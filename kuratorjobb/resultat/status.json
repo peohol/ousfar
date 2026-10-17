@@ -1,18 +1,50 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/publisert-fenobarbital-20261017",
     "foresporsel_commit": "103dc54dc10d64356815c088f1ec4ec0f5af609b",
     "foresporsel_sha256": "1a069b5dd8a2b0e16c96da6d84b4301c972bf06f7fdf39257f19b436bd8037de",
     "kode_commit": "63a73d6d280aa61d787b268407acd4618ef59c72",
     "kjoring": "https://github.com/peohol/far/actions/runs/39062497491",
-    "startet_kl": "2026-10-17T19:27:10.468Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-17T19:27:12.073Z",
+    "ferdig_kl": "2026-10-17T19:27:19.917Z"
   },
-  "foresporsel": null,
-  "referanse": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "fenobarbital"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ],
+    "referanse": "publisert-fenobarbital-20261017-1926"
+  },
+  "referanse": "publisert-fenobarbital-20261017-1926",
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 565
+    }
+  ],
+  "stoffer": {
+    "fenobarbital": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/fenobarbital/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
