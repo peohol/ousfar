@@ -1,18 +1,49 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39243664600",
     "foresporsel_commit": "e4e73881f37e3fce138c7e41723a58aa142a2473",
     "foresporsel_sha256": "7dee52f0d8ee594cf974d3719c5ce600e10a5edbbde33a9311239bf0d7e8f49c",
     "kode_commit": "e6c6bef0191dcad4a6818b98380b379fe6c0979f",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39243664600",
-    "startet_kl": "2026-10-19T11:18:44.333Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-19T11:18:46.367Z",
+    "ferdig_kl": "2026-10-19T11:18:55.864Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "topiramat"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 1090
+    }
+  ],
+  "stoffer": {
+    "topiramat": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/topiramat/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
