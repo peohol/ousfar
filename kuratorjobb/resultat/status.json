@@ -1,18 +1,49 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39243917868",
     "foresporsel_commit": "0c4caa437ff89dcf647ab0dfc2b5eb3ff0af2528",
     "foresporsel_sha256": "3bce8b951ae9c542c23e784fe0b08a3e59c29b9eab0fa63b9b35f8f53cf4e5c5",
     "kode_commit": "e6c6bef0191dcad4a6818b98380b379fe6c0979f",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39243917868",
-    "startet_kl": "2026-10-19T11:20:57.542Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-19T11:20:59.405Z",
+    "ferdig_kl": "2026-10-19T11:21:06.365Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "vortioksetin"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 626
+    }
+  ],
+  "stoffer": {
+    "vortioksetin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/vortioksetin/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
