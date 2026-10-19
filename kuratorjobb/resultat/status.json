@@ -1,18 +1,69 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39228338739",
     "foresporsel_commit": "81448f4afbe55becfacea679f7bfed0f565208e5",
     "foresporsel_sha256": "dd3242c48e1e70aeb7476aedeb66fd1635b6be93f46a0a1a24b280fb171967c3",
     "kode_commit": "e6c6bef0191dcad4a6818b98380b379fe6c0979f",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39228338739",
-    "startet_kl": "2026-10-19T09:13:18.970Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-19T09:13:20.999Z",
+    "ferdig_kl": "2026-10-19T09:13:36.156Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "lurasidon",
+      "fenobarbital",
+      "ghb"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 720
+    }
+  ],
+  "stoffer": {
+    "lurasidon": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/lurasidon/funksjonstest.json"
+        }
+      }
+    },
+    "fenobarbital": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/fenobarbital/funksjonstest.json"
+        }
+      }
+    },
+    "ghb": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/ghb/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
