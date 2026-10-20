@@ -1,18 +1,49 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39432315737",
     "foresporsel_commit": "a6972a04da9342e0d6fd946349bfbddc12726e59",
     "foresporsel_sha256": "fc399b6f39610c45656dd41e0340d8614103d9482a434a1e19d21c39f26d3c56",
     "kode_commit": "6614ff2c08e6aa2985a8440c5e1eda82bdaaa111",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39432315737",
-    "startet_kl": "2026-10-20T13:40:08.467Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-20T13:40:10.503Z",
+    "ferdig_kl": "2026-10-20T13:40:19.817Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "sertindol"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 611
+    }
+  ],
+  "stoffer": {
+    "sertindol": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/sertindol/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
