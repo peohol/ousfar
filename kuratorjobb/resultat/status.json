@@ -1,18 +1,49 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39415554599",
     "foresporsel_commit": "8e1d339b30ae52da1347ab3d11221586d9622024",
     "foresporsel_sha256": "0d6dcdcfd1db814440ac20b3fee245c37f4d9522b096856ea50a481892cddc93",
     "kode_commit": "6614ff2c08e6aa2985a8440c5e1eda82bdaaa111",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39415554599",
-    "startet_kl": "2026-10-20T11:32:03.077Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-20T11:32:04.791Z",
+    "ferdig_kl": "2026-10-20T11:32:12.500Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "cbd"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 216
+    }
+  ],
+  "stoffer": {
+    "cbd": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/cbd/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
