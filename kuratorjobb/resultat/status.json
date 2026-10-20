@@ -1,18 +1,49 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39418500278",
     "foresporsel_commit": "5cf33e4fab7f3887c87f5707bc2e49437dfabace",
     "foresporsel_sha256": "1e06ec6e69ccbb9bc67016262aa49dcf21294d1397e7742c16ed84eb65727e22",
     "kode_commit": "6614ff2c08e6aa2985a8440c5e1eda82bdaaa111",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39418500278",
-    "startet_kl": "2026-10-20T11:56:30.503Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-20T11:56:32.623Z",
+    "ferdig_kl": "2026-10-20T11:56:42.151Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "fenobarbital"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 693
+    }
+  ],
+  "stoffer": {
+    "fenobarbital": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/fenobarbital/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
