@@ -1,18 +1,49 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39417455680",
     "foresporsel_commit": "9e6767aa3f0abde09e9cca9d5764c4468290f664",
     "foresporsel_sha256": "10cb13513eca86560a607d443a3567fa80cbb80bde056b976f6a0faede4d44a1",
     "kode_commit": "6614ff2c08e6aa2985a8440c5e1eda82bdaaa111",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39417455680",
-    "startet_kl": "2026-10-20T11:47:49.725Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-20T11:47:51.423Z",
+    "ferdig_kl": "2026-10-20T11:47:59.718Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "doksepin"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 312
+    }
+  ],
+  "stoffer": {
+    "doksepin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/doksepin/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
