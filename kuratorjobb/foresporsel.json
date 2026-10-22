@@ -1,0 +1,10 @@
+{
+  "versjon": 1,
+  "stoffer": [
+    "brekspiprazol",
+    "lurasidon"
+  ],
+  "oppgaver": [
+    "funksjonstest"
+  ]
+}
