@@ -1,0 +1,18 @@
+{
+  "versjon": 1,
+  "status": "kjorer",
+  "jobb": {
+    "gren": "kuratorjobb/manuell-39738903275",
+    "foresporsel_commit": "012282b5751ae10c3e097d51eb5553b16c6d71e7",
+    "foresporsel_sha256": "11d1931ccd2ad1703b70c5bbdd1550ea3549d32b7253f1c34cfa540a816179df",
+    "kode_commit": "86785412b42b9f8378cfaba299adcb16ca80904b",
+    "kjoring": "https://github.com/peohol/ousfar/actions/runs/39738903275",
+    "startet_kl": "2026-10-22T07:13:00.608Z",
+    "ferdig_kl": null
+  },
+  "foresporsel": null,
+  "referanse": null,
+  "feil": [],
+  "bruker": [],
+  "stoffer": {}
+}
