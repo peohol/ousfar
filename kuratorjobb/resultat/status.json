@@ -1,18 +1,49 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39777658488",
     "foresporsel_commit": "e69ea423b8fdb48b6bc3148302b5343d83eb4b61",
     "foresporsel_sha256": "3cf0661f3719a6a30c68fef267ae5405568dfe0bc5f146263b8cfb69564c59ab",
     "kode_commit": "3404e3cec0dff67eb79fd3eae60d76d8d7519ea7",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39777658488",
-    "startet_kl": "2026-10-22T12:21:55.695Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-22T12:21:57.804Z",
+    "ferdig_kl": "2026-10-22T12:22:05.794Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "lamotrigin"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 268
+    }
+  ],
+  "stoffer": {
+    "lamotrigin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/lamotrigin/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
