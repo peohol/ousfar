@@ -1,18 +1,49 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39780031501",
     "foresporsel_commit": "5af12ec9d502936089c708d0b6d29e495fd6b1cc",
     "foresporsel_sha256": "9babd10241a16241f9e34d6e5a0020e5dd3afecb4113f96f1b173a8d34e6eb86",
     "kode_commit": "3404e3cec0dff67eb79fd3eae60d76d8d7519ea7",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39780031501",
-    "startet_kl": "2026-10-22T12:41:05.327Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-22T12:41:07.088Z",
+    "ferdig_kl": "2026-10-22T12:41:21.759Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "levetiracetam"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 886
+    }
+  ],
+  "stoffer": {
+    "levetiracetam": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/levetiracetam/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
