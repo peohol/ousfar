@@ -1,18 +1,49 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39775723602",
     "foresporsel_commit": "59f006ebbe501ee9ea69f3be8c94b6d82df4e718",
     "foresporsel_sha256": "674e4e7712680b43acc45d6160e026b1b6ed741ef056a1c1c9939a46c5102b4a",
     "kode_commit": "3404e3cec0dff67eb79fd3eae60d76d8d7519ea7",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39775723602",
-    "startet_kl": "2026-10-22T12:07:25.495Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-22T12:07:27.613Z",
+    "ferdig_kl": "2026-10-22T12:07:36.431Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "fenytoin"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 486
+    }
+  ],
+  "stoffer": {
+    "fenytoin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/fenytoin/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
