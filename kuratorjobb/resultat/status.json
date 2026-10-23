@@ -1,18 +1,49 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39888456646",
     "foresporsel_commit": "6f928e1003df71ba6642aa58ff1e1ff6209904f4",
     "foresporsel_sha256": "3252fd6df01ccc466b2543a21ec653e7ad7a4fd0ec1496674799af13e07532ca",
     "kode_commit": "cf36d2602624ed31c09f34cf9c8a28ed70d645d4",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39888456646",
-    "startet_kl": "2026-10-23T02:14:34.993Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-23T02:14:36.496Z",
+    "ferdig_kl": "2026-10-23T02:14:43.200Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "atomoksetin"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 585
+    }
+  ],
+  "stoffer": {
+    "atomoksetin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/atomoksetin/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
