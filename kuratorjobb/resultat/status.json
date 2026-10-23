@@ -1,18 +1,79 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39949578473",
     "foresporsel_commit": "84dc948d09d9ac725fefafcbf9624fec75928aba",
     "foresporsel_sha256": "0958e15f279d3220b45d9325318225e8436c5e30dd16fff4e31ef20bae8d383b",
     "kode_commit": "9b8b6ad231f79c5fa2137aacf500153a6fbba4db",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39949578473",
-    "startet_kl": "2026-10-23T11:56:23.362Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-23T11:56:25.101Z",
+    "ferdig_kl": "2026-10-23T11:56:44.878Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "citalopram",
+      "alprazolam",
+      "atomoksetin",
+      "brekspiprazol"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 605
+    }
+  ],
+  "stoffer": {
+    "citalopram": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/citalopram/funksjonstest.json"
+        }
+      }
+    },
+    "alprazolam": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/alprazolam/funksjonstest.json"
+        }
+      }
+    },
+    "atomoksetin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/atomoksetin/funksjonstest.json"
+        }
+      }
+    },
+    "brekspiprazol": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/brekspiprazol/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
