@@ -1,18 +1,49 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39906300040",
     "foresporsel_commit": "e284957e444d2a9402259044b92c62cf10d87d2d",
     "foresporsel_sha256": "3027beb032f02c1140a32986dd9822990def0f84a5de60ea0cfb146dbc1b7411",
     "kode_commit": "3c9936e11cc8bc8d4fba7116e35cce4559af79a0",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39906300040",
-    "startet_kl": "2026-10-23T05:32:43.532Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-23T05:32:45.291Z",
+    "ferdig_kl": "2026-10-23T05:32:54.936Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "petidin"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 867
+    }
+  ],
+  "stoffer": {
+    "petidin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/petidin/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
