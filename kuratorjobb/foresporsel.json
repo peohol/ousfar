@@ -1,0 +1,12 @@
+{
+  "versjon": 1,
+  "stoffer": [
+    "citalopram",
+    "alprazolam",
+    "atomoksetin",
+    "brekspiprazol"
+  ],
+  "oppgaver": [
+    "funksjonstest"
+  ]
+}
