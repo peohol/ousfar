@@ -1,18 +1,49 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39891726470",
     "foresporsel_commit": "fb55f6a3fb95552f782e6d74db27f80dc18dd249",
     "foresporsel_sha256": "dd2a46e0e9f68bc1e3ff17a42e7b4b695783cf8caf62997463b89e10414868c0",
     "kode_commit": "df00ccb6348393731986b1aea359969e4126047b",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39891726470",
-    "startet_kl": "2026-10-23T02:50:33.091Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-23T02:50:34.846Z",
+    "ferdig_kl": "2026-10-23T02:50:43.131Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "oksazepam"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 697
+    }
+  ],
+  "stoffer": {
+    "oksazepam": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/oksazepam/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
