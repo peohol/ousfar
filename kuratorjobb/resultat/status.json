@@ -1,18 +1,49 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39891279680",
     "foresporsel_commit": "ee01ed384fc690a944624f94ccb40ca3663e1f01",
     "foresporsel_sha256": "755af6a18f2af56c39f24eede6f6d52ebbc99c94740291b92fa5426d26267660",
     "kode_commit": "df00ccb6348393731986b1aea359969e4126047b",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39891279680",
-    "startet_kl": "2026-10-23T02:45:34.462Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-23T02:45:36.149Z",
+    "ferdig_kl": "2026-10-23T02:45:44.053Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "diazepam"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 523
+    }
+  ],
+  "stoffer": {
+    "diazepam": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/diazepam/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
