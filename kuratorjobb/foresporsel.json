@@ -1,0 +1,16 @@
+{
+  "versjon": 1,
+  "stoffer": [
+    "atomoksetin",
+    "cbd",
+    "diazepam",
+    "doksepin",
+    "fenytoin",
+    "flunitrazepam",
+    "kariprazin",
+    "lamotrigin"
+  ],
+  "oppgaver": [
+    "funksjonstest"
+  ]
+}
