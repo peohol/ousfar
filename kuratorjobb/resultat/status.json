@@ -1,18 +1,119 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39969180952",
     "foresporsel_commit": "235e8192c9483f6048f4847c182d2d229431d31a",
     "foresporsel_sha256": "c367873548e77c02625dd1b3e4b8fca6b42720791aee1aa1111ea88a077d4dc0",
     "kode_commit": "f38ac2cab27683a3b904eeac40f1c7cf251ed187",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39969180952",
-    "startet_kl": "2026-10-23T14:24:26.586Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-23T14:24:28.616Z",
+    "ferdig_kl": "2026-10-23T14:25:30.896Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "atomoksetin",
+      "cbd",
+      "diazepam",
+      "doksepin",
+      "fenytoin",
+      "flunitrazepam",
+      "kariprazin",
+      "lamotrigin"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 375
+    }
+  ],
+  "stoffer": {
+    "atomoksetin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/atomoksetin/funksjonstest.json"
+        }
+      }
+    },
+    "cbd": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/cbd/funksjonstest.json"
+        }
+      }
+    },
+    "diazepam": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/diazepam/funksjonstest.json"
+        }
+      }
+    },
+    "doksepin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/doksepin/funksjonstest.json"
+        }
+      }
+    },
+    "fenytoin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/fenytoin/funksjonstest.json"
+        }
+      }
+    },
+    "flunitrazepam": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/flunitrazepam/funksjonstest.json"
+        }
+      }
+    },
+    "kariprazin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/kariprazin/funksjonstest.json"
+        }
+      }
+    },
+    "lamotrigin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/lamotrigin/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
