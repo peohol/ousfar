@@ -1,18 +1,79 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39896503206",
     "foresporsel_commit": "0505965b363c3e738760e981490489f4cc1a96ed",
     "foresporsel_sha256": "1e01ca8343a0b4c0a0a3a5adda66276fc2ed9a1de1199544e8d7d57dea667f83",
     "kode_commit": "3c9936e11cc8bc8d4fba7116e35cce4559af79a0",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39896503206",
-    "startet_kl": "2026-10-23T03:43:51.399Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-23T03:43:53.351Z",
+    "ferdig_kl": "2026-10-23T03:44:14.287Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "fenobarbital",
+      "citalopram",
+      "cbd",
+      "kariprazin"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 217
+    }
+  ],
+  "stoffer": {
+    "fenobarbital": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/fenobarbital/funksjonstest.json"
+        }
+      }
+    },
+    "citalopram": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/citalopram/funksjonstest.json"
+        }
+      }
+    },
+    "cbd": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/cbd/funksjonstest.json"
+        }
+      }
+    },
+    "kariprazin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/kariprazin/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
