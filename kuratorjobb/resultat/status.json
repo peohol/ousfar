@@ -1,18 +1,49 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39890995568",
     "foresporsel_commit": "7aabfb9031963243a2535f9961b01825d05a8296",
     "foresporsel_sha256": "995451f11b758e6c64d83562bc182900ad18be0e2d29d22176a65bdedad3728f",
     "kode_commit": "df00ccb6348393731986b1aea359969e4126047b",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39890995568",
-    "startet_kl": "2026-10-23T02:42:30.818Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-23T02:42:32.590Z",
+    "ferdig_kl": "2026-10-23T02:42:41.279Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "nitrazepam"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 257
+    }
+  ],
+  "stoffer": {
+    "nitrazepam": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/nitrazepam/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
