@@ -1,18 +1,49 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39916150947",
     "foresporsel_commit": "a82c5f8e8749d3e48f8516679922edfc684f62bd",
     "foresporsel_sha256": "2e40d1926a1d1f38d0a77262051d064a106e79b9a1c73d5ddc89c63c6cd3dc0f",
     "kode_commit": "3c9936e11cc8bc8d4fba7116e35cce4559af79a0",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39916150947",
-    "startet_kl": "2026-10-23T07:13:04.357Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-23T07:13:06.245Z",
+    "ferdig_kl": "2026-10-23T07:13:15.883Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "zolpidem"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 646
+    }
+  ],
+  "stoffer": {
+    "zolpidem": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/zolpidem/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
