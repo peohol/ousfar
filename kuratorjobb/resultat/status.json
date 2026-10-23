@@ -1,18 +1,49 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39891502190",
     "foresporsel_commit": "8a4f7d89a50e0f8fcbc69c0ad7515f650ddf2159",
     "foresporsel_sha256": "a6c79aae7490fb51165db013c62074246a210de262fe706ad8ff90563a7f5346",
     "kode_commit": "df00ccb6348393731986b1aea359969e4126047b",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39891502190",
-    "startet_kl": "2026-10-23T02:48:06.151Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-23T02:48:08.034Z",
+    "ferdig_kl": "2026-10-23T02:48:17.509Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "valproat"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 1065
+    }
+  ],
+  "stoffer": {
+    "valproat": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/valproat/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
