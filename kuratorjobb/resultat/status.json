@@ -1,18 +1,69 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39897498694",
     "foresporsel_commit": "08ac1f217bfa13d228d0c21301402aace342bceb",
     "foresporsel_sha256": "77f74b7d221a5751eaa8a3ab4768df899bff88104ff5c1b0990fe686f81efcf1",
     "kode_commit": "3c9936e11cc8bc8d4fba7116e35cce4559af79a0",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39897498694",
-    "startet_kl": "2026-10-23T03:55:28.686Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-23T03:55:30.443Z",
+    "ferdig_kl": "2026-10-23T03:55:46.134Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "sertindol",
+      "fenytoin",
+      "brekspiprazol"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 811
+    }
+  ],
+  "stoffer": {
+    "sertindol": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/sertindol/funksjonstest.json"
+        }
+      }
+    },
+    "fenytoin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/fenytoin/funksjonstest.json"
+        }
+      }
+    },
+    "brekspiprazol": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/brekspiprazol/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
