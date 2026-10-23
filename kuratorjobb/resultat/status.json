@@ -1,18 +1,59 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39959647747",
     "foresporsel_commit": "8f1f9cf8ac681b56689ff2d2348407e7bb098809",
     "foresporsel_sha256": "cd7c818490a1381643a1789c71232d8f29c35f7e610ed51c0a9f2dd1b8098a26",
     "kode_commit": "6c03c49457e020c59137db068a5773d26a9f6e7f",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39959647747",
-    "startet_kl": "2026-10-23T13:15:35.201Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-23T13:15:37.186Z",
+    "ferdig_kl": "2026-10-23T13:15:50.069Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "zopiklon",
+      "ketamin"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 248
+    }
+  ],
+  "stoffer": {
+    "zopiklon": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/zopiklon/funksjonstest.json"
+        }
+      }
+    },
+    "ketamin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/ketamin/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
