@@ -1,18 +1,49 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-39929920784",
     "foresporsel_commit": "292d0897b801d0c921d735df024a6515d1c342ac",
     "foresporsel_sha256": "5f3b9e65edc5957be1d74bc24247d3540aa667ba90cc2c3080fec01eba289343",
     "kode_commit": "c1e6374833eca0e985d37a698148cf03d04cb03c",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/39929920784",
-    "startet_kl": "2026-10-23T09:10:45.344Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-23T09:10:47.002Z",
+    "ferdig_kl": "2026-10-23T09:10:55.910Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "ketamin"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 393
+    }
+  ],
+  "stoffer": {
+    "ketamin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/ketamin/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
