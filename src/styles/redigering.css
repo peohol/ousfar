@@ -383,6 +383,8 @@
    Ett kort: verktøyraden på hevet flate øverst, teksten i serif under.
    Kortet får aksentkant mens det skrives i det. */
 .rikteksteditor {
+  /* Kanten feltet dras høyere i (`justerbar`), står i bunnen. */
+  position: relative;
   display: flex;
   flex-direction: column;
   background: var(--flate);

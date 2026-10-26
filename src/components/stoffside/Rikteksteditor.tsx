@@ -12,7 +12,7 @@ import {
 } from '@tiptap/react'
 import { NodeSelection } from '@tiptap/pm/state'
 import StarterKit from '@tiptap/starter-kit'
-import { Fragment, useId, useRef, useState, type MouseEvent, type ReactNode, type Ref } from 'react'
+import { Fragment, useId, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode, type Ref } from 'react'
 import { useAutoerstattregler } from '../../autoerstatt/Autoerstattkilde'
 import { Autoerstatt } from '../../autoerstatt/editor'
 import {
@@ -38,10 +38,12 @@ import {
   rensDokument,
   type Riktekstdokument,
 } from '../../faginnhold/riktekst'
+import { lengdeinnstilling } from '../../auth/innstillinger'
 import { Button } from '../Button'
 import { Direktelenkepanel } from '../direktelenker/Direktelenkepanel'
 import { Lenkebrikkevisning } from '../direktelenker/Lenkebrikke'
 import { Ikon } from '../ikon/Ikon'
+import { Kanthandtak, maalLengde, useDrattLengde } from '../Kanthandtak'
 import { lesKonsentrasjonsattrs, useKonsentrasjonskilde } from './Konsentrasjon'
 import { useOverskriftsniva } from '../Overskriftsniva'
 import { Referansevelger } from './Referansevelger'
@@ -287,7 +289,15 @@ export interface RikteksteditorProps {
   autofokus?: boolean
   /** Lavere tekstfelt, til korte tekster som kommentarer. */
   kompakt?: boolean
+  /**
+   * Feltet kan dras høyere eller lavere i nedre kant, som i fagsidenes
+   * redigering. Høyden følger brukeren til neste felt og neste maskin.
+   */
+  justerbar?: boolean
 }
+
+/** Høyden brukeren har dratt et justerbart felt til (`justerbar`). */
+const TEKSTHOYDE = lengdeinnstilling('redigering.teksthoyde')
 
 type Verktoypanel = 'lenke' | 'referanse' | 'direktelenke' | 'konsentrasjon' | null
 
@@ -302,8 +312,13 @@ export function Rikteksteditor({
   direktelenker = false,
   autofokus = false,
   kompakt = false,
+  justerbar = false,
 }: RikteksteditorProps) {
   const [panel, setPanel] = useState<Verktoypanel>(null)
+  const valgt = useDrattLengde('teksthoyde', justerbar ? TEKSTHOYDE : null)
+  // Høyden mens kanten dras; den lagres når draget er ferdig.
+  const [underveis, setUnderveis] = useState<number | null>(null)
+  const hoyde = underveis ?? valgt.lengde
   const [tegnmeny, setTegnmeny] = useState<Tegnmenytilstand>(null)
   const tegnknapp = useRef<HTMLButtonElement>(null)
   const over = useOverskriftsniva()
@@ -346,7 +361,11 @@ export function Rikteksteditor({
   if (!editor) return null
 
   return (
-    <div className="rikteksteditor">
+    <div
+      className="rikteksteditor"
+      data-hoyde={hoyde !== null || undefined}
+      style={hoyde !== null ? ({ '--tekstfelt-valgt': `${hoyde}px` } as CSSProperties) : undefined}
+    >
       <Verktoylinje
         editor={editor}
         panel={panel}
@@ -396,6 +415,32 @@ export function Rikteksteditor({
         />
       )}
       <EditorContent editor={editor} className="rikteksteditor__tekst" />
+      {justerbar && (
+        <Kanthandtak
+          etikett="Høyden på tekstfeltet"
+          kant="bunn"
+          maal={(handtak) => {
+            const felt = handtak.parentElement!
+            return {
+              lengde: felt.querySelector('.rikteksteditor__tekst')!.getBoundingClientRect().height,
+              minst: maalLengde(felt, 'var(--tekstfelt-min)', 'hoyde'),
+              mest: maalLengde(felt, 'var(--tekstfelt-dratt-mest)', 'hoyde'),
+            }
+          }}
+          onEndre={(ny) => {
+            valgt.endrer()
+            setUnderveis(ny)
+          }}
+          onFerdig={(ny) => {
+            valgt.sett(ny)
+            setUnderveis(null)
+          }}
+          onNullstill={() => {
+            valgt.sett(null)
+            setUnderveis(null)
+          }}
+        />
+      )}
     </div>
   )
 }

@@ -82,7 +82,8 @@ smalest og bredest; dobbeltklikk gir smalest). Den smaleste bredden er den
 menyen hadde fra før; den bredeste lar siden bak beholde plass
 (`--diskusjonspanel-minst` og `--diskusjonspanel-mest` i `diskusjoner.css`).
 Bredden lagres på brukeren og gjelder alle sider. Håndtaket er felles
-(`src/components/Breddehandtak.tsx`).
+(`src/components/Kanthandtak.tsx`), det samme som gjør tekstfeltet i
+fagsidenes redigering høyere.
 
 Overskriften, søket i lista og, i en tråd, «Alle tråder» og overskriften på
 tråden står fast; bare det under ruller. Overskriften på tråden står i en

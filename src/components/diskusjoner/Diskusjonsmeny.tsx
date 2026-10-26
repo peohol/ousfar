@@ -33,7 +33,7 @@ import {
 import { useJevnligSjekk } from '../../hooks/useJevnligSjekk'
 import { useRestenInert } from '../../hooks/useRestenInert'
 import { merketall } from '../../varsler/modell'
-import { Breddehandtak, maalLengde } from '../Breddehandtak'
+import { Kanthandtak, maalLengde, useDrattLengde } from '../Kanthandtak'
 import { Ikon } from '../ikon/Ikon'
 import { ToppmenyInnhold } from '../toppmeny/Toppmenykilde'
 import { Toppmenyknapp } from '../toppmeny/Toppmenyknapp'
@@ -56,6 +56,7 @@ const ROTMERKE = 'diskusjonsmeny'
 
 /** Bredden brukeren har dratt menyen til, satt på rotelementet; `diskusjoner.css` holder den innenfor grensene. */
 const BREDDEVARIABEL = '--diskusjonsbredde'
+const BREDDE = { hent: hentBredde, lagre: lagreBredde }
 const settBredde = (bredde: number | null) => {
   const stil = document.documentElement.style
   if (bredde === null) stil.removeProperty(BREDDEVARIABEL)
@@ -112,7 +113,8 @@ export function Diskusjonsmeny({
   sider: Diskusjonssider
 }) {
   const [laast, setLaast] = useBevart('diskusjoner/laast', false)
-  const [bredde, setBredde] = useBevart<number | null>('diskusjoner/bredde', null)
+  // Bredden følger brukeren som «Hold åpen» (`diskusjoner.bredde`).
+  const { lengde: bredde, endrer: endrerBredde, sett: lagreNyBredde } = useDrattLengde('diskusjoner/bredde', BREDDE)
   const [mobilApen, setMobilApen] = useBevart('diskusjoner/mobil', false)
   const [helside, setHelside] = useBevart('diskusjoner/helside', false)
   const [svever, setSvever] = useState(false)
@@ -125,26 +127,14 @@ export function Diskusjonsmeny({
     void hentLaast().then((lagret) => lagret !== null && setLaast(lagret), () => undefined)
   }, [setLaast])
 
-  // Bredden er også lagret på brukeren. Har brukeren alt endret den her, vinner det.
-  const breddeEndret = useRef(false)
-  useEffect(() => {
-    void hentBredde().then((lagret) => lagret !== null && !breddeEndret.current && setBredde(lagret), () => undefined)
-  }, [setBredde])
-
   useEffect(() => {
     settBredde(bredde)
     return () => settBredde(null)
   }, [bredde])
 
   const visBredde = (ny: number) => {
-    breddeEndret.current = true
+    endrerBredde()
     settBredde(ny)
-  }
-
-  const lagreNyBredde = (ny: number) => {
-    breddeEndret.current = true
-    setBredde(ny)
-    void lagreBredde(ny).catch(() => undefined)
   }
 
   const veksleLaas = () => {
@@ -252,10 +242,10 @@ export function Diskusjonsmeny({
         }}
       >
         {apen && !helside && (
-          <Breddehandtak
+          <Kanthandtak
             etikett="Bredden på diskusjonene"
             maal={() => ({
-              bredde: maalLengde(meny.current!, 'var(--diskusjonspanel)'),
+              lengde: maalLengde(meny.current!, 'var(--diskusjonspanel)'),
               minst: maalLengde(meny.current!, 'var(--diskusjonspanel-minst)'),
               mest: maalLengde(meny.current!, 'var(--diskusjonspanel-mest)'),
             })}

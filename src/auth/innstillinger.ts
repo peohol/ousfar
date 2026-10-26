@@ -45,3 +45,36 @@ export function lagreSisteValg<T>(nokkel: string): (verdi: T) => Promise<void> {
     return lagring
   }
 }
+
+/**
+ * En lengde i piksler som brukeren har dratt en flate til, som bredden på
+ * diskusjonsmenyen. `null` er lengden flaten har av seg selv.
+ */
+export interface Lengdeinnstilling {
+  hent: () => Promise<number | null>
+  /** Kan kalles mange ganger raskt (et drag, piltastene); den siste vinner. */
+  lagre: (lengde: number | null) => Promise<void>
+  /** Den siste lengden som er hentet eller lagret her, så en flate kan åpne med den. */
+  sist?: () => number | null | undefined
+}
+
+/**
+ * En lengdeinnstilling under `nokkel`. Verdien kan ikke være tom i tabellen,
+ * så «av seg selv» lagres som 0.
+ */
+export function lengdeinnstilling(nokkel: string): Lengdeinnstilling {
+  const lagreValg = lagreSisteValg<number>(nokkel)
+  let sist: number | null | undefined
+  return {
+    async hent() {
+      const verdi = await hentInnstilling(nokkel)
+      sist = typeof verdi === 'number' && Number.isFinite(verdi) && verdi > 0 ? verdi : null
+      return sist
+    },
+    lagre(lengde) {
+      sist = lengde === null ? null : Math.round(lengde)
+      return lagreValg(sist ?? 0)
+    },
+    sist: () => sist,
+  }
+}

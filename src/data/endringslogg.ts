@@ -12,6 +12,18 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.108.0',
+    dato: '2026-10-26',
+    sammendrag: 'Tekstfeltet i redigeringen av fagsidene er høyere og kan dras høyere',
+    typer: ['Funksjonalitet', 'Design / layout'],
+    omfang: 'Mindre omfang',
+    gjelder: ['stoff'],
+    punkter: [
+      'Tekstfeltet tar alltid minst halve høyden av redigeringsvinduet. En lang kildeliste presser det ikke lenger sammen; den står under feltet, og vinduet ruller ned til den.',
+      'Dra i nedre kant av tekstfeltet for å gjøre det høyere eller lavere, som bredden på diskusjonsmenyen. Kanten kan også flyttes med piltastene når den har fokus. Høyden huskes til neste gang, og et dobbeltklikk på kanten gir feltet vanlig høyde igjen.',
+    ],
+  },
+  {
     versjon: '1.107.8',
     dato: '2026-10-23',
     sammendrag: 'Bare klinisk viktige endringer gir varsler om ny funksjonalitet',
