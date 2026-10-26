@@ -185,10 +185,19 @@ bare fargene gjennom `--tast-flate`, `--tast-blekk` og `--tast-kant`
   aldri under én linje. Flatene er kroppen i et modalt lag og
   diskusjonsmenyen; ellers er det vinduet. Er teksten det skjemaet handler om,
   får skjemaet (eller skriveren) klassen `skriveflate`: da er det like høyt som
-  flaten, og teksten fyller det som er igjen under feltene og over knappene.
+  flaten, og teksten fyller det som er igjen under feltene og over knappene,
+  men aldri mindre enn halve flaten (`--skriveflate-tekst-min`): står det mye
+  under, som en lang kildeliste, ruller flaten i stedet.
   Skriveflaten må være det eneste på flaten; står noe over den (som
   overskriften i en tråd), holder taket på halve høyden.
-  Stilen står nederst i `skjema.css`.
+  En rikteksteditor med `justerbar` (fagsidenes redigering) kan dras høyere
+  eller lavere i nedre kant; høyden følger brukeren
+  (brukerinnstillingen `redigering.teksthoyde`), og dobbeltklikk gir
+  vanlig høyde igjen. Stilen står nederst i `skjema.css`.
+- **`Kanthandtak`** er kanten en flate dras større eller mindre i: en side
+  (bredden på diskusjonsmenyen) eller bunnen (høyden på et tekstfelt). Den
+  tar pekeren, piltastene, Home/End og dobbeltklikk, og `useDrattLengde`
+  bevarer og lagrer lengden på brukeren (`lengdeinnstilling`).
 - **Klasser uten egen komponent:** `.kommentartekst` (teksten som limes inn),
   `.notis` (forsiktighet, med `--handling` når den tilbyr handlingen),
   `.mangelliste`, og skjemaklassene `.avkryssinger`/`.avkryssing`,

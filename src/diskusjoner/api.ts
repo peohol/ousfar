@@ -4,7 +4,7 @@
  * unike navn og emojier, arkivet som fryser); kommentarene og hjertene går
  * rett mot tabellene, der radsikkerheten avgjør hvem som får gjøre hva.
  */
-import { hentInnstilling, lagreInnstilling, lagreSisteValg } from '../auth/innstillinger'
+import { hentInnstilling, lagreInnstilling, lengdeinnstilling } from '../auth/innstillinger'
 import { lesbarFeil, UVENTET_FEIL, type Databasefeil } from '../auth/databasefeil'
 import { klient } from '../auth/klient'
 import type { Riktekstdokument } from '../faginnhold/riktekst'
@@ -178,14 +178,9 @@ export function lagreLaast(laast: boolean): Promise<void> {
 /** Nøkkelen i brukerinnstillingene for hvor bred menyen er dratt, i piksler. */
 export const BREDDENOKKEL = 'diskusjoner.bredde'
 
-export async function hentBredde(): Promise<number | null> {
-  const verdi = await hentInnstilling(BREDDENOKKEL)
-  return typeof verdi === 'number' && Number.isFinite(verdi) && verdi > 0 ? verdi : null
-}
+const bredde = lengdeinnstilling(BREDDENOKKEL)
 
-const lagreBreddevalg = lagreSisteValg<number>(BREDDENOKKEL)
+export const hentBredde = bredde.hent
 
 /** Bredden kan lagres mange ganger raskt (piltastene); den siste vinner. */
-export function lagreBredde(bredde: number): Promise<void> {
-  return lagreBreddevalg(Math.round(bredde))
-}
+export const lagreBredde = bredde.lagre

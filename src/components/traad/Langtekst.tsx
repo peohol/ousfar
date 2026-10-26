@@ -1,6 +1,6 @@
 import { useId, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { Button } from '../Button'
-import { maalLengde } from '../Breddehandtak'
+import { maalLengde } from '../Kanthandtak'
 import { Ikon } from '../ikon/Ikon'
 
 /**

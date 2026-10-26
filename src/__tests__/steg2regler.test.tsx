@@ -102,7 +102,10 @@ async function tilSteg2(kode: string) {
     </TipsLag>,
   )
   await user.keyboard(kode.toLowerCase())
-  await user.keyboard('1')
+  // Står bare analytten igjen i søket, velger den seg selv. På en travel
+  // testmaskin (CI) kan det skje før koden er skrevet ferdig (HBUP etter «hb»),
+  // og da ville 1 velge et bånd i steg 2. Ellers velger 1 det første treffet.
+  if (!screen.queryByRole('region', { name: 'Velg konsentrasjon' })) await user.keyboard('1')
   // Hele appen tegnes; på en travel testmaskin tar det mer enn standardsekundet.
   const steg = await screen.findByRole('region', { name: 'Velg konsentrasjon' }, { timeout: 5000 })
   return { user, steg }

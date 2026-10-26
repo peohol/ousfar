@@ -8,7 +8,7 @@
  * resten av appen plass til den (`data-diskusjonsmeny` på rotelementet). På
  * smale flater er den skjult til knappen i dokken åpner den over siden.
  *
- * Åpen kan menyen dras bredere i venstre kanten (`Breddehandtak`). Bredden
+ * Åpen kan menyen dras bredere i venstre kanten (`Kanthandtak`). Bredden
  * brukeren har valgt, står i `--diskusjonsbredde` på rotelementet, og holdes
  * her mellom den opprinnelige bredden og en bredde som lar siden få plass.
  *
@@ -73,7 +73,7 @@
 }
 
 /* Mens kanten dras, følger menyen pekeren uten å gli etter. */
-.diskusjonsmeny:has(> .breddehandtak[data-drar]) {
+.diskusjonsmeny:has(> .kanthandtak[data-drar]) {
   transition: none;
 }
 
@@ -93,7 +93,7 @@
   }
 
   /* Smalt fyller menyen bredden; der er det ingen kant å dra. */
-  .diskusjonsmeny > .breddehandtak {
+  .diskusjonsmeny > .kanthandtak {
     display: none;
   }
 

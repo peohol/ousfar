@@ -328,6 +328,10 @@
   --tekstfelt-maks: 50cqh;
   /* Én linje i rikteksten (`.riktekstfelt`) med luften over og under. */
   --tekstfelt-min: calc(var(--tekst-lesing) * 1.55 + var(--rom-5) + var(--rom-6));
+  /* Teksten i en skriveflate har aldri mindre enn halve flaten. */
+  --skriveflate-tekst-min: max(var(--tekstfelt-min), 50cqh);
+  /* Det høyeste et felt kan dras til: hele flaten. */
+  --tekstfelt-dratt-mest: 100cqh;
 }
 
 :is(.rikteksteditor__tekst, textarea) {
@@ -344,9 +348,10 @@
    like høy som det synlige av flaten den står på, og teksten tar det som er
    igjen når feltene over og knappene under har fått sitt. Alt mellom
    skriveflaten og teksten strekker seg med. Teksten regnes som tom når resten
-   måles (`contain`), så det er den som gir etter når vinduet blir lavere;
-   får heller ikke én linje plass, ruller flaten. Skriveflaten må være det
-   eneste på flaten: det som står over den, trekkes ikke fra. */
+   måles (`contain`), så det er den som gir etter når vinduet blir lavere —
+   men aldri under halve flaten: er det mer under den, som en lang kildeliste,
+   ruller flaten i stedet. Skriveflaten må være det eneste på flaten: det som
+   står over den, trekkes ikke fra. */
 .skriveflate:has(:is(.rikteksteditor__tekst, textarea)) {
   display: flex;
   flex-direction: column;
@@ -362,11 +367,26 @@
 .skriveflate :is(.rikteksteditor__tekst, textarea) {
   flex: 1 0 auto;
   max-height: none;
-  min-height: var(--tekstfelt-min);
+  min-height: var(--skriveflate-tekst-min);
   contain: size;
 }
 
 /* Hele flaten er skrivefeltet, så et klikk under teksten treffer det. */
 .skriveflate .rikteksteditor__tekst > .riktekstfelt {
   min-height: 100%;
+}
+
+/* Et felt brukeren har dratt høyere eller lavere i nedre kant (`justerbar` på
+   rikteksteditoren) har den høyden, innenfor én linje og hele flaten, i
+   stedet for den teksten eller skriveflaten gir. Det som er igjen av
+   skriveflaten, blir stående tomt under. */
+.rikteksteditor[data-hoyde] > .rikteksteditor__tekst {
+  flex: none;
+  height: clamp(var(--tekstfelt-min), var(--tekstfelt-valgt), var(--tekstfelt-dratt-mest));
+  min-height: var(--tekstfelt-min);
+  max-height: none;
+}
+
+.skriveflate :is(:has(.rikteksteditor[data-hoyde]), .rikteksteditor[data-hoyde]) {
+  flex-grow: 0;
 }

@@ -24,7 +24,8 @@ const innstillinger = vi.hoisted(() => ({
   hentInnstilling: vi.fn<(nokkel: string) => Promise<unknown>>(),
   lagreInnstilling: vi.fn<(nokkel: string, verdi: unknown) => Promise<void>>(),
 }))
-vi.mock('../auth/innstillinger', () => ({
+vi.mock('../auth/innstillinger', async (original) => ({
+  ...(await original<typeof import('../auth/innstillinger')>()),
   hentInnstilling: innstillinger.hentInnstilling,
   lagreInnstilling: innstillinger.lagreInnstilling,
   lagreSisteValg: (nokkel: string) => (verdi: unknown) => innstillinger.lagreInnstilling(nokkel, verdi),
