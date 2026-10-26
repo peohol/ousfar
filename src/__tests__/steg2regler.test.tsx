@@ -103,8 +103,9 @@ async function tilSteg2(kode: string) {
   )
   await user.keyboard(kode.toLowerCase())
   await user.keyboard('1')
-  // Hele appen tegnes; på en travel testmaskin tar det mer enn standardsekundet.
-  const steg = await screen.findByRole('region', { name: 'Velg konsentrasjon' }, { timeout: 5000 })
+  // Hele appen tegnes; på en travel testmaskin (CI) kan det ta mer enn fem
+  // sekunder. Fristen er testens egen (se HBUP-testen), ikke denne ventingen.
+  const steg = await screen.findByRole('region', { name: 'Velg konsentrasjon' }, { timeout: 12_000 })
   return { user, steg }
 }
 
