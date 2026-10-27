@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.111.0',
+    dato: '2026-10-27',
+    sammendrag: '16 nye fagsider for antidepressiva og antipsykotika, koblet til legemiddeldataene',
+    typer: ['Funksjonalitet'],
+    omfang: 'Moderat omfang',
+    gjelder: ['stoff', 'stoffregister', 'sok'],
+    punkter: [
+      'Agomelatin, dosulepin, fenelzin, flufenazin, imipramin, loksapin, maprotilin, moklobemid, penfluridol, perisiazin, pimozid, promazin, sulpirid, tranylcypromin, trazodon og trifluoperazin har fått fagside, plassert i stoffregisteret, med preparatene fra FEST og, der kildene har dem, kjemiske grunndata og analysene ved norske laboratorier. MAO-hemmerne står i en ny underkategori under antidepressivene.',
+      'De nye sidene har ikke faginnhold og er ikke faglig kuratert. Sidene sier det selv: en fagside uten faginnhold sier nå at den ikke er faglig kuratert også når den viser preparater eller andre data som hentes automatisk.',
+      'Stoffene kan søkes opp også med de engelske navnene, og litium også som litiumion.',
+    ],
+  },
+  {
     versjon: '1.110.1',
     dato: '2026-10-27',
     sammendrag: 'Kartlegging av virkestoffene og formuleringene til de kommende verktøyene for nedtrapping og bytte',

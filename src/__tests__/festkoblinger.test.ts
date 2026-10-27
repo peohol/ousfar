@@ -44,6 +44,8 @@ const KJORT_MED_TIDLIGERE_UTGAVE: Record<string, string> = {
   stoffsider_fest_kobling: '63acee3f8d90a16bb2c8f6661f60bd03',
 }
 const MIGRASJONSMAPPE = new URL('../../supabase/migrations/', import.meta.url)
+/** Migrasjonen uten erklæringen skriptet legger inn (`scripts/agentvalg.ts`); de eldre har ingen. */
+const utenErklaring = (sql: string) => sql.replace(/^select intern\.endring_start\(.*\);\n/m, '')
 
 /** Navnene FEST gir virkestoffene. */
 const FESTNAVN: Record<string, string> = {
@@ -135,7 +137,7 @@ describe('koblingene', () => {
       const tekst = readFileSync(new URL(KOBLINGER[i]!, MIGRASJONSMAPPE), 'utf8')
       const md5 = KJORT_MED_TIDLIGERE_UTGAVE[migrasjon]
       if (md5) expect(createHash('md5').update(tekst).digest('hex'), migrasjon).toBe(md5)
-      else expect(tekst, migrasjon).toBe(festkoblingSql(koblinger, 'peohol'))
+      else expect(utenErklaring(tekst), migrasjon).toBe(festkoblingSql(koblinger, 'peohol'))
     }
   })
 })

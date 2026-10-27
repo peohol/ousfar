@@ -299,10 +299,16 @@ koblet til natriumoksybat, og ketaminsiden til ketamin og esketamin
 (`*_ghb_ketamin_fest_kobling.sql`). THC-siden er koblet til dronabinol, som er
 FESTs navn på THC, og ikke til cannabidiol, så Sativex vises uten preparatene
 med bare CBD (`*_thc_fest_kobling.sql`). CBD-siden (først «Cannabidiol») er koblet til
-cannabidiol (`*_cbd_fest_kobling.sql`). En ny import
-legges til som en ny oppføring, så migrasjonene som er kjørt, står;
-`stoffsider_fest_kobling` ble laget med en tidligere utgave av skriptet, og
-testen låser md5-en dens.
+cannabidiol (`*_cbd_fest_kobling.sql`). De 16 fagsidene OUSFAR Verktøy
+manglet (P2), er koblet til moderstoffene i kartleggingen
+(`*_verktoy_fest_kobling.sql`, koblingene lages av
+`src/verktoy/fagsider.ts`), så saltene og esterne følger med, også
+depotesterne (flufenazindekanoat). Seks av dem har ingen preparater i FEST
+(dosulepin, loksapin, maprotilin, perisiazin, promazin, trifluoperazin), og
+sidene sier det. En ny import legges til som en ny oppføring, så migrasjonene
+som er kjørt, står; `stoffsider_fest_kobling` ble laget med en tidligere
+utgave av skriptet, og testen låser md5-en dens. Skriptet legger inn
+erklæringen (`--agent`), som de eldre migrasjonene ikke har.
 
 ## Slik preparatene vises
 

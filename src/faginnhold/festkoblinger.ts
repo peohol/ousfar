@@ -15,6 +15,7 @@
 import { ELEMENTTYPER } from './paneler'
 import { PREPARATPANEL } from '../legemiddeldata/stoffside'
 import { innlogging, lit } from './import'
+import { VERKTOY_FESTKOBLINGER } from '../verktoy/fagsider'
 
 export interface Festkobling {
   /** Navnet på stoffsiden. Har siden flere virkestoff, står den én gang for hvert. */
@@ -185,6 +186,7 @@ export const FESTKOBLINGSIMPORTER: readonly { migrasjon: string; koblinger: read
   { migrasjon: 'cbd_fest_kobling', koblinger: CBD_FESTKOBLINGER },
   { migrasjon: 'rusmidler_fest_kobling', koblinger: RUSMIDLER_FESTKOBLINGER },
   { migrasjon: 'antihypertensiver_fest_kobling', koblinger: ANTIHYPERTENSIV_FESTKOBLINGER },
+  { migrasjon: 'verktoy_fest_kobling', koblinger: VERKTOY_FESTKOBLINGER },
 ]
 
 /** Kilden revisjonene får i historikken. */

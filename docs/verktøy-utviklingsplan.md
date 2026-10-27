@@ -1,7 +1,7 @@
 # OUSFAR – Verktøy: utviklingsplan og fremdrift
 
 **Opprettet:** 27.10.2026  
-**Status:** P1 til faglig kontroll – ingen verktøy er implementert gjennom denne planen  
+**Status:** P1 ferdig og godkjent; P2 til faglig kontroll – ingen verktøy er implementert gjennom denne planen  
 **Omfang:** Tre første verktøy, felles regel- og beregningsmotor, kildedata og videre drift  
 **Hovedansvar for implementering og oppdatering av denne planen:** Claude Code  
 **Uavhengig faglig kontroll:** ChatGPT, etter eksplisitt forespørsel ved kontrollpunktene nedenfor
@@ -49,8 +49,8 @@ Statusene er **Ikke startet / Pågår / Til faglig kontroll / Blokkert / Ferdig*
 | ID | Leveranse | Utførende | Uavhengig kontroll | Status | Dokumentasjon / PR |
 | --- | --- | --- | --- | --- | --- |
 | P0 | Plan og avgrensning | ChatGPT | – | **Ferdig** | Dette dokumentet, 27.10.2026 |
-| P1 | Virkestoff- og FEST-kartlegging | Claude | ChatGPT (utvalg) | Til faglig kontroll | `docs/verktøy-p1-kartlegging.md`, PR #279 |
-| P2 | Manglende fagsider og FEST-koblinger | Claude | ChatGPT (avvik) | Ikke startet | – |
+| P1 | Virkestoff- og FEST-kartlegging | Claude | ChatGPT (utvalg) | Ferdig – godkjent 27.10.2026 | `docs/verktøy-p1-kartlegging.md`, PR #279 |
+| P2 | Manglende fagsider og FEST-koblinger | Claude | ChatGPT (avvik) | Til faglig kontroll | `src/verktoy/fagsider.ts`, PR #280 |
 | P3 | Komplett og lovlig kildeimport | Claude | ChatGPT (deknings- og stikkprøvekontroll) | Ikke startet | – |
 | P4 | Faglig regelmodell og kontrollert pilotsett | Claude | **ChatGPT – sperrende** | Ikke startet | – |
 | P5 | Felles dose- og planmotor med FEST | Claude | **ChatGPT – kliniske testtilfeller** | Ikke startet | – |
@@ -90,11 +90,24 @@ Statusene er **Ikke startet / Pågår / Til faglig kontroll / Blokkert / Ferdig*
 
 ### P2 – Opprette og koble nødvendige fagsider
 
-- [ ] **P2.1** Opprett fagsider bare for virkestoffer som mangler dem; bevar eksisterende identiteter og historie.
-- [ ] **P2.2** Marker nye sider uten kuratert faginnhold tydelig som ikke-kuraterte. Ikke fyll dem med oppdiktede monografidata.
-- [ ] **P2.3** Legg til og kontroller FEST-koblinger med eksisterende OUSFAR-mekanisme. Kjør eksisterende referanse- og stoffregistertester.
-- [ ] **P2.4** Kontroller at opprettelse og koblinger ikke endrer fortolkningsregler, referanseområder eller andre stoffers data.
-- [ ] **P2.5** Dokumenter hvilke stoffer som ikke har ordinært markedsførte preparater i Norge, men likevel kan ha faglige anbefalinger.
+- [x] **P2.1** Opprett fagsider bare for virkestoffer som mangler dem; bevar eksisterende identiteter og historie.
+- [x] **P2.2** Marker nye sider uten kuratert faginnhold tydelig som ikke-kuraterte. Ikke fyll dem med oppdiktede monografidata.
+- [x] **P2.3** Legg til og kontroller FEST-koblinger med eksisterende OUSFAR-mekanisme. Kjør eksisterende referanse- og stoffregistertester.
+- [x] **P2.4** Kontroller at opprettelse og koblinger ikke endrer fortolkningsregler, referanseområder eller andre stoffers data.
+- [x] **P2.5** Dokumenter hvilke stoffer som ikke har ordinært markedsførte preparater i Norge, men likevel kan ha faglige anbefalinger.
+
+**Resultat (27.10.2026):** Før noe ble laget, ble produksjonen lest (bare lesing): ingen av de 16 virkestoffene hadde side som publisert, utkast, arkivert, i papirkurven eller slettet for godt, heller ikke under engelsk navn. Hvilke sider som lages, og kategorien i stoffregisteret, står i `src/verktoy/fagsider.ts`; navnet, nøkkelen og FEST-ID-ene hentes fra kartleggingen. To migrasjoner, begge ført på Claude Code i endringsloggen for sidene:
+
+- `*_verktoy_fagsider.sql` lager de 16 sidene publisert, uten faginnhold (bare navn og nøkkel), og plasserer dem: dosulepin og imipramin under TCA; fenelzin, moklobemid og tranylcypromin i den nye underkategorien MAO-hemmere; agomelatin, maprotilin og trazodon rett under Antidepressiver (ingen eksisterende underkategori passer); de åtte antipsykotikaene under Førstegenerasjonsmidler. Den hopper over en side som finnes med samme navn eller nøkkel, eller er slettet for godt.
+- `*_verktoy_fest_kobling.sql` kobler hver side til moderstoffet i FEST med den vanlige mekanismen (`FESTKOBLINGSIMPORTER`); saltene og esterne følger med (f.eks. flufenazindekanoat og -enantat, fenelzinsulfat, tranylcyprominsulfat, imipramin- og trazodonhydroklorid). Alle 16 ID-ene finnes i FEST-kopien i produksjon og er ikke utgått (kontrollert 27.10.2026). Ingen ny synkronisering.
+
+Hver fagside skal ha en kjemisk forbindelse og en ClinPGx-status, så de 16 fikk det med de vanlige kontrollene (27.10.2026): forbindelsene er koblet til PubChem for 14 (dosulepin og penfluridol er uavklart, ingen uavhengig kilde), til Farmakologiportalen for flufenazin, imipramin, moklobemid, pimozid og trazodon (dosulepin usikker, bare navnet), og ClinPGx-statusen er «krever kuratert kobling» for 14 (for perisiazin bare under navnet propericiazine) og «ikke i ClinPGx» for dosulepin og penfluridol. Ingen ClinPGx-kobling er lagt inn.
+
+Sidene er «Ikke kuratert», og en fagside uten faginnhold sier nå selv at den ikke er faglig kuratert også når den viser preparater (`harFaginnhold`). Søkealiasene (engelske navn og kildens stavemåter, også «litiumion» for litium og «periciazine»/«pericyazine» for perisiazin) står i `src/data/stoffregister.json`.
+
+**P2.5 – uten ordinært markedsført preparat i Norge** (FEST-uttrekk 08.10.2026, se P1-rapporten): *ingen preparater i FEST*: dosulepin, loksapin, maprotilin, perisiazin, promazin, trifluoperazin; *bare preparater med godkjenningsfritak*: agomelatin, fenelzin, flufenazin, imipramin, penfluridol, pimozid, sulpirid, tranylcypromin, trazodon. Moklobemid er markedsført. Alle 16 har likevel bytteanbefalinger i Psychiatrienet og får dem importert i P3 på samme måte som de andre.
+
+**Kontroll:** `src/__tests__/verktoyfagsider.test.ts` kjører migrasjonene i testdatabasen: hver side publisert med kartleggingens navn og nøkkel, ett kort med bare kartleggingens moderstoff, ingen referanser eller faginnhold, ingen kuratering, riktig kategori, ingen side for et virkestoff som har en fra før eller er slettet, alle tidligere revisjoner, publiseringer og plasseringer urørt, og ingenting skjer ved ny kjøring. `src/__tests__/verktoykartlegging.test.ts` kontrollerer at alle 54 virkestoffene har fagside eller får den i P2, med kartleggingens FEST-ID-er, at stoffregisterfilen har hvert virkestoff med alle aliasene, og at johannesurt ikke får side, kobling eller alias. Fortolkningsreglene, referanseområdene og de andre sidene er ikke rørt.
 
 **Akseptanse:** Alle inkluderbare virkestoffer kan velges/identifiseres, uten nye fagsider for johannesurt og uten brudd i eksisterende stoffregister.
 
@@ -257,6 +270,8 @@ Før en oppgave eller fase krysses av:
 | --- | --- | --- | --- |
 | 27.10.2026 | P0.1–P0.3 | Plan og ansvarsdeling fastlagt; johannesurt eksplisitt ekskludert | Ingen kildedata eller kode er importert/implementert gjennom denne planoppgaven |
 | 27.10.2026 | P1.1–P1.7 | Kartlegging, øyeblikksbilder, rapport og tester, PR #279. Kilder: Psychiatrienet (revisjon 10184 / 10673 / 10641, hentet 27.10.2026), FEST-uttrekk 08.10.2026, fagsidene i produksjon 27.10.2026. `npm test` og `npm run build` grønne | Venter på ChatGPTs kontroll av utvalget og de uavklarte punktene i rapporten. Ingen fagsider, anbefalingstekster eller regler er laget |
+| 27.10.2026 | P1 godkjent | ChatGPT kontrollerte PR #279 faglig; squash-merget (8df6f91). P1 er ferdig | De uavklarte punktene i rapporten følges opp i fasene de hører til (Stop-lenker i P3/P5, depot i P10) |
+| 27.10.2026 | P2.1–P2.5 | 16 fagsider uten faginnhold, FEST-koblinger og søkealiaser, PR #280. `npm test` og `npm run build` grønne | Venter på ChatGPTs kontroll, særlig kategoriplasseringen i stoffregisteret og de seks stoffene uten preparater i FEST. Sidene finnes i produksjon først når PR-en er slått sammen |
 
 ## 8. Startoppdrag til Claude Code
 

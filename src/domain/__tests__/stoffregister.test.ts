@@ -3,6 +3,7 @@ import { IKONNAVN, KATEGORIIKON_PLASSHOLDER, kategoriikon } from '../../componen
 import { filnokkel } from '../../faginnhold/import'
 import { CBD_STOFFSIDER, NYE_STOFFSIDER } from '../../faginnhold/indikasjoner'
 import { STOFFSIDE_DATASETT } from '../../faginnhold/stoffsider'
+import { FAGSIDEIMPORTER } from '../../faginnhold/nyefagsider'
 import { ANALYTTKATALOG } from '../analyttkatalog'
 import { navnenokkel } from '../sokenavn'
 import { GRUNNINNDELING, GRUNNSTRUKTUR, kategoriid } from '../../__tests__/hjelp/registerstruktur'
@@ -30,7 +31,12 @@ import {
 const REGISTER = byggStoffregister([], STOFFREGISTERDATA, GRUNNSTRUKTUR)
 
 /** Stoffsidene importene lager. */
-const IMPORTERTE = [...STOFFSIDE_DATASETT.filer.map(filnokkel), ...NYE_STOFFSIDER, ...CBD_STOFFSIDER]
+const IMPORTERTE = [
+  ...STOFFSIDE_DATASETT.filer.map(filnokkel),
+  ...NYE_STOFFSIDER,
+  ...CBD_STOFFSIDER,
+  ...FAGSIDEIMPORTER.flatMap((i) => i.sider.map((s) => s.navn)),
+]
 
 /** Importerte sider en senere migrasjon har gitt stoffets navn (`*_cbd_stoffside.sql`). */
 const OMDOPTE: Readonly<Record<string, string>> = { Cannabidiol: 'CBD' }
@@ -227,6 +233,7 @@ describe('sidemenyen', () => {
       'Reseptorantagonister (NaSSA)',
       'Multimodale',
       'NMDA-reseptorantagonister',
+      'MAO-hemmere',
     ])
     expect(navnI(k, 'SSRI')).toEqual(['Citalopram', 'Escitalopram', 'Fluoksetin', 'Fluvoksamin', 'Paroksetin', 'Sertralin'])
     expect(navnI(k, 'SNRI')).toEqual(['Duloksetin', 'Venlafaksin'])
@@ -234,6 +241,8 @@ describe('sidemenyen', () => {
     expect(navnI(k, 'TCA')).toContain('Amitriptylin')
     expect(navnI(k, 'TCA')).toContain('Nortriptylin')
     expect(navnI(k, 'NMDA-reseptorantagonister')).toEqual(['Ketamin'])
+    expect(navnI(k, 'MAO-hemmere')).toEqual(['Fenelzin', 'Moklobemid', 'Tranylcypromin'])
+    expect(k.direkte.map((s) => s.navn)).toEqual(['Agomelatin', 'Maprotilin', 'Trazodon'])
   })
 
   it('deler antipsykotika i første- og andregenerasjonsmidler', () => {
@@ -286,11 +295,11 @@ describe('sidemenyen', () => {
     }
   })
 
-  it('har de samme stoffene med og uten underkategoriene', () => {
+  it('har de samme stoffene med og uten underkategoriene: de som ikke står i en, står i kategorien selv', () => {
     for (const k of REGISTER.kategorier) {
       if (k.underkategorier.length === 0) continue
       const iUnder = new Set(k.underkategorier.flatMap((u) => u.stoffer.map((s) => s.slug)))
-      expect(k.stoffer.filter((s) => !iUnder.has(s.slug)), k.navn).toEqual([])
+      expect(k.stoffer.filter((s) => !iUnder.has(s.slug)), k.navn).toEqual(k.direkte)
     }
   })
 })
@@ -365,8 +374,9 @@ describe('inndelingen i databasen', () => {
     expect(r.kategorierFor('ketamin')).toEqual([{ kategori: 'Hallusinogene stoffer', ikon: 'katHallusinogener' }])
     expect(navnI(kategori(ANDRE_STOFFER, r.kategorier))).toContain('Sertralin')
     expect(r.arkiverteKategorier).toMatchObject([{ navn: 'Antidepressiver', forelder: null }])
-    const ad = GRUNNINNDELING.find((k) => k.navn === 'Antidepressiver')!
-    expect(r.arkiverteKategorier[0]!.antall).toBe(new Set(ad.underkategorier!.flatMap((u) => u.stoffer)).size)
+    const ad = GRUNNSTRUKTUR.kategorier.filter((k) => k.id === kategoriid('Antidepressiver') || k.forelder === kategoriid('Antidepressiver'))
+    const iAd = GRUNNSTRUKTUR.plasseringer.filter((p) => ad.some((k) => k.id === p.kategori)).map((p) => p.stoff)
+    expect(r.arkiverteKategorier[0]!.antall).toBe(new Set(iAd).size)
   })
 
   it('tar arkiverte stoffer og stoffer i papirkurven ut av registeret, men finner dem fortsatt', () => {

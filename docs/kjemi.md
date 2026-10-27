@@ -71,11 +71,14 @@ Skriptet endrer aldri en kobling som står; avviker kontrollen fra den, skrives
 avviket ut.
 
 Kontrollert 8. oktober 2026: 135 av 136 forbindelser er koblet; psilocybin og
-psilocin ble koblet 21. oktober 2026. Uavklart:
+psilocin ble koblet 21. oktober 2026. De 16 fagsidene for OUSFAR Verktøy fikk
+hver sin forbindelse 27. oktober 2026; 14 ble koblet. Uavklart:
 
 | Forbindelse | Hvorfor |
 | --- | --- |
 | Desmetylklomipramin | PubChem har én forbindelse for «desmethylclomipramine» (CID 622606, Norclomipramine), men verken ClinPGx eller ChEBI har den, så ingen uavhengig kilde bekrefter den |
+| Dosulepin | PubChem har «dosulepin» (CID 5284550), men verken ClinPGx eller ChEBI har stoffet under navnet |
+| Penfluridol | PubChem har «penfluridol» (CID 33630), men verken ClinPGx eller ChEBI har stoffet under navnet |
 
 ## Synkroniseringen
 

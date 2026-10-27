@@ -2,7 +2,9 @@
  * Kartleggingen for OUSFAR Verktøy (P1 i `docs/verktøy-utviklingsplan.md`):
  * lesingen av switchtabellene, formuleringene i FEST, at kartleggingen stemmer
  * med øyeblikksbildene, de faktiske celletallene, at johannesurt og
- * Start-kolonnen er utelatt, og at rapporten er oppdatert.
+ * Start-kolonnen er utelatt, og at rapporten er oppdatert. Og P2: at hvert
+ * virkestoff har eller får fagside med kartleggingens FEST-ID-er, uten
+ * johannesurt (migrasjonene prøves i `verktoyfagsider.test.ts`).
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
@@ -21,6 +23,8 @@ import {
 } from '../verktoy/kartlegging'
 import { lesSwitchtabell } from '../verktoy/kildetabeller'
 import { lagRapport, RAPPORTFIL } from '../verktoy/rapport'
+import { VERKTOY_FAGSIDER, VERKTOY_FESTKOBLINGER, VERKTOY_KATEGORIER } from '../verktoy/fagsider'
+import { stoffslug, STOFFREGISTER } from '../domain/stoffregister'
 
 const DATA = lesKartdata()
 const kopi = (): Kartdata => structuredClone(DATA)
@@ -132,12 +136,15 @@ describe('Kartleggingen', () => {
     expect(mangler).toEqual([])
   })
 
-  it('har 54 virkestoffer, og de 16 uten fagside er de som mangler', () => {
+  it('har 54 virkestoffer, og P2 lager fagsidene de 16 som manglet', () => {
     expect(DATA.kartlegging.virkestoffer).toHaveLength(54)
-    expect(DATA.kartlegging.virkestoffer.filter((v) => !virkestoffstatus(DATA, v).fagside).map((v) => v.nokkel)).toEqual([
+    expect(Object.keys(VERKTOY_KATEGORIER)).toEqual([
       'agomelatin', 'dosulepin', 'fenelzin', 'flufenazin', 'imipramin', 'loksapin', 'maprotilin', 'moklobemid',
       'penfluridol', 'perisiazin', 'pimozid', 'promazin', 'sulpirid', 'tranylcypromin', 'trazodon', 'trifluoperazin',
     ])
+    // Før øyeblikksbildet er tatt på nytt etter utrullingen, mangler de i det; etterpå finnes de.
+    const uten = DATA.kartlegging.virkestoffer.filter((v) => !virkestoffstatus(DATA, v).fagside).map((v) => v.nokkel)
+    expect(uten.filter((n) => !VERKTOY_KATEGORIER[n])).toEqual([])
   })
 
   it('holder gruppene som kilderegler, ikke som valgbare virkestoffer', () => {
@@ -210,6 +217,51 @@ describe('Johannesurt og Start-kolonnen', () => {
     const mal = importmal(DATA).filter((c) => c.tabell === 'SwitchAntidepressants')
     expect(mal.filter((c) => c.kolonne === 'Start')).toEqual([])
     expect(mal.filter((c) => c.kolonne === 'Stop').map((c) => c.rad)).toEqual(ad.rader.map((r) => r.kode).filter((k) => k !== 'Hy'))
+  })
+})
+
+describe('Fagsidene og FEST-koblingene (P2)', () => {
+  const kart = (nokkel: string) => DATA.kartlegging.virkestoffer.find((v) => v.nokkel === nokkel)!
+
+  it('gir hver ny side kartleggingens navn og nøkkel, og ingen side som alt finnes under et annet navn', () => {
+    for (const [nokkel, side] of Object.keys(VERKTOY_KATEGORIER).map((n, i) => [n, VERKTOY_FAGSIDER[i]!] as const)) {
+      expect(side.navn, nokkel).toBe(kart(nokkel).navn)
+      expect(stoffslug(side.navn), nokkel).toBe(nokkel)
+      const finnes = DATA.fagsider.sider.find((s) => s.slug !== nokkel && [s.navn, s.slug].some((n) => stoffslug(n) === nokkel))
+      expect(finnes, nokkel).toBeUndefined()
+    }
+  })
+
+  it('kobler hver ny side til nøyaktig moderstoffene kartleggingen har i FEST, ingen andre', () => {
+    for (const nokkel of Object.keys(VERKTOY_KATEGORIER)) {
+      const v = kart(nokkel)
+      expect(VERKTOY_FESTKOBLINGER.filter((k) => k.side === v.navn).map((k) => k.fest_id), nokkel).toEqual(v.fest)
+    }
+    expect(VERKTOY_FESTKOBLINGER).toHaveLength(Object.keys(VERKTOY_KATEGORIER).length)
+    expect(new Set(VERKTOY_FESTKOBLINGER.map((k) => k.fest_id)).size).toBe(VERKTOY_FESTKOBLINGER.length)
+  })
+
+  it('kobler aldri til et salt eller en ester, som følger moderstoffet av seg selv', () => {
+    const salter = new Set(DATA.fest.virkestoffer.flatMap((f) => f.salter.map((s) => s.id)))
+    expect(VERKTOY_FESTKOBLINGER.filter((k) => salter.has(k.fest_id))).toEqual([])
+    // Flufenazinsiden viser også depotet med esteren (dekanoatet).
+    expect(DATA.fest.virkestoffer.find((f) => f.nokkel === 'flufenazin')!.salter.map((x) => x.navn)).toContain('Flufenazindekanoat')
+    expect(preparaterFor(DATA, 'flufenazin').some((p) => p.klasse === 'depotinjeksjon')).toBe(true)
+  })
+
+  it('har hvert virkestoff i stoffregisterfilen, med nøkkelen og alle kartleggingens søkealiaser', () => {
+    for (const v of DATA.kartlegging.virkestoffer) {
+      const stoff = STOFFREGISTER.finn(v.nokkel)
+      expect(stoff?.navn, v.nokkel).toBe(v.navn)
+      for (const alias of v.aliaser) expect(STOFFREGISTER.kanonisk(alias)?.slug, `${v.nokkel}: ${alias}`).toBe(v.nokkel)
+    }
+  })
+
+  it('lager ingen side og ingen kobling for johannesurt', () => {
+    const k = DATA.kartlegging
+    expect(VERKTOY_FAGSIDER.filter((s) => erSperret(k, s.navn))).toEqual([])
+    expect(VERKTOY_FESTKOBLINGER.filter((x) => erSperret(k, x.side) || DATA.fest.virkestoffer.some((f) => f.id === x.fest_id && erSperret(k, f.navn ?? '')))).toEqual([])
+    expect(DATA.stoffregister.stoffer.filter((s) => [s.navn, s.slug, ...(s.aliaser ?? [])].some((n) => erSperret(k, n)))).toEqual([])
   })
 })
 

@@ -274,7 +274,7 @@ describe('kurateringene', () => {
     const liste = await kurateringsfanen()
     // Karbamazepin står i to kategorier, men bare én gang her.
     expect(navnene(liste).filter((n) => n === 'Karbamazepin')).toHaveLength(1)
-    expect(navnene(liste).slice(0, 5)).toEqual(['GHB', 'THC', 'Citalopram', 'Ketamin', 'Alprazolam'])
+    expect(navnene(liste).slice(0, 5)).toEqual(['GHB', 'THC', 'Citalopram', 'Ketamin', 'Agomelatin'])
     const linje = (navn: string) => within(liste).getByRole('link', { name: navn }).closest('li') as HTMLElement
     expect(linje('GHB').textContent).toMatch(/Pågår.*De novo-kuratering: kurateres, startet/)
     expect(linje('THC').textContent).toMatch(/Pågår.*Kuratering: til kontroll, startet .* · sist kuratert/)
@@ -293,7 +293,8 @@ describe('kurateringene', () => {
     fireEvent.change(sortering(), { target: { value: '2' } })
     expect(sortering().getAttribute('aria-valuetext')).toBe('Stoffgruppe')
     const grupper = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent)
-    expect(grupper.slice(0, 2)).toEqual(['Antidepressiver › SSRI', 'Antidepressiver › SNRI'])
+    // Stoffene som står rett i kategorien, kommer før underkategoriene.
+    expect(grupper.slice(0, 3)).toEqual(['Antidepressiver', 'Antidepressiver › SSRI', 'Antidepressiver › SNRI'])
     expect(grupper.at(-1)).toBe('Andre stoffer')
     expect(grupper.indexOf('Stimulanter')).toBeLessThan(grupper.indexOf('Cannabinoider'))
     expect(navnene(screen.getByRole('list', { name: 'Cannabinoider' }))).toEqual(['CBD', 'THC'])

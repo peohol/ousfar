@@ -1,12 +1,14 @@
 /**
- * Inndelingen av stoffregisteret slik databasen får den første gang: den
- * migrasjonen `stoffregister_redigering` legger inn (lest fra fila, så testene
- * og databasen aldri går fra hverandre), med faste ID-er. Til testene som
- * bygger registeret uten database.
+ * Inndelingen av stoffregisteret slik databasen får den: den migrasjonen
+ * `stoffregister_redigering` legger inn (lest fra fila, så testene og
+ * databasen aldri går fra hverandre), og plasseringene til fagsidene som er
+ * lagt inn senere (`FAGSIDEIMPORTER`), med faste ID-er. Til testene som bygger
+ * registeret uten database.
  */
 import { readdirSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import type { Kategorirad, Plasseringsrad, Registerstruktur } from '../../domain/stoffregister'
+import { stoffslug, type Kategorirad, type Plasseringsrad, type Registerstruktur } from '../../domain/stoffregister'
+import { FAGSIDEIMPORTER } from '../../faginnhold/nyefagsider'
 
 interface Grunnkategori {
   navn: string
@@ -47,8 +49,27 @@ function bygg(): Registerstruktur {
       for (const stoff of u.stoffer) plasseringer.push({ stoff, kategori: uid })
     })
   })
+  // Fagsidene som er lagt inn senere, med underkategoriene importen lager når de mangler.
+  for (const { navn, kategori: [kategori, under] } of FAGSIDEIMPORTER.flatMap((i) => i.sider)) {
+    const id = kategoriid(kategori, under)
+    if (under && !kategorier.some((k) => k.id === id)) {
+      const posisjon = kategorier.filter((k) => k.forelder === kategoriid(kategori)).length
+      kategorier.push({ id, forelder: kategoriid(kategori), navn: under, posisjon, ikon: null, arkivert_kl: null })
+    }
+    plasseringer.push({ stoff: stoffslug(navn), kategori: id })
+  }
   return { kategorier, plasseringer, status: [] }
 }
 
-/** Inndelingen fra migrasjonen, uten arkiverte eller slettede stoffer. */
+/**
+ * Stoffene som plasseres sammen med fagsiden sin (`FAGSIDEIMPORTER`). Det
+ * gjør migrasjonen bare når administratoren finnes; uten, som i de fleste
+ * testdatabasene, står de i «Andre stoffer» (`verktoyfagsider.test.ts`
+ * prøver plasseringen).
+ */
+export const PLASSERT_MED_SIDEN: ReadonlySet<string> = new Set(
+  FAGSIDEIMPORTER.flatMap((i) => i.sider.map((s) => stoffslug(s.navn))),
+)
+
+/** Inndelingen fra migrasjonene, uten arkiverte eller slettede stoffer. */
 export const GRUNNSTRUKTUR: Registerstruktur = bygg()

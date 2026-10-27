@@ -422,6 +422,17 @@ function medKobling(tilstand: Tilstand): Stoffsidedata {
   }
 }
 
+/** En side med bare koblingen til legemiddeldataene: uten faginnhold. */
+function bareKobling(tilstand: Tilstand): Stoffsidedata {
+  const data = medKobling(tilstand)
+  return {
+    ...data,
+    infoside: utgave('hs', { navn: 'Amitriptylin', slug: 'amitriptylin' }),
+    elementer: data.elementer.filter((e) => e.innhold.elementtype === 'legemiddelkobling'),
+    referanser: [],
+  }
+}
+
 function legemiddelleser(): Legemiddelleser {
   return {
     les: vi.fn(async (ider: readonly string[]) => (ider.includes('ID_AMI') ? UTVALG : TOMT_UTVALG)),
@@ -1212,6 +1223,22 @@ describe('preparatene', () => {
     await finnVerdi('10–20 nmol/L')
     expect(screen.queryByRole('region', { name: 'Preparater' })).toBeNull()
     expect(k.legemidler.les).not.toHaveBeenCalled()
+  })
+
+  it('sier at en side med bare preparatene ikke har faginnhold og ikke er faglig kuratert', async () => {
+    vis('amitriptylin', kilde({ data: bareKobling }))
+    expect(
+      await screen.findByText(
+        'Denne siden har ikke fått faginnhold ennå og er ikke faglig kuratert. Det som står her, er hentet automatisk fra offentlige datakilder.',
+      ),
+    ).toBeTruthy()
+    expect(await screen.findByText('3 preparater · 2 legemiddelformer · 3 styrker · 1 med godkjenningsfritak')).toBeTruthy()
+  })
+
+  it('sier ingenting om faginnhold på en side som har det, og er koblet', async () => {
+    vis('amitriptylin', kilde({ data: medKobling }))
+    await screen.findByText('3 preparater · 2 legemiddelformer · 3 styrker · 1 med godkjenningsfritak')
+    expect(screen.queryByText(/har ikke fått faginnhold/)).toBeNull()
   })
 
   it('viser formene som overskrifter, styrkene som kort og preparatene i den åpne styrken, med kilden', async () => {

@@ -88,6 +88,31 @@ export const FORBINDELSESDATA: Forbindelse[] = [
     }
   },
   {
+    "nokkel": "agomelatin",
+    "navn": "Agomelatin",
+    "engelsk": "agomelatine",
+    "stoffer": [
+      {
+        "stoff": "agomelatin",
+        "relasjon": "selve_stoffet"
+      }
+    ],
+    "form": "fri",
+    "pubchem": {
+      "cid": 82148,
+      "inchikey": "YJYPHIXNFHFHND-UHFFFAOYSA-N",
+      "formel": "C15H17NO2",
+      "kontrollert": "2026-10-27",
+      "grunnlag": "Eneste treff i PubChem for «agomelatine»; samme InChIKey hos ClinPGx (PA165958363, CID 82148) og ChEBI (CHEBI:134990)."
+    },
+    "farmakologiportalen": {
+      "status": "uavklart",
+      "grunn": "Ingen komponent i Farmakologiportalen har navnet «Agomelatin».",
+      "kandidater": [],
+      "kontrollert": "2026-10-27"
+    }
+  },
+  {
     "nokkel": "alprazolam",
     "navn": "Alprazolam",
     "engelsk": "alprazolam",
@@ -856,6 +881,31 @@ export const FORBINDELSESDATA: Forbindelse[] = [
     }
   },
   {
+    "nokkel": "dosulepin",
+    "navn": "Dosulepin",
+    "engelsk": "dosulepin",
+    "stoffer": [
+      {
+        "stoff": "dosulepin",
+        "relasjon": "selve_stoffet"
+      }
+    ],
+    "form": "fri",
+    "uavklart": {
+      "grunn": "Ingen uavhengig kilde (ClinPGx, ChEBI) bekrefter treffet i PubChem (Dosulepin).",
+      "kandidater": [
+        5284550
+      ]
+    },
+    "farmakologiportalen": {
+      "status": "usikker",
+      "id": "3207",
+      "navn": "Dosulepin",
+      "kontrollert": "2026-10-27",
+      "grunnlag": "Eneste komponent i Farmakologiportalen med navnet («Dosulepin», ID 3207), men forbindelsen har ingen verifisert kobling til PubChem å kontrollere mot."
+    }
+  },
+  {
     "nokkel": "duloksetin",
     "navn": "Duloksetin",
     "engelsk": "duloxetine",
@@ -1096,6 +1146,31 @@ export const FORBINDELSESDATA: Forbindelse[] = [
     }
   },
   {
+    "nokkel": "fenelzin",
+    "navn": "Fenelzin",
+    "engelsk": "phenelzine",
+    "stoffer": [
+      {
+        "stoff": "fenelzin",
+        "relasjon": "selve_stoffet"
+      }
+    ],
+    "form": "fri",
+    "pubchem": {
+      "cid": 3675,
+      "inchikey": "RMUCZJUITONUFY-UHFFFAOYSA-N",
+      "formel": "C8H12N2",
+      "kontrollert": "2026-10-27",
+      "grunnlag": "Eneste treff i PubChem for «phenelzine»; samme InChIKey hos ClinPGx (PA450903, CID 3675) og ChEBI (CHEBI:8060)."
+    },
+    "farmakologiportalen": {
+      "status": "uavklart",
+      "grunn": "Ingen komponent i Farmakologiportalen har navnet «Fenelzin».",
+      "kandidater": [],
+      "kontrollert": "2026-10-27"
+    }
+  },
+  {
     "nokkel": "fenobarbital",
     "navn": "Fenobarbital",
     "engelsk": "phenobarbital",
@@ -1171,6 +1246,32 @@ export const FORBINDELSESDATA: Forbindelse[] = [
       "navn": "Fenytoin",
       "kontrollert": "2026-10-08",
       "grunnlag": "Komponenten i Farmakologiportalen med nøyaktig navnet («Fenytoin», ID 577; ellers «Fenytoin (bundet)», «Fenytoin (fritt)»); CAS-nummeret 57-41-0 er også PubChems, og molekylvekten 252,27 g/mol stemmer med PubChem (CID 1775) (252,27)."
+    }
+  },
+  {
+    "nokkel": "flufenazin",
+    "navn": "Flufenazin",
+    "engelsk": "fluphenazine",
+    "stoffer": [
+      {
+        "stoff": "flufenazin",
+        "relasjon": "selve_stoffet"
+      }
+    ],
+    "form": "fri",
+    "pubchem": {
+      "cid": 3372,
+      "inchikey": "PLDUPXSUYLZYBN-UHFFFAOYSA-N",
+      "formel": "C22H26F3N3OS",
+      "kontrollert": "2026-10-27",
+      "grunnlag": "Eneste treff i PubChem for «fluphenazine»; samme InChIKey hos ClinPGx (PA449676, CID 3372) og ChEBI (CHEBI:5123)."
+    },
+    "farmakologiportalen": {
+      "status": "verifisert",
+      "id": "579",
+      "navn": "Flufenazin",
+      "kontrollert": "2026-10-27",
+      "grunnlag": "Eneste komponent i Farmakologiportalen med navnet («Flufenazin», ID 579); CAS-nummeret 69-23-8 er også PubChems, og molekylvekten 437,52 g/mol stemmer med PubChem (CID 3372) (437,5)."
     }
   },
   {
@@ -1468,6 +1569,32 @@ export const FORBINDELSESDATA: Forbindelse[] = [
       "navn": "Likarbazepin",
       "kontrollert": "2026-10-08",
       "grunnlag": "Eneste komponent i Farmakologiportalen med navnet («Likarbazepin», ID 807); CAS-nummeret 104746-03-4 er i PubChem CID 9816485 («Licarbazepine, (R)-»), samme forbindelse som PubChem (CID 114709) uten hensyn til stereokjemien (InChIKey-skjelett BMPDWHIDQYTSHX)."
+    }
+  },
+  {
+    "nokkel": "imipramin",
+    "navn": "Imipramin",
+    "engelsk": "imipramine",
+    "stoffer": [
+      {
+        "stoff": "imipramin",
+        "relasjon": "selve_stoffet"
+      }
+    ],
+    "form": "fri",
+    "pubchem": {
+      "cid": 3696,
+      "inchikey": "BCGWQEUPMDMJNV-UHFFFAOYSA-N",
+      "formel": "C19H24N2",
+      "kontrollert": "2026-10-27",
+      "grunnlag": "Eneste treff i PubChem for «imipramine»; samme InChIKey hos ClinPGx (PA449969, CID 3696) og ChEBI (CHEBI:47499)."
+    },
+    "farmakologiportalen": {
+      "status": "verifisert",
+      "id": "603",
+      "navn": "Imipramin",
+      "kontrollert": "2026-10-27",
+      "grunnlag": "Eneste komponent i Farmakologiportalen med navnet («Imipramin», ID 603); CAS-nummeret 50-49-7 er også PubChems, og molekylvekten 280,41 g/mol stemmer med PubChem (CID 3696) (280,4)."
     }
   },
   {
@@ -2074,6 +2201,31 @@ export const FORBINDELSESDATA: Forbindelse[] = [
     }
   },
   {
+    "nokkel": "loksapin",
+    "navn": "Loksapin",
+    "engelsk": "loxapine",
+    "stoffer": [
+      {
+        "stoff": "loksapin",
+        "relasjon": "selve_stoffet"
+      }
+    ],
+    "form": "fri",
+    "pubchem": {
+      "cid": 3964,
+      "inchikey": "XJGVXQDUIWGIRW-UHFFFAOYSA-N",
+      "formel": "C18H18ClN3O",
+      "kontrollert": "2026-10-27",
+      "grunnlag": "Eneste treff i PubChem for «loxapine»; samme InChIKey hos ClinPGx (PA450273, CID 3964) og ChEBI (CHEBI:50841)."
+    },
+    "farmakologiportalen": {
+      "status": "uavklart",
+      "grunn": "Ingen komponent i Farmakologiportalen har navnet «Loksapin».",
+      "kandidater": [],
+      "kontrollert": "2026-10-27"
+    }
+  },
+  {
     "nokkel": "losartan",
     "navn": "Losartan",
     "engelsk": "losartan",
@@ -2149,6 +2301,31 @@ export const FORBINDELSESDATA: Forbindelse[] = [
       "navn": "Lurasidon",
       "kontrollert": "2026-10-08",
       "grunnlag": "Eneste komponent i Farmakologiportalen med navnet («Lurasidon», ID 9001); CAS-nummeret 367514-87-2 er også PubChems, og molekylvekten 492,67 g/mol stemmer med PubChem (CID 213046) (492,7)."
+    }
+  },
+  {
+    "nokkel": "maprotilin",
+    "navn": "Maprotilin",
+    "engelsk": "maprotiline",
+    "stoffer": [
+      {
+        "stoff": "maprotilin",
+        "relasjon": "selve_stoffet"
+      }
+    ],
+    "form": "fri",
+    "pubchem": {
+      "cid": 4011,
+      "inchikey": "QSLMDECMDJKHMQ-UHFFFAOYSA-N",
+      "formel": "C20H23N",
+      "kontrollert": "2026-10-27",
+      "grunnlag": "Eneste treff i PubChem for «maprotiline»; samme InChIKey hos ClinPGx (PA450322, CID 4011) og ChEBI (CHEBI:6690)."
+    },
+    "farmakologiportalen": {
+      "status": "uavklart",
+      "grunn": "Ingen komponent i Farmakologiportalen har navnet «Maprotilin».",
+      "kandidater": [],
+      "kontrollert": "2026-10-27"
     }
   },
   {
@@ -2357,6 +2534,32 @@ export const FORBINDELSESDATA: Forbindelse[] = [
       "navn": "Mirtazapin",
       "kontrollert": "2026-10-08",
       "grunnlag": "Eneste komponent i Farmakologiportalen med navnet («Mirtazapin», ID 668); CAS-nummeret 61337-67-5 er også PubChems, og molekylvekten 265,35 g/mol stemmer med PubChem (CID 4205) (265,35)."
+    }
+  },
+  {
+    "nokkel": "moklobemid",
+    "navn": "Moklobemid",
+    "engelsk": "moclobemide",
+    "stoffer": [
+      {
+        "stoff": "moklobemid",
+        "relasjon": "selve_stoffet"
+      }
+    ],
+    "form": "fri",
+    "pubchem": {
+      "cid": 4235,
+      "inchikey": "YHXISWVBGDMDLQ-UHFFFAOYSA-N",
+      "formel": "C13H17ClN2O2",
+      "kontrollert": "2026-10-27",
+      "grunnlag": "Eneste treff i PubChem for «moclobemide»; samme InChIKey hos ClinPGx (PA452615, CID 4235) og ChEBI (CHEBI:83531)."
+    },
+    "farmakologiportalen": {
+      "status": "verifisert",
+      "id": "670",
+      "navn": "Moklobemid",
+      "kontrollert": "2026-10-27",
+      "grunnlag": "Eneste komponent i Farmakologiportalen med navnet («Moklobemid», ID 670); CAS-nummeret 71320-77-9 er også PubChems, og molekylvekten 268,74 g/mol stemmer med PubChem (CID 4235) (268,74)."
     }
   },
   {
@@ -2931,6 +3134,30 @@ export const FORBINDELSESDATA: Forbindelse[] = [
     }
   },
   {
+    "nokkel": "penfluridol",
+    "navn": "Penfluridol",
+    "engelsk": "penfluridol",
+    "stoffer": [
+      {
+        "stoff": "penfluridol",
+        "relasjon": "selve_stoffet"
+      }
+    ],
+    "form": "fri",
+    "uavklart": {
+      "grunn": "Ingen uavhengig kilde (ClinPGx, ChEBI) bekrefter treffet i PubChem (Penfluridol).",
+      "kandidater": [
+        33630
+      ]
+    },
+    "farmakologiportalen": {
+      "status": "uavklart",
+      "grunn": "Ingen komponent i Farmakologiportalen har navnet «Penfluridol».",
+      "kandidater": [],
+      "kontrollert": "2026-10-27"
+    }
+  },
+  {
     "nokkel": "perfenazin",
     "navn": "Perfenazin",
     "engelsk": "perphenazine",
@@ -2957,6 +3184,34 @@ export const FORBINDELSESDATA: Forbindelse[] = [
     }
   },
   {
+    "nokkel": "perisiazin",
+    "navn": "Perisiazin",
+    "engelsk": "periciazine",
+    "synonymer": [
+      "pericyazine"
+    ],
+    "stoffer": [
+      {
+        "stoff": "perisiazin",
+        "relasjon": "selve_stoffet"
+      }
+    ],
+    "form": "fri",
+    "pubchem": {
+      "cid": 4747,
+      "inchikey": "LUALIOATIOESLM-UHFFFAOYSA-N",
+      "formel": "C21H23N3OS",
+      "kontrollert": "2026-10-27",
+      "grunnlag": "Eneste treff i PubChem for «periciazine»; samme InChIKey hos ChEBI (CHEBI:31981)."
+    },
+    "farmakologiportalen": {
+      "status": "uavklart",
+      "grunn": "Ingen komponent i Farmakologiportalen har navnet «Perisiazin».",
+      "kandidater": [],
+      "kontrollert": "2026-10-27"
+    }
+  },
+  {
     "nokkel": "petidin",
     "navn": "Petidin",
     "engelsk": "pethidine",
@@ -2980,6 +3235,57 @@ export const FORBINDELSESDATA: Forbindelse[] = [
       "navn": "Petidin",
       "kontrollert": "2026-10-08",
       "grunnlag": "Eneste komponent i Farmakologiportalen med navnet («Petidin», ID 689); CAS-nummeret 57-42-1 er også PubChems, og molekylvekten 247,33 g/mol stemmer med PubChem (CID 4058) (247,33)."
+    }
+  },
+  {
+    "nokkel": "pimozid",
+    "navn": "Pimozid",
+    "engelsk": "pimozide",
+    "stoffer": [
+      {
+        "stoff": "pimozid",
+        "relasjon": "selve_stoffet"
+      }
+    ],
+    "form": "fri",
+    "pubchem": {
+      "cid": 16362,
+      "inchikey": "YVUQSNJEYSNKRX-UHFFFAOYSA-N",
+      "formel": "C28H29F2N3O",
+      "kontrollert": "2026-10-27",
+      "grunnlag": "Eneste treff i PubChem for «pimozide»; samme InChIKey hos ClinPGx (PA450965, CID 16362) og ChEBI (CHEBI:8212)."
+    },
+    "farmakologiportalen": {
+      "status": "verifisert",
+      "id": "690",
+      "navn": "Pimozid",
+      "kontrollert": "2026-10-27",
+      "grunnlag": "Eneste komponent i Farmakologiportalen med navnet («Pimozid», ID 690); CAS-nummeret 2062-78-4 er også PubChems, og molekylvekten 461,56 g/mol stemmer med PubChem (CID 16362) (461,5)."
+    }
+  },
+  {
+    "nokkel": "promazin",
+    "navn": "Promazin",
+    "engelsk": "promazine",
+    "stoffer": [
+      {
+        "stoff": "promazin",
+        "relasjon": "selve_stoffet"
+      }
+    ],
+    "form": "fri",
+    "pubchem": {
+      "cid": 4926,
+      "inchikey": "ZGUGWUXLJSTTMA-UHFFFAOYSA-N",
+      "formel": "C17H20N2S",
+      "kontrollert": "2026-10-27",
+      "grunnlag": "Eneste treff i PubChem for «promazine»; samme InChIKey hos ClinPGx (PA451126, CID 4926) og ChEBI (CHEBI:8459)."
+    },
+    "farmakologiportalen": {
+      "status": "uavklart",
+      "grunn": "Ingen komponent i Farmakologiportalen har navnet «Promazin».",
+      "kandidater": [],
+      "kontrollert": "2026-10-27"
     }
   },
   {
@@ -3218,6 +3524,31 @@ export const FORBINDELSESDATA: Forbindelse[] = [
     }
   },
   {
+    "nokkel": "sulpirid",
+    "navn": "Sulpirid",
+    "engelsk": "sulpiride",
+    "stoffer": [
+      {
+        "stoff": "sulpirid",
+        "relasjon": "selve_stoffet"
+      }
+    ],
+    "form": "fri",
+    "pubchem": {
+      "cid": 5355,
+      "inchikey": "BGRJTUBHPOOWDU-UHFFFAOYSA-N",
+      "formel": "C15H23N3O4S",
+      "kontrollert": "2026-10-27",
+      "grunnlag": "Eneste treff i PubChem for «sulpiride»; samme InChIKey hos ClinPGx (PA164745485, CID 5355) og ChEBI (CHEBI:32168)."
+    },
+    "farmakologiportalen": {
+      "status": "uavklart",
+      "grunn": "Ingen komponent i Farmakologiportalen har navnet «Sulpirid».",
+      "kandidater": [],
+      "kontrollert": "2026-10-27"
+    }
+  },
+  {
     "nokkel": "tapentadol",
     "navn": "Tapentadol",
     "engelsk": "tapentadol",
@@ -3400,6 +3731,82 @@ export const FORBINDELSESDATA: Forbindelse[] = [
       "navn": "Tramadol",
       "kontrollert": "2026-10-08",
       "grunnlag": "Eneste komponent i Farmakologiportalen med navnet («Tramadol», ID 718); CAS-nummeret 27203-92-5 er også PubChems, og molekylvekten 263,4 g/mol stemmer med PubChem (CID 33741) (263,37)."
+    }
+  },
+  {
+    "nokkel": "tranylcypromin",
+    "navn": "Tranylcypromin",
+    "engelsk": "tranylcypromine",
+    "stoffer": [
+      {
+        "stoff": "tranylcypromin",
+        "relasjon": "selve_stoffet"
+      }
+    ],
+    "form": "fri",
+    "pubchem": {
+      "cid": 5530,
+      "inchikey": "AELCINSCMGFISI-UHFFFAOYSA-N",
+      "formel": "C9H11N",
+      "kontrollert": "2026-10-27",
+      "grunnlag": "PubChems post for «tranylcypromine» (tittel «Tranylcypromine»); ClinPGx (PA451741, CID 441233) har samme skjelett, men en annen stereokjemi eller protonering i InChIKey. Formelen og molekylvekten er de samme."
+    },
+    "farmakologiportalen": {
+      "status": "uavklart",
+      "grunn": "Ingen komponent i Farmakologiportalen har navnet «Tranylcypromin».",
+      "kandidater": [],
+      "kontrollert": "2026-10-27"
+    }
+  },
+  {
+    "nokkel": "trazodon",
+    "navn": "Trazodon",
+    "engelsk": "trazodone",
+    "stoffer": [
+      {
+        "stoff": "trazodon",
+        "relasjon": "selve_stoffet"
+      }
+    ],
+    "form": "fri",
+    "pubchem": {
+      "cid": 5533,
+      "inchikey": "PHLBKPHSAVXXEF-UHFFFAOYSA-N",
+      "formel": "C19H22ClN5O",
+      "kontrollert": "2026-10-27",
+      "grunnlag": "Eneste treff i PubChem for «trazodone»; samme InChIKey hos ClinPGx (PA451744, CID 5533) og ChEBI (CHEBI:9654)."
+    },
+    "farmakologiportalen": {
+      "status": "verifisert",
+      "id": "2882",
+      "navn": "Trazodon",
+      "kontrollert": "2026-10-27",
+      "grunnlag": "Eneste komponent i Farmakologiportalen med navnet («Trazodon», ID 2882); CAS-nummeret 19794-93-5 er også PubChems, og molekylvekten 371,86 g/mol stemmer med PubChem (CID 5533) (371,9)."
+    }
+  },
+  {
+    "nokkel": "trifluoperazin",
+    "navn": "Trifluoperazin",
+    "engelsk": "trifluoperazine",
+    "stoffer": [
+      {
+        "stoff": "trifluoperazin",
+        "relasjon": "selve_stoffet"
+      }
+    ],
+    "form": "fri",
+    "pubchem": {
+      "cid": 5566,
+      "inchikey": "ZEWQUBUPAILYHI-UHFFFAOYSA-N",
+      "formel": "C21H24F3N3S",
+      "kontrollert": "2026-10-27",
+      "grunnlag": "Eneste treff i PubChem for «trifluoperazine»; samme InChIKey hos ClinPGx (PA451771, CID 5566) og ChEBI (CHEBI:45951)."
+    },
+    "farmakologiportalen": {
+      "status": "uavklart",
+      "grunn": "Ingen komponent i Farmakologiportalen har navnet «Trifluoperazin».",
+      "kandidater": [],
+      "kontrollert": "2026-10-27"
     }
   },
   {
