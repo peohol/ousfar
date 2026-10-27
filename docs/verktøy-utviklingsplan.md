@@ -49,7 +49,7 @@ Statusene er **Ikke startet / Pågår / Til faglig kontroll / Blokkert / Ferdig*
 | ID | Leveranse | Utførende | Uavhengig kontroll | Status | Dokumentasjon / PR |
 | --- | --- | --- | --- | --- | --- |
 | P0 | Plan og avgrensning | ChatGPT | – | **Ferdig** | Dette dokumentet, 27.10.2026 |
-| P1 | Virkestoff- og FEST-kartlegging | Claude | ChatGPT (utvalg) | Til faglig kontroll | `docs/verktøy-p1-kartlegging.md`, PR #PRNR |
+| P1 | Virkestoff- og FEST-kartlegging | Claude | ChatGPT (utvalg) | Til faglig kontroll | `docs/verktøy-p1-kartlegging.md`, PR #279 |
 | P2 | Manglende fagsider og FEST-koblinger | Claude | ChatGPT (avvik) | Ikke startet | – |
 | P3 | Komplett og lovlig kildeimport | Claude | ChatGPT (deknings- og stikkprøvekontroll) | Ikke startet | – |
 | P4 | Faglig regelmodell og kontrollert pilotsett | Claude | **ChatGPT – sperrende** | Ikke startet | – |
@@ -256,7 +256,7 @@ Før en oppgave eller fase krysses av:
 | Dato | Fase / oppgave | Resultat, PR/commit | Kontroll / gjenstående |
 | --- | --- | --- | --- |
 | 27.10.2026 | P0.1–P0.3 | Plan og ansvarsdeling fastlagt; johannesurt eksplisitt ekskludert | Ingen kildedata eller kode er importert/implementert gjennom denne planoppgaven |
-| 27.10.2026 | P1.1–P1.7 | Kartlegging, øyeblikksbilder, rapport og tester, PR #PRNR. Kilder: Psychiatrienet (revisjon 10184 / 10673 / 10641, hentet 27.10.2026), FEST-uttrekk 08.10.2026, fagsidene i produksjon 27.10.2026. `npm test` og `npm run build` grønne | Venter på ChatGPTs kontroll av utvalget og de uavklarte punktene i rapporten. Ingen fagsider, anbefalingstekster eller regler er laget |
+| 27.10.2026 | P1.1–P1.7 | Kartlegging, øyeblikksbilder, rapport og tester, PR #279. Kilder: Psychiatrienet (revisjon 10184 / 10673 / 10641, hentet 27.10.2026), FEST-uttrekk 08.10.2026, fagsidene i produksjon 27.10.2026. `npm test` og `npm run build` grønne | Venter på ChatGPTs kontroll av utvalget og de uavklarte punktene i rapporten. Ingen fagsider, anbefalingstekster eller regler er laget |
 
 ## 8. Startoppdrag til Claude Code
 
