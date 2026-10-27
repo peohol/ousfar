@@ -1,0 +1,61 @@
+Bruk hos eldre pasienter (over 65 år)
+Eldre pasienter kan ha behov for dosejustering på grunn av redusert nyrefunksjon med økende alder
+(se tabell 2). Søvnighet, perifert ødem og asteni kan forekomme hyppigere hos eldre pasienter.
+
+Nedsatt nyrefunksjon
+Dosejustering, som beskrevet i tabell 2, er anbefalt hos pasienter med nedsatt nyrefunksjon og/eller
+pasienter som får hemodialyse.
+
+  Tabell 2: GABAPENTINDOSERING HOS VOKSNE BASERT PÅ NYREFUNKSJON
+  Kreatininclearance (ml/min.)                        Total døgndosea (mg/døgn)
+  ≥ 80                                                900-3600 (18-72 ml)
+  50-79                                               600-1800 (12-36 ml)
+  30-49                                               300-900 (6-18 ml)
+  15-29                                               150-600 (3-12 ml)
+  < 15b                                               150-300 (3-6ml)
+a
+ Total døgndose bør fordeles på tre doser. Reduserte doser skal benyttes hos pasienter med nedsatt
+nyrefunksjon (kreatininclearance < 79 ml/min.).
+b
+  For pasienter med kreatininclearance < 15 ml/min., skal døgndosen reduseres proporsjonalt med
+kreatininclearance (f.eks. bør pasienter med en kreatininclearance på 7,5 ml/min. få halvparten av
+døgndosen som pasienter med en kreatininclearance på 15 ml/min får).
+
+Bruk hos pasienter som gjennomgår hemodialyse
+For pasienter med nyresvikt som får hemodialyse og som tidligere aldri har fått gabapentin, anbefales
+en startdose på 300 til 400 mg (6 ml-8 ml), deretter 200 til 300 mg (4 ml-6 ml) gabapentin etter hver
+4. time med hemodialyse. På dialysefrie dager skal det ikke gis gabapentin.
+
+For pasienter med nedsatt nyrefunksjon som får hemodialyse, bør vedlikeholdsdosen med gabapentin
+være basert på doseringsanbefalingene i tabell 2. I tillegg til vedlikeholdsdosen anbefales en ekstra
+dose på 200 til 300 mg (4 ml-6 ml) etter hver 4. time med hemodialyse.
+
+Administrasjonsmåte
+
+Til oral bruk.
+
+Gabapentin kan tas med eller uten mat.
+
+Kun egnet for administrasjon via nasogastrisk (NG) sonde eller perkutan endoskopisk gastronomi
+(PEG)-sonde. For mer informasjon, se pkt. 6.6.
+
+For doser som ikke er praktisk mulig med dette legemidlet, er andre legemiddelformer og produkter
+tilgjengelige.
+
+4.3   Kontraindikasjoner
+
+Overfølsomhet overfor virkestoffet eller overfor hjelpestoffene listet opp i pkt. 6.1.
+
+4.4   Advarsler og forsiktighetsregler
+
+Alvorlige kutane bivirkninger (SCARs)
+Alvorlige kutane bivirkninger (SCARs) inkludert Stevens-Johnsons syndrom (SJS), toksisk
+epidermal nekrolyse (TEN) og legemiddelutslett med eosinofili og systemiske symptomer
+(DRESS), som kan være livstruende eller dødelige, har blitt rapportert i forbindelse med
+gabapentinbehandling. Ved foreskrivning skal pasienter informeres om tegn og symptomer og
+overvåkes nøye for hudreaksjoner. Hvis det forekommer tegn og symptomer som tyder på disse
+reaksjonene, skal gabapentin seponeres umiddelbart og alternativ behandling vurderes (etter
+behov).
+
+
+                                                    3

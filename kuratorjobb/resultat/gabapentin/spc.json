@@ -1,0 +1,755 @@
+{
+  "stoff": "gabapentin",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-10-27T04:15:06.281727+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 10,
+    "hentet": 7,
+    "dokumenter": 3,
+    "mangler": [
+      {
+        "merkevare_id": "ID_794CE185-704B-4BE6-BC01-5D9B042A3473",
+        "varenavn": "Gabapentin rosemont",
+        "navn_form_styrke": "Gabapentin rosemont mikst oppl 50 mg/ml",
+        "produsent": "Rosemont Pharmaceuticals",
+        "atc": "N02BF01",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_7F33ADF8-B997-44A9-85DA-73B6C1005D0B",
+        "varenavn": "Gabapentin stada",
+        "navn_form_styrke": "Gabapentin stada kaps 100 mg",
+        "produsent": "Stada Arzneimittel AG",
+        "atc": "N02BF01",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_F8545436-4DEE-4816-BB2E-7D1503395A77",
+        "varenavn": "GabaLiquid GeriaSan",
+        "navn_form_styrke": "GabaLiquid GeriaSan mikst oppl 50 mg/ml",
+        "produsent": "Infectopharm",
+        "atc": "N02BF01",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 7 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 7,
+        "ikke_dmp": 0,
+        "uten_omtale": 3
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "3 av 10 preparater i FEST mangler en hentet preparatomtale fra DMP: 3 uten preparatomtale i FEST (f.eks. sentralt godkjente, med omtalen hos EMA). SPC-behovet er ikke dekket; se «dekning.mangler».",
+      "antall": {
+        "preparater": 10,
+        "hentet": 7,
+        "mangler": 3,
+        "dokumenter": 3
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15937.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15937.pdf",
+      "hentet_kl": "2026-10-27T11:38:58.267Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "315194",
+        "content-md5": "EC2JtYgWhYORGkecLFq6PA==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:39 GMT",
+        "etag": "0x8DF250876D42435",
+        "date": "Tue, 27 Oct 2026 11:38:59 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_191DF4D2-1B54-4E0B-9423-E18A584FAB73",
+          "varenavn": "Neurisol",
+          "navn_form_styrke": "Neurisol mikst oppl 50 mg/ml",
+          "produsent": "Oresund Pharma ApS",
+          "atc": "N02BF01",
+          "legemiddelform": "Mikstur, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15937.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (315194 byte).",
+          "antall": {
+            "bytes": 315194
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "73aca4291840019aa373ec7f26aa1d47e8feaaa58c465fbbbb58f1c2afaadbe0"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08221.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08221.pdf",
+      "hentet_kl": "2026-10-27T11:39:04.726Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "358345",
+        "content-md5": "I52Mz2aPDexEBRWCJmVsJw==",
+        "last-modified": "Thu, 08 Oct 2026 06:49:30 GMT",
+        "etag": "0x8DF25084D943C9A",
+        "date": "Tue, 27 Oct 2026 11:39:05 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_367CCE0C-E796-4735-BEB1-0F3606FC22ED",
+          "varenavn": "Neurontin",
+          "navn_form_styrke": "Neurontin kaps 400 mg",
+          "produsent": "Viatris Healthcare Limited",
+          "atc": "N02BF01",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08221.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (358345 byte).",
+          "antall": {
+            "bytes": 358345
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "674e7202efd087cc4549d6927f58deaf249ad8c092880682af28b338a9d7cd97"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-02995.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-02995.pdf",
+      "hentet_kl": "2026-10-27T11:39:10.824Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "358345",
+        "content-md5": "I52Mz2aPDexEBRWCJmVsJw==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:24 GMT",
+        "etag": "0x8DF25086E110177",
+        "date": "Tue, 27 Oct 2026 11:39:10 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_38FDE548-4A59-4D44-BC5C-2A479415EF02",
+          "varenavn": "Neurontin",
+          "navn_form_styrke": "Neurontin kaps 100 mg",
+          "produsent": "Viatris Healthcare Limited",
+          "atc": "N02BF01",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-02995.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (358345 byte).",
+          "antall": {
+            "bytes": 358345
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "674e7202efd087cc4549d6927f58deaf249ad8c092880682af28b338a9d7cd97"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1999-00855.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1999-00855.pdf",
+      "hentet_kl": "2026-10-27T11:39:11.104Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "358345",
+        "content-md5": "I52Mz2aPDexEBRWCJmVsJw==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:20 GMT",
+        "etag": "0x8DF25086BC5111A",
+        "date": "Tue, 27 Oct 2026 11:39:11 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_3AF67BEE-C23F-4387-99C8-F5EACC28F100",
+          "varenavn": "Neurontin",
+          "navn_form_styrke": "Neurontin tab 800 mg",
+          "produsent": "Viatris Healthcare Limited",
+          "atc": "N02BF01",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/1999-00855.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (358345 byte).",
+          "antall": {
+            "bytes": 358345
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "674e7202efd087cc4549d6927f58deaf249ad8c092880682af28b338a9d7cd97"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1999-00854.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1999-00854.pdf",
+      "hentet_kl": "2026-10-27T11:39:11.471Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "358345",
+        "content-md5": "I52Mz2aPDexEBRWCJmVsJw==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:20 GMT",
+        "etag": "0x8DF25086BC25265",
+        "date": "Tue, 27 Oct 2026 11:39:11 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_888ABF2F-0E22-4D49-914D-37B81A720079",
+          "varenavn": "Neurontin",
+          "navn_form_styrke": "Neurontin tab 600 mg",
+          "produsent": "Viatris Healthcare Limited",
+          "atc": "N02BF01",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/1999-00854.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (358345 byte).",
+          "antall": {
+            "bytes": 358345
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "674e7202efd087cc4549d6927f58deaf249ad8c092880682af28b338a9d7cd97"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08220.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08220.pdf",
+      "hentet_kl": "2026-10-27T11:39:11.968Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "358345",
+        "content-md5": "I52Mz2aPDexEBRWCJmVsJw==",
+        "last-modified": "Thu, 08 Oct 2026 06:49:30 GMT",
+        "etag": "0x8DF25084D917DE2",
+        "date": "Tue, 27 Oct 2026 11:39:12 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_A3BE6D77-EE8E-4696-947B-B2DF1DAE950D",
+          "varenavn": "Neurontin",
+          "navn_form_styrke": "Neurontin kaps 300 mg",
+          "produsent": "Viatris Healthcare Limited",
+          "atc": "N02BF01",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08220.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (358345 byte).",
+          "antall": {
+            "bytes": 358345
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "674e7202efd087cc4549d6927f58deaf249ad8c092880682af28b338a9d7cd97"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15846.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15846.pdf",
+      "hentet_kl": "2026-10-27T11:39:12.469Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "338594",
+        "content-md5": "PISnm1VVokCtXKyyv4tzvw==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:38 GMT",
+        "etag": "0x8DF2508767C2610",
+        "date": "Tue, 27 Oct 2026 11:39:12 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_B275827A-7110-4AA2-AE12-0B65A28F2891",
+          "varenavn": "Shaktatin",
+          "navn_form_styrke": "Shaktatin mikst oppl 50 mg/ml",
+          "produsent": "2care4 Generics ApS",
+          "atc": "N02BF01",
+          "legemiddelform": "Mikstur, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15846.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (338594 byte).",
+          "antall": {
+            "bytes": 338594
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "9d8d185d0b7f4977a21e22311be79727ed440e7f63df901ef6e765b09e820cc7"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "73aca4291840019aa373ec7f26aa1d47e8feaaa58c465fbbbb58f1c2afaadbe0",
+      "bytes": 315194,
+      "mappe": "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a",
+      "pdf": {
+        "sider": 14,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "mutual-recognition-decentralised-referral-pi-template-version-42_en_CLEAN_NO",
+        "laget": "Fri Sep 18 12:33:21 2026 UTC",
+        "endret": "Fri Sep 18 12:33:21 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/original.pdf",
+        "tekst": "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/tekst/side-001.txt",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/tekst/side-002.txt",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/tekst/side-003.txt",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/tekst/side-004.txt",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/tekst/side-005.txt",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/tekst/side-006.txt",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/tekst/side-007.txt",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/tekst/side-008.txt",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/tekst/side-009.txt",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/tekst/side-010.txt",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/tekst/side-011.txt",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/tekst/side-012.txt",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/tekst/side-013.txt",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/tekst/side-014.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/sider/side-001.png",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/sider/side-002.png",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/sider/side-003.png",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/sider/side-004.png",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/sider/side-005.png",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/sider/side-006.png",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/sider/side-007.png",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/sider/side-008.png",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/sider/side-009.png",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/sider/side-010.png",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/sider/side-011.png",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/sider/side-012.png",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/sider/side-013.png",
+          "kuratorjobb/resultat/gabapentin/spc/73aca4291840019a/sider/side-014.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 7,
+        "til": 9
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (14 sider).",
+          "antall": {
+            "sider": 14
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 32938
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 7."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 14
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "674e7202efd087cc4549d6927f58deaf249ad8c092880682af28b338a9d7cd97",
+      "bytes": 358345,
+      "mappe": "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc",
+      "pdf": {
+        "sider": 15,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "PREPARATOMTALE",
+        "laget": "Tue May 26 09:06:16 2026 UTC",
+        "endret": "Tue May 26 09:06:16 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/original.pdf",
+        "tekst": "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/tekst/side-001.txt",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/tekst/side-002.txt",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/tekst/side-003.txt",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/tekst/side-004.txt",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/tekst/side-005.txt",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/tekst/side-006.txt",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/tekst/side-007.txt",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/tekst/side-008.txt",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/tekst/side-009.txt",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/tekst/side-010.txt",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/tekst/side-011.txt",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/tekst/side-012.txt",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/tekst/side-013.txt",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/tekst/side-014.txt",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/tekst/side-015.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/sider/side-001.png",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/sider/side-002.png",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/sider/side-003.png",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/sider/side-004.png",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/sider/side-005.png",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/sider/side-006.png",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/sider/side-007.png",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/sider/side-008.png",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/sider/side-009.png",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/sider/side-010.png",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/sider/side-011.png",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/sider/side-012.png",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/sider/side-013.png",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/sider/side-014.png",
+          "kuratorjobb/resultat/gabapentin/spc/674e7202efd087cc/sider/side-015.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 10
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (15 sider).",
+          "antall": {
+            "sider": 15
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 32576
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 15
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "9d8d185d0b7f4977a21e22311be79727ed440e7f63df901ef6e765b09e820cc7",
+      "bytes": 338594,
+      "mappe": "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977",
+      "pdf": {
+        "sider": 14,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "mutual-recognition-decentralised-referral-pi-template-version-42_en_CLEAN_NO",
+        "laget": "Tue Oct  6 07:22:01 2026 UTC",
+        "endret": "Tue Oct  6 07:22:01 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/original.pdf",
+        "tekst": "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/tekst/side-001.txt",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/tekst/side-002.txt",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/tekst/side-003.txt",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/tekst/side-004.txt",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/tekst/side-005.txt",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/tekst/side-006.txt",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/tekst/side-007.txt",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/tekst/side-008.txt",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/tekst/side-009.txt",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/tekst/side-010.txt",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/tekst/side-011.txt",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/tekst/side-012.txt",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/tekst/side-013.txt",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/tekst/side-014.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/sider/side-001.png",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/sider/side-002.png",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/sider/side-003.png",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/sider/side-004.png",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/sider/side-005.png",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/sider/side-006.png",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/sider/side-007.png",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/sider/side-008.png",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/sider/side-009.png",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/sider/side-010.png",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/sider/side-011.png",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/sider/side-012.png",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/sider/side-013.png",
+          "kuratorjobb/resultat/gabapentin/spc/9d8d185d0b7f4977/sider/side-014.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 7,
+        "til": 9
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (14 sider).",
+          "antall": {
+            "sider": 14
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 33660
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 7."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 14
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": []
+}

@@ -1,0 +1,58 @@
+5.3     Prekliniske sikkerhetsdata
+
+Karsinogenitet
+
+Gabapentin ble gitt i maten til mus og rotter i to år. Mus ble gitt dosene 200, 600 og 2000 mg/kg/dag
+og rotter dosene 250, 1000 og 2000 mg/kg/dag.. En statistisk signifikant økning i insidensen av
+tumorer i acinøse celler i pankreas ble funnet kun i hannrotter ved den høyeste dosen. Maksimal
+plasmakonsentrasjon av legemidlet i rotter ved dosen 2000 mg/kg/dag er 10 ganger høyere enn
+plasmakonsentrasjonen hos mennesker ved dosering 3600 mg/dag. Tumorene i acinøse celler i
+pankreas hos hannrotter hadde lavgradig malignitet og påvirket ikke overlevelse. Tumorene
+metastaserte ikke og invaderte ikke omkringliggende vev og var lik de sett i samtidige kontroller.
+Betydningen av tumorer i acinøse celler i pankreas hos hannrotter og karsinogen risiko hos mennesket
+er ukjent.
+
+Mutagenese
+
+Gabapentin har ikke vist gentoksisk potensiale og var ikke mutagent i in vitro-standardanalyser med
+bakterielle eller mammalske celler. Gabapentin induserte ikke strukturelle kromosomendringer i
+mammalske celler in vitro eller in vivo og induserte ikke dannelse av mikrokjerner i benmargen hos
+hamstere.
+
+Nedsatt fertilitet
+
+Ingen bivirkninger er observert mht fertilitet eller reproduksjon hos rotter i doser opptil 2000 mg/kg
+(ca. fem ganger maksimal daglig dose for mennesker på basis av mg/m2 av kroppsoverflateareal).
+
+Teratogenitet
+
+Gabapentin økte ikke insidensen av misdannelser sammenlignet med kontroller hos avkommet til mus,
+rotter eller kaniner ved doser opptil henholdsvis 50, 30 og 25 ganger human daglig dose på 3600 mg
+(henholdsvis fire, fem eller åtte ganger human daglig dose på basis av mg/m2).
+
+Gabapentin induserte forsinket ossifikasjon av skalle, ryggrad, forbein og bakben hos gnagere. Dette
+indikerer føtal vekstretardasjon. Effektene forekom hos drektige mus som fikk orale doser på 1000
+eller 3000 mg/kg/dag under organogenesen og hos rotter som fikk 2000 mg/kg før og under parringen
+og gjennom hele drektighetsperioden. Disse dosene er ca. 1 til 5 ganger høyere enn human dose på
+3600 mg på basis av mg/m2.
+
+Ingen effekter ble observert hos drektige mus som fikk 500 mg/kg/dag (ca. ½ gang human daglig dose
+på basis av mg/m2).
+
+En økt insidens av hydroureter og/eller hydronefrose ble observert hos rotter som fikk 2000 mg/kg/dag
+i en fertilitets- og generell reproduksjonsstudie, 1500 mg/kg/dag i en teratogenitetsstudie og 500, 1000
+og 2000 mg/kg/dag i en perinatal- og postnatalstudie. Betydningen av disse funnene er ukjent, men de
+har blitt assosiert med forsinket utvikling. Dosene er ca. 1 til 5 ganger høyere enn human dose på 3600
+mg på basis av mg/m2.
+
+I en teratogenitetsstudie med kaniner ble det observert økt insidens av føtalt tap, som oppstod hos
+drektige kaniner etter implantasjon ved dosene 60, 300 og 1500 mg/kg/dag gitt under organogenesen.
+Disse dosene er ca. 0,3 til 8 ganger høyere enn human daglig dose på 3600 mg på basis av mg/m2.
+Sikkerhetsmarginene er utilstrekkelige når det gjelder å utelukke risikoen av disse effektene hos
+mennesker.
+
+
+6.      FARMASØYTISKE OPPLYSNINGER
+
+
+                                                   13

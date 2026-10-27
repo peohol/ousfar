@@ -1,0 +1,59 @@
+Absorpsjon
+Maksimal plasmakonsentrasjon av gabapentin nås i løpet av 2 til 3 timer etter oral administrasjon.
+Biotilgjengeligheten av gabapentin (brøkdel av dosen absorbert) synes å reduseres ved økt dose.
+Absolutt biotilgjengelighet av en 300 mg kapsel er ca. 60%. Mat, inkludert fettrik diett, har ikke
+klinisk signifikant effekt på gabapentins farmakokinetikk.
+
+Gabapentins farmakokinetikk påvirkes ikke av gjentatt administrering. Selv om
+plasmakonsentrasjonen av gabapentin vanligvis lå mellom 2 mikrog/ml og 20 mikrog/ml i kliniske
+studier, kan ikke disse konsentrasjonene predikere sikkerhet og effekt. Farmakokinetiske parametere
+er oppgitt i Tabell 3.
+
+ Tabell 3
+ SAMMENDRAG AV GABAPENTINS GJENNOMSNITTLIGE (%CV) STEADY-STATE
+ FARMAKOKINETISKE PARAMETERE ETTER DOSERING HVER 8. TIME.
+ Farmakokinetisk 300 mg                        400 mg                         800 mg
+ parameter           (N=7)                     (N=14)                         (N=14)
+                     Gj.snitt     %CV          Gj.snitt        %CV            Gj.snitt      %CV
+ Cmax (mikrog/ml) 4,02            (24)         5,74            (38)           8,71          (29)
+ tmax (hr)           2,7          (18)         2,1             (54)           1,6           (76)
+ T1/2 (hr)           5,2          (12)         10,8            (89)           10,6          (41)
+ AUC (0-8)           24,8         (24)         34,5            (34)           51,4          (27)
+ mikrog•hr/ml)
+ Ae% (%)             NA           NA           47,2            (25)           34,4          (37)
+ Cmax= Maksimal steady-state plasmakonsentrasjon
+ tmax= Tid for Cmax
+ T1/2 = Eliminasjonshalveringstiden
+ AUC(0-8) = Steady-state område under plasmakonsentrasjons-tidskurven fra perioden 0 til 8 timer
+ etter dosering
+ Ae% = Prosent av dosen som skilles ut uforandret i urin fra perioden 0 til 8 timer etter dosering
+ NA = ikke tilgjengelig
+
+Distribusjon
+Gabapentin bindes ikke til plasmaproteiner og har et distribusjonsvolum svarende til 57,7 liter. Hos
+pasienter med epilepsi er gabapentinkonsentrasjonen i cerebrospinalvæsken (CSF) ca. 20% av
+korresponderende laveste plasmakonsentrasjon ved steady-state. Gabapentin er til stede i brystmelk
+hos ammende kvinner.
+
+Biotransformasjon
+Det finnes ikke holdepunkter for at gabapentin metaboliseres hos mennesker. Gabapentin induserer
+ikke de ulike oksidative enzymene i leveren som er ansvarlig for legemiddelmetabolisme.
+
+Eliminasjon
+Gabapentin utskilles uforandret og kun gjennom renal ekskresjon. Eliminasjonshalveringstiden for
+gabapentin er uavhengig av dose og er gjennomsnittlig 5 til 7 timer.
+
+Hos eldre pasienter og pasienter med nedsatt nyrefunksjon er plasmaclearance for gabapentin redusert.
+Eliminasjonshastighetskonstanten, plasmaclearance og renal clearance er direkte proporsjonale med
+kreatinclearance for gabapentin.
+
+Gabapentin kan fjernes fra plasma ved hemodialyse. Dosejustering anbefales for pasienter med nedsatt
+nyrefunksjon eller som gjennomgår hemodialyse (se pkt. 4.2).
+
+Gabapentins farmakokinetikk hos barn ble undersøkt hos 50 friske individer i alderen 1 måned til 12
+år. Generelt var plasmakonsentrasjonen av gabapentin hos barn > 5 år tilsvarende den hos voksne ved
+dosering basert på mg/kg.
+
+
+
+                                                  11

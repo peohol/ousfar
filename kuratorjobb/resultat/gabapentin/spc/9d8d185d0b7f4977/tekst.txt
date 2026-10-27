@@ -1,0 +1,802 @@
+1.    LEGEMIDLETS NAVN
+
+Shaktatin 50 mg/ml mikstur, oppløsning
+
+
+2.    KVALITATIV OG KVANTITATIV SAMMENSETNING
+
+Hver ml mikstur, oppløsning inneholder 50 mg gabapentin.
+
+Hjelpestoffer med kjent effekt:
+
+Hver ml mikstur, oppløsning inneholder 1,2 mg metylparahydroksybenzoat (E 218), 0,12 mg
+etylparahydroksybenzoat (E 214) og 17,2 mg propylenglykol (E 1520).
+
+For fullstendig liste over hjelpestoffer, se pkt. 6.1.
+
+
+3.    LEGEMIDDELFORM
+
+Mikstur, oppløsning
+
+Klar, fargeløs oppløsning
+
+
+4.    KLINISKE OPPLYSNINGER
+
+4.1   Indikasjoner
+
+Epilepsi
+Gabapentin er indisert som tilleggsbehandling ved partiell epilepsi med og uten sekundær
+generalisering hos voksne og barn på 6 år eller eldre (se pkt. 5.1).
+
+Gabapentin er indisert som monoterapi ved behandling av epilepsi med partielle anfall med og uten
+sekundær generalisering hos voksne og ungdom på 12 år eller eldre.
+
+Behandling av perifer nevropatisk smerte
+Gabapentin er indisert for behandling av perifer nevropatisk smerte, som for eksempel smertefull
+diabetisk nevropati og postherpetisk nevralgi hos voksne.
+
+4.2   Dosering og administrasjonsmåte
+
+Dosering
+
+Tabell 1 viser anbefalt dosetitreringsskjema for alle indikasjoner ved oppstart av behandling hos
+voksne og ungdom på 12 år eller eldre. Dosering for barn under 12 år er angitt under en egen
+undertittel senere i dette avsnittet.
+
+ Tabell 1: DOSERINGSSKJEMA – TITRERING VED OPPSTART
+ Dag 1                        Dag 2                          Dag 3
+ 300 mg (6 ml) én gang daglig 300 mg (6 ml) to ganger daglig 300 mg (6 ml) tre ganger
+                                                             daglig
+
+Seponering av gabapentin
+I samsvar med gjeldende klinisk praksis er det anbefalt at gabapentin seponeres gradvis over minst én
+uke, uavhengig av indikasjon.
+
+Epilepsi
+
+                                                         1
+Epilepsi krever vanligvis langtidsbehandling. Dosering bestemmes av behandlende lege basert på
+individuell toleranse og effekt.
+
+Voksne og ungdom:
+I kliniske studier varierte den effektive dosen mellom 900 og 3600 mg/døgn (18 ml til 72 ml).
+Behandling kan startes ved å titrere dosen som beskrevet i tabell 1 eller ved å gi 300 mg (6 ml) tre
+ganger daglig på dag 1. Deretter, avhengig av respons og toleranse hos den enkelte pasient, kan dosen
+økes med 300 mg/døgn (6 ml) hver 2.-3. dag opptil en maksimal dose på 3600 mg/døgn (72 ml).
+Langsommere titrering av gabapentindosen kan være nødvendig for enkelte pasienter. Det må brukes
+minst én uke på opptitrering til en dose på 1800 mg/døgn (36 ml), minst to uker på opptitrering til en
+dose på 2400 mg/døgn (48 ml), og minst tre uker på opptitrering til en dose på 3600 mg/døgn (72 ml).
+Doser på opptil 4800 mg/døgn (96 ml) er godt tolerert i åpne kliniske langtidsstudier. Den totale
+døgndosen skal fordeles på tre enkeltdoser. For å forhindre gjennombruddsanfall skal det maksimale
+tidsintervallet mellom dosene ikke overskride 12 timer.
+
+Barn på 6 år eller eldre:
+Startdosen bør ligge mellom 10 og 15 mg/kg/døgn, og effektiv dose oppnås ved å opptitrere i løpet av
+en periode på ca. tre dager. Den effektive dosen med gabapentin hos barn fra 6 år og eldre ligger
+mellom 25 og 35 mg/kg/døgn. Doser på opptil 50 mg/kg/døgn har vært godt tolerert i en klinisk
+langtidsstudie. Den totale døgndosen skal deles inn i tre enkeltdoser med maksimalt 12 timers
+tidsintervall mellom hver dose.
+
+Det er ikke nødvendig å overvåke plasmakonsentrasjoner av gabapentin for å optimalisere
+gabapentinbehandlingen. Gabapentin kan også brukes i kombinasjon med andre antiepileptika uten at
+det vil medføre endring av plasmakonsentrasjonen av gabapentin eller serumkonsentrasjonen av andre
+antiepileptika.
+
+Barn under 6 år:
+Shaktatin er ikke anbefalt hos barn under 6 år.
+
+Perifer nevropatisk smerte
+
+Voksne:
+Behandlingen kan startes ved å titrere dosen som beskrevet i tabell 1. Alternativt kan startdosen
+900 mg/døgn (18 ml) gis fordelt på tre like doser. Deretter, basert på pasientens individuelle respons
+og toleranse, kan dosen økes ytterligere med 300 mg/døgn (6 ml) hver 2.-3. dag opptil en maksimal
+dose på 3600 mg/døgn (72 ml). Langsommere titrering av gabapentindosen kan være nødvendig for
+enkelte pasienter. Det må gå minst én uke for å nå en dose på 1800 mg/døgn (36 ml), minst to uker for
+å nå en dose på 2400 mg/døgn (48 ml), og minst tre uker for å nå en dose på 3600 mg/døgn (72 ml).
+
+Ved behandling av perifer nevropatisk smerte, som for eksempel smertefull diabetisk nevropati og
+postherpetisk nevralgi, er ikke effekt og sikkerhet undersøkt i kliniske studier for behandlingsperioder
+på over fem måneder. Dersom en pasient trenger behandling av perifer nevropatisk smerte i mer enn
+fem måneder, bør behandlende lege vurdere pasientens kliniske tilstand og vurdere behov for
+tilleggsbehandling.
+
+Instruksjon for alle indikasjonsområder
+Hos pasienter med dårlig allmenntilstand, som for eksempel lav kroppsvekt eller etter
+organtransplantasjon osv., skal dosen opptitreres langsommere, ved å bruke enten mindre
+doseøkninger eller lengre intervaller mellom hver doseøkning.
+
+Leger bør være forsiktige med å forskrive høye doser av gabapentin til unge voksne eller voksne med
+lav kroppsvekt (36-50 kg) ettersom nivåene av propylenglykol kan overskride WHOs anbefalte
+daglige dose hos disse pasientene.
+
+
+
+
+                                                   2
+Bruk hos eldre pasienter (over 65 år)
+Eldre pasienter kan ha behov for dosejustering på grunn av redusert nyrefunksjon med økende alder
+(se tabell 2). Søvnighet, perifert ødem og asteni kan forekomme hyppigere hos eldre pasienter.
+
+Nedsatt nyrefunksjon
+Dosejustering, som beskrevet i tabell 2, er anbefalt hos pasienter med nedsatt nyrefunksjon og/eller
+pasienter som får hemodialyse.
+
+  Tabell 2: GABAPENTINDOSERING HOS VOKSNE BASERT PÅ NYREFUNKSJON
+  Kreatininclearance (ml/min.)                        Total døgndosea (mg/døgn)
+  ≥ 80                                                900-3600 (18-72 ml)
+  50-79                                               600-1800 (12-36 ml)
+  30-49                                               300-900 (6-18 ml)
+  15-29                                               150-600 (3-12 ml)
+  < 15b                                               150-300 (3-6ml)
+a
+ Total døgndose bør fordeles på tre doser. Reduserte doser skal benyttes hos pasienter med nedsatt
+nyrefunksjon (kreatininclearance < 79 ml/min.).
+b
+  For pasienter med kreatininclearance < 15 ml/min., skal døgndosen reduseres proporsjonalt med
+kreatininclearance (f.eks. bør pasienter med en kreatininclearance på 7,5 ml/min. få halvparten av
+døgndosen som pasienter med en kreatininclearance på 15 ml/min får).
+
+Bruk hos pasienter som gjennomgår hemodialyse
+For pasienter med nyresvikt som får hemodialyse og som tidligere aldri har fått gabapentin, anbefales
+en startdose på 300 til 400 mg (6 ml-8 ml), deretter 200 til 300 mg (4 ml-6 ml) gabapentin etter hver
+4. time med hemodialyse. På dialysefrie dager skal det ikke gis gabapentin.
+
+For pasienter med nedsatt nyrefunksjon som får hemodialyse, bør vedlikeholdsdosen med gabapentin
+være basert på doseringsanbefalingene i tabell 2. I tillegg til vedlikeholdsdosen anbefales en ekstra
+dose på 200 til 300 mg (4 ml-6 ml) etter hver 4. time med hemodialyse.
+
+Administrasjonsmåte
+
+Til oral bruk.
+
+Gabapentin kan tas med eller uten mat.
+
+Kun egnet for administrasjon via nasogastrisk (NG) sonde eller perkutan endoskopisk gastronomi
+(PEG)-sonde. For mer informasjon, se pkt. 6.6.
+
+For doser som ikke er praktisk mulig med dette legemidlet, er andre legemiddelformer og produkter
+tilgjengelige.
+
+4.3   Kontraindikasjoner
+
+Overfølsomhet overfor virkestoffet eller overfor hjelpestoffene listet opp i pkt. 6.1.
+
+4.4   Advarsler og forsiktighetsregler
+
+Alvorlige kutane bivirkninger (SCARs)
+Alvorlige kutane bivirkninger (SCARs) inkludert Stevens-Johnsons syndrom (SJS), toksisk
+epidermal nekrolyse (TEN) og legemiddelutslett med eosinofili og systemiske symptomer
+(DRESS), som kan være livstruende eller dødelige, har blitt rapportert i forbindelse med
+gabapentinbehandling. Ved foreskrivning skal pasienter informeres om tegn og symptomer og
+overvåkes nøye for hudreaksjoner. Hvis det forekommer tegn og symptomer som tyder på disse
+reaksjonene, skal gabapentin seponeres umiddelbart og alternativ behandling vurderes (etter
+behov).
+
+
+                                                    3
+Dersom pasienten har utviklet en alvorlig reaksjon som SJS, TEN eller DRESS ved bruk av
+gabapentin, må behandling med gabapentin ikke startes opp igjen hos pasienten på noe
+tidspunkt.
+
+Anafylaksi
+Gabapentin kan forårsake anafylaksi. Tegn og symptomer i rapporterte tilfeller omfatter blant annet
+pustevansker, opphovning av lepper, hals og tunge, og hypotensjon som krever akutt behandling.
+Pasienter skal instrueres om å seponere gabapentin og umiddelbart søke medisinsk hjelp dersom de
+opplever tegn eller symptomer på anafylaksi (se pkt. 4.8).
+
+Selvmordstanker og selvmordsrelatert atferd
+Selvmordstanker og selvmordsrelatert atferd er rapportert hos pasienter behandlet med antiepileptika
+ved flere indikasjoner. En metaanalyse av randomiserte placebokontrollerte studier av antiepileptika
+har også vist en lett økning av selvmordstanker og selvmordsrelatert atferd. Mekanismen bak denne
+risikoen er ikke kjent. Erfaringer etter markedsføring har vist tilfeller av selvmordstanker og
+selvmordsrelatert atferd hos pasienter behandlet med gabapentin (se pkt. 4.8).
+
+Pasienter skal derfor overvåkes for tegn på selvmordstanker og selvmordsrelatert atferd, og nødvendig
+behandling skal vurderes. Pasienter (og pårørende) bør oppfordres til å kontakte medisinsk hjelp
+dersom tegn på selvmordstanker eller selvmordsrelatert adferd oppstår. Det bør vurderes å avbryte
+behandling med gabapentin ved tegn på selvmordstanker og selvmordsrelatert atferd.
+
+Akutt pankreatitt
+Hvis en pasient utvikler akutt pankreatitt under behandling med gabapentin, bør seponering av
+gabapentin vurderes (se pkt. 4.8).
+
+Epileptiske anfall
+Selv om det ikke finnes holdepunkter for tilbakefall av epileptiske anfall med gabapentin, kan brå
+seponering av antikonvulsiva hos epileptiske pasienter utløse status epilepticus (se pkt. 4.2). I likhet
+med andre antiepileptika, kan enkelte pasienter oppleve en økning i anfallshyppighet eller nye typer
+anfall med gabapentin.
+
+Hos behandlingsresistente pasienter, som bruker mer enn ett antiepileptikum, har forsøk på å seponere
+samtidig administrerte antiepileptika for å oppnå monoterapi med gabapentin liten suksess.
+Tilsvarende gjelder for andre antiepileptika.
+
+Gabapentin anses ikke som effektivt mot primære generaliserte anfall, for eksempel absenser, og kan
+hos enkelte pasienter forverre disse anfallene. Gabapentin skal derfor brukes med forsiktighet hos
+pasienter med blandede anfall, inkludert absenser.
+
+Gabapentinbehandling er forbundet med svimmelhet og søvnighet, som kan øke forekomsten av
+utilsiktede skader (fall). Etter markedsføring er det også rapportert forvirring, tap av bevissthet og
+nedsatt mental kapasitet. Pasienter skal derfor rådes om å være forsiktige inntil de er kjent med de
+potensielle effektene av legemidlet.
+
+Samtidig bruk med opioider og andre CNS-dempende legemidler
+Pasienter som trenger samtidig behandling med legemidler som har en dempende effekt på
+sentralnervesystemet (CNS), inkludert opioider, skal observeres nøye for tegn på depresjon av
+sentralnervesystemet (CNS), som søvnighet, sedasjon og respirasjonsdepresjon. Pasienter som bruker
+gabapentin og morfin samtidig kan få økte konsentrasjoner av gabapentin. Dosen av gabapentin eller
+CNS-dempende legemidler (inkludert opioider) bør reduseres til et hensiktsmessig nivå (se pkt. 4.5).
+
+Forsiktighet skal utvises ved forskriving av gabapentin samtidig med opioider på grunn av risiko for
+CNS-depresjon. I en populasjonsbasert, observerende nøstet kasus-kontrollstudie av opioidbrukere ble
+samtidig forskrivning av opioider og gabapentin forbundet med en økt risiko for opiodrelatert død
+sammenlignet med bruk av et opioid alene (justert oddsratio [aOR], 1,49 [95 % KI, 1,18 til 1,88,
+p < 0,001]).
+
+                                                    4
+Respirasjonsdepresjon
+Gabapentin har blitt forbundet med alvorlig respirasjonsdepresjon. Pasienter med nedsatt
+lungefunksjon, respiratorisk eller nevrologisk sykdom, nedsatt nyrefunksjon, samtidig bruk av
+CNS-depressive midler og eldre kan ha høyere risiko for å oppleve denne alvorlige bivirkningen.
+Dosejusteringer kan være nødvendig hos disse pasientene.
+
+Myasthenia gravis
+Gabapentin må brukes med forsiktighet hos pasienter med myasthenia gravis, da tilfeller av forverring
+av myasthenia gravis ved bruk av gabapentin har blitt rapportert etter markedsføring.
+
+Eldre (over 65 år)
+Det er ikke utført systematiske studier med gabapentin hos pasienter over 65 år. I en dobbeltblindet
+studie hos pasienter med nevropatiske smerter, forekom søvnighet, perifert ødem og asteni med noe
+større grad hos pasienter over 65 år, sammenlignet med yngre pasienter. Bortsett fra disse funnene
+tyder ikke kliniske studier på at gabapentin har en annen bivirkningsprofil i denne aldersgruppen enn
+det som er observert hos yngre pasienter.
+
+Pediatrisk populasjon
+Effektene av langtidsbehandling (mer enn 36 uker) med gabapentin på læring, intelligens og utvikling
+hos barn og ungdom, er ikke tilstrekkelig studert. Fordelene ved langtidsbehandling må derfor
+vurderes opp mot de mulige risikoene ved slik behandling.
+
+Misbruk, misbrukspotensial og avhengighet
+Gabapentin kan forårsake legemiddelavhengighet, som kan oppstå ved terapeutiske doser. Det har blitt
+rapportert om tilfeller av misbruk og tilsiktet feilbruk. Pasienter med rus-/legemiddelmisbruk i
+anamnesen kan ha høyere risiko for misbruk, tilsiktet feilbruk og avhengighet av gabapentin, og
+gabapentin skal brukes med forsiktighet hos slike pasienter. Før gabapentin foreskrives, skal
+pasientens risiko for misbruk, tilsiktet feilbruk og avhengighet vurderes nøye.
+
+Pasienter som behandles med gabapentin, skal overvåkes for symptomer på misbruk, tilsiktet
+feilbruk og avhengighet av gabapentin, som toleranseutvikling, doseeskalering og
+legemiddelsøkende atferd.
+
+Seponeringssymptomer
+Etter seponering eller dosereduksjon av korttids- og langtidsbehandling med gabapentin er det
+observert seponeringssymptomer (se pkt 4.8). Pasienten skal informeres om dette ved oppstart av
+behandlingen. Seponeringssymptomer kan oppstå kort tid etter seponering, vanligvis
+innen 48 timer. De hyppigst rapporterte symptomene inkluderer angst, søvnløshet, kvalme,
+smerter, svette, skjelving, hodepine, depresjon, føle seg unormal, svimmelhet og sykdomsfølelse.
+Forekomsten av seponeringssymptomer etter seponering av gabapentin kan indikere
+legemiddelavhengighet (se pkt. 4.8). Dersom gabapentin skal seponeres eller hvis dosen skal
+reduseres, anbefales det at dette gjøres gradvis over minst 1 uke uavhengig av indikasjonen (se
+pkt. 4.2).
+
+Laboratorietester
+Falskt positive resultater kan oppnås ved bruk av teststrimmelprøver ved semikvantitative
+bestemmelser av total mengde protein i urinen. Det er derfor anbefalt å bekrefte et slikt positivt
+resultat ved bruk av metoder basert på andre analyseprinsipper, for eksempel Biuretmetoden,
+turbidimetri eller fargebindingsmetoder. Eventuelt kan disse alternative metodene brukes fra start.
+
+Hjelpestoffer
+Metylparahydroksybenzoat (E 218) og etylparahydroksybenzoat (E 214): Kan forårsake
+allergiske reaksjoner (mulig forsinket).
+
+
+
+
+                                                  5
+Propylenglykol (E 1520): Dette legemidlet inneholder 17,2 mg/ml propylenglykol. Samtidig
+administrering med et hvilket som helst substrat for alkoholdehydrogenase som etanol kan indusere
+alvorlige bivirkninger hos nyfødte.
+
+Natrium: Dette legemidlet inneholder mindre enn 1 mmol natrium (23 mg) i hver dose (300 mg
+gabapentin), og er så godt som “natriumfritt”.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Det finnes spontane og publiserte rapporter om respirasjonsdepresjon, sedasjon og død forbundet med
+bruk av gabapentin når det tas samtidig med CNS-dempende midler, inkludert opioider. I enkelte av
+disse rapportene ble det vurdert av forfatterne å være en spesiell risiko knyttet til kombinasjonen av
+gabapentin og opioider svake pasienter, hos eldre, pasienter med alvorlige underliggende
+respirasjonssykdommer, med polyfarmasi og hos personer med lidelser knyttet til rusmisbruk.
+
+I en studie som involverte friske frivillige (N=12), der en 60 mg morfinkapsel med modifisert
+frisetting ble gitt 2 timer før en 600 mg gabapentinkapsel, økte gjennomsnittlig AUC for gabapentin
+med 44 %, sammenlignet med gabapentin gitt uten morfin. Pasienter som får samtidig behandling med
+opioider skal derfor observeres nøye for tegn på CNS-depresjon, som for eksempel søvnighet,
+sedasjon og respirasjonsdepresjon, og gabapentin- eller opioiddosen skal reduseres ved behov.
+
+Det er ikke observert interaksjon mellom gabapentin og fenobarbital, fenytoin, valproinsyre eller
+karbamazepin.
+
+Farmakokinetikken til gabapentin ved steady-state er lik hos friske frivillige og pasienter med epilepsi
+som får slike antiepileptika.
+
+Samtidig administrasjon av gabapentin og p-piller som inneholder noretindron og/eller etinyløstradiol,
+påvirker ikke farmakokinetikken ved steady-state for noen av disse.
+
+Samtidig administrasjon av gabapentin og antacida som inneholder aluminium og magnesium
+reduserer biotilgjengeligheten til gabapentin opptil 24 %. Det er anbefalt at gabapentin tas tidligst
+2 timer etter administrasjon av antacida.
+
+Renal utskillelse av gabapentin påvirkes ikke av probenecid.
+
+En lett reduksjon av renal utskillelse av gabapentin som er observert ved samtidig administrasjon med
+cimetidin, forventes ikke å ha klinisk relevans.
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet
+Risiko forbundet med epilepsi og antiepileptika generelt
+Det bør gis råd fra spesialist om den potensielle risikoen for et foster forårsaket av både anfall og
+antiepileptisk behandling til kvinner i fertil alder, spesielt til kvinner som planlegger å bli gravide og
+gravide kvinner. Behovet for antiepileptisk behandling bør vurderes når en kvinner planlegger å bli
+gravid. Hos kvinner som behandles for epilepsi kan brå seponering av antiepileptisk behandling føre
+til gjennombruddsanfall, som kan ha alvorlige konsekvenser for både mor og barn. Monoterapi bør
+foretrekkes når mulig fordi behandling med flere antiepileptika kan assosieres med høyere risiko for
+medfødte misdannelser enn monoterapi, avhengig av hvilket antiepileptika som brukes.
+
+Risiko forbundet med gabapentin
+Gabapentin krysser placentabarrieren.
+
+Data fra en Nordisk observasjonsstudie av mer enn 1700 graviditeter eksponert for gabapentin i første
+trimester viste ikke høyere risiko for alvorlige medfødte misdannelser bland barna som ble eksponert
+for gabapentin sammenlignet med barn som ikke ble eksponert og sammenlignet med barna som ble
+
+                                                     6
+eksponert for pregabalin, lamotrigin og pregabalin eller lamotrigin. På samme måte ble det ikke
+observert noen økt risiko for nevrologiske utviklingsforstyrrelser hos barn utsatt for gabapentin under
+graviditet.
+
+Det var begrenset data på en høyere risiko for lav fødselsvekt og for tidlig fødsel, men ikke av
+dødfødsel, liten for svangerskapsalder, lav Apgar-score etter 5 minutter og mikrokefali hos nyfødte fra
+kvinner utsatt for gabapentin.
+
+Dyrestudier har vist reproduksjonstoksiske effekter (se punkt 5.3).
+
+Gabapentin kan brukes under første trimester hos gravide kvinner hvis klinisk nødvendig.
+
+Neonatalt abstinenssyndrom har blitt rapportert hos nyfødte eksponert in utero for gabapentin.
+Samtidig eksponering for gabapentin og opioider under graviditet kan øke risikoen for neonatalt
+abstinenssyndrom. Nyfødte skal overvåkes nøye.
+
+Amming
+Gabapentin blir skilt ut i morsmelk hos mennesker. Siden påvirkning av det diende barnet er ukjent,
+skal forsiktighet utvises når gabapentin gis til ammende mødre. Gabapentin skal kun brukes av
+ammende mødre hvis fordelen klart oppveier risikoen.
+
+Fertilitet
+Dyrestudier indikerer ingen effekt på fertilitet (se pkt. 5.3).
+Det er ingen data på effekten av gabapentin på fertilitet hos mennesker.
+
+4.7   Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+Gabapentin har liten eller moderat påvirkning på evnen til å kjøre bil og bruke maskiner. Gabapentin
+påvirker sentralnervesystemet og kan forårsake søvnighet, svimmelhet eller andre relaterte
+symptomer. Selv om den eventuelle påvirkningen er av liten eller moderat grad, kan disse
+bivirkningene være potensielt farlige for pasienter som kjører eller bruker maskiner. Dette gjelder
+spesielt i begynnelsen av behandlingen og etter doseøkninger.
+
+4.8   Bivirkninger
+
+Bivirkninger som er observert under kliniske studier utført ved epilepsi (adjuvant og monoterapi) og
+nevropatisk smerte er presentert i en samlet liste under etter gruppering og frekvens svært vanlige
+(≥1/10); vanlige (≥1/100 til <1/10); mindre vanlige (≥1/1 000 til <1/100); sjeldne (≥1/10 000 til
+<1/1 000); svært sjeldne (<1/10 000). Der en bivirkning er observert med ulik frekvens i kliniske
+studier er den oppført under den høyest rapporterte frekvens.
+
+I tillegg er det rapportert om reaksjoner etter markedsføringstidspunktet og disse er satt inn som ikke
+kjent (kan ikke anslås ut ifra tilgjengelig data) i kursivskrift i listen nedenfor.
+
+Innenfor hver frekvensgruppering er bivirkninger presentert etter synkende alvorlighetsgrad.
+
+ Organklassesystem Bivirkning
+ Infeksiøse og parasittære sykdommer
+ Svært vanlige         Virusinfeksjoner
+ Vanlige               Pneumoni, luftveisinfeksjon, urinveisinfeksjon, infeksjon,
+                       mellomørebetennelse
+ Sykdommer i blod og lymfatiske organer
+ Vanlige               Leukopeni
+ Ikke kjent            Trombocytopeni
+ Forstyrrelser i immunsystemet
+ Mindre vanlige        Allergiske reaksjoner (f.eks. urtikaria)
+
+
+                                                   7
+Ikke kjent            Hypersensitivitetssyndrom (inkludert systemiske reaksjoner slik som feber,
+                      utslett, hepatitt, lymfadenopati, eosinofili og eventuelt også andre tegn og
+                      symptomer), anafylaksi (se pkt. 4.4).
+Stoffskifte- og ernæringsbetingede sykdommer
+Vanlige               Anoreksi, økt appetitt
+Mindre vanlige        Hyperglykemi (oftest observert hos pasienter med diabetes)
+Sjeldne               Hypoglykemi (oftest observert hos pasienter med diabetes)
+Ikke kjent            Hyponatremi
+Psykiatriske lidelser
+Vanlige               Fiendtlighet, forvirring og følelsesmessig labilitet, depresjon, angst,
+                      nervøsitet, unormal tankegang
+Mindre vanlige        Agitasjon
+Ikke kjent            Selvmordstanker, hallusinasjoner, legemiddelavhengighet
+Nevrologiske sykdommer
+Svært vanlige         Somnolens, svimmelhet, ataksi
+Vanlige               Kramper, hyperkinesi, taleforstyrrelser, hukommelsestap, tremor, søvnløshet,
+                      hodepine, fornemmelse av prikking i huden, nedsatt berøringssans, unormal
+                      koordinasjon, nystagmus, forsterkede, nedsatte eller fraværende reflekser
+Mindre vanlige        Hypokinesi, mental svekkelse
+Sjeldne               Bevisstløshet
+Ikke kjent            Andre bevegelsesforstyrrelser (f.eks. choreoatetose, dyskinesi og dystoni)
+Øyesykdommer
+Vanlige               Synsforstyrrelser som synssvekkelse, dobbeltsyn
+Sykdommer i øre og labyrint
+Vanlige               Vertigo
+Ikke kjent            Tinnitus
+Hjertesykdommer
+Mindre vanlige        Palpitasjoner
+Karsykdommer
+Vanlige               Hypertensjon, vasodilatasjon
+Sykdommer i respirasjonsorganer, thorax og mediastinum
+Vanlige               Dyspné, bronkitt, faryngitt, hoste, rhinitt
+Sjeldne               Respirasjonsdepresjon
+Gastrointestinale sykdommer
+Vanlige               Oppkast, kvalme, tannmisdannelser, tannkjøttbetennelse, diaré, abdominal
+                      smerte, dyspepsi, forstoppelse, tørrhet i munn eller hals, flatulens
+Mindre vanlige        Dysfagi
+Ikke kjent            Pankreatitt
+Sykdommer i lever og galleveier
+Ikke kjent            Hepatitt, gulsott
+Hud- og underhudssykdommer
+Vanlige               Ansiktsødem, purpura, oftest beskrevet som blåmerker etter skade, utslett,
+                      pruritus, akne
+Ikke kjent            Stevens-Johnson syndrom, toksisk epidermal nekrolyse, legemiddel utslett
+                      med eosinofili og systemiske symptomer (se pkt. 4.4), erythema multiforme,
+                      angioødem, alopesi
+Sykdommer i muskler, bindevev og skjelett
+Vanlige               Artralgi, myalgi, ryggsmerter, muskelrykninger
+Ikke kjent            Rabdomyolyse, myoklonus, forverring av myasthenia gravis
+Sykdommer i nyre og urinveier
+Ikke kjent            Akutt nyresvikt, urininkontinens
+Lidelser i kjønnsorganer og brystsykdommer
+Vanlige               Impotens
+Ikke kjent            Brysthypertrofi, gynekomasti, seksuell dyfunksjon (inkluderer endringer i
+                      libido, ejakulasjonsproblemer og anorgasme)
+
+                                                8
+ Generelle lidelser og reaksjoner på administrasjonsstedet
+ Svært vanlige          Tretthet, feber
+ Vanlige                Perifert ødem, unormal gange, asteni, smerte, utilpasshet, influensasyndrom
+ Mindre vanlige         Generalisert ødem
+ Ikke kjent             Seponeringsreaksjoner*, brystsmerter. Plutselig uforklarlig død er
+                        rapportert uten at relasjonen til behandling med gabapentin er klarlagt.
+ Undersøkelser
+ Vanlige                Redusert antall hvite blodlegemer, vektøkning
+ Mindre vanlige         Forhøyede leverfunksjonsverdier SGOT (AST), SGPT (ALT) og bilirubin
+ Ikke kjent             Økt kreatin-fosfokinase i blodet
+ Skader, forgiftninger og komplikasjoner ved medisinske prosedyrer
+ Vanlige                Skade ved uhell, fraktur, hudavskrapning
+ Mindre vanlige         Fallulykke
+
+*Etter seponering, eller dosereduksjon av korttids- og langtidsbehandling med gabapentin er det
+observert seponeringssymptomer. Seponeringssymptomer kan oppstå kort tid etter seponering,
+vanligvis innen 48 timer. De hyppigst rapporterte symptomene inkluderer angst, søvnløshet, kvalme,
+smerter, svette, skjelving, hodepine, depresjon, føle seg unormal, svimmelhet og sykdomsfølelse (se
+pkt. 4.4). Forekomsten av seponeringssymptomer etter seponering av gabapentin kan indikere
+legemiddelavhengighet (se pkt. 4.8). Pasienten bør informeres om dette ved oppstart av behandlingen.
+Dersom gabapentin skal seponeres eller dosereduksjon, anbefales det at dette gjøres gradvis over
+minst 1 uke uavhengig av indikasjonen (se pkt. 4.2).
+
+Tilfeller av akutt pankreatitt er rapportert under behandling med gabapentin. Årsakssammenhengen
+med gabapentin er uklar (se pkt. 4.4).
+
+Hos pasienter som får behandling med hemodialyse ved terminal nyresvikt, er det blitt rapportert om
+myopati med økt nivå av kreatinkinase.
+
+Luftveisinfeksjoner, mellomørebetennelse, kramper og bronkitt er bare rapportert i kliniske studier hos
+barn. I tillegg ble aggressiv oppførsel og hyperkinesi rapportert hyppig i kliniske studier hos barn.
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til
+Direktoratet for medisinske produkter: www.dmp.no/meldeskjema.
+
+4.9   Overdosering
+
+Akutt livstruende toksisitet er ikke observert ved overdosering av gabapentin med opptil 49 g.
+Symptomer på overdosering er svimmelhet, dobbeltsyn, utydelig tale, døsighet, bevisstløshet, letargi
+og mild diaré. Alle pasienter ble fullstendig restituert etter støttende behandling. Redusert absorpsjon
+av gabapentin ved høyere doser kan begrense absorpsjonen ved tidspunktet for overdoseringen og
+derfor minimere toksisiteten ved overdoser.
+
+Overdose med gabapentin og spesielt ved kombinasjon med andre CNS-hemmende legemidler kan
+føre til koma.
+
+Erfaringsmessig er det ikke behov for hemodialyse selv om gabapentin kan fjernes på denne måten.
+Hemodialyse kan likevel være indisert hos pasienter med alvorlig nedsatt nyrefunksjon.
+
+Gabapentin dosert inntil 8000 mg/kg hos mus og rotter har ikke gitt grunnlag for å fastslå noen letal
+oral dose. Tegn på akutt toksisitet hos dyr inkluderte ataksi, anstrengt pusting, ptose, redusert aktivitet
+eller eksitasjon.
+
+
+
+                                                    9
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Andre analgetika og antipyretika, ATC-kode: N02BF01
+
+Virkningsmekanisme
+Gabapentin passerer lett inn i hjernen og forhindrer anfall i flere dyremodeller mot epilepsi.
+Gabapentin har ikke affinitet til hverken GABAA- eller GABAB-reseptorer, og endrer heller ikke
+metabolismen av GABA. Det binder seg ikke til andre nevrotransmittere i hjernen, og interagerer ikke
+med natriumkanaler. Gabapentin binder seg med høy affinitet til α2δ- (alfa-2-delta-) subenheten av
+spenningsavhengige kalsiumkanaler, og det er antatt at bindingen til α2δ-subenheten kan være
+medvirkende til at gabapentin har en forebyggende effekt på anfall hos dyr. Brede panelundersøkelser
+antyder ikke andre legemiddelmål enn α2δ.
+
+Resultater fra flere prekliniske modeller viser at den farmakologiske aktiviteten til gabapentin kan bli
+overført via binding til α2δ gjennom en reduksjon i utskillelse av eksitatoriske nevrotransmittere i
+regioner av sentralnervesystemet. Denne typen aktivitet kan danne grunnlaget for gabapentins
+anfallsforebyggende virkning. Betydningen disse ulike virkningene av gabapentin kan ha for den
+antiepileptiske effekten hos mennesker er ikke klarlagt.
+
+Gabapentin har også vist seg å være effektivt i flere prekliniske dyremodeller mot smerte. Spesifikk
+binding av gabapentin til α2δ-subenheten antas å resultere i flere ulike virkninger som kan være
+årsaken til den smertestillende virkningen i dyremodeller. Den smertestillende virkningen av
+gabapentin kan foregå både i ryggraden og i høyere hjernesentre gjennom interaksjon med
+nedadgående smertehemmende nervefibre. Betydningen av disse prekliniske egenskapene for den
+kliniske virkningen hos mennesker er ukjent.
+
+Klinisk effekt og sikkerhet
+En klinisk studie av adjuvant behandling av partielle epilepsianfall hos barn i alderen 3 til 12 år viste
+en numerisk, men ikke statistisk signifikant forskjell i 50 % responsfrekvens i favør av
+gabapentingruppen sammenliknet med placebo. Ytterligere post-hoc-analyser av responsfrekvenser
+mht. alder viste ingen statistisk signifikant effekt av alder, verken som kontinuerlig eller dikotom
+variabel (aldersgruppe 3-5 år og 6-12 år).
+
+Data fra denne ekstra post-hoc-analysen er oppsummert i tabellen nedenfor:
+
+  Respons (≥ 50 % forbedret) av behandling og alder MITT*-populasjon
+  Aldersgruppe             Placebo                  Gabapentin                 P-verdi
+  < 6 år                   4/21 (19,0 %)            4/17 (23,5 %)              0,7362
+  6-12 år                  17/99 (17,2 %)           20/96 (20,8 %)             0,5144
+* Den modifiserte Intention to treat-populasjonen var definert som alle pasienter som ble randomisert
+til studiemedisin som også hadde evaluerbare anfallsdagbøker i 28 dager i både baseline- og
+dobbeltblindede faser.
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+Maksimal plasmakonsentrasjon av gabapentin nås i løpet av 2 til 3 timer etter peroral administrasjon.
+Biotilgjengeligheten av gabapentin (fraksjon av absorbert dose) synes å reduseres ved økt dose.
+Absolutt biotilgjengelighet av en kapsel med 300 mg er ca. 60 %. Mat, inkludert fettrik diett, har ingen
+klinisk signifikant effekt på farmakokinetikken til gabapentin.
+
+Farmakokinetikken til gabapentin påvirkes ikke av gjentatt administrering. Selv om
+plasmakonsentrasjonen av gabapentin vanligvis lå mellom 2 mikrog/ml og 20 mikrog/ml i kliniske
+studier, kan ikke disse konsentrasjonene predikere sikkerhet og effekt. Farmakokinetiske parametere
+er oppført i tabell 3.
+
+                                                    10
+Tabell 3: Sammendrag av gabapentins gjennomsnittlige (% C.V.) farmakokinetiske parametere ved
+steady-state etter dosering hver 8. time.
+ Farmakokinetisk parameter                300 mg (N = 7)    400 mg (N = 14)        800 mg (N = 14)
+                                          Gj.sn. % C.V.     Gj.sn. % C.V.          Gj.sn.      % C.V.
+ Cmax (mikrog/ml)                         4,02    (24)      5,74      (38)         8,71        (29)
+ tmax (time)                              2,7     (18)      2,1       (54)         1,6         (76)
+ T1/2 (time)                              5,2     (12)      10,8      (89)         10,6        (41)
+ AUC (0-8) (mikrog•time/ml)               24,8    (24)      34,5      (34)         51,4        (27)
+ Ae% (%)                                  NA      NA        47,2      (25)         34,4        (37)
+Cmax = Maksimal steady-state plasmakonsentrasjon
+tmax = Tid til Cmax
+T1/2 = Halveringstid
+AUC(0-8) = Steady-state-areal under plasmakonsentrasjon-tidskurven fra 0 til 8 timer etter dosering
+Ae % = Prosentandel av dosen som skilles ut uforandret i urinen fra 0 til 8 timer etter dosering
+NA = Ikke tilgjengelig
+
+Distribusjon
+Gabapentin bindes ikke til plasmaproteiner, og har et distribusjonsvolum på 57,7 liter. Hos pasienter
+med epilepsi er gabapentinkonsentrasjoner i cerebrospinalvæske (CSF) ca. 20 % av korresponderende
+laveste plasmakonsentrasjon ved steady-state. Gabapentin er til stede i morsmelk hos ammende
+kvinner.
+
+Biotransformasjon
+Det finnes ingen holdepunkter for at gabapentin metaboliseres hos mennesker. Gabapentin induserer
+ikke de ulike oksidative enzymene i leveren som er ansvarlige for legemiddelmetabolisme.
+
+Eliminasjon
+Gabapentin utskilles uforandret og kun via renal ekskresjon. Halveringstiden for gabapentin er
+uavhengig av dose, og er gjennomsnittlig 5 til 7 timer.
+
+Hos eldre pasienter og pasienter med nedsatt nyrefunksjon, er plasmaclearance for gabapentin
+redusert. Eliminasjonshastighetskonstanten, plasmaclearance og renal clearance er direkte
+proporsjonale med kreatininclearance for gabapentin.
+
+Gabapentin kan fjernes fra plasma ved hemodialyse. Dosejustering anbefales for pasienter med
+redusert nyrefunksjon eller som gjennomgår hemodialyse (se pkt. 4.2).
+
+Farmakokinetikken til gabapentin hos barn ble fastslått hos 50 friske forsøkspersoner i alderen
+1 måned til 12 år. Generelt var plasmakonsentrasjonene av gabapentin hos barn > 5 år tilsvarende den
+hos voksne ved dosering basert på mg/kg.
+
+I en farmakokinetisk studie hos 24 friske pediatriske forsøkspersoner i alderen 1 måned til
+48 måneder, ble det observert ca. 30 % lavere eksponering (AUC), lavere Cmax og høyere clearance pr.
+kroppsvekt observert sammenlignet med tilgjengelige rapporterte data fra barn over 5 år.
+
+Linearitet/ikke-linearitet
+Biotilgjengeligheten av gabapentin (andel av absorbert dose) reduseres med økt dose, noe som fører til
+ikke-linearitet i forhold til farmakokinetiske parametere for biotilgjengelighet (F), f.eks. Ae %, CL/F,
+Vd/F. Eliminasjonsfarmakokinetikk (farmakokinetiske parametere som ikke inkluderer F, for
+eksempel CLr og T1/2), beskrives best ved lineær farmakokinetikk. Plasmakonsentrasjoner ved
+steady-state av gabapentin kan forutses fra enkeltdosedata.
+
+5.3   Prekliniske sikkerhetsdata
+
+Karsinogenitet
+
+                                                  11
+Gabapentin ble gitt i fôrblandingen til mus og rotter i to år ved doser på 200, 600 og 2000 mg/kg/døgn
+til mus og 250, 1000 og 2000 mg/kg/døgn til rotter. Det ble kun funnet en statistisk signifikant økning
+av forekomsten av tumorer i acinære celler i bukspyttkjertelen hos hannrotter ved den høyeste dosen.
+Maksimal plasmakonsentrasjon av legemidlet hos rotter ved dosen 2000 mg/kg/døgn er 10 ganger
+høyere enn plasmakonsentrasjonen hos mennesker ved dosering 3600 mg/døgn. Tumorene i acinære
+celler i bukspyttkjertelen hos hannrotter var av lavgradig malignitet og påvirket ikke overlevelsen.
+Tumorene metastaserte ikke og invaderte ikke omkringliggende vev, og var tilsvarende de sett i
+samtidige kontroller. Hvilken betydning tumorer i acinære celler i bukspyttkjertelen hos hannrotter har
+for karsinogen risiko hos mennesker, er ukjent.
+
+Mutagenese
+Gabapentin har ikke vist gentoksisk potensiale, og var ikke mutagent i in vitro-standardanalyser med
+bakterielle eller mammalske celler. Gabapentin induserte ikke strukturelle kromosomendringer i
+mammalske celler in vitro eller in vivo, og induserte ikke dannelse av mikrokjerner i benmargen hos
+hamstere.
+
+Nedsatt fertilitet
+Ingen bivirkninger er observert med hensyn til fertilitet eller reproduksjon hos rotter i doser opptil
+2000 mg/kg (ca. fem ganger den maksimale daglig dose for mennesker basert på mg/m2 av
+kroppsoverflateareal).
+
+Teratogenitet
+Gabapentin økte ikke forekomsten av misdannelser sammenlignet med kontroller hos avkommet til
+mus, rotter eller kaniner ved doser på henholdsvis opptil 50, 30 og 25 ganger den humane døgndosen
+på 3600 mg (henholdsvis fire, fem eller åtte ganger døgndosen hos mennesker basert på mg/m2).
+
+Gabapentin induserte forsinket ossifikasjon i hodeskallen, ryggraden og lemmer hos gnagere, noe som
+indikerer føtal vekstretardasjon. Disse effektene forekom når drektige mus fikk perorale doser på 1000
+eller 3000 mg/kg/døgn under organogenesen og hos rotter som fikk 2000 mg/kg før og under
+parringen og gjennom hele drektighetsperioden. Disse dosene er ca. 1 til 5 ganger høyere enn den
+humane dosen på 3600 mg basert på mg/m2.
+
+Ingen effekter ble observert når drektige mus fikk 500 mg/kg/døgn (omtrent 1/2 av den humane
+døgndosen basert på mg/m2).
+
+En økt forekomst av hydroureter og/eller hydronefrose ble observert når rotter fikk 2000 mg/kg/døgn i
+en studie av fertilitet og generell reproduksjon, 1500 mg/kg/døgn i en teratogenitetsstudie, og 500,
+1000 og 2000 mg/kg/døgn i en perinatal og postnatal studie. Betydningen av disse funnene er ukjent,
+men de er assosiert med forsinket utvikling. Disse dosene er også omtrent 1 til 5 ganger høyere enn
+den humane dosen på 3600 mg basert på mg/m2.
+
+I en teratogenitetsstudie hos kanin ble det observert økt forekomst av føtalt tap som oppstod hos
+drektige kaniner etter implantasjon ved doser på 60, 300 og 1500 mg/kg/døgn under organogenesen.
+Disse dosene er omtrent 0.3 til 8 ganger høyere enn den humane dosen på 3600 mg basert på mg/m2.
+Sikkerhetsmarginene er utilstrekkelige når det gjelder å utelukke risikoen av disse effektene hos
+mennesker.
+
+
+6.    FARMASØYTISKE OPPLYSNINGER
+
+6.1   Hjelpestoffer
+
+Acesulfamkalium (E 950)
+Sakkarinnatrium (E 954)
+Propylenglykol (E 1520)
+Metylparahydroksybenzoat (E 218)
+Etylparahydroksybenzoat (E 214)
+
+                                                   12
+Karmellosenatrium (E 466)
+Renset vann
+
+6.2   Uforlikeligheter
+
+Dette legemidlet skal ikke blandes med andre legemidler, da det ikke er gjort studier på uforlikelighet.
+
+6.3   Holdbarhet
+
+1 år.
+Kast legemiddelet 30 dager etter første åpning.
+
+6.4   Oppbevaringsbetingelser
+
+Oppbevares ved høyst 25 °C. Skal ikke oppbevares i kjøleskap eller fryses.
+
+For oppbevaringsbetingelser etter første åpning av pakningen, se pkt. 6.3.
+
+6.5   Emballasje (type og innhold)
+
+Flaske: Ph.Eur Type III Amber glass.
+
+Lukkemekanisme: Tuklesikker, barnesikker hvit plasthette som består av en innside av polypropylen,
+en ytterside av polyetylen og en ekspandert polyetylen (EPE) foring.
+
+Doseringsenhet: 10 ml oral polypropylen (PP) sprøyte med 0,5 ml gradering og en høydensitets
+polyetylen (HDPE) sprøyteadapter.
+
+Pakningsstørrelse: 1 x 150 ml.
+
+6.6   Spesielle forholdsregler for destruksjon og annen håndtering
+
+Ikke bruk dette legemidlet hvis du ser at oppløsningen blir misfarget eller viser tegn på forringelse.
+Søk råd fra apotek.
+
+Instruksjoner for administrasjon via nasogastrisk (NG) sonde eller perkutan endoskopisk gastronomi
+(PEG)-sonde.
+
+Shaktatin 50 mg/ml mikstur, oppløsning er egnet for bruk med følgende typer NG- eller PEG-sonder:
+ Materiale          Ytre diameter       Indre diameter       Maksimal lengde Anbefalt
+                    (Fr-enhet)          (mm)                                    skyllevolum
+ Silikon            6                   1,0 mm               125 cm for alle    15 ml
+                    8                   1,5 mm
+                    10                  2,0 mm
+ PVC                8                   1,5 mm               120 cm             15 ml
+                    12                  2,0 mm               92 cm
+                    18                  4,0 mm               100 cm
+ Polyuretan         8                   1,5 mm               100 cm for alle    15 ml
+                    12                  2,6 mm
+                    18                  4,0 mm
+
+Sørg for at den enterale ernæringssonden ikke er tett før administrering.
+
+1. Skyll den enterale sonden med vann med minimum skyllevolum. 15 ml for alle størrelser.
+2. Administrer dosen av Shaktatin 50 mg/ml mikstur, oppløsning med et egnet måleinstrument. Den
+   orale sprøyten som er inkludert i pakken er kun til bruk for pasienter som er i stand til å svelge
+   legemidlet. Helsepersonell må bruke et annen egnet instrument.
+
+                                                   13
+3. Skyll den enterale sonden med vann igjen, med minimum skyllevolum.
+
+Dette produktet skal kun administreres med NG- eller PEG-sonder av silikon, PVC eller polyuretan.
+
+Helsepersonell skal være klar over at med luftspyling er det en risiko for underdosering (opptil 50 %).
+Det anbefales derfor at det kun brukes vannspyling.
+
+Ikke anvendt legemiddel samt avfall bør destrueres i overensstemmelse med lokale krav.
+
+
+7.    INNEHAVER AV MARKEDSFØRINGSTILLATELSEN
+
+2care4 Generics ApS
+Stenhuggervej 12
+6710 Esbjerg V
+Danmark
+
+
+8.    MARKEDSFØRINGSTILLATELSESNUMMER (NUMRE)
+
+23-15846
+
+
+9.    DATO FOR FØRSTE MARKEDSFØRINGSTILLATELSE / SISTE FORNYELSE
+
+Dato for første markedsføringstillatelse: 23. april 2025
+Dato for siste fornyelse:
+
+
+10.   OPPDATERINGSDATO
+
+17.01.2026
+
+
+
+
+                                                   14
+

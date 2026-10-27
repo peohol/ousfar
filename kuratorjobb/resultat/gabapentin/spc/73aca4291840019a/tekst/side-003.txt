@@ -1,0 +1,61 @@
+                         ≥80                                        900-3600 (18 to 72 ml)
+                        50-79                                       600-1800 (12 to 36 ml)
+                        30-49                                        300-900 (6 to 18 ml)
+                        15-29                                        150-600 (3 to 12 ml)
+                            b                                         150-300 (3 to 6 ml)
+                        <15
+a
+  Total daglig dose bør fordeles på tre doser. Redusert dose er for pasienter med nedsatt nyrefunksjon
+(kreatinclearance < 79 ml/min).
+b
+  For pasienter med kreatinclearance <15 ml/min bør den daglige dosen reduseres i forhold til
+kreatinclearance (f.eks. bør pasienter med kreatinclearance på 7,5 ml/min få halv dose i forhold til
+pasienter med kreatinclearance på 15 ml/min).
+
+Bruk hos pasienter som gjennomgår hemodialyse
+Til anuriske pasienter som får hemodialyse og som tidligere aldri har fått gabapentin, anbefales det en
+startdose på 300 til 400 mg (6 til 8 ml), deretter 200 til 300 mg (4 til 6 ml) av gabapentin etter hver 4.
+time med hemodialyse. På dialysefrie dager skal det ikke gis gabapentin.
+
+For pasienter med nedsatt nyrefunksjon som får hemodialyse, bør vedlikeholdsdosen av gabapentin
+baseres på de doseanbefalinger som er gitt i Tabell 2. I tillegg til vedlikeholdsdosen er det anbefalt å gi
+ytterligere 200 til 300 mg (4 til 6 ml) etter hver 4. time med hemodialyse.
+
+Administrasjonsmåte
+Til oral bruk.
+Gabapentin kan tas med eller uten mat.
+For doser som ikke er praktisk mulig med dette legemidlet, er andre legemiddelformer og legemidler
+tilgjengelige.
+
+Notat
+Ved behov kan Neurisol administreres via intragastriske ernæringssonder (nasogastrisk (NG) eller
+perkutan endoskopisk gastrostomi (PEG) sonder). Sondene skal skylles to ganger med 10 ml vann
+umiddelbart etter administrering. For ytterligere informasjon, se pkt. 6.6.
+
+4.3   Kontraindikasjoner
+
+Overfølsomhet overfor virkestoffet eller overfor noen av hjelpestoffene listet opp i pkt. 6.1.
+
+4.4   Advarsler og forsiktighetsregler
+
+Alvorlige kutane bivirkninger (SCARs)
+Alvorlige kutane bivirkninger (SCARs) inkludert Stevens-Johnsons syndrom (SJS), toksisk epidermal
+nekrolyse (TEN) og legemiddelutslett med eosinofili og systemiske symptomer (DRESS), som kan
+være livstruende eller dødelige, har blitt rapportert i forbindelse med gabapentinbehandling. Ved
+foreskrivning bør pasienter informeres om tegn og symptomer og overvåkes nøye for hudreaksjoner.
+Hvis det forekommer tegn og symptomer som tyder på disse reaksjonene, skal gabapentin seponeres
+umiddelbart og alternativ behandling vurderes (etter behov).
+
+Dersom pasienten har utviklet en alvorlig reaksjon som SJS, TEN eller DRESS ved bruk av
+gabapentin, må behandling med gabapentin ikke startes opp igjen hos pasienten på noe tidspunkt.
+
+Anafylaksi
+Gabapentin kan forårsake anafylaksi. I rapporterte tilfeller har tegn og symptomer på anafylaksi
+inkludert pustevansker, hevelse i lepper, hals og tunge, og hypotensjon som krever akutt behandling.
+Pasienter skal instrueres til å avbryte behandling med gabapentin og søke øyeblikkelig medisinsk hjelp
+dersom de opplever tegn eller symptomer på anafylaksi (se punkt 4.8).
+
+Selvmordstanker og selvmordsrelatert adferd
+Selvmordstanker og selvmordsrelatert adferd er rapportert hos pasienter behandlet med antiepileptiske
+legemidler for flere indikasjoner. En meta-analyse av randomiserte placebokontrollerte forsøk med
+                                                    3

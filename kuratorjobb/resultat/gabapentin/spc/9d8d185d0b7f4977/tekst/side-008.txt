@@ -1,0 +1,57 @@
+Ikke kjent            Hypersensitivitetssyndrom (inkludert systemiske reaksjoner slik som feber,
+                      utslett, hepatitt, lymfadenopati, eosinofili og eventuelt også andre tegn og
+                      symptomer), anafylaksi (se pkt. 4.4).
+Stoffskifte- og ernæringsbetingede sykdommer
+Vanlige               Anoreksi, økt appetitt
+Mindre vanlige        Hyperglykemi (oftest observert hos pasienter med diabetes)
+Sjeldne               Hypoglykemi (oftest observert hos pasienter med diabetes)
+Ikke kjent            Hyponatremi
+Psykiatriske lidelser
+Vanlige               Fiendtlighet, forvirring og følelsesmessig labilitet, depresjon, angst,
+                      nervøsitet, unormal tankegang
+Mindre vanlige        Agitasjon
+Ikke kjent            Selvmordstanker, hallusinasjoner, legemiddelavhengighet
+Nevrologiske sykdommer
+Svært vanlige         Somnolens, svimmelhet, ataksi
+Vanlige               Kramper, hyperkinesi, taleforstyrrelser, hukommelsestap, tremor, søvnløshet,
+                      hodepine, fornemmelse av prikking i huden, nedsatt berøringssans, unormal
+                      koordinasjon, nystagmus, forsterkede, nedsatte eller fraværende reflekser
+Mindre vanlige        Hypokinesi, mental svekkelse
+Sjeldne               Bevisstløshet
+Ikke kjent            Andre bevegelsesforstyrrelser (f.eks. choreoatetose, dyskinesi og dystoni)
+Øyesykdommer
+Vanlige               Synsforstyrrelser som synssvekkelse, dobbeltsyn
+Sykdommer i øre og labyrint
+Vanlige               Vertigo
+Ikke kjent            Tinnitus
+Hjertesykdommer
+Mindre vanlige        Palpitasjoner
+Karsykdommer
+Vanlige               Hypertensjon, vasodilatasjon
+Sykdommer i respirasjonsorganer, thorax og mediastinum
+Vanlige               Dyspné, bronkitt, faryngitt, hoste, rhinitt
+Sjeldne               Respirasjonsdepresjon
+Gastrointestinale sykdommer
+Vanlige               Oppkast, kvalme, tannmisdannelser, tannkjøttbetennelse, diaré, abdominal
+                      smerte, dyspepsi, forstoppelse, tørrhet i munn eller hals, flatulens
+Mindre vanlige        Dysfagi
+Ikke kjent            Pankreatitt
+Sykdommer i lever og galleveier
+Ikke kjent            Hepatitt, gulsott
+Hud- og underhudssykdommer
+Vanlige               Ansiktsødem, purpura, oftest beskrevet som blåmerker etter skade, utslett,
+                      pruritus, akne
+Ikke kjent            Stevens-Johnson syndrom, toksisk epidermal nekrolyse, legemiddel utslett
+                      med eosinofili og systemiske symptomer (se pkt. 4.4), erythema multiforme,
+                      angioødem, alopesi
+Sykdommer i muskler, bindevev og skjelett
+Vanlige               Artralgi, myalgi, ryggsmerter, muskelrykninger
+Ikke kjent            Rabdomyolyse, myoklonus, forverring av myasthenia gravis
+Sykdommer i nyre og urinveier
+Ikke kjent            Akutt nyresvikt, urininkontinens
+Lidelser i kjønnsorganer og brystsykdommer
+Vanlige               Impotens
+Ikke kjent            Brysthypertrofi, gynekomasti, seksuell dyfunksjon (inkluderer endringer i
+                      libido, ejakulasjonsproblemer og anorgasme)
+
+                                                8

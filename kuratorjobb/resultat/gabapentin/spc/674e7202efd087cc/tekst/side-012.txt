@@ -1,0 +1,59 @@
+  Tabell 3
+  SAMMENDRAG AV GABAPENTINS GJENNOMSNITTLIGE (% C.V.) STEADY-STATE
+  FARMAKOKINETISKE PARAMETERE ETTER DOSERING HVER 8. TIME.
+  Farmakokinetisk                 300 mg                     400 mg                        800 mg
+  parameter                       (N = 7)                    (N=14)                        (N=14)
+                                Gj.snitt % C.V.        Gj.snitt % C.V.               Gj.snitt % C.V.
+  Cmax (g/ml)                  4,02 (24)                  5,74 (38)                    8,71 (29)
+  tmax (time)                   2,7 (18)                   2,1 (54)                      1,6    (76)
+  t1/2 (time)                   5,2 (12)                   10,8 (89)                    10,6 (41)
+  AUC (0-8) g•time/ml)         24,8 (24)                  34,5 (34)                    51,4 (27)
+  Ae%                            -       -                 47,2 (26)                    34,4     (37)
+Cmax = Maksimal steady-state plasmakonsentrasjon
+tmax = Tid for Cmax
+t1/2 = Eliminasjonshalveringstiden
+AUC 0-8 = Steady-state område under plasmakonsentrasjons-tidskurven fra perioden 0 til 8 timer etter
+dosering
+Ae % = Prosent av dosen som skilles ut uforandret i urin fra perioden 0 til 8 timer etter dosering
+ - = ikke tilgjengelig
+
+Distribusjon
+
+Gabapentin bindes ikke til plasmaproteiner og har et distribusjonsvolum svarende til 57,7 liter. Hos
+pasienter med epilepsi er gabapentinkonsentrasjonen i cerebrospinalvæsken (CSF) ca. 20 % av
+korresponderende laveste plasmakonsentrasjon ved steady-state. Gabapentin er til stede i brystmelk
+hos ammende kvinner.
+
+Biotransformasjon
+
+Det finnes ikke holdepunkter for at gabapentin metaboliseres hos mennesker. Gabapentin induserer
+ikke de ulike oksidative enzymene i leveren som er ansvarlig for legemiddelmetabolisme.
+
+Eliminasjon
+
+Gabapentin utskilles uforandret og kun gjennom renal ekskresjon. Eliminasjonshalveringstiden for
+gabapentin er uavhengig av dose og er gjennomsnittlig 5 til 7 timer.
+
+Hos eldre pasienter og pasienter med nedsatt nyrefunksjon er plasmaclearance for gabapentin redusert.
+Eliminasjonshastighetskonstanten, plasmaclearance og renal clearance er direkte proporsjonale med
+kreatinclearance for gabapentin.
+
+Gabapentin kan fjernes fra plasma ved hemodialyse. Dosejustering anbefales for pasienter med nedsatt
+nyrefunksjon eller som gjennomgår hemodialyse (se pkt. 4.2).
+
+Gabapentins farmakokinetikk hos barn ble undersøkt hos 50 friske individer i alderen 1 måned til 12
+år. Generelt var plasmakonsentrasjonen av gabapentin hos barn > 5 år tilsvarende den hos voksne ved
+dosering basert på mg/kg.
+I en farmakokinetisk studie med 24 friske individer i alderen 1 måned til 48 måneder ble det observert
+ca 30 % lavere eksponering (AUC), lavere Cmax og høyere clearance per kg kroppsvekt sammenlignet
+med data tilgjengelig hos barn eldre enn 5 år.
+
+Linearitet/ikke-linearitet
+
+Biotilgjengeligheten av gabapentin (andel av absorbert dose) reduseres med økt dose, noe som
+indikerer ikke-linearitet i forhold til farmakokinetiske parametere som parametere for
+biotilgjengelighet (F) f.eks. Ae %, CL/F, Vd/F. Elimineringsfarmakokinetikk (farmokokinetiske
+parametere som ikke inkluderer F slik som CLr og T1/2), beskrives best ved lineær farmakokinetikk.
+Plasmakonsentrasjoner ved steady-state av gabapentin er forutsigbare ut fra enkeltdosedata.
+
+                                                   12
