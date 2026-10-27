@@ -1,6 +1,6 @@
 # Kurateringskøen
 
-Oppdatert 2026-10-27T08:41:41.221Z. Stoffene sist lest fra databasen 2026-10-27T01:45:38.675Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-10-27T09:37:19.552Z. Stoffene sist lest fra databasen 2026-10-27T01:45:38.675Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
 Klar: 76 · Publisert: 16 · Blokkert: 8 · Utenfor køen: 1
 
@@ -15,13 +15,13 @@ Ingen kurateringer venter.
 ## Blokkert
 
 - **etanol**: Stoffet har ingen publisert fagside å kuratere.
-- **ketamin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.
+- **ketamin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.
 - **kokain**: Stoffet har ingen publisert fagside å kuratere.
-- **litium**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.
+- **litium**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.
 - **mdma**: Stoffet har ingen publisert fagside å kuratere.
 - **metamfetamin**: Stoffet har ingen publisert fagside å kuratere.
 - **okskarbazepin**: Skrivefasen stoppet av et automatisk sikkerhetsfilter; venter på avgjørelse fra fagansvarlig.
-- **tapentadol**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.
+- **tapentadol**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.
 
 ## Køen
 
