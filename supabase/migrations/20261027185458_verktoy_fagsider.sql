@@ -1,5 +1,5 @@
 -- Nye fagsider uten faginnhold
-select intern.endring_start('claude-code', '20261027185458_verktoy_fagsider.sql', 'Nye fagsider uten faginnhold (16)');
+select intern.endring_start('claude-code', '20261027185458_verktoy_fagsider.sql', 'Nye fagsider uten faginnhold (16)', array['https://github.com/peohol/ousfar/pull/280']::text[]);
 do $fagsider$
 declare
   administrator uuid;

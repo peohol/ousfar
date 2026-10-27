@@ -50,7 +50,7 @@ Statusene er **Ikke startet / Pågår / Til faglig kontroll / Blokkert / Ferdig*
 | --- | --- | --- | --- | --- | --- |
 | P0 | Plan og avgrensning | ChatGPT | – | **Ferdig** | Dette dokumentet, 27.10.2026 |
 | P1 | Virkestoff- og FEST-kartlegging | Claude | ChatGPT (utvalg) | Ferdig – godkjent 27.10.2026 | `docs/verktøy-p1-kartlegging.md`, PR #279 |
-| P2 | Manglende fagsider og FEST-koblinger | Claude | ChatGPT (avvik) | Til faglig kontroll | `src/verktoy/fagsider.ts`, PR #PRNR |
+| P2 | Manglende fagsider og FEST-koblinger | Claude | ChatGPT (avvik) | Til faglig kontroll | `src/verktoy/fagsider.ts`, PR #280 |
 | P3 | Komplett og lovlig kildeimport | Claude | ChatGPT (deknings- og stikkprøvekontroll) | Ikke startet | – |
 | P4 | Faglig regelmodell og kontrollert pilotsett | Claude | **ChatGPT – sperrende** | Ikke startet | – |
 | P5 | Felles dose- og planmotor med FEST | Claude | **ChatGPT – kliniske testtilfeller** | Ikke startet | – |
@@ -271,7 +271,7 @@ Før en oppgave eller fase krysses av:
 | 27.10.2026 | P0.1–P0.3 | Plan og ansvarsdeling fastlagt; johannesurt eksplisitt ekskludert | Ingen kildedata eller kode er importert/implementert gjennom denne planoppgaven |
 | 27.10.2026 | P1.1–P1.7 | Kartlegging, øyeblikksbilder, rapport og tester, PR #279. Kilder: Psychiatrienet (revisjon 10184 / 10673 / 10641, hentet 27.10.2026), FEST-uttrekk 08.10.2026, fagsidene i produksjon 27.10.2026. `npm test` og `npm run build` grønne | Venter på ChatGPTs kontroll av utvalget og de uavklarte punktene i rapporten. Ingen fagsider, anbefalingstekster eller regler er laget |
 | 27.10.2026 | P1 godkjent | ChatGPT kontrollerte PR #279 faglig; squash-merget (8df6f91). P1 er ferdig | De uavklarte punktene i rapporten følges opp i fasene de hører til (Stop-lenker i P3/P5, depot i P10) |
-| 27.10.2026 | P2.1–P2.5 | 16 fagsider uten faginnhold, FEST-koblinger og søkealiaser, PR #PRNR. `npm test` og `npm run build` grønne | Venter på ChatGPTs kontroll, særlig kategoriplasseringen i stoffregisteret og de seks stoffene uten preparater i FEST. Sidene finnes i produksjon først når PR-en er slått sammen |
+| 27.10.2026 | P2.1–P2.5 | 16 fagsider uten faginnhold, FEST-koblinger og søkealiaser, PR #280. `npm test` og `npm run build` grønne | Venter på ChatGPTs kontroll, særlig kategoriplasseringen i stoffregisteret og de seks stoffene uten preparater i FEST. Sidene finnes i produksjon først når PR-en er slått sammen |
 
 ## 8. Startoppdrag til Claude Code
 
