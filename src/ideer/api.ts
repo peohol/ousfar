@@ -101,6 +101,19 @@ export async function frigiOppgave(id: string): Promise<void> {
   sjekk(await klient().rpc('frigi_oppgave', { oppgave: id }))
 }
 
+/**
+ * Oppgaven er gjort uten at en agent tok den fra køen. Versjonen er føringen i
+ * endringsloggen der det står hva som ble gjort, eller `null` når den ikke har noen.
+ */
+export async function merkOppgaveUtfort(id: string, endringslogg: string | null): Promise<void> {
+  sjekk(await klient().rpc('merk_oppgave_utfort', { oppgave: id, endringslogg }))
+}
+
+/** En oppgave som er merket utført i appen, får statusen den hadde tilbake. */
+export async function angreOppgaveUtfort(id: string): Promise<void> {
+  sjekk(await klient().rpc('angre_oppgave_utfort', { oppgave: id }))
+}
+
 export interface Ideinnhold {
   kategori: Idekategori
   tittel: string

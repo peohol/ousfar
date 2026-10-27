@@ -1,7 +1,16 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { useAutoerstattFelt } from '../../autoerstatt/felt'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
-import { flyttOppgaveTilbake, frigiOppgave, hentOppgave, lagreOppgave, settOppgaveKlar } from '../../ideer/api'
+import { ENDRINGSLOGG } from '../../data/endringslogg'
+import {
+  angreOppgaveUtfort,
+  flyttOppgaveTilbake,
+  frigiOppgave,
+  hentOppgave,
+  lagreOppgave,
+  merkOppgaveUtfort,
+  settOppgaveKlar,
+} from '../../ideer/api'
 import { oppgavekode } from '../../ideer/modell'
 import { TITTEL_MEST } from '../../traad/modell'
 import { PROMPT_MEST, iEndringsloggen, type Oppgavedetaljer } from '../../ideer/oppgaver'
@@ -29,6 +38,10 @@ import type { Skjemastatus } from './useForlatvakt'
  * Mens en agent håndterer oppgaven, kan den ikke endres. En administrator kan
  * frigi den, så den blir klar igjen. En utført oppgave har en knapp til
  * føringen i endringsloggen, og kan ikke endres.
+ *
+ * Er oppgaven gjort uten at en agent tok den fra køen, kan en administrator
+ * merke den utført selv, med føringen i endringsloggen eller uten, og gjøre
+ * det om igjen. En oppgave en agent har merket utført, står.
  */
 export function Oppgaveside({
   id,
@@ -109,6 +122,8 @@ export function Oppgaveside({
   const handteres = oppgave.status === 'haandteres'
   const redigerer = admin && !utfort && !handteres
   const publisert = iEndringsloggen(oppgave.endringslogg)
+  const kanGjoresOm = admin && oppgave.merket_utfort
+  const merkUtfort = (versjon: string | null) => utfor(() => merkOppgaveUtfort(oppgave.id, versjon))
 
   return (
     <article className="ideside oppgaveside" aria-labelledby={`oppgave-${oppgave.id}`}>
@@ -157,15 +172,28 @@ export function Oppgaveside({
           <Ikon navn="done" storrelse="ui" />
           <p>
             <strong>Utført{oppgave.nummer !== null && ` som ${oppgavekode(oppgave.nummer)}`}.</strong>{' '}
-            {publisert
-              ? 'Endringsloggen sier hva som ble gjort.'
-              : `Føringen i endringsloggen (versjon ${oppgave.endringslogg}) er ikke publisert ennå.`}
+            {oppgave.merket_utfort && 'Merket utført av en administrator. '}
+            {oppgave.endringslogg === null
+              ? 'Den har ingen føring i endringsloggen.'
+              : publisert
+                ? 'Endringsloggen sier hva som ble gjort.'
+                : `Føringen i endringsloggen (versjon ${oppgave.endringslogg}) er ikke publisert ennå.`}
           </p>
-          {publisert && (
+          {(publisert || kanGjoresOm) && (
             <div className="idemerknad__handlinger">
-              <Button variant="kant" icon={<Ikon navn="history" storrelse="ui" />} onClick={() => visEndringslogg(oppgave.endringslogg)}>
-                Se i endringsloggen
-              </Button>
+              {publisert && (
+                <Button variant="kant" icon={<Ikon navn="history" storrelse="ui" />} onClick={() => visEndringslogg(oppgave.endringslogg)}>
+                  Se i endringsloggen
+                </Button>
+              )}
+              {kanGjoresOm && (
+                <Bekreftknapp
+                  ikon="reset"
+                  tekst="Ikke utført likevel"
+                  bekreftTekst="Bekreft: ikke utført likevel"
+                  onBekreft={() => void utfor(() => angreOppgaveUtfort(oppgave.id))}
+                />
+              )}
             </div>
           )}
         </div>
@@ -177,7 +205,7 @@ export function Oppgaveside({
           <p>
             <strong>Håndteres nå av en agent.</strong> Oppgaven kan ikke endres imens.
             {oppgave.nummer !== null && ` En avbrutt økt fortsetter med /utfor-oppgaver ${oppgavekode(oppgave.nummer)}.`}
-            {admin && ' Er agenten stoppet, kan du frigi oppgaven, så den blir klar igjen.'}
+            {admin && ' Er agenten stoppet, kan du frigi oppgaven, så den blir klar igjen, eller merke den utført om arbeidet er gjort.'}
           </p>
           {admin && (
             <div className="idemerknad__handlinger">
@@ -187,6 +215,7 @@ export function Oppgaveside({
                 bekreftTekst="Bekreft: frigi oppgaven"
                 onBekreft={() => void utfor(() => frigiOppgave(oppgave.id))}
               />
+              <MerkUtfort oppgave={oppgave.id} disabled={arbeider} onMerk={merkUtfort} />
             </div>
           )}
         </div>
@@ -246,6 +275,12 @@ export function Oppgaveside({
               })
             }
           />
+          <MerkUtfort
+            oppgave={oppgave.id}
+            disabled={arbeider || skjemastatus !== 'uendret'}
+            hindring={skjemastatus !== 'uendret' ? 'Lagre eller forkast endringene først.' : undefined}
+            onMerk={merkUtfort}
+          />
         </div>
       )}
 
@@ -256,6 +291,85 @@ export function Oppgaveside({
         <Ideside id={oppgave.ide_id} innebygd />
       </section>
     </article>
+  )
+}
+
+/**
+ * «Merk som utført», for en oppgave som er gjort uten at en agent tok den fra
+ * køen. Knappen åpner valget av føringen i endringsloggen der det står hva som
+ * ble gjort — eller ingen — og oppgaven merkes først når det bekreftes.
+ */
+function MerkUtfort({
+  oppgave,
+  disabled,
+  hindring,
+  onMerk,
+}: {
+  oppgave: string
+  disabled: boolean
+  /** Hvorfor knappen ikke kan brukes nå. */
+  hindring?: string
+  onMerk: (versjon: string | null) => Promise<boolean>
+}) {
+  return (
+    <Bevaringsomrade navn={`oppgave:${oppgave}`}>
+      <MerkUtfortValg disabled={disabled} hindring={hindring} onMerk={onMerk} />
+    </Bevaringsomrade>
+  )
+}
+
+function MerkUtfortValg({ disabled, hindring, onMerk }: Omit<Parameters<typeof MerkUtfort>[0], 'oppgave'>) {
+  // Valget overlever en oppdatering av appen, som skjemaet over.
+  const [apen, setApen] = useBevart('merkUtfort', false)
+  const [versjon, setVersjon] = useBevart('merkUtfort.versjon', '')
+  const velger = useRef<HTMLSelectElement>(null)
+  const id = useId()
+  useEffect(() => {
+    if (apen) velger.current?.focus()
+  }, [apen])
+
+  if (!apen) {
+    return (
+      <Button variant="kant" icon={<Ikon navn="done" storrelse="ui" />} disabled={disabled} title={hindring} onClick={() => setApen(true)}>
+        Merk som utført
+      </Button>
+    )
+  }
+  return (
+    <div className="merkutfort" role="group" aria-label="Merk oppgaven utført">
+      <div className="felt">
+        <label className="felt__merkelapp" htmlFor={id}>
+          Føringen i endringsloggen
+        </label>
+        <select
+          ref={velger}
+          id={id}
+          className="felt__inndata"
+          value={versjon}
+          aria-describedby={`${id}-hjelp`}
+          onChange={(e) => setVersjon(e.target.value)}
+        >
+          <option value="">Ingen føring</option>
+          {ENDRINGSLOGG.map((e) => (
+            <option key={e.versjon} value={e.versjon}>
+              {e.versjon} – {e.sammendrag}
+            </option>
+          ))}
+        </select>
+        <span id={`${id}-hjelp`} className="felt__hjelp">
+          For en oppgave som er gjort uten at en agent tok den fra køen. Velg føringen som sier hva som ble gjort, så
+          oppgaven får en knapp dit. Det kan gjøres om etterpå.
+        </span>
+      </div>
+      <div className="skjema__knapper">
+        <Button variant="subtle" onClick={() => setApen(false)}>
+          Avbryt
+        </Button>
+        <Button className="knapp--kompakt" disabled={disabled} onClick={() => void onMerk(versjon || null)}>
+          Merk utført
+        </Button>
+      </div>
+    </div>
   )
 }
 

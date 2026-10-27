@@ -145,7 +145,9 @@ select public.fullfor_oppgave(7, '<x.y.z>') where exists (select 1 from public.o
   PR, med en føring som har `utenVarsel: true`. Den rulles ut automatisk når
   PR-en slås sammen (`docs/migrasjoner.md`); ikke be om et eget ja.
 - Funksjonen stopper hvis oppgaven verken håndteres av en agent eller er klar,
-  for eksempel hvis administratoren har flyttet den tilbake i mellomtiden. Les
+  for eksempel hvis administratoren har flyttet den tilbake i mellomtiden, eller
+  alt har merket den utført i appen («Merk som utført»); da er det ingenting å
+  merke. Les
   statusen med `execute_sql` før PR-en lages, og merk den ikke hvis den har
   endret seg; si det. Stopper utrullingen likevel på dette, fjernes fila i en ny
   PR (den er ikke kjørt).

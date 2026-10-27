@@ -12,6 +12,18 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.109.0',
+    dato: '2026-10-27',
+    sammendrag: 'Planlagte oppgaver kan merkes utført av en administrator',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['vinduer'],
+    punkter: [
+      'En planlagt oppgave som er gjort uten at en agent hentet den fra køen, kan merkes utført med knappen «Merk som utført» på oppgaven. Velg føringen i endringsloggen som sier hva som ble gjort, eller ingen.',
+      'En oppgave som er merket utført på denne måten, kan gjøres om med «Ikke utført likevel», og får da statusen den hadde tilbake.',
+    ],
+  },
+  {
     versjon: '1.108.1',
     dato: '2026-10-27',
     sammendrag: 'Avsnittet rett over en liste i fagsidene har samme skrift som resten av teksten',

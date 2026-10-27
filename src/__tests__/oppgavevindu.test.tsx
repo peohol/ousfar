@@ -50,6 +50,7 @@ const oppgave = (id: string, status: Oppgave['status'], ekstra: Partial<Oppgave>
   klar_kl: null,
   tatt_kl: null,
   utfort_kl: null,
+  merket_utfort: false,
   ...ekstra,
 })
 
@@ -94,6 +95,8 @@ const api = vi.hoisted(() => ({
   settOppgaveKlar: vi.fn(async () => {}),
   flyttOppgaveTilbake: vi.fn(async () => {}),
   frigiOppgave: vi.fn(async () => {}),
+  merkOppgaveUtfort: vi.fn(async () => {}),
+  angreOppgaveUtfort: vi.fn(async () => {}),
   hentIdetraad: vi.fn(),
   merkIdeSett: vi.fn(async () => {}),
   settHjerte: vi.fn(async () => {}),
@@ -193,6 +196,7 @@ describe('én oppgave', () => {
     expect(screen.queryByRole('textbox', { name: 'Overskrift' })).toBeNull()
     expect(screen.queryByRole('button', { name: 'Klar til implementering' })).toBeNull()
     expect(screen.queryByRole('button', { name: /Flytt tilbake/ })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Merk som utført' })).toBeNull()
   })
 
   it('lar en administrator skrive prompten, og merke oppgaven klar først når den er lagret', async () => {
@@ -351,6 +355,77 @@ describe('én oppgave', () => {
     expect(screen.queryByRole('button', { name: /Flytt tilbake/ })).toBeNull()
     await bruker.click(screen.getByRole('button', { name: 'Se i endringsloggen' }))
     expect(visEndringslogg).toHaveBeenCalledWith(PUBLISERT)
+    // Utført av en agent kan ikke gjøres om.
+    expect(screen.queryByRole('button', { name: 'Ikke utført likevel' })).toBeNull()
+  })
+})
+
+describe('merke en oppgave utført i appen', () => {
+  it('lar en administrator velge føringen i endringsloggen før oppgaven merkes', async () => {
+    const bruker = userEvent.setup()
+    tilstand.meg = ADMIN
+    api.hentOppgave.mockResolvedValue(detaljer(OPPGAVER[1]!, 'Legg til en knapp.'))
+    apne('b')
+    await bruker.click(await screen.findByRole('button', { name: 'Merk som utført' }))
+    const velger = screen.getByRole('combobox', { name: 'Føringen i endringsloggen' }) as HTMLSelectElement
+    expect(document.activeElement).toBe(velger)
+    expect(velger.value).toBe('')
+    expect(velger.options).toHaveLength(ENDRINGSLOGG.length + 1)
+
+    // Avbryt lukker valget uten å merke noe.
+    await bruker.click(screen.getByRole('button', { name: 'Avbryt' }))
+    expect(screen.queryByRole('combobox', { name: 'Føringen i endringsloggen' })).toBeNull()
+
+    await bruker.click(screen.getByRole('button', { name: 'Merk som utført' }))
+    await bruker.selectOptions(screen.getByRole('combobox', { name: 'Føringen i endringsloggen' }), PUBLISERT)
+    api.hentOppgave.mockResolvedValue(
+      detaljer({ ...OPPGAVER[1]!, status: 'utfort', endringslogg: PUBLISERT, klar_kl: '2026-09-28T12:00:00Z', utfort_kl: '2026-09-29T10:00:00Z', merket_utfort: true }),
+    )
+    await bruker.click(screen.getByRole('button', { name: 'Merk utført' }))
+    expect(api.merkOppgaveUtfort).toHaveBeenCalledWith('b', PUBLISERT)
+    const merknad = await screen.findByRole('note')
+    expect(merknad.textContent).toMatch(/Utført som OPG-004\. Merket utført av en administrator\. Endringsloggen sier/)
+    expect(screen.getByRole('button', { name: 'Se i endringsloggen' })).toBeTruthy()
+  })
+
+  it('kan merke en oppgave en agent håndterer, uten føring', async () => {
+    const bruker = userEvent.setup()
+    tilstand.meg = ADMIN
+    api.hentOppgave.mockResolvedValue(detaljer(OPPGAVER[2]!, 'Legg til en knapp.'))
+    apne('e')
+    await bruker.click(await screen.findByRole('button', { name: 'Merk som utført' }))
+    await bruker.click(screen.getByRole('button', { name: 'Merk utført' }))
+    expect(api.merkOppgaveUtfort).toHaveBeenCalledWith('e', null)
+  })
+
+  it('venter til endringene i skjemaet er lagret eller forkastet', async () => {
+    const bruker = userEvent.setup()
+    tilstand.meg = ADMIN
+    apne('a')
+    await bruker.type(await screen.findByRole('textbox', { name: 'Prompt' }), 'Halvferdig')
+    const knapp = screen.getByRole('button', { name: 'Merk som utført' }) as HTMLButtonElement
+    expect(knapp.disabled).toBe(true)
+    expect(knapp.title).toBe('Lagre eller forkast endringene først.')
+  })
+
+  it('lar en administrator gjøre om en oppgave som er merket utført i appen, i to trykk', async () => {
+    const bruker = userEvent.setup()
+    const merket = oppgave('f', 'utfort', { nummer: 6, klar_kl: '2026-09-28T12:00:00Z', utfort_kl: '2026-09-29T10:00:00Z', merket_utfort: true })
+    api.hentOppgave.mockResolvedValue(detaljer(merket))
+    apne('f')
+    expect((await screen.findByRole('note')).textContent).toMatch(/Merket utført av en administrator\. Den har ingen føring i endringsloggen\./)
+    expect(screen.queryByRole('button', { name: 'Se i endringsloggen' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Ikke utført likevel' })).toBeNull()
+    cleanup()
+
+    tilstand.meg = ADMIN
+    apne('f')
+    await bruker.click(await screen.findByRole('button', { name: 'Ikke utført likevel' }))
+    expect(api.angreOppgaveUtfort).not.toHaveBeenCalled()
+    api.hentOppgave.mockResolvedValue(detaljer({ ...merket, status: 'under_arbeid', klar_kl: null, utfort_kl: null, merket_utfort: false }))
+    await bruker.click(screen.getByRole('button', { name: 'Bekreft: ikke utført likevel' }))
+    expect(api.angreOppgaveUtfort).toHaveBeenCalledWith('f')
+    expect(await screen.findByRole('textbox', { name: 'Prompt' })).toBeTruthy()
   })
 })
 

@@ -32,6 +32,7 @@ interface Oppgave {
   klar_kl: string | null
   tatt_kl: string | null
   utfort_kl: string | null
+  merket_utfort: boolean
 }
 
 describe('arkivet og de planlagte oppgavene', () => {
@@ -341,6 +342,56 @@ describe('arkivet og de planlagte oppgavene', () => {
     const gammel = await klarOppgave()
     await migrering(`select public.fullfor_oppgave($1, '1.53.0')`, [gammel.nummer])
     expect(await oppgave(bo, gammel.id)).toMatchObject({ status: 'utfort', tatt_kl: expect.any(String) })
+  })
+
+  it('lar en administrator merke en oppgave utført i appen, med eller uten versjon, og gjøre det om', async () => {
+    // Fra «Ikke påbegynt», uten føring i endringsloggen.
+    const id = await overfor(await nyIde(ada))
+    const { nummer } = (await oppgave(bo, id))!
+    expect(await feilFra(() => sql(bo, 'select public.merk_oppgave_utfort($1, null)', [id]))).toMatchObject({ code: '42501' })
+    await sql(admin, 'select public.merk_oppgave_utfort($1, null)', [id])
+    expect(await oppgave(bo, id)).toMatchObject({
+      status: 'utfort',
+      nummer,
+      endringslogg: null,
+      merket_utfort: true,
+      utfort_kl: expect.any(String),
+      tatt_kl: null,
+    })
+    expect((await en<Oppgave[]>(bo, 'select public.oppgaveoversikt()')).find((o) => o.id === id)).toMatchObject({ merket_utfort: true })
+
+    // Utført er utført: den kan ikke merkes igjen, endres eller tas av en agent.
+    expect(await feilFra(() => sql(admin, 'select public.merk_oppgave_utfort($1, null)', [id]))).toMatchObject({ code: '55000' })
+    expect(await feilFra(() => sql(admin, 'select public.lagre_oppgave($1, $$Ny$$, $2)', [id, 'Mer']))).toMatchObject({ code: '55000' })
+    expect(await feilFra(() => migrering(`select public.fullfor_oppgave($1, '1.53.0')`, [nummer]))).toMatchObject({ code: '55000' })
+
+    // Gjort om får den statusen tilbake, som om den aldri var merket.
+    expect(await feilFra(() => sql(bo, 'select public.angre_oppgave_utfort($1)', [id]))).toMatchObject({ code: '42501' })
+    await sql(admin, 'select public.angre_oppgave_utfort($1)', [id])
+    expect(await oppgave(bo, id)).toMatchObject({
+      status: 'ikke_paabegynt',
+      endringslogg: null,
+      merket_utfort: false,
+      klar_kl: null,
+      utfort_kl: null,
+    })
+    expect(await feilFra(() => sql(admin, 'select public.angre_oppgave_utfort($1)', [id]))).toMatchObject({ code: '55000' })
+
+    // En agent håndterer den, men arbeidet er gjort: med versjonen, og blanke tegn rundt.
+    const tatt = await klarOppgave()
+    await migrering('select public.ta_oppgaver($1)', [[tatt.nummer]])
+    const { klar_kl, tatt_kl } = (await oppgave(bo, tatt.id))!
+    expect(await feilFra(() => sql(admin, `select public.merk_oppgave_utfort($1, 'v1.53')`, [tatt.id]))).toMatchObject({ code: '23514' })
+    await sql(admin, `select public.merk_oppgave_utfort($1, ' 1.53.0 ')`, [tatt.id])
+    expect(await oppgave(bo, tatt.id)).toMatchObject({ status: 'utfort', endringslogg: '1.53.0', merket_utfort: true, klar_kl, tatt_kl })
+    await sql(admin, 'select public.angre_oppgave_utfort($1)', [tatt.id])
+    expect(await oppgave(bo, tatt.id)).toMatchObject({ status: 'haandteres', endringslogg: null, klar_kl, tatt_kl })
+
+    // En oppgave en agent har merket utført, kan ikke gjøres om i appen.
+    await migrering(`select public.fullfor_oppgave($1, '1.53.0')`, [tatt.nummer])
+    expect((await oppgave(bo, tatt.id))!.merket_utfort).toBe(false)
+    expect(await feilFra(() => sql(admin, 'select public.angre_oppgave_utfort($1)', [tatt.id]))).toMatchObject({ code: '55000' })
+    expect(await feilFra(() => sql(admin, 'select public.merk_oppgave_utfort(gen_random_uuid(), null)'))).toMatchObject({ code: '55000' })
   })
 
   it('flytter en oppgave tilbake til idélista, der den er åpen igjen', async () => {
