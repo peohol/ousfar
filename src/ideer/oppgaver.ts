@@ -27,6 +27,8 @@ export interface Oppgave {
   /** Når en agent tok oppgaven. */
   tatt_kl: string | null
   utfort_kl: string | null
+  /** Merket utført i appen av en administrator, ikke av en agent. Kan gjøres om. */
+  merket_utfort: boolean
 }
 
 export interface Oppgavedetaljer extends Oppgave {
@@ -59,6 +61,7 @@ function lesOppgaverad(rad: unknown): Oppgave | null {
     klar_kl: tekstEllerNull(rad.klar_kl),
     tatt_kl: tekstEllerNull(rad.tatt_kl),
     utfort_kl: tekstEllerNull(rad.utfort_kl),
+    merket_utfort: rad.merket_utfort === true,
   }
 }
 

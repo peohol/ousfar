@@ -428,6 +428,24 @@
   padding-top: var(--rom-2);
 }
 
+/* «Merk som utført» åpnes til valget av føringen, på en egen linje i raden. */
+.merkutfort {
+  display: grid;
+  flex-basis: 100%;
+  gap: var(--rom-2);
+  min-width: 0;
+}
+
+.merkutfort .felt__inndata {
+  width: 100%;
+  max-width: 100%;
+  text-overflow: ellipsis;
+}
+
+.merkutfort .skjema__knapper {
+  justify-content: flex-end;
+}
+
 /* --- Planlagte oppgaver ------------------------------------------------------ */
 
 .oppgavekode {

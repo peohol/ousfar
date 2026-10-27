@@ -85,7 +85,13 @@ oppgave. En oppgave går gjennom disse statusene:
    endres, merkes eller flyttes; en administrator kan frigi den
    (`frigi_oppgave()`), så den er klar igjen.
 5. `utfort`: satt av Claude med `fullfor_oppgave(nummer, versjon)` når arbeidet
-   er slått sammen, med versjonen i endringsloggen.
+   er slått sammen, med versjonen i endringsloggen. Er oppgaven gjort uten at
+   en agent tok den fra køen, kan en administrator merke den utført selv fra
+   hvilken som helst annen status («Merk som utført», `merk_oppgave_utfort()`),
+   med en føring fra endringsloggen eller uten. Statusen den hadde, lagres i
+   `utfort_fra` (`merket_utfort` i lesefunksjonene), og administratoren kan
+   gjøre det om («Ikke utført likevel», `angre_oppgave_utfort()`), så den får
+   statusen tilbake. En oppgave Claude har merket utført, kan ikke gjøres om.
 
 `ta_oppgaver()` og `fullfor_oppgave()` kan ingen i appen kalle. De kjøres som
 migreringer av agenten uten separat samtykke (`*_oppgaver_tatt_*.sql` og
@@ -103,7 +109,7 @@ utført oppgave kan ikke endres eller flyttes. Idéen kan ikke slettes så lenge
 den er en oppgave. Det gjelder også når brukeren som skrev den, slettes i
 Supabase: det stoppes, så oppgaven ikke forsvinner med brukeren.
 
-En utført oppgave har en knapp til føringen i endringsloggen. Den bruker
+En utført oppgave med versjon har en knapp til føringen i endringsloggen. Den bruker
 `visEndringslogg()` (`components/endringsloggvisning.ts`), som åpner loggen over
 laget med føringen utfoldet. Knappen står bare når versjonen er publisert i
 appen.
