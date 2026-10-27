@@ -20,8 +20,8 @@
 
 /* --- Lesetekst ------------------------------------------------------------
    Prosa i panelene er serif i lesestørrelse, med en linjelengde som kan
-   leses. Et avsnitt som leder inn i en liste («Seroquel (filmdrasjerte
-   tabletter):»), er en ingress i UI-skrift. */
+   leses. Alle avsnitt ser like ut, også det som står rett foran en liste:
+   visningen skal se ut som redigeringen. */
 .infotekst > .riktekst,
 .infokort__innhold > .riktekst {
   gap: var(--rom-4);
@@ -29,11 +29,6 @@
   font: var(--vekt-normal) var(--tekst-lesing) / 1.55 var(--skrift-display);
   color: var(--blekk);
   text-wrap: pretty;
-}
-
-.infotekst > .riktekst p:has(+ ul, + ol) {
-  font: var(--vekt-halvfet) var(--tekst-ui) / 1.3 var(--skrift-ui);
-  color: var(--blekk-sterk);
 }
 
 .infotekst > .riktekst ul,

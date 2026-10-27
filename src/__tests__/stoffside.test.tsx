@@ -3523,6 +3523,11 @@ describe('bivirkningene fra preparatomtalene', () => {
     expect(bivirkninger).toMatch(/@media \(max-width: 47\.5em\)\s*\{\s*\.overskriftskort > \.skuff__hode \.bivirkninger__definisjon\s*\{\s*flex-basis:\s*100%/)
   })
 
+  it('viser avsnittet foran en liste i samme skrift som de andre avsnittene, slik det ser ut i redigeringen', () => {
+    const monograf = readFileSync('src/styles/monograf.css', 'utf8')
+    expect(monograf).not.toMatch(/\.riktekst[^{]*\bp:has\(\s*\+/)
+  })
+
   it('sier fra når bivirkningene ikke kunne hentes, i redigeringen', async () => {
     const user = userEvent.setup()
     vis('amitriptylin', { ...bivirkningskilde(new Error('Syntetisk feil')), kanRedigere: true })
