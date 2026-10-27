@@ -1,0 +1,59 @@
+Bupropion er en selektiv hemmer av nevronalt reopptak av katekolaminer (noradrenalin og dopamin),
+har minimal effekt på reopptak av indolaminer (serotonin) og inhiberer ikke monoaminoksidaser.
+Virkningsmekanismen for den antidepressive effekten til bupropion er ukjent. Det antas imidlertid at
+virkningen er mediert via noradrenerge og/eller dopaminerge mekanismer.
+
+Klinisk effekt
+Den antidepressive effekten av bupropion ble studert i et klinisk program som involverte 1155
+pasienter som fikk bupropion (tablett med modifisert frisetting) og 1868 pasienter som fikk bupropion
+(depottabletter). Alle pasientene hadde Major Depressive Disorder (MDD). Syv av studiene
+undersøkte effekten av Paritdam. Tre av disse ble utført i EU ved doser opp til 300 mg/dag, og fire ble
+utført i USA med et fleksibelt doseringsområde opp til 450 mg/dag. I tillegg er ni studier med MDD-
+pasienter som fikk bupropion (depottablett) vurdert å være støttende basert på at bupropion tablett med
+modifisert frisetting (en gang daglig) er vurdert bioekvivalent til bupropion depottablett (to ganger
+daglig).
+
+Bupropion (tablett med modifisert frisetting) viste seg å være statistisk signifikant bedre enn placebo i
+en av to identiske studier med doseringer i området 150–300 mg. Forbedring ble målt ved
+Montgomery-Asberg Depression Rating Scale (MADRS) total score. Respons og remisjonsfrekvenser
+var også statistisk signifikant høyere med bupropion (tablett med modifisert frisetting) sammenlignet
+med placebo. I en tredje studie på eldre pasienter, kunne det ikke påvises statistisk signifikant bedre
+effekt på den primære parameteren, gjennomsnittlig endring fra baseline i MADRS (Last Observation
+Carried Forward-endepunkt) selv om statistisk signifikante effekter ble sett i en sekundær (Observed
+Case) analyse.
+
+Det ble påvist signifikant forbedring på det primære endepunktet i to av de fire amerikanske studiene
+med bupropion (tablett med modifisert frisetting) (300–450 mg). Av disse to positive studiene var den
+ene en placebokontrollert studie hos pasienter med MDD og den andre var en studie med aktiv
+komparator hos pasienter med MDD.
+
+I en tilbakefallsforebyggende åpen studie ble pasienter som responderte på åtte ukers akutt behandling
+med bupropion (depottablett) (300 mg/dag) randomisert til enten bupropion (depottablett) eller
+placebo i ytterligere 44 uker. Bupropion (depottablett) viste statistisk signifikant bedring
+sammenlignet med placebo (P < 0,05) på det primære endepunktet. I den dobbeltblinde
+oppfølgingsstudien på 44 uker var forekomsten av vedlikeholdseffekt 64 % for bupropion (tablett med
+modifisert frisetting) og 48 % for placebo.
+
+Klinisk sikkerhet
+Den prospektive observerte proporsjonen av kardiovaskulære fødselsdefekter i graviditeter med
+prenatal eksponering for bupropion i det første trimester i det internasjonale graviditetsregistret var
+9/675 (1,3 %).
+
+I en retrospektiv studie med flere enn 1000 gravide kvinner eksponert for bupropion i 1. trimester, ble
+det ikke sett større antall medfødte misdannelser eller kardiovaskulære misdannelser, sammenlignet
+med bruk av andre antidepressiva.
+
+I en retrospektiv analyse hvor data fra ”the National Birth Defects Prevention Study” var brukt, ble en
+statistisk signifikant assosiasjon observert mellom forekomst av defekt i venstre ventrikkels utløp hos
+barnet og selvrapportert bruk av bupropion i tidlig graviditet hos mor. Ingen assosiasjon ble observert
+mellom eksponering for bupropion hos mor og noen annen type kardiovaskulær defekt eller med alle
+kategorier av hjertefeil kombinert.
+
+En videre analyse fra en studie på fosterskader gjort av Slone Epidemiology Center fant ingen
+statistisk signifikant økning av defekt i venstre ventrikkels utløp ved bruk av bupropion hos mor. En
+statistisk signifikant assosiasjon ble imidlertid observert for ventrikkelseptumdefekt som følge av at
+bupropion ble brukt alene i første trimester.
+
+
+
+                                                   11

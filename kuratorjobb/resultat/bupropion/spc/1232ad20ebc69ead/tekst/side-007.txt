@@ -1,0 +1,59 @@
+med et av de ovennevnte legemidlene, må en dosereduksjon av de overnevnte legemidlene vurderes. I
+disse tilfellene må forventet fordel av behandling med bupropion nøye vurderes mot potensiell risiko.
+
+Serotonergt syndrom, en potensielt livstruende tilstand, er rapportert etter markedsføring ved samtidig
+administrering av bupropion og et serotonergt legemiddel, slik som selektive
+serotoninreopptakshemmere (SSRIer) eller serotonin- og noradrenalinreopptakshemmere (SNRIer) (se
+pkt. 4.4).
+
+Legemidler som krever metabolsk aktivering via CYP2D6 for å være effektive (f.eks. tamoksifen) kan
+ha redusert effekt når det gis sammen med hemmere av CYP2D6, som bupropion (se pkt. 4.4)
+
+Selv om citalopram (en SSRI) ikke primært metaboliseres av CYP2D6, viste en studie at bupropion
+økte Cmax og AUC for citalopram med henholdsvis 30 % og 40 %.
+
+Samtidig administrering av digoksin med bupropion kan redusere digoksinnivåer. En cross-studie
+sammenligning viste at digoksin AUC0-24 t ble redusert og renal clearance ble økt hos friske frivillige.
+Leger bør være klar over at digoksinnivå kan stige ved seponering av bupropion og pasienten bør
+overvåkes for mulig digoksintoksisitet.
+
+Andre legemidlers effekt på bupropion
+
+Bupropion metaboliseres til den aktive hovedmetabolitten hydroksibupropion hovedsakelig via
+cytokrom P450 CYP2B6 (se pkt. 5.2). Samtidig administrering av legemidler som kan påvirke
+metabolisme av bupropion via CYP2B6 isoenzymet (f.eks CYP2B6 substrater som cyklofosfamid,
+ifosfamid og CYP2B6 hemmere som orfenadrin, tiklopidin, klopidogrel), kan resultere i økte
+plasmånivåer av bupropion og lavere nivå av den aktive metabolitten hydroksibupropion. Den kliniske
+konsekvens av inhibering av bupropionmetabolisme via CYP2B6 enzymet og de følgelige endringene
+i ratioen mellom bupropion og hydroksibupropion, er for tiden ikke kjent.
+
+Siden bupropion metaboliseres i stor grad, bør forsiktighet utvises når bupropion gis samtidig med
+legemidler som er kjent for å indusere metabolisme (f.eks. karbamazepin, fenytoin, ritonavir,
+efavirenz) eller hemme metabolisme (f.eks. valproat) ettersom dette kan påvirke den kliniske effekt og
+sikkerhet.
+
+I en serie av studier hos friske frivillige reduserte ritonavir (100 mg 2 ganger daglig, eller 600 mg
+2 ganger daglig) eller ritonavir 100 mg samt lopinavir 400 mg 2 ganger daglig eksponeringen av
+bupropion og dets hovedmetabolitter på en doseavhengig måte med ca. 20-80 % (se punkt 5.2).
+Tilsvarende vil 600 mg efavirenz én gang daglig i 2 uker redusere eksponering av bupropion med ca.
+55 % hos friske frivillige. De kliniske konsekvensene av redusert eksponering er usikker, men kan
+inkludere nedsatt effekt av behandlingen av alvorlig depresjon. Pasienter som bruker noen av disse
+legemidlene samtidig med bupropion kan behøve økt dose bupropion, men maksimal anbefalt
+bupropiondose bør ikke overskrides.
+
+Øvrige interaksjoner
+
+Administrering av bupropion til pasienter som samtidig får enten levodopa eller amantadin må gjøres
+med forsiktighet. Begrensede kliniske data tyder på en høyere bivirkningsfrekvens (f.eks. kvalme,
+oppkast, og neuropsykiatriske episoder, se pkt. 4.8) hos pasienter som får samtidig behandling med
+bupropion og enten levodopa eller amantadin.
+
+Selv om kliniske data ikke viser noen farmakokinetisk interaksjon mellom bupropion og alkohol, har
+det i sjeldne tilfeller vært rapportert uønskede neuropsykiatriske episoder eller redusert
+alkoholtoleranse hos pasienter som inntok alkohol under behandling med bupropion. Inntak av alkohol
+under behandling med bupropion bør reduseres til det minimale eller unngås.
+
+Det er ikke utført noen farmakokinetiske studier av bupropion og samtidig administrering av
+benzodiazepiner. Det finnes det ikke grunnlag for interaksjon mellom disse, basert på in vitro
+
+                                                   7

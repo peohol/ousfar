@@ -1,0 +1,55 @@
+Absorpsjon
+
+Etter oral administrasjon av 300 mg bupropionhydroklorid tablett med modifisert frisetting en gang
+daglig til friske frivillige, ble maks plasma konsentrasjon (Cmax) på ca. 160 ng/ml observert etter ca. 5
+timer. Ved steady state var Cmax og AUC verdiene for hydroksibupropion henholdsvis ca. 3 og 14
+ganger høyere enn verdiene for bupropion. Cmax for treohydrobupropion ved steady state var
+tilsvarende verdien for bupropion, og AUC var ca. 5 ganger høyere, mens plasmakonsentrasjonene av
+erytrohydrobupropion var sammenlignbar med verdiene for bupropion. Maksimale plasmaverdier av
+hydroksibupropion ble nådd etter 7 timer, mens for treohydrobupropion og erytrohydrobupropion ble
+de nådd etter 8 timer. AUC og Cmax-verdiene for bupropion og dens aktive metabolitter
+hydroksibupropion og treohydrobupropion, økte proporsjonalt med dosen i et doseringsintervall på
+mellom 50-200 mg etterfulgt av enkelt doser og i et doseringsintervall på mellom 300-450 mg/dag ved
+langvarig administrering.
+
+Bupropions absolutte biotilgjengelighet er ikke kjent. Urinekskresjonsdata viser imidlertid at minst
+87 % av bupropiondosen absorberes.
+
+Absorpsjon av bupropion tablett med modifisert frisetting påvirkes ikke signifikant av samtidig
+matinntak.
+
+Distribusjon
+
+Bupropion distribueres i stor grad og har et tilsynelatende distribusjonsvolum på ca. 2000 L.
+
+Bupropion, hydroksybupropion og treohydrobupropion bindes moderat til plasma proteiner
+(henholdsvis 84 %, 77 % og 42 %).
+
+Bupropion og dens aktive metabolitter utskilles i human brystmelk. Dyrestudier viser at bupropion og
+dens aktive metabolitter passerer blod-hjerne barrieren og placenta. ”Positron Emision Tomography”
+studier av friske, frivillige demonstrerte at bupropion penetrerer sentralnervesystemet og bindes til de
+striatale dopaminerge reopptakstransportørene (ca. 25 % ved 150 mg to ganger daglig).
+
+Biotransformasjon
+
+Bupropion metaboliseres i stor grad i mennesker. Tre farmakologisk aktive metabolitter er identifisert
+i plasma: hydroksibupropion og aminoalkohol-isomerene, treohydrobupropion og
+erytrohydrobupropion. Disse kan ha klinisk betydning da deres plasmakonsentrasjoner er like høy eller
+høyere enn bupropions. De aktive metabolittene metaboliseres videre til inaktive metabolitter (der ikke
+alle er fullstendig karakterisert, men kan inkludere konjugater) og utskilles i urin.
+
+In vitro studier indikerer at bupropion metaboliseres til den aktive hovedmetabolitten
+hydroksibupropion hovedsakelig via CYP2B6, mens CYP1A2, 2A6, 2C9, 3A4 og 2E1 er mindre
+involvert. I motsetning, involverer dannelse av treohydrobupropion en karbonylreduksjon, men
+involverer ikke cytokrom P450 isoenzymer (se pkt. 4.5).
+Treohydrobupropion og erytrohydrobupropions potensiale for hemming av cytokrom P450 er ikke
+undersøkt.
+
+Bupropion og hydroksibupropion er begge hemmere av CYP2D6 isoenzymet med Ki verdier på
+henholdsvis 21 og 13,3 µM (se pkt. 4.5).
+
+Bupropion har vist seg å indusere sin egen metabolisme i forsøksdyr etter sub-kronisk administrasjon.
+Hos mennesker var det ingen tegn på enzyminduksjon av bupropion eller hydroksybupropion hos
+frivillige eller pasienter som fikk anbefalte doser bupropionhydroklorid i 10 til 45 dager.
+
+Eliminasjon

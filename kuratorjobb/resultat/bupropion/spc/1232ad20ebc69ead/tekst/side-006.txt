@@ -1,0 +1,59 @@
+Interferens i urinprøver
+
+Fordi bupropion har en amfetaminlignende kjemisk struktur, interfererer bupropion i analysen av noen
+typer urinprøver som kan resultere i falskt positivt resultat, spesielt ved testing for amfetaminer. Et
+positivt resultat bør vanligvis bekreftes ved hjelp av en mer spesifikk metode.
+
+Uegnete administrasjonsmåter
+
+Bupropion hydrochloride Teva er beregnet til oral bruk. Inhalering av knuste tabletter eller injeksjon
+av oppløst bupropion er blitt rapportert, og kan føre til en rask frigjøring, raskere absorpsjon og en
+eventuell overdosering. Krampeanfall og/eller tilfeller av dødsfall er blitt rapportert når bupropion har
+blitt administrert intranasalt eller ved parenteral injeksjon.
+
+Serotonergt syndrom
+
+Serotonergt syndrom, en potensielt livstruende tilstand, er rapportert etter markedsføring ved samtidig
+administrering av bupropion og et serotonergt legemiddel, slik som selektive
+serotoninreopptakshemmere (SSRIer) eller serotonin- og noradrenalinreopptakshemmere (SNRIer) (se
+pkt. 4.5). Dersom samtidig behandling med andre serotonerge legemidler er klinisk nødvendig, er
+nøye observasjon av pasienten anbefalt, spesielt ved behandlingsstart og ved doseøkninger.
+Symptomer på serotonergt syndrom kan være endret mental status (f.eks. agitasjon, hallusinasjoner,
+koma), overaktivitet i det autonome nervesystemet (f.eks. takykardi, labilt blodtrykk, hypertermi),
+nevromuskulær overaktivitet (f.eks. hyperrefleksi, dårlig koordinasjon, rigiditet) og/eller
+gastrointestinale symptomer (f.eks. kvalme, oppkast, diaré).
+Hvis serotonergt syndrom mistenkes bør dosereduksjon eller seponering av behandlingen vurderes,
+avhengig av symptomenes alvorlighetsgrad.
+
+
+Hjelpestoff(er)
+
+Natrium
+Dette legemidlet inneholder mindre enn 1 mmol natrium (23 mg) i hver tablett, og er så godt som
+“natriumfritt”.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Ettersom monoaminoksidase A og B hemmere også øker aktiviteten i de katekolaminerge nervebaner,
+ved en ulik mekanisme enn bupropion, er samtidig bruk av bupropion og monoaminoksidasehemmere
+(MAO-hemmere) kontraindisert (se pkt. 4.3) da det er økt mulighet for bivirkninger ved samtidig
+administrering av disse. Det bør gå minst 14 dager mellom seponering av irreversible MAO-hemmere
+og oppstart av behandling med bupropion. For reversible MAO-hemmere er det tilstrekkelig med en
+periode på 24 timer.
+
+Bupropions effekt på andre legemidler
+
+Selv om bupropion og hovedmetabolitten hydroksibupropion ikke metaboliseres via CYP2D6
+isoenzymet, hemmer de CYP2D6 metabolismeveien. Samtidig administrering av bupropion og
+desipramin til friske frivillige som man visste hadde rask metabolisme via CYP2D6 isoenzymet,
+resulterte i en stor (2-5 gangers) økning i Cmax og AUC for desipramin. Inhiberingen av CYP2D6 var
+til stede i minst 7 dager etter siste dose av bupropion.
+
+Samtidig behandling med legemidler som har et smalt terapeutisk vindu og som primært metaboliseres
+via CYP2D6, bør påbegynnes i den nedre delen av doseringsområdet. Slike legemidler inkluderer
+enkelte antidepressiva (f.eks. desipramin, imipramin), antipsykotika (f.eks. risperidon, tioridazin),
+betablokkere (f.eks. metoprolol), selektive serotonin-reopptakshemmere (SSRIer) og Type 1C
+antiarytmika (f.eks. propafenon, flekainid). Dersom bupropion gis til pasienter som allerede behandles
+
+
+                                                   6

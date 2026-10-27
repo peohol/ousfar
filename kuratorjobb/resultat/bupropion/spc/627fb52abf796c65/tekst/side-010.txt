@@ -1,0 +1,59 @@
+Direktoratet for medisinske produkter: www.dmp.no/meldeskjema.
+
+4.9   Overdosering
+
+Det er rapportert om akutt inntak av doser som overstiger 10 ganger maksimal terapeutisk dose. I
+tillegg til symptomene angitt under bivirkninger, har overdoseringer resultert i symptomer som
+døsighet, bevisstløshet og/eller elektrokardiogram (EKG)-forandringer som ledningsforstyrrelser
+(inkludert QRS-forlengelse), arytmier og takykardi. QTc-forlengelse er også rapportert, men ble
+generelt sett i forbindelse med QRS-forlengelse og økt hjertefrekvens. Selv om de fleste pasienter kom
+til seg selv igjen uten varige mén, har dødsfall i forbindelse ved massiv overdose av bupropion vært
+rapportert i sjeldne tilfeller. Serotonergt syndrom er også rapportert.
+
+Behandling
+I tilfeller av overdose anbefales sykehusinnleggelse. EKG og livsfunksjoner bør overvåkes.
+Sørg for åpne luftveier, oksygenering og ventilasjon. Det anbefales å gi aktivt kull. Det finnes ingen
+spesifikk antidot for bupropion. Videre behandling bør være som klinisk indisert.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Andre antidepressiva, ATC-kode: N06A X12.
+
+Virkningsmekanisme
+
+Bupropion er en selektiv hemmer av nevronalt reopptak av katekolaminer (noradrenalin og dopamin)
+med minimal effekt på reopptak av indolaminer (serotonin) og inhiberer ikke monoaminoksidaser.
+Virkningsmekanismen for bupropions antidepressive effekt er ukjent. Det antas imidlertid at
+virkningen er mediert via noradrenerge og/eller dopaminerge mekanismer.
+
+Klinisk effekt
+
+Den antidepressive effekten av bupropion ble studert i et klinisk program som involverte totalt
+1155 pasienter som fikk bupropion (tablett med modifisert frisetting) og 1868 pasienter som fikk
+bupropion (depottablett). Alle pasientene hadde Major Depressive Disorder (MDD). Syv av studiene
+undersøkte effekten av bupropion (tablett med modifisert frisetting): tre ble utført i EU ved doser opp
+til 300 mg/dag og fire ble utført i USA med et fleksibelt doseringsområde opp til 450 mg/dag. I tillegg
+er ni studier med bupropion (depottablett) vurdert å være støttende basert på bioekvivalensen av
+bupropion (tablett med modifisert frisetting) (én gang daglig) mot depottabletten (to ganger daglig).
+
+Bupropion (tablett med modifisert frisetting) viste seg å være statistisk signifikant bedre enn placebo
+målt på forbedring på Montgomery-Asberg Depression Rating Scale (MADRS) total score i en av to
+identiske studier med doseringer i området 150-300 mg. Respons og remisjonsfrekvenser var også
+statistisk signifikant høyere med bupropion (tablett med modifisert frisetting) sammenlignet med
+placebo. I en tredje studie på eldre pasienter kunne det ikke vises statistisk signifikant bedre effekt på
+den primære parameteren, gjennomsnittlig endring fra baseline i MADRS (Last Observation Carried
+Forward endepunkt) selv om statistisk signifikante effekter ble sett i en sekundær (Observed Case)
+analyse.
+
+Det ble vist signifikant fordel på det primære endepunktet i to av de fire amerikanske studiene med
+bupropion (tablett med modifisert frisetting) (300-450 mg). Av de to positive studiene var den ene en
+placebokontrollert studie hos pasienter med MDD og den andre var en studie med aktiv komparator
+hos pasienter med MDD.
+
+I en åpen tilbakefallsforebyggende studie ble pasienter som responderte på åtte ukers akutt behandling
+med bupropion (depottablett) (300 mg/dag) randomisert til enten bupropion (depottablett) eller
+
+                                                    10

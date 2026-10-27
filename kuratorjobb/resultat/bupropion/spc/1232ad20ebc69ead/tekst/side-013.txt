@@ -1,0 +1,58 @@
+Det uoppløselige skallet til tablettene med modifisert frisetting kan forbli intakt i løpet av den
+gastrointestinale passasjen og skilles ut i feces.
+
+Spesielle pasientpopulasjoner
+
+Nedsatt nyrefunksjon
+
+Eliminasjonen av bupropion og dets aktive hovedmetabolitter kan være nedsatt hos pasienter med
+nedsatt nyrefunksjon. Begrensede data fra pasienter med alvorlig nyresvikt eller moderat til alvorlig
+nedsatt nyrefunksjon indikerer at eksponeringen til bupropion og/eller dets metabolitter økte (se pkt.
+4.4).
+
+Nedsatt leverfunksjon
+
+Farmakokinetikken av bupropion og dens aktive metabolitter var ikke statistisk signifikant forskjellig
+hos pasienter med mild til moderat cirrhose, selv om større variasjoner ble observert blant disse
+pasientene enn hos friske frivillige (se pkt. 4.4). For pasienter med alvorlig levercirrhose, var
+bupropions Cmax og AUC vesentlig økt (gjennomsnittlig differanse var henholdsvis ca. 70 % og
+3 gangers forskjell) og mer variabel ved sammenligning med verdier hos friske frivillige; den
+gjennomsnittlige halveringstiden var også lengre (ca. 40 %). For hydroksybupropion var
+gjennomsnittlig Cmax lavere (ca. 70 %), gjennomsnittlig AUC syntes å være høyere (ca. 30 %), median
+Tmax inntraff senere (etter ca. 20 timer), gjennomsnittlig halveringstid var lengre (ca. 4 ganger så lang)
+enn hos friske frivillige. For treohydrobupropion og erytrohydrobupropion syntes gjennomsnittlig Cmax
+å være lavere (ca. 30 %), gjennomsnittlig AUC syntes å være høyere (ca. 50 %), median Tmax inntraff
+senere (etter ca. 20 timer) og gjennomsnittlig halveringstid var lengre (ca. 2 ganger så lang) som hos
+friske frivillige (se pkt. 4.3).
+
+Eldre
+
+Farmakokinetiske studier i eldre har vist variable resultater. En enkeltdosestudie viste at
+farmakokinetikken av bupropion og dens metabolitter hos eldre ikke avviker fra yngre voksne. En
+annen farmakokinetisk enkelt- og flerdosestudie, antydet at akkumulering av bupropion og dens
+metabolitter kan forekomme i større grad hos eldre. Klinisk erfaring har ikke påvist forskjell i
+toleranse mellom eldre og yngre pasienter, men økt følsomhet hos eldre kan ikke utelukkes (se pkt.
+4.4).
+
+In-vitro frigjøring av bupropion med alkohol
+In-vitro tester har vist at ved høye alkoholkonsentrasjoner (opptil 40 %) frigis bupropion raskere fra
+depotformuleringen (opptil 20 % bupropion er oppløst etter 2 timer) (se pkt. 4.5).
+
+5.3     Prekliniske sikkerhetsdata
+
+Reproduksjonstoksisitetsstudier utført i rotter ved lignende eksponering som den maksimalt anbefalte
+dosen til mennesker (basert på systemisk data ved eksponering) avdekket ingen bivirkninger på
+fertilitet, graviditet og fosterutvikling. Reproduksjonstoksisitetsstudier utført på kaniner behandlet med
+doser opp til 7 ganger maksimal anbefalt dose for mennesker basert på mg/m2 (ingen systemiske data
+på eksponering er tilgjengelig) avdekket kun en svak økning i skjelettvariasjoner (økt insidens av
+vanlig anatomisk variasjon av ekstra ribbein i thorax og forsinket forbeining av falanks). Forminsket
+fødselsvekt hos kaniner ble videre observert ved toksiske doser hos den drektige kaninen.
+
+I dyrestudier hvor bupropion ble administrert i doser som er flere ganger høyere enn terapeutiske
+humane doser, ble følgende dose-relaterte symptomer sett: ataksi og kramper hos rotter, generell
+svakhet, skjelving og brekninger hos hunder og økt dødelighet hos begge arter. På grunn av
+enzyminduksjon hos dyr, men ikke hos mennesker, var systemisk eksponering hos dyr lik systemisk
+eksponering sett hos mennesker ved maksimal anbefalt dose.
+
+
+                                                    13

@@ -1,0 +1,59 @@
+hos pasienter med Brugada syndrom eller risikofaktorer som en familiehistorie med hjertestans eller
+plutselig død.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Monoaminoksidase A- og B-hemmere øker aktiviteten i de katekolaminerge nervebaner, men via en
+annen mekanisme enn bupropion. Samtidig bruk av Paritdam og monoaminoksidasehemmere (MAO-
+hemmere) er derfor kontraindisert (se pkt. 4.3). Det er økt risiko for bivirkninger ved samtidig
+administrering av disse. Det bør gå minst 14 dager mellom seponering av irreversible MAO-hemmere
+og oppstart av behandling med Paritdam. For reversible MAO-hemmere er det tilstrekkelig med en
+periode på 24 timer.
+
+Bupropions effekt på andre legemidler
+Selv om bupropion og hovedmetabolitten hydroksibupropion ikke metaboliseres via CYP2D6-
+isoenzymet, hemmer de CYP2D6-metabolismeveien. Samtidig administrering av bupropion og
+desipramin til friske frivillige som hadde kjent rask omsetting via CYP2D6-isoenzymet, resulterte i en
+stor (2–5 ganger) økning i Cmax og AUC for desipramin. Inhiberingen av CYP2D6 var til stede i minst
+7 dager etter siste dose av bupropion.
+
+Ved samtidig behandling med legemidler som har et smalt terapeutisk vindu og som primært
+metaboliseres via CYP2D6, bør dosering startes i den nedre delen av doseringsområdet. Slike
+legemidler inkluderer enkelte antidepressiva (f.eks. desipramin, imipramin), antipsykotika (f.eks.
+risperidon, tioridazin), betablokkere (f.eks. metoprolol), selektive serotonin-reopptakshemmere
+(SSRIer) og Type 1C antiarytmika (f.eks. propafenon, flekainid). En dosereduksjon av legemidlene
+nevnt ovenfor må vurderes dersom Paritdam gis til pasienter som allerede behandles med et av disse
+legemidlene. I disse tilfellene må forventet fordel av behandling med Paritdam nøye vurderes mot
+potensiell risiko. Serotonergt syndrom, en potensielt livstruende tilstand, er sett etter markedsføring
+ved samtidig administrering av Paritdam og et serotonergt legemiddel, slik som selektive
+serotoninreopptakshemmere (SSRI) eller serotonin- og noradrenalinreopptakshemmere (SNRI) (se
+pkt. 4.4).
+
+Legemidler som krever metabolsk aktivering via CYP2D6 for å være effektivt (f.eks. tamoksifen) kan
+ha redusert effekt når det gis sammen med hemmere av CYP2D6, som bupropion (se pkt. 4.4).
+
+Selv om citalopram (en SSRI) ikke primært metaboliseres av CYP2D6, viste en studie at bupropion
+økte Cmax og AUC for citalopam med henholdsvis 30 % og 40 %.
+
+Samtidig administrering av digoksin med bupropion kan redusere nivåene av digoksin. En
+sammenligning på tvers av studier (cross study) viste at digoksin AUC 0–24 t ble redusert og renal
+clearance ble økt hos friske frivillige. Leger bør være oppmerksomme på at nivåene av digoksin kan
+stige ved seponering av bupropion. Pasienten bør overvåkes for mulig digoksintoksisitet.
+
+Andre legemidlers effekt på bupropion
+Bupropion metaboliseres til den aktive hovedmetabolitten hydroksibupropion hovedsakelig via
+cytokrom P450 CYP2B6 (se pkt. 5.2). Samtidig administrering av legemidler som kan påvirke
+metabolisme av bupropion via CYP2B6-isoenzymet (f.eks. CYP2B6-substrater som cyklofosfamid,
+ifosfamid og CYP2B6-hemmere som orfenadrin, tiklopidin, klopidogrel), kan resultere i økte
+plasmånivåer av bupropiron og lavere nivå av den aktive metabolitten hydroksibupropion. Den
+kliniske konsekvens av inhibering av bupropionmetabolisme via CYP2B6-enzymet og de påfølgende
+endringer i ratioen mellom bupropion og hydroksibupropion, er for tiden ikke kjent.
+
+Forsiktighet bør utvises når bupropion gis samtidig med legemidler som er kjent for å indusere
+metabolisme (f.eks. karbamazepin, fenytoin, ritonavir, efavirenz) eller hemme metabolisme (f.eks.
+valproat). Siden bupropion metaboliseres raskt, kan dette påvirke den kliniske effekt og sikkerhet.
+
+I en serie av studier hos friske frivillige reduserte ritonavir (100 mg 2 ganger daglig, eller 600 mg
+2 ganger daglig) eller ritonavir 100 mg samt lopinavir 400 mg 2 ganger daglig eksponeringen av
+
+                                                    6

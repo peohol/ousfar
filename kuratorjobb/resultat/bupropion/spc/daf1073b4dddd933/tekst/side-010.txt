@@ -1,0 +1,55 @@
+ Sykdommer i nyre og          Svært          Endret vannlatingsfrekvens og/eller urinretensjon,
+ urinveier                    sjeldne        urininkontinens
+ Generelle lidelser og        Vanlige        Feber, smerter i brystet, asteni
+ reaksjoner på
+ administrasjonsstedet
+
+*Hypersensitivitet kan vise seg som hudreaksjoner. Se ”Forstyrrelser i immunsystemet” og ”Hud- og
+underhudssykdommer”.
+
+**Hyppigheten av krampeanfall er ca. 0,1 % (1/1000). Den mest vanlige formen for kramper er
+generaliserte tonisk-kloniske anfall, som i enkelte tilfeller kan resultere i postiktal forvirring eller
+svekket hukommelse (se pkt. 4.4).
+
+***Tilfeller av selvmordstanker og suicidal oppførsel har blitt rapportert under bupropionbehandling
+eller like etter behandlingsseponering (se pkt. 4.4).
+
+****Serotonergt syndrom kan oppstå som en konsekvens av en interaksjon mellom bupropion og et
+serotonergt legemiddel slik som selektive serotonin-reopptakshemmere (SSRI) eller serotonin- og
+noradrenalinreopptakshemmere (SNRI-er) (se pkt. 4.4).
+
+Melding av mistenkte bivirkninger
+
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til
+Direktoratet for medisinske produkter: www.dmp.no/meldeskjema.
+
+4.9   Overdosering
+
+Akutt inntak av doser som overstiger 10 ganger maksimal terapeutisk dose, har vært rapportert. I
+tillegg til symptomene angitt under bivirkninger, har overdoseringer resultert i symptomer som
+døsighet, bevisstløshet og/eller elektrokardiogram (EKG) forandringer som ledningsforstyrrelser
+(inkludert QRS forlengelse), arytmier og takykardi. QTc forlengelse er også rapportert, men ble
+generelt sett i forbindelse med QRS forlengelse og økt hjertefrekvens. Selv om de fleste pasienter kom
+til seg selv igjen uten varige mén, har dødsfall i forbindelse ved massiv overdose av bupropion vært
+rapportert i sjeldne tilfeller. Serotonergt syndrom har også blitt rapportert.
+
+Behandling:
+
+I tilfeller av overdose, anbefales sykehusinnleggelse. EKG og livsfunksjoner bør overvåkes.
+
+Sørg for åpne luftveier, oksygenering og ventilasjon. Det anbefales å gi aktivt kull. Det finnes ingen
+spesifikk antidot for bupropion. Videre behandling bør være som klinisk indisert.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Andre antidepressiva ATC-kode: N06 AX12.
+
+Virkningsmekanisme
+
+Bupropion er en selektiv hemmer av neuronalt reopptak av katekolaminer (noradrenalin og dopamin)
+med minimal effekt på reopptak av indolaminer (serotonin) og inhiberer ikke monoaminoksidaser.

@@ -1,0 +1,54 @@
+Etter oral administrasjon av 200 mg av 14C-bupropion hos mennesker, ble 87 % og 10 % av den
+radioaktive dosen gjenfunnet i henholdsvis urin og fæces. Fraksjonen av uomdannet bupropion, var
+kun 0,5 %, noe som samsvarer med bupropions utstrakte metabolisme. Under 10 % av denne 14C
+dosen målt i urinen utgjorde aktive metabolitter.
+
+Gjennomsnittlig tilsynelatende clearance etter oral administrasjon av bupropionhydroklorid er ca.
+200 L/time, og gjennomsnittlig eliminasjonshalveringstid for bupropion er ca. 20 timer.
+
+Eliminasjonshalveringstid for hydroksibupropion er ca. 20 timer. Eliminasjonshalveringstid for
+treohydrobupropion og erytrohydrobupropion er lengre (henholdsvis 37 og 33 timer) og AUC verdiene
+ved steady-state er henholdsvis 8 og 1,6 ganger høyere enn for bupropion. Steady-state for bupropion
+og dens metabolitter oppnås etter 8 dager.
+
+Det uoppløselige skallet til tablettene med modifisert frisetting kan forbli intakt i løpet av den
+gastrointestinale passasjen og skilles ut i feces.
+
+Spesielle pasientpopulasjoner:
+
+Nedsatt nyrefunksjon
+
+Eliminasjonen av bupropion og dets aktive hovedmetabolitter kan være nedsatt hos pasienter med
+nedsatt nyrefunksjon. Begrensede data fra pasienter med alvorlig nyresvikt eller moderat til alvorlig
+nedsatt nyrefunksjon indikerer at eksponeringen til bupropion og/eller dets metabolitter økte (se punkt
+4.4).
+
+Nedsatt leverfunksjon
+
+Farmakokinetikken av bupropion og dens aktive metabolitter var ikke statistisk signifikant forskjellig
+hos pasienter med mild til moderat cirrhose, selv om større variasjoner ble observert blant disse
+pasientene enn hos friske frivillige (se pkt. 4.4). For pasienter med alvorlig levercirrhose, var
+bupropions Cmax og AUC vesentlig økt (gjennomsnittlig differanse var henholdsvis ca. 70 % og 3
+gangers forskjell) og mer variabel ved sammenligning med verdier hos friske frivillige; den
+gjennomsnittlige halveringstiden var også lengre (ca. 40 %). For hydroksybupropion var
+gjennomsnittlig Cmax lavere (ca. 70 %), gjennomsnittlig AUC syntes å være høyere (ca. 30 %), median
+Tmax inntraff senere (etter ca. 20 timer), gjennomsnittlig halveringstid var lengre (ca. 4 ganger så lang)
+enn hos friske frivillige. For treohydrobupropion og erytrohydrobupropion syntes gjennomsnittlig Cmax
+å være lavere (ca. 30 %), gjennomsnittlig AUC syntes å være høyere (ca. 50 %), median Tmax inntraff
+senere (etter ca. 20 timer) og gjennomsnittlig halveringstid var lengre (ca. 2 ganger så lang) som hos
+friske frivillige (se pkt. 4.3).
+
+Eldre
+
+Farmakokinetiske studier i eldre har vist variable resultater. En enkeltdosestudie viste at
+farmakokinetikken av bupropion og dens metabolitter hos eldre ikke avviker fra yngre voksne. En
+annen farmakokinetisk enkelt- og flerdosestudie, antydet at akkumulering av bupropion og dens
+metabolitter kan forekomme i større grad hos eldre. Klinisk erfaring har ikke påvist forskjell i
+toleranse mellom eldre og yngre pasienter, men økt følsomhet hos eldre kan ikke utelukkes (se pkt.
+4.4).
+
+Eudragit alkoholoppløsning
+In-vitro tester har vist at ved høye alkoholkonsentrasjoner (opptil 40 %) frigis bupropion raskere fra
+depotformuleringen (opptil 20 % bupropion er oppløst etter 2 timer) (se avsnitt 4.5).
+
+5.3     Prekliniske sikkerhetsdata

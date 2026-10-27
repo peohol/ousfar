@@ -1,0 +1,863 @@
+{
+  "stoff": "bupropion",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-10-27T04:15:06.281727+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 8,
+    "hentet": 6,
+    "dokumenter": 5,
+    "mangler": [
+      {
+        "merkevare_id": "ID_7CD9BCA0-E637-4DC0-9E38-25A00EC9A7ED",
+        "varenavn": "Mysimba",
+        "navn_form_styrke": "Mysimba depottab 8 mg/90 mg",
+        "produsent": "Orexigen Therapeutics Ireland Limited (1)",
+        "atc": "A08AA62",
+        "legemiddelform": "Depottablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_FF2865A0-9725-490B-99E3-B35BC1C04A29",
+        "varenavn": "Mysimba",
+        "navn_form_styrke": "Mysimba depottab 8 mg/90 mg",
+        "produsent": "2care4 ApS",
+        "atc": "A08AA62",
+        "legemiddelform": "Depottablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 6 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 6,
+        "ikke_dmp": 0,
+        "uten_omtale": 2
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "2 av 8 preparater i FEST mangler en hentet preparatomtale fra DMP: 2 uten preparatomtale i FEST (f.eks. sentralt godkjente, med omtalen hos EMA). SPC-behovet er ikke dekket; se «dekning.mangler».",
+      "antall": {
+        "preparater": 8,
+        "hentet": 6,
+        "mangler": 2,
+        "dokumenter": 5
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-3990.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-3990.pdf",
+      "hentet_kl": "2026-10-27T11:09:40.260Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "310593",
+        "content-md5": "Xbm6OKWFR/xZCI5varZTWQ==",
+        "last-modified": "Fri, 16 Oct 2026 11:32:41 GMT",
+        "etag": "0x8DF2B79306356F2",
+        "date": "Tue, 27 Oct 2026 11:09:41 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_136ED36F-084F-466C-A511-98E2BA1D5FB6",
+          "varenavn": "Wellbutrin Retard",
+          "navn_form_styrke": "Wellbutrin Retard tab modif frisetting 150 mg",
+          "produsent": "GlaxoSmithKline AS",
+          "atc": "N06AX12",
+          "legemiddelform": "Tablett med modifisert frisetting"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-3990.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (310593 byte).",
+          "antall": {
+            "bytes": 310593
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "daf1073b4dddd933e46338e36bd839d5e68425bd7c44bc55df0264fce64e89d6"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11754.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11754.pdf",
+      "hentet_kl": "2026-10-27T11:09:46.029Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "327203",
+        "content-md5": "uq9Fj269XfxXpNvhCoCWSQ==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:51 GMT",
+        "etag": "0x8DE85F8EDB8CF8A",
+        "date": "Tue, 27 Oct 2026 11:09:46 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_60068657-5494-47A6-B51E-5316E4C56A5D",
+          "varenavn": "Paritdam",
+          "navn_form_styrke": "Paritdam tab modif frisetting 300 mg",
+          "produsent": "Accord Healthcare B.V.",
+          "atc": "N06AX12",
+          "legemiddelform": "Tablett med modifisert frisetting"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11754.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (327203 byte).",
+          "antall": {
+            "bytes": 327203
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "6562b7961dba9a5ace4f58ae0ac5e107ae8ca5803f9d6e9e64b94793df0cd3c5"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/18-12448.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/18-12448.pdf",
+      "hentet_kl": "2026-10-27T11:09:51.480Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "303208",
+        "content-md5": "MDqcTto3U803BkhgQdQiCg==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:13 GMT",
+        "etag": "0x8DF250867840A27",
+        "date": "Tue, 27 Oct 2026 11:09:52 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_6FC07338-5B9D-4819-8273-D6DDACE6190C",
+          "varenavn": "Bupropion hydrochloride Teva",
+          "navn_form_styrke": "Bupropion hydrochloride Teva tab modif frisetting 150 mg",
+          "produsent": "Teva B.V.",
+          "atc": "N06AX12",
+          "legemiddelform": "Tablett med modifisert frisetting"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/18-12448.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (303208 byte).",
+          "antall": {
+            "bytes": 303208
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "627fb52abf796c65786e627062759ae36377b9bec0eaf05f837ade2731ee645f"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-3991.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-3991.pdf",
+      "hentet_kl": "2026-10-27T11:09:57.055Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "310593",
+        "content-md5": "Xbm6OKWFR/xZCI5varZTWQ==",
+        "last-modified": "Fri, 16 Oct 2026 11:32:42 GMT",
+        "etag": "0x8DF2B7930FA03B6",
+        "date": "Tue, 27 Oct 2026 11:09:57 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_AA56A922-B653-46BB-9FFE-5AD698B04D93",
+          "varenavn": "Wellbutrin Retard",
+          "navn_form_styrke": "Wellbutrin Retard tab modif frisetting 300 mg",
+          "produsent": "GlaxoSmithKline AS",
+          "atc": "N06AX12",
+          "legemiddelform": "Tablett med modifisert frisetting"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-3991.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (310593 byte).",
+          "antall": {
+            "bytes": 310593
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "daf1073b4dddd933e46338e36bd839d5e68425bd7c44bc55df0264fce64e89d6"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14132.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14132.pdf",
+      "hentet_kl": "2026-10-27T11:09:58.304Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "338656",
+        "content-md5": "eyQiTAVtIg6MCNEantmgYA==",
+        "last-modified": "Thu, 19 Mar 2026 20:49:14 GMT",
+        "etag": "0x8DE85F8FB460BA4",
+        "date": "Tue, 27 Oct 2026 11:09:58 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_CA324236-12F4-4507-8CC3-61D2338BFBE2",
+          "varenavn": "Paritdam",
+          "navn_form_styrke": "Paritdam tab modif frisetting 150 mg",
+          "produsent": "Accord Healthcare B.V.",
+          "atc": "N06AX12",
+          "legemiddelform": "Tablett med modifisert frisetting"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14132.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (338656 byte).",
+          "antall": {
+            "bytes": 338656
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "1cc0426ab521d2bcd316d80b0cd23ba8f6018d5bced11dc2c4744b43ed6e3639"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/18-12228.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/18-12228.pdf",
+      "hentet_kl": "2026-10-27T11:10:03.692Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "321768",
+        "content-md5": "MpDURFJrL7IegTA1l4RFtw==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:12 GMT",
+        "etag": "0x8DF250866F0938D",
+        "date": "Tue, 27 Oct 2026 11:10:04 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_F049AEAC-7693-41A7-BE83-338F7B9046D0",
+          "varenavn": "Bupropion hydrochloride Teva",
+          "navn_form_styrke": "Bupropion hydrochloride Teva tab modif frisetting 300 mg",
+          "produsent": "Teva B.V.",
+          "atc": "N06AX12",
+          "legemiddelform": "Tablett med modifisert frisetting"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/18-12228.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (321768 byte).",
+          "antall": {
+            "bytes": 321768
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "1232ad20ebc69eada65d7b26491642e40161f1ed31b745f4f01adcdb104324b9"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "daf1073b4dddd933e46338e36bd839d5e68425bd7c44bc55df0264fce64e89d6",
+      "bytes": 310593,
+      "mappe": "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933",
+      "pdf": {
+        "sider": 15,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Fri Oct 16 11:15:34 2026 UTC",
+        "endret": "Fri Oct 16 11:15:34 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/original.pdf",
+        "tekst": "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/tekst/side-001.txt",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/tekst/side-002.txt",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/tekst/side-003.txt",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/tekst/side-004.txt",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/tekst/side-005.txt",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/tekst/side-006.txt",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/tekst/side-007.txt",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/tekst/side-008.txt",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/tekst/side-009.txt",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/tekst/side-010.txt",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/tekst/side-011.txt",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/tekst/side-012.txt",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/tekst/side-013.txt",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/tekst/side-014.txt",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/tekst/side-015.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/sider/side-001.png",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/sider/side-002.png",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/sider/side-003.png",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/sider/side-004.png",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/sider/side-005.png",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/sider/side-006.png",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/sider/side-007.png",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/sider/side-008.png",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/sider/side-009.png",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/sider/side-010.png",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/sider/side-011.png",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/sider/side-012.png",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/sider/side-013.png",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/sider/side-014.png",
+          "kuratorjobb/resultat/bupropion/spc/daf1073b4dddd933/sider/side-015.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 10
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (15 sider).",
+          "antall": {
+            "sider": 15
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 36865
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 15
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "6562b7961dba9a5ace4f58ae0ac5e107ae8ca5803f9d6e9e64b94793df0cd3c5",
+      "bytes": 327203,
+      "mappe": "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a",
+      "pdf": {
+        "sider": 15,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "Hreferralspccleanno",
+        "laget": "Wed Mar 18 10:52:37 2026 UTC",
+        "endret": "Wed Mar 18 10:52:37 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/original.pdf",
+        "tekst": "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/tekst/side-001.txt",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/tekst/side-002.txt",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/tekst/side-003.txt",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/tekst/side-004.txt",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/tekst/side-005.txt",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/tekst/side-006.txt",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/tekst/side-007.txt",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/tekst/side-008.txt",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/tekst/side-009.txt",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/tekst/side-010.txt",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/tekst/side-011.txt",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/tekst/side-012.txt",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/tekst/side-013.txt",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/tekst/side-014.txt",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/tekst/side-015.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/sider/side-001.png",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/sider/side-002.png",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/sider/side-003.png",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/sider/side-004.png",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/sider/side-005.png",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/sider/side-006.png",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/sider/side-007.png",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/sider/side-008.png",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/sider/side-009.png",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/sider/side-010.png",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/sider/side-011.png",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/sider/side-012.png",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/sider/side-013.png",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/sider/side-014.png",
+          "kuratorjobb/resultat/bupropion/spc/6562b7961dba9a5a/sider/side-015.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 9
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (15 sider).",
+          "antall": {
+            "sider": 15
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 36494
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 15
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "627fb52abf796c65786e627062759ae36377b9bec0eaf05f837ade2731ee645f",
+      "bytes": 303208,
+      "mappe": "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65",
+      "pdf": {
+        "sider": 15,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "Hreferralspccleanno",
+        "laget": "Tue Apr 21 10:11:47 2026 UTC",
+        "endret": "Tue Apr 21 10:11:47 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/original.pdf",
+        "tekst": "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/tekst/side-001.txt",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/tekst/side-002.txt",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/tekst/side-003.txt",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/tekst/side-004.txt",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/tekst/side-005.txt",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/tekst/side-006.txt",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/tekst/side-007.txt",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/tekst/side-008.txt",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/tekst/side-009.txt",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/tekst/side-010.txt",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/tekst/side-011.txt",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/tekst/side-012.txt",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/tekst/side-013.txt",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/tekst/side-014.txt",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/tekst/side-015.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/sider/side-001.png",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/sider/side-002.png",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/sider/side-003.png",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/sider/side-004.png",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/sider/side-005.png",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/sider/side-006.png",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/sider/side-007.png",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/sider/side-008.png",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/sider/side-009.png",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/sider/side-010.png",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/sider/side-011.png",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/sider/side-012.png",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/sider/side-013.png",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/sider/side-014.png",
+          "kuratorjobb/resultat/bupropion/spc/627fb52abf796c65/sider/side-015.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 10
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (15 sider).",
+          "antall": {
+            "sider": 15
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 36715
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 15
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "1cc0426ab521d2bcd316d80b0cd23ba8f6018d5bced11dc2c4744b43ed6e3639",
+      "bytes": 338656,
+      "mappe": "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc",
+      "pdf": {
+        "sider": 14,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Wed Mar 18 10:52:36 2026 UTC",
+        "endret": "Wed Mar 18 10:52:36 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/original.pdf",
+        "tekst": "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/tekst/side-001.txt",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/tekst/side-002.txt",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/tekst/side-003.txt",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/tekst/side-004.txt",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/tekst/side-005.txt",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/tekst/side-006.txt",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/tekst/side-007.txt",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/tekst/side-008.txt",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/tekst/side-009.txt",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/tekst/side-010.txt",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/tekst/side-011.txt",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/tekst/side-012.txt",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/tekst/side-013.txt",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/tekst/side-014.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/sider/side-001.png",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/sider/side-002.png",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/sider/side-003.png",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/sider/side-004.png",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/sider/side-005.png",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/sider/side-006.png",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/sider/side-007.png",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/sider/side-008.png",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/sider/side-009.png",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/sider/side-010.png",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/sider/side-011.png",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/sider/side-012.png",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/sider/side-013.png",
+          "kuratorjobb/resultat/bupropion/spc/1cc0426ab521d2bc/sider/side-014.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 7,
+        "til": 9
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (14 sider).",
+          "antall": {
+            "sider": 14
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 36326
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 7."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 14
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "1232ad20ebc69eada65d7b26491642e40161f1ed31b745f4f01adcdb104324b9",
+      "bytes": 321768,
+      "mappe": "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead",
+      "pdf": {
+        "sider": 15,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "Hreferralspccleanno",
+        "laget": "Tue Apr 21 10:11:57 2026 UTC",
+        "endret": "Tue Apr 21 10:11:57 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/original.pdf",
+        "tekst": "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/tekst/side-001.txt",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/tekst/side-002.txt",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/tekst/side-003.txt",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/tekst/side-004.txt",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/tekst/side-005.txt",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/tekst/side-006.txt",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/tekst/side-007.txt",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/tekst/side-008.txt",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/tekst/side-009.txt",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/tekst/side-010.txt",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/tekst/side-011.txt",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/tekst/side-012.txt",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/tekst/side-013.txt",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/tekst/side-014.txt",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/tekst/side-015.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/sider/side-001.png",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/sider/side-002.png",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/sider/side-003.png",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/sider/side-004.png",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/sider/side-005.png",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/sider/side-006.png",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/sider/side-007.png",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/sider/side-008.png",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/sider/side-009.png",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/sider/side-010.png",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/sider/side-011.png",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/sider/side-012.png",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/sider/side-013.png",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/sider/side-014.png",
+          "kuratorjobb/resultat/bupropion/spc/1232ad20ebc69ead/sider/side-015.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 10
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (15 sider).",
+          "antall": {
+            "sider": 15
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 36855
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 15
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": []
+}
