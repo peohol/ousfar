@@ -1,0 +1,59 @@
+4.5     Interaksjon med andre legemidler og andre former for interaksjon
+
+Samtidig administrering av følgende legemidler med litium kan føre til økte litiumkonsentrasjoner og en
+risiko for toksisitet:
+- Ethvert legemiddel som kan gi nedsatt nyrefunksjon, har potensial til å forårsake en økning i litiumnivåer,
+    og dermed forårsake toksisitet. Hvis bruken av legemidlet ikke kan unngås, skal litiumnivået i blodet
+    overvåkes tett og dosen tilpasses etter behov.
+- Antiinfeksiøse midler: En økning i litiumkonsentrasjoner forbundet med kliniske tegn på toksisitet har
+    vært rapportert i sjeldne tilfeller under samtidig administrering av antiinfeksiøse midler som trimetoprim,
+    metronidazol, tetrasykliner, spektinomycin, og levofloksacin.
+- Syklooksygenase-2 (COX-2)-hemmere: Overvåk litiumkonsentrasjoner i serum hyppigere hvis NSAID-
+    behandling igangsettes eller seponeres. Kliniske tegn på toksisitet forbundet med en økning i
+    litiumkonsentrasjoner har vært beskrevet i sjeldne tilfeller under samtidig administrering med rofekoksib
+    og celekoksib.
+- Angiotensin II-antagonister (f.eks. losartan, irbesartan) og ACE-hemmere (f.eks. enalapril, lisinopril,
+    ramipril) hemmer utskillelsen av natrium i urinen, noe som kan fremme litiumretensjon, særlig hos
+    pasienter med nedsatt nyrefunksjon. Avhengig av serumkonsentrasjonen kan det hende litiumdosen må
+    justeres.
+- Diuretika: Natriumtømmende diureteika (tiazider og sløyfediuretika) kan redusere litiumutskillelsen og
+    forårsake litiumintoksikasjon.
+- Karbamazepin, fenytoin: Kan øke plasmakonsentrasjonene av litium.
+- Andre legemidler som påvirker elektrolyttbalansen, f.eks. steroider, kan endre litiumutskillelsen og skal
+    derfor unngås.
+
+Samtidig administrering av følgende legemidler med litium kan føre til reduserte konsentrasjoner av litium i
+plasma og en risiko for effekttap:
+- Natriumbikarbonat
+- Xantiner (teofyllin, koffein): Serumlitium reduseres med 20–30 % på grunn av en økt renal clearance
+   under samtidig administrering med teofyllin. Interaksjonen kan gi tap av effekt. Når behandlingen med
+   teofyllin stoppes, er det en risiko for litiumforgiftning hvis litiumdosen ble økt under samtidig
+   behandling.
+- Forbruk av koffein kan øke den renale clearance av litium. Potensiell litiumintoksikasjon kan ses ved
+   koffeinabstinens etter langvarig samtidig inntak, med en 20–25 % økning i konsentrasjoner av litium i
+   serum som resultat.
+- Karbonanhydrasehemmere (e.g. acetazolamid).
+
+Andre interaksjoner
+- Antipsykotika (f.eks. haloperidol, olanzapin, clozapin): Ekstrapyramidale motoriske symptomer og
+  forvirring har vært rapportert i sjeldne tilfeller etter kombinasjonsbehandling med store doser
+  antipsykotika. Typiske antipsykotika i kombinasjon med litium kan gi alvorlige ekstrapyramidale
+  motoriske forstyrrelser (pseudo-parkinsonisme).
+- Legemidler som kan interferere med serotoninmetabolisme (f.eks. MAO-hemmere, eller selektive
+  serotoninreopptakshemmere (SSRI) som citalopram; og norepinefrinreopptakshemmere (SNRI),
+  trisykliske antidepressiva eller visse opioider (f.eks. buprenorfin): Samtidig administrering kan gi
+  serotonergt syndrom med søvnforstyrrelser, oppspilthet og tremor, og i alvorlige tilfeller myoklonus,
+  temperaturstigning og forvirring.
+- Jodinforbindelser: Den tyreostatiske effekten forsterkes.
+- Nevroleptika og antidepressiva: Økte effekter når administrert sammen med litium.
+  Kombinasjonsbehandling med antidepressiva kan forsterke håndtremor, som muligens kan behandles
+  med betablokkere (f.eks. propanolol).
+- Curare-lignende preparater (muskelavslappende) og anestesimidler: Kombinasjonen av litium og ikke-
+  depolariserende blokkere fører til en synergistisk hemming av nevromuskulær overføring. På den annen
+  siden forlenger litium latensen (tid til debut) og varigheten av nevromuskulær blokkade som produseres
+  av både depolariserende og ikke-depolariserende nevromuskulære blokkmidler. Se avsnitt 4.4.
+
+4.6     Fertilitet, graviditet og amming
+
+
+                                                       5

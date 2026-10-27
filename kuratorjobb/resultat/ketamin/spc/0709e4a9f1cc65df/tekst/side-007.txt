@@ -1,0 +1,58 @@
+Klinisk effekt og sikkerhet
+Esketamin har en markant lokal anestetisk effekt på ryggmarg og perifere nerver.
+Esketamin forårsaker ikke respirasjons- eller kretsløpshemming og har kun en marginal innvirkning på
+de beskyttende refleksene. Under anestesi med esketamin vil muskeltonus opprettholdes eller øke, og
+de beskyttende refleksene blir som regel ikke svekket. Konvulsjonsterskelen senkes ikke. Under
+spontan respirasjon finner det sted en økning i det intrakranielle trykket. Dette kan unngås ved
+adekvat lungeventilasjon.
+
+Den sympatomimetiske effekten til esketamin fører til at blodtrykket og hjertefrekvensen stiger, noe
+som resulterer i økt myokardielt oksygenforbruk og koronar blodgjennomstrømning. Esketamin har
+en negativ inotrop og antiarytmisk effekt på hjertet. Den perifere resistensen påvirkes nesten ikke
+grunnet motvirkende effekter.
+
+Moderat hyperventilasjon kan observeres etter administrering av esketamin, men dette har ikke noen
+nevneverdig effekt på blodgassene.
+
+Esketamin har en bronkodilaterende effekt som gjør at det egner seg til bruk hos astmapasienter og
+under kunstig ventilasjon av pasienter med status asthmaticus.
+
+5. 2    Farmakokinetiske egenskaper
+
+Det fins ingen eller kun små forskjeller i farmakokinetikken til esketamin og racemisk (±)-ketamin.
+Derfor kan det henvises til farmakokinetiske erfaringer med racemisk ketamin (nedenfor kalt
+"ketamin"). Farmakokinetikken til keatmin er lineær.
+
+Absorpsjon
+Ketamin absorberes hurtig etter intramuskulær administrering og har en biotilgjengelighet på ca. 90 %.
+
+Distribusjon
+Bindingsgraden i forhold til plasmaproteiner er ca. 50 %. Lipidløseligheten er høy.
+
+Ketamin distribueres raskt i vev med høy perfusjon (f. eks. hjerte, lunge og hjerne) etterfulgt av
+muskelvev og perifert vev, og deretter fettvev. Med en intravenøs bolusdose på 2,5 mg/kg vil
+distribusjonsfasen for ketamin hos mennesker vare i cirka 45 minutter med en halveringstid på 10 til
+15 minutter, og er assosiert med varigheten av anestetisk effekt (ca. 20 minutter).
+Esketaminkonsentrasjonen i plasma er ca. 2,6 mikrog/ml ved 1 minutt og 0,9 mikrog/ml ved
+5 minutter etter en intravenøs bolusdose på 1 mg/kg esketamin. Toppkonsentrasjoner av esketamin i
+plasma er ca. 0,14 mikrog/ml ved 25 minutter etter en intramuskulær esketamindose på 0,5 mg/kg.
+
+Biotransformasjon
+Ketamin brytes ned i leveren via demetylering (via cytokrom P450-systemet) til den vesentlig mindre
+potente hovedmetabolitten norketamin og andre, etter hvert inaktive, metabolitter. CYP3A4-enzymet
+er det primære enzymet ansvarlig for ketamin N-demetylering til norketamin i humane
+levermikrosomer, med CYP2B6-og CYP2C9-enzymer som mindre bidragsytere. Metabolismen er
+hurtig og hovedsakelig fullstendig. Metabolsk clearance ligger på 1200 til 1500 ml/min.
+
+Eliminasjon
+Den terminale halveringstiden for ketamin er mellom 79 minutter (etter kontinuerlig intravenøs
+infusjon) og 186 minutter (etter intravenøs lavdoseadministrering). 98 % av ketamin og dets
+metabolitter elimineres via nyrene og 2 % via feces, med kun en liten mengde som uendret substans.
+Totalt sett elimineres ca. 95 % i løpet av de første 24 timene.
+
+5. 3    Prekliniske sikkerhetsdata
+
+Prekliniske data for esketamin med hensyn til gentoksisitet indikerer ingen spesiell fare for mennesker.
+
+
+                                                   7

@@ -1,0 +1,50 @@
+      4.      Overskytende blod skal ikke tilbakeføres til pasienten. Dette blodet kan
+              koagulere i posen og/eller ta opp forurensende materiale/partikler ved kontakt
+              med vekemateriale fra flowcellen.
+
+      5.      Unngå bruk av LiDCO-systemet de første 30 minuttene etter bolusinjeksjoner
+              eller infusjoner av muskelrelaksantia, f.eks. vekuroniumbromid,
+              atrakuriumbesylat og pankuroniumbromid. Disse midlene påvirker
+              litiumelektrodens funksjon og samtidig bruk må unngås.
+
+      6.      Litiumsensorer påvirkes av andre kjemikalier, spesielt: vaskemidler/surfaktanter
+              og oppløsningsmidler. Enkelte problemer er registrert med forurensninger i
+              infusjonspreparater av saltvannsoppløsninger, som poser med
+              saltvannsoppløsninger.
+
+      7.      Bruk av LiDCO-systemet krever bolusadministrasjon av litiumklorid og
+              saltvannsoppløsning etterfulgt av arteriell blodprøvetaking. Kun medisinsk
+              personale godt kvalifisert for administrasjon av intravenøse væsker og bruk av
+              perifert arteriekateter skal bruke systemet. Vanlig forsiktighet bør utvises for å
+              unngå: pasientinfeksjon, kateter- eller slangefrakobling, arterielt eller venøst
+              blodtap og luftemboli.
+
+      8.      Samtidig bruk av: elektrokauter-, elektrokirurgi-, defibrillerings- og røntgen-
+              apparatur vil gi forbigående påvirkning av LiDCO-systemets registreringer. Det
+              bør ikke foretas målinger i slike perioder. Slik påvirkning er ikke kjent å
+              forekomme ved infrarød bestråling eller utstyr som genererer
+              radiofrekvensbestråling.
+
+      9       Ved intrakardiell shunt (som hjerteinfarkt med interventrikulær septumruptur), vil
+              målingen av hjertets minuttvolum forstyrres ved måling med LiDCO-systemet,
+              som det også vil ved termofortynningsmetoden. En alternativ metode for
+              bestemmelse av hjertets minuttvolum bør vurderes i slike tilfeller.
+
+      10.     Litiumklorid skal ikke infunderes via slange som brukes til infusjon av
+              vasoaktive eller andre potente legemidler.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+      Ingen kjente interaksjoner med andre legemidler ved de anbefalte doser.
+
+4.6   Graviditet og amming
+
+      Graviditet
+
+      Det foreligger data for teratogene effekter av normale terapeutiske doser av litium i første
+      trimester, spesielt den økte faren for hjertefeil, spesifikt Ebsteins.
+
+      Amming
+
+      Selv om litium distribueres til ekstracellulærvæsken (ECV), er amming tillatt etter
+      administrasjon av litiumklorid for måling av hjertets minuttvolum.

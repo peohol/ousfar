@@ -1,0 +1,307 @@
+                                  PREPARATOMTALE
+
+
+1.    LEGEMIDLETS NAVN
+
+      Lithium Chloride Lidco 0,15 mmol/ml injeksjonsvæske, oppløsning.
+
+
+2.    KVALITATIV OG KVANTITATIV SAMMENSETNING
+
+      1 ml oppløsning inneholder 6,36 mg litiumklorid tilsvarende 0,15 mmol.
+      En 10 ml ampulle inneholder 63,6 mg litiumklorid tilsvarende 1,5 mmol.
+      For en i sin helhet fortegnelse over hjelpestoffer se avdeling 6.1
+
+
+3.    LEGEMIDDELFORM
+
+      Injeksjonsvæske, oppløsning.
+      En klar oppløsning i en glassampulle.
+
+
+4.    KLINISKE OPPLYSNINGER
+
+4.1   Indikasjoner
+
+      Dette legemiddel er kun til bruk ved diagnostiske formål.
+      Kun til bruk ved in-vivomåling av hjertets minuttvolum sammen med LiDCO-systemet.
+
+4.2   Dosering og administrasjonsmåte
+
+      Optimalisering av dosen for bestemmelse av hjertets minuttvolum
+
+      Den optimale dosen for bestemmelse av hjertets minuttvolum er den minste dosen som
+      kan gi en maksimal arteriell blodkonsentrasjon av litium i området 0,2 mM til 0,8 mM,
+      ved bruk av en dose på 0,075 mmol (0,5 ml), 0,15 mmol (1 ml) eller 0,3 mmol (2 ml)
+      Lithium Chloride Lidco 0,15 mmol/ml injeksjonsvæske, oppløsning.
+
+      Hos pasienter hvor det forventes et stort antall bestemmelser av hjertets minuttvolum, er
+      det best å starte med en måldose på 0,15 mmol, dvs. 1,0 ml litiumkloridinjeksjon.
+      LiDCO-systemets monitor vil vise en ‘Advarsel’ hvis dosen gir en kurve med maksimal
+      høyde under 0,2 mM. Topper mellom 0,1 og 0,2 mM er tillatt, men målingen kan bli
+      mindre nøyaktig. Hvis toppen ikke er innenfor det ønskede området, justeres dosen
+      deretter, men husk at en enkeltdose ikke må overskride 0,3 mmol, dvs. 2,0 ml eller være
+      under 0,075 mmol, dvs. 0,5 ml injeksjon.
+
+      Det bør gå et intervall på minst 5 minutter før en påfølgende litiumbestemmelse av
+      hjertets minuttvolum foretas.
+
+      Doseanbefalinger for Lithium Chloride Lidco 0,15 mmol/ml injeksjonsvæske, oppløsning
+      forutsetter at pasientens vekt er over 40 kg.
+      Vær oppmerksom på at en enkel LiDCO-bestemmelse innenfor ønsket maksimalområde
+      for fortynningskurven, er tilstrekkelig til å gi en avlesning av hjertets minuttvolum med
+      samme presisjon og nøyaktighet som gjennomsnittet av tre termofortynningsmålinger.
+
+      Maksimaldose
+
+      Hver dose er begrenset til maksimalt 0,3 mmol (2 ml) litiumklorid.
+      Kumulativ dose av litiumklorid bør ikke overskride 3 mmol.
+
+      Administrasjonsmåte
+
+      DETTE PREPARATET SKAL KUN BRUKES I HENHOLD TIL LiDCO-SYSTEMETS
+      BRUKERHÅNDBOK SOM LEVERES SAMMEN MED MÅLEUTSTYRET, OG SKAL
+      KUN BRUKES VED MEDISINSKE OG KIRURGISKE INTENSIVAVDELINGER,
+      OPERASJONSSTUER OG SKADE- OG AKUTTAVDELINGER
+
+      Litiumkloridampullen er kun for bruk i én pasient og skal brukes umiddelbart etter den er
+      åpnet. Litiumklorid kan trekkes ut av ampullen og inn i et lukket sprøytesystem som
+      leveres av LiDCO og som er beskrevet i LiDCO-systemets brukerhåndbok. Eventuell
+      ubrukt oppløsning som blir værende igjen i det lukkede sprøytesystem må kastes etter tre
+      (3) timer.
+
+      Litiumdosen administreres ved intravenøs injeksjon via et sentralt venekateter.
+
+4.3   Kontraindikasjoner
+
+      Bruk av Lithium Chloride Lidco 0,15 mmol/ml injeksjonsvæske, oppløsning er
+      kontraindisert:
+
+             Hos pasienter som behandles med litium for kontroll av bipolare lidelser.
+
+             Hos pasienter som veier mindre enn 40 kg.
+
+             I første trimester av graviditet. For mer informasjon se pkt. 4.6.
+
+      Overfølsomhet overfor litiumforbindelser.
+
+4.4   Advarsler og forsiktighetsregler
+
+      Dette legemidlet må kun brukes sammen med LiDCO-systemet
+
+      1.      Følg doseanbefalingene. Unøyaktigheter oppstår ved blodnivåer over 0,3 mM og
+              litium er toksisk ved blodkonsentrasjoner over 1,5 mM.
+
+      2.      Alle injeksjoner av litiumklorid skal registreres i pasientjournalen.
+
+      3.      Det skal gå minst 5 minutter mellom påfølgende LiDCO-systembestemmelser av
+              hjertets minuttvolum.
+      4.      Overskytende blod skal ikke tilbakeføres til pasienten. Dette blodet kan
+              koagulere i posen og/eller ta opp forurensende materiale/partikler ved kontakt
+              med vekemateriale fra flowcellen.
+
+      5.      Unngå bruk av LiDCO-systemet de første 30 minuttene etter bolusinjeksjoner
+              eller infusjoner av muskelrelaksantia, f.eks. vekuroniumbromid,
+              atrakuriumbesylat og pankuroniumbromid. Disse midlene påvirker
+              litiumelektrodens funksjon og samtidig bruk må unngås.
+
+      6.      Litiumsensorer påvirkes av andre kjemikalier, spesielt: vaskemidler/surfaktanter
+              og oppløsningsmidler. Enkelte problemer er registrert med forurensninger i
+              infusjonspreparater av saltvannsoppløsninger, som poser med
+              saltvannsoppløsninger.
+
+      7.      Bruk av LiDCO-systemet krever bolusadministrasjon av litiumklorid og
+              saltvannsoppløsning etterfulgt av arteriell blodprøvetaking. Kun medisinsk
+              personale godt kvalifisert for administrasjon av intravenøse væsker og bruk av
+              perifert arteriekateter skal bruke systemet. Vanlig forsiktighet bør utvises for å
+              unngå: pasientinfeksjon, kateter- eller slangefrakobling, arterielt eller venøst
+              blodtap og luftemboli.
+
+      8.      Samtidig bruk av: elektrokauter-, elektrokirurgi-, defibrillerings- og røntgen-
+              apparatur vil gi forbigående påvirkning av LiDCO-systemets registreringer. Det
+              bør ikke foretas målinger i slike perioder. Slik påvirkning er ikke kjent å
+              forekomme ved infrarød bestråling eller utstyr som genererer
+              radiofrekvensbestråling.
+
+      9       Ved intrakardiell shunt (som hjerteinfarkt med interventrikulær septumruptur), vil
+              målingen av hjertets minuttvolum forstyrres ved måling med LiDCO-systemet,
+              som det også vil ved termofortynningsmetoden. En alternativ metode for
+              bestemmelse av hjertets minuttvolum bør vurderes i slike tilfeller.
+
+      10.     Litiumklorid skal ikke infunderes via slange som brukes til infusjon av
+              vasoaktive eller andre potente legemidler.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+      Ingen kjente interaksjoner med andre legemidler ved de anbefalte doser.
+
+4.6   Graviditet og amming
+
+      Graviditet
+
+      Det foreligger data for teratogene effekter av normale terapeutiske doser av litium i første
+      trimester, spesielt den økte faren for hjertefeil, spesifikt Ebsteins.
+
+      Amming
+
+      Selv om litium distribueres til ekstracellulærvæsken (ECV), er amming tillatt etter
+      administrasjon av litiumklorid for måling av hjertets minuttvolum.
+4.7   Påvirkning av evnen til å kjøre bil eller bruke maskiner
+
+      Ikke relevant.
+
+4.8   Bivirkninger
+
+      Det forventes ingen bivirkninger relatert til litiumklorid ved foreslått dosering.
+
+4.9   Overdosering
+
+      Doseringsanbefalingene vil måtte femdobles for at litiumtoksisitet skal oppstå.
+
+      Innledende manifestasjoner av litiumtoksisitet omfatter ofte sentralnervesystemet og
+      omfatter døsighet, forvirring, ørhet, apati, skjelvende hender og dysartri. Gastrointestinale
+      symptomer som nedsatt appetitt, kvalme, oppkast eller diaré observeres av og til.
+      Muskelstivhet eller fascikulasjoner, lett ataksi, tinnitus, økt sløvhet, økte senereflekser,
+      tåkesyn og vertikal nystagmus følger vanligvis.
+
+      Litiumforgiftning kan utvikle seg til nedsatt bevissthet, økte fascikulasjoner og ataksi,
+      kraftig og uregelmessig skjelving i lemmer, choreoatetoide bevegelser, tannhjulsstivhet
+      og andre lokale nevrologiske tegn. Koma, rykninger, kraftige sammentrekninger av
+      muskler, generaliserte tonisk-kloniske anfall, kardiovaskulær kollaps med oliguri og anuri
+      og død kan forekomme. Dysrytmier, økende QRS-varighet, inverterte T-bølger og
+      hjerteinfarkt kan forekomme.
+
+      Det kliniske forløpet av litiumforgiftning varierer mye, så pasienter kan få hvilke som
+      helst av tegnene og symptomene over.
+
+      Behandlingen av litiumforgiftning er hovedsakelig støttende og avhenger av pasientens
+      kliniske tilstand og blodkonsentrasjonen av litium. Lett litiumtoksisitet responderer
+      vanligvis på midlertidig behandlingsavbrudd og korrigering av væske- og
+      elektrolyttforstyrrelser. Når toksisiteten er mer alvorlig kan pasienten trenge
+      intensivbehandling. Seponering av litium og eventuelt samtidig administrert diuretikum
+      er helt nødvendig.
+
+      Intravenøs infusjon av natriumklorid 9 mg/ml bør startes når litiumtoksisitet antas å være
+      sekundært til natriummangel i hele kroppen. Rask administrasjon av store volumer av
+      intravenøse oppløsninger eller administrasjon av kalium eller et diuretikum gir
+      tilsynelatende ingen ytterligere effekt. Selv om diuretika kan øke litiumclearance, er økt
+      clearance ikke tilstrekkelig til å være hensiktsmessig ved behandling av forgiftning.
+
+      Hemodialyse i 8-12 timer anbefales når blodkonsentrasjonen av litium overskrider 3 mM,
+      når blodkonsentrasjonen er 2-3 mM og pasientens tilstand forverres, når væske- eller
+      elektrolyttforstyrrelser ikke responderer på symptomatisk behandling, når
+      kreatininclearance eller urinproduksjon faller betydelig eller når blodkonsentrasjonen av
+      litium ikke reduseres med minst 20% i løpet av 6 timer. Blodkonsentrasjoner av litium
+      faller vanligvis tilbake etter 5-6 timer med hemodialyse på grunn av redistribusjon, og
+      dette nødvendiggjør ofte gjentatte runder med hemodialyse. Målet ved hemodialyse er å
+      gi en blodkonsentrasjonen av litium under 1 mM når 8 timer med hemodialyse er fullført.
+      Peritonealdialyse er mindre effektivt til å fjerne litium og brukes kun når hemodialyse
+      ikke er mulig.
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+      Farmakoterapeutisk gruppe: Andre diagnostika
+
+      ATC-kode: V04CX
+
+      Injeksjonen er designet for å gi en midlertidig litiumtopp mellom 0,2 og 0,8 mM i arterielt
+      blod. Toppen registreres av en litiumionselektiv elektrode lokalisert i en flowcelle som
+      samler blod fra den arterielle slangen. Fortynningen av litium brukes til å beregne
+      pasientens blodstrøm (l/min). Etter første passasje og distribusjon til ECV/vevsvæske, er
+      konsentrasjonen av litiumioner under den anbefalte nedre grense for litium ved
+      behandling av mani. Doseanbefalingene på 0,075-0,3 mmol per bestemmelse, med et
+      intervall over 5 minutter og en maksimal kumulativ dose på 3 mmol, er alle beregnet i
+      forhold til den verst tenkelige situasjon.            Dette omfatter betydelig reduserte
+      kompartmentvolumer, lav kroppsvekt og totalt fravær av litiumutskillelse, og i slike
+      tilfeller administrasjon av den maksimale tillate dosen ved maksimal frekvens. I kliniske
+      studier er disse anbefalingene overskredet med en faktor på tre uten noen uønskede
+      hendelser.
+
+5.2   Farmakokinetiske egenskaper
+
+      Distribusjon og utskillelse av litium: Lithium Chloride Lidco 0,15 mmol/ml
+      injeksjonsvæske, oppløsning er en fullionisert isoton oppløsning. Markørsubstansen er
+      litiumionet - administrert intravenøst som en bolus. Litium metaboliseres ikke og
+      farmakokinetisk fokus er derfor på distribusjon og utskillelse. Farmakokinetikkdata
+      passer i en modell bestående av et sentralt kompartment av ECV, dvs. plasma og
+      interstitiell væske, og to perifere kompartments. Distribusjonsvolumene i ECV, grunne
+      og dype kompartments hos en 71 kg mann er henholdsvis 16,4, 19,4 og 3,2 liter.
+
+      Ved beskrevet bruk av litiumklorid som en markørsubstans for bestemmelse av hjertets
+      minuttvolum, er det klart ingen absorpsjonsfase (i kontrast til oralt litium), og maksimal
+      arteriell plasmaverdi (0,2 til 0,8 mmol/l) oppnås under første passasje gjennom
+      sirkulasjonen. Blodnivået faller deretter kontinuerlig når litiumioner redistribueres og
+      utskilles. Maksimal konsentrasjon, som er betydelig mindre enn hos pasienter på oral
+      litiumterapi, er begrenset til det intravaskulære kompartment hvorfra det distribueres til
+      vevene og filtreres i renale glomeruli.
+
+5.3   Prekliniske sikkerhetsdata
+
+      Den generelle farmakologien til Lithium Chloride Lidco 0,15 mmol/ml injeksjonsvæske,
+      oppløsning ble undersøkt ved enkle og gjentatte intravenøse injeksjoner,
+      reproduksjons-/utviklingstoksikologi, mutagenitets- og antigenitetsstudier. Ut fra
+      resultatene fra disse prekliniske sikkerhetsstudiene vurderes doseanbefalingene for
+      Lithium Chloride Lidco 0,15 mmol/ml injeksjonsvæske, oppløsning som sikre.
+6.    FARMASØYTISKE OPPLYSNINGER
+
+6.1   Fortegnelse over hjelpestoffer
+
+      Vann til injeksjonsvæsker.
+
+6.2   Uforlikeligheter
+
+      For uforlikeligheter, se pkt. 4.4.
+
+6.3   Holdbarhet
+
+      5 år.
+
+6.4   Oppbevaringsbetingelser
+
+      Oppbevares ved høyst 25 °C.
+      Oppbevares i originalpakningen.
+
+6.5   Emballasje (type og innhold)
+
+      Glassampulle (Type I)
+      Hver ampulle inneholder 10 ml oppløsning.
+      Pakninger med 5 ampuller.
+
+6.6   Instruksjoner vedrørende bruk og håndtering samt destruksjon
+
+      Kun til bruk sammen med LiDCO-systemet i henhold til brukerhåndboken for LiDCO-
+      systemet.
+
+      Kun klare oppløsninger praktisk talt fri for partikler skal brukes.
+
+      Ikke anvendt andel av Lithium Chloride Lidco 0,15 mmol/ml injeksjonsvæske bør
+      destrueres i overensstemmelse med lokale krav. Litiumkloridampullen er kun for bruk i
+      én pasient og skal brukes umiddelbart etter den er åpnet. Eventuell oppløsning som blir
+      værende igjen i ampullen må kastes umiddelbart etter den er åpnet. Litiumklorid kan
+      trekkes ut av ampullen og inn i et lukket sprøytesystem og bør brukes umiddelbart. Hvis
+      litiumkloridoppløsningen ikke brukes umiddelbart, må eventuell ubrukt oppløsning som
+      blir værende igjen i det lukkede sprøytesystemet som leveres av LiDCO, kastes innen tre
+      (3) timer etter det lukkede sprøytesystemet er fylt.
+
+
+7.    INNEHAVER AV MARKEDSFØRINGSTILLATELSEN
+
+      LiDCO Netherlands B.V.,
+      Van Heuven Goedhartlaan 935A,
+      1181 LD, Amstelveen,
+      Nederland
+8.    MARKEDSFØRINGSTILLATELSESNUMMER
+
+      04-2790
+
+9.    MT-DATO FOR FØRSTE GANG/SISTE FORNYELSE
+
+      MT-DATO FOR FØRSTE GANG : 2005-02-07
+      Dato av vare fornyelse: 2006-02-07
+
+
+10.   OPPDATERINGSDATO
+
+      01.01.2021
+

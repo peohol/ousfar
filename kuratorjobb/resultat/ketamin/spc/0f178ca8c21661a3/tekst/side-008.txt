@@ -1,0 +1,58 @@
+Ketalar inneholder som virksom substans ketamin i racemisk form.
+
+Virkningsmekanisme
+Ketamin gir såkalt ”dissosiativ anestesi” ved selektiv avbrytelse av assosiasjonsbanene i
+hjernen. Den analgetiske effekten opptrer ved lavere doser enn de som kreves for anestesi, og
+den analgetiske effekten varer lengre enn anestesien. Disse ønskete farmakologiske effektene
+beror hovedsakelig på en blokade av NMDA reseptorer.
+
+Farmakodynamiske effekter
+Ketamin påvirker vanligvis ikke refleksene i farynks og larynks og muskeltonus forblir
+normal eller øker noe. Kardiovaskulært og respiratorisk stimulerende effekter medvirker til at
+ketamin gis til høyrisikopasienter i hypovolemisk sjokk. Ketamins bronkodilaterende effekt
+muliggjør anvendelse på pasienter med asthma bronchiale samt ved respiratorbehandling av
+status asthmaticus. Påvirkning på sekresjon og mage-tarmkanalen dempes gjennom
+premedisinering med antikolinergikum. Den analgetiske effekten kan utnyttes som
+supplement til regional anestesi eller masseskadesituasjoner / katastrofesammenheng.
+Ketamin er klinisk kompatibel med de vanligste anestetika og muskelrelaksantia under
+forutsetning av at respirasjonen opprettholdes.
+
+5.2     Farmakokinetiske egenskaper
+
+Absorpsjon
+Ketamin absorberes hurtig etter parenteral administrering. Ketaminhydroklorid er ca. 90%
+biotilgjengelig etter en intramuskulær injeksjon.
+
+Distribusjon
+Etter en intravenøs bolus når ketaminhydroklorid raskt hjernen; Intravenøse doser på 2,0
+mg/kg gir kirurgisk anestesi i løpet av 30 sekunder som varer i 5-15 minutter. Intramuskulære
+doser på 10 mg/kg gir kirurgisk anestesi i løpet av 3-4 minutter med en varighet på 12-25
+minutter. Bindingsgraden til plasmaproteiner er ca. 50%.
+
+Ketamin passerer hurtig placenta og distribueres raskt til godt perfundert vev (f.eks. hjerte,
+lunge og hjerne), deretter til muskelvev og perifert vev, deretter til fett. Ved bruk av en
+intravenøs bolusdose på 2,5 mg/kg varer distribusjonsfasen for ketamin i cirka 45 minutter,
+med en halveringstid på 10 til 15 minutter, som er relatert til varigheten av legemidlets
+anestetiske effekt (cirka 20 minutter). De høyeste plasmakonsentrasjonene av ketamin er cirka
+1,8 til 2,0 g/ml 5 minutter etter en intravenøs injeksjon av en bolusdose på 2 mg/kg, og cirka
+1,7 til 2,2 g/ml 15 minutter etter en intramuskulær injeksjon på 6 mg/kg hos voksne og barn.
+
+Fødende som får en intramuskulær dose på 250 mg (cirka 4,2 mg/kg), har en placental
+overføringshastighet for ketamin fra mors blod til navlestrengsvenen på 47 % ved fødsel (1,72
+vs. 0,75 g/ml). For disse fødende gikk det gjennomsnittlig 12 minutter fra tidspunktet for
+injeksjon av ketamin til vaginal fødsel.
+
+Biotransformasjon
+Metabolismen er rask og stort sett fullstendig. Ketamin gjennomgår hepatisk N-demetylering
+(via cytokrom P450-systemet) og hydroksylering av sykloheksanonringen, med dannelse av
+vannløselige konjugater som skilles ut i urinen. CYP3A4-enzymet er hovedenzym for N-
+demetylering av ketamin til norketamin i humane levermikrosomer; med enzymene CYP2B6
+og CYP2C9 som mindre bidragsytere. Ytterligere oksidering finner sted med dannelsen av et
+sykloheksanonderivat. Den ukonjugerte N-demetylerte metabolitten ble funnet å være en
+sjettedel så potent som ketamin. Det ukonjugerte demetylsykloheksanonderivatet ble funnet å
+være en tidel så potent som ketamin. Halveringstiden i plasma er ca 80 minutter for voksne,
+noe kortere for barn.
+
+
+
+                                                                                                  -8-

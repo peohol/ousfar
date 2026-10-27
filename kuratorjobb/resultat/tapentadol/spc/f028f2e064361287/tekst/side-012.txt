@@ -1,0 +1,57 @@
+modell basert på farmakokinetiske data ved enkeltdose, som bekrefter lineær og forutsigbar
+farmakokinetikk hos tapentadol. Akkumulering hos pediatriske personer (akkumuleringsforhold 1,7
+for tapentadol) var innenfor området observert hos voksne.
+
+Effekt av mat
+Ingen dedikert studie av effekt av mat er blitt utført hos barn og ungdom. I fase III-studien utført hos
+barn og ungdom ble tapentadol mikstur, oppløsning gitt uavhengig av matinntak.
+Basert på effektdata innhentet i fase III-studien hos barn og ungdom, anses effekten av mat å ikke ha
+klinisk relevans. Palexia kan tas med eller uten mat.
+
+Distribusjon
+Distribusjonsvolum etter aldersgruppe hos barn etter oral administrasjon av tapentadol basert på en
+populasjonsfarmakokinetisk analyse er vist i følgende tabell:
+
+                            Tilsynelatende
+                          distribusjonsvolum
+                            (V/F) etter oral
+      Aldersgruppe
+                            administrasjon
+                                 (liter)
+                         Gjennomsnitt +/- SD
+  12 år til under 18 år       958 +/- 241
+   6 år til under 12 år       545 +/- 148
+    2 år til under 6 år        286 +/- 78
+Parametrene er basert på den endelige pediatriske populasjonsfarmakokinetiske modellen for
+tapentadol.
+
+Metabolisme
+Tapentadols metabolisme hos mennesker fra 5 måneders alder er omfattende.
+
+Eliminasjon
+Pediatrisk clearance av tapentadol etter oral administrasjon basert på en populasjonsfarmakokinetisk
+analyse for forskjellige aldersgrupper er vist i tabellen nedenfor.
+
+                          Tilsynelatende clearance
+                         av tapentadol (CL/F) etter
+      Aldersgruppe           oral administrasjon
+                                 (liter/time)
+                            Gjennomsnitt +/- SD
+  12 år til under 18 år           217 +/- 45
+   6 år til under 12 år           148 +/- 42
+    2 år til under 6 år            79 +/- 20
+Parametrene er basert på den endelige pediatriske populasjonsfarmakokinetiske modellen for
+tapentadol.
+
+Spesielle populasjoner
+Nedsatt nyre- eller leverfunksjon
+Palexia er ikke undersøkt hos barn og ungdom med nedsatt nyre- eller leverfunksjon.
+
+Farmakokinetiske interaksjoner
+Ingen dedikerte interaksjonsstudier er blitt utført hos barn og ungdom.
+
+5.3   Prekliniske sikkerhetsdata
+
+Tapentadol var ikke gentoksisk i bakterier i Ames test. En in vitro kromosomavvikstest ga tvetydige
+funn, men da testen ble gjentatt var resultatene klart negative. Tapentadol var ikke gentoksisk in vivo,
+vurdert ved de to endepunktene kromosomavvik og ikke-programmert DNA-syntese, ved testing opp

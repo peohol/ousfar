@@ -1,0 +1,673 @@
+{
+  "stoff": "litium",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-10-27T04:15:06.281727+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 13,
+    "hentet": 4,
+    "dokumenter": 4,
+    "mangler": [
+      {
+        "merkevare_id": "ID_14EF2B61-E365-4877-B3A9-99BC76B1776E",
+        "varenavn": "Priadel",
+        "navn_form_styrke": "Priadel depottab 200 mg",
+        "produsent": "Essential Pharma",
+        "atc": "N05AN01",
+        "legemiddelform": "Depottablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_21D9048B-00B9-46C7-9C26-06E151D94D54",
+        "varenavn": "Priadel",
+        "navn_form_styrke": "Priadel depottab 200 mg",
+        "produsent": "Essential Pharma",
+        "atc": "N05AN01",
+        "legemiddelform": "Depottablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_56227268-5C00-467C-BD8D-44C9AE00C495",
+        "varenavn": "Litarex",
+        "navn_form_styrke": "Litarex depottab 42 mg",
+        "produsent": "Actavis",
+        "atc": "N05AN01",
+        "legemiddelform": "Depottablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_6450043F-3800-47FB-BE48-A66780839961",
+        "varenavn": "Lithium orotate advanced research",
+        "navn_form_styrke": "Lithium orotate advanced research tab 120 mg",
+        "produsent": null,
+        "atc": "A12CX",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_94A94B1E-7C6B-436A-947E-71AF8C582B2A",
+        "varenavn": "Priadel",
+        "navn_form_styrke": "Priadel depottab 400 mg",
+        "produsent": "Essential Pharma",
+        "atc": "N05AN01",
+        "legemiddelform": "Depottablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_9B4C973E-7AF7-4731-9317-CC9EB0B037C8",
+        "varenavn": "Hypnorex retard",
+        "navn_form_styrke": "Hypnorex retard depottab 400 mg",
+        "produsent": "Essential Pharma",
+        "atc": "N05AN01",
+        "legemiddelform": "Depottablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_A35358A9-1454-4E9A-B808-D8C08EF01D37",
+        "varenavn": "Li-liquid",
+        "navn_form_styrke": "Li-liquid sirup 1018 mg/5 ml",
+        "produsent": "Rosemont",
+        "atc": "N05AN01",
+        "legemiddelform": "Sirup",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_A610792B-D198-4197-B596-E1AF313604B2",
+        "varenavn": "Apo-Lithium carbonate",
+        "navn_form_styrke": "Apo-Lithium carbonate kaps 300 mg",
+        "produsent": "Apotex",
+        "atc": "N05AN01",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_E4FDD7A2-4804-4A04-9B5A-125DC43A80F2",
+        "varenavn": "Litiumkarbonat oba",
+        "navn_form_styrke": "Litiumkarbonat oba tab 300 mg",
+        "produsent": "Oba-Pharma ApS",
+        "atc": "N05AN01",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 4 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 4,
+        "ikke_dmp": 0,
+        "uten_omtale": 9
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "9 av 13 preparater i FEST mangler en hentet preparatomtale fra DMP: 9 uten preparatomtale i FEST (f.eks. sentralt godkjente, med omtalen hos EMA). SPC-behovet er ikke dekket; se «dekning.mangler».",
+      "antall": {
+        "preparater": 13,
+        "hentet": 4,
+        "mangler": 9,
+        "dokumenter": 4
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-07373.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-07373.pdf",
+      "hentet_kl": "2026-10-27T08:25:49.002Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "291786",
+        "content-md5": "DxxVNKmzyt9ZFD0vn9fZ0g==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:24 GMT",
+        "etag": "0x8DF25086E3BB4C7",
+        "date": "Tue, 27 Oct 2026 08:25:50 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_12893886-4456-4CC4-9A31-6EA709655332",
+          "varenavn": "Lithionit",
+          "navn_form_styrke": "Lithionit depottab 83 mg",
+          "produsent": "Karo Pharma AB (1)",
+          "atc": "N05AN01",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-07373.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (291786 byte).",
+          "antall": {
+            "bytes": 291786
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "c6c741fd4e2e4267b07083f5ae7c1dc1459a1aecbbe14a914475137912dfe919"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2790.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2790.pdf",
+      "hentet_kl": "2026-10-27T08:25:53.801Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "158991",
+        "content-md5": "Fjl3NAjaK0OqAdNQHmLm2w==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:50 GMT",
+        "etag": "0x8DE53793C81D0CA",
+        "date": "Tue, 27 Oct 2026 08:25:53 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_13233C6A-B3B3-4E08-A0C1-B01D67AEE845",
+          "varenavn": "Lithium Chloride Lidco",
+          "navn_form_styrke": "Lithium Chloride Lidco inj, oppl 0,15 mmol/ml",
+          "produsent": "LiDCO Netherlands BV",
+          "atc": "V04CX",
+          "legemiddelform": "Injeksjonsvæske, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2790.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (158991 byte).",
+          "antall": {
+            "bytes": 158991
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "c432ef79b1d08d79efb7ce6c6d6d9fe6a7eca1b707fa478d1b7c88ee44971f7a"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-05559.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-05559.pdf",
+      "hentet_kl": "2026-10-27T08:25:56.136Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "217919",
+        "content-md5": "CcUq1Y1kOkfULl//UmzZxA==",
+        "last-modified": "Thu, 08 Oct 2026 06:49:22 GMT",
+        "etag": "0x8DF25084922B4D5",
+        "date": "Tue, 27 Oct 2026 08:25:56 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_8B9D2FD2-36DE-49B9-AA16-9BF12A06E153",
+          "varenavn": "Lithionit",
+          "navn_form_styrke": "Lithionit depottab 42 mg",
+          "produsent": "Karo Pharma AB (1)",
+          "atc": "N05AN01",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-05559.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (217919 byte).",
+          "antall": {
+            "bytes": 217919
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "f553e4364b09ac0342386d768aa5e3b3bbebb72697eb57379a062ce5bad4f77f"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15504.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15504.pdf",
+      "hentet_kl": "2026-10-27T08:25:59.561Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "200604",
+        "content-md5": "qFYxGHVcS3mGTubfpbckew==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:55 GMT",
+        "etag": "0x8DE53793FCA8ED2",
+        "date": "Tue, 27 Oct 2026 08:25:59 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_E778C574-42B2-44CD-BA62-C149E6ABEF2C",
+          "varenavn": "Carblit",
+          "navn_form_styrke": "Carblit tab 300 mg",
+          "produsent": "XGX Pharma ApS",
+          "atc": "N05AN01",
+          "legemiddelform": "Tablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15504.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (200604 byte).",
+          "antall": {
+            "bytes": 200604
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "d7c4bbe0010c16a4ea3c19a270d108661171a4138c73a00b17e8c3ef88fcf5b5"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "c6c741fd4e2e4267b07083f5ae7c1dc1459a1aecbbe14a914475137912dfe919",
+      "bytes": 291786,
+      "mappe": "kuratorjobb/resultat/litium/spc/c6c741fd4e2e4267",
+      "pdf": {
+        "sider": 8,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Wed Jul  8 07:51:15 2026 UTC",
+        "endret": "Wed Jul  8 07:51:15 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/litium/spc/c6c741fd4e2e4267/original.pdf",
+        "tekst": "kuratorjobb/resultat/litium/spc/c6c741fd4e2e4267/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/litium/spc/c6c741fd4e2e4267/tekst/side-001.txt",
+          "kuratorjobb/resultat/litium/spc/c6c741fd4e2e4267/tekst/side-002.txt",
+          "kuratorjobb/resultat/litium/spc/c6c741fd4e2e4267/tekst/side-003.txt",
+          "kuratorjobb/resultat/litium/spc/c6c741fd4e2e4267/tekst/side-004.txt",
+          "kuratorjobb/resultat/litium/spc/c6c741fd4e2e4267/tekst/side-005.txt",
+          "kuratorjobb/resultat/litium/spc/c6c741fd4e2e4267/tekst/side-006.txt",
+          "kuratorjobb/resultat/litium/spc/c6c741fd4e2e4267/tekst/side-007.txt",
+          "kuratorjobb/resultat/litium/spc/c6c741fd4e2e4267/tekst/side-008.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/litium/spc/c6c741fd4e2e4267/sider/side-001.png",
+          "kuratorjobb/resultat/litium/spc/c6c741fd4e2e4267/sider/side-002.png",
+          "kuratorjobb/resultat/litium/spc/c6c741fd4e2e4267/sider/side-003.png",
+          "kuratorjobb/resultat/litium/spc/c6c741fd4e2e4267/sider/side-004.png",
+          "kuratorjobb/resultat/litium/spc/c6c741fd4e2e4267/sider/side-005.png",
+          "kuratorjobb/resultat/litium/spc/c6c741fd4e2e4267/sider/side-006.png",
+          "kuratorjobb/resultat/litium/spc/c6c741fd4e2e4267/sider/side-007.png",
+          "kuratorjobb/resultat/litium/spc/c6c741fd4e2e4267/sider/side-008.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 4,
+        "til": 6
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (8 sider).",
+          "antall": {
+            "sider": 8
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 17534
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 4."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 8
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "c432ef79b1d08d79efb7ce6c6d6d9fe6a7eca1b707fa478d1b7c88ee44971f7a",
+      "bytes": 158991,
+      "mappe": "kuratorjobb/resultat/litium/spc/c432ef79b1d08d79",
+      "pdf": {
+        "sider": 7,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Wed Jan 13 12:30:31 2021 UTC",
+        "endret": "Wed Jan 13 12:30:31 2021 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/litium/spc/c432ef79b1d08d79/original.pdf",
+        "tekst": "kuratorjobb/resultat/litium/spc/c432ef79b1d08d79/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/litium/spc/c432ef79b1d08d79/tekst/side-001.txt",
+          "kuratorjobb/resultat/litium/spc/c432ef79b1d08d79/tekst/side-002.txt",
+          "kuratorjobb/resultat/litium/spc/c432ef79b1d08d79/tekst/side-003.txt",
+          "kuratorjobb/resultat/litium/spc/c432ef79b1d08d79/tekst/side-004.txt",
+          "kuratorjobb/resultat/litium/spc/c432ef79b1d08d79/tekst/side-005.txt",
+          "kuratorjobb/resultat/litium/spc/c432ef79b1d08d79/tekst/side-006.txt",
+          "kuratorjobb/resultat/litium/spc/c432ef79b1d08d79/tekst/side-007.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/litium/spc/c432ef79b1d08d79/sider/side-001.png",
+          "kuratorjobb/resultat/litium/spc/c432ef79b1d08d79/sider/side-002.png",
+          "kuratorjobb/resultat/litium/spc/c432ef79b1d08d79/sider/side-003.png",
+          "kuratorjobb/resultat/litium/spc/c432ef79b1d08d79/sider/side-004.png",
+          "kuratorjobb/resultat/litium/spc/c432ef79b1d08d79/sider/side-005.png",
+          "kuratorjobb/resultat/litium/spc/c432ef79b1d08d79/sider/side-006.png",
+          "kuratorjobb/resultat/litium/spc/c432ef79b1d08d79/sider/side-007.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 4,
+        "til": 4
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (7 sider).",
+          "antall": {
+            "sider": 7
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 11383
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 4."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 7
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "f553e4364b09ac0342386d768aa5e3b3bbebb72697eb57379a062ce5bad4f77f",
+      "bytes": 217919,
+      "mappe": "kuratorjobb/resultat/litium/spc/f553e4364b09ac03",
+      "pdf": {
+        "sider": 8,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Wed Jul  8 07:51:20 2026 UTC",
+        "endret": "Wed Jul  8 07:51:20 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/litium/spc/f553e4364b09ac03/original.pdf",
+        "tekst": "kuratorjobb/resultat/litium/spc/f553e4364b09ac03/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/litium/spc/f553e4364b09ac03/tekst/side-001.txt",
+          "kuratorjobb/resultat/litium/spc/f553e4364b09ac03/tekst/side-002.txt",
+          "kuratorjobb/resultat/litium/spc/f553e4364b09ac03/tekst/side-003.txt",
+          "kuratorjobb/resultat/litium/spc/f553e4364b09ac03/tekst/side-004.txt",
+          "kuratorjobb/resultat/litium/spc/f553e4364b09ac03/tekst/side-005.txt",
+          "kuratorjobb/resultat/litium/spc/f553e4364b09ac03/tekst/side-006.txt",
+          "kuratorjobb/resultat/litium/spc/f553e4364b09ac03/tekst/side-007.txt",
+          "kuratorjobb/resultat/litium/spc/f553e4364b09ac03/tekst/side-008.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/litium/spc/f553e4364b09ac03/sider/side-001.png",
+          "kuratorjobb/resultat/litium/spc/f553e4364b09ac03/sider/side-002.png",
+          "kuratorjobb/resultat/litium/spc/f553e4364b09ac03/sider/side-003.png",
+          "kuratorjobb/resultat/litium/spc/f553e4364b09ac03/sider/side-004.png",
+          "kuratorjobb/resultat/litium/spc/f553e4364b09ac03/sider/side-005.png",
+          "kuratorjobb/resultat/litium/spc/f553e4364b09ac03/sider/side-006.png",
+          "kuratorjobb/resultat/litium/spc/f553e4364b09ac03/sider/side-007.png",
+          "kuratorjobb/resultat/litium/spc/f553e4364b09ac03/sider/side-008.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 4,
+        "til": 6
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (8 sider).",
+          "antall": {
+            "sider": 8
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 17519
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 4."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 8
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "d7c4bbe0010c16a4ea3c19a270d108661171a4138c73a00b17e8c3ef88fcf5b5",
+      "bytes": 200604,
+      "mappe": "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4",
+      "pdf": {
+        "sider": 10,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Thu Dec 12 14:14:35 2024 UTC",
+        "endret": "Thu Dec 12 14:14:35 2024 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4/original.pdf",
+        "tekst": "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4/tekst/side-001.txt",
+          "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4/tekst/side-002.txt",
+          "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4/tekst/side-003.txt",
+          "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4/tekst/side-004.txt",
+          "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4/tekst/side-005.txt",
+          "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4/tekst/side-006.txt",
+          "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4/tekst/side-007.txt",
+          "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4/tekst/side-008.txt",
+          "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4/tekst/side-009.txt",
+          "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4/tekst/side-010.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4/sider/side-001.png",
+          "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4/sider/side-002.png",
+          "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4/sider/side-003.png",
+          "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4/sider/side-004.png",
+          "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4/sider/side-005.png",
+          "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4/sider/side-006.png",
+          "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4/sider/side-007.png",
+          "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4/sider/side-008.png",
+          "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4/sider/side-009.png",
+          "kuratorjobb/resultat/litium/spc/d7c4bbe0010c16a4/sider/side-010.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 6,
+        "til": 8
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (10 sider).",
+          "antall": {
+            "sider": 10
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 23236
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 6."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 10
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": []
+}

@@ -1,0 +1,54 @@
+Svulster i nyrene: Tilfeller av mikrocyster, onkocytomer og karsinomer i samlesystemet (nyrene) er
+rapportert hos pasienter med alvorlig nedsatt nyrefunksjon og som har brukt litium i mer enn 10 år (se
+pkt. 4.8).
+
+Intrakraniell hypertensjon
+Det har vært tilfeller av intrakraniell hypertensjon (se pkt. 4.8). Pasienter bør oppmuntres til å
+rapportere vedvarende hodepine og/eller synsforstyrrelser.
+
+Toksisitet etter bariatrisk kirurgi
+Hos pasienter som har gjennomgått bariatrisk kirurgi, kan det være nødvendig med en lavere
+vedlikeholdsdose av litium. Litiumnivåer skal overvåkes nøye på grunn av risikoen for litiumtoksisitet
+inntil vekten har stabilisert seg.
+
+Irreversibel litiumindusert nevrotoksisitet (SILENT)
+I sjeldne tilfeller kan nevrologiske symptomer vedvare etter litiumtoksisitet, til tross for normalisering
+av serumlitiumkonsentrasjonen. Den patologiske mekanismen er uklar, men kronisk eller
+tilbakevendende toksisitet kan øke risikoen for utvikling av SILENT. Hvis risikoen for toksisitet er
+overhengende, f.eks. i tilfelle redusert nyrefunksjon eller dehydrering, eller hvis det er mistanke om
+dårlig etterlevelse, bør intervallet for serumlitiumkontroller forkortes (se pkt. 4.8).
+
+Brugada syndrom
+Litium kan synliggjøre eller forverre Brugada syndrom, en arvelig sykdom i hjertets natriumkanal med
+karakteristiske EKG-forandringer (høyre grenblokk og forhøyet ST-segment i høyre prekordiale
+avledninger), som kan føre til hjertestans eller brå død. Litium er ikke anbefalt hos pasienter med kjent
+Brugada syndrom eller en familiær historie med Brugada syndrom. Det er anbefalt å utvise
+forsiktighet hos pasienter med en familiær historie med hjertestans eller brå død.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Tillegg av antihypertensiva med α-metyldopa (L-formen) hos pasienter som behandles med litium kan
+gi symptomer som indikerer litiumtoksisitet på tross av normale serumlitiumnivåer (mekanisme
+ukjent).
+
+ACE-inhibitorer kan signifikant øke litiumnivåene ved «steady state» og resultere i litiumtoksisitet ved
+å redusere litiumutskillelse sekundært til en økning av renal ekskresjon av natrium. Tiazid-diuretika
+kan også redusere renal utskillelse av litium. Nøye overvåkning av serumlitiumnivå anbefales. I
+motsetning til tiazider ser det ikke ut til at loop-diuretika (f.eks. furosemid) og amilorid influerer på
+den renale ekskresjonen av litium.
+
+Ikke-steroide anti-innflammatoriske legemidler (NSAID-er) reduserer renal litiumutskillelse. Om disse
+legemidlene brukes samtidig er frekvent kontroll av litiumserumnivå obligatorisk.
+
+Samtidig bruk av litium og det antiepileptiske legemiddelet karbamazepin er av og til rapportert å gi
+toksisk syndrom som inkluderer forvirring, tremor, ataksi, hyperrefleksi og slapphet. Plasmanivåene
+av begge legemidlene er rapportert å ligge innenfor normalområdet.
+
+Det er rapportert nevrotoksisk syndrom, inkludert forvirring, desorientering, tap av bevissthet, feber og
+ekstrapyramidale symptomer når litium og større doser nevroleptika, spesielt haloperidol og tioridazin,
+har vært kombinert. Det er ikke funnet noen årssakssammenheng til dette. I flere rapporterte tilfeller
+har pasienten fått svært høye doser av haloperidol og serumlitiumnivåene var unødvendig høye.
+Tilfeller av malignt nevroleptikasyndrom er også blitt rapportert etter samtidig bruk av både
+nevroleptika og litium.
+
+Den serotonerge effekten av anti-migrene-middelet sumatriptan kan øke ved samtidig bruk av litium.

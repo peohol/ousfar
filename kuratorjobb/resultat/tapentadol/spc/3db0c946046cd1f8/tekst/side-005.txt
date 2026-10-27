@@ -1,0 +1,59 @@
+Tapentadol G.L. Pharma kan indusere kramper og øke risikoen for kramper forårsaket av selektive
+serotonin reopptakshemmere (SSRIs), serotonin-noradrenalin-reopptakshemmere (SNRIs), trisykliske
+antidepressiva, antipsykotika og andre legemidler som senker anfallsterskelen.
+
+Det er rapportert tilfeller av serotonergt syndrom, som har tidsmessig sammenfalt med behandling
+med tapentadol i kombinasjon med serotonerge legemidler slik som selektive
+serotoninreopptakshemmere (SSRIs), serotonin-noradrenalin-reopptakshemmere (SNRIs) og
+trisykliske antidepressiva.
+
+Det er sannsynlig at serotonergt syndrom foreligger dersom ett av følgende blir observert:
+• Spontan klonus
+• Induserbar eller okulær klonus med agitasjon eller diaforese
+• Tremor og hyperrefleksi
+• Hypertoni og kroppstemperatur > 38 °C samt induserbar okulær klonus.
+
+Seponering av de serotonerge legemidlene fører vanligvis til rask bedring. Behandlingen avhenger av
+symptomenes art og alvorlighetsgrad.
+
+Viktigste metabolismevei for tapentadol er konjugering med glukuronsyre mediert via
+uridindifosfattransferase (UGT) hovedsakelig UGT1A6-, UGT1A9- og UGT2B7-isoformer. Dermed
+kan samtidig behandling med sterke hemmere av disse isoenzymene (f.eks. ketokonazol, flukonazol,
+meklofenamsyre) føre til økt systemisk eksponering av tapentadol (se pkt. 5.2).
+
+Forsiktighet bør utvises ved start eller stopp av samtidig bruk av sterke enzyminduserende legemidler
+(f.eks. rifampicin, fenobarbital, johannesurt (Hypericum perforatum)) for pasienter på
+tapentadolbehandling, da dette kan føre til redusert effekt eller risiko for bivirkninger.
+
+Behandling med Tapentadol G.L. Pharma bør unngås hos pasienter som bruker monoaminoksidase
+(MAO)-hemmere eller som har brukt dette de siste 14 dagene, på grunn av mulige additive effekter på
+synaptisk noradrenalinkonsentrasjon som kan medføre kardiovaskulære bivirkninger, slik som
+hypertensiv krise.
+
+Samtidig bruk av Tapentadol G.L. Pharma og antikolinergika eller legemidler med antikolinerg
+aktivitet (f.eks. trisykliske antidepressiva, antihistaminer, antipsykotika, muskelavslappende
+legemidler, antiparkinson-legemidler) kan gi økte antikolinerge bivirkninger.
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet
+Det er svært begrensede data på bruk hos gravide kvinner.
+
+Dyrestudier har ikke vist teratogene effekter, men det er observert forsinket utvikling og
+embryotoksisitet ved doser som avspeilet overdrevne farmakologiske effekter (my-opioidrelaterte
+CNS-effekter relatert til dosering høyere enn terapeutisk område). Effekter på postnatal utvikling var
+allerede observert ved maternal NOAEL (se pkt. 5.3).
+
+Tapentadol G.L. Pharma skal kun brukes under graviditet hvis mulig nytte berettiger mulig risiko for
+fosteret. Ved langvarig bruk av opioider under graviditet, vil fosteret også bli eksponert. Det nyfødte
+barnet kan utvikle påfølgende neonatalt abstinenssyndrom (NAS). Neonatalt abstinenssyndrom kan
+være livstruende hvis det ikke oppdages og behandles. Et antidot skal være lett tilgjengelig for det
+nyfødte barnet.
+
+Under fødsel
+Tapentadols effekt under fødsel hos mennesker er ukjent. Tapentadol G.L. Pharma er ikke anbefalt til
+kvinner under og rett før fødsel. På grunn av tapentadols agonistaktivitet overfor opioide my-
+reseptorer, bør nyfødte av mødre som har tatt tapentadol overvåkes for respirasjonshemming.
+
+
+                                                   5

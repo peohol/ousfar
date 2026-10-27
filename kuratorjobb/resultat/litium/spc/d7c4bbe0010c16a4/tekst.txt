@@ -1,0 +1,579 @@
+1.         LEGEMIDLETS NAVN
+
+Carblit 300 mg (8,1 mmol) tabletter
+
+
+2.         KVALITATIV OG KVANTITATIV SAMMENSETNING
+
+Hver tablett inneholder 300 mg litiumkarbonat, tilsvarende 56 mg Li+ (8,1 mmol).
+
+Hjelpestoff med kjent effekt
+Hver tablett inneholder 57 mg laktose (som monohydrat).
+
+For fullstendig liste over hjelpestoffer, se pkt. 6.1.
+
+
+3.         LEGEMIDDELFORM
+
+Tablett.
+
+Hvit, rund, flat tablett med skrå kant, med en delestrek på den ene siden.
+Diameter: 10 mm, Tykkelse: 4 mm
+
+Delestreken er kun ment for å lette deling slik at det blir enklere å svelge tabletten, og ikke for å dele
+den i like doser.
+
+
+4.         KLINISKE OPPLYSNINGER
+
+4.1        Indikasjon(er)
+
+     mani
+     antimanisk behandling av bipolar lidelse og profylakse for å forebygge alvorlige, hyppige faser
+     forsterkning til et antidepressiva ved alvorlig depressiv lidelse
+
+Dette legemidlet er ment for bruk hos voksne ≥ 18 år.
+
+4.2        Dosering og administrasjonsmåte
+
+Litiumkarbonat har et smalt terapeutisk vindu (0,6–1,2 mmol/l). Den terapeutiske dosen er individualisert og
+fastsettes etter litiumnivåer i serum (se pkt. 4.4 «Overvåking»). Pasientens alder, vekt og nyrefunksjon
+(kreatininclearance) skal tas med i vurderingen under dosering.
+
+Dosering
+
+Profylaktisk behandling
+Første uke: 1 tablett (300 mg (8,1 mmol)) skal administreres daglig.
+
+Etter 1 uke skal litiumkonsentrasjonen i serum fastslås, og dosen skal justeres slik at litiumkonsentrasjonen i
+serum 12 timer etter dosen er 0,6–0,8 mmol/l. Under vedlikeholdsbehandling fastslås litiumnivået i serum
+hver 2.–6. måned (se pkt. 4.4).
+
+Ved tilbakefall skal dosen økes.
+
+Akutt mani
+Den innledende startdosen skal være høy: 4 til 5 tabletter (1200-1500 mg (32,4 – 40,5 mmol)) daglig fordelt
+på 4 doser.
+
+
+                                                         1
+Litiumkonsentrasjonen i serum skal til å begynne med kontrolleres annenhver dag, og skal ikke overskride
+1,2 mmol/l. Etter ca. 1 uke skal dosen halveres (se pkt. 4.4).
+
+Forsterkning til et antidepressiv ved alvorlig depressiv lidelse (MDD)
+Startdose: 1 tablett (300 mg (8,1 mmol)) to ganger daglig. Dosen skal justeres oppover som indikert ved
+litiumnivåer i plasma (nivåer kan oppnås 5 dager etter dosejustering).
+Vedlikeholdsdose: 2-3 tabletter (600-900 mg (16,2-24,3 mmol)) daglig fordelt på 1-2 doser (for å redusere
+risikoen for nedsatt nyrefunksjon).
+
+Målet for litiumkonsentrasjoner i serum for antidepressiv forsterkning er i området 0,5 0,8 mmol/l, men
+litiumkonsentrasjoner i serum på opptil 1,2 mmol/l kan være målet for å oppnå optimal klinisk respons.
+
+Eldre (> 65 år)
+På grunn av lavere distribusjonsvolum (Vd) for litium trenger eldre pasienter lavere doser for å oppnå en
+ønsket konsentrasjon ved steady state (Css). I tillegg kan redusert litiumclearance føre til endrede eller
+toksiske litiumkonsentrasjoner hos eldre pasienter, på grunn av den aldersrelaterte nedgangen i glomerulær
+filtrasjonshastighet. En nyrefunksjonstest kreves før behandlingen igangsettes (kreatininclearance og/eller
+eGFR). Litiumdoser skal reduseres med 25 % til 35 % hos eldre. Videre anbefales økt overvåking av
+litiumkonsentrasjoner i serum.
+
+Undersøkelser før litiumbehandling
+Et EKG kreves hos pasienter > 40 år før behandlingen igangsettes. (Se også pkt. 4.4 for langtidsovervåking.)
+Overvåking av serumkalsium og skjoldbruskfunksjon er nødvendig hos pasienter før behandling med litium.
+En nyrefunksjonstest kreves for å fastslå om det observeres nedsatt nyrefunksjon før behandlingsoppstart
+(kreatininclearance og/eller eGFR skal måles). Det anbefales økt overvåkingsfrekvens av
+litiumkonsentrasjoner i serum ved redusert nyrefunksjon (se også pkt. 4.4 for langtidsovervåking).
+
+Pediatrisk populasjon
+Barn og ungdom (< 18 år): Administrering anbefales ikke på grunn av manglende erfaring.
+
+Overvekt
+Litiumclearance har en betydelig korrelasjon med total kroppsvekt. Anbefalingen for overvektige pasienter
+er å starte behandlingen med de lavere innledende dosene av litium. Vedlikeholdsdoser veiledes av målinger
+av plasmakonsentrasjoner.
+
+Administrasjonsmåte
+Carblit må tas før eller etter måltider, til de tidspunktene som er forskrevet. Dette er nødvendig for å holde
+litiumnivået i blodet konstant. (Se også pkt. 4.4.)
+
+Ved intolerable eller alvorlige gastrointestinale bivirkninger anbefales det å ta Carblit med mat og/eller
+redusere dosen. Når de gastrointestinale bivirkningene avtar, skal dosen gradvis økes til måldosen. Samtidig
+administrering av litium med mat og ulike typer dietter kan imidlertid endre litiumabsorpsjonen. Derfor skal
+det utvises forsiktighet (se pkt. 4.4).
+
+4.3      Kontraindikasjoner
+
+-     overfølsomhet overfor virkestoffet eller overfor noen av hjelpestoffene listet opp i pkt. 6.1
+-     hjertesykdom (f.eks. risiko for arytmi inkludert brugadas syndrom eller mistanke om brugadas syndrom,
+      hjerteinsuffisisens)
+-     medisinsk tilstand forbundet med lave natriumnivåer (f.eks. addisons sykdom), en
+      natriummetabolismesykdom, diett med lite natrium
+-     hypotyreose
+-     alvorlig nyresykdom
+-     keratosis follicularis (dariers sykdom)
+-     under amming
+
+
+
+                                                        2
+4.4     Advarsler og forsiktighetsregler
+
+Litiumkarbonat har et smalt terapeutisk vindu, så tett overvåking kreves (se pkt. 4.2).
+
+Terapeutiske effekter og de fleste bivirkninger korrelerer med litiumkonsentrasjoner i serum.
+
+Overvåking
+Periodisk overvåking av litiumkonsentrasjoner i serum kreves under behandling med litiumkarbonat.
+
+Litiumkonsentrasjoner i serum skal måles hver 5. til 7. dag fra oppstart, til stabilisering er oppnådd, med
+mindre hyppigere overvåking er indisert. I tillegg ved regelmessige intervaller i hele behandlingens varighet.
+
+Ekstra overvåking av litiumkonsentrasjoner i serum kreves ved endring i dosering eller natriuiminntak.
+
+For å fastslå litiumkonsentrasjoner i serum skal det tas blodprøve 12 ± 0,5 timer etter den siste dosen.
+
+Det kreves regelmessig overvåking av serumkalsium, thyroideafunksjon, nyrefunksjon og EKG/hjerte hos
+pasienter på litiumbehandling.
+
+På grunn av risikoen for hyperparatyreoidisme skal serumkalsium fastslås før behandlingsstart, etter seks
+måneder og etter ett år etter behandlingsstart. I tillegg skal det utføres årlige kontroller ved langvarig
+behandling (se pkt. 4.8).
+
+Administrering, tidsplan og effekt av kosthold
+Samtidig inntak av mat har en tendens til å øke litiumabsorpsjonen sammenlignet med ved faste, selv om
+biotilgjengeligheten av litium reduseres ved et fettholdig kosthold sammenlignet med et vanlig kosthold.
+Derfor skal det utvises forsiktighet ved administrering av litium (dvs. følg anvisningene om å ta det før eller
+etter måltider) og ved vesentlige endringer i sammensetning (dvs. type mat med høyt fettinnhold).
+
+Ved endring av kosthold kreves ytterligere overvåking av litiumnivået frem til målkonsentrasjonen i serum
+er oppnådd.
+
+Tilstøtende sykdommer, tilstander ved endret væske- og elektrolyttbalanse
+Ekstra overvåking av litiumkonsentrasjoner i serum kreves ved tilbakefall, alvorlige bivirkninger, tilstøtende
+sykdommer, episoder med oppkast eller andre tilstander eller behandling som kan føre til endret væske- og
+elektrolyttbalanse, inkludert behandling med diuretika. Pasienter skal også få beskjed om å rapportere hvis
+de utvikler polyuri eller polydipsi.
+
+Det skal utvises forsiktighet ved somatiske sykdommer med feber, diett og kosthold med lite natrium. I slike
+tilfeller skal behandlingen seponeres midlertidig, eller dosen skal reduseres, og serumkonsentrasjonene skal
+kontrolleres. Balanseforstyrrelse av elektrolytter grunnet gastrointestinal, kardiovaskulær eller renal
+dysregulering kan føre til økt risiko for ytterligere dysregulering og nevrologiske komplikasjoner. På grunn
+av risikoen forbundet med dehydrering skal væske administreres parenteralt til litiumbehandlede pasienter
+som er i koma, som lider av voldsomt oppkast, og som faster før anestesi.
+
+Litiumbehandling skal generelt seponeres 24–48 timer før større kirurgi. Avgjørelsen om å seponere
+litiumbehandling opptil 72 timer før større kirurgi skal imidlertid vurderes ved å vurdere risikoen for
+legemiddelinteraksjon med anestesi, risikoen for abstinenssymptomer og risikoen for tilbakefall eller
+forverret mental helse. Behandlingen skal gjenopptas postoperativt når nyrefunksjonen og væske-
+elektrolyttbalansen er normalisert. For mindre kirurgi kan litium normalt fortsettes hvis litiumnivået i serum
+ikke er i toksisk område, nyrefunksjonen er normal og væske-/elektrolyttstatusen er stabil (se pkt. 4.5).
+
+Litium kan interagere med nevromuskulære blokkerende midler og potensiere effekten av disse, og føre til
+forlenget paralyse. Det er viktig med tett overvåking av nevromuskulær funksjon for å unngå komplikasjoner
+relatert til forlenget paralyse.
+
+Eksisterende medisinske tilstander
+
+                                                       3
+-   Høyere risiko for venøs tromboemboli (VTE) har vært rapportert hos pasienter behandlet med litium (se
+    pkt. 4.8). Pasienter som behandles med antipsykotika, har ofte fått risikofaktorer for VTE. Derfor skal
+    alle mulige risikofaktorer for VTE identifiseres før og under behandling med Carblit, og forebyggende
+    tiltak skal iverksettes.
+-   Litium kan maskere eller forverre Brugadas syndrom, en arvelig sykdom i hjertekalsiumkanalen med
+    karakteristiske EKG-endringer (høyre «bundle branch block» (fortetning) og ST-segmentøkning i høyre
+    prekordiale ledninger), som kan føre til hjertestans eller plutselig dødsfall. Litium skal ikke administreres
+    til pasienter med Brugadas syndrom eller en familiehistorikk med Brugadas syndrom (se pkt. 4.3).
+-   Forsiktighet tilrådes hos pasienter med en familiehistorikk med hjertestans eller plutselig dødsfall. Som
+    et forsiktighetstiltak er litium kontraindisert hos pasienter med medfødt langt QT-syndrom, hos pasienter
+    med risikofaktorer for forlengelse av QT-intervall (som inkluderer hjertesykdom, bradykardi,
+    thyroidsykdom, hypokalemi, hypomagnesemi, hypokalsemi. Samtidig behandling med QT-forlengende
+    midler må ledsages av kontrollovervåking med EKG (se pkt. 4.5 og 4.8).
+-   Et EKG kreves hos pasienter > 40 år før behandlingen igangsettes (se pkt. 4.2).
+-   Pasienter med manifest epilepsi, alvorlig patologisk EKG og andre konvulsive tilstander, mindre EKG-
+    forstyrrelser, hypotensjon, nevromuskulære sykdommer som myasthenia gravis, psoriasis samt eldre
+    pasienter skal overvåkes tett.
+-   Det finnes en risiko for forverring av bipolar/manisk lidelse etter rask seponering av litium.
+
+Pasienter og deres pårørende skal informeres om symptomene på litiumforgiftning (se pkt. 4.9). Hvis disse
+oppleves, skal litiumbehandlingen seponeres, og lege skal konsulteres.
+
+Nevroleptisk malignt syndrom
+Nevroleptisk malignt syndrom, kjennetegnet av hypertermi, muskelstivhet, autonom ustabilitet, endret
+bevissthet og økte serumkreatin-fosfokinasenivåer, har vært rapportert hos pasienter behandlet med
+antipsykotika (inkludert litium) (se pkt. 4.8). Hvis disse symptomene oppstår, skal Carblit seponeres.
+
+Nyresvulster
+Mikrocyster, onkocytom og karsinom i oppsamlingskanalene har vært rapportert hos pasienter med alvorlig
+nedsatt nyrefunksjon som fikk litium i mer enn 10 år (se pkt. 4.8).
+
+Immunsystem
+Litiumbehandlingsrelatert leukocytose samt en økning i antinukleære antistoffer har vært rapportert (se
+pkt. 4.8). Ved en potensiell risiko for immunsykdommer skal pasienten overvåkes periodisk.
+
+Thyroideafunksjon
+I sjeldne tilfeller av åpenbar hypotyroidisme (redusert fritt tyroksin) eller hyppigere subklinisk
+hypotyroidisme (økte nivåer av thyroideastimulerende hormon) har lav klinisk relevans. Enkelte tilfeller av
+autoimmun thyroiditt (thyroid-antistoffer) har vært beskrevet i forbindelse med litiumbehandling. Hvis
+serum-TSJ er over 10 mu/l, er det en stor risiko for progresjon til åpenbar hypotyriodisme, og
+levotyroksinnatrium skal forskrives, uavhengig av om pasienten er symptomatisk. Litiumbehandling kan
+dermed fortsettes med forskrivning av levotyroksinnatrium.
+
+Thyroideafunksjon skal overvåkes før igangsetting av litiumbehandling, etter 3 måneder, og deretter hver 6.–
+12. måned etter at behandlingen ble igangsatt.
+
+Gastrointestinale bivirkninger
+Gastrointestinale bivirkninger kan oppstå når behandling med litium startes opp. De fleste av disse
+bivirkningene er selvbegrensende og går gradvis over etter de første ukene (se pkt. 4.2).
+
+Hjelpestoffer
+Dette legemidlet inneholder laktose. Personer med sjeldne, arvelige problemer med laktoseintoleranse, total
+laktasemangel eller glukose-galaktose-malabsorpsjon skal ikke ta dette legemidlet.
+
+Dette legemidlet inneholder mindre enn 1 mmol natrium (23 mg) per tablett, og er så godt som
+«natriumfritt».
+
+
+                                                       4
+4.5     Interaksjon med andre legemidler og andre former for interaksjon
+
+Samtidig administrering av følgende legemidler med litium kan føre til økte litiumkonsentrasjoner og en
+risiko for toksisitet:
+- Ethvert legemiddel som kan gi nedsatt nyrefunksjon, har potensial til å forårsake en økning i litiumnivåer,
+    og dermed forårsake toksisitet. Hvis bruken av legemidlet ikke kan unngås, skal litiumnivået i blodet
+    overvåkes tett og dosen tilpasses etter behov.
+- Antiinfeksiøse midler: En økning i litiumkonsentrasjoner forbundet med kliniske tegn på toksisitet har
+    vært rapportert i sjeldne tilfeller under samtidig administrering av antiinfeksiøse midler som trimetoprim,
+    metronidazol, tetrasykliner, spektinomycin, og levofloksacin.
+- Syklooksygenase-2 (COX-2)-hemmere: Overvåk litiumkonsentrasjoner i serum hyppigere hvis NSAID-
+    behandling igangsettes eller seponeres. Kliniske tegn på toksisitet forbundet med en økning i
+    litiumkonsentrasjoner har vært beskrevet i sjeldne tilfeller under samtidig administrering med rofekoksib
+    og celekoksib.
+- Angiotensin II-antagonister (f.eks. losartan, irbesartan) og ACE-hemmere (f.eks. enalapril, lisinopril,
+    ramipril) hemmer utskillelsen av natrium i urinen, noe som kan fremme litiumretensjon, særlig hos
+    pasienter med nedsatt nyrefunksjon. Avhengig av serumkonsentrasjonen kan det hende litiumdosen må
+    justeres.
+- Diuretika: Natriumtømmende diureteika (tiazider og sløyfediuretika) kan redusere litiumutskillelsen og
+    forårsake litiumintoksikasjon.
+- Karbamazepin, fenytoin: Kan øke plasmakonsentrasjonene av litium.
+- Andre legemidler som påvirker elektrolyttbalansen, f.eks. steroider, kan endre litiumutskillelsen og skal
+    derfor unngås.
+
+Samtidig administrering av følgende legemidler med litium kan føre til reduserte konsentrasjoner av litium i
+plasma og en risiko for effekttap:
+- Natriumbikarbonat
+- Xantiner (teofyllin, koffein): Serumlitium reduseres med 20–30 % på grunn av en økt renal clearance
+   under samtidig administrering med teofyllin. Interaksjonen kan gi tap av effekt. Når behandlingen med
+   teofyllin stoppes, er det en risiko for litiumforgiftning hvis litiumdosen ble økt under samtidig
+   behandling.
+- Forbruk av koffein kan øke den renale clearance av litium. Potensiell litiumintoksikasjon kan ses ved
+   koffeinabstinens etter langvarig samtidig inntak, med en 20–25 % økning i konsentrasjoner av litium i
+   serum som resultat.
+- Karbonanhydrasehemmere (e.g. acetazolamid).
+
+Andre interaksjoner
+- Antipsykotika (f.eks. haloperidol, olanzapin, clozapin): Ekstrapyramidale motoriske symptomer og
+  forvirring har vært rapportert i sjeldne tilfeller etter kombinasjonsbehandling med store doser
+  antipsykotika. Typiske antipsykotika i kombinasjon med litium kan gi alvorlige ekstrapyramidale
+  motoriske forstyrrelser (pseudo-parkinsonisme).
+- Legemidler som kan interferere med serotoninmetabolisme (f.eks. MAO-hemmere, eller selektive
+  serotoninreopptakshemmere (SSRI) som citalopram; og norepinefrinreopptakshemmere (SNRI),
+  trisykliske antidepressiva eller visse opioider (f.eks. buprenorfin): Samtidig administrering kan gi
+  serotonergt syndrom med søvnforstyrrelser, oppspilthet og tremor, og i alvorlige tilfeller myoklonus,
+  temperaturstigning og forvirring.
+- Jodinforbindelser: Den tyreostatiske effekten forsterkes.
+- Nevroleptika og antidepressiva: Økte effekter når administrert sammen med litium.
+  Kombinasjonsbehandling med antidepressiva kan forsterke håndtremor, som muligens kan behandles
+  med betablokkere (f.eks. propanolol).
+- Curare-lignende preparater (muskelavslappende) og anestesimidler: Kombinasjonen av litium og ikke-
+  depolariserende blokkere fører til en synergistisk hemming av nevromuskulær overføring. På den annen
+  siden forlenger litium latensen (tid til debut) og varigheten av nevromuskulær blokkade som produseres
+  av både depolariserende og ikke-depolariserende nevromuskulære blokkmidler. Se avsnitt 4.4.
+
+4.6     Fertilitet, graviditet og amming
+
+
+                                                       5
+Graviditet
+Dyrestudier har vist at litium påvirker graviditet og fosterutvikling, og fører til nedsatt vaskulogenese og
+unormalheter i skjelettet (se pkt. 5.3). Derfor kreves overvåking med ultralyd og EKG av fosteret hvis litium
+administreres.
+
+Litium krysser placentabarrieren og når samme konsentrasjon hos fosteret som hos mor. Ved graviditet
+rangeres litiumsalter som kategori D (positiv evidens for risiko).
+Litiumkarbonat skal ikke brukes under graviditet med mindre fordelene for mor er større enn den mulige
+risikoen for fosteret. Bruk av litium kort tid før termin kan gi alvorlig, men vanligvis reversibel, toksisitet
+hos de nyfødte.
+
+Litiumintoksikasjon oppstår hos nyfødte av mødre som har terapeutiske litiumnivåer i blodet, eller som har
+fått litiumbehandling i perioden før fødsel i de siste ukene av graviditeten: Lav Apgar-skår, cyanose,
+hypotoni, respirasjonsdepresjon, letargi, mulig gulsott og hjerte- og thyroideadysfunksjon. Derfor skal
+nyfødte overvåkes tett. Hvis litiumbehandling er avgjørende, skal dosen halveres i en uke før termindatoen,
+og behandlingen skal stoppes fra de første tegnene på fødsel til dagen etter fødsel, ettersom litiumnivåene
+kan variere.
+
+Amming
+Litium skilles ut i morsmelk hos mennesker. Amming skal derfor opphøre ved behandling med Carblit.
+
+Fertilitet
+Dyrestudier har vist negativ effekt på fertilitet hos hanndyr (se pkt. 5.3).
+
+4.7       Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+Dette legemidlet har liten til moderat påvirkning på evnen til å kjøre bil og bruke maskiner.
+
+Litium kan gi forstyrrelser i CNS (se pkt. 4.8). Derfor skal pasienter advares om de mulige farene ved
+kjøring eller bruk av maskiner, særlig i den første fasen av behandlingen.
+
+4.8       Bivirkninger
+
+Bivirkninger er vanligvis knyttet til litiumkonsentrasjoner i serum og er mindre vanlige hos pasienter med
+litiumkonsentrasjoner i plasma på under 1,0 mmol/l.
+
+Bivirkninger er listet opp etter MedDRA organklassesystem og frekvens. Hyppigheten er definert som: svært
+vanlige ( 1/10), vanlige ( 1/100 til < 1/10); mindre vanlige ( 1/1 000 til < 1/100); sjeldne ( 1/10 000 til
+< 1/1 000); svært sjeldne (< 1/10 000), ikke kjent (kan ikke fastslås utifra tilgjengelige data).
+
+Organklassesystem                               MedDRA foretrukket term
+Sykdommer i blod og lymfatiske organer
+Ikke kjent                                       Reversibel leukocytose, mild agranulocytose
+
+Endokrine sykdommer
+Svært vanlige                                    TSH-økning, struma
+
+Vanlige                                          Hypotyreose, subklinisk hypotyreose,
+                                                 hyperparatyreoidisme
+Ikke kjent                                       Tyrotoksikose, hypertyreose (- etter opphør eller
+                                                 reduksjon av behandling)
+
+Stoffskifte- og ernæringsbetingede
+sykdommer
+Svært vanlige                                    Vektøkning
+
+
+                                                         6
+Organklassesystem                      MedDRA foretrukket term
+Vanlige                                Polydipsi
+
+Psykiatriske lidelser
+Vanlige                                Forvirring, døsighet
+Nevrologiske sykdommer
+Vanlige                                Lett håndtremor, lett redusert konsentrasjon og respons
+Mindre vanlige                         Reversibel parkinsonisme, hodepine, svimmelhet
+Sjeldne                                Nevroleptisk malignt syndrom. EEG-endringer
+
+Hjertesykdommer
+
+Vanlige                                T-bølgeutflating i EKG
+Mindre vanlige                         Sinusknutedysfunksjon, AV-blokk, arytmi
+
+Karsykdommer
+Ikke kjent                             Venøs tromboemboli, inkludert tilfeller av lungeemboli
+                                       og tilfeller av dyp venetrombose rapportert
+
+Gastrointestinale sykdommer
+Vanlige                                Diaré, kvalme, abdominal smerte (særlig i de første
+                                       behandlingsukene)
+
+Hud- og underhudssykdommer
+Vanlige                                Akne
+Mindre vanlige                         Psoriasis (forverring eller tilfeller av), alopesi
+Ikke kjent                             Lichenoid legemiddelreaksjon
+
+
+Sykdommer i muskler, bindevev og
+skjelett
+Mindre vanlige                         Muskelsvakhet
+
+Sykdommer i nyre og urinveier
+Svært vanlige                          Nefrogen diabetes insidipus
+Vanlige                                Polyuri
+Ikke kjent                             Mikrocyster, onkocytom eller nyrekarsinom i
+                                       oppsamlingskanalene (ved langvarig behandling) (se
+                                       pkt. 4.4)
+                                       Nedsatt nyrefunksjon (ved langvarig behandling)
+
+Lidelser i kjønnsorganer og
+brystsykdommer
+Ikke kjent                             Seksuell dysfunksjon
+
+Graviditet, puerperale og perinatale
+lidelser
+Ikke kjent                             Neonatalt abstinenssyndrom (se pkt. 4.6)
+
+
+
+
+                                               7
+Organklassesystem                               MedDRA foretrukket term
+Forstyrreksler i immunsystemet
+Ikke kjent                                       Økning i antinukleære antistoffer (se pkt. 4.4).
+
+Øyesykdommer
+Ikke kjent                                       Synsforstyrrelser
+
+Generelle lidelser og reaksjoner på
+administrasjonsstedet
+Vanlige                                          Ødemer
+
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å overvåke
+forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å melde enhver
+mistenkt bivirkning. Dette gjøres via Meldeskjema som finnes på nettsiden til Direktoratet for medisinske
+produkter: www.dmp.no/meldeskjema
+
+4.9     Overdosering
+
+Toksiske effekter kan forventes ved litiumkonsentrasjoner i serum på ca. 1,5 mmol/liter, selv om de kan
+oppstå ved lavere konsentrasjoner. De krever umiddelbart seponering og skal alltid anses som svært
+alvorlige.
+
+Behandlingsnaive pasienter, som ikke tidligere har vært eksponert for litium, kan ha risiko for akutt
+toksisitet, primært på grunn av overdose.
+
+Pasienter på langvarig litiumbehandling kan oppleve kronisk toksisitet, som kan utvikle seg gradvis over tid
+og ofte oppstår på grunn av faktorer som svekker nyrefunksjonen eller litiumclearance (som dehydrering,
+legemiddelinteraksjon eller endringer i helsestatus).
+
+Resultater fra studier på rotter indikerte at pasienter som allerede bruker litium, kan være mer følsomme for
+litiumforgiftning enn pasienter som er behandlingsnaive til litium, ettersom toppkonsentrasjonen i serum og
+hjernen kan forsinkes, noe som fører til at den høye litiumeksponeringen varer lenger hos pasienter som
+allerede får behandling med litium.
+
+Symptomer
+Mild til moderat toksisitet inkluderer grov tremor, letargi, fatigue, forvirring, agitasjon, delirium, takykardi,
+uklar tale, fasikkulasjon, hypertoni, kvalme, oppkast og diaré.
+
+Alvorlig toksisitet inkluderer nedsatt bevissthet, koma, epileptoforme anfall, hypertermi, hypotensjon, EEG-
+og EKG-endring, risiko for nyresvikt og dødsfall.
+
+Behandling
+Pasientens tilstand krever intensiv pleie, i tillegg til at ny justering av salt- og væskebalanse, opprettholdelse
+av sirkulasjon og respirasjon, og administrering av symptomatiske legemidler, peritoneal dialyse eller
+hemodialyse kan være påkrevd i de mest alvorlige tilfellene.
+
+
+5.      FARMAKOLOGISKE EGENSKAPER
+
+5.1     Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe psykoleptika, antipsykotika, ATC-kode: N05A N01
+
+
+
+                                                         8
+Litium er et monovalent kation. Litiumkarbonat er karbonatsaltet av litium, et mykt alkalimetall, med
+antimaniske og hematopoietisk aktiviteter.
+
+Virkningsmekanismen til litium er fremdeles ikke fullt ut forstått. Det utviser effekt i mange retninger. Den
+terapeutiske effekten til litium kan skyldes en rekke effekter, fra hemming av enzymer som
+glykogensyntasekinase 3, inositolfosfater eller modulering av glutamatreseptorer:
+
+Som en konsekvens reduserer litium omsetningen av noradrenalin og dopamin, og hemmer utviklingen av
+dopaminreseptorers superfølsomhet for effekten av antipsykotika, og disse kan være forbundet med
+antimaniske effekter.
+
+Ved høyere konsentrasjoner hemmer litium også adenylatsyklase-aktivitet. Dette kan forklare den
+tyrotoksiske effekten og antagonismen til den renale effekten til det antidiuretiske hormonet, ettersom både
+TRH- og ADH-reseptorer binder seg til adenylatsyklase.
+
+Subklinisk hypotyreose (økte nivåer av thyroideastimulerende hormon) har lav klinisk relevans for litiums
+potensielle effekter på thyroideafunksjonen.
+
+Leukocytose relatert til litiumbehandling samt økning i antinukleære antistoffer har vært beskrevet som
+bivirkninger relatert til litiumkonsentrasjoner i serum. Litiums potensielle effekter på immunsystemet kan gi
+grunn til periodisk kontroll, særlig hos pasienter med immunforstyrrelser i anamnesen.
+
+5.2     Farmakokinetiske egenskaper
+
+Absorpsjon
+Litium absorberes lett fra mage-tarm-kanalen med en biotilgjengelighet på 80–100 %. Toppkonsentrasjoner i
+plasma nås innen 1–2 timer for doseformer med standard frigjøring etter oral administrering. Det er direkte
+proporsjonalitet mellom den administrerte dosen og serumkonsentrasjonen.
+
+Distribusjon
+Litium distribueres i hele kroppsvæsken (Vd 0,7–1,0 l/kg). Det krysser blod-hjerne-barrieren langsomt. Ved
+steady state er litiumkonsentrasjonen i cerebrospinalvæsken 40–50 % av plasmanivåene.
+
+Biotransformasjon og eliminasjon
+Plasmakonsentrasjonene avhenger av nyrefunksjon, mulige kostsholdsrestriksjoner (f.eks. lite natrium),
+pasientens somatiske tilstand og andre legemiddelbehandlinger (f.eks. diuretika). Litium utskilles nesten
+utelukkende via nyrene som fritt ion i urinen, med en halveringstid i plasma på 16–30 timer.
+
+5.3     Prekliniske sikkerhetsdata
+
+I reproduksjonstoksisitetsstudier av rotter forårsaket litium i terapeutiske doser en reduksjon i fostervekt,
+antall levende fostre, forsinket skjelettutvikling og nyretoksisitet hos nyfødte ved doser som var toksiske for
+mor. Hos hannrotter ga litium morfologiske og histologiske endringer i epitel i sædledere og spermatider ved
+doser som var sammenlignbare med doser til mennesker, og redusert testikkelvekt og sædproduksjon ved
+doser mer enn 20 ganger høyere enn den administrerte dosen til mennesker. I eksperimenter med rotter
+forårsaket litium histopatologiske endringer i nefroner og forstørret skjoldbruskkjertel. Høye konsentrasjoner
+av litium er potensielt teratogent hos rotter og mus.
+
+Ytterligere innsendte prekliniske data viste ingen klinisk relevante bivirkninger av litiumbehandling som
+ikke allerede er nevnt her eller beskrevet i andre deler av preparatomtalen.
+
+
+
+
+                                                       9
+6.      FARMASØYTISKE OPPLYSNINGER
+
+6.1     Hjelpestoffer
+
+silika, kolloidal
+magnesiumstearat
+talkum (E 553b)
+natriumstivelseglykolat (type A)
+povidon
+laktosemonohydrat
+maisstivelse
+
+6.2     Uforlikeligheter
+
+Ikke relevant.
+
+6.3     Holdbarhet
+
+2 år
+
+6.4     Oppbevaringsbetingelser
+
+Dette legemidlet krever ingen spesielle oppbevaringsbetingelser.
+
+6.5     Emballasje (type og innhold)
+
+Gjennomsiktig, ravgul glassflaske med en skrukork i LDPE/HDPE og et integrert silikageltørkemiddel.
+
+Pakningsstørrelse: 100 tabletter
+
+6.6     Spesielle forholdsregler for destruksjon og annen håndtering
+
+Ikke anvendt legemiddel samt avfall bør destrueres i overensstemmelse med lokale krav.
+
+
+7.      INNEHAVER AV MARKEDSFØRINGSTILLATELSEN
+
+XGX Pharma ApS
+Frederiksgade 11, st.th
+1265 København
+Danmark
+
+
+8.      MARKEDSFØRINGSTILLATELSESNUMMER (NUMRE)
+
+23-15504
+
+
+9.      DATO FOR FØRSTE MARKEDSFØRINGSTILLATELSE / SISTE FORNYELSE
+
+Dato for første markedsføringstillatelse: 12. desember 2024
+
+
+10.     OPPDATERINGSDATO
+
+12.12.2024
+
+
+                                                     10
+

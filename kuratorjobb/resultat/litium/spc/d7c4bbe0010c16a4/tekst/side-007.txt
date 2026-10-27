@@ -1,0 +1,53 @@
+Organklassesystem                      MedDRA foretrukket term
+Vanlige                                Polydipsi
+
+Psykiatriske lidelser
+Vanlige                                Forvirring, døsighet
+Nevrologiske sykdommer
+Vanlige                                Lett håndtremor, lett redusert konsentrasjon og respons
+Mindre vanlige                         Reversibel parkinsonisme, hodepine, svimmelhet
+Sjeldne                                Nevroleptisk malignt syndrom. EEG-endringer
+
+Hjertesykdommer
+
+Vanlige                                T-bølgeutflating i EKG
+Mindre vanlige                         Sinusknutedysfunksjon, AV-blokk, arytmi
+
+Karsykdommer
+Ikke kjent                             Venøs tromboemboli, inkludert tilfeller av lungeemboli
+                                       og tilfeller av dyp venetrombose rapportert
+
+Gastrointestinale sykdommer
+Vanlige                                Diaré, kvalme, abdominal smerte (særlig i de første
+                                       behandlingsukene)
+
+Hud- og underhudssykdommer
+Vanlige                                Akne
+Mindre vanlige                         Psoriasis (forverring eller tilfeller av), alopesi
+Ikke kjent                             Lichenoid legemiddelreaksjon
+
+
+Sykdommer i muskler, bindevev og
+skjelett
+Mindre vanlige                         Muskelsvakhet
+
+Sykdommer i nyre og urinveier
+Svært vanlige                          Nefrogen diabetes insidipus
+Vanlige                                Polyuri
+Ikke kjent                             Mikrocyster, onkocytom eller nyrekarsinom i
+                                       oppsamlingskanalene (ved langvarig behandling) (se
+                                       pkt. 4.4)
+                                       Nedsatt nyrefunksjon (ved langvarig behandling)
+
+Lidelser i kjønnsorganer og
+brystsykdommer
+Ikke kjent                             Seksuell dysfunksjon
+
+Graviditet, puerperale og perinatale
+lidelser
+Ikke kjent                             Neonatalt abstinenssyndrom (se pkt. 4.6)
+
+
+
+
+                                               7

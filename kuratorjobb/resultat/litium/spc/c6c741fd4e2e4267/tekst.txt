@@ -1,0 +1,377 @@
+1.    LEGEMIDLETS NAVN
+
+Lithionit 83 mg (12 mmol) depottabletter
+
+
+2.    KVALITATIV OG KVANTITATIV SAMMENSETNING
+
+Virkestoff: Hver depottablett inneholder vannfritt litiumsulfat tilsvarende 83 mg (12 mmol) litium.
+For fullstendig liste over hjelpestoffer, se pkt. 6.1.
+
+
+3.    LEGEMIDDELFORM
+
+Depottabletter. Hvite, avlange. Med delestrek 16,2 x 8,7 mm.
+
+
+4.    KLINISKE OPPLYSNINGER
+
+4.1   Indikasjoner
+
+Profylaktisk ved maniske og depressive faser i manisk depressiv sykdom. Terapeutisk ved maniske
+tilstander.
+
+4.2   Dosering og administrasjonsmåte
+
+Dosen fastlegges etter bestemmelse av serumlitium. Serumkonsentrasjonen skal vanligvis ligge i
+området 0,5–0,8–1,2 mmol/l. Hos eldre kan dosereduksjon være nødvendig for ønsket
+serumkonsentrasjon. Blodprøve til bestemmelse av serumlitium skal alltid tas nøyaktig 12 timer etter
+siste kveldsdose og i «steady state». «Steady state» nås etter ca. 1 uke. Skal svelges hele. Kan deles,
+men må ikke tygges eller knuses.
+Før oppstart av litiumbehandling skal pasientens nyrefunksjon, hjertefunksjon og
+skjoldbruskkjertelfunksjon evalueres. Pasienten bør være eutyreoid før oppstart av litiumbehandling.
+Litiumbehandling er kontraindisert hos pasienter med alvorlig nyreskade (se pkt. 4.3). Pasientenes
+nyrefunksjon, hjertefunksjon og skjoldbruskkjertelfunksjon bør evalueres regelmessig under
+behandling med litium.
+Profylaktisk ved manisk-depressiv sykdom: Initialt gis en halv depottablett morgen og kveld
+(12 mmol/døgn). Etter 1 uke bestemmes serumkonsentrasjonen 12 timer etter siste kveldsdose. 12
+timersprøven gjentas 1–2 ganger med få dagers intervall. Ut fra den funne verdi beregnes
+vedlikeholdsdosen (det er proporsjonalitet mellom dose og serumkonsentrasjon).
+Veiledende vedlikeholdsdose er 2–5 depottabletter, vanligvis fordelt på morgen og kveld. Doseøkning
+skjer gradvis, og 1 uke etter doseendring bestemmes serumlitium. Når ønsket vedlikeholdsdose er
+nådd, kontrolleres serumlitium 1 gang pr. uke i 1 måned. Deretter skjer kontroll 1 gang pr måned i et
+halvt år. Dersom pasienten samarbeider godt, er det i den videre behandling tilstrekkelig med kontroll
+hver annen måned. Ved langtidsbehandling tilstrebes lavest mulig effektiv dose som ikke gir residiv.
+Etter minst et par år uten ubehag kan dosen forsiktig justeres ned. Nivåer mellom 0,3–0,6 mmol/l kan
+iblant gi tilstrekkelig profylaktisk effekt. I andre tilfeller kan det være nødvendig å gå opp til 0,9–
+1,2 mmol/l. Bestemmelse av serumlitium må alltid foretas ved tegn til intoksikasjon (se
+Overdosering/Forgiftning). Hyppig kontroll er nødvendig ved endring i nyrefunksjon, ved graviditet,
+før og etter fødsel, ved diuretikaterapi, nedsatt/økt saltinntak, sykdomstilstander med feber, svette,
+brekninger, diaré og hos eldre som behandles med diuretika, ACE-hemmere og/eller NSAID-er.
+Terapeutisk ved akutte maniske tilstander: Behandling skal kun skje i avdelinger med adgang til hurtig
+bestemmelse av serumlitiumkonsentrasjon. Veiledende døgndose initialt er 4 depottabletter
+(48 mmol), fordelt på 4 doser. Når den nødvendige dose er nådd, hvilket kontrolleres ved å bestemme
+serumlitium 1 uke etter siste doseendring, skjer behandling som ved profylaktisk behandling.
+Depottabletten oppløses under passasjen gjennom mage-tarm-kanalen, men det tomme
+plastlipidskjelettet kan noen ganger gjenfinnes helt i feces.
+
+4.3   Kontraindikasjoner
+
+Alvorlig nyresvikt eller sykdomstilstand som kan øke risikoen for eksisterende nyreskader. Betydelige
+forstyrrelser i elektrolytt- og væskebalansen. Amming.
+Om litium gis til pasienter i denne gruppen, anbefales hyppig litium-bestemmelse, og dosene bør
+justeres til laveste dose vanligvis tolerert av slike pasienter.
+Overfølsomhet overfor virkestoffet(ene) eller overfor noen av hjelpestoffene listet opp i pkt. 6.1.
+
+4.4   Advarsler og forsiktighetsregler
+
+Forstyrrelser i elektrolytt- og væskebalansen, hjertekar-lidelser, kombinasjon med høye doser
+antipsykotika. Forsiktighet anbefales også ved behandling av eldre, spesielt ved samtidig behandling
+med diuretika, ACE-hemmere og/eller NSAID-er.
+Litium har et relativt smalt terapeutisk spekter: Serumlitiumnivå på 1,2–1,6 mmol/l kan medføre risiko
+for overdose; nivåer på 1,6 mmol/l medfører en definitiv risiko for overdose. Dette innebærer at
+serumlitiumnivåene må sjekkes og, om nødvendig, behandlingen midlertidig stoppes ved somatisk
+sykdom eller tilstander som kan være assosiert med forstyrrelser i væske- og elektrolyttbalansen
+(f.eks. svetting, diaré, gastroenteritt). Mange pasienter blir tørste av litiumbehandlingen. Om så er
+tilfellet, er det viktig å stille tørsten med kalorifattig drikke for å unngå vektøkning. Man skal også
+være oppmerksom på at overdreven væsketilførsel kan lede til økt diurese med økt utskillelse av
+litium. Store mengder kaffe, te eller andre matvarer med innhold av xantin kan føre til økt utskillelse
+av litium.
+Man bør utvise forsiktighet hos pasienter med manifest epilepsi og alvorlig patologisk EEG, og andre
+krampetilstander, samt hos pasienter med lettere EKG-forstyrrelser, hypotensjon, og kongestiv
+hjertesvikt. Litium kan forverre psoriasis.
+Hos pasienter på saltfri kost, vil tubulær reabsorpsjon av litium øke, noe som kan føre til akkumulering
+av litium.
+Forsiktighet bør også utvises hos pasienter med Addisons sykdom, og andre endokrinopatier, så vel
+som andre somatiske tilstander assosiert med elektrolyttforstyrrelser, samt ved nevromuskulære
+sykdommer som myasthenia gravis.
+Selv om hypotyreoidisme ikke er kontraindisert ved litiumbehandling, bør nøye kontroll av
+tyroideafunksjon være obligatorisk hos alle pasienter på litiumbehandling (se pkt. 4.2). Siden
+behandling med litium kan føre til hyperparatyreoidisme, anbefales det å kontrollere albuminkorrigert
+kalsium både før behandlingstart med litium og jevnlig under behandling.
+
+Langtidsbehandling med litium kan føre til permanente forandringer i nyrehistologi og nedsatt
+nyrefunksjon. Siden litium primært utskilles via nyrene kan signifikant akkumulering av litium
+forekomme hos pasienter med nyresvikt.
+Det anbefales å utvise forsiktighet ved mild eller moderat nedsatt nyrefunksjon. Serumlitiumnivået bør
+overvåkes nøye og litiumdosen justeres ved behov (se pkt. 4.2). Dersom serumlitiumnivå og
+plasmakreatininnivå ikke kan kontrolleres regelmessig, bør ikke litium forskrives til denne
+pasientgruppen. Litium er kontraindisert til pasienter med alvorlig nyresvikt (se pkt. 4.3).
+
+Risikoen for hypotyreoidisme og nyresvikt som oppstår ved langvarig behandling bør tas hensyn til og
+evalueres regelmessig.
+
+Forhøyede litiumkonsentrasjoner øker risikoen for nyresvikt og samtidig bruk av legemidler som kan
+forårsake forhøyede litiumkonsentrasjoner bør derfor unngås (se pkt. 4.5).
+
+Pasienter med nyrepåvirkning oppfordres til å melde fra dersom de utvikler polyuri eller polydipsi.
+Hvis pasienten utvikler polyuri og/eller polydipsi, bør nyrefunksjonen overvåkes utover regelmessig
+analyse av serumlitium.
+Svulster i nyrene: Tilfeller av mikrocyster, onkocytomer og karsinomer i samlesystemet (nyrene) er
+rapportert hos pasienter med alvorlig nedsatt nyrefunksjon og som har brukt litium i mer enn 10 år (se
+pkt. 4.8).
+
+Intrakraniell hypertensjon
+Det har vært tilfeller av intrakraniell hypertensjon (se pkt. 4.8). Pasienter bør oppmuntres til å
+rapportere vedvarende hodepine og/eller synsforstyrrelser.
+
+Toksisitet etter bariatrisk kirurgi
+Hos pasienter som har gjennomgått bariatrisk kirurgi, kan det være nødvendig med en lavere
+vedlikeholdsdose av litium. Litiumnivåer skal overvåkes nøye på grunn av risikoen for litiumtoksisitet
+inntil vekten har stabilisert seg.
+
+Irreversibel litiumindusert nevrotoksisitet (SILENT)
+I sjeldne tilfeller kan nevrologiske symptomer vedvare etter litiumtoksisitet, til tross for normalisering
+av serumlitiumkonsentrasjonen. Den patologiske mekanismen er uklar, men kronisk eller
+tilbakevendende toksisitet kan øke risikoen for utvikling av SILENT. Hvis risikoen for toksisitet er
+overhengende, f.eks. i tilfelle redusert nyrefunksjon eller dehydrering, eller hvis det er mistanke om
+dårlig etterlevelse, bør intervallet for serumlitiumkontroller forkortes (se pkt. 4.8).
+
+Brugada syndrom
+Litium kan synliggjøre eller forverre Brugada syndrom, en arvelig sykdom i hjertets natriumkanal med
+karakteristiske EKG-forandringer (høyre grenblokk og forhøyet ST-segment i høyre prekordiale
+avledninger), som kan føre til hjertestans eller brå død. Litium er ikke anbefalt hos pasienter med kjent
+Brugada syndrom eller en familiær historie med Brugada syndrom. Det er anbefalt å utvise
+forsiktighet hos pasienter med en familiær historie med hjertestans eller brå død.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Tillegg av antihypertensiva med α-metyldopa (L-formen) hos pasienter som behandles med litium kan
+gi symptomer som indikerer litiumtoksisitet på tross av normale serumlitiumnivåer (mekanisme
+ukjent).
+
+ACE-inhibitorer kan signifikant øke litiumnivåene ved «steady state» og resultere i litiumtoksisitet ved
+å redusere litiumutskillelse sekundært til en økning av renal ekskresjon av natrium. Tiazid-diuretika
+kan også redusere renal utskillelse av litium. Nøye overvåkning av serumlitiumnivå anbefales. I
+motsetning til tiazider ser det ikke ut til at loop-diuretika (f.eks. furosemid) og amilorid influerer på
+den renale ekskresjonen av litium.
+
+Ikke-steroide anti-innflammatoriske legemidler (NSAID-er) reduserer renal litiumutskillelse. Om disse
+legemidlene brukes samtidig er frekvent kontroll av litiumserumnivå obligatorisk.
+
+Samtidig bruk av litium og det antiepileptiske legemiddelet karbamazepin er av og til rapportert å gi
+toksisk syndrom som inkluderer forvirring, tremor, ataksi, hyperrefleksi og slapphet. Plasmanivåene
+av begge legemidlene er rapportert å ligge innenfor normalområdet.
+
+Det er rapportert nevrotoksisk syndrom, inkludert forvirring, desorientering, tap av bevissthet, feber og
+ekstrapyramidale symptomer når litium og større doser nevroleptika, spesielt haloperidol og tioridazin,
+har vært kombinert. Det er ikke funnet noen årssakssammenheng til dette. I flere rapporterte tilfeller
+har pasienten fått svært høye doser av haloperidol og serumlitiumnivåene var unødvendig høye.
+Tilfeller av malignt nevroleptikasyndrom er også blitt rapportert etter samtidig bruk av både
+nevroleptika og litium.
+
+Den serotonerge effekten av anti-migrene-middelet sumatriptan kan øke ved samtidig bruk av litium.
+Samtidig bruk av litium og antidepressiva, spesielt spesifikke serotonin re-opptakshemmere (SSRI-er,
+f.eks. fluoxetin, fluvoksamin) og venlafaksin er rapportert å gi serotonergt syndrom, med symptomer
+som hyperrefleksi, tremor, bevissthetsbortfall og epileptiske anfall, antagelig på grunn av en antatt
+hyper-serotonerg tilstand. Selv om det ikke har vært tilsvarende rapporter på andre SSRI-er eller andre
+antidepressiva, bør det utvises forsiktighet ved kombinasjon av litium og antidepressiva.
+Sibutramin er en ikke-amfetamin apetittdemper som minsker reopptaket av serotonin, noradrenalin og
+dopamin som har vært assosiert med serotonergt syndrom om den tas i tillegg til litium.
+
+Økt litiumtoksisitet er rapportert i enkeltstående tilfeller hos pasienter som får den antimikrobielle
+substansen metronidazol.
+
+Litium kan forlenge effekten til kurarelignende depolariserende substanser, noe som leder til forlenget
+nevromuskulær blokade.
+
+Samtidig administrering av dapagliflozin og litium kan føre til reduserte litiumkonsentrasjoner og
+risiko for tap av effekt av litium.
+
+Topiramat
+Hos friske frivillige var det en observert reduksjon (18 % for AUC) i systemisk eksponering for litium
+ved samtidig administrering med topiramat 200 mg/dag. Hos pasienter med bipolar lidelse var
+farmakokinetikken til litium upåvirket under behandling med topiramat ved doser på 200 mg/dag. Det
+var imidlertid en observert økning i systemisk eksponering (26 % for AUC) etter topiramatdoser på
+opptil 600 mg/dag. Det har vært rapporter om litiumtoksisitet ved samtidig administrering med
+topiramat. Litiumnivåene bør overvåkes nøye når det gis sammen med topiramat.
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet:
+Lithionit skal ikke brukes under graviditet, spesielt under første trimester av graviditeten, hvis ikke
+den kliniske tilstanden til kvinnen gjør behandling med litium nødvendig. Det er epidemiologisk
+evidens for at litium kan være skadelig for det menneskelige fosteret. Litium går over til fosteret, og
+det er beskrevet tilfeller av allmenne symptomer (inkludert letargi, redusert muskeltonus og hypotoni)
+og forstyrrelse av tyreoideafunksjonen hos nyfødte. Tilgjengelige data tyder også på at litium under
+svangerskapet kan øke risikoen for kardiovaskulære misdannelser, inkludert Ebsteins anomali.
+Dyrestudier har vist reproduksjonstoksiske effekter (se pkt. 5.3).
+
+Amming:
+Kontraindisert ved amming, se pkt. 4.3. Litium går over i morsmelk. Konsentrasjonen i melken er ca.
+50% av konsentrasjonen i morens serum. Barnets serumkonsentrasjon er målt til å være ca. halvparten
+av morens serumkonsentrasjon. Det er sannsynlig at barn som ammes kan skades. Preparatet må derfor
+ikke brukes under amming.
+
+4.7   Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+Det foreligger ingen endelige data som indikerer at litium påvirker evnen til å kjøre bil eller bruke
+maskiner. Forsiktighet anbefales imidlertid i begynnelsen av behandling med Lithionit inntil den
+individuelle påvirkning er evaluert.
+
+4.8   Bivirkninger
+
+I løpet av de første èn til to uker på litiumbehandling er de mest vanlige bivirkningsymptomene tørste
+og polyuri, fin håndtremor, muskelsvakhet, trøtthet, kvalme og diaré. Gastrointestinale symptomer
+avtar gradvis eller forsvinner raskt, tremor mer gradvis.
+I løpet av langtidsbruk har følgende symptomer inntruffet, i enkelte tillfeller vedvarende: Nedsatt
+nyrefunksjon, hypotyreoidisme, ikke-toksisk struma, svekket tubulærfunksjon, polyuri, fin tremor og
+reversible Parkinsonlignende symptomer.
+Symptomer som kan signalisere umiddelbar litiumtoksisitet er utydelig tale, døsighet, grov tremor,
+kvalme, oppkast, diaré, muskelfascikulasjon og forvirring.
+
+I tabellen under er bivirkningene listet etter klasse og frekvens (vanlige (≥1/100 til <1/10), mindre
+vanlige (≥1/1000 til <1/100), sjeldne (1/10 000 til <1/1000), ikke kjent (kan ikke anslås ut ifra
+tilgjengelige data).
+
+
+ Organsystem                 Bivirkninger
+ Hjertesykdommer
+ Vanlige                     EKG forandringer (spesielt hos eldre)
+ Mindre vanlige              Arrytmier (vanligvis doserelatert)
+ Ikke kjent                  Brugada syndrom (synliggjøring/forverring)*
+ Nevrologiske sykdommer
+ Vanlige                     Fin håndtremor
+ Mindre vanlige              Tremor. Redusert motorisk koordinasjon spesielt i begynnelsen av
+                             behandlingen. Utydelig tale. Hodepine, svimmelhet. Reversible
+                             Parkinsonlignende symptomer (relatert til dose, lengde på behandlingen,
+                             samt samtidig nevroleptika-behandling).
+ Sjeldne                     Ikke-spesifikke EEG-forandringer
+ Ikke kjent                  Malignt nevroleptikasyndrom (hovedsakelig i kombinasjon med
+                             nevroleptika). Syndrom av irreversibel litiumindusert nevrotoksisitet
+                             (SILENT, se pkt. 4.4). Intrakraniell hypertensjon
+ Øyesykdommer
+ Ikke kjent                  Synsforstyrrelse**
+ Gastrointestinale sykdommer
+ Vanlige                     Diaré, kvalme, magesmerter (oftest forbigående)
+ Ikke kjent                  Munntørrhet. Hypersalivasjon.
+ Sykdommer i nyre og urinveier
+ Vanlige                     Polyuri
+ Mindre vanlige              Forstyrrelse i tubulærfunksjon (relatert til dose og lengde på behandling)
+ Ikke kjent                  Mikrocyster, onkocytomer og karsinomer i samlesystemet (nyrene) (ved
+                             langtidsbruk) (se pkt. 4.4).
+                             Det er rapportert om tilfeller av nyresvikt (spesielt ved forhøyede
+                             litiumkonsentrasjoner og/eller hos predisponerte pasienter) (se pkt. 4.4 og
+                             4.9).
+ Hud- og underhudssykdommer
+ Vanlige                     Ikke-spesifikke makulopapulære eller akneutslett
+ Mindre vanlige              Forverring eller utbrudd av psoriasis. Moderat håravfall (noen ganger
+                             assosiert med hypotyreoidisme).
+ Ikke kjent                  Lichenoid legemiddelreaksjon. Legemiddelreaksjoner med eosinofili og
+                             systemiske symptomer (DRESS). Forverring av Dariers sykdom
+ Sykdommer i muskler, bindevev og skjelett
+ Mindre vanlige              Muskelsvakhet
+ Endokrine sykdommer
+ Svært vanlige               Hyperkalsemi
+ Vanlige                     Doserelatert hypotyreoidisme, ikke-toksisk struma
+ Ikke kjent                  Hyperparatyreoidisme, paratyreoideaadenom, paratyreoideahyperplasi
+ Stoffskifte- og ernæringsbetingede sykdommer
+ Vanlige                     Økt tørste og vektøkning
+ Generelle lidelser og reaksjoner på administrasjonsstedet
+ Vanlige                     Ødem
+ Mindre vanlige              Allergisk reaksjon
+ Ikke kjent                  Trøtthet (spesielt de første ukene)
+ Psykiatriske lidelser
+ Vanlige                     Tap av apetitt, forvirring og døsighet
+ Sjeldne                     Svekket kognitiv og motorisk funksjon
+ Lidelser i kjønnsorganer og brystsykdommer
+ Ikke kjent                  Seksuell dysfunksjon
+*Se pkt. 4.4 Advarsler og forsiktighetsregler – Brugada syndrom
+**Manifestasjoner av kliniske symptomer, inkludert synsforstyrrelser og/eller vedvarende hodepine,
+bør føre til en mulig diagnose av intrakraniell hypertensjon.
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til
+Direktoratet for medisinske produkter: www.dmp.no/meldeskjema
+
+
+4.9   Overdosering
+
+På grunn av det smale terapeutiske vinduet til litium kan noen pasienter få forgiftningssymptomer ved
+mindre endringer i renal funksjon eller væske- og elektrolyttbalanse. Eldre pasienter har en høyere
+risiko for forgiftning.
+Forgiftningssymptomer kan hos litiumbehandlede utløses av f.eks. forverret nyrefunksjon. Tidlige
+tegn på toksisitet inkluderer døsighet, sløvhet, muskelsvakhet, forverring av bevegelsestremor,
+muskelfascikulasjon, dyskinesi og nystagmus. Dette kan komme av reduksjon i eller avslutning av
+litiumbehandling. Ved videre intoksikasjon kan ukoordinerte bevegelser, dysartri, ataksi, forvirring, og
+synsforstyrrelser oppstå. Nyrepåvirkning av varierende grad, inkludert tilfeller av nyresvikt (først og
+fremst ved kronisk medisinering, men også ved akutt forgiftning). Ved nivåer over 3,0 mEq/l kan man
+få en generalisert nevrotoksisk tilstand med markert forvirring, kramper, koma og død.
+Behandling: Det finnes ingen spesifikk antidot for litiumoverdose. Litiumbehandling bør stanses
+umiddelbart og støttebehandling initieres.
+Ved alvorlig overdose er hemodialyse effektivt for å redusere litiumnivåene, dette må kanskje
+repeteres.
+5.     FARMAKOLOGISKE EGENSKAPER
+
+5.1    Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Antipsykotika, ATC-kode: N05A N01
+
+Litium har en profylaktisk effekt mot både maniske og depressive faser av manisk depressiv sykdom.
+Litium skal da tilføres kontinuerlig. Litium har også en terapeutisk effekt mot manisk tilstand. Full
+effekt nås innen ca. 1 uke. Virkningsmekanismen for litium er ikke klarlagt. Det er mulig at
+virkningen på biologisk membran gjennom interaksjon med både natrium og kalium er den primære
+mekanismen med videreinnvirkninger på bl.a. monoamin-omsetning sekundært.
+
+5.2    Farmakokinetiske egenskaper
+
+Den absolutte biotilgjengeligheten til litiumsulfat er nesten fullstendig. Den relative
+biotilgjengeligheten til Lithionit sammenlignet med vanlige tabletter med litiumkarbonat er nesten
+100 %. Dette ser man også når vanlige tabletter med lithiumsulfat brukes som referanse.
+
+5.3    Prekliniske sikkerhetsdata
+
+Følgende reproduksjonstoksiske effekter ble observert hos dyr i klinisk relevante doser: fosterdød,
+misdannelser i hjerte-karsystemet, ganespalte, defekter på øye og ytre øre.
+
+
+6.     FARMASØYTISKE OPPLYSNINGER
+
+6.1    Fortegnelse over hjelpestoffer
+
+Eudragit RS 100, hypromellose, magnesiumstearat.
+
+6.2    Uforlikeligheter
+
+Ikke relevant.
+
+6.3    Holdbarhet
+
+3 år
+
+6.4    Oppbevaringsbetingelser
+
+Oppbevares ved høyst 25 ºC.
+
+6.5    Emballasje (type og innhold)
+
+Blister laget av PVC/PE/PVdC og Al
+
+6.6    Spesielle forholdsregler for destruksjon og annen håndtering
+
+Ingen spesielle forholdsregler.
+
+
+7.     INNEHAVER AV MARKEDSFØRINGSTILLATELSEN
+
+Karo Pharma AB
+Box 16184
+103 24 Stockholm
+Sverige
+
+8.    MARKEDSFØRINGSTILLATELSESNUMMER (NUMRE)
+
+00-7373
+
+
+9.    DATO FOR FØRSTE MARKEDSFØRINGSTILLATELSE / SISTE FORNYELSE
+
+Dato for første markedsføringstillatelse: 20 mars 2001
+
+
+10.   OPPDATERINGSDATO
+
+08.07.2026
+

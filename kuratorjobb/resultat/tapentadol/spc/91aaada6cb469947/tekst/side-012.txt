@@ -1,0 +1,59 @@
+Metabolisme
+
+Tapentadols metabolisme hos mennesker er omfattende. Ca. 97 % av modersubstansen metaboliseres.
+Viktigste metabolismevei for tapentadol er konjugering med glukuronsyre til glukuronider. Etter oralt
+inntak utskilles ca. 70 % av dosen i urin i konjugerte former (55 % glukuronid og 15 % sulfat av
+tapentadol). Uridindifosfatglukuronyltransferase (UGT) er hovedenzymet ved glukuronidering
+(hovedsakelig UGT1A6-, UGT1A9- og UGT2B7-isoformer). Totalt 3 % av virkestoffet utskilles i urin
+som uendret virkestoff. Tapentadol metaboliseres også til N-desmetyltapentadol (13 %) av CYP2C9
+og CYP2C19 og til hydroksytapentadol (2 %) av CYP2D6, som metaboliseres videre ved konjugering.
+Virkestoffmetabolisme mediert av cytokrom P450-systemet er derfor av mindre betydning enn
+glukuronidering.
+Ingen av metabolittene bidrar til analgetisk aktivitet.
+
+Eliminasjon
+
+Tapentadol og metabolittene utskilles nesten utelukkende (99 %) via nyrene. Totalclearance etter
+intravenøs administrasjon er 1530 +/- 177 ml/minutt. Terminal halveringstid er gjennomsnittlig 5-6
+timer etter oralt inntak.
+
+Spesielle populasjoner
+Eldre pasienter
+Gjennomsnittlig tapentadoleksponering (AUC) var tilsvarende i en studie med eldre forsøkspersoner
+(65-78 år) som hos unge voksne (19-43 år), og gjennomsnittlig Cmax var 16 % lavere i gruppen med
+eldre enn hos unge voksne forsøkspersoner.
+
+Nedsatt nyrefunksjon
+Tapentadols AUC og Cmax var sammenlignbare hos forsøkspersoner med varierende grad av
+nyrefunksjon (fra normal til alvorlig nedsatt). Det ble derimot observert økende eksponering (AUC)
+for tapentadol-O-glukuronid ved økende grad av nedsatt nyrefunksjon. Hos forsøkspersoner med lett,
+moderat eller alvorlig nedsatt nyrefunksjon, er AUC for tapentadol-O-glukuronid henholdsvis 1,5, 2,5
+og 5,5 ganger høyere enn ved normal nyrefunksjon.
+
+Nedsatt leverfunksjon
+Administrasjon av tapentadol medførte høyere eksponering og serumnivå av tapentadol hos
+forsøkspersoner med nedsatt leverfunksjon enn hos forsøkspersoner med normal leverfunksjon.
+Forholdet mellom tapentadols farmakokinetikkparametre ved lett og moderat nedsatt leverfunksjon
+sammenlignet med normal leverfunksjon var henholdsvis 1,7 og 4,2 for AUC, 1,4 og 2,5 for Cmax og
+1,2 og 1,4 for t1/2. Det var mindre dannelse av tapentadol-O-glukuronid hos forsøkspersoner med
+høyere grad av nedsatt leverfunksjon.
+
+Farmakokinetiske interaksjoner
+
+Tapentadol metaboliseres hovedsakelig ved glukuronidering, og kun en liten mengde metaboliseres
+ved oksidering.
+
+Da glukuronidering er et høykapasitets- og lavaffinitetssystem, som ikke lett mettes selv ved sykdom,
+og terapeutisk konsentrasjon av virkestoffer vanligvis er godt under konsentrasjonen som er
+nødvendig for mulig hemming av glukuronidering, er klinisk relevante interaksjoner forårsaket av
+glukuronidering lite sannsynlige. I legemiddelinteraksjonsstudier med paracetamol, naproksen,
+acetylsalisylsyre og probenecid ble en mulig effekt av disse virkestoffene på glukuronidering av
+tapentadol undersøkt. Studiene med testvirkestoffene naproksen (500 mg to ganger daglig i 2 dager)
+og probenecid (500 mg to ganger daglig i 2 dager) viste økninger i tapentadols AUC på henholdsvis
+17 % og 57 %. Totalt sett ble det ikke observert klinisk relevante effekter på tapentadols
+serumkonsentrasjon i disse studiene.
+Det er også utført interaksjonsstudier med metoklopramid og omeprazol for å undersøke om disse
+virkestoffene påvirket tapentadols absorpsjon. Disse studiene viste heller ingen klinisk relevante
+effekter på tapentadols serumkonsentrasjon.
+
+                                                 12

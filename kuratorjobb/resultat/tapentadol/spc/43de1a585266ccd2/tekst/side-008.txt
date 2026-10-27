@@ -1,0 +1,59 @@
+Tapentadol er et sterkt analgetikum med my-agonistisk opioid og i tillegg
+noradrenalinreopptakshemmende egenskaper. Tapentadol utøver sin analgetiske effekt direkte uten
+noen farmakologisk aktiv metabolitt.
+
+Tapentadol viste effekt i prekliniske modeller av nociseptive, nevropatiske, viscerale og
+inflammatoriske smerter. Effekt er bekreftet i kliniske studier med tapentadol filmdrasjerte tabletter
+ved nociseptive smertetilstander, inkludert postoperative ortopediske og abdominale smerter samt
+kroniske osteoartrittsmerter i hofte eller kne. Vanligvis var tapentadols analgetiske effekt i studier av
+nociseptive smerter tilsvarende det som ble observert med et sterkt opioid brukt som
+sammenligningspreparat.
+
+Effekter på kardiovaskulærsystemet: I en grundig human QT-studie ble det ikke vist noen effekt av
+gjentatte terapeutiske og supraterapeutiske tapentadoldoser på QT-intervallet. Tapentadol hadde heller
+ingen relevant effekt på andre EKG-parametre (puls, PR-intervall, QRS-tid, T-bølge- eller U-
+bølgemorfologi).
+
+Pediatrisk populasjon
+Det europeiske legemiddelkontoret (The European Medicines Agency) har utsatt forpliktelsen til å
+presentere resultater fra studier med Palexia i alle undergrupper av den pediatriske populasjonen med
+moderat til sterke, akutte smerter (se punkt 4.2 for informasjon vedrørende pediatrisk bruk).
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+Tapentadol absorberes raskt og fullstendig etter oralt inntak av Palexia. Gjennomsnittlig absolutt
+biotilgjengelighet etter enkeltdoser (fastende) er ca. 32 % på grunn av omfattende første passasje-
+metabolisme. Maksimal serumkonsentrasjon av tapentadol ses vanligvis ca. 1,25 timer etter inntak av
+filmdrasjerte tabletter. Doseproporsjonale økninger i tapentadols Cmax- og AUC-verdier i terapeutisk
+doseområde er sett etter inntak av filmdrasjerte tabletter.
+En studie med gjentatt dosering (hver 6. time) med doser fra 75 til 175 mg tapentadol gitt som
+filmdrasjerte tabletter viste et akkumuleringsforhold mellom 1,4 og 1,7 for aktiv modersubstans og
+mellom 1,7 og 2,0 for hovedmetabolitten tapentadol-O-glukuronid, som hovedsakelig bestemmes av
+doseringsintervallet og tapentadols og metabolittens tilsynelatende halveringstid. Steady state
+serumkonsentrasjon av tapentadol nås på behandlingsregimets andre dag.
+
+Effekt av mat
+AUC og Cmax økte med henholdsvis 25 % og 16 % når filmdrasjerte tabletter ble gitt etter en fett- og
+kaloririk frokost. Tid til maksimal plasmakonsentrasjon ble forsinket med 1,5 timer under disse
+forholdene. Basert på effektdata fra tidlige målingstidspunkt i fase II/III studier syns ikke matinntak å
+ha klinisk relevans. Palexia kan tas med eller uten mat.
+
+Distribusjon
+Tapentadol har omfattende distribusjon i kroppen. Etter intravenøs tilførsel er tapentadols
+distribusjonsvolum (Vz) 540 +/- 98 liter. Serumproteinbindingen er lav, ca. 20 %.
+
+Biotransformasjon
+Tapentadols metabolisme hos mennesker er omfattende. Ca. 97 % av modersubstansen metaboliseres.
+Viktigste metabolismevei for tapentadol er konjugering med glukuronsyre til glukuronider. Etter oralt
+inntak utskilles ca. 70 % av dosen i urin i konjugerte former (55 % glukuronid og 15 % sulfat av
+tapentadol). Uridindifosfatglukuronyltransferase (UGT) er hovedenzymet ved glukuronidering
+(hovedsakelig UGT1A6-, UGT1A9- og UGT2B7-isoformer). Totalt 3 % av virkestoffet utskilles i urin
+som uendret virkestoff. Tapentadol metaboliseres også til N-desmetyltapentadol (13 %) av CYP2C9
+og CYP2C19 og til hydroksytapentadol (2 %) av CYP2D6, som metaboliseres videre ved konjugering.
+Virkestoffmetabolisme mediert av cytokrom P450-systemet er derfor av mindre betydning enn
+glukuronidering
+Ingen av metabolittene bidrar til analgetisk aktivitet.
+
+
+                                                    8

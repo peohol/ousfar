@@ -1,0 +1,44 @@
+ Sykdommer i muskler, bindevev og skjelett
+ Mindre vanlige              Muskelsvakhet
+ Endokrine sykdommer
+ Svært vanlige               Hyperkalsemi
+ Vanlige                     Doserelatert hypotyreoidisme, ikke-toksisk struma
+ Ikke kjent                  Hyperparatyreoidisme, paratyreoideaadenom, paratyreoideahyperplasi
+ Stoffskifte- og ernæringsbetingede sykdommer
+ Vanlige                     Økt tørste og vektøkning
+ Generelle lidelser og reaksjoner på administrasjonsstedet
+ Vanlige                     Ødem
+ Mindre vanlige              Allergisk reaksjon
+ Ikke kjent                  Trøtthet (spesielt de første ukene)
+ Psykiatriske lidelser
+ Vanlige                     Tap av apetitt, forvirring og døsighet
+ Sjeldne                     Svekket kognitiv og motorisk funksjon
+ Lidelser i kjønnsorganer og brystsykdommer
+ Ikke kjent                  Seksuell dysfunksjon
+*Se pkt. 4.4 Advarsler og forsiktighetsregler – Brugada syndrom
+**Manifestasjoner av kliniske symptomer, inkludert synsforstyrrelser og/eller vedvarende hodepine,
+bør føre til en mulig diagnose av intrakraniell hypertensjon.
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til
+Direktoratet for medisinske produkter: www.dmp.no/meldeskjema
+
+
+4.9   Overdosering
+
+På grunn av det smale terapeutiske vinduet til litium kan noen pasienter få forgiftningssymptomer ved
+mindre endringer i renal funksjon eller væske- og elektrolyttbalanse. Eldre pasienter har en høyere
+risiko for forgiftning.
+Forgiftningssymptomer kan hos litiumbehandlede utløses av f.eks. forverret nyrefunksjon. Tidlige
+tegn på toksisitet inkluderer døsighet, sløvhet, muskelsvakhet, forverring av bevegelsestremor,
+muskelfascikulasjon, dyskinesi og nystagmus. Dette kan komme av reduksjon i eller avslutning av
+litiumbehandling. Ved videre intoksikasjon kan ukoordinerte bevegelser, dysartri, ataksi, forvirring, og
+synsforstyrrelser oppstå. Nyrepåvirkning av varierende grad, inkludert tilfeller av nyresvikt (først og
+fremst ved kronisk medisinering, men også ved akutt forgiftning). Ved nivåer over 3,0 mEq/l kan man
+få en generalisert nevrotoksisk tilstand med markert forvirring, kramper, koma og død.
+Behandling: Det finnes ingen spesifikk antidot for litiumoverdose. Litiumbehandling bør stanses
+umiddelbart og støttebehandling initieres.
+Ved alvorlig overdose er hemodialyse effektivt for å redusere litiumnivåene, dette må kanskje
+repeteres.

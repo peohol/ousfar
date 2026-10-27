@@ -1,0 +1,58 @@
+ I.m.- injeksjon     Dose (mg/kg kroppsvekt)             Tilslagstid (minutter)     Varighet (minutter)
+ Induksjon           10,0 (6,5-13,5)                     3-5                        12-25
+ Vedlikehold         ½ induksjonsdose
+
+Intravenøst: Administrering av intravenøs bolusdose bør skje langsomt (minst 60 sekunder). Raskere
+administrering kan forårsake forbigående respiratorisk depresjon.
+
+ I.v. injeksjon    Dose (mg/kg kroppsvekt)                 Tilslagstid (minutter)     Varighet (minutter)
+ Induksjon         2,0 (1,0-4,5)                           1                          5-15
+ Vedlikehold       ½ induksjonsdose, alternativt
+                   overgang til infusjon. Se nedenfor.
+
+Omregningstabell: Fra dose i mg/kg kroppsvekt til dose i ml/kg kroppsvekt
+
+ Dose i mg/kg kroppsvekt             Dose i ml/kg kroppsvekt             Dose i ml/kg kroppsvekt
+
+                                     Ketamin Abcur 10 mg/ml              Ketamin Abcur 50 mg/ml
+ 1,0                                 0,10                                0,02
+ 2,0                                 0,20                                0,04
+ 4,5                                 0,45                                0,09
+ 6,5                                 0,65                                0,13
+ 10,0                                1,00                                0,20
+ 13,5                                1,35                                0,27
+
+Infusjon: Infusjon gir jevnere anestesi. Total ketamindose er ofte lavere enn ved intermitterende
+injeksjoner og oppvåkningen skjer raskere. Under ventilering med oksygen-/nitrogenoksid kan en
+lavere dose ketamin være tilstrekkelig.
+
+ Infusjon                                                Dose
+ Induksjon                                               2,0-6,0 mg/kg kroppsvekt
+ Vedlikehold                                             2,0-6,0 mg/kg kroppsvekt og time
+
+Dosen angitt ovenfor tilsvarer ca. 1 dråpe/kg kroppsvekt og minutt av ketamin 1 mg/ml
+infusjonsløsning.
+
+Obstetrisk dosering: Èn intravenøs dose på 0,2-1,0 mg/kg anbefales ved vaginal forløsning eller
+keisersnitt, se pkt. 4.6.
+
+Dosering ved nedsatt leverfunksjon: Dosereduksjon bør overveies hos pasienter med cirrhose eller
+nedsatt leverfunksjon av andre årsaker (se pkt. 4.4).
+
+Dosering ved nedsatt nyrefunksjon: Dosereduksjon er vanligvis ikke nødvendig.
+
+Kombinasjon med andre anestetika: Ketamin kan med fordel kombineres med benzodiazepin-
+derivater, slik som midazolam. Ketamin og midazolam kan blandes i samme infusjons (10 ml Ketamin
+Abcur 50 mg / ml + 7,5 ml midazolam 5 mg / ml per 500 ml infusjonsvæske, oppløsning).
+
+ Induksjon (i.v. injeksjon)
+ ketamin                                                 2 mg/kg kroppsvekt
+ midazolam                                               0,15 mg/kg kroppsvekt
+
+ Vedlikehold (kontinuerlig infusjon)
+ ketamin                                                 1 mg/kg kroppsvekt og time
+ midazolam                                               0,075 mg/kg kroppsvekt og time
+
+Administrasjonsmåte
+
+                                                    2

@@ -1,0 +1,59 @@
+Litiumkonsentrasjonen i serum skal til å begynne med kontrolleres annenhver dag, og skal ikke overskride
+1,2 mmol/l. Etter ca. 1 uke skal dosen halveres (se pkt. 4.4).
+
+Forsterkning til et antidepressiv ved alvorlig depressiv lidelse (MDD)
+Startdose: 1 tablett (300 mg (8,1 mmol)) to ganger daglig. Dosen skal justeres oppover som indikert ved
+litiumnivåer i plasma (nivåer kan oppnås 5 dager etter dosejustering).
+Vedlikeholdsdose: 2-3 tabletter (600-900 mg (16,2-24,3 mmol)) daglig fordelt på 1-2 doser (for å redusere
+risikoen for nedsatt nyrefunksjon).
+
+Målet for litiumkonsentrasjoner i serum for antidepressiv forsterkning er i området 0,5 0,8 mmol/l, men
+litiumkonsentrasjoner i serum på opptil 1,2 mmol/l kan være målet for å oppnå optimal klinisk respons.
+
+Eldre (> 65 år)
+På grunn av lavere distribusjonsvolum (Vd) for litium trenger eldre pasienter lavere doser for å oppnå en
+ønsket konsentrasjon ved steady state (Css). I tillegg kan redusert litiumclearance føre til endrede eller
+toksiske litiumkonsentrasjoner hos eldre pasienter, på grunn av den aldersrelaterte nedgangen i glomerulær
+filtrasjonshastighet. En nyrefunksjonstest kreves før behandlingen igangsettes (kreatininclearance og/eller
+eGFR). Litiumdoser skal reduseres med 25 % til 35 % hos eldre. Videre anbefales økt overvåking av
+litiumkonsentrasjoner i serum.
+
+Undersøkelser før litiumbehandling
+Et EKG kreves hos pasienter > 40 år før behandlingen igangsettes. (Se også pkt. 4.4 for langtidsovervåking.)
+Overvåking av serumkalsium og skjoldbruskfunksjon er nødvendig hos pasienter før behandling med litium.
+En nyrefunksjonstest kreves for å fastslå om det observeres nedsatt nyrefunksjon før behandlingsoppstart
+(kreatininclearance og/eller eGFR skal måles). Det anbefales økt overvåkingsfrekvens av
+litiumkonsentrasjoner i serum ved redusert nyrefunksjon (se også pkt. 4.4 for langtidsovervåking).
+
+Pediatrisk populasjon
+Barn og ungdom (< 18 år): Administrering anbefales ikke på grunn av manglende erfaring.
+
+Overvekt
+Litiumclearance har en betydelig korrelasjon med total kroppsvekt. Anbefalingen for overvektige pasienter
+er å starte behandlingen med de lavere innledende dosene av litium. Vedlikeholdsdoser veiledes av målinger
+av plasmakonsentrasjoner.
+
+Administrasjonsmåte
+Carblit må tas før eller etter måltider, til de tidspunktene som er forskrevet. Dette er nødvendig for å holde
+litiumnivået i blodet konstant. (Se også pkt. 4.4.)
+
+Ved intolerable eller alvorlige gastrointestinale bivirkninger anbefales det å ta Carblit med mat og/eller
+redusere dosen. Når de gastrointestinale bivirkningene avtar, skal dosen gradvis økes til måldosen. Samtidig
+administrering av litium med mat og ulike typer dietter kan imidlertid endre litiumabsorpsjonen. Derfor skal
+det utvises forsiktighet (se pkt. 4.4).
+
+4.3      Kontraindikasjoner
+
+-     overfølsomhet overfor virkestoffet eller overfor noen av hjelpestoffene listet opp i pkt. 6.1
+-     hjertesykdom (f.eks. risiko for arytmi inkludert brugadas syndrom eller mistanke om brugadas syndrom,
+      hjerteinsuffisisens)
+-     medisinsk tilstand forbundet med lave natriumnivåer (f.eks. addisons sykdom), en
+      natriummetabolismesykdom, diett med lite natrium
+-     hypotyreose
+-     alvorlig nyresykdom
+-     keratosis follicularis (dariers sykdom)
+-     under amming
+
+
+
+                                                        2

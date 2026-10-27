@@ -1,0 +1,56 @@
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Analgetika, opioider, andre opioider
+ATC-kode: N02A X06
+
+Tapentadol er et sterkt analgetikum med my-agonistisk opioide og i tillegg
+noradrenalinreopptakshemmende egenskaper. Tapentadol utøver sin analgetiske effekt direkte uten
+noen farmakologisk aktiv metabolitt.
+
+Tapentadol viste effekt i prekliniske modeller av nociseptive, nevropatiske, viscerale og
+inflammatoriske smerter. Effekt er bekreftet i kliniske studier hos voksne med en annen
+legemiddelform av tapentadol med umiddelbar frisetting (filmdrasjerte tabletter) som dekket
+nociseptive smertetilstander, inkludert postoperative ortopediske og abdominale smerter, samt
+kroniske smerter som følge av osteoartritt i hofte eller kne. Generelt viste studier hos voksne med
+nociseptive smerter tilsvarende analgetisk effekt av tapentadol og et sterkt opioid brukt som
+sammenligningspreparat.
+
+Effekter på kardiovaskulærsystemet: I en grundig human QT-studie hos voksne ble det ikke observert
+noen effekt av gjentatte terapeutiske og supraterapeutiske tapentadoldoser på QT-intervallet.
+Tapentadol hadde heller ingen relevant effekt på andre EKG-parametre (puls, PR-intervall, QRS-tid,
+T-bølge- eller U-bølgemorfologi).
+
+Pediatrisk populasjon
+Effekt av tapentadol mikstur, oppløsning tatt i inntil 72 timer er påvist hos barn og ungdom (i alderen
+fra 2 år til under 18 år) med postoperative smerter.
+
+5.2   Farmakokinetiske egenskaper
+
+Biotilgjengelighet vurdert ved Cmax og AUC og alle andre farmakokinetikkparametre bestemt for
+tapentadol etter administrasjon av 100 mg tapentadol som mikstur, oppløsning var tilsvarende som for
+en 100 mg filmdrasjert tablett (en annen oral legemiddelform med umiddelbar frisetting).
+Informasjonen nedenfor gitt på bakgrunn av studier med filmdrasjerte tabletter gjelder derfor også for
+mikstur, oppløsning.
+
+Absorpsjon
+Tapentadol absorberes raskt og fullstendig etter oral administrasjon av Palexia. Gjennomsnittlig
+absolutt biotilgjengelighet etter enkeltdoser (fastende) er ca. 32 % på grunn av omfattende første
+passasje-metabolisme. Maksimal serumkonsentrasjon av tapentadol ses vanligvis ca. 1,25 timer etter
+inntak av filmdrasjerte tabletter. Doseproporsjonale økninger i Cmax og AUC for tapentadol i
+terapeutisk oralt doseområde er sett etter inntak av filmdrasjerte tabletter.
+En studie med gjentatt (hver 6. time) dosering med doser fra 75 til 175 mg tapentadol gitt som
+filmdrasjerte tabletter viste et akkumuleringsforhold mellom 1,4 og 1,7 for aktiv modersubstans og
+mellom 1,7 og 2,0 for hovedmetabolitten tapentadol-O-glukuronid, som hovedsakelig bestemmes av
+doseringsintervallet og tilsynelatende halveringstid for tapentadol og metabolitten. Steady state
+serumkonsentrasjon av tapentadol nås på dag to i behandlingsregimet.
+
+Effekt av mat
+AUC og Cmax økte med henholdsvis 25 % og 16 % når filmdrasjerte tabletter ble gitt etter en fett- og
+kaloririk frokost. Tid til maksimal plasmakonsentrasjon ble forlenget med 1,5 timer ved slike
+betingelser.
+På bakgrunn av effektdata fra tidlige målingstidspunkter i fase II/III, anses effekten av mat å ikke ha
+klinisk relevans. Palexia kan tas med eller uten mat.
+
+Distribusjon

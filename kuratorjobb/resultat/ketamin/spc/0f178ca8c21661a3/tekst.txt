@@ -1,0 +1,551 @@
+1.      LEGEMIDLETS NAVN
+
+Ketalar 10 mg/ml injeksjonsvæske, oppløsning
+Ketalar 50 mg/ml injeksjonsvæske, oppløsning
+
+
+2.      KVALITATIV OG KVANTITATIV SAMMENSETNING
+
+Ketalar 10 mg/ml: ketamin 10 mg/ml som ketaminhydroklorid.
+Ketalar 50 mg/ml: ketamin 50 mg/ml som ketaminhydroklorid.
+
+Hjelpestoff med kjent effekt:
+
+Ketalar 10 mg/ml inneholder 53 mg natrium i hvert hetteglass med 20 ml oppløsning.
+
+For fullstendig liste over hjelpestoffer se pkt. 6.1
+
+
+3.      LEGEMIDDELFORM
+
+Injeksjonsvæske, oppløsning
+
+
+4.      KLINISKE OPPLYSNINGER
+
+4.1     Indikasjoner
+
+Ketamin kan brukes hos barn og voksne.
+
+Kan benyttes som anestetikum ved diagnostiske eller kirurgiske inngrep av kortvarig natur,
+som innledningsanestetikum før administrering av andre anestetika samt som supplement til
+andre anestetika.
+
+4.2     Dosering og administrasjonsmåte
+
+Ketalar skal kun brukes av eller under ledelse av lege som har erfaring med legemidlets
+egenskaper og bruk.
+
+Ketalar er ikke indisert eller anbefalt til langtidsbehandling (se pkt. 4.1 og 4.4).
+
+Premedisinering: Et antikolinergikum bør gis preoperativt for å hemme sekresjonen.
+Droperidol (0,1 mg/kg i.m.) eller diazepam (0,1 mg/kg i.v., 0,2 mg i.m. eller suppositorier)
+som premedisinering har vist seg effektivt for å redusere frekvensen av reaksjoner i
+oppvåkningsfasen.
+
+Supplerende medisinering: Ketamin er klinisk kompatibelt med de vanligste anvendte
+anestetika og muskelrelaksantia under forutsetning av at respirasjonen opprettholdes. Ketamin
+er blitt gitt alene med god sikkerhet når ventrikkelen ikke har vært tømt, men siden behovet
+av supplerende anestetika eller muskelavslappende midler ikke alltid kan forutsies, anbefales
+det faste i minst 6 timer.
+
+Intramuskulært: Ved intramuskulær administrering bør man velge den høyeste styrken,
+ketalar 50 mg/ml, for å minimere volumet.
+
+
+
+
+                                                                                                -1-
+i.m. injeksjon      Dose                                     Tilslagstid       Varighet
+                    (mg/kg kroppsvekt)                       (min)             (min)
+Induksjon           10,0 (6,5-13,5)                          3-5               12-25
+Vedlikehold         Halve induksjonsdosen
+
+
+En lav initialdose, 4 mg/kg i.m. kan gis ved diagnostiske inngrep.
+
+Obstetrisk dosering:
+Det finnes ikke data tilgjengelig for intramuskulær injeksjon hos fødende, og
+doseanbefalinger kan ikke gis. Tilgjengelige farmakokinetiske data er angitt i pkt. 5.2.
+
+Intravenøst: Administrering av intravenøs bolusdose bør skje langsomt (minst 60 sekunder),
+fordi raskere tilførsel kan resultere i forbigående respiratorisk depresjon.
+
+i.v. injeksjon      Dose                                     Tilslagstid-      Varighet
+                    (mg/kg kroppsvekt)                       (min)             (min)
+Induksjon           2,0 (1,0-4,5)                            1                 5-15
+Vedlikehold         Halve induksjonsdosen,
+                    alternativt overgang til
+                    infusjonsteknikk.
+                    Se nedenfor
+
+
+Omgjøringstabell: Dose i mg/kg kroppsvekt til dose i ml/kg kroppsvekt
+              KETALAR 10 mg/ml                 KETALAR 50 mg/ml
+mg/kg         ml/kg                                     ml/kg
+ 1,0          0,10                                      0,02
+ 2,0          0,20                                      0,04
+ 4,5          0,45                                      0,09
+ 6,5          0,65                                      0,13
+10,0          1,00                                      0,20
+13,5          1,35                                      0,27
+
+Obstetrisk dosering:
+Data for bruk i obstetrisk anestesi er begrenset. Intravenøse doser fra 0,2 til 1,0 mg/kg ved
+obstetriske prosedyrer (vaginal forløsning eller keisersnitt) støttes av publisert litteratur (se
+pkt. 4.6). Det mangler imidlertid data for vedlikeholdsdose av ketamin hos fødende, og
+doseanbefalinger kan ikke gis.
+
+Infusjon: Infusjonsteknikk gir et jevnere narkoseforløp, den totale ketamindosen blir ofte
+lavere enn ved intermitterende injeksjoner og oppvåkningen skjer raskere.
+
+Initial- og vedlikeholdsdose fortynnes med glukose 50 mg/ml infusjonsvæske eller
+natriumklorid 9 mg/ml infusjonsvæske.
+Infusjon                 Dose
+Induksjon                2,0-6,0 mg/kg kroppsvekt
+Vedlikehold              2,0-6,0 mg/kg kroppsvekt/time
+(Ovenfor angitte dosering tilsvarer omtrent 1 dråpe/kg kroppsvekt og minutt av ketamin
+infusjonsløsning 1 mg/ml).
+
+
+
+
+                                                                                                    -2-
+Som eneste anestetikum sammen med oksygen bør dosen være 4-6 mg/kg/time; ved
+kombinasjonsnarkose med oksygen/lystgass eller diazepam 2-4 mg/ kg/time. Ønskes en
+fortynning av preparatet, kan dette skje i natriumklorid injeksjonsvæske 9 mg/ml i forbindelse
+med engangsdoser i.v. f. eks. til barn.
+
+Dosering ved nedsatt leverfunksjon
+Dosereduksjon bør overveies hos pasienter med cirrhose eller nedsatt leverfunksjon. (Se pkt.
+4.4.)
+
+Kriteriene for å sende hjem polikliniske pasienter er de samme med ketamin som for andre
+anestetika.
+
+Vedlikeholdsdose av generell anestesi:
+Det mangler data knyttet til vedlikeholdsdose av ketamin hos fødende, og doseanbefalinger
+kan ikke gis.
+
+4.3    Kontraindikasjoner
+
+Pasienter der en økning i blodtrykket utgjør en alvorlig risiko. Eklampsi og preeklampsi.
+Overfølsomhet overfor virkestoffet(ene) eller overfor noen av hjelpestoffene listet opp i pkt.
+6.1.
+
+4.4     Advarsler og forsiktighetsregler
+
+Som ved annen anestesi bør utstyr for å opprettholde livsviktige funksjoner finnes
+tilgjengelig.
+
+Forsiktighet må utvises ved kombinasjon med andre legemidler og/eller stoffer som kan øke
+faren for alvorlig respirasjonsdepresjon (se pkt. 4.5).
+
+Under oppvåkningen kan pasienten gjennomgå en fase med livlige drømmer, med eller uten
+psykomotorisk aktivitet, som manifesteres av forvirring, irrasjonell oppførsel, mareritt eller
+hallusinasjoner (ofte bestående av atskilte eller flytende fornemmelser). Frekvensen av disse
+reaksjonene kan minskes betydelig ved anvendelse av et benzodiazepinpreparat, og om tiltale
+og berøring av pasienten skjer med stor forsiktighet under oppvåkningsfasen.
+Da refleksene i farynks vanligvis bibeholdes, bør mekanisk stimulering av farynks unnvikes,
+hvis ikke adekvate muskelrelaksantia er anvendt. Aspirasjon av røntgenkontrastmiddel er
+rapportert under eksperimentelle betingelser, og derfor må vanlige forsiktighetsregler tas.
+
+Ketalar skal anvendes med forsiktighet hos pasienter med følgende tilstander:
+ Pasienter med hjerteinkompensasjon. Disse bør være adekvat medisinert og følges under
+   anestesien og oppvåkningsfasen.
+ Forhøyet cerebrospinalt trykk samt skader eller sykdommer i CNS, ettersom øket
+   cerebrospinalt trykk er blitt rapportert under ketaminanestesi.
+ Pasienter med kronisk alkoholisme eller ved akutte alkoholforgiftninger, samt til
+   epilepsipasienter.
+ Ketamin metaboliseres i leveren og leverclearance er nødvendig for å avslutte den
+   kliniske effekten av anestesien. Unormale leverfunksjonstester knyttet til ketaminbruk er
+   blitt rapportert, særlig ved langvarig bruk (>3 dager) eller rusmisbruk. Forsterket effekt
+   kan inntreffe hos pasienter med cirrhose eller nedsatt leverfunksjon. En reduksjon i dosen
+   bør vurderes hos disse pasientene.
+ Pasienter med nevrotiske trekk eller psykisk sykdom, f.eks. schizofreni og akutte
+   psykoser.
+
+
+
+
+                                                                                                 -3-
+     Pasienter med økt intraokulært trykk (f.eks. glaukom), fordi trykket kan øke betydelig
+      etter en enkelt dose med ketamin.
+     Pasienter med akutt residiverende porfyri.
+     Pasienter med hypertyreoidea eller pasienter som tar tyreoideahormoner (økt risiko for
+      hypertensjon og takykardi).
+     Pasienter med lunge- eller øvre luftveisinfeksjon (ketamin trigger svelgrefleksen som kan
+      forårsake laryngospasmer).
+     Pasienter med store intrakranielle lesjoner, akutte hodeskader, øyeskader eller
+      hydrocefalus.
+
+Hjerte/kar
+På grunn av betydelig økning i myokard oksygenopptak bør ketamin brukes med forsiktighet
+hos pasienter med nedsatt blodvolum, dehydrering eller hjertesykdom, spesielt
+koronarsykdom (f.eks. kongestiv hjertesvikt, myokard iskemi og myokard infarkt). I tillegg
+bør ketamin brukes med forsiktighet hos pasienter med mild til moderat hypertensjon og
+takyarytmi.
+
+Hjertefunksjonen bør kontrolleres kontinuerlig i løpet av behandlingsperioden hos pasienter
+som har påvist hypertensjon eller hjerteinkompensasjon.
+
+En økning i blodtrykket begynner straks etter injeksjonen, når et maksimum etter noen
+minutter og går normalt tilbake til preanestetiske verdier innen 15 minutter.
+Median av maks økning i blodtrykk målt i kliniske studier har vært i området fra 20 til 25 %
+av preanestetiske verdier. Avhengig av tilstanden til pasienten kan denne økningen i
+blodtrykket bli vurdert til å være en gunstig effekt hos noen eller en uønsket hendelse hos
+andre.
+
+Langtidsbehandling
+
+Ketalar er ikke indisert eller anbefalt til langtidsbehandling (se pkt. 4.1 og 4.4).
+
+Tilfeller av cystitt, inkludert blødende cystitt, akutt nyreskade, hydronefrose og
+uretersykdommer, har blitt rapportert hos pasienter som har brukt ketamin over en lengre
+periode, særlig i forbindelse med ketaminmisbruk. Disse bivirkningene er utviklet hos
+pasienter som har fått langtidsbehandling med ketamin over en periode fra 1 md. til flere år.
+I tillegg har det blitt rapportert om hepatotoksisitet, som blandet leverskade, kolestatisk
+leverskade og galleveisdilatasjon, hos pasienter ved langvarig bruk (>3 dager). Se pkt. 4.8.
+
+Misbruk og avhengighet
+Det er rapportert om bruk av ketamin som et rusmiddel. Rapporter viser at ketamin gir flere
+symptomer som bl.a.” flashback”, hallusinasjoner, dysfori, angst, søvnløshet eller
+desorientering (se pkt.4.8). Andre bivirkninger har også blitt rapportert: se
+«Langtidsbehandling». Avhengighet av og toleranse for ketamin kan utvikle seg hos personer
+som tidligere har vært misbrukere eller avhengige av rusmidler. Derfor skal ketamin
+forskrives og brukes med forsiktighet.
+
+Informasjon om hjelpestoffer
+Ketalar 10 mg/ml inneholder 53 mg natrium i hvert hetteglass med 20 ml oppløsning. Dette
+tilsvarer 2,65 % av WHOs anbefalte maksimale daglige inntak av natrium på 2 gram for en
+voksen person.
+
+4.5       Interaksjon med andre legemidler og andre former for interaksjon
+
+Barbiturater og opioidagonister som gis samtidig med ketamin, kan forlenge oppvåkningen.
+
+
+
+                                                                                                  -4-
+Diazepam er kjent for å øke halveringstiden for ketamin og forlenge farmakodynamiske
+effekter. Det kan derfor være behov for dosejusteringer.
+
+Ketamin kan forsterke den muskelrelakserende effekt av atrakurium, suksametonium og
+tubokurarin, inklusiv respirasjonsdepresjon og apné.
+
+Samtidig administrering av ketamin og halogenerte anestetika kan forlenge halveringstiden
+for ketamin og forsinke oppvåkningsfasen. Samtidig administrering av ketamin (særlig i høye
+doser eller ved hurtig administrering) og halogenerte anestetika kan øke risikoen for
+bradykardi, hypotensjon og nedsatt minuttvolum.
+
+Kombinasjon av ketamin og andre CNS-depressive legemidler (f.eks. etanol, fentiaziner,
+sedative H1-blokkere eller muskelrelakserende midler) kan potensiere CNS depresjon og/eller
+øke risikoen for å utvikle alvorlig respirasjonsdepresjon. Reduksjon av ketamindosen kan
+være nødvendig ved samtidig administrering av anxiolytika, sedativa og hypnotika.
+
+Det er rapportert at Ketamin reduserer den hypnotiske effekten av tiopental.
+
+Pasienter som bruker tyroideahormoner har en økt risiko for å utvikle hypertensjon og
+takykardi ved samtidig administrering av ketamin.
+
+Samtidig administrering av antihypertensive midler og ketamin øker risikoen for hypotensjon.
+
+Ved samtidig administrering av ketamin og vasopressin er synergistisk blodtrykksøkning blitt
+observert.
+
+Sympatomimetika (som virker direkte eller indirekte) og vasopressin kan forsterke
+sympatomimetiske effekter av ketamin.
+
+Samtidig bruk med ergometrin kan føre til økt blodtrykk.
+
+Ved samtidig administrering av ketamin og teofyllin eller aminofyllin, kan man se klinisk
+signifikant reduksjon av krampeterskel. Det er rapportert tilfeller av ekstensorkramper ved
+samtidig administrering av disse midlene. Kombinasjonen bør unngås.
+
+Legemidler som hemmer aktiviteten til CYP3A4-enzymet, reduserer normalt hepatisk
+clearance, noe som fører til økt plasmakonsentrasjon ved medisinering med CYP3A4-
+substrater som ketamin. Samtidig administrering av ketamin og legemidler som hemmer
+CYP3A4-enzymet, kan kreve en reduksjon i ketamindoser for å oppnå det ønskede kliniske
+resultatet.
+
+Legemidler som induserer aktiviteten til CYP3A4-enzymet, øker normalt hepatisk clearance,
+noe som fører til redusert plasmakonsentrasjon ved medisinering med CYP3A4-substrater
+som ketamin. Samtidig administrering av ketamin og legemidler som induserer CYP3A4-
+enzymet, kan kreve en økning i ketamindoser for å oppnå det ønskede kliniske resultatet.
+
+4.6     Fertilitet, graviditet og amming
+
+Graviditet
+Det er ikke utført noen kontrollerte kliniske studier under graviditet. Sikker bruk under
+graviditet er ikke fastslått, og slik bruk anbefales ikke, med unntak av administrering under
+kirurgi for abdominal forløsning eller vaginal forløsning. Ketamin krysser lett placenta.
+Dyrestudier har vist reproduksjonstoksiske effekter (se pkt. 5.3). Noen nyfødte som har vært
+
+
+
+                                                                                                -5-
+eksponert for ketamin ved intravenøse doser hos mor ≥ 1,5 mg/kg under forløsning, har
+opplevd respiratorisk depresjon og lav Apgar-score som krevde nyfødtgjenoppliving.
+
+Det er observert markerte økninger i blodtrykk og uterin tonus hos mor ved intravenøse doser
+>2 mg/kg.
+
+Amming
+Ketamin går i liten grad over i morsmelk.
+Det er lite sannsynlig at barn som ammes blir påvirket ved terapeutiske doser.
+
+4.7     Påvirkning av evnen til å kjøre bil eller bruke maskiner
+
+Legemidlet kan påvirke evnen til å kjøre bil eller bruke maskiner.
+Pasienten bør avstå fra bilkjøring og bruk av maskiner i minst 24 timer etter
+anestesi med ketamin.
+
+4.8     Bivirkninger
+
+Bivirkningene er stort sett relatert til dose og injeksjonshastighet, samt er
+reversible. CNS-bivirkninger er mest vanlige om ketamin gis som eneste
+anestetikum.
+
+Følgende bivirkninger har blitt observert og rapportert under behandling med X med følgende
+frekvens: svært vanlige (≥1/10); vanlige (≥1/100 til <1/10); mindre vanlige (≥1/1000 til
+<1/100); sjeldne (≥1/10 000 til <1/1000); svært sjeldne (<1/10 000); ikke kjent (kan ikke
+anslås utifra tilgjengelige data).
+
+
+ Organklasse-            Vanlige             Mindre vanlige           Sjeldne            Ikke kjent (kan
+ system                  (≥1/100 til         (≥1/1000 til <1/100)     (≥1/10 000 til     ikke anslås utifra
+                         <1/10)                                       <1/1000)           tilgjengelige data)
+
+
+ Forstyrrelser i                                                      Anafylaktisk
+ immunsystemet                                                        reaksjon*
+ Stoffskifte- og                             Anoreksi
+ ernærings-
+ betingede
+ sykdommer
+ Psykiatriske            Hallusinasjoner,    Angst                    Delirium*,
+ lidelser                unormale                                     desorientering*,
+                         drømmer,                                     flashback*,
+                         mareritt,                                    dysfori*,
+                         forvirring,                                  søvnløshet,
+                         agitasjon,
+                         unormal adferd
+                         (se pkt. 4.4)
+ Nevrologiske            Nystagmus,
+ sykdommer               hypertoni,
+                         toniske og
+                         kloniske
+                         bevegelser
+ Øyesykdommer            Diplopi                                                         Økt intraokulært
+                                                                                         trykk
+
+
+
+                                                                                                         -6-
+ Hjertesykdommer          Forbigående           Bradykardi, arytmi
+                          takykardi
+ Karsykdommer             Hypertensjon          Hypotensjon
+ Gastrointestinale        Kvalme,                                          Hypersalivasjon
+ sykdommer                oppkast                                          * (se pkt. 4.2 –
+                                                                           Premedisin-
+                                                                           ering)
+ Sykdommer i              Forhøyet              Laryngospasme,             Obstruktiv
+ respirasjonsorgan        respirasjons-         respiratorisk              lungesykdom*,
+ er, thorax og            frekvens              depresjon                  apné*
+ mediastinum
+ Sykdommer i                                                                                  Unormal
+ lever og galleveier                                                                          leverfunksjonstest*,
+                                                                                              legemiddelindusert
+                                                                                              leverskade*,**
+ Hud- og                                        Lokal smerte på
+ underhudssykdom          Erytem,               injeksjonsstedet,
+ mer                      meslinglignende       eksantem
+                          utslett
+ Sykdommer i nyre                                                          Blødende
+ og urinveier                                                              cystitt*, ***,
+                                                                           cystitt*, ***
+
+* Bivirkning identifisert ved bruk etter markedsføring
+** Langvarig bruk (>3 dager) eller rusmisbruk
+*** Langvarig bruk (1 måned til flere år), spesielt i tilfeller av ketaminmisbruk
+
+Økningen i blodtrykket begynner straks etter injeksjonen, når et maksimum etter noen
+minutter og går tilbake til preanestetiske verdier innen 15 minutter.
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det
+mulig å overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell
+oppfordres til å melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som ligger
+på nettsiden til Statens legemiddelverk: www.legemiddelverket.no/meldeskjema.
+
+4.9      Overdosering
+
+Kliniske tegn på overdosering er kramper, hjertearytmier og åndedrettsstans.
+
+Åndedrettsstans skal behandles med assistert eller kontrollert ventilasjon til tilfredsstillende
+spontan respirasjon er gjenopprettet.
+
+Kramper skal behandles med intravenøs tilførsel av diazepam. Hvis denne behandlingen ikke
+gir ønsket resultat anbefales intravenøs tilførsel av fenytoin eller tiopental.
+
+Intet spesifikt antidot finnes.
+
+
+5.       FARMAKOLOGISKE EGENSKAPER
+
+5.1      Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Generelle anestetika. ATC-kode: N01A X03
+
+
+
+                                                                                                              -7-
+Ketalar inneholder som virksom substans ketamin i racemisk form.
+
+Virkningsmekanisme
+Ketamin gir såkalt ”dissosiativ anestesi” ved selektiv avbrytelse av assosiasjonsbanene i
+hjernen. Den analgetiske effekten opptrer ved lavere doser enn de som kreves for anestesi, og
+den analgetiske effekten varer lengre enn anestesien. Disse ønskete farmakologiske effektene
+beror hovedsakelig på en blokade av NMDA reseptorer.
+
+Farmakodynamiske effekter
+Ketamin påvirker vanligvis ikke refleksene i farynks og larynks og muskeltonus forblir
+normal eller øker noe. Kardiovaskulært og respiratorisk stimulerende effekter medvirker til at
+ketamin gis til høyrisikopasienter i hypovolemisk sjokk. Ketamins bronkodilaterende effekt
+muliggjør anvendelse på pasienter med asthma bronchiale samt ved respiratorbehandling av
+status asthmaticus. Påvirkning på sekresjon og mage-tarmkanalen dempes gjennom
+premedisinering med antikolinergikum. Den analgetiske effekten kan utnyttes som
+supplement til regional anestesi eller masseskadesituasjoner / katastrofesammenheng.
+Ketamin er klinisk kompatibel med de vanligste anestetika og muskelrelaksantia under
+forutsetning av at respirasjonen opprettholdes.
+
+5.2     Farmakokinetiske egenskaper
+
+Absorpsjon
+Ketamin absorberes hurtig etter parenteral administrering. Ketaminhydroklorid er ca. 90%
+biotilgjengelig etter en intramuskulær injeksjon.
+
+Distribusjon
+Etter en intravenøs bolus når ketaminhydroklorid raskt hjernen; Intravenøse doser på 2,0
+mg/kg gir kirurgisk anestesi i løpet av 30 sekunder som varer i 5-15 minutter. Intramuskulære
+doser på 10 mg/kg gir kirurgisk anestesi i løpet av 3-4 minutter med en varighet på 12-25
+minutter. Bindingsgraden til plasmaproteiner er ca. 50%.
+
+Ketamin passerer hurtig placenta og distribueres raskt til godt perfundert vev (f.eks. hjerte,
+lunge og hjerne), deretter til muskelvev og perifert vev, deretter til fett. Ved bruk av en
+intravenøs bolusdose på 2,5 mg/kg varer distribusjonsfasen for ketamin i cirka 45 minutter,
+med en halveringstid på 10 til 15 minutter, som er relatert til varigheten av legemidlets
+anestetiske effekt (cirka 20 minutter). De høyeste plasmakonsentrasjonene av ketamin er cirka
+1,8 til 2,0 g/ml 5 minutter etter en intravenøs injeksjon av en bolusdose på 2 mg/kg, og cirka
+1,7 til 2,2 g/ml 15 minutter etter en intramuskulær injeksjon på 6 mg/kg hos voksne og barn.
+
+Fødende som får en intramuskulær dose på 250 mg (cirka 4,2 mg/kg), har en placental
+overføringshastighet for ketamin fra mors blod til navlestrengsvenen på 47 % ved fødsel (1,72
+vs. 0,75 g/ml). For disse fødende gikk det gjennomsnittlig 12 minutter fra tidspunktet for
+injeksjon av ketamin til vaginal fødsel.
+
+Biotransformasjon
+Metabolismen er rask og stort sett fullstendig. Ketamin gjennomgår hepatisk N-demetylering
+(via cytokrom P450-systemet) og hydroksylering av sykloheksanonringen, med dannelse av
+vannløselige konjugater som skilles ut i urinen. CYP3A4-enzymet er hovedenzym for N-
+demetylering av ketamin til norketamin i humane levermikrosomer; med enzymene CYP2B6
+og CYP2C9 som mindre bidragsytere. Ytterligere oksidering finner sted med dannelsen av et
+sykloheksanonderivat. Den ukonjugerte N-demetylerte metabolitten ble funnet å være en
+sjettedel så potent som ketamin. Det ukonjugerte demetylsykloheksanonderivatet ble funnet å
+være en tidel så potent som ketamin. Halveringstiden i plasma er ca 80 minutter for voksne,
+noe kortere for barn.
+
+
+
+                                                                                                  -8-
+Eliminasjon
+Studier på mennesker viste en gjennomsnittlig utskillelse på 91 % av dosen i urinen og 3 % i
+feces. Kun en liten del utskilles uforandret.
+
+5.3     Prekliniske sikkerhetsdata
+
+Prekliniske data indikerer ingen spesiell fare for mennesker basert på konvensjonelle
+prekliniske studier.
+
+Publiserte data fra dyrestudier (inklusiv primater) ved doser som gir lett til moderat anestesi
+viser at bruk av anestesimidler i perioder med rask hjernevekst eller synaptogenese fører til
+tap av celler i den utviklende hjernen. Dette kan være forbundet med langvarig kognitiv svikt.
+Klinisk relevans av disse prekliniske funnene er ikke klarlagt.
+
+6.      FARMASØYTISKE OPPLYSNINGER
+
+6.1     Hjelpestoffer
+
+Ketalar 10 mg/ml: benzetoniumklorid, natriumklorid, vann til injeksjonsvæsker.
+Ketalar 50 mg/ml: benzetoniumklorid, vann til injeksjonsvæsker.
+
+6.2     Uforlikeligheter
+
+Ketamin og barbiturater skal ikke blandes før injeksjon ettersom de er kjemisk inkompatible
+og blanding medfører utfelling. De kan ikke administreres i samme kanyle.
+
+Dette legemidlet skal ikke blandes med andre legemidler enn de som er angitt i pkt. 6.6.
+
+6.3     Holdbarhet
+
+Ubrutt forpakning er holdbar i 5 år.
+
+6.4     Oppbevaringsbetingelser
+
+Oppbevar beholderen i ytteremballasjen for å beskytte mot lys.
+Skal ikke fryses.
+
+6.5     Emballasje (type og innhold)
+
+Hetteglass:
+Ketalar 10 mg/ml: 20 ml
+Ketalar 50 mg/ml: 10 ml
+
+6.6     Spesielle forholdsregler for destruksjon og annen håndtering
+
+Kun til engangsbruk.
+
+Engangsdosebeholder. Etter åpning: Fra et mikrobiologisk perspektiv skal legemidlet brukes
+umiddelbart, med mindre metoden for åpning utelukker risikoen for mikrobiologisk
+kontaminasjon. Kast ubrukt legemiddel etter bruk.
+
+Ikke anvendt legemiddel samt avfall bør destrueres i overensstemmelse med lokale krav.
+
+Parenterale legemidler må kontrolleres visuelt for partikler og misfarging før administrering,
+der det er mulig basert på oppløsning og beholder.
+
+
+                                                                                                  -9-
+Ketamin kan fortynnes med glukose 50 mg/ml infusjonsvæske eller natriumklorid 9 mg/ml
+infusjonsvæske.
+
+
+7.     INNEHAVER AV MARKEDSFØRINGSTILLATELSEN
+
+Pfizer AS
+Postboks 3
+1324 Lysaker
+
+
+8.     MARKEDSFØRINGSTILLATELSESNUMMER (NUMRE)
+
+Ketalar 10 mg/ml: 5723
+Ketalar 50 mg/ml: 5724
+
+
+9.     DATO FOR FØRSTE MARKEDSFØRINGSTILLATELSE / SISTE
+       FORNYELSE
+
+Dato for første markedsføringstillatelse: november 1972
+Dato for siste fornyelse: 7. august 2007
+
+
+10.    OPPDATERINGSDATO
+
+13.11.2023
+
+
+
+
+                                                                                        - 10 -
+

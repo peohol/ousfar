@@ -1,0 +1,1430 @@
+{
+  "stoff": "tapentadol",
+  "status": "ok",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-10-27T04:15:06.281727+00:00"
+  },
+  "dekning": {
+    "dekket": true,
+    "preparater": 18,
+    "hentet": 18,
+    "dokumenter": 6,
+    "mangler": []
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 14 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 14,
+        "ikke_dmp": 0,
+        "uten_omtale": 0
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "ok",
+      "melding": "Alle 18 preparatene FEST oppgir, har en hentet preparatomtale fra DMP.",
+      "antall": {
+        "preparater": 18,
+        "hentet": 18,
+        "mangler": 0,
+        "dokumenter": 6
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13989.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13989.pdf",
+      "hentet_kl": "2026-10-27T08:26:08.516Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "306614",
+        "content-md5": "A1BA33Suuy+sql6nuYpVbg==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:27 GMT",
+        "etag": "0x8DF25086FA20F22",
+        "date": "Tue, 27 Oct 2026 08:26:09 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_02C74D1F-28EC-45EA-9F01-CD0265566738",
+          "varenavn": "Tapentadol Medical Valley",
+          "navn_form_styrke": "Tapentadol Medical Valley depottab 50 mg",
+          "produsent": "Medical Valley Invest AB",
+          "atc": "N02AX06",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13989.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (306614 byte).",
+          "antall": {
+            "bytes": 306614
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "91aaada6cb46994773298dffbfc469729ca9de5642430d2f34e684e8dda2ef30"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6809.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6809.pdf",
+      "hentet_kl": "2026-10-27T08:26:16.479Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "377736",
+        "content-md5": "GwOL9F3tAECMuuMvR3vTmA==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:23 GMT",
+        "etag": "0x8DE85F8DC750A37",
+        "date": "Tue, 27 Oct 2026 08:26:16 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_11FACC08-DBB9-48BF-8A44-820A139844B0",
+          "varenavn": "Palexia depot",
+          "navn_form_styrke": "Palexia depot depottab 200 mg",
+          "produsent": "Orifarm AS",
+          "atc": "N02AX06",
+          "legemiddelform": "Depottablett"
+        },
+        {
+          "merkevare_id": "ID_6DB2A3FB-B160-4198-8351-95A337B9C6FD",
+          "varenavn": "Palexia depot",
+          "navn_form_styrke": "Palexia depot depottab 200 mg",
+          "produsent": "Grünenthal GmbH",
+          "atc": "N02AX06",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6809.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (377736 byte).",
+          "antall": {
+            "bytes": 377736
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "3ee47a7c594039ad0ff0e27431535ea3c688a09afac7691c4105404b14261fd5"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6810.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6810.pdf",
+      "hentet_kl": "2026-10-27T08:26:24.276Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "377736",
+        "content-md5": "GwOL9F3tAECMuuMvR3vTmA==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:23 GMT",
+        "etag": "0x8DE85F8DC78170F",
+        "date": "Tue, 27 Oct 2026 08:26:25 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_23911BB2-2640-4C0D-AE62-F807A368AE93",
+          "varenavn": "Palexia depot",
+          "navn_form_styrke": "Palexia depot depottab 250 mg",
+          "produsent": "Grünenthal GmbH",
+          "atc": "N02AX06",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6810.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (377736 byte).",
+          "antall": {
+            "bytes": 377736
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "3ee47a7c594039ad0ff0e27431535ea3c688a09afac7691c4105404b14261fd5"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6806.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6806.pdf",
+      "hentet_kl": "2026-10-27T08:26:25.468Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "377736",
+        "content-md5": "GwOL9F3tAECMuuMvR3vTmA==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:22 GMT",
+        "etag": "0x8DE85F8DC6BBCCC",
+        "date": "Tue, 27 Oct 2026 08:26:25 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_2E48E5E7-DBC9-42DC-8E99-88088C8E8F16",
+          "varenavn": "Palexia depot",
+          "navn_form_styrke": "Palexia depot depottab 50 mg",
+          "produsent": "Orifarm AS",
+          "atc": "N02AX06",
+          "legemiddelform": "Depottablett"
+        },
+        {
+          "merkevare_id": "ID_73D503B4-EE82-4794-84C7-4BA4497E611F",
+          "varenavn": "Palexia depot",
+          "navn_form_styrke": "Palexia depot depottab 50 mg",
+          "produsent": "Grünenthal GmbH",
+          "atc": "N02AX06",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6806.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (377736 byte).",
+          "antall": {
+            "bytes": 377736
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "3ee47a7c594039ad0ff0e27431535ea3c688a09afac7691c4105404b14261fd5"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13990.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13990.pdf",
+      "hentet_kl": "2026-10-27T08:26:26.381Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "306614",
+        "content-md5": "A1BA33Suuy+sql6nuYpVbg==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:27 GMT",
+        "etag": "0x8DF25086FA4F4E8",
+        "date": "Tue, 27 Oct 2026 08:26:26 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_3B4A9C98-7747-43D1-B0C9-F02DA1D352EE",
+          "varenavn": "Tapentadol Medical Valley",
+          "navn_form_styrke": "Tapentadol Medical Valley depottab 100 mg",
+          "produsent": "Medical Valley Invest AB",
+          "atc": "N02AX06",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13990.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (306614 byte).",
+          "antall": {
+            "bytes": 306614
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "91aaada6cb46994773298dffbfc469729ca9de5642430d2f34e684e8dda2ef30"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6802.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6802.pdf",
+      "hentet_kl": "2026-10-27T08:26:26.714Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "357801",
+        "content-md5": "lElFUZYhArufLKfyv/SG9A==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:22 GMT",
+        "etag": "0x8DE85F8DC657C29",
+        "date": "Tue, 27 Oct 2026 08:26:27 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_45797E21-6426-48F2-83A0-CB80C6DB1CD2",
+          "varenavn": "Palexia",
+          "navn_form_styrke": "Palexia tab 50 mg",
+          "produsent": "Grünenthal GmbH",
+          "atc": "N02AX06",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6802.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (357801 byte).",
+          "antall": {
+            "bytes": 357801
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "43de1a585266ccd286db5e9dd06a5cd03cd1ea89d7dc3e2731a2598a2ab3c28a"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8506.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8506.pdf",
+      "hentet_kl": "2026-10-27T08:26:32.108Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "437755",
+        "content-md5": "fJ/7bM08rAEnsjQSbJoeXg==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:32 GMT",
+        "etag": "0x8DE85F8E24460B5",
+        "date": "Tue, 27 Oct 2026 08:26:32 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_49E713A2-2B09-4A10-B1E9-0053D96658D0",
+          "varenavn": "Palexia",
+          "navn_form_styrke": "Palexia mikst oppl 20 mg/ml",
+          "produsent": "Grünenthal GmbH",
+          "atc": "N02AX06",
+          "legemiddelform": "Mikstur, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8506.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (437755 byte).",
+          "antall": {
+            "bytes": 437755
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "3e693aceacccd8e368d008b4510de48f4de9beb235cde6205bafaf7daf3e10f4"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6807.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6807.pdf",
+      "hentet_kl": "2026-10-27T08:26:39.422Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "377736",
+        "content-md5": "GwOL9F3tAECMuuMvR3vTmA==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:22 GMT",
+        "etag": "0x8DE85F8DC6E7B87",
+        "date": "Tue, 27 Oct 2026 08:26:40 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_56D0A4F1-D8E9-4DF7-86D9-95507187C97B",
+          "varenavn": "Palexia depot",
+          "navn_form_styrke": "Palexia depot depottab 100 mg",
+          "produsent": "Orifarm AS",
+          "atc": "N02AX06",
+          "legemiddelform": "Depottablett"
+        },
+        {
+          "merkevare_id": "ID_7399D758-B0EF-4B3E-93FC-6D98B5BC3868",
+          "varenavn": "Palexia depot",
+          "navn_form_styrke": "Palexia depot depottab 100 mg",
+          "produsent": "Grünenthal GmbH",
+          "atc": "N02AX06",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6807.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (377736 byte).",
+          "antall": {
+            "bytes": 377736
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "3ee47a7c594039ad0ff0e27431535ea3c688a09afac7691c4105404b14261fd5"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8505.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8505.pdf",
+      "hentet_kl": "2026-10-27T08:26:40.691Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "411723",
+        "content-md5": "IWQjgCdsdP1F7l+dofsHjg==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:32 GMT",
+        "etag": "0x8DE85F8E2417AF1",
+        "date": "Tue, 27 Oct 2026 08:26:41 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_6E949DC6-C009-49DD-9658-EBB523AC4793",
+          "varenavn": "Palexia",
+          "navn_form_styrke": "Palexia mikst oppl 4 mg/ml",
+          "produsent": "Grünenthal GmbH",
+          "atc": "N02AX06",
+          "legemiddelform": "Mikstur, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8505.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (411723 byte).",
+          "antall": {
+            "bytes": 411723
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "f028f2e064361287c6c34e84089ec8249a59626ac39418842ff7e41d785f46b6"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13991.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13991.pdf",
+      "hentet_kl": "2026-10-27T08:26:47.955Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "306614",
+        "content-md5": "A1BA33Suuy+sql6nuYpVbg==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:27 GMT",
+        "etag": "0x8DF25086FA801B4",
+        "date": "Tue, 27 Oct 2026 08:26:48 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_89B60B74-FAE3-4E9C-9F2F-2CF9889E69AC",
+          "varenavn": "Tapentadol Medical Valley",
+          "navn_form_styrke": "Tapentadol Medical Valley depottab 150 mg",
+          "produsent": "Medical Valley Invest AB",
+          "atc": "N02AX06",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13991.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (306614 byte).",
+          "antall": {
+            "bytes": 306614
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "91aaada6cb46994773298dffbfc469729ca9de5642430d2f34e684e8dda2ef30"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-15026.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-15026.pdf",
+      "hentet_kl": "2026-10-27T08:26:48.796Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "314635",
+        "content-md5": "owNyrtT95GYEXvkCYve5qg==",
+        "last-modified": "Thu, 19 Mar 2026 20:49:21 GMT",
+        "etag": "0x8DE85F8FF3ACD3A",
+        "date": "Tue, 27 Oct 2026 08:26:49 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_AA183D6A-C3B2-4C9D-9049-F1223868951E",
+          "varenavn": "Tapentadol G.L. Pharma",
+          "navn_form_styrke": "Tapentadol G.L. Pharma tab 50 mg",
+          "produsent": "G.L. Pharma GmbH",
+          "atc": "N02AX06",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-15026.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (314635 byte).",
+          "antall": {
+            "bytes": 314635
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "3db0c946046cd1f87aec7b59a77bde96391083f7445634bfe2f1a0738129f7c4"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13993.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13993.pdf",
+      "hentet_kl": "2026-10-27T08:26:54.928Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "306614",
+        "content-md5": "A1BA33Suuy+sql6nuYpVbg==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:27 GMT",
+        "etag": "0x8DF25086FAD310D",
+        "date": "Tue, 27 Oct 2026 08:26:55 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_CA3B852E-224F-4A49-BBFC-D5A5E90108F2",
+          "varenavn": "Tapentadol Medical Valley",
+          "navn_form_styrke": "Tapentadol Medical Valley depottab 250 mg",
+          "produsent": "Medical Valley Invest AB",
+          "atc": "N02AX06",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13993.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (306614 byte).",
+          "antall": {
+            "bytes": 306614
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "91aaada6cb46994773298dffbfc469729ca9de5642430d2f34e684e8dda2ef30"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6808.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6808.pdf",
+      "hentet_kl": "2026-10-27T08:26:56.112Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "377736",
+        "content-md5": "GwOL9F3tAECMuuMvR3vTmA==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:23 GMT",
+        "etag": "0x8DE85F8DC71884A",
+        "date": "Tue, 27 Oct 2026 08:26:56 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_CED0C526-20EF-4E88-829B-42B8FFB2373F",
+          "varenavn": "Palexia depot",
+          "navn_form_styrke": "Palexia depot depottab 150 mg",
+          "produsent": "Orifarm AS",
+          "atc": "N02AX06",
+          "legemiddelform": "Depottablett"
+        },
+        {
+          "merkevare_id": "ID_FEFF9F45-8645-41F2-8B49-C9E926C47A8E",
+          "varenavn": "Palexia depot",
+          "navn_form_styrke": "Palexia depot depottab 150 mg",
+          "produsent": "Grünenthal GmbH",
+          "atc": "N02AX06",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6808.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (377736 byte).",
+          "antall": {
+            "bytes": 377736
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "3ee47a7c594039ad0ff0e27431535ea3c688a09afac7691c4105404b14261fd5"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13992.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13992.pdf",
+      "hentet_kl": "2026-10-27T08:26:57.024Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "306614",
+        "content-md5": "A1BA33Suuy+sql6nuYpVbg==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:27 GMT",
+        "etag": "0x8DF25086FAA7253",
+        "date": "Tue, 27 Oct 2026 08:26:57 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_FA375085-4C9E-4BFE-AFFD-B4266634923B",
+          "varenavn": "Tapentadol Medical Valley",
+          "navn_form_styrke": "Tapentadol Medical Valley depottab 200 mg",
+          "produsent": "Medical Valley Invest AB",
+          "atc": "N02AX06",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13992.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (306614 byte).",
+          "antall": {
+            "bytes": 306614
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "91aaada6cb46994773298dffbfc469729ca9de5642430d2f34e684e8dda2ef30"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "91aaada6cb46994773298dffbfc469729ca9de5642430d2f34e684e8dda2ef30",
+      "bytes": 306614,
+      "mappe": "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947",
+      "pdf": {
+        "sider": 16,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "mutual-recognition-decentralised-referral-pi-template-version-42_en_CLEAN_NO",
+        "laget": "Mon Sep 14 13:27:33 2026 UTC",
+        "endret": "Mon Sep 14 13:27:33 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/original.pdf",
+        "tekst": "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/tekst/side-001.txt",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/tekst/side-002.txt",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/tekst/side-003.txt",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/tekst/side-004.txt",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/tekst/side-005.txt",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/tekst/side-006.txt",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/tekst/side-007.txt",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/tekst/side-008.txt",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/tekst/side-009.txt",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/tekst/side-010.txt",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/tekst/side-011.txt",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/tekst/side-012.txt",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/tekst/side-013.txt",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/tekst/side-014.txt",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/tekst/side-015.txt",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/tekst/side-016.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/sider/side-001.png",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/sider/side-002.png",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/sider/side-003.png",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/sider/side-004.png",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/sider/side-005.png",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/sider/side-006.png",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/sider/side-007.png",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/sider/side-008.png",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/sider/side-009.png",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/sider/side-010.png",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/sider/side-011.png",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/sider/side-012.png",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/sider/side-013.png",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/sider/side-014.png",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/sider/side-015.png",
+          "kuratorjobb/resultat/tapentadol/spc/91aaada6cb469947/sider/side-016.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 10
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (16 sider).",
+          "antall": {
+            "sider": 16
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 35956
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 16
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "3ee47a7c594039ad0ff0e27431535ea3c688a09afac7691c4105404b14261fd5",
+      "bytes": 377736,
+      "mappe": "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad",
+      "pdf": {
+        "sider": 16,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "Version 1",
+        "laget": "Thu Jan 22 13:11:41 2026 UTC",
+        "endret": "Thu Jan 22 13:11:41 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/original.pdf",
+        "tekst": "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/tekst/side-001.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/tekst/side-002.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/tekst/side-003.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/tekst/side-004.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/tekst/side-005.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/tekst/side-006.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/tekst/side-007.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/tekst/side-008.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/tekst/side-009.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/tekst/side-010.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/tekst/side-011.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/tekst/side-012.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/tekst/side-013.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/tekst/side-014.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/tekst/side-015.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/tekst/side-016.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/sider/side-001.png",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/sider/side-002.png",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/sider/side-003.png",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/sider/side-004.png",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/sider/side-005.png",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/sider/side-006.png",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/sider/side-007.png",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/sider/side-008.png",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/sider/side-009.png",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/sider/side-010.png",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/sider/side-011.png",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/sider/side-012.png",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/sider/side-013.png",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/sider/side-014.png",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/sider/side-015.png",
+          "kuratorjobb/resultat/tapentadol/spc/3ee47a7c594039ad/sider/side-016.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 7,
+        "til": 9
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (16 sider).",
+          "antall": {
+            "sider": 16
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 36844
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 7."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 16
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "43de1a585266ccd286db5e9dd06a5cd03cd1ea89d7dc3e2731a2598a2ab3c28a",
+      "bytes": 357801,
+      "mappe": "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2",
+      "pdf": {
+        "sider": 11,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "Version 1",
+        "laget": "Mon Feb  2 08:10:17 2026 UTC",
+        "endret": "Mon Feb  2 08:10:17 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/original.pdf",
+        "tekst": "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/tekst/side-001.txt",
+          "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/tekst/side-002.txt",
+          "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/tekst/side-003.txt",
+          "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/tekst/side-004.txt",
+          "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/tekst/side-005.txt",
+          "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/tekst/side-006.txt",
+          "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/tekst/side-007.txt",
+          "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/tekst/side-008.txt",
+          "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/tekst/side-009.txt",
+          "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/tekst/side-010.txt",
+          "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/tekst/side-011.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/sider/side-001.png",
+          "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/sider/side-002.png",
+          "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/sider/side-003.png",
+          "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/sider/side-004.png",
+          "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/sider/side-005.png",
+          "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/sider/side-006.png",
+          "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/sider/side-007.png",
+          "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/sider/side-008.png",
+          "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/sider/side-009.png",
+          "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/sider/side-010.png",
+          "kuratorjobb/resultat/tapentadol/spc/43de1a585266ccd2/sider/side-011.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 5,
+        "til": 7
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (11 sider).",
+          "antall": {
+            "sider": 11
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 27323
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 5."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 11
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "3e693aceacccd8e368d008b4510de48f4de9beb235cde6205bafaf7daf3e10f4",
+      "bytes": 437755,
+      "mappe": "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3",
+      "pdf": {
+        "sider": 14,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Mon Feb  2 08:10:13 2026 UTC",
+        "endret": "Mon Feb  2 08:10:13 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/original.pdf",
+        "tekst": "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/tekst/side-001.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/tekst/side-002.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/tekst/side-003.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/tekst/side-004.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/tekst/side-005.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/tekst/side-006.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/tekst/side-007.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/tekst/side-008.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/tekst/side-009.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/tekst/side-010.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/tekst/side-011.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/tekst/side-012.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/tekst/side-013.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/tekst/side-014.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/sider/side-001.png",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/sider/side-002.png",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/sider/side-003.png",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/sider/side-004.png",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/sider/side-005.png",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/sider/side-006.png",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/sider/side-007.png",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/sider/side-008.png",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/sider/side-009.png",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/sider/side-010.png",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/sider/side-011.png",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/sider/side-012.png",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/sider/side-013.png",
+          "kuratorjobb/resultat/tapentadol/spc/3e693aceacccd8e3/sider/side-014.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 7,
+        "til": 9
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (14 sider).",
+          "antall": {
+            "sider": 14
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 35025
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 7."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 14
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "f028f2e064361287c6c34e84089ec8249a59626ac39418842ff7e41d785f46b6",
+      "bytes": 411723,
+      "mappe": "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287",
+      "pdf": {
+        "sider": 14,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Mon Feb  2 08:10:14 2026 UTC",
+        "endret": "Mon Feb  2 08:10:14 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/original.pdf",
+        "tekst": "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/tekst/side-001.txt",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/tekst/side-002.txt",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/tekst/side-003.txt",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/tekst/side-004.txt",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/tekst/side-005.txt",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/tekst/side-006.txt",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/tekst/side-007.txt",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/tekst/side-008.txt",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/tekst/side-009.txt",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/tekst/side-010.txt",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/tekst/side-011.txt",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/tekst/side-012.txt",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/tekst/side-013.txt",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/tekst/side-014.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/sider/side-001.png",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/sider/side-002.png",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/sider/side-003.png",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/sider/side-004.png",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/sider/side-005.png",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/sider/side-006.png",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/sider/side-007.png",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/sider/side-008.png",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/sider/side-009.png",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/sider/side-010.png",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/sider/side-011.png",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/sider/side-012.png",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/sider/side-013.png",
+          "kuratorjobb/resultat/tapentadol/spc/f028f2e064361287/sider/side-014.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 7,
+        "til": 9
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (14 sider).",
+          "antall": {
+            "sider": 14
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 34771
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 7."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 14
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "3db0c946046cd1f87aec7b59a77bde96391083f7445634bfe2f1a0738129f7c4",
+      "bytes": 314635,
+      "mappe": "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8",
+      "pdf": {
+        "sider": 12,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "mutual-recognition-decentralised-referral-pi-template-version-42_en_CLEAN_NO",
+        "laget": "Mon Jan 26 15:21:50 2026 UTC",
+        "endret": "Mon Jan 26 15:21:50 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/original.pdf",
+        "tekst": "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/tekst/side-001.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/tekst/side-002.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/tekst/side-003.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/tekst/side-004.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/tekst/side-005.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/tekst/side-006.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/tekst/side-007.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/tekst/side-008.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/tekst/side-009.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/tekst/side-010.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/tekst/side-011.txt",
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/tekst/side-012.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/sider/side-001.png",
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/sider/side-002.png",
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/sider/side-003.png",
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/sider/side-004.png",
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/sider/side-005.png",
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/sider/side-006.png",
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/sider/side-007.png",
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/sider/side-008.png",
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/sider/side-009.png",
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/sider/side-010.png",
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/sider/side-011.png",
+          "kuratorjobb/resultat/tapentadol/spc/3db0c946046cd1f8/sider/side-012.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 6,
+        "til": 8
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (12 sider).",
+          "antall": {
+            "sider": 12
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 28163
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 6."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 12
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": []
+}

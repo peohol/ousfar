@@ -1,18 +1,82 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "advarsel",
   "jobb": {
     "gren": "kuratorjobb/manuell-40473311311",
     "foresporsel_commit": "561a479da7024a320e33d302858142f9e71a3f97",
     "foresporsel_sha256": "38939652cf8165e026d469440e1595d6108cf3494d2f897c0645221c6610f46b",
     "kode_commit": "e351a898f643e29c899b4ed693bff0d300a5fa0c",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/40473311311",
-    "startet_kl": "2026-10-27T08:25:16.252Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-27T08:25:18.227Z",
+    "ferdig_kl": "2026-10-27T08:26:57.237Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "ketamin",
+      "litium",
+      "tapentadol"
+    ],
+    "oppgaver": [
+      "funksjonstest",
+      "spc"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 451
+    }
+  ],
+  "stoffer": {
+    "ketamin": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/ketamin/funksjonstest.json"
+        },
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/ketamin/spc.json"
+        }
+      }
+    },
+    "litium": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/litium/funksjonstest.json"
+        },
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/litium/spc.json"
+        }
+      }
+    },
+    "tapentadol": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/tapentadol/funksjonstest.json"
+        },
+        "spc": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/tapentadol/spc.json"
+        }
+      }
+    }
+  }
 }

@@ -1,0 +1,59 @@
+Risikoen for hypotensjon øker ved samtidig administrering av antihypertensive legemidler og ketamin.
+
+Legemidler som hemmer CYP3A4-enzymaktivitet reduserer vanligvis hepatisk clearance, noe som
+kan føre til økt plasmakonsentrasjon av CYP3A4-substratlegemidler, slik som ketamin. Når ketamin
+administreres samtidig med legemidler som hemmer CYP3A4-enzymer (f.eks. itraconazol, flukonazol,
+klaritromycin, erytromycin, verapamil, diltiazem), kan en redusert dosering av ketamin være
+nødvendig for å oppnå ønsket klinisk utfall.
+
+Legemidler som induserer CYP3A4-enzymaktivitet øker vanligvis hepatisk clearance, noe som kan
+føre til redusert plasmakonsentrasjon av CYP3A4-substratlegemidler, slik som ketamin. Når ketamin
+administreres samtidig med legemidler som induserer CYP3A4-enzymer (f.eks. fenytoin,
+karbamazepin, prikkperikum (Johannesurt)), kan økt dosering av ketamin være nødvendig for å oppnå
+ønsket klinisk utfall.
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet
+Ingen kontrollerte kliniske studier har blitt utført under graviditet. Sikkerhet ved bruk under graviditet
+har ikke blitt fastslått, og slik bruk anbefales derfor ikke, unntatt administrering under keisersnitt og
+vaginal forløsning. Ketamin passerer lett placenta. Dyrestudier har vist reproduksjonstoksikologiske
+effekter (se pkt. 5.3).
+
+Noen nyfødte som har vært eksponert for ketamin ved intravenøse doser hos mor ≥ 1,5 mg/kg under
+forløsning, har fått respiratorisk depresjon og lav Apgar-score som krevde nyfødtgjenoppliving.
+
+Det er sett markant økning i blodtrykk og uterin muskeltonus hos mor ved intravenøse doser
+> 2 mg/kg.
+
+Amming
+Ketamin skilles ut i morsmelk, men en risiko for at barnet skades virker usannsynlig ved terapeutiske
+doser. Bruk anbefales imidlertid ikke, på grunn av manglende data.
+
+4.7   Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+Reaksjonsevnen kan bli nedsatt etter behandling med ketamin. Dette bør det tas hensyn til når økt
+oppmerksomhet er nødvendig, f.eks. ved bilkjøring.
+Pasienten bør avstå fra bilkjøring og bruk av maskiner i minst 24 timer etter ketaminanestesi. Etter
+poliklinisk anestesi bør pasienten følges hjem og avstå fra alkohol de neste 24 timene.
+
+4.8   Bivirkninger
+
+Bivirkningene er stort sett relatert til dose og injeksjonshastighet og er reversible. CNS-bivirkninger er
+mer vanlige dersom ketamin gis som eneste anestetikum.
+
+Følgende bivirkninger har blitt observert og rapportert ved behandling med ketamin med følgende
+frekvens: Svært vanlige (≥ 1/10), vanlige (≥ 1/100 til < 1/10), mindre vanlige (≥ 1/1000 til < 1/100),
+sjeldne (≥ 1/10 000 til < 1/1000), svært sjeldne (< 1/10 000), ikke kjent (hyppighet kan ikke anslås ut
+ifra tilgjengelige data).
+
+ Organklassesystem         Vanlige                Mindre             Sjeldne         Ikke kjent
+                           (≥ 1/100 til < 1/10)   vanlige            (≥ 1/10 000 til (hyppighet kan
+                                                  (≥ 1/1000 til      < 1/1000)       ikke anslås ut
+                                                  < 1/100)                           ifra tilgjengelige
+                                                                                     data)
+ Forstyrrelser i                                                     anafylaktisk
+ immunsystemet                                                       reaksjon*
+
+
+                                                    5

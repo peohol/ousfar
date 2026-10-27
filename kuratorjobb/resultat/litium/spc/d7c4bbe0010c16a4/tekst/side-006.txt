@@ -1,0 +1,58 @@
+Graviditet
+Dyrestudier har vist at litium påvirker graviditet og fosterutvikling, og fører til nedsatt vaskulogenese og
+unormalheter i skjelettet (se pkt. 5.3). Derfor kreves overvåking med ultralyd og EKG av fosteret hvis litium
+administreres.
+
+Litium krysser placentabarrieren og når samme konsentrasjon hos fosteret som hos mor. Ved graviditet
+rangeres litiumsalter som kategori D (positiv evidens for risiko).
+Litiumkarbonat skal ikke brukes under graviditet med mindre fordelene for mor er større enn den mulige
+risikoen for fosteret. Bruk av litium kort tid før termin kan gi alvorlig, men vanligvis reversibel, toksisitet
+hos de nyfødte.
+
+Litiumintoksikasjon oppstår hos nyfødte av mødre som har terapeutiske litiumnivåer i blodet, eller som har
+fått litiumbehandling i perioden før fødsel i de siste ukene av graviditeten: Lav Apgar-skår, cyanose,
+hypotoni, respirasjonsdepresjon, letargi, mulig gulsott og hjerte- og thyroideadysfunksjon. Derfor skal
+nyfødte overvåkes tett. Hvis litiumbehandling er avgjørende, skal dosen halveres i en uke før termindatoen,
+og behandlingen skal stoppes fra de første tegnene på fødsel til dagen etter fødsel, ettersom litiumnivåene
+kan variere.
+
+Amming
+Litium skilles ut i morsmelk hos mennesker. Amming skal derfor opphøre ved behandling med Carblit.
+
+Fertilitet
+Dyrestudier har vist negativ effekt på fertilitet hos hanndyr (se pkt. 5.3).
+
+4.7       Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+Dette legemidlet har liten til moderat påvirkning på evnen til å kjøre bil og bruke maskiner.
+
+Litium kan gi forstyrrelser i CNS (se pkt. 4.8). Derfor skal pasienter advares om de mulige farene ved
+kjøring eller bruk av maskiner, særlig i den første fasen av behandlingen.
+
+4.8       Bivirkninger
+
+Bivirkninger er vanligvis knyttet til litiumkonsentrasjoner i serum og er mindre vanlige hos pasienter med
+litiumkonsentrasjoner i plasma på under 1,0 mmol/l.
+
+Bivirkninger er listet opp etter MedDRA organklassesystem og frekvens. Hyppigheten er definert som: svært
+vanlige ( 1/10), vanlige ( 1/100 til < 1/10); mindre vanlige ( 1/1 000 til < 1/100); sjeldne ( 1/10 000 til
+< 1/1 000); svært sjeldne (< 1/10 000), ikke kjent (kan ikke fastslås utifra tilgjengelige data).
+
+Organklassesystem                               MedDRA foretrukket term
+Sykdommer i blod og lymfatiske organer
+Ikke kjent                                       Reversibel leukocytose, mild agranulocytose
+
+Endokrine sykdommer
+Svært vanlige                                    TSH-økning, struma
+
+Vanlige                                          Hypotyreose, subklinisk hypotyreose,
+                                                 hyperparatyreoidisme
+Ikke kjent                                       Tyrotoksikose, hypertyreose (- etter opphør eller
+                                                 reduksjon av behandling)
+
+Stoffskifte- og ernæringsbetingede
+sykdommer
+Svært vanlige                                    Vektøkning
+
+
+                                                         6

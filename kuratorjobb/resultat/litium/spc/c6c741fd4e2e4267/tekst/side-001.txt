@@ -1,0 +1,54 @@
+1.    LEGEMIDLETS NAVN
+
+Lithionit 83 mg (12 mmol) depottabletter
+
+
+2.    KVALITATIV OG KVANTITATIV SAMMENSETNING
+
+Virkestoff: Hver depottablett inneholder vannfritt litiumsulfat tilsvarende 83 mg (12 mmol) litium.
+For fullstendig liste over hjelpestoffer, se pkt. 6.1.
+
+
+3.    LEGEMIDDELFORM
+
+Depottabletter. Hvite, avlange. Med delestrek 16,2 x 8,7 mm.
+
+
+4.    KLINISKE OPPLYSNINGER
+
+4.1   Indikasjoner
+
+Profylaktisk ved maniske og depressive faser i manisk depressiv sykdom. Terapeutisk ved maniske
+tilstander.
+
+4.2   Dosering og administrasjonsmåte
+
+Dosen fastlegges etter bestemmelse av serumlitium. Serumkonsentrasjonen skal vanligvis ligge i
+området 0,5–0,8–1,2 mmol/l. Hos eldre kan dosereduksjon være nødvendig for ønsket
+serumkonsentrasjon. Blodprøve til bestemmelse av serumlitium skal alltid tas nøyaktig 12 timer etter
+siste kveldsdose og i «steady state». «Steady state» nås etter ca. 1 uke. Skal svelges hele. Kan deles,
+men må ikke tygges eller knuses.
+Før oppstart av litiumbehandling skal pasientens nyrefunksjon, hjertefunksjon og
+skjoldbruskkjertelfunksjon evalueres. Pasienten bør være eutyreoid før oppstart av litiumbehandling.
+Litiumbehandling er kontraindisert hos pasienter med alvorlig nyreskade (se pkt. 4.3). Pasientenes
+nyrefunksjon, hjertefunksjon og skjoldbruskkjertelfunksjon bør evalueres regelmessig under
+behandling med litium.
+Profylaktisk ved manisk-depressiv sykdom: Initialt gis en halv depottablett morgen og kveld
+(12 mmol/døgn). Etter 1 uke bestemmes serumkonsentrasjonen 12 timer etter siste kveldsdose. 12
+timersprøven gjentas 1–2 ganger med få dagers intervall. Ut fra den funne verdi beregnes
+vedlikeholdsdosen (det er proporsjonalitet mellom dose og serumkonsentrasjon).
+Veiledende vedlikeholdsdose er 2–5 depottabletter, vanligvis fordelt på morgen og kveld. Doseøkning
+skjer gradvis, og 1 uke etter doseendring bestemmes serumlitium. Når ønsket vedlikeholdsdose er
+nådd, kontrolleres serumlitium 1 gang pr. uke i 1 måned. Deretter skjer kontroll 1 gang pr måned i et
+halvt år. Dersom pasienten samarbeider godt, er det i den videre behandling tilstrekkelig med kontroll
+hver annen måned. Ved langtidsbehandling tilstrebes lavest mulig effektiv dose som ikke gir residiv.
+Etter minst et par år uten ubehag kan dosen forsiktig justeres ned. Nivåer mellom 0,3–0,6 mmol/l kan
+iblant gi tilstrekkelig profylaktisk effekt. I andre tilfeller kan det være nødvendig å gå opp til 0,9–
+1,2 mmol/l. Bestemmelse av serumlitium må alltid foretas ved tegn til intoksikasjon (se
+Overdosering/Forgiftning). Hyppig kontroll er nødvendig ved endring i nyrefunksjon, ved graviditet,
+før og etter fødsel, ved diuretikaterapi, nedsatt/økt saltinntak, sykdomstilstander med feber, svette,
+brekninger, diaré og hos eldre som behandles med diuretika, ACE-hemmere og/eller NSAID-er.
+Terapeutisk ved akutte maniske tilstander: Behandling skal kun skje i avdelinger med adgang til hurtig
+bestemmelse av serumlitiumkonsentrasjon. Veiledende døgndose initialt er 4 depottabletter
+(48 mmol), fordelt på 4 doser. Når den nødvendige dose er nådd, hvilket kontrolleres ved å bestemme
+serumlitium 1 uke etter siste doseendring, skjer behandling som ved profylaktisk behandling.

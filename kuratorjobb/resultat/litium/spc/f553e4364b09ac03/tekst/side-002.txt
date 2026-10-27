@@ -1,0 +1,52 @@
+4.3   Kontraindikasjoner
+
+Alvorlig nyresvikt eller sykdomstilstand som kan øke risikoen for eksisterende nyreskader.
+Betydelige forstyrrelser i elektrolytt- og væskebalansen. Amming.
+Om litium gis til pasienter i denne gruppen, anbefales hyppig litium-bestemmelse, og dosene bør
+justeres til laveste dose vanligvis tolerert av slike pasienter.
+Overfølsomhet overfor virkestoffet eller overfor noen av hjelpestoffene listet opp i pkt. 6.1.
+
+4.4   Advarsler og forsiktighetsregler
+
+Forstyrrelser i elektrolytt- og væskebalansen, hjertekar-lidelser, kombinasjon med høye doser
+antipsykotika. Forsiktighet anbefales også ved behandling av eldre, spesielt ved samtidig behandling
+med diuretika, ACE-hemmere og / eller NSAID-er. Litium har et relativt smalt terapeutisk spekter:
+Serum litium nivå på 1,2–1,6 mmol/l kan medføre risiko for overdose; nivåer på 1,6 mmol/l
+medføreren definitiv risiko for overdose. Dette innebærer at serum-litium-nivåene må sjekkes og, om
+nødvendig, behandlingen midlertidig stoppes ved somatisk sykdom eller tilstander som kan være
+assosiert med forstyrrelser i væske- og elektrolyttbalansen (f.eks. svetting, diaré, gastroenteritt).
+Mange pasienter blir tørste av litiumbehandlingen. Om så er tilfellet, er det viktig å stille tørsten med
+kalorifattig drikke for å unngå vektøkning. Man skal også være oppmerksom på at overdreven
+væsketilførsel kan lede til økt diurese med økt utskillelse av litium. Store mengder kaffe, te eller andre
+matvarer med innhold av xantin kan føre til økt utskillelse av litium.
+Man bør utvise forsiktighet hos pasienter med manifest epilepsi og alvorlig patologisk EEG, og andre
+krampetilstander, samt hos pasienter med lettere EKG-forstyrrelser, hypotensjon, og kongestiv
+hjertesvikt. Litium kan forverre psoriasis.
+Hos pasienter på saltfri kost, vil tubulær reabsorpsjon av litium øke, noe som kan føre til akkumulering
+av litium.
+
+Forsiktighet bør også utvises hos pasienter med Addisons sykdom, og andre endokrinopatier, så vel
+som andre somatiske tilstander assosiert med elektrolyttforstyrrelser, samt ved nevromuskulære
+sykdommer som myasthenia gravis.
+Selv om hypotyreoidisme ikke er kontraindisert ved litiumbehandling, bør nøye kontroll av
+tyroideafunksjon være obligatorisk hos alle pasienter på litiumbehandling (se pkt. 4.2). Siden
+behandling med litium kan føre til hyperparatyreoidisme, anbefales det å kontrollere albuminkorrigert
+kalsium både før behandlingstart med litium og jevnlig under behandling.
+
+Langtidsbehandling med litium kan føre til permanente forandringer i nyrehistologi og nedsatt
+nyrefunksjon. Siden litium primært utskilles via nyrene kan signifikant akkumulering av litium
+forekomme hos pasienter med nyresvikt.
+Det anbefales å utvise forsiktighet ved mild eller moderat nedsatt nyrefunksjon. Serumlitiumnivået bør
+overvåkes nøye og litiumdosen justeres ved behov (se pkt. 4.2). Dersom serumlitiumnivå og
+plasmakreatininnivå ikke kan kontrolleres regelmessig, bør ikke litium forskrives til denne
+pasientgruppen. Litium er kontraindisert til pasienter med alvorlig nyresvikt (se pkt. 4.3).
+
+Risikoen for hypotyreoidisme og nyresvikt som oppstår ved langvarig behandling bør tas hensyn til og
+evalueres regelmessig.
+
+Forhøyede litiumkonsentrasjoner øker risikoen for nyresvikt og samtidig bruk av legemidler som kan
+forårsake forhøyede litiumkonsentrasjoner bør derfor unngås (se pkt. 4.5).
+
+Pasienter med nyrepåvirkning oppfordres til å melde fra dersom de utvikler polyuri eller polydipsi.
+Hvis pasienten utvikler polyuri og/eller polydipsi, bør nyrefunksjonen overvåkes utover regelmessig
+analyse av serumlitium.

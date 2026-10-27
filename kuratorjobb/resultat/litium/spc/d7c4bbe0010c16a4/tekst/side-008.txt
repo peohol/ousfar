@@ -1,0 +1,58 @@
+Organklassesystem                               MedDRA foretrukket term
+Forstyrreksler i immunsystemet
+Ikke kjent                                       Økning i antinukleære antistoffer (se pkt. 4.4).
+
+Øyesykdommer
+Ikke kjent                                       Synsforstyrrelser
+
+Generelle lidelser og reaksjoner på
+administrasjonsstedet
+Vanlige                                          Ødemer
+
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å overvåke
+forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å melde enhver
+mistenkt bivirkning. Dette gjøres via Meldeskjema som finnes på nettsiden til Direktoratet for medisinske
+produkter: www.dmp.no/meldeskjema
+
+4.9     Overdosering
+
+Toksiske effekter kan forventes ved litiumkonsentrasjoner i serum på ca. 1,5 mmol/liter, selv om de kan
+oppstå ved lavere konsentrasjoner. De krever umiddelbart seponering og skal alltid anses som svært
+alvorlige.
+
+Behandlingsnaive pasienter, som ikke tidligere har vært eksponert for litium, kan ha risiko for akutt
+toksisitet, primært på grunn av overdose.
+
+Pasienter på langvarig litiumbehandling kan oppleve kronisk toksisitet, som kan utvikle seg gradvis over tid
+og ofte oppstår på grunn av faktorer som svekker nyrefunksjonen eller litiumclearance (som dehydrering,
+legemiddelinteraksjon eller endringer i helsestatus).
+
+Resultater fra studier på rotter indikerte at pasienter som allerede bruker litium, kan være mer følsomme for
+litiumforgiftning enn pasienter som er behandlingsnaive til litium, ettersom toppkonsentrasjonen i serum og
+hjernen kan forsinkes, noe som fører til at den høye litiumeksponeringen varer lenger hos pasienter som
+allerede får behandling med litium.
+
+Symptomer
+Mild til moderat toksisitet inkluderer grov tremor, letargi, fatigue, forvirring, agitasjon, delirium, takykardi,
+uklar tale, fasikkulasjon, hypertoni, kvalme, oppkast og diaré.
+
+Alvorlig toksisitet inkluderer nedsatt bevissthet, koma, epileptoforme anfall, hypertermi, hypotensjon, EEG-
+og EKG-endring, risiko for nyresvikt og dødsfall.
+
+Behandling
+Pasientens tilstand krever intensiv pleie, i tillegg til at ny justering av salt- og væskebalanse, opprettholdelse
+av sirkulasjon og respirasjon, og administrering av symptomatiske legemidler, peritoneal dialyse eller
+hemodialyse kan være påkrevd i de mest alvorlige tilfellene.
+
+
+5.      FARMAKOLOGISKE EGENSKAPER
+
+5.1     Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe psykoleptika, antipsykotika, ATC-kode: N05A N01
+
+
+
+                                                         8

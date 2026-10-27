@@ -1,0 +1,50 @@
+                                  PREPARATOMTALE
+
+
+1.    LEGEMIDLETS NAVN
+
+      Lithium Chloride Lidco 0,15 mmol/ml injeksjonsvæske, oppløsning.
+
+
+2.    KVALITATIV OG KVANTITATIV SAMMENSETNING
+
+      1 ml oppløsning inneholder 6,36 mg litiumklorid tilsvarende 0,15 mmol.
+      En 10 ml ampulle inneholder 63,6 mg litiumklorid tilsvarende 1,5 mmol.
+      For en i sin helhet fortegnelse over hjelpestoffer se avdeling 6.1
+
+
+3.    LEGEMIDDELFORM
+
+      Injeksjonsvæske, oppløsning.
+      En klar oppløsning i en glassampulle.
+
+
+4.    KLINISKE OPPLYSNINGER
+
+4.1   Indikasjoner
+
+      Dette legemiddel er kun til bruk ved diagnostiske formål.
+      Kun til bruk ved in-vivomåling av hjertets minuttvolum sammen med LiDCO-systemet.
+
+4.2   Dosering og administrasjonsmåte
+
+      Optimalisering av dosen for bestemmelse av hjertets minuttvolum
+
+      Den optimale dosen for bestemmelse av hjertets minuttvolum er den minste dosen som
+      kan gi en maksimal arteriell blodkonsentrasjon av litium i området 0,2 mM til 0,8 mM,
+      ved bruk av en dose på 0,075 mmol (0,5 ml), 0,15 mmol (1 ml) eller 0,3 mmol (2 ml)
+      Lithium Chloride Lidco 0,15 mmol/ml injeksjonsvæske, oppløsning.
+
+      Hos pasienter hvor det forventes et stort antall bestemmelser av hjertets minuttvolum, er
+      det best å starte med en måldose på 0,15 mmol, dvs. 1,0 ml litiumkloridinjeksjon.
+      LiDCO-systemets monitor vil vise en ‘Advarsel’ hvis dosen gir en kurve med maksimal
+      høyde under 0,2 mM. Topper mellom 0,1 og 0,2 mM er tillatt, men målingen kan bli
+      mindre nøyaktig. Hvis toppen ikke er innenfor det ønskede området, justeres dosen
+      deretter, men husk at en enkeltdose ikke må overskride 0,3 mmol, dvs. 2,0 ml eller være
+      under 0,075 mmol, dvs. 0,5 ml injeksjon.
+
+      Det bør gå et intervall på minst 5 minutter før en påfølgende litiumbestemmelse av
+      hjertets minuttvolum foretas.
+
+      Doseanbefalinger for Lithium Chloride Lidco 0,15 mmol/ml injeksjonsvæske, oppløsning
+      forutsetter at pasientens vekt er over 40 kg.

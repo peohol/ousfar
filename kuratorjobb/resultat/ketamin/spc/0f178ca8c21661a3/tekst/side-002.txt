@@ -1,0 +1,55 @@
+i.m. injeksjon      Dose                                     Tilslagstid       Varighet
+                    (mg/kg kroppsvekt)                       (min)             (min)
+Induksjon           10,0 (6,5-13,5)                          3-5               12-25
+Vedlikehold         Halve induksjonsdosen
+
+
+En lav initialdose, 4 mg/kg i.m. kan gis ved diagnostiske inngrep.
+
+Obstetrisk dosering:
+Det finnes ikke data tilgjengelig for intramuskulær injeksjon hos fødende, og
+doseanbefalinger kan ikke gis. Tilgjengelige farmakokinetiske data er angitt i pkt. 5.2.
+
+Intravenøst: Administrering av intravenøs bolusdose bør skje langsomt (minst 60 sekunder),
+fordi raskere tilførsel kan resultere i forbigående respiratorisk depresjon.
+
+i.v. injeksjon      Dose                                     Tilslagstid-      Varighet
+                    (mg/kg kroppsvekt)                       (min)             (min)
+Induksjon           2,0 (1,0-4,5)                            1                 5-15
+Vedlikehold         Halve induksjonsdosen,
+                    alternativt overgang til
+                    infusjonsteknikk.
+                    Se nedenfor
+
+
+Omgjøringstabell: Dose i mg/kg kroppsvekt til dose i ml/kg kroppsvekt
+              KETALAR 10 mg/ml                 KETALAR 50 mg/ml
+mg/kg         ml/kg                                     ml/kg
+ 1,0          0,10                                      0,02
+ 2,0          0,20                                      0,04
+ 4,5          0,45                                      0,09
+ 6,5          0,65                                      0,13
+10,0          1,00                                      0,20
+13,5          1,35                                      0,27
+
+Obstetrisk dosering:
+Data for bruk i obstetrisk anestesi er begrenset. Intravenøse doser fra 0,2 til 1,0 mg/kg ved
+obstetriske prosedyrer (vaginal forløsning eller keisersnitt) støttes av publisert litteratur (se
+pkt. 4.6). Det mangler imidlertid data for vedlikeholdsdose av ketamin hos fødende, og
+doseanbefalinger kan ikke gis.
+
+Infusjon: Infusjonsteknikk gir et jevnere narkoseforløp, den totale ketamindosen blir ofte
+lavere enn ved intermitterende injeksjoner og oppvåkningen skjer raskere.
+
+Initial- og vedlikeholdsdose fortynnes med glukose 50 mg/ml infusjonsvæske eller
+natriumklorid 9 mg/ml infusjonsvæske.
+Infusjon                 Dose
+Induksjon                2,0-6,0 mg/kg kroppsvekt
+Vedlikehold              2,0-6,0 mg/kg kroppsvekt/time
+(Ovenfor angitte dosering tilsvarer omtrent 1 dråpe/kg kroppsvekt og minutt av ketamin
+infusjonsløsning 1 mg/ml).
+
+
+
+
+                                                                                                    -2-

@@ -1,0 +1,55 @@
+Litium er et monovalent kation. Litiumkarbonat er karbonatsaltet av litium, et mykt alkalimetall, med
+antimaniske og hematopoietisk aktiviteter.
+
+Virkningsmekanismen til litium er fremdeles ikke fullt ut forstått. Det utviser effekt i mange retninger. Den
+terapeutiske effekten til litium kan skyldes en rekke effekter, fra hemming av enzymer som
+glykogensyntasekinase 3, inositolfosfater eller modulering av glutamatreseptorer:
+
+Som en konsekvens reduserer litium omsetningen av noradrenalin og dopamin, og hemmer utviklingen av
+dopaminreseptorers superfølsomhet for effekten av antipsykotika, og disse kan være forbundet med
+antimaniske effekter.
+
+Ved høyere konsentrasjoner hemmer litium også adenylatsyklase-aktivitet. Dette kan forklare den
+tyrotoksiske effekten og antagonismen til den renale effekten til det antidiuretiske hormonet, ettersom både
+TRH- og ADH-reseptorer binder seg til adenylatsyklase.
+
+Subklinisk hypotyreose (økte nivåer av thyroideastimulerende hormon) har lav klinisk relevans for litiums
+potensielle effekter på thyroideafunksjonen.
+
+Leukocytose relatert til litiumbehandling samt økning i antinukleære antistoffer har vært beskrevet som
+bivirkninger relatert til litiumkonsentrasjoner i serum. Litiums potensielle effekter på immunsystemet kan gi
+grunn til periodisk kontroll, særlig hos pasienter med immunforstyrrelser i anamnesen.
+
+5.2     Farmakokinetiske egenskaper
+
+Absorpsjon
+Litium absorberes lett fra mage-tarm-kanalen med en biotilgjengelighet på 80–100 %. Toppkonsentrasjoner i
+plasma nås innen 1–2 timer for doseformer med standard frigjøring etter oral administrering. Det er direkte
+proporsjonalitet mellom den administrerte dosen og serumkonsentrasjonen.
+
+Distribusjon
+Litium distribueres i hele kroppsvæsken (Vd 0,7–1,0 l/kg). Det krysser blod-hjerne-barrieren langsomt. Ved
+steady state er litiumkonsentrasjonen i cerebrospinalvæsken 40–50 % av plasmanivåene.
+
+Biotransformasjon og eliminasjon
+Plasmakonsentrasjonene avhenger av nyrefunksjon, mulige kostsholdsrestriksjoner (f.eks. lite natrium),
+pasientens somatiske tilstand og andre legemiddelbehandlinger (f.eks. diuretika). Litium utskilles nesten
+utelukkende via nyrene som fritt ion i urinen, med en halveringstid i plasma på 16–30 timer.
+
+5.3     Prekliniske sikkerhetsdata
+
+I reproduksjonstoksisitetsstudier av rotter forårsaket litium i terapeutiske doser en reduksjon i fostervekt,
+antall levende fostre, forsinket skjelettutvikling og nyretoksisitet hos nyfødte ved doser som var toksiske for
+mor. Hos hannrotter ga litium morfologiske og histologiske endringer i epitel i sædledere og spermatider ved
+doser som var sammenlignbare med doser til mennesker, og redusert testikkelvekt og sædproduksjon ved
+doser mer enn 20 ganger høyere enn den administrerte dosen til mennesker. I eksperimenter med rotter
+forårsaket litium histopatologiske endringer i nefroner og forstørret skjoldbruskkjertel. Høye konsentrasjoner
+av litium er potensielt teratogent hos rotter og mus.
+
+Ytterligere innsendte prekliniske data viste ingen klinisk relevante bivirkninger av litiumbehandling som
+ikke allerede er nevnt her eller beskrevet i andre deler av preparatomtalen.
+
+
+
+
+                                                       9

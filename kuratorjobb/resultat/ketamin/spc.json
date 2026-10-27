@@ -1,0 +1,725 @@
+{
+  "stoff": "ketamin",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-10-27T04:15:06.281727+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 8,
+    "hentet": 6,
+    "dokumenter": 4,
+    "mangler": [
+      {
+        "merkevare_id": "ID_18AA14DF-19BE-4A29-9CEB-5462FD279913",
+        "varenavn": "Spravato",
+        "navn_form_styrke": "Spravato nesespray oppl 28 mg",
+        "produsent": "Janssen-Cilag International N.V.",
+        "atc": "N06AX27",
+        "legemiddelform": "Nesespray, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_B89E202C-CD2E-4FBD-BAEB-1B617D8C701C",
+        "varenavn": "Ketamin abcur",
+        "navn_form_styrke": "Ketamin abcur inj, oppl 10 mg/ml",
+        "produsent": "Abcur AB",
+        "atc": "N01AX03",
+        "legemiddelform": "Injeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 6 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 6,
+        "ikke_dmp": 0,
+        "uten_omtale": 2
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "2 av 8 preparater i FEST mangler en hentet preparatomtale fra DMP: 2 uten preparatomtale i FEST (f.eks. sentralt godkjente, med omtalen hos EMA). SPC-behovet er ikke dekket; se «dekning.mangler».",
+      "antall": {
+        "preparater": 8,
+        "hentet": 6,
+        "mangler": 2,
+        "dokumenter": 4
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-05723.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-05723.pdf",
+      "hentet_kl": "2026-10-27T08:25:28.182Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "401464",
+        "content-md5": "E5FC1i7Q5PKJIjKT8t4LUQ==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:57 GMT",
+        "etag": "0x8DE537940F2B75E",
+        "date": "Tue, 27 Oct 2026 08:25:28 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_0CF6C7F8-A7FC-4027-934E-D3BBF4934627",
+          "varenavn": "Ketalar",
+          "navn_form_styrke": "Ketalar inj, oppl 10 mg/ml",
+          "produsent": "Pfizer AS",
+          "atc": "N01AX03",
+          "legemiddelform": "Injeksjonsvæske, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-05723.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (401464 byte).",
+          "antall": {
+            "bytes": 401464
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "0f178ca8c21661a3a9918d35d17cb1f7f92ae50291fba41e2fce7bf6f0bf1e27"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10368.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10368.pdf",
+      "hentet_kl": "2026-10-27T08:25:32.815Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "311504",
+        "content-md5": "5HA2eC++AEkdTrkJanbeDg==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:44 GMT",
+        "etag": "0x8DE85F8E921F253",
+        "date": "Tue, 27 Oct 2026 08:25:32 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_28C1C9F5-0D9C-4F5F-9823-A0BC8643CFE9",
+          "varenavn": "Ketamin Abcur",
+          "navn_form_styrke": "Ketamin Abcur inj, oppl 10 mg/ml",
+          "produsent": "Abcur AB",
+          "atc": "N01AX03",
+          "legemiddelform": "Injeksjonsvæske, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10368.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (311504 byte).",
+          "antall": {
+            "bytes": 311504
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "51097c0e1eb58135fa4ec33226c65bfa98cf018fa412ba85ae42761e85997dd0"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-05724.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-05724.pdf",
+      "hentet_kl": "2026-10-27T08:25:36.612Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "401464",
+        "content-md5": "E5FC1i7Q5PKJIjKT8t4LUQ==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:49 GMT",
+        "etag": "0x8DE53793BF3FD2A",
+        "date": "Tue, 27 Oct 2026 08:25:36 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_2AAF29DA-DCB3-4C65-8A6C-EB75AF691D19",
+          "varenavn": "Ketalar",
+          "navn_form_styrke": "Ketalar inj, oppl 50 mg/ml",
+          "produsent": "Pfizer AS",
+          "atc": "N01AX03",
+          "legemiddelform": "Injeksjonsvæske, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-05724.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (401464 byte).",
+          "antall": {
+            "bytes": 401464
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "0f178ca8c21661a3a9918d35d17cb1f7f92ae50291fba41e2fce7bf6f0bf1e27"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9423.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9423.pdf",
+      "hentet_kl": "2026-10-27T08:25:36.731Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "326615",
+        "content-md5": "k2ZrUobnkGexXBULhgTmSg==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:57 GMT",
+        "etag": "0x8DE537941018252",
+        "date": "Tue, 27 Oct 2026 08:25:37 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_370FB723-54FC-4585-BA90-43F2AB529A1C",
+          "varenavn": "Ketanest",
+          "navn_form_styrke": "Ketanest inj/inf, oppl 25 mg/ml",
+          "produsent": "PFIZER AS",
+          "atc": "N01AX14",
+          "legemiddelform": "Injeksjons-/infusjonsvæske, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9423.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (326615 byte).",
+          "antall": {
+            "bytes": 326615
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "0709e4a9f1cc65dfd0157beabc7f81fa093f93e314d06c96b55bee7e83da9355"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10369.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10369.pdf",
+      "hentet_kl": "2026-10-27T08:25:40.537Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "311504",
+        "content-md5": "5HA2eC++AEkdTrkJanbeDg==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:44 GMT",
+        "etag": "0x8DE85F8E926106F",
+        "date": "Tue, 27 Oct 2026 08:25:40 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_704BAE37-D63B-42C6-8FB9-B2BBA89BC48D",
+          "varenavn": "Ketamin Abcur",
+          "navn_form_styrke": "Ketamin Abcur inj, oppl 50 mg/ml",
+          "produsent": "Abcur AB",
+          "atc": "N01AX03",
+          "legemiddelform": "Injeksjonsvæske, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10369.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (311504 byte).",
+          "antall": {
+            "bytes": 311504
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "51097c0e1eb58135fa4ec33226c65bfa98cf018fa412ba85ae42761e85997dd0"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9422.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9422.pdf",
+      "hentet_kl": "2026-10-27T08:25:40.655Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "326340",
+        "content-md5": "9cSCUyadml78r0gpVrAzvg==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:57 GMT",
+        "etag": "0x8DE537940F9BB38",
+        "date": "Tue, 27 Oct 2026 08:25:41 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_9853BE2D-2031-4958-9C35-F47E3FF4474F",
+          "varenavn": "Ketanest",
+          "navn_form_styrke": "Ketanest inj/inf, oppl 5 mg/ml",
+          "produsent": "PFIZER AS",
+          "atc": "N01AX14",
+          "legemiddelform": "Injeksjons-/infusjonsvæske, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9422.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (326340 byte).",
+          "antall": {
+            "bytes": 326340
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "e2e1def04c6c957bce64c47af1a0bb7908b28356f5fbaaefb0e0396b90a2f0d8"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "0f178ca8c21661a3a9918d35d17cb1f7f92ae50291fba41e2fce7bf6f0bf1e27",
+      "bytes": 401464,
+      "mappe": "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3",
+      "pdf": {
+        "sider": 10,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "Ketalar SPC",
+        "laget": "Mon Nov 13 13:11:12 2023 UTC",
+        "endret": "Mon Nov 13 13:11:12 2023 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3/original.pdf",
+        "tekst": "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3/tekst/side-001.txt",
+          "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3/tekst/side-002.txt",
+          "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3/tekst/side-003.txt",
+          "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3/tekst/side-004.txt",
+          "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3/tekst/side-005.txt",
+          "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3/tekst/side-006.txt",
+          "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3/tekst/side-007.txt",
+          "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3/tekst/side-008.txt",
+          "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3/tekst/side-009.txt",
+          "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3/tekst/side-010.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3/sider/side-001.png",
+          "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3/sider/side-002.png",
+          "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3/sider/side-003.png",
+          "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3/sider/side-004.png",
+          "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3/sider/side-005.png",
+          "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3/sider/side-006.png",
+          "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3/sider/side-007.png",
+          "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3/sider/side-008.png",
+          "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3/sider/side-009.png",
+          "kuratorjobb/resultat/ketamin/spc/0f178ca8c21661a3/sider/side-010.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 6,
+        "til": 7
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (10 sider).",
+          "antall": {
+            "sider": 10
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 18765
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 6."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 10
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "51097c0e1eb58135fa4ec33226c65bfa98cf018fa412ba85ae42761e85997dd0",
+      "bytes": 311504,
+      "mappe": "kuratorjobb/resultat/ketamin/spc/51097c0e1eb58135",
+      "pdf": {
+        "sider": 9,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "Hreferralspccleanno",
+        "laget": "Mon Feb 16 12:40:59 2026 UTC",
+        "endret": "Mon Feb 16 12:40:59 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/ketamin/spc/51097c0e1eb58135/original.pdf",
+        "tekst": "kuratorjobb/resultat/ketamin/spc/51097c0e1eb58135/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/ketamin/spc/51097c0e1eb58135/tekst/side-001.txt",
+          "kuratorjobb/resultat/ketamin/spc/51097c0e1eb58135/tekst/side-002.txt",
+          "kuratorjobb/resultat/ketamin/spc/51097c0e1eb58135/tekst/side-003.txt",
+          "kuratorjobb/resultat/ketamin/spc/51097c0e1eb58135/tekst/side-004.txt",
+          "kuratorjobb/resultat/ketamin/spc/51097c0e1eb58135/tekst/side-005.txt",
+          "kuratorjobb/resultat/ketamin/spc/51097c0e1eb58135/tekst/side-006.txt",
+          "kuratorjobb/resultat/ketamin/spc/51097c0e1eb58135/tekst/side-007.txt",
+          "kuratorjobb/resultat/ketamin/spc/51097c0e1eb58135/tekst/side-008.txt",
+          "kuratorjobb/resultat/ketamin/spc/51097c0e1eb58135/tekst/side-009.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/ketamin/spc/51097c0e1eb58135/sider/side-001.png",
+          "kuratorjobb/resultat/ketamin/spc/51097c0e1eb58135/sider/side-002.png",
+          "kuratorjobb/resultat/ketamin/spc/51097c0e1eb58135/sider/side-003.png",
+          "kuratorjobb/resultat/ketamin/spc/51097c0e1eb58135/sider/side-004.png",
+          "kuratorjobb/resultat/ketamin/spc/51097c0e1eb58135/sider/side-005.png",
+          "kuratorjobb/resultat/ketamin/spc/51097c0e1eb58135/sider/side-006.png",
+          "kuratorjobb/resultat/ketamin/spc/51097c0e1eb58135/sider/side-007.png",
+          "kuratorjobb/resultat/ketamin/spc/51097c0e1eb58135/sider/side-008.png",
+          "kuratorjobb/resultat/ketamin/spc/51097c0e1eb58135/sider/side-009.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 5,
+        "til": 7
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (9 sider).",
+          "antall": {
+            "sider": 9
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 18058
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 5."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 9
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "0709e4a9f1cc65dfd0157beabc7f81fa093f93e314d06c96b55bee7e83da9355",
+      "bytes": 326615,
+      "mappe": "kuratorjobb/resultat/ketamin/spc/0709e4a9f1cc65df",
+      "pdf": {
+        "sider": 9,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "SUMMARY OF PRODUCT CHARASTERISTICS",
+        "laget": "Thu Nov  4 08:55:20 2021 UTC",
+        "endret": "Thu Nov  4 08:55:20 2021 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/ketamin/spc/0709e4a9f1cc65df/original.pdf",
+        "tekst": "kuratorjobb/resultat/ketamin/spc/0709e4a9f1cc65df/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/ketamin/spc/0709e4a9f1cc65df/tekst/side-001.txt",
+          "kuratorjobb/resultat/ketamin/spc/0709e4a9f1cc65df/tekst/side-002.txt",
+          "kuratorjobb/resultat/ketamin/spc/0709e4a9f1cc65df/tekst/side-003.txt",
+          "kuratorjobb/resultat/ketamin/spc/0709e4a9f1cc65df/tekst/side-004.txt",
+          "kuratorjobb/resultat/ketamin/spc/0709e4a9f1cc65df/tekst/side-005.txt",
+          "kuratorjobb/resultat/ketamin/spc/0709e4a9f1cc65df/tekst/side-006.txt",
+          "kuratorjobb/resultat/ketamin/spc/0709e4a9f1cc65df/tekst/side-007.txt",
+          "kuratorjobb/resultat/ketamin/spc/0709e4a9f1cc65df/tekst/side-008.txt",
+          "kuratorjobb/resultat/ketamin/spc/0709e4a9f1cc65df/tekst/side-009.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/ketamin/spc/0709e4a9f1cc65df/sider/side-001.png",
+          "kuratorjobb/resultat/ketamin/spc/0709e4a9f1cc65df/sider/side-002.png",
+          "kuratorjobb/resultat/ketamin/spc/0709e4a9f1cc65df/sider/side-003.png",
+          "kuratorjobb/resultat/ketamin/spc/0709e4a9f1cc65df/sider/side-004.png",
+          "kuratorjobb/resultat/ketamin/spc/0709e4a9f1cc65df/sider/side-005.png",
+          "kuratorjobb/resultat/ketamin/spc/0709e4a9f1cc65df/sider/side-006.png",
+          "kuratorjobb/resultat/ketamin/spc/0709e4a9f1cc65df/sider/side-007.png",
+          "kuratorjobb/resultat/ketamin/spc/0709e4a9f1cc65df/sider/side-008.png",
+          "kuratorjobb/resultat/ketamin/spc/0709e4a9f1cc65df/sider/side-009.png"
+        ]
+      },
+      "avsnitt_4_8": null,
+      "status": "advarsel",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (9 sider).",
+          "antall": {
+            "sider": 9
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 17996
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "advarsel",
+          "melding": "Fant ikke overskriften «4.8 Bivirkninger» i teksten. Se sidebildene."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 9
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "e2e1def04c6c957bce64c47af1a0bb7908b28356f5fbaaefb0e0396b90a2f0d8",
+      "bytes": 326340,
+      "mappe": "kuratorjobb/resultat/ketamin/spc/e2e1def04c6c957b",
+      "pdf": {
+        "sider": 9,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "SUMMARY OF PRODUCT CHARASTERISTICS",
+        "laget": "Wed Apr 29 10:49:15 2020 UTC",
+        "endret": "Wed Apr 29 10:49:15 2020 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/ketamin/spc/e2e1def04c6c957b/original.pdf",
+        "tekst": "kuratorjobb/resultat/ketamin/spc/e2e1def04c6c957b/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/ketamin/spc/e2e1def04c6c957b/tekst/side-001.txt",
+          "kuratorjobb/resultat/ketamin/spc/e2e1def04c6c957b/tekst/side-002.txt",
+          "kuratorjobb/resultat/ketamin/spc/e2e1def04c6c957b/tekst/side-003.txt",
+          "kuratorjobb/resultat/ketamin/spc/e2e1def04c6c957b/tekst/side-004.txt",
+          "kuratorjobb/resultat/ketamin/spc/e2e1def04c6c957b/tekst/side-005.txt",
+          "kuratorjobb/resultat/ketamin/spc/e2e1def04c6c957b/tekst/side-006.txt",
+          "kuratorjobb/resultat/ketamin/spc/e2e1def04c6c957b/tekst/side-007.txt",
+          "kuratorjobb/resultat/ketamin/spc/e2e1def04c6c957b/tekst/side-008.txt",
+          "kuratorjobb/resultat/ketamin/spc/e2e1def04c6c957b/tekst/side-009.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/ketamin/spc/e2e1def04c6c957b/sider/side-001.png",
+          "kuratorjobb/resultat/ketamin/spc/e2e1def04c6c957b/sider/side-002.png",
+          "kuratorjobb/resultat/ketamin/spc/e2e1def04c6c957b/sider/side-003.png",
+          "kuratorjobb/resultat/ketamin/spc/e2e1def04c6c957b/sider/side-004.png",
+          "kuratorjobb/resultat/ketamin/spc/e2e1def04c6c957b/sider/side-005.png",
+          "kuratorjobb/resultat/ketamin/spc/e2e1def04c6c957b/sider/side-006.png",
+          "kuratorjobb/resultat/ketamin/spc/e2e1def04c6c957b/sider/side-007.png",
+          "kuratorjobb/resultat/ketamin/spc/e2e1def04c6c957b/sider/side-008.png",
+          "kuratorjobb/resultat/ketamin/spc/e2e1def04c6c957b/sider/side-009.png"
+        ]
+      },
+      "avsnitt_4_8": null,
+      "status": "advarsel",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (9 sider).",
+          "antall": {
+            "sider": 9
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 17986
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "advarsel",
+          "melding": "Fant ikke overskriften «4.8 Bivirkninger» i teksten. Se sidebildene."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 9
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": []
+}

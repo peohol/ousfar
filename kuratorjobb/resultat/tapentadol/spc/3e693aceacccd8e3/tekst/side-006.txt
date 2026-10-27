@@ -1,0 +1,55 @@
+Palexia er ikke undersøkt hos barn og ungdom med nedsatt nyre- eller leverfunksjon, og derfor er bruk
+i denne populasjonen ikke anbefalt (se pkt. 4.2 og 5.2).
+
+Palexia er ikke anbefalt til barn under 2 år (se pkt. 4.1).
+
+Palexia anbefales ikke til barn med kroppsvekt på 16 kg eller mindre (se pkt. 4.2)
+
+Palexia er ikke systematisk undersøkt hos barn og ungdom med fedme, og derfor skal pediatriske
+pasienter med fedme overvåkes nøye, og den anbefalte maksimaldosen for alderen skal ikke
+overskrides.
+
+Palexia er tiltenkt bruk ved akutte smerter, og er derfor undersøkt ved korttidsbehandling. Data for
+langtidssikkerhet hos barn (f.eks. for vekst eller utvikling) er ikke tilgjengelig.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Sentralvirkende legemidler / legemidler med dempende effekt på sentralnervesystemet (CNS),
+inkludert alkohol og CNS-dempende narkotiske legemidlerSamtidig bruk av Palexia med
+sedativa, som benzodiazepiner eller andre respirasjonshemmende eller CNS-hemmende legemidler
+(andre opioider, antitussiva eller substitusjonsbehandlinger, barbiturater, antipsykotika, H1-
+antihistaminer, alkohol) øker risikoen for sedasjon, respirasjonsdepresjon, koma og dødsfall, på grunn
+av additiv CNS-hemmende effekt. Dersom en kombinasjonsbehandling med Palexia og et
+respirasjonshemmende eller CNS-hemmende legemiddel overveies, bør derfor reduksjon av dosen for
+ett eller begge legemidlene vurderes og varigheten av den samtidige bruken begrenses (se pkt. 4.4).
+Samtidig bruk av opioider og gabapentinoider (gabapentin og pregabalin) øker risikoen for
+opioidoverdosering, respirasjonsdepresjon og død.
+
+Blandet opioid agonist/antagonister
+Forsiktighet bør utvises ved samtidig bruk av Palexia og blandet my-opioid agonist/antagonister (som
+pentazocin, nalbufin) eller delvis my-opioid agonister (som buprenorfin) (se også pkt. 4.4).
+
+Palexia kan indusere kramper og øke risikoen for kramper forårsaket av selektive serotonin-
+reopptakshemmere (SSRIs), serotonin-noradrenalin-reopptakshemmere (SNRIs), trisykliske
+antidepressiva, antipsykotika og andre legemidler som senker anfallsterskelen.
+
+Det er rapportert tilfeller av serotonergt syndrom, som har tidsmessig sammenfalt med behandling
+med tapentadol i kombinasjon med serotonerge legemidler slik som selektive
+serotoninreopptakshemmere (SSRIs), serotonin-noradrenalin-reopptakshemmere (SNRIs) og
+trisykliske antidepressiva. Det er sannsynlig at serotonergt syndrom foreligger dersom ett av følgende
+blir observert:
+• Spontan klonus
+• Induserbar eller okulær klonus med agitasjon eller diaforese
+• Tremor og hyperrefleksi
+• Hypertoni og kroppstemperatur > 38 °C samt induserbar okulær klonus
+Seponering av de serotonerge legemidlene fører vanligvis til rask bedring. Behandlingen avhenger av
+symptomenes art og alvorlighetsgrad.
+
+Viktigste metabolismevei for tapentadol er konjugering med glukuronsyre mediert via
+uridindifosfattransferase (UGT) hovedsakelig UGT1A6-, UGT1A9- og UGT2B7-isoformer. Således
+kan samtidig behandling med sterke hemmere av disse isoenzymene (f.eks. ketokonazol, flukonazol,
+meklofenaminsyre) føre til økt systemisk eksponering av tapentadol (se pkt. 5.2).
+Da viktigste metabolismevei er glukuronidkonjugering er potensialet for interaksjoner hos voksne lavt.
+
+I tillegg er det in vitro vist at tapentadol ikke induserer eller hemmer noen av de viktigste CYP-
+enzymene, inkludert CYP3A4.

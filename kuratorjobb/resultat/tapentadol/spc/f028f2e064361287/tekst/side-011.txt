@@ -1,0 +1,57 @@
+Ingen av metabolittene bidrar til analgetisk aktivitet.
+
+Eliminasjon
+Tapentadol og metabolittene utskilles nesten utelukkende (99 %) via nyrene. Totalclearance etter
+intravenøs tilførsel er 1530 +/- 177 ml/min.
+
+Spesielle populasjoner
+Eldre pasienter
+Gjennomsnittlig tapentadoleksponering (AUC) var tilsvarende i en studie med eldre forsøkspersoner
+(65-78 år) som hos unge voksne (19-43 år), og gjennomsnittlig Cmax var 16 % lavere i gruppen med
+eldre enn hos unge voksne forsøkspersoner.
+
+Nedsatt nyrefunksjon
+Tapentadols AUC og Cmax var sammenlignbare hos forsøkspersoner med varierende grad av
+nyrefunksjon (fra normal til sterkt nedsatt). Det ble derimot observert økende eksponering (AUC) for
+tapentadol-O-glukuronid ved økende grad av nedsatt nyrefunksjon. Hos forsøkspersoner med lett,
+moderat eller sterkt nedsatt nyrefunksjon, er AUC for tapentadol-O-glukuronid henholdsvis 1,5, 2,5 og
+5,5 ganger høyere enn ved normal nyrefunksjon.
+
+Nedsatt leverfunksjon
+Administrasjon av tapentadol medførte høyere eksponering og serumnivå av tapentadol hos
+forsøkspersoner med nedsatt leverfunksjon enn hos forsøkspersoner med normal leverfunksjon.
+Forholdet mellom tapentadols farmakokinetikkparametre ved lett og moderat nedsatt leverfunksjon
+sammenlignet med normal leverfunksjon var henholdsvis 1,7 og 4,2 for AUC, 1,4 og 2,5 for Cmax og
+1,2 og 1,4 for t1/2. Det var mindre dannelse av tapentadol-O-glukuronid hos forsøkspersoner med
+høyere grad av nedsatt leverfunksjon.
+
+Farmakokinetiske interaksjoner
+Tapentadol metaboliseres hovedsakelig ved glukuronidering, og kun en liten mengde metaboliseres
+ved oksidering.
+Da glukuronidering er et høykapasitets- og lavaffinitetssystem, som ikke lett mettes selv ved sykdom,
+og terapeutisk konsentrasjon av virkestoffer vanligvis er godt under konsentrasjonen som er
+nødvendig for mulig hemming av glukuronidering, er klinisk relevante interaksjoner forårsaket av
+glukuronidering lite sannsynlige. I legemiddelinteraksjonsstudier med paracetamol, naproksen,
+acetylsalisylsyre og probenecid ble en mulig effekt av disse virkestoffene på glukuronidering av
+tapentadol undersøkt. Studiene med testvirkestoffene naproksen (500 mg to ganger daglig i 2 dager)
+og probenecid (500 mg to ganger daglig i 2 dager) viste økninger i tapentadols AUC på henholdsvis
+17 % og 57 %. Totalt sett ble det ikke observert klinisk relevante effekter på tapentadols
+serumkonsentrasjon i disse studiene.
+Det er også utført interaksjonsstudier med metoklopramid og omeprazol for å undersøke om disse
+virkestoffene påvirket tapentadols absorpsjon. Disse studiene viste heller ingen klinisk relevante
+effekter på tapentadols serumkonsentrasjon.
+In vitro-studier indikerte ikke at tapentadol hemmer eller induserer cytokrom P450-enzymer. Klinisk
+relevante interaksjoner mediert av cytokrom P450-systemet er derfor lite sannsynlige.
+Tapentadols plasmaproteinbinding er lav (ca. 20 %). Sannsynligheten for farmakokinetiske
+legemiddelinteraksjoner forårsaket av fortrengning fra proteinbindingssete er derfor lav.
+
+Pediatrisk populasjon
+
+Absorpsjon
+I den pediatriske populasjonen ble maksimal serumkonsentrasjon observert ved tilsvarende tidspunkt
+som hos voksne, uten aldersrelaterte forskjeller.
+
+En flerdosestudie med Palexia gitt hver 4. time i henhold til doseringsanbefalingen (se pkt. 4.2) til
+barn i alderen 2 år til under 7 år viste serumkonsentrasjoner av tapentadol innenfor området av
+konsentrasjoner som ble observert hos voksne forsøkspersoner. De observerte konsentrasjonene av
+tapentadol var også innenfor det forventede konsentrasjonsområdet fra en populasjonsfarmakokinetisk

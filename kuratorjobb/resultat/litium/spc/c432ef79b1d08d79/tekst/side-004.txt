@@ -1,0 +1,51 @@
+4.7   Påvirkning av evnen til å kjøre bil eller bruke maskiner
+
+      Ikke relevant.
+
+4.8   Bivirkninger
+
+      Det forventes ingen bivirkninger relatert til litiumklorid ved foreslått dosering.
+
+4.9   Overdosering
+
+      Doseringsanbefalingene vil måtte femdobles for at litiumtoksisitet skal oppstå.
+
+      Innledende manifestasjoner av litiumtoksisitet omfatter ofte sentralnervesystemet og
+      omfatter døsighet, forvirring, ørhet, apati, skjelvende hender og dysartri. Gastrointestinale
+      symptomer som nedsatt appetitt, kvalme, oppkast eller diaré observeres av og til.
+      Muskelstivhet eller fascikulasjoner, lett ataksi, tinnitus, økt sløvhet, økte senereflekser,
+      tåkesyn og vertikal nystagmus følger vanligvis.
+
+      Litiumforgiftning kan utvikle seg til nedsatt bevissthet, økte fascikulasjoner og ataksi,
+      kraftig og uregelmessig skjelving i lemmer, choreoatetoide bevegelser, tannhjulsstivhet
+      og andre lokale nevrologiske tegn. Koma, rykninger, kraftige sammentrekninger av
+      muskler, generaliserte tonisk-kloniske anfall, kardiovaskulær kollaps med oliguri og anuri
+      og død kan forekomme. Dysrytmier, økende QRS-varighet, inverterte T-bølger og
+      hjerteinfarkt kan forekomme.
+
+      Det kliniske forløpet av litiumforgiftning varierer mye, så pasienter kan få hvilke som
+      helst av tegnene og symptomene over.
+
+      Behandlingen av litiumforgiftning er hovedsakelig støttende og avhenger av pasientens
+      kliniske tilstand og blodkonsentrasjonen av litium. Lett litiumtoksisitet responderer
+      vanligvis på midlertidig behandlingsavbrudd og korrigering av væske- og
+      elektrolyttforstyrrelser. Når toksisiteten er mer alvorlig kan pasienten trenge
+      intensivbehandling. Seponering av litium og eventuelt samtidig administrert diuretikum
+      er helt nødvendig.
+
+      Intravenøs infusjon av natriumklorid 9 mg/ml bør startes når litiumtoksisitet antas å være
+      sekundært til natriummangel i hele kroppen. Rask administrasjon av store volumer av
+      intravenøse oppløsninger eller administrasjon av kalium eller et diuretikum gir
+      tilsynelatende ingen ytterligere effekt. Selv om diuretika kan øke litiumclearance, er økt
+      clearance ikke tilstrekkelig til å være hensiktsmessig ved behandling av forgiftning.
+
+      Hemodialyse i 8-12 timer anbefales når blodkonsentrasjonen av litium overskrider 3 mM,
+      når blodkonsentrasjonen er 2-3 mM og pasientens tilstand forverres, når væske- eller
+      elektrolyttforstyrrelser ikke responderer på symptomatisk behandling, når
+      kreatininclearance eller urinproduksjon faller betydelig eller når blodkonsentrasjonen av
+      litium ikke reduseres med minst 20% i løpet av 6 timer. Blodkonsentrasjoner av litium
+      faller vanligvis tilbake etter 5-6 timer med hemodialyse på grunn av redistribusjon, og
+      dette nødvendiggjør ofte gjentatte runder med hemodialyse. Målet ved hemodialyse er å
+      gi en blodkonsentrasjonen av litium under 1 mM når 8 timer med hemodialyse er fullført.
+      Peritonealdialyse er mindre effektivt til å fjerne litium og brukes kun når hemodialyse
+      ikke er mulig.

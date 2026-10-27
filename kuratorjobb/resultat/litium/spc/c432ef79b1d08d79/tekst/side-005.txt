@@ -1,0 +1,46 @@
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+      Farmakoterapeutisk gruppe: Andre diagnostika
+
+      ATC-kode: V04CX
+
+      Injeksjonen er designet for å gi en midlertidig litiumtopp mellom 0,2 og 0,8 mM i arterielt
+      blod. Toppen registreres av en litiumionselektiv elektrode lokalisert i en flowcelle som
+      samler blod fra den arterielle slangen. Fortynningen av litium brukes til å beregne
+      pasientens blodstrøm (l/min). Etter første passasje og distribusjon til ECV/vevsvæske, er
+      konsentrasjonen av litiumioner under den anbefalte nedre grense for litium ved
+      behandling av mani. Doseanbefalingene på 0,075-0,3 mmol per bestemmelse, med et
+      intervall over 5 minutter og en maksimal kumulativ dose på 3 mmol, er alle beregnet i
+      forhold til den verst tenkelige situasjon.            Dette omfatter betydelig reduserte
+      kompartmentvolumer, lav kroppsvekt og totalt fravær av litiumutskillelse, og i slike
+      tilfeller administrasjon av den maksimale tillate dosen ved maksimal frekvens. I kliniske
+      studier er disse anbefalingene overskredet med en faktor på tre uten noen uønskede
+      hendelser.
+
+5.2   Farmakokinetiske egenskaper
+
+      Distribusjon og utskillelse av litium: Lithium Chloride Lidco 0,15 mmol/ml
+      injeksjonsvæske, oppløsning er en fullionisert isoton oppløsning. Markørsubstansen er
+      litiumionet - administrert intravenøst som en bolus. Litium metaboliseres ikke og
+      farmakokinetisk fokus er derfor på distribusjon og utskillelse. Farmakokinetikkdata
+      passer i en modell bestående av et sentralt kompartment av ECV, dvs. plasma og
+      interstitiell væske, og to perifere kompartments. Distribusjonsvolumene i ECV, grunne
+      og dype kompartments hos en 71 kg mann er henholdsvis 16,4, 19,4 og 3,2 liter.
+
+      Ved beskrevet bruk av litiumklorid som en markørsubstans for bestemmelse av hjertets
+      minuttvolum, er det klart ingen absorpsjonsfase (i kontrast til oralt litium), og maksimal
+      arteriell plasmaverdi (0,2 til 0,8 mmol/l) oppnås under første passasje gjennom
+      sirkulasjonen. Blodnivået faller deretter kontinuerlig når litiumioner redistribueres og
+      utskilles. Maksimal konsentrasjon, som er betydelig mindre enn hos pasienter på oral
+      litiumterapi, er begrenset til det intravaskulære kompartment hvorfra det distribueres til
+      vevene og filtreres i renale glomeruli.
+
+5.3   Prekliniske sikkerhetsdata
+
+      Den generelle farmakologien til Lithium Chloride Lidco 0,15 mmol/ml injeksjonsvæske,
+      oppløsning ble undersøkt ved enkle og gjentatte intravenøse injeksjoner,
+      reproduksjons-/utviklingstoksikologi, mutagenitets- og antigenitetsstudier. Ut fra
+      resultatene fra disse prekliniske sikkerhetsstudiene vurderes doseanbefalingene for
+      Lithium Chloride Lidco 0,15 mmol/ml injeksjonsvæske, oppløsning som sikre.

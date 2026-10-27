@@ -1,0 +1,48 @@
+      Vær oppmerksom på at en enkel LiDCO-bestemmelse innenfor ønsket maksimalområde
+      for fortynningskurven, er tilstrekkelig til å gi en avlesning av hjertets minuttvolum med
+      samme presisjon og nøyaktighet som gjennomsnittet av tre termofortynningsmålinger.
+
+      Maksimaldose
+
+      Hver dose er begrenset til maksimalt 0,3 mmol (2 ml) litiumklorid.
+      Kumulativ dose av litiumklorid bør ikke overskride 3 mmol.
+
+      Administrasjonsmåte
+
+      DETTE PREPARATET SKAL KUN BRUKES I HENHOLD TIL LiDCO-SYSTEMETS
+      BRUKERHÅNDBOK SOM LEVERES SAMMEN MED MÅLEUTSTYRET, OG SKAL
+      KUN BRUKES VED MEDISINSKE OG KIRURGISKE INTENSIVAVDELINGER,
+      OPERASJONSSTUER OG SKADE- OG AKUTTAVDELINGER
+
+      Litiumkloridampullen er kun for bruk i én pasient og skal brukes umiddelbart etter den er
+      åpnet. Litiumklorid kan trekkes ut av ampullen og inn i et lukket sprøytesystem som
+      leveres av LiDCO og som er beskrevet i LiDCO-systemets brukerhåndbok. Eventuell
+      ubrukt oppløsning som blir værende igjen i det lukkede sprøytesystem må kastes etter tre
+      (3) timer.
+
+      Litiumdosen administreres ved intravenøs injeksjon via et sentralt venekateter.
+
+4.3   Kontraindikasjoner
+
+      Bruk av Lithium Chloride Lidco 0,15 mmol/ml injeksjonsvæske, oppløsning er
+      kontraindisert:
+
+             Hos pasienter som behandles med litium for kontroll av bipolare lidelser.
+
+             Hos pasienter som veier mindre enn 40 kg.
+
+             I første trimester av graviditet. For mer informasjon se pkt. 4.6.
+
+      Overfølsomhet overfor litiumforbindelser.
+
+4.4   Advarsler og forsiktighetsregler
+
+      Dette legemidlet må kun brukes sammen med LiDCO-systemet
+
+      1.      Følg doseanbefalingene. Unøyaktigheter oppstår ved blodnivåer over 0,3 mM og
+              litium er toksisk ved blodkonsentrasjoner over 1,5 mM.
+
+      2.      Alle injeksjoner av litiumklorid skal registreres i pasientjournalen.
+
+      3.      Det skal gå minst 5 minutter mellom påfølgende LiDCO-systembestemmelser av
+              hjertets minuttvolum.

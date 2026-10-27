@@ -1,0 +1,53 @@
+Samtidig bruk av litium og antidepressiva, spesielt spesifikke serotonin re-opptakshemmere (SSRI-er,
+f.eks. fluoxetin, fluvoksamin) og venlafaksin er rapportert å gi serotonergt syndrom, med symptomer
+som hyperrefleksi, tremor, bevissthetsbortfall og epileptiske anfall, antagelig på grunn av en antatt
+hyper-serotonerg tilstand. Selv om det ikke har vært tilsvarende rapporter på andre SSRI-er eller andre
+antidepressiva, bør det utvises forsiktighet ved kombinasjon av litium og antidepressiva.
+Sibutramin er en ikke-amfetamin apetittdemper som minsker reopptaket av serotonin, noradrenalin og
+dopamin som har vært assosiert med serotonergt syndrom om den tas i tillegg til litium.
+
+Økt litiumtoksisitet er rapportert i enkeltstående tilfeller hos pasienter som får den antimikrobielle
+substansen metronidazol.
+
+Litium kan forlenge effekten til kurarelignende depolariserende substanser, noe som leder til forlenget
+nevromuskulær blokade.
+
+Samtidig administrering av dapagliflozin og litium kan føre til reduserte litiumkonsentrasjoner og
+risiko for tap av effekt av litium.
+
+Topiramat
+Hos friske frivillige var det en observert reduksjon (18 % for AUC) i systemisk eksponering for litium
+ved samtidig administrering med topiramat 200 mg/dag. Hos pasienter med bipolar lidelse var
+farmakokinetikken til litium upåvirket under behandling med topiramat ved doser på 200 mg/dag. Det
+var imidlertid en observert økning i systemisk eksponering (26 % for AUC) etter topiramatdoser på
+opptil 600 mg/dag. Det har vært rapporter om litiumtoksisitet ved samtidig administrering med
+topiramat. Litiumnivåene bør overvåkes nøye når det gis sammen med topiramat.
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet:
+Lithionit skal ikke brukes under graviditet, spesielt under første trimester av graviditeten, hvis ikke
+den kliniske tilstanden til kvinnen gjør behandling med litium nødvendig. Det er epidemiologisk
+evidens for at litium kan være skadelig for det menneskelige fosteret. Litium går over til fosteret, og
+det er beskrevet tilfeller av allmenne symptomer (inkludert letargi, redusert muskeltonus og hypotoni)
+og forstyrrelse av tyreoideafunksjonen hos nyfødte. Tilgjengelige data tyder også på at litium under
+svangerskapet kan øke risikoen for kardiovaskulære misdannelser, inkludert Ebsteins anomali.
+Dyrestudier har vist reproduksjonstoksiske effekter (se pkt. 5.3).
+
+Amming:
+Kontraindisert ved amming, se pkt. 4.3. Litium går over i morsmelk. Konsentrasjonen i melken er ca.
+50% av konsentrasjonen i morens serum. Barnets serumkonsentrasjon er målt til å være ca. halvparten
+av morens serumkonsentrasjon. Det er sannsynlig at barn som ammes kan skades. Preparatet må derfor
+ikke brukes under amming.
+
+4.7   Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+Det foreligger ingen endelige data som indikerer at litium påvirker evnen til å kjøre bil eller bruke
+maskiner. Forsiktighet anbefales imidlertid i begynnelsen av behandling med Lithionit inntil den
+individuelle påvirkning er evaluert.
+
+4.8   Bivirkninger
+
+I løpet av de første èn til to uker på litiumbehandling er de mest vanlige bivirkningsymptomene tørste
+og polyuri, fin håndtremor, muskelsvakhet, trøtthet, kvalme og diaré. Gastrointestinale symptomer
+avtar gradvis eller forsvinner raskt, tremor mer gradvis.
