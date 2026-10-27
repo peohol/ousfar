@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.110.0',
+    dato: '2026-10-27',
+    sammendrag: 'Egen THC-syrekommentar for «kan ikke fastslås» under cut-off, og melding når samlet vurdering ikke endrer noe',
+    typer: ['Fag', 'Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    endrerFortolkning: true,
+    gjelder: ['fortolkning/ircak'],
+    punkter: [
+      'Var forrige prøve under cut-off og kan det ikke fastslås om det er nytt inntak, har kommentaren nå sin egen ordlyd. Den forklarer at lave konsentrasjoner kan svinge over og under påvisningsgrensen, og slutter med hvordan rekvirenten kan kontakte vakthavende lege.',
+      'Gir ingen av prøvene i den samlede vurderingen «nytt inntak», står det nå en melding over kommentaren om det, og kommentaren er den vanlige for fortolkningen mot forrige prøve.',
+    ],
+  },
+  {
     versjon: '1.109.0',
     dato: '2026-10-27',
     sammendrag: 'Planlagte oppgaver kan merkes utført av en administrator',

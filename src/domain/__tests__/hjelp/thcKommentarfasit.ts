@@ -6,8 +6,9 @@
  * de to sammen gir nøyaktig dette.
  *
  * Nivåene og konklusjonen som velger kommentaren, er de samme som før; bare
- * ordlyden er ny. Forrige prøve under cut-off har egen kommentar bare for
- * «ikke nødvendigvis nytt»; ellers gir den samme kommentar som uten cut-off.
+ * ordlyden er ny. Forrige prøve under cut-off har egen kommentar for
+ * «ikke nødvendigvis nytt» og, fra 27.10.2026, for «kan ikke fastslås»; ellers
+ * gir den samme kommentar som uten cut-off.
  */
 
 export type Fasitniva = 'lav' | 'middels høy' | 'høy'
@@ -41,10 +42,13 @@ export function forventetKommentar(
         : `${intro(niva)} Analyseresultatet viser at cannabis har vært inntatt – men ikke nødvendigvis etter prøven ` +
             `tatt ${forrigeDato}.`
     case 'vanskelig':
-      return (
-        `${intro(niva)} Analyseresultatet viser at cannabis har vært inntatt – men gir i seg selv ikke grunnlag for ` +
-        `å fastslå om inntaket har skjedd etter prøven tatt ${forrigeDato}. ${SPORSMAL}`
-      )
+      return underCutoff
+        ? `${intro(niva)} Analyseresultatet viser at cannabis har vært inntatt – men gir i seg selv ikke grunnlag for ` +
+            `å fastslå om inntaket har skjedd etter prøven tatt ${forrigeDato} selv om den ble rapportert som ` +
+            '«ikke påvist». Lave konsentrasjoner av THC-syre kan svinge over og under påvisningsgrensen uten at ' +
+            `dette nødvendigvis skyldes nytt inntak. ${SPORSMAL}`
+        : `${intro(niva)} Analyseresultatet viser at cannabis har vært inntatt – men gir i seg selv ikke grunnlag for ` +
+            `å fastslå om inntaket har skjedd etter prøven tatt ${forrigeDato}. ${SPORSMAL}`
     case 'nytt_inntak':
       return hoy
         ? `${intro(niva)} Slike konsentrasjoner ses gjerne ved prøvetaking kort tid etter inntak av cannabis. ` +

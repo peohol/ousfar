@@ -5,7 +5,7 @@
  * beskytter den. Se `src/domain/__tests__/hjelp/thcFasit.ts`.
  *
  * Konklusjonen, manglene, varselet og tallene kommer fra den opprinnelige
- * modulen. Kommentaren er eierens ordlyd fra 12.10.2026
+ * modulen. Kommentaren er eierens ordlyd fra 12.10.2026 og 27.10.2026
  * (`hjelp/thcKommentarfasit.ts`) for det nivået og den konklusjonen den
  * opprinnelige modulen ga.
  */

@@ -273,6 +273,7 @@ describe('redigeringen av THC-syrereglene', () => {
       'nytt_inntak_nylig',
       'samlet_vurdering',
       'under_cutoff_ikke_nodvendigvis',
+      'under_cutoff_vanskelig',
       'kort_tid',
     ])
   })
