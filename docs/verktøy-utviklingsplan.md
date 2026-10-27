@@ -1,7 +1,7 @@
 # OUSFAR – Verktøy: utviklingsplan og fremdrift
 
 **Opprettet:** 27.10.2026  
-**Status:** P1 ferdig og godkjent; P2 til faglig kontroll – ingen verktøy er implementert gjennom denne planen  
+**Status:** P1 og P2 ferdige; P3 til faglig kontroll – ingen verktøy er implementert gjennom denne planen  
 **Omfang:** Tre første verktøy, felles regel- og beregningsmotor, kildedata og videre drift  
 **Hovedansvar for implementering og oppdatering av denne planen:** Claude Code  
 **Uavhengig faglig kontroll:** ChatGPT, etter eksplisitt forespørsel ved kontrollpunktene nedenfor
@@ -50,8 +50,8 @@ Statusene er **Ikke startet / Pågår / Til faglig kontroll / Blokkert / Ferdig*
 | --- | --- | --- | --- | --- | --- |
 | P0 | Plan og avgrensning | ChatGPT | – | **Ferdig** | Dette dokumentet, 27.10.2026 |
 | P1 | Virkestoff- og FEST-kartlegging | Claude | ChatGPT (utvalg) | Ferdig – godkjent 27.10.2026 | `docs/verktøy-p1-kartlegging.md`, PR #279 |
-| P2 | Manglende fagsider og FEST-koblinger | Claude | ChatGPT (avvik) | Til faglig kontroll | `src/verktoy/fagsider.ts`, PR #280 |
-| P3 | Komplett og lovlig kildeimport | Claude | ChatGPT (deknings- og stikkprøvekontroll) | Ikke startet | – |
+| P2 | Manglende fagsider og FEST-koblinger | Claude | ChatGPT (avvik) | Ferdig – godkjent og utrullet 27.10.2026 | `src/verktoy/fagsider.ts`, PR #280 |
+| P3 | Komplett og lovlig kildeimport | Claude | ChatGPT (deknings- og stikkprøvekontroll) | Til faglig kontroll | `docs/verktøy-p3-kildegrunnlag.md`, `docs/verktøy-p3-rettigheter.md`, PR #281 |
 | P4 | Faglig regelmodell og kontrollert pilotsett | Claude | **ChatGPT – sperrende** | Ikke startet | – |
 | P5 | Felles dose- og planmotor med FEST | Claude | **ChatGPT – kliniske testtilfeller** | Ikke startet | – |
 | P6 | Meny, søk, ruter og felles planvisning | Claude | ChatGPT (produktkontroll) | Ikke startet | – |
@@ -113,14 +113,38 @@ Sidene er «Ikke kuratert», og en fagside uten faginnhold sier nå selv at den 
 
 ### P3 – Kildetilfang, fullstendighet og proveniens
 
-- [ ] **P3.1** Avklar gjenbruksrettigheter for systematisk uttrekk, lagring og eventuell videreformidling av Psychiatrienets tekster. Ved uklar eller manglende rett: lagre bare det materialet vi har rett til og bruk lenker/selvstendig formulert regelgrunnlag. Ikke omgå sperrer eller publiser beskyttet tekst.
-- [ ] **P3.2** Importer tilgjengelige anbefalinger for **Combining Moodstabilizers** (retning eksisterende → tillegg). Materialet skal arkiveres/klassifiseres, ikke gi et brukerrettet kombineringverktøy i første leveranse.
-- [ ] **P3.3** Importer tilgjengelige retningsbestemte antidepressivbytter og hver **Stop**-anbefaling, men ingen Start-anbefalinger og ingen celler til/fra johannesurt.
-- [ ] **P3.4** Importer alle reelt tilgjengelige antipsykotikabyttinger, inkludert grupper og ulike administrasjonsformer. Skill mellom tom celle, manglende lenke, delt/felles anbefaling og særskilt anbefaling.
-- [ ] **P3.5** Ta vare på kilde-URL, hentet tidspunkt med tidssone, eventuell kildeoppdatering, kildeversjon, kontrollsum, tabellkoordinater, identifikatorer og importørversjon for hver oppføring.
-- [ ] **P3.6** Lag en fullstendig dekningsrapport per tabell: forventede celler, funnet lenke, vellykket hentet, eksplisitt uten lenke, feil/til kontroll og ekskludert av beslutning. Feil eller manglende datadekning skal ikke telles som «ferdig importert».
-- [ ] **P3.7** Gjør importen deterministisk og repeterbar, og vis differanse mot forrige innhenting. Nytt kildeuttrekk skal aldri selv publisere nye kliniske regler.
+- [x] **P3.1** Avklar gjenbruksrettigheter for systematisk uttrekk, lagring og eventuell videreformidling av Psychiatrienets tekster. Ved uklar eller manglende rett: lagre bare det materialet vi har rett til og bruk lenker/selvstendig formulert regelgrunnlag. Ikke omgå sperrer eller publiser beskyttet tekst.
+- [x] **P3.2** Importer tilgjengelige anbefalinger for **Combining Moodstabilizers** (retning eksisterende → tillegg). Materialet skal arkiveres/klassifiseres, ikke gi et brukerrettet kombineringverktøy i første leveranse.
+- [x] **P3.3** Importer tilgjengelige retningsbestemte antidepressivbytter og hver **Stop**-anbefaling, men ingen Start-anbefalinger og ingen celler til/fra johannesurt.
+- [x] **P3.4** Importer alle reelt tilgjengelige antipsykotikabyttinger, inkludert grupper og ulike administrasjonsformer. Skill mellom tom celle, manglende lenke, delt/felles anbefaling og særskilt anbefaling.
+- [x] **P3.5** Ta vare på kilde-URL, hentet tidspunkt med tidssone, eventuell kildeoppdatering, kildeversjon, kontrollsum, tabellkoordinater, identifikatorer og importørversjon for hver oppføring.
+- [x] **P3.6** Lag en fullstendig dekningsrapport per tabell: forventede celler, funnet lenke, vellykket hentet, eksplisitt uten lenke, feil/til kontroll og ekskludert av beslutning. Feil eller manglende datadekning skal ikke telles som «ferdig importert».
+- [x] **P3.7** Gjør importen deterministisk og repeterbar, og vis differanse mot forrige innhenting. Nytt kildeuttrekk skal aldri selv publisere nye kliniske regler.
 - [ ] **P3.8** ChatGPT kontrollerer representative kilder fra hver tabell, inklusive Stop, gruppeanbefaling, utvasking, depot og én bevisst manglende celle.
+
+**Resultat (27.10.2026):**
+
+*Rettigheter (P3.1).* Psychiatrienet eies av forlaget De Tijdstroom og har ingen lisens eller bruksvilkår som tillater kopiering; repoet er offentlig. Teksten i anbefalingene er derfor **ikke** lagret, verken i repoet eller internt. Det som lagres, er fakta om hver anbefaling: adresse, tabellkoordinater, revisjon, tidspunkt, kontrollsummer, retningen siden selv oppgir, avsnittsoverskrifter og navnene i faktaboksene. Vurderingen per bruk (intern lagring, egne regler, offentlig videreformidling) og et utkast til henvendelse om tillatelse står i `docs/verktøy-p3-rettigheter.md`.
+
+*Import (P3.2–P3.5).* `npm run verktoy:kildeimport -- hent` henter de tre tabellene og hver side de lenker til, én om gangen, og legger dem som et uttrekk i kildearkivet `src/data/verktoy/psychiatrienet-kildearkiv.json` (lesingen i `src/verktoy/kildeside.ts`, arkivet i `src/verktoy/kildearkiv.ts`). Sidene for johannesurt og Start-kolonnen hentes ikke. Oppføringene lages av arkivet og P1-kartleggingen i `src/verktoy/kildeanbefalinger.ts`: én per celle, med tabell, rad og kolonne, virkestoffer, retning (bytte, tillegg eller seponering), formulering (LA, ER, MA), kildeside, URL, revisjon, tidspunkt, uttrekk, to kontrollsummer (hele siden og selve anbefalingen), om den er gruppebasert, delt med andre celler eller har samme tekst som en annen side, om den er tilgjengelig, og kjente kildeproblemer. Alle har status «kildeoppføring», aldri regel. Uttrekk 1 (27.10.2026 kl. 20:01–20:09 UTC): 994 sider, **1 044 anbefalinger** – Combining Moodstabilizers 110, Switching Antidepressants 529 (506 bytter og 23 Stop), Switching Antipsychotics 405 (76 gruppebaserte, 54 celler som deler siden «Depot-Depot», og 6 bytter mellom paliperidondepotene i en undertabell på siden for Paliperidone_ER → Paliperidone_ER, som P1 ikke hadde sett).
+
+*Stop-lenkene.* Vortioksetin og doksepin er hentet fra kildens egne sider på en annen adresse (`stop-vortioxetine`, `stop-doxepin`) og merket slik. For fenelzin finnes ingen Stop-side på noen adresse eller i søket på nettstedet; den står som ikke tilgjengelig, og ingen anbefaling er laget.
+
+*Dekning og endringer (P3.6–P3.7).* `docs/verktøy-p3-kildegrunnlag.md` (laget av arkivet) viser hver celle i hver tabell med status: hentet, hentet fra annen adresse, ikke tilgjengelig, undertabell, ingen anbefaling, ekskludert (49 johannesurt) og ikke importert (23 Start). Arkivet vokser bare: en ny kjøring legger til et nytt uttrekk, en uendret side får bare uttrekket registrert, en endret side får en ny versjon ved siden av den gamle, og rapporten viser hva som er nytt, endret og borte. Ingenting i arkivet brukes av appen eller blir en regel.
+
+*Kildeproblemer som er funnet* (ikke rettet, til P4): sidene for tre par i Combining Moodstabilizers (aripiprazol med lamotrigin, risperidon og ziprasidon) oppgir motsatt retning av tabellen; faktaboksen for Rest AP på sidene har andre medlemmer enn tabellen (mangler flufenazin og promazin, og på 24 sider også ziprasidon, men har paliperidon); sidene for Paliperidone_ER kaller formuleringen «Paliperidone LA»; Haloperidol_LA → Zuclopenthixol_MA har nøyaktig samme tekst som det perorale Haloperidol → Zuclopenthixol_MA.
+
+**Kontroll:** `src/__tests__/verktoykildegrunnlag.test.ts` kontrollerer lesingen av en side (retning, grupper, undertabell, at kontrollsummen ikke endres av MediaWikis tidsstempler, og at ingen tekst tas med), at arkivet bare vokser og viser endringer uten å endre gamle versjoner, og for det virkelige uttrekket: fullstendighet mot tabellene og P1, retning, grupper, den delte depotsiden, formuleringer og undertabellen, Stop-kolonnen og de tre Stop-lenkene, johannesurt og Start, at arkivet ikke har anbefalingstekst, at bare verktøymodulene leser det, og at rapporten er oppdatert.
+
+**Spørsmål til P4:**
+
+- Tillatelse fra De Tijdstroom (utkast i rettighetsnotatet): uten den må OUSFARs regler lages som egne faglige vurderinger, ikke som en omgjøring av hele tabellsettet.
+- Fenelzin har ingen Stop-anbefaling: skal nedtrapping av fenelzin være uten støtte, eller bygges på en annen kilde?
+- Rest AP: skal gruppen følge tabellen (med flufenazin, promazin og ziprasidon) eller faktaboksen på sidene (med paliperidon)? Gjelder også om paliperidon skal arve gruppeanbefalingene.
+- De seks kombinasjonssidene med motsatt retning: hvilken retning gjelder anbefalingen egentlig?
+- Paliperidone_ER: gjelder sidene en- eller tremånedersdepot (Xeplion, Trevicta, Byannli), når de kaller den «LA»? Undertabellen skiller dem.
+- Haloperidol_LA → Zuclopenthixol_MA: er det riktig at depot og peroral haloperidol har samme anbefaling?
+- Stop-sidene for vortioksetin og doksepin er hentet fra en annen adresse enn tabellen lenker til; P4 bør bekrefte at det er de riktige.
 
 **Akseptanse:** Dokumentert komplett oversikt over *tilgjengelig* kildemateriale, med eksplisitte hull og sporbar innhentingsdato. De lagrede anbefalingene er **ikke** ennå klinisk godkjente beregningsregler.
 
@@ -272,6 +296,8 @@ Før en oppgave eller fase krysses av:
 | 27.10.2026 | P1.1–P1.7 | Kartlegging, øyeblikksbilder, rapport og tester, PR #279. Kilder: Psychiatrienet (revisjon 10184 / 10673 / 10641, hentet 27.10.2026), FEST-uttrekk 08.10.2026, fagsidene i produksjon 27.10.2026. `npm test` og `npm run build` grønne | Venter på ChatGPTs kontroll av utvalget og de uavklarte punktene i rapporten. Ingen fagsider, anbefalingstekster eller regler er laget |
 | 27.10.2026 | P1 godkjent | ChatGPT kontrollerte PR #279 faglig; squash-merget (8df6f91). P1 er ferdig | De uavklarte punktene i rapporten følges opp i fasene de hører til (Stop-lenker i P3/P5, depot i P10) |
 | 27.10.2026 | P2.1–P2.5 | 16 fagsider uten faginnhold, FEST-koblinger og søkealiaser, PR #280. `npm test` og `npm run build` grønne | Venter på ChatGPTs kontroll, særlig kategoriplasseringen i stoffregisteret og de seks stoffene uten preparater i FEST. Sidene finnes i produksjon først når PR-en er slått sammen |
+| 27.10.2026 | P2 godkjent og utrullet | ChatGPT kontrollerte PR #280 faglig; squash-merget (f924c51). Produksjonsmigreringen (GitHub Actions, kjøring 40) lyktes, og produksjonen ble lest etterpå: alle 16 sider publisert, hver med én FEST-kobling, alle plassert i stoffregisteret. P2 er ferdig | – |
+| 27.10.2026 | P3.1–P3.7 | Rettighetsnotat, kildearkiv (uttrekk 1: 994 sider, 1 044 anbefalinger), dekningsrapport og tester, PR #281. `npm test` og `npm run build` grønne | Venter på ChatGPTs kontroll (P3.8) og svar på spørsmålene til P4. Ingen anbefalingstekst er lagret og ingen regler er laget |
 
 ## 8. Startoppdrag til Claude Code
 

@@ -1258,15 +1258,18 @@
     },
     {
       "href": "/switchdetail/stop",
-      "funn": "Stop-cellen for vortioxetine lenker hit (404) i stedet for til virkestoffets side. /switchdetail/stop-vortioxetine finnes (200, kontrollert 27.10.2026). Hvilken side som skal brukes, avgjøres i P3."
+      "funn": "Stop-cellen for vortioxetine lenker hit (404) i stedet for til virkestoffets side. /switchdetail/stop-vortioxetine finnes (200) og heter «Stop-vortioxetine». P3 henter den siden for cellen og merker at den er hentet fra en annen adresse enn tabellen lenker til.",
+      "alternativ": "/switchdetail/stop-vortioxetine"
     },
     {
       "href": "/switchdetail/stop-doxepine",
-      "funn": "404. /switchdetail/stop-doxepin finnes (200, kontrollert 27.10.2026). Hvilken side som skal brukes, avgjøres i P3."
+      "funn": "404. /switchdetail/stop-doxepin finnes (200) og heter «Stop-doxepin». P3 henter den siden for cellen og merker at den er hentet fra en annen adresse enn tabellen lenker til.",
+      "alternativ": "/switchdetail/stop-doxepin"
     },
     {
       "href": "/switchdetail/stop-fenelzine",
-      "funn": "404. Heller ikke /switchdetail/stop-phenelzine finnes (kontrollert 27.10.2026). Kilden har ingen tilgjengelig Stop-anbefaling for fenelzin."
+      "funn": "404. Ingen annen adresse finnes: stop-phenelzine, stop-fenelzin, stop-phenelzin og Stop-fenelzine svarer også 404, og søket på nettstedet finner ingen Stop-side for fenelzin (kontrollert 27.10.2026). Kilden har ingen tilgjengelig Stop-anbefaling for fenelzin, og P3 lager ingen.",
+      "alternativ": null
     }
   ]
 }

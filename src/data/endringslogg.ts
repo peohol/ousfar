@@ -12,6 +12,18 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.111.1',
+    dato: '2026-10-27',
+    sammendrag: 'Psychiatrienets anbefalinger registrert som versjonert kildegrunnlag for de kommende verktøyene',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen ennå. Hver anbefaling i Psychiatrienets tabeller for bytte av antidepressiva og antipsykotika, Stop-anbefalingene for antidepressiva og kombinasjonene av stemningsstabilisatorer er registrert med kilde, versjon, tidspunkt og kontrollsum, så endringer hos kilden kan oppdages. Johannesurt og den generelle Start-kolonnen er utelatt.',
+      'Anbefalingene er ikke gjort om til regler, og teksten deres er ikke kopiert, fordi kilden ikke gir tillatelse til det.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.111.0',
     dato: '2026-10-27',
     sammendrag: '16 nye fagsider for antidepressiva og antipsykotika, koblet til legemiddeldataene',

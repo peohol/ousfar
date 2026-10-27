@@ -60,8 +60,9 @@ export interface Kildegruppe {
   medlemmer: { navn: string; href: string | null }[]
 }
 
-export interface Switchtabell {
-  id: Tabell_id
+/** En switchtabell; `I` er en annen identitet for en undertabell på en kildeside (P3). */
+export interface Switchtabell<I extends string = Tabell_id> {
+  id: I
   /** Overskriften på siden. */
   tittel: string
   /** Hva radene og kolonnene står for, slik tabellen sier det («from», «to»). */
@@ -80,7 +81,8 @@ export interface Switchtabell {
 
 const ENTITETER: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', '#39': "'", nbsp: ' ' }
 
-function tekst(html: string): string {
+/** Teksten i et HTML-utsnitt: uten tagger, med tegnene oversatt og mellomrommene slått sammen. */
+export function tekst(html: string): string {
   return html
     .replace(/<[^>]*>/g, '')
     .replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (hel, e: string) => {
@@ -146,7 +148,7 @@ function lesGrupper(innledning: string): Kildegruppe[] {
  * Leser én switchtabell. Kaster når siden ikke har én switchtabell, når en
  * rad har feil antall celler, eller når en celle verken er en lenke eller tom.
  */
-export function lesSwitchtabell(id: Tabell_id, html: string): Switchtabell {
+export function lesSwitchtabell<I extends string = Tabell_id>(id: I, html: string): Switchtabell<I> {
   const start = html.indexOf('<table class="switchtable"')
   if (start < 0 || html.indexOf('<table class="switchtable"', start + 1) >= 0) feil(id, 'ikke nøyaktig én switchtabell')
   const slutt = html.indexOf('</table>', start)

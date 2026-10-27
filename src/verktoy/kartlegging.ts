@@ -92,8 +92,12 @@ export interface Virkestoffkartlegging {
   virkestoffer: Kartvirkestoff[]
   festoverstyringer: Festoverstyring[]
   uten_kildevariant: { virkestoff: string; varenavn: string; grunn: string }[]
-  /** Lenker i kilden som ikke svarer 200, med det som ble funnet om dem. */
-  kjente_lenkeavvik: { href: string; funn: string }[]
+  /**
+   * Lenker i kilden som ikke svarer 200, med det som ble funnet om dem, og
+   * kildens egen side for samme anbefaling når den finnes på en annen adresse
+   * (`null` når det er lett etter en uten å finne den). P3 henter den.
+   */
+  kjente_lenkeavvik: { href: string; funn: string; alternativ?: string | null }[]
 }
 
 export interface Tabellbilde {
