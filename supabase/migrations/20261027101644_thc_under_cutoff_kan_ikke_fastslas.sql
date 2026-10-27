@@ -439,6 +439,10 @@ revoke all on all functions in schema intern from public, anon, authenticated, s
 
 -- --- Den nye kommentaren, og regelsettet lagret på nytt ---------------------
 
+select intern.endring_start('claude-code', '20261027101644_thc_under_cutoff_kan_ikke_fastslas.sql',
+  'Egen THC-syrekommentar for «kan ikke fastslås» når forrige prøve var under cut-off, bestilt av Peder',
+  array['https://github.com/peohol/ousfar/pull/278']);
+
 do $ny_kommentar$
 declare
   objekt uuid;
