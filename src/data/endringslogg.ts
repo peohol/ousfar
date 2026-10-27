@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.108.1',
+    dato: '2026-10-27',
+    sammendrag: 'Avsnittet rett over en liste i fagsidene har samme skrift som resten av teksten',
+    typer: ['Design / layout'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['stoff'],
+    punkter: [
+      'Avsnittet som står rett over en punktliste eller nummerert liste, ble vist med liten, fet skrift når redigeringen var avsluttet. Det vises nå som de andre avsnittene, slik det ser ut mens man redigerer.',
+    ],
+  },
+  {
     versjon: '1.108.0',
     dato: '2026-10-26',
     sammendrag: 'Tekstfeltet i redigeringen av fagsidene er høyere og kan dras høyere',
