@@ -36,6 +36,7 @@
     "scripts/kuratorjobb.ts",
     "scripts/kurateringsko.ts",
     "scripts/kurateringsagent.ts",
+    "scripts/verktoy-kartlegging.ts",
     "supabase/functions/_delt",
     "api"
   ]
