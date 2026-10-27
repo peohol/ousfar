@@ -1,0 +1,54 @@
+Annet
+Risikoen for arytmier kan øke ved samtidig inntak av astemizol, terfenadin eller sotalol.
+
+4.6 Fertilitet, graviditet og amming
+
+Graviditet
+Det er ingen eller begrenset mengde data på bruk av trimipramin hos gravide kvinner. Studier på dyr
+er utilstrekkelige med hensyn på reproduksjonstoksisitet. Trimipramin anbefales ikke til bruk under
+graviditet med mindre det er strengt nødvendig og kun etter nøye vurdering av nytte/risiko.
+
+Det er ønskelig med en god mental balanse hos mor under graviditeten. Dersom medisinsk
+behandling er nødvendig for å sikre denne balansen bør behandlingen påbegynnes eller vedlikeholdes
+med en effektiv dose under graviditeten og, dersom mulig, som monoterapi.
+
+Hos nyfødte der mor har blitt behandlet med trisykliske antidepressiva i slutten av graviditeten kan
+tilpasningsvansker og abstinenssymptomer oppstå i den første leveuken, og kan inkludere hypotoni,
+irritabilitet, skjelvinger og krampeanfall, respiratoriske effekter (polypné, akutt cyanose og
+respiratorisk svikt) og gastrointestinale effekter (problemer med å ta til seg næring, forsinket passasje
+av mekonium og abdominal distensjon). En gradvis dosereduksjon og stopp i behandlingen ca. 14
+dager før fødsel anbefales. Dersom initiering eller vedlikehold av behandling med trimipramin under
+graviditet er uunngåelig skal effektene som er beskrevet ovenfor tas i betraktning ved overvåkning av
+det nyfødte barnet.
+
+Amming
+Det foreligger ikke tilstrekkelig informasjon om utskillelse av trimipramin i morsmelk, påvirkning på
+melkeproduksjon eller effekter hos det ammende barnet. Fysikalsk-kjemiske data tyder på at
+trimipramin utskilles i morsmelk. En risiko for nyfødte/spedbarn som ammes kan ikke utelukkes.
+Tatt i betraktning fordelene av amming for barnet og fordelene av behandling for moren, må det tas
+en beslutning om ammingen skal opphøre eller behandlingen med trimipramin skal avsluttes/avstås
+fra.
+
+4.7 Påvirkning av evnen til å kjøre bil eller bruke maskiner
+
+Trimipramin kan gi tåkesyn og sedasjon. Derfor anbefales det å utvise forsiktighet ved kjøring eller
+bruk av maskiner. Tretthet, særlig i starten av behandlingen, er vanlig. Bilkjøring og bruk av
+maskiner i denne fasen bør derfor unngås.
+
+4.8 Bivirkninger
+
+Trisykliske antidepressiva kan gi mange bivirkninger. Hyppigst forekommende er tretthet (rapportert
+i begynnelsen av behandlingen hos 60 % av pasientene) samt antikolinerge effekter. Disse
+bivirkningene opptrer ofte initialt og toleranse oppnås som regel ved fortsatt behandling.
+
+Frekvenser er definert som: Svært vanlige (≥1/10), vanlige (≥1/100 til <1/10), mindre vanlige
+(≥1/1000 til <1/100), sjeldne (≥1/10 000 til <1/1000), svært sjeldne (<1/10 000), ikke kjent (kan ikke
+anslås utifra tilgjengelige data).
+
+ MedDRA          Svært       Vanlige          Mindre          Sjeldne            Ikke kjent (kan ikke
+ Organ-          vanlige     (1/100 til      vanlige         (1/10 000 til     anslås utifra
+ Klasse-         (1/10)     <1/10)           (1/1000 til    <1/1000)           tilgjengelige data)
+ system                                       <1/100)
+
+ Sykdommer                                                    Agranulo-          Leukopeni,
+ i blod og                                                    cytose,            trombocytopeni

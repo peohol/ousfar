@@ -1,0 +1,347 @@
+{
+  "stoff": "trimipramin",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-10-27T04:15:06.281727+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 5,
+    "hentet": 2,
+    "dokumenter": 2,
+    "mangler": [
+      {
+        "merkevare_id": "ID_13491375-F4F3-4C8D-B6F7-4C02B988AF0F",
+        "varenavn": "Stangyl",
+        "navn_form_styrke": "Stangyl tab 25 mg",
+        "produsent": "Sanofi-aventis",
+        "atc": "N06AA06",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_1F633B9E-26DB-40D1-A7AF-2BF2F5ABBC07",
+        "varenavn": "Surmontil",
+        "navn_form_styrke": "Surmontil tab 25 mg",
+        "produsent": "Neuraxpharm",
+        "atc": "N06AA06",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_4440B6BE-C731-4A63-92DC-C39ACECD49B5",
+        "varenavn": "Trimipramin-neuraxpharm",
+        "navn_form_styrke": "Trimipramin-neuraxpharm tab 25 mg",
+        "produsent": "Neuraxpharm",
+        "atc": "N06AA06",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 2 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 2,
+        "ikke_dmp": 0,
+        "uten_omtale": 3
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "3 av 5 preparater i FEST mangler en hentet preparatomtale fra DMP: 3 uten preparatomtale i FEST (f.eks. sentralt godkjente, med omtalen hos EMA). SPC-behovet er ikke dekket; se «dekning.mangler».",
+      "antall": {
+        "preparater": 5,
+        "hentet": 2,
+        "mangler": 3,
+        "dokumenter": 2
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-05154.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-05154.pdf",
+      "hentet_kl": "2026-10-27T11:33:21.388Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "184765",
+        "content-md5": "k/FLl/x8KTBt9GDJy5kArg==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:51 GMT",
+        "etag": "0x8DE53793D3E27BC",
+        "date": "Tue, 27 Oct 2026 11:33:22 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_08CC29A7-7151-476D-9827-91B1E5ABE558",
+          "varenavn": "Surmontil",
+          "navn_form_styrke": "Surmontil tab 25 mg",
+          "produsent": "Neuraxpharm Sweden AB",
+          "atc": "N06AA06",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-05154.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (184765 byte).",
+          "antall": {
+            "bytes": 184765
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "611ed6a53721a2438b3c44a51c4a666b9491dd21bb644d6691854fabf652a504"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06599.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06599.pdf",
+      "hentet_kl": "2026-10-27T11:33:25.844Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "184765",
+        "content-md5": "7Q8vbXB79Kk5yikwrY7Vkw==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:52 GMT",
+        "etag": "0x8DE53793D84C379",
+        "date": "Tue, 27 Oct 2026 11:33:25 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_3640F737-BB25-4F74-99FE-79DD351D84ED",
+          "varenavn": "Surmontil",
+          "navn_form_styrke": "Surmontil tab 10 mg",
+          "produsent": "Neuraxpharm Sweden AB",
+          "atc": "N06AA06",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06599.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (184765 byte).",
+          "antall": {
+            "bytes": 184765
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "b026e10579515837956dcb75a8034819efc287b71a9b1e407855935b82d1a090"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "611ed6a53721a2438b3c44a51c4a666b9491dd21bb644d6691854fabf652a504",
+      "bytes": 184765,
+      "mappe": "kuratorjobb/resultat/trimipramin/spc/611ed6a53721a243",
+      "pdf": {
+        "sider": 9,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "PREPARATOMTALE",
+        "laget": "Wed Nov  1 08:43:12 2023 UTC",
+        "endret": "Wed Nov  1 08:43:12 2023 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/trimipramin/spc/611ed6a53721a243/original.pdf",
+        "tekst": "kuratorjobb/resultat/trimipramin/spc/611ed6a53721a243/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/trimipramin/spc/611ed6a53721a243/tekst/side-001.txt",
+          "kuratorjobb/resultat/trimipramin/spc/611ed6a53721a243/tekst/side-002.txt",
+          "kuratorjobb/resultat/trimipramin/spc/611ed6a53721a243/tekst/side-003.txt",
+          "kuratorjobb/resultat/trimipramin/spc/611ed6a53721a243/tekst/side-004.txt",
+          "kuratorjobb/resultat/trimipramin/spc/611ed6a53721a243/tekst/side-005.txt",
+          "kuratorjobb/resultat/trimipramin/spc/611ed6a53721a243/tekst/side-006.txt",
+          "kuratorjobb/resultat/trimipramin/spc/611ed6a53721a243/tekst/side-007.txt",
+          "kuratorjobb/resultat/trimipramin/spc/611ed6a53721a243/tekst/side-008.txt",
+          "kuratorjobb/resultat/trimipramin/spc/611ed6a53721a243/tekst/side-009.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/trimipramin/spc/611ed6a53721a243/sider/side-001.png",
+          "kuratorjobb/resultat/trimipramin/spc/611ed6a53721a243/sider/side-002.png",
+          "kuratorjobb/resultat/trimipramin/spc/611ed6a53721a243/sider/side-003.png",
+          "kuratorjobb/resultat/trimipramin/spc/611ed6a53721a243/sider/side-004.png",
+          "kuratorjobb/resultat/trimipramin/spc/611ed6a53721a243/sider/side-005.png",
+          "kuratorjobb/resultat/trimipramin/spc/611ed6a53721a243/sider/side-006.png",
+          "kuratorjobb/resultat/trimipramin/spc/611ed6a53721a243/sider/side-007.png",
+          "kuratorjobb/resultat/trimipramin/spc/611ed6a53721a243/sider/side-008.png",
+          "kuratorjobb/resultat/trimipramin/spc/611ed6a53721a243/sider/side-009.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 5,
+        "til": 7
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (9 sider).",
+          "antall": {
+            "sider": 9
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 16774
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 5."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 9
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "b026e10579515837956dcb75a8034819efc287b71a9b1e407855935b82d1a090",
+      "bytes": 184765,
+      "mappe": "kuratorjobb/resultat/trimipramin/spc/b026e10579515837",
+      "pdf": {
+        "sider": 9,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "PREPARATOMTALE",
+        "laget": "Wed Nov  1 08:39:58 2023 UTC",
+        "endret": "Wed Nov  1 08:39:58 2023 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/trimipramin/spc/b026e10579515837/original.pdf",
+        "tekst": "kuratorjobb/resultat/trimipramin/spc/b026e10579515837/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/trimipramin/spc/b026e10579515837/tekst/side-001.txt",
+          "kuratorjobb/resultat/trimipramin/spc/b026e10579515837/tekst/side-002.txt",
+          "kuratorjobb/resultat/trimipramin/spc/b026e10579515837/tekst/side-003.txt",
+          "kuratorjobb/resultat/trimipramin/spc/b026e10579515837/tekst/side-004.txt",
+          "kuratorjobb/resultat/trimipramin/spc/b026e10579515837/tekst/side-005.txt",
+          "kuratorjobb/resultat/trimipramin/spc/b026e10579515837/tekst/side-006.txt",
+          "kuratorjobb/resultat/trimipramin/spc/b026e10579515837/tekst/side-007.txt",
+          "kuratorjobb/resultat/trimipramin/spc/b026e10579515837/tekst/side-008.txt",
+          "kuratorjobb/resultat/trimipramin/spc/b026e10579515837/tekst/side-009.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/trimipramin/spc/b026e10579515837/sider/side-001.png",
+          "kuratorjobb/resultat/trimipramin/spc/b026e10579515837/sider/side-002.png",
+          "kuratorjobb/resultat/trimipramin/spc/b026e10579515837/sider/side-003.png",
+          "kuratorjobb/resultat/trimipramin/spc/b026e10579515837/sider/side-004.png",
+          "kuratorjobb/resultat/trimipramin/spc/b026e10579515837/sider/side-005.png",
+          "kuratorjobb/resultat/trimipramin/spc/b026e10579515837/sider/side-006.png",
+          "kuratorjobb/resultat/trimipramin/spc/b026e10579515837/sider/side-007.png",
+          "kuratorjobb/resultat/trimipramin/spc/b026e10579515837/sider/side-008.png",
+          "kuratorjobb/resultat/trimipramin/spc/b026e10579515837/sider/side-009.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 5,
+        "til": 7
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (9 sider).",
+          "antall": {
+            "sider": 9
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 16774
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 5."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 9
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": []
+}

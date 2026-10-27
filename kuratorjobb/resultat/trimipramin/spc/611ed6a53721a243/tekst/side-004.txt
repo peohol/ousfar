@@ -1,0 +1,55 @@
+legemidler som inneholder alkohol bør unngås på grunn av økt sedativ effekt av Surmontil ved
+samtidig inntak av alkohol.
+
+Alfa- og beta-sympatomimetiske legemidler:
+Paroksysmal hypertensjon kan oppstå med mulighet for arytmi (hemming av sympatomimetikas
+overgang til sympatiske nervefibre).
+
+Serotonerge legemidler
+Samtidig administrasjon av andre serotonerge legemidler (som SSRIer, SNRIer, MAO-hemmere,
+buprenorfin, litium, triptaner, tramadol, linezolid, L-tryptofan og johannesurt – Hypericum
+perforatum) kan føre til serotonergt syndrom, en potensielt livstruende tilstand (se pkt. 4.4). Nøye
+klinisk overvåking er nødvendig når disse substansene gis sammen med trimipramin.
+
+Atropinlignende legemidler:
+Det bør tas i betraktning at de uønskede effektene av atropinlignende substanser kan bli additive og
+øke sannsynligheten for urinretensjon, akutt oppblussing av glaukom, forstoppelse, tørr munn osv.
+
+Legemidler som senker blodtrykket, inkludert antihypertensiva:
+Økt risiko for hypotensjon, spesielt ortostatisk hypotensjon.
+Klonidin, guanfacin: Trimipramin hemmer den antihypertensive effekten til klonidin og guanfacin
+(antagonist til adrenerge reseptorer). Samtidig bruk anbefales ikke.
+
+Den antihypertensive effekten av betanidin, debrisoquin og guanetidin kan bli redusert av trisykliske
+antidepressiva.
+
+Andre legemidler som senker krampeterskelen:
+Økt fare for krampeanfall (se pkt. 4.4).
+
+Baklofen:
+Risiko for økt muskelhypotoni.
+
+Valproat
+Bør brukes med forsiktighet sammen med valproat på grunn av risiko for generaliserte krampeanfall-
+(antidepressiva senker krampeterskelen ). Pasienten bør overvåkes klinisk og dosen av trimipramin
+justeres ved behov.
+
+Legemidler som forlenger QT-intervallet
+Trimipramin bør brukes med forsiktighet hos pasienter som behandles med legemidler kjent for å
+forlenge QT-intervallet (f.eks. klasse IA og III antiarytmika, makrolider, fluorokinoloner, visse
+antifungale legemidler, visse antipsykotika), indusere hypokalemi (f.eks. diuretika som øker
+utskillelsen av kalium, laksantia som stimulerer til økt tarmbevegelse, glukokortikoider,
+tetrakosaktider) eller bradykardi (f.eks. betablokkere, diltiazem, verapamil, klonidin,
+digitalispreparater) (se pkt.4.4).
+
+Enzyminduserende legemidler
+Barbiturater og andre enzyminduserende stoffer som rifampicin og noen antiepileptika kan øke
+metabolismen av trisykliske antidepressiva og kan resultere i lavere plasmakonsentrasjoner og
+dermed redusert antidepressiv effekt.
+
+Thyroideahormoner
+Pasienter som tar thyroideahormoner kan få en økt effekt av trisykliske antidepressiva (se pkt. 4.4)
+
+Irreversible MAO-hemmere
+Alvorlige hypertensive reaksjoner, hyperpyretiske kriser, kramper og dødsfall har vært rapportert
+etter samtidig bruk av trisykliske antidepressiva og irreversible MAO-hemmere (se pkt. 4.3).
