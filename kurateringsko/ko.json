@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-10-27T12:46:28.523Z",
+  "oppdatert_kl": "2026-10-27T13:38:45.550Z",
   "malt_kl": "2026-10-27T01:45:38.675Z",
   "teller": 82,
   "stoffer": {
@@ -759,8 +759,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
-          "kl": "2026-10-27T12:46:28.523Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.",
+          "kl": "2026-10-27T13:38:45.550Z",
           "kilde": "system"
         }
       ],
@@ -2534,8 +2534,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
-          "kl": "2026-10-27T12:46:28.523Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.",
+          "kl": "2026-10-27T13:38:45.550Z",
           "kilde": "system"
         }
       ],
@@ -6437,7 +6437,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.",
-          "kl": "2026-10-27T12:46:28.523Z",
+          "kl": "2026-10-27T13:38:45.550Z",
           "kilde": "system"
         }
       ],

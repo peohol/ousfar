@@ -1,6 +1,6 @@
 # Kurateringskøen
 
-Oppdatert 2026-10-27T12:46:28.523Z. Stoffene sist lest fra databasen 2026-10-27T01:45:38.675Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-10-27T13:38:45.550Z. Stoffene sist lest fra databasen 2026-10-27T01:45:38.675Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
 Klar: 76 · Publisert: 16 · Blokkert: 8 · Utenfor køen: 1
 
@@ -14,9 +14,9 @@ Ingen kurateringer venter.
 
 ## Blokkert
 
-- **bupropion**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.
+- **bupropion**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.
 - **etanol**: Stoffet har ingen publisert fagside å kuratere.
-- **gabapentin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.
+- **gabapentin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.
 - **kokain**: Stoffet har ingen publisert fagside å kuratere.
 - **mdma**: Stoffet har ingen publisert fagside å kuratere.
 - **metamfetamin**: Stoffet har ingen publisert fagside å kuratere.
