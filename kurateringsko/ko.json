@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-10-27T11:33:30.272Z",
+  "oppdatert_kl": "2026-10-27T12:46:28.523Z",
   "malt_kl": "2026-10-27T01:45:38.675Z",
   "teller": 82,
   "stoffer": {
@@ -760,7 +760,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
-          "kl": "2026-10-27T11:33:30.272Z",
+          "kl": "2026-10-27T12:46:28.523Z",
           "kilde": "system"
         }
       ],
@@ -2511,17 +2511,11 @@
     "gabapentin": {
       "stoff": "gabapentin",
       "navn": "Gabapentin",
-      "status": "klar",
+      "status": "blokkert",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 427.6,
-        "grunner": [
-          "De novo-kuratering i runden som gjelder.",
-          "Aldri kuratert.",
-          "Ingen kuratering å regne alderen fra.",
-          "9 av 13 redaksjonelle seksjoner er tomme.",
-          "1 av 6 elementer har ingen kilde."
-        ]
+        "poeng": 0,
+        "grunner": []
       },
       "maal": {
         "kl": "2026-10-27T01:45:39.259Z",
@@ -2537,7 +2531,14 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [],
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
+          "kl": "2026-10-27T12:46:28.523Z",
+          "kilde": "system"
+        }
+      ],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
@@ -3225,11 +3226,16 @@
     "ketamin": {
       "stoff": "ketamin",
       "navn": "Ketamin",
-      "status": "blokkert",
+      "status": "klar",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 0,
-        "grunner": []
+        "poeng": 104.2,
+        "grunner": [
+          "De novo-kuratering i runden som gjelder.",
+          "Sist kuratert 2026-10-04.",
+          "6 av 13 redaksjonelle seksjoner er tomme.",
+          "1 av 29 elementer har ingen kilde."
+        ]
       },
       "maal": {
         "kl": "2026-10-27T01:45:39.259Z",
@@ -3245,14 +3251,7 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [
-        {
-          "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.",
-          "kl": "2026-10-27T11:33:30.272Z",
-          "kilde": "system"
-        }
-      ],
+      "blokkeringer": [],
       "sist_kuratert": {
         "kl": "2026-10-04T04:00:00.000Z",
         "modus": "oppdatering",
@@ -6414,17 +6413,11 @@
     "trimipramin": {
       "stoff": "trimipramin",
       "navn": "Trimipramin",
-      "status": "klar",
+      "status": "blokkert",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 432.5,
-        "grunner": [
-          "De novo-kuratering i runden som gjelder.",
-          "Aldri kuratert.",
-          "Ingen kuratering å regne alderen fra.",
-          "6 av 13 redaksjonelle seksjoner er tomme.",
-          "16 av 22 elementer har ingen kilde."
-        ]
+        "poeng": 0,
+        "grunner": []
       },
       "maal": {
         "kl": "2026-10-27T01:45:39.259Z",
@@ -6440,7 +6433,14 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [],
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.",
+          "kl": "2026-10-27T12:46:28.523Z",
+          "kilde": "system"
+        }
+      ],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
