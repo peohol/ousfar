@@ -3,12 +3,13 @@
  * lesingen av en kildeside, at kildearkivet bare vokser og viser endringer,
  * og at oppføringene laget av arkivet er fullstendige, har riktig retning,
  * grupper, delte sider og formuleringer, utelater johannesurt og
- * Start-kolonnen, ikke har kildetekst og ikke er regler. Og at rapporten er
- * oppdatert.
+ * Start-kolonnen, ikke har kildetekst og ikke er regler. At innhentingen
+ * skiller en reell 404 fra en forbigående serverfeil, og ikke skriver sidene
+ * til disk. Og at rapporten er oppdatert.
  */
 import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import arkivfil from '../data/verktoy/psychiatrienet-kildearkiv.json'
 import { lesKartdata } from '../verktoy/kartdata'
 import { erSperret, importmal } from '../verktoy/kartlegging'
@@ -22,6 +23,7 @@ import {
   type Sideinnhenting,
 } from '../verktoy/kildearkiv'
 import { importceller, importmalForTabeller, kildedekning, kildegrunnlag } from '../verktoy/kildeanbefalinger'
+import { erForbigaende, ForbigaendeFeil, hentKilde } from '../verktoy/kildehenting'
 import { lesKildeinnhold } from '../verktoy/kildeside'
 import { KILDERAPPORTFIL, lagKilderapport } from '../verktoy/kilderapport'
 
@@ -63,7 +65,7 @@ const bytteside = (dag = 'Day 2:') =>
   )
 
 describe('Lesingen av en kildeside', () => {
-  it('leser et bytte: retningen, avsnittene og faktaboksene, uten teksten', () => {
+  it('leser et bytte: retningen, hva slags avsnitt og faktaboksene, uten tekst eller overskrifter', () => {
     const s = lesKildeinnhold(bytteside())
     expect(s).toMatchObject({
       overskrift: 'Agomelatine-amitriptyline',
@@ -73,16 +75,12 @@ describe('Lesingen av en kildeside', () => {
       retning: { fra: 'agomelatine', til: 'amitriptyline' },
       undertabell: null,
     })
-    expect(s.avsnitt).toEqual([
-      { type: 'stopp', overskrift: 'Stop agomelatine' },
-      { type: 'start', overskrift: 'Start amitriptyline' },
-      { type: 'informasjon', overskrift: 'More information' },
-    ])
+    expect(s.avsnitt).toEqual(['stopp', 'start', 'informasjon'])
     expect(s.legemidler.map((l) => [l.navn, l.href])).toEqual([
       ['Agomelatine', '/switchdetail/agomelatine'],
       ['Amitriptyline', '/switchdetail/amitriptyline'],
     ])
-    expect(JSON.stringify(s)).not.toMatch(/Day \d|normal dosage|wash-out/)
+    expect(JSON.stringify(s)).not.toMatch(/Day \d|normal dosage|wash-out|Stop agomelatine|Start amitriptyline|More information|Stahl|greatest care/)
   })
 
   it('gir samme kontrollsum når bare kommentarer, skript og hurtigbuffer endres, og en ny når teksten endres', () => {
@@ -136,10 +134,59 @@ describe('Lesingen av en kildeside', () => {
     )
     expect(s.sidetype).toBe('undertabell')
     expect(s.undertabell!.celler.filter((c) => c.type === 'lenke').map((c) => `${c.rad}>${c.kolonne}`)).toEqual(['Lp>Sp', 'Sp>Lp'])
+    // Bare koordinater og lenker: ikke lenketitlene eller -tekstene fra kilden.
+    expect(s.undertabell!.celler[1]).toEqual({ rad: 'Lp', kolonne: 'Sp', type: 'lenke', href: '/switchdetail/paliperidone-lp-paliperidone-sp' })
   })
 
   it('kaster på en side uten MediaWiki-innhold', () => {
     expect(() => lesKildeinnhold('<html><h1>Not found</h1></html>')).toThrow(/MediaWiki/)
+  })
+})
+
+/* --- Hentingen --------------------------------------------------------------- */
+
+describe('Hentingen av en kildeside', () => {
+  /** En `fetch` som svarer med statusene i rekkefølge; en `Error` er et brudd i forbindelsen. */
+  const falsk = (svar: (number | Error)[]) => {
+    const hent = vi.fn(async (url: string | URL | Request) => {
+      const s = svar.shift()!
+      if (s instanceof Error) throw s
+      return { status: s, url: String(url), text: async () => `<html>${s}</html>` } as Response
+    })
+    const vent = vi.fn(async () => {})
+    return { hent: hent as unknown as typeof fetch, kall: hent, vent, na: () => '2026-10-27T20:00:00Z' }
+  }
+
+  it('skiller svar som sier noe om siden fra forbigående serverfeil', () => {
+    for (const s of [200, 301, 400, 403, 404, 410]) expect(erForbigaende(s), String(s)).toBe(false)
+    for (const s of [408, 425, 429, 500, 502, 503, 504]) expect(erForbigaende(s), String(s)).toBe(true)
+  })
+
+  it('godtar en reell 404 med én gang, uten nye forsøk', async () => {
+    const f = falsk([404])
+    await expect(hentKilde('https://psychiatrienet.nl/switchdetail/stop', f)).resolves.toMatchObject({ status: 404, hentet: '2026-10-27T20:00:00Z' })
+    expect(f.kall).toHaveBeenCalledTimes(1)
+    expect(f.vent).not.toHaveBeenCalled()
+  })
+
+  it('prøver 429, serverfeil og brudd på nytt med økende pause, og bruker svaret når det kommer', async () => {
+    const f = falsk([429, 503, new Error('ECONNRESET'), 200])
+    await expect(hentKilde('https://psychiatrienet.nl/x', { ...f, pause: 10 })).resolves.toMatchObject({ status: 200, html: '<html>200</html>' })
+    expect(f.kall).toHaveBeenCalledTimes(4)
+    expect(f.vent.mock.calls).toEqual([[10], [20], [40]])
+  })
+
+  it('kaster når feilen vedvarer, så en midlertidig feil aldri blir arkivert som et hull', async () => {
+    const f = falsk([500, 500, 429])
+    await expect(hentKilde('https://psychiatrienet.nl/x', { ...f, forsok: 3 })).rejects.toThrow(ForbigaendeFeil)
+    expect(f.kall).toHaveBeenCalledTimes(3)
+  })
+
+  it('skriver bare arkivet og rapporten til disk, aldri sidene selv', () => {
+    const skript = readFileSync(new URL('../../scripts/verktoy-kildeimport.ts', import.meta.url), 'utf8')
+    expect(skript).not.toMatch(/mellomlager|mkdirSync|appendFileSync|createWriteStream|copyFileSync/)
+    expect([...skript.matchAll(/writeFileSync\(([^,]+),/g)].map((m) => m[1]!.trim())).toEqual(['ARKIV', 'new URL(`../${KILDERAPPORTFIL}`'])
+    expect(skript).toMatch(/hentKilde\(/)
   })
 })
 
@@ -357,17 +404,103 @@ describe('Kildegrunnlaget fra Psychiatrienet', () => {
 })
 
 describe('Rettighetene og skillet mot regler', () => {
-  it('har ingen anbefalingstekst i arkivet, bare korte fakta', () => {
-    const lange: string[] = []
-    const gaa = (x: unknown, sti: string) => {
-      if (typeof x === 'string') {
-        if (x.length > 200 || /\bDay \d|\bdosage\b|wash-?out|\btaper/i.test(x)) lange.push(`${sti}: ${x.slice(0, 60)}`)
-      } else if (Array.isArray(x)) x.forEach((y, i) => gaa(y, `${sti}[${i}]`))
-      else if (x && typeof x === 'object') for (const [n, y] of Object.entries(x)) gaa(y, `${sti}.${n}`)
-    }
-    gaa(ARKIV.sider, 'sider')
-    gaa(ARKIV.tabeller, 'tabeller')
-    expect(lange).toEqual([])
+  /**
+   * Hvert felt arkivet har lov til å ha, og hva slags verdi det kan ha. Et
+   * nytt felt i arkivet må legges til her med vilje, etter en vurdering mot
+   * `docs/verktøy-p3-rettigheter.md`. `navn` er koder og navn fra kilden
+   * (virkestoffer, grupper, sidetitler), aldri en setning.
+   */
+  type Verdi = 'tall' | 'tid' | 'sha' | 'adresse' | 'lenke' | 'kode' | 'navn' | 'egen'
+  const AKSER = (p: string): Record<string, Verdi> => ({
+    [`${p}.radetikett`]: 'navn',
+    [`${p}.kolonneetikett`]: 'navn',
+    [`${p}.rader[].kode`]: 'kode',
+    [`${p}.rader[].navn`]: 'navn',
+    [`${p}.kolonner[].kode`]: 'kode',
+    [`${p}.kolonner[].navn`]: 'navn',
+    [`${p}.grupper[].navn`]: 'navn',
+    [`${p}.grupper[].href`]: 'lenke',
+    [`${p}.grupper[].medlemmer[].navn`]: 'navn',
+    [`${p}.grupper[].medlemmer[].href`]: 'lenke',
+    [`${p}.celler[].rad`]: 'kode',
+    [`${p}.celler[].kolonne`]: 'kode',
+    [`${p}.celler[].type`]: 'kode',
+    [`${p}.celler[].href`]: 'lenke',
+  })
+  const ARKIVFELT: Record<string, Verdi> = {
+    om: 'egen',
+    'uttrekk[].nr': 'tall',
+    'uttrekk[].startet': 'tid',
+    'uttrekk[].ferdig': 'tid',
+    'uttrekk[].leser': 'tall',
+    'tabeller[].tabell': 'kode',
+    'tabeller[].url': 'adresse',
+    'tabeller[].hentet': 'tid',
+    'tabeller[].sha256': 'sha',
+    'tabeller[].revisjon': 'tall',
+    'tabeller[].lagret': 'tid',
+    'tabeller[].forst_sett': 'tall',
+    'tabeller[].sist_sett': 'tall',
+    ...AKSER('tabeller[]'),
+    'sider[].href': 'lenke',
+    'sider[].url': 'adresse',
+    'sider[].hentet': 'tid',
+    'sider[].status': 'tall',
+    'sider[].endelig': 'adresse',
+    'sider[].leser': 'tall',
+    'sider[].forst_sett': 'tall',
+    'sider[].sist_sett': 'tall',
+    'sider[].innhold': 'egen',
+    'sider[].innhold.overskrift': 'navn',
+    'sider[].innhold.revisjon': 'tall',
+    'sider[].innhold.lagret': 'tid',
+    'sider[].innhold.sha256_side': 'sha',
+    'sider[].innhold.sha256_anbefaling': 'sha',
+    'sider[].innhold.sidetype': 'kode',
+    'sider[].innhold.retning': 'egen',
+    'sider[].innhold.retning.fra': 'navn',
+    'sider[].innhold.retning.til': 'navn',
+    'sider[].innhold.avsnitt[]': 'kode',
+    'sider[].innhold.legemidler[].navn': 'navn',
+    'sider[].innhold.legemidler[].href': 'lenke',
+    'sider[].innhold.legemidler[].medlemmer[].navn': 'navn',
+    'sider[].innhold.legemidler[].medlemmer[].href': 'lenke',
+    'sider[].innhold.undertabell': 'egen',
+    ...AKSER('sider[].innhold.undertabell'),
+  }
+  const FORM: Record<Verdi, (x: unknown) => boolean> = {
+    tall: (x) => typeof x === 'number' && Number.isInteger(x),
+    tid: (x) => typeof x === 'string' && /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$/.test(x),
+    sha: (x) => typeof x === 'string' && /^[0-9a-f]{64}$/.test(x),
+    adresse: (x) => typeof x === 'string' && /^https:\/\/psychiatrienet\.nl\/\S*$/.test(x),
+    // Også kildens egne lenker til wikien, f.eks. til en side som ikke finnes.
+    lenke: (x) => typeof x === 'string' && /^(\/|https?:\/\/([a-z]+\.)?psychiatrienet\.nl\/)\S+$/.test(x),
+    kode: (x) => typeof x === 'string' && /^[A-Za-z_]{1,40}$/.test(x),
+    // Et navn er kort og har ingen setningsskille.
+    navn: (x) => typeof x === 'string' && x.length <= 60 && !/[.:;!?](\s|$)/.test(x),
+    egen: () => true,
+  }
+
+  /** Felt som ikke er tillatt, eller har en verdi av feil form, i `x` (som ligger på `sti` i arkivet). */
+  const feltfeil = (x: unknown, sti = '', feil: string[] = []): string[] => {
+    if (Array.isArray(x)) x.forEach((y) => feltfeil(y, `${sti}[]`, feil))
+    else if (x && typeof x === 'object') for (const [n, y] of Object.entries(x)) feltfeil(y, sti ? `${sti}.${n}` : n, feil)
+    else if (!ARKIVFELT[sti]) feil.push(`${sti}: ikke et tillatt felt`)
+    else if (x !== null && !FORM[ARKIVFELT[sti]](x)) feil.push(`${sti}: ${JSON.stringify(x).slice(0, 80)} er ikke ${ARKIVFELT[sti]}`)
+    return feil
+  }
+
+  it('har bare de tillatte feltene i arkivet, med verdier av riktig form', () => {
+    expect([...new Set(feltfeil(ARKIV))]).toEqual([])
+  })
+
+  it('oppdager et felt som ikke er tillatt, og en setning i et navnefelt', () => {
+    const side = utsnitt(ARKIV).sider.get('/switchdetail/agomelatine-amitriptyline')!
+    const med = (endring: Partial<NonNullable<Sideinnhenting['innhold']>> & Record<string, unknown>) =>
+      feltfeil({ ...side, innhold: { ...side.innhold!, ...endring } }, 'sider[]').map((f) => f.split(':')[0])
+    expect(med({})).toEqual([])
+    expect(med({ tekst: 'Day 1: stop.' })).toEqual(['sider[].innhold.tekst'])
+    expect(med({ overskrift: 'Stop gradually. Then start.' })).toEqual(['sider[].innhold.overskrift'])
   })
 
   it('brukes ikke av appen: bare verktøymodulene og testene leser kildearkivet', () => {
@@ -382,7 +515,7 @@ describe('Rettighetene og skillet mot regler', () => {
     const rot = new URL('../', import.meta.url).pathname
     gaa(rot)
     const brukere = filer
-      .filter((f) => /psychiatrienet-kildearkiv|verktoy\/kilde(arkiv|anbefalinger|rapport|side)/.test(readFileSync(f, 'utf8')))
+      .filter((f) => /psychiatrienet-kildearkiv|verktoy\/kilde(arkiv|anbefalinger|henting|rapport|side)/.test(readFileSync(f, 'utf8')))
       .map((f) => f.slice(rot.length))
       .filter((f) => !f.startsWith('verktoy/') && !f.startsWith('__tests__/'))
     expect(brukere).toEqual([])

@@ -12,10 +12,11 @@
  * det publiserer ingenting og endrer ingen godkjent regel (P4).
  *
  * Arkivet har ingen anbefalingstekst, bare det `kildeside.ts` leser av hver
- * side (`docs/verktøy-p3-rettigheter.md`).
+ * side og tabellene som `Arkivtabell` (`docs/verktøy-p3-rettigheter.md`).
+ * Testene har den fullstendige listen over feltene arkivet kan ha (`ARKIVFELT`).
  */
 import type { Kildeinnhold } from './kildeside'
-import type { Switchtabell, Tabell_id } from './kildetabeller'
+import type { Arkivtabell, Tabell_id } from './kildetabeller'
 
 export interface Uttrekk {
   nr: number
@@ -31,12 +32,14 @@ export interface Sett {
   sist_sett: number
 }
 
-export interface Tabellinnhenting extends Omit<Switchtabell, 'id'> {
+export interface Tabellinnhenting extends Arkivtabell {
   tabell: Tabell_id
   url: string
   hentet: string
   /** SHA-256 av tabellens HTML, som i P1. */
   sha256: string
+  revisjon: number | null
+  lagret: string | null
 }
 
 export interface Sideinnhenting {

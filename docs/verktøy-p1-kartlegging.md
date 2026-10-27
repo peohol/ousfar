@@ -154,10 +154,6 @@ ulike celler med hver sin lenke.
 | Dz | Zuclopenthixol_LA | Virkestoff: Zuklopentiksol (`zuklopentiksol`) | LA |
 | Mz | Zuclopenthixol_MA | Virkestoff: Zuklopentiksol (`zuklopentiksol`) | MA |
 
-Fotnoter i kilden:
-
-- Switching Antipsychotics: «ER = extended release (Palmeux® + Xeplion® + Trivecta® + Byannli®), LA = long acting, MA = medium acting»
-
 Kildeformuleringene:
 
 - **Uten tillegg** → Peroral, vanlig frisetting eller Peroral, modifisert frisetting. Rad uten tillegg. Kilden sier ikke om vanlig eller modifisert frisetting gjelder.

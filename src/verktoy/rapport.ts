@@ -126,7 +126,6 @@ export function lagRapport(d: Kartdata): string {
     })
     .filter((x) => x.nye.length > 0)
 
-  const fotnoter = t.flatMap((x) => x.fotnoter.map((f) => `${TABELLNAVN[x.id]}: «${f}»`))
   const sum = (f: (x: (typeof dekning)[number]) => number) => dekning.reduce((a, x) => a + f(x), 0)
 
   return `# OUSFAR Verktøy – P1: virkestoff- og formuleringskartlegging
@@ -213,7 +212,7 @@ ${tabell(
 )}`,
 ).join('\n\n')}
 
-${fotnoter.length ? `Fotnoter i kilden:\n\n${liste(fotnoter)}\n\n` : ''}Kildeformuleringene:
+Kildeformuleringene:
 
 ${liste(Object.entries(KILDEFORMULERINGER).map(([f, x]) => `**${f === 'standard' ? 'Uten tillegg' : f}** → ${x.klasser.map((c) => FORMULERINGSKLASSER[c]).join(' eller ')}. ${x.forklaring}`))}
 

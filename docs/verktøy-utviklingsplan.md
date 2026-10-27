@@ -20,6 +20,8 @@ Venstremenyen skal få valgene **Verktøy** og **Stoffregister**. Stoffregistere
 
 **Kildetabeller:** Psychiatrienets Combining Moodstabilizers, Switching Antidepressants og Switching Antipsychotics. Innhold fra Combining Moodstabilizers tas inn som kildemateriale for mulig senere bruk, men det opprettes **ikke et fjerde brukerrettet verktøy** i denne leveransen. Den tabellens retning «eksisterende legemiddel → legges til» må bevares.
 
+**Kildetekst vises aldri.** OUSFAR skal aldri vise Psychiatrienets anbefalinger ordrett, heller ikke korte sitater, og heller ikke oversatte eller omskrevne versjoner av originalteksten. OUSFAR viser selvstendig faglig vurderte, matematisk formulerte regler og kildehenvisninger (lenke, revisjon, dato). Prinsippet gjelder alle faser fra P4 og alle flater: verktøyene, forklaringer, utskrift, kopiering, eksport, repoet og testdata. Begrunnelsen står i `docs/verktøy-p3-rettigheter.md`.
+
 **Endelig eksklusjon: Johannesurt (Hypericum / St. John's wort).**
 
 - Ingen fagside skal opprettes for johannesurt. Eventuelle eksisterende egne oppføringer/fagsider må oppdages og håndteres kontrollert, slik at de ikke inngår i dette verktøyområdet.
@@ -124,9 +126,9 @@ Sidene er «Ikke kuratert», og en fagside uten faginnhold sier nå selv at den 
 
 **Resultat (27.10.2026):**
 
-*Rettigheter (P3.1).* Psychiatrienet eies av forlaget De Tijdstroom og har ingen lisens eller bruksvilkår som tillater kopiering; repoet er offentlig. Teksten i anbefalingene er derfor **ikke** lagret, verken i repoet eller internt. Det som lagres, er fakta om hver anbefaling: adresse, tabellkoordinater, revisjon, tidspunkt, kontrollsummer, retningen siden selv oppgir, avsnittsoverskrifter og navnene i faktaboksene. Vurderingen per bruk (intern lagring, egne regler, offentlig videreformidling) og et utkast til henvendelse om tillatelse står i `docs/verktøy-p3-rettigheter.md`.
+*Rettigheter (P3.1).* Psychiatrienet eies av forlaget De Tijdstroom og har ingen lisens eller bruksvilkår som tillater kopiering; repoet er offentlig. Ingen tekst fra kilden er derfor lagret, verken i repoet, internt eller midlertidig på disk: ikke anbefalingene, avsnittsoverskriftene, fotnotene eller lenketitlene. Det som lagres, er et minimum av metadata for å vise til og følge med på hver anbefaling: adresse, tabellkoordinater og lenker, revisjon, tidspunkt, kontrollsummer, legemiddelnavnene i retningen siden selv oppgir, hva slags avsnitt den har, og navnene i faktaboksene. Det er ikke fastslått at et systematisk uttrekk av denne strukturen er fritt hvis samlingen har databasevern; det er heller ikke fastslått at den har det. Notatet `docs/verktøy-p3-rettigheter.md` skiller opphavsrett (uttrykksform) fra databasevern, vurderer intern lagring, egne regler, fullstendig systematisk overføring og offentlig visning hver for seg, og har et utkast til henvendelse om tillatelse. Produktbeslutningen om at kildeteksten aldri vises (avsnitt 1) er tatt inn.
 
-*Import (P3.2–P3.5).* `npm run verktoy:kildeimport -- hent` henter de tre tabellene og hver side de lenker til, én om gangen, og legger dem som et uttrekk i kildearkivet `src/data/verktoy/psychiatrienet-kildearkiv.json` (lesingen i `src/verktoy/kildeside.ts`, arkivet i `src/verktoy/kildearkiv.ts`). Sidene for johannesurt og Start-kolonnen hentes ikke. Oppføringene lages av arkivet og P1-kartleggingen i `src/verktoy/kildeanbefalinger.ts`: én per celle, med tabell, rad og kolonne, virkestoffer, retning (bytte, tillegg eller seponering), formulering (LA, ER, MA), kildeside, URL, revisjon, tidspunkt, uttrekk, to kontrollsummer (hele siden og selve anbefalingen), om den er gruppebasert, delt med andre celler eller har samme tekst som en annen side, om den er tilgjengelig, og kjente kildeproblemer. Alle har status «kildeoppføring», aldri regel. Uttrekk 1 (27.10.2026 kl. 20:01–20:09 UTC): 994 sider, **1 044 anbefalinger** – Combining Moodstabilizers 110, Switching Antidepressants 529 (506 bytter og 23 Stop), Switching Antipsychotics 405 (76 gruppebaserte, 54 celler som deler siden «Depot-Depot», og 6 bytter mellom paliperidondepotene i en undertabell på siden for Paliperidone_ER → Paliperidone_ER, som P1 ikke hadde sett).
+*Import (P3.2–P3.5).* `npm run verktoy:kildeimport -- hent` henter de tre tabellene og hver side de lenker til, én om gangen, og legger dem som et uttrekk i kildearkivet `src/data/verktoy/psychiatrienet-kildearkiv.json` (lesingen i `src/verktoy/kildeside.ts`, arkivet i `src/verktoy/kildearkiv.ts`). Sidene for johannesurt og Start-kolonnen hentes ikke. Forbigående serverfeil (429, 5xx, brudd) prøves på nytt, og vedvarer de, stopper innhentingen uten å skrive noe (`src/verktoy/kildehenting.ts`), så bare reelle svar som 404 registreres som hull. Oppføringene lages av arkivet og P1-kartleggingen i `src/verktoy/kildeanbefalinger.ts`: én per celle, med tabell, rad og kolonne, virkestoffer, retning (bytte, tillegg eller seponering), formulering (LA, ER, MA), kildeside, URL, revisjon, tidspunkt, uttrekk, to kontrollsummer (hele siden og selve anbefalingen), om den er gruppebasert, delt med andre celler eller har samme tekst som en annen side, om den er tilgjengelig, og kjente kildeproblemer. Alle har status «kildeoppføring», aldri regel. Uttrekk 1 (27.10.2026 kl. 21:00–21:09 UTC): 994 sider, **1 044 anbefalinger** – Combining Moodstabilizers 110, Switching Antidepressants 529 (506 bytter og 23 Stop), Switching Antipsychotics 405 (76 gruppebaserte, 54 celler som deler siden «Depot-Depot», og 6 bytter mellom paliperidondepotene i en undertabell på siden for Paliperidone_ER → Paliperidone_ER, som P1 ikke hadde sett).
 
 *Stop-lenkene.* Vortioksetin og doksepin er hentet fra kildens egne sider på en annen adresse (`stop-vortioxetine`, `stop-doxepin`) og merket slik. For fenelzin finnes ingen Stop-side på noen adresse eller i søket på nettstedet; den står som ikke tilgjengelig, og ingen anbefaling er laget.
 
@@ -134,11 +136,12 @@ Sidene er «Ikke kuratert», og en fagside uten faginnhold sier nå selv at den 
 
 *Kildeproblemer som er funnet* (ikke rettet, til P4): sidene for tre par i Combining Moodstabilizers (aripiprazol med lamotrigin, risperidon og ziprasidon) oppgir motsatt retning av tabellen; faktaboksen for Rest AP på sidene har andre medlemmer enn tabellen (mangler flufenazin og promazin, og på 24 sider også ziprasidon, men har paliperidon); sidene for Paliperidone_ER kaller formuleringen «Paliperidone LA»; Haloperidol_LA → Zuclopenthixol_MA har nøyaktig samme tekst som det perorale Haloperidol → Zuclopenthixol_MA.
 
-**Kontroll:** `src/__tests__/verktoykildegrunnlag.test.ts` kontrollerer lesingen av en side (retning, grupper, undertabell, at kontrollsummen ikke endres av MediaWikis tidsstempler, og at ingen tekst tas med), at arkivet bare vokser og viser endringer uten å endre gamle versjoner, og for det virkelige uttrekket: fullstendighet mot tabellene og P1, retning, grupper, den delte depotsiden, formuleringer og undertabellen, Stop-kolonnen og de tre Stop-lenkene, johannesurt og Start, at arkivet ikke har anbefalingstekst, at bare verktøymodulene leser det, og at rapporten er oppdatert.
+**Kontroll:** `src/__tests__/verktoykildegrunnlag.test.ts` kontrollerer lesingen av en side (retning, grupper, undertabell, at kontrollsummen ikke endres av MediaWikis tidsstempler, og at ingen tekst eller overskrift tas med), hentingen (en 404 godtas med én gang, 429/5xx/brudd prøves på nytt og stopper innhentingen når de vedvarer, og skriptet skriver bare arkivet og rapporten til disk), at arkivet bare vokser og viser endringer uten å endre gamle versjoner, og for det virkelige uttrekket: fullstendighet mot tabellene og P1, retning, grupper, den delte depotsiden, formuleringer og undertabellen, Stop-kolonnen og de tre Stop-lenkene, johannesurt og Start, at arkivet bare har feltene i en fast liste over tillatte felt (med form på verdiene, så et navnefelt ikke kan inneholde en setning), at bare verktøymodulene leser det, og at rapporten er oppdatert.
 
 **Spørsmål til P4:**
 
-- Tillatelse fra De Tijdstroom (utkast i rettighetsnotatet): uten den må OUSFARs regler lages som egne faglige vurderinger, ikke som en omgjøring av hele tabellsettet.
+- Tillatelse fra De Tijdstroom (utkast i rettighetsnotatet): uten den lages OUSFARs regler som selvstendige faglige vurderinger per kombinasjon, ikke som en fullstendig systematisk overføring av tabellsettet. Skal tabellsettet likevel overføres i sin helhet, må databasespørsmålet avklares først.
+- Kildeteksten vises aldri, heller ikke oversatt eller omskrevet (avsnitt 1): regelmodellen i P4.1 skal derfor ikke ha felt for kildetekst.
 - Fenelzin har ingen Stop-anbefaling: skal nedtrapping av fenelzin være uten støtte, eller bygges på en annen kilde?
 - Rest AP: skal gruppen følge tabellen (med flufenazin, promazin og ziprasidon) eller faktaboksen på sidene (med paliperidon)? Gjelder også om paliperidon skal arve gruppeanbefalingene.
 - De seks kombinasjonssidene med motsatt retning: hvilken retning gjelder anbefalingen egentlig?
@@ -150,11 +153,13 @@ Sidene er «Ikke kuratert», og en fagside uten faginnhold sier nå selv at den 
 
 ### P4 – Kildeuavhengig, faglig validert regelmodell
 
+**Kildetekst:** Regelmodellen har ingen felt for kildens tekst. En regel er OUSFARs egen faglige vurdering, formulert matematisk, med kildehenvisning til kildeoppføringen (P3); den er ikke en oversettelse eller omskriving av kilden (avsnitt 1). Uten tillatelse fra utgiveren lages regler per kombinasjon som selvstendige vurderinger, ikke som en fullstendig systematisk overføring av tabellsettet (`docs/verktøy-p3-rettigheter.md`).
+
 - [ ] **P4.1** Definer egne objekter for kildeoppføring, faglig fortolkning, versjonert regelsett, godkjenningsstatus og beregningsresultat. Et regelsett skal kunne bruke andre kilder enn Psychiatrienet senere.
 - [ ] **P4.2** Støtt: prosent av **startdose**, prosent av **aktuell dose**, faste doser, intervall i dager/uker, mål-/startdose, overlapp, sekvensielt bytte, pauser/utvasking, dosegrenser, administrasjonsformer og betingelser.
 - [ ] **P4.3** Skil tydelig mellom bindende krav (f.eks. nødvendig utvasking, begrenset overlapp, formulering) og veiledende preferanser (f.eks. omtrentlig prosent og ønsket trinnlengde).
 - [ ] **P4.4** Klassifiser kildene som **entydig beregnbar**, **beregnbar etter eksplisitt faglig avklaring**, **bare tekstlig veiledning** eller **mangler anbefaling**. Ingen automatisk regel ved tvetydighet.
-- [ ] **P4.5** Beskriv for hver foreslått generalisering hva som er kildetro og hva som er OUSFARs selvstendige faglige tilpasning. Ikke bruk samme klassifikasjon for «kildeutdrag» og «godkjent anbefaling».
+- [ ] **P4.5** Beskriv for hver foreslått generalisering hva som er kildetro og hva som er OUSFARs selvstendige faglige tilpasning. Ikke bruk samme klassifikasjon for «kildeoppføring» og «godkjent anbefaling».
 - [ ] **P4.6** Vurder klinisk ulike nedtrappingsstrategier (lineær, gjentatt prosentvis, hyperbolsk/ikke-lineær) og grenser for når ekstra trinn er forsvarlige. Flere trinn er et mulig valg, ikke automatisk en forbedring.
 - [ ] **P4.7** Definer minst ett lite pilotsett med ulike regelklasser og konkrete, forventede beregningseksempler. Prioriter enkel seponering, krysstapering, fast opptrapping, MAO-utvasking, gruppebasert antipsykotikabytte og depot.
 - [ ] **P4.8** ChatGPT gjør uavhengig kildekontroll og stresstest av pilotreglene; uenigheter avgjøres eksplisitt før de merkes «klinisk godkjent».
@@ -163,6 +168,8 @@ Sidene er «Ikke kuratert», og en fagside uten faginnhold sier nå selv at den 
 
 ### P5 – FEST-tilpasset, deterministisk beregningsmotor
 
+**Kildetekst:** Motoren regner bare med godkjente OUSFAR-regler og viser aldri kildens tekst (avsnitt 1).
+
 - [ ] **P5.1** Bruk den **eksisterende** nattlige FEST-synkroniseringen og «Hent nå», ikke en parallell importør. Sjekk status og dato for siste vellykkede uttrekk.
 - [ ] **P5.2** Definer dosebyggesteiner per faktisk preparat, legemiddelform og styrke (inkludert enhet, saltforhold, administrasjonsvei og eventuelle dosebegrensninger).
 - [ ] **P5.3** Beregn halve/fjerdedels tabletter **bare** når informasjon for akkurat dette preparatet tillater det. Uavklart deling betyr ikke delbart; ikke anta at kapsler eller modifisert frisetting kan åpnes/deles/knuses.
@@ -170,13 +177,15 @@ Sidene er «Ikke kuratert», og en fagside uten faginnhold sier nå selv at den 
 - [ ] **P5.5** Implementer ønsket faglig dosekurve **før** praktisk dosevalg. Beregn oppnåelige doser og velg en plan som først oppfyller harde sikkerhetskrav, deretter minimerer doseavvik og praktisk kompleksitet.
 - [ ] **P5.6** Legg til presis avrunding, doseenheter, maksimum/minimum, trinnvarighet, ikke-negative doser, riktig håndtering av dag 1 og korrekte kalenderdatoer ved valgfri startdato. Avvik fra ønsket plan må dokumenteres.
 - [ ] **P5.7** Støtt to samtidige legemiddelforløp uten å glemme utvaskingsperioder; for depot må tidspunkt og varighet håndteres som egen tidsmodell, ikke som perorale daglige doser.
-- [ ] **P5.8** Mangler gyldig regel, preparat eller gjennomførbar dose: stans beregningen, oppgi grunnen og vis eventuell godkjent fagtekst; ikke gjett eller utvid en regel lydløst.
+- [ ] **P5.8** Mangler gyldig regel, preparat eller gjennomførbar dose: stans beregningen, oppgi grunnen og vis eventuell godkjent OUSFAR-fagtekst (aldri kildens tekst); ikke gjett eller utvid en regel lydløst.
 - [ ] **P5.9** Merk hver beregnet plan med kilde-/regelversjon, beregningsmotorversjon og FEST-uttrekkets dato. Like inndata og like versjoner skal gi samme resultat.
 - [ ] **P5.10** Lag automatiserte enhets-, grense- og egenskapstester, særlig for prosentdefinisjoner, deling, ikke-delbare depotpreparater, manglende styrker, utvasking og runding. ChatGPT kontrollerer klinisk meningsinnhold i testtilfellene.
 
 **Akseptanse:** Samme motor brukes i alle tre verktøy. Ingen dose kan presenteres som fysisk gjennomførbar uten et spor til konkrete, tillatte preparatbyggesteiner.
 
 ### P6 – Felles navigasjon og brukergrensesnitt
+
+**Kildetekst:** Planvisningen viser OUSFARs regler og kildehenvisninger med lenke til kilden, aldri kildens tekst, sitater eller oversettelser av den (avsnitt 1).
 
 - [ ] **P6.1** Lag et verktøyregister med stabil ID, navn, søkealiaser og rute per verktøy. Det skal være enkelt å legge til senere verktøy.
 - [ ] **P6.2** Bygg om sidemenyen med to tydelige valg: Verktøy og Stoffregister. Bevar eksisterende stoffregister, favoritter, tastaturflyt, Ctrl+M, tilgjengelighet og gjenoppretting etter oppdatering.
@@ -192,6 +201,8 @@ Sidene er «Ikke kuratert», og en fagside uten faginnhold sier nå selv at den 
 
 ### P7 – Første brukerrettede verktøy: Trappe ned antidepressiv
 
+**Kildetekst:** Stop-anbefalingene brukes som kildegrunnlag for egne, godkjente regler; verktøyet viser aldri kildens tekst (avsnitt 1).
+
 - [ ] **P7.1** Bruk Stop-kildene for samtlige inkluderte antidepressiva og registrer regelstatus for hvert stoff.
 - [ ] **P7.2** Inndata: valgt stoff, gjeldende dose og valgfri startdato; etterspør preparat/formulering når doseberegningen krever det.
 - [ ] **P7.3** Generer dag-for-dag eller trinnvis plan helt til seponering, med konkret tilgjengelig dosebygging.
@@ -201,6 +212,8 @@ Sidene er «Ikke kuratert», og en fagside uten faginnhold sier nå selv at den 
 **Akseptanse:** Alle inkluderte stoffer har dokumentert status: klinisk godkjent beregning, bare fagtekst eller ikke tilgjengelig. Verktøyet skal ikke late som dekningen er større.
 
 ### P8 – Bytte antidepressiv
+
+**Kildetekst:** Byttene bygger på egne, godkjente regler med kildehenvisning; verktøyet viser aldri kildens tekst (avsnitt 1).
 
 - [ ] **P8.1** Implementer retningsbestemt fra/til-kobling; A→B og B→A skal ikke blandes.
 - [ ] **P8.2** Krev gjeldende dose og en klinisk gyldig måldose/eksplisitt bekreftet standarddose for nytt stoff, pluss nødvendig preparat/formulering.
@@ -298,6 +311,7 @@ Før en oppgave eller fase krysses av:
 | 27.10.2026 | P2.1–P2.5 | 16 fagsider uten faginnhold, FEST-koblinger og søkealiaser, PR #280. `npm test` og `npm run build` grønne | Venter på ChatGPTs kontroll, særlig kategoriplasseringen i stoffregisteret og de seks stoffene uten preparater i FEST. Sidene finnes i produksjon først når PR-en er slått sammen |
 | 27.10.2026 | P2 godkjent og utrullet | ChatGPT kontrollerte PR #280 faglig; squash-merget (f924c51). Produksjonsmigreringen (GitHub Actions, kjøring 40) lyktes, og produksjonen ble lest etterpå: alle 16 sider publisert, hver med én FEST-kobling, alle plassert i stoffregisteret. P2 er ferdig | – |
 | 27.10.2026 | P3.1–P3.7 | Rettighetsnotat, kildearkiv (uttrekk 1: 994 sider, 1 044 anbefalinger), dekningsrapport og tester, PR #281. `npm test` og `npm run build` grønne | Venter på ChatGPTs kontroll (P3.8) og svar på spørsmålene til P4. Ingen anbefalingstekst er lagret og ingen regler er laget |
+| 27.10.2026 | P3 rettet etter kontroll | ChatGPTs fire funn i PR #281 rettet: ingen mellomlagring av sider på disk; fotnoter, lenketitler og avsnittsoverskrifter fjernet fra arkivet og P1-øyeblikksbildet, og en fast liste over tillatte felt i testene; produktbeslutningen om at kildeteksten aldri vises er ført inn i avsnitt 1 og P4–P8, og rettighetsnotatet skiller opphavsrett fra databasevern; forbigående serverfeil prøves på nytt og stopper innhentingen. Arkivet er hentet på nytt i den nye formen | Venter på ChatGPTs nye kontroll (P3.8) |
 
 ## 8. Startoppdrag til Claude Code
 

@@ -15,7 +15,7 @@ leses på kilden; kontrollsummen viser om den er den samme som da den ble hentet
 
 | Uttrekk | Startet | Ferdig | Leserversjon |
 | --- | --- | --- | --- |
-| 1 | 27.10.2026 kl. 20:01 UTC | 27.10.2026 kl. 20:09 UTC | 1 |
+| 1 | 27.10.2026 kl. 21:00 UTC | 27.10.2026 kl. 21:09 UTC | 1 |
 
 Rapporten gjelder uttrekk 1.
 
@@ -223,7 +223,11 @@ faglig i P4.
 Adressen, svaret (status og eventuell videresending), tidspunktet den ble
 hentet, MediaWiki-revisjonen og når kilden lagret den, kontrollsummen av hele
 innholdet og av selve anbefalingen (SHA-256 av normalisert tekst), hva siden
-selv sier at den gjelder («from … to …», «Adding …», «Stop …»),
-overskriftene på avsnittene, navnene i faktaboksene (med gruppemedlemmer), og
-undertabellen når siden har en. Ikke anbefalingsteksten, referansene eller
-annen tekst fra siden.
+selv sier at den gjelder (legemiddelnavnene i «from … to …», «Adding …»,
+«Stop …»), hva slags avsnitt den har (stopp, start, informasjon; ikke
+overskriftene), navnene i faktaboksene (med gruppemedlemmer), og
+undertabellens koordinater og lenker når siden har en. For tabellene: rader,
+kolonner og grupper med koder og navn, og hver celles koordinater og lenke.
+Ikke anbefalingsteksten, overskrifter, fotnoter, lenketitler, referansene eller
+annen tekst fra kilden. Sidene skrives aldri til disk, heller ikke midlertidig.
+Testene har en fast liste over feltene arkivet kan ha.

@@ -19,7 +19,7 @@ export const ENDRINGSLOGG: Endring[] = [
     omfang: 'Minimalt omfang',
     punkter: [
       'Ingen endring i appen ennå. Hver anbefaling i Psychiatrienets tabeller for bytte av antidepressiva og antipsykotika, Stop-anbefalingene for antidepressiva og kombinasjonene av stemningsstabilisatorer er registrert med kilde, versjon, tidspunkt og kontrollsum, så endringer hos kilden kan oppdages. Johannesurt og den generelle Start-kolonnen er utelatt.',
-      'Anbefalingene er ikke gjort om til regler, og teksten deres er ikke kopiert, fordi kilden ikke gir tillatelse til det.',
+      'Anbefalingene er ikke gjort om til regler, og ingen tekst fra dem er lagret, fordi kilden ikke gir tillatelse til det. OUSFAR vil aldri vise Psychiatrienets tekst, bare egne, faglig vurderte regler med lenke til kilden.',
     ],
     utenVarsel: true,
   },

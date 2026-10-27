@@ -1047,7 +1047,6 @@
     }
    ],
    "grupper": [],
-   "fotnoter": [],
    "revisjon": 10184,
    "lagret": "2024-03-09T01:10:51Z",
    "url": "https://psychiatrienet.nl/switchtabel/show?id=CombiningMoodstabilizers",
@@ -6209,7 +6208,6 @@
     }
    ],
    "grupper": [],
-   "fotnoter": [],
    "revisjon": 10673,
    "lagret": "2026-04-15T00:10:06Z",
    "url": "https://psychiatrienet.nl/switchtabel/show?id=SwitchAntidepressants",
@@ -10449,9 +10447,6 @@
       }
      ]
     }
-   ],
-   "fotnoter": [
-    "ER = extended release (Palmeux® + Xeplion® + Trivecta® + Byannli®), LA = long acting, MA = medium acting"
    ],
    "revisjon": 10641,
    "lagret": "2026-01-29T01:10:06Z",

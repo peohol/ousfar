@@ -6,9 +6,10 @@
  * Psychiatrienet gir ingen lisens til å kopiere tekstene
  * (`docs/verktøy-p3-rettigheter.md`), og repoet er offentlig. Derfor lagres
  * bare sidens identitet (tittel, revisjon), kontrollsummer av teksten,
- * retningen siden selv oppgir, overskriftene på avsnittene, legemidlene og
- * gruppemedlemmene siden nevner, og en eventuell undertabell med lenker.
- * Ingen setning fra anbefalingen tas vare på.
+ * retningen siden selv oppgir, hvilke slags avsnitt den har (ikke
+ * overskriftene), legemidlene og gruppemedlemmene siden nevner, og en
+ * eventuell undertabell med koordinater og lenker. Ingen setning fra
+ * anbefalingen tas vare på, heller ikke korte sitater.
  *
  * Sidene er MediaWiki-sider. Innholdet står i `mw-parser-output`: først en
  * ramme med ett faktaboks per legemiddel (eller gruppe), så anbefalingen
@@ -16,7 +17,7 @@
  * avsnitt som har et skilt foran overskriften, og til slutt referansene.
  */
 import { createHash } from 'node:crypto'
-import { lesRevisjon, lesSwitchtabell, tekst, type Switchtabell } from './kildetabeller'
+import { arkivtabell, lesRevisjon, lesSwitchtabell, tekst, type Arkivtabell } from './kildetabeller'
 
 /** Hvilken versjon av lesingen som laget en avlesning. Økes når lesingen eller normaliseringen endres. */
 export const LESERVERSJON = 1
@@ -52,10 +53,11 @@ export interface Kildeinnhold {
   sidetype: Sidetype
   /** Retningen siden selv oppgir, med kildens navn: fra/til, eller eksisterende/legges til. */
   retning: { fra: string; til: string | null } | null
-  avsnitt: { type: Avsnittstype; overskrift: string }[]
+  /** Hva slags avsnitt anbefalingen har, i rekkefølge (stopp, start, informasjon …), uten overskriftene. */
+  avsnitt: Avsnittstype[]
   legemidler: Sidelegemiddel[]
   /** En switchtabell på selve siden, f.eks. mellom paliperidondepotene. */
-  undertabell: Omit<Switchtabell<string>, 'revisjon' | 'lagret'> | null
+  undertabell: Arkivtabell | null
 }
 
 const sha256 = (s: string) => createHash('sha256').update(s, 'utf8').digest('hex')
@@ -113,8 +115,8 @@ function lesLegemidler(ramme: string): Sidelegemiddel[] {
 
 function lesAvsnitt(anbefaling: string): Kildeinnhold['avsnitt'] {
   return [...anbefaling.matchAll(/<div\b[^>]*>\s*<img\b[^>]*alt="([^"]*)"[^>]*>([\s\S]*?)<\/div>/g)]
-    .map((m) => ({ type: SKILT[m[1]!] ?? 'annet', overskrift: tekst(m[2]!) }))
-    .filter((a) => a.overskrift !== '')
+    .filter((m) => tekst(m[2]!) !== '')
+    .map((m) => SKILT[m[1]!] ?? 'annet')
 }
 
 function lesRetning(anbefaling: string, overskrift: string | null): Pick<Kildeinnhold, 'sidetype' | 'retning'> {
@@ -145,11 +147,7 @@ export function lesKildeinnhold(html: string): Kildeinnhold {
   const referanser = etterRamme.indexOf('<div class="myrefs"')
   const anbefaling = referanser < 0 ? etterRamme : etterRamme.slice(0, referanser)
 
-  let undertabell: Kildeinnhold['undertabell'] = null
-  if (alt.includes('<table class="switchtable"')) {
-    const { revisjon: _r, lagret: _l, ...t } = lesSwitchtabell(overskrift ?? 'undertabell', alt)
-    undertabell = t
-  }
+  const undertabell = alt.includes('<table class="switchtable"') ? arkivtabell(lesSwitchtabell(overskrift ?? 'undertabell', alt)) : null
   const retning = lesRetning(anbefaling, overskrift)
   return {
     overskrift,

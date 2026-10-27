@@ -41,7 +41,7 @@ describe('Lesingen av en switchtabell', () => {
   const godeRader = `<tr><th>Aa</th><th>Alfa</th><td> — </td><td><a href="/switchdetail/a-b" title="A-B">AaBb</a></td><td><a href="/switchdetail/stop-a">Aa–</a></td></tr>
     <tr><th>Bb</th><th>Beta &amp; co</th><td><a href="/switchdetail/b-a">BbAa</a></td><td> — </td><td> — </td></tr>`
 
-  it('gir rader, kolonner, celler, grupper, fotnoter og revisjon', () => {
+  it('gir rader, kolonner, celler, grupper og revisjon, men ikke fotnotene', () => {
     const t = lesSwitchtabell('SwitchAntipsychotics', side(godeRader))
     expect(t.radetikett).toBe('from')
     expect(t.kolonneetikett).toBe('to')
@@ -53,7 +53,7 @@ describe('Lesingen av en switchtabell', () => {
     expect(t.grupper).toEqual([
       { navn: 'Gruppe', href: '/switchdetail/gruppe', medlemmer: [{ navn: 'A1', href: '/switchdetail/a1' }, { navn: 'A2', href: '/switchdetail/a2' }] },
     ])
-    expect(t.fotnoter).toEqual(['LA = long acting'])
+    expect(t).not.toHaveProperty('fotnoter')
     expect(t.revisjon).toBe(10641)
     expect(t.lagret).toBe('2026-01-29T01:10:06Z')
   })
