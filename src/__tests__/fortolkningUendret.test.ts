@@ -78,13 +78,14 @@ const DATASETT: Record<string, string> = {
  * fikk ny ordlyd og de nye situasjonene (samlet vurdering, under cut-off og
  * kort tid mellom prøvene) kom til. Konklusjonene, nivåene og tallgrunnlaget
  * er de samme; den nye fasiten ble kontrollert mot den gamle på alt annet enn
- * kommentarteksten.
+ * kommentarteksten. Den ble byttet på samme måte 27.10.2026, da «kan ikke
+ * fastslås» under cut-off fikk egen kommentar.
  */
 const FORTOLKNINGSUTFALL: Record<string, string> = {
   band: '0beefabadcb7f4dc7e1438c9feb7f9496c40e7a883336031a2f6f59648114779',
   etg: '9aa2aea633064367b24e4a9578c37fb5fde700f7b410c8710187769c62ef434c',
   rus: '33a3739b124621c0deca34f68675b10c5398598ca78f3f6775456e3981621078',
-  thc: 'b6c0ecd8ce6423262565b8847c16ee8c29dc940ed740beab39428f08f60a2e33',
+  thc: 'befbd14c72276a1daff2e3283be8f4f6a3c6b50847ff815fa9f309c7a256cc0f',
   kategorier: 'd6b8c44090aa62afd61f57bfa8ff317c6c6e6ade4498485c0a7cff1804786098',
 }
 

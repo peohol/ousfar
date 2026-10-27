@@ -197,9 +197,10 @@ export interface ThcKommentarvalg {
 }
 
 /**
- * Kommentaren konklusjonen gir. Under cut-off har «ikke nødvendigvis» sin
- * egen kommentar; «kan ikke fastslås» erstattes av den samlede vurderingen
- * når en enda tidligere prøve gir nytt inntak; og kort tid mellom prøvene
+ * Kommentaren konklusjonen gir. Under cut-off har «ikke nødvendigvis» og
+ * «kan ikke fastslås» hver sin egen kommentar; «kan ikke fastslås» erstattes
+ * av den samlede vurderingen når en enda tidligere prøve gir nytt inntak,
+ * også under cut-off; og kort tid mellom prøvene
  * gir sin egen. Ellers er det situasjonen selv, med egen kommentar for
  * nivåene som tyder på nylig inntak. Hver kommentar er beskrevet i
  * `THC_SITUASJONSINFO`.
@@ -212,6 +213,7 @@ export function velgKommentar(
   if (kortTid) return 'kort_tid'
   if (utfall === 'vanskelig' && samlet) return 'samlet_vurdering'
   if (utfall === 'ikke_nodvendigvis' && underCutoff) return 'under_cutoff_ikke_nodvendigvis'
+  if (utfall === 'vanskelig' && underCutoff) return 'under_cutoff_vanskelig'
   return kommentarnokkel(utfall, niva.nylig_inntak)
 }
 
@@ -384,6 +386,12 @@ export type ThcResultat =
       /** Satt når den samlede vurderingen fant nytt inntak etter en enda tidligere prøve. */
       samlet: ThcSamletVurdering | null
       /**
+       * Sant når den samlede vurderingen ble gjort, men ingen av de tidligere
+       * prøvene ga nytt inntak. Kommentaren er da den vanlige mot forrige
+       * prøve, og modulen sier fra om hvorfor.
+       */
+      samletUtenNyttInntak: boolean
+      /**
        * Sant når det er mer enn regelsettets varselgrense i døgn mellom
        * prøvene. Fortolkningen skjer som normalt; dette er bare et varsel.
        */
@@ -488,7 +496,11 @@ export function fortolkThc(inn: ThcInndata, modell: ThcModell): ThcResultat {
     forrigeDato: string,
     grunnlag: ThcGrunnlag | null,
     langt: boolean,
-    { samlet = null, kortTid = false }: { samlet?: ThcSamletVurdering | null; kortTid?: boolean } = {},
+    {
+      samlet = null,
+      samletUtenNyttInntak = false,
+      kortTid = false,
+    }: { samlet?: ThcSamletVurdering | null; samletUtenNyttInntak?: boolean; kortTid?: boolean } = {},
   ) => {
     const kommentarnokkel = velgKommentar(niva, utfall, { underCutoff, samlet: samlet !== null, kortTid })
     const { kommentar, deler } = byggKommentar(modell, kommentarnokkel, {
@@ -505,6 +517,7 @@ export function fortolkThc(inn: ThcInndata, modell: ThcModell): ThcResultat {
       bolker: deler,
       grunnlag,
       samlet,
+      samletUtenNyttInntak,
       langtMellomProvene: langt,
     }
   }
@@ -536,6 +549,9 @@ export function fortolkThc(inn: ThcInndata, modell: ThcModell): ThcResultat {
     })
 
   const { korrigert, forventet, utfall } = sammenlign(forrigeIrcak, dager, underCutoff)
+  // De tidligere prøvene vurderes bare når forrige prøve gir «kan ikke fastslås».
+  const vurderSamlet = utfall === 'vanskelig' && tidligere.length > 0
+  const samlet = vurderSamlet ? samletVurdering(tidligere, tidligereIrcak as number[], inn, sammenlign) : null
 
   return resultat(
     utfall,
@@ -552,7 +568,7 @@ export function fortolkThc(inn: ThcInndata, modell: ThcModell): ThcResultat {
       forventet,
     },
     langt,
-    { samlet: utfall === 'vanskelig' ? samletVurdering(tidligere, tidligereIrcak as number[], inn, sammenlign) : null },
+    { samlet, samletUtenNyttInntak: vurderSamlet && samlet === null },
   )
 }
 

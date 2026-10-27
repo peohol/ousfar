@@ -60,6 +60,14 @@ export function ThcKommentar({
           )}
         </div>
       )}
+      {/* Den samlede vurderingen endret ikke noe, så kommentaren sier ikke
+          noe om den; brukeren skal likevel vite at den ble gjort. */}
+      {resultat.samletUtenNyttInntak && (
+        <p className="notis thc-samlet-uten-treff" role="note">
+          Ingen av de tidligere prøvene ga «nytt inntak». Kommentaren er derfor den vanlige for fortolkningen mot
+          forrige prøve.
+        </p>
+      )}
       <p className="kommentartekst">{resultat.kommentar}</p>
       {handling}
     </>

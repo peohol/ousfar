@@ -5,8 +5,9 @@
  *
  * Databasen bygges slik prosjektet ble det: regelsettet importeres med
  * tekstene i seg, tallene rettes, tekstene flyttes så ut som egne
- * kommentarer, og til slutt byttes de ut med de nye kommentarene og de felles
- * setningene (12.10.2026). Det som prøves, er altså resultatet av de samme migrasjonene
+ * kommentarer, så byttes de ut med de nye kommentarene og de felles
+ * setningene (12.10.2026), og til slutt kommer kommentaren for «kan ikke
+ * fastslås» under cut-off til (27.10.2026). Det som prøves, er altså resultatet av de samme migrasjonene
  * som ble kjørt mot prosjektet, med administratoren de er skrevet for.
  */
 import type { PGlite } from '@electric-sql/pglite'
@@ -142,7 +143,7 @@ describe('regelsettet etter migrasjonene', () => {
     expect(regler).toStrictEqual(REGLER)
     expect(Object.keys(tekstbolker).sort()).toEqual([...THC_TEKSTNOKLER].sort())
     expect(new Set(Object.values(tekstbolker)).size).toBe(THC_TEKSTNOKLER.length)
-    expect([revisjon, publisert_revisjon]).toEqual([4, 4])
+    expect([revisjon, publisert_revisjon]).toEqual([5, 5])
     // Tallene er de samme flyttallene, ikke bare like når de skrives ut.
     expect(regler.kurver.gul.a1).toBe(2 * 75.10642536264817)
     expect(regler.konverteringsfaktor).toBe(344.451 / 1000)
@@ -183,9 +184,10 @@ describe('regelsettet etter migrasjonene', () => {
   })
 
   it('har historikken urørt: importen, rettingen av tallene, flyttingen av tekstene og de nye kommentarene', async () => {
-    const [importen, rettingen, flyttingen, nye] = await k.revisjoner(id)
-    expect([importen, rettingen, flyttingen, nye].map((r) => r?.handling)).toEqual(['opprettet', 'endret', 'endret', 'endret'])
-    for (const r of [importen, rettingen, flyttingen, nye]) expect(r?.utfort_av).toBe(peder)
+    const revisjoner = await k.revisjoner(id)
+    const [importen, rettingen, flyttingen, nye, underCutoff] = revisjoner
+    expect(revisjoner.slice(0, 5).map((r) => r?.handling)).toEqual(['opprettet', 'endret', 'endret', 'endret', 'endret'])
+    for (const r of revisjoner.slice(0, 5)) expect(r?.utfort_av).toBe(peder)
     // Importen fikk 15 sifre; rettingen alle. Begge har tekstene i seg.
     expect((importen!.innhold as { kurver: ThcRegelsett['kurver'] }).kurver.gul.a1).not.toBe(REGLER.kurver.gul.a1)
     const { tekster, ...reglene } = rettingen!.innhold as unknown as ThcRegelsett & { tekster: ThcTekster }
@@ -196,15 +198,25 @@ describe('regelsettet etter migrasjonene', () => {
     expect(flyttet).toStrictEqual(IMPORTERTE_REGLER)
     expect(Object.keys(gamle).sort()).toEqual(Object.keys(IMPORTERTE_TEKSTER).sort())
     // De nye kommentarene: reglene er de samme, med kort tid og spørsmålsetningen.
-    expect(nye!.innhold).toStrictEqual(REGELSETT)
     const { kort_tid_dager: _k, med_sporsmalsetning: _s, ...uendret } = REGLER
     expect(uendret).toStrictEqual(IMPORTERTE_REGLER)
+    const { under_cutoff_vanskelig: _u, ...tolvte } = BOLKER
+    expect(nye!.innhold).toStrictEqual({
+      ...REGELSETT,
+      tekstbolker: tolvte,
+      med_sporsmalsetning: REGLER.med_sporsmalsetning.filter((n) => n !== 'under_cutoff_vanskelig'),
+    })
+    // Kommentaren for «kan ikke fastslås» under cut-off kom til, med spørsmålsetningen.
+    expect(underCutoff!.innhold).toStrictEqual(REGELSETT)
   })
 
-  it('har de nye tekstene i migrasjonen lik eierens ordlyd', () => {
-    const fil = migrasjonsfiler().find((f) => f.endsWith('_thc_nye_kommentarer.sql'))!
-    const json = /\$json\$(.*)\$json\$/s.exec(readFileSync(`supabase/migrations/${fil}`, 'utf8'))![1]!
-    expect(JSON.parse(json)).toStrictEqual(TEKSTER)
+  it('har de nye tekstene i migrasjonene lik eierens ordlyd', () => {
+    const les = (slutt: string) =>
+      readFileSync(`supabase/migrations/${migrasjonsfiler().find((f) => f.endsWith(slutt))!}`, 'utf8')
+    const json = /\$json\$(.*)\$json\$/s.exec(les('_thc_nye_kommentarer.sql'))![1]!
+    const { under_cutoff_vanskelig: tekst, ...tolvte } = TEKSTER
+    expect(JSON.parse(json)).toStrictEqual(tolvte)
+    expect(/\$tekst\$(.*)\$tekst\$/s.exec(les('_thc_under_cutoff_kan_ikke_fastslas.sql'))![1]).toBe(tekst)
   })
 
   it('ble importert fra de samme reglene og tekstene som fasiten', () => {
@@ -280,6 +292,27 @@ describe('lagring og publisering', () => {
     // slik regelsettet har dem nå.
     expect(innhold).toStrictEqual({ ...REGELSETT, kort_tid_dager: 2 })
     await k.lagre(id, revisjon + 2, REGELSETT)
+    await k.forventSamsvar(id)
+  })
+
+  it('gjenoppretter en revisjon fra før kommentaren for «kan ikke fastslås» under cut-off, med den kommentaren', async () => {
+    const { revisjon } = await regelsettet('utkast')
+    // Revisjon 4 har spørsmålsetningen sist i «kan ikke fastslås»; tas den
+    // bort nå, blir den borte også i det gjenopprettede.
+    await k.lagre(id, revisjon, {
+      ...REGELSETT,
+      varsel_dager_mellom: 60,
+      med_sporsmalsetning: REGLER.med_sporsmalsetning.filter((n) => n !== 'vanskelig'),
+    })
+    await k.gjenopprett(id, revisjon + 1, 4)
+    expect((await regelsettet('utkast')).innhold).toStrictEqual(REGELSETT)
+
+    // Uten spørsmålsetning for den nye kommentaren nå, får den ingen.
+    const utenSporsmal = REGLER.med_sporsmalsetning.filter((n) => n !== 'under_cutoff_vanskelig')
+    await k.lagre(id, revisjon + 2, { ...REGELSETT, med_sporsmalsetning: utenSporsmal })
+    await k.gjenopprett(id, revisjon + 3, 4)
+    expect((await regelsettet('utkast')).innhold).toStrictEqual({ ...REGELSETT, med_sporsmalsetning: utenSporsmal })
+    await k.lagre(id, revisjon + 4, REGELSETT)
     await k.forventSamsvar(id)
   })
 

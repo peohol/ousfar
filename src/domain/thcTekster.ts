@@ -41,6 +41,7 @@ export const THC_SITUASJONER = [
   'nytt_inntak',
   'samlet_vurdering',
   'under_cutoff_ikke_nodvendigvis',
+  'under_cutoff_vanskelig',
   'kort_tid',
 ] as const
 export type ThcSituasjon = (typeof THC_SITUASJONER)[number]
@@ -110,9 +111,7 @@ export const THC_SITUASJONSINFO: Record<ThcSituasjon, ThcSituasjonsinfo> = {
   },
   vanskelig: {
     tittel: 'Kan ikke fastslås',
-    brukes:
-      'Når endringen ligger over grensen for «kan ikke fastslås», men ikke for nytt inntak. Gjelder også når ' +
-      'forrige prøve er fortolket under cut-off.',
+    brukes: 'Når endringen ligger over grensen for «kan ikke fastslås», men ikke for nytt inntak.',
     plassholdere: ['{forrige prøvedato}'],
     tilgjengelige: MED_FORRIGE,
   },
@@ -125,14 +124,22 @@ export const THC_SITUASJONSINFO: Record<ThcSituasjon, ThcSituasjonsinfo> = {
   samlet_vurdering: {
     tittel: 'Samlet vurdering av flere tidligere prøver',
     brukes:
-      'I stedet for «Kan ikke fastslås» når samlet vurdering er slått på, og sammenligningen med en enda ' +
-      'tidligere prøve gir nytt inntak. Den nærmeste slike prøven brukes.',
+      'I stedet for «Kan ikke fastslås», også under cut-off, når samlet vurdering er slått på og ' +
+      'sammenligningen med en enda tidligere prøve gir nytt inntak. Den nærmeste slike prøven brukes.',
     plassholdere: ['{forrige prøvedato}', '{tidligere prøvedato}'],
     tilgjengelige: [...MED_FORRIGE, '{tidligere prøvedato}'],
   },
   under_cutoff_ikke_nodvendigvis: {
     tittel: 'Under cut-off i forrige prøve · ikke nødvendigvis nytt',
     brukes: 'I stedet for «Ikke nødvendigvis nytt» når forrige prøve er fortolket under cut-off.',
+    plassholdere: ['{forrige prøvedato}'],
+    tilgjengelige: MED_FORRIGE,
+  },
+  under_cutoff_vanskelig: {
+    tittel: 'Under cut-off i forrige prøve · kan ikke fastslås',
+    brukes:
+      'I stedet for «Kan ikke fastslås» når forrige prøve er fortolket under cut-off. Gir den samlede ' +
+      'vurderingen nytt inntak, brukes den i stedet.',
     plassholdere: ['{forrige prøvedato}'],
     tilgjengelige: MED_FORRIGE,
   },

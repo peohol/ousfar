@@ -234,10 +234,26 @@ describe('fortolkningsmodulen for THC-syre', () => {
     await user.type(gruppe('Denne prøven').getByLabelText('Prøvedato'), '2026-07-27')
     expect(screen.getByText(/men gir i seg selv ikke grunnlag for å fastslå/)).toBeTruthy()
 
+    const utenTreff = /^Ingen av de tidligere prøvene ga «nytt inntak»\. Kommentaren er derfor den vanlige/
+    expect(screen.queryByText(utenTreff)).toBeNull()
+
     await user.click(screen.getByRole('checkbox', { name: 'Samlet vurdering med enda tidligere prøver' }))
-    await user.type(gruppe('Tidligere prøve').getByRole('textbox', { name: 'IRCAK' }), '0,5')
+    // En tidligere prøve som ikke gir nytt inntak: den vanlige kommentaren, og en melding over den.
+    await user.type(gruppe('Tidligere prøve').getByRole('textbox', { name: 'IRCAK' }), '7')
+    await user.type(gruppe('Tidligere prøve').getByLabelText('Prøvedato'), '2026-06-30')
+    const melding = screen.getByText(utenTreff)
+    expect(melding.getAttribute('role')).toBe('note')
+    expect(melding.nextElementSibling?.textContent).toMatch(/men gir i seg selv ikke grunnlag for å fastslå/)
+    expect(screen.queryByText(/tilsier likevel/)).toBeNull()
+
+    // En som gir nytt inntak: den samlede kommentaren, uten meldingen.
+    const ircak = gruppe('Tidligere prøve').getByRole('textbox', { name: 'IRCAK' })
+    await user.clear(ircak)
+    await user.type(ircak, '0,5')
+    await user.clear(gruppe('Tidligere prøve').getByLabelText('Prøvedato'))
     await user.type(gruppe('Tidligere prøve').getByLabelText('Prøvedato'), '2026-06-01')
     expect(screen.getByText(/tilsier likevel at det har skjedd minst ett inntak etter prøven tatt 01\.06\.2026\./)).toBeTruthy()
+    expect(screen.queryByText(utenTreff)).toBeNull()
 
     // En prøve til gir to nummererte prøver.
     await user.click(screen.getByRole('button', { name: 'Legg til tidligere prøve' }))

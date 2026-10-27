@@ -238,12 +238,21 @@ describe('kommentarene', () => {
     }
   })
 
-  it('har egen kommentar under cut-off bare for «ikke nødvendigvis nytt»', () => {
-    const lav = nivaer[0]!
-    expect(velgKommentar(lav, 'ikke_nodvendigvis', { ...ingen, underCutoff: true })).toBe('under_cutoff_ikke_nodvendigvis')
-    for (const u of ['uten_forrige', 'vanskelig', 'nytt_inntak'] as const) {
-      expect(velgKommentar(lav, u, { ...ingen, underCutoff: true })).toBe(u)
+  it('har egen kommentar under cut-off for «ikke nødvendigvis nytt» og «kan ikke fastslås», for alle nivåer', () => {
+    for (const niva of nivaer) {
+      expect(velgKommentar(niva, 'ikke_nodvendigvis', { ...ingen, underCutoff: true })).toBe(
+        'under_cutoff_ikke_nodvendigvis',
+      )
+      expect(velgKommentar(niva, 'vanskelig', { ...ingen, underCutoff: true })).toBe('under_cutoff_vanskelig')
     }
+    expect(velgKommentar(nivaer[0]!, 'nytt_inntak', { ...ingen, underCutoff: true })).toBe('nytt_inntak')
+    expect(velgKommentar(nivaer[2]!, 'nytt_inntak', { ...ingen, underCutoff: true })).toBe('nytt_inntak_nylig')
+  })
+
+  it('bruker den samlede vurderingen også under cut-off, når den gir nytt inntak', () => {
+    expect(velgKommentar(nivaer[0]!, 'vanskelig', { ...ingen, underCutoff: true, samlet: true })).toBe(
+      'samlet_vurdering',
+    )
   })
 
   it('bytter «kan ikke fastslås» med den samlede vurderingen, og ingen annen konklusjon', () => {
@@ -325,10 +334,32 @@ describe('samlet vurdering mot tidligere prøver', () => {
     expect(kommentar(fortolk(samlet(prove('0', '2026-06-30')))).samlet?.dato).toBe('30.06.2026')
   })
 
-  it('beholder kommentaren mot forrige prøve når de tidligere prøvene ikke tilfører noe', () => {
+  it('beholder kommentaren mot forrige prøve når de tidligere prøvene ikke tilfører noe, og sier fra', () => {
     const r = kommentar(fortolk(samlet(prove('7', '2026-06-30'))))
     expect(r.samlet).toBeNull()
+    expect(r.samletUtenNyttInntak).toBe(true)
     expect(r.kommentar).toBe(forventetKommentar('lav', 'vanskelig', false, '04.07.2026'))
+    // Gir en av dem nytt inntak, er det ingenting å si fra om.
+    expect(kommentar(fortolk(samlet(prove('7', '2026-06-30'), prove('0,5', '2026-06-01')))).samletUtenNyttInntak).toBe(
+      false,
+    )
+    // Uten samlet vurdering heller ikke.
+    expect(kommentar(fortolk(grunn)).samletUtenNyttInntak).toBe(false)
+  })
+
+  it('gir den egne kommentaren under cut-off når de tidligere prøvene ikke tilfører noe', () => {
+    // Forrige prøve under cut-off, UCAK/NKRE = 6,5, gir fortsatt «kan ikke fastslås».
+    const underCutoff = { ...grunn, forrigeUnderCutoff: true, forrigeUcak: '13', forrigeNkre: '2' }
+    expect(kommentar(fortolk(underCutoff))).toMatchObject({
+      konklusjon: 'vanskelig',
+      kommentarnokkel: 'under_cutoff_vanskelig',
+      kommentar: forventetKommentar('lav', 'vanskelig', true, '04.07.2026'),
+    })
+    const ingenTreff = kommentar(fortolk({ ...underCutoff, samletVurdering: true, tidligere: [prove('7', '2026-06-30')] }))
+    expect(ingenTreff).toMatchObject({ kommentarnokkel: 'under_cutoff_vanskelig', samletUtenNyttInntak: true })
+    const treff = kommentar(fortolk({ ...underCutoff, samletVurdering: true, tidligere: [prove('0,5', '2026-06-01')] }))
+    expect(treff).toMatchObject({ kommentarnokkel: 'samlet_vurdering', samletUtenNyttInntak: false })
+    expect(treff.kommentar).toBe(forventetSamletKommentar('lav', '04.07.2026', '01.06.2026'))
   })
 
   it('gjelder bare «kan ikke fastslås»', () => {
@@ -337,6 +368,8 @@ describe('samlet vurdering mot tidligere prøver', () => {
       const med = kommentar(fortolk({ ...samlet(prove('0', '2026-06-30')), aktuellVerdi }))
       expect(med.konklusjon).not.toBe('vanskelig')
       expect(med.kommentar).toBe(uten.kommentar)
+      // De tidligere prøvene ble ikke vurdert, så det er ingenting å si fra om.
+      expect(med.samletUtenNyttInntak).toBe(false)
     }
   })
 

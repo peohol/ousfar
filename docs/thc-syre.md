@@ -40,10 +40,10 @@ som fasit i testene (se [Redigeringen](#redigeringen)).
 | `src/domain/__tests__/hjelp/thcOpprinnelig.ts` | Den opprinnelige modulen, med regnearkets konstanter i koden. Bare fasit i testene |
 | `src/domain/__tests__/fasit/thc-regelsett-import.json`, `thc-tekster-import.json` | Reglene og tekstene slik de står i den opprinnelige modulen |
 | `src/domain/__tests__/fasit/thc-regelsett.json`, `thc-tekster.json` | Reglene og tekstene slik de er publisert nå |
-| `src/domain/__tests__/hjelp/thcKommentarfasit.ts` | Kommentarene slik eieren skrev dem 12.10.2026, skrevet ut uavhengig av tekstene og motoren |
+| `src/domain/__tests__/hjelp/thcKommentarfasit.ts` | Kommentarene slik eieren skrev dem 12.10.2026 og 27.10.2026, skrevet ut uavhengig av tekstene og motoren |
 | `src/domain/__tests__/fasit/thc-fasit.json` | Fasiten: konklusjonen fra den opprinnelige modulen og kommentaren fra kommentarfasiten for over 4000 inndata |
 | `scripts/lag-thc-fasit.ts` | Lager fasiten på nytt, bare ved bevisst klinisk endring |
-| `supabase/migrations/*_thc_regelsett*.sql`, `*_thc_tekster_som_kommentarer.sql`, `*_thc_laste_deler_og_samlet_lagring.sql`, `*_thc_nye_kommentarer.sql` | Lagringen: tabellene, kontrollen på serveren, importen, flyttingen av tekstene, de låste delene, `lagre_thc_regelsett` og de nye kommentarene |
+| `supabase/migrations/*_thc_regelsett*.sql`, `*_thc_tekster_som_kommentarer.sql`, `*_thc_laste_deler_og_samlet_lagring.sql`, `*_thc_nye_kommentarer.sql`, `*_thc_under_cutoff_kan_ikke_fastslas.sql` | Lagringen: tabellene, kontrollen på serveren, importen, flyttingen av tekstene, de låste delene, `lagre_thc_regelsett` og de nye kommentarene |
 | `src/__tests__/thcRegelsettlagring.test.ts` | Lagringen prøvd mot en ekte database bygd av migrasjonene |
 | `src/__tests__/thcsteg.test.tsx`, `thcregler.test.tsx` | Modulen og redigeringssiden med reglene de får |
 | `src/__tests__/thcredigering.test.tsx`, `thcredigeringslagring.test.ts` | Redigeringen, og lagringen og publiseringen av den mot en ekte database |
@@ -91,9 +91,12 @@ og dato). Gir sammenligningen med forrige prøve «kan ikke fastslås»,
 sammenlignes denne prøven med hver av dem, fra den nærmeste og bakover, med
 den samme fremgangsmåten. Den nærmeste som gir nytt inntak (eller har IRCAK
 0), gir kommentaren «Samlet vurdering av flere tidligere prøver» med datoen
-dens. Gir ingen nytt inntak, er kommentaren den vanlige. Konklusjonen og
-tallgrunnlaget er alltid sammenligningen med forrige prøve. En tidligere
-prøve må være tatt før forrige prøve.
+dens, også når forrige prøve lå under cut-off. Gir ingen nytt inntak, er
+kommentaren den vanlige mot forrige prøve, og en melding over kommentaren
+sier at ingen av de tidligere prøvene ga «nytt inntak»
+(`samletUtenNyttInntak`). Konklusjonen og tallgrunnlaget er alltid
+sammenligningen med forrige prøve. En tidligere prøve må være tatt før
+forrige prøve.
 
 ## Regler og tekster er adskilt
 
@@ -121,9 +124,10 @@ I databasen er hver tekst en kommentar (objekttypen `kommentar`, se
 
 ## Kommentarene
 
-Ordlyden er Peders (12.10.2026). Hver kommentar er introsetningen, så
-kommentaren for situasjonen, og spørsmålsetningen sist der det er huket av
-for den, bundet sammen med ett mellomrom (`settSammen`).
+Ordlyden er Peders (12.10.2026, og 27.10.2026 for «kan ikke fastslås» under
+cut-off). Hver kommentar er introsetningen, så kommentaren for situasjonen,
+og spørsmålsetningen sist der det er huket av for den, bundet sammen med ett
+mellomrom (`settSammen`).
 
 | Nøkkel | Hva |
 | --- | --- |
@@ -135,6 +139,7 @@ for den, bundet sammen med ett mellomrom (`settSammen`).
 | `nytt_inntak` | Nytt inntak |
 | `samlet_vurdering` | Kan ikke fastslås, men en enda tidligere prøve gir nytt inntak (spørsmålsetning) |
 | `under_cutoff_ikke_nodvendigvis` | Ikke nødvendigvis nytt når forrige prøve var under cut-off (spørsmålsetning) |
+| `under_cutoff_vanskelig` | Kan ikke fastslås når forrige prøve var under cut-off (spørsmålsetning; fra 27.10.2026) |
 | `kort_tid` | Kort tid mellom prøvene (spørsmålsetning) |
 
 De fire første situasjonene har to kommentarer: én for nivåene som tyder på
@@ -142,8 +147,8 @@ nylig inntak (`_nylig`, i dag «høy») og én for de øvrige. Hvilken som
 brukes, avgjøres av flagget på nivået, ikke av navnet, så det holder også om
 nivåene endres. «Kan ikke fastslås» og «Ikke nødvendigvis nytt» har i dag den
 samme ordlyden for alle nivåer, men kan skilles. Forrige prøve under cut-off
-gir egen kommentar bare for «ikke nødvendigvis nytt»; ellers er kommentaren
-den samme som uten cut-off.
+gir egen kommentar for «ikke nødvendigvis nytt» og «kan ikke fastslås»; ved
+nytt inntak er kommentaren den samme som uten cut-off.
 
 ## Reglene
 
@@ -240,11 +245,19 @@ utkastene bare til administratorer. Tabellene kan ikke skrives direkte.
    som peker på dem. Reglene ellers er uendret. Har regelsettet et utkast
    som ikke er publisert, stopper migrasjonen uten å endre noe. De gamle
    kommentarene står igjen, med sin historikk, men brukes ikke.
+5. `*_thc_under_cutoff_kan_ikke_fastslas.sql` (27.10.2026) la inn
+   kommentaren for «kan ikke fastslås» under cut-off, og publiserte en ny
+   revisjon som peker på den, med spørsmålsetningen sist. Den stopper på
+   samme måte ved et upublisert utkast.
 
-Revisjonene fra før de nye kommentarene har tekstene i seg eller peker på de
-gamle. Gjenopprettes en av dem, får regelsettet reglene derfra og beholder
-kommentarene, grensen for kort tid og spørsmålsetningen det har nå; tekstene
-har sin egen historikk.
+Eldre revisjoner gjøres om av `intern.thc_innhold_fra_eldre_utgave` før de
+lagres igjen. Revisjonene fra før de nye kommentarene har tekstene i seg
+eller peker på de gamle. Gjenopprettes en av dem, får regelsettet reglene
+derfra og beholder kommentarene, grensen for kort tid og spørsmålsetningen
+det har nå. Revisjonene fra 12.10.2026 til 27.10.2026 får bare kommentaren
+for «kan ikke fastslås» under cut-off, og spørsmålsetningen for den, fra det
+regelsettet har nå. Tekstene har sin egen historikk. Kommer det til en ny
+kommentar, er det den funksjonen som må utvides.
 
 ## I appen
 
@@ -332,7 +345,8 @@ regelsettet, som databasen krever.
 
 Motoren er skrevet slik at regnestykkene skjer i nøyaktig samme rekkefølge som
 i den opprinnelige modulen, og gir samme resultat helt ned til siste siffer.
-Kommentarene fikk ny ordlyd 12.10.2026; fasiten ble da laget på nytt med
+Kommentarene fikk ny ordlyd 12.10.2026, og «kan ikke fastslås» under cut-off
+egen kommentar 27.10.2026; fasiten ble begge gangene laget på nytt med
 konklusjonene fra den opprinnelige modulen og kommentarene fra
 `thcKommentarfasit.ts`, og kontrollert mot den gamle: alt annet enn
 kommentarteksten er det samme, også summen over tallgrunnlaget. Testene som
