@@ -71,7 +71,6 @@ Statusene er **Ikke startet / Pågår / Til faglig kontroll / Blokkert / Ferdig*
 - [x] **P0.1** Avgrens de tre første verktøyene og den felles beregningsmotoren.
 - [x] **P0.2** Beslutt at johannesurt utelates fra sider, import og verktøy.
 - [x] **P0.3** Beslutt ansvarsdeling mellom Claude Code, ChatGPT og faglig beslutningstaker.
-- [ ] **P0.4** Claude tar planen i bruk som eneste operative sjekkliste og knytter første gjennomførings-PR til den.
 
 **Ferdig når:** Planen ligger på main og den kan brukes som referanse ved neste PR.
 
@@ -258,7 +257,7 @@ Før en oppgave eller fase krysses av:
 
 ## 8. Startoppdrag til Claude Code
 
-**Neste arbeid er P0.4 og P1, ikke implementasjon av verktøyet.**
+**Neste arbeid er P1, ikke implementasjon av verktøyet.**
 
 1. Les dette dokumentet, docs/legemiddeldata.md, docs/stoffregister.md, docs/faginnhold.md, docs/stoffsider-og-redigering.md og relevante nåværende filer. Bekreft faktisk tilstand – ikke anta at gammel repooversikt er oppdatert.
 2. Lag den fulle matrisekartleggingen og navnelisten med norske navn, kilde-ID-er, gruppe-/formuleringsvarianter og sammenligning mot OUSFAR/FEST. Arbeid kun med syntetiske/testdata.
