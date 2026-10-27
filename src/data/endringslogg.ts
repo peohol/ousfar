@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.110.1',
+    dato: '2026-10-27',
+    sammendrag: 'Kartlegging av virkestoffene og formuleringene til de kommende verktøyene for nedtrapping og bytte',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen ennå. Alle virkestoffer, grupper og formuleringer i Psychiatrienets tabeller for bytte av antidepressiva og antipsykotika og kombinasjon av stemningsstabilisatorer er kartlagt mot norske navn, legemiddeldataene fra FEST og fagsidene, som grunnlag for verktøyene som skal bygges. Johannesurt er utelatt.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.110.0',
     dato: '2026-10-27',
     sammendrag: 'Egen THC-syrekommentar for «kan ikke fastslås» under cut-off, og melding når samlet vurdering ikke endrer noe',

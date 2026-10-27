@@ -1,7 +1,7 @@
 # OUSFAR – Verktøy: utviklingsplan og fremdrift
 
 **Opprettet:** 27.10.2026  
-**Status:** Planlagt – ingen verktøy er implementert gjennom denne planen  
+**Status:** P1 til faglig kontroll – ingen verktøy er implementert gjennom denne planen  
 **Omfang:** Tre første verktøy, felles regel- og beregningsmotor, kildedata og videre drift  
 **Hovedansvar for implementering og oppdatering av denne planen:** Claude Code  
 **Uavhengig faglig kontroll:** ChatGPT, etter eksplisitt forespørsel ved kontrollpunktene nedenfor
@@ -49,7 +49,7 @@ Statusene er **Ikke startet / Pågår / Til faglig kontroll / Blokkert / Ferdig*
 | ID | Leveranse | Utførende | Uavhengig kontroll | Status | Dokumentasjon / PR |
 | --- | --- | --- | --- | --- | --- |
 | P0 | Plan og avgrensning | ChatGPT | – | **Ferdig** | Dette dokumentet, 27.10.2026 |
-| P1 | Virkestoff- og FEST-kartlegging | Claude | ChatGPT (utvalg) | Ikke startet | – |
+| P1 | Virkestoff- og FEST-kartlegging | Claude | ChatGPT (utvalg) | Til faglig kontroll | `docs/verktøy-p1-kartlegging.md`, PR #279 |
 | P2 | Manglende fagsider og FEST-koblinger | Claude | ChatGPT (avvik) | Ikke startet | – |
 | P3 | Komplett og lovlig kildeimport | Claude | ChatGPT (deknings- og stikkprøvekontroll) | Ikke startet | – |
 | P4 | Faglig regelmodell og kontrollert pilotsett | Claude | **ChatGPT – sperrende** | Ikke startet | – |
@@ -76,15 +76,17 @@ Statusene er **Ikke startet / Pågår / Til faglig kontroll / Blokkert / Ferdig*
 
 ### P1 – Fullstendig virkestoff- og formuleringskartlegging
 
-- [ ] **P1.1** Les aktuelle tabeller på https://psychiatrienet.nl/switchtabel på nytt. Lag en maskinlesbar oversikt over samtlige rad-/kolonneidentiteter og navn, også grupper og formuleringer.
-- [ ] **P1.2** Oversett/kontroller norske virkestoffnavn mot autoritative norske kilder, særlig FEST, og registrer engelske navn som søkealiaser. Identifiser usikre navn for faglig avklaring.
-- [ ] **P1.3** Sammenlign både stoffregisterfilen **og levende fagsidedata** i OUSFAR. Skill mellom allerede eksisterende fagside, uregistrert stoff og et stoff uten norsk markedsført preparat.
-- [ ] **P1.4** Opprett en versjonert koblingstabell: kilde-ID/navn → OUSFAR-stoffnøkkel → FEST-virkestoff-ID(er) → tilgjengelige formuleringer; kontroller salter/estere, moderstoffer og spesialtilfeller.
-- [ ] **P1.5** For antipsykotika: dokumenter alle medlemmer av «Partial agonist» og «Rest AP». Gruppene er **kilderegler, ikke valgbare virkestoffer**. Kartlegg egne poster for peroralt, modifisert frisetting, LA og MA; ikke anta at Psychiatrienets «ER» alltid betyr peroral depottablett.
-- [ ] **P1.6** Dokumenter matrisenes faktiske antall mulige, lenkede, tomme og utilgjengelige celler etter eksklusjon av johannesurt. Ikke bruk antatte totalsummer som dekningsbevis.
-- [ ] **P1.7** Verifiser at johannesurt ikke finnes som aktuell OUSFAR-fagside eller importmål.
+- [x] **P1.1** Les aktuelle tabeller på https://psychiatrienet.nl/switchtabel på nytt. Lag en maskinlesbar oversikt over samtlige rad-/kolonneidentiteter og navn, også grupper og formuleringer.
+- [x] **P1.2** Oversett/kontroller norske virkestoffnavn mot autoritative norske kilder, særlig FEST, og registrer engelske navn som søkealiaser. Identifiser usikre navn for faglig avklaring.
+- [x] **P1.3** Sammenlign både stoffregisterfilen **og levende fagsidedata** i OUSFAR. Skill mellom allerede eksisterende fagside, uregistrert stoff og et stoff uten norsk markedsført preparat.
+- [x] **P1.4** Opprett en versjonert koblingstabell: kilde-ID/navn → OUSFAR-stoffnøkkel → FEST-virkestoff-ID(er) → tilgjengelige formuleringer; kontroller salter/estere, moderstoffer og spesialtilfeller.
+- [x] **P1.5** For antipsykotika: dokumenter alle medlemmer av «Partial agonist» og «Rest AP». Gruppene er **kilderegler, ikke valgbare virkestoffer**. Kartlegg egne poster for peroralt, modifisert frisetting, LA og MA; ikke anta at Psychiatrienets «ER» alltid betyr peroral depottablett.
+- [x] **P1.6** Dokumenter matrisenes faktiske antall mulige, lenkede, tomme og utilgjengelige celler etter eksklusjon av johannesurt. Ikke bruk antatte totalsummer som dekningsbevis.
+- [x] **P1.7** Verifiser at johannesurt ikke finnes som aktuell OUSFAR-fagside eller importmål.
 
 **Akseptanse:** Én etterprøvbar identitetsliste uten uavklarte navnekollisjoner. Ingen gjetning basert bare på navnelikhet.
+
+**Resultat (27.10.2026):** Kartleggingen er `src/data/verktoy/virkestoffkartlegging.json`, rapporten `docs/verktøy-p1-kartlegging.md` (laget av dataene). Øyeblikksbildene av tabellene, de 1 072 lenkede kildesidene, FEST (uttrekk 08.10.2026) og de publiserte fagsidene står i samme mappe og lages på nytt med `npm run verktoy:kartlegging`. `src/__tests__/verktoykartlegging.test.ts` kontrollerer at hver rad og kolonne er kartlagt én gang, FEST-ID-ene, fagsidene, navnekollisjoner, celletallene, depottilordningen, johannesurt og Start-kolonnen. 54 virkestoffer, 2 kildegrupper, 9 depot-/MA-varianter; 16 virkestoffer mangler fagside. Uavklart til faglig kontroll: rapportens avsnitt «Avvik og uavklarte punkter», blant annet tre Stop-lenker som ikke svarer (vortioksetin, doksepin, fenelzin), preparater som ikke er nevnt av kilden (Okedi, Paliperidon Zentiva, Niapelf), flufenazindepot med bare godkjenningsfritak, og intervallene for sentralt godkjente depotpreparater (P10.1).
 
 ### P2 – Opprette og koble nødvendige fagsider
 
@@ -254,6 +256,7 @@ Før en oppgave eller fase krysses av:
 | Dato | Fase / oppgave | Resultat, PR/commit | Kontroll / gjenstående |
 | --- | --- | --- | --- |
 | 27.10.2026 | P0.1–P0.3 | Plan og ansvarsdeling fastlagt; johannesurt eksplisitt ekskludert | Ingen kildedata eller kode er importert/implementert gjennom denne planoppgaven |
+| 27.10.2026 | P1.1–P1.7 | Kartlegging, øyeblikksbilder, rapport og tester, PR #279. Kilder: Psychiatrienet (revisjon 10184 / 10673 / 10641, hentet 27.10.2026), FEST-uttrekk 08.10.2026, fagsidene i produksjon 27.10.2026. `npm test` og `npm run build` grønne | Venter på ChatGPTs kontroll av utvalget og de uavklarte punktene i rapporten. Ingen fagsider, anbefalingstekster eller regler er laget |
 
 ## 8. Startoppdrag til Claude Code
 

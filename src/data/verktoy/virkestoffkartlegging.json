@@ -1,0 +1,1272 @@
+{
+  "versjon": 1,
+  "oppdatert": "2026-10-27",
+  "om": "Identitetskartleggingen for OUSFAR Verktøy (P1 i docs/verktøy-utviklingsplan.md): kildeidentitetene i Psychiatrienets switchtabeller → OUSFAR-nøkkel → virkestoff i FEST → formuleringer. Valgt og kontrollert for hånd; kontrolleres av src/__tests__/verktoykartlegging.test.ts mot øyeblikksbildene i samme mappe.",
+  "ekskludert": [
+    {
+      "id": "johannesurt",
+      "navn": "Johannesurt",
+      "kildekoder": [
+        {
+          "tabell": "SwitchAntidepressants",
+          "kode": "Hy",
+          "kildenavn": "hypericum"
+        }
+      ],
+      "sperrenavn": [
+        "johannesurt",
+        "hypericum",
+        "hypericum perforatum",
+        "hyperici herba",
+        "perikum",
+        "prikkperikum",
+        "st. john's wort",
+        "st john's wort",
+        "saint john's wort"
+      ],
+      "grunn": "Uttrykkelig utelatt av faglig beslutningstaker (P0.2): ingen fagside, ingen import, ingen regler og ingen bytter til eller fra johannesurt."
+    }
+  ],
+  "ikke_importert": [
+    {
+      "tabell": "SwitchAntidepressants",
+      "kode": "Start",
+      "grunn": "Den generelle Start-kolonnen skal ikke importeres (P0.2). Stop-kolonnen beholdes."
+    }
+  ],
+  "kildeidentiteter": {
+    "CombiningMoodstabilizers": [
+      {
+        "kode": "Ar",
+        "kildenavn": "Aripiprazole",
+        "type": "virkestoff",
+        "virkestoff": "aripiprazol",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Ca",
+        "kildenavn": "Carbamazepine",
+        "type": "virkestoff",
+        "virkestoff": "karbamazepin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Ga",
+        "kildenavn": "Gabapentin",
+        "type": "virkestoff",
+        "virkestoff": "gabapentin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "La",
+        "kildenavn": "Lamotrigine",
+        "type": "virkestoff",
+        "virkestoff": "lamotrigin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Li",
+        "kildenavn": "Lithium",
+        "type": "virkestoff",
+        "virkestoff": "litium",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "To",
+        "kildenavn": "Topiramate",
+        "type": "virkestoff",
+        "virkestoff": "topiramat",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Va",
+        "kildenavn": "Valproic acid",
+        "type": "virkestoff",
+        "virkestoff": "valproat",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Rd",
+        "kildenavn": "Risperidone",
+        "type": "virkestoff",
+        "virkestoff": "risperidon",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Ol",
+        "kildenavn": "Olanzapine",
+        "type": "virkestoff",
+        "virkestoff": "olanzapin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Qu",
+        "kildenavn": "Quetiapine",
+        "type": "virkestoff",
+        "virkestoff": "kvetiapin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Zi",
+        "kildenavn": "Ziprasidone",
+        "type": "virkestoff",
+        "virkestoff": "ziprasidon",
+        "kildeformulering": "standard"
+      }
+    ],
+    "SwitchAntidepressants": [
+      {
+        "kode": "Start",
+        "kildenavn": null,
+        "type": "start"
+      },
+      {
+        "kode": "Ag",
+        "kildenavn": "agomelatine",
+        "type": "virkestoff",
+        "virkestoff": "agomelatin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "At",
+        "kildenavn": "amitriptyline",
+        "type": "virkestoff",
+        "virkestoff": "amitriptylin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Bu",
+        "kildenavn": "bupropion",
+        "type": "virkestoff",
+        "virkestoff": "bupropion",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Ci",
+        "kildenavn": "citalopram",
+        "type": "virkestoff",
+        "virkestoff": "citalopram",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Cl",
+        "kildenavn": "clomipramine",
+        "type": "virkestoff",
+        "virkestoff": "klomipramin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Ds",
+        "kildenavn": "dosulepine",
+        "type": "virkestoff",
+        "virkestoff": "dosulepin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Dx",
+        "kildenavn": "doxepine",
+        "type": "virkestoff",
+        "virkestoff": "doksepin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Du",
+        "kildenavn": "duloxetine",
+        "type": "virkestoff",
+        "virkestoff": "duloksetin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Es",
+        "kildenavn": "escitalopram",
+        "type": "virkestoff",
+        "virkestoff": "escitalopram",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Fe",
+        "kildenavn": "fenelzine",
+        "type": "virkestoff",
+        "virkestoff": "fenelzin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Fo",
+        "kildenavn": "fluoxetine",
+        "type": "virkestoff",
+        "virkestoff": "fluoksetin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Fv",
+        "kildenavn": "fluvoxamine",
+        "type": "virkestoff",
+        "virkestoff": "fluvoksamin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Hy",
+        "kildenavn": "hypericum",
+        "type": "ekskludert",
+        "ekskludert": "johannesurt"
+      },
+      {
+        "kode": "Im",
+        "kildenavn": "imipramine",
+        "type": "virkestoff",
+        "virkestoff": "imipramin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Ma",
+        "kildenavn": "maprotiline",
+        "type": "virkestoff",
+        "virkestoff": "maprotilin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Mz",
+        "kildenavn": "mirtazapine",
+        "type": "virkestoff",
+        "virkestoff": "mirtazapin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Mo",
+        "kildenavn": "moclobemide",
+        "type": "virkestoff",
+        "virkestoff": "moklobemid",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "No",
+        "kildenavn": "nortriptyline",
+        "type": "virkestoff",
+        "virkestoff": "nortriptylin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Pa",
+        "kildenavn": "paroxetine",
+        "type": "virkestoff",
+        "virkestoff": "paroksetin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Se",
+        "kildenavn": "sertraline",
+        "type": "virkestoff",
+        "virkestoff": "sertralin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Tc",
+        "kildenavn": "tranylcypromine",
+        "type": "virkestoff",
+        "virkestoff": "tranylcypromin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Td",
+        "kildenavn": "trazodone",
+        "type": "virkestoff",
+        "virkestoff": "trazodon",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Ve",
+        "kildenavn": "venlafaxine",
+        "type": "virkestoff",
+        "virkestoff": "venlafaksin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Vo",
+        "kildenavn": "vortioxetine",
+        "type": "virkestoff",
+        "virkestoff": "vortioksetin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Stop",
+        "kildenavn": null,
+        "type": "stopp"
+      }
+    ],
+    "SwitchAntipsychotics": [
+      {
+        "kode": "Am",
+        "kildenavn": "Amisulpride",
+        "type": "virkestoff",
+        "virkestoff": "amisulprid",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Cp",
+        "kildenavn": "Clozapine",
+        "type": "virkestoff",
+        "virkestoff": "klozapin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Hp",
+        "kildenavn": "Haloperidol",
+        "type": "virkestoff",
+        "virkestoff": "haloperidol",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Lu",
+        "kildenavn": "Lurasidone",
+        "type": "virkestoff",
+        "virkestoff": "lurasidon",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Ol",
+        "kildenavn": "Olanzapine",
+        "type": "virkestoff",
+        "virkestoff": "olanzapin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Pp",
+        "kildenavn": "Paliperidone",
+        "type": "virkestoff",
+        "virkestoff": "paliperidon",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Pa",
+        "kildenavn": "Partial agonist",
+        "type": "gruppe",
+        "gruppe": "partiell-agonist"
+      },
+      {
+        "kode": "Pf",
+        "kildenavn": "Penfluridol",
+        "type": "virkestoff",
+        "virkestoff": "penfluridol",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Pi",
+        "kildenavn": "Pimozide",
+        "type": "virkestoff",
+        "virkestoff": "pimozid",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Qu",
+        "kildenavn": "Quetiapine",
+        "type": "virkestoff",
+        "virkestoff": "kvetiapin",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Rd",
+        "kildenavn": "Risperidone",
+        "type": "virkestoff",
+        "virkestoff": "risperidon",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Sd",
+        "kildenavn": "Sertindole",
+        "type": "virkestoff",
+        "virkestoff": "sertindol",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "Sr",
+        "kildenavn": "Sulpiride",
+        "type": "virkestoff",
+        "virkestoff": "sulpirid",
+        "kildeformulering": "standard"
+      },
+      {
+        "kode": "RA",
+        "kildenavn": "Rest AP",
+        "type": "gruppe",
+        "gruppe": "rest-ap"
+      },
+      {
+        "kode": "Da",
+        "kildenavn": "Aripiprazole_LA",
+        "type": "virkestoff",
+        "virkestoff": "aripiprazol",
+        "kildeformulering": "LA",
+        "preparater": [
+          {
+            "varenavn": "Abilify Maintena",
+            "virkestoffform": null,
+            "intervall": "Kilden: 300 og 400 mg én gang i måneden, 720 og 960 mg hver annen måned",
+            "grunnlag": "Psychiatrienet, f.eks. /switchdetail/aripiprazole-la-amisulpride. Ikke kontrollert mot preparatomtalen (sentralt godkjent)."
+          }
+        ],
+        "merknad": "Intervallet følger styrken, ikke preparatnavnet: FEST har 400 mg og 720/960 mg under samme varenavn. 300 mg finnes ikke i FEST."
+      },
+      {
+        "kode": "Di",
+        "kildenavn": "Flupenthixol_LA",
+        "type": "virkestoff",
+        "virkestoff": "flupentiksol",
+        "kildeformulering": "LA",
+        "preparater": [
+          {
+            "varenavn": "Fluanxol Depot",
+            "virkestoffform": "flupentiksoldekanoat",
+            "intervall": "hver 2. til 4. uke",
+            "grunnlag": "Preparatomtalen 0000-05934, pkt. 2 og 4.2"
+          }
+        ]
+      },
+      {
+        "kode": "Df",
+        "kildenavn": "Fluphenazine_LA",
+        "type": "virkestoff",
+        "virkestoff": "flufenazin",
+        "kildeformulering": "LA",
+        "preparater": [
+          {
+            "varenavn": "Fluphenazin-neuraxpharm D",
+            "virkestoffform": null,
+            "intervall": null,
+            "grunnlag": "Bare godkjenningsfritak; ingen preparatomtale i FEST. Ester og intervall ikke kontrollert."
+          },
+          {
+            "varenavn": "Modecate",
+            "virkestoffform": null,
+            "intervall": null,
+            "grunnlag": "Bare godkjenningsfritak; ingen preparatomtale i FEST. Ester og intervall ikke kontrollert."
+          }
+        ],
+        "merknad": "Ingen markedsført flufenazin med norsk markedsføringstillatelse; bare preparater med godkjenningsfritak."
+      },
+      {
+        "kode": "Dh",
+        "kildenavn": "Haloperidol_LA",
+        "type": "virkestoff",
+        "virkestoff": "haloperidol",
+        "kildeformulering": "LA",
+        "preparater": [
+          {
+            "varenavn": "Haldol Depot",
+            "virkestoffform": "haloperidoldekanoat",
+            "intervall": "vanligvis 4 uker",
+            "grunnlag": "Preparatomtalen 0000-06767, pkt. 2 og 4.2"
+          }
+        ]
+      },
+      {
+        "kode": "Do",
+        "kildenavn": "Olanzapine_LA",
+        "type": "virkestoff",
+        "virkestoff": "olanzapin",
+        "kildeformulering": "LA",
+        "preparater": [
+          {
+            "varenavn": "Zypadhera",
+            "virkestoffform": null,
+            "intervall": null,
+            "grunnlag": "Sentralt godkjent; ikke kontrollert mot preparatomtalen i P1."
+          },
+          {
+            "varenavn": "Zyprexa Relprevv",
+            "virkestoffform": null,
+            "intervall": null,
+            "grunnlag": "Kildesidene nevner «Relprevv». I FEST bare med godkjenningsfritak."
+          }
+        ]
+      },
+      {
+        "kode": "Dp",
+        "kildenavn": "Paliperidone_ER",
+        "type": "virkestoff",
+        "virkestoff": "paliperidon",
+        "kildeformulering": "ER",
+        "preparater": [
+          {
+            "varenavn": "Xeplion",
+            "virkestoffform": null,
+            "intervall": null,
+            "grunnlag": "Står i kildens fotnote om ER. Sentralt godkjent; ikke kontrollert mot preparatomtalen i P1."
+          },
+          {
+            "varenavn": "Trevicta",
+            "virkestoffform": null,
+            "intervall": null,
+            "grunnlag": "Står i kildens fotnote om ER (skrevet «Trivecta»). Sentralt godkjent; ikke kontrollert mot preparatomtalen i P1."
+          },
+          {
+            "varenavn": "Palmeux",
+            "virkestoffform": null,
+            "intervall": null,
+            "grunnlag": "Står i kildens fotnote om ER. Ikke kontrollert mot preparatomtalen i P1."
+          }
+        ],
+        "merknad": "Psychiatrienets «ER» er her paliperidonpalmitat som depotinjeksjon, ikke peroral depottablett. Fotnoten nevner også Byannli, som ikke finnes i FEST. Preparatene har ulike styrkeserier i FEST (Xeplion 25–150 mg, Palmeux 50–150 mg, Trevicta 175–525 mg). Intervallene kontrolleres mot preparatomtalene i P10.1, og varianten skal ikke behandles som én formulering før det er gjort."
+      },
+      {
+        "kode": "Dr",
+        "kildenavn": "Risperidone_LA",
+        "type": "virkestoff",
+        "virkestoff": "risperidon",
+        "kildeformulering": "LA",
+        "preparater": [
+          {
+            "varenavn": "Risperdal Consta",
+            "virkestoffform": "risperidon (ikke salt eller ester)",
+            "intervall": "annenhver uke",
+            "grunnlag": "Preparatomtalen 2001-09858, pkt. 2 og 4.2"
+          }
+        ],
+        "merknad": "Okedi (risperidon, depotinjeksjon) finnes i FEST, men nevnes ikke av kilden og er ikke tilordnet."
+      },
+      {
+        "kode": "Dz",
+        "kildenavn": "Zuclopenthixol_LA",
+        "type": "virkestoff",
+        "virkestoff": "zuklopentiksol",
+        "kildeformulering": "LA",
+        "preparater": [
+          {
+            "varenavn": "Cisordinol Depot",
+            "virkestoffform": "zuklopentiksoldekanoat",
+            "intervall": "hver 2. til 4. uke",
+            "grunnlag": "Preparatomtalen 0000-06226, pkt. 2 og 4.2"
+          }
+        ]
+      },
+      {
+        "kode": "Mz",
+        "kildenavn": "Zuclopenthixol_MA",
+        "type": "virkestoff",
+        "virkestoff": "zuklopentiksol",
+        "kildeformulering": "MA",
+        "preparater": [
+          {
+            "varenavn": "Cisordinol-Acutard",
+            "virkestoffform": "zuklopentiksolacetat",
+            "intervall": "ny injeksjon etter 2–3 dager ved behov; behandlingen bør ikke overstige 2 uker",
+            "grunnlag": "Preparatomtalen 0000-07543, pkt. 2 og 4.2"
+          }
+        ]
+      }
+    ]
+  },
+  "grupper": [
+    {
+      "id": "rest-ap",
+      "tabell": "SwitchAntipsychotics",
+      "kode": "RA",
+      "kildenavn": "Rest AP",
+      "medlemmer": [
+        {
+          "kildenavn": "Chlorprothixene",
+          "virkestoff": "klorprotiksen"
+        },
+        {
+          "kildenavn": "Flupentixol",
+          "virkestoff": "flupentiksol"
+        },
+        {
+          "kildenavn": "Fluphenazine",
+          "virkestoff": "flufenazin"
+        },
+        {
+          "kildenavn": "Loxapine",
+          "virkestoff": "loksapin"
+        },
+        {
+          "kildenavn": "Pericyazine",
+          "virkestoff": "perisiazin"
+        },
+        {
+          "kildenavn": "Perphenazine",
+          "virkestoff": "perfenazin"
+        },
+        {
+          "kildenavn": "Promazine",
+          "virkestoff": "promazin"
+        },
+        {
+          "kildenavn": "Trifluoperazine",
+          "virkestoff": "trifluoperazin"
+        },
+        {
+          "kildenavn": "Ziprasidone",
+          "virkestoff": "ziprasidon"
+        },
+        {
+          "kildenavn": "Zuclopentixol",
+          "virkestoff": "zuklopentiksol"
+        }
+      ],
+      "merknad": "En kilderegel for ti virkestoffer, ikke et valgbart virkestoff. Flupentiksol, flufenazin og zuklopentiksol har i tillegg egne depotrader; perfenazin har depot i Norge (Trilafon Dekanoat), men ingen egen depotrad i kilden."
+    },
+    {
+      "id": "partiell-agonist",
+      "tabell": "SwitchAntipsychotics",
+      "kode": "Pa",
+      "kildenavn": "Partial agonist",
+      "medlemmer": [
+        {
+          "kildenavn": "Aripiprazole",
+          "virkestoff": "aripiprazol"
+        },
+        {
+          "kildenavn": "Brexpiprazole",
+          "virkestoff": "brekspiprazol"
+        },
+        {
+          "kildenavn": "Cariprazine",
+          "virkestoff": "kariprazin"
+        }
+      ],
+      "merknad": "En kilderegel for tre virkestoffer, ikke et valgbart virkestoff. Aripiprazol har i tillegg en egen depotrad (Aripiprazole_LA)."
+    }
+  ],
+  "virkestoffer": [
+    {
+      "nokkel": "agomelatin",
+      "navn": "Agomelatin",
+      "fest": [
+        "ID_B01358F8-EB08-4C5C-8399-4F70197493F1"
+      ],
+      "aliaser": [
+        "agomelatine"
+      ]
+    },
+    {
+      "nokkel": "amisulprid",
+      "navn": "Amisulprid",
+      "fest": [
+        "ID_23A8F342-84DC-41FF-B835-B9A45B2F6394"
+      ],
+      "aliaser": [
+        "amisulpride"
+      ]
+    },
+    {
+      "nokkel": "amitriptylin",
+      "navn": "Amitriptylin",
+      "fest": [
+        "ID_0A1B24EF-A7F8-488B-97B8-8023193E976D"
+      ],
+      "aliaser": [
+        "amitriptyline"
+      ]
+    },
+    {
+      "nokkel": "aripiprazol",
+      "navn": "Aripiprazol",
+      "fest": [
+        "ID_4596EE8B-CD03-43E0-AEA8-CDB60778EA43"
+      ],
+      "aliaser": [
+        "aripiprazole"
+      ]
+    },
+    {
+      "nokkel": "brekspiprazol",
+      "navn": "Brekspiprazol",
+      "fest": [
+        "ID_68DCFD07-0824-4962-AA56-FD6ED472D9B8"
+      ],
+      "aliaser": [
+        "brexpiprazole"
+      ]
+    },
+    {
+      "nokkel": "bupropion",
+      "navn": "Bupropion",
+      "fest": [
+        "ID_4FE84EA2-FC1B-44A6-8D70-2A118B211697"
+      ],
+      "aliaser": []
+    },
+    {
+      "nokkel": "citalopram",
+      "navn": "Citalopram",
+      "fest": [
+        "ID_E2B9E074-0D21-4E5E-9867-BC70B8FC2654"
+      ],
+      "aliaser": []
+    },
+    {
+      "nokkel": "doksepin",
+      "navn": "Doksepin",
+      "fest": [
+        "ID_AF1D3EF5-E7BA-45E4-8C6F-EB410DB3C4AF"
+      ],
+      "aliaser": [
+        "doxepin",
+        "doxepine"
+      ],
+      "merknad": "Kilden staver «doxepine»."
+    },
+    {
+      "nokkel": "dosulepin",
+      "navn": "Dosulepin",
+      "fest": [
+        "ID_DD009B35-8BF4-4080-80C5-3F400A89F713"
+      ],
+      "aliaser": [
+        "dosulepine"
+      ],
+      "merknad": "Kilden staver «dosulepine»."
+    },
+    {
+      "nokkel": "duloksetin",
+      "navn": "Duloksetin",
+      "fest": [
+        "ID_D27A3210-135D-42C9-9DB3-8AB8CBEA77E6"
+      ],
+      "aliaser": [
+        "duloxetine"
+      ]
+    },
+    {
+      "nokkel": "escitalopram",
+      "navn": "Escitalopram",
+      "fest": [
+        "ID_13E05918-25C1-4DAA-A0F5-1266DEC3A75F"
+      ],
+      "aliaser": []
+    },
+    {
+      "nokkel": "fenelzin",
+      "navn": "Fenelzin",
+      "fest": [
+        "ID_B3CA8826-0F7A-4190-B1C3-E3B897AE69FF"
+      ],
+      "aliaser": [
+        "fenelzine",
+        "phenelzine"
+      ],
+      "merknad": "Kilden staver «fenelzine» (nederlandsk form); FESTs engelske navn er «Phenelzine»."
+    },
+    {
+      "nokkel": "flufenazin",
+      "navn": "Flufenazin",
+      "fest": [
+        "ID_0263C5B9-693B-4BE3-84D4-7EB46AB0A71C"
+      ],
+      "aliaser": [
+        "fluphenazine"
+      ]
+    },
+    {
+      "nokkel": "fluoksetin",
+      "navn": "Fluoksetin",
+      "fest": [
+        "ID_D473FE91-133D-494A-A2B0-C644A8372A8B"
+      ],
+      "aliaser": [
+        "fluoxetine"
+      ]
+    },
+    {
+      "nokkel": "flupentiksol",
+      "navn": "Flupentiksol",
+      "fest": [
+        "ID_9E8C912B-84DB-4AFF-BE91-DB21F945B83E"
+      ],
+      "aliaser": [
+        "flupenthixol",
+        "flupentixol"
+      ],
+      "merknad": "Kilden staver både «Flupentixol» (i Rest AP) og «Flupenthixol» (depotraden)."
+    },
+    {
+      "nokkel": "fluvoksamin",
+      "navn": "Fluvoksamin",
+      "fest": [
+        "ID_A39218DE-5973-4473-A005-FBA8B4E86C62"
+      ],
+      "aliaser": [
+        "fluvoxamine"
+      ]
+    },
+    {
+      "nokkel": "gabapentin",
+      "navn": "Gabapentin",
+      "fest": [
+        "ID_A46CFA9C-F01A-4F03-AF5C-28A5579898DB"
+      ],
+      "aliaser": []
+    },
+    {
+      "nokkel": "haloperidol",
+      "navn": "Haloperidol",
+      "fest": [
+        "ID_667FA975-A8EC-4CF8-A89E-96F97808E3AD"
+      ],
+      "aliaser": []
+    },
+    {
+      "nokkel": "imipramin",
+      "navn": "Imipramin",
+      "fest": [
+        "ID_D136F468-4949-4C91-81E4-04628D7C07DE"
+      ],
+      "aliaser": [
+        "imipramine"
+      ]
+    },
+    {
+      "nokkel": "karbamazepin",
+      "navn": "Karbamazepin",
+      "fest": [
+        "ID_8418C9B9-33E9-4757-9224-7D3A76E776B6"
+      ],
+      "aliaser": [
+        "carbamazepine"
+      ]
+    },
+    {
+      "nokkel": "kariprazin",
+      "navn": "Kariprazin",
+      "fest": [
+        "ID_966A0E9E-10AF-40C1-BA48-3E2E6ECF49C2"
+      ],
+      "aliaser": [
+        "cariprazine"
+      ]
+    },
+    {
+      "nokkel": "klomipramin",
+      "navn": "Klomipramin",
+      "fest": [
+        "ID_40E4710B-8115-40CA-986D-E98AE4C2D6B0"
+      ],
+      "aliaser": [
+        "clomipramine"
+      ]
+    },
+    {
+      "nokkel": "klorprotiksen",
+      "navn": "Klorprotiksen",
+      "fest": [
+        "ID_9672824E-CE48-45EB-B232-E41DC928D08B"
+      ],
+      "aliaser": [
+        "chlorprothixene"
+      ]
+    },
+    {
+      "nokkel": "klozapin",
+      "navn": "Klozapin",
+      "fest": [
+        "ID_41137AC7-7E5B-47BA-BF41-4CE0672EF755"
+      ],
+      "aliaser": [
+        "clozapine"
+      ]
+    },
+    {
+      "nokkel": "kvetiapin",
+      "navn": "Kvetiapin",
+      "fest": [
+        "ID_61E766DA-E71D-4381-B4DE-2A06C51A2BD8"
+      ],
+      "aliaser": [
+        "quetiapine"
+      ]
+    },
+    {
+      "nokkel": "lamotrigin",
+      "navn": "Lamotrigin",
+      "fest": [
+        "ID_F456CD11-3821-4C60-B36F-DE0C9D51ED22"
+      ],
+      "aliaser": [
+        "lamotrigine"
+      ]
+    },
+    {
+      "nokkel": "litium",
+      "navn": "Litium",
+      "fest": [
+        "ID_36AEA22F-E6BC-4CF0-9A3F-2E9341A7B5F6"
+      ],
+      "aliaser": [
+        "lithium",
+        "litiumion"
+      ],
+      "merknad": "Kilden: «Lithium». Fagsiden heter Litium og er koblet til FESTs «Litiumion», som litiumsaltene i preparatene hører til; virkestoffet «Litium» i FEST har ingen preparater."
+    },
+    {
+      "nokkel": "loksapin",
+      "navn": "Loksapin",
+      "fest": [
+        "ID_CBF9DD3B-0EFC-4CB2-B78C-9D61AFD78AFA"
+      ],
+      "aliaser": [
+        "loxapine"
+      ]
+    },
+    {
+      "nokkel": "lurasidon",
+      "navn": "Lurasidon",
+      "fest": [
+        "ID_3B369762-A4B8-49DB-931D-6AC9D901ABAC"
+      ],
+      "aliaser": [
+        "lurasidone"
+      ]
+    },
+    {
+      "nokkel": "maprotilin",
+      "navn": "Maprotilin",
+      "fest": [
+        "ID_EC5AFDB1-7FAD-44E8-BD51-89E84AC709E3"
+      ],
+      "aliaser": [
+        "maprotiline"
+      ]
+    },
+    {
+      "nokkel": "mirtazapin",
+      "navn": "Mirtazapin",
+      "fest": [
+        "ID_0AFFD596-9932-44A7-86E8-F35BBDB1FCAD"
+      ],
+      "aliaser": [
+        "mirtazapine"
+      ]
+    },
+    {
+      "nokkel": "moklobemid",
+      "navn": "Moklobemid",
+      "fest": [
+        "ID_D1F74888-C7D1-474F-A9E8-2E58CB136B06"
+      ],
+      "aliaser": [
+        "moclobemide"
+      ]
+    },
+    {
+      "nokkel": "nortriptylin",
+      "navn": "Nortriptylin",
+      "fest": [
+        "ID_829694BA-B839-4173-BE1A-37CD35C17700"
+      ],
+      "aliaser": [
+        "nortriptyline"
+      ]
+    },
+    {
+      "nokkel": "olanzapin",
+      "navn": "Olanzapin",
+      "fest": [
+        "ID_A86FC555-41CA-4E80-A188-ED521EEC5903"
+      ],
+      "aliaser": [
+        "olanzapine"
+      ]
+    },
+    {
+      "nokkel": "paliperidon",
+      "navn": "Paliperidon",
+      "fest": [
+        "ID_82CAEDDE-7CB1-4302-9C30-6A2010DB6D85"
+      ],
+      "aliaser": [
+        "paliperidone"
+      ]
+    },
+    {
+      "nokkel": "paroksetin",
+      "navn": "Paroksetin",
+      "fest": [
+        "ID_0F9E3AC0-1950-4CF5-8F4F-4008696E85B8"
+      ],
+      "aliaser": [
+        "paroxetine"
+      ]
+    },
+    {
+      "nokkel": "penfluridol",
+      "navn": "Penfluridol",
+      "fest": [
+        "ID_DF5D1607-B995-49E6-A7F1-CF4440AC101A"
+      ],
+      "aliaser": []
+    },
+    {
+      "nokkel": "perfenazin",
+      "navn": "Perfenazin",
+      "fest": [
+        "ID_57F9D9AC-707C-4172-8A52-2C2D944B5FF5"
+      ],
+      "aliaser": [
+        "perphenazine"
+      ]
+    },
+    {
+      "nokkel": "perisiazin",
+      "navn": "Perisiazin",
+      "fest": [
+        "ID_429EE77E-79B6-4431-98E8-D5281A9E1D39"
+      ],
+      "aliaser": [
+        "periciazine",
+        "pericyazine"
+      ],
+      "merknad": "Kilden staver «Pericyazine»; FEST har «Perisiazin» (engelsk «Periciazine»)."
+    },
+    {
+      "nokkel": "pimozid",
+      "navn": "Pimozid",
+      "fest": [
+        "ID_D700661D-AD77-4F91-880E-5B101EFAC189"
+      ],
+      "aliaser": [
+        "pimozide"
+      ]
+    },
+    {
+      "nokkel": "promazin",
+      "navn": "Promazin",
+      "fest": [
+        "ID_891C7906-F62A-4D2B-80B2-2CE5478CAF18"
+      ],
+      "aliaser": [
+        "promazine"
+      ]
+    },
+    {
+      "nokkel": "risperidon",
+      "navn": "Risperidon",
+      "fest": [
+        "ID_852F4AC9-FF5C-4C97-999E-03FE3C144223"
+      ],
+      "aliaser": [
+        "risperidone"
+      ]
+    },
+    {
+      "nokkel": "sertindol",
+      "navn": "Sertindol",
+      "fest": [
+        "ID_79EE8CA6-168F-444A-9C83-2F6110A42CF0"
+      ],
+      "aliaser": [
+        "sertindole"
+      ]
+    },
+    {
+      "nokkel": "sertralin",
+      "navn": "Sertralin",
+      "fest": [
+        "ID_1C2C9254-987B-4A37-AC48-6349BB671F07"
+      ],
+      "aliaser": [
+        "sertraline"
+      ]
+    },
+    {
+      "nokkel": "sulpirid",
+      "navn": "Sulpirid",
+      "fest": [
+        "ID_E5BEB70C-39AD-4EA1-87B5-63983C1D534A"
+      ],
+      "aliaser": [
+        "sulpiride"
+      ]
+    },
+    {
+      "nokkel": "topiramat",
+      "navn": "Topiramat",
+      "fest": [
+        "ID_A8E3BC2D-A60C-4AA6-B069-5D09BC84ADE0"
+      ],
+      "aliaser": [
+        "topiramate"
+      ]
+    },
+    {
+      "nokkel": "tranylcypromin",
+      "navn": "Tranylcypromin",
+      "fest": [
+        "ID_6E876C08-FF0F-48BC-AAEE-15C0A3B83DCA"
+      ],
+      "aliaser": [
+        "tranylcypromine"
+      ]
+    },
+    {
+      "nokkel": "trazodon",
+      "navn": "Trazodon",
+      "fest": [
+        "ID_90E0E28B-FDED-44F8-88DA-EEB0232AEAFD"
+      ],
+      "aliaser": [
+        "trazodone"
+      ]
+    },
+    {
+      "nokkel": "trifluoperazin",
+      "navn": "Trifluoperazin",
+      "fest": [
+        "ID_E52C65FD-26A0-4B1F-8E26-EB3012B77F81"
+      ],
+      "aliaser": [
+        "trifluoperazine"
+      ]
+    },
+    {
+      "nokkel": "valproat",
+      "navn": "Valproat",
+      "fest": [
+        "ID_A61E2EDC-D6B4-4E52-89F4-3D10F0E03E38"
+      ],
+      "aliaser": [
+        "valproic acid",
+        "valproinsyre"
+      ],
+      "merknad": "Kilden: «Valproic acid». Fagsiden heter Valproat og er koblet til FESTs «Valproinsyre», som natriumvalproat og divalproeksnatrium er salter av."
+    },
+    {
+      "nokkel": "venlafaksin",
+      "navn": "Venlafaksin",
+      "fest": [
+        "ID_289921F8-A934-43E2-8F86-DB736FA198DF"
+      ],
+      "aliaser": [
+        "venlafaxine"
+      ]
+    },
+    {
+      "nokkel": "vortioksetin",
+      "navn": "Vortioksetin",
+      "fest": [
+        "ID_328991B3-C34B-4D78-AD5C-7D7DDA7B2DCA"
+      ],
+      "aliaser": [
+        "vortioxetine"
+      ]
+    },
+    {
+      "nokkel": "ziprasidon",
+      "navn": "Ziprasidon",
+      "fest": [
+        "ID_97EEA6F8-10CB-44CC-B37D-9B3DC81A6398"
+      ],
+      "aliaser": [
+        "ziprasidone"
+      ],
+      "merknad": "Egen rad i Combining Moodstabilizers, men medlem av gruppen Rest AP i Switching Antipsychotics."
+    },
+    {
+      "nokkel": "zuklopentiksol",
+      "navn": "Zuklopentiksol",
+      "fest": [
+        "ID_31472D31-DAB7-49DF-AB66-A7CDA5A8222B"
+      ],
+      "aliaser": [
+        "zuclopenthixol",
+        "zuclopentixol"
+      ],
+      "merknad": "Kilden staver både «Zuclopentixol» (i Rest AP) og «Zuclopenthixol» (depot- og MA-radene)."
+    }
+  ],
+  "festoverstyringer": [
+    {
+      "virkestoff": "haloperidol",
+      "varenavn": "Haldol Depot",
+      "klasse": "depotinjeksjon",
+      "grunn": "Haloperidoldekanoat (preparatomtalen 0000-06767). FEST oppgir vanlig injeksjonsvæske med styrken på haloperidol."
+    },
+    {
+      "virkestoff": "flupentiksol",
+      "varenavn": "Fluanxol Depot",
+      "klasse": "depotinjeksjon",
+      "grunn": "Flupentiksoldekanoat (preparatomtalen 0000-05934). FEST oppgir vanlig injeksjonsvæske med styrken på flupentiksol."
+    },
+    {
+      "virkestoff": "zuklopentiksol",
+      "varenavn": "Cisordinol Depot",
+      "klasse": "depotinjeksjon",
+      "grunn": "Zuklopentiksoldekanoat (preparatomtalen 0000-06226). FEST oppgir vanlig injeksjonsvæske med styrken på zuklopentiksol."
+    },
+    {
+      "virkestoff": "zuklopentiksol",
+      "varenavn": "Cisordinol-Acutard",
+      "klasse": "middels_langtidsvirkende",
+      "grunn": "Zuklopentiksolacetat (preparatomtalen 0000-07543). FEST oppgir vanlig injeksjonsvæske med styrken på zuklopentiksol."
+    },
+    {
+      "virkestoff": "perfenazin",
+      "varenavn": "Trilafon Dekanoat",
+      "klasse": "depotinjeksjon",
+      "grunn": "Perfenazindekanoat (preparatomtalen 0000-07128). FEST oppgir vanlig injeksjonsvæske."
+    },
+    {
+      "virkestoff": "flufenazin",
+      "varenavn": "Modecate",
+      "klasse": "depotinjeksjon",
+      "grunn": "Godkjenningsfritak uten preparatomtale i FEST; ført som depot fordi kilden har en egen depotrad for flufenazin og FEST ikke har noen annen flufenazininjeksjon. Ikke kontrollert mot preparatomtale."
+    },
+    {
+      "virkestoff": "flufenazin",
+      "varenavn": "Fluphenazin-neuraxpharm D",
+      "klasse": "depotinjeksjon",
+      "grunn": "Godkjenningsfritak uten preparatomtale i FEST; ført som depot av samme grunn som Modecate. Ikke kontrollert mot preparatomtale."
+    }
+  ],
+  "uten_kildevariant": [
+    {
+      "virkestoff": "perfenazin",
+      "varenavn": "Trilafon Dekanoat",
+      "grunn": "Perfenazin er bare med i kilden som medlem av Rest AP; kilden har ingen depotrad for perfenazin."
+    },
+    {
+      "virkestoff": "risperidon",
+      "varenavn": "Okedi",
+      "grunn": "Nevnes ikke av kilden. Om Risperidone_LA omfatter Okedi, må avklares før P10."
+    },
+    {
+      "virkestoff": "paliperidon",
+      "varenavn": "Paliperidon Zentiva",
+      "grunn": "Ikke nevnt i kildens fotnote om ER. Om Paliperidone_ER omfatter preparatet, må avklares før P10."
+    },
+    {
+      "virkestoff": "paliperidon",
+      "varenavn": "Niapelf",
+      "grunn": "Godkjenningsfritak, ikke nevnt i kildens fotnote om ER. Om Paliperidone_ER omfatter preparatet, må avklares før P10."
+    }
+  ],
+  "kjente_lenkeavvik": [
+    {
+      "href": "/switchdetail/partial-agonist",
+      "funn": "Gruppesiden for Partial agonist finnes ikke (404). Medlemmene står i innledningen over tabellen."
+    },
+    {
+      "href": "/switchdetail/rest-ap",
+      "funn": "Gruppesiden for Rest AP finnes ikke (404). Medlemmene står i innledningen over tabellen."
+    },
+    {
+      "href": "/switchdetail/start-dosulepine",
+      "funn": "404. Gjelder Start-kolonnen, som ikke skal importeres."
+    },
+    {
+      "href": "/switchdetail/start-doxepine",
+      "funn": "404. Gjelder Start-kolonnen, som ikke skal importeres."
+    },
+    {
+      "href": "/switchdetail/stop",
+      "funn": "Stop-cellen for vortioxetine lenker hit (404) i stedet for til virkestoffets side. /switchdetail/stop-vortioxetine finnes (200, kontrollert 27.10.2026). Hvilken side som skal brukes, avgjøres i P3."
+    },
+    {
+      "href": "/switchdetail/stop-doxepine",
+      "funn": "404. /switchdetail/stop-doxepin finnes (200, kontrollert 27.10.2026). Hvilken side som skal brukes, avgjøres i P3."
+    },
+    {
+      "href": "/switchdetail/stop-fenelzine",
+      "funn": "404. Heller ikke /switchdetail/stop-phenelzine finnes (kontrollert 27.10.2026). Kilden har ingen tilgjengelig Stop-anbefaling for fenelzin."
+    }
+  ]
+}
