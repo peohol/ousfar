@@ -210,11 +210,11 @@ antihypertensivene mot ClinPGx 30. september 2026.
 | Status | Sider |
 | --- | --- |
 | Koblet til ClinPGx og verifisert | 93 |
-| Relevant objekt finnes i ClinPGx, men krever kuratert kobling | 4 |
-| ClinPGx har ikke relevant objekt | 0 |
+| Relevant objekt finnes i ClinPGx, men krever kuratert kobling | 18 |
+| ClinPGx har ikke relevant objekt | 2 |
 | Metabolitt eller analytisk komponent, kobles ikke automatisk til moderstoffet | 9 |
 | Uavklart, krever faglig vurdering | 0 |
-| Til sammen | 106 |
+| Til sammen | 122 |
 
 Koblet:
 
@@ -320,6 +320,7 @@ Ikke koblet:
 
 | Fagside | Status | ClinPGx | Grunn |
 | --- | --- | --- | --- |
+| Agomelatin | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: agomelatine (PA165958363) | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har agomelatine (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
 | Bupropion | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: bupropion (PA448687) | Fagsiden gjelder virkestoffet bupropion; laboratoriet måler metabolitten hydroksybupropion (HBUP). ClinPGx har bupropion som eget kjemikalie; koblingen er ikke lagt inn ennå. |
 | CBD | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: cannabidiol (PA166175791) | Siden ble laget 27. september 2026 for å vise Epidyolex fra FEST. ClinPGx har cannabidiol (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
 | Dehydroaripiprazol | Metabolitt eller analytisk komponent, kobles ikke automatisk til moderstoffet | Moderstoff: aripiprazole (PA10026), side: Aripiprazol. Metabolitten selv: dehydroaripiprazole (PA166170895) | Aktiv metabolitt av aripiprazol. ClinPGx har metabolitten som eget kjemikalie, uten annotasjoner. |
@@ -328,11 +329,26 @@ Ikke koblet:
 | Desmetylklomipramin | Metabolitt eller analytisk komponent, kobles ikke automatisk til moderstoffet | Moderstoff: clomipramine (PA449048), side: Klomipramin. Metabolitten selv: desmethyl clomipramine (PA166131507) | Aktiv metabolitt av klomipramin. ClinPGx har metabolitten som eget kjemikalie, uten annotasjoner. |
 | Desmetylmianserin | Metabolitt eller analytisk komponent, kobles ikke automatisk til moderstoffet | Moderstoff: mianserin (PA134687937), side: Mianserin. Metabolitten selv: – | Metabolitt av mianserin. ClinPGx har ikke metabolitten som eget kjemikalie. |
 | Didesmetylkariprazin | Metabolitt eller analytisk komponent, kobles ikke automatisk til moderstoffet | Moderstoff: cariprazine (PA166177476), side: Kariprazin. Metabolitten selv: didesmethyl cariprazine (PA166356881) | Aktiv metabolitt av kariprazin. ClinPGx har metabolitten som eget kjemikalie, uten annotasjoner. |
+| Dosulepin | ClinPGx har ikke relevant objekt | Søkt etter: dosulepin, dosulepine, dothiepin | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har ikke stoffet under noen av navnene. |
+| Fenelzin | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: phenelzine (PA450903) | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har phenelzine (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
+| Flufenazin | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: fluphenazine (PA449676) | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har fluphenazine (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
 | Hydroksybupropion | Metabolitt eller analytisk komponent, kobles ikke automatisk til moderstoffet | Moderstoff: bupropion (PA448687), side: Bupropion. Metabolitten selv: hydroxybupropion (PA166226561), 4-hydroxybupropion (PA166170175) | Komponenten HBUP måler, ikke en egen fagside. Aktiv metabolitt av bupropion. ClinPGx har to kjemikalier for metabolitten, begge uten annotasjoner. |
+| Imipramin | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: imipramine (PA449969) | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har imipramine (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
+| Loksapin | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: loxapine (PA450273) | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har loxapine (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
+| Maprotilin | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: maprotiline (PA450322) | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har maprotiline (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
+| Moklobemid | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: moclobemide (PA452615) | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har moclobemide (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
 | Norfluoksetin | Metabolitt eller analytisk komponent, kobles ikke automatisk til moderstoffet | Moderstoff: fluoxetine (PA449673), side: Fluoksetin. Metabolitten selv: r-norfluoxetine (PA166131377), s-norfluoxetine (PA166131313) | Aktiv metabolitt av fluoksetin. ClinPGx har bare de to enantiomerene hver for seg, uten annotasjoner. |
 | O-desmetyltramadol | Metabolitt eller analytisk komponent, kobles ikke automatisk til moderstoffet | Moderstoff: tramadol (PA451735), side: Tramadol. Metabolitten selv: o-desmethyltramadol (PA166131379) | Aktiv metabolitt av tramadol. ClinPGx har metabolitten som eget kjemikalie med kliniske annotasjoner; om siden skal vise dem, tramadols data eller begge, er en faglig vurdering. |
+| Penfluridol | ClinPGx har ikke relevant objekt | Søkt etter: penfluridol | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har ikke stoffet. |
+| Perisiazin | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: propericiazine (PA164781043) | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har ingen treff på periciazine eller pericyazine, bare propericiazine, et annet navn på stoffet som må bekreftes før det kobles. |
+| Pimozid | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: pimozide (PA450965) | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har pimozide (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
+| Promazin | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: promazine (PA451126) | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har promazine (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
+| Sulpirid | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: sulpiride (PA164745485) | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har sulpiride (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
 | Tapentadol | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: tapentadol (PA166179720) | Siden ble laget 28. september 2026 med indikasjonen og preparatene fra FEST. ClinPGx har tapentadol (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
 | THC | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: dronabinol (PA449421) | Siden ble laget 27. september 2026 for å vise Sativex fra FEST. ClinPGx har THC som dronabinol (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
+| Tranylcypromin | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: tranylcypromine (PA451741) | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har tranylcypromine (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
+| Trazodon | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: trazodone (PA451744) | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har trazodone (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
+| Trifluoperazin | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: trifluoperazine (PA451771) | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har trifluoperazine (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
 
 ## Synkroniseringen
 

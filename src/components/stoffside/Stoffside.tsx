@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useId, useMemo, useRef, type ReactNode } from 'react'
 import { Bevaringsomrade, useBevart } from '../../oppdatering/Bevaring'
 import type { Analyttkatalog, Laboratorieanalytt } from '../../domain/analyttkatalog'
-import { byggSidemodell, referanseunivers } from '../../faginnhold/stoffside'
+import { byggSidemodell, harFaginnhold, referanseunivers } from '../../faginnhold/stoffside'
 import { PANELER } from '../../faginnhold/paneler'
 import { indekserSide, sokeord, stoffidentitet } from '../../faginnhold/sok'
 import { useLukkMedEscape } from '../../hooks/useLukkMedEscape'
@@ -264,12 +264,10 @@ function Innhold({ stoff: slug, sted, register, katalog, onApneFortolkning, onLu
     }),
     [redigerer, referansebase, handlinger.opprettReferanse, handlinger.gjenopprett],
   )
-  const harInnhold =
-    modell.paneler.size > 0 ||
-    Object.keys(modell.panelreferanser).length > 0 ||
-    harBivirkninger(bivirkninger) ||
-    kjemi.rader.some((r) => r.data) ||
-    laboratorier.tabeller.length > 0
+  // En side uten faginnhold er ikke faglig kuratert, selv om den viser data
+  // OUSFAR henter selv (preparatene fra FEST, kjemien, laboratoriene).
+  const utenFaginnhold = !harFaginnhold(modell) && !harBivirkninger(bivirkninger)
+  const harData = modell.paneler.size > 0 || kjemi.rader.some((r) => r.data) || laboratorier.tabeller.length > 0
 
   // En side som åpnes, begynner øverst, med fokus på navnet — så tastaturet og
   // skjermleseren står der siden begynner, og ikke igjen i menyen eller modulen.
@@ -461,8 +459,12 @@ function Innhold({ stoff: slug, sted, register, katalog, onApneFortolkning, onLu
                   }
                 })}
 
-                {!redigerer && side.status === 'klar' && !harInnhold && (
-                  <p className="stoffside__tom">Denne siden har ikke fått faginnhold ennå.</p>
+                {!redigerer && side.status === 'klar' && utenFaginnhold && (
+                  <p className="stoffside__tom">
+                    {harData
+                      ? 'Denne siden har ikke fått faginnhold ennå og er ikke faglig kuratert. Det som står her, er hentet automatisk fra offentlige datakilder.'
+                      : 'Denne siden har ikke fått faginnhold ennå.'}
+                  </p>
                 )}
                 <Referanseliste />
               </div>

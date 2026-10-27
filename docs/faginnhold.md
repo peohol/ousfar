@@ -826,6 +826,21 @@ fikk indikasjonene sine i `*_rusmidler_indikasjoner_*.sql`, og tapentadol
 (TAP) fikk siden sin samme vei, som THC. Et indikasjonskort som alt står på siden, røres ikke. Har
 Felleskatalogen ingen preparatomtale for stoffet, sier kortet det.
 
+**Fagsider uten faginnhold.** Sider som bare skal finnes — med navn, nøkkel,
+plass i stoffregisteret og kobling til FEST — lages med
+`FAGSIDEIMPORTER` i `src/faginnhold/nyefagsider.ts` og `npx vite-node
+scripts/lag-fagsider.ts -- <brukernavn> <migrasjon> <fil> --agent <nøkkel>`,
+som «Ny fagside» i stoffregisteret, men mange om gangen. Migrasjonen lager
+aldri en side som finnes med samme navn eller nøkkel (også som utkast,
+arkivert eller i papirkurven) eller er slettet for godt, og lager en
+underkategori som mangler. Sidene får ikke monografiinnhold og er «Ikke
+kuratert» til en kuratering er publisert. En side uten faginnhold sier det
+også når den viser data OUSFAR henter selv: «… og er ikke faglig kuratert»
+(`harFaginnhold` i `src/faginnhold/stoffside.ts`; koblingene til FEST og
+ClinPGx er ikke faginnhold). Slik ble de 16 fagsidene OUSFAR Verktøy manglet
+laget (`*_verktoy_fagsider.sql`, P2 i `docs/verktøy-utviklingsplan.md`), med
+navnene, nøklene og FEST-ID-ene fra kartleggingen (`src/verktoy/fagsider.ts`).
+
 **Antihypertensiver.** `supabase/import/antihypertensiver/` har de 25
 antihypertensivene fra oversikten over serumkonsentrasjoner
 (`originaldata/antihypertensiver.docx`), med samme oppsett som

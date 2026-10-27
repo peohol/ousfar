@@ -8,7 +8,7 @@
  */
 import type { Regeldata, Stoffsidedata, Utgave } from './lesing'
 import type { Innholdselementinnhold, Referanseinnhold } from './modell'
-import { FJERNET, PANELREKKEFOLGE, panelFor, sammenlignKort } from './paneler'
+import { ELEMENTTYPER, FJERNET, PANELREKKEFOLGE, panelFor, sammenlignKort } from './paneler'
 import {
   feltreferanser,
   INGEN_AUTOMATISKE,
@@ -89,6 +89,21 @@ export function byggSidemodell(data: Stoffsidedata): Sidemodell {
   const modell = { paneler, panelreferanser, referanser }
   const { nummerering, liste } = referanseunivers(modell)
   return { ...modell, nummerering, referanseliste: liste }
+}
+
+/** Elementene som bare kobler siden til data OUSFAR henter selv; de er ikke faginnhold. */
+const DATAKOBLINGER: ReadonlySet<string> = new Set([ELEMENTTYPER.legemiddelkobling, ELEMENTTYPER.clinpgxkobling])
+
+/**
+ * Om siden har faginnhold: noe en fagperson har skrevet eller lagt inn, ikke
+ * bare koblingene til legemiddeldataene og ClinPGx. En side uten er ikke
+ * faglig kuratert, selv om den viser preparater.
+ */
+export function harFaginnhold(modell: Pick<Sidemodell, 'paneler' | 'panelreferanser'>): boolean {
+  return (
+    Object.keys(modell.panelreferanser).length > 0 ||
+    [...modell.paneler.values()].some((elementer) => elementer.some((e) => !DATAKOBLINGER.has(e.elementtype)))
+  )
 }
 
 function bareKjentePaneler<T>(perPanel: Readonly<Record<string, T>>): Record<string, T> {

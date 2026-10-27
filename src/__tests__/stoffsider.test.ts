@@ -22,6 +22,7 @@ import { SITERING } from '../faginnhold/referanser'
 import { indekserSide, lagSokeindeks, sokGlobalt, sokeadresse, stoffidentitet } from '../faginnhold/sok'
 import { ANDRE_STOFFER, byggStoffregister } from '../domain/stoffregister'
 import { faginnholdskall, nyDatabase, opprettBruker, type Faginnholdskall } from './hjelp/testdatabase'
+import { PLASSERT_MED_SIDEN } from './hjelp/registerstruktur'
 
 let db: PGlite
 let kall: Faginnholdskall
@@ -127,7 +128,8 @@ describe('les_stoffliste', () => {
     const register = byggStoffregister(sider, undefined, struktur)
     expect(register.finn('teststoff')).toEqual({ slug: 'teststoff', navn: 'Teststoff', aliaser: [] })
     expect(register.kategorierFor('teststoff')).toEqual([{ kategori: ANDRE_STOFFER }])
-    expect(register.kategorier.find((k) => k.navn === ANDRE_STOFFER)?.stoffer.map((s) => s.slug)).toEqual(['teststoff'])
+    const andre = register.kategorier.find((k) => k.navn === ANDRE_STOFFER)?.stoffer.map((s) => s.slug)
+    expect(andre?.filter((s) => !PLASSERT_MED_SIDEN.has(s))).toEqual(['teststoff'])
     // Bupropion er stoffet i registeret, med analytten koblet til der.
     expect(register.finn('bupropion')?.navn).toBe('Bupropion')
     expect(register.analytterFor('bupropion').map((k) => k.kode)).toContain('HBUP')

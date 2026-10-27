@@ -73,8 +73,59 @@ export type UkobletSide = Felles &
 export type Dekning = KobletSide | UkobletSide
 
 /**
+ * Fagsidene OUSFAR Verktøy manglet (P2 i `docs/verktøy-utviklingsplan.md`),
+ * søkt opp i ClinPGx på det engelske navnet 27. oktober 2026. Ingen er koblet.
+ */
+const VERKTOYSIDE = 'Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST.'
+const VERKTOYSIDER: readonly UkobletSide[] = [
+  ...(
+    [
+      ['Agomelatin', 'PA165958363', 'agomelatine'],
+      ['Fenelzin', 'PA450903', 'phenelzine'],
+      ['Flufenazin', 'PA449676', 'fluphenazine'],
+      ['Imipramin', 'PA449969', 'imipramine'],
+      ['Loksapin', 'PA450273', 'loxapine'],
+      ['Maprotilin', 'PA450322', 'maprotiline'],
+      ['Moklobemid', 'PA452615', 'moclobemide'],
+      ['Pimozid', 'PA450965', 'pimozide'],
+      ['Promazin', 'PA451126', 'promazine'],
+      ['Sulpirid', 'PA164745485', 'sulpiride'],
+      ['Tranylcypromin', 'PA451741', 'tranylcypromine'],
+      ['Trazodon', 'PA451744', 'trazodone'],
+      ['Trifluoperazin', 'PA451771', 'trifluoperazine'],
+    ] as const
+  ).map(
+    ([side, clinpgx_id, navn]): UkobletSide => ({
+      side,
+      status: 'krever_kuratering',
+      kandidater: [{ clinpgx_id, navn }],
+      grunn: `${VERKTOYSIDE} ClinPGx har ${navn} (kontrollert samme dag); koblingen er ikke lagt inn ennå.`,
+    }),
+  ),
+  {
+    side: 'Perisiazin',
+    status: 'krever_kuratering',
+    kandidater: [{ clinpgx_id: 'PA164781043', navn: 'propericiazine' }],
+    grunn: `${VERKTOYSIDE} ClinPGx har ingen treff på periciazine eller pericyazine, bare propericiazine, et annet navn på stoffet som må bekreftes før det kobles.`,
+  },
+  {
+    side: 'Dosulepin',
+    status: 'ikke_i_clinpgx',
+    sokt: ['dosulepin', 'dosulepine', 'dothiepin'],
+    grunn: `${VERKTOYSIDE} ClinPGx har ikke stoffet under noen av navnene.`,
+  },
+  {
+    side: 'Penfluridol',
+    status: 'ikke_i_clinpgx',
+    sokt: ['penfluridol'],
+    grunn: `${VERKTOYSIDE} ClinPGx har ikke stoffet.`,
+  },
+]
+
+/**
  * Stoffsidene som ikke er koblet, med grunnen. Kontrollert mot ClinPGx
- * 26. september 2026, også hvilke annotasjoner metabolittene har.
+ * 26. september 2026, også hvilke annotasjoner metabolittene har, og de
+ * nyere sidene der det står.
  */
 export const UKOBLEDE_STOFFSIDER: readonly UkobletSide[] = [
   {
@@ -176,6 +227,7 @@ export const UKOBLEDE_STOFFSIDER: readonly UkobletSide[] = [
     grunn:
       'Siden ble laget 28. september 2026 med indikasjonen og preparatene fra FEST. ClinPGx har tapentadol (kontrollert samme dag); koblingen er ikke lagt inn ennå.',
   },
+  ...VERKTOYSIDER,
 ]
 
 /** Hver publiserte stoffside med status, sortert etter navnet. */

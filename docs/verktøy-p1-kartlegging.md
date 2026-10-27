@@ -19,7 +19,7 @@ regler er laget.
 | De 1072 lenkede sidene på https://psychiatrienet.nl | status, overskrift og revisjon per side | 27.10.2026 |
 | FEST (fest251.zip) | uttrekk 08.10.2026, fil endret 21.10.2026 | – |
 | Fagsidene i OUSFAR | 107 publiserte | 27.10.2026 |
-| Stoffregisterfilen | src/data/stoffregister.json, 99 stoffer | – |
+| Stoffregisterfilen | src/data/stoffregister.json, 115 stoffer | – |
 
 Markedsstatusen gjelder dagen FEST-uttrekket ble laget. FEST er ikke
 sanntidsbeholdning i apotek.
@@ -37,7 +37,7 @@ sanntidsbeholdning i apotek.
   - Injeksjon, middels langtidsvirkende (MA): 1
   - Depotinjeksjon (LA): 52
   - Annen administrasjonsform: 2
-- **Fagsider:** 38 finnes, **16 mangler**: Agomelatin, Dosulepin, Fenelzin, Flufenazin, Imipramin, Loksapin, Maprotilin, Moklobemid, Penfluridol, Perisiazin, Pimozid, Promazin, Sulpirid, Tranylcypromin, Trazodon, Trifluoperazin.
+- **Fagsider:** 38 finnes, **16 mangler**: Agomelatin, Dosulepin, Fenelzin, Flufenazin, Imipramin, Loksapin, Maprotilin, Moklobemid, Penfluridol, Perisiazin, Pimozid, Promazin, Sulpirid, Tranylcypromin, Trazodon, Trifluoperazin. 16 av dem lages i P2 (`src/verktoy/fagsider.ts`).
 - **Celler:** 1274 i alt, 1110 lenkede, 164 tomme. Etter johannesurt og Start-kolonnen er **1039 celler importmål** i P3, og 1036 av dem svarte.
 
 ## Dekning per tabell
@@ -172,7 +172,7 @@ annet. Aliasene er FESTs engelske navn og kildens stavemåter.
 
 | Norsk navn | Nøkkel | Aliaser | FEST (moderstoff) | Salter/estere i FEST | Fagside | I stoffregisterfilen | Marked | Tabeller |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Agomelatin | `agomelatin` | agomelatine | Agomelatin `ID_B01358F8-EB08-4C5C-8399-4F70197493F1` | – | **mangler** | nei | Bare preparater med godkjenningsfritak | AD |
+| Agomelatin | `agomelatin` | agomelatine | Agomelatin `ID_B01358F8-EB08-4C5C-8399-4F70197493F1` | – | lages i P2 | ja | Bare preparater med godkjenningsfritak | AD |
 | Amisulprid | `amisulprid` | amisulpride | Amisulprid `ID_23A8F342-84DC-41FF-B835-B9A45B2F6394` | – | finnes | ja | Markedsført legemiddel i Norge | AP |
 | Amitriptylin | `amitriptylin` | amitriptyline | Amitriptylin `ID_0A1B24EF-A7F8-488B-97B8-8023193E976D` | Amitriptylinhydroklorid | finnes | ja | Markedsført legemiddel i Norge | AD |
 | Aripiprazol | `aripiprazol` | aripiprazole | Aripiprazol `ID_4596EE8B-CD03-43E0-AEA8-CDB60778EA43` | Aripiprazolmonohydrat | finnes | ja | Markedsført legemiddel i Norge | MS, AP |
@@ -180,17 +180,17 @@ annet. Aliasene er FESTs engelske navn og kildens stavemåter.
 | Bupropion | `bupropion` | – | Bupropion `ID_4FE84EA2-FC1B-44A6-8D70-2A118B211697` | Bupropionhydrobromid, Bupropionhydroklorid | finnes | ja | Markedsført legemiddel i Norge | AD |
 | Citalopram | `citalopram` | – | Citalopram `ID_E2B9E074-0D21-4E5E-9867-BC70B8FC2654` | Citalopramhydrobromid, Citalopramhydroklorid | finnes | ja | Markedsført legemiddel i Norge | AD |
 | Doksepin | `doksepin` | doxepin, doxepine | Doksepin `ID_AF1D3EF5-E7BA-45E4-8C6F-EB410DB3C4AF` | Doksepinhydroklorid | finnes | ja | Markedsført legemiddel i Norge | AD |
-| Dosulepin | `dosulepin` | dosulepine | Dosulepin `ID_DD009B35-8BF4-4080-80C5-3F400A89F713` | – | **mangler** | nei | Ingen preparater i FEST | AD |
+| Dosulepin | `dosulepin` | dosulepine | Dosulepin `ID_DD009B35-8BF4-4080-80C5-3F400A89F713` | – | lages i P2 | ja | Ingen preparater i FEST | AD |
 | Duloksetin | `duloksetin` | duloxetine | Duloksetin `ID_D27A3210-135D-42C9-9DB3-8AB8CBEA77E6` | Duloksetinhydroklorid | finnes | ja | Markedsført legemiddel i Norge | AD |
 | Escitalopram | `escitalopram` | – | Escitalopram `ID_13E05918-25C1-4DAA-A0F5-1266DEC3A75F` | Escitalopramoksalat | finnes | ja | Markedsført legemiddel i Norge | AD |
-| Fenelzin | `fenelzin` | fenelzine, phenelzine | Fenelzin `ID_B3CA8826-0F7A-4190-B1C3-E3B897AE69FF` | Fenelzinsulfat | **mangler** | nei | Bare preparater med godkjenningsfritak | AD |
-| Flufenazin | `flufenazin` | fluphenazine | Flufenazin `ID_0263C5B9-693B-4BE3-84D4-7EB46AB0A71C` | Flufenazindekanoat, Flufenazindihydroklorid, Flufenazinenantat | **mangler** | nei | Bare preparater med godkjenningsfritak | AP |
+| Fenelzin | `fenelzin` | fenelzine, phenelzine | Fenelzin `ID_B3CA8826-0F7A-4190-B1C3-E3B897AE69FF` | Fenelzinsulfat | lages i P2 | ja | Bare preparater med godkjenningsfritak | AD |
+| Flufenazin | `flufenazin` | fluphenazine | Flufenazin `ID_0263C5B9-693B-4BE3-84D4-7EB46AB0A71C` | Flufenazindekanoat, Flufenazindihydroklorid, Flufenazinenantat | lages i P2 | ja | Bare preparater med godkjenningsfritak | AP |
 | Fluoksetin | `fluoksetin` | fluoxetine | Fluoksetin `ID_D473FE91-133D-494A-A2B0-C644A8372A8B` | Fluoksetinhydroklorid | finnes | ja | Markedsført legemiddel i Norge | AD |
 | Flupentiksol | `flupentiksol` | flupenthixol, flupentixol | Flupentiksol `ID_9E8C912B-84DB-4AFF-BE91-DB21F945B83E` | Flupentiksoldekanoat, Flupentiksoldihydroklorid | finnes | ja | Markedsført legemiddel i Norge | AP |
 | Fluvoksamin | `fluvoksamin` | fluvoxamine | Fluvoksamin `ID_A39218DE-5973-4473-A005-FBA8B4E86C62` | Fluvoksaminmaleat | finnes | ja | Markedsført legemiddel i Norge | AD |
 | Gabapentin | `gabapentin` | – | Gabapentin `ID_A46CFA9C-F01A-4F03-AF5C-28A5579898DB` | – | finnes | ja | Markedsført legemiddel i Norge | MS |
 | Haloperidol | `haloperidol` | – | Haloperidol `ID_667FA975-A8EC-4CF8-A89E-96F97808E3AD` | Haloperidoldekanoat | finnes | ja | Markedsført legemiddel i Norge | AP |
-| Imipramin | `imipramin` | imipramine | Imipramin `ID_D136F468-4949-4C91-81E4-04628D7C07DE` | Imipraminhydroklorid | **mangler** | nei | Bare preparater med godkjenningsfritak | AD |
+| Imipramin | `imipramin` | imipramine | Imipramin `ID_D136F468-4949-4C91-81E4-04628D7C07DE` | Imipraminhydroklorid | lages i P2 | ja | Bare preparater med godkjenningsfritak | AD |
 | Karbamazepin | `karbamazepin` | carbamazepine | Karbamazepin `ID_8418C9B9-33E9-4757-9224-7D3A76E776B6` | – | finnes | ja | Markedsført legemiddel i Norge | MS |
 | Kariprazin | `kariprazin` | cariprazine | Kariprazin `ID_966A0E9E-10AF-40C1-BA48-3E2E6ECF49C2` | Kariprazinhydroklorid | finnes | ja | Markedsført legemiddel i Norge | AP |
 | Klomipramin | `klomipramin` | clomipramine | Klomipramin `ID_40E4710B-8115-40CA-986D-E98AE4C2D6B0` | Klomipraminhydroklorid | finnes | ja | Markedsført legemiddel i Norge | AD |
@@ -199,28 +199,28 @@ annet. Aliasene er FESTs engelske navn og kildens stavemåter.
 | Kvetiapin | `kvetiapin` | quetiapine | Kvetiapin `ID_61E766DA-E71D-4381-B4DE-2A06C51A2BD8` | Kvetiapinfumarat | finnes | ja | Markedsført legemiddel i Norge | MS, AP |
 | Lamotrigin | `lamotrigin` | lamotrigine | Lamotrigin `ID_F456CD11-3821-4C60-B36F-DE0C9D51ED22` | – | finnes | ja | Markedsført legemiddel i Norge | MS |
 | Litium | `litium` | lithium, litiumion | Litiumion `ID_36AEA22F-E6BC-4CF0-9A3F-2E9341A7B5F6` | Litiumhydroksidmonohydrat, Litiumkarbonat, Litiumklorid, Litiumorotat, Litiumsitrat, Litiumsitrat, Ph. Eur., Litiumsuksinat, Litiumsulfat | finnes | ja | Markedsført legemiddel i Norge | MS |
-| Loksapin | `loksapin` | loxapine | Loksapin `ID_CBF9DD3B-0EFC-4CB2-B78C-9D61AFD78AFA` | – | **mangler** | nei | Ingen preparater i FEST | AP |
+| Loksapin | `loksapin` | loxapine | Loksapin `ID_CBF9DD3B-0EFC-4CB2-B78C-9D61AFD78AFA` | – | lages i P2 | ja | Ingen preparater i FEST | AP |
 | Lurasidon | `lurasidon` | lurasidone | Lurasidon `ID_3B369762-A4B8-49DB-931D-6AC9D901ABAC` | Lurasidonhydroklorid | finnes | ja | Markedsført legemiddel i Norge | AP |
-| Maprotilin | `maprotilin` | maprotiline | Maprotilin `ID_EC5AFDB1-7FAD-44E8-BD51-89E84AC709E3` | – | **mangler** | nei | Ingen preparater i FEST | AD |
+| Maprotilin | `maprotilin` | maprotiline | Maprotilin `ID_EC5AFDB1-7FAD-44E8-BD51-89E84AC709E3` | – | lages i P2 | ja | Ingen preparater i FEST | AD |
 | Mirtazapin | `mirtazapin` | mirtazapine | Mirtazapin `ID_0AFFD596-9932-44A7-86E8-F35BBDB1FCAD` | Mirtazapinhemihydrat | finnes | ja | Markedsført legemiddel i Norge | AD |
-| Moklobemid | `moklobemid` | moclobemide | Moklobemid `ID_D1F74888-C7D1-474F-A9E8-2E58CB136B06` | – | **mangler** | nei | Markedsført legemiddel i Norge | AD |
+| Moklobemid | `moklobemid` | moclobemide | Moklobemid `ID_D1F74888-C7D1-474F-A9E8-2E58CB136B06` | – | lages i P2 | ja | Markedsført legemiddel i Norge | AD |
 | Nortriptylin | `nortriptylin` | nortriptyline | Nortriptylin `ID_829694BA-B839-4173-BE1A-37CD35C17700` | Nortriptylinhydroklorid | finnes | ja | Markedsført legemiddel i Norge | AD |
 | Olanzapin | `olanzapin` | olanzapine | Olanzapin `ID_A86FC555-41CA-4E80-A188-ED521EEC5903` | Olanzapinembonatmonohydrat | finnes | ja | Markedsført legemiddel i Norge | MS, AP |
 | Paliperidon | `paliperidon` | paliperidone | Paliperidon `ID_82CAEDDE-7CB1-4302-9C30-6A2010DB6D85` | Paliperidonpalmitat | finnes | ja | Markedsført legemiddel i Norge | AP |
 | Paroksetin | `paroksetin` | paroxetine | Paroksetin `ID_0F9E3AC0-1950-4CF5-8F4F-4008696E85B8` | Paroksetinhydroklorid, Paroksetinhydrokloridhemihydrat, Paroksetinmesilat | finnes | ja | Markedsført legemiddel i Norge | AD |
-| Penfluridol | `penfluridol` | – | Penfluridol `ID_DF5D1607-B995-49E6-A7F1-CF4440AC101A` | – | **mangler** | nei | Bare preparater med godkjenningsfritak | AP |
+| Penfluridol | `penfluridol` | – | Penfluridol `ID_DF5D1607-B995-49E6-A7F1-CF4440AC101A` | – | lages i P2 | ja | Bare preparater med godkjenningsfritak | AP |
 | Perfenazin | `perfenazin` | perphenazine | Perfenazin `ID_57F9D9AC-707C-4172-8A52-2C2D944B5FF5` | Perfenazindekanoat | finnes | ja | Markedsført legemiddel i Norge | AP |
-| Perisiazin | `perisiazin` | periciazine, pericyazine | Perisiazin `ID_429EE77E-79B6-4431-98E8-D5281A9E1D39` | – | **mangler** | nei | Ingen preparater i FEST | AP |
-| Pimozid | `pimozid` | pimozide | Pimozid `ID_D700661D-AD77-4F91-880E-5B101EFAC189` | – | **mangler** | nei | Bare preparater med godkjenningsfritak | AP |
-| Promazin | `promazin` | promazine | Promazin `ID_891C7906-F62A-4D2B-80B2-2CE5478CAF18` | – | **mangler** | nei | Ingen preparater i FEST | AP |
+| Perisiazin | `perisiazin` | periciazine, pericyazine | Perisiazin `ID_429EE77E-79B6-4431-98E8-D5281A9E1D39` | – | lages i P2 | ja | Ingen preparater i FEST | AP |
+| Pimozid | `pimozid` | pimozide | Pimozid `ID_D700661D-AD77-4F91-880E-5B101EFAC189` | – | lages i P2 | ja | Bare preparater med godkjenningsfritak | AP |
+| Promazin | `promazin` | promazine | Promazin `ID_891C7906-F62A-4D2B-80B2-2CE5478CAF18` | – | lages i P2 | ja | Ingen preparater i FEST | AP |
 | Risperidon | `risperidon` | risperidone | Risperidon `ID_852F4AC9-FF5C-4C97-999E-03FE3C144223` | – | finnes | ja | Markedsført legemiddel i Norge | MS, AP |
 | Sertindol | `sertindol` | sertindole | Sertindol `ID_79EE8CA6-168F-444A-9C83-2F6110A42CF0` | – | finnes | ja | Markedsført legemiddel i Norge | AP |
 | Sertralin | `sertralin` | sertraline | Sertralin `ID_1C2C9254-987B-4A37-AC48-6349BB671F07` | Sertralinhydroklorid | finnes | ja | Markedsført legemiddel i Norge | AD |
-| Sulpirid | `sulpirid` | sulpiride | Sulpirid `ID_E5BEB70C-39AD-4EA1-87B5-63983C1D534A` | – | **mangler** | nei | Bare preparater med godkjenningsfritak | AP |
+| Sulpirid | `sulpirid` | sulpiride | Sulpirid `ID_E5BEB70C-39AD-4EA1-87B5-63983C1D534A` | – | lages i P2 | ja | Bare preparater med godkjenningsfritak | AP |
 | Topiramat | `topiramat` | topiramate | Topiramat `ID_A8E3BC2D-A60C-4AA6-B069-5D09BC84ADE0` | – | finnes | ja | Markedsført legemiddel i Norge | MS |
-| Tranylcypromin | `tranylcypromin` | tranylcypromine | Tranylcypromin `ID_6E876C08-FF0F-48BC-AAEE-15C0A3B83DCA` | Tranylcyprominsulfat | **mangler** | nei | Bare preparater med godkjenningsfritak | AD |
-| Trazodon | `trazodon` | trazodone | Trazodon `ID_90E0E28B-FDED-44F8-88DA-EEB0232AEAFD` | Trazodonhydroklorid | **mangler** | nei | Bare preparater med godkjenningsfritak | AD |
-| Trifluoperazin | `trifluoperazin` | trifluoperazine | Trifluoperazin `ID_E52C65FD-26A0-4B1F-8E26-EB3012B77F81` | – | **mangler** | nei | Ingen preparater i FEST | AP |
+| Tranylcypromin | `tranylcypromin` | tranylcypromine | Tranylcypromin `ID_6E876C08-FF0F-48BC-AAEE-15C0A3B83DCA` | Tranylcyprominsulfat | lages i P2 | ja | Bare preparater med godkjenningsfritak | AD |
+| Trazodon | `trazodon` | trazodone | Trazodon `ID_90E0E28B-FDED-44F8-88DA-EEB0232AEAFD` | Trazodonhydroklorid | lages i P2 | ja | Bare preparater med godkjenningsfritak | AD |
+| Trifluoperazin | `trifluoperazin` | trifluoperazine | Trifluoperazin `ID_E52C65FD-26A0-4B1F-8E26-EB3012B77F81` | – | lages i P2 | ja | Ingen preparater i FEST | AP |
 | Valproat | `valproat` | valproic acid, valproinsyre | Valproinsyre `ID_A61E2EDC-D6B4-4E52-89F4-3D10F0E03E38` | Divalproeksnatrium, Natriumvalproat | finnes | ja | Markedsført legemiddel i Norge | MS |
 | Venlafaksin | `venlafaksin` | venlafaxine | Venlafaksin `ID_289921F8-A934-43E2-8F86-DB736FA198DF` | Venlafaksinhydroklorid | finnes | ja | Markedsført legemiddel i Norge | AD |
 | Vortioksetin | `vortioksetin` | vortioxetine | Vortioksetin `ID_328991B3-C34B-4D78-AD5C-7D7DDA7B2DCA` | Vortioksetin DL-laktat, Vortioksetinhydrobromid, Vortioksetinhydrobromidbenzylalkoholhemisolvat | finnes | ja | Markedsført legemiddel i Norge | AD |
@@ -231,32 +231,35 @@ MS = Combining Moodstabilizers, AD = Switching Antidepressants, AP = Switching A
 
 ### Virkestoffer som mangler fagside
 
-| Virkestoff | Foreslått nøkkel | Marked | Tabeller |
-| --- | --- | --- | --- |
-| Agomelatin | `agomelatin` | Bare preparater med godkjenningsfritak | AD |
-| Dosulepin | `dosulepin` | Ingen preparater i FEST | AD |
-| Fenelzin | `fenelzin` | Bare preparater med godkjenningsfritak | AD |
-| Flufenazin | `flufenazin` | Bare preparater med godkjenningsfritak | AP |
-| Imipramin | `imipramin` | Bare preparater med godkjenningsfritak | AD |
-| Loksapin | `loksapin` | Ingen preparater i FEST | AP |
-| Maprotilin | `maprotilin` | Ingen preparater i FEST | AD |
-| Moklobemid | `moklobemid` | Markedsført legemiddel i Norge | AD |
-| Penfluridol | `penfluridol` | Bare preparater med godkjenningsfritak | AP |
-| Perisiazin | `perisiazin` | Ingen preparater i FEST | AP |
-| Pimozid | `pimozid` | Bare preparater med godkjenningsfritak | AP |
-| Promazin | `promazin` | Ingen preparater i FEST | AP |
-| Sulpirid | `sulpirid` | Bare preparater med godkjenningsfritak | AP |
-| Tranylcypromin | `tranylcypromin` | Bare preparater med godkjenningsfritak | AD |
-| Trazodon | `trazodon` | Bare preparater med godkjenningsfritak | AD |
-| Trifluoperazin | `trifluoperazin` | Ingen preparater i FEST | AP |
+Etter fagsidene i produksjon da øyeblikksbildet ble tatt. Sidene P2 lager, er
+uten faginnhold og kobles til moderstoffet i FEST; de står her til bildet er
+tatt på nytt etter utrullingen.
+
+| Virkestoff | Nøkkel | Marked | Tabeller | Kategori i stoffregisteret (P2) |
+| --- | --- | --- | --- | --- |
+| Agomelatin | `agomelatin` | Bare preparater med godkjenningsfritak | AD | Antidepressiver |
+| Dosulepin | `dosulepin` | Ingen preparater i FEST | AD | Antidepressiver › TCA |
+| Fenelzin | `fenelzin` | Bare preparater med godkjenningsfritak | AD | Antidepressiver › MAO-hemmere |
+| Flufenazin | `flufenazin` | Bare preparater med godkjenningsfritak | AP | Antipsykotika › Førstegenerasjonsmidler |
+| Imipramin | `imipramin` | Bare preparater med godkjenningsfritak | AD | Antidepressiver › TCA |
+| Loksapin | `loksapin` | Ingen preparater i FEST | AP | Antipsykotika › Førstegenerasjonsmidler |
+| Maprotilin | `maprotilin` | Ingen preparater i FEST | AD | Antidepressiver |
+| Moklobemid | `moklobemid` | Markedsført legemiddel i Norge | AD | Antidepressiver › MAO-hemmere |
+| Penfluridol | `penfluridol` | Bare preparater med godkjenningsfritak | AP | Antipsykotika › Førstegenerasjonsmidler |
+| Perisiazin | `perisiazin` | Ingen preparater i FEST | AP | Antipsykotika › Førstegenerasjonsmidler |
+| Pimozid | `pimozid` | Bare preparater med godkjenningsfritak | AP | Antipsykotika › Førstegenerasjonsmidler |
+| Promazin | `promazin` | Ingen preparater i FEST | AP | Antipsykotika › Førstegenerasjonsmidler |
+| Sulpirid | `sulpirid` | Bare preparater med godkjenningsfritak | AP | Antipsykotika › Førstegenerasjonsmidler |
+| Tranylcypromin | `tranylcypromin` | Bare preparater med godkjenningsfritak | AD | Antidepressiver › MAO-hemmere |
+| Trazodon | `trazodon` | Bare preparater med godkjenningsfritak | AD | Antidepressiver |
+| Trifluoperazin | `trifluoperazin` | Ingen preparater i FEST | AP | Antipsykotika › Førstegenerasjonsmidler |
 
 ### Søkealiaser som ikke finnes i dag
 
 Navn fagsøket ikke allerede finner gjennom stavemåteregelen (`navnenokkel`)
-eller stoffregisterfilen. Legges inn sammen med fagsidene i P2.
+eller stoffregisterfilen.
 
-- Litium: litiumion
-- Perisiazin: periciazine, pericyazine
+Ingen: de er lagt inn i stoffregisterfilen (P2).
 
 ## Formuleringer i FEST
 

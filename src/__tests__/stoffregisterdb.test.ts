@@ -8,6 +8,7 @@ import { readFileSync } from 'node:fs'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { STOFFREGISTERDATA } from '../domain/stoffregister'
 import { faginnholdskall, feilFra, nyDatabase, opprettBruker, som, type Faginnholdskall } from './hjelp/testdatabase'
+import { PLASSERT_MED_SIDEN } from './hjelp/registerstruktur'
 
 interface Kategorirad {
   id: string
@@ -98,7 +99,7 @@ describe('stoffregisteret i databasen', () => {
     expect(data.kategorier.find((k) => k.id === ssri.forelder)?.navn).toBe('Antidepressiver')
     expect(data.plasseringer.filter((p) => p.kategori === ssri.id).map((p) => p.stoff)).toContain('sertralin')
     const plassert = new Set(data.plasseringer.map((p) => p.stoff))
-    for (const s of STOFFREGISTERDATA.stoffer) expect(plassert.has(s.slug), s.slug).toBe(true)
+    for (const s of STOFFREGISTERDATA.stoffer) expect(plassert.has(s.slug), s.slug).toBe(!PLASSERT_MED_SIDEN.has(s.slug))
     // Ketamin står to steder, som i datafilen.
     expect(data.plasseringer.filter((p) => p.stoff === 'ketamin')).toHaveLength(2)
   })

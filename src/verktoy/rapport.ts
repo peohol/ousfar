@@ -18,6 +18,7 @@ import {
   type Kildeidentitet,
   type Markedsgrunnlag,
 } from './kartlegging'
+import { VERKTOY_KATEGORIER } from './fagsider'
 
 export const RAPPORTFIL = 'docs/verktøy-p1-kartlegging.md'
 
@@ -39,6 +40,7 @@ const celle = (t: string) => t.replace(/\|/g, '\\|').replace(/\n/g, ' ')
 const tabell = (hode: string[], rader: string[][]) =>
   [`| ${hode.join(' | ')} |`, `| ${hode.map(() => '---').join(' | ')} |`, ...rader.map((r) => `| ${r.map(celle).join(' | ')} |`)].join('\n')
 const liste = (xs: string[]) => xs.map((x) => `- ${x}`).join('\n')
+const listeEller = (xs: string[], ingen: string) => (xs.length > 0 ? liste(xs) : ingen)
 
 /** Legemiddelformene i en klasse, med antall preparatnavn (merkevarer) i FEST. */
 function formoversikt(preparater: Festpreparat[]): string {
@@ -115,6 +117,7 @@ export function lagRapport(d: Kartdata): string {
   for (const g of k.grupper) avvik.push(`**${g.kildenavn}:** ${g.merknad}`)
   for (const v of varianter) if (v.merknad) avvik.push(`**${v.kildenavn}:** ${v.merknad}`)
 
+  const iP2 = (vs: readonly { nokkel: string }[]) => vs.filter((v) => VERKTOY_KATEGORIER[v.nokkel]).length
   const nyeAliaser = k.virkestoffer
     .map((v) => {
       const register = d.stoffregister.stoffer.find((s) => s.slug === v.nokkel)
@@ -161,7 +164,7 @@ sanntidsbeholdning i apotek.
 - **${identiteter.length} rad- og kolonneidentiteter** i de tre tabellene (${KILDETABELLER.map((x) => `${KORT[x.id]}: ${k.kildeidentiteter[x.id].length}`).join(', ')}).
 - **${new Set(alleFest.map((p) => p.id)).size} preparater (merkevarer) i FEST** for virkestoffene, uten kombinasjonspreparater:
 ${liste((Object.keys(FORMULERINGSKLASSER) as Formuleringsklasse[]).map((c) => `${FORMULERINGSKLASSER[c]}: ${new Set(alleFest.filter((p) => p.klasse === c).map((p) => p.id)).size}`)).replace(/^/gm, '  ')}
-- **Fagsider:** ${k.virkestoffer.length - mangler.length} finnes, **${mangler.length} mangler**: ${mangler.map((v) => v.navn).join(', ')}.
+- **Fagsider:** ${k.virkestoffer.length - mangler.length} finnes, **${mangler.length} mangler**${mangler.length > 0 ? `: ${mangler.map((v) => v.navn).join(', ')}. ${iP2(mangler)} av dem lages i P2 (\`src/verktoy/fagsider.ts\`)` : ''}.
 - **Celler:** ${sum((x) => x.celler)} i alt, ${sum((x) => x.lenkede)} lenkede, ${sum((x) => x.tomme)} tomme. Etter johannesurt og Start-kolonnen er **${mal.length} celler importmål** i P3, og ${sum((x) => x.importmal_tilgjengelige)} av dem svarte.
 
 ## Dekning per tabell
@@ -230,7 +233,7 @@ ${tabell(
       v.aliaser.join(', ') || '–',
       f.map((x) => `${x.navn} \`${x.id}\``).join('; '),
       f.flatMap((x) => x.salter.map((s) => s.navn)).join(', ') || '–',
-      s.fagside ? 'finnes' : '**mangler**',
+      s.fagside ? 'finnes' : VERKTOY_KATEGORIER[v.nokkel] ? 'lages i P2' : '**mangler**',
       s.i_stoffregisterfilen ? 'ja' : 'nei',
       MARKEDSGRUNNLAG[s.marked],
       s.tabeller.map((x) => KORT[x]).join(', '),
@@ -242,20 +245,28 @@ MS = ${TABELLNAVN.CombiningMoodstabilizers}, AD = ${TABELLNAVN.SwitchAntidepress
 
 ### Virkestoffer som mangler fagside
 
-${tabell(
-  ['Virkestoff', 'Foreslått nøkkel', 'Marked', 'Tabeller'],
-  mangler.map((v) => {
-    const s = status.get(v.nokkel)!
-    return [v.navn, `\`${v.nokkel}\``, MARKEDSGRUNNLAG[s.marked], s.tabeller.map((x) => KORT[x]).join(', ')]
-  }),
-)}
+Etter fagsidene i produksjon da øyeblikksbildet ble tatt. Sidene P2 lager, er
+uten faginnhold og kobles til moderstoffet i FEST; de står her til bildet er
+tatt på nytt etter utrullingen.
+
+${
+  mangler.length > 0
+    ? tabell(
+        ['Virkestoff', 'Nøkkel', 'Marked', 'Tabeller', 'Kategori i stoffregisteret (P2)'],
+        mangler.map((v) => {
+          const s = status.get(v.nokkel)!
+          return [v.navn, `\`${v.nokkel}\``, MARKEDSGRUNNLAG[s.marked], s.tabeller.map((x) => KORT[x]).join(', '), VERKTOY_KATEGORIER[v.nokkel]?.join(' › ') ?? '**ingen side planlagt**']
+        }),
+      )
+    : 'Ingen.'
+}
 
 ### Søkealiaser som ikke finnes i dag
 
 Navn fagsøket ikke allerede finner gjennom stavemåteregelen (\`navnenokkel\`)
-eller stoffregisterfilen. Legges inn sammen med fagsidene i P2.
+eller stoffregisterfilen.
 
-${liste(nyeAliaser.map((x) => `${x.v.navn}: ${x.nye.join(', ')}`))}
+${listeEller(nyeAliaser.map((x) => `${x.v.navn}: ${x.nye.join(', ')}`), 'Ingen: de er lagt inn i stoffregisterfilen (P2).')}
 
 ## Formuleringer i FEST
 
