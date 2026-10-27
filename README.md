@@ -7,6 +7,12 @@ kommentaren kopiert til utklippstavlen — hele veien med tastaturet.
 Appen dekker psykofarmaka, antihypertensiver, THC-syre i urin, stoffene med
 ruspotensial i serum og etanolmarkørene EtG og EtS.
 
+## Utviklingsplan for farmakologiske verktøy
+
+Planlagte verktøy for nedtrapping og bytte av psykofarmaka, med fremdrift,
+ansvarsdeling og kliniske kontrollpunkter: [Verktøy – utviklingsplan og fremdrift](docs/verktøy-utviklingsplan.md).
+Dette er foreløpig en plan; verktøyene er ikke implementert.
+
 ## Kom i gang
 
 ```bash
