@@ -1,6 +1,8 @@
 /**
  * Psychiatrienets tre switchtabeller, lest som struktur: radene, kolonnene,
- * cellene og gruppene, ikke anbefalingstekstene.
+ * cellene og gruppene med kildens koder og legemiddelnavn. Ingen annen tekst
+ * fra kilden tas med, heller ikke lenketekster, lenketitler eller fotnoter
+ * (`docs/verktøy-p3-rettigheter.md`).
  *
  * Tabellene er MediaWiki-sider med én `<table class="switchtable">`. Første
  * rad har kolonnekodene, og hver rad etter den har koden og navnet til
@@ -49,9 +51,11 @@ export interface Tabellakse {
   navn: string | null
 }
 
-export type Celle =
-  | { rad: string; kolonne: string; type: 'lenke'; href: string; tittel: string | null; tekst: string }
-  | { rad: string; kolonne: string; type: 'tom'; tekst: string }
+/**
+ * En celle: koordinatene og lenken. Lenketeksten og -tittelen fra kilden tas
+ * ikke med (`docs/verktøy-p3-rettigheter.md`).
+ */
+export type Celle = { rad: string; kolonne: string; type: 'lenke'; href: string } | { rad: string; kolonne: string; type: 'tom' }
 
 /** En gruppe kilden behandler som én rad og kolonne, f.eks. «Rest AP». */
 export interface Kildegruppe {
@@ -60,10 +64,9 @@ export interface Kildegruppe {
   medlemmer: { navn: string; href: string | null }[]
 }
 
-export interface Switchtabell {
-  id: Tabell_id
-  /** Overskriften på siden. */
-  tittel: string
+/** En switchtabell; `I` er en annen identitet for en undertabell på en kildeside (P3). */
+export interface Switchtabell<I extends string = Tabell_id> {
+  id: I
   /** Hva radene og kolonnene står for, slik tabellen sier det («from», «to»). */
   radetikett: string
   kolonneetikett: string
@@ -71,8 +74,6 @@ export interface Switchtabell {
   kolonner: Tabellakse[]
   celler: Celle[]
   grupper: Kildegruppe[]
-  /** Forklaringer under tabellen, f.eks. hva «ER», «LA» og «MA» betyr. */
-  fotnoter: string[]
   /** Sidens revisjon og når den ble lagret, fra MediaWikis kommentar i siden. */
   revisjon: number | null
   lagret: string | null
@@ -80,7 +81,8 @@ export interface Switchtabell {
 
 const ENTITETER: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', '#39': "'", nbsp: ' ' }
 
-function tekst(html: string): string {
+/** Teksten i et HTML-utsnitt: uten tagger, med tegnene oversatt og mellomrommene slått sammen. */
+export function tekst(html: string): string {
   return html
     .replace(/<[^>]*>/g, '')
     .replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (hel, e: string) => {
@@ -97,10 +99,9 @@ function attributt(tag: string, navn: string): string | null {
   return m ? tekst(m[1]!) : null
 }
 
-function lenker(html: string): { href: string | null; tittel: string | null; tekst: string }[] {
+function lenker(html: string): { href: string | null; tekst: string }[] {
   return [...html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)].map((m) => ({
     href: attributt(m[1]!, 'href'),
-    tittel: attributt(m[1]!, 'title'),
     tekst: tekst(m[2]!),
   }))
 }
@@ -146,14 +147,13 @@ function lesGrupper(innledning: string): Kildegruppe[] {
  * Leser én switchtabell. Kaster når siden ikke har én switchtabell, når en
  * rad har feil antall celler, eller når en celle verken er en lenke eller tom.
  */
-export function lesSwitchtabell(id: Tabell_id, html: string): Switchtabell {
+export function lesSwitchtabell<I extends string = Tabell_id>(id: I, html: string): Switchtabell<I> {
   const start = html.indexOf('<table class="switchtable"')
   if (start < 0 || html.indexOf('<table class="switchtable"', start + 1) >= 0) feil(id, 'ikke nøyaktig én switchtabell')
   const slutt = html.indexOf('</table>', start)
   if (slutt < 0) feil(id, 'tabellen slutter ikke')
   const innhold = html.indexOf('mw-parser-output')
   const innledning = html.slice(innhold < 0 ? 0 : innhold, start)
-  const etter = html.slice(slutt, html.indexOf('</div>', slutt) < 0 ? undefined : html.indexOf('</div>', slutt))
 
   const rader = [...html.slice(start, slutt).matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/g)].map((m) => celler(m[1]!))
   const [hode, ...kropp] = rader
@@ -177,9 +177,9 @@ export function lesSwitchtabell(id: Tabell_id, html: string): Switchtabell {
       const t = tekst(c.html)
       if (c.tag !== 'td') feil(id, `cellen ${kode}→${kolonne} er en overskrift`)
       if (l.length === 1 && l[0]!.href) {
-        alle.push({ rad: kode, kolonne, type: 'lenke', href: l[0]!.href, tittel: l[0]!.tittel, tekst: l[0]!.tekst })
+        alle.push({ rad: kode, kolonne, type: 'lenke', href: l[0]!.href })
       } else if (l.length === 0 && (t === '—' || t === '')) {
-        alle.push({ rad: kode, kolonne, type: 'tom', tekst: t })
+        alle.push({ rad: kode, kolonne, type: 'tom' })
       } else {
         feil(id, `cellen ${kode}→${kolonne} er verken én lenke eller tom («${t}»)`)
       }
@@ -191,18 +191,15 @@ export function lesSwitchtabell(id: Tabell_id, html: string): Switchtabell {
   const radnavn = new Map(tabellrader.map((r) => [r.kode, r.navn]))
   const merkede = kolonner.map((k) => ({ kode: k.kode, navn: radnavn.get(k.kode) ?? null }))
 
-  const tittel = tekst(/<b>([\s\S]*?)<\/b>/.exec(innledning)?.[1] ?? '')
   const etiketter = hode.slice(0, 2).map((c) => tekst(c.html).replace(/[↓→]/g, '').trim())
   return {
     id,
-    tittel,
     radetikett: etiketter[0] ?? '',
     kolonneetikett: etiketter[1] ?? '',
     rader: tabellrader,
     kolonner: merkede,
     celler: alle,
     grupper: lesGrupper(innledning),
-    fotnoter: [...etter.matchAll(/<p>([\s\S]*?)<\/p>/g)].map((m) => tekst(m[1]!)).filter(Boolean),
     ...lesRevisjon(html),
   }
 }
@@ -228,4 +225,11 @@ export function lesKildeside(href: string, status: number, endelig: string | nul
     overskrift: status === 200 && h1 ? tekst(h1[1]!) : null,
     ...(status === 200 ? lesRevisjon(html) : { revisjon: null, lagret: null }),
   }
+}
+
+/** En switchtabell slik kildearkivet tar vare på den (P3), uten identiteten og revisjonen, som arkivet har selv. */
+export type Arkivtabell = Omit<Switchtabell<string>, 'id' | 'revisjon' | 'lagret'>
+
+export function arkivtabell({ id: _id, revisjon: _r, lagret: _l, ...t }: Switchtabell<string>): Arkivtabell {
+  return t
 }

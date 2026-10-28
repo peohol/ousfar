@@ -92,8 +92,12 @@ export interface Virkestoffkartlegging {
   virkestoffer: Kartvirkestoff[]
   festoverstyringer: Festoverstyring[]
   uten_kildevariant: { virkestoff: string; varenavn: string; grunn: string }[]
-  /** Lenker i kilden som ikke svarer 200, med det som ble funnet om dem. */
-  kjente_lenkeavvik: { href: string; funn: string }[]
+  /**
+   * Lenker i kilden som ikke svarer 200, med det som ble funnet om dem, og
+   * kildens egen side for samme anbefaling når den finnes på en annen adresse
+   * (`null` når det er lett etter en uten å finne den). P3 henter den.
+   */
+  kjente_lenkeavvik: { href: string; funn: string; alternativ?: string | null }[]
 }
 
 export interface Tabellbilde {
@@ -368,7 +372,7 @@ export function kontrollerKartlegging(d: Kartdata): string[] {
     for (const n of [s.navn, s.slug, ...(s.aliaser ?? [])]) if (erSperret(k, n)) feil.push(`Stoffregisterfilen: «${n}» er sperret`)
   }
   for (const g of k.grupper) for (const m of g.medlemmer) if (erSperret(k, m.kildenavn)) feil.push(`Gruppen ${g.kildenavn}: ${m.kildenavn} er sperret`)
-  for (const c of importmal(d)) if (erSperret(k, c.href) || erSperret(k, c.tittel ?? '')) feil.push(`Importmålet ${c.href} gjelder johannesurt`)
+  for (const c of importmal(d)) if (erSperret(k, c.href)) feil.push(`Importmålet ${c.href} gjelder johannesurt`)
 
   // Hver lenke som ikke svarer, er kjent og forklart, og omvendt.
   for (const s of d.lenker.sider) {

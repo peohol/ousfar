@@ -73,9 +73,9 @@ ulike celler med hver sin lenke.
 | `/switchdetail/rest-ap` | Gruppesiden for Rest AP finnes ikke (404). Medlemmene står i innledningen over tabellen. |
 | `/switchdetail/start-dosulepine` | 404. Gjelder Start-kolonnen, som ikke skal importeres. |
 | `/switchdetail/start-doxepine` | 404. Gjelder Start-kolonnen, som ikke skal importeres. |
-| `/switchdetail/stop` | Stop-cellen for vortioxetine lenker hit (404) i stedet for til virkestoffets side. /switchdetail/stop-vortioxetine finnes (200, kontrollert 27.10.2026). Hvilken side som skal brukes, avgjøres i P3. |
-| `/switchdetail/stop-doxepine` | 404. /switchdetail/stop-doxepin finnes (200, kontrollert 27.10.2026). Hvilken side som skal brukes, avgjøres i P3. |
-| `/switchdetail/stop-fenelzine` | 404. Heller ikke /switchdetail/stop-phenelzine finnes (kontrollert 27.10.2026). Kilden har ingen tilgjengelig Stop-anbefaling for fenelzin. |
+| `/switchdetail/stop` | Stop-cellen for vortioxetine lenker hit (404) i stedet for til virkestoffets side. /switchdetail/stop-vortioxetine finnes (200) og heter «Stop-vortioxetine». P3 henter den siden for cellen og merker at den er hentet fra en annen adresse enn tabellen lenker til. |
+| `/switchdetail/stop-doxepine` | 404. /switchdetail/stop-doxepin finnes (200) og heter «Stop-doxepin». P3 henter den siden for cellen og merker at den er hentet fra en annen adresse enn tabellen lenker til. |
+| `/switchdetail/stop-fenelzine` | 404. Ingen annen adresse finnes: stop-phenelzine, stop-fenelzin, stop-phenelzin og Stop-fenelzine svarer også 404, og søket på nettstedet finner ingen Stop-side for fenelzin (kontrollert 27.10.2026). Kilden har ingen tilgjengelig Stop-anbefaling for fenelzin, og P3 lager ingen. |
 
 ## Kildeidentiteter
 
@@ -153,10 +153,6 @@ ulike celler med hver sin lenke.
 | Dr | Risperidone_LA | Virkestoff: Risperidon (`risperidon`) | LA |
 | Dz | Zuclopenthixol_LA | Virkestoff: Zuklopentiksol (`zuklopentiksol`) | LA |
 | Mz | Zuclopenthixol_MA | Virkestoff: Zuklopentiksol (`zuklopentiksol`) | MA |
-
-Fotnoter i kilden:
-
-- Switching Antipsychotics: «ER = extended release (Palmeux® + Xeplion® + Trivecta® + Byannli®), LA = long acting, MA = medium acting»
 
 Kildeformuleringene:
 
