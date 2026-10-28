@@ -36,6 +36,9 @@ const SEROXAT = {
   ),
 }
 
+/** Den amerikanske preparatomtalen beskriver hvor studieregimet sluttet; det gjør ikke den norske. */
+const PAXIL_FDA = h('fda-paxil', 'pkt. 5.7', 'I studiene ved generalisert angst og PTSD ble døgndosen redusert med 10 mg hver uke, og pasientene sto én uke på 20 mg før seponering.')
+
 const FEVARIN = {
   dose: h('dmp-fevarin', 'pkt. 4.2', 'Ved depresjon er anbefalt dose 100 mg daglig, med start på 50 eller 100 mg; dosen kan økes til høyst 300 mg daglig.'),
   seponering: h('dmp-fevarin', 'pkt. 4.2', 'Brå seponering bør unngås; dosen reduseres gradvis over minst én til to uker. Ved utålelige symptomer kan forrige dose gjenopptas og nedtrappingen fortsette langsommere.'),
@@ -295,7 +298,7 @@ const paroksetin = nedtrappingsregel({
   dose: SEROXAT.dose,
   seponering: SEROXAT.seponering,
   doseomrade: [10, 60],
-  kildetro: 'Paroksetin seponeres ikke brått. I de kliniske studiene ble døgndosen redusert med 10 mg hver uke.',
+  kildetro: 'Paroksetin seponeres ikke brått. I de kliniske studiene ble døgndosen redusert med 10 mg hver uke; den norske preparatomtalen sier ikke hvor regimet sluttet.',
   strategi: {
     strategi: {
       type: 'absolutt',
@@ -304,8 +307,13 @@ const paroksetin = nedtrappingsregel({
     trinnlengde: forslag(7, 'dager', 'Én uke per trinn, som i studieregimet; innenfor NICEs én til to uker.', { omrade: [7, 14], henvisninger: [SEROXAT.seponering, NICE.vurdering] }),
     tekst: [
       utsagn(
-        'OUSFAR bruker regimet fra de kliniske studiene i preparatomtalen som plan: døgndosen senkes med 10 mg hver uke til null. Trinnet og trinnlengden er kildens, men at regimet brukes som plan, er OUSFARs valg.',
+        'OUSFAR bruker regimet fra de kliniske studiene i preparatomtalen som plan: døgndosen senkes med 10 mg hver uke. Trinnet og trinnlengden er kildens, men at regimet brukes som plan, er OUSFARs valg.',
         SEROXAT.seponering,
+      ),
+      utsagn(
+        'Planen fortsetter til null, med en uke på 10 mg etter 20 mg. Det er OUSFARs valg, i tråd med NICEs råd om mindre trinn ved lav dose; den amerikanske preparatomtalen beskriver at studieregimet sluttet etter en uke på 20 mg.',
+        NICE.andel,
+        PAXIL_FDA,
       ),
     ],
   },
@@ -314,7 +322,9 @@ const paroksetin = nedtrappingsregel({
     tekst: utsagn('Planen må ha minst ett trinn på én uke; fra 10 mg ville regimet gi seponering uten nedtrapping, så da stopper beregningen.', SEROXAT.seponering),
   },
   ekstra: {
+    kildetro: [utsagn('I den amerikanske preparatomtalen sluttet studieregimet etter en uke på 20 mg, uten et trinn på 10 mg.', PAXIL_FDA)],
     usikkerhet: [
+      'Den norske preparatomtalen sier ikke hvor studieregimet sluttet, mens den amerikanske sier at det sluttet etter en uke på 20 mg. Om planen skal slutte etter 20 mg eller fortsette med en uke på 10 mg, må avklares faglig.',
       'Trinnene er like store i mg, ikke en andel av dosen som NICE beskriver; siste trinn (fra 10 mg til null) er derfor relativt størst. Om det passer pasienten, er et åpent faglig spørsmål.',
       'Én uke per trinn er nedre del av NICEs vurderingstid; preparatomtalen sier at noen trenger langsommere nedtrapping.',
     ],

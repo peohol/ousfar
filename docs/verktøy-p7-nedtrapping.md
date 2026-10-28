@@ -7,7 +7,7 @@ Notatet beskriver hvordan OUSFAR har vurdert nedtrapping til seponering for hver
 ## 1. Avgrensning
 
 - **Seponering, ikke bytte.** Reglene gjelder nedtrapping til null for en pasient som skal slutte med legemidlet. Bytte er P8.
-- **Kildens Stop-anbefaling er ikke en OUSFAR-regel.** Psychiatrienet står bare som referanse til Stop-oppføringen i P3-arkivet (oppføringens id); ingen regel bygger på eller gjengir teksten der, og ingen samling omskrevne regler er importert (`docs/verktøy-p3-rettigheter.md`). Reglene bygger på norske preparatomtaler fra DMP, EU-preparatomtaler fra EMA der Norge bare har preparater med godkjenningsfritak eller ingen norsk omtale finnes (vortioksetin, agomelatin), og NICE NG222. Fakta er gjengitt med egne ord, med sted i kilden og kontrollsum for dokumentet.
+- **Kildens Stop-anbefaling er ikke en OUSFAR-regel.** Psychiatrienet står bare som referanse til Stop-oppføringen i P3-arkivet (oppføringens id); ingen regel bygger på eller gjengir teksten der, og ingen samling omskrevne regler er importert (`docs/verktøy-p3-rettigheter.md`). Reglene bygger på norske preparatomtaler fra DMP, EU-preparatomtaler fra EMA der Norge bare har preparater med godkjenningsfritak eller ingen norsk omtale finnes (vortioksetin, agomelatin), og NICE NG222. Den amerikanske preparatomtalen for paroksetin er tatt med fordi den beskriver hvor studieregimet sluttet, som den norske ikke gjør. Fakta er gjengitt med egne ord, med sted i kilden og kontrollsum for dokumentet.
 - **Ingen klinisk godkjenning.** Alle regler har status «til faglig kontroll». OUSFARs egne valg er merket som åpne forslag, skilt fra det kildene sier.
 - **Hyperbolsk nedtrapping holdes utenfor.** P7 lager ingen nye hyperbolske eller forlengede regler. Den hyperbolske pilotregelen for citalopram fra P4 er uendret. Spørsmålet om optimal hyperbolsk nedtrapping er et eget forskningsspørsmål (B2) og ikke en del av denne leveransen.
 - **Johannesurt** er utelatt og kontrolleres bort.
@@ -51,7 +51,7 @@ OUSFARs forslag, merket som åpne valg i hver regel:
 
 ### Særregler
 
-- **Paroksetin** følger nedtrappingsregimet fra de kliniske studiene i preparatomtalen: 10 mg lavere hver uke til null, minst én uke. At regimet brukes som plan, er OUSFARs valg.
+- **Paroksetin** følger nedtrappingsregimet fra de kliniske studiene i preparatomtalen: 10 mg lavere hver uke, minst én uke. At regimet brukes som plan, er OUSFARs valg. Den norske preparatomtalen sier ikke hvor regimet sluttet. Den amerikanske (FDA, pkt. 5.7) sier at studiene ved generalisert angst og PTSD holdt 20 mg i én uke og så seponerte. OUSFARs utkast fortsetter i stedet med en uke på 10 mg før seponering, etter NICEs råd om mindre trinn ved lav dose. Kildekonflikten er beskrevet i regelen og er et åpent faglig spørsmål (avsnitt 7).
 - **Mirtazapin:** preparatomtalen sier bare «gradvis». OUSFAR leser det som minst ett trinn på 14 dager.
 - **Fluoksetin:** kildene er ikke enige om hvor mye nedtrapping som trengs (preparatomtalen, NICE og Keks mfl. 2016). Regelen følger preparatomtalen.
 - **Venlafaksin:** preparatomtalen sier at noen trenger nedtrapping over flere måneder; planen er den korteste som oppfyller minimumet.
@@ -121,7 +121,7 @@ Disse valgene er OUSFARs forslag og må avgjøres av uavhengig faglig kontroll, 
 3. **Sluttdosen:** laveste dose i preparatomtalen og så seponering, eller lavere. Å gå under laveste dose er B2 og holdes utenfor P7. Escitalopramregelen går til 2,5 mg; om sluttdosene skal samordnes.
 4. **Minste varighet og lave startdoser:** «minst én til to uker» lest som bindende 14 dager. Følgen er at en pasient på laveste dose (citalopram 10, sertralin 25, fluvoksamin 50, venlafaksin 37,5, duloksetin 30, mirtazapin 15, paroksetin 10 mg) får stopp, ikke en plan. Alternativene er en egen regel for lav dose (for eksempel et trinn på samme dose eller annenhver dag) eller at stoppen står.
 5. **Doser som ikke kan gis:** i dag stopper beregningen (se avsnitt 6). Skal en regel få en godkjent toleranse eller en avrundingsregel, eller skal stoppen stå? Ingen avvik brukes uten et slikt vedtak.
-6. **Paroksetin:** studieregimet (10 mg hver uke) eller halvering som de andre; én uke per trinn; om startdoser som ikke er hele 10 mg skal avvises (i dag gir 11 mg et siste trinn på 1 mg, som FEST stopper).
+6. **Paroksetin:** studieregimet (10 mg hver uke) eller halvering som de andre; én uke per trinn; om planen skal slutte etter en uke på 20 mg, slik den amerikanske preparatomtalen beskriver studieregimet, eller fortsette med en uke på 10 mg, som utkastet gjør nå; og om startdoser som ikke er hele 10 mg skal avvises (i dag gir 11 mg et siste trinn på 1 mg, som FEST stopper).
 7. **Mirtazapin:** om «gradvis» kan leses som minst ett trinn på 14 dager.
 8. **Fluoksetin:** om nedtrapping trengs (kildene er uenige), sluttdose 10 mg daglig i stedet for 20 mg annenhver dag, og at kapslene ikke kan gi 10 mg.
 9. **Venlafaksin:** om 14 dager per trinn er for raskt.

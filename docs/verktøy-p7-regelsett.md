@@ -31,7 +31,7 @@ Statusen er OUSFARs og skilt fra kildens Stop-anbefaling: kolonnen for Stop-oppf
 | mirtazapin | Beregnbar regel til faglig kontroll | `seponering-mirtazapin` | `SwitchAntidepressants:Mz>Stop` (hentet) | smeltetab 15 mg, smeltetab 30 mg, smeltetab 45 mg, tab 15 mg, tab 30 mg, tab 45 mg; også godkjenningsfritak: mikst oppl 15 mg/ml | Preparatomtalen sier at behandlingen avsluttes gradvis, og oppgir doseområdet; varigheten er OUSFARs tolkning. | Om «gradvis» kan leses som minst ett trinn på 14 dager. |
 | moklobemid | Mangler anbefaling | – | `SwitchAntidepressants:Mo>Stop` (hentet) | tab 150 mg, tab 300 mg | Preparatomtalen omtaler ikke nedtrapping ved seponering, og FEST oppgir ikke delbarhet for tablettene på 150 og 300 mg. | Om NICEs generelle prinsipp alene er nok grunnlag for en regel for en reversibel MAO-hemmer. |
 | nortriptylin | Annen begrunnet begrensning | – | `SwitchAntidepressants:No>Stop` (hentet) | tab 10 mg, tab 25 mg, tab 50 mg | Preparatomtalen sier at brå seponering etter lang tids bruk kan gi abstinenssymptomer, men gir ingen nedtrappingsplan; dosereduksjonen den beskriver gjelder vedlikeholdsdosen. En regel krever en faglig beslutning om strategien først. | Hvilken strategi trisykliske antidepressiva skal ha (andel av dosen eller faste mg-trinn), trinnlengde, sluttdose og minste varighet. |
-| paroksetin | Beregnbar regel til faglig kontroll | `seponering-paroksetin` | `SwitchAntidepressants:Pa>Stop` (hentet) | tab 20 mg | Preparatomtalen beskriver nedtrappingsregimet fra de kliniske studiene (10 mg lavere hver uke), og regelen følger det. | Om studieregimet (like store mg-trinn) skal brukes, eller halvering som for de andre. |
+| paroksetin | Beregnbar regel til faglig kontroll | `seponering-paroksetin` | `SwitchAntidepressants:Pa>Stop` (hentet) | tab 20 mg | Preparatomtalen beskriver nedtrappingsregimet fra de kliniske studiene (10 mg lavere hver uke), og regelen følger det. | Om studieregimet (like store mg-trinn) skal brukes, eller halvering som for de andre. Om planen skal slutte etter en uke på 20 mg, slik den amerikanske preparatomtalen beskriver studieregimet, eller fortsette med en uke på 10 mg, som nå. |
 | sertralin | Beregnbar regel til faglig kontroll | `seponering-sertralin` | `SwitchAntidepressants:Se>Stop` (hentet) | kons til mikst 20 mg/ml, tab 25 mg, tab 50 mg, tab 100 mg; også godkjenningsfritak: kaps 25 mg | Preparatomtalen sier at dosen trappes gradvis ned over minst én til to uker, og oppgir doseområdet. | – |
 | tranylcypromin | Mangler anbefaling | – | `SwitchAntidepressants:Tc>Stop` (hentet) | bare godkjenningsfritak: tab 10 mg | FEST har bare preparater med godkjenningsfritak og ingen norsk preparatomtale å bygge en regel på. | – |
 | trazodon | Mangler anbefaling | – | `SwitchAntidepressants:Td>Stop` (hentet) | bare godkjenningsfritak: kaps 50 mg, kaps 100 mg, tab 50 mg, tab 100 mg | FEST har bare preparater med godkjenningsfritak og ingen norsk preparatomtale å bygge en regel på. | – |
@@ -85,6 +85,7 @@ Kontrollsummen (SHA-256) er av dokumentet slik det ble hentet 28.10.2026.
 | [dmp-wellbutrin-retard](https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-3990.pdf) | preparatomtale | Wellbutrin Retard (bupropion) tabletter med modifisert frisetting, preparatomtale | Oppdatert 23.07.2026 | `daf1073b4dddd933…` |
 | [ema-brintellix](https://www.ema.europa.eu/en/documents/product-information/brintellix-epar-product-information_en.pdf) | preparatomtale | Brintellix (vortioksetin), produktinformasjon | Dokumentet sist endret 08.01.2026 | `39c9a9149ac76ca0…` |
 | [ema-valdoxan](https://www.ema.europa.eu/en/documents/product-information/valdoxan-epar-product-information_en.pdf) | preparatomtale | Valdoxan (agomelatin), produktinformasjon | Dokumentet sist endret 14.04.2025 | `33ae8627c3852425…` |
+| [fda-paxil](https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=ef3b5cbe-f9e1-c1ac-79da-cfe14e3a7e7e&type=pdf) | preparatomtale | Paxil (paroksetin) tabletter, amerikansk preparatomtale (prescribing information) | Revidert 09/2026 | `18b3c28b2b06784a…` |
 | [nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations) | retningslinje | Depression in adults: treatment and management (NG222), Recommendations | Publisert 29.06.2022 | `8fb54d455ce9ebee…` |
 | [psychiatrienet](https://www.psychiatrienet.nl/switchtabel) | kildeoppføring | Psychiatrienet, switchtabellene (kildearkivet fra P3) | Uttrekk og revisjon per kildeoppføring i src/data/verktoy/psychiatrienet-kildearkiv.json | – |
 
@@ -536,24 +537,29 @@ Ingen; regelen har ingen beregning.
 
 ## Seponering av paroksetin, nedtrapping etter preparatomtalen
 
-`seponering-paroksetin`, versjon 1, fingeravtrykk `61af70bc5dd78a3a1678428a700bf940514a76c552e9c264bd75ef1869ce6736`. Seponering: paroksetin → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`seponering-paroksetin`, versjon 1, fingeravtrykk `b760f605700e08334b83383a6f125da85e0200594bd2b39aa4201fcc42f3a473`. Seponering: paroksetin → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
-- Paroksetin seponeres ikke brått. I de kliniske studiene ble døgndosen redusert med 10 mg hver uke.
+- Paroksetin seponeres ikke brått. I de kliniske studiene ble døgndosen redusert med 10 mg hver uke; den norske preparatomtalen sier ikke hvor regimet sluttet.
   - Brå seponering bør unngås. I de kliniske studiene ble døgndosen redusert med 10 mg hver uke. Ved utålelige symptomer kan forrige dose gjenopptas og nedtrappingen fortsette langsommere. *([dmp-seroxat](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07840.pdf), pkt. 4.2)*
 - Hvert trinn er en andel av forrige dose, med mindre trinn ved lav dose, og nedtrappingen kan ta uker til måneder.
   - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
   - Tempoet avtales med pasienten; neste reduksjon først når seponeringssymptomene er borte eller tålelige. Nedtrapping kan ta uker til måneder. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
 - Det bør gå én til to uker mellom reduksjonene.
   - Det bør gå én til to uker for å vurdere virkningen av en dosereduksjon før neste. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.18)*
+- I den amerikanske preparatomtalen sluttet studieregimet etter en uke på 20 mg, uten et trinn på 10 mg.
+  - I studiene ved generalisert angst og PTSD ble døgndosen redusert med 10 mg hver uke, og pasientene sto én uke på 20 mg før seponering. *([fda-paxil](https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=ef3b5cbe-f9e1-c1ac-79da-cfe14e3a7e7e&type=pdf), pkt. 5.7)*
 
 **OUSFARs selvstendige tilpasninger (må kontrolleres):**
 
-- OUSFAR bruker regimet fra de kliniske studiene i preparatomtalen som plan: døgndosen senkes med 10 mg hver uke til null. Trinnet og trinnlengden er kildens, men at regimet brukes som plan, er OUSFARs valg.
+- OUSFAR bruker regimet fra de kliniske studiene i preparatomtalen som plan: døgndosen senkes med 10 mg hver uke. Trinnet og trinnlengden er kildens, men at regimet brukes som plan, er OUSFARs valg.
   - Brå seponering bør unngås. I de kliniske studiene ble døgndosen redusert med 10 mg hver uke. Ved utålelige symptomer kan forrige dose gjenopptas og nedtrappingen fortsette langsommere. *([dmp-seroxat](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07840.pdf), pkt. 4.2)*
+- Planen fortsetter til null, med en uke på 10 mg etter 20 mg. Det er OUSFARs valg, i tråd med NICEs råd om mindre trinn ved lav dose; den amerikanske preparatomtalen beskriver at studieregimet sluttet etter en uke på 20 mg.
+  - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
+  - I studiene ved generalisert angst og PTSD ble døgndosen redusert med 10 mg hver uke, og pasientene sto én uke på 20 mg før seponering. *([fda-paxil](https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=ef3b5cbe-f9e1-c1ac-79da-cfe14e3a7e7e&type=pdf), pkt. 5.7)*
 - Planen må ha minst ett trinn på én uke; fra 10 mg ville regimet gi seponering uten nedtrapping, så da stopper beregningen.
   - Brå seponering bør unngås. I de kliniske studiene ble døgndosen redusert med 10 mg hver uke. Ved utålelige symptomer kan forrige dose gjenopptas og nedtrappingen fortsette langsommere. *([dmp-seroxat](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07840.pdf), pkt. 4.2)*
 
@@ -580,6 +586,7 @@ Ingen; regelen har ingen beregning.
 
 - Den faktiske nedtrappingen bør styres av pasientens seponeringssymptomer (NICE 1.4.16); planen er et utgangspunkt, ikke en fast tidsplan.
 - Om hver dose kan gis med norske preparater (styrke, deling, flytende form), avgjøres av FEST når planen beregnes; en dose som ikke kan gis nøyaktig, stopper beregningen i stedet for å avrundes.
+- Den norske preparatomtalen sier ikke hvor studieregimet sluttet, mens den amerikanske sier at det sluttet etter en uke på 20 mg. Om planen skal slutte etter 20 mg eller fortsette med en uke på 10 mg, må avklares faglig.
 - Trinnene er like store i mg, ikke en andel av dosen som NICE beskriver; siste trinn (fra 10 mg til null) er derfor relativt størst. Om det passer pasienten, er et åpent faglig spørsmål.
 - Én uke per trinn er nedre del av NICEs vurderingstid; preparatomtalen sier at noen trenger langsommere nedtrapping.
 

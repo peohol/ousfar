@@ -148,7 +148,10 @@ export const NEDTRAPPINGSDEKNING: readonly Nedtrappingsdekning[] = [
     status: 'beregnbar_regel',
     grunn: 'Preparatomtalen beskriver nedtrappingsregimet fra de kliniske studiene (10 mg lavere hver uke), og regelen følger det.',
     henvisninger: [],
-    apne: ['Om studieregimet (like store mg-trinn) skal brukes, eller halvering som for de andre.'],
+    apne: [
+      'Om studieregimet (like store mg-trinn) skal brukes, eller halvering som for de andre.',
+      'Om planen skal slutte etter en uke på 20 mg, slik den amerikanske preparatomtalen beskriver studieregimet, eller fortsette med en uke på 10 mg, som nå.',
+    ],
   },
   {
     nokkel: 'sertralin',

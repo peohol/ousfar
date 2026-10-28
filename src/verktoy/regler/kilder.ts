@@ -2,7 +2,9 @@
  * Kildene pilotreglene i P4 (`docs/verktøy-p4-regelmodell.md`) og
  * nedtrappingsreglene i P7 (`docs/verktøy-p7-nedtrapping.md`) bygger på:
  * norske preparatomtaler fra DMP, sentralt godkjente preparatomtaler fra EMA,
- * NICE-retningslinjen for depresjon og primær- og oversiktslitteratur. Alle
+ * én amerikansk preparatomtale (FDA, der den beskriver et regime den norske
+ * omtalen ikke beskriver fullt ut), NICE-retningslinjen for depresjon og
+ * primær- og oversiktslitteratur. Alle
  * ble hentet og lest 28.10.2026; kontrollsummen er av dokumentet slik det ble
  * hentet, så en ny revisjon kan oppdages før en regel kontrolleres på nytt.
  *
@@ -73,6 +75,17 @@ export const KILDER: readonly Kilde[] = [
   epar('ema-zyprexa', 'Zyprexa (olanzapin), produktinformasjon', 'zyprexa', 'Sist endret 08.10.2026', '2026-10-28T03:32:59Z', 'd7a60e6f4908c9e7d3e4f8ff39c56bf74a1014719fb7cace04436a065b4d3357'),
   epar('ema-brintellix', 'Brintellix (vortioksetin), produktinformasjon', 'brintellix', 'Dokumentet sist endret 08.01.2026', '2026-10-28T14:37:02Z', '39c9a9149ac76ca0fbe73df123a7c9f5de7dcd96ddbd144fa863659dff9cbf06'),
   epar('ema-valdoxan', 'Valdoxan (agomelatin), produktinformasjon', 'valdoxan', 'Dokumentet sist endret 14.04.2025', '2026-10-28T14:37:03Z', '33ae8627c3852425805dc277cb828c18efb7bf98fe5077cca57b1fea8b81318e'),
+  {
+    id: 'fda-paxil',
+    type: 'preparatomtale',
+    tittel: 'Paxil (paroksetin) tabletter, amerikansk preparatomtale (prescribing information)',
+    utgiver: 'U.S. Food and Drug Administration (FDA), via DailyMed',
+    url: 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=ef3b5cbe-f9e1-c1ac-79da-cfe14e3a7e7e&type=pdf',
+    versjon: 'Revidert 09/2026',
+    hentet: '2026-10-28T15:18:45Z',
+    sha256: '18b3c28b2b06784ac2c445de41cb512ae3c0dcc3293e1766096895736499f985',
+    bruk: OFFENTLIG,
+  },
   {
     id: 'nice-ng222',
     type: 'retningslinje',

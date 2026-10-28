@@ -192,6 +192,10 @@ describe('Regelutkastene (P7.2)', () => {
     expect(ideell('paroksetin', 10)).toMatch(/Nedtrappingen av paroksetin blir 0 dager, kortere enn 7 dager/)
     // Like store mg-trinn gir et lite siste trinn når startdosen ikke er hele 10 mg; om det kan gis, avgjør FEST (åpent faglig spørsmål).
     expect(ideell('paroksetin', 11)).toEqual(['dag 1–7: 1 mg', 'fra dag 8: seponert'])
+    // Uken på 10 mg er OUSFARs valg: den amerikanske preparatomtalen sier at studieregimet sluttet etter 20 mg. Konflikten står i regelen.
+    const r = regel('paroksetin')
+    expect(r.fortolkning.tilpasninger.some((u) => u.tekst.includes('en uke på 10 mg') && u.henvisninger.some((h) => h.kilde === 'fda-paxil'))).toBe(true)
+    expect(r.fortolkning.usikkerhet.join(' ')).toMatch(/slutte etter 20 mg eller fortsette med en uke på 10 mg, må avklares faglig/)
   })
 
   it('fagtekstreglene har ingen beregning og vises bare når de er godkjent', () => {
