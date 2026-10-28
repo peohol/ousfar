@@ -305,7 +305,10 @@ manglet (P2), er koblet til moderstoffene i kartleggingen
 `src/verktoy/fagsider.ts`), så saltene og esterne følger med, også
 depotesterne (flufenazindekanoat). Seks av dem har ingen preparater i FEST
 (dosulepin, loksapin, maprotilin, perisiazin, promazin, trifluoperazin), og
-sidene sier det. En ny import legges til som en ny oppføring, så migrasjonene
+sidene sier det. Kokain- og etanolsiden er koblet til moderstoffet
+(`*_kokain_etanol_fest_kobling.sql`), med kokainhydroklorid og etanolkvalitetene
+FEST fører som salter; FEST har bare sykehuspreparater med kokain, og MDMA
+finnes ikke i FEST. En ny import legges til som en ny oppføring, så migrasjonene
 som er kjørt, står; `stoffsider_fest_kobling` ble laget med en tidligere
 utgave av skriptet, og testen låser md5-en dens. Skriptet legger inn
 erklæringen (`--agent`), som de eldre migrasjonene ikke har.

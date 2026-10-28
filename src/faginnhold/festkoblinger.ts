@@ -177,6 +177,24 @@ export const ANTIHYPERTENSIV_FESTKOBLINGER: readonly Festkobling[] = [
   { side: 'Verapamil', fest_id: 'ID_DB91861C-E102-47D6-8ED7-F0C118195F67' },
 ]
 
+/**
+ * Kokain- og etanolsidene (`KOKAIN_MDMA_ETANOL_FAGSIDER` i `nyefagsider.ts`),
+ * koblet til moderstoffet i FEST, så saltene følger med. MDMA finnes ikke i
+ * FEST og kobles ikke. Kontrollert mot FEST-filen fra 8. oktober 2026.
+ */
+export const KOKAIN_ETANOL_FESTKOBLINGER: readonly Festkobling[] = [
+  {
+    side: 'Kokain',
+    fest_id: 'ID_05E35980-D626-4A37-94CB-EB16E8E80921',
+    merknad: 'Med kokainhydroklorid. FEST har bare sykehuspreparater (øyedråper og pulver).',
+  },
+  {
+    side: 'Etanol',
+    fest_id: 'ID_3A955613-130E-40CC-8841-24E7B2A32E6D',
+    merknad: 'Med kvalitetene FEST fører som salter av etanol (96 %, vannfri, denaturert osv.).',
+  },
+]
+
 /** Hver import av koblinger, i rekkefølge, med navnet migrasjonen fikk. */
 export const FESTKOBLINGSIMPORTER: readonly { migrasjon: string; koblinger: readonly Festkobling[] }[] = [
   { migrasjon: 'stoffsider_fest_kobling', koblinger: STOFFSIDE_FESTKOBLINGER },
@@ -187,6 +205,7 @@ export const FESTKOBLINGSIMPORTER: readonly { migrasjon: string; koblinger: read
   { migrasjon: 'rusmidler_fest_kobling', koblinger: RUSMIDLER_FESTKOBLINGER },
   { migrasjon: 'antihypertensiver_fest_kobling', koblinger: ANTIHYPERTENSIV_FESTKOBLINGER },
   { migrasjon: 'verktoy_fest_kobling', koblinger: VERKTOY_FESTKOBLINGER },
+  { migrasjon: 'kokain_etanol_fest_kobling', koblinger: KOKAIN_ETANOL_FESTKOBLINGER },
 ]
 
 /** Kilden revisjonene får i historikken. */

@@ -3,7 +3,8 @@
  * (`src/faginnhold/festkoblinger.ts`): at hver stoffside uten analyttkode har
  * én, at amfetaminsiden har deksamfetamin og lisdeksamfetamin, at THC-siden
  * har dronabinol, at cannabidiolsiden har cannabidiol, at rusmiddelsidene som
- * er legemidler har sine, at hver antihypertensivside har sitt, og at
+ * er legemidler har sine, at hver antihypertensivside har sitt, at kokain og
+ * etanol har sine (og MDMA ingen), og at
  * migrasjonene legger dem inn som kortet redigeringen lager, hopper over det
  * de ikke kan koble, og ikke gjør noe når de kjøres igjen. FEST-radene er
  * syntetiske, med ID-ene og navnene fra FEST.
@@ -19,6 +20,7 @@ import {
   FESTKOBLINGSIMPORTER,
   FESTKOBLINGSKILDE,
   festkoblingSql,
+  KOKAIN_ETANOL_FESTKOBLINGER,
   RUSMIDLER_FESTKOBLINGER,
   STOFFSIDE_FESTKOBLINGER,
   THC_FESTKOBLINGER,
@@ -170,6 +172,7 @@ describe('migrasjonen i databasen', () => {
       ...CBD_FESTKOBLINGER.map((k) => [k.fest_id, 'Cannabidiol', false] as const),
       ...RUSMIDLER_FESTKOBLINGER.map((k) => [k.fest_id, rusnavn(k), false] as const),
       ...ANTIHYPERTENSIV_FESTKOBLINGER.map((k) => [k.fest_id, antihypertensivnavn(k.side), false] as const),
+      ...KOKAIN_ETANOL_FESTKOBLINGER.map((k) => [k.fest_id, k.side, false] as const),
     ]
     for (const [fest_id, navn, utgatt] of virkestoff) {
       await db.query(
@@ -251,6 +254,16 @@ describe('migrasjonen i databasen', () => {
         virkestoff: [{ fest_id: k.fest_id, navn: antihypertensivnavn(k.side) }],
       })
     }
+  })
+
+  it('kobler kokain- og etanolsiden, som fagsideimporten lager, men ikke MDMA, som ikke finnes i FEST', async () => {
+    for (const k of KOKAIN_ETANOL_FESTKOBLINGER) {
+      const [kobling, ...flere] = await koblingen(k.side)
+      expect(flere, k.side).toEqual([])
+      expect(kobling!.innhold.panel, k.side).toBe(PREPARATPANEL)
+      expect(lesLegemiddelkobling(kobling!.innhold.data), k.side).toEqual({ virkestoff: [{ fest_id: k.fest_id, navn: k.side }] })
+    }
+    expect(await koblingen('MDMA')).toEqual([])
   })
 
   it('hopper over et virkestoff som mangler eller er utgått i FEST, og en side som ikke finnes', async () => {
