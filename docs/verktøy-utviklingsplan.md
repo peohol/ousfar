@@ -1,7 +1,7 @@
 # OUSFAR – Verktøy: utviklingsplan og fremdrift
 
 **Opprettet:** 27.10.2026  
-**Status:** P1 og P2 ferdige; P3 til faglig kontroll – ingen verktøy er implementert gjennom denne planen  
+**Status:** P1–P3 ferdige; P4 til faglig kontroll – ingen verktøy er implementert gjennom denne planen  
 **Omfang:** Tre første verktøy, felles regel- og beregningsmotor, kildedata og videre drift  
 **Hovedansvar for implementering og oppdatering av denne planen:** Claude Code  
 **Uavhengig faglig kontroll:** ChatGPT, etter eksplisitt forespørsel ved kontrollpunktene nedenfor
@@ -53,8 +53,8 @@ Statusene er **Ikke startet / Pågår / Til faglig kontroll / Blokkert / Ferdig*
 | P0 | Plan og avgrensning | ChatGPT | – | **Ferdig** | Dette dokumentet, 27.10.2026 |
 | P1 | Virkestoff- og FEST-kartlegging | Claude | ChatGPT (utvalg) | Ferdig – godkjent 27.10.2026 | `docs/verktøy-p1-kartlegging.md`, PR #279 |
 | P2 | Manglende fagsider og FEST-koblinger | Claude | ChatGPT (avvik) | Ferdig – godkjent og utrullet 27.10.2026 | `src/verktoy/fagsider.ts`, PR #280 |
-| P3 | Komplett og lovlig kildeimport | Claude | ChatGPT (deknings- og stikkprøvekontroll) | Til faglig kontroll | `docs/verktøy-p3-kildegrunnlag.md`, `docs/verktøy-p3-rettigheter.md`, PR #281 |
-| P4 | Faglig regelmodell og kontrollert pilotsett | Claude | **ChatGPT – sperrende** | Ikke startet | – |
+| P3 | Komplett og lovlig kildeimport | Claude | ChatGPT (deknings- og stikkprøvekontroll) | Ferdig – godkjent 28.10.2026 | `docs/verktøy-p3-kildegrunnlag.md`, `docs/verktøy-p3-rettigheter.md`, PR #281 |
+| P4 | Faglig regelmodell og kontrollert pilotsett | Claude | **ChatGPT – sperrende** | Til faglig kontroll | `docs/verktøy-p4-regelmodell.md`, `docs/verktøy-p4-pilotsett.md`, PR #282 |
 | P5 | Felles dose- og planmotor med FEST | Claude | **ChatGPT – kliniske testtilfeller** | Ikke startet | – |
 | P6 | Meny, søk, ruter og felles planvisning | Claude | ChatGPT (produktkontroll) | Ikke startet | – |
 | P7 | Trappe ned antidepressiv | Claude | **ChatGPT – sperrende** | Ikke startet | – |
@@ -122,7 +122,7 @@ Sidene er «Ikke kuratert», og en fagside uten faginnhold sier nå selv at den 
 - [x] **P3.5** Ta vare på kilde-URL, hentet tidspunkt med tidssone, eventuell kildeoppdatering, kildeversjon, kontrollsum, tabellkoordinater, identifikatorer og importørversjon for hver oppføring.
 - [x] **P3.6** Lag en fullstendig dekningsrapport per tabell: forventede celler, funnet lenke, vellykket hentet, eksplisitt uten lenke, feil/til kontroll og ekskludert av beslutning. Feil eller manglende datadekning skal ikke telles som «ferdig importert».
 - [x] **P3.7** Gjør importen deterministisk og repeterbar, og vis differanse mot forrige innhenting. Nytt kildeuttrekk skal aldri selv publisere nye kliniske regler.
-- [ ] **P3.8** ChatGPT kontrollerer representative kilder fra hver tabell, inklusive Stop, gruppeanbefaling, utvasking, depot og én bevisst manglende celle.
+- [x] **P3.8** ChatGPT kontrollerer representative kilder fra hver tabell, inklusive Stop, gruppeanbefaling, utvasking, depot og én bevisst manglende celle.
 
 **Resultat (27.10.2026):**
 
@@ -155,16 +155,22 @@ Sidene er «Ikke kuratert», og en fagside uten faginnhold sier nå selv at den 
 
 **Kildetekst:** Regelmodellen har ingen felt for kildens tekst. En regel er OUSFARs egen faglige vurdering, formulert matematisk, med kildehenvisning til kildeoppføringen (P3); den er ikke en oversettelse eller omskriving av kilden (avsnitt 1). Uten tillatelse fra utgiveren lages regler per kombinasjon som selvstendige vurderinger, ikke som en fullstendig systematisk overføring av tabellsettet (`docs/verktøy-p3-rettigheter.md`).
 
-- [ ] **P4.1** Definer egne objekter for kildeoppføring, faglig fortolkning, versjonert regelsett, godkjenningsstatus og beregningsresultat. Et regelsett skal kunne bruke andre kilder enn Psychiatrienet senere.
-- [ ] **P4.2** Støtt: prosent av **startdose**, prosent av **aktuell dose**, faste doser, intervall i dager/uker, mål-/startdose, overlapp, sekvensielt bytte, pauser/utvasking, dosegrenser, administrasjonsformer og betingelser.
-- [ ] **P4.3** Skil tydelig mellom bindende krav (f.eks. nødvendig utvasking, begrenset overlapp, formulering) og veiledende preferanser (f.eks. omtrentlig prosent og ønsket trinnlengde).
-- [ ] **P4.4** Klassifiser kildene som **entydig beregnbar**, **beregnbar etter eksplisitt faglig avklaring**, **bare tekstlig veiledning** eller **mangler anbefaling**. Ingen automatisk regel ved tvetydighet.
-- [ ] **P4.5** Beskriv for hver foreslått generalisering hva som er kildetro og hva som er OUSFARs selvstendige faglige tilpasning. Ikke bruk samme klassifikasjon for «kildeoppføring» og «godkjent anbefaling».
-- [ ] **P4.6** Vurder klinisk ulike nedtrappingsstrategier (lineær, gjentatt prosentvis, hyperbolsk/ikke-lineær) og grenser for når ekstra trinn er forsvarlige. Flere trinn er et mulig valg, ikke automatisk en forbedring.
-- [ ] **P4.7** Definer minst ett lite pilotsett med ulike regelklasser og konkrete, forventede beregningseksempler. Prioriter enkel seponering, krysstapering, fast opptrapping, MAO-utvasking, gruppebasert antipsykotikabytte og depot.
+- [x] **P4.1** Definer egne objekter for kildeoppføring, faglig fortolkning, versjonert regelsett, godkjenningsstatus og beregningsresultat. Et regelsett skal kunne bruke andre kilder enn Psychiatrienet senere.
+- [x] **P4.2** Støtt: prosent av **startdose**, prosent av **aktuell dose**, faste doser, intervall i dager/uker, mål-/startdose, overlapp, sekvensielt bytte, pauser/utvasking, dosegrenser, administrasjonsformer og betingelser.
+- [x] **P4.3** Skil tydelig mellom bindende krav (f.eks. nødvendig utvasking, begrenset overlapp, formulering) og veiledende preferanser (f.eks. omtrentlig prosent og ønsket trinnlengde).
+- [x] **P4.4** Klassifiser kildene som **entydig beregnbar**, **beregnbar etter eksplisitt faglig avklaring**, **bare tekstlig veiledning** eller **mangler anbefaling**. Ingen automatisk regel ved tvetydighet.
+- [x] **P4.5** Beskriv for hver foreslått generalisering hva som er kildetro og hva som er OUSFARs selvstendige faglige tilpasning. Ikke bruk samme klassifikasjon for «kildeoppføring» og «godkjent anbefaling».
+- [x] **P4.6** Vurder klinisk ulike nedtrappingsstrategier (lineær, gjentatt prosentvis, hyperbolsk/ikke-lineær) og grenser for når ekstra trinn er forsvarlige. Flere trinn er et mulig valg, ikke automatisk en forbedring.
+- [x] **P4.7** Definer minst ett lite pilotsett med ulike regelklasser og konkrete, forventede beregningseksempler. Prioriter enkel seponering, krysstapering, fast opptrapping, MAO-utvasking, gruppebasert antipsykotikabytte og depot.
 - [ ] **P4.8** ChatGPT gjør uavhengig kildekontroll og stresstest av pilotreglene; uenigheter avgjøres eksplisitt før de merkes «klinisk godkjent».
 
 **Sperrende kontrollport:** Ingen kildebasert automatisk doseplan vises klinisk før tilhørende regelversjon er godkjent og har testsaker som dokumenterer fortolkningen.
+
+**Resultat (28.10.2026, til faglig kontroll):** Regelmodellen er `src/verktoy/regler/` og beskrevet i `docs/verktøy-p4-regelmodell.md`. Den holder seks ting fra hverandre (P4.1): kilden (dokument, versjon, hentetidspunkt, kontrollsum, og for hver henvisning sted og et kort faktum med egne ord; Psychiatrienet bare som id-en til P3-oppføringen), den faglige fortolkningen (kildetro, OUSFARs tilpasninger, forutsetninger, usikkerhet), den matematiske regelen (forløp med faser: hold, nedtrapping, fast opptrapping, vedlikehold, seponering, depotinjeksjoner og forløp uten beregning; start på en dag eller etter utvasking; overlapp til et annet forløp er avsluttet), betingelsene (inndatakrav uten standardverdier, bekreftelser, unntak, gruppemedlemmer med vurdering), godkjenningen (status med historikk per regelversjon) og beregningsresultatet (modellberegning eller stopp med grunner, kontroller, versjoner, `klinisk_godkjent`). Nedtrapping kan være prosent av aktuell dose (med mindre prosent ved lav dose og sluttdose), prosent av startdosen, faste mg eller hyperbolsk (like trinn i beregnet reseptorbinding) (P4.2, B1). Hver verdi er et bindende krav eller en veiledende preferanse, med kilde eller merket OUSFAR-forslag (P4.3), og hver regel er klassifisert som entydig beregnbar, beregnbar etter avklaring, bare tekstlig eller uten anbefaling (P4.4); kontrollene sikrer at en regel med forslag ikke kan merkes entydig eller godkjennes. Strategiene er vurdert i notatets avsnitt 6 (P4.6).
+
+*Pilotsettet (P4.5, P4.7)* er åtte regler med 22 regneeksempler regnet ut for hånd: seponering av escitalopram (gjentatt prosentvis) og citalopram (hyperbolsk, alternativ strategi), kryssnedtrapping sertralin → mirtazapin, fluoksetin → fenelzin med 35 dagers utvasking, olanzapin → kvetiapin med fast opptrapping, gruppen Rest AP → aripiprazol (bare zuklopentiksol foreslått; de andre medlemmene stopper), og oppstart av Abilify Maintena og Xeplion fra peroral behandling. Kildene er preparatomtaler fra DMP og EMA, NICE NG222, Sørensen mfl. 2022, Horowitz og Taylor 2019 og Keks mfl. 2016 og 2019, hentet 28.10.2026 med kontrollsum. Psychiatrienet er bare referanse (P3-oppføringens id); ingen regel bygger på eller gjengir teksten, og tabellsettet er ikke overført. Alle regler har status «til faglig kontroll»; ingen er klinisk godkjent. `docs/verktøy-p4-pilotsett.md` (laget av reglene) viser hver regel med kilder, parametre, betingelser, forutsetninger, usikkerhet og beregnede eksempler. Spørsmålene til P4 fra P3 er besvart i notatets avsnitt 8, og spørsmålene til faglig kontroll står i avsnitt 9.
+
+**Kontroll:** `src/__tests__/verktoyregler.test.ts` kontrollerer hver strategi ved grenseverdiene (dose lik sluttdose og grensen for lav prosent, siste trinn under null, antall hyperbolske trinn og like trinn i binding), datoer over årsskifte og kortere måneder, utvasking, at hvert regneeksempel gir det som er regnet ut for hånd, at beregningen stopper og sier alle grunnene (unntak, ukjent pasientforhold, manglende bekreftelse, dose utenfor området, manglende måldose, gruppemedlem som ikke er vurdert, manglende verdi, bare tekstlig eller avvist regel, for kort nedtrapping, dose som mangler i omregningstabellen), at den er deterministisk og bærer versjonene, at bare en klinisk godkjent regelversjon gir `klinisk_godkjent`, at ingen pilotregel er godkjent, at Psychiatrienet bare er referanse til en eksisterende P3-oppføring, at kontrollene slår ut på feil (innhold fra Psychiatrienet, johannesurt, ukjente virkestoffer og kilder, gruppemedlemmer som ikke er P1-gruppens, forslag i en regel merket entydig, godkjenning uten uavhengig kontrollør, regneeksempler som ikke stemmer), at bare verktøymodulene bruker reglene, og at rapporten er oppdatert. `npm run verktoy:regler -- kontroll` kjører de samme kontrollene.
 
 ### P5 – FEST-tilpasset, deterministisk beregningsmotor
 
@@ -313,6 +319,8 @@ Før en oppgave eller fase krysses av:
 | 27.10.2026 | P3.1–P3.7 | Rettighetsnotat, kildearkiv (uttrekk 1: 994 sider, 1 044 anbefalinger), dekningsrapport og tester, PR #281. `npm test` og `npm run build` grønne | Venter på ChatGPTs kontroll (P3.8) og svar på spørsmålene til P4. Ingen anbefalingstekst er lagret og ingen regler er laget |
 | 27.10.2026 | P3 rettet etter kontroll | ChatGPTs fire funn i PR #281 rettet: ingen mellomlagring av sider på disk; fotnoter, lenketitler og avsnittsoverskrifter fjernet fra arkivet og P1-øyeblikksbildet, og en fast liste over tillatte felt i testene; produktbeslutningen om at kildeteksten aldri vises er ført inn i avsnitt 1 og P4–P8, og rettighetsnotatet skiller opphavsrett fra databasevern; forbigående serverfeil prøves på nytt og stopper innhentingen. Arkivet er hentet på nytt i den nye formen | Venter på ChatGPTs nye kontroll (P3.8) |
 | 28.10.2026 | P3 rettet etter andre kontroll | ChatGPTs to funn i P1-kjeden rettet: P1-skriptet har ikke lenger mellomlager for sidene (og bruker samme henting med nye forsøk som P3); leseren av switchtabellene tar ikke lenger med lenketitler, lenketekster eller tabelltittel, og P1-bildet er renset; den faste feltlisten gjelder alle tre offentlige kildedatasett og kontrolleres av skriptene før de skriver. Utkastet til henvendelse sier at tabellstrukturen alt er publisert som metadata | Venter på ChatGPTs nye kontroll (P3.8) |
+| 28.10.2026 | P3 godkjent | ChatGPT kontrollerte PR #281 på nytt (P3.8); squash-merget (5c228ff). P3 har ingen migrasjoner. P3 er ferdig | Spørsmålene til P4 er besvart i `docs/verktøy-p4-regelmodell.md` |
+| 28.10.2026 | P4.1–P4.7 | Regelmodell, beregning, kontroller, kilderegister og pilotsett (8 regler, 22 regneeksempler), notat og rapport, PR #282. `npm test` og `npm run build` grønne | Venter på ChatGPTs uavhengige kontroll av kilder, klinisk innhold og regneeksempler (P4.8). Ingen regel er klinisk godkjent eller brukes av appen |
 
 ## 8. Startoppdrag til Claude Code
 
