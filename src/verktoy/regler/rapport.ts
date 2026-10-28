@@ -22,7 +22,7 @@ import {
   type Utsagn,
   type Virkestoffvalg,
 } from './modell'
-import { NEDTRAPPINGSSETT } from './nedtrapping'
+import { NEDTRAPPINGSSETT, SAMMENLIGNINGSSETT } from './nedtrapping'
 import { PILOTSETT } from './pilotsett'
 
 /** En rapport om ett regelsett: filen, overskriften og notatene som beskriver valgene. */
@@ -40,7 +40,13 @@ export const P7RAPPORT: Regelrapport = {
   sett: NEDTRAPPINGSSETT,
   notater: ['docs/verktøy-p4-regelmodell.md', 'docs/verktøy-p7-nedtrapping.md'],
 }
-export const REGELRAPPORTER: readonly Regelrapport[] = [P4RAPPORT, P7RAPPORT]
+export const P7SAMMENLIGNING: Regelrapport = {
+  fil: 'docs/verktøy-p7-sammenligning.md',
+  tittel: 'P7: varianter til sammenligning (ikke i verktøyet)',
+  sett: SAMMENLIGNINGSSETT,
+  notater: ['docs/verktøy-p7-nedtrapping.md'],
+}
+export const REGELRAPPORTER: readonly Regelrapport[] = [P4RAPPORT, P7RAPPORT, P7SAMMENLIGNING]
 
 const celle = (t: string) => t.replace(/\|/g, '\\|').replace(/\n/g, ' ')
 export const tabell = (hode: string[], rader: string[][]) =>

@@ -52,6 +52,10 @@ export const NICE = {
   fluoksetin: h('nice-ng222', 'anbefaling 1.4.18', 'Fluoksetin virker lenge: ved 20 mg daglig kan en periode med dosering annenhver dag være en egnet reduksjon; ved 40–60 mg daglig brukes gradvis nedtrapping.'),
   mao: h('nice-ng222', 'anbefaling 1.9.5', 'Bytte til eller fra en MAO-hemmer skal skje i, eller med råd fra, spesialisthelsetjenesten. Bytte kan kreve kryssnedtrapping.'),
   kombinasjon: h('nice-ng222', 'anbefaling 1.9.9', 'Mirtazapin lagt til et SSRI er et kombinasjonsalternativ; SSRI sammen med MAO-hemmer kan være farlig og skal unngås.'),
+  halveringstid: h('nice-ng222', 'anbefaling 1.4.16', 'Ved nedtrapping tas det hensyn til farmakokinetikken og behandlingstiden; antidepressiva med kort halveringstid må trappes ned langsommere.'),
+  saerligRisiko: h('nice-ng222', 'anbefaling 1.4.18', 'Seponeringssymptomer kan komme med mange antidepressiva; paroksetin og venlafaksin gir dem oftere og krever særlig varsomhet.'),
+  tidligere: h('nice-ng222', 'anbefaling 1.4.15', 'Mange trenger mer støtte for å lykkes med seponering, særlig når tidligere forsøk har gitt seponeringssymptomer eller ikke har lyktes.'),
+  alvorlig: h('nice-ng222', 'anbefaling 1.4.21', 'Ved mer alvorlige seponeringssymptomer kan forrige dose gjenopptas, og nedtrappingen forsøkes igjen langsommere og med mindre trinn når symptomene er borte.'),
 }
 
 /* --- Felles forslag ----------------------------------------------------------------------- */

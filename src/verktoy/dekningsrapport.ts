@@ -11,7 +11,6 @@ import { lesKartdata } from './kartdata'
 import { MARKEDSGRUNNLAG, markedsgrunnlag, preparaterFor, type Kartdata } from './kartlegging'
 import { lesKontrollgrunnlag, type Kontrollgrunnlag } from './regler/kontroll'
 import { henvisninger, type Regel, type Regelsett } from './regler/modell'
-import { FEST_UTTREKK, LAVESTE_STYRKE } from './regler/nedtrapping'
 import { BEREGNBARHET, dato, liste, statustekst, tabell, tall } from './regler/rapport'
 import { REGELSETT } from './tilgjengelighet'
 
@@ -41,6 +40,12 @@ export function lavesteStyrke(preparater: readonly Festpreparat[]): number | nul
   return styrker.length > 0 ? Math.min(...styrker) : null
 }
 
+/** Sluttdosen i regelen (mg): et klinisk valg, uavhengig av styrkene. */
+const sluttdoseI = (r: Regel): number | null => {
+  for (const f of r.plan.forlop.flatMap((l) => l.faser)) if (f.type === 'nedtrapping' && f.strategi.type === 'prosent_av_aktuell') return f.strategi.sluttdose_mg.verdi
+  return null
+}
+
 const TILGJENGELIGHET = { hentet: 'hentet', alternativ_adresse: 'hentet fra annen adresse', utilgjengelig: '**utilgjengelig**' } as const
 
 function rad(d: Dekning, kart: Kartdata, g: Kontrollgrunnlag): string[] {
@@ -48,14 +53,15 @@ function rad(d: Dekning, kart: Kartdata, g: Kontrollgrunnlag): string[] {
   const stop = g.kildeoppforinger.get(stopOppforing(d.kode))
   const preparater = preparaterFor(kart, d.nokkel)
   const laveste = lavesteStyrke(preparater)
-  const egen = LAVESTE_STYRKE[d.nokkel]
   const regler = seponeringsregler(d.nokkel)
+  const sluttdoser = [...new Set(regler.flatMap((r) => sluttdoseI(r) ?? []))]
   const kilder = [...new Set(regler.flatMap((r) => henvisninger(r).map((h) => h.kilde)))].filter((k) => k !== 'psychiatrienet')
   return [
     navn,
     stop ? `\`${d.kode}>Stop\` (${TILGJENGELIGHET[stop.tilgjengelighet]})` : '**mangler**',
     MARKEDSGRUNNLAG[markedsgrunnlag(preparater)],
-    laveste === null ? '–' : `${tall(laveste)} mg${egen ? ` → sluttdose ${tall(egen.delbar ? egen.mg / 2 : egen.mg)} mg${egen.delbar ? ' (delbar i 2)' : ''}` : ''}`,
+    laveste === null ? '–' : `${tall(laveste)} mg`,
+    sluttdoser.map((x) => `${tall(x)} mg`).join(', ') || '–',
     `**${DEKNINGSSTATUS[d.status]}**`,
     regler.map((r) => `\`${r.id}\` (${BEREGNBARHET[r.beregnbarhet]}, ${statustekst(r)})`).join('; ') || '–',
     kilder.join(', ') || '–',
@@ -71,14 +77,14 @@ export function lagDekningsrapport(kart: Kartdata = lesKartdata(), g: Kontrollgr
 
 <!-- Laget av \`npm run verktoy:regler -- rapport\` fra src/verktoy/dekning.ts, regelsettet, P3-kildearkivet og FEST-uttrekket. Ikke rediger for hånd. -->
 
-Én rad per antidepressivum i kildetabellen (${NEDTRAPPINGSDEKNING.length} virkestoffer; johannesurt er utelatt). Statusen skiller kildens Stop-oppføring fra OUSFARs egen regel: at kilden har en Stop-oppføring, gir aldri i seg selv en regel, og ingen regel bygger på teksten der. **Ingen regel er klinisk godkjent**, så verktøyet viser ingen doseplan før uavhengig faglig kontroll (P7.5). Valgene og de åpne faglige spørsmålene står i \`docs/verktøy-p7-nedtrapping.md\`, og reglene i \`docs/verktøy-p7-regelutkast.md\`.
+Én rad per antidepressivum i kildetabellen (${NEDTRAPPINGSDEKNING.length} virkestoffer; johannesurt er utelatt). Statusen skiller kildens Stop-oppføring fra OUSFARs egen regel: at kilden har en Stop-oppføring, gir aldri i seg selv en regel, og ingen regel bygger på teksten der. **Ingen regel er klinisk godkjent**, så verktøyet viser ingen doseplan før uavhengig faglig kontroll (P7.5). Valgene og de åpne faglige spørsmålene står i \`docs/verktøy-p7-nedtrapping.md\`, reglene i \`docs/verktøy-p7-regelutkast.md\`, og paroksetins raske studievariant, som bare er til sammenligning og ikke i verktøyet, i \`docs/verktøy-p7-sammenligning.md\`.
 
 ${liste(telling)}
 
-Norske preparater og laveste styrke er lest fra FEST-uttrekket ${fest} (\`src/data/verktoy/fest-formuleringer.json\`): laveste styrke blant tabletter og kapsler med markedsføringstillatelse som er markedsført. Delbarheten i sluttdosen er lest fra hele FEST-filen (uttrekk ${FEST_UTTREKK}), som ikke ligger i repoet.
+Norske preparater og laveste styrke er lest fra FEST-uttrekket ${fest} (\`src/data/verktoy/fest-formuleringer.json\`): laveste styrke blant tabletter og kapsler med markedsføringstillatelse som er markedsført. Sluttdosen er regelens kliniske grense (en firedel av laveste døgndose i preparatomtalen), ikke en styrke: hvilke trinn som kan gis med preparatene, avgjøres når doseplanen beregnes, og et trinn som ikke kan gis, stopper beregningen med begrunnelse.
 
 ${tabell(
-  ['Virkestoff', 'Stop-oppføring (P3)', 'Norske preparater', 'Laveste styrke', 'Status', 'Regel', 'Kildegrunnlag for regelen', 'Forklaring'],
+  ['Virkestoff', 'Stop-oppføring (P3)', 'Norske preparater', 'Laveste styrke (FEST)', 'Sluttdose i regelen', 'Status', 'Regel', 'Kildegrunnlag for regelen', 'Forklaring'],
   NEDTRAPPINGSDEKNING.map((d) => rad(d, kart, g)),
 )}
 `

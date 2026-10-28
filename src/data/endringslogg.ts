@@ -21,7 +21,7 @@ export const ENDRINGSLOGG: Endring[] = [
     punkter: [
       'Trappe ned antidepressiv har fått utkast til nedtrappingsregler for 14 antidepressiva, bygd på preparatomtalene og NICE-retningslinjen, og en tekstregel for agomelatin, som ikke trenger nedtrapping. Ingen er klinisk godkjent, så verktøyet sier fortsatt at faglig kontroll gjenstår, og viser ingen doseplan.',
       'For antidepressiva uten regel forklarer verktøyet hvorfor, for eksempel at stoffet ikke har preparater i FEST, bare finnes med godkjenningsfritak eller mangler kildegrunnlag.',
-      'Når reglene er godkjent, ender planen alltid med seponering. Kan et trinn ikke gis nøyaktig med norske preparater, stopper beregningen og viser de nærmeste dosene i stedet for å avvike fra regelen.',
+      'Når reglene er godkjent, er planen et startforslag som må bekreftes, og den gjelder ikke når et tidligere nedtrappingsforsøk har gitt seponeringssymptomer. Planen ender alltid med seponering. Kan et trinn ikke gis nøyaktig med norske preparater, stopper beregningen og viser de nærmeste dosene i stedet for å avvike fra regelen.',
     ],
   },
   {
