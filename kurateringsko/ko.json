@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-10-28T18:30:53.184Z",
+  "oppdatert_kl": "2026-10-28T19:26:32.055Z",
   "malt_kl": "2026-10-28T18:30:53.184Z",
   "teller": 82,
   "stoffer": {
@@ -7803,30 +7803,6 @@
     }
   },
   "okter": {
-    "kurateringsko/okt/20261014-173642": {
-      "ider": [
-        "frigi-1",
-        "forny-2",
-        "forny-1",
-        "reserver-1"
-      ],
-      "siste": {
-        "id": "frigi-1",
-        "sha256": "b675741443b64798271c6798daeb9ecefc135d047d18e54be5d0c3c82a6adc13",
-        "svar": {
-          "versjon": 1,
-          "foresporsel_id": "frigi-1",
-          "foresporsel_sha256": "b675741443b64798271c6798daeb9ecefc135d047d18e54be5d0c3c82a6adc13",
-          "handling": "frigi",
-          "utfall": "ok",
-          "melding": "lurasidon er frigitt og står i køen igjen.",
-          "behandlet_kl": "2026-10-14T18:04:44.264Z",
-          "kjoring": "https://github.com/peohol/far/actions/runs/38612038372"
-        }
-      },
-      "besvart_commit": "de79763b30570d9b44e4e53c10b3aa0d49b269a3",
-      "sist_brukt_kl": "2026-10-14T18:04:44.264Z"
-    },
     "kurateringsko/okt/20261016-125910": {
       "ider": [
         "fullfort-kariprazin-0082",
