@@ -190,7 +190,7 @@ Miksturer uten dokumentert dosering per ml brukes ikke. Sluttdosen avhenger ikke
    - beholde området, men kreve en egen bekreftelse eller begrunnelse for verdier utover standardverdien.
 
    Skal regelen også tillate lengre trinn enn 28 dager, eller er en ny plan fra aktuell dose riktig svar (avsnitt 3)? Valget er klinisk og er ikke tatt i koden.
-4. **Sluttdosen:** Vurder akseptkriteriet i avsnitt 7, og avklar sluttdosen for hvert stoff for seg. Kontroller siste dose før null i relevante scenarioer. Eksempel: paroksetin 20 mg ender med 2,54 mg før seponering, mens RCPsych sier at noen trenger doser ned mot 2 % av opprinnelig dose.
+4. **Sluttdosen:** Vurder akseptkriteriet i avsnitt 7, og avklar sluttdosen for hvert stoff for seg. Kontroller siste dose før null i relevante scenarioer. Eksempel: paroksetin 20 mg ender med 2,7 mg før seponering, mens RCPsych sier at noen trenger doser ned mot 2 % av opprinnelig dose.
 5. **Toleranse eller annen formulering:** De fleste planer stopper (avsnitt 10). Skal enkelte regler få en begrunnet toleranse, skal flytende former eller andre styrker brukes, eller skal en forklart stopp være svaret? Toleranse må godkjennes per regelversjon.
 6. **Minste varighet:** Er 28 dager i alt et forsvarlig minimum for alle stoffene, også de der preparatomtalen ikke har noe krav (avsnitt 8)?
 7. **Paroksetins studievariant:** Skal den bli stående i sammenligningssettet, eller fjernes?
