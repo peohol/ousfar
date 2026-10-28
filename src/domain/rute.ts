@@ -62,6 +62,13 @@ import { STOFFREGISTER, stoffslug, type Stoffregister } from './stoffregister'
  *
  *   #/stoffregister
  *
+ * Verktøyene har en oversikt og hver sin side, etter den stabile ID-en i
+ * verktøyregisteret (`src/verktoy/register.ts`). Det som er fylt inn i et
+ * verktøy, står ikke i adressen:
+ *
+ *   #/verktoy
+ *   #/verktoy/trappe-ned-antidepressiv
+ *
  * En tidligere versjon av en fagside har sin egen adresse, etter nummeret i
  * sideversjonene, og en kurateringsgren etter ID-en, så de kan deles og
  * åpnes fra en lenke:
@@ -93,6 +100,11 @@ export type Rute =
       q: string
     }
   | { side: 'stoffregister' }
+  | {
+      side: 'verktoy'
+      /** Verktøyets ID i verktøyregisteret. Utelatt på oversikten. */
+      verktoy?: string
+    }
   | {
       side: 'versjon'
       /** Stoffets nøkkel. */
@@ -154,6 +166,8 @@ const SOK = /^#\/sok\/?(?:\?(.*))?$/i
 
 const STOFFREGISTERSIDE = /^#\/stoffregister\/?$/i
 
+const VERKTOYSIDE = /^#\/verktoy(?:\/([a-z0-9]+(?:-[a-z0-9]+)*))?\/?$/i
+
 const VERSJON = /^#\/versjon\/([a-z0-9]+(?:-[a-z0-9]+)*)\/([1-9][0-9]{0,8})\/?$/i
 
 const KURATERING = /^#\/kuratering\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\/?$/i
@@ -161,12 +175,17 @@ const KURATERING = /^#\/kuratering\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f
 /** Adressen til helsiden for stoffregisteret. */
 export const STOFFREGISTERADRESSE = '#/stoffregister'
 
+/** Adressen til verktøyoversikten, eller til ett verktøy etter ID-en. */
+export function verktoyadresse(id?: string): string {
+  return id ? `#/verktoy/${encodeURIComponent(id)}` : '#/verktoy'
+}
+
 /** Flest ledd i stedet: seksjonen og detaljkortet. */
 const MAKS_STEDSLEDD = 2
 
 /**
- * Ruten adressen peker på. Alt som ikke er en fagside, søket eller
- * stoffregisteret, er
+ * Ruten adressen peker på. Alt som ikke er en fagside, søket,
+ * stoffregisteret eller et verktøy, er
  * fortolkningen. Et navn, et alias eller en gammel analyttadresse gir ruten til
  * stoffet de fører til; {@link kanoniskAdresse} sier om adressefeltet bør
  * skrives om.
@@ -175,6 +194,8 @@ export function lesRute(hash: string, register: Stoffregister = STOFFREGISTER): 
   const sok = SOK.exec(hash)
   if (sok) return { side: 'sok', q: new URLSearchParams(sok[1] ?? '').get('q') ?? '' }
   if (STOFFREGISTERSIDE.test(hash)) return { side: 'stoffregister' }
+  const verktoy = VERKTOYSIDE.exec(hash)
+  if (verktoy) return verktoy[1] ? { side: 'verktoy', verktoy: verktoy[1].toLowerCase() } : { side: 'verktoy' }
   const versjon = VERSJON.exec(hash)
   if (versjon?.[1] && versjon[2]) return { side: 'versjon', stoff: versjon[1].toLowerCase(), nr: Number(versjon[2]) }
   const gren = KURATERING.exec(hash)
@@ -264,6 +285,8 @@ export function adresse(rute: Rute): string {
       return sokeside(rute.q)
     case 'stoffregister':
       return STOFFREGISTERADRESSE
+    case 'verktoy':
+      return verktoyadresse(rute.verktoy)
     case 'versjon':
       return versjonsadresse(rute.stoff, rute.nr)
     case 'kuratering':
@@ -298,7 +321,7 @@ export function stoffadresse(slug: string, sted: readonly string[] = []): string
 /**
  * Siden ruten står på, uten stedet på den og uten søket: `fortolkning`,
  * `fortolkning/hbup`, `fortolkning/hbup/rediger`, `stoff/bupropion`, `sok`,
- * `stoffregister`, `versjon/bupropion/3` og `kuratering/<gren-ID>`. Det er formen områdene i endringsloggen skrives på
+ * `stoffregister`, `verktoy`, `verktoy/<ID>`, `versjon/bupropion/3` og `kuratering/<gren-ID>`. Det er formen områdene i endringsloggen skrives på
  * (`src/oppdatering/sider.ts`), og det som skifter når brukeren går til en
  * annen side — ikke når en seksjon åpnes eller søket skrives om.
  */
@@ -310,6 +333,8 @@ export function sidesti(rute: Rute): string {
       return `versjon/${rute.stoff}/${rute.nr}`
     case 'kuratering':
       return `kuratering/${rute.gren}`
+    case 'verktoy':
+      return rute.verktoy ? `verktoy/${rute.verktoy}` : 'verktoy'
     case 'fortolkning':
       return ['fortolkning', rute.analytt, rute.rediger ? REDIGER : undefined].filter(Boolean).join('/')
     default:

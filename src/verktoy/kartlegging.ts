@@ -8,7 +8,9 @@
  * `scripts/verktoy-kartlegging.ts`: tabellene, de lenkede kildesidene, FEST og
  * fagsidene i produksjon. Denne modulen kontrollerer at kartleggingen og
  * øyeblikksbildene stemmer overens (`kontrollerKartlegging`), og regner ut
- * dekningen og statusene rapporten viser. Ingenting her brukes av appen ennå.
+ * dekningen og statusene rapporten viser. Appen bruker bare typene,
+ * formuleringene og sperren mot utelatte virkestoffer, gjennom
+ * verktøyregisteret (`register.ts`); øyeblikksbildene når den ikke.
  */
 import { navnenokkel } from '../domain/sokenavn'
 import { stoffslug } from '../domain/stoffregister'

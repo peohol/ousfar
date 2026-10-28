@@ -206,19 +206,20 @@ function dosegrense(p: Parameter | undefined, sti: string): number | null {
 
 const listeOg = (xs: string[]) => (xs.length <= 1 ? xs.join('') : `${xs.slice(0, -1).join(', ')} og ${xs.at(-1)}`)
 
+/** Om preparatet ligger utenfor det forløpet gjelder: administrasjonsveien, formuleringen regelen gjelder. */
+function utenforForlop(def: Forlop, b: Byggestein): boolean {
+  if (def.administrasjon === 'peroral') {
+    if (!(b.klasse === 'peroral' || b.klasse === 'peroral_modifisert') || !b.administrasjonsveier.includes('Oral bruk')) return true
+  } else if (b.klasse !== 'depotinjeksjon') return true
+  return !!def.klasser && !def.klasser.includes(b.klasse)
+}
+
 /** Preparatene som kan brukes i forløpet, etter regelens og forskriverens avgrensninger, og begrensningene for resten. */
-function preparaterFor(def: Forlop, virkestoff: string, steiner: Byggestein[], valg: Formvalg, fritak: boolean): { brukbare: Byggestein[]; begrensninger: string[] } {
+function utvalgFor(def: Forlop, steiner: Byggestein[], valg: Formvalg, fritak: boolean): { brukbare: Byggestein[]; begrensninger: string[] } {
   const begrensninger: string[] = []
-  const utenfor = (b: Byggestein): string | null => {
-    if (def.administrasjon === 'peroral') {
-      if (!(b.klasse === 'peroral' || b.klasse === 'peroral_modifisert') || !b.administrasjonsveier.includes('Oral bruk')) return 'gis ikke peroralt'
-    } else if (b.klasse !== 'depotinjeksjon') return 'er ikke en depotinjeksjon'
-    if (def.klasser && !def.klasser.includes(b.klasse)) return 'har en annen formulering enn regelen gjelder'
-    return null
-  }
   const brukbare: Byggestein[] = []
   for (const b of steiner) {
-    if (utenfor(b)) continue
+    if (utenforForlop(def, b)) continue
     if (def.preparater && !def.preparater.includes(b.varenavn)) continue
     if (valg.klasse && b.klasse !== valg.klasse) continue
     if (valg.legemiddelformer && !valg.legemiddelformer.includes(b.legemiddelform?.kode ?? '')) continue
@@ -228,8 +229,14 @@ function preparaterFor(def: Forlop, virkestoff: string, steiner: Byggestein[], v
     if (grunner.length > 0) begrensninger.push(`${b.navn_form_styrke}: ${grunner.join('; ')}`)
     else brukbare.push(b)
   }
+  return { brukbare, begrensninger }
+}
+
+/** Som {@link utvalgFor}, men stopper med grunnen når ingen preparater kan brukes. */
+function preparaterFor(def: Forlop, virkestoff: string, steiner: Byggestein[], valg: Formvalg, fritak: boolean): { brukbare: Byggestein[]; begrensninger: string[] } {
+  const { brukbare, begrensninger } = utvalgFor(def, steiner, valg, fritak)
   if (brukbare.length === 0) {
-    const finnes = steiner.filter((b) => !utenfor(b) && (!def.preparater || def.preparater.includes(b.varenavn)))
+    const finnes = steiner.filter((b) => !utenforForlop(def, b) && (!def.preparater || def.preparater.includes(b.varenavn)))
     const depot = def.preparater ? ` (${def.preparater.join(', ')})` : ''
     const [hva, bestemt] = def.administrasjon === 'peroral' ? ['perorale preparater', 'de perorale preparatene'] : [`depotpreparater${depot}`, `depotpreparatene${depot}`]
     throw new Stopp(
@@ -251,6 +258,34 @@ function entydig(f: string, virkestoff: string, brukbare: Byggestein[], valg: Fo
   if (former.length > 1 && !valg.legemiddelformer) {
     throw new Stopp(`${virkestoff} (${f}) finnes i flere legemiddelformer (${listeOg(former.map(([k, t]) => `${t} [${k}]`))}); formen må velges, beregningen blander dem ikke av seg selv.`)
   }
+}
+
+/** Det forskriveren kan velge mellom i ett forløp: formuleringene og legemiddelformene (FEST-koder). */
+export interface Formalternativer {
+  klasser: { kode: Formuleringsklasse; navn: string }[]
+  legemiddelformer: { kode: string; navn: string }[]
+}
+
+/**
+ * Forløpene der preparatene i FEST spenner over flere formuleringer eller
+ * legemiddelformer, med alternativene, så skjemaet kan be om valget før
+ * beregningen (P6.6). En liste med ett alternativ eller færre trenger ikke
+ * noe valg. Formene gjelder formuleringen som er valgt; uten valg alle.
+ */
+export function formvalgSomTrengs(regel: Regel, inndata: Doseplaninndata, grunnlag: Preparatgrunnlag, idag: string): Record<string, Formalternativer> {
+  const ut: Record<string, Formalternativer> = {}
+  for (const def of regel.plan.forlop) {
+    const virkestoff = def.virkestoff.type === 'virkestoff' ? def.virkestoff.nokkel : inndata.medlem
+    if (!virkestoff) continue
+    const valg = inndata.formvalg?.[def.id] ?? {}
+    const { brukbare } = utvalgFor(def, byggesteiner(grunnlag, virkestoff, idag), {}, inndata.godkjenningsfritak === true)
+    const klasser = [...new Set(brukbare.map((b) => b.klasse))].sort().map((kode) => ({ kode, navn: FORMULERINGSKLASSER[kode] }))
+    const former = [...new Map(brukbare.filter((b) => !valg.klasse || b.klasse === valg.klasse).map((b) => [b.legemiddelform?.kode ?? '', b.legemiddelform?.tekst ?? '(uten form)'])).entries()]
+      .sort()
+      .map(([kode, navn]) => ({ kode, navn }))
+    if (klasser.length > 1 || former.length > 1) ut[def.id] = { klasser: klasser.length > 1 ? klasser : [], legemiddelformer: former.length > 1 ? former : [] }
+  }
+  return ut
 }
 
 /**

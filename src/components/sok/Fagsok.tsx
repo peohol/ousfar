@@ -1,4 +1,4 @@
-import { useDeferredValue, useEffect, useId, useRef, useState, type FocusEvent, type KeyboardEvent } from 'react'
+import { useDeferredValue, useEffect, useId, useRef, useState, type FocusEvent, type KeyboardEvent, type ReactNode } from 'react'
 import { sokeside } from '../../domain/rute'
 import { FAGSOK_LAG } from '../../hooks/useKeyboard'
 import type { Sokeindekstilstand } from '../../hooks/useSokeindeks'
@@ -9,7 +9,7 @@ import { Fagsokfelt } from '../toppmeny/Fagsokfelt'
 import { Toppmenyknapp } from '../toppmeny/Toppmenyknapp'
 import { Markert } from './Markert'
 import { Manglende } from './Manglende'
-import { HENTER_MER } from './treffvisning'
+import { HENTER_MER, type Treffvisning } from './treffvisning'
 import { useFagsoketreff } from './useFagsoketreff'
 
 /** Flest treff i rullegardinen. Resten står på søkesiden. */
@@ -31,9 +31,9 @@ export interface FagsokProps {
 }
 
 /**
- * Det globale fagsøket i toppmenyen: feltet, og en rullegardin med de beste
- * treffene i alle de publiserte stoffsidene. Det er noe annet enn analyttsøket
- * som driver fortolkningen, og rører det ikke.
+ * Det globale fagsøket i toppmenyen: feltet, og en rullegardin med verktøyene
+ * søket finner og de beste treffene i alle de publiserte stoffsidene. Det er
+ * noe annet enn analyttsøket som driver fortolkningen, og rører det ikke.
  *
  * Feltet er en kombinasjonsboks: piltastene velger et treff, `Enter` åpner
  * det, og `Escape` lukker rullegardinen (deretter tømmer den feltet). Uten
@@ -49,8 +49,11 @@ export function Fagsok({ indeks, onKrev, onProvIgjen, sporring, beskrivSide, onG
   const [apen, setApen] = useState(false)
   const [aktiv, setAktiv] = useState(0)
   const soket = useDeferredValue(verdi)
-  const { treff, vis } = useFagsoketreff(indeks, soket, beskrivSide)
-  const viste = treff.slice(0, MAKS_I_RULLEGARDIN).map(vis)
+  const { treff, vis, verktoy } = useFagsoketreff(indeks, soket, beskrivSide)
+  // Verktøyene står først, som en egen gruppe; piltastene går gjennom begge.
+  const fagtreff = treff.slice(0, MAKS_I_RULLEGARDIN).map(vis)
+  const viste = [...verktoy, ...fagtreff]
+  const antall = treff.length + verktoy.length
   const harSok = verdi.trim() !== ''
   const visListe = fokus && apen && harSok
   // Treffene henger etter feltet mens React regner ut det nye søket. Da står
@@ -117,6 +120,45 @@ export function Fagsok({ indeks, onKrev, onProvIgjen, sporring, beskrivSide, onG
   const listeId = `${id}-treff`
   const radId = (i: number) => `${id}-treff-${i}`
 
+  const rad = (t: Treffvisning, i: number) => (
+    <a
+      key={t.nokkel}
+      id={radId(i)}
+      href={t.adresse}
+      role="option"
+      aria-selected={i === valgtIndeks}
+      tabIndex={-1}
+      className="fagsok__rad"
+      data-gruppe={t.gruppe}
+      data-ih=""
+      onMouseDown={(e) => e.preventDefault()}
+      onMouseEnter={() => setAktiv(i)}
+      onClick={(e) => {
+        e.preventDefault()
+        ga(t.adresse)
+      }}
+    >
+      <span className="fagsok__radikon">
+        <Ikon navn={t.ikon} storrelse="ui" />
+      </span>
+      <span className="fagsok__radtekst">
+        <span className="fagsok__radtittel">
+          <Markert {...t.tittel} />
+        </span>
+        <span className="fagsok__radsti">
+          {t.sti.join(' › ')}
+          {t.utdrag && (
+            <>
+              {' · '}
+              <Markert {...t.utdrag} />
+            </>
+          )}
+        </span>
+      </span>
+      <span className="fagsok__radtype">{t.type}</span>
+    </a>
+  )
+
   return (
     <div
       className="fagsokkilde"
@@ -140,59 +182,40 @@ export function Fagsok({ indeks, onKrev, onProvIgjen, sporring, beskrivSide, onG
         {...(valgt && { 'aria-activedescendant': radId(valgtIndeks) })}
       >
         <div className="fagsok__rullegardin" hidden={!visListe}>
+          {viste.length > 0 && (
+            <div id={listeId} role="listbox" aria-label="Treff i søket" className="fagsok__treff">
+              {verktoy.length > 0 ? (
+                <>
+                  <Treffgruppe id={`${id}-verktoy`} navn="Verktøy">
+                    {verktoy.map((t, i) => rad(t, i))}
+                  </Treffgruppe>
+                  {fagtreff.length > 0 && (
+                    <Treffgruppe id={`${id}-fagstoff`} navn="I fagstoffet">
+                      {fagtreff.map((t, i) => rad(t, verktoy.length + i))}
+                    </Treffgruppe>
+                  )}
+                </>
+              ) : (
+                fagtreff.map((t, i) => rad(t, i))
+              )}
+            </div>
+          )}
           <Liste
             indeks={indeks}
             onKrev={onKrev}
             onProvIgjen={onProvIgjen ?? onKrev}
             antall={treff.length}
             forsinket={forsinket}
-          >
-            <div id={listeId} role="listbox" aria-label="Treff i fagstoff" className="fagsok__treff">
-              {viste.map((t, i) => (
-                <a
-                  key={t.nokkel}
-                  id={radId(i)}
-                  href={t.adresse}
-                  role="option"
-                  aria-selected={i === valgtIndeks}
-                  tabIndex={-1}
-                  className="fagsok__rad"
-                  data-ih=""
-                  onMouseDown={(e) => e.preventDefault()}
-                  onMouseEnter={() => setAktiv(i)}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    ga(t.adresse)
-                  }}
-                >
-                  <span className="fagsok__radikon">
-                    <Ikon navn={t.ikon} storrelse="ui" />
-                  </span>
-                  <span className="fagsok__radtekst">
-                    <span className="fagsok__radtittel">
-                      <Markert {...t.tittel} />
-                    </span>
-                    <span className="fagsok__radsti">
-                      {t.sti.join(' › ')}
-                      {t.utdrag && (
-                        <>
-                          {' · '}
-                          <Markert {...t.utdrag} />
-                        </>
-                      )}
-                    </span>
-                  </span>
-                  <span className="fagsok__radtype">{t.type}</span>
-                </a>
-              ))}
-            </div>
-          </Liste>
+          />
+          <p className="kun-skjermleser" role="status">
+            {forsinket ? '' : antall === 1 ? '1 treff' : `${antall} treff`}
+          </p>
           <div className="fagsok__bunn">
             <span className="fagsok__hint" aria-hidden="true">
               ↑ ↓ velg · Enter åpne · Esc lukk
             </span>
             <Toppmenyknapp ikon="search" variant="primar" onClick={visAlle}>
-              {`Vis alle treff (${treff.length})`}
+              {`Vis alle treff (${antall})`}
             </Toppmenyknapp>
           </div>
         </div>
@@ -201,21 +224,31 @@ export function Fagsok({ indeks, onKrev, onProvIgjen, sporring, beskrivSide, onG
   )
 }
 
-/** Innholdet i rullegardinen etter hvor langt indeksen har kommet. */
+/** En gruppe treff i rullegardinen, med navnet over. */
+function Treffgruppe({ id, navn, children }: { id: string; navn: string; children: ReactNode }) {
+  return (
+    <div role="group" aria-labelledby={id} className="fagsok__gruppe">
+      <div id={id} role="presentation" className="fagsok__gruppenavn">
+        {navn}
+      </div>
+      {children}
+    </div>
+  )
+}
+
+/** Meldingene om fagstoffet under treffene, etter hvor langt indeksen har kommet. */
 function Liste({
   indeks,
   onKrev,
   onProvIgjen,
   antall,
   forsinket,
-  children,
 }: {
   indeks: Sokeindekstilstand
   onKrev: () => void
   onProvIgjen: () => void
   antall: number
   forsinket: boolean
-  children: React.ReactNode
 }) {
   if (indeks.status === 'feil') {
     return (
@@ -239,7 +272,6 @@ function Liste({
   return (
     <>
       {antall === 0 && !forsinket && !indeks.henterMer && <p className="fagsok__melding">Ingen treff i fagstoffet.</p>}
-      {children}
       {indeks.henterMer && (
         <p className="fagsok__melding">
           <Lastesirkel />
@@ -252,9 +284,6 @@ function Liste({
         henter={!!indeks.henterMer}
         onProvIgjen={onProvIgjen}
       />
-      <p className="kun-skjermleser" role="status">
-        {forsinket ? '' : antall === 1 ? '1 treff' : `${antall} treff`}
-      </p>
     </>
   )
 }

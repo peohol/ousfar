@@ -1,6 +1,6 @@
 # OUSFAR Verktøy – P4: regelmodellen
 
-**Status 28.10.2026:** til faglig kontroll (P4.8), tredje runde. De to første uavhengige kontrollene fant feil i modellen og beregningen; de er rettet (§11). De fire reglene som ble endret faglig, er versjon 2 og sendt til kontroll på nytt. Ingen regel er klinisk godkjent, og ingenting her brukes av appen.
+**Status 28.10.2026:** til faglig kontroll (P4.8), tredje runde. De to første uavhengige kontrollene fant feil i modellen og beregningen; de er rettet (§11). De fire reglene som ble endret faglig, er versjon 2 og sendt til kontroll på nytt. Ingen regel er klinisk godkjent. Fra P6 leser appen regelstatusen for å vise hva som kan beregnes, og får en plan bare gjennom `kliniskDoseplan`; med dagens regler viser den at faglig kontroll gjenstår.
 
 Dette notatet beskriver hvordan OUSFAR skriver regler for nedtrapping og bytte av psykofarmaka, uavhengig av kilde, og hvorfor. Pilotsettet med alle regler, parametre, kilder og regneeksempler står i `docs/verktøy-p4-pilotsett.md`, som lages av koden (`npm run verktoy:regler -- rapport`) og derfor alltid stemmer med den. Koden ligger i `src/verktoy/regler/`.
 

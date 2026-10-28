@@ -91,7 +91,7 @@ function visFagsok(indeks: Sokeindekstilstand = KLAR, sporring?: string) {
   return { onKrev, onGaaTil, felt, ...resultat }
 }
 
-const rader = () => within(screen.getByRole('listbox', { name: 'Treff i fagstoff' })).queryAllByRole('option')
+const rader = () => within(screen.getByRole('listbox', { name: 'Treff i søket' })).queryAllByRole('option')
 
 /* --- Rullegardinen ------------------------------------------------------------ */
 

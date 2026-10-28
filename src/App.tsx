@@ -72,6 +72,7 @@ import { utenSider } from './faginnhold/sok'
 import { lagRegisterlager } from './stoffregister/api'
 import { StoffregisterkildeProvider, useLagStoffregisterkilde } from './stoffregister/Stoffregisterkilde'
 import { Stoffregisterside } from './components/stoffregister/Stoffregisterside'
+import { Verktoyside } from './components/verktoy/Verktoyside'
 import { lagLegemiddelleser, lagLegemiddelsok } from './legemiddeldata/lesing'
 import { lagFarmakogenetikkleser, lagFarmakogenetikksok } from './clinpgx/lesing'
 import { lagCpicleser } from './cpic/lesing'
@@ -192,7 +193,7 @@ export default function App() {
   // Redigeringen av reglene og kommentarene en fortolkning gir, for
   // administratorene, på en egen adresse under fortolkningen.
   const redigererFortolkning = erRedigering(rute) && faginnhold.kanRedigere && state.analyte !== null
-  // Stoffsidene, søkesiden og redigeringen legger seg over fortolkningen, som står skjult bak.
+  // Stoffsidene, søkesiden, verktøyene og redigeringen legger seg over fortolkningen, som står skjult bak.
   const fortolkningSkjult = rute.side !== 'fortolkning' || redigererFortolkning
   // Reglene rusmiddelmodulene fortolkes med, hentet én gang for hele appen.
   const scenarioregler = useHentScenarioregler(useCallback(() => lesScenarioregler(klient()), []))
@@ -770,6 +771,12 @@ export default function App() {
                       onLukk={lukkInfoside}
                       kuratering={faginnhold.kuratering}
                     />
+                  </main>
+                )}
+
+                {rute.side === 'verktoy' && (
+                  <main className="scene scene--verktoy">
+                    <Verktoyside verktoy={rute.verktoy} legemidler={faginnhold.legemidler} onLukk={lukkInfoside} />
                   </main>
                 )}
 

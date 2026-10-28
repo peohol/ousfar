@@ -1,21 +1,28 @@
-import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent as Tastetrykk, type ReactNode } from 'react'
 import { useBevart } from '../oppdatering/Bevaring'
 import { Bryter } from './Bryter'
 import { Shortcut } from './Shortcut'
 import { Ikon } from './ikon/Ikon'
 import { kategoriikon } from './ikon/register'
 import { useTips } from './Tips'
-import { STOFFREGISTERADRESSE, stoffadresse } from '../domain/rute'
+import { STOFFREGISTERADRESSE, stoffadresse, verktoyadresse } from '../domain/rute'
 import { useFavoritter, type Favoritter } from '../favoritter/Favorittkilde'
 import type { Registerkategori, Registerstoff, Stoffregister } from '../domain/stoffregister'
 import { fokusIFagsok, lagLiggerOver } from '../hooks/useKeyboard'
 import { rullefart } from '../hooks/useKortHopp'
 import { useTrykkUtenfor } from '../hooks/useTrykkUtenfor'
+import { VERKTOY } from '../verktoy/register'
 
 /**
- * Sidemenyen: stoffregisteret.
+ * Sidemenyen: to faner, Stoffregister og Verktøy (P6.2 i
+ * `docs/verktøy-utviklingsplan.md`). Fanen som sist var valgt, står valgt
+ * når menyen åpnes igjen, også etter en oppdatering av appen. Piltastene
+ * bytter fane, som i andre fanelister.
  *
- * Menyen er veien inn til stoffsiden for hvert stoff, ordnet etter
+ * Verktøyfanen har verktøyene fra verktøyregisteret (`src/verktoy/register.ts`)
+ * som lenker til sidene deres, og lenken til oversikten.
+ *
+ * Stoffregisterfanen er veien inn til stoffsiden for hvert stoff, ordnet etter
  * farmakologisk klasse (`src/domain/stoffregister.ts`). Hvert stoff lenker
  * alltid til `#/stoff/<nøkkel>`; kodene til laboratorieanalyttene stoffet er
  * primært koblet til, står ved siden av som sekundær informasjon. Søket i
@@ -41,8 +48,16 @@ const ETTER_GLIDNING = 300
 /** Tasten som åpner og lukker menyen. */
 const MENY_SNARVEI = 'Ctrl + M'
 
-/** Navnet på menyen, i tittelen og for skjermlesere. */
-const TITTEL = 'Stoffregister'
+/** Navnet på menyen for skjermlesere. */
+const TITTEL = 'Meny'
+
+/** Fanene i menyen, i rekkefølgen de står. */
+const FANER = [
+  { id: 'stoffregister', navn: 'Stoffregister', ikon: 'stoffregister' },
+  { id: 'verktoy', navn: 'Verktøy', ikon: 'gears' },
+] as const
+
+type Fane = (typeof FANER)[number]['id']
 
 /** Merket menyen bærer som `data-lag` mens den står åpen. */
 const MENY_LAG = 'meny'
@@ -64,7 +79,7 @@ const FOKUSERBART = 'button, input, [href], [tabindex]:not([tabindex="-1"])'
 function naabare(panel: HTMLElement | null): HTMLElement[] {
   if (!panel) return []
   return [...panel.querySelectorAll<HTMLElement>(FOKUSERBART)].filter(
-    (el) => getComputedStyle(el).visibility !== 'hidden',
+    (el) => !el.closest('[hidden]') && getComputedStyle(el).visibility !== 'hidden',
   )
 }
 
@@ -81,11 +96,12 @@ export function Sidemeny({ register }: SidemenyProps) {
   const [apenSkuff, setApenSkuff] = useBevart<string | null>('sidemeny/skuff', null)
   const favoritter = useFavoritter()
   const [favoritterApen, setFavoritterApen] = useBevart('sidemeny/favoritter', false)
+  const [fane, setFane] = useBevart<Fane>('sidemeny/fane', 'stoffregister')
   const panelId = useId()
   const panel = useRef<HTMLElement>(null)
   const knapp = useRef<HTMLButtonElement | null>(null)
 
-  const knappenavn = 'Vis stoffregisteret'
+  const knappenavn = 'Vis menyen'
   const knappetips = useTips(knappenavn, { skjermleser: false })
   // Tipset og fokuset skal på det samme elementet, så de to ref-ene slås sammen.
   const { ref: tipsRef, ...knappeprops } = knappetips.props
@@ -212,10 +228,7 @@ export function Sidemeny({ register }: SidemenyProps) {
         tabIndex={-1}
       >
         <div className="sidemeny__topp">
-          <h2 className="sidemeny__tittel">
-            <Ikon navn="stoffregister" className="sidemeny__tittelikon" />
-            {TITTEL}
-          </h2>
+          <Fanevalg fane={fane} panelId={panelId} onVelg={setFane} />
           <button
             type="button"
             className="sidemeny__lukk"
@@ -226,45 +239,119 @@ export function Sidemeny({ register }: SidemenyProps) {
           </button>
         </div>
 
-        {/* Bryteren gjelder hele lista, og står fast øverst i stedet for å
-            rulle bort med den. */}
-        <Bryter className="menyveksle" pa={visUnderkategorier} onEndre={setVisUnderkategorier}>
-          Vis underkategorier
-        </Bryter>
+        <div
+          id={`${panelId}-stoffregister`}
+          role="tabpanel"
+          aria-labelledby={`${panelId}-fane-stoffregister`}
+          className="sidemeny__fane"
+          hidden={fane !== 'stoffregister'}
+        >
+          {/* Bryteren gjelder hele lista, og står fast øverst i stedet for å
+              rulle bort med den. */}
+          <Bryter className="menyveksle" pa={visUnderkategorier} onEndre={setVisUnderkategorier}>
+            Vis underkategorier
+          </Bryter>
 
-        {/* Favorittene står også fast, under bryteren og over kategoriene. */}
-        {favoritter && (
-          <ul className="menyfavoritter">
-            <Favorittskuff
-              favoritter={favoritter}
-              register={register}
-              apen={favoritterApen}
-              onVeksle={() => setFavoritterApen((apen) => !apen)}
-              onVelg={velg}
-            />
+          {/* Favorittene står også fast, under bryteren og over kategoriene. */}
+          {favoritter && (
+            <ul className="menyfavoritter">
+              <Favorittskuff
+                favoritter={favoritter}
+                register={register}
+                apen={favoritterApen}
+                onVeksle={() => setFavoritterApen((apen) => !apen)}
+                onVelg={velg}
+              />
+            </ul>
+          )}
+
+          <ul className="menyliste">
+            {register.kategorier.map((kategori) => (
+              <Kategoriskuff
+                key={kategori.navn}
+                kategori={kategori}
+                apen={apenSkuff === kategori.navn}
+                visUnderkategorier={visUnderkategorier}
+                onVeksle={() => veksle(kategori.navn)}
+                onVelg={velg}
+              />
+            ))}
           </ul>
-        )}
 
-        <ul className="menyliste">
-          {register.kategorier.map((kategori) => (
-            <Kategoriskuff
-              key={kategori.navn}
-              kategori={kategori}
-              apen={apenSkuff === kategori.navn}
-              visUnderkategorier={visUnderkategorier}
-              onVeksle={() => veksle(kategori.navn)}
-              onVelg={velg}
-            />
-          ))}
-        </ul>
+          {/* Helsiden har hele registeret, med arkivet og redigeringen. Menyen holdes ryddig. */}
+          <a className="menyhelside" href={STOFFREGISTERADRESSE} onClick={velg}>
+            <Ikon navn="ext" storrelse="ui" />
+            Åpne hele stoffregisteret
+          </a>
+        </div>
 
-        {/* Helsiden har hele registeret, med arkivet og redigeringen. Menyen holdes ryddig. */}
-        <a className="menyhelside" href={STOFFREGISTERADRESSE} onClick={velg}>
-          <Ikon navn="ext" storrelse="ui" />
-          Åpne hele stoffregisteret
-        </a>
+        <div
+          id={`${panelId}-verktoy`}
+          role="tabpanel"
+          aria-labelledby={`${panelId}-fane-verktoy`}
+          className="sidemeny__fane"
+          hidden={fane !== 'verktoy'}
+        >
+          <ul className="menyverktoy">
+            {VERKTOY.map((v) => (
+              <li key={v.id}>
+                <a className="menyverktoy__lenke" href={verktoyadresse(v.id)} onClick={velg}>
+                  <Ikon navn={v.ikon} storrelse="ui" className="menyskuff__ikon" />
+                  <span className="menyverktoy__tekst">
+                    <span className="menyverktoy__navn">{v.navn}</span>
+                    <span className="menyverktoy__beskrivelse">{v.beskrivelse}</span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a className="menyhelside" href={verktoyadresse()} onClick={velg}>
+            <Ikon navn="ext" storrelse="ui" />
+            Åpne verktøyoversikten
+          </a>
+        </div>
       </nav>
     </>
+  )
+}
+
+/**
+ * Fanene øverst i menyen. Bare den valgte fanen nås med tabulator; piltastene,
+ * Home og End flytter mellom fanene og velger dem.
+ */
+function Fanevalg({ fane, panelId, onVelg }: { fane: Fane; panelId: string; onVelg: (fane: Fane) => void }) {
+  const paaTast = (event: Tastetrykk<HTMLDivElement>) => {
+    const i = FANER.findIndex((f) => f.id === fane)
+    const ny =
+      event.key === 'ArrowRight' ? (i + 1) % FANER.length
+      : event.key === 'ArrowLeft' ? (i - 1 + FANER.length) % FANER.length
+      : event.key === 'Home' ? 0
+      : event.key === 'End' ? FANER.length - 1
+      : -1
+    if (ny < 0) return
+    event.preventDefault()
+    onVelg(FANER[ny]!.id)
+    document.getElementById(`${panelId}-fane-${FANER[ny]!.id}`)?.focus()
+  }
+  return (
+    <div role="tablist" aria-label="Menyvalg" className="sidemeny__faner" onKeyDown={paaTast}>
+      {FANER.map((f) => (
+        <button
+          key={f.id}
+          id={`${panelId}-fane-${f.id}`}
+          type="button"
+          role="tab"
+          className="sidemeny__fanevalg"
+          aria-selected={fane === f.id}
+          aria-controls={`${panelId}-${f.id}`}
+          tabIndex={fane === f.id ? 0 : -1}
+          onClick={() => onVelg(f.id)}
+        >
+          <Ikon navn={f.ikon} storrelse="ui" />
+          {f.navn}
+        </button>
+      ))}
+    </div>
   )
 }
 

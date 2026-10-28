@@ -12,6 +12,8 @@ import {
   type Utdrag,
 } from '../../faginnhold/sok'
 import type { Manglende, Sokekilde } from '../../faginnhold/globaltSok'
+import { verktoyadresse } from '../../domain/rute'
+import type { Verktoytreff } from '../../verktoy/register'
 import type { Ikonnavn } from '../ikon/register'
 import { seksjonsikon } from '../stoffside/panelvisning'
 
@@ -25,7 +27,7 @@ export interface Treffvisning {
   /** Stedet treffet peker på. Unikt blant treffene i ett søk. */
   nokkel: string
   adresse: string
-  gruppe: Treffgruppe
+  gruppe: Visningsgruppe
   /** Hva slags treff det er, som står ved siden av i rullegardinen. */
   type: string
   ikon: Ikonnavn
@@ -58,8 +60,15 @@ export function manglertekst(mangler: Manglende | undefined): string | null {
   return `Søket mangler nå ${liste}, som ikke kunne hentes.`
 }
 
+/**
+ * Gruppene treffene vises i: verktøyene først, så gruppene i fagstoffet.
+ * Verktøyene er en egen trefftype og blandes aldri med stoff eller preparater.
+ */
+export type Visningsgruppe = 'verktoy' | Treffgruppe
+
 /** Navnene på gruppene: fanen på søkesiden og overskriften over gruppen. */
-export const GRUPPENAVN: Record<Treffgruppe, { fane: string; overskrift: string }> = {
+export const GRUPPENAVN: Record<Visningsgruppe, { fane: string; overskrift: string }> = {
+  verktoy: { fane: 'Verktøy', overskrift: 'Verktøy' },
   stoff: { fane: 'Stoff', overskrift: 'Stoff' },
   preparat: { fane: 'Preparater', overskrift: 'Preparater' },
   tekst: { fane: 'Tekst', overskrift: 'I teksten' },
@@ -140,4 +149,18 @@ export function visTreff(
 function utenSiste(ledd: string[], tittel: string): string[] {
   const siste = ledd[ledd.length - 1]
   return siste !== undefined && fold(siste.trim()) === fold(tittel.trim()) ? ledd.slice(0, -1) : ledd
+}
+
+/** Visningen av et verktøy søket fant: navnet, og aliaset når det var det som ga treffet. */
+export function visVerktoy({ verktoy, alias }: Verktoytreff, ord: readonly string[]): Treffvisning {
+  return {
+    nokkel: `verktoy:${verktoy.id}`,
+    adresse: verktoyadresse(verktoy.id),
+    gruppe: 'verktoy',
+    type: 'Verktøy',
+    ikon: verktoy.ikon,
+    tittel: markert(verktoy.navn, ord),
+    sti: [verktoy.beskrivelse],
+    ...(alias && { utdrag: markert(alias, ord) }),
+  }
 }

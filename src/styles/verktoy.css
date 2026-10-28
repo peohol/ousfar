@@ -1,0 +1,510 @@
+/**
+ * Verktøyene (`#/verktoy`, `src/components/verktoy/`): oversikten med ett kort
+ * per verktøy, skjemaet, statusen for valgene og doseplanen med tabellen.
+ * Bygd på flatene, feltene og avstandene ellers i appen; utskriften har bare
+ * doseplanen.
+ */
+
+.scene--verktoy {
+  width: min(100%, 60rem);
+}
+
+.verktoyside {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-7);
+  padding-block: var(--rom-9);
+}
+
+.verktoyside__hode {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-3);
+}
+
+.verktoyside__overtittel {
+  margin: 0;
+  font-size: var(--tekst-meta);
+  font-weight: var(--vekt-halvfet);
+  letter-spacing: var(--sperring-meta);
+  text-transform: uppercase;
+  color: var(--blekk-dempet);
+}
+
+.verktoyside__overtittel a {
+  color: inherit;
+}
+
+.verktoyside__tittel {
+  margin: 0;
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-sidetittel);
+  font-weight: var(--vekt-medium);
+  line-height: var(--linjehoyde-titler);
+  letter-spacing: -0.02em;
+}
+
+.verktoyside__tittel:focus {
+  outline: none;
+}
+
+.verktoyside__ingress,
+.verktoyside__hint {
+  margin: 0;
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-ingress);
+  font-style: italic;
+  color: var(--blekk-dempet);
+  text-wrap: pretty;
+}
+
+.verktoyside__hint {
+  display: flex;
+  align-items: center;
+  gap: var(--rom-3);
+}
+
+/* --- Oversikten -------------------------------------------------------------- */
+.verktoykort {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: var(--rom-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.verktoykort__lenke {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--rom-4);
+  height: 100%;
+  padding: var(--rom-6);
+  color: var(--blekk);
+  text-decoration: none;
+  background: var(--flate);
+  border: var(--kant) solid var(--linje);
+  border-radius: var(--runding-kort);
+  transition: border-color var(--fart-rask) var(--kurve);
+}
+
+.verktoykort__lenke:hover {
+  border-color: var(--linje-kontroll);
+}
+
+.verktoykort__ikon {
+  flex: none;
+  width: var(--ikon-panel);
+  height: var(--ikon-panel);
+}
+
+.verktoykort__tekst {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--rom-2);
+  min-width: 0;
+}
+
+.verktoykort__navn {
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-seksjon);
+  font-weight: var(--vekt-medium);
+  line-height: var(--linjehoyde-tett);
+}
+
+.verktoykort__beskrivelse {
+  font-size: var(--tekst-etikett);
+  line-height: var(--linjehoyde-lesing);
+  color: var(--blekk-dempet);
+}
+
+.verktoykort__status {
+  font-size: var(--tekst-liten);
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk-dempet);
+}
+
+.verktoykort__pil {
+  flex: none;
+  align-self: center;
+  color: var(--blekk-dempet);
+}
+
+/* --- Skjemaet ---------------------------------------------------------------- */
+.verktoyskjema {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-6);
+}
+
+.verktoyfelt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-3);
+  min-width: 0;
+}
+
+.verktoyfelt__hjelp {
+  margin: 0;
+  font-size: var(--tekst-etikett);
+  color: var(--toksisk-blekk);
+}
+
+.verktoyfelt__formuleringer,
+.verktoyskjema__unntak {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.verktoyfelt__formuleringer > legend,
+.verktoyskjema__unntak > legend {
+  margin-bottom: var(--rom-2);
+  padding: 0;
+  font-size: var(--tekst-liten);
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk-dempet);
+}
+
+/* Feltene for virkestoffene står øverst i raden, også når bare det ene har formuleringer under seg. */
+.verktoyskjema__virkestoffer {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  align-items: start;
+}
+
+/* Lange formuleringsnavn brytes inne i pillen i stedet for å gå ut av feltet. */
+.verktoyfelt__formuleringer .avkryssing {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  padding-block: var(--rom-2);
+}
+
+.avkryssinger--loddrett {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.verktoyskjema select.inndatafelt {
+  font-weight: var(--vekt-medium);
+}
+
+.verktoyskjema__feil {
+  margin: 0;
+  padding: var(--rom-4) var(--rom-4) var(--rom-4) var(--rom-8);
+  font-size: var(--tekst-etikett);
+  color: var(--alvorlig-blekk);
+  background: var(--alvorlig-flate);
+  border-radius: var(--runding-underkort);
+}
+
+.verktoyskjema__handlinger {
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* --- Statusen for valgene ----------------------------------------------------
+   Samme flate som varslene ellers: sperret, ikke støttet og stoppet i
+   varselfargen; tilgjengelig og fagtekst på aksentflaten. Teksten sier alltid
+   det samme som fargen. */
+.verktoystatus {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-3);
+  margin: 0;
+  padding: var(--rom-5) var(--rom-6);
+  font-size: var(--tekst-ui);
+  line-height: var(--linjehoyde-lesing);
+  color: var(--toksisk-blekk);
+  background: var(--toksisk-flate);
+  border: var(--kant) solid var(--toksisk-kant);
+  border-radius: var(--runding-felt);
+}
+
+.verktoystatus :is(h2, p, ul) {
+  margin: 0;
+}
+
+.verktoystatus h2 {
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-seksjon);
+  font-weight: var(--vekt-medium);
+  line-height: var(--linjehoyde-tett);
+}
+
+.verktoystatus:is([data-status='tilgjengelig'], [data-status='fagtekst']) {
+  color: var(--blekk);
+  background: var(--aksent-flate);
+  border-color: var(--aksent);
+}
+
+.verktoystatus__regler {
+  padding-left: var(--rom-6);
+}
+
+.verktoystatus__merke {
+  font-size: var(--tekst-liten);
+  font-weight: var(--vekt-halvfet);
+  white-space: nowrap;
+}
+
+.verktoyfagtekst {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-3);
+}
+
+.verktoyfagtekst :is(h3, p, ul) {
+  margin: 0;
+}
+
+/* --- Doseplanen -------------------------------------------------------------- */
+.doseplan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-6);
+}
+
+.doseplan__hode {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+}
+
+.doseplan__overtittel {
+  margin: 0;
+  font-size: var(--tekst-meta);
+  font-weight: var(--vekt-halvfet);
+  letter-spacing: var(--sperring-meta);
+  text-transform: uppercase;
+  color: var(--blekk-dempet);
+}
+
+.doseplan__tittel {
+  margin: 0;
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-seksjon);
+  font-weight: var(--vekt-medium);
+  line-height: var(--linjehoyde-tett);
+}
+
+.doseplan__handlinger {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rom-3);
+  margin-top: var(--rom-3);
+}
+
+.doseplan__kvittering {
+  margin: 0;
+  font-size: var(--tekst-etikett);
+  color: var(--blekk-dempet);
+}
+
+/* Tabellen ruller sidelengs på smale flater i stedet for å presse siden ut. */
+.doseplan__tabell {
+  overflow-x: auto;
+  border: var(--kant) solid var(--linje);
+  border-radius: var(--runding-felt);
+}
+
+.doseplan table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--tekst-ui);
+  font-variant-numeric: tabular-nums;
+}
+
+.doseplan :is(th, td) {
+  padding: var(--rom-4) var(--rom-5);
+  text-align: left;
+  vertical-align: top;
+  border-bottom: var(--kant) solid var(--linje);
+}
+
+.doseplan tbody tr:last-child :is(th, td) {
+  border-bottom: 0;
+}
+
+.doseplan thead th {
+  font-size: var(--tekst-liten);
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk-dempet);
+  background: var(--flate-hevet);
+}
+
+.doseplan__administrasjon {
+  font-weight: var(--vekt-normal);
+}
+
+.doseplan tbody th {
+  font-weight: var(--vekt-halvfet);
+  white-space: nowrap;
+}
+
+.doseplan tr[data-type='injeksjon'] {
+  background: var(--aksent-flate);
+}
+
+.doseplan__dager,
+.doseplan__datoer {
+  display: block;
+}
+
+.doseplan__datoer,
+.doseplan__elementer,
+.doseplan__avvik {
+  font-size: var(--tekst-liten);
+  font-weight: var(--vekt-normal);
+  color: var(--blekk-dempet);
+}
+
+.doseplan__celle {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-1);
+}
+
+.doseplan__avvik {
+  font-style: italic;
+}
+
+.doseplan__injeksjon {
+  display: flex;
+  gap: var(--rom-2);
+}
+
+.doseplan__injeksjon > span {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-1);
+}
+
+.doseplan__del {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+}
+
+.doseplan__del h3 {
+  margin: 0;
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-ingress);
+  font-weight: var(--vekt-medium);
+}
+
+.doseplan__del ul {
+  margin: 0;
+  padding-left: var(--rom-6);
+  font-size: var(--tekst-etikett);
+  line-height: var(--linjehoyde-lesing);
+}
+
+.doseplan__del[data-tone='advarsel'] ul {
+  color: var(--toksisk-blekk);
+}
+
+.doseplan__del[data-tone='spor'] ul {
+  font-size: var(--tekst-liten);
+  color: var(--blekk-dempet);
+}
+
+.doseplan__kilde {
+  color: var(--blekk-dempet);
+}
+
+/* På smale skjermer stables tabellen: én blokk per dag, med virkestoffet
+   foran hver dose og uten de tomme cellene. Rollene i markeringen holder den
+   en tabell for skjermlesere. */
+@media (max-width: 40rem) {
+  .doseplan__tabell {
+    overflow-x: visible;
+  }
+
+  .doseplan :is(table, tbody, tr, th, td) {
+    display: block;
+  }
+
+  .doseplan thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .doseplan tbody tr {
+    padding: var(--rom-4) var(--rom-5);
+    border-bottom: var(--kant) solid var(--linje);
+  }
+
+  .doseplan tbody :is(th, td) {
+    padding: 0;
+    border-bottom: 0;
+  }
+
+  .doseplan tbody th {
+    margin-bottom: var(--rom-3);
+    white-space: normal;
+  }
+
+  .doseplan tbody td + td {
+    margin-top: var(--rom-3);
+  }
+
+  .doseplan td[data-tom] {
+    display: none;
+  }
+
+  .doseplan td::before {
+    content: attr(data-kolonne);
+    display: block;
+    margin-bottom: var(--rom-1);
+    font-size: var(--tekst-liten);
+    font-weight: var(--vekt-halvfet);
+    color: var(--blekk-dempet);
+  }
+}
+
+/* --- Utskrift -----------------------------------------------------------------
+   Bare doseplanen skrives ut, uten knappene, i svart på hvitt. */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .doseplan,
+  .doseplan * {
+    visibility: visible;
+  }
+
+  .doseplan {
+    position: absolute;
+    inset: 0 0 auto;
+    color: #000;
+    background: #fff;
+  }
+
+  .verktoyside > :not(.doseplan),
+  .doseplan__handlinger {
+    display: none;
+  }
+
+  .doseplan__tabell {
+    overflow: visible;
+  }
+
+  .doseplan :is(thead th, tr[data-type='injeksjon']) {
+    background: transparent;
+  }
+
+  .doseplan tr {
+    break-inside: avoid;
+  }
+}

@@ -1,5 +1,5 @@
 import { useEffect, useId, useMemo, useState } from 'react'
-import { TREFFGRUPPER, sidenokkel, treffgruppe, type Soketreff, type Treffgruppe } from '../../faginnhold/sok'
+import { TREFFGRUPPER, sidenokkel, treffgruppe, type Treffgruppe } from '../../faginnhold/sok'
 import { useLukkMedEscape } from '../../hooks/useLukkMedEscape'
 import type { Sokeindekstilstand } from '../../hooks/useSokeindeks'
 import { Button } from '../Button'
@@ -9,7 +9,7 @@ import { Lukkeknapp } from '../Lukkeknapp'
 import { ToppmenyInnhold } from '../toppmeny/Toppmenykilde'
 import { Manglende } from './Manglende'
 import { Markert } from './Markert'
-import { GRUPPENAVN, HENTER_MER, type Treffvisning } from './treffvisning'
+import { GRUPPENAVN, HENTER_MER, type Treffvisning, type Visningsgruppe } from './treffvisning'
 import { useFagsoketreff } from './useFagsoketreff'
 
 /** Flest treff som vises i en gruppe før «Vis alle». */
@@ -27,18 +27,21 @@ export interface SokesideProps {
   onLukk: () => void
 }
 
-type Filter = Treffgruppe | 'alle'
+type Filter = Visningsgruppe | 'alle'
+
+const somDen = (t: Treffvisning) => t
 
 /**
- * Søkesiden (`#/sok?q=…`): alle treffene i fagstoffet for et søk, gruppert
- * etter hva de er — stoff, preparater, tekst og referanser — i rangeringens
- * rekkefølge. Hvert treff dyplenker til seksjonen eller kortet det står i.
+ * Søkesiden (`#/sok?q=…`): verktøyene søket finner, og alle treffene i
+ * fagstoffet for et søk, gruppert etter hva de er — stoff, preparater, tekst
+ * og referanser — i rangeringens rekkefølge. Verktøyene står først, som en
+ * egen gruppe, også mens fagstoffet hentes. Hvert treff dyplenker til seksjonen eller kortet det står i.
  * Søket skrives i fagsøket i toppmenyen; siden viser bare resultatet.
  */
 export function Sokeside({ q, indeks, onKrev, onProvIgjen, beskrivSide, onLukk }: SokesideProps) {
   const overskrift = useId()
   const [filter, setFilter] = useState<Filter>('alle')
-  const { treff, vis } = useFagsoketreff(indeks, q, beskrivSide)
+  const { treff, vis, verktoy } = useFagsoketreff(indeks, q, beskrivSide)
   const sporring = q.trim()
 
   useEffect(onKrev, [onKrev])
@@ -66,6 +69,9 @@ export function Sokeside({ q, indeks, onKrev, onProvIgjen, beskrivSide, onLukk }
   }, [treff])
   const monografier = useMemo(() => new Set(treff.map((t) => sidenokkel(t.dokument.sted.side))).size, [treff])
   const viste = grupper.filter((g) => g.treff.length > 0 && (filter === 'alle' || g.gruppe === filter))
+  const verktoygruppe = sporring && verktoy.length > 0 && (filter === 'alle' || filter === 'verktoy') && (
+    <Treffgruppevisning key={`verktoy\n${sporring}`} navn={GRUPPENAVN.verktoy.overskrift} treff={verktoy} vis={somDen} />
+  )
 
   return (
     <section className="sokeside" aria-labelledby={overskrift}>
@@ -80,12 +86,22 @@ export function Sokeside({ q, indeks, onKrev, onProvIgjen, beskrivSide, onLukk }
         </h1>
         {indeks.status === 'klar' && sporring && (
           <p className="sokeside__antall" role="status">
-            {treff.length === 0
-              ? 'Ingen treff'
-              : `${antallTekst(treff.length, 'treff', 'treff')} i ${antallTekst(monografier, 'monografi', 'monografier')}`}
+            {[
+              verktoy.length > 0 && antallTekst(verktoy.length, 'verktøy', 'verktøy'),
+              treff.length === 0
+                ? verktoy.length > 0
+                  ? 'ingen treff i fagstoffet'
+                  : 'Ingen treff'
+                : `${antallTekst(treff.length, 'treff', 'treff')} i ${antallTekst(monografier, 'monografi', 'monografier')}`,
+            ]
+              .filter(Boolean)
+              .join(' · ')}
           </p>
         )}
       </header>
+
+      {/* Verktøyene trenger ikke fagstoffet, og står mens det hentes. */}
+      {indeks.status !== 'klar' && verktoygruppe}
 
       {!sporring ? (
         <p className="sokeside__melding">Skriv det du leter etter i søkefeltet øverst.</p>
@@ -113,9 +129,22 @@ export function Sokeside({ q, indeks, onKrev, onProvIgjen, beskrivSide, onLukk }
             henter={!!indeks.henterMer}
             onProvIgjen={onProvIgjen ?? onKrev}
           />
-          {treff.length > 0 && (
+          {treff.length + verktoy.length > 0 && (
             <div className="sokeside__filter" role="group" aria-label="Vis treff">
-              <Filterknapp navn="Alle" antall={treff.length} valgt={filter === 'alle'} onVelg={() => setFilter('alle')} />
+              <Filterknapp
+                navn="Alle"
+                antall={treff.length + verktoy.length}
+                valgt={filter === 'alle'}
+                onVelg={() => setFilter('alle')}
+              />
+              {verktoy.length > 0 && (
+                <Filterknapp
+                  navn={GRUPPENAVN.verktoy.fane}
+                  antall={verktoy.length}
+                  valgt={filter === 'verktoy'}
+                  onVelg={() => setFilter('verktoy')}
+                />
+              )}
               {grupper.map(({ gruppe, treff: gruppetreff }) => (
                 <Filterknapp
                   key={gruppe}
@@ -127,6 +156,7 @@ export function Sokeside({ q, indeks, onKrev, onProvIgjen, beskrivSide, onLukk }
               ))}
             </div>
           )}
+          {verktoygruppe}
           {viste.map(({ gruppe, treff: gruppetreff }) => (
             <Treffgruppevisning
               // Et nytt søk eller filter viser de første treffene igjen.
@@ -155,15 +185,7 @@ function Filterknapp({ navn, antall, valgt, onVelg }: { navn: string; antall: nu
   )
 }
 
-function Treffgruppevisning({
-  navn,
-  treff,
-  vis,
-}: {
-  navn: string
-  treff: Soketreff[]
-  vis: (treff: Soketreff) => Treffvisning
-}) {
+function Treffgruppevisning<T>({ navn, treff, vis }: { navn: string; treff: T[]; vis: (treff: T) => Treffvisning }) {
   const overskrift = useId()
   const [alle, setAlle] = useState(false)
   // Bare treffene som vises, gjøres klare til visning: et kort søk kan ha tusenvis.

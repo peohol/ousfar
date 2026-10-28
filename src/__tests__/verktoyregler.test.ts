@@ -12,8 +12,7 @@
  * mange regler som faktisk er godkjent.
  */
 import { createHash } from 'node:crypto'
-import { readdirSync, readFileSync, statSync } from 'node:fs'
-import { join } from 'node:path'
+import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import {
   avrund,
@@ -659,24 +658,6 @@ describe('Kontrollene av et regelsett', () => {
 })
 
 describe('Reglene', () => {
-  it('brukes ikke av appen: bare verktøymodulene og testene bruker regelmodellen', () => {
-    const filer: string[] = []
-    const gaa = (mappe: string) => {
-      for (const n of readdirSync(mappe)) {
-        const sti = join(mappe, n)
-        if (statSync(sti).isDirectory()) gaa(sti)
-        else if (/\.(ts|tsx)$/.test(n)) filer.push(sti)
-      }
-    }
-    const rot = new URL('../', import.meta.url).pathname
-    gaa(rot)
-    const brukere = filer
-      .filter((f) => /verktoy\/regler\//.test(readFileSync(f, 'utf8')))
-      .map((f) => f.slice(rot.length))
-      .filter((f) => !f.startsWith('verktoy/regler/') && !f.startsWith('__tests__/'))
-    expect(brukere).toEqual([])
-  })
-
   it('rapporten sier hvor mange regler som faktisk er gyldig klinisk godkjent', () => {
     expect(lagRegelrapport()).toMatch(/\*\*8 regler, 0 klinisk godkjent\.\*\*.*ingen av reglene er klinisk godkjent/)
     const en = lagRegelrapport(sett([godkjenn(regel('depot-paliperidon-xeplion')), regel('seponering-escitalopram')]))

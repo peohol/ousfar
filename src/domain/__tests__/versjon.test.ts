@@ -24,6 +24,7 @@ import {
   type Rute,
 } from '../rute'
 import { STOFFREGISTER } from '../stoffregister'
+import { VERKTOY } from '../../verktoy/register'
 import {
   endringsomrader,
   ENDRINGSTYPER,
@@ -182,6 +183,8 @@ const ALLE_SIDER = [
   { side: 'kuratering', gren: '00000000-0000-4000-8000-000000000000' } satisfies Rute,
   lesRute(sokeside('')),
   lesRute(STOFFREGISTERADRESSE),
+  { side: 'verktoy' } satisfies Rute,
+  ...VERKTOY.map((v): Rute => ({ side: 'verktoy', verktoy: v.id })),
 ].map(sidesti)
 
 /**
@@ -196,10 +199,10 @@ function kjentOmrade(omrade: string): boolean {
 describe('områdene en føring gjelder', () => {
   it('kjennes igjen når de er sider, og ikke ellers', () => {
     const kjente = ['hele appen', 'vinduer', 'fortolkning', 'fortolkning/hbup', 'fortolkning/*/rediger', 'stoff', 'versjon', 'kuratering']
-    for (const omrade of [...kjente, 'stoff/bupropion', 'sok', 'stoffregister']) {
+    for (const omrade of [...kjente, 'stoff/bupropion', 'sok', 'stoffregister', 'verktoy', 'verktoy/bytte-antidepressiv']) {
       expect(kjentOmrade(omrade), omrade).toBe(true)
     }
-    const ukjente = ['alt', 'stoff/finnes-ikke', 'fortolkning/xyz', 'sok/kvetiapin', 'fortolkning/hbup/endre']
+    const ukjente = ['alt', 'stoff/finnes-ikke', 'verktoy/finnes-ikke', 'fortolkning/xyz', 'sok/kvetiapin', 'fortolkning/hbup/endre']
     for (const omrade of [...ukjente, 'stoff/bupropion/farmakokinetikk', '']) {
       expect(kjentOmrade(omrade), omrade).toBe(false)
     }
