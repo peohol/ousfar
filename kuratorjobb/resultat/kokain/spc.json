@@ -1,0 +1,113 @@
+{
+  "stoff": "kokain",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-10-28T04:15:06.321036+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 7,
+    "hentet": 0,
+    "dokumenter": 0,
+    "mangler": [
+      {
+        "merkevare_id": "ID_138ED6E7-6F26-4F11-BB07-A6ED66D8892E",
+        "varenavn": "Kokain SA",
+        "navn_form_styrke": "Kokain SA øyedr, oppl 100 mg/ml",
+        "produsent": "Sykehusapoteket Oslo, Rikshospitalet",
+        "atc": "S01HA01",
+        "legemiddelform": "Øyedråper, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_7C24B98E-A640-428D-AC6E-60E3164F5EC4",
+        "varenavn": "Kokain SA",
+        "navn_form_styrke": "Kokain SA øyedr, oppl 20 mg/ml",
+        "produsent": "Sykehusapoteket Oslo, Rikshospitalet",
+        "atc": "S01HA01",
+        "legemiddelform": "Øyedråper, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_92ECA74F-815D-437A-A9F7-1A1A51D44F67",
+        "varenavn": "Kokain SA",
+        "navn_form_styrke": "Kokain SA pulv 200 mg",
+        "produsent": "Sykehusapotekene HF",
+        "atc": "N01BC01",
+        "legemiddelform": "Pulver",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_9B2C4C1F-86B9-4513-A1D3-E866F72AFBC2",
+        "varenavn": "Kokain SA",
+        "navn_form_styrke": "Kokain SA pulv 400 mg",
+        "produsent": "Sykehusapotekene HF",
+        "atc": "N01BC01",
+        "legemiddelform": "Pulver",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_B3559898-1160-4074-B249-59E3D519EFF2",
+        "varenavn": "Kokain SA",
+        "navn_form_styrke": "Kokain SA pulv 400 mg",
+        "produsent": "Sykehusapotekene HF",
+        "atc": "N01BC01",
+        "legemiddelform": "Pulver",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_B6C60CB9-BE2F-4060-BA75-70B4711C6DB1",
+        "varenavn": "Kokain SA",
+        "navn_form_styrke": "Kokain SA pulv 300 mg",
+        "produsent": "Sykehusapotekene HF",
+        "atc": "N01BC01",
+        "legemiddelform": "Pulver",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_EAC67D47-59A8-4D81-84C0-2EC47A1F6B21",
+        "varenavn": "Kokain SA",
+        "navn_form_styrke": "Kokain SA øyedr, oppl 40 mg/ml",
+        "produsent": "Sykehusapoteket Oslo, Rikshospitalet",
+        "atc": "S01HA01",
+        "legemiddelform": "Øyedråper, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 0 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 0,
+        "ikke_dmp": 0,
+        "uten_omtale": 7
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "Ingen preparatomtale ble hentet. SPC-behovet er ikke dekket; se «dekning».",
+      "antall": {
+        "preparater": 7,
+        "hentet": 0,
+        "mangler": 7,
+        "dokumenter": 0
+      }
+    }
+  ],
+  "adresser": [],
+  "dokumenter": [],
+  "utelatt": []
+}

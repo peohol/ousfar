@@ -1,18 +1,82 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "feil",
   "jobb": {
     "gren": "kuratorjobb/manuell-40712175011",
     "foresporsel_commit": "6f1b8e7ea41a9c4a2a6c75df21a0b60956b1e890",
     "foresporsel_sha256": "747514c3a1f6157071b3f6073b86692a90dd67f359146e05a0d197407fc37739",
     "kode_commit": "7812c1863f3e80b86c4e0fc3e93f046d84c0d754",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/40712175011",
-    "startet_kl": "2026-10-28T15:04:48.845Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-28T15:04:51.820Z",
+    "ferdig_kl": "2026-10-28T15:05:05.400Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "kokain",
+      "mdma",
+      "etanol"
+    ],
+    "oppgaver": [
+      "funksjonstest",
+      "spc"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 543
+    }
+  ],
+  "stoffer": {
+    "kokain": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/kokain/funksjonstest.json"
+        },
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/kokain/spc.json"
+        }
+      }
+    },
+    "mdma": {
+      "status": "feil",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/mdma/funksjonstest.json"
+        },
+        "spc": {
+          "status": "feil",
+          "fil": "kuratorjobb/resultat/mdma/spc.json"
+        }
+      }
+    },
+    "etanol": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/etanol/funksjonstest.json"
+        },
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/etanol/spc.json"
+        }
+      }
+    }
+  }
 }

@@ -1,0 +1,93 @@
+{
+  "stoff": "etanol",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-10-28T04:15:06.321036+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 5,
+    "hentet": 0,
+    "dokumenter": 0,
+    "mangler": [
+      {
+        "merkevare_id": "ID_49C06B86-5949-4C67-A356-8A3750DE6D47",
+        "varenavn": "Alkohol-Konzentrat braun",
+        "navn_form_styrke": "Alkohol-Konzentrat braun kons til inf oppl 95 % v/v",
+        "produsent": "B. Braun Melsungen",
+        "atc": "V03AB16",
+        "legemiddelform": "Konsentrat til infusjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_B361FAEA-4E0F-4AA7-AE0B-689648E8733D",
+        "varenavn": "Steril sprit NAF",
+        "navn_form_styrke": "Steril sprit NAF kons til inf oppl 70 % v/v",
+        "produsent": "Sjukehusapoteket i Bergen",
+        "atc": "V03AB16",
+        "legemiddelform": "Konsentrat til infusjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_CE5C338D-9827-43D6-95B9-C1FD03B9D519",
+        "varenavn": "Etanol SA",
+        "navn_form_styrke": "Etanol SA øyedr, oppl 20 % w/w",
+        "produsent": "Sykehusapoteket Oslo, Rikshospitalet",
+        "atc": "S01K",
+        "legemiddelform": "Øyedråper, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_F64FD67F-0242-4175-AC50-8E0950BBC241",
+        "varenavn": "Alsolsprit apl",
+        "navn_form_styrke": "Alsolsprit apl øredr, oppl 1 % w/w/10 % w/w",
+        "produsent": "Apoteket Produktion & Laboratorier",
+        "atc": "S02AA04",
+        "legemiddelform": "Øredråper, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_F9045AFE-7519-4250-A66F-DFD02781DECC",
+        "varenavn": "Etanol SA",
+        "navn_form_styrke": "Etanol SA liniment, oppl 70 % v/v",
+        "produsent": "Sykehusapotekene HF",
+        "atc": "V07A",
+        "legemiddelform": "Liniment, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 0 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 0,
+        "ikke_dmp": 0,
+        "uten_omtale": 5
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "Ingen preparatomtale ble hentet. SPC-behovet er ikke dekket; se «dekning».",
+      "antall": {
+        "preparater": 5,
+        "hentet": 0,
+        "mangler": 5,
+        "dokumenter": 0
+      }
+    }
+  ],
+  "adresser": [],
+  "dokumenter": [],
+  "utelatt": []
+}
