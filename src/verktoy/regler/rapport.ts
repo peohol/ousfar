@@ -5,7 +5,7 @@
  * `npm run verktoy:regler -- rapport` skriver dem; testene sier fra når de
  * ikke er oppdatert. Psychiatrienet vises bare som kildeoppføringens id.
  */
-import { beregn, kortform, MOTORVERSJON } from './beregning'
+import { beregn, inndatagrenser, kortform, MOTORVERSJON } from './beregning'
 import { erKliniskGodkjent, fingeravtrykk, godkjenningsfeil } from './godkjenning'
 import { KILDER, kildeFor } from './kilder'
 import {
@@ -145,7 +145,7 @@ function inndatatekst(i: Beregningsinndata): string {
 function regelavsnitt(r: Regel, sett: Regelsett): string {
   const betingelser = [
     ...r.inndata.map((x) => {
-      const gyldig = x.omrade ? `${tall(x.omrade[0])}–${tall(x.omrade[1])} mg` : `${x.verdier!.map(tall).join(', ')} mg`
+      const gyldig = inndatagrenser(x)
       return `${x.navn === 'startdose' ? 'Startdose' : 'Måldose (må oppgis)'} ${gyldig}${x.gjelder_medlem ? ` for ${x.gjelder_medlem}` : ''} (${x.art === 'bindende_krav' ? 'bindende' : 'veiledende'}; ${grunnlag(x.grunnlag)})`
     }),
     ...r.bekreftelser.map((b) => `Må bekreftes (\`${b.id}\`): ${b.tekst} (${grunnlag(b.grunnlag)})`),

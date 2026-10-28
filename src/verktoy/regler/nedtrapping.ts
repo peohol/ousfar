@@ -81,8 +81,8 @@ const verdi = (p: Parameter | undefined) => p?.verdi ?? null
 export const STARTFORSLAG: Bekreftelse = {
   id: 'startforslag',
   tekst:
-    'Planen er et startforslag. Trinn og tempo tilpasses behandlingstiden, legemidlets egenskaper og pasientens ønsker, og neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige; trengs mer tid, beregnes en ny plan fra dosen pasienten da bruker.',
-  grunnlag: { type: 'kilde', henvisninger: [NICE.tempo, NICE.halveringstid, RCPSYCH.plan] },
+    'Planen er et startforslag. Jeg har vurdert behandlingstiden, legemidlets halveringstid, tidligere seponeringssymptomer og pasientens ønsker, og valgt trinnstørrelse og dager per trinn etter det (etter lang bruk anbefaler RCPsych 5–10 % per trinn). Neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige; trengs mer tid, beregnes en ny plan fra dosen pasienten da bruker.',
+  grunnlag: { type: 'kilde', henvisninger: [NICE.tempo, NICE.halveringstid, RCPSYCH.plan, RCPSYCH.langvarig] },
 }
 
 /** Unntaket hver beregnbar regel har: etter seponeringssymptomer ved et tidligere forsøk trengs en individuell, langsommere plan. */
@@ -231,7 +231,9 @@ function seponeringsregel(s: Stoffregel): Regel {
   const trinnlengde = s.variant?.trinnlengde ?? s.trinnlengde ?? DAGER_PER_TRINN
   const minste_varighet = s.varighet && minst28(...s.varighet)
   const virkestoff = { type: 'virkestoff' as const, nokkel: s.nokkel }
-  const nedre = strat.type === 'prosent_av_aktuell' ? verdi(strat.sluttdose_mg)! : s.dose.lavest
+  // En prosentvis regel gjelder enhver lav aktuell dose; under sluttdosen stopper beregningen med den grunnen, ikke fordi dosen er ugyldig.
+  const prosentvis = strat.type === 'prosent_av_aktuell'
+  const nedre = prosentvis ? 0 : s.dose.lavest
   const unntak = [TIDLIGERE_SYMPTOMER, ...(s.unntak ?? [])]
   const avkreftet = Object.fromEntries(unntak.map((u) => [u.id, false]))
   const besvart = (e: Regneeksempel): Regneeksempel => ({
@@ -271,7 +273,9 @@ function seponeringsregel(s: Stoffregel): Regel {
         art: 'bindende_krav',
         grunnlag: {
           type: 'ousfar_vurdering',
-          begrunnelse: `Fra ${tall(nedre)} mg, der nedtrappingen slutter, til høyeste døgndose preparatomtalen oppgir (${tall(s.dose.hoyest)} mg). Lave restdoser under det ordinære doseområdet er med, fordi nedtrappingen skal kunne fortsette fra dem.`,
+          begrunnelse: prosentvis
+            ? `Høyst den høyeste døgndosen preparatomtalen oppgir (${tall(s.dose.hoyest)} mg). Lave restdoser under det ordinære doseområdet er med, fordi nedtrappingen skal kunne fortsette fra dem. Under sluttdosen har regelen ingen trinn; da stopper beregningen og sier at videre nedtrapping må vurderes individuelt, uten å kalle dosen ugyldig.`
+            : `Fra ${tall(nedre)} mg til høyeste døgndose preparatomtalen oppgir (${tall(s.dose.hoyest)} mg).`,
           henvisninger: [s.dose.kilde],
           avklaring: null,
         },
@@ -320,6 +324,7 @@ const stoff = (s: Stoffregel) => s
 
 const KORTERE = /kortere enn 28 dager/
 const utenfor = (mg: number) => new RegExp(`Startdosen ${tall(mg)} mg er utenfor`)
+const UNDER_SLUTTDOSEN = /er under regelens sluttdose .* ingen godkjent videre nedtrapping eller seponering fra en så lav dose/
 
 /* --- Reglene ------------------------------------------------------------------------ */
 
@@ -336,7 +341,7 @@ const citalopram = stoff({
     eks('fra-20-mg', 'Fra 20 mg: ett halveringstrinn til 10 mg, så 25 % per trinn til neste dose er under 2,5 mg.', 20, ['dag 1–14: 10 mg', 'dag 15–28: 7,5 mg', 'dag 29–42: 5,63 mg', 'dag 43–56: 4,22 mg', 'dag 57–70: 3,16 mg', 'fra dag 71: seponert']),
     eks('fra-10-mg', 'Fra 10 mg, på grensen: 25 % fra første trinn.', 10, ['dag 1–14: 7,5 mg', 'dag 15–28: 5,63 mg', 'dag 29–42: 4,22 mg', 'dag 43–56: 3,16 mg', 'fra dag 57: seponert']),
     stopp('fra-3-34-mg', 'Fra 3,34 mg blir nedtrappingen 14 dager, kortere enn 28 dager, så beregningen stopper.', 3.34, KORTERE),
-    stopp('under-sluttdosen', '2 mg er under sluttdosen, der regelen ikke gir noen nedtrapping.', 2, utenfor(2)),
+    stopp('under-sluttdosen', '2 mg er under sluttdosen: regelen har ingen videre nedtrapping, og beregningen sier det.', 2, UNDER_SLUTTDOSEN),
   ],
 })
 
@@ -381,7 +386,7 @@ const sertralin = stoff({
       { prosent: 25, dager: 28 },
     ),
     eks('fra-12-5-mg', 'Lav restdose under ordinært doseområde: 25 % per trinn.', 12.5, ['dag 1–14: 9,38 mg', 'dag 15–28: 7,03 mg', 'fra dag 29: seponert']),
-    stopp('under-sluttdosen', '6 mg er under sluttdosen, der regelen ikke gir noen nedtrapping.', 6, utenfor(6)),
+    stopp('under-sluttdosen', '6 mg er under sluttdosen: regelen har ingen videre nedtrapping, og beregningen sier det.', 6, UNDER_SLUTTDOSEN),
     stopp('over-maksimum', '250 mg er over dosene regelen gjelder for.', 250, utenfor(250)),
   ],
 })

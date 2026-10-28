@@ -281,6 +281,12 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
       case 'nedtrapping': {
         const fasestart = dag
         const lengde = verdi(fase.trinnlengde)
+        // Under sluttdosen har regelen ingen trinn; dosen er ikke ugyldig, men videre nedtrapping er ikke en del av regelen.
+        if (fase.strategi.type === 'prosent_av_aktuell' && aktuell < verdi(fase.strategi.sluttdose_mg) - EPS) {
+          throw new Stopp(
+            `Dosen ${tall(aktuell)} mg av ${virkestoff} er under regelens sluttdose (${tall(verdi(fase.strategi.sluttdose_mg))} mg), der regelen går over til seponering. Regelen har ingen godkjent videre nedtrapping eller seponering fra en så lav dose; det må vurderes individuelt.`,
+          )
+        }
         for (const mg of trinnserie(fase.strategi, aktuell)) {
           legg(dag, dag + lengde - 1, mg)
           dag += lengde
@@ -381,6 +387,10 @@ function dater(r: Forlopsresultat, startdato: string) {
 
 const tall = (x: number) => String(avrund(x)).replace('.', ',')
 
+/** Dosene et inndatakrav tillater, i klartekst; nedre grense 0 er enhver positiv dose. */
+export const inndatagrenser = (krav: Pick<Inndatakrav, 'omrade' | 'verdier'>): string =>
+  krav.omrade ? (krav.omrade[0] === 0 ? `høyst ${tall(krav.omrade[1])} mg` : `${tall(krav.omrade[0])}–${tall(krav.omrade[1])} mg`) : `${(krav.verdier ?? []).map(tall).join(', ')} mg`
+
 /** Kontrollerer ett inndatakrav; et brudd på et bindende krav blir en stoppgrunn, på et veiledende en merknad. */
 function kontrollerInndata(krav: Inndatakrav, x: number | undefined, stopp: string[], merknader: string[], kontroller: Kontroll[]) {
   const navn = krav.navn === 'startdose' ? 'Startdosen' : 'Måldosen'
@@ -395,7 +405,7 @@ function kontrollerInndata(krav: Inndatakrav, x: number | undefined, stopp: stri
   if (!krav.omrade && !krav.verdier) return
   const utenfor =
     (krav.omrade && (x < krav.omrade[0] - EPS || x > krav.omrade[1] + EPS)) || (krav.verdier && !krav.verdier.some((v) => Math.abs(v - x) < EPS))
-  const gyldig = krav.omrade ? `${tall(krav.omrade[0])}–${tall(krav.omrade[1])} mg` : `${krav.verdier!.map(tall).join(', ')} mg`
+  const gyldig = inndatagrenser(krav)
   const art = krav.art === 'bindende_krav' ? 'bindende' : 'veiledende'
   kontroller.push({ krav: `${navn} er ${gyldig} (${art})`, oppfylt: !utenfor, detalj: `${tall(x)} mg.` })
   if (!utenfor) return

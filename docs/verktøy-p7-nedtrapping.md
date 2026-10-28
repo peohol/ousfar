@@ -19,7 +19,7 @@ Alle lages med `npm run verktoy:regler -- rapport`, og testene sier fra når de 
 | P7.3 Verktøyet | `src/verktoy/tilgjengelighet.ts`, `src/verktoy/doseplan.ts`, `src/components/verktoy/Verktoyside.tsx` | Appen bruker pilotsettet og P7-reglene sammen, men ikke sammenligningssettet. Et stoff uten regel får forklaringen fra dekningen. En plan oppgir regelsettet regelen hører til. Feltgruppen «Tilpasning av planen» lar forskriveren velge trinnstørrelse og trinnlengde innenfor regelens områder (avsnitt 5). |
 | P7.4 Tester | `src/__tests__/verktoynedtrapping.test.ts`, `verktoyside.test.tsx` | Testene dekker dekningen mot regelsettet, P3 og FEST, og reglene ved grenseverdier. De dekker risikogruppene, kildegrunnlaget for trinnlengden og forskriverens valg ved og rett utenfor grensene. Bekreftelse og unntak er med, og doseplaner med syntetiske preparater, også i de lave trinnene. Den kliniske sperren testes med fersk og foreldet FEST, og det testes at fortolkningen ikke bruker reglene. |
 
-Reglene bruker regelmodellen og beregningen fra P4 og doseplanmotoren fra P5. Etter andre kontroll har modellen fått justerbare verdier (regelmodell 4, beregningsmotor 2; avsnitt 5). Felles byggesteiner for pilotsettet og P7 står i `src/verktoy/regler/bygg.ts`.
+Reglene bruker regelmodellen og beregningen fra P4 og doseplanmotoren fra P5. Etter andre kontroll har modellen fått justerbare verdier (regelmodell 4, beregningsmotor 2; avsnitt 5). Et inndatakrav kan ha bare en øvre grense, og en prosentvis nedtrapping fra en dose under sluttdosen stopper med forklaring (avsnitt 4). Felles byggesteiner for pilotsettet og P7 står i `src/verktoy/regler/bygg.ts`.
 
 ## 2. Kildegrunnlag
 
@@ -49,7 +49,7 @@ Bare egne formuleringer av enkeltfakta er lagret, høyst 250 tegn, med punktet i
 
 Hver beregnbar regel gir et **startforslag**. Det er bygd inn på tre måter:
 
-- **Bekreftelse (`startforslag`).** Forskriveren må bekrefte at planen er et startforslag. Trinn og tempo tilpasses behandlingstiden, legemidlets egenskaper og pasientens ønsker. Neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige (NICE 1.4.16, RCPsych). Trengs mer tid på et trinn, beregnes en ny plan fra dosen pasienten da bruker. Uten bekreftelse stopper beregningen.
+- **Bekreftelse (`startforslag`).** Forskriveren må bekrefte at planen er et startforslag, og at hen har vurdert behandlingstiden, halveringstiden, tidligere seponeringssymptomer og pasientens ønsker og valgt trinnstørrelse og dager per trinn etter det. Etter lang bruk anbefaler RCPsych 5–10 % per trinn. Neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige (NICE 1.4.16, RCPsych). Trengs mer tid på et trinn, beregnes en ny plan fra dosen pasienten da bruker. Uten bekreftelse stopper beregningen.
 - **Unntak (`tidligere_seponeringssymptomer`).** Har et tidligere forsøk med samme legemiddel gitt seponeringssymptomer eller mislyktes, gjelder ikke regelen. Da trengs en individuelt langsommere plan med mindre trinn (NICE 1.4.15, 1.4.21; RCPsych). Ubesvart stopper beregningen like mye som «ja». At regelen da stopper, er OUSFARs valg og står åpent.
 - **Forskriverens valg (avsnitt 5).** Forskriveren kan velge mindre trinn og lengre tid innenfor regelens områder.
 
@@ -74,7 +74,7 @@ Hver del er merket med om den kommer fra kilden eller er OUSFARs valg. Alle OUSF
 | Trinnlengde | RCPsych: to til fire uker; fluoksetin minst fire uker | 14 dager, og forskriveren kan velge 14–28. Fluoksetin har 28 dager uten valg. |
 | Sluttdose | Ingen kilde oppgir en sluttdose; RCPsych: noen trenger svært lave doser | En firedel av laveste døgndose i preparatomtalen. Under den seponeres det. Dette er en **uavklart modellforutsetning** (avsnitt 7). |
 | Minste varighet | RCPsych: minst fire uker i alt; preparatomtalene (avsnitt 8) | Minst 28 dager som bindende krav for alle. Er nedtrappingen kortere, stopper beregningen. |
-| Startdose | Preparatomtalens høyeste døgndose for voksne | Fra sluttdosen til høyeste døgndose. Lave restdoser under ordinært doseområde er med. |
+| Startdose | Preparatomtalens høyeste døgndose for voksne | Enhver dose opp til høyeste døgndose. Lave restdoser under ordinært doseområde er med. Under sluttdosen stopper beregningen fordi regelen ikke har flere trinn, ikke fordi dosen er ugyldig. |
 | Toleranse | – | Ingen. Et trinn som ikke kan gis nøyaktig, stopper beregningen. |
 
 **Risikogruppene (RCPsych tillegg 1):**
@@ -94,7 +94,7 @@ Standardverdiene er forsvart slik:
 
 **Sluttdosen avhenger ikke av styrkene.** Den er valgt så nedtrappingen fortsetter med små trinn under laveste ordinære dose. Om hvert trinn kan gis, avgjøres av doseplanmotoren (P5). Kan et trinn ikke gis nøyaktig, stopper beregningen med de nærmeste dosene og beskjed om at en annen formulering krever en ny faglig beslutning. Laveste styrke blir aldri en tilfredsstillende slutt i seg selv. Matrisen viser laveste styrke i FEST og sluttdosen i regelen i hver sin kolonne.
 
-**Startdosen skiller doseområde fra restdose.** Regelen gjelder fra sluttdosen til preparatomtalens høyeste døgndose. En lav aktuell dose beregnes og avvises ikke fordi den er under ordinært behandlingsområde. Eksempler er sertralin 12,5 mg og nortriptylin 15 mg. Er planen fra en svært lav dose kortere enn 28 dager, stopper beregningen med den grunnen.
+**Startdosen er skilt fra sluttdosen.** Regelen gjelder enhver aktuell dose opp til preparatomtalens høyeste døgndose. En lav aktuell dose beregnes og avvises ikke fordi den er under ordinært behandlingsområde; eksempler er sertralin 12,5 mg og nortriptylin 15 mg. Er planen fra en svært lav dose kortere enn 28 dager, stopper beregningen med den grunnen. Er dosen under sluttdosen, for eksempel sertralin 6 mg eller paroksetin 2 mg, stopper beregningen og sier at regelen ikke har noen godkjent videre nedtrapping eller seponering fra en så lav dose, og at det må vurderes individuelt. Dosen kalles ikke ugyldig.
 
 Kildens Stop-anbefaling og OUSFARs regel er to ulike ting. Regelen er en selvstendig, etterprøvbar strategi bygd på preparatomtalen, NICE og RCPsych. Den er ikke en validert optimal nedtrapping og ikke en omskriving av Stop-oppføringen.
 
@@ -132,6 +132,8 @@ Det står i hver regel, både i begrunnelsen for parameteren og under usikkerhet
 1. Siste dose i planen er lik eller under sluttdosen.
 2. Sluttdosen er vurdert og avklart **for akkurat dette stoffet** av en uavhengig kontrollør. Vurderingen skal være mot stoffets farmakologi, særlig halveringstid og forholdet mellom dose og reseptorbinding, og mot kildegrunnlaget. Begrunnelsen skal stå i avklaringen.
 3. Hvert trinn ned til sluttdosen kan gis med norske preparater uten toleranse, eller med en toleranse som er godkjent for regelversjonen.
+
+Ingen regel kan seponere fra dag 1: står pasienten på sluttdosen, blir nedtrappingen 0 dager, kortere enn 28, og beregningen stopper. Testene viser det for alle stoffene, også med 5 % per trinn.
 
 Punkt 1 og 3 håndheves av beregningen og doseplanmotoren. Punkt 2 håndheves av godkjenningen: sluttdosen er et åpent forslag i hver regel, og en regel med et åpent forslag kan ikke bli klinisk godkjent (`apneValg`, P4). Kvartregelen kan altså ikke godkjennes samlet for alle stoffene. Hvert stoff må få sin egen avklaring, som kan ende med en annen sluttdose for det stoffet.
 
@@ -189,7 +191,7 @@ Miksturer uten dokumentert dosering per ml brukes ikke. Sluttdosen avhenger ikke
 7. **Paroksetins studievariant:** Skal den bli stående i sammenligningssettet, eller fjernes?
 8. **Escitalopram og citalopram:** Skal pilotregelen for escitalopram harmoniseres med P7 (sluttdose, minstevarighet, bekreftelse, unntak og justerbare verdier)? Skal den hyperbolske citalopramregelen stå som valgbar strategi i verktøyet (B2)?
 9. **Fluoksetin:** Er det riktig å droppe mindre trinn ved lav dose og låse trinnene til 28 dager? Skal dosering annenhver dag (NICE) støttes?
-10. **Startdosen:** Reglene gjelder fra sluttdosen til preparatomtalens høyeste døgndose. Er det riktig også for eldre og andre indikasjoner, og er unntaket for moklobemid ved nedsatt leverfunksjon nok?
+10. **Startdosen:** Reglene gjelder enhver dose opp til preparatomtalens høyeste døgndose, og stopper med forklaring under sluttdosen. Er det riktig også for eldre og andre indikasjoner, og er unntaket for moklobemid ved nedsatt leverfunksjon nok?
 11. **Stoffene med begrensning:** Skal OUSFAR lage regler for imipramin, tranylcypromin, trazodon, doksepin og fenelzin fra andre kilder, og i så fall hvilke?
 12. **Agomelatin:** Godkjennes tekstregelen om at nedtrapping ikke trengs?
 
@@ -213,6 +215,14 @@ Miksturer uten dokumentert dosering per ml brukes ikke. Sluttdosen avhenger ikke
 | De langsomme variantene var ikke begrunnet | Trinnstørrelsen følger RCPsychs risikogrupper per stoff (avsnitt 4). Duloksetin, mirtazapin og moklobemid er med blant stoffene med høyest risiko, og standardverdiene er begrunnet. Forskriveren kan velge trinnstørrelse og trinnlengde innenfor områder som er en del av regelen og godkjenningen (avsnitt 5). Det er grense- og variasjonstester ved 5 og 50 %, 14 og 28 dager, rett utenfor og for deler av dager. |
 | Sluttdosen var ikke begrunnet som terskel | Sluttdosen er merket som uavklart modellforutsetning, og akseptkriteriet står i avsnitt 7. Kvartregelen kan ikke godkjennes samlet: hver regel har den som åpent forslag. |
 | Minste varighet | Alle reglene har minst 28 dager i alt (RCPsych). |
+
+**Tillegg til andre kontroll** (samme regelversjon):
+
+| Kontrollpunkt | Endring |
+| --- | --- |
+| Sluttdosen var også nedre grense for startdosen | Startdosen har bare en øvre grense. Under sluttdosen stopper beregningen med forklaringen at regelen ikke har noen godkjent videre nedtrapping fra en så lav dose, ikke at dosen er ugyldig (avsnitt 4). Grensetester under sluttdosen, ved den og rett over høyeste dose. |
+| Seponering fra dag 1 uten minstevarighet | Alle reglene har minst 28 dager, så ingen plan seponerer fra dag 1. Det er testet ved sluttdosen for alle stoffene (avsnitt 7). |
+| En bekreftelse gjør ikke planen individuell | Bekreftelsen sier nå uttrykkelig hva forskriveren har vurdert (behandlingstid, halveringstid, tidligere symptomer, pasientens ønsker), og forskriveren kan velge trinnstørrelse og trinnlengde (avsnitt 5). Stoffene med høyest risiko starter med 10 %, ikke 25 % (avsnitt 4). |
 
 Mindre trinn ved lav dose er aldri større enn reduksjonen forskriveren har valgt. Paroksetins studievariant er versjon 2, med de rettede tekstene.
 

@@ -185,7 +185,8 @@ describe('Regelutkastene (P7.2)', () => {
       expect(stoppet(r, dose, { pasientforhold: { ...besvart(r, dose).pasientforhold, [TIDLIGERE_SYMPTOMER.id]: true } }), r.id).toMatch(/Regelen gjelder ikke: Et tidligere forsøk/)
     }
     // Startforslaget bygger på NICEs og RCPsychs råd om tempo; unntaket er OUSFARs valg og står åpent.
-    expect(STARTFORSLAG.grunnlag).toEqual({ type: 'kilde', henvisninger: [NICE.tempo, NICE.halveringstid, RCPSYCH.plan] })
+    expect(STARTFORSLAG.grunnlag).toEqual({ type: 'kilde', henvisninger: [NICE.tempo, NICE.halveringstid, RCPSYCH.plan, RCPSYCH.langvarig] })
+    expect(STARTFORSLAG.tekst).toMatch(/vurdert behandlingstiden, legemidlets halveringstid, tidligere seponeringssymptomer og pasientens ønsker, og valgt trinnstørrelse og dager per trinn/)
     expect(STARTFORSLAG.tekst).toMatch(/trengs mer tid, beregnes en ny plan fra dosen pasienten da bruker/)
     expect(TIDLIGERE_SYMPTOMER.grunnlag).toMatchObject({ type: 'ousfar_vurdering', avklaring: null, henvisninger: [NICE.tidligere, NICE.alvorlig, RCPSYCH.langvarig] })
     // Moklobemid har i tillegg et unntak ved alvorlig nedsatt leverfunksjon, der preparatomtalen reduserer dosen.
@@ -196,7 +197,6 @@ describe('Regelutkastene (P7.2)', () => {
     for (const r of BEREGNBARE) {
       const slutt = sluttdose(r)!
       const fase = r.plan.forlop[0]!.faser[0]!
-      expect(r.inndata[0]!.omrade![0], r.id).toBe(slutt)
       const grunnlag = fase.type === 'nedtrapping' && fase.strategi.type === 'prosent_av_aktuell' ? fase.strategi.sluttdose_mg.grunnlag : null
       expect(grunnlag, r.id).toMatchObject({ type: 'ousfar_vurdering', avklaring: null, begrunnelse: expect.stringMatching(/^Uavklart modellforutsetning: .*Må vurderes for stoffet før godkjenning\.$/) })
       expect(grunnlag?.henvisninger, r.id).toContainEqual(RCPSYCH.lavDose)
@@ -326,11 +326,27 @@ describe('Regelutkastene (P7.2)', () => {
     }
   })
 
-  it('holder ved grensene for startdosen: fra sluttdosen til høyeste dose, rett utenfor stopper', () => {
+  it('gjelder enhver lav dose opp til høyeste dose; under sluttdosen stopper den fordi regelen ikke har flere trinn, ikke fordi dosen er ugyldig', () => {
+    const UNDER = /er under regelens sluttdose \(.*\), der regelen går over til seponering\. Regelen har ingen godkjent videre nedtrapping eller seponering fra en så lav dose; det må vurderes individuelt\./
     for (const r of BEREGNBARE) {
       const [min, maks] = r.inndata[0]!.omrade!
-      for (const dose of [min, maks]) expect(stoppet(r, dose), `${r.id} ${dose}`).not.toMatch(/utenfor/)
-      for (const dose of [min - 0.01, maks + 0.01]) expect(stoppet(r, dose), `${r.id} ${dose}`).toMatch(/utenfor det regelen gjelder for/)
+      const slutt = sluttdose(r)!
+      expect(min, r.id).toBe(0)
+      expect(stoppet(r, maks), r.id).not.toMatch(/utenfor/)
+      expect(stoppet(r, maks + 0.01), r.id).toMatch(new RegExp(`utenfor det regelen gjelder for \\(høyst ${String(maks).replace('.', ',')} mg\\)`))
+      for (const dose of [0.01, slutt / 2, slutt - 0.01]) {
+        expect(stoppet(r, dose), `${r.id} ${dose}`).toMatch(UNDER)
+        expect(stoppet(r, dose), `${r.id} ${dose}`).not.toMatch(/utenfor/)
+      }
+    }
+  })
+
+  it('seponerer aldri fra dag 1: ved sluttdosen blir nedtrappingen 0 dager, og beregningen stopper', () => {
+    for (const r of BEREGNBARE) {
+      const slutt = sluttdose(r)!
+      expect(stoppet(r, slutt), r.id).toMatch(/blir 0 dager, kortere enn 28 dager/)
+      // Heller ikke forskriverens minste trinn gir seponering uten nedtrapping.
+      expect(stoppet(r, slutt, { justert: { [PROSENT]: 5 } }), r.id).toMatch(/kortere enn 28 dager/)
     }
   })
 
@@ -338,7 +354,8 @@ describe('Regelutkastene (P7.2)', () => {
     expect(kort(regel('sertralin'), 12.5).fra).toEqual(['dag 1–14: 9,38 mg', 'dag 15–28: 7,03 mg', 'fra dag 29: seponert'])
     expect(kort(regel('nortriptylin'), 15).fra).toEqual(['dag 1–14: 11,25 mg', 'dag 15–28: 8,44 mg', 'dag 29–42: 6,33 mg', 'fra dag 43: seponert'])
     expect(kort(regel('venlafaksin'), 20).fra![0]).toBe('dag 1–14: 18 mg')
-    expect(stoppet(regel('sertralin'), 6.24)).toMatch(/Startdosen 6,24 mg er utenfor det regelen gjelder for \(6,25–200 mg\)/)
+    expect(stoppet(regel('sertralin'), 6.24)).toMatch(/Dosen 6,24 mg av sertralin er under regelens sluttdose \(6,25 mg\)/)
+    expect(stoppet(regel('paroksetin'), 2)).toMatch(/Dosen 2 mg av paroksetin er under regelens sluttdose \(2,5 mg\)/)
   })
 
   it('holder ved grensene for varighet og lav dose', () => {
@@ -407,7 +424,7 @@ describe('Doseplanene (P7.3–P7.4)', () => {
     expect(s).toMatch(/dag 15–28: den ideelle dosen 37,5 mg/)
     expect(s).toMatch(/25 mg \(-33,33 %\) og 50 mg \(\+33,33 %\)/)
     expect(s).toMatch(NAERMESTE)
-    expect(plan('sertralin', 250, SERTRALIN).stopp).toEqual(['Startdosen 250 mg er utenfor det regelen gjelder for (6,25–200 mg).'])
+    expect(plan('sertralin', 250, SERTRALIN).stopp).toEqual(['Startdosen 250 mg er utenfor det regelen gjelder for (høyst 200 mg).'])
     expect(stopp('duloksetin', 90, [p('D30', 'kapsel', 30), p('D60', 'kapsel', 60)])).toMatch(/dag 1–14: den ideelle dosen 81 mg kan ikke gis.*60 mg \(-25,93 %\) og 90 mg \(\+11,11 %\)/)
   })
 

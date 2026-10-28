@@ -27,7 +27,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Seponering av paroksetin, rask studievariant til sammenligning (ikke klinisk anbefaling)
 
-`seponering-paroksetin-studievariant`, versjon 2, fingeravtrykk `98586215ee85b5af26544811bfedc2153ae44bd486d7b5f9606d8801b701829e`. Seponering: paroksetin → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`seponering-paroksetin-studievariant`, versjon 2, fingeravtrykk `46424da499fe39df1c3c1da5e1c5d6f9b2556a4d4d7327f2259411431a2c54df`. Seponering: paroksetin → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code).
 
@@ -65,8 +65,8 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 **Betingelser:**
 
-- Startdose 10–60 mg (bindende; **OUSFAR-vurdering, åpent forslag:** Fra 10 mg, der nedtrappingen slutter, til høyeste døgndose preparatomtalen oppgir (60 mg). Lave restdoser under det ordinære doseområdet er med, fordi nedtrappingen skal kunne fortsette fra dem. (bygger på dmp-seroxat pkt. 4.2))
-- Må bekreftes (`startforslag`): Planen er et startforslag. Trinn og tempo tilpasses behandlingstiden, legemidlets egenskaper og pasientens ønsker, og neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige; trengs mer tid, beregnes en ny plan fra dosen pasienten da bruker. (nice-ng222 anbefaling 1.4.16; nice-ng222 anbefaling 1.4.16; rcpsych-stopping Which plan should I follow?)
+- Startdose 10–60 mg (bindende; **OUSFAR-vurdering, åpent forslag:** Fra 10 mg til høyeste døgndose preparatomtalen oppgir (60 mg). (bygger på dmp-seroxat pkt. 4.2))
+- Må bekreftes (`startforslag`): Planen er et startforslag. Jeg har vurdert behandlingstiden, legemidlets halveringstid, tidligere seponeringssymptomer og pasientens ønsker, og valgt trinnstørrelse og dager per trinn etter det (etter lang bruk anbefaler RCPsych 5–10 % per trinn). Neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige; trengs mer tid, beregnes en ny plan fra dosen pasienten da bruker. (nice-ng222 anbefaling 1.4.16; nice-ng222 anbefaling 1.4.16; rcpsych-stopping Which plan should I follow?; rcpsych-stopping If you have been taking antidepressants for longer)
 - Unntak (`tidligere_seponeringssymptomer`): Et tidligere forsøk på å trappe ned eller seponere dette legemidlet har gitt seponeringssymptomer eller mislyktes; da trengs en individuelt langsommere plan med mindre trinn. (**OUSFAR-vurdering, åpent forslag:** NICE og RCPsych anbefaler mer støtte og langsommere nedtrapping med mindre trinn for disse pasientene. Hvor mye langsommere kan ikke utledes av dosen, så regelen beregner ikke planen. (bygger på nice-ng222 anbefaling 1.4.15; nice-ng222 anbefaling 1.4.21; rcpsych-stopping If you have been taking antidepressants for longer))
 
 **Kliniske forutsetninger:**
@@ -89,15 +89,15 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 - *Fra 40 mg: 10 mg mindre hver uke.* Inndata: startdose 40 mg; bekreftet: startforslag; pasientforhold: tidligere_seponeringssymptomer nei.
   - **fra:** dag 1–7: 30 mg; dag 8–14: 20 mg; dag 15–21: 10 mg; fra dag 22: seponert
   - Kontroll: Avkreftet: Et tidligere forsøk på å trappe ned eller seponere dette legemidlet har gitt seponeringssymptomer eller mislyktes; da trengs en individuelt langsommere plan med mindre trinn. – oppfylt. Vurdert og avkreftet av forskriveren.
-  - Kontroll: Bekreftet: Planen er et startforslag. Trinn og tempo tilpasses behandlingstiden, legemidlets egenskaper og pasientens ønsker, og neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige; trengs mer tid, beregnes en ny plan fra dosen pasienten da bruker. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Planen er et startforslag. Jeg har vurdert behandlingstiden, legemidlets halveringstid, tidligere seponeringssymptomer og pasientens ønsker, og valgt trinnstørrelse og dager per trinn etter det (etter lang bruk anbefaler RCPsych 5–10 % per trinn). Neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige; trengs mer tid, beregnes en ny plan fra dosen pasienten da bruker. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 10–60 mg (bindende) – oppfylt. 40 mg.
 - *Fra 20 mg: én uke på 10 mg (rask).* Inndata: startdose 20 mg; bekreftet: startforslag; pasientforhold: tidligere_seponeringssymptomer nei.
   - **fra:** dag 1–7: 10 mg; fra dag 8: seponert
   - Kontroll: Avkreftet: Et tidligere forsøk på å trappe ned eller seponere dette legemidlet har gitt seponeringssymptomer eller mislyktes; da trengs en individuelt langsommere plan med mindre trinn. – oppfylt. Vurdert og avkreftet av forskriveren.
-  - Kontroll: Bekreftet: Planen er et startforslag. Trinn og tempo tilpasses behandlingstiden, legemidlets egenskaper og pasientens ønsker, og neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige; trengs mer tid, beregnes en ny plan fra dosen pasienten da bruker. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Planen er et startforslag. Jeg har vurdert behandlingstiden, legemidlets halveringstid, tidligere seponeringssymptomer og pasientens ønsker, og valgt trinnstørrelse og dager per trinn etter det (etter lang bruk anbefaler RCPsych 5–10 % per trinn). Neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige; trengs mer tid, beregnes en ny plan fra dosen pasienten da bruker. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 10–60 mg (bindende) – oppfylt. 20 mg.
 - *Uten bekreftelse av at planen er et startforslag, stopper beregningen.* Inndata: startdose 40 mg; pasientforhold: tidligere_seponeringssymptomer nei.
-  - **Stoppet:** Må bekreftes før beregning: Planen er et startforslag. Trinn og tempo tilpasses behandlingstiden, legemidlets egenskaper og pasientens ønsker, og neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige; trengs mer tid, beregnes en ny plan fra dosen pasienten da bruker.
+  - **Stoppet:** Må bekreftes før beregning: Planen er et startforslag. Jeg har vurdert behandlingstiden, legemidlets halveringstid, tidligere seponeringssymptomer og pasientens ønsker, og valgt trinnstørrelse og dager per trinn etter det (etter lang bruk anbefaler RCPsych 5–10 % per trinn). Neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige; trengs mer tid, beregnes en ny plan fra dosen pasienten da bruker.
 - *Har et tidligere forsøk gitt seponeringssymptomer, gjelder ikke regelen.* Inndata: startdose 40 mg; bekreftet: startforslag; pasientforhold: tidligere_seponeringssymptomer ja.
   - **Stoppet:** Regelen gjelder ikke: Et tidligere forsøk på å trappe ned eller seponere dette legemidlet har gitt seponeringssymptomer eller mislyktes; da trengs en individuelt langsommere plan med mindre trinn.
 

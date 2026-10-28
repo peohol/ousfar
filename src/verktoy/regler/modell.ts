@@ -264,6 +264,7 @@ export interface Plan {
  */
 export interface Inndatakrav {
   navn: 'startdose' | 'maldose'
+  /** Dosene regelen gjelder for. Nedre grense 0 betyr enhver positiv dose (bare en øvre grense). */
   omrade?: [number, number]
   verdier?: number[]
   /** For en gruppeplan: kravet gjelder bare dette medlemmet. */
@@ -474,7 +475,7 @@ export function tallfeil(r: Pick<Regel, 'plan' | 'inndata'>): string[] {
     }
   }
   for (const x of r.inndata) {
-    const tall = [...(x.omrade ?? []), ...(x.verdier ?? [])]
+    const tall = [...(x.omrade ?? []), ...(x.verdier ?? [])].filter((v, i) => !(i === 0 && x.omrade && v === 0))
     if (!tall.every(positiv) || (x.omrade && x.omrade[0] > x.omrade[1])) feil.push(`inndatakravet for ${x.navn} har ugyldige grenser`)
   }
   return feil
