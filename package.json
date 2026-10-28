@@ -1,7 +1,7 @@
 {
   "name": "far",
   "private": true,
-  "version": "1.111.1",
+  "version": "1.111.2",
   "type": "module",
   "description": "Verktøy for å kommentere farmakologiske analyser",
   "scripts": {
@@ -15,6 +15,7 @@
     "import:intervallregelsett": "vite-node scripts/importer-intervallregelsett.ts --",
     "verktoy:kartlegging": "vite-node scripts/verktoy-kartlegging.ts --",
     "verktoy:kildeimport": "vite-node scripts/verktoy-kildeimport.ts --",
+    "verktoy:regler": "vite-node scripts/verktoy-regler.ts --",
     "kuratorjobb": "vite-node scripts/kuratorjobb.ts --",
     "kurateringsko": "vite-node scripts/kurateringsko.ts --",
     "kurator": "vite-node scripts/kurateringsagent.ts -- kurator",

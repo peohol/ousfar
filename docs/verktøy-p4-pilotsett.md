@@ -1,0 +1,639 @@
+# OUSFAR Verktøy – P4: pilotsettet
+
+<!-- Laget av `npm run verktoy:regler -- rapport` fra reglene i src/verktoy/regler/. Ikke rediger for hånd; endre reglene og lag rapporten på nytt. -->
+
+Regelsett `ousfar-verktoy-pilot` versjon 2, regelmodell 2, beregningsmotor 1. Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.
+
+**8 regler, 0 klinisk godkjent.** Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. De er ikke empirisk validerte kliniske anbefalinger, og ingen av reglene er klinisk godkjent. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-p4-regelmodell.md`.
+
+Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel bygger på teksten der, og den vises ikke (`docs/verktøy-p3-rettigheter.md`).
+
+## Oversikt
+
+| Regel | Form | Fra → til | Beregnbarhet | Åpne valg | Status | Eksempler |
+| --- | --- | --- | --- | --- | --- | --- |
+| `seponering-escitalopram` | seponering | escitalopram → – | beregnbar etter faglig avklaring | 6 | til faglig kontroll | 3 |
+| `seponering-citalopram-hyperbolsk` | seponering | citalopram → – | beregnbar etter faglig avklaring | 3 | til faglig kontroll | 1 |
+| `kryssnedtrapping-sertralin-mirtazapin` | kryssnedtrapping | sertralin → mirtazapin | beregnbar etter faglig avklaring | 4 | til faglig kontroll | 3 |
+| `mao-fluoksetin-fenelzin` | sekvensielt bytte | fluoksetin → fenelzin | beregnbar etter faglig avklaring | 4 | til faglig kontroll | 3 |
+| `antipsykotikabytte-olanzapin-kvetiapin` | kryssnedtrapping | olanzapin → kvetiapin | beregnbar etter faglig avklaring | 3 | til faglig kontroll | 4 |
+| `gruppe-rest-ap-aripiprazol` | kryssnedtrapping | gruppen rest-ap → aripiprazol | beregnbar etter faglig avklaring | 4 | til faglig kontroll | 2 |
+| `depot-aripiprazol-maintena` | oppstart av depot | aripiprazol → aripiprazol | entydig beregnbar | 0 | til faglig kontroll | 4 |
+| `depot-paliperidon-xeplion` | oppstart av depot | paliperidon → paliperidon | entydig beregnbar | 0 | til faglig kontroll | 6 |
+
+## Kilder
+
+Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det ble hentet.
+
+| Id | Type | Kilde | Versjon | SHA-256 |
+| --- | --- | --- | --- | --- |
+| [dmp-cipralex](https://produktinformasjon.legemiddelsok.no/preparatomtaler/2002-00713.pdf) | preparatomtale | Cipralex (escitalopram) tabletter, preparatomtale | Oppdatert 22.11.2024 | `a04d22200055055d…` |
+| [dmp-cipramil](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08151.pdf) | preparatomtale | Cipramil (citalopram) tabletter, preparatomtale | Oppdatert 16.05.2024 | `4bc8dfd2e647d273…` |
+| [dmp-zoloft](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08203.pdf) | preparatomtale | Zoloft (sertralin) tabletter, preparatomtale | Oppdatert 07.01.2026 | `4ac8f7305379de98…` |
+| [dmp-fluoxetin](https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-7362.pdf) | preparatomtale | Fluoxetine Vitabalans (fluoksetin) tabletter, preparatomtale | Oppdatert 12.11.2021 | `221a73511f81243a…` |
+| [dmp-remeron](https://produktinformasjon.legemiddelsok.no/preparatomtaler/1997-03657.pdf) | preparatomtale | Remeron (mirtazapin) tabletter, preparatomtale | Oppdatert 01.09.2021 | `2bc89cecfe0b2a80…` |
+| [dmp-seroquel](https://produktinformasjon.legemiddelsok.no/preparatomtaler/02-1435.pdf) | preparatomtale | Seroquel (kvetiapin) tabletter, preparatomtale | Oppdatert 03.07.2024 | `87e197ef056358d0…` |
+| [dmp-cisordinol](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06778.pdf) | preparatomtale | Cisordinol (zuklopentiksol) tabletter, preparatomtale | Oppdatert 16.02.2026 | `e34ae0834fb63bb8…` |
+| [ema-abilify](https://www.ema.europa.eu/en/documents/product-information/abilify-epar-product-information_en.pdf) | preparatomtale | Abilify (aripiprazol), produktinformasjon | Sist endret 08.10.2026 | `48ec4699460ea38c…` |
+| [ema-abilify-maintena](https://www.ema.europa.eu/en/documents/product-information/abilify-maintena-epar-product-information_en.pdf) | preparatomtale | Abilify Maintena (aripiprazol depotinjeksjon), produktinformasjon | Sist endret 08.10.2026 | `41ea025269b746fe…` |
+| [ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf) | preparatomtale | Xeplion (paliperidonpalmitat depotinjeksjon), produktinformasjon | Sist endret 08.10.2026 | `2d38bdc767adb9ed…` |
+| [ema-zyprexa](https://www.ema.europa.eu/en/documents/product-information/zyprexa-epar-product-information_en.pdf) | preparatomtale | Zyprexa (olanzapin), produktinformasjon | Sist endret 08.10.2026 | `d7a60e6f4908c9e7…` |
+| [nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations) | retningslinje | Depression in adults: treatment and management (NG222), Recommendations | Publisert 29.06.2022 | `8fb54d455ce9ebee…` |
+| [horowitz-2019](https://doi.org/10.1016/S2215-0366(19)30032-X) | primærlitteratur | Horowitz MA, Taylor D. Tapering of SSRI treatment to mitigate withdrawal symptoms. Lancet Psychiatry 2019;6:538–546 | doi:10.1016/S2215-0366(19)30032-X, PMID 30850328 | – |
+| [sorensen-2022](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8960396/fullTextXML) | primærlitteratur | Sørensen A, Ruhé HG, Munkholm K. The relationship between dose and serotonin transporter occupancy of antidepressants – a systematic review. Mol Psychiatry 2022;27:192–201 | doi:10.1038/s41380-021-01285-w, PMC8960396 | `2b243d8f800a9c27…` |
+| [keks-2016](https://pmc.ncbi.nlm.nih.gov/articles/PMC4919171/) | oversiktsartikkel | Keks N, Hope J, Keogh S. Switching and stopping antidepressants. Aust Prescr 2016;39:76–83 | doi:10.18773/austprescr.2016.039, PMC4919171 | `55c5b956f46b02f9…` |
+| [keks-2019](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6787301/fullTextXML) | oversiktsartikkel | Keks N, Schwartz D, Hope J. Stopping and switching antipsychotic drugs. Aust Prescr 2019;42:152–157 | doi:10.18773/austprescr.2019.052, PMC6787301 | `26102eb58a504876…` |
+| [psychiatrienet](https://www.psychiatrienet.nl/switchtabel) | kildeoppføring | Psychiatrienet, switchtabellene (kildearkivet fra P3) | Uttrekk og revisjon per kildeoppføring i src/data/verktoy/psychiatrienet-kildearkiv.json | – |
+
+## Seponering av escitalopram, gjentatt prosentvis nedtrapping
+
+`seponering-escitalopram`, versjon 1, fingeravtrykk `b6a1f525bdd0cb6a90548390600f91c719138d22713fe0d489121019f12258e3`. Seponering: escitalopram → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code).
+
+**Kildetro – det som følger direkte av kildene:**
+
+- Escitalopram trappes ned gradvis over minst én til to uker, ikke seponeres brått.
+  - Brå seponering bør unngås; dosen reduseres gradvis over minst én til to uker. Ved utålelige symptomer kan man gå tilbake til forrige dose og trappe ned langsommere. *([dmp-cipralex](https://produktinformasjon.legemiddelsok.no/preparatomtaler/2002-00713.pdf), pkt. 4.2)*
+- Hvert trinn er en andel av forrige dose, med mindre trinn ved lav dose, og nedtrappingen kan ta uker til måneder.
+  - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
+  - Tempoet avtales med pasienten; neste reduksjon først når seponeringssymptomene er borte eller tålelige. Nedtrapping kan ta uker til måneder. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
+- Det bør gå én til to uker mellom reduksjonene.
+  - Det bør gå én til to uker for å vurdere virkningen av en dosereduksjon før neste. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.18)*
+
+**OUSFARs selvstendige tilpasninger (må kontrolleres):**
+
+- OUSFAR bruker 50 % av aktuell dose ned til 5 mg og deretter 25 %, med 14 dager per trinn, og seponerer når neste dose blir under 2,5 mg. Alle tallene er forslag innenfor eller etter eksemplene i kildene.
+  - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
+  - Det bør gå én til to uker for å vurdere virkningen av en dosereduksjon før neste. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.18)*
+- «Minst én til to uker» er lest som et bindende minimum på 14 dager; blir planen kortere, stopper beregningen.
+  - Brå seponering bør unngås; dosen reduseres gradvis over minst én til to uker. Ved utålelige symptomer kan man gå tilbake til forrige dose og trappe ned langsommere. *([dmp-cipralex](https://produktinformasjon.legemiddelsok.no/preparatomtaler/2002-00713.pdf), pkt. 4.2)*
+
+**Den matematiske regelen – parametre:**
+
+| Hvor | Parameter | Verdi | Art | Grunnlag |
+| --- | --- | --- | --- | --- |
+| fra: fase 1 (nedtrapping) | strategi.prosent | 50 % | veiledende | **OUSFAR-vurdering, åpent forslag:** Eksempelet i NICE er 50 % av forrige dose. (bygger på nice-ng222 anbefaling 1.4.16) |
+| fra: fase 1 (nedtrapping) | strategi.lav_prosent | 25 % | veiledende | **OUSFAR-vurdering, åpent forslag:** Eksempelet i NICE på mindre trinn ved lav dose. (bygger på nice-ng222 anbefaling 1.4.16) |
+| fra: fase 1 (nedtrapping) | strategi.lav_grense_mg | 5 mg | veiledende | **OUSFAR-vurdering, åpent forslag:** Laveste dose som oppgis i preparatomtalen; fra den regnes dosen som lav. (bygger på dmp-cipralex pkt. 4.2) |
+| fra: fase 1 (nedtrapping) | strategi.sluttdose_mg | 2,5 mg | veiledende | **OUSFAR-vurdering, åpent forslag:** Laveste dose i planen; under den seponeres. Halvparten av laveste tablettstyrke (5 mg). (bygger på dmp-cipralex pkt. 4.2) |
+| fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 7–14) | veiledende | **OUSFAR-vurdering, åpent forslag:** Øvre del av NICEs vurderingstid, så hvert trinn kan vurderes før neste. (bygger på nice-ng222 anbefaling 1.4.18) |
+| fra: fase 1 (nedtrapping) | minste_varighet | 14 dager | bindende krav | **OUSFAR-vurdering, åpent forslag:** «Minst én til to uker» er lest konservativt som minst 14 dager. (bygger på dmp-cipralex pkt. 4.2) |
+
+**Betingelser:**
+
+- Startdose 5–20 mg (bindende; dmp-cipralex pkt. 4.2)
+
+**Kliniske forutsetninger:**
+
+- Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
+- Dosene er den ideelle dosekurven, avrundet til to desimaler; hvilke doser som kan gis med norske preparater (styrker, deling, flytende form), avgjøres i P5.
+- Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet, interaksjoner, graviditet, etterlevelse eller individuell toleranse fra dosen (B7); dette må vurderes av forskriveren.
+- Planen gjelder seponering, ikke bytte til et annet antidepressiv.
+
+**Usikkerhet:**
+
+- Prosentene, grensen ved 5 mg og sluttdosen på 2,5 mg er eksempler eller OUSFARs valg, ikke empirisk validerte verdier.
+- Den faktiske nedtrappingen bør styres av pasientens seponeringssymptomer (NICE 1.4.16); planen er et utgangspunkt, ikke en fast tidsplan.
+- Doser under 5 mg krever deling eller flytende form; om det finnes, avgjøres i P5.
+
+**Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
+
+- *Fra 20 mg: 50 % ned til 5 mg, så 25 %, til neste dose er under 2,5 mg.* Inndata: startdose 20 mg.
+  - **fra:** dag 1–14: 10 mg; dag 15–28: 5 mg; dag 29–42: 3,75 mg; dag 43–56: 2,81 mg; fra dag 57: seponert
+  - Kontroll: Startdosen er 5–20 mg (bindende) – oppfylt. 20 mg.
+  - Kontroll: Nedtrappingen av escitalopram varer minst 14 dager (bindende) – oppfylt. Nedtrapping dag 1–56 (56 dager).
+- *Fra 5 mg, på grensen: 25 % fra første trinn.* Inndata: startdose 5 mg.
+  - **fra:** dag 1–14: 3,75 mg; dag 15–28: 2,81 mg; fra dag 29: seponert
+  - Kontroll: Startdosen er 5–20 mg (bindende) – oppfylt. 5 mg.
+  - Kontroll: Nedtrappingen av escitalopram varer minst 14 dager (bindende) – oppfylt. Nedtrapping dag 1–28 (28 dager).
+- *25 mg er over dosene regelen gjelder for, så beregningen stopper.* Inndata: startdose 25 mg.
+  - **Stoppet:** Startdosen 25 mg er utenfor det regelen gjelder for (5–20 mg).
+
+**Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntidepressants:Es>Stop`.
+
+## Seponering av citalopram, hyperbolsk nedtrapping (alternativ strategi)
+
+`seponering-citalopram-hyperbolsk`, versjon 1, fingeravtrykk `c4e4250ac9807dd092c05949dbeefbad779dbba57bf26c2eec4c58d5d441fff7`. Seponering: citalopram → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code).
+
+**Kildetro – det som følger direkte av kildene:**
+
+- Citalopram trappes ned gradvis over minst én til to uker.
+  - Brå seponering bør unngås; dosen reduseres gradvis over minst én til to uker. Ved utålelige symptomer kan man gå tilbake til forrige dose og trappe ned langsommere. *([dmp-cipramil](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08151.pdf), pkt. 4.2)*
+- SERT-bindingen øker hyperbolsk med dosen; ED50 for citalopram er 3,4 mg.
+  - Dosen som gir halvparten av maksimal SERT-binding (ED50) er 3,4 mg for citalopram. *([sorensen-2022](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8960396/fullTextXML), Results (dose og SERT-binding))*
+  - SERT-bindingen øker hyperbolsk med dosen og flater ut ved omtrent 80 % rundt minste vanlige dose; studiene er små og metodene ulike. *([sorensen-2022](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8960396/fullTextXML), Results og Discussion)*
+- Like store trinn i binding gir stadig mindre dosetrinn ned mot null.
+  - Nedtrapping i like store trinn i SERT-binding gir stadig mindre dosetrinn og kan gå til doser godt under minste terapeutiske dose. *([horowitz-2019](https://doi.org/10.1016/S2215-0366(19)30032-X), sammendrag)*
+
+**OUSFARs selvstendige tilpasninger (må kontrolleres):**
+
+- Beregnet binding relativt til maksimum, f = D / (3,4 + D), senkes i åtte like store trinn fra startdosen til null, og dosen er D = 3,4 · f / (1 − f). Maksimal binding går ut av regnestykket. Antall trinn og 14 dager per trinn er OUSFARs forslag.
+  - Dosen som gir halvparten av maksimal SERT-binding (ED50) er 3,4 mg for citalopram. *([sorensen-2022](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8960396/fullTextXML), Results (dose og SERT-binding))*
+  - Nedtrapping i like store trinn i SERT-binding gir stadig mindre dosetrinn og kan gå til doser godt under minste terapeutiske dose. *([horowitz-2019](https://doi.org/10.1016/S2215-0366(19)30032-X), sammendrag)*
+- Strategien er et alternativ ved siden av gjentatt prosentvis nedtrapping, ikke en standard (B2). *(OUSFARs vurdering)*
+
+**Den matematiske regelen – parametre:**
+
+| Hvor | Parameter | Verdi | Art | Grunnlag |
+| --- | --- | --- | --- | --- |
+| fra: fase 1 (nedtrapping) | strategi.ed50_mg | 3,4 mg | veiledende | sorensen-2022 Results (dose og SERT-binding) |
+| fra: fase 1 (nedtrapping) | strategi.trinn | 8 trinn | veiledende | **OUSFAR-vurdering, åpent forslag:** Åtte like store trinn i beregnet binding; et antall som må vurderes faglig mot pasientens toleranse. (bygger på horowitz-2019 sammendrag) |
+| fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 7–14) | veiledende | **OUSFAR-vurdering, åpent forslag:** Øvre del av NICEs vurderingstid. (bygger på nice-ng222 anbefaling 1.4.18) |
+| fra: fase 1 (nedtrapping) | minste_varighet | 14 dager | bindende krav | **OUSFAR-vurdering, åpent forslag:** «Minst én til to uker» er lest konservativt som minst 14 dager. (bygger på dmp-cipramil pkt. 4.2) |
+
+**Betingelser:**
+
+- Startdose 10–40 mg (bindende; dmp-cipramil pkt. 4.2)
+
+**Kliniske forutsetninger:**
+
+- Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
+- Dosene er den ideelle dosekurven, avrundet til to desimaler; hvilke doser som kan gis med norske preparater (styrker, deling, flytende form), avgjøres i P5.
+- Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet, interaksjoner, graviditet, etterlevelse eller individuell toleranse fra dosen (B7); dette må vurderes av forskriveren.
+- ED50 fra PET-studier av SERT-binding gjelder pasienten tilnærmet.
+
+**Usikkerhet:**
+
+- Bindingskurven bygger på få og små studier med ulike metoder; at like trinn i binding gir mindre seponeringssymptomer, er ikke vist i kontrollerte studier av denne planen.
+- De siste dosene (under 1 mg) krever flytende form; om det finnes, avgjøres i P5.
+- Flere trinn er ikke automatisk bedre (P4.6): planen varer 14 uker fra 20 mg.
+
+**Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
+
+- *Fra 20 mg: åtte like trinn i beregnet binding (85,5 % av maksimum ved 20 mg).* Inndata: startdose 20 mg.
+  - **fra:** dag 1–14: 10,08 mg; dag 15–28: 6,07 mg; dag 29–42: 3,9 mg; dag 43–56: 2,54 mg; dag 57–70: 1,6 mg; dag 71–84: 0,92 mg; dag 85–98: 0,41 mg; fra dag 99: seponert
+  - Kontroll: Startdosen er 10–40 mg (bindende) – oppfylt. 20 mg.
+  - Kontroll: Nedtrappingen av citalopram varer minst 14 dager (bindende) – oppfylt. Nedtrapping dag 1–98 (98 dager).
+
+**Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntidepressants:Ci>Stop`.
+
+## Bytte fra sertralin til mirtazapin, kryssnedtrapping
+
+`kryssnedtrapping-sertralin-mirtazapin`, versjon 1, fingeravtrykk `54f1cdde505e6ffb66877c9fee6eceb816fb326c80354dbe80d1daaf4cf3e911`. Kryssnedtrapping: sertralin → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code).
+
+**Kildetro – det som følger direkte av kildene:**
+
+- Sertralin trappes ned gradvis over minst én til to uker.
+  - Dosen reduseres gradvis over minst én til to uker; noen trenger nedtrapping over flere uker eller måneder. *([dmp-zoloft](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08203.pdf), pkt. 4.2 og 4.4)*
+- Ved kryssnedtrapping startes det nye antidepressivet mens det første trappes ned.
+  - Bytte kan gjøres konservativt (nedtrapping, utvasking, så oppstart), moderat, direkte eller med kryssnedtrapping, der det nye startes mens det første trappes ned. *([keks-2016](https://pmc.ncbi.nlm.nih.gov/articles/PMC4919171/), tabell 2)*
+- Mirtazapin sammen med et SSRI er et anerkjent kombinasjonsalternativ, så overlappen er ikke en kjent kontraindisert kombinasjon.
+  - Mirtazapin lagt til et SSRI er et kombinasjonsalternativ; SSRI sammen med MAO-hemmer kan være farlig og skal unngås. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.9.9)*
+- Mirtazapin startes med 15 eller 30 mg; effektiv dose er 15–45 mg.
+  - Effektiv døgndose er vanligvis 15–45 mg; startdosen er 15 eller 30 mg. Behandlingen avsluttes gradvis. *([dmp-remeron](https://produktinformasjon.legemiddelsok.no/preparatomtaler/1997-03657.pdf), pkt. 4.2)*
+
+**OUSFARs selvstendige tilpasninger (må kontrolleres):**
+
+- OUSFAR halverer sertralin hver 14. dag ned til 25 mg og starter mirtazapin 15 mg dag 1, holdt til sertralin er seponert, deretter måldosen.
+  - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
+  - Effektiv døgndose er vanligvis 15–45 mg; startdosen er 15 eller 30 mg. Behandlingen avsluttes gradvis. *([dmp-remeron](https://produktinformasjon.legemiddelsok.no/preparatomtaler/1997-03657.pdf), pkt. 4.2)*
+- Måldosen for mirtazapin må oppgis; regelen har ingen standard måldose (P6.8). *(OUSFARs vurdering)*
+
+**Den matematiske regelen – parametre:**
+
+| Hvor | Parameter | Verdi | Art | Grunnlag |
+| --- | --- | --- | --- | --- |
+| fra: fase 1 (nedtrapping) | strategi.prosent | 50 % | veiledende | **OUSFAR-vurdering, åpent forslag:** Eksempelet i NICE er 50 % av forrige dose. (bygger på nice-ng222 anbefaling 1.4.16) |
+| fra: fase 1 (nedtrapping) | strategi.sluttdose_mg | 25 mg | veiledende | **OUSFAR-vurdering, åpent forslag:** Laveste startdose i preparatomtalen; under den seponeres. (bygger på dmp-zoloft pkt. 4.2) |
+| fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 7–14) | veiledende | **OUSFAR-vurdering, åpent forslag:** Øvre del av NICEs vurderingstid; NICE åpner for raskere nedtrapping ved bytte (7 dager). (bygger på nice-ng222 anbefaling 1.4.18; nice-ng222 anbefaling 1.4.16) |
+| fra: fase 1 (nedtrapping) | minste_varighet | 14 dager | bindende krav | **OUSFAR-vurdering, åpent forslag:** «Minst én til to uker» er lest konservativt som minst 14 dager. (bygger på dmp-zoloft pkt. 4.2 og 4.4) |
+| til: fase 1 (hold) | dose.mg | 15 mg | veiledende | dmp-remeron pkt. 4.2 |
+
+**Betingelser:**
+
+- Startdose 50–200 mg (bindende; dmp-zoloft pkt. 4.2)
+- Måldose (må oppgis) 15–45 mg (bindende; dmp-remeron pkt. 4.2)
+
+**Kliniske forutsetninger:**
+
+- Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
+- Dosene er den ideelle dosekurven, avrundet til to desimaler; hvilke doser som kan gis med norske preparater (styrker, deling, flytende form), avgjøres i P5.
+- Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet, interaksjoner, graviditet, etterlevelse eller individuell toleranse fra dosen (B7); dette må vurderes av forskriveren.
+- Pasienten har ikke andre serotonerge legemidler som gjør overlappen mer risikofylt.
+
+**Usikkerhet:**
+
+- Ved samtidig bruk kan serotonerge bivirkninger øke; overlappens lengde er OUSFARs valg.
+- NICE åpner for raskere nedtrapping ved bytte; 14 dager per trinn kan være lengre enn nødvendig.
+
+**Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
+
+- *Sertralin 100 mg til mirtazapin 30 mg.* Inndata: startdose 100 mg; måldose 30 mg.
+  - **fra:** dag 1–14: 50 mg; dag 15–28: 25 mg; fra dag 29: seponert
+  - **til:** dag 1–28: 15 mg; fra dag 29: 30 mg
+  - Kontroll: Startdosen er 50–200 mg (bindende) – oppfylt. 100 mg.
+  - Kontroll: Måldosen er 15–45 mg (bindende) – oppfylt. 30 mg.
+  - Kontroll: Nedtrappingen av sertralin varer minst 14 dager (bindende) – oppfylt. Nedtrapping dag 1–28 (28 dager).
+- *Sertralin 50 mg til mirtazapin 15 mg: én reduksjon, og mirtazapin fortsetter på 15 mg.* Inndata: startdose 50 mg; måldose 15 mg.
+  - **fra:** dag 1–14: 25 mg; fra dag 15: seponert
+  - **til:** fra dag 1: 15 mg
+  - Kontroll: Startdosen er 50–200 mg (bindende) – oppfylt. 50 mg.
+  - Kontroll: Måldosen er 15–45 mg (bindende) – oppfylt. 15 mg.
+  - Kontroll: Nedtrappingen av sertralin varer minst 14 dager (bindende) – oppfylt. Nedtrapping dag 1–14 (14 dager).
+- *Uten måldose stopper beregningen; det finnes ingen skjult standard.* Inndata: startdose 100 mg.
+  - **Stoppet:** Måldosen må oppgis; regelen har ingen standard måldose.
+
+**Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntidepressants:Se>Mz`.
+
+## Bytte fra fluoksetin til fenelzin, sekvensielt med utvasking
+
+`mao-fluoksetin-fenelzin`, versjon 1, fingeravtrykk `4f40b159a345695a6cc81a55c5234664db399e990927532d7b39b8bd3f879c03`. Sekvensielt bytte: fluoksetin → fenelzin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code).
+
+**Kildetro – det som følger direkte av kildene:**
+
+- Fluoksetin og en irreversibel, ikke-selektiv MAO-hemmer skal ikke brukes samtidig; det skal gå minst 5 uker fra fluoksetin er seponert til MAO-hemmeren startes.
+  - Kontraindisert sammen med irreversibel, ikke-selektiv MAO-hemmer; det skal gå minst 5 uker etter seponering av fluoksetin før en slik MAO-hemmer startes. *([dmp-fluoxetin](https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-7362.pdf), pkt. 4.3 og 4.5)*
+- Litteraturen anbefaler 5–6 ukers utvasking, og at MAO-hemmeren startes forsiktig i lav dose.
+  - Fra fluoksetin til MAO-hemmer: fluoksetin seponeres (trappes ned over 40 mg daglig), så 5–6 ukers utvasking før MAO-hemmeren startes forsiktig i lav dose. *([keks-2016](https://pmc.ncbi.nlm.nih.gov/articles/PMC4919171/), tabell 3)*
+- Fluoksetin trappes ned gradvis over minst én til to uker.
+  - Brå seponering bør unngås; dosen reduseres gradvis over minst én til to uker. Aktivt stoff finnes i kroppen i flere uker etter seponering. *([dmp-fluoxetin](https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-7362.pdf), pkt. 4.2)*
+- Bytte til en MAO-hemmer skal skje i, eller med råd fra, spesialisthelsetjenesten.
+  - Bytte til eller fra en MAO-hemmer skal skje i, eller med råd fra, spesialisthelsetjenesten. Bytte kan kreve kryssnedtrapping. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.9.5)*
+
+**OUSFARs selvstendige tilpasninger (må kontrolleres):**
+
+- OUSFAR halverer fluoksetin hver 14. dag ned til 10 mg og seponerer deretter. Utvaskingen på 35 dager regnes fra første dag uten fluoksetin; fenelzin kan tidligst startes dagen etter.
+  - Kontraindisert sammen med irreversibel, ikke-selektiv MAO-hemmer; det skal gå minst 5 uker etter seponering av fluoksetin før en slik MAO-hemmer startes. *([dmp-fluoxetin](https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-7362.pdf), pkt. 4.3 og 4.5)*
+- Startdosen for fenelzin beregnes ikke, fordi det ikke finnes en norsk preparatomtale å bygge den på. *(OUSFARs vurdering)*
+
+**Den matematiske regelen – parametre:**
+
+| Hvor | Parameter | Verdi | Art | Grunnlag |
+| --- | --- | --- | --- | --- |
+| fra: fase 1 (nedtrapping) | strategi.prosent | 50 % | veiledende | **OUSFAR-vurdering, åpent forslag:** Eksempelet i NICE er 50 % av forrige dose. (bygger på nice-ng222 anbefaling 1.4.16) |
+| fra: fase 1 (nedtrapping) | strategi.sluttdose_mg | 10 mg | veiledende | **OUSFAR-vurdering, åpent forslag:** Daglig 10 mg i stedet for 20 mg annenhver dag, som modellen ikke har; under den seponeres. (bygger på nice-ng222 anbefaling 1.4.18) |
+| fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 7–14) | veiledende | **OUSFAR-vurdering, åpent forslag:** Øvre del av NICEs vurderingstid. (bygger på nice-ng222 anbefaling 1.4.18) |
+| fra: fase 1 (nedtrapping) | minste_varighet | 14 dager | bindende krav | **OUSFAR-vurdering, åpent forslag:** «Minst én til to uker» er lest konservativt som minst 14 dager. (bygger på dmp-fluoxetin pkt. 4.2) |
+| til: start | utvasking | 35 dager | bindende krav | dmp-fluoxetin pkt. 4.3 og 4.5; keks-2016 tabell 3 |
+
+**Betingelser:**
+
+- Startdose 20–60 mg (bindende; dmp-fluoxetin pkt. 4.2)
+- Må bekreftes (`spesialisthelsetjeneste`): Byttet gjøres i, eller med råd fra, spesialisthelsetjenesten. (nice-ng222 anbefaling 1.9.5)
+
+**Kliniske forutsetninger:**
+
+- Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
+- Dosene er den ideelle dosekurven, avrundet til to desimaler; hvilke doser som kan gis med norske preparater (styrker, deling, flytende form), avgjøres i P5.
+- Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet, interaksjoner, graviditet, etterlevelse eller individuell toleranse fra dosen (B7); dette må vurderes av forskriveren.
+- Fenelzin er en irreversibel, ikke-selektiv MAO-hemmer, så utvaskingskravet for slike gjelder.
+
+**Usikkerhet:**
+
+- Kildene er ikke enige om nedtrappingen: preparatomtalen sier gradvis over minst én til to uker, NICE nevner dosering annenhver dag ved 20 mg, og Keks mfl. seponerer uten nedtrapping ved 40 mg daglig eller mindre. Regelen følger preparatomtalen; valget må avklares faglig.
+- Ved høye doser og lang behandling kan 6 uker være tryggere enn 5; regelen bruker minimum fra preparatomtalen.
+- Utvaskingen gjør at pasienten er uten antidepressiv i minst fem uker; risikoen for tilbakefall må vurderes individuelt.
+
+**Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
+
+- *Fluoksetin 40 mg: to reduksjoner, 35 dager utvasking, fenelzin tidligst dag 64.* Inndata: startdose 40 mg; bekreftet: spesialisthelsetjeneste.
+  - **fra:** dag 1–14: 20 mg; dag 15–28: 10 mg; fra dag 29: seponert
+  - **til:** tidligst dag 64: oppstart, dosering beregnes ikke
+  - Kontroll: Bekreftet: Byttet gjøres i, eller med råd fra, spesialisthelsetjenesten. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Startdosen er 20–60 mg (bindende) – oppfylt. 40 mg.
+  - Kontroll: Nedtrappingen av fluoksetin varer minst 14 dager (bindende) – oppfylt. Nedtrapping dag 1–28 (28 dager).
+  - Kontroll: Minst 35 dager uten fluoksetin før fenelzin (bindende) – oppfylt. Uten legemiddel dag 29–63 (35 dager); fenelzin tidligst dag 64.
+- *Fluoksetin 20 mg: én reduksjon, fenelzin tidligst dag 50.* Inndata: startdose 20 mg; bekreftet: spesialisthelsetjeneste.
+  - **fra:** dag 1–14: 10 mg; fra dag 15: seponert
+  - **til:** tidligst dag 50: oppstart, dosering beregnes ikke
+  - Kontroll: Bekreftet: Byttet gjøres i, eller med råd fra, spesialisthelsetjenesten. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Startdosen er 20–60 mg (bindende) – oppfylt. 20 mg.
+  - Kontroll: Nedtrappingen av fluoksetin varer minst 14 dager (bindende) – oppfylt. Nedtrapping dag 1–14 (14 dager).
+  - Kontroll: Minst 35 dager uten fluoksetin før fenelzin (bindende) – oppfylt. Uten legemiddel dag 15–49 (35 dager); fenelzin tidligst dag 50.
+- *Uten bekreftelse om spesialisthelsetjenesten stopper beregningen.* Inndata: startdose 40 mg.
+  - **Stoppet:** Må bekreftes før beregning: Byttet gjøres i, eller med råd fra, spesialisthelsetjenesten.
+
+**Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntidepressants:Fo>Fe`.
+
+## Bytte fra olanzapin til kvetiapin, kryss-titrering med fast opptrapping
+
+`antipsykotikabytte-olanzapin-kvetiapin`, versjon 2, fingeravtrykk `f99caa565de15abc04c93ef883de06210ddc78143c853b1ef8cc86c64443114b`. Kryssnedtrapping: olanzapin → kvetiapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code).
+
+**Kildetro – det som følger direkte av kildene:**
+
+- Kvetiapin (vanlig frisetting) trappes opp med 50, 100, 200 og 300 mg de fire første dagene ved schizofreni, deretter 300–450 mg daglig.
+  - Schizofreni: døgndose 50, 100, 200 og 300 mg dag 1–4; fra dag 4 anbefales 300–450 mg daglig, individuelt innenfor 150–750 mg. *([dmp-seroquel](https://produktinformasjon.legemiddelsok.no/preparatomtaler/02-1435.pdf), pkt. 4.2)*
+- Ved kryss-titrering trappes det første antipsykotikumet ned mens det andre innføres, uten opphold.
+  - Ved kryss-titrering trappes det første antipsykotikumet ned mens det andre innføres. Et opphold uten antipsykotikum anbefales ikke. *([keks-2019](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6787301/fullTextXML), tabell 4 og avsnittet om byttestrategier)*
+- Gradvis nedtrapping av olanzapin bør vurderes.
+  - Gradvis nedtrapping bør vurderes ved seponering; akutte symptomer ved brå seponering er sjeldne. *([ema-zyprexa](https://www.ema.europa.eu/en/documents/product-information/zyprexa-epar-product-information_en.pdf), section 4.2 og 4.4)*
+
+**OUSFARs selvstendige tilpasninger (må kontrolleres):**
+
+- OUSFAR holder olanzapin uendret til kvetiapin er på 300 mg (dag 4), og trapper så ned med 25 % av startdosen hver uke.
+  - Schizofreni: døgndose 50, 100, 200 og 300 mg dag 1–4; fra dag 4 anbefales 300–450 mg daglig, individuelt innenfor 150–750 mg. *([dmp-seroquel](https://produktinformasjon.legemiddelsok.no/preparatomtaler/02-1435.pdf), pkt. 4.2)*
+  - Ved kryss-titrering trappes det første antipsykotikumet ned mens det andre innføres. Et opphold uten antipsykotikum anbefales ikke. *([keks-2019](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6787301/fullTextXML), tabell 4 og avsnittet om byttestrategier)*
+- Regelen gjelder bare måldoser i det anbefalte vedlikeholdsområdet 300–450 mg; andre måldoser krever individuell vurdering.
+  - Schizofreni: døgndose 50, 100, 200 og 300 mg dag 1–4; fra dag 4 anbefales 300–450 mg daglig, individuelt innenfor 150–750 mg. *([dmp-seroquel](https://produktinformasjon.legemiddelsok.no/preparatomtaler/02-1435.pdf), pkt. 4.2)*
+
+**Den matematiske regelen – parametre:**
+
+| Hvor | Parameter | Verdi | Art | Grunnlag |
+| --- | --- | --- | --- | --- |
+| fra: fase 1 (hold) | varighet.dager | 4 dager | veiledende | **OUSFAR-vurdering, åpent forslag:** Til kvetiapin har nådd 300 mg dag 4. (bygger på dmp-seroquel pkt. 4.2) |
+| fra: fase 2 (nedtrapping) | strategi.prosent | 25 % | veiledende | **OUSFAR-vurdering, åpent forslag:** Fire like store trinn. |
+| fra: fase 2 (nedtrapping) | trinnlengde | 7 dager (område 7–14) | veiledende | **OUSFAR-vurdering, åpent forslag:** Én uke per trinn. |
+| til: fase 1 (opptrapping) | trinn[0].mg | 50 mg | veiledende | dmp-seroquel pkt. 4.2 |
+| til: fase 1 (opptrapping) | trinn[0].dager | 1 dager | veiledende | dmp-seroquel pkt. 4.2 |
+| til: fase 1 (opptrapping) | trinn[1].mg | 100 mg | veiledende | dmp-seroquel pkt. 4.2 |
+| til: fase 1 (opptrapping) | trinn[1].dager | 1 dager | veiledende | dmp-seroquel pkt. 4.2 |
+| til: fase 1 (opptrapping) | trinn[2].mg | 200 mg | veiledende | dmp-seroquel pkt. 4.2 |
+| til: fase 1 (opptrapping) | trinn[2].dager | 1 dager | veiledende | dmp-seroquel pkt. 4.2 |
+| til: fase 1 (opptrapping) | trinn[3].mg | 300 mg | veiledende | dmp-seroquel pkt. 4.2 |
+| til: fase 1 (opptrapping) | trinn[3].dager | 1 dager | veiledende | dmp-seroquel pkt. 4.2 |
+
+**Betingelser:**
+
+- Startdose 5–20 mg (bindende; ema-zyprexa section 4.2)
+- Måldose (må oppgis) 300–450 mg (bindende; dmp-seroquel pkt. 4.2)
+- Må bekreftes (`indikasjon`): Indikasjonen er schizofreni; opptrappingen av kvetiapin i regelen gjelder schizofreni. (dmp-seroquel pkt. 4.2)
+- Må bekreftes (`peroral_formulering`): Pasienten bruker peroral olanzapin, ikke depotinjeksjon. (keks-2019 avsnittet om byttestrategier)
+
+**Kliniske forutsetninger:**
+
+- Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
+- Dosene er den ideelle dosekurven, avrundet til to desimaler; hvilke doser som kan gis med norske preparater (styrker, deling, flytende form), avgjøres i P5.
+- Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet, interaksjoner, graviditet, etterlevelse eller individuell toleranse fra dosen (B7); dette må vurderes av forskriveren.
+- Kvetiapin gis som tabletter med vanlig frisetting, to ganger daglig; døgndosen er oppgitt.
+
+**Usikkerhet:**
+
+- Lengden på nedtrappingen av olanzapin (fire uker) er OUSFARs valg; kildene oppgir ingen varighet.
+- Sedasjon og ortostatisk blodtrykksfall kan øke mens begge brukes; det må følges klinisk.
+
+**Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
+
+- *Olanzapin 20 mg til kvetiapin 300 mg.* Inndata: startdose 20 mg; måldose 300 mg; bekreftet: indikasjon, peroral_formulering.
+  - **fra:** dag 1–4: 20 mg; dag 5–11: 15 mg; dag 12–18: 10 mg; dag 19–25: 5 mg; fra dag 26: seponert
+  - **til:** dag 1: 50 mg; dag 2: 100 mg; dag 3: 200 mg; fra dag 4: 300 mg
+  - Kontroll: Bekreftet: Indikasjonen er schizofreni; opptrappingen av kvetiapin i regelen gjelder schizofreni. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten bruker peroral olanzapin, ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Startdosen er 5–20 mg (bindende) – oppfylt. 20 mg.
+  - Kontroll: Måldosen er 300–450 mg (bindende) – oppfylt. 300 mg.
+- *Olanzapin 10 mg til kvetiapin 400 mg med startdato 2. november 2026.* Inndata: startdose 10 mg; måldose 400 mg; startdato 02.11.2026; bekreftet: indikasjon, peroral_formulering.
+  - **fra:** dag 1–4 (02.11.2026–05.11.2026): 10 mg; dag 5–11 (06.11.2026–12.11.2026): 7,5 mg; dag 12–18 (13.11.2026–19.11.2026): 5 mg; dag 19–25 (20.11.2026–26.11.2026): 2,5 mg; fra dag 26 (27.11.2026): seponert
+  - **til:** dag 1 (02.11.2026): 50 mg; dag 2 (03.11.2026): 100 mg; dag 3 (04.11.2026): 200 mg; dag 4 (05.11.2026): 300 mg; fra dag 5 (06.11.2026): 400 mg
+  - Kontroll: Bekreftet: Indikasjonen er schizofreni; opptrappingen av kvetiapin i regelen gjelder schizofreni. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten bruker peroral olanzapin, ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Startdosen er 5–20 mg (bindende) – oppfylt. 10 mg.
+  - Kontroll: Måldosen er 300–450 mg (bindende) – oppfylt. 400 mg.
+- *30 mg olanzapin er over doseområdet regelen gjelder for.* Inndata: startdose 30 mg; måldose 300 mg; bekreftet: indikasjon, peroral_formulering.
+  - **Stoppet:** Startdosen 30 mg er utenfor det regelen gjelder for (5–20 mg).
+- *Uten bekreftelse av at olanzapin er peroral (ikke depot) stopper beregningen.* Inndata: startdose 20 mg; måldose 300 mg; bekreftet: indikasjon.
+  - **Stoppet:** Må bekreftes før beregning: Pasienten bruker peroral olanzapin, ikke depotinjeksjon.
+
+**Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntipsychotics:Ol>Qu`.
+
+## Bytte fra et antipsykotikum i gruppen «øvrige antipsykotika» til aripiprazol, kryss-titrering
+
+`gruppe-rest-ap-aripiprazol`, versjon 2, fingeravtrykk `1250cf2c5d4cfe1729b0b321ce62be73f86d2ae5ed3fab1b6ddc29d348c98bb4`. Kryssnedtrapping: gruppen rest-ap → aripiprazol. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code).
+
+**Kildetro – det som følger direkte av kildene:**
+
+- Aripiprazol startes med 10 eller 15 mg ved schizofreni; doseområdet er 10–30 mg.
+  - Schizofreni: startdose 10 eller 15 mg daglig, vedlikehold 15 mg; effektivt doseområde 10–30 mg daglig. *([ema-abilify](https://www.ema.europa.eu/en/documents/product-information/abilify-epar-product-information_en.pdf), section 4.2)*
+- Brå seponering av zuklopentiksol kan gi seponeringssymptomer innen 1–4 dager.
+  - Brå seponering kan gi seponeringssymptomer, vanligvis innen 1–4 dager, som avtar innen 7–14 dager. *([dmp-cisordinol](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06778.pdf), pkt. 4.8)*
+- Ved kryss-titrering trappes det første antipsykotikumet ned mens det andre innføres, uten opphold.
+  - Ved kryss-titrering trappes det første antipsykotikumet ned mens det andre innføres. Et opphold uten antipsykotikum anbefales ikke. *([keks-2019](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6787301/fullTextXML), tabell 4 og avsnittet om byttestrategier)*
+
+**OUSFARs selvstendige tilpasninger (må kontrolleres):**
+
+- OUSFAR starter aripiprazol 10 mg dag 1, holder det gamle antipsykotikumet uendret i én uke og trapper det så ned med 25 % av startdosen per uke. Aripiprazol går til måldosen når det gamle er seponert.
+  - Schizofreni: startdose 10 eller 15 mg daglig, vedlikehold 15 mg; effektivt doseområde 10–30 mg daglig. *([ema-abilify](https://www.ema.europa.eu/en/documents/product-information/abilify-epar-product-information_en.pdf), section 4.2)*
+  - Ved kryss-titrering trappes det første antipsykotikumet ned mens det andre innføres. Et opphold uten antipsykotikum anbefales ikke. *([keks-2019](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6787301/fullTextXML), tabell 4 og avsnittet om byttestrategier)*
+- Gruppen følger P1-kartleggingen (tabellens medlemmer). Bare medlemmer som er vurdert hver for seg, kan beregnes (B4); i piloten gjelder det bare zuklopentiksol, som forslag. *(OUSFARs vurdering)*
+
+**Den matematiske regelen – parametre:**
+
+| Hvor | Parameter | Verdi | Art | Grunnlag |
+| --- | --- | --- | --- | --- |
+| fra: fase 1 (hold) | varighet.dager | 7 dager | veiledende | **OUSFAR-vurdering, åpent forslag:** Første uke med aripiprazol før nedtrappingen starter. |
+| fra: fase 2 (nedtrapping) | strategi.prosent | 25 % | veiledende | **OUSFAR-vurdering, åpent forslag:** Fire like store trinn. |
+| fra: fase 2 (nedtrapping) | trinnlengde | 7 dager (område 7–14) | veiledende | **OUSFAR-vurdering, åpent forslag:** Én uke per trinn. |
+| til: fase 1 (hold) | dose.mg | 10 mg | veiledende | ema-abilify section 4.2 |
+
+**Betingelser:**
+
+- Startdose 20–40 mg for zuklopentiksol (veiledende; dmp-cisordinol pkt. 4.2)
+- Måldose (må oppgis) 10–30 mg (bindende; ema-abilify section 4.2)
+- Må bekreftes (`indikasjon`): Indikasjonen er schizofreni. (ema-abilify section 4.2)
+- Må bekreftes (`peroral_formulering`): Pasienten bruker en peroral formulering, ikke depotinjeksjon eller korttidsvirkende injeksjon. (keks-2019 avsnittet om byttestrategier)
+
+**Gruppemedlemmer (B4).** Bare medlemmer som er foreslått eller validert, kan beregnes.
+
+| Virkestoff | Vurdering | Begrunnelse |
+| --- | --- | --- |
+| klorprotiksen | ikke vurdert | Ikke vurdert individuelt (halveringstid, formulering og norske preparater); gruppeanbefalingen alene er ikke nok (B4). |
+| flupentiksol | ikke vurdert | Ikke vurdert individuelt (halveringstid, formulering og norske preparater); gruppeanbefalingen alene er ikke nok (B4). |
+| flufenazin | ikke vurdert | Bare godkjenningsfritak i Norge (P2.5), og mangler i gruppens faktaboks på kildesidene (P3); ikke vurdert individuelt. |
+| loksapin | ikke vurdert | Har ingen preparater i FEST (P2.5); ikke vurdert individuelt. |
+| perisiazin | ikke vurdert | Har ingen preparater i FEST (P2.5); ikke vurdert individuelt. |
+| perfenazin | ikke vurdert | Ikke vurdert individuelt (halveringstid, formulering og norske preparater); gruppeanbefalingen alene er ikke nok (B4). |
+| promazin | ikke vurdert | Har ingen preparater i FEST (P2.5); ikke vurdert individuelt. Mangler også i gruppens faktaboks på kildesidene (P3). |
+| trifluoperazin | ikke vurdert | Har ingen preparater i FEST (P2.5); ikke vurdert individuelt. |
+| ziprasidon | ikke vurdert | Ikke vurdert individuelt (halveringstid, formulering og norske preparater); gruppeanbefalingen alene er ikke nok (B4). Mangler i gruppens faktaboks på en del kildesider (P3). |
+| zuklopentiksol | foreslatt | Vurdert mot preparatomtalen: seponeringssymptomer kommer innen 1–4 dager etter brå seponering, så gradvis nedtrapping med overlapp er rimelig. Foreslått, ikke validert. |
+
+**Kliniske forutsetninger:**
+
+- Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
+- Dosene er den ideelle dosekurven, avrundet til to desimaler; hvilke doser som kan gis med norske preparater (styrker, deling, flytende form), avgjøres i P5.
+- Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet, interaksjoner, graviditet, etterlevelse eller individuell toleranse fra dosen (B7); dette må vurderes av forskriveren.
+
+**Usikkerhet:**
+
+- Kildesidene og tabellen er ikke enige om hvem som er med i gruppen (P3); gruppens sammensetning må avklares faglig.
+- Medlemmene har ulik halveringstid og ulike doser; samme plan passer ikke nødvendigvis alle.
+- Aripiprazol er en partiell agonist og kan gi forverring eller akatisi ved bytte fra en full antagonist; overlappens lengde er OUSFARs valg.
+
+**Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
+
+- *Zuklopentiksol 20 mg til aripiprazol 15 mg.* Inndata: startdose 20 mg; måldose 15 mg; virkestoff zuklopentiksol; bekreftet: indikasjon, peroral_formulering.
+  - **fra:** dag 1–7: 20 mg; dag 8–14: 15 mg; dag 15–21: 10 mg; dag 22–28: 5 mg; fra dag 29: seponert
+  - **til:** dag 1–28: 10 mg; fra dag 29: 15 mg
+  - Kontroll: Bekreftet: Indikasjonen er schizofreni. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten bruker en peroral formulering, ikke depotinjeksjon eller korttidsvirkende injeksjon. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Startdosen er 20–40 mg (veiledende) – oppfylt. 20 mg.
+  - Kontroll: Måldosen er 10–30 mg (bindende) – oppfylt. 15 mg.
+- *Flupentiksol er medlem av gruppen, men ikke vurdert individuelt, så beregningen stopper.* Inndata: startdose 6 mg; måldose 15 mg; virkestoff flupentiksol; bekreftet: indikasjon, peroral_formulering.
+  - **Stoppet:** flupentiksol er ikke vurdert individuelt for gruppeanbefalingen: Ikke vurdert individuelt (halveringstid, formulering og norske preparater); gruppeanbefalingen alene er ikke nok (B4).
+
+**Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntipsychotics:RA>Pa`.
+
+## Fra peroral aripiprazol til Abilify Maintena, oppstart med én injeksjon
+
+`depot-aripiprazol-maintena`, versjon 2, fingeravtrykk `659ab5f674c2c8fcbb4b8523e61f6e55086625216e824485f0c1ac02b2fa2430`. Oppstart av depot: aripiprazol → aripiprazol. **Entydig beregnbar**; status **til faglig kontroll**.
+
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code).
+
+**Kildetro – det som følger direkte av kildene:**
+
+- Depotet er til vedlikeholdsbehandling av schizofreni hos voksne som er stabilisert på peroral aripiprazol, og tolerabilitet må være vist før det startes.
+  - Vedlikeholdsbehandling av schizofreni hos voksne som er stabilisert på peroral aripiprazol. *([ema-abilify-maintena](https://www.ema.europa.eu/en/documents/product-information/abilify-maintena-epar-product-information_en.pdf), section 4.1)*
+  - Har pasienten aldri brukt aripiprazol, må tolerabilitet med peroral aripiprazol være vist før depotet startes. *([ema-abilify-maintena](https://www.ema.europa.eu/en/documents/product-information/abilify-maintena-epar-product-information_en.pdf), section 4.2)*
+- Ved oppstart med én injeksjon gis 400 mg på startdagen, og peroral aripiprazol 10–20 mg fortsetter i 14 dager.
+  - Oppstart med én injeksjon: 400 mg på startdagen, og peroral aripiprazol 10–20 mg daglig i 14 dager på rad. *([ema-abilify-maintena](https://www.ema.europa.eu/en/documents/product-information/abilify-maintena-epar-product-information_en.pdf), section 4.2)*
+- Vedlikehold er 400 mg én gang i måneden, tidligst 26 dager etter forrige injeksjon.
+  - Vedlikehold 400 mg én gang i måneden, tidligst 26 dager etter forrige injeksjon; 300 mg ved bivirkninger. *([ema-abilify-maintena](https://www.ema.europa.eu/en/documents/product-information/abilify-maintena-epar-product-information_en.pdf), section 4.2)*
+- Langsomme CYP2D6-omsettere, sterke hemmere og induktorer krever andre doser eller bør unngås.
+  - Kjente langsomme CYP2D6-omsettere skal ha andre doser (300 mg) og ikke oppstart med to injeksjoner. *([ema-abilify-maintena](https://www.ema.europa.eu/en/documents/product-information/abilify-maintena-epar-product-information_en.pdf), section 4.2)*
+  - Ved samtidig bruk av sterke CYP2D6- eller CYP3A4-hemmere i mer enn 14 dager skal dosen reduseres. *([ema-abilify-maintena](https://www.ema.europa.eu/en/documents/product-information/abilify-maintena-epar-product-information_en.pdf), section 4.2)*
+  - Samtidig bruk av CYP3A4-induktorer i mer enn 14 dager bør unngås. *([ema-abilify-maintena](https://www.ema.europa.eu/en/documents/product-information/abilify-maintena-epar-product-information_en.pdf), section 4.2)*
+
+**OUSFARs selvstendige tilpasninger (må kontrolleres):**
+
+- Den perorale dosen pasienten bruker, fortsetter uendret i 14 dager (dag 1–14) og seponeres deretter.
+  - Oppstart med én injeksjon: 400 mg på startdagen, og peroral aripiprazol 10–20 mg daglig i 14 dager på rad. *([ema-abilify-maintena](https://www.ema.europa.eu/en/documents/product-information/abilify-maintena-epar-product-information_en.pdf), section 4.2)*
+- Oppstart med to injeksjoner er ikke tatt med i piloten.
+  - Alternativ oppstart: to injeksjoner à 400 mg samme dag på to ulike steder, med én peroral dose på 20 mg. *([ema-abilify-maintena](https://www.ema.europa.eu/en/documents/product-information/abilify-maintena-epar-product-information_en.pdf), section 4.2)*
+- Dosereduksjon til 300 mg ved bivirkninger er en klinisk vurdering og beregnes ikke.
+  - Vedlikehold 400 mg én gang i måneden, tidligst 26 dager etter forrige injeksjon; 300 mg ved bivirkninger. *([ema-abilify-maintena](https://www.ema.europa.eu/en/documents/product-information/abilify-maintena-epar-product-information_en.pdf), section 4.2)*
+
+**Den matematiske regelen – parametre:**
+
+| Hvor | Parameter | Verdi | Art | Grunnlag |
+| --- | --- | --- | --- | --- |
+| fra: fase 1 (hold) | varighet.dager | 14 dager | bindende krav | ema-abilify-maintena section 4.2 |
+| til: fase 1 (injeksjoner) | start[0].dag | 1 (dag) | bindende krav | ema-abilify-maintena section 4.2 |
+| til: fase 1 (injeksjoner) | start[0].dose.mg | 400 mg | bindende krav | ema-abilify-maintena section 4.2 |
+| til: fase 1 (injeksjoner) | vedlikehold.dose.mg | 400 mg | veiledende | ema-abilify-maintena section 4.2 |
+| til: fase 1 (injeksjoner) | vedlikehold.maaneder | 1 måned(er) | bindende krav | ema-abilify-maintena section 4.2 |
+| til: fase 1 (injeksjoner) | vedlikehold.tidligst_dager | 26 dager | bindende krav | ema-abilify-maintena section 4.2 |
+
+**Betingelser:**
+
+- Startdose 10–20 mg (bindende; ema-abilify-maintena section 4.2)
+- Må bekreftes (`indikasjon`): Pasienten er voksen, har schizofreni og er stabilisert på, og har tålt, peroral aripiprazol. (ema-abilify-maintena section 4.1; ema-abilify-maintena section 4.2)
+- Unntak (`cyp2d6_langsom`): Pasienten er kjent langsom CYP2D6-omsetter; preparatomtalen har egne doser. (ema-abilify-maintena section 4.2)
+- Unntak (`sterk_cyp_hemmer`): Pasienten bruker en sterk CYP2D6- eller CYP3A4-hemmer; dosen skal reduseres. (ema-abilify-maintena section 4.2)
+- Unntak (`cyp3a4_induktor`): Pasienten bruker en CYP3A4-induktor, som bør unngås sammen med depotet. (ema-abilify-maintena section 4.2)
+
+**Kliniske forutsetninger:**
+
+- Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
+- Dosene er den ideelle dosekurven, avrundet til to desimaler; hvilke doser som kan gis med norske preparater (styrker, deling, flytende form), avgjøres i P5.
+- Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet, interaksjoner, graviditet, etterlevelse eller individuell toleranse fra dosen (B7); dette må vurderes av forskriveren.
+- Pasienten bruker peroral aripiprazol 10–20 mg daglig.
+- Forskriveren har vurdert hvert unntak (CYP2D6-status, hemmere og induktorer) og svart nei; et ubesvart unntak stopper beregningen. «Nei» om CYP2D6 betyr at pasienten ikke er kjent langsom omsetter.
+
+**Usikkerhet:**
+
+- Regelen gjelder Abilify Maintena; andre aripiprazoldepoter (andre estere eller intervaller) har egne oppstartsregimer og er ikke omfattet.
+
+**Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
+
+- *Peroral aripiprazol 15 mg; indikasjonen bekreftet og alle unntak avkreftet.* Inndata: startdose 15 mg; bekreftet: indikasjon; pasientforhold: cyp2d6_langsom nei, sterk_cyp_hemmer nei, cyp3a4_induktor nei.
+  - **fra:** dag 1–14: 15 mg; fra dag 15: seponert
+  - **til:** dag 1: 400 mg injeksjon; hver måned fra 1 måned etter dag 1, tidligst 26 dager etter forrige: 400 mg injeksjon
+  - Kontroll: Avkreftet: Pasienten er kjent langsom CYP2D6-omsetter; preparatomtalen har egne doser. – oppfylt. Vurdert og avkreftet av forskriveren.
+  - Kontroll: Avkreftet: Pasienten bruker en sterk CYP2D6- eller CYP3A4-hemmer; dosen skal reduseres. – oppfylt. Vurdert og avkreftet av forskriveren.
+  - Kontroll: Avkreftet: Pasienten bruker en CYP3A4-induktor, som bør unngås sammen med depotet. – oppfylt. Vurdert og avkreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten er voksen, har schizofreni og er stabilisert på, og har tålt, peroral aripiprazol. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Startdosen er 10–20 mg (bindende) – oppfylt. 15 mg.
+- *Kjent langsom CYP2D6-omsetter: regelen gjelder ikke.* Inndata: startdose 15 mg; bekreftet: indikasjon; pasientforhold: cyp2d6_langsom ja, sterk_cyp_hemmer nei, cyp3a4_induktor nei.
+  - **Stoppet:** Regelen gjelder ikke: Pasienten er kjent langsom CYP2D6-omsetter; preparatomtalen har egne doser.
+- *Hemmere og induktorer er ikke vurdert: ukjent stopper like mye som et unntak som gjelder.* Inndata: startdose 15 mg; bekreftet: indikasjon; pasientforhold: cyp2d6_langsom nei.
+  - **Stoppet:** Må avklares før beregning (ukjent): Pasienten bruker en sterk CYP2D6- eller CYP3A4-hemmer; dosen skal reduseres.; Må avklares før beregning (ukjent): Pasienten bruker en CYP3A4-induktor, som bør unngås sammen med depotet.
+- *Uten bekreftet indikasjon og tolerabilitet stopper beregningen.* Inndata: startdose 15 mg; pasientforhold: cyp2d6_langsom nei, sterk_cyp_hemmer nei, cyp3a4_induktor nei.
+  - **Stoppet:** Må bekreftes før beregning: Pasienten er voksen, har schizofreni og er stabilisert på, og har tålt, peroral aripiprazol.
+
+**Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntipsychotics:Pa>Da`.
+
+## Fra peroral paliperidon depottablett til Xeplion
+
+`depot-paliperidon-xeplion`, versjon 2, fingeravtrykk `19158b1df8057ab8285458b0e5957b3902c8c1a40da33ceb43a915fb32f35545`. Oppstart av depot: paliperidon → paliperidon. **Entydig beregnbar**; status **til faglig kontroll**.
+
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code).
+
+**Kildetro – det som følger direkte av kildene:**
+
+- Xeplion startes med 150 mg dag 1 og 100 mg dag 8 (±4 dager), begge i deltoideus; deretter månedlig (±7 dager), første gang én måned etter andre dose.
+  - Oppstart: 150 mg dag 1 og 100 mg dag 8, begge i deltoideus; tredje dose én måned etter andre. Vedlikehold kan gis i deltoideus eller setemuskel. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2)*
+  - Andre oppstartsdose kan gis inntil 4 dager før eller etter dag 8; vedlikeholdsdosene inntil 7 dager før eller etter månedsdatoen. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2 (glemte doser))*
+- Xeplion er til vedlikeholdsbehandling av schizofreni hos voksne som er stabilisert på paliperidon eller risperidon.
+  - Vedlikeholdsbehandling av schizofreni hos voksne som er stabilisert på paliperidon eller risperidon. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.1)*
+- Vedlikeholdsdosen som gir tilsvarende eksponering som 3, 6, 9 og 12 mg peroralt, er 25–50, 75, 100 og 150 mg.
+  - Peroral paliperidon depottablett 3, 6, 9 og 12 mg daglig tilsvarer ved vedlikehold 25–50, 75, 100 og 150 mg Xeplion månedlig. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2 (bytte fra peroral))*
+- Ved nedsatt nyrefunksjon er start- og vedlikeholdsdosene andre, og under 50 ml/min anbefales ikke Xeplion.
+  - Ved kreatininclearance fra 50 til under 80 ml/min er oppstarten 100 mg dag 1 og 75 mg én uke senere, og vedlikehold 50 mg (25–100 mg); under 50 ml/min anbefales ikke Xeplion. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2 (nedsatt nyrefunksjon))*
+- Den perorale behandlingen kan seponeres når Xeplion startes.
+  - Peroral paliperidon eller risperidon kan seponeres når Xeplion startes; noen kan ha nytte av gradvis seponering. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2 (bytte fra peroral))*
+- Ved bytte mellom peroral behandling og depot må preparatspesifikke instruksjoner følges.
+  - Ved bytte mellom peroral behandling og depot må preparatspesifikke instruksjoner følges. *([keks-2019](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6787301/fullTextXML), avsnittet om byttestrategier)*
+
+**OUSFARs selvstendige tilpasninger (må kontrolleres):**
+
+- OUSFAR seponerer den perorale behandlingen dagen før første injeksjon; gradvis seponering, som preparatomtalen nevner for noen, er ikke modellert.
+  - Peroral paliperidon eller risperidon kan seponeres når Xeplion startes; noen kan ha nytte av gradvis seponering. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2 (bytte fra peroral))*
+- Ved 3 mg peroralt oppgis vedlikeholdsdosen som spennet 25–50 mg. Valget i spennet er en klinisk vurdering: forskriveren må oppgi dosen som måldose, ellers stopper beregningen. Ved 6, 9 og 12 mg må en oppgitt måldose være lik tabellens.
+  - Peroral paliperidon depottablett 3, 6, 9 og 12 mg daglig tilsvarer ved vedlikehold 25–50, 75, 100 og 150 mg Xeplion månedlig. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2 (bytte fra peroral))*
+- Bytte fra peroral risperidon er ikke tatt med, fordi preparatomtalen ikke har en omregning fra risperidondose. *(OUSFARs vurdering)*
+
+**Den matematiske regelen – parametre:**
+
+| Hvor | Parameter | Verdi | Art | Grunnlag |
+| --- | --- | --- | --- | --- |
+| til: fase 1 (injeksjoner) | start[0].dag | 1 (dag) | bindende krav | ema-xeplion section 4.2 |
+| til: fase 1 (injeksjoner) | start[0].dose.mg | 150 mg | bindende krav | ema-xeplion section 4.2 |
+| til: fase 1 (injeksjoner) | start[1].dag | 8 (dag) | bindende krav | ema-xeplion section 4.2 |
+| til: fase 1 (injeksjoner) | start[1].dose.mg | 100 mg | bindende krav | ema-xeplion section 4.2 |
+| til: fase 1 (injeksjoner) | start[1].vindu_dager | 4 dager | bindende krav | ema-xeplion section 4.2 (glemte doser) |
+| til: fase 1 (injeksjoner) | vedlikehold.maaneder | 1 måned(er) | bindende krav | ema-xeplion section 4.2 |
+| til: fase 1 (injeksjoner) | vedlikehold.vindu_dager | 7 dager | bindende krav | ema-xeplion section 4.2 (glemte doser) |
+| til: vedlikeholdsdose | omregningstabell | 3 → 25–50 mg, 6 → 75 mg, 9 → 100 mg, 12 → 150 mg | bindende krav | ema-xeplion section 4.2 (bytte fra peroral) |
+
+**Betingelser:**
+
+- Startdose 3, 6, 9, 12 mg (bindende; ema-xeplion section 4.2 (bytte fra peroral))
+- Må bekreftes (`indikasjon`): Pasienten er voksen, har schizofreni og er stabilisert på peroral paliperidon depottablett. (ema-xeplion section 4.1; ema-xeplion section 4.2 (bytte fra peroral))
+- Unntak (`nedsatt_nyrefunksjon`): Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min. (ema-xeplion section 4.2 (nedsatt nyrefunksjon))
+
+**Kliniske forutsetninger:**
+
+- Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
+- Dosene er den ideelle dosekurven, avrundet til to desimaler; hvilke doser som kan gis med norske preparater (styrker, deling, flytende form), avgjøres i P5.
+- Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet, interaksjoner, graviditet, etterlevelse eller individuell toleranse fra dosen (B7); dette må vurderes av forskriveren.
+- Pasienten bruker én av depottablettstyrkene 3, 6, 9 eller 12 mg daglig.
+- Forskriveren har vurdert nyrefunksjonen og svart at kreatininclearance ikke er under 80 ml/min; ubesvart stopper beregningen.
+
+**Usikkerhet:**
+
+- Ved bytte fra 9–12 mg til injeksjon i setemuskelen kan eksponeringen bli lavere de første seks månedene (preparatomtalen); valg av injeksjonssted beregnes ikke.
+- Tremånedersdepotene (Trevicta, Byannli) har egne regler og er ikke omfattet.
+
+**Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
+
+- *Paliperidon depottablett 6 mg; indikasjonen bekreftet og nedsatt nyrefunksjon avkreftet.* Inndata: startdose 6 mg; bekreftet: indikasjon; pasientforhold: nedsatt_nyrefunksjon nei.
+  - **fra:** fra dag 1: seponert
+  - **til:** dag 1: 150 mg injeksjon, deltoideus; dag 8 (±4 dager): 100 mg injeksjon, deltoideus; hver måned fra 1 måned etter dag 8 (±7 dager): 75 mg injeksjon, deltoideus eller setemuskel
+  - Kontroll: Avkreftet: Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min. – oppfylt. Vurdert og avkreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten er voksen, har schizofreni og er stabilisert på peroral paliperidon depottablett. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Startdosen er 3, 6, 9, 12 mg (bindende) – oppfylt. 6 mg.
+- *Fra 3 mg med klinikerens valg 50 mg i spennet 25–50 mg, startdato 24. januar 2027: dag 8 er 31. januar, og én måned senere er siste dag i februar.* Inndata: startdose 3 mg; måldose 50 mg; startdato 24.01.2027; bekreftet: indikasjon; pasientforhold: nedsatt_nyrefunksjon nei.
+  - **fra:** fra dag 1 (24.01.2027): seponert
+  - **til:** dag 1 (24.01.2027): 150 mg injeksjon, deltoideus; dag 8 (31.01.2027, ±4 dager): 100 mg injeksjon, deltoideus; hver måned fra 1 måned etter dag 8 (28.02.2027, ±7 dager): 50 mg injeksjon, deltoideus eller setemuskel
+  - Kontroll: Avkreftet: Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min. – oppfylt. Vurdert og avkreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten er voksen, har schizofreni og er stabilisert på peroral paliperidon depottablett. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Startdosen er 3, 6, 9, 12 mg (bindende) – oppfylt. 3 mg.
+- *Fra 3 mg uten valgt dose i spennet: beregningen velger ikke selv, og stopper.* Inndata: startdose 3 mg; bekreftet: indikasjon; pasientforhold: nedsatt_nyrefunksjon nei.
+  - **Stoppet:** Ved 3 mg gir omregningstabellen et spenn på 25–50 mg. Dosen i spennet er et klinisk valg og må oppgis som måldose; beregningen velger ikke selv.
+- *15 mg finnes ikke i omregningstabellen, så beregningen stopper.* Inndata: startdose 15 mg; bekreftet: indikasjon; pasientforhold: nedsatt_nyrefunksjon nei.
+  - **Stoppet:** Startdosen 15 mg er utenfor det regelen gjelder for (3, 6, 9, 12 mg).
+- *Kreatininclearance under 80 ml/min: regelen gjelder ikke.* Inndata: startdose 6 mg; bekreftet: indikasjon; pasientforhold: nedsatt_nyrefunksjon ja.
+  - **Stoppet:** Regelen gjelder ikke: Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min.
+- *Nyrefunksjonen er ikke vurdert: ukjent stopper like mye som nedsatt.* Inndata: startdose 6 mg; bekreftet: indikasjon.
+  - **Stoppet:** Må avklares før beregning (ukjent): Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min.
+
+**Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntipsychotics:Pp>Dp`.
