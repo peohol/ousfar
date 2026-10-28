@@ -1,5 +1,5 @@
 -- Stoffsidene kobles til virkestoffene i FEST
-select intern.endring_start('claude-code', '20261028142704_kokain_etanol_fest_kobling.sql', 'Fagsider koblet til legemiddeldataene (2)');
+select intern.endring_start('claude-code', '20261028142704_kokain_etanol_fest_kobling.sql', 'Fagsider koblet til legemiddeldataene (2)', array['https://github.com/peohol/ousfar/pull/285']::text[]);
 do $kobling$
 declare
   administrator uuid;

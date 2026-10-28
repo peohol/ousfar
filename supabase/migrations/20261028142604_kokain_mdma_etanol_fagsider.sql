@@ -1,5 +1,5 @@
 -- Nye fagsider uten faginnhold
-select intern.endring_start('claude-code', '20261028142604_kokain_mdma_etanol_fagsider.sql', 'Nye fagsider uten faginnhold (3)');
+select intern.endring_start('claude-code', '20261028142604_kokain_mdma_etanol_fagsider.sql', 'Nye fagsider uten faginnhold (3)', array['https://github.com/peohol/ousfar/pull/285']::text[]);
 do $fagsider$
 declare
   administrator uuid;
