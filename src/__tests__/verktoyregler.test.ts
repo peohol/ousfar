@@ -2,12 +2,16 @@
  * Regelmodellen og pilotsettet for OUSFAR Verktøy (P4 i
  * `docs/verktøy-utviklingsplan.md`): hver nedtrappingsstrategi ved
  * grenseverdiene, utvasking, depot og datoer, at beregningen stopper i
- * stedet for å gjette, at den er deterministisk og bærer versjonene, at
+ * stedet for å gjette (ukjente unntak, dosespenn, ugyldige datoer og
+ * parametre), at den aldri kaster, er deterministisk og bærer versjonene, at
+ * en godkjenning bare gjelder nøyaktig den kontrollerte regelversjonen, at
  * pilotreglenes regneeksempler (regnet ut for hånd) stemmer, at ingen regel
  * er klinisk godkjent eller bygger på Psychiatrienet, at kontrollene slår ut
- * på feil, at bare verktøymodulene bruker reglene, og at rapporten er
- * oppdatert.
+ * på feil (også en Psychiatrienet-referanse med feil retning), at bare
+ * verktøymodulene bruker reglene, og at rapporten er oppdatert og sier hvor
+ * mange regler som faktisk er godkjent.
  */
+import { createHash } from 'node:crypto'
 import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
@@ -15,6 +19,7 @@ import {
   avrund,
   beregn,
   datoFor,
+  erIsoDato,
   FORBEHOLD_GODKJENT,
   FORBEHOLD_IKKE_GODKJENT,
   kortform,
@@ -23,6 +28,7 @@ import {
   trinnserie,
   type Beregningsresultat,
 } from '../verktoy/regler/beregning'
+import { fingeravtrykk, godkjenningsfeil, kanonisk, sha256 } from '../verktoy/regler/godkjenning'
 import { KILDER } from '../verktoy/regler/kilder'
 import { kontrollerRegelsett, lesKontrollgrunnlag } from '../verktoy/regler/kontroll'
 import { henvisninger, REGELMODELLVERSJON, type Nedtrappingsstrategi, type Parameter, type Regel, type Regelsett } from '../verktoy/regler/modell'
@@ -40,6 +46,20 @@ const p = (verdi: number | null, enhet: Parameter['enhet'] = 'mg'): Parameter =>
 const serie = (s: Nedtrappingsstrategi, d0: number) => trinnserie(s, d0).map(avrund)
 const stoppgrunner = (r: Beregningsresultat) => (r.status === 'stoppet' ? r.stoppgrunner : [])
 const sett = (regler: Regel[]): Regelsett => ({ ...PILOTSETT, regler })
+/** Legger til en klinisk godkjenning av regelen slik den er nå. */
+const godkjenn = (r: Regel, av = 'Uavhengig kontrollør') => {
+  r.godkjenning = {
+    status: 'klinisk_godkjent',
+    historikk: [
+      ...r.godkjenning.historikk,
+      { status: 'klinisk_godkjent', dato: '2026-11-01', av, rolle: 'uavhengig_kontrollor', regelversjon: r.versjon, fingeravtrykk: fingeravtrykk(r), merknad: 'test' },
+    ],
+  }
+  return r
+}
+const XEPLION = { startdose_mg: 6, bekreftet: ['indikasjon'], pasientforhold: { nedsatt_nyrefunksjon: false } }
+const MAINTENA = { startdose_mg: 15, bekreftet: ['indikasjon'], pasientforhold: { cyp2d6_langsom: false, sterk_cyp_hemmer: false, cyp3a4_induktor: false } }
+const AP = ['indikasjon', 'peroral_formulering']
 
 describe('Nedtrappingsstrategiene', () => {
   it('prosent av aktuell dose: beholder en dose lik sluttdosen, seponerer like under', () => {
@@ -91,6 +111,11 @@ describe('Nedtrappingsstrategiene', () => {
 })
 
 describe('Datoer', () => {
+  it('godtar bare gyldige kalenderdatoer som ÅÅÅÅ-MM-DD', () => {
+    for (const d of ['2027-02-28', '2028-02-29', '2026-12-31']) expect(erIsoDato(d), d).toBe(true)
+    for (const d of ['2027-02-29', '2027-02-31', '2027-13-01', '2027-00-10', '2027-1-5', 'i morgen', '', '2027-02-28T00:00']) expect(erIsoDato(d), d).toBe(false)
+  })
+
   it('dag 1 er startdatoen, også over et årsskifte', () => {
     expect(datoFor('2026-12-30', 1)).toBe('2026-12-30')
     expect(datoFor('2026-12-30', 3)).toBe('2027-01-01')
@@ -109,12 +134,22 @@ describe('Pilotsettet', () => {
     expect(kontrollerRegelsett(PILOTSETT, GRUNNLAG)).toEqual([])
   })
 
-  it('har ingen klinisk godkjent regel; alle er til faglig kontroll, med historikk', () => {
+  it('har ingen klinisk godkjent regel; alle er til faglig kontroll i sin gjeldende versjon, med historikk', () => {
     for (const r of PILOTSETT.regler) {
       expect(r.godkjenning.status, r.id).toBe('til_faglig_kontroll')
-      expect(r.godkjenning.historikk.map((s) => s.status)).toEqual(['utkast', 'til_faglig_kontroll'])
+      expect(godkjenningsfeil(r).length, r.id).toBeGreaterThan(0)
+      const forventet = r.versjon === 1 ? ['utkast', 'til_faglig_kontroll'] : ['utkast', 'til_faglig_kontroll', 'utkast', 'til_faglig_kontroll']
+      expect(r.godkjenning.historikk.map((s) => s.status), r.id).toEqual(forventet)
+      expect(r.godkjenning.historikk.at(-1)!.regelversjon, r.id).toBe(r.versjon)
       expect(r.godkjenning.historikk.every((s) => s.rolle === 'utvikler')).toBe(true)
     }
+    // Reglene som ble rettet etter første kontroll, er nye versjoner.
+    expect(PILOTSETT.regler.filter((r) => r.versjon === 2).map((r) => r.id)).toEqual([
+      'antipsykotikabytte-olanzapin-kvetiapin',
+      'gruppe-rest-ap-aripiprazol',
+      'depot-aripiprazol-maintena',
+      'depot-paliperidon-xeplion',
+    ])
   })
 
   it('dekker regelklassene planen prioriterer', () => {
@@ -176,15 +211,61 @@ describe('Beregningen', () => {
     })
   })
 
-  it('er bare klinisk godkjent når regelversjonen er det', () => {
-    const r = regel('depot-paliperidon-xeplion')
-    r.godkjenning = {
-      status: 'klinisk_godkjent',
-      historikk: [...r.godkjenning.historikk, { status: 'klinisk_godkjent', dato: '2026-11-01', av: 'Kontrollør', rolle: 'uavhengig_kontrollor', merknad: 'test' }],
+  it('er bare klinisk godkjent når godkjenningen gjelder nøyaktig denne regelversjonen', () => {
+    const r = godkjenn(regel('depot-paliperidon-xeplion'))
+    expect(godkjenningsfeil(r)).toEqual([])
+    expect(beregn(r, XEPLION)).toMatchObject({ klinisk_godkjent: true, forbehold: FORBEHOLD_GODKJENT, merknader: [] })
+    expect(beregn(r, { ...XEPLION, startdose_mg: 15 }).klinisk_godkjent).toBe(false)
+  })
+
+  it('mister godkjenningen når en godkjent regel endres faglig, uten at versjonen økes (regresjon)', () => {
+    const r = godkjenn(regel('depot-paliperidon-xeplion'))
+    const fase = r.plan.forlop[1]!.faser[0]!
+    if (fase.type !== 'injeksjoner') throw new Error()
+    fase.vedlikehold.vindu_dager = { ...fase.vedlikehold.vindu_dager!, verdi: 14 }
+    const res = beregn(r, XEPLION)
+    expect(res).toMatchObject({ status: 'modellberegning', klinisk_godkjent: false, forbehold: FORBEHOLD_IKKE_GODKJENT })
+    expect(res.merknader.join()).toMatch(/endret etter godkjenningen.*behandlet som ikke godkjent/)
+    // Også en endring bare i fortolkningen, et eksempel eller en kildes versjon gir nytt fingeravtrykk.
+    const a = regel('depot-paliperidon-xeplion')
+    const f0 = fingeravtrykk(a)
+    a.fortolkning.usikkerhet.push('Ny merknad.')
+    expect(fingeravtrykk(a)).not.toBe(f0)
+    const b = regel('depot-paliperidon-xeplion')
+    b.eksempler[0]!.stopp = /x/
+    expect(fingeravtrykk(b)).not.toBe(f0)
+    const kilde = KILDER.find((k) => k.id === 'ema-xeplion')!
+    const versjon = kilde.versjon
+    try {
+      kilde.versjon = 'ny revisjon'
+      expect(fingeravtrykk(regel('depot-paliperidon-xeplion'))).not.toBe(f0)
+    } finally {
+      kilde.versjon = versjon
     }
-    const res = beregn(r, { startdose_mg: 6, bekreftet: ['stabil_peroralt'] })
-    expect(res).toMatchObject({ klinisk_godkjent: true, forbehold: FORBEHOLD_GODKJENT })
-    expect(beregn(r, { startdose_mg: 15, bekreftet: ['stabil_peroralt'] }).klinisk_godkjent).toBe(false)
+    // Godkjenningen selv inngår ikke, og rekkefølgen på feltene betyr ingenting.
+    expect(fingeravtrykk(godkjenn(regel('depot-paliperidon-xeplion')))).toBe(f0)
+    expect(kanonisk({ b: 1, a: [2, { d: undefined, c: /x/g }] })).toBe(kanonisk({ a: [2, { c: /x/g }], b: 1 }))
+  })
+
+  it('mister godkjenningen når versjonen økes, og godtar ikke godkjenning fra utvikler eller av en regel med åpne valg', () => {
+    const v = godkjenn(regel('depot-paliperidon-xeplion'))
+    v.versjon = 3
+    expect(godkjenningsfeil(v).join()).toMatch(/gjelder regelversjon 2, ikke versjon 3/)
+    expect(beregn(v, XEPLION).klinisk_godkjent).toBe(false)
+    const u = godkjenn(regel('depot-paliperidon-xeplion'), 'Claude Code')
+    expect(godkjenningsfeil(u).join()).toMatch(/ikke en klinisk godkjenning fra en uavhengig kontrollør/)
+    const a = godkjenn(regel('seponering-escitalopram'))
+    expect(godkjenningsfeil(a).join()).toMatch(/valg som må avklares/)
+    expect(beregn(a, { startdose_mg: 20 }).klinisk_godkjent).toBe(false)
+    const uten = godkjenn(regel('depot-paliperidon-xeplion'))
+    delete uten.godkjenning.historikk.at(-1)!.fingeravtrykk
+    expect(beregn(uten, XEPLION).klinisk_godkjent).toBe(false)
+  })
+
+  it('regner SHA-256 likt med Node', () => {
+    for (const t of ['', 'abc', 'æøå – μg/l', 'x'.repeat(55), 'x'.repeat(56), 'x'.repeat(64), 'y'.repeat(1000)]) {
+      expect(sha256(t), t.slice(0, 10)).toBe(createHash('sha256').update(t, 'utf8').digest('hex'))
+    }
   })
 
   it('holder utvaskingen: fenelzin tidligst etter 35 hele dager uten fluoksetin', () => {
@@ -223,37 +304,108 @@ describe('Beregningen', () => {
     expect(beregn(r, { startdose_mg: 5 }).status).toBe('modellberegning')
     expect(stoppgrunner(beregn(r, { startdose_mg: 20.01 })).join()).toMatch(/utenfor/)
     expect(stoppgrunner(beregn(r, { startdose_mg: 4.99 })).join()).toMatch(/utenfor/)
-    expect(stoppgrunner(beregn(r, { startdose_mg: 0 })).join()).toMatch(/Startdosen må oppgis/)
+    expect(stoppgrunner(beregn(r, { startdose_mg: 0 })).join()).toMatch(/Startdosen må være et positivt tall/)
     const g = regel('gruppe-rest-ap-aripiprazol')
-    const res = beregn(g, { startdose_mg: 10, maldose_mg: 15, medlem: 'zuklopentiksol' })
+    const res = beregn(g, { startdose_mg: 10, maldose_mg: 15, medlem: 'zuklopentiksol', bekreftet: AP })
     expect(res.status).toBe('modellberegning')
     expect(res.merknader.join()).toMatch(/Startdosen 10 mg er utenfor .*veiledende grense/)
-    expect(stoppgrunner(beregn(g, { startdose_mg: 20, maldose_mg: 35, medlem: 'zuklopentiksol' })).join()).toMatch(/Måldosen 35 mg er utenfor/)
+    expect(stoppgrunner(beregn(g, { startdose_mg: 20, maldose_mg: 35, medlem: 'zuklopentiksol', bekreftet: AP })).join()).toMatch(/Måldosen 35 mg er utenfor/)
   })
 
   it('stopper for unntak, ukjente pasientforhold og manglende bekreftelser, og sier alle grunnene', () => {
     const r = regel('depot-aripiprazol-maintena')
-    const res = beregn(r, { startdose_mg: 25, pasientforhold: ['sterk_cyp_hemmer', 'graviditet'] })
+    const res = beregn(r, { startdose_mg: 25, pasientforhold: { sterk_cyp_hemmer: true, cyp3a4_induktor: false, graviditet: true } })
     expect(stoppgrunner(res)).toEqual([
+      'Må avklares før beregning (ukjent): Pasienten er kjent langsom CYP2D6-omsetter; preparatomtalen har egne doser.',
       'Regelen gjelder ikke: Pasienten bruker en sterk CYP2D6- eller CYP3A4-hemmer; dosen skal reduseres.',
       'Pasientforholdet «graviditet» er ukjent for regelen; det må vurderes individuelt.',
-      'Må bekreftes før beregning: Pasienten har tålt peroral aripiprazol.',
+      'Må bekreftes før beregning: Pasienten er voksen, har schizofreni og er stabilisert på, og har tålt, peroral aripiprazol.',
       'Startdosen 25 mg er utenfor det regelen gjelder for (10–20 mg).',
     ])
     expect(res.klinisk_godkjent).toBe(false)
   })
 
+  it('skiller ukjent fra avkreftet: bare et eksplisitt nei på hvert unntak slipper gjennom', () => {
+    const r = regel('depot-aripiprazol-maintena')
+    const alle = MAINTENA.pasientforhold
+    const ok = beregn(r, MAINTENA)
+    expect(ok.status).toBe('modellberegning')
+    if (ok.status !== 'modellberegning') throw new Error()
+    expect(ok.kontroller.filter((k) => k.krav.startsWith('Avkreftet:'))).toHaveLength(3)
+    for (const id of Object.keys(alle)) {
+      const { [id as keyof typeof alle]: _, ...uten } = alle
+      expect(stoppgrunner(beregn(r, { ...MAINTENA, pasientforhold: uten })).join(), `${id} ukjent`).toMatch(/Må avklares før beregning \(ukjent\)/)
+      expect(stoppgrunner(beregn(r, { ...MAINTENA, pasientforhold: { ...alle, [id]: true } })).join(), `${id} ja`).toMatch(/Regelen gjelder ikke/)
+    }
+    expect(stoppgrunner(beregn(r, { ...MAINTENA, pasientforhold: undefined })).filter((g) => g.includes('(ukjent)'))).toHaveLength(3)
+    // Et nei på et forhold regelen ikke kjenner, endrer ingenting.
+    expect(beregn(r, { ...MAINTENA, pasientforhold: { ...alle, graviditet: false } }).status).toBe('modellberegning')
+    // Den gamle formen (en liste med forhold som gjelder) godtas ikke.
+    expect(stoppgrunner(beregn(r, { ...MAINTENA, pasientforhold: ['cyp2d6_langsom'] as never })).join()).toMatch(/ja eller nei/)
+    expect(stoppgrunner(beregn(r, { ...MAINTENA, pasientforhold: { ...alle, cyp2d6_langsom: 'nei' } as never })).join()).toMatch(/ja eller nei/)
+  })
+
+  it('krever klinikerens dosevalg når omregningstabellen gir et spenn, og godtar det bare innenfor spennet', () => {
+    const r = regel('depot-paliperidon-xeplion')
+    const ved3 = (maldose_mg?: number) => beregn(r, { ...XEPLION, startdose_mg: 3, ...(maldose_mg === undefined ? {} : { maldose_mg }) })
+    expect(stoppgrunner(ved3()).join()).toMatch(/spenn på 25–50 mg.*beregningen velger ikke selv/)
+    for (const x of [25, 37.5, 50]) {
+      const res = ved3(x)
+      if (res.status !== 'modellberegning') throw new Error(`${x}: ${stoppgrunner(res).join()}`)
+      expect(res.forlop[1]!.injeksjoner.at(-1)!.mg).toBe(x)
+    }
+    for (const x of [24.99, 50.01]) expect(stoppgrunner(ved3(x)).join(), String(x)).toMatch(/utenfor spennet 25–50 mg/)
+    expect(stoppgrunner(ved3(-5)).join()).toMatch(/Måldosen må være et positivt tall/)
+    // Ved en entydig rad kan måldosen utelates, men må være lik tabellens når den oppgis.
+    expect(beregn(r, { ...XEPLION, maldose_mg: 75 }).status).toBe('modellberegning')
+    expect(stoppgrunner(beregn(r, { ...XEPLION, maldose_mg: 50 })).join()).toMatch(/stemmer ikke med omregningstabellen, som gir 75 mg/)
+  })
+
+  it('stopper på ugyldige datoer og inndata i stedet for å normalisere dem eller kaste', () => {
+    const r = regel('antipsykotikabytte-olanzapin-kvetiapin')
+    const inn = { startdose_mg: 20, maldose_mg: 300, bekreftet: AP }
+    for (const startdato of ['2027-02-31', '2027-02-29', '2027-13-01', 'i morgen', '']) {
+      expect(stoppgrunner(beregn(r, { ...inn, startdato })).join(), startdato).toMatch(/ikke en gyldig dato/)
+    }
+    expect(beregn(r, { ...inn, startdato: '2028-02-29' }).status).toBe('modellberegning')
+    expect(stoppgrunner(beregn(r, { ...inn, startdose_mg: Number.NaN })).join()).toMatch(/Startdosen må være et positivt tall/)
+    expect(stoppgrunner(beregn(r, { ...inn, maldose_mg: Number.POSITIVE_INFINITY })).join()).toMatch(/Måldosen må være et positivt tall/)
+    expect(stoppgrunner(beregn(r, { ...inn, bekreftet: 'indikasjon' as never })).join()).toMatch(/liste med id-er/)
+  })
+
+  it('stopper på ugyldige regelparametre, og kaster aldri selv når regelen er feil', () => {
+    const med = (strategi: Nedtrappingsstrategi, trinnlengde = 14) => {
+      const r = regel('seponering-escitalopram')
+      const fase = r.plan.forlop[0]!.faser[0]!
+      if (fase.type !== 'nedtrapping') throw new Error()
+      fase.strategi = strategi
+      fase.trinnlengde = p(trinnlengde, 'dager')
+      delete fase.minste_varighet
+      return beregn(r, { startdose_mg: 20 })
+    }
+    expect(stoppgrunner(med({ type: 'absolutt', mg: p(0) })).join()).toMatch(/strategi\.mg er ugyldig: 0 mg må være over 0/)
+    expect(stoppgrunner(med({ type: 'prosent_av_startdose', prosent: p(0, 'prosent') })).join()).toMatch(/er ugyldig: 0 prosent må være over 0/)
+    expect(stoppgrunner(med({ type: 'prosent_av_startdose', prosent: p(100.01, 'prosent') })).join()).toMatch(/kan ikke være over 100 %/)
+    expect(stoppgrunner(med({ type: 'hyperbolsk', ed50_mg: p(3.4), trinn: p(2.5, 'trinn') })).join()).toMatch(/må være et helt tall/)
+    expect(stoppgrunner(med({ type: 'absolutt', mg: p(Number.NaN) })).join()).toMatch(/ikke et endelig tall/)
+    expect(stoppgrunner(med({ type: 'absolutt', mg: p(5) }, 0)).join()).toMatch(/trinnlengde er ugyldig/)
+    expect(med({ type: 'prosent_av_startdose', prosent: p(100, 'prosent') }).status).toBe('modellberegning')
+    // Gyldige verdier som likevel ikke når null: kontrollert stopp, ikke et unntak.
+    expect(stoppgrunner(med({ type: 'absolutt', mg: p(0.01) })).join()).toMatch(/Beregningen kunne ikke fullføres: .*når ikke 0 på 200 trinn/)
+  })
+
   it('beregner bare gruppemedlemmer som er vurdert, og bare medlemmer av gruppen', () => {
     const r = regel('gruppe-rest-ap-aripiprazol')
-    expect(stoppgrunner(beregn(r, { startdose_mg: 20, maldose_mg: 15 })).join()).toMatch(/virkestoffet pasienten bruker må oppgis/)
-    expect(stoppgrunner(beregn(r, { startdose_mg: 20, maldose_mg: 15, medlem: 'olanzapin' })).join()).toMatch(/ikke medlem av gruppen/)
+    const inn = { startdose_mg: 20, maldose_mg: 15, bekreftet: AP }
+    expect(stoppgrunner(beregn(r, inn)).join()).toMatch(/virkestoffet pasienten bruker må oppgis/)
+    expect(stoppgrunner(beregn(r, { ...inn, medlem: 'olanzapin' })).join()).toMatch(/ikke medlem av gruppen/)
     for (const m of r.medlemmer!.filter((x) => x.validering === 'ikke_vurdert')) {
-      expect(beregn(r, { startdose_mg: 20, maldose_mg: 15, medlem: m.nokkel }).status, m.nokkel).toBe('stoppet')
+      expect(beregn(r, { ...inn, medlem: m.nokkel }).status, m.nokkel).toBe('stoppet')
     }
     // Et medlems egne faser går foran gruppens.
     const z = r.medlemmer!.find((m) => m.nokkel === 'zuklopentiksol')!
     z.faser = [{ type: 'seponer' }]
-    const res = beregn(r, { startdose_mg: 20, maldose_mg: 15, medlem: 'zuklopentiksol' })
+    const res = beregn(r, { ...inn, medlem: 'zuklopentiksol' })
     expect(kortform(res)).toEqual({ fra: ['fra dag 1: seponert'], til: ['fra dag 1: 15 mg'] })
   })
 
@@ -266,14 +418,17 @@ describe('Beregningen', () => {
     const t = { ...regel('seponering-escitalopram'), beregnbarhet: 'bare_tekstlig' as const }
     expect(stoppgrunner(beregn(t, { startdose_mg: 20 })).join()).toMatch(/bare tekstlig/)
     const a = regel('seponering-escitalopram')
-    a.godkjenning = { status: 'avvist', historikk: [...a.godkjenning.historikk, { status: 'avvist', dato: '2026-11-01', av: 'Kontrollør', rolle: 'uavhengig_kontrollor', merknad: '' }] }
+    a.godkjenning = {
+      status: 'avvist',
+      historikk: [...a.godkjenning.historikk, { status: 'avvist', dato: '2026-11-01', av: 'Kontrollør', rolle: 'uavhengig_kontrollor', regelversjon: 1, merknad: '' }],
+    }
     expect(stoppgrunner(beregn(a, { startdose_mg: 20 })).join()).toMatch(/avvist/)
   })
 
   it('stopper når startdosen ikke finnes i omregningstabellen, uten å velge nærmeste', () => {
     const r = regel('depot-paliperidon-xeplion')
     r.inndata = []
-    expect(stoppgrunner(beregn(r, { startdose_mg: 7.5, bekreftet: ['stabil_peroralt'] })).join()).toMatch(/finnes ikke i omregningstabellen/)
+    expect(stoppgrunner(beregn(r, { ...XEPLION, startdose_mg: 7.5 })).join()).toMatch(/finnes ikke i omregningstabellen/)
   })
 
   it('har ingen skjult standard måldose', () => {
@@ -324,10 +479,57 @@ describe('Kontrollene av et regelsett', () => {
     const a = { ...regel('seponering-escitalopram'), beregnbarhet: 'entydig_beregnbar' as const }
     expect(feil(a)).toMatch(/merket entydig beregnbar, men har forslag/)
     const b = regel('depot-paliperidon-xeplion')
-    b.godkjenning = { status: 'klinisk_godkjent', historikk: [...b.godkjenning.historikk, { status: 'klinisk_godkjent', dato: '2026-11-01', av: 'Claude Code', rolle: 'utvikler', merknad: '' }] }
-    expect(feil(b)).toMatch(/uten et godkjenningssteg fra en uavhengig kontrollør/)
-    b.godkjenning.historikk.push({ status: 'klinisk_godkjent', dato: '2026-11-02', av: 'Claude Code', rolle: 'uavhengig_kontrollor', merknad: '' })
-    expect(feil(b)).toMatch(/uten et godkjenningssteg fra en uavhengig kontrollør/)
+    const f = fingeravtrykk(b)
+    b.godkjenning = {
+      status: 'klinisk_godkjent',
+      historikk: [...b.godkjenning.historikk, { status: 'klinisk_godkjent', dato: '2026-11-01', av: 'Claude Code', rolle: 'utvikler', regelversjon: 2, fingeravtrykk: f, merknad: '' }],
+    }
+    expect(feil(b)).toMatch(/ikke en klinisk godkjenning fra en uavhengig kontrollør/)
+    b.godkjenning.historikk.push({ status: 'klinisk_godkjent', dato: '2026-11-02', av: 'Claude Code', rolle: 'uavhengig_kontrollor', regelversjon: 2, fingeravtrykk: f, merknad: '' })
+    expect(feil(b)).toMatch(/ikke en klinisk godkjenning fra en uavhengig kontrollør/)
+    expect(feil(godkjenn(regel('depot-paliperidon-xeplion')))).toBe('')
+  })
+
+  it('slår ut når en godkjent regel er endret, eller en endret regel ikke er sendt til kontroll på nytt', () => {
+    const a = godkjenn(regel('depot-paliperidon-xeplion'))
+    a.unntak = []
+    a.eksempler = a.eksempler.filter((e) => !/nyre/.test(e.id))
+    expect(feil(a)).toMatch(/fingeravtrykket stemmer ikke/)
+    const b = regel('seponering-escitalopram')
+    b.versjon = 2
+    expect(feil(b)).toMatch(/siste godkjenningssteg gjelder regelversjon 1, ikke versjon 2; en endret regel må sendes til kontroll på nytt/)
+  })
+
+  it('slår ut når en Psychiatrienet-referanse har feil retning, virkestoff, type eller formulering', () => {
+    const a = regel('kryssnedtrapping-sertralin-mirtazapin')
+    a.referanser = [{ kilde: 'psychiatrienet', kildeoppforing: 'SwitchAntidepressants:Mz>Se' }]
+    expect(feil(a)).toMatch(/Mz>Se passer ikke regelen: den fra-siden gjelder mirtazapin, ikke sertralin/)
+    expect(feil(a)).toMatch(/til-siden gjelder sertralin, ikke mirtazapin/)
+    const b = regel('depot-paliperidon-xeplion')
+    b.referanser = [{ kilde: 'psychiatrienet', kildeoppforing: 'SwitchAntipsychotics:Dp>Pp' }]
+    expect(feil(b)).toMatch(/fra-siden gjelder formuleringen ER \(depotinjeksjon\), ikke peroral/)
+    expect(feil(b)).toMatch(/til-siden gjelder formuleringen standard \(peroral\/peroral_modifisert\), ikke depotinjeksjon/)
+    const c = regel('seponering-escitalopram')
+    c.referanser = [{ kilde: 'psychiatrienet', kildeoppforing: 'SwitchAntidepressants:Ci>Stop' }]
+    expect(feil(c)).toMatch(/fra-siden gjelder citalopram, ikke escitalopram/)
+    const d = regel('seponering-escitalopram')
+    d.referanser = [{ kilde: 'psychiatrienet', kildeoppforing: 'SwitchAntidepressants:Es>Ci' }]
+    expect(feil(d)).toMatch(/er en anbefaling om bytte, men regelen seponerer/)
+    const e = regel('gruppe-rest-ap-aripiprazol')
+    e.fra = { type: 'gruppe', gruppe: 'partiell-agonist' }
+    expect(feil(e)).toMatch(/fra-siden gjelder gruppen rest-ap, ikke gruppen partiell-agonist/)
+  })
+
+  it('slår ut på ugyldige parametre, inndatagrenser og omregningsrader', () => {
+    const a = regel('depot-paliperidon-xeplion')
+    const fase = a.plan.forlop[1]!.faser[0]!
+    if (fase.type !== 'injeksjoner' || fase.vedlikehold.dose.type !== 'tabell') throw new Error()
+    fase.vedlikehold.dose.rader[0] = { fra_mg: 3, til_mg: [50, 25] }
+    fase.vedlikehold.maaneder = { ...fase.vedlikehold.maaneder, verdi: 0.5 }
+    a.inndata[0] = { ...a.inndata[0]!, verdier: [0, 6] }
+    expect(feil(a)).toMatch(/omregningsraden 3 mg er ugyldig/)
+    expect(feil(a)).toMatch(/maaneder er ugyldig: 0.5 maaneder må være et helt tall/)
+    expect(feil(a)).toMatch(/inndatakravet for startdose har ugyldige grenser/)
   })
 
   it('slår ut når et regneeksempel ikke stemmer med beregningen', () => {
@@ -361,6 +563,19 @@ describe('Reglene', () => {
       .map((f) => f.slice(rot.length))
       .filter((f) => !f.startsWith('verktoy/regler/') && !f.startsWith('__tests__/'))
     expect(brukere).toEqual([])
+  })
+
+  it('rapporten sier hvor mange regler som faktisk er gyldig klinisk godkjent', () => {
+    expect(lagRegelrapport()).toMatch(/\*\*8 regler, 0 klinisk godkjent\.\*\*.*ingen av reglene er klinisk godkjent/)
+    const en = lagRegelrapport(sett([godkjenn(regel('depot-paliperidon-xeplion')), regel('seponering-escitalopram')]))
+    expect(en).toMatch(/\*\*2 regler, 1 klinisk godkjent\.\*\*.*1 av reglene er klinisk godkjent/)
+    expect(en).not.toMatch(/ingen av reglene/)
+    expect(lagRegelrapport(sett([godkjenn(regel('depot-paliperidon-xeplion'))]))).toMatch(/Alle reglene er klinisk godkjent/)
+    const endret = godkjenn(regel('depot-paliperidon-xeplion'))
+    endret.unntak = []
+    const ugyldig = lagRegelrapport(sett([endret]))
+    expect(ugyldig).toMatch(/\*\*1 regler, 0 klinisk godkjent\.\*\*/)
+    expect(ugyldig).toMatch(/merket klinisk godkjent, men ugyldig \(Regelen er endret etter godkjenningen/)
   })
 
   it('rapporten er oppdatert', () => {

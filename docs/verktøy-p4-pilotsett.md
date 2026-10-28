@@ -2,9 +2,9 @@
 
 <!-- Laget av `npm run verktoy:regler -- rapport` fra reglene i src/verktoy/regler/. Ikke rediger for hånd; endre reglene og lag rapporten på nytt. -->
 
-Regelsett `ousfar-verktoy-pilot` versjon 1, regelmodell 1, beregningsmotor 1. Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.
+Regelsett `ousfar-verktoy-pilot` versjon 2, regelmodell 1, beregningsmotor 1. Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.
 
-**8 regler, 0 klinisk godkjent.** Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. De er ikke empirisk validerte kliniske anbefalinger, og ingen av dem er kontrollert faglig ennå. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-p4-regelmodell.md`.
+**8 regler, 0 klinisk godkjent.** Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. De er ikke empirisk validerte kliniske anbefalinger, og ingen av reglene er klinisk godkjent. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-p4-regelmodell.md`.
 
 Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel bygger på teksten der, og den vises ikke (`docs/verktøy-p3-rettigheter.md`).
 
@@ -16,10 +16,10 @@ Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel by
 | `seponering-citalopram-hyperbolsk` | seponering | citalopram → – | beregnbar etter faglig avklaring | til faglig kontroll | 1 |
 | `kryssnedtrapping-sertralin-mirtazapin` | kryssnedtrapping | sertralin → mirtazapin | beregnbar etter faglig avklaring | til faglig kontroll | 3 |
 | `mao-fluoksetin-fenelzin` | sekvensielt bytte | fluoksetin → fenelzin | beregnbar etter faglig avklaring | til faglig kontroll | 3 |
-| `antipsykotikabytte-olanzapin-kvetiapin` | kryssnedtrapping | olanzapin → kvetiapin | beregnbar etter faglig avklaring | til faglig kontroll | 3 |
+| `antipsykotikabytte-olanzapin-kvetiapin` | kryssnedtrapping | olanzapin → kvetiapin | beregnbar etter faglig avklaring | til faglig kontroll | 4 |
 | `gruppe-rest-ap-aripiprazol` | kryssnedtrapping | gruppen rest-ap → aripiprazol | beregnbar etter faglig avklaring | til faglig kontroll | 2 |
-| `depot-aripiprazol-maintena` | oppstart av depot | aripiprazol → aripiprazol | entydig beregnbar | til faglig kontroll | 3 |
-| `depot-paliperidon-xeplion` | oppstart av depot | paliperidon → paliperidon | entydig beregnbar | til faglig kontroll | 4 |
+| `depot-aripiprazol-maintena` | oppstart av depot | aripiprazol → aripiprazol | entydig beregnbar | til faglig kontroll | 4 |
+| `depot-paliperidon-xeplion` | oppstart av depot | paliperidon → paliperidon | entydig beregnbar | til faglig kontroll | 6 |
 
 ## Kilder
 
@@ -47,7 +47,9 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Seponering av escitalopram, gjentatt prosentvis nedtrapping
 
-`seponering-escitalopram`, versjon 1. Seponering: escitalopram → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`seponering-escitalopram`, versjon 1, fingeravtrykk `6d81d5ca872989dcda7922156ddd10ecd8e390cee7c0474d635f0a135ae9b127`. Seponering: escitalopram → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -112,7 +114,9 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Seponering av citalopram, hyperbolsk nedtrapping (alternativ strategi)
 
-`seponering-citalopram-hyperbolsk`, versjon 1. Seponering: citalopram → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`seponering-citalopram-hyperbolsk`, versjon 1, fingeravtrykk `6cdc538c304f3f5b0981f7d64487a00c91e457e3f44d268a9938ec93ec053faf`. Seponering: citalopram → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -168,7 +172,9 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra sertralin til mirtazapin, kryssnedtrapping
 
-`kryssnedtrapping-sertralin-mirtazapin`, versjon 1. Kryssnedtrapping: sertralin → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`kryssnedtrapping-sertralin-mirtazapin`, versjon 1, fingeravtrykk `db20fa3c00f7273b281333f7888d9e53d7088f233d71b276aac33fb00e555dee`. Kryssnedtrapping: sertralin → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -236,7 +242,9 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra fluoksetin til fenelzin, sekvensielt med utvasking
 
-`mao-fluoksetin-fenelzin`, versjon 1. Sekvensielt bytte: fluoksetin → fenelzin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`mao-fluoksetin-fenelzin`, versjon 1, fingeravtrykk `aaf57e1955407c74d34ed58f1d99521b83dbde1a03050f50bdb66a4e7f8a9dfd`. Sekvensielt bytte: fluoksetin → fenelzin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -306,7 +314,9 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra olanzapin til kvetiapin, kryss-titrering med fast opptrapping
 
-`antipsykotikabytte-olanzapin-kvetiapin`, versjon 1. Kryssnedtrapping: olanzapin → kvetiapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`antipsykotikabytte-olanzapin-kvetiapin`, versjon 2, fingeravtrykk `e83ff02bcbd282f85d981a8ef8b898b31fe97b81595a838596585079db70dca0`. Kryssnedtrapping: olanzapin → kvetiapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -345,6 +355,8 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 - Startdose 5–20 mg (bindende; ema-zyprexa section 4.2)
 - Måldose (må oppgis) 300–450 mg (bindende; dmp-seroquel pkt. 4.2)
+- Må bekreftes (`indikasjon`): Indikasjonen er schizofreni; opptrappingen av kvetiapin i regelen gjelder schizofreni. (dmp-seroquel pkt. 4.2)
+- Må bekreftes (`peroral_formulering`): Pasienten bruker peroral olanzapin, ikke depotinjeksjon. (keks-2019 avsnittet om byttestrategier)
 
 **Kliniske forutsetninger:**
 
@@ -352,7 +364,6 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 - Dosene er den ideelle dosekurven, avrundet til to desimaler; hvilke doser som kan gis med norske preparater (styrker, deling, flytende form), avgjøres i P5.
 - Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet, interaksjoner, graviditet, etterlevelse eller individuell toleranse fra dosen (B7); dette må vurderes av forskriveren.
 - Kvetiapin gis som tabletter med vanlig frisetting, to ganger daglig; døgndosen er oppgitt.
-- Indikasjonen er schizofreni.
 
 **Usikkerhet:**
 
@@ -361,24 +372,32 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 **Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
 
-- *Olanzapin 20 mg til kvetiapin 300 mg.* Inndata: startdose 20 mg; måldose 300 mg.
+- *Olanzapin 20 mg til kvetiapin 300 mg.* Inndata: startdose 20 mg; måldose 300 mg; bekreftet: indikasjon, peroral_formulering.
   - **fra:** dag 1–4: 20 mg; dag 5–11: 15 mg; dag 12–18: 10 mg; dag 19–25: 5 mg; fra dag 26: seponert
   - **til:** dag 1: 50 mg; dag 2: 100 mg; dag 3: 200 mg; fra dag 4: 300 mg
+  - Kontroll: Bekreftet: Indikasjonen er schizofreni; opptrappingen av kvetiapin i regelen gjelder schizofreni. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten bruker peroral olanzapin, ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 5–20 mg (bindende) – oppfylt. 20 mg.
   - Kontroll: Måldosen er 300–450 mg (bindende) – oppfylt. 300 mg.
-- *Olanzapin 10 mg til kvetiapin 400 mg med startdato 2. november 2026.* Inndata: startdose 10 mg; måldose 400 mg; startdato 02.11.2026.
+- *Olanzapin 10 mg til kvetiapin 400 mg med startdato 2. november 2026.* Inndata: startdose 10 mg; måldose 400 mg; startdato 02.11.2026; bekreftet: indikasjon, peroral_formulering.
   - **fra:** dag 1–4 (02.11.2026–05.11.2026): 10 mg; dag 5–11 (06.11.2026–12.11.2026): 7,5 mg; dag 12–18 (13.11.2026–19.11.2026): 5 mg; dag 19–25 (20.11.2026–26.11.2026): 2,5 mg; fra dag 26 (27.11.2026): seponert
   - **til:** dag 1 (02.11.2026): 50 mg; dag 2 (03.11.2026): 100 mg; dag 3 (04.11.2026): 200 mg; dag 4 (05.11.2026): 300 mg; fra dag 5 (06.11.2026): 400 mg
+  - Kontroll: Bekreftet: Indikasjonen er schizofreni; opptrappingen av kvetiapin i regelen gjelder schizofreni. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten bruker peroral olanzapin, ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 5–20 mg (bindende) – oppfylt. 10 mg.
   - Kontroll: Måldosen er 300–450 mg (bindende) – oppfylt. 400 mg.
-- *30 mg olanzapin er over doseområdet regelen gjelder for.* Inndata: startdose 30 mg; måldose 300 mg.
+- *30 mg olanzapin er over doseområdet regelen gjelder for.* Inndata: startdose 30 mg; måldose 300 mg; bekreftet: indikasjon, peroral_formulering.
   - **Stoppet:** Startdosen 30 mg er utenfor det regelen gjelder for (5–20 mg).
+- *Uten bekreftelse av at olanzapin er peroral (ikke depot) stopper beregningen.* Inndata: startdose 20 mg; måldose 300 mg; bekreftet: indikasjon.
+  - **Stoppet:** Må bekreftes før beregning: Pasienten bruker peroral olanzapin, ikke depotinjeksjon.
 
 **Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntipsychotics:Ol>Qu`.
 
 ## Bytte fra et antipsykotikum i gruppen «øvrige antipsykotika» til aripiprazol, kryss-titrering
 
-`gruppe-rest-ap-aripiprazol`, versjon 1. Kryssnedtrapping: gruppen rest-ap → aripiprazol. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`gruppe-rest-ap-aripiprazol`, versjon 2, fingeravtrykk `b659f76e989ec51501af41c0bb3227dc0d42d59877d3d889f1757a074507c6bb`. Kryssnedtrapping: gruppen rest-ap → aripiprazol. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -409,6 +428,8 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 - Startdose 20–40 mg for zuklopentiksol (veiledende; dmp-cisordinol pkt. 4.2)
 - Måldose (må oppgis) 10–30 mg (bindende; ema-abilify section 4.2)
+- Må bekreftes (`indikasjon`): Indikasjonen er schizofreni. (ema-abilify section 4.2)
+- Må bekreftes (`peroral_formulering`): Pasienten bruker en peroral formulering, ikke depotinjeksjon eller korttidsvirkende injeksjon. (keks-2019 avsnittet om byttestrategier)
 
 **Gruppemedlemmer (B4).** Bare medlemmer som er foreslått eller validert, kan beregnes.
 
@@ -430,8 +451,6 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
 - Dosene er den ideelle dosekurven, avrundet til to desimaler; hvilke doser som kan gis med norske preparater (styrker, deling, flytende form), avgjøres i P5.
 - Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet, interaksjoner, graviditet, etterlevelse eller individuell toleranse fra dosen (B7); dette må vurderes av forskriveren.
-- Pasienten bruker en peroral formulering, ikke depot.
-- Indikasjonen er schizofreni.
 
 **Usikkerhet:**
 
@@ -441,23 +460,28 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 **Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
 
-- *Zuklopentiksol 20 mg til aripiprazol 15 mg.* Inndata: startdose 20 mg; måldose 15 mg; virkestoff zuklopentiksol.
+- *Zuklopentiksol 20 mg til aripiprazol 15 mg.* Inndata: startdose 20 mg; måldose 15 mg; virkestoff zuklopentiksol; bekreftet: indikasjon, peroral_formulering.
   - **fra:** dag 1–7: 20 mg; dag 8–14: 15 mg; dag 15–21: 10 mg; dag 22–28: 5 mg; fra dag 29: seponert
   - **til:** dag 1–28: 10 mg; fra dag 29: 15 mg
+  - Kontroll: Bekreftet: Indikasjonen er schizofreni. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten bruker en peroral formulering, ikke depotinjeksjon eller korttidsvirkende injeksjon. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 20–40 mg (veiledende) – oppfylt. 20 mg.
   - Kontroll: Måldosen er 10–30 mg (bindende) – oppfylt. 15 mg.
-- *Flupentiksol er medlem av gruppen, men ikke vurdert individuelt, så beregningen stopper.* Inndata: startdose 6 mg; måldose 15 mg; virkestoff flupentiksol.
+- *Flupentiksol er medlem av gruppen, men ikke vurdert individuelt, så beregningen stopper.* Inndata: startdose 6 mg; måldose 15 mg; virkestoff flupentiksol; bekreftet: indikasjon, peroral_formulering.
   - **Stoppet:** flupentiksol er ikke vurdert individuelt for gruppeanbefalingen: Ikke vurdert individuelt (halveringstid, formulering og norske preparater); gruppeanbefalingen alene er ikke nok (B4).
 
 **Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntipsychotics:RA>Pa`.
 
 ## Fra peroral aripiprazol til Abilify Maintena, oppstart med én injeksjon
 
-`depot-aripiprazol-maintena`, versjon 1. Oppstart av depot: aripiprazol → aripiprazol. **Entydig beregnbar**; status **til faglig kontroll**.
+`depot-aripiprazol-maintena`, versjon 2, fingeravtrykk `659ab5f674c2c8fcbb4b8523e61f6e55086625216e824485f0c1ac02b2fa2430`. Oppstart av depot: aripiprazol → aripiprazol. **Entydig beregnbar**; status **til faglig kontroll**.
+
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
-- Tolerabilitet med peroral aripiprazol må være vist før depotet startes.
+- Depotet er til vedlikeholdsbehandling av schizofreni hos voksne som er stabilisert på peroral aripiprazol, og tolerabilitet må være vist før det startes.
+  - Vedlikeholdsbehandling av schizofreni hos voksne som er stabilisert på peroral aripiprazol. *([ema-abilify-maintena](https://www.ema.europa.eu/en/documents/product-information/abilify-maintena-epar-product-information_en.pdf), section 4.1)*
   - Har pasienten aldri brukt aripiprazol, må tolerabilitet med peroral aripiprazol være vist før depotet startes. *([ema-abilify-maintena](https://www.ema.europa.eu/en/documents/product-information/abilify-maintena-epar-product-information_en.pdf), section 4.2)*
 - Ved oppstart med én injeksjon gis 400 mg på startdagen, og peroral aripiprazol 10–20 mg fortsetter i 14 dager.
   - Oppstart med én injeksjon: 400 mg på startdagen, og peroral aripiprazol 10–20 mg daglig i 14 dager på rad. *([ema-abilify-maintena](https://www.ema.europa.eu/en/documents/product-information/abilify-maintena-epar-product-information_en.pdf), section 4.2)*
@@ -491,7 +515,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 **Betingelser:**
 
 - Startdose 10–20 mg (bindende; ema-abilify-maintena section 4.2)
-- Må bekreftes (`tolerert_peroralt`): Pasienten har tålt peroral aripiprazol. (ema-abilify-maintena section 4.2)
+- Må bekreftes (`indikasjon`): Pasienten er voksen, har schizofreni og er stabilisert på, og har tålt, peroral aripiprazol. (ema-abilify-maintena section 4.1; ema-abilify-maintena section 4.2)
 - Unntak (`cyp2d6_langsom`): Pasienten er kjent langsom CYP2D6-omsetter; preparatomtalen har egne doser. (ema-abilify-maintena section 4.2)
 - Unntak (`sterk_cyp_hemmer`): Pasienten bruker en sterk CYP2D6- eller CYP3A4-hemmer; dosen skal reduseres. (ema-abilify-maintena section 4.2)
 - Unntak (`cyp3a4_induktor`): Pasienten bruker en CYP3A4-induktor, som bør unngås sammen med depotet. (ema-abilify-maintena section 4.2)
@@ -502,7 +526,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 - Dosene er den ideelle dosekurven, avrundet til to desimaler; hvilke doser som kan gis med norske preparater (styrker, deling, flytende form), avgjøres i P5.
 - Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet, interaksjoner, graviditet, etterlevelse eller individuell toleranse fra dosen (B7); dette må vurderes av forskriveren.
 - Pasienten bruker peroral aripiprazol 10–20 mg daglig.
-- Pasienten bruker ikke legemidler med kjente interaksjoner som preparatomtalen nevner (se unntakene).
+- Forskriveren har vurdert hvert unntak (CYP2D6-status, hemmere og induktorer) og svart nei; et ubesvart unntak stopper beregningen. «Nei» om CYP2D6 betyr at pasienten ikke er kjent langsom omsetter.
 
 **Usikkerhet:**
 
@@ -510,29 +534,40 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 **Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
 
-- *Peroral aripiprazol 15 mg, tolerert.* Inndata: startdose 15 mg; bekreftet: tolerert_peroralt.
+- *Peroral aripiprazol 15 mg; indikasjonen bekreftet og alle unntak avkreftet.* Inndata: startdose 15 mg; bekreftet: indikasjon; pasientforhold: cyp2d6_langsom nei, sterk_cyp_hemmer nei, cyp3a4_induktor nei.
   - **fra:** dag 1–14: 15 mg; fra dag 15: seponert
   - **til:** dag 1: 400 mg injeksjon; hver måned fra 1 måned etter dag 1, tidligst 26 dager etter forrige: 400 mg injeksjon
-  - Kontroll: Bekreftet: Pasienten har tålt peroral aripiprazol. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Avkreftet: Pasienten er kjent langsom CYP2D6-omsetter; preparatomtalen har egne doser. – oppfylt. Vurdert og avkreftet av forskriveren.
+  - Kontroll: Avkreftet: Pasienten bruker en sterk CYP2D6- eller CYP3A4-hemmer; dosen skal reduseres. – oppfylt. Vurdert og avkreftet av forskriveren.
+  - Kontroll: Avkreftet: Pasienten bruker en CYP3A4-induktor, som bør unngås sammen med depotet. – oppfylt. Vurdert og avkreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten er voksen, har schizofreni og er stabilisert på, og har tålt, peroral aripiprazol. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 10–20 mg (bindende) – oppfylt. 15 mg.
-- *Kjent langsom CYP2D6-omsetter: regelen gjelder ikke.* Inndata: startdose 15 mg; bekreftet: tolerert_peroralt; pasientforhold: cyp2d6_langsom.
+- *Kjent langsom CYP2D6-omsetter: regelen gjelder ikke.* Inndata: startdose 15 mg; bekreftet: indikasjon; pasientforhold: cyp2d6_langsom ja, sterk_cyp_hemmer nei, cyp3a4_induktor nei.
   - **Stoppet:** Regelen gjelder ikke: Pasienten er kjent langsom CYP2D6-omsetter; preparatomtalen har egne doser.
-- *Uten bekreftet tolerabilitet stopper beregningen.* Inndata: startdose 15 mg.
-  - **Stoppet:** Må bekreftes før beregning: Pasienten har tålt peroral aripiprazol.
+- *Hemmere og induktorer er ikke vurdert: ukjent stopper like mye som et unntak som gjelder.* Inndata: startdose 15 mg; bekreftet: indikasjon; pasientforhold: cyp2d6_langsom nei.
+  - **Stoppet:** Må avklares før beregning (ukjent): Pasienten bruker en sterk CYP2D6- eller CYP3A4-hemmer; dosen skal reduseres.; Må avklares før beregning (ukjent): Pasienten bruker en CYP3A4-induktor, som bør unngås sammen med depotet.
+- *Uten bekreftet indikasjon og tolerabilitet stopper beregningen.* Inndata: startdose 15 mg; pasientforhold: cyp2d6_langsom nei, sterk_cyp_hemmer nei, cyp3a4_induktor nei.
+  - **Stoppet:** Må bekreftes før beregning: Pasienten er voksen, har schizofreni og er stabilisert på, og har tålt, peroral aripiprazol.
 
 **Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntipsychotics:Pa>Da`.
 
 ## Fra peroral paliperidon depottablett til Xeplion
 
-`depot-paliperidon-xeplion`, versjon 1. Oppstart av depot: paliperidon → paliperidon. **Entydig beregnbar**; status **til faglig kontroll**.
+`depot-paliperidon-xeplion`, versjon 2, fingeravtrykk `19158b1df8057ab8285458b0e5957b3902c8c1a40da33ceb43a915fb32f35545`. Oppstart av depot: paliperidon → paliperidon. **Entydig beregnbar**; status **til faglig kontroll**.
+
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
 - Xeplion startes med 150 mg dag 1 og 100 mg dag 8 (±4 dager), begge i deltoideus; deretter månedlig (±7 dager), første gang én måned etter andre dose.
   - Oppstart: 150 mg dag 1 og 100 mg dag 8, begge i deltoideus; tredje dose én måned etter andre. Vedlikehold kan gis i deltoideus eller setemuskel. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2)*
   - Andre oppstartsdose kan gis inntil 4 dager før eller etter dag 8; vedlikeholdsdosene inntil 7 dager før eller etter månedsdatoen. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2 (glemte doser))*
+- Xeplion er til vedlikeholdsbehandling av schizofreni hos voksne som er stabilisert på paliperidon eller risperidon.
+  - Vedlikeholdsbehandling av schizofreni hos voksne som er stabilisert på paliperidon eller risperidon. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.1)*
 - Vedlikeholdsdosen som gir tilsvarende eksponering som 3, 6, 9 og 12 mg peroralt, er 25–50, 75, 100 og 150 mg.
   - Peroral paliperidon depottablett 3, 6, 9 og 12 mg daglig tilsvarer ved vedlikehold 25–50, 75, 100 og 150 mg Xeplion månedlig. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2 (bytte fra peroral))*
+- Ved nedsatt nyrefunksjon er start- og vedlikeholdsdosene andre, og under 50 ml/min anbefales ikke Xeplion.
+  - Ved kreatininclearance fra 50 til under 80 ml/min er oppstarten 100 mg dag 1 og 75 mg én uke senere, og vedlikehold 50 mg (25–100 mg); under 50 ml/min anbefales ikke Xeplion. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2 (nedsatt nyrefunksjon))*
 - Den perorale behandlingen kan seponeres når Xeplion startes.
   - Peroral paliperidon eller risperidon kan seponeres når Xeplion startes; noen kan ha nytte av gradvis seponering. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2 (bytte fra peroral))*
 - Ved bytte mellom peroral behandling og depot må preparatspesifikke instruksjoner følges.
@@ -542,7 +577,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 - OUSFAR seponerer den perorale behandlingen dagen før første injeksjon; gradvis seponering, som preparatomtalen nevner for noen, er ikke modellert.
   - Peroral paliperidon eller risperidon kan seponeres når Xeplion startes; noen kan ha nytte av gradvis seponering. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2 (bytte fra peroral))*
-- Ved 3 mg peroralt oppgis vedlikeholdsdosen som spennet 25–50 mg; valget i spennet er en klinisk vurdering.
+- Ved 3 mg peroralt oppgis vedlikeholdsdosen som spennet 25–50 mg. Valget i spennet er en klinisk vurdering: forskriveren må oppgi dosen som måldose, ellers stopper beregningen. Ved 6, 9 og 12 mg må en oppgitt måldose være lik tabellens.
   - Peroral paliperidon depottablett 3, 6, 9 og 12 mg daglig tilsvarer ved vedlikehold 25–50, 75, 100 og 150 mg Xeplion månedlig. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2 (bytte fra peroral))*
 - Bytte fra peroral risperidon er ikke tatt med, fordi preparatomtalen ikke har en omregning fra risperidondose. *(OUSFARs vurdering)*
 
@@ -562,8 +597,8 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 **Betingelser:**
 
 - Startdose 3, 6, 9, 12 mg (bindende; ema-xeplion section 4.2 (bytte fra peroral))
-- Må bekreftes (`stabil_peroralt`): Pasienten er stabilisert på peroral paliperidon depottablett. (ema-xeplion section 4.2 (bytte fra peroral))
-- Unntak (`nedsatt_nyrefunksjon`): Pasienten har nedsatt nyrefunksjon (kreatininclearance under 80 ml/min); preparatomtalen har andre doser eller fraråder Xeplion. (ema-xeplion section 4.2 (nedsatt nyrefunksjon))
+- Må bekreftes (`indikasjon`): Pasienten er voksen, har schizofreni og er stabilisert på peroral paliperidon depottablett. (ema-xeplion section 4.1; ema-xeplion section 4.2 (bytte fra peroral))
+- Unntak (`nedsatt_nyrefunksjon`): Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min. (ema-xeplion section 4.2 (nedsatt nyrefunksjon))
 
 **Kliniske forutsetninger:**
 
@@ -571,7 +606,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 - Dosene er den ideelle dosekurven, avrundet til to desimaler; hvilke doser som kan gis med norske preparater (styrker, deling, flytende form), avgjøres i P5.
 - Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet, interaksjoner, graviditet, etterlevelse eller individuell toleranse fra dosen (B7); dette må vurderes av forskriveren.
 - Pasienten bruker én av depottablettstyrkene 3, 6, 9 eller 12 mg daglig.
-- Nyrefunksjonen er normal.
+- Forskriveren har vurdert nyrefunksjonen og svart at kreatininclearance ikke er under 80 ml/min; ubesvart stopper beregningen.
 
 **Usikkerhet:**
 
@@ -580,19 +615,25 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 **Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
 
-- *Paliperidon depottablett 6 mg.* Inndata: startdose 6 mg; bekreftet: stabil_peroralt.
+- *Paliperidon depottablett 6 mg; indikasjonen bekreftet og nedsatt nyrefunksjon avkreftet.* Inndata: startdose 6 mg; bekreftet: indikasjon; pasientforhold: nedsatt_nyrefunksjon nei.
   - **fra:** fra dag 1: seponert
   - **til:** dag 1: 150 mg injeksjon, deltoideus; dag 8 (±4 dager): 100 mg injeksjon, deltoideus; hver måned fra 1 måned etter dag 8 (±7 dager): 75 mg injeksjon, deltoideus eller setemuskel
-  - Kontroll: Bekreftet: Pasienten er stabilisert på peroral paliperidon depottablett. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Avkreftet: Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min. – oppfylt. Vurdert og avkreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten er voksen, har schizofreni og er stabilisert på peroral paliperidon depottablett. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 3, 6, 9, 12 mg (bindende) – oppfylt. 6 mg.
-- *Fra 3 mg, startdato 24. januar 2027: dag 8 er 31. januar, og én måned senere er siste dag i februar.* Inndata: startdose 3 mg; startdato 24.01.2027; bekreftet: stabil_peroralt.
+- *Fra 3 mg med klinikerens valg 50 mg i spennet 25–50 mg, startdato 24. januar 2027: dag 8 er 31. januar, og én måned senere er siste dag i februar.* Inndata: startdose 3 mg; måldose 50 mg; startdato 24.01.2027; bekreftet: indikasjon; pasientforhold: nedsatt_nyrefunksjon nei.
   - **fra:** fra dag 1 (24.01.2027): seponert
-  - **til:** dag 1 (24.01.2027): 150 mg injeksjon, deltoideus; dag 8 (31.01.2027, ±4 dager): 100 mg injeksjon, deltoideus; hver måned fra 1 måned etter dag 8 (28.02.2027, ±7 dager): 25–50 mg injeksjon, deltoideus eller setemuskel
-  - Kontroll: Bekreftet: Pasienten er stabilisert på peroral paliperidon depottablett. – oppfylt. Bekreftet av forskriveren.
+  - **til:** dag 1 (24.01.2027): 150 mg injeksjon, deltoideus; dag 8 (31.01.2027, ±4 dager): 100 mg injeksjon, deltoideus; hver måned fra 1 måned etter dag 8 (28.02.2027, ±7 dager): 50 mg injeksjon, deltoideus eller setemuskel
+  - Kontroll: Avkreftet: Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min. – oppfylt. Vurdert og avkreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten er voksen, har schizofreni og er stabilisert på peroral paliperidon depottablett. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 3, 6, 9, 12 mg (bindende) – oppfylt. 3 mg.
-- *15 mg finnes ikke i omregningstabellen, så beregningen stopper.* Inndata: startdose 15 mg; bekreftet: stabil_peroralt.
+- *Fra 3 mg uten valgt dose i spennet: beregningen velger ikke selv, og stopper.* Inndata: startdose 3 mg; bekreftet: indikasjon; pasientforhold: nedsatt_nyrefunksjon nei.
+  - **Stoppet:** Ved 3 mg gir omregningstabellen et spenn på 25–50 mg. Dosen i spennet er et klinisk valg og må oppgis som måldose; beregningen velger ikke selv.
+- *15 mg finnes ikke i omregningstabellen, så beregningen stopper.* Inndata: startdose 15 mg; bekreftet: indikasjon; pasientforhold: nedsatt_nyrefunksjon nei.
   - **Stoppet:** Startdosen 15 mg er utenfor det regelen gjelder for (3, 6, 9, 12 mg).
-- *Nedsatt nyrefunksjon: regelen gjelder ikke.* Inndata: startdose 6 mg; bekreftet: stabil_peroralt; pasientforhold: nedsatt_nyrefunksjon.
-  - **Stoppet:** Regelen gjelder ikke: Pasienten har nedsatt nyrefunksjon (kreatininclearance under 80 ml/min); preparatomtalen har andre doser eller fraråder Xeplion.
+- *Kreatininclearance under 80 ml/min: regelen gjelder ikke.* Inndata: startdose 6 mg; bekreftet: indikasjon; pasientforhold: nedsatt_nyrefunksjon ja.
+  - **Stoppet:** Regelen gjelder ikke: Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min.
+- *Nyrefunksjonen er ikke vurdert: ukjent stopper like mye som nedsatt.* Inndata: startdose 6 mg; bekreftet: indikasjon.
+  - **Stoppet:** Må avklares før beregning (ukjent): Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min.
 
 **Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntipsychotics:Pp>Dp`.

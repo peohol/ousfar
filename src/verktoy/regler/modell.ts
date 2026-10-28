@@ -255,6 +255,14 @@ export interface Godkjenningssteg {
   dato: string
   av: string
   rolle: Rolle
+  /** Regelversjonen steget gjelder. */
+  regelversjon: number
+  /**
+   * Fingeravtrykket av regelen steget gjelder (`fingeravtrykk` i
+   * `godkjenning.ts`). Påkrevd for en klinisk godkjenning: den gjelder bare
+   * nøyaktig det innholdet som ble kontrollert.
+   */
+  fingeravtrykk?: string
   merknad: string
 }
 
@@ -283,10 +291,14 @@ export interface Beregningsinndata {
   startdato?: string
   /** For en gruppeplan: medlemmet pasienten bruker. */
   medlem?: string
-  /** Bekreftelser forskriveren har gitt (id-ene). */
+  /** Bekreftelser forskriveren har gitt (id-ene). Det som ikke er bekreftet, regnes som ikke bekreftet. */
   bekreftet?: string[]
-  /** Pasientforhold forskriveren har oppgitt (unntakenes id-er). */
-  pasientforhold?: string[]
+  /**
+   * Forskriverens svar på hvert unntak (id → `true` når forholdet gjelder,
+   * `false` når det er vurdert og avkreftet). Et unntak uten svar er ukjent,
+   * og ukjent stopper beregningen like mye som et forhold som gjelder.
+   */
+  pasientforhold?: Record<string, boolean>
 }
 
 export interface Regel {
@@ -319,6 +331,33 @@ export interface Regelsett {
 }
 
 /* --- Oppslag ------------------------------------------------------------------ */
+
+const heltall: Enhet[] = ['dager', 'dag', 'maaneder', 'trinn']
+
+/**
+ * Hva som er galt med en parameterverdi, eller `null` når den er gyldig (en
+ * manglende verdi er ikke ugyldig, men må avklares). Doser og varigheter er
+ * positive og endelige, prosenter over 0 og høyst 100, og dager, måneder og
+ * trinn hele tall.
+ */
+export function parameterfeil(p: Parameter): string | null {
+  const feil = (v: number): string | null => {
+    if (typeof v !== 'number' || !Number.isFinite(v)) return 'er ikke et endelig tall'
+    if (v <= 0) return 'må være over 0'
+    if (p.enhet === 'prosent' && v > 100) return 'kan ikke være over 100 %'
+    if (heltall.includes(p.enhet) && !Number.isInteger(v)) return 'må være et helt tall'
+    return null
+  }
+  if (p.verdi !== null) {
+    const f = feil(p.verdi)
+    if (f) return `${p.verdi} ${p.enhet} ${f}`
+  }
+  if (p.omrade) {
+    const f = feil(p.omrade[0]) ?? feil(p.omrade[1])
+    if (f || p.omrade[0] > p.omrade[1]) return `området ${p.omrade.join('–')} ${p.enhet} er ugyldig`
+  }
+  return null
+}
 
 const erParameter = (x: unknown): x is Parameter =>
   !!x && typeof x === 'object' && 'verdi' in x && 'enhet' in x && 'art' in x && 'grunnlag' in x

@@ -20,6 +20,7 @@ export const ENDRINGSLOGG: Endring[] = [
     punkter: [
       'Ingen endring i appen ennå. De kommende verktøyene for nedtrapping og bytte av antidepressiva og antipsykotika har fått en felles måte å skrive regler på, som skiller det kildene sier, OUSFARs egne faglige valg, regnereglene, betingelsene, godkjenningen og selve beregningen.',
       'Åtte pilotregler bygger på preparatomtaler, NICE-retningslinjen og faglitteratur, ikke på Psychiatrienet. De er sendt til uavhengig faglig kontroll; ingen er klinisk godkjent eller tatt i bruk.',
+      'En godkjenning gjelder bare nøyaktig den regelversjonen som ble kontrollert, og beregningen stopper når et sikkerhetsforhold, en indikasjon eller et dosevalg ikke er avklart.',
     ],
     utenVarsel: true,
   },

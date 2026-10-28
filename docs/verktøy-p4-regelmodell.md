@@ -1,6 +1,6 @@
 # OUSFAR Verktøy – P4: regelmodellen
 
-**Status 28.10.2026:** til faglig kontroll (P4.8). Ingen regel er klinisk godkjent, og ingenting her brukes av appen.
+**Status 28.10.2026:** til faglig kontroll (P4.8), andre runde. Første uavhengige kontroll fant seks feil i modellen og beregningen; de er rettet (§11), og de fire reglene som ble endret, er versjon 2 og sendt til kontroll på nytt. Ingen regel er klinisk godkjent, og ingenting her brukes av appen.
 
 Dette notatet beskriver hvordan OUSFAR skriver regler for nedtrapping og bytte av psykofarmaka, uavhengig av kilde, og hvorfor. Pilotsettet med alle regler, parametre, kilder og regneeksempler står i `docs/verktøy-p4-pilotsett.md`, som lages av koden (`npm run verktoy:regler -- rapport`) og derfor alltid stemmer med den. Koden ligger i `src/verktoy/regler/`.
 
@@ -19,7 +19,7 @@ Dette notatet beskriver hvordan OUSFAR skriver regler for nedtrapping og bytte a
 | Faglig fortolkning | `Fortolkning` | Det som følger direkte av kildene (*kildetro*, hvert utsagn med kilde), OUSFARs *tilpasninger*, kliniske *forutsetninger* og *usikkerhet* | Valg som ikke er merket som OUSFARs |
 | Matematisk regel | `Plan`, `Forlop`, `Fase`, `Nedtrappingsstrategi`, `Parameter` | Doseforløp, faser, strategier og tidsrelasjoner; hver verdi med art (bindende eller veiledende) og grunnlag (kilde eller OUSFAR-forslag) | Doser som ikke har et grunnlag |
 | Betingelser | `Inndatakrav`, `Bekreftelse`, `Unntak`, `Gruppemedlem` | Hvilke doser regelen gjelder for, hva forskriveren må bekrefte, pasientforhold der regelen ikke gjelder, hvilke gruppemedlemmer som er vurdert | Standardverdier (ingen skjult måldose, P6.8) |
-| Godkjenning | `Godkjenning` | Status (utkast, til faglig kontroll, klinisk godkjent, avvist, trukket) med historikk, rolle og dato, per regelversjon | Godkjenning uten et steg fra en uavhengig kontrollør |
+| Godkjenning | `Godkjenning` (`godkjenning.ts`) | Status (utkast, til faglig kontroll, klinisk godkjent, avvist, trukket) med historikk, rolle, dato, regelversjon og fingeravtrykk | Godkjenning uten et steg fra en uavhengig kontrollør, eller for en annen versjon eller et annet innhold |
 | Beregningsresultat | `Beregningsresultat` (`beregning.ts`) | Status (*modellberegning* eller *stoppet* med grunner), forløpene, kontrollene av bindende krav, merknader, regel-, regelsett-, modell- og motorversjon, `klinisk_godkjent` | En plan når noe mangler; `klinisk_godkjent` for en regel som ikke er godkjent |
 
 Et regelsett (`Regelsett`) har id, versjon og regelmodellversjon, og kan inneholde regler fra hvilken som helst kilde (P4.1, P12.3). En regel har sin egen versjon; en godkjenning gjelder én versjon.
@@ -37,7 +37,7 @@ Et regelsett (`Regelsett`) har id, versjon og regelmodellversjon, og kan innehol
 - *opptrapping* – faste doser i faste dager (f.eks. kvetiapin dag 1–4);
 - *vedlikehold* – dosen planen ender med;
 - *seponer* – legemidlet stoppes når fasen starter;
-- *injeksjoner* – startinjeksjoner på bestemte dager (med tidsvindu og injeksjonssted) og månedlig vedlikehold (med tidsvindu, tidligste intervall og dose fra en omregningstabell). Depot har sin egen tidsmodell, ikke daglige doser (P5.7);
+- *injeksjoner* – startinjeksjoner på bestemte dager (med tidsvindu og injeksjonssted) og månedlig vedlikehold (med tidsvindu, tidligste intervall og dose fra en omregningstabell). Depot har sin egen tidsmodell, ikke daglige doser (P5.7). Gir tabellen et **spenn** (Xeplion 25–50 mg ved 3 mg peroralt), er dosen i spennet et klinisk valg: forskriveren må oppgi den som måldose, ellers stopper beregningen. En oppgitt måldose ved en entydig rad må være lik tabellens;
 - *uten beregning* – forløpet kan starte, men doseringen beregnes ikke (f.eks. fenelzin, som mangler norsk preparatomtale).
 
 **Strategier for nedtrapping** (B1: «prosent» er alltid enten av startdosen eller av aktuell dose, aldri uspesifisert):
@@ -52,6 +52,8 @@ Et regelsett (`Regelsett`) har id, versjon og regelmodellversjon, og kan innehol
 *D*₀ for «prosent av startdosen» er dosen når nedtrappingsfasen starter. I den hyperbolske strategien går maksimal binding (Emax) ut av regnestykket, så bare ED50 trengs.
 
 **Avrunding.** Beregningen bruker uavrundede doser; de vises med to desimaler. Det er den ideelle dosekurven. Hvilke doser som faktisk kan gis (styrker, delbarhet, flytende form) og valget mellom oppnåelige doser hører til P5 (B3, B5).
+
+**Gyldige verdier.** Doser og varigheter er endelige tall over 0, prosenter over 0 og høyst 100, og dager, måneder og trinn hele tall (`parameterfeil`). En startdato må være en gyldig kalenderdato som `ÅÅÅÅ-MM-DD`; `2027-02-31` normaliseres ikke. Ugyldige verdier i regelen eller inndata gir en stopp med grunnen, og beregningen kaster aldri: også en feil i regelen selv blir en kontrollert stopp.
 
 **Måneder.** Månedlige injeksjoner regnes fra forrige injeksjon. Med startdato er én måned senere samme dato, eller siste dag i måneden når den er kortere (31. januar → 28. februar); tidsvinduet i preparatomtalen gjelder rundt den datoen.
 
@@ -71,11 +73,11 @@ Ved tvetydighet lages ingen automatisk regel: valget skrives ut som forslag, og 
 
 ## 5. Godkjenning og beregningsresultat
 
-En regel godkjennes per versjon. Statusen er siste steg i historikken. *Klinisk godkjent* krever et steg fra en uavhengig kontrollør som ikke er den samme som utvikleren (kontrollert). En faglig endring gir ny versjon og ny kontroll; en ny kilderevisjon endrer aldri en godkjent regel av seg selv (B8, P12).
+En regel godkjennes per versjon og per innhold. Statusen er siste steg i historikken, og hvert steg sier hvilken regelversjon det gjelder. **Fingeravtrykket** er SHA-256 av regelen i kanonisk form (alt unntatt godkjenningen: plan, verdier, betingelser, fortolkning, referanser og eksempler) sammen med versjonen og kontrollsummen til kildene den viser til; rapporten viser det for hver regel. En klinisk godkjenning er bare gyldig når siste steg er *klinisk godkjent* fra en uavhengig kontrollør som aldri har vært utvikler av regelen, for regelens gjeldende versjon og nøyaktig dette fingeravtrykket, og regelen ikke har forslag som må avklares (`godkjenningsfeil`). Endres noe faglig etter godkjenningen – selv bare en verdi, en forutsetning eller en kildes versjon – er regelen ikke lenger godkjent før den er kontrollert på nytt. En faglig endring gir ny versjon, og kontrollene slår ut når siste steg gjelder en eldre versjon; en ny kilderevisjon endrer aldri en godkjent regel av seg selv (B8, P12).
 
-Beregningen (`beregn`) stopper og sier alle grunnene når regelen bare er tekstlig, avvist eller trukket; når et unntak gjelder eller pasientforholdet er ukjent for regelen; når en bekreftelse mangler; når start- eller måldosen mangler eller er utenfor et bindende område; når gruppemedlemmet ikke er vurdert eller ikke er med i gruppen; når en verdi mangler; eller når resultatet bryter et bindende krav. Den gjetter aldri og utvider aldri en regel lydløst (P5.8).
+Beregningen (`beregn`) stopper og sier alle grunnene når regelen bare er tekstlig, avvist eller trukket; når et unntak gjelder **eller ikke er besvart**, eller et pasientforhold er ukjent for regelen; når en bekreftelse mangler; når start- eller måldosen mangler, er ugyldig eller er utenfor et bindende område; når et dosespenn ikke er avklart; når startdatoen ikke er en gyldig dato; når gruppemedlemmet ikke er vurdert eller ikke er med i gruppen; når en verdi mangler eller er ugyldig; eller når resultatet bryter et bindende krav. Den gjetter aldri og utvider aldri en regel lydløst (P5.8).
 
-Et resultat har status *modellberegning* og et forbehold. `klinisk_godkjent` er bare sann når regelversjonen er klinisk godkjent, og heller ikke da er beregningen en vurdering av den enkelte pasient. Resultatet bærer regel-, regelsett-, modell- og motorversjon; like inndata og like versjoner gir samme resultat (P5.9).
+Et resultat har status *modellberegning* og et forbehold. `klinisk_godkjent` er bare sann når godkjenningen er gyldig for nøyaktig denne regelversjonen; er regelen merket godkjent uten at godkjenningen gjelder, får resultatet en merknad og behandles som ikke godkjent. Heller ikke en gyldig godkjenning gjør beregningen til en vurdering av den enkelte pasient. Resultatet bærer regel-, regelsett-, modell- og motorversjon; like inndata og like versjoner gir samme resultat (P5.9).
 
 ## 6. Strategiene vurdert (P4.6)
 
@@ -89,8 +91,8 @@ Et resultat har status *modellberegning* og et forbehold. `klinisk_godkjent` er 
 
 Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet, interaksjoner, graviditet, etterlevelse eller individuell toleranse fra dosen. Regelmodellen håndterer dette på tre måter:
 
-- *unntak* – pasientforhold der regelen ikke gjelder, når kilden sier det (f.eks. langsom CYP2D6-omsetter for Abilify Maintena, nedsatt nyrefunksjon for Xeplion). Et pasientforhold regelen ikke kjenner, stopper også beregningen;
-- *bekreftelser* – det forskriveren må bekrefte (f.eks. at peroral aripiprazol er tolerert, at byttet til en MAO-hemmer skjer med spesialisthelsetjenesten);
+- *unntak* – pasientforhold der regelen ikke gjelder, når kilden sier det (f.eks. kjent langsom CYP2D6-omsetter, sterke hemmere og induktorer for Abilify Maintena; kreatininclearance under 80 ml/min for Xeplion). **Hvert unntak må besvares** med ja eller nei. At et forhold ikke er nevnt, beviser ikke at det er vurdert: ubesvart (ukjent) stopper beregningen like mye som ja, og bare et eksplisitt nei slipper gjennom og vises som en oppfylt kontroll. «Nei» betyr at forholdet er vurdert og ikke foreligger etter det forskriveren vet (f.eks. ikke *kjent* langsom omsetter). Et pasientforhold regelen ikke kjenner, stopper også beregningen når det er ja;
+- *bekreftelser* – det forskriveren må bekrefte, også indikasjon og formulering når de endrer doseringen (f.eks. schizofreni hos voksen stabilisert på peroral behandling for depotene, schizofreni for opptrappingen av kvetiapin, peroral og ikke depot for olanzapin og Rest AP, og at byttet til en MAO-hemmer skjer med spesialisthelsetjenesten). Det som ikke er bekreftet, regnes som ikke bekreftet;
 - *forutsetninger* – skrevet ut i hver regel, så det er tydelig hva beregningen ikke vurderer.
 
 ## 8. Svar på spørsmålene fra P3
@@ -117,7 +119,20 @@ Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet
 
 ## 10. Hva som ikke er gjort
 
-- Ingen faglig kontroll ennå (P4.8); ingen regel er klinisk godkjent.
+- Faglig kontroll pågår (P4.8): første runde fant feil som er rettet (§11); ingen regel er klinisk godkjent, og de eksplisitt uavklarte valgene i §9 er fortsatt uavklarte.
 - Ingen FEST-tilpasning: doser er ideelle, ikke preparater (P5).
 - Ingen visning i appen (P6–P10).
 - Ingen regel for kombinasjoner utenfor pilotsettet.
+
+## 11. Rettet etter første uavhengige kontroll (28.10.2026)
+
+| Funn | Rettelse | Testet med |
+| --- | --- | --- |
+| Godkjenningen var ikke bundet til regelversjonen; en endret regel kunne beholde «klinisk godkjent» | Godkjenningssteg har regelversjon og fingeravtrykk; `beregn` setter `klinisk_godkjent` bare når godkjenningen er gyldig (§5) | Regresjonstest som endrer en godkjent regel (verdi, fortolkning, eksempel, kildeversjon), øker versjonen, eller godkjenner som utvikler |
+| Et unntak som ikke var nevnt, ble tolket som avkreftet | Hvert unntak må besvares ja/nei; ukjent stopper. Indikasjon og formulering må bekreftes der de endrer doseringen (§7) | Ukjent og avkreftet testet hver for seg for hvert unntak; eksempler på ukjent nyrefunksjon og ukjente interaksjoner |
+| Xeplion 3 mg ga spennet 25–50 mg som en ferdig plan | Dosen i spennet må velges av klinikeren og oppgis; ellers stopp (§3) | Grenseverdiene 25 og 50 mg, 24,99 og 50,01 mg, og uten valg |
+| Ugyldige datoer og parametre ble normalisert eller ga et unntak | Streng dato- og parameterkontroll; beregningen kaster aldri (§3) | 2027-02-31, 2027-02-29, ugyldige strenger, 0 mg, 0 %, over 100 %, ikke-heltall, NaN og en regel som aldri når null |
+| Psychiatrienet-referansen ble bare kontrollert på id | Kontrollen sjekker type, retning, virkestoff eller gruppe og formulering mot regelen | Mutasjoner med motsatt retning, feil virkestoff, feil type, feil formulering og feil gruppe |
+| Rapporten sa at ingen regler var kontrollert, uansett status | Teksten følger antallet regler med gyldig godkjenning | Rapporten med 0, 1 av 2 og alle godkjent, og med en ugyldig godkjenning |
+
+Reglene for olanzapin → kvetiapin, Rest AP → aripiprazol, Abilify Maintena og Xeplion er versjon 2 (nye bekreftelser og unntakssvar, og dosevalget for Xeplion). De fire andre er uendret i versjon 1. Den faglige vurderingen av valgene i §9 er ikke endret av rettingen.

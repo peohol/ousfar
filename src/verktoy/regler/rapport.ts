@@ -5,6 +5,7 @@
  * ikke er oppdatert. Psychiatrienet vises bare som kildeoppføringens id.
  */
 import { beregn, kortform, MOTORVERSJON } from './beregning'
+import { erKliniskGodkjent, fingeravtrykk, godkjenningsfeil } from './godkjenning'
 import { KILDER, kildeFor } from './kilder'
 import {
   parametre,
@@ -50,6 +51,12 @@ const FORM: Record<Regel['plan']['form'], string> = {
   oppstart_depot: 'oppstart av depot',
 }
 const ENHET: Record<Parameter['enhet'], string> = { mg: 'mg', dager: 'dager', dag: '(dag)', maaneder: 'måned(er)', prosent: '%', trinn: 'trinn' }
+
+/** Statusen slik den faktisk gjelder: en klinisk godkjenning som ikke gjelder denne versjonen, sies rett ut. */
+const statustekst = (r: Regel) =>
+  r.godkjenning.status === 'klinisk_godkjent' && !erKliniskGodkjent(r)
+    ? `merket klinisk godkjent, men ugyldig (${godkjenningsfeil(r).join(' ')})`
+    : STATUS[r.godkjenning.status]
 
 const valg = (v: Virkestoffvalg | null) => (!v ? '–' : v.type === 'virkestoff' ? v.nokkel : `gruppen ${v.gruppe}`)
 
@@ -103,7 +110,8 @@ function inndatatekst(i: Beregningsinndata): string {
   if (i.medlem) deler.push(`virkestoff ${i.medlem}`)
   if (i.startdato) deler.push(`startdato ${dato(i.startdato)}`)
   if (i.bekreftet?.length) deler.push(`bekreftet: ${i.bekreftet.join(', ')}`)
-  if (i.pasientforhold?.length) deler.push(`pasientforhold: ${i.pasientforhold.join(', ')}`)
+  const forhold = Object.entries(i.pasientforhold ?? {})
+  if (forhold.length) deler.push(`pasientforhold: ${forhold.map(([id, ja]) => `${id} ${ja ? 'ja' : 'nei'}`).join(', ')}`)
   return deler.join('; ')
 }
 
@@ -134,7 +142,9 @@ function regelavsnitt(r: Regel, sett: Regelsett): string {
 
   return `## ${r.tittel}
 
-\`${r.id}\`, versjon ${r.versjon}. ${FORM[r.plan.form][0]!.toUpperCase()}${FORM[r.plan.form].slice(1)}: ${valg(r.fra)} → ${valg(r.til)}. **${BEREGNBARHET[r.beregnbarhet][0]!.toUpperCase()}${BEREGNBARHET[r.beregnbarhet].slice(1)}**; status **${STATUS[r.godkjenning.status]}**.
+\`${r.id}\`, versjon ${r.versjon}, fingeravtrykk \`${fingeravtrykk(r)}\`. ${FORM[r.plan.form][0]!.toUpperCase()}${FORM[r.plan.form].slice(1)}: ${valg(r.fra)} → ${valg(r.til)}. **${BEREGNBARHET[r.beregnbarhet][0]!.toUpperCase()}${BEREGNBARHET[r.beregnbarhet].slice(1)}**; status **${statustekst(r)}**.
+
+**Godkjenningshistorikk:** ${r.godkjenning.historikk.map((s) => `${STATUS[s.status]} (versjon ${s.regelversjon}, ${dato(s.dato)}, ${s.av})`).join(' → ')}.
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -168,14 +178,21 @@ ${eksempler}
 }
 
 export function lagRegelrapport(sett: Regelsett = PILOTSETT): string {
-  const godkjent = sett.regler.filter((r) => r.godkjenning.status === 'klinisk_godkjent').length
+  const godkjent = sett.regler.filter(erKliniskGodkjent).length
+  const n = sett.regler.length
+  const godkjenningstekst =
+    godkjent === 0
+      ? 'De er ikke empirisk validerte kliniske anbefalinger, og ingen av reglene er klinisk godkjent.'
+      : godkjent === n
+        ? 'Alle reglene er klinisk godkjent etter uavhengig faglig kontroll i nøyaktig denne versjonen; beregningene er likevel ikke empirisk validerte og erstatter ikke klinisk vurdering av den enkelte pasient.'
+        : `${godkjent} av reglene er klinisk godkjent etter uavhengig faglig kontroll i nøyaktig denne versjonen; de andre er ikke, og beregningene etter dem er ikke kliniske anbefalinger. Ingen av beregningene er empirisk validerte.`
   return `# OUSFAR Verktøy – P4: pilotsettet
 
 <!-- Laget av \`npm run verktoy:regler -- rapport\` fra reglene i src/verktoy/regler/. Ikke rediger for hånd; endre reglene og lag rapporten på nytt. -->
 
 Regelsett \`${sett.id}\` versjon ${sett.versjon}, regelmodell ${REGELMODELLVERSJON}, beregningsmotor ${MOTORVERSJON}. ${sett.beskrivelse}
 
-**${sett.regler.length} regler, ${godkjent} klinisk godkjent.** Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. De er ikke empirisk validerte kliniske anbefalinger, og ingen av dem er kontrollert faglig ennå. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i \`docs/verktøy-p4-regelmodell.md\`.
+**${n} regler, ${godkjent} klinisk godkjent.** Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. ${godkjenningstekst} En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i \`docs/verktøy-p4-regelmodell.md\`.
 
 Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel bygger på teksten der, og den vises ikke (\`docs/verktøy-p3-rettigheter.md\`).
 
@@ -183,7 +200,7 @@ Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel by
 
 ${tabell(
   ['Regel', 'Form', 'Fra → til', 'Beregnbarhet', 'Status', 'Eksempler'],
-  sett.regler.map((r) => [`\`${r.id}\``, FORM[r.plan.form], `${valg(r.fra)} → ${valg(r.til)}`, BEREGNBARHET[r.beregnbarhet], STATUS[r.godkjenning.status], String(r.eksempler.length)]),
+  sett.regler.map((r) => [`\`${r.id}\``, FORM[r.plan.form], `${valg(r.fra)} → ${valg(r.til)}`, BEREGNBARHET[r.beregnbarhet], statustekst(r), String(r.eksempler.length)]),
 )}
 
 ## Kilder

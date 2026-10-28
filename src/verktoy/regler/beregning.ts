@@ -7,14 +7,18 @@
  * ideelle og avrundet til to desimaler, og hvilke doser som faktisk kan gis
  * med norske preparater, avgjøres av motoren i P5 (FEST, deling). Resultatet
  * er aldri en klinisk anbefaling i seg selv: `klinisk_godkjent` er bare sann
- * når regelversjonen er klinisk godkjent etter uavhengig faglig kontroll.
+ * når nøyaktig denne regelversjonen er klinisk godkjent etter uavhengig
+ * faglig kontroll (`godkjenning.ts`).
  *
- * Beregningen gjetter aldri: mangler en verdi, en bekreftelse eller et
- * validert gruppemedlem, gjelder et unntak, eller bryter resultatet et
- * bindende krav, stopper den og sier hvorfor. Like inndata og like versjoner
- * gir samme resultat.
+ * Beregningen gjetter aldri: mangler en verdi, en bekreftelse, et svar på et
+ * unntak, et klinisk dosevalg eller et validert gruppemedlem, gjelder et
+ * unntak, er inndata eller en parameter ugyldig, eller bryter resultatet et
+ * bindende krav, stopper den og sier hvorfor. Den kaster aldri. Like inndata
+ * og like versjoner gir samme resultat.
  */
+import { godkjenningsfeil } from './godkjenning'
 import {
+  parameterfeil,
   parametre,
   REGELMODELLVERSJON,
   type Dosekilde,
@@ -45,7 +49,7 @@ export interface Injeksjon {
   /** Planens dag for en startinjeksjon; `null` for vedlikeholdet. */
   dag: number | null
   dato?: string
-  mg: number | [number, number]
+  mg: number
   sted?: string
   vindu_dager?: number
   /** Vedlikehold: hver `maaneder` måned, første gang `maaneder` måned etter dag `etter_dag`. */
@@ -83,7 +87,7 @@ interface Versjoner {
   regelsett: { id: string; versjon: number } | null
   modell: number
   motor: number
-  /** Bare sann når regelversjonen er klinisk godkjent; da er beregningen fortsatt ikke en vurdering av den enkelte pasient. */
+  /** Bare sann når godkjenningen gjelder nøyaktig denne regelversjonen; da er beregningen fortsatt ikke en vurdering av den enkelte pasient. */
   klinisk_godkjent: boolean
   merknader: string[]
 }
@@ -109,6 +113,13 @@ const verdi = (p: Parameter) => p.verdi as number
 
 const tilDato = (iso: string) => new Date(`${iso}T00:00:00Z`)
 const iso = (d: Date) => d.toISOString().slice(0, 10)
+
+/** En gyldig kalenderdato som `ÅÅÅÅ-MM-DD`; `2027-02-31` er ikke det. */
+export function erIsoDato(x: unknown): x is string {
+  if (typeof x !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(x)) return false
+  const d = tilDato(x)
+  return !Number.isNaN(d.getTime()) && iso(d) === x
+}
 
 export function datoFor(startdato: string, dag: number): string {
   const d = tilDato(startdato)
@@ -174,7 +185,7 @@ interface Kontekst {
   kontroller: Kontroll[]
 }
 
-function dose(k: Dosekilde | { type: 'aktuell' }, aktuell: number, ctx: Kontekst): number | [number, number] {
+function dose(k: Dosekilde | { type: 'aktuell' }, aktuell: number, ctx: Kontekst): number {
   switch (k.type) {
     case 'aktuell':
       return aktuell
@@ -183,19 +194,30 @@ function dose(k: Dosekilde | { type: 'aktuell' }, aktuell: number, ctx: Kontekst
     case 'inndata':
       return k.navn === 'startdose' ? ctx.inndata.startdose_mg : (ctx.inndata.maldose_mg as number)
     case 'tabell': {
-      const rad = k.rader.find((r) => Math.abs(r.fra_mg - ctx.inndata.startdose_mg) < EPS)
-      if (!rad) throw new Stopp(`Startdosen ${tall(ctx.inndata.startdose_mg)} mg finnes ikke i omregningstabellen.`)
-      return rad.til_mg
+      // Et spenn i tabellen er et klinisk valg: dosen må oppgis som måldose, og beregningen velger aldri selv.
+      const start = ctx.inndata.startdose_mg
+      const valgt = ctx.inndata.maldose_mg
+      const rad = k.rader.find((r) => Math.abs(r.fra_mg - start) < EPS)
+      if (!rad) throw new Stopp(`Startdosen ${tall(start)} mg finnes ikke i omregningstabellen.`)
+      if (!Array.isArray(rad.til_mg)) {
+        if (valgt !== undefined && Math.abs(valgt - rad.til_mg) > EPS) {
+          throw new Stopp(`Måldosen ${tall(valgt)} mg stemmer ikke med omregningstabellen, som gir ${tall(rad.til_mg)} mg ved ${tall(start)} mg.`)
+        }
+        return rad.til_mg
+      }
+      const [lav, hoy] = rad.til_mg
+      if (valgt === undefined) {
+        throw new Stopp(
+          `Ved ${tall(start)} mg gir omregningstabellen et spenn på ${tall(lav)}–${tall(hoy)} mg. Dosen i spennet er et klinisk valg og må oppgis som måldose; beregningen velger ikke selv.`,
+        )
+      }
+      if (valgt < lav - EPS || valgt > hoy + EPS) throw new Stopp(`Måldosen ${tall(valgt)} mg er utenfor spennet ${tall(lav)}–${tall(hoy)} mg i omregningstabellen.`)
+      return valgt
     }
   }
 }
 
 class Stopp extends Error {}
-
-const enkel = (x: number | [number, number]): number => {
-  if (Array.isArray(x)) throw new Stopp('Et dosespenn kan bare brukes til injeksjoner, ikke til daglig dose.')
-  return x
-}
 
 /** Fasene for forløpet: gruppemedlemmets egne når de finnes. */
 function faserFor(regel: Regel, f: Forlop, medlem: string | null): Fase[] {
@@ -239,7 +261,7 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
   for (const fase of faserFor(regel, f, ctx.medlem)) {
     switch (fase.type) {
       case 'hold': {
-        const mg = enkel(dose(fase.dose, aktuell, ctx))
+        const mg = dose(fase.dose, aktuell, ctx)
         let n: number
         if (fase.varighet.type === 'dager') n = verdi(fase.varighet.dager)
         else {
@@ -286,7 +308,7 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
         }
         break
       case 'vedlikehold':
-        aktuell = enkel(dose(fase.dose, aktuell, ctx))
+        aktuell = dose(fase.dose, aktuell, ctx)
         legg(dag, null, aktuell)
         fortsetter = true
         break
@@ -359,8 +381,12 @@ const tall = (x: number) => String(avrund(x)).replace('.', ',')
 /** Kontrollerer ett inndatakrav; et brudd på et bindende krav blir en stoppgrunn, på et veiledende en merknad. */
 function kontrollerInndata(krav: Inndatakrav, x: number | undefined, stopp: string[], merknader: string[], kontroller: Kontroll[]) {
   const navn = krav.navn === 'startdose' ? 'Startdosen' : 'Måldosen'
-  if (x === undefined || !Number.isFinite(x) || x <= 0) {
+  if (x === undefined) {
     stopp.push(`${navn} må oppgis${krav.navn === 'maldose' ? '; regelen har ingen standard måldose' : ''}.`)
+    return
+  }
+  if (!positivt(x)) {
+    stopp.push(`${navn} må være et positivt tall i mg.`)
     return
   }
   if (!krav.omrade && !krav.verdier) return
@@ -376,14 +402,32 @@ function kontrollerInndata(krav: Inndatakrav, x: number | undefined, stopp: stri
 }
 
 const brukerMaldose = (x: unknown) => JSON.stringify(x).includes('"navn":"maldose"')
+const positivt = (x: unknown): x is number => typeof x === 'number' && Number.isFinite(x) && x > 0
+
+/** Inndata som har feil form (ikke bare feil verdi), som stoppgrunner. */
+function inndatafeil(i: Beregningsinndata): string[] {
+  const feil: string[] = []
+  if (i.startdato !== undefined && !erIsoDato(i.startdato)) feil.push(`Startdatoen «${String(i.startdato)}» er ikke en gyldig dato (ÅÅÅÅ-MM-DD).`)
+  if (i.medlem !== undefined && typeof i.medlem !== 'string') feil.push('Virkestoffet pasienten bruker må oppgis som tekst.')
+  if (i.bekreftet !== undefined && !(Array.isArray(i.bekreftet) && i.bekreftet.every((x) => typeof x === 'string'))) feil.push('Bekreftelsene må være en liste med id-er.')
+  const forhold = i.pasientforhold as unknown
+  if (forhold !== undefined && (!forhold || typeof forhold !== 'object' || Array.isArray(forhold) || Object.values(forhold).some((x) => typeof x !== 'boolean'))) {
+    feil.push('Pasientforholdene må oppgis som ja eller nei for hvert unntak.')
+  }
+  return feil
+}
 
 /**
  * Beregner `regel` for `inndata`. `regelsett` er settet regelen hører til,
  * når den beregnes som del av et.
  */
 export function beregn(regel: Regel, inndata: Beregningsinndata, regelsett?: Regelsett): Beregningsresultat {
-  const klinisk_godkjent = regel.godkjenning.status === 'klinisk_godkjent'
+  const ugyldigGodkjenning = godkjenningsfeil(regel)
+  const klinisk_godkjent = ugyldigGodkjenning.length === 0
   const merknader: string[] = []
+  if (regel.godkjenning.status === 'klinisk_godkjent' && !klinisk_godkjent) {
+    merknader.push(`Regelen er merket klinisk godkjent, men godkjenningen gjelder ikke denne regelversjonen: ${ugyldigGodkjenning.join(' ')} Beregningen er behandlet som ikke godkjent.`)
+  }
   const versjoner = (): Versjoner => ({
     regel: { id: regel.id, versjon: regel.versjon, godkjenning: regel.godkjenning.status },
     regelsett: regelsett ? { id: regelsett.id, versjon: regelsett.versjon } : null,
@@ -399,12 +443,24 @@ export function beregn(regel: Regel, inndata: Beregningsinndata, regelsett?: Reg
     stopp.push(regel.beregnbarhet === 'bare_tekstlig' ? 'Regelen er bare tekstlig veiledning og har ingen beregnbar plan.' : 'Det finnes ingen anbefaling å beregne.')
   }
   if (regel.godkjenning.status === 'avvist' || regel.godkjenning.status === 'trukket') stopp.push(`Regelversjonen er ${regel.godkjenning.status}.`)
-
-  for (const id of inndata.pasientforhold ?? []) {
-    const u = regel.unntak.find((x) => x.id === id)
-    stopp.push(u ? `Regelen gjelder ikke: ${u.tekst}` : `Pasientforholdet «${id}» er ukjent for regelen; det må vurderes individuelt.`)
+  const formfeil = inndatafeil(inndata)
+  if (formfeil.length > 0) {
+    stopp.push(...formfeil)
+    return stoppet()
   }
+
+  // Unntakene (B7): hvert må være besvart. Ukjent stopper like mye som et forhold som gjelder; bare et eksplisitt «nei» slipper gjennom.
   const kontroller: Kontroll[] = []
+  const forhold = inndata.pasientforhold ?? {}
+  for (const u of regel.unntak) {
+    const svar = forhold[u.id]
+    if (svar === true) stopp.push(`Regelen gjelder ikke: ${u.tekst}`)
+    else if (svar === undefined) stopp.push(`Må avklares før beregning (ukjent): ${u.tekst}`)
+    else kontroller.push({ krav: `Avkreftet: ${u.tekst}`, oppfylt: true, detalj: 'Vurdert og avkreftet av forskriveren.' })
+  }
+  for (const [id, svar] of Object.entries(forhold)) {
+    if (svar && !regel.unntak.some((u) => u.id === id)) stopp.push(`Pasientforholdet «${id}» er ukjent for regelen; det må vurderes individuelt.`)
+  }
   for (const b of regel.bekreftelser) {
     const ja = inndata.bekreftet?.includes(b.id) ?? false
     kontroller.push({ krav: `Bekreftet: ${b.tekst}`, oppfylt: ja, detalj: ja ? 'Bekreftet av forskriveren.' : 'Ikke bekreftet.' })
@@ -418,6 +474,7 @@ export function beregn(regel: Regel, inndata: Beregningsinndata, regelsett?: Reg
   const malkrav = regel.inndata.filter((k) => k.navn === 'maldose' && gjelder(k))
   if (malkrav.length === 0 && brukerMaldose(regel.plan)) malkrav.push({ navn: 'maldose', art: 'bindende_krav', grunnlag: { type: 'ousfar_forslag', begrunnelse: '' } })
   for (const k of malkrav) kontrollerInndata(k, inndata.maldose_mg, stopp, merknader, kontroller)
+  if (malkrav.length === 0 && inndata.maldose_mg !== undefined && !positivt(inndata.maldose_mg)) stopp.push('Måldosen må være et positivt tall i mg.')
 
   // Gruppemedlemmet (B4): bare et medlem som er foreslått eller validert, kan beregnes.
   let medlem: string | null = null
@@ -429,10 +486,12 @@ export function beregn(regel: Regel, inndata: Beregningsinndata, regelsett?: Reg
     else medlem = m.nokkel
   }
 
-  // Parametre uten verdi i de fasene som faktisk brukes.
+  // Parametre uten gyldig verdi i de fasene som faktisk brukes.
   for (const f of regel.plan.forlop) {
     for (const [sti, p] of parametre({ start: f.start, faser: faserFor(regel, f, medlem) }, f.id)) {
+      const ugyldig = parameterfeil(p)
       if (p.verdi === null) stopp.push(`Verdien ${sti} mangler og må avklares faglig.`)
+      else if (ugyldig) stopp.push(`Verdien ${sti} er ugyldig: ${ugyldig}.`)
     }
   }
 
@@ -442,8 +501,8 @@ export function beregn(regel: Regel, inndata: Beregningsinndata, regelsett?: Reg
   try {
     for (const f of regel.plan.forlop) ctx.resultater.set(f.id, beregnForlop(regel, f, ctx))
   } catch (e) {
-    if (!(e instanceof Stopp)) throw e
-    stopp.push(e.message)
+    // Også en feil i regelen selv gir en kontrollert stopp, aldri et unntak hos den som beregner.
+    stopp.push(e instanceof Stopp ? e.message : `Beregningen kunne ikke fullføres: ${e instanceof Error ? e.message : String(e)}`)
     return stoppet()
   }
   for (const k of ctx.kontroller) if (!k.oppfylt) merknader.push(`${k.krav}: ikke oppfylt. ${k.detalj}`)
@@ -459,7 +518,7 @@ export function beregn(regel: Regel, inndata: Beregningsinndata, regelsett?: Reg
 
 /* --- Kort form, til eksemplene og rapporten ----------------------------------------- */
 
-const mg = (x: number | [number, number]) => (Array.isArray(x) ? `${tall(x[0])}–${tall(x[1])}` : tall(x))
+const mg = tall
 const norskDato = (d: string) => `${d.slice(8, 10)}.${d.slice(5, 7)}.${d.slice(0, 4)}`
 
 const parentes = (...deler: (string | undefined | false)[]) => {

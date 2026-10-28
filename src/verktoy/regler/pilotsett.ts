@@ -13,9 +13,11 @@
  *
  * **Ingen regel er klinisk godkjent.** Alle har status «til faglig kontroll»
  * (P4.8). OUSFARs egne valg er merket som forslag og må avklares; eksemplene
- * er regnet ut for hånd og kontrolleres av testene mot beregningen.
+ * er regnet ut for hånd og kontrolleres av testene mot beregningen. Reglene
+ * som ble endret etter første uavhengige kontroll, har versjon 2 og er sendt
+ * til kontroll på nytt.
  */
-import type { Bekreftelse, Godkjenning, Kildehenvisning, Parameter, Parameterart, Regel, Regelsett, Unntak, Utsagn } from './modell'
+import type { Bekreftelse, Godkjenning, Godkjenningssteg, Kildehenvisning, Parameter, Parameterart, Regel, Regelsett, Unntak, Utsagn } from './modell'
 import { REGELMODELLVERSJON } from './modell'
 
 /* --- Byggesteiner ----------------------------------------------------------------- */
@@ -46,18 +48,21 @@ const forslag = (
   ...(valg.omrade ? { omrade: valg.omrade } : {}),
 })
 
-const TIL_KONTROLL: Godkjenning = {
-  status: 'til_faglig_kontroll',
-  historikk: [
-    { status: 'utkast', dato: '2026-10-28', av: 'Claude Code', rolle: 'utvikler', merknad: 'Utkast til pilotregel (P4.7).' },
-    {
-      status: 'til_faglig_kontroll',
-      dato: '2026-10-28',
-      av: 'Claude Code',
-      rolle: 'utvikler',
-      merknad: 'Sendt til uavhengig faglig kontroll av kilder, klinisk innhold og regneeksempler (P4.8). Ikke klinisk godkjent.',
-    },
-  ],
+const steg = (status: Godkjenningssteg['status'], regelversjon: number, merknad: string): Godkjenningssteg => ({
+  status,
+  dato: '2026-10-28',
+  av: 'Claude Code',
+  rolle: 'utvikler',
+  regelversjon,
+  merknad,
+})
+const TIL_KONTROLL = 'Sendt til uavhengig faglig kontroll av kilder, klinisk innhold og regneeksempler (P4.8). Ikke klinisk godkjent.'
+
+/** Historikken for en pilotregel: versjon 1 til kontroll, og for en regel som er rettet etter kontrollen, versjon 2 til kontroll på nytt. */
+function tilKontroll(rettet?: string): Godkjenning {
+  const v1 = [steg('utkast', 1, 'Utkast til pilotregel (P4.7).'), steg('til_faglig_kontroll', 1, TIL_KONTROLL)]
+  const v2 = rettet ? [steg('utkast', 2, `Rettet etter første uavhengige kontroll (PR #282): ${rettet}`), steg('til_faglig_kontroll', 2, TIL_KONTROLL)] : []
+  return { status: 'til_faglig_kontroll', historikk: [...v1, ...v2] }
 }
 
 /* --- Fakta fra kildene, med egne ord ------------------------------------------------- */
@@ -101,6 +106,7 @@ const SPC = {
   cisordinolDose: h('dmp-cisordinol', 'pkt. 4.2', 'Vedlikeholdsdose ved kronisk schizofreni og andre kroniske psykoser er vanligvis 20–40 mg daglig.'),
   cisordinolSeponering: h('dmp-cisordinol', 'pkt. 4.8', 'Brå seponering kan gi seponeringssymptomer, vanligvis innen 1–4 dager, som avtar innen 7–14 dager.'),
   abilifyDose: h('ema-abilify', 'section 4.2', 'Schizofreni: startdose 10 eller 15 mg daglig, vedlikehold 15 mg; effektivt doseområde 10–30 mg daglig.'),
+  maintenaIndikasjon: h('ema-abilify-maintena', 'section 4.1', 'Vedlikeholdsbehandling av schizofreni hos voksne som er stabilisert på peroral aripiprazol.'),
   maintenaToleranse: h('ema-abilify-maintena', 'section 4.2', 'Har pasienten aldri brukt aripiprazol, må tolerabilitet med peroral aripiprazol være vist før depotet startes.'),
   maintenaStart: h('ema-abilify-maintena', 'section 4.2', 'Oppstart med én injeksjon: 400 mg på startdagen, og peroral aripiprazol 10–20 mg daglig i 14 dager på rad.'),
   maintenaToInjeksjoner: h('ema-abilify-maintena', 'section 4.2', 'Alternativ oppstart: to injeksjoner à 400 mg samme dag på to ulike steder, med én peroral dose på 20 mg.'),
@@ -108,12 +114,17 @@ const SPC = {
   maintenaCyp2d6: h('ema-abilify-maintena', 'section 4.2', 'Kjente langsomme CYP2D6-omsettere skal ha andre doser (300 mg) og ikke oppstart med to injeksjoner.'),
   maintenaHemmere: h('ema-abilify-maintena', 'section 4.2', 'Ved samtidig bruk av sterke CYP2D6- eller CYP3A4-hemmere i mer enn 14 dager skal dosen reduseres.'),
   maintenaInduktorer: h('ema-abilify-maintena', 'section 4.2', 'Samtidig bruk av CYP3A4-induktorer i mer enn 14 dager bør unngås.'),
+  xeplionIndikasjon: h('ema-xeplion', 'section 4.1', 'Vedlikeholdsbehandling av schizofreni hos voksne som er stabilisert på paliperidon eller risperidon.'),
   xeplionStart: h('ema-xeplion', 'section 4.2', 'Oppstart: 150 mg dag 1 og 100 mg dag 8, begge i deltoideus; tredje dose én måned etter andre. Vedlikehold kan gis i deltoideus eller setemuskel.'),
   xeplionVinduer: h('ema-xeplion', 'section 4.2 (glemte doser)', 'Andre oppstartsdose kan gis inntil 4 dager før eller etter dag 8; vedlikeholdsdosene inntil 7 dager før eller etter månedsdatoen.'),
   xeplionOmregning: h('ema-xeplion', 'section 4.2 (bytte fra peroral)', 'Peroral paliperidon depottablett 3, 6, 9 og 12 mg daglig tilsvarer ved vedlikehold 25–50, 75, 100 og 150 mg Xeplion månedlig.'),
   xeplionSeponering: h('ema-xeplion', 'section 4.2 (bytte fra peroral)', 'Peroral paliperidon eller risperidon kan seponeres når Xeplion startes; noen kan ha nytte av gradvis seponering.'),
   xeplionHoyDose: h('ema-xeplion', 'section 4.2 (bytte fra peroral)', 'Ved bytte fra 9–12 mg peroralt til injeksjon i setemuskel kan eksponeringen bli lavere de første seks månedene; deltoideus kan vurderes da.'),
-  xeplionNyre: h('ema-xeplion', 'section 4.2 (nedsatt nyrefunksjon)', 'Lett nedsatt nyrefunksjon (kreatininclearance 50–80 ml/min) krever andre doser; ved lavere clearance anbefales ikke Xeplion.'),
+  xeplionNyre: h(
+    'ema-xeplion',
+    'section 4.2 (nedsatt nyrefunksjon)',
+    'Ved kreatininclearance fra 50 til under 80 ml/min er oppstarten 100 mg dag 1 og 75 mg én uke senere, og vedlikehold 50 mg (25–100 mg); under 50 ml/min anbefales ikke Xeplion.',
+  ),
 }
 
 const LITTERATUR = {
@@ -136,6 +147,9 @@ const halvering = (sluttdose: Parameter, lav?: { prosent: Parameter; grense: Par
   ...(lav ? { lav_prosent: lav.prosent, lav_grense_mg: lav.grense } : {}),
   sluttdose_mg: sluttdose,
 })
+
+/** Bekreftelse av at pasienten bruker en peroral formulering, når samme virkestoff også finnes som depot. */
+const perorFormulering = (tekst: string): Bekreftelse => ({ id: 'peroral_formulering', tekst, grunnlag: { type: 'kilde', henvisninger: [KEKS19.depot] } })
 
 const FORUTSETNINGER_FELLES = [
   'Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.',
@@ -217,7 +231,7 @@ const seponeringEscitalopram: Regel = {
       stopp: /Startdosen 25 mg er utenfor/,
     },
   ],
-  godkjenning: TIL_KONTROLL,
+  godkjenning: tilKontroll(),
 }
 
 const seponeringCitalopramHyperbolsk: Regel = {
@@ -295,7 +309,7 @@ const seponeringCitalopramHyperbolsk: Regel = {
       },
     },
   ],
-  godkjenning: TIL_KONTROLL,
+  godkjenning: tilKontroll(),
 }
 
 const kryssSertralinMirtazapin: Regel = {
@@ -381,7 +395,7 @@ const kryssSertralinMirtazapin: Regel = {
       stopp: /Måldosen må oppgis/,
     },
   ],
-  godkjenning: TIL_KONTROLL,
+  godkjenning: tilKontroll(),
 }
 
 const maoFluoksetinFenelzin: Regel = {
@@ -473,12 +487,14 @@ const maoFluoksetinFenelzin: Regel = {
       stopp: /Må bekreftes før beregning: Byttet gjøres i, eller med råd fra, spesialisthelsetjenesten/,
     },
   ],
-  godkjenning: TIL_KONTROLL,
+  godkjenning: tilKontroll(),
 }
+
+const BEKREFTET_AP = ['indikasjon', 'peroral_formulering']
 
 const antipsykotikabytteOlanzapinKvetiapin: Regel = {
   id: 'antipsykotikabytte-olanzapin-kvetiapin',
-  versjon: 1,
+  versjon: 2,
   tittel: 'Bytte fra olanzapin til kvetiapin, kryss-titrering med fast opptrapping',
   fra: { type: 'virkestoff', nokkel: 'olanzapin' },
   til: { type: 'virkestoff', nokkel: 'kvetiapin' },
@@ -521,7 +537,14 @@ const antipsykotikabytteOlanzapinKvetiapin: Regel = {
     { navn: 'startdose', omrade: [5, 20], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [SPC.zyprexaDose] } },
     { navn: 'maldose', omrade: [300, 450], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [SPC.seroquel] } },
   ],
-  bekreftelser: [],
+  bekreftelser: [
+    {
+      id: 'indikasjon',
+      tekst: 'Indikasjonen er schizofreni; opptrappingen av kvetiapin i regelen gjelder schizofreni.',
+      grunnlag: { type: 'kilde', henvisninger: [SPC.seroquel] },
+    },
+    perorFormulering('Pasienten bruker peroral olanzapin, ikke depotinjeksjon.'),
+  ],
   unntak: [],
   beregnbarhet: 'beregnbar_etter_avklaring',
   fortolkning: {
@@ -534,7 +557,7 @@ const antipsykotikabytteOlanzapinKvetiapin: Regel = {
       utsagn('OUSFAR holder olanzapin uendret til kvetiapin er på 300 mg (dag 4), og trapper så ned med 25 % av startdosen hver uke.', SPC.seroquel, KEKS19.kryss),
       utsagn('Regelen gjelder bare måldoser i det anbefalte vedlikeholdsområdet 300–450 mg; andre måldoser krever individuell vurdering.', SPC.seroquel),
     ],
-    forutsetninger: [...FORUTSETNINGER_FELLES, 'Kvetiapin gis som tabletter med vanlig frisetting, to ganger daglig; døgndosen er oppgitt.', 'Indikasjonen er schizofreni.'],
+    forutsetninger: [...FORUTSETNINGER_FELLES, 'Kvetiapin gis som tabletter med vanlig frisetting, to ganger daglig; døgndosen er oppgitt.'],
     usikkerhet: [
       'Lengden på nedtrappingen av olanzapin (fire uker) er OUSFARs valg; kildene oppgir ingen varighet.',
       'Sedasjon og ortostatisk blodtrykksfall kan øke mens begge brukes; det må følges klinisk.',
@@ -545,7 +568,7 @@ const antipsykotikabytteOlanzapinKvetiapin: Regel = {
     {
       id: 'fra-20-mg',
       beskrivelse: 'Olanzapin 20 mg til kvetiapin 300 mg.',
-      inndata: { startdose_mg: 20, maldose_mg: 300 },
+      inndata: { startdose_mg: 20, maldose_mg: 300, bekreftet: BEKREFTET_AP },
       forventet: {
         fra: ['dag 1–4: 20 mg', 'dag 5–11: 15 mg', 'dag 12–18: 10 mg', 'dag 19–25: 5 mg', 'fra dag 26: seponert'],
         til: ['dag 1: 50 mg', 'dag 2: 100 mg', 'dag 3: 200 mg', 'fra dag 4: 300 mg'],
@@ -554,7 +577,7 @@ const antipsykotikabytteOlanzapinKvetiapin: Regel = {
     {
       id: 'med-startdato',
       beskrivelse: 'Olanzapin 10 mg til kvetiapin 400 mg med startdato 2. november 2026.',
-      inndata: { startdose_mg: 10, maldose_mg: 400, startdato: '2026-11-02' },
+      inndata: { startdose_mg: 10, maldose_mg: 400, startdato: '2026-11-02', bekreftet: BEKREFTET_AP },
       forventet: {
         fra: [
           'dag 1–4 (02.11.2026–05.11.2026): 10 mg',
@@ -569,12 +592,19 @@ const antipsykotikabytteOlanzapinKvetiapin: Regel = {
     {
       id: 'over-maksimum',
       beskrivelse: '30 mg olanzapin er over doseområdet regelen gjelder for.',
-      inndata: { startdose_mg: 30, maldose_mg: 300 },
+      inndata: { startdose_mg: 30, maldose_mg: 300, bekreftet: BEKREFTET_AP },
       forventet: {},
       stopp: /Startdosen 30 mg er utenfor/,
     },
+    {
+      id: 'depotformulering',
+      beskrivelse: 'Uten bekreftelse av at olanzapin er peroral (ikke depot) stopper beregningen.',
+      inndata: { startdose_mg: 20, maldose_mg: 300, bekreftet: ['indikasjon'] },
+      forventet: {},
+      stopp: /Må bekreftes før beregning: Pasienten bruker peroral olanzapin/,
+    },
   ],
-  godkjenning: TIL_KONTROLL,
+  godkjenning: tilKontroll('indikasjonen (schizofreni) og at olanzapin er peroral, må bekreftes.'),
 }
 
 const IKKE_VURDERT = 'Ikke vurdert individuelt (halveringstid, formulering og norske preparater); gruppeanbefalingen alene er ikke nok (B4).'
@@ -582,7 +612,7 @@ const UTEN_PREPARAT = 'Har ingen preparater i FEST (P2.5); ikke vurdert individu
 
 const gruppeRestApAripiprazol: Regel = {
   id: 'gruppe-rest-ap-aripiprazol',
-  versjon: 1,
+  versjon: 2,
   tittel: 'Bytte fra et antipsykotikum i gruppen «øvrige antipsykotika» til aripiprazol, kryss-titrering',
   fra: { type: 'gruppe', gruppe: 'rest-ap' },
   til: { type: 'virkestoff', nokkel: 'aripiprazol' },
@@ -621,7 +651,10 @@ const gruppeRestApAripiprazol: Regel = {
     { navn: 'startdose', omrade: [20, 40], gjelder_medlem: 'zuklopentiksol', art: 'veiledende_preferanse', grunnlag: { type: 'kilde', henvisninger: [SPC.cisordinolDose] } },
     { navn: 'maldose', omrade: [10, 30], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [SPC.abilifyDose] } },
   ],
-  bekreftelser: [],
+  bekreftelser: [
+    { id: 'indikasjon', tekst: 'Indikasjonen er schizofreni.', grunnlag: { type: 'kilde', henvisninger: [SPC.abilifyDose] } },
+    perorFormulering('Pasienten bruker en peroral formulering, ikke depotinjeksjon eller korttidsvirkende injeksjon.'),
+  ],
   unntak: [],
   medlemmer: [
     { nokkel: 'klorprotiksen', validering: 'ikke_vurdert', begrunnelse: IKKE_VURDERT },
@@ -650,7 +683,7 @@ const gruppeRestApAripiprazol: Regel = {
       utsagn('OUSFAR starter aripiprazol 10 mg dag 1, holder det gamle antipsykotikumet uendret i én uke og trapper det så ned med 25 % av startdosen per uke. Aripiprazol går til måldosen når det gamle er seponert.', SPC.abilifyDose, KEKS19.kryss),
       utsagn('Gruppen følger P1-kartleggingen (tabellens medlemmer). Bare medlemmer som er vurdert hver for seg, kan beregnes (B4); i piloten gjelder det bare zuklopentiksol, som forslag.'),
     ],
-    forutsetninger: [...FORUTSETNINGER_FELLES, 'Pasienten bruker en peroral formulering, ikke depot.', 'Indikasjonen er schizofreni.'],
+    forutsetninger: [...FORUTSETNINGER_FELLES],
     usikkerhet: [
       'Kildesidene og tabellen er ikke enige om hvem som er med i gruppen (P3); gruppens sammensetning må avklares faglig.',
       'Medlemmene har ulik halveringstid og ulike doser; samme plan passer ikke nødvendigvis alle.',
@@ -662,7 +695,7 @@ const gruppeRestApAripiprazol: Regel = {
     {
       id: 'zuklopentiksol-20-mg',
       beskrivelse: 'Zuklopentiksol 20 mg til aripiprazol 15 mg.',
-      inndata: { startdose_mg: 20, maldose_mg: 15, medlem: 'zuklopentiksol' },
+      inndata: { startdose_mg: 20, maldose_mg: 15, medlem: 'zuklopentiksol', bekreftet: BEKREFTET_AP },
       forventet: {
         fra: ['dag 1–7: 20 mg', 'dag 8–14: 15 mg', 'dag 15–21: 10 mg', 'dag 22–28: 5 mg', 'fra dag 29: seponert'],
         til: ['dag 1–28: 10 mg', 'fra dag 29: 15 mg'],
@@ -671,17 +704,17 @@ const gruppeRestApAripiprazol: Regel = {
     {
       id: 'flupentiksol-ikke-vurdert',
       beskrivelse: 'Flupentiksol er medlem av gruppen, men ikke vurdert individuelt, så beregningen stopper.',
-      inndata: { startdose_mg: 6, maldose_mg: 15, medlem: 'flupentiksol' },
+      inndata: { startdose_mg: 6, maldose_mg: 15, medlem: 'flupentiksol', bekreftet: BEKREFTET_AP },
       forventet: {},
       stopp: /flupentiksol er ikke vurdert individuelt/,
     },
   ],
-  godkjenning: TIL_KONTROLL,
+  godkjenning: tilKontroll('indikasjonen (schizofreni) og peroral formulering må bekreftes.'),
 }
 
 const depotAripiprazol: Regel = {
   id: 'depot-aripiprazol-maintena',
-  versjon: 1,
+  versjon: 2,
   tittel: 'Fra peroral aripiprazol til Abilify Maintena, oppstart med én injeksjon',
   fra: { type: 'virkestoff', nokkel: 'aripiprazol' },
   til: { type: 'virkestoff', nokkel: 'aripiprazol' },
@@ -719,7 +752,11 @@ const depotAripiprazol: Regel = {
   },
   inndata: [{ navn: 'startdose', omrade: [10, 20], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [SPC.maintenaStart] } }],
   bekreftelser: [
-    { id: 'tolerert_peroralt', tekst: 'Pasienten har tålt peroral aripiprazol.', grunnlag: { type: 'kilde', henvisninger: [SPC.maintenaToleranse] } },
+    {
+      id: 'indikasjon',
+      tekst: 'Pasienten er voksen, har schizofreni og er stabilisert på, og har tålt, peroral aripiprazol.',
+      grunnlag: { type: 'kilde', henvisninger: [SPC.maintenaIndikasjon, SPC.maintenaToleranse] },
+    },
   ],
   unntak: [
     { id: 'cyp2d6_langsom', tekst: 'Pasienten er kjent langsom CYP2D6-omsetter; preparatomtalen har egne doser.', grunnlag: { type: 'kilde', henvisninger: [SPC.maintenaCyp2d6] } },
@@ -729,7 +766,7 @@ const depotAripiprazol: Regel = {
   beregnbarhet: 'entydig_beregnbar',
   fortolkning: {
     kildetro: [
-      utsagn('Tolerabilitet med peroral aripiprazol må være vist før depotet startes.', SPC.maintenaToleranse),
+      utsagn('Depotet er til vedlikeholdsbehandling av schizofreni hos voksne som er stabilisert på peroral aripiprazol, og tolerabilitet må være vist før det startes.', SPC.maintenaIndikasjon, SPC.maintenaToleranse),
       utsagn('Ved oppstart med én injeksjon gis 400 mg på startdagen, og peroral aripiprazol 10–20 mg fortsetter i 14 dager.', SPC.maintenaStart),
       utsagn('Vedlikehold er 400 mg én gang i måneden, tidligst 26 dager etter forrige injeksjon.', SPC.maintenaVedlikehold),
       utsagn('Langsomme CYP2D6-omsettere, sterke hemmere og induktorer krever andre doser eller bør unngås.', SPC.maintenaCyp2d6, SPC.maintenaHemmere, SPC.maintenaInduktorer),
@@ -739,15 +776,19 @@ const depotAripiprazol: Regel = {
       utsagn('Oppstart med to injeksjoner er ikke tatt med i piloten.', SPC.maintenaToInjeksjoner),
       utsagn('Dosereduksjon til 300 mg ved bivirkninger er en klinisk vurdering og beregnes ikke.', SPC.maintenaVedlikehold),
     ],
-    forutsetninger: [...FORUTSETNINGER_FELLES, 'Pasienten bruker peroral aripiprazol 10–20 mg daglig.', 'Pasienten bruker ikke legemidler med kjente interaksjoner som preparatomtalen nevner (se unntakene).'],
+    forutsetninger: [
+      ...FORUTSETNINGER_FELLES,
+      'Pasienten bruker peroral aripiprazol 10–20 mg daglig.',
+      'Forskriveren har vurdert hvert unntak (CYP2D6-status, hemmere og induktorer) og svart nei; et ubesvart unntak stopper beregningen. «Nei» om CYP2D6 betyr at pasienten ikke er kjent langsom omsetter.',
+    ],
     usikkerhet: ['Regelen gjelder Abilify Maintena; andre aripiprazoldepoter (andre estere eller intervaller) har egne oppstartsregimer og er ikke omfattet.'],
   },
   referanser: [pn('SwitchAntipsychotics:Pa>Da')],
   eksempler: [
     {
       id: 'fra-15-mg',
-      beskrivelse: 'Peroral aripiprazol 15 mg, tolerert.',
-      inndata: { startdose_mg: 15, bekreftet: ['tolerert_peroralt'] },
+      beskrivelse: 'Peroral aripiprazol 15 mg; indikasjonen bekreftet og alle unntak avkreftet.',
+      inndata: { startdose_mg: 15, bekreftet: ['indikasjon'], pasientforhold: { cyp2d6_langsom: false, sterk_cyp_hemmer: false, cyp3a4_induktor: false } },
       forventet: {
         fra: ['dag 1–14: 15 mg', 'fra dag 15: seponert'],
         til: ['dag 1: 400 mg injeksjon', 'hver måned fra 1 måned etter dag 1, tidligst 26 dager etter forrige: 400 mg injeksjon'],
@@ -756,24 +797,33 @@ const depotAripiprazol: Regel = {
     {
       id: 'langsom-cyp2d6',
       beskrivelse: 'Kjent langsom CYP2D6-omsetter: regelen gjelder ikke.',
-      inndata: { startdose_mg: 15, bekreftet: ['tolerert_peroralt'], pasientforhold: ['cyp2d6_langsom'] },
+      inndata: { startdose_mg: 15, bekreftet: ['indikasjon'], pasientforhold: { cyp2d6_langsom: true, sterk_cyp_hemmer: false, cyp3a4_induktor: false } },
       forventet: {},
       stopp: /Regelen gjelder ikke: Pasienten er kjent langsom CYP2D6-omsetter/,
     },
     {
-      id: 'ikke-tolerert',
-      beskrivelse: 'Uten bekreftet tolerabilitet stopper beregningen.',
-      inndata: { startdose_mg: 15 },
+      id: 'interaksjoner-ukjent',
+      beskrivelse: 'Hemmere og induktorer er ikke vurdert: ukjent stopper like mye som et unntak som gjelder.',
+      inndata: { startdose_mg: 15, bekreftet: ['indikasjon'], pasientforhold: { cyp2d6_langsom: false } },
       forventet: {},
-      stopp: /Må bekreftes før beregning: Pasienten har tålt peroral aripiprazol/,
+      stopp: /Må avklares før beregning \(ukjent\): Pasienten bruker en sterk CYP2D6- eller CYP3A4-hemmer/,
+    },
+    {
+      id: 'uten-indikasjon',
+      beskrivelse: 'Uten bekreftet indikasjon og tolerabilitet stopper beregningen.',
+      inndata: { startdose_mg: 15, pasientforhold: { cyp2d6_langsom: false, sterk_cyp_hemmer: false, cyp3a4_induktor: false } },
+      forventet: {},
+      stopp: /Må bekreftes før beregning: Pasienten er voksen, har schizofreni/,
     },
   ],
-  godkjenning: TIL_KONTROLL,
+  godkjenning: tilKontroll('indikasjonen må bekreftes, og hvert unntak må besvares; et ukjent unntak stopper beregningen.'),
 }
+
+const NYRE_AVKREFTET = { nedsatt_nyrefunksjon: false }
 
 const depotPaliperidon: Regel = {
   id: 'depot-paliperidon-xeplion',
-  versjon: 1,
+  versjon: 2,
   tittel: 'Fra peroral paliperidon depottablett til Xeplion',
   fra: { type: 'virkestoff', nokkel: 'paliperidon' },
   til: { type: 'virkestoff', nokkel: 'paliperidon' },
@@ -830,23 +880,42 @@ const depotPaliperidon: Regel = {
   },
   inndata: [{ navn: 'startdose', verdier: [3, 6, 9, 12], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [SPC.xeplionOmregning] } }],
   bekreftelser: [
-    { id: 'stabil_peroralt', tekst: 'Pasienten er stabilisert på peroral paliperidon depottablett.', grunnlag: { type: 'kilde', henvisninger: [SPC.xeplionOmregning] } } satisfies Bekreftelse,
+    {
+      id: 'indikasjon',
+      tekst: 'Pasienten er voksen, har schizofreni og er stabilisert på peroral paliperidon depottablett.',
+      grunnlag: { type: 'kilde', henvisninger: [SPC.xeplionIndikasjon, SPC.xeplionOmregning] },
+    } satisfies Bekreftelse,
   ],
-  unntak: [{ id: 'nedsatt_nyrefunksjon', tekst: 'Pasienten har nedsatt nyrefunksjon (kreatininclearance under 80 ml/min); preparatomtalen har andre doser eller fraråder Xeplion.', grunnlag: { type: 'kilde', henvisninger: [SPC.xeplionNyre] } }],
+  unntak: [
+    {
+      id: 'nedsatt_nyrefunksjon',
+      tekst: 'Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min.',
+      grunnlag: { type: 'kilde', henvisninger: [SPC.xeplionNyre] },
+    },
+  ],
   beregnbarhet: 'entydig_beregnbar',
   fortolkning: {
     kildetro: [
       utsagn('Xeplion startes med 150 mg dag 1 og 100 mg dag 8 (±4 dager), begge i deltoideus; deretter månedlig (±7 dager), første gang én måned etter andre dose.', SPC.xeplionStart, SPC.xeplionVinduer),
+      utsagn('Xeplion er til vedlikeholdsbehandling av schizofreni hos voksne som er stabilisert på paliperidon eller risperidon.', SPC.xeplionIndikasjon),
       utsagn('Vedlikeholdsdosen som gir tilsvarende eksponering som 3, 6, 9 og 12 mg peroralt, er 25–50, 75, 100 og 150 mg.', SPC.xeplionOmregning),
+      utsagn('Ved nedsatt nyrefunksjon er start- og vedlikeholdsdosene andre, og under 50 ml/min anbefales ikke Xeplion.', SPC.xeplionNyre),
       utsagn('Den perorale behandlingen kan seponeres når Xeplion startes.', SPC.xeplionSeponering),
       utsagn('Ved bytte mellom peroral behandling og depot må preparatspesifikke instruksjoner følges.', KEKS19.depot),
     ],
     tilpasninger: [
       utsagn('OUSFAR seponerer den perorale behandlingen dagen før første injeksjon; gradvis seponering, som preparatomtalen nevner for noen, er ikke modellert.', SPC.xeplionSeponering),
-      utsagn('Ved 3 mg peroralt oppgis vedlikeholdsdosen som spennet 25–50 mg; valget i spennet er en klinisk vurdering.', SPC.xeplionOmregning),
+      utsagn(
+        'Ved 3 mg peroralt oppgis vedlikeholdsdosen som spennet 25–50 mg. Valget i spennet er en klinisk vurdering: forskriveren må oppgi dosen som måldose, ellers stopper beregningen. Ved 6, 9 og 12 mg må en oppgitt måldose være lik tabellens.',
+        SPC.xeplionOmregning,
+      ),
       utsagn('Bytte fra peroral risperidon er ikke tatt med, fordi preparatomtalen ikke har en omregning fra risperidondose.'),
     ],
-    forutsetninger: [...FORUTSETNINGER_FELLES, 'Pasienten bruker én av depottablettstyrkene 3, 6, 9 eller 12 mg daglig.', 'Nyrefunksjonen er normal.'],
+    forutsetninger: [
+      ...FORUTSETNINGER_FELLES,
+      'Pasienten bruker én av depottablettstyrkene 3, 6, 9 eller 12 mg daglig.',
+      'Forskriveren har vurdert nyrefunksjonen og svart at kreatininclearance ikke er under 80 ml/min; ubesvart stopper beregningen.',
+    ],
     usikkerhet: [
       'Ved bytte fra 9–12 mg til injeksjon i setemuskelen kan eksponeringen bli lavere de første seks månedene (preparatomtalen); valg av injeksjonssted beregnes ikke.',
       'Tremånedersdepotene (Trevicta, Byannli) har egne regler og er ikke omfattet.',
@@ -856,8 +925,8 @@ const depotPaliperidon: Regel = {
   eksempler: [
     {
       id: 'fra-6-mg',
-      beskrivelse: 'Paliperidon depottablett 6 mg.',
-      inndata: { startdose_mg: 6, bekreftet: ['stabil_peroralt'] },
+      beskrivelse: 'Paliperidon depottablett 6 mg; indikasjonen bekreftet og nedsatt nyrefunksjon avkreftet.',
+      inndata: { startdose_mg: 6, bekreftet: ['indikasjon'], pasientforhold: NYRE_AVKREFTET },
       forventet: {
         fra: ['fra dag 1: seponert'],
         til: [
@@ -869,38 +938,52 @@ const depotPaliperidon: Regel = {
     },
     {
       id: 'fra-3-mg-med-dato',
-      beskrivelse: 'Fra 3 mg, startdato 24. januar 2027: dag 8 er 31. januar, og én måned senere er siste dag i februar.',
-      inndata: { startdose_mg: 3, bekreftet: ['stabil_peroralt'], startdato: '2027-01-24' },
+      beskrivelse: 'Fra 3 mg med klinikerens valg 50 mg i spennet 25–50 mg, startdato 24. januar 2027: dag 8 er 31. januar, og én måned senere er siste dag i februar.',
+      inndata: { startdose_mg: 3, maldose_mg: 50, bekreftet: ['indikasjon'], pasientforhold: NYRE_AVKREFTET, startdato: '2027-01-24' },
       forventet: {
         fra: ['fra dag 1 (24.01.2027): seponert'],
         til: [
           'dag 1 (24.01.2027): 150 mg injeksjon, deltoideus',
           'dag 8 (31.01.2027, ±4 dager): 100 mg injeksjon, deltoideus',
-          'hver måned fra 1 måned etter dag 8 (28.02.2027, ±7 dager): 25–50 mg injeksjon, deltoideus eller setemuskel',
+          'hver måned fra 1 måned etter dag 8 (28.02.2027, ±7 dager): 50 mg injeksjon, deltoideus eller setemuskel',
         ],
       },
     },
     {
+      id: 'fra-3-mg-uten-dosevalg',
+      beskrivelse: 'Fra 3 mg uten valgt dose i spennet: beregningen velger ikke selv, og stopper.',
+      inndata: { startdose_mg: 3, bekreftet: ['indikasjon'], pasientforhold: NYRE_AVKREFTET },
+      forventet: {},
+      stopp: /Ved 3 mg gir omregningstabellen et spenn på 25–50 mg/,
+    },
+    {
       id: 'dose-uten-omregning',
       beskrivelse: '15 mg finnes ikke i omregningstabellen, så beregningen stopper.',
-      inndata: { startdose_mg: 15, bekreftet: ['stabil_peroralt'] },
+      inndata: { startdose_mg: 15, bekreftet: ['indikasjon'], pasientforhold: NYRE_AVKREFTET },
       forventet: {},
       stopp: /Startdosen 15 mg er utenfor det regelen gjelder for \(3, 6, 9, 12 mg\)/,
     },
     {
       id: 'nedsatt-nyrefunksjon',
-      beskrivelse: 'Nedsatt nyrefunksjon: regelen gjelder ikke.',
-      inndata: { startdose_mg: 6, bekreftet: ['stabil_peroralt'], pasientforhold: ['nedsatt_nyrefunksjon'] },
+      beskrivelse: 'Kreatininclearance under 80 ml/min: regelen gjelder ikke.',
+      inndata: { startdose_mg: 6, bekreftet: ['indikasjon'], pasientforhold: { nedsatt_nyrefunksjon: true } },
       forventet: {},
-      stopp: /Regelen gjelder ikke: Pasienten har nedsatt nyrefunksjon/,
+      stopp: /Regelen gjelder ikke: Pasienten har kreatininclearance under 80 ml\/min/,
+    },
+    {
+      id: 'nyrefunksjon-ukjent',
+      beskrivelse: 'Nyrefunksjonen er ikke vurdert: ukjent stopper like mye som nedsatt.',
+      inndata: { startdose_mg: 6, bekreftet: ['indikasjon'] },
+      forventet: {},
+      stopp: /Må avklares før beregning \(ukjent\): Pasienten har kreatininclearance under 80 ml\/min/,
     },
   ],
-  godkjenning: TIL_KONTROLL,
+  godkjenning: tilKontroll('indikasjonen må bekreftes, nyrefunksjonen må besvares, og ved 3 mg må klinikeren velge dosen i spennet 25–50 mg.'),
 }
 
 export const PILOTSETT: Regelsett = {
   id: 'ousfar-verktoy-pilot',
-  versjon: 1,
+  versjon: 2,
   modell: REGELMODELLVERSJON,
   beskrivelse:
     'Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.',

@@ -2,29 +2,76 @@
  * Kontrollene av et regelsett (P4 i `docs/verktøy-utviklingsplan.md`): at
  * reglene henger sammen med P1-kartleggingen og P3-kildegrunnlaget, at hver
  * verdi har et grunnlag, at Psychiatrienet bare er en referanse uten
- * innhold, at beregnbarheten og godkjenningen stemmer med innholdet, og at
- * regneeksemplene gir det som er regnet ut for hånd. Testene krever at
+ * innhold og viser til en kildeoppføring med samme retning, virkestoffer og
+ * formulering som regelen, at verdiene er gyldige, at beregnbarheten og
+ * godkjenningen stemmer med innholdet og regelversjonen, og at regneeksemplene
+ * gir det som er regnet ut for hånd. Testene krever at
  * listen er tom; et nytt regelsett må bestå de samme kontrollene.
  */
 import arkivfil from '../../data/verktoy/psychiatrienet-kildearkiv.json'
 import kartleggingsfil from '../../data/verktoy/virkestoffkartlegging.json'
+import type { Formuleringsklasse } from '../festformuleringer'
 import type { Kildearkiv } from '../kildearkiv'
-import { kildegrunnlag } from '../kildeanbefalinger'
-import { erSperret, type Virkestoffkartlegging } from '../kartlegging'
+import { kildegrunnlag, type Kildeanbefaling, type Kildepart } from '../kildeanbefalinger'
+import { erSperret, KILDEFORMULERINGER, type Virkestoffkartlegging } from '../kartlegging'
 import { beregn, kortform } from './beregning'
+import { godkjenningsfeil } from './godkjenning'
 import { kildeFor } from './kilder'
-import { henvisninger, parametre, REGELMODELLVERSJON, type Grunnlag, type Regel, type Regelsett, type Virkestoffvalg } from './modell'
+import {
+  henvisninger,
+  parameterfeil,
+  parametre,
+  REGELMODELLVERSJON,
+  type Administrasjon,
+  type Grunnlag,
+  type Regel,
+  type Regelsett,
+  type Virkestoffvalg,
+} from './modell'
 
-/** Det reglene kontrolleres mot: P1-kartleggingen og id-ene til P3-kildeoppføringene. */
+/** Det reglene kontrolleres mot: P1-kartleggingen og P3-kildeoppføringene etter id. */
 export interface Kontrollgrunnlag {
   kartlegging: Virkestoffkartlegging
-  kildeoppforinger: Set<string>
+  kildeoppforinger: Map<string, Kildeanbefaling>
 }
 
 export function lesKontrollgrunnlag(): Kontrollgrunnlag {
   const kartlegging = kartleggingsfil as Virkestoffkartlegging
   const g = kildegrunnlag(arkivfil as Kildearkiv, kartlegging)
-  return { kartlegging, kildeoppforinger: new Set(g.anbefalinger.map((a) => a.id)) }
+  return { kartlegging, kildeoppforinger: new Map(g.anbefalinger.map((a) => [a.id, a])) }
+}
+
+/** Formuleringsklassene i P1 som hver administrasjonsform i regelmodellen svarer til. */
+const KLASSER: Record<Administrasjon, readonly Formuleringsklasse[]> = {
+  peroral: ['peroral', 'peroral_modifisert'],
+  depotinjeksjon: ['depotinjeksjon'],
+}
+
+/** Hvorfor kildeoppføringens side (`fra` eller `til`) ikke gjelder det regelen gjelder; `null` når den gjør det. */
+function avvikendePart(part: Kildepart, v: Virkestoffvalg, administrasjon: Administrasjon | undefined): string | null {
+  const stoff = v.type === 'virkestoff' ? part.virkestoffer.includes(v.nokkel) : part.gruppe === v.gruppe
+  if (!stoff) return `gjelder ${part.gruppe ? `gruppen ${part.gruppe}` : part.virkestoffer.join(', ')}, ikke ${v.type === 'virkestoff' ? v.nokkel : `gruppen ${v.gruppe}`}`
+  const klasser: readonly Formuleringsklasse[] = part.formulering ? KILDEFORMULERINGER[part.formulering].klasser : []
+  if (administrasjon && part.formulering && !klasser.some((k) => KLASSER[administrasjon].includes(k))) {
+    return `gjelder formuleringen ${part.formulering} (${klasser.join('/')}), ikke ${administrasjon}`
+  }
+  return null
+}
+
+/** At P3-oppføringen er samme slags anbefaling, i samme retning, for samme virkestoffer og formuleringer som regelen. */
+function referansefeil(r: Regel, a: Kildeanbefaling): string[] {
+  const feil: string[] = []
+  if (a.type === 'tillegg') feil.push('er en anbefaling om tillegg, ikke om bytte eller seponering')
+  else if ((a.type === 'seponering') !== (r.til === null)) feil.push(`er en anbefaling om ${a.type}, men regelen ${r.til ? 'bytter' : 'seponerer'}`)
+  const fraForlop = r.plan.forlop[0]
+  const tilForlop = r.til ? r.plan.forlop.slice(1).find((x) => like(x.virkestoff, r.til)) : undefined
+  const fra = avvikendePart(a.fra, r.fra, fraForlop?.administrasjon)
+  if (fra) feil.push(`fra-siden ${fra}`)
+  if (r.til && a.til) {
+    const til = avvikendePart(a.til, r.til, tilForlop?.administrasjon)
+    if (til) feil.push(`til-siden ${til}`)
+  }
+  return feil
 }
 
 /** Lengste tillatte gjengivelse av et faktum: en kort setning med egne ord, aldri et avsnitt. */
@@ -88,7 +135,9 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
     const kilde = kildeFor(hv.kilde)
     if (!kilde) f(`ukjent kilde ${hv.kilde}`)
     if (hv.kilde === 'psychiatrienet') {
-      if (!('kildeoppforing' in hv) || !g.kildeoppforinger.has(hv.kildeoppforing)) f(`Psychiatrienet-henvisningen ${'kildeoppforing' in hv ? hv.kildeoppforing : '?'} er ikke en kildeoppføring i P3`)
+      const oppforing = 'kildeoppforing' in hv ? g.kildeoppforinger.get(hv.kildeoppforing) : undefined
+      if (!oppforing) f(`Psychiatrienet-henvisningen ${'kildeoppforing' in hv ? hv.kildeoppforing : '?'} er ikke en kildeoppføring i P3`)
+      else for (const x of referansefeil(r, oppforing)) f(`Psychiatrienet-oppføringen ${oppforing.id} passer ikke regelen: den ${x}`)
       if ('faktum' in hv || 'sted' in hv) f('en Psychiatrienet-henvisning har innhold; den skal bare ha kildeoppføringen')
     } else if (!('sted' in hv) || !hv.faktum.trim() || !hv.sted.trim()) f(`henvisningen til ${hv.kilde} mangler sted eller faktum`)
     else if (hv.faktum.length > MAKS_FAKTUM) f(`faktumet fra ${hv.kilde} er lengre enn ${MAKS_FAKTUM} tegn`)
@@ -113,7 +162,26 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
     if (gr.type === 'ousfar_forslag' && !gr.begrunnelse.trim()) f(`${sti} er et forslag uten begrunnelse`)
   }
   for (const [sti, p] of parametre(r)) {
-    if (p.verdi !== null && p.omrade && (p.verdi < p.omrade[0] || p.verdi > p.omrade[1])) f(`${sti} er utenfor sitt eget område`)
+    const ugyldig = parameterfeil(p)
+    if (ugyldig) f(`${sti} er ugyldig: ${ugyldig}`)
+    else if (p.verdi !== null && p.omrade && (p.verdi < p.omrade[0] || p.verdi > p.omrade[1])) f(`${sti} er utenfor sitt eget område`)
+  }
+  const positiv = (x: number) => Number.isFinite(x) && x > 0
+  for (const x of r.inndata) {
+    const tall = [...(x.omrade ?? []), ...(x.verdier ?? [])]
+    if (!tall.every(positiv) || (x.omrade && x.omrade[0] > x.omrade[1])) f(`inndatakravet for ${x.navn} har ugyldige grenser`)
+  }
+  for (const forlop of r.plan.forlop) {
+    for (const fase of forlop.faser) {
+      if (fase.type !== 'injeksjoner') continue
+      for (const dose of [...fase.start.map((s) => s.dose), fase.vedlikehold.dose]) {
+        if (dose.type !== 'tabell') continue
+        for (const rad of dose.rader) {
+          const til = Array.isArray(rad.til_mg) ? rad.til_mg : [rad.til_mg]
+          if (!positiv(rad.fra_mg) || !til.every(positiv) || (til.length === 2 && til[0]! >= til[1]!)) f(`forløp ${forlop.id}: omregningsraden ${rad.fra_mg} mg er ugyldig`)
+        }
+      }
+    }
   }
   const forslag = grunnlag.filter(([, gr]) => gr.type === 'ousfar_forslag').map(([sti]) => sti)
   const mangler = parametre(r).filter(([, p]) => p.verdi === null).map(([sti]) => sti)
@@ -121,15 +189,13 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
     f(`er merket entydig beregnbar, men har forslag eller manglende verdier som må avklares: ${[...forslag, ...mangler].join(', ')}`)
   }
 
-  // Godkjenningen: status følger historikken, og klinisk godkjenning krever uavhengig kontroll.
+  // Godkjenningen: status følger historikken, siste steg gjelder denne regelversjonen, og en klinisk
+  // godkjenning gjelder nøyaktig dette innholdet og kommer fra en uavhengig kontrollør.
   const sist = r.godkjenning.historikk.at(-1)
   if (!sist || sist.status !== r.godkjenning.status) f('godkjenningsstatusen er ikke siste steg i historikken')
-  if (r.godkjenning.status === 'klinisk_godkjent') {
-    const utviklere = new Set(r.godkjenning.historikk.filter((s) => s.rolle === 'utvikler').map((s) => s.av))
-    const kontroll = r.godkjenning.historikk.some((s) => s.rolle === 'uavhengig_kontrollor' && s.status === 'klinisk_godkjent' && !utviklere.has(s.av))
-    if (!kontroll) f('er klinisk godkjent uten et godkjenningssteg fra en uavhengig kontrollør')
-    if (r.beregnbarhet === 'beregnbar_etter_avklaring') f('er klinisk godkjent, men har fortsatt valg som må avklares')
-  }
+  if (sist && sist.regelversjon !== r.versjon) f(`siste godkjenningssteg gjelder regelversjon ${sist.regelversjon}, ikke versjon ${r.versjon}; en endret regel må sendes til kontroll på nytt`)
+  for (const s of r.godkjenning.historikk) if (!Number.isInteger(s.regelversjon) || s.regelversjon < 1 || s.regelversjon > r.versjon) f(`et godkjenningssteg gjelder en ukjent regelversjon (${s.regelversjon})`)
+  if (r.godkjenning.status === 'klinisk_godkjent') for (const x of godkjenningsfeil(r)) f(`er merket klinisk godkjent, men godkjenningen er ikke gyldig: ${x}`)
 
   // Regneeksemplene: et beregnbart eksempel gir nøyaktig det forventede, et stopp-eksempel stopper av riktig grunn.
   if (r.beregnbarhet !== 'bare_tekstlig' && r.beregnbarhet !== 'mangler_anbefaling' && !r.eksempler.some((e) => !e.stopp)) f('har ingen regneeksempler med beregnet plan')
