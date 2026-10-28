@@ -23,13 +23,14 @@ export const forslag = (
   verdi: number | null,
   enhet: Parameter['enhet'],
   begrunnelse: string,
-  valg: { art?: Parameterart; omrade?: [number, number]; henvisninger?: Kildehenvisning[] } = {},
+  valg: { art?: Parameterart; omrade?: [number, number]; justerbar?: string; henvisninger?: Kildehenvisning[] } = {},
 ): Parameter => ({
   verdi,
   enhet,
   art: valg.art ?? 'veiledende_preferanse',
   grunnlag: { type: 'ousfar_vurdering', begrunnelse, ...(valg.henvisninger ? { henvisninger: valg.henvisninger } : {}), avklaring: null },
   ...(valg.omrade ? { omrade: valg.omrade } : {}),
+  ...(valg.justerbar ? { justerbar: valg.justerbar } : {}),
 })
 
 export const steg = (status: Godkjenningssteg['status'], regelversjon: number, merknad: string): Godkjenningssteg => ({
@@ -48,7 +49,7 @@ export const NICE = {
   tempo: h('nice-ng222', 'anbefaling 1.4.16', 'Tempoet avtales med pasienten; neste reduksjon først når seponeringssymptomene er borte eller tålelige. Nedtrapping kan ta uker til måneder.'),
   bytte: h('nice-ng222', 'anbefaling 1.4.16', 'Raskere nedtrapping kan være aktuelt ved bytte av antidepressiv.'),
   flytende: h('nice-ng222', 'anbefaling 1.4.16', 'Flytende formuleringer kan vurderes når svært små doser ikke kan gis med tabletter eller kapsler.'),
-  vurdering: h('nice-ng222', 'anbefaling 1.4.18', 'Det bør gå én til to uker for å vurdere virkningen av en dosereduksjon før neste.'),
+  fluoksetinVurdering: h('nice-ng222', 'anbefaling 1.4.18 (om fluoksetin)', 'Ved nedtrapping av fluoksetin: la det gå én til to uker for å vurdere virkningen av en dosereduksjon før neste.'),
   fluoksetin: h('nice-ng222', 'anbefaling 1.4.18', 'Fluoksetin virker lenge: ved 20 mg daglig kan en periode med dosering annenhver dag være en egnet reduksjon; ved 40–60 mg daglig brukes gradvis nedtrapping.'),
   mao: h('nice-ng222', 'anbefaling 1.9.5', 'Bytte til eller fra en MAO-hemmer skal skje i, eller med råd fra, spesialisthelsetjenesten. Bytte kan kreve kryssnedtrapping.'),
   kombinasjon: h('nice-ng222', 'anbefaling 1.9.9', 'Mirtazapin lagt til et SSRI er et kombinasjonsalternativ; SSRI sammen med MAO-hemmer kan være farlig og skal unngås.'),
@@ -58,13 +59,37 @@ export const NICE = {
   alvorlig: h('nice-ng222', 'anbefaling 1.4.21', 'Ved mer alvorlige seponeringssymptomer kan forrige dose gjenopptas, og nedtrappingen forsøkes igjen langsommere og med mindre trinn når symptomene er borte.'),
 }
 
+/* --- Fakta fra Royal College of Psychiatrists, med egne ord ------------------------------ */
+
+export const RCPSYCH = {
+  tid: h('rcpsych-stopping', 'How should I gradually reduce my dose?', 'Et første trinn kan være en firedel eller halvdel av dosen, med to til fire uker før neste; tiden mellom trinnene bør være så lang som seponeringssymptomene krever.'),
+  smaa: h('rcpsych-stopping', 'How should I gradually reduce my dose?', 'Gir et trinn ubehagelige symptomer, går man tilbake til siste gode dose og fortsetter senere med mindre trinn, for eksempel 10 % eller 5 %.'),
+  langvarig: h('rcpsych-stopping', 'If you have been taking antidepressants for longer', 'Etter mange måneders bruk, etter plagsomme seponeringssymptomer tidligere eller med et høyrisikostoff er små trinn fra start best, for eksempel 5–10 % av dosen.'),
+  fluoksetin: h('rcpsych-stopping', 'If you have been taking antidepressants for longer', 'Langtidsvirkende stoffer som fluoksetin kan gi seponeringssymptomer dager til uker etter en reduksjon; det er best å vente minst fire uker før neste.'),
+  fireUker: h('rcpsych-stopping', 'When and how should I stop my antidepressants?', 'Selv etter kort bruk og uten seponeringssymptomer er det best å trappe ned over minst fire uker; etter lang bruk vanligvis over måneder eller lenger.'),
+  lavDose: h('rcpsych-stopping', 'When and how should I stop my antidepressants?', 'Trinnene blir mindre etter hvert som dosen synker, og noen trenger svært lave doser før de slutter, helt ned mot 2 % av opprinnelig dose.'),
+  hoyRisiko: h('rcpsych-stopping', 'Appendix 1', 'Høyest potensiell risiko for seponeringssymptomer har blant andre duloksetin, mirtazapin, moklobemid, paroksetin og venlafaksin.'),
+  middelsRisiko: h('rcpsych-stopping', 'Appendix 1', 'Middels potensiell risiko har blant andre amitriptylin, bupropion, citalopram, escitalopram, fluoksetin, fluvoksamin, klomipramin, nortriptylin og sertralin; lav har blant andre vortioksetin.'),
+  plan: h('rcpsych-stopping', 'Which plan should I follow?', 'Planene er utgangspunkt som tilpasses underveis: om lag 50 % per trinn hver 2.–4. uke ved middels eller lavere risiko, og om lag 10 % ved høyest risiko.'),
+}
+
 /* --- Felles forslag ----------------------------------------------------------------------- */
 
 export const minst14 = (seponering: Kildehenvisning) =>
   forslag(14, 'dager', '«Minst én til to uker» er lest konservativt som minst 14 dager.', { art: 'bindende_krav', henvisninger: [seponering] })
 
-export const trinn14 = (begrunnelse: string, ...henvisninger: Kildehenvisning[]) =>
-  forslag(14, 'dager', begrunnelse, { omrade: [7, 14], henvisninger: [NICE.vurdering, ...henvisninger] })
+/** 14 dager per trinn: nedre del av RCPsychs to til fire uker; et åpent forslag, ikke en regel fra NICE. */
+export const trinn14 = (begrunnelse: string, valg: { omrade?: [number, number]; henvisninger?: Kildehenvisning[] } = {}) =>
+  forslag(14, 'dager', begrunnelse, { omrade: valg.omrade ?? [14, 28], henvisninger: [RCPSYCH.tid, ...(valg.henvisninger ?? [])] })
+
+/** 28 dager per trinn for fluoksetin: RCPsychs minst fire uker før neste reduksjon er strengere enn NICEs én til to uker. */
+export const fluoksetinTrinn28 = () =>
+  forslag(
+    28,
+    'dager',
+    'RCPsych anbefaler minst fire uker før neste reduksjon av langtidsvirkende fluoksetin, fordi symptomene kan komme sent; NICE nevner én til to uker for å vurdere virkningen. OUSFAR bruker det strengeste.',
+    { henvisninger: [RCPSYCH.fluoksetin, NICE.fluoksetinVurdering] },
+  )
 
 export const halvering = (sluttdose: Parameter, lav?: { prosent: Parameter; grense: Parameter }) => ({
   type: 'prosent_av_aktuell' as const,

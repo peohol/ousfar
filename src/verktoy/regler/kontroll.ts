@@ -173,6 +173,7 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
     const ugyldig = parameterfeil(p, sti)
     if (ugyldig) f(`${sti} er ugyldig: ${ugyldig}`)
     else if (p.verdi !== null && p.omrade && (p.verdi < p.omrade[0] || p.verdi > p.omrade[1])) f(`${sti} er utenfor sitt eget område`)
+    if (p.justerbar !== undefined && (!p.justerbar.trim() || !p.omrade || p.omrade[0] === p.omrade[1])) f(`${sti} er justerbar uten tekst eller uten et område å velge i`)
   }
   for (const x of tallfeil(r)) f(x)
   const vurderinger = grunnlag.filter(([, gr]) => gr.type === 'ousfar_vurdering').map(([sti]) => sti)

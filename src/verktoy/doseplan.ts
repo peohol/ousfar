@@ -12,7 +12,8 @@ import type { Legemiddelutvalg } from '../legemiddeldata/lesing'
 import type { Preparatgrunnlag } from './motor/byggesteiner'
 import { festFerskhet, formvalgSomTrengs, kliniskDoseplan, type Doseplaninndata, type Doseplanresultat, type Formalternativer, type Formvalg } from './motor/plan'
 import { festkoblinger, KARTLEGGING } from './register'
-import type { Regel, Regelsett } from './regler/modell'
+import { medEnhet, omradetekst } from './regler/beregning'
+import { justerbare, type Regel, type Regelsett } from './regler/modell'
 import type { Formuleringsklasse } from './festformuleringer'
 import { medlemFor, REGELSETT, settFor, type Verktoyvalg } from './tilgjengelighet'
 
@@ -31,6 +32,12 @@ export interface Planskjema {
   formvalg: Record<string, { klasse?: string; legemiddelform?: string }>
   godkjenningsfritak: boolean
   /**
+   * Parameterstien → forskriverens valg for en verdi regelen lar forskriveren
+   * justere (f.eks. dager per trinn), slik feltet står. Tomt felt gir regelens
+   * forslag; om valget er innenfor regelens område, avgjør beregningen.
+   */
+  justert: Record<string, string>
+  /**
    * Valgene skjemaet er fylt ut for ({@link valgidentitet}). Skifter
    * virkestoffet eller formuleringen, begynner skjemaet på nytt, så ingen dose,
    * bekreftelse eller svar på et unntak følger med til andre valg.
@@ -47,6 +54,7 @@ export const TOMT_SKJEMA: Planskjema = {
   pasientforhold: {},
   formvalg: {},
   godkjenningsfritak: false,
+  justert: {},
   gjelder: '',
 }
 
@@ -59,7 +67,7 @@ export const skjemaFor = (s: Planskjema, gjelder: string): Planskjema => (s.gjel
 
 /**
  * Skjemaet med en annen strategi. Alt som hører til regelen — måldosen,
- * bekreftelsene, svarene på unntakene, formvalgene og godkjenningsfritaket —
+ * bekreftelsene, svarene på unntakene, formvalgene, justeringene og godkjenningsfritaket —
  * begynner på nytt; dosen pasienten bruker og startdatoen står.
  */
 export const medRegel = (s: Planskjema, regel: string): Planskjema =>
@@ -82,8 +90,21 @@ export function mangler(r: Regel, skjema: Planskjema): string[] {
   if (lesDose(skjema.startdose) === undefined) ut.push('Aktuell døgndose må fylles inn som et tall større enn 0.')
   if (trengerMaldose(r) && lesDose(skjema.maldose) === undefined) ut.push('Måldosen må fylles inn som et tall større enn 0.')
   if (skjema.startdato && !/^\d{4}-\d{2}-\d{2}$/.test(skjema.startdato)) ut.push('Startdatoen er ikke en gyldig dato.')
+  for (const [sti, p] of justerbare(r)) {
+    if (skjema.justert[sti]?.trim() && justertVerdi(skjema, sti) === undefined) ut.push(`${p.justerbar} må være et tall større enn 0, eller stå tomt for regelens forslag.`)
+  }
   return ut
 }
+
+/** Verdiene forskriveren kan justere i regelen: stien, navnet og en hjelpetekst med forslaget og området. */
+export const justeringsfelt = (r: Regel): { sti: string; navn: string; forslag: string; hjelp: string }[] =>
+  justerbare(r).map(([sti, p]) => {
+    const forslag = p.verdi === null ? '' : medEnhet(p.verdi, p)
+    return { sti, navn: p.justerbar, forslag, hjelp: `${forslag ? `Regelens forslag er ${forslag}; tomt felt bruker forslaget. ` : ''}Regelen tillater ${omradetekst(p)}.` }
+  })
+
+/** Forskriverens valg for den justerbare verdien på `sti`; `undefined` når feltet er tomt eller ikke et tall. */
+const justertVerdi = (skjema: Planskjema, sti: string) => lesDose(skjema.justert[sti] ?? '')
 
 /** Inndataene til motoren, fra valgene i verktøyet og skjemaet. */
 export function inndataFor(r: Regel, valg: Verktoyvalg, skjema: Planskjema): Doseplaninndata {
@@ -98,6 +119,10 @@ export function inndataFor(r: Regel, valg: Verktoyvalg, skjema: Planskjema): Dos
   const medlem = medlemFor(r, valg)
   const maldose = trengerMaldose(r) ? lesDose(skjema.maldose) : undefined
   const pasientforhold = Object.fromEntries(r.unntak.flatMap((u) => (u.id in skjema.pasientforhold ? [[u.id, skjema.pasientforhold[u.id]!]] : [])))
+  const justert = Object.fromEntries(justerbare(r).flatMap(([sti]) => {
+    const x = justertVerdi(skjema, sti)
+    return x === undefined ? [] : [[sti, x]]
+  }))
   return {
     startdose_mg: lesDose(skjema.startdose) ?? 0,
     ...(maldose !== undefined && { maldose_mg: maldose }),
@@ -105,6 +130,7 @@ export function inndataFor(r: Regel, valg: Verktoyvalg, skjema: Planskjema): Dos
     ...(medlem && { medlem }),
     bekreftet: skjema.bekreftet.filter((id) => r.bekreftelser.some((b) => b.id === id)),
     pasientforhold,
+    ...(Object.keys(justert).length > 0 && { justert }),
     formvalg,
     godkjenningsfritak: skjema.godkjenningsfritak,
   }

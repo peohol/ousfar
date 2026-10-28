@@ -32,10 +32,11 @@ import {
   type Regelsett,
   type Beregningsinndata,
   type Inndatakrav,
+  justerbare,
 } from './modell'
 
 /** Økes når beregningen endres slik at like inndata kan gi et annet resultat. */
-export const MOTORVERSJON = 1
+export const MOTORVERSJON = 2
 
 /** En sammenhengende periode med samme daglige dose. `til` er `null` når dosen fortsetter. */
 export interface Periode {
@@ -150,8 +151,9 @@ export function trinnserie(s: Nedtrappingsstrategi, d0: number): number[] {
   const neste = (aktuell: number, k: number): number => {
     switch (s.type) {
       case 'prosent_av_aktuell': {
+        // Ved lav dose blir trinnet mindre, aldri større enn ellers (også når prosenten er justert ned).
         const lav = s.lav_prosent && s.lav_grense_mg && aktuell <= verdi(s.lav_grense_mg) + EPS
-        const d = aktuell * (1 - verdi(lav ? s.lav_prosent! : s.prosent) / 100)
+        const d = aktuell * (1 - (lav ? Math.min(verdi(s.lav_prosent!), verdi(s.prosent)) : verdi(s.prosent)) / 100)
         return d < verdi(s.sluttdose_mg) - EPS ? 0 : d
       }
       case 'prosent_av_startdose':
@@ -415,6 +417,10 @@ function inndatafeil(i: Beregningsinndata): string[] {
   if (forhold !== undefined && (!forhold || typeof forhold !== 'object' || Array.isArray(forhold) || Object.values(forhold).some((x) => typeof x !== 'boolean'))) {
     feil.push('Pasientforholdene må oppgis som ja eller nei for hvert unntak.')
   }
+  const justert = i.justert as unknown
+  if (justert !== undefined && (!justert || typeof justert !== 'object' || Array.isArray(justert) || Object.values(justert).some((x) => typeof x !== 'number' || !Number.isFinite(x)))) {
+    feil.push('Justeringene må oppgis som tall.')
+  }
   return feil
 }
 
@@ -434,6 +440,49 @@ function planfeil(forlop: Forlopsresultat[]): string[] {
     }
   }
   return feil
+}
+
+const ENHETSTEKST: Partial<Record<Parameter['enhet'], string>> = { prosent: '%', dager: 'dager', mg: 'mg' }
+/** Et tall med parameterens enhet, slik forskriveren ser det. */
+export const medEnhet = (x: number, p: Parameter) => `${tall(x)}${p.enhet === 'prosent' ? ' %' : ` ${ENHETSTEKST[p.enhet] ?? p.enhet}`}`
+
+/** Området en justerbar verdi kan velges i, med enhet. */
+export const omradetekst = (p: Parameter & { omrade: [number, number] }) => `${tall(p.omrade[0])}–${medEnhet(p.omrade[1], p)}`
+
+/**
+ * Regelen med forskriverens valg for de justerbare parametrene. Et valg for en
+ * parameter som ikke er justerbar, eller utenfor området regelen tillater,
+ * gir en feil; hvert gyldig valg blir en kontroll, så planen viser at den
+ * avviker fra regelens forslag.
+ */
+export function juster(regel: Regel, justert: Record<string, number>): { regel: Regel; feil: string[]; kontroller: Kontroll[] } {
+  const valg = Object.entries(justert)
+  if (valg.length === 0) return { regel, feil: [], kontroller: [] }
+  const kopi = structuredClone(regel)
+  const parametere = new Map(justerbare(kopi))
+  const feil: string[] = []
+  const kontroller: Kontroll[] = []
+  for (const [sti, x] of valg) {
+    const p = parametere.get(sti)
+    if (!p) {
+      feil.push(`«${sti}» kan ikke justeres i denne regelen.`)
+      continue
+    }
+    const [a, b] = p.omrade
+    const tillatt = omradetekst(p)
+    if (x < a - EPS || x > b + EPS) {
+      feil.push(`${p.justerbar}: ${medEnhet(x, p)} er utenfor det regelen tillater (${tillatt}).`)
+      continue
+    }
+    if (parameterfeil({ ...p, verdi: x }, sti)) {
+      feil.push(`${p.justerbar}: ${medEnhet(x, p)} kan ikke brukes; regelen tillater ${p.enhet === 'dager' ? 'hele dager' : 'tall'} i området ${tillatt}.`)
+      continue
+    }
+    if (p.verdi !== null && Math.abs(x - p.verdi) < EPS) continue
+    kontroller.push({ krav: `${p.justerbar} er valgt av forskriveren innenfor regelens område`, oppfylt: true, detalj: `${medEnhet(x, p)} i stedet for regelens forslag ${p.verdi === null ? '(mangler)' : medEnhet(p.verdi, p)}; regelen tillater ${tillatt}.` })
+    p.verdi = x
+  }
+  return { regel: kopi, feil, kontroller }
 }
 
 /**
@@ -467,9 +516,16 @@ export function beregn(regel: Regel, inndata: Beregningsinndata, regelsett?: Reg
     stopp.push(...formfeil)
     return stoppet()
   }
+  // Forskriverens justeringer etter godkjenningskontrollen: godkjenningen gjelder regelen med områdene, ikke det enkelte valget.
+  const justering = juster(regel, inndata.justert ?? {})
+  if (justering.feil.length > 0) {
+    stopp.push(...justering.feil)
+    return stoppet()
+  }
+  regel = justering.regel
 
   // Unntakene (B7): hvert må være besvart. Ukjent stopper like mye som et forhold som gjelder; bare et eksplisitt «nei» slipper gjennom.
-  const kontroller: Kontroll[] = []
+  const kontroller: Kontroll[] = [...justering.kontroller]
   const forhold = inndata.pasientforhold ?? {}
   for (const u of regel.unntak) {
     const svar = forhold[u.id]

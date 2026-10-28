@@ -50,6 +50,14 @@ export const TEST_NEDTRAPPING: Regel = godkjennITest(
   'test-nedtrapping',
 )
 
+/** Som {@link TEST_NEDTRAPPING}, men forskriveren kan velge dager per trinn (14–28). */
+export const TEST_JUSTERBAR: Regel = (() => {
+  const r = nedtrappingsregel({ type: 'prosent_av_startdose', prosent: sp(50, 'prosent') }, { avvik_prosent: sp(10, 'prosent') }, 'justerbar')
+  const fase = r.plan.forlop[0]!.faser[0]!
+  if (fase.type === 'nedtrapping') fase.trinnlengde = { ...fase.trinnlengde, omrade: [14, 28], justerbar: 'Dager per trinn' }
+  return godkjennITest(omkoble(r), 'test-justerbar')
+})()
+
 /** Kryssnedtrapping «escitalopram» → «mirtazapin» med syntetiske verdier og måldose fra inndata. */
 export const TEST_KRYSS: Regel = godkjennITest(omkoble({ ...KRYSSREGEL, inndata: [{ navn: 'maldose', art: 'bindende_krav', grunnlag: { type: 'ousfar_vurdering', begrunnelse: 'Syntetisk.', avklaring: null } }] } as Regel), 'test-kryss')
 

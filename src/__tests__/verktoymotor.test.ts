@@ -13,7 +13,7 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import type { Legemiddelutvalg } from '../legemiddeldata/lesing'
-import { beregn } from '../verktoy/regler/beregning'
+import { beregn, MOTORVERSJON } from '../verktoy/regler/beregning'
 import { fingeravtrykk } from '../verktoy/regler/godkjenning'
 import { REGELMODELLVERSJON, type Nedtrappingsstrategi, type Regel } from '../verktoy/regler/modell'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
@@ -346,7 +346,7 @@ describe('Kildedata, versjoner og determinisme', () => {
     expect(r).toMatchObject({
       regel: { id: 'syntetisk-fast', versjon: 1, fingeravtrykk: fingeravtrykk(regel), godkjenning: 'utkast' },
       modell: REGELMODELLVERSJON,
-      motor: 1,
+      motor: MOTORVERSJON,
       planmotor: PLANMOTORVERSJON,
       fest: { kilde: 'Syntetiske testdata', kildedato: '2026-10-15', kontrollert_kl: '2026-11-01T04:20:00Z', statusdato: '2026-11-01' },
       preparatgrunnlag: expect.stringMatching(/^[0-9a-f]{64}$/),

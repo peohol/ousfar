@@ -11,6 +11,9 @@
  *   ut. Endrede inndata, foreldet FEST og en ny dag tar planen bort.
  * - Det som er fylt inn, kommer tilbake etter en oppdatering av appen; planen
  *   gjør det ikke, og må beregnes på nytt.
+ * - En regel som lar forskriveren justere en verdi, får et felt for den; et
+ *   valg innenfor området gir planen og står som kontroll, et valg utenfor
+ *   stopper.
  */
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -19,7 +22,7 @@ import { Verktoyside, type VerktoysideProps } from '../components/verktoy/Verkto
 import type { Legemiddelutvalg } from '../legemiddeldata/lesing'
 import { glemBildet, oppdaterOgTaVare, taBilde } from '../oppdatering/bevaring'
 import { KARTLEGGING } from '../verktoy/register'
-import { godkjennITest, TEST_DEPOT, TEST_NEDTRAPPING, TESTKLOKKE, testFest, testsett } from './hjelp/verktoyplan'
+import { godkjennITest, TEST_DEPOT, TEST_JUSTERBAR, TEST_NEDTRAPPING, TESTKLOKKE, testFest, testsett } from './hjelp/verktoyplan'
 
 beforeEach(() => {
   window.scrollTo = () => {}
@@ -259,6 +262,41 @@ describe('med en regel godkjent bare i testen', () => {
     expect(legemidler.les).toHaveBeenCalledOnce()
     // Formvalget fra før oppdateringen gjelder fortsatt, så siden ber ikke om det igjen.
     expect(screen.queryByText('Velg formulering og legemiddelform over, og beregn på nytt.')).toBeNull()
+  })
+})
+
+describe('med en regel forskriveren kan justere', () => {
+  it('viser feltet med forslaget, bruker valget innenfor området og stopper utenfor', async () => {
+    const user = userEvent.setup()
+    vis({ verktoy: 'trappe-ned-antidepressiv', legemidler: lesing(), regelsett: testsett(TEST_JUSTERBAR), klokke: TESTKLOKKE })
+    await fyllInn(user)
+    const felt = screen.getByRole('textbox', { name: 'Dager per trinn' }) as HTMLInputElement
+    expect(felt.placeholder).toBe('14 dager')
+    expect(felt.getAttribute('aria-describedby') && document.getElementById(felt.getAttribute('aria-describedby')!)?.textContent).toBe(
+      'Dager per trinn: Regelens forslag er 14 dager; tomt felt bruker forslaget. Regelen tillater 14–28 dager.',
+    )
+    // Tomt felt: regelens forslag.
+    await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+    const rad = async () => within(await screen.findByRole('region', { name: TEST_JUSTERBAR.tittel })).getAllByRole('row')[1]!.querySelector('th, td')!.textContent
+    expect(await rad()).toBe('Dag 1–14')
+    // Innenfor området: valget gir planen og står som kontroll.
+    await user.type(felt, '28')
+    await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+    expect(await rad()).toBe('Dag 1–28')
+    expect(screen.getByText(/Dager per trinn er valgt av forskriveren innenfor regelens område: oppfylt \(28 dager i stedet for regelens forslag 14 dager; regelen tillater 14–28 dager\.\)/)).toBeTruthy()
+    // Utenfor området: ingen plan.
+    await user.clear(felt)
+    await user.type(felt, '30')
+    await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+    expect(await screen.findByText('Dager per trinn: 30 dager er utenfor det regelen tillater (14–28 dager).')).toBeTruthy()
+    expect(screen.queryByRole('table')).toBeNull()
+  })
+
+  it('har ikke feltet for en regel uten valg', async () => {
+    const user = userEvent.setup()
+    vis({ verktoy: 'trappe-ned-antidepressiv', legemidler: lesing(), regelsett: testsett(TEST_NEDTRAPPING), klokke: TESTKLOKKE })
+    await user.type(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' }), 'Escitalopram')
+    expect(screen.queryByRole('group', { name: /Tilpasning av planen/ })).toBeNull()
   })
 })
 

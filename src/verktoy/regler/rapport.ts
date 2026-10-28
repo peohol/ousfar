@@ -106,7 +106,7 @@ function parametertabell(r: Regel): string {
   const rader: string[][] = []
   const legg = (hvor: string, x: unknown) => {
     for (const [sti, p] of parametre(x)) {
-      const verdi = p.verdi === null ? '**mangler**' : `${tall(p.verdi)} ${ENHET[p.enhet]}${p.omrade ? ` (område ${tall(p.omrade[0])}–${tall(p.omrade[1])})` : ''}`
+      const verdi = p.verdi === null ? '**mangler**' : `${tall(p.verdi)} ${ENHET[p.enhet]}${p.omrade ? ` (${p.justerbar ? `forskriveren kan velge ${tall(p.omrade[0])}–${tall(p.omrade[1])}` : `område ${tall(p.omrade[0])}–${tall(p.omrade[1])}`})` : ''}`
       rader.push([hvor, sti, verdi, p.art === 'bindende_krav' ? 'bindende krav' : 'veiledende', grunnlag(p.grunnlag)])
     }
   }

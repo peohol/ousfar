@@ -2,7 +2,7 @@
 
 <!-- Laget av `npm run verktoy:regler -- rapport` fra reglene i src/verktoy/regler/. Ikke rediger for hånd; endre reglene og lag rapporten på nytt. -->
 
-Regelsett `ousfar-verktoy-pilot` versjon 2, regelmodell 3, beregningsmotor 1. Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.
+Regelsett `ousfar-verktoy-pilot` versjon 3, regelmodell 4, beregningsmotor 2. Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.
 
 **8 regler, 0 klinisk godkjent.** Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. De er ikke empirisk validerte kliniske anbefalinger, og ingen av reglene er klinisk godkjent. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-p4-regelmodell.md`.
 
@@ -39,6 +39,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 | [ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf) | preparatomtale | Xeplion (paliperidonpalmitat depotinjeksjon), produktinformasjon | Sist endret 08.10.2026 | `2d38bdc767adb9ed…` |
 | [ema-zyprexa](https://www.ema.europa.eu/en/documents/product-information/zyprexa-epar-product-information_en.pdf) | preparatomtale | Zyprexa (olanzapin), produktinformasjon | Sist endret 08.10.2026 | `d7a60e6f4908c9e7…` |
 | [nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations) | retningslinje | Depression in adults: treatment and management (NG222), Recommendations | Publisert 29.06.2022 | `8fb54d455ce9ebee…` |
+| [rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants) | retningslinje | Stopping antidepressants | Publisert mars 2024 | `f465fb1dbece0c76…` |
 | [horowitz-2019](https://doi.org/10.1016/S2215-0366(19)30032-X) | primærlitteratur | Horowitz MA, Taylor D. Tapering of SSRI treatment to mitigate withdrawal symptoms. Lancet Psychiatry 2019;6:538–546 | doi:10.1016/S2215-0366(19)30032-X, PMID 30850328 | – |
 | [sorensen-2022](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8960396/fullTextXML) | primærlitteratur | Sørensen A, Ruhé HG, Munkholm K. The relationship between dose and serotonin transporter occupancy of antidepressants – a systematic review. Mol Psychiatry 2022;27:192–201 | doi:10.1038/s41380-021-01285-w, PMC8960396 | `2b243d8f800a9c27…` |
 | [keks-2016](https://pmc.ncbi.nlm.nih.gov/articles/PMC4919171/) | oversiktsartikkel | Keks N, Hope J, Keogh S. Switching and stopping antidepressants. Aust Prescr 2016;39:76–83 | doi:10.18773/austprescr.2016.039, PMC4919171 | `55c5b956f46b02f9…` |
@@ -47,9 +48,9 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Seponering av escitalopram, gjentatt prosentvis nedtrapping
 
-`seponering-escitalopram`, versjon 1, fingeravtrykk `b6a1f525bdd0cb6a90548390600f91c719138d22713fe0d489121019f12258e3`. Seponering: escitalopram → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`seponering-escitalopram`, versjon 2, fingeravtrykk `4dd31345f876a7ceac756016177f814f8331f3024e5385eb0a44017c08ef440d`. Seponering: escitalopram → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -58,14 +59,14 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 - Hvert trinn er en andel av forrige dose, med mindre trinn ved lav dose, og nedtrappingen kan ta uker til måneder.
   - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
   - Tempoet avtales med pasienten; neste reduksjon først når seponeringssymptomene er borte eller tålelige. Nedtrapping kan ta uker til måneder. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
-- Det bør gå én til to uker mellom reduksjonene.
-  - Det bør gå én til to uker for å vurdere virkningen av en dosereduksjon før neste. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.18)*
+- To til fire uker mellom reduksjonene er et vanlig utgangspunkt; tiden bør være så lang som seponeringssymptomene krever.
+  - Et første trinn kan være en firedel eller halvdel av dosen, med to til fire uker før neste; tiden mellom trinnene bør være så lang som seponeringssymptomene krever. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), How should I gradually reduce my dose?)*
 
 **OUSFARs selvstendige tilpasninger (må kontrolleres):**
 
 - OUSFAR bruker 50 % av aktuell dose ned til 5 mg og deretter 25 %, med 14 dager per trinn, og seponerer når neste dose blir under 2,5 mg. Alle tallene er forslag innenfor eller etter eksemplene i kildene.
   - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
-  - Det bør gå én til to uker for å vurdere virkningen av en dosereduksjon før neste. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.18)*
+  - Et første trinn kan være en firedel eller halvdel av dosen, med to til fire uker før neste; tiden mellom trinnene bør være så lang som seponeringssymptomene krever. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), How should I gradually reduce my dose?)*
 - «Minst én til to uker» er lest som et bindende minimum på 14 dager; blir planen kortere, stopper beregningen.
   - Brå seponering bør unngås; dosen reduseres gradvis over minst én til to uker. Ved utålelige symptomer kan man gå tilbake til forrige dose og trappe ned langsommere. *([dmp-cipralex](https://produktinformasjon.legemiddelsok.no/preparatomtaler/2002-00713.pdf), pkt. 4.2)*
 
@@ -77,7 +78,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 | fra: fase 1 (nedtrapping) | strategi.lav_prosent | 25 % | veiledende | **OUSFAR-vurdering, åpent forslag:** Eksempelet i NICE på mindre trinn ved lav dose. (bygger på nice-ng222 anbefaling 1.4.16) |
 | fra: fase 1 (nedtrapping) | strategi.lav_grense_mg | 5 mg | veiledende | **OUSFAR-vurdering, åpent forslag:** Laveste dose som oppgis i preparatomtalen; fra den regnes dosen som lav. (bygger på dmp-cipralex pkt. 4.2) |
 | fra: fase 1 (nedtrapping) | strategi.sluttdose_mg | 2,5 mg | veiledende | **OUSFAR-vurdering, åpent forslag:** Laveste dose i planen; under den seponeres. Halvparten av laveste tablettstyrke (5 mg). (bygger på dmp-cipralex pkt. 4.2) |
-| fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 7–14) | veiledende | **OUSFAR-vurdering, åpent forslag:** Øvre del av NICEs vurderingstid, så hvert trinn kan vurderes før neste. (bygger på nice-ng222 anbefaling 1.4.18) |
+| fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 14–28) | veiledende | **OUSFAR-vurdering, åpent forslag:** Nedre del av RCPsychs to til fire uker mellom reduksjonene; tiden bør tilpasses symptomene. (bygger på rcpsych-stopping How should I gradually reduce my dose?) |
 | fra: fase 1 (nedtrapping) | minste_varighet | 14 dager | bindende krav | **OUSFAR-vurdering, åpent forslag:** «Minst én til to uker» er lest konservativt som minst 14 dager. (bygger på dmp-cipralex pkt. 4.2) |
 
 **Betingelser:**
@@ -114,9 +115,9 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Seponering av citalopram, hyperbolsk nedtrapping (alternativ strategi)
 
-`seponering-citalopram-hyperbolsk`, versjon 1, fingeravtrykk `c4e4250ac9807dd092c05949dbeefbad779dbba57bf26c2eec4c58d5d441fff7`. Seponering: citalopram → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`seponering-citalopram-hyperbolsk`, versjon 2, fingeravtrykk `3f4110d09f99903a7d979bc6b9d486c9866cbe4b4a27ec209c53160ffc4a6b51`. Seponering: citalopram → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -141,7 +142,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 | --- | --- | --- | --- | --- |
 | fra: fase 1 (nedtrapping) | strategi.ed50_mg | 3,4 mg | veiledende | sorensen-2022 Results (dose og SERT-binding) |
 | fra: fase 1 (nedtrapping) | strategi.trinn | 8 trinn | veiledende | **OUSFAR-vurdering, åpent forslag:** Åtte like store trinn i beregnet binding; et antall som må vurderes faglig mot pasientens toleranse. (bygger på horowitz-2019 sammendrag) |
-| fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 7–14) | veiledende | **OUSFAR-vurdering, åpent forslag:** Øvre del av NICEs vurderingstid. (bygger på nice-ng222 anbefaling 1.4.18) |
+| fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 14–28) | veiledende | **OUSFAR-vurdering, åpent forslag:** Nedre del av RCPsychs to til fire uker mellom reduksjonene. (bygger på rcpsych-stopping How should I gradually reduce my dose?) |
 | fra: fase 1 (nedtrapping) | minste_varighet | 14 dager | bindende krav | **OUSFAR-vurdering, åpent forslag:** «Minst én til to uker» er lest konservativt som minst 14 dager. (bygger på dmp-cipramil pkt. 4.2) |
 
 **Betingelser:**
@@ -172,9 +173,9 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra sertralin til mirtazapin, kryssnedtrapping
 
-`kryssnedtrapping-sertralin-mirtazapin`, versjon 1, fingeravtrykk `54f1cdde505e6ffb66877c9fee6eceb816fb326c80354dbe80d1daaf4cf3e911`. Kryssnedtrapping: sertralin → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`kryssnedtrapping-sertralin-mirtazapin`, versjon 2, fingeravtrykk `5944d123ae670cbfb6091875a1b488842e6814293834a7b3e5fe558bfd4bb763`. Kryssnedtrapping: sertralin → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -200,7 +201,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 | --- | --- | --- | --- | --- |
 | fra: fase 1 (nedtrapping) | strategi.prosent | 50 % | veiledende | **OUSFAR-vurdering, åpent forslag:** Eksempelet i NICE er 50 % av forrige dose. (bygger på nice-ng222 anbefaling 1.4.16) |
 | fra: fase 1 (nedtrapping) | strategi.sluttdose_mg | 25 mg | veiledende | **OUSFAR-vurdering, åpent forslag:** Laveste startdose i preparatomtalen; under den seponeres. (bygger på dmp-zoloft pkt. 4.2) |
-| fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 7–14) | veiledende | **OUSFAR-vurdering, åpent forslag:** Øvre del av NICEs vurderingstid; NICE åpner for raskere nedtrapping ved bytte (7 dager). (bygger på nice-ng222 anbefaling 1.4.18; nice-ng222 anbefaling 1.4.16) |
+| fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 7–14) | veiledende | **OUSFAR-vurdering, åpent forslag:** NICE åpner for raskere nedtrapping ved bytte; OUSFAR foreslår likevel 14 dager. (bygger på rcpsych-stopping How should I gradually reduce my dose?; nice-ng222 anbefaling 1.4.16) |
 | fra: fase 1 (nedtrapping) | minste_varighet | 14 dager | bindende krav | **OUSFAR-vurdering, åpent forslag:** «Minst én til to uker» er lest konservativt som minst 14 dager. (bygger på dmp-zoloft pkt. 4.2 og 4.4) |
 | til: fase 1 (hold) | dose.mg | 15 mg | veiledende | dmp-remeron pkt. 4.2 |
 
@@ -242,9 +243,9 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra fluoksetin til fenelzin, sekvensielt med utvasking
 
-`mao-fluoksetin-fenelzin`, versjon 1, fingeravtrykk `4f40b159a345695a6cc81a55c5234664db399e990927532d7b39b8bd3f879c03`. Sekvensielt bytte: fluoksetin → fenelzin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`mao-fluoksetin-fenelzin`, versjon 2, fingeravtrykk `81580c1625d962420c7054ac9d05486df6ab94f36a2ab517b9409f4c20af0381`. Sekvensielt bytte: fluoksetin → fenelzin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -254,12 +255,14 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Fra fluoksetin til MAO-hemmer: fluoksetin seponeres (trappes ned over 40 mg daglig), så 5–6 ukers utvasking før MAO-hemmeren startes forsiktig i lav dose. *([keks-2016](https://pmc.ncbi.nlm.nih.gov/articles/PMC4919171/), tabell 3)*
 - Fluoksetin trappes ned gradvis over minst én til to uker.
   - Brå seponering bør unngås; dosen reduseres gradvis over minst én til to uker. Aktivt stoff finnes i kroppen i flere uker etter seponering. *([dmp-fluoxetin](https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-7362.pdf), pkt. 4.2)*
+- Seponeringssymptomer kan komme dager til uker etter en reduksjon av fluoksetin; det er best å vente minst fire uker før neste.
+  - Langtidsvirkende stoffer som fluoksetin kan gi seponeringssymptomer dager til uker etter en reduksjon; det er best å vente minst fire uker før neste. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), If you have been taking antidepressants for longer)*
 - Bytte til en MAO-hemmer skal skje i, eller med råd fra, spesialisthelsetjenesten.
   - Bytte til eller fra en MAO-hemmer skal skje i, eller med råd fra, spesialisthelsetjenesten. Bytte kan kreve kryssnedtrapping. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.9.5)*
 
 **OUSFARs selvstendige tilpasninger (må kontrolleres):**
 
-- OUSFAR halverer fluoksetin hver 14. dag ned til 10 mg og seponerer deretter. Utvaskingen på 35 dager regnes fra første dag uten fluoksetin; fenelzin kan tidligst startes dagen etter.
+- OUSFAR halverer fluoksetin hver 28. dag ned til 10 mg og seponerer deretter. Utvaskingen på 35 dager regnes fra første dag uten fluoksetin; fenelzin kan tidligst startes dagen etter.
   - Kontraindisert sammen med irreversibel, ikke-selektiv MAO-hemmer; det skal gå minst 5 uker etter seponering av fluoksetin før en slik MAO-hemmer startes. *([dmp-fluoxetin](https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-7362.pdf), pkt. 4.3 og 4.5)*
 - Startdosen for fenelzin beregnes ikke, fordi det ikke finnes en norsk preparatomtale å bygge den på. *(OUSFARs vurdering)*
 
@@ -269,7 +272,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 | --- | --- | --- | --- | --- |
 | fra: fase 1 (nedtrapping) | strategi.prosent | 50 % | veiledende | **OUSFAR-vurdering, åpent forslag:** Eksempelet i NICE er 50 % av forrige dose. (bygger på nice-ng222 anbefaling 1.4.16) |
 | fra: fase 1 (nedtrapping) | strategi.sluttdose_mg | 10 mg | veiledende | **OUSFAR-vurdering, åpent forslag:** Daglig 10 mg i stedet for 20 mg annenhver dag, som modellen ikke har; under den seponeres. (bygger på nice-ng222 anbefaling 1.4.18) |
-| fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 7–14) | veiledende | **OUSFAR-vurdering, åpent forslag:** Øvre del av NICEs vurderingstid. (bygger på nice-ng222 anbefaling 1.4.18) |
+| fra: fase 1 (nedtrapping) | trinnlengde | 28 dager | veiledende | **OUSFAR-vurdering, åpent forslag:** RCPsych anbefaler minst fire uker før neste reduksjon av langtidsvirkende fluoksetin, fordi symptomene kan komme sent; NICE nevner én til to uker for å vurdere virkningen. OUSFAR bruker det strengeste. (bygger på rcpsych-stopping If you have been taking antidepressants for longer; nice-ng222 anbefaling 1.4.18 (om fluoksetin)) |
 | fra: fase 1 (nedtrapping) | minste_varighet | 14 dager | bindende krav | **OUSFAR-vurdering, åpent forslag:** «Minst én til to uker» er lest konservativt som minst 14 dager. (bygger på dmp-fluoxetin pkt. 4.2) |
 | til: start | utvasking | 35 dager | bindende krav | dmp-fluoxetin pkt. 4.3 og 4.5; keks-2016 tabell 3 |
 
@@ -293,20 +296,20 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 **Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
 
-- *Fluoksetin 40 mg: to reduksjoner, 35 dager utvasking, fenelzin tidligst dag 64.* Inndata: startdose 40 mg; bekreftet: spesialisthelsetjeneste.
-  - **fra:** dag 1–14: 20 mg; dag 15–28: 10 mg; fra dag 29: seponert
-  - **til:** tidligst dag 64: oppstart, dosering beregnes ikke
+- *Fluoksetin 40 mg: to reduksjoner med 28 dager per trinn, 35 dager utvasking, fenelzin tidligst dag 92.* Inndata: startdose 40 mg; bekreftet: spesialisthelsetjeneste.
+  - **fra:** dag 1–28: 20 mg; dag 29–56: 10 mg; fra dag 57: seponert
+  - **til:** tidligst dag 92: oppstart, dosering beregnes ikke
   - Kontroll: Bekreftet: Byttet gjøres i, eller med råd fra, spesialisthelsetjenesten. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 20–60 mg (bindende) – oppfylt. 40 mg.
-  - Kontroll: Nedtrappingen av fluoksetin varer minst 14 dager (bindende) – oppfylt. Nedtrapping dag 1–28 (28 dager).
-  - Kontroll: Minst 35 dager uten fluoksetin før fenelzin (bindende) – oppfylt. Uten legemiddel dag 29–63 (35 dager); fenelzin tidligst dag 64.
-- *Fluoksetin 20 mg: én reduksjon, fenelzin tidligst dag 50.* Inndata: startdose 20 mg; bekreftet: spesialisthelsetjeneste.
-  - **fra:** dag 1–14: 10 mg; fra dag 15: seponert
-  - **til:** tidligst dag 50: oppstart, dosering beregnes ikke
+  - Kontroll: Nedtrappingen av fluoksetin varer minst 14 dager (bindende) – oppfylt. Nedtrapping dag 1–56 (56 dager).
+  - Kontroll: Minst 35 dager uten fluoksetin før fenelzin (bindende) – oppfylt. Uten legemiddel dag 57–91 (35 dager); fenelzin tidligst dag 92.
+- *Fluoksetin 20 mg: én reduksjon, fenelzin tidligst dag 64.* Inndata: startdose 20 mg; bekreftet: spesialisthelsetjeneste.
+  - **fra:** dag 1–28: 10 mg; fra dag 29: seponert
+  - **til:** tidligst dag 64: oppstart, dosering beregnes ikke
   - Kontroll: Bekreftet: Byttet gjøres i, eller med råd fra, spesialisthelsetjenesten. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 20–60 mg (bindende) – oppfylt. 20 mg.
-  - Kontroll: Nedtrappingen av fluoksetin varer minst 14 dager (bindende) – oppfylt. Nedtrapping dag 1–14 (14 dager).
-  - Kontroll: Minst 35 dager uten fluoksetin før fenelzin (bindende) – oppfylt. Uten legemiddel dag 15–49 (35 dager); fenelzin tidligst dag 50.
+  - Kontroll: Nedtrappingen av fluoksetin varer minst 14 dager (bindende) – oppfylt. Nedtrapping dag 1–28 (28 dager).
+  - Kontroll: Minst 35 dager uten fluoksetin før fenelzin (bindende) – oppfylt. Uten legemiddel dag 29–63 (35 dager); fenelzin tidligst dag 64.
 - *Uten bekreftelse om spesialisthelsetjenesten stopper beregningen.* Inndata: startdose 40 mg.
   - **Stoppet:** Må bekreftes før beregning: Byttet gjøres i, eller med råd fra, spesialisthelsetjenesten.
 

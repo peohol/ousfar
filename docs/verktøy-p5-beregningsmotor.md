@@ -43,7 +43,7 @@ FEST sier hva som er registrert og markedsført, ikke hva apoteket har på lager
 
 ## 4. Hva regelen bestemmer (regelmodell 3)
 
-P4-modellen har fått tre valgfrie felt per forløp. Ingen av pilotreglene har dem, så fingeravtrykkene deres er uendret.
+P4-modellen har fått tre valgfrie felt per forløp. Ingen av pilotreglene har dem, så fingeravtrykkene deres er uendret. Regelmodell 4 har i tillegg justerbare verdier, som forskriveren kan velge innenfor regelens område før den ideelle kurven beregnes (`docs/verktøy-p4-regelmodell.md` §3); motoren får kurven slik den da blir.
 
 - **`dosevalg`**: `avvik_prosent` (største avvik fra den ideelle døgndosen, begge veier), `maks_mg` og `min_mg`. Hver er en parameter med art og grunnlag, som andre verdier i en regel. **Uten `avvik_prosent` godtas bare doser som kan gis nøyaktig**; motoren velger aldri en toleranse selv.
 - **`klasser`**: formuleringsklassene (P1) forløpet gjelder, f.eks. bare vanlig frisetting.

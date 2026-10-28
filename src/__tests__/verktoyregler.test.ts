@@ -159,13 +159,10 @@ describe('Pilotsettet', () => {
       expect(r.godkjenning.historikk.at(-1)!.regelversjon, r.id).toBe(r.versjon)
       expect(r.godkjenning.historikk.every((s) => s.rolle === 'utvikler')).toBe(true)
     }
-    // Reglene som ble rettet etter første kontroll, er nye versjoner.
-    expect(PILOTSETT.regler.filter((r) => r.versjon === 2).map((r) => r.id)).toEqual([
-      'antipsykotikabytte-olanzapin-kvetiapin',
-      'gruppe-rest-ap-aripiprazol',
-      'depot-aripiprazol-maintena',
-      'depot-paliperidon-xeplion',
-    ])
+    // Alle reglene er nye versjoner: fire rettet etter første kontroll av piloten, fire fikk kildegrunnlaget for trinnlengden rettet etter kontrollen av P7.
+    const rettet = (pr: string) => PILOTSETT.regler.filter((r) => r.versjon === 2 && r.godkjenning.historikk[2]!.merknad.includes(pr)).map((r) => r.id)
+    expect(rettet('PR #282')).toEqual(['antipsykotikabytte-olanzapin-kvetiapin', 'gruppe-rest-ap-aripiprazol', 'depot-aripiprazol-maintena', 'depot-paliperidon-xeplion'])
+    expect(rettet('PR #286')).toEqual(['seponering-escitalopram', 'seponering-citalopram-hyperbolsk', 'kryssnedtrapping-sertralin-mirtazapin', 'mao-fluoksetin-fenelzin'])
   })
 
   it('dekker regelklassene planen prioriterer', () => {
@@ -220,7 +217,7 @@ describe('Beregningen', () => {
       status: 'modellberegning',
       klinisk_godkjent: false,
       forbehold: FORBEHOLD_IKKE_GODKJENT,
-      regel: { id: r.id, versjon: 1, godkjenning: 'til_faglig_kontroll' },
+      regel: { id: r.id, versjon: 2, godkjenning: 'til_faglig_kontroll' },
       regelsett: { id: PILOTSETT.id, versjon: PILOTSETT.versjon },
       modell: REGELMODELLVERSJON,
       motor: MOTORVERSJON,
@@ -561,14 +558,28 @@ describe('Kontrollene av et regelsett', () => {
     expect(feil(godkjenn(regel('depot-paliperidon-xeplion')))).toBe('')
   })
 
+  it('slår ut når en justerbar verdi mangler tekst eller et område å velge i', () => {
+    const fase = (r: Regel) => {
+      const f = r.plan.forlop[0]!.faser[0]!
+      if (f.type !== 'nedtrapping') throw new Error()
+      return f
+    }
+    expect(feil(regel('seponering-escitalopram'))).toBe('')
+    for (const [justerbar, omrade] of [['Dager per trinn', undefined], ['Dager per trinn', [14, 14]], [' ', [14, 28]]] as const) {
+      const r = regel('seponering-escitalopram')
+      fase(r).trinnlengde = { ...fase(r).trinnlengde, justerbar, omrade: omrade && [...omrade] }
+      expect(feil(r), JSON.stringify([justerbar, omrade])).toMatch(/trinnlengde er justerbar uten tekst eller uten et område å velge i/)
+    }
+  })
+
   it('slår ut når en godkjent regel er endret, eller en endret regel ikke er sendt til kontroll på nytt', () => {
     const a = godkjenn(regel('depot-paliperidon-xeplion'))
     a.unntak = []
     a.eksempler = a.eksempler.filter((e) => !/nyre/.test(e.id))
     expect(feil(a)).toMatch(/fingeravtrykket stemmer ikke/)
     const b = regel('seponering-escitalopram')
-    b.versjon = 2
-    expect(feil(b)).toMatch(/siste godkjenningssteg gjelder regelversjon 1, ikke versjon 2; en endret regel må sendes til kontroll på nytt/)
+    b.versjon = 3
+    expect(feil(b)).toMatch(/siste godkjenningssteg gjelder regelversjon 2, ikke versjon 3; en endret regel må sendes til kontroll på nytt/)
   })
 
   it('slår ut når en Psychiatrienet-referanse har feil retning, virkestoff, type eller formulering', () => {

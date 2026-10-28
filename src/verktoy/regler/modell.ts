@@ -32,7 +32,7 @@
 import type { Formuleringsklasse } from '../festformuleringer'
 
 /** Økes når formen på regler eller regelsett endres. */
-export const REGELMODELLVERSJON = 3
+export const REGELMODELLVERSJON = 4
 
 /* --- Kilder ----------------------------------------------------------------- */
 
@@ -134,6 +134,12 @@ export interface Parameter {
   grunnlag: Grunnlag
   /** Området kilden eller vurderingen tillater, når verdien er et valg innenfor det. */
   omrade?: [number, number]
+  /**
+   * Når forskriveren kan velge en annen verdi innenfor `omrade` for den enkelte
+   * planen: teksten feltet vises med, f.eks. «Dager per trinn». Verdien i
+   * regelen er da forslaget; området er det som godkjennes.
+   */
+  justerbar?: string
 }
 
 /* --- Planen ------------------------------------------------------------------- */
@@ -346,6 +352,11 @@ export interface Beregningsinndata {
    * og ukjent stopper beregningen like mye som et forhold som gjelder.
    */
   pasientforhold?: Record<string, boolean>
+  /**
+   * Forskriverens valg for parametrene som er justerbare (stien fra
+   * {@link parametre} → verdien), innenfor området regelen tillater.
+   */
+  justert?: Record<string, number>
 }
 
 export interface Regel {
@@ -515,6 +526,10 @@ export function parametre(x: unknown, sti = ''): [string, Parameter][] {
   if (x && typeof x === 'object') return Object.entries(x).flatMap(([n, y]) => parametre(y, sti ? `${sti}.${n}` : n))
   return []
 }
+
+/** Parametrene forskriveren kan justere for den enkelte planen, med stien dit. */
+export const justerbare = (r: Pick<Regel, 'plan'>): [string, Parameter & { justerbar: string; omrade: [number, number] }][] =>
+  parametre(r.plan, 'plan').filter((x): x is [string, Parameter & { justerbar: string; omrade: [number, number] }] => !!x[1].justerbar && !!x[1].omrade)
 
 /** Alle kildehenvisninger i `x`. */
 export function henvisninger(x: unknown): Kildehenvisning[] {

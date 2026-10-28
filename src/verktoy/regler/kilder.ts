@@ -77,6 +77,17 @@ export const KILDER: readonly Kilde[] = [
     bruk: OFFENTLIG,
   },
   {
+    id: 'rcpsych-stopping',
+    type: 'retningslinje',
+    tittel: 'Stopping antidepressants',
+    utgiver: 'Royal College of Psychiatrists (RCPsych)',
+    url: 'https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants',
+    versjon: 'Publisert mars 2024',
+    hentet: '2026-10-28T16:11:58Z',
+    sha256: 'f465fb1dbece0c76c7985138c8b59aa0a1e8a2f9f9dffd60e8d07c3d64ef3b4d',
+    bruk: OFFENTLIG,
+  },
+  {
     id: 'horowitz-2019',
     type: 'primærlitteratur',
     tittel: 'Horowitz MA, Taylor D. Tapering of SSRI treatment to mitigate withdrawal symptoms. Lancet Psychiatry 2019;6:538–546',

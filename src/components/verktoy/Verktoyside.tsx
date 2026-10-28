@@ -8,6 +8,7 @@ import {
   festIderFor,
   formvalgFor,
   gjelderFortsatt,
+  justeringsfelt,
   mangler,
   medRegel,
   skjemaFor,
@@ -362,6 +363,7 @@ function Beregningsdel({
   const nokkel = JSON.stringify({ regel: regel?.id, valg, skjema })
   const gjeldende = beregning?.nokkel === nokkel ? beregning : null
   const formvalg = alternativer && alternativer.regel === regel?.id ? alternativer.valg : {}
+  const justeringer = useMemo(() => (regel ? justeringsfelt(regel) : []), [regel])
 
   // En plan som står, kontrolleres mot klokken: den gjelder bare så lenge FEST-kopien er fersk og dagen den samme.
   const harPlan = gjeldende?.status === 'ferdig' && gjeldende.resultat.status === 'doseplan'
@@ -495,6 +497,31 @@ function Beregningsdel({
                   ))}
                 </div>
               </fieldset>
+            ))}
+          </fieldset>
+        )}
+
+        {justeringer.length > 0 && (
+          <fieldset className="feltgruppe">
+            <legend>Tilpasning av planen (valgfri)</legend>
+            <p className="feltgruppe__hjelp">Velg mindre trinn eller lengre tid innenfor det regelen tillater. Valget vises i planen.</p>
+            <div className="feltrad">
+              {justeringer.map((j) => (
+                <label key={j.sti} className="skjemafelt">
+                  <span>{j.navn}</span>
+                  <Tallfelt
+                    value={skjema.justert[j.sti] ?? ''}
+                    placeholder={j.forslag}
+                    aria-describedby={`${id}-${j.sti}`}
+                    onChange={(v) => sett('justert', { ...skjema.justert, [j.sti]: v })}
+                  />
+                </label>
+              ))}
+            </div>
+            {justeringer.map((j) => (
+              <p key={j.sti} id={`${id}-${j.sti}`} className="feltgruppe__hjelp">
+                {j.navn}: {j.hjelp}
+              </p>
             ))}
           </fieldset>
         )}

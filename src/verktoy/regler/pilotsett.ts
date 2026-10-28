@@ -14,10 +14,11 @@
  * **Ingen regel er klinisk godkjent.** Alle har status «til faglig kontroll»
  * (P4.8). OUSFARs egne valg er merket som forslag og må avklares; eksemplene
  * er regnet ut for hånd og kontrolleres av testene mot beregningen. Reglene
- * som ble endret etter første uavhengige kontroll, har versjon 2 og er sendt
- * til kontroll på nytt.
+ * som ble endret etter første uavhengige kontroll (PR #282), eller fikk rettet
+ * kildegrunnlaget for trinnlengden etter kontrollen av P7 (PR #286), har
+ * versjon 2 og er sendt til kontroll på nytt.
  */
-import { FORUTSETNINGER_FELLES, forslag, h, halvering, kilde, minst14, NICE, pn, steg, trinn14, utsagn } from './bygg'
+import { fluoksetinTrinn28, FORUTSETNINGER_FELLES, forslag, h, halvering, kilde, minst14, NICE, pn, RCPSYCH, steg, trinn14, utsagn } from './bygg'
 import type { Bekreftelse, Godkjenning, Regel, Regelsett, Unntak } from './modell'
 import { REGELMODELLVERSJON } from './modell'
 
@@ -25,12 +26,18 @@ import { REGELMODELLVERSJON } from './modell'
 
 const TIL_KONTROLL = 'Sendt til uavhengig faglig kontroll av kilder, klinisk innhold og regneeksempler (P4.8). Ikke klinisk godkjent.'
 
-/** Historikken for en pilotregel: versjon 1 til kontroll, og for en regel som er rettet etter kontrollen, versjon 2 til kontroll på nytt. */
+/** Historikken for en pilotregel: versjon 1 til kontroll, og for en regel som er rettet etter en kontroll, versjon 2 til kontroll på nytt. */
 function tilKontroll(rettet?: string): Godkjenning {
   const v1 = [steg('utkast', 1, 'Utkast til pilotregel (P4.7).'), steg('til_faglig_kontroll', 1, TIL_KONTROLL)]
-  const v2 = rettet ? [steg('utkast', 2, `Rettet etter første uavhengige kontroll (PR #282): ${rettet}`), steg('til_faglig_kontroll', 2, TIL_KONTROLL)] : []
+  const v2 = rettet ? [steg('utkast', 2, rettet), steg('til_faglig_kontroll', 2, TIL_KONTROLL)] : []
   return { status: 'til_faglig_kontroll', historikk: [...v1, ...v2] }
 }
+
+const etterPilotkontrollen = (rettet: string) => `Rettet etter første uavhengige kontroll (PR #282): ${rettet}`
+
+/** Trinnlengden i v1 viste til NICEs én til to uker, som gjelder fluoksetin; kildegrunnlaget er rettet etter kontrollen av P7. */
+const TRINNLENGDE_RETTET =
+  'Kildegrunnlaget for trinnlengden er rettet etter kontrollen av P7 (PR #286): NICEs én til to uker gjelder fluoksetin, så forslaget bygger nå på RCPsychs to til fire uker.'
 
 /* --- Fakta fra kildene, med egne ord ------------------------------------------------- */
 
@@ -96,7 +103,7 @@ const perorFormulering = (tekst: string): Bekreftelse => ({ id: 'peroral_formule
 
 const seponeringEscitalopram: Regel = {
   id: 'seponering-escitalopram',
-  versjon: 1,
+  versjon: 2,
   tittel: 'Seponering av escitalopram, gjentatt prosentvis nedtrapping',
   fra: { type: 'virkestoff', nokkel: 'escitalopram' },
   til: null,
@@ -116,7 +123,7 @@ const seponeringEscitalopram: Regel = {
               prosent: forslag(25, 'prosent', 'Eksempelet i NICE på mindre trinn ved lav dose.', { henvisninger: [NICE.andel] }),
               grense: forslag(5, 'mg', 'Laveste dose som oppgis i preparatomtalen; fra den regnes dosen som lav.', { henvisninger: [SPC.cipralexDose] }),
             }),
-            trinnlengde: trinn14('Øvre del av NICEs vurderingstid, så hvert trinn kan vurderes før neste.'),
+            trinnlengde: trinn14('Nedre del av RCPsychs to til fire uker mellom reduksjonene; tiden bør tilpasses symptomene.'),
             minste_varighet: minst14(SPC.cipralexSeponering),
           },
         ],
@@ -131,10 +138,10 @@ const seponeringEscitalopram: Regel = {
     kildetro: [
       utsagn('Escitalopram trappes ned gradvis over minst én til to uker, ikke seponeres brått.', SPC.cipralexSeponering),
       utsagn('Hvert trinn er en andel av forrige dose, med mindre trinn ved lav dose, og nedtrappingen kan ta uker til måneder.', NICE.andel, NICE.tempo),
-      utsagn('Det bør gå én til to uker mellom reduksjonene.', NICE.vurdering),
+      utsagn('To til fire uker mellom reduksjonene er et vanlig utgangspunkt; tiden bør være så lang som seponeringssymptomene krever.', RCPSYCH.tid),
     ],
     tilpasninger: [
-      utsagn('OUSFAR bruker 50 % av aktuell dose ned til 5 mg og deretter 25 %, med 14 dager per trinn, og seponerer når neste dose blir under 2,5 mg. Alle tallene er forslag innenfor eller etter eksemplene i kildene.', NICE.andel, NICE.vurdering),
+      utsagn('OUSFAR bruker 50 % av aktuell dose ned til 5 mg og deretter 25 %, med 14 dager per trinn, og seponerer når neste dose blir under 2,5 mg. Alle tallene er forslag innenfor eller etter eksemplene i kildene.', NICE.andel, RCPSYCH.tid),
       utsagn('«Minst én til to uker» er lest som et bindende minimum på 14 dager; blir planen kortere, stopper beregningen.', SPC.cipralexSeponering),
     ],
     forutsetninger: [...FORUTSETNINGER_FELLES, 'Planen gjelder seponering, ikke bytte til et annet antidepressiv.'],
@@ -166,12 +173,12 @@ const seponeringEscitalopram: Regel = {
       stopp: /Startdosen 25 mg er utenfor/,
     },
   ],
-  godkjenning: tilKontroll(),
+  godkjenning: tilKontroll(TRINNLENGDE_RETTET),
 }
 
 const seponeringCitalopramHyperbolsk: Regel = {
   id: 'seponering-citalopram-hyperbolsk',
-  versjon: 1,
+  versjon: 2,
   tittel: 'Seponering av citalopram, hyperbolsk nedtrapping (alternativ strategi)',
   fra: { type: 'virkestoff', nokkel: 'citalopram' },
   til: null,
@@ -192,7 +199,7 @@ const seponeringCitalopramHyperbolsk: Regel = {
               ed50_mg: kilde(3.4, 'mg', 'veiledende_preferanse', LITTERATUR.ed50),
               trinn: forslag(8, 'trinn', 'Åtte like store trinn i beregnet binding; et antall som må vurderes faglig mot pasientens toleranse.', { henvisninger: [LITTERATUR.horowitz] }),
             },
-            trinnlengde: trinn14('Øvre del av NICEs vurderingstid.'),
+            trinnlengde: trinn14('Nedre del av RCPsychs to til fire uker mellom reduksjonene.'),
             minste_varighet: minst14(SPC.cipramilSeponering),
           },
         ],
@@ -244,12 +251,12 @@ const seponeringCitalopramHyperbolsk: Regel = {
       },
     },
   ],
-  godkjenning: tilKontroll(),
+  godkjenning: tilKontroll(TRINNLENGDE_RETTET),
 }
 
 const kryssSertralinMirtazapin: Regel = {
   id: 'kryssnedtrapping-sertralin-mirtazapin',
-  versjon: 1,
+  versjon: 2,
   tittel: 'Bytte fra sertralin til mirtazapin, kryssnedtrapping',
   fra: { type: 'virkestoff', nokkel: 'sertralin' },
   til: { type: 'virkestoff', nokkel: 'mirtazapin' },
@@ -266,7 +273,7 @@ const kryssSertralinMirtazapin: Regel = {
           {
             type: 'nedtrapping',
             strategi: halvering(forslag(25, 'mg', 'Laveste startdose i preparatomtalen; under den seponeres.', { henvisninger: [SPC.zoloftDose] })),
-            trinnlengde: trinn14('Øvre del av NICEs vurderingstid; NICE åpner for raskere nedtrapping ved bytte (7 dager).', NICE.bytte),
+            trinnlengde: trinn14('NICE åpner for raskere nedtrapping ved bytte; OUSFAR foreslår likevel 14 dager.', { omrade: [7, 14], henvisninger: [NICE.bytte] }),
             minste_varighet: minst14(SPC.zoloftSeponering),
           },
         ],
@@ -330,12 +337,12 @@ const kryssSertralinMirtazapin: Regel = {
       stopp: /Måldosen må oppgis/,
     },
   ],
-  godkjenning: tilKontroll(),
+  godkjenning: tilKontroll(TRINNLENGDE_RETTET),
 }
 
 const maoFluoksetinFenelzin: Regel = {
   id: 'mao-fluoksetin-fenelzin',
-  versjon: 1,
+  versjon: 2,
   tittel: 'Bytte fra fluoksetin til fenelzin, sekvensielt med utvasking',
   fra: { type: 'virkestoff', nokkel: 'fluoksetin' },
   til: { type: 'virkestoff', nokkel: 'fenelzin' },
@@ -352,7 +359,7 @@ const maoFluoksetinFenelzin: Regel = {
           {
             type: 'nedtrapping',
             strategi: halvering(forslag(10, 'mg', 'Daglig 10 mg i stedet for 20 mg annenhver dag, som modellen ikke har; under den seponeres.', { henvisninger: [NICE.fluoksetin] })),
-            trinnlengde: trinn14('Øvre del av NICEs vurderingstid.'),
+            trinnlengde: fluoksetinTrinn28(),
             minste_varighet: minst14(SPC.fluoksetinSeponering),
           },
         ],
@@ -387,10 +394,11 @@ const maoFluoksetinFenelzin: Regel = {
       utsagn('Fluoksetin og en irreversibel, ikke-selektiv MAO-hemmer skal ikke brukes samtidig; det skal gå minst 5 uker fra fluoksetin er seponert til MAO-hemmeren startes.', SPC.fluoksetinMao),
       utsagn('Litteraturen anbefaler 5–6 ukers utvasking, og at MAO-hemmeren startes forsiktig i lav dose.', KEKS16.fluoksetinMao),
       utsagn('Fluoksetin trappes ned gradvis over minst én til to uker.', SPC.fluoksetinSeponering),
+      utsagn('Seponeringssymptomer kan komme dager til uker etter en reduksjon av fluoksetin; det er best å vente minst fire uker før neste.', RCPSYCH.fluoksetin),
       utsagn('Bytte til en MAO-hemmer skal skje i, eller med råd fra, spesialisthelsetjenesten.', NICE.mao),
     ],
     tilpasninger: [
-      utsagn('OUSFAR halverer fluoksetin hver 14. dag ned til 10 mg og seponerer deretter. Utvaskingen på 35 dager regnes fra første dag uten fluoksetin; fenelzin kan tidligst startes dagen etter.', SPC.fluoksetinMao),
+      utsagn('OUSFAR halverer fluoksetin hver 28. dag ned til 10 mg og seponerer deretter. Utvaskingen på 35 dager regnes fra første dag uten fluoksetin; fenelzin kan tidligst startes dagen etter.', SPC.fluoksetinMao),
       utsagn('Startdosen for fenelzin beregnes ikke, fordi det ikke finnes en norsk preparatomtale å bygge den på.'),
     ],
     forutsetninger: [...FORUTSETNINGER_FELLES, 'Fenelzin er en irreversibel, ikke-selektiv MAO-hemmer, så utvaskingskravet for slike gjelder.'],
@@ -404,15 +412,15 @@ const maoFluoksetinFenelzin: Regel = {
   eksempler: [
     {
       id: 'fra-40-mg',
-      beskrivelse: 'Fluoksetin 40 mg: to reduksjoner, 35 dager utvasking, fenelzin tidligst dag 64.',
+      beskrivelse: 'Fluoksetin 40 mg: to reduksjoner med 28 dager per trinn, 35 dager utvasking, fenelzin tidligst dag 92.',
       inndata: { startdose_mg: 40, bekreftet: ['spesialisthelsetjeneste'] },
-      forventet: { fra: ['dag 1–14: 20 mg', 'dag 15–28: 10 mg', 'fra dag 29: seponert'], til: ['tidligst dag 64: oppstart, dosering beregnes ikke'] },
+      forventet: { fra: ['dag 1–28: 20 mg', 'dag 29–56: 10 mg', 'fra dag 57: seponert'], til: ['tidligst dag 92: oppstart, dosering beregnes ikke'] },
     },
     {
       id: 'fra-20-mg',
-      beskrivelse: 'Fluoksetin 20 mg: én reduksjon, fenelzin tidligst dag 50.',
+      beskrivelse: 'Fluoksetin 20 mg: én reduksjon, fenelzin tidligst dag 64.',
       inndata: { startdose_mg: 20, bekreftet: ['spesialisthelsetjeneste'] },
-      forventet: { fra: ['dag 1–14: 10 mg', 'fra dag 15: seponert'], til: ['tidligst dag 50: oppstart, dosering beregnes ikke'] },
+      forventet: { fra: ['dag 1–28: 10 mg', 'fra dag 29: seponert'], til: ['tidligst dag 64: oppstart, dosering beregnes ikke'] },
     },
     {
       id: 'uten-spesialist',
@@ -422,7 +430,7 @@ const maoFluoksetinFenelzin: Regel = {
       stopp: /Må bekreftes før beregning: Byttet gjøres i, eller med råd fra, spesialisthelsetjenesten/,
     },
   ],
-  godkjenning: tilKontroll(),
+  godkjenning: tilKontroll(TRINNLENGDE_RETTET),
 }
 
 const BEKREFTET_AP = ['indikasjon', 'peroral_formulering']
@@ -539,7 +547,7 @@ const antipsykotikabytteOlanzapinKvetiapin: Regel = {
       stopp: /Må bekreftes før beregning: Pasienten bruker peroral olanzapin/,
     },
   ],
-  godkjenning: tilKontroll('indikasjonen (schizofreni) og at olanzapin er peroral, må bekreftes.'),
+  godkjenning: tilKontroll(etterPilotkontrollen('indikasjonen (schizofreni) og at olanzapin er peroral, må bekreftes.')),
 }
 
 const IKKE_VURDERT = 'Ikke vurdert individuelt (halveringstid, formulering og norske preparater); gruppeanbefalingen alene er ikke nok (B4).'
@@ -644,7 +652,7 @@ const gruppeRestApAripiprazol: Regel = {
       stopp: /flupentiksol er ikke vurdert individuelt/,
     },
   ],
-  godkjenning: tilKontroll('indikasjonen (schizofreni) og peroral formulering må bekreftes.'),
+  godkjenning: tilKontroll(etterPilotkontrollen('indikasjonen (schizofreni) og peroral formulering må bekreftes.')),
 }
 
 const depotAripiprazol: Regel = {
@@ -751,7 +759,7 @@ const depotAripiprazol: Regel = {
       stopp: /Må bekreftes før beregning: Pasienten er voksen, har schizofreni/,
     },
   ],
-  godkjenning: tilKontroll('indikasjonen må bekreftes, og hvert unntak må besvares; et ukjent unntak stopper beregningen.'),
+  godkjenning: tilKontroll(etterPilotkontrollen('indikasjonen må bekreftes, og hvert unntak må besvares; et ukjent unntak stopper beregningen.')),
 }
 
 const NYRE_AVKREFTET = { nedsatt_nyrefunksjon: false }
@@ -913,12 +921,12 @@ const depotPaliperidon: Regel = {
       stopp: /Må avklares før beregning \(ukjent\): Pasienten har kreatininclearance under 80 ml\/min/,
     },
   ],
-  godkjenning: tilKontroll('indikasjonen må bekreftes, nyrefunksjonen må besvares, og ved 3 mg må klinikeren velge dosen i spennet 25–50 mg.'),
+  godkjenning: tilKontroll(etterPilotkontrollen('indikasjonen må bekreftes, nyrefunksjonen må besvares, og ved 3 mg må klinikeren velge dosen i spennet 25–50 mg.')),
 }
 
 export const PILOTSETT: Regelsett = {
   id: 'ousfar-verktoy-pilot',
-  versjon: 2,
+  versjon: 3,
   modell: REGELMODELLVERSJON,
   beskrivelse:
     'Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.',
