@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-10-28T08:30:54.344Z",
+  "oppdatert_kl": "2026-10-28T09:29:09.994Z",
   "malt_kl": "2026-10-27T22:26:02.816Z",
   "teller": 82,
   "stoffer": {
@@ -7724,29 +7724,6 @@
     }
   },
   "okter": {
-    "kurateringsko/okt/20261014-064915": {
-      "ider": [
-        "fullfort-1",
-        "forny-1",
-        "reserver-1"
-      ],
-      "siste": {
-        "id": "fullfort-1",
-        "sha256": "a1f22a5cb27302934373efbef8a1239a84f876eedfdf02ef790e0343cdd9185d",
-        "svar": {
-          "versjon": 1,
-          "foresporsel_id": "fullfort-1",
-          "foresporsel_sha256": "a1f22a5cb27302934373efbef8a1239a84f876eedfdf02ef790e0343cdd9185d",
-          "handling": "fullfort",
-          "utfall": "ok",
-          "melding": "ghb er ferdig fra kuratoren; køen følger PR #228 til den er publisert.",
-          "behandlet_kl": "2026-10-14T07:39:28.362Z",
-          "kjoring": "https://github.com/peohol/far/actions/runs/38529713189"
-        }
-      },
-      "besvart_commit": "771fa9e33af574a39d006d15b0e816583a83c348",
-      "sist_brukt_kl": "2026-10-14T07:39:28.362Z"
-    },
     "kurateringsko/okt/20261014-173642": {
       "ider": [
         "frigi-1",
