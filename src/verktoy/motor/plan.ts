@@ -20,12 +20,12 @@
  *
  * En plan er bare klinisk når regelversjonen er gyldig klinisk godkjent, ikke
  * er en syntetisk testregel, og preparatene er fra en FEST-kopi som er
- * kontrollert det siste døgnet (`kliniskSperre`). Appen skal bare bruke
+ * bekreftet fersk ({@link festFerskhet}; se {@link kliniskSperre}). Appen skal bare bruke
  * {@link kliniskDoseplan}, som stopper alt annet.
  */
-import { festForeldet } from '../../legemiddeldata/referanser'
+import { FEST_FORELDET_ETTER_TIMER, festForeldet } from '../../legemiddeldata/referanser'
 import { FORMULERINGSKLASSER, type Formuleringsklasse } from '../festformuleringer'
-import { avrund, beregn, erIsoDato, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
+import { avrund, beregn, erIsoDato, injeksjonstidspunkt, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
 import { fingeravtrykk, godkjenningsfeil, kanonisk, sha256 } from '../regler/godkjenning'
 import { parameterfeil, type Beregningsinndata, type Forlop, type Parameter, type Regel, type Regelsett } from '../regler/modell'
 import { byggesteiner, DOSEENHETER, norskDato, type Byggestein, type Preparatgrunnlag } from './byggesteiner'
@@ -126,14 +126,53 @@ export const FORBEHOLD_KLINISK = 'Beregnet etter en klinisk godkjent regelversjo
 const tall = (x: number) => String(avrund(x)).replace('.', ',')
 const dager = (p: { fra: number; til: number | null }) => (p.til === null ? `fra dag ${p.fra}` : p.til === p.fra ? `dag ${p.fra}` : `dag ${p.fra}–${p.til}`)
 
+/**
+ * Hvor langt FEST-kontrollen kan ligge foran klokken her før tidsstemplet
+ * ikke godtas (ulike klokker). En teknisk driftsregel, ikke en klinisk grense.
+ */
+export const KLOKKEAVVIK_MINUTTER = 5
+/** Et fullt tidspunkt med tidssone, slik databasen gir det. */
+const ISO_TIDSPUNKT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2})$/
+const DOGN = 86_400_000
+
+/** Hvorfor tidsstemplene til FEST-kopien ikke kan brukes i det hele tatt; tom når de er gyldige. */
+function festdatofeil(utvalg: Pick<Preparatgrunnlag['utvalg'], 'kontrollert_kl' | 'kildedato'>): string[] {
+  const { kontrollert_kl: kl, kildedato } = utvalg
+  if (!kl || !kildedato) return ['Det finnes ingen vellykket henting av FEST å regne med; preparatene kan ikke bekreftes.']
+  const feil: string[] = []
+  const kontrollert = ISO_TIDSPUNKT.test(kl) ? Date.parse(kl) : NaN
+  if (Number.isNaN(kontrollert)) feil.push(`Tidspunktet FEST sist ble kontrollert («${kl}») er ikke et gyldig tidspunkt.`)
+  if (!erIsoDato(kildedato)) feil.push(`Kildedatoen til FEST-kopien («${kildedato}») er ikke en gyldig dato.`)
+  // Ett døgns slingring for tidssonen kontrolltidspunktet er skrevet i.
+  else if (!Number.isNaN(kontrollert) && kildedato > new Date(kontrollert + DOGN).toISOString().slice(0, 10)) {
+    feil.push(`Kildedatoen til FEST-kopien (${norskDato(kildedato)}) ligger etter tidspunktet den ble kontrollert.`)
+  }
+  return feil
+}
+
+/**
+ * Hvorfor FEST-kopien ikke er bekreftet fersk ved `naa`; tom når den er det.
+ * Kravet er positivt: kontrolltidspunktet og kildedatoen må være gyldige, og
+ * kontrollen må ligge mellom {@link KLOKKEAVVIK_MINUTTER} minutter fram og
+ * {@link FEST_FORELDET_ETTER_TIMER} timer tilbake i tid.
+ */
+export function festFerskhet(utvalg: Pick<Preparatgrunnlag['utvalg'], 'kontrollert_kl' | 'kildedato'>, naa: Date): string[] {
+  const feil = festdatofeil(utvalg)
+  if (feil.length > 0) return feil
+  if (Number.isNaN(naa.getTime())) return ['Tidspunktet beregningen gjøres er ikke gyldig, så FEST-kopiens alder kan ikke bekreftes.']
+  const alder = naa.getTime() - Date.parse(utvalg.kontrollert_kl!)
+  if (alder < -KLOKKEAVVIK_MINUTTER * 60_000) return [`FEST-kopien oppgir å være kontrollert ${utvalg.kontrollert_kl}, fram i tid; tidsstemplet kan ikke stoles på.`]
+  if (alder > FEST_FORELDET_ETTER_TIMER * 3_600_000) return [festForeldet(utvalg, naa)!]
+  return []
+}
+
 /** Hvorfor en plan etter `regel` med preparatene i `utvalg` ikke kan være klinisk; tom når den kan. */
 export function kliniskSperre(regel: Regel, utvalg: Preparatgrunnlag['utvalg'], naa: Date): string[] {
   const sperre: string[] = []
   if (regel.id.startsWith(SYNTETISK_REGEL)) sperre.push('Regelen er en syntetisk testregel.')
   sperre.push(...godkjenningsfeil(regel))
   if (utvalg.kilde !== 'FEST') sperre.push(`Preparatene er fra «${utvalg.kilde}», ikke fra FEST.`)
-  const foreldet = festForeldet(utvalg, naa)
-  if (foreldet) sperre.push(foreldet)
+  sperre.push(...festFerskhet(utvalg, naa))
   return sperre
 }
 
@@ -261,10 +300,15 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
       if (kandidater.length === 0) throw new Stopp(ingenDose(f, p, v, alleValg, tol, grenser))
       perioder.push({ ideell: p.mg, kandidater })
     }
-    const serie = velgSerie(perioder)
+    // Retningen gjelder fra dosen forløpet starter med, også i første periode.
+    const start = def.utgangsdose === 'startdose' ? inndata.startdose_mg : 0
+    const serie = velgSerie(perioder, start)
     if (!serie) {
+      const forste = velgSerie(perioder.slice(0, 1), start) === null
       throw new Stopp(
-        `${f.virkestoff} (${f.id}): hver periode kan gis innenfor rammene, men ikke i kurvens retning (en praktisk dose ville økt under nedtrapping eller sunket under opptrapping). En annen plan krever en ny faglig beslutning.`,
+        forste
+          ? `${f.virkestoff} (${f.id}): første periode er ideelt ${tall(perioder[0]!.ideell)} mg, men ingen dose innenfor rammene er ${perioder[0]!.ideell < start ? 'lavere' : 'høyere'} enn dosen forløpet starter med (${tall(start)} mg). En annen plan krever en ny faglig beslutning.`
+          : `${f.virkestoff} (${f.id}): hver periode kan gis innenfor rammene, men ikke i kurvens retning (en praktisk dose ville økt under nedtrapping eller sunket under opptrapping). En annen plan krever en ny faglig beslutning.`,
       )
     }
     ut.perioder = f.perioder.map((p, i) => ({
@@ -349,7 +393,7 @@ export function beregnDoseplan(regel: Regel, inndata: Doseplaninndata, grunnlag:
   if (!erIsoDato(omgivelse.idag)) forhand.push(`Datoen preparatstatusen gjelder («${String(omgivelse.idag)}») er ikke en gyldig dato.`)
   if (Number.isNaN(naa.getTime())) forhand.push(`Tidspunktet «${String(omgivelse.naa)}» er ikke gyldig.`)
   if (utvalg.kilde !== 'FEST' && utvalg.kilde !== SYNTETISK_KILDE) forhand.push(`Preparatdataene er fra «${utvalg.kilde}», ikke fra FEST.`)
-  if (!utvalg.kontrollert_kl || !utvalg.kildedato) forhand.push('Det finnes ingen vellykket henting av FEST å regne med; preparatene kan ikke bekreftes.')
+  forhand.push(...festdatofeil(utvalg))
   if (forhand.length > 0) return stopp(forhand)
 
   ideell = beregn(regel, inndata, regelsett)
@@ -436,9 +480,8 @@ export function planform(r: Doseplanresultat): Record<string, string[]> {
         return `${dager(p)}${dato}: ${tall(p.mg)} mg = ${p.elementer.map(elementtekst).join(' + ')}${avvik}`
       })
       for (const i of f.injeksjoner) {
-        const naar = i.dag === null ? `vedlikehold hver ${i.vedlikehold!.maaneder}. måned fra dag ${i.vedlikehold!.etter_dag}` : `dag ${i.dag}`
-        const dato = i.dato ?? i.vedlikehold?.forste_dato
-        linjer.push(`${naar}${dato ? ` [${norskDato(dato)}]` : ''}: ${tall(i.mg)} mg = ${elementtekst(i.element)}`)
+        const dato = i.vedlikehold ? i.vedlikehold.forste_dato : i.dato
+        linjer.push(`${injeksjonstidspunkt(i)}${dato ? ` [${norskDato(dato)}]` : ''}: ${tall(i.mg)} mg = ${elementtekst(i.element)}`)
       }
       if (f.siste_dosedag !== null) linjer.push(`fra dag ${f.siste_dosedag + 1}${f.seponert_dato ? ` [${norskDato(f.seponert_dato)}]` : ''}: seponert`)
       return [f.id, linjer]

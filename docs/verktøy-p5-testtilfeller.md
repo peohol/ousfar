@@ -550,7 +550,7 @@ Testoksetin 10 mg trappes ned med 5 mg per uke, så 14 dager uten legemiddel fø
 
 ### depot-manedlig
 
-Fra testperidon depottabletter til månedlig depot fra 31.01.2027: 150 mg dag 1, 100 mg dag 8, så 100 mg hver måned. Bare det månedlige preparatet regelen nevner brukes, aldri det tremånedlige.
+Fra testperidon depottabletter til månedlig depot fra 31.01.2027: 150 mg dag 1, 100 mg dag 8, så 100 mg hver måned med første vedlikeholdsdose én måned etter dag 8 (07.03.2027, dag 36). Bare det månedlige preparatet regelen nevner brukes, aldri det tremånedlige.
 
 *Kontrollerer:* P5.7 depot som egen tidsmodell; hele injeksjoner; kalendermåned i februar. *Regel:* SYNTETISK TESTREGEL: oppstart av månedlig testperidon-depot. *Inndata:* startdose 6 mg, startdato 2027-01-31. *Preparatstatus:* 2026-11-01.
 
@@ -576,7 +576,7 @@ Fra testperidon depottabletter til månedlig depot fra 31.01.2027: 150 mg dag 1,
 
 - dag 1 [31.01.2027]: 150 mg = 1 injeksjon à 150 mg
 - dag 8 [07.02.2027]: 100 mg = 1 injeksjon à 100 mg
-- vedlikehold hver 1. måned fra dag 8 [07.03.2027]: 100 mg = 1 injeksjon à 100 mg
+- hver måned fra 1 måned etter dag 8 [07.03.2027]: 100 mg = 1 injeksjon à 100 mg
 
 **Avvik fra den ideelle kurven:**
 
@@ -661,3 +661,104 @@ Uten en vellykket henting av FEST kan ingen plan beregnes.
 *Stopper:*
 
 - Det finnes ingen vellykket henting av FEST å regne med; preparatene kan ikke bekreftes.
+
+### fest-ugyldig-tidsstempel
+
+Et kontrolltidspunkt som ikke kan tolkes, regnes ikke som en vellykket henting av FEST.
+
+*Kontrollerer:* P5.1. *Regel:* SYNTETISK TESTREGEL: seponering av testoksetin. *Inndata:* startdose 20 mg, valg: fra peroral, SYN-TAB. *Preparatstatus:* 2026-11-01.
+
+**Ideell kurve (P4):**
+
+*fra:*
+
+- dag 1–14: 15 mg
+- dag 15–28: 10 mg
+- dag 29–42: 5 mg
+- fra dag 43: seponert
+
+**Doseplan:**
+
+*Stopper:*
+
+- Tidspunktet FEST sist ble kontrollert («ikke-et-tidspunkt») er ikke et gyldig tidspunkt.
+
+### forste-dose-motsatt-vei
+
+Nedtrapping fra 10 mg, 10 % per trinn: første ideelle dose er 9 mg. Den eneste tabletten (10,5 mg, ikke delbar) ligger innenfor ±25 %, men ville økt dosen fra dagens 10 mg.
+
+*Kontrollerer:* P5.5 retningen fra aktuell dose i første periode. *Regel:* SYNTETISK TESTREGEL: seponering av testoksetin. *Inndata:* startdose 10 mg, valg: fra peroral, SYN-TAB. *Preparatstatus:* 2026-11-01.
+
+**Ideell kurve (P4):**
+
+*fra:*
+
+- dag 1–14: 9 mg
+- fra dag 15: seponert
+
+**Doseplan:**
+
+*Stopper:*
+
+- testoksetin (fra): første periode er ideelt 9 mg, men ingen dose innenfor rammene er lavere enn dosen forløpet starter med (10 mg). En annen plan krever en ny faglig beslutning.
+
+### avrunding-mellomtrinn
+
+Nedtrapping fra 20 mg, 25 % av aktuell dose, seponering under 8 mg, med hele tabletter og ±12 %: mellomtrinnet 11,25 mg kan gis som 10 eller 12,5 mg med likt avvik og like enkelt. Det rundes mot forrige dose (opp), så neste reduksjon blir større.
+
+*Kontrollerer:* P5.5 avrunding ved ellers likt i et mellomtrinn. *Regel:* SYNTETISK TESTREGEL: seponering av testoksetin. *Inndata:* startdose 20 mg, valg: fra peroral, SYN-TAB. *Preparatstatus:* 2026-11-01.
+
+**Ideell kurve (P4):**
+
+*fra:*
+
+- dag 1–14: 15 mg
+- dag 15–28: 11,25 mg
+- dag 29–42: 8,44 mg
+- fra dag 43: seponert
+
+**Doseplan:**
+
+*fra:*
+
+- dag 1–14: 15 mg = 1 tablett à 15 mg
+- dag 15–28: 12,5 mg = 1 tablett à 12,5 mg (ideelt 11,25 mg, +11,11 %)
+- dag 29–42: 7,5 mg = 1 tablett à 7,5 mg (ideelt 8,44 mg, -11,11 %)
+- fra dag 43: seponert
+
+**Avvik fra den ideelle kurven:**
+
+- testoksetin dag 15–28: 12,5 mg i stedet for 11,25 mg (+11,11 %).
+- testoksetin dag 29–42: 7,5 mg i stedet for 8,44 mg (-11,11 %).
+
+**Preparater (FESTs navn, deling):**
+
+- Testoksetin Hel tablett 12,5 mg (FEST: «Ikke delbar»)
+- Testoksetin Hel tablett 15 mg (FEST: «Ikke delbar»)
+- Testoksetin Hel tablett 7,5 mg (FEST: «Ikke delbar»)
+
+**Begrensninger (preparater som ikke brukes):**
+
+- Ingen.
+
+**Klinisk:** nei. Regelen er en syntetisk testregel. Regelversjonen er utkast, ikke klinisk godkjent. Preparatene er fra «Syntetiske testdata», ikke fra FEST.
+
+### draper-to-styrker-over-rammen
+
+Testazapin-dråper à 1 og 2 mg: 120 mg er 60 dråper, men 121 mg ville krevd 61 dråper til sammen (1 + 60) og stopper.
+
+*Kontrollerer:* P5.5 rammen på 60 dråper for hele døgndosen. *Regel:* SYNTETISK TESTREGEL: faste doser av testazapin. *Inndata:* startdose 1 mg, valg: fra peroral, SYN-DRAP. *Preparatstatus:* 2026-11-01.
+
+**Ideell kurve (P4):**
+
+*fra:*
+
+- dag 1–7: 120 mg
+- dag 8–14: 121 mg
+- fra dag 15: seponert
+
+**Doseplan:**
+
+*Stopper:*
+
+- testazapin dag 8–14: den ideelle dosen 121 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 120 mg (-0,83 %). Et større avvik eller en annen formulering krever en ny faglig beslutning; beregningen gjør det ikke selv.

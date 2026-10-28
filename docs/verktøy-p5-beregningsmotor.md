@@ -53,7 +53,7 @@ Kontrollene i P4 sjekker at `klasser` passer administrasjonen og at `preparater`
 
 ## 5. Valget av doser (`dosevalg.ts`, B3)
 
-**Harde krav.** Hver døgndose med dose er over 0, innenfor regelens avvik fra den ideelle dosen (uten toleranse nøyaktig), og innenfor `maks_mg` og `min_mg`. Dosen går aldri motsatt vei av kurven: synker den ideelle dosen fra én periode til neste, øker ikke den praktiske, og omvendt. Et trinn kan bli likt det forrige; da står det som avvik.
+**Harde krav.** Hver døgndose med dose er over 0, innenfor regelens avvik fra den ideelle dosen (uten toleranse nøyaktig), og innenfor `maks_mg` og `min_mg`. Dosen går aldri motsatt vei av kurven: synker den ideelle dosen fra én periode til neste, øker ikke den praktiske, og omvendt. Det gjelder også første periode, målt fra dosen forløpet starter med: pasientens aktuelle dose (`utgangsdose: 'startdose'`), eller 0 for et nytt legemiddel. En nedtrapping kan altså aldri begynne med å øke dosen, og en opptrapping aldri med å senke den; finnes ingen første dose som oppfyller både toleransen og retningen, stopper beregningen. Et trinn kan bli likt det forrige; da står det som avvik.
 
 **Så, i denne rekkefølgen:**
 
@@ -62,12 +62,14 @@ Kontrollene i P4 sjekker at `klasser` passer administrasjonen og at `preparater`
 3. færrest delinger (en kvart teller som to halve);
 4. færrest tabletter, kapsler eller målinger;
 5. færrest styrker;
-6. minst endring fra forrige dose: ved likt avvik rundes en nedtrapping heller opp enn ned, og en opptrapping heller ned enn opp;
-7. fast rekkefølge, så like inndata alltid gir samme plan.
+6. avrunding mot forrige dose: summen over periodene av det relative avviket regnet mot kurvens retning, så en nedtrapping rundes heller opp og en opptrapping heller ned, i hvert trinn og ikke bare det første;
+7. fast rekkefølge (lavest dose først), så like inndata alltid gir samme plan.
+
+Punkt 1–5 er en eksplisitt teknisk prioritering innenfor de harde kravene, ikke dokumentasjon for et klinisk optimum. Punkt 6 skiller bare kandidater som ellers er like gode. Det betyr ikke at hele forløpet blir mildere: runder ett trinn opp, blir neste reduksjon tilsvarende større (testtilfellet `avrunding-mellomtrinn`: 15 → 12,5 → 7,5 mg i stedet for 15 → 10 → 7,5 mg). Godkjenningsfritak teller som kompleksitet (punkt 2), så et registrert preparat foretrekkes når avviket er det samme, men ikke foran et mindre avvik.
 
 Valget gjøres for hele forløpet samlet (dynamisk programmering), ikke periode for periode, så et valg tidlig aldri gjør et senere trinn umulig når en annen rekke finnes.
 
-**Praktiske rammer.** En døgndose settes sammen av høyst 2 styrker og høyst 4 tabletter eller kapsler eller 60 dråper. Det er en ramme for søket, ikke en klinisk grense. Finnes ingen dose innenfor den, stopper beregningen og sier det.
+**Praktiske rammer.** En døgndose settes sammen av høyst 2 styrker og til sammen høyst 4 tabletter eller kapsler eller 60 dråper, talt over alle styrkene i dosen. Det er en ramme for søket, ikke en klinisk grense. Finnes ingen dose innenfor den, stopper beregningen og sier det.
 
 **Stopp (P5.8).** Kan en periode ikke gis innenfor rammene, stopper beregningen med perioden, den ideelle dosen, toleransen, de nærmeste dosene som kan settes sammen med avviket, og preparater som er utelatt fordi de ikke er markedsført hele perioden. Motoren utvider aldri toleransen, bytter formulering eller endrer trinnene selv; det er en ny faglig beslutning.
 
@@ -76,7 +78,7 @@ Valget gjøres for hele forløpet samlet (dynamisk programmering), ikke periode 
 ## 6. Samtidige forløp, utvasking og depot (P5.7)
 
 - Hvert forløp får sine egne preparater og sitt eget dosevalg. Trinnene og dagene er de samme som i den ideelle kurven, så utvaskingen fra P4 bevares. Den kontrolleres likevel på nytt i den praktiske planen: siste dag med dose i forrige forløp, og første dag med dose i neste.
-- Depot har tidsmodellen fra P4: startinjeksjoner på bestemte dager med tidsvindu, og vedlikehold hver *n*. måned regnet med kalendermåneder. Hver injeksjon er nøyaktig én hel injeksjon med dosen. Motoren setter aldri sammen flere sprøyter og bruker aldri en del av en sprøyte. Registrerte preparater foretrekkes framfor godkjenningsfritak.
+- Depot har tidsmodellen fra P4: startinjeksjoner på bestemte dager med tidsvindu, og vedlikehold hver *n*. måned regnet med kalendermåneder. Første vedlikeholdsdose gis *n* måneder etter siste startinjeksjon, og planen skriver det slik («hver måned fra 1 måned etter dag 8», med første dato når startdatoen er kjent). Hver injeksjon er nøyaktig én hel injeksjon med dosen. Motoren setter aldri sammen flere sprøyter og bruker aldri en del av en sprøyte. Registrerte preparater foretrekkes framfor godkjenningsfritak.
 - Med startdato får hver periode og injeksjon kalenderdatoer, også over årsskifter og i korte måneder.
 
 ## 7. Datoer og dag 1
@@ -102,11 +104,11 @@ En plan er **klinisk** bare når alt dette gjelder (`kliniskSperre`):
 - regelversjonen er gyldig klinisk godkjent (`godkjenningsfeil` fra P4: riktig versjon og fingeravtrykk, uavhengig kontrollør, ingen åpne valg);
 - regelen er ikke en syntetisk testregel;
 - preparatene er fra FEST;
-- FEST-kopien er kontrollert de siste 48 timene.
+- FEST-kopien er bekreftet fersk. Kravet er positivt: kontrolltidspunktet må være et gyldig tidspunkt med tidssone, høyst 48 timer gammelt og høyst 5 minutter fram i tid (klokkeavvik), og kildedatoen en gyldig dato som ikke ligger etter kontrollen (ett døgns slingring for tidssonen). 48 timer og 5 minutter er tekniske driftsregler for datagrunnlaget, ikke medisinske terskler. Mangler et tidsstempel eller kan det ikke tolkes, stopper beregningen helt (P5.1).
 
 Ellers er planen en modellberegning med forbeholdet at den ikke skal vises i appen, og grunnene står i `sperre`. `kliniskDoseplan`, som appen skal bruke, gjør en slik plan om til en stopp. Ved en stopp vises bare publisert OUSFAR-fagtekst, aldri en kildes tekst (P5.8).
 
-Testene kontrollerer at ingen av de åtte pilotreglene kan gi en klinisk plan, heller ikke med preparatdata merket som FEST, og at en syntetisk regel med en syntetisk godkjenning heller ikke kan det. Ingen virkelig regel er godkjent for å få testene til å passere.
+Testene kontrollerer at ingen av de åtte pilotreglene kan gi en klinisk plan, heller ikke med preparatdata merket som FEST, og at en syntetisk regel med en syntetisk godkjenning heller ikke kan det. Kravene til FEST-kopien prøves med en positiv kontroll: en regel som bare finnes i testen, med en godkjenning laget der, gir en klinisk plan med fersk FEST, og så varieres tidsstemplene ved grensene. Ingen virkelig regel er godkjent for å få testene til å passere.
 
 ## 10. Prøvekjøring mot FEST
 
@@ -128,6 +130,15 @@ Motoren ble kjørt på pilotreglenes regneeksempler med FEST-filen lastet ned 28
 6. **Meldte avregistreringer.** Er det riktig at et preparat med meldt avregistrering ikke brukes i et vedlikehold uten slutt, eller uten startdato?
 7. **Foreldet FEST.** Er det riktig at en kopi som ikke er kontrollert på 48 timer gjør planen ikke-klinisk, slik at verktøyet stopper når synkroniseringen har feilet to netter?
 8. **Pilotreglene.** Depotreglene trenger `preparater` (Abilify Maintena 400 mg månedlig, Xeplion) og eventuelt `klasser`, og nedtrappingsreglene en toleranse. Det er en endring av reglene, så det hører til en ny regelversjon og kontroll (P4.8).
+
+**Svar fra første kontroll (ChatGPT, 28.10.2026).** Ingen pilotregel ble godkjent, og P4.8 står åpen.
+
+- *B3:* kan brukes som teknisk prioritering innenfor godkjente harde krav, men er ikke dokumentasjon for et universelt klinisk optimum. Retningen skal gjelde fra startdosen og avrundingen ved likhet virke i hvert trinn; begge er rettet (§5).
+- *Toleranse:* eksakt dose og kontrollert stopp er standard. Motoren skal ikke ha én generell klinisk toleranse; en toleranse begrunnes og godkjennes i den enkelte regelversjonen.
+- *Modifisert frisetting:* et uttrykkelig, preparatspesifikt FEST-felt for deling er forsvarlig. Delbarhet utledes aldri av virkestoff, en annen merkevare eller en delestrek. Motoren deler derfor en depottablett bare når FEST sier det for akkurat det preparatet.
+- *Dråper:* hele dråper med oppgitt mg per dråpe kan brukes. 60 er en søkegrense, ikke en klinisk maksimumsdose, og gjelder nå hele døgndosen.
+- *Godkjenningsfritak, avregistrering og 48 timer:* kan beholdes som beskrevet; ferskheten er nå et positivt krav (§9).
+- *Pilotreglene:* depotpreparat og toleranser krever nye, sporbare regelversjoner og egen P4.8-kontroll. At P5 stopper for dagens regler, er riktig.
 
 ## 12. Hva som ikke er gjort
 

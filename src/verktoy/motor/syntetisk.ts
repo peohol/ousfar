@@ -258,6 +258,29 @@ export const KRYSSREGEL: Regel = {
   },
 }
 
+/** Opptrapping av testazapin med faste trinn på 7 dager og dosevalget, til å prøve grensene for én dose. */
+export function fastDose(mg: number[], dosevalg?: Regel['plan']['forlop'][number]['dosevalg']): Regel {
+  return {
+    ...grunnregel('fast', 'faste doser av testazapin'),
+    fra: { type: 'virkestoff', nokkel: 'testazapin' },
+    til: null,
+    plan: {
+      form: 'seponering',
+      forlop: [
+        {
+          id: 'fra',
+          virkestoff: { type: 'virkestoff', nokkel: 'testazapin' },
+          administrasjon: 'peroral',
+          utgangsdose: null,
+          start: { type: 'dag', dag: 1 },
+          faser: [{ type: 'opptrapping', trinn: mg.map((x) => ({ mg: sp(x, 'mg'), dager: sp(7, 'dager') })) }],
+          ...(dosevalg ? { dosevalg } : {}),
+        },
+      ],
+    },
+  }
+}
+
 /** Sekvensielt bytte testoksetin → testazapin med 14 dagers utvasking. */
 export const SEKVENSIELL_REGEL: Regel = {
   ...grunnregel('sekvensielt', 'sekvensielt bytte testoksetin → testazapin med utvasking'),
@@ -512,14 +535,14 @@ export const TESTTILFELLER: Testtilfelle[] = [
   },
   {
     id: 'depot-manedlig',
-    beskrivelse: 'Fra testperidon depottabletter til månedlig depot fra 31.01.2027: 150 mg dag 1, 100 mg dag 8, så 100 mg hver måned. Bare det månedlige preparatet regelen nevner brukes, aldri det tremånedlige.',
+    beskrivelse: 'Fra testperidon depottabletter til månedlig depot fra 31.01.2027: 150 mg dag 1, 100 mg dag 8, så 100 mg hver måned med første vedlikeholdsdose én måned etter dag 8 (07.03.2027, dag 36). Bare det månedlige preparatet regelen nevner brukes, aldri det tremånedlige.',
     kontrollerer: 'P5.7 depot som egen tidsmodell; hele injeksjoner; kalendermåned i februar',
     regel: depotregel(),
     inndata: { startdose_mg: 6, startdato: '2027-01-31' },
     preparater: TESTPERIDON,
     forventet: {
       fra: ['fra dag 1 [31.01.2027]: seponert'],
-      til: ['dag 1 [31.01.2027]: 150 mg = 1 injeksjon à 150 mg', 'dag 8 [07.02.2027]: 100 mg = 1 injeksjon à 100 mg', 'vedlikehold hver 1. måned fra dag 8 [07.03.2027]: 100 mg = 1 injeksjon à 100 mg'],
+      til: ['dag 1 [31.01.2027]: 150 mg = 1 injeksjon à 150 mg', 'dag 8 [07.02.2027]: 100 mg = 1 injeksjon à 100 mg', 'hver måned fra 1 måned etter dag 8 [07.03.2027]: 100 mg = 1 injeksjon à 100 mg'],
     },
   },
   {
@@ -549,5 +572,49 @@ export const TESTTILFELLER: Testtilfelle[] = [
     preparater: TESTOKSETIN,
     fest: { kontrollert_kl: null, kildedato: null },
     forventet: { stopp: /ingen vellykket henting av FEST/ },
+  },
+  {
+    id: 'fest-ugyldig-tidsstempel',
+    beskrivelse: 'Et kontrolltidspunkt som ikke kan tolkes, regnes ikke som en vellykket henting av FEST.',
+    kontrollerer: 'P5.1',
+    regel: nedtrappingsregel({ type: 'prosent_av_startdose', prosent: sp(25, 'prosent') }),
+    inndata: { startdose_mg: 20, formvalg: { fra: TABLETT } },
+    preparater: TESTOKSETIN,
+    fest: { kontrollert_kl: 'ikke-et-tidspunkt' },
+    forventet: { stopp: /ikke et gyldig tidspunkt/ },
+  },
+  {
+    id: 'forste-dose-motsatt-vei',
+    beskrivelse: 'Nedtrapping fra 10 mg, 10 % per trinn: første ideelle dose er 9 mg. Den eneste tabletten (10,5 mg, ikke delbar) ligger innenfor ±25 %, men ville økt dosen fra dagens 10 mg.',
+    kontrollerer: 'P5.5 retningen fra aktuell dose i første periode',
+    regel: nedtrappingsregel({ type: 'prosent_av_aktuell', prosent: sp(10, 'prosent'), sluttdose_mg: sp(8.5, 'mg') }, { avvik_prosent: sp(25, 'prosent') }),
+    inndata: { startdose_mg: 10, formvalg: { fra: TABLETT } },
+    preparater: [{ id: 'OKS-TAB10-5', virkestoff: 'testoksetin', varenavn: 'Testoksetin Syntetisk', form: 'tablett', mg: 10.5, deling: '1' }],
+    forventet: { stopp: /første periode er ideelt 9 mg, men ingen dose innenfor rammene er lavere enn dosen forløpet starter med \(10 mg\)/ },
+  },
+  {
+    id: 'avrunding-mellomtrinn',
+    beskrivelse: 'Nedtrapping fra 20 mg, 25 % av aktuell dose, seponering under 8 mg, med hele tabletter og ±12 %: mellomtrinnet 11,25 mg kan gis som 10 eller 12,5 mg med likt avvik og like enkelt. Det rundes mot forrige dose (opp), så neste reduksjon blir større.',
+    kontrollerer: 'P5.5 avrunding ved ellers likt i et mellomtrinn',
+    regel: nedtrappingsregel({ type: 'prosent_av_aktuell', prosent: sp(25, 'prosent'), sluttdose_mg: sp(8, 'mg') }, { avvik_prosent: sp(12, 'prosent') }),
+    inndata: { startdose_mg: 20, formvalg: { fra: TABLETT } },
+    preparater: [15, 12.5, 10, 7.5].map((mg) => ({ id: `OKS-HEL${mg}`, virkestoff: 'testoksetin' as const, varenavn: 'Testoksetin Hel', form: 'tablett' as const, mg, deling: '1' })),
+    forventet: {
+      fra: [
+        'dag 1–14: 15 mg = 1 tablett à 15 mg',
+        'dag 15–28: 12,5 mg = 1 tablett à 12,5 mg (ideelt 11,25 mg, +11,11 %)',
+        'dag 29–42: 7,5 mg = 1 tablett à 7,5 mg (ideelt 8,44 mg, -11,11 %)',
+        'fra dag 43: seponert',
+      ],
+    },
+  },
+  {
+    id: 'draper-to-styrker-over-rammen',
+    beskrivelse: 'Testazapin-dråper à 1 og 2 mg: 120 mg er 60 dråper, men 121 mg ville krevd 61 dråper til sammen (1 + 60) og stopper.',
+    kontrollerer: 'P5.5 rammen på 60 dråper for hele døgndosen',
+    regel: fastDose([120, 121]),
+    inndata: { startdose_mg: 1, formvalg: { fra: { klasse: 'peroral', legemiddelformer: [FORMER.draper.kode] } } },
+    preparater: [1, 2].map((per_drape) => ({ id: `AZA-DRAP${per_drape}`, virkestoff: 'testazapin' as const, varenavn: `Testazapin Dråper ${per_drape}`, form: 'draper' as const, mg: 20 * per_drape, nevner: { verdi: 1, enhet: 'ml' }, per_drape })),
+    forventet: { stopp: /121 mg kan ikke gis med preparatene i FEST nøyaktig/ },
   },
 ]

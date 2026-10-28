@@ -36,8 +36,8 @@ import {
 import { lagMotorrapport, MOTORRAPPORTFIL } from '../verktoy/motor/rapport'
 import {
   depotregel,
+  fastDose,
   FORMER,
-  KRYSSREGEL,
   nedtrappingsregel,
   OMGIVELSE,
   sp,
@@ -58,26 +58,6 @@ const en = (p: Omit<Testpreparat, 'virkestoff' | 'varenavn' | 'id'> & Partial<Te
 const stopp = (r: Doseplanresultat) => (r.status === 'stoppet' ? r.stoppgrunner.join(' ') : '')
 const plan = (regel: Regel, inndata: Doseplaninndata, preparater: Testpreparat[] = ALLE, omgivelse: Omgivelse = OMGIVELSE) =>
   beregnDoseplan(regel, inndata, syntetiskGrunnlag(preparater), omgivelse)
-/** Opptrapping av testazapin med faste trinn og dosevalget, til å prøve grensene for én dose. */
-const fastDose = (mg: number[], dosevalg?: Regel['plan']['forlop'][number]['dosevalg']): Regel => ({
-  ...KRYSSREGEL,
-  id: 'syntetisk-fast',
-  til: null,
-  plan: {
-    form: 'seponering',
-    forlop: [
-      {
-        id: 'fra',
-        virkestoff: { type: 'virkestoff', nokkel: 'testazapin' },
-        administrasjon: 'peroral',
-        utgangsdose: null,
-        start: { type: 'dag', dag: 1 },
-        faser: [{ type: 'opptrapping', trinn: mg.map((x) => ({ mg: sp(x, 'mg'), dager: sp(7, 'dager') })) }],
-        ...(dosevalg ? { dosevalg } : {}),
-      },
-    ],
-  },
-})
 const AZA = { startdose_mg: 1, formvalg: { fra: TABLETT } }
 /** Et utvalg merket som FEST, men med syntetiske preparater: bare til å prøve sperrene. */
 const somFest = (u: Legemiddelutvalg, kontrollert_kl = '2026-11-01T04:20:00Z'): Legemiddelutvalg => ({ ...u, kilde: 'FEST', kontrollert_kl })
@@ -191,19 +171,44 @@ describe('Dosene som kan settes sammen', () => {
 
   it('går aldri motsatt vei av kurven, og velger heller en større avvik tidlig enn å bryte retningen', () => {
     // Nærmest for første periode er 9,5, men da kan andre periode (bare 9,7) ikke gis uten å øke under nedtrapping.
-    const serie = velgSerie([
-      { ideell: 10, kandidater: [kandidat(9.5), kandidat(10.6)] },
-      { ideell: 9.9, kandidater: [kandidat(9.7)] },
-    ])
+    // Første periode holder dosen forløpet starter med (10 mg), så den har ingen retning.
+    const serie = velgSerie(
+      [
+        { ideell: 10, kandidater: [kandidat(9.5), kandidat(10.6)] },
+        { ideell: 9.9, kandidater: [kandidat(9.7)] },
+      ],
+      10,
+    )
     expect(serie?.map((k) => k.mg)).toEqual([10.6, 9.7])
-    expect(velgSerie([{ ideell: 10, kandidater: [kandidat(9.5)] }, { ideell: 9.9, kandidater: [kandidat(9.7)] }])).toBeNull()
+    expect(velgSerie([{ ideell: 10, kandidater: [kandidat(9.5)] }, { ideell: 9.9, kandidater: [kandidat(9.7)] }], 10)).toBeNull()
     // Opptrapping: ikke lavere enn forrige.
-    expect(velgSerie([{ ideell: 10, kandidater: [kandidat(10.4)] }, { ideell: 10.5, kandidater: [kandidat(10.2), kandidat(10.9)] }])?.map((k) => k.mg)).toEqual([10.4, 10.9])
+    expect(velgSerie([{ ideell: 10, kandidater: [kandidat(10.4)] }, { ideell: 10.5, kandidater: [kandidat(10.2), kandidat(10.9)] }], 10)?.map((k) => k.mg)).toEqual([10.4, 10.9])
   })
 
-  it('velger minst endring fra forrige dose ved likt avvik: en nedtrapping rundes opp', () => {
-    expect(velgSerie([{ ideell: 15, kandidater: [kandidat(15)] }, { ideell: 11.25, kandidater: [kandidat(10), kandidat(12.5)] }])?.map((k) => k.mg)).toEqual([15, 12.5])
-    expect(velgSerie([{ ideell: 10, kandidater: [kandidat(10)] }, { ideell: 13.75, kandidater: [kandidat(12.5), kandidat(15)] }])?.map((k) => k.mg)).toEqual([10, 12.5])
+  it('måler retningen i første periode fra dosen forløpet starter med', () => {
+    // Nedtrapping fra 10 mg: første ideelle dose er 9 mg; 10,5 mg ville økt dosen.
+    expect(velgSerie([{ ideell: 9, kandidater: [kandidat(10.5)] }], 10)).toBeNull()
+    expect(velgSerie([{ ideell: 9, kandidater: [kandidat(8), kandidat(10.5)] }], 10)?.map((k) => k.mg)).toEqual([8])
+    // Akkurat dagens dose er ikke motsatt vei.
+    expect(velgSerie([{ ideell: 9, kandidater: [kandidat(10)] }], 10)?.map((k) => k.mg)).toEqual([10])
+    // Opptrapping fra 10 mg: første ideelle dose er 11 mg; 9,5 mg ville senket dosen.
+    expect(velgSerie([{ ideell: 11, kandidater: [kandidat(9.5)] }], 10)).toBeNull()
+    expect(velgSerie([{ ideell: 11, kandidater: [kandidat(9.5), kandidat(12)] }], 10)?.map((k) => k.mg)).toEqual([12])
+    // Et nytt legemiddel starter fra 0.
+    expect(velgSerie([{ ideell: 11, kandidater: [kandidat(9.5)] }], 0)?.map((k) => k.mg)).toEqual([9.5])
+  })
+
+  it('runder mot forrige dose ved ellers likt avvik i hvert trinn: nedtrapping opp, opptrapping ned', () => {
+    // Samme sum av avvik og endringer; avrundingen bestemmer mellomtrinnet.
+    const ned = [15, 11.25, 5].map((ideell) => ({ ideell, kandidater: [5, 10, 12.5, 15].map(kandidat).filter((k) => Math.abs(k.mg - ideell) / ideell <= 0.12) }))
+    expect(velgSerie(ned, 15)?.map((k) => k.mg)).toEqual([15, 12.5, 5])
+    const opp = [5, 13.75, 20].map((ideell) => ({ ideell, kandidater: [5, 12.5, 15, 20].map(kandidat).filter((k) => Math.abs(k.mg - ideell) / ideell <= 0.1) }))
+    expect(velgSerie(opp, 0)?.map((k) => k.mg)).toEqual([5, 12.5, 20])
+    // Flere mellomtrinn med likt avvik: hvert rundes mot forrige dose.
+    const lang = [20, 13.75, 11.25, 5].map((ideell) => ({ ideell, kandidater: [5, 10, 12.5, 15, 20].map(kandidat).filter((k) => Math.abs(k.mg - ideell) / ideell <= 0.12) }))
+    expect(velgSerie(lang, 20)?.map((k) => k.mg)).toEqual([20, 15, 12.5, 5])
+    // Avviket går foran avrundingen: nærmest vinner selv om det er ned i en nedtrapping.
+    expect(velgSerie([{ ideell: 11, kandidater: [kandidat(10.5), kandidat(12)] }], 15)?.map((k) => k.mg)).toEqual([10.5])
   })
 })
 
@@ -264,6 +269,31 @@ describe('Doseplanen', () => {
     expect(ideelle[1]!.slice(0, 3)).toEqual([15, 11.25, 8.4375])
   })
 
+  it('starter aldri en nedtrapping med å øke dosen, eller en opptrapping med å senke den', () => {
+    // Fra 10 mg, 10 % ned til under 8,5 mg: ideelt 9 mg; bare en udelelig 10,5 mg-tablett finnes.
+    const ned = nedtrappingsregel({ type: 'prosent_av_aktuell', prosent: sp(10, 'prosent'), sluttdose_mg: sp(8.5, 'mg') }, { avvik_prosent: sp(25, 'prosent') })
+    const bare = (mg: number): Testpreparat[] => [{ id: 'T', virkestoff: 'testoksetin', varenavn: 'Testoksetin T', form: 'tablett', mg, deling: '1' }]
+    const inndata = { startdose_mg: 10, formvalg: { fra: TABLETT } }
+    expect(stopp(plan(ned, inndata, bare(10.5)))).toMatch(/første periode er ideelt 9 mg, men ingen dose innenfor rammene er lavere enn dosen forløpet starter med \(10 mg\)/)
+    expect(planform(plan(ned, inndata, bare(8))).fra![0]).toBe('dag 1–14: 8 mg = 1 tablett à 8 mg (ideelt 9 mg, -11,11 %)')
+    // Fra 10 mg opp til 11 mg: 9,5 mg ville senket dosen.
+    const opp: Regel = { ...ned, plan: { ...ned.plan, forlop: [{ ...ned.plan.forlop[0]!, faser: [{ type: 'opptrapping', trinn: [{ mg: sp(11, 'mg'), dager: sp(7, 'dager') }] }] }] } }
+    expect(stopp(plan(opp, inndata, bare(9.5)))).toMatch(/første periode er ideelt 11 mg, men ingen dose innenfor rammene er høyere enn dosen forløpet starter med \(10 mg\)/)
+    expect(planform(plan(opp, inndata, bare(12))).fra![0]).toBe('dag 1–7: 12 mg = 1 tablett à 12 mg (ideelt 11 mg, +9,09 %)')
+  })
+
+  it('holder grensen på dråper for hele døgndosen, også over to styrker', () => {
+    const draper = (mg: number, per_drape: number): Testpreparat => ({ id: `D${per_drape}`, virkestoff: 'testazapin', varenavn: `Testazapin D${per_drape}`, form: 'draper', mg, nevner: { verdi: 1, enhet: 'ml' }, per_drape })
+    const to = [draper(20, 1), draper(40, 2)]
+    const valg = { fra: { klasse: 'peroral' as const, legemiddelformer: [FORMER.draper.kode] } }
+    // 120 mg = 60 dråper à 2 mg; 121 mg krever 61 dråper (1 à 1 mg + 60 à 2 mg) og stopper.
+    expect(planform(plan(fastDose([120]), { ...AZA, formvalg: valg }, to)).fra![0]).toBe('dag 1–7: 120 mg = 60 dråper à 2 mg')
+    expect(planform(plan(fastDose([119]), { ...AZA, formvalg: valg }, to)).fra![0]).toBe('dag 1–7: 119 mg = 1 dråpe à 1 mg + 59 dråper à 2 mg')
+    expect(stopp(plan(fastDose([121]), { ...AZA, formvalg: valg }, to))).toMatch(/121 mg kan ikke gis med preparatene i FEST nøyaktig/)
+    const v = styrkevalg(stein(to, 'testazapin'))
+    expect(doser(v, 0, 1000).every((k) => k.elementer.reduce((n, e) => n + e.antall, 0) <= MAKS_DRAPER)).toBe(true)
+  })
+
   it('bevarer utvaskingen i den praktiske planen', () => {
     const t = TESTTILFELLER.find((x) => x.id === 'sekvensielt-utvasking')!
     const r = plan(t.regel, t.inndata, t.preparater)
@@ -272,7 +302,7 @@ describe('Doseplanen', () => {
 
   it('gir depot med nøyaktig én hel injeksjon av preparatet regelen nevner, med godkjenningsfritak bare når det er valgt', () => {
     const r = plan(depotregel(['Testdepot Månedlig'], 75), { startdose_mg: 6, godkjenningsfritak: true })
-    expect(planform(r).til!.at(-1)).toBe('vedlikehold hver 1. måned fra dag 8: 75 mg = 1 injeksjon à 75 mg')
+    expect(planform(r).til!.slice(-2)).toEqual(['dag 8: 100 mg = 1 injeksjon à 100 mg', 'hver måned fra 1 måned etter dag 8: 75 mg = 1 injeksjon à 75 mg'])
     expect(r.status === 'doseplan' && r.forlop[1]!.injeksjoner.at(-1)!.element.preparater.map((b) => [b.varenavn, b.registrering])).toEqual([['Testdepot Månedlig', 'godkjenningsfritak']])
     expect(stopp(plan(depotregel(['Testdepot Månedlig'], 250), { startdose_mg: 6 }))).toMatch(/vedlikeholdet er 250 mg, men FEST har ingen brukbar injeksjon .* Deler av eller flere injeksjoner settes ikke sammen/)
     expect(stopp(plan(depotregel(['Testdepot Finnes Ikke']), { startdose_mg: 6 }))).toMatch(/FEST har ingen depotpreparater \(Testdepot Finnes Ikke\) av testperidon. Det finnes ingen bekreftet norsk løsning/)
@@ -429,10 +459,69 @@ describe('Sperren mot klinisk bruk', () => {
     for (const t of TESTTILFELLER) expect(kliniskDoseplan(t.regel, t.inndata, syntetiskGrunnlag(t.preparater, t.fest), OMGIVELSE).status, t.id).toBe('stoppet')
   })
 
-  it('sperrer når FEST-kopien ikke er kontrollert de siste 48 timene', () => {
-    const regel = fastDose([15])
-    expect(kliniskSperre(regel, somFest(g.utvalg, '2026-10-30T12:00:00Z'), NAA).join(' ')).not.toMatch(/sist kontrollert mot FEST/)
-    expect(kliniskSperre(regel, somFest(g.utvalg, '2026-10-30T11:59:00Z'), NAA).join(' ')).toMatch(/sist kontrollert mot FEST/)
+  /**
+   * Positiv kontroll: en regel som bare finnes i denne testen, med en
+   * godkjenning laget her og ikke syntetisk id, så den faktisk kan passere
+   * godkjenningssperren. Da er det bare FEST-kopien som avgjør om planen er
+   * klinisk. Ingen virkelig regel eller godkjenning endres.
+   */
+  const positivKontroll = (): Regel => {
+    const regel: Regel = structuredClone({ ...fastDose([15]), id: 'positivkontroll-bare-i-test' })
+    const av = { dato: '2026-11-01', av: 'Testkontrollør', rolle: 'uavhengig_kontrollor' as const, regelversjon: 1 }
+    const avklar = (x: unknown): void => {
+      if (Array.isArray(x)) x.forEach(avklar)
+      else if (x && typeof x === 'object') {
+        if ((x as { type?: string }).type === 'ousfar_vurdering') (x as { avklaring: unknown }).avklaring = { ...av, merknad: 'Avklart bare for testen.' }
+        Object.values(x).forEach(avklar)
+      }
+    }
+    avklar(regel.plan)
+    regel.godkjenning = { status: 'klinisk_godkjent', historikk: [{ status: 'klinisk_godkjent', ...av, fingeravtrykk: fingeravtrykk(regel), merknad: 'Positiv kontroll av sperren, bare i testen.' }] }
+    return regel
+  }
+  const klinisk = (fest: Partial<Pick<Legemiddelutvalg, 'kontrollert_kl' | 'kildedato'>>, naa = OMGIVELSE.naa) => {
+    const regel = positivKontroll()
+    return kliniskDoseplan(regel, AZA, { ...g, utvalg: { ...somFest(g.utvalg), ...fest } }, { ...OMGIVELSE, naa })
+  }
+
+  it('den positive kontrollen gir en klinisk plan med fersk FEST, så sperren er det som prøves', () => {
+    expect(kliniskSperre(positivKontroll(), somFest(g.utvalg), NAA)).toEqual([])
+    expect(klinisk({})).toMatchObject({ status: 'doseplan', klinisk: true, sperre: [] })
+    expect(kliniskSperre(positivKontroll(), g.utvalg, NAA)).toEqual(['Preparatene er fra «Syntetiske testdata», ikke fra FEST.'])
+  })
+
+  it('krever et gyldig FEST-tidspunkt innenfor 48 timer tilbake og høyst 5 minutter fram', () => {
+    const grunner = (kontrollert_kl: string | null, naa?: string) => {
+      const r = klinisk({ kontrollert_kl }, naa)
+      return r.status === 'stoppet' ? r.stoppgrunner.join(' ') : ''
+    }
+    // Akkurat 48 timer gammel er fersk; ett minutt til er foreldet.
+    expect(klinisk({ kontrollert_kl: '2026-10-30T12:00:00Z' })).toMatchObject({ status: 'doseplan', klinisk: true })
+    expect(grunner('2026-10-30T11:59:00Z')).toMatch(/sist kontrollert mot FEST/)
+    // Fram i tid: 5 minutter godtas som klokkeavvik, mer ikke.
+    expect(klinisk({ kontrollert_kl: '2026-11-01T12:05:00Z' })).toMatchObject({ status: 'doseplan', klinisk: true })
+    expect(grunner('2026-11-01T12:06:00Z')).toMatch(/fram i tid; tidsstemplet kan ikke stoles på/)
+    expect(grunner('2099-01-01T00:00:00Z')).toMatch(/fram i tid/)
+    // Tidssone og brøkdeler av sekunder, slik databasen skriver det.
+    expect(klinisk({ kontrollert_kl: '2026-11-01T05:20:00.123456+01:00' })).toMatchObject({ status: 'doseplan', klinisk: true })
+    // Ugyldige tidspunkter stopper beregningen helt.
+    for (const x of ['not-a-timestamp', '2026-11-01', '2026-11-01T04:20:00', '2026-13-01T04:20:00Z', '']) expect(grunner(x), x).toMatch(/ingen vellykket henting|ikke et gyldig tidspunkt/)
+    expect(grunner(null)).toMatch(/ingen vellykket henting av FEST/)
+    expect(beregnDoseplan(positivKontroll(), AZA, { ...g, utvalg: somFest(g.utvalg, 'not-a-timestamp') }, OMGIVELSE)).toMatchObject({ status: 'stoppet' })
+    // Et ugyldig tidspunkt for beregningen gir heller ingen klinisk plan.
+    expect(kliniskSperre(positivKontroll(), somFest(g.utvalg), new Date('ugyldig'))).toEqual([expect.stringMatching(/alder kan ikke bekreftes/)])
+  })
+
+  it('krever en gyldig kildedato som ikke ligger etter kontrollen', () => {
+    const grunner = (kildedato: string) => {
+      const r = klinisk({ kildedato })
+      return r.status === 'stoppet' ? r.stoppgrunner.join(' ') : ''
+    }
+    expect(klinisk({ kildedato: '2026-11-01' })).toMatchObject({ status: 'doseplan', klinisk: true })
+    // Ett døgns slingring for tidssonen kontrolltidspunktet er skrevet i.
+    expect(klinisk({ kildedato: '2026-11-02' })).toMatchObject({ status: 'doseplan', klinisk: true })
+    expect(grunner('2026-11-03')).toMatch(/kildedatoen til FEST-kopien \(03\.11\.2026\) ligger etter tidspunktet den ble kontrollert/i)
+    for (const x of ['2026-02-30', '15.10.2026', 'ukjent']) expect(grunner(x), x).toMatch(/ikke en gyldig dato/)
   })
 
   it('viser bare publisert OUSFAR-fagtekst når beregningen stopper', () => {

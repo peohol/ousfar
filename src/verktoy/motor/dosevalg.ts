@@ -8,15 +8,21 @@
  * 1. **Harde krav.** Hver dose ligger innenfor regelens tillatte avvik fra den
  *    ideelle (uten toleranse bare nøyaktig), innenfor regelens dosegrenser, og
  *    over 0. Dosen går aldri motsatt vei av kurven: synker den ideelle dosen,
- *    øker ikke den praktiske, og omvendt.
+ *    øker ikke den praktiske, og omvendt. Det gjelder også første periode,
+ *    målt fra dosen forløpet starter med (pasientens aktuelle dose, eller 0
+ *    for et nytt legemiddel).
  * 2. **Minst avvik**: summen av de relative avvikene over periodene.
  * 3. **Minst kompleksitet**: færrest preparater med godkjenningsfritak, så
  *    færrest delinger (en kvart teller som to halve), så færrest tabletter
  *    eller kapsler, så færrest styrker.
- * 4. **Jevnest overgang**: minst endring fra forrige dose (en nedtrapping
- *    rundes heller opp enn ned ved likt avvik), så fast rekkefølge.
+ * 4. **Avrunding mot forrige dose** ved ellers likt: summen over periodene av
+ *    det relative avviket regnet mot kurvens retning, så en nedtrapping rundes
+ *    heller opp og en opptrapping heller ned, i hvert trinn. Det er en fast
+ *    regel for å skille like gode kandidater, ikke en påstand om at hele
+ *    forløpet blir mildere: runder ett trinn opp, blir neste reduksjon større.
+ * 5. **Fast rekkefølge**: lavest dose først.
  *
- * En dose består av høyst {@link MAKS_STYRKER} styrker og høyst
+ * En dose består av høyst {@link MAKS_STYRKER} styrker og til sammen høyst
  * {@link MAKS_ENHETER} tabletter eller kapsler eller {@link MAKS_DRAPER}
  * dråper. Det er en praktisk ramme for
  * søket, ikke en klinisk grense: finnes ingen dose innenfor den, stopper
@@ -92,6 +98,21 @@ const DELINGER = { 1: 0, 2: 1, 4: 2 } as const
 
 const enheter = (e: Doseelement) => (e.doseenhet === 'drape' || e.doseenhet === 'injeksjon' ? 1 : Math.ceil(e.antall - EPS))
 
+/** Høyst så mange av doseenheten i én døgndose, til sammen over styrkene. */
+const RAMME: Record<Doseenhet, number> = { tablett: MAKS_ENHETER, kapsel: MAKS_ENHETER, drape: MAKS_DRAPER, injeksjon: 1 }
+/** Tabletter og kapsler telles sammen, hele enheter (en delt tablett er én tablett). */
+const rammegruppe = (d: Doseenhet) => (d === 'kapsel' ? 'tablett' : d)
+
+/** Om dosen holder seg innenfor rammene for hver doseenhet, til sammen over styrkene. */
+function innenforRammene(elementer: readonly Doseelement[]): boolean {
+  const sum = new Map<Doseenhet, number>()
+  for (const e of elementer) {
+    const d = rammegruppe(e.doseenhet)
+    sum.set(d, (sum.get(d) ?? 0) + Math.ceil(e.antall - EPS))
+  }
+  return [...sum].every(([d, n]) => n <= RAMME[d])
+}
+
 function kandidat(elementer: Doseelement[], fritak: ReadonlySet<string>): Dosekandidat {
   return {
     mg: elementer.reduce((s, e) => s + e.antall * e.mg, 0),
@@ -113,7 +134,7 @@ function antallFor(v: Styrkevalg, maksMg: number): number[] {
   for (let k = 1; ; k++) {
     const antall = k * steg
     if (antall * v.mg > maksMg + EPS) break
-    if (Math.ceil(antall - EPS) > (v.doseenhet === 'drape' ? MAKS_DRAPER : MAKS_ENHETER)) break
+    if (Math.ceil(antall - EPS) > RAMME[v.doseenhet]) break
     ut.push(antall)
   }
   return ut
@@ -131,7 +152,7 @@ export function doser(valg: readonly Styrkevalg[], fra: number, til: number): Do
     if (elementer.some((e) => e.preparater.length === 0)) return
     const k = kandidat(elementer, fritak)
     if (k.mg < fra - EPS || k.mg > til + EPS) return
-    if (elementer.filter((e) => e.doseenhet !== 'drape' && e.doseenhet !== 'injeksjon').reduce((s, e) => s + enheter(e), 0) > MAKS_ENHETER) return
+    if (!innenforRammene(elementer)) return
     const nokkel = k.mg.toFixed(6)
     const forrige = beste.get(nokkel)
     if (!forrige || sammenlign(k.kompleksitet, forrige.kompleksitet) < 0 || (sammenlign(k.kompleksitet, forrige.kompleksitet) === 0 && elementnokkel(k) < elementnokkel(forrige))) {
@@ -174,40 +195,39 @@ export interface Periodevalg {
 
 const relativtAvvik = (ideell: number, mg: number) => Math.abs(mg - ideell) / ideell
 
+/** Retningen fra `fra` til `til`: -1, 0 eller 1, med toleranse for flyttall. */
+const retningFra = (fra: number, til: number) => (Math.abs(til - fra) <= EPS * Math.max(1, Math.abs(fra)) ? 0 : Math.sign(til - fra))
+
 /**
  * Velger én dose per periode etter rekkefølgen øverst i filen. Retningen
- * mellom to perioder følger den ideelle kurven: synker den, kan den praktiske
- * dosen ikke øke, og omvendt. `null` når ingen rekke oppfyller kravene.
+ * følger den ideelle kurven fra `start` (dosen forløpet starter med): synker
+ * den, kan den praktiske dosen ikke øke, og omvendt. `null` når ingen rekke
+ * oppfyller kravene.
  */
-export function velgSerie(perioder: readonly Periodevalg[]): Dosekandidat[] | null {
-  if (perioder.length === 0) return []
-  type Tilstand = { kost: number[]; forrige: number }
-  const lag: Tilstand[][] = []
-  const egen = (p: Periodevalg, k: Dosekandidat) => [relativtAvvik(p.ideell, k.mg), ...k.kompleksitet]
-  lag.push(perioder[0]!.kandidater.map((k) => ({ kost: [...egen(perioder[0]!, k), 0], forrige: -1 })))
-  for (let i = 1; i < perioder.length; i++) {
-    const p = perioder[i]!
-    const q = perioder[i - 1]!
-    const retning = Math.sign(p.ideell - q.ideell)
-    lag.push(
-      p.kandidater.map((k) => {
-        let best: Tilstand | null = null
-        for (const [j, t] of lag[i - 1]!.entries()) {
-          if (!Number.isFinite(t.kost[0]!)) continue
-          const fra = q.kandidater[j]!.mg
-          if ((retning < 0 && k.mg > fra + EPS) || (retning > 0 && k.mg < fra - EPS)) continue
-          const kost = egen(p, k).map((x, n) => x + t.kost[n]!)
-          kost.push(t.kost.at(-1)! + Math.abs(k.mg - fra))
-          if (!best || sammenlign(kost, best.kost) < 0) best = { kost, forrige: j }
-        }
-        return best ?? { kost: [Infinity], forrige: -1 }
-      }),
-    )
+export function velgSerie(perioder: readonly Periodevalg[], start: number): Dosekandidat[] | null {
+  type Tilstand = { mg: number; kost: number[]; forrige: number }
+  let forrige: (Tilstand | null)[] = [{ mg: start, kost: [0, 0, 0, 0, 0, 0], forrige: -1 }]
+  let fraIdeell = start
+  const lag: (Tilstand | null)[][] = []
+  for (const p of perioder) {
+    const retning = retningFra(fraIdeell, p.ideell)
+    const naa = p.kandidater.map((k): Tilstand | null => {
+      const egen = [relativtAvvik(p.ideell, k.mg), ...k.kompleksitet, (retning * (k.mg - p.ideell)) / p.ideell]
+      let best: Tilstand | null = null
+      for (const [j, t] of forrige.entries()) {
+        if (!t || (retning < 0 && k.mg > t.mg + EPS) || (retning > 0 && k.mg < t.mg - EPS)) continue
+        const kost = egen.map((x, n) => x + t.kost[n]!)
+        if (!best || sammenlign(kost, best.kost) < 0) best = { mg: k.mg, kost, forrige: j }
+      }
+      return best
+    })
+    lag.push(naa)
+    forrige = naa
+    fraIdeell = p.ideell
   }
-  const siste = lag.at(-1)!
   let j = -1
-  for (const [n, t] of siste.entries()) if (Number.isFinite(t.kost[0]!) && (j < 0 || sammenlign(t.kost, siste[j]!.kost) < 0)) j = n
-  if (j < 0) return null
+  for (const [n, t] of forrige.entries()) if (t && (j < 0 || sammenlign(t.kost, forrige[j]!.kost) < 0)) j = n
+  if (j < 0) return perioder.length === 0 ? [] : null
   const serie: Dosekandidat[] = []
   for (let i = perioder.length - 1; i >= 0; i--) {
     serie.unshift(perioder[i]!.kandidater[j]!)
