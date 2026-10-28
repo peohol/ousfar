@@ -184,8 +184,13 @@ Miksturer uten dokumentert dosering per ml brukes ikke. Sluttdosen avhenger ikke
 
 1. **Startforslaget:** Er bekreftelsen og unntaket for tidligere seponeringssymptomer riktig avgrenset? Skal regelen heller ha en egen langsommere variant for disse pasientene?
 2. **Risikogruppene og standardverdiene:** Godkjennes 50 % og 10 % som utgangspunkt for de to gruppene (avsnitt 4)? Er RCPsychs gruppering riktig å følge for hvert stoff, også moklobemid, der preparatomtalen er taus?
-3. **Områdene forskriveren kan velge i:** Er 5–50 % og 14–28 dager riktige grenser? Skal regelen tillate lengre trinn enn 28 dager, eller er en ny plan fra aktuell dose riktig svar (avsnitt 3)?
-4. **Sluttdosen:** Vurder akseptkriteriet i avsnitt 7, og avklar sluttdosen for hvert stoff for seg.
+3. **Områdene forskriveren kan velge i:** En godkjenning dekker *hele* området, ikke bare standardverdien. I dag kan alle reglene, også de med høyest risiko, velges med 5–50 % og 14–28 dager, og verktøyet kontrollerer ikke behandlingstiden. Mulige valg per risikogruppe:
+   - godkjenne hele området, fordi det er forskriverens vurdering;
+   - snevre inn området for høyest risiko, f.eks. til 5–10 % (RCPsychs utgangspunkt);
+   - beholde området, men kreve en egen bekreftelse eller begrunnelse for verdier utover standardverdien.
+
+   Skal regelen også tillate lengre trinn enn 28 dager, eller er en ny plan fra aktuell dose riktig svar (avsnitt 3)? Valget er klinisk og er ikke tatt i koden.
+4. **Sluttdosen:** Vurder akseptkriteriet i avsnitt 7, og avklar sluttdosen for hvert stoff for seg. Kontroller siste dose før null i relevante scenarioer. Eksempel: paroksetin 20 mg ender med 2,54 mg før seponering, mens RCPsych sier at noen trenger doser ned mot 2 % av opprinnelig dose.
 5. **Toleranse eller annen formulering:** De fleste planer stopper (avsnitt 10). Skal enkelte regler få en begrunnet toleranse, skal flytende former eller andre styrker brukes, eller skal en forklart stopp være svaret? Toleranse må godkjennes per regelversjon.
 6. **Minste varighet:** Er 28 dager i alt et forsvarlig minimum for alle stoffene, også de der preparatomtalen ikke har noe krav (avsnitt 8)?
 7. **Paroksetins studievariant:** Skal den bli stående i sammenligningssettet, eller fjernes?
