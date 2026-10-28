@@ -1,6 +1,6 @@
 # Kurateringskøen
 
-Oppdatert 2026-10-28T16:29:49.543Z. Stoffene sist lest fra databasen 2026-10-27T22:26:02.816Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-10-28T17:27:15.544Z. Stoffene sist lest fra databasen 2026-10-27T22:26:02.816Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
 Klar: 95 · Publisert: 16 · Blokkert: 5 · Utenfor køen: 1
 
@@ -14,7 +14,7 @@ Ingen kurateringer venter.
 
 ## Blokkert
 
-- **etanol**: Stoffet har ingen publisert fagside å kuratere. Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.
+- **etanol**: Stoffet har ingen publisert fagside å kuratere.
 - **kokain**: Stoffet har ingen publisert fagside å kuratere. Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.
 - **mdma**: Stoffet har ingen publisert fagside å kuratere. Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.
 - **metamfetamin**: Stoffet har ingen publisert fagside å kuratere.
@@ -116,7 +116,7 @@ Ingen kurateringer venter.
 | 90 | trimipramin | de_novo | 353.4 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 4 av 59 elementer har ingen kilde. |
 | 91 | bupropion | de_novo | 352.9 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 3 av 52 elementer har ingen kilde. |
 | 92 | gabapentin | de_novo | 351.1 | De novo-kuratering i runden som gjelder. Aldri kuratert. Ingen kuratering å regne alderen fra. 1 av 47 elementer har ingen kilde. |
-| 93 | kvetiapin | de_novo | 66.7 | De novo-kuratering i runden som gjelder. Sist kuratert 2026-10-05. 1 av 13 redaksjonelle seksjoner er tomme. 3 av 51 elementer har ingen kilde. |
+| 93 | kvetiapin | de_novo | 66.9 | De novo-kuratering i runden som gjelder. Sist kuratert 2026-10-05. 1 av 13 redaksjonelle seksjoner er tomme. 3 av 51 elementer har ingen kilde. |
 | 94 | ketamin | de_novo | 57.6 | De novo-kuratering i runden som gjelder. Sist kuratert 2026-10-04. 1 av 50 elementer har ingen kilde. |
 | 95 | thc | de_novo | 54.9 | De novo-kuratering i runden som gjelder. Sist kuratert 2026-10-10. |
 
