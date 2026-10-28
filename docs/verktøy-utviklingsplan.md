@@ -57,7 +57,7 @@ Statusene er **Ikke startet / Pågår / Til faglig kontroll / Blokkert / Ferdig*
 | P4 | Faglig regelmodell og kontrollert pilotsett | Claude | **ChatGPT – sperrende** | Til faglig kontroll | `docs/verktøy-p4-regelmodell.md`, `docs/verktøy-p4-pilotsett.md`, PR #282 |
 | P5 | Felles dose- og planmotor med FEST | Claude | **ChatGPT – kliniske testtilfeller** | Ferdig – kontrollert 28.10.2026 | `docs/verktøy-p5-beregningsmotor.md`, `docs/verktøy-p5-testtilfeller.md`, PR #283 |
 | P6 | Meny, søk, ruter og felles planvisning | Claude | ChatGPT (produktkontroll) | Ferdig – kontrollert 28.10.2026 | `src/verktoy/register.ts`, `src/components/verktoy/`, PR #284 |
-| P7 | Trappe ned antidepressiv | Claude | **ChatGPT – sperrende** | Til faglig kontroll | `docs/verktøy-p7-nedtrapping.md`, `docs/verktøy-p7-dekning.md`, `docs/verktøy-p7-regelutkast.md`, PR #285 |
+| P7 | Trappe ned antidepressiv | Claude | **ChatGPT – sperrende** | Til faglig kontroll | `docs/verktøy-p7-nedtrapping.md`, `docs/verktøy-p7-dekning.md`, `docs/verktøy-p7-regelutkast.md`, PR #286 |
 | P8 | Bytte antidepressiv | Claude | **ChatGPT – sperrende** | Ikke startet | – |
 | P9 | Bytte antipsykotikum, peroralt | Claude | **ChatGPT – sperrende** | Ikke startet | – |
 | P10 | Depotantipsykotika og formuleringsovergang | Claude | **ChatGPT – sperrende** | Ikke startet | – |
@@ -350,7 +350,7 @@ Før en oppgave eller fase krysses av:
 | 28.10.2026 | P6.1–P6.9 | Verktøyregister, menyen med fanene Stoffregister og Verktøy, verktøy som trefftype i søket, adressene, de felles feltene, regelstatusen, doseplanvisningen med kopiering og utskrift, og den kliniske sperren, PR #284. Testene for motoren og reglene som forbød all bruk i appen er erstattet av `verktoyapp.test.ts`. `npm test` og `npm run build` grønne | Venter på ChatGPTs produktkontroll. Ingen regel er klinisk godkjent, så appen viser at beregning ikke er tilgjengelig. P4.8 står åpen |
 | 28.10.2026 | P6 rettet etter kontroll | Funnene fra Codex og ChatGPT rettet i PR #284: oversikten teller bare beregnbare regler, kopien har administrasjonsformen og «Kontroller» som skjermen, bare den siste beregningen vises, og valg som hørte til et annet virkestoff, en annen formulering eller en annen strategi tømmes. `npm test` (3842) og `npm run build` grønne | Venter på ny produktkontroll. Ingen regel er godkjent. P4.8 står åpen |
 | 28.10.2026 | P6 godkjent | ChatGPT fant ingen gjenstående funn i PR #284; merget som 1.112.0. P6 er ferdig | P4.8 står åpen; ingen regel er klinisk godkjent |
-| 28.10.2026 | P7.1–P7.4 | Dekning for alle 23 antidepressiva, 14 regelutkast og én tekstregel, kobling til verktøyet med forklarte stopp, 24 syntetiske tester, dekningsmatrise, regelrapport og notat, PR #285. `npm test` og `npm run build` grønne | Venter på uavhengig faglig kontroll (P7.5) og de faglige beslutningene i `docs/verktøy-p7-nedtrapping.md` §7. Ingen regel er klinisk godkjent, og verktøyet viser ingen doseplan. P4.8 står åpen |
+| 28.10.2026 | P7.1–P7.4 | Dekning for alle 23 antidepressiva, 14 regelutkast og én tekstregel, kobling til verktøyet med forklarte stopp, 24 syntetiske tester, dekningsmatrise, regelrapport og notat, PR #286. `npm test` og `npm run build` grønne | Venter på uavhengig faglig kontroll (P7.5) og de faglige beslutningene i `docs/verktøy-p7-nedtrapping.md` §7. Ingen regel er klinisk godkjent, og verktøyet viser ingen doseplan. P4.8 står åpen |
 
 ## 8. Startoppdrag til Claude Code
 
