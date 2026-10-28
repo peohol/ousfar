@@ -112,6 +112,10 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
     const forste = x.faser[0]
     const trengerDose = forste && (forste.type === 'nedtrapping' || (forste.type === 'hold' && forste.dose.type === 'aktuell'))
     if (trengerDose && x.utgangsdose !== 'startdose') f(`forløp ${x.id} trapper ned eller holder en dose uten utgangsdose`)
+    // Avgrensningene P5 regner med: formuleringene passer administrasjonen, og varenavnene er oppgitt.
+    for (const k of x.klasser ?? []) if (!KLASSER[x.administrasjon].includes(k)) f(`forløp ${x.id} gjelder formuleringen ${k}, som ikke er ${x.administrasjon}`)
+    if (x.klasser?.length === 0) f(`forløp ${x.id} har en tom liste med formuleringer`)
+    if (x.preparater && (x.preparater.length === 0 || x.preparater.some((v) => !v.trim()))) f(`forløp ${x.id} har en tom liste eller et tomt varenavn`)
   })
 
   // Inndata: en måldose i planen krever et eksplisitt krav, og ingen skjult standard.

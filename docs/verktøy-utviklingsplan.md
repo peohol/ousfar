@@ -1,7 +1,7 @@
 # OUSFAR – Verktøy: utviklingsplan og fremdrift
 
 **Opprettet:** 27.10.2026  
-**Status:** P1–P3 ferdige; P4 til faglig kontroll – ingen verktøy er implementert gjennom denne planen  
+**Status:** P1–P3 ferdige; P4 og P5 til faglig kontroll – ingen verktøy er implementert gjennom denne planen  
 **Omfang:** Tre første verktøy, felles regel- og beregningsmotor, kildedata og videre drift  
 **Hovedansvar for implementering og oppdatering av denne planen:** Claude Code  
 **Uavhengig faglig kontroll:** ChatGPT, etter eksplisitt forespørsel ved kontrollpunktene nedenfor
@@ -55,7 +55,7 @@ Statusene er **Ikke startet / Pågår / Til faglig kontroll / Blokkert / Ferdig*
 | P2 | Manglende fagsider og FEST-koblinger | Claude | ChatGPT (avvik) | Ferdig – godkjent og utrullet 27.10.2026 | `src/verktoy/fagsider.ts`, PR #280 |
 | P3 | Komplett og lovlig kildeimport | Claude | ChatGPT (deknings- og stikkprøvekontroll) | Ferdig – godkjent 28.10.2026 | `docs/verktøy-p3-kildegrunnlag.md`, `docs/verktøy-p3-rettigheter.md`, PR #281 |
 | P4 | Faglig regelmodell og kontrollert pilotsett | Claude | **ChatGPT – sperrende** | Til faglig kontroll | `docs/verktøy-p4-regelmodell.md`, `docs/verktøy-p4-pilotsett.md`, PR #282 |
-| P5 | Felles dose- og planmotor med FEST | Claude | **ChatGPT – kliniske testtilfeller** | Ikke startet | – |
+| P5 | Felles dose- og planmotor med FEST | Claude | **ChatGPT – kliniske testtilfeller** | Til faglig kontroll | `docs/verktøy-p5-beregningsmotor.md`, `docs/verktøy-p5-testtilfeller.md`, PR #283 |
 | P6 | Meny, søk, ruter og felles planvisning | Claude | ChatGPT (produktkontroll) | Ikke startet | – |
 | P7 | Trappe ned antidepressiv | Claude | **ChatGPT – sperrende** | Ikke startet | – |
 | P8 | Bytte antidepressiv | Claude | **ChatGPT – sperrende** | Ikke startet | – |
@@ -178,18 +178,22 @@ Sidene er «Ikke kuratert», og en fagside uten faginnhold sier nå selv at den 
 
 **Kildetekst:** Motoren regner bare med godkjente OUSFAR-regler og viser aldri kildens tekst (avsnitt 1).
 
-- [ ] **P5.1** Bruk den **eksisterende** nattlige FEST-synkroniseringen og «Hent nå», ikke en parallell importør. Sjekk status og dato for siste vellykkede uttrekk.
-- [ ] **P5.2** Definer dosebyggesteiner per faktisk preparat, legemiddelform og styrke (inkludert enhet, saltforhold, administrasjonsvei og eventuelle dosebegrensninger).
-- [ ] **P5.3** Beregn halve/fjerdedels tabletter **bare** når informasjon for akkurat dette preparatet tillater det. Uavklart deling betyr ikke delbart; ikke anta at kapsler eller modifisert frisetting kan åpnes/deles/knuses.
-- [ ] **P5.4** Skill mellom markedsført/registrert preparat, godkjenningsfritak, avregistrert og midlertidig utgått. FEST er ikke sanntidsbeholdning i apotek. Manglende bekreftet norsk løsning skal vises som begrensning.
-- [ ] **P5.5** Implementer ønsket faglig dosekurve **før** praktisk dosevalg. Beregn oppnåelige doser og velg en plan som først oppfyller harde sikkerhetskrav, deretter minimerer doseavvik og praktisk kompleksitet.
-- [ ] **P5.6** Legg til presis avrunding, doseenheter, maksimum/minimum, trinnvarighet, ikke-negative doser, riktig håndtering av dag 1 og korrekte kalenderdatoer ved valgfri startdato. Avvik fra ønsket plan må dokumenteres.
-- [ ] **P5.7** Støtt to samtidige legemiddelforløp uten å glemme utvaskingsperioder; for depot må tidspunkt og varighet håndteres som egen tidsmodell, ikke som perorale daglige doser.
-- [ ] **P5.8** Mangler gyldig regel, preparat eller gjennomførbar dose: stans beregningen, oppgi grunnen og vis eventuell godkjent OUSFAR-fagtekst (aldri kildens tekst); ikke gjett eller utvid en regel lydløst.
-- [ ] **P5.9** Merk hver beregnet plan med kilde-/regelversjon, beregningsmotorversjon og FEST-uttrekkets dato. Like inndata og like versjoner skal gi samme resultat.
+- [x] **P5.1** Bruk den **eksisterende** nattlige FEST-synkroniseringen og «Hent nå», ikke en parallell importør. Sjekk status og dato for siste vellykkede uttrekk.
+- [x] **P5.2** Definer dosebyggesteiner per faktisk preparat, legemiddelform og styrke (inkludert enhet, saltforhold, administrasjonsvei og eventuelle dosebegrensninger).
+- [x] **P5.3** Beregn halve/fjerdedels tabletter **bare** når informasjon for akkurat dette preparatet tillater det. Uavklart deling betyr ikke delbart; ikke anta at kapsler eller modifisert frisetting kan åpnes/deles/knuses.
+- [x] **P5.4** Skill mellom markedsført/registrert preparat, godkjenningsfritak, avregistrert og midlertidig utgått. FEST er ikke sanntidsbeholdning i apotek. Manglende bekreftet norsk løsning skal vises som begrensning.
+- [x] **P5.5** Implementer ønsket faglig dosekurve **før** praktisk dosevalg. Beregn oppnåelige doser og velg en plan som først oppfyller harde sikkerhetskrav, deretter minimerer doseavvik og praktisk kompleksitet.
+- [x] **P5.6** Legg til presis avrunding, doseenheter, maksimum/minimum, trinnvarighet, ikke-negative doser, riktig håndtering av dag 1 og korrekte kalenderdatoer ved valgfri startdato. Avvik fra ønsket plan må dokumenteres.
+- [x] **P5.7** Støtt to samtidige legemiddelforløp uten å glemme utvaskingsperioder; for depot må tidspunkt og varighet håndteres som egen tidsmodell, ikke som perorale daglige doser.
+- [x] **P5.8** Mangler gyldig regel, preparat eller gjennomførbar dose: stans beregningen, oppgi grunnen og vis eventuell godkjent OUSFAR-fagtekst (aldri kildens tekst); ikke gjett eller utvid en regel lydløst.
+- [x] **P5.9** Merk hver beregnet plan med kilde-/regelversjon, beregningsmotorversjon og FEST-uttrekkets dato. Like inndata og like versjoner skal gi samme resultat.
 - [ ] **P5.10** Lag automatiserte enhets-, grense- og egenskapstester, særlig for prosentdefinisjoner, deling, ikke-delbare depotpreparater, manglende styrker, utvasking og runding. ChatGPT kontrollerer klinisk meningsinnhold i testtilfellene.
 
 **Akseptanse:** Samme motor brukes i alle tre verktøy. Ingen dose kan presenteres som fysisk gjennomførbar uten et spor til konkrete, tillatte preparatbyggesteiner.
+
+**Resultat (28.10.2026, til faglig kontroll):** Doseplanmotoren er `src/verktoy/motor/` og beskrevet i `docs/verktøy-p5-beregningsmotor.md`. Den leser preparatene i den formen `les_legemidler` gir dem, fra den eksisterende FEST-synkroniseringen, og stopper uten en vellykket henting (P5.1). Hvert preparat blir en byggestein med mg moderstoff per tablett, kapsel, injeksjon eller dråpe, formulering, administrasjonsvei, preparattype og markedsstatus; kombinasjoner, styrker oppgitt for et salt, flytende former per ml og styrker som ikke er én verdi brukes ikke, og grunnen står som begrensning (P5.2). Tabletter deles bare når FEST sier delbar i 2 eller 4 for preparatet; kapsler, dråper og injeksjoner aldri (P5.3). Registrerte preparater brukes; godkjenningsfritak bare etter uttrykkelig valg; utgåtte, avregistrerte og meldt avregistrerte preparater ikke i perioder de ikke finnes; FEST er ikke lagerstatus (P5.4). Motoren beregner først den ideelle kurven med P4, så én døgndose per periode som oppfyller regelens toleranse og dosegrenser og kurvens retning, med minst avvik og så minst kompleksitet, valgt for hele forløpet samlet (P5.5, P5.6, B3). Uten toleranse i regelen godtas bare nøyaktige doser. Samtidige forløp, utvasking (kontrollert på nytt), depot med én hel injeksjon av preparatet regelen nevner, og kalenderdatoer håndteres (P5.7). Mangler regel, preparat, valg av form eller en dose innenfor rammene, stopper beregningen med grunnen og viser bare publisert OUSFAR-fagtekst (P5.8). Hver plan har regel- og motorversjoner, fingeravtrykk, FEST-uttrekkets dato og en kontrollsum over preparatene, og er deterministisk (P5.9). Regelmodellen er versjon 3 med tre valgfrie felt per forløp (`dosevalg`, `klasser`, `preparater`); pilotreglene er ikke endret. En plan er klinisk bare med en gyldig klinisk godkjent regelversjon, ikke-syntetisk regel og en FEST-kopi kontrollert de siste 48 timene; appen skal bare bruke `kliniskDoseplan`, som stopper alt annet. Ingen pilotregel er godkjent, så ingen klinisk plan kan lages ennå.
+
+**Kontroll:** `src/__tests__/verktoymotor.test.ts` kontrollerer lesingen av FEST (deling, kapsler, modifisert frisetting, styrke, salt, flytende former, preparattyper, markedsstatus med meldte endringer, rekkefølge), sammensetningen av doser (deling per preparat, rammene, injeksjoner), valget (retning, likt avvik, toleransen nøyaktig på grensen og rett over, dosegrenser, flate trinn, avregistrering i planperioden), at den ideelle kurven fra P4 bevares for hver strategi, utvasking, depot, kildedataene, versjonene, determinisme uavhengig av rekkefølge, at den aldri kaster, at hver dose har et spor til brukbare preparater med tillatt deling, sperren for alle åtte pilotregler og for syntetiske regler, foreldet FEST, fagteksten, de 18 syntetiske testtilfellene og at rapporten er oppdatert. Motoren er også prøvekjørt mot FEST-filen 28.10.2026 (notatets §10).
 
 ### P6 – Felles navigasjon og brukergrensesnitt
 
@@ -325,6 +329,7 @@ Før en oppgave eller fase krysses av:
 | 28.10.2026 | P4.1–P4.7 | Regelmodell, beregning, kontroller, kilderegister og pilotsett (8 regler, 22 regneeksempler), notat og rapport, PR #282. `npm test` og `npm run build` grønne | Venter på ChatGPTs uavhengige kontroll av kilder, klinisk innhold og regneeksempler (P4.8). Ingen regel er klinisk godkjent eller brukes av appen |
 | 28.10.2026 | P4 rettet etter kontroll | ChatGPTs seks funn og tre kodegjennomgangsfunn i PR #282 rettet: godkjenning bundet til regelversjon og fingeravtrykk; ukjente unntak stopper, og indikasjon og formulering må bekreftes; dosespenn krever klinikerens valg; streng validering av datoer, inndata og parametre uten unntak; Psychiatrienet-referansen kontrolleres mot retning, virkestoff og formulering; rapportteksten følger godkjenningsstatusen. Fire regler er versjon 2 (26 regneeksempler). `npm test` og `npm run build` grønne | Venter på ny uavhengig kontroll (P4.8). Ingen regel er klinisk godkjent eller brukes av appen |
 | 28.10.2026 | P4 rettet etter andre kontroll | ChatGPTs to nye funn rettet: OUSFAR-vurderinger har opprinnelse og avklaring hver for seg, og en regel kan godkjennes når alle åpne valg er avklart uavhengig (regelmodell versjon 2); fast enhet per parameterfelt, kontroll av startdager, tabellrader og inndatagrenser, og av planen før den returneres. `npm test` og `npm run build` grønne | Venter på ny uavhengig kontroll (P4.8). Ingen regel er klinisk godkjent eller brukes av appen |
+| 28.10.2026 | P5.1–P5.9 | Doseplanmotor med FEST-byggesteiner, dosevalg, sperre mot klinisk bruk, regelmodell 3, notat, 18 syntetiske testtilfeller og rapport, PR #283. `npm test` og `npm run build` grønne | Venter på ChatGPTs kontroll av testtilfellene og valgene i notatets §11 (P5.10). Ingen regel er klinisk godkjent, og motoren brukes ikke av appen |
 
 ## 8. Startoppdrag til Claude Code
 

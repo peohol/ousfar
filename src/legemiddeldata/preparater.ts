@@ -18,6 +18,9 @@ import type { Legemiddelutvalg } from './lesing'
 /** Preparattypen FEST bruker for preparater som krever godkjenningsfritak. */
 export const GODKJENNINGSFRITAK = '11'
 
+/** Preparattypen FEST bruker for registrerte legemidler («Legemiddel»). */
+export const LEGEMIDDEL = '7'
+
 /** Én pakning av en merkevare. */
 export interface Preparatpakning {
   id: string

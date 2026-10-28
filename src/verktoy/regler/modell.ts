@@ -29,8 +29,10 @@
  * (`docs/verktøy-p3-rettigheter.md`).
  */
 
+import type { Formuleringsklasse } from '../festformuleringer'
+
 /** Økes når formen på regler eller regelsett endres. */
-export const REGELMODELLVERSJON = 2
+export const REGELMODELLVERSJON = 3
 
 /* --- Kilder ----------------------------------------------------------------- */
 
@@ -202,13 +204,37 @@ export type Forlopsstart =
   /** Sekvensielt: når forløpet `forlop` er avsluttet, etter minst `utvasking` dager uten legemiddel. */
   | { type: 'etter_utvasking'; forlop: string; utvasking: Parameter }
 
+/**
+ * Hvor langt en praktisk dose kan avvike fra den ideelle (P5). Uten
+ * `avvik_prosent` godtas bare doser som kan gis nøyaktig; motoren velger aldri
+ * selv en toleranse. Grensene gjelder døgndosen i hver periode med dose.
+ */
+export interface Dosevalg {
+  /** Største tillatte avvik fra den ideelle dosen, i prosent av den, begge veier. */
+  avvik_prosent?: Parameter
+  /** Høyeste døgndose som kan gis i forløpet. */
+  maks_mg?: Parameter
+  /** Laveste døgndose som kan gis i en periode med dose. */
+  min_mg?: Parameter
+}
+
 export interface Forlop {
   /** `fra` og `til`, eller en annen id når en plan har flere. */
   id: string
   virkestoff: Virkestoffvalg
   administrasjon: Administrasjon
-  /** Kildens formulering når den betyr noe (depot, frisetting). */
+  /** Kildens formulering når den betyr noe (depot, frisetting), som tekst. */
   formulering?: string
+  /** Formuleringsklassene (P1) forløpet gjelder, når regelen avgrenser dem; ellers må forskriveren velge når flere finnes (P5). */
+  klasser?: Formuleringsklasse[]
+  /**
+   * Varenavnene forløpet gjelder (FESTs `Varenavn`), når formuleringen er
+   * preparatspesifikk. Påkrevd for depotinjeksjoner: FEST skiller ikke
+   * f.eks. månedlig og tremånedlig paliperidon i formen (P5).
+   */
+  preparater?: string[]
+  /** Hvor langt de praktiske dosene kan avvike fra den ideelle kurven (P5). */
+  dosevalg?: Dosevalg
   /** `startdose` når pasienten bruker legemidlet når planen starter; ellers starter forløpet uten dose. */
   utgangsdose: 'startdose' | null
   start: Forlopsstart
@@ -376,6 +402,9 @@ export const FELTENHET: Record<string, Enhet> = {
   lav_grense_mg: 'mg',
   sluttdose_mg: 'mg',
   ed50_mg: 'mg',
+  avvik_prosent: 'prosent',
+  maks_mg: 'mg',
+  min_mg: 'mg',
 }
 
 const feltnavn = (sti: string) => sti.replace(/\[\d+\]/g, '').split('.').at(-1) ?? ''

@@ -51,7 +51,7 @@ Et regelsett (`Regelsett`) har id, versjon og regelmodellversjon, og kan innehol
 
 *D*₀ for «prosent av startdosen» er dosen når nedtrappingsfasen starter. I den hyperbolske strategien går maksimal binding (Emax) ut av regnestykket, så bare ED50 trengs.
 
-**Avrunding.** Beregningen bruker uavrundede doser; de vises med to desimaler. Det er den ideelle dosekurven. Hvilke doser som faktisk kan gis (styrker, delbarhet, flytende form) og valget mellom oppnåelige doser hører til P5 (B3, B5).
+**Avrunding.** Beregningen bruker uavrundede doser; de vises med to desimaler. Det er den ideelle dosekurven. Hvilke doser som faktisk kan gis (styrker, delbarhet, flytende form) og valget mellom oppnåelige doser gjør doseplanmotoren i P5 (B3, B5; `docs/verktøy-p5-beregningsmotor.md`). Regelmodell 3 har tre valgfrie felt per forløp for det: tillatt avvik og dosegrenser (`dosevalg`), formuleringsklasser (`klasser`) og varenavn (`preparater`).
 
 **Gyldige verdier.** Doser og varigheter er endelige tall over 0, prosenter over 0 og høyst 100, og dager, måneder og trinn hele tall (`parameterfeil`). En startdato må være en gyldig kalenderdato som `ÅÅÅÅ-MM-DD`; `2027-02-31` normaliseres ikke. Ugyldige verdier i regelen eller inndata gir en stopp med grunnen, og beregningen kaster aldri: også en feil i regelen selv blir en kontrollert stopp.
 
@@ -124,7 +124,7 @@ Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet
 ## 10. Hva som ikke er gjort
 
 - Faglig kontroll pågår (P4.8): første runde fant feil som er rettet (§11); ingen regel er klinisk godkjent, og de eksplisitt uavklarte valgene i §9 er fortsatt uavklarte.
-- Ingen FEST-tilpasning: doser er ideelle, ikke preparater (P5).
+- Reglene gir ideelle doser; preparatene i FEST velges av doseplanmotoren i P5. Pilotreglene har ennå ikke tillatt avvik eller depotpreparat, så motoren stopper for flere av dem (`docs/verktøy-p5-beregningsmotor.md` §10–11).
 - Ingen visning i appen (P6–P10).
 - Ingen regel for kombinasjoner utenfor pilotsettet.
 

@@ -643,6 +643,15 @@ describe('Kontrollene av et regelsett', () => {
     expect(feil(a)).toMatch(/eksempel over-maksimum stopper ikke som forventet/)
   })
 
+  it('slår ut på formuleringer og varenavn for P5 som ikke passer forløpet', () => {
+    const r = regel('depot-paliperidon-xeplion')
+    r.plan.forlop[0]!.klasser = ['depotinjeksjon']
+    r.plan.forlop[1]!.preparater = ['']
+    const f = feil(r)
+    expect(f).toMatch(/forløp fra gjelder formuleringen depotinjeksjon, som ikke er peroral/)
+    expect(f).toMatch(/forløp til har en tom liste eller et tomt varenavn/)
+  })
+
   it('slår ut på to regler med samme id', () => {
     const r = regel('seponering-escitalopram')
     expect(kontrollerRegelsett(sett([r, r]), GRUNNLAG).join()).toMatch(/finnes flere ganger/)

@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.111.3',
+    dato: '2026-10-28',
+    sammendrag: 'Beregning av doseplaner med preparater som finnes i FEST, til faglig kontroll',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen ennå. De kommende verktøyene for nedtrapping og bytte av antidepressiva og antipsykotika har fått en felles beregning som gjør den ideelle dosekurven om til doser som kan gis med preparater registrert og markedsført i Norge etter FEST.',
+      'Tabletter deles bare når FEST sier at akkurat det preparatet er delbart, kapsler og injeksjoner deles aldri, og preparater med godkjenningsfritak brukes bare når det er valgt. Hver dose viser hvilke preparater den bygger på, og hvor mye den avviker fra den ideelle.',
+      'Kan en dose ikke gis innenfor regelens rammer, stopper beregningen og sier hvorfor i stedet for å gjette. Ingen regel er klinisk godkjent ennå, så ingen doseplan kan vises i appen.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.111.2',
     dato: '2026-10-28',
     sammendrag: 'Regelmodell og pilotregler for nedtrapping og bytte av psykofarmaka, til faglig kontroll',
