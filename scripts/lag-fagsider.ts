@@ -23,5 +23,5 @@ if (!admin || !valgt || !fil) {
 }
 
 // Uten linjeskift til slutt: apply_migration lagrer teksten uten, og filen skal være lik byte for byte.
-writeFileSync(fil, erklartMigrasjon(nyeFagsiderSql(valgt.sider, admin, valgt.kilde), fil, valg, `Nye fagsider uten faginnhold (${valgt.sider.length})`))
+writeFileSync(fil, erklartMigrasjon(nyeFagsiderSql(valgt.sider, admin, valgt.kilde, valgt), fil, valg, `Nye fagsider uten faginnhold (${valgt.sider.length})`))
 console.log(`${valgt.sider.length} fagsider → ${fil}`)

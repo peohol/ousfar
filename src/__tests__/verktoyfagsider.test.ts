@@ -101,7 +101,8 @@ describe('i databasen', () => {
       )
     }
     foran = await bilde()
-    await kjorMigrasjoner(db, { fra: SIDER })
+    // Bare disse to: senere fagsideimporter lager sider for andre stoffer.
+    await kjorMigrasjoner(db, { bare: [SIDER, KOBLING] })
   }, 240_000)
 
   it('lager hver side publisert, med kartleggingens navn og nøkkel og ingenting annet', async () => {

@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.113.0',
+    dato: '2026-10-28',
+    sammendrag: 'Fagsider for kokain, MDMA og etanol, foreløpig uten faginnhold',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['stoff', 'stoffregister', 'sok'],
+    punkter: [
+      'Kokain, MDMA og etanol har fått fagside. Til nå sa disse stoffene at de ikke hadde noen publisert fagside. De står i stoffregisteret der de sto fra før: kokain og MDMA under stimulanter, etanol under alkohol og GHB.',
+      'Sidene har ikke faginnhold og er ikke faglig kuratert, og sier det selv. De er laget så den faglige kurateringen av dem kan starte.',
+      'Kokain- og etanolsiden viser preparatene fra FEST. MDMA finnes ikke i FEST.',
+    ],
+  },
+  {
     versjon: '1.112.0',
     dato: '2026-10-28',
     sammendrag: 'Verktøy for nedtrapping og bytte i menyen og søket, foreløpig uten beregning',

@@ -123,6 +123,33 @@ const VERKTOYSIDER: readonly UkobletSide[] = [
 ]
 
 /**
+ * Fagsidene for kokain, MDMA og etanol (`KOKAIN_MDMA_ETANOL_FAGSIDER` i
+ * `nyefagsider.ts`), søkt opp i ClinPGx på det engelske navnet 28. oktober
+ * 2026. Ingen er koblet.
+ */
+const RUSMIDDELSIDE = 'Siden ble laget 28. oktober 2026, uten faginnhold, så kurateringen kan starte.'
+const RUSMIDDELSIDER: readonly UkobletSide[] = [
+  {
+    side: 'Etanol',
+    status: 'krever_kuratering',
+    kandidater: [{ clinpgx_id: 'PA448073', navn: 'ethanol' }],
+    grunn: `${RUSMIDDELSIDE} ClinPGx har ethanol (kontrollert samme dag); koblingen er ikke lagt inn ennå.`,
+  },
+  {
+    side: 'Kokain',
+    status: 'krever_kuratering',
+    kandidater: [{ clinpgx_id: 'PA449072', navn: 'cocaine' }],
+    grunn: `${RUSMIDDELSIDE} ClinPGx har cocaine (kontrollert samme dag); koblingen er ikke lagt inn ennå.`,
+  },
+  {
+    side: 'MDMA',
+    status: 'krever_kuratering',
+    kandidater: [{ clinpgx_id: 'PA131887008', navn: '3,4-methylenedioxymethamphetamine' }],
+    grunn: `${RUSMIDDELSIDE} ClinPGx har 3,4-methylenedioxymethamphetamine (kontrollert samme dag), men ingen treff på MDMA eller midomafetamine; koblingen er ikke lagt inn ennå.`,
+  },
+]
+
+/**
  * Stoffsidene som ikke er koblet, med grunnen. Kontrollert mot ClinPGx
  * 26. september 2026, også hvilke annotasjoner metabolittene har, og de
  * nyere sidene der det står.
@@ -228,6 +255,7 @@ export const UKOBLEDE_STOFFSIDER: readonly UkobletSide[] = [
       'Siden ble laget 28. september 2026 med indikasjonen og preparatene fra FEST. ClinPGx har tapentadol (kontrollert samme dag); koblingen er ikke lagt inn ennå.',
   },
   ...VERKTOYSIDER,
+  ...RUSMIDDELSIDER,
 ]
 
 /** Hver publiserte stoffside med status, sortert etter navnet. */

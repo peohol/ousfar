@@ -210,11 +210,11 @@ antihypertensivene mot ClinPGx 30. september 2026.
 | Status | Sider |
 | --- | --- |
 | Koblet til ClinPGx og verifisert | 93 |
-| Relevant objekt finnes i ClinPGx, men krever kuratert kobling | 18 |
+| Relevant objekt finnes i ClinPGx, men krever kuratert kobling | 21 |
 | ClinPGx har ikke relevant objekt | 2 |
 | Metabolitt eller analytisk komponent, kobles ikke automatisk til moderstoffet | 9 |
 | Uavklart, krever faglig vurdering | 0 |
-| Til sammen | 122 |
+| Til sammen | 125 |
 
 Koblet:
 
@@ -330,12 +330,15 @@ Ikke koblet:
 | Desmetylmianserin | Metabolitt eller analytisk komponent, kobles ikke automatisk til moderstoffet | Moderstoff: mianserin (PA134687937), side: Mianserin. Metabolitten selv: – | Metabolitt av mianserin. ClinPGx har ikke metabolitten som eget kjemikalie. |
 | Didesmetylkariprazin | Metabolitt eller analytisk komponent, kobles ikke automatisk til moderstoffet | Moderstoff: cariprazine (PA166177476), side: Kariprazin. Metabolitten selv: didesmethyl cariprazine (PA166356881) | Aktiv metabolitt av kariprazin. ClinPGx har metabolitten som eget kjemikalie, uten annotasjoner. |
 | Dosulepin | ClinPGx har ikke relevant objekt | Søkt etter: dosulepin, dosulepine, dothiepin | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har ikke stoffet under noen av navnene. |
+| Etanol | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: ethanol (PA448073) | Siden ble laget 28. oktober 2026, uten faginnhold, så kurateringen kan starte. ClinPGx har ethanol (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
 | Fenelzin | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: phenelzine (PA450903) | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har phenelzine (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
 | Flufenazin | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: fluphenazine (PA449676) | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har fluphenazine (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
 | Hydroksybupropion | Metabolitt eller analytisk komponent, kobles ikke automatisk til moderstoffet | Moderstoff: bupropion (PA448687), side: Bupropion. Metabolitten selv: hydroxybupropion (PA166226561), 4-hydroxybupropion (PA166170175) | Komponenten HBUP måler, ikke en egen fagside. Aktiv metabolitt av bupropion. ClinPGx har to kjemikalier for metabolitten, begge uten annotasjoner. |
 | Imipramin | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: imipramine (PA449969) | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har imipramine (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
+| Kokain | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: cocaine (PA449072) | Siden ble laget 28. oktober 2026, uten faginnhold, så kurateringen kan starte. ClinPGx har cocaine (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
 | Loksapin | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: loxapine (PA450273) | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har loxapine (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
 | Maprotilin | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: maprotiline (PA450322) | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har maprotiline (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
+| MDMA | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: 3,4-methylenedioxymethamphetamine (PA131887008) | Siden ble laget 28. oktober 2026, uten faginnhold, så kurateringen kan starte. ClinPGx har 3,4-methylenedioxymethamphetamine (kontrollert samme dag), men ingen treff på MDMA eller midomafetamine; koblingen er ikke lagt inn ennå. |
 | Moklobemid | Relevant objekt finnes i ClinPGx, men krever kuratert kobling | Kandidater: moclobemide (PA452615) | Siden ble laget 27. oktober 2026 for OUSFAR Verktøy, uten faginnhold, med preparatene fra FEST. ClinPGx har moclobemide (kontrollert samme dag); koblingen er ikke lagt inn ennå. |
 | Norfluoksetin | Metabolitt eller analytisk komponent, kobles ikke automatisk til moderstoffet | Moderstoff: fluoxetine (PA449673), side: Fluoksetin. Metabolitten selv: r-norfluoxetine (PA166131377), s-norfluoxetine (PA166131313) | Aktiv metabolitt av fluoksetin. ClinPGx har bare de to enantiomerene hver for seg, uten annotasjoner. |
 | O-desmetyltramadol | Metabolitt eller analytisk komponent, kobles ikke automatisk til moderstoffet | Moderstoff: tramadol (PA451735), side: Tramadol. Metabolitten selv: o-desmethyltramadol (PA166131379) | Aktiv metabolitt av tramadol. ClinPGx har metabolitten som eget kjemikalie med kliniske annotasjoner; om siden skal vise dem, tramadols data eller begge, er en faglig vurdering. |
