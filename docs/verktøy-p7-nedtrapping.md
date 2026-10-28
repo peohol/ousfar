@@ -129,7 +129,7 @@ Det står i hver regel, både i begrunnelsen for parameteren og under usikkerhet
 
 **Foreslått faglig akseptkriterium.** Algoritmen kan generere et avsluttende nulltrinn bare når alle tre punktene er oppfylt. Ellers stopper beregningen.
 
-1. Siste dose i planen er lik eller under sluttdosen.
+1. Neste trinn ville kommet under sluttdosen. Siste dose før null er altså lik eller over sluttdosen, men aldri mer enn ett trinn over. Eksempel: paroksetin har sluttdose 2,5 mg, og med 10 % per trinn fra 20 mg er siste dose 2,7 mg.
 2. Sluttdosen er vurdert og avklart **for akkurat dette stoffet** av en uavhengig kontrollør. Vurderingen skal være mot stoffets farmakologi, særlig halveringstid og forholdet mellom dose og reseptorbinding, og mot kildegrunnlaget. Begrunnelsen skal stå i avklaringen.
 3. Hvert trinn ned til sluttdosen kan gis med norske preparater uten toleranse, eller med en toleranse som er godkjent for regelversjonen.
 
