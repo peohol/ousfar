@@ -164,15 +164,31 @@ export function planvisning(r: Doseplanresultat, regel: Regel, startdato?: strin
   }
 }
 
+/**
+ * Listene under tabellen, i rekkefølgen de står i. Skjermen og teksten som
+ * kopieres, bruker den samme lista, så kopien har alt skjermen har. Kildene
+ * og versjonene står etter dem.
+ */
+export const PLANDELER = [
+  { tittel: 'Advarsler', felt: 'advarsler', tone: 'advarsel' },
+  { tittel: 'Avvik fra regelens kurve', felt: 'avvik' },
+  { tittel: 'Antakelser', felt: 'antakelser' },
+  { tittel: 'Usikkerhet', felt: 'usikkerhet' },
+  { tittel: 'Preparater planen bygger på', felt: 'preparater' },
+  { tittel: 'Kontroller', felt: 'kontroller' },
+] as const satisfies readonly { tittel: string; felt: keyof Planvisning; tone?: 'advarsel' | 'spor' }[]
+
 const punkter = (overskrift: string, linjer: readonly string[]) => (linjer.length > 0 ? [``, `${overskrift}:`, ...linjer.map((l) => `- ${l}`)] : [])
 
 /** Planen som ren tekst, til utklippstavlen: det samme som står på skjermen. */
 export function planTekst(v: Planvisning, overskrift: string): string {
+  // Navnet med administrasjonsformen, som kolonnene på skjermen: samme virkestoff kan stå både peroralt og som depot.
+  const kolonne = (i: number) => `${v.kolonner[i]!.navn} ${v.kolonner[i]!.administrasjon}`
   const celle = (c: Dosecelle | null, i: number) =>
-    c && `${v.kolonner[i]!.navn}: ${c.dose}${c.elementer.length > 0 ? ` = ${c.elementer.join(' + ')}` : ''}${c.avvik ? ` (${c.avvik})` : ''}`
+    c && `${kolonne(i)}: ${c.dose}${c.elementer.length > 0 ? ` = ${c.elementer.join(' + ')}` : ''}${c.avvik ? ` (${c.avvik})` : ''}`
   const linjer = v.rader.map((r) => {
     const naar = `${r.dager}${r.datoer ? ` (${r.datoer})` : ''}`
-    if (r.type === 'injeksjon') return `${naar}: ${v.kolonner[r.kolonne]!.navn} ${r.dose} = ${r.element}${r.detalj ? ` (${r.detalj})` : ''}`
+    if (r.type === 'injeksjon') return `${naar}: ${kolonne(r.kolonne)} ${r.dose} = ${r.element}${r.detalj ? ` (${r.detalj})` : ''}`
     return `${naar}: ${r.celler.map(celle).filter(Boolean).join('; ') || 'ingen dose'}`
   })
   return [
@@ -180,11 +196,7 @@ export function planTekst(v: Planvisning, overskrift: string): string {
     v.tittel,
     '',
     ...linjer,
-    ...punkter('Advarsler', v.advarsler),
-    ...punkter('Avvik fra regelens kurve', v.avvik),
-    ...punkter('Antakelser', v.antakelser),
-    ...punkter('Usikkerhet', v.usikkerhet),
-    ...punkter('Preparater', v.preparater),
+    ...PLANDELER.flatMap((d) => punkter(d.tittel, v[d.felt])),
     ...punkter('Kilder', v.kilder.map((k) => `${k.tittel} (${k.utgiver}, ${k.versjon}): ${k.url}${k.steder.length > 0 ? ` – ${k.steder.join('; ')}` : ''}`)),
     ...punkter('Versjoner', v.versjoner),
   ].join('\n')

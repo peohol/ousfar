@@ -1,6 +1,6 @@
 import { useId, useState } from 'react'
 import { useClipboard } from '../../hooks/useClipboard'
-import { planTekst, type Dosecelle, type Planvisning } from '../../verktoy/planvisning'
+import { PLANDELER, planTekst, type Dosecelle, type Planvisning } from '../../verktoy/planvisning'
 import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 
@@ -91,12 +91,9 @@ export function Doseplanvisning({ plan, overskrift }: { plan: Planvisning; overs
         </table>
       </div>
 
-      <Liste tittel="Advarsler" linjer={plan.advarsler} tone="advarsel" />
-      <Liste tittel="Avvik fra regelens kurve" linjer={plan.avvik} />
-      <Liste tittel="Antakelser" linjer={plan.antakelser} />
-      <Liste tittel="Usikkerhet" linjer={plan.usikkerhet} />
-      <Liste tittel="Preparater planen bygger på" linjer={plan.preparater} />
-      <Liste tittel="Kontroller" linjer={plan.kontroller} />
+      {PLANDELER.map((d) => (
+        <Liste key={d.felt} tittel={d.tittel} linjer={plan[d.felt]} tone={'tone' in d ? d.tone : undefined} />
+      ))}
 
       {plan.kilder.length > 0 && (
         <section className="doseplan__del">

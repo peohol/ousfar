@@ -72,9 +72,15 @@ export function medlemFor(r: Regel, valg: Verktoyvalg): string | undefined {
   return r.til?.type === 'gruppe' ? valg.til?.nokkel : undefined
 }
 
+/** Om regelen har en beregning; en regel som bare er tekstlig eller mangler anbefaling, har det ikke. */
+const harBeregning = (r: Regel) => r.beregnbarhet !== 'bare_tekstlig' && r.beregnbarhet !== 'mangler_anbefaling'
+
+/** Om regelen venter på faglig kontroll: ikke godkjent, og med en anbefaling å kontrollere. */
+const venterPaKontroll = (r: Regel) => godkjenningsfeil(r).length > 0 && r.beregnbarhet !== 'mangler_anbefaling'
+
 /** Hvorfor en godkjent regel likevel ikke kan beregnes for valgene; tom når den kan. */
 function beregningsfeil(r: Regel, valg: Verktoyvalg): string[] {
-  if (r.beregnbarhet === 'bare_tekstlig' || r.beregnbarhet === 'mangler_anbefaling') return [`Regelen «${r.tittel}» har ingen beregning.`]
+  if (!harBeregning(r)) return [`Regelen «${r.tittel}» har ingen beregning.`]
   const medlem = medlemFor(r, valg)
   if (medlem === undefined) return []
   const m = r.medlemmer?.find((x) => x.nokkel === medlem)
@@ -100,7 +106,7 @@ export function tilgjengelighet(verktoy: Verktoy, valg: Verktoyvalg, regelsett: 
   if (beregnbare.length > 0) return { status: 'tilgjengelig', regler: beregnbare, grunner: [] }
   const fagtekst = godkjente.filter((r) => r.beregnbarhet === 'bare_tekstlig')
   if (fagtekst.length > 0) return { status: 'fagtekst', regler: fagtekst, grunner: fagtekst.flatMap((r) => beregningsfeil(r, valg)) }
-  const tilKontroll = regler.filter((r) => !godkjente.includes(r) && r.beregnbarhet !== 'mangler_anbefaling')
+  const tilKontroll = regler.filter(venterPaKontroll)
   if (tilKontroll.length > 0) {
     return { status: 'til_kontroll', regler: tilKontroll, grunner: ['Beregning er ikke tilgjengelig fordi faglig kontroll av regelen gjenstår.'] }
   }
@@ -108,12 +114,19 @@ export function tilgjengelighet(verktoy: Verktoy, valg: Verktoyvalg, regelsett: 
   return { status: 'ikke_stottet', regler: [], grunner: grunner.length > 0 ? grunner : ['OUSFAR har ingen regel for denne kombinasjonen.'] }
 }
 
-/** Hvor mange regler for verktøyets virkestoffer som kan beregnes nå, og hvor mange som venter på faglig kontroll. */
+/**
+ * Hvor mange regler for verktøyets virkestoffer som kan beregnes nå, og hvor
+ * mange som venter på faglig kontroll, med de samme kravene som
+ * {@link tilgjengelighet}: en godkjent regel uten beregning telles ikke som
+ * tilgjengelig.
+ */
 export function regeloversikt(verktoy: Verktoy, regelsett: Regelsett = REGELSETT, k: Virkestoffkartlegging = KARTLEGGING): { tilgjengelige: number; tilKontroll: number } {
   const nokler = new Set(virkestoffvalg(verktoy, k).map((v) => v.nokkel))
   const iVerktoyet = (v: Virkestoffvalg) =>
     v.type === 'virkestoff' ? nokler.has(v.nokkel) : (k.grupper.find((g) => g.id === v.gruppe)?.medlemmer.some((m) => nokler.has(m.virkestoff)) ?? false)
   const egne = regelsett.regler.filter((r) => (verktoy.type === 'seponering') === (r.til === null) && iVerktoyet(r.fra) && (!r.til || iVerktoyet(r.til)))
-  const godkjente = egne.filter((r) => godkjenningsfeil(r).length === 0)
-  return { tilgjengelige: godkjente.length, tilKontroll: egne.length - godkjente.length }
+  return {
+    tilgjengelige: egne.filter((r) => godkjenningsfeil(r).length === 0 && harBeregning(r)).length,
+    tilKontroll: egne.filter(venterPaKontroll).length,
+  }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { useLukkMedEscape } from '../../hooks/useLukkMedEscape'
 import type { Legemiddelleser } from '../../legemiddeldata/lesing'
 import { Bevaringsomrade, useBevart, type Bevaringsform } from '../../oppdatering/Bevaring'
@@ -9,14 +9,17 @@ import {
   formvalgFor,
   gjelderFortsatt,
   mangler,
+  medRegel,
+  skjemaFor,
   TOMT_SKJEMA,
   trengerMaldose,
+  valgidentitet,
   type Planskjema,
 } from '../../verktoy/doseplan'
 import type { Kildeformulering } from '../../verktoy/kartlegging'
 import type { Doseplanresultat, Formalternativer } from '../../verktoy/motor/plan'
 import { kildeliste, planvisning } from '../../verktoy/planvisning'
-import { KARTLEGGING, VERKTOY, verktoyFor, virkestoffvalg, type Verktoy } from '../../verktoy/register'
+import { finnVirkestoff, KARTLEGGING, VERKTOY, verktoyFor, virkestoffvalg, type Verktoy } from '../../verktoy/register'
 import type { Regel, Regelsett } from '../../verktoy/regler/modell'
 import {
   fraForlop,
@@ -187,11 +190,23 @@ function Verktoyskjema({
   const [fraForm, setFraForm] = useBevart<Kildeformulering | ''>('fra/formulering', '')
   const [tilTekst, setTilTekst] = useBevart('til', '')
   const [tilForm, setTilForm] = useBevart<Kildeformulering | ''>('til/formulering', '')
-  const [skjema, setSkjema] = useBevart<Planskjema>('skjema', TOMT_SKJEMA, SKJEMAFORM)
+  const [lagretSkjema, setSkjema] = useBevart<Planskjema>('skjema', TOMT_SKJEMA, SKJEMAFORM)
 
   const fra = lesVirkestoffvalg(valgene, fraTekst, fraForm)
   const til = verktoy.type === 'bytte' ? lesVirkestoffvalg(valgene, tilTekst, tilForm) : undefined
   const valg: Verktoyvalg | undefined = fra && (verktoy.type === 'seponering' || til) ? { fra, ...(til && { til }) } : undefined
+  // Skjemaet gjelder bare valgene det ble fylt ut for; andre valg begynner med et tomt skjema.
+  const identitet = valg ? valgidentitet(valg) : ''
+  const skjema = skjemaFor(lagretSkjema, identitet)
+  const settSkjema = (endre: (s: Planskjema) => Planskjema) => setSkjema((s) => endre(skjemaFor(s, identitet)))
+  // Det gamle skjemaet glemmes med en gang valgene skifter, også når de skifter tilbake senere.
+  useEffect(() => setSkjema((s) => skjemaFor(s, identitet)), [identitet, setSkjema])
+
+  /** Et annet virkestoff i feltet: formuleringen som var valgt for det forrige, gjelder ikke det nye. */
+  const nyttVirkestoff = (forrige: string, settTekst: (t: string) => void, settForm: (f: Kildeformulering | '') => void) => (tekst: string) => {
+    if (finnVirkestoff(valgene, tekst)?.nokkel !== finnVirkestoff(valgene, forrige)?.nokkel) settForm('')
+    settTekst(tekst)
+  }
   const status = useMemo(() => (valg ? tilgjengelighet(verktoy, valg, regelsett) : undefined), [verktoy, regelsett, valg?.fra.nokkel, valg?.fra.formulering, valg?.til?.nokkel, valg?.til?.formulering]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -215,11 +230,11 @@ function Verktoyskjema({
               valg={valgene}
               tekst={fraTekst}
               formulering={fraForm}
-              onTekst={setFraTekst}
+              onTekst={nyttVirkestoff(fraTekst, setFraTekst, setFraForm)}
               onFormulering={setFraForm}
             />
             {verktoy.type === 'bytte' && (
-              <Virkestoffelt etikett="Bytte til" valg={valgene} tekst={tilTekst} formulering={tilForm} onTekst={setTilTekst} onFormulering={setTilForm} />
+              <Virkestoffelt etikett="Bytte til" valg={valgene} tekst={tilTekst} formulering={tilForm} onTekst={nyttVirkestoff(tilTekst, setTilTekst, setTilForm)} onFormulering={setTilForm} />
             )}
           </div>
         </fieldset>
@@ -236,7 +251,7 @@ function Verktoyskjema({
           valg={valg}
           regler={status.regler}
           skjema={skjema}
-          setSkjema={setSkjema}
+          setSkjema={settSkjema}
           legemidler={legemidler}
           regelsett={regelsett}
           klokke={klokke}
@@ -342,6 +357,8 @@ function Beregningsdel({
   const [alternativer, setAlternativer] = useState<{ regel: string; valg: Record<string, Formalternativer> } | null>(null)
   const [feil, setFeil] = useState<string[]>([])
   const [, setTikk] = useState(0)
+  // Bare den siste beregningen som er startet, får vise resultatet sitt; en eldre som blir ferdig senere, forkastes.
+  const siste = useRef(0)
   const nokkel = JSON.stringify({ regel: regel?.id, valg, skjema })
   const gjeldende = beregning?.nokkel === nokkel ? beregning : null
   const formvalg = alternativer && alternativer.regel === regel?.id ? alternativer.valg : {}
@@ -361,10 +378,12 @@ function Beregningsdel({
     const mangel = mangler(regel, skjema)
     setFeil(mangel)
     if (mangel.length > 0) return
+    const denne = ++siste.current
     setBeregning({ nokkel, status: 'henter' })
     try {
       if (!legemidler) throw new Error('Legemiddeldataene kan ikke leses her.')
       const utvalg = await legemidler.les(festIderFor(regel, valg))
+      if (denne !== siste.current) return
       const tid = klokke()
       const alt = formvalgFor(regel, valg, skjema, utvalg, tid)
       setAlternativer({ regel: regel.id, valg: alt })
@@ -374,6 +393,7 @@ function Beregningsdel({
       if (uvalgt) return setBeregning({ nokkel, status: 'formvalg' })
       setBeregning({ nokkel, status: 'ferdig', resultat: beregnPlan(regel, valg, skjema, utvalg, tid, regelsett) })
     } catch (e) {
+      if (denne !== siste.current) return
       setBeregning({ nokkel, status: 'feil', melding: e instanceof Error ? e.message : String(e) })
     }
   }
@@ -406,7 +426,7 @@ function Beregningsdel({
             <div className="avkryssinger avkryssinger--loddrett">
               {regler.map((r) => (
                 <label key={r.id} className="avkryssing">
-                  <input type="radio" name={`${id}-regel`} checked={skjema.regel === r.id} onChange={() => sett('regel', r.id)} />
+                  <input type="radio" name={`${id}-regel`} checked={skjema.regel === r.id} onChange={() => setSkjema((s) => medRegel(s, r.id))} />
                   {r.tittel}
                 </label>
               ))}

@@ -7,7 +7,7 @@
  */
 import { describe, expect, it } from 'vitest'
 import { adresse, lesRute, sidesti, verktoyadresse } from '../domain/rute'
-import { beregnPlan, festIderFor, formvalgFor, gjelderFortsatt, inndataFor, lesDose, mangler, osloDato, TOMT_SKJEMA } from '../verktoy/doseplan'
+import { beregnPlan, festIderFor, formvalgFor, gjelderFortsatt, inndataFor, lesDose, mangler, medRegel, osloDato, skjemaFor, TOMT_SKJEMA, valgidentitet } from '../verktoy/doseplan'
 import { planTekst, planvisning } from '../verktoy/planvisning'
 import { finnVirkestoff, KARTLEGGING, sokVerktoy, VERKTOY, verktoyFor, virkestoffvalg } from '../verktoy/register'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
@@ -150,6 +150,8 @@ describe('Regelstatusen', () => {
     tekst.beregnbarhet = 'bare_tekstlig'
     const r = godkjennITest(tekst, 'test-fagtekst')
     expect(tilgjengelighet(TRAPPE_NED!, { fra: v('escitalopram') }, testsett(r))).toMatchObject({ status: 'fagtekst', regler: [r] })
+    // Oversikten sier det samme: en godkjent regel uten beregning kan ikke beregnes, og venter ikke på kontroll.
+    expect(regeloversikt(TRAPPE_NED!, testsett(r))).toEqual({ tilgjengelige: 0, tilKontroll: 1 })
   })
 })
 
@@ -157,6 +159,21 @@ describe('Doseplanen i verktøyene', () => {
   const valg: Verktoyvalg = { fra: v('escitalopram') }
   // Testoksetin finnes i flere formuleringer og former i FEST; tablettene er valgt, slik skjemaet ber om.
   const skjema = { ...TOMT_SKJEMA, startdose: '20', formvalg: { fra: { klasse: 'peroral', legemiddelform: 'SYN-TAB' } } }
+
+  it('beholder utfyllingen bare så lenge virkestoffene, formuleringene og strategien er de samme', () => {
+    const id = valgidentitet(valg)
+    const utfylt = { ...skjema, gjelder: id, regel: 'a', maldose: '5', startdato: '2026-11-02', bekreftet: ['x'], pasientforhold: { u: true }, godkjenningsfritak: true }
+    expect(skjemaFor(utfylt, id)).toBe(utfylt)
+    expect(valgidentitet({ fra: v('escitalopram') })).toBe(id)
+    for (const annen of [{ fra: v('citalopram') }, { fra: v('escitalopram'), til: v('mirtazapin') }, { fra: v('escitalopram', 'LA') }]) {
+      const ny = valgidentitet(annen)
+      expect(ny).not.toBe(id)
+      expect(skjemaFor(utfylt, ny)).toEqual({ ...TOMT_SKJEMA, gjelder: ny })
+    }
+    expect(medRegel(utfylt, 'a')).toBe(utfylt)
+    // Ny strategi: bekreftelser, unntak, måldose, formvalg og fritak gjaldt den gamle; dose og startdato følger pasienten.
+    expect(medRegel(utfylt, 'b')).toEqual({ ...TOMT_SKJEMA, gjelder: id, regel: 'b', startdose: '20', startdato: '2026-11-02' })
+  })
 
   it('leser doser med komma og punktum, og krever måldose bare når regelen har den', () => {
     expect([lesDose('12,5'), lesDose('12.5'), lesDose('0'), lesDose('-1'), lesDose('1e3'), lesDose(''), lesDose('abc')]).toEqual([12.5, 12.5, undefined, undefined, undefined, undefined, undefined])
@@ -195,7 +212,7 @@ describe('Doseplanen i verktøyene', () => {
     expect(p.advarsler.join(' ')).toMatch(/klinisk godkjent regelversjon/)
     const tekst = planTekst(p, 'Trappe ned antidepressiv')
     expect(tekst).toMatch(/^Trappe ned antidepressiv\n/)
-    expect(tekst).toMatch(/Dag 1–14 \(02\.11\.2026–15\.11\.2026\): Escitalopram: 12,5 mg = 1 tablett à 10 mg \+ ½ tablett à 5 mg/)
+    expect(tekst).toMatch(/Dag 1–14 \(02\.11\.2026–15\.11\.2026\): Escitalopram peroralt: 12,5 mg = 1 tablett à 10 mg \+ ½ tablett à 5 mg/)
     expect(tekst).toMatch(/Versjoner:/)
   })
 
@@ -209,7 +226,7 @@ describe('Doseplanen i verktøyene', () => {
       ['Dag 8', '100 mg', 1],
       ['Hver måned fra 1 måned etter dag 8', '100 mg', 1],
     ])
-    expect(planTekst(p, 'Bytte antipsykotikum')).toMatch(/Dag 8: Paliperidon 100 mg = 1 injeksjon à 100 mg \(±4 dager\)/)
+    expect(planTekst(p, 'Bytte antipsykotikum')).toMatch(/Dag 8: Paliperidon depotinjeksjon 100 mg = 1 injeksjon à 100 mg \(±4 dager\)/)
   })
 
   it('stopper uten svar på et unntak, og når FEST er foreldet, mangler eller ikke er FEST', () => {

@@ -30,6 +30,12 @@ export interface Planskjema {
   /** Forløpets id → formuleringen og legemiddelformen som er valgt. */
   formvalg: Record<string, { klasse?: string; legemiddelform?: string }>
   godkjenningsfritak: boolean
+  /**
+   * Valgene skjemaet er fylt ut for ({@link valgidentitet}). Skifter
+   * virkestoffet eller formuleringen, begynner skjemaet på nytt, så ingen dose,
+   * bekreftelse eller svar på et unntak følger med til andre valg.
+   */
+  gjelder: string
 }
 
 export const TOMT_SKJEMA: Planskjema = {
@@ -41,7 +47,23 @@ export const TOMT_SKJEMA: Planskjema = {
   pasientforhold: {},
   formvalg: {},
   godkjenningsfritak: false,
+  gjelder: '',
 }
+
+/** Identiteten til valgene: virkestoffene og formuleringene på begge sider. */
+export const valgidentitet = (valg: Verktoyvalg): string =>
+  JSON.stringify([valg.fra.nokkel, valg.fra.formulering, valg.til?.nokkel ?? null, valg.til?.formulering ?? null])
+
+/** Skjemaet slik det gjelder for valgene `gjelder`: et skjema fylt ut for andre valg, begynner på nytt. */
+export const skjemaFor = (s: Planskjema, gjelder: string): Planskjema => (s.gjelder === gjelder ? s : { ...TOMT_SKJEMA, gjelder })
+
+/**
+ * Skjemaet med en annen strategi. Alt som hører til regelen — måldosen,
+ * bekreftelsene, svarene på unntakene, formvalgene og godkjenningsfritaket —
+ * begynner på nytt; dosen pasienten bruker og startdatoen står.
+ */
+export const medRegel = (s: Planskjema, regel: string): Planskjema =>
+  s.regel === regel ? s : { ...TOMT_SKJEMA, gjelder: s.gjelder, regel, startdose: s.startdose, startdato: s.startdato }
 
 /** Et tall slik det er skrevet, med komma eller punktum; `undefined` når feltet er tomt eller ikke et positivt tall. */
 export function lesDose(tekst: string): number | undefined {
