@@ -418,9 +418,10 @@ function inndatafeil(i: Beregningsinndata): string[] {
   return feil
 }
 
-/** Siste kontroll før en plan returneres: hele planens dager fra 1 og endelige, positive doser. */
-function planfeil(forlop: Forlopsresultat[]): string[] {
+/** Siste kontroll før en plan returneres: hele planens dager fra 1, endelige, positive doser, og at en seponering ender i seponering. */
+function planfeil(forlop: Forlopsresultat[], form: Regel['plan']['form']): string[] {
   const feil: string[] = []
+  if (form === 'seponering') for (const f of forlop) if (f.siste_dosedag === null) feil.push(`${f.id} ender ikke med seponering`)
   const dag = (x: unknown) => typeof x === 'number' && Number.isInteger(x) && x >= 1
   const dose = (x: unknown) => typeof x === 'number' && Number.isFinite(x) && x > 0
   for (const f of forlop) {
@@ -525,7 +526,7 @@ export function beregn(regel: Regel, inndata: Beregningsinndata, regelsett?: Reg
     stopp.push(e instanceof Stopp ? e.message : `Beregningen kunne ikke fullføres: ${e instanceof Error ? e.message : String(e)}`)
     return stoppet()
   }
-  const ugyldigPlan = planfeil([...ctx.resultater.values()])
+  const ugyldigPlan = planfeil([...ctx.resultater.values()], regel.plan.form)
   if (ugyldigPlan.length > 0) {
     stopp.push(...ugyldigPlan.map((x) => `Beregningen ga en ugyldig plan: ${x}.`))
     return stoppet()

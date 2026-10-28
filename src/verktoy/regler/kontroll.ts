@@ -15,6 +15,7 @@ import type { Kildearkiv } from '../kildearkiv'
 import { kildegrunnlag, type Kildeanbefaling, type Kildepart } from '../kildeanbefalinger'
 import { erSperret, KILDEFORMULERINGER, type Virkestoffkartlegging } from '../kartlegging'
 import { beregn, kortform } from './beregning'
+import type { Nedtrappingsdekning } from './dekning'
 import { godkjenningsfeil } from './godkjenning'
 import { kildeFor } from './kilder'
 import {
@@ -80,6 +81,8 @@ export const MAKS_FAKTUM = 250
 
 const like = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b)
 
+const BEREGNBAR: readonly Regel['beregnbarhet'][] = ['entydig_beregnbar', 'beregnbar_etter_avklaring']
+
 function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
   const feil: string[] = []
   const f = (t: string) => feil.push(`${r.id}: ${t}`)
@@ -102,6 +105,16 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
     if (r.plan.forlop.length === 0) f('regelen er beregnbar, men har ingen plan')
     if (!like(r.plan.forlop[0]?.virkestoff, r.fra)) f('første forløp er ikke regelens fra-virkestoff')
     if (r.til && !r.plan.forlop.slice(1).some((x) => like(x.virkestoff, r.til))) f('ingen forløp har regelens til-virkestoff')
+  }
+  // En seponering ender i seponering (P7): hvert forløp slutter med nedtrapping til null eller seponering, aldri med en dose som fortsetter.
+  if (r.plan.form === 'seponering') {
+    if (r.til !== null) f('er en seponering, men har et til-virkestoff')
+    if (BEREGNBAR.includes(r.beregnbarhet)) {
+      for (const x of r.plan.forlop) {
+        const siste = x.faser.at(-1)?.type
+        if (siste !== 'nedtrapping' && siste !== 'seponer') f(`forløp ${x.id} ender med ${siste ?? 'ingen fase'}, ikke med seponering`)
+      }
+    }
   }
   const ids = r.plan.forlop.map((x) => x.id)
   if (new Set(ids).size !== ids.length) f('to forløp har samme id')
@@ -217,4 +230,57 @@ export function kontrollerRegelsett(s: Regelsett, g: Kontrollgrunnlag = lesKontr
   for (const id of new Set(ids)) if (ids.filter((x) => x === id).length > 1) feil.push(`${s.id}: regelen ${id} finnes flere ganger`)
   for (const r of s.regler) feil.push(...kontrollerRegel(r, g))
   return feil
+}
+
+
+/** Seponeringsreglene i settet for et virkestoff, delt etter om de har en beregning eller bare er fagtekst. */
+export function seponeringsreglerFor(nokkel: string, s: Regelsett): { beregnbare: Regel[]; fagtekst: Regel[] } {
+  const egne = s.regler.filter((r) => r.til === null && r.plan.form === 'seponering' && r.fra.type === 'virkestoff' && r.fra.nokkel === nokkel)
+  return { beregnbare: egne.filter((r) => BEREGNBAR.includes(r.beregnbarhet)), fagtekst: egne.filter((r) => r.beregnbarhet === 'bare_tekstlig') }
+}
+
+/**
+ * Alt som er galt med dekningen for nedtrapping (P7.1); tom når den er i
+ * orden. Hvert antidepressivum i kildetabellen har nøyaktig én status, og
+ * statusen stemmer med reglene i settet: en beregnbar regel gir «beregnbar
+ * regel», bare en fagtekstregel gir «bare fagtekst», og et virkestoff uten
+ * regel har en begrunnet status uten regel. Grunnen og fakta er OUSFARs egne,
+ * fra kilder som finnes, aldri fra Psychiatrienet.
+ */
+export function kontrollerDekning(dekning: readonly Nedtrappingsdekning[], s: Regelsett, g: Kontrollgrunnlag = lesKontrollgrunnlag()): string[] {
+  const feil: string[] = []
+  const k = g.kartlegging
+  const forventet = k.kildeidentiteter.SwitchAntidepressants.flatMap((i) => (i.type === 'virkestoff' && !erSperret(k, i.virkestoff) ? [i.virkestoff] : []))
+  const nokler = dekning.map((d) => d.nokkel)
+  for (const n of forventet) if (!nokler.includes(n)) feil.push(`${n} mangler status i dekningen`)
+  for (const n of new Set(nokler)) {
+    if (nokler.filter((x) => x === n).length > 1) feil.push(`${n} har flere statuser i dekningen`)
+    if (!forventet.includes(n)) feil.push(`${n} er ikke et antidepressivum i kildetabellen`)
+  }
+  if (erSperret(k, JSON.stringify(dekning))) feil.push('dekningen omtaler et ekskludert virkestoff (johannesurt)')
+  for (const d of dekning) {
+    const f = (x: string) => feil.push(`${d.nokkel}: ${x}`)
+    const { beregnbare, fagtekst } = seponeringsreglerFor(d.nokkel, s)
+    const regler = [...beregnbare, ...fagtekst].map((r) => r.id).join(', ')
+    if (d.status === 'beregnbar_regel' && beregnbare.length === 0) f('har status beregnbar regel, men settet har ingen beregnbar seponeringsregel for virkestoffet')
+    if (d.status !== 'beregnbar_regel' && beregnbare.length > 0) f(`har status ${d.status}, men settet har en beregnbar regel (${regler})`)
+    if (d.status === 'bare_fagtekst' && (fagtekst.length === 0 || beregnbare.length > 0)) f('har status bare fagtekst, men settet har ikke bare en fagtekstregel for virkestoffet')
+    if ((d.status === 'mangler_anbefaling' || d.status === 'begrenset') && regler) f(`har status ${d.status}, men settet har regler for virkestoffet (${regler})`)
+    if (!d.grunn.trim()) f('har ingen grunn')
+    if (d.status === 'begrenset' && (d.henvisninger.length === 0 || d.apne.length === 0)) f('en begrensning må ha kildegrunnlaget og de åpne spørsmålene')
+    for (const hv of d.henvisninger) {
+      if (hv.kilde === 'psychiatrienet' || kildeFor(hv.kilde)?.type === 'kildeoppføring') f(`${hv.kilde} kan ikke gi fakta til dekningen`)
+      else if (!kildeFor(hv.kilde)) f(`ukjent kilde ${hv.kilde}`)
+      else if (!('sted' in hv) || !hv.sted.trim() || !hv.faktum.trim()) f(`henvisningen til ${hv.kilde} mangler sted eller faktum`)
+      else if (hv.faktum.length > MAKS_FAKTUM) f(`faktumet fra ${hv.kilde} er lengre enn ${MAKS_FAKTUM} tegn`)
+    }
+    if (!g.kildeoppforinger.has(stoppoppforing(d.nokkel, g))) f('har ingen Stop-oppføring i P3 å skille statusen fra')
+  }
+  return feil
+}
+
+/** Id-en til kildens Stop-oppføring for et antidepressivum i P3 (`SwitchAntidepressants:<kode>>Stop`). */
+export function stoppoppforing(nokkel: string, g: Kontrollgrunnlag = lesKontrollgrunnlag()): string {
+  const i = g.kartlegging.kildeidentiteter.SwitchAntidepressants.find((x) => x.type === 'virkestoff' && x.virkestoff === nokkel)
+  return `SwitchAntidepressants:${i?.kode ?? '?'}>Stop`
 }

@@ -4,8 +4,9 @@
  *
  * - Oversikten viser de tre verktøyene og at ingen beregning er tilgjengelig
  *   så lenge ingen regel er klinisk godkjent; en ukjent adresse sier fra.
- * - Med pilotreglene står det at faglig kontroll gjenstår, uten skjema,
- *   uten henting fra FEST og uten tabell.
+ * - Med pilotreglene og nedtrappingsreglene står det at faglig kontroll
+ *   gjenstår, uten skjema, uten henting fra FEST og uten tabell; uten regel
+ *   står grunnen fra dekningen for nedtrapping.
  * - Med en regel godkjent bare i testen og syntetiske preparater i FESTs form
  *   ber siden om formulering og form, viser planen, kopierer og skriver den
  *   ut. Endrede inndata, foreldet FEST og en ny dag tar planen bort.
@@ -19,6 +20,7 @@ import { Verktoyside, type VerktoysideProps } from '../components/verktoy/Verkto
 import type { Legemiddelutvalg } from '../legemiddeldata/lesing'
 import { glemBildet, oppdaterOgTaVare, taBilde } from '../oppdatering/bevaring'
 import { KARTLEGGING } from '../verktoy/register'
+import { NEDTRAPPINGSSETT } from '../verktoy/regler/nedtrapping'
 import { godkjennITest, TEST_DEPOT, TEST_NEDTRAPPING, TESTKLOKKE, testFest, testsett } from './hjelp/verktoyplan'
 
 beforeEach(() => {
@@ -63,7 +65,7 @@ describe('oversikten', () => {
     const kort = screen.getAllByRole('link').filter((a) => a.classList.contains('verktoykort__lenke'))
     expect(kort.map((a) => a.getAttribute('href'))).toEqual(['#/verktoy/trappe-ned-antidepressiv', '#/verktoy/bytte-antidepressiv', '#/verktoy/bytte-antipsykotikum'])
     expect(kort.map((a) => a.querySelector('.verktoykort__status')?.textContent)).toEqual([
-      'Ingen beregning tilgjengelig ennå · 2 til faglig kontroll',
+      `Ingen beregning tilgjengelig ennå · ${2 + NEDTRAPPINGSSETT.regler.length} til faglig kontroll`,
       'Ingen beregning tilgjengelig ennå · 2 til faglig kontroll',
       'Ingen beregning tilgjengelig ennå · 4 til faglig kontroll',
     ])
@@ -79,7 +81,7 @@ describe('oversikten', () => {
   })
 })
 
-describe('med pilotreglene', () => {
+describe('med reglene i appen', () => {
   it('sier at beregning ikke er tilgjengelig fordi faglig kontroll gjenstår, og henter ingenting', async () => {
     const user = userEvent.setup()
     const legemidler = lesing()
@@ -111,8 +113,21 @@ describe('med pilotreglene', () => {
     expect(screen.getByText(/Verktøyet har ikke dette virkestoffet/)).toBeTruthy()
     expect([...document.querySelectorAll('datalist option')].map((o) => o.getAttribute('value'))).not.toContain('Johannesurt')
     await user.clear(felt)
-    await user.type(felt, 'Agomelatin')
-    expect(screen.getByRole('status').textContent).toMatch(/Ikke støttet.*ingen regel/)
+    await user.type(felt, 'Dosulepin')
+    expect(screen.getByRole('status').textContent).toMatch(/Ikke støttet.*OUSFAR har ingen regel for nedtrapping av dosulepin\. Mangler anbefaling: /)
+  })
+
+  it('sier at faglig kontroll gjenstår for en nedtrappingsregel, og viser ikke skjemaet', async () => {
+    const user = userEvent.setup()
+    const legemidler = lesing()
+    vis({ verktoy: 'trappe-ned-antidepressiv', legemidler })
+    await user.type(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' }), 'Sertralin')
+    const status = screen.getByRole('status')
+    expect(within(status).getByRole('heading', { name: 'Beregning er ikke tilgjengelig' })).toBeTruthy()
+    expect(status.textContent).toMatch(/faglig kontroll av regelen gjenstår/)
+    expect(screen.queryByRole('textbox', { name: /Aktuell døgndose/ })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Beregn doseplan' })).toBeNull()
+    expect(legemidler.les).not.toHaveBeenCalled()
   })
 })
 

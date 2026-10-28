@@ -9,11 +9,19 @@
 import { KILDEFORMULERINGER, type Kildeformulering, type Virkestoffkartlegging } from './kartlegging'
 import { KARTLEGGING, virkestoffvalg, type Verktoy } from './register'
 import { godkjenningsfeil } from './regler/godkjenning'
-import type { Administrasjon, Forlop, Regel, Regelsett, Virkestoffvalg } from './regler/modell'
+import { dekningFor, DEKNINGSSTATUS } from './regler/dekning'
+import { REGELMODELLVERSJON, type Administrasjon, type Forlop, type Regel, type Regelsett, type Virkestoffvalg } from './regler/modell'
+import { NEDTRAPPINGSSETT } from './regler/nedtrapping'
 import { PILOTSETT } from './regler/pilotsett'
 
-/** Regelsettet appen bruker. */
-export const REGELSETT: Regelsett = PILOTSETT
+/** Regelsettet appen bruker: pilotsettet fra P4 og nedtrappingsreglene fra P7. */
+export const REGELSETT: Regelsett = {
+  id: 'ousfar-verktoy',
+  versjon: 1,
+  modell: REGELMODELLVERSJON,
+  beskrivelse: 'Reglene verktøyene i appen bruker: pilotsettet (P4) og nedtrappingsreglene for antidepressiva (P7).',
+  regler: [...PILOTSETT.regler, ...NEDTRAPPINGSSETT.regler],
+}
 
 /** Ett valgt virkestoff med formuleringen fra kildetabellen. */
 export interface Valgtvirkestoff {
@@ -111,7 +119,13 @@ export function tilgjengelighet(verktoy: Verktoy, valg: Verktoyvalg, regelsett: 
     return { status: 'til_kontroll', regler: tilKontroll, grunner: ['Beregning er ikke tilgjengelig fordi faglig kontroll av regelen gjenstår.'] }
   }
   const grunner = godkjente.flatMap((r) => beregningsfeil(r, valg))
-  return { status: 'ikke_stottet', regler: [], grunner: grunner.length > 0 ? grunner : ['OUSFAR har ingen regel for denne kombinasjonen.'] }
+  return { status: 'ikke_stottet', regler: [], grunner: grunner.length > 0 ? grunner : utenRegel(verktoy, valg) }
+}
+
+/** Hvorfor OUSFAR ikke har en regel: for nedtrapping grunnen i dekningen (P7.1), ellers at kombinasjonen mangler. */
+function utenRegel(verktoy: Verktoy, valg: Verktoyvalg): string[] {
+  const d = verktoy.type === 'seponering' && verktoy.tabell === 'SwitchAntidepressants' ? dekningFor(valg.fra.nokkel) : undefined
+  return d ? [`OUSFAR har ingen regel for nedtrapping av ${valg.fra.nokkel}. ${DEKNINGSSTATUS[d.status]}: ${d.grunn}`] : ['OUSFAR har ingen regel for denne kombinasjonen.']
 }
 
 /**

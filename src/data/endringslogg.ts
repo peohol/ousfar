@@ -12,6 +12,20 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.113.1',
+    dato: '2026-10-28',
+    sammendrag: 'Nedtrappingsregler for antidepressiva til faglig kontroll, og status for hvert virkestoff i verktøyet',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Trappe ned antidepressiv har fått regelutkast for nedtrapping til seponering av citalopram, sertralin, paroksetin, fluoksetin, fluvoksamin, venlafaksin, duloksetin og mirtazapin, og fagtekst for vortioksetin, agomelatin og bupropion. Reglene bygger på preparatomtalene og NICE-retningslinjen, ikke på Psychiatrienet.',
+      'Ingen av reglene er klinisk godkjent, så verktøyet viser fortsatt ingen doseplan; det sier at faglig kontroll gjenstår for disse virkestoffene.',
+      'For virkestoffene uten regel sier verktøyet hvorfor, for eksempel at det ikke finnes preparater eller norsk preparatomtale å bygge på, eller at de trisykliske antidepressivene venter på en faglig beslutning om hvordan de skal trappes ned.',
+      'Når en regel er godkjent, regnes bare doser som kan gis nøyaktig med norske preparater. Kan en dose ikke gis, stopper beregningen og viser de nærmeste dosene som finnes, i stedet for å runde av.',
+    ],
+  },
+  {
     versjon: '1.113.0',
     dato: '2026-10-28',
     sammendrag: 'Fagsider for kokain, MDMA og etanol, foreløpig uten faginnhold',
