@@ -6,14 +6,28 @@
  * i regelsettet, med godkjenningen kontrollert mot regelversjon og
  * fingeravtrykk (`godkjenningsfeil`), aldri etter et flagg i appen.
  */
+import { dekningFor, dekningstekst } from './dekning'
 import { KILDEFORMULERINGER, type Kildeformulering, type Virkestoffkartlegging } from './kartlegging'
 import { KARTLEGGING, virkestoffvalg, type Verktoy } from './register'
 import { godkjenningsfeil } from './regler/godkjenning'
-import type { Administrasjon, Forlop, Regel, Regelsett, Virkestoffvalg } from './regler/modell'
+import { REGELMODELLVERSJON, type Administrasjon, type Forlop, type Regel, type Regelsett, type Virkestoffvalg } from './regler/modell'
+import { NEDTRAPPINGSSETT } from './regler/nedtrapping'
 import { PILOTSETT } from './regler/pilotsett'
 
-/** Regelsettet appen bruker. */
-export const REGELSETT: Regelsett = PILOTSETT
+/** Regelsettene appen bruker: pilotsettet (P4) og nedtrappingsreglene (P7). Hver regel hører til ett av dem. */
+export const REGELSETTENE: readonly Regelsett[] = [PILOTSETT, NEDTRAPPINGSSETT]
+
+/** Alle reglene appen bruker, samlet så verktøyene kan slå opp i dem. */
+export const REGELSETT: Regelsett = {
+  id: 'ousfar-verktoy',
+  versjon: 1,
+  modell: REGELMODELLVERSJON,
+  beskrivelse: `Reglene i ${REGELSETTENE.map((s) => s.id).join(' og ')}.`,
+  regler: REGELSETTENE.flatMap((s) => s.regler),
+}
+
+/** Settet regelen hører til, så planen oppgir det settets id og versjon; ellers `regelsett`. */
+export const settFor = (r: Regel, regelsett: Regelsett = REGELSETT): Regelsett => REGELSETTENE.find((s) => s.regler.includes(r)) ?? regelsett
 
 /** Ett valgt virkestoff med formuleringen fra kildetabellen. */
 export interface Valgtvirkestoff {
@@ -111,7 +125,9 @@ export function tilgjengelighet(verktoy: Verktoy, valg: Verktoyvalg, regelsett: 
     return { status: 'til_kontroll', regler: tilKontroll, grunner: ['Beregning er ikke tilgjengelig fordi faglig kontroll av regelen gjenstår.'] }
   }
   const grunner = godkjente.flatMap((r) => beregningsfeil(r, valg))
-  return { status: 'ikke_stottet', regler: [], grunner: grunner.length > 0 ? grunner : ['OUSFAR har ingen regel for denne kombinasjonen.'] }
+  if (grunner.length > 0) return { status: 'ikke_stottet', regler: [], grunner }
+  const dekning = valg.til ? undefined : dekningFor(verktoy, valg.fra.nokkel)
+  return { status: 'ikke_stottet', regler: [], grunner: [dekning ? dekningstekst(dekning) : 'OUSFAR har ingen regel for denne kombinasjonen.'] }
 }
 
 /**

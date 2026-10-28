@@ -1,6 +1,7 @@
 /**
- * Kildene pilotreglene i P4 bygger på (`docs/verktøy-p4-regelmodell.md`):
- * norske preparatomtaler fra DMP, sentralt godkjente preparatomtaler fra EMA,
+ * Kildene reglene bygger på: pilotreglene i P4 (`docs/verktøy-p4-regelmodell.md`)
+ * og nedtrappingsreglene i P7 (`docs/verktøy-p7-nedtrapping.md`). Norske
+ * preparatomtaler fra DMP, sentralt godkjente preparatomtaler fra EMA,
  * NICE-retningslinjen for depresjon og primær- og oversiktslitteratur. Alle
  * ble hentet og lest 28.10.2026; kontrollsummen er av dokumentet slik det ble
  * hentet, så en ny revisjon kan oppdages før en regel kontrolleres på nytt.
@@ -49,6 +50,17 @@ export const KILDER: readonly Kilde[] = [
   preparatomtale('dmp-remeron', 'Remeron (mirtazapin) tabletter, preparatomtale', '1997-03657', 'Oppdatert 01.09.2021', '2026-10-28T03:37:07Z', '2bc89cecfe0b2a80a5633e770315971a2726f1bf4e5307d3bcd982c3584f0e54'),
   preparatomtale('dmp-seroquel', 'Seroquel (kvetiapin) tabletter, preparatomtale', '02-1435', 'Oppdatert 03.07.2024', '2026-10-28T03:32:53Z', '87e197ef056358d0bad84b80cf58c18c68e0846bbe3ab5f01e55d2519c30dde4'),
   preparatomtale('dmp-cisordinol', 'Cisordinol (zuklopentiksol) tabletter, preparatomtale', '0000-06778', 'Oppdatert 16.02.2026', '2026-10-28T03:37:09Z', 'e34ae0834fb63bb82fe32ec614c6319f0bcccbcc03dbf7e01dc5dd6d603739fe'),
+  preparatomtale('dmp-sarotex', 'Sarotex (amitriptylin) tabletter, preparatomtale', '0000-04328', 'Oppdatert 29.01.2025', '2026-10-28T14:26:09Z', '2ad8048952eddc499e0107aecb43cd54c66c09bbb210551d28e7f04e857b44cc'),
+  preparatomtale('dmp-anafranil', 'Anafranil (klomipramin) tabletter, preparatomtale', '0000-05467', 'Oppdatert 26.02.2026', '2026-10-28T14:26:12Z', '13399bacfb980808edd269c62ef9aba7f3fc4bd5f15eac61453f27b16bf32ba1'),
+  preparatomtale('dmp-noritren', 'Noritren (nortriptylin) tabletter, preparatomtale', '0000-04958', 'Oppdatert 20.06.2024', '2026-10-28T14:26:16Z', '1e72fa14b0c31b4177490defa59c6c1d419016166005c77643f7209129c8ffb8'),
+  preparatomtale('dmp-fevarin', 'Fevarin (fluvoksamin) tabletter, preparatomtale', '0000-07544', 'Oppdatert 09.02.2022', '2026-10-28T14:26:13Z', '657b31e95bc8e4a6ee8b6ab2cad34dc471a0bf33ae0254521b58ef53edfc836c'),
+  preparatomtale('dmp-seroxat', 'Seroxat (paroksetin) tabletter, preparatomtale', '0000-07840', 'Oppdatert 17.10.2025', '2026-10-28T14:26:17Z', 'feff7cc66006b17b8e3677298fc27ee45888e5c95628eb61118f5d38c746a57b'),
+  preparatomtale('dmp-efexor-depot', 'Efexor Depot (venlafaksin) depotkapsler, preparatomtale', '1997-04782', 'Oppdatert 07.01.2026', '2026-10-28T14:26:19Z', '78b5773e061d193ee1231369f65db2fb4b02b99f44eafd1dae92c24128d70805'),
+  preparatomtale('dmp-wellbutrin', 'Wellbutrin Retard (bupropion) tabletter med modifisert frisetting, preparatomtale', '06-3990', 'Oppdatert 23.07.2026', '2026-10-28T14:26:11Z', 'daf1073b4dddd933e46338e36bd839d5e68425bd7c44bc55df0264fce64e89d6'),
+  preparatomtale('dmp-aurorix', 'Aurorix (moklobemid) tabletter, preparatomtale', '0000-07547', 'Oppdatert 13.10.2023', '2026-10-28T14:26:14Z', '70238657f0f1c309b966e0be1eda0afce295b72b7012c4bce665a4805b286c84'),
+  epar('ema-cymbalta', 'Cymbalta (duloksetin), produktinformasjon', 'cymbalta', 'Sist endret 08.10.2026', '2026-10-28T14:26:29Z', 'a3b2a486f9b4069e76d38032cad9e45c893ee290991d9c0e8b3ea325ef1c101c'),
+  epar('ema-brintellix', 'Brintellix (vortioksetin), produktinformasjon', 'brintellix', 'Sist endret 08.10.2026', '2026-10-28T14:26:29Z', '39c9a9149ac76ca0fbe73df123a7c9f5de7dcd96ddbd144fa863659dff9cbf06'),
+  epar('ema-valdoxan', 'Valdoxan (agomelatin), produktinformasjon', 'valdoxan', 'Sist endret 08.10.2026', '2026-10-28T14:27:43Z', '33ae8627c3852425805dc277cb828c18efb7bf98fe5077cca57b1fea8b81318e'),
   epar('ema-abilify', 'Abilify (aripiprazol), produktinformasjon', 'abilify', 'Sist endret 08.10.2026', '2026-10-28T03:32:58Z', '48ec4699460ea38cacf1c891061adc75be0cb67e5657869eb4f756b4f121c005'),
   epar('ema-abilify-maintena', 'Abilify Maintena (aripiprazol depotinjeksjon), produktinformasjon', 'abilify-maintena', 'Sist endret 08.10.2026', '2026-10-28T03:30:15Z', '41ea025269b746fee63511b9edbf4ea222d53988b45b27fd317f27f82cafb4fe'),
   epar('ema-xeplion', 'Xeplion (paliperidonpalmitat depotinjeksjon), produktinformasjon', 'xeplion', 'Sist endret 08.10.2026', '2026-10-28T03:30:16Z', '2d38bdc767adb9ede103df61263cd780b613b64f4605afd38720f25f2e234f90'),

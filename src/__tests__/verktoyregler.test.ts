@@ -42,7 +42,7 @@ import {
   type Regelsett,
 } from '../verktoy/regler/modell'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
-import { lagRegelrapport, REGELRAPPORTFIL } from '../verktoy/regler/rapport'
+import { lagRegelrapport, REGELRAPPORTER } from '../verktoy/regler/rapport'
 
 const GRUNNLAG = lesKontrollgrunnlag()
 const regel = (id: string) => structuredClone(PILOTSETT.regler.find((r) => r.id === id)!)
@@ -671,8 +671,8 @@ describe('Reglene', () => {
     expect(ugyldig).toMatch(/merket klinisk godkjent, men ugyldig \(Regelen er endret etter godkjenningen/)
   })
 
-  it('rapporten er oppdatert', () => {
+  it.each(REGELRAPPORTER.map((r) => [r.fil, r] as const))('rapporten %s er oppdatert', (fil, r) => {
     const ny = 'Lag den på nytt med `npm run verktoy:regler -- rapport`.'
-    expect(readFileSync(new URL(`../../${REGELRAPPORTFIL}`, import.meta.url), 'utf8'), ny).toBe(lagRegelrapport())
+    expect(readFileSync(new URL(`../../${fil}`, import.meta.url), 'utf8'), ny).toBe(lagRegelrapport(r.sett, r))
   })
 })

@@ -6,7 +6,7 @@
  * verdiene har klinisk innhold.
  */
 import type { Legemiddelutvalg } from '../../legemiddeldata/lesing'
-import { KRYSSREGEL, depotregel, nedtrappingsregel, sp, syntetiskUtvalg, TESTAZAPIN, TESTOKSETIN, TESTPERIDON } from '../../verktoy/motor/syntetisk'
+import { KRYSSREGEL, depotregel, nedtrappingsregel, sp, syntetiskUtvalg, TESTAZAPIN, TESTOKSETIN, TESTPERIDON, type Testpreparat } from '../../verktoy/motor/syntetisk'
 import { KARTLEGGING } from '../../verktoy/register'
 import { fingeravtrykk } from '../../verktoy/regler/godkjenning'
 import type { Regel, Regelsett, Virkestoffvalg } from '../../verktoy/regler/modell'
@@ -17,10 +17,10 @@ export const TESTKOBLING = { testoksetin: 'escitalopram', testazapin: 'mirtazapi
 
 const festId = (nokkel: string) => KARTLEGGING.virkestoffer.find((v) => v.nokkel === nokkel)!.fest[0]!
 
-/** Erstatter testvirkestoffene med virkestoffene i kartleggingen, overalt i `x`. */
-function omkoble<T>(x: T, ider = false): T {
+/** Erstatter testvirkestoffene med virkestoffene i kartleggingen etter `kobling`, overalt i `x`. */
+function omkoble<T>(x: T, ider = false, kobling: Readonly<Record<string, string>> = TESTKOBLING): T {
   let tekst = JSON.stringify(x)
-  for (const [test, ekte] of Object.entries(TESTKOBLING)) {
+  for (const [test, ekte] of Object.entries(kobling)) {
     tekst = ider
       ? tekst.replaceAll(`ID_SYNTETISK-${test.toUpperCase()}"`, `${festId(ekte)}"`)
       : tekst.replaceAll(`"${test}"`, `"${ekte}"`)
@@ -75,6 +75,15 @@ export function testsett(...regler: Regel[]): Regelsett {
 /** Preparatene for testvirkestoffene i FESTs form, kontrollert `kontrollert_kl`. */
 export function testFest(kontrollert_kl: string | null = '2026-11-01T04:20:00Z', kildedato: string | null = '2026-10-15'): Legemiddelutvalg {
   return { ...omkoble(syntetiskUtvalg([...TESTOKSETIN, ...TESTAZAPIN, ...TESTPERIDON], { kontrollert_kl, kildedato }), true), kilde: 'FEST' }
+}
+
+/**
+ * Syntetiske preparater i FESTs form for et hvilket som helst virkestoff i
+ * kartleggingen: testoksetin-preparatene står for `nokkel`, så en ekte regel
+ * kan beregnes med preparater som bare finnes i testen.
+ */
+export function testFestFor(nokkel: string, preparater: readonly Testpreparat[], kontroll: Parameters<typeof syntetiskUtvalg>[1] = {}): Legemiddelutvalg {
+  return { ...omkoble(syntetiskUtvalg(preparater, kontroll), true, { testoksetin: nokkel }), kilde: 'FEST' }
 }
 
 /** Tidspunktet testene regner fra: samme dag som FEST-kopien er kontrollert. */

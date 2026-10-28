@@ -63,7 +63,7 @@ describe('oversikten', () => {
     const kort = screen.getAllByRole('link').filter((a) => a.classList.contains('verktoykort__lenke'))
     expect(kort.map((a) => a.getAttribute('href'))).toEqual(['#/verktoy/trappe-ned-antidepressiv', '#/verktoy/bytte-antidepressiv', '#/verktoy/bytte-antipsykotikum'])
     expect(kort.map((a) => a.querySelector('.verktoykort__status')?.textContent)).toEqual([
-      'Ingen beregning tilgjengelig ennå · 2 til faglig kontroll',
+      'Ingen beregning tilgjengelig ennå · 17 til faglig kontroll',
       'Ingen beregning tilgjengelig ennå · 2 til faglig kontroll',
       'Ingen beregning tilgjengelig ennå · 4 til faglig kontroll',
     ])
@@ -111,8 +111,8 @@ describe('med pilotreglene', () => {
     expect(screen.getByText(/Verktøyet har ikke dette virkestoffet/)).toBeTruthy()
     expect([...document.querySelectorAll('datalist option')].map((o) => o.getAttribute('value'))).not.toContain('Johannesurt')
     await user.clear(felt)
-    await user.type(felt, 'Agomelatin')
-    expect(screen.getByRole('status').textContent).toMatch(/Ikke støttet.*ingen regel/)
+    await user.type(felt, 'Dosulepin')
+    expect(screen.getByRole('status').textContent).toMatch(/Ikke støttet.*ingen preparater i FEST.*ingen regel for dosulepin/)
   })
 })
 

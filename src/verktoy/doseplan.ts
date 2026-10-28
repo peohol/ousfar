@@ -14,7 +14,7 @@ import { festFerskhet, formvalgSomTrengs, kliniskDoseplan, type Doseplaninndata,
 import { festkoblinger, KARTLEGGING } from './register'
 import type { Regel, Regelsett } from './regler/modell'
 import type { Formuleringsklasse } from './festformuleringer'
-import { medlemFor, REGELSETT, type Verktoyvalg } from './tilgjengelighet'
+import { medlemFor, REGELSETT, settFor, type Verktoyvalg } from './tilgjengelighet'
 
 /** Det forskriveren har fylt inn, slik feltene står. Tas vare på når appen oppdateres; planen gjør aldri det. */
 export interface Planskjema {
@@ -135,7 +135,7 @@ export function formvalgFor(r: Regel, valg: Verktoyvalg, skjema: Planskjema, utv
 
 /** Doseplanen, bare når den er klinisk; ellers en stopp med grunnene. */
 export function beregnPlan(r: Regel, valg: Verktoyvalg, skjema: Planskjema, utvalg: Legemiddelutvalg, naa: Date, regelsett: Regelsett = REGELSETT): Doseplanresultat {
-  return kliniskDoseplan(r, inndataFor(r, valg, skjema), grunnlagFor(r, valg, utvalg), { idag: osloDato(naa), naa: naa.toISOString(), fagtekst: [] }, regelsett)
+  return kliniskDoseplan(r, inndataFor(r, valg, skjema), grunnlagFor(r, valg, utvalg), { idag: osloDato(naa), naa: naa.toISOString(), fagtekst: [] }, settFor(r, regelsett))
 }
 
 /**

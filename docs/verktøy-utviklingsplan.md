@@ -56,8 +56,8 @@ Statusene er **Ikke startet / Pågår / Til faglig kontroll / Blokkert / Ferdig*
 | P3 | Komplett og lovlig kildeimport | Claude | ChatGPT (deknings- og stikkprøvekontroll) | Ferdig – godkjent 28.10.2026 | `docs/verktøy-p3-kildegrunnlag.md`, `docs/verktøy-p3-rettigheter.md`, PR #281 |
 | P4 | Faglig regelmodell og kontrollert pilotsett | Claude | **ChatGPT – sperrende** | Til faglig kontroll | `docs/verktøy-p4-regelmodell.md`, `docs/verktøy-p4-pilotsett.md`, PR #282 |
 | P5 | Felles dose- og planmotor med FEST | Claude | **ChatGPT – kliniske testtilfeller** | Ferdig – kontrollert 28.10.2026 | `docs/verktøy-p5-beregningsmotor.md`, `docs/verktøy-p5-testtilfeller.md`, PR #283 |
-| P6 | Meny, søk, ruter og felles planvisning | Claude | ChatGPT (produktkontroll) | Til produktkontroll | `src/verktoy/register.ts`, `src/components/verktoy/`, PR #284 |
-| P7 | Trappe ned antidepressiv | Claude | **ChatGPT – sperrende** | Ikke startet | – |
+| P6 | Meny, søk, ruter og felles planvisning | Claude | ChatGPT (produktkontroll) | Ferdig – kontrollert 28.10.2026 | `src/verktoy/register.ts`, `src/components/verktoy/`, PR #284 |
+| P7 | Trappe ned antidepressiv | Claude | **ChatGPT – sperrende** | Til faglig kontroll | `docs/verktøy-p7-nedtrapping.md`, `docs/verktøy-p7-dekning.md`, `docs/verktøy-p7-regelutkast.md`, PR #285 |
 | P8 | Bytte antidepressiv | Claude | **ChatGPT – sperrende** | Ikke startet | – |
 | P9 | Bytte antipsykotikum, peroralt | Claude | **ChatGPT – sperrende** | Ikke startet | – |
 | P10 | Depotantipsykotika og formuleringsovergang | Claude | **ChatGPT – sperrende** | Ikke startet | – |
@@ -225,13 +225,17 @@ Doseplanen (`src/verktoy/planvisning.ts`, `Doseplanvisning.tsx`) er en tabell me
 
 **Kildetekst:** Stop-anbefalingene brukes som kildegrunnlag for egne, godkjente regler; verktøyet viser aldri kildens tekst (avsnitt 1).
 
-- [ ] **P7.1** Bruk Stop-kildene for samtlige inkluderte antidepressiva og registrer regelstatus for hvert stoff.
-- [ ] **P7.2** Inndata: valgt stoff, gjeldende dose og valgfri startdato; etterspør preparat/formulering når doseberegningen krever det.
-- [ ] **P7.3** Generer dag-for-dag eller trinnvis plan helt til seponering, med konkret tilgjengelig dosebygging.
-- [ ] **P7.4** Kontroller typiske og utypiske startdoser, for rask nedtrapping, små sluttdoser og manglende norske styrker.
+- [x] **P7.1** Bruk Stop-kildene for samtlige inkluderte antidepressiva og registrer regelstatus for hvert stoff.
+- [x] **P7.2** Inndata: valgt stoff, gjeldende dose og valgfri startdato; etterspør preparat/formulering når doseberegningen krever det.
+- [x] **P7.3** Generer dag-for-dag eller trinnvis plan helt til seponering, med konkret tilgjengelig dosebygging.
+- [x] **P7.4** Kontroller typiske og utypiske startdoser, for rask nedtrapping, små sluttdoser og manglende norske styrker.
 - [ ] **P7.5** ChatGPT kontrollerer et representativt utvalg, inkludert minst én langvarig og én rask kildevariant, før klinisk publisering.
 
 **Akseptanse:** Alle inkluderte stoffer har dokumentert status: klinisk godkjent beregning, bare fagtekst eller ikke tilgjengelig. Verktøyet skal ikke late som dekningen er større.
+
+**Resultat (28.10.2026, til faglig kontroll):** Alle 23 antidepressiva i kildetabellen (uten johannesurt) har en status i `src/verktoy/dekning.ts` med Stop-oppføringen fra P3: 15 har en beregnbar regel under faglig kontroll, agomelatin bare fagtekst, fenelzin mangler anbefaling, og imipramin, tranylcypromin, trazodon, doksepin, dosulepin og maprotilin har en begrunnet begrensning (bare godkjenningsfritak, ingen preparatomtale eller ingen preparater i FEST). Matrisen står i `docs/verktøy-p7-dekning.md` (P7.1). De 14 nye regelutkastene og tekstregelen for agomelatin (`src/verktoy/regler/nedtrapping.ts`, `docs/verktøy-p7-regelutkast.md`) bygger på preparatomtalene (11 nye i kilderegisteret) og NICE, med et felles prinsipp der hvert OUSFAR-valg er et åpent forslag; Psychiatrienet står bare som referanse. Paroksetin følger studienedtrappingen i preparatomtalen som rask kildevariant, og klomipramin fra høye doser er den langvarige. Escitalopram dekkes av pilotregelen fra P4 (P7.2). Verktøyet bruker pilotsettet og P7-reglene sammen, gir aktuell dose og formulering til doseplanmotoren fra P5, og forklarer hvorfor et stoff uten regel ikke kan trappes ned. Planene ender med seponering, og et trinn som ikke kan gis nøyaktig, gir en forklart stopp med de nærmeste dosene, aldri et avvik uten godkjent toleranse (P7.3). Testene dekker vanlige og uvanlige startdoser, rask og langvarig nedtrapping, lave sluttdoser, delbare og ikke-delbare tabletter, dråper og mikstur, manglende norske styrker og fersk og foreldet FEST (P7.4). Faglige beslutninger før P4.8 og P7.5 står i `docs/verktøy-p7-nedtrapping.md` §7.
+
+**Kontroll:** `src/__tests__/verktoynedtrapping.test.ts` kontrollerer dekningen mot regelsettet, P3-kildeoppføringene og FEST-uttrekket, reglene ved grensene for startdose, varighet og lav dose, at ingen regel er godkjent og at hver viser til sin egen Stop-oppføring, sluttdosen mot laveste markedsførte styrke, doseplanene med syntetiske preparater, den kliniske sperren med regler godkjent bare i testen og at fortolkningen ikke bruker de nye reglene. `npm run verktoy:regler -- kontroll` kontrollerer begge regelsettene og alle regneeksemplene.
 
 ### P8 – Bytte antidepressiv
 
@@ -345,6 +349,8 @@ Før en oppgave eller fase krysses av:
 | 28.10.2026 | P5 godkjent | ChatGPT kontrollerte PR #283 på nytt og fant ingen gjenstående funn ([kontrollen](https://github.com/peohol/ousfar/pull/283#issuecomment-6469359107)); merget som 1.111.3. P5.10 og P5 er ferdige | P4.8 står fortsatt åpen; ingen regel er klinisk godkjent |
 | 28.10.2026 | P6.1–P6.9 | Verktøyregister, menyen med fanene Stoffregister og Verktøy, verktøy som trefftype i søket, adressene, de felles feltene, regelstatusen, doseplanvisningen med kopiering og utskrift, og den kliniske sperren, PR #284. Testene for motoren og reglene som forbød all bruk i appen er erstattet av `verktoyapp.test.ts`. `npm test` og `npm run build` grønne | Venter på ChatGPTs produktkontroll. Ingen regel er klinisk godkjent, så appen viser at beregning ikke er tilgjengelig. P4.8 står åpen |
 | 28.10.2026 | P6 rettet etter kontroll | Funnene fra Codex og ChatGPT rettet i PR #284: oversikten teller bare beregnbare regler, kopien har administrasjonsformen og «Kontroller» som skjermen, bare den siste beregningen vises, og valg som hørte til et annet virkestoff, en annen formulering eller en annen strategi tømmes. `npm test` (3842) og `npm run build` grønne | Venter på ny produktkontroll. Ingen regel er godkjent. P4.8 står åpen |
+| 28.10.2026 | P6 godkjent | ChatGPT fant ingen gjenstående funn i PR #284; merget som 1.112.0. P6 er ferdig | P4.8 står åpen; ingen regel er klinisk godkjent |
+| 28.10.2026 | P7.1–P7.4 | Dekning for alle 23 antidepressiva, 14 regelutkast og én tekstregel, kobling til verktøyet med forklarte stopp, 24 syntetiske tester, dekningsmatrise, regelrapport og notat, PR #285. `npm test` og `npm run build` grønne | Venter på uavhengig faglig kontroll (P7.5) og de faglige beslutningene i `docs/verktøy-p7-nedtrapping.md` §7. Ingen regel er klinisk godkjent, og verktøyet viser ingen doseplan. P4.8 står åpen |
 
 ## 8. Startoppdrag til Claude Code
 

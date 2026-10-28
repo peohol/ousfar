@@ -1,34 +1,42 @@
 /**
- * Regelmodellen og pilotsettet (P4) og doseplanmotoren (P5) for OUSFAR
+ * Regelmodellen og pilotsettet (P4), doseplanmotoren (P5) og nedtrappingsreglene (P7) for OUSFAR
  * Verktøy (`docs/verktøy-utviklingsplan.md`).
  *
- *   npm run verktoy:regler -- kontroll   Kontrollerer pilotsettet (kilder, grunnlag, godkjenning, regneeksempler)
- *   npm run verktoy:regler -- rapport    docs/verktøy-p4-pilotsett.md
+ *   npm run verktoy:regler -- kontroll   Kontrollerer regelsettene (kilder, grunnlag, godkjenning, regneeksempler)
+ *   npm run verktoy:regler -- rapport    docs/verktøy-p4-pilotsett.md, docs/verktøy-p7-regelutkast.md og docs/verktøy-p7-dekning.md
  *   npm run verktoy:regler -- motorrapport   docs/verktøy-p5-testtilfeller.md (doseplanmotoren, syntetiske data)
  *
  * Skriptet henter ingenting, skriver ikke til databasen og godkjenner ingen regel.
  */
 import { writeFileSync } from 'node:fs'
+import { DEKNINGSRAPPORTFIL, lagDekningsrapport } from '../src/verktoy/dekningsrapport'
 import { kontrollerRegelsett } from '../src/verktoy/regler/kontroll'
-import { PILOTSETT } from '../src/verktoy/regler/pilotsett'
-import { lagRegelrapport, REGELRAPPORTFIL } from '../src/verktoy/regler/rapport'
+import { lagRegelrapport, REGELRAPPORTER } from '../src/verktoy/regler/rapport'
 import { lagMotorrapport, MOTORRAPPORTFIL } from '../src/verktoy/motor/rapport'
 
+const skriv = (fil: string, innhold: string) => {
+  writeFileSync(new URL(`../${fil}`, import.meta.url), innhold)
+  console.log(`→ ${fil}`)
+}
+
 async function kontroll() {
-  const feil = kontrollerRegelsett(PILOTSETT)
-  for (const f of feil) console.error(`✗ ${f}`)
-  console.log(feil.length === 0 ? `✓ ${PILOTSETT.regler.length} regler uten feil` : `${feil.length} feil`)
-  if (feil.length > 0) process.exit(1)
+  let antall = 0
+  for (const { sett } of REGELRAPPORTER) {
+    const feil = kontrollerRegelsett(sett)
+    for (const f of feil) console.error(`✗ ${sett.id}: ${f}`)
+    console.log(feil.length === 0 ? `✓ ${sett.id}: ${sett.regler.length} regler uten feil` : `${sett.id}: ${feil.length} feil`)
+    antall += feil.length
+  }
+  if (antall > 0) process.exit(1)
 }
 
 async function rapport() {
-  writeFileSync(new URL(`../${REGELRAPPORTFIL}`, import.meta.url), lagRegelrapport())
-  console.log(`→ ${REGELRAPPORTFIL}`)
+  for (const r of REGELRAPPORTER) skriv(r.fil, lagRegelrapport(r.sett, r))
+  skriv(DEKNINGSRAPPORTFIL, lagDekningsrapport())
 }
 
 async function motorrapport() {
-  writeFileSync(new URL(`../${MOTORRAPPORTFIL}`, import.meta.url), lagMotorrapport())
-  console.log(`→ ${MOTORRAPPORTFIL}`)
+  skriv(MOTORRAPPORTFIL, lagMotorrapport())
 }
 
 const [kommando] = process.argv.slice(2).filter((a) => a !== '--')

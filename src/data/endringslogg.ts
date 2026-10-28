@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.112.1',
+    dato: '2026-10-28',
+    sammendrag: 'Regelutkast for nedtrapping av antidepressiva, til faglig kontroll',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Trappe ned antidepressiv har fått utkast til nedtrappingsregler for 14 antidepressiva, bygd på preparatomtalene og NICE-retningslinjen, og en tekstregel for agomelatin, som ikke trenger nedtrapping. Ingen er klinisk godkjent, så verktøyet sier fortsatt at faglig kontroll gjenstår, og viser ingen doseplan.',
+      'For antidepressiva uten regel forklarer verktøyet hvorfor, for eksempel at stoffet ikke har preparater i FEST, bare finnes med godkjenningsfritak eller mangler kildegrunnlag.',
+      'Når reglene er godkjent, ender planen alltid med seponering. Kan et trinn ikke gis nøyaktig med norske preparater, stopper beregningen og viser de nærmeste dosene i stedet for å avvike fra regelen.',
+    ],
+  },
+  {
     versjon: '1.112.0',
     dato: '2026-10-28',
     sammendrag: 'Verktøy for nedtrapping og bytte i menyen og søket, foreløpig uten beregning',
