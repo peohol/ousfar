@@ -1,5 +1,5 @@
 {
-  "oppdatert_kl": "2026-10-28T09:29:09.994Z",
+  "oppdatert_kl": "2026-10-28T15:28:20.407Z",
   "malt_kl": "2026-10-27T22:26:02.816Z",
   "antall": {
     "klar": 95,
@@ -155,6 +155,12 @@
           "grunn": "Stoffet har ingen publisert fagside å kuratere.",
           "kl": "2026-10-14T04:50:43.758Z",
           "kilde": "system"
+        },
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
+          "kl": "2026-10-28T15:28:20.407Z",
+          "kilde": "system"
         }
       ]
     },
@@ -166,6 +172,12 @@
           "grunn": "Stoffet har ingen publisert fagside å kuratere.",
           "kl": "2026-10-14T04:50:43.758Z",
           "kilde": "system"
+        },
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
+          "kl": "2026-10-28T15:28:20.407Z",
+          "kilde": "system"
         }
       ]
     },
@@ -176,6 +188,12 @@
           "kode": "uten_fagside",
           "grunn": "Stoffet har ingen publisert fagside å kuratere.",
           "kl": "2026-10-14T04:50:43.758Z",
+          "kilde": "system"
+        },
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
+          "kl": "2026-10-28T15:28:20.407Z",
           "kilde": "system"
         }
       ]
