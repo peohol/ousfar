@@ -40,20 +40,20 @@ Bestemt 27.10.2026 (kontrollen av PR #281): **OUSFAR skal aldri vise Psychiatrie
 
 OUSFAR lagrer bare det som trengs for å gjenfinne, kontrollere og følge med på hver anbefaling:
 
-- **Hvor den står:** tabell, rad og kolonne (og cellen i en undertabell), og adressen. For tabellene: radene, kolonnene og gruppene med kildens koder og legemiddelnavn, og hver celles koordinater og lenke. Ikke lenketitler, lenketekster eller fotnoter.
+- **Hvor den står:** tabell, rad og kolonne (og cellen i en undertabell), og adressen. For tabellene: radene, kolonnene og gruppene med kildens koder og legemiddelnavn, og hver celles koordinater og lenke. Ikke lenketitler, lenketekster eller fotnoter, verken i P3-arkivet eller i P1-bildene (`psychiatrienet-tabeller.json`, `psychiatrienet-lenker.json`).
 - **Hvilken versjon:** MediaWiki-revisjonen, tidspunktet kilden lagret siden, og tidspunktet OUSFAR hentet den (UTC).
 - **Kontrollsummer:** SHA-256 av hele innholdet og av selve anbefalingen, som normalisert tekst. Når noen senere leser siden hos kilden, viser kontrollsummen om teksten er den samme som den OUSFAR registrerte. Hver ny innhenting sammenligner kontrollsummene og viser hva som er endret.
 - **Hva siden selv sier den gjelder:** bare legemiddelnavnene i «Switch medication from A to B», «Adding B to A» eller «Stop A», så retningen kan kontrolleres mot tabellen.
 - **Hva slags avsnitt** siden har (stopp, start, informasjon), uten overskriftene, og **navnene i faktaboksene**, også gruppemedlemmene siden oppgir.
 
-Tabellstrukturen lagres fordi den er selve kildehenvisningen: uten koordinatene og lenkene kan en senere regel ikke vise nøyaktig hvilken anbefaling den bygger på, og en endring i kilden kan ikke oppdages. P1 har allerede publisert den samme strukturen (`src/data/verktoy/psychiatrienet-tabeller.json`, nå uten fotnoter). Hvis utgiveren ber om det, kan arkivet flyttes ut av det offentlige repoet uten endringer i resten av modellen.
+Tabellstrukturen lagres fordi den er selve kildehenvisningen: uten koordinatene og lenkene kan en senere regel ikke vise nøyaktig hvilken anbefaling den bygger på, og en endring i kilden kan ikke oppdages. P1 har allerede publisert den samme strukturen (`src/data/verktoy/psychiatrienet-tabeller.json`, nå uten fotnoter, lenketitler og lenketekster). Alle tre datasettene har en fast liste over tillatte felt (`src/verktoy/kildefelt.ts`); skriptene kontrollerer dataene mot den før de skriver, og testene kontrollerer filene i repoet. Ingen av skriptene skriver sidene til disk, heller ikke midlertidig. Hvis utgiveren ber om det, kan arkivet flyttes ut av det offentlige repoet uten endringer i resten av modellen.
 
 Det som **kan gå tapt** med denne løsningen, er selve teksten hvis Psychiatrienet endrer eller fjerner en side. Vi vil da vite at den er endret og hvilken versjon vi hadde, men ikke kunne lese den gamle teksten. To ting kan lukke det hullet:
 
 1. **Tillatelse fra De Tijdstroom** til å lagre sidene i et lukket, ikke-offentlig arkiv (utkast til henvendelse under). Kontrollsummene viser da at den lagrede teksten er den som ble registrert.
 2. **En offentlig nettarkivkopi** (Internet Archive). Den ble ikke prøvd: tjenesten var ikke tilgjengelig fra miljøet OUSFAR utvikles i (27.10.2026), og å be et nettarkiv kopiere hele samlingen bør vurderes sammen med tillatelsen.
 
-**Kjent forhold:** den første versjonen av arkivet i PR #281 hadde avsnittsoverskrifter (f.eks. «More information»), lenketitler og én fotnote fra kilden. De er fjernet, og PR-en slås sammen som én endring, så de kommer ikke inn i hovedgrenen; de finnes bare i PR-ens historikk på GitHub.
+**Kjent forhold:** den første versjonen av arkivet i PR #281 hadde avsnittsoverskrifter (f.eks. «More information»), lenketitler og én fotnote fra kilden, og P1-bildet (slått sammen i PR #279) hadde lenketitlene (f.eks. «Combining-Aripiprazole-Lithium»), lenketekstene (kodene, f.eks. «ArLi») og den samme fotnoten. Alt er fjernet i PR #281. Det som ble slått sammen med P1, finnes fortsatt i historikken til hovedgrenen; det som bare var i PR #281, finnes bare i PR-ens historikk. Historikken skrives ikke om.
 
 ## Utkast til henvendelse til utgiveren
 
@@ -73,7 +73,7 @@ Til: info@tijdstroom.nl. Bør sendes av den faglig ansvarlige for OUSFAR, med na
 > 2. for permission to store copies of the switch-table pages in a closed, non-public archive, solely to document which version of each recommendation our clinical reviewers have assessed; and
 > 3. for permission to use the switch tables systematically as one basis for our own clinically reviewed rules, always with a reference and a link to the original page.
 >
-> We would not publish the tables or the texts. We are happy to describe the tool in more detail, to follow any conditions you set, and to report errors we find in the tables (for instance links that no longer work).
+> To be transparent: the table structure (which combinations have a recommendation, with the cell coordinates and links to your pages, and the drug names and codes used in the tables) is already published as metadata in our public repository. The full clinical recommendation texts are not published and will not be. We do not consider this question legally settled, and we will move or remove the metadata if you ask us to. We are happy to describe the tool in more detail, to follow any conditions you set, and to report errors we find in the tables (for instance links that no longer work).
 >
 > Kind regards,
 > [name, position, institution]

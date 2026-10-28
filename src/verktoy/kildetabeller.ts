@@ -1,6 +1,8 @@
 /**
  * Psychiatrienets tre switchtabeller, lest som struktur: radene, kolonnene,
- * cellene og gruppene, ikke anbefalingstekstene.
+ * cellene og gruppene med kildens koder og legemiddelnavn. Ingen annen tekst
+ * fra kilden tas med, heller ikke lenketekster, lenketitler eller fotnoter
+ * (`docs/verktøy-p3-rettigheter.md`).
  *
  * Tabellene er MediaWiki-sider med én `<table class="switchtable">`. Første
  * rad har kolonnekodene, og hver rad etter den har koden og navnet til
@@ -49,15 +51,11 @@ export interface Tabellakse {
   navn: string | null
 }
 
-export type Celle =
-  | { rad: string; kolonne: string; type: 'lenke'; href: string; tittel: string | null; tekst: string }
-  | { rad: string; kolonne: string; type: 'tom'; tekst: string }
-
 /**
- * En celle slik kildearkivet tar vare på den (P3): koordinatene og lenken,
- * uten lenketeksten eller -tittelen fra kilden.
+ * En celle: koordinatene og lenken. Lenketeksten og -tittelen fra kilden tas
+ * ikke med (`docs/verktøy-p3-rettigheter.md`).
  */
-export type Arkivcelle = { rad: string; kolonne: string; type: 'lenke'; href: string } | { rad: string; kolonne: string; type: 'tom' }
+export type Celle = { rad: string; kolonne: string; type: 'lenke'; href: string } | { rad: string; kolonne: string; type: 'tom' }
 
 /** En gruppe kilden behandler som én rad og kolonne, f.eks. «Rest AP». */
 export interface Kildegruppe {
@@ -69,8 +67,6 @@ export interface Kildegruppe {
 /** En switchtabell; `I` er en annen identitet for en undertabell på en kildeside (P3). */
 export interface Switchtabell<I extends string = Tabell_id> {
   id: I
-  /** Overskriften på siden. */
-  tittel: string
   /** Hva radene og kolonnene står for, slik tabellen sier det («from», «to»). */
   radetikett: string
   kolonneetikett: string
@@ -103,10 +99,9 @@ function attributt(tag: string, navn: string): string | null {
   return m ? tekst(m[1]!) : null
 }
 
-function lenker(html: string): { href: string | null; tittel: string | null; tekst: string }[] {
+function lenker(html: string): { href: string | null; tekst: string }[] {
   return [...html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)].map((m) => ({
     href: attributt(m[1]!, 'href'),
-    tittel: attributt(m[1]!, 'title'),
     tekst: tekst(m[2]!),
   }))
 }
@@ -182,9 +177,9 @@ export function lesSwitchtabell<I extends string = Tabell_id>(id: I, html: strin
       const t = tekst(c.html)
       if (c.tag !== 'td') feil(id, `cellen ${kode}→${kolonne} er en overskrift`)
       if (l.length === 1 && l[0]!.href) {
-        alle.push({ rad: kode, kolonne, type: 'lenke', href: l[0]!.href, tittel: l[0]!.tittel, tekst: l[0]!.tekst })
+        alle.push({ rad: kode, kolonne, type: 'lenke', href: l[0]!.href })
       } else if (l.length === 0 && (t === '—' || t === '')) {
-        alle.push({ rad: kode, kolonne, type: 'tom', tekst: t })
+        alle.push({ rad: kode, kolonne, type: 'tom' })
       } else {
         feil(id, `cellen ${kode}→${kolonne} er verken én lenke eller tom («${t}»)`)
       }
@@ -196,11 +191,9 @@ export function lesSwitchtabell<I extends string = Tabell_id>(id: I, html: strin
   const radnavn = new Map(tabellrader.map((r) => [r.kode, r.navn]))
   const merkede = kolonner.map((k) => ({ kode: k.kode, navn: radnavn.get(k.kode) ?? null }))
 
-  const tittel = tekst(/<b>([\s\S]*?)<\/b>/.exec(innledning)?.[1] ?? '')
   const etiketter = hode.slice(0, 2).map((c) => tekst(c.html).replace(/[↓→]/g, '').trim())
   return {
     id,
-    tittel,
     radetikett: etiketter[0] ?? '',
     kolonneetikett: etiketter[1] ?? '',
     rader: tabellrader,
@@ -234,21 +227,9 @@ export function lesKildeside(href: string, status: number, endelig: string | nul
   }
 }
 
-/**
- * En switchtabell slik kildearkivet tar vare på den (P3): bare det som trengs
- * for å finne igjen hver anbefaling (aksene, gruppene og cellenes koordinater
- * og lenker), ingen tekst fra kilden utover koder og navn
- * (`docs/verktøy-p3-rettigheter.md`).
- */
-export type Arkivtabell = Pick<Switchtabell<string>, 'radetikett' | 'kolonneetikett' | 'rader' | 'kolonner' | 'grupper'> & { celler: Arkivcelle[] }
+/** En switchtabell slik kildearkivet tar vare på den (P3), uten identiteten og revisjonen, som arkivet har selv. */
+export type Arkivtabell = Omit<Switchtabell<string>, 'id' | 'revisjon' | 'lagret'>
 
-export function arkivtabell(t: Switchtabell<string>): Arkivtabell {
-  return {
-    radetikett: t.radetikett,
-    kolonneetikett: t.kolonneetikett,
-    rader: t.rader,
-    kolonner: t.kolonner,
-    grupper: t.grupper,
-    celler: t.celler.map((c) => (c.type === 'lenke' ? { rad: c.rad, kolonne: c.kolonne, type: 'lenke', href: c.href } : { rad: c.rad, kolonne: c.kolonne, type: 'tom' })),
-  }
+export function arkivtabell({ id: _id, revisjon: _r, lagret: _l, ...t }: Switchtabell<string>): Arkivtabell {
+  return t
 }

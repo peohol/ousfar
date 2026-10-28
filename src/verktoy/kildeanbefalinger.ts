@@ -19,18 +19,13 @@ import { navnenokkel } from '../domain/sokenavn'
 import { erSperret, identitet, utelatt, type Kildeformulering, type Virkestoffkartlegging } from './kartlegging'
 import type { Kildearkiv, Sideversjon, Tabellversjon, Uttrekk } from './kildearkiv'
 import { utsnitt } from './kildearkiv'
-import { KILDETABELLER, PSYCHIATRIENET, type Arkivcelle, type Celle, type Tabell_id } from './kildetabeller'
+import { KILDETABELLER, PSYCHIATRIENET, type Celle, type Tabell_id } from './kildetabeller'
 
 /** Hvor dypt innhentingen følger undertabeller på kildesidene (paliperidondepotene er ett nivå). */
 export const UNDERTABELLDYBDE = 2
 
-/** En celle fra kilden (med lenketittelen) eller fra arkivet (bare lenken). */
-type Kildecelle = Celle | Arkivcelle
-type Lenkecelle = Extract<Kildecelle, { type: 'lenke' }>
-type Celletabell = { id: Tabell_id; celler: readonly Kildecelle[] }
-
-/** Lenken, eller lenketittelen når kilden gir den, nevner johannesurt. */
-const sperret = (k: Virkestoffkartlegging, c: Lenkecelle) => erSperret(k, c.href) || ('tittel' in c && erSperret(k, c.tittel ?? ''))
+type Lenkecelle = Extract<Celle, { type: 'lenke' }>
+type Celletabell = { id: Tabell_id; celler: readonly Celle[] }
 
 /* --- Hva som skal hentes ---------------------------------------------------- */
 
@@ -39,7 +34,7 @@ export function importceller(k: Virkestoffkartlegging, t: Celletabell): Lenkecel
   return t.celler
     .filter((c): c is Lenkecelle => c.type === 'lenke')
     .filter((c) => utelatt(k, t.id, c.rad) === null && utelatt(k, t.id, c.kolonne) === null)
-    .filter((c) => !sperret(k, c))
+    .filter((c) => !erSperret(k, c.href))
 }
 
 /** Lenkene i tabellene som skal hentes, og kildens egen side der tabellen lenker feil (`kjente_lenkeavvik`). */
@@ -53,7 +48,7 @@ export function importmalForTabeller(k: Virkestoffkartlegging, tabeller: readonl
 export function undertabellmal(k: Virkestoffkartlegging, side: Sideversjon | Pick<Sideversjon, 'innhold'>): string[] {
   const t = side.innhold?.undertabell
   if (!t) return []
-  return t.celler.filter((c): c is Lenkecelle => c.type === 'lenke' && !sperret(k, c)).map((c) => c.href)
+  return t.celler.filter((c): c is Lenkecelle => c.type === 'lenke' && !erSperret(k, c.href)).map((c) => c.href)
 }
 
 /* --- Oppføringene ----------------------------------------------------------- */
@@ -284,7 +279,7 @@ export function kildegrunnlag(arkiv: Kildearkiv, k: Virkestoffkartlegging, nr?: 
         celler.set(id, c.rad === c.kolonne ? 'diagonal' : 'ingen_anbefaling')
         continue
       }
-      if (sperret(k, c)) {
+      if (erSperret(k, c.href)) {
         celler.set(id, 'ekskludert')
         continue
       }
@@ -305,7 +300,7 @@ export function kildegrunnlag(arkiv: Kildearkiv, k: Virkestoffkartlegging, nr?: 
           celler.set(uid, u.rad === u.kolonne ? 'diagonal' : 'ingen_anbefaling')
           continue
         }
-        if (sperret(k, u)) {
+        if (erSperret(k, u.href)) {
           celler.set(uid, 'ekskludert')
           continue
         }

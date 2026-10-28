@@ -23,6 +23,7 @@ import {
   type Sideinnhenting,
 } from '../verktoy/kildearkiv'
 import { importceller, importmalForTabeller, kildedekning, kildegrunnlag } from '../verktoy/kildeanbefalinger'
+import { feltfeil, KILDEFELT, kontrollerKildefelt, type Kildedatasett } from '../verktoy/kildefelt'
 import { erForbigaende, ForbigaendeFeil, hentKilde } from '../verktoy/kildehenting'
 import { lesKildeinnhold } from '../verktoy/kildeside'
 import { KILDERAPPORTFIL, lagKilderapport } from '../verktoy/kilderapport'
@@ -182,11 +183,27 @@ describe('Hentingen av en kildeside', () => {
     expect(f.kall).toHaveBeenCalledTimes(3)
   })
 
-  it('skriver bare arkivet og rapporten til disk, aldri sidene selv', () => {
-    const skript = readFileSync(new URL('../../scripts/verktoy-kildeimport.ts', import.meta.url), 'utf8')
-    expect(skript).not.toMatch(/mellomlager|mkdirSync|appendFileSync|createWriteStream|copyFileSync/)
-    expect([...skript.matchAll(/writeFileSync\(([^,]+),/g)].map((m) => m[1]!.trim())).toEqual(['ARKIV', 'new URL(`../${KILDERAPPORTFIL}`'])
-    expect(skript).toMatch(/hentKilde\(/)
+  /** Hva et skript skriver til disk: første argument til hver `writeFileSync`. */
+  const skriverTil = (skript: string) => [...skript.matchAll(/writeFileSync\(([^,]+),/g)].map((m) => m[1]!.trim())
+  const skript = (navn: string) => readFileSync(new URL(`../../scripts/${navn}`, import.meta.url), 'utf8')
+
+  it.each(['verktoy-kildeimport.ts', 'verktoy-kartlegging.ts'])('%s henter sidene med hentKilde og har ingen mellomlagring på disk', (navn) => {
+    expect(skript(navn)).not.toMatch(/mellomlager|mkdirSync|appendFileSync|createWriteStream|copyFileSync|existsSync\(`/)
+    expect(skript(navn)).toMatch(/hentKilde\(/)
+    expect(skript(navn)).not.toMatch(/\bfetch\((url|`\$\{PSYCHIATRIENET)/)
+  })
+
+  it('P3 skriver bare arkivet, etter feltkontrollen, og rapporten', () => {
+    const s = skript('verktoy-kildeimport.ts')
+    expect(skriverTil(s)).toEqual(['ARKIV', 'new URL(`../${KILDERAPPORTFIL}`'])
+    expect(s.indexOf("kontrollerKildefelt('psychiatrienet-kildearkiv.json', arkiv)")).toBeLessThan(s.indexOf('writeFileSync(ARKIV'))
+  })
+
+  it('P1 skriver bare bildene i src/data/verktoy, etter feltkontrollen, og rapporten', () => {
+    const s = skript('verktoy-kartlegging.ts')
+    expect(skriverTil(s)).toEqual(['fil(navn)', 'new URL(`../${RAPPORTFIL}`'])
+    const skriv = s.slice(s.indexOf('const skriv = '), s.indexOf('writeFileSync(fil(navn)'))
+    expect(skriv).toMatch(/kontrollerKildefelt\(/)
   })
 })
 
@@ -404,103 +421,39 @@ describe('Kildegrunnlaget fra Psychiatrienet', () => {
 })
 
 describe('Rettighetene og skillet mot regler', () => {
-  /**
-   * Hvert felt arkivet har lov til å ha, og hva slags verdi det kan ha. Et
-   * nytt felt i arkivet må legges til her med vilje, etter en vurdering mot
-   * `docs/verktøy-p3-rettigheter.md`. `navn` er koder og navn fra kilden
-   * (virkestoffer, grupper, sidetitler), aldri en setning.
-   */
-  type Verdi = 'tall' | 'tid' | 'sha' | 'adresse' | 'lenke' | 'kode' | 'navn' | 'egen'
-  const AKSER = (p: string): Record<string, Verdi> => ({
-    [`${p}.radetikett`]: 'navn',
-    [`${p}.kolonneetikett`]: 'navn',
-    [`${p}.rader[].kode`]: 'kode',
-    [`${p}.rader[].navn`]: 'navn',
-    [`${p}.kolonner[].kode`]: 'kode',
-    [`${p}.kolonner[].navn`]: 'navn',
-    [`${p}.grupper[].navn`]: 'navn',
-    [`${p}.grupper[].href`]: 'lenke',
-    [`${p}.grupper[].medlemmer[].navn`]: 'navn',
-    [`${p}.grupper[].medlemmer[].href`]: 'lenke',
-    [`${p}.celler[].rad`]: 'kode',
-    [`${p}.celler[].kolonne`]: 'kode',
-    [`${p}.celler[].type`]: 'kode',
-    [`${p}.celler[].href`]: 'lenke',
-  })
-  const ARKIVFELT: Record<string, Verdi> = {
-    om: 'egen',
-    'uttrekk[].nr': 'tall',
-    'uttrekk[].startet': 'tid',
-    'uttrekk[].ferdig': 'tid',
-    'uttrekk[].leser': 'tall',
-    'tabeller[].tabell': 'kode',
-    'tabeller[].url': 'adresse',
-    'tabeller[].hentet': 'tid',
-    'tabeller[].sha256': 'sha',
-    'tabeller[].revisjon': 'tall',
-    'tabeller[].lagret': 'tid',
-    'tabeller[].forst_sett': 'tall',
-    'tabeller[].sist_sett': 'tall',
-    ...AKSER('tabeller[]'),
-    'sider[].href': 'lenke',
-    'sider[].url': 'adresse',
-    'sider[].hentet': 'tid',
-    'sider[].status': 'tall',
-    'sider[].endelig': 'adresse',
-    'sider[].leser': 'tall',
-    'sider[].forst_sett': 'tall',
-    'sider[].sist_sett': 'tall',
-    'sider[].innhold': 'egen',
-    'sider[].innhold.overskrift': 'navn',
-    'sider[].innhold.revisjon': 'tall',
-    'sider[].innhold.lagret': 'tid',
-    'sider[].innhold.sha256_side': 'sha',
-    'sider[].innhold.sha256_anbefaling': 'sha',
-    'sider[].innhold.sidetype': 'kode',
-    'sider[].innhold.retning': 'egen',
-    'sider[].innhold.retning.fra': 'navn',
-    'sider[].innhold.retning.til': 'navn',
-    'sider[].innhold.avsnitt[]': 'kode',
-    'sider[].innhold.legemidler[].navn': 'navn',
-    'sider[].innhold.legemidler[].href': 'lenke',
-    'sider[].innhold.legemidler[].medlemmer[].navn': 'navn',
-    'sider[].innhold.legemidler[].medlemmer[].href': 'lenke',
-    'sider[].innhold.undertabell': 'egen',
-    ...AKSER('sider[].innhold.undertabell'),
-  }
-  const FORM: Record<Verdi, (x: unknown) => boolean> = {
-    tall: (x) => typeof x === 'number' && Number.isInteger(x),
-    tid: (x) => typeof x === 'string' && /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$/.test(x),
-    sha: (x) => typeof x === 'string' && /^[0-9a-f]{64}$/.test(x),
-    adresse: (x) => typeof x === 'string' && /^https:\/\/psychiatrienet\.nl\/\S*$/.test(x),
-    // Også kildens egne lenker til wikien, f.eks. til en side som ikke finnes.
-    lenke: (x) => typeof x === 'string' && /^(\/|https?:\/\/([a-z]+\.)?psychiatrienet\.nl\/)\S+$/.test(x),
-    kode: (x) => typeof x === 'string' && /^[A-Za-z_]{1,40}$/.test(x),
-    // Et navn er kort og har ingen setningsskille.
-    navn: (x) => typeof x === 'string' && x.length <= 60 && !/[.:;!?](\s|$)/.test(x),
-    egen: () => true,
-  }
+  const DATASETT = Object.keys(KILDEFELT) as Kildedatasett[]
+  const fil = (navn: Kildedatasett): unknown => JSON.parse(readFileSync(new URL(`../data/verktoy/${navn}`, import.meta.url), 'utf8'))
 
-  /** Felt som ikke er tillatt, eller har en verdi av feil form, i `x` (som ligger på `sti` i arkivet). */
-  const feltfeil = (x: unknown, sti = '', feil: string[] = []): string[] => {
-    if (Array.isArray(x)) x.forEach((y) => feltfeil(y, `${sti}[]`, feil))
-    else if (x && typeof x === 'object') for (const [n, y] of Object.entries(x)) feltfeil(y, sti ? `${sti}.${n}` : n, feil)
-    else if (!ARKIVFELT[sti]) feil.push(`${sti}: ikke et tillatt felt`)
-    else if (x !== null && !FORM[ARKIVFELT[sti]](x)) feil.push(`${sti}: ${JSON.stringify(x).slice(0, 80)} er ikke ${ARKIVFELT[sti]}`)
-    return feil
-  }
-
-  it('har bare de tillatte feltene i arkivet, med verdier av riktig form', () => {
-    expect([...new Set(feltfeil(ARKIV))]).toEqual([])
+  it('dekker alle de offentlige kildedatasettene fra Psychiatrienet', () => {
+    const iRepoet = readdirSync(new URL('../data/verktoy/', import.meta.url)).filter((n) => n.startsWith('psychiatrienet-'))
+    expect(iRepoet.sort()).toEqual([...DATASETT].sort())
   })
 
-  it('oppdager et felt som ikke er tillatt, og en setning i et navnefelt', () => {
+  it.each(DATASETT)('%s har bare de tillatte feltene, med verdier av riktig form', (navn) => {
+    expect([...new Set(feltfeil(KILDEFELT[navn], fil(navn)))]).toEqual([])
+    expect(() => kontrollerKildefelt(navn, fil(navn))).not.toThrow()
+  })
+
+  it('stopper et felt som ikke er tillatt, og en setning i et navnefelt, i alle datasettene', () => {
     const side = utsnitt(ARKIV).sider.get('/switchdetail/agomelatine-amitriptyline')!
     const med = (endring: Partial<NonNullable<Sideinnhenting['innhold']>> & Record<string, unknown>) =>
-      feltfeil({ ...side, innhold: { ...side.innhold!, ...endring } }, 'sider[]').map((f) => f.split(':')[0])
+      feltfeil(KILDEFELT['psychiatrienet-kildearkiv.json'], { ...side, innhold: { ...side.innhold!, ...endring } }, 'sider[]').map((f) => f.split(':')[0])
     expect(med({})).toEqual([])
     expect(med({ tekst: 'Day 1: stop.' })).toEqual(['sider[].innhold.tekst'])
     expect(med({ overskrift: 'Stop gradually. Then start.' })).toEqual(['sider[].innhold.overskrift'])
+    // P1: lenketitler, lenketekst og fotnoter, slik den første P1-versjonen lagret dem.
+    const p1 = structuredClone(DATA.tabeller) as unknown as { tabeller: Record<string, unknown>[] }
+    const t = p1.tabeller[0]!
+    ;(t.celler as Record<string, unknown>[])[1] = { ...(t.celler as Record<string, unknown>[])[1], tittel: 'Combining-Aripiprazole-Lithium', tekst: 'ArLi' }
+    t.fotnoter = ['LA = long acting']
+    t.tittel = 'Combining Moodstabilizers'
+    expect(() => kontrollerKildefelt('psychiatrienet-tabeller.json', p1)).toThrow(/ikke er tillatt/)
+    expect(new Set(feltfeil(KILDEFELT['psychiatrienet-tabeller.json'], p1).map((f) => f.split(':')[0]))).toEqual(
+      new Set(['tabeller[].celler[].tittel', 'tabeller[].celler[].tekst', 'tabeller[].fotnoter[]', 'tabeller[].tittel']),
+    )
+    const lenker = structuredClone(DATA.lenker)
+    lenker.sider[0] = { ...lenker.sider[0]!, overskrift: 'Stop gradually. Then start.' }
+    expect(() => kontrollerKildefelt('psychiatrienet-lenker.json', lenker)).toThrow(/overskrift/)
   })
 
   it('brukes ikke av appen: bare verktøymodulene og testene leser kildearkivet', () => {
@@ -515,7 +468,7 @@ describe('Rettighetene og skillet mot regler', () => {
     const rot = new URL('../', import.meta.url).pathname
     gaa(rot)
     const brukere = filer
-      .filter((f) => /psychiatrienet-kildearkiv|verktoy\/kilde(arkiv|anbefalinger|henting|rapport|side)/.test(readFileSync(f, 'utf8')))
+      .filter((f) => /psychiatrienet-kildearkiv|verktoy\/kilde(arkiv|anbefalinger|felt|henting|rapport|side)/.test(readFileSync(f, 'utf8')))
       .map((f) => f.slice(rot.length))
       .filter((f) => !f.startsWith('verktoy/') && !f.startsWith('__tests__/'))
     expect(brukere).toEqual([])

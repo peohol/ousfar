@@ -3,8 +3,7 @@
  * (P1 i `docs/verktøy-utviklingsplan.md`), og rapporten.
  *
  *   npm run verktoy:kartlegging -- tabeller            Psychiatrienets tre switchtabeller
- *   npm run verktoy:kartlegging -- lenker [--mellomlager <mappe>]
- *                                                     Om hver lenket side finnes (én om gangen)
+ *   npm run verktoy:kartlegging -- lenker             Om hver lenket side finnes (én om gangen)
  *   npm run verktoy:kartlegging -- fest [<fil.zip>]   Preparatene i FEST (laster ned uten fil)
  *   npm run verktoy:kartlegging -- fagsider           Publiserte fagsider i produksjon (bare lesing;
  *                                                     krever VITE_SUPABASE_URL og SUPABASE_SECRET_KEY)
@@ -12,16 +11,19 @@
  *
  * Bildene står i `src/data/verktoy/`. Selve kartleggingen
  * (`virkestoffkartlegging.json`) skrives for hånd; `npm test` sier fra når den
- * ikke stemmer med bildene. Ingenting her skriver til databasen eller henter
- * anbefalingstekstene; det er P3.
+ * ikke stemmer med bildene. Ingenting her skriver til databasen. Sidene hos
+ * Psychiatrienet leses bare i minnet og skrives aldri til disk, og bildene av
+ * dem kontrolleres mot de tillatte feltene før de skrives
+ * (`src/verktoy/kildefelt.ts`), så ingen tekst fra kilden kommer med.
  */
 import { createHash } from 'node:crypto'
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { readFileSync, writeFileSync } from 'node:fs'
 import { lesFest } from '../src/legemiddeldata/fest'
 import { FEST_URL } from '../src/legemiddeldata/synk'
 import { pakkUt } from '../src/legemiddeldata/zip'
 import { lagFestformuleringer } from '../src/verktoy/festformuleringer'
+import { kontrollerKildefelt, type Kildedatasett } from '../src/verktoy/kildefelt'
+import { hentKilde } from '../src/verktoy/kildehenting'
 import { KILDETABELLER, lesKildeside, lesSwitchtabell, PSYCHIATRIENET, tabelladresse } from '../src/verktoy/kildetabeller'
 import type { Fagsidebilde, Lenkebilde, Tabellbilde, Virkestoffkartlegging } from '../src/verktoy/kartlegging'
 import { lagRapport, RAPPORTFIL } from '../src/verktoy/rapport'
@@ -29,26 +31,19 @@ import { lagRapport, RAPPORTFIL } from '../src/verktoy/rapport'
 const MAPPE = new URL('../src/data/verktoy/', import.meta.url)
 const fil = (navn: string) => new URL(navn, MAPPE)
 const skriv = (navn: string, data: unknown) => {
+  if (navn.startsWith('psychiatrienet-')) kontrollerKildefelt(navn as Kildedatasett, data)
   writeFileSync(fil(navn), `${JSON.stringify(data, null, 1)}\n`)
   console.log(`→ src/data/verktoy/${navn}`)
 }
 const les = <T>(navn: string): T => JSON.parse(readFileSync(fil(navn), 'utf8')) as T
 const nå = () => new Date().toISOString().replace(/\.\d+Z$/, 'Z')
-const vent = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
-/** Høflig mot en liten nettside: ett kall om gangen, med pause. */
+/** Høflig mot en liten nettside: ett kall om gangen, med pause. Forbigående feil prøves på nytt eller stopper kjøringen. */
 const PAUSE_MS = 300
-
-async function hent(url: string): Promise<{ status: number; endelig: string; html: string }> {
-  for (let forsok = 1; ; forsok++) {
-    try {
-      const svar = await fetch(url, { redirect: 'follow' })
-      return { status: svar.status, endelig: svar.url, html: await svar.text() }
-    } catch (e) {
-      if (forsok >= 4) throw e
-      await vent(2000 * 2 ** forsok)
-    }
-  }
+async function hent(url: string) {
+  const svar = await hentKilde(url)
+  await new Promise((r) => setTimeout(r, PAUSE_MS))
+  return svar
 }
 
 async function tabeller() {
@@ -60,12 +55,11 @@ async function tabeller() {
     const start = html.indexOf('<table class="switchtable"')
     const sha256 = createHash('sha256').update(html.slice(start, html.indexOf('</table>', start))).digest('hex')
     tabeller.push({ ...lesSwitchtabell(t.id, html), url, sha256 })
-    await vent(PAUSE_MS)
   }
   skriv('psychiatrienet-tabeller.json', { hentet: nå(), tabeller } satisfies Tabellbilde)
 }
 
-async function lenker(mellomlager: string | null) {
+async function lenker() {
   const bilde = les<Tabellbilde>('psychiatrienet-tabeller.json')
   const hrefs = [
     ...new Set(
@@ -75,18 +69,9 @@ async function lenker(mellomlager: string | null) {
       ]),
     ),
   ].sort()
-  if (mellomlager) mkdirSync(mellomlager, { recursive: true })
   const sider = []
   for (const [i, href] of hrefs.entries()) {
-    const navn = mellomlager && join(mellomlager, href.replace(/^\/switchdetail\//, '').replace(/[^A-Za-z0-9._-]/g, '_'))
-    let svar: { status: number; endelig: string; html: string }
-    if (navn && existsSync(`${navn}.json`)) {
-      svar = JSON.parse(readFileSync(`${navn}.json`, 'utf8'))
-    } else {
-      svar = await hent(`${PSYCHIATRIENET}${href}`)
-      if (navn) writeFileSync(`${navn}.json`, JSON.stringify(svar))
-      await vent(PAUSE_MS)
-    }
+    const svar = await hent(`${PSYCHIATRIENET}${href}`)
     sider.push(lesKildeside(href, svar.status, svar.endelig, svar.html))
     if ((i + 1) % 100 === 0) console.log(`${i + 1}/${hrefs.length}`)
   }
@@ -149,13 +134,9 @@ async function rapport() {
 }
 
 const [kommando, ...resten] = process.argv.slice(2).filter((a) => a !== '--')
-const valg = (navn: string) => {
-  const i = resten.indexOf(navn)
-  return i >= 0 ? resten[i + 1] ?? null : null
-}
 const kommandoer: Record<string, () => Promise<void> | void> = {
   tabeller,
-  lenker: () => lenker(valg('--mellomlager')),
+  lenker,
   fest: () => fest(resten.find((a) => !a.startsWith('--'))),
   fagsider,
   rapport,

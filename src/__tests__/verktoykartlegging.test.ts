@@ -41,19 +41,22 @@ describe('Lesingen av en switchtabell', () => {
   const godeRader = `<tr><th>Aa</th><th>Alfa</th><td> — </td><td><a href="/switchdetail/a-b" title="A-B">AaBb</a></td><td><a href="/switchdetail/stop-a">Aa–</a></td></tr>
     <tr><th>Bb</th><th>Beta &amp; co</th><td><a href="/switchdetail/b-a">BbAa</a></td><td> — </td><td> — </td></tr>`
 
-  it('gir rader, kolonner, celler, grupper og revisjon, men ikke fotnotene', () => {
+  it('gir rader, kolonner, celler, grupper og revisjon, men ikke fotnoter, lenketitler eller lenketekst', () => {
     const t = lesSwitchtabell('SwitchAntipsychotics', side(godeRader))
     expect(t.radetikett).toBe('from')
     expect(t.kolonneetikett).toBe('to')
     expect(t.rader).toEqual([{ kode: 'Aa', navn: 'Alfa' }, { kode: 'Bb', navn: 'Beta & co' }])
     expect(t.kolonner).toEqual([{ kode: 'Aa', navn: 'Alfa' }, { kode: 'Bb', navn: 'Beta & co' }, { kode: 'Stop', navn: null }])
     expect(t.celler).toHaveLength(6)
-    expect(t.celler[1]).toEqual({ rad: 'Aa', kolonne: 'Bb', type: 'lenke', href: '/switchdetail/a-b', tittel: 'A-B', tekst: 'AaBb' })
+    expect(t.celler[1]).toEqual({ rad: 'Aa', kolonne: 'Bb', type: 'lenke', href: '/switchdetail/a-b' })
+    expect(t.celler[0]).toEqual({ rad: 'Aa', kolonne: 'Aa', type: 'tom' })
     expect(t.celler.filter((c) => c.type === 'tom').map((c) => `${c.rad}${c.kolonne}`)).toEqual(['AaAa', 'BbBb', 'BbStop'])
     expect(t.grupper).toEqual([
       { navn: 'Gruppe', href: '/switchdetail/gruppe', medlemmer: [{ navn: 'A1', href: '/switchdetail/a1' }, { navn: 'A2', href: '/switchdetail/a2' }] },
     ])
     expect(t).not.toHaveProperty('fotnoter')
+    expect(t).not.toHaveProperty('tittel')
+    expect(JSON.stringify(t)).not.toMatch(/"A-B"|AaBb|long acting/)
     expect(t.revisjon).toBe(10641)
     expect(t.lagret).toBe('2026-01-29T01:10:06Z')
   })

@@ -10,7 +10,8 @@
  * sidene for johannesurt eller Start-kolonnen. Sidene leses i minnet og
  * skrives aldri til disk; arkivet får bare det `src/verktoy/kildeside.ts` og
  * `arkivtabell` leser av dem, ingen anbefalingstekst
- * (`docs/verktøy-p3-rettigheter.md`). Vedvarer en forbigående serverfeil,
+ * (`docs/verktøy-p3-rettigheter.md`), og arkivet kontrolleres mot de tillatte
+ * feltene før det skrives (`src/verktoy/kildefelt.ts`). Vedvarer en forbigående serverfeil,
  * stopper innhentingen uten å skrive noe (`src/verktoy/kildehenting.ts`).
  * Skriptet skriver ikke til databasen og endrer ingen regel.
  */
@@ -18,6 +19,7 @@ import { createHash } from 'node:crypto'
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { registrerInnhenting, TOMT_ARKIV, type Kildearkiv, type Sideinnhenting, type Tabellinnhenting } from '../src/verktoy/kildearkiv'
 import { importmalForTabeller, undertabellmal, UNDERTABELLDYBDE } from '../src/verktoy/kildeanbefalinger'
+import { kontrollerKildefelt } from '../src/verktoy/kildefelt'
 import { hentKilde } from '../src/verktoy/kildehenting'
 import { LESERVERSJON, lesKildeinnhold } from '../src/verktoy/kildeside'
 import { arkivtabell, KILDETABELLER, lesSwitchtabell, PSYCHIATRIENET, tabelladresse, type Switchtabell } from '../src/verktoy/kildetabeller'
@@ -39,7 +41,6 @@ async function hentAlt() {
   const k = JSON.parse(readFileSync(KARTLEGGING, 'utf8')) as Virkestoffkartlegging
 
   const tabeller: Tabellinnhenting[] = []
-  // Hele tabellene, med lenketitlene, bare for å velge hva som skal hentes; arkivet får `arkivtabell`.
   const lest: Switchtabell[] = []
   for (const t of KILDETABELLER) {
     const url = tabelladresse(t.id)
@@ -83,6 +84,7 @@ async function hentAlt() {
   // Tidsrommet sidene faktisk ble hentet i.
   const tider = [...tabeller, ...sider].map((x) => x.hentet).sort()
   const { arkiv, endringer } = registrerInnhenting(forrige, { startet: tider[0]!, ferdig: tider.at(-1)!, leser: LESERVERSJON, tabeller, sider })
+  kontrollerKildefelt('psychiatrienet-kildearkiv.json', arkiv)
   writeFileSync(ARKIV, `${JSON.stringify(arkiv, null, 1)}\n`)
   console.log(`→ src/data/verktoy/psychiatrienet-kildearkiv.json (uttrekk ${arkiv.uttrekk.at(-1)!.nr}, ${sider.length} sider)`)
   for (const type of ['ny', 'endret', 'forsvunnet'] as const) {
