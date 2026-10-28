@@ -472,6 +472,16 @@ og logikken står i `src/legemiddeldata/interaksjoner.ts`.
 Eksempler fra filen 08.09.2026: amitriptylin 21 bør unngås og 36 forholdsregler,
 kvetiapin 38 og 12, karbamazepin 180 og 169.
 
+## Bruk i OUSFAR Verktøy
+
+Doseplanmotoren i OUSFAR Verktøy (P5) bruker de samme dataene som
+`les_legemidler` gir, uten egen import. Den leser styrken, delingen,
+preparattypen og markedsstatusen per merkevare og regner bare med det FEST
+sier uttrykkelig: uklar deling er ikke deling, og en styrke oppgitt for et salt
+regnes ikke om (`src/verktoy/motor/byggesteiner.ts`,
+`docs/verktøy-p5-beregningsmotor.md`). Endres lesingen av disse feltene i
+`fest.ts`, må motorens prøver kjøres også.
+
 ## Hull og begrensninger
 
 - **Klinisk innhold** (dosering, referanseområder, farmakokinetikk,

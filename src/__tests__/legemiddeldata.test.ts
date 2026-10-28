@@ -34,6 +34,8 @@ import {
   UTDRAG,
 } from './hjelp/fest'
 import { faginnholdskall, feilFra, nyDatabase, opprettBruker } from './hjelp/testdatabase'
+import { beregnDoseplan, festFerskhet } from '../verktoy/motor/plan'
+import { fastDose } from '../verktoy/motor/syntetisk'
 
 async function* biter(tekst: string, storrelse = 997): AsyncGenerator<string> {
   for (let i = 0; i < tekst.length; i += storrelse) yield tekst.slice(i, i + storrelse)
@@ -277,6 +279,19 @@ describe('synkroniseringen', () => {
     expect(data.merkevarer).toHaveLength(11)
     expect(data.virkestoff.map((v) => v.navn)).toContain('Amitriptylin')
     expect(data.pakninger.length).toBeGreaterThan(0)
+  })
+
+  it('gir doseplanmotoren data i et format den godtar', async () => {
+    await synk(UTDRAG)
+    const data = await lesAmitriptylin()
+    const naa = new Date(Date.parse(data.kontrollert_kl!) + 60_000)
+    expect(festFerskhet(data, naa)).toEqual([])
+    // En syntetisk testregel uten klinisk innhold: bare formatet prøves, og planen er aldri klinisk.
+    const r = beregnDoseplan(fastDose([50], undefined, 'amitriptylin'), { startdose_mg: 1, formvalg: { fra: { klasse: 'peroral' } } }, { utvalg: data, koblinger: { amitriptylin: [AMITRIPTYLIN] }, overstyringer: [] }, { idag: naa.toISOString().slice(0, 10), naa: naa.toISOString() })
+    expect(r.fest).toEqual({ kilde: 'FEST', kildedato: '2026-09-08T03:09:06', kontrollert_kl: data.kontrollert_kl, statusdato: naa.toISOString().slice(0, 10) })
+    // Planen beregnes med preparatene fra FEST; den sperres bare fordi regelen er syntetisk og ikke godkjent.
+    expect(r).toMatchObject({ status: 'doseplan', klinisk: false, sperre: ['Regelen er en syntetisk testregel.', 'Regelversjonen er utkast, ikke klinisk godkjent.'] })
+    expect(r.status === 'doseplan' && r.forlop[0]!.perioder.map((p) => p.mg)).toEqual([50])
   })
 
   it('finner et preparat som peker på saltet i stedet for moderstoffet', async () => {

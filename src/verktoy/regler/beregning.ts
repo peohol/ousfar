@@ -557,15 +557,20 @@ function periodetekst(p: Periode): string {
   return `${dager}${parentes(dato)}: ${mg(p.mg)} mg`
 }
 
+/** Når injeksjonen gis: `dag 8`, eller for vedlikehold intervallet og første gang (`hver måned fra 1 måned etter dag 8`). */
+export function injeksjonstidspunkt(i: Pick<Injeksjon, 'dag' | 'vedlikehold'>): string {
+  const v = i.vedlikehold
+  if (!v) return `dag ${i.dag}`
+  const hver = v.maaneder === 1 ? 'hver måned' : `hver ${v.maaneder}. måned`
+  return `${hver} fra ${v.maaneder} ${v.maaneder === 1 ? 'måned' : 'måneder'} etter dag ${v.etter_dag}`
+}
+
 function injeksjonstekst(i: Injeksjon): string {
   const vindu = i.vindu_dager ? `±${i.vindu_dager} dager` : undefined
   const sted = i.sted ? `, ${i.sted}` : ''
-  if (!i.vedlikehold) return `dag ${i.dag}${parentes(i.dato && norskDato(i.dato), vindu)}: ${mg(i.mg)} mg injeksjon${sted}`
-  const v = i.vedlikehold
-  const hver = v.maaneder === 1 ? 'hver måned' : `hver ${v.maaneder}. måned`
-  const forste = `fra ${v.maaneder} ${v.maaneder === 1 ? 'måned' : 'måneder'} etter dag ${v.etter_dag}`
-  const tidligst = v.tidligst_dager ? `, tidligst ${v.tidligst_dager} dager etter forrige` : ''
-  return `${hver} ${forste}${parentes(v.forste_dato && norskDato(v.forste_dato), vindu)}${tidligst}: ${mg(i.mg)} mg injeksjon${sted}`
+  const dato = i.vedlikehold ? i.vedlikehold.forste_dato : i.dato
+  const tidligst = i.vedlikehold?.tidligst_dager ? `, tidligst ${i.vedlikehold.tidligst_dager} dager etter forrige` : ''
+  return `${injeksjonstidspunkt(i)}${parentes(dato && norskDato(dato), vindu)}${tidligst}: ${mg(i.mg)} mg injeksjon${sted}`
 }
 
 /** Hvert forløp som korte linjer (`dag 1–14: 10 mg`), eller `stopp` med grunnene. */
