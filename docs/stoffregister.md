@@ -43,7 +43,8 @@ databasen har. Registeret hentes på nytt når fanen blir synlig igjen.
 
 ## Helsiden
 
-`#/stoffregister`, lenket fra bunnen av sidemenyen, er bygd som fagsidene: en
+`#/stoffregister`, lenket fra bunnen av fanen Stoffregister i sidemenyen (den
+andre fanen er Verktøy, se `docs/verktøy-utviklingsplan.md`, P6), er bygd som fagsidene: en
 seksjon per kategori, underkategoriene som mellomtitler og et detaljkort per
 stoff, i et rutenett med like brede kort (`.skuffrutenett`, som
 farmakodynamikk-kortene). Lukket viser kortet navnet og begynnelsen på

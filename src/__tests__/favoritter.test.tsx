@@ -101,7 +101,7 @@ function visApp() {
 }
 
 function menyen() {
-  return screen.getByRole('navigation', { name: 'Stoffregister' })
+  return screen.getByRole('navigation', { name: 'Meny' })
 }
 
 function favorittskuffen() {
@@ -117,7 +117,7 @@ describe('favorittskuffen i stoffregisteret', () => {
   it('står lukket mellom bryteren og den første kategorien, og sier hvordan en favoritt legges til', async () => {
     const user = userEvent.setup()
     visApp()
-    await user.click(screen.getByRole('button', { name: 'Vis stoffregisteret' }))
+    await user.click(screen.getByRole('button', { name: 'Vis menyen' }))
     const skuff = favorittskuffen()
     expect(skuff.getAttribute('aria-expanded')).toBe('false')
     expect(skuff.textContent).toContain('0')
@@ -149,7 +149,7 @@ describe('stjernen på fagsiden', { timeout: 20_000 }, () => {
     expect(screen.getByRole('button', { name: 'Fjern fra favoritter' })).toBeTruthy()
     await waitFor(() => expect(databasen.favoritter).toEqual(['bupropion']))
 
-    await user.click(screen.getByRole('button', { name: 'Vis stoffregisteret' }))
+    await user.click(screen.getByRole('button', { name: 'Vis menyen' }))
     await user.click(favorittskuffen())
     const lenke = within(favorittene()).getByRole('link', { name: /^Bupropion/ })
     expect(lenke.getAttribute('href')).toBe('#/stoff/bupropion')
@@ -169,7 +169,7 @@ describe('stjernen på fagsiden', { timeout: 20_000 }, () => {
     visApp()
     await screen.findByRole('button', { name: 'Fjern fra favoritter' })
 
-    await user.click(screen.getByRole('button', { name: 'Vis stoffregisteret' }))
+    await user.click(screen.getByRole('button', { name: 'Vis menyen' }))
     await user.click(favorittskuffen())
     // Alfabetisk, som resten av menyen.
     expect(within(favorittene()).getAllByRole('link').map((a) => a.getAttribute('href'))).toEqual([

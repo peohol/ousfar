@@ -12,6 +12,20 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.112.0',
+    dato: '2026-10-28',
+    sammendrag: 'Verktøy for nedtrapping og bytte i menyen og søket, foreløpig uten beregning',
+    typer: ['Funksjonalitet', 'Design / layout'],
+    omfang: 'Moderat omfang',
+    gjelder: ['hele appen'],
+    punkter: [
+      'Sidemenyen har fått to faner, Stoffregister og Verktøy. Stoffregisteret er som før; piltastene bytter fane, og Ctrl + M åpner menyen på fanen du sist brukte.',
+      'De tre verktøyene Trappe ned antidepressiv, Bytte antidepressiv og Bytte antipsykotikum har egne sider med egne lenker, og søket viser dem som egne treff øverst når du søker på navnet eller ord som «nedtrapping», «kryssnedtrapping» og «depot».',
+      'Velger du virkestoff, viser verktøyet om en doseplan kan beregnes. Ingen av reglene er klinisk godkjent ennå, så verktøyene sier at beregning ikke er tilgjengelig fordi faglig kontroll gjenstår, eller at kombinasjonen ikke er støttet.',
+      'Når en regel er godkjent, ber verktøyet om dose, eventuell måldose, startdato og formulering, og viser planen dag for dag med doser, tablettstyrker og deling, depotinjeksjoner, advarsler, kilder og versjoner. Planen kan kopieres og skrives ut, og må beregnes på nytt når noe endres eller appen oppdateres.',
+    ],
+  },
+  {
     versjon: '1.111.3',
     dato: '2026-10-28',
     sammendrag: 'Beregning av doseplaner med preparater som finnes i FEST, til faglig kontroll',

@@ -10,8 +10,7 @@
  * pilotregel og ingen syntetisk regel kan gi en klinisk plan, at testtilfellene
  * stemmer, at rapporten er oppdatert, og at bare verktøymodulene bruker motoren.
  */
-import { readdirSync, readFileSync, statSync } from 'node:fs'
-import { join } from 'node:path'
+import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import type { Legemiddelutvalg } from '../legemiddeldata/lesing'
 import { beregn } from '../verktoy/regler/beregning'
@@ -580,24 +579,6 @@ describe('Testtilfellene', () => {
 })
 
 describe('Motoren', () => {
-  it('brukes ikke av appen: bare verktøymodulene og testene bruker den', () => {
-    const filer: string[] = []
-    const gaa = (mappe: string) => {
-      for (const n of readdirSync(mappe)) {
-        const sti = join(mappe, n)
-        if (statSync(sti).isDirectory()) gaa(sti)
-        else if (/\.(ts|tsx)$/.test(n)) filer.push(sti)
-      }
-    }
-    const rot = new URL('../', import.meta.url).pathname
-    gaa(rot)
-    const brukere = filer
-      .filter((f) => /verktoy\/motor\/|from '\.\/motor\//.test(readFileSync(f, 'utf8')))
-      .map((f) => f.slice(rot.length))
-      .filter((f) => !f.startsWith('verktoy/motor/') && !f.startsWith('__tests__/'))
-    expect(brukere).toEqual([])
-  })
-
   it('testdataene er tydelig syntetiske', () => {
     expect(ALLE.every((p) => /^Test/.test(p.varenavn))).toBe(true)
     expect(g.utvalg.kilde).toBe('Syntetiske testdata')

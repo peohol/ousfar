@@ -1,5 +1,6 @@
 /**
- * Sidemenyen — stoffregisteret — fra Atlas (`SideMenu`): én skuff per
+ * Sidemenyen fra Atlas (`SideMenu`), med to faner: Stoffregister og Verktøy.
+ * Stoffregisteret har én skuff per
  * farmakologisk kategori, med «Vis underkategorier» som bryter fast øverst og
  * «Ny stoffside» for redaktørene fast nederst. Menyknappen står først i
  * toppmenyen (`toppmeny.css`). Filteret for søket i fortolkningen
@@ -68,7 +69,7 @@
   outline: none;
 }
 
-/* Tittelen i serif til venstre, lukkeknappen i motsatt hjørne. */
+/* Fanene til venstre, lukkeknappen i motsatt hjørne. */
 .sidemeny__topp {
   flex: none;
   display: flex;
@@ -77,16 +78,61 @@
   padding: var(--rom-7) var(--rom-6) var(--rom-5);
 }
 
-.sidemeny__tittel {
+/* To faner som en delt pille: den valgte står på den hevede flaten, med
+   navnet i serif som tittelen før. */
+.sidemeny__faner {
   display: flex;
-  align-items: center;
-  gap: var(--rom-3);
   flex: 1;
+  gap: var(--rom-1);
+  min-width: 0;
+  padding: var(--rom-1);
+  background: var(--flate-bunn);
+  border: var(--kant) solid var(--linje);
+  border-radius: var(--runding-pille);
+}
+
+.sidemeny__fanevalg {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: var(--rom-2);
+  min-width: 0;
+  min-height: var(--hoyde-kontroll);
+  padding: 0 var(--rom-4);
   font-family: var(--skrift-display);
-  font-size: var(--tekst-seksjon);
+  font-size: var(--tekst-ingress);
   font-weight: var(--vekt-medium);
   line-height: var(--linjehoyde-tett);
+  color: var(--blekk-dempet);
+  background: transparent;
+  border: 0;
+  border-radius: var(--runding-pille);
+  cursor: pointer;
+  transition:
+    background-color var(--fart-rask) var(--kurve),
+    color var(--fart-rask) var(--kurve);
+}
+
+.sidemeny__fanevalg:hover {
   color: var(--blekk);
+}
+
+.sidemeny__fanevalg[aria-selected='true'] {
+  color: var(--blekk);
+  background: var(--flate-hevet);
+}
+
+/* Innholdet i en fane fyller resten av panelet, som før fanene kom. */
+.sidemeny__fane {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.sidemeny__fane[hidden] {
+  display: none;
 }
 
 .sidemeny__lukk {
@@ -127,13 +173,6 @@
 .menyfavoritter .menyskuff__inner {
   max-height: 40dvh;
   overflow-y: auto;
-}
-
-/* Ikonet foran tittelen i serif, på linje med den. */
-.sidemeny__tittelikon {
-  flex: none;
-  width: var(--ikon-panel);
-  height: var(--ikon-panel);
 }
 
 /* Ikonet foran hver skuff: kategoriens, eller stjernen foran «Favoritter». */
@@ -393,4 +432,53 @@
 .menyhelside:hover,
 .menyhelside:focus-visible {
   color: var(--aksent);
+}
+
+/* --- Verktøyene ----------------------------------------------------------------
+   Hvert verktøy som en rad med ikonet, navnet i serif og hva det gjør under. */
+.menyverktoy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--rom-2);
+  min-height: 0;
+  margin: 0;
+  overflow-y: auto;
+  padding: var(--rom-2) var(--rom-4) var(--rom-4);
+  border-top: var(--kant) solid var(--linje);
+}
+
+.menyverktoy__lenke {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--rom-3);
+  padding: var(--rom-4);
+  text-decoration: none;
+  border-radius: var(--runding-underkort);
+  transition: background-color var(--fart-rask) var(--kurve);
+}
+
+.menyverktoy__lenke:hover {
+  background: var(--flate-hevet);
+}
+
+.menyverktoy__tekst {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-1);
+  min-width: 0;
+}
+
+.menyverktoy__navn {
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-ingress);
+  font-weight: var(--vekt-medium);
+  line-height: 1.25;
+  color: var(--blekk);
+}
+
+.menyverktoy__beskrivelse {
+  font-size: var(--tekst-etikett);
+  line-height: var(--linjehoyde-lesing);
+  color: var(--blekk-dempet);
 }

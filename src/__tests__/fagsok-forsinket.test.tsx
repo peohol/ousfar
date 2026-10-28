@@ -44,7 +44,7 @@ describe('fagsøket mens treffene henger etter feltet', () => {
     const felt = screen.getByRole('combobox', { name: 'Søk i fagstoffet' })
     await user.click(felt)
     await user.keyboard('sertralin')
-    const liste = screen.getByRole('listbox', { name: 'Treff i fagstoff' })
+    const liste = screen.getByRole('listbox', { name: 'Treff i søket' })
     expect(within(liste).getAllByRole('option')[0]!.getAttribute('aria-selected')).toBe('true')
 
     // Nytt søk skrives, men treffene viser fortsatt «sertralin».

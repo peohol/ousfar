@@ -130,7 +130,7 @@ function visApp() {
 
 /** Fortolkningen, synlig eller skjult. */
 function fortolkningen(): HTMLElement {
-  return document.querySelector('main.scene:not(.scene--infoside):not(.scene--sokeside)')!
+  return document.querySelector('main.scene[data-fortolkning]')!
 }
 
 /** Stoffsiden, når den står åpen. */
@@ -176,11 +176,13 @@ describe('sidemenyen', { timeout: 20_000 }, () => {
   it('er stoffregisteret, og lenker hvert stoff til stoffsiden etter nøkkelen, med kodene som sekundær tekst', async () => {
     const user = userEvent.setup()
     visApp()
-    await user.click(screen.getByRole('button', { name: 'Vis stoffregisteret' }))
-    const meny = screen.getByRole('navigation', { name: 'Stoffregister' })
+    await user.click(screen.getByRole('button', { name: 'Vis menyen' }))
+    // Stoffregisteret er fanen menyen åpner med.
+    expect(screen.getByRole('tab', { name: 'Stoffregister' }).getAttribute('aria-selected')).toBe('true')
+    const meny = screen.getByRole('tabpanel', { name: 'Stoffregister' })
     // Søket i fortolkningen filtreres fra hovedsiden, ikke herfra.
     expect(within(meny).queryByRole('radio')).toBeNull()
-    // Hver lenke i menyen går til en stoffside, aldri til en analyttkode.
+    // Hver lenke i registeret går til en stoffside, aldri til en analyttkode.
     const adresser = [...meny.querySelectorAll('a[href]')].map((a) => a.getAttribute('href')!)
     expect(adresser.length).toBeGreaterThan(20)
     // Utenom den ene lenken til hele stoffregisteret.
@@ -206,10 +208,57 @@ describe('sidemenyen', { timeout: 20_000 }, () => {
     expect(document.activeElement).toBe(screen.getByRole('heading', { level: 1 }))
   })
 
+  it('har verktøyene i en egen fane, med piltastene, og åpner et verktøy på sin egen adresse', async () => {
+    const user = userEvent.setup()
+    visApp()
+    await user.keyboard('{Control>}m{/Control}')
+    const meny = screen.getByRole('navigation', { name: 'Meny' })
+    expect(meny.getAttribute('data-apen')).toBe('ja')
+    expect(within(meny).getAllByRole('tab').map((t) => t.textContent)).toEqual(['Stoffregister', 'Verktøy'])
+
+    // Piltastene flytter mellom fanene; bare den valgte nås med tabulator.
+    within(meny).getByRole('tab', { name: 'Stoffregister' }).focus()
+    await user.keyboard('{ArrowRight}')
+    const fane = within(meny).getByRole('tab', { name: 'Verktøy' })
+    expect(fane.getAttribute('aria-selected')).toBe('true')
+    expect(document.activeElement).toBe(fane)
+    expect(fane.tabIndex).toBe(0)
+    expect(within(meny).getByRole('tab', { name: 'Stoffregister' }).tabIndex).toBe(-1)
+    expect(within(meny).queryByRole('tabpanel', { name: 'Stoffregister' })).toBeNull()
+    const verktoy = within(meny).getByRole('tabpanel', { name: 'Verktøy' })
+    expect([...verktoy.querySelectorAll('a[href]')].map((a) => a.getAttribute('href'))).toEqual([
+      '#/verktoy/trappe-ned-antidepressiv',
+      '#/verktoy/bytte-antidepressiv',
+      '#/verktoy/bytte-antipsykotikum',
+      '#/verktoy',
+    ])
+    // Tabulator går rundt i de synlige feltene, ikke inn i den skjulte fanen.
+    await user.keyboard('{Shift>}{Tab}{/Shift}')
+    expect(document.activeElement?.closest('[role="tabpanel"]')?.hasAttribute('hidden') ?? false).toBe(false)
+
+    await user.click(within(verktoy).getByRole('link', { name: /^Bytte antidepressiv/ }))
+    expect(await screen.findByRole('heading', { level: 1, name: 'Bytte antidepressiv' })).toBeTruthy()
+    expect(window.location.hash).toBe('#/verktoy/bytte-antidepressiv')
+    expect(meny.getAttribute('data-apen')).toBe('nei')
+    expect(fortolkningen().hidden).toBe(true)
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByRole('heading', { level: 1 })))
+
+    // Ctrl M åpner menyen igjen på fanen som sist var valgt.
+    await user.keyboard('{Control>}m{/Control}')
+    expect(meny.getAttribute('data-apen')).toBe('ja')
+    expect(within(meny).getByRole('tab', { name: 'Verktøy' }).getAttribute('aria-selected')).toBe('true')
+    await user.keyboard('{Escape}')
+    expect(meny.getAttribute('data-apen')).toBe('nei')
+
+    // Esc lukker verktøyet, og fortolkningen står der den sto.
+    await user.keyboard('{Escape}')
+    await waitFor(() => expect(fortolkningen().hidden).toBe(false))
+  })
+
   it('lar filteret for søket stå som det er', async () => {
     const user = userEvent.setup()
     visApp()
-    await user.click(screen.getByRole('button', { name: 'Vis stoffregisteret' }))
+    await user.click(screen.getByRole('button', { name: 'Vis menyen' }))
     // Alt + tall setter filteret på hovedsiden, men ikke mens registeret står åpent.
     await user.keyboard('{Alt>}1{/Alt}')
     await user.keyboard('{Escape}')
@@ -222,7 +271,7 @@ describe('stoffene uten analyttkode', { timeout: 20_000 }, () => {
   it('står i registeret, og fører til siden etter nøkkelen', async () => {
     const user = userEvent.setup()
     visApp()
-    await user.click(screen.getByRole('button', { name: 'Vis stoffregisteret' }))
+    await user.click(screen.getByRole('button', { name: 'Vis menyen' }))
     // Teststoffet står ikke i registeret, og havner derfor i «Andre stoffer».
     await user.click(await screen.findByRole('button', { name: /^Andre stoffer/ }))
     // En vanlig bruker kan ikke lage nye sider.
@@ -615,6 +664,40 @@ describe('fagsøket i hele appen', () => {
     await user.keyboard('1')
     await waitFor(async () => expect(await navigator.clipboard.readText()).toBe(dagensKommentar('NOR', 'under')))
   })
+
+  it('viser verktøyene som egne treff, og åpner et verktøy med Enter', async () => {
+    const user = userEvent.setup()
+    visApp()
+    await user.keyboard('{Control>}k{/Control}')
+    await user.keyboard('bytte')
+    const liste = await screen.findByRole('listbox', { name: 'Treff i søket' })
+    const gruppe = within(liste).getByRole('group', { name: 'Verktøy' })
+    expect(within(gruppe).getAllByRole('option').map((o) => o.textContent)).toEqual([
+      expect.stringContaining('Bytte antidepressiv'),
+      expect.stringContaining('Bytte antipsykotikum'),
+    ])
+    // Verktøyene står først, og piltastene går fra dem videre til fagstoffet.
+    await user.keyboard('{ArrowDown}{ArrowDown}{Enter}')
+    expect(await screen.findByRole('heading', { level: 1, name: 'Bytte antipsykotikum' })).toBeTruthy()
+    expect(window.location.hash).toBe('#/verktoy/bytte-antipsykotikum')
+  }, 20_000)
+
+  it('åpner et verktøy og verktøyoversikten direkte fra adressen, og følger tilbake og fram', async () => {
+    window.location.hash = '#/verktoy/trappe-ned-antidepressiv'
+    visApp()
+    expect(await screen.findByRole('heading', { level: 1, name: 'Trappe ned antidepressiv' })).toBeTruthy()
+    expect(fortolkningen().hidden).toBe(true)
+    expect(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' })).toBeTruthy()
+
+    window.location.hash = '#/verktoy'
+    window.dispatchEvent(new HashChangeEvent('hashchange'))
+    expect(await screen.findByRole('heading', { level: 1, name: 'Verktøy' })).toBeTruthy()
+    expect(screen.getAllByRole('link', { name: /^(Trappe ned antidepressiv|Bytte antidepressiv|Bytte antipsykotikum)/ })).toHaveLength(3)
+
+    window.location.hash = '#/verktoy/trappe-ned-antidepressiv'
+    window.dispatchEvent(new HashChangeEvent('hashchange'))
+    expect(await screen.findByRole('heading', { level: 1, name: 'Trappe ned antidepressiv' })).toBeTruthy()
+  }, 20_000)
 
   it('åpner søkesiden direkte fra adressen, med søket i feltet', async () => {
     window.location.hash = '#/sok?q=kvetiapin'
