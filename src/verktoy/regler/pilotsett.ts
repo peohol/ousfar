@@ -44,7 +44,7 @@ const forslag = (
   verdi,
   enhet,
   art: valg.art ?? 'veiledende_preferanse',
-  grunnlag: { type: 'ousfar_forslag', begrunnelse, ...(valg.henvisninger ? { henvisninger: valg.henvisninger } : {}) },
+  grunnlag: { type: 'ousfar_vurdering', begrunnelse, ...(valg.henvisninger ? { henvisninger: valg.henvisninger } : {}), avklaring: null },
   ...(valg.omrade ? { omrade: valg.omrade } : {}),
 })
 

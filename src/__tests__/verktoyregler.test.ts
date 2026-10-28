@@ -31,7 +31,17 @@ import {
 import { fingeravtrykk, godkjenningsfeil, kanonisk, sha256 } from '../verktoy/regler/godkjenning'
 import { KILDER } from '../verktoy/regler/kilder'
 import { kontrollerRegelsett, lesKontrollgrunnlag } from '../verktoy/regler/kontroll'
-import { henvisninger, REGELMODELLVERSJON, type Nedtrappingsstrategi, type Parameter, type Regel, type Regelsett } from '../verktoy/regler/modell'
+import {
+  alleGrunnlag,
+  apneValg,
+  henvisninger,
+  REGELMODELLVERSJON,
+  type Avklaring,
+  type Nedtrappingsstrategi,
+  type Parameter,
+  type Regel,
+  type Regelsett,
+} from '../verktoy/regler/modell'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
 import { lagRegelrapport, REGELRAPPORTFIL } from '../verktoy/regler/rapport'
 
@@ -41,7 +51,7 @@ const p = (verdi: number | null, enhet: Parameter['enhet'] = 'mg'): Parameter =>
   verdi,
   enhet,
   art: 'veiledende_preferanse',
-  grunnlag: { type: 'ousfar_forslag', begrunnelse: 'test' },
+  grunnlag: { type: 'ousfar_vurdering', begrunnelse: 'test', avklaring: null },
 })
 const serie = (s: Nedtrappingsstrategi, d0: number) => trinnserie(s, d0).map(avrund)
 const stoppgrunner = (r: Beregningsresultat) => (r.status === 'stoppet' ? r.stoppgrunner : [])
@@ -55,6 +65,13 @@ const godkjenn = (r: Regel, av = 'Uavhengig kontrollør') => {
       { status: 'klinisk_godkjent', dato: '2026-11-01', av, rolle: 'uavhengig_kontrollor', regelversjon: r.versjon, fingeravtrykk: fingeravtrykk(r), merknad: 'test' },
     ],
   }
+  return r
+}
+/** Avklarer hver åpen OUSFAR-vurdering og validerer foreslåtte medlemmer, slik en uavhengig kontrollør ville gjort det. */
+const avklarAlle = (r: Regel, av = 'Uavhengig kontrollør') => {
+  const avklaring: Avklaring = { dato: '2026-11-01', av, rolle: 'uavhengig_kontrollor', regelversjon: r.versjon, merknad: 'Vurdert og akseptert.' }
+  for (const [, g] of alleGrunnlag(r)) if (g.type === 'ousfar_vurdering' && !g.avklaring) g.avklaring = { ...avklaring }
+  for (const m of r.medlemmer ?? []) if (m.validering === 'foreslatt') m.validering = 'validert'
   return r
 }
 const XEPLION = { startdose_mg: 6, bekreftet: ['indikasjon'], pasientforhold: { nedsatt_nyrefunksjon: false } }
@@ -255,11 +272,47 @@ describe('Beregningen', () => {
     const u = godkjenn(regel('depot-paliperidon-xeplion'), 'Claude Code')
     expect(godkjenningsfeil(u).join()).toMatch(/ikke en klinisk godkjenning fra en uavhengig kontrollør/)
     const a = godkjenn(regel('seponering-escitalopram'))
-    expect(godkjenningsfeil(a).join()).toMatch(/valg som må avklares/)
+    expect(godkjenningsfeil(a).join()).toMatch(/åpne valg som må avklares faglig: .*trinnlengde \(åpent forslag\)/)
     expect(beregn(a, { startdose_mg: 20 }).klinisk_godkjent).toBe(false)
     const uten = godkjenn(regel('depot-paliperidon-xeplion'))
     delete uten.godkjenning.historikk.at(-1)!.fingeravtrykk
     expect(beregn(uten, XEPLION).klinisk_godkjent).toBe(false)
+  })
+
+  it('kan godkjenne OUSFARs egne valg etter eksplisitt uavhengig avklaring, uten å endre opprinnelsen (regresjon)', () => {
+    const r = regel('seponering-escitalopram')
+    const for0 = alleGrunnlag(r)
+    // Først blokkerer de åpne forslagene godkjenningen.
+    expect(apneValg(r).length).toBeGreaterThan(0)
+    expect(godkjenningsfeil(godkjenn(structuredClone(r))).join()).toMatch(/åpne valg/)
+    // Etter avklaring av en uavhengig kontrollør kan nøyaktig denne versjonen godkjennes.
+    avklarAlle(r)
+    expect(apneValg(r)).toEqual([])
+    godkjenn(r)
+    expect(godkjenningsfeil(r)).toEqual([])
+    expect(kontrollerRegelsett(sett([r]), GRUNNLAG)).toEqual([])
+    expect(beregn(r, { startdose_mg: 20 })).toMatchObject({ klinisk_godkjent: true, forbehold: FORBEHOLD_GODKJENT })
+    // Opprinnelsen er uendret: fortsatt OUSFARs vurdering med samme begrunnelse, og regelen er fortsatt klassifisert som beregnbar etter avklaring.
+    const etter = alleGrunnlag(r)
+    expect(etter.map(([sti, g]) => [sti, g.type, g.type === 'ousfar_vurdering' ? g.begrunnelse : null])).toEqual(
+      for0.map(([sti, g]) => [sti, g.type, g.type === 'ousfar_vurdering' ? g.begrunnelse : null]),
+    )
+    expect(r.beregnbarhet).toBe('beregnbar_etter_avklaring')
+    // En avklaring etter godkjenningen endrer fingeravtrykket, så godkjenningen faller bort.
+    const g = etter.find(([, x]) => x.type === 'ousfar_vurdering')![1]
+    if (g.type !== 'ousfar_vurdering') throw new Error()
+    g.avklaring = { ...g.avklaring!, merknad: 'Endret vurdering.' }
+    expect(godkjenningsfeil(r).join()).toMatch(/fingeravtrykket stemmer ikke/)
+  })
+
+  it('godtar ikke en avklaring fra en utvikler av regelen', () => {
+    const r = godkjenn(avklarAlle(regel('seponering-escitalopram'), 'Claude Code'))
+    expect(godkjenningsfeil(r).join()).toMatch(/avklart av en utvikler av regelen, ikke uavhengig/)
+    expect(kontrollerRegelsett(sett([r]), GRUNNLAG).join()).toMatch(/er avklart av en utvikler av regelen; avklaringen må være uavhengig/)
+    expect(beregn(r, { startdose_mg: 20 }).klinisk_godkjent).toBe(false)
+    // Rest AP: et medlem som bare er foreslått, er også et åpent valg.
+    const g = regel('gruppe-rest-ap-aripiprazol')
+    expect(apneValg(g)).toContain('zuklopentiksol (medlem foreslått, ikke validert)')
   })
 
   it('regner SHA-256 likt med Node', () => {
@@ -361,6 +414,19 @@ describe('Beregningen', () => {
     expect(stoppgrunner(beregn(r, { ...XEPLION, maldose_mg: 50 })).join()).toMatch(/stemmer ikke med omregningstabellen, som gir 75 mg/)
   })
 
+  it('stopper når et forløp starter på en ugyldig dag, og når en dose har en varighetsenhet', () => {
+    for (const dag of [0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY]) {
+      const r = regel('kryssnedtrapping-sertralin-mirtazapin')
+      r.plan.forlop[1]!.start = { type: 'dag', dag }
+      expect(stoppgrunner(beregn(r, { startdose_mg: 100, maldose_mg: 30 })).join(), String(dag)).toMatch(/forløp til starter dag .*startdagen må være et helt tall fra 1/)
+    }
+    const r = regel('kryssnedtrapping-sertralin-mirtazapin')
+    const hold = r.plan.forlop[1]!.faser[0]!
+    if (hold.type !== 'hold' || hold.dose.type !== 'fast') throw new Error()
+    hold.dose.mg = { ...hold.dose.mg, enhet: 'dager' }
+    expect(stoppgrunner(beregn(r, { startdose_mg: 100, maldose_mg: 30 })).join()).toMatch(/dose\.mg er ugyldig: enheten er dager, men mg skal være i mg/)
+  })
+
   it('stopper på ugyldige datoer og inndata i stedet for å normalisere dem eller kaste', () => {
     const r = regel('antipsykotikabytte-olanzapin-kvetiapin')
     const inn = { startdose_mg: 20, maldose_mg: 300, bekreftet: AP }
@@ -390,6 +456,12 @@ describe('Beregningen', () => {
     expect(stoppgrunner(med({ type: 'absolutt', mg: p(Number.NaN) })).join()).toMatch(/ikke et endelig tall/)
     expect(stoppgrunner(med({ type: 'absolutt', mg: p(5) }, 0)).join()).toMatch(/trinnlengde er ugyldig/)
     expect(med({ type: 'prosent_av_startdose', prosent: p(100, 'prosent') }).status).toBe('modellberegning')
+    // Enheten må være den feltet krever, ikke bare en gyldig enhet.
+    const r = regel('seponering-escitalopram')
+    const fase = r.plan.forlop[0]!.faser[0]!
+    if (fase.type !== 'nedtrapping') throw new Error()
+    fase.trinnlengde = { ...fase.trinnlengde, enhet: 'mg' }
+    expect(stoppgrunner(beregn(r, { startdose_mg: 20 })).join()).toMatch(/trinnlengde er ugyldig: enheten er mg, men trinnlengde skal være i dager/)
     // Gyldige verdier som likevel ikke når null: kontrollert stopp, ikke et unntak.
     expect(stoppgrunner(med({ type: 'absolutt', mg: p(0.01) })).join()).toMatch(/Beregningen kunne ikke fullføres: .*når ikke 0 på 200 trinn/)
   })
@@ -477,7 +549,7 @@ describe('Kontrollene av et regelsett', () => {
 
   it('slår ut når en regel med forslag er merket entydig, eller er klinisk godkjent uten uavhengig kontroll', () => {
     const a = { ...regel('seponering-escitalopram'), beregnbarhet: 'entydig_beregnbar' as const }
-    expect(feil(a)).toMatch(/merket entydig beregnbar, men har forslag/)
+    expect(feil(a)).toMatch(/merket entydig beregnbar, men har OUSFAR-vurderinger/)
     const b = regel('depot-paliperidon-xeplion')
     const f = fingeravtrykk(b)
     b.godkjenning = {
@@ -530,6 +602,37 @@ describe('Kontrollene av et regelsett', () => {
     expect(feil(a)).toMatch(/omregningsraden 3 mg er ugyldig/)
     expect(feil(a)).toMatch(/maaneder er ugyldig: 0.5 maaneder må være et helt tall/)
     expect(feil(a)).toMatch(/inndatakravet for startdose har ugyldige grenser/)
+  })
+
+  it('slår ut når en parameter har feil enhet for feltet, eller et forløp starter på en ugyldig dag', () => {
+    const a = regel('seponering-escitalopram')
+    const fase = a.plan.forlop[0]!.faser[0]!
+    if (fase.type !== 'nedtrapping' || fase.strategi.type !== 'prosent_av_aktuell') throw new Error()
+    fase.trinnlengde = { ...fase.trinnlengde, enhet: 'mg' }
+    fase.strategi.prosent = { ...fase.strategi.prosent, enhet: 'mg' }
+    fase.strategi.sluttdose_mg = { ...fase.strategi.sluttdose_mg, enhet: 'prosent' }
+    expect(feil(a)).toMatch(/trinnlengde er ugyldig: enheten er mg, men trinnlengde skal være i dager/)
+    expect(feil(a)).toMatch(/strategi\.prosent er ugyldig: enheten er mg, men prosent skal være i prosent/)
+    expect(feil(a)).toMatch(/sluttdose_mg er ugyldig: enheten er prosent, men sluttdose_mg skal være i mg/)
+    for (const dag of [0, 1.5, Number.NaN]) {
+      const b = regel('kryssnedtrapping-sertralin-mirtazapin')
+      b.plan.forlop[1]!.start = { type: 'dag', dag }
+      expect(feil(b), String(dag)).toMatch(/forløp til starter dag .*startdagen må være et helt tall fra 1/)
+    }
+  })
+
+  it('slår ut når beregnbarheten ikke stemmer med opprinnelsen, og på avklaringer uten innhold', () => {
+    // Avklarte OUSFAR-vurderinger gjør ikke regelen entydig: den bygger fortsatt på OUSFARs valg.
+    const a = { ...avklarAlle(regel('seponering-escitalopram')), beregnbarhet: 'entydig_beregnbar' as const }
+    expect(feil(a)).toMatch(/merket entydig beregnbar, men har OUSFAR-vurderinger/)
+    const b = { ...regel('depot-paliperidon-xeplion'), beregnbarhet: 'beregnbar_etter_avklaring' as const }
+    expect(feil(b)).toMatch(/merket beregnbar etter avklaring, men har ingen OUSFAR-vurderinger/)
+    const c = avklarAlle(regel('seponering-escitalopram'))
+    const g = alleGrunnlag(c).find(([, x]) => x.type === 'ousfar_vurdering')![1]
+    if (g.type !== 'ousfar_vurdering') throw new Error()
+    g.avklaring = { ...g.avklaring!, merknad: ' ', regelversjon: 5 }
+    expect(feil(c)).toMatch(/mangler dato, navn eller merknad/)
+    expect(feil(c)).toMatch(/gjelder en ukjent regelversjon \(5\)/)
   })
 
   it('slår ut når et regneeksempel ikke stemmer med beregningen', () => {

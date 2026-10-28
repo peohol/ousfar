@@ -2,7 +2,7 @@
 
 <!-- Laget av `npm run verktoy:regler -- rapport` fra reglene i src/verktoy/regler/. Ikke rediger for hånd; endre reglene og lag rapporten på nytt. -->
 
-Regelsett `ousfar-verktoy-pilot` versjon 2, regelmodell 1, beregningsmotor 1. Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.
+Regelsett `ousfar-verktoy-pilot` versjon 2, regelmodell 2, beregningsmotor 1. Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.
 
 **8 regler, 0 klinisk godkjent.** Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. De er ikke empirisk validerte kliniske anbefalinger, og ingen av reglene er klinisk godkjent. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-p4-regelmodell.md`.
 
@@ -10,16 +10,16 @@ Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel by
 
 ## Oversikt
 
-| Regel | Form | Fra → til | Beregnbarhet | Status | Eksempler |
-| --- | --- | --- | --- | --- | --- |
-| `seponering-escitalopram` | seponering | escitalopram → – | beregnbar etter faglig avklaring | til faglig kontroll | 3 |
-| `seponering-citalopram-hyperbolsk` | seponering | citalopram → – | beregnbar etter faglig avklaring | til faglig kontroll | 1 |
-| `kryssnedtrapping-sertralin-mirtazapin` | kryssnedtrapping | sertralin → mirtazapin | beregnbar etter faglig avklaring | til faglig kontroll | 3 |
-| `mao-fluoksetin-fenelzin` | sekvensielt bytte | fluoksetin → fenelzin | beregnbar etter faglig avklaring | til faglig kontroll | 3 |
-| `antipsykotikabytte-olanzapin-kvetiapin` | kryssnedtrapping | olanzapin → kvetiapin | beregnbar etter faglig avklaring | til faglig kontroll | 4 |
-| `gruppe-rest-ap-aripiprazol` | kryssnedtrapping | gruppen rest-ap → aripiprazol | beregnbar etter faglig avklaring | til faglig kontroll | 2 |
-| `depot-aripiprazol-maintena` | oppstart av depot | aripiprazol → aripiprazol | entydig beregnbar | til faglig kontroll | 4 |
-| `depot-paliperidon-xeplion` | oppstart av depot | paliperidon → paliperidon | entydig beregnbar | til faglig kontroll | 6 |
+| Regel | Form | Fra → til | Beregnbarhet | Åpne valg | Status | Eksempler |
+| --- | --- | --- | --- | --- | --- | --- |
+| `seponering-escitalopram` | seponering | escitalopram → – | beregnbar etter faglig avklaring | 6 | til faglig kontroll | 3 |
+| `seponering-citalopram-hyperbolsk` | seponering | citalopram → – | beregnbar etter faglig avklaring | 3 | til faglig kontroll | 1 |
+| `kryssnedtrapping-sertralin-mirtazapin` | kryssnedtrapping | sertralin → mirtazapin | beregnbar etter faglig avklaring | 4 | til faglig kontroll | 3 |
+| `mao-fluoksetin-fenelzin` | sekvensielt bytte | fluoksetin → fenelzin | beregnbar etter faglig avklaring | 4 | til faglig kontroll | 3 |
+| `antipsykotikabytte-olanzapin-kvetiapin` | kryssnedtrapping | olanzapin → kvetiapin | beregnbar etter faglig avklaring | 3 | til faglig kontroll | 4 |
+| `gruppe-rest-ap-aripiprazol` | kryssnedtrapping | gruppen rest-ap → aripiprazol | beregnbar etter faglig avklaring | 4 | til faglig kontroll | 2 |
+| `depot-aripiprazol-maintena` | oppstart av depot | aripiprazol → aripiprazol | entydig beregnbar | 0 | til faglig kontroll | 4 |
+| `depot-paliperidon-xeplion` | oppstart av depot | paliperidon → paliperidon | entydig beregnbar | 0 | til faglig kontroll | 6 |
 
 ## Kilder
 
@@ -47,7 +47,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Seponering av escitalopram, gjentatt prosentvis nedtrapping
 
-`seponering-escitalopram`, versjon 1, fingeravtrykk `6d81d5ca872989dcda7922156ddd10ecd8e390cee7c0474d635f0a135ae9b127`. Seponering: escitalopram → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`seponering-escitalopram`, versjon 1, fingeravtrykk `b6a1f525bdd0cb6a90548390600f91c719138d22713fe0d489121019f12258e3`. Seponering: escitalopram → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code).
 
@@ -73,12 +73,12 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 | Hvor | Parameter | Verdi | Art | Grunnlag |
 | --- | --- | --- | --- | --- |
-| fra: fase 1 (nedtrapping) | strategi.prosent | 50 % | veiledende | **OUSFAR-forslag:** Eksempelet i NICE er 50 % av forrige dose. (bygger på nice-ng222 anbefaling 1.4.16) |
-| fra: fase 1 (nedtrapping) | strategi.lav_prosent | 25 % | veiledende | **OUSFAR-forslag:** Eksempelet i NICE på mindre trinn ved lav dose. (bygger på nice-ng222 anbefaling 1.4.16) |
-| fra: fase 1 (nedtrapping) | strategi.lav_grense_mg | 5 mg | veiledende | **OUSFAR-forslag:** Laveste dose som oppgis i preparatomtalen; fra den regnes dosen som lav. (bygger på dmp-cipralex pkt. 4.2) |
-| fra: fase 1 (nedtrapping) | strategi.sluttdose_mg | 2,5 mg | veiledende | **OUSFAR-forslag:** Laveste dose i planen; under den seponeres. Halvparten av laveste tablettstyrke (5 mg). (bygger på dmp-cipralex pkt. 4.2) |
-| fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 7–14) | veiledende | **OUSFAR-forslag:** Øvre del av NICEs vurderingstid, så hvert trinn kan vurderes før neste. (bygger på nice-ng222 anbefaling 1.4.18) |
-| fra: fase 1 (nedtrapping) | minste_varighet | 14 dager | bindende krav | **OUSFAR-forslag:** «Minst én til to uker» er lest konservativt som minst 14 dager. (bygger på dmp-cipralex pkt. 4.2) |
+| fra: fase 1 (nedtrapping) | strategi.prosent | 50 % | veiledende | **OUSFAR-vurdering, åpent forslag:** Eksempelet i NICE er 50 % av forrige dose. (bygger på nice-ng222 anbefaling 1.4.16) |
+| fra: fase 1 (nedtrapping) | strategi.lav_prosent | 25 % | veiledende | **OUSFAR-vurdering, åpent forslag:** Eksempelet i NICE på mindre trinn ved lav dose. (bygger på nice-ng222 anbefaling 1.4.16) |
+| fra: fase 1 (nedtrapping) | strategi.lav_grense_mg | 5 mg | veiledende | **OUSFAR-vurdering, åpent forslag:** Laveste dose som oppgis i preparatomtalen; fra den regnes dosen som lav. (bygger på dmp-cipralex pkt. 4.2) |
+| fra: fase 1 (nedtrapping) | strategi.sluttdose_mg | 2,5 mg | veiledende | **OUSFAR-vurdering, åpent forslag:** Laveste dose i planen; under den seponeres. Halvparten av laveste tablettstyrke (5 mg). (bygger på dmp-cipralex pkt. 4.2) |
+| fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 7–14) | veiledende | **OUSFAR-vurdering, åpent forslag:** Øvre del av NICEs vurderingstid, så hvert trinn kan vurderes før neste. (bygger på nice-ng222 anbefaling 1.4.18) |
+| fra: fase 1 (nedtrapping) | minste_varighet | 14 dager | bindende krav | **OUSFAR-vurdering, åpent forslag:** «Minst én til to uker» er lest konservativt som minst 14 dager. (bygger på dmp-cipralex pkt. 4.2) |
 
 **Betingelser:**
 
@@ -114,7 +114,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Seponering av citalopram, hyperbolsk nedtrapping (alternativ strategi)
 
-`seponering-citalopram-hyperbolsk`, versjon 1, fingeravtrykk `6cdc538c304f3f5b0981f7d64487a00c91e457e3f44d268a9938ec93ec053faf`. Seponering: citalopram → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`seponering-citalopram-hyperbolsk`, versjon 1, fingeravtrykk `c4e4250ac9807dd092c05949dbeefbad779dbba57bf26c2eec4c58d5d441fff7`. Seponering: citalopram → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code).
 
@@ -140,9 +140,9 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 | Hvor | Parameter | Verdi | Art | Grunnlag |
 | --- | --- | --- | --- | --- |
 | fra: fase 1 (nedtrapping) | strategi.ed50_mg | 3,4 mg | veiledende | sorensen-2022 Results (dose og SERT-binding) |
-| fra: fase 1 (nedtrapping) | strategi.trinn | 8 trinn | veiledende | **OUSFAR-forslag:** Åtte like store trinn i beregnet binding; et antall som må vurderes faglig mot pasientens toleranse. (bygger på horowitz-2019 sammendrag) |
-| fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 7–14) | veiledende | **OUSFAR-forslag:** Øvre del av NICEs vurderingstid. (bygger på nice-ng222 anbefaling 1.4.18) |
-| fra: fase 1 (nedtrapping) | minste_varighet | 14 dager | bindende krav | **OUSFAR-forslag:** «Minst én til to uker» er lest konservativt som minst 14 dager. (bygger på dmp-cipramil pkt. 4.2) |
+| fra: fase 1 (nedtrapping) | strategi.trinn | 8 trinn | veiledende | **OUSFAR-vurdering, åpent forslag:** Åtte like store trinn i beregnet binding; et antall som må vurderes faglig mot pasientens toleranse. (bygger på horowitz-2019 sammendrag) |
+| fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 7–14) | veiledende | **OUSFAR-vurdering, åpent forslag:** Øvre del av NICEs vurderingstid. (bygger på nice-ng222 anbefaling 1.4.18) |
+| fra: fase 1 (nedtrapping) | minste_varighet | 14 dager | bindende krav | **OUSFAR-vurdering, åpent forslag:** «Minst én til to uker» er lest konservativt som minst 14 dager. (bygger på dmp-cipramil pkt. 4.2) |
 
 **Betingelser:**
 
@@ -172,7 +172,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra sertralin til mirtazapin, kryssnedtrapping
 
-`kryssnedtrapping-sertralin-mirtazapin`, versjon 1, fingeravtrykk `db20fa3c00f7273b281333f7888d9e53d7088f233d71b276aac33fb00e555dee`. Kryssnedtrapping: sertralin → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`kryssnedtrapping-sertralin-mirtazapin`, versjon 1, fingeravtrykk `54f1cdde505e6ffb66877c9fee6eceb816fb326c80354dbe80d1daaf4cf3e911`. Kryssnedtrapping: sertralin → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code).
 
@@ -198,10 +198,10 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 | Hvor | Parameter | Verdi | Art | Grunnlag |
 | --- | --- | --- | --- | --- |
-| fra: fase 1 (nedtrapping) | strategi.prosent | 50 % | veiledende | **OUSFAR-forslag:** Eksempelet i NICE er 50 % av forrige dose. (bygger på nice-ng222 anbefaling 1.4.16) |
-| fra: fase 1 (nedtrapping) | strategi.sluttdose_mg | 25 mg | veiledende | **OUSFAR-forslag:** Laveste startdose i preparatomtalen; under den seponeres. (bygger på dmp-zoloft pkt. 4.2) |
-| fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 7–14) | veiledende | **OUSFAR-forslag:** Øvre del av NICEs vurderingstid; NICE åpner for raskere nedtrapping ved bytte (7 dager). (bygger på nice-ng222 anbefaling 1.4.18; nice-ng222 anbefaling 1.4.16) |
-| fra: fase 1 (nedtrapping) | minste_varighet | 14 dager | bindende krav | **OUSFAR-forslag:** «Minst én til to uker» er lest konservativt som minst 14 dager. (bygger på dmp-zoloft pkt. 4.2 og 4.4) |
+| fra: fase 1 (nedtrapping) | strategi.prosent | 50 % | veiledende | **OUSFAR-vurdering, åpent forslag:** Eksempelet i NICE er 50 % av forrige dose. (bygger på nice-ng222 anbefaling 1.4.16) |
+| fra: fase 1 (nedtrapping) | strategi.sluttdose_mg | 25 mg | veiledende | **OUSFAR-vurdering, åpent forslag:** Laveste startdose i preparatomtalen; under den seponeres. (bygger på dmp-zoloft pkt. 4.2) |
+| fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 7–14) | veiledende | **OUSFAR-vurdering, åpent forslag:** Øvre del av NICEs vurderingstid; NICE åpner for raskere nedtrapping ved bytte (7 dager). (bygger på nice-ng222 anbefaling 1.4.18; nice-ng222 anbefaling 1.4.16) |
+| fra: fase 1 (nedtrapping) | minste_varighet | 14 dager | bindende krav | **OUSFAR-vurdering, åpent forslag:** «Minst én til to uker» er lest konservativt som minst 14 dager. (bygger på dmp-zoloft pkt. 4.2 og 4.4) |
 | til: fase 1 (hold) | dose.mg | 15 mg | veiledende | dmp-remeron pkt. 4.2 |
 
 **Betingelser:**
@@ -242,7 +242,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra fluoksetin til fenelzin, sekvensielt med utvasking
 
-`mao-fluoksetin-fenelzin`, versjon 1, fingeravtrykk `aaf57e1955407c74d34ed58f1d99521b83dbde1a03050f50bdb66a4e7f8a9dfd`. Sekvensielt bytte: fluoksetin → fenelzin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`mao-fluoksetin-fenelzin`, versjon 1, fingeravtrykk `4f40b159a345695a6cc81a55c5234664db399e990927532d7b39b8bd3f879c03`. Sekvensielt bytte: fluoksetin → fenelzin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code).
 
@@ -267,10 +267,10 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 | Hvor | Parameter | Verdi | Art | Grunnlag |
 | --- | --- | --- | --- | --- |
-| fra: fase 1 (nedtrapping) | strategi.prosent | 50 % | veiledende | **OUSFAR-forslag:** Eksempelet i NICE er 50 % av forrige dose. (bygger på nice-ng222 anbefaling 1.4.16) |
-| fra: fase 1 (nedtrapping) | strategi.sluttdose_mg | 10 mg | veiledende | **OUSFAR-forslag:** Daglig 10 mg i stedet for 20 mg annenhver dag, som modellen ikke har; under den seponeres. (bygger på nice-ng222 anbefaling 1.4.18) |
-| fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 7–14) | veiledende | **OUSFAR-forslag:** Øvre del av NICEs vurderingstid. (bygger på nice-ng222 anbefaling 1.4.18) |
-| fra: fase 1 (nedtrapping) | minste_varighet | 14 dager | bindende krav | **OUSFAR-forslag:** «Minst én til to uker» er lest konservativt som minst 14 dager. (bygger på dmp-fluoxetin pkt. 4.2) |
+| fra: fase 1 (nedtrapping) | strategi.prosent | 50 % | veiledende | **OUSFAR-vurdering, åpent forslag:** Eksempelet i NICE er 50 % av forrige dose. (bygger på nice-ng222 anbefaling 1.4.16) |
+| fra: fase 1 (nedtrapping) | strategi.sluttdose_mg | 10 mg | veiledende | **OUSFAR-vurdering, åpent forslag:** Daglig 10 mg i stedet for 20 mg annenhver dag, som modellen ikke har; under den seponeres. (bygger på nice-ng222 anbefaling 1.4.18) |
+| fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 7–14) | veiledende | **OUSFAR-vurdering, åpent forslag:** Øvre del av NICEs vurderingstid. (bygger på nice-ng222 anbefaling 1.4.18) |
+| fra: fase 1 (nedtrapping) | minste_varighet | 14 dager | bindende krav | **OUSFAR-vurdering, åpent forslag:** «Minst én til to uker» er lest konservativt som minst 14 dager. (bygger på dmp-fluoxetin pkt. 4.2) |
 | til: start | utvasking | 35 dager | bindende krav | dmp-fluoxetin pkt. 4.3 og 4.5; keks-2016 tabell 3 |
 
 **Betingelser:**
@@ -314,7 +314,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra olanzapin til kvetiapin, kryss-titrering med fast opptrapping
 
-`antipsykotikabytte-olanzapin-kvetiapin`, versjon 2, fingeravtrykk `e83ff02bcbd282f85d981a8ef8b898b31fe97b81595a838596585079db70dca0`. Kryssnedtrapping: olanzapin → kvetiapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`antipsykotikabytte-olanzapin-kvetiapin`, versjon 2, fingeravtrykk `f99caa565de15abc04c93ef883de06210ddc78143c853b1ef8cc86c64443114b`. Kryssnedtrapping: olanzapin → kvetiapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code).
 
@@ -339,9 +339,9 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 | Hvor | Parameter | Verdi | Art | Grunnlag |
 | --- | --- | --- | --- | --- |
-| fra: fase 1 (hold) | varighet.dager | 4 dager | veiledende | **OUSFAR-forslag:** Til kvetiapin har nådd 300 mg dag 4. (bygger på dmp-seroquel pkt. 4.2) |
-| fra: fase 2 (nedtrapping) | strategi.prosent | 25 % | veiledende | **OUSFAR-forslag:** Fire like store trinn. |
-| fra: fase 2 (nedtrapping) | trinnlengde | 7 dager (område 7–14) | veiledende | **OUSFAR-forslag:** Én uke per trinn. |
+| fra: fase 1 (hold) | varighet.dager | 4 dager | veiledende | **OUSFAR-vurdering, åpent forslag:** Til kvetiapin har nådd 300 mg dag 4. (bygger på dmp-seroquel pkt. 4.2) |
+| fra: fase 2 (nedtrapping) | strategi.prosent | 25 % | veiledende | **OUSFAR-vurdering, åpent forslag:** Fire like store trinn. |
+| fra: fase 2 (nedtrapping) | trinnlengde | 7 dager (område 7–14) | veiledende | **OUSFAR-vurdering, åpent forslag:** Én uke per trinn. |
 | til: fase 1 (opptrapping) | trinn[0].mg | 50 mg | veiledende | dmp-seroquel pkt. 4.2 |
 | til: fase 1 (opptrapping) | trinn[0].dager | 1 dager | veiledende | dmp-seroquel pkt. 4.2 |
 | til: fase 1 (opptrapping) | trinn[1].mg | 100 mg | veiledende | dmp-seroquel pkt. 4.2 |
@@ -395,7 +395,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra et antipsykotikum i gruppen «øvrige antipsykotika» til aripiprazol, kryss-titrering
 
-`gruppe-rest-ap-aripiprazol`, versjon 2, fingeravtrykk `b659f76e989ec51501af41c0bb3227dc0d42d59877d3d889f1757a074507c6bb`. Kryssnedtrapping: gruppen rest-ap → aripiprazol. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`gruppe-rest-ap-aripiprazol`, versjon 2, fingeravtrykk `1250cf2c5d4cfe1729b0b321ce62be73f86d2ae5ed3fab1b6ddc29d348c98bb4`. Kryssnedtrapping: gruppen rest-ap → aripiprazol. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code).
 
@@ -419,9 +419,9 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 | Hvor | Parameter | Verdi | Art | Grunnlag |
 | --- | --- | --- | --- | --- |
-| fra: fase 1 (hold) | varighet.dager | 7 dager | veiledende | **OUSFAR-forslag:** Første uke med aripiprazol før nedtrappingen starter. |
-| fra: fase 2 (nedtrapping) | strategi.prosent | 25 % | veiledende | **OUSFAR-forslag:** Fire like store trinn. |
-| fra: fase 2 (nedtrapping) | trinnlengde | 7 dager (område 7–14) | veiledende | **OUSFAR-forslag:** Én uke per trinn. |
+| fra: fase 1 (hold) | varighet.dager | 7 dager | veiledende | **OUSFAR-vurdering, åpent forslag:** Første uke med aripiprazol før nedtrappingen starter. |
+| fra: fase 2 (nedtrapping) | strategi.prosent | 25 % | veiledende | **OUSFAR-vurdering, åpent forslag:** Fire like store trinn. |
+| fra: fase 2 (nedtrapping) | trinnlengde | 7 dager (område 7–14) | veiledende | **OUSFAR-vurdering, åpent forslag:** Én uke per trinn. |
 | til: fase 1 (hold) | dose.mg | 10 mg | veiledende | ema-abilify section 4.2 |
 
 **Betingelser:**

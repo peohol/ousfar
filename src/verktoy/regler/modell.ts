@@ -30,7 +30,7 @@
  */
 
 /** Økes når formen på regler eller regelsett endres. */
-export const REGELMODELLVERSJON = 1
+export const REGELMODELLVERSJON = 2
 
 /* --- Kilder ----------------------------------------------------------------- */
 
@@ -98,10 +98,28 @@ export type Beregnbarhet = 'entydig_beregnbar' | 'beregnbar_etter_avklaring' | '
 /** Et bindende krav må overholdes (f.eks. utvasking); en veiledende preferanse kan justeres faglig (f.eks. trinnlengde). P4.3. */
 export type Parameterart = 'bindende_krav' | 'veiledende_preferanse'
 
+/**
+ * En eksplisitt faglig avklaring av en OUSFAR-vurdering: hvem som har vurdert
+ * og akseptert valget, i hvilken regelversjon. Avklaringen endrer ikke
+ * opprinnelsen; valget er fortsatt OUSFARs, ikke et faktum fra en kilde.
+ */
+export interface Avklaring {
+  dato: string
+  av: string
+  rolle: Exclude<Rolle, 'utvikler'>
+  regelversjon: number
+  merknad: string
+}
+
 export type Grunnlag =
   | { type: 'kilde'; henvisninger: Kildehenvisning[] }
-  /** OUSFARs eget forslag, som må avklares faglig før regelen kan godkjennes; `henvisninger` er det valget bygger på, når det er et valg innenfor en kilde. */
-  | { type: 'ousfar_forslag'; begrunnelse: string; henvisninger?: Kildehenvisning[] }
+  /**
+   * OUSFARs egen faglige vurdering. Opprinnelsen (`type`) er alltid OUSFAR;
+   * statusen er `avklaring`: `null` er et åpent forslag som må avklares før
+   * regelen kan godkjennes, ellers den eksplisitte avklaringen. `henvisninger`
+   * er det valget bygger på, når det er et valg innenfor en kilde.
+   */
+  | { type: 'ousfar_vurdering'; begrunnelse: string; henvisninger?: Kildehenvisning[]; avklaring: Avklaring | null }
 
 /** `dager` er en varighet, `dag` en dag i planen (dag 1 er første dag). */
 export type Enhet = 'mg' | 'dager' | 'dag' | 'maaneder' | 'prosent' | 'trinn'
@@ -151,6 +169,9 @@ export type Nedtrappingsstrategi =
 
 export type Varighet = { type: 'dager'; dager: Parameter } | { type: 'til_forlop_er_avsluttet'; forlop: string }
 
+/** Planens dag når forløpet starter: et helt tall fra 1. */
+export type Dag = number
+
 export type Fase =
   /** Holder en dose i en periode. */
   | { type: 'hold'; dose: Dosekilde | { type: 'aktuell' }; varighet: Varighet }
@@ -177,7 +198,7 @@ export type Fase =
 
 /** Når et forløp starter. */
 export type Forlopsstart =
-  | { type: 'dag'; dag: number }
+  | { type: 'dag'; dag: Dag }
   /** Sekvensielt: når forløpet `forlop` er avsluttet, etter minst `utvasking` dager uten legemiddel. */
   | { type: 'etter_utvasking'; forlop: string; utvasking: Parameter }
 
@@ -335,12 +356,42 @@ export interface Regelsett {
 const heltall: Enhet[] = ['dager', 'dag', 'maaneder', 'trinn']
 
 /**
- * Hva som er galt med en parameterverdi, eller `null` når den er gyldig (en
- * manglende verdi er ikke ugyldig, men må avklares). Doser og varigheter er
- * positive og endelige, prosenter over 0 og høyst 100, og dager, måneder og
- * trinn hele tall.
+ * Enheten hvert parameterfelt i en plan skal ha, etter feltets navn (siste
+ * ledd i stien, uten indeks). Et felt som ikke står her, er ikke en del av
+ * modellen.
  */
-export function parameterfeil(p: Parameter): string | null {
+export const FELTENHET: Record<string, Enhet> = {
+  trinnlengde: 'dager',
+  minste_varighet: 'dager',
+  utvasking: 'dager',
+  dager: 'dager',
+  vindu_dager: 'dager',
+  tidligst_dager: 'dager',
+  dag: 'dag',
+  maaneder: 'maaneder',
+  trinn: 'trinn',
+  prosent: 'prosent',
+  lav_prosent: 'prosent',
+  mg: 'mg',
+  lav_grense_mg: 'mg',
+  sluttdose_mg: 'mg',
+  ed50_mg: 'mg',
+}
+
+const feltnavn = (sti: string) => sti.replace(/\[\d+\]/g, '').split('.').at(-1) ?? ''
+
+/**
+ * Hva som er galt med en parameter på stien `sti`, eller `null` når den er
+ * gyldig (en manglende verdi er ikke ugyldig, men må avklares). Enheten må
+ * være den feltet krever (`FELTENHET`); doser og varigheter er positive og
+ * endelige, prosenter over 0 og høyst 100, og dager, måneder og trinn hele
+ * tall.
+ */
+export function parameterfeil(p: Parameter, sti: string): string | null {
+  const navn = feltnavn(sti)
+  const forventet = FELTENHET[navn]
+  if (!forventet) return `feltet ${navn || '(uten navn)'} er ikke en parameter i regelmodellen`
+  if (p.enhet !== forventet) return `enheten er ${p.enhet}, men ${navn} skal være i ${forventet}`
   const feil = (v: number): string | null => {
     if (typeof v !== 'number' || !Number.isFinite(v)) return 'er ikke et endelig tall'
     if (v <= 0) return 'må være over 0'
@@ -357,6 +408,72 @@ export function parameterfeil(p: Parameter): string | null {
     if (f || p.omrade[0] > p.omrade[1]) return `området ${p.omrade.join('–')} ${p.enhet} er ugyldig`
   }
   return null
+}
+
+const positiv = (x: unknown) => typeof x === 'number' && Number.isFinite(x) && x > 0
+const heltallFra1 = (x: unknown) => typeof x === 'number' && Number.isInteger(x) && x >= 1
+
+/**
+ * Feil i regelens tall som ikke er parametre: startdagen for et forløp,
+ * radene i en omregningstabell og grensene i inndatakravene. Brukes både av
+ * regelkontrollen og før en beregning.
+ */
+export function tallfeil(r: Pick<Regel, 'plan' | 'inndata'>): string[] {
+  const feil: string[] = []
+  for (const f of r.plan.forlop) {
+    if (f.start.type === 'dag' && !heltallFra1(f.start.dag)) feil.push(`forløp ${f.id} starter dag ${String(f.start.dag)}; startdagen må være et helt tall fra 1`)
+    for (const fase of f.faser) {
+      if (fase.type !== 'injeksjoner') continue
+      for (const dose of [...fase.start.map((x) => x.dose), fase.vedlikehold.dose]) {
+        if (dose.type !== 'tabell') continue
+        for (const rad of dose.rader) {
+          const til = Array.isArray(rad.til_mg) ? rad.til_mg : [rad.til_mg]
+          if (!positiv(rad.fra_mg) || !til.every(positiv) || (til.length === 2 && til[0]! >= til[1]!)) feil.push(`forløp ${f.id}: omregningsraden ${String(rad.fra_mg)} mg er ugyldig`)
+        }
+      }
+    }
+  }
+  for (const x of r.inndata) {
+    const tall = [...(x.omrade ?? []), ...(x.verdier ?? [])]
+    if (!tall.every(positiv) || (x.omrade && x.omrade[0] > x.omrade[1])) feil.push(`inndatakravet for ${x.navn} har ugyldige grenser`)
+  }
+  return feil
+}
+
+/**
+ * Valgene som fortsatt er åpne: OUSFAR-vurderinger uten avklaring, verdier
+ * som mangler, og gruppemedlemmer som bare er foreslått. En regel kan ikke
+ * godkjennes klinisk før listen er tom.
+ */
+export function apneValg(r: Regel): string[] {
+  return [
+    ...alleGrunnlag(r)
+      .filter(([, g]) => g.type === 'ousfar_vurdering' && !g.avklaring)
+      .map(([sti]) => `${sti} (åpent forslag)`),
+    ...parametre(r)
+      .filter(([, p]) => p.verdi === null)
+      .map(([sti]) => `${sti} (mangler)`),
+    ...(r.medlemmer ?? []).filter((m) => m.validering === 'foreslatt').map((m) => `${m.nokkel} (medlem foreslått, ikke validert)`),
+  ]
+}
+
+/** Grunnlaget for hver omregningstabell i planen. */
+export function grunnlagITabeller(r: Pick<Regel, 'plan'>): [string, Grunnlag][] {
+  return r.plan.forlop.flatMap((f) =>
+    f.faser.flatMap((fase) =>
+      fase.type === 'injeksjoner' && fase.vedlikehold.dose.type === 'tabell' ? [[`${f.id}.vedlikehold.tabell`, fase.vedlikehold.dose.grunnlag] as [string, Grunnlag]] : [],
+    ),
+  )
+}
+
+/** Alle grunnlag i regelen med stien dit: parametre, inndata, bekreftelser, unntak og tabeller. */
+export function alleGrunnlag(r: Regel): [string, Grunnlag][] {
+  return [
+    ...parametre(r).map(([sti, p]) => [sti, p.grunnlag] as [string, Grunnlag]),
+    ...r.inndata.map((x) => [`inndata.${x.navn}`, x.grunnlag] as [string, Grunnlag]),
+    ...[...r.bekreftelser, ...r.unntak].map((x) => [x.id, x.grunnlag] as [string, Grunnlag]),
+    ...grunnlagITabeller(r),
+  ]
 }
 
 const erParameter = (x: unknown): x is Parameter =>

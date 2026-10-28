@@ -1,6 +1,6 @@
 # OUSFAR Verktøy – P4: regelmodellen
 
-**Status 28.10.2026:** til faglig kontroll (P4.8), andre runde. Første uavhengige kontroll fant seks feil i modellen og beregningen; de er rettet (§11), og de fire reglene som ble endret, er versjon 2 og sendt til kontroll på nytt. Ingen regel er klinisk godkjent, og ingenting her brukes av appen.
+**Status 28.10.2026:** til faglig kontroll (P4.8), tredje runde. De to første uavhengige kontrollene fant feil i modellen og beregningen; de er rettet (§11). De fire reglene som ble endret faglig, er versjon 2 og sendt til kontroll på nytt. Ingen regel er klinisk godkjent, og ingenting her brukes av appen.
 
 Dette notatet beskriver hvordan OUSFAR skriver regler for nedtrapping og bytte av psykofarmaka, uavhengig av kilde, og hvorfor. Pilotsettet med alle regler, parametre, kilder og regneeksempler står i `docs/verktøy-p4-pilotsett.md`, som lages av koden (`npm run verktoy:regler -- rapport`) og derfor alltid stemmer med den. Koden ligger i `src/verktoy/regler/`.
 
@@ -61,19 +61,23 @@ Et regelsett (`Regelsett`) har id, versjon og regelmodellversjon, og kan innehol
 
 **Art (P4.3).** Hver parameter og hvert inndatakrav er enten et *bindende krav* (utvasking, minste varighet, doseområde regelen gjelder for, tidligste injeksjonsintervall) eller en *veiledende preferanse* (prosent, trinnlengde, overlapp). Et bindende krav som ikke er oppfylt, stopper beregningen; en veiledende grense gir en merknad.
 
-**Grunnlag.** Hver verdi har et grunnlag: enten *kilde* (verdien står i kilden, med henvisning) eller *OUSFAR-forslag* (med begrunnelse, og henvisning når det er et valg innenfor det kilden tillater, f.eks. 14 dager av NICEs «én til to uker»). En verdi kan også mangle (`null`); da kan regelen ikke beregnes før den er avklart.
+**Grunnlag.** Hver verdi har et grunnlag: enten *kilde* (verdien står i kilden, med henvisning) eller *OUSFAR-vurdering* (med begrunnelse, og henvisning når det er et valg innenfor det kilden tillater, f.eks. 14 dager av NICEs «én til to uker»). En verdi kan også mangle (`null`); da kan regelen ikke beregnes før den er avklart.
+
+**Opprinnelse og avklaring er to ting.** En OUSFAR-vurdering er alltid OUSFARs, også etter at den er godtatt. Statusen står i `avklaring`: `null` er et *åpent forslag*; ellers dato, navn, rolle (uavhengig kontrollør eller faglig beslutningstaker), regelversjon og merknad for den eksplisitte avklaringen. En avklaring må komme fra en som aldri har vært utvikler av regelen (kontrollert). Åpne forslag, manglende verdier og gruppemedlemmer som bare er foreslått, er regelens *åpne valg* (`apneValg`); en regel kan bli klinisk godkjent først når listen er tom, og avklaringene inngår i fingeravtrykket som godkjenningen gjelder.
+
+**Enheter.** Hvert parameterfelt har en fast enhet (`FELTENHET`): trinnlengde, utvasking, minste varighet og vinduer i dager, startdager i dag, intervaller i måneder, antall trinn i trinn, prosenter i prosent og doser i mg. En parameter med en annen enhet enn feltet krever, er ugyldig, også når verdien er gyldig i sin egen enhet. Tall som ikke er parametre (et forløps startdag, rader i omregningstabeller, grenser i inndatakrav) kontrolleres for seg (`tallfeil`), og før en plan returneres, kontrolleres det at alle dager er hele tall fra 1 og alle doser positive.
 
 **Beregnbarhet (P4.4):**
 
-- *entydig beregnbar* – alle verdier står i kildene; ingen OUSFAR-forslag eller manglende verdier (kontrollert);
-- *beregnbar etter avklaring* – planen er beregnbar, men har OUSFAR-forslag som må avklares faglig før regelen kan godkjennes;
+- *entydig beregnbar* – alle verdier står i kildene; ingen OUSFAR-vurderinger, manglende verdier eller foreslåtte medlemmer (kontrollert);
+- *beregnbar etter avklaring* – planen bygger på OUSFAR-vurderinger (eller har manglende verdier eller foreslåtte medlemmer) som må avklares faglig før regelen kan godkjennes. Klassifiseringen beskriver kildegrunnlaget og endres ikke når valgene er avklart; det som endres, er at regelen ikke lenger har åpne valg;
 - *bare tekstlig veiledning* og *mangler anbefaling* – ingen plan; beregningen stopper alltid.
 
-Ved tvetydighet lages ingen automatisk regel: valget skrives ut som forslag, og regelen kan ikke bli klinisk godkjent mens den har forslag som ikke er avklart (kontrollert).
+Ved tvetydighet lages ingen automatisk regel: valget skrives ut som et åpent forslag, og regelen kan ikke bli klinisk godkjent før hvert forslag er eksplisitt avklart (kontrollert). Det gjør at også en regel som bygger på OUSFARs egne valg, kan godkjennes sannferdig: valget forblir merket som OUSFARs, med avklaringen ved siden av.
 
 ## 5. Godkjenning og beregningsresultat
 
-En regel godkjennes per versjon og per innhold. Statusen er siste steg i historikken, og hvert steg sier hvilken regelversjon det gjelder. **Fingeravtrykket** er SHA-256 av regelen i kanonisk form (alt unntatt godkjenningen: plan, verdier, betingelser, fortolkning, referanser og eksempler) sammen med versjonen og kontrollsummen til kildene den viser til; rapporten viser det for hver regel. En klinisk godkjenning er bare gyldig når siste steg er *klinisk godkjent* fra en uavhengig kontrollør som aldri har vært utvikler av regelen, for regelens gjeldende versjon og nøyaktig dette fingeravtrykket, og regelen ikke har forslag som må avklares (`godkjenningsfeil`). Endres noe faglig etter godkjenningen – selv bare en verdi, en forutsetning eller en kildes versjon – er regelen ikke lenger godkjent før den er kontrollert på nytt. En faglig endring gir ny versjon, og kontrollene slår ut når siste steg gjelder en eldre versjon; en ny kilderevisjon endrer aldri en godkjent regel av seg selv (B8, P12).
+En regel godkjennes per versjon og per innhold. Statusen er siste steg i historikken, og hvert steg sier hvilken regelversjon det gjelder. **Fingeravtrykket** er SHA-256 av regelen i kanonisk form (alt unntatt godkjenningen: plan, verdier, betingelser, fortolkning, referanser og eksempler) sammen med versjonen og kontrollsummen til kildene den viser til; rapporten viser det for hver regel. En klinisk godkjenning er bare gyldig når siste steg er *klinisk godkjent* fra en uavhengig kontrollør som aldri har vært utvikler av regelen, for regelens gjeldende versjon og nøyaktig dette fingeravtrykket, og regelen ikke har åpne valg (`godkjenningsfeil`). Endres noe faglig etter godkjenningen – selv bare en verdi, en forutsetning eller en kildes versjon – er regelen ikke lenger godkjent før den er kontrollert på nytt. En faglig endring gir ny versjon, og kontrollene slår ut når siste steg gjelder en eldre versjon; en ny kilderevisjon endrer aldri en godkjent regel av seg selv (B8, P12).
 
 Beregningen (`beregn`) stopper og sier alle grunnene når regelen bare er tekstlig, avvist eller trukket; når et unntak gjelder **eller ikke er besvart**, eller et pasientforhold er ukjent for regelen; når en bekreftelse mangler; når start- eller måldosen mangler, er ugyldig eller er utenfor et bindende område; når et dosespenn ikke er avklart; når startdatoen ikke er en gyldig dato; når gruppemedlemmet ikke er vurdert eller ikke er med i gruppen; når en verdi mangler eller er ugyldig; eller når resultatet bryter et bindende krav. Den gjetter aldri og utvider aldri en regel lydløst (P5.8).
 
@@ -124,7 +128,7 @@ Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet
 - Ingen visning i appen (P6–P10).
 - Ingen regel for kombinasjoner utenfor pilotsettet.
 
-## 11. Rettet etter første uavhengige kontroll (28.10.2026)
+## 11. Rettet etter de uavhengige kontrollene (28.10.2026)
 
 | Funn | Rettelse | Testet med |
 | --- | --- | --- |
@@ -134,5 +138,7 @@ Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet
 | Ugyldige datoer og parametre ble normalisert eller ga et unntak | Streng dato- og parameterkontroll; beregningen kaster aldri (§3) | 2027-02-31, 2027-02-29, ugyldige strenger, 0 mg, 0 %, over 100 %, ikke-heltall, NaN og en regel som aldri når null |
 | Psychiatrienet-referansen ble bare kontrollert på id | Kontrollen sjekker type, retning, virkestoff eller gruppe og formulering mot regelen | Mutasjoner med motsatt retning, feil virkestoff, feil type, feil formulering og feil gruppe |
 | Rapporten sa at ingen regler var kontrollert, uansett status | Teksten følger antallet regler med gyldig godkjenning | Rapporten med 0, 1 av 2 og alle godkjent, og med en ugyldig godkjenning |
+| *Andre runde:* En regel med OUSFARs egne valg kunne aldri godkjennes uten å ommerke valgene som kildefakta | OUSFAR-vurderinger har opprinnelse og avklaring hver for seg; godkjenning krever at alle åpne valg er avklart uavhengig (§4). Regelmodellen er versjon 2 | Regresjonstest som først blokkerer, så godkjenner samme regel etter uavhengig avklaring, med uendret opprinnelse; avklaring fra utvikler avvises |
+| *Andre runde:* Enheten ble ikke kontrollert mot feltet, og et forløps startdag ble ikke kontrollert | Fast enhet per felt (`FELTENHET`), kontroll av startdager, tabellrader og inndatagrenser (`tallfeil`), og kontroll av planen før den returneres (§4) | Trinnlengde i mg, prosent i mg, dose i dager, sluttdose i prosent, startdag 0, −1, 1,5, NaN og uendelig |
 
 Reglene for olanzapin → kvetiapin, Rest AP → aripiprazol, Abilify Maintena og Xeplion er versjon 2 (nye bekreftelser og unntakssvar, og dosevalget for Xeplion). De fire andre er uendret i versjon 1. Den faglige vurderingen av valgene i §9 er ikke endret av rettingen.

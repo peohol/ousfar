@@ -11,7 +11,7 @@
  * i nettleseren.
  */
 import { kildeFor } from './kilder'
-import { henvisninger, type Regel } from './modell'
+import { alleGrunnlag, apneValg, henvisninger, type Regel } from './modell'
 
 /** JSON med sorterte nøkler, uten udefinerte felt, og med RegExp som kilde og flagg. */
 export function kanonisk(x: unknown): string {
@@ -84,8 +84,9 @@ export function fingeravtrykk(r: Regel): string {
  * Hvorfor regelen ikke er gyldig klinisk godkjent; tom når den er det. Gyldig
  * godkjent er den bare når siste steg er en klinisk godkjenning fra en
  * uavhengig kontrollør (ingen som har vært utvikler av regelen), for denne
- * regelversjonen og dette fingeravtrykket, og regelen ikke har valg igjen som
- * må avklares.
+ * regelversjonen og dette fingeravtrykket, og regelen ikke har åpne valg
+ * igjen. OUSFARs egne vurderinger kan godkjennes når hver er eksplisitt
+ * avklart av en som ikke er utvikler; de beholder sin opprinnelse.
  */
 export function godkjenningsfeil(r: Regel): string[] {
   const g = r.godkjenning
@@ -98,7 +99,11 @@ export function godkjenningsfeil(r: Regel): string[] {
   }
   if (sist && sist.regelversjon !== r.versjon) feil.push(`Godkjenningen gjelder regelversjon ${sist.regelversjon}, ikke versjon ${r.versjon}.`)
   if (sist && sist.fingeravtrykk !== fingeravtrykk(r)) feil.push('Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke); den må kontrolleres på nytt.')
-  if (r.beregnbarhet === 'beregnbar_etter_avklaring') feil.push('Regelen har fortsatt valg som må avklares faglig.')
+  const apne = apneValg(r)
+  if (apne.length > 0) feil.push(`Regelen har åpne valg som må avklares faglig: ${apne.join(', ')}.`)
+  for (const [sti, gr] of alleGrunnlag(r)) {
+    if (gr.type === 'ousfar_vurdering' && gr.avklaring && utviklere.has(gr.avklaring.av)) feil.push(`Valget ${sti} er avklart av en utvikler av regelen, ikke uavhengig.`)
+  }
   return feil
 }
 

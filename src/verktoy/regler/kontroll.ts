@@ -18,12 +18,13 @@ import { beregn, kortform } from './beregning'
 import { godkjenningsfeil } from './godkjenning'
 import { kildeFor } from './kilder'
 import {
+  alleGrunnlag,
   henvisninger,
   parameterfeil,
   parametre,
   REGELMODELLVERSJON,
+  tallfeil,
   type Administrasjon,
-  type Grunnlag,
   type Regel,
   type Regelsett,
   type Virkestoffvalg,
@@ -151,42 +152,33 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
   if (r.fortolkning.forutsetninger.length === 0) f('fortolkningen har ingen forutsetninger')
   if (r.fortolkning.usikkerhet.length === 0) f('fortolkningen har ingen usikkerhet')
 
-  // Hver verdi har et grunnlag, og beregnbarheten stemmer med det.
-  const grunnlag: [string, Grunnlag][] = [
-    ...parametre(r).map(([sti, p]) => [sti, p.grunnlag] as [string, Grunnlag]),
-    ...r.inndata.map((x) => [`inndata.${x.navn}`, x.grunnlag] as [string, Grunnlag]),
-    ...[...r.bekreftelser, ...r.unntak].map((x) => [x.id, x.grunnlag] as [string, Grunnlag]),
-  ]
+  // Hver verdi har et grunnlag og riktig enhet, og beregnbarheten stemmer med opprinnelsen.
+  // Beregnbarheten beskriver kildene: en regel med OUSFAR-vurderinger er aldri entydig, heller ikke når vurderingene er avklart.
+  const grunnlag = alleGrunnlag(r)
+  const utviklere = new Set(r.godkjenning.historikk.filter((s) => s.rolle === 'utvikler').map((s) => s.av))
   for (const [sti, gr] of grunnlag) {
     if (gr.type === 'kilde' && gr.henvisninger.length === 0) f(`${sti} har kilde som grunnlag, men ingen henvisning`)
-    if (gr.type === 'ousfar_forslag' && !gr.begrunnelse.trim()) f(`${sti} er et forslag uten begrunnelse`)
+    if (gr.type !== 'ousfar_vurdering') continue
+    if (!gr.begrunnelse.trim()) f(`${sti} er en OUSFAR-vurdering uten begrunnelse`)
+    const a = gr.avklaring
+    if (a && (!a.av.trim() || !a.merknad.trim() || !/^\d{4}-\d\d-\d\d$/.test(a.dato))) f(`avklaringen av ${sti} mangler dato, navn eller merknad`)
+    if (a && ((a.rolle as string) === 'utvikler' || utviklere.has(a.av))) f(`${sti} er avklart av en utvikler av regelen; avklaringen må være uavhengig`)
+    if (a && (!Number.isInteger(a.regelversjon) || a.regelversjon < 1 || a.regelversjon > r.versjon)) f(`avklaringen av ${sti} gjelder en ukjent regelversjon (${a.regelversjon})`)
   }
   for (const [sti, p] of parametre(r)) {
-    const ugyldig = parameterfeil(p)
+    const ugyldig = parameterfeil(p, sti)
     if (ugyldig) f(`${sti} er ugyldig: ${ugyldig}`)
     else if (p.verdi !== null && p.omrade && (p.verdi < p.omrade[0] || p.verdi > p.omrade[1])) f(`${sti} er utenfor sitt eget område`)
   }
-  const positiv = (x: number) => Number.isFinite(x) && x > 0
-  for (const x of r.inndata) {
-    const tall = [...(x.omrade ?? []), ...(x.verdier ?? [])]
-    if (!tall.every(positiv) || (x.omrade && x.omrade[0] > x.omrade[1])) f(`inndatakravet for ${x.navn} har ugyldige grenser`)
-  }
-  for (const forlop of r.plan.forlop) {
-    for (const fase of forlop.faser) {
-      if (fase.type !== 'injeksjoner') continue
-      for (const dose of [...fase.start.map((s) => s.dose), fase.vedlikehold.dose]) {
-        if (dose.type !== 'tabell') continue
-        for (const rad of dose.rader) {
-          const til = Array.isArray(rad.til_mg) ? rad.til_mg : [rad.til_mg]
-          if (!positiv(rad.fra_mg) || !til.every(positiv) || (til.length === 2 && til[0]! >= til[1]!)) f(`forløp ${forlop.id}: omregningsraden ${rad.fra_mg} mg er ugyldig`)
-        }
-      }
-    }
-  }
-  const forslag = grunnlag.filter(([, gr]) => gr.type === 'ousfar_forslag').map(([sti]) => sti)
+  for (const x of tallfeil(r)) f(x)
+  const vurderinger = grunnlag.filter(([, gr]) => gr.type === 'ousfar_vurdering').map(([sti]) => sti)
   const mangler = parametre(r).filter(([, p]) => p.verdi === null).map(([sti]) => sti)
-  if (r.beregnbarhet === 'entydig_beregnbar' && (forslag.length > 0 || mangler.length > 0)) {
-    f(`er merket entydig beregnbar, men har forslag eller manglende verdier som må avklares: ${[...forslag, ...mangler].join(', ')}`)
+  const foreslatt = (r.medlemmer ?? []).filter((m) => m.validering === 'foreslatt').map((m) => m.nokkel)
+  if (r.beregnbarhet === 'entydig_beregnbar' && (vurderinger.length > 0 || mangler.length > 0 || foreslatt.length > 0)) {
+    f(`er merket entydig beregnbar, men har OUSFAR-vurderinger, manglende verdier eller foreslåtte medlemmer: ${[...vurderinger, ...mangler, ...foreslatt].join(', ')}`)
+  }
+  if (r.beregnbarhet === 'beregnbar_etter_avklaring' && vurderinger.length + mangler.length + foreslatt.length === 0) {
+    f('er merket beregnbar etter avklaring, men har ingen OUSFAR-vurderinger, manglende verdier eller foreslåtte medlemmer; den er entydig beregnbar')
   }
 
   // Godkjenningen: status følger historikken, siste steg gjelder denne regelversjonen, og en klinisk

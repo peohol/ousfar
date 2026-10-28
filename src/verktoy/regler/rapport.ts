@@ -8,6 +8,7 @@ import { beregn, kortform, MOTORVERSJON } from './beregning'
 import { erKliniskGodkjent, fingeravtrykk, godkjenningsfeil } from './godkjenning'
 import { KILDER, kildeFor } from './kilder'
 import {
+  apneValg,
   parametre,
   REGELMODELLVERSJON,
   type Beregningsinndata,
@@ -72,7 +73,9 @@ const utsagn = (u: Utsagn) =>
 function grunnlag(g: Grunnlag): string {
   if (g.type === 'kilde') return g.henvisninger.map((h) => (h.kilde === 'psychiatrienet' ? 'psychiatrienet' : `${h.kilde} ${'sted' in h ? h.sted : ''}`)).join('; ')
   const bygger = g.henvisninger?.length ? ` (bygger på ${g.henvisninger.map((h) => `${h.kilde} ${'sted' in h ? h.sted : ''}`).join('; ')})` : ''
-  return `**OUSFAR-forslag:** ${g.begrunnelse}${bygger}`
+  const a = g.avklaring
+  const status = a ? `avklart ${dato(a.dato)} av ${a.av} (versjon ${a.regelversjon}): ${a.merknad}` : 'åpent forslag'
+  return `**OUSFAR-vurdering, ${status}:** ${g.begrunnelse}${bygger}`
 }
 
 function parametertabell(r: Regel): string {
@@ -199,8 +202,16 @@ Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel by
 ## Oversikt
 
 ${tabell(
-  ['Regel', 'Form', 'Fra → til', 'Beregnbarhet', 'Status', 'Eksempler'],
-  sett.regler.map((r) => [`\`${r.id}\``, FORM[r.plan.form], `${valg(r.fra)} → ${valg(r.til)}`, BEREGNBARHET[r.beregnbarhet], statustekst(r), String(r.eksempler.length)]),
+  ['Regel', 'Form', 'Fra → til', 'Beregnbarhet', 'Åpne valg', 'Status', 'Eksempler'],
+  sett.regler.map((r) => [
+    `\`${r.id}\``,
+    FORM[r.plan.form],
+    `${valg(r.fra)} → ${valg(r.til)}`,
+    BEREGNBARHET[r.beregnbarhet],
+    String(apneValg(r).length),
+    statustekst(r),
+    String(r.eksempler.length),
+  ]),
 )}
 
 ## Kilder

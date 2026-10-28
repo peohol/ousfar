@@ -21,6 +21,7 @@ import {
   parameterfeil,
   parametre,
   REGELMODELLVERSJON,
+  tallfeil,
   type Dosekilde,
   type Fase,
   type Forlop,
@@ -417,6 +418,24 @@ function inndatafeil(i: Beregningsinndata): string[] {
   return feil
 }
 
+/** Siste kontroll før en plan returneres: hele planens dager fra 1 og endelige, positive doser. */
+function planfeil(forlop: Forlopsresultat[]): string[] {
+  const feil: string[] = []
+  const dag = (x: unknown) => typeof x === 'number' && Number.isInteger(x) && x >= 1
+  const dose = (x: unknown) => typeof x === 'number' && Number.isFinite(x) && x > 0
+  for (const f of forlop) {
+    if (!dag(f.start)) feil.push(`${f.id} starter dag ${String(f.start)}`)
+    for (const p of f.perioder) {
+      if (!dag(p.fra) || (p.til !== null && (!dag(p.til) || p.til < p.fra)) || !dose(p.mg)) feil.push(`${f.id} har perioden dag ${p.fra}–${String(p.til)} med ${p.mg} mg`)
+    }
+    for (const i of f.injeksjoner) {
+      if ((i.dag !== null && !dag(i.dag)) || !dose(i.mg)) feil.push(`${f.id} har en injeksjon dag ${String(i.dag)} med ${i.mg} mg`)
+      if (i.vedlikehold && (!dag(i.vedlikehold.etter_dag) || !dag(i.vedlikehold.maaneder))) feil.push(`${f.id} har et ugyldig vedlikeholdsintervall`)
+    }
+  }
+  return feil
+}
+
 /**
  * Beregner `regel` for `inndata`. `regelsett` er settet regelen hører til,
  * når den beregnes som del av et.
@@ -469,10 +488,10 @@ export function beregn(regel: Regel, inndata: Beregningsinndata, regelsett?: Reg
 
   const gjelder = (k: Inndatakrav) => !k.gjelder_medlem || k.gjelder_medlem === inndata.medlem
   const startkrav = regel.inndata.filter((k) => k.navn === 'startdose' && gjelder(k))
-  if (startkrav.length === 0) startkrav.push({ navn: 'startdose', art: 'bindende_krav', grunnlag: { type: 'ousfar_forslag', begrunnelse: '' } })
+  if (startkrav.length === 0) startkrav.push({ navn: 'startdose', art: 'bindende_krav', grunnlag: { type: 'ousfar_vurdering', begrunnelse: '', avklaring: null } })
   for (const k of startkrav) kontrollerInndata(k, inndata.startdose_mg, stopp, merknader, kontroller)
   const malkrav = regel.inndata.filter((k) => k.navn === 'maldose' && gjelder(k))
-  if (malkrav.length === 0 && brukerMaldose(regel.plan)) malkrav.push({ navn: 'maldose', art: 'bindende_krav', grunnlag: { type: 'ousfar_forslag', begrunnelse: '' } })
+  if (malkrav.length === 0 && brukerMaldose(regel.plan)) malkrav.push({ navn: 'maldose', art: 'bindende_krav', grunnlag: { type: 'ousfar_vurdering', begrunnelse: '', avklaring: null } })
   for (const k of malkrav) kontrollerInndata(k, inndata.maldose_mg, stopp, merknader, kontroller)
   if (malkrav.length === 0 && inndata.maldose_mg !== undefined && !positivt(inndata.maldose_mg)) stopp.push('Måldosen må være et positivt tall i mg.')
 
@@ -489,11 +508,12 @@ export function beregn(regel: Regel, inndata: Beregningsinndata, regelsett?: Reg
   // Parametre uten gyldig verdi i de fasene som faktisk brukes.
   for (const f of regel.plan.forlop) {
     for (const [sti, p] of parametre({ start: f.start, faser: faserFor(regel, f, medlem) }, f.id)) {
-      const ugyldig = parameterfeil(p)
+      const ugyldig = parameterfeil(p, sti)
       if (p.verdi === null) stopp.push(`Verdien ${sti} mangler og må avklares faglig.`)
       else if (ugyldig) stopp.push(`Verdien ${sti} er ugyldig: ${ugyldig}.`)
     }
   }
+  for (const x of tallfeil(regel)) stopp.push(`Regelen er ugyldig: ${x}.`)
 
   if (stopp.length > 0) return stoppet()
 
@@ -503,6 +523,11 @@ export function beregn(regel: Regel, inndata: Beregningsinndata, regelsett?: Reg
   } catch (e) {
     // Også en feil i regelen selv gir en kontrollert stopp, aldri et unntak hos den som beregner.
     stopp.push(e instanceof Stopp ? e.message : `Beregningen kunne ikke fullføres: ${e instanceof Error ? e.message : String(e)}`)
+    return stoppet()
+  }
+  const ugyldigPlan = planfeil([...ctx.resultater.values()])
+  if (ugyldigPlan.length > 0) {
+    stopp.push(...ugyldigPlan.map((x) => `Beregningen ga en ugyldig plan: ${x}.`))
     return stoppet()
   }
   for (const k of ctx.kontroller) if (!k.oppfylt) merknader.push(`${k.krav}: ikke oppfylt. ${k.detalj}`)
