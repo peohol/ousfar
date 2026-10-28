@@ -36,6 +36,16 @@ export const GRUNNINNDELING: readonly Grunnkategori[] = lesGrunninndeling()
 export const kategoriid = (kategori: string, underkategori?: string) =>
   underkategori ? `${kategori}/${underkategori}` : kategori
 
+/** Stoffene grunninndelingen plasserer. */
+const I_GRUNNINNDELINGEN = new Set(
+  GRUNNINNDELING.flatMap((k) => [...(k.stoffer ?? []), ...(k.underkategorier ?? []).flatMap((u) => u.stoffer)]),
+)
+
+/** Sidene importene plasserer i stoffregisteret. */
+const PLASSERES_MED_SIDEN = FAGSIDEIMPORTER.flatMap((i) =>
+  i.sider.filter((s) => !(i.beholdPlassering && I_GRUNNINNDELINGEN.has(stoffslug(s.navn)))),
+)
+
 function bygg(): Registerstruktur {
   const kategorier: Kategorirad[] = []
   const plasseringer: Plasseringsrad[] = []
@@ -50,7 +60,7 @@ function bygg(): Registerstruktur {
     })
   })
   // Fagsidene som er lagt inn senere, med underkategoriene importen lager når de mangler.
-  for (const { navn, kategori: [kategori, under] } of FAGSIDEIMPORTER.flatMap((i) => i.sider)) {
+  for (const { navn, kategori: [kategori, under] } of PLASSERES_MED_SIDEN) {
     const id = kategoriid(kategori, under)
     if (under && !kategorier.some((k) => k.id === id)) {
       const posisjon = kategorier.filter((k) => k.forelder === kategoriid(kategori)).length
@@ -65,11 +75,10 @@ function bygg(): Registerstruktur {
  * Stoffene som plasseres sammen med fagsiden sin (`FAGSIDEIMPORTER`). Det
  * gjør migrasjonen bare når administratoren finnes; uten, som i de fleste
  * testdatabasene, står de i «Andre stoffer» (`verktoyfagsider.test.ts`
- * prøver plasseringen).
+ * prøver plasseringen). En import som beholder plasseringen, plasserer ikke
+ * et stoff som alt står i grunninndelingen (`kokainmdmaetanol.test.ts`).
  */
-export const PLASSERT_MED_SIDEN: ReadonlySet<string> = new Set(
-  FAGSIDEIMPORTER.flatMap((i) => i.sider.map((s) => stoffslug(s.navn))),
-)
+export const PLASSERT_MED_SIDEN: ReadonlySet<string> = new Set(PLASSERES_MED_SIDEN.map((s) => stoffslug(s.navn)))
 
 /** Inndelingen fra migrasjonene, uten arkiverte eller slettede stoffer. */
 export const GRUNNSTRUKTUR: Registerstruktur = bygg()

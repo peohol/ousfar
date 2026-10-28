@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.112.1',
+    versjon: '1.113.1',
     dato: '2026-10-28',
     sammendrag: 'Regelutkast for nedtrapping av antidepressiva, til faglig kontroll',
     typer: ['Funksjonalitet'],
@@ -22,6 +22,19 @@ export const ENDRINGSLOGG: Endring[] = [
       'Trappe ned antidepressiv har fått utkast til nedtrappingsregler for 14 antidepressiva, bygd på preparatomtalene og NICE-retningslinjen, og en tekstregel for agomelatin, som ikke trenger nedtrapping. Ingen er klinisk godkjent, så verktøyet sier fortsatt at faglig kontroll gjenstår, og viser ingen doseplan.',
       'For antidepressiva uten regel forklarer verktøyet hvorfor, for eksempel at stoffet ikke har preparater i FEST, bare finnes med godkjenningsfritak eller mangler kildegrunnlag.',
       'Når reglene er godkjent, er planen et startforslag som må bekreftes, og den gjelder ikke når et tidligere nedtrappingsforsøk har gitt seponeringssymptomer. Planen ender alltid med seponering. Kan et trinn ikke gis nøyaktig med norske preparater, stopper beregningen og viser de nærmeste dosene i stedet for å avvike fra regelen.',
+    ],
+  },
+  {
+    versjon: '1.113.0',
+    dato: '2026-10-28',
+    sammendrag: 'Fagsider for kokain, MDMA og etanol, foreløpig uten faginnhold',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['stoff', 'stoffregister', 'sok'],
+    punkter: [
+      'Kokain, MDMA og etanol har fått fagside. Til nå sa disse stoffene at de ikke hadde noen publisert fagside. De står i stoffregisteret der de sto fra før: kokain og MDMA under stimulanter, etanol under alkohol og GHB.',
+      'Sidene har ikke faginnhold og er ikke faglig kuratert, og sier det selv. De er laget så den faglige kurateringen av dem kan starte.',
+      'Kokain- og etanolsiden viser preparatene fra FEST. MDMA finnes ikke i FEST.',
     ],
   },
   {

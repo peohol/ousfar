@@ -840,6 +840,12 @@ også når den viser data OUSFAR henter selv: «… og er ikke faglig kuratert»
 ClinPGx er ikke faginnhold). Slik ble de 16 fagsidene OUSFAR Verktøy manglet
 laget (`*_verktoy_fagsider.sql`, P2 i `docs/verktøy-utviklingsplan.md`), med
 navnene, nøklene og FEST-ID-ene fra kartleggingen (`src/verktoy/fagsider.ts`).
+Kokain, MDMA og etanol fikk sine på samme måte (`*_kokain_mdma_etanol_fagsider.sql`),
+så kurateringen av dem kan starte; kokain og etanol er koblet til FEST,
+MDMA finnes ikke der. Stoffene sto alt i stoffregisteret (kokain og MDMA i
+«Stimulanter», etanol i «Alkohol og GHB»), så importen har
+`beholdPlassering`: et stoff som står i en kategori, blir stående der, og
+bare et stoff uten plassering legges i kategorien importen oppgir.
 
 **Antihypertensiver.** `supabase/import/antihypertensiver/` har de 25
 antihypertensivene fra oversikten over serumkonsentrasjoner
