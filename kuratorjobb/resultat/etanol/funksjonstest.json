@@ -1,0 +1,98 @@
+{
+  "stoff": "etanol",
+  "status": "feil",
+  "kontroller": [
+    {
+      "id": "les_stoff",
+      "rpc": "les_stoff",
+      "ms": 367,
+      "status": "feil",
+      "melding": "Fant ingen publisert fagside med nøkkelen «etanol»."
+    },
+    {
+      "id": "utkast_skjult",
+      "rpc": "les_stoff",
+      "ms": 374,
+      "status": "ok",
+      "melding": "Utkastet er skjult for en vanlig bruker, som det skal."
+    },
+    {
+      "id": "stoffliste",
+      "rpc": "les_stoffliste",
+      "ms": 160,
+      "status": "feil",
+      "melding": "Siden står ikke i lista over fagsider.",
+      "antall": {
+        "sider": 125
+      }
+    },
+    {
+      "id": "fest",
+      "status": "feil",
+      "melding": "Kunne ikke lese koblingen til FEST uten siden."
+    },
+    {
+      "id": "bivirkninger",
+      "rpc": "les_bivirkninger",
+      "ms": 158,
+      "status": "ikke_aktuelt",
+      "melding": "Ingen bivirkninger er importert fra preparatomtaler for siden.",
+      "antall": {
+        "kilder": 0,
+        "rader": 0,
+        "rader_appen_viser": 0
+      }
+    },
+    {
+      "id": "clinpgx",
+      "status": "feil",
+      "melding": "Kunne ikke lese koblingen til ClinPGx uten siden."
+    },
+    {
+      "id": "kjemi",
+      "rpc": "les_kjemi",
+      "ms": 372,
+      "status": "ok",
+      "melding": "De kjemiske grunndataene ble lest, og koblingene stemmer (kontrollert 2026-10-28T03:15:15.268885+00:00).",
+      "antall": {
+        "forbindelser": 3,
+        "hentet": 3,
+        "ikke_hentet": 0,
+        "uavklarte": 0,
+        "rader": 3,
+        "rader_appen_viser": 3
+      }
+    },
+    {
+      "id": "kjemivisning",
+      "status": "ok",
+      "melding": "Seksjonen «Kjemiske grunndata» kan bygges av svaret."
+    },
+    {
+      "id": "laboratorieanalyser",
+      "rpc": "les_laboratorieanalyser",
+      "ms": 449,
+      "status": "ok",
+      "melding": "Laboratorieanalysene ble lest, og koblingene stemmer (kontrollert 2026-10-28T04:44:59.935728+00:00).",
+      "antall": {
+        "forbindelser": 3,
+        "koblet": 3,
+        "usikre": 0,
+        "komponenter": 6,
+        "analyser": 103,
+        "laboratorier": 47
+      }
+    },
+    {
+      "id": "laboratorievisning",
+      "status": "ok",
+      "melding": "Seksjonen «Analyse ved norske laboratorier» kan bygges av svaret, i alle enhetene.",
+      "antall": {
+        "tabeller": 14,
+        "rader": 93,
+        "ikke_omregnet": 11,
+        "usikre": 0
+      }
+    }
+  ]
+}

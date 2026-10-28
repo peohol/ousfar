@@ -1,0 +1,98 @@
+{
+  "stoff": "mdma",
+  "status": "feil",
+  "kontroller": [
+    {
+      "id": "les_stoff",
+      "rpc": "les_stoff",
+      "ms": 401,
+      "status": "feil",
+      "melding": "Fant ingen publisert fagside med nøkkelen «mdma»."
+    },
+    {
+      "id": "utkast_skjult",
+      "rpc": "les_stoff",
+      "ms": 144,
+      "status": "ok",
+      "melding": "Utkastet er skjult for en vanlig bruker, som det skal."
+    },
+    {
+      "id": "stoffliste",
+      "rpc": "les_stoffliste",
+      "ms": 364,
+      "status": "feil",
+      "melding": "Siden står ikke i lista over fagsider.",
+      "antall": {
+        "sider": 125
+      }
+    },
+    {
+      "id": "fest",
+      "status": "feil",
+      "melding": "Kunne ikke lese koblingen til FEST uten siden."
+    },
+    {
+      "id": "bivirkninger",
+      "rpc": "les_bivirkninger",
+      "ms": 383,
+      "status": "ikke_aktuelt",
+      "melding": "Ingen bivirkninger er importert fra preparatomtaler for siden.",
+      "antall": {
+        "kilder": 0,
+        "rader": 0,
+        "rader_appen_viser": 0
+      }
+    },
+    {
+      "id": "clinpgx",
+      "status": "feil",
+      "melding": "Kunne ikke lese koblingen til ClinPGx uten siden."
+    },
+    {
+      "id": "kjemi",
+      "rpc": "les_kjemi",
+      "ms": 138,
+      "status": "ok",
+      "melding": "De kjemiske grunndataene ble lest, og koblingene stemmer (kontrollert 2026-10-28T03:15:15.268885+00:00).",
+      "antall": {
+        "forbindelser": 2,
+        "hentet": 2,
+        "ikke_hentet": 0,
+        "uavklarte": 0,
+        "rader": 2,
+        "rader_appen_viser": 2
+      }
+    },
+    {
+      "id": "kjemivisning",
+      "status": "ok",
+      "melding": "Seksjonen «Kjemiske grunndata» kan bygges av svaret."
+    },
+    {
+      "id": "laboratorieanalyser",
+      "rpc": "les_laboratorieanalyser",
+      "ms": 185,
+      "status": "ok",
+      "melding": "Laboratorieanalysene ble lest, og koblingene stemmer (kontrollert 2026-10-28T04:44:59.935728+00:00).",
+      "antall": {
+        "forbindelser": 2,
+        "koblet": 2,
+        "usikre": 0,
+        "komponenter": 3,
+        "analyser": 44,
+        "laboratorier": 16
+      }
+    },
+    {
+      "id": "laboratorievisning",
+      "status": "ok",
+      "melding": "Seksjonen «Analyse ved norske laboratorier» kan bygges av svaret, i alle enhetene.",
+      "antall": {
+        "tabeller": 10,
+        "rader": 38,
+        "ikke_omregnet": 3,
+        "usikre": 0
+      }
+    }
+  ]
+}
