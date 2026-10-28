@@ -258,18 +258,21 @@ export const KRYSSREGEL: Regel = {
   },
 }
 
-/** Opptrapping av testazapin med faste trinn på 7 dager og dosevalget, til å prøve grensene for én dose. */
-export function fastDose(mg: number[], dosevalg?: Regel['plan']['forlop'][number]['dosevalg']): Regel {
+/**
+ * Opptrapping av testazapin (eller `nokkel`) med faste trinn på 7 dager og
+ * dosevalget, til å prøve grensene for én dose.
+ */
+export function fastDose(mg: number[], dosevalg?: Regel['plan']['forlop'][number]['dosevalg'], nokkel = 'testazapin'): Regel {
   return {
-    ...grunnregel('fast', 'faste doser av testazapin'),
-    fra: { type: 'virkestoff', nokkel: 'testazapin' },
+    ...grunnregel('fast', `faste doser av ${nokkel}`),
+    fra: { type: 'virkestoff', nokkel },
     til: null,
     plan: {
       form: 'seponering',
       forlop: [
         {
           id: 'fra',
-          virkestoff: { type: 'virkestoff', nokkel: 'testazapin' },
+          virkestoff: { type: 'virkestoff', nokkel },
           administrasjon: 'peroral',
           utgangsdose: null,
           start: { type: 'dag', dag: 1 },

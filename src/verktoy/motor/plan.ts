@@ -131,21 +131,38 @@ const dager = (p: { fra: number; til: number | null }) => (p.til === null ? `fra
  * ikke godtas (ulike klokker). En teknisk driftsregel, ikke en klinisk grense.
  */
 export const KLOKKEAVVIK_MINUTTER = 5
-/** Et fullt tidspunkt med tidssone, slik databasen gir det. */
-const ISO_TIDSPUNKT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2})$/
+/** Et ISO-tidspunkt: dato, eventuelt klokkeslett med sekunder, brøkdeler og tidssone. */
+const ISO_TIDSPUNKT = /^(\d{4}-\d{2}-\d{2})(?:T(\d{2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?(Z|[+-](\d{2}):(\d{2}))?)?$/
 const DOGN = 86_400_000
+
+/**
+ * Kalenderdatoen i `x` når hele tidspunktet er gyldig, ellers `null`. Datoen
+ * kontrolleres før tidspunktet tolkes, så `2026-02-30` ikke flyttes til mars.
+ * `medSone` krever klokkeslett og tidssone (kontrolltidspunktet); kildedatoen
+ * fra FEST lagres som dato og klokkeslett uten tidssone.
+ */
+function tidspunktdato(x: string, medSone: boolean): string | null {
+  const m = ISO_TIDSPUNKT.exec(x)
+  if (!m || !erIsoDato(m[1])) return null
+  const [, dato, t, min, sek, sone, st, sm] = m
+  if (medSone && sone === undefined) return null
+  if (t !== undefined && (Number(t) > 23 || Number(min) > 59 || Number(sek ?? 0) > 59)) return null
+  if (st !== undefined && (Number(st) > 23 || Number(sm) > 59)) return null
+  return dato!
+}
 
 /** Hvorfor tidsstemplene til FEST-kopien ikke kan brukes i det hele tatt; tom når de er gyldige. */
 function festdatofeil(utvalg: Pick<Preparatgrunnlag['utvalg'], 'kontrollert_kl' | 'kildedato'>): string[] {
   const { kontrollert_kl: kl, kildedato } = utvalg
   if (!kl || !kildedato) return ['Det finnes ingen vellykket henting av FEST å regne med; preparatene kan ikke bekreftes.']
   const feil: string[] = []
-  const kontrollert = ISO_TIDSPUNKT.test(kl) ? Date.parse(kl) : NaN
+  const kontrollert = tidspunktdato(kl, true) === null ? NaN : Date.parse(kl)
   if (Number.isNaN(kontrollert)) feil.push(`Tidspunktet FEST sist ble kontrollert («${kl}») er ikke et gyldig tidspunkt.`)
-  if (!erIsoDato(kildedato)) feil.push(`Kildedatoen til FEST-kopien («${kildedato}») er ikke en gyldig dato.`)
+  const uttrekk = tidspunktdato(kildedato, false)
+  if (uttrekk === null) feil.push(`Kildedatoen til FEST-kopien («${kildedato}») er ikke en gyldig dato.`)
   // Ett døgns slingring for tidssonen kontrolltidspunktet er skrevet i.
-  else if (!Number.isNaN(kontrollert) && kildedato > new Date(kontrollert + DOGN).toISOString().slice(0, 10)) {
-    feil.push(`Kildedatoen til FEST-kopien (${norskDato(kildedato)}) ligger etter tidspunktet den ble kontrollert.`)
+  else if (!Number.isNaN(kontrollert) && uttrekk > new Date(kontrollert + DOGN).toISOString().slice(0, 10)) {
+    feil.push(`Kildedatoen til FEST-kopien (${norskDato(uttrekk)}) ligger etter tidspunktet den ble kontrollert.`)
   }
   return feil
 }

@@ -505,7 +505,17 @@ describe('Sperren mot klinisk bruk', () => {
     // Tidssone og brøkdeler av sekunder, slik databasen skriver det.
     expect(klinisk({ kontrollert_kl: '2026-11-01T05:20:00.123456+01:00' })).toMatchObject({ status: 'doseplan', klinisk: true })
     // Ugyldige tidspunkter stopper beregningen helt.
-    for (const x of ['not-a-timestamp', '2026-11-01', '2026-11-01T04:20:00', '2026-13-01T04:20:00Z', '']) expect(grunner(x), x).toMatch(/ingen vellykket henting|ikke et gyldig tidspunkt/)
+    for (const x of ['not-a-timestamp', '2026-11-01', '2026-11-01T04:20:00', '2026-13-01T04:20:00Z', '2026-11-01T24:00:00Z', '2026-11-01T04:60:00Z', '2026-11-01T04:20:00+25:00', '']) expect(grunner(x), x).toMatch(/ingen vellykket henting|ikke et gyldig tidspunkt/)
+    // En dag som ikke finnes i kalenderen, flyttes ikke til neste måned.
+    const mars = '2026-03-02T12:00:00Z'
+    expect(klinisk({ kontrollert_kl: '2026-03-01T12:00:00Z', kildedato: '2026-02-15' }, mars)).toMatchObject({ status: 'doseplan', klinisk: true })
+    for (const x of ['2026-02-30T12:00:00Z', '2026-02-29T12:00:00Z']) {
+      const r = klinisk({ kontrollert_kl: x, kildedato: '2026-02-15' }, mars)
+      expect(r.status === 'stoppet' && r.stoppgrunner.join(' '), x).toMatch(/ikke et gyldig tidspunkt/)
+    }
+    expect(klinisk({ kontrollert_kl: '2026-11-31T12:00:00Z' })).toMatchObject({ status: 'stoppet' })
+    // 29. februar i et skuddår er gyldig.
+    expect(klinisk({ kontrollert_kl: '2028-02-29T12:00:00Z', kildedato: '2028-02-15' }, '2028-03-01T12:00:00Z')).toMatchObject({ status: 'doseplan', klinisk: true })
     expect(grunner(null)).toMatch(/ingen vellykket henting av FEST/)
     expect(beregnDoseplan(positivKontroll(), AZA, { ...g, utvalg: somFest(g.utvalg, 'not-a-timestamp') }, OMGIVELSE)).toMatchObject({ status: 'stoppet' })
     // Et ugyldig tidspunkt for beregningen gir heller ingen klinisk plan.
@@ -518,6 +528,11 @@ describe('Sperren mot klinisk bruk', () => {
       return r.status === 'stoppet' ? r.stoppgrunner.join(' ') : ''
     }
     expect(klinisk({ kildedato: '2026-11-01' })).toMatchObject({ status: 'doseplan', klinisk: true })
+    // Slik FEST-synken lagrer den: dato og klokkeslett uten tidssone. Den beholdes uendret i sporet.
+    const r = klinisk({ kildedato: '2026-10-08T03:09:06' })
+    expect(r).toMatchObject({ status: 'doseplan', klinisk: true, fest: { kildedato: '2026-10-08T03:09:06' } })
+    for (const x of ['2026-10-08T03:09', '2026-10-08T03:09:06.5', '2026-10-08T03:09:06Z']) expect(klinisk({ kildedato: x }), x).toMatchObject({ klinisk: true })
+    for (const x of ['2026-02-30T03:09:06', '2026-10-08T25:09:06', '2026-10-08 03:09:06']) expect(grunner(x), x).toMatch(/ikke en gyldig dato/)
     // Ett døgns slingring for tidssonen kontrolltidspunktet er skrevet i.
     expect(klinisk({ kildedato: '2026-11-02' })).toMatchObject({ status: 'doseplan', klinisk: true })
     expect(grunner('2026-11-03')).toMatch(/kildedatoen til FEST-kopien \(03\.11\.2026\) ligger etter tidspunktet den ble kontrollert/i)
