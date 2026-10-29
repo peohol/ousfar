@@ -16,8 +16,9 @@
  * 3. **Den matematiske regelen** (`Plan`): doseforløp med faser, strategier og
  *    tidsrelasjoner, og parametre som hver sier om de er bindende krav eller
  *    veiledende preferanser, og hva de bygger på.
- * 4. **Betingelsene** (`Inndatakrav`, `Bekreftelse`, `Unntak`): når regelen
- *    gjelder, hva forskriveren må bekrefte, og når den ikke gjelder.
+ * 4. **Betingelsene** (`Inndatakrav`, `Bekreftelse`, `Unntak`, `Sporsmal`):
+ *    når regelen gjelder, hva forskriveren må bekrefte og svare på, og når den
+ *    ikke gjelder.
  * 5. **Godkjenningen** (`Godkjenning`): utkast, til faglig kontroll, klinisk
  *    godkjent, avvist eller trukket, med historikk.
  * 6. **Beregningsresultatet** (`Beregningsresultat`, i `beregning.ts`): en
@@ -32,7 +33,7 @@
 import type { Formuleringsklasse } from '../festformuleringer'
 
 /** Økes når formen på regler eller regelsett endres. */
-export const REGELMODELLVERSJON = 4
+export const REGELMODELLVERSJON = 5
 
 /* --- Kilder ----------------------------------------------------------------- */
 
@@ -140,6 +141,26 @@ export interface Parameter {
    * regelen er da forslaget; området er det som godkjennes.
    */
   justerbar?: string
+  /**
+   * Den øvre grensen i `omrade` er bare teknisk (en grense for hvor lang en
+   * beregnet plan kan bli), ikke klinisk: verdien har ingen klinisk fastsatt
+   * øvre grense, og teksten sier «minst …».
+   */
+  teknisk_maks?: true
+  /** Verdier som bare kan brukes med en skriftlig begrunnelse fra forskriveren. */
+  begrunnelseskrav?: Begrunnelseskrav[]
+}
+
+/**
+ * En verdi over `over` eller under `under` krever en skriftlig begrunnelse fra
+ * forskriveren; med `ved` bare når forskriveren har svart ja på det spørsmålet
+ * (`Sporsmal`). Kravet gjelder verdien som brukes, også regelens forslag.
+ */
+export interface Begrunnelseskrav {
+  over?: number
+  under?: number
+  ved?: string
+  grunnlag: Grunnlag
 }
 
 /* --- Planen ------------------------------------------------------------------- */
@@ -187,8 +208,11 @@ export type Fase =
    * Trapper ned fra den aktuelle dosen til 0, med `trinnlengde` dager per
    * trinn. Første trinn er allerede redusert. Blir nedtrappingen kortere enn
    * `minste_varighet` dager, stopper beregningen i stedet for å forlenge den.
+   * Med `avslutning: 'individuell'` går planen ikke til 0: siste trinn
+   * fortsetter, og avslutningen må vurderes individuelt, fordi regelen ikke
+   * har noen godkjent avslutning (nulltrinn). Da er trinnlengden en minstetid.
    */
-  | { type: 'nedtrapping'; strategi: Nedtrappingsstrategi; trinnlengde: Parameter; minste_varighet?: Parameter }
+  | { type: 'nedtrapping'; strategi: Nedtrappingsstrategi; trinnlengde: Parameter; minste_varighet?: Parameter; avslutning?: 'individuell' }
   /** Fast opptrapping: hver dose i sitt antall dager. */
   | { type: 'opptrapping'; trinn: { mg: Parameter; dager: Parameter }[] }
   /** Dosen planen ender med (ingen sluttdato). */
@@ -287,6 +311,19 @@ export interface Unntak {
   grunnlag: Grunnlag
 }
 
+/**
+ * Et spørsmål forskriveren må svare ja eller nei på før beregningen, f.eks. om
+ * behandlingstiden er lang. Svaret står i planen og kan avgjøre om et
+ * begrunnelseskrav gjelder. Et spørsmål uten svar stopper beregningen.
+ */
+export interface Sporsmal {
+  id: string
+  tekst: string
+  /** Hva et ja betyr, kort, til teksten i planen og kravene: «lang behandlingstid». */
+  ja: string
+  grunnlag: Grunnlag
+}
+
 /** Gruppemedlemmer må valideres hver for seg (B4); bare `foreslatt` og `validert` kan beregnes. */
 export type Medlemsvalidering = 'ikke_vurdert' | 'foreslatt' | 'validert'
 
@@ -358,6 +395,10 @@ export interface Beregningsinndata {
    * {@link parametre} → verdien), innenfor området regelen tillater.
    */
   justert?: Record<string, number>
+  /** Forskriverens svar på spørsmålene (id → ja eller nei). Et spørsmål uten svar stopper beregningen. */
+  svar?: Record<string, boolean>
+  /** Forskriverens skriftlige begrunnelse, når et valg krever det (`Begrunnelseskrav`). */
+  begrunnelse?: string
 }
 
 export interface Regel {
@@ -371,6 +412,8 @@ export interface Regel {
   inndata: Inndatakrav[]
   bekreftelser: Bekreftelse[]
   unntak: Unntak[]
+  /** Spørsmål forskriveren må svare på før beregningen. */
+  sporsmal?: Sporsmal[]
   /** For en gruppe: hvert medlem og om det er validert. */
   medlemmer?: Gruppemedlem[]
   beregnbarhet: Beregnbarhet
@@ -507,12 +550,15 @@ export function grunnlagITabeller(r: Pick<Regel, 'plan'>): [string, Grunnlag][] 
   )
 }
 
-/** Alle grunnlag i regelen med stien dit: parametre, inndata, bekreftelser, unntak og tabeller. */
+/** Alle grunnlag i regelen med stien dit: parametre og begrunnelseskravene deres, inndata, bekreftelser, unntak, spørsmål og tabeller. */
 export function alleGrunnlag(r: Regel): [string, Grunnlag][] {
   return [
-    ...parametre(r).map(([sti, p]) => [sti, p.grunnlag] as [string, Grunnlag]),
+    ...parametre(r).flatMap(([sti, p]) => [
+      [sti, p.grunnlag] as [string, Grunnlag],
+      ...(p.begrunnelseskrav ?? []).map((k, i) => [`${sti}.begrunnelseskrav[${i}]`, k.grunnlag] as [string, Grunnlag]),
+    ]),
     ...r.inndata.map((x) => [`inndata.${x.navn}`, x.grunnlag] as [string, Grunnlag]),
-    ...[...r.bekreftelser, ...r.unntak].map((x) => [x.id, x.grunnlag] as [string, Grunnlag]),
+    ...[...r.bekreftelser, ...r.unntak, ...(r.sporsmal ?? [])].map((x) => [x.id, x.grunnlag] as [string, Grunnlag]),
     ...grunnlagITabeller(r),
   ]
 }

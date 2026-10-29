@@ -13,7 +13,8 @@
  *   gjør det ikke, og må beregnes på nytt.
  * - En regel som lar forskriveren justere en verdi, får et felt for den; et
  *   valg innenfor området gir planen og står som kontroll, et valg utenfor
- *   stopper.
+ *   stopper. Et spørsmål må besvares, og et valg som krever begrunnelse,
+ *   stopper uten den; svaret og begrunnelsen står i planen.
  */
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -22,7 +23,7 @@ import { Verktoyside, type VerktoysideProps } from '../components/verktoy/Verkto
 import type { Legemiddelutvalg } from '../legemiddeldata/lesing'
 import { glemBildet, oppdaterOgTaVare, taBilde } from '../oppdatering/bevaring'
 import { KARTLEGGING } from '../verktoy/register'
-import { godkjennITest, TEST_DEPOT, TEST_JUSTERBAR, TEST_NEDTRAPPING, TESTKLOKKE, testFest, testsett } from './hjelp/verktoyplan'
+import { godkjennITest, TEST_BEGRUNNELSE, TEST_DEPOT, TEST_JUSTERBAR, TEST_NEDTRAPPING, TESTKLOKKE, testFest, testsett } from './hjelp/verktoyplan'
 
 beforeEach(() => {
   window.scrollTo = () => {}
@@ -290,6 +291,38 @@ describe('med en regel forskriveren kan justere', () => {
     await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
     expect(await screen.findByText('Dager per trinn: 30 dager er utenfor det regelen tillater (14–28 dager).')).toBeTruthy()
     expect(screen.queryByRole('table')).toBeNull()
+  })
+
+  it('krever svar på regelens spørsmål, og begrunnelse for et valg som krever det, og viser begge i planen', async () => {
+    const user = userEvent.setup()
+    vis({ verktoy: 'trappe-ned-antidepressiv', legemidler: lesing(), regelsett: testsett(TEST_BEGRUNNELSE), klokke: TESTKLOKKE })
+    await fyllInn(user)
+    const sporsmal = screen.getByRole('group', { name: 'Et syntetisk spørsmål som må besvares.' })
+    const felt = screen.getByRole('textbox', { name: 'Dager per trinn' })
+    const begrunnelse = screen.getByRole('textbox', { name: 'Begrunnelse for valgene' })
+    expect(document.getElementById(begrunnelse.getAttribute('aria-describedby')!)?.textContent).toMatch(/^Begrunnelse kreves ved Dager per trinn under 21 dager ved syntetisk ja, .*skriv ikke navn eller andre personopplysninger\.$/)
+    // Uten svar: ingen plan.
+    await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+    expect(await screen.findByText(/Må besvares før beregning: Et syntetisk spørsmål som må besvares\./)).toBeTruthy()
+    expect(screen.queryByRole('table')).toBeNull()
+    // Ja, og 14 dager uten begrunnelse: ingen plan.
+    await user.click(within(sporsmal).getByRole('radio', { name: 'Ja' }))
+    await user.type(felt, '14')
+    await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+    expect(await screen.findByText(/Dager per trinn 14 dager krever en skriftlig begrunnelse fra forskriveren/)).toBeTruthy()
+    expect(screen.queryByRole('table')).toBeNull()
+    // Med begrunnelse: planen, med svaret og begrunnelsen.
+    await user.type(begrunnelse, 'Syntetisk begrunnelse.')
+    await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+    expect(await screen.findByRole('table')).toBeTruthy()
+    expect(screen.getByText(/Et syntetisk spørsmål som må besvares\. Ja/)).toBeTruthy()
+    expect(screen.getByText(/Forskriverens begrunnelse: «Syntetisk begrunnelse\.»/)).toBeTruthy()
+    // Nei: 14 dager krever ingen begrunnelse.
+    await user.clear(begrunnelse)
+    await user.click(within(sporsmal).getByRole('radio', { name: 'Nei' }))
+    await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+    expect(await screen.findByRole('table')).toBeTruthy()
+    expect(screen.queryByText(/Forskriverens begrunnelse/)).toBeNull()
   })
 
   it('har ikke feltet for en regel uten valg', async () => {

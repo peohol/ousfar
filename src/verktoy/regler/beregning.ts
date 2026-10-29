@@ -32,11 +32,13 @@ import {
   type Regelsett,
   type Beregningsinndata,
   type Inndatakrav,
+  type Begrunnelseskrav,
+  type Sporsmal,
   justerbare,
 } from './modell'
 
 /** Økes når beregningen endres slik at like inndata kan gi et annet resultat. */
-export const MOTORVERSJON = 2
+export const MOTORVERSJON = 3
 
 /** En sammenhengende periode med samme daglige dose. `til` er `null` når dosen fortsetter. */
 export interface Periode {
@@ -75,6 +77,11 @@ export interface Forlopsresultat {
   /** Datoene for `start` og dagen etter `siste_dosedag`, når planen har startdato. */
   start_dato?: string
   seponert_dato?: string
+  /**
+   * Når nedtrappingen ikke går til 0 (`avslutning: 'individuell'`): hvorfor,
+   * med dosen pasienten står på. Siste periode fortsetter da (`til` er `null`).
+   */
+  avslutning?: string
 }
 
 /** Et bindende krav beregningen er kontrollert mot. */
@@ -260,6 +267,7 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
   let aktuell = f.utgangsdose === 'startdose' ? inndata.startdose_mg : 0
   let fortsetter = false
   let uten: string | undefined
+  let avslutning: string | undefined
 
   for (const fase of faserFor(regel, f, ctx.medlem)) {
     switch (fase.type) {
@@ -281,13 +289,33 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
       case 'nedtrapping': {
         const fasestart = dag
         const lengde = verdi(fase.trinnlengde)
+        const individuell = fase.avslutning === 'individuell'
         // Under sluttdosen har regelen ingen trinn; dosen er ikke ugyldig, men videre nedtrapping er ikke en del av regelen.
         if (fase.strategi.type === 'prosent_av_aktuell' && aktuell < verdi(fase.strategi.sluttdose_mg) - EPS) {
+          const grense = tall(verdi(fase.strategi.sluttdose_mg))
           throw new Stopp(
-            `Dosen ${tall(aktuell)} mg av ${virkestoff} er under regelens sluttdose (${tall(verdi(fase.strategi.sluttdose_mg))} mg), der regelen går over til seponering. Regelen har ingen godkjent videre nedtrapping eller seponering fra en så lav dose; det må vurderes individuelt.`,
+            individuell
+              ? `Dosen ${tall(aktuell)} mg av ${virkestoff} er under regelens nedre grense (${grense} mg). Regelen har ingen trinn under den og ingen godkjent avslutning; videre nedtrapping og avslutning må vurderes individuelt.`
+              : `Dosen ${tall(aktuell)} mg av ${virkestoff} er under regelens sluttdose (${grense} mg), der regelen går over til seponering. Regelen har ingen godkjent videre nedtrapping eller seponering fra en så lav dose; det må vurderes individuelt.`,
           )
         }
-        for (const mg of trinnserie(fase.strategi, aktuell)) {
+        const serie = trinnserie(fase.strategi, aktuell)
+        if (individuell) {
+          // Uten godkjent avslutning tas aldri trinnet til 0: siste dose fortsetter til avslutningen er vurdert.
+          if (serie.length === 0) {
+            throw new Stopp(`Fra ${tall(aktuell)} mg av ${virkestoff} har regelen ingen reduksjon før avslutningen, og regelen har ingen godkjent avslutning; den må vurderes individuelt.`)
+          }
+          for (const mg of serie.slice(0, -1)) {
+            legg(dag, dag + lengde - 1, mg)
+            dag += lengde
+          }
+          aktuell = serie.at(-1)!
+          legg(dag, null, aktuell)
+          avslutning = `Planen går ikke til null. Fra dag ${dag} står pasienten på ${tall(aktuell)} mg av ${virkestoff} til avslutningen er vurdert individuelt; regelen har ingen godkjent avslutning (nulltrinn).`
+          fortsetter = true
+          break
+        }
+        for (const mg of serie) {
           legg(dag, dag + lengde - 1, mg)
           dag += lengde
         }
@@ -365,6 +393,7 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
     injeksjoner,
     siste_dosedag: fortsetter ? null : dag - 1,
     ...(uten ? { uten_beregning: uten } : {}),
+    ...(avslutning ? { avslutning } : {}),
   }
   if (inndata.startdato) dater(resultat, inndata.startdato)
   return resultat
@@ -431,6 +460,11 @@ function inndatafeil(i: Beregningsinndata): string[] {
   if (justert !== undefined && (!justert || typeof justert !== 'object' || Array.isArray(justert) || Object.values(justert).some((x) => typeof x !== 'number' || !Number.isFinite(x)))) {
     feil.push('Justeringene må oppgis som tall.')
   }
+  const svar = i.svar as unknown
+  if (svar !== undefined && (!svar || typeof svar !== 'object' || Array.isArray(svar) || Object.values(svar).some((x) => typeof x !== 'boolean'))) {
+    feil.push('Svarene må oppgis som ja eller nei for hvert spørsmål.')
+  }
+  if (i.begrunnelse !== undefined && typeof i.begrunnelse !== 'string') feil.push('Begrunnelsen må oppgis som tekst.')
   return feil
 }
 
@@ -456,8 +490,37 @@ const ENHETSTEKST: Partial<Record<Parameter['enhet'], string>> = { prosent: '%',
 /** Et tall med parameterens enhet, slik forskriveren ser det. */
 export const medEnhet = (x: number, p: Parameter) => `${tall(x)}${p.enhet === 'prosent' ? ' %' : ` ${ENHETSTEKST[p.enhet] ?? p.enhet}`}`
 
-/** Området en justerbar verdi kan velges i, med enhet. */
-export const omradetekst = (p: Parameter & { omrade: [number, number] }) => `${tall(p.omrade[0])}–${medEnhet(p.omrade[1], p)}`
+/** Området en justerbar verdi kan velges i, med enhet; uten klinisk øvre grense «minst …» med den tekniske grensen. */
+export const omradetekst = (p: Parameter & { omrade: [number, number] }) =>
+  p.teknisk_maks ? `minst ${medEnhet(p.omrade[0], p)}, av tekniske grunner høyst ${medEnhet(p.omrade[1], p)}` : `${tall(p.omrade[0])}–${medEnhet(p.omrade[1], p)}`
+
+/** Når et begrunnelseskrav gjelder, i klartekst: «over 25 %», «under 28 dager ved lang behandlingstid». */
+export function kravtekst(k: Begrunnelseskrav, p: Parameter, sporsmal: readonly Sporsmal[] = []): string {
+  const grenser = [k.over !== undefined && `over ${medEnhet(k.over, p)}`, k.under !== undefined && `under ${medEnhet(k.under, p)}`].filter(Boolean).join(' eller ')
+  const ved = k.ved && (sporsmal.find((s) => s.id === k.ved)?.ja ?? k.ved)
+  return ved ? `${grenser} ved ${ved}` : grenser
+}
+
+/**
+ * Begrunnelseskravene verdiene i regelen (etter forskriverens valg) utløser:
+ * hver blir en kontroll med begrunnelsen, eller en stoppgrunn når den mangler.
+ * Et krav med `ved` gjelder bare når spørsmålet er besvart med ja.
+ */
+function kontrollerBegrunnelser(regel: Regel, inndata: Beregningsinndata, stopp: string[], kontroller: Kontroll[]) {
+  const begrunnelse = inndata.begrunnelse?.trim() ?? ''
+  for (const [sti, p] of parametre(regel.plan, 'plan')) {
+    if (p.verdi === null) continue
+    const x = p.verdi
+    for (const k of p.begrunnelseskrav ?? []) {
+      if (k.ved && inndata.svar?.[k.ved] !== true) continue
+      if (!((k.over !== undefined && x > k.over + EPS) || (k.under !== undefined && x < k.under - EPS))) continue
+      const navn = p.justerbar ?? sti
+      const krav = `${navn}: ${medEnhet(x, p)} krever begrunnelse (${kravtekst(k, p, regel.sporsmal)})`
+      if (begrunnelse) kontroller.push({ krav, oppfylt: true, detalj: `Forskriverens begrunnelse: «${begrunnelse}».` })
+      else stopp.push(`${navn} ${medEnhet(x, p)} krever en skriftlig begrunnelse fra forskriveren (${kravtekst(k, p, regel.sporsmal)}). Skriv begrunnelsen, eller velg en annen verdi.`)
+    }
+  }
+}
 
 /**
  * Regelen med forskriverens valg for de justerbare parametrene. Et valg for en
@@ -551,6 +614,15 @@ export function beregn(regel: Regel, inndata: Beregningsinndata, regelsett?: Reg
     kontroller.push({ krav: `Bekreftet: ${b.tekst}`, oppfylt: ja, detalj: ja ? 'Bekreftet av forskriveren.' : 'Ikke bekreftet.' })
     if (!ja) stopp.push(`Må bekreftes før beregning: ${b.tekst}`)
   }
+  // Spørsmålene: hvert må være besvart, og svaret står i planen.
+  const sporsmal = regel.sporsmal ?? []
+  for (const s of sporsmal) {
+    const svar = inndata.svar?.[s.id]
+    if (svar === undefined) stopp.push(`Må besvares før beregning: ${s.tekst}`)
+    else kontroller.push({ krav: `${s.tekst} ${svar ? 'Ja' : 'Nei'}`, oppfylt: true, detalj: 'Oppgitt av forskriveren.' })
+  }
+  for (const id of Object.keys(inndata.svar ?? {})) if (!sporsmal.some((s) => s.id === id)) stopp.push(`Svaret «${id}» gjelder ikke et spørsmål i regelen.`)
+  kontrollerBegrunnelser(regel, inndata, stopp, kontroller)
 
   const gjelder = (k: Inndatakrav) => !k.gjelder_medlem || k.gjelder_medlem === inndata.medlem
   const startkrav = regel.inndata.filter((k) => k.navn === 'startdose' && gjelder(k))
@@ -597,6 +669,7 @@ export function beregn(regel: Regel, inndata: Beregningsinndata, regelsett?: Reg
     return stoppet()
   }
   for (const k of ctx.kontroller) if (!k.oppfylt) merknader.push(`${k.krav}: ikke oppfylt. ${k.detalj}`)
+  for (const f of ctx.resultater.values()) if (f.avslutning) merknader.push(f.avslutning)
 
   return {
     ...versjoner(),
@@ -639,6 +712,9 @@ function injeksjonstekst(i: Injeksjon): string {
   return `${injeksjonstidspunkt(i)}${parentes(dato && norskDato(dato), vindu)}${tidligst}: ${mg(i.mg)} mg injeksjon${sted}`
 }
 
+/** Linjen i kortformen når planen ikke går til null. */
+export const AVSLUTNING_KORT = 'avslutning: vurderes individuelt (ingen nulltrinn)'
+
 /** Hvert forløp som korte linjer (`dag 1–14: 10 mg`), eller `stopp` med grunnene. */
 export function kortform(r: Beregningsresultat): Record<string, string[]> {
   if (r.status === 'stoppet') return { stopp: r.stoppgrunner }
@@ -647,6 +723,7 @@ export function kortform(r: Beregningsresultat): Record<string, string[]> {
       const linjer = [...f.perioder.map(periodetekst), ...f.injeksjoner.map(injeksjonstekst)]
       if (f.uten_beregning) linjer.push(`tidligst dag ${f.start}${parentes(f.start_dato && norskDato(f.start_dato))}: oppstart, dosering beregnes ikke`)
       if (f.siste_dosedag !== null) linjer.push(`fra dag ${f.siste_dosedag + 1}${parentes(f.seponert_dato && norskDato(f.seponert_dato))}: seponert`)
+      if (f.avslutning) linjer.push(AVSLUTNING_KORT)
       return [f.id, linjer]
     }),
   )

@@ -4,7 +4,7 @@
  * fakta fra NICE som flere regler bygger på. Faktaene er gjengitt med egne
  * ord, med sted i kilden (`kilder.ts`).
  */
-import type { Godkjenningssteg, Kildehenvisning, Parameter, Parameterart, Utsagn } from './modell'
+import type { Avklaring, Begrunnelseskrav, Godkjenningssteg, Kildehenvisning, Parameter, Parameterart, Utsagn } from './modell'
 
 export const h = (kilde: string, sted: string, faktum: string): Kildehenvisning => ({ kilde, sted, faktum })
 export const pn = (kildeoppforing: string): Kildehenvisning => ({ kilde: 'psychiatrienet', kildeoppforing })
@@ -18,24 +18,38 @@ export const kilde = (verdi: number, enhet: Parameter['enhet'], art: Parameterar
   grunnlag: { type: 'kilde', henvisninger },
 })
 
-/** OUSFARs eget valg, eventuelt innenfor det en kilde tillater. */
+/**
+ * OUSFARs eget valg, eventuelt innenfor det en kilde tillater. Uten
+ * `avklaring` er det et åpent forslag; med en er valget avklart av en
+ * uavhengig kontrollør, men fortsatt OUSFARs.
+ */
 export const forslag = (
   verdi: number | null,
   enhet: Parameter['enhet'],
   begrunnelse: string,
-  valg: { art?: Parameterart; omrade?: [number, number]; justerbar?: string; henvisninger?: Kildehenvisning[] } = {},
+  valg: {
+    art?: Parameterart
+    omrade?: [number, number]
+    justerbar?: string
+    teknisk_maks?: true
+    begrunnelseskrav?: Begrunnelseskrav[]
+    henvisninger?: Kildehenvisning[]
+    avklaring?: Avklaring
+  } = {},
 ): Parameter => ({
   verdi,
   enhet,
   art: valg.art ?? 'veiledende_preferanse',
-  grunnlag: { type: 'ousfar_vurdering', begrunnelse, ...(valg.henvisninger ? { henvisninger: valg.henvisninger } : {}), avklaring: null },
+  grunnlag: { type: 'ousfar_vurdering', begrunnelse, ...(valg.henvisninger ? { henvisninger: valg.henvisninger } : {}), avklaring: valg.avklaring ?? null },
   ...(valg.omrade ? { omrade: valg.omrade } : {}),
   ...(valg.justerbar ? { justerbar: valg.justerbar } : {}),
+  ...(valg.teknisk_maks ? { teknisk_maks: true as const } : {}),
+  ...(valg.begrunnelseskrav ? { begrunnelseskrav: valg.begrunnelseskrav } : {}),
 })
 
-export const steg = (status: Godkjenningssteg['status'], regelversjon: number, merknad: string): Godkjenningssteg => ({
+export const steg = (status: Godkjenningssteg['status'], regelversjon: number, merknad: string, dato = '2026-10-28'): Godkjenningssteg => ({
   status,
-  dato: '2026-10-28',
+  dato,
   av: 'Claude Code',
   rolle: 'utvikler',
   regelversjon,

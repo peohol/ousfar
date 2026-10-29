@@ -1,6 +1,6 @@
 # OUSFAR Verktøy – P5: doseplanmotoren med FEST
 
-**Status 28.10.2026:** til faglig kontroll. Motoren er ferdig og testet med syntetiske regler og preparater. Ingen av P4s åtte pilotregler er klinisk godkjent (P4.8 er åpen), så motoren kan ikke gi en klinisk doseplan i appen. Ingen brukerflate er laget (P6–P10).
+**Status 28.10.2026:** til faglig kontroll. Motoren er ferdig og testet med syntetiske regler og preparater. Ingen av P4s sju pilotregler er klinisk godkjent (P4.8 er åpen), så motoren kan ikke gi en klinisk doseplan i appen. Ingen brukerflate er laget (P6–P10).
 
 Notatet beskriver hvordan OUSFAR går fra den ideelle dosekurven i P4 til en doseplan med preparater som faktisk finnes i Norge, og hvorfor. Testtilfellene står i `docs/verktøy-p5-testtilfeller.md`, som lages av koden (`npm run verktoy:regler -- motorrapport`) og derfor alltid stemmer med den. Koden ligger i `src/verktoy/motor/`.
 
@@ -43,7 +43,7 @@ FEST sier hva som er registrert og markedsført, ikke hva apoteket har på lager
 
 ## 4. Hva regelen bestemmer (regelmodell 3)
 
-P4-modellen har fått tre valgfrie felt per forløp. Ingen av pilotreglene har dem, så fingeravtrykkene deres er uendret. Regelmodell 4 har i tillegg justerbare verdier, som forskriveren kan velge innenfor regelens område før den ideelle kurven beregnes (`docs/verktøy-p4-regelmodell.md` §3); motoren får kurven slik den da blir.
+P4-modellen har fått tre valgfrie felt per forløp. Ingen av pilotreglene har dem, så fingeravtrykkene deres er uendret. Regelmodell 4 har i tillegg justerbare verdier, som forskriveren kan velge innenfor regelens område før den ideelle kurven beregnes (`docs/verktøy-p4-regelmodell.md` §3); motoren får kurven slik den da blir. Regelmodell 5 (beregningsmotor 3 i P4) har spørsmål, krav om begrunnelse og individuell avslutning: en seponering går da ikke til null, og siste dose fortsetter til avslutningen er vurdert. Motoren setter sammen dosene til og med den siste dosen og tar med merknaden om avslutningen i planen (`docs/verktøy-p7-nedtrapping.md` §7).
 
 - **`dosevalg`**: `avvik_prosent` (største avvik fra den ideelle døgndosen, begge veier), `maks_mg` og `min_mg`. Hver er en parameter med art og grunnlag, som andre verdier i en regel. **Uten `avvik_prosent` godtas bare doser som kan gis nøyaktig**; motoren velger aldri en toleranse selv.
 - **`klasser`**: formuleringsklassene (P1) forløpet gjelder, f.eks. bare vanlig frisetting.
@@ -108,7 +108,7 @@ En plan er **klinisk** bare når alt dette gjelder (`kliniskSperre`):
 
 Ellers er planen en modellberegning med forbeholdet at den ikke skal vises i appen, og grunnene står i `sperre`. `kliniskDoseplan`, som appen skal bruke, gjør en slik plan om til en stopp. Ved en stopp vises bare publisert OUSFAR-fagtekst, aldri en kildes tekst (P5.8).
 
-Testene kontrollerer at ingen av de åtte pilotreglene kan gi en klinisk plan, heller ikke med preparatdata merket som FEST, og at en syntetisk regel med en syntetisk godkjenning heller ikke kan det. En integrasjonstest fører svaret fra `les_legemidler` i en database bygd av migrasjonene helt inn i motoren. Kravene til FEST-kopien prøves med en positiv kontroll: en regel som bare finnes i testen, med en godkjenning laget der, gir en klinisk plan med fersk FEST, og så varieres tidsstemplene ved grensene. Ingen virkelig regel er godkjent for å få testene til å passere.
+Testene kontrollerer at ingen av de sju pilotreglene kan gi en klinisk plan, heller ikke med preparatdata merket som FEST, og at en syntetisk regel med en syntetisk godkjenning heller ikke kan det. En integrasjonstest fører svaret fra `les_legemidler` i en database bygd av migrasjonene helt inn i motoren. Kravene til FEST-kopien prøves med en positiv kontroll: en regel som bare finnes i testen, med en godkjenning laget der, gir en klinisk plan med fersk FEST, og så varieres tidsstemplene ved grensene. Ingen virkelig regel er godkjent for å få testene til å passere.
 
 ## 10. Prøvekjøring mot FEST
 

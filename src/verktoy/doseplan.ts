@@ -12,8 +12,8 @@ import type { Legemiddelutvalg } from '../legemiddeldata/lesing'
 import type { Preparatgrunnlag } from './motor/byggesteiner'
 import { festFerskhet, formvalgSomTrengs, kliniskDoseplan, type Doseplaninndata, type Doseplanresultat, type Formalternativer, type Formvalg } from './motor/plan'
 import { festkoblinger, KARTLEGGING } from './register'
-import { medEnhet, omradetekst } from './regler/beregning'
-import { justerbare, type Regel, type Regelsett } from './regler/modell'
+import { kravtekst, medEnhet, omradetekst } from './regler/beregning'
+import { justerbare, parametre, type Regel, type Regelsett } from './regler/modell'
 import type { Formuleringsklasse } from './festformuleringer'
 import { medlemFor, REGELSETT, settFor, type Verktoyvalg } from './tilgjengelighet'
 
@@ -28,6 +28,10 @@ export interface Planskjema {
   bekreftet: string[]
   /** Unntakets id → om forholdet gjelder. Et unntak uten svar er ukjent. */
   pasientforhold: Record<string, boolean>
+  /** Spørsmålets id → forskriverens svar (ja eller nei). Et spørsmål uten svar stopper beregningen. */
+  svar: Record<string, boolean>
+  /** Forskriverens begrunnelse for valg som krever det; står i planen. */
+  begrunnelse: string
   /** Forløpets id → formuleringen og legemiddelformen som er valgt. */
   formvalg: Record<string, { klasse?: string; legemiddelform?: string }>
   godkjenningsfritak: boolean
@@ -52,6 +56,8 @@ export const TOMT_SKJEMA: Planskjema = {
   regel: '',
   bekreftet: [],
   pasientforhold: {},
+  svar: {},
+  begrunnelse: '',
   formvalg: {},
   godkjenningsfritak: false,
   justert: {},
@@ -67,7 +73,8 @@ export const skjemaFor = (s: Planskjema, gjelder: string): Planskjema => (s.gjel
 
 /**
  * Skjemaet med en annen strategi. Alt som hører til regelen — måldosen,
- * bekreftelsene, svarene på unntakene, formvalgene, justeringene og godkjenningsfritaket —
+ * bekreftelsene, svarene på unntakene og spørsmålene, formvalgene, justeringene,
+ * begrunnelsen og godkjenningsfritaket —
  * begynner på nytt; dosen pasienten bruker og startdatoen står.
  */
 export const medRegel = (s: Planskjema, regel: string): Planskjema =>
@@ -96,6 +103,15 @@ export function mangler(r: Regel, skjema: Planskjema): string[] {
   return ut
 }
 
+/** Om et valg i regelen kan kreve en skriftlig begrunnelse; da viser skjemaet feltet for den. */
+export const kanKreveBegrunnelse = (r: Regel) => parametre(r.plan).some(([, p]) => (p.begrunnelseskrav ?? []).length > 0)
+
+/** Når regelen krever begrunnelse, i klartekst: «Reduksjon per trinn over 25 %; …». */
+export const begrunnelseshjelp = (r: Regel): string =>
+  parametre(r.plan)
+    .flatMap(([sti, p]) => (p.begrunnelseskrav ?? []).map((k) => `${p.justerbar ?? sti} ${kravtekst(k, p, r.sporsmal)}`))
+    .join('; ')
+
 /** Verdiene forskriveren kan justere i regelen: stien, navnet og en hjelpetekst med forslaget og området. */
 export const justeringsfelt = (r: Regel): { sti: string; navn: string; forslag: string; hjelp: string }[] =>
   justerbare(r).map(([sti, p]) => {
@@ -119,6 +135,8 @@ export function inndataFor(r: Regel, valg: Verktoyvalg, skjema: Planskjema): Dos
   const medlem = medlemFor(r, valg)
   const maldose = trengerMaldose(r) ? lesDose(skjema.maldose) : undefined
   const pasientforhold = Object.fromEntries(r.unntak.flatMap((u) => (u.id in skjema.pasientforhold ? [[u.id, skjema.pasientforhold[u.id]!]] : [])))
+  const svar = Object.fromEntries((r.sporsmal ?? []).flatMap((x) => (x.id in skjema.svar ? [[x.id, skjema.svar[x.id]!]] : [])))
+  const begrunnelse = kanKreveBegrunnelse(r) ? skjema.begrunnelse.trim() : ''
   const justert = Object.fromEntries(justerbare(r).flatMap(([sti]) => {
     const x = justertVerdi(skjema, sti)
     return x === undefined ? [] : [[sti, x]]
@@ -130,7 +148,9 @@ export function inndataFor(r: Regel, valg: Verktoyvalg, skjema: Planskjema): Dos
     ...(medlem && { medlem }),
     bekreftet: skjema.bekreftet.filter((id) => r.bekreftelser.some((b) => b.id === id)),
     pasientforhold,
+    ...(Object.keys(svar).length > 0 && { svar }),
     ...(Object.keys(justert).length > 0 && { justert }),
+    ...(begrunnelse && { begrunnelse }),
     formvalg,
     godkjenningsfritak: skjema.godkjenningsfritak,
   }

@@ -508,3 +508,11 @@
     break-inside: avoid;
   }
 }
+
+/* Begrunnelsen for valgene er vanlig tekst over flere linjer, ikke et tall. */
+.verktoyskjema__begrunnelse {
+  padding-block: var(--rom-3);
+  font-weight: var(--vekt-normal);
+  font-variant-numeric: normal;
+  resize: vertical;
+}

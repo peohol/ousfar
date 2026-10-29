@@ -13,15 +13,16 @@ import type { Endring } from '../domain/versjon'
 export const ENDRINGSLOGG: Endring[] = [
   {
     versjon: '1.113.1',
-    dato: '2026-10-28',
+    dato: '2026-10-29',
     sammendrag: 'Regelutkast for nedtrapping av antidepressiva, til faglig kontroll',
     typer: ['Funksjonalitet'],
     omfang: 'Mindre omfang',
     gjelder: ['verktoy'],
     punkter: [
-      'Trappe ned antidepressiv har fått utkast til nedtrappingsregler for 14 antidepressiva, bygd på preparatomtalene, NICE-retningslinjen og rådene fra Royal College of Psychiatrists, og en tekstregel for agomelatin, som ikke trenger nedtrapping. Ingen er klinisk godkjent, så verktøyet sier fortsatt at faglig kontroll gjenstår, og viser ingen doseplan.',
+      'Trappe ned antidepressiv har fått utkast til nedtrappingsregler for 15 antidepressiva, bygd på preparatomtalene, NICE-retningslinjen, rådene fra Royal College of Psychiatrists og en uavhengig fagvurdering, og en tekstregel for agomelatin, som ikke trenger nedtrapping. Ingen er klinisk godkjent, så verktøyet sier fortsatt at faglig kontroll gjenstår, og viser ingen doseplan.',
       'For antidepressiva uten regel forklarer verktøyet hvorfor, for eksempel at stoffet ikke har preparater i FEST, bare finnes med godkjenningsfritak eller mangler kildegrunnlag.',
-      'Når reglene er godkjent, er planen et startforslag som må bekreftes, og den gjelder ikke når et tidligere nedtrappingsforsøk har gitt seponeringssymptomer. Forskriveren kan velge mindre trinn og lengre tid per trinn innenfor det regelen tillater, og valget står i planen. Planen ender alltid med seponering. Kan et trinn ikke gis nøyaktig med norske preparater, stopper beregningen og viser de nærmeste dosene i stedet for å avvike fra regelen.',
+      'Når reglene er godkjent, er planen et startforslag som må bekreftes, og den gjelder ikke når et tidligere nedtrappingsforsøk har gitt seponeringssymptomer. Forskriveren må oppgi om pasienten har brukt legemidlet lenge, og kan velge trinnstørrelse og dager per trinn innenfor det regelen tillater for stoffets risikogruppe. Et raskere valg krever en skriftlig begrunnelse, og valget og begrunnelsen står i planen.',
+      'Dagene per trinn er minstetider: neste reduksjon venter til eventuelle seponeringssymptomer er borte eller tålelige. Planen går ikke til null; siste dose fortsetter til avslutningen er vurdert individuelt. Kan et trinn ikke gis nøyaktig med norske preparater, stopper beregningen og viser de nærmeste dosene i stedet for å avvike fra regelen.',
     ],
   },
   {

@@ -4,11 +4,13 @@ import type { Legemiddelleser } from '../../legemiddeldata/lesing'
 import { Bevaringsomrade, useBevart, type Bevaringsform } from '../../oppdatering/Bevaring'
 import { verktoyadresse } from '../../domain/rute'
 import {
+  begrunnelseshjelp,
   beregnPlan,
   festIderFor,
   formvalgFor,
   gjelderFortsatt,
   justeringsfelt,
+  kanKreveBegrunnelse,
   mangler,
   medRegel,
   skjemaFor,
@@ -464,7 +466,7 @@ function Beregningsdel({
           {!skjema.startdato && <p className="feltgruppe__hjelp">Uten startdato står planen med dagnummer.</p>}
         </fieldset>
 
-        {regel && (regel.bekreftelser.length > 0 || regel.unntak.length > 0) && (
+        {regel && (regel.bekreftelser.length > 0 || regel.unntak.length > 0 || (regel.sporsmal ?? []).length > 0) && (
           <fieldset className="feltgruppe">
             <legend>Forutsetninger for regelen</legend>
             {regel.bekreftelser.map((b) => (
@@ -477,34 +479,26 @@ function Beregningsdel({
                 {b.tekst}
               </label>
             ))}
+            {(regel.sporsmal ?? []).map((x) => (
+              <JaNei key={x.id} navn={`${id}-${x.id}`} tekst={x.tekst} svar={['Ja', 'Nei']} verdi={skjema.svar[x.id]} onVelg={(v) => sett('svar', { ...skjema.svar, [x.id]: v })} />
+            ))}
             {regel.unntak.map((u) => (
-              <fieldset key={u.id} className="verktoyskjema__unntak">
-                <legend>{u.tekst}</legend>
-                <div className="avkryssinger">
-                  {[
-                    [true, 'Gjelder'],
-                    [false, 'Gjelder ikke'],
-                  ].map(([verdi, tekst]) => (
-                    <label key={String(verdi)} className="avkryssing">
-                      <input
-                        type="radio"
-                        name={`${id}-${u.id}`}
-                        checked={skjema.pasientforhold[u.id] === verdi}
-                        onChange={() => sett('pasientforhold', { ...skjema.pasientforhold, [u.id]: verdi as boolean })}
-                      />
-                      {tekst}
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
+              <JaNei
+                key={u.id}
+                navn={`${id}-${u.id}`}
+                tekst={u.tekst}
+                svar={['Gjelder', 'Gjelder ikke']}
+                verdi={skjema.pasientforhold[u.id]}
+                onVelg={(v) => sett('pasientforhold', { ...skjema.pasientforhold, [u.id]: v })}
+              />
             ))}
           </fieldset>
         )}
 
         {justeringer.length > 0 && (
           <fieldset className="feltgruppe">
-            <legend>Tilpasning av planen (valgfri)</legend>
-            <p className="feltgruppe__hjelp">Velg mindre trinn eller lengre tid innenfor det regelen tillater. Valget vises i planen.</p>
+            <legend>Tilpasning av planen</legend>
+            <p className="feltgruppe__hjelp">Velg mindre trinn eller lengre tid innenfor det regelen tillater. Dagene er minstetider. Valget vises i planen.</p>
             <div className="feltrad">
               {justeringer.map((j) => (
                 <label key={j.sti} className="skjemafelt">
@@ -523,6 +517,23 @@ function Beregningsdel({
                 {j.navn}: {j.hjelp}
               </p>
             ))}
+            {regel && kanKreveBegrunnelse(regel) && (
+              <>
+                <label className="skjemafelt">
+                  <span>Begrunnelse for valgene</span>
+                  <textarea
+                    className="inndatafelt verktoyskjema__begrunnelse"
+                    rows={3}
+                    value={skjema.begrunnelse}
+                    aria-describedby={`${id}-begrunnelse`}
+                    onChange={(e) => sett('begrunnelse', e.target.value)}
+                  />
+                </label>
+                <p id={`${id}-begrunnelse`} className="feltgruppe__hjelp">
+                  Begrunnelse kreves ved {begrunnelseshjelp(regel)}, f.eks. om behandlingstid og tidligere toleranse. Den står i planen; skriv ikke navn eller andre personopplysninger.
+                </p>
+              </>
+            )}
           </fieldset>
         )}
 
@@ -593,6 +604,23 @@ function Beregningsdel({
 
       <Resultat beregning={gjeldende} utdatert={!!beregning && !gjeldende} verktoy={verktoy} regel={regel} startdato={skjema.startdato} klokke={klokke} />
     </>
+  )
+}
+
+/** Et ja/nei-valg med to svar, f.eks. et unntak («Gjelder» / «Gjelder ikke») eller et spørsmål («Ja» / «Nei»). */
+function JaNei({ navn, tekst, svar, verdi, onVelg }: { navn: string; tekst: string; svar: [string, string]; verdi: boolean | undefined; onVelg: (verdi: boolean) => void }) {
+  return (
+    <fieldset className="verktoyskjema__unntak">
+      <legend>{tekst}</legend>
+      <div className="avkryssinger">
+        {([true, false] as const).map((v, i) => (
+          <label key={String(v)} className="avkryssing">
+            <input type="radio" name={navn} checked={verdi === v} onChange={() => onVelg(v)} />
+            {svar[i]}
+          </label>
+        ))}
+      </div>
+    </fieldset>
   )
 }
 

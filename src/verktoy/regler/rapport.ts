@@ -5,7 +5,7 @@
  * `npm run verktoy:regler -- rapport` skriver dem; testene sier fra når de
  * ikke er oppdatert. Psychiatrienet vises bare som kildeoppføringens id.
  */
-import { beregn, inndatagrenser, kortform, MOTORVERSJON } from './beregning'
+import { beregn, inndatagrenser, kortform, kravtekst, MOTORVERSJON, omradetekst } from './beregning'
 import { erKliniskGodkjent, fingeravtrykk, godkjenningsfeil } from './godkjenning'
 import { KILDER, kildeFor } from './kilder'
 import {
@@ -106,8 +106,10 @@ function parametertabell(r: Regel): string {
   const rader: string[][] = []
   const legg = (hvor: string, x: unknown) => {
     for (const [sti, p] of parametre(x)) {
-      const verdi = p.verdi === null ? '**mangler**' : `${tall(p.verdi)} ${ENHET[p.enhet]}${p.omrade ? ` (${p.justerbar ? `forskriveren kan velge ${tall(p.omrade[0])}–${tall(p.omrade[1])}` : `område ${tall(p.omrade[0])}–${tall(p.omrade[1])}`})` : ''}`
-      rader.push([hvor, sti, verdi, p.art === 'bindende_krav' ? 'bindende krav' : 'veiledende', grunnlag(p.grunnlag)])
+      const omrade = p.omrade && (p.justerbar ? `forskriveren kan velge ${omradetekst(p as Parameter & { omrade: [number, number] })}` : `område ${tall(p.omrade[0])}–${tall(p.omrade[1])}`)
+      const verdi = p.verdi === null ? '**mangler**' : `${tall(p.verdi)} ${ENHET[p.enhet]}${omrade ? ` (${omrade})` : ''}`
+      const krav = (p.begrunnelseskrav ?? []).map((k) => `<br>Begrunnelse kreves ${kravtekst(k, p, r.sporsmal)} (${grunnlag(k.grunnlag)})`).join('')
+      rader.push([hvor, sti, verdi, p.art === 'bindende_krav' ? 'bindende krav' : 'veiledende', `${grunnlag(p.grunnlag)}${krav}`])
     }
   }
   for (const f of r.plan.forlop) {
@@ -139,6 +141,11 @@ function inndatatekst(i: Beregningsinndata): string {
   if (i.bekreftet?.length) deler.push(`bekreftet: ${i.bekreftet.join(', ')}`)
   const forhold = Object.entries(i.pasientforhold ?? {})
   if (forhold.length) deler.push(`pasientforhold: ${forhold.map(([id, ja]) => `${id} ${ja ? 'ja' : 'nei'}`).join(', ')}`)
+  const svar = Object.entries(i.svar ?? {})
+  if (svar.length) deler.push(`svar: ${svar.map(([id, ja]) => `${id} ${ja ? 'ja' : 'nei'}`).join(', ')}`)
+  const justert = Object.entries(i.justert ?? {})
+  if (justert.length) deler.push(`valgt: ${justert.map(([sti, x]) => `${sti.split('.').at(-1)} ${tall(x)}`).join(', ')}`)
+  if (i.begrunnelse) deler.push(`begrunnelse: «${i.begrunnelse}»`)
   return deler.join('; ')
 }
 
@@ -150,6 +157,7 @@ function regelavsnitt(r: Regel, sett: Regelsett): string {
     }),
     ...r.bekreftelser.map((b) => `Må bekreftes (\`${b.id}\`): ${b.tekst} (${grunnlag(b.grunnlag)})`),
     ...r.unntak.map((u) => `Unntak (\`${u.id}\`): ${u.tekst} (${grunnlag(u.grunnlag)})`),
+    ...(r.sporsmal ?? []).map((x) => `Må besvares (\`${x.id}\`): ${x.tekst} (${grunnlag(x.grunnlag)})`),
   ]
   const medlemmer = r.medlemmer
     ? `\n\n**Gruppemedlemmer (B4).** Bare medlemmer som er foreslått eller validert, kan beregnes.\n\n${tabell(

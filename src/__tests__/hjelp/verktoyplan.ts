@@ -58,6 +58,21 @@ export const TEST_JUSTERBAR: Regel = (() => {
   return godkjennITest(omkoble(r), 'test-justerbar')
 })()
 
+/**
+ * Som {@link TEST_JUSTERBAR}, med et spørsmål som må besvares, og kortere trinn
+ * enn 21 dager krever begrunnelse når svaret er ja.
+ */
+export const TEST_BEGRUNNELSE: Regel = (() => {
+  const r = nedtrappingsregel({ type: 'prosent_av_startdose', prosent: sp(50, 'prosent') }, { avvik_prosent: sp(10, 'prosent') }, 'begrunnelse')
+  const grunnlag = { type: 'ousfar_vurdering' as const, begrunnelse: 'Syntetisk.', avklaring: null }
+  r.sporsmal = [{ id: 'testsporsmal', tekst: 'Et syntetisk spørsmål som må besvares.', ja: 'syntetisk ja', grunnlag }]
+  const fase = r.plan.forlop[0]!.faser[0]!
+  if (fase.type === 'nedtrapping') {
+    fase.trinnlengde = { ...fase.trinnlengde, omrade: [14, 28], justerbar: 'Dager per trinn', begrunnelseskrav: [{ under: 21, ved: 'testsporsmal', grunnlag }] }
+  }
+  return godkjennITest(omkoble(r), 'test-begrunnelse')
+})()
+
 /** Kryssnedtrapping «escitalopram» → «mirtazapin» med syntetiske verdier og måldose fra inndata. */
 export const TEST_KRYSS: Regel = godkjennITest(omkoble({ ...KRYSSREGEL, inndata: [{ navn: 'maldose', art: 'bindende_krav', grunnlag: { type: 'ousfar_vurdering', begrunnelse: 'Syntetisk.', avklaring: null } }] } as Regel), 'test-kryss')
 

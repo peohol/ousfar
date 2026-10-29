@@ -25,7 +25,7 @@
  */
 import { FEST_FORELDET_ETTER_TIMER, festForeldet } from '../../legemiddeldata/referanser'
 import { FORMULERINGSKLASSER, type Formuleringsklasse } from '../festformuleringer'
-import { avrund, beregn, erIsoDato, injeksjonstidspunkt, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
+import { AVSLUTNING_KORT, avrund, beregn, erIsoDato, injeksjonstidspunkt, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
 import { fingeravtrykk, godkjenningsfeil, kanonisk, sha256 } from '../regler/godkjenning'
 import { parameterfeil, type Beregningsinndata, type Forlop, type Parameter, type Regel, type Regelsett } from '../regler/modell'
 import { byggesteiner, DOSEENHETER, norskDato, type Byggestein, type Preparatgrunnlag } from './byggesteiner'
@@ -536,6 +536,7 @@ export function planform(r: Doseplanresultat): Record<string, string[]> {
         linjer.push(`${injeksjonstidspunkt(i)}${dato ? ` [${norskDato(dato)}]` : ''}: ${tall(i.mg)} mg = ${elementtekst(i.element)}`)
       }
       if (f.siste_dosedag !== null) linjer.push(`fra dag ${f.siste_dosedag + 1}${f.seponert_dato ? ` [${norskDato(f.seponert_dato)}]` : ''}: seponert`)
+      if (f.avslutning) linjer.push(AVSLUTNING_KORT)
       return [f.id, linjer]
     }),
   )

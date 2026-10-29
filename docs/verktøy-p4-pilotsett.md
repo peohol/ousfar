@@ -2,9 +2,9 @@
 
 <!-- Laget av `npm run verktoy:regler -- rapport` fra reglene i src/verktoy/regler/. Ikke rediger for hånd; endre reglene og lag rapporten på nytt. -->
 
-Regelsett `ousfar-verktoy-pilot` versjon 3, regelmodell 4, beregningsmotor 2. Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.
+Regelsett `ousfar-verktoy-pilot` versjon 4, regelmodell 5, beregningsmotor 3. Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.
 
-**8 regler, 0 klinisk godkjent.** Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. De er ikke empirisk validerte kliniske anbefalinger, og ingen av reglene er klinisk godkjent. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-p4-regelmodell.md`.
+**7 regler, 0 klinisk godkjent.** Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. De er ikke empirisk validerte kliniske anbefalinger, og ingen av reglene er klinisk godkjent. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-p4-regelmodell.md`.
 
 Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel bygger på teksten der, og den vises ikke (`docs/verktøy-p3-rettigheter.md`).
 
@@ -12,8 +12,7 @@ Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel by
 
 | Regel | Form | Fra → til | Beregnbarhet | Åpne valg | Status | Eksempler |
 | --- | --- | --- | --- | --- | --- | --- |
-| `seponering-escitalopram` | seponering | escitalopram → – | beregnbar etter faglig avklaring | 6 | til faglig kontroll | 3 |
-| `seponering-citalopram-hyperbolsk` | seponering | citalopram → – | beregnbar etter faglig avklaring | 3 | til faglig kontroll | 1 |
+| `seponering-citalopram-hyperbolsk` | seponering | citalopram → – | beregnbar etter faglig avklaring | 2 | til faglig kontroll | 1 |
 | `kryssnedtrapping-sertralin-mirtazapin` | kryssnedtrapping | sertralin → mirtazapin | beregnbar etter faglig avklaring | 4 | til faglig kontroll | 3 |
 | `mao-fluoksetin-fenelzin` | sekvensielt bytte | fluoksetin → fenelzin | beregnbar etter faglig avklaring | 4 | til faglig kontroll | 3 |
 | `antipsykotikabytte-olanzapin-kvetiapin` | kryssnedtrapping | olanzapin → kvetiapin | beregnbar etter faglig avklaring | 3 | til faglig kontroll | 4 |
@@ -27,7 +26,6 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 | Id | Type | Kilde | Versjon | SHA-256 |
 | --- | --- | --- | --- | --- |
-| [dmp-cipralex](https://produktinformasjon.legemiddelsok.no/preparatomtaler/2002-00713.pdf) | preparatomtale | Cipralex (escitalopram) tabletter, preparatomtale | Oppdatert 22.11.2024 | `a04d22200055055d…` |
 | [dmp-cipramil](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08151.pdf) | preparatomtale | Cipramil (citalopram) tabletter, preparatomtale | Oppdatert 16.05.2024 | `4bc8dfd2e647d273…` |
 | [dmp-zoloft](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08203.pdf) | preparatomtale | Zoloft (sertralin) tabletter, preparatomtale | Oppdatert 07.01.2026 | `4ac8f7305379de98…` |
 | [dmp-fluoxetin](https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-7362.pdf) | preparatomtale | Fluoxetine Vitabalans (fluoksetin) tabletter, preparatomtale | Oppdatert 12.11.2021 | `221a73511f81243a…` |
@@ -46,78 +44,11 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 | [keks-2019](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6787301/fullTextXML) | oversiktsartikkel | Keks N, Schwartz D, Hope J. Stopping and switching antipsychotic drugs. Aust Prescr 2019;42:152–157 | doi:10.18773/austprescr.2019.052, PMC6787301 | `26102eb58a504876…` |
 | [psychiatrienet](https://www.psychiatrienet.nl/switchtabel) | kildeoppføring | Psychiatrienet, switchtabellene (kildearkivet fra P3) | Uttrekk og revisjon per kildeoppføring i src/data/verktoy/psychiatrienet-kildearkiv.json | – |
 
-## Seponering av escitalopram, gjentatt prosentvis nedtrapping
-
-`seponering-escitalopram`, versjon 2, fingeravtrykk `4dd31345f876a7ceac756016177f814f8331f3024e5385eb0a44017c08ef440d`. Seponering: escitalopram → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
-
-**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code).
-
-**Kildetro – det som følger direkte av kildene:**
-
-- Escitalopram trappes ned gradvis over minst én til to uker, ikke seponeres brått.
-  - Brå seponering bør unngås; dosen reduseres gradvis over minst én til to uker. Ved utålelige symptomer kan man gå tilbake til forrige dose og trappe ned langsommere. *([dmp-cipralex](https://produktinformasjon.legemiddelsok.no/preparatomtaler/2002-00713.pdf), pkt. 4.2)*
-- Hvert trinn er en andel av forrige dose, med mindre trinn ved lav dose, og nedtrappingen kan ta uker til måneder.
-  - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
-  - Tempoet avtales med pasienten; neste reduksjon først når seponeringssymptomene er borte eller tålelige. Nedtrapping kan ta uker til måneder. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
-- To til fire uker mellom reduksjonene er et vanlig utgangspunkt; tiden bør være så lang som seponeringssymptomene krever.
-  - Et første trinn kan være en firedel eller halvdel av dosen, med to til fire uker før neste; tiden mellom trinnene bør være så lang som seponeringssymptomene krever. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), How should I gradually reduce my dose?)*
-
-**OUSFARs selvstendige tilpasninger (må kontrolleres):**
-
-- OUSFAR bruker 50 % av aktuell dose ned til 5 mg og deretter 25 %, med 14 dager per trinn, og seponerer når neste dose blir under 2,5 mg. Alle tallene er forslag innenfor eller etter eksemplene i kildene.
-  - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
-  - Et første trinn kan være en firedel eller halvdel av dosen, med to til fire uker før neste; tiden mellom trinnene bør være så lang som seponeringssymptomene krever. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), How should I gradually reduce my dose?)*
-- «Minst én til to uker» er lest som et bindende minimum på 14 dager; blir planen kortere, stopper beregningen.
-  - Brå seponering bør unngås; dosen reduseres gradvis over minst én til to uker. Ved utålelige symptomer kan man gå tilbake til forrige dose og trappe ned langsommere. *([dmp-cipralex](https://produktinformasjon.legemiddelsok.no/preparatomtaler/2002-00713.pdf), pkt. 4.2)*
-
-**Den matematiske regelen – parametre:**
-
-| Hvor | Parameter | Verdi | Art | Grunnlag |
-| --- | --- | --- | --- | --- |
-| fra: fase 1 (nedtrapping) | strategi.prosent | 50 % | veiledende | **OUSFAR-vurdering, åpent forslag:** Eksempelet i NICE er 50 % av forrige dose. (bygger på nice-ng222 anbefaling 1.4.16) |
-| fra: fase 1 (nedtrapping) | strategi.lav_prosent | 25 % | veiledende | **OUSFAR-vurdering, åpent forslag:** Eksempelet i NICE på mindre trinn ved lav dose. (bygger på nice-ng222 anbefaling 1.4.16) |
-| fra: fase 1 (nedtrapping) | strategi.lav_grense_mg | 5 mg | veiledende | **OUSFAR-vurdering, åpent forslag:** Laveste dose som oppgis i preparatomtalen; fra den regnes dosen som lav. (bygger på dmp-cipralex pkt. 4.2) |
-| fra: fase 1 (nedtrapping) | strategi.sluttdose_mg | 2,5 mg | veiledende | **OUSFAR-vurdering, åpent forslag:** Laveste dose i planen; under den seponeres. Halvparten av laveste tablettstyrke (5 mg). (bygger på dmp-cipralex pkt. 4.2) |
-| fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 14–28) | veiledende | **OUSFAR-vurdering, åpent forslag:** Nedre del av RCPsychs to til fire uker mellom reduksjonene; tiden bør tilpasses symptomene. (bygger på rcpsych-stopping How should I gradually reduce my dose?) |
-| fra: fase 1 (nedtrapping) | minste_varighet | 14 dager | bindende krav | **OUSFAR-vurdering, åpent forslag:** «Minst én til to uker» er lest konservativt som minst 14 dager. (bygger på dmp-cipralex pkt. 4.2) |
-
-**Betingelser:**
-
-- Startdose 5–20 mg (bindende; dmp-cipralex pkt. 4.2)
-
-**Kliniske forutsetninger:**
-
-- Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
-- Dosene er den ideelle dosekurven, avrundet til to desimaler; hvilke doser som kan gis med norske preparater (styrker, deling, flytende form), avgjøres i P5.
-- Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet, interaksjoner, graviditet, etterlevelse eller individuell toleranse fra dosen (B7); dette må vurderes av forskriveren.
-- Planen gjelder seponering, ikke bytte til et annet antidepressiv.
-
-**Usikkerhet:**
-
-- Prosentene, grensen ved 5 mg og sluttdosen på 2,5 mg er eksempler eller OUSFARs valg, ikke empirisk validerte verdier.
-- Den faktiske nedtrappingen bør styres av pasientens seponeringssymptomer (NICE 1.4.16); planen er et utgangspunkt, ikke en fast tidsplan.
-- Doser under 5 mg krever deling eller flytende form; om det finnes, avgjøres i P5.
-
-**Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
-
-- *Fra 20 mg: 50 % ned til 5 mg, så 25 %, til neste dose er under 2,5 mg.* Inndata: startdose 20 mg.
-  - **fra:** dag 1–14: 10 mg; dag 15–28: 5 mg; dag 29–42: 3,75 mg; dag 43–56: 2,81 mg; fra dag 57: seponert
-  - Kontroll: Startdosen er 5–20 mg (bindende) – oppfylt. 20 mg.
-  - Kontroll: Nedtrappingen av escitalopram varer minst 14 dager (bindende) – oppfylt. Nedtrapping dag 1–56 (56 dager).
-- *Fra 5 mg, på grensen: 25 % fra første trinn.* Inndata: startdose 5 mg.
-  - **fra:** dag 1–14: 3,75 mg; dag 15–28: 2,81 mg; fra dag 29: seponert
-  - Kontroll: Startdosen er 5–20 mg (bindende) – oppfylt. 5 mg.
-  - Kontroll: Nedtrappingen av escitalopram varer minst 14 dager (bindende) – oppfylt. Nedtrapping dag 1–28 (28 dager).
-- *25 mg er over dosene regelen gjelder for, så beregningen stopper.* Inndata: startdose 25 mg.
-  - **Stoppet:** Startdosen 25 mg er utenfor det regelen gjelder for (5–20 mg).
-
-**Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntidepressants:Es>Stop`.
-
 ## Seponering av citalopram, hyperbolsk nedtrapping (alternativ strategi)
 
-`seponering-citalopram-hyperbolsk`, versjon 2, fingeravtrykk `3f4110d09f99903a7d979bc6b9d486c9866cbe4b4a27ec209c53160ffc4a6b51`. Seponering: citalopram → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`seponering-citalopram-hyperbolsk`, versjon 3, fingeravtrykk `58dfdc1f095b4d23146ed5dbf62daa448a500713061751c6bd00928194200d19`. Seponering: citalopram → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → utkast (versjon 3, 29.10.2026, Claude Code) → til faglig kontroll (versjon 3, 29.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -131,10 +62,11 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 **OUSFARs selvstendige tilpasninger (må kontrolleres):**
 
-- Beregnet binding relativt til maksimum, f = D / (3,4 + D), senkes i åtte like store trinn fra startdosen til null, og dosen er D = 3,4 · f / (1 − f). Maksimal binding går ut av regnestykket. Antall trinn og 14 dager per trinn er OUSFARs forslag.
+- Beregnet binding relativt til maksimum, f = D / (3,4 + D), senkes i åtte like store trinn fra startdosen mot null, og dosen er D = 3,4 · f / (1 − f). Maksimal binding går ut av regnestykket. Antall trinn og 14 dager per trinn er OUSFARs forslag.
   - Dosen som gir halvparten av maksimal SERT-binding (ED50) er 3,4 mg for citalopram. *([sorensen-2022](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8960396/fullTextXML), Results (dose og SERT-binding))*
   - Nedtrapping i like store trinn i SERT-binding gir stadig mindre dosetrinn og kan gå til doser godt under minste terapeutiske dose. *([horowitz-2019](https://doi.org/10.1016/S2215-0366(19)30032-X), sammendrag)*
 - Strategien er et alternativ ved siden av gjentatt prosentvis nedtrapping, ikke en standard (B2). *(OUSFARs vurdering)*
+- Planen tar ikke det åttende trinnet til null: ingen avslutning er godkjent etter fagvurderingen av P7, så siste dose fortsetter til avslutningen er vurdert individuelt. Trinnlengden er en minstetid. *(OUSFARs vurdering)*
 
 **Den matematiske regelen – parametre:**
 
@@ -142,8 +74,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 | --- | --- | --- | --- | --- |
 | fra: fase 1 (nedtrapping) | strategi.ed50_mg | 3,4 mg | veiledende | sorensen-2022 Results (dose og SERT-binding) |
 | fra: fase 1 (nedtrapping) | strategi.trinn | 8 trinn | veiledende | **OUSFAR-vurdering, åpent forslag:** Åtte like store trinn i beregnet binding; et antall som må vurderes faglig mot pasientens toleranse. (bygger på horowitz-2019 sammendrag) |
-| fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 14–28) | veiledende | **OUSFAR-vurdering, åpent forslag:** Nedre del av RCPsychs to til fire uker mellom reduksjonene. (bygger på rcpsych-stopping How should I gradually reduce my dose?) |
-| fra: fase 1 (nedtrapping) | minste_varighet | 14 dager | bindende krav | **OUSFAR-vurdering, åpent forslag:** «Minst én til to uker» er lest konservativt som minst 14 dager. (bygger på dmp-cipramil pkt. 4.2) |
+| fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 14–28) | veiledende | **OUSFAR-vurdering, åpent forslag:** Nedre del av RCPsychs to til fire uker mellom reduksjonene; en minstetid. (bygger på rcpsych-stopping How should I gradually reduce my dose?) |
 
 **Betingelser:**
 
@@ -160,14 +91,15 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 - Bindingskurven bygger på få og små studier med ulike metoder; at like trinn i binding gir mindre seponeringssymptomer, er ikke vist i kontrollerte studier av denne planen.
 - De siste dosene (under 1 mg) krever flytende form; om det finnes, avgjøres i P5.
-- Flere trinn er ikke automatisk bedre (P4.6): planen varer 14 uker fra 20 mg.
+- Flere trinn er ikke automatisk bedre (P4.6): fra 20 mg tar de sju trinnene før null 12 uker.
+- Om den hyperbolske strategien skal være valgbar i verktøyet (B2), og hvordan avslutningen fra den siste lave dosen skal gjøres, er ikke avklart.
 
 **Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
 
-- *Fra 20 mg: åtte like trinn i beregnet binding (85,5 % av maksimum ved 20 mg).* Inndata: startdose 20 mg.
-  - **fra:** dag 1–14: 10,08 mg; dag 15–28: 6,07 mg; dag 29–42: 3,9 mg; dag 43–56: 2,54 mg; dag 57–70: 1,6 mg; dag 71–84: 0,92 mg; dag 85–98: 0,41 mg; fra dag 99: seponert
+- *Fra 20 mg: like trinn i beregnet binding (85,5 % av maksimum ved 20 mg), uten det åttende trinnet til null.* Inndata: startdose 20 mg.
+  - **fra:** dag 1–14: 10,08 mg; dag 15–28: 6,07 mg; dag 29–42: 3,9 mg; dag 43–56: 2,54 mg; dag 57–70: 1,6 mg; dag 71–84: 0,92 mg; fra dag 85: 0,41 mg; avslutning: vurderes individuelt (ingen nulltrinn)
   - Kontroll: Startdosen er 10–40 mg (bindende) – oppfylt. 20 mg.
-  - Kontroll: Nedtrappingen av citalopram varer minst 14 dager (bindende) – oppfylt. Nedtrapping dag 1–98 (98 dager).
+  - Merknad: Planen går ikke til null. Fra dag 85 står pasienten på 0,41 mg av citalopram til avslutningen er vurdert individuelt; regelen har ingen godkjent avslutning (nulltrinn).
 
 **Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntidepressants:Ci>Stop`.
 

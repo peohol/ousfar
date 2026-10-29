@@ -174,6 +174,27 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
     if (ugyldig) f(`${sti} er ugyldig: ${ugyldig}`)
     else if (p.verdi !== null && p.omrade && (p.verdi < p.omrade[0] || p.verdi > p.omrade[1])) f(`${sti} er utenfor sitt eget område`)
     if (p.justerbar !== undefined && (!p.justerbar.trim() || !p.omrade || p.omrade[0] === p.omrade[1])) f(`${sti} er justerbar uten tekst eller uten et område å velge i`)
+    if (p.teknisk_maks && !p.omrade) f(`${sti} har en teknisk øvre grense uten et område`)
+    for (const [i, k] of (p.begrunnelseskrav ?? []).entries()) {
+      const grenser = [k.over, k.under].filter((x): x is number => x !== undefined)
+      if (grenser.length === 0) f(`${sti}.begrunnelseskrav[${i}] har verken over eller under`)
+      if (p.omrade && grenser.some((x) => x < p.omrade![0] || x > p.omrade![1])) f(`${sti}.begrunnelseskrav[${i}] har en grense utenfor området ${p.omrade.join('–')}`)
+      if (k.ved && !r.sporsmal?.some((s) => s.id === k.ved)) f(`${sti}.begrunnelseskrav[${i}] gjelder spørsmålet ${k.ved}, som regelen ikke har`)
+    }
+  }
+
+  // Spørsmålene har tekst og en id ingen bekreftelse eller unntak bruker.
+  const betingelser = [...r.bekreftelser, ...r.unntak, ...(r.sporsmal ?? [])].map((x) => x.id)
+  for (const id of new Set(betingelser)) if (betingelser.filter((x) => x === id).length > 1) f(`id-en ${id} brukes av flere bekreftelser, unntak eller spørsmål`)
+  for (const s of r.sporsmal ?? []) if (!s.tekst.trim() || !s.ja.trim()) f(`spørsmålet ${s.id} mangler tekst`)
+
+  // Ingen seponeringsregel går til 0 av seg selv: ingen avslutning (nulltrinn) er godkjent faglig (P7.5).
+  for (const x of r.plan.forlop) {
+    for (const fase of x.faser) {
+      if (fase.type !== 'nedtrapping') continue
+      if (r.plan.form === 'seponering' && fase.avslutning !== 'individuell') f(`forløp ${x.id} går til null etter siste trinn; ingen avslutning er godkjent, så en seponeringsregel må ha avslutning «individuell»`)
+      if (fase.avslutning === 'individuell' && fase.minste_varighet) f(`forløp ${x.id} har både minste varighet og individuell avslutning; uten seponering har nedtrappingen ingen slutt å måle til`)
+    }
   }
   for (const x of tallfeil(r)) f(x)
   const vurderinger = grunnlag.filter(([, gr]) => gr.type === 'ousfar_vurdering').map(([sti]) => sti)

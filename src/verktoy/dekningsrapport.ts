@@ -40,8 +40,8 @@ export function lavesteStyrke(preparater: readonly Festpreparat[]): number | nul
   return styrker.length > 0 ? Math.min(...styrker) : null
 }
 
-/** Sluttdosen i regelen (mg): et klinisk valg, uavhengig av styrkene. */
-const sluttdoseI = (r: Regel): number | null => {
+/** Planens nedre grense i regelen (mg): et klinisk valg, uavhengig av styrkene, og aldri et automatisk sluttpunkt. */
+const nedreGrenseI = (r: Regel): number | null => {
   for (const f of r.plan.forlop.flatMap((l) => l.faser)) if (f.type === 'nedtrapping' && f.strategi.type === 'prosent_av_aktuell') return f.strategi.sluttdose_mg.verdi
   return null
 }
@@ -54,14 +54,14 @@ function rad(d: Dekning, kart: Kartdata, g: Kontrollgrunnlag): string[] {
   const preparater = preparaterFor(kart, d.nokkel)
   const laveste = lavesteStyrke(preparater)
   const regler = seponeringsregler(d.nokkel)
-  const sluttdoser = [...new Set(regler.flatMap((r) => sluttdoseI(r) ?? []))]
+  const grenser = [...new Set(regler.flatMap((r) => nedreGrenseI(r) ?? []))]
   const kilder = [...new Set(regler.flatMap((r) => henvisninger(r).map((h) => h.kilde)))].filter((k) => k !== 'psychiatrienet')
   return [
     navn,
     stop ? `\`${d.kode}>Stop\` (${TILGJENGELIGHET[stop.tilgjengelighet]})` : '**mangler**',
     MARKEDSGRUNNLAG[markedsgrunnlag(preparater)],
     laveste === null ? '–' : `${tall(laveste)} mg`,
-    sluttdoser.map((x) => `${tall(x)} mg`).join(', ') || '–',
+    grenser.map((x) => `${tall(x)} mg`).join(', ') || '–',
     `**${DEKNINGSSTATUS[d.status]}**`,
     regler.map((r) => `\`${r.id}\` (${BEREGNBARHET[r.beregnbarhet]}, ${statustekst(r)})`).join('; ') || '–',
     kilder.join(', ') || '–',
@@ -81,10 +81,10 @@ export function lagDekningsrapport(kart: Kartdata = lesKartdata(), g: Kontrollgr
 
 ${liste(telling)}
 
-Norske preparater og laveste styrke er lest fra FEST-uttrekket ${fest} (\`src/data/verktoy/fest-formuleringer.json\`): laveste styrke blant tabletter og kapsler med markedsføringstillatelse som er markedsført. Sluttdosen er regelens kliniske grense (en firedel av laveste døgndose i preparatomtalen), ikke en styrke: hvilke trinn som kan gis med preparatene, avgjøres når doseplanen beregnes, og et trinn som ikke kan gis, stopper beregningen med begrunnelse.
+Norske preparater og laveste styrke er lest fra FEST-uttrekket ${fest} (\`src/data/verktoy/fest-formuleringer.json\`): laveste styrke blant tabletter og kapsler med markedsføringstillatelse som er markedsført. Den nedre grensen er regelens kliniske grense for beregnede trinn (en firedel av laveste døgndose i preparatomtalen), ikke en styrke og ikke en sluttdose: planen går aldri til null, og avslutningen vurderes individuelt (fagvurderingen 29.10.2026). Hvilke trinn som kan gis med preparatene, avgjøres når doseplanen beregnes, og et trinn som ikke kan gis, stopper beregningen med begrunnelse.
 
 ${tabell(
-  ['Virkestoff', 'Stop-oppføring (P3)', 'Norske preparater', 'Laveste styrke (FEST)', 'Sluttdose i regelen', 'Status', 'Regel', 'Kildegrunnlag for regelen', 'Forklaring'],
+  ['Virkestoff', 'Stop-oppføring (P3)', 'Norske preparater', 'Laveste styrke (FEST)', 'Nedre grense i regelen', 'Status', 'Regel', 'Kildegrunnlag for regelen', 'Forklaring'],
   NEDTRAPPINGSDEKNING.map((d) => rad(d, kart, g)),
 )}
 `

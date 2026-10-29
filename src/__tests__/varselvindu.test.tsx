@@ -31,9 +31,12 @@ function profil(id: string, fornavn: string): Profil {
 const KARI = profil('kari', 'Kari')
 const OLA = profil('ola', 'Ola')
 
+/** I dag: en lest føring eldre enn varselfristen ville ellers falle ut av varslene, og testene ville avhenge av datoen de kjøres. */
+const IDAG = new Date().toISOString().slice(0, 10)
+
 const endring = (versjon: string, sammendrag: string): Endring => ({
   versjon,
-  dato: '2026-09-29',
+  dato: IDAG,
   sammendrag,
   typer: ['Funksjonalitet'],
   omfang: 'Mindre omfang',

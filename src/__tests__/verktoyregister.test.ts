@@ -105,7 +105,6 @@ describe('Søket etter verktøy', () => {
 describe('Regelstatusen', () => {
   it('sier at faglig kontroll gjenstår for alle reglene i pilotsettet og P7, som ingen er godkjent', () => {
     const tilfeller: [typeof TRAPPE_NED, Verktoyvalg, string[]][] = [
-      [TRAPPE_NED, { fra: v('escitalopram') }, ['seponering-escitalopram']],
       // Den hyperbolske pilotregelen står ved siden av P7-regelen; klinikeren velger strategi.
       [TRAPPE_NED, { fra: v('citalopram') }, ['seponering-citalopram-hyperbolsk', 'seponering-citalopram']],
       [BYTTE_AD, { fra: v('sertralin'), til: v('mirtazapin') }, ['kryssnedtrapping-sertralin-mirtazapin']],
@@ -127,7 +126,7 @@ describe('Regelstatusen', () => {
     expect(new Set(tilfeller.flatMap(([, , r]) => r))).toEqual(new Set(REGELSETT.regler.map((r) => r.id)))
     expect(REGELSETT.regler).toHaveLength(PILOTSETT.regler.length + NEDTRAPPINGSSETT.regler.length)
     for (const x of VERKTOY) expect(regeloversikt(x).tilgjengelige).toBe(0)
-    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([2 + NEDTRAPPINGSSETT.regler.length, 2, 4])
+    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([1 + NEDTRAPPINGSSETT.regler.length, 2, 4])
   })
 
   it('forklarer hvorfor et antidepressivum uten regel ikke kan trappes ned, med dekningen fra P7', () => {

@@ -428,7 +428,7 @@ describe('Sperren mot klinisk bruk', () => {
   const NAA = new Date('2026-11-01T12:00:00Z')
 
   it('ingen av P4s pilotregler kan gi en klinisk plan, uansett preparatdata', () => {
-    expect(PILOTSETT.regler).toHaveLength(8)
+    expect(PILOTSETT.regler).toHaveLength(7)
     const fest = somFest(g.utvalg)
     for (const r of PILOTSETT.regler) {
       expect(r.godkjenning.status).not.toBe('klinisk_godkjent')
