@@ -33,7 +33,7 @@
 import type { Formuleringsklasse } from '../festformuleringer'
 
 /** Økes når formen på regler eller regelsett endres. */
-export const REGELMODELLVERSJON = 7
+export const REGELMODELLVERSJON = 8
 
 /* --- Kilder ----------------------------------------------------------------- */
 
@@ -219,8 +219,25 @@ export type Fase =
    * og `horisont` er hvor mange reduksjoner planen viser frem i tid: en
    * teknisk planhorisont, ikke en klinisk sluttdose. Planen stopper også før
    * et trinn under forløpets laveste dose som kan gis (`dosevalg.min_mg`).
+   *
+   * `trinnvalg` er grunnlaget for at forskriveren kan velge blant dosene som
+   * kan gis når et trinn ikke kan gis nøyaktig med preparatene (P7.5):
+   * doseplanen viser de nærmeste, med faktisk reduksjon fra dosen før, og
+   * bare doser med faktisk reduksjon innenfor `strategi.prosent.omrade`
+   * (høyst `lav_prosent` ved lav dose) kan velges, med de samme kravene om
+   * begrunnelse. Valget er forskriverens (`Beregningsinndata.trinnvalg`);
+   * beregningen velger aldri selv. Bare med `prosent_av_aktuell`, individuell
+   * avslutning og uten toleranse ({@link trinnvalgOmrade} i `beregning.ts`).
    */
-  | { type: 'nedtrapping'; strategi: Nedtrappingsstrategi; trinnlengde: Parameter; minste_varighet?: Parameter; avslutning?: 'individuell'; horisont?: Parameter }
+  | {
+      type: 'nedtrapping'
+      strategi: Nedtrappingsstrategi
+      trinnlengde: Parameter
+      minste_varighet?: Parameter
+      avslutning?: 'individuell'
+      horisont?: Parameter
+      trinnvalg?: Grunnlag
+    }
   /**
    * Dosen gis hver `hver`. dag i stedet for daglig, fra fasen starter og uten
    * slutt: minst `minstetid` dager før pasienten revurderes. Går aldri til 0;
@@ -440,6 +457,20 @@ export interface Beregningsinndata {
   svar?: Record<string, boolean>
   /** Forskriverens skriftlige begrunnelse, når et valg krever det (`Begrunnelseskrav`). */
   begrunnelse?: string
+  /**
+   * Dosene forskriveren har valgt for trinn som ikke kan gis nøyaktig
+   * (`Fase.trinnvalg`). Et valg gjelder bare trinnet i forløpet når dosen før
+   * er `fra_mg`; ellers brukes det ikke, og planen sier det.
+   */
+  trinnvalg?: Trinnvalgsvar[]
+}
+
+/** Forskriverens valg av dose for ett trinn: trinnet (fra 1) i forløpet, dosen før og den valgte dosen. */
+export interface Trinnvalgsvar {
+  forlop: string
+  trinn: number
+  fra_mg: number
+  mg: number
 }
 
 export interface Regel {
@@ -636,7 +667,7 @@ export function grunnlagITabeller(r: Pick<Regel, 'plan'>): [string, Grunnlag][] 
   )
 }
 
-/** Alle grunnlag i regelen med stien dit: parametre og begrunnelseskravene deres, inndata, bekreftelser, unntak, spørsmål og tabeller. */
+/** Alle grunnlag i regelen med stien dit: parametre og begrunnelseskravene deres, inndata, bekreftelser, unntak, spørsmål, tabeller, valg av dose per trinn og fordeling. */
 export function alleGrunnlag(r: Regel): [string, Grunnlag][] {
   return [
     ...parametre(r).flatMap(([sti, p]) => [
@@ -646,6 +677,7 @@ export function alleGrunnlag(r: Regel): [string, Grunnlag][] {
     ...r.inndata.map((x) => [inndatasti(x), x.grunnlag] as [string, Grunnlag]),
     ...[...r.bekreftelser, ...r.unntak, ...(r.sporsmal ?? [])].map((x) => [x.id, x.grunnlag] as [string, Grunnlag]),
     ...grunnlagITabeller(r),
+    ...r.plan.forlop.flatMap((f) => f.faser.flatMap((x, i) => (x.type === 'nedtrapping' && x.trinnvalg ? [[`${f.id}.faser[${i}].trinnvalg`, x.trinnvalg] as [string, Grunnlag]] : []))),
     ...r.plan.forlop.flatMap((f) =>
       f.fordeling
         ? [[`${f.id}.fordeling`, f.fordeling.grunnlag] as [string, Grunnlag], ...(f.fordeling.like_store ? [[`${f.id}.fordeling.like_store`, f.fordeling.like_store] as [string, Grunnlag]] : [])]

@@ -5,7 +5,10 @@
  * vanlig dose, (b) lang behandlingstid, (c) tidligere seponeringssymptomer
  * (den langsomme varianten), (d) en lav dose, (f) videreføringen fra siste dose
  * i (a), og (g) om planen stopper allerede ved første trinn. Alt regnes med
- * preparatene i et lagret FEST-uttrekk (e), ikke syntetiske.
+ * preparatene i et lagret FEST-uttrekk (e), ikke syntetiske. Der et trinn ikke
+ * kan gis, viser rapporten dosene forskriveren kan velge (`Fase.trinnvalg`),
+ * og (h) simulerer hvor langt planen kommer når et valg gjøres ved hvert slikt
+ * trinn.
  *
  * Dette er modellberegninger til faglig kontroll, aldri kliniske planer:
  * ingen beregnbar regel er godkjent, og resultatet viser hvor mange av reglene
@@ -16,8 +19,10 @@
  */
 import type { Legemiddelutvalg } from '../../legemiddeldata/lesing'
 import { byggesteiner, norskDato, type Preparatgrunnlag } from '../motor/byggesteiner'
-import { beregnDoseplan, formvalgSomTrengs, planform, type Doseplaninndata, type Doseplanresultat, type Omgivelse } from '../motor/plan'
+import { beregnDoseplan, formvalgSomTrengs, planform, type Doseplaninndata, type Doseplanresultat, type Omgivelse, type Trinnvalg } from '../motor/plan'
 import { festkoblinger, KARTLEGGING } from '../register'
+import { avrund } from './beregning'
+import { PLANHORISONT_TRINN } from './bygg'
 import type { Beregningsinndata, Regel } from './modell'
 import { LANG_BEHANDLINGSTID, NEDTRAPPINGSSETT, UTENFOR_DOSERAMME_ID } from './nedtrapping'
 
@@ -104,7 +109,7 @@ export const reduksjoner = (p: Doseplanresultat) => (p.status === 'doseplan' ? (
 /** Siste dose planen gir, eller `null` når den stopper før første trinn. */
 export const sisteDose = (p: Doseplanresultat) => (p.status === 'doseplan' ? (p.forlop[0]?.perioder.at(-1)?.mg ?? null) : null)
 
-export type Scenario = 'a' | 'b' | 'c' | 'd' | 'f'
+export type Scenario = 'a' | 'b' | 'c' | 'd' | 'f' | 'h'
 
 export const SCENARIOER: Record<Scenario, string> = {
   a: 'Vanlig dose, kort behandlingstid, standardvalgene',
@@ -112,6 +117,31 @@ export const SCENARIOER: Record<Scenario, string> = {
   c: 'Tidligere seponeringssymptomer (langsom variant)',
   d: 'Lav dose: laveste styrke i formen',
   f: 'Videreføring: ny plan fra siste dose i (a)',
+  h: 'Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag)',
+}
+
+/** Den syntetiske begrunnelsen i (h) når et valg krever begrunnelse; aldri pasientopplysninger. */
+const VALGBEGRUNNELSE = 'Syntetisk begrunnelse i aksepttesten.'
+
+/**
+ * (h): planen når forskriveren ved hvert trinn som ikke kan gis, velger den
+ * tilbudte dosen med reduksjon nærmest regelens standardvalg (ved likt avvik
+ * den minste reduksjonen). En simulering til kontrollen; beregningen selv
+ * velger aldri.
+ */
+export function medValg(u: Festuttrekk, r: Regel, form: Formalternativ, inndata: Beregningsinndata): Doseplanresultat {
+  const fase = r.plan.forlop[0]!.faser[0]!
+  const standard = fase.type === 'nedtrapping' && fase.strategi.type === 'prosent_av_aktuell' ? (fase.strategi.prosent.verdi ?? 0) : 0
+  let x = inndata
+  let plan = beregnAksept(u, r, form, x)
+  // Hvert valg gir minst ett trinn til, så horisonten begrenser antallet.
+  for (let i = 0; i < 2 * PLANHORISONT_TRINN && plan.trinnvalg?.length; i++) {
+    const tv = plan.trinnvalg[0]!
+    const d = [...tv.doser].sort((a, b) => Math.abs(a.prosent - standard) - Math.abs(b.prosent - standard) || a.prosent - b.prosent)[0]!
+    x = { ...x, trinnvalg: [...(x.trinnvalg ?? []), { forlop: tv.forlop, trinn: tv.trinn, fra_mg: tv.fra_mg, mg: d.mg }], ...(d.krever_begrunnelse && { begrunnelse: VALGBEGRUNNELSE }) }
+    plan = beregnAksept(u, r, form, x)
+  }
+  return plan
 }
 
 export interface Akseptresultat {
@@ -144,6 +174,7 @@ export function akseptFor(u: Festuttrekk, s: (typeof AKSEPTSTOFFER)[number], for
     videre === null
       ? { scenario: 'f', startdose_mg: null, plan: null, ikke_regnet: '(a) gir ingen dose å videreføre fra.' }
       : { scenario: 'f', startdose_mg: videre, plan: beregnAksept(u, s.hoved, form, besvart(s.hoved, videre)) },
+    { scenario: 'h', startdose_mg: dose, plan: medValg(u, s.hoved, form, besvart(s.hoved, dose)) },
   ]
   return { nokkel: s.nokkel, form, resultater }
 }
@@ -172,9 +203,14 @@ function utfall(r: Akseptresultat): string {
   return n === 0 ? 'stopper ved første trinn' : `${n} ${n === 1 ? 'reduksjon' : 'reduksjoner'}`
 }
 
+/** «Kan velges for trinn 2 (dag 29, beregnet 56,25 mg, fra 75 mg): 50 mg (−33,33 %, krever begrunnelse).» */
+export const valgtekst = (t: Trinnvalg) =>
+  `Kan velges for trinn ${t.trinn} (dag ${t.fra_dag}, beregnet ${tall(avrund(t.beregnet_mg))} mg, fra ${tall(t.fra_mg)} mg): ${t.doser.map((d) => `${tall(d.mg)} mg (−${tall(avrund(d.prosent))} %${d.krever_begrunnelse ? ', krever begrunnelse' : ''})`).join(' eller ')}.`
+
 const linjer = (p: Doseplanresultat) => {
   const form = planform(p)
-  return form.stopp ? `Stopper:\n\n${liste(form.stopp)}` : liste(form.fra ?? [])
+  const valg = (p.trinnvalg ?? []).map(valgtekst)
+  return (form.stopp ? `Stopper:\n\n${liste(form.stopp)}` : liste(form.fra ?? [])) + (valg.length > 0 ? `\n\n${liste(valg)}` : '')
 }
 
 function scenariotekst(r: Akseptresultat): string {
@@ -187,8 +223,10 @@ const formnavn = (f: Formalternativ) => (f.kode ? `${f.navn} [${f.kode}]` : 'ene
 export function lagAksepttestrapport(u: Festuttrekk): string {
   const sett = akseptsett(u)
   const forsteTrinn = sett.filter((t) => reduksjoner(t.resultater[0]!.plan!) === 0)
+  const medValgForste = sett.filter((t) => reduksjoner(t.resultater.find((r) => r.scenario === 'h')!.plan!) === 0)
+  const tilbud = sett.filter((t) => t.resultater[0]!.plan!.trinnvalg?.length)
   const oversikt = tabell(
-    ['Virkestoff', 'Form', ...(['a', 'b', 'c', 'd', 'f'] as const).map((s) => `(${s})`)],
+    ['Virkestoff', 'Form', ...(Object.keys(SCENARIOER) as Scenario[]).map((s) => `(${s})`)],
     sett.map((t) => [t.nokkel, formnavn(t.form), ...t.resultater.map(utfall)]),
   )
   const annenhver = annenhverDag(u)
@@ -205,11 +243,13 @@ ${liste(Object.entries(SCENARIOER).map(([k, v]) => `(${k}) ${v}.`))}
 - (e) Alle scenariene bruker de norske preparatene i FEST.
 - (g) Oversikten viser om planen stopper allerede ved første trinn.
 
-Svarene er de samme i alle scenariene: startforslaget og organfunksjon er bekreftet, ingen unntak gjelder, dosen er innenfor rammen, og svaret er nei på stoffets spørsmål om pasientgruppe og indikasjon. Den vanlige dosen er startdosen i regelens første regneeksempel.
+Svarene er de samme i alle scenariene: startforslaget og organfunksjon er bekreftet, ingen unntak gjelder, dosen er innenfor rammen, og svaret er nei på stoffets spørsmål om pasientgruppe og indikasjon. Den vanlige dosen er startdosen i regelens første regneeksempel. Under hver plan som stopper ved et trinn forskriveren kan velge dosen for, står dosene som kan velges, med faktisk reduksjon.
 
 ## Oversikt (g)
 
 I (a) stopper ${forsteTrinn.length} av ${sett.length} kombinasjoner av virkestoff og form allerede ved første trinn${forsteTrinn.length > 0 ? `: ${forsteTrinn.map((t) => `${t.nokkel} (${formnavn(t.form)})`).join(', ')}` : ''}.
+
+Der et trinn ikke kan gis nøyaktig, kan forskriveren velge blant de nærmeste dosene som kan gis, med faktisk reduksjon innenfor valgområdet for risikogruppen (bidragsyterens valg 30.10.2026, åpent forslag til kontrollen). I (a) tilbyr ${tilbud.length} av ${sett.length} kombinasjoner et slikt valg. Med et valg ved hvert slikt trinn (h) stopper ${medValgForste.length} av ${sett.length} ved første trinn.
 
 ${oversikt}
 

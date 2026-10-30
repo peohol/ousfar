@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useLukkMedEscape } from '../../hooks/useLukkMedEscape'
 import type { Legemiddelleser } from '../../legemiddeldata/lesing'
 import { Bevaringsomrade, useBevart, type Bevaringsform } from '../../oppdatering/Bevaring'
@@ -13,6 +13,7 @@ import {
   kanKreveBegrunnelse,
   mangler,
   medRegel,
+  medTrinnvalg,
   skjemaFor,
   TOMT_SKJEMA,
   trengerMaldose,
@@ -20,9 +21,10 @@ import {
   type Planskjema,
 } from '../../verktoy/doseplan'
 import type { Kildeformulering } from '../../verktoy/kartlegging'
-import type { Doseplanresultat, Formalternativer } from '../../verktoy/motor/plan'
+import type { Doseplanresultat, Formalternativer, Trinnvalg } from '../../verktoy/motor/plan'
 import { godkjenningstekst, kildeliste, planvisning } from '../../verktoy/planvisning'
 import { finnVirkestoff, KARTLEGGING, VERKTOY, verktoyFor, virkestoffvalg, type Verktoy } from '../../verktoy/register'
+import { avrund } from '../../verktoy/regler/beregning'
 import type { Regel, Regelsett } from '../../verktoy/regler/modell'
 import {
   fraForlop,
@@ -164,7 +166,11 @@ function Oversikt({ overskrift, ukjent, regelsett }: { overskrift: string; ukjen
 /** Skjemaet slik det tas vare på: et tidligere skjema fylles ut med feltene en ny versjon har lagt til. */
 const SKJEMAFORM: Bevaringsform<Planskjema> = {
   lagre: (s) => s,
-  les: (x) => (x && typeof x === 'object' && !Array.isArray(x) ? { ...TOMT_SKJEMA, ...(x as Partial<Planskjema>) } : undefined),
+  les: (x) => {
+    if (!x || typeof x !== 'object' || Array.isArray(x)) return undefined
+    const s = { ...TOMT_SKJEMA, ...(x as Partial<Planskjema>) }
+    return Array.isArray(s.trinnvalg) ? s : { ...s, trinnvalg: [] }
+  },
 }
 
 type Beregning =
@@ -379,29 +385,38 @@ function Beregningsdel({
 
   const sett = <K extends keyof Planskjema>(felt: K, verdi: Planskjema[K]) => setSkjema((s) => ({ ...s, [felt]: verdi }))
 
-  async function beregn() {
+  // `sk` er skjemaet slik det blir når beregningen startes av et valg i resultatet, før det er vist.
+  async function beregn(sk: Planskjema = skjema) {
     if (!regel) return setFeil(['Velg strategien planen skal beregnes etter.'])
-    const mangel = mangler(regel, skjema)
+    const mangel = mangler(regel, sk)
     setFeil(mangel)
     if (mangel.length > 0) return
+    const n = JSON.stringify({ regel: regel.id, valg, skjema: sk })
     const denne = ++siste.current
-    setBeregning({ nokkel, status: 'henter' })
+    setBeregning({ nokkel: n, status: 'henter' })
     try {
       if (!legemidler) throw new Error('Legemiddeldataene kan ikke leses her.')
       const utvalg = await legemidler.les(festIderFor(regel, valg))
       if (denne !== siste.current) return
       const tid = klokke()
-      const alt = formvalgFor(regel, valg, skjema, utvalg, tid)
+      const alt = formvalgFor(regel, valg, sk, utvalg, tid)
       setAlternativer({ regel: regel.id, valg: alt })
       const uvalgt = Object.entries(alt).some(
-        ([f, a]) => (a.klasser.length > 1 && !skjema.formvalg[f]?.klasse) || (a.legemiddelformer.length > 1 && !skjema.formvalg[f]?.legemiddelform),
+        ([f, a]) => (a.klasser.length > 1 && !sk.formvalg[f]?.klasse) || (a.legemiddelformer.length > 1 && !sk.formvalg[f]?.legemiddelform),
       )
-      if (uvalgt) return setBeregning({ nokkel, status: 'formvalg' })
-      setBeregning({ nokkel, status: 'ferdig', resultat: beregnPlan(regel, valg, skjema, utvalg, tid, regelsett) })
+      if (uvalgt) return setBeregning({ nokkel: n, status: 'formvalg' })
+      setBeregning({ nokkel: n, status: 'ferdig', resultat: beregnPlan(regel, valg, sk, utvalg, tid, regelsett) })
     } catch (e) {
       if (denne !== siste.current) return
-      setBeregning({ nokkel, status: 'feil', melding: e instanceof Error ? e.message : String(e) })
+      setBeregning({ nokkel: n, status: 'feil', melding: e instanceof Error ? e.message : String(e) })
     }
+  }
+
+  // Et valg av dose for et trinn står i skjemaet og gir en ny beregning med en gang.
+  const velgTrinn = (t: Trinnvalg, mg: number) => {
+    const nytt = medTrinnvalg(skjema, t, mg)
+    setSkjema(() => nytt)
+    void beregn(nytt)
   }
 
   const forlopsnavn = (forlop: string) => {
@@ -539,6 +554,22 @@ function Beregningsdel({
           </fieldset>
         )}
 
+        {skjema.trinnvalg.length > 0 && (
+          <fieldset className="feltgruppe">
+            <legend>Valgte doser per trinn</legend>
+            <ul className="verktoyskjema__valgte">
+              {skjema.trinnvalg.map((v) => (
+                <li key={`${v.forlop}-${v.trinn}`}>
+                  Trinn {v.trinn} av {forlopsnavn(v.forlop)}: {tall(v.mg)} mg (fra {tall(v.fra_mg)} mg)
+                </li>
+              ))}
+            </ul>
+            <Button variant="kant" onClick={() => sett('trinnvalg', [])}>
+              Fjern valgene
+            </Button>
+          </fieldset>
+        )}
+
         {Object.keys(formvalg).length > 0 && (
           <fieldset className="feltgruppe">
             <legend>Formulering og legemiddelform</legend>
@@ -604,7 +635,15 @@ function Beregningsdel({
         </div>
       </form>
 
-      <Resultat beregning={gjeldende} utdatert={!!beregning && !gjeldende} verktoy={verktoy} regel={regel} startdato={skjema.startdato} klokke={klokke} />
+      <Resultat
+        beregning={gjeldende}
+        utdatert={!!beregning && !gjeldende}
+        verktoy={verktoy}
+        regel={regel}
+        startdato={skjema.startdato}
+        klokke={klokke}
+        valg={<Trinnvalgdel resultat={gjeldende?.status === 'ferdig' ? gjeldende.resultat : null} navn={forlopsnavn} onVelg={velgTrinn} />}
+      />
     </>
   )
 }
@@ -626,7 +665,41 @@ function JaNei({ navn, tekst, svar, verdi, onVelg }: { navn: string; tekst: stri
   )
 }
 
-/** Resultatet av siste beregning for inndataene slik de står. */
+const tall = (x: number) => String(avrund(x)).replace('.', ',')
+
+/**
+ * Dosene forskriveren kan velge for et trinn som ikke kan gis nøyaktig
+ * (P7.5): de nærmeste dosene som kan gis, med faktisk reduksjon. Beregningen
+ * velger aldri selv; et valg gir en ny beregning fra den valgte dosen.
+ */
+function Trinnvalgdel({ resultat, navn, onVelg }: { resultat: Doseplanresultat | null; navn: (forlop: string) => string; onVelg: (t: Trinnvalg, mg: number) => void }) {
+  const valg = resultat?.trinnvalg ?? []
+  if (valg.length === 0) return null
+  return (
+    <section className="trinnvalg" aria-label="Doser som kan velges">
+      {valg.map((t) => (
+        <fieldset key={`${t.forlop}-${t.trinn}`} className="feltgruppe">
+          <legend>
+            Trinn {t.trinn} av {navn(t.forlop)} kan ikke gis nøyaktig
+          </legend>
+          <p className="feltgruppe__hjelp">
+            Beregnet {tall(t.beregnet_mg)} mg fra {tall(t.fra_mg)} mg. Velg en dose som kan gis; den faktiske reduksjonen må være {tall(t.omrade[0])}–{tall(t.omrade[1])} %. Verktøyet velger ikke selv, og
+            planen beregnes på nytt fra dosen du velger.
+          </p>
+          <div className="verktoyskjema__handlinger">
+            {t.doser.map((d) => (
+              <Button key={d.mg} variant="kant" onClick={() => onVelg(t, d.mg)}>
+                {tall(d.mg)} mg (−{tall(d.prosent)} %){d.krever_begrunnelse ? ', krever begrunnelse' : ''}
+              </Button>
+            ))}
+          </div>
+        </fieldset>
+      ))}
+    </section>
+  )
+}
+
+/** Resultatet av siste beregning for inndataene slik de står, med dosene som kan velges (`valg`). */
 function Resultat({
   beregning,
   utdatert,
@@ -634,6 +707,7 @@ function Resultat({
   regel,
   startdato,
   klokke,
+  valg,
 }: {
   beregning: Beregning | null
   utdatert: boolean
@@ -641,6 +715,7 @@ function Resultat({
   regel: Regel | undefined
   startdato: string
   klokke: () => Date
+  valg: ReactNode
 }) {
   if (!beregning) {
     return utdatert ? (
@@ -673,18 +748,21 @@ function Resultat({
   const r = beregning.resultat
   if (r.status === 'stoppet') {
     return (
-      <section className="verktoystatus" data-status="stoppet" role="status">
-        <h2>Ingen doseplan</h2>
-        {r.stoppgrunner.map((g) => (
-          <p key={g}>{g}</p>
-        ))}
-        {r.fagtekst.map((t) => (
-          <article key={t.fagside + t.tittel} className="verktoyfagtekst">
-            <h3>{t.tittel}</h3>
-            <p>{t.tekst}</p>
-          </article>
-        ))}
-      </section>
+      <>
+        <section className="verktoystatus" data-status="stoppet" role="status">
+          <h2>Ingen doseplan</h2>
+          {r.stoppgrunner.map((g) => (
+            <p key={g}>{g}</p>
+          ))}
+          {r.fagtekst.map((t) => (
+            <article key={t.fagside + t.tittel} className="verktoyfagtekst">
+              <h3>{t.tittel}</h3>
+              <p>{t.tekst}</p>
+            </article>
+          ))}
+        </section>
+        {valg}
+      </>
     )
   }
   const plan = regel && gjelderFortsatt(r, klokke()) ? planvisning(r, regel, startdato || undefined) : null
@@ -695,5 +773,10 @@ function Resultat({
       </p>
     )
   }
-  return <Doseplanvisning plan={plan} overskrift={verktoy.navn} />
+  return (
+    <>
+      {valg}
+      <Doseplanvisning plan={plan} overskrift={verktoy.navn} />
+    </>
+  )
 }

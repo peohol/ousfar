@@ -35,11 +35,12 @@ import {
   type Inndatakrav,
   type Begrunnelseskrav,
   type Sporsmal,
+  type Trinnvalgsvar,
   justerbare,
 } from './modell'
 
 /** Økes når beregningen endres slik at like inndata kan gi et annet resultat. */
-export const MOTORVERSJON = 5
+export const MOTORVERSJON = 6
 
 /** En sammenhengende periode med samme dose. `til` er `null` når dosen fortsetter. */
 export interface Periode {
@@ -51,6 +52,10 @@ export interface Periode {
   hver?: number
   /** Døgndosen er over forløpets grense for én dose og gis fordelt på et av disse antallene doser (`Forlop.fordeling`). */
   fordeles?: number[]
+  /** Trinnet (fra 1) i en nedtrapping der forskriveren kan velge dose per trinn (`Fase.trinnvalg`). */
+  trinn?: number
+  /** Når forskriveren har valgt dosen for trinnet: den beregnede dosen, som ikke kunne gis, og den faktiske reduksjonen i prosent. */
+  valgt?: { beregnet_mg: number; prosent: number }
   fra_dato?: string
   til_dato?: string | null
 }
@@ -218,22 +223,48 @@ export const MINSTE_VISTE_MG = 0.01
  * er den samme (fagkontrollen 30.10.2026, beslutning 6). En reduksjon som
  * forsvinner i avrundingen, er ikke et trinn: planen stopper ved dosen før.
  * `neste` er dosen som ville kommet etter siste, uavrundet.
+ *
+ * `velg` gir forskriverens valgte dose for trinn `k` fra `aktuell`, når den
+ * beregnede dosen ikke kan gis (`Fase.trinnvalg`); neste trinn regnes fra den
+ * valgte dosen. Et valg erstatter bare et trinn beregningen ellers ville gitt.
+ * `beregnet` er den beregnede dosen for hvert trinn i `serie`.
  */
-export function trinnTilHorisont(s: Nedtrappingsstrategi, d0: number, horisont: number, min_mg?: number): { serie: number[]; slutt: Trinnslutt; neste: number } {
+export function trinnTilHorisont(
+  s: Nedtrappingsstrategi,
+  d0: number,
+  horisont: number,
+  min_mg?: number,
+  velg?: (k: number, aktuell: number, beregnet: number) => number | undefined,
+): { serie: number[]; beregnet: number[]; slutt: Trinnslutt; neste: number } {
   const neste = nesteFor(s, d0)
   const serie: number[] = []
+  const beregnet: number[] = []
   let aktuell = d0
   for (let k = 1; k <= Math.min(horisont, MAKS_TRINN); k++) {
     const raa = neste(aktuell, k)
-    if (raa <= EPS) return { serie, slutt: 'siste_trinn', neste: 0 }
+    if (raa <= EPS) return { serie, beregnet, slutt: 'siste_trinn', neste: 0 }
     const d = avrund(raa)
-    if (min_mg !== undefined && d < min_mg - EPS) return { serie, slutt: 'praktisk_grense', neste: raa }
-    if (d < MINSTE_VISTE_MG - EPS) return { serie, slutt: 'minste_viste_dose', neste: raa }
-    if (d >= avrund(aktuell) - EPS) return { serie, slutt: 'avrundet_bort', neste: raa }
-    serie.push(d)
-    aktuell = d
+    if (min_mg !== undefined && d < min_mg - EPS) return { serie, beregnet, slutt: 'praktisk_grense', neste: raa }
+    if (d < MINSTE_VISTE_MG - EPS) return { serie, beregnet, slutt: 'minste_viste_dose', neste: raa }
+    if (d >= avrund(aktuell) - EPS) return { serie, beregnet, slutt: 'avrundet_bort', neste: raa }
+    beregnet.push(d)
+    aktuell = velg?.(k, aktuell, d) ?? d
+    serie.push(aktuell)
   }
-  return { serie, slutt: 'horisont', neste: neste(aktuell, serie.length + 1) }
+  return { serie, beregnet, slutt: 'horisont', neste: neste(aktuell, serie.length + 1) }
+}
+
+/**
+ * Valgområdet for faktisk reduksjon i prosent når forskriveren velger dosen
+ * for et trinn fra `aktuell` (`Fase.trinnvalg`): regelens område for
+ * reduksjonen per trinn, og ved lav dose høyst `lav_prosent`. `null` når
+ * strategien ikke har et slikt område.
+ */
+export function trinnvalgOmrade(s: Nedtrappingsstrategi, aktuell: number): [number, number] | null {
+  if (s.type !== 'prosent_av_aktuell' || !s.prosent.omrade) return null
+  const [fra, til] = s.prosent.omrade
+  const lav = s.lav_prosent?.verdi != null && s.lav_grense_mg?.verdi != null && aktuell <= s.lav_grense_mg.verdi + EPS
+  return [fra, lav ? Math.min(til, s.lav_prosent!.verdi!) : til]
 }
 
 /** «fordelt på 2 eller 3 doser». */
@@ -263,6 +294,8 @@ interface Kontekst {
   medlem: string | null
   resultater: Map<string, Forlopsresultat>
   kontroller: Kontroll[]
+  /** Forskriverens valg av dose per trinn som er brukt. */
+  brukteValg: Set<Trinnvalgsvar>
 }
 
 function dose(k: Dosekilde | { type: 'aktuell' }, aktuell: number, ctx: Kontekst): number {
@@ -305,6 +338,47 @@ function faserFor(regel: Regel, f: Forlop, medlem: string | null): Fase[] {
   return regel.medlemmer?.find((m) => m.nokkel === medlem)?.faser ?? f.faser
 }
 
+/**
+ * Forskriverens valg av dose per trinn (`Fase.trinnvalg`) for
+ * {@link trinnTilHorisont}: et valg gjelder trinnet bare når dosen før er den
+ * valget ble gjort fra. Den valgte dosen må være lavere, ikke under laveste
+ * dose som kan gis, vises nøyaktig med to desimaler og gi en faktisk reduksjon
+ * innenfor {@link trinnvalgOmrade}; ellers stopper beregningen. En reduksjon
+ * som utløser et begrunnelseskrav for reduksjonen per trinn, krever
+ * begrunnelsen. Om den beregnede dosen faktisk ikke kan gis, kontrollerer
+ * doseplanmotoren (P5).
+ */
+function trinnvelger(regel: Regel, s: Nedtrappingsstrategi, virkestoff: string, valg: Trinnvalgsvar[], min: number | undefined, ctx: Kontekst) {
+  return (k: number, aktuell: number, beregnet: number): number | undefined => {
+    const v = valg.find((x) => x.trinn === k && Math.abs(x.fra_mg - aktuell) < EPS)
+    if (!v) return undefined
+    ctx.brukteValg.add(v)
+    const omrade = trinnvalgOmrade(s, aktuell)!
+    const prosent = (1 - v.mg / aktuell) * 100
+    const hva = `Trinn ${k} av ${virkestoff}: den valgte dosen ${tall(v.mg)} mg`
+    if (v.mg >= aktuell - EPS) throw new Stopp(`${hva} er ikke lavere enn dosen før (${tall(aktuell)} mg).`)
+    if (Math.abs(avrund(v.mg) - v.mg) > EPS) throw new Stopp(`${hva} kan ikke vises nøyaktig med to desimaler.`)
+    if (min !== undefined && v.mg < min - EPS) throw new Stopp(`${hva} er under ${tall(min)} mg, den laveste dosen som kan gis med formuleringen regelen gjelder.`)
+    if (prosent < omrade[0] - EPS || prosent > omrade[1] + EPS) {
+      throw new Stopp(`${hva} er en reduksjon på ${tall(prosent)} % fra ${tall(aktuell)} mg, utenfor valgområdet ${tall(omrade[0])}–${tall(omrade[1])} % regelen tillater for dette trinnet.`)
+    }
+    const begrunnelse = ctx.inndata.begrunnelse?.trim() ?? ''
+    if (s.type === 'prosent_av_aktuell') {
+      for (const krav of utlosteKrav(s.prosent, prosent, ctx.inndata.svar)) {
+        const tekst = kravtekst(krav, s.prosent, regel.sporsmal)
+        if (!begrunnelse) throw new Stopp(`${hva} er en reduksjon på ${tall(prosent)} % og krever en skriftlig begrunnelse fra forskriveren (${tekst}). Skriv begrunnelsen, eller velg en annen dose.`)
+        ctx.kontroller.push({ krav: `${hva} (${tall(prosent)} %) krever begrunnelse (${tekst})`, oppfylt: true, detalj: `Forskriverens begrunnelse: «${begrunnelse}».` })
+      }
+    }
+    ctx.kontroller.push({
+      krav: `Trinn ${k} av ${virkestoff} er valgt av forskriveren fordi den beregnede dosen (${tall(beregnet)} mg) ikke kan gis; den faktiske reduksjonen er innenfor valgområdet ${tall(omrade[0])}–${tall(omrade[1])} %`,
+      oppfylt: true,
+      detalj: `${tall(v.mg)} mg, ${tall(prosent)} % fra ${tall(aktuell)} mg.`,
+    })
+    return v.mg
+  }
+}
+
 function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
   const { inndata } = ctx
   const virkestoff = f.virkestoff.type === 'virkestoff' ? f.virkestoff.nokkel : (ctx.medlem as string)
@@ -327,11 +401,11 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
   const perioder: Periode[] = []
   const injeksjoner: Injeksjon[] = []
   const fordeling = f.fordeling && { over: f.fordeling.over_mg ? verdi(f.fordeling.over_mg) : 0, antall: f.fordeling.antall }
-  const legg = (fra: number, til: number | null, mg: number, hver?: number) => {
+  const legg = (fra: number, til: number | null, mg: number, hver?: number, trinn?: Pick<Periode, 'trinn' | 'valgt'>) => {
     if (til !== null && til < fra) return
     const forrige = perioder.at(-1)
-    if (forrige && forrige.til === fra - 1 && Math.abs(forrige.mg - mg) < EPS && forrige.hver === hver) forrige.til = til
-    else perioder.push({ fra, til, mg, ...(hver !== undefined && { hver }), ...(fordeling && mg > fordeling.over + EPS && { fordeles: fordeling.antall }) })
+    if (!trinn && forrige && forrige.til === fra - 1 && Math.abs(forrige.mg - mg) < EPS && forrige.hver === hver) forrige.til = til
+    else perioder.push({ fra, til, mg, ...(hver !== undefined && { hver }), ...(fordeling && mg > fordeling.over + EPS && { fordeles: fordeling.antall }), ...trinn })
   }
 
   let dag = start
@@ -374,7 +448,9 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
         if (individuell) {
           // Uten godkjent avslutning tas aldri trinnet til 0: planen viser trinnene frem til horisonten eller laveste dose som kan gis, og siste dose fortsetter.
           const min = f.dosevalg?.min_mg?.verdi ?? undefined
-          const { serie, slutt, neste } = trinnTilHorisont(fase.strategi, aktuell, verdi(fase.horisont!), min)
+          const valg = (inndata.trinnvalg ?? []).filter((v) => v.forlop === f.id)
+          const velg = fase.trinnvalg ? trinnvelger(regel, fase.strategi, virkestoff, valg, min, ctx) : undefined
+          const { serie, beregnet, slutt, neste } = trinnTilHorisont(fase.strategi, aktuell, verdi(fase.horisont!), min, velg)
           if (serie.length === 0) {
             throw new Stopp(
               slutt === 'praktisk_grense'
@@ -384,12 +460,19 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
                   : `Fra ${tall(aktuell)} mg av ${virkestoff} har regelen ingen reduksjon før avslutningen, og regelen har ingen godkjent avslutning; den må vurderes individuelt.`,
             )
           }
-          for (const mg of serie.slice(0, -1)) {
-            legg(dag, dag + lengde - 1, mg)
+          // Med valg per trinn bærer hver periode trinnet sitt, og et valgt trinn den beregnede dosen og den faktiske reduksjonen.
+          const trinn = (i: number) =>
+            fase.trinnvalg && {
+              trinn: i + 1,
+              ...(Math.abs(serie[i]! - beregnet[i]!) > EPS && { valgt: { beregnet_mg: beregnet[i]!, prosent: (1 - serie[i]! / (i === 0 ? aktuell : serie[i - 1]!)) * 100 } }),
+            }
+          for (const [i, mg] of serie.slice(0, -1).entries()) {
+            legg(dag, dag + lengde - 1, mg, undefined, trinn(i) || undefined)
             dag += lengde
           }
+          const sisteTrinn = trinn(serie.length - 1) || undefined
           aktuell = serie.at(-1)!
-          legg(dag, null, aktuell)
+          legg(dag, null, aktuell, undefined, sisteTrinn)
           const star = `Fra dag ${dag} står pasienten på ${tall(aktuell)} mg av ${virkestoff} til planen revurderes`
           if (slutt === 'horisont') {
             avslutning = `Planen viser ${serie.length} reduksjoner, regelens tekniske planhorisont, ikke en klinisk grense. ${star}. ${AVSLUTNING_FELLES}`
@@ -597,6 +680,12 @@ function inndatafeil(i: Beregningsinndata): string[] {
     feil.push('Svarene må oppgis som ja eller nei for hvert spørsmål.')
   }
   if (i.begrunnelse !== undefined && typeof i.begrunnelse !== 'string') feil.push('Begrunnelsen må oppgis som tekst.')
+  const valg = i.trinnvalg as unknown
+  const ettValg = (x: unknown) => {
+    const v = x as Partial<Trinnvalgsvar> | null
+    return !!v && typeof v === 'object' && typeof v.forlop === 'string' && Number.isInteger(v.trinn) && v.trinn! >= 1 && positivt(v.fra_mg) && positivt(v.mg)
+  }
+  if (valg !== undefined && !(Array.isArray(valg) && valg.every(ettValg))) feil.push('Valgene av dose per trinn må oppgis som forløp, trinn (fra 1), dosen før og den valgte dosen i mg.')
   return feil
 }
 
@@ -657,14 +746,16 @@ export function kravtekst(k: Begrunnelseskrav, p: Parameter, sporsmal: readonly 
  * hver blir en kontroll med begrunnelsen, eller en stoppgrunn når den mangler.
  * Et krav med `ved` gjelder bare når spørsmålet er besvart med ja.
  */
+/** Begrunnelseskravene til `p` som verdien `x` utløser; et krav med `ved` bare når spørsmålet er besvart med ja. */
+export const utlosteKrav = (p: Parameter, x: number, svar: Record<string, boolean> | undefined): Begrunnelseskrav[] =>
+  (p.begrunnelseskrav ?? []).filter((k) => (!k.ved || svar?.[k.ved] === true) && ((k.over !== undefined && x > k.over + EPS) || (k.under !== undefined && x < k.under - EPS)))
+
 function kontrollerBegrunnelser(regel: Regel, inndata: Beregningsinndata, stopp: string[], kontroller: Kontroll[]) {
   const begrunnelse = inndata.begrunnelse?.trim() ?? ''
   for (const [sti, p] of parametre(regel.plan, 'plan')) {
     if (p.verdi === null) continue
     const x = p.verdi
-    for (const k of p.begrunnelseskrav ?? []) {
-      if (k.ved && inndata.svar?.[k.ved] !== true) continue
-      if (!((k.over !== undefined && x > k.over + EPS) || (k.under !== undefined && x < k.under - EPS))) continue
+    for (const k of utlosteKrav(p, x, inndata.svar)) {
       const navn = p.justerbar ?? sti
       const krav = `${navn}: ${medEnhet(x, p)} krever begrunnelse (${kravtekst(k, p, regel.sporsmal)})`
       if (begrunnelse) kontroller.push({ krav, oppfylt: true, detalj: `Forskriverens begrunnelse: «${begrunnelse}».` })
@@ -810,10 +901,15 @@ export function beregn(regel: Regel, inndata: Beregningsinndata, regelsett?: Reg
     }
   }
   for (const x of tallfeil(regel)) stopp.push(`Regelen er ugyldig: ${x}.`)
+  // Valg av dose per trinn bare i forløp der regelen tillater det (`Fase.trinnvalg`).
+  for (const id of new Set((inndata.trinnvalg ?? []).map((v) => v.forlop))) {
+    const f = regel.plan.forlop.find((x) => x.id === id)
+    if (!f || !faserFor(regel, f, medlem).some((x) => x.type === 'nedtrapping' && x.trinnvalg)) stopp.push(`Regelen lar ikke forskriveren velge dosen per trinn i forløpet «${id}»; valgene kan ikke brukes.`)
+  }
 
   if (stopp.length > 0) return stoppet()
 
-  const ctx: Kontekst = { inndata, medlem, resultater: new Map(), kontroller }
+  const ctx: Kontekst = { inndata, medlem, resultater: new Map(), kontroller, brukteValg: new Set() }
   try {
     for (const f of regel.plan.forlop) ctx.resultater.set(f.id, beregnForlop(regel, f, ctx))
   } catch (e) {
@@ -828,6 +924,9 @@ export function beregn(regel: Regel, inndata: Beregningsinndata, regelsett?: Reg
     return stoppet()
   }
   for (const k of ctx.kontroller) if (!k.oppfylt) merknader.push(`${k.krav}: ikke oppfylt. ${k.detalj}`)
+  for (const v of inndata.trinnvalg ?? []) {
+    if (!ctx.brukteValg.has(v)) merknader.push(`Valget ${tall(v.mg)} mg for trinn ${v.trinn} (${v.forlop}, fra ${tall(v.fra_mg)} mg) er ikke brukt: planen har ikke det trinnet fra den dosen lenger. Velg på nytt om trinnet ikke kan gis.`)
+  }
   for (const f of ctx.resultater.values()) if (f.avslutning) merknader.push(f.avslutning)
   if ([...ctx.resultater.values()].some((f) => f.avslutning && f.perioder.length > 1)) merknader.push(TIDLIGSTE_DATOER)
 
@@ -853,8 +952,13 @@ const parentes = (...deler: (string | undefined | false)[]) => {
 function periodetekst(p: Periode): string {
   const dager = p.til === null ? `fra dag ${p.fra}` : p.til === p.fra ? `dag ${p.fra}` : `dag ${p.fra}–${p.til}`
   const dato = p.fra_dato && (p.til_dato && p.til !== p.fra ? `${norskDato(p.fra_dato)}–${norskDato(p.til_dato)}` : norskDato(p.fra_dato))
-  return `${dager}${parentes(dato)}: ${mg(p.mg)} mg${p.hver ? ` ${hverTekst(p.hver)}` : ''}${p.fordeles ? `, ${fordelingstekst(p.fordeles)}` : ''}`
+  return `${dager}${parentes(dato)}: ${mg(p.mg)} mg${p.hver ? ` ${hverTekst(p.hver)}` : ''}${p.fordeles ? `, ${fordelingstekst(p.fordeles)}` : ''}${valgtSuffiks(p)}`
 }
+
+/** «valgt av forskriveren (beregnet 37,5 mg; −30 %)» for et trinn forskriveren har valgt dosen for. */
+export const valgtTekst = (p: Pick<Periode, 'valgt'>) => (p.valgt ? `valgt av forskriveren (beregnet ${mg(p.valgt.beregnet_mg)} mg; −${mg(p.valgt.prosent)} %)` : '')
+/** Det samme etter dosen: «, valgt av forskriveren (…)». */
+export const valgtSuffiks = (p: Pick<Periode, 'valgt'>) => (p.valgt ? `, ${valgtTekst(p)}` : '')
 
 /** Når injeksjonen gis: `dag 8`, eller for vedlikehold intervallet og første gang (`hver måned fra 1 måned etter dag 8`). */
 export function injeksjonstidspunkt(i: Pick<Injeksjon, 'dag' | 'vedlikehold'>): string {

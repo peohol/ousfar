@@ -1,7 +1,7 @@
 <!-- Laget av `npm run verktoy:regler -- aksepttest` fra src/data/verktoy/fest-aksepttest.json; rediger ikke for hånd. -->
 # P7: aksepttest med norske preparater
 
-Aksepttesten etter kontrollrunden 30.10.2026 (P7.5, del E.2). Hver hovedregel og langsom variant i `ousfar-verktoy-nedtrapping` versjon 7 er regnet med de faktiske preparatene i FEST, ikke syntetiske, for hver legemiddelform forskriveren kan velge. FEST-uttrekket er hentet 30.10.2026 (kildedato 27.10.2026); bare preparater med markedsføringstillatelse som er markedsført, brukes, ikke godkjenningsfritak.
+Aksepttesten etter kontrollrunden 30.10.2026 (P7.5, del E.2). Hver hovedregel og langsom variant i `ousfar-verktoy-nedtrapping` versjon 8 er regnet med de faktiske preparatene i FEST, ikke syntetiske, for hver legemiddelform forskriveren kan velge. FEST-uttrekket er hentet 30.10.2026 (kildedato 27.10.2026); bare preparater med markedsføringstillatelse som er markedsført, brukes, ikke godkjenningsfritak.
 
 **Dette er modellberegninger til faglig kontroll, ikke kliniske planer.** Ingen beregnbar regel er klinisk godkjent, og verktøyet viser ingen av planene. Pasientopplysninger inngår ikke.
 
@@ -12,33 +12,36 @@ Scenariene er:
 - (c) Tidligere seponeringssymptomer (langsom variant).
 - (d) Lav dose: laveste styrke i formen.
 - (f) Videreføring: ny plan fra siste dose i (a).
+- (h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag).
 - (e) Alle scenariene bruker de norske preparatene i FEST.
 - (g) Oversikten viser om planen stopper allerede ved første trinn.
 
-Svarene er de samme i alle scenariene: startforslaget og organfunksjon er bekreftet, ingen unntak gjelder, dosen er innenfor rammen, og svaret er nei på stoffets spørsmål om pasientgruppe og indikasjon. Den vanlige dosen er startdosen i regelens første regneeksempel.
+Svarene er de samme i alle scenariene: startforslaget og organfunksjon er bekreftet, ingen unntak gjelder, dosen er innenfor rammen, og svaret er nei på stoffets spørsmål om pasientgruppe og indikasjon. Den vanlige dosen er startdosen i regelens første regneeksempel. Under hver plan som stopper ved et trinn forskriveren kan velge dosen for, står dosene som kan velges, med faktisk reduksjon.
 
 ## Oversikt (g)
 
 I (a) stopper 8 av 16 kombinasjoner av virkestoff og form allerede ved første trinn: amitriptylin (eneste form), citalopram (eneste form), fluoksetin (Kapsel, hard [891]), mirtazapin (Smeltetablett [48]), mirtazapin (Tablett [53]), moklobemid (eneste form), nortriptylin (eneste form), paroksetin (eneste form).
 
-| Virkestoff | Form | (a) | (b) | (c) | (d) | (f) |
-| --- | --- | --- | --- | --- | --- | --- |
-| amitriptylin | eneste form | stopper ved første trinn | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | – |
-| citalopram | eneste form | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | – |
-| escitalopram | Tablett [53] | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn |
-| escitalopram | Dråper, oppløsning [748] | 1 reduksjon | 1 reduksjon | 1 reduksjon | stopper ved første trinn | stopper ved første trinn |
-| fluoksetin | Dispergerbar tablett [5] | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn |
-| fluoksetin | Tablett [53] | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn |
-| fluoksetin | Kapsel, hard [891] | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | – |
-| fluvoksamin | eneste form | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn |
-| klomipramin | eneste form | 1 reduksjon | 1 reduksjon | 1 reduksjon | stopper ved første trinn | stopper ved første trinn |
-| mirtazapin | Smeltetablett [48] | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | – |
-| mirtazapin | Tablett [53] | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | – |
-| moklobemid | eneste form | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | – |
-| nortriptylin | eneste form | stopper ved første trinn | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | – |
-| paroksetin | eneste form | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | – |
-| sertralin | eneste form | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn |
-| vortioksetin | eneste form | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn |
+Der et trinn ikke kan gis nøyaktig, kan forskriveren velge blant de nærmeste dosene som kan gis, med faktisk reduksjon innenfor valgområdet for risikogruppen (bidragsyterens valg 30.10.2026, åpent forslag til kontrollen). I (a) tilbyr 12 av 16 kombinasjoner et slikt valg. Med et valg ved hvert slikt trinn (h) stopper 4 av 16 ved første trinn.
+
+| Virkestoff | Form | (a) | (b) | (c) | (d) | (f) | (h) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| amitriptylin | eneste form | stopper ved første trinn | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | – | 5 reduksjoner |
+| citalopram | eneste form | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | – | 1 reduksjon |
+| escitalopram | Tablett [53] | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | 3 reduksjoner |
+| escitalopram | Dråper, oppløsning [748] | 1 reduksjon | 1 reduksjon | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | 7 reduksjoner |
+| fluoksetin | Dispergerbar tablett [5] | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | 3 reduksjoner |
+| fluoksetin | Tablett [53] | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | 3 reduksjoner |
+| fluoksetin | Kapsel, hard [891] | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | – | 1 reduksjon |
+| fluvoksamin | eneste form | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | 2 reduksjoner |
+| klomipramin | eneste form | 1 reduksjon | 1 reduksjon | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | 6 reduksjoner |
+| mirtazapin | Smeltetablett [48] | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | – | stopper ved første trinn |
+| mirtazapin | Tablett [53] | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | – | stopper ved første trinn |
+| moklobemid | eneste form | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | – | stopper ved første trinn |
+| nortriptylin | eneste form | stopper ved første trinn | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | – | 4 reduksjoner |
+| paroksetin | eneste form | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | – | stopper ved første trinn |
+| sertralin | eneste form | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | 3 reduksjoner |
+| vortioksetin | eneste form | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | 3 reduksjoner |
 
 ## Per virkestoff
 
@@ -48,28 +51,41 @@ I (a) stopper 8 av 16 kombinasjoner av virkestoff og form allerede ved første t
 
 Stopper:
 
-- amitriptylin dag 1–28: den ideelle dosen 37,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 35 mg (-6,67 %, faktisk reduksjon 30 % fra 50 mg) og 40 mg (+6,67 %, faktisk reduksjon 20 % fra 50 mg). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- amitriptylin dag 1–28: den ideelle dosen 37,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 35 mg (-6,67 %, faktisk reduksjon 30 % fra 50 mg) og 40 mg (+6,67 %, faktisk reduksjon 20 % fra 50 mg). Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 50 mg innenfor valgområdet 5–50 %: 35 mg (−30 %, krever begrunnelse) eller 40 mg (−20 %). Beregningen velger ikke selv.
+
+- Kan velges for trinn 1 (dag 1, beregnet 37,5 mg, fra 50 mg): 35 mg (−30 %, krever begrunnelse) eller 40 mg (−20 %).
 
 **(b) Lang behandlingstid, 10 % per trinn, fra 50 mg.**
 
 - fra dag 1: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg
 - neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
+- Kan velges for trinn 2 (dag 29, beregnet 40,5 mg, fra 45 mg): 40 mg (−11,11 %, krever begrunnelse).
+
 **(c) Tidligere seponeringssymptomer (langsom variant), fra 50 mg.**
 
 Stopper:
 
-- amitriptylin dag 1–28: den ideelle dosen 47,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 45 mg (-5,26 %, faktisk reduksjon 10 % fra 50 mg) og 50 mg (+5,26 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- amitriptylin dag 1–28: den ideelle dosen 47,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 45 mg (-5,26 %, faktisk reduksjon 10 % fra 50 mg) og 50 mg (+5,26 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(d) Lav dose: laveste styrke i formen, fra 10 mg.**
 
 Stopper:
 
-- amitriptylin dag 1–28: den ideelle dosen 7,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- amitriptylin dag 1–28: den ideelle dosen 7,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (+33,33 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(f) Videreføring: ny plan fra siste dose i (a).**
 
 (a) gir ingen dose å videreføre fra.
+
+**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 50 mg.**
+
+- dag 1–28: 40 mg = 4 tabletter à 10 mg, valgt av forskriveren (beregnet 37,5 mg; −20 %)
+- dag 29–56: 30 mg = 3 tabletter à 10 mg
+- dag 57–84: 25 mg = 1 tablett à 25 mg, valgt av forskriveren (beregnet 22,5 mg; −16,67 %)
+- dag 85–112: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 18,75 mg; −20 %)
+- fra dag 113: 10 mg = 1 tablett à 10 mg, valgt av forskriveren (beregnet 15 mg; −50 %)
+- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
 ### citalopram, eneste form
 
@@ -77,29 +93,38 @@ Stopper:
 
 Stopper:
 
-- citalopram dag 1–28: den ideelle dosen 15 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-33,33 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- citalopram dag 1–28: den ideelle dosen 15 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-33,33 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+33,33 %). Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 20 mg innenfor valgområdet 5–50 %: 10 mg (−50 %, krever begrunnelse). Beregningen velger ikke selv.
+
+- Kan velges for trinn 1 (dag 1, beregnet 15 mg, fra 20 mg): 10 mg (−50 %, krever begrunnelse).
 
 **(b) Lang behandlingstid, 10 % per trinn, fra 20 mg.**
 
 Stopper:
 
-- citalopram dag 1–28: den ideelle dosen 18 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-44,44 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+11,11 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- citalopram dag 1–28: den ideelle dosen 18 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-44,44 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 20 mg innenfor valgområdet 5–50 %: 10 mg (−50 %, krever begrunnelse). Beregningen velger ikke selv.
+
+- Kan velges for trinn 1 (dag 1, beregnet 18 mg, fra 20 mg): 10 mg (−50 %, krever begrunnelse).
 
 **(c) Tidligere seponeringssymptomer (langsom variant), fra 20 mg.**
 
 Stopper:
 
-- citalopram dag 1–28: den ideelle dosen 19 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-47,37 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+5,26 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- citalopram dag 1–28: den ideelle dosen 19 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-47,37 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+5,26 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(d) Lav dose: laveste styrke i formen, fra 10 mg.**
 
 Stopper:
 
-- citalopram dag 1–28: den ideelle dosen 7,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- citalopram dag 1–28: den ideelle dosen 7,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (+33,33 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(f) Videreføring: ny plan fra siste dose i (a).**
 
 (a) gir ingen dose å videreføre fra.
+
+**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 20 mg.**
+
+- fra dag 1: 10 mg = 1 tablett à 10 mg, valgt av forskriveren (beregnet 15 mg; −50 %)
+- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
 ### escitalopram, Tablett [53]
 
@@ -108,29 +133,42 @@ Stopper:
 - fra dag 1: 15 mg = 1 tablett à 10 mg + 1 tablett à 5 mg
 - neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
+- Kan velges for trinn 2 (dag 29, beregnet 11,25 mg, fra 15 mg): 10 mg (−33,33 %, krever begrunnelse).
+
 **(b) Lang behandlingstid, 10 % per trinn, fra 20 mg.**
 
 Stopper:
 
-- escitalopram dag 1–28: den ideelle dosen 18 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (-16,67 %, faktisk reduksjon 25 % fra 20 mg) og 20 mg (+11,11 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- escitalopram dag 1–28: den ideelle dosen 18 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (-16,67 %, faktisk reduksjon 25 % fra 20 mg) og 20 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 20 mg innenfor valgområdet 5–50 %: 15 mg (−25 %, krever begrunnelse). Beregningen velger ikke selv.
+
+- Kan velges for trinn 1 (dag 1, beregnet 18 mg, fra 20 mg): 15 mg (−25 %, krever begrunnelse).
 
 **(c) Tidligere seponeringssymptomer (langsom variant), fra 20 mg.**
 
 Stopper:
 
-- escitalopram dag 1–28: den ideelle dosen 19 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (-21,05 %, faktisk reduksjon 25 % fra 20 mg) og 20 mg (+5,26 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- escitalopram dag 1–28: den ideelle dosen 19 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (-21,05 %, faktisk reduksjon 25 % fra 20 mg) og 20 mg (+5,26 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(d) Lav dose: laveste styrke i formen, fra 5 mg.**
 
 Stopper:
 
-- escitalopram dag 1–28: den ideelle dosen 3,75 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 5 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- escitalopram dag 1–28: den ideelle dosen 3,75 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 5 mg (+33,33 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(f) Videreføring: ny plan fra siste dose i (a), fra 15 mg.**
 
 Stopper:
 
-- escitalopram dag 1–28: den ideelle dosen 11,25 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-11,11 %, faktisk reduksjon 33,33 % fra 15 mg) og 15 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- escitalopram dag 1–28: den ideelle dosen 11,25 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-11,11 %, faktisk reduksjon 33,33 % fra 15 mg) og 15 mg (+33,33 %). Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 15 mg innenfor valgområdet 5–50 %: 10 mg (−33,33 %, krever begrunnelse). Beregningen velger ikke selv.
+
+- Kan velges for trinn 1 (dag 1, beregnet 11,25 mg, fra 15 mg): 10 mg (−33,33 %, krever begrunnelse).
+
+**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 20 mg.**
+
+- dag 1–28: 15 mg = 1 tablett à 10 mg + 1 tablett à 5 mg
+- dag 29–56: 10 mg = 1 tablett à 10 mg, valgt av forskriveren (beregnet 11,25 mg; −33,33 %)
+- fra dag 57: 5 mg = 1 tablett à 5 mg, valgt av forskriveren (beregnet 7,5 mg; −50 %)
+- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
 ### escitalopram, Dråper, oppløsning [748]
 
@@ -139,10 +177,14 @@ Stopper:
 - fra dag 1: 15 mg = 15 dråper à 1 mg
 - neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
+- Kan velges for trinn 2 (dag 29, beregnet 11,25 mg, fra 15 mg): 11 mg (−26,67 %, krever begrunnelse) eller 12 mg (−20 %).
+
 **(b) Lang behandlingstid, 10 % per trinn, fra 20 mg.**
 
 - fra dag 1: 18 mg = 18 dråper à 1 mg
 - neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
+
+- Kan velges for trinn 2 (dag 29, beregnet 16,2 mg, fra 18 mg): 16 mg (−11,11 %, krever begrunnelse) eller 17 mg (−5,56 %).
 
 **(c) Tidligere seponeringssymptomer (langsom variant), fra 20 mg.**
 
@@ -153,13 +195,26 @@ Stopper:
 
 Stopper:
 
-- escitalopram dag 1–28: den ideelle dosen 0,75 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 1 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- escitalopram dag 1–28: den ideelle dosen 0,75 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 1 mg (+33,33 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(f) Videreføring: ny plan fra siste dose i (a), fra 15 mg.**
 
 Stopper:
 
-- escitalopram dag 1–28: den ideelle dosen 11,25 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 11 mg (-2,22 %, faktisk reduksjon 26,67 % fra 15 mg) og 12 mg (+6,67 %, faktisk reduksjon 20 % fra 15 mg). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- escitalopram dag 1–28: den ideelle dosen 11,25 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 11 mg (-2,22 %, faktisk reduksjon 26,67 % fra 15 mg) og 12 mg (+6,67 %, faktisk reduksjon 20 % fra 15 mg). Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 15 mg innenfor valgområdet 5–50 %: 11 mg (−26,67 %, krever begrunnelse) eller 12 mg (−20 %). Beregningen velger ikke selv.
+
+- Kan velges for trinn 1 (dag 1, beregnet 11,25 mg, fra 15 mg): 11 mg (−26,67 %, krever begrunnelse) eller 12 mg (−20 %).
+
+**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 20 mg.**
+
+- dag 1–28: 15 mg = 15 dråper à 1 mg
+- dag 29–56: 11 mg = 11 dråper à 1 mg, valgt av forskriveren (beregnet 11,25 mg; −26,67 %)
+- dag 57–84: 8 mg = 8 dråper à 1 mg, valgt av forskriveren (beregnet 8,25 mg; −27,27 %)
+- dag 85–112: 6 mg = 6 dråper à 1 mg
+- dag 113–140: 5 mg = 5 dråper à 1 mg, valgt av forskriveren (beregnet 4,5 mg; −16,67 %)
+- dag 141–168: 4 mg = 4 dråper à 1 mg, valgt av forskriveren (beregnet 3,75 mg; −20 %)
+- fra dag 169: 3 mg = 3 dråper à 1 mg
+- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
 ### fluoksetin, Dispergerbar tablett [5]
 
@@ -168,29 +223,44 @@ Stopper:
 - fra dag 1: 30 mg = 1½ tabletter à 20 mg
 - neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
+- Kan velges for trinn 2 (dag 29, beregnet 22,5 mg, fra 30 mg): 20 mg (−33,33 %, krever begrunnelse).
+
 **(b) Lang behandlingstid, 10 % per trinn, fra 40 mg.**
 
 Stopper:
 
-- fluoksetin dag 1–28: den ideelle dosen 36 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 30 mg (-16,67 %, faktisk reduksjon 25 % fra 40 mg) og 40 mg (+11,11 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- fluoksetin dag 1–28: den ideelle dosen 36 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 30 mg (-16,67 %, faktisk reduksjon 25 % fra 40 mg) og 40 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 40 mg innenfor valgområdet 5–50 %: 30 mg (−25 %, krever begrunnelse). Beregningen velger ikke selv.
+
+- Kan velges for trinn 1 (dag 1, beregnet 36 mg, fra 40 mg): 30 mg (−25 %, krever begrunnelse).
 
 **(c) Tidligere seponeringssymptomer (langsom variant), fra 40 mg.**
 
 Stopper:
 
-- fluoksetin dag 1–28: den ideelle dosen 38 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 30 mg (-21,05 %, faktisk reduksjon 25 % fra 40 mg) og 40 mg (+5,26 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- fluoksetin dag 1–28: den ideelle dosen 38 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 30 mg (-21,05 %, faktisk reduksjon 25 % fra 40 mg) og 40 mg (+5,26 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(d) Lav dose: laveste styrke i formen, fra 20 mg.**
 
 Stopper:
 
-- fluoksetin dag 1–28: den ideelle dosen 15 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-33,33 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- fluoksetin dag 1–28: den ideelle dosen 15 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-33,33 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+33,33 %). Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 20 mg innenfor valgområdet 5–50 %: 10 mg (−50 %, krever begrunnelse). Beregningen velger ikke selv.
+
+- Kan velges for trinn 1 (dag 1, beregnet 15 mg, fra 20 mg): 10 mg (−50 %, krever begrunnelse).
 
 **(f) Videreføring: ny plan fra siste dose i (a), fra 30 mg.**
 
 Stopper:
 
-- fluoksetin dag 1–28: den ideelle dosen 22,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 20 mg (-11,11 %, faktisk reduksjon 33,33 % fra 30 mg) og 30 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- fluoksetin dag 1–28: den ideelle dosen 22,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 20 mg (-11,11 %, faktisk reduksjon 33,33 % fra 30 mg) og 30 mg (+33,33 %). Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 30 mg innenfor valgområdet 5–50 %: 20 mg (−33,33 %, krever begrunnelse). Beregningen velger ikke selv.
+
+- Kan velges for trinn 1 (dag 1, beregnet 22,5 mg, fra 30 mg): 20 mg (−33,33 %, krever begrunnelse).
+
+**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 40 mg.**
+
+- dag 1–28: 30 mg = 1½ tabletter à 20 mg
+- dag 29–56: 20 mg = 1 tablett à 20 mg, valgt av forskriveren (beregnet 22,5 mg; −33,33 %)
+- fra dag 57: 10 mg = ½ tablett à 20 mg, valgt av forskriveren (beregnet 15 mg; −50 %)
+- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
 ### fluoksetin, Tablett [53]
 
@@ -199,29 +269,44 @@ Stopper:
 - fra dag 1: 30 mg = 1½ tabletter à 20 mg
 - neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
+- Kan velges for trinn 2 (dag 29, beregnet 22,5 mg, fra 30 mg): 20 mg (−33,33 %, krever begrunnelse).
+
 **(b) Lang behandlingstid, 10 % per trinn, fra 40 mg.**
 
 Stopper:
 
-- fluoksetin dag 1–28: den ideelle dosen 36 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 30 mg (-16,67 %, faktisk reduksjon 25 % fra 40 mg) og 40 mg (+11,11 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- fluoksetin dag 1–28: den ideelle dosen 36 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 30 mg (-16,67 %, faktisk reduksjon 25 % fra 40 mg) og 40 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 40 mg innenfor valgområdet 5–50 %: 30 mg (−25 %, krever begrunnelse). Beregningen velger ikke selv.
+
+- Kan velges for trinn 1 (dag 1, beregnet 36 mg, fra 40 mg): 30 mg (−25 %, krever begrunnelse).
 
 **(c) Tidligere seponeringssymptomer (langsom variant), fra 40 mg.**
 
 Stopper:
 
-- fluoksetin dag 1–28: den ideelle dosen 38 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 30 mg (-21,05 %, faktisk reduksjon 25 % fra 40 mg) og 40 mg (+5,26 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- fluoksetin dag 1–28: den ideelle dosen 38 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 30 mg (-21,05 %, faktisk reduksjon 25 % fra 40 mg) og 40 mg (+5,26 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(d) Lav dose: laveste styrke i formen, fra 20 mg.**
 
 Stopper:
 
-- fluoksetin dag 1–28: den ideelle dosen 15 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-33,33 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- fluoksetin dag 1–28: den ideelle dosen 15 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-33,33 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+33,33 %). Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 20 mg innenfor valgområdet 5–50 %: 10 mg (−50 %, krever begrunnelse). Beregningen velger ikke selv.
+
+- Kan velges for trinn 1 (dag 1, beregnet 15 mg, fra 20 mg): 10 mg (−50 %, krever begrunnelse).
 
 **(f) Videreføring: ny plan fra siste dose i (a), fra 30 mg.**
 
 Stopper:
 
-- fluoksetin dag 1–28: den ideelle dosen 22,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 20 mg (-11,11 %, faktisk reduksjon 33,33 % fra 30 mg) og 30 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- fluoksetin dag 1–28: den ideelle dosen 22,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 20 mg (-11,11 %, faktisk reduksjon 33,33 % fra 30 mg) og 30 mg (+33,33 %). Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 30 mg innenfor valgområdet 5–50 %: 20 mg (−33,33 %, krever begrunnelse). Beregningen velger ikke selv.
+
+- Kan velges for trinn 1 (dag 1, beregnet 22,5 mg, fra 30 mg): 20 mg (−33,33 %, krever begrunnelse).
+
+**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 40 mg.**
+
+- dag 1–28: 30 mg = 1½ tabletter à 20 mg
+- dag 29–56: 20 mg = 1 tablett à 20 mg, valgt av forskriveren (beregnet 22,5 mg; −33,33 %)
+- fra dag 57: 10 mg = ½ tablett à 20 mg, valgt av forskriveren (beregnet 15 mg; −50 %)
+- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
 ### fluoksetin, Kapsel, hard [891]
 
@@ -229,29 +314,38 @@ Stopper:
 
 Stopper:
 
-- fluoksetin dag 1–28: den ideelle dosen 30 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 20 mg (-33,33 %, faktisk reduksjon 50 % fra 40 mg) og 40 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- fluoksetin dag 1–28: den ideelle dosen 30 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 20 mg (-33,33 %, faktisk reduksjon 50 % fra 40 mg) og 40 mg (+33,33 %). Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 40 mg innenfor valgområdet 5–50 %: 20 mg (−50 %, krever begrunnelse). Beregningen velger ikke selv.
+
+- Kan velges for trinn 1 (dag 1, beregnet 30 mg, fra 40 mg): 20 mg (−50 %, krever begrunnelse).
 
 **(b) Lang behandlingstid, 10 % per trinn, fra 40 mg.**
 
 Stopper:
 
-- fluoksetin dag 1–28: den ideelle dosen 36 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 20 mg (-44,44 %, faktisk reduksjon 50 % fra 40 mg) og 40 mg (+11,11 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- fluoksetin dag 1–28: den ideelle dosen 36 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 20 mg (-44,44 %, faktisk reduksjon 50 % fra 40 mg) og 40 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 40 mg innenfor valgområdet 5–50 %: 20 mg (−50 %, krever begrunnelse). Beregningen velger ikke selv.
+
+- Kan velges for trinn 1 (dag 1, beregnet 36 mg, fra 40 mg): 20 mg (−50 %, krever begrunnelse).
 
 **(c) Tidligere seponeringssymptomer (langsom variant), fra 40 mg.**
 
 Stopper:
 
-- fluoksetin dag 1–28: den ideelle dosen 38 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 20 mg (-47,37 %, faktisk reduksjon 50 % fra 40 mg) og 40 mg (+5,26 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- fluoksetin dag 1–28: den ideelle dosen 38 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 20 mg (-47,37 %, faktisk reduksjon 50 % fra 40 mg) og 40 mg (+5,26 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(d) Lav dose: laveste styrke i formen, fra 20 mg.**
 
 Stopper:
 
-- fluoksetin dag 1–28: den ideelle dosen 15 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 20 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- fluoksetin dag 1–28: den ideelle dosen 15 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 20 mg (+33,33 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(f) Videreføring: ny plan fra siste dose i (a).**
 
 (a) gir ingen dose å videreføre fra.
+
+**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 40 mg.**
+
+- fra dag 1: 20 mg = 1 kapsel à 20 mg, valgt av forskriveren (beregnet 30 mg; −50 %)
+- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
 ### fluvoksamin, eneste form
 
@@ -260,29 +354,41 @@ Stopper:
 - fra dag 1: 75 mg = 1½ tabletter à 50 mg
 - neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
+- Kan velges for trinn 2 (dag 29, beregnet 56,25 mg, fra 75 mg): 50 mg (−33,33 %, krever begrunnelse).
+
 **(b) Lang behandlingstid, 10 % per trinn, fra 100 mg.**
 
 Stopper:
 
-- fluvoksamin dag 1–28: den ideelle dosen 90 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 75 mg (-16,67 %, faktisk reduksjon 25 % fra 100 mg) og 100 mg (+11,11 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- fluvoksamin dag 1–28: den ideelle dosen 90 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 75 mg (-16,67 %, faktisk reduksjon 25 % fra 100 mg) og 100 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 100 mg innenfor valgområdet 5–50 %: 75 mg (−25 %, krever begrunnelse). Beregningen velger ikke selv.
+
+- Kan velges for trinn 1 (dag 1, beregnet 90 mg, fra 100 mg): 75 mg (−25 %, krever begrunnelse).
 
 **(c) Tidligere seponeringssymptomer (langsom variant), fra 100 mg.**
 
 Stopper:
 
-- fluvoksamin dag 1–28: den ideelle dosen 95 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 75 mg (-21,05 %, faktisk reduksjon 25 % fra 100 mg) og 100 mg (+5,26 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- fluvoksamin dag 1–28: den ideelle dosen 95 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 75 mg (-21,05 %, faktisk reduksjon 25 % fra 100 mg) og 100 mg (+5,26 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(d) Lav dose: laveste styrke i formen, fra 50 mg.**
 
 Stopper:
 
-- fluvoksamin dag 1–28: den ideelle dosen 37,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 25 mg (-33,33 %, faktisk reduksjon 50 % fra 50 mg) og 50 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- fluvoksamin dag 1–28: den ideelle dosen 37,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 25 mg (-33,33 %, faktisk reduksjon 50 % fra 50 mg) og 50 mg (+33,33 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(f) Videreføring: ny plan fra siste dose i (a), fra 75 mg.**
 
 Stopper:
 
-- fluvoksamin dag 1–28: den ideelle dosen 56,25 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 50 mg (-11,11 %, faktisk reduksjon 33,33 % fra 75 mg) og 75 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- fluvoksamin dag 1–28: den ideelle dosen 56,25 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 50 mg (-11,11 %, faktisk reduksjon 33,33 % fra 75 mg) og 75 mg (+33,33 %). Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 75 mg innenfor valgområdet 5–50 %: 50 mg (−33,33 %, krever begrunnelse). Beregningen velger ikke selv.
+
+- Kan velges for trinn 1 (dag 1, beregnet 56,25 mg, fra 75 mg): 50 mg (−33,33 %, krever begrunnelse).
+
+**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 100 mg.**
+
+- dag 1–28: 75 mg = 1½ tabletter à 50 mg
+- fra dag 29: 50 mg = 1 tablett à 50 mg, valgt av forskriveren (beregnet 56,25 mg; −33,33 %)
+- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
 ### klomipramin, eneste form
 
@@ -291,10 +397,14 @@ Stopper:
 - fra dag 1: 37,5 mg = 1½ tabletter à 25 mg
 - neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
+- Kan velges for trinn 2 (dag 29, beregnet 28,13 mg, fra 37,5 mg): 27,5 mg (−26,67 %, krever begrunnelse) eller 30 mg (−20 %).
+
 **(b) Lang behandlingstid, 10 % per trinn, fra 50 mg.**
 
 - fra dag 1: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg
 - neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
+
+- Kan velges for trinn 2 (dag 29, beregnet 40,5 mg, fra 45 mg): 40 mg (−11,11 %, krever begrunnelse) eller 42,5 mg (−5,56 %).
 
 **(c) Tidligere seponeringssymptomer (langsom variant), fra 50 mg.**
 
@@ -305,13 +415,25 @@ Stopper:
 
 Stopper:
 
-- klomipramin dag 1–28: den ideelle dosen 7,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 5 mg (-33,33 %, faktisk reduksjon 50 % fra 10 mg) og 10 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- klomipramin dag 1–28: den ideelle dosen 7,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 5 mg (-33,33 %, faktisk reduksjon 50 % fra 10 mg) og 10 mg (+33,33 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(f) Videreføring: ny plan fra siste dose i (a), fra 37,5 mg.**
 
 Stopper:
 
-- klomipramin dag 1–28: den ideelle dosen 28,13 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 27,5 mg (-2,24 %, faktisk reduksjon 26,67 % fra 37,5 mg) og 30 mg (+6,65 %, faktisk reduksjon 20 % fra 37,5 mg). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- klomipramin dag 1–28: den ideelle dosen 28,13 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 27,5 mg (-2,24 %, faktisk reduksjon 26,67 % fra 37,5 mg) og 30 mg (+6,65 %, faktisk reduksjon 20 % fra 37,5 mg). Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 37,5 mg innenfor valgområdet 5–50 %: 27,5 mg (−26,67 %, krever begrunnelse) eller 30 mg (−20 %). Beregningen velger ikke selv.
+
+- Kan velges for trinn 1 (dag 1, beregnet 28,13 mg, fra 37,5 mg): 27,5 mg (−26,67 %, krever begrunnelse) eller 30 mg (−20 %).
+
+**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 50 mg.**
+
+- dag 1–28: 37,5 mg = 1½ tabletter à 25 mg
+- dag 29–56: 27,5 mg = 1½ tabletter à 10 mg + ½ tablett à 25 mg, valgt av forskriveren (beregnet 28,13 mg; −26,67 %)
+- dag 57–84: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 20,63 mg; −27,27 %)
+- dag 85–112: 15 mg = 1½ tabletter à 10 mg
+- dag 113–140: 12,5 mg = ½ tablett à 25 mg, valgt av forskriveren (beregnet 11,25 mg; −16,67 %)
+- fra dag 141: 10 mg = 1 tablett à 10 mg, valgt av forskriveren (beregnet 9,38 mg; −20 %)
+- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
 ### mirtazapin, Smeltetablett [48]
 
@@ -319,29 +441,35 @@ Stopper:
 
 Stopper:
 
-- mirtazapin dag 1–28: den ideelle dosen 13,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (+11,11 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- mirtazapin dag 1–28: den ideelle dosen 13,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(b) Lang behandlingstid, 10 % per trinn, fra 15 mg.**
 
 Stopper:
 
-- mirtazapin dag 1–28: den ideelle dosen 13,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (+11,11 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- mirtazapin dag 1–28: den ideelle dosen 13,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(c) Tidligere seponeringssymptomer (langsom variant), fra 15 mg.**
 
 Stopper:
 
-- mirtazapin dag 1–28: den ideelle dosen 14,25 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (+5,26 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- mirtazapin dag 1–28: den ideelle dosen 14,25 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (+5,26 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(d) Lav dose: laveste styrke i formen, fra 15 mg.**
 
 Stopper:
 
-- mirtazapin dag 1–28: den ideelle dosen 13,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (+11,11 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- mirtazapin dag 1–28: den ideelle dosen 13,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(f) Videreføring: ny plan fra siste dose i (a).**
 
 (a) gir ingen dose å videreføre fra.
+
+**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 15 mg.**
+
+Stopper:
+
+- mirtazapin dag 1–28: den ideelle dosen 13,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 ### mirtazapin, Tablett [53]
 
@@ -349,29 +477,35 @@ Stopper:
 
 Stopper:
 
-- mirtazapin dag 1–28: den ideelle dosen 13,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 7,5 mg (-44,44 %, faktisk reduksjon 50 % fra 15 mg) og 15 mg (+11,11 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- mirtazapin dag 1–28: den ideelle dosen 13,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 7,5 mg (-44,44 %, faktisk reduksjon 50 % fra 15 mg) og 15 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(b) Lang behandlingstid, 10 % per trinn, fra 15 mg.**
 
 Stopper:
 
-- mirtazapin dag 1–28: den ideelle dosen 13,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 7,5 mg (-44,44 %, faktisk reduksjon 50 % fra 15 mg) og 15 mg (+11,11 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- mirtazapin dag 1–28: den ideelle dosen 13,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 7,5 mg (-44,44 %, faktisk reduksjon 50 % fra 15 mg) og 15 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(c) Tidligere seponeringssymptomer (langsom variant), fra 15 mg.**
 
 Stopper:
 
-- mirtazapin dag 1–28: den ideelle dosen 14,25 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 7,5 mg (-47,37 %, faktisk reduksjon 50 % fra 15 mg) og 15 mg (+5,26 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- mirtazapin dag 1–28: den ideelle dosen 14,25 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 7,5 mg (-47,37 %, faktisk reduksjon 50 % fra 15 mg) og 15 mg (+5,26 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(d) Lav dose: laveste styrke i formen, fra 15 mg.**
 
 Stopper:
 
-- mirtazapin dag 1–28: den ideelle dosen 13,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 7,5 mg (-44,44 %, faktisk reduksjon 50 % fra 15 mg) og 15 mg (+11,11 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- mirtazapin dag 1–28: den ideelle dosen 13,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 7,5 mg (-44,44 %, faktisk reduksjon 50 % fra 15 mg) og 15 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(f) Videreføring: ny plan fra siste dose i (a).**
 
 (a) gir ingen dose å videreføre fra.
+
+**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 15 mg.**
+
+Stopper:
+
+- mirtazapin dag 1–28: den ideelle dosen 13,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 7,5 mg (-44,44 %, faktisk reduksjon 50 % fra 15 mg) og 15 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 ### moklobemid, eneste form
 
@@ -379,29 +513,35 @@ Stopper:
 
 Stopper:
 
-- moklobemid dag 1–28: den ideelle dosen 270 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 150 mg (-44,44 %, faktisk reduksjon 50 % fra 300 mg) og 300 mg (+11,11 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- moklobemid dag 1–28: den ideelle dosen 270 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 150 mg (-44,44 %, faktisk reduksjon 50 % fra 300 mg) og 300 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(b) Lang behandlingstid, 10 % per trinn, fra 300 mg.**
 
 Stopper:
 
-- moklobemid dag 1–28: den ideelle dosen 270 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 150 mg (-44,44 %, faktisk reduksjon 50 % fra 300 mg) og 300 mg (+11,11 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- moklobemid dag 1–28: den ideelle dosen 270 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 150 mg (-44,44 %, faktisk reduksjon 50 % fra 300 mg) og 300 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(c) Tidligere seponeringssymptomer (langsom variant), fra 300 mg.**
 
 Stopper:
 
-- moklobemid dag 1–28: den ideelle dosen 285 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 150 mg (-47,37 %, faktisk reduksjon 50 % fra 300 mg) og 300 mg (+5,26 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- moklobemid dag 1–28: den ideelle dosen 285 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 150 mg (-47,37 %, faktisk reduksjon 50 % fra 300 mg) og 300 mg (+5,26 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(d) Lav dose: laveste styrke i formen, fra 150 mg.**
 
 Stopper:
 
-- moklobemid dag 1–28: den ideelle dosen 135 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 150 mg (+11,11 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- moklobemid dag 1–28: den ideelle dosen 135 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 150 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(f) Videreføring: ny plan fra siste dose i (a).**
 
 (a) gir ingen dose å videreføre fra.
+
+**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 300 mg.**
+
+Stopper:
+
+- moklobemid dag 1–28: den ideelle dosen 270 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 150 mg (-44,44 %, faktisk reduksjon 50 % fra 300 mg) og 300 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 ### nortriptylin, eneste form
 
@@ -409,28 +549,40 @@ Stopper:
 
 Stopper:
 
-- nortriptylin dag 1–28: den ideelle dosen 37,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 35 mg (-6,67 %, faktisk reduksjon 30 % fra 50 mg) og 40 mg (+6,67 %, faktisk reduksjon 20 % fra 50 mg). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- nortriptylin dag 1–28: den ideelle dosen 37,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 35 mg (-6,67 %, faktisk reduksjon 30 % fra 50 mg) og 40 mg (+6,67 %, faktisk reduksjon 20 % fra 50 mg). Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 50 mg innenfor valgområdet 5–50 %: 35 mg (−30 %, krever begrunnelse) eller 40 mg (−20 %). Beregningen velger ikke selv.
+
+- Kan velges for trinn 1 (dag 1, beregnet 37,5 mg, fra 50 mg): 35 mg (−30 %, krever begrunnelse) eller 40 mg (−20 %).
 
 **(b) Lang behandlingstid, 10 % per trinn, fra 50 mg.**
 
 - fra dag 1: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg
 - neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
+- Kan velges for trinn 2 (dag 29, beregnet 40,5 mg, fra 45 mg): 40 mg (−11,11 %, krever begrunnelse).
+
 **(c) Tidligere seponeringssymptomer (langsom variant), fra 50 mg.**
 
 Stopper:
 
-- nortriptylin dag 1–28: den ideelle dosen 47,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 45 mg (-5,26 %, faktisk reduksjon 10 % fra 50 mg) og 50 mg (+5,26 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- nortriptylin dag 1–28: den ideelle dosen 47,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 45 mg (-5,26 %, faktisk reduksjon 10 % fra 50 mg) og 50 mg (+5,26 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(d) Lav dose: laveste styrke i formen, fra 10 mg.**
 
 Stopper:
 
-- nortriptylin dag 1–28: den ideelle dosen 7,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- nortriptylin dag 1–28: den ideelle dosen 7,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (+33,33 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(f) Videreføring: ny plan fra siste dose i (a).**
 
 (a) gir ingen dose å videreføre fra.
+
+**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 50 mg.**
+
+- dag 1–28: 40 mg = 4 tabletter à 10 mg, valgt av forskriveren (beregnet 37,5 mg; −20 %)
+- dag 29–56: 30 mg = 3 tabletter à 10 mg
+- dag 57–84: 25 mg = 1 tablett à 25 mg, valgt av forskriveren (beregnet 22,5 mg; −16,67 %)
+- fra dag 85: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 18,75 mg; −20 %)
+- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
 ### paroksetin, eneste form
 
@@ -438,29 +590,35 @@ Stopper:
 
 Stopper:
 
-- paroksetin dag 1–28: den ideelle dosen 18 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-44,44 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+11,11 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- paroksetin dag 1–28: den ideelle dosen 18 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-44,44 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(b) Lang behandlingstid, 10 % per trinn, fra 20 mg.**
 
 Stopper:
 
-- paroksetin dag 1–28: den ideelle dosen 18 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-44,44 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+11,11 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- paroksetin dag 1–28: den ideelle dosen 18 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-44,44 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(c) Tidligere seponeringssymptomer (langsom variant), fra 20 mg.**
 
 Stopper:
 
-- paroksetin dag 1–28: den ideelle dosen 19 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-47,37 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+5,26 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- paroksetin dag 1–28: den ideelle dosen 19 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-47,37 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+5,26 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(d) Lav dose: laveste styrke i formen, fra 20 mg.**
 
 Stopper:
 
-- paroksetin dag 1–28: den ideelle dosen 18 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-44,44 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+11,11 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- paroksetin dag 1–28: den ideelle dosen 18 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-44,44 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(f) Videreføring: ny plan fra siste dose i (a).**
 
 (a) gir ingen dose å videreføre fra.
+
+**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 20 mg.**
+
+Stopper:
+
+- paroksetin dag 1–28: den ideelle dosen 18 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-44,44 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 ### sertralin, eneste form
 
@@ -469,29 +627,42 @@ Stopper:
 - fra dag 1: 75 mg = 1 tablett à 25 mg + 1 tablett à 50 mg
 - neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
+- Kan velges for trinn 2 (dag 29, beregnet 56,25 mg, fra 75 mg): 50 mg (−33,33 %, krever begrunnelse).
+
 **(b) Lang behandlingstid, 10 % per trinn, fra 100 mg.**
 
 Stopper:
 
-- sertralin dag 1–28: den ideelle dosen 90 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 75 mg (-16,67 %, faktisk reduksjon 25 % fra 100 mg) og 100 mg (+11,11 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- sertralin dag 1–28: den ideelle dosen 90 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 75 mg (-16,67 %, faktisk reduksjon 25 % fra 100 mg) og 100 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 100 mg innenfor valgområdet 5–50 %: 75 mg (−25 %, krever begrunnelse). Beregningen velger ikke selv.
+
+- Kan velges for trinn 1 (dag 1, beregnet 90 mg, fra 100 mg): 75 mg (−25 %, krever begrunnelse).
 
 **(c) Tidligere seponeringssymptomer (langsom variant), fra 100 mg.**
 
 Stopper:
 
-- sertralin dag 1–28: den ideelle dosen 95 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 75 mg (-21,05 %, faktisk reduksjon 25 % fra 100 mg) og 100 mg (+5,26 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- sertralin dag 1–28: den ideelle dosen 95 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 75 mg (-21,05 %, faktisk reduksjon 25 % fra 100 mg) og 100 mg (+5,26 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(d) Lav dose: laveste styrke i formen, fra 25 mg.**
 
 Stopper:
 
-- sertralin dag 1–28: den ideelle dosen 18,75 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 25 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- sertralin dag 1–28: den ideelle dosen 18,75 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 25 mg (+33,33 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(f) Videreføring: ny plan fra siste dose i (a), fra 75 mg.**
 
 Stopper:
 
-- sertralin dag 1–28: den ideelle dosen 56,25 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 50 mg (-11,11 %, faktisk reduksjon 33,33 % fra 75 mg) og 75 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- sertralin dag 1–28: den ideelle dosen 56,25 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 50 mg (-11,11 %, faktisk reduksjon 33,33 % fra 75 mg) og 75 mg (+33,33 %). Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 75 mg innenfor valgområdet 5–50 %: 50 mg (−33,33 %, krever begrunnelse). Beregningen velger ikke selv.
+
+- Kan velges for trinn 1 (dag 1, beregnet 56,25 mg, fra 75 mg): 50 mg (−33,33 %, krever begrunnelse).
+
+**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 100 mg.**
+
+- dag 1–28: 75 mg = 1 tablett à 25 mg + 1 tablett à 50 mg
+- dag 29–56: 50 mg = 1 tablett à 50 mg, valgt av forskriveren (beregnet 56,25 mg; −33,33 %)
+- fra dag 57: 25 mg = 1 tablett à 25 mg, valgt av forskriveren (beregnet 37,5 mg; −50 %)
+- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
 ### vortioksetin, eneste form
 
@@ -500,29 +671,42 @@ Stopper:
 - fra dag 1: 15 mg = 1 tablett à 15 mg
 - neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
+- Kan velges for trinn 2 (dag 29, beregnet 11,25 mg, fra 15 mg): 10 mg (−33,33 %, krever begrunnelse).
+
 **(b) Lang behandlingstid, 10 % per trinn, fra 20 mg.**
 
 Stopper:
 
-- vortioksetin dag 1–28: den ideelle dosen 18 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (-16,67 %, faktisk reduksjon 25 % fra 20 mg) og 20 mg (+11,11 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- vortioksetin dag 1–28: den ideelle dosen 18 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (-16,67 %, faktisk reduksjon 25 % fra 20 mg) og 20 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 20 mg innenfor valgområdet 5–50 %: 15 mg (−25 %). Beregningen velger ikke selv.
+
+- Kan velges for trinn 1 (dag 1, beregnet 18 mg, fra 20 mg): 15 mg (−25 %).
 
 **(c) Tidligere seponeringssymptomer (langsom variant), fra 20 mg.**
 
 Stopper:
 
-- vortioksetin dag 1–28: den ideelle dosen 19 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (-21,05 %, faktisk reduksjon 25 % fra 20 mg) og 20 mg (+5,26 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- vortioksetin dag 1–28: den ideelle dosen 19 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (-21,05 %, faktisk reduksjon 25 % fra 20 mg) og 20 mg (+5,26 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(d) Lav dose: laveste styrke i formen, fra 5 mg.**
 
 Stopper:
 
-- vortioksetin dag 1–28: den ideelle dosen 3,75 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 5 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- vortioksetin dag 1–28: den ideelle dosen 3,75 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 5 mg (+33,33 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 **(f) Videreføring: ny plan fra siste dose i (a), fra 15 mg.**
 
 Stopper:
 
-- vortioksetin dag 1–28: den ideelle dosen 11,25 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-11,11 %, faktisk reduksjon 33,33 % fra 15 mg) og 15 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- vortioksetin dag 1–28: den ideelle dosen 11,25 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-11,11 %, faktisk reduksjon 33,33 % fra 15 mg) og 15 mg (+33,33 %). Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 15 mg innenfor valgområdet 5–50 %: 10 mg (−33,33 %, krever begrunnelse). Beregningen velger ikke selv.
+
+- Kan velges for trinn 1 (dag 1, beregnet 11,25 mg, fra 15 mg): 10 mg (−33,33 %, krever begrunnelse).
+
+**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 20 mg.**
+
+- dag 1–28: 15 mg = 1 tablett à 15 mg
+- dag 29–56: 10 mg = 1 tablett à 10 mg, valgt av forskriveren (beregnet 11,25 mg; −33,33 %)
+- fra dag 57: 5 mg = 1 tablett à 5 mg, valgt av forskriveren (beregnet 7,5 mg; −50 %)
+- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
 ## Fluoksetin 20 mg annenhver dag
 

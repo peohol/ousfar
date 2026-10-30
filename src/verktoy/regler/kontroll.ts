@@ -212,6 +212,12 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
       if (individuell && sluttdose && r.plan.form === 'seponering') f(`forløp ${x.id} har både sluttdose og individuell avslutning; ingen nedre grense for beregnede trinn ved seponering er godkjent`)
       if (individuell && slutt && r.plan.form !== 'seponering' && !slutt.grunnlag.henvisninger?.length) f(`forløp ${x.id} stopper beregningen ved en sluttdose uten kilde`)
       if (!individuell && fase.strategi.type === 'prosent_av_aktuell' && !sluttdose) f(`forløp ${x.id} trapper ned prosentvis uten sluttdose og uten individuell avslutning; dosen når aldri 0`)
+      // Valg av dose per trinn (P7.5) gjelder bare innenfor regelens område for reduksjonen, når planen stopper ved et trinn som ikke kan gis, og uten toleranse.
+      if (fase.trinnvalg) {
+        if (fase.strategi.type !== 'prosent_av_aktuell' || !fase.strategi.prosent.omrade) f(`forløp ${x.id} lar forskriveren velge dose per trinn uten et område for reduksjonen i prosent av aktuell dose`)
+        if (!individuell) f(`forløp ${x.id} lar forskriveren velge dose per trinn uten individuell avslutning`)
+        if (x.dosevalg?.avvik_prosent?.verdi) f(`forløp ${x.id} lar forskriveren velge dose per trinn og har samtidig en toleranse`)
+      }
     }
   }
   for (const x of tallfeil(r)) f(x)

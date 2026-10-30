@@ -150,6 +150,12 @@ const LIKE_STORE_DOSER: Versjon = {
   merknad: 'Rettet etter kontrollrunden 30.10.2026 (P7.5): at deldosene skal være like store, er regelens eget konservative valg med eget grunnlag, ikke et krav i preparatomtalen eller en felles regel for alle legemidler.',
   dato: RUNDE_4,
 }
+/** Alle beregnbare P7-regler etter bidragsyterens valg 30.10.2026 (P7.5): forskriveren velger blant dosene som kan gis. */
+const VALG_AV_DOSE: Versjon = {
+  merknad:
+    'Etter bidragsyterens valg 30.10.2026 (P7.5): når et trinn ikke kan gis nøyaktig med preparatene, viser planen de nærmeste dosene som kan gis, med faktisk reduksjon fra dosen før, og forskriveren velger. Bare doser med faktisk reduksjon innenfor valgområdet for risikogruppen kan velges, med de samme kravene om begrunnelse. Åpent forslag til ny kontroll.',
+  dato: RUNDE_4,
+}
 /** Den første versjonen av en regel laget etter fagkontrollen 30.10.2026. */
 const NY_ETTER_RUNDE_2 = (hva: string): Versjon => ({ merknad: `Ny regel etter fagkontrollen 30.10.2026 (P7.5): ${hva}`, dato: RUNDE_2 })
 
@@ -217,6 +223,17 @@ const vurdering = (begrunnelse: string, henvisninger: Kildehenvisning[], avklari
  */
 const likeStore = (fordeling: Kildehenvisning): Grunnlag =>
   vurdering('Preparatomtalen sier hvor mange doser døgndosen fordeles på, men ikke at de skal være like store. OUSFAR bruker bare like store doser fordi ingen kilde dokumenterer en bestemt ujevn fordeling; et konservativt valg som må avklares faglig.', [fordeling], null)
+
+/**
+ * At forskriveren kan velge blant dosene som kan gis når et trinn ikke kan gis
+ * nøyaktig (bidragsyterens valg 30.10.2026, P7.5): grensene er valgområdet
+ * kontrolløren allerede har avklart for risikogruppen. Åpent forslag.
+ */
+const TRINNVALG: Grunnlag = vurdering(
+  'Når et trinn ikke kan gis nøyaktig med norske preparater, viser planen de nærmeste dosene som kan gis, med faktisk reduksjon fra dosen før, og forskriveren velger; beregningen velger aldri selv. Bare doser med faktisk reduksjon innenfor valgområdet for risikogruppen kan velges (ved lav dose høyst 25 % der den grensen gjelder), med de samme kravene om begrunnelse som et valg av trinnstørrelse. Bidragsyterens valg 30.10.2026; grensene og mekanismen må avklares av kontrolløren.',
+  [RCPSYCH.plan, RCPSYCH.smaa],
+  null,
+)
 
 /** Bekreftelsen hver beregnbar regel krever: planen er et startforslag med minstetider, ikke en fast tidsplan. */
 export const STARTFORSLAG: Bekreftelse = {
@@ -440,7 +457,7 @@ const LANGSOM: Risikogruppe = {
     standard: 5,
     omrade: [1, 5],
     begrunnelse:
-      'Etter seponeringssymptomer ved et tidligere forsøk: 5 % av aktuell dose per trinn, og forskriveren kan velge 1–5 %. Større reduksjoner er utenfor varianten. Dosene må kunne gis; et trinn som ikke kan gis, stopper planen.',
+      'Etter seponeringssymptomer ved et tidligere forsøk: 5 % av aktuell dose per trinn, og forskriveren kan velge 1–5 %. Større reduksjoner er utenfor varianten. Dosene må kunne gis; et trinn som ikke kan gis, stopper planen, med mindre forskriveren velger en dose som kan gis, med faktisk reduksjon på 1–5 %.',
     henvisninger: [RCPSYCH.langvarig, RCPSYCH.smaa, NICE.tidligere, NICE.alvorlig],
   },
   dager: {
@@ -627,7 +644,7 @@ const fellesUsikkerhet = (horisont: number) => [
   'Prosentene og trinnlengdene er tillatte rammer for individuell planlegging (fagvurderingen 29.10.2026), ikke vitenskapelig dokumenterte optimale verdier.',
   `Ingen fast nedre grense for beregnede trinn er godkjent (fagkontrollen 30.10.2026): en lav dose kan fortsatt gi betydelig reseptorbinding, og noen trenger svært lave doser før seponering (RCPsych). Planen viser derfor høyst ${horisont} reduksjoner, en teknisk horisont uten dokumentasjon for at akkurat dette antallet er bedre enn et annet, og videre nedtrapping beregnes fra dosen pasienten da faktisk bruker. Hvor langt ned den enkelte trenger å gå, avgjøres individuelt.`,
   'Hva som er lang behandlingstid, avgjør forskriveren; RCPsych sier «mange måneder eller lenger» uten en eksakt grense.',
-  'Regelen har ingen toleranse: hvert trinn avrundes til den viste dosen (to desimaler), og et trinn som ikke kan gis nøyaktig med norske preparater, eller en reduksjon som forsvinner i avrundingen, stopper planen ved trinnet før. En annen dose er et nytt forslag med egen vurdering og godkjenning (fagkontrollene 30.10.2026).',
+  'Regelen har ingen toleranse: hvert trinn avrundes til den viste dosen (to desimaler), og en reduksjon som forsvinner i avrundingen, stopper planen ved trinnet før. Kan et trinn ikke gis nøyaktig med norske preparater, stopper planen også der, men forskriveren kan velge en av de nærmeste dosene som kan gis, med faktisk reduksjon innenfor valgområdet og de samme kravene om begrunnelse. Det er bidragsyterens valg 30.10.2026 og et åpent forslag; den faktiske reduksjonen kan avvike fra den valgte trinnstørrelsen.',
 ]
 
 /** Spørsmålene stoffet stiller om pasientgruppe, indikasjon og organfunksjon, hvert én gang. */
@@ -779,7 +796,7 @@ const FELLES_KILDETRO = [
 
 const fellesTilpasninger = (horisont: number) => [
   utsagn(
-    `Planen går ikke til null og foreslår ingen dato for siste dose. Ingen avslutning (nulltrinn) og ingen fast nedre grense er godkjent (fagkontrollene 29. og 30.10.2026). Planen viser høyst ${horisont} reduksjoner, aldri et trinn under laveste dose formuleringen kan gi, og stopper ved første trinn som ikke kan gis. Der stopper planen av tekniske grunner: pasienten fortsetter med dosen til forskriveren har vurdert videre nedtrapping, og dosen er ikke nødvendigvis en sluttdose. Dagene er tidligste tidspunkt; utsettes et trinn, forskyves resten.`,
+    `Planen går ikke til null og foreslår ingen dato for siste dose. Ingen avslutning (nulltrinn) og ingen fast nedre grense er godkjent (fagkontrollene 29. og 30.10.2026). Planen viser høyst ${horisont} reduksjoner, aldri et trinn under laveste dose formuleringen kan gi, og stopper ved første trinn som ikke kan gis, med mindre forskriveren velger en av de nærmeste dosene som kan gis, med faktisk reduksjon innenfor valgområdet. Der stopper planen av tekniske grunner: pasienten fortsetter med dosen til forskriveren har vurdert videre nedtrapping, og dosen er ikke nødvendigvis en sluttdose. Dagene er tidligste tidspunkt; utsettes et trinn, forskyves resten.`,
     RCPSYCH.lavDose,
   ),
   ...STARTDOSE_TILPASNINGER,
@@ -795,8 +812,8 @@ const STARTDOSE_TILPASNINGER = [
 
 function seponeringsregel(s: Stoffregel, langsom = false): Regel {
   const versjoner = langsom
-    ? [NY_ETTER_RUNDE_2(`langsom variant for ${s.navn} etter tidligere seponeringssymptomer.`), KONTROLL_5, ...(s.senere ?? [])]
-    : [...(s.tidligere ?? [UTKAST, KONTROLL_1, KONTROLL_2, KONTROLL_3]), KONTROLL_4, KONTROLL_5, ...(s.senere ?? [])]
+    ? [NY_ETTER_RUNDE_2(`langsom variant for ${s.navn} etter tidligere seponeringssymptomer.`), KONTROLL_5, ...(s.senere ?? []), VALG_AV_DOSE]
+    : [...(s.tidligere ?? [UTKAST, KONTROLL_1, KONTROLL_2, KONTROLL_3]), KONTROLL_4, KONTROLL_5, ...(s.senere ?? []), VALG_AV_DOSE]
   const versjon = versjoner.length
   const gruppe = langsom ? LANGSOM : s.gruppe
   const avklaring = langsom ? runde2(versjon, 'langsom') : beslutning1(versjon)
@@ -828,7 +845,7 @@ function seponeringsregel(s: Stoffregel, langsom = false): Regel {
           ...(s.fordeling && { fordeling: s.fordeling }),
           utgangsdose: 'startdose',
           start: { type: 'dag', dag: 1 },
-          faser: [{ type: 'nedtrapping', strategi: strat, trinnlengde, avslutning: 'individuell', horisont: horisont(versjon, langsom) }],
+          faser: [{ type: 'nedtrapping', strategi: strat, trinnlengde, avslutning: 'individuell', horisont: horisont(versjon, langsom), trinnvalg: TRINNVALG }],
         },
       ],
     },
@@ -1955,10 +1972,10 @@ const STOFFER = [amitriptylin, citalopram, escitalopram, fluoksetin, fluvoksamin
 
 export const NEDTRAPPINGSSETT: Regelsett = {
   id: 'ousfar-verktoy-nedtrapping',
-  versjon: 7,
+  versjon: 8,
   modell: REGELMODELLVERSJON,
   beskrivelse:
-    'Utkast til nedtrappingsregler for antidepressiva (P7): én regel per virkestoff med forsvarlig kildegrunnlag, laget fra preparatomtalen, NICE og RCPsych, og en langsom variant av hver etter tidligere seponeringssymptomer. Hver plan er et startforslag med minstetider som forskriveren kan justere innenfor valgområdene fra fagvurderingen; ingen plan går til null eller har en fast nedre grense. Tekstreglene for bupropion og agomelatin er klinisk godkjent etter substanskontrollen 30.10.2026; duloksetin og venlafaksin er tekstregler uten beregning. De øvrige reglene er til ny faglig kontroll, og ingen beregnet plan er klinisk godkjent.',
+    'Utkast til nedtrappingsregler for antidepressiva (P7): én regel per virkestoff med forsvarlig kildegrunnlag, laget fra preparatomtalen, NICE og RCPsych, og en langsom variant av hver etter tidligere seponeringssymptomer. Hver plan er et startforslag med minstetider som forskriveren kan justere innenfor valgområdene fra fagvurderingen; ingen plan går til null eller har en fast nedre grense. Kan et trinn ikke gis nøyaktig med preparatene, kan forskriveren velge blant de nærmeste dosene som kan gis, innenfor valgområdet. Tekstreglene for bupropion og agomelatin er klinisk godkjent etter substanskontrollen 30.10.2026; duloksetin og venlafaksin er tekstregler uten beregning. De øvrige reglene er til ny faglig kontroll, og ingen beregnet plan er klinisk godkjent.',
   regler: [...STOFFER.flatMap((s) => [seponeringsregel(s), seponeringsregel(s, true)]), fluoksetinAnnenhverDag(), bupropion, agomelatin, duloksetin, venlafaksin],
 }
 

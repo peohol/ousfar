@@ -6,7 +6,7 @@
  * verdiene har klinisk innhold.
  */
 import type { Legemiddelutvalg } from '../../legemiddeldata/lesing'
-import { KRYSSREGEL, depotregel, nedtrappingUtenNull, sp, syntetiskUtvalg, TESTAZAPIN, TESTOKSETIN, TESTPERIDON, type Testpreparat } from '../../verktoy/motor/syntetisk'
+import { KRYSSREGEL, depotregel, nedtrappingUtenNull, sp, syntetiskUtvalg, TESTAZAPIN, TESTOKSETIN, TESTPERIDON, trinnvalgUtenNull, type Testpreparat } from '../../verktoy/motor/syntetisk'
 import { KARTLEGGING } from '../../verktoy/register'
 import { fingeravtrykk } from '../../verktoy/regler/godkjenning'
 import type { Regel, Regelsett, Virkestoffvalg } from '../../verktoy/regler/modell'
@@ -77,6 +77,9 @@ export const TEST_BEGRUNNELSE: Regel = (() => {
   }
   return godkjennITest(omkoble(r), 'test-begrunnelse')
 })()
+
+/** Nedtrapping av «escitalopram» der forskriveren kan velge blant dosene som kan gis når et trinn ikke kan gis nøyaktig (P7.5), med syntetiske verdier. */
+export const TEST_TRINNVALG: Regel = godkjennITest(omkoble(trinnvalgUtenNull()), 'test-trinnvalg')
 
 /** Kryssnedtrapping «escitalopram» → «mirtazapin» med syntetiske verdier og måldose fra inndata. */
 export const TEST_KRYSS: Regel = godkjennITest(omkoble({ ...KRYSSREGEL, inndata: [{ navn: 'maldose', art: 'bindende_krav', grunnlag: { type: 'ousfar_vurdering', begrunnelse: 'Syntetisk.', avklaring: null } }] } as Regel), 'test-kryss')

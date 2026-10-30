@@ -15,6 +15,9 @@
  *   valg innenfor området gir planen og står som kontroll, et valg utenfor
  *   stopper. Et spørsmål må besvares, og et valg som krever begrunnelse,
  *   stopper uten den; svaret og begrunnelsen står i planen.
+ * - Når et trinn ikke kan gis nøyaktig og regelen tillater det, viser siden de
+ *   nærmeste dosene som kan gis, med faktisk reduksjon; et valg gir en ny
+ *   plan med en gang, står i planen og kan fjernes.
  */
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -23,7 +26,7 @@ import { Verktoyside, type VerktoysideProps } from '../components/verktoy/Verkto
 import type { Legemiddelutvalg } from '../legemiddeldata/lesing'
 import { glemBildet, oppdaterOgTaVare, taBilde } from '../oppdatering/bevaring'
 import { KARTLEGGING } from '../verktoy/register'
-import { godkjennITest, TEST_BEGRUNNELSE, TEST_DEPOT, TEST_JUSTERBAR, TEST_NEDTRAPPING, TESTKLOKKE, testFest, testsett } from './hjelp/verktoyplan'
+import { godkjennITest, TEST_BEGRUNNELSE, TEST_DEPOT, TEST_JUSTERBAR, TEST_NEDTRAPPING, TEST_TRINNVALG, TESTKLOKKE, testFest, testsett } from './hjelp/verktoyplan'
 
 beforeEach(() => {
   window.scrollTo = () => {}
@@ -349,6 +352,41 @@ describe('med en regel forskriveren kan justere', () => {
     vis({ verktoy: 'trappe-ned-antidepressiv', legemidler: lesing(), regelsett: testsett(TEST_NEDTRAPPING), klokke: TESTKLOKKE })
     await user.type(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' }), 'Escitalopram')
     expect(screen.queryByRole('group', { name: /Tilpasning av planen/ })).toBeNull()
+  })
+})
+
+describe('med en regel der forskriveren kan velge dosen for et trinn som ikke kan gis', () => {
+  it('viser de nærmeste dosene med faktisk reduksjon, beregner på nytt fra valget og lar valgene fjernes', async () => {
+    const user = userEvent.setup()
+    vis({ verktoy: 'trappe-ned-antidepressiv', legemidler: lesing(), regelsett: testsett(TEST_TRINNVALG), klokke: TESTKLOKKE })
+    await fyllInn(user)
+    await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+    // 25 mg → 18,75 mg kan gis; neste trinn (14,06 mg) kan ikke, så planen står på 18,75 mg og tilbyr de nærmeste dosene.
+    const tabell = await screen.findByRole('region', { name: TEST_TRINNVALG.tittel })
+    expect(within(tabell).getAllByRole('row').at(-1)!.textContent).toMatch(/18,75 mg/)
+    const valg = screen.getByRole('group', { name: 'Trinn 2 av Escitalopram kan ikke gis nøyaktig' })
+    expect(within(valg).getByText(/Beregnet 14,06 mg fra 18,75 mg\. Velg en dose som kan gis; den faktiske reduksjonen må være 5–50 %\./)).toBeTruthy()
+    expect(within(valg).getAllByRole('button').map((b) => b.textContent)).toEqual(['13,75 mg (−26,67 %), krever begrunnelse', '15 mg (−20 %)'])
+    // Valget gir en ny plan med en gang, fra den valgte dosen, og står i planen og i skjemaet.
+    await user.click(within(valg).getByRole('button', { name: '15 mg (−20 %)' }))
+    expect(await screen.findByText(/valgt av forskriveren \(beregnet 14,06 mg; −20 %\)/)).toBeTruthy()
+    expect(screen.getByText(/escitalopram (fra )?dag [\d–]+: 15 mg, valgt av forskriveren fordi den beregnede dosen 14,06 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før\./i)).toBeTruthy()
+    const valgte = screen.getByRole('group', { name: 'Valgte doser per trinn' })
+    expect(within(valgte).getByRole('listitem').textContent).toBe('Trinn 2 av Escitalopram: 15 mg (fra 18,75 mg)')
+    // Et valg som krever begrunnelse, stopper uten den.
+    // 15 mg → 11,25 mg kan gis; 8,44 mg kan ikke, og 7,5 mg (−33,33 %) krever begrunnelse.
+    const neste = await screen.findByRole('group', { name: 'Trinn 4 av Escitalopram kan ikke gis nøyaktig' })
+    expect(within(neste).getAllByRole('button').map((b) => b.textContent)).toEqual(['7,5 mg (−33,33 %), krever begrunnelse', '8,75 mg (−22,22 %)'])
+    await user.click(within(neste).getByRole('button', { name: '7,5 mg (−33,33 %), krever begrunnelse' }))
+    expect(await screen.findByText(/Trinn 4 av escitalopram: den valgte dosen 7,5 mg er en reduksjon på 33,33 % og krever en skriftlig begrunnelse fra forskriveren \(over 25 %\)\. Skriv begrunnelsen, eller velg en annen dose\./)).toBeTruthy()
+    expect(within(screen.getByRole('group', { name: 'Valgte doser per trinn' })).getAllByRole('listitem').map((x) => x.textContent)).toEqual([
+      'Trinn 2 av Escitalopram: 15 mg (fra 18,75 mg)',
+      'Trinn 4 av Escitalopram: 7,5 mg (fra 11,25 mg)',
+    ])
+    // Valgene kan fjernes; planen må da beregnes på nytt.
+    await user.click(within(screen.getByRole('group', { name: 'Valgte doser per trinn' })).getByRole('button', { name: 'Fjern valgene' }))
+    expect(screen.queryByRole('group', { name: 'Valgte doser per trinn' })).toBeNull()
+    expect(await screen.findByText('Inndataene er endret. Beregn på nytt for å se en plan.')).toBeTruthy()
   })
 })
 

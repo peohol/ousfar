@@ -639,8 +639,9 @@ describe('Kontrollene av et regelsett', () => {
     a.eksempler = a.eksempler.filter((e) => !/nyre/.test(e.id))
     expect(feil(a)).toMatch(/fingeravtrykket stemmer ikke/)
     const b = regel('seponering-escitalopram')
-    b.versjon = 7
-    expect(feil(b)).toMatch(/siste godkjenningssteg gjelder regelversjon 6, ikke versjon 7; en endret regel må sendes til kontroll på nytt/)
+    const v = b.versjon
+    b.versjon = v + 1
+    expect(feil(b)).toMatch(new RegExp(`siste godkjenningssteg gjelder regelversjon ${v}, ikke versjon ${v + 1}; en endret regel må sendes til kontroll på nytt`))
   })
 
   it('slår ut når en Psychiatrienet-referanse har feil retning, virkestoff, type eller formulering', () => {
@@ -701,9 +702,9 @@ describe('Kontrollene av et regelsett', () => {
     const c = avklarAlle(regel('seponering-escitalopram'))
     const g = alleGrunnlag(c).find(([, x]) => x.type === 'ousfar_vurdering')![1]
     if (g.type !== 'ousfar_vurdering') throw new Error()
-    g.avklaring = { ...g.avklaring!, merknad: ' ', regelversjon: 7 }
+    g.avklaring = { ...g.avklaring!, merknad: ' ', regelversjon: c.versjon + 1 }
     expect(feil(c)).toMatch(/mangler dato, navn eller merknad/)
-    expect(feil(c)).toMatch(/gjelder en ukjent regelversjon \(7\)/)
+    expect(feil(c)).toContain(`gjelder en ukjent regelversjon (${c.versjon + 1})`)
   })
 
   it('slår ut når et regneeksempel ikke stemmer med beregningen', () => {

@@ -365,6 +365,23 @@ describe('Kildedata, versjoner og determinisme', () => {
     }
   })
 
+  it('tilbyr de nærmeste dosene som kan gis bare når regelen tillater det, og velger ikke selv (P7.5)', () => {
+    const t = TESTTILFELLER.find((x) => x.id === 'trinnvalg-tilbys')!
+    const beregnet = (r: typeof t.regel) => beregnDoseplan(r, t.inndata, syntetiskGrunnlag(t.preparater), OMGIVELSE)
+    const r = beregnet(t.regel)
+    expect(r.trinnvalg?.map((x) => [x.trinn, x.fra_mg, x.beregnet_mg, x.omrade, x.doser.map((d) => [d.mg, Math.round(d.prosent * 100) / 100, d.krever_begrunnelse])])).toEqual([
+      [2, 18.75, 14.06, [5, 50], [[13.75, 26.67, true], [15, 20, false]]],
+    ])
+    expect(r.merknader.join(' ')).toMatch(/Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 18,75 mg innenfor valgområdet 5–50 %: 13,75 mg \(−26,67 %, krever begrunnelse\) eller 15 mg \(−20 %\)\. Beregningen velger ikke selv\./)
+    // Uten valg per trinn i regelen: ingen doser tilbys, og stoppet sier at en annen dose krever en ny faglig vurdering.
+    const uten = structuredClone(t.regel)
+    const fase = uten.plan.forlop[0]!.faser[0]!
+    if (fase.type === 'nedtrapping') delete fase.trinnvalg
+    const u = beregnet(uten)
+    expect(u.trinnvalg).toBeUndefined()
+    expect(u.merknader.join(' ')).toMatch(/En annen dose, et større avvik eller en annen formulering er et nytt forslag/)
+  })
+
   it('kaster aldri, heller ikke på meningsløse inndata', () => {
     const verdier = [undefined, null, -1, 0, Number.NaN, Infinity, 'x', 1e9, 0.0001, 15]
     for (const t of TESTTILFELLER) {

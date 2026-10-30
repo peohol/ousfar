@@ -10,10 +10,10 @@
  */
 import type { Legemiddelutvalg } from '../legemiddeldata/lesing'
 import type { Preparatgrunnlag } from './motor/byggesteiner'
-import { festFerskhet, formvalgSomTrengs, kliniskDoseplan, type Doseplaninndata, type Doseplanresultat, type Formalternativer, type Formvalg } from './motor/plan'
+import { festFerskhet, formvalgSomTrengs, kliniskDoseplan, type Doseplaninndata, type Doseplanresultat, type Formalternativer, type Formvalg, type Trinnvalg } from './motor/plan'
 import { festkoblinger, KARTLEGGING } from './register'
 import { inndatagrenser, inndatavilkar, kravtekst, medEnhet, omradetekst } from './regler/beregning'
-import { justerbare, parametre, type Regel, type Regelsett } from './regler/modell'
+import { justerbare, parametre, type Regel, type Regelsett, type Trinnvalgsvar } from './regler/modell'
 import type { Formuleringsklasse } from './festformuleringer'
 import { medlemFor, REGELSETT, settFor, type Verktoyvalg } from './tilgjengelighet'
 
@@ -42,6 +42,12 @@ export interface Planskjema {
    */
   justert: Record<string, string>
   /**
+   * Dosene forskriveren har valgt for trinn som ikke kan gis nøyaktig
+   * (`Fase.trinnvalg`), i trinnenes rekkefølge. Et valg gjelder bare fra dosen
+   * det ble gjort fra; ellers sier planen at det ikke er brukt.
+   */
+  trinnvalg: Trinnvalgsvar[]
+  /**
    * Valgene skjemaet er fylt ut for ({@link valgidentitet}). Skifter
    * virkestoffet eller formuleringen, begynner skjemaet på nytt, så ingen dose,
    * bekreftelse eller svar på et unntak følger med til andre valg.
@@ -61,6 +67,7 @@ export const TOMT_SKJEMA: Planskjema = {
   formvalg: {},
   godkjenningsfritak: false,
   justert: {},
+  trinnvalg: [],
   gjelder: '',
 }
 
@@ -74,11 +81,21 @@ export const skjemaFor = (s: Planskjema, gjelder: string): Planskjema => (s.gjel
 /**
  * Skjemaet med en annen strategi. Alt som hører til regelen — måldosen,
  * bekreftelsene, svarene på unntakene og spørsmålene, formvalgene, justeringene,
- * begrunnelsen og godkjenningsfritaket —
+ * begrunnelsen, valgene av dose per trinn og godkjenningsfritaket —
  * begynner på nytt; dosen pasienten bruker og startdatoen står.
  */
 export const medRegel = (s: Planskjema, regel: string): Planskjema =>
   s.regel === regel ? s : { ...TOMT_SKJEMA, gjelder: s.gjelder, regel, startdose: s.startdose, startdato: s.startdato }
+
+/**
+ * Skjemaet med forskriverens valg av `mg` for trinnet i `t`. Valg for senere
+ * trinn i samme forløp faller bort, fordi de ble gjort fra en plan som nå
+ * endres.
+ */
+export const medTrinnvalg = (s: Planskjema, t: Pick<Trinnvalg, 'forlop' | 'trinn' | 'fra_mg'>, mg: number): Planskjema => ({
+  ...s,
+  trinnvalg: [...s.trinnvalg.filter((v) => v.forlop !== t.forlop || v.trinn < t.trinn), { forlop: t.forlop, trinn: t.trinn, fra_mg: t.fra_mg, mg }],
+})
 
 /** Et tall slik det er skrevet, med komma eller punktum; `undefined` når feltet er tomt eller ikke et positivt tall. */
 export function lesDose(tekst: string): number | undefined {
@@ -160,6 +177,7 @@ export function inndataFor(r: Regel, valg: Verktoyvalg, skjema: Planskjema): Dos
     ...(Object.keys(svar).length > 0 && { svar }),
     ...(Object.keys(justert).length > 0 && { justert }),
     ...(begrunnelse && { begrunnelse }),
+    ...(skjema.trinnvalg.length > 0 && { trinnvalg: skjema.trinnvalg.filter((v) => r.plan.forlop.some((f) => f.id === v.forlop)) }),
     formvalg,
     godkjenningsfritak: skjema.godkjenningsfritak,
   }

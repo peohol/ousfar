@@ -236,6 +236,19 @@ export function nedtrappingUtenNull(strategi: Nedtrappingsstrategi, dosevalg?: R
   return r
 }
 
+/**
+ * Som {@link nedtrappingUtenNull} med 25 % per trinn, der forskriveren kan velge
+ * blant dosene som kan gis når et trinn ikke kan gis nøyaktig (`Fase.trinnvalg`):
+ * valgområde 5–50 %, over 25 % krever begrunnelse, ingen trinn under 5 mg.
+ */
+export function trinnvalgUtenNull(): Regel {
+  const prosent = { ...sp(25, 'prosent'), omrade: [5, 50] as [number, number], justerbar: 'Reduksjon per trinn', begrunnelseskrav: [{ over: 25, grunnlag: syntetisk }] }
+  const r = nedtrappingUtenNull({ type: 'prosent_av_aktuell', prosent }, { min_mg: sp(5, 'mg') }, 'trinnvalg-uten-null')
+  const fase = r.plan.forlop[0]!.faser[0]!
+  if (fase.type === 'nedtrapping') fase.trinnvalg = syntetisk
+  return r
+}
+
 /** Som {@link nedtrappingUtenNull}, der døgndoser over `over` mg skal fordeles på `antall` doser, hver høyst `over` mg, og med `likeStore` på like store doser. */
 export function fordeltUtenNull(strategi: Nedtrappingsstrategi, over: number, antall: number[], likeStore = false): Regel {
   const r = nedtrappingUtenNull(strategi, undefined, 'fordelt-uten-null')
@@ -723,6 +736,32 @@ export const TESTTILFELLER: Testtilfelle[] = [
     inndata: { startdose_mg: 40, formvalg: { fra: TABLETT } },
     preparater: TESTOKSETIN,
     forventet: { stopp: /døgndosen 30 mg skal gis fordelt på 2 eller 3 doser, hver høyst 20 mg \(preparatomtalen\)\. Den kan gis fordelt som 20 \+ 10 mg, men regelen krever like store doser \(regelens eget valg, ikke et krav i preparatomtalen\)/ },
+  },
+  {
+    id: 'trinnvalg-tilbys',
+    beskrivelse:
+      'Nedtrapping med 25 % per trinn der regelen lar forskriveren velge blant dosene som kan gis (valgområde 5–50 %), fra 25 mg med tablettene: 18,75 mg kan gis, 14,06 mg kan ikke. Planen står på 18,75 mg og tilbyr 13,75 mg (−26,67 %, krever begrunnelse) og 15 mg (−20 %); den velger ikke selv.',
+    kontrollerer: 'P5.5 de nærmeste dosene som kan gis, med faktisk reduksjon innenfor valgområdet, når et trinn ikke kan gis nøyaktig (P7.5, bidragsyterens valg 30.10.2026)',
+    regel: trinnvalgUtenNull(),
+    inndata: { startdose_mg: 25, formvalg: { fra: TABLETT } },
+    preparater: TESTOKSETIN,
+    forventet: { fra: ['fra dag 1: 18,75 mg = 1 tablett à 10 mg + 1¾ tabletter à 5 mg', 'neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt'] },
+  },
+  {
+    id: 'trinnvalg-valgt',
+    beskrivelse: 'Som «trinnvalg-tilbys», der forskriveren har valgt 15 mg for trinn 2: planen fortsetter fra 15 mg, og trinnet står som valgt med den beregnede dosen og den faktiske reduksjonen.',
+    kontrollerer: 'P5.5 et valgt trinn gis, og neste trinn regnes fra den valgte dosen',
+    regel: trinnvalgUtenNull(),
+    inndata: { startdose_mg: 25, formvalg: { fra: TABLETT }, trinnvalg: [{ forlop: 'fra', trinn: 2, fra_mg: 18.75, mg: 15 }] },
+    preparater: TESTOKSETIN,
+    forventet: {
+      fra: [
+        'dag 1–14: 18,75 mg = 1 tablett à 10 mg + 1¾ tabletter à 5 mg',
+        'dag 15–28: 15 mg = 1 tablett à 10 mg + 1 tablett à 5 mg, valgt av forskriveren (beregnet 14,06 mg; −20 %)',
+        'fra dag 29: 11,25 mg = 1 tablett à 10 mg + ¼ tablett à 5 mg',
+        'neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt',
+      ],
+    },
   },
   {
     id: 'fordeling-kan-ikke-fordeles',

@@ -25,14 +25,14 @@
  */
 import { FEST_FORELDET_ETTER_TIMER, festForeldet } from '../../legemiddeldata/referanser'
 import { FORMULERINGSKLASSER, type Formuleringsklasse } from '../festformuleringer'
-import { AVSLUTNING_FELLES, avrund, beregn, erIsoDato, fordelingstekst, hverTekst, injeksjonstidspunkt, utenBeregningLinje, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
+import { AVSLUTNING_FELLES, avrund, beregn, erIsoDato, fordelingstekst, hverTekst, injeksjonstidspunkt, utenBeregningLinje, utlosteKrav, valgtSuffiks, trinnvalgOmrade, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
 import { fingeravtrykk, godkjenningsfeil, kanonisk, sha256 } from '../regler/godkjenning'
-import { parameterfeil, type Beregningsinndata, type Forlop, type Parameter, type Regel, type Regelsett } from '../regler/modell'
+import { parameterfeil, type Beregningsinndata, type Fase, type Forlop, type Parameter, type Regel, type Regelsett } from '../regler/modell'
 import { byggesteiner, DOSEENHETER, norskDato, type Byggestein, type Preparatgrunnlag } from './byggesteiner'
 import { doser, fordel, styrkevalg, velgSerie, type Dosekandidat, type Doseelement, type Periodevalg, type Styrkevalg } from './dosevalg'
 
 /** Økes når doseplanen endres slik at like inndata kan gi et annet resultat. */
-export const PLANMOTORVERSJON = 4
+export const PLANMOTORVERSJON = 5
 
 /** Id-ene til syntetiske testregler begynner slik; de kan aldri gi en klinisk plan. */
 export const SYNTETISK_REGEL = 'syntetisk-'
@@ -81,6 +81,39 @@ export interface Praktiskperiode extends Periode {
   doser?: number[]
 }
 
+/**
+ * Dosene forskriveren kan velge for et trinn som ikke kan gis nøyaktig
+ * (`Fase.trinnvalg`): de nærmeste dosene som kan gis på hver side av den
+ * beregnede, med faktisk reduksjon fra dosen før innenfor `omrade`.
+ * Beregningen velger aldri selv; valget gis inn som `Beregningsinndata.trinnvalg`.
+ */
+export interface Trinnvalg {
+  forlop: string
+  virkestoff: string
+  /** Trinnet, fra 1. */
+  trinn: number
+  /** Dagen trinnet starter. */
+  fra_dag: number
+  /** Dosen før trinnet, som reduksjonen regnes fra. */
+  fra_mg: number
+  /** Den beregnede dosen, som ikke kan gis nøyaktig. */
+  beregnet_mg: number
+  /** Valgområdet for faktisk reduksjon, i prosent. */
+  omrade: [number, number]
+  doser: Trinndose[]
+}
+
+export interface Trinndose {
+  mg: number
+  /** Faktisk reduksjon fra dosen før, i prosent. */
+  prosent: number
+  elementer: Doseelement[]
+  /** Fordelingen når døgndosen skal fordeles. */
+  doser?: number[]
+  /** Om reduksjonen utløser et krav om begrunnelse. */
+  krever_begrunnelse: boolean
+}
+
 export interface Praktiskinjeksjon extends Injeksjon {
   element: Doseelement
 }
@@ -117,8 +150,10 @@ export type Doseplanresultat =
       kontroller: Kontroll[]
       /** Hvert avvik fra den ideelle kurven, i klartekst (P5.6). */
       avvik: string[]
+      /** Trinn der planen stopper fordi dosen ikke kan gis, men forskriveren kan velge en dose som kan gis. */
+      trinnvalg?: Trinnvalg[]
     })
-  | (Planversjoner & { status: 'stoppet'; klinisk: false; stoppgrunner: string[]; fagtekst: Fagtekst[] })
+  | (Planversjoner & { status: 'stoppet'; klinisk: false; stoppgrunner: string[]; fagtekst: Fagtekst[]; trinnvalg?: Trinnvalg[] })
 
 export const FORBEHOLD_LAGER = 'FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.'
 export const FORBEHOLD_DOGNDOSE = 'Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.'
@@ -312,7 +347,7 @@ function tilgjengelig(v: Styrkevalg[], til_dato: string | null): Styrkevalg[] {
  * dosene som kan settes sammen, med avviket fra den ideelle og, når dosen før
  * er kjent (`fra`), den faktiske reduksjonen fra den.
  */
-function ingenDose(f: Forlopsresultat, p: Periode, valg: Styrkevalg[], alleValg: Styrkevalg[], tol: number, grenser: string, fra?: number): string {
+function ingenDose(f: Forlopsresultat, p: Periode, valg: Styrkevalg[], alleValg: Styrkevalg[], tol: number, grenser: string, fra?: number, tv?: Trinnvalg | null): string {
   const brukbare = new Set(valg.flatMap((v) => v.preparater.map((b) => b.id)))
   const utenfor = alleValg.flatMap((v) => v.preparater).filter((b) => !brukbare.has(b.id) && b.marked_til)
   const alle = doser(valg, EPS, p.mg * 2 + Math.max(...valg.map((v) => v.mg), 0))
@@ -324,8 +359,54 @@ function ingenDose(f: Forlopsresultat, p: Periode, valg: Styrkevalg[], alleValg:
     `${f.virkestoff} ${dager(p)}: den ideelle dosen ${tall(p.mg)} mg${hverSuffiks(p)} kan ikke gis med preparatene i FEST ${tol > 0 ? `innenfor ±${tall(tol * 100)} %` : 'nøyaktig'}${grenser}. ` +
     (naermeste.length > 0 ? `Nærmeste doser som kan settes sammen: ${naermeste.join(' og ')}. ` : '') +
     (utenfor.length > 0 ? `${listeOg(utenfor.map((b) => b.navn_form_styrke))} brukes ikke her, fordi FEST melder at ${utenfor.length === 1 ? 'det' : 'de'} ikke er markedsført hele perioden. ` : '') +
-    'En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.'
+    (tv === undefined ? ANNEN_DOSE : trinnvalgtekst(tv))
   )
+}
+
+const ANNEN_DOSE = 'En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.'
+
+/** Det stoppet sier når regelen lar forskriveren velge dosen for trinnet (`tv`), eller når ingen dose er innenfor valgområdet (`null`). */
+function trinnvalgtekst(tv: Trinnvalg | null): string {
+  if (!tv) return `Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. ${ANNEN_DOSE}`
+  const valg = tv.doser.map((d) => `${tall(d.mg)} mg (−${tall(d.prosent)} %${d.krever_begrunnelse ? ', krever begrunnelse' : ''})`)
+  return `Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra ${tall(tv.fra_mg)} mg innenfor valgområdet ${tall(tv.omrade[0])}–${tall(tv.omrade[1])} %: ${valg.join(' eller ')}. Beregningen velger ikke selv.`
+}
+
+/** Nedtrappingsfasen i forløpet der forskriveren kan velge dosen per trinn. */
+const trinnvalgFase = (def: Forlop) => def.faser.find((x): x is Extract<Fase, { type: 'nedtrapping' }> => x.type === 'nedtrapping' && !!x.trinnvalg)
+
+/**
+ * Dosene forskriveren kan velge for periode `p` (trinn `p.trinn`) fra `fra`
+ * mg: blant dosene som kan gis og fordeles, den nærmeste under og den
+ * nærmeste over den beregnede, når den faktiske reduksjonen er innenfor
+ * valgområdet og dosen vises nøyaktig. `null` når ingen er det.
+ */
+function trinnvalgFor(def: Forlop, f: Forlopsresultat, p: Periode, v: Styrkevalg[], fra: number, min: number | null, fordelt: (k: Dosekandidat) => number[] | null | undefined, svar: Beregningsinndata['svar']): Trinnvalg | null {
+  const fase = trinnvalgFase(def)!
+  const omrade = trinnvalgOmrade(fase.strategi, fra)!
+  const prosent = (mg: number) => (1 - mg / fra) * 100
+  const mulige = doser(v, Math.max(fra * (1 - omrade[1] / 100), min ?? 0, EPS) - EPS * fra, fra * (1 - omrade[0] / 100) + EPS * fra).filter(
+    (k) => k.mg < fra - EPS && Math.abs(avrund(k.mg) - k.mg) < EPS && prosent(k.mg) >= omrade[0] - EPS && prosent(k.mg) <= omrade[1] + EPS && fordelt(k) !== null,
+  )
+  const naermeste = [mulige.filter((k) => k.mg < p.mg).at(-1), mulige.find((k) => k.mg > p.mg)].filter((k): k is Dosekandidat => !!k)
+  if (naermeste.length === 0) return null
+  const s = fase.strategi
+  return {
+    forlop: f.id,
+    virkestoff: f.virkestoff,
+    trinn: p.trinn!,
+    fra_dag: p.fra,
+    fra_mg: fra,
+    beregnet_mg: p.mg,
+    omrade,
+    doser: naermeste.map((k) => ({
+      mg: k.mg,
+      prosent: prosent(k.mg),
+      elementer: k.elementer,
+      ...(p.fordeles && { doser: fordelt(k)! }),
+      krever_begrunnelse: s.type === 'prosent_av_aktuell' && utlosteKrav(s.prosent, prosent(k.mg), svar).length > 0,
+    })),
+  }
 }
 
 /**
@@ -345,7 +426,7 @@ const ingenFordeling = (f: Forlopsresultat, p: Periode, over: number | null, lik
 const motKurven = (f: Forlopsresultat, p: Periode) =>
   `${f.virkestoff} ${dager(p)}: den ideelle dosen ${tall(p.mg)} mg kan gis, men ikke i kurvens retning (en praktisk dose ville økt under nedtrapping). En annen dose er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.`
 
-function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, inndata: Doseplaninndata, idag: string, kontroller: Kontroll[]): Praktiskforlop {
+function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, inndata: Doseplaninndata, idag: string, kontroller: Kontroll[], trinnvalg: Trinnvalg[]): Praktiskforlop {
   const grunn = { ...f, toleranse_prosent: 0, begrensninger: [] as string[] }
   if (f.perioder.length === 0 && f.injeksjoner.length === 0) return { ...grunn, perioder: [], injeksjoner: [] }
   const valg = inndata.formvalg?.[f.id] ?? {}
@@ -380,20 +461,30 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
     const start = def.utgangsdose === 'startdose' ? inndata.startdose_mg : 0
     const perioder: Periodevalg[] = []
     let stans: string | undefined
+    const kanGis = (v: Styrkevalg[], mg: number) => doser(v, Math.max(mg * (1 - tol), min ?? 0, EPS), Math.min(mg * (1 + tol), maks ?? Infinity))
+    const valgbar = !!trinnvalgFase(def)
     for (const [i, p] of f.perioder.entries()) {
       const v = tilgjengelig(alleValg, sluttdato(p))
-      const fra = Math.max(p.mg * (1 - tol), min ?? 0, EPS)
-      const til = Math.min(p.mg * (1 + tol), maks ?? Infinity)
-      const innenfor = fra <= til + EPS ? doser(v, fra, til).filter((k) => Math.abs(k.mg - p.mg) <= p.mg * tol + EPS * Math.max(1, p.mg)) : []
+      const forrige = i === 0 ? start : f.perioder[i - 1]!.mg
+      // Et valgt trinn gjelder bare når den beregnede dosen faktisk ikke kan gis.
+      if (p.valgt && kanGis(v, p.valgt.beregnet_mg).some((k) => Math.abs(k.mg - p.valgt!.beregnet_mg) < EPS * Math.max(1, k.mg) && fordelt(p, k) !== null)) {
+        throw new Stopp(`${f.virkestoff} ${dager(p)}: den beregnede dosen ${tall(p.valgt.beregnet_mg)} mg for trinn ${p.trinn} kan gis med preparatene i FEST, så valget ${tall(p.mg)} mg gjelder ikke. Fjern valget.`)
+      }
+      const innenfor = kanGis(v, p.mg).filter((k) => Math.abs(k.mg - p.mg) <= p.mg * tol + EPS * Math.max(1, p.mg))
       const kandidater = innenfor.filter((k) => fordelt(p, k) !== null)
       if (kandidater.length === 0) {
         // Kan en nøyaktig dose gis, men ikke fordeles, er det fordelingen som stopper planen.
         const fordelingen = !!p.fordeles && innenfor.length > 0
         // Stopper bare kravet om like store doser, vises fordelingen som ellers kunne vært gitt.
         const ujevn = fordelingen && likeStore ? (innenfor.map((k) => fordel(k, p.fordeles!, over ?? Infinity)).find((x) => x !== null) ?? null) : null
-        const hvorfor = fordelingen ? ingenFordeling(f, p, over, likeStore, ujevn) : ingenDose(f, p, v, alleValg, tol, grenser, i === 0 ? start : f.perioder[i - 1]!.mg)
+        // Lar regelen forskriveren velge en dose som kan gis, regnes de nærmeste ut; et valgt trinn tilbys ikke på nytt.
+        const tv = valgbar && avkortbar && p.trinn !== undefined && !p.valgt ? trinnvalgFor(def, f, p, v, forrige, min, (k) => fordelt(p, k), inndata.svar) : undefined
+        const hvorfor = fordelingen
+          ? ingenFordeling(f, p, over, likeStore, ujevn) + (tv === undefined ? '' : ` ${trinnvalgtekst(tv)}`)
+          : ingenDose(f, p, v, alleValg, tol, grenser, forrige, tv)
+        if (tv) trinnvalg.push(tv)
         if (!avkortbar || i === 0) throw new Stopp(hvorfor)
-        stans = fordelingen ? hvorfor : ingenDose(f, p, v, alleValg, tol, grenser)
+        stans = fordelingen || tv !== undefined ? hvorfor : ingenDose(f, p, v, alleValg, tol, grenser)
         break
       }
       perioder.push({ ideell: p.mg, kandidater })
@@ -467,6 +558,7 @@ function avvikstekster(forlop: Praktiskforlop[]): string[] {
   const ut: string[] = []
   for (const f of forlop) {
     for (const [i, p] of f.perioder.entries()) {
+      if (p.valgt) ut.push(`${f.virkestoff} ${dager(p)}: ${tall(p.mg)} mg, valgt av forskriveren fordi den beregnede dosen ${tall(p.valgt.beregnet_mg)} mg ikke kan gis; faktisk reduksjon ${tall(p.valgt.prosent)} % fra dosen før.`)
       if (Math.abs(p.mg - p.ideell_mg) > EPS * Math.max(1, p.ideell_mg)) {
         ut.push(`${f.virkestoff} ${dager(p)}: ${tall(p.mg)} mg i stedet for ${tall(p.ideell_mg)} mg (${p.avvik_prosent > 0 ? '+' : ''}${tall(p.avvik_prosent)} %).`)
       }
@@ -519,14 +611,16 @@ export function beregnDoseplan(regel: Regel, inndata: Doseplaninndata, grunnlag:
   if (ideell.status === 'stoppet') return stopp(ideell.stoppgrunner)
 
   const kontroller = [...ideell.kontroller]
+  const trinnvalg: Trinnvalg[] = []
+  const medValg = <T extends object>(r: T): T & { trinnvalg?: Trinnvalg[] } => (trinnvalg.length > 0 ? { ...r, trinnvalg } : r)
   let forlop: Praktiskforlop[]
   try {
     forlop = ideell.forlop.map((f) => {
       const def = regel.plan.forlop.find((x) => x.id === f.id)!
-      return praktiskForlop(def, f, grunnlag, inndata, omgivelse.idag, kontroller)
+      return praktiskForlop(def, f, grunnlag, inndata, omgivelse.idag, kontroller, trinnvalg)
     })
   } catch (e) {
-    return stopp([e instanceof Stopp ? e.message : `Doseplanen kunne ikke beregnes: ${e instanceof Error ? e.message : String(e)}`])
+    return medValg(stopp([e instanceof Stopp ? e.message : `Doseplanen kunne ikke beregnes: ${e instanceof Error ? e.message : String(e)}`]))
   }
 
   // P5.7: utvaskingen kontrolleres på nytt i den praktiske planen.
@@ -553,16 +647,16 @@ export function beregnDoseplan(regel: Regel, inndata: Doseplaninndata, grunnlag:
   const unike = [...new Map(brukte.map((b) => [b.id, b])).values()].sort((a, b) => (a.id < b.id ? -1 : 1))
   const sperre = kliniskSperre(regel, utvalg, naa)
   const klinisk = sperre.length === 0 && ideell.klinisk_godkjent
-  return {
+  return medValg({
     ...versjoner(sha256(kanonisk({ kildedato: utvalg.kildedato, preparater: unike }))),
-    status: 'doseplan',
+    status: 'doseplan' as const,
     klinisk,
     sperre,
     forbehold: [klinisk ? FORBEHOLD_KLINISK : FORBEHOLD_IKKE_KLINISK, FORBEHOLD_LAGER, FORBEHOLD_DOGNDOSE],
     forlop,
     kontroller,
     avvik: avvikstekster(forlop),
-  }
+  })
 }
 
 /**
@@ -572,8 +666,15 @@ export function beregnDoseplan(regel: Regel, inndata: Doseplaninndata, grunnlag:
  */
 export function kliniskDoseplan(...args: Parameters<typeof beregnDoseplan>): Doseplanresultat {
   const r = beregnDoseplan(...args)
-  if (r.status === 'stoppet' || r.klinisk) return r
-  const { status: _s, klinisk: _k, sperre, forbehold: _f, forlop: _fl, kontroller: _ko, avvik: _a, ...versjoner } = r
+  if (r.status === 'stoppet') {
+    // Valg av dose per trinn tilbys bare når planen kan bli klinisk.
+    const [regel, , grunnlag, omgivelse] = args
+    if (!r.trinnvalg || kliniskSperre(regel, grunnlag.utvalg, new Date(omgivelse.naa)).length === 0) return r
+    const { trinnvalg: _t, ...uten } = r
+    return uten
+  }
+  if (r.klinisk) return r
+  const { status: _s, klinisk: _k, sperre, forbehold: _f, forlop: _fl, kontroller: _ko, avvik: _a, trinnvalg: _t, ...versjoner } = r
   return { ...versjoner, status: 'stoppet', klinisk: false, stoppgrunner: ['Ingen klinisk doseplan kan vises.', ...sperre], fagtekst: (args[3].fagtekst ?? []).filter((t) => t.publisert === true) }
 }
 
@@ -601,7 +702,7 @@ export function planform(r: Doseplanresultat): Record<string, string[]> {
       const linjer = f.perioder.map((p) => {
         const avvik = Math.abs(p.avvik_prosent) > 1e-7 ? ` (ideelt ${tall(p.ideell_mg)} mg, ${p.avvik_prosent > 0 ? '+' : ''}${tall(p.avvik_prosent)} %)` : ''
         const dato = p.fra_dato ? ` [${norskDato(p.fra_dato)}${p.til_dato && p.til !== p.fra ? `–${norskDato(p.til_dato)}` : ''}]` : ''
-        return `${dager(p)}${dato}: ${tall(p.mg)} mg${hverSuffiks(p)} = ${p.elementer.map(elementtekst).join(' + ')}${fordelingSuffiks(p)}${avvik}`
+        return `${dager(p)}${dato}: ${tall(p.mg)} mg${hverSuffiks(p)} = ${p.elementer.map(elementtekst).join(' + ')}${fordelingSuffiks(p)}${avvik}${valgtSuffiks(p)}`
       })
       for (const i of f.injeksjoner) {
         const dato = i.vedlikehold ? i.vedlikehold.forste_dato : i.dato
