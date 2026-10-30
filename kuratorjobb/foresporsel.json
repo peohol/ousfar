@@ -1,0 +1,12 @@
+{
+  "versjon": 1,
+  "stoffer": [
+    "fenelzin",
+    "flufenazin",
+    "imipramin"
+  ],
+  "oppgaver": [
+    "funksjonstest",
+    "spc"
+  ]
+}
