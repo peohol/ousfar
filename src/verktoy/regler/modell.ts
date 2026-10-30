@@ -234,9 +234,10 @@ export type Fase =
    * `trinnvalg` er grunnlaget for at forskriveren kan velge blant dosene som
    * kan gis når et trinn ikke kan gis nøyaktig med preparatene (P7.5):
    * doseplanen viser de nærmeste, med faktisk reduksjon fra dosen før, og
-   * bare doser med faktisk reduksjon innenfor `strategi.prosent.omrade`
-   * (høyst `lav_prosent` ved lav dose) kan velges, med de samme kravene om
-   * begrunnelse. Valget er forskriverens (`Beregningsinndata.trinnvalg`);
+   * bare doser med faktisk reduksjon innenfor det foretrukne området kan
+   * velges: `strategi.prosent.omrade`, høyst `lav_prosent` ved lav dose og
+   * under grensen der et begrunnelseskrav slår inn. Et avvik som krever
+   * begrunnelse, tilbys ikke. Valget er forskriverens (`Beregningsinndata.trinnvalg`);
    * beregningen velger aldri selv. Bare med `prosent_av_aktuell`, individuell
    * avslutning og uten toleranse ({@link trinnvalgOmrade} i `beregning.ts`).
    */

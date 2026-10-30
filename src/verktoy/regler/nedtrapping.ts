@@ -43,7 +43,10 @@
  * bupropion (versjon 5) og agomelatin (versjon 1), med kontrollørens
  * fingeravtrykk. De beregnbare reglene er godkjent med endring og sendt til ny
  * uavhengig kontroll (P7.5). Duloksetin og venlafaksin er tekstregler, fordi
- * depotformuleringene ikke kan gi trinnene. Den hyperbolske citalopramregelen
+ * depotformuleringene ikke kan gi trinnene; citalopram, mirtazapin, moklobemid
+ * og paroksetin etter kontrollørens beslutninger. Et trinn som ikke kan gis,
+ * gir bare valg innenfor det foretrukne området, aldri et avvik som krever
+ * begrunnelse (gjennomgangen av 9cb420b). Den hyperbolske citalopramregelen
  * ligger bare i sammenligningssettet, som ikke er klinisk. Psychiatrienet står
  * bare som referanse til Stop-oppføringen fra P3; ingen regel bygger på eller
  * gjengir teksten der.
@@ -116,6 +119,8 @@ const RUNDE_2 = '2026-10-30'
 const RUNDE_3 = '2026-10-30'
 const RUNDE_4 = '2026-10-30'
 const RUNDE_5 = '2026-10-30'
+/** Kontrollørens gjennomgang av 9cb420b. */
+const RUNDE_7 = '2026-10-31'
 
 /** Hva som er endret i en versjon, og når; regelversjonen er antallet versjoner. */
 interface Versjon {
@@ -163,6 +168,12 @@ const KONTROLL_6: Versjon = {
     'Rettet etter kontrollørens beslutninger 30.10.2026 (P7.5, P7-A og P7-B): valg blant dosene som kan gis er akseptert som prinsipp; etter lang behandlingstid er 10 % per trinn forslaget der mer enn 10 % krever begrunnelse, så et større trinn er et synlig avvik; et valg som ikke lenger passer planen eller ikke kan gis, avvises; like store deldoser kreves ikke, og en ulik fordeling merkes.',
   dato: RUNDE_5,
 }
+/** Alle beregnbare P7-regler etter kontrollørens gjennomgang av 9cb420b 31.10.2026 (P7.5). */
+const KONTROLL_7: Versjon = {
+  merknad:
+    'Rettet etter kontrollørens gjennomgang av 9cb420b 31.10.2026 (P7.5): et avvik som krever begrunnelse, er ikke et godkjent planområde og tilbys ikke lenger som valg. Forskriveren kan bare velge en dose med faktisk reduksjon innenfor det foretrukne området, der ingen begrunnelse kreves; finnes ingen, er planen et forklarende stopp. En plan med én reduksjon er én mulig reduksjon med revurdering, ikke en fullstendig nedtrappingsplan.',
+  dato: RUNDE_7,
+}
 /**
  * Mirtazapin, moklobemid og paroksetin etter kontrollørens beslutning P7-A:
  * ingen dose innenfor valgområdet kan gis ved første trinn med dagens former,
@@ -172,6 +183,12 @@ const IKKE_BEREGNBAR_FORM: Versjon = {
   merknad:
     'Gjort om til fagtekst etter kontrollørens beslutninger 30.10.2026 (P7.5, beslutning P7-A): med dagens norske former ga ingen dose første trinn innenfor valgområdet i aksepttesten, heller ikke med forskriverens valg blant dosene som kan gis. Ingen aktiv beregnbar plan før en dokumentert alternativ formulering og en substansspesifikk kontroll foreligger; den langsomme varianten er tatt ut.',
   dato: RUNDE_5,
+}
+/** Citalopram etter kontrollørens gjennomgang av 9cb420b 31.10.2026 (P7.5). */
+const CITALOPRAM_FAGTEKST: Versjon = {
+  merknad:
+    'Gjort om til fagtekst etter kontrollørens gjennomgang av 9cb420b 31.10.2026 (P7.5): med tablettene i FEST er den eneste dosen som kan gis ved første trinn fra vanlig dose, en halvering, verken ved kort eller lang behandlingstid. Det er ikke et faglig akseptert standardtrinn, og regelen skal foreløpig ikke aktiveres som klinisk beregnbar regel; den langsomme varianten er tatt ut.',
+  dato: RUNDE_7,
 }
 /** Den første versjonen av en regel laget etter fagkontrollen 30.10.2026. */
 const NY_ETTER_RUNDE_2 = (hva: string): Versjon => ({ merknad: `Ny regel etter fagkontrollen 30.10.2026 (P7.5): ${hva}`, dato: RUNDE_2 })
@@ -238,6 +255,12 @@ const RUNDE_5_BESLUTNING = {
   langStandard: 'Beslutning P7-A: etter lang behandlingstid i middelsgruppen er 5–10 % det foretrukne utgangspunktet; et større trinn er et synlig, begrunnet avvik, aldri et likeverdig standardforslag',
 } as const
 
+/** Kontrollørens beslutning i gjennomgangen av 9cb420b 31.10.2026; ingen klinisk godkjenning. */
+const RUNDE_7_BESLUTNING =
+  'P7-A–C er grunnlaget for delplaner, men «bare avvik» og «stopp» er ikke godkjente kliniske planområder: standardresponsen er et forklarende stopp, et avvik presenteres ikke som en normal plan, og én reduksjon omtales som én mulig reduksjon med revurdering'
+
+const runde7 = (regelversjon: number): Avklaring => ({ dato: RUNDE_7, ...kontrollor, regelversjon, merknad: `Kontrollørens gjennomgang av 9cb420b 31.10.2026, ${RUNDE_7_BESLUTNING}` })
+
 const runde5 = (regelversjon: number, hva: keyof typeof RUNDE_5_BESLUTNING): Avklaring => ({
   dato: RUNDE_5,
   ...kontrollor,
@@ -249,15 +272,15 @@ const vurdering = (begrunnelse: string, henvisninger: Kildehenvisning[], avklari
 
 /**
  * At forskriveren kan velge blant dosene som kan gis når et trinn ikke kan gis
- * nøyaktig (bidragsyterens valg 30.10.2026, P7.5): grensene er valgområdet
- * kontrolløren har avklart for risikogruppen, og prinsippet er akseptert i
- * beslutning P7-A.
+ * nøyaktig (bidragsyterens valg 30.10.2026, P7.5): prinsippet er akseptert i
+ * beslutning P7-A, og etter gjennomgangen av 9cb420b bare innenfor det
+ * foretrukne området, der ingen begrunnelse kreves.
  */
 const trinnvalg = (versjon: number): Grunnlag =>
   vurdering(
-    'Når et trinn ikke kan gis nøyaktig med norske preparater, viser planen de nærmeste dosene som kan gis, med faktisk reduksjon fra dosen før, og forskriveren velger; beregningen velger aldri selv. Bare doser med faktisk reduksjon innenfor valgområdet for risikogruppen kan velges (ved lav dose høyst 25 % der den grensen gjelder), med de samme kravene om begrunnelse som et valg av trinnstørrelse, regnet fra den faktiske reduksjonen. Neste trinn regnes fra den valgte dosen, og et valg som ikke lenger passer planen eller ikke kan gis, avvises. Finnes ingen slik dose, stopper planen; et farligere trinn velges aldri for å få en plan.',
+    'Når et trinn ikke kan gis nøyaktig med norske preparater, viser planen de nærmeste dosene som kan gis, med faktisk reduksjon fra dosen før, og forskriveren velger; beregningen velger aldri selv. Bare doser med faktisk reduksjon innenfor det foretrukne området kan velges: valgområdet for risikogruppen (ved lav dose høyst 25 % der den grensen gjelder), men aldri en reduksjon som ville krevd begrunnelse, for eksempel over 10 % etter lang behandlingstid. Et avvik som krever begrunnelse, tilbys ikke; finnes ingen dose i det foretrukne området, er planen et forklarende stopp, og en annen plan vurderes individuelt utenfor verktøyet. Neste trinn regnes fra den valgte dosen, og et valg som ikke lenger passer planen eller ikke kan gis, avvises. Et farligere trinn velges aldri for å få en plan, og én reduksjon er én mulig reduksjon med revurdering, ikke en fullstendig nedtrappingsplan.',
     [RCPSYCH.plan, RCPSYCH.smaa, NICE.andel],
-    runde5(versjon, 'trinnvalg'),
+    runde7(versjon),
   )
 
 /** Bekreftelsen hver beregnbar regel krever: planen er et startforslag med minstetider, ikke en fast tidsplan. */
@@ -638,6 +661,9 @@ const stopp = (id: string, beskrivelse: string, startdose_mg: number, grunn: Reg
   stopp: grunn,
 })
 
+/** Legemiddelformene i FEST (kodeverket for legemiddelform) reglene her avgrenser til. */
+const FEST_FORM = { dispergerbarTablett: '5', tablett: '53' } as const
+
 /** Stien til de justerbare parametrene i en regel bygd her. */
 const STI = { prosent: 'plan.forlop[0].faser[0].strategi.prosent', dager: 'plan.forlop[0].faser[0].trinnlengde' } as const
 
@@ -678,7 +704,16 @@ interface Stoffregel {
    * med dagens former (beslutning P7-A): grunnen planen viser, og
    * usikkerheten. Regelen blir da fagtekst ({@link tekstFraStoff}).
    */
-  ikkeBeregnbar?: { grunn: string; usikkerhet: string[] }
+  ikkeBeregnbar?: {
+    grunn: string
+    usikkerhet: string[]
+    /** Versjonene etter hovedversjonene; uten dem beslutning P7-A ({@link IKKE_BEREGNBAR_FORM}). */
+    etter?: Versjon[]
+    /** Kontrollørens beslutning i fagteksten; uten den beslutning P7-A. */
+    beslutning?: string
+  }
+  /** Legemiddelformene (FEST-koder) regelen gjelder, når kontrolløren har sperret andre former. */
+  former?: { koder: string[]; tilpasning: Utsagn }
 }
 
 const FORUTSETNINGER_P7 = [
@@ -690,7 +725,7 @@ const fellesUsikkerhet = (horisont: number) => [
   'Prosentene og trinnlengdene er tillatte rammer for individuell planlegging (fagvurderingen 29.10.2026), ikke vitenskapelig dokumenterte optimale verdier.',
   `Ingen fast nedre grense for beregnede trinn er godkjent (fagkontrollen 30.10.2026): en lav dose kan fortsatt gi betydelig reseptorbinding, og noen trenger svært lave doser før seponering (RCPsych). Planen viser derfor høyst ${horisont} reduksjoner, en teknisk horisont uten dokumentasjon for at akkurat dette antallet er bedre enn et annet, og videre nedtrapping beregnes fra dosen pasienten da faktisk bruker. Hvor langt ned den enkelte trenger å gå, avgjøres individuelt.`,
   'Hva som er lang behandlingstid, avgjør forskriveren; RCPsych sier «mange måneder eller lenger» uten en eksakt grense.',
-  'Regelen har ingen toleranse: hvert trinn avrundes til den viste dosen (to desimaler), og en reduksjon som forsvinner i avrundingen, stopper planen ved trinnet før. Kan et trinn ikke gis nøyaktig med norske preparater, stopper planen også der, men forskriveren kan velge en av de nærmeste dosene som kan gis, med faktisk reduksjon innenfor valgområdet og de samme kravene om begrunnelse (bidragsyterens valg og kontrollørens beslutning P7-A 30.10.2026). Den faktiske reduksjonen kan avvike fra den valgte trinnstørrelsen, og hvor nyttig valget er, avhenger av preparatene: ett trinn som kan gis, er ikke en fullstendig nedtrapping.',
+  'Regelen har ingen toleranse: hvert trinn avrundes til den viste dosen (to desimaler), og en reduksjon som forsvinner i avrundingen, stopper planen ved trinnet før. Kan et trinn ikke gis nøyaktig med norske preparater, stopper planen også der, men forskriveren kan velge en av de nærmeste dosene som kan gis, med faktisk reduksjon innenfor det foretrukne området, der ingen begrunnelse kreves (bidragsyterens valg, kontrollørens beslutning P7-A 30.10.2026 og gjennomgangen av 9cb420b 31.10.2026). Et avvik som krever begrunnelse, tilbys ikke, og er det eneste som kan gis, er planen et forklarende stopp. Den faktiske reduksjonen kan avvike fra den valgte trinnstørrelsen, og hvor nyttig valget er, avhenger av preparatene: ett trinn som kan gis, er én mulig reduksjon med revurdering, ikke en fullstendig nedtrapping.',
 ]
 
 /** Spørsmålene stoffet stiller om pasientgruppe, indikasjon og organfunksjon, hvert én gang. */
@@ -861,8 +896,8 @@ const hovedversjoner = (s: Stoffregel) => [...(s.tidligere ?? [UTKAST, KONTROLL_
 
 function seponeringsregel(s: Stoffregel, langsom = false): Regel {
   const versjoner = langsom
-    ? [NY_ETTER_RUNDE_2(`langsom variant for ${s.navn} etter tidligere seponeringssymptomer.`), KONTROLL_5, ...(s.senere ?? []), VALG_AV_DOSE, KONTROLL_6]
-    : [...hovedversjoner(s), KONTROLL_6]
+    ? [NY_ETTER_RUNDE_2(`langsom variant for ${s.navn} etter tidligere seponeringssymptomer.`), KONTROLL_5, ...(s.senere ?? []), VALG_AV_DOSE, KONTROLL_6, KONTROLL_7]
+    : [...hovedversjoner(s), KONTROLL_6, KONTROLL_7]
   const versjon = versjoner.length
   const gruppe = langsom ? LANGSOM : s.gruppe
   const avklaring = langsom ? runde2(versjon, 'langsom') : beslutning1(versjon)
@@ -891,6 +926,7 @@ function seponeringsregel(s: Stoffregel, langsom = false): Regel {
           id: 'fra',
           virkestoff,
           administrasjon: 'peroral',
+          ...(s.former && { legemiddelformer: s.former.koder }),
           ...(s.fordeling && { fordeling: s.fordeling }),
           utgangsdose: 'startdose',
           start: { type: 'dag', dag: 1 },
@@ -919,6 +955,7 @@ function seponeringsregel(s: Stoffregel, langsom = false): Regel {
             ),
         ...fellesTilpasninger(langsom ? PLANHORISONT_LANGSOM : PLANHORISONT_TRINN),
         ...(s.tilpasninger ?? []),
+        ...(s.former ? [s.former.tilpasning] : []),
       ],
       forutsetninger: [...FORUTSETNINGER_FELLES, ...FORUTSETNINGER_P7, ...(s.forutsetninger ?? [])],
       usikkerhet: [...fellesUsikkerhet(langsom ? PLANHORISONT_LANGSOM : PLANHORISONT_TRINN), ...s.usikkerhet],
@@ -988,6 +1025,17 @@ const citalopram = stoff({
     utsagn('Hos eldre over 65 år og ved mild eller moderat nedsatt leverfunksjon er høyeste dose 20 mg daglig; ved alvorlig nedsatt leverfunksjon kreves særlig forsiktighet.', P7.cipramilEldre, P7.cipramilLever),
   ],
   usikkerhet: ['Trinnene under 10 mg krever deling av 10 mg, som FEST ikke oppgir som delbar, eller flytende form; uten det stopper planen ved trinnet før.'],
+  ikkeBeregnbar: {
+    grunn:
+      'Med citalopramtablettene i FEST kan den foretrukne reduksjonen fra vanlig dose (20 mg) ikke gis, verken ved kort eller lang behandlingstid; den eneste dosen som kan gis ved første trinn, 10 mg, er en halvering (50 %), et avvik og ikke et faglig akseptert standardtrinn. Regelen beregner ingen trinn.',
+    beslutning:
+      'Kontrolløren besluttet derfor 31.10.2026 (gjennomgangen av 9cb420b, P7.5) at citalopram foreløpig ikke skal aktiveres som klinisk beregnbar regel; en halvering skal ikke velges bare fordi tablettene ikke tillater et mindre trinn. Regelen står som fagtekst til en dokumentert formulering og en ny substansspesifikk kontroll foreligger.',
+    usikkerhet: [
+      'Ingen formulering i FEST gir dosene trinnene krever fra vanlig dose; 20 → 10 mg er ikke et faglig akseptert standardtrinn, heller ikke etter lang behandlingstid.',
+      'En plan med større trinn kan vurderes individuelt av forskriveren utenfor verktøyet, men er ikke godkjent av regelen.',
+    ],
+    etter: [KONTROLL_6, CITALOPRAM_FAGTEKST],
+  },
   eksempler: [
     eks('fra-20-mg', 'Fra 20 mg med standardvalgene: 25 % per trinn, minst 28 dager, til den tekniske planhorisonten.', 20, [
       'dag 1–28: 15 mg',
@@ -1268,6 +1316,13 @@ const fluoksetin = stoff({
     utsagn('Ved 20 mg daglig kan forskriveren i stedet velge dosering annenhver dag, en egen regel. Om 5 mg brukes som et frivillig punkt for å vurdere avslutningen, avgjør forskriveren; det er ingen sperre i regelen.', NICE.fluoksetin),
   ],
   usikkerhet: ['Doser under 10 mg krever flytende form eller deling i fire; finnes det ikke, stopper planen ved trinnet før.'],
+  former: {
+    koder: [FEST_FORM.dispergerbarTablett, FEST_FORM.tablett],
+    tilpasning: utsagn(
+      'Regelen gjelder bare tablettene og de dispergerbare tablettene. Med de harde kapslene kunne ingen dose med foretrukket reduksjon gis i noen av de testede situasjonene; kontrolløren besluttet 31.10.2026 (gjennomgangen av 9cb420b, P7.5) at kapslene foreløpig ikke skal aktiveres i en beregnbar regel. Velges kapslene, stopper planen.',
+      SPC.fluoksetinDose,
+    ),
+  },
   eksempler: [
     eks('fra-40-mg', 'Fra 40 mg med standardvalgene: 25 % per trinn, minst 28 dager, til den tekniske planhorisonten.', 40, [
       'dag 1–28: 30 mg',
@@ -2040,7 +2095,7 @@ const STOFFER = [amitriptylin, citalopram, escitalopram, fluoksetin, fluvoksamin
  * langsomme varianten.
  */
 function tekstFraStoff(s: Stoffregel & { ikkeBeregnbar: NonNullable<Stoffregel['ikkeBeregnbar']> }): Regel {
-  const versjoner = [...hovedversjoner(s), IKKE_BEREGNBAR_FORM]
+  const versjoner = [...hovedversjoner(s), ...(s.ikkeBeregnbar.etter ?? [IKKE_BEREGNBAR_FORM])]
   const v = versjoner.length
   return tekstregel({
     id: `seponering-${s.nokkel}`,
@@ -2055,7 +2110,7 @@ function tekstFraStoff(s: Stoffregel & { ikkeBeregnbar: NonNullable<Stoffregel['
       kildetro: s.kildetro,
       tilpasninger: [
         utsagn(
-          `${s.ikkeBeregnbar.grunn} Kontrolløren besluttet derfor 30.10.2026 (P7-A) at ${s.navn} ikke skal ha en aktiv beregnbar plan med dagens dokumenterte former; regelen står som fagtekst til en dokumentert alternativ formulering og en substansspesifikk kontroll foreligger.`,
+          `${s.ikkeBeregnbar.grunn} ${s.ikkeBeregnbar.beslutning ?? `Kontrolløren besluttet derfor 30.10.2026 (P7-A) at ${s.navn} ikke skal ha en aktiv beregnbar plan med dagens dokumenterte former; regelen står som fagtekst til en dokumentert alternativ formulering og en substansspesifikk kontroll foreligger.`}`,
           s.dose.kilde,
         ),
         utsagn('Nedtrappingen planlegges individuelt, og etter tidligere seponeringssymptomer med mindre trinn og lengre tid; OUSFAR beregner ingen plan og foreslår ingen dato for siste dose.', NICE.tidligere, RCPSYCH.smaa),
@@ -2072,10 +2127,10 @@ const harTekst = (s: Stoffregel): s is Stoffregel & { ikkeBeregnbar: NonNullable
 
 export const NEDTRAPPINGSSETT: Regelsett = {
   id: 'ousfar-verktoy-nedtrapping',
-  versjon: 9,
+  versjon: 10,
   modell: REGELMODELLVERSJON,
   beskrivelse:
-    'Utkast til nedtrappingsregler for antidepressiva (P7): én regel per virkestoff med forsvarlig kildegrunnlag, laget fra preparatomtalen, NICE og RCPsych, og en langsom variant av hver beregnbar regel etter tidligere seponeringssymptomer. Hver plan er et startforslag med minstetider som forskriveren kan justere innenfor valgområdene fra fagvurderingen; ingen plan går til null eller har en fast nedre grense. Kan et trinn ikke gis nøyaktig med preparatene, kan forskriveren velge blant de nærmeste dosene som kan gis, innenfor valgområdet (beslutning P7-A). Tekstreglene for bupropion og agomelatin er klinisk godkjent etter substanskontrollen 30.10.2026; duloksetin, venlafaksin, mirtazapin, moklobemid og paroksetin er tekstregler uten beregning. De øvrige reglene er til ny faglig kontroll, og ingen beregnet plan er klinisk godkjent.',
+    'Utkast til nedtrappingsregler for antidepressiva (P7): én regel per virkestoff med forsvarlig kildegrunnlag, laget fra preparatomtalen, NICE og RCPsych, og en langsom variant av hver beregnbar regel etter tidligere seponeringssymptomer. Hver plan er et startforslag med minstetider som forskriveren kan justere innenfor valgområdene fra fagvurderingen; ingen plan går til null eller har en fast nedre grense. Kan et trinn ikke gis nøyaktig med preparatene, kan forskriveren velge blant de nærmeste dosene som kan gis, innenfor det foretrukne området der ingen begrunnelse kreves (beslutning P7-A og gjennomgangen av 9cb420b); et avvik tilbys ikke, og planen er da et forklarende stopp. Tekstreglene for bupropion og agomelatin er klinisk godkjent etter substanskontrollen 30.10.2026; duloksetin, venlafaksin, citalopram, mirtazapin, moklobemid og paroksetin er tekstregler uten beregning, og fluoksetinregelen gjelder ikke de harde kapslene. De øvrige reglene er til ny faglig kontroll, og ingen beregnet plan er klinisk godkjent.',
   regler: [
     ...STOFFER.flatMap((s) => (harTekst(s) ? [] : [seponeringsregel(s), seponeringsregel(s, true)])),
     fluoksetinAnnenhverDag(),

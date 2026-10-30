@@ -41,7 +41,7 @@ import {
 } from './modell'
 
 /** Økes når beregningen endres slik at like inndata kan gi et annet resultat. */
-export const MOTORVERSJON = 8
+export const MOTORVERSJON = 9
 
 /** En sammenhengende periode med samme dose. `til` er `null` når dosen fortsetter. */
 export interface Periode {
@@ -260,15 +260,23 @@ export function trinnTilHorisont(
 /**
  * Valgområdet for faktisk reduksjon i prosent når forskriveren velger dosen
  * for et trinn fra `aktuell` (`Fase.trinnvalg`): regelens område for
- * reduksjonen per trinn, og ved lav dose høyst `lav_prosent`. `null` når
- * strategien ikke har et slikt område.
+ * reduksjonen per trinn, ved lav dose høyst `lav_prosent`, og aldri over en
+ * reduksjon som ville krevd begrunnelse med svarene i `svar` (det foretrukne
+ * området). En dose som krever begrunnelse, er et avvik og tilbys ikke
+ * (kontrollørens gjennomgang av 9cb420b, P7.5). `null` når strategien ikke har
+ * et slikt område.
  */
-export function trinnvalgOmrade(s: Nedtrappingsstrategi, aktuell: number): [number, number] | null {
+export function trinnvalgOmrade(s: Nedtrappingsstrategi, aktuell: number, svar: Beregningsinndata['svar']): [number, number] | null {
   if (s.type !== 'prosent_av_aktuell' || !s.prosent.omrade) return null
   const [fra, til] = s.prosent.omrade
   const lav = s.lav_prosent?.verdi != null && s.lav_grense_mg?.verdi != null && aktuell <= s.lav_grense_mg.verdi + EPS
-  return [fra, lav ? Math.min(til, s.lav_prosent!.verdi!) : til]
+  const begrunnes = (s.prosent.begrunnelseskrav ?? []).filter((k) => k.over !== undefined && (!k.ved || svar?.[k.ved] === true)).map((k) => k.over!)
+  return [fra, Math.min(til, ...(lav ? [s.lav_prosent!.verdi!] : []), ...begrunnes)]
 }
+
+/** Hva et valg utenfor det foretrukne området er: et avvik verktøyet ikke beregner (kontrollørens gjennomgang av 9cb420b, P7.5). */
+export const AVVIK_IKKE_BEREGNET =
+  'En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet.'
 
 /** «fordelt på 2 eller 3 doser». */
 export const fordelingstekst = (antall: readonly number[]) => `fordelt på ${antall.length <= 1 ? antall.join('') : `${antall.slice(0, -1).join(', ')} eller ${antall.at(-1)}`} doser`
@@ -346,32 +354,25 @@ function faserFor(regel: Regel, f: Forlop, medlem: string | null): Fase[] {
  * {@link trinnTilHorisont}: et valg gjelder trinnet bare når dosen før er den
  * valget ble gjort fra. Den valgte dosen må være lavere, ikke under laveste
  * dose som kan gis, vises nøyaktig med to desimaler og gi en faktisk reduksjon
- * innenfor {@link trinnvalgOmrade}; ellers stopper beregningen. En reduksjon
- * som utløser et begrunnelseskrav for reduksjonen per trinn, krever
- * begrunnelsen. Om den beregnede dosen faktisk ikke kan gis, kontrollerer
- * doseplanmotoren (P5).
+ * innenfor {@link trinnvalgOmrade}, som aldri krever begrunnelse; ellers
+ * stopper beregningen. Om den beregnede dosen faktisk ikke kan gis,
+ * kontrollerer doseplanmotoren (P5).
  */
-function trinnvelger(regel: Regel, s: Nedtrappingsstrategi, virkestoff: string, valg: Trinnvalgsvar[], min: number | undefined, ctx: Kontekst) {
+function trinnvelger(s: Nedtrappingsstrategi, virkestoff: string, valg: Trinnvalgsvar[], min: number | undefined, ctx: Kontekst) {
   return (k: number, aktuell: number, beregnet: number): number | undefined => {
     const v = valg.find((x) => x.trinn === k && Math.abs(x.fra_mg - aktuell) < EPS)
     if (!v) return undefined
     ctx.brukteValg.add(v)
-    const omrade = trinnvalgOmrade(s, aktuell)!
+    const omrade = trinnvalgOmrade(s, aktuell, ctx.inndata.svar)!
     const prosent = (1 - v.mg / aktuell) * 100
     const hva = `Trinn ${k} av ${virkestoff}: den valgte dosen ${tall(v.mg)} mg`
     if (v.mg >= aktuell - EPS) throw new Stopp(`${hva} er ikke lavere enn dosen før (${tall(aktuell)} mg).`)
     if (Math.abs(avrund(v.mg) - v.mg) > EPS) throw new Stopp(`${hva} kan ikke vises nøyaktig med to desimaler.`)
     if (min !== undefined && v.mg < min - EPS) throw new Stopp(`${hva} er under ${tall(min)} mg, den laveste dosen som kan gis med formuleringen regelen gjelder.`)
     if (prosent < omrade[0] - EPS || prosent > omrade[1] + EPS) {
-      throw new Stopp(`${hva} er en reduksjon på ${tall(prosent)} % fra ${tall(aktuell)} mg, utenfor valgområdet ${tall(omrade[0])}–${tall(omrade[1])} % regelen tillater for dette trinnet.`)
-    }
-    const begrunnelse = ctx.inndata.begrunnelse?.trim() ?? ''
-    if (s.type === 'prosent_av_aktuell') {
-      for (const krav of utlosteKrav(s.prosent, prosent, ctx.inndata.svar)) {
-        const tekst = kravtekst(krav, s.prosent, regel.sporsmal)
-        if (!begrunnelse) throw new Stopp(`${hva} er en reduksjon på ${tall(prosent)} % og krever en skriftlig begrunnelse fra forskriveren (${tekst}). Skriv begrunnelsen, eller velg en annen dose.`)
-        ctx.kontroller.push({ krav: `${hva} (${tall(prosent)} %) krever begrunnelse (${tekst})`, oppfylt: true, detalj: `Forskriverens begrunnelse: «${begrunnelse}».` })
-      }
+      throw new Stopp(
+        `${hva} er en reduksjon på ${tall(prosent)} % fra ${tall(aktuell)} mg, utenfor valgområdet ${tall(omrade[0])}–${tall(omrade[1])} % regelen tillater for dette trinnet.${prosent > omrade[1] ? ` ${AVVIK_IKKE_BEREGNET}` : ''}`,
+      )
     }
     ctx.kontroller.push({
       krav: `Trinn ${k} av ${virkestoff} er valgt av forskriveren fordi den beregnede dosen (${tall(beregnet)} mg) ikke kan gis; den faktiske reduksjonen er innenfor valgområdet ${tall(omrade[0])}–${tall(omrade[1])} %`,
@@ -454,7 +455,7 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
           // Uten godkjent avslutning tas aldri trinnet til 0: planen viser trinnene frem til horisonten eller laveste dose som kan gis, og siste dose fortsetter.
           const min = f.dosevalg?.min_mg?.verdi ?? undefined
           const valg = (inndata.trinnvalg ?? []).filter((v) => v.forlop === f.id)
-          const velg = fase.trinnvalg ? trinnvelger(regel, fase.strategi, virkestoff, valg, min, ctx) : undefined
+          const velg = fase.trinnvalg ? trinnvelger(fase.strategi, virkestoff, valg, min, ctx) : undefined
           const { serie, beregnet, slutt, neste } = trinnTilHorisont(fase.strategi, aktuell, verdi(fase.horisont!), min, velg)
           if (serie.length === 0) {
             throw new Stopp(

@@ -23,7 +23,7 @@ import { beregnDoseplan, formvalgSomTrengs, planform, trinndosetekst, type Dosep
 import { festkoblinger, KARTLEGGING } from '../register'
 import { avrund } from './beregning'
 import { PLANHORISONT_TRINN } from './bygg'
-import type { Beregningsinndata, Regel } from './modell'
+import type { Beregningsinndata, Regel, Trinnvalgsvar } from './modell'
 import { LANG_BEHANDLINGSTID, NEDTRAPPINGSSETT, UTENFOR_DOSERAMME_ID } from './nedtrapping'
 
 export const AKSEPTTESTFIL = 'docs/verktøy-p7-aksepttest.md'
@@ -92,12 +92,16 @@ export function formerFor(u: Festuttrekk, r: Regel): Formalternativ[] {
   return former.length > 0 ? former.map((f) => ({ kode: f.kode, navn: f.navn })) : [{ kode: null, navn: 'eneste form' }]
 }
 
-/** Laveste styrke i én enhet blant preparatene som kan brukes i formen. */
-export function lavesteStyrke(u: Festuttrekk, n: string, form: Formalternativ): number | null {
-  const mg = byggesteiner(grunnlagFor(u, n), n, omgivelseFor(u).idag)
+/** Styrkene i én enhet blant preparatene som kan brukes i formen: markedsført, med markedsføringstillatelse. */
+const styrker = (u: Festuttrekk, n: string, form: Formalternativ) =>
+  byggesteiner(grunnlagFor(u, n), n, omgivelseFor(u).idag)
     .filter((b) => b.begrensninger.length === 0 && b.registrering === 'registrert' && b.marked === 'markedsfort' && b.mg !== null)
     .filter((b) => form.kode === null || b.legemiddelform?.kode === form.kode)
     .map((b) => b.mg!)
+
+/** Laveste styrke i én enhet blant preparatene som kan brukes i formen. */
+export function lavesteStyrke(u: Festuttrekk, n: string, form: Formalternativ): number | null {
+  const mg = styrker(u, n, form)
   return mg.length > 0 ? Math.min(...mg) : null
 }
 
@@ -118,32 +122,42 @@ export const SCENARIOER: Record<Scenario, string> = {
   b: `Lang behandlingstid, ${LANG_PROSENT} % per trinn`,
   c: 'Tidligere seponeringssymptomer (langsom variant)',
   d: 'Lav dose: laveste styrke i formen',
-  f: 'Videreføring: ny plan fra siste dose i (a)',
+  f: 'Videreføring: ny plan fra siste dose i (a), eller fra dosen forskriveren velger ved første trinn når (a) bare gir et valg',
   h: 'Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag)',
 }
 
-/** Den syntetiske begrunnelsen i (h) når et valg krever begrunnelse; aldri pasientopplysninger. */
-const VALGBEGRUNNELSE = 'Syntetisk begrunnelse i aksepttesten.'
-
 /**
- * (h): planen når forskriveren ved hvert trinn som ikke kan gis, velger den
- * tilbudte dosen med reduksjon nærmest regelens standardvalg (ved likt avvik
- * den minste reduksjonen). En simulering til kontrollen; beregningen selv
- * velger aldri.
+ * Den tilbudte dosen med reduksjon nærmest regelens standardvalg (ved likt
+ * avvik den minste reduksjonen): en simulering av forskriverens valg til
+ * kontrollen, aldri et forslag; beregningen selv velger aldri.
  */
-export function medValg(u: Festuttrekk, r: Regel, form: Formalternativ, inndata: Beregningsinndata): Doseplanresultat {
+function simulertValg(r: Regel, tv: Trinnvalg): Trinnvalgsvar {
   const fase = r.plan.forlop[0]!.faser[0]!
   const standard = fase.type === 'nedtrapping' && fase.strategi.type === 'prosent_av_aktuell' ? (fase.strategi.prosent.verdi ?? 0) : 0
+  const d = [...tv.doser].sort((a, b) => Math.abs(a.prosent - standard) - Math.abs(b.prosent - standard) || a.prosent - b.prosent)[0]!
+  return { forlop: tv.forlop, trinn: tv.trinn, fra_mg: tv.fra_mg, mg: d.mg }
+}
+
+/** (h): planen når forskriveren ved hvert trinn som ikke kan gis, velger dosen {@link simulertValg} gir. */
+export function medValg(u: Festuttrekk, r: Regel, form: Formalternativ, inndata: Beregningsinndata): Doseplanresultat {
   let x = inndata
   let plan = beregnAksept(u, r, form, x)
   // Hvert valg gir minst ett trinn til, så horisonten begrenser antallet.
   for (let i = 0; i < 2 * PLANHORISONT_TRINN && plan.trinnvalg?.length; i++) {
-    const tv = plan.trinnvalg[0]!
-    const d = [...tv.doser].sort((a, b) => Math.abs(a.prosent - standard) - Math.abs(b.prosent - standard) || a.prosent - b.prosent)[0]!
-    x = { ...x, trinnvalg: [...(x.trinnvalg ?? []), { forlop: tv.forlop, trinn: tv.trinn, fra_mg: tv.fra_mg, mg: d.mg }], ...(d.krever_begrunnelse && { begrunnelse: VALGBEGRUNNELSE }) }
+    x = { ...x, trinnvalg: [...(x.trinnvalg ?? []), simulertValg(r, plan.trinnvalg[0]!)] }
     plan = beregnAksept(u, r, form, x)
   }
   return plan
+}
+
+/**
+ * Dosen en ny plan videreføres fra (f): siste dose planen gir, eller, når den
+ * stopper før første trinn med et valg, dosen forskriveren velger der
+ * ({@link simulertValg}); `null` når ingen av dem finnes.
+ */
+export function videreforingsdose(r: Regel, p: Doseplanresultat): number | null {
+  const tv = p.trinnvalg?.find((t) => t.trinn === 1)
+  return sisteDose(p) ?? (tv ? simulertValg(r, tv).mg : null)
 }
 
 export interface Akseptresultat {
@@ -165,7 +179,7 @@ export function akseptFor(u: Festuttrekk, s: (typeof AKSEPTSTOFFER)[number], for
   const dose = vanligDose(s.hoved)
   const a = beregnAksept(u, s.hoved, form, besvart(s.hoved, dose))
   const lav = lavesteStyrke(u, s.nokkel, form)
-  const videre = sisteDose(a)
+  const videre = videreforingsdose(s.hoved, a)
   const resultater: Akseptresultat[] = [
     { scenario: 'a', startdose_mg: dose, plan: a },
     { scenario: 'b', startdose_mg: dose, plan: beregnAksept(u, s.hoved, form, besvart(s.hoved, dose, { svar: LANG, justert: { [PROSENTSTI]: LANG_PROSENT } })) },
@@ -174,7 +188,7 @@ export function akseptFor(u: Festuttrekk, s: (typeof AKSEPTSTOFFER)[number], for
       ? { scenario: 'd', startdose_mg: null, plan: null, ikke_regnet: 'Ingen markedsført styrke med markedsføringstillatelse i formen.' }
       : { scenario: 'd', startdose_mg: lav, plan: beregnAksept(u, s.hoved, form, besvart(s.hoved, lav)) },
     videre === null
-      ? { scenario: 'f', startdose_mg: null, plan: null, ikke_regnet: '(a) gir ingen dose å videreføre fra.' }
+      ? { scenario: 'f', startdose_mg: null, plan: null, ikke_regnet: '(a) gir ingen dose å videreføre fra, heller ikke en dose forskriveren kan velge.' }
       : { scenario: 'f', startdose_mg: videre, plan: beregnAksept(u, s.hoved, form, besvart(s.hoved, videre)) },
     { scenario: 'h', startdose_mg: dose, plan: medValg(u, s.hoved, form, besvart(s.hoved, dose)) },
   ]
@@ -205,31 +219,81 @@ function utfall(r: Akseptresultat): string {
   return n === 0 ? 'stopper ved første trinn' : `${n} ${n === 1 ? 'reduksjon' : 'reduksjoner'}`
 }
 
-/** Det kliniske omfanget en plan har i ett scenario (P7.5, kontrollørens gjennomgang av 62ebb21). */
-export type Omfang = 'delplan' | 'valg' | 'avvik' | 'stopp'
+/**
+ * Det kliniske omfanget en plan har i ett scenario (P7.5, kontrollørens
+ * gjennomgang av 62ebb21 og 9cb420b). Et avvik som krever begrunnelse, tilbys
+ * ikke, så et trinn uten dose i det foretrukne området er et forklarende stopp.
+ */
+export type Omfang = 'delplan' | 'valg' | 'stopp'
 
 export const OMFANG: Record<Omfang, string> = {
-  delplan: 'delplan med den foretrukne reduksjonen, som stopper ved trinnet før det første som ikke kan gis',
-  valg: 'første trinn bare med en dose forskriveren velger, innenfor det foretrukne området',
-  avvik: 'bare forklarende stopp; de eneste dosene som kan gis, er avvik som krever begrunnelse og kan bare velges etter uttrykkelig individuell vurdering',
-  stopp: 'bare forklarende stopp; ingen dose i valgområdet kan gis',
+  delplan:
+    'delplan med den foretrukne reduksjonen, som stopper ved trinnet før det første som ikke kan gis; med én reduksjon er den én mulig reduksjon med revurdering, ikke en fullstendig nedtrappingsplan',
+  valg: 'første trinn bare med en dose forskriveren velger, innenfor det foretrukne området uten krav om begrunnelse',
+  stopp: 'bare forklarende stopp; ingen dose med reduksjon innenfor det foretrukne området kan gis, og et avvik tilbys ikke',
+}
+
+/** Omfanget av planen: en delplan når første trinn kan gis med den foretrukne reduksjonen; ellers om forskriveren kan velge en dose for første trinn. */
+export function omfang(p: Doseplanresultat): Omfang {
+  if (reduksjoner(p) > 0) return 'delplan'
+  return p.trinnvalg?.some((t) => t.trinn === 1) ? 'valg' : 'stopp'
+}
+
+const OMFANGSORD: Record<Omfang, string> = { delplan: 'delplan', valg: 'valgt dose', stopp: 'stopp' }
+
+/** Omfanget i en tabellcelle, med antall reduksjoner; én reduksjon står som det den er. */
+function omfangscelle(p: Doseplanresultat | null | undefined): string {
+  if (!p) return '–'
+  const o = omfang(p)
+  if (o !== 'delplan') return OMFANGSORD[o]
+  const n = reduksjoner(p)
+  return n === 1 ? 'én reduksjon med revurdering' : `delplan (${n})`
 }
 
 /**
- * Omfanget av planen: en delplan når første trinn kan gis med den foretrukne
- * reduksjonen; ellers om første trinn kan gis med en valgt dose uten krav om
- * begrunnelse, bare som avvik, eller ikke i det hele tatt.
+ * Startdosene omfanget regnes for per form: hver markedsført styrke i formen
+ * som én enhet, regelens vanlige dose og grensene for startdosen (høyeste
+ * døgndose og grensene for pasientgruppe og indikasjon), opp til den høyeste
+ * startdosen svarene i scenariene tillater uten begrunnelse.
  */
-export function omfang(p: Doseplanresultat): Omfang {
-  if (reduksjoner(p) > 0) return 'delplan'
-  const doser = p.trinnvalg?.find((t) => t.trinn === 1)?.doser ?? []
-  if (doser.some((d) => !d.krever_begrunnelse)) return 'valg'
-  return doser.length > 0 ? 'avvik' : 'stopp'
+export function startdoser(u: Festuttrekk, r: Regel, form: Formalternativ): number[] {
+  const svar = besvart(r, 0).svar ?? {}
+  const krav = r.inndata.flatMap((k) => (k.navn === 'startdose' && k.omrade ? [{ ...k, omrade: k.omrade }] : []))
+  const hoyest = Math.min(...krav.filter((k) => !k.ved || (svar[k.ved.sporsmal] ?? false) === k.ved.svar).map((k) => k.omrade[1]))
+  return [...new Set([...styrker(u, nokkel(r), form), vanligDose(r), ...krav.map((k) => k.omrade[1])])].filter((mg) => mg > 0 && mg <= hoyest).sort((a, b) => a - b)
 }
 
-const OMFANGSORD: Record<Omfang, string> = { delplan: 'delplan', valg: 'valgt dose', avvik: 'bare avvik', stopp: 'stopp' }
+/** Scenariene omfanget regnes for per startdose. */
+export type Dosescenario = 'a' | 'b' | 'c' | 'f'
 
-/** «Kan velges for trinn 2 (dag 29, beregnet 56,25 mg, fra 75 mg): 50 mg (−33,33 %, avvik som krever begrunnelse).» */
+export interface Doseomfang {
+  startdose_mg: number
+  planer: Record<Dosescenario, Doseplanresultat | null>
+  /** Dosen (f) er videreført fra, eller `null` når (a) ikke gir noen. */
+  videre_mg: number | null
+}
+
+/** (a), (b), (c) og videreføringen (f) fra én startdose i én form. */
+export function omfangFor(u: Festuttrekk, s: (typeof AKSEPTSTOFFER)[number], form: Formalternativ, startdose_mg: number): Doseomfang {
+  const a = beregnAksept(u, s.hoved, form, besvart(s.hoved, startdose_mg))
+  const videre_mg = videreforingsdose(s.hoved, a)
+  return {
+    startdose_mg,
+    videre_mg,
+    planer: {
+      a,
+      b: beregnAksept(u, s.hoved, form, besvart(s.hoved, startdose_mg, { svar: LANG, justert: { [PROSENTSTI]: LANG_PROSENT } })),
+      c: beregnAksept(u, s.langsom, form, besvart(s.langsom, startdose_mg)),
+      f: videre_mg === null ? null : beregnAksept(u, s.hoved, form, besvart(s.hoved, videre_mg)),
+    },
+  }
+}
+
+export function omfangssett(u: Festuttrekk): { nokkel: string; form: Formalternativ; doser: Doseomfang[] }[] {
+  return AKSEPTSTOFFER.flatMap((s) => formerFor(u, s.hoved).map((form) => ({ nokkel: s.nokkel, form, doser: startdoser(u, s.hoved, form).map((mg) => omfangFor(u, s, form, mg)) })))
+}
+
+/** «Kan velges for trinn 2 (dag 29, beregnet 56,25 mg, fra 75 mg): 60 mg (−20 %).» */
 export const valgtekst = (t: Trinnvalg) =>
   `Kan velges for trinn ${t.trinn} (dag ${t.fra_dag}, beregnet ${tall(avrund(t.beregnet_mg))} mg, fra ${tall(t.fra_mg)} mg): ${t.doser.map((d) => trinndosetekst({ ...d, prosent: avrund(d.prosent) })).join(' eller ')}.`
 
@@ -258,11 +322,19 @@ export function lagAksepttestrapport(u: Festuttrekk): string {
   const kliniske = (Object.keys(SCENARIOER) as Scenario[]).filter((s) => s !== 'h')
   const omfangstabell = tabell(
     ['Virkestoff', 'Form', ...kliniske.map((s) => `(${s})`)],
-    sett.map((t) => [t.nokkel, formnavn(t.form), ...kliniske.map((s) => {
-      const p = t.resultater.find((r) => r.scenario === s)?.plan
-      return p ? `${OMFANGSORD[omfang(p)]}${omfang(p) === 'delplan' ? ` (${reduksjoner(p)})` : ''}` : '–'
-    })]),
+    sett.map((t) => [t.nokkel, formnavn(t.form), ...kliniske.map((s) => omfangscelle(t.resultater.find((r) => r.scenario === s)?.plan))]),
   )
+  const perDose = omfangssett(u)
+  const dosetabell = tabell(
+    ['Virkestoff', 'Form', 'Startdose', '(a)', '(b)', '(c)', '(f)'],
+    perDose.flatMap((t) =>
+      t.doser.map((d) => [t.nokkel, formnavn(t.form), `${tall(d.startdose_mg)} mg`, omfangscelle(d.planer.a), omfangscelle(d.planer.b), omfangscelle(d.planer.c), d.videre_mg === null ? '–' : `fra ${tall(d.videre_mg)} mg: ${omfangscelle(d.planer.f)}`]),
+    ),
+  )
+  const lave = sett.flatMap((t) => {
+    const d = t.resultater.find((r) => r.scenario === 'd')?.plan
+    return d && omfang(d) !== 'stopp' ? [`${t.nokkel} (${formnavn(t.form)})`] : []
+  })
   const annenhver = annenhverDag(u)
   return `<!-- Laget av \`npm run verktoy:regler -- aksepttest\` fra ${FEST_AKSEPTTEST}; rediger ikke for hånd. -->
 # P7: aksepttest med norske preparater
@@ -277,7 +349,7 @@ ${liste(Object.entries(SCENARIOER).map(([k, v]) => `(${k}) ${v}.`))}
 - (e) Alle scenariene bruker de norske preparatene i FEST.
 - (g) Oversikten viser om planen stopper allerede ved første trinn.
 
-Stoffene som bare har fagtekst, er ikke med: ${NEDTRAPPINGSSETT.regler.filter((r) => r.beregnbarhet === 'bare_tekstlig').map(nokkel).join(', ')}. Mirtazapin, moklobemid og paroksetin ble fagtekst etter kontrollørens beslutning P7-A fordi ingen dose innenfor valgområdet for første trinn kunne gis med de norske formene.
+Stoffene som bare har fagtekst, er ikke med: ${NEDTRAPPINGSSETT.regler.filter((r) => r.beregnbarhet === 'bare_tekstlig').map(nokkel).join(', ')}. Mirtazapin, moklobemid og paroksetin ble fagtekst etter kontrollørens beslutning P7-A fordi ingen dose innenfor valgområdet for første trinn kunne gis med de norske formene. Citalopram ble fagtekst etter gjennomgangen av 9cb420b, fordi den eneste dosen som kunne gis ved første trinn fra vanlig dose, var en halvering, og fluoksetinregelen gjelder ikke lenger de harde kapslene, av samme grunn.
 
 Svarene er de samme i alle scenariene: startforslaget og organfunksjon er bekreftet, ingen unntak gjelder, dosen er innenfor rammen, og svaret er nei på stoffets spørsmål om pasientgruppe og indikasjon. Den vanlige dosen er startdosen i regelens første regneeksempel. Under hver plan som stopper ved et trinn forskriveren kan velge dosen for, står dosene som kan velges, med faktisk reduksjon.
 
@@ -291,11 +363,19 @@ ${oversikt}
 
 ## Klinisk omfang per virkestoff og form (P7.5)
 
-Til kontrollørens regel- og formspesifikke kontroll (gjennomgangen av 62ebb21): for hver kombinasjon og hvert klinisk scenario, om en oppnåelig delplan kan brukes, eller om bare et forklarende stopp er riktig. Ingen delplan er en fullstendig seponering, og en dose som krever begrunnelse, er aldri et anbefalt eller rutinemessig trinn. Scenario (h) er en simulering og er ikke med.
+Til kontrollørens regel- og formspesifikke kontroll (gjennomgangen av 62ebb21 og 9cb420b): for hver kombinasjon og hvert klinisk scenario, om en oppnåelig delplan kan brukes, eller om bare et forklarende stopp er riktig. Tabellen er en teknisk matrise regnet ut av planene, ikke en klinisk godkjenning. Ingen delplan er en fullstendig seponering. Et avvik som krever begrunnelse, tilbys ikke: der det er det eneste som kan gis, er planen et forklarende stopp, og en annen plan vurderes individuelt utenfor verktøyet. Scenario (h) er en simulering og er ikke med.
 
-${liste(Object.values(OMFANG).map((v, i) => `**${Object.values(OMFANGSORD)[i]}:** ${v}.`))}
+${liste(Object.entries(OMFANG).map(([k, v]) => `**${OMFANGSORD[k as Omfang]}:** ${v}.`))}
 
 ${omfangstabell}
+
+${lave.length === 0 ? 'Ingen av lavdoseeksemplene (d) gir et ordinært første trinn: fra laveste styrke i formen er planen et forklarende stopp i alle kombinasjonene.' : `Lavdoseeksemplene (d) gir et første trinn bare for ${lave.join(', ')}.`}
+
+### Per startdose
+
+Omfanget for hver markedsført styrke i formen, regelens vanlige dose og grensene for startdosen, så doseområdets grenser og andre faktiske startdoser er med, opp til den høyeste startdosen svarene over tillater uten begrunnelse; en høyere dose krever et ja eller en begrunnelse og er ikke med. Videreføringen (f) regnes fra siste dose i (a), eller fra dosen forskriveren velger ved første trinn når (a) bare gir et valg (den tilbudte dosen med reduksjon nærmest standardvalget, en simulering).
+
+${dosetabell}
 
 ## Per virkestoff
 

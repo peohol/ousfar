@@ -380,13 +380,20 @@ describe('Kildedata, versjoner og determinisme', () => {
     const t = TESTTILFELLER.find((x) => x.id === 'trinnvalg-tilbys')!
     const beregnet = (r: typeof t.regel) => beregnDoseplan(r, t.inndata, syntetiskGrunnlag(t.preparater), OMGIVELSE)
     const r = beregnet(t.regel)
-    expect(r.trinnvalg?.map((x) => [x.trinn, x.fra_mg, x.beregnet_mg, x.omrade, x.doser.map((d) => [d.mg, Math.round(d.prosent * 100) / 100, d.krever_begrunnelse])])).toEqual([
-      [2, 18.75, 14.06, [5, 50], [[13.75, 26.67, true], [15, 20, false]]],
-    ])
-    // Den foretrukne reduksjonen står først; en dose som krever begrunnelse, er merket som avvik, ikke som et anbefalt trinn.
+    // Det foretrukne området er 5–25 %: over 25 % ville krevd begrunnelse, så 13,75 mg (−26,67 %) er et avvik og tilbys ikke (kontrollørens gjennomgang av 9cb420b).
+    expect(r.trinnvalg?.map((x) => [x.trinn, x.fra_mg, x.beregnet_mg, x.omrade, x.doser.map((d) => [d.mg, Math.round(d.prosent * 100) / 100])])).toEqual([[2, 18.75, 14.06, [5, 25], [[15, 20]]]])
+    // Den foretrukne reduksjonen står først.
     expect(r.merknader.join(' ')).toMatch(
-      /Den foretrukne reduksjonen til 14,06 mg \(−25,01 % fra 18,75 mg\) kan ikke gis med preparatene\. Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 18,75 mg innenfor valgområdet 5–50 %: 13,75 mg \(−26,67 %, avvik som krever begrunnelse\) eller 15 mg \(−20 %\)\. En dose som krever begrunnelse, er et avvik fra den foretrukne reduksjonen og ikke et anbefalt trinn; den kan bare velges etter uttrykkelig individuell vurdering\. Beregningen velger ikke selv\./,
+      /Den foretrukne reduksjonen til 14,06 mg \(−25,01 % fra 18,75 mg\) kan ikke gis med preparatene\. Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 18,75 mg innenfor det foretrukne området 5–25 %: 15 mg \(−20 %\)\. Beregningen velger ikke selv\./,
     )
+    // Et avvik kan heller ikke velges, også med begrunnelse: planen stopper og sier at verktøyet ikke beregner det.
+    const avvik = beregnDoseplan(t.regel, { ...t.inndata, trinnvalg: [{ forlop: 'fra', trinn: 2, fra_mg: 18.75, mg: 13.75 }], begrunnelse: 'Syntetisk begrunnelse.' }, syntetiskGrunnlag(t.preparater), OMGIVELSE)
+    expect(avvik.status === 'stoppet' && avvik.stoppgrunner.join(' ')).toMatch(/den valgte dosen 13,75 mg er en reduksjon på 26,67 % fra 18,75 mg, utenfor valgområdet 5–25 % regelen tillater for dette trinnet\. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke/)
+    // Finnes ingen dose i det foretrukne området, er planen et forklarende stopp uten valg.
+    // Fra 20 mg med bare 10 mg-tabletter: 15 mg kan gis, 11,25 mg ikke, og fra 15 mg er 10 mg (−33,33 %) nærmeste dose under.
+    const ingen = beregnDoseplan(t.regel, { ...t.inndata, startdose_mg: 20 }, syntetiskGrunnlag(t.preparater.filter((x) => x.id === 'OKS-TAB10')), OMGIVELSE)
+    expect(ingen.trinnvalg).toBeUndefined()
+    expect(ingen.merknader.join(' ') + (ingen.status === 'stoppet' ? ingen.stoppgrunner.join(' ') : '')).toMatch(/kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 5–25 %\. En større reduksjon er et avvik/)
     // Uten valg per trinn i regelen: ingen doser tilbys, og stoppet sier at en annen dose krever en ny faglig vurdering.
     const uten = structuredClone(t.regel)
     const fase = uten.plan.forlop[0]!.faser[0]!
@@ -793,7 +800,7 @@ describe('Fenelzin etter fluoksetin med preparatene i FEST (P4.8, gjennomgangen 
   })
 })
 
-describe('Sertralin til mirtazapin med preparatene i FEST (P4.8, gjennomgangen av 62ebb21)', () => {
+describe('Sertralin til mirtazapin med preparatene i FEST (P4.8, gjennomgangene av 62ebb21 og 9cb420b)', () => {
   const grunnlag = pilotgrunnlag('sertralin', 'mirtazapin')
   const REGEL = pilotregel('kryssnedtrapping-sertralin-mirtazapin')
   const tabletter = { klasse: 'peroral' as const, legemiddelformer: ['53'] }
@@ -829,12 +836,23 @@ describe('Sertralin til mirtazapin med preparatene i FEST (P4.8, gjennomgangen a
     expect(stopp(plan(100, { pasientforhold: {} }))).toMatch(/Må avklares før beregning \(ukjent\): Et tidligere forsøk/)
     expect(stopp(plan(100, { bekreftet: [] }))).toMatch(/Må bekreftes før beregning: Toleransen vurderes før hver reduksjon av sertralin/)
     expect(stopp(plan(100, { svar: { lang_behandlingstid: true } }))).toMatch(/Svaret ja \(lang behandlingstid\) krever en skriftlig begrunnelse/)
+    // Kontroll av serotonerg sammedisinering må bekreftes for seg (gjennomgangen av 9cb420b).
+    expect(stopp(plan(100, { bekreftet: ['toleranse_overlapp'] }))).toMatch(/Må bekreftes før beregning: .*serotonerg/i)
     // Mirtazapin finnes som tabletter og smeltetabletter; uten formvalg blander ikke beregningen dem.
     expect(stopp(plan(100, { formvalg: { fra: tabletter } }))).toMatch(/mirtazapin \(til\) finnes i flere legemiddelformer/)
   })
 
+  it('gjelder bare 50–100 mg, startforløpet som er verifisert ende til ende (gjennomgangen av 9cb420b)', () => {
+    // Doser mellom grensene gir ingen plan når trinnet ikke kan gis med hele tabletter.
+    expect(stopp(plan(75))).toMatch(/37,5 mg kan ikke gis/)
+    for (const sd of [101, 125, 150, 200]) expect(stopp(plan(sd)), `${sd} mg`).toMatch(new RegExp(`Startdosen ${sd} mg er utenfor .*50–100 mg`))
+    expect(stopp(plan(49))).toMatch(/Startdosen 49 mg er utenfor .*50–100 mg/)
+    for (const sd of [50, 100]) expect(plan(sd).status, `${sd} mg`).toBe('doseplan')
+  })
+
   it('er ikke klinisk godkjent og gir ingen klinisk plan', () => {
     expect(erKliniskGodkjent(REGEL)).toBe(false)
+    expect(REGEL.versjon).toBe(6)
     expect(kliniskDoseplan(REGEL, inndata(100), grunnlag, PILOTOMGIVELSE)).toMatchObject({ status: 'stoppet', klinisk: false })
   })
 })

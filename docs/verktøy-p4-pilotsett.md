@@ -2,7 +2,7 @@
 
 <!-- Laget av `npm run verktoy:regler -- rapport` fra reglene i src/verktoy/regler/. Ikke rediger for hånd; endre reglene og lag rapporten på nytt. -->
 
-Regelsett `ousfar-verktoy-pilot` versjon 10, regelmodell 9, beregningsmotor 8. Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Etter kontrollrunden 30.10.2026 er byttereglene rettet eller avgrenset og sendt til ny kontroll, og de to depotreglene er funnet kildemessig akseptable som avgrensede varianter. Etter kontrollørens beslutninger samme dag er byttene avgrenset slik kontrolløren godtok dem, gruppebyttet til aripiprazol er tatt ut av verktøyet (en modelleringsdemonstrasjon i utviklingssettet), og depotreglene er koblet til preparatet sitt i FEST. Etter kontrollørens gjennomgang av de rettede versjonene er kvetiapin bundet til tabletter med vanlig frisetting fordelt på to doser, og fenelzin vises som utvasking fullført, ikke som oppstart. Etter gjennomgangen av 62ebb21 er de to depotreglene (versjon 3) klinisk godkjent av den uavhengige kontrolløren, bare for nøyaktig de avgrensede oppstartene, og fenelzinregelen står som modell for utvaskingen, ikke som en godkjennbar samlet doseplan. De tre byttereglene er til faglig kontroll og brukes ikke i appen.
+Regelsett `ousfar-verktoy-pilot` versjon 11, regelmodell 9, beregningsmotor 9. Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Etter kontrollrunden 30.10.2026 er byttereglene rettet eller avgrenset og sendt til ny kontroll, og de to depotreglene er funnet kildemessig akseptable som avgrensede varianter. Etter kontrollørens beslutninger samme dag er byttene avgrenset slik kontrolløren godtok dem, gruppebyttet til aripiprazol er tatt ut av verktøyet (en modelleringsdemonstrasjon i utviklingssettet), og depotreglene er koblet til preparatet sitt i FEST. Etter kontrollørens gjennomgang av de rettede versjonene er kvetiapin bundet til tabletter med vanlig frisetting fordelt på to doser, og fenelzin vises som utvasking fullført, ikke som oppstart. Etter gjennomgangen av 62ebb21 er de to depotreglene (versjon 3) klinisk godkjent av den uavhengige kontrolløren, bare for nøyaktig de avgrensede oppstartene, og fenelzinregelen står som modell for utvaskingen, ikke som en godkjennbar samlet doseplan. Etter gjennomgangen av 9cb420b gjelder byttet fra sertralin til mirtazapin (versjon 6) bare 50–100 mg sertralin, med bekreftet kontroll av serotonerg sammedisinering. De tre byttereglene er til faglig kontroll og brukes ikke i appen.
 
 **5 regler, 2 klinisk godkjent.** Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. 2 av reglene er klinisk godkjent etter uavhengig faglig kontroll i nøyaktig denne versjonen; de andre er ikke, og beregningene etter dem er ikke kliniske anbefalinger. Ingen av beregningene er empirisk validerte. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-p4-regelmodell.md`.
 
@@ -40,9 +40,9 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
 
 ## Bytte fra sertralin til mirtazapin, kryssnedtrapping
 
-`kryssnedtrapping-sertralin-mirtazapin`, versjon 5, fingeravtrykk `cdd1da6f011c2d9f420cf4d5eb010b81a4b6426e9770aab4a6508b904e20120f`. Kryssnedtrapping: sertralin → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`kryssnedtrapping-sertralin-mirtazapin`, versjon 6, fingeravtrykk `d0b81963075c39e1b6f8d18a3fc1eeac32e405c339960b472e5471427ffb2675`. Kryssnedtrapping: sertralin → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → utkast (versjon 3, 30.10.2026, Claude Code) → til faglig kontroll (versjon 3, 30.10.2026, Claude Code) → utkast (versjon 4, 30.10.2026, Claude Code) → til faglig kontroll (versjon 4, 30.10.2026, Claude Code) → utkast (versjon 5, 30.10.2026, Claude Code) → til faglig kontroll (versjon 5, 30.10.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → utkast (versjon 3, 30.10.2026, Claude Code) → til faglig kontroll (versjon 3, 30.10.2026, Claude Code) → utkast (versjon 4, 30.10.2026, Claude Code) → til faglig kontroll (versjon 4, 30.10.2026, Claude Code) → utkast (versjon 5, 30.10.2026, Claude Code) → til faglig kontroll (versjon 5, 30.10.2026, Claude Code) → til faglig kontroll (versjon 5, 31.10.2026, ChatGPT (uavhengig fagkontrollør)) → utkast (versjon 6, 31.10.2026, Claude Code) → til faglig kontroll (versjon 6, 31.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -80,8 +80,9 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
 
 **Betingelser:**
 
-- Startdose 50–200 mg (bindende; dmp-zoloft pkt. 4.2)
+- Startdose 50–100 mg (bindende; **OUSFAR-vurdering, avklart 31.10.2026 av ChatGPT (uavhengig fagkontrollør) (versjon 5): Kontrollørens gjennomgang av 9cb420b (P4.8): en snever godkjenning kan bare gjelde 50 og 100 mg sertralin; innskrenk regelen til den verifiserte doserammen:** Regelen gjelder bare sertralin 50–100 mg, startforløpet som er verifisert ende til ende med preparatene i FEST. Preparatomtalen tillater opptil 200 mg, men 150 og 200 mg er ikke verifisert, så byttet planlegges da individuelt. (bygger på dmp-zoloft pkt. 4.2))
 - Må bekreftes (`toleranse_overlapp`): Toleransen vurderes før hver reduksjon av sertralin: dagene er minstetider, og neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. (nice-ng222 anbefaling 1.4.16; rcpsych-stopping How should I gradually reduce my dose?; nice-ng222 anbefaling 1.9.9)
+- Må bekreftes (`serotonerg_sammedisinering`): Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør overlappen mellom sertralin og mirtazapin mer risikofylt. (nice-ng222 anbefaling 1.9.9)
 - Unntak (`tidligere_seponeringssymptomer`): Et tidligere forsøk på å trappe ned eller seponere sertralin har gitt seponeringssymptomer eller mislyktes. Da passer ikke den faste kryssnedtrappingen, og byttet planlegges individuelt med mindre trinn. (nice-ng222 anbefaling 1.4.15; rcpsych-stopping If you have been taking antidepressants for longer)
 - Må besvares (`lang_behandlingstid`): Har pasienten brukt sertralin i mange måneder eller lenger? Et ja krever en skriftlig begrunnelse. (rcpsych-stopping If you have been taking antidepressants for longer; nice-ng222 anbefaling 1.4.16)
 
@@ -90,7 +91,6 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
 - Dosene er den ideelle dosekurven, avrundet til to desimaler; hvilke doser som kan gis med norske preparater (styrker, deling, flytende form), avgjøres i P5.
 - Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet, interaksjoner, graviditet, etterlevelse eller individuell toleranse fra dosen (B7); dette må vurderes av forskriveren.
-- Pasienten har ikke andre serotonerge legemidler som gjør overlappen mer risikofylt.
 
 **Usikkerhet:**
 
@@ -100,28 +100,30 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
 
 **Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
 
-- *Sertralin 100 mg til mirtazapin: halvering til 25 mg; seponeringen derfra og måldosen for mirtazapin planlegges individuelt.* Inndata: startdose 100 mg; bekreftet: toleranse_overlapp; pasientforhold: tidligere_seponeringssymptomer nei; svar: lang_behandlingstid nei.
+- *Sertralin 100 mg til mirtazapin: halvering til 25 mg; seponeringen derfra og måldosen for mirtazapin planlegges individuelt.* Inndata: startdose 100 mg; bekreftet: toleranse_overlapp, serotonerg_sammedisinering; pasientforhold: tidligere_seponeringssymptomer nei; svar: lang_behandlingstid nei.
   - **fra:** dag 1–14: 50 mg; fra dag 15: 25 mg; siste trinn før null; avslutning vurderes individuelt
   - **til:** fra dag 1: 15 mg; holdes til sertralin er avsluttet; videre dosering planlegges individuelt
   - Kontroll: Avkreftet: Et tidligere forsøk på å trappe ned eller seponere sertralin har gitt seponeringssymptomer eller mislyktes. Da passer ikke den faste kryssnedtrappingen, og byttet planlegges individuelt med mindre trinn. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Toleransen vurderes før hver reduksjon av sertralin: dagene er minstetider, og neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør overlappen mellom sertralin og mirtazapin mer risikofylt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Har pasienten brukt sertralin i mange måneder eller lenger? Nei – oppfylt. Oppgitt av forskriveren.
-  - Kontroll: Startdosen er 50–200 mg (bindende) – oppfylt. 100 mg.
+  - Kontroll: Startdosen er 50–100 mg (bindende) – oppfylt. 100 mg.
   - Merknad: Regelens siste trinn før null er nådd. Fra dag 15 står pasienten på 25 mg av sertralin til planen revurderes. Planen stopper her av tekniske grunner. Fortsett med denne dosen inntil forskriveren har vurdert videre nedtrapping. Dosen er ikke nødvendigvis en sluttdose. Planen går ikke til null og foreslår ingen dato for siste dose. En ny plan beregnes fra dosen pasienten faktisk bruker når forskriveren revurderer, ikke nødvendigvis siste dose her, og tidligere symptomer, toleranse og utsettelser må vurderes.
   - Merknad: Dosen av mirtazapin holdes på 15 mg til sertralin er avsluttet. Avslutningen av sertralin vurderes individuelt, og videre dosering av mirtazapin beregnes ikke, men planlegges individuelt sammen med den.
   - Merknad: Dagene og datoene er tidligste mulige tidspunkt dersom alle tidligere reduksjoner gjennomføres som planlagt; utsettes et trinn, forskyves alle senere tidspunkter tilsvarende.
-- *Sertralin 50 mg til mirtazapin: én reduksjon til 25 mg, som fortsetter til avslutningen er vurdert.* Inndata: startdose 50 mg; bekreftet: toleranse_overlapp; pasientforhold: tidligere_seponeringssymptomer nei; svar: lang_behandlingstid nei.
+- *Sertralin 50 mg til mirtazapin: én reduksjon til 25 mg, som fortsetter til avslutningen er vurdert.* Inndata: startdose 50 mg; bekreftet: toleranse_overlapp, serotonerg_sammedisinering; pasientforhold: tidligere_seponeringssymptomer nei; svar: lang_behandlingstid nei.
   - **fra:** fra dag 1: 25 mg; siste trinn før null; avslutning vurderes individuelt
   - **til:** fra dag 1: 15 mg; holdes til sertralin er avsluttet; videre dosering planlegges individuelt
   - Kontroll: Avkreftet: Et tidligere forsøk på å trappe ned eller seponere sertralin har gitt seponeringssymptomer eller mislyktes. Da passer ikke den faste kryssnedtrappingen, og byttet planlegges individuelt med mindre trinn. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Toleransen vurderes før hver reduksjon av sertralin: dagene er minstetider, og neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør overlappen mellom sertralin og mirtazapin mer risikofylt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Har pasienten brukt sertralin i mange måneder eller lenger? Nei – oppfylt. Oppgitt av forskriveren.
-  - Kontroll: Startdosen er 50–200 mg (bindende) – oppfylt. 50 mg.
+  - Kontroll: Startdosen er 50–100 mg (bindende) – oppfylt. 50 mg.
   - Merknad: Regelens siste trinn før null er nådd. Fra dag 1 står pasienten på 25 mg av sertralin til planen revurderes. Planen stopper her av tekniske grunner. Fortsett med denne dosen inntil forskriveren har vurdert videre nedtrapping. Dosen er ikke nødvendigvis en sluttdose. Planen går ikke til null og foreslår ingen dato for siste dose. En ny plan beregnes fra dosen pasienten faktisk bruker når forskriveren revurderer, ikke nødvendigvis siste dose her, og tidligere symptomer, toleranse og utsettelser må vurderes.
   - Merknad: Dosen av mirtazapin holdes på 15 mg til sertralin er avsluttet. Avslutningen av sertralin vurderes individuelt, og videre dosering av mirtazapin beregnes ikke, men planlegges individuelt sammen med den.
-- *Etter seponeringssymptomer ved et tidligere forsøk gjelder ikke regelen; byttet planlegges individuelt.* Inndata: startdose 100 mg; bekreftet: toleranse_overlapp; pasientforhold: tidligere_seponeringssymptomer ja; svar: lang_behandlingstid nei.
+- *Etter seponeringssymptomer ved et tidligere forsøk gjelder ikke regelen; byttet planlegges individuelt.* Inndata: startdose 100 mg; bekreftet: toleranse_overlapp, serotonerg_sammedisinering; pasientforhold: tidligere_seponeringssymptomer ja; svar: lang_behandlingstid nei.
   - **Stoppet:** Regelen gjelder ikke: Et tidligere forsøk på å trappe ned eller seponere sertralin har gitt seponeringssymptomer eller mislyktes. Da passer ikke den faste kryssnedtrappingen, og byttet planlegges individuelt med mindre trinn.
-- *Ved lang behandlingstid krever den faste halveringen en skriftlig begrunnelse.* Inndata: startdose 100 mg; bekreftet: toleranse_overlapp; pasientforhold: tidligere_seponeringssymptomer nei; svar: lang_behandlingstid ja.
+- *Ved lang behandlingstid krever den faste halveringen en skriftlig begrunnelse.* Inndata: startdose 100 mg; bekreftet: toleranse_overlapp, serotonerg_sammedisinering; pasientforhold: tidligere_seponeringssymptomer nei; svar: lang_behandlingstid ja.
   - **Stoppet:** Svaret ja (lang behandlingstid) krever en skriftlig begrunnelse fra forskriveren, en særskilt vurdering. Skriv begrunnelsen, eller vurder om regelen passer.
 
 **Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntidepressants:Se>Mz`.

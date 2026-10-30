@@ -67,17 +67,22 @@ const etterBeslutningene = (rettet: string) => ({ merknad: `Rettet etter kontrol
 /** Rettet etter kontrollørens gjennomgang av de rettede versjonene (HEAD fe08fac, 30.10.2026). */
 const etterGjennomgangenAvFe08fac = (rettet: string) => ({ merknad: `Rettet etter kontrollørens gjennomgang av fe08fac 30.10.2026 (P4.8): ${rettet}`, dato: RUNDE_5 })
 
-/** Kontrollørens gjennomgang av HEAD 62ebb21 30.10.2026 (P4.8). */
-const RUNDE_6 = '2026-10-30'
+/** Kontrollørens gjennomganger av en HEAD i PR #286 (P4.8), med datoen. */
+interface Gjennomgang {
+  commit: string
+  dato: string
+}
+const RUNDE_6: Gjennomgang = { commit: '62ebb21', dato: '2026-10-30' }
+const RUNDE_7: Gjennomgang = { commit: '9cb420b', dato: '2026-10-31' }
 const KONTROLLOR = 'ChatGPT (uavhengig fagkontrollør)'
-const kontrollorsteg = (status: Godkjenningssteg['status'], regelversjon: number, merknad: string, fingeravtrykk?: string): Godkjenningssteg => ({
+const kontrollorsteg = (status: Godkjenningssteg['status'], regelversjon: number, merknad: string, fingeravtrykk?: string, gjennomgang = RUNDE_6): Godkjenningssteg => ({
   status,
-  dato: RUNDE_6,
+  dato: gjennomgang.dato,
   av: KONTROLLOR,
   rolle: 'uavhengig_kontrollor',
   regelversjon,
   ...(fingeravtrykk && { fingeravtrykk }),
-  merknad: `Kontrollørens gjennomgang av 62ebb21 30.10.2026 (P4.8): ${merknad}`,
+  merknad: `Kontrollørens gjennomgang av ${gjennomgang.commit} ${gjennomgang.dato.split('-').reverse().join('.')} (P4.8): ${merknad}`,
 })
 
 /**
@@ -93,9 +98,9 @@ const avgrensetGodkjent = (g: Godkjenning, versjon: number, fingeravtrykk: strin
 })
 
 /** Kontrollørens avgrensning av hva en regelversjon kan godkjennes som; regelen står fortsatt til kontroll og er ikke godkjent. */
-const medKontrollorsavgrensning = (g: Godkjenning, versjon: number, avgrensning: string): Godkjenning => ({
+const medKontrollorsavgrensning = (g: Godkjenning, versjon: number, avgrensning: string, gjennomgang = RUNDE_6): Godkjenning => ({
   status: g.status,
-  historikk: [...g.historikk, kontrollorsteg('til_faglig_kontroll', versjon, avgrensning)],
+  historikk: [...g.historikk, kontrollorsteg('til_faglig_kontroll', versjon, avgrensning, undefined, gjennomgang)],
 })
 
 /** En ny versjon til kontroll etter en historikk som allerede har steg for den forrige. */
@@ -272,12 +277,12 @@ export const seponeringCitalopramHyperbolsk: Regel = {
   godkjenning: utAvVerktoyet(tilKontroll(TRINNLENGDE_RETTET, UTEN_NULLTRINN), 4),
 }
 
-/** Svarene som lar kryssnedtrappingen beregnes: toleransen følges, ingen tidligere seponeringssymptomer, kort behandlingstid. */
-const KRYSS_BESVART = { bekreftet: ['toleranse_overlapp'], pasientforhold: { tidligere_seponeringssymptomer: false }, svar: { lang_behandlingstid: false } }
+/** Svarene som lar kryssnedtrappingen beregnes: toleransen og sammedisineringen er kontrollert, ingen tidligere seponeringssymptomer, kort behandlingstid. */
+const KRYSS_BESVART = { bekreftet: ['toleranse_overlapp', 'serotonerg_sammedisinering'], pasientforhold: { tidligere_seponeringssymptomer: false }, svar: { lang_behandlingstid: false } }
 
 const kryssSertralinMirtazapin: Regel = {
   id: 'kryssnedtrapping-sertralin-mirtazapin',
-  versjon: 5,
+  versjon: 6,
   tittel: 'Bytte fra sertralin til mirtazapin, kryssnedtrapping',
   fra: { type: 'virkestoff', nokkel: 'sertralin' },
   til: { type: 'virkestoff', nokkel: 'mirtazapin' },
@@ -313,13 +318,32 @@ const kryssSertralinMirtazapin: Regel = {
       },
     ],
   },
-  inndata: [{ navn: 'startdose', omrade: [50, 200], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [SPC.zoloftDose] } }],
+  inndata: [
+    {
+      navn: 'startdose',
+      omrade: [50, 100],
+      art: 'bindende_krav',
+      grunnlag: {
+        type: 'ousfar_vurdering',
+        begrunnelse:
+          'Regelen gjelder bare sertralin 50–100 mg, startforløpet som er verifisert ende til ende med preparatene i FEST. Preparatomtalen tillater opptil 200 mg, men 150 og 200 mg er ikke verifisert, så byttet planlegges da individuelt.',
+        henvisninger: [SPC.zoloftDose],
+        avklaring: { dato: RUNDE_7.dato, av: KONTROLLOR, rolle: 'uavhengig_kontrollor', regelversjon: 5, merknad: `Kontrollørens gjennomgang av ${RUNDE_7.commit} (P4.8): en snever godkjenning kan bare gjelde 50 og 100 mg sertralin; innskrenk regelen til den verifiserte doserammen` },
+      },
+    },
+  ],
   bekreftelser: [
     {
       id: 'toleranse_overlapp',
       tekst:
         'Toleransen vurderes før hver reduksjon av sertralin: dagene er minstetider, og neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning.',
       grunnlag: { type: 'kilde', henvisninger: [NICE.tempo, RCPSYCH.tid, NICE.kombinasjon] },
+    },
+    {
+      id: 'serotonerg_sammedisinering',
+      tekst:
+        'Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør overlappen mellom sertralin og mirtazapin mer risikofylt.',
+      grunnlag: { type: 'kilde', henvisninger: [NICE.kombinasjon] },
     },
   ],
   unntak: [
@@ -360,7 +384,7 @@ const kryssSertralinMirtazapin: Regel = {
         RCPSYCH.langvarig,
       ),
     ],
-    forutsetninger: [...FORUTSETNINGER_FELLES, 'Pasienten har ikke andre serotonerge legemidler som gjør overlappen mer risikofylt.'],
+    forutsetninger: [...FORUTSETNINGER_FELLES],
     usikkerhet: [
       'Ved samtidig bruk kan serotonerge bivirkninger øke; overlappens lengde er OUSFARs valg.',
       'NICE åpner for raskere nedtrapping ved bytte; 14 dager per trinn kan være lengre enn nødvendig.',
@@ -396,11 +420,24 @@ const kryssSertralinMirtazapin: Regel = {
       stopp: /Svaret ja \(lang behandlingstid\) krever en skriftlig begrunnelse/,
     },
   ],
-  godkjenning: tilKontroll(
-    TRINNLENGDE_RETTET,
-    etterKontrollrunden('tidligere seponeringssymptomer stopper regelen, lang behandlingstid krever begrunnelse, og toleransen og overlappen må følges før hver reduksjon.'),
-    etterGjennomgangen('beregningen stopper ved 25 mg sertralin; seponeringen derfra og måldosen for mirtazapin planlegges individuelt.'),
-    etterBeslutningene('godtatt bare som avgrenset innledende plan (ned til en positiv sertralindose, mirtazapin 15 mg samtidig), uten automatisk seponering eller måldose for mirtazapin; om og når siste sertralindose seponeres, er forskriverens individuelle valg.'),
+  godkjenning: nyVersjon(
+    medKontrollorsavgrensning(
+      tilKontroll(
+        TRINNLENGDE_RETTET,
+        etterKontrollrunden('tidligere seponeringssymptomer stopper regelen, lang behandlingstid krever begrunnelse, og toleransen og overlappen må følges før hver reduksjon.'),
+        etterGjennomgangen('beregningen stopper ved 25 mg sertralin; seponeringen derfra og måldosen for mirtazapin planlegges individuelt.'),
+        etterBeslutningene('godtatt bare som avgrenset innledende plan (ned til en positiv sertralindose, mirtazapin 15 mg samtidig), uten automatisk seponering eller måldose for mirtazapin; om og når siste sertralindose seponeres, er forskriverens individuelle valg.'),
+      ),
+      5,
+      'ende-til-ende-testene med FEST for 50 og 100 mg er akseptert. Det verifiserte startforløpet kan være grunnlag for en snever klinisk godkjenning ved 50 og 100 mg sertralin, uten tidligere seponeringsplager og med bekreftet kontroll av serotonerg sammedisinering og toleranse, men ikke hele versjon 5: startdosen tillater 50–200 mg, og sammedisineringen står bare som forutsetning. Lang behandlingstid krever fortsatt individuell begrunnelse; fingeravtrykket for en godkjenning beregnes på den endelige avgrensede versjonen.',
+      RUNDE_7,
+    ),
+    6,
+    {
+      merknad:
+        'Avgrenset etter kontrollørens gjennomgang av 9cb420b 31.10.2026 (P4.8): startdosen er innskrenket til 50–100 mg, den verifiserte doserammen, og kontrollen av serotonerg sammedisinering er en uttrykkelig bekreftelse i stedet for en forutsetning. Til sluttkontroll av nøyaktig denne versjonen.',
+      dato: RUNDE_7.dato,
+    },
   ),
 }
 
@@ -1096,9 +1133,9 @@ const depotPaliperidon: Regel = {
 
 export const PILOTSETT: Regelsett = {
   id: 'ousfar-verktoy-pilot',
-  versjon: 10,
+  versjon: 11,
   modell: REGELMODELLVERSJON,
   beskrivelse:
-    'Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Etter kontrollrunden 30.10.2026 er byttereglene rettet eller avgrenset og sendt til ny kontroll, og de to depotreglene er funnet kildemessig akseptable som avgrensede varianter. Etter kontrollørens beslutninger samme dag er byttene avgrenset slik kontrolløren godtok dem, gruppebyttet til aripiprazol er tatt ut av verktøyet (en modelleringsdemonstrasjon i utviklingssettet), og depotreglene er koblet til preparatet sitt i FEST. Etter kontrollørens gjennomgang av de rettede versjonene er kvetiapin bundet til tabletter med vanlig frisetting fordelt på to doser, og fenelzin vises som utvasking fullført, ikke som oppstart. Etter gjennomgangen av 62ebb21 er de to depotreglene (versjon 3) klinisk godkjent av den uavhengige kontrolløren, bare for nøyaktig de avgrensede oppstartene, og fenelzinregelen står som modell for utvaskingen, ikke som en godkjennbar samlet doseplan. De tre byttereglene er til faglig kontroll og brukes ikke i appen.',
+    'Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Etter kontrollrunden 30.10.2026 er byttereglene rettet eller avgrenset og sendt til ny kontroll, og de to depotreglene er funnet kildemessig akseptable som avgrensede varianter. Etter kontrollørens beslutninger samme dag er byttene avgrenset slik kontrolløren godtok dem, gruppebyttet til aripiprazol er tatt ut av verktøyet (en modelleringsdemonstrasjon i utviklingssettet), og depotreglene er koblet til preparatet sitt i FEST. Etter kontrollørens gjennomgang av de rettede versjonene er kvetiapin bundet til tabletter med vanlig frisetting fordelt på to doser, og fenelzin vises som utvasking fullført, ikke som oppstart. Etter gjennomgangen av 62ebb21 er de to depotreglene (versjon 3) klinisk godkjent av den uavhengige kontrolløren, bare for nøyaktig de avgrensede oppstartene, og fenelzinregelen står som modell for utvaskingen, ikke som en godkjennbar samlet doseplan. Etter gjennomgangen av 9cb420b gjelder byttet fra sertralin til mirtazapin (versjon 6) bare 50–100 mg sertralin, med bekreftet kontroll av serotonerg sammedisinering. De tre byttereglene er til faglig kontroll og brukes ikke i appen.',
   regler: [kryssSertralinMirtazapin, maoFluoksetinFenelzin, antipsykotikabytteOlanzapinKvetiapin, depotAripiprazol, depotPaliperidon],
 }

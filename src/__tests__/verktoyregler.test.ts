@@ -80,7 +80,7 @@ const XEPLION = { startdose_mg: 6, bekreftet: ['indikasjon'], pasientforhold: { 
 const MAINTENA = { startdose_mg: 15, bekreftet: ['indikasjon'], pasientforhold: { cyp2d6_langsom: false, sterk_cyp_hemmer: false, cyp3a4_induktor: false } }
 const AP = ['indikasjon', 'peroral_formulering', 'spesialist_risiko']
 /** Svarene som lar kryssnedtrappingen sertralin → mirtazapin beregnes (kontrollrunden 30.10.2026). */
-const KRYSS = { bekreftet: ['toleranse_overlapp'], pasientforhold: { tidligere_seponeringssymptomer: false }, svar: { lang_behandlingstid: false } }
+const KRYSS = { bekreftet: ['toleranse_overlapp', 'serotonerg_sammedisinering'], pasientforhold: { tidligere_seponeringssymptomer: false }, svar: { lang_behandlingstid: false } }
 /** Alt seponeringsregelen for escitalopram spør om, fra 20 mg. */
 /** Escitalopram 20 mg med alt bekreftet, hvert unntak avkreftet og nei på hvert spørsmål. */
 const ESCITALOPRAM = regel('seponering-escitalopram')
@@ -198,27 +198,37 @@ describe('Pilotsettet', () => {
       }
       if (k === 'til_faglig_kontroll') expect(r.godkjenning.historikk.at(-1)!.fingeravtrykk, r.id).toBeUndefined()
       if (r.id === 'mao-fluoksetin-fenelzin') expect(r.godkjenning.historikk.at(-1)!.merknad).toMatch(/akseptert bare som kildebasert utvaskingsinformasjon.*kan derfor ikke godkjennes som en samlet klinisk doseplan/)
-      const historikk = k ? r.godkjenning.historikk.slice(0, -1) : r.godkjenning.historikk
+      const historikk = r.godkjenning.historikk.filter((s) => s.rolle === 'utvikler')
+      // Kontrolløren har bare egne steg der den har gitt en beslutning: det siste for de tre over, og for sertralin en avgrensning av versjon 5 i gjennomgangen av 9cb420b.
+      const kontrollor = r.godkjenning.historikk.filter((s) => s.rolle === 'uavhengig_kontrollor')
+      expect(kontrollor.length, r.id).toBe(k || r.id === 'kryssnedtrapping-sertralin-mirtazapin' ? 1 : 0)
+      if (r.id === 'kryssnedtrapping-sertralin-mirtazapin') {
+        expect(kontrollor[0]).toMatchObject({ status: 'til_faglig_kontroll', regelversjon: 5, merknad: expect.stringMatching(/^Kontrollørens gjennomgang av 9cb420b 31\.10\.2026 \(P4\.8\): .*ved 50 og 100 mg/) })
+        expect(kontrollor[0]!.fingeravtrykk).toBeUndefined()
+      }
       // Depotreglene har i tillegg et steg fra kontrollrunden 30.10.2026 for versjon 2: kildemessig akseptable, ikke klinisk godkjent.
       const depot = r.plan.form === 'oppstart_depot'
       const steg = Array.from({ length: r.versjon }, (_, i) => ['utkast', 'til_faglig_kontroll', ...(depot && i === 1 ? ['til_faglig_kontroll'] : [])]).flat()
       expect(historikk.map((s) => s.status), r.id).toEqual(steg)
       if (depot) expect(historikk[4]!.merknad, r.id).toMatch(/^Kontrollrunden 30\.10\.2026 \(P4\.8\): kildemessig akseptabel som avgrenset .*Ikke klinisk godkjent/)
-      // Hver regel i pilotsettet er rettet etter kontrollørens beslutninger 30.10.2026 (P4-A og P4-B); fenelzin og kvetiapin i tillegg etter gjennomgangen av fe08fac.
-      const gjennomgang = ['mao-fluoksetin-fenelzin', 'antipsykotikabytte-olanzapin-kvetiapin'].includes(r.id)
-      expect(historikk.at(gjennomgang ? -4 : -2)!.merknad, r.id).toMatch(/^Rettet etter kontrollørens beslutninger 30\.10\.2026 \(P4\.8\)/)
-      if (gjennomgang) expect(historikk.at(-2)!.merknad, r.id).toMatch(/^Rettet etter kontrollørens gjennomgang av fe08fac 30\.10\.2026 \(P4\.8\)/)
+      // Hver regel i pilotsettet er rettet etter kontrollørens beslutninger 30.10.2026 (P4-A og P4-B); fenelzin og kvetiapin i tillegg etter gjennomgangen av fe08fac, og sertralin etter gjennomgangen av 9cb420b.
+      const senere: Record<string, RegExp> = {
+        'mao-fluoksetin-fenelzin': /^Rettet etter kontrollørens gjennomgang av fe08fac 30\.10\.2026 \(P4\.8\)/,
+        'antipsykotikabytte-olanzapin-kvetiapin': /^Rettet etter kontrollørens gjennomgang av fe08fac 30\.10\.2026 \(P4\.8\)/,
+        'kryssnedtrapping-sertralin-mirtazapin': /^Avgrenset etter kontrollørens gjennomgang av 9cb420b 31\.10\.2026 \(P4\.8\): startdosen er innskrenket til 50–100 mg/,
+      }
+      expect(historikk.at(senere[r.id] ? -4 : -2)!.merknad, r.id).toMatch(/^Rettet etter kontrollørens beslutninger 30\.10\.2026 \(P4\.8\)/)
+      if (senere[r.id]) expect(historikk.at(-2)!.merknad, r.id).toMatch(senere[r.id]!)
       expect(historikk.at(-1)!.regelversjon, r.id).toBe(r.versjon)
-      expect(historikk.every((s) => s.rolle === 'utvikler'), r.id).toBe(true)
     }
     // Alle reglene er nye versjoner: tre rettet etter første kontroll av piloten, og to fikk kildegrunnlaget for trinnlengden rettet etter kontrollen av P7.
     // Escitalopram er flyttet til P7s nedtrappingsregler, og den hyperbolske citalopramregelen og gruppebyttet til sammenligningssettet.
     const rettet = (pr: string) => PILOTSETT.regler.filter((r) => r.godkjenning.historikk[2]!.merknad.includes(pr)).map((r) => r.id)
     expect(rettet('PR #282')).toEqual(['antipsykotikabytte-olanzapin-kvetiapin', 'depot-aripiprazol-maintena', 'depot-paliperidon-xeplion'])
     expect(rettet('PR #286')).toEqual(['kryssnedtrapping-sertralin-mirtazapin', 'mao-fluoksetin-fenelzin'])
-    // Kontrollrunden og gjennomgangen 30.10.2026 ga versjon 3–5; kontrollørens beslutninger samme dag én versjon til for hver regel, og gjennomgangen av fe08fac én til for fenelzin og kvetiapin.
+    // Kontrollrunden og gjennomgangen 30.10.2026 ga versjon 3–5; kontrollørens beslutninger samme dag én versjon til for hver regel, gjennomgangen av fe08fac én til for fenelzin og kvetiapin, og gjennomgangen av 9cb420b én til for sertralin.
     expect(PILOTSETT.regler.map((r) => [r.id, r.versjon])).toEqual([
-      ['kryssnedtrapping-sertralin-mirtazapin', 5],
+      ['kryssnedtrapping-sertralin-mirtazapin', 6],
       ['mao-fluoksetin-fenelzin', 7],
       ['antipsykotikabytte-olanzapin-kvetiapin', 5],
       ['depot-aripiprazol-maintena', 3],
@@ -302,7 +312,7 @@ describe('Beregningen', () => {
       status: 'modellberegning',
       klinisk_godkjent: false,
       forbehold: FORBEHOLD_IKKE_GODKJENT,
-      regel: { id: r.id, versjon: 5, godkjenning: 'til_faglig_kontroll' },
+      regel: { id: r.id, versjon: 6, godkjenning: 'til_faglig_kontroll' },
       regelsett: { id: PILOTSETT.id, versjon: PILOTSETT.versjon },
       modell: REGELMODELLVERSJON,
       motor: MOTORVERSJON,

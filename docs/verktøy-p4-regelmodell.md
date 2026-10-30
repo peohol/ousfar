@@ -250,3 +250,11 @@ Kvetiapinregelen testes ende til ende med det samme FEST-uttrekket, som nå ogs�
 | Olanzapin → kvetiapin (versjon 5) | Kvetiapinopptrappingen er akseptert som modell; olanzapin er individuell etter dag 4, og byttet som helhet er ikke validert. | Uendret, til faglig kontroll. |
 
 Godkjenningen av depotreglene er registrert med fingeravtrykket for versjonen i commit 62ebb21, som kontrolløren kontrollerte; fingeravtrykkene sto i PR-kommentaren kontrolløren svarte på. Testene viser at de to reglene gir en klinisk plan med de faktiske preparatene og fersk FEST, og at planen sperres utenfor avgrensningen (CYP2D6, induktorer, nyrefunksjon og manglende bekreftelse), med FEST eldre enn 48 timer og når regelen er endret etter godkjenningen. I verktøyet «Bytte antipsykotikum» kan de to oppstartene nå beregnes. FEST-uttrekket for pilotreglene (`src/data/verktoy/fest-pilotsett.json`) har nå preparatene for alle virkestoffene i pilotsettet.
+
+**Etter kontrollørens gjennomgang av 9cb420b (31.10.2026).** Fingeravtrykkene for Abilify Maintena og Xeplion versjon 3 er bekreftet som godkjenningsgrunnlag; reglene er uendret. Pilotsettet er versjon 11:
+
+| Regel | Beslutning | Endring |
+| --- | --- | --- |
+| Sertralin → mirtazapin (versjon 6) | Ende-til-ende-testene er akseptert. En snever godkjenning er mulig ved 50 og 100 mg sertralin, uten tidligere seponeringsplager og med bekreftet kontroll av serotonerg sammedisinering og toleranse, men ikke for versjon 5, der startdosen tillot 50–200 mg og sammedisineringen bare var en forutsetning. Lang behandlingstid krever fortsatt begrunnelse. | Startdosen er avgrenset til 50–100 mg (OUSFARs vurdering med kontrollørens avklaring), og «Serotonerg sammedisinering er kontrollert» er en egen bekreftelse i stedet for en forutsetning. Kontrollørens avgrensning av versjon 5 står i historikken. 75 mg stopper fordi 37,5 mg ikke kan gis med hele tabletter; under 50 og over 100 mg er utenfor regelen. Ikke godkjent: fingeravtrykket for versjon 6 er sendt til ny kontroll. |
+| Olanzapin → kvetiapin (versjon 5) | Akseptert bare som opptitrering av kvetiapin med vanlig frisetting, ikke som et validert bytte. | Uendret, til faglig kontroll. |
+| Fluoksetin → fenelzin (versjon 7) | Bare modellen er akseptert, ikke en samlet plan. | Uendret, til faglig kontroll. |

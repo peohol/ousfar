@@ -69,7 +69,14 @@ export const NEDTRAPPINGSDEKNING: readonly Dekning[] = [
     forhold: [],
     merknad: 'Med norske depottabletter, som ikke kan deles, kan ingen døgndose under 150 mg gis, så den prosentvise regelen er ikke beregnbar (fagkontrollen 30.10.2026). Avslutningen vurderes individuelt fra en dose som kan gis.',
   },
-  regel('citalopram', 'Ci'),
+  {
+    nokkel: 'citalopram',
+    kode: 'Ci',
+    status: 'bare_fagtekst',
+    forhold: [],
+    merknad:
+      'Med de norske tablettene er den eneste dosen som kan gis ved første trinn fra vanlig dose (20 mg), en halvering til 10 mg, verken ved kort eller lang behandlingstid; det er ikke et faglig akseptert standardtrinn, så en beregnet plan aktiveres foreløpig ikke (kontrollørens beslutning 31.10.2026). Nedtrappingen planlegges individuelt.',
+  },
   begrenset('doksepin', 'Dx', 'mangler_preparatomtale', 'stop_alternativ_adresse'),
   begrenset('dosulepin', 'Ds', 'ingen_preparater'),
   {

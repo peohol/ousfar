@@ -1,6 +1,6 @@
 # OUSFAR Verktøy – P5: testtilfeller for doseplanmotoren
 
-**Laget av `src/verktoy/motor/rapport.ts`; ikke rediger for hånd.** Lag den på nytt med `npm run verktoy:regler -- motorrapport`. Doseplanmotor 7. Bakgrunnen står i `docs/verktøy-p5-beregningsmotor.md`.
+**Laget av `src/verktoy/motor/rapport.ts`; ikke rediger for hånd.** Lag den på nytt med `npm run verktoy:regler -- motorrapport`. Doseplanmotor 8. Bakgrunnen står i `docs/verktøy-p5-beregningsmotor.md`.
 
 **Alt her er syntetisk.** Virkestoffene (testoksetin, testazapin, testperidon), preparatene og reglene finnes ikke og har ingen klinisk betydning. De er laget for å prøve motoren ved grenseverdiene: deling, formuleringer og former, godkjenningsfritak, avregistrering, toleranse, dosegrenser, utvasking, depot og datoer. Ingen av P4s pilotregler er brukt eller godkjent, og ingen plan her er klinisk. Hvert tilfelle kontrolleres av `src/__tests__/verktoymotor.test.ts`.
 
@@ -792,7 +792,7 @@ Testoksetin 20 mg trappes ned med 25 % av aktuell dose uten nulltrinn (individue
 *fra:*
 
 - fra dag 1: 15 mg = 1½ tabletter à 10 mg
-- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
+- én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene
 
 **Avvik fra den ideelle kurven:**
 
@@ -867,7 +867,7 @@ Testoksetin-dråper (1 mg per dråpe) fra 20 mg med 10 % av aktuell dose uten nu
 *fra:*
 
 - fra dag 1: 18 mg = 18 dråper à 1 mg
-- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
+- én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene
 
 **Avvik fra den ideelle kurven:**
 
@@ -1014,9 +1014,9 @@ Testoksetin 80 mg med 50 % av aktuell dose uten nulltrinn: 40 mg vises fordelt p
 
 ### trinnvalg-tilbys
 
-Nedtrapping med 25 % per trinn der regelen lar forskriveren velge blant dosene som kan gis (valgområde 5–50 %), fra 25 mg med tablettene: 18,75 mg kan gis, 14,06 mg kan ikke. Planen står på 18,75 mg og tilbyr 13,75 mg (−26,67 %, krever begrunnelse) og 15 mg (−20 %); den velger ikke selv.
+Nedtrapping med 25 % per trinn der regelen lar forskriveren velge blant dosene som kan gis (valgområde 5–50 %), fra 25 mg med tablettene: 18,75 mg kan gis, 14,06 mg kan ikke. Planen står på 18,75 mg og tilbyr 15 mg (−20 %); 13,75 mg (−26,67 %) ville krevd begrunnelse og tilbys ikke. Den velger ikke selv.
 
-*Kontrollerer:* P5.5 de nærmeste dosene som kan gis, med faktisk reduksjon innenfor valgområdet, når et trinn ikke kan gis nøyaktig (P7.5, bidragsyterens valg 30.10.2026). *Regel:* SYNTETISK TESTREGEL: seponering av testoksetin. *Inndata:* startdose 25 mg, valg: fra peroral, SYN-TAB. *Preparatstatus:* 2026-11-01.
+*Kontrollerer:* P5.5 de nærmeste dosene som kan gis, med faktisk reduksjon innenfor det foretrukne området, når et trinn ikke kan gis nøyaktig (P7.5, bidragsyterens valg 30.10.2026 og kontrollørens gjennomgang av 9cb420b). *Regel:* SYNTETISK TESTREGEL: seponering av testoksetin. *Inndata:* startdose 25 mg, valg: fra peroral, SYN-TAB. *Preparatstatus:* 2026-11-01.
 
 **Ideell kurve (P4):**
 
@@ -1034,7 +1034,7 @@ Nedtrapping med 25 % per trinn der regelen lar forskriveren velge blant dosene s
 *fra:*
 
 - fra dag 1: 18,75 mg = 1 tablett à 10 mg + 1¾ tabletter à 5 mg
-- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
+- én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene
 
 **Avvik fra den ideelle kurven:**
 
