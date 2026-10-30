@@ -1,0 +1,14 @@
+{
+  "versjon": 1,
+  "stoffer": [
+    "trimipramin",
+    "bupropion",
+    "gabapentin",
+    "litium",
+    "etanol",
+    "mdma"
+  ],
+  "oppgaver": [
+    "funksjonstest"
+  ]
+}
