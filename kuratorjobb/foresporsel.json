@@ -1,0 +1,12 @@
+{
+  "versjon": 1,
+  "stoffer": [
+    "tranylcypromin",
+    "trazodon",
+    "trifluoperazin",
+    "metadon"
+  ],
+  "oppgaver": [
+    "funksjonstest"
+  ]
+}
