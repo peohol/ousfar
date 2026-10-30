@@ -1,0 +1,53 @@
+Metylfenidat metaboliseres ikke i klinisk relevant grad via cytokrom P450. Forbindelser som induserer
+eller hemmer cytokrom P450 forventes ikke å ha noen relevant effekt på farmakokinetikken til
+metylfenidat. Omvendt hemmer ikke d- og l-enantiomerene av metylfenidat cytokrom P450 1A2, 2C8,
+2C9, 2C19, 2D6, 2E1 eller 3A i relevant grad.
+
+Det er imidlertid rapporter som indikerer at metylfenidat kan hemme metabolismen av antikoagulanter
+av kumarintypen, antikonvulsiva (f.eks. fenobarbital, fenytoin, primidon) og noen antidepressiver
+(trisykliske og selektive serotoninreopptakshemmere). Det kan være nødvendig å justere dosen av
+disse legemidlene som allerede brukes og måle plasmakonsentrasjonene av legemidlet (eller når det
+gjelder kumarin, koagulasjonstiden) ved oppstart eller seponering av metylfenidat.
+
+Farmakodynamiske interaksjoner
+
+Antihypertensiva
+Metylfenidat kan redusere effektiviteten av legemidler som brukes til behandling av hypertensjon.
+
+Samtidig bruk av legemidler som øker blodtrykket
+Forsiktighet bør utvises hos pasienter som behandles med metylfenidat sammen med alle andre
+legemidler som kan øke blodtrykket (se også avsnitt om kardiovaskulære og cerebrovaskulære
+tilstander i pkt. 4.4 Advarsler og forsiktighetsregler).
+
+På grunn av risiko for hypertensiv krise er metylfenidat kontraindisert hos pasienter som behandles (er
+under behandling eller som er blitt behandlet de siste to ukene) med ikke-selektive irreversible MAO-
+hemmere (se pkt. 4.3 Kontraindikasjoner).
+
+Samtidig bruk av alkohol
+Alkohol kan forsterke CNS-bivirkningene av psykoaktive legemidler, inkludert metylfenidat.
+Pasienten bør derfor avstå fra bruk av alkohol under behandlingen.
+
+Ved svært høye alkoholkonsentrasjoner kan den kinetiske profilen endres mot en mer ”immediate
+release”-lignende modell.
+
+Samtidig bruk av anestesimidler
+Det er en risiko for plutselig blodtrykks- og hjertefrekvensøkning under kirurgiske inngrep. Hvis et
+kirurgisk inngrep er planlagt, bør metylfenidat ikke brukes samme dag som inngrepet.
+
+Samtidig bruk av sentraltvirkende alfa-2-agonister (f.eks. klonidin)
+Sikkerheten ved langtidsbruk av metylfenidat i kombinasjon med klonidin eller andre sentraltvirkende
+alfa-2-agonister er ikke systematisk undersøkt.
+
+Samtidig bruk av dopaminerge legemidler
+Forsiktighet anbefales når metylfenidat administreres samtidig med dopaminerge legemidler, inkludert
+antipsykotika. Fordi den dominerende virkningen av metylfenidat er å øke ekstracellulære
+dopaminnivåer, kan metylfenidat forbindes med farmakodynamiske interaksjoner ved samtidig
+administrering av direkte eller indirekte dopaminagonister (inkludert DOPA og trisykliske
+antidepressiver) eller dopaminantagonister, inkludert antipsykotika.
+
+
+4.6     Fertilitet, graviditet og amming
+
+Graviditet
+Data fra en kohortstudie av totalt ca. 3400 svangerskap eksponert i første trimester antyder ingen økt
+risiko for fødselsdefekter generelt. Det var en liten økning i forekomst av hjertemisdannelser (samlet

@@ -1,0 +1,52 @@
+Behandling består av adekvate støttetiltak.
+
+Pasienten må beskyttes mot selvskading og mot eksterne stimuli som kan forverre overstimuleringen
+som allerede er til stede. Dersom tegnene og symptomene ikke er for alvorlige og pasienten er bevisst,
+kan mageinnholdet tømmes ved å fremkalle brekninger eller ved mageskylling. Før mageskylling bør
+agitasjon og eventuelle krampeanfall kontrolleres og frie luftveier sikres. Andre tiltak for å
+detoksifisere tarmen kan være administrering av aktivt kull og avføringsmiddel. Ved alvorlig
+forgiftning skal en nøye titrert dose av et benzodiazepin gis før mageskylling utføres.
+
+Intensivbehandling må gis for å opprettholde nødvendig sirkulasjon og respirasjon. Ytre avkjøling kan
+være nødvendig ved hyperpyreksi.
+
+Effekten av peritoneal dialyse eller ekstrakorporeal hemodialyse ved overdosering med metylfenidat
+er ikke dokumentert.
+
+
+5.      FARMAKOLOGISKE EGENSKAPER
+
+5.1     Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Sentralt virkende sympatomimetika, ATC-kode: N06BA04.
+
+Ritalin er et racemat som består av en 1:1 blanding av d-metylfenidat (d-MPH) og l-metylfenidat (1-
+MPH), og d-enantiomeren regnes som den farmakologisk aktive.
+
+Virkningsmekanisme
+Metylfenidat er et mildt sentralstimulerende middel med mer uttalt effekt på mentale enn motoriske
+aktiviteter.Virkningsmekanismen er ikke fullstendig klarlagt, men det antas at den stimulerende
+effekten skyldes hemming av noradrenalin og dopamin reopptak presynaptisk, og økt utskillelse av
+disse monoaminene til den synaptiske spalten. Bakgrunnen for preparatets gunstige effekt på mentale
+forstyrrelser og adferd hos barn er ikke fullstendig klarlagt. Det er heller ikke kjent hvordan
+metylfenidat påvirker forstyrrelser i sentralnervesystemet ved disse tilstandene.
+
+Effekten av behandling med 40 mg deksmetylfenidat hydroklorid, den farmakologisk aktive d-
+enantiomeren til Ritalin, på QT/QTc-intervallet ble evaluert i en studie med 75 friske frivillige.
+Maksimum gjennomsnittlig forlengelse av QTcF-intervaller var <5 ms, og øvre grense for 90 %
+konfidensintevallet var under 10 ms for alle sammenlignede tider versus placebo. Dette var under
+terskelen for klinisk bekymring og ingen eksponeringsresponsforhold var gjeldende.
+
+5.2     Farmakokinetiske egenskaper
+
+Absorpsjon
+Rask og nesten fullstendig. På grunn av uttalt ”first-pass” metabolisme er absolutt biotilgjengelighet
+22±8% for d-enantiomeren og 5±3% for l-enantiomeren. Samtidig matinntak har ingen relevant effekt
+på hastigheten av absorpsjonen. Maks. plasmakonsentrasjon på ca. 40 nmol/L (11 ng/mL) nås 1-2
+timer etter inntak. Det er store individuelle variasjoner i maks. plasmakonsentrasjon. AUC og Cmaks er
+proposjonal med dosen.
+
+Distribusjon
+I blod blir metylfenidat og dens metabolitter fordelt i plasma (57%) og erytrocytter (43%).
+Plasmaproteinbindingsgraden er lav (10-33%). Distribusjonsvolum var 2,65±1,11 l/kg for d-MPH og
+1,80±0,91 l/kg for l-MPH.

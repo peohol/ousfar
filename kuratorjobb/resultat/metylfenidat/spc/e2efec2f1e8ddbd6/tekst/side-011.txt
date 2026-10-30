@@ -1,0 +1,52 @@
+Metylfenidat metaboliseres ikke i klinisk relevant grad via cytokrom P450. Forbindelser som induserer
+eller hemmer cytokrom P450 forventes ikke å ha noen relevant effekt på farmakokinetikken til
+metylfenidat. Omvendt hemmer ikke d- og l-enantiomerene av metylfenidat cytokrom P450 1A2, 2C8,
+2C9, 2C19, 2D6, 2E1 eller 3A i relevant grad.
+
+Det er imidlertid rapporter som indikerer at metylfenidat kan hemme metabolismen av antikoagulanter
+av kumarintypen, antikonvulsiva (f.eks. fenobarbital, fenytoin, primidon) og noen antidepressiver
+(trisykliske og selektive serotoninreopptakshemmere). Det kan være nødvendig å justere dosen av
+disse legemidlene som allerede brukes, og måle plasmakonsentrasjonene av legemidlet (eller når det
+gjelder kumarin, koagulasjonstiden) ved oppstart eller seponering av metylfenidat.
+
+Farmakodynamiske interaksjoner
+
+Antihypertensive legemidler
+Metylfenidat kan redusere effekten av legemidler som brukes til behandling av hypertensjon.
+
+Samtidig bruk av legemidler som øker blodtrykket
+Forsiktighet bør utvises hos pasienter som behandles med metylfenidat sammen med alle andre
+legemidler som kan øke blodtrykket (se også avsnitt om kardiovaskulære og cerebrovaskulære
+tilstander i pkt. 4.4).
+På grunn av risiko for hypertensiv krise er metylfenidat kontraindisert hos pasienter som behandles (er
+under behandling eller som er blitt behandlet de siste to ukene) med ikke-selektive, irreversible MAO-
+hemmere (se pkt. 4.3).
+
+Samtidig bruk av alkohol
+Alkohol kan forsterke CNS-bivirkningene av psykoaktive legemidler, inkludert metylfenidat. In-vitro-
+data indikerer at alkoholkonsentrasjoner på over 10 % kan øke den kumulative frigjøringen av
+metylfenidat fra Methylphenidate Sandoz. Den kliniske relevansen av dette funnet knyttet til
+metylfenidateksponering etter oralt inntak av Methylphenidate Sandoz i kombinasjon med alkohol er
+ikke kjent. Pasienten bør derfor avstå fra bruk av alkohol under behandlingen.
+
+Samtidig bruk av serotonerge legemidler
+Det er rapportert om serotonergt syndrom etter samtidig administrering av metylfenidat og serotonerge
+legemidler. Ved behov for samtidig bruk av metylfenidat og et serotonergt legemiddel er det viktig å
+gjenkjenne symptomene på serotonergt syndrom raskt (se pkt. 4.4). Metylfenidat skal seponeres så
+snart som mulig ved mistanke om serotonergt syndrom.
+
+Samtidig bruk av halogenerte anestesimidler
+Det er en risiko for plutselig blodtrykksøkning og økt hjertefrekvens under kirurgiske inngrep. Hvis et
+kirurgisk inngrep er planlagt, bør metylfenidat ikke brukes samme dag som inngrepet.
+
+Samtidig bruk av sentraltvirkende alfa-2-agonister (f.eks. klonidin)
+Det er rapportert om alvorlige bivirkninger inkludert plutselig død, ved samtidig bruk av metylfenidat
+og klonidin. Sikkerheten ved langtidsbruk av metylfenidat i kombinasjon med klonidin eller andre
+sentraltvirkende alfa-2-agonister er ikke systematisk undersøkt.
+
+Samtidig bruk av dopaminerge legemidler
+Forsiktighet anbefales når metylfenidat administreres samtidig med dopaminerge legemidler, inkludert
+antipsykotika. Fordi den dominerende virkningen av metylfenidat er å øke ekstracellulære
+dopaminnivåer, kan metylfenidat forbindes med farmakodynamiske interaksjoner ved samtidig
+administrering av direkte eller indirekte dopaminagonister (inkludert DOPA og trisykliske
+antidepressiva) eller dopaminantagonister, inkludert antipsykotika.

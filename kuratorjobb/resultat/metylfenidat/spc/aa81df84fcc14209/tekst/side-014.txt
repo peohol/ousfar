@@ -1,0 +1,59 @@
+Effekten på QT/QTc-intervallet av behandling med 40 mg deksmetylfenidathydroklorid, den
+farmakologisk aktive d-enantiomeren av metylfenidat, ble evaluert i en studie med 75 friske frivillige.
+
+Maksimal gjennomsnittlig forlengelse av QTcF-intervaller var < 5 ms og den øvre grensen for 90 %
+konfidensintervall var under 10 ms for alle sammenkoblede sammenligningstidspunkter i forhold til
+placebo. Dette var under terskelen for klinisk relevans, og det var ingen klar eksponering-respons-
+relasjon.
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+Virkestoffet metylfenidathydroklorid absorberes raskt og nesten fullstendig etter oral administrering.
+På grunn av omfattende første passasje-metabolisme er den absolutte biotilgjengeligheten 22 ± 8 % for
+d-enantiomeren og 5 ± 3 % for l-enantiomeren. Inntak av metylfenidat sammen med mat hadde ingen
+relevant innvirkning på absorpsjonen. Maksimal plasmakonsentrasjon på ca. 40 nmol/l (11 ng/ml) nås
+ca. 1-2 timer etter administrering. Maksimal plasmakonsentrasjon varierer markant fra pasient til
+pasient. Arealet under konsentrasjon-tid-kurven (AUC) og maksimal plasmakonsentrasjon (Cmax) er
+proporsjonale med administrert dose.
+
+Distribusjon
+I blodet er metylfenidat og dets metabolitter fordelt i plasma (57 %) og erytrocytter (43 %).
+Metylfenidat og dets metabolitter har lav plasmaproteinbindingshastighet (10-33 %).
+Distribusjonsvolumet er 2,65 ± 1,11 l/kg for d-MPH og 1,80 ± 0,91 liter/kg for l-MPH. Metylfenidat
+krysser lett blod-hjerne-barrieren.
+
+Biotransformasjon
+Biotransformasjon av metylfenidat av karboksylesterasen CES1A1 er rask og omfattende. Det
+metaboliseres primært til ritalinsyre. Maksimal plasmakonsentrasjon av α-fenyl-2-piperidyleddiksyre
+(ritalinsyre) (PPAA) oppnås ca. 2 timer etter administrering av metylfenidat og er 30-50 ganger høyere
+enn for den uendrede substansen. Halveringstiden for PPAA er omtrent dobbelt så lang som for
+metylfenidat, og gjennomsnittlig systemisk clearance er 0,17 liter/time/kg. Akkumulering hos
+pasienter med nyreinsuffisiens er derfor mulig. Bare små mengder hydroksylerte metabolitter (f.eks.
+hydroksymetylfenidat og hydroksyritalinsyre) kan påvises. Terapeutisk aktivitet ser ut til å komme
+hovedsakelig på grunn av moderforbindelsen.
+
+Eliminasjon
+Metylfenidat elimineres fra plasma med en gjennomsnittlig halveringstid på 2 timer. Den systemiske
+clearance er 0,40 ± 0,12 liter/time/kg for d-MPH og 0,73 ± 0,28 l/t/kg for l-MPH. Etter oral
+administrering utskilles 78-97 % av dosen i urinen og 1-3 % i feces som metabolitter innen
+48-96 timer. Uendret metylfenidat vises i urinen bare i små mengder (< 1 %). Hoveddelen av dosen
+skilles ut i urinen som PPAA, (60-86 %), antagelig uavhengig av pH.
+
+Pasienter med nedsatt nyrefunksjon
+Eliminasjonsdata fra pasienter med normal nyrefunksjon tyder på at nyreutskillelse av uendret
+metylfenidat ikke vil bli signifikant redusert ved nedsatt nyrefunksjon. Utskillelsen av metabolitten Α-
+fenyl-2-piperidineddiksyre via nyrene vil mest sannsynlig bli redusert.
+
+5.3   Prekliniske sikkerhetsdata
+
+Karsinogenitet
+I livstidsstudier av karsinogenitet hos mus ble det sett økt forekomst av ondartede levertumorer hos
+hannmus ved en dose ca. 35 ganger høyere enn maksimal anbefalt human dose basert på mg/kg. Det
+antas at levertumorer kan være forårsaket av ikke-gentoksiske mekanismer som økt celledeling i
+leveren. Dette stemmer overens med den økte levervekten som ble observert i studien. I livstidsstudier
+av karsinogenitet hos rotter ble det ikke sett økt forekomst av svulster, høyeste dose som ble brukt var
+ca. 26 ganger høyere enn maksimal anbefalt human dose basert på mg/kg.
+
+
+                                                  14

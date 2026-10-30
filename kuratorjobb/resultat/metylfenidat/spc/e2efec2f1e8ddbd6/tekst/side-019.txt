@@ -1,0 +1,52 @@
+Etter administrasjon av Methylphenidate Sandoz depottabletter 18 mg én gang daglig hos 36 voksne
+var gjennomsnittsverdien for farmakokinetiske parametre: Cmax 3,7 ± 1,0 (ng/ml), Tmax 6,8 ±
+1,8 (timer), AUCinf 41,8 ± 13,9 (ng timer/ml), og t1/2 3,5 ± 0,4 (timer).
+
+Det var ingen forskjeller i farmakokinetikk ved Methylphenidate Sandoz depottabletter etter
+éngangsdosering og gjentatt daglig éngangsdosering. Dette indikerer at man ikke har noen signifikant
+akkumulering av aktiv substans. AUC og t1/2 etter gjentatt daglig éngangsdosering er lik tilsvarende
+parametre observert etter første gitte dose på 18 mg Methylphenidate Sandoz depottabletter.
+
+Etter administrasjon av Methylphenidate Sandoz depottabletter i enkeltdoser på 18, 36 og 54 mg/dag
+til voksne, viste Cmax og AUC(0-inf) for metylfenidat doseproporsjonalitet.
+
+Distribusjon
+Plasmakonsentrasjonen av metylfenidat hos voksne avtar bi-eksponensielt etter oral administrasjon.
+Halveringstiden for metylfenidat hos voksne etter oralt inntak av Methylphenidate Sandoz
+depottabletter, var ca. 3,5 timer. Proteinbindingsgraden for metylfenidat og metabolittene er ca. 15 %.
+Det tilsynelatende distribusjonsvolumet er ca. 13 liter/kg.
+
+Biotransformasjon
+Hos mennesker blir metylfenidat metabolisert hovedsakelig ved de-esterifisering til alfa-fenyl-
+piperidin-eddiksyre (PPA, ca. 50 ganger så høyt nivå i forhold til uforandret substans), som har liten
+eller ingen farmakologisk aktivitet. Hos voksne er metabolismen til PPA ved Methylphenidate Sandoz
+depottabletter gitt én gang daglig lik metabolismen ved metylfenidat gitt tre ganger daglig.
+Metabolismen for Methylphenidate Sandoz depottabletter gitt én gang daglig endres ikke ved gjentatt
+dosering.
+
+Eliminasjon
+Eliminasjonshalveringstiden for metylfenidat hos voksne etter oralt inntak av Methylphenidate Sandoz
+depottabletter var ca. 3,5 timer. Innen 48 til 96 timer etter oral administrering er ca. 90 % av dosen
+eliminert i urin og 1 til 3 % av dosen i feces som metabolitter. Små mengder med uforandret
+metylfenidat gjenfinnes i urin (mindre enn 1 %). Alfa- fenyl-piperidin-eddiksyre er hovedmetabolitten
+i urin (60–90 %).
+
+Etter oral dosering av radiomerket metylfenidat hos mennesker ble om lag 90 % av radioaktiviteten
+gjenfunnet i urinen. Hovedmetabolitten i urin var PPA, som stod for ca. 80 % av dosen.
+
+Effekt av mat
+Hos pasientene var det ingen forskjell verken i farmakokinetikk eller i farmakodynamikk når
+Methylphenidate Sandoz depottabletter ble gitt etter en fettrik frokost på tom mage.
+
+Spesielle populasjoner
+Kjønn
+Hos friske voksne var gjennomsnittlig dosejusterte AUC(0-inf)-verdier for Methylphenidate Sandoz
+depottabletterpå 36,7 ng timer/ml hos menn og 37,1 ng timer/ml hos kvinner, uten påviselige
+forskjeller mellom de to gruppene
+
+Etnisitet
+Hos friske voksne som fikk Methylphenidate Sandoz depottabletter var dosejustert AUC(0-inf)
+konsistent på tvers av etniske grupper. Imidlertid kan antallet personer ha vært utilstrekkelig for å
+oppdage etniske variasjoner i farmakokinetikk.
+
+Alder

@@ -1,0 +1,51 @@
+Biotransformasjon
+Rask og uttalt metabolisme via karboksylesterase CES1A1. Maks. plasmakonsentrasjon av
+hovedmetabolitten (-fenyl-2-piperidin eddiksyre (ritalinsyre)) nås etter ca. 2 timer og er 30-50 ganger
+høyere enn for uomdannet substans. Hovedmetabolitten har ca. dobbelt så lang
+eliminasjonshalveringstid som metylfenidat og systemisk clearance er 0,17 L/time/kg. Den
+terapeutiske effekten til preparatet synes i hovedsak å skyldes metylfenidat.
+
+Eliminasjon
+Metylfenidat utskilles fra plasma med en eliminasjonshalveringstid på ca. 2 timer. Systemisk
+clearance er 0,40±0,12 l/time/kg for d-MPH og 0,73±0,28 l/time/kg for l-MPH. 78-97% av dosen
+utskilles i urinen og 1-3% utskilles i fæces i form av metabolitter innen 48-96 timer. Kun små
+mengder (<1%) metylfenidat gjenfinnes i uforandret form i urinen, mens mesteparten av dosen
+utskilles som -fenyl-2-piperidin eddiksyre (60-86%).
+
+Pasientkarakteristika
+Det er ingen synlige forskjeller i farmakokinetikken av metylfenidat hos hyperaktive barn (6-13 år) og
+friske frivillige voksne. Eliminasjonen av uforandret metylfenidat vil trolig ikke påvirkes hos pasienter
+som har nedsatt nyrefunksjon. Imidlertid kan eliminasjonen av metabolitten -fenyl-2-piperidin
+eddiksyre reduseres.
+
+5.3     Prekliniske sikkerhetsdata
+
+Karsinogenitet
+I livsløpsstudier av karsinogenitet hos rotte og mus, ble økt antall tilfeller av hepatoblastom (en malign
+leversvulst) funnet kun hos hannmus ved en dose som var 35 ganger høyere enn maksimalt anbefalt
+dose hos mennesker basert på mg/kg. Hepatoblastom er en relativt sjelden malign svulst hos gnagere.
+Det antas at leverblastomer kan være forårsaket av ikke-genotoksiske mekanismer slik som økt
+celledeling av leverceller. Dette stemmer overens med den økte levervekten som ble observert i
+studien.
+
+Metylfenidat hadde ingen effekt på reproduksjonsevnen eller fertiliteten ved få gjentatte doseringer av
+klinisk dose.
+
+In vitro-forsøk med kulturer av ovarieceller fra Kinesisk hamster, viste økt forekomst av
+søsterkromatidutvekslinger og kromosomavvik. Imidlertid ble det ikke funnet mutagen effekt i to
+videre in vitro-forsøk (”Ames reverse mutation test” og ”mouse lymphoma forward mutation test”). I
+en in vivo-studie ble effekt av metylfenidat på benmargceller hos mus (mikrokjernetest) undersøkt i
+doser opp til 250 mg/kg, men hverken klastogen eller aneugen effekt ble påvist. I dette in vivo-
+forsøket ble det benyttet samme B6C3F1-musestamme som ga den positive responsen i
+karsinogenstudien.
+
+Kommentar: Ved å studere databasen ”Surveillance, Epidemiology and End Results (SEER)” for
+årene 1973-1991, har FDA estimert at den generelle forekomsten av hepatoblastom i befolkningen
+ikke er større enn 1 per 10 millioner personår.
+
+Totalt 174 tilfeller av hepatoblastom ble rapportert av SEER i perioden 1973-1995. Den aldersjusterte
+insidensraten var svært lav (IR = 0,0382 per 100 000 personår). Flesteparten av tilfellene (149 av 174)
+ble diagnostisert i aldersgruppen 0-4 år, noe som er i overensstemmelse med den naturlige
+sykdomshistorien. I aldersgruppen 5-24 år var forekomsten av hepatoblastom svært lav, med få eller
+ingen rapporterte tilfeller. Ut fra de erfaringer som er gjort siden Ritalin ble markedsført, er det ikke
+noe som tyder på at forekomsten er høyere for pasienter som behandles med Ritalin.
