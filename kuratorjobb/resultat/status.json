@@ -1,18 +1,69 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "advarsel",
   "jobb": {
     "gren": "kuratorjobb/manuell-41059224134",
     "foresporsel_commit": "89ec55929918ffc8e7183994b514224fc8913e66",
     "foresporsel_sha256": "151c153ca7312b26f8466706a0821ef48d5a0251c4b989e07cfabe2f8ab382a2",
     "kode_commit": "c58509067b9f530f36d25b6953495c5fd634f14f",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/41059224134",
-    "startet_kl": "2026-10-30T12:57:26.369Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-30T12:57:28.396Z",
+    "ferdig_kl": "2026-10-30T12:57:42.008Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "dmt",
+      "dosulepin",
+      "agomelatin"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 447
+    }
+  ],
+  "stoffer": {
+    "dmt": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/dmt/funksjonstest.json"
+        }
+      }
+    },
+    "dosulepin": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/dosulepin/funksjonstest.json"
+        }
+      }
+    },
+    "agomelatin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/agomelatin/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
