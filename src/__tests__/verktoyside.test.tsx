@@ -62,7 +62,7 @@ async function fyllInn(user: ReturnType<typeof userEvent.setup>) {
 }
 
 describe('oversikten', () => {
-  it('viser de tre verktøyene, og at ingen beregning er tilgjengelig ennå', () => {
+  it('viser de tre verktøyene, og at bare de to godkjente depotreglene kan beregnes', () => {
     vis()
     expect(screen.getByRole('heading', { level: 1, name: 'Verktøy' })).toBeTruthy()
     expect(document.activeElement).toBe(screen.getByRole('heading', { level: 1 }))
@@ -72,9 +72,9 @@ describe('oversikten', () => {
     expect(kort.map((a) => a.querySelector('.verktoykort__status')?.textContent)).toEqual([
       'Ingen beregning tilgjengelig ennå · 24 til faglig kontroll',
       'Ingen beregning tilgjengelig ennå · 2 til faglig kontroll',
-      'Ingen beregning tilgjengelig ennå · 3 til faglig kontroll',
+      '2 regler kan beregnes · 1 til faglig kontroll',
     ])
-    expect(screen.getByText(/Ingen beregninger er tilgjengelige ennå/)).toBeTruthy()
+    expect(screen.queryByText(/Ingen beregninger er tilgjengelige ennå/)).toBeNull()
     expect(screen.queryByRole('alert')).toBeNull()
   })
 
@@ -92,13 +92,12 @@ describe('med pilotreglene', () => {
     const legemidler = lesing()
     vis({ verktoy: 'bytte-antipsykotikum', legemidler })
     expect(screen.getByText(/Velg begge virkestoffene/)).toBeTruthy()
-    await user.type(screen.getByRole('combobox', { name: 'Bytte fra' }), 'Paliperidon')
-    // Paliperidon finnes både peroralt og som depot; formuleringen velges aldri for brukeren.
-    const formulering = screen.getByRole('group', { name: 'Formulering av paliperidon (bytte fra)' })
+    await user.type(screen.getByRole('combobox', { name: 'Bytte fra' }), 'Olanzapin')
+    // Olanzapin finnes både peroralt og som depot; formuleringen velges aldri for brukeren.
+    const formulering = screen.getByRole('group', { name: 'Formulering av olanzapin (bytte fra)' })
     expect(within(formulering).getAllByRole('radio').every((r) => !(r as HTMLInputElement).checked)).toBe(true)
     await user.click(within(formulering).getByRole('radio', { name: 'Peroral' }))
-    await user.type(screen.getByRole('combobox', { name: 'Bytte til' }), 'Paliperidon')
-    await user.click(within(screen.getByRole('group', { name: 'Formulering av paliperidon (bytte til)' })).getByRole('radio', { name: /^Depotinjeksjon/ }))
+    await user.type(screen.getByRole('combobox', { name: 'Bytte til' }), 'Kvetiapin')
 
     const status = screen.getByRole('status')
     expect(within(status).getByRole('heading', { name: 'Beregning er ikke tilgjengelig' })).toBeTruthy()
@@ -106,6 +105,22 @@ describe('med pilotreglene', () => {
     expect(status.textContent).toMatch(/til faglig kontroll/)
     expect(screen.queryByRole('button', { name: 'Beregn doseplan' })).toBeNull()
     expect(screen.queryByRole('table')).toBeNull()
+    expect(legemidler.les).not.toHaveBeenCalled()
+  })
+
+  it('tilbyr beregning for en depotregel kontrolløren har godkjent, og henter preparatene først når forskriveren beregner', async () => {
+    const user = userEvent.setup()
+    const legemidler = lesing()
+    vis({ verktoy: 'bytte-antipsykotikum', legemidler })
+    await user.type(screen.getByRole('combobox', { name: 'Bytte fra' }), 'Paliperidon')
+    // Paliperidon finnes både peroralt og som depot; formuleringen velges aldri for brukeren.
+    const formulering = screen.getByRole('group', { name: 'Formulering av paliperidon (bytte fra)' })
+    expect(within(formulering).getAllByRole('radio').every((r) => !(r as HTMLInputElement).checked)).toBe(true)
+    await user.click(within(formulering).getByRole('radio', { name: 'Peroral' }))
+    await user.type(screen.getByRole('combobox', { name: 'Bytte til' }), 'Paliperidon')
+    await user.click(within(screen.getByRole('group', { name: 'Formulering av paliperidon (bytte til)' })).getByRole('radio', { name: /^Depotinjeksjon/ }))
+    expect(screen.queryByText(/faglig kontroll av regelen gjenstår/)).toBeNull()
+    expect(screen.getByRole('button', { name: 'Beregn doseplan' })).toBeTruthy()
     expect(legemidler.les).not.toHaveBeenCalled()
   })
 

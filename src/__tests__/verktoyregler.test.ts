@@ -175,21 +175,41 @@ describe('Pilotsettet', () => {
     expect(kontrollerRegelsett({ ...PILOTSETT, regler: [r] }, GRUNNLAG).join(' ')).toMatch(/forløp fra stopper beregningen ved en sluttdose uten kilde/)
   })
 
-  it('har ingen klinisk godkjent regel; alle er til faglig kontroll i sin gjeldende versjon, med historikk', () => {
+  it('har bare de to depotreglene klinisk godkjent av kontrolløren; de andre er til faglig kontroll i sin gjeldende versjon, med historikk', () => {
+    // Kontrollørens gjennomgang av 62ebb21 30.10.2026: depotreglene godkjent for de avgrensede oppstartene, fenelzin bare som utvaskingsinformasjon.
+    const KONTROLLOREN: Record<string, 'klinisk_godkjent' | 'til_faglig_kontroll'> = {
+      'depot-aripiprazol-maintena': 'klinisk_godkjent',
+      'depot-paliperidon-xeplion': 'klinisk_godkjent',
+      'mao-fluoksetin-fenelzin': 'til_faglig_kontroll',
+    }
     for (const r of PILOTSETT.regler) {
-      expect(r.godkjenning.status, r.id).toBe('til_faglig_kontroll')
-      expect(godkjenningsfeil(r).length, r.id).toBeGreaterThan(0)
+      const k = KONTROLLOREN[r.id]
+      expect(r.godkjenning.status, r.id).toBe(k ?? 'til_faglig_kontroll')
+      expect(godkjenningsfeil(r).length === 0, r.id).toBe(k === 'klinisk_godkjent')
+      if (k) {
+        expect(r.godkjenning.historikk.at(-1), r.id).toMatchObject({
+          status: k,
+          av: 'ChatGPT (uavhengig fagkontrollør)',
+          rolle: 'uavhengig_kontrollor',
+          regelversjon: r.versjon,
+          ...(k === 'klinisk_godkjent' && { fingeravtrykk: fingeravtrykk(r) }),
+          merknad: expect.stringMatching(/^Kontrollørens gjennomgang av 62ebb21 30\.10\.2026 \(P4\.8\): /),
+        })
+      }
+      if (k === 'til_faglig_kontroll') expect(r.godkjenning.historikk.at(-1)!.fingeravtrykk, r.id).toBeUndefined()
+      if (r.id === 'mao-fluoksetin-fenelzin') expect(r.godkjenning.historikk.at(-1)!.merknad).toMatch(/akseptert bare som kildebasert utvaskingsinformasjon.*kan derfor ikke godkjennes som en samlet klinisk doseplan/)
+      const historikk = k ? r.godkjenning.historikk.slice(0, -1) : r.godkjenning.historikk
       // Depotreglene har i tillegg et steg fra kontrollrunden 30.10.2026 for versjon 2: kildemessig akseptable, ikke klinisk godkjent.
       const depot = r.plan.form === 'oppstart_depot'
       const steg = Array.from({ length: r.versjon }, (_, i) => ['utkast', 'til_faglig_kontroll', ...(depot && i === 1 ? ['til_faglig_kontroll'] : [])]).flat()
-      expect(r.godkjenning.historikk.map((s) => s.status), r.id).toEqual(steg)
-      if (depot) expect(r.godkjenning.historikk[4]!.merknad, r.id).toMatch(/^Kontrollrunden 30\.10\.2026 \(P4\.8\): kildemessig akseptabel som avgrenset .*Ikke klinisk godkjent/)
+      expect(historikk.map((s) => s.status), r.id).toEqual(steg)
+      if (depot) expect(historikk[4]!.merknad, r.id).toMatch(/^Kontrollrunden 30\.10\.2026 \(P4\.8\): kildemessig akseptabel som avgrenset .*Ikke klinisk godkjent/)
       // Hver regel i pilotsettet er rettet etter kontrollørens beslutninger 30.10.2026 (P4-A og P4-B); fenelzin og kvetiapin i tillegg etter gjennomgangen av fe08fac.
       const gjennomgang = ['mao-fluoksetin-fenelzin', 'antipsykotikabytte-olanzapin-kvetiapin'].includes(r.id)
-      expect(r.godkjenning.historikk.at(gjennomgang ? -4 : -2)!.merknad, r.id).toMatch(/^Rettet etter kontrollørens beslutninger 30\.10\.2026 \(P4\.8\)/)
-      if (gjennomgang) expect(r.godkjenning.historikk.at(-2)!.merknad, r.id).toMatch(/^Rettet etter kontrollørens gjennomgang av fe08fac 30\.10\.2026 \(P4\.8\)/)
-      expect(r.godkjenning.historikk.at(-1)!.regelversjon, r.id).toBe(r.versjon)
-      expect(r.godkjenning.historikk.every((s) => s.rolle === 'utvikler')).toBe(true)
+      expect(historikk.at(gjennomgang ? -4 : -2)!.merknad, r.id).toMatch(/^Rettet etter kontrollørens beslutninger 30\.10\.2026 \(P4\.8\)/)
+      if (gjennomgang) expect(historikk.at(-2)!.merknad, r.id).toMatch(/^Rettet etter kontrollørens gjennomgang av fe08fac 30\.10\.2026 \(P4\.8\)/)
+      expect(historikk.at(-1)!.regelversjon, r.id).toBe(r.versjon)
+      expect(historikk.every((s) => s.rolle === 'utvikler'), r.id).toBe(true)
     }
     // Alle reglene er nye versjoner: tre rettet etter første kontroll av piloten, og to fikk kildegrunnlaget for trinnlengden rettet etter kontrollen av P7.
     // Escitalopram er flyttet til P7s nedtrappingsregler, og den hyperbolske citalopramregelen og gruppebyttet til sammenligningssettet.
@@ -743,7 +763,7 @@ describe('Kontrollene av et regelsett', () => {
 
 describe('Reglene', () => {
   it('rapporten sier hvor mange regler som faktisk er gyldig klinisk godkjent', () => {
-    expect(lagRegelrapport()).toMatch(/\*\*5 regler, 0 klinisk godkjent\.\*\*.*ingen av reglene er klinisk godkjent/)
+    expect(lagRegelrapport()).toMatch(/\*\*5 regler, 2 klinisk godkjent\.\*\*.*2 av reglene er klinisk godkjent/)
     const en = lagRegelrapport(sett([godkjenn(regel('depot-paliperidon-xeplion')), regel('seponering-escitalopram')]))
     expect(en).toMatch(/\*\*2 regler, 1 klinisk godkjent\.\*\*.*1 av reglene er klinisk godkjent/)
     expect(en).not.toMatch(/ingen av reglene/)

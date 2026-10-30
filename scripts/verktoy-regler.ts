@@ -50,12 +50,8 @@ async function aksepttest() {
   skriv(AKSEPTTESTFIL, lagAksepttestrapport(uttrekk))
 }
 
-/** Virkestoffene i depotforløpene i pilotsettet. */
-/** Virkestoffene i pilotreglene som har et forløp bundet til legemiddelformer i FEST; de testes ende til ende. */
-const bundneStoffer = () =>
-  PILOTSETT.regler
-    .filter((r) => r.plan.forlop.some((f) => f.legemiddelformer || f.preparater))
-    .flatMap((r) => r.plan.forlop.flatMap((f) => (f.virkestoff.type === 'virkestoff' ? [f.virkestoff.nokkel] : [])))
+/** Virkestoffene i pilotreglene; reglene testes ende til ende med preparatene i FEST. */
+const pilotstoffer = () => PILOTSETT.regler.flatMap((r) => r.plan.forlop.flatMap((f) => (f.virkestoff.type === 'virkestoff' ? [f.virkestoff.nokkel] : [])))
 
 async function hentFest() {
   const url = process.env.VITE_SUPABASE_URL
@@ -63,7 +59,7 @@ async function hentFest() {
   if (!url || !nokkel) throw new Error('VITE_SUPABASE_URL og SUPABASE_SECRET_KEY må være satt.')
   for (const [fil, nokler] of [
     [FEST_AKSEPTTEST, AKSEPTSTOFFER.map((s) => s.nokkel)],
-    [FEST_PILOT, [...new Set(bundneStoffer())]],
+    [FEST_PILOT, [...new Set(pilotstoffer())]],
   ] as const) {
     const ider = [...new Set(Object.values(festkoblinger(nokler)).flat())].sort()
     const svar = await fetch(`${url}/rest/v1/rpc/les_legemidler`, {

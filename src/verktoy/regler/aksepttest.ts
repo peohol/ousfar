@@ -28,7 +28,7 @@ import { LANG_BEHANDLINGSTID, NEDTRAPPINGSSETT, UTENFOR_DOSERAMME_ID } from './n
 
 export const AKSEPTTESTFIL = 'docs/verktøy-p7-aksepttest.md'
 export const FEST_AKSEPTTEST = 'src/data/verktoy/fest-aksepttest.json'
-/** FEST-uttrekket ende-til-ende-testene av pilotreglene som er bundet til preparater eller legemiddelformer i FEST, regnes fra (P4.8, beslutning P4-B). */
+/** FEST-uttrekket ende-til-ende-testene av pilotreglene regnes fra (P4.8). */
 export const FEST_PILOT = 'src/data/verktoy/fest-pilotsett.json'
 
 /** Stien til trinnstørrelsen forskriveren kan justere i en P7-regel. */
@@ -205,6 +205,30 @@ function utfall(r: Akseptresultat): string {
   return n === 0 ? 'stopper ved første trinn' : `${n} ${n === 1 ? 'reduksjon' : 'reduksjoner'}`
 }
 
+/** Det kliniske omfanget en plan har i ett scenario (P7.5, kontrollørens gjennomgang av 62ebb21). */
+export type Omfang = 'delplan' | 'valg' | 'avvik' | 'stopp'
+
+export const OMFANG: Record<Omfang, string> = {
+  delplan: 'delplan med den foretrukne reduksjonen, som stopper ved trinnet før det første som ikke kan gis',
+  valg: 'første trinn bare med en dose forskriveren velger, innenfor det foretrukne området',
+  avvik: 'bare forklarende stopp; de eneste dosene som kan gis, er avvik som krever begrunnelse og kan bare velges etter uttrykkelig individuell vurdering',
+  stopp: 'bare forklarende stopp; ingen dose i valgområdet kan gis',
+}
+
+/**
+ * Omfanget av planen: en delplan når første trinn kan gis med den foretrukne
+ * reduksjonen; ellers om første trinn kan gis med en valgt dose uten krav om
+ * begrunnelse, bare som avvik, eller ikke i det hele tatt.
+ */
+export function omfang(p: Doseplanresultat): Omfang {
+  if (reduksjoner(p) > 0) return 'delplan'
+  const doser = p.trinnvalg?.find((t) => t.trinn === 1)?.doser ?? []
+  if (doser.some((d) => !d.krever_begrunnelse)) return 'valg'
+  return doser.length > 0 ? 'avvik' : 'stopp'
+}
+
+const OMFANGSORD: Record<Omfang, string> = { delplan: 'delplan', valg: 'valgt dose', avvik: 'bare avvik', stopp: 'stopp' }
+
 /** «Kan velges for trinn 2 (dag 29, beregnet 56,25 mg, fra 75 mg): 50 mg (−33,33 %, avvik som krever begrunnelse).» */
 export const valgtekst = (t: Trinnvalg) =>
   `Kan velges for trinn ${t.trinn} (dag ${t.fra_dag}, beregnet ${tall(avrund(t.beregnet_mg))} mg, fra ${tall(t.fra_mg)} mg): ${t.doser.map((d) => trinndosetekst({ ...d, prosent: avrund(d.prosent) })).join(' eller ')}.`
@@ -231,13 +255,21 @@ export function lagAksepttestrapport(u: Festuttrekk): string {
     ['Virkestoff', 'Form', ...(Object.keys(SCENARIOER) as Scenario[]).map((s) => `(${s})`)],
     sett.map((t) => [t.nokkel, formnavn(t.form), ...t.resultater.map(utfall)]),
   )
+  const kliniske = (Object.keys(SCENARIOER) as Scenario[]).filter((s) => s !== 'h')
+  const omfangstabell = tabell(
+    ['Virkestoff', 'Form', ...kliniske.map((s) => `(${s})`)],
+    sett.map((t) => [t.nokkel, formnavn(t.form), ...kliniske.map((s) => {
+      const p = t.resultater.find((r) => r.scenario === s)?.plan
+      return p ? `${OMFANGSORD[omfang(p)]}${omfang(p) === 'delplan' ? ` (${reduksjoner(p)})` : ''}` : '–'
+    })]),
+  )
   const annenhver = annenhverDag(u)
   return `<!-- Laget av \`npm run verktoy:regler -- aksepttest\` fra ${FEST_AKSEPTTEST}; rediger ikke for hånd. -->
 # P7: aksepttest med norske preparater
 
 Aksepttesten etter kontrollrunden 30.10.2026 (P7.5, del E.2). Hver hovedregel og langsom variant i \`ousfar-verktoy-nedtrapping\` versjon ${NEDTRAPPINGSSETT.versjon} er regnet med de faktiske preparatene i FEST, ikke syntetiske, for hver legemiddelform forskriveren kan velge. FEST-uttrekket er hentet ${norskDato(u.hentet.slice(0, 10))} (kildedato ${u.utvalg.kildedato ? norskDato(u.utvalg.kildedato.slice(0, 10)) : 'ukjent'}); bare preparater med markedsføringstillatelse som er markedsført, brukes, ikke godkjenningsfritak.
 
-**Dette er modellberegninger til faglig kontroll, ikke kliniske planer.** Ingen beregnbar regel er klinisk godkjent, og verktøyet viser ingen av planene. Pasientopplysninger inngår ikke.
+**Dette er modellberegninger til faglig kontroll, ikke kliniske planer.** Ingen beregnbar P7-regel er klinisk godkjent, og verktøyet viser ingen av planene. Pasientopplysninger inngår ikke.
 
 Scenariene er:
 
@@ -256,6 +288,14 @@ I (a) stopper ${forsteTrinn.length} av ${sett.length} kombinasjoner av virkestof
 Der et trinn ikke kan gis nøyaktig, kan forskriveren velge blant de nærmeste dosene som kan gis, med faktisk reduksjon innenfor valgområdet for risikogruppen (bidragsyterens valg 30.10.2026, akseptert som prinsipp i kontrollørens beslutning P7-A). I (a) tilbyr ${tilbud.length} av ${sett.length} kombinasjoner et slikt valg. Med et valg ved hvert slikt trinn (h) stopper ${medValgForste.length} av ${sett.length} ved første trinn.
 
 ${oversikt}
+
+## Klinisk omfang per virkestoff og form (P7.5)
+
+Til kontrollørens regel- og formspesifikke kontroll (gjennomgangen av 62ebb21): for hver kombinasjon og hvert klinisk scenario, om en oppnåelig delplan kan brukes, eller om bare et forklarende stopp er riktig. Ingen delplan er en fullstendig seponering, og en dose som krever begrunnelse, er aldri et anbefalt eller rutinemessig trinn. Scenario (h) er en simulering og er ikke med.
+
+${liste(Object.values(OMFANG).map((v, i) => `**${Object.values(OMFANGSORD)[i]}:** ${v}.`))}
+
+${omfangstabell}
 
 ## Per virkestoff
 

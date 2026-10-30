@@ -42,7 +42,7 @@ import { markedsgrunnlag, preparaterFor } from '../verktoy/kartlegging'
 import { beregnDoseplan, kliniskDoseplan, planform } from '../verktoy/motor/plan'
 import { syntetiskUtvalg, type Testpreparat } from '../verktoy/motor/syntetisk'
 import { VERKTOY, virkestoffvalg } from '../verktoy/register'
-import { akseptsett, AKSEPTSTOFFER, AKSEPTTESTFIL, annenhverDag, besvart, FEST_AKSEPTTEST, KORT, LANG, lagAksepttestrapport, reduksjoner, valgtekst, vanligDose, type Festuttrekk } from '../verktoy/regler/aksepttest'
+import { akseptsett, AKSEPTSTOFFER, AKSEPTTESTFIL, annenhverDag, besvart, FEST_AKSEPTTEST, KORT, LANG, lagAksepttestrapport, omfang, reduksjoner, valgtekst, vanligDose, type Festuttrekk } from '../verktoy/regler/aksepttest'
 import { AVSLUTNING_FELLES, avrund, beregn, kortform, MINSTE_VISTE_MG, nulldagfeil, SISTE_DOSE, TIDLIGSTE_DATOER, trinnTilHorisont, type Forlopsresultat, type Periode } from '../verktoy/regler/beregning'
 import { erKliniskGodkjent, fingeravtrykk } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett, lesKontrollgrunnlag } from '../verktoy/regler/kontroll'
@@ -1161,6 +1161,28 @@ describe('Aksepttesten med norske preparater (P7.5, del E.2)', () => {
       const linjer = planform(p).fra!
       expect(linjer.join('\n')).not.toMatch(/seponert|: 0 mg/)
       expect(linjer.at(-1)).toMatch(AVSLUTNING)
+    }
+  })
+
+  it('sier for hver kombinasjon og hvert klinisk scenario om en delplan kan brukes, eller bare et forklarende stopp (P7.5, gjennomgangen av 62ebb21)', () => {
+    const omfanget = (n: string, form: string | null, sc: string) => {
+      const p = sett.find((t) => t.nokkel === n && t.form.kode === form)!.resultater.find((r) => r.scenario === sc)!.plan!
+      return omfang(p)
+    }
+    // Citalopram 20 mg etter lang behandlingstid: 18 mg kan ikke gis, og den eneste dosen som tilbys (10 mg, 50 %), er et avvik, ikke et trinn.
+    expect(omfanget('citalopram', null, 'b')).toBe('avvik')
+    // Amitriptylin 50 mg: 37,5 mg kan ikke gis; 40 mg (20 %) kan velges uten begrunnelse.
+    expect(omfanget('amitriptylin', null, 'a')).toBe('valg')
+    for (const t of sett) {
+      for (const r of t.resultater.filter((x) => x.plan && x.scenario !== 'h')) {
+        const p = r.plan!
+        const o = omfang(p)
+        const forste = p.trinnvalg?.find((x) => x.trinn === 1)?.doser ?? []
+        // En delplan gir minst én reduksjon uten valg; ellers stopper planen ved første trinn, og omfanget følger dosene som tilbys.
+        expect(o === 'delplan', `${t.nokkel} ${r.scenario}`).toBe(reduksjoner(p) > 0)
+        if (o === 'avvik') expect(forste.length > 0 && forste.every((d) => d.krever_begrunnelse), `${t.nokkel} ${r.scenario}`).toBe(true)
+        if (o === 'stopp') expect(forste, `${t.nokkel} ${r.scenario}`).toEqual([])
+      }
     }
   })
 

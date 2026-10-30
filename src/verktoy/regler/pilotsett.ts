@@ -22,7 +22,7 @@
  * versjon 2 og er sendt til kontroll på nytt.
  */
 import { fluoksetinTrinn28, FORUTSETNINGER_FELLES, forslag, h, halvering, kilde, minst14, NICE, planhorisont, pn, RCPSYCH, steg, trinn14, utsagn } from './bygg'
-import type { Bekreftelse, Godkjenning, Regel, Regelsett, Sporsmal, Unntak } from './modell'
+import type { Bekreftelse, Godkjenning, Godkjenningssteg, Regel, Regelsett, Sporsmal, Unntak } from './modell'
 import { REGELMODELLVERSJON } from './modell'
 
 /* --- Godkjenning ------------------------------------------------------------------ */
@@ -66,6 +66,37 @@ const RUNDE_5 = '2026-10-30'
 const etterBeslutningene = (rettet: string) => ({ merknad: `Rettet etter kontrollørens beslutninger 30.10.2026 (P4.8): ${rettet}`, dato: RUNDE_5 })
 /** Rettet etter kontrollørens gjennomgang av de rettede versjonene (HEAD fe08fac, 30.10.2026). */
 const etterGjennomgangenAvFe08fac = (rettet: string) => ({ merknad: `Rettet etter kontrollørens gjennomgang av fe08fac 30.10.2026 (P4.8): ${rettet}`, dato: RUNDE_5 })
+
+/** Kontrollørens gjennomgang av HEAD 62ebb21 30.10.2026 (P4.8). */
+const RUNDE_6 = '2026-10-30'
+const KONTROLLOR = 'ChatGPT (uavhengig fagkontrollør)'
+const kontrollorsteg = (status: Godkjenningssteg['status'], regelversjon: number, merknad: string, fingeravtrykk?: string): Godkjenningssteg => ({
+  status,
+  dato: RUNDE_6,
+  av: KONTROLLOR,
+  rolle: 'uavhengig_kontrollor',
+  regelversjon,
+  ...(fingeravtrykk && { fingeravtrykk }),
+  merknad: `Kontrollørens gjennomgang av 62ebb21 30.10.2026 (P4.8): ${merknad}`,
+})
+
+/**
+ * Kontrollørens avgrensede kliniske godkjenning av nøyaktig regelversjonen
+ * kontrolløren kontrollerte i HEAD 62ebb21, med fingeravtrykket for den
+ * versjonen (oppgitt i PR-kommentaren til kontrollen). OUSFAR Dev setter
+ * aldri en klinisk godkjenning selv, og godkjenningen faller bort når regelen
+ * endres.
+ */
+const avgrensetGodkjent = (g: Godkjenning, versjon: number, fingeravtrykk: string, avgrensning: string): Godkjenning => ({
+  status: 'klinisk_godkjent',
+  historikk: [...g.historikk, kontrollorsteg('klinisk_godkjent', versjon, `faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: ${avgrensning}`, fingeravtrykk)],
+})
+
+/** Kontrollørens avgrensning av hva en regelversjon kan godkjennes som; regelen står fortsatt til kontroll og er ikke godkjent. */
+const medKontrollorsavgrensning = (g: Godkjenning, versjon: number, avgrensning: string): Godkjenning => ({
+  status: g.status,
+  historikk: [...g.historikk, kontrollorsteg('til_faglig_kontroll', versjon, avgrensning)],
+})
 
 /** En ny versjon til kontroll etter en historikk som allerede har steg for den forrige. */
 const nyVersjon = (g: Godkjenning, versjon: number, v: { merknad: string; dato: string }): Godkjenning => ({
@@ -472,13 +503,17 @@ const maoFluoksetinFenelzin: Regel = {
       stopp: /Må bekreftes før beregning: Byttet gjøres i, eller med råd fra, spesialisthelsetjenesten/,
     },
   ],
-  godkjenning: tilKontroll(
-    TRINNLENGDE_RETTET,
-    etterKontrollrunden('fenelzin startes ikke automatisk på dagen planen viser; utvaskingen er et minimum, og senere oppstart kan være nødvendig.'),
-    etterGjennomgangen('den britiske preparatomtalen for fenelzin (pkt. 4.5) er lagt til som kilde for minimum 5 uker etter fluoksetin.'),
-    etterGjennomgangen('den britiske preparatomtalen for fenelzin gir 5 uker etter fluoksetin som eksempel, ikke som eget minimum; minimumet på 35 dager bygger på preparatomtalen for fluoksetin.'),
-    etterBeslutningene('35 døgn uten fluoksetin er godtatt bare som kildebasert tidligste utvasking, ikke en anbefalt startdato; fenelzin startes og doseres ikke, og fenelzins kontraindikasjoner og interaksjoner (den britiske preparatomtalen, pkt. 4.3 og 4.5) står framhevet i planen.'),
-    etterGjennomgangenAvFe08fac('planlinjen for fenelzin sier ikke lenger «oppstart», men at utvaskingen er fullført, at fenelzin ikke er startet eller dosert av planen, og at klinisk oppstart først kan vurderes etter kontroll av kontraindikasjoner, interaksjoner og øvrige forhold.'),
+  godkjenning: medKontrollorsavgrensning(
+    tilKontroll(
+      TRINNLENGDE_RETTET,
+      etterKontrollrunden('fenelzin startes ikke automatisk på dagen planen viser; utvaskingen er et minimum, og senere oppstart kan være nødvendig.'),
+      etterGjennomgangen('den britiske preparatomtalen for fenelzin (pkt. 4.5) er lagt til som kilde for minimum 5 uker etter fluoksetin.'),
+      etterGjennomgangen('den britiske preparatomtalen for fenelzin gir 5 uker etter fluoksetin som eksempel, ikke som eget minimum; minimumet på 35 dager bygger på preparatomtalen for fluoksetin.'),
+      etterBeslutningene('35 døgn uten fluoksetin er godtatt bare som kildebasert tidligste utvasking, ikke en anbefalt startdato; fenelzin startes og doseres ikke, og fenelzins kontraindikasjoner og interaksjoner (den britiske preparatomtalen, pkt. 4.3 og 4.5) står framhevet i planen.'),
+      etterGjennomgangenAvFe08fac('planlinjen for fenelzin sier ikke lenger «oppstart», men at utvaskingen er fullført, at fenelzin ikke er startet eller dosert av planen, og at klinisk oppstart først kan vurderes etter kontroll av kontraindikasjoner, interaksjoner og øvrige forhold.'),
+    ),
+    7,
+    'akseptert bare som kildebasert utvaskingsinformasjon (35 dager etter siste fluoksetindose som minimum, fenelzin ikke startet eller dosert av planen), ikke som en klinisk godkjent fast nedtrapping av fluoksetin. Regelen kan derfor ikke godkjennes som en samlet klinisk doseplan; den står som modell. En godkjennbar regel må skille utvaskingen fra nedtrappingen, for eksempel med bekreftet dato for siste fluoksetindose som inndata.',
   ),
 }
 
@@ -856,16 +891,21 @@ const depotAripiprazol: Regel = {
       stopp: /Må bekreftes før beregning: Pasienten er voksen, har schizofreni/,
     },
   ],
-  godkjenning: nyVersjon(
-    kildemessigAkseptabel(
-      tilKontroll(etterPilotkontrollen('indikasjonen må bekreftes, og hvert unntak må besvares; et ukjent unntak stopper beregningen.')),
-      2,
-      'avgrenset oppstart med én injeksjon fra stabilisert og tolerert peroral aripiprazol; det gjelder ikke andre oppstartsvarianter eller depoter',
+  godkjenning: avgrensetGodkjent(
+    nyVersjon(
+      kildemessigAkseptabel(
+        tilKontroll(etterPilotkontrollen('indikasjonen må bekreftes, og hvert unntak må besvares; et ukjent unntak stopper beregningen.')),
+        2,
+        'avgrenset oppstart med én injeksjon fra stabilisert og tolerert peroral aripiprazol; det gjelder ikke andre oppstartsvarianter eller depoter',
+      ),
+      3,
+      etterBeslutningene(
+        'doseringsprinsippene er godtatt i samsvar med preparatomtalen (P4-B). Depotforløpet er koblet til Abilify Maintena i FEST, bare den månedlige presentasjonen (pulver og væske til depotinjeksjonsvæske), så beregningen kan gi en plan med faktiske preparater; ikke andre aripiprazoldepoter.',
+      ),
     ),
     3,
-    etterBeslutningene(
-      'doseringsprinsippene er godtatt i samsvar med preparatomtalen (P4-B). Depotforløpet er koblet til Abilify Maintena i FEST, bare den månedlige presentasjonen (pulver og væske til depotinjeksjonsvæske), så beregningen kan gi en plan med faktiske preparater; ikke andre aripiprazoldepoter.',
-    ),
+    '04d1debe48f02ea03a31aab3d7cd5cdeb15c56d4b43797bda353f3d857297f20',
+    'oppstart med én injeksjon Abilify Maintena 400 mg, peroral aripiprazol i 14 dager og deretter 400 mg månedlig, hos voksne med schizofreni som er stabilisert på og har tålt peroral aripiprazol. Gjelder ikke andre depottyper eller oppstartsvarianter, kjent langsom CYP2D6-omsetning, sterke CYP2D6- eller CYP3A4-hemmere, CYP3A4-induktorer eller ubekreftet stabilisering eller toleranse.',
   ),
 }
 
@@ -1036,24 +1076,29 @@ const depotPaliperidon: Regel = {
       stopp: /Må avklares før beregning \(ukjent\): Pasienten har kreatininclearance under 80 ml\/min/,
     },
   ],
-  godkjenning: nyVersjon(
-    kildemessigAkseptabel(
-      tilKontroll(etterPilotkontrollen('indikasjonen må bekreftes, nyrefunksjonen må besvares, og ved 3 mg må klinikeren velge dosen i spennet 25–50 mg.')),
-      2,
-      'avgrenset overgang fra stabiliserte perorale paliperidon-depottabletter med normal nyrefunksjon; det gjelder ikke risperidon, nedsatt nyrefunksjon eller andre depotregimer',
+  godkjenning: avgrensetGodkjent(
+    nyVersjon(
+      kildemessigAkseptabel(
+        tilKontroll(etterPilotkontrollen('indikasjonen må bekreftes, nyrefunksjonen må besvares, og ved 3 mg må klinikeren velge dosen i spennet 25–50 mg.')),
+        2,
+        'avgrenset overgang fra stabiliserte perorale paliperidon-depottabletter med normal nyrefunksjon; det gjelder ikke risperidon, nedsatt nyrefunksjon eller andre depotregimer',
+      ),
+      3,
+      etterBeslutningene(
+        'doseringsprinsippene er godtatt i samsvar med preparatomtalen (P4-B). Depotforløpet er koblet til Xeplion i FEST, så beregningen kan gi en plan med faktiske preparater; etter bytte fra 9–12 mg står deltoideus framhevet i selve planen, og dosene er oppgitt som paliperidon med palmitat-ekvivalentene.',
+      ),
     ),
     3,
-    etterBeslutningene(
-      'doseringsprinsippene er godtatt i samsvar med preparatomtalen (P4-B). Depotforløpet er koblet til Xeplion i FEST, så beregningen kan gi en plan med faktiske preparater; etter bytte fra 9–12 mg står deltoideus framhevet i selve planen, og dosene er oppgitt som paliperidon med palmitat-ekvivalentene.',
-    ),
+    '21a335eec8c3816ee21627ceec3197e52957ccdf99cdbfaa00a3ca3cb5987bdf',
+    'overgang fra perorale paliperidon-depottabletter til Xeplion med 150 mg paliperidon dag 1 og 100 mg dag 8 i deltoideus, deretter månedlig fra én måned etter dag 8, hos voksne med schizofreni som er stabilisert, med kreatininclearance minst 80 ml/min og med deltoideus framhevet etter 9–12 mg peroralt. Gjelder ikke andre depottyper eller depotregimer, risperidon, nedsatt nyrefunksjon eller ubekreftet stabilisering eller toleranse.',
   ),
 }
 
 export const PILOTSETT: Regelsett = {
   id: 'ousfar-verktoy-pilot',
-  versjon: 9,
+  versjon: 10,
   modell: REGELMODELLVERSJON,
   beskrivelse:
-    'Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Etter kontrollrunden 30.10.2026 er byttereglene rettet eller avgrenset og sendt til ny kontroll, og de to depotreglene er funnet kildemessig akseptable som avgrensede varianter. Etter kontrollørens beslutninger samme dag er byttene avgrenset slik kontrolløren godtok dem, gruppebyttet til aripiprazol er tatt ut av verktøyet (en modelleringsdemonstrasjon i utviklingssettet), og depotreglene er koblet til preparatet sitt i FEST. Etter kontrollørens gjennomgang av de rettede versjonene er kvetiapin bundet til tabletter med vanlig frisetting fordelt på to doser, og fenelzin vises som utvasking fullført, ikke som oppstart. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.',
+    'Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Etter kontrollrunden 30.10.2026 er byttereglene rettet eller avgrenset og sendt til ny kontroll, og de to depotreglene er funnet kildemessig akseptable som avgrensede varianter. Etter kontrollørens beslutninger samme dag er byttene avgrenset slik kontrolløren godtok dem, gruppebyttet til aripiprazol er tatt ut av verktøyet (en modelleringsdemonstrasjon i utviklingssettet), og depotreglene er koblet til preparatet sitt i FEST. Etter kontrollørens gjennomgang av de rettede versjonene er kvetiapin bundet til tabletter med vanlig frisetting fordelt på to doser, og fenelzin vises som utvasking fullført, ikke som oppstart. Etter gjennomgangen av 62ebb21 er de to depotreglene (versjon 3) klinisk godkjent av den uavhengige kontrolløren, bare for nøyaktig de avgrensede oppstartene, og fenelzinregelen står som modell for utvaskingen, ikke som en godkjennbar samlet doseplan. De tre byttereglene er til faglig kontroll og brukes ikke i appen.',
   regler: [kryssSertralinMirtazapin, maoFluoksetinFenelzin, antipsykotikabytteOlanzapinKvetiapin, depotAripiprazol, depotPaliperidon],
 }

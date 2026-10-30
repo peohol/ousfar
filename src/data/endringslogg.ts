@@ -14,11 +14,12 @@ export const ENDRINGSLOGG: Endring[] = [
   {
     versjon: '1.115.0',
     dato: '2026-10-30',
-    sammendrag: 'Nedtrapping av antidepressiva: godkjent fagtekst for bupropion og agomelatin, regelutkast for resten til faglig kontroll',
+    sammendrag: 'Doseplan for oppstart av Abilify Maintena og Xeplion, og nedtrapping av antidepressiva',
     typer: ['Funksjonalitet', 'Fag'],
-    omfang: 'Mindre omfang',
+    omfang: 'Moderat omfang',
     gjelder: ['verktoy'],
     punkter: [
+      'Bytte antipsykotikum beregner nå en doseplan for to klinisk godkjente oppstarter av depotinjeksjon, med preparatene i FEST: Abilify Maintena fra stabilisert og tolerert peroral aripiprazol (én injeksjon 400 mg, tablettene i 14 dager, deretter månedlig), og Xeplion fra paliperidon-depottabletter ved normal nyrefunksjon (dag 1 og dag 8 i deltoideus, deretter månedlig). Planen gjelder bare voksne med schizofreni og stopper ved forhold utenfor godkjenningen, som kjent langsom CYP2D6-omsetning, interaksjoner eller nedsatt nyrefunksjon. Andre bytter mellom antipsykotika venter fortsatt på faglig kontroll.',
       'Trappe ned antidepressiv viser nå klinisk godkjent fagtekst for bupropion, der depottablettene ikke kan deles og avslutningen vurderes individuelt, og agomelatin, som ikke trenger nedtrapping. Teksten sier hvem som godkjente den, når og hva godkjenningen gjelder; for agomelatin gjelder den bare at nedtrapping ikke er nødvendig.',
       'De øvrige antidepressivene har utkast til nedtrappingsregler, bygd på preparatomtalene, NICE-retningslinjen, rådene fra Royal College of Psychiatrists og flere uavhengige fagkontroller. De er ikke klinisk godkjent, så verktøyet sier at faglig kontroll gjenstår, og viser ingen doseplan. Duloksetin og venlafaksin får bare fagtekst, fordi trinnene ikke kan gis med norske kapsler, og det samme gjelder mirtazapin, moklobemid og paroksetin, der ingen dose som kan gis med norske tabletter, gir et forsvarlig første trinn.',
       'For antidepressiva uten regel forklarer verktøyet hvorfor, for eksempel at stoffet ikke har preparater i FEST, bare finnes med godkjenningsfritak eller mangler kildegrunnlag.',

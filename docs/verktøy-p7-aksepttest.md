@@ -3,7 +3,7 @@
 
 Aksepttesten etter kontrollrunden 30.10.2026 (P7.5, del E.2). Hver hovedregel og langsom variant i `ousfar-verktoy-nedtrapping` versjon 9 er regnet med de faktiske preparatene i FEST, ikke syntetiske, for hver legemiddelform forskriveren kan velge. FEST-uttrekket er hentet 30.10.2026 (kildedato 27.10.2026); bare preparater med markedsføringstillatelse som er markedsført, brukes, ikke godkjenningsfritak.
 
-**Dette er modellberegninger til faglig kontroll, ikke kliniske planer.** Ingen beregnbar regel er klinisk godkjent, og verktøyet viser ingen av planene. Pasientopplysninger inngår ikke.
+**Dette er modellberegninger til faglig kontroll, ikke kliniske planer.** Ingen beregnbar P7-regel er klinisk godkjent, og verktøyet viser ingen av planene. Pasientopplysninger inngår ikke.
 
 Scenariene er:
 
@@ -40,6 +40,30 @@ Der et trinn ikke kan gis nøyaktig, kan forskriveren velge blant de nærmeste d
 | nortriptylin | eneste form | stopper ved første trinn | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | – | 4 reduksjoner |
 | sertralin | eneste form | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | 3 reduksjoner |
 | vortioksetin | eneste form | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | 3 reduksjoner |
+
+## Klinisk omfang per virkestoff og form (P7.5)
+
+Til kontrollørens regel- og formspesifikke kontroll (gjennomgangen av 62ebb21): for hver kombinasjon og hvert klinisk scenario, om en oppnåelig delplan kan brukes, eller om bare et forklarende stopp er riktig. Ingen delplan er en fullstendig seponering, og en dose som krever begrunnelse, er aldri et anbefalt eller rutinemessig trinn. Scenario (h) er en simulering og er ikke med.
+
+- **delplan:** delplan med den foretrukne reduksjonen, som stopper ved trinnet før det første som ikke kan gis.
+- **valgt dose:** første trinn bare med en dose forskriveren velger, innenfor det foretrukne området.
+- **bare avvik:** bare forklarende stopp; de eneste dosene som kan gis, er avvik som krever begrunnelse og kan bare velges etter uttrykkelig individuell vurdering.
+- **stopp:** bare forklarende stopp; ingen dose i valgområdet kan gis.
+
+| Virkestoff | Form | (a) | (b) | (c) | (d) | (f) |
+| --- | --- | --- | --- | --- | --- | --- |
+| amitriptylin | eneste form | valgt dose | delplan (1) | stopp | stopp | – |
+| citalopram | eneste form | bare avvik | bare avvik | stopp | stopp | – |
+| escitalopram | Tablett [53] | delplan (1) | bare avvik | stopp | stopp | bare avvik |
+| escitalopram | Dråper, oppløsning [748] | delplan (1) | delplan (1) | delplan (1) | stopp | valgt dose |
+| fluoksetin | Dispergerbar tablett [5] | delplan (1) | bare avvik | stopp | bare avvik | bare avvik |
+| fluoksetin | Tablett [53] | delplan (1) | bare avvik | stopp | bare avvik | bare avvik |
+| fluoksetin | Kapsel, hard [891] | bare avvik | bare avvik | stopp | stopp | – |
+| fluvoksamin | eneste form | delplan (1) | bare avvik | stopp | stopp | bare avvik |
+| klomipramin | eneste form | delplan (1) | delplan (1) | delplan (1) | stopp | valgt dose |
+| nortriptylin | eneste form | valgt dose | delplan (1) | stopp | stopp | – |
+| sertralin | eneste form | delplan (1) | bare avvik | stopp | stopp | bare avvik |
+| vortioksetin | eneste form | delplan (1) | valgt dose | stopp | stopp | bare avvik |
 
 ## Per virkestoff
 
