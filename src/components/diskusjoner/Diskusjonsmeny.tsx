@@ -77,8 +77,9 @@ const SIST = Number.MAX_SAFE_INTEGER
  * Diskusjonene på siden som står åpen — en fagside eller fortolkningen av én
  * analytt — i en fast meny til høyre. Den har fire tilstander:
  *
- * 1. Lukket står den på brede flater som en rund boble med samtaleikonet, der
- *    toppen av menyen står åpen, og et blått merke når noe er nytt.
+ * 1. Lukket står den på brede flater som en rund boble med samtaleikonet, like
+ *    høy som toppmenyen, der toppen av menyen står åpen, og et blått merke når
+ *    noe er nytt.
  * 2. Med pekeren over (eller fokus fra tastaturet) vokser boblen litt og sier
  *    «Diskusjoner — Trykk for å vise». Det er bare utseende (`diskusjoner.css`).
  * 3. Et trykk på boblen åpner menyen. Den står åpen, også fra side til side og
@@ -532,7 +533,7 @@ function Diskusjonsflate({
         onClick={onApne}
       >
         <span className="diskusjonsboble__innhold" aria-hidden="true">
-          <Ikon navn="diskusjon" className="diskusjonsboble__ikon" />
+          <Ikon navn="diskusjon" storrelse="ui" className="diskusjonsboble__ikon" />
           <span className="diskusjonsboble__tittel">Diskusjoner</span>
           <span className="diskusjonsboble__hint">Trykk for å vise</span>
         </span>

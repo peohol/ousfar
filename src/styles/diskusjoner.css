@@ -22,9 +22,11 @@
  */
 
 :root {
-  /* Den lukkede menyen: en sirkel med et stort samtaleikon. */
-  --diskusjonsboble: 6.5rem;
-  --diskusjonsboble-ikon: calc(2 * var(--ikon-ui));
+  /* Den lukkede menyen: en sirkel like høy som toppmenyen, med ikonet i vanlig
+     størrelse og like mye luft rundt som ikonene i toppmenyen har mot kanten
+     (pillens luft og knappens). */
+  --diskusjonsboble: var(--hoyde-toppmeny);
+  --diskusjonsboble-luft: calc((var(--diskusjonsboble) - var(--ikon-ui)) / 2 - var(--kant));
   --diskusjonspanel-minst: 28rem;
   /* Så bred at siden bak fortsatt får plass. */
   --diskusjonspanel-mest: max(var(--diskusjonspanel-minst), 100vw - 32rem);
@@ -175,18 +177,17 @@
 
 /* --- Boblen -------------------------------------------------------------------- */
 
-/* Lukket: et stort ikon midt i en sirkel. Med pekeren over eller fokus fra
-   tastaturet vokser den litt, mot venstre og ned, og ikonet krymper til vanlig
-   størrelse foran tittelen, med hintet under. */
+/* Lukket: ikonet midt i en sirkel. Med pekeren over eller fokus fra
+   tastaturet vokser den litt, mot venstre og ned, med tittelen ved siden av
+   ikonet og hintet under. */
 .diskusjonsboble {
-  --boble-ikon: var(--diskusjonsboble-ikon);
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   min-width: var(--diskusjonsboble);
   min-height: var(--diskusjonsboble);
-  padding: 0 var(--rom-4);
+  padding: 0 var(--diskusjonsboble-luft);
   font-family: var(--skrift-ui);
   line-height: 1.25;
   color: var(--blekk);
@@ -207,9 +208,7 @@
 }
 
 .diskusjonsboble:is(:hover, :focus-visible) {
-  --boble-ikon: var(--ikon-ui);
   min-height: calc(var(--diskusjonsboble) + var(--rom-3));
-  padding-inline: var(--rom-6);
   background: var(--flate-hevet);
 }
 
@@ -238,11 +237,6 @@
 
 .diskusjonsboble__ikon {
   grid-area: ikon;
-  width: var(--boble-ikon);
-  height: var(--boble-ikon);
-  transition:
-    width var(--fart-glid) var(--kurve),
-    height var(--fart-glid) var(--kurve);
 }
 
 /* Tekstene kan krympe til ingenting (`overflow`), så sporene kan stå på 0. */

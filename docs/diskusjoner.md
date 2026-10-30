@@ -74,11 +74,10 @@ til en kategori, eller flyttes med valget på tråden.
 tilstander:
 
 1. **Lukket**: en rund boble (`--diskusjonsboble`) øverst til høyre under
-   toppmenyen, med et stort samtaleikon og et blått tall for tråder med noe
-   nytt. Resten av appen gir plass til den.
+   toppmenyen, like høy som den og med samme luft rundt ikonet, og et blått
+   tall for tråder med noe nytt. Resten av appen gir plass til den.
 2. **Pekeren over** (eller fokus fra tastaturet): boblen vokser litt mot
-   venstre, ikonet krymper til vanlig størrelse foran «Diskusjoner», med
-   «Trykk for å vise» under. Bare CSS; den går tilbake når pekeren går ut.
+   venstre, med «Diskusjoner» ved siden av ikonet og «Trykk for å vise» under. Bare CSS; den går tilbake når pekeren går ut.
 3. **Åpen**: et trykk på boblen åpner menyen, og fokus går til lukkeknappen.
    Den står åpen til lukkeknappen (✕ øverst til høyre) trykkes, også fra side
    til side; det lagres på brukeren. Resten av appen gir plass til den.
