@@ -1,18 +1,179 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "advarsel",
   "jobb": {
     "gren": "kuratorjobb/manuell-41108618064",
     "foresporsel_commit": "f89d1c89d46c7bab4617864f29f8196fbcbdd380",
     "foresporsel_sha256": "ac18a1b8726d2cbbe1cb4c0463ab68187cd212d8586c2cbd021d220966411314",
     "kode_commit": "c58509067b9f530f36d25b6953495c5fd634f14f",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/41108618064",
-    "startet_kl": "2026-10-30T18:39:29.733Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-30T18:39:31.483Z",
+    "ferdig_kl": "2026-10-30T18:40:13.516Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "flufenazin",
+      "fenelzin",
+      "imipramin",
+      "loksapin",
+      "lsd",
+      "maprotilin",
+      "penfluridol",
+      "moklobemid",
+      "perisiazin",
+      "pimozid",
+      "sulpirid",
+      "dmt",
+      "dosulepin",
+      "agomelatin"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 292
+    }
+  ],
+  "stoffer": {
+    "flufenazin": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/flufenazin/funksjonstest.json"
+        }
+      }
+    },
+    "fenelzin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/fenelzin/funksjonstest.json"
+        }
+      }
+    },
+    "imipramin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/imipramin/funksjonstest.json"
+        }
+      }
+    },
+    "loksapin": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/loksapin/funksjonstest.json"
+        }
+      }
+    },
+    "lsd": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/lsd/funksjonstest.json"
+        }
+      }
+    },
+    "maprotilin": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/maprotilin/funksjonstest.json"
+        }
+      }
+    },
+    "penfluridol": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/penfluridol/funksjonstest.json"
+        }
+      }
+    },
+    "moklobemid": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/moklobemid/funksjonstest.json"
+        }
+      }
+    },
+    "perisiazin": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/perisiazin/funksjonstest.json"
+        }
+      }
+    },
+    "pimozid": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/pimozid/funksjonstest.json"
+        }
+      }
+    },
+    "sulpirid": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/sulpirid/funksjonstest.json"
+        }
+      }
+    },
+    "dmt": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/dmt/funksjonstest.json"
+        }
+      }
+    },
+    "dosulepin": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/dosulepin/funksjonstest.json"
+        }
+      }
+    },
+    "agomelatin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/agomelatin/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
