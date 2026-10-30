@@ -1,0 +1,73 @@
+{
+  "stoff": "fenelzin",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-10-30T04:15:57.810377+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 3,
+    "hentet": 0,
+    "dokumenter": 0,
+    "mangler": [
+      {
+        "merkevare_id": "ID_0BCB9BB3-9DED-47CC-9ED6-2382688D2BD7",
+        "varenavn": "Nardil",
+        "navn_form_styrke": "Nardil tab 15 mg",
+        "produsent": null,
+        "atc": "N06AF03",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_321D8F7D-04E6-4929-853A-A483524D0485",
+        "varenavn": "Phenelzine neon",
+        "navn_form_styrke": "Phenelzine neon tab 15 mg",
+        "produsent": "Neon Healthcare",
+        "atc": "N06AF03",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_33268ADF-200D-4517-BB34-A6257F2EBF65",
+        "varenavn": "Nardil",
+        "navn_form_styrke": "Nardil tab 15 mg",
+        "produsent": "Pfizer",
+        "atc": "N06AF03",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 0 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 0,
+        "ikke_dmp": 0,
+        "uten_omtale": 3
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "Ingen preparatomtale ble hentet. SPC-behovet er ikke dekket; se «dekning».",
+      "antall": {
+        "preparater": 3,
+        "hentet": 0,
+        "mangler": 3,
+        "dokumenter": 0
+      }
+    }
+  ],
+  "adresser": [],
+  "dokumenter": [],
+  "utelatt": []
+}

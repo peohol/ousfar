@@ -1,0 +1,93 @@
+{
+  "stoff": "flufenazin",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-10-30T04:15:57.810377+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 5,
+    "hentet": 0,
+    "dokumenter": 0,
+    "mangler": [
+      {
+        "merkevare_id": "ID_34ADD1E1-2459-45E0-BA1E-0AF5BCC53B7E",
+        "varenavn": "Fluphenazin-neuraxpharm D",
+        "navn_form_styrke": "Fluphenazin-neuraxpharm D inj, oppl 100 mg/ml",
+        "produsent": "Neuraxpharm",
+        "atc": "N05AB02",
+        "legemiddelform": "Injeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_4971F4B8-79FC-4BE3-B7B5-D26E657D5D73",
+        "varenavn": "Modecate",
+        "navn_form_styrke": "Modecate inj, oppl 25 mg/ml",
+        "produsent": "sanofi-aventis (2)",
+        "atc": "N05AB02",
+        "legemiddelform": "Injeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_74E37D53-9B1C-4B12-84BC-9B43A2A6C876",
+        "varenavn": "Fluphenazin-neuraxpharm D",
+        "navn_form_styrke": "Fluphenazin-neuraxpharm D inj, oppl 12,5 mg/0,5 ml",
+        "produsent": "Neuraxpharm",
+        "atc": "N05AB02",
+        "legemiddelform": "Injeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_9D1FB1BE-2349-47B8-83A0-D31675D9A7CA",
+        "varenavn": "Fluphenazine HCl lannett",
+        "navn_form_styrke": "Fluphenazine HCl lannett tab 1 mg",
+        "produsent": "Lannett",
+        "atc": "N05AB02",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_FA9EBB58-FB8E-4D5C-B011-FB315B1D92C7",
+        "varenavn": "Fluphenazine HCl lannett",
+        "navn_form_styrke": "Fluphenazine HCl lannett tab 5 mg",
+        "produsent": "Lannett",
+        "atc": "N05AB02",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 0 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 0,
+        "ikke_dmp": 0,
+        "uten_omtale": 5
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "Ingen preparatomtale ble hentet. SPC-behovet er ikke dekket; se «dekning».",
+      "antall": {
+        "preparater": 5,
+        "hentet": 0,
+        "mangler": 5,
+        "dokumenter": 0
+      }
+    }
+  ],
+  "adresser": [],
+  "dokumenter": [],
+  "utelatt": []
+}
