@@ -230,12 +230,21 @@ Ingen regel har toleranse (beslutning 5.7), heller ikke med dråper: en dose som
 
 **Registrerte kliniske godkjenninger.** Bare de to uttrykkelige godkjenningene er registrert, av «ChatGPT (uavhengig fagkontrollør)» 30.10.2026, med fingeravtrykkene kontrolløren oppga: bupropion versjon 5 (`e7536668…b5f5f`) og agomelatin versjon 1 (`6d42863f…a2d1`). Fingeravtrykkene stemmer med reglene, og en test holder dem fast; endres en av reglene, faller godkjenningen bort. «Godkjent med endring» er ikke registrert som godkjenning: de 25 reglene er omarbeidet til versjon 6 (de langsomme variantene og annenhver dag versjon 2) og sendt til ny uavhengig kontroll. Ingen automatisk seponering.
 
+**Kontrollrunden 30.10.2026 (P4.8 og P7.5, substans- og kildevurdering av HEAD `45fa29b`):** P4.8 og P7.5 er gjennomgått, men ikke bestått. Ingen nye regler er godkjent, og bupropion og agomelatin er uendret. Prinsippene i beslutning 2–7 er godtatt som modellprinsipper, ikke som endelig godkjenning: 12 og 6 trinn er en teknisk visningshorisont som ikke betyr fullført nedtrapping, risikogruppene er et forsiktig startområde og ikke en validert hastighet per pasient, og en begrunnelse alene er ikke evidens for at et raskt valg er forsvarlig. Alle tolv virkestoffene har betinget aksept av det farmakologiske prinsippet (ikke klinisk godkjenning), med forbehold som allerede står i reglene: lavdose og QT for citalopram, dråper for escitalopram, Zoloft konsentrat sperret, annenhver dag bare fra 20 mg for fluoksetin, fordeling for fluvoksamin og moklobemid, at prosentregimet for vortioksetin er OUSFARs forslag, forsiktighetsgrensene for amitriptylin, klomipramin og nortriptylin, og at paroksetins studievariant er ute. Oppfølgingen:
+
+- **Aksepttest med norske preparater (E.2).** Hver hovedregel og langsom variant er regnet med de faktiske preparatene i et lagret FEST-uttrekk, for hver legemiddelform, ved vanlig dose, lang behandlingstid, tidligere seponeringssymptomer, lav dose og videreføring (`docs/verktøy-p7-aksepttest.md`). **Resultatet er at reglene sjelden gir mer enn én reduksjon:** i halvparten av kombinasjonene av virkestoff og form stopper planen allerede ved første trinn, fordi prosenttrinnene ikke kan gis nøyaktig med tablettstyrkene og delingen i FEST, og ingen toleranse er godkjent. Hvordan reglene eventuelt skal tilpasses tilgjengelige doser, er et faglig valg til neste kontroll; verktøyet viser ingen av planene.
+- **Fordeling bare på like store doser.** Doseplanmotoren bruker ikke lenger ujevne fordelinger av døgndosen (som 20 + 10 mg), fordi ingen regel dokumenterer dem; en dose som bare kan fordeles ujevnt, stopper planen (doseplanmotor 4).
+- **Pilotreglene (P4.8).** De fire byttereglene er rettet eller avgrenset (versjon 3), og depotreglene er registrert som kildemessig akseptable som avgrensede varianter, ikke klinisk godkjent (`docs/verktøy-p4-regelmodell.md`).
+- **Klinisk ansvar.** Kontrollen sier at en signert klinisk godkjenning må knyttes til en navngitt fagansvarlig lege etter bestått uavhengig kontroll; en AI-kontroll alene overfører ikke klinisk ansvar. Hvordan dette skal gjelde for godkjenningene av bupropion og agomelatin, er lagt fram for bidragsyteren.
+
 **Gjenstår før P4.8 og P7.5 kan godkjennes for de beregnbare reglene:**
 
 1. **Ny uavhengig kontroll av regelversjon 6:** de 12 hovedreglene, de 12 langsomme variantene, fluoksetin annenhver dag og tekstreglene for duloksetin og venlafaksin. Særlig grensene for startdosen i avsnitt 4, der grensen for nortriptylin hos eldre (50 mg) og det at paroksetin og nortriptylin spør om «eldre» uten alder, er OUSFARs valg ut fra preparatomtalen.
-2. **Zoloft konsentrat (P5):** dokumentert dose per ml, oppmålingsoppløsning og nøyaktighet før konsentratet kan brukes.
-3. **Duloksetin og venlafaksin:** en dokumentert metode for mindre doser før en beregnbar regel kan vurderes på nytt.
-4. **Senere, når det bestemmes:** utkast for doksepin, imipramin og trazodon fra utenlandske preparatomtaler. Fenelzin og tranylcypromin får ingen regler nå; dosulepin og maprotilin venter.
+2. **Klinisk nytte med norske preparater:** aksepttesten viser at de fleste planene stopper ved første eller andre trinn. Det må avgjøres faglig om reglene skal tilpasses dosene som kan gis, eller vises som forklarende tekst (kontrollrunden 30.10.2026, B.3).
+3. **Navngitt fagansvarlig lege:** en signert klinisk godkjenning knyttes til en navngitt fagansvarlig lege etter bestått uavhengig kontroll.
+4. **Zoloft konsentrat (P5):** dokumentert dose per ml, oppmålingsoppløsning og nøyaktighet før konsentratet kan brukes.
+5. **Duloksetin og venlafaksin:** en dokumentert metode for mindre doser før en beregnbar regel kan vurderes på nytt.
+6. **Senere, når det bestemmes:** utkast for doksepin, imipramin og trazodon fra utenlandske preparatomtaler. Fenelzin og tranylcypromin får ingen regler nå; dosulepin og maprotilin venter.
 
 ## 12. Endret etter kontrollene
 
@@ -293,6 +302,15 @@ Kontrollene av regelversjon 4 (ChatGPT, 30.10.2026) fant to veier til null som k
 | Beslutning 8 og 9: bupropion og agomelatin | Klinisk godkjent med kontrollørens fingeravtrykk; verktøyet viser fagteksten med godkjenningen og avgrensningen. |
 | Grensetester | Hver grense for startdosen ved og rett over, med og uten begrunnelse; citalopram 40/40,01 mg og de andre ytre rammene; 0 mg og minste positive dose; stoppene og kontraindikasjonene; annenhver dag ved 19,99, 20 og 20,01 mg; horisonten på 6; avrunding fra 0,55 og 0,5 mg med 1 %; deling av døgndosen; dråper uten toleranse. Alle forventede planer er regnet ut på nytt og kontrollert mot en uavhengig utregning. |
 
+**Kontrollrunden 30.10.2026** (P4.8 og P7.5, av regelversjon 6; ingen nye godkjenninger):
+
+| Kontrollpunkt | Endring |
+| --- | --- |
+| E.2: aksepttest per virkestoff | Ny rapport `docs/verktøy-p7-aksepttest.md` med scenariene (a)–(g), regnet med et lagret FEST-uttrekk (`src/data/verktoy/fest-aksepttest.json`, hentes med `npm run verktoy:regler -- hent-fest`). Testene holder rapporten oppdatert og kontrollerer at ingen plan er klinisk, går til null eller bruker deler av dråper. |
+| Fluvoksamin: ingen ujevne fordelinger | Doseplanmotor 4 fordeler døgndosen bare på like store doser. |
+| Nortriptylin: 50 mg hos eldre | Merket som OUSFARs forsiktighetsvalg, ikke kontrollens eller preparatomtalens grense. |
+| Godkjenning bare av nøyaktig versjon | Uendret: fingeravtrykket, uavhengig kontrollør og ingen åpne valg kreves, og «godkjent med endring» er ikke registrert som godkjenning. |
+
 ## 13. Holdt utenfor
 
 - Spørsmålet om optimal hyperbolsk nedtrapping er et forskningsspørsmål og ikke en del av denne leveransen. Den hyperbolske citalopramregelen står bare i sammenlignings- og utviklingssettet.
@@ -302,6 +320,6 @@ Kontrollene av regelversjon 4 (ChatGPT, 30.10.2026) fant to veier til null som k
 ## 14. Kontroll
 
 - `npm run verktoy:regler -- kontroll` kontrollerer alle regelsettene, også sammenligningssettet. Den sjekker kilder, påstandsnære henvisninger, grunnlag, godkjenning, justerbare verdier, spørsmål, krav om begrunnelse, individuell avslutning og planhorisont, og at hvert regneeksempel stemmer med beregningen, også med forskriverens valg, svar og begrunnelse.
-- `src/__tests__/verktoynedtrapping.test.ts` kontrollerer dekningen, reglene, forskriverens valg og doseplanene som beskrevet over.
+- `src/__tests__/verktoynedtrapping.test.ts` kontrollerer dekningen, reglene, forskriverens valg og doseplanene som beskrevet over, og at aksepttesten med norske preparater er oppdatert (`npm run verktoy:regler -- aksepttest`).
 - `verktoyregister.test.ts` og `verktoyside.test.tsx` kontrollerer statusen i verktøyet for alle regler i appens regelsett. `verktoyside.test.tsx` tester også feltene for forskriverens valg, spørsmålene og begrunnelsen.
 - `fortolkningUendret.test.ts` holder fortolkningen uendret, og en egen test kontrollerer at bare verktøyene bruker de nye reglene.

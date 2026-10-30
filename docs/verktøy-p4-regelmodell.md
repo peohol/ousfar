@@ -139,6 +139,8 @@ Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet
 
 1. *Escitalopram (minstevarighet og prosentvis nedtrapping) er flyttet til P7 og vurdert i fagvurderingen 29.10.2026; se `docs/verktøy-p7-nedtrapping.md` §11.*
 2. *Den hyperbolske strategien: fagkontrollen 30.10.2026 godkjente den ikke som valgbar klinisk strategi. Den står bare i sammenligningssettet i P7; se `docs/verktøy-p7-nedtrapping.md` §6.*
+*Punkt 3–8 er vurdert i kontrollrunden 30.10.2026 (§11); det som gjenstår, står der.*
+
 3. Sertralin → mirtazapin: er mirtazapin 15 mg fra dag 1 med overlapp til sertralin er seponert forsvarlig, og bør trinnene være kortere ved bytte (NICE åpner for raskere nedtrapping)?
 4. Fluoksetin → fenelzin: kildene er uenige om nedtrapping av fluoksetin før utvasking (preparatomtalen: gradvis over minst én til to uker; NICE: annenhver dag ved 20 mg; Keks mfl.: seponering uten nedtrapping ved 40 mg eller mindre). Regelen følger preparatomtalen, med 28 dager per trinn fordi RCPsych anbefaler minst fire uker før neste reduksjon av fluoksetin. Er 35 dagers utvasking (minimum i preparatomtalen) nok, eller skal høye doser ha 42?
 5. Olanzapin → kvetiapin: er det riktig å holde olanzapin til kvetiapin er på 300 mg (dag 4) og deretter trappe ned 25 % av startdosen per uke? Er det riktig å begrense regelen til måldoser 300–450 mg?
@@ -176,3 +178,16 @@ Reglene for olanzapin → kvetiapin, Rest AP → aripiprazol, Abilify Maintena o
 **Etter fagkontrollen av P7 (30.10.2026).** Den hyperbolske citalopramregelen er versjon 4 med teknisk planhorisont og status utkast, og er flyttet til sammenligningssettet i P7, fordi kontrolløren ikke godkjente den som valgbar klinisk strategi. Pilotsettet er versjon 5 med seks regler, og regelmodellen er versjon 6.
 
 **Etter substanskontrollen av P7 (30.10.2026, runde 3).** Regelmodellen er versjon 7 og beregningsmotoren versjon 5 (§3). Pilotreglene er uendret i innhold; den hyperbolske citalopramregelen avrunder nå hvert trinn til den viste dosen.
+
+**Etter kontrollrunden 30.10.2026 (P4.8).** Kontrolløren vurderte hver pilotregel mot kildene. P4.8 er gjennomgått, men ikke bestått, og ingen regel er klinisk godkjent. Pilotsettet er versjon 6:
+
+| Regel | Vurdering | Endring |
+| --- | --- | --- |
+| Sertralin → mirtazapin (versjon 3) | En fast sekvens er ikke trygg for alle etter lang SSRI-bruk eller tidligere seponeringssymptomer; et bytte kan begrunne raskere nedtrapping, men ikke samme tempo for alle. | Tidligere seponeringssymptomer stopper regelen. Lang behandlingstid er et spørsmål der et ja krever skriftlig begrunnelse. Forskriveren må bekrefte at toleransen vurderes før hver reduksjon og at sedasjon og serotonerg belastning følges under overlappen. Om seponeringen fra 25 mg skal være et fast sluttpunkt, står åpent. |
+| Fluoksetin → fenelzin (versjon 3) | 35 dagers utvasking, spesialistkravet og ingen automatisk fenelzindose er godtatt som minimum, ikke som et fast klinisk forløp. | Planen sier at fenelzin ikke startes automatisk: dagen er den tidligste, og senere oppstart kan være nødvendig. Produktinformasjon for fenelzin fra en godkjent utenlandsk kilde er ikke kontrollert ennå. |
+| Olanzapin → kvetiapin (versjon 3) | Kvetiapinopptrappingen er et regime fra preparatomtalen; den faste nedtrappingen av olanzapin er ikke validert. Ikke godkjent. | Nedtrappingen av olanzapin beregnes ikke lenger; planen viser kvetiapinopptrappingen og at olanzapin deretter planlegges individuelt. Vurderingen av risiko og tempo i, eller med råd fra, spesialisthelsetjenesten må bekreftes. |
+| Rest AP → aripiprazol (versjon 3) | Én felles algoritme er ikke validert for antipsykotika med ulik farmakologi. Ikke godkjent som gruppebasert klinisk doseplan. | Regelen sier at den ikke er en gruppebasert klinisk plan, og at zuklopentiksol alene er kandidat, helst som egen regel til ny kontroll. Samme bekreftelse om risiko og tempo som over. |
+| Abilify Maintena (versjon 2) | Kildemessig akseptabel som avgrenset oppstart med én injeksjon. | Uendret. Registrert som kildemessig akseptabel, ikke klinisk godkjent; siste kontroll av preparatomtale, doser og regneeksempler gjenstår. |
+| Xeplion (versjon 2) | Kildemessig akseptabel som avgrenset overgang fra perorale paliperidon-depottabletter med normal nyrefunksjon. | Uendret, og registrert på samme måte. Dosene er mg paliperidon, som styrkene i den europeiske preparatomtalen; det skal kontrolleres på nytt før en signert godkjenning. |
+
+Beregningen viser nå et forløp som fortsetter uten beregning etter de første periodene, som «fra dag 5: videre dosering beregnes ikke; planlegges individuelt».

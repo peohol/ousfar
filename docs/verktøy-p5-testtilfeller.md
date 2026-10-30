@@ -1,6 +1,6 @@
 # OUSFAR Verktøy – P5: testtilfeller for doseplanmotoren
 
-**Laget av `src/verktoy/motor/rapport.ts`; ikke rediger for hånd.** Lag den på nytt med `npm run verktoy:regler -- motorrapport`. Doseplanmotor 3. Bakgrunnen står i `docs/verktøy-p5-beregningsmotor.md`.
+**Laget av `src/verktoy/motor/rapport.ts`; ikke rediger for hånd.** Lag den på nytt med `npm run verktoy:regler -- motorrapport`. Doseplanmotor 4. Bakgrunnen står i `docs/verktøy-p5-beregningsmotor.md`.
 
 **Alt her er syntetisk.** Virkestoffene (testoksetin, testazapin, testperidon), preparatene og reglene finnes ikke og har ingen klinisk betydning. De er laget for å prøve motoren ved grenseverdiene: deling, formuleringer og former, godkjenningsfritak, avregistrering, toleranse, dosegrenser, utvasking, depot og datoer. Ingen av P4s pilotregler er brukt eller godkjent, og ingen plan her er klinisk. Hvert tilfelle kontrolleres av `src/__tests__/verktoymotor.test.ts`.
 
@@ -903,9 +903,67 @@ Testoksetin 0,5 mg med 1 % av aktuell dose uten nulltrinn: første reduksjon (0,
 
 ### fordeling-over-grense
 
-Testoksetin 40 mg med 25 % av aktuell dose uten nulltrinn, der døgndoser over 20 mg skal gis fordelt på 2 eller 3 doser, hver høyst 20 mg. Dosene over 20 mg vises fordelt; dosene til og med 20 mg gis som én dose.
+Testoksetin 80 mg med 50 % av aktuell dose uten nulltrinn, der døgndoser over 20 mg skal gis fordelt på 2 eller 3 like store doser, hver høyst 20 mg. 40 mg vises fordelt på 2 doser; dosene til og med 20 mg gis som én dose.
 
-*Kontrollerer:* P5.5 fordeling av døgndosen når preparatomtalen krever det (substanskontrollen 30.10.2026, fluvoksamin og moklobemid). *Regel:* SYNTETISK TESTREGEL: seponering av testoksetin. *Inndata:* startdose 40 mg, valg: fra peroral, SYN-TAB. *Preparatstatus:* 2026-11-01.
+*Kontrollerer:* P5.5 fordeling av døgndosen på like store doser når preparatomtalen krever det (substanskontrollen og kontrollrunden 30.10.2026, fluvoksamin og moklobemid). *Regel:* SYNTETISK TESTREGEL: seponering av testoksetin. *Inndata:* startdose 80 mg, valg: fra peroral, SYN-TAB. *Preparatstatus:* 2026-11-01.
+
+**Ideell kurve (P4):**
+
+*fra:*
+
+- dag 1–14: 40 mg, fordelt på 2 eller 3 doser
+- dag 15–28: 20 mg
+- dag 29–42: 10 mg
+- dag 43–56: 5 mg
+- dag 57–70: 2,5 mg
+- dag 71–84: 1,25 mg
+- dag 85–98: 0,63 mg
+- dag 99–112: 0,32 mg
+- dag 113–126: 0,16 mg
+- dag 127–140: 0,08 mg
+- dag 141–154: 0,04 mg
+- fra dag 155: 0,02 mg
+- teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt
+
+**Doseplan:**
+
+*fra:*
+
+- dag 1–14: 40 mg = 2 tabletter à 20 mg, fordelt på 2 doser: 20 + 20 mg
+- dag 15–28: 20 mg = 1 tablett à 20 mg
+- dag 29–42: 10 mg = 1 tablett à 10 mg
+- dag 43–56: 5 mg = 1 tablett à 5 mg
+- dag 57–70: 2,5 mg = ½ tablett à 5 mg
+- fra dag 71: 1,25 mg = ¼ tablett à 5 mg
+- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
+
+**Avvik fra den ideelle kurven:**
+
+- Ingen.
+
+**Preparater (FESTs navn, deling):**
+
+- Testoksetin Annen tablett 5 mg (FEST: «Delbar i 4»)
+- Testoksetin Syntetisk tablett 10 mg (FEST: «Delbar i 2»)
+- Testoksetin Syntetisk tablett 20 mg (FEST: «Delbar i 4»)
+- Testoksetin Syntetisk tablett 5 mg (FEST oppgir ikke deling; regnes som ikke delbar)
+
+**Begrensninger (preparater som ikke brukes):**
+
+- Testoksetin Avregistrert tablett 1 mg: er avregistrert i FEST
+- Testoksetin Fritak tablett 2 mg: krever godkjenningsfritak, som ikke er valgt
+- Testoksetin Kombi tablett 6 mg: er et kombinasjonspreparat
+- Testoksetin Salt tablett 4 mg: har styrken oppgitt for saltet Testoksetinsalt; omregning til moderstoffet er ikke dokumentert i FEST
+- Testoksetin Sykehus tablett 3 mg: har preparattypen «Sykehuspreparat», som ikke brukes i automatiske doseplaner
+- Testoksetin Utgått tablett 7,5 mg: er midlertidig utgått i FEST fra 01.09.2026
+
+**Klinisk:** nei. Regelen er en syntetisk testregel. Regelversjonen er utkast, ikke klinisk godkjent. Preparatene er fra «Syntetiske testdata», ikke fra FEST.
+
+### fordeling-ujevn
+
+Testoksetin 40 mg med 25 % av aktuell dose: 30 mg kan gis som 10 + 20 mg, men ikke som like store doser på høyst 20 mg. En ujevn fordeling er ikke dokumentert i noen regel, så beregningen stopper.
+
+*Kontrollerer:* P5.5 fordelingen bruker aldri ujevne doser (kontrollrunden 30.10.2026, fluvoksamin). *Regel:* SYNTETISK TESTREGEL: seponering av testoksetin. *Inndata:* startdose 40 mg, valg: fra peroral, SYN-TAB. *Preparatstatus:* 2026-11-01.
 
 **Ideell kurve (P4):**
 
@@ -927,32 +985,9 @@ Testoksetin 40 mg med 25 % av aktuell dose uten nulltrinn, der døgndoser over 2
 
 **Doseplan:**
 
-*fra:*
+*Stopper:*
 
-- dag 1–14: 30 mg = 1 tablett à 10 mg + 1 tablett à 20 mg, fordelt på 2 doser: 20 + 10 mg
-- fra dag 15: 22,5 mg = 1 tablett à 20 mg + ½ tablett à 5 mg, fordelt på 2 doser: 20 + 2,5 mg
-- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
-
-**Avvik fra den ideelle kurven:**
-
-- Ingen.
-
-**Preparater (FESTs navn, deling):**
-
-- Testoksetin Annen tablett 5 mg (FEST: «Delbar i 4»)
-- Testoksetin Syntetisk tablett 10 mg (FEST: «Delbar i 2»)
-- Testoksetin Syntetisk tablett 20 mg (FEST: «Delbar i 4»)
-
-**Begrensninger (preparater som ikke brukes):**
-
-- Testoksetin Avregistrert tablett 1 mg: er avregistrert i FEST
-- Testoksetin Fritak tablett 2 mg: krever godkjenningsfritak, som ikke er valgt
-- Testoksetin Kombi tablett 6 mg: er et kombinasjonspreparat
-- Testoksetin Salt tablett 4 mg: har styrken oppgitt for saltet Testoksetinsalt; omregning til moderstoffet er ikke dokumentert i FEST
-- Testoksetin Sykehus tablett 3 mg: har preparattypen «Sykehuspreparat», som ikke brukes i automatiske doseplaner
-- Testoksetin Utgått tablett 7,5 mg: er midlertidig utgått i FEST fra 01.09.2026
-
-**Klinisk:** nei. Regelen er en syntetisk testregel. Regelversjonen er utkast, ikke klinisk godkjent. Preparatene er fra «Syntetiske testdata», ikke fra FEST.
+- testoksetin dag 1–14: døgndosen 30 mg skal gis fordelt på 2 eller 3 doser, hver høyst 20 mg (preparatomtalen), og dosene skal være like store, men ingen nøyaktig dose med preparatene i FEST kan fordeles slik. En annen dose eller fordeling er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 ### fordeling-kan-ikke-fordeles
 
@@ -982,7 +1017,7 @@ Som over fra 40 mg med bare en hel 30 mg-tablett som ikke kan deles: 30 mg kan g
 
 *Stopper:*
 
-- testoksetin dag 1–14: døgndosen 30 mg skal gis fordelt på 2 eller 3 doser, hver høyst 20 mg (preparatomtalen), men ingen nøyaktig dose med preparatene i FEST kan fordeles slik. En annen dose eller fordeling er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+- testoksetin dag 1–14: døgndosen 30 mg skal gis fordelt på 2 eller 3 doser, hver høyst 20 mg (preparatomtalen), og dosene skal være like store, men ingen nøyaktig dose med preparatene i FEST kan fordeles slik. En annen dose eller fordeling er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 ### annenhver-dag
 

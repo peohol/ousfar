@@ -25,14 +25,14 @@
  */
 import { FEST_FORELDET_ETTER_TIMER, festForeldet } from '../../legemiddeldata/referanser'
 import { FORMULERINGSKLASSER, type Formuleringsklasse } from '../festformuleringer'
-import { AVSLUTNING_FELLES, avrund, beregn, erIsoDato, fordelingstekst, hverTekst, injeksjonstidspunkt, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
+import { AVSLUTNING_FELLES, avrund, beregn, erIsoDato, fordelingstekst, hverTekst, injeksjonstidspunkt, utenBeregningLinje, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
 import { fingeravtrykk, godkjenningsfeil, kanonisk, sha256 } from '../regler/godkjenning'
 import { parameterfeil, type Beregningsinndata, type Forlop, type Parameter, type Regel, type Regelsett } from '../regler/modell'
 import { byggesteiner, DOSEENHETER, norskDato, type Byggestein, type Preparatgrunnlag } from './byggesteiner'
 import { doser, fordel, styrkevalg, velgSerie, type Dosekandidat, type Doseelement, type Periodevalg, type Styrkevalg } from './dosevalg'
 
 /** Økes når doseplanen endres slik at like inndata kan gi et annet resultat. */
-export const PLANMOTORVERSJON = 3
+export const PLANMOTORVERSJON = 4
 
 /** Id-ene til syntetiske testregler begynner slik; de kan aldri gi en klinisk plan. */
 export const SYNTETISK_REGEL = 'syntetisk-'
@@ -330,7 +330,7 @@ function ingenDose(f: Forlopsresultat, p: Periode, valg: Styrkevalg[], alleValg:
 
 /** Hvorfor perioden ikke kan gis når døgndosen må fordeles og ingen dose som kan gis, kan fordeles slik regelen krever. */
 const ingenFordeling = (f: Forlopsresultat, p: Periode, over: number | null) =>
-  `${f.virkestoff} ${dager(p)}: døgndosen ${tall(p.mg)} mg skal gis ${fordelingstekst(p.fordeles!)}${over !== null ? `, hver høyst ${tall(over)} mg` : ''} (preparatomtalen), men ingen nøyaktig dose med preparatene i FEST kan fordeles slik. En annen dose eller fordeling er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.`
+  `${f.virkestoff} ${dager(p)}: døgndosen ${tall(p.mg)} mg skal gis ${fordelingstekst(p.fordeles!)}${over !== null ? `, hver høyst ${tall(over)} mg` : ''} (preparatomtalen), og dosene skal være like store, men ingen nøyaktig dose med preparatene i FEST kan fordeles slik. En annen dose eller fordeling er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.`
 
 /** Om en dose innenfor rammene kan settes sammen for perioden, uten krav til fordelingen. */
 const kanGis = (v: Styrkevalg[], p: Periode, tol: number, fra: number, til: number) =>
@@ -598,6 +598,7 @@ export function planform(r: Doseplanresultat): Record<string, string[]> {
         const dato = i.vedlikehold ? i.vedlikehold.forste_dato : i.dato
         linjer.push(`${injeksjonstidspunkt(i)}${dato ? ` [${norskDato(dato)}]` : ''}: ${tall(i.mg)} mg = ${elementtekst(i.element)}`)
       }
+      if (f.uten_beregning) linjer.push(utenBeregningLinje(f, (d) => (d ? ` [${norskDato(d)}]` : '')))
       if (f.siste_dosedag !== null) linjer.push(`fra dag ${f.siste_dosedag + 1}${f.seponert_dato ? ` [${norskDato(f.seponert_dato)}]` : ''}: seponert`)
       if (f.avslutning_kort) linjer.push(f.avslutning_kort)
       return [f.id, linjer]

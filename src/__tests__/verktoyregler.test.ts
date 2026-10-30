@@ -77,7 +77,9 @@ const avklarAlle = (r: Regel, av = 'Uavhengig kontrollør') => {
 }
 const XEPLION = { startdose_mg: 6, bekreftet: ['indikasjon'], pasientforhold: { nedsatt_nyrefunksjon: false } }
 const MAINTENA = { startdose_mg: 15, bekreftet: ['indikasjon'], pasientforhold: { cyp2d6_langsom: false, sterk_cyp_hemmer: false, cyp3a4_induktor: false } }
-const AP = ['indikasjon', 'peroral_formulering']
+const AP = ['indikasjon', 'peroral_formulering', 'spesialist_risiko']
+/** Svarene som lar kryssnedtrappingen sertralin → mirtazapin beregnes (kontrollrunden 30.10.2026). */
+const KRYSS = { bekreftet: ['toleranse_overlapp'], pasientforhold: { tidligere_seponeringssymptomer: false }, svar: { lang_behandlingstid: false } }
 /** Alt seponeringsregelen for escitalopram spør om, fra 20 mg. */
 /** Escitalopram 20 mg med alt bekreftet, hvert unntak avkreftet og nei på hvert spørsmål. */
 const ESCITALOPRAM = regel('seponering-escitalopram')
@@ -168,8 +170,12 @@ describe('Pilotsettet', () => {
     for (const r of PILOTSETT.regler) {
       expect(r.godkjenning.status, r.id).toBe('til_faglig_kontroll')
       expect(godkjenningsfeil(r).length, r.id).toBeGreaterThan(0)
-      const forventet = Array.from({ length: r.versjon }, () => ['utkast', 'til_faglig_kontroll']).flat()
+      // Depotreglene har i tillegg et steg fra kontrollrunden 30.10.2026: kildemessig akseptable, ikke klinisk godkjent.
+      const depot = r.plan.form === 'oppstart_depot'
+      const forventet = [...Array.from({ length: r.versjon }, () => ['utkast', 'til_faglig_kontroll']).flat(), ...(depot ? ['til_faglig_kontroll'] : [])]
       expect(r.godkjenning.historikk.map((s) => s.status), r.id).toEqual(forventet)
+      if (depot) expect(r.godkjenning.historikk.at(-1)!.merknad, r.id).toMatch(/^Kontrollrunden 30\.10\.2026 \(P4\.8\): kildemessig akseptabel som avgrenset .*Ikke klinisk godkjent/)
+      else expect(r.godkjenning.historikk.at(-2)!.merknad, r.id).toMatch(/^Rettet etter kontrollrunden 30\.10\.2026 \(P4\.8\)/)
       expect(r.godkjenning.historikk.at(-1)!.regelversjon, r.id).toBe(r.versjon)
       expect(r.godkjenning.historikk.every((s) => s.rolle === 'utvikler')).toBe(true)
     }
@@ -178,6 +184,15 @@ describe('Pilotsettet', () => {
     const rettet = (pr: string) => PILOTSETT.regler.filter((r) => r.godkjenning.historikk[2]!.merknad.includes(pr)).map((r) => r.id)
     expect(rettet('PR #282')).toEqual(['antipsykotikabytte-olanzapin-kvetiapin', 'gruppe-rest-ap-aripiprazol', 'depot-aripiprazol-maintena', 'depot-paliperidon-xeplion'])
     expect(rettet('PR #286')).toEqual(['kryssnedtrapping-sertralin-mirtazapin', 'mao-fluoksetin-fenelzin'])
+    // Kontrollrunden 30.10.2026 (P4.8): de fire byttereglene er rettet eller avgrenset (versjon 3); depotreglene er uendret.
+    expect(PILOTSETT.regler.map((r) => [r.id, r.versjon])).toEqual([
+      ['kryssnedtrapping-sertralin-mirtazapin', 3],
+      ['mao-fluoksetin-fenelzin', 3],
+      ['antipsykotikabytte-olanzapin-kvetiapin', 3],
+      ['gruppe-rest-ap-aripiprazol', 3],
+      ['depot-aripiprazol-maintena', 2],
+      ['depot-paliperidon-xeplion', 2],
+    ])
     expect(PILOTSETT.regler.some((r) => r.id === 'seponering-escitalopram' || r.id === 'seponering-citalopram-hyperbolsk')).toBe(false)
   })
 
@@ -238,13 +253,13 @@ describe('Pilotsettet', () => {
 describe('Beregningen', () => {
   it('er deterministisk og bærer regel-, regelsett-, modell- og motorversjon', () => {
     const r = regel('kryssnedtrapping-sertralin-mirtazapin')
-    const a = beregn(r, { startdose_mg: 100, maldose_mg: 30 }, PILOTSETT)
-    expect(beregn(r, { startdose_mg: 100, maldose_mg: 30 }, PILOTSETT)).toEqual(a)
+    const a = beregn(r, { startdose_mg: 100, maldose_mg: 30, ...KRYSS }, PILOTSETT)
+    expect(beregn(r, { startdose_mg: 100, maldose_mg: 30, ...KRYSS }, PILOTSETT)).toEqual(a)
     expect(a).toMatchObject({
       status: 'modellberegning',
       klinisk_godkjent: false,
       forbehold: FORBEHOLD_IKKE_GODKJENT,
-      regel: { id: r.id, versjon: 2, godkjenning: 'til_faglig_kontroll' },
+      regel: { id: r.id, versjon: 3, godkjenning: 'til_faglig_kontroll' },
       regelsett: { id: PILOTSETT.id, versjon: PILOTSETT.versjon },
       modell: REGELMODELLVERSJON,
       motor: MOTORVERSJON,

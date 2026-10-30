@@ -42,6 +42,7 @@ import { markedsgrunnlag, preparaterFor } from '../verktoy/kartlegging'
 import { beregnDoseplan, planform } from '../verktoy/motor/plan'
 import { syntetiskUtvalg, type Testpreparat } from '../verktoy/motor/syntetisk'
 import { VERKTOY, virkestoffvalg } from '../verktoy/register'
+import { akseptsett, AKSEPTSTOFFER, AKSEPTTESTFIL, annenhverDag, besvart, FEST_AKSEPTTEST, KORT, LANG, lagAksepttestrapport, reduksjoner, vanligDose, type Festuttrekk } from '../verktoy/regler/aksepttest'
 import { AVSLUTNING_FELLES, beregn, kortform, MINSTE_VISTE_MG, nulldagfeil, SISTE_DOSE, TIDLIGSTE_DATOER, trinnTilHorisont, type Forlopsresultat, type Periode } from '../verktoy/regler/beregning'
 import { erKliniskGodkjent, fingeravtrykk } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett, lesKontrollgrunnlag } from '../verktoy/regler/kontroll'
@@ -88,8 +89,6 @@ const NEDTRAPPINGER = [...HOVEDREGLER, ...LANGSOMME]
 const HYPERBOLSK = SAMMENLIGNINGSSETT.regler[0]!
 
 /** Svarene på spørsmålene: kort behandlingstid og dose innenfor rammen, eller lang behandlingstid. */
-const KORT = { [LANG_BEHANDLINGSTID.id]: false, [UTENFOR_DOSERAMME_ID]: false }
-const LANG = { ...KORT, [LANG_BEHANDLINGSTID.id]: true }
 const UTENFOR = { ...KORT, [UTENFOR_DOSERAMME_ID]: true }
 /** En syntetisk begrunnelse; aldri pasientopplysninger. */
 const BEGRUNNELSE = 'Syntetisk begrunnelse: kort behandlingstid og ingen tidligere seponeringssymptomer.'
@@ -99,23 +98,8 @@ const FORSTE_BORTE = /blir første reduksjon \(til [\d,]+ mg\) borte når dosen 
 const AVSLUTNING = /; avslutning vurderes individuelt$/
 const HORISONT = `teknisk planhorisont: ${PLANHORISONT_TRINN} reduksjoner; avslutning vurderes individuelt`
 
-/** Nei på stoffets egne spørsmål om pasientgruppe, indikasjon og organfunksjon; de felles spørsmålene står i {@link KORT}. */
-const stoffsvar = (r: Regel) => Object.fromEntries((r.sporsmal ?? []).filter((x) => !(x.id in KORT)).map((x) => [x.id, false]))
-/**
- * Inndata med startforslag og organfunksjon bekreftet, hvert unntak avkreftet,
- * kort behandlingstid, dose innenfor rammen og nei på stoffets egne spørsmål,
- * som i eksemplene. Svar i `x` kommer i tillegg til stoffets nei.
- */
-const besvart = (r: Regel, startdose_mg: number, x: Partial<Beregningsinndata> = {}): Beregningsinndata => ({
-  startdose_mg,
-  bekreftet: r.bekreftelser.map((b) => b.id),
-  pasientforhold: Object.fromEntries(r.unntak.map((u) => [u.id, false])),
-  ...((r.sporsmal ?? []).length > 0 && { svar: { ...KORT, ...stoffsvar(r) } }),
-  ...x,
-  ...(x.svar && { svar: { ...stoffsvar(r), ...x.svar } }),
-})
-/** Startdosen i regelens første beregnede eksempel; innenfor alle grensene med svarene over. */
-const start = (r: Regel) => r.eksempler.find((e) => !e.stopp)!.inndata.startdose_mg
+/** Startdosen i regelens første beregnede eksempel; innenfor alle grensene med svarene i {@link besvart}. */
+const start = vanligDose
 const kort = (r: Regel, startdose_mg: number, x?: Partial<Beregningsinndata>) => kortform(beregn(r, besvart(r, startdose_mg, x)))
 const stoppet = (r: Regel, startdose_mg: number, x?: Partial<Beregningsinndata>) => (kort(r, startdose_mg, x).stopp ?? []).join(' ')
 /** Stiene til forskriverens valg i en P7-regel. */
@@ -1022,5 +1006,48 @@ describe('Fortolkningen', () => {
       .filter((f) => !f.startsWith('__tests__/') && /(?:regler\/nedtrapping|\/dekning|['"]\.\/dekning)['"]/.test(readFileSync(join(rot, f), 'utf8')))
     expect(brukere.every((f) => f.startsWith('verktoy/') || f.startsWith('components/verktoy/')), brukere.join(', ')).toBe(true)
     expect(brukere).toContain('verktoy/tilgjengelighet.ts')
+  })
+})
+
+describe('Aksepttesten med norske preparater (P7.5, del E.2)', () => {
+  const uttrekk = JSON.parse(readFileSync(new URL(`../../${FEST_AKSEPTTEST}`, import.meta.url), 'utf8')) as Festuttrekk
+  const sett = akseptsett(uttrekk)
+  const planer = [...sett.flatMap((t) => t.resultater.flatMap((r) => (r.plan ? [r.plan] : []))), ...annenhverDag(uttrekk).map((a) => a.plan)]
+
+  it('er oppdatert', () => {
+    expect(readFileSync(new URL(`../../${AKSEPTTESTFIL}`, import.meta.url), 'utf8'), 'Lag den på nytt med `npm run verktoy:regler -- aksepttest`.').toBe(lagAksepttestrapport(uttrekk))
+  })
+
+  it('regner hver hovedregel og langsom variant med de faktiske preparatene i FEST, i hver form, for alle scenariene', () => {
+    expect(uttrekk.utvalg.kilde).toBe('FEST')
+    expect(uttrekk.utvalg.kildedato).toBeTruthy()
+    expect(AKSEPTSTOFFER.map((s) => s.hoved)).toEqual(HOVEDREGLER)
+    expect(AKSEPTSTOFFER.map((s) => s.langsom)).toEqual(LANGSOMME)
+    expect(new Set(sett.map((t) => t.nokkel))).toEqual(new Set(HOVEDREGLER.map(nokkel)))
+    for (const t of sett) expect(t.resultater.map((r) => r.scenario), t.nokkel).toEqual(['a', 'b', 'c', 'd', 'f'])
+    // Escitalopram har både tabletter og dråper, og hver form regnes for seg.
+    expect(sett.filter((t) => t.nokkel === 'escitalopram').map((t) => t.form.navn)).toEqual(expect.arrayContaining(['Tablett', 'Dråper, oppløsning']))
+  })
+
+  it('gir aldri en klinisk plan eller en plan til null, og hver plan ender med individuell avslutning', () => {
+    for (const p of planer) {
+      expect(p.klinisk).toBe(false)
+      if (p.status !== 'doseplan') continue
+      const linjer = planform(p).fra!
+      expect(linjer.join('\n')).not.toMatch(/seponert|: 0 mg/)
+      expect(linjer.at(-1)).toMatch(AVSLUTNING)
+    }
+  })
+
+  it('bruker hele dråper for escitalopram', () => {
+    const drapeplaner = sett.filter((t) => t.nokkel === 'escitalopram' && t.form.navn === 'Dråper, oppløsning').flatMap((t) => t.resultater.flatMap((r) => (r.plan?.status === 'doseplan' ? [r.plan] : [])))
+    expect(drapeplaner.length).toBeGreaterThan(0)
+    for (const p of drapeplaner) for (const e of p.forlop[0]!.perioder.flatMap((x) => x.elementer)) expect([e.doseenhet, Number.isInteger(e.antall)]).toEqual(['drape', true])
+  })
+
+  it('viser hvor ofte planen stopper allerede ved første trinn (g)', () => {
+    const vanlig = sett.map((t) => reduksjoner(t.resultater[0]!.plan!))
+    expect(vanlig.some((n) => n === 0)).toBe(true)
+    expect(readFileSync(new URL(`../../${AKSEPTTESTFIL}`, import.meta.url), 'utf8')).toContain(`I (a) stopper ${vanlig.filter((n) => n === 0).length} av ${sett.length} kombinasjoner`)
   })
 })

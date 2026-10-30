@@ -863,13 +863,25 @@ function injeksjonstekst(i: Injeksjon): string {
   return `${injeksjonstidspunkt(i)}${parentes(dato && norskDato(dato), vindu)}${tidligst}: ${mg(i.mg)} mg injeksjon${sted}`
 }
 
+/**
+ * Linjen for et forløp regelen ikke beregner videre: en oppstart som ikke
+ * doseres (som fenelzin etter utvasking), eller dosering etter de beregnede
+ * periodene som planlegges individuelt (som olanzapin etter de første dagene).
+ */
+export function utenBeregningLinje(f: Pick<Forlopsresultat, 'start' | 'start_dato' | 'perioder'>, datotekst = (d: string | undefined) => parentes(d && norskDato(d))): string {
+  const siste = f.perioder.at(-1)
+  if (!siste) return `tidligst dag ${f.start}${datotekst(f.start_dato)}: oppstart, dosering beregnes ikke`
+  const dag = (siste.til ?? siste.fra) + 1
+  return `fra dag ${dag}${datotekst(siste.til_dato ? datoFor(siste.til_dato, 2) : undefined)}: videre dosering beregnes ikke; planlegges individuelt`
+}
+
 /** Hvert forløp som korte linjer (`dag 1–14: 10 mg`), eller `stopp` med grunnene. */
 export function kortform(r: Beregningsresultat): Record<string, string[]> {
   if (r.status === 'stoppet') return { stopp: r.stoppgrunner }
   return Object.fromEntries(
     r.forlop.map((f) => {
       const linjer = [...f.perioder.map(periodetekst), ...f.injeksjoner.map(injeksjonstekst)]
-      if (f.uten_beregning) linjer.push(`tidligst dag ${f.start}${parentes(f.start_dato && norskDato(f.start_dato))}: oppstart, dosering beregnes ikke`)
+      if (f.uten_beregning) linjer.push(utenBeregningLinje(f))
       if (f.siste_dosedag !== null) linjer.push(`fra dag ${f.siste_dosedag + 1}${parentes(f.seponert_dato && norskDato(f.seponert_dato))}: seponert`)
       if (f.avslutning_kort) linjer.push(f.avslutning_kort)
       return [f.id, linjer]
