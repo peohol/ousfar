@@ -100,6 +100,7 @@ export const SPC = {
   fluoksetinDose: h('dmp-fluoxetin', 'pkt. 4.2', 'Anbefalt dose ved depresjon er 20 mg daglig, maksimalt 60 mg.'),
   fluoksetinSeponering: h('dmp-fluoxetin', 'pkt. 4.2', 'Brå seponering bør unngås; dosen reduseres gradvis over minst én til to uker. Aktivt stoff finnes i kroppen i flere uker etter seponering.'),
   fluoksetinMao: h('dmp-fluoxetin', 'pkt. 4.3 og 4.5', 'Kontraindisert sammen med irreversibel, ikke-selektiv MAO-hemmer; det skal gå minst 5 uker etter seponering av fluoksetin før en slik MAO-hemmer startes.'),
+  nardilSsri: h('emc-nardil', 'section 4.5', 'Fenelzin brukes ikke sammen med serotoninreopptakshemmere; det må gå lang nok tid til at de og metabolittene er skilt ut, for eksempel 5 uker etter fluoksetin.'),
   seroquel: h('dmp-seroquel', 'pkt. 4.2', 'Schizofreni: døgndose 50, 100, 200 og 300 mg dag 1–4; fra dag 4 anbefales 300–450 mg daglig, individuelt innenfor 150–750 mg.'),
   zyprexaDose: h('ema-zyprexa', 'section 4.2', 'Doseområdet er 5–20 mg daglig.'),
   zyprexaSeponering: h('ema-zyprexa', 'section 4.2 og 4.4', 'Gradvis nedtrapping bør vurderes ved seponering; akutte symptomer ved brå seponering er sjeldne.'),
@@ -351,7 +352,7 @@ const kryssSertralinMirtazapin: Regel = {
 
 const maoFluoksetinFenelzin: Regel = {
   id: 'mao-fluoksetin-fenelzin',
-  versjon: 3,
+  versjon: 4,
   tittel: 'Bytte fra fluoksetin til fenelzin, sekvensielt med utvasking',
   fra: { type: 'virkestoff', nokkel: 'fluoksetin' },
   til: { type: 'virkestoff', nokkel: 'fenelzin' },
@@ -378,7 +379,7 @@ const maoFluoksetinFenelzin: Regel = {
         virkestoff: { type: 'virkestoff', nokkel: 'fenelzin' },
         administrasjon: 'peroral',
         utgangsdose: null,
-        start: { type: 'etter_utvasking', forlop: 'fra', utvasking: kilde(35, 'dager', 'bindende_krav', SPC.fluoksetinMao, KEKS16.fluoksetinMao) },
+        start: { type: 'etter_utvasking', forlop: 'fra', utvasking: kilde(35, 'dager', 'bindende_krav', SPC.fluoksetinMao, SPC.nardilSsri, KEKS16.fluoksetinMao) },
         faser: [
           {
             type: 'uten_beregning',
@@ -402,6 +403,7 @@ const maoFluoksetinFenelzin: Regel = {
   fortolkning: {
     kildetro: [
       utsagn('Fluoksetin og en irreversibel, ikke-selektiv MAO-hemmer skal ikke brukes samtidig; det skal gå minst 5 uker fra fluoksetin er seponert til MAO-hemmeren startes.', SPC.fluoksetinMao),
+      utsagn('Den britiske preparatomtalen for fenelzin sier det samme fra fenelzins side: minst 5 uker etter fluoksetin.', SPC.nardilSsri),
       utsagn('Litteraturen anbefaler 5–6 ukers utvasking, og at MAO-hemmeren startes forsiktig i lav dose.', KEKS16.fluoksetinMao),
       utsagn('Fluoksetin trappes ned gradvis over minst én til to uker.', SPC.fluoksetinSeponering),
       utsagn('Seponeringssymptomer kan komme dager til uker etter en reduksjon av fluoksetin; det er best å vente minst fire uker før neste.', RCPSYCH.fluoksetin),
@@ -421,7 +423,7 @@ const maoFluoksetinFenelzin: Regel = {
       'Kildene er ikke enige om nedtrappingen: preparatomtalen sier gradvis over minst én til to uker, NICE nevner dosering annenhver dag ved 20 mg, og Keks mfl. seponerer uten nedtrapping ved 40 mg daglig eller mindre. Regelen følger preparatomtalen; valget må avklares faglig.',
       'Ved høye doser og lang behandling kan 6 uker være tryggere enn 5; regelen bruker minimum fra preparatomtalen.',
       'Utvaskingen gjør at pasienten er uten antidepressiv i minst fem uker; risikoen for tilbakefall må vurderes individuelt.',
-      'Produktinformasjonen for fenelzin fra en godkjent utenlandsk kilde er ennå ikke kontrollert (kontrollrunden 30.10.2026).',
+      'Den britiske preparatomtalen for fenelzin støtter 35 dager som minimum (pkt. 4.5). Resten av bytteforløpet og fenelzins øvrige kontraindikasjoner er ikke kontrollert mot den.',
     ],
   },
   referanser: [pn('SwitchAntidepressants:Fo>Fe')],
@@ -446,7 +448,11 @@ const maoFluoksetinFenelzin: Regel = {
       stopp: /Må bekreftes før beregning: Byttet gjøres i, eller med råd fra, spesialisthelsetjenesten/,
     },
   ],
-  godkjenning: tilKontroll(TRINNLENGDE_RETTET, etterKontrollrunden('fenelzin startes ikke automatisk på dagen planen viser; utvaskingen er et minimum, og senere oppstart kan være nødvendig.')),
+  godkjenning: tilKontroll(
+    TRINNLENGDE_RETTET,
+    etterKontrollrunden('fenelzin startes ikke automatisk på dagen planen viser; utvaskingen er et minimum, og senere oppstart kan være nødvendig.'),
+    etterGjennomgangen('den britiske preparatomtalen for fenelzin (pkt. 4.5) er lagt til som kilde for minimum 5 uker etter fluoksetin.'),
+  ),
 }
 
 /**
@@ -972,7 +978,7 @@ export const PILOTSETT: Regelsett = {
   versjon: 7,
   modell: REGELMODELLVERSJON,
   beskrivelse:
-    'Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Etter kontrollrunden 30.10.2026 er de fire byttereglene rettet eller avgrenset og sendt til ny kontroll, og de to depotreglene er funnet kildemessig akseptable som avgrensede varianter. Ved gjennomgangen samme dag ble de beregnede sluttdelene av sertralin→mirtazapin og gruppebyttet til aripiprazol tatt ut; de planlegges individuelt. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.',
+    'Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Etter kontrollrunden 30.10.2026 er de fire byttereglene rettet eller avgrenset og sendt til ny kontroll, og de to depotreglene er funnet kildemessig akseptable som avgrensede varianter. Ved gjennomgangen samme dag ble de beregnede sluttdelene av sertralin→mirtazapin og gruppebyttet til aripiprazol tatt ut, så de planlegges individuelt, og fluoksetin→fenelzin fikk den britiske preparatomtalen for fenelzin som kilde. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.',
   regler: [
     kryssSertralinMirtazapin,
     maoFluoksetinFenelzin,

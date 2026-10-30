@@ -193,11 +193,12 @@ Reglene for olanzapin → kvetiapin, Rest AP → aripiprazol, Abilify Maintena o
 
 Beregningen viser nå et forløp som fortsetter uten beregning etter de første periodene, som «fra dag 5: videre dosering beregnes ikke; planlegges individuelt».
 
-**Etter gjennomgangen av de rettede versjonene (30.10.2026).** Kontrolløren fant at to bytteregler fortsatt beregnet en del som ikke er kontrollert for hvert stoff. Begge er versjon 4, og pilotsettet er versjon 7:
+**Etter gjennomgangen av de rettede versjonene (30.10.2026).** Kontrolløren fant at to bytteregler fortsatt beregnet en del som ikke er kontrollert for hvert stoff, og pekte på en utenlandsk preparatomtale for fenelzin. De tre reglene er versjon 4, og pilotsettet er versjon 7:
 
 | Regel | Vurdering | Endring |
 | --- | --- | --- |
 | Sertralin → mirtazapin (versjon 4) | Trinnet fra 25 mg til 0 var fortsatt et fast, ubesluttet sluttpunkt. | Beregningen stopper ved 25 mg sertralin, som fortsetter til avslutningen er vurdert individuelt. Mirtazapin holdes på 15 mg til da; måldosen beregnes ikke, og regelen spør ikke lenger etter den. |
+| Fluoksetin → fenelzin (versjon 4) | Utenlandsk produktinformasjon for fenelzin var ikke kontrollert. | Den britiske preparatomtalen for Nardil (pkt. 4.5, revidert 02.07.2025) er lagt til som kilde: minst 5 uker etter fluoksetin, som støtter 35 dager som minimum. Resten av bytteforløpet og fenelzins øvrige kontraindikasjoner er ikke kontrollert mot den. |
 | Rest AP → aripiprazol (versjon 4) | Regelen beregnet fortsatt 25 % av startdosen per uke til null, også for zuklopentiksol. | Bare første uke beregnes. Nedtrappingen av det gamle antipsykotikumet og måldosen for aripiprazol planlegges individuelt; aripiprazol holdes på 10 mg til da. En beregnet nedtrapping krever en egen regel for zuklopentiksol. |
 
 Ingen pilotregel bruker lenger prosent av startdosen; strategien er fortsatt en del av modellen og testes for seg.

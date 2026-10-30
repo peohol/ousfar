@@ -175,8 +175,8 @@ describe('Pilotsettet', () => {
   })
 
   it('har ingen klinisk godkjent regel; alle er til faglig kontroll i sin gjeldende versjon, med historikk', () => {
-    // Ved gjennomgangen av de rettede versjonene ble de beregnede sluttdelene av to bytteregler tatt ut.
-    const ETTER_GJENNOMGANGEN = ['kryssnedtrapping-sertralin-mirtazapin', 'gruppe-rest-ap-aripiprazol']
+    // Ved gjennomgangen av de rettede versjonene ble de beregnede sluttdelene av to bytteregler tatt ut, og fenelzinregelen fikk en kilde til.
+    const ETTER_GJENNOMGANGEN = ['kryssnedtrapping-sertralin-mirtazapin', 'mao-fluoksetin-fenelzin', 'gruppe-rest-ap-aripiprazol']
     for (const r of PILOTSETT.regler) {
       expect(r.godkjenning.status, r.id).toBe('til_faglig_kontroll')
       expect(godkjenningsfeil(r).length, r.id).toBeGreaterThan(0)
@@ -195,10 +195,10 @@ describe('Pilotsettet', () => {
     expect(rettet('PR #282')).toEqual(['antipsykotikabytte-olanzapin-kvetiapin', 'gruppe-rest-ap-aripiprazol', 'depot-aripiprazol-maintena', 'depot-paliperidon-xeplion'])
     expect(rettet('PR #286')).toEqual(['kryssnedtrapping-sertralin-mirtazapin', 'mao-fluoksetin-fenelzin'])
     // Kontrollrunden 30.10.2026 (P4.8): de fire byttereglene er rettet eller avgrenset (versjon 3), og ved gjennomgangen samme dag
-    // ble de beregnede sluttdelene av to av dem tatt ut (versjon 4); depotreglene er uendret.
+    // ble tre av dem rettet på nytt (versjon 4); depotreglene er uendret.
     expect(PILOTSETT.regler.map((r) => [r.id, r.versjon])).toEqual([
       ['kryssnedtrapping-sertralin-mirtazapin', 4],
-      ['mao-fluoksetin-fenelzin', 3],
+      ['mao-fluoksetin-fenelzin', 4],
       ['antipsykotikabytte-olanzapin-kvetiapin', 3],
       ['gruppe-rest-ap-aripiprazol', 4],
       ['depot-aripiprazol-maintena', 2],

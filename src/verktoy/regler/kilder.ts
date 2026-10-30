@@ -64,6 +64,18 @@ export const KILDER: readonly Kilde[] = [
   epar('ema-abilify', 'Abilify (aripiprazol), produktinformasjon', 'abilify', 'Sist endret 08.10.2026', '2026-10-28T03:32:58Z', '48ec4699460ea38cacf1c891061adc75be0cb67e5657869eb4f756b4f121c005'),
   epar('ema-abilify-maintena', 'Abilify Maintena (aripiprazol depotinjeksjon), produktinformasjon', 'abilify-maintena', 'Sist endret 08.10.2026', '2026-10-28T03:30:15Z', '41ea025269b746fee63511b9edbf4ea222d53988b45b27fd317f27f82cafb4fe'),
   epar('ema-xeplion', 'Xeplion (paliperidonpalmitat depotinjeksjon), produktinformasjon', 'xeplion', 'Sist endret 08.10.2026', '2026-10-28T03:30:16Z', '2d38bdc767adb9ede103df61263cd780b613b64f4605afd38720f25f2e234f90'),
+  {
+    id: 'emc-nardil',
+    type: 'preparatomtale',
+    tittel: 'Nardil (fenelzin) 15 mg filmdrasjerte tabletter, britisk preparatomtale (SmPC)',
+    utgiver: 'Neon Healthcare Ltd, via electronic medicines compendium (emc)',
+    url: 'https://www.medicines.org.uk/emc/product/228/smpc',
+    versjon: 'Revidert 02.07.2025',
+    hentet: '2026-10-30T13:35:00Z',
+    // Nettsiden har engangsverdier, så kontrollsummen er av den synlige teksten: uten skript, stil og tagger, med mellomrom samlet.
+    sha256: 'ace676d3533deee6b8d244b63ca125920ae103196912fbbe8b827a8ac294abe4',
+    bruk: OFFENTLIG,
+  },
   epar('ema-zyprexa', 'Zyprexa (olanzapin), produktinformasjon', 'zyprexa', 'Sist endret 08.10.2026', '2026-10-28T03:32:59Z', 'd7a60e6f4908c9e7d3e4f8ff39c56bf74a1014719fb7cace04436a065b4d3357'),
   {
     id: 'nice-ng222',

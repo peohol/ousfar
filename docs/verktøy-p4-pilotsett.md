@@ -2,7 +2,7 @@
 
 <!-- Laget av `npm run verktoy:regler -- rapport` fra reglene i src/verktoy/regler/. Ikke rediger for hånd; endre reglene og lag rapporten på nytt. -->
 
-Regelsett `ousfar-verktoy-pilot` versjon 7, regelmodell 7, beregningsmotor 5. Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Etter kontrollrunden 30.10.2026 er de fire byttereglene rettet eller avgrenset og sendt til ny kontroll, og de to depotreglene er funnet kildemessig akseptable som avgrensede varianter. Ved gjennomgangen samme dag ble de beregnede sluttdelene av sertralin→mirtazapin og gruppebyttet til aripiprazol tatt ut; de planlegges individuelt. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.
+Regelsett `ousfar-verktoy-pilot` versjon 7, regelmodell 7, beregningsmotor 5. Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Etter kontrollrunden 30.10.2026 er de fire byttereglene rettet eller avgrenset og sendt til ny kontroll, og de to depotreglene er funnet kildemessig akseptable som avgrensede varianter. Ved gjennomgangen samme dag ble de beregnede sluttdelene av sertralin→mirtazapin og gruppebyttet til aripiprazol tatt ut, så de planlegges individuelt, og fluoksetin→fenelzin fikk den britiske preparatomtalen for fenelzin som kilde. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.
 
 **6 regler, 0 klinisk godkjent.** Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. De er ikke empirisk validerte kliniske anbefalinger, og ingen av reglene er klinisk godkjent. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-p4-regelmodell.md`.
 
@@ -21,7 +21,7 @@ Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel by
 
 ## Kilder
 
-Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det ble hentet.
+Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det ble hentet.
 
 | Id | Type | Kilde | Versjon | SHA-256 |
 | --- | --- | --- | --- | --- |
@@ -33,6 +33,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 | [ema-abilify](https://www.ema.europa.eu/en/documents/product-information/abilify-epar-product-information_en.pdf) | preparatomtale | Abilify (aripiprazol), produktinformasjon | Sist endret 08.10.2026 | `48ec4699460ea38c…` |
 | [ema-abilify-maintena](https://www.ema.europa.eu/en/documents/product-information/abilify-maintena-epar-product-information_en.pdf) | preparatomtale | Abilify Maintena (aripiprazol depotinjeksjon), produktinformasjon | Sist endret 08.10.2026 | `41ea025269b746fe…` |
 | [ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf) | preparatomtale | Xeplion (paliperidonpalmitat depotinjeksjon), produktinformasjon | Sist endret 08.10.2026 | `2d38bdc767adb9ed…` |
+| [emc-nardil](https://www.medicines.org.uk/emc/product/228/smpc) | preparatomtale | Nardil (fenelzin) 15 mg filmdrasjerte tabletter, britisk preparatomtale (SmPC) | Revidert 02.07.2025 | `ace676d3533deee6…` |
 | [ema-zyprexa](https://www.ema.europa.eu/en/documents/product-information/zyprexa-epar-product-information_en.pdf) | preparatomtale | Zyprexa (olanzapin), produktinformasjon | Sist endret 08.10.2026 | `d7a60e6f4908c9e7…` |
 | [nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations) | retningslinje | Depression in adults: treatment and management (NG222), Recommendations | Publisert 29.06.2022 | `8fb54d455ce9ebee…` |
 | [rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants) | retningslinje | Stopping antidepressants | Publisert mars 2024 | `f465fb1dbece0c76…` |
@@ -130,14 +131,16 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra fluoksetin til fenelzin, sekvensielt med utvasking
 
-`mao-fluoksetin-fenelzin`, versjon 3, fingeravtrykk `c179f388d87f3cbc3a3467f84d2653b7b3961b65dd18f0e2d0f12ebebd0ecab1`. Sekvensielt bytte: fluoksetin → fenelzin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`mao-fluoksetin-fenelzin`, versjon 4, fingeravtrykk `9b1d132a013507d46cbe0fe786376299fa0b47ce05b2ab37997a4be7abd970ae`. Sekvensielt bytte: fluoksetin → fenelzin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → utkast (versjon 3, 30.10.2026, Claude Code) → til faglig kontroll (versjon 3, 30.10.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → utkast (versjon 3, 30.10.2026, Claude Code) → til faglig kontroll (versjon 3, 30.10.2026, Claude Code) → utkast (versjon 4, 30.10.2026, Claude Code) → til faglig kontroll (versjon 4, 30.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
 - Fluoksetin og en irreversibel, ikke-selektiv MAO-hemmer skal ikke brukes samtidig; det skal gå minst 5 uker fra fluoksetin er seponert til MAO-hemmeren startes.
   - Kontraindisert sammen med irreversibel, ikke-selektiv MAO-hemmer; det skal gå minst 5 uker etter seponering av fluoksetin før en slik MAO-hemmer startes. *([dmp-fluoxetin](https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-7362.pdf), pkt. 4.3 og 4.5)*
+- Den britiske preparatomtalen for fenelzin sier det samme fra fenelzins side: minst 5 uker etter fluoksetin.
+  - Fenelzin brukes ikke sammen med serotoninreopptakshemmere; det må gå lang nok tid til at de og metabolittene er skilt ut, for eksempel 5 uker etter fluoksetin. *([emc-nardil](https://www.medicines.org.uk/emc/product/228/smpc), section 4.5)*
 - Litteraturen anbefaler 5–6 ukers utvasking, og at MAO-hemmeren startes forsiktig i lav dose.
   - Fra fluoksetin til MAO-hemmer: fluoksetin seponeres (trappes ned over 40 mg daglig), så 5–6 ukers utvasking før MAO-hemmeren startes forsiktig i lav dose. *([keks-2016](https://pmc.ncbi.nlm.nih.gov/articles/PMC4919171/), tabell 3)*
 - Fluoksetin trappes ned gradvis over minst én til to uker.
@@ -164,7 +167,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 | fra: fase 1 (nedtrapping) | strategi.sluttdose_mg | 10 mg | veiledende | **OUSFAR-vurdering, åpent forslag:** Daglig 10 mg i stedet for 20 mg annenhver dag, som modellen ikke har; under den seponeres. (bygger på nice-ng222 anbefaling 1.4.18) |
 | fra: fase 1 (nedtrapping) | trinnlengde | 28 dager | veiledende | **OUSFAR-vurdering, åpent forslag:** RCPsych anbefaler minst fire uker før neste reduksjon av langtidsvirkende fluoksetin, fordi symptomene kan komme sent; NICE nevner én til to uker for å vurdere virkningen. OUSFAR bruker det strengeste. (bygger på rcpsych-stopping If you have been taking antidepressants for longer; nice-ng222 anbefaling 1.4.18 (om fluoksetin)) |
 | fra: fase 1 (nedtrapping) | minste_varighet | 14 dager | bindende krav | **OUSFAR-vurdering, åpent forslag:** «Minst én til to uker» er lest konservativt som minst 14 dager. (bygger på dmp-fluoxetin pkt. 4.2) |
-| til: start | utvasking | 35 dager | bindende krav | dmp-fluoxetin pkt. 4.3 og 4.5; keks-2016 tabell 3 |
+| til: start | utvasking | 35 dager | bindende krav | dmp-fluoxetin pkt. 4.3 og 4.5; emc-nardil section 4.5; keks-2016 tabell 3 |
 
 **Betingelser:**
 
@@ -183,7 +186,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 - Kildene er ikke enige om nedtrappingen: preparatomtalen sier gradvis over minst én til to uker, NICE nevner dosering annenhver dag ved 20 mg, og Keks mfl. seponerer uten nedtrapping ved 40 mg daglig eller mindre. Regelen følger preparatomtalen; valget må avklares faglig.
 - Ved høye doser og lang behandling kan 6 uker være tryggere enn 5; regelen bruker minimum fra preparatomtalen.
 - Utvaskingen gjør at pasienten er uten antidepressiv i minst fem uker; risikoen for tilbakefall må vurderes individuelt.
-- Produktinformasjonen for fenelzin fra en godkjent utenlandsk kilde er ennå ikke kontrollert (kontrollrunden 30.10.2026).
+- Den britiske preparatomtalen for fenelzin støtter 35 dager som minimum (pkt. 4.5). Resten av bytteforløpet og fenelzins øvrige kontraindikasjoner er ikke kontrollert mot den.
 
 **Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
 
