@@ -2,9 +2,9 @@
 
 <!-- Laget av `npm run verktoy:regler -- rapport` fra reglene i src/verktoy/regler/. Ikke rediger for hånd; endre reglene og lag rapporten på nytt. -->
 
-Regelsett `ousfar-verktoy-pilot` versjon 7, regelmodell 8, beregningsmotor 6. Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Etter kontrollrunden 30.10.2026 er de fire byttereglene rettet eller avgrenset og sendt til ny kontroll, og de to depotreglene er funnet kildemessig akseptable som avgrensede varianter. Ved gjennomgangen samme dag ble de beregnede sluttdelene av sertralin→mirtazapin og gruppebyttet til aripiprazol tatt ut, så de planlegges individuelt, og fluoksetin→fenelzin fikk den britiske preparatomtalen for fenelzin som kilde. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.
+Regelsett `ousfar-verktoy-pilot` versjon 8, regelmodell 9, beregningsmotor 7. Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Etter kontrollrunden 30.10.2026 er byttereglene rettet eller avgrenset og sendt til ny kontroll, og de to depotreglene er funnet kildemessig akseptable som avgrensede varianter. Etter kontrollørens beslutninger samme dag er byttene avgrenset slik kontrolløren godtok dem, gruppebyttet til aripiprazol er tatt ut av verktøyet (en modelleringsdemonstrasjon i utviklingssettet), og depotreglene er koblet til preparatet sitt i FEST. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.
 
-**6 regler, 0 klinisk godkjent.** Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. De er ikke empirisk validerte kliniske anbefalinger, og ingen av reglene er klinisk godkjent. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-p4-regelmodell.md`.
+**5 regler, 0 klinisk godkjent.** Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. De er ikke empirisk validerte kliniske anbefalinger, og ingen av reglene er klinisk godkjent. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-p4-regelmodell.md`.
 
 Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel bygger på teksten der, og den vises ikke (`docs/verktøy-p3-rettigheter.md`).
 
@@ -15,7 +15,6 @@ Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel by
 | `kryssnedtrapping-sertralin-mirtazapin` | kryssnedtrapping | sertralin → mirtazapin | beregnbar etter faglig avklaring | 4 | til faglig kontroll | 4 |
 | `mao-fluoksetin-fenelzin` | sekvensielt bytte | fluoksetin → fenelzin | beregnbar etter faglig avklaring | 4 | til faglig kontroll | 3 |
 | `antipsykotikabytte-olanzapin-kvetiapin` | kryssnedtrapping | olanzapin → kvetiapin | beregnbar etter faglig avklaring | 2 | til faglig kontroll | 4 |
-| `gruppe-rest-ap-aripiprazol` | kryssnedtrapping | gruppen rest-ap → aripiprazol | beregnbar etter faglig avklaring | 3 | til faglig kontroll | 2 |
 | `depot-aripiprazol-maintena` | oppstart av depot | aripiprazol → aripiprazol | entydig beregnbar | 0 | til faglig kontroll | 4 |
 | `depot-paliperidon-xeplion` | oppstart av depot | paliperidon → paliperidon | entydig beregnbar | 0 | til faglig kontroll | 6 |
 
@@ -29,8 +28,6 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
 | [dmp-fluoxetin](https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-7362.pdf) | preparatomtale | Fluoxetine Vitabalans (fluoksetin) tabletter, preparatomtale | Oppdatert 12.11.2021 | `221a73511f81243a…` |
 | [dmp-remeron](https://produktinformasjon.legemiddelsok.no/preparatomtaler/1997-03657.pdf) | preparatomtale | Remeron (mirtazapin) tabletter, preparatomtale | Oppdatert 01.09.2021 | `2bc89cecfe0b2a80…` |
 | [dmp-seroquel](https://produktinformasjon.legemiddelsok.no/preparatomtaler/02-1435.pdf) | preparatomtale | Seroquel (kvetiapin) tabletter, preparatomtale | Oppdatert 03.07.2024 | `87e197ef056358d0…` |
-| [dmp-cisordinol](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06778.pdf) | preparatomtale | Cisordinol (zuklopentiksol) tabletter, preparatomtale | Oppdatert 16.02.2026 | `e34ae0834fb63bb8…` |
-| [ema-abilify](https://www.ema.europa.eu/en/documents/product-information/abilify-epar-product-information_en.pdf) | preparatomtale | Abilify (aripiprazol), produktinformasjon | Sist endret 08.10.2026 | `48ec4699460ea38c…` |
 | [ema-abilify-maintena](https://www.ema.europa.eu/en/documents/product-information/abilify-maintena-epar-product-information_en.pdf) | preparatomtale | Abilify Maintena (aripiprazol depotinjeksjon), produktinformasjon | Sist endret 08.10.2026 | `41ea025269b746fe…` |
 | [ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf) | preparatomtale | Xeplion (paliperidonpalmitat depotinjeksjon), produktinformasjon | Sist endret 08.10.2026 | `2d38bdc767adb9ed…` |
 | [emc-nardil](https://www.medicines.org.uk/emc/product/228/smpc) | preparatomtale | Nardil (fenelzin) 15 mg filmdrasjerte tabletter, britisk preparatomtale (SmPC) | Revidert 02.07.2025 | `ace676d3533deee6…` |
@@ -43,9 +40,9 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
 
 ## Bytte fra sertralin til mirtazapin, kryssnedtrapping
 
-`kryssnedtrapping-sertralin-mirtazapin`, versjon 4, fingeravtrykk `e9043380fa21ed7c59cab20a75d88de5c9c6a8a3e9f570896064bc60af73b6f9`. Kryssnedtrapping: sertralin → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`kryssnedtrapping-sertralin-mirtazapin`, versjon 5, fingeravtrykk `cdd1da6f011c2d9f420cf4d5eb010b81a4b6426e9770aab4a6508b904e20120f`. Kryssnedtrapping: sertralin → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → utkast (versjon 3, 30.10.2026, Claude Code) → til faglig kontroll (versjon 3, 30.10.2026, Claude Code) → utkast (versjon 4, 30.10.2026, Claude Code) → til faglig kontroll (versjon 4, 30.10.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → utkast (versjon 3, 30.10.2026, Claude Code) → til faglig kontroll (versjon 3, 30.10.2026, Claude Code) → utkast (versjon 4, 30.10.2026, Claude Code) → til faglig kontroll (versjon 4, 30.10.2026, Claude Code) → utkast (versjon 5, 30.10.2026, Claude Code) → til faglig kontroll (versjon 5, 30.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -99,7 +96,7 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
 
 - Ved samtidig bruk kan serotonerge bivirkninger øke; overlappens lengde er OUSFARs valg.
 - NICE åpner for raskere nedtrapping ved bytte; 14 dager per trinn kan være lengre enn nødvendig.
-- Om seponeringen fra 25 mg kan bli et fast sluttpunkt i byttet, og for hvilke pasienter, er ikke avklart (kontrollrunden 30.10.2026); til da beregnes den ikke.
+- Om og når siste sertralindose seponeres, er forskriverens individuelle valg (kontrollørens beslutning P4-A 30.10.2026); regelen beregner det ikke, og det er ikke et åpent spørsmål for beregningen.
 
 **Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
 
@@ -131,9 +128,9 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
 
 ## Bytte fra fluoksetin til fenelzin, sekvensielt med utvasking
 
-`mao-fluoksetin-fenelzin`, versjon 5, fingeravtrykk `1f1a30be2295be5152ab74f94eaa6a793499bc80b121ff9baaf48f41849779ec`. Sekvensielt bytte: fluoksetin → fenelzin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`mao-fluoksetin-fenelzin`, versjon 6, fingeravtrykk `4066601968d931e1ed1612909fa6358d84b6b62b40f18bc3a8c408f8fddd17d8`. Sekvensielt bytte: fluoksetin → fenelzin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → utkast (versjon 3, 30.10.2026, Claude Code) → til faglig kontroll (versjon 3, 30.10.2026, Claude Code) → utkast (versjon 4, 30.10.2026, Claude Code) → til faglig kontroll (versjon 4, 30.10.2026, Claude Code) → utkast (versjon 5, 30.10.2026, Claude Code) → til faglig kontroll (versjon 5, 30.10.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → utkast (versjon 3, 30.10.2026, Claude Code) → til faglig kontroll (versjon 3, 30.10.2026, Claude Code) → utkast (versjon 4, 30.10.2026, Claude Code) → til faglig kontroll (versjon 4, 30.10.2026, Claude Code) → utkast (versjon 5, 30.10.2026, Claude Code) → til faglig kontroll (versjon 5, 30.10.2026, Claude Code) → utkast (versjon 6, 30.10.2026, Claude Code) → til faglig kontroll (versjon 6, 30.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -141,6 +138,8 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
   - Kontraindisert sammen med irreversibel, ikke-selektiv MAO-hemmer; det skal gå minst 5 uker etter seponering av fluoksetin før en slik MAO-hemmer startes. *([dmp-fluoxetin](https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-7362.pdf), pkt. 4.3 og 4.5)*
 - Den britiske preparatomtalen for fenelzin sier at det må gå lang nok tid til at fluoksetin er skilt ut, med 5 uker som eksempel; den gir ikke et eget minimum. Minimumet på 35 dager kommer fra preparatomtalen for fluoksetin.
   - Fenelzin brukes ikke sammen med serotoninreopptakshemmere; det må gå lang nok tid til at de og metabolittene er skilt ut, for eksempel 5 uker etter fluoksetin. *([emc-nardil](https://www.medicines.org.uk/emc/product/228/smpc), section 4.5)*
+- Fenelzin har viktige kontraindikasjoner og interaksjoner, blant annet ved hjertesvikt, cerebrovaskulær sykdom og leversykdom, og med serotonerge legemidler, sympatomimetika, enkelte opioider og tyramin.
+  - Preparatomtalen har viktige kontraindikasjoner og interaksjoner, blant annet ved hjertesvikt, cerebrovaskulær sykdom og leversykdom, og med serotonerge legemidler, sympatomimetika, enkelte opioider og tyramin. *([emc-nardil](https://www.medicines.org.uk/emc/product/228/smpc), section 4.3 og 4.5)*
 - Litteraturen anbefaler 5–6 ukers utvasking, og at MAO-hemmeren startes forsiktig i lav dose.
   - Fra fluoksetin til MAO-hemmer: fluoksetin seponeres (trappes ned over 40 mg daglig), så 5–6 ukers utvasking før MAO-hemmeren startes forsiktig i lav dose. *([keks-2016](https://pmc.ncbi.nlm.nih.gov/articles/PMC4919171/), tabell 3)*
 - Fluoksetin trappes ned gradvis over minst én til to uker.
@@ -186,7 +185,7 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
 - Kildene er ikke enige om nedtrappingen: preparatomtalen sier gradvis over minst én til to uker, NICE nevner dosering annenhver dag ved 20 mg, og Keks mfl. seponerer uten nedtrapping ved 40 mg daglig eller mindre. Regelen følger preparatomtalen; valget må avklares faglig.
 - Ved høye doser og lang behandling kan 6 uker være tryggere enn 5; regelen bruker minimum fra preparatomtalen.
 - Utvaskingen gjør at pasienten er uten antidepressiv i minst fem uker; risikoen for tilbakefall må vurderes individuelt.
-- Den britiske preparatomtalen for fenelzin er i samsvar med 35 dager (pkt. 4.5, 5 uker som eksempel). Resten av bytteforløpet og fenelzins øvrige kontraindikasjoner er ikke kontrollert mot den.
+- Fenelzindelen er utvaskingsinformasjon, ikke en oppstartsplan (kontrollørens beslutning P4-A 30.10.2026): verktøyet kontrollerer ikke fenelzins kontraindikasjoner og interaksjoner, så de står framhevet i planen og må kontrolleres klinisk ved en eventuell oppstart.
 
 **Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
 
@@ -197,6 +196,7 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
   - Kontroll: Startdosen er 20–60 mg (bindende) – oppfylt. 40 mg.
   - Kontroll: Nedtrappingen av fluoksetin varer minst 14 dager (bindende) – oppfylt. Nedtrapping dag 1–56 (56 dager).
   - Kontroll: Minst 35 dager uten fluoksetin før fenelzin (bindende) – oppfylt. Uten legemiddel dag 57–91 (35 dager); fenelzin tidligst dag 92.
+  - Merknad: fenelzin: Fenelzin startes ikke automatisk: dagen planen viser, er den tidligste etter minimum 35 dagers utvasking, ikke en anbefalt startdag. Senere oppstart kan være nødvendig etter høy dose eller lang behandling med fluoksetin, ved interaksjoner og etter klinisk vurdering. Fenelzin har ingen norsk preparatomtale (bare godkjenningsfritak); startdose og opptrapping vurderes i spesialisthelsetjenesten. Før en eventuell oppstart må fenelzins kontraindikasjoner og interaksjoner kontrolleres klinisk (den britiske preparatomtalen, pkt. 4.3 og 4.5), blant annet ved hjertesvikt, cerebrovaskulær sykdom og leversykdom, og med serotonerge legemidler, sympatomimetika, enkelte opioider og tyramin.
 - *Fluoksetin 20 mg: én reduksjon, fenelzin tidligst dag 64.* Inndata: startdose 20 mg; bekreftet: spesialisthelsetjeneste.
   - **fra:** dag 1–28: 10 mg; fra dag 29: seponert
   - **til:** tidligst dag 64: oppstart, dosering beregnes ikke
@@ -204,6 +204,7 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
   - Kontroll: Startdosen er 20–60 mg (bindende) – oppfylt. 20 mg.
   - Kontroll: Nedtrappingen av fluoksetin varer minst 14 dager (bindende) – oppfylt. Nedtrapping dag 1–28 (28 dager).
   - Kontroll: Minst 35 dager uten fluoksetin før fenelzin (bindende) – oppfylt. Uten legemiddel dag 29–63 (35 dager); fenelzin tidligst dag 64.
+  - Merknad: fenelzin: Fenelzin startes ikke automatisk: dagen planen viser, er den tidligste etter minimum 35 dagers utvasking, ikke en anbefalt startdag. Senere oppstart kan være nødvendig etter høy dose eller lang behandling med fluoksetin, ved interaksjoner og etter klinisk vurdering. Fenelzin har ingen norsk preparatomtale (bare godkjenningsfritak); startdose og opptrapping vurderes i spesialisthelsetjenesten. Før en eventuell oppstart må fenelzins kontraindikasjoner og interaksjoner kontrolleres klinisk (den britiske preparatomtalen, pkt. 4.3 og 4.5), blant annet ved hjertesvikt, cerebrovaskulær sykdom og leversykdom, og med serotonerge legemidler, sympatomimetika, enkelte opioider og tyramin.
 - *Uten bekreftelse om spesialisthelsetjenesten stopper beregningen.* Inndata: startdose 40 mg.
   - **Stoppet:** Må bekreftes før beregning: Byttet gjøres i, eller med råd fra, spesialisthelsetjenesten.
 
@@ -211,9 +212,9 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
 
 ## Bytte fra olanzapin til kvetiapin, kryss-titrering med fast opptrapping
 
-`antipsykotikabytte-olanzapin-kvetiapin`, versjon 3, fingeravtrykk `378a51259483e5d00671533d6771f6544ff312e192ce8d40539ac20efada7ef7`. Kryssnedtrapping: olanzapin → kvetiapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`antipsykotikabytte-olanzapin-kvetiapin`, versjon 4, fingeravtrykk `a5ecf8488285d100576ad7291bd8c0a744452e6c4161f2791ba04fc45a559419`. Kryssnedtrapping: olanzapin → kvetiapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → utkast (versjon 3, 30.10.2026, Claude Code) → til faglig kontroll (versjon 3, 30.10.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → utkast (versjon 3, 30.10.2026, Claude Code) → til faglig kontroll (versjon 3, 30.10.2026, Claude Code) → utkast (versjon 4, 30.10.2026, Claude Code) → til faglig kontroll (versjon 4, 30.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -265,6 +266,7 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
 
 - Kildene oppgir ingen varighet for nedtrappingen av olanzapin; den faste nedtrappingen med 25 % av startdosen per uke i versjon 2 var OUSFARs valg og er tatt ut.
 - Sedasjon og ortostatisk blodtrykksfall kan øke mens begge brukes; det må følges klinisk.
+- Opptrappingen av kvetiapin bygger på preparatomtalen, men validerer ikke kryssbyttet som helhet (kontrollørens beslutning P4-A 30.10.2026).
 
 **Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
 
@@ -276,6 +278,7 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
   - Kontroll: Bekreftet: Byttet gjøres i, eller med råd fra, spesialisthelsetjenesten, og indikasjonen, risikoen for tilbakefall og tempoet er vurdert. Byttet tilpasses toleransen og symptomene; sedasjon, ortostatisk blodtrykksfall, akatisi og forverring følges. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 5–20 mg (bindende) – oppfylt. 20 mg.
   - Kontroll: Måldosen er 300–450 mg (bindende) – oppfylt. 300 mg.
+  - Merknad: olanzapin: Nedtrappingen av olanzapin beregnes ikke: et fast skjema er ikke validert (kontrollrunden 30.10.2026). Den planlegges i, eller med råd fra, spesialisthelsetjenesten og tilpasses toleransen og symptomene; olanzapin seponeres ikke brått.
 - *Olanzapin 10 mg til kvetiapin 400 mg med startdato 2. november 2026.* Inndata: startdose 10 mg; måldose 400 mg; startdato 02.11.2026; bekreftet: indikasjon, peroral_formulering, spesialist_risiko.
   - **fra:** dag 1–4 (02.11.2026–05.11.2026): 10 mg; fra dag 5 (06.11.2026): videre dosering beregnes ikke; planlegges individuelt
   - **til:** dag 1 (02.11.2026): 50 mg; dag 2 (03.11.2026): 100 mg; dag 3 (04.11.2026): 200 mg; dag 4 (05.11.2026): 300 mg; fra dag 5 (06.11.2026): 400 mg
@@ -284,6 +287,7 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
   - Kontroll: Bekreftet: Byttet gjøres i, eller med råd fra, spesialisthelsetjenesten, og indikasjonen, risikoen for tilbakefall og tempoet er vurdert. Byttet tilpasses toleransen og symptomene; sedasjon, ortostatisk blodtrykksfall, akatisi og forverring følges. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 5–20 mg (bindende) – oppfylt. 10 mg.
   - Kontroll: Måldosen er 300–450 mg (bindende) – oppfylt. 400 mg.
+  - Merknad: olanzapin: Nedtrappingen av olanzapin beregnes ikke: et fast skjema er ikke validert (kontrollrunden 30.10.2026). Den planlegges i, eller med råd fra, spesialisthelsetjenesten og tilpasses toleransen og symptomene; olanzapin seponeres ikke brått.
 - *30 mg olanzapin er over doseområdet regelen gjelder for.* Inndata: startdose 30 mg; måldose 300 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko.
   - **Stoppet:** Startdosen 30 mg er utenfor det regelen gjelder for (5–20 mg).
 - *Uten bekreftelse av at olanzapin er peroral (ikke depot) stopper beregningen.* Inndata: startdose 20 mg; måldose 300 mg; bekreftet: indikasjon, spesialist_risiko.
@@ -291,91 +295,11 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
 
 **Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntipsychotics:Ol>Qu`.
 
-## Bytte fra et antipsykotikum i gruppen «øvrige antipsykotika» til aripiprazol, kryss-titrering
-
-`gruppe-rest-ap-aripiprazol`, versjon 4, fingeravtrykk `be187975c27404d81fc3e2446528516bdc5c5e6b5be7640c512cd527a071d433`. Kryssnedtrapping: gruppen rest-ap → aripiprazol. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
-
-**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → utkast (versjon 3, 30.10.2026, Claude Code) → til faglig kontroll (versjon 3, 30.10.2026, Claude Code) → utkast (versjon 4, 30.10.2026, Claude Code) → til faglig kontroll (versjon 4, 30.10.2026, Claude Code).
-
-**Kildetro – det som følger direkte av kildene:**
-
-- Aripiprazol startes med 10 eller 15 mg ved schizofreni; doseområdet er 10–30 mg.
-  - Schizofreni: startdose 10 eller 15 mg daglig, vedlikehold 15 mg; effektivt doseområde 10–30 mg daglig. *([ema-abilify](https://www.ema.europa.eu/en/documents/product-information/abilify-epar-product-information_en.pdf), section 4.2)*
-- Brå seponering av zuklopentiksol kan gi seponeringssymptomer innen 1–4 dager.
-  - Brå seponering kan gi seponeringssymptomer, vanligvis innen 1–4 dager, som avtar innen 7–14 dager. *([dmp-cisordinol](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06778.pdf), pkt. 4.8)*
-- Ved kryss-titrering trappes det første antipsykotikumet ned mens det andre innføres, uten opphold.
-  - Ved kryss-titrering trappes det første antipsykotikumet ned mens det andre innføres. Et opphold uten antipsykotikum anbefales ikke. *([keks-2019](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6787301/fullTextXML), tabell 4 og avsnittet om byttestrategier)*
-
-**OUSFARs selvstendige tilpasninger (må kontrolleres):**
-
-- OUSFAR starter aripiprazol 10 mg dag 1 og holder det gamle antipsykotikumet uendret i én uke. Nedtrappingen av det gamle og økningen av aripiprazol til måldosen beregnes ikke, men planlegges individuelt (kontrollrunden 30.10.2026); aripiprazol holdes på 10 mg til da.
-  - Schizofreni: startdose 10 eller 15 mg daglig, vedlikehold 15 mg; effektivt doseområde 10–30 mg daglig. *([ema-abilify](https://www.ema.europa.eu/en/documents/product-information/abilify-epar-product-information_en.pdf), section 4.2)*
-  - Ved kryss-titrering trappes det første antipsykotikumet ned mens det andre innføres. Et opphold uten antipsykotikum anbefales ikke. *([keks-2019](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6787301/fullTextXML), tabell 4 og avsnittet om byttestrategier)*
-- Gruppen følger P1-kartleggingen (tabellens medlemmer). Bare medlemmer som er vurdert hver for seg, kan beregnes (B4); i piloten gjelder det bare zuklopentiksol, som forslag. *(OUSFARs vurdering)*
-- Regelen er ikke en gruppebasert klinisk doseplan (kontrollrunden 30.10.2026): én felles algoritme er ikke validert for antipsykotika med ulik farmakologi. Gruppen viser bare hvordan modellen håndterer medlemmer; det kliniske kandidatforslaget er zuklopentiksol alene, helst som en egen regel til ny kontroll. *(OUSFARs vurdering)*
-
-**Den matematiske regelen – parametre:**
-
-| Hvor | Parameter | Verdi | Art | Grunnlag |
-| --- | --- | --- | --- | --- |
-| fra: fase 1 (hold) | varighet.dager | 7 dager | veiledende | **OUSFAR-vurdering, åpent forslag:** Første uke med aripiprazol før nedtrappingen starter. |
-| til: fase 1 (hold) | dose.mg | 10 mg | veiledende | ema-abilify section 4.2 |
-
-**Betingelser:**
-
-- Startdose 20–40 mg for zuklopentiksol (veiledende; dmp-cisordinol pkt. 4.2)
-- Må bekreftes (`indikasjon`): Indikasjonen er schizofreni. (ema-abilify section 4.2)
-- Må bekreftes (`peroral_formulering`): Pasienten bruker en peroral formulering, ikke depotinjeksjon eller korttidsvirkende injeksjon. (keks-2019 avsnittet om byttestrategier)
-- Må bekreftes (`spesialist_risiko`): Byttet gjøres i, eller med råd fra, spesialisthelsetjenesten, og indikasjonen, risikoen for tilbakefall og tempoet er vurdert. Byttet tilpasses toleransen og symptomene; sedasjon, ortostatisk blodtrykksfall, akatisi og forverring følges. (**OUSFAR-vurdering, åpent forslag:** Kontrollrunden 30.10.2026 fant at ingen fast byttemodell er validert for alle pasienter: redusert antipsykotisk dekning kan gi tilbakefall, og overlapp kan gi sedasjon og ortostase. (bygger på keks-2019 tabell 4 og avsnittet om byttestrategier))
-
-**Gruppemedlemmer (B4).** Bare medlemmer som er foreslått eller validert, kan beregnes.
-
-| Virkestoff | Vurdering | Begrunnelse |
-| --- | --- | --- |
-| klorprotiksen | ikke vurdert | Ikke vurdert individuelt (halveringstid, formulering og norske preparater); gruppeanbefalingen alene er ikke nok (B4). |
-| flupentiksol | ikke vurdert | Ikke vurdert individuelt (halveringstid, formulering og norske preparater); gruppeanbefalingen alene er ikke nok (B4). |
-| flufenazin | ikke vurdert | Bare godkjenningsfritak i Norge (P2.5), og mangler i gruppens faktaboks på kildesidene (P3); ikke vurdert individuelt. |
-| loksapin | ikke vurdert | Har ingen preparater i FEST (P2.5); ikke vurdert individuelt. |
-| perisiazin | ikke vurdert | Har ingen preparater i FEST (P2.5); ikke vurdert individuelt. |
-| perfenazin | ikke vurdert | Ikke vurdert individuelt (halveringstid, formulering og norske preparater); gruppeanbefalingen alene er ikke nok (B4). |
-| promazin | ikke vurdert | Har ingen preparater i FEST (P2.5); ikke vurdert individuelt. Mangler også i gruppens faktaboks på kildesidene (P3). |
-| trifluoperazin | ikke vurdert | Har ingen preparater i FEST (P2.5); ikke vurdert individuelt. |
-| ziprasidon | ikke vurdert | Ikke vurdert individuelt (halveringstid, formulering og norske preparater); gruppeanbefalingen alene er ikke nok (B4). Mangler i gruppens faktaboks på en del kildesider (P3). |
-| zuklopentiksol | foreslatt | Vurdert mot preparatomtalen: seponeringssymptomer kommer innen 1–4 dager etter brå seponering, så gradvis nedtrapping med overlapp er rimelig. Foreslått, ikke validert. |
-
-**Kliniske forutsetninger:**
-
-- Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
-- Dosene er den ideelle dosekurven, avrundet til to desimaler; hvilke doser som kan gis med norske preparater (styrker, deling, flytende form), avgjøres i P5.
-- Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet, interaksjoner, graviditet, etterlevelse eller individuell toleranse fra dosen (B7); dette må vurderes av forskriveren.
-
-**Usikkerhet:**
-
-- Kildesidene og tabellen er ikke enige om hvem som er med i gruppen (P3); gruppens sammensetning må avklares faglig.
-- Medlemmene har ulik halveringstid og ulike doser; samme plan passer ikke nødvendigvis alle.
-- Aripiprazol er en partiell agonist og kan gi forverring eller akatisi ved bytte fra en full antagonist; overlappens lengde er OUSFARs valg.
-- Den faste nedtrappingen med 25 % av startdosen per uke i versjon 3 var OUSFARs valg og er tatt ut. En beregnet nedtrapping krever en egen regel for zuklopentiksol med et substansspesifikt, kontrollert forløp.
-
-**Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
-
-- *Zuklopentiksol 20 mg til aripiprazol: første uke beregnes; nedtrappingen og måldosen planlegges individuelt.* Inndata: startdose 20 mg; virkestoff zuklopentiksol; bekreftet: indikasjon, peroral_formulering, spesialist_risiko.
-  - **fra:** dag 1–7: 20 mg; fra dag 8: videre dosering beregnes ikke; planlegges individuelt
-  - **til:** fra dag 1: 10 mg; holdes til zuklopentiksol er avsluttet; videre dosering planlegges individuelt
-  - Kontroll: Bekreftet: Indikasjonen er schizofreni. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Pasienten bruker en peroral formulering, ikke depotinjeksjon eller korttidsvirkende injeksjon. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Byttet gjøres i, eller med råd fra, spesialisthelsetjenesten, og indikasjonen, risikoen for tilbakefall og tempoet er vurdert. Byttet tilpasses toleransen og symptomene; sedasjon, ortostatisk blodtrykksfall, akatisi og forverring følges. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Startdosen er 20–40 mg (veiledende) – oppfylt. 20 mg.
-  - Merknad: Dosen av aripiprazol holdes på 10 mg til zuklopentiksol er avsluttet. Avslutningen av zuklopentiksol vurderes individuelt, og videre dosering av aripiprazol beregnes ikke, men planlegges individuelt sammen med den.
-- *Flupentiksol er medlem av gruppen, men ikke vurdert individuelt, så beregningen stopper.* Inndata: startdose 6 mg; virkestoff flupentiksol; bekreftet: indikasjon, peroral_formulering, spesialist_risiko.
-  - **Stoppet:** flupentiksol er ikke vurdert individuelt for gruppeanbefalingen: Ikke vurdert individuelt (halveringstid, formulering og norske preparater); gruppeanbefalingen alene er ikke nok (B4).
-
-**Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntipsychotics:RA>Pa`.
-
 ## Fra peroral aripiprazol til Abilify Maintena, oppstart med én injeksjon
 
-`depot-aripiprazol-maintena`, versjon 2, fingeravtrykk `659ab5f674c2c8fcbb4b8523e61f6e55086625216e824485f0c1ac02b2fa2430`. Oppstart av depot: aripiprazol → aripiprazol. **Entydig beregnbar**; status **til faglig kontroll**.
+`depot-aripiprazol-maintena`, versjon 3, fingeravtrykk `04d1debe48f02ea03a31aab3d7cd5cdeb15c56d4b43797bda353f3d857297f20`. Oppstart av depot: aripiprazol → aripiprazol. **Entydig beregnbar**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 30.10.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 30.10.2026, Claude Code) → utkast (versjon 3, 30.10.2026, Claude Code) → til faglig kontroll (versjon 3, 30.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -429,7 +353,7 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
 
 **Usikkerhet:**
 
-- Regelen gjelder Abilify Maintena; andre aripiprazoldepoter (andre estere eller intervaller) har egne oppstartsregimer og er ikke omfattet.
+- Regelen gjelder Abilify Maintena; andre aripiprazoldepoter (andre estere eller intervaller) har egne oppstartsregimer og er ikke omfattet, heller ikke Abilify Maintena 720 og 960 mg til injeksjon annenhver måned. Pasienter som trenger en annen dosering, planlegges individuelt.
 
 **Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
 
@@ -452,17 +376,21 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
 
 ## Fra peroral paliperidon depottablett til Xeplion
 
-`depot-paliperidon-xeplion`, versjon 2, fingeravtrykk `19158b1df8057ab8285458b0e5957b3902c8c1a40da33ceb43a915fb32f35545`. Oppstart av depot: paliperidon → paliperidon. **Entydig beregnbar**; status **til faglig kontroll**.
+`depot-paliperidon-xeplion`, versjon 3, fingeravtrykk `21a335eec8c3816ee21627ceec3197e52957ccdf99cdbfaa00a3ca3cb5987bdf`. Oppstart av depot: paliperidon → paliperidon. **Entydig beregnbar**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 30.10.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 30.10.2026, Claude Code) → utkast (versjon 3, 30.10.2026, Claude Code) → til faglig kontroll (versjon 3, 30.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
 - Xeplion startes med 150 mg dag 1 og 100 mg dag 8 (±4 dager), begge i deltoideus; deretter månedlig (±7 dager), første gang én måned etter andre dose.
   - Oppstart: 150 mg dag 1 og 100 mg dag 8, begge i deltoideus; tredje dose én måned etter andre. Vedlikehold kan gis i deltoideus eller setemuskel. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2)*
   - Andre oppstartsdose kan gis inntil 4 dager før eller etter dag 8; vedlikeholdsdosene inntil 7 dager før eller etter månedsdatoen. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2 (glemte doser))*
+- Dosene er i mg paliperidon: 150 mg tilsvarer 234 mg paliperidonpalmitat, og 100 mg tilsvarer 156 mg.
+  - Oppstart: 150 mg dag 1 og 100 mg dag 8, begge i deltoideus; tredje dose én måned etter andre. Vedlikehold kan gis i deltoideus eller setemuskel. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2)*
 - Xeplion er til vedlikeholdsbehandling av schizofreni hos voksne som er stabilisert på paliperidon eller risperidon.
   - Vedlikeholdsbehandling av schizofreni hos voksne som er stabilisert på paliperidon eller risperidon. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.1)*
+- Ved bytte fra 9–12 mg peroralt kan injeksjon i setemuskelen gi lavere eksponering de første seks månedene; deltoideus kan vurderes da.
+  - Ved bytte fra 9–12 mg peroralt til injeksjon i setemuskel kan eksponeringen bli lavere de første seks månedene; deltoideus kan vurderes da. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2 (bytte fra peroral))*
 - Vedlikeholdsdosen som gir tilsvarende eksponering som 3, 6, 9 og 12 mg peroralt, er 25–50, 75, 100 og 150 mg.
   - Peroral paliperidon depottablett 3, 6, 9 og 12 mg daglig tilsvarer ved vedlikehold 25–50, 75, 100 og 150 mg Xeplion månedlig. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2 (bytte fra peroral))*
 - Ved nedsatt nyrefunksjon er start- og vedlikeholdsdosene andre, og under 50 ml/min anbefales ikke Xeplion.
@@ -479,6 +407,8 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
 - Ved 3 mg peroralt oppgis vedlikeholdsdosen som spennet 25–50 mg. Valget i spennet er en klinisk vurdering: forskriveren må oppgi dosen som måldose, ellers stopper beregningen. Ved 6, 9 og 12 mg må en oppgitt måldose være lik tabellens.
   - Peroral paliperidon depottablett 3, 6, 9 og 12 mg daglig tilsvarer ved vedlikehold 25–50, 75, 100 og 150 mg Xeplion månedlig. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2 (bytte fra peroral))*
 - Bytte fra peroral risperidon er ikke tatt med, fordi preparatomtalen ikke har en omregning fra risperidondose. *(OUSFARs vurdering)*
+- Etter bytte fra 9 eller 12 mg står deltoideus framhevet i selve planen for vedlikeholdet, ikke bare i usikkerheten (kontrollørens beslutning P4-B 30.10.2026).
+  - Ved bytte fra 9–12 mg peroralt til injeksjon i setemuskel kan eksponeringen bli lavere de første seks månedene; deltoideus kan vurderes da. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2 (bytte fra peroral))*
 
 **Den matematiske regelen – parametre:**
 
@@ -509,7 +439,7 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
 
 **Usikkerhet:**
 
-- Ved bytte fra 9–12 mg til injeksjon i setemuskelen kan eksponeringen bli lavere de første seks månedene (preparatomtalen); valg av injeksjonssted beregnes ikke.
+- Valget av injeksjonssted for vedlikeholdet beregnes ikke; planen viser bare hva preparatomtalen sier om det.
 - Tremånedersdepotene (Trevicta, Byannli) har egne regler og er ikke omfattet.
 
 **Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):

@@ -28,6 +28,8 @@ import { LANG_BEHANDLINGSTID, NEDTRAPPINGSSETT, UTENFOR_DOSERAMME_ID } from './n
 
 export const AKSEPTTESTFIL = 'docs/verktøy-p7-aksepttest.md'
 export const FEST_AKSEPTTEST = 'src/data/verktoy/fest-aksepttest.json'
+/** FEST-uttrekket ende-til-ende-testene av depotreglene i pilotsettet regnes fra (P4.8, beslutning P4-B). */
+export const FEST_DEPOT = 'src/data/verktoy/fest-depot.json'
 
 /** Stien til trinnstørrelsen forskriveren kan justere i en P7-regel. */
 export const PROSENTSTI = 'plan.forlop[0].faser[0].strategi.prosent'
@@ -243,13 +245,15 @@ ${liste(Object.entries(SCENARIOER).map(([k, v]) => `(${k}) ${v}.`))}
 - (e) Alle scenariene bruker de norske preparatene i FEST.
 - (g) Oversikten viser om planen stopper allerede ved første trinn.
 
+Stoffene som bare har fagtekst, er ikke med: ${NEDTRAPPINGSSETT.regler.filter((r) => r.beregnbarhet === 'bare_tekstlig').map(nokkel).join(', ')}. Mirtazapin, moklobemid og paroksetin ble fagtekst etter kontrollørens beslutning P7-A fordi ingen dose innenfor valgområdet for første trinn kunne gis med de norske formene.
+
 Svarene er de samme i alle scenariene: startforslaget og organfunksjon er bekreftet, ingen unntak gjelder, dosen er innenfor rammen, og svaret er nei på stoffets spørsmål om pasientgruppe og indikasjon. Den vanlige dosen er startdosen i regelens første regneeksempel. Under hver plan som stopper ved et trinn forskriveren kan velge dosen for, står dosene som kan velges, med faktisk reduksjon.
 
 ## Oversikt (g)
 
 I (a) stopper ${forsteTrinn.length} av ${sett.length} kombinasjoner av virkestoff og form allerede ved første trinn${forsteTrinn.length > 0 ? `: ${forsteTrinn.map((t) => `${t.nokkel} (${formnavn(t.form)})`).join(', ')}` : ''}.
 
-Der et trinn ikke kan gis nøyaktig, kan forskriveren velge blant de nærmeste dosene som kan gis, med faktisk reduksjon innenfor valgområdet for risikogruppen (bidragsyterens valg 30.10.2026, åpent forslag til kontrollen). I (a) tilbyr ${tilbud.length} av ${sett.length} kombinasjoner et slikt valg. Med et valg ved hvert slikt trinn (h) stopper ${medValgForste.length} av ${sett.length} ved første trinn.
+Der et trinn ikke kan gis nøyaktig, kan forskriveren velge blant de nærmeste dosene som kan gis, med faktisk reduksjon innenfor valgområdet for risikogruppen (bidragsyterens valg 30.10.2026, akseptert som prinsipp i kontrollørens beslutning P7-A). I (a) tilbyr ${tilbud.length} av ${sett.length} kombinasjoner et slikt valg. Med et valg ved hvert slikt trinn (h) stopper ${medValgForste.length} av ${sett.length} ved første trinn.
 
 ${oversikt}
 

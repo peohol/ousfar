@@ -36,11 +36,12 @@ import {
   type Begrunnelseskrav,
   type Sporsmal,
   type Trinnvalgsvar,
+  forslagsverdi,
   justerbare,
 } from './modell'
 
 /** Økes når beregningen endres slik at like inndata kan gi et annet resultat. */
-export const MOTORVERSJON = 6
+export const MOTORVERSJON = 7
 
 /** En sammenhengende periode med samme dose. `til` er `null` når dosen fortsetter. */
 export interface Periode {
@@ -565,10 +566,12 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
           })
         }
         const v = fase.vedlikehold
+        // Stedet kan avhenge av startdosen (en rad i omregningstabellen).
+        const sted = (v.dose.type === 'tabell' ? v.dose.rader.find((x) => Math.abs(x.fra_mg - ctx.inndata.startdose_mg) < EPS)?.sted : undefined) ?? v.sted
         injeksjoner.push({
           dag: null,
           mg: dose(v.dose, aktuell, ctx),
-          ...(v.sted ? { sted: v.sted } : {}),
+          ...(sted ? { sted } : {}),
           ...(v.vindu_dager ? { vindu_dager: verdi(v.vindu_dager) } : {}),
           vedlikehold: { maaneder: verdi(v.maaneder), etter_dag: sist, ...(v.tidligst_dager ? { tidligst_dager: verdi(v.tidligst_dager) } : {}) },
         })
@@ -741,14 +744,15 @@ export function kravtekst(k: Begrunnelseskrav, p: Parameter, sporsmal: readonly 
   return ved ? `${grenser} ved ${ved}` : grenser
 }
 
+/** Begrunnelseskravene til `p` som verdien `x` utløser; et krav med `ved` bare når spørsmålet er besvart med ja. */
+export const utlosteKrav = (p: Parameter, x: number, svar: Record<string, boolean> | undefined): Begrunnelseskrav[] =>
+  (p.begrunnelseskrav ?? []).filter((k) => (!k.ved || svar?.[k.ved] === true) && ((k.over !== undefined && x > k.over + EPS) || (k.under !== undefined && x < k.under - EPS)))
+
 /**
  * Begrunnelseskravene verdiene i regelen (etter forskriverens valg) utløser:
  * hver blir en kontroll med begrunnelsen, eller en stoppgrunn når den mangler.
  * Et krav med `ved` gjelder bare når spørsmålet er besvart med ja.
  */
-/** Begrunnelseskravene til `p` som verdien `x` utløser; et krav med `ved` bare når spørsmålet er besvart med ja. */
-export const utlosteKrav = (p: Parameter, x: number, svar: Record<string, boolean> | undefined): Begrunnelseskrav[] =>
-  (p.begrunnelseskrav ?? []).filter((k) => (!k.ved || svar?.[k.ved] === true) && ((k.over !== undefined && x > k.over + EPS) || (k.under !== undefined && x < k.under - EPS)))
 
 function kontrollerBegrunnelser(regel: Regel, inndata: Beregningsinndata, stopp: string[], kontroller: Kontroll[]) {
   const begrunnelse = inndata.begrunnelse?.trim() ?? ''
@@ -769,6 +773,25 @@ function kontrollerBegrunnelser(regel: Regel, inndata: Beregningsinndata, stopp:
     if (begrunnelse) kontroller.push({ krav, oppfylt: true, detalj: `Forskriverens begrunnelse: «${begrunnelse}».` })
     else stopp.push(`Svaret ja (${s.ja}) krever en skriftlig begrunnelse fra forskriveren, en særskilt vurdering. Skriv begrunnelsen, eller vurder om regelen passer.`)
   }
+}
+
+/**
+ * Regelen med forslagene som gjelder for forskriverens svar
+ * (`Parameter.standard_ved`), før forskriverens egne valg: et annet forslag
+ * blir utgangspunktet, og et valg utover det er et synlig avvik fra det.
+ */
+export function medSvarforslag(regel: Regel, svar: Record<string, boolean> | undefined): { regel: Regel; kontroller: Kontroll[] } {
+  const endret = justerbare(regel).filter(([, p]) => forslagsverdi(p, svar) !== p.verdi)
+  if (endret.length === 0) return { regel, kontroller: [] }
+  const kopi = structuredClone(regel)
+  const parametere = new Map(justerbare(kopi))
+  const kontroller = endret.map(([sti, p]): Kontroll => {
+    const ny = p.standard_ved!
+    parametere.get(sti)!.verdi = ny.verdi
+    const ja = regel.sporsmal?.find((x) => x.id === ny.ved)?.ja ?? ny.ved
+    return { krav: `${p.justerbar}: regelens forslag ved ${ja} er ${medEnhet(ny.verdi, p)}`, oppfylt: true, detalj: `I stedet for ${p.verdi === null ? 'forslaget ellers' : medEnhet(p.verdi, p)}, som gjelder ellers.` }
+  })
+  return { regel: kopi, kontroller }
 }
 
 /**
@@ -838,8 +861,9 @@ export function beregn(regel: Regel, inndata: Beregningsinndata, regelsett?: Reg
     stopp.push(...formfeil)
     return stoppet()
   }
-  // Forskriverens justeringer etter godkjenningskontrollen: godkjenningen gjelder regelen med områdene, ikke det enkelte valget.
-  const justering = juster(regel, inndata.justert ?? {})
+  // Forslagene ved svar, så forskriverens justeringer etter godkjenningskontrollen: godkjenningen gjelder regelen med områdene, ikke det enkelte valget.
+  const forslag = medSvarforslag(regel, inndata.svar)
+  const justering = juster(forslag.regel, inndata.justert ?? {})
   if (justering.feil.length > 0) {
     stopp.push(...justering.feil)
     return stoppet()
@@ -847,7 +871,7 @@ export function beregn(regel: Regel, inndata: Beregningsinndata, regelsett?: Reg
   regel = justering.regel
 
   // Unntakene (B7): hvert må være besvart. Ukjent stopper like mye som et forhold som gjelder; bare et eksplisitt «nei» slipper gjennom.
-  const kontroller: Kontroll[] = [...justering.kontroller]
+  const kontroller: Kontroll[] = [...forslag.kontroller, ...justering.kontroller]
   const forhold = inndata.pasientforhold ?? {}
   for (const u of regel.unntak) {
     const svar = forhold[u.id]
@@ -923,10 +947,14 @@ export function beregn(regel: Regel, inndata: Beregningsinndata, regelsett?: Reg
     stopp.push(...ugyldigPlan.map((x) => `Beregningen ga en ugyldig plan: ${x}.`))
     return stoppet()
   }
-  for (const k of ctx.kontroller) if (!k.oppfylt) merknader.push(`${k.krav}: ikke oppfylt. ${k.detalj}`)
+  // Et valg som ikke lenger passer planen (endret dose eller andre valg), avvises i stedet for å stå ubrukt (P7.5, beslutning P7-A).
   for (const v of inndata.trinnvalg ?? []) {
-    if (!ctx.brukteValg.has(v)) merknader.push(`Valget ${tall(v.mg)} mg for trinn ${v.trinn} (${v.forlop}, fra ${tall(v.fra_mg)} mg) er ikke brukt: planen har ikke det trinnet fra den dosen lenger. Velg på nytt om trinnet ikke kan gis.`)
+    if (!ctx.brukteValg.has(v)) stopp.push(`Valget ${tall(v.mg)} mg for trinn ${v.trinn} (${v.forlop}, fra ${tall(v.fra_mg)} mg) gjelder ikke lenger: planen har ikke det trinnet fra den dosen, for eksempel etter endret dose eller andre valg. Fjern valget, og velg på nytt om trinnet ikke kan gis.`)
   }
+  if (stopp.length > 0) return stoppet()
+  for (const k of ctx.kontroller) if (!k.oppfylt) merknader.push(`${k.krav}: ikke oppfylt. ${k.detalj}`)
+  // Det som ikke beregnes, står i planen med grunnen, ikke bare i regelen.
+  for (const f of ctx.resultater.values()) if (f.uten_beregning) merknader.push(`${f.virkestoff}: ${f.uten_beregning}`)
   for (const f of ctx.resultater.values()) if (f.avslutning) merknader.push(f.avslutning)
   if ([...ctx.resultater.values()].some((f) => f.avslutning && f.perioder.length > 1)) merknader.push(TIDLIGSTE_DATOER)
 

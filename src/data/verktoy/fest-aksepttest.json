@@ -1,5 +1,5 @@
 {
- "hentet": "2026-10-30T12:08:05.569Z",
+ "hentet": "2026-10-30T20:30:42.587Z",
  "utvalg": {
   "kilde": "FEST",
   "styrker": [
@@ -36,22 +36,6 @@
     "alternativ_styrke": null
    },
    {
-    "id": "ID_0CFE2828-AF9B-4E7C-A644-305B589F81B4",
-    "ovre": null,
-    "nevner": null,
-    "styrke": {
-     "enhet": "mg",
-     "verdi": 30
-    },
-    "operator": {
-     "kode": "L",
-     "tekst": "Lik"
-    },
-    "virkestoff_id": "ID_0AFFD596-9932-44A7-86E8-F35BBDB1FCAD",
-    "alternativ_nevner": null,
-    "alternativ_styrke": null
-   },
-   {
     "id": "ID_11625465-FEB4-4C8A-BFA6-4C9E8D1FD1B7",
     "ovre": null,
     "nevner": null,
@@ -64,38 +48,6 @@
      "tekst": "Lik"
     },
     "virkestoff_id": "ID_E2B9E074-0D21-4E5E-9867-BC70B8FC2654",
-    "alternativ_nevner": null,
-    "alternativ_styrke": null
-   },
-   {
-    "id": "ID_146D8D7A-78BC-487D-A55A-C35C99794FFC",
-    "ovre": null,
-    "nevner": null,
-    "styrke": {
-     "enhet": "mg",
-     "verdi": 300
-    },
-    "operator": {
-     "kode": "L",
-     "tekst": "Lik"
-    },
-    "virkestoff_id": "ID_D1F74888-C7D1-474F-A9E8-2E58CB136B06",
-    "alternativ_nevner": null,
-    "alternativ_styrke": null
-   },
-   {
-    "id": "ID_160F0E65-18EC-49C5-94F1-C412855ADE9A",
-    "ovre": null,
-    "nevner": null,
-    "styrke": {
-     "enhet": "mg",
-     "verdi": 150
-    },
-    "operator": {
-     "kode": "L",
-     "tekst": "Lik"
-    },
-    "virkestoff_id": "ID_D1F74888-C7D1-474F-A9E8-2E58CB136B06",
     "alternativ_nevner": null,
     "alternativ_styrke": null
    },
@@ -160,22 +112,6 @@
      "tekst": "Lik"
     },
     "virkestoff_id": "ID_D473FE91-133D-494A-A2B0-C644A8372A8B",
-    "alternativ_nevner": null,
-    "alternativ_styrke": null
-   },
-   {
-    "id": "ID_2A7E46F4-7199-4193-ABE7-BC8EC669D3AD",
-    "ovre": null,
-    "nevner": null,
-    "styrke": {
-     "enhet": "mg",
-     "verdi": 20
-    },
-    "operator": {
-     "kode": "L",
-     "tekst": "Lik"
-    },
-    "virkestoff_id": "ID_0F9E3AC0-1950-4CF5-8F4F-4008696E85B8",
     "alternativ_nevner": null,
     "alternativ_styrke": null
    },
@@ -266,22 +202,6 @@
     "alternativ_styrke": null
    },
    {
-    "id": "ID_487E8D0A-99FD-475F-BCC4-EFC5CA7F7894",
-    "ovre": null,
-    "nevner": null,
-    "styrke": {
-     "enhet": "mg",
-     "verdi": 45
-    },
-    "operator": {
-     "kode": "L",
-     "tekst": "Lik"
-    },
-    "virkestoff_id": "ID_0AFFD596-9932-44A7-86E8-F35BBDB1FCAD",
-    "alternativ_nevner": null,
-    "alternativ_styrke": null
-   },
-   {
     "id": "ID_48B84A5E-0EC8-4696-967C-95E7CEC550A9",
     "ovre": null,
     "nevner": null,
@@ -314,22 +234,6 @@
     "alternativ_styrke": null
    },
    {
-    "id": "ID_4C9B7633-4F67-4EAC-B626-41CC6451B83D",
-    "ovre": null,
-    "nevner": null,
-    "styrke": {
-     "enhet": "mg",
-     "verdi": 45
-    },
-    "operator": {
-     "kode": "L",
-     "tekst": "Lik"
-    },
-    "virkestoff_id": "ID_0AFFD596-9932-44A7-86E8-F35BBDB1FCAD",
-    "alternativ_nevner": null,
-    "alternativ_styrke": null
-   },
-   {
     "id": "ID_503F00C9-88BD-414D-A68B-02D1C0ABEC79",
     "ovre": null,
     "nevner": null,
@@ -342,41 +246,6 @@
      "tekst": "Lik"
     },
     "virkestoff_id": "ID_D473FE91-133D-494A-A2B0-C644A8372A8B",
-    "alternativ_nevner": null,
-    "alternativ_styrke": null
-   },
-   {
-    "id": "ID_505D906E-71D0-4738-B477-FC91E54ED461",
-    "ovre": null,
-    "nevner": null,
-    "styrke": {
-     "enhet": "mg",
-     "verdi": 30
-    },
-    "operator": {
-     "kode": "L",
-     "tekst": "Lik"
-    },
-    "virkestoff_id": "ID_0AFFD596-9932-44A7-86E8-F35BBDB1FCAD",
-    "alternativ_nevner": null,
-    "alternativ_styrke": null
-   },
-   {
-    "id": "ID_555800B4-8074-424E-8A47-CBF70CA4763D",
-    "ovre": null,
-    "nevner": {
-     "enhet": "ml",
-     "verdi": 1
-    },
-    "styrke": {
-     "enhet": "mg",
-     "verdi": 15
-    },
-    "operator": {
-     "kode": "L",
-     "tekst": "Lik"
-    },
-    "virkestoff_id": "ID_0AFFD596-9932-44A7-86E8-F35BBDB1FCAD",
     "alternativ_nevner": null,
     "alternativ_styrke": null
    },
@@ -496,22 +365,6 @@
     "alternativ_styrke": null
    },
    {
-    "id": "ID_7A47580A-7567-4662-87DB-38D8CB234B2B",
-    "ovre": null,
-    "nevner": null,
-    "styrke": {
-     "enhet": "mg",
-     "verdi": 15
-    },
-    "operator": {
-     "kode": "L",
-     "tekst": "Lik"
-    },
-    "virkestoff_id": "ID_0AFFD596-9932-44A7-86E8-F35BBDB1FCAD",
-    "alternativ_nevner": null,
-    "alternativ_styrke": null
-   },
-   {
     "id": "ID_7ACADBE5-5AA7-4CC9-93B0-5C58E6BABECD",
     "ovre": null,
     "nevner": null,
@@ -613,22 +466,6 @@
      "tekst": "Lik"
     },
     "virkestoff_id": "ID_0A1B24EF-A7F8-488B-97B8-8023193E976D",
-    "alternativ_nevner": null,
-    "alternativ_styrke": null
-   },
-   {
-    "id": "ID_CA66AD4C-A497-47AB-9339-99191EDCECD1",
-    "ovre": null,
-    "nevner": null,
-    "styrke": {
-     "enhet": "mg",
-     "verdi": 15
-    },
-    "operator": {
-     "kode": "L",
-     "tekst": "Lik"
-    },
-    "virkestoff_id": "ID_0AFFD596-9932-44A7-86E8-F35BBDB1FCAD",
     "alternativ_nevner": null,
     "alternativ_styrke": null
    },
@@ -894,80 +731,6 @@
     "midlertidig_utgatt_dato": null
    },
    {
-    "id": "ID_07616065-9D71-4A70-9EB2-D6D5F0054BE1",
-    "ean": [
-     "6432100044075"
-    ],
-    "varenr": "024344",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 28,
-      "merkevare_id": "ID_B8D768A7-BB2A-42F2-B556-82611D6F92F2",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 28,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_B8D768A7-BB2A-42F2-B556-82611D6F92F2"
-    ],
-    "byttegrupper": [
-     "ID_1737F11C-DB88-4DA3-88B0-5C05C9C05EE4"
-    ],
-    "byttegrupper_fra": {
-     "ID_1737F11C-DB88-4DA3-88B0-5C05C9C05EE4": "2017-01-01"
-    },
-    "navn_form_styrke": "Mirtazapin Orion tab 45 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2017-01-15",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_0B17A1C4-963F-41B7-860E-9AE78F556A3C",
-    "ean": [
-     "6432100044051"
-    ],
-    "varenr": "024333",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 98,
-      "merkevare_id": "ID_2B2C6089-E54F-48D5-89DD-B4EC70FA37D4",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 98,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_2B2C6089-E54F-48D5-89DD-B4EC70FA37D4"
-    ],
-    "byttegrupper": [
-     "ID_B3B5BC0D-B6E9-4999-9E71-603636032358"
-    ],
-    "byttegrupper_fra": {
-     "ID_B3B5BC0D-B6E9-4999-9E71-603636032358": "2017-01-01"
-    },
-    "navn_form_styrke": "Mirtazapin Orion tab 30 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2017-01-15",
-    "midlertidig_utgatt_dato": null
-   },
-   {
     "id": "ID_0D073B91-A0FB-40C0-BE4F-C5A3B2E6A20D",
     "ean": [
      "7046260220362"
@@ -1039,43 +802,6 @@
     "navn_form_styrke": "Citalopram Orion tab 20 mg",
     "avregistrert_dato": null,
     "markedsforingsdato": "2015-03-01",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_0F159344-B4AC-43DE-9E8C-A3FB517A6076",
-    "ean": [
-     "7311924890503"
-    ],
-    "varenr": "489050",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 96,
-      "merkevare_id": "ID_0B3FB505-1F66-439D-9B2E-EBB907A06ABA",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 96,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_0B3FB505-1F66-439D-9B2E-EBB907A06ABA"
-    ],
-    "byttegrupper": [
-     "ID_B3B5BC0D-B6E9-4999-9E71-603636032358"
-    ],
-    "byttegrupper_fra": {
-     "ID_B3B5BC0D-B6E9-4999-9E71-603636032358": "2009-04-01"
-    },
-    "navn_form_styrke": "Mirtazapin Bluefish smeltetab 30 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2012-02-01",
     "midlertidig_utgatt_dato": null
    },
    {
@@ -1469,117 +1195,6 @@
     "midlertidig_utgatt_dato": null
    },
    {
-    "id": "ID_27988F39-3C2F-428C-9DD5-DBB0180B5789",
-    "ean": [
-     "6432100045720"
-    ],
-    "varenr": "579147",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 100,
-      "merkevare_id": "ID_817F814F-6EA4-47DE-803B-F69DDC2D7A04",
-      "pakningstype": {
-       "kode": "55",
-       "tekst": "Boks av plast"
-      },
-      "pakningsstorrelse": 100,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_817F814F-6EA4-47DE-803B-F69DDC2D7A04"
-    ],
-    "byttegrupper": [
-     "ID_8C34DD69-DE6B-466D-B601-F0F9DAC8A923"
-    ],
-    "byttegrupper_fra": {
-     "ID_8C34DD69-DE6B-466D-B601-F0F9DAC8A923": "2020-03-15"
-    },
-    "navn_form_styrke": "Mirtazapin Orion tab 15 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2020-03-15",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_283D0641-5D9C-43B0-BEEF-DA018730B7B7",
-    "ean": [
-     "6432100045492"
-    ],
-    "varenr": "024852",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 30,
-      "merkevare_id": "ID_523FD26A-3C5B-483F-82AA-49C7FDB37DF8",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 30,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_523FD26A-3C5B-483F-82AA-49C7FDB37DF8"
-    ],
-    "byttegrupper": [
-     "ID_B3B5BC0D-B6E9-4999-9E71-603636032358"
-    ],
-    "byttegrupper_fra": {
-     "ID_B3B5BC0D-B6E9-4999-9E71-603636032358": "2008-01-17"
-    },
-    "navn_form_styrke": "Mirtazapin Orion smeltetab 30 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2017-01-15",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_2885CA26-BFB2-438A-902E-C91CA383526E",
-    "ean": [
-     "6432100044082"
-    ],
-    "varenr": "024248",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 98,
-      "merkevare_id": "ID_B8D768A7-BB2A-42F2-B556-82611D6F92F2",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 98,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_B8D768A7-BB2A-42F2-B556-82611D6F92F2"
-    ],
-    "byttegrupper": [
-     "ID_1737F11C-DB88-4DA3-88B0-5C05C9C05EE4"
-    ],
-    "byttegrupper_fra": {
-     "ID_1737F11C-DB88-4DA3-88B0-5C05C9C05EE4": "2017-01-01"
-    },
-    "navn_form_styrke": "Mirtazapin Orion tab 45 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2017-01-15",
-    "midlertidig_utgatt_dato": null
-   },
-   {
     "id": "ID_2896779B-D7F6-4852-8B4E-4C763B41037F",
     "ean": [
      "7046265642909"
@@ -1688,43 +1303,6 @@
     "navn_form_styrke": "Escitalopram Grindeks tab 10 mg",
     "avregistrert_dato": null,
     "markedsforingsdato": "2025-01-01",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_322188D1-A7A1-4716-B331-32C239D7D712",
-    "ean": [
-     "5712923026764"
-    ],
-    "varenr": "462396",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": 96,
-      "mengde": 1,
-      "merkevare_id": "ID_8C381CB9-2965-4C65-BA27-ADABACC1897F",
-      "pakningstype": {
-       "kode": "305",
-       "tekst": "Endoseblisterpakning"
-      },
-      "pakningsstorrelse": null,
-      "pakningsstorrelse_tekst": "96 x 1"
-     }
-    ],
-    "merkevarer": [
-     "ID_8C381CB9-2965-4C65-BA27-ADABACC1897F"
-    ],
-    "byttegrupper": [
-     "ID_1737F11C-DB88-4DA3-88B0-5C05C9C05EE4"
-    ],
-    "byttegrupper_fra": {
-     "ID_1737F11C-DB88-4DA3-88B0-5C05C9C05EE4": "2024-06-15"
-    },
-    "navn_form_styrke": "Remeron-S smeltetab 45 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2024-05-15",
     "midlertidig_utgatt_dato": null
    },
    {
@@ -2218,80 +1796,6 @@
     "midlertidig_utgatt_dato": null
    },
    {
-    "id": "ID_6312E47E-4874-461B-AA4A-0C27F134A5A8",
-    "ean": [
-     "7046264668139"
-    ],
-    "varenr": "466813",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 100,
-      "merkevare_id": "ID_7EC7E1DA-18EF-49FE-B81D-5A308D4400DD",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 100,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_7EC7E1DA-18EF-49FE-B81D-5A308D4400DD"
-    ],
-    "byttegrupper": [
-     "ID_8248BAD8-E60B-48A7-9C1E-E5FAFF492C72"
-    ],
-    "byttegrupper_fra": {
-     "ID_8248BAD8-E60B-48A7-9C1E-E5FAFF492C72": "2008-01-17"
-    },
-    "navn_form_styrke": "Aurorix tab 150 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2001-01-01",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_63B2FB35-2349-4E2C-97B1-9152712ED2F9",
-    "ean": [
-     "7311924357280"
-    ],
-    "varenr": "435728",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 96,
-      "merkevare_id": "ID_037F7C1A-8FAF-4C53-B926-8CA546711A69",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 96,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_037F7C1A-8FAF-4C53-B926-8CA546711A69"
-    ],
-    "byttegrupper": [
-     "ID_1737F11C-DB88-4DA3-88B0-5C05C9C05EE4"
-    ],
-    "byttegrupper_fra": {
-     "ID_1737F11C-DB88-4DA3-88B0-5C05C9C05EE4": "2009-04-01"
-    },
-    "navn_form_styrke": "Mirtazapin Bluefish smeltetab 45 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2012-02-01",
-    "midlertidig_utgatt_dato": null
-   },
-   {
     "id": "ID_6603CBDD-D082-4D11-8F07-9D8F90DE877C",
     "ean": [
      "7046260477599"
@@ -2329,81 +1833,6 @@
     "midlertidig_utgatt_dato": null
    },
    {
-    "id": "ID_664C5F48-F141-4C2D-9F5B-34AD2DBA9048",
-    "ean": [
-     "840164508307",
-     "0191778015522"
-    ],
-    "varenr": "011050",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": 96,
-      "mengde": 1,
-      "merkevare_id": "ID_7878CC41-BD6D-47AE-B8C2-092B41CA444F",
-      "pakningstype": {
-       "kode": "305",
-       "tekst": "Endoseblisterpakning"
-      },
-      "pakningsstorrelse": null,
-      "pakningsstorrelse_tekst": "96 x 1"
-     }
-    ],
-    "merkevarer": [
-     "ID_7878CC41-BD6D-47AE-B8C2-092B41CA444F"
-    ],
-    "byttegrupper": [
-     "ID_B3B5BC0D-B6E9-4999-9E71-603636032358"
-    ],
-    "byttegrupper_fra": {
-     "ID_B3B5BC0D-B6E9-4999-9E71-603636032358": "2008-01-17"
-    },
-    "navn_form_styrke": "Remeron-S smeltetab 30 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2002-10-01",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_689A78D9-A1BB-4203-A6FE-868E659FC9CC",
-    "ean": [
-     "6432100045522"
-    ],
-    "varenr": "024860",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 90,
-      "merkevare_id": "ID_33BAB838-DF54-4A36-AB1D-685DA23DB5CD",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 90,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_33BAB838-DF54-4A36-AB1D-685DA23DB5CD"
-    ],
-    "byttegrupper": [
-     "ID_1737F11C-DB88-4DA3-88B0-5C05C9C05EE4"
-    ],
-    "byttegrupper_fra": {
-     "ID_1737F11C-DB88-4DA3-88B0-5C05C9C05EE4": "2008-01-17"
-    },
-    "navn_form_styrke": "Mirtazapin Orion smeltetab 45 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2017-01-15",
-    "midlertidig_utgatt_dato": null
-   },
-   {
     "id": "ID_694AE373-3881-4404-A4F6-2E17BBF97C65",
     "ean": [
      "6432100042095"
@@ -2438,43 +1867,6 @@
     "navn_form_styrke": "Citalopram Orion tab 20 mg",
     "avregistrert_dato": null,
     "markedsforingsdato": "2015-02-01",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_6BAF0620-C35E-46BC-9757-442643BB9386",
-    "ean": [
-     "6432100044044"
-    ],
-    "varenr": "024346",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 28,
-      "merkevare_id": "ID_2B2C6089-E54F-48D5-89DD-B4EC70FA37D4",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 28,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_2B2C6089-E54F-48D5-89DD-B4EC70FA37D4"
-    ],
-    "byttegrupper": [
-     "ID_B3B5BC0D-B6E9-4999-9E71-603636032358"
-    ],
-    "byttegrupper_fra": {
-     "ID_B3B5BC0D-B6E9-4999-9E71-603636032358": "2017-01-01"
-    },
-    "navn_form_styrke": "Mirtazapin Orion tab 30 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2017-01-15",
     "midlertidig_utgatt_dato": null
    },
    {
@@ -2586,44 +1978,6 @@
     "navn_form_styrke": "Amitriptylin Abcur tab 10 mg",
     "avregistrert_dato": null,
     "markedsforingsdato": "2017-08-15",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_703044F9-4A0B-4262-9903-C53FD45F4564",
-    "ean": [
-     "840164508239",
-     "0191778019063"
-    ],
-    "varenr": "014159",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 30,
-      "merkevare_id": "ID_87F35DFC-189C-4024-AA8D-6864D83360DF",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 30,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_87F35DFC-189C-4024-AA8D-6864D83360DF"
-    ],
-    "byttegrupper": [
-     "ID_B3B5BC0D-B6E9-4999-9E71-603636032358"
-    ],
-    "byttegrupper_fra": {
-     "ID_B3B5BC0D-B6E9-4999-9E71-603636032358": "2008-01-17"
-    },
-    "navn_form_styrke": "Remeron tab 30 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2001-01-01",
     "midlertidig_utgatt_dato": null
    },
    {
@@ -2874,43 +2228,6 @@
     "midlertidig_utgatt_dato": null
    },
    {
-    "id": "ID_7EF1B527-31F6-4F20-B269-4ECECB444977",
-    "ean": [
-     "7046260248410"
-    ],
-    "varenr": "024841",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 90,
-      "merkevare_id": "ID_9372EEA5-B969-4CCE-B3EB-024D3F2BE9EF",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 90,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_9372EEA5-B969-4CCE-B3EB-024D3F2BE9EF"
-    ],
-    "byttegrupper": [
-     "ID_8C34DD69-DE6B-466D-B601-F0F9DAC8A923"
-    ],
-    "byttegrupper_fra": {
-     "ID_8C34DD69-DE6B-466D-B601-F0F9DAC8A923": "2017-01-15"
-    },
-    "navn_form_styrke": "Mirtazapin Orion smeltetab 15 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2017-01-15",
-    "midlertidig_utgatt_dato": null
-   },
-   {
     "id": "ID_817F4347-F70B-4FF1-B5E5-F7792A2E0298",
     "ean": [
      "7046265756033"
@@ -2985,76 +2302,6 @@
     "midlertidig_utgatt_dato": null
    },
    {
-    "id": "ID_826379FA-15E2-4C76-B923-38888DF11C0A",
-    "ean": [
-     "7046260131354"
-    ],
-    "varenr": "013135",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 100,
-      "merkevare_id": "ID_E72EB4C9-2902-4F8F-B1AC-DAC1D0905C7E",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 100,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_E72EB4C9-2902-4F8F-B1AC-DAC1D0905C7E"
-    ],
-    "byttegrupper": [
-     "ID_1737F11C-DB88-4DA3-88B0-5C05C9C05EE4"
-    ],
-    "byttegrupper_fra": {
-     "ID_1737F11C-DB88-4DA3-88B0-5C05C9C05EE4": "2008-01-17"
-    },
-    "navn_form_styrke": "Mirtazapin Hexal tab 45 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2004-11-01",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_84031A55-90E9-4427-B4A6-38DAF88F224F",
-    "ean": [
-     "4150049657577"
-    ],
-    "varenr": "270065",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 50,
-      "merkevare_id": "ID_E678BB85-737F-4260-BDC3-90D7D0F79F50",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 50,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_E678BB85-737F-4260-BDC3-90D7D0F79F50"
-    ],
-    "byttegrupper": [],
-    "byttegrupper_fra": {},
-    "navn_form_styrke": "Moclobemid tab 150 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2020-02-01",
-    "midlertidig_utgatt_dato": null
-   },
-   {
     "id": "ID_85DA515C-2403-4624-B7A3-4B3D7095F62E",
     "ean": [
      "4750232023150"
@@ -3089,80 +2336,6 @@
     "navn_form_styrke": "Escitalopram Grindeks tab 10 mg",
     "avregistrert_dato": null,
     "markedsforingsdato": "2024-11-15",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_85F82CB1-60F8-44A9-AA9B-0CED79178CC6",
-    "ean": [
-     "5712923008586"
-    ],
-    "varenr": "047510",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 100,
-      "merkevare_id": "ID_739FE156-A053-4DA4-9F8C-D09AD46E1222",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 100,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_739FE156-A053-4DA4-9F8C-D09AD46E1222"
-    ],
-    "byttegrupper": [
-     "ID_283A1337-8EE0-4793-B7DB-1B5D6A6D3475"
-    ],
-    "byttegrupper_fra": {
-     "ID_283A1337-8EE0-4793-B7DB-1B5D6A6D3475": "2021-03-01"
-    },
-    "navn_form_styrke": "Seroxat tab 20 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2021-03-01",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_870AD35C-0A27-4FB1-9953-AB4258A80FB8",
-    "ean": [
-     "6432100044037"
-    ],
-    "varenr": "024310",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 28,
-      "merkevare_id": "ID_817F814F-6EA4-47DE-803B-F69DDC2D7A04",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 28,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_817F814F-6EA4-47DE-803B-F69DDC2D7A04"
-    ],
-    "byttegrupper": [
-     "ID_8C34DD69-DE6B-466D-B601-F0F9DAC8A923"
-    ],
-    "byttegrupper_fra": {
-     "ID_8C34DD69-DE6B-466D-B601-F0F9DAC8A923": "2017-01-01"
-    },
-    "navn_form_styrke": "Mirtazapin Orion tab 15 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2017-01-15",
     "midlertidig_utgatt_dato": null
    },
    {
@@ -3308,82 +2481,6 @@
     "midlertidig_utgatt_dato": null
    },
    {
-    "id": "ID_8DD6C48A-5F56-4E7E-B2F6-855D195247F0",
-    "ean": [
-     "840164508338",
-     "0191778015539"
-    ],
-    "varenr": "011061",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": 96,
-      "mengde": 1,
-      "merkevare_id": "ID_B3E11873-8B52-4BFA-9357-249B7C1E4347",
-      "pakningstype": {
-       "kode": "305",
-       "tekst": "Endoseblisterpakning"
-      },
-      "pakningsstorrelse": null,
-      "pakningsstorrelse_tekst": "96 x 1"
-     }
-    ],
-    "merkevarer": [
-     "ID_B3E11873-8B52-4BFA-9357-249B7C1E4347"
-    ],
-    "byttegrupper": [
-     "ID_1737F11C-DB88-4DA3-88B0-5C05C9C05EE4"
-    ],
-    "byttegrupper_fra": {
-     "ID_1737F11C-DB88-4DA3-88B0-5C05C9C05EE4": "2008-01-17"
-    },
-    "navn_form_styrke": "Remeron-S smeltetab 45 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2002-10-01",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_908108C7-B909-4643-AC40-A1BA2A8276BA",
-    "ean": [
-     "6432100045713",
-     "6432100044068"
-    ],
-    "varenr": "466034",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 250,
-      "merkevare_id": "ID_2B2C6089-E54F-48D5-89DD-B4EC70FA37D4",
-      "pakningstype": {
-       "kode": "55",
-       "tekst": "Boks av plast"
-      },
-      "pakningsstorrelse": 250,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_2B2C6089-E54F-48D5-89DD-B4EC70FA37D4"
-    ],
-    "byttegrupper": [
-     "ID_B3B5BC0D-B6E9-4999-9E71-603636032358"
-    ],
-    "byttegrupper_fra": {
-     "ID_B3B5BC0D-B6E9-4999-9E71-603636032358": "2017-01-15"
-    },
-    "navn_form_styrke": "Mirtazapin Orion tab 30 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2017-01-15",
-    "midlertidig_utgatt_dato": null
-   },
-   {
     "id": "ID_90963121-AD2C-43EA-838A-7BB7E3669DEE",
     "ean": [
      "9120099672115"
@@ -3418,43 +2515,6 @@
     "navn_form_styrke": "Anafranil tab 10 mg",
     "avregistrert_dato": null,
     "markedsforingsdato": "2001-01-01",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_90E0255D-CF3B-4693-AA27-1424492BB9BC",
-    "ean": [
-     "7046264321478"
-    ],
-    "varenr": "432147",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 30,
-      "merkevare_id": "ID_F791E442-AB5C-44EA-8E56-E6C5666D7420",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 30,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_F791E442-AB5C-44EA-8E56-E6C5666D7420"
-    ],
-    "byttegrupper": [
-     "ID_B3B5BC0D-B6E9-4999-9E71-603636032358"
-    ],
-    "byttegrupper_fra": {
-     "ID_B3B5BC0D-B6E9-4999-9E71-603636032358": "2008-01-17"
-    },
-    "navn_form_styrke": "Mirtazapin Hexal tab 30 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2004-11-01",
     "midlertidig_utgatt_dato": null
    },
    {
@@ -3553,43 +2613,6 @@
     "midlertidig_utgatt_dato": null
    },
    {
-    "id": "ID_9A1687E5-A3C3-4973-A609-47664B8FDEA9",
-    "ean": [
-     "6432100045515"
-    ],
-    "varenr": "024849",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 30,
-      "merkevare_id": "ID_33BAB838-DF54-4A36-AB1D-685DA23DB5CD",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 30,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_33BAB838-DF54-4A36-AB1D-685DA23DB5CD"
-    ],
-    "byttegrupper": [
-     "ID_1737F11C-DB88-4DA3-88B0-5C05C9C05EE4"
-    ],
-    "byttegrupper_fra": {
-     "ID_1737F11C-DB88-4DA3-88B0-5C05C9C05EE4": "2008-01-17"
-    },
-    "navn_form_styrke": "Mirtazapin Orion smeltetab 45 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2017-01-15",
-    "midlertidig_utgatt_dato": null
-   },
-   {
     "id": "ID_9A313BD4-9BD5-4A21-996D-B382ACAA6070",
     "ean": [
      "840149640596",
@@ -3625,43 +2648,6 @@
     "navn_form_styrke": "Zoloft tab 50 mg",
     "avregistrert_dato": null,
     "markedsforingsdato": "2001-01-01",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_9A6CF47D-4EF6-408C-920B-94B76A226AE7",
-    "ean": [
-     "7311925222792"
-    ],
-    "varenr": "522279",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 30,
-      "merkevare_id": "ID_037F7C1A-8FAF-4C53-B926-8CA546711A69",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 30,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_037F7C1A-8FAF-4C53-B926-8CA546711A69"
-    ],
-    "byttegrupper": [
-     "ID_1737F11C-DB88-4DA3-88B0-5C05C9C05EE4"
-    ],
-    "byttegrupper_fra": {
-     "ID_1737F11C-DB88-4DA3-88B0-5C05C9C05EE4": "2009-04-01"
-    },
-    "navn_form_styrke": "Mirtazapin Bluefish smeltetab 45 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2012-02-01",
     "midlertidig_utgatt_dato": null
    },
    {
@@ -3888,43 +2874,6 @@
     "midlertidig_utgatt_dato": null
    },
    {
-    "id": "ID_A18CD98F-ED82-42BC-8051-7E9BC06BC40B",
-    "ean": [
-     "5054626150446"
-    ],
-    "varenr": "038448",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 100,
-      "merkevare_id": "ID_1DD8BBF6-6A5C-4BE5-ABED-919F7C1E582D",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 100,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_1DD8BBF6-6A5C-4BE5-ABED-919F7C1E582D"
-    ],
-    "byttegrupper": [
-     "ID_283A1337-8EE0-4793-B7DB-1B5D6A6D3475"
-    ],
-    "byttegrupper_fra": {
-     "ID_283A1337-8EE0-4793-B7DB-1B5D6A6D3475": "2008-01-17"
-    },
-    "navn_form_styrke": "Seroxat tab 20 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2001-01-01",
-    "midlertidig_utgatt_dato": null
-   },
-   {
     "id": "ID_A1CDC83C-609D-48FC-A53B-E88F48A1490B",
     "ean": [
      "7046264914519"
@@ -4021,43 +2970,6 @@
     "navn_form_styrke": "Fluoxetin stada disperg tab 20 mg",
     "avregistrert_dato": null,
     "markedsforingsdato": "2026-03-16",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_A56A7595-A39B-4DCC-8247-CF280D05C7C5",
-    "ean": [
-     "5712923007305"
-    ],
-    "varenr": "194526",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 100,
-      "merkevare_id": "ID_2174885A-1D02-48E3-BCBA-5E9EEEDEE64D",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 100,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_2174885A-1D02-48E3-BCBA-5E9EEEDEE64D"
-    ],
-    "byttegrupper": [
-     "ID_8248BAD8-E60B-48A7-9C1E-E5FAFF492C72"
-    ],
-    "byttegrupper_fra": {
-     "ID_8248BAD8-E60B-48A7-9C1E-E5FAFF492C72": "2020-03-15"
-    },
-    "navn_form_styrke": "Aurorix tab 150 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2020-03-15",
     "midlertidig_utgatt_dato": null
    },
    {
@@ -4275,37 +3187,6 @@
     "midlertidig_utgatt_dato": null
    },
    {
-    "id": "ID_B18A452D-4EE3-4987-AFCB-8C2E0D1E434E",
-    "ean": [],
-    "varenr": "225468",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "ml",
-       "tekst": "milliliter"
-      },
-      "antall": null,
-      "mengde": 66,
-      "merkevare_id": "ID_41762CA0-2038-41DD-A36C-EFBDBE0A94E9",
-      "pakningstype": {
-       "kode": "120",
-       "tekst": "Flaske av mørkt glass"
-      },
-      "pakningsstorrelse": 66,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_41762CA0-2038-41DD-A36C-EFBDBE0A94E9"
-    ],
-    "byttegrupper": [],
-    "byttegrupper_fra": {},
-    "navn_form_styrke": "Mirtazapine rosemont mikst oppl 15 mg/ml",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2026-01-01",
-    "midlertidig_utgatt_dato": null
-   },
-   {
     "id": "ID_B2856ABE-DEBC-4F2C-A312-E212CB74983E",
     "ean": [
      "7046264998076"
@@ -4451,43 +3332,6 @@
     "navn_form_styrke": "Sarotex tab 10 mg",
     "avregistrert_dato": null,
     "markedsforingsdato": "2001-01-01",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_B7519590-CD7D-4429-9D81-8196A703CC9B",
-    "ean": [
-     "7311924453579"
-    ],
-    "varenr": "445357",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 30,
-      "merkevare_id": "ID_A4496C5B-B23C-4696-B7ED-0E77A0517B0B",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 30,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_A4496C5B-B23C-4696-B7ED-0E77A0517B0B"
-    ],
-    "byttegrupper": [
-     "ID_8C34DD69-DE6B-466D-B601-F0F9DAC8A923"
-    ],
-    "byttegrupper_fra": {
-     "ID_8C34DD69-DE6B-466D-B601-F0F9DAC8A923": "2009-04-01"
-    },
-    "navn_form_styrke": "Mirtazapin Bluefish smeltetab 15 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2012-02-01",
     "midlertidig_utgatt_dato": null
    },
    {
@@ -4806,43 +3650,6 @@
     "midlertidig_utgatt_dato": null
    },
    {
-    "id": "ID_C2C6F540-E6E0-4940-A8D3-7200BF986F8A",
-    "ean": [
-     "7046265878575"
-    ],
-    "varenr": "587857",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 60,
-      "merkevare_id": "ID_31BA1874-A4CB-497E-BDD7-C894BD3A1E8F",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 60,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_31BA1874-A4CB-497E-BDD7-C894BD3A1E8F"
-    ],
-    "byttegrupper": [
-     "ID_A770D34D-8E9C-4F7D-A2CE-2DF7216C17A9"
-    ],
-    "byttegrupper_fra": {
-     "ID_A770D34D-8E9C-4F7D-A2CE-2DF7216C17A9": "2008-01-17"
-    },
-    "navn_form_styrke": "Aurorix tab 300 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2001-01-01",
-    "midlertidig_utgatt_dato": null
-   },
-   {
     "id": "ID_C42C62FF-0977-4F58-89D6-2EB1A02D9B00",
     "ean": [],
     "varenr": "265501",
@@ -4871,80 +3678,6 @@
     "navn_form_styrke": "Fluoxetina aristo disperg tab 20 mg",
     "avregistrert_dato": null,
     "markedsforingsdato": "2024-03-15",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_C4B54FC5-FDE2-4A24-931E-0806C56E2BEC",
-    "ean": [
-     "6432100045485"
-    ],
-    "varenr": "024838",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 30,
-      "merkevare_id": "ID_9372EEA5-B969-4CCE-B3EB-024D3F2BE9EF",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 30,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_9372EEA5-B969-4CCE-B3EB-024D3F2BE9EF"
-    ],
-    "byttegrupper": [
-     "ID_8C34DD69-DE6B-466D-B601-F0F9DAC8A923"
-    ],
-    "byttegrupper_fra": {
-     "ID_8C34DD69-DE6B-466D-B601-F0F9DAC8A923": "2008-01-30"
-    },
-    "navn_form_styrke": "Mirtazapin Orion smeltetab 15 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2017-01-15",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_C57FB4C9-38A8-4FE3-9D23-F400C05D87B4",
-    "ean": [
-     "7311924477537"
-    ],
-    "varenr": "447753",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 30,
-      "merkevare_id": "ID_0B3FB505-1F66-439D-9B2E-EBB907A06ABA",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 30,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_0B3FB505-1F66-439D-9B2E-EBB907A06ABA"
-    ],
-    "byttegrupper": [
-     "ID_B3B5BC0D-B6E9-4999-9E71-603636032358"
-    ],
-    "byttegrupper_fra": {
-     "ID_B3B5BC0D-B6E9-4999-9E71-603636032358": "2009-04-01"
-    },
-    "navn_form_styrke": "Mirtazapin Bluefish smeltetab 30 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2012-02-01",
     "midlertidig_utgatt_dato": null
    },
    {
@@ -5083,39 +3816,6 @@
     "navn_form_styrke": "Fluoxetin hexal tab 20 mg",
     "avregistrert_dato": null,
     "markedsforingsdato": "2024-02-15",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_CE27783A-C788-4F4A-A0F1-7425E1EEBDD5",
-    "ean": [
-     "7046265791478"
-    ],
-    "varenr": "282364",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 100,
-      "merkevare_id": "ID_6AF894A1-1003-408E-9531-1CE2DAC29E1D",
-      "pakningstype": {
-       "kode": "55",
-       "tekst": "Boks av plast"
-      },
-      "pakningsstorrelse": 100,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_6AF894A1-1003-408E-9531-1CE2DAC29E1D"
-    ],
-    "byttegrupper": [],
-    "byttegrupper_fra": {},
-    "navn_form_styrke": "Mirtazapin orion tab 15 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2017-06-15",
     "midlertidig_utgatt_dato": null
    },
    {
@@ -5331,39 +4031,6 @@
     "midlertidig_utgatt_dato": null
    },
    {
-    "id": "ID_D74435CE-C268-454F-B0E8-50765F01B824",
-    "ean": [
-     "8901175000111"
-    ],
-    "varenr": "308076",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 30,
-      "merkevare_id": "ID_7F1B7493-DF46-4B99-9EE3-AD8185213C9A",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 30,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_7F1B7493-DF46-4B99-9EE3-AD8185213C9A"
-    ],
-    "byttegrupper": [],
-    "byttegrupper_fra": {},
-    "navn_form_styrke": "Mirtazapine aurobindo smeltetab 30 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2021-09-01",
-    "midlertidig_utgatt_dato": null
-   },
-   {
     "id": "ID_DA470E05-2E1E-4199-B653-6A36CB60097B",
     "ean": [
      "840149639750",
@@ -5402,44 +4069,6 @@
     "midlertidig_utgatt_dato": null
    },
    {
-    "id": "ID_DF27A4FC-B7C9-42FA-8515-6818B611F63A",
-    "ean": [
-     "5745000432752",
-     "7046260456501"
-    ],
-    "varenr": "177739",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 100,
-      "merkevare_id": "ID_C49F4AEE-950A-46A1-8325-C11747C49922",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 100,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_C49F4AEE-950A-46A1-8325-C11747C49922"
-    ],
-    "byttegrupper": [
-     "ID_283A1337-8EE0-4793-B7DB-1B5D6A6D3475"
-    ],
-    "byttegrupper_fra": {
-     "ID_283A1337-8EE0-4793-B7DB-1B5D6A6D3475": "2010-11-15"
-    },
-    "navn_form_styrke": "Paroxetine Oresund Pharma tab 20 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2011-08-01",
-    "midlertidig_utgatt_dato": null
-   },
-   {
     "id": "ID_DF7FAC5E-773B-497A-9ACF-92353BD85760",
     "ean": [
      "7046261388283"
@@ -5474,80 +4103,6 @@
     "navn_form_styrke": "Fluoxetine Vitabalans tab 20 mg",
     "avregistrert_dato": null,
     "markedsforingsdato": "2014-06-15",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_E0E9C4D4-921F-47F4-8DAE-529C11D29232",
-    "ean": [
-     "7046264550502"
-    ],
-    "varenr": "455050",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 100,
-      "merkevare_id": "ID_F791E442-AB5C-44EA-8E56-E6C5666D7420",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 100,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_F791E442-AB5C-44EA-8E56-E6C5666D7420"
-    ],
-    "byttegrupper": [
-     "ID_B3B5BC0D-B6E9-4999-9E71-603636032358"
-    ],
-    "byttegrupper_fra": {
-     "ID_B3B5BC0D-B6E9-4999-9E71-603636032358": "2008-01-17"
-    },
-    "navn_form_styrke": "Mirtazapin Hexal tab 30 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2004-11-01",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_E4DCC154-5E24-45E2-BCFD-ACB6410F79EB",
-    "ean": [
-     "6432100045508"
-    ],
-    "varenr": "024871",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 90,
-      "merkevare_id": "ID_523FD26A-3C5B-483F-82AA-49C7FDB37DF8",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 90,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_523FD26A-3C5B-483F-82AA-49C7FDB37DF8"
-    ],
-    "byttegrupper": [
-     "ID_B3B5BC0D-B6E9-4999-9E71-603636032358"
-    ],
-    "byttegrupper_fra": {
-     "ID_B3B5BC0D-B6E9-4999-9E71-603636032358": "2008-01-17"
-    },
-    "navn_form_styrke": "Mirtazapin Orion smeltetab 30 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2017-01-15",
     "midlertidig_utgatt_dato": null
    },
    {
@@ -5656,37 +4211,6 @@
     "midlertidig_utgatt_dato": null
    },
    {
-    "id": "ID_EB24D751-B245-475E-A2EB-B5038DDFAC57",
-    "ean": [],
-    "varenr": "365369",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 100,
-      "merkevare_id": "ID_46203A00-ED18-4883-BC8A-4A14DBF69AFC",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 100,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_46203A00-ED18-4883-BC8A-4A14DBF69AFC"
-    ],
-    "byttegrupper": [],
-    "byttegrupper_fra": {},
-    "navn_form_styrke": "Moclostad tab 150 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2019-09-16",
-    "midlertidig_utgatt_dato": null
-   },
-   {
     "id": "ID_F373F0C3-7D76-4D53-A667-0F3ACCF52D56",
     "ean": [
      "5055565742617"
@@ -5758,44 +4282,6 @@
     "navn_form_styrke": "Escitalopram Actavis tab 20 mg",
     "avregistrert_dato": null,
     "markedsforingsdato": "2011-07-01",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_F66DE518-0FB0-4FA1-9372-8C74C0A86F4B",
-    "ean": [
-     "5745000432721",
-     "7046260560789"
-    ],
-    "varenr": "052791",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 60,
-      "merkevare_id": "ID_C49F4AEE-950A-46A1-8325-C11747C49922",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 60,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_C49F4AEE-950A-46A1-8325-C11747C49922"
-    ],
-    "byttegrupper": [
-     "ID_283A1337-8EE0-4793-B7DB-1B5D6A6D3475"
-    ],
-    "byttegrupper_fra": {
-     "ID_283A1337-8EE0-4793-B7DB-1B5D6A6D3475": "2010-11-15"
-    },
-    "navn_form_styrke": "Paroxetine Oresund Pharma tab 20 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2011-08-01",
     "midlertidig_utgatt_dato": null
    },
    {
@@ -5903,75 +4389,6 @@
     "navn_form_styrke": "Fevarin tab 50 mg",
     "avregistrert_dato": null,
     "markedsforingsdato": "2001-01-01",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_F96456EE-032A-4CF5-8B71-484112233ABB",
-    "ean": [],
-    "varenr": "268254",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": null,
-      "mengde": 30,
-      "merkevare_id": "ID_8DA5E935-D452-4A17-8E96-336ADFF3369F",
-      "pakningstype": {
-       "kode": "169",
-       "tekst": "Blisterpakning"
-      },
-      "pakningsstorrelse": 30,
-      "pakningsstorrelse_tekst": null
-     }
-    ],
-    "merkevarer": [
-     "ID_8DA5E935-D452-4A17-8E96-336ADFF3369F"
-    ],
-    "byttegrupper": [],
-    "byttegrupper_fra": {},
-    "navn_form_styrke": "Manerix tab 300 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2019-09-01",
-    "midlertidig_utgatt_dato": null
-   },
-   {
-    "id": "ID_FAA8099E-E1BA-413A-B350-74F35DA000F6",
-    "ean": [
-     "840164508277",
-     "0191778015515"
-    ],
-    "varenr": "010554",
-    "innhold": [
-     {
-      "enhet": {
-       "kode": "stk",
-       "tekst": "stykk"
-      },
-      "antall": 30,
-      "mengde": 1,
-      "merkevare_id": "ID_F9D0069B-8D64-43A5-AD1F-F12E3134BBB5",
-      "pakningstype": {
-       "kode": "305",
-       "tekst": "Endoseblisterpakning"
-      },
-      "pakningsstorrelse": null,
-      "pakningsstorrelse_tekst": "30 x 1"
-     }
-    ],
-    "merkevarer": [
-     "ID_F9D0069B-8D64-43A5-AD1F-F12E3134BBB5"
-    ],
-    "byttegrupper": [
-     "ID_8C34DD69-DE6B-466D-B601-F0F9DAC8A923"
-    ],
-    "byttegrupper_fra": {
-     "ID_8C34DD69-DE6B-466D-B601-F0F9DAC8A923": "2008-01-30"
-    },
-    "navn_form_styrke": "Remeron-S smeltetab 15 mg",
-    "avregistrert_dato": null,
-    "markedsforingsdato": "2002-10-01",
     "midlertidig_utgatt_dato": null
    },
    {
@@ -6167,45 +4584,6 @@
     "virkestoff_uten_styrke": []
    },
    {
-    "id": "ID_037F7C1A-8FAF-4C53-B926-8CA546711A69",
-    "atc": {
-     "kode": "N06AX11",
-     "tekst": "Mirtazapin"
-    },
-    "deling": null,
-    "varenavn": "Mirtazapin Bluefish",
-    "kan_apnes": null,
-    "produsent": "Bluefish Pharmaceuticals AB",
-    "kan_knuses": null,
-    "preparattype": {
-     "kode": "7",
-     "tekst": "Legemiddel"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "48",
-     "tekst": "Smeltetablett"
-    },
-    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5291.pdf",
-    "navn_form_styrke": "Mirtazapin Bluefish smeltetab 45 mg",
-    "referanseprodukt": "Remeron-S",
-    "legemiddelform_lang": "Smeltetablett",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_4C9B7633-4F67-4EAC-B626-41CC6451B83D"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
     "id": "ID_03F15B1E-64C6-4FC8-BEE5-A803D981C65D",
     "atc": {
      "kode": "N06AA09",
@@ -6364,45 +4742,6 @@
     ],
     "virkestoff_med_styrke": [
      "ID_F366BAA1-EB62-43EB-8B2C-78C78E53CB47"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
-    "id": "ID_0B3FB505-1F66-439D-9B2E-EBB907A06ABA",
-    "atc": {
-     "kode": "N06AX11",
-     "tekst": "Mirtazapin"
-    },
-    "deling": null,
-    "varenavn": "Mirtazapin Bluefish",
-    "kan_apnes": null,
-    "produsent": "Bluefish Pharmaceuticals AB",
-    "kan_knuses": null,
-    "preparattype": {
-     "kode": "7",
-     "tekst": "Legemiddel"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "48",
-     "tekst": "Smeltetablett"
-    },
-    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5290.pdf",
-    "navn_form_styrke": "Mirtazapin Bluefish smeltetab 30 mg",
-    "referanseprodukt": "Remeron-S",
-    "legemiddelform_lang": "Smeltetablett",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_505D906E-71D0-4738-B477-FC91E54ED461"
     ],
     "virkestoff_uten_styrke": []
    },
@@ -6827,96 +5166,6 @@
     "virkestoff_uten_styrke": []
    },
    {
-    "id": "ID_1DD8BBF6-6A5C-4BE5-ABED-919F7C1E582D",
-    "atc": {
-     "kode": "N06AB05",
-     "tekst": "Paroksetin"
-    },
-    "deling": {
-     "kode": "2",
-     "tekst": "Delbar i 2"
-    },
-    "varenavn": "Seroxat",
-    "kan_apnes": null,
-    "produsent": "GlaxoSmithKline AS",
-    "kan_knuses": {
-     "kode": "9",
-     "tekst": "Ukjent"
-    },
-    "preparattype": {
-     "kode": "7",
-     "tekst": "Legemiddel"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "53",
-     "tekst": "Tablett"
-    },
-    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07840.pdf",
-    "navn_form_styrke": "Seroxat tab 20 mg",
-    "referanseprodukt": null,
-    "legemiddelform_lang": "Tablett, filmdrasjert",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_2A7E46F4-7199-4193-ABE7-BC8EC669D3AD"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
-    "id": "ID_2174885A-1D02-48E3-BCBA-5E9EEEDEE64D",
-    "atc": {
-     "kode": "N06AG02",
-     "tekst": "Moklobemid"
-    },
-    "deling": {
-     "kode": "0",
-     "tekst": "Ikke spesifisert"
-    },
-    "varenavn": "Aurorix",
-    "kan_apnes": null,
-    "produsent": "2care4 ApS",
-    "kan_knuses": {
-     "kode": "9",
-     "tekst": "Ukjent"
-    },
-    "preparattype": {
-     "kode": "7",
-     "tekst": "Legemiddel"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "53",
-     "tekst": "Tablett"
-    },
-    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07547.pdf",
-    "navn_form_styrke": "Aurorix tab 150 mg",
-    "referanseprodukt": "Aurorix",
-    "legemiddelform_lang": "Tablett, filmdrasjert",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_160F0E65-18EC-49C5-94F1-C412855ADE9A"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
     "id": "ID_22A42A6A-884E-4A30-875D-08ACAA69B46E",
     "atc": {
      "kode": "N06AA09",
@@ -7084,51 +5333,6 @@
     ],
     "virkestoff_med_styrke": [
      "ID_6EECBB6E-E878-4503-9C75-3AF11387D4BB"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
-    "id": "ID_2B2C6089-E54F-48D5-89DD-B4EC70FA37D4",
-    "atc": {
-     "kode": "N06AX11",
-     "tekst": "Mirtazapin"
-    },
-    "deling": {
-     "kode": "2",
-     "tekst": "Delbar i 2"
-    },
-    "varenavn": "Mirtazapin Orion",
-    "kan_apnes": null,
-    "produsent": "Orion Corporation - Espoo",
-    "kan_knuses": {
-     "kode": "9",
-     "tekst": "Ukjent"
-    },
-    "preparattype": {
-     "kode": "7",
-     "tekst": "Legemiddel"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "53",
-     "tekst": "Tablett"
-    },
-    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9619.pdf",
-    "navn_form_styrke": "Mirtazapin Orion tab 30 mg",
-    "referanseprodukt": "Remeron",
-    "legemiddelform_lang": "Tablett, filmdrasjert",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_0CFE2828-AF9B-4E7C-A644-305B589F81B4"
     ],
     "virkestoff_uten_styrke": []
    },
@@ -7310,51 +5514,6 @@
     "virkestoff_uten_styrke": []
    },
    {
-    "id": "ID_31BA1874-A4CB-497E-BDD7-C894BD3A1E8F",
-    "atc": {
-     "kode": "N06AG02",
-     "tekst": "Moklobemid"
-    },
-    "deling": {
-     "kode": "0",
-     "tekst": "Ikke spesifisert"
-    },
-    "varenavn": "Aurorix",
-    "kan_apnes": null,
-    "produsent": "Viatris AS",
-    "kan_knuses": {
-     "kode": "9",
-     "tekst": "Ukjent"
-    },
-    "preparattype": {
-     "kode": "7",
-     "tekst": "Legemiddel"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "53",
-     "tekst": "Tablett"
-    },
-    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07983.pdf",
-    "navn_form_styrke": "Aurorix tab 300 mg",
-    "referanseprodukt": null,
-    "legemiddelform_lang": "Tablett, filmdrasjert",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_146D8D7A-78BC-487D-A55A-C35C99794FFC"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
     "id": "ID_31F8766F-EB20-4190-A4EC-EC33B4DBA754",
     "atc": {
      "kode": "N06AX26",
@@ -7393,45 +5552,6 @@
     ],
     "virkestoff_med_styrke": [
      "ID_5673CF02-48CE-4AD1-9937-FF6503833086"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
-    "id": "ID_33BAB838-DF54-4A36-AB1D-685DA23DB5CD",
-    "atc": {
-     "kode": "N06AX11",
-     "tekst": "Mirtazapin"
-    },
-    "deling": null,
-    "varenavn": "Mirtazapin Orion",
-    "kan_apnes": null,
-    "produsent": "Orion Corporation Orion Pharma",
-    "kan_knuses": null,
-    "preparattype": {
-     "kode": "7",
-     "tekst": "Legemiddel"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "48",
-     "tekst": "Smeltetablett"
-    },
-    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4177.pdf",
-    "navn_form_styrke": "Mirtazapin Orion smeltetab 45 mg",
-    "referanseprodukt": "Remeron",
-    "legemiddelform_lang": "Smeltetablett",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_4C9B7633-4F67-4EAC-B626-41CC6451B83D"
     ],
     "virkestoff_uten_styrke": []
    },
@@ -7520,45 +5640,6 @@
     "virkestoff_uten_styrke": []
    },
    {
-    "id": "ID_41762CA0-2038-41DD-A36C-EFBDBE0A94E9",
-    "atc": {
-     "kode": "N06AX11",
-     "tekst": "Mirtazapin"
-    },
-    "deling": null,
-    "varenavn": "Mirtazapine rosemont",
-    "kan_apnes": null,
-    "produsent": "Rosemont Pharmaceuticals",
-    "kan_knuses": null,
-    "preparattype": {
-     "kode": "11",
-     "tekst": "Krever godkj. Fritak"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "842",
-     "tekst": "Mikstur, oppløsning"
-    },
-    "preparatomtale": null,
-    "navn_form_styrke": "Mirtazapine rosemont mikst oppl 15 mg/ml",
-    "referanseprodukt": null,
-    "legemiddelform_lang": "Mikstur, oppløsning",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_555800B4-8074-424E-8A47-CBF70CA4763D"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
     "id": "ID_45AA3363-8013-432B-A214-1499475A8E4A",
     "atc": {
      "kode": "N06AB06",
@@ -7594,48 +5675,6 @@
     ],
     "virkestoff_med_styrke": [
      "ID_2F4E2858-A988-45B7-B7E3-E18A0E56DDFD"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
-    "id": "ID_46203A00-ED18-4883-BC8A-4A14DBF69AFC",
-    "atc": {
-     "kode": "N06AG02",
-     "tekst": "Moklobemid"
-    },
-    "deling": null,
-    "varenavn": "Moclostad",
-    "kan_apnes": null,
-    "produsent": "Stada",
-    "kan_knuses": {
-     "kode": "9",
-     "tekst": "Ukjent"
-    },
-    "preparattype": {
-     "kode": "11",
-     "tekst": "Krever godkj. Fritak"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "53",
-     "tekst": "Tablett"
-    },
-    "preparatomtale": null,
-    "navn_form_styrke": "Moclostad tab 150 mg",
-    "referanseprodukt": null,
-    "legemiddelform_lang": "Tablett",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_160F0E65-18EC-49C5-94F1-C412855ADE9A"
     ],
     "virkestoff_uten_styrke": []
    },
@@ -7807,45 +5846,6 @@
     ],
     "virkestoff_med_styrke": [
      "ID_67A0D5C1-6F7C-4BDC-B026-34864092E961"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
-    "id": "ID_523FD26A-3C5B-483F-82AA-49C7FDB37DF8",
-    "atc": {
-     "kode": "N06AX11",
-     "tekst": "Mirtazapin"
-    },
-    "deling": null,
-    "varenavn": "Mirtazapin Orion",
-    "kan_apnes": null,
-    "produsent": "Orion Corporation Orion Pharma",
-    "kan_knuses": null,
-    "preparattype": {
-     "kode": "7",
-     "tekst": "Legemiddel"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "48",
-     "tekst": "Smeltetablett"
-    },
-    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4176.pdf",
-    "navn_form_styrke": "Mirtazapin Orion smeltetab 30 mg",
-    "referanseprodukt": "Remeron",
-    "legemiddelform_lang": "Smeltetablett",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_505D906E-71D0-4738-B477-FC91E54ED461"
     ],
     "virkestoff_uten_styrke": []
    },
@@ -8276,48 +6276,6 @@
     "virkestoff_uten_styrke": []
    },
    {
-    "id": "ID_6AF894A1-1003-408E-9531-1CE2DAC29E1D",
-    "atc": {
-     "kode": "N06AX11",
-     "tekst": "Mirtazapin"
-    },
-    "deling": null,
-    "varenavn": "Mirtazapin orion",
-    "kan_apnes": null,
-    "produsent": "Orion",
-    "kan_knuses": {
-     "kode": "9",
-     "tekst": "Ukjent"
-    },
-    "preparattype": {
-     "kode": "11",
-     "tekst": "Krever godkj. Fritak"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "53",
-     "tekst": "Tablett"
-    },
-    "preparatomtale": null,
-    "navn_form_styrke": "Mirtazapin orion tab 15 mg",
-    "referanseprodukt": null,
-    "legemiddelform_lang": "Tablett",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_CA66AD4C-A497-47AB-9339-99191EDCECD1"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
     "id": "ID_6BF1DF73-3390-4F7C-9795-0AC656A938A0",
     "atc": {
      "kode": "N06AB03",
@@ -8486,51 +6444,6 @@
     "virkestoff_uten_styrke": []
    },
    {
-    "id": "ID_739FE156-A053-4DA4-9F8C-D09AD46E1222",
-    "atc": {
-     "kode": "N06AB05",
-     "tekst": "Paroksetin"
-    },
-    "deling": {
-     "kode": "2",
-     "tekst": "Delbar i 2"
-    },
-    "varenavn": "Seroxat",
-    "kan_apnes": null,
-    "produsent": "2care4 ApS",
-    "kan_knuses": {
-     "kode": "9",
-     "tekst": "Ukjent"
-    },
-    "preparattype": {
-     "kode": "7",
-     "tekst": "Legemiddel"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "53",
-     "tekst": "Tablett"
-    },
-    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07840.pdf",
-    "navn_form_styrke": "Seroxat tab 20 mg",
-    "referanseprodukt": "Seroxat",
-    "legemiddelform_lang": "Tablett, filmdrasjert",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_2A7E46F4-7199-4193-ABE7-BC8EC669D3AD"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
     "id": "ID_7511547A-36FD-4EE1-995A-56B29B5FA0B2",
     "atc": {
      "kode": "N06AB06",
@@ -8614,45 +6527,6 @@
     ],
     "virkestoff_med_styrke": [
      "ID_39EC8EC6-7724-4E1B-8E4A-AB2D53416D21"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
-    "id": "ID_7878CC41-BD6D-47AE-B8C2-092B41CA444F",
-    "atc": {
-     "kode": "N06AX11",
-     "tekst": "Mirtazapin"
-    },
-    "deling": null,
-    "varenavn": "Remeron-S",
-    "kan_apnes": null,
-    "produsent": "N.V. Organon - Kloosterstraat",
-    "kan_knuses": null,
-    "preparattype": {
-     "kode": "7",
-     "tekst": "Legemiddel"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "48",
-     "tekst": "Smeltetablett"
-    },
-    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-00816.pdf",
-    "navn_form_styrke": "Remeron-S smeltetab 30 mg",
-    "referanseprodukt": null,
-    "legemiddelform_lang": "Smeltetablett",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_505D906E-71D0-4738-B477-FC91E54ED461"
     ],
     "virkestoff_uten_styrke": []
    },
@@ -8741,135 +6615,6 @@
     "virkestoff_uten_styrke": []
    },
    {
-    "id": "ID_7EC7E1DA-18EF-49FE-B81D-5A308D4400DD",
-    "atc": {
-     "kode": "N06AG02",
-     "tekst": "Moklobemid"
-    },
-    "deling": {
-     "kode": "0",
-     "tekst": "Ikke spesifisert"
-    },
-    "varenavn": "Aurorix",
-    "kan_apnes": null,
-    "produsent": "Viatris AS",
-    "kan_knuses": {
-     "kode": "9",
-     "tekst": "Ukjent"
-    },
-    "preparattype": {
-     "kode": "7",
-     "tekst": "Legemiddel"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "53",
-     "tekst": "Tablett"
-    },
-    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07547.pdf",
-    "navn_form_styrke": "Aurorix tab 150 mg",
-    "referanseprodukt": null,
-    "legemiddelform_lang": "Tablett, filmdrasjert",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_160F0E65-18EC-49C5-94F1-C412855ADE9A"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
-    "id": "ID_7F1B7493-DF46-4B99-9EE3-AD8185213C9A",
-    "atc": {
-     "kode": "N06AX11",
-     "tekst": "Mirtazapin"
-    },
-    "deling": null,
-    "varenavn": "Mirtazapine aurobindo",
-    "kan_apnes": null,
-    "produsent": "Milpharm",
-    "kan_knuses": null,
-    "preparattype": {
-     "kode": "11",
-     "tekst": "Krever godkj. Fritak"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "48",
-     "tekst": "Smeltetablett"
-    },
-    "preparatomtale": null,
-    "navn_form_styrke": "Mirtazapine aurobindo smeltetab 30 mg",
-    "referanseprodukt": null,
-    "legemiddelform_lang": "Smeltetablett",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_505D906E-71D0-4738-B477-FC91E54ED461"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
-    "id": "ID_817F814F-6EA4-47DE-803B-F69DDC2D7A04",
-    "atc": {
-     "kode": "N06AX11",
-     "tekst": "Mirtazapin"
-    },
-    "deling": {
-     "kode": "2",
-     "tekst": "Delbar i 2"
-    },
-    "varenavn": "Mirtazapin Orion",
-    "kan_apnes": null,
-    "produsent": "Orion Corporation - Espoo",
-    "kan_knuses": {
-     "kode": "9",
-     "tekst": "Ukjent"
-    },
-    "preparattype": {
-     "kode": "7",
-     "tekst": "Legemiddel"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "53",
-     "tekst": "Tablett"
-    },
-    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9618.pdf",
-    "navn_form_styrke": "Mirtazapin Orion tab 15 mg",
-    "referanseprodukt": "Remeron",
-    "legemiddelform_lang": "Tablett, filmdrasjert",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_CA66AD4C-A497-47AB-9339-99191EDCECD1"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
     "id": "ID_860B8BC6-0386-4EAD-AB9A-8B43D0B97F07",
     "atc": {
      "kode": "N06AB06",
@@ -8915,51 +6660,6 @@
     "virkestoff_uten_styrke": []
    },
    {
-    "id": "ID_87F35DFC-189C-4024-AA8D-6864D83360DF",
-    "atc": {
-     "kode": "N06AX11",
-     "tekst": "Mirtazapin"
-    },
-    "deling": {
-     "kode": "2",
-     "tekst": "Delbar i 2"
-    },
-    "varenavn": "Remeron",
-    "kan_apnes": null,
-    "produsent": "N.V. Organon - Kloosterstraat",
-    "kan_knuses": {
-     "kode": "9",
-     "tekst": "Ukjent"
-    },
-    "preparattype": {
-     "kode": "7",
-     "tekst": "Legemiddel"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "53",
-     "tekst": "Tablett"
-    },
-    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1997-03657.pdf",
-    "navn_form_styrke": "Remeron tab 30 mg",
-    "referanseprodukt": null,
-    "legemiddelform_lang": "Tablett, filmdrasjert",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_0CFE2828-AF9B-4E7C-A644-305B589F81B4"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
     "id": "ID_8926A874-4851-4CFE-8C37-0162524E0572",
     "atc": {
      "kode": "N06AB04",
@@ -8998,87 +6698,6 @@
     ],
     "virkestoff_med_styrke": [
      "ID_19F29143-68D4-4B7D-845E-460DFFB8E260"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
-    "id": "ID_8C381CB9-2965-4C65-BA27-ADABACC1897F",
-    "atc": {
-     "kode": "N06AX11",
-     "tekst": "Mirtazapin"
-    },
-    "deling": null,
-    "varenavn": "Remeron-S",
-    "kan_apnes": null,
-    "produsent": "2care4 ApS",
-    "kan_knuses": null,
-    "preparattype": {
-     "kode": "7",
-     "tekst": "Legemiddel"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "48",
-     "tekst": "Smeltetablett"
-    },
-    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-00817.pdf",
-    "navn_form_styrke": "Remeron-S smeltetab 45 mg",
-    "referanseprodukt": "Remeron-S",
-    "legemiddelform_lang": "Smeltetablett",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_4C9B7633-4F67-4EAC-B626-41CC6451B83D"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
-    "id": "ID_8DA5E935-D452-4A17-8E96-336ADFF3369F",
-    "atc": {
-     "kode": "N06AG02",
-     "tekst": "Moklobemid"
-    },
-    "deling": null,
-    "varenavn": "Manerix",
-    "kan_apnes": null,
-    "produsent": "Mylan",
-    "kan_knuses": {
-     "kode": "9",
-     "tekst": "Ukjent"
-    },
-    "preparattype": {
-     "kode": "11",
-     "tekst": "Krever godkj. Fritak"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "53",
-     "tekst": "Tablett"
-    },
-    "preparatomtale": null,
-    "navn_form_styrke": "Manerix tab 300 mg",
-    "referanseprodukt": null,
-    "legemiddelform_lang": "Tablett",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_146D8D7A-78BC-487D-A55A-C35C99794FFC"
     ],
     "virkestoff_uten_styrke": []
    },
@@ -9160,45 +6779,6 @@
     ],
     "virkestoff_med_styrke": [
      "ID_D7BBA73E-CCB3-4653-A9EE-2F5D85D8A5F4"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
-    "id": "ID_9372EEA5-B969-4CCE-B3EB-024D3F2BE9EF",
-    "atc": {
-     "kode": "N06AX11",
-     "tekst": "Mirtazapin"
-    },
-    "deling": null,
-    "varenavn": "Mirtazapin Orion",
-    "kan_apnes": null,
-    "produsent": "Orion Corporation Orion Pharma",
-    "kan_knuses": null,
-    "preparattype": {
-     "kode": "7",
-     "tekst": "Legemiddel"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "48",
-     "tekst": "Smeltetablett"
-    },
-    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4175.pdf",
-    "navn_form_styrke": "Mirtazapin Orion smeltetab 15 mg",
-    "referanseprodukt": "Remeron",
-    "legemiddelform_lang": "Smeltetablett",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_7A47580A-7567-4662-87DB-38D8CB234B2B"
     ],
     "virkestoff_uten_styrke": []
    },
@@ -9371,45 +6951,6 @@
     "virkestoff_uten_styrke": []
    },
    {
-    "id": "ID_A4496C5B-B23C-4696-B7ED-0E77A0517B0B",
-    "atc": {
-     "kode": "N06AX11",
-     "tekst": "Mirtazapin"
-    },
-    "deling": null,
-    "varenavn": "Mirtazapin Bluefish",
-    "kan_apnes": null,
-    "produsent": "Bluefish Pharmaceuticals AB",
-    "kan_knuses": null,
-    "preparattype": {
-     "kode": "7",
-     "tekst": "Legemiddel"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "48",
-     "tekst": "Smeltetablett"
-    },
-    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5289.pdf",
-    "navn_form_styrke": "Mirtazapin Bluefish smeltetab 15 mg",
-    "referanseprodukt": "Remeron-S",
-    "legemiddelform_lang": "Smeltetablett",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_7A47580A-7567-4662-87DB-38D8CB234B2B"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
     "id": "ID_A86D96EB-42AC-43A5-911E-AD7CAB1C1159",
     "atc": {
      "kode": "N06AB03",
@@ -9578,87 +7119,6 @@
     "virkestoff_uten_styrke": []
    },
    {
-    "id": "ID_B3E11873-8B52-4BFA-9357-249B7C1E4347",
-    "atc": {
-     "kode": "N06AX11",
-     "tekst": "Mirtazapin"
-    },
-    "deling": null,
-    "varenavn": "Remeron-S",
-    "kan_apnes": null,
-    "produsent": "N.V. Organon - Kloosterstraat",
-    "kan_knuses": null,
-    "preparattype": {
-     "kode": "7",
-     "tekst": "Legemiddel"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "48",
-     "tekst": "Smeltetablett"
-    },
-    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-00817.pdf",
-    "navn_form_styrke": "Remeron-S smeltetab 45 mg",
-    "referanseprodukt": null,
-    "legemiddelform_lang": "Smeltetablett",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_4C9B7633-4F67-4EAC-B626-41CC6451B83D"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
-    "id": "ID_B8D768A7-BB2A-42F2-B556-82611D6F92F2",
-    "atc": {
-     "kode": "N06AX11",
-     "tekst": "Mirtazapin"
-    },
-    "deling": null,
-    "varenavn": "Mirtazapin Orion",
-    "kan_apnes": null,
-    "produsent": "Orion Corporation - Espoo",
-    "kan_knuses": {
-     "kode": "9",
-     "tekst": "Ukjent"
-    },
-    "preparattype": {
-     "kode": "7",
-     "tekst": "Legemiddel"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "53",
-     "tekst": "Tablett"
-    },
-    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9620.pdf",
-    "navn_form_styrke": "Mirtazapin Orion tab 45 mg",
-    "referanseprodukt": "Remeron",
-    "legemiddelform_lang": "Tablett, filmdrasjert",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_487E8D0A-99FD-475F-BCC4-EFC5CA7F7894"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
     "id": "ID_BD4B45DA-CB7A-443F-A8DE-32FD86E7D62B",
     "atc": {
      "kode": "N06AB04",
@@ -9784,51 +7244,6 @@
     ],
     "virkestoff_med_styrke": [
      "ID_76A6500D-9CAF-4EC8-AE2A-A6BDDA8FFF10"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
-    "id": "ID_C49F4AEE-950A-46A1-8325-C11747C49922",
-    "atc": {
-     "kode": "N06AB05",
-     "tekst": "Paroksetin"
-    },
-    "deling": {
-     "kode": "2",
-     "tekst": "Delbar i 2"
-    },
-    "varenavn": "Paroxetine Oresund Pharma",
-    "kan_apnes": null,
-    "produsent": "Oresund Pharma ApS",
-    "kan_knuses": {
-     "kode": "9",
-     "tekst": "Ukjent"
-    },
-    "preparattype": {
-     "kode": "7",
-     "tekst": "Legemiddel"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "53",
-     "tekst": "Tablett"
-    },
-    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-7387.pdf",
-    "navn_form_styrke": "Paroxetine Oresund Pharma tab 20 mg",
-    "referanseprodukt": "Seroxat",
-    "legemiddelform_lang": "Tablett, filmdrasjert",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_2A7E46F4-7199-4193-ABE7-BC8EC669D3AD"
     ],
     "virkestoff_uten_styrke": []
    },
@@ -10337,93 +7752,6 @@
     "virkestoff_uten_styrke": []
    },
    {
-    "id": "ID_E678BB85-737F-4260-BDC3-90D7D0F79F50",
-    "atc": {
-     "kode": "N06AG02",
-     "tekst": "Moklobemid"
-    },
-    "deling": null,
-    "varenavn": "Moclobemid",
-    "kan_apnes": null,
-    "produsent": "Ratiopharm",
-    "kan_knuses": {
-     "kode": "9",
-     "tekst": "Ukjent"
-    },
-    "preparattype": {
-     "kode": "11",
-     "tekst": "Krever godkj. Fritak"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "53",
-     "tekst": "Tablett"
-    },
-    "preparatomtale": null,
-    "navn_form_styrke": "Moclobemid tab 150 mg",
-    "referanseprodukt": null,
-    "legemiddelform_lang": "Tablett",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_160F0E65-18EC-49C5-94F1-C412855ADE9A"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
-    "id": "ID_E72EB4C9-2902-4F8F-B1AC-DAC1D0905C7E",
-    "atc": {
-     "kode": "N06AX11",
-     "tekst": "Mirtazapin"
-    },
-    "deling": {
-     "kode": "0",
-     "tekst": "Ikke spesifisert"
-    },
-    "varenavn": "Mirtazapin Hexal",
-    "kan_apnes": null,
-    "produsent": "Hexal A/S",
-    "kan_knuses": {
-     "kode": "9",
-     "tekst": "Ukjent"
-    },
-    "preparattype": {
-     "kode": "7",
-     "tekst": "Legemiddel"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "53",
-     "tekst": "Tablett"
-    },
-    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2594.pdf",
-    "navn_form_styrke": "Mirtazapin Hexal tab 45 mg",
-    "referanseprodukt": "Remeron",
-    "legemiddelform_lang": "Tablett, filmdrasjert",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_487E8D0A-99FD-475F-BCC4-EFC5CA7F7894"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
     "id": "ID_E868339E-CD90-416D-8CC7-74FE25B040BE",
     "atc": {
      "kode": "N06AB10",
@@ -10727,51 +8055,6 @@
     "virkestoff_uten_styrke": []
    },
    {
-    "id": "ID_F791E442-AB5C-44EA-8E56-E6C5666D7420",
-    "atc": {
-     "kode": "N06AX11",
-     "tekst": "Mirtazapin"
-    },
-    "deling": {
-     "kode": "2",
-     "tekst": "Delbar i 2"
-    },
-    "varenavn": "Mirtazapin Hexal",
-    "kan_apnes": null,
-    "produsent": "Hexal A/S",
-    "kan_knuses": {
-     "kode": "9",
-     "tekst": "Ukjent"
-    },
-    "preparattype": {
-     "kode": "7",
-     "tekst": "Legemiddel"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "53",
-     "tekst": "Tablett"
-    },
-    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2593.pdf",
-    "navn_form_styrke": "Mirtazapin Hexal tab 30 mg",
-    "referanseprodukt": "Remeron",
-    "legemiddelform_lang": "Tablett, filmdrasjert",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_0CFE2828-AF9B-4E7C-A644-305B589F81B4"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
     "id": "ID_F8FBB8C2-D35F-42D1-975D-9965ED1015D0",
     "atc": {
      "kode": "N06AB06",
@@ -10813,45 +8096,6 @@
     ],
     "virkestoff_med_styrke": [
      "ID_AF7951E5-5BA6-4EF8-84B6-C2C96CC34432"
-    ],
-    "virkestoff_uten_styrke": []
-   },
-   {
-    "id": "ID_F9D0069B-8D64-43A5-AD1F-F12E3134BBB5",
-    "atc": {
-     "kode": "N06AX11",
-     "tekst": "Mirtazapin"
-    },
-    "deling": null,
-    "varenavn": "Remeron-S",
-    "kan_apnes": null,
-    "produsent": "N.V. Organon - Kloosterstraat",
-    "kan_knuses": null,
-    "preparattype": {
-     "kode": "7",
-     "tekst": "Legemiddel"
-    },
-    "reseptgruppe": {
-     "kode": "C",
-     "tekst": "Reseptgruppe C"
-    },
-    "svart_trekant": false,
-    "legemiddelform": {
-     "kode": "48",
-     "tekst": "Smeltetablett"
-    },
-    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-00815.pdf",
-    "navn_form_styrke": "Remeron-S smeltetab 15 mg",
-    "referanseprodukt": null,
-    "legemiddelform_lang": "Smeltetablett",
-    "administrasjonsveier": [
-     {
-      "kode": "53",
-      "tekst": "Oral bruk"
-     }
-    ],
-    "virkestoff_med_styrke": [
-     "ID_7A47580A-7567-4662-87DB-38D8CB234B2B"
     ],
     "virkestoff_uten_styrke": []
    },
@@ -11047,26 +8291,6 @@
     "navn_engelsk": "Amitriptyline"
    },
    {
-    "id": "ID_0AFFD596-9932-44A7-86E8-F35BBDB1FCAD",
-    "navn": "Mirtazapin",
-    "salter": [
-     "ID_B4128970-3555-4603-92A2-29B6E05192EE"
-    ],
-    "utgatt": false,
-    "navn_engelsk": "Mirtazapine"
-   },
-   {
-    "id": "ID_0F9E3AC0-1950-4CF5-8F4F-4008696E85B8",
-    "navn": "Paroksetin",
-    "salter": [
-     "ID_06C1DC23-3704-4CC2-847B-8ACBCF4B1198",
-     "ID_17D31594-9A20-4CF0-BE82-40AB8C96AE11",
-     "ID_28020AE2-C4E3-4F85-B768-3E91AF0DBD6A"
-    ],
-    "utgatt": false,
-    "navn_engelsk": "Paroxetine"
-   },
-   {
     "id": "ID_13E05918-25C1-4DAA-A0F5-1266DEC3A75F",
     "navn": "Escitalopram",
     "salter": [
@@ -11123,13 +8347,6 @@
     "navn_engelsk": "Fluvoxamine"
    },
    {
-    "id": "ID_D1F74888-C7D1-474F-A9E8-2E58CB136B06",
-    "navn": "Moklobemid",
-    "salter": [],
-    "utgatt": false,
-    "navn_engelsk": "Moclobemide"
-   },
-   {
     "id": "ID_D473FE91-133D-494A-A2B0-C644A8372A8B",
     "navn": "Fluoksetin",
     "salter": [
@@ -11151,27 +8368,9 @@
   ],
   "byttegrupper": [
    {
-    "id": "ID_1737F11C-DB88-4DA3-88B0-5C05C9C05EE4",
-    "kode": "000812",
-    "tekst": "MIRTAZAPIN TABLETTER OG SMELTETABLETTER 45MG",
-    "gyldig_fra": "2008-01-17",
-    "gyldig_til": null,
-    "beskrivelse": null,
-    "merknad_til_byttbarhet": false
-   },
-   {
     "id": "ID_1EB4FC7A-5B1E-4758-84E8-1594D66F2791",
     "kode": "000643",
     "tekst": "KLOMIPRAMIN TABLETTER 25MG",
-    "gyldig_fra": "2008-01-17",
-    "gyldig_til": null,
-    "beskrivelse": null,
-    "merknad_til_byttbarhet": false
-   },
-   {
-    "id": "ID_283A1337-8EE0-4793-B7DB-1B5D6A6D3475",
-    "kode": "000661",
-    "tekst": "PAROKSETIN TABLETTER 20MG",
     "gyldig_fra": "2008-01-17",
     "gyldig_til": null,
     "beskrivelse": null,
@@ -11250,24 +8449,6 @@
     "merknad_til_byttbarhet": false
    },
    {
-    "id": "ID_8248BAD8-E60B-48A7-9C1E-E5FAFF492C72",
-    "kode": "000674",
-    "tekst": "MOKLOBEMID TABLETTER 150MG",
-    "gyldig_fra": "2008-01-17",
-    "gyldig_til": null,
-    "beskrivelse": null,
-    "merknad_til_byttbarhet": false
-   },
-   {
-    "id": "ID_8C34DD69-DE6B-466D-B601-F0F9DAC8A923",
-    "kode": "001518",
-    "tekst": "MIRTAZAPIN FILMDRASJERTE TABLETTER OG SMELTETABLETTER 15 MG",
-    "gyldig_fra": "2008-01-17",
-    "gyldig_til": null,
-    "beskrivelse": null,
-    "merknad_til_byttbarhet": false
-   },
-   {
     "id": "ID_8E562F75-4F69-40C0-80B0-5AEC8432812F",
     "kode": "000667",
     "tekst": "FLUVOKSAMIN TABLETTER 50MG",
@@ -11304,28 +8485,10 @@
     "merknad_til_byttbarhet": false
    },
    {
-    "id": "ID_A770D34D-8E9C-4F7D-A2CE-2DF7216C17A9",
-    "kode": "000675",
-    "tekst": "MOKLOBEMID TABLETTER 300MG",
-    "gyldig_fra": "2008-01-17",
-    "gyldig_til": null,
-    "beskrivelse": null,
-    "merknad_til_byttbarhet": false
-   },
-   {
     "id": "ID_B262F115-4B68-45B7-A173-784F7D93DC9E",
     "kode": "002224",
     "tekst": "VORTIOKESTIN TABLETT 5MG",
     "gyldig_fra": "2017-12-22",
-    "gyldig_til": null,
-    "beskrivelse": null,
-    "merknad_til_byttbarhet": false
-   },
-   {
-    "id": "ID_B3B5BC0D-B6E9-4999-9E71-603636032358",
-    "kode": "000683",
-    "tekst": "MIRTAZAPIN FILMDRASJERTE TABLETTER OG SMELTETABLETTER 30MG",
-    "gyldig_fra": "2008-01-17",
     "gyldig_til": null,
     "beskrivelse": null,
     "merknad_til_byttbarhet": false

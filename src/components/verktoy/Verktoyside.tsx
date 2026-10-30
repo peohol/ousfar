@@ -373,7 +373,7 @@ function Beregningsdel({
   const nokkel = JSON.stringify({ regel: regel?.id, valg, skjema })
   const gjeldende = beregning?.nokkel === nokkel ? beregning : null
   const formvalg = alternativer && alternativer.regel === regel?.id ? alternativer.valg : {}
-  const justeringer = useMemo(() => (regel ? justeringsfelt(regel) : []), [regel])
+  const justeringer = useMemo(() => (regel ? justeringsfelt(regel, skjema.svar) : []), [regel, skjema.svar])
 
   // En plan som står, kontrolleres mot klokken: den gjelder bare så lenge FEST-kopien er fersk og dagen den samme.
   const harPlan = gjeldende?.status === 'ferdig' && gjeldende.resultat.status === 'doseplan'

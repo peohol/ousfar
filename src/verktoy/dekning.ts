@@ -42,6 +42,14 @@ const FORHOLD: Record<Dekningsforhold, (navn: string) => string> = {
 }
 
 const regel = (nokkel: string, kode: string, ...forhold: Dekningsforhold[]): Dekning => ({ nokkel, kode, status: 'regel_til_kontroll', forhold })
+/** Et stoff der ingen dose i valgområdet for første trinn kan gis med de norske formene, så regelen er fagtekst (beslutning P7-A, 30.10.2026). */
+const formtekst = (nokkel: string, kode: string, former: string): Dekning => ({
+  nokkel,
+  kode,
+  status: 'bare_fagtekst',
+  forhold: [],
+  merknad: `Med de norske ${former} kan ingen dose innenfor valgområdet for første trinn gis, heller ikke blant de nærmeste dosene forskriveren kan velge, så en beregnet plan er ikke godkjent (kontrollørens beslutning 30.10.2026). Nedtrappingen planlegges individuelt til en dokumentert alternativ formulering foreligger.`,
+})
 const begrenset = (nokkel: string, kode: string, ...forhold: Dekningsforhold[]): Dekning => ({ nokkel, kode, status: 'begrenset', forhold })
 
 /** Alle antidepressiva i «Trappe ned antidepressiv», alfabetisk etter nøkkel. Johannesurt er utelatt (P0). */
@@ -83,10 +91,10 @@ export const NEDTRAPPINGSDEKNING: readonly Dekning[] = [
   begrenset('imipramin', 'Im', 'bare_godkjenningsfritak'),
   regel('klomipramin', 'Cl'),
   begrenset('maprotilin', 'Ma', 'ingen_preparater'),
-  regel('mirtazapin', 'Mz'),
-  regel('moklobemid', 'Mo'),
+  formtekst('mirtazapin', 'Mz', 'tablettene og smeltetablettene'),
+  formtekst('moklobemid', 'Mo', 'tablettene på 150 og 300 mg'),
   regel('nortriptylin', 'No'),
-  regel('paroksetin', 'Pa'),
+  formtekst('paroksetin', 'Pa', 'tablettene'),
   regel('sertralin', 'Se'),
   begrenset('tranylcypromin', 'Tc', 'bare_godkjenningsfritak'),
   begrenset('trazodon', 'Td', 'bare_godkjenningsfritak'),

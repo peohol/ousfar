@@ -70,9 +70,9 @@ describe('oversikten', () => {
     const kort = screen.getAllByRole('link').filter((a) => a.classList.contains('verktoykort__lenke'))
     expect(kort.map((a) => a.getAttribute('href'))).toEqual(['#/verktoy/trappe-ned-antidepressiv', '#/verktoy/bytte-antidepressiv', '#/verktoy/bytte-antipsykotikum'])
     expect(kort.map((a) => a.querySelector('.verktoykort__status')?.textContent)).toEqual([
-      'Ingen beregning tilgjengelig ennå · 27 til faglig kontroll',
+      'Ingen beregning tilgjengelig ennå · 24 til faglig kontroll',
       'Ingen beregning tilgjengelig ennå · 2 til faglig kontroll',
-      'Ingen beregning tilgjengelig ennå · 4 til faglig kontroll',
+      'Ingen beregning tilgjengelig ennå · 3 til faglig kontroll',
     ])
     expect(screen.getByText(/Ingen beregninger er tilgjengelige ennå/)).toBeTruthy()
     expect(screen.queryByRole('alert')).toBeNull()

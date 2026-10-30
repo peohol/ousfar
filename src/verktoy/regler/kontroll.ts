@@ -14,7 +14,7 @@ import type { Formuleringsklasse } from '../festformuleringer'
 import type { Kildearkiv } from '../kildearkiv'
 import { kildegrunnlag, type Kildeanbefaling, type Kildepart } from '../kildeanbefalinger'
 import { erSperret, KILDEFORMULERINGER, type Virkestoffkartlegging } from '../kartlegging'
-import { beregn, kortform } from './beregning'
+import { beregn, kortform, utlosteKrav } from './beregning'
 import { godkjenningsfeil } from './godkjenning'
 import { kildeFor } from './kilder'
 import {
@@ -117,6 +117,9 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
     for (const k of x.klasser ?? []) if (!KLASSER[x.administrasjon].includes(k)) f(`forløp ${x.id} gjelder formuleringen ${k}, som ikke er ${x.administrasjon}`)
     if (x.klasser?.length === 0) f(`forløp ${x.id} har en tom liste med formuleringer`)
     if (x.preparater && (x.preparater.length === 0 || x.preparater.some((v) => !v.trim()))) f(`forløp ${x.id} har en tom liste eller et tomt varenavn`)
+    if (x.legemiddelformer && (x.legemiddelformer.length === 0 || x.legemiddelformer.some((v) => !v.trim()))) f(`forløp ${x.id} har en tom liste eller en tom legemiddelform`)
+    // FEST skiller ikke depotformuleringer med ulike intervaller i formen; et depotforløp uten varenavn kan aldri gi en plan.
+    if (x.administrasjon === 'depotinjeksjon' && !x.preparater && r.beregnbarhet !== 'bare_tekstlig') f(`depotforløpet ${x.id} sier ikke hvilket depotpreparat det gjelder (varenavn i FEST)`)
   })
 
   // Inndata: en måldose i planen krever et eksplisitt krav, og ingen skjult standard.
@@ -188,6 +191,13 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
       if (grenser.length === 0) f(`${sti}.begrunnelseskrav[${i}] har verken over eller under`)
       if (p.omrade && grenser.some((x) => x < p.omrade![0] || x > p.omrade![1])) f(`${sti}.begrunnelseskrav[${i}] har en grense utenfor området ${p.omrade.join('–')}`)
       if (k.ved && !r.sporsmal?.some((s) => s.id === k.ved)) f(`${sti}.begrunnelseskrav[${i}] gjelder spørsmålet ${k.ved}, som regelen ikke har`)
+    }
+    // Et forslag ved et svar er et utgangspunkt: innenfor området, og uten selv å kreve begrunnelse ved det svaret.
+    const sv = p.standard_ved
+    if (sv) {
+      if (!r.sporsmal?.some((s) => s.id === sv.ved)) f(`${sti}.standard_ved gjelder spørsmålet ${sv.ved}, som regelen ikke har`)
+      if (!p.justerbar || !p.omrade || sv.verdi < p.omrade[0] || sv.verdi > p.omrade[1]) f(`${sti}.standard_ved er ikke et valg innenfor parameterens område`)
+      if (utlosteKrav(p, sv.verdi, { [sv.ved]: true }).length > 0) f(`${sti}.standard_ved krever selv begrunnelse ved svaret det gjelder; et utgangspunkt kan ikke være et avvik`)
     }
   }
 

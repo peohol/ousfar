@@ -6,13 +6,14 @@
  *   npm run verktoy:regler -- rapport    docs/verktøy-p4-pilotsett.md, docs/verktøy-p7-regelutkast.md og docs/verktøy-p7-dekning.md
  *   npm run verktoy:regler -- motorrapport   docs/verktøy-p5-testtilfeller.md (doseplanmotoren, syntetiske data)
  *   npm run verktoy:regler -- aksepttest     docs/verktøy-p7-aksepttest.md (P7-reglene med de norske preparatene i FEST-uttrekket)
- *   npm run verktoy:regler -- hent-fest      Henter FEST-uttrekket til aksepttesten på nytt (krever VITE_SUPABASE_URL og SUPABASE_SECRET_KEY)
+ *   npm run verktoy:regler -- hent-fest      Henter FEST-uttrekkene til aksepttesten og depottestene på nytt (krever VITE_SUPABASE_URL og SUPABASE_SECRET_KEY)
  *
  * Bare `hent-fest` henter noe, og bare ved å lese med `les_legemidler`. Skriptet
  * skriver ikke til databasen og godkjenner ingen regel.
  */
 import { readFileSync, writeFileSync } from 'node:fs'
-import { AKSEPTSTOFFER, AKSEPTTESTFIL, FEST_AKSEPTTEST, lagAksepttestrapport, type Festuttrekk } from '../src/verktoy/regler/aksepttest'
+import { AKSEPTSTOFFER, AKSEPTTESTFIL, FEST_AKSEPTTEST, FEST_DEPOT, lagAksepttestrapport, type Festuttrekk } from '../src/verktoy/regler/aksepttest'
+import { PILOTSETT } from '../src/verktoy/regler/pilotsett'
 import { festkoblinger } from '../src/verktoy/register'
 import { DEKNINGSRAPPORTFIL, lagDekningsrapport } from '../src/verktoy/dekningsrapport'
 import { kontrollerRegelsett } from '../src/verktoy/regler/kontroll'
@@ -49,19 +50,28 @@ async function aksepttest() {
   skriv(AKSEPTTESTFIL, lagAksepttestrapport(uttrekk))
 }
 
+/** Virkestoffene i depotforløpene i pilotsettet. */
+const depotstoffer = () =>
+  PILOTSETT.regler.flatMap((r) => r.plan.forlop.flatMap((f) => (f.administrasjon === 'depotinjeksjon' && f.virkestoff.type === 'virkestoff' ? [f.virkestoff.nokkel] : [])))
+
 async function hentFest() {
   const url = process.env.VITE_SUPABASE_URL
   const nokkel = process.env.SUPABASE_SECRET_KEY
   if (!url || !nokkel) throw new Error('VITE_SUPABASE_URL og SUPABASE_SECRET_KEY må være satt.')
-  const ider = [...new Set(Object.values(festkoblinger(AKSEPTSTOFFER.map((s) => s.nokkel))).flat())].sort()
-  const svar = await fetch(`${url}/rest/v1/rpc/les_legemidler`, {
-    method: 'POST',
-    headers: { apikey: nokkel, Authorization: `Bearer ${nokkel}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ virkestoff_ider: ider }),
-  })
-  if (!svar.ok) throw new Error(`les_legemidler svarte ${svar.status}: ${await svar.text()}`)
-  const uttrekk: Festuttrekk = { hentet: new Date().toISOString(), utvalg: await svar.json() }
-  skriv(FEST_AKSEPTTEST, `${JSON.stringify(uttrekk, null, 1)}\n`)
+  for (const [fil, nokler] of [
+    [FEST_AKSEPTTEST, AKSEPTSTOFFER.map((s) => s.nokkel)],
+    [FEST_DEPOT, depotstoffer()],
+  ] as const) {
+    const ider = [...new Set(Object.values(festkoblinger(nokler)).flat())].sort()
+    const svar = await fetch(`${url}/rest/v1/rpc/les_legemidler`, {
+      method: 'POST',
+      headers: { apikey: nokkel, Authorization: `Bearer ${nokkel}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ virkestoff_ider: ider }),
+    })
+    if (!svar.ok) throw new Error(`les_legemidler svarte ${svar.status}: ${await svar.text()}`)
+    const uttrekk: Festuttrekk = { hentet: new Date().toISOString(), utvalg: await svar.json() }
+    skriv(fil, `${JSON.stringify(uttrekk, null, 1)}\n`)
+  }
 }
 
 const [kommando] = process.argv.slice(2).filter((a) => a !== '--')

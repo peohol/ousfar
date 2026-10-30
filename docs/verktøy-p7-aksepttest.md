@@ -1,7 +1,7 @@
 <!-- Laget av `npm run verktoy:regler -- aksepttest` fra src/data/verktoy/fest-aksepttest.json; rediger ikke for hånd. -->
 # P7: aksepttest med norske preparater
 
-Aksepttesten etter kontrollrunden 30.10.2026 (P7.5, del E.2). Hver hovedregel og langsom variant i `ousfar-verktoy-nedtrapping` versjon 8 er regnet med de faktiske preparatene i FEST, ikke syntetiske, for hver legemiddelform forskriveren kan velge. FEST-uttrekket er hentet 30.10.2026 (kildedato 27.10.2026); bare preparater med markedsføringstillatelse som er markedsført, brukes, ikke godkjenningsfritak.
+Aksepttesten etter kontrollrunden 30.10.2026 (P7.5, del E.2). Hver hovedregel og langsom variant i `ousfar-verktoy-nedtrapping` versjon 9 er regnet med de faktiske preparatene i FEST, ikke syntetiske, for hver legemiddelform forskriveren kan velge. FEST-uttrekket er hentet 30.10.2026 (kildedato 27.10.2026); bare preparater med markedsføringstillatelse som er markedsført, brukes, ikke godkjenningsfritak.
 
 **Dette er modellberegninger til faglig kontroll, ikke kliniske planer.** Ingen beregnbar regel er klinisk godkjent, og verktøyet viser ingen av planene. Pasientopplysninger inngår ikke.
 
@@ -16,13 +16,15 @@ Scenariene er:
 - (e) Alle scenariene bruker de norske preparatene i FEST.
 - (g) Oversikten viser om planen stopper allerede ved første trinn.
 
+Stoffene som bare har fagtekst, er ikke med: bupropion, agomelatin, duloksetin, venlafaksin, mirtazapin, moklobemid, paroksetin. Mirtazapin, moklobemid og paroksetin ble fagtekst etter kontrollørens beslutning P7-A fordi ingen dose innenfor valgområdet for første trinn kunne gis med de norske formene.
+
 Svarene er de samme i alle scenariene: startforslaget og organfunksjon er bekreftet, ingen unntak gjelder, dosen er innenfor rammen, og svaret er nei på stoffets spørsmål om pasientgruppe og indikasjon. Den vanlige dosen er startdosen i regelens første regneeksempel. Under hver plan som stopper ved et trinn forskriveren kan velge dosen for, står dosene som kan velges, med faktisk reduksjon.
 
 ## Oversikt (g)
 
-I (a) stopper 8 av 16 kombinasjoner av virkestoff og form allerede ved første trinn: amitriptylin (eneste form), citalopram (eneste form), fluoksetin (Kapsel, hard [891]), mirtazapin (Smeltetablett [48]), mirtazapin (Tablett [53]), moklobemid (eneste form), nortriptylin (eneste form), paroksetin (eneste form).
+I (a) stopper 4 av 12 kombinasjoner av virkestoff og form allerede ved første trinn: amitriptylin (eneste form), citalopram (eneste form), fluoksetin (Kapsel, hard [891]), nortriptylin (eneste form).
 
-Der et trinn ikke kan gis nøyaktig, kan forskriveren velge blant de nærmeste dosene som kan gis, med faktisk reduksjon innenfor valgområdet for risikogruppen (bidragsyterens valg 30.10.2026, åpent forslag til kontrollen). I (a) tilbyr 12 av 16 kombinasjoner et slikt valg. Med et valg ved hvert slikt trinn (h) stopper 4 av 16 ved første trinn.
+Der et trinn ikke kan gis nøyaktig, kan forskriveren velge blant de nærmeste dosene som kan gis, med faktisk reduksjon innenfor valgområdet for risikogruppen (bidragsyterens valg 30.10.2026, akseptert som prinsipp i kontrollørens beslutning P7-A). I (a) tilbyr 12 av 12 kombinasjoner et slikt valg. Med et valg ved hvert slikt trinn (h) stopper 0 av 12 ved første trinn.
 
 | Virkestoff | Form | (a) | (b) | (c) | (d) | (f) | (h) |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -35,11 +37,7 @@ Der et trinn ikke kan gis nøyaktig, kan forskriveren velge blant de nærmeste d
 | fluoksetin | Kapsel, hard [891] | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | – | 1 reduksjon |
 | fluvoksamin | eneste form | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | 2 reduksjoner |
 | klomipramin | eneste form | 1 reduksjon | 1 reduksjon | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | 6 reduksjoner |
-| mirtazapin | Smeltetablett [48] | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | – | stopper ved første trinn |
-| mirtazapin | Tablett [53] | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | – | stopper ved første trinn |
-| moklobemid | eneste form | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | – | stopper ved første trinn |
 | nortriptylin | eneste form | stopper ved første trinn | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | – | 4 reduksjoner |
-| paroksetin | eneste form | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | – | stopper ved første trinn |
 | sertralin | eneste form | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | 3 reduksjoner |
 | vortioksetin | eneste form | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | 3 reduksjoner |
 
@@ -435,114 +433,6 @@ Stopper:
 - fra dag 141: 10 mg = 1 tablett à 10 mg, valgt av forskriveren (beregnet 9,38 mg; −20 %)
 - neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
-### mirtazapin, Smeltetablett [48]
-
-**(a) Vanlig dose, kort behandlingstid, standardvalgene, fra 15 mg.**
-
-Stopper:
-
-- mirtazapin dag 1–28: den ideelle dosen 13,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
-
-**(b) Lang behandlingstid, 10 % per trinn, fra 15 mg.**
-
-Stopper:
-
-- mirtazapin dag 1–28: den ideelle dosen 13,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
-
-**(c) Tidligere seponeringssymptomer (langsom variant), fra 15 mg.**
-
-Stopper:
-
-- mirtazapin dag 1–28: den ideelle dosen 14,25 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (+5,26 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
-
-**(d) Lav dose: laveste styrke i formen, fra 15 mg.**
-
-Stopper:
-
-- mirtazapin dag 1–28: den ideelle dosen 13,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
-
-**(f) Videreføring: ny plan fra siste dose i (a).**
-
-(a) gir ingen dose å videreføre fra.
-
-**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 15 mg.**
-
-Stopper:
-
-- mirtazapin dag 1–28: den ideelle dosen 13,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
-
-### mirtazapin, Tablett [53]
-
-**(a) Vanlig dose, kort behandlingstid, standardvalgene, fra 15 mg.**
-
-Stopper:
-
-- mirtazapin dag 1–28: den ideelle dosen 13,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 7,5 mg (-44,44 %, faktisk reduksjon 50 % fra 15 mg) og 15 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
-
-**(b) Lang behandlingstid, 10 % per trinn, fra 15 mg.**
-
-Stopper:
-
-- mirtazapin dag 1–28: den ideelle dosen 13,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 7,5 mg (-44,44 %, faktisk reduksjon 50 % fra 15 mg) og 15 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
-
-**(c) Tidligere seponeringssymptomer (langsom variant), fra 15 mg.**
-
-Stopper:
-
-- mirtazapin dag 1–28: den ideelle dosen 14,25 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 7,5 mg (-47,37 %, faktisk reduksjon 50 % fra 15 mg) og 15 mg (+5,26 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
-
-**(d) Lav dose: laveste styrke i formen, fra 15 mg.**
-
-Stopper:
-
-- mirtazapin dag 1–28: den ideelle dosen 13,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 7,5 mg (-44,44 %, faktisk reduksjon 50 % fra 15 mg) og 15 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
-
-**(f) Videreføring: ny plan fra siste dose i (a).**
-
-(a) gir ingen dose å videreføre fra.
-
-**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 15 mg.**
-
-Stopper:
-
-- mirtazapin dag 1–28: den ideelle dosen 13,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 7,5 mg (-44,44 %, faktisk reduksjon 50 % fra 15 mg) og 15 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
-
-### moklobemid, eneste form
-
-**(a) Vanlig dose, kort behandlingstid, standardvalgene, fra 300 mg.**
-
-Stopper:
-
-- moklobemid dag 1–28: den ideelle dosen 270 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 150 mg (-44,44 %, faktisk reduksjon 50 % fra 300 mg) og 300 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
-
-**(b) Lang behandlingstid, 10 % per trinn, fra 300 mg.**
-
-Stopper:
-
-- moklobemid dag 1–28: den ideelle dosen 270 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 150 mg (-44,44 %, faktisk reduksjon 50 % fra 300 mg) og 300 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
-
-**(c) Tidligere seponeringssymptomer (langsom variant), fra 300 mg.**
-
-Stopper:
-
-- moklobemid dag 1–28: den ideelle dosen 285 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 150 mg (-47,37 %, faktisk reduksjon 50 % fra 300 mg) og 300 mg (+5,26 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
-
-**(d) Lav dose: laveste styrke i formen, fra 150 mg.**
-
-Stopper:
-
-- moklobemid dag 1–28: den ideelle dosen 135 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 150 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
-
-**(f) Videreføring: ny plan fra siste dose i (a).**
-
-(a) gir ingen dose å videreføre fra.
-
-**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 300 mg.**
-
-Stopper:
-
-- moklobemid dag 1–28: den ideelle dosen 270 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 150 mg (-44,44 %, faktisk reduksjon 50 % fra 300 mg) og 300 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
-
 ### nortriptylin, eneste form
 
 **(a) Vanlig dose, kort behandlingstid, standardvalgene, fra 50 mg.**
@@ -583,42 +473,6 @@ Stopper:
 - dag 57–84: 25 mg = 1 tablett à 25 mg, valgt av forskriveren (beregnet 22,5 mg; −16,67 %)
 - fra dag 85: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 18,75 mg; −20 %)
 - neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
-
-### paroksetin, eneste form
-
-**(a) Vanlig dose, kort behandlingstid, standardvalgene, fra 20 mg.**
-
-Stopper:
-
-- paroksetin dag 1–28: den ideelle dosen 18 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-44,44 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
-
-**(b) Lang behandlingstid, 10 % per trinn, fra 20 mg.**
-
-Stopper:
-
-- paroksetin dag 1–28: den ideelle dosen 18 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-44,44 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
-
-**(c) Tidligere seponeringssymptomer (langsom variant), fra 20 mg.**
-
-Stopper:
-
-- paroksetin dag 1–28: den ideelle dosen 19 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-47,37 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+5,26 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
-
-**(d) Lav dose: laveste styrke i formen, fra 20 mg.**
-
-Stopper:
-
-- paroksetin dag 1–28: den ideelle dosen 18 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-44,44 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
-
-**(f) Videreføring: ny plan fra siste dose i (a).**
-
-(a) gir ingen dose å videreføre fra.
-
-**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 20 mg.**
-
-Stopper:
-
-- paroksetin dag 1–28: den ideelle dosen 18 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (-44,44 %, faktisk reduksjon 50 % fra 20 mg) og 20 mg (+11,11 %). Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 ### sertralin, eneste form
 

@@ -32,7 +32,7 @@ import { byggesteiner, DOSEENHETER, norskDato, type Byggestein, type Preparatgru
 import { doser, fordel, styrkevalg, velgSerie, type Dosekandidat, type Doseelement, type Periodevalg, type Styrkevalg } from './dosevalg'
 
 /** Økes når doseplanen endres slik at like inndata kan gi et annet resultat. */
-export const PLANMOTORVERSJON = 5
+export const PLANMOTORVERSJON = 6
 
 /** Id-ene til syntetiske testregler begynner slik; de kan aldri gi en klinisk plan. */
 export const SYNTETISK_REGEL = 'syntetisk-'
@@ -164,8 +164,9 @@ const tall = (x: number) => String(avrund(x)).replace('.', ',')
 const dager = (p: { fra: number; til: number | null }) => (p.til === null ? `fra dag ${p.fra}` : p.til === p.fra ? `dag ${p.fra}` : `dag ${p.fra}–${p.til}`)
 /** «, annenhver dag» når dosen ikke gis daglig. */
 const hverSuffiks = (p: { hver?: number }) => (p.hver ? ` ${hverTekst(p.hver)}` : '')
-/** «, fordelt på 2 doser: 100 + 100 mg» når døgndosen er fordelt. */
-export const fordelingSuffiks = (p: { doser?: number[] }) => (p.doser ? `, fordelt på ${p.doser.length} doser: ${p.doser.map(tall).join(' + ')} mg` : '')
+/** «, fordelt på 2 doser: 100 + 50 mg (ulik fordeling)» når døgndosen er fordelt; en ulik fordeling merkes (P7.5, beslutning P7-B). */
+export const fordelingSuffiks = (p: { doser?: number[] }) =>
+  p.doser ? `, fordelt på ${p.doser.length} doser: ${p.doser.map(tall).join(' + ')} mg${p.doser.some((d) => Math.abs(d - p.doser![0]!) > EPS) ? ' (ulik fordeling)' : ''}` : ''
 
 /**
  * Hvor langt FEST-kontrollen kan ligge foran klokken her før tidsstemplet
@@ -247,11 +248,13 @@ function dosegrense(p: Parameter | undefined, sti: string): number | null {
 
 const listeOg = (xs: string[]) => (xs.length <= 1 ? xs.join('') : `${xs.slice(0, -1).join(', ')} og ${xs.at(-1)}`)
 
-/** Om preparatet ligger utenfor det forløpet gjelder: administrasjonsveien, formuleringen regelen gjelder. */
+/** Om preparatet ligger utenfor det forløpet gjelder: administrasjonsveien, og formuleringen, varenavnet og legemiddelformen når regelen avgrenser dem. */
 function utenforForlop(def: Forlop, b: Byggestein): boolean {
   if (def.administrasjon === 'peroral') {
     if (!(b.klasse === 'peroral' || b.klasse === 'peroral_modifisert') || !b.administrasjonsveier.includes('Oral bruk')) return true
   } else if (b.klasse !== 'depotinjeksjon') return true
+  if (def.preparater && !def.preparater.includes(b.varenavn)) return true
+  if (def.legemiddelformer && !def.legemiddelformer.includes(b.legemiddelform?.kode ?? '')) return true
   return !!def.klasser && !def.klasser.includes(b.klasse)
 }
 
@@ -261,7 +264,6 @@ function utvalgFor(def: Forlop, steiner: Byggestein[], valg: Formvalg, fritak: b
   const brukbare: Byggestein[] = []
   for (const b of steiner) {
     if (utenforForlop(def, b)) continue
-    if (def.preparater && !def.preparater.includes(b.varenavn)) continue
     if (valg.klasse && b.klasse !== valg.klasse) continue
     if (valg.legemiddelformer && !valg.legemiddelformer.includes(b.legemiddelform?.kode ?? '')) continue
     if (valg.preparater && !valg.preparater.includes(b.id)) continue
@@ -277,7 +279,7 @@ function utvalgFor(def: Forlop, steiner: Byggestein[], valg: Formvalg, fritak: b
 function preparaterFor(def: Forlop, virkestoff: string, steiner: Byggestein[], valg: Formvalg, fritak: boolean): { brukbare: Byggestein[]; begrensninger: string[] } {
   const { brukbare, begrensninger } = utvalgFor(def, steiner, valg, fritak)
   if (brukbare.length === 0) {
-    const finnes = steiner.filter((b) => !utenforForlop(def, b) && (!def.preparater || def.preparater.includes(b.varenavn)))
+    const finnes = steiner.filter((b) => !utenforForlop(def, b))
     const depot = def.preparater ? ` (${def.preparater.join(', ')})` : ''
     const [hva, bestemt] = def.administrasjon === 'peroral' ? ['perorale preparater', 'de perorale preparatene'] : [`depotpreparater${depot}`, `depotpreparatene${depot}`]
     throw new Stopp(
@@ -409,17 +411,9 @@ function trinnvalgFor(def: Forlop, f: Forlopsresultat, p: Periode, v: Styrkevalg
   }
 }
 
-/**
- * Hvorfor perioden ikke kan gis når døgndosen må fordeles og ingen dose som
- * kan gis, kan fordeles slik regelen krever. `ujevn` er en fordeling som
- * ellers kunne vært gitt, når det bare er regelens krav om like store doser
- * som stopper.
- */
-const ingenFordeling = (f: Forlopsresultat, p: Periode, over: number | null, likeStore: boolean, ujevn: number[] | null) =>
-  `${f.virkestoff} ${dager(p)}: døgndosen ${tall(p.mg)} mg skal gis ${fordelingstekst(p.fordeles!)}${over !== null ? `, hver høyst ${tall(over)} mg` : ''} (preparatomtalen)` +
-  (ujevn
-    ? `. Den kan gis fordelt som ${ujevn.map(tall).join(' + ')} mg, men regelen krever like store doser (regelens eget valg, ikke et krav i preparatomtalen), og ingen nøyaktig dose med preparatene i FEST kan fordeles på like store doser.`
-    : `${likeStore ? ' og like store doser (regelens eget valg)' : ''}, men ingen nøyaktig dose med preparatene i FEST kan fordeles slik.`) +
+/** Hvorfor perioden ikke kan gis når døgndosen må fordeles og ingen dose som kan gis, kan fordeles slik preparatomtalen krever. */
+const ingenFordeling = (f: Forlopsresultat, p: Periode, over: number | null) =>
+  `${f.virkestoff} ${dager(p)}: døgndosen ${tall(p.mg)} mg skal gis ${fordelingstekst(p.fordeles!)}${over !== null ? `, hver høyst ${tall(over)} mg` : ''} (preparatomtalen), men ingen nøyaktig dose med preparatene i FEST kan fordeles slik.` +
   ' En annen dose eller fordeling er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.'
 
 /** Hvorfor perioden ikke kan gis i kurvens retning, når hver dose for seg kan gis. */
@@ -453,8 +447,7 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
     const grenser = [min !== null && ` og ikke under ${tall(min)} mg`, maks !== null && ` og ikke over ${tall(maks)} mg`].filter(Boolean).join('')
     // Døgndoser over grensen for én dose må kunne fordeles på doser som hver kan gis (preparatomtalen).
     const over = dosegrense(def.fordeling?.over_mg, `${f.id}.fordeling.over_mg`)
-    const likeStore = !!def.fordeling?.like_store
-    const fordelt = (p: Periode, k: Dosekandidat) => (p.fordeles ? fordel(k, p.fordeles, over ?? Infinity, likeStore) : undefined)
+    const fordelt = (p: Periode, k: Dosekandidat) => (p.fordeles ? fordel(k, p.fordeles, over ?? Infinity) : undefined)
     ut.toleranse_prosent = tol * 100
     // En plan uten nulltrinn stopper ved første trinn som ikke kan gis (P7.5, beslutning 3); en annen plan stopper helt.
     const avkortbar = !!f.avslutning
@@ -473,14 +466,14 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
       const innenfor = kanGis(v, p.mg).filter((k) => Math.abs(k.mg - p.mg) <= p.mg * tol + EPS * Math.max(1, p.mg))
       const kandidater = innenfor.filter((k) => fordelt(p, k) !== null)
       if (kandidater.length === 0) {
+        // Et valg som ikke kan gis (preparatet er utgått eller valgene endret), avvises; planen stopper ikke stille ved trinnet før (P7.5, beslutning P7-A).
+        if (p.valgt) throw new Stopp(`${f.virkestoff} ${dager(p)}: den valgte dosen ${tall(p.mg)} mg for trinn ${p.trinn} kan ikke gis${p.fordeles ? ' og fordeles' : ''} med preparatene i FEST for perioden. Fjern valget, og velg på nytt.`)
         // Kan en nøyaktig dose gis, men ikke fordeles, er det fordelingen som stopper planen.
         const fordelingen = !!p.fordeles && innenfor.length > 0
-        // Stopper bare kravet om like store doser, vises fordelingen som ellers kunne vært gitt.
-        const ujevn = fordelingen && likeStore ? (innenfor.map((k) => fordel(k, p.fordeles!, over ?? Infinity)).find((x) => x !== null) ?? null) : null
         // Lar regelen forskriveren velge en dose som kan gis, regnes de nærmeste ut; et valgt trinn tilbys ikke på nytt.
         const tv = valgbar && avkortbar && p.trinn !== undefined && !p.valgt ? trinnvalgFor(def, f, p, v, forrige, min, (k) => fordelt(p, k), inndata.svar) : undefined
         const hvorfor = fordelingen
-          ? ingenFordeling(f, p, over, likeStore, ujevn) + (tv === undefined ? '' : ` ${trinnvalgtekst(tv)}`)
+          ? ingenFordeling(f, p, over) + (tv === undefined ? '' : ` ${trinnvalgtekst(tv)}`)
           : ingenDose(f, p, v, alleValg, tol, grenser, forrige, tv)
         if (tv) trinnvalg.push(tv)
         if (!avkortbar || i === 0) throw new Stopp(hvorfor)
@@ -522,7 +515,7 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
     }
     if (ut.perioder.some((p) => p.doser)) {
       kontroller.push({
-        krav: `${over !== null ? `Døgndoser av ${f.virkestoff} over ${tall(over)} mg` : `Døgndosene av ${f.virkestoff}`} er ${fordelingstekst(def.fordeling!.antall)}${over !== null ? `, hver høyst ${tall(over)} mg` : ''}${likeStore ? ', like store (regelens eget valg)' : ''}`,
+        krav: `${over !== null ? `Døgndoser av ${f.virkestoff} over ${tall(over)} mg` : `Døgndosene av ${f.virkestoff}`} er ${fordelingstekst(def.fordeling!.antall)}${over !== null ? `, hver høyst ${tall(over)} mg` : ''}; en ulik fordeling er merket`,
         oppfylt: true,
         detalj: ut.perioder.filter((p) => p.doser).map((p) => `${dager(p)}: ${p.doser!.map(tall).join(' + ')} mg`).join('; '),
       })
@@ -706,7 +699,7 @@ export function planform(r: Doseplanresultat): Record<string, string[]> {
       })
       for (const i of f.injeksjoner) {
         const dato = i.vedlikehold ? i.vedlikehold.forste_dato : i.dato
-        linjer.push(`${injeksjonstidspunkt(i)}${dato ? ` [${norskDato(dato)}]` : ''}: ${tall(i.mg)} mg = ${elementtekst(i.element)}`)
+        linjer.push(`${injeksjonstidspunkt(i)}${dato ? ` [${norskDato(dato)}]` : ''}: ${tall(i.mg)} mg = ${elementtekst(i.element)}${i.sted ? `, ${i.sted}` : ''}`)
       }
       if (f.uten_beregning) linjer.push(utenBeregningLinje(f, (d) => (d ? ` [${norskDato(d)}]` : '')))
       if (f.siste_dosedag !== null) linjer.push(`fra dag ${f.siste_dosedag + 1}${f.seponert_dato ? ` [${norskDato(f.seponert_dato)}]` : ''}: seponert`)

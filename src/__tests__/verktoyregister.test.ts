@@ -114,7 +114,6 @@ describe('Regelstatusen', () => {
       [BYTTE_AD, { fra: v('sertralin'), til: v('mirtazapin') }, ['kryssnedtrapping-sertralin-mirtazapin']],
       [BYTTE_AD, { fra: v('fluoksetin'), til: v('fenelzin') }, ['mao-fluoksetin-fenelzin']],
       [BYTTE_AP, { fra: v('olanzapin'), til: v('kvetiapin') }, ['antipsykotikabytte-olanzapin-kvetiapin']],
-      [BYTTE_AP, { fra: v('zuklopentiksol'), til: v('aripiprazol') }, ['gruppe-rest-ap-aripiprazol']],
       [BYTTE_AP, { fra: v('aripiprazol'), til: v('aripiprazol', 'LA') }, ['depot-aripiprazol-maintena']],
       [BYTTE_AP, { fra: v('paliperidon'), til: v('paliperidon', 'ER') }, ['depot-paliperidon-xeplion']],
       ...[...perStoff].map(([n, regler]): [typeof TRAPPE_NED, Verktoyvalg, string[]] => [TRAPPE_NED, { fra: v(n) }, regler]),
@@ -131,10 +130,12 @@ describe('Regelstatusen', () => {
         expect(t.grunner.join(' ')).toMatch(/faglig kontroll/)
       }
     }
+    // Gruppebyttet til aripiprazol er ikke godkjent som modell (beslutning P4-A) og står bare i sammenligningssettet.
+    expect(tilgjengelighet(BYTTE_AP!, { fra: v('zuklopentiksol'), til: v('aripiprazol') })).toMatchObject({ status: 'ikke_stottet', regler: [] })
     expect(new Set(tilfeller.flatMap(([, , r]) => r))).toEqual(new Set(REGELSETT.regler.map((r) => r.id)))
     expect(REGELSETT.regler).toHaveLength(PILOTSETT.regler.length + NEDTRAPPINGSSETT.regler.length)
     for (const x of VERKTOY) expect(regeloversikt(x).tilgjengelige).toBe(0)
-    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length, 2, 4])
+    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length, 2, 3])
   })
 
   it('forklarer hvorfor et antidepressivum uten regel ikke kan trappes ned, med dekningen fra P7', () => {

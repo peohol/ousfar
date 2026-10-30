@@ -13,7 +13,7 @@ import type { Preparatgrunnlag } from './motor/byggesteiner'
 import { festFerskhet, formvalgSomTrengs, kliniskDoseplan, type Doseplaninndata, type Doseplanresultat, type Formalternativer, type Formvalg, type Trinnvalg } from './motor/plan'
 import { festkoblinger, KARTLEGGING } from './register'
 import { inndatagrenser, inndatavilkar, kravtekst, medEnhet, omradetekst } from './regler/beregning'
-import { justerbare, parametre, type Regel, type Regelsett, type Trinnvalgsvar } from './regler/modell'
+import { forslagsverdi, justerbare, parametre, type Regel, type Regelsett, type Trinnvalgsvar } from './regler/modell'
 import type { Formuleringsklasse } from './festformuleringer'
 import { medlemFor, REGELSETT, settFor, type Verktoyvalg } from './tilgjengelighet'
 
@@ -138,11 +138,16 @@ export const begrunnelseshjelp = (r: Regel): string =>
     ...doserMedBegrunnelse(r).map((k) => `${k.navn === 'startdose' ? 'Aktuell døgndose' : 'Måldose'} over ${inndatagrenser(k)}${inndatavilkar(k, r.sporsmal)}`),
   ].join('; ')
 
-/** Verdiene forskriveren kan justere i regelen: stien, navnet og en hjelpetekst med forslaget og området. */
-export const justeringsfelt = (r: Regel): { sti: string; navn: string; forslag: string; hjelp: string }[] =>
+/**
+ * Verdiene forskriveren kan justere i regelen: stien, navnet og en hjelpetekst
+ * med forslaget og området. Forslaget følger svarene (`Parameter.standard_ved`).
+ */
+export const justeringsfelt = (r: Regel, svar: Record<string, boolean> = {}): { sti: string; navn: string; forslag: string; hjelp: string }[] =>
   justerbare(r).map(([sti, p]) => {
-    const forslag = p.verdi === null ? '' : medEnhet(p.verdi, p)
-    return { sti, navn: p.justerbar, forslag, hjelp: `${forslag ? `Regelens forslag er ${forslag}; tomt felt bruker forslaget. ` : ''}Regelen tillater ${omradetekst(p)}.` }
+    const x = forslagsverdi(p, svar)
+    const forslag = x === null ? '' : medEnhet(x, p)
+    const ved = x !== p.verdi && p.standard_ved ? ` ved ${r.sporsmal?.find((s) => s.id === p.standard_ved!.ved)?.ja ?? p.standard_ved.ved}${p.verdi === null ? '' : ` (ellers ${medEnhet(p.verdi, p)})`}` : ''
+    return { sti, navn: p.justerbar, forslag, hjelp: `${forslag ? `Regelens forslag er ${forslag}${ved}; tomt felt bruker forslaget. ` : ''}Regelen tillater ${omradetekst(p)}.` }
   })
 
 /** Forskriverens valg for den justerbare verdien på `sti`; `undefined` når feltet er tomt eller ikke et tall. */

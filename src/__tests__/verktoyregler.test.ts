@@ -44,6 +44,7 @@ import {
 import { NEDTRAPPINGSSETT, SAMMENLIGNINGSSETT } from '../verktoy/regler/nedtrapping'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
 import { lagRegelrapport, REGELRAPPORTER } from '../verktoy/regler/rapport'
+import { REGELSETTENE } from '../verktoy/tilgjengelighet'
 
 const GRUNNLAG = lesKontrollgrunnlag()
 /** En regel fra pilotsettet eller P7s nedtrappingsregler (escitalopram ble flyttet dit), som en kopi testen kan endre. */
@@ -175,36 +176,43 @@ describe('Pilotsettet', () => {
   })
 
   it('har ingen klinisk godkjent regel; alle er til faglig kontroll i sin gjeldende versjon, med historikk', () => {
-    // Ved gjennomgangen av de rettede versjonene ble de beregnede sluttdelene av to bytteregler tatt ut, og fenelzinregelen fikk en kilde til.
-    const ETTER_GJENNOMGANGEN = ['kryssnedtrapping-sertralin-mirtazapin', 'mao-fluoksetin-fenelzin', 'gruppe-rest-ap-aripiprazol']
     for (const r of PILOTSETT.regler) {
       expect(r.godkjenning.status, r.id).toBe('til_faglig_kontroll')
       expect(godkjenningsfeil(r).length, r.id).toBeGreaterThan(0)
-      // Depotreglene har i tillegg et steg fra kontrollrunden 30.10.2026: kildemessig akseptable, ikke klinisk godkjent.
+      // Depotreglene har i tillegg et steg fra kontrollrunden 30.10.2026 for versjon 2: kildemessig akseptable, ikke klinisk godkjent.
       const depot = r.plan.form === 'oppstart_depot'
-      const forventet = [...Array.from({ length: r.versjon }, () => ['utkast', 'til_faglig_kontroll']).flat(), ...(depot ? ['til_faglig_kontroll'] : [])]
-      expect(r.godkjenning.historikk.map((s) => s.status), r.id).toEqual(forventet)
-      if (depot) expect(r.godkjenning.historikk.at(-1)!.merknad, r.id).toMatch(/^Kontrollrunden 30\.10\.2026 \(P4\.8\): kildemessig akseptabel som avgrenset .*Ikke klinisk godkjent/)
-      else expect(r.godkjenning.historikk.at(-2)!.merknad, r.id).toMatch(ETTER_GJENNOMGANGEN.includes(r.id) ? /^Rettet etter gjennomgangen av de rettede versjonene 30\.10\.2026 \(P4\.8\)/ : /^Rettet etter kontrollrunden 30\.10\.2026 \(P4\.8\)/)
+      const steg = Array.from({ length: r.versjon }, (_, i) => ['utkast', 'til_faglig_kontroll', ...(depot && i === 1 ? ['til_faglig_kontroll'] : [])]).flat()
+      expect(r.godkjenning.historikk.map((s) => s.status), r.id).toEqual(steg)
+      if (depot) expect(r.godkjenning.historikk[4]!.merknad, r.id).toMatch(/^Kontrollrunden 30\.10\.2026 \(P4\.8\): kildemessig akseptabel som avgrenset .*Ikke klinisk godkjent/)
+      // Hver regel i pilotsettet er rettet etter kontrollørens beslutninger 30.10.2026 (P4-A og P4-B).
+      expect(r.godkjenning.historikk.at(-2)!.merknad, r.id).toMatch(/^Rettet etter kontrollørens beslutninger 30\.10\.2026 \(P4\.8\)/)
       expect(r.godkjenning.historikk.at(-1)!.regelversjon, r.id).toBe(r.versjon)
       expect(r.godkjenning.historikk.every((s) => s.rolle === 'utvikler')).toBe(true)
     }
-    // Alle reglene er nye versjoner: fire rettet etter første kontroll av piloten, og to fikk kildegrunnlaget for trinnlengden rettet etter kontrollen av P7.
-    // Escitalopram er flyttet til P7s nedtrappingsregler, og den hyperbolske citalopramregelen til sammenligningssettet (fagkontrollen 30.10.2026).
+    // Alle reglene er nye versjoner: tre rettet etter første kontroll av piloten, og to fikk kildegrunnlaget for trinnlengden rettet etter kontrollen av P7.
+    // Escitalopram er flyttet til P7s nedtrappingsregler, og den hyperbolske citalopramregelen og gruppebyttet til sammenligningssettet.
     const rettet = (pr: string) => PILOTSETT.regler.filter((r) => r.godkjenning.historikk[2]!.merknad.includes(pr)).map((r) => r.id)
-    expect(rettet('PR #282')).toEqual(['antipsykotikabytte-olanzapin-kvetiapin', 'gruppe-rest-ap-aripiprazol', 'depot-aripiprazol-maintena', 'depot-paliperidon-xeplion'])
+    expect(rettet('PR #282')).toEqual(['antipsykotikabytte-olanzapin-kvetiapin', 'depot-aripiprazol-maintena', 'depot-paliperidon-xeplion'])
     expect(rettet('PR #286')).toEqual(['kryssnedtrapping-sertralin-mirtazapin', 'mao-fluoksetin-fenelzin'])
-    // Kontrollrunden 30.10.2026 (P4.8): de fire byttereglene er rettet eller avgrenset (versjon 3), og ved gjennomgangen samme dag
-    // ble tre av dem rettet på nytt (versjon 4, fenelzin versjon 5 etter en presisering av kilden); depotreglene er uendret.
+    // Kontrollrunden og gjennomgangen 30.10.2026 ga versjon 3–5; kontrollørens beslutninger samme dag én versjon til for hver regel.
     expect(PILOTSETT.regler.map((r) => [r.id, r.versjon])).toEqual([
-      ['kryssnedtrapping-sertralin-mirtazapin', 4],
-      ['mao-fluoksetin-fenelzin', 5],
-      ['antipsykotikabytte-olanzapin-kvetiapin', 3],
-      ['gruppe-rest-ap-aripiprazol', 4],
-      ['depot-aripiprazol-maintena', 2],
-      ['depot-paliperidon-xeplion', 2],
+      ['kryssnedtrapping-sertralin-mirtazapin', 5],
+      ['mao-fluoksetin-fenelzin', 6],
+      ['antipsykotikabytte-olanzapin-kvetiapin', 4],
+      ['depot-aripiprazol-maintena', 3],
+      ['depot-paliperidon-xeplion', 3],
     ])
-    expect(PILOTSETT.regler.some((r) => r.id === 'seponering-escitalopram' || r.id === 'seponering-citalopram-hyperbolsk')).toBe(false)
+    expect(PILOTSETT.regler.some((r) => ['seponering-escitalopram', 'seponering-citalopram-hyperbolsk', 'gruppe-rest-ap-aripiprazol'].includes(r.id))).toBe(false)
+  })
+
+  it('har gruppebyttet til aripiprazol bare i sammenligningssettet, som sperret modelleringsdemonstrasjon (beslutning P4-A)', () => {
+    const gr = SAMMENLIGNINGSSETT.regler.find((r) => r.id === 'gruppe-rest-ap-aripiprazol')!
+    expect(gr.versjon).toBe(5)
+    expect(gr.godkjenning.status).toBe('utkast')
+    expect(gr.godkjenning.historikk.at(-1)).toMatchObject({ status: 'utkast', regelversjon: 5, dato: '2026-10-30' })
+    expect(gr.godkjenning.historikk.at(-1)!.merknad).toMatch(/ikke godkjent som klinisk beregnbar gruppebytteregel, heller ikke en generisk første uke med aripiprazol 10 mg/)
+    expect(godkjenningsfeil(gr).length).toBeGreaterThan(0)
+    expect(REGELSETTENE.flatMap((x) => x.regler).some((r) => r.id === gr.id)).toBe(false)
   })
 
   it('har den hyperbolske citalopramregelen bare i sammenligningssettet, som utkast utenfor klinisk kontroll', () => {
@@ -221,12 +229,13 @@ describe('Pilotsettet', () => {
     const r = PILOTSETT.regler
     const json = JSON.stringify([...r, ...SAMMENLIGNINGSSETT.regler])
     expect(new Set(r.map((x) => x.plan.form))).toEqual(new Set(['kryssnedtrapping', 'sekvensielt', 'oppstart_depot']))
-    expect(new Set([...SAMMENLIGNINGSSETT.regler, ...NEDTRAPPINGSSETT.regler].map((x) => x.plan.form))).toEqual(new Set(['seponering']))
+    expect(new Set(NEDTRAPPINGSSETT.regler.map((x) => x.plan.form))).toEqual(new Set(['seponering']))
+    expect(SAMMENLIGNINGSSETT.regler.map((x) => x.plan.form)).toEqual(['seponering', 'kryssnedtrapping'])
     // Prosent av startdosen brukes ikke lenger av noen pilotregel (gjennomgangen 30.10.2026); strategien testes for seg under Nedtrappingen.
     for (const t of ['prosent_av_aktuell', 'hyperbolsk', 'opptrapping', 'etter_utvasking', 'injeksjoner', 'tabell', 'uten_beregning', 'til_forlop_er_avsluttet']) {
       expect(json, t).toContain(`"type":"${t}"`)
     }
-    expect(r.some((x) => x.medlemmer)).toBe(true)
+    expect(SAMMENLIGNINGSSETT.regler.some((x) => x.medlemmer)).toBe(true)
     expect(r.some((x) => x.unntak.length > 0) && r.some((x) => x.bekreftelser.length > 0)).toBe(true)
     expect(new Set(r.map((x) => x.beregnbarhet))).toEqual(new Set(['entydig_beregnbar', 'beregnbar_etter_avklaring']))
   })
@@ -271,7 +280,7 @@ describe('Beregningen', () => {
       status: 'modellberegning',
       klinisk_godkjent: false,
       forbehold: FORBEHOLD_IKKE_GODKJENT,
-      regel: { id: r.id, versjon: 4, godkjenning: 'til_faglig_kontroll' },
+      regel: { id: r.id, versjon: 5, godkjenning: 'til_faglig_kontroll' },
       regelsett: { id: PILOTSETT.id, versjon: PILOTSETT.versjon },
       modell: REGELMODELLVERSJON,
       motor: MOTORVERSJON,
@@ -316,8 +325,8 @@ describe('Beregningen', () => {
 
   it('mister godkjenningen når versjonen økes, og godtar ikke godkjenning fra utvikler eller av en regel med åpne valg', () => {
     const v = godkjenn(regel('depot-paliperidon-xeplion'))
-    v.versjon = 3
-    expect(godkjenningsfeil(v).join()).toMatch(/gjelder regelversjon 2, ikke versjon 3/)
+    v.versjon += 1
+    expect(godkjenningsfeil(v).join()).toMatch(new RegExp(`gjelder regelversjon ${v.versjon - 1}, ikke versjon ${v.versjon}`))
     expect(beregn(v, XEPLION).klinisk_godkjent).toBe(false)
     const u = godkjenn(regel('depot-paliperidon-xeplion'), 'Claude Code')
     expect(godkjenningsfeil(u).join()).toMatch(/ikke en klinisk godkjenning fra en uavhengig kontrollør/)
@@ -732,7 +741,7 @@ describe('Kontrollene av et regelsett', () => {
 
 describe('Reglene', () => {
   it('rapporten sier hvor mange regler som faktisk er gyldig klinisk godkjent', () => {
-    expect(lagRegelrapport()).toMatch(/\*\*6 regler, 0 klinisk godkjent\.\*\*.*ingen av reglene er klinisk godkjent/)
+    expect(lagRegelrapport()).toMatch(/\*\*5 regler, 0 klinisk godkjent\.\*\*.*ingen av reglene er klinisk godkjent/)
     const en = lagRegelrapport(sett([godkjenn(regel('depot-paliperidon-xeplion')), regel('seponering-escitalopram')]))
     expect(en).toMatch(/\*\*2 regler, 1 klinisk godkjent\.\*\*.*1 av reglene er klinisk godkjent/)
     expect(en).not.toMatch(/ingen av reglene/)

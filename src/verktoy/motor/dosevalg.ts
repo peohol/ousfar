@@ -242,11 +242,10 @@ export function velgSerie(perioder: readonly Periodevalg[], start: number): Dose
  * antallet i `antall` som lar enhetene i dosen (hele og delte tabletter,
  * kapsler eller dråper) fordeles så hver dose er over 0 og høyst `maks` mg.
  * En delt tablett hører til én dose. Blant mulige fordelinger velges den
- * jevneste (minst største dose); med `likeStore` brukes bare like store doser,
- * når regelen krever det (`Forlop.fordeling.like_store`). Dosene i mg,
+ * jevneste (minst største dose); like store doser kreves ikke. Dosene i mg,
  * største først; `null` når ingen fordeling går.
  */
-export function fordel(k: Pick<Dosekandidat, 'elementer'>, antall: readonly number[], maks: number, likeStore = false): number[] | null {
+export function fordel(k: Pick<Dosekandidat, 'elementer'>, antall: readonly number[], maks: number): number[] | null {
   // Enhetene som stykker av samme størrelse med et antall: hele enheter, og en eventuell delt enhet per styrke.
   const stykker = new Map<number, number>()
   const legg = (mg: number, n: number) => n > 0 && stykker.set(mg, (stykker.get(mg) ?? 0) + n)
@@ -263,7 +262,7 @@ export function fordel(k: Pick<Dosekandidat, 'elementer'>, antall: readonly numb
       if (doser.length === n - 1) {
         const rest = igjen.reduce((s, c, i) => s + c * typer[i]![0], 0)
         const alle = [...doser, rest].sort((a, b) => b - a)
-        if (alle.some((d) => d <= EPS || d > maks + EPS || (likeStore && Math.abs(d - alle[0]!) > EPS))) return
+        if (alle.some((d) => d <= EPS || d > maks + EPS)) return
         if (!best || sammenlign(alle, best) < 0) best = alle
         return
       }

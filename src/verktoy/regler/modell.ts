@@ -33,7 +33,7 @@
 import type { Formuleringsklasse } from '../festformuleringer'
 
 /** Økes når formen på regler eller regelsett endres. */
-export const REGELMODELLVERSJON = 8
+export const REGELMODELLVERSJON = 9
 
 /* --- Kilder ----------------------------------------------------------------- */
 
@@ -149,7 +149,17 @@ export interface Parameter {
   teknisk_maks?: true
   /** Verdier som bare kan brukes med en skriftlig begrunnelse fra forskriveren. */
   begrunnelseskrav?: Begrunnelseskrav[]
+  /**
+   * Et annet forslag når forskriveren har svart ja på spørsmålet `ved`
+   * (`Sporsmal`), f.eks. 10 % per trinn etter lang behandlingstid. Forslaget
+   * er da utgangspunktet; verdien over gjelder ellers ({@link forslagsverdi}).
+   */
+  standard_ved?: { ved: string; verdi: number; grunnlag: Grunnlag }
 }
+
+/** Forslaget for parameteren med forskriverens svar: `standard_ved` når svaret er ja, ellers verdien. */
+export const forslagsverdi = (p: Pick<Parameter, 'verdi' | 'standard_ved'>, svar: Record<string, boolean> | undefined): number | null =>
+  p.standard_ved && svar?.[p.standard_ved.ved] === true ? p.standard_ved.verdi : p.verdi
 
 /**
  * En verdi over `over` eller under `under` krever en skriftlig begrunnelse fra
@@ -176,7 +186,8 @@ export type Dosekilde =
   /** Pasientens dose når planen starter, eller måldosen forskriveren oppgir. */
   | { type: 'inndata'; navn: 'startdose' | 'maldose' }
   /** Slått opp i en tabell fra startdosen, f.eks. peroral dose → depotdose. */
-  | { type: 'tabell'; rader: { fra_mg: number; til_mg: number | [number, number] }[]; grunnlag: Grunnlag }
+  /** Med `sted` på en rad gjelder det injeksjonsstedet for vedlikeholdet fra den startdosen i stedet for fasens. */
+  | { type: 'tabell'; rader: { fra_mg: number; til_mg: number | [number, number]; sted?: string }[]; grunnlag: Grunnlag }
 
 /**
  * Hvordan en nedtrapping regner ut neste dose. «Prosent» er alltid enten av
@@ -294,6 +305,12 @@ export interface Forlop {
    * f.eks. månedlig og tremånedlig paliperidon i formen (P5).
    */
   preparater?: string[]
+  /**
+   * Legemiddelformene (FEST-koder) forløpet gjelder, når et varenavn dekker
+   * flere presentasjoner med ulike regimer (f.eks. Abilify Maintena månedlig
+   * og annenhver måned); forskriveren kan bare velge blant dem.
+   */
+  legemiddelformer?: string[]
   /** Hvor langt de praktiske dosene kan avvike fra den ideelle kurven (P5). */
   dosevalg?: Dosevalg
   /**
@@ -302,11 +319,10 @@ export interface Forlop {
    * fluvoksamin), ellers alle (f.eks. moklobemid). `antall` er hvor mange
    * doser døgndosen kan fordeles på, i den rekkefølgen de foretrekkes. P5
    * viser fordelingen og stopper når den ikke kan gis med preparatene.
-   * `like_store` er regelens eget valg om at dosene skal være like store,
-   * med sitt eget grunnlag; preparatomtalen krever det ikke nødvendigvis.
-   * Uten det velger P5 den jevneste fordelingen som kan gis.
+   * P5 velger den jevneste fordelingen som kan gis og merker en ulik
+   * fordeling; like store doser kreves ikke (P7.5, beslutning P7-B).
    */
-  fordeling?: { over_mg?: Parameter; antall: number[]; grunnlag: Grunnlag; like_store?: Grunnlag }
+  fordeling?: { over_mg?: Parameter; antall: number[]; grunnlag: Grunnlag }
   /** `startdose` når pasienten bruker legemidlet når planen starter; ellers starter forløpet uten dose. */
   utgangsdose: 'startdose' | null
   start: Forlopsstart
@@ -667,22 +683,19 @@ export function grunnlagITabeller(r: Pick<Regel, 'plan'>): [string, Grunnlag][] 
   )
 }
 
-/** Alle grunnlag i regelen med stien dit: parametre og begrunnelseskravene deres, inndata, bekreftelser, unntak, spørsmål, tabeller, valg av dose per trinn og fordeling. */
+/** Alle grunnlag i regelen med stien dit: parametre med begrunnelseskravene og forslagene ved svar, inndata, bekreftelser, unntak, spørsmål, tabeller, valg av dose per trinn og fordeling. */
 export function alleGrunnlag(r: Regel): [string, Grunnlag][] {
   return [
     ...parametre(r).flatMap(([sti, p]) => [
       [sti, p.grunnlag] as [string, Grunnlag],
       ...(p.begrunnelseskrav ?? []).map((k, i) => [`${sti}.begrunnelseskrav[${i}]`, k.grunnlag] as [string, Grunnlag]),
+      ...(p.standard_ved ? [[`${sti}.standard_ved`, p.standard_ved.grunnlag] as [string, Grunnlag]] : []),
     ]),
     ...r.inndata.map((x) => [inndatasti(x), x.grunnlag] as [string, Grunnlag]),
     ...[...r.bekreftelser, ...r.unntak, ...(r.sporsmal ?? [])].map((x) => [x.id, x.grunnlag] as [string, Grunnlag]),
     ...grunnlagITabeller(r),
     ...r.plan.forlop.flatMap((f) => f.faser.flatMap((x, i) => (x.type === 'nedtrapping' && x.trinnvalg ? [[`${f.id}.faser[${i}].trinnvalg`, x.trinnvalg] as [string, Grunnlag]] : []))),
-    ...r.plan.forlop.flatMap((f) =>
-      f.fordeling
-        ? [[`${f.id}.fordeling`, f.fordeling.grunnlag] as [string, Grunnlag], ...(f.fordeling.like_store ? [[`${f.id}.fordeling.like_store`, f.fordeling.like_store] as [string, Grunnlag]] : [])]
-        : [],
-    ),
+    ...r.plan.forlop.flatMap((f) => (f.fordeling ? [[`${f.id}.fordeling`, f.fordeling.grunnlag] as [string, Grunnlag]] : [])),
   ]
 }
 

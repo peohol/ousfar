@@ -33,6 +33,9 @@ import {
   type Omgivelse,
 } from '../verktoy/motor/plan'
 import { lagMotorrapport, MOTORRAPPORTFIL } from '../verktoy/motor/rapport'
+import { FEST_DEPOT, omgivelseFor, type Festuttrekk } from '../verktoy/regler/aksepttest'
+import { festkoblinger, KARTLEGGING } from '../verktoy/register'
+import { godkjennITest } from './hjelp/verktoyplan'
 import {
   depotregel,
   fastDose,
@@ -382,6 +385,16 @@ describe('Kildedata, versjoner og determinisme', () => {
     expect(u.merknader.join(' ')).toMatch(/En annen dose, et større avvik eller en annen formulering er et nytt forslag/)
   })
 
+  it('avviser et valg som ikke lenger passer planen eller ikke kan gis, i stedet for å la det stå ubrukt (P7.5, beslutning P7-A)', () => {
+    const t = TESTTILFELLER.find((x) => x.id === 'trinnvalg-valgt')!
+    const med = (trinnvalg: Doseplaninndata['trinnvalg']) => beregnDoseplan(t.regel, { ...t.inndata, trinnvalg }, syntetiskGrunnlag(t.preparater), OMGIVELSE)
+    expect(med(t.inndata.trinnvalg).status).toBe('doseplan')
+    // Fra en annen dose (f.eks. etter endret startdose) gjelder valget ikke lenger.
+    expect(stopp(med([{ forlop: 'fra', trinn: 2, fra_mg: 20, mg: 15 }]))).toMatch(/Valget 15 mg for trinn 2 \(fra, fra 20 mg\) gjelder ikke lenger: planen har ikke det trinnet fra den dosen.*Fjern valget/)
+    // 14,5 mg er innenfor valgområdet (−22,67 %), men kan ikke gis med tablettene.
+    expect(stopp(med([{ forlop: 'fra', trinn: 2, fra_mg: 18.75, mg: 14.5 }]))).toMatch(/testoksetin dag 15–28: den valgte dosen 14,5 mg for trinn 2 kan ikke gis med preparatene i FEST for perioden\. Fjern valget, og velg på nytt\./)
+  })
+
   it('kaster aldri, heller ikke på meningsløse inndata', () => {
     const verdier = [undefined, null, -1, 0, Number.NaN, Infinity, 'x', 1e9, 0.0001, 15]
     for (const t of TESTTILFELLER) {
@@ -445,7 +458,7 @@ describe('Sperren mot klinisk bruk', () => {
   const NAA = new Date('2026-11-01T12:00:00Z')
 
   it('ingen av P4s pilotregler kan gi en klinisk plan, uansett preparatdata', () => {
-    expect(PILOTSETT.regler).toHaveLength(6)
+    expect(PILOTSETT.regler).toHaveLength(5)
     const fest = somFest(g.utvalg)
     for (const r of PILOTSETT.regler) {
       expect(r.godkjenning.status).not.toBe('klinisk_godkjent')
@@ -574,15 +587,89 @@ describe('Sperren mot klinisk bruk', () => {
     expect(kliniskDoseplan(fastDose([15]), AZA, g, { ...OMGIVELSE, fagtekst })).toMatchObject({ fagtekst: [fagtekst[0]] })
   })
 
-  it('pilotreglenes depotforløp sier ikke hvilket preparat de gjelder, så motoren stopper for dem', () => {
-    for (const id of ['depot-paliperidon-xeplion', 'depot-aripiprazol-maintena']) {
-      const r = PILOTSETT.regler.find((x) => x.id === id)
-      expect(r, id).toBeDefined()
-      expect(r!.plan.forlop.filter((f) => f.administrasjon === 'depotinjeksjon').every((f) => !f.preparater)).toBe(true)
+})
+
+describe('Depotreglene i pilotsettet med preparatene i FEST (P4.8, beslutning P4-B)', () => {
+  const u = JSON.parse(readFileSync(new URL(`../../${FEST_DEPOT}`, import.meta.url), 'utf8')) as Festuttrekk
+  const grunnlag = { utvalg: u.utvalg, koblinger: festkoblinger(['aripiprazol', 'paliperidon']), overstyringer: KARTLEGGING.festoverstyringer }
+  const omgivelse = omgivelseFor(u)
+  const regel = (id: string) => PILOTSETT.regler.find((x) => x.id === id)!
+  const MAINTENA = regel('depot-aripiprazol-maintena')
+  const XEPLION = regel('depot-paliperidon-xeplion')
+  const TABLETT_FEST = { legemiddelformer: ['53'] }
+  const maintena: Doseplaninndata = { startdose_mg: 15, bekreftet: ['indikasjon'], pasientforhold: { cyp2d6_langsom: false, sterk_cyp_hemmer: false, cyp3a4_induktor: false }, formvalg: { fra: TABLETT_FEST } }
+  const xeplion = (startdose_mg: number, x: Partial<Doseplaninndata> = {}): Doseplaninndata => ({ startdose_mg, bekreftet: ['indikasjon'], pasientforhold: { nedsatt_nyrefunksjon: false }, ...x })
+  const depotpreparater = (r: Doseplanresultat) =>
+    r.status === 'doseplan' ? [...new Set(r.forlop.flatMap((f) => f.injeksjoner.flatMap((i) => i.element.preparater.map((b) => `${b.varenavn} [${b.legemiddelform?.kode}] ${b.registrering}`))))].sort() : []
+
+  it('hver depotregel sier hvilket depotpreparat den gjelder, så motoren aldri velger selv', () => {
+    for (const r of [MAINTENA, XEPLION]) expect(r.plan.forlop.filter((f) => f.administrasjon === 'depotinjeksjon').map((f) => f.preparater), r.id).toEqual([[r === MAINTENA ? 'Abilify Maintena' : 'Xeplion']])
+    expect(MAINTENA.plan.forlop[1]!.legemiddelformer).toEqual(['819'])
+  })
+
+  it('Abilify Maintena: oppstart og etterfølgende injeksjoner med den månedlige presentasjonen, aldri den annenhver måned', () => {
+    const r = beregnDoseplan(MAINTENA, maintena, grunnlag, omgivelse)
+    expect(planform(r)).toEqual({
+      fra: ['dag 1–14: 15 mg = 1 tablett à 15 mg', 'fra dag 15: seponert'],
+      til: ['dag 1: 400 mg = 1 injeksjon à 400 mg', 'hver måned fra 1 måned etter dag 1: 400 mg = 1 injeksjon à 400 mg'],
+    })
+    expect(r.status === 'doseplan' && r.forlop[1]!.injeksjoner.map((i) => [i.mg, i.element.doseenhet, i.vedlikehold?.tidligst_dager ?? null])).toEqual([
+      [400, 'injeksjon', null],
+      [400, 'injeksjon', 26],
+    ])
+    expect(depotpreparater(r)).toEqual(['Abilify Maintena [819] registrert'])
+    // Presentasjonen til injeksjon annenhver måned (720 og 960 mg) kan ikke velges.
+    expect(stopp(beregnDoseplan(MAINTENA, { ...maintena, formvalg: { ...maintena.formvalg, til: { legemiddelformer: ['913'] } } }, grunnlag, omgivelse))).toMatch(
+      /Ingen av depotpreparatene \(Abilify Maintena\) av aripiprazol i FEST kan brukes med valgene som er gjort/,
+    )
+  })
+
+  it('Abilify Maintena: CYP2D6, hemmere og induktorer stopper, også ubesvart', () => {
+    expect(stopp(beregnDoseplan(MAINTENA, { ...maintena, pasientforhold: { ...maintena.pasientforhold, cyp2d6_langsom: true } }, grunnlag, omgivelse))).toMatch(/Regelen gjelder ikke: Pasienten er kjent langsom CYP2D6-omsetter/)
+    expect(stopp(beregnDoseplan(MAINTENA, { ...maintena, pasientforhold: { cyp2d6_langsom: false } }, grunnlag, omgivelse))).toMatch(/Må avklares før beregning \(ukjent\): Pasienten bruker en sterk CYP2D6- eller CYP3A4-hemmer/)
+  })
+
+  it('Xeplion: oppstart i deltoideus, vedlikehold etter omregningen, og deltoideus framhevet etter bytte fra 9–12 mg', () => {
+    const fra6 = beregnDoseplan(XEPLION, xeplion(6, { startdato: '2026-11-02' }), grunnlag, omgivelse)
+    expect(planform(fra6).til).toEqual([
+      'dag 1 [02.11.2026]: 150 mg = 1 injeksjon à 150 mg, deltoideus',
+      'dag 8 [09.11.2026]: 100 mg = 1 injeksjon à 100 mg, deltoideus',
+      'hver måned fra 1 måned etter dag 8 [09.12.2026]: 75 mg = 1 injeksjon à 75 mg, deltoideus eller setemuskel',
+    ])
+    // Bare registrerte Xeplion-preparater uten godkjenningsfritak; Trevicta, Palmeux og de andre paliperidondepotene brukes aldri.
+    expect(depotpreparater(fra6)).toEqual(['Xeplion [913] registrert'])
+    for (const [start, vedlikehold] of [[9, 100], [12, 150]] as const) {
+      expect(planform(beregnDoseplan(XEPLION, xeplion(start), grunnlag, omgivelse)).til!.at(-1), `${start} mg`).toBe(
+        `hver måned fra 1 måned etter dag 8: ${vedlikehold} mg = 1 injeksjon à ${vedlikehold} mg, deltoideus eller setemuskel; etter bytte fra 9–12 mg kan setemuskelen gi lavere eksponering de første seks månedene, så deltoideus bør vurderes`,
+      )
     }
-    const xeplion = PILOTSETT.regler.find((x) => x.id === 'depot-paliperidon-xeplion')!
-    const res = beregnDoseplan(xeplion, { startdose_mg: 6, bekreftet: ['indikasjon'], pasientforhold: { nedsatt_nyrefunksjon: false } }, { ...g, koblinger: { paliperidon: ['ID_SYNTETISK-TESTPERIDON'] } }, OMGIVELSE)
-    expect(stopp(res)).toMatch(/Regelen sier ikke hvilket depotpreparat paliperidon \(til\) gjelder/)
+    expect(planform(beregnDoseplan(XEPLION, xeplion(3, { maldose_mg: 50 }), grunnlag, omgivelse)).til!.at(-1)).toBe('hver måned fra 1 måned etter dag 8: 50 mg = 1 injeksjon à 50 mg, deltoideus eller setemuskel')
+  })
+
+  it('Xeplion: nedsatt nyrefunksjon stopper, også ubesvart', () => {
+    expect(stopp(beregnDoseplan(XEPLION, xeplion(6, { pasientforhold: { nedsatt_nyrefunksjon: true } }), grunnlag, omgivelse))).toMatch(/Regelen gjelder ikke: Pasienten har kreatininclearance under 80 ml\/min/)
+    expect(stopp(beregnDoseplan(XEPLION, xeplion(6, { pasientforhold: {} }), grunnlag, omgivelse))).toMatch(/Må avklares før beregning \(ukjent\): Pasienten har kreatininclearance under 80 ml\/min/)
+  })
+
+  it('stopper når depotpreparatet med dosen er utgått, og bruker ikke et annet depot i stedet', () => {
+    const utgatt = structuredClone(grunnlag)
+    const ider = new Set(utgatt.utvalg.merkevarer.filter((m) => m.varenavn === 'Xeplion').map((m) => m.id))
+    const styrke75 = byggesteiner(grunnlag, 'paliperidon', omgivelse.idag).filter((b) => b.varenavn === 'Xeplion' && b.mg === 75).map((b) => b.id)
+    for (const p of utgatt.utvalg.pakninger) if (p.merkevarer.some((m) => styrke75.includes(m) && ider.has(m))) p.avregistrert_dato = '2026-01-01'
+    expect(stopp(beregnDoseplan(XEPLION, xeplion(6), utgatt, omgivelse))).toMatch(/paliperidon \(til\): vedlikeholdet er 75 mg, men FEST har ingen brukbar injeksjon med den styrken \(brukbare styrker: 50, 100, 150 mg\)/)
+  })
+
+  it('gir en klinisk plan med de faktiske preparatene når regelen er klinisk godkjent (her bare i testen)', () => {
+    for (const [r, inndata] of [
+      [MAINTENA, maintena],
+      [XEPLION, xeplion(6)],
+    ] as const) {
+      const res = kliniskDoseplan(godkjennITest(r, r.id), inndata, grunnlag, omgivelse)
+      expect(res.status, r.id).toBe('doseplan')
+      expect(res.klinisk, r.id).toBe(true)
+    }
+    // Uten godkjenning sperres planen som før.
+    expect(kliniskDoseplan(XEPLION, xeplion(6), grunnlag, omgivelse).status).toBe('stoppet')
   })
 })
 
