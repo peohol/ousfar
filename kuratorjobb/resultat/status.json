@@ -1,18 +1,54 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "advarsel",
   "jobb": {
     "gren": "kuratorjobb/manuell-41066053312",
     "foresporsel_commit": "c5388e3239af8a4d078d82f67f4ff5b7b411e519",
     "foresporsel_sha256": "30304fe665dae8660becc058c566dc623d9acf6cd10517dd96379588e7a5b5cb",
     "kode_commit": "c58509067b9f530f36d25b6953495c5fd634f14f",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/41066053312",
-    "startet_kl": "2026-10-30T13:47:06.010Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-30T13:47:07.931Z",
+    "ferdig_kl": "2026-10-30T13:47:15.523Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "perisiazin"
+    ],
+    "oppgaver": [
+      "funksjonstest",
+      "spc"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 616
+    }
+  ],
+  "stoffer": {
+    "perisiazin": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/perisiazin/funksjonstest.json"
+        },
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/perisiazin/spc.json"
+        }
+      }
+    }
+  }
 }
