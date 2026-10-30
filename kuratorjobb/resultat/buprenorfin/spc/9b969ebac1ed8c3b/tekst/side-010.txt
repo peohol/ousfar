@@ -1,0 +1,58 @@
+    Organklasse-    Svært        Vanlige       Mindre vanlige       Sjeldne         Svært          Ikke kjent
+    system          vanlige      (≥ 1/100,     (≥ 1/1 000,          (≥ 1/10 000,    sjeldne        (kan ikke
+                    (≥ 1/10)     < 1/10)       < 1/100)             < 1/1 000)      (< 1/10000)    anslås utifra
+                                                                                                   tilgjengelige
+                                                                                                   data)
+    Hud- og         Kløe,        Utslett,      Tørr hud,            Ansikts-        Pustler,       Kontakt-
+    underhuds-      erytem       svetting,     urtikaria            ødem            vesikler       dermatitt,
+    sykdommer                    eksantem                                                          misfarging
+                                                                                                   på
+                                                                                                   applikasjons
+                                                                                                   stedet
+    Sykdommer i                  Muskel-       Myalgi,
+    muskler,                     svakhet       muskelkramper
+    bindevev og
+    skjelett
+    Sykdommer i                                Urininkontinens,
+    nyre og                                    urinretensjon,
+    urinveier                                  urinhesitasjon
+
+    Lidelser i                                                      Erektil dys-
+    kjønns-                                                         funksjon,
+    organer og                                                      seksuell
+    brystsyk-                                                       dysfunksjon
+    dommer
+    Generelle       Reaksjon     Tretthet,     Fatigue, feber,      Influensa-                     Neonatalt
+    lidelser og     på           asteni-       kuldeskjelvinger,    lignende                       legemiddelse
+    reaksjoner på   applikasjo   tilstander,   ødem,                sykdom                         poneringssy
+    administras-    nsstedet1*   perifert      seponerings-                                        ndrom,
+    jonsstedet                   ødem          symptomer,                                          legemiddel-
+                                               brystsmerter                                        toleranse
+    Under-                                     Økt ALAT
+    søkelser                                   (alanin-
+                                               aminotrans-
+                                               ferase), redusert
+                                               vekt
+    Skader,                                    Skade ved uhell,
+    forgiftninger                              fall
+    og kompli-
+    kasjoner ved
+    medisinske
+    prosedyrer
+1
+  Inkluderer vanlige tegn og symptomer på kontaktdermatitt (irritativ eller allergisk): erytem, ødem, kløe,
+utslett, vesikler, smertefull/sviende følelse på applikasjonsstedet.
+*
+  I noen tilfeller forekom forsinkede lokale allergiske reaksjoner (allergisk kontaktdermatitt) med klare
+tegn på inflammasjon. Mekaniske skader ved fjerning av plasteret (f.eks. laserasjon) er også mulig hos
+pasienter med skjør hud. Kronisk inflammasjon kan føre til langvarige følgetilstander, som post-
+inflammatorisk hyper- og hypopigmentering, samt tørre og tykke flassende hudlesjoner som kan ligne
+veldig på arr. I slike tilfeller bør behandling med Norspan seponeres (se pkt. 4.3 og 4.4).
+
+Legemiddelavhengighet
+Gjentatt bruk av Norspan kan føre til legemiddelavhengighet, selv ved terapeutiske doser. Risikoen for
+legemiddelavhengighet kan variere avhengig av en pasients individuelle risikofaktorer, dosering og
+varighet av opioidbehandling (se pkt. 4.4).
+
+Buprenorfin har lav risiko for fysisk avhengighet. Etter seponering av Norspan er abstinenssymptomer
+lite sannsynlig. Dette kan skyldes svært langsom dissosiasjon av buprenorfin fra opioidreseptorer og

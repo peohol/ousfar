@@ -1,0 +1,56 @@
+Organklasse-    Svært       Vanlige       Mindre vanlige        Sjeldne          Svært         Ikke kjent
+system          vanlige     (≥ 1/100,     (≥ 1/1 000,           (≥ 1/10 000,     sjeldne       (kan ikke
+                (≥ 1/10)    < 1/10)       < 1/100)              < 1/1 000)       (< 1/10000)   anslås utifra
+                                                                                               tilgjengelige
+                                                                                               data)
+Psykiatriske                Forvirring,   Affektlabilitet,      Psykotisk        Lege-         Deperson-
+lidelser                    depresjon,    søvnforstyrrelser,    lidelse          middel-       alisering
+                            insomni,      rastløshet,                            avhengighe
+                            nervøsitet,   agitasjon, eufori,                     t (se
+                            angst         hallusinasjoner,                       pkt. 4.4),
+                                          redusert libido,                       humør-
+                                          mareritt,                              svingninger
+                                          aggresjon
+Nevrologiske    Hodepine,   Tremor        Sedasjon,             Balanse-         Ufrivillige   Krampe-
+sykdommer       svimmel-                  dysgeusi, dysartri,   forstyrrelser,   muskel-       anfall,
+                het,                      hypoestesi,           tale-            kontraksjon   søvnapné-
+                somnolens                 svekket               forstyrrelser    er            syndrom,
+                                          hukommelse,                                          hyperalgesi
+                                          migrene, synkope,
+                                          unormal
+                                          koordinasjon,
+                                          oppmerksomhetsf
+                                          orstyrrelse,
+                                          parestesi
+Øye-                                      Tørre øyne,           Syns-
+sykdommer                                 tåkesyn               forstyrrelser,
+                                                                øyelokks-
+                                                                ødem, miose
+Sykdommer i                               Tinnitus, vertigo                      Øresmerter
+øre og
+labyrint
+Hjertesyk-                                Palpitasjoner,        Angina
+dommer                                    takykardi,            pectoris
+
+Kar-                                      Hypotensjon,          Vaso-
+sykdommer                                 sirkulasjons-         dilatasjon,
+                                          kollaps,              ortostatisk
+                                          hypertensjon,         hypotensjon
+                                          flushing
+Sykdommer i                 Dyspné        Hoste,                Respirasjons-
+respirasjons-                             hvesing,              depresjon,
+organer,                                  hikke                 respirasjons-
+thorax og                                                       svikt,
+mediastinum                                                     forverret
+                                                                astma, hyper-
+                                                                ventilering,
+                                                                rhinitt
+Gastro-         Forstop-    Abdominal     Flatulens             Dysfagi,                       Divertikulitt
+intestinale     pelse,      -smerte,                            ileus
+sykdommer       kvalme,     diaré,
+                oppkast     dyspepsi,
+                            munn-
+                            tørrhet
+Sykdommer i                                                                                    Galleveis-
+lever og                                                                                       kolikk
+galleveier

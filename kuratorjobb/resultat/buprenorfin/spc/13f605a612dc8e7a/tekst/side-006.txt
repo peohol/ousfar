@@ -1,0 +1,54 @@
+Pasienter som har feber eller er eksponert for ekstern varme
+Pasientene skal rådes til å unngå å utsette applikasjonsstedet for eksterne varmekilder, som for
+eksempel varmepute, varmeteppe, varmeflaske, varmelampe, badstue, varmt bad og oppvarmet
+vannseng osv, når de har plasteret på, siden absorpsjonen av buprenorfin kan øke.
+Alvorlig febersykdom kan også øke absorpsjonshastigheten fra buprenorfin depotplaster, og det kan
+føre til økt plasmakonsentrasjon av buprenorfin og dermed øke risikoen for opioidreaksjoner.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Effekt av andre virkestoffer på farmakokinetikken til buprenorfin
+Buprenorfin metaboliseres hovedsakelig ved glukuronidering og i mindre grad (omtrent 30 %) via
+CYP3A4. Samtidig behandling med CYP3A4-hemmere kan gi forhøyede plasmakonsentrasjoner med
+forsterket buprenorfin-effekt.
+
+Studier av CYP3A4-hemmeren ketokonazol ga ikke klinisk relevant økning i gjennomsnittlig
+maksimal (Cmax) eller total (AUC) buprenorfin-eksponering etter bruk av buprenorfin depotplastre
+med ketokonazol sammenlignet med buprenorfin depotplastre alene.
+
+Interaksjonen mellom buprenorfin og CYP3A4-induktorer er ikke undersøkt. Samtidig administrasjon
+av buprenorfin depotplaster og enzyminduktorer (f.eks. fenobarbital, karbamazepin, fenytoin og
+rifampicin) kan gi økt clearance, som kan medføre redusert effekt.
+
+Reduksjon av leverens blodgjennomstrømning indusert av visse generelle anestetika (f.eks. halotan)
+og andre legemidler kan gi nedsatt eliminasjonshastighet for buprenorfin via leveren.
+
+Farmakodynamiske interaksjoner
+Buprenorfin depotplaster må ikke brukes samtidig med MAO-hemmere eller av pasienter som har fått
+MAO-hemmere de siste to ukene (se pkt. 4.3).
+
+Bugnanto bør brukes med forsiktighet når det brukes samtidig med:
+-    Sedative legemidler som benzodiazepiner eller relaterte legemidler:
+     Samtidig bruk av opioider og sedative legemidler som benzodiazepiner eller relaterte
+     legemidler, øker risikoen for sedasjon, respirasjonsdepresjon, koma og død på grunn av additiv
+     CNS-dempende effekt. Dosen og varigheten av samtidig bruk bør være begrenset (se pkt. 4.4).
+     Dette inkluderer sedativa eller hypnotika, generelle anestetika, andre opioidanalgetika,
+     fenotiaziner, sentraltvirkende antiemetika, benzodiazepiner og alkohol.
+-    Andre CNS-dempende midler: andre opioidderivater (analgetika og antitussiva som inneholder
+     f.eks. morfin, dekstropropoksyfen, kodein, dekstrometorfan or noskapin). Visse antidepressiva,
+     sedative H1-reseptorantagonister, alkohol, anxiolytika, antipsykotika, klonidin og relaterte
+     forbindelser. Disse kombinasjonene øker den CNS-dempende effekten. Samtidig bruk av
+     buprenorfin og gabapentinoider (gabapentin og pregabalin) kan medføre respirasjonsdepresjon,
+     hypotensjon, dyp sedasjon, koma eller død (se pkt. 4.4).
+-    Serotonerge legemidler, f.eks. en selektiv serotonin-reopptakshemmer (SSRI) eller en
+     serotonin/noradrenalin-reopptakshemmer (SNRI) eller trisykliske antidepressiva, fordi det øker
+     risikoen for serotonergt syndrom, en potensielt livstruende tilstand (se også pkt. 4.4).
+-    Antikolinergika eller legemidler med antikolinerg aktivitet (f.eks. trisykliske antidepressiva,
+     antihistaminer, antipsykotika, muskelavslappende midler og Parkinson-legemidler) kan
+     resultere i økte antikolinerge bivirkninger.
+
+Buprenorfin beskrives å virke som en ren my-reseptoragonist ved typisk analgetiske doser. I kliniske
+studier med buprenorfin depotplaster ble forsøkspersoner som fikk rene my-agonistopioider (inntil
+90 mg oral morfin eller orale morfinekvivalenter per dag) overført til buprenorfin depotplaster. Det var
+ingen rapporter om abstinenssyndrom eller opioide abstinenssymptomer under overgang fra
+opprinnelig opioid til buprenorfin depotplaster (se pkt. 4.4).

@@ -1,0 +1,1361 @@
+{
+  "stoff": "buprenorfin",
+  "status": "advarsel",
+  "kilde": "foresporsel",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-10-30T04:15:57.810377+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 46,
+    "hentet": 7,
+    "dokumenter": 6,
+    "mangler": [
+      {
+        "merkevare_id": "ID_0D241A48-D9C9-43F2-B8CD-73E6A1A54F63",
+        "varenavn": "Espranor",
+        "navn_form_styrke": "Espranor lyofil tab 8 mg",
+        "produsent": "Ethypharm",
+        "atc": "N07BC01",
+        "legemiddelform": "Lyofilisattablett",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15849.pdf"
+      },
+      {
+        "merkevare_id": "ID_10AEF508-42EC-478D-8D0E-2EAEB2E32A44",
+        "varenavn": "Buprefarm",
+        "navn_form_styrke": "Buprefarm depotplaster 10 mikrog/time",
+        "produsent": "Orifarm Generics A/S",
+        "atc": "N02AE01",
+        "legemiddelform": "Depotplaster",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/15-10646.pdf"
+      },
+      {
+        "merkevare_id": "ID_17736AEF-C2CC-40F0-901C-A8D889A33075",
+        "varenavn": "Norspan",
+        "navn_form_styrke": "Norspan depotplaster 30 mikrog/time",
+        "produsent": "Mundipharma AS",
+        "atc": "N02AE01",
+        "legemiddelform": "Depotplaster",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9543.pdf"
+      },
+      {
+        "merkevare_id": "ID_338FE003-50FC-4E39-8D0B-67A47CF29448",
+        "varenavn": "Buprenorphine G.L. Pharma",
+        "navn_form_styrke": "Buprenorphine G.L. Pharma sublingvaltab 0,2 mg",
+        "produsent": "G.L. Pharma Gmbh",
+        "atc": "N02AE01",
+        "legemiddelform": "Sublingvaltablett",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15725.pdf"
+      },
+      {
+        "merkevare_id": "ID_3C0B93E7-FB97-4F47-AD32-6BDFE48DBE68",
+        "varenavn": "Buprenorphine G.L. Pharma",
+        "navn_form_styrke": "Buprenorphine G.L. Pharma sublingvaltab 0,4 mg",
+        "produsent": "G.L. Pharma Gmbh",
+        "atc": "N02AE01",
+        "legemiddelform": "Sublingvaltablett",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15726.pdf"
+      },
+      {
+        "merkevare_id": "ID_3D1FCDE1-FA4B-44D5-954D-44BF6FFB9835",
+        "varenavn": "Espranor",
+        "navn_form_styrke": "Espranor lyofil tab 2 mg",
+        "produsent": "Ethypharm",
+        "atc": "N07BC01",
+        "legemiddelform": "Lyofilisattablett",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15848.pdf"
+      },
+      {
+        "merkevare_id": "ID_4961433D-264B-490C-8BC5-471CEB0808A9",
+        "varenavn": "Norspan",
+        "navn_form_styrke": "Norspan depotplaster 20 mikrog/time",
+        "produsent": "Mundipharma AS",
+        "atc": "N02AE01",
+        "legemiddelform": "Depotplaster",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-3092.pdf"
+      },
+      {
+        "merkevare_id": "ID_50336C54-7E77-48AE-BF34-E24074AD992C",
+        "varenavn": "Bunalict",
+        "navn_form_styrke": "Bunalict sublingvaltab 8 mg/2 mg",
+        "produsent": "Sandoz - København",
+        "atc": "N07BC51",
+        "legemiddelform": "Sublingvaltablett",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/16-11389.pdf"
+      },
+      {
+        "merkevare_id": "ID_514BCB2D-2DAA-4BA7-A0C4-EF599A9426F6",
+        "varenavn": "Bugnanto",
+        "navn_form_styrke": "Bugnanto depotplaster 15 mikrog/time",
+        "produsent": "Sandoz - København",
+        "atc": "N02AE01",
+        "legemiddelform": "Depotplaster",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11835.pdf"
+      },
+      {
+        "merkevare_id": "ID_66544009-224C-4A88-B87F-378BF04E410D",
+        "varenavn": "Buprenorphine Orifarm",
+        "navn_form_styrke": "Buprenorphine Orifarm sublingvaltab 8 mg",
+        "produsent": "Orifarm Generics (3)",
+        "atc": "N07BC01",
+        "legemiddelform": "Sublingvaltablett",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-7078.pdf"
+      },
+      {
+        "merkevare_id": "ID_66EC1BC8-4C6B-408B-B3EB-74DE1D052887",
+        "varenavn": "Bugnanto",
+        "navn_form_styrke": "Bugnanto depotplaster 20 mikrog/time",
+        "produsent": "Sandoz - København",
+        "atc": "N02AE01",
+        "legemiddelform": "Depotplaster",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9924.pdf"
+      },
+      {
+        "merkevare_id": "ID_6A29134E-1291-400F-A15E-95C69C0E633E",
+        "varenavn": "Buprefarm",
+        "navn_form_styrke": "Buprefarm depotplaster 5 mikrog/time",
+        "produsent": "Orifarm Generics A/S",
+        "atc": "N02AE01",
+        "legemiddelform": "Depotplaster",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/15-10645.pdf"
+      },
+      {
+        "merkevare_id": "ID_7BB4277E-D80B-4DE9-AA3E-1850A8FDB7B6",
+        "varenavn": "Bunalict",
+        "navn_form_styrke": "Bunalict sublingvaltab 2 mg/0,5 mg",
+        "produsent": "Sandoz - København",
+        "atc": "N07BC51",
+        "legemiddelform": "Sublingvaltablett",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/16-11388.pdf"
+      },
+      {
+        "merkevare_id": "ID_84D89370-F42F-4394-92E8-89D4F4C1344E",
+        "varenavn": "Buprenorphine Sandoz",
+        "navn_form_styrke": "Buprenorphine Sandoz sublingvaltab 2 mg",
+        "produsent": "Sandoz (2)",
+        "atc": "N07BC01",
+        "legemiddelform": "Sublingvaltablett",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-7231.pdf"
+      },
+      {
+        "merkevare_id": "ID_925DF1FE-4A42-40F4-80E4-32879716A0B9",
+        "varenavn": "Bugnanto",
+        "navn_form_styrke": "Bugnanto depotplaster 5 mikrog/time",
+        "produsent": "Sandoz - København",
+        "atc": "N02AE01",
+        "legemiddelform": "Depotplaster",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9922.pdf"
+      },
+      {
+        "merkevare_id": "ID_937521C4-569F-42B9-AE72-CA68F62230E0",
+        "varenavn": "Buprefarm",
+        "navn_form_styrke": "Buprefarm depotplaster 20 mikrog/time",
+        "produsent": "Orifarm Generics A/S",
+        "atc": "N02AE01",
+        "legemiddelform": "Depotplaster",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/15-10647.pdf"
+      },
+      {
+        "merkevare_id": "ID_A13E41DE-683B-4599-90A9-CE20FBC193A5",
+        "varenavn": "Buprefarm",
+        "navn_form_styrke": "Buprefarm depotplaster 30 mikrog/time",
+        "produsent": "Orifarm Generics A/S",
+        "atc": "N02AE01",
+        "legemiddelform": "Depotplaster",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/19-13091.pdf"
+      },
+      {
+        "merkevare_id": "ID_A506659D-12C7-4000-B548-48151E5C5515",
+        "varenavn": "Bugnanto",
+        "navn_form_styrke": "Bugnanto depotplaster 10 mikrog/time",
+        "produsent": "Sandoz - København",
+        "atc": "N02AE01",
+        "legemiddelform": "Depotplaster",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9923.pdf"
+      },
+      {
+        "merkevare_id": "ID_BA428BE4-BF5F-4B16-B504-F5DBB0C09C52",
+        "varenavn": "Buprenorphine Orifarm",
+        "navn_form_styrke": "Buprenorphine Orifarm sublingvaltab 2 mg",
+        "produsent": "Orifarm Generics (3)",
+        "atc": "N07BC01",
+        "legemiddelform": "Sublingvaltablett",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-7077.pdf"
+      },
+      {
+        "merkevare_id": "ID_BC0E483E-B5B2-45C9-BE35-DEE83D785EF5",
+        "varenavn": "Norspan",
+        "navn_form_styrke": "Norspan depotplaster 5 mikrog/time",
+        "produsent": "Mundipharma AS",
+        "atc": "N02AE01",
+        "legemiddelform": "Depotplaster",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-3090.pdf"
+      },
+      {
+        "merkevare_id": "ID_02271CC4-637F-4237-B71C-4DFB73CED8BD",
+        "varenavn": "Buvidal",
+        "navn_form_styrke": "Buvidal depotinj væske, oppl 64 mg/sprøyte",
+        "produsent": "Camurus AB",
+        "atc": "N07BC01",
+        "legemiddelform": "Depotinjeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_128A6D48-CF29-45CC-B8B3-FAC6B7E115CC",
+        "varenavn": "Zubsolv",
+        "navn_form_styrke": "Zubsolv sublingvaltab 11,4 mg/2,9 mg",
+        "produsent": "Accord Healthcare S.L.U.",
+        "atc": "N07BC51",
+        "legemiddelform": "Sublingvaltablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_197FAA21-0EE4-4B9C-9286-B6C8CCC97C3F",
+        "varenavn": "Buvidal",
+        "navn_form_styrke": "Buvidal depotinj væske, oppl 8 mg/sprøyte",
+        "produsent": "Camurus AB",
+        "atc": "N07BC01",
+        "legemiddelform": "Depotinjeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_1C47E51B-3C7E-4887-A5F1-991AA417A5FA",
+        "varenavn": "Zubsolv",
+        "navn_form_styrke": "Zubsolv sublingvaltab 2,9 mg/0,71 mg",
+        "produsent": "Accord Healthcare S.L.U.",
+        "atc": "N07BC51",
+        "legemiddelform": "Sublingvaltablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_47F039F2-6468-4FED-8446-C30206BD7C36",
+        "varenavn": "Suboxone",
+        "navn_form_styrke": "Suboxone sublingvaltab 8 mg/2 mg",
+        "produsent": "Orifarm AS",
+        "atc": "N07BC51",
+        "legemiddelform": "Sublingvaltablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_57D87398-57C7-45A8-A4D1-AA54C910E2A8",
+        "varenavn": "Buvidal",
+        "navn_form_styrke": "Buvidal depotinj væske, oppl 160 mg/sprøyte",
+        "produsent": "Camurus AB",
+        "atc": "N07BC01",
+        "legemiddelform": "Depotinjeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_6756C2FB-4E38-49CD-B77D-A0E06932A7A4",
+        "varenavn": "Buvidal",
+        "navn_form_styrke": "Buvidal depotinj væske, oppl 16 mg/sprøyte",
+        "produsent": "Camurus AB",
+        "atc": "N07BC01",
+        "legemiddelform": "Depotinjeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_74A9A244-BB51-4356-A99B-8511C4469168",
+        "varenavn": "Buvidal",
+        "navn_form_styrke": "Buvidal depotinj væske, oppl 24 mg/sprøyte",
+        "produsent": "Camurus AB",
+        "atc": "N07BC01",
+        "legemiddelform": "Depotinjeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_A0690629-7AC5-48DB-B264-2F9A8A53A50B",
+        "varenavn": "Buvidal",
+        "navn_form_styrke": "Buvidal depotinj væske, oppl 128 mg/sprøyte",
+        "produsent": "Camurus AB",
+        "atc": "N07BC01",
+        "legemiddelform": "Depotinjeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_CBCEBD29-6B3B-4D55-BAE9-1A6F108D42BB",
+        "varenavn": "Buvidal",
+        "navn_form_styrke": "Buvidal depotinj væske, oppl 32 mg/sprøyte",
+        "produsent": "Camurus AB",
+        "atc": "N07BC01",
+        "legemiddelform": "Depotinjeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_CCC23A8A-3B0A-450F-8786-F6833E5175A9",
+        "varenavn": "Buprenorphine stada",
+        "navn_form_styrke": "Buprenorphine stada depotplaster 70 mikrog/time",
+        "produsent": "Stada",
+        "atc": "N02AE01",
+        "legemiddelform": "Depotplaster",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_D3505DE4-EC43-425C-BAAE-BFBAF188374C",
+        "varenavn": "Zubsolv",
+        "navn_form_styrke": "Zubsolv sublingvaltab 5,7 mg/1,4 mg",
+        "produsent": "Accord Healthcare S.L.U.",
+        "atc": "N07BC51",
+        "legemiddelform": "Sublingvaltablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_D4EF1D59-0CD0-4E70-A325-92A3EAB36C55",
+        "varenavn": "Zubsolv",
+        "navn_form_styrke": "Zubsolv sublingvaltab 1,4 mg/0,36 mg",
+        "produsent": "Accord Healthcare S.L.U.",
+        "atc": "N07BC51",
+        "legemiddelform": "Sublingvaltablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_D838C9D4-10E9-40C6-B6A1-510D957156AC",
+        "varenavn": "Espranor",
+        "navn_form_styrke": "Espranor smeltetab 2 mg",
+        "produsent": "Martindale Pharmaceuticals",
+        "atc": "N07BC01",
+        "legemiddelform": "Smeltetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_DE08F89D-EF04-4A35-8A6B-F3EF7664BA60",
+        "varenavn": "Zubsolv",
+        "navn_form_styrke": "Zubsolv sublingvaltab 8,6 mg/2,1 mg",
+        "produsent": "Accord Healthcare S.L.U.",
+        "atc": "N07BC51",
+        "legemiddelform": "Sublingvaltablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_EAC52461-40DE-4E46-B805-94F1C1648BC4",
+        "varenavn": "Suboxone",
+        "navn_form_styrke": "Suboxone sublingvalfilm 8 mg/2 mg",
+        "produsent": "Indivor",
+        "atc": "N07BC51",
+        "legemiddelform": "Sublingvalfilm",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_F62E31C6-60B7-4B50-B66C-B2F34E1B308A",
+        "varenavn": "Espranor",
+        "navn_form_styrke": "Espranor smeltetab 8 mg",
+        "produsent": "Martindale Pharmaceuticals",
+        "atc": "N07BC01",
+        "legemiddelform": "Smeltetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_FA449212-0993-4F69-8521-B8A9B96A00F9",
+        "varenavn": "Buvidal",
+        "navn_form_styrke": "Buvidal depotinj væske, oppl 96 mg/sprøyte",
+        "produsent": "Camurus AB",
+        "atc": "N07BC01",
+        "legemiddelform": "Depotinjeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_FBFD8FC3-D200-44E5-961E-7D04D6417461",
+        "varenavn": "Suboxone",
+        "navn_form_styrke": "Suboxone sublingvalfilm 12 mg/3 mg",
+        "produsent": "Indivor",
+        "atc": "N07BC51",
+        "legemiddelform": "Sublingvalfilm",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 27 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 27,
+        "ikke_dmp": 0,
+        "uten_omtale": 19
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "39 av 46 preparater i FEST mangler en hentet preparatomtale fra DMP: 19 uten preparatomtale i FEST (f.eks. sentralt godkjente, med omtalen hos EMA); 20 ikke valgt i forespørselen. SPC-behovet er ikke dekket; se «dekning.mangler».",
+      "antall": {
+        "preparater": 46,
+        "hentet": 7,
+        "mangler": 39,
+        "dokumenter": 6
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06800.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06800.pdf",
+      "hentet_kl": "2026-10-30T17:57:12.368Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "286624",
+        "content-md5": "/a2O9xJ6UnWHTBwyf2hc5Q==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:44 GMT",
+        "etag": "0x8DE537938ECD286",
+        "date": "Fri, 30 Oct 2026 17:57:13 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_D8C20665-5165-4D8C-B41D-1A7159A99A32",
+          "varenavn": "Temgesic",
+          "navn_form_styrke": "Temgesic sublingvaltab 0,2 mg",
+          "produsent": "Eumedica Pharmaceuticals GmbH",
+          "atc": "N02AE01",
+          "legemiddelform": "Sublingvaltablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06800.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (286624 byte).",
+          "antall": {
+            "bytes": 286624
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "eb30f05ea9d3cf453278641623354740292fd5567fc141e98ec588452d2e2962"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07615.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07615.pdf",
+      "hentet_kl": "2026-10-30T17:57:16.680Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "286624",
+        "content-md5": "/a2O9xJ6UnWHTBwyf2hc5Q==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:52 GMT",
+        "etag": "0x8DE53793DD0B59E",
+        "date": "Fri, 30 Oct 2026 17:57:16 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_FC28F90A-3D51-44C6-B2F6-A4826A15E1FF",
+          "varenavn": "Temgesic",
+          "navn_form_styrke": "Temgesic sublingvaltab 0,4 mg",
+          "produsent": "Eumedica Pharmaceuticals GmbH",
+          "atc": "N02AE01",
+          "legemiddelform": "Sublingvaltablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07615.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (286624 byte).",
+          "antall": {
+            "bytes": 286624
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "eb30f05ea9d3cf453278641623354740292fd5567fc141e98ec588452d2e2962"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-3091.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-3091.pdf",
+      "hentet_kl": "2026-10-30T17:57:16.979Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "372669",
+        "content-md5": "Ps4E8wWC36RsC74xaGTVGA==",
+        "last-modified": "Thu, 08 Oct 2026 06:49:34 GMT",
+        "etag": "0x8DF25085042481F",
+        "date": "Fri, 30 Oct 2026 17:57:17 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_F1B0D464-0F0B-4A16-BA95-FD4529B11201",
+          "varenavn": "Norspan",
+          "navn_form_styrke": "Norspan depotplaster 10 mikrog/time",
+          "produsent": "Mundipharma AS",
+          "atc": "N02AE01",
+          "legemiddelform": "Depotplaster"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-3091.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (372669 byte).",
+          "antall": {
+            "bytes": 372669
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "9b969ebac1ed8c3b59dc00524fb9b24519c4a9dfb9eeeeb1634f8925e3ef62a5"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9541.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9541.pdf",
+      "hentet_kl": "2026-10-30T17:57:22.520Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "359923",
+        "content-md5": "TxPWicWj5MZddThjIhxovA==",
+        "last-modified": "Thu, 08 Oct 2026 06:49:59 GMT",
+        "etag": "0x8DF25085ECC7790",
+        "date": "Fri, 30 Oct 2026 17:57:23 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_E191E3B6-FB81-4944-BD4B-AFB9A964728D",
+          "varenavn": "Norspan",
+          "navn_form_styrke": "Norspan depotplaster 15 mikrog/time",
+          "produsent": "Mundipharma AS",
+          "atc": "N02AE01",
+          "legemiddelform": "Depotplaster"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9541.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (359923 byte).",
+          "antall": {
+            "bytes": 359923
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "6a1e14a81a8821a34d730fb68c7bd4dffc8783750bffb2a391cf9f3c56802074"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-7232.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-7232.pdf",
+      "hentet_kl": "2026-10-30T17:57:28.949Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "201818",
+        "content-md5": "TGGf3hnlauNgGXxgNxVadw==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:58 GMT",
+        "etag": "0x8DE5379413EA984",
+        "date": "Fri, 30 Oct 2026 17:57:29 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_F1CF263E-5F36-4E37-B9DF-DBC3CD05A7BC",
+          "varenavn": "Buprenorphine Sandoz",
+          "navn_form_styrke": "Buprenorphine Sandoz sublingvaltab 8 mg",
+          "produsent": "Sandoz (2)",
+          "atc": "N07BC01",
+          "legemiddelform": "Sublingvaltablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-7232.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (201818 byte).",
+          "antall": {
+            "bytes": 201818
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "440d8243cf722261681638868c26d391b5282d4c1f3cf092bf04ac5a1c9597f2"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/18-12234.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/18-12234.pdf",
+      "hentet_kl": "2026-10-30T17:57:34.097Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "223622",
+        "content-md5": "wEJdX6EpaEi+5eHCLdfDHA==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:51 GMT",
+        "etag": "0x8DE53793D5F187E",
+        "date": "Fri, 30 Oct 2026 17:57:34 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_F05D0DD2-5C99-4B0C-A9DE-0B6B41F3BF0D",
+          "varenavn": "Buprefarm",
+          "navn_form_styrke": "Buprefarm depotplaster 15 mikrog/time",
+          "produsent": "Orifarm Generics A/S",
+          "atc": "N02AE01",
+          "legemiddelform": "Depotplaster"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/18-12234.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (223622 byte).",
+          "antall": {
+            "bytes": 223622
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "34ea49259987083c4200b604adf98d9ebff3bc6e9f1984911fdd6aca4c02d4a9"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14068.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14068.pdf",
+      "hentet_kl": "2026-10-30T17:57:38.699Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "304972",
+        "content-md5": "7hLltJRZenw2o74svu8Omw==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:27 GMT",
+        "etag": "0x8DF25086FD1935C",
+        "date": "Fri, 30 Oct 2026 17:57:39 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_FD5B03C9-2972-4834-BC72-546E06EA2486",
+          "varenavn": "Bugnanto",
+          "navn_form_styrke": "Bugnanto depotplaster 30 mikrog/time",
+          "produsent": "Sandoz - København",
+          "atc": "N02AE01",
+          "legemiddelform": "Depotplaster"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14068.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (304972 byte).",
+          "antall": {
+            "bytes": 304972
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "13f605a612dc8e7a7687eb876207a64a081719b97e94046c9ec2923074851d04"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "eb30f05ea9d3cf453278641623354740292fd5567fc141e98ec588452d2e2962",
+      "bytes": 286624,
+      "mappe": "kuratorjobb/resultat/buprenorfin/spc/eb30f05ea9d3cf45",
+      "pdf": {
+        "sider": 9,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Mon Oct 28 08:16:06 2024 UTC",
+        "endret": "Mon Oct 28 08:16:06 2024 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/buprenorfin/spc/eb30f05ea9d3cf45/original.pdf",
+        "tekst": "kuratorjobb/resultat/buprenorfin/spc/eb30f05ea9d3cf45/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/buprenorfin/spc/eb30f05ea9d3cf45/tekst/side-001.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/eb30f05ea9d3cf45/tekst/side-002.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/eb30f05ea9d3cf45/tekst/side-003.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/eb30f05ea9d3cf45/tekst/side-004.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/eb30f05ea9d3cf45/tekst/side-005.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/eb30f05ea9d3cf45/tekst/side-006.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/eb30f05ea9d3cf45/tekst/side-007.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/eb30f05ea9d3cf45/tekst/side-008.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/eb30f05ea9d3cf45/tekst/side-009.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/buprenorfin/spc/eb30f05ea9d3cf45/sider/side-001.png",
+          "kuratorjobb/resultat/buprenorfin/spc/eb30f05ea9d3cf45/sider/side-002.png",
+          "kuratorjobb/resultat/buprenorfin/spc/eb30f05ea9d3cf45/sider/side-003.png",
+          "kuratorjobb/resultat/buprenorfin/spc/eb30f05ea9d3cf45/sider/side-004.png",
+          "kuratorjobb/resultat/buprenorfin/spc/eb30f05ea9d3cf45/sider/side-005.png",
+          "kuratorjobb/resultat/buprenorfin/spc/eb30f05ea9d3cf45/sider/side-006.png",
+          "kuratorjobb/resultat/buprenorfin/spc/eb30f05ea9d3cf45/sider/side-007.png",
+          "kuratorjobb/resultat/buprenorfin/spc/eb30f05ea9d3cf45/sider/side-008.png",
+          "kuratorjobb/resultat/buprenorfin/spc/eb30f05ea9d3cf45/sider/side-009.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 5,
+        "til": 7
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (9 sider).",
+          "antall": {
+            "sider": 9
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 18750
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 5."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 9
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "9b969ebac1ed8c3b59dc00524fb9b24519c4a9dfb9eeeeb1634f8925e3ef62a5",
+      "bytes": 372669,
+      "mappe": "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b",
+      "pdf": {
+        "sider": 15,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "SPC-II-lab-pl Template",
+        "laget": "Wed May  6 07:04:39 2026 UTC",
+        "endret": "Wed May  6 07:04:39 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/original.pdf",
+        "tekst": "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/tekst/side-001.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/tekst/side-002.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/tekst/side-003.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/tekst/side-004.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/tekst/side-005.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/tekst/side-006.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/tekst/side-007.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/tekst/side-008.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/tekst/side-009.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/tekst/side-010.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/tekst/side-011.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/tekst/side-012.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/tekst/side-013.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/tekst/side-014.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/tekst/side-015.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/sider/side-001.png",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/sider/side-002.png",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/sider/side-003.png",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/sider/side-004.png",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/sider/side-005.png",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/sider/side-006.png",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/sider/side-007.png",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/sider/side-008.png",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/sider/side-009.png",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/sider/side-010.png",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/sider/side-011.png",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/sider/side-012.png",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/sider/side-013.png",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/sider/side-014.png",
+          "kuratorjobb/resultat/buprenorfin/spc/9b969ebac1ed8c3b/sider/side-015.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 11
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (15 sider).",
+          "antall": {
+            "sider": 15
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 32830
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 15
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "6a1e14a81a8821a34d730fb68c7bd4dffc8783750bffb2a391cf9f3c56802074",
+      "bytes": 359923,
+      "mappe": "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3",
+      "pdf": {
+        "sider": 15,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Wed May  6 07:04:41 2026 UTC",
+        "endret": "Wed May  6 07:04:41 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/original.pdf",
+        "tekst": "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/tekst/side-001.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/tekst/side-002.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/tekst/side-003.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/tekst/side-004.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/tekst/side-005.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/tekst/side-006.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/tekst/side-007.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/tekst/side-008.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/tekst/side-009.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/tekst/side-010.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/tekst/side-011.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/tekst/side-012.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/tekst/side-013.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/tekst/side-014.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/tekst/side-015.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/sider/side-001.png",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/sider/side-002.png",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/sider/side-003.png",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/sider/side-004.png",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/sider/side-005.png",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/sider/side-006.png",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/sider/side-007.png",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/sider/side-008.png",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/sider/side-009.png",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/sider/side-010.png",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/sider/side-011.png",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/sider/side-012.png",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/sider/side-013.png",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/sider/side-014.png",
+          "kuratorjobb/resultat/buprenorfin/spc/6a1e14a81a8821a3/sider/side-015.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 11
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (15 sider).",
+          "antall": {
+            "sider": 15
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 32987
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 15
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "440d8243cf722261681638868c26d391b5282d4c1f3cf092bf04ac5a1c9597f2",
+      "bytes": 201818,
+      "mappe": "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261",
+      "pdf": {
+        "sider": 12,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "Version 7",
+        "laget": "Tue Oct 12 08:15:27 2021 UTC",
+        "endret": "Tue Oct 12 08:15:27 2021 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/original.pdf",
+        "tekst": "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/tekst/side-001.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/tekst/side-002.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/tekst/side-003.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/tekst/side-004.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/tekst/side-005.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/tekst/side-006.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/tekst/side-007.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/tekst/side-008.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/tekst/side-009.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/tekst/side-010.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/tekst/side-011.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/tekst/side-012.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/sider/side-001.png",
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/sider/side-002.png",
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/sider/side-003.png",
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/sider/side-004.png",
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/sider/side-005.png",
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/sider/side-006.png",
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/sider/side-007.png",
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/sider/side-008.png",
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/sider/side-009.png",
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/sider/side-010.png",
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/sider/side-011.png",
+          "kuratorjobb/resultat/buprenorfin/spc/440d8243cf722261/sider/side-012.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 7,
+        "til": 9
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (12 sider).",
+          "antall": {
+            "sider": 12
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 27958
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 7."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 12
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "34ea49259987083c4200b604adf98d9ebff3bc6e9f1984911fdd6aca4c02d4a9",
+      "bytes": 223622,
+      "mappe": "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c",
+      "pdf": {
+        "sider": 14,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "Exelon, INN-rivastigmine",
+        "laget": "Thu Mar 20 07:04:44 2025 UTC",
+        "endret": "Thu Mar 20 07:04:44 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/original.pdf",
+        "tekst": "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/tekst/side-001.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/tekst/side-002.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/tekst/side-003.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/tekst/side-004.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/tekst/side-005.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/tekst/side-006.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/tekst/side-007.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/tekst/side-008.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/tekst/side-009.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/tekst/side-010.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/tekst/side-011.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/tekst/side-012.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/tekst/side-013.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/tekst/side-014.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/sider/side-001.png",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/sider/side-002.png",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/sider/side-003.png",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/sider/side-004.png",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/sider/side-005.png",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/sider/side-006.png",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/sider/side-007.png",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/sider/side-008.png",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/sider/side-009.png",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/sider/side-010.png",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/sider/side-011.png",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/sider/side-012.png",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/sider/side-013.png",
+          "kuratorjobb/resultat/buprenorfin/spc/34ea49259987083c/sider/side-014.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 7,
+        "til": 10
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (14 sider).",
+          "antall": {
+            "sider": 14
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 30974
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 7."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 14
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "13f605a612dc8e7a7687eb876207a64a081719b97e94046c9ec2923074851d04",
+      "bytes": 304972,
+      "mappe": "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a",
+      "pdf": {
+        "sider": 14,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Wed Jun 24 11:58:42 2026 UTC",
+        "endret": "Wed Jun 24 11:58:42 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/original.pdf",
+        "tekst": "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/tekst/side-001.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/tekst/side-002.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/tekst/side-003.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/tekst/side-004.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/tekst/side-005.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/tekst/side-006.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/tekst/side-007.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/tekst/side-008.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/tekst/side-009.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/tekst/side-010.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/tekst/side-011.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/tekst/side-012.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/tekst/side-013.txt",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/tekst/side-014.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/sider/side-001.png",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/sider/side-002.png",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/sider/side-003.png",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/sider/side-004.png",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/sider/side-005.png",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/sider/side-006.png",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/sider/side-007.png",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/sider/side-008.png",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/sider/side-009.png",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/sider/side-010.png",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/sider/side-011.png",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/sider/side-012.png",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/sider/side-013.png",
+          "kuratorjobb/resultat/buprenorfin/spc/13f605a612dc8e7a/sider/side-014.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 7,
+        "til": 10
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (14 sider).",
+          "antall": {
+            "sider": 14
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 31848
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 7."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 14
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": []
+}

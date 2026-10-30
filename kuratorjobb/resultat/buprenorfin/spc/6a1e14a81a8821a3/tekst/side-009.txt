@@ -1,0 +1,53 @@
+Organklasse-      Svært       Vanlige       Mindre vanlige     Sjeldne          Svært sjeldne    Ikke kjent
+system            vanlige     (≥ 1/100,     (≥ 1/1 000,        (≥ 1/10 000,     (< 1/10 000)     (kan ikke
+MedDRA            (≥ 1/10)    < 1/10)       < 1/100)           < 1/1 000)                        anslås ut ifra
+                                                                                                 tilgjengelige
+                                                                                                 data)
+Forstyrrelser i                             Overfølsomhet      Anafylak-                         Anafylak-
+immunsystemet                                                  tiske                             toide
+                                                               reaksjoner                        reaksjoner
+Stoffskifte- og               Anoreksi                         Dehydrering
+ernærings-
+betingede
+sykdommer
+Psykiatriske                  Forvirring,   Affektlabilitet,   Psykotisk        Legemiddel-      Depersonalis
+lidelser                      Depresjon,    søvn-              lidelse          avhengighet      ering
+                              Insomni,      forstyrrelser,                      (se pkt. 4.4),
+                              Nervøsitet,   rastløshet,                         humør-
+                              angst         agitasjon,                          svingninger
+                                            eufori,
+                                            hallusinasjoner,
+                                            redusert libido,
+                                            mareritt,
+                                            aggresjon
+Nevrologiske      Hodepine,   tremor        Sedasjon,          Balanse-         Ufrivillige      Krampe-
+sykdommer         Svimmel-                  dysgeusi,          forstyrrelser,   muskel-          anfall,
+                  het,                      dysartri,          tale-            kontraksjone     søvnapné-
+                  somnolens                 hypoestesi,        forstyrrelser    r                syndrom,
+                                            svekket                                              hyperalgesi
+                                            hukommelse,
+                                            migrene,
+                                            synkope,
+                                            unormal
+                                            koordinasjon,
+                                            oppmerksomhet
+                                            sforstyrrelse,
+                                            parestesi
+Øyesykdommer                                Tørre øyne,        Syns-
+                                            tåkesyn            forstyrrelser,
+                                                               øyelokks-
+                                                               ødem,
+                                                               miose
+Sykdommer i                                 Tinnitus,                           Øresmerter
+øre og labyrint                             vertigo
+Hjerte-                                     Palpitasjoner,     Angina
+sykdommer                                   takykardi          pectoris
+Karsykdommer                                Hypotensjon,       Vaso-
+                                            sirkulasjons-      dilatasjon,
+                                            kollaps,           ortostatisk
+                                            hypertensjon,      hypotensjon
+                                            flushing
+Sykdommer i                   Dyspné        Hoste,             Respirasjons-
+respirasjons-                               hvesing,           depresjon,
+organer, thorax                             hikke              respirasjons-
+og mediastinum                                                 svikt,

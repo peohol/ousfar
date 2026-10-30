@@ -1,0 +1,53 @@
+Norspan bør ikke brukes i høyere doser enn anbefalt.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Effekt av andre virkestoffer på buprenorfins farmakokinetikk
+
+Buprenorfin metaboliseres hovedsakelig ved glukuronidering og i mindre grad (ca. 30 %) via
+CYP3A4. Samtidig behandling med CYP3A4-hemmere kan gi forhøyede plasmakonsentrasjoner med
+forsterket buprenorfineffekt.
+
+Studier med CYP3A4-hemmeren ketokonazol ga ikke klinisk relevante økninger i gjennomsnittlig
+maksimal (C𝑚𝑎𝑥) eller total (AUC) buprenorfineksponering etter Norspan med ketokonazol i forhold
+til Norspan alene.
+
+Interaksjonen mellom buprenorfin og CYP3A4-indusere er ikke undersøkt. Samtidig administrasjon
+av Norspan og enzymindusere (f.eks. fenobarbital, karbamazepin, fenytoin og rifampicin) kan gi økt
+clearance som kan medføre redusert effekt.
+
+Reduksjon av leverens blodgjennomstrømning indusert av visse generelle anestetika (f.eks. halotan)
+og andre legemidler kan gi nedsatt eliminasjonshastighet for buprenorfin via leveren.
+
+Farmakodynamiske interaksjoner
+
+Norspan skal ikke brukes samtidig med MAO-hemmere eller hos pasienter som har fått MAO-
+hemmere de siste to ukene (se pkt. 4.3).
+
+Norspan bør brukes med forsiktighet ved samtidig administrering med:
+
+Serotonerge legemidler slik som MAO-hemmere, selektive serotoninreopptakshemmere (SSRIer),
+serotonin- og noradrenalinreopptakshemmere (SNRIer) eller trisykliske antidepressiva, på grunn av
+økt risiko for serotonergt syndrom, en potensielt livstruende tilstand (se pkt. 4.4).
+Andre CNS-dempende midler: andre opioidderivater (analgetika og antitussiva inneholdende f.eks.
+morfin, dekstropropoksyfen, kodein, dekstrometorfan eller noskapin). Visse antidepressiva, sedative
+H1-reseptorantagonister, alkohol, anxiolytika, antipsykotika, klonidin og beslektede substanser. Disse
+kombinasjonene øker den CNS-dempende effekten.
+
+Samtidig bruk av Norspan og gabapentinoider (gabapentin og pregabalin) kan føre til
+respirasjonsdepresjon, hypotensjon, dyp sedasjon, koma eller død (se pkt. 4.4).
+
+Samtidig administrering av buprenorfin og antikolinergika eller legemidler med antikolinerg aktivitet
+(f.eks. trisykliske antidepressiva, antihistaminer, antipsykotika, muskelavslappende legemidler,
+antiparkinson-legemidler) kan resultere i økte antikolinerge bivirkninger.
+
+Samtidig bruk av opioider med sedativa, som benzodiazepiner eller lignende legemidler, øker risikoen
+for sedasjon, respirasjonsdepresjon, koma og dødsfall på grunn av additiv CNS-hemmende effekt.
+Dose og varighet ved samtidig bruk bør begrenses (se pkt. 4.4). Dette inkluderer sedativa eller
+hypnotika, generelle anestetika, andre opioidanalgetika, fenotiaziner, sentraltvirkende antiemetika,
+benzodiazepiner og alkohol.
+
+Opioidantagonister brukt i behandling av alkoholavhengighet: Nalmefen eller naltrekson kan blokkere
+og redusere de terapeutiske effektene av buprenorfin, og kan også utløse en plutselig inntreden av
+langvarige og intense opioidabstinenssymptomer hos personer som er avhengige av opioider. Samtidig
+administrering under behandling med transdermalt buprenorfin bør unngås (se seksjon 4.4).

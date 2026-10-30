@@ -1,0 +1,59 @@
+Det er vist at opioider øker trykket i gallegangen og bør brukes med forsiktighet hos pasienter med
+manglende eller skadet funksjon av gallegangen.
+
+Opioider skal administreres med forsiktighet hos eldre eller svekkede pasienter.
+
+Søvnrelaterte respirasjonsforstyrrelser
+Opioider kan gi søvnrelaterte respirasjonsforstyrrelser, inkl. sentral søvnapné (CSA) og søvnrelatert
+hypoksemi. Bruk av opioider øker risikoen for CSA på doseavhengig vis. Ved CSA skal det vurderes
+å redusere den totale opioiddosen.
+
+Buprenorphine Sandoz inneholder laktose og natrium.
+Pasienter med sjeldne arvelige problemer med galaktoseintoleranse, total laktasemangel eller glukose-
+galaktose-malabsorpsjon bør ikke ta dette legemidlet.
+
+Dette legemidlet inneholder mindre enn 1 mmol natrium (23 mg) per sublingvaltablett, og er så godt
+som «natriumfritt».
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Ikke anbefalte kombinasjoner
+-     Alkohol eller legemidler som inneholder alkohol øker den sedative effekten av buprenorfin (se
+      pkt. 4.7).
+
+Kombinasjoner som krever særlig forsiktighet
+-   Sedativa som benzodiazepiner eller lignende legemidler: Samtidig bruk av opioider med
+    sedativa, som benzodiazepiner eller lignende legemidler, øker risikoen for sedasjon,
+    respirasjonsdepresjon, koma og dødsfall på grunn av additiv CNS-hemmende effekt. Dose og
+    varighet ved samtidig bruk bør begrenses (se pkt. 4.4). Denne kombinasjonen bør unngås i
+    tilfeller hvor det er fare for misbruk.
+-   Andre substanser som kan gi sentralnervøs depresjon: Andre opioidderivater (f.eks. metadon,
+    analgetika og antitussiva), visse antidepressiva, seditative H1-reseptorantagonister, barbiturater,
+    andre anxiolytika enn benzodiazepiner, nevroleptika, klonidin og beslektede substanser. Disse
+    kombinasjonene øker sentralnervøs depresjon. Den reduserte årvåkenheten kan gjøre det farlig å
+    kjøre bil og bruke maskiner.
+-   Gabapentinoider: Denne kombinasjonen kan føre til sentral respirasjonsdepresjon med dødelig
+    utgang. Derfor må doseringen monitoreres nøye, og denne kombinasjonen bør unngås i tilfeller
+    hvor det er fare for misbruk. Pasientene skal få informasjon om at de kun skal bruke
+    gabapentinoider (som pregabalin og gabapentin) sammen med dette legemidlet som anvist av
+    legen (se pkt. 4.4).
+-   Smertestillende opioider: Adekvat analgesi kan være vanskelig å oppnå når det administreres
+    en opioid-fullagonist til pasienter som får buprenorfin. Potensialet for en overdose eksisterer
+    også med en fullagonist, særlig når man prøver å overgå buprenorfins partielle agonisteffekt,
+    eller når plasmanivåene av buprenorfin reduseres.
+-   Naltrekson: Dette er en opioidantagonist som kan blokkere de farmakologiske effektene av
+    buprenorfin. For opioidavhengige pasienter som får behandling med burprenorfin, kan
+    naltrekson gi symptomer på plutselig innsettende forlenget opioidabstinens. For pasienter som
+    får naltrekson, kan den tilsiktede terapeutiske effekten av buprenorfin bli blokkert av naltrekson.
+-   CYP3A4-hemmere: En interaksjonsstudie med buprenorfin og ketokonazol (en potent
+    CYP3A4-hemmer) viste økt Cmax og AUC for buprenorfin (henholdsvis ca. 50 % og 70 %) og, i
+    mindre grad, for metabolitten norbuprenorfin. Pasienter som får buprenorfin sublingvaltabletter,
+    bør overvåkes nøye og kan trenge en reduksjon av dosen dersom den kombineres med en potent
+    CYP3A4-hemmer (f.eks. proteasehemmere som ritonavir, nelfinavir eller indinavir, eller
+    antimykotiske stoffer i azolgruppen som ketokonazol og itrakonazol eller makrolidantibiotika.
+-   CYPA4-induktorer: Samtidig bruk av buprenorfin og CYP3A4-induktorer kan redusere
+    plasmakonsentrasjoner av buprenorfin, og potensielt føre til suboptimal behandling av
+    opioidavhengighet med buprenorfin. Det anbefales at pasienter som bruker buprenorfin
+    samtidig med enzyminduktorer (f.eks. fenobarbital, karbamazepin, fenytoin eller rifampicin)
+
+                                                   6

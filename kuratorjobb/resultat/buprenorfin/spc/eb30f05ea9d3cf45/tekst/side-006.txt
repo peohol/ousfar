@@ -1,0 +1,54 @@
+Bivirkninger i tabellformat
+Tabell 1 oppsummer:
+     Bivirkninger rapportert fra kliniske studier. Hyppigheten av mulige bivirkninger oppgitt
+        nedenfor, er definert på følgende måte: Svært vanlige (1/10), vanlige (1/100 til <1/10),
+        mindre vanlige (1/1000 til <1/100), sjeldne (1/10 000 til <1/1000), svært sjeldne
+        (<1/10 000), ikke kjent (bivirkninger som ikke er rapportert i registreringsstudier, kan ikke
+        anslås ut ifra tilgjengelige rapporter etter markedsføring).
+     De vanligst rapporterte bivirkningene under overvåkning av legemidlet etter markedsføring.
+        Bivirkninger som forekommer i minst 1% av rapportene fra helsepersonell og som kan
+        forventes, er inkludert. Hyppigheten av bivirkninger som ikke er ikke rapportert i pivotale
+        studier, kan ikke anslås og er oppgitt som ikke kjent.
+
+Tabell 1: Bivirkninger observert i pivotale kliniske studier og/eller under overvåkning etter
+markedsføring, angitt etter organsystem
+
+             Tabell 1. Bivirkninger rapportert fra kliniske studier
+Organklasse-    Svært          Vanlige           Mindre                Sjeldne             Ikke kjent
+system          vanlige        (≥ 1/100 til      vanlige            ( 1/10 000 til         (kan ikke
+                (≥ 1/10)       < 1/10)           ( 1/1000 til        < 1/1000)           anslås ut ifra
+                                                 < 1/100)                                 tilgjengelige
+                                                                                              data)
+Forstyrrelser i                                                         Overfølsomhet    Anafylaktisk
+immunsystemet                                                                            sjokk
+Stoffskifte- og                                                         Nedsatt
+ernærings-                                                              appetitt
+betingede
+sykdommer
+Psykiatriske                                         Forvirrings-       Dysfori
+lidelser                                             tilstand           Agitasjon
+                                                     Euforisk
+                                                     stemningsleie
+                                                     Nervøsitet
+                                                     Depresjon
+                                                     Psykotisk
+                                                     lidelse
+                                                     Hallusinasjoner
+                                                     Depersonal-
+                                                     isering
+Nevrologiske       Sedasjon       Hodepine           Dysartri           Kramper
+sykdommer          Svimmelhet                        Parestesi          Unormal
+                                                     Koma               koordinasjon
+                                                     Tremor
+Øyesykdommer                      Miose              Sløret syn
+                                                     Diplopi
+                                                     Svekket syn
+                                                     Konjunktivitt
+Sykdommer i        Vertigo                           Tinnitus
+øre og labyrint
+Hjerte-                                              Takykardi
+sykdommer                                            Bradykardi
+
+
+
+                                                                                                        6

@@ -1,0 +1,56 @@
+5.1    Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Analgetika, opioider, oripavinderivater. ATC-kode: N02A E01
+
+Virkningsmekanisme
+Buprenorfin er en μ-opioidagonist som virker som en full agonist når det gjelder analgesi, og som en
+partiell agonist når det gjelder respirasjonshemmende egenskaper. Den har dessuten antagonistisk
+virkning på kappa-opioidreseptoren.
+
+Andre farmakologiske virkninger: In vitro-studier og dyrestudier tyder på at naturlige opioider, som
+morfin, har en rekke virkninger på immunsystemets elementer. Den kliniske relevans av disse funnene
+er ikke kjent. Det er ikke kjent hvorvidt buprenorfin, som er et halvsyntetisk opioid, har lignende
+immunologiske virkninger som morfin.
+
+Buprenorfin medfører en mulig risiko for respirasjonsdepresjon. Det foreligger imidlertid evidens for
+at buprenorfin er en partiell agonist når det gjelder respirasjonshemmende virkning, og det er
+rapportert en maksimal effekt etter intravenøse doser på over 2 mikrogram/kg. Respirasjonsdepresjon
+ser ut til å forekomme sjelden ved terapeutiske doser med transdermale preparater (opptil
+40 mikrogram/time).
+
+Klinisk effekt og sikkerhet
+Effekt er vist i syv pivotale fase III-studier av opptil 12 ukers varighet, der det deltok pasienter med
+ikke-maligne smerter av ulik etiologi. Det deltok blant annet pasienter med moderate og sterke
+artrosesmerter og ryggsmerter. Buprenorfin depotplaster har gitt klinisk signifikant reduksjon i
+smertescore (omtrent 3 punkter på BS-11-skalaen) og signifikant bedre smertekontroll sammenlignet
+med placebo.
+
+Det er også blitt utført en langtids, åpen forlengelsesstudie (n=384) på pasienter med ikke-maligne
+smerter. Med fast dosering opprettholdt 63 % av pasientene smertekontroll i 6 måneder, 39 % av
+pasientene i 12 måneder, 13 % av pasientene i 18 måneder og 6 % i 21 måneder. Omtrent 17 % ble
+stabilisert på dosen 5 mikrogram/time, 35 % på dosen 10 mikrogram/time og 48 % på dosen
+20 mikrogram/time.
+
+5.2   Farmakokinetiske egenskaper
+
+Hvert depotplaster avgir buprenorfin i fast mengde i inntil syv dager. «Steady-state» oppnås etter
+første applisering. Etter fjerning av Bugnanto faller buprenorfin-konsentrasjonen med ca. 50 % i løpet
+av de første 12 timene. Den gjennomsnittlige halveringstiden er rapportert å være mellom 30 og 45
+timer deretter.
+
+Absorpsjon
+Etter applisering av Bugnanto diffunderer buprenorfin fra depotplasteret og gjennom huden. I kliniske
+farmakologiske studier var median tid til frisetting av buprenorfin fra buprenorfin depotplaster i en
+påviselig konsentrasjon (25 pikogram/ml), ca. 17 timer. Analyse av gjenværende buprenorfin i
+depotplastre etter 7 dagers bruk viser at 15 % av den opprinnelige mengden frigis. En
+biotilgjengelighetsstudie bekrefter sammenlignet med intravenøs administrasjon at denne mengden
+absorberes systemisk. Buprenorfin-konsentrasjonen er relativt konstant i 7-dagersperioden med
+depotplaster.
+
+Applikasjonssted:
+En studie med friske forsøkspersoner viste at den farmakokinetiske profilen til buprenorfin frigitt fra
+buprenorfin depotplaster er tilsvarende ved applisering på yttersiden av overarmen, øvre del av
+brystkassen, øvre del av ryggen og siden av brystkassen (midtre aksillærlinje, 5. interkostale
+mellomrom). Absorpsjonen varierer til en viss grad avhengig av applikasjonssted, og eksponeringen er
+på det meste omtrent 26 % høyere ved påføring på øvre del av ryggen sammenlignet med siden av
+brystkassen.

@@ -1,0 +1,59 @@
+Tabell 2 oppsummerer resultatene fra en klinisk studie der eksponering av buprenorfin ble fastslått
+etter administrasjon av buprenorfin/nalokson 2 mg/0,5 mg sublingvaltablett til friske personer, samt
+personer med varierende grad av nedsatt leverfunksjon.
+
+ Tabell 2: Effekt av nedsatt leverfunksjon på farmakokinetiske parametre for buprenorfin
+ etter admininstrering av buprenorfin/nalokson (endring i forhold til friske personer)
+ FK parameter       Lett nedsatt              Moderat nedsatt            Alvorlig nedsatt
+                    leverfunksjon             leverfunksjon              leverfunksjon
+                    (Child-Pugh klasse A)     (Child-Pugh klasse B)      (Child-Pugh klasse C)
+                    (n=9)                     (n=8)                      (n=8)
+ Buprenorfin
+ Cmax               1,2 ganger økning         1,1 ganger økning          1,7 ganger økning
+ AUClast            Tilsvarende               1,6 ganger økning          2,8 ganger økning
+                    kontrollgruppe
+
+Generelt økte plasmaeksponeringen for buprenorfin omtrent 3 ganger hos pasienter med alvorlig
+nedsatt leverfunksjon.
+
+5.3   Prekliniske sikkerhetsdata
+
+Akutt buprenorfintoksisitet ble observert hos mus og rotter etter oral og parenteral administrasjon.
+Median for letal dose (LD50) hos mus var 26, 94 og 261 mg/kg ved henholdsvis intravenøs,
+intraperitoneal og oral administrasjon. Median for letal dose (LD50) hos rotte var 35, 243 og 600
+mg/kg ved henholdsvis intravenøs, intraperitoneal og oral administrasjon.
+
+Når beaglehunder ble dosert kontinuerlig subkutant i én måned, rhesus-aper oralt i én måned og rotter
+og bavianer intramuskulært i seks måneder, ga buprenorfin bemerkelsesverdig lav vevstoksisitet og
+biokjemisk toksisitet.
+
+Etter teratologistudier med rotter og kaniner ble det konkludert med at buprenorfin ikke er
+embryotoksisk eller teratogent, og det har ingen vesentlig effekt på avvenning. Det var ingen
+bivirkninger på fertilitet eller generell reproduksjonsfunksjon hos rotter, men det ble observert
+fødselsvansker og økt neonatal mortalitet ved høyeste intramuskulære dose (5 mg/kg/døgn).
+
+Minimal til moderat gallegangshyperplasi med ledsagende peribiliær fibrose, forekom hos hunder etter
+52 uker med 75 mg/kg/døgn administrert oralt.
+
+
+6.    FARMASØYTISKE OPPLYSNINGER
+
+6.1   Hjelpestoffer
+
+Sitronsyre, vannfri
+Laktosemonohydrat
+Mannitol
+Natriumsitrat
+Natriumstearylfumarat
+Pregelatinisert stivelse (mais)
+
+6.2   Uforlikeligheter
+
+Ikke relevant
+
+6.3   Holdbarhet
+
+18 måneder
+
+
+                                                   11

@@ -1,0 +1,55 @@
+Buprenorfin er en μ-opioidagonist som virker som en full agonist med hensyn til smertelindring og
+partiell agonist med hensyn til respirasjonsdepressive egenskaper. Den har også antagonistaktivitet på
+kappa-reseptoren.
+
+Andre farmakologiske effekter
+In vitro og dyrestudier indikerer ulike effekter av naturlige opioider, som morfin, på komponenter av
+immunsystemet. Den kliniske betydningen av disse funnene er ukjent. Der er ikke kjent om
+buprenorfin, et semisyntetisk opioid, har immunologiske effekter tilsvarende morfin.
+
+Som med andre opioidanalgetika har buprenorfin en potensiell risiko for respirasjonsdepresjon.
+Det finnes likevel bevis som tyder på at buprenorfin er en partiell agonist på grunn av den
+respirasjonsdepressive aktiviteten, og en «takeffekt» har blitt rapportert etter intravenøse doser større
+enn 2 mikrogram/kg. Respirasjonsdepresjon ser ut til å forekomme sjelden ved terapeutiske doser av
+den transdermale legemiddelformen [inntil 40 mikrogram/t].
+
+Effekt er vist i syv pivotale fase III-studier med opptil 12 ukers varighet hos pasienter med ikke-
+maligne smerter av ulik etiologi. Disse inkluderer pasienter med moderate og sterke artrose- og
+ryggsmerter. Norspan har vist klinisk signifikant reduksjon i smertescore (ca. 3 punkter på BS-11-
+skalaen) og signifikant bedre smertekontroll sammenlignet med placebo.
+
+En langtids, åpen, forlengelsesstudie (n = 384) har også blitt gjennomført på pasienter med ikke-
+maligne smerter. Med fast dosering, opprettholdt 63 % av pasientene smertekontroll i 6 måneder, 39 %
+i 12 måneder, 13 % i 18 måneder og 6 % i 21 måneder. Omlag 17 % stabiliserte seg på Norspan 5 mg,
+35 % stabiliserte seg på Norspan 10 mg, og 48 % på Norspan 20 mg.
+
+5.2   Farmakokinetiske egenskaper
+
+Det er holdepunkter for enterohepatisk kretsløp.
+
+Studier med ikke-drektige og drektige rotter har vist at buprenorfin passerer blod-hjerne- og
+placentabarrierene. Konsentrasjoner i hjernen (som kun innholdt uendret buprenorfin) etter parenteral
+administrasjon var 2-3 ganger høyere enn etter oral administrasjon. Etter intramuskulær eller oral
+administrasjon synes buprenorfin å akkumuleres i fosterets gastrointestinallumen - trolig som følge av
+galleutskillelse, da enterohepatisk kretsløp ikke er fullt utviklet.
+
+Hvert plaster avgir buprenorfin i fast mengde i inntil syv dager, og "steady state" oppnås under første
+påføring. Etter fjerning av Norspan faller buprenorfinkonsentrasjonen med ca. 50 % i løpet av de
+første 12 timene. Den gjennomsnittlige halveringstiden er rapportert å være mellom 30 og 45 timer
+deretter.
+
+Absorpsjon
+
+Etter påføring av Norspan diffunderer buprenorfin fra plasteret gjennom huden. I kliniske
+farmakologistudier var median tid til frisetting av påviselige buprenorfinkonsentrasjoner
+(25 pikogram/ml) fra “Norspan 10 mikrogram/time” ca. 17 timer. Analyse av gjenværende
+buprenorfin i plastre etter 7 dagers bruk viser at ca. 15 % av den opprinnelige mengden frigis. En
+biotilgjengelighetsstudie bekrefter sammenlignet med intravenøs administrasjon at denne mengden
+absorberes systemisk. Buprenorfinkonsentrasjonen er relativt konstant i 7-dagersperioden med
+depotplaster.
+
+Påføringssted
+
+En studie med friske forsøkspersoner viste at den farmakokinetiske profilen til buprenorfin frigitt fra
+Norspan er tilsvarende ved påføring på yttersiden av overarmen, øvre del av brystkassen, øvre del av
+ryggen og siden av brystkassen (midtre aksillærlinje, 5. interkostale mellomrom). Absorpsjonen

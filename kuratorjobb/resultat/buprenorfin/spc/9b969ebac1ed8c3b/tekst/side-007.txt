@@ -1,0 +1,54 @@
+Norspan bør brukes med forsiktighet ved samtidig administrering med:
+
+Serotonerge legemidler slik som MAO-hemmere, selektive serotoninreopptakshemmere (SSRIer),
+serotonin- og noradrenalinreopptakshemmere (SNRIer) eller trisykliske antidepressiva, på grunn av økt
+risiko for serotonergt syndrom, en potensielt livstruende tilstand (se pkt. 4.4).
+
+Andre CNS-dempende midler: andre opioidderivater (analgetika og antitussiva inneholdende f.eks.
+morfin, dekstropropoksyfen, kodein, dekstrometorfan eller noskapin). Visse antidepressiva, sedative H1-
+reseptorantagonister, alkohol, anxiolytika, antipsykotika, klonidin og beslektede substanser. Disse
+kombinasjonene øker den CNS-dempende effekten.
+
+Samtidig bruk av Norspan og gabapentinoider (gabapentin og pregabalin) kan føre til
+respirasjonsdepresjon, hypotensjon, dyp sedasjon, koma eller død (se pkt. 4.4).
+
+Samtidig administrering av buprenorfin og antikolinergika eller legemidler med antikolinerg aktivitet
+(f.eks. trisykliske antidepressiva, antihistaminer, antipsykotika, muskelavslappende legemidler,
+antiparkinson-legemidler) kan resultere i økte antikolinerge bivirkninger.
+
+Samtidig bruk av opioider med sedativa, som benzodiazepiner eller lignende legemidler, øker risikoen
+for sedasjon, respirasjonsdepresjon, koma og dødsfall på grunn av additiv CNS-hemmende effekt. Dose
+og varighet ved samtidig bruk bør begrenses (se pkt. 4.4). Dette inkluderer sedativa eller hypnotika,
+generelle anestetika, andre opioidanalgetika, fenotiaziner, sentraltvirkende antiemetika, benzodiazepiner
+og alkohol.
+
+Opioidantagonister brukt i behandling av alkoholavhengighet: nalmefen eller naltrekson kan blokkere og
+redusere de terapeutiske effektene av buprenorfin og kan også utløse en plutselig inntreden av langvarige
+og intense opioidabstinenssymptomer hos personer som er avhengige av opioider. Samtidig
+administrasjon under behandling med transdermalt buprenorfin bør unngås (se seksjon 4.4)
+
+Buprenorfin beskrives å virke som en ren my-reseptoragonist ved typisk analgetiske doser. I kliniske
+studier med Norspan, ble forsøkspersoner som fikk rene my-agonistopioider (inntil 90 mg oral morfin
+eller orale morfinekvivalenter per døgn) overført til Norspan. Det var ingen rapporter om
+abstinenssyndrom under overgang fra opprinnelig opioid til Norspan (se pkt. 4.4).
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet
+
+Det finnes ingen eller begrensede data fra bruk av Norspan hos gravide kvinner. Dyrestudier har vist
+reproduksjonstoksiske effekter (se pkt. 5.3). Den potensielle risikoen for mennesker er ukjent.
+Buprenorfin passerer placenta og kan sammen med den aktive metabolitten norbuprenorfin påvises i
+serum, urin og mekonium hos nyfødte etter in utero eksponering.
+Mot slutten av svangerskapet kan høye buprenorfindoser gi respirasjonshemming hos den nyfødte, selv
+etter en kort administrasjonsperiode. Langvarig bruk av buprenorfin under graviditet trimester kan
+resultere i opioid neonatalt abstinenssyndrom. Norspan bør derfor ikke brukes under graviditet og hos
+kvinner i fertil alder som ikke bruker effektiv prevensjon med mindre den potensielle nytten overveier
+den potensielle risikoen for fosteret.
+
+Amming
+
+Buprenorfin skilles ut i morsmelk hos mennesker. Studier med rotter har vist at buprenorfin kan hemme
+amming. Tilgjengelige farmakodynamiske/toksikologiske data fra dyr har vist utskillelse av buprenorfin i
+melk (se pkt. 5.3). En risiko for nyfødte/spedbarn kan ikke utelukkes. Norspan skal brukes med
+forsiktighet ved amming.

@@ -1,0 +1,59 @@
+må iverksettes. Pasienten skal flyttes til et sted hvor fullt utstyr for gjenopplivning er tilgjengelig. Bruk
+av en opioidantagonist (dvs. nalokson) anbefales, til tross for den muligens beskjedne effekten på
+reversering av respirasjonssymptomene ved overdosering med buprenorfin, sammenlignet med
+naloksons effekt på fulle opioidagonister.
+
+Den lange virketiden til buprenorfin må tas i betraktning ved bestemmelse av nødvendig
+behandlingstid for å reversere effektene av en overdose. Symptomer på overdose av buprenorfin som
+tidligere var kontrollert, kan komme tilbake fordi nalokson kan skilles ut mye raskere enn buprenorfin.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Andre midler med virkning på nervesystemet. Midler ved
+opioidavhengighet, ATC-kode: N07B C01
+
+Virkningsmekanisme
+Buprenorfin er en partiell opioid-agonist/antagonist som bindes til µ- (mu) og κ- (kappa) reseptorene i
+hjernen. Effekten ved opioid vedlikeholdsbehandling tilskrives blant annet langsomt reversibel
+binding til µ-reseptorer, noe som over en lang periode reduserer den opioidavhengige pasientens
+stoffbehov.
+
+Klinisk effekt og sikkerhet
+I kliniske farmakologiske studier med opiatavhengige pasienter, hadde buprenorfin maksimal effekt på
+en rekke parametre, blant annet positiv sinnsstemning, “god effekt” og respirasjonsdepresjon.
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+Ved peroralt inntak gjennomgår buprenorfin førstepassasje-metabolisme i leveren og N-dealkylering
+og glukuronidering i tynntarmen og leveren. Peroral administrasjon av dette legemidlet er derfor ikke
+hensiktsmessig.
+
+Maksimal plasmakonsentrasjon oppnås 90 minutter etter sublingval administrasjon, og forholdet
+mellom maksimal dose og konsentrasjon er lineært mellom 2 mg og 16 mg.
+
+Distribusjon
+Absorpsjonen av buprenorfin følges av en rask distribusjonsfase, og halveringstiden er 2 til 5 timer.
+
+Biotransformasjon og eliminasjon
+Buprenorfin metaboliseres oksidativt ved 14-N-dealkylering til N-desalkyl-buprenorfin (også kalt
+norbuprenorfin) via cytokrom P450 CYP3A4 og ved glukuronidering av utgangsmolekylet og den
+dealkylerte metabolitten. Norbuprenorfin er en µ-agonist med svak egenaktivitet.
+
+Eliminasjonen av buprenorfin er bi- eller trieksponensiell, med en lang terminal elimineringsfase på
+20 til 25 timer. Dette skyldes delvis reabsorpsjon av buprenorfin etter hydrolyse av det konjugerte
+derivatet i tynntarmen, og delvis at molekylet er svært lipofilt.
+
+Buprenorfin utskilles hovedsakelig i feces via galleekskresjon av de glukuroniderte metabolittene (70
+%), mens resten utskilles via urinen.
+
+Nedsatt leverfunksjon
+Effekten av nedsatt leverfunksjon på farmakokinetikken til buprenorfin og nalokson ble evaluert i en
+studie etter markedsføring.
+
+
+
+                                                     10
