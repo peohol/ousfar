@@ -1,0 +1,10 @@
+{
+  "versjon": 1,
+  "stoffer": ["metadon"],
+  "oppgaver": ["spc"],
+  "spc": {
+    "adresser": [
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/16-11471.pdf"
+    ]
+  }
+}
