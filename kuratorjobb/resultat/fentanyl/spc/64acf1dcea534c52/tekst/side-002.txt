@@ -1,0 +1,52 @@
+Doseringen av Fentanyl Hameln bør individualiseres i henhold til alder, kroppsvekt,
+fysisk tilstand, underliggende patologisk forfatning, bruk av andre medikamenter og
+hvilken type kirurgisk inngrep og anestesi det dreier seg om.
+
+
+Voksne
+Det vanlige doseringsregimet for intravenøs injeksjon for voksne er som følger:
+
+                        Startdose                  Tilleggsdose
+ Spontan respirasjon    50-200*mikrogram           50 mikrogram
+                        300-3500 mikrogram
+ Assistert ventilasjon (opp til                    100-200 mikrogram
+                        50 mikrogram /kg)
+* Doser på mer enn 200 mikrogram leder til betydelig respirasjonsdepresjon og skal
+kun brukes under anestesi.
+
+Fentanyl Hameln 50 mikrogram/ml injeksjonsvæske, oppløsning kan også gis som en
+infusjon.
+
+Hos ventilerte pasienter blir en metningsdose på 1 mikrogram/kg/minutt de første
+10 minuttene etterfulgt av en infusjon på omtrent 0,1 mikrogram/kg/minutt.
+
+Alternativt kan metningsdosen gis som en bolus. Infusjonshastigheter bør titreres til
+hver individuell pasientrespons, og hastigheter på opptil 3 mikrogram/kg/minutt har
+blitt brukt i hjertekirurgi. Infusjon bør stoppes omtrent 40 minutter før operasjonen er
+avsluttet, med mindre kunstig ventilasjon skal gjennomføres også postoperativt.
+
+For spontant respirerende pasienter er lavere infusjonshastighet på
+0,05 - 0,08 mikrogram/kg/minutt nødvendig.
+
+Neuroleptanalgesi og neuroleptanestesi
+For neuroleptanalgesi krever voksne personer som regel en første dose på 50 til
+100 mikrogram (0,7-1,4 mikrogram/kg) fentanyl som injiseres sakte intravenøst i
+kombinasjon med et neuroleptisk middel (fortrinnsvis droperidol). Ved behov kan det
+gis nok en dose på 50 til 100 mikrogram (0,7-1,4 mikrogram/kg) fentanyl 30 til
+45 minutter etter første dose.
+
+For neuroleptanestesi under respirasjon krever voksne personer som regel en første
+dose på 200 til 600 mikrogram (2,8-8,4 mikrogram/kg) fentanyl som injiseres sakte
+intravenøst i kombinasjon med et neuroleptisk middel (fortrinnsvis droperidol).
+Doseringen avhenger av hvor langvarig og alvorlig det kirurgiske inngrepet er og av
+hvilket annet medikament som brukes for generell anestesi. For vedlikehold av
+anestesi kan det gis tilleggsdoser på 50 til 100 mikrogram (0,7-1,4 mikrogram/kg)
+fentanyl hvert 30. til 45. minutt. Tidsintervallene og dosene for slik
+tilleggsadministrering må tilpasses til det kirurgiske inngrepets forløp.
+
+Smertebehandling på intensivavdeling
+Ved bruk under smertebehandling av ventilerte pasienter på intensivavdeling må
+doseringen av fentanyl tilpasses individuelt i henhold til smerteforløp og andre
+medikamenter som gis sammen med fentanyl. Vanligvis ligger de første doser
+innenfor et område mellom 50 og 100 mikrogram i.v. (0,7-1,4 mikrogram/kg), men de
+kan titreres høyere ved behov. Første dose følges som regel av gjentatte injeksjoner i

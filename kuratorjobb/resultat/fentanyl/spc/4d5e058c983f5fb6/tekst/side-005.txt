@@ -1,0 +1,51 @@
+Pediatriske pasienter:
+Hos et spontant pustende barn bør smertestillende kun brukes som en del av anestesiprosedyren, eller
+gis som en del av sedasjons-/smertestillende prosedyren. Personellet skal ha erfaring og operere i et
+miljø som kan behandle plutselig stivhet i brystet som krever intubasjon eller apné som krever assistert
+pusting.
+
+Fentanyl Piramal 2 ml ampulle: Dette legemidlet inneholder mindre enn 1 mmol natrium (23 mg) per
+2 ml ampulle, og er så godt som «natriumfritt».
+
+Fentanyl Piramal 10 ml ampulle: Dette legemidlet inneholder 35,4 mg natrium per 10 ml ampulle.
+Dette tilsvarer 1,8 % av WHOs anbefalte maksimale daglige inntak av natrium på 2 g for en voksen
+person.
+
+
+
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Effekt av andre legemidler på fentanyl
+
+Sentralnervesystemdempende midler
+Barbiturater, benzodiazepiner eller lignende legemidler, nevroleptika, generelle anestetika,
+gabapentinoider (gabapentin og pregabalin) og andre ikke-selektive sentralnevesystemdempende
+midler (f.eks. alkohol) kan øke opioidindusert respirasjonsdepresjon. Dosen av fentanyl skal være
+lavere enn vanlig hos pasienter som får disse sentralnervesystemdempende midlene. På grunn av den
+additive effekten av sentralnervesystemdempende midler, øker samtidig bruk av opioider og
+beroligende legemidler som benzodiazepiner og lignende legemidler risikoen for
+respirasjonsdepresjon, alvorlig sedasjon, koma og død. Doseringen og varigheten av samtidig
+behandling skal begrenses (se pkt. 4.4).
+
+Cytokrom P450 3A4 (CYP3A4) enzymhemmere
+Fentanyl er et legemiddel med høy clearance som metaboliseres raskt og effektivt, hovedsakelig av
+CYP3A4-enzymet. Samtidig bruk av en CYP3A4-hemmer og fentanyl kan redusere clearance av
+fentanyl. Ved administrering av en enkelt dose Fentanyl Piramal kan risikoen for
+respirasjonsdepresjon forlenges, og pasienten kan derfor trenge spesialbehandling og må overvåkes
+lenger enn vanlig. Ved gjentatte doser av Fentanyl Piramal kan risikoen for akutt og/eller forsinket
+respirasjonsdepresjon øke, og det kan derfor være nødvendig å redusere dosen av Fentanyl Piramal for
+å unngå fentanylopphopning. Oral ritonavir (en potent CYP3A4-hemmer) reduserte clearance av en
+enkelt intravenøs dose Fentanyl Piramal med to tredjedeler, men påvirket ikke maksimal
+fentanylplasmakonsentrasjon. Oral administrering av itrakonazol (en annen potent CYP3A4-hemmer)
+i en dose på 200 mg daglig i fire dager påvirket imidlertid ikke farmakokinetikken til en enkelt
+intravenøs dose Fentanyl Piramal signifikant. Samtidig bruk av andre sterke eller svakere CYP3A4-
+hemmere, som vorikonazol eller flukonazol, med fentanyl kan også øke og/eller forlenge
+fentanyleksponeringen.
+
+Monoaminoksidasehemmere (MAO-hemmere)
+Det anbefales vanligvis at MAO-hemmere seponeres to uker før kirurgiske eller andre
+anestesiprosedyrer. Fentanyl har imidlertid blitt brukt i kirurgiske prosedyrer og anestesi uten
+bivirkninger, selv hos pasienter som bruker MAO-hemmere.
+
+Serotonerge legemidler

@@ -1,0 +1,56 @@
+Dette legemidlet inneholder mindre enn 1 mmol natrium (23 mg) i hver tablett, og er så godt som
+“natriumfritt”.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Samtidig bruk av legemidler som inneholder natriumoksybat og fentanyl er kontraindisert (se pkt. 4.3).
+Behandling med natriumoksybat skal seponeres før oppstart av behandling med Abstral.
+
+Fentanyl metaboliseres av CYP3A4. Stoffer som hemmer CYP3A4-aktivitet, slik som
+makrolidantibiotika (f. eks. erytromycin), antimykotika av azoltypen (f. eks. ketokonazol, itrakonazol)
+og visse proteasehemmere (f. eks. ritonavir) kan øke biotilgjengeligheten til fentanyl ved å senke dens
+systemiske clearance, noe som potensielt kan øke eller forlenge opioidvirkningene. Grapefruktjuice er
+også kjent for å hemme CYP3A4. Samtidig administrasjon med legemidler som induserer CYP3A4-
+aktivitet, slik som midler mot mykobakterier (f.eks. rifampicin, rifabutin), antikonvulsiva (f.eks.
+karbamazepin, fenytoin og fenobarbital) og naturmidler (f.eks. johannesurt (Hypericum perforatum))
+kan redusere effekten av fentanyl. CYP3A4-indusere har en tidsavhengig effekt, og det kan ta minst to
+uker før maksimal effekt er nådd etter igangsatt behandling. Motsatt kan det ta minst to uker før
+CYP3A4-induksjon avtar ved seponering. Pasienter som får fentanyl, og som avslutter behandling
+med eller reduserer dosen av CYP3A4-indusere, kan ha risiko for økt fentanylaktivitet eller toksisitet.
+Fentanyl bør derfor gis med forsiktighet til pasienter hvis det blir administrert samtidig med CYP3A4-
+hemmere og/eller -indusere.
+
+Samtidig bruk av andre CNS-dempende midler, slik som andre morfinderivater (analgetika og
+antitussiva), generelle anestetika, gabapentinoider (gabapentin og pregabalin), muskelavslappende
+midler, sedative antidepressiva, sedative H1-antihistaminer, barbiturater, anxiolytika (dvs.
+benzodiazepiner), hypnotika, antipsykotika, klonidin og beslektede stoffer kan forårsake økte CNS-
+dempende virkninger, økt risiko for sedasjon, respirasjonsdepresjon, hypotensjon, koma og dødsfall
+grunnet additiv CNS-dempende virkning. Dose og varighet av samtidig bruk bør begrenses (se
+pkt. 4.4).
+
+Alkohol forsterker de sedative virkningene til morfinbaserte analgetika, derfor anbefales ikke samtidig
+administrasjon av Abstral med alkoholholdige drikker eller legemidler som inneholder alkohol.
+
+Abstral anbefales ikke til bruk hos pasienter som har fått monoaminooksidase (MAO)-hemmere de
+siste 14 dager fordi alvorlig og uforutsigbar forsterkning av MAO-hemmere har blitt rapportert med
+opioidanalgetika.
+
+Samtidig bruk av delvis opioide agonister/antagonister (f. eks. buprenorfin, nalbufin, pentazocin)
+anbefales ikke. De har høy affinitet til opioide reseptorer med lav egenaktivitet og motvirker derfor
+delvis den analgetiske effekten av fentanyl. Dette kan fremkalle abstinenssymptomer hos
+opioidavhengige pasienter.
+
+Serotonerge legemidler
+Samtidig administrering av fentanyl med et serotonergt stoff, som en selektiv serotonin
+reopptakshemmer (SSRI) eller en serotonin norepinefrin reopptakshemmer (SNRI) eller en
+monoaminooksidasehemmer (MAO-hemmer), kan øke risikoen for serotonergt syndrom, en potensielt
+livstruende tilstand.
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet
+Sikkerheten til fentanyl hos gravide har ikke blitt fastslått. Dyrestudier har vist reproduksjons-
+toksisitet med svekket fertilitet hos rotter (se pkt. 5.3). Risikoen for mennesker er ukjent. Fentanyl bør
+bare brukes under graviditet hvis strengt nødvendig.
+
+Langtidsbehandling under graviditet kan forårsake abstinenssymptomer hos nyfødte.

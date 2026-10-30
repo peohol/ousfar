@@ -1,0 +1,57 @@
+Overdosering av fentanyl manifesteres ved en utvidelse av de farmakologiske effektene.
+Respirasjonsdepresjon kan forekomme, som kan variere fra bradypné til apné.
+Toksisk leukoencefalopati er observert ved overdosering av fentanyl.
+
+Behandling
+Ved hypoventilering eller apné må det gis oksygen, og om nødvendig må ventilasjon gis.
+Ved respirasjonsdepresjon bør det gis en opioidantagonist. Dette utelukker ikke andre mer direkte
+mottiltak.
+Den kortere virkningsvarigheten av opioidantagonisten, sammenlignet med fentanyl, bør tas i
+betraktning. Gjentatt administrering av opioidantagonisten kan være nødvendig. Dersom
+respirasjonsdepresjon er ledsaget av muskelstivhet, kan et muskelavslappende legemiddel
+administreres - dersom nødvendig - for å lette pusten.
+Pasienten bør observeres nøye. Kroppstemperatur og tilstrekkelig væskeinntak må opprettholdes.
+Dersom hypotensjon er alvorlig eller vedvarende, må hypovolemi tas i betraktning. I dette tilfellet bør
+passende parenterale væsker administreres.
+
+
+5.      FARMAKOLOGISKE EGENSKAPER
+
+5.1     Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: anestetika, opioidanestetika, ATC-kode: N01A H01
+
+Fentanyl er et syntetisk opioid med en farmakologisk effekt av μ-agonist.
+Fentanyl er et potent opioid smertestillende legemiddel. Fentanyl kan brukes som et smertestillende
+supplement i generell anestesi eller som et bedøvelsesmiddel alene. En dose på 100 mikrogram
+(2,0 ml) har en lignende smertestillende effekt som 10 mg morfin. Fentanyl har en rask virkning.
+Maksimal smertestillende effekt og depressiv effekt på respirasjon finner sted i løpet av få minutter.
+Gjennomsnittlig virkningstid for den smertestillende effekten er omtrent 30 minutter etter en enkelt
+dose opp til 100 mikrogram. Dybden av smertestillende er doseavhengig og kan justeres til
+smertenivået i den kirurgiske prosedyren.
+
+5.2     Farmakokinetiske egenskaper
+
+Distribusjon
+Etter intravenøs injeksjon avtar fentanyl-plasmakonsentrasjoner raskt, med påfølgende
+distribusjonshalveringstid på omtrent 1 minutt og omtrent 15 minutter og en terminal
+eliminasjonshalveringstid på omtrent 8 timer. Fentanyl har en Vc (sentralt fordelingsvolum) på
+omtrent 15 l og en total Vdss (fordelingsvolum ved steady state) på omtrent 400 l. Fentanyl-binding til
+plasmaproteiner er omtrent 84 %.
+
+Biotransformasjon
+Fentanyl metaboliseres raskt, først og fremst i leveren, av CYP3A4. Fentanyl har ingen aktive
+metabolitter, hovedmetabolitten er norfentanyl. Utskillelse er omtrent 600 ml/min. In vitro-studier med
+midazolam som substrat fant at fentanyl hemmet CYP3A4.
+
+Eliminasjon
+Omtrent 75 % av den administrerte dosen skilles ut i urinen innen 24 timer. Kun 10 % av dosen som
+utskilles i urinen er til stede som uendret substans.
+
+Spesielle populasjoner
+
+Barn
+Etter intravenøs administrering er plasma proteinbinding av fentanyl lavere hos nyfødte enn hos
+voksne. Hos prematurfødte nyfødte er den høyere (omtrent 77 %) enn hos terminfødte nyfødte
+(omtrent 62 %). Utskillelse per kg kroppsvekt og totalt fordelingsvolum etter intravenøs
+administrering av fentanyl er høyere hos spedbarn og barn enn hos voksne. Dette kan føre til behovet

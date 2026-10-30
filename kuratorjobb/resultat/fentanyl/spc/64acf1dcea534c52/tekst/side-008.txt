@@ -1,0 +1,52 @@
+med fentanyl kan risikoen for akutt og/eller forsinket respirasjonsdepresjon øke, og en
+dosereduksjon av fentanyl kan være nødvendig for å unngå akkumulering av fentanyl.
+Peroralt ritonavir (en potent CYP3A4-hemmer) reduserte clearance klarering av en
+intravenøs enkeltdose av fentanyl med to tredjedeler, selv om maksimal
+plasmakonsentrasjon av fentanyl ikke ble påvirket. Itrakonazol (en annen potent
+CYP3A4-hemmer) gitt som 200 mg/døgn oralt i 4 døgn, hadde imidlertid ingen
+signifikant effekt på farmakokinetikken til en intravenøs enkeltdose av fentanyl.
+Koadministrering av andre potente eller mindre potente CYP3A4-hemmere, som
+vorikonazol eller flukonazol, og Fentanyl Hameln kan også resultere i økt og/eller
+forlenget eksponering for fentanyl.
+
+Monoaminoksidasehemmere (MAO-hemmere)
+På pasienter som var blitt behandlet med MAO-inhibitorer innen 14 dager før opioid-
+administreringen, er det blitt observert livstruende interaksjon med petidin på det
+sentrale nervesystem (f.eks. agitasjon, muskelstivhet, høy feber, kramper) og på
+respirasjons- og kretsløpsfunksjonene (f.eks. kretsløpsdepresjon, hypotensjon,
+hemodynamisk instabilitet og koma) og dette kan ikke utelukkes med fentanyl.
+MAO-inhibitorer blokkerer også enzymene som metaboliserer sentralt aktive
+substanser (sedativer, antihistaminer, opioider, etc.). Konsekvensen kan være at
+fentanyl får en intensiv og vedvarende effekt, inkl. respirasjonsdepresjon.
+Det anbefales vanligvis å seponere MAO-hemmere 2 uker før kirurgi eller anestesi.
+Flere rapporter beskriver imidlertid problemfri bruk av fentanyl under kirurgi eller
+anestesi hos pasienter som samtidig behandles med MAO-hemmere.
+
+Serotoninerge legemidler
+Samtidig bruk av fentanyl og et serotoninergt legemiddel, som en selektiv
+serotoninreopptakshemmer (SSRI), en serotonin-noradrenalinreopptakshemmer
+(SNRI) eller en monoaminoksidase (MAO)-hemmer, kan øke risikoen for serotonergt
+syndrom, en potensielt livstruende tilstand.
+
+Andre medisiner
+Ved høyere doser fentanyl kan en samtidig anvendelse av lystgass eller til og med små
+doser diazepam føre til en forstyrret hjerte-kretsløpfunksjon.
+
+Samtidig anvendelse av droperidol kan føre til senkning av blodtrykket, men i noen
+tilfeller har man også observert en økning av blodtrykket. Lungearterietrykket kan bli
+redusert. Videre kan det oppstå skjelving, uro og postoperative hallusinasjoner.
+
+En forutgående administrasjon av cimetidin kan føre til høynet plasmanivå av
+fentanyl.
+
+Samtidig anvendelse av klonidin kan forsterke virkningen av fentanyl og spesielt
+forlenge fentanylindusert respirasjonsdepresjon.
+
+Vekuronium kan forårsake hemodynamisk depresjon hvis det kombineres med
+fentanyl. Signifikant reduksjon av hjertefrekvens, hovedarterietrykk og hjertets
+minuttvolum kan oppstå, uten at dette er avhengig av dosen vekuronium.
+
+Bradykardi kan utvikle seg ved kombinert bruk av atrakurium og fentanyl.
+
+Når fentanyl kombineres med baklofen, forsterkes og forlenges virkningen av
+fentanyl.

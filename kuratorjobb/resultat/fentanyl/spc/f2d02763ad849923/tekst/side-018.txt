@@ -1,0 +1,54 @@
+Linearitet/ikke-linearitet
+Serumkonsentrasjonen av fentanyl som oppnås er proporsjonal med fentanylplasterets størrelse.
+Farmakokinetikken til transdermal fentanyl endres ikke ved gjentatt applikasjon.
+
+Farmakokinetiske/farmakodynamiske forhold
+Det er stor interindividuell variasjon i fentanyls farmakokinetikk, i forholdet mellom
+fentanylkonsentrasjon, terapeutisk effekt og bivirkninger samt i opioidtoleranse. Laveste effektive
+fentanylkonsentrasjon avhenger av smerteintensitet og tidligere bruk av opioidbehandling. Både
+laveste effektive konsentrasjon og toksisk konsentrasjon øker ved toleranse. Et optimalt terapeutisk
+konsentrasjonsområde for fentanyl kan derfor ikke fastslås. Justering av individuell fentanyldose skal
+baseres på pasientens respons og toleransenivå. Det må tas hensyn til en forsinkelse på 12 til 24 timer
+etter applikasjon av første depotplaster og etter en doseøkning.
+
+Spesielle populasjoner
+
+Eldre
+Data fra studier med intravenøs fentanyl tyder på at eldre pasienter kan ha redusert clearance og
+forlenget halveringstid og kan være mer følsomme overfor legemidlet enn yngre pasienter. I en studie
+gjennomført med fentanyl-plastre hadde friske eldre forsøkspersoner en farmakokinetikk som ikke
+skilte seg signifikant fra den hos friske unge forsøkspersoner, selv om maksimal serumkonsentrasjon
+tenderte til å være lavere, og gjennomsnittlig halveringstid var forlenget til ca. 34 timer. Eldre
+pasienter bør observeres nøye for tegn på fentanyltoksisitet, og dosen reduseres om nødvendig (se pkt.
+4.4).
+
+Nedsatt nyrefunksjon
+Effekten av nedsatt nyrefunksjon på farmakokinetikken til fentanyl forventes å være begrenset da
+urinutskillelse av uforandret fentanyl er mindre enn 10 % og ingen kjente aktive metabolitter
+elimineres via nyrene. Det bør imidlertid utvises forsiktighet da effekten av nedsatt nyrefunksjon på
+farmakokinetikken til fentanyl ikke er undersøkt (se pkt. 4.2 og 4.4).
+
+Nedsatt leverfunksjon
+Pasienter med nedsatt leverfunksjon bør observeres nøye for tegn på fentanyltoksisitet og Fentanyl
+ratiopharm-dosen reduseres om nødvendig (se pkt. 4.4). Data fra forsøkspersoner med kirrhose og
+simulerte data for forsøkspersoner med ulik grad av nedsatt leverfunksjon behandlet med transdermal
+fentanyl, tyder på at fentanylkonsentrasjonen kan være økt og fentanylclearance kan være redusert
+sammenlignet med forsøkspersoner med normal leverfunksjon. Simuleringene tyder på at AUC ved
+”steady-state” hos pasienter med Child-Pugh grad B leversykdom (Child-Pugh skår = 8) vil være ca.
+1,36 ganger større sammenlignet med hos pasienter med normal leverfunksjon (grad A; Child-Pugh
+skår = 5,5). For pasienter med grad C leversykdom (Child-Pugh skår = 12,5) tyder resultatene på at
+fentanylkonsentrasjonen akkumuleres ved hver administrering, noe som medfører at disse pasientene
+har ca. 3,72 ganger større AUC ved ”steady-state”.
+
+Pediatrisk populasjon
+Fentanylkonsentrasjoner ble målt hos mer enn 250 barn i alderen 2 til 17 år som fikk applisert fentanyl
+depotplaster i doseområdet 12,5 til 300 mikrog/time. Når man justerer for kroppsvekt synes clearance
+(l/time/kg) å være ca. 80 % høyere hos barn i alderen 2 til 5 år og 25 % høyere hos barn i alderen 6 til
+10 år, sammenlignet med barn i alderen 11 til 16 år som forventes å ha tilsvarende clearance som
+voksne. Disse funnene er tatt i betraktning ved bestemmelse av doseringsanbefalinger for pediatriske
+pasienter (se pkt. 4.2 og 4.4).
+
+5.3   Prekliniske sikkerhetsdata
+
+Prekliniske data indikerer ingen spesiell fare for mennesker basert på konvensjonelle studier av
+toksisitetstester ved gjentatt dosering.

@@ -1,0 +1,66 @@
+5.                                     FARMAKOLOGISKE EGENSKAPER
+
+5.1                                    Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Analgetika, opioider, fenylpiperdinderivater. ATC-kode: N02AB03
+
+Fentanyl er et potent µ-opioidanalgetikum med raskt innsettende analgetisk virkning og kort virketid.
+Fentanyl er omtrent 100 ganger mer potent enn morfin som analgetikum. Sekundære virkninger av
+fentanyl på sentralnervesystemet (CNS), respiratorisk og gastrointestinal funksjon er typisk for
+opioidanalgetika, og er ansett for å være klasseeffekter. Disse kan inkludere respirasjonsdepresjon ,
+bardykardi, hypotermi, obstipasjon, miose, fysisk avhengighet og eufori.
+
+Opioider kan påvirke hypothalamus-hypofyse-binyre- eller –gonadeakser. Noen endringer som kan ses
+er en økning i serumprolaktin og en reduksjon i plasmakortisol og -testosteron. Kliniske tegn og
+symptomer kan manifesteres av disse hormonforandringene.
+
+De analgetiske virkningene av fentanyl er relaterte til blodkonsentrasjonen av virkestoffet, og hos
+opioidnaive pasienter er minste effektive analgetiske serumkonsentrasjon av fentanyl 0,3-1,2 ng/ml,
+mens blodkonsentrasjoner på 10-20 ng/ml gir kirurgisk anestesi og uttalt respirasjonsdepresjon.
+
+Hos pasienter med kroniske kreftsmerter på stabile vedlikeholdsdoser av opioider ble det observert
+statistisk signifikant forbedring av smerteintensitetsforskjell med Abstral sammenlignet med placebo
+fra 10 minutter etter administrasjon (se figur 1 nedenfor), med signifikant lavere behov for
+tilleggsanalgesi (”rescue”-terapi).
+
+
+Figur 1 Gjennomsnittlig differanse på smerteintensitet fra baselinjen (± SE) for Abstral sammenlignet
+                       med placebo (målt med 0-10 Likert-skala)
+
+
+                             4                                                                                  P=0.0004
+
+                                                                                     P=0.0002
+ Gjennomsnittlig smerteintensitet
+
+
+
+
+                             3
+
+                                                                     P=0.0011
+
+                             2
+                                                          P=0.0055
+ Difference
+
+
+
+
+                             1
+                     Mean Pain Intensity Difference
+                                                                                                 Placebo    Abstral
+
+
+                             0
+                                                      0          10             20        30      40       50          60
+                                                                                     Tid (min)
+
+Sikkerheten og effekten av Abstral har blitt evaluert hos pasienter som tar legemidlet ved starten av
+episoden med gjennombruddssmerter. Forebyggende bruk av Abstral for forutsigbare smerteepisoder
+ble ikke undersøkt i de kliniske forsøkene.
+
+Fentanyl gir som alle andre µ-opioidreseptoragonister doseavhengig respirasjonsdepresjon. Risikoen
+er høyere hos opioidnaive personer enn hos pasienter med sterke smerter eller som får kronisk
+opioidbehandling. Langtidsbehandling med opioider fører vanligvis til utvikling av toleranse mot
+sekundære virkninger.

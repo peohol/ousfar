@@ -1,0 +1,57 @@
+Farmakoterapeutisk gruppe: Opioidanestetika. ATC-kode: N01A H01.
+
+Fentanyl er et kraftig narkotisk smertestillende legemiddel.
+
+Virkningsmekanisme
+Fentanyl er en syntetisk opioidagonist som hovedsakelig virker ved å interagere med opioide μ-
+reseptorer i CNS.
+
+Farmakodynamiske effekter
+Fentanyl har en lignende farmakodynamisk profil som morfin, men har en sterkere analgetisk og
+respiratorisk hemmende effekt.
+
+Det kan brukes som et smertestillende supplement i generell anestesi eller som eneste anestesi
+legemiddel som brukes i prosedyren. Fentanyl opprettholder den kardiovaskulære stabiliteten og
+bedøver hormonendringene forbundet med stress i store doser. En dose på ett hundre mikrogram
+(2,0 ml) tilsvarer omtrent 10 mg morfin når det gjelder sin smertestillende effekt. Effekten starter
+raskt. Imidlertid kan det hende at den maksimale smertestillende og respirasjonsdempende effekten
+ikke observeres før det går flere minutter. Varigheten av smertestillende effekt er omtrent 30 minutter
+etter en enkel intravenøs dose (opptil 100 μg). Dybden av smertelindring avhenger av dosen og kan
+justeres i henhold til smertenivået ved det aktuelle kirurgiske inngrepet.
+
+Som andre opioidbaserte smertestillende midler kan Fentanyl Piramal også forårsake muskelstivhet,
+eufori, miose og bradykardi, avhengig av dose og administrasjonshastighet.
+
+Histamin- og hudtester hos mennesker og in vivo-tester hos hunder har vist at klinisk signifikant
+histaminfrigjøring sjelden forekommer ved bruk av fentanyl.
+
+Alle effekter av fentanyl kan reverseres umiddelbart og fullstendig ved administrering av en spesifikk
+opioidantagonist som nalokson.
+
+5.2   Farmakokinetiske egenskaper
+
+Fentanyl er et syntetisk opioid med farmakologiske µ-agonisteffekter.
+
+Distribusjon
+Plasmakonsentrasjonen av fentanyl reduseres raskt etter intravenøs injeksjon. Halveringstidene for
+sekvensiell distribusjon er omtrent 1 minutt og 18 minutter, og den terminale
+eliminasjonshalveringstiden er 475 minutter. Distribusjonsvolumet for fentanyl i sentral tilstand (Vc )
+er 13 l og det totale distribusjonsvolumet ved stabil tilstand (Vdss ) er 339 l. Fentanyl er ca. 84 %
+bundet til plasmaproteiner.
+
+Biotransformasjon
+Fentanyl metaboliseres raskt i leveren av CYP3A4-enzymet, og hovedmetabolitten er norfentanyl.
+Fentanylclearance er 574 ml/min.
+
+Eliminasjon
+Omtrent 75 % av den administrerte dosen utskilles innen 24 timer i urinen, og kun 10 % av den
+eliminerte dosen er uendret.
+
+Spesialgrupper
+
+Barn
+Hos en nyfødt er fentanyl omtrent 62 % proteinbundet, noe som er mindre enn hos voksne. Hos
+spedbarn og barn er utskillelsen og distribusjonsvolumet høyere. Derfor kan det være nødvendig å øke
+dosen med fentanyl.
+
+Nyresvikt

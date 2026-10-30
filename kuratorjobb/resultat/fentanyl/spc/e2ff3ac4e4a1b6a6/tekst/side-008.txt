@@ -1,0 +1,61 @@
+for en høyere fentanyldose per kg. Den terminale halveringstiden er lengre hos nyfødte. CYP3A4-
+aktiviteten er svært lav ved fødselen, men øker postpartum for å oppnå 30 til 40 % av voksennivået 1
+måned postpartum. Verdier for utskillelse, fordelingsdistribusjon ved steady state og terminal
+halveringstid for barn i forskjellige aldre er oppført i tabellen nedenfor.
+
+Tabell 2 Utskillelse, steady state fordelingsvolum og terminal halveringstid hos barn
+
+                                       KI                      Vss               Beta T½
+                                  (ml/kg/min)*              (l/kg)*               (timer)
+ Spedbarn
+                                    3,4 – 58,7            1,3 – 30,3           1,3 – 15,9
+ 1-26 dager postpartum
+ Spedbarn
+                                   21.9 – 32.3            6,0 – 9,5            3,1 – 15,5
+ 48-71 dager postpartum
+ Barn
+                                   11,5 ± 4,19           3,06 ± 1,02           4,1 ± 1,3
+ 3,17 ± 0,68 years
+ Ungdom
+                                   7,05 ± 1,24           1,92 ± 1,04           3,5 ± 1,2
+ 12 ± 1,73 years
+* Verdiene for steady state-utskillelse og fordelingsvolum ble normalisert for kroppsvekt
+
+Nedsatt nyrefunksjon
+Data fra en studie der fentanyl ble administrert intravenøst til pasienter som gjennomgikk
+nyretransplantasjon, antyder at utskillelse av fentanyl kan bli redusert i denne pasientpopulasjonen.
+Dersom pasienter med nedsatt nyrefunksjon får Fentanyl Kalceks, bør de observers nøye og dosen bør
+reduseres om nødvendig (se pkt. 4.2).
+
+Voksne pasienter med brannsår
+Etter en bolus eller en kortvarig intravenøs infusjon med fentanyl økes utskillelsen med maksimalt 44
+%, sammen med et større fordelingsvolum. Dette resulterer i lavere plasmakonsentrasjon av fentanyl.
+Dette kan nødvendiggjøre en økning i fentanyldosen.
+
+Overvektige pasienter
+Det har blitt observer en økning i total utskillelse av fentanyl med økt kroppsvekt. For pasienter med
+KMI > 30 kg/m2, øker utskillelse med omtrent 10 % per 10 kg økning i LBM (lean body mass).
+
+5.3     Prekliniske sikkerhetsdata
+
+In vitro viste fentanyl, som andre opioide smertestillende legemidler, mutagene effekter i en
+pattedyrcelletest kun i cytotoksiske konsentrasjoner, sammen med metabolsk aktivering. Fentanyl
+viste ingen mutagenisitet i in vivo-studier med gnagere og bakterietester.
+I en toårig karsinogenisitetsstudie på rotter var fentanyl ikke assosiert med økt forekomst av svulster.
+
+Noen tester på hunnrotter avdekket redusert fruktbarhet, så vel som dødelighet hos embryoer. Disse
+funnene var relatert til toksisitet i hunner og var ikke en direkte effekt av legemidlet på det utviklende
+embryoet. Det var ingen bevis for teratogene effekter.
+
+
+6.      FARMASØYTISKE OPPLYSNINGER
+
+6.1     Hjelpestoffer
+
+Natriumklorid
+Natriumhydroksid (for justering av pH)
+Vann til injeksjonsvæsker
+
+6.2     Uforlikeligheter
+
+Dette legemidlet skal ikke blandes med andre legemidler.

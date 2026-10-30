@@ -1,0 +1,56 @@
+Høy dose: Induksjon av anestesi kan brukes ved store, langvarige kirurgiske prosedyrer (f.eks.
+hjertekirurgi) i området 20–50 mikrog/kg. I dette tilfellet vil stressresponsen være skadelig for
+pasientens velvære. For tilstrekkelige analgetiske og minimale hemodynamiske endringer er de
+ytterligere dosene 5–20 mikrog/kg/t. Doseringen avhenger av vanskelighetene ved operasjonen
+og eventuelle andre anestesimidler som brukes med fentanyl. Ved slike høye doser skal
+pasientens pusting støttes og overvåkes på intensivavdelingen flere timer etter operasjonen.
+
+Svært overvektige pasienter
+Hos svært overvektige pasienter vil beregning av dosen basert på vekt utgjøre en risiko for
+overdosering. For svært overvektige pasienter bør dosen være basert på et estimat av fettfri
+kroppsvekt og ikke bare på vekt.
+
+Nyresvikt
+Hos pasienter med nedsatt nyrefunksjon bør en lavere dose av Fentanyl Piramal vurderes, og
+pasienten bør overvåkes nøye for tegn på fentanyltoksisitet (se pkt. 5.2).
+
+Eldre og svekkede pasienter
+Som med andre opioider bør fentanyldosen reduseres hos eldre (> 65 år) og svekkede
+pasienter.
+
+Bruk som anestesi for barn
+For induksjon og vedlikehold av anestesi hos barn i alderen 2–11 år anbefales en dose på 1–3
+mikrogram/kg. Ytterligere doser på 1–2 mikrogram/kg hvert 30–45 minutt.
+
+Dosering for barn i alderen 12 til 17 år: Følg doseringen som for voksne.
+
+Barn 2 til 11 år
+Det vanlige doseringsregimet for barn er som følger:
+
+                              Alder                    Første dose                Tilleggsdose
+    Spontan                   2–11 år                  1-3 mikrog/kg              1–2 mikrog/kg
+    respirasjon                                                                   hvert        30–
+                                                                                  45. minutt
+    Assistert                 2–11 år                  1–                         1–2 mikrog/kg
+    ventilasjon                                        3 mikrogram/kg             hvert        30–
+                                                                                  45. minutt
+
+Hos et spontant pustende barn bør smertestillende kun brukes som en del av
+anestesiprosedyren, eller gis som en del av sedasjons-/smertestillende prosedyren. Personellet
+skal ha erfaring og operere i et miljø der akutt bryststivhet som krever intubasjon eller apné
+som krever assistert pust kan behandles (se avsnitt 4.4).
+
+Administrasjonsmåte
+
+Intravenøs administrering (i.v.) enten som en bolus eller som en infusjon.
+Fentanyl Piramal 50 mikrog/ml injeksjonsvæske, oppløsning kan blandes med 0,9 %
+natriumklorid eller 5 % glukose infusjonsoppløsninger. Disse oppløsningene er kompatible
+med infusjonsenheter av plast. Oppløsninger skal brukes umiddelbart.
+
+
+
+4.3      Kontraindikasjoner
+
+-        Overfølsomhet overfor virkestoffet, noen av hjelpestoffene listet opp i pkt. 6.1 eller andre
+         opioidanalgetika.
+-        Ukontrollert hypovolemi og hypotensjon,

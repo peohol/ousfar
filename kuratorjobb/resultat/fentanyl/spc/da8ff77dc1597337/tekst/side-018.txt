@@ -1,0 +1,57 @@
+Etter 72 timers bruk av et plaster er gjennomsnittlig halveringstid i området 20 til 27 timer. På grunn
+av fortsatt absorpsjon av fentanyl fra huddepotet etter at plasteret er fjernet, er halveringstiden til
+fentanyl etter transdermal administrering ca. 2 til 3 ganger lengre enn ved intravenøs administrering.
+
+Etter intravenøs administrering er gjennomsnittlig totalclearance på tvers av studier generelt mellom
+34 og 66 liter/time.
+
+I løpet av 72 timers intravenøs fentanyladministrering er omtrent 75 % av dosen utskilt i urinen og
+omtrent 9 % av dosen i avføringen. Ekskresjon skjer hovedsakelig som metabolitter, og mindre
+enn 10 % av dosen utskilles som uforandret virkestoff.
+
+Linearitet/ikke-linearitet
+Serumkonsentrasjonen av fentanyl er proporsjonal med størrelsen på Fentanyl Sandoz
+depotplaster. Farmakokinetikken til transdermal fentanyl blir ikke endret ved gjentatt
+applikasjon.
+
+Farmakokinetiske/farmakodynamiske forhold
+Det er høy variabilitet fra person til person når det gjelder fentanyls farmakokinetikk, forholdet
+mellom fentanylkonsentrasjon, terapeutisk effekt og bivirkninger, samt opioidtoleranse.
+Laveste effektive fentanylkonsentrasjon avhenger av smerteintensitet og tidligere bruk av
+opioid behandling. Både den laveste effektive konsentrasjonen og den toksiske
+konsentrasjonen øker med toleransen. Et optimalt terapeutisk konsentrasjonsområde for
+fentanyl kan derfor ikke fastslås. Justering av den individuelle fentanyldosen må være basert
+på pasientens respons og toleransenivå. Etter applisering av det første plasteret og etter en
+doseøkning må man ta i betraktning 12 til 24 timers forsinkelse av effekt.
+
+Spesielle pasientgrupper
+Eldre
+Data fra studier med intravenøs administrering av fentanyl, tyder på at eldre pasienter kan ha redusert
+clearance, forlenget halveringstid og være mer sensitive overfor virkestoffet enn yngre pasienter. I en
+studie hvor det ble benyttet fentanylplastre, var ikke farmakokinetikken hos friske eldre personer
+signifikant forskjellig fra farmakokinetikken friske unge personer, men maksimal serumkonsentrasjon
+tenderte til å være lavere og gjennomsnittsverdier for halveringstid ble forlenget til omtrent 34 timer.
+Eldre pasienter bør observeres nøye med hensyn til tegn på fentanyltoksisitet, og dosen må om
+nødvendig reduseres (se pkt. 4.4).
+
+Nedsatt nyrefunksjon
+Innvirkningen av nedsatt nyrefunksjon på farmakokinetikken til fentanyl forventes å være
+begrenset, siden urinutskillelsen av uforandret fentanyl er mindre enn 10 % og ingen kjente
+metabolitter elimineres via nyrene. Siden innvirkningen av nedsatt nyrefunksjon på
+farmakokinetikken til fentanyl ikke er evaluert, anbefales det imidlertid å utvise forsiktighet (se
+pkt. 4.2 og 4.4).
+
+Nedsatt leverfunksjon
+Pasienter med nedsatt leverfunksjon bør observeres nøye med hensyn til tegn på fentanyltoksisitet,
+og dosen av Fentanyl Sandoz depotplaster må om nødvendig reduseres (se pkt. 4.4). Data for
+personer med cirrhose og simulerte data for personer med forskjellig grad av nedsatt leverfunksjon,
+som ble behandlet med transdermal fentanyl, tyder på at fentanylkonsentrasjonen økes og
+fentanylclearance reduseres, sammenlignet med personer med normal leverfunksjon. Simuleringene
+tyder på at steady-state AUC for pasienter med leversykdom Child-Pugh klasse B (Child-Pugh-score
+= 8) vil være 1,36 ganger høyere enn for pasienter med normal leverfunksjon (Klasse A; Child-Pugh-
+score = 5,5). Når det gjelder pasienter med leversykdom klasse A (Child-Pugh-score = 12,5),
+indikerer resultatene at fentanyl akkumuleres ved hver administrering, noe som fører til at disse
+pasientene har omtrent 3,72 ganger høyere AUC ved steady fase.
+
+Pediatrisk populasjon
+                                                    18

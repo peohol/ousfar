@@ -1,0 +1,57 @@
+Av disse 110 personene hadde 23 (20,9 %) tidligere fått < 30 mg perorale morfinekvivalenter per
+døgn, 66 (60,0 %) hadde fått 30 til 44 mg perorale morfinekvivalenter per døgn, og 12 (10,9 %)
+hadde fått minst 45 mg perorale morfinekvivalenter per døgn (data ikke tilgjengelig for 9 [8,2 %]
+personer). Startdoser på 25 mikrog/time og høyere ble brukt av de resterende 179 personene, hvorav
+174 (97,2 %) hadde stått på opioiddoser på minst 45 mg perorale morfinekvivalenter per døgn.
+Blant de resterende 5 personene med en startdose på minst 25 mikrog/time, som tidligere fikk
+opioiddoser på <45 mg perorale morfinekvivalenter per døgn, hadde 1 (0,6 %) tidligere fått <30 mg
+perorale morfinekvivalenter per døgn og 4 (2,2 %) hadde fått 30 til 44 mg perorale
+morfinekvivalenter per døgn (se pkt. 4.8).
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+Fentanyl Sandoz depotplaster gir kontinuerlig systemisk frisetting av fentanyl under den 72-timers
+bruksperioden. Etter applisering av fentanyl depotplaster absorberer huden under systemet fentanyl,
+og et depot av fentanyl blir konsentrert i det øvre hudlaget. Fentanyl blir deretter tilgjengelig i
+systemisk sirkulasjon. Polymermatriksen og diffusjonen av fentanyl gjennom hudlagene sikrer at
+frisettingshastigheten er relativt konstant. Konsentrasjonsgradienten mellom systemet og den lavere
+konsentrasjonen i huden driver frisettingen av virkestoffet. Gjennomsnittlig biotilgjengelighet av
+fentanyl etter applisering av depotplasteret er 92 %.
+
+Etter første applisering av Fentanyl Sandoz depotplaster øker serumkonsentrasjonen av fentanyl
+gradvis, flater ut mellom 12 og 24 timer og forblir relativt konstant resten av den 72-timers
+bruksperioden. På slutten av den andre 72-timers perioden er steady-state serumkonsentrasjon
+oppnådd og blir opprettholdt under påfølgende bruk av plaster av samme størrelse.
+På grunn av akkumulering er AUC- og Cmax-verdiene over et doseringsintervall ved steady-state
+omtrent 40 % høyere etter én applikasjon. Pasientene når og opprettholder en steady-state
+serumkonsentrasjon som er bestemt av individuell variasjon i hudpermeabilitet og kroppsclearance av
+fentanyl. Det er observert høy variabilitet fra person til person.
+
+En farmakokinetisk modell tyder på at serumkonsentrasjonen av fentanyl kan øke med 14 %
+(variasjonsbredde 0-26 %) dersom et nytt plaster settes på etter 24 timer istedenfor etter 72 timers bruk
+som anbefalt.
+
+En økning av hudtemperaturen kan forsterke absorpsjonen av transdermalt applisert fentanyl (se pkt.
+4.4). En økning i hudtemperaturen på grunn av en lavt innstilt varmepute som ble plassert over
+fentanylplasteret de første 10 timene etter en enkeltapplisering, ga 2,2 ganger høyere gjennomsnittlig
+AUC-verdi for fentanyl, og gjennomsnittskonsentrasjonen på slutten av oppvarmingen var 61 %.
+
+Distribusjon
+Fentanyl blir raskt distribuert til forskjellige vev og organer, slik det store distribusjonsvolumet
+indikerer (3 til 10 liter/kg etter intravenøs administrering til pasienter). Fentanyl akkumuleres i
+skjelettmuskulatur og fett og blir frisatt langsomt til blodet.
+
+I en studie av kreftpasienter som ble behandlet med transdermal fentanyl, var gjennomsnittlig
+plasmaproteinbinding 95 % (variasjonsbredde 77-100 %). Fentanyl krysser enkelt blod/hjerne-
+barrieren. Det krysser også placenta og utskilles i morsmelk.
+
+Biotransformasjon
+Fentanyl er et legemiddel med høy clearance, som metaboliseres raskt og i stor grad, hovedsakelig av
+CYP3A4 i leveren. Den viktigste metabolitten, norfentanyl, og andre metabolitter er inaktive. Huden
+ser ikke ut til å metabolisere fentanyl som opptas transdermalt. Dette ble vist i en analyse med humane
+keratinocytter, og i kliniske studier hvor 92 % av dosen som ble frisatt fra plasteret, ble registrert som
+uforandret fentanyl i systemisk sirkulasjon.
+
+Eliminasjon
+                                                     17

@@ -1,0 +1,57 @@
+Fentanyl depotplaster anbefales ikke til pasienter som trenger samtidig behandling med en MAO-
+hemmer. Det er rapportert alvorlige og uforutsigbare interaksjoner med MAO-hemmere, som
+innebærer potensering av opiate eller serotonerge effekter. Fentanyl Sandoz depotplaster bør derfor
+ikke brukes de første 14 dagene etter at behandling med en MAO-hemmer er avsluttet.
+
+Serotonerge legemidler
+Samtidig administrering av fentanyl og et serotonergt legemiddel, f.eks. en selektiv serotonin-
+reopptakshemmer (SSRI) eller en serotonin/noradrenalinreopptakshemmer (SNRI) eller en
+monoaminoksidasehemmer (MAO-hemmer), kan øke risikoen for serotonergt syndrom, en potensielt
+livstruende tilstand. Samtidig bruk krever forsiktighet. Pasienten skal observeres nøye, spesielt ved
+behandlingsstart og dosejustering (se pkt. 4.4).
+
+Samtidig bruk av blandede opioide agonister/antagonister
+Samtidig bruk av buprenorfin, nalbufin eller pentazocin er ikke anbefalt. De har høy affinitet for
+opioidreseptorer med relativt lav egenaktivitet og antagoniserer derfor delvis den analgetiske
+effekten av fentanyl og kan forårsake abstinenssymptomer hos opioidavhengige pasienter (se pkt.
+4.4).
+
+Farmakokinetikkrelaterte interaksjoner
+Cytokrom P450 3A4-hemmere (CYP3A4)
+Fentanyl, som er et virkestoff med høy clearance, blir metabolisert raskt og i høy grad, hovedsakelig
+av CYP3A4.
+
+Samtidig bruk av fentanylplaster og cytokrom P450 3A4-hemmere (CYP3A4) kan føre til økt
+plasmakonsentrasjon av fentanyl. Dette kan medføre økning i, eller forlengelse av, både den
+terapeutiske effekten og bivirkningene og kan forårsake alvorlig respirasjonsdepresjon. Graden av
+interaksjon med sterke CYP3A4-hemmere forventes å være høyere enn med svake eller moderate
+CYP3A4-hemmere.
+Det er rapportert tilfeller av alvorlig respirasjonsdepresjon etter samtidig administrering av CYP3A4-
+hemmere og transdermal fentanyl, inkludert et fatalt tilfelle etter samtidig administrering med en
+moderat CYP3A4-hemmer. Samtidig bruk av CYP3A4-hemmere og fentanylplaster anbefales ikke,
+med mindre pasienten overvåkes nøye (se pkt. 4.4). Eksempler på virkestoffer som kan øke
+fentanylkonsentrasjonen omfatter: amiodaron, cimetidin, klaritromycin, diltiazem, erytromycin,
+flukonazol, itrakonazol, ketokonazol, nefazodon, ritonavir, verapamil og vorikonazol (denne listen er
+ikke utfyllende).
+
+Etter samtidig bruk av svake, moderate eller sterke CYP3A4-hemmere og kortvarig intravenøs
+fentanyladministrering, var reduksjonen av fentanyls clearance vanligvis ≤ 25 %. Med ritonavir (en
+sterk CYP3A4-hemmer) ble imidlertid clearance av fentanyl redusert med gjennomsnittlig 67 %.
+Graden av interaksjoner med CYP3A4-hemmere og langvarig transdermal administrering av fentanyl
+er ikke kjent, men kan være høyere enn ved kortvarig intravenøs administrering.
+
+Cytokrom P450 3A4-induktorer (CYP3A4)
+Samtidig bruk av transdermal fentanyl og CYP3A4-induktorer kan føre til redusert
+plasmakonsentrasjon av fentanyl og redusert terapeutisk effekt. Forsiktighet tilrådes ved samtidig
+bruk av CYP3A4-induktorer og Fentanyl Sandoz depotplaster. Det kan hende dosen av Fentanyl
+Sandoz depotplaster må økes eller at det må byttes til et annet analgetikum. I forbindelse med
+seponering av samtidig behandling med en CYP3A4-induktor, anbefales det at fentanyldosen
+reduseres og pasienten overvåkes nøye. Effektene av induktoren minsker gradvis. Det kan føre til
+økt plasmakonsentrasjon av fentanyl, noe som kan øke eller forlenge både de terapeutiske effektene
+og bivirkningene, samt forårsake alvorlig respirasjonsdepresjon. Nøye overvåking bør fortsette
+inntil stabile legemiddeleffekter er oppnådd. Eksempler på virkestoffer som kan redusere
+plasmakonsentrasjonen av fentanyl omfatter: karbamazepin, fenobarbital, fenytoin og rifampicin
+(denne listen er ikke utfyllende).
+
+Pediatrisk populasjon
+                                                   12

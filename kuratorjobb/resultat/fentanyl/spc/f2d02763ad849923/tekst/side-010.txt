@@ -1,0 +1,56 @@
+Interaksjoner med andre legemidler
+CYP3A4-hemmere
+Samtidig bruk av Fentanyl ratiopharm og cytokrom P450 3A4 (CYP3A4)-hemmere kan medføre en
+økning i plasmakonsentrasjon av fentanyl. Dette kan medføre økning i, eller forlengelse av, både den
+terapeutiske effekten og bivirkninger av fentanyl, og igjen føre til alvorlig respirasjonsdepresjon.
+Samtidig bruk av Fentanyl ratiopharm og CYP3A4-hemmere er derfor ikke anbefalt med mindre
+fordelen oppveier den økte risikoen for bivirkninger. Generelt bør en pasient vente 2 dager etter
+seponering av behandling med en CYP3A4-hemmer før bruk av første Fentanyl ratiopharm-plaster.
+Varigheten av hemmingen varierer imidlertid, og for noen CYP3A4-hemmere med lang halveringstid,
+som amiodaron, eller for tidsavhengige hemmere som erytromycin, idelalisib, nikardipin og ritonavir,
+kan det være nødvendig med en lengre periode. Preparatomtalen til CYP3A4-hemmeren skal derfor
+konsulteres for virkestoffets halveringstid og varighet av den hemmende effekten, før bruk av første
+Fentanyl ratiopharm-plaster. En pasient som behandles med Fentanyl ratiopharm, bør vente minst
+1 uke etter fjerning av siste plaster før oppstart av behandling med en CYP3A4-hemmer. Dersom
+samtidig bruk av Fentanyl ratiopharm og en CYP3A4-hemmer ikke kan unngås, kreves nøye
+monitorering for tegn eller symptomer på økning i, eller forlengelse av, terapeutisk effekt og
+bivirkninger av fentanyl (særlig respirasjonsdepresjon), og Fentanyl ratiopharm-dosen skal reduseres
+eller avbrytes hvis nødvendig (se pkt. 4.5).
+
+Utilsiktet eksponering ved overføring av plaster
+Utilsiktet overføring av et fentanylplaster til huden til en som ikke bruker slike plastre (særlig et barn),
+ved deling av seng eller tett fysisk kontakt med en plasterbruker, kan medføre opioidoverdosering hos
+ikke-brukeren. Pasienter bør informeres om at dersom utilsiktet plasteroverføring finner sted, skal det
+overførte plasteret omgående fjernes fra huden til ikke-brukeren (se pkt. 4.9).
+
+Bruk hos eldre pasienter
+Data fra studier med intravenøs fentanyl tyder på at eldre pasienter kan ha redusert clearance og
+forlenget halveringstid og kan være mer følsomme overfor virkestoffet enn yngre pasienter. Dersom
+eldre pasienter får Fentanyl ratiopharm, bør de observeres nøye for tegn på fentanyltoksisitet, og dosen
+reduseres om nødvendig (se pkt. 5.2).
+
+Mage-tarmkanalen
+Opioider øker tonus og reduserer peristaltiske kontraksjoner i glatt muskulatur i mage-tarmkanalen.
+Påfølgende forlenget passasjetid gjennom mage-tarmkanalen kan bidra til den forstoppende effekten
+til fentanyl. Pasienter bør rådes til å ta forholdsregler for å forebygge forstoppelse, og profylaktisk
+bruk av laksantia bør vurderes. Det bør utvises ekstra forsiktighet hos pasienter med kronisk
+forstoppelse. Ved bekreftet eller mistenkt paralytisk ileus bør behandling med Fentanyl ratiopharm
+seponeres.
+
+Pasienter med myasthenia gravis
+Ikke-epileptiske (myo)klone reaksjoner kan forekomme. Forsiktighet bør utvises ved behandling av
+pasienter med myasthenia gravis.
+
+Samtidig bruk av partielle opioidagonister/-antagonister
+Samtidig bruk av buprenorfin, nalbufin eller pentazocin er ikke anbefalt (se pkt. 4.5).
+
+Pediatrisk populasjon
+Fentanyl ratiopharm bør ikke gis til opioidnaive pediatriske pasienter (se pkt. 4.2). Alvorlig eller
+livstruende hypoventilering kan potensielt oppstå uavhengig av dose av Fentanyl ratiopharm-plaster.
+
+Transdermalt fentanyl er ikke studert hos barn under 2 år. Fentanyl ratiopharm depotplaster bør kun
+gis til opioidtolerante barn som er 2 år eller eldre (se pkt. 4.2).
+
+Vær påpasselig med valg av applikasjonssted for Fentanyl ratiopharm for å forhindre at barn bruker
+eller spiser plasteret (se pkt. 4.2 og pkt. 6.6). Følg nøye med på at plasteret sitter som det skal og ikke
+faller av.

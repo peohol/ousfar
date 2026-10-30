@@ -1,0 +1,57 @@
+En dose på 1,25-2,5 mikrogram/kg eller 0,25-0,5 ml per 10 kg kroppsvekt anbefales vanligvis for
+induksjon hos barn. For vedlikehold av analgetikum, kan ytterligere intravenøse doser på 0,25 ml per
+10 kg administreres hvert 30. til 45. minutt.
+
+Barn under 2 år
+Det finnes ingen erfaring med fentanyl hos barn under 2 år.
+
+Bruk hos barn
+Hos spontant pustende barn kan smertestillende teknikker kun brukes som en del av en
+anestesiteknikk, eller som en del av beroligende/smertestillende teknikker, av rutinert personell på et
+sted der plutselig muskelstivhet (som krever intubasjon) eller apné (som krever ventilasjon) kan
+behandles (se pkt. 4.4).
+
+Bruk hos eldre
+Som med andre opioider bør startdosen for eldre (> 65 år) og svekkede pasienter reduseres. Effekten
+av den innledende dosen må tas i betraktning når ytterligere doser bestemmes.
+
+Bruk hos pasienter med nedsatt nyrefunksjon
+Hos pasienter med nedsatt nyrefunksjon bør en reduksjon i Fentanyl Kalceks-dosen vurderes, og disse
+pasientene bør nøye observeres for tegn på fentanyl-toksisitet (se pkt. 5.2).
+
+Bruk hos overvektige pasienter
+Hos overvektige pasienter er det en risiko for overdose dersom dosen er beregnet på basis av
+kroppsvekt. Dosen for overvektige pasienter (KMI > 30 kg/m2) bør bestemmes på basis av anslått
+kroppsmasse i stedet for kroppsvekt alene. Ytterligere titrering bør fortsette med forsiktighet, basert på
+effekt (se pkt. 5.2).
+
+Administrasjonsmåte
+
+Administrer langsomt – over 1 til 2 minutter – intravenøst.
+
+4.3     Kontraindikasjoner
+
+-     Overfølsomhet overfor virkestoffet eller overfor noen av hjelpestoffene listet opp i pkt. 6.1, eller
+      overfor andre opoider.
+-     Dårlig lungefunksjon uten mekanisk ventilasjon. Dette skyldes den respirasjonsdepressive
+      effekten som er spesifikk for morfinlignende substanser.
+
+4.4     Advarsler og forsiktighetsregler
+
+- Fentanyl kan kun administreres på et sted der luftveiene kan overvåkes og av personell som er kjent
+  med overvåking av luftveier.
+- Som alle potente opioider kan fentanyl fremkalle respiratorisk depresjon, som er doserelatert.
+  Betydelig luftveisdepresjon vil oppstå når det administreres i doser over 200 mikrogram fentanyl (4
+  ml). Administrering av nalokson, en spesifikk opioidantagonist, kan motvirke denne effekten. Det
+  kan bli nødvendig å gjenta opioidantagonistdosen, fordi respiratorisk depresjon kan vare lenger enn
+  virkningsvarigheten til opioidantagonisten. Dyp analgesi er ledsaget av tydelig
+  respirasjonsdepresjon, som kan vedvare eller gjenoppstå i den postoperative perioden. Det er derfor
+  viktig at pasientene forblir under korrekt overvåking. Gjenopplivingsutstyr og opioidantagonister
+  skal være umiddelbart tilgjengelig. Hyperventilering under anestesi kan endre pasientens respons til
+  CO2 og kan derfor også påvirke pusten etter operasjonen.
+- Det kan utvikles stivhet i muskler. Et resultat av dette kan være at respiratorisk depresjon
+  forekommer. Forekomsten kan reduseres med langsom, intravenøs injeksjon (normalt tilstrekkelig i
+  lave doser). Reaksjonen kan behandles med kunstig ventilasjon, premedisinering med
+  benzodiazepiner og, om nødvendig, administrasjon av muskelavslappende legemiddel.
+- Forekomsten av anafylaktiske reaksjoner bør tas i betraktning ved administrering av fentanyl.
+- Ikke-epileptiske myoklone reaksjoner kan forekomme.

@@ -1,0 +1,54 @@
+                            495-584                                                           150
+                            585-674                                                           175
+                            675-764                                                           200
+                            765-854                                                           225
+                            855-944                                                           250
+                           945-1034                                                           275
+                          1035-1124                                                           300
+  1 I kliniske studier ble disse døgndosenivåene av peroral morfin brukt som grunnlag for konvertering til Fantanyl ratiopharm.
+
+
+
+
+  Tabell 3: Anbefalt startdose av Fentanyl ratiopharm basert på døgndose peroral morfin (for pasienter
+            som har en stabil og veltolerert opioidbehandling: konverteringsrate for peroral morfin til
+            transdermal fentanyl er omtrent 100:1)
+                                                               Fentanyl ratiopharm dose
+          Døgndose av peroral morfin                                (mikrog/time)
+                    (mg/døgn)
+                         ≤ 44                                              12
+                        45-89                                              25
+                       90-149                                              50
+                      150-209                                              75
+                      210-269                                             100
+                      270-329                                             125
+                      330-389                                             150
+                      390-449                                             175
+                      450-509                                             200
+                      510-569                                             225
+                      570-629                                             250
+                      630-689                                             275
+                      690-749                                             300
+
+Første evaluering av maksimal analgetisk effekt av Fentanyl ratiopharm kan ikke utføres før
+depotplasteret har sittet på i 24 timer. Denne forsinkelsen skyldes at serumkonsentrasjonen av
+fentanyl øker gradvis de første 24 timene etter påføring av depotplaster.
+
+Tidligere analgetisk terapi bør derfor seponeres gradvis etter påføring av første dose, inntil
+analgetisk effekt av Fentanyl ratiopharm er oppnådd.
+
+Dosetitrering og vedlikeholdsbehandling
+Fentanyl ratiopharm-plasteret bør skiftes hver 72. time.
+
+Dosen bør titreres individuelt basert på gjennomsnittlig daglig bruk av annen smertebehandling, inntil
+en balanse mellom analgetisk effekt og tolerabilitet er oppnådd. Dosetitrering foretas vanligvis med
+økninger på 12 mikrog/time eller 25 mikrog/time, men behov for annen smertebehandling (peroral
+morfin 45/90 mg/døgn  Fentanyl ratiopharm 12/25 mikrog/time) og pasientens smertestatus må tas i
+betraktning. Etter en doseøkning kan det ta inntil 6 dager før pasientens likevekt på det nye dosenivået
+nås. Derfor bør pasienter etter en doseøkning bruke depotplasteret med høyere dose i to 72-
+timersperioder før en eventuell ytterligere økning av dosenivået.
+
+Mer enn ett Fentanyl ratiopharm-plaster kan benyttes når doseringen er høyere enn 100 mikrog/time.
+Enkelte pasienter kan kreve periodevis supplering med kortvirkende analgetika for
+gjennombruddssmerter. Enkelte pasienter kan kreve tillegg eller alternative metoder av
+opioidadministrering når dosen av Fentanyl ratiopharm overskrider 300 mikrog/time.

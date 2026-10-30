@@ -1,0 +1,57 @@
+4.1   Indikasjoner
+
+Voksne:
+Fentanyl Sandoz depotplaster er indisert for behandling av alvorlige, kroniske smerter som krever
+kontinuerlig, langvarig opioidadministrering.
+
+Barn:
+Langvarig behandling av sterke, kroniske smerter hos barn fra 2 år som får opioidbehandling.
+
+4.2   Dosering og administrasjonsmåte
+
+Dosering
+Dosene av fentanyl depotplaster skal være individuell, basert på pasientens status, og må vurderes
+ved jevne mellomrom etter applisering. Den laveste effektive dosen bør brukes. Plastrene er
+designet for å avgi omtrent 12,5, 25, 37,5, 50, 75 og 100 mikrog/time fentanyl til systemisk
+sirkulasjon, som tilsvarer henholdsvis ca. 0,3, 0,6, 0,9, 1,2, 1,8 og 2,4 mg per døgn.
+
+Valg av startdose
+Den hensiktsmessige startdosen av fentanylplaster bør baseres på pasientens nåværende opioidbruk.
+Det anbefales at fentanylplaster brukes hos pasienter som har vist opioidtoleranse. Andre faktorer
+som bør tas i betraktning, er pasientens generelle helsetilstand og medisinske status, inkl.
+kroppsstørrelse, alder, hvor svekket pasienten er, og grad av opioidtoleranse.
+
+Voksne
+Opioidtolerante pasienter
+For å konvertere opioidtolerante pasienter fra perorale eller parenterale opioider til Fentanyl Sandoz
+depotplaster, vises det til Ekvianalgetisk potenskonvertering nedenfor. Dosen kan deretter titreres
+opp eller ned ved behov, med enten 12,5 eller 25 mikrog/time for å finne laveste tilstrekkelige dose
+av fentanylplaster, avhengig av pasientens respons og supplerende smertebehandling.
+
+Opioidnaive pasienter
+Generelt anbefales ikke transdermal administrering hos opioidnaive pasienter. Alternative
+administrasjonsmåter (perorale, parenterale) bør vurderes. For å forebygge overdosering anbefales
+det at opioidnaive pasienter får lave doser opioider med umiddelbar frisetting (f.eks. morfin,
+hydromorfon, oksykodon, tramadol og kodein), som titreres inntil det oppnås en analgetisk dose
+som tilsvarer fentanylplaster med en frisettingshastighet på 12,5 mikrog/time eller 25 mikrog/time.
+Pasientene kan deretter bytte til Fentanyl Sandoz depotplaster.
+
+Ved omstendigheter der oppstart av behandling med perorale opioider betraktes som mulig, og der
+fentanylplaster anses som eneste hensiktsmessige behandling for opioidnaive pasienter, bør bare den
+laveste startdosen (dvs. 12,5 mikrog/time) vurderes. I slike tilfeller må pasienten følges nøye. Det er
+mulighet for alvorlig eller livstruende hypoventilering selv om den laveste dosen av Fentanyl Sandoz
+depotplaster blir brukt ved oppstart av behandling hos opioidnaive pasienter (se pkt. 4.4 og 4.9).
+
+Ekvianalgetisk potenskonvertering
+Hos pasienter som allerede bruker opioide analgetika, bør startdosen av Fentanyl Sandoz depotplaster
+være basert på døgndosen av det tidligere opioidet. Følg trinnene nedenfor for å beregne den
+hensiktsmessige startdosen av Fentanyl Sandoz depotplaster.
+1.    Beregn døgndosen (mg/døgn) av opioidet som for tiden brukes.
+2.    Konverter denne mengden til den ekvianalgetiske perorale døgndosen av morfin ved bruk av
+      multiplikasjonsfaktoren i Tabell 1 for den aktuelle administrasjonsmåten.
+3.    For å finne dosen av Fentanyl Sandoz depotplaster som tilsvarer den beregnede
+      ekvianalgetiske døgndosen av morfin, brukes dosekonverteringstabell 2 eller 3 som
+      følger:
+      a.     Tabell 2 er for voksne pasienter som har behov for opioidrotasjon eller som er mindre
+             klinisk stabile (konverteringsforholdet for peroral morfin til transdermal fentanyl er
+                                                      2

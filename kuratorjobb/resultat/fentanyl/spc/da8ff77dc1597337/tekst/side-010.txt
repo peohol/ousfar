@@ -1,0 +1,56 @@
+Alle pasienter bør rådes til å unngå at applikasjonsstedet for fentanylplasteret utsettes for direkte
+eksterne varmekilder, som varmeputer, elektriske tepper, oppvarmede vannsenger, varme- eller
+solariumslamper, solbading eller langvarige varme bad, badstue og varme boblebad.
+
+Serotonergt syndrom
+Det bør utvises forsiktighet når fentanyl depotplaster blir administrert samtidig med legemidler
+som påvirker serotonerge nevrotransmittorsystemer.
+
+Utvikling av potensielt livstruende serotonergt syndrom kan forekomme ved samtidig bruk av
+serotonerge legemidler, som selektive serotoninreopptakshemmere (SSRI) eller
+serotonin/noradrenalinreopptakshemmere (SNRI), og virkestoffer som hemmer metabolisme av
+serotonin (inkludert monoaminoksidasehemmere [MAO-hemmere]). Dette kan oppstå ved bruk av
+anbefalt dose (se pkt. 4.5).
+
+Serotonergt syndrom kan omfatte endringer i sinnstilstand (f.eks. uro, hallusinasjoner, koma),
+autonom ustabilitet (f.eks. takykardi, labilt blodtrykk, hypertermi), nevromuskulære
+forstyrrelser (f.eks. hyperrefleksi, koordinasjonsvansker, rigiditet) og/eller gastrointestinale
+symptomer (f.eks. kvalme, oppkast, diaré).
+
+Ved mistanke om serotonergt syndrom bør behandling med Fentanyl Sandoz depotplaster seponeres.
+
+Interaksjoner med andre legemidler
+CYP3A4-hemmere
+Samtidig bruk av fentanylplaster og cytokrom P450 3A4-hemmere (CYP3A4-hemmere) kan
+medføre en økning i plasmakonsentrasjonen av fentanyl. Dette kan øke eller forlenge både de
+terapeutiske effektene og bivirkningene av fentanyl og kan føre til alvorlig respirasjonsdepresjon.
+Samtidig bruk av Fentanyl Sandoz depotplaster og CYP3A4-hemmere anbefales derfor ikke,
+såfremt ikke nytten oppveier den økte risikoen for bivirkninger. Generelt bør pasienten vente i 2
+dager etter avsluttet behandling med en CYP3A4-hemmer før applisering av første Fentanyl
+Sandoz depotplaster. Varigheten av hemmingen varierer imidlertid, og for noen CYP3A4-
+hemmere med lang eliminasjonshalveringstid, som amiodaron, eller for tidsavhengige hemmere
+som erytromycin, idelalisib, nikardipin og ritonavir, kan det hende denne perioden må være lengre.
+Preparatomtalen til CYP3A4-hemmeren skal derfor konsulteres for virkestoffets halveringstid og
+varigheten av den hemmende effekten. En pasient som er behandlet med fentanylplaster, bør vente
+minst 1 uke etter fjerning av siste plaster før behandling med en CYP3A4-hemmer igangsettes.
+Dersom samtidig bruk av fentanylplaster og en CYP3A4-hemmer ikke kan unngås, anbefales nøye
+overvåking med hensyn til tegn eller symptomer på økte eller forlengede terapeutiske effekter og
+bivirkninger av fentanyl (spesielt respirasjonsdepresjon), og administreringen av fentanylplaster
+må om nødvendig reduseres eller avbrytes (se pkt. 4.5).
+
+Utilsiktet eksponering ved plasteroverføring
+Utilsiktet overføring av et fentanylplaster til huden til en som ikke bruker slike plastre (særlig et
+barn), ved deling av seng eller tett fysisk kontakt med en plasterbruker, kan medføre
+opioidoverdosering hos ikke-brukeren. Pasientene bør informeres om at dersom utilsiktet
+plasteroverføring finner sted, skal det overførte plasteret omgående fjernes fra huden til ikke-brukeren
+(se pkt. 4.9).
+
+Bruk hos eldre pasienter
+Data fra studier med intravenøs fentanyl tyder på at eldre pasienter kan ha redusert clearance og
+forlenget halveringstid, og de kan være mer sensitive for virkestoffet enn yngre pasienter. Dersom
+eldre pasienter bruker fentanylplaster, bør de observeres nøye for tegn på fantanyltoksisitet, og dosen
+må om nødvendig reduseres (se pkt. 5.2).
+
+Mage-tarmkanalen
+Opioider øker tonus og reduserer peristaltiske kontraksjoner i glatt muskulatur i mage-tarmkanalen.
+                                                     10

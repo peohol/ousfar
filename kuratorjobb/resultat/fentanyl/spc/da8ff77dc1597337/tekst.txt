@@ -1,0 +1,1121 @@
+1.    LEGEMIDLETS NAVN
+
+Fentanyl Sandoz 12 mikrog/time, depotplaster
+Fentanyl Sandoz 25 mikrog/time, depotplaster
+Fentanyl Sandoz 50 mikrog/time, depotplaster
+Fentanyl Sandoz 75 mikrog/time, depotplaster
+Fentanyl Sandoz 100 mikrog/time, depotplaster
+
+
+2.    KVALITATIV OG KVANTITATIV SAMMENSETNING
+
+Fentanyl Sandoz 12 mikrog/time, depotplaster
+Hvert depotplaster frigir 12,5* mikrog fentanyl pr. time. Hvert plaster på 5,25 cm2 inneholder 2,1 mg
+fentanyl.
+* Den laveste dosen kan angis som 12 mikrog/time (men den virkelige dosen er 12,5 mikrog/time) for å skille
+den fra en dose på 125 mikrog/time som kan forskrives ved å bruke flere plastre.
+
+Fentanyl Sandoz 25 mikrog/time, depotplaster
+Hvert depotplaster frigir 25 mikrog fentanyl pr. time Hvert plaster på 10,5 cm2 inneholder 4,2 mg
+fentanyl.
+
+Fentanyl Sandoz 50 mikrog/time, depotplaster
+Hvert depotplaster frigir 50 mikrog fentanyl pr. time Hvert plaster på 21 cm2 inneholder 8,4 mg
+fentanyl.
+
+Fentanyl Sandoz 75 mikrog/time, depotplaster
+Hvert depotplaster frigir 75 mikrog fentanyl pr. time Hvert plaster på 31,5 cm2 inneholder 12,6 mg
+fentanyl.
+
+Fentanyl Sandoz 100 mikrog/time, depotplaster
+Hvert depotplaster frigir 100 mikrog fentanyl pr. time Hvert plaster på 42 cm2 inneholder 16,8 mg
+fentanyl.
+
+
+For fullstendig liste over hjelpestoffer, se pkt. 6.1.
+
+
+3.    LEGEMIDDELFORM
+
+Depotplaster
+
+Transparent, avrundet og avlangt depotplaster med følgende trykket på baksiden
+
+”fentanyl 12µg/h”
+”fentanyl 25µg/h”
+”fentanyl 50µg/h”
+”fentanyl 75µg/h”
+”fentanyl 100µg/h”
+
+Plasteret består av en beskyttelseslag (som skal fjernes før plasteret appliseres) og to funksjonslag: ett
+selvklebende matriks lag som inneholder fentanyl og en film på baksiden som er ugjennomtrengelig
+for vann.
+
+
+4.     KLINISKE OPPLYSNINGER
+
+                                                         1
+4.1   Indikasjoner
+
+Voksne:
+Fentanyl Sandoz depotplaster er indisert for behandling av alvorlige, kroniske smerter som krever
+kontinuerlig, langvarig opioidadministrering.
+
+Barn:
+Langvarig behandling av sterke, kroniske smerter hos barn fra 2 år som får opioidbehandling.
+
+4.2   Dosering og administrasjonsmåte
+
+Dosering
+Dosene av fentanyl depotplaster skal være individuell, basert på pasientens status, og må vurderes
+ved jevne mellomrom etter applisering. Den laveste effektive dosen bør brukes. Plastrene er
+designet for å avgi omtrent 12,5, 25, 37,5, 50, 75 og 100 mikrog/time fentanyl til systemisk
+sirkulasjon, som tilsvarer henholdsvis ca. 0,3, 0,6, 0,9, 1,2, 1,8 og 2,4 mg per døgn.
+
+Valg av startdose
+Den hensiktsmessige startdosen av fentanylplaster bør baseres på pasientens nåværende opioidbruk.
+Det anbefales at fentanylplaster brukes hos pasienter som har vist opioidtoleranse. Andre faktorer
+som bør tas i betraktning, er pasientens generelle helsetilstand og medisinske status, inkl.
+kroppsstørrelse, alder, hvor svekket pasienten er, og grad av opioidtoleranse.
+
+Voksne
+Opioidtolerante pasienter
+For å konvertere opioidtolerante pasienter fra perorale eller parenterale opioider til Fentanyl Sandoz
+depotplaster, vises det til Ekvianalgetisk potenskonvertering nedenfor. Dosen kan deretter titreres
+opp eller ned ved behov, med enten 12,5 eller 25 mikrog/time for å finne laveste tilstrekkelige dose
+av fentanylplaster, avhengig av pasientens respons og supplerende smertebehandling.
+
+Opioidnaive pasienter
+Generelt anbefales ikke transdermal administrering hos opioidnaive pasienter. Alternative
+administrasjonsmåter (perorale, parenterale) bør vurderes. For å forebygge overdosering anbefales
+det at opioidnaive pasienter får lave doser opioider med umiddelbar frisetting (f.eks. morfin,
+hydromorfon, oksykodon, tramadol og kodein), som titreres inntil det oppnås en analgetisk dose
+som tilsvarer fentanylplaster med en frisettingshastighet på 12,5 mikrog/time eller 25 mikrog/time.
+Pasientene kan deretter bytte til Fentanyl Sandoz depotplaster.
+
+Ved omstendigheter der oppstart av behandling med perorale opioider betraktes som mulig, og der
+fentanylplaster anses som eneste hensiktsmessige behandling for opioidnaive pasienter, bør bare den
+laveste startdosen (dvs. 12,5 mikrog/time) vurderes. I slike tilfeller må pasienten følges nøye. Det er
+mulighet for alvorlig eller livstruende hypoventilering selv om den laveste dosen av Fentanyl Sandoz
+depotplaster blir brukt ved oppstart av behandling hos opioidnaive pasienter (se pkt. 4.4 og 4.9).
+
+Ekvianalgetisk potenskonvertering
+Hos pasienter som allerede bruker opioide analgetika, bør startdosen av Fentanyl Sandoz depotplaster
+være basert på døgndosen av det tidligere opioidet. Følg trinnene nedenfor for å beregne den
+hensiktsmessige startdosen av Fentanyl Sandoz depotplaster.
+1.    Beregn døgndosen (mg/døgn) av opioidet som for tiden brukes.
+2.    Konverter denne mengden til den ekvianalgetiske perorale døgndosen av morfin ved bruk av
+      multiplikasjonsfaktoren i Tabell 1 for den aktuelle administrasjonsmåten.
+3.    For å finne dosen av Fentanyl Sandoz depotplaster som tilsvarer den beregnede
+      ekvianalgetiske døgndosen av morfin, brukes dosekonverteringstabell 2 eller 3 som
+      følger:
+      a.     Tabell 2 er for voksne pasienter som har behov for opioidrotasjon eller som er mindre
+             klinisk stabile (konverteringsforholdet for peroral morfin til transdermal fentanyl er
+                                                      2
+             omtrent 150:1)
+       b.    Tabell 3 er for voksne pasienter som har en stabil og veltolerert opioidbehandling
+             (konverteringsforholdet for peroral morfin til transdermal fentanyl er omtrent 100:1).
+
+Tabell 1: Konverteringstabell - Multiplikasjonsfaktorer for konvertering av døgndose av
+tidligere opioider til ekvianalgetisk døgndose av peroral morfin (mg/døgn av tidligere opioid x
+faktor = ekvianalgetisk døgndose av peroral morfin)
+
+Tidligere opioid                    Administrasjonsmåte             Multiplikasjonsfaktor
+                                    peroralt                                1a
+morfin                              parenteralt                             3
+                                    sublingvalt                             75
+buprenorfin                         parenteralt                             100
+                                    peroralt                                0.15
+kodein                              parenteralt                            0,23b
+                                    peroralt                                0.5
+diamorfin                           parenteralt                             6b
+                                    peroralt                                -
+fentanyl                            parenteralt                             300
+                                    peroralt                                4
+hydromorfon                         parenteralt                             20b
+                                    peroralt                                1
+ketobemidon                         parenteralt                             3
+                                    peroralt                                7.5
+levorfanol                          parenteralt                             15b
+                                    peroralt                                1.5
+metadon                             parenteralt                             3b
+                                    peroralt                                1.5
+oksykodon                           parenteralt                             3
+oksymorfon                          rektalt                                 3
+                                    parenteralt                             30b
+                                    peroralt                                -
+petidin                             parenteralt                             0,4b
+                                    peroralt                                0.4
+tapentadol                          parenteralt                             -
+                                    peroralt                                0.25
+tramadol                            parenteralt                             0.3
+a
+    Peroral/intramuskulær potens for morfin er basert på klinisk erfaring hos pasienter med kroniske
+    smerter.
+b
+    Basert på enkeltdosestudier hvor en intramuskulær dose av hvert oppførte virkestoff ble
+    sammenlignet med morfin for å fastslå relativ potens. Perorale doser er de som anbefales ved
+    bytte fra parenteral til peroral administrering.
+
+
+
+                                                   3
+Tabell 2: Anbefalt startdose av Fentanyl Sandoz depotplaster basert på peroral døgndose av
+morfin (for pasienter som har behov for opioidrotasjon eller for klinisk mindre stabile
+pasienter: konverteringsforholdet for peroral morfin til transdermal fentanyl er omtrent
+150:1)1
+                                                           Fentanyl Sandoz depotplaster
+       Peroral morfin per døgn                                      Dose
+           (mg/døgn)                                          (mikrog/time)
+              <90                                                12,5
+             90-134                                               25
+             135-224                                              50
+             225-314                                              75
+             315-404                                              100
+             405-494                                              125
+             495-584                                              150
+             585-674                                              175
+             675-764                                              200
+             765-854                                              225
+             855-944                                              250
+            945-1034                                              275
+            1035-1124                                             300
+1
+   I kliniske studier ble disse doseområdene for peroral døgndose av morfin brukt som grunnlag for
+   konvertering til fentanyl depotplaster.
+
+Tabell 3: Anbefalt startdose av Fentanyl Sandoz depotplaster basert på peroral døgndose av
+morfin (for pasienter på stabil og veltolerert opioidbehandling): konverteringsforholdet for
+peroral morfin til transdermal fentanyl er omtrent 100:1)
+                                                     Fentanyl Sandoz depotplaster
+    Peroral døgndose morfin                                Dose
+         (mg/døgn)                                     (mikrog/time)
+
+
+           ≤ 44                                                 12,5
+           45-89                                                 25
+          90-149                                                 50
+          150-209                                                75
+          210-269                                                100
+          270-329                                                125
+          330-389                                                150
+          390-449                                                175
+          450-509                                                200
+          510-569                                                225
+          570-629                                                250
+          630-689                                                275
+          690-749                                                300
+
+Innledende evaluering av den maksimale analgetiske effekten av Fentanyl Sandoz depotplaster kan ikke
+gjøres før plasteret har sittet på i 24 timer. Denne forsinkelsen skyldes den gradvise økning av
+serumkonsentrasjonen av fentanyl i de første 24 timene etter applisering av første plaster.
+
+Tidligere analgetisk behandling bør derfor fases ut gradvis etter applisering av første dose, inntil
+analgetisk effekt av Fentanyl Sandoz depotplaster er oppnådd.
+
+Dosetitrering og vedlikeholdsbehandling
+Fentanyl Sandoz depotplaster bør skiftes ut hver 72. time.
+
+                                                    4
+Dosen bør titreres individuelt på bakgrunn av gjennomsnittlig daglig bruk av supplerende
+analgetika, inntil det er oppnådd en balanse mellom analgetisk effekt og tolerabilitet. Dosejustering
+foretas vanligvis i trinn på 12,5 mikrog/time eller 25 mikrog/time, men bruk av nødvendige
+supplerende analgetika (peroral morfin 45/90 mg/døgn ≈ Fentanyl Sandoz depotplaster 12,5/25
+mikrog/time) og pasientens smertestatus må tas i betraktning. Etter en doseøkning kan det ta opptil
+6 døgn før pasienten har oppnådd likevekt på det nye dosenivået. Etter en doseøkning bør derfor
+pasienten bruke et plaster med høyere styrke gjennom to 72-timers intervaller før det gjøres noen
+ny økning i dosenivå.
+
+Mer enn ett Fentanyl Sandoz depotplaster kan benyttes når doseringen er høyere enn 100
+mikrog/time. Pasientene kan trenge periodevis supplering med korttidsvirkende analgetika mot
+gjennombruddssmerter. Enkelte pasienter kan trenge ytterligere eller alternative metoder for
+opioidadministrering når fentanyldosen overskrider 300 mikrog/time.
+
+Ved utilstrekkelig smertekontroll bør muligheten for hyperalgesi, toleranse og progresjon av
+underliggende sykdom overveies (se pkt. 4.4).
+
+Dersom det ikke oppnås tilstrekkelig smertelindring ved første påføring, kan fentanylplasteret skiftes ut
+med et nytt plaster av samme styrke etter 48 timer, eller dosen kan økes etter 72 timer.
+
+Dersom plasteret må erstattes (f.eks. dersom det faller av) før det har gått 72 timer, skal et plaster av
+samme styrke påføres på et annet hudområde. Dette kan føre til økt serumkonsentrasjon (se pkt. 5.2), og
+pasienten bør overvåkes nøye.
+
+Behandlingvarighet og behandlingsmål
+Før behandlingen med Fentanyl Sandoz depotplaster startes, bør det avtales en behandlingsstrategi som
+inkluderer behandlingsvarighet og behandlingsmål, og en plan for avslutning av behandlingen. Dette bør
+gjøres sammen med pasienten, i samsvar med retningslinjer for smertehåndtering. I løpet av behandlingen
+bør det være hyppig kontakt mellom legen og pasienten for å evaluere behovet for vedvarende behandling,
+vurdere seponering og justere dosen ved behov. Ved utilstrekkelig smertekontroll bør muligheten for
+hyperalgesi, toleranse og progresjon av underliggende sykdom overveies (se punkt 4.4).
+
+Seponering av fentanyl depotplaster
+Dersom det er nødvendig å seponere fentanylplaster, skal bytte til andre opioider skje gradvis, ved å
+starte med en lav dose og øke langsomt. Det er fordi fentanylkonsentrasjonen faller gradvis etter at
+fentanylplasteret er fjernet. Det kan ta 20 timer eller mer før serumkonsentrasjonen av fentanyl er
+redusert med 50 %. Generelt skal seponering av opioide analgetika skje gradvis for å unngå
+abstinenssymptomer (se pkt. 4.4 og 4.8). Det har vært rapporter om at rask seponering av
+opioidanalgetika hos pasienter som er fysisk avhengige av opioider har medført alvorlige
+seponeringssymptomer og ukontrollerte smerter. Nedtrapping skal baseres på individuell dose,
+behandlingsvarighet og pasientens respons med hensyn til smerter og seponeringssymptomer.
+Pasienter på langtidsbehandling kan trenge en mer gradvis nedtrapping. Hos pasienter som har blitt
+behandlet i en kort periode kan en raskere nedtrappingsplan vurderes.
+
+Opioide abstinenssymptomer kan forkomme hos noen pasienter etter konvertering eller
+dosejustering. Tabell 1, 2, og 3 bør bare brukes for overgang fra andre opioider til Fentanyl Sandoz
+depotplaster og ikke fra Fentanyl Sandoz depotplaster til andre behandlinger, dette for å unngå
+overestimering av den nye analgetiske dosen og potensiell overdosering.
+
+Spesielle pasientgrupper
+Eldre pasienter
+Eldre pasienter bør observeres nøye, og dosen bør være individuell og basert på pasientens status
+(se pkt. 4.4 og 5.2).
+
+Hos opioidnaive eldre pasienter skal behandling vurderes bare dersom nytten oppveier risikoen. I disse
+tilfellene skal bare fentanylplaster 12,5 mikrog/time vurderes for den innledende behandlingen.
+                                                      5
+Nedsatt nyre- og leverfunksjon
+Pasienter med nedsatt nyre- eller leverfunksjon bør observeres nøye, og dosen bør være
+individuell og basert på pasientens status (se pkt. 4.4 og 5.2).
+
+Hos opioidnaive pasienter med nedsatt nyre- eller leverfunksjon, skal behandling vurderes bare
+dersom nytten oppveier risikoen. I disse tilfellene skal bare 12,5 mikrog/time fentanylplaster vurderes
+for den innledende behandlingen
+
+Pediatrisk populasjon
+Barn fra 16 år og eldre
+Følg dosering for voksne.
+
+Barn fra 2 til 16 år
+Fentanyl depotplaster bør administreres bare til opioidtolerante pediatriske pasienter (alder 2 til 16 år)
+som allerede får minst 30 mg perorale morfinekvivalenter per døgn. Ved konvertering av pediatriske
+pasienter fra perorale eller parenterale opioider til fentanylplaster, se Ekvianalgetisk
+potenskonvertering (Tabell 1) og anbefalt dose av fentanylplaster basert på peroral døgndose av morfin
+(Tabell 4).
+
+Tabell 4: Anbefalt dose av fentanylplaster for pediatriske pasienter1 basert på peroral døgndose
+av morfin) 2
+                                                      Fentanyl Sandoz depotplaster
+     Peroral morfin per døgn                                       Dose
+          (mg/døgn)                                       (mikrog/time)
+           30-44                                              12,5
+           45-134                                               25
+1
+   Konvertering til doser av fentanylplaster som er høyere enn 25 mikrog/time, er den samme for
+   pediatriske pasienter som for voksne pasienter (se Tabell 2).
+2
+   I kliniske studier ble disse perorale døgndosene av morfin brukt som grunnlag for konvertering til
+   fentanylplaster.
+
+I to pediatriske studier ble den nødvendige dosen av fentanyl depotplaster beregnet konservativt:
+30 mg til 44 mg peroral morfin per døgn eller den ekvivalente opioiddosen ble erstattet med ett
+fentanylplaster 12,5 mikrog/time. Det gjøres oppmerksom på at dette konverteringsskjemaet for
+barn bare gjelder bytte fra peroral morfin (eller tilsvarende) til fentanylplaster.
+Konverteringsskjemaet skal ikke brukes ved bytte fra Fentanyl Sandoz depotplaster til andre
+opioider, siden overdosering da kan forekomme.
+
+Den analgetiske effekten av det første fentanylplasteret vil ikke være optimal i løpet av de første
+24 timene. De første 12 timene etter bytte til fentanyl depotplaster, bør derfor pasienten få den
+tidligere regelmessige dosen av analgetika. De neste 12 timene bør disse analgetika gis på bakgrunn
+av klinisk behov.
+
+Det anbefales å overvåke pasienten med tanke på bivirkninger, som kan omfatte
+hypoventilering, i minst 48 timer etter oppstart av behandling med fentanylplaster eller etter
+opptitrering av dosen (se pkt. 4.4).
+
+Fentanyl Sandoz depotplaster skal ikke brukes hos barn under 2 år, da sikkerhet og effekt ikke
+er fastslått.
+
+Dosetitrering og vedlikeholdsdose hos barn
+Fentanyl Sandoz depotplaster bør skiftes hver 72. time. Dosen bør titreres individuelt inntil det
+er oppnådd en balanse mellom analgetisk effekt og tolerabilitet. Dosen må ikke økes i intervaller
+på under 72 timer. Dersom den analgetiske effekten av fentanylplaster er utilstrekkelig, bør
+supplerende morfin eller annet korttidsvirkende opioid administreres. Det kan være nødvendig å
+                                                      6
+øke dosen, avhengig av behovet for ytterligere analgetika og barnets smertestatus. Dosejustering
+bør gjøres i trinn på 12,5 mikrog/time.
+
+Administrasjonsmåte
+Fentanyl Sandoz depotplaster er for transdermal bruk.
+Fentanyl depotplaster bør appliseres på ikke-irritert og ikke-bestrålt hud på et flatt område på
+overkroppen eller overarmene.
+Hos små barn er foretrukket plassering øverst på ryggen, dette for å minske risikoen for at barnet
+fjerner plasteret.
+
+Hår på applikasjonsstedet (et ubehåret område er foretrukket) bør klippes (ikke barberes) før
+applisering. Dersom stedet for applisering av fentanylplasteret trenger rengjøring før plasteret
+appliseres, bør det gjøres kun med vann. Såper, oljer, lotions eller andre stoffer som kan irritere huden
+eller endre hudens karakter, skal ikke brukes. Huden skal være fullstendig tørr før plasteret appliseres.
+Plastrene bør inspiseres før bruk. Plastre som er klippet, delt eller skadet på noen måte, skal ikke
+brukes.
+
+Fentanyl Sandoz depotplaster bør appliseres umiddelbart etter at det er tatt ut av den forseglede
+pakningen. Finn den stiplede linjen for å ta plasteret ut av beskyttelsesposen. Riv kanten på posen
+helt av. Åpne så posen langs begge sider, og brett posen ut som du åpner en bok.
+Beskyttelseslaget på plasteret er delt. Trekk den første delen av beskyttelseslaget av midten på
+plasteret. Unngå å berøre den klebrige siden av plasteret. Press den klebrige siden av plasteret mot
+huden. Fjern den andre delen av beskyttelseslaget. Press hele plasteret mot huden ved å påføre et lett
+trykk med håndflaten i ca. 30 sekunder. Pass på at kantene på plasteret sitter godt. Vask deretter
+hendene med rent vann.
+
+Fentanyl Sandoz depotplaster kan brukes kontinuerlig i 72 timer. Et nytt plaster bør appliseres på et
+annet sted på huden etter at det forrige depotplasteret er fjernet. Det bør gå flere dager før et nytt
+plaster appliseres på samme hudområde.
+
+4.3     Kontraindikasjoner
+
+Overfølsomhet overfor virkestoffet eller overfor noen av hjelpestoffene listet opp i pkt. 6.1.
+
+Akutt eller postoperativ smerte ettersom dosetitrering ikke er mulig ved korttidsbehandling og fordi
+slik bruk kan resultere i alvorlig eller livstruende hypoventilering.
+
+Alvorlig respirasjonsdepresjon.
+
+4.4     Advarsler og forsiktighetsregler
+
+Pasienter som har opplevd alvorlige bivirkninger, bør overvåkes i minst 24 timer etter fjerning av
+fentanylplasteret, eller i lengre tid, alt etter hva kliniske symptomer indikerer. Dette fordi
+serumkonsentrasjonen av fentanyl faller gradvis og er redusert med ca. 50 % etter 20 til 27 timer.
+
+Pasientene og deres pårørende må informeres om at Fentanyl Sandoz depotplaster inneholder et
+virkestoff i en mengde som kan være dødelig, spesielt for barn. De må derfor oppbevare plastrene
+utilgjengelig for barn, både før og etter bruk.
+
+På grunn av risiko, inkludert fatalt utfall, forbundet med utilsiktet inntak, feilbruk og misbruk, skal
+pasienter og deres pårørende rådes til å oppbevare Fentanyl Sandoz på en sikker og trygg plass,
+utilgjengelig for andre.
+
+Opioidnaive og ikke opioidtolerante tilstander
+Bruk av fentanylplaster hos opioidnaive pasienter har i svært sjeldne tilfeller ført til uttalt
+respirasjonsdepresjon og/eller dødsfall når det har vært brukt som innledende opioidbehandling,
+                                                     7
+spesielt hos pasienter med smerte som ikke er kreftrelatert. Alvorlig eller livstruende
+hypoventilering kan forekomme også ved bruk av den laveste dosen av Fentanyl Sandoz
+depotplaster som innledende behandling av opioidnaive pasienter, spesielt hos eldre eller
+pasienter med nedsatt lever- eller nyrefunksjon. Tendensen til toleranseutvikling varierer mye fra
+person til person. Det anbefales at fentanylplaster brukes hos pasienter som har vist
+opioidtoleranse (se pkt. 4.2).
+
+Respirasjonsdepresjon
+Noen pasienter kan oppleve uttalt respirasjonsdepresjon med fentanylplaster. Pasientene må
+observeres med tanke på denne effekten. Respirasjonsdepresjonen kan vedvare etter fjerning av
+plasteret. Forekomsten av respirasjonsdepresjon øker med økende dose av fentanylplaster (se pkt.
+4.9).
+
+Opioider kan forårsake søvnrelaterte pusteforstyrrelser, inkludert sentral søvnapné (CSA) og
+søvnrelatert hypoksi. Opioidbruk øker risikoen for CSA på en doseavhengig måte. Hos pasienter med
+CSA bør det vurderes å redusere totaldosen av opioider.
+
+Risiko ved samtidig bruk av legemidler som hemmer sentralnervesystemet, inkludert sedativa som
+benzodiazepiner eller beslektede legemidler, alkohol og narkotiske legemidler med hemmende effekt
+på sentralnervesystemet
+Samtidig bruk av fentanyldepotplaster og sedativa, for eksempel benzodiazepiner eller lignende
+legemidler, alkohol eller narkotiske legemidler som hemmer sentralnervesystemet, kan medføre
+sedasjon, respirasjonsdepresjon, koma og død. På grunn av denne risikoen skal samtidig forskrivning
+av sedativa forbeholdes pasienter hvor alternativ behandling ikke er mulig. Dersom det tas en
+beslutning om å foreskrive fentanyldepotplaster samtidig med sedativa, skal det benyttes laveste
+effektive dose og varigheten av behandlingen må være så kort som mulig.
+
+Pasienter skal overvåkes nøye for tegn og symptomer på respirasjonsdepresjon og sedasjon. I den
+forbindelse anbefales det sterkt å gjøre pasienter og omsorgspersoner oppmerksom på disse
+symptomene (se pkt. 4.5).
+
+Kronisk lungesykdom
+Fentanylplaster kan gi mer alvorlige bivirkninger hos pasienter med kronisk obstruktiv
+lungesykdom eller andre lungesykdommer. Hos slike pasienter kan opioider redusere
+respirasjonsevnen og øke luftveismotstanden.
+
+Effekter av langtidsbehandling samt toleranse
+Hos alle pasienter kan toleranse overfor de analgetiske effektene, hyperalgesi og fysisk og
+psykisk avhengighet utvikles ved gjentatt bruk av opioider, mens ufullstendig toleranse utvikles
+overfor enkelte bivirkninger, som opioidindusert forstoppelse. Særlig hos pasienter med kronisk
+smerte som ikke er kreftrelatert, er det rapportert utilstrekkelig lindring av smerteintensitet ved
+kontinuerlig langtidsbruk av opioidbehandling. I løpet av behandlingen bør det være hyppig
+kontakt mellom legen og pasienten for å evaluere behovet for vedvarende behandling (se punkt
+4.2). Når det fastslås at fortsatt behandling ikke vil ha effekt, skal det foretas gradvis nedtitrering
+for å unngå seponeringssymptomer.
+
+Fentanyl Sandoz skal ikke seponeres brått hos pasienter som er fysisk avhengige av opioider.
+Legemiddelseponeringssyndrom kan oppstå ved brå seponering av behandling eller
+dosereduksjon. Det har vært rapporter om at rask nedtrapping av Fentanyl Sandoz hos pasienter
+som er fysisk avhengige av opioider kan medføre alvorlige seponeringssymptomer og
+ukontrollerte smerter (se pkt. 4.2 og 4.8). Når en pasient ikke lenger trenger behandling,
+anbefales det å trappe dosen gradvis ned for å minimere seponeringssymptomer. Nedtrapping fra
+en høy dose kan ta uker til måneder. Opioidseponeringssyndromet kjennetegnes med noen eller
+alle av følgende: rastløshet, lakrimasjon, rhinoré, gjesping, perspirasjon, frysninger, myalgi,
+mydriasis og palpitasjoner. Andre symptomer kan også oppstå, inkludert irritabilitet, uro, angst,
+hyperkinesi, tremor, svakhet, insomni, anoreksi, abdominale kramper, kvalme, oppkast, diaré,
+                                                      8
+økt blodtrykk, økt respirasjonsfrekvens og økt hjertefrekvens.
+
+Avvikende opioidbruk (misbruk og avhengighet)
+Gjentatt bruk av Fentanyl Sandoz kan medføre avvikende opioidbruk (Opioid use disorder,
+OUD). En høyere dose og lengre varighet av opioidbehandlingen kan øke risikoen for å utvikle
+OUD. Misbruk eller feilbruk av Fentanyl Sandoz kan føre til overdosering og/eller død.
+Risikoen for utvikling av OUD er økt hos pasienter med personlig eller familieanamnese
+(foreldre eller søsken) med stoffmisbruk (inkludert alkoholmisbruk), hos tobakksbrukere og hos
+pasienter med personlig anamnese med andre sinnslidelser (f.eks. alvorlig depresjon, angst og
+personlighetsforstyrrelser).
+
+Før og i løpet av behandlingen med Fentanyl Sandoz depotplaster, bør det avtales
+behandlingsmål og en seponeringsplan med pasienten (se punkt 4.2). Før og i løpet av
+behandlingen bør også pasienten bli informert om risikoene for og tegnene på OUD. Hvis disse
+tegnene forekommer, skal pasienter bli rådet til å ta kontakt med legen sin.
+
+Pasienter som behandles med opioide legemidler skal overvåkes for tegn på OUD, slik som
+legemiddelsøkende atferd (f.eks. for tidlig forespørsel om påfyll), spesielt pasienter med økt
+risiko. Dette omfatter gjennomgang av samtidig bruk av opioider og psykoaktive legemidler
+(slik som benzodiazepiner). Hos pasienter med tegn og symptomer på OUD bør det vurderes å
+konsultere en spesialist på stoffavhengighet. Dersom opioidet skal seponeres (se pkt. 4.4).
+
+Lidelser i sentralnervesystemet, inkludert økt intrakranielt trykk.
+Fentanylplaster skal brukes med forsiktighet hos pasienter som kan være særlig følsomme for de
+intrakranielle effektene av CO2-retensjon, for eksempel pasienter som viser tegn på økt
+intrakranielt trykk, nedsatt bevissthet eller koma. Fentanylplaster skal brukes med forsiktighet hos
+pasienter med hjernesvulst.
+
+Hjertesykdom
+Fentanyl kan gi bradykardi og bør derfor administreres med forsiktighet til pasienter med
+bradyarytmi.
+
+Hypotensjon
+Opioider kan forårsake hypotensjon, spesielt hos pasienter med akutt hypovolemi. Underliggende,
+symptomatisk hypotensjon og/eller hypovolemi bør korrigeres før behandling med fentanyl
+depotplaster igangsettes.
+
+Nedsatt leverfunksjon
+Siden fentanyl blir metabolisert til inaktive metabolitter i leveren, kan nedsatt leverfunksjon svekke
+eliminasjonen. Dersom pasienter med nedsatt leverfunksjon bruker fentanylplaster, bør de observeres
+nøye for tegn på fentanyltoksisitet, og dosen av fentanylplaster må om nødvendig reduseres (se pkt.
+5.2).
+
+Nedsatt nyrefunksjon
+Selv om nedsatt nyrefunksjon ikke er forventet å påvirke eliminasjonen av fentanyl i klinisk relevant
+grad, tilrådes forsiktighet siden fentanyls farmakokinetikk ikke er evaluert i denne pasientgruppen (se
+pkt. 5.2). Behandling skal kun overveies dersom nytten oppveier risikoen. Dersom pasienter med
+nedsatt nyrefunksjon bruker fentanylplaster, bør de observeres nøye for tegn på fentanyltoksisitet, og
+dosen skal om nødvendig reduseres. Ytterligere begrensninger gjelder opioidnaive pasienter med
+nedsatt nyrefunksjon (se pkt. 4.2).
+
+Feber/påføring av ekstern varme
+Fentanylkonsentrasjonen kan øke dersom hudtemperaturen øker (se pkt. 5.2). Pasienter med feber
+bør derfor overvåkes for uønskede opioideffekter, og dosen av fentanylplaster skal om nødvendig
+justeres. Det er mulighet for en temperaturavhengig økning av frigjort fentanyl fra plasteret, noe
+som kan resultere i overdosering og dødsfall.
+                                                    9
+Alle pasienter bør rådes til å unngå at applikasjonsstedet for fentanylplasteret utsettes for direkte
+eksterne varmekilder, som varmeputer, elektriske tepper, oppvarmede vannsenger, varme- eller
+solariumslamper, solbading eller langvarige varme bad, badstue og varme boblebad.
+
+Serotonergt syndrom
+Det bør utvises forsiktighet når fentanyl depotplaster blir administrert samtidig med legemidler
+som påvirker serotonerge nevrotransmittorsystemer.
+
+Utvikling av potensielt livstruende serotonergt syndrom kan forekomme ved samtidig bruk av
+serotonerge legemidler, som selektive serotoninreopptakshemmere (SSRI) eller
+serotonin/noradrenalinreopptakshemmere (SNRI), og virkestoffer som hemmer metabolisme av
+serotonin (inkludert monoaminoksidasehemmere [MAO-hemmere]). Dette kan oppstå ved bruk av
+anbefalt dose (se pkt. 4.5).
+
+Serotonergt syndrom kan omfatte endringer i sinnstilstand (f.eks. uro, hallusinasjoner, koma),
+autonom ustabilitet (f.eks. takykardi, labilt blodtrykk, hypertermi), nevromuskulære
+forstyrrelser (f.eks. hyperrefleksi, koordinasjonsvansker, rigiditet) og/eller gastrointestinale
+symptomer (f.eks. kvalme, oppkast, diaré).
+
+Ved mistanke om serotonergt syndrom bør behandling med Fentanyl Sandoz depotplaster seponeres.
+
+Interaksjoner med andre legemidler
+CYP3A4-hemmere
+Samtidig bruk av fentanylplaster og cytokrom P450 3A4-hemmere (CYP3A4-hemmere) kan
+medføre en økning i plasmakonsentrasjonen av fentanyl. Dette kan øke eller forlenge både de
+terapeutiske effektene og bivirkningene av fentanyl og kan føre til alvorlig respirasjonsdepresjon.
+Samtidig bruk av Fentanyl Sandoz depotplaster og CYP3A4-hemmere anbefales derfor ikke,
+såfremt ikke nytten oppveier den økte risikoen for bivirkninger. Generelt bør pasienten vente i 2
+dager etter avsluttet behandling med en CYP3A4-hemmer før applisering av første Fentanyl
+Sandoz depotplaster. Varigheten av hemmingen varierer imidlertid, og for noen CYP3A4-
+hemmere med lang eliminasjonshalveringstid, som amiodaron, eller for tidsavhengige hemmere
+som erytromycin, idelalisib, nikardipin og ritonavir, kan det hende denne perioden må være lengre.
+Preparatomtalen til CYP3A4-hemmeren skal derfor konsulteres for virkestoffets halveringstid og
+varigheten av den hemmende effekten. En pasient som er behandlet med fentanylplaster, bør vente
+minst 1 uke etter fjerning av siste plaster før behandling med en CYP3A4-hemmer igangsettes.
+Dersom samtidig bruk av fentanylplaster og en CYP3A4-hemmer ikke kan unngås, anbefales nøye
+overvåking med hensyn til tegn eller symptomer på økte eller forlengede terapeutiske effekter og
+bivirkninger av fentanyl (spesielt respirasjonsdepresjon), og administreringen av fentanylplaster
+må om nødvendig reduseres eller avbrytes (se pkt. 4.5).
+
+Utilsiktet eksponering ved plasteroverføring
+Utilsiktet overføring av et fentanylplaster til huden til en som ikke bruker slike plastre (særlig et
+barn), ved deling av seng eller tett fysisk kontakt med en plasterbruker, kan medføre
+opioidoverdosering hos ikke-brukeren. Pasientene bør informeres om at dersom utilsiktet
+plasteroverføring finner sted, skal det overførte plasteret omgående fjernes fra huden til ikke-brukeren
+(se pkt. 4.9).
+
+Bruk hos eldre pasienter
+Data fra studier med intravenøs fentanyl tyder på at eldre pasienter kan ha redusert clearance og
+forlenget halveringstid, og de kan være mer sensitive for virkestoffet enn yngre pasienter. Dersom
+eldre pasienter bruker fentanylplaster, bør de observeres nøye for tegn på fantanyltoksisitet, og dosen
+må om nødvendig reduseres (se pkt. 5.2).
+
+Mage-tarmkanalen
+Opioider øker tonus og reduserer peristaltiske kontraksjoner i glatt muskulatur i mage-tarmkanalen.
+                                                     10
+Påfølgende forlenget passasjetid gjennom mage-tarmkanalen kan bidra til den forstoppende effekten
+til fentanyl. Pasientene bør rådes til å ta forholdsregler for å forebygge forstoppelse, og profylaktisk
+bruk av laksantia bør vurderes. Det bør utvises ekstra forsiktighet hos pasienter med kronisk
+forstoppelse. Ved bekreftet eller mistenkt paralytisk ileus skal behandling med Fentanyl Sandoz
+depotplaster seponeres.
+
+Pasienter med myasthenia gravis
+Ikke-epileptiske (myo)kloniske reaksjoner kan forekomme. Forsiktighet bør utvises ved behandling
+av pasienter med myasthenia gravis.
+
+Samtidig bruk av blandede opioidagonister/-antagonister
+Samtidig bruk av buprenorfin, nalbufin eller pentazocin er ikke anbefalt (se pkt. 4.5).
+
+Pediatrisk populasjon
+Fentanyl Sandoz depotplaster bør ikke administreres til opioidnaive pediatriske pasienter (se pkt.
+4.2). Alvorlig eller livstruende hypoventilering kan potensielt oppstå uansett hvilken dose fentanyl
+depotplaster som blir administrert.
+
+Bruk av fentanyl depotplaster er ikke undersøkt hos barn under 2 år. Fentanyl Sandoz
+depotplaster bør kun gis til barn som tåler opioider og er 2 år eller eldre (se pkt. 4.2).
+
+Vær påpasselig med valg av applikasjonssted for fentanylplaster, for å forhindre at barn spiser
+plasteret (se pkt. 4.2 og 6.6), og følg nøye med på at plasteret sitter godt.
+
+Opioidindusert hyperalgesi
+Opioidindusert hyperalgesi (OIH) er en paradoksal respons på et opioid, hvor det er en økning i
+smerteopplevelse til tross for stabil eller økt opioideksponering. Det er forskjellig fra toleranse, hvor
+høyere opioiddoser er nødvendig for å oppnå samme analgetiske effekt eller behandle tilbakevendende
+smerter. OIH kan manifesteres som økt smertenivå, mer generaliserte smerter (dvs. mindre fokale)
+eller smerter som følge av ordinære (dvs. ikke smertefulle) stimuli (allodyni) uten tegn på
+sykdomsprogresjon. Ved mistanke om OIH skal opioiddosen reduseres eller nedtrappes, hvis mulig.
+
+Endokrine effekter
+Opioider slik som fentanyl, kan påvirke hypothalamus-hypofyse-binyre-aksen eller -gonadeaksen,
+spesielt etter langtidsbruk. Noen endringer som kan ses, inkluderer en økning i serumprolaktin og
+reduksjon i plasmakortisol og testosteron. Kliniske tegn og symptomer kan manifesteres fra disse
+hormonforandringene. Ved mistanke om en endokrin effekt slik som hyperprolaktinemi eller
+binyresvikt, anbefales relevante laboratorieprøver, og seponering av behandling med Fentanyl Sandoz
+bør vurderes.
+
+4.5     Interaksjon med andre legemidler og andre former for interaksjon
+
+Farmakodynamikk-relaterte interaksjoner
+Sentraltvirkende legemidler/legemidler som hemmer sentralnervesystemet, inkludert alkohol og
+narkotiske legemidler med hemmende effekt på sentralnervesystemet
+Samtidig bruk av fentanyldepotplaster og andre legemidler som hemmer sentralnervesystemet
+(inkludert benzodiazepiner og andre sedativa/hypnotika, opioider, generelle anestetika,
+fentiaziner, anxiolytika, sederende antihistaminer, alkohol og narkotiske legemidler med
+hemmende effekt på sentralnervesystemet), muskelrelaksantia og gabapentinoider (gabapentin og
+pregabalin) kan medføre respirasjonsdepresjon, hypotensjon, dyp sedasjon, koma eller død.
+Samtidig forskrivning av legemidler som hemmer sentralnervesystemet og fentanyldepotplaster
+skal forbeholdes pasienter hvor alternativ behandling ikke er mulig. Samtidig bruk av noen av
+disse legemidlene og Fentanyl Sandoz depotplaster krever nøye monitorering og observasjon av
+pasienten. Dose og varighet ved samtidig bruk skal begrenses (se pkt. 4.4).
+
+Monoaminoksydasehemmere (MAO-hemmere)
+                                                     11
+Fentanyl depotplaster anbefales ikke til pasienter som trenger samtidig behandling med en MAO-
+hemmer. Det er rapportert alvorlige og uforutsigbare interaksjoner med MAO-hemmere, som
+innebærer potensering av opiate eller serotonerge effekter. Fentanyl Sandoz depotplaster bør derfor
+ikke brukes de første 14 dagene etter at behandling med en MAO-hemmer er avsluttet.
+
+Serotonerge legemidler
+Samtidig administrering av fentanyl og et serotonergt legemiddel, f.eks. en selektiv serotonin-
+reopptakshemmer (SSRI) eller en serotonin/noradrenalinreopptakshemmer (SNRI) eller en
+monoaminoksidasehemmer (MAO-hemmer), kan øke risikoen for serotonergt syndrom, en potensielt
+livstruende tilstand. Samtidig bruk krever forsiktighet. Pasienten skal observeres nøye, spesielt ved
+behandlingsstart og dosejustering (se pkt. 4.4).
+
+Samtidig bruk av blandede opioide agonister/antagonister
+Samtidig bruk av buprenorfin, nalbufin eller pentazocin er ikke anbefalt. De har høy affinitet for
+opioidreseptorer med relativt lav egenaktivitet og antagoniserer derfor delvis den analgetiske
+effekten av fentanyl og kan forårsake abstinenssymptomer hos opioidavhengige pasienter (se pkt.
+4.4).
+
+Farmakokinetikkrelaterte interaksjoner
+Cytokrom P450 3A4-hemmere (CYP3A4)
+Fentanyl, som er et virkestoff med høy clearance, blir metabolisert raskt og i høy grad, hovedsakelig
+av CYP3A4.
+
+Samtidig bruk av fentanylplaster og cytokrom P450 3A4-hemmere (CYP3A4) kan føre til økt
+plasmakonsentrasjon av fentanyl. Dette kan medføre økning i, eller forlengelse av, både den
+terapeutiske effekten og bivirkningene og kan forårsake alvorlig respirasjonsdepresjon. Graden av
+interaksjon med sterke CYP3A4-hemmere forventes å være høyere enn med svake eller moderate
+CYP3A4-hemmere.
+Det er rapportert tilfeller av alvorlig respirasjonsdepresjon etter samtidig administrering av CYP3A4-
+hemmere og transdermal fentanyl, inkludert et fatalt tilfelle etter samtidig administrering med en
+moderat CYP3A4-hemmer. Samtidig bruk av CYP3A4-hemmere og fentanylplaster anbefales ikke,
+med mindre pasienten overvåkes nøye (se pkt. 4.4). Eksempler på virkestoffer som kan øke
+fentanylkonsentrasjonen omfatter: amiodaron, cimetidin, klaritromycin, diltiazem, erytromycin,
+flukonazol, itrakonazol, ketokonazol, nefazodon, ritonavir, verapamil og vorikonazol (denne listen er
+ikke utfyllende).
+
+Etter samtidig bruk av svake, moderate eller sterke CYP3A4-hemmere og kortvarig intravenøs
+fentanyladministrering, var reduksjonen av fentanyls clearance vanligvis ≤ 25 %. Med ritonavir (en
+sterk CYP3A4-hemmer) ble imidlertid clearance av fentanyl redusert med gjennomsnittlig 67 %.
+Graden av interaksjoner med CYP3A4-hemmere og langvarig transdermal administrering av fentanyl
+er ikke kjent, men kan være høyere enn ved kortvarig intravenøs administrering.
+
+Cytokrom P450 3A4-induktorer (CYP3A4)
+Samtidig bruk av transdermal fentanyl og CYP3A4-induktorer kan føre til redusert
+plasmakonsentrasjon av fentanyl og redusert terapeutisk effekt. Forsiktighet tilrådes ved samtidig
+bruk av CYP3A4-induktorer og Fentanyl Sandoz depotplaster. Det kan hende dosen av Fentanyl
+Sandoz depotplaster må økes eller at det må byttes til et annet analgetikum. I forbindelse med
+seponering av samtidig behandling med en CYP3A4-induktor, anbefales det at fentanyldosen
+reduseres og pasienten overvåkes nøye. Effektene av induktoren minsker gradvis. Det kan føre til
+økt plasmakonsentrasjon av fentanyl, noe som kan øke eller forlenge både de terapeutiske effektene
+og bivirkningene, samt forårsake alvorlig respirasjonsdepresjon. Nøye overvåking bør fortsette
+inntil stabile legemiddeleffekter er oppnådd. Eksempler på virkestoffer som kan redusere
+plasmakonsentrasjonen av fentanyl omfatter: karbamazepin, fenobarbital, fenytoin og rifampicin
+(denne listen er ikke utfyllende).
+
+Pediatrisk populasjon
+                                                   12
+Interaksjonsstudier har kun blitt utført hos voksne.
+
+4.6     Fertilitet, graviditet og amming
+
+Graviditet
+Det finnes ikke tilstrekkelige data på bruk av fentanyl depotplaster hos gravide kvinner. Dyrestudier
+har vist en viss reproduksjonstoksisitet (se pkt. 5.3). Den mulige risikoen for mennesker er ikke
+kjent, selv om det er vist at fentanyl som intravenøst anestetikum krysser placenta ved graviditet
+hos mennesker. Neonatalt abstinenssyndrom er rapportert hos nyfødte spedbarn der moren har brukt
+fentanyl depotplaster kronisk under svangerskapet. Fentanyl Sandoz depotplaster bør ikke brukes
+under svangerskap, såfremt det ikke er helt nødvendig.
+
+Fentanyl Sandoz depotplaster anbefales ikke brukt under fødsel, da det ikke skal brukes til behandling
+av akutte eller postoperative smerter (se pkt. 4.3). Fentanyl krysser dessuten placenta, og bruk av
+Fentanyl Sandoz depotplaster under fødsel kan føre til respirasjonsdepresjon hos det nyfødte
+spedbarnet.
+
+Amming
+Fentanyl utskilles i morsmelk hos mennesker og kan forårsake sedasjon/respirasjonsdepresjon hos et
+diende spedbarn. Amming bør derfor avbrytes under behandling med Fentanyl Sandoz depotplaster
+og i minst 72 timer etter at plasteret er fjernet.
+
+Fertilitet
+Det finnes ingen kliniske data vedrørende effektene av fentanyl på fertilitet. Noen studier på
+rotter har vist redusert fertilitet og økt embryomortalitet ved doser som var toksiske for
+mordyret (se pkt. 5.3).
+
+4.7   Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+Fentanyl depotplaster kan svekke den mentale og/eller fysiske evne som er nødvendig for å utføre
+potensielt farlige oppgaver, som å kjøre bil eller betjene maskiner.
+
+4.8   Bivirkninger
+
+Sikkerheten av fentanyl depotplaster ble evaluert hos 1 565 voksne og 289 pediatriske pasienter
+som deltok i 11 kliniske studier (1 dobbeltblind, placebo-kontrollert; 7 åpne, aktiv-kontrollerte; 3
+åpne, ikke-kontrollerte) ved behandling av kronisk malign eller ikke-malign smerte. Disse
+personene fikk minst én dose fentanylplaster, og dette genererte sikkerhetsdata.
+
+Basert på samlede sikkerhetsdata fra disse kliniske studiene, var de hyppigst rapporterte
+bivirkningene (dvs. ≥ 10 % insidens): kvalme (35,7 %), oppkast (23,2 %), obstipasjon (23,1 %),
+somnolens (15,0 %), svimmelhet (13,1 %) og hodepine (11,8 %).
+
+Bivirkningene som er rapportert ved bruk av fentanylplaster i disse kliniske studiene, inkludert de
+ovennevnte bivirkningene, og etter markedsføring, er oppgitt i tabell 5 nedenfor.
+
+Bivirkningene er fordelt i frekvensgrupper basert på følgende termer: Svært vanlige (≥ 1/10);
+vanlige (≥ 1/100 til < 1/10); mindre vanlige (≥ 1/1 000 til < 1/100); sjeldne (≥ 1/10 000 til <
+1/1 000), svært sjeldne (< 1/10 000), ikke kjent (kan ikke anslås ut ifra tilgjengelige data).
+Bivirkningene blir oppgitt i henhold til organklassesystem og etter fallende alvorlighetsgrad
+innenfor hver frekvenskategori.
+
+
+
+
+                                                       13
+Tabell 5: Bivirkninger hos voksne og pediatriske pasienter
+Organklassesystem                                  Frekvenskategori
+                     Svært         Vanlige             Mindre vanlige        Sjeldne    Ikke kjent
+                     vanlige
+Forstyrrelser i                    Overfølsomhet                                        Anafylaktisk
+immunsystemet                                                                           sjokk,
+                                                                                        anafylaktisk
+                                                                                        reaksjon,
+                                                                                        anafylaktoid
+                                                                                        reaksjon,
+Endokrine                                                                               Androgen-
+sykdommer                                                                               mangel
+Stoffskifte- og                    Anoreksi
+ernærings-
+betingede
+sykdommer
+Psykiatriske                       Insomni,               Agitasjon,                    Delirium,
+lidelser                           depresjon,             desorientering,               avhengighet
+                                   angst,                 euforisk
+                                   forvirringstilstand,   stemningsleie
+                                   hallusinasjoner
+Nevrologiske         Somnolens,    Tremor,                Hypoestesi,
+sykdommer            svimmelhet,   parestesi              kramper
+                     hodepine                             (inkludert
+                                                          kloniske kramper
+                                                          og grand mal),
+                                                          amnesi,
+                                                          nedsatt
+                                                          bevissthet,
+                                                          bevisstløshet
+Øyesykdommer                                              Tåkesyn          Miose
+Sykdommer i øre og                 Vertigo
+labyrint
+Hjertesykdommer                    Palpitasjoner,         Bradykardi,
+                                   takykardi              cyanose
+Karsykdommer                       Hypertensjon           Hypotensjon
+Sykdommer i                        Dyspné                 Respirasjons       Apné,       Bradypné
+respirasjons-                                             depresjon,         hypo-
+organer, thorax og                                        åndenød            ventilering
+mediastinum
+Gastrointestinale    Kvalme,       Diaré,                 Ileus, dysfagi     Subileus
+sykdommer            oppkast,      munntørrhet,
+                     obstipasjon   magesmerter,
+                                   smerter i øvre
+                                   abdomen,
+                                   dyspepsi
+Hud- og                            Hyperhidrose,          Eksem,
+underhuds-                         pruritus,              allergisk
+sykdommer                          utslett,               dermatitt,
+                                   erytem                 hudlidelse,
+                                                          dermatitt,
+                                                          kontaktdermatitt
+Sykdommer i                        Muskelspasmer          Muskel-
+muskler, bindevev                                         trekninger
+og skjelett
+                                              14
+ Tabell 5: Bivirkninger hos voksne og pediatriske pasienter
+ Organklassesystem                                  Frekvenskategori
+                      Svært         Vanlige             Mindre vanlige           Sjeldne      Ikke kjent
+                      vanlige
+ Sykdommer i nyre                   Urinretensjon
+ og urinveier
+ Lidelser i                                             Erektil
+ kjønnsorganer og                                       dysfunksjon,
+ brystsykdommer                                         seksuell
+                                                        dysfunksjon
+ Generelle lidelser                 Fatigue,            Reaksjoner på            Dermatitt Toleranse
+ og reaksjoner på                   perifert ødem,      applikasjons-            på applika-
+ administrasjons-                   asteni,             stedet,                  sjonsstedet,
+ stedet                             sykdomsfølelse,     influensa-               eksem på
+                                    kuldefølelse        lignende                 applika-
+                                                        sykdom,                  sjonsstedet
+                                                        følelse av endret
+                                                        kropps-
+                                                        temperatur,
+                                                        overfølsomhet på
+                                                        applikasjons-
+                                                        stedet,
+                                                        abstinens-
+                                                        syndrom,
+                                                        pyreksi*
+* Den tildelte frekvens (mindre vanlige) er basert på analyser av insidens som omfattet kun kliniske
+  studier på voksne og pediatriske pasienter med ikke-kreftrelatert smerte.
+
+Pediatrisk populasjon
+Sikkerheten til fentanyl depotplaster ble evaluert hos 289 pediatriske pasienter (< 18 år) som
+deltok i 3 kliniske studier med behandling av kronisk eller kontinuerlig smerte av malign eller
+ikke-malign opprinnelse. Disse pasientene fikk minst én dose av fentanyl depotplaster, og dette
+genererte sikkerhetsdata (se pkt. 5.1).
+
+Sikkerhetsprofilen hos barn og ungdom som ble behandlet med fentanylplaster var omtrent som
+hos voksne. Ingen risiko ble identifisert i den pediatriske populasjonen utover det som var
+forventet ved bruk av opioider for lindring av smerte forbundet med alvorlig sykdom, og det
+synes ikke å være noen spesifikk pediatrisk risiko forbundet med bruk av fentanylplaster hos
+barn helt ned til 2 års alder, når de blir brukt som angitt.
+
+Basert på samlede sikkerhetsdata fra disse 3 kliniske studiene på pediatriske pasienter, var de
+hyppigst rapporterte bivirkningene (dvs. ≥ 10 % insidens) oppkast (33,9 %), kvalme (23,5 %),
+hodepine (16,3 %), obstipasjon (13,5 %), diaré (12,8 %) og pruritus (12,8 %).
+
+Toleranse
+Toleranse kan utvikles ved gjentatt bruk.
+
+Legemiddelavhengighet
+Gjentatt bruk av Fentanyl Sandoz depotplaster kan føre til legemiddelavhengighet, selv ved
+terapeutiske doser. Risikoen for legemiddelavhengighet kan variere etter en pasients individuelle
+risikofaktorer, dose og varigheten av opioidbehandlingen (se punkt 4.4).
+
+Opioidseponeringssymptomer
+Opioide abstinenssymptomer (som kvalme, oppkast, diaré, angst og skjelving) kan opptre hos noen
+pasienter etter bytte fra tidligere opioid analgetikum til fentanylplaster eller dersom behandlingen
+                                                   15
+plutselig seponeres (se pkt. 4.2 og 4.4).
+
+Neonatalt abstinenssyndrom
+Det er rapportert svært sjeldne tilfeller av abstinenssyndrom hos nyfødte spedbarn når moren
+har brukt fentanylplaster kronisk under svangerskapet (se pkt. 4.6).
+
+Serotonergt syndrom
+Det er rapportert tilfeller av serotonergt syndrom når fentanyl ble administrert samtidig med kraftig
+serotonerge legemidler (se pkt. 4.4. og 4.5).
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til
+Direktoratet for medisinske produkter: www.dmp.no/meldeskjema.
+
+4.9   Overdosering
+
+Tegn og symptomer
+Overdosering med fentanyl manifesteres ved økt farmakologisk aktivitet. Den alvorligste
+effekten er respirasjonsdepresjon. Toksisk leukoencefalopati er også observert med
+overdosering av fentanyl.
+
+Behandling
+Ved respirasjonsdepresjon skal man som et umiddelbart tiltak fjerne fentanylplasteret og fysisk eller
+verbalt stimulere pasienten. Dette kan følges opp med administrering av en spesifikk opioidantagonist
+slik som nalokson. Respirasjonsdepresjon som følge av overdosering kan vare lengre enn effekten av
+opioidantagonisten. Intervallet mellom intravenøse doser av antagonist bør velges nøye på grunn av
+mulighet for renarkotisering etter at plasteret er fjernet; gjentatte injeksjoner eller kontinuerlig infusjon
+av nalokson kan være nødvendig. Reversering av den narkotiske effekten kan utløse akutt smerte og
+frigjøring av katekolaminer.
+
+Hvis den kliniske situasjonen tilsier det, skal frie luftveier sikres og vedlikeholdes, om mulig med
+orofaryngeal luftveisslange eller endotrakeal slange, og oksygen bør administreres og respirasjonen
+kontrolleres og assisteres etter forholdene. Adekvat kroppstemperatur og væskeinntak bør vedlikeholdes.
+
+Hypovolemi bør vurderes ved forekomst av alvorlig eller vedvarende hypotensjon, og tilstanden bør
+håndteres med passende parenteral væskebehandling.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Analgetika, opioider, fenylpiperidinderivater,
+ATC-kode: N02AB03
+
+Virkningsmekanisme
+Fentanyl er et opioidanalgetikum, som hovedsakelig bindes til µ-reseptorene. De primære
+terapeutiske virkningene er smertelindring og sedasjon.
+
+Pediatrisk populasjon
+Sikkerheten av fentanylplaster ble evaluert i 3 åpne studier på 289 pediatriske pasienter med
+kronisk smerte, i alderen 2 til 17 år. Åtti av barna var i alderen 2 til 6 år. Av de 289 personene som
+deltok i disse 3 studiene, startet 110 behandling med fentanylplaster i en dose på 12,5 mikrog/time.
+
+                                                     16
+Av disse 110 personene hadde 23 (20,9 %) tidligere fått < 30 mg perorale morfinekvivalenter per
+døgn, 66 (60,0 %) hadde fått 30 til 44 mg perorale morfinekvivalenter per døgn, og 12 (10,9 %)
+hadde fått minst 45 mg perorale morfinekvivalenter per døgn (data ikke tilgjengelig for 9 [8,2 %]
+personer). Startdoser på 25 mikrog/time og høyere ble brukt av de resterende 179 personene, hvorav
+174 (97,2 %) hadde stått på opioiddoser på minst 45 mg perorale morfinekvivalenter per døgn.
+Blant de resterende 5 personene med en startdose på minst 25 mikrog/time, som tidligere fikk
+opioiddoser på <45 mg perorale morfinekvivalenter per døgn, hadde 1 (0,6 %) tidligere fått <30 mg
+perorale morfinekvivalenter per døgn og 4 (2,2 %) hadde fått 30 til 44 mg perorale
+morfinekvivalenter per døgn (se pkt. 4.8).
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+Fentanyl Sandoz depotplaster gir kontinuerlig systemisk frisetting av fentanyl under den 72-timers
+bruksperioden. Etter applisering av fentanyl depotplaster absorberer huden under systemet fentanyl,
+og et depot av fentanyl blir konsentrert i det øvre hudlaget. Fentanyl blir deretter tilgjengelig i
+systemisk sirkulasjon. Polymermatriksen og diffusjonen av fentanyl gjennom hudlagene sikrer at
+frisettingshastigheten er relativt konstant. Konsentrasjonsgradienten mellom systemet og den lavere
+konsentrasjonen i huden driver frisettingen av virkestoffet. Gjennomsnittlig biotilgjengelighet av
+fentanyl etter applisering av depotplasteret er 92 %.
+
+Etter første applisering av Fentanyl Sandoz depotplaster øker serumkonsentrasjonen av fentanyl
+gradvis, flater ut mellom 12 og 24 timer og forblir relativt konstant resten av den 72-timers
+bruksperioden. På slutten av den andre 72-timers perioden er steady-state serumkonsentrasjon
+oppnådd og blir opprettholdt under påfølgende bruk av plaster av samme størrelse.
+På grunn av akkumulering er AUC- og Cmax-verdiene over et doseringsintervall ved steady-state
+omtrent 40 % høyere etter én applikasjon. Pasientene når og opprettholder en steady-state
+serumkonsentrasjon som er bestemt av individuell variasjon i hudpermeabilitet og kroppsclearance av
+fentanyl. Det er observert høy variabilitet fra person til person.
+
+En farmakokinetisk modell tyder på at serumkonsentrasjonen av fentanyl kan øke med 14 %
+(variasjonsbredde 0-26 %) dersom et nytt plaster settes på etter 24 timer istedenfor etter 72 timers bruk
+som anbefalt.
+
+En økning av hudtemperaturen kan forsterke absorpsjonen av transdermalt applisert fentanyl (se pkt.
+4.4). En økning i hudtemperaturen på grunn av en lavt innstilt varmepute som ble plassert over
+fentanylplasteret de første 10 timene etter en enkeltapplisering, ga 2,2 ganger høyere gjennomsnittlig
+AUC-verdi for fentanyl, og gjennomsnittskonsentrasjonen på slutten av oppvarmingen var 61 %.
+
+Distribusjon
+Fentanyl blir raskt distribuert til forskjellige vev og organer, slik det store distribusjonsvolumet
+indikerer (3 til 10 liter/kg etter intravenøs administrering til pasienter). Fentanyl akkumuleres i
+skjelettmuskulatur og fett og blir frisatt langsomt til blodet.
+
+I en studie av kreftpasienter som ble behandlet med transdermal fentanyl, var gjennomsnittlig
+plasmaproteinbinding 95 % (variasjonsbredde 77-100 %). Fentanyl krysser enkelt blod/hjerne-
+barrieren. Det krysser også placenta og utskilles i morsmelk.
+
+Biotransformasjon
+Fentanyl er et legemiddel med høy clearance, som metaboliseres raskt og i stor grad, hovedsakelig av
+CYP3A4 i leveren. Den viktigste metabolitten, norfentanyl, og andre metabolitter er inaktive. Huden
+ser ikke ut til å metabolisere fentanyl som opptas transdermalt. Dette ble vist i en analyse med humane
+keratinocytter, og i kliniske studier hvor 92 % av dosen som ble frisatt fra plasteret, ble registrert som
+uforandret fentanyl i systemisk sirkulasjon.
+
+Eliminasjon
+                                                     17
+Etter 72 timers bruk av et plaster er gjennomsnittlig halveringstid i området 20 til 27 timer. På grunn
+av fortsatt absorpsjon av fentanyl fra huddepotet etter at plasteret er fjernet, er halveringstiden til
+fentanyl etter transdermal administrering ca. 2 til 3 ganger lengre enn ved intravenøs administrering.
+
+Etter intravenøs administrering er gjennomsnittlig totalclearance på tvers av studier generelt mellom
+34 og 66 liter/time.
+
+I løpet av 72 timers intravenøs fentanyladministrering er omtrent 75 % av dosen utskilt i urinen og
+omtrent 9 % av dosen i avføringen. Ekskresjon skjer hovedsakelig som metabolitter, og mindre
+enn 10 % av dosen utskilles som uforandret virkestoff.
+
+Linearitet/ikke-linearitet
+Serumkonsentrasjonen av fentanyl er proporsjonal med størrelsen på Fentanyl Sandoz
+depotplaster. Farmakokinetikken til transdermal fentanyl blir ikke endret ved gjentatt
+applikasjon.
+
+Farmakokinetiske/farmakodynamiske forhold
+Det er høy variabilitet fra person til person når det gjelder fentanyls farmakokinetikk, forholdet
+mellom fentanylkonsentrasjon, terapeutisk effekt og bivirkninger, samt opioidtoleranse.
+Laveste effektive fentanylkonsentrasjon avhenger av smerteintensitet og tidligere bruk av
+opioid behandling. Både den laveste effektive konsentrasjonen og den toksiske
+konsentrasjonen øker med toleransen. Et optimalt terapeutisk konsentrasjonsområde for
+fentanyl kan derfor ikke fastslås. Justering av den individuelle fentanyldosen må være basert
+på pasientens respons og toleransenivå. Etter applisering av det første plasteret og etter en
+doseøkning må man ta i betraktning 12 til 24 timers forsinkelse av effekt.
+
+Spesielle pasientgrupper
+Eldre
+Data fra studier med intravenøs administrering av fentanyl, tyder på at eldre pasienter kan ha redusert
+clearance, forlenget halveringstid og være mer sensitive overfor virkestoffet enn yngre pasienter. I en
+studie hvor det ble benyttet fentanylplastre, var ikke farmakokinetikken hos friske eldre personer
+signifikant forskjellig fra farmakokinetikken friske unge personer, men maksimal serumkonsentrasjon
+tenderte til å være lavere og gjennomsnittsverdier for halveringstid ble forlenget til omtrent 34 timer.
+Eldre pasienter bør observeres nøye med hensyn til tegn på fentanyltoksisitet, og dosen må om
+nødvendig reduseres (se pkt. 4.4).
+
+Nedsatt nyrefunksjon
+Innvirkningen av nedsatt nyrefunksjon på farmakokinetikken til fentanyl forventes å være
+begrenset, siden urinutskillelsen av uforandret fentanyl er mindre enn 10 % og ingen kjente
+metabolitter elimineres via nyrene. Siden innvirkningen av nedsatt nyrefunksjon på
+farmakokinetikken til fentanyl ikke er evaluert, anbefales det imidlertid å utvise forsiktighet (se
+pkt. 4.2 og 4.4).
+
+Nedsatt leverfunksjon
+Pasienter med nedsatt leverfunksjon bør observeres nøye med hensyn til tegn på fentanyltoksisitet,
+og dosen av Fentanyl Sandoz depotplaster må om nødvendig reduseres (se pkt. 4.4). Data for
+personer med cirrhose og simulerte data for personer med forskjellig grad av nedsatt leverfunksjon,
+som ble behandlet med transdermal fentanyl, tyder på at fentanylkonsentrasjonen økes og
+fentanylclearance reduseres, sammenlignet med personer med normal leverfunksjon. Simuleringene
+tyder på at steady-state AUC for pasienter med leversykdom Child-Pugh klasse B (Child-Pugh-score
+= 8) vil være 1,36 ganger høyere enn for pasienter med normal leverfunksjon (Klasse A; Child-Pugh-
+score = 5,5). Når det gjelder pasienter med leversykdom klasse A (Child-Pugh-score = 12,5),
+indikerer resultatene at fentanyl akkumuleres ved hver administrering, noe som fører til at disse
+pasientene har omtrent 3,72 ganger høyere AUC ved steady fase.
+
+Pediatrisk populasjon
+                                                    18
+Fentanylkonsentrasjonen ble målt hos over 250 barn i alderen 2 til 17 år, som fikk applisert
+fentanylplastre i et doseområde på 12,5 til 300 mikrog/time. Etter korrigering for kroppsvekt,
+synes clearance (liter/time/kg) å være omtrent 80 % høyere hos barn i alderen 2 til 5 år og
+25 % høyere hos barn i alderen 6 til 10 år, sammenlignet med barn i alderen 11 til 16 år, som
+forventes å ha lignende clearance som voksne. Disse funnene er tatt i betraktning ved
+bestemmelse av doseringsanbefalingene for pediatriske pasienter (se pkt. 4.2 og 4.4).
+
+5.3    Prekliniske sikkerhetsdata
+
+Prekliniske data viser ingen spesiell fare for mennesker basert på konvensjonelle toksisitetsstudier
+med gjentatt dosering.
+
+Det er utført standardstudier av reproduksjons- og utviklingstoksisitet ved bruk av parenteral
+administrering av fentanyl. I en rottestudie påvirket ikke fentanyl hanners fertilitet. Noen studier
+med hunnrotter viste redusert fertilitet og økt embryodødelighet.
+
+Virkningene på embryoet skyldtes maternal toksisitet og ikke direkte effekter av substansen på
+embryoet under utvikling. Det var ingen indikasjoner på teratogene virkninger i studier med to arter
+(rotter og kaniner). I en studie av pre- og postnatal utvikling ble overlevelsesraten for avkom
+signifikant redusert ved doser som ga lett redusert maternal vekt. Denne effekten kan skyldes enten
+endret omsorg fra moren eller en direkte effekt av fentanyl på avkom. Virkninger på somatisk utvikling
+og atferd hos avkom ble ikke observert.
+
+Mutagenitetstester i bakterier og gnagere ga negative resultater. I likhet med andre opioide
+analgetika induserte fentanyl mutagene effekter i pattedyrceller in vitro. En mutagen risiko ved bruk
+av terapeutiske doser synes å være usannsynlig, siden effektene forekom bare ved høye
+konsentrasjoner.
+
+En karsinogenitetsstudie (daglig subkutan injeksjon av fentanylhydroklorid til Sprague Dawley-rotter i
+to år) medførte ingen funn som tyder på onkogent potensiale.
+
+
+6.     FARMASØYTISKE OPPLYSNINGER
+
+6.1    Fortegnelse over hjelpestoffer
+
+Beskyttelseslag:
+Polyetylentereftalat, silikonbehandlet
+
+Selvklebende matrikssjikt:
+Akrylatvinylacetatkopolymer
+
+Bakfilm:
+Polyetylentereftalat folie
+Blekk til trykk
+
+6.2    Uforlikeligheter
+
+Ikke relevant.
+
+6.3    Holdbarhet
+
+3 år
+
+6.4    Oppbevaringsbetingelser
+
+                                                    19
+Oppbevares i originalpakningen.
+
+6.5 Emballasje (type og innhold)
+
+Depotplastrene er pakket individuelt i barnesikre poser av PETP/Al/PE.
+Pakningene inneholder 1, 2, 3, 4, 5, 7, 8, 10, 14, 16 og 20 depotplastre.
+Sykehuspakninger med 5 depotplastre.
+
+Ikke alle pakningsstørrelser vil nødvendigvis bli markedsført.
+
+6.6   Spesielle forholdsregler for destruksjon og annen håndtering
+
+Instruksjoner for destruksjon:
+Brukte plastre skal brettes sammen slik at limsidene festes til hverandre, og deretter skal de kastes på
+en sikker måte. Ikke anvendt legemiddel samt avfall bør destrueres i overensstemmelse med lokale
+krav.
+
+
+7.     INNEHAVER AV MARKEDSFØRINGSTILLATELSEN
+
+Sandoz A/S,
+Edvard Thomsens Vej 14
+2300 København S
+Danmark
+
+
+8.    MARKEDSFØRINGSTILLATELSESNUMMER (NUMRE)
+
+Fentanyl Sandoz 12 mikrog/time:           07-5004
+Fentanyl Sandoz 25 mikrog/time:           07-5005
+Fentanyl Sandoz 50 mikrog/time:           07-5007
+Fentanyl Sandoz 75 mikrog/time:           07-5008
+Fentanyl Sandoz 100 mikrog/time:          07-5009
+
+
+9.      DATO FOR FØRSTE MARKEDSFØRINGSTILLATELSE / SISTE FORNYELSE
+
+Dato for første markedsføringstillatelse: 30.06.2009
+Dato for siste fornyelse: 04.08.2013
+
+
+10.     OPPDATERINGSDATO
+
+07.11.2025
+
+
+
+
+                                                    20
+

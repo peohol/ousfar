@@ -1,0 +1,54 @@
+      Pediatrisk populasjon
+      Prosedyrer som involverer analgesi hos barn med spontan respirasjon, bør bare brukes
+      som del av en anestesiprosedyre, eller gis som en del av en sedasjon / analgesi
+      prosedyre med erfarent personale tilstede i omgivelser som kan håndtere plutselig
+      brystveggsstivhet som krever intubasjon, eller apné som krever kunstig åndedrett.
+
+      Serotonergt syndrom
+
+      Det bør utvises forsiktighet når Fentanyl Hameln gis samtidig med legemidler som
+      påvirker serotonerge nevrotransmittorsystemer.
+
+      Utvikling av potensielt livstruende serotonergt syndrom kan forekomme ved samtidig
+      bruk av serotoninerge legemidler, som selektive serotoninreopptakshemmere (SSRI)
+      eller serotonin-noradrenalinreopptakshemmere (SNRI), og legemidler som hemmer
+      metabolisme av serotonin (inkludert monoaminoksidase [MAO]-hemmere). Dette kan
+      oppstå ved bruk av anbefalt dose.
+
+      Serotonergt syndrom kan omfatte endringer i sinnstilstand (f.eks. uro, hallusinasjoner,
+      koma), autonom ustabilitet (f.eks. takykardi, labilt blodtrykk, hypertermi),
+      nevromuskulære forstyrrelser (f.eks. hyperrefleksi, koordinasjonsvansker, rigiditet)
+      og/eller gastrointestinale symptomer (f.eks. kvalme, oppkast, diaré).
+
+      Ved mistanke om serotonergt syndrom bør rask seponering av Fentanyl Hameln
+      vurderes.
+
+      Natriuminnhold
+      Dette legemidlet inneholder 3,5 mg natrium per ml væske, oppløsning. Dette tilsvarer
+      0,2 % av WHOs anbefalte maksimale daglige inntak av natrium på 2 g for en voksen
+      person.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+      Effekt av andre legemidler på Fentanyl Hameln
+
+      Beroligende legemidler som benzodiazepiner eller lignende legemidler
+      Samtidig bruk av opioider og beroligende legemidler som benzodiazepiner eller
+      lignende legemidler øker risikoen for sedasjon, respirasjonsdepresjon, koma og
+      dødsfall på grunn av additiv CNS-depressiv effekt. Dosen og varigheten av samtidig
+      bruk bør begrenses (se pkt. 4.4).
+
+      Andre sentraldempende midler (CNS-depressiva)
+      Legemidler som barbiturater, nevroleptika, generelle anestetika, gabapentinoider
+      (gabapentin og pregabalin), og andre ikke-selektive legemidler som hemmer
+      sentralnervesystemet (f.eks. alkohol), kan øke eller forlenge respirasjonsdepresjonen
+      til fentanyl. Når pasientene har fått slike stoffer, vil nødvendig fentanyldose være
+      mindre enn vanlig. Samtidig bruk av fentanyl hos pasienter med spontan respirasjon
+      kan øke risikoen for respirasjonsdepresjon, uttalt sedasjon, koma og død.
+
+      Cytokrom P450 3A4 (CYP3A4)-hemmere
+      Fentanyl Hameln er et høy-clearance legemiddel som metaboliseres raskt og i høy
+      grad, hovedsaklig av CYP3A4. Når fentanyl blir brukt, kan samtidig bruk av en
+      CYP3A4-hemmer resultere i redusert fentanyl clearance. Ved administrering av
+      enkeltdoser av fentanyl kan tiden med risiko for respirasjonsdepresjon forlenges, noe
+      som kan kreve spesiell pasientpleie og lengre observasjonstid. Ved gjentatt dosering

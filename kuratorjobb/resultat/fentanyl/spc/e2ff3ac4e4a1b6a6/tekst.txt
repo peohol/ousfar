@@ -1,0 +1,503 @@
+1.      LEGEMIDLETS NAVN
+
+Fentanyl Kalceks 50 mikrogram/ml injeksjonsvæske, oppløsning
+
+
+2.      KVALITATIV OG KVANTITATIV SAMMENSETNING
+
+Hver ml med oppløsning inneholder 50 mikrogram fentanyl (som fentanylsitrat).
+Hver ampulle med 2 ml inneholder 100 mikrogram fentanyl (som fentanylsitrat).
+Hver ampulle med 10 ml inneholder 500 mikrogram fentanyl (som fentanylsitrat).
+
+Hjelpestoff med kjent effekt
+Hver ampulle med 2 ml inneholder 7,08 mg (0,31 mmol) natrium.
+Hver ampulle med 10 ml inneholder 35,41 mg (1,54 mmol) natrium.
+
+For fullstendig liste over hjelpestoffer, se pkt. 6.1.
+
+
+3.      LEGEMIDDELFORM
+
+Injeksjonsvæske, oppløsning (injeksjon).
+
+Klar, fargeløs injeksjonsvæske, oppløsning, fri for synlige partikler.
+Oppløsningens pH er 4,0 til 7,0.
+Osmolalitet er omtrent 285 mOsmol/kg.
+
+
+4.      KLINISKE OPPLYSNINGER
+
+4.1     Indikasjoner
+
+Fentanyl Kalceks er et anestesi-analgetikum:
+- til bruk som et opioid smertestillende sammen med generell eller lokalbedøvelse,
+- til administrasjon med et nevroleptisk legemiddel.
+
+4.2     Dosering og administrasjonsmåte
+
+Fentanyl Kalceks kan kun administreres på et sted der luftveiene kan overvåkes og av personell som er
+kjent med overvåking av luftveier (se pkt. 4.4).
+
+Dosering
+
+Doseringen med Fentanyl Kalceks skal bestemmes individuelt, basert på alder, kroppsvekt, fysisk
+status, underliggende patologisk tilstand, medisinbruk og type kirurgi og anestesi.
+
+Voksne
+Ved induksjon blir 200 til 600 mikrogram (2,8 til 8,5 mikrogram/kg), tilsvarende 4-12 ml, vanligvis
+injisert intravenøst. Doser over 200 mikrogram bør kun administreres sammen med ventilasjon. For
+vedlikehold av analgetikum kan ytterligere intravenøse doser på 50 til 200 mikrogram (0,7 til
+2,8 mikrogram/kg), tilsvarende 1-4 ml, administreres etter 30 til 45 minutter.
+
+Pediatrisk populasjon
+Ungdommer 12 til 17 år
+Følg dosering for voksne.
+
+Barn 2 til 11 år
+En dose på 1,25-2,5 mikrogram/kg eller 0,25-0,5 ml per 10 kg kroppsvekt anbefales vanligvis for
+induksjon hos barn. For vedlikehold av analgetikum, kan ytterligere intravenøse doser på 0,25 ml per
+10 kg administreres hvert 30. til 45. minutt.
+
+Barn under 2 år
+Det finnes ingen erfaring med fentanyl hos barn under 2 år.
+
+Bruk hos barn
+Hos spontant pustende barn kan smertestillende teknikker kun brukes som en del av en
+anestesiteknikk, eller som en del av beroligende/smertestillende teknikker, av rutinert personell på et
+sted der plutselig muskelstivhet (som krever intubasjon) eller apné (som krever ventilasjon) kan
+behandles (se pkt. 4.4).
+
+Bruk hos eldre
+Som med andre opioider bør startdosen for eldre (> 65 år) og svekkede pasienter reduseres. Effekten
+av den innledende dosen må tas i betraktning når ytterligere doser bestemmes.
+
+Bruk hos pasienter med nedsatt nyrefunksjon
+Hos pasienter med nedsatt nyrefunksjon bør en reduksjon i Fentanyl Kalceks-dosen vurderes, og disse
+pasientene bør nøye observeres for tegn på fentanyl-toksisitet (se pkt. 5.2).
+
+Bruk hos overvektige pasienter
+Hos overvektige pasienter er det en risiko for overdose dersom dosen er beregnet på basis av
+kroppsvekt. Dosen for overvektige pasienter (KMI > 30 kg/m2) bør bestemmes på basis av anslått
+kroppsmasse i stedet for kroppsvekt alene. Ytterligere titrering bør fortsette med forsiktighet, basert på
+effekt (se pkt. 5.2).
+
+Administrasjonsmåte
+
+Administrer langsomt – over 1 til 2 minutter – intravenøst.
+
+4.3     Kontraindikasjoner
+
+-     Overfølsomhet overfor virkestoffet eller overfor noen av hjelpestoffene listet opp i pkt. 6.1, eller
+      overfor andre opoider.
+-     Dårlig lungefunksjon uten mekanisk ventilasjon. Dette skyldes den respirasjonsdepressive
+      effekten som er spesifikk for morfinlignende substanser.
+
+4.4     Advarsler og forsiktighetsregler
+
+- Fentanyl kan kun administreres på et sted der luftveiene kan overvåkes og av personell som er kjent
+  med overvåking av luftveier.
+- Som alle potente opioider kan fentanyl fremkalle respiratorisk depresjon, som er doserelatert.
+  Betydelig luftveisdepresjon vil oppstå når det administreres i doser over 200 mikrogram fentanyl (4
+  ml). Administrering av nalokson, en spesifikk opioidantagonist, kan motvirke denne effekten. Det
+  kan bli nødvendig å gjenta opioidantagonistdosen, fordi respiratorisk depresjon kan vare lenger enn
+  virkningsvarigheten til opioidantagonisten. Dyp analgesi er ledsaget av tydelig
+  respirasjonsdepresjon, som kan vedvare eller gjenoppstå i den postoperative perioden. Det er derfor
+  viktig at pasientene forblir under korrekt overvåking. Gjenopplivingsutstyr og opioidantagonister
+  skal være umiddelbart tilgjengelig. Hyperventilering under anestesi kan endre pasientens respons til
+  CO2 og kan derfor også påvirke pusten etter operasjonen.
+- Det kan utvikles stivhet i muskler. Et resultat av dette kan være at respiratorisk depresjon
+  forekommer. Forekomsten kan reduseres med langsom, intravenøs injeksjon (normalt tilstrekkelig i
+  lave doser). Reaksjonen kan behandles med kunstig ventilasjon, premedisinering med
+  benzodiazepiner og, om nødvendig, administrasjon av muskelavslappende legemiddel.
+- Forekomsten av anafylaktiske reaksjoner bør tas i betraktning ved administrering av fentanyl.
+- Ikke-epileptiske myoklone reaksjoner kan forekomme.
+- Bradykardi og hjertestans kan forekomme dersom pasienten har fått for lav mengde antikolinergt
+  legemiddel eller dersom Fentanyl Kalceks er kombinert med ikke-vagolytiske muskelavslappende
+  legemidler. Brakydardi kan behandles med atropin.
+- Opioider kan forårsake hypotensjon, spesielt hos hypovolemiske pasienter. Passende tiltak må
+  iverksettes for å opprettholde stabilt arterielt trykk.
+- Bruk av hurtige bolus opioidinjeksjoner må unngås. Hos pasienter med svekket intracerebral
+  utskillelse er den midlertidige reduksjonen i gjennomsnittlig arterielt trykk noen ganger ledsaget av
+  en kortvarig reduksjon i perfusjonstrykket.
+- Pasienter som får kronisk behandling med opioider, eller som er avhengige av opioider, kan trenge
+  høyere doser.
+- Dosereduksjon anbefales hos eldre og svekkede pasienter. Opioider må titreres nøye hos pasienter
+  med én eller flere av følgende underliggende tilstander: ukontrollert hypotyreose, lungesykdom,
+  nedsatt lungefunksjon eller alkoholisme. Pasienter med leverdysfunksjon skal doseres med
+  forsiktighet på grunn av mulig nedsatt metabolisme. Pasienter med nedsatt nyrefunksjon bør
+  overvåkes nøye for symptomer på fentanyl-toksisitet. Som et resultat av dialyse kan
+  distribusjonsvolumet av fentanyl endre seg, noe som kan påvirke serumkonsentrasjonen. Disse
+  pasientene bør observeres postoperativt i en lengre periode.
+- Dersom Fentanyl Kalceks administreres sammen med nevroleptika, må legen være kjent med de
+  spesifikke egenskapene til begge legemidlene, spesielt forskjellene i virkningsvarighet. Risikoen
+  for hypotensjon er større når denne kombinasjonen administreres. Nevroleptika kan føre til
+  ekstrapyramidale symptomer som kan motvirkes med antiparkinsonmidler. Kombinasjonen med
+  antiparkinsonmidler kan øke risikoen for tardiv dyskinesi.
+- Som med andre opioider kan administrering av fentanyl på grunn av antikolinerge effekter føre til
+  økt trykk i gallegangen, og det kan av og til sees spasmer i Oddis sfinkter.
+- Hos pasienter med myastenia gravis bør bruken av visse antikolinerge legemidler og
+  nevromuskulære blokkere vurderes nøye før og under administrering av et generelt
+  bedøvelsesregime der fentanyl administreres intravenøst.
+- Forsiktighet anbefales der Fentanyl Kalceks administreres samtidig med legemidler som påvirker
+  serotonerge nevrotransmitter-systemer.
+  Et potensielt livstruende serotonergt syndrom kan utvikle seg med samtidig bruk av serotonerge
+  legemidler som selektive serotoninreopptakshemmere (SSRI) og serotonin noradrenalin
+  reopptakshemmere (SNRI) og med legemidler som hemmer nedbrytingen av serotonin (inkludert
+  monoaminoksidasehemmere [MAO-hemmere]). Dette kan forekomme innenfor den anbefalte
+  dosen.
+  Serotonergt syndrom kan omfatte endringer i psykologisk tilstand (som agitasjon, hallusinasjoner,
+  koma), autonom ustabilitet (som takykardi, labilt blodtrykk, hypertermi), nevromuskulære lidelser
+  (som hyperrefleksi, dårlig koordinasjon, stivhet) og/eller gastrointestinale symptomer (som kvalme,
+  oppkast, diaré).
+  Dersom det er mistanke om serotonergt syndrom, bør rask seponering av Fentanyl Kalceks
+  vurderes.
+
+Toleranse og avvikende opioidbruk (misbruk og avhengighet)
+Toleranse, fysisk og psykologisk avhengighet kan utvikle seg ved gjentatt administrering av opioider.
+Gjentatt bruk av opioider kan medføre avvikende opioidbruk (opioid use disorder, OUD). Misbruk
+eller tilsiktet feilbruk av opioider kan føre til overdosering og/eller død. Risikoen for utvikling av
+OUD er økt hos pasienter med personlig eller familieanamnese (foreldre eller søsken) med
+stoffmisbruk (inkludert alkoholmisbruk), hos tobakksbrukere og hos pasienter med personlig
+anamnese med andre sinnslidelser (f.eks. alvorlig depresjon, angst og personlighetsforstyrrelser).
+
+Abstinenssyndrom
+Gjentatt administrering med kortvarige intervaller i lengre perioder kan føre til utvikling av
+abstinenssyndrom etter opphør av behandlingen. Dette kan manifestere seg som forekomst av følgende
+bivirkninger: kvalme, oppkast, diaré, angst, frysninger, skjelving og svette.
+
+Pediatrisk populasjon
+Hos spontant pustende barn kan smertestillende teknikker kun brukes som en del av en
+anestesiteknikk, eller som en del av beroligende/smertestillende teknikker, av rutinert personell på et
+sted der plutselig muskelstivhet (som krever intubasjon) eller apné (som krever ventilasjon) kan
+behandles.
+
+Hjelpestoffer
+Dette legemiddelet inneholder:
+7,08 mg natrium per 2 ml ampulle, og er så godt som «natriumfritt».
+35,41 mg natrium per 10 ml ampulle, tilsvarende 1,78 % av WHOs anbefalte maksimale daglige
+inntak av natrium på 2 g for en voksen person.
+
+4.5     Interaksjon med andre legemidler og andre former for interaksjon
+
+Andre legemidlers innvirkning på fentanyl
+
+MAO-hemmere og andre serotonerge legemidler
+Samtidig administrering av fentanyl- og MAO-hemmere kan føre til paroksysmal stimulering av CNS
+og hypertensjon. Samtidig administrering bør unngås, og når det er mulig må behandling med
+MAO-hemmere seponeres i minst 2 uker før behandlingsstart med Fentanyl Kalceks.
+Samtidig administrering av fentanyl med et serotonergt legemiddel, for eksempel et SSRI, et SNRI,
+eller en MAO-hemmer, kan øke risikoen for serotonergt syndrom, en potensielt livstruende tilstand.
+Dersom man ikke kan unngå samtidig bruk av Fentanyl Kalceks med SSRI, SNRI eller MAO-
+hemmere bør pasienten overvåkes for symptomer på serotonergt syndrom under samtidig bruk.
+
+Legemidler som barbiturater, benzodiazepiner, nevroleptika, halogenerte gasser, gabapentinoider
+(gabapentin og pregabalin) eller andre midler som utøver en ikke-selektiv depressiv effekt på
+sentralnervesystemet (inkludert alkohol) kan øke respirasjonsdepresjon forårsaket av opioider. Dersom
+pasienter har fått slike legemidler, kan den nødvendige fentanyldosen være lavere enn vanlig.
+
+Fentanyl, et legemiddel med stor grad av utskillelse, metaboliseres raskt og omfattende av CYP3A4.
+Oral administrering av 200 mg itrakonazol (en potent CYP3A4-hemmer) daglig i 4 dager, hadde ingen
+signifikant effekt på farmakokinetikken til intravenøst administrert fentanyl. Oral administrasjon av
+ritonavir (en av de sterkeste CYP3A4-hemmerne), reduserte utskillelsen av intravenøst administrert
+fentanyl med to tredjedeler. Maksimale plasmakonsentrasjoner ble imidlertid ikke påvirket etter en
+enkel dose intravenøst administrert fentanyl.
+
+Samtidig administrering av flukonazol eller vorikonazol og fentanyl kan øke eksponeringen for
+fentanyl med omtrent 25 til 40 %. Ved samtidig bruk av flukonazol eller vorikonazol og fentanyl, bør
+pasienter overvåkes nøye, med justering av fentanyldosen om nødvendig.
+
+Når fentanyl administreres i en enkeltdose, kreves spesiell forsiktighet og pasientobservasjon ved
+samtidig bruk av sterke CYP3A4-hemmere som ritonavir. Ved kontinuerlig administrering kan en
+reduksjon i fentanyldosen være nødvendig for å forhindre opphopning av fentanyl, noe som kan føre
+til økt risiko for langvarig eller forsinket respirasjonsdepresjon.
+
+Cytokrom P450 3A4 (CYP3A4)-indusere
+Fentanyl-injeksjon, sammen med sterkt CYP3A4-indusere (f.eks. karbamazepin, fenytoin), kan
+redusere plasmakonsentrasjonene av fentanyl, og dermed redusere effekten. Pasienten bør overvåkes
+nøye for bevis på reduserte smertestillende effekter dersom fentanyl brukes sammen med en sterk
+CYP3A4-induser. Økningen av fentanyldosen bør også vurderes om nødvendig.
+
+Virkningen av fentanyl på andre legemidler
+
+Samtidig bruk av andre legemidler med en depressiv effekt på sentralnervesystemet, inkludert
+opioider, sedativa, hypnotika, legemidler til generell anestesi, fenotiaziner, beroligende legemidler,
+muskelavslappende legemidler, beroligende antihistaminer og alkoholholdige drikker, kan ha en
+additiv depressiv effekt; hypoventilering, hypotensjon og dyp sedasjon eller koma kan forekomme i
+slike tilfeller. Samtidig bruk av fentanyl med et av de ovennevnte legemidlene krever derfor spesiell
+forsiktighet og pasientobservasjon.
+
+Ved samtidig bruk med fentanyl økte plasmakonsentrasjonene av etomidat betydelig (med en faktor på
+2 til 3). Under samtidig bruk avtar den totale utskillelsen i plasma og distribusjonsvolumet av etomidat
+med en faktor på 2 til 3 uten endring i halveringstiden.
+
+Samtidig administrering av fentanyl og intravenøst midazolam resulterer i en økning i den terminale
+plasmahalveringstiden og en reduksjon i utskillelsen i plasma for midazolam. Eksponeringen for
+midazolam økes med omtrent 50 %. Mekanismen for interaksjon er konkurrerende hemming av
+CYP3A4 (se pkt. 5.2). Når midazolam gis sammen med fentanyl, kan det være nødvendig å redusere
+dosen av midazolam.
+
+4.6     Fertilitet, graviditet og amming
+
+Graviditet
+Det foreligger ikke tilstrekkelige data om bruk av Fentanyl Kalceks under graviditet hos mennesker
+for å vurdere potensialet for skade. Fentanyl kan krysse morkaken tidlig i svangerskapet og under
+fødselen. I dyreforsøk er det sett kun begrensede bevis på reproduksjonstoksisitet (se pkt. 5.3). Den
+potensielle risikoen for mennesker er ukjent. Fentanyl må ikke brukes under graviditet med mindre det
+er strengt nødvendig.
+
+Administrering under fødsel (inkludert keisersnitt) anbefales ikke, da fentanyl krysser morkaken og
+muligens undertrykker spontan pusting i umiddelbar postpartumperiode. Dersom fentanyl
+administreres, må assistert ventilasjonsutstyr være umiddelbart tilgjengelig for mor og barn, i tilfelle
+det trengs. En opioidantagonist for barnet skal alltid være tilgjengelig.
+
+Amming
+Fentanyl utskilles i morsmelk hos mennesker. Det anbefales derfor ikke å amme i 24 timer etter
+administrering av fentanyl eller å bruke morsmelk pumpet i denne perioden. Den tilknyttede risikoen
+bør veies mot mulige skadelige effecter.
+
+Fertilitet
+Det foreligger ingen data vedrørende effekten av fentanyl på mannlig eller kvinnelig fertilitet. I
+dyrestudier har noen tester vist redusert fertilitet hos hunnkjønn ved doser som var maternelt toksisk
+(se pkt. 5.3).
+
+4.7     Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+Pasienter bør ikke kjøre bil eller bruke maskiner i en viss tid (minst 24 timer) etter administrering av
+Fentanyl Kalceks.
+
+4.8     Bivirkninger
+
+Sikkerheten til fentanyl ble evaluert hos 376 forsøkspersoner som deltok i 20 kliniske studier der
+fentanyl ble evaluert som et bedøvelsesmiddel. Disse forsøkspersonene fikk minst 1 dose fentanyl og
+ga sikkerhetsdata. Basert på de samlede sikkerhetsdataene fra disse kliniske studiene, er de vanligste
+(≥ 5 % forekomst) bivirkningene: kvalme (26,1 %), oppkast (18,6 %), muskelstivhet (10,4 %),
+hypotensjon (8,8 %), hypertensjon (8,8 %), bradykardi (6,1 %) og sedasjon (5,3 %).
+
+Disse bivirkningene (inkludert bivirkningene oppført ovenfor) avledet fra klinisk forskning og data
+etter markedsføring, er blitt delt inn i systemorganklasse og er definert som følger: svært vanlige
+(≥1/10), vanlige (≥1/100 til <1/10), mindre vanlige (≥1/1000 til <1/100), sjeldne (≥1/10 000 til
+<1/1000), svært sjeldne (<1/10 000), ikke kjent (kan ikke anslås ut ifra tilgjengelige data).
+
+Innen hver frekvensgruppe vises bivirkninger i synkende alvorlighetsgrad.
+Tabell 1 Bivirkninger rapportert for fentanyl
+
+ Organklassesystem                                               Bivirkninger
+                                                              Frekvenskategori
+                                  Svært vanlige            Vanlige        Mindre vanlige           Ikke kjent
+ Forstyrrelser i                                                                               Hypersensitivitet
+ immunsystemet                                                                                 (inkludert
+                                                                                               anafylaktisk
+                                                                                               sjokk,
+                                                                                               anafylaktisk
+                                                                                               reaksjon,
+                                                                                               urtikaria)
+ Psykiatriske lidelser                                                    Eufori               Delirium
+ Nevrologiske sykdommer                               Dyskinesia          Hodepine             Kramper
+                                                      Sedasjon                                 Tap av bevissthet
+                                                      Svimmelhet                               Myoklonus
+ Øyesykdommer                                         Synsforstyrrelser
+ Hjertesykdommer                                      Bradykardi                               Hjertestans
+                                                      Tachykardi
+                                                      Arytmier
+ Karsykdommer                                         Hypotensjon         Flebitt
+                                                      Hypertensjon        Fluktuasjoner i
+                                                      Venesmerter         blodtrykk
+ Sykdommer i                                          Laryngospasme       Hyperventilasjon     Respiratorisk
+ respirasjonsorganer,                                 Bronkospasme        Hikke                depresjon
+ thorax og mediastinum                                Apné
+ Gastrointestinale              Kvalme                                    Dysfagi
+ sykdommer                      Oppkast
+ Hud- og                                              Allergisk                                Pruritus
+ underhudssykdommer                                   dermatitt
+ Sykdommer i muskler,           Muskelstivhet
+ bindevev og skjelett
+ Generelle lidelser og                                                    Frysinger            Medikamentelt
+ reaksjoner på                                                            Hypotermi            abstinenssyndrom
+ admiministrasjonsstedet                                                                       (se pkt. 4.4)
+ Skader, forgiftninger og                             Postoperativ        Luftveiskomplika
+ komplikasjoner ved                                   forvirring          sjoner ved
+ medisinske prosedyrer                                Nevrologisk         anestesi
+                                                      anestetisk          Postoperativ
+                                                      komplikasjon        agitasjon
+                                                                          Prosedyre-
+                                                                          komplikasjoner
+
+Tilfeller av serotonergt syndrom har vært rapportert når legemidler som inneholder fentanyl ble gitt
+samtidig med potente serotonerge legemidler (se pkt. 4.4 og 4.5).
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til
+Direktoratet for medisinske produkter: www.dmp.no/meldeskjema.
+
+4.9     Overdosering
+
+Tegn og symptomer
+Overdosering av fentanyl manifesteres ved en utvidelse av de farmakologiske effektene.
+Respirasjonsdepresjon kan forekomme, som kan variere fra bradypné til apné.
+Toksisk leukoencefalopati er observert ved overdosering av fentanyl.
+
+Behandling
+Ved hypoventilering eller apné må det gis oksygen, og om nødvendig må ventilasjon gis.
+Ved respirasjonsdepresjon bør det gis en opioidantagonist. Dette utelukker ikke andre mer direkte
+mottiltak.
+Den kortere virkningsvarigheten av opioidantagonisten, sammenlignet med fentanyl, bør tas i
+betraktning. Gjentatt administrering av opioidantagonisten kan være nødvendig. Dersom
+respirasjonsdepresjon er ledsaget av muskelstivhet, kan et muskelavslappende legemiddel
+administreres - dersom nødvendig - for å lette pusten.
+Pasienten bør observeres nøye. Kroppstemperatur og tilstrekkelig væskeinntak må opprettholdes.
+Dersom hypotensjon er alvorlig eller vedvarende, må hypovolemi tas i betraktning. I dette tilfellet bør
+passende parenterale væsker administreres.
+
+
+5.      FARMAKOLOGISKE EGENSKAPER
+
+5.1     Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: anestetika, opioidanestetika, ATC-kode: N01A H01
+
+Fentanyl er et syntetisk opioid med en farmakologisk effekt av μ-agonist.
+Fentanyl er et potent opioid smertestillende legemiddel. Fentanyl kan brukes som et smertestillende
+supplement i generell anestesi eller som et bedøvelsesmiddel alene. En dose på 100 mikrogram
+(2,0 ml) har en lignende smertestillende effekt som 10 mg morfin. Fentanyl har en rask virkning.
+Maksimal smertestillende effekt og depressiv effekt på respirasjon finner sted i løpet av få minutter.
+Gjennomsnittlig virkningstid for den smertestillende effekten er omtrent 30 minutter etter en enkelt
+dose opp til 100 mikrogram. Dybden av smertestillende er doseavhengig og kan justeres til
+smertenivået i den kirurgiske prosedyren.
+
+5.2     Farmakokinetiske egenskaper
+
+Distribusjon
+Etter intravenøs injeksjon avtar fentanyl-plasmakonsentrasjoner raskt, med påfølgende
+distribusjonshalveringstid på omtrent 1 minutt og omtrent 15 minutter og en terminal
+eliminasjonshalveringstid på omtrent 8 timer. Fentanyl har en Vc (sentralt fordelingsvolum) på
+omtrent 15 l og en total Vdss (fordelingsvolum ved steady state) på omtrent 400 l. Fentanyl-binding til
+plasmaproteiner er omtrent 84 %.
+
+Biotransformasjon
+Fentanyl metaboliseres raskt, først og fremst i leveren, av CYP3A4. Fentanyl har ingen aktive
+metabolitter, hovedmetabolitten er norfentanyl. Utskillelse er omtrent 600 ml/min. In vitro-studier med
+midazolam som substrat fant at fentanyl hemmet CYP3A4.
+
+Eliminasjon
+Omtrent 75 % av den administrerte dosen skilles ut i urinen innen 24 timer. Kun 10 % av dosen som
+utskilles i urinen er til stede som uendret substans.
+
+Spesielle populasjoner
+
+Barn
+Etter intravenøs administrering er plasma proteinbinding av fentanyl lavere hos nyfødte enn hos
+voksne. Hos prematurfødte nyfødte er den høyere (omtrent 77 %) enn hos terminfødte nyfødte
+(omtrent 62 %). Utskillelse per kg kroppsvekt og totalt fordelingsvolum etter intravenøs
+administrering av fentanyl er høyere hos spedbarn og barn enn hos voksne. Dette kan føre til behovet
+for en høyere fentanyldose per kg. Den terminale halveringstiden er lengre hos nyfødte. CYP3A4-
+aktiviteten er svært lav ved fødselen, men øker postpartum for å oppnå 30 til 40 % av voksennivået 1
+måned postpartum. Verdier for utskillelse, fordelingsdistribusjon ved steady state og terminal
+halveringstid for barn i forskjellige aldre er oppført i tabellen nedenfor.
+
+Tabell 2 Utskillelse, steady state fordelingsvolum og terminal halveringstid hos barn
+
+                                       KI                      Vss               Beta T½
+                                  (ml/kg/min)*              (l/kg)*               (timer)
+ Spedbarn
+                                    3,4 – 58,7            1,3 – 30,3           1,3 – 15,9
+ 1-26 dager postpartum
+ Spedbarn
+                                   21.9 – 32.3            6,0 – 9,5            3,1 – 15,5
+ 48-71 dager postpartum
+ Barn
+                                   11,5 ± 4,19           3,06 ± 1,02           4,1 ± 1,3
+ 3,17 ± 0,68 years
+ Ungdom
+                                   7,05 ± 1,24           1,92 ± 1,04           3,5 ± 1,2
+ 12 ± 1,73 years
+* Verdiene for steady state-utskillelse og fordelingsvolum ble normalisert for kroppsvekt
+
+Nedsatt nyrefunksjon
+Data fra en studie der fentanyl ble administrert intravenøst til pasienter som gjennomgikk
+nyretransplantasjon, antyder at utskillelse av fentanyl kan bli redusert i denne pasientpopulasjonen.
+Dersom pasienter med nedsatt nyrefunksjon får Fentanyl Kalceks, bør de observers nøye og dosen bør
+reduseres om nødvendig (se pkt. 4.2).
+
+Voksne pasienter med brannsår
+Etter en bolus eller en kortvarig intravenøs infusjon med fentanyl økes utskillelsen med maksimalt 44
+%, sammen med et større fordelingsvolum. Dette resulterer i lavere plasmakonsentrasjon av fentanyl.
+Dette kan nødvendiggjøre en økning i fentanyldosen.
+
+Overvektige pasienter
+Det har blitt observer en økning i total utskillelse av fentanyl med økt kroppsvekt. For pasienter med
+KMI > 30 kg/m2, øker utskillelse med omtrent 10 % per 10 kg økning i LBM (lean body mass).
+
+5.3     Prekliniske sikkerhetsdata
+
+In vitro viste fentanyl, som andre opioide smertestillende legemidler, mutagene effekter i en
+pattedyrcelletest kun i cytotoksiske konsentrasjoner, sammen med metabolsk aktivering. Fentanyl
+viste ingen mutagenisitet i in vivo-studier med gnagere og bakterietester.
+I en toårig karsinogenisitetsstudie på rotter var fentanyl ikke assosiert med økt forekomst av svulster.
+
+Noen tester på hunnrotter avdekket redusert fruktbarhet, så vel som dødelighet hos embryoer. Disse
+funnene var relatert til toksisitet i hunner og var ikke en direkte effekt av legemidlet på det utviklende
+embryoet. Det var ingen bevis for teratogene effekter.
+
+
+6.      FARMASØYTISKE OPPLYSNINGER
+
+6.1     Hjelpestoffer
+
+Natriumklorid
+Natriumhydroksid (for justering av pH)
+Vann til injeksjonsvæsker
+
+6.2     Uforlikeligheter
+
+Dette legemidlet skal ikke blandes med andre legemidler.
+6.3     Holdbarhet
+
+4 år.
+
+Etter første anbrudd: legemidlet skal brukes umiddelbart.
+
+6.4     Oppbevaringsbetingelser
+
+Oppbevares i originalpakningen for å beskytte mot lys. Skal ikke fryses.
+
+6.5     Emballasje (type og innhold)
+
+10 glassampuller på 2 ml
+10 glassampuller på 10 ml
+
+Ikke alle pakningsstørrelser vil nødvendigvis bli markedsført.
+
+6.6     Spesielle forholdsregler for destruksjon
+
+Kun til engangsbruk. Kast gjenværende oppløsning dersom delvis brukt.
+
+Bruk fingerbeskyttelse når ampullen åpnes.
+
+Ikke anvendt legemiddel samt avfall bør destrueres i overensstemmelse med lokale krav.
+
+
+7.      INNEHAVER AV MARKEDSFØRINGSTILLATELSEN
+
+AS Kalceks
+Krustpils iela 71E, Rīga, LV-1057, Latvia
+Tlf.: +371 67083320
+e-post: kalceks@kalceks.lv
+
+
+8.      MARKEDSFØRINGSTILLATELSESNUMMER (NUMRE)
+
+20-13375
+
+
+9.      DATO FOR FØRSTE MARKEDSFØRINGSTILLATELSE / SISTE FORNYELSE
+
+Dato for første markedsføringstillatelse: 30.09.2020
+Dato for siste fornyelse: 19.06.2022
+
+
+10.     OPPDATERINGSDATO
+
+21.03.2024
+

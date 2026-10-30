@@ -1,0 +1,55 @@
+-     Respirasjonsdepresjon uten mekanisk ventilasjon,
+-     Økt intrakranialt trykk, (kranialt) hjernetraume, med mindre ventilasjonen er sikret.
+
+4.4   Advarsler og forsiktighetsregler
+
+Fentanyl skal kun administreres under forhold der pusting kan overvåkes og der kvalifisert personell
+sikrer at luftveiene fungerer.
+
+Som andre opioider forårsaker fentanyl doseavhengig respirasjonsdepresjon. Tilstanden kan behandles
+med et spesifikt antistoff (nalokson), hvorav mer må gis senere, fordi respiratorisk depresjon kan vare
+lenger enn den aktuelle antagonistens virkning. Dyp analgesi kan være forbundet med betydelig
+respirasjonsdepresjon, som kan vedvare eller forekomme igjen etter kirurgi. Derfor skal pasienter
+holdes under riktig observasjon, og gjenopplivingsutstyr og antistoff skal være umiddelbart
+tilgjengelig. Hyperventilasjon under anestesi kan endre CO2-responsen til pasientens
+respirasjonssenter, og dermed påvirke postoperativ pusting.
+
+Dosering over 200 mikrogram (tilsvarende 4 ml fentanyl injeksjonsvæske 50 mikrogram/ml) krever
+ventilasjon/respiratorisk behandling. Varighet av effekt og respirasjonsdepresjon kan forlenges på
+grunn av akkumulering.
+Pasienten bør overvåkes nøye for tegn og symptomer på respirasjonsdepresjon og sedasjon.
+Det er også viktig å lære opp pasienter og deres omsorgspersoner til å gjenkjenne slike symptomer (se
+avsnitt 4.5).
+
+Fentanyl kan forårsake muskelstivhet, som også kan forekomme i brystmusklene. Dette kan imidlertid
+unngås ved følgende tiltak: langsom intravenøs injeksjon (vanligvis tilstrekkelig ved lave doser),
+premedikasjon med benzodiazepiner og bruk av muskelavslappende midler.
+
+Ikke-epileptiske (myo)kloniske muskelsammentrekninger kan forekomme.
+
+Palpitasjoner og mulig hjertestans kan forekomme hvis pasienten ikke har fått nok antikolinergika
+eller hvis fentanyl brukes sammen med muskelavslappende midler som reduserer pulsfrekvensen.
+Palpitasjoner kan behandles med atropin.
+
+Opioider kan forårsake hypotensjon, spesielt hos hypovolemiske pasienter, og i så fall bør passende
+tiltak tas for å opprettholde tilstrekkelig blodtrykk.
+
+Rask bolusinjeksjon av opioider bør unngås hos pasienter med nedsatt cerebral sirkulasjon eller risiko
+for økt intrakranielt trykk. Hos slike pasienter har en forbigående reduksjon i gjennomsnittlig
+blodtrykk forårsaket en kortvarig reduksjon i cerebralt perfusjonstrykk.
+
+Pasienter som får kontinuerlig opioidbehandling eller opioidmisbrukere kan trenge høyere doser enn
+normalt.
+
+Dosen skal reduseres hos eldre og svekkede pasienter. Spesiell forsiktighet bør utvises ved dosering til
+pasienter med noen av følgende tilstander: ukontrollert hypotyreose, lungesykdom, redusert
+respirasjonskapasitet, alkoholisme eller nedsatt lever- eller nyrefunksjon. Slike pasienter trenger også
+lengre postoperativ observasjon.
+
+Hvis fentanyl administreres sammen med nevroleptika, må legen være oppmerksom på de spesielle
+egenskapene til hvert legemiddel, spesielt forskjellen i virkningsvarighet. Ved bruk av en slik
+kombinasjon forekommer hypotensjon oftere. Nevroleptika kan forårsake ekstrapyramidale
+symptomer, som kan behandles med medisiner mot Parkinsons sykdom.
+
+Som med andre opioider, kan fentanylbruk øke trykket i gallegangene på grunn av den antikolinerge
+effekten, og i isolerte tilfeller kan Oddi-sfinkterspasmer forekomme.

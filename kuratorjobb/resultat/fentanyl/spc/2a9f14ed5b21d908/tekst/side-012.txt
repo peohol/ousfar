@@ -1,0 +1,51 @@
+Mens opioider generelt øker tonus i urinveienes glatte muskulatur, synes nettoeffekten å være variabel,
+i noen tilfeller oppstår vannlatingstrang, i andre tilfeller vannlatingsvansker.
+
+Opioider øker tonus og senker de fremdrivende sammentrekningene i gastrointestinal glatt muskulatur,
+noe som leder til lengre gastrointestinal transittid, og som kan være årsaken til den obstiperende
+virkningen til fentanyl.
+
+5.2   Farmakokinetiske egenskaper
+
+Fentanyl er et svært fettløslig stoff, som absorberes svært raskt gjennom oral mukosa og saktere via
+mage-tarm-kanalen. Oralt administrert fentanyl gjennomgår uttalte first pass-effekter i lever og tarm.
+
+Abstral er en raskt oppløselig sublingvaltablettformulering. Rask absorbsjon av fentanyl foregår i løpet
+av omtrent 30 minutter etter administrasjon av Abstral. Den absolutte biotilgjengeligheten til Abstral
+er beregnet til 54 %. Gjennomsnittlig maksimal plasmakonsentrasjon av fentanyl er 0,2 til 1,3 ng/ml
+(etter administrasjon av 100 til 800 mikrog Abstral) og nås innen 22,5 til 240 minutter.
+
+Omtrent 80-85 % av fentanyl er bundet av plasmaproteiner, hovedsakelig 1-glykoprotein, og i
+mindre grad albumin og lipoprotein. Distribusjonsvolumet til fentanyl ved steady state er omtrent 3-
+6 liter/kg.
+Fentanyl metaboliseres primært via CYP3A4 til flere farmakologisk inaktive metabolitter, inkludert
+norfentanyl. Innen 72 timer etter intravenøs administrasjon av fentanyl blir rundt 75 % av dosen utskilt
+i urinen, for det meste som metabolitter, med mindre enn 10 % som uforandret legemiddel. Omtrent
+9 % av dosen gjenfinnes i fæces, primært som metabolitter. Total plasmaclearance av fentanyl er
+omtrent 0,5 liter/time/kg. Etter administrasjon av Abstral er eliminasjonshalveringstiden omtrent
+7 timer (3-12,5 timer) og terminal halveringstid er omtrent 20 timer (11,5-20 timer).
+
+De farmakokinetiske egenskapene til Abstral har vist seg å være doseproporsjonale i doseområdet 100
+til 800 mikrog. Farmakokinetikkstudier har vist at flere tabletter er bioekvivalent til enkle tabletter av
+tilsvarende dose.
+
+Nyre-/leversvikt
+Nedsatt lever- eller nyrefunksjon kan forårsake økte serumkonsentrasjoner. Eldre, kakektiske og
+generelt svekkede pasienter kan ha lavere fentanylclearance, noe som kan forårsake lengre terminal
+halveringstid for stoffet (se pkt. 4.2 og 4.4).
+
+5.3   Prekliniske sikkerhetsdata
+
+Studier av sikkerhetsfarmakologi og toksisitetstester ved gjentatt dosering indikerer ingen spesiell fare
+for mennesker som ikke allerede er dekket i andre punkter av denne preparatomtalen. Dyrestudier har
+vist redusert fertilitet og økt mortalitet hos rottefostre. Teratogene effekter har likevel ikke blitt
+demonstrert.
+
+Mutagenitet hos bakterier og gnagere ga negative resultater. Som andre opiater viste fentanyl
+mutagene virkninger in vitro i celler fra pattedyr. En mutagen risiko ved terapeutisk bruk virker
+usannsynlig siden virkningene bare ble indusert ved svært høye konsentrasjoner.
+
+Karsinogenesestudier (26-ukers alternativt hudbioassay med Tg.AC-transgene mus, toårig subkutan
+karsinogenesestudie med rotter) med fentanyl avdekket ingen holdepunkter for onkogent potensiale.
+Evaluering av hjernesnitt fra karsinogenstudien med rotter viste hjerneskader hos dyr som hadde fått
+høye doser med fentanylcitrat. Relevansen av disse funnene for mennesker er ukjent.

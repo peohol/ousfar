@@ -1,0 +1,73 @@
+      b. Tabell 3 er for voksne pasienter som har en stabil og veltolerert opioidbehandling
+         (konverteringsrate for peroral morfin til transdermal fentanyl er omtrent 100:1).
+
+Tabell 1: Konverteringstabell – Multiplikasjonsfaktorer for konvertering av døgndose av tidligere
+          opioider til ekvianalgetisk døgndose av peroral morfin
+          (mg/døgn av tidligere opioid x faktor = ekvianalgetisk døgndose av peroral morfin)
+  Tidligere opioid                    Administrasjonsvei                 Multiplikasjonsfaktor
+                                      peroral                                       1a
+  Morfin
+                                      parenteral                                     3
+                                      sublingual                                    75
+  Buprenorfin
+                                      parenteral                                   100
+                                      peroral                                     0,15
+  Kodein
+                                      parenteral                                  0,23b
+                                      peroral                                      0,5
+  Diamorfin
+                                      parenteral                                    6b
+                                      peroral                                        -
+  Fentanyl
+                                      parenteral                                   300
+                                      peroral                                        4
+  Hydromorfon
+                                      parenteral                                   20b
+                                      peroral                                        1
+  Ketobemidon
+                                      parenteral                                     3
+                                      peroral                                      7,5
+  Levorfanol
+                                      parenteral                                   15b
+  Metadon                             peroral                                      1,5
+                                                                                      b
+                                      parenteral                                    3
+                                      peroral                                      1,5
+  Oksykodon
+                                      parenteral                                     3
+                                      rectal                                         3
+  Oksymorfon
+                                      parenteral                                   30b
+                                      peroral                                        -
+  Petidin
+                                      parenteral                                  0,4b
+                                      peroral                                      0,4
+  Tapentadol
+                                      parenteral                                     -
+                                      peroral                                     0,25
+  Tramadol
+                                      parenteral                                   0,3
+  a
+      Peroral/intramuskulær potens for morfin er basert på klinisk erfaring fra pasienter med kroniske smerter.
+  b
+      Basert på enkeltdosestudier, hvor en intramuskulær dose av hvert oppført virkestoff ble sammenlignet med morfin for
+       å fastslå relativ potens. Perorale doser er de som anbefales ved bytte fra parenteral til peroral dosering.
+
+  Referanser: Tilpasset fra 1) Foley KM. The treatment of cancer pain. NEJM 1985; 313 (2): 84-95 og
+  2) McPherson ML. Introduction to opioid conversion calculations. In: Demystifying Opioid Conversion
+  Calculations: A Guide for Effective Dosing. Bethesda, MD: American Society of Health- System
+  Pharmacists; 2010:1-15.
+
+  Tabell 2: Anbefalt startdose av Fentanyl ratiopharm basert på døgndose av peroral morfin (for pasienter
+            som har behov for skifte av opioid eller for pasienter som er mindre klinisk stabile:
+            konverteringsrate for peroral morfin til transdermal fentanyl er omtrent 150:1)1
+                                                                     Fentanyl ratiopharm dose
+                Døgndose av peroral                                          (mikrog/time)
+                 morfin (mg/døgn)
+                       (mg/dag)
+                          <90                                                    12
+                         90-134                                                  25
+                        135-224                                                  50
+                        225-314                                                  75
+                        315-404                                                 100
+                        405-494                                                 125

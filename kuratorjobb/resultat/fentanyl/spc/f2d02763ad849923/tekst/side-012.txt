@@ -1,0 +1,55 @@
+Farmakokinetisk-relaterte interaksjoner
+
+Cytokrom P450 3A4 (CYP 3A4)-hemmere
+Fentanyl er et virkestoff med høy clearance, som blir hurtig og i høy grad metabolisert, hovedsakelig
+av CYP3A4.
+
+Samtidig bruk av Fentanyl ratiopharm og cytokrom P450 3A4 (CYP3A4)-hemmere kan medføre en
+økning i plasmakonsentrasjon av fentanyl. Dette kan medføre økning i, eller forlengelse av, både den
+terapeutiske effekten og bivirkninger av fentanyl, og igjen føre til alvorlig respirasjonsdepresjon.
+Graden av interaksjon med sterke CYP3A4-hemmere forventes å være større enn med svake eller
+moderate CYP3A4-hemmere. Tilfeller av alvorlig respirasjonsdepresjon etter samtidig bruk av
+CYP3A4-hemmere og transdermal fentanyl er rapportert, inkludert et dødsfall etter samtidig bruk av
+en moderat CYP3A4-hemmer. Samtidig bruk av CYP3A4-hemmere og Fentanyl ratiopharm er ikke
+anbefalt, med mindre pasienten monitoreres nøye (se pkt. 4.4). Eksempler på virkestoffer som kan øke
+fentanylkonsentrasjonen, omfatter: amiodaron, cimetidin, klaritromycin, diltiazem, erytromycin,
+flukonazol, itrakonazol, ketokonazol, nefazodon, ritonavir, verapamil og vorikonazol (denne listen er
+ikke uttømmende). Etter samtidig bruk av svake, moderate eller sterke CYP3A4-hemmere og
+korttidsbruk av intravenøs fentanyl, var reduksjonen i fentanyls clearance vanligvis ≤25 %, men med
+ritonavir (en sterk CYP3A4-hemmer) ble fentanyls clearance redusert gjennomsnittlig med 67 %.
+Graden av interaksjon mellom CYP3A4-hemmere og langtidsbruk av transdermal fentanyl er ikke
+kjent, men kan være større enn med intravenøs korttidsbruk.
+
+Cytokrom P450 3A4 (CYP3A4)-induktorer
+Samtidig bruk av transdermal fentanyl og CYP3A4-induktorer kan medføre redusert
+plasmakonsentrasjon av fentanyl og redusert terapeutisk effekt. Forsiktighet bør utvises ved samtidig
+bruk av CYP3A4-induktorer og Fentanyl ratiopharm. Det kan være nødvendig å øke dosen av
+Fentanyl ratiopharm eller bytte til et annet analgetisk virkesstoff. En reduksjon av fentanyldosen og
+grundig monitorering er nødvendig dersom seponering av samtidig behandling med en CYP3A4-
+induktor forventes. Den induserende effekten vil gradvis avta og kunne medføre økt
+plasmakonsentrasjon av fentanyl, som kan gi økt eller forlenget terapeutisk effekt og bivirkninger, og
+forårsake alvorlig respirasjonsdepresjon. I slik situasjoner kreves nøye monitorering til stabile
+legemiddeleffekter oppnås. Eksempler på virkestoffer som kan redusere plasmakonsentrasjon av
+fentanyl omfatter: karbamazepin, fenobarbital, fenytoin og rifampicin (denne listen er ikke
+uttømmende).
+
+Pediatrisk populasjon
+Interaksjonsstudier har kun blitt utført hos voksne.
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet
+Det foreligger ikke tilstrekkelige data på bruk av fentanylplastre hos gravide kvinner. Dyrestudier har
+vist reproduksjonstoksiske effekter (se pkt. 5.3). Risikoen for mennesker er ukjent, selv om det er vist
+at fentanyl som intravenøst anestetikum passerer placenta ved graviditet hos mennesker. Neonatalt
+abstinenssyndrom hos nyfødte er rapportert etter maternal langtidsbruk av Fentanyl ratiopharm under
+graviditeten. Fentanyl ratiopharm skal ikke brukes under graviditet, hvis ikke strengt nødvendig.
+
+Bruk av Fentanyl ratiopharm under fødsel er ikke anbefalt da det ikke skal brukes til behandling av
+akutte eller postoperative smerter (se pkt. 4.3). Fentanyl passerer dessuten placenta, og bruk av
+Fentanyl ratiopharm under fødsel kan forårsake respirasjonsdepresjon hos det nyfødte barnet.
+
+Amming
+Fentanyl skilles ut i morsmelk hos mennesker og kan forårsake sedasjon/respirasjonsdepresjon hos
+spedbarn som ammes. Amming bør derfor opphøre under behandling med Fentanyl ratiopharm og i
+minst 72 timer etter at depotplasteret er fjernet.

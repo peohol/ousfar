@@ -1,0 +1,57 @@
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+Fentanyl depotplaster gir kontinuerlig systemisk frisetting av fentanyl i en 72 timers
+applikasjonsperiode. Etter applikasjon av et fentanyl-plaster absorberer huden under systemet
+fentanyl, og et lager av fentanyl dannes i de øvre hudlag. Fentanyl blir deretter tilgjengelig i systemisk
+sirkulasjon. Polymermatriksen og diffusjon av fentanyl gjennom hudlagene holder
+frisettingshastigheten relativt konstant. Konsentrasjonsgradienten mellom systemet og den lavere
+konsentrasjonen i huden driver legemiddelfrisettingen. Gjennomsnittlig biotilgjengelighet av fentanyl
+etter applikasjon av depotplaster er 92 %.
+
+Etter første applikasjon av fentanyl depotplaster øker serumkonsentrasjonen av fentanyl gradvis, og
+jevnes vanligvis ut etter 12-24 timer. Deretter holder den seg relativt konstant resten av 72-
+timersperioden. Ved slutten av den andre 72-timers applikasjonen oppnås en ”steady-state”
+serumkonsentrasjon, som opprettholdes gjennom de senere plasterperiodene ved bruk av samme
+plasterstørrelse. Grunnet akkumulering er AUC- og Cmax-verdiene i et doseringsintervall ved ”steady-
+state” omtrent 40 % høyere enn etter en enkeltapplikasjon. Pasienter oppnår og opprettholder en
+”steady-state” serumkonsentrasjon som bestemmes av individuell variasjon i hudpermeabilitet og
+fentanylclearance. Det er observert stor grad av interindividuell variasjon i plasmakonsentrasjon.
+
+En farmakokinetisk modell tyder på at serumkonsentrasjonen av fentanyl kan øke med 14 %
+(variasjonsbredde 0-26 %) hvis et nytt plaster settes på etter 24 timer istedenfor etter 72 timers bruk
+som anbefalt.
+
+Økt hudtemperatur kan øke absorpsjonen av transdermalt tilført fentanyl (se pkt. 4.4). En økning i
+hudtemperaturen ved bruk av en varmepute på lav innstilling over fentanyl-plasteret de første
+10 timene av en enkeltapplikasjon økte gjennomsnittlig AUC-verdi for fentanyl 2,2 ganger og
+gjennomsnittlig konsentrasjon på slutten av varmebruken med 61 %.
+
+Distribusjon
+Fentanyl distribueres raskt til ulike vev og organer, som det store distribusjonsvolumet (3 til 10 l/kg
+etter intravenøs dosering hos pasienter) viser. Fentanyl akkumuleres i muskler og fett og frisettes
+langsomt til blodet.
+
+I en studie med kreftpasienter behandlet med transdermal fentanyl, var plasmaproteinbindingen
+gjennomsnittlig 95 % (variasjonsbredde 77-100 %). Fentanyl passerer lett blod-hjernebarrieren. Det
+passerer også placenta og skilles ut i morsmelk.
+
+Biotransformasjon:
+Fentanyl er et virkestoff med høy clearance, som metaboliseres raskt og i stor grad, hovedsakelig av
+CYP3A4 i leveren. Hovedmetabolitten, norfentanyl og andre metabolitter er inaktive. Huden ser ikke
+ut til å metabolisere fentanyl som opptas transdermalt. Dette ble vist i en analyse med humane
+keratinocytter, og i kliniske studier hvor 92 % av dosen som ble levert fra systemet ble registrert som
+uforandret fentanyl i systemisk sirkulasjon.
+
+Eliminasjon
+Etter en 72-timers applikasjon av depotplaster er gjennomsnittlig halveringstid for fentanyl 20-
+27 timer. Som følge av fortsatt absorpsjon av fentanyl fra hudlageret etter fjerning av depotplasteret, er
+fentanyls halveringstid etter trandermal administrering ca. 2-3 ganger lengre enn etter intravenøs
+administrering.
+
+Etter intravenøs administrering var fentanyls gjennomsnittlige clearance på tvers av studier vanligvis
+mellom 34 og 66 l/time.
+
+Innen 72 timer etter intravenøs administrering av fentanyl skilles ca. 75 % av dosen ut i urinen og ca.
+9 % av dosen i feces. Utskillelse er hovedsakelig som metabolitter, med mindre enn 10 % av dosen
+utskilt som uforandret virkestoff.

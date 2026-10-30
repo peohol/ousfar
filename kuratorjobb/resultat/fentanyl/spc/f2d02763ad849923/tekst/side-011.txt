@@ -1,0 +1,53 @@
+Opioidindusert hyperalgesi
+Opioidindusert hyperalgesi (OIH) er en paradoksal respons på et opioid, hvor det er en økning i
+smerteopplevelse til tross for stabil eller økt opioideksponering. Det er forskjellig fra toleranse, hvor
+høyere opioiddoser er nødvendig for å oppnå samme analgetiske effekt eller behandle tilbakevendende
+smerter. OIH kan manifesteres som økt smertenivå, mer generaliserte smerter (dvs. mindre fokale)
+eller smerter som følge av ordinære (dvs. ikke smertefulle) stimuli (allodyni) uten tegn på
+sykdomsprogresjon. Ved mistanke om OIH skal opioiddosen reduseres eller nedtrappes, hvis mulig.
+
+Doping
+Bruk av fentanylplastre kan føre til positiv dopingtest. Bruk av fentanylplastre som dopingmiddel kan
+være helsefarlig.
+
+Endokrine effekter
+Opioider, slik som fentanyl, kan påvirke hypothalamus-hypofyse-binyre-aksen eller hypothalamus-
+hypofyse-gonade-aksen, spesielt etter langtidsbruk. Noen endringer som kan ses, inkluderer en økning
+i serumprolaktin og reduksjon i plasmakortisol og testosteron. Kliniske tegn og symptomer kan oppstå
+som følge av disse hormonforandringene. Ved mistanke om en endokrin effekt slik som
+hyperprolaktinemi eller binyresvikt, anbefales relevante laboratorieprøver, og seponering av
+behandling med Fentanyl ratiopharm bør vurderes.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Farmakodynamisk-relaterte interaksjoner
+
+Sentraltvirkende legemidler/legemidler som hemmer sentralnervesystemet, inkludert alkohol og
+narkotiske legemidler med hemmende effekt på sentralnervesystemet
+Samtidig bruk av Fentanyl ratiopharm og andre legemidler som hemmer sentralnervesystemet
+(inkludert benzodiapiner og andre sedativa, hypnotika, opioider, generelle anestetika, fentiaziner,
+beroligende midler, sederende antihistaminer, alkohol og og narkotiske legemidler med hemmende
+effekt på sentralnervesystemet), muskelrelaksantia og gabapentinoider (gabapentin og pregabalin) kan
+medføre respirasjonsdepresjon, hypotensjon og dyp sedasjon, koma eller død. Samtidig forskrivning
+av legemidler som hemmer sentralnervesystemet og Fentanyl ratiopharm skal forbeholdes pasienter
+hvor alternativ behandling ikke er mulig. Samtidig bruk av disse legemidlene og Fentanyl ratiopharm
+krever nøye monitorering og observasjon.
+Dosen og varigheten ved samtidig bruk bør begrenses (se pkt. 4.4).
+
+Monoaminoksidasehemmere (MAOI)
+Fentanyl ratiopharm anbefales ikke til pasienter som trenger samtidig behandling med en MAO-
+hemmer. Alvorlige og uforutsigbare interaksjoner med MAO-hemmere som innebærer en potensering
+av opiate eller serotonerge effekter har blitt rapportert. Derfor bør Fentanyl ratiopharm ikke brukes de
+første 14 dagene etter at behandling med en MAO-hemmer er avsluttet.
+
+Serotoninerge legemidler
+Samtidig bruk av fentanyl og et serotoninergt legemiddel, som en selektiv serotoninreopptaks-hemmer
+(SSRI), en serotonin-noradrenalinreopptakshemmer (SNRI) eller en monoaminoksidase (MAO)-
+hemmer, kan øke risikoen for serotonergt syndrom, en potensielt livstruende tilstand. Samtidig bruk
+krever forsiktighet. Pasienter skal observeres nøye, spesielt ved behandlingsstart og dosejustering (se
+pkt. 4.4).
+
+Samtidig bruk av blandede opioidagonister/antagonister
+Samtidig bruk av buprenorfin, nalbufin eller pentazocin anbefales ikke. De har høy affinitet til
+opioidreseptorer med relativt lav egenaktivitet og antagoniserer derfor delvis den analgetiske effekten
+til fentanyl og kan forårsake abstinenssymptomer hos opioidavhengige pasienter (se pkt. 4.4).

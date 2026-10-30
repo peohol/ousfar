@@ -1,0 +1,54 @@
+      kan vare lenger enn effekten av antagonisten; flere doser av sistnevnte kan derfor bli
+      nødvendig.
+
+      Hvis pustevanskene er assosiert med muskelstivhet, kan det bli nødvendig å gi en
+      intravenøs nevromuskulær blokker for å lette assistert eller kontrollert respirasjon.
+
+      Pasienten bør overvåkes nøye; kroppsvarme og tilstrekkelig væskeinntak bør
+      opprettholdes. Ved alvorlig eller vedvarende hypotensjon, bør muligheten for
+      hypovolemi vurderes og parental væsketilførsel gis om nødvendig.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+      Farmakoterapeutisk gruppe: Opioidanestetikum, ATC-kode: N01A H01
+
+      Fentanyl er et sterktvirkende opioid-analgetikum som kan brukes som et analgetisk
+      supplement ved generell anestesi eller alene som anestetikum.
+      Fentanyl har µ-agonistiske egenskaper. Den agonistiske aktiviteten til - og -
+      reseptorene svarer til den til morfin. En dose på 100 mikrogram (2 ml) har en
+      analgetisk virkning som svarer til 10 mg morfin.
+
+      Fentanyl har en raskt innsettende effekt. Maks. analgetisk effekt og depressiv virkning
+      på respirasjonen finner sted innen noen få minutter.
+      Gjennomsnittlig varighet for den analgetiske effekten er ca. 30 minutter etter en enkel
+      bolusinjeksjon på 100 mikrogram. Analgesiens styrke er doseavhengig og kan
+      tilpasses smertenivået i den kirurgiske prosedyren.
+
+      Fentanyl er karakterisert ved relativt liten hjerte-kretsløpsbelastning, men har en sterk
+      depressiv virkning på respirasjonen. Stressinduserte hormonforandringer kan ikke med
+      sikkerhet undertrykkes med fentanyl. Et høynet blodtrykk på grunn av intraoperative
+      smertestimuli kan oppstå på tross av behandling med høy dose fentanyl.
+
+      Avhengig av dosering og injeksjonshastighet kan fentanyl forårsake muskelstivhet,
+      eufori, miose og bradykardi. Intradermale tester og serumanalyser av histamin på
+      mennesker, og likeledes in-vivo tester på hunder, har vist at det sjelden kan observeres
+      klinisk relevant histaminavgivelse etter anvendelse av fentanyl.
+
+      Alle fentanyls virkninger kan motvirkes ved hjelp av spesifikke opioid-antagonister
+      som f.eks. nalokson.
+
+5.2   Farmakokinetiske egenskaper
+
+      Etter intravenøs injeksjon synker fentanyls plasmakonsentrasjon raskt. Fordelingen av
+      fentanyl skjer i 3 faser med halveringstider på ca. 1 minutt, 15 minutter og 6 timer.
+      Fentanyl har et fordelingsvolum for det sentrale kammer på rundt 15 liter og et totalt
+      fordelingsvolum på rundt 400 liter.
+      Spesielt på gamle pasienter, eller etter at legemidlet er gitt flere ganger, kan
+      halveringstiden forlenges. Det kan oppstå sekundære topp-plasmanivåer.
+      Plasmaprotein-bindingsgraden til fentanyl er 80 – 85 %.
+      Fentanyl metaboliseres raskt, i hovedsak i leveren, ved oksidativ N-desalkylasjon.
+      Clearance ligger på rundt 0,5 l/time/kg. Rundt 75 % av den dose som gis elimineres
+      innen 24 timer. Kun 10 % av dosen skilles ut som uforandret substans.

@@ -1,0 +1,53 @@
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til
+Direktoratet for medisinske produkter: www.dmp.no/meldeskjema.
+
+4.9   Overdosering
+
+Symptomer og tegn
+Overdosering med fentanyl manifesteres ved økt farmakologisk aktivitet. Den mest alvorlige effekten
+er respirasjonsdepresjon. Toksisk leukoencefalopati er også observert med overdosering av fentanyl.
+
+Behandling
+Ved respirasjonsdepresjon skal man umiddelbart fjerne Fentanyl ratiopharm-plasteret og fysisk eller
+verbalt stimulere pasienten. Dette kan følges opp med administrering av en spesifikk opioidantagonist
+slik som nalokson. Respirasjonsdepresjon som følge av overdosering kan vare lengre enn effekten av
+opioidantagonisten. Intervallet mellom intravenøse doser av antagonist bør velges nøye på grunn av
+mulighet for renarkotisering etter at depotplasteret er fjernet; gjentatte injeksjoner eller kontinuerlig
+infusjon av nalokson kan bli nødvendig. Reversering av den narkotiske effekten kan utløse akutt
+smerte og frigjøring av katekolaminer.
+
+Hvis den kliniske situasjonen tilsier det, bør frie luftveier sikres og vedlikeholdes, potensielt ved
+kunstig ventilasjon, om nødvendig med intubering, og oksygen bør administreres og respirasjonen
+kontrolleres og assisteres etter forholdene. Adekvat kroppstemperatur og væskeinntak bør
+vedlikeholdes.
+
+Hypovolemi bør vurderes ved forekomst av alvorlig eller vedvarende hypotensjon og tilstanden bør
+håndteres med passende parenteral væskebehandling.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Analgetika, opioider, fenylpiperidinderivater. ATC-kode: N02A B03.
+
+Virkningsmekanisme
+Fentanyl er et opioidanalgetikum som hovedsakelig interagerer med opioide -reseptorer. Primær
+terapeutisk respons er analgetisk og sedativ effekt.
+
+Pediatrisk populasjon
+Sikkerhet til transdermal fentanyl plaster ble evaluert i 3 åpne studier hos 289 pediatriske
+forsøkspersoner med kroniske smerter, i alderen 2 til 17 år. Åtti av barna var i alderen 2 til 6 år. Av de
+289 forsøkspersonene som ble inkludert i disse 3 studiene, startet 110 behandling med fentanyl
+depotplaster i en dose på 12 mikrog/time. Av disse 110 pasientene hadde 23 (20,9 %) tidligere fått
+<30 mg perorale morfinekvivalenter/døgn, 66 (60,0 %) hadde fått 30 til 44 mg perorale
+morfinekvivalenter/døgn og 12 (10,9 %) hadde fått minst 45 mg perorale morfinekvivalenter/døgn
+(data ikke tilgjengelig for 9 [8,2 %] forsøkspersoner). Startdoser på 25 mikrog/time eller mer ble brukt
+av de resterende 179 forsøkspersonene, hvorav 174 (97,2 %) hadde stått på opioiddoser på minst
+45 mg perorale morfinekvivalenter/døgn. Blant de resterende 5 forsøkspersonene med en startdose på
+minst 25 mikrog/time som tidligere opioiddoser <45 mg perorale morfinekvivalenter/døgn, hadde
+1 (0,6 %) tidligere fått <30 mg perorale morfinekvivalenter/døgn, og 4 (2,2 %) hadde fått 30 til 44 mg
+perorale morfinekvivalenter/døgn (se pkt. 4.8).

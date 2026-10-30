@@ -1,0 +1,745 @@
+1.    LEGEMIDLETS NAVN
+
+      Fentanyl Hameln 50 mikrog/ml injeksjonsvæske, oppløsning
+
+
+2.    KVALITATIV OG KVANTITATIV SAMMENSETNING
+
+      1 ml injeksjonsvæske, oppløsning inneholder
+             fentanylsitrat       78,5 mikrog
+             svarer til fentanyl  50 mikrog
+
+      1 ampulle med 2 ml injeksjonsvæske, oppløsning inneholder
+      fentanylsitrat       157 mikrog
+      svarer til fentanyl  100 mikrog
+
+      1 ampulle med 10 ml injeksjonsvæske, oppløsning inneholder
+      fentanylsitrat       785 mikrog
+      svarer til fentanyl  500 mikrog
+
+      1 hetteglass med 50 ml injeksjonsvæske, oppløsning inneholder
+      fentanylsitrat       3925 mikrog
+      svarer til fentanyl  2500 mikrog
+
+      Hjelpestoff med kjent effekt: Fentanyl Hameln 50 mikrog/ml injeksjonsvæske,
+      oppløsning inneholder 3,5 mg natrium per ml væske, oppløsning.
+
+      For fullstendig liste over hjelpestoffer, se pkt. 6.1.
+
+
+3.    LEGEMIDDELFORM
+
+      Injeksjonsvæske, oppløsning
+
+      Produktet er en klar, fargeløs oppløsning med en pH på 5,0 – 7,5.
+
+
+4.    KLINISKE OPPLYSNINGER
+
+4.1   Indikasjoner
+
+      Fentanyl er et opioid med kortvarig virkning som brukes
+      - for neuroleptanalgesi og neuroleptanestesi
+      - som analgetisk komponent ved generell anestesi hos intuberte, ventilerte pasienter
+      - for analgetisk behandling hos ventilerte pasienter på intensivavdeling
+
+4.2   Dosering og administrasjonsmåte
+
+      Reseptgruppe: A
+
+      Dosering
+
+      Fentanyl Hameln bør kun gis av erfarent personale i omgivelser som kan håndtere
+      kontrollert respirasjon (se punkt 4.4).
+Doseringen av Fentanyl Hameln bør individualiseres i henhold til alder, kroppsvekt,
+fysisk tilstand, underliggende patologisk forfatning, bruk av andre medikamenter og
+hvilken type kirurgisk inngrep og anestesi det dreier seg om.
+
+
+Voksne
+Det vanlige doseringsregimet for intravenøs injeksjon for voksne er som følger:
+
+                        Startdose                  Tilleggsdose
+ Spontan respirasjon    50-200*mikrogram           50 mikrogram
+                        300-3500 mikrogram
+ Assistert ventilasjon (opp til                    100-200 mikrogram
+                        50 mikrogram /kg)
+* Doser på mer enn 200 mikrogram leder til betydelig respirasjonsdepresjon og skal
+kun brukes under anestesi.
+
+Fentanyl Hameln 50 mikrogram/ml injeksjonsvæske, oppløsning kan også gis som en
+infusjon.
+
+Hos ventilerte pasienter blir en metningsdose på 1 mikrogram/kg/minutt de første
+10 minuttene etterfulgt av en infusjon på omtrent 0,1 mikrogram/kg/minutt.
+
+Alternativt kan metningsdosen gis som en bolus. Infusjonshastigheter bør titreres til
+hver individuell pasientrespons, og hastigheter på opptil 3 mikrogram/kg/minutt har
+blitt brukt i hjertekirurgi. Infusjon bør stoppes omtrent 40 minutter før operasjonen er
+avsluttet, med mindre kunstig ventilasjon skal gjennomføres også postoperativt.
+
+For spontant respirerende pasienter er lavere infusjonshastighet på
+0,05 - 0,08 mikrogram/kg/minutt nødvendig.
+
+Neuroleptanalgesi og neuroleptanestesi
+For neuroleptanalgesi krever voksne personer som regel en første dose på 50 til
+100 mikrogram (0,7-1,4 mikrogram/kg) fentanyl som injiseres sakte intravenøst i
+kombinasjon med et neuroleptisk middel (fortrinnsvis droperidol). Ved behov kan det
+gis nok en dose på 50 til 100 mikrogram (0,7-1,4 mikrogram/kg) fentanyl 30 til
+45 minutter etter første dose.
+
+For neuroleptanestesi under respirasjon krever voksne personer som regel en første
+dose på 200 til 600 mikrogram (2,8-8,4 mikrogram/kg) fentanyl som injiseres sakte
+intravenøst i kombinasjon med et neuroleptisk middel (fortrinnsvis droperidol).
+Doseringen avhenger av hvor langvarig og alvorlig det kirurgiske inngrepet er og av
+hvilket annet medikament som brukes for generell anestesi. For vedlikehold av
+anestesi kan det gis tilleggsdoser på 50 til 100 mikrogram (0,7-1,4 mikrogram/kg)
+fentanyl hvert 30. til 45. minutt. Tidsintervallene og dosene for slik
+tilleggsadministrering må tilpasses til det kirurgiske inngrepets forløp.
+
+Smertebehandling på intensivavdeling
+Ved bruk under smertebehandling av ventilerte pasienter på intensivavdeling må
+doseringen av fentanyl tilpasses individuelt i henhold til smerteforløp og andre
+medikamenter som gis sammen med fentanyl. Vanligvis ligger de første doser
+innenfor et område mellom 50 og 100 mikrogram i.v. (0,7-1,4 mikrogram/kg), men de
+kan titreres høyere ved behov. Første dose følges som regel av gjentatte injeksjoner i
+en total dosering på 25 til 125 mikrogram fentanyl pr. time (0,35 -
+1,8 mikrogram/kg/time).
+
+Dosering til pediatrisk populasjon
+
+Barn fra 12 til 17 år bør følge anbefalt doseringsskjema til voksne.
+
+For barn fra 2 til 11 år er anbefalt vanlig doseringsskjema som følger:
+
+                Alder i år     Startdose i                  Tilleggsdose i
+                               mikorgram/kg                 mikrogram/kg
+                               kroppsvekt                   kroppsvekt
+ Spontan        2-11           1-3                          1-1.25
+ respirasjon
+ Assistert      2-11           1-3                          1-1.25
+ ventilasjon
+
+Bruk hos barn:
+Analgesi under operasjon, som tillegg til anestesi med spontan respirasjon:
+
+Prosedyrer som involverer analgesi hos barn med spontan respirasjon bør bare brukes
+som del av en anestesiprosedyre, eller gis som en del av en sedasjon/analgesi
+prosedyre med erfarent personale tilstede i omgivelser som kan håndtere plutselig
+brystveggs stivhet som krever intubasjon eller apné som krever kunstig åndedrett (se
+pkt. 4.4).
+
+Dosering til eldre og svekkede pasienter
+Som med andre opioider bør initialdosen reduseres hos eldre (>65 år) og svekkede
+pasienter. Effekten av første dose bør tas med i betraktning når oppfølgende doser
+fastsettes.
+
+Overvektige pasienter
+Hos overvektige pasienter er det fare for overdosering dersom dosen beregnes ut fra
+kroppsvekt. Overvektige pasienter bør doseres ut fra estimert fettfri kroppsmasse (lean
+body mass).
+
+Nedsatt nyrefunksjon
+Hos pasienter med nedsatt nyrefunksjon bør redusert dosering av Fentanyl Hameln tas
+i betraktning, og disse pasientene bør observeres nøye for tegn på fentanyltoksisitet.
+
+Dosering til pasienter som kronisk tar opioide medikamenter
+For pasienter som kronisk tar opioide medikamenter eller som har kjent historie med
+misbruk av opioider, kan det være nødvendig med høyere dosering av fentanyl.
+
+Dosering til pasienter med tilleggssykdommer
+Hos pasienter med en av de følgende sykdommer bør man være forsiktig under
+titreringen av fentanyl:
+    ikke kompensert hypotyreose
+    lungesykdommer, spesielt slike med redusert vitalkapasitet
+    alkoholmisbruk
+    nedsatt leverfunksjon
+      Man må også være forsiktig hvis Fentanyl Hameln skal gis til pasienter med
+      binyreinsuffisiens, prostatahypertrofi, porfyri og bradykardi.
+
+      I alle disse tilfeller, bortsett fra alkoholmisbruk, kan det være nødvendig å redusere
+      dosen. Ved alkoholmisbruk kan det være nødvendig enten å redusere eller øke dosen.
+
+      Hos slike pasienter anbefales en forlenget postoperativ overvåkning.
+
+      Administrasjonsmåte
+      Intravenøs administrasjon enten som en bolusinjeksjon eller ved infusjon.
+
+      For instruksjoner om fortynning av dette legemidlet før administrering, se pkt. 6.6.
+
+      For å unngå bradykardi, anbefales det å administrere en liten intravenøs dose av et
+      anti-kolinergikum rett før induksjon av anestesi.
+
+      Ved intravenøs injeksjon skal Fentanyl Hameln administreres sakte innenfor 1-2
+      minutter (se pkt. 4.4.), eventuelt i kombinasjon med et neuroleptika (fortrinnsvis
+      droperidol).
+      Ved anestesi avhenger administrasjonsvarigheten av tidsforløpet til det kirurgiske
+      inngrepet. Ved smertestillende behandling av pasienter på intensivavdeling må legen
+      fastsette administrasjonsvarighet i henhold til smertenes intensitet og tidsforløp.
+
+4.3   Kontraindikasjoner
+
+      Fentanyl Hameln skal ikke brukes på pasienter med
+
+      -   overfølsomhet overfor virkestoffet, andre morfinometika eller overfor noen av
+        hjelpestoffene listet opp i pkt. 6.1.
+      - respirasjonsdepresjon uten kunstig ventilasjon.
+      - samtidig behandling med MAO-inhibitorer eller innen to uker etter avsluttet
+        anvendelse av MAO-inhibitorer.
+      - høynet intrakranisk trykk og hjernetrauma.
+      - hypovolemi og hypotensjon.
+      - myasthenia gravis.
+
+4.4   Advarsler og forsiktighetsregler
+
+      Fentanyl Hameln bør kun gis av erfarent personale i omgivelser som kan håndtere
+      kontrollert respirasjon.
+
+      Respirasjonsdepresjon
+      Som med alle sterke opioider, respirasjonsdepresjon er doserelatert og kan reverseres
+      ved en spesifikk antagonist som nalokson, men ytterligere doser av sistnevnte kan
+      være nødvendig, da respirasjonsdepresjonen kan vare lenger enn virkningen av
+      opioidantagonisten. Dyp analgesi er ledsaget av markert respirasjonsdepresjon, som
+      kan vedvare eller komme tilbake i den postoperative perioden. Pasienter bør derfor
+      fortsatt holdes under passende overvåkning. Gjenopplivningsutstyr og antagonister bør
+      være lett tilgjengelig. Hyperventilering under anestesi kan endre pasientens respons på
+      CO2, og dermed påvirke postoperativ respirasjon.
+
+      Effekten på respirasjonen kan vare lenge, spesielt hos eldre. På nyfødte må man regne
+      med en respirasjonsdepresjon etter små doser.
+I isolerte tilfeller kan det på epileptiske pasienter etter en rask og stor dose fentanyl
+(19-36 mikrogram/kg) administrert i løpet av 2-5 minutter oppstå elektrokortikografisk
+registrerbar elektrisk anfallsaktivitet, selv i friske områder av hjernen. En innvirkning
+på den intraoperative elektrokortikografiske fokuslokalisasjon etter lave fentanyldoser er
+hittil ikke kjent.
+
+Risiko ved samtidig bruk av beroligende legemidler som benzodiazepiner eller
+lignende legemidler
+Samtidig bruk av Fentanyl og beroligende legemidler som benzodiazepiner eller
+lignende legemidler kan føre til sedasjon, respirasjonsdepresjon, koma og dødsfall. På
+grunn av disse risikofaktorene, bør samtidig forskrivning av disse beroligende
+legemidlene være forbeholdt pasienter som ikke har andre alternative
+behandlingsmuligheter. Dersom det er besluttet å forskrive Fentanyl samtidig med
+beroligende legemidler, bør laveste effektive dose og kortest mulig behandlingstid
+brukes.
+Pasientene skal følges opp nøye for tegn og symptomer på respiratorisk depresjon og
+sedasjon. I denne forbindelse anbefales det sterkt å gjøre pasientene og deres
+omsorgspersoner oppmerksomme på disse symptomene (se pkt. 4.5).
+
+Nevrologiske sykdommer
+    Indusering av muskelstivhet, som også kan involvere brystmusklene, kan
+      forekomme, men kan hindres ved følgende tiltak: langsom i.v. injeksjon
+      (vanligvis tilstrekkelig for lavere doser), premedisinering med benzodiazepiner
+      og bruk av muskelavslappende midler.
+
+      Ikke-epileptiske (myo)kloniske bevegelser kan oppstå.
+
+Sykdommer i galleveier
+Som med andre opioider, grunnet antikolinerge effekter, kan administrering av
+fentanyl føre til kortvarig trykk på gallegangen og i enkelte tilfeller spasme på
+sphincter Oddi: Det må tas hensyn til dette under de intraoperative diagnoseprosedyrer
+ved gallegangskirurgi og ved smertebehandling av pasienter på intensivstasjon.
+
+Tarmmotilitet
+Som alle andre opioider kan fentanyl ha en hemmende effekt på tarmmotiliteten. Det
+bør tas hensyn til dette ved smertebehandling på intensivstasjon av pasienter med
+betente eller obstruktive tarmsykdommer.
+
+Kardiovaskulære sykdommer
+Bradykardi, og mulig hjertestans, kan oppstå hvis pasienten blir gitt en for lav mengde
+antikolinergikum, eller hvis fentanyl kombineres med et ikke-vagolytisk
+muskelavslappende middel. Bradykardi kan behandles med atropin.
+
+Opioider kan indusere hypotensjon, spesielt på hypovolemiske pasienter og på
+pasienter med dekompensert hjertesvikt. Induserte doser bør tilpasses og gis sakte, slik
+at man unngår depresjon av hjerte-kretsløp.
+Egnede tiltak for å opprettholde stabilt arterisk trykk bør iverksettes.
+
+Man bør unngå å bruke raske bolusinjeksjoner av Fentanyl Hameln hos pasienter med
+nedsatt intracerebral elastisitet; hos slike pasienter har den forbigående senkingen av
+det gjennomsnittlige arterietrykket noen ganger vært ledsaget av en kortvarig
+reduksjon av det cerebrale perfusjonstrykket.
+Toleranse og avvikende opioidbruk (misbruk og avhengighet)
+Toleranse samt fysisk og psykisk avhengighet kan utvikles ved gjentatt administrering
+av opioider.
+
+Gjentatt bruk av opioider kan medføre avvikende opioidbruk (opioid use disorder,
+OUD). Misbruk eller tilsiktet feilbruk av opioider kan føre til overdosering og/eller
+død. Risikoen for utvikling av OUD er økt hos pasienter med personlig eller
+familieanamnese (foreldre eller søsken) med stoffmisbruk (inkludert alkoholmisbruk),
+hos tobakksbrukere og hos pasienter med personlig anamnese med andre sinnslidelser
+(f.eks. alvorlig depresjon, angst og personlighetsforstyrrelser).
+
+Abstinenssyndrom
+Gjentatt administrasjon med korte mellomrom over lengre tid kan medføre utvikling
+av abstinenssyndrom etter seponering av behandling. Dette kan manifesteres ved
+forekomst av følgende bivirkninger: kvalme, oppkast, diaré, angst, frysninger,
+skjelving og svetting.
+
+På nyfødte er det tilstrekkelig sannsynlighet for at det utvikles et abstinenssyndrom
+etter en behandling på mer enn 5 dager eller en total dose på > 1,6 mg/kg.
+
+Neonatalt abstinenssyndrom
+Hvis kvinner får langtidsopioider under graviditet, er det en risiko for at deres nyfødte
+spedbarn vil utvikle neonatalt abstinenssyndrom (se pkt. 4.6).
+Opioid-indusert hyperalgesi
+Som med andre opioider, ved utilstrekkelig smertekontroll som respons på økt dose av
+fentanyl, bør muligheten for opioidindusert hyperalgesi vurderes. En dosereduksjon
+eller seponering av fentanylbehandling eller behandlingsgjennomgang kan være
+indisert.
+
+Samtidig administrering med nevroleptika
+Hvis Fentanyl Hameln blir gitt sammen med nevroleptika (som droperidol), bør
+brukeren være fortrolig med de spesifikke egenskapene i begge medikamentene,
+spesielt forskjellen i varigheten av effekt. Når en slik kombinasjon blir brukt, er det en
+høyere forekomst av hypotensjon. Nevroleptika kan indusere ekstrapyramidale
+symptomer som kan kontrolleres med antiparkinson-midler.
+
+Bruk i spesielle populasjonsgrupper
+    Det anbefales å redusere dosen hos eldre og svekkede pasienter. Hos pasienter
+        med en av følgende sykdommer bør man være forsiktig under titreringen av
+        opioider: ukontrollert hypotyreose, lungesykdom, nedsatt pustereserve,
+        alkoholmisbruk eller nedsatt lever-eller nyrefunksjon. Slike pasienter krever
+        også forlenget postoperativ overvåkning.
+
+      Pasienter med nyreinsuffisiens bør kontrolleres omhyggelig med henblikk på
+       symptomer på fentanyl-toksisitet. Fordelingsvolumet for Fentanyl Hameln kan
+       forandre seg som et resultat av dialyse, noe som kan få innvirkning på
+       serumkonsentrasjonen.
+
+
+      Pasienter på kronisk opioidterapi, eller med opioid misbruk i anamnesen, kan
+       trenge høyere doser (se også Toleranse og avvikende opioidbruk (misbruk og
+       avhengighet)).
+      Pediatrisk populasjon
+      Prosedyrer som involverer analgesi hos barn med spontan respirasjon, bør bare brukes
+      som del av en anestesiprosedyre, eller gis som en del av en sedasjon / analgesi
+      prosedyre med erfarent personale tilstede i omgivelser som kan håndtere plutselig
+      brystveggsstivhet som krever intubasjon, eller apné som krever kunstig åndedrett.
+
+      Serotonergt syndrom
+
+      Det bør utvises forsiktighet når Fentanyl Hameln gis samtidig med legemidler som
+      påvirker serotonerge nevrotransmittorsystemer.
+
+      Utvikling av potensielt livstruende serotonergt syndrom kan forekomme ved samtidig
+      bruk av serotoninerge legemidler, som selektive serotoninreopptakshemmere (SSRI)
+      eller serotonin-noradrenalinreopptakshemmere (SNRI), og legemidler som hemmer
+      metabolisme av serotonin (inkludert monoaminoksidase [MAO]-hemmere). Dette kan
+      oppstå ved bruk av anbefalt dose.
+
+      Serotonergt syndrom kan omfatte endringer i sinnstilstand (f.eks. uro, hallusinasjoner,
+      koma), autonom ustabilitet (f.eks. takykardi, labilt blodtrykk, hypertermi),
+      nevromuskulære forstyrrelser (f.eks. hyperrefleksi, koordinasjonsvansker, rigiditet)
+      og/eller gastrointestinale symptomer (f.eks. kvalme, oppkast, diaré).
+
+      Ved mistanke om serotonergt syndrom bør rask seponering av Fentanyl Hameln
+      vurderes.
+
+      Natriuminnhold
+      Dette legemidlet inneholder 3,5 mg natrium per ml væske, oppløsning. Dette tilsvarer
+      0,2 % av WHOs anbefalte maksimale daglige inntak av natrium på 2 g for en voksen
+      person.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+      Effekt av andre legemidler på Fentanyl Hameln
+
+      Beroligende legemidler som benzodiazepiner eller lignende legemidler
+      Samtidig bruk av opioider og beroligende legemidler som benzodiazepiner eller
+      lignende legemidler øker risikoen for sedasjon, respirasjonsdepresjon, koma og
+      dødsfall på grunn av additiv CNS-depressiv effekt. Dosen og varigheten av samtidig
+      bruk bør begrenses (se pkt. 4.4).
+
+      Andre sentraldempende midler (CNS-depressiva)
+      Legemidler som barbiturater, nevroleptika, generelle anestetika, gabapentinoider
+      (gabapentin og pregabalin), og andre ikke-selektive legemidler som hemmer
+      sentralnervesystemet (f.eks. alkohol), kan øke eller forlenge respirasjonsdepresjonen
+      til fentanyl. Når pasientene har fått slike stoffer, vil nødvendig fentanyldose være
+      mindre enn vanlig. Samtidig bruk av fentanyl hos pasienter med spontan respirasjon
+      kan øke risikoen for respirasjonsdepresjon, uttalt sedasjon, koma og død.
+
+      Cytokrom P450 3A4 (CYP3A4)-hemmere
+      Fentanyl Hameln er et høy-clearance legemiddel som metaboliseres raskt og i høy
+      grad, hovedsaklig av CYP3A4. Når fentanyl blir brukt, kan samtidig bruk av en
+      CYP3A4-hemmer resultere i redusert fentanyl clearance. Ved administrering av
+      enkeltdoser av fentanyl kan tiden med risiko for respirasjonsdepresjon forlenges, noe
+      som kan kreve spesiell pasientpleie og lengre observasjonstid. Ved gjentatt dosering
+med fentanyl kan risikoen for akutt og/eller forsinket respirasjonsdepresjon øke, og en
+dosereduksjon av fentanyl kan være nødvendig for å unngå akkumulering av fentanyl.
+Peroralt ritonavir (en potent CYP3A4-hemmer) reduserte clearance klarering av en
+intravenøs enkeltdose av fentanyl med to tredjedeler, selv om maksimal
+plasmakonsentrasjon av fentanyl ikke ble påvirket. Itrakonazol (en annen potent
+CYP3A4-hemmer) gitt som 200 mg/døgn oralt i 4 døgn, hadde imidlertid ingen
+signifikant effekt på farmakokinetikken til en intravenøs enkeltdose av fentanyl.
+Koadministrering av andre potente eller mindre potente CYP3A4-hemmere, som
+vorikonazol eller flukonazol, og Fentanyl Hameln kan også resultere i økt og/eller
+forlenget eksponering for fentanyl.
+
+Monoaminoksidasehemmere (MAO-hemmere)
+På pasienter som var blitt behandlet med MAO-inhibitorer innen 14 dager før opioid-
+administreringen, er det blitt observert livstruende interaksjon med petidin på det
+sentrale nervesystem (f.eks. agitasjon, muskelstivhet, høy feber, kramper) og på
+respirasjons- og kretsløpsfunksjonene (f.eks. kretsløpsdepresjon, hypotensjon,
+hemodynamisk instabilitet og koma) og dette kan ikke utelukkes med fentanyl.
+MAO-inhibitorer blokkerer også enzymene som metaboliserer sentralt aktive
+substanser (sedativer, antihistaminer, opioider, etc.). Konsekvensen kan være at
+fentanyl får en intensiv og vedvarende effekt, inkl. respirasjonsdepresjon.
+Det anbefales vanligvis å seponere MAO-hemmere 2 uker før kirurgi eller anestesi.
+Flere rapporter beskriver imidlertid problemfri bruk av fentanyl under kirurgi eller
+anestesi hos pasienter som samtidig behandles med MAO-hemmere.
+
+Serotoninerge legemidler
+Samtidig bruk av fentanyl og et serotoninergt legemiddel, som en selektiv
+serotoninreopptakshemmer (SSRI), en serotonin-noradrenalinreopptakshemmer
+(SNRI) eller en monoaminoksidase (MAO)-hemmer, kan øke risikoen for serotonergt
+syndrom, en potensielt livstruende tilstand.
+
+Andre medisiner
+Ved høyere doser fentanyl kan en samtidig anvendelse av lystgass eller til og med små
+doser diazepam føre til en forstyrret hjerte-kretsløpfunksjon.
+
+Samtidig anvendelse av droperidol kan føre til senkning av blodtrykket, men i noen
+tilfeller har man også observert en økning av blodtrykket. Lungearterietrykket kan bli
+redusert. Videre kan det oppstå skjelving, uro og postoperative hallusinasjoner.
+
+En forutgående administrasjon av cimetidin kan føre til høynet plasmanivå av
+fentanyl.
+
+Samtidig anvendelse av klonidin kan forsterke virkningen av fentanyl og spesielt
+forlenge fentanylindusert respirasjonsdepresjon.
+
+Vekuronium kan forårsake hemodynamisk depresjon hvis det kombineres med
+fentanyl. Signifikant reduksjon av hjertefrekvens, hovedarterietrykk og hjertets
+minuttvolum kan oppstå, uten at dette er avhengig av dosen vekuronium.
+
+Bradykardi kan utvikle seg ved kombinert bruk av atrakurium og fentanyl.
+
+Når fentanyl kombineres med baklofen, forsterkes og forlenges virkningen av
+fentanyl.
+      Antiepileptika, som f.eks. karbamazepin, fenytoin, primidon er potente
+      enzyminduserende midler som øker leverens metabolisering av fentanyl, slik at
+      fentanyl raskere renses ut av kroppen igjen. Man må regne med et betydelig økt behov
+      for fentanyl hos alle pasienter som gis langvarig behandling med slike antiepileptika,
+      men ikke med natriumvalproat.
+
+      Effekt av fentanyl på andre legemidler
+
+      Dosen av andre CNS-depressiva bør reduseres etter administrering av fentanyl (se
+      ovenfor). Dette er spesielt viktig postoperativt, fordi uttalt analgesi ledsages av
+      markant respirasjonsdepresjon, som kan vedvare eller komme tilbake i den
+      postoperative perioden. Administrering av et CNS-hemmende middel i denne
+      perioden, som for eksempel et benzodiazepin eller lignende legemidler, kan
+      uproporsjonalt øke risikoen for respirasjonsdepresjon (se ovenfor).
+
+      Plasmakonsentrasjoner av etomidate økte betydelig (med en faktor på 2 til 3) i
+      kombinasjon med fentanyl. Total plasmaclearance og distribusjonsvolum for
+      etomidate er redusert med en faktor på 2-3, uten endring i halveringstid ved samtidig
+      bruk av fentanyl.
+
+      Kombinert anvendelse av fentanyl og midazolam kan føre til redusert blodtrykk.
+      Samtidig administrering av fentanyl og intravenøs midazolam resulterer i en økning i
+      halveringstiden for terminal plasma, og en reduksjon i plasmaclearance av midazolam.
+      Det kan være nødvendig å redusere dosene på disse legemidlene når de gis sammen
+      med fentanyl.
+
+4.6   Fertilitet, graviditet og amming
+
+      Graviditet
+      Det foreligger ikke tilstrekkelige data fra bruk av fentanyl hos gravide kvinner.
+      Fentanyl kan passere placenta tidlig i svangerskapet. Derfor må Fentanyl Hameln kun
+      brukes under graviditet når det anses nødvendig og etter en nøye vurdering av
+      potensielle fordeler og risikoer ved behandling.
+
+      Ved langvarig bruk under graviditet er det en risiko for neonatalt
+      opioidabstinenssyndrom som kan være livstruende hvis det ikke gjenkjennes og
+      behandles
+      Bruk (i.m. eller i.v.) under fødsel (inkludert keisersnitt) anbefales ikke, da fentanyl
+      passerer placenta, og fordi fosterets respirasjonssenter er spesielt følsomt overfor
+      opiater. Hvis Fentanyl Hameln administreres, bør assistert ventilasjonsutstyr for mor
+      og spedbarn og en opioidantagonist for barnet alltid være for hånden.
+
+      Amming
+      Fentanyl utskilles i morsmelk. Amming anbefales derfor ikke de første 24 timene etter
+      administrering av dette stoffet.
+      Nytte / risiko av amming etter administrering av fentanyl bør vurderes.
+
+      Fertilitet
+      Det finnes ingen kliniske data på effekten av Fentanyl Hameln på fertilitet.
+      Dyrestudier har vist reproduksjonstoksiske effekter (se pkt. 5.3, Prekliniske
+      sikkerhetsdata). Den potensielle risikoen for mennesker er ukjent.
+4.7       Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+          Bruken av Fentanyl Hameln kan forårsake reduserte reaksjonsevner og konsentrasjon.
+          Bilkjøring og betjening av maskiner kan ikke gjenopptas før det har gått tilstrekkelig
+          tid etter administrering av fentanyl.
+
+          Pasienter bør følges hjem etter utskrivning og gis beskjed om ikke å nyte alkohol.
+
+4.8       Bivirkninger
+          Sikkerheten av Fentanyl Hameln i.v. ble evaluert hos 376 forsøkspersoner som deltok i
+          20 kliniske studier som evaluerte Fentanyl Hameln i.v. som anestetikum. Disse
+          personene tok minst 1 dose Fentanyl Hameln i.v. og skaffet således sikkerhetsdata.
+          Basert på samlede sikkerhetsdata fra disse kliniske studiene, var de hyppigst
+          rapporterte ( ≥5 % insidens) bivirkningene (% insidens): Kvalme (26,1),
+          brekninger/oppkast (18,6), muskelstivhet (10,4) hypotensjon (8,8) hypertensjon (8,8),
+          bradykardi (6,1) og sedasjon (5,3).
+          I tillegg til bivirkningene som er nevnt ovenfor, viser tabellene nedenfor bivirkninger
+          som er rapportert ved bruk av Fentanyl Hameln i.v., basert på enten kliniske studier
+          eller bruk etter markedsføring.
+          Følgende frekvenskategorier benyttes:
+          Svært vanlige:       ≥1/10
+          Vanlige:             ≥1/100 til <1/10
+          Mindre vanlige:      ≥1/1000 til <1/100
+          Sjeldne:             ≥1/10 000 til <1/1000
+          Svært sjeldne        <1/10 000
+          Ikke kjent           kan ikke anslås utifra tilgjengelige data
+
+
+      System organklasse      Svært vanlige   Vanlige             Mindre vanlige   Ikke kjent
+      Sykdommer i blod og                                                          Methemoglobine
+      lymfatiske organer                                                           mi
+      Forstyrrelser i                                                              Hypersensivitet
+      immunsystemet                                                                (som anafylaktisk
+                                                                                   sjokk,
+                                                                                   anafylaktisk
+                                                                                   reaksjon,
+                                                                                   urtikaria)
+      Psykiatriske lidelser                                       Euforisk         Delirium
+                                                                  sinnsstemning    Administrasjon av
+                                                                                   Fentanyl Hameln
+                                                                                   over en lengre
+                                                                                   tidsperiode kan
+                                                                                   føre til utvikling
+                                                                                   av toleranse.
+                                                                                   Utvikling av
+                                                                                   avhengighet kan
+                                                                                   ikke utelukkes.
+      Nevrologiske                            Dyskinesi           Hodepine         Anfall/kramper
+      sykdommer                               Sedasjon                             Bevissthetstap
+                                              Svimmelhet                           Myoklonus
+                                                                                   Vertigo
+                                                                                   Horners syndrom
+                                                                                   Tap av
+                                                                                   svelgerefleks og
+                                                                                   evnen til å svelge
+      Øyesykdommer                            Synsforstyrrelser
+      Hjertesykdommer                         Bradykardi                           Hjertestans
+                                              Takykardi
+                                               Arrytmi
+      Karsykdommer                             Hypotensjon           Flebitt
+                                               Hypertensjon          Blodtrykkssvingni
+                                               Venesmerter           nger
+      Sykdommer i                              Laryngospasme         Hyperventilasjon     Respirasjonsdepre
+      respirasjonsorganer,                     Bronkospasme          Hikke                sjon
+      thorax og                                Apné                                       Lungeødem
+      mediastinum
+      Gastrointestinale       Kvalme                                 Dysfagi
+      sykdommer               Oppkast
+      Sykdommer i lever og                                                                Krampe i
+      galleveier                                                                          sphincter Oddi
+      Hud- og                                  Allergisk dermatitt                        Pruritus
+      underhudssykdommer                                                                  Hyperhidrosis
+      Sykdommer i             Muskelstivhet,
+      muskler, bindevev og    inkl.
+      skjelett                brystmusklene
+      Sykdommer i nyre og                                                                 Økt muskeltonus i
+      urinveier                                                                           urinleder
+                                                                                          Urinretensjon,
+                                                                                          spesielt hos
+                                                                                          pasienter med
+                                                                                          prostatahypertrofi
+      Generelle lidelser og                                          Frysninger           Legemiddelabstin
+      reaksjoner på                                                  Hypotermi            enssyndrom (se
+      administrasjonsstedet                                                               pkt. 4.4)
+      Skader, forgiftninger                    Postoperativ          Luftveiskomplika
+      og komplikasjoner                        forvirring            sjoner av anestesi
+      ved medisinske                                                 Postoperativ
+      prosedyrer                                                     agitasjon
+
+
+
+         Melding av mistenkte bivirkninger
+         Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør
+         det mulig å overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig.
+         Helsepersonell oppfordres til å melde enhver mistenkt bivirkning. Dette gjøres via
+         meldeskjema som finnes på nettsiden til Statens legemiddelverk:
+         www.legemiddelverket.no/meldeskjema.
+
+4.9      Overdosering
+
+         Tegn og symptomer
+         Overdosering av fentanyl manifesteres som forsterket farmakologisk respons.
+         Avhengig av individuell følsomhet, bestemmes det kliniske bildet hovedsaklig av
+         graden av respirasjonsdepresjon, som varierer fra bradypné til apné, bradykardi opp til
+         asystoli, nedsatt blodtrykk, sirkulasjonssvikt, koma, krampelignende anfall,
+         muskelstivhet i brystsone, kropp og ekstremiteter og lungeødem.
+         Toksisk leukoencefalopati er observert med overdosering av fentanyl.
+
+         Behandling
+         Oksygentilførsel og assistert eller kontrollert respirasjon bør som nevnt igangsettes
+         ved hypoventilering eller apné. En spesifikk antagonist, som nalokson, bør som nevnt
+         brukes til å kontrollere respirasjonsdepresjon. Bruk av dette betyr ikke at annen
+         intensivbehandling skal opphøre.
+         Vanlig startdose nalokson ligger på 0,4 til 2 mg. Hvis man ikke kan konstatere noen
+         virkning, kan denne dosen gjentas annethvert til tredjehvert minutt fram til
+         respirasjonsdepresjonen er over, eller til pasienten våkner. Respirasjonsdepresjonen
+      kan vare lenger enn effekten av antagonisten; flere doser av sistnevnte kan derfor bli
+      nødvendig.
+
+      Hvis pustevanskene er assosiert med muskelstivhet, kan det bli nødvendig å gi en
+      intravenøs nevromuskulær blokker for å lette assistert eller kontrollert respirasjon.
+
+      Pasienten bør overvåkes nøye; kroppsvarme og tilstrekkelig væskeinntak bør
+      opprettholdes. Ved alvorlig eller vedvarende hypotensjon, bør muligheten for
+      hypovolemi vurderes og parental væsketilførsel gis om nødvendig.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+      Farmakoterapeutisk gruppe: Opioidanestetikum, ATC-kode: N01A H01
+
+      Fentanyl er et sterktvirkende opioid-analgetikum som kan brukes som et analgetisk
+      supplement ved generell anestesi eller alene som anestetikum.
+      Fentanyl har µ-agonistiske egenskaper. Den agonistiske aktiviteten til - og -
+      reseptorene svarer til den til morfin. En dose på 100 mikrogram (2 ml) har en
+      analgetisk virkning som svarer til 10 mg morfin.
+
+      Fentanyl har en raskt innsettende effekt. Maks. analgetisk effekt og depressiv virkning
+      på respirasjonen finner sted innen noen få minutter.
+      Gjennomsnittlig varighet for den analgetiske effekten er ca. 30 minutter etter en enkel
+      bolusinjeksjon på 100 mikrogram. Analgesiens styrke er doseavhengig og kan
+      tilpasses smertenivået i den kirurgiske prosedyren.
+
+      Fentanyl er karakterisert ved relativt liten hjerte-kretsløpsbelastning, men har en sterk
+      depressiv virkning på respirasjonen. Stressinduserte hormonforandringer kan ikke med
+      sikkerhet undertrykkes med fentanyl. Et høynet blodtrykk på grunn av intraoperative
+      smertestimuli kan oppstå på tross av behandling med høy dose fentanyl.
+
+      Avhengig av dosering og injeksjonshastighet kan fentanyl forårsake muskelstivhet,
+      eufori, miose og bradykardi. Intradermale tester og serumanalyser av histamin på
+      mennesker, og likeledes in-vivo tester på hunder, har vist at det sjelden kan observeres
+      klinisk relevant histaminavgivelse etter anvendelse av fentanyl.
+
+      Alle fentanyls virkninger kan motvirkes ved hjelp av spesifikke opioid-antagonister
+      som f.eks. nalokson.
+
+5.2   Farmakokinetiske egenskaper
+
+      Etter intravenøs injeksjon synker fentanyls plasmakonsentrasjon raskt. Fordelingen av
+      fentanyl skjer i 3 faser med halveringstider på ca. 1 minutt, 15 minutter og 6 timer.
+      Fentanyl har et fordelingsvolum for det sentrale kammer på rundt 15 liter og et totalt
+      fordelingsvolum på rundt 400 liter.
+      Spesielt på gamle pasienter, eller etter at legemidlet er gitt flere ganger, kan
+      halveringstiden forlenges. Det kan oppstå sekundære topp-plasmanivåer.
+      Plasmaprotein-bindingsgraden til fentanyl er 80 – 85 %.
+      Fentanyl metaboliseres raskt, i hovedsak i leveren, ved oksidativ N-desalkylasjon.
+      Clearance ligger på rundt 0,5 l/time/kg. Rundt 75 % av den dose som gis elimineres
+      innen 24 timer. Kun 10 % av dosen skilles ut som uforandret substans.
+      Nedsatt nyrefunksjon
+      Data fra en studie med administrering av i.v. fentanyl til pasienter som gjennomgikk
+      nyretransplantasjon, indikerer at klarering av fentanyl kan være redusert i denne
+      pasientpopulasjonen. Dersom pasienter med nedsatt nyrefunksjon får Fentanyl
+      Hameln, bør de observeres nøye for tegn på fentanyltoksisitet, og dosen reduseres ved
+      behov (se pkt. 4.2 Dosering og administrasjonsmåte).
+
+      Overvektige pasienter
+      En økning i klarering av fentanyl observeres ved økt kroppsvekt. Hos pasienter med en
+      BMI > 30, øker klarering av fentanyl med ca. 10 % per 10 kg økning i fettfri
+      kroppsmasse (lean body mass).
+
+5.3   Prekliniske sikkerhetsdata
+
+      Lignende virkninger som tidligere er blitt beskrevet for andre opioider ble observert i
+      toksisitetsstudier med gjentatt dosering over et tidsrom på opptil 4 uker.
+      Dyreforsøk har vist redusert fruktbarhet på rotter av hunkjønn og embryodødelighet,
+      selv om det ikke har blitt observert tegn på teratogen virkning.
+
+      Mutagenitetsforsøk på bakterier og gnagere har ikke vist noe mutagent potensiale for
+      fentanyl. Tilsvarende som for andre opioider viser fentanyl mutagene virkninger in
+      vitro i pattedyrceller. Disse virkningene ble imidlertid kun indusert ved svært høye
+      konsentrasjoner. Derfor regnes ikke fentanyl for å innebære noen genotoksisk fare for
+      pasienter.
+      Det er ikke gjennomført langvarige carcinogenitets studier.
+
+
+6.    FARMASØYTISKE OPPLYSNINGER
+
+6.1   Hjelpestoffer
+
+      Natriumklorid
+      Vann for injeksjon
+      Saltsyre eller natriumhydroksid for pH-justering
+
+6.2   Uforlikeligheter
+
+      Dette legemidlet skal ikke blandes med andre legemidler enn de som er angitt i pkt.
+      6.6.
+
+      Man må kontrollere uforlikeligheten før legemiddelbruk hvis det skal blandes med
+      andre legemidler.
+
+      Fentanylsitrat er rapportert som fysisk uforlikelig med pentobarbitalnatrium,
+      metoheksitalnatrium, tiopentalnatrium og nafcillin.
+
+6.3   Holdbarhet
+
+      Holdbarhet før beholderen åpnes første gang
+      3 år
+      Holdbarhet etter fortynning
+      Oppløsningenes kjemiske og fysiske stabilitet under bruk (se pkt. 6.6) er blitt
+      dokumentert til 24 timer ved 25°C.
+      Fra et mikrobiologisk synspunkt bør fortynningene brukes umiddelbart.
+      Hvis de ikke brukes umiddelbart, har brukeren ansvaret for oppbevaringstid og
+      oppbevaringsbetingelser for oppløsninger som er i bruk. Vanligvis må disse ikke
+      oppbevares mer enn 24 timer ved 2 til 8°C, bortsett fra hvis fortynningen har skjedd
+      under kontrollerte og validerte aseptiske betingelser.
+
+6.4   Oppbevaringsbetingelser
+
+      Oppbevar ampullene/hetteglassene i ytteremballasjen for å beskytte mot lys.
+      For oppbevaringsbetingelser etter fortynning av legemidlet, se pkt. 6.3.
+
+6.5   Emballasje (type og innhold)
+
+      5 (10) ampuller laget av fargeløst glass, type I, med 2 eller 10 ml oppløsning.
+      1 (5, 10) hetteglass laget av fargeløst glass, type I, med 50 ml oppløsning, med
+      bromobutyl gummipropp.
+      Ikke alle pakningsstørrelser vil nødvendigvis bli markedsført.
+
+6.6   Spesielle forholdsregler for destruksjon og annen håndtering
+
+      Bruk fingerbeskyttelse når du åpner en ampulle.
+
+      Injeksjonsvæsken er beregnet på en enkelt pasient og bør brukes straks etter at den er
+      åpnet. Injeksjonsvæsken bør ikke brukes hvis det finnes partikler. Ubrukt
+      infeksjonsvæske kasseres.
+
+      Produktet kan brukes ufortynnet eller fortynnet. De fortynningstrinn som er testet med
+      natriumklorid 9 mg/ml og glukoseoppløsning 50 mg/ml, er 1:1 og 1:25. Derfor må
+      ikke maksimal fortynning overskride 1 del Fentanyl Hameln til 25 deler natriumklorid
+      9 mg/ml eller glukoseoppløsning 50 mg/ml.
+
+
+7.    INNEHAVER AV MARKEDSFØRINGSTILLATELSEN
+
+      hameln pharma gmbh
+      Inselstraße 1
+      31787 Hameln
+      Tyskland
+
+8.    MARKEDSFØRINGSTILLATELSESNUMMER
+
+      00-2395
+
+9.    DATO FOR FØRSTE MARKEDSFØRINGSTILLATELSE /SISTE
+      FORNYELSE
+
+      2001-01-08/2009-02-16
+
+10.   OPPDATERINGSDATO
+
+      01.03.2024
+

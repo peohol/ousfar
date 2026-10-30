@@ -1,0 +1,48 @@
+             omtrent 150:1)
+       b.    Tabell 3 er for voksne pasienter som har en stabil og veltolerert opioidbehandling
+             (konverteringsforholdet for peroral morfin til transdermal fentanyl er omtrent 100:1).
+
+Tabell 1: Konverteringstabell - Multiplikasjonsfaktorer for konvertering av døgndose av
+tidligere opioider til ekvianalgetisk døgndose av peroral morfin (mg/døgn av tidligere opioid x
+faktor = ekvianalgetisk døgndose av peroral morfin)
+
+Tidligere opioid                    Administrasjonsmåte             Multiplikasjonsfaktor
+                                    peroralt                                1a
+morfin                              parenteralt                             3
+                                    sublingvalt                             75
+buprenorfin                         parenteralt                             100
+                                    peroralt                                0.15
+kodein                              parenteralt                            0,23b
+                                    peroralt                                0.5
+diamorfin                           parenteralt                             6b
+                                    peroralt                                -
+fentanyl                            parenteralt                             300
+                                    peroralt                                4
+hydromorfon                         parenteralt                             20b
+                                    peroralt                                1
+ketobemidon                         parenteralt                             3
+                                    peroralt                                7.5
+levorfanol                          parenteralt                             15b
+                                    peroralt                                1.5
+metadon                             parenteralt                             3b
+                                    peroralt                                1.5
+oksykodon                           parenteralt                             3
+oksymorfon                          rektalt                                 3
+                                    parenteralt                             30b
+                                    peroralt                                -
+petidin                             parenteralt                             0,4b
+                                    peroralt                                0.4
+tapentadol                          parenteralt                             -
+                                    peroralt                                0.25
+tramadol                            parenteralt                             0.3
+a
+    Peroral/intramuskulær potens for morfin er basert på klinisk erfaring hos pasienter med kroniske
+    smerter.
+b
+    Basert på enkeltdosestudier hvor en intramuskulær dose av hvert oppførte virkestoff ble
+    sammenlignet med morfin for å fastslå relativ potens. Perorale doser er de som anbefales ved
+    bytte fra parenteral til peroral administrering.
+
+
+
+                                                   3

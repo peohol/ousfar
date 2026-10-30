@@ -1,0 +1,57 @@
+4.    KLINISKE OPPLYSNINGER
+
+4.1   Indikasjoner
+
+Voksne:
+Fentanyl ratiopharm er indisert til behandling av sterk kronisk smerte som krever kontinuerlig,
+langvarig opioidadministrering.
+
+Barn:
+Langtidsbehandling av sterk kronisk smerte hos barn over 2 år som får opioidbehandling.
+
+4.2   Dosering og administrasjonsmåte
+
+Dosering
+Doseringen av Fentanyl ratiopharm skal være individuell basert på pasientens status og skal vurderes
+med jevne mellomrom etter påføring. Laveste effektive dose skal brukes. Depotplastrene er laget slik
+at de frisetter ca. 12, 25, 50, 75 og 100 mikrog/time av fentanyl til systemisk sirkulasjon, som tilsvarer
+henholdsvis ca. 0,3, 0,6, 1,2, 1,8 og 2,4 mg/døgn.
+
+Valg av startdose
+Initialdosen av Fentanyl ratiopharm bør baseres på pasientens nåværende opioidbruk. Det anbefales at
+Fentanyl ratiopharm brukes hos pasienter med påvist opioidtoleranse. Andre faktorer som bør tas i
+betraktning er pasientens generelle helsetilstand og medisinske status, inkl. kroppsstørrelse, alder, hvor
+svekket pasienten er, og grad av opioidtoleranse.
+
+Voksne
+Opioidtolerante pasienter
+For å konvertere opioidtolerante pasienter fra perorale eller parenterale opioider til Fentanyl
+ratiopharm, vises det til Ekvianalgetisk potenskonvertering nedenfor. Dosen kan deretter titreres opp
+eller ned ved behov med enten 12 eller 25 mikrog/time for å finne laveste tilstrekkelige dose av
+Fentanyl ratiopharm, avhengig av pasientens respons og eventuelt behov for annen smertebehandling.
+
+Opioidnaive pasienter
+Generelt anbefales ikke transdermal administrering til opioidnaive pasienter. Alternative
+administrasjonsveier (peroral, parenteral) bør vurderes. For å hindre overdosering anbefales det at
+opioidnaive pasienter får lave doser av opioider med umiddelbar frisetting (f.eks. morfin,
+hydromorfon, oksykodon, tramadol og kodein), som titreres til det oppnås en analgetisk dosering
+ekvivalent med Fentanyl ratiopharm med en frisettingshastighet på 12 mikrog/time eller
+25 mikrog/time. Pasienten kan deretter bytte til Fentanyl ratiopharm.
+
+Under omstendigheter der oppstart med perorale opioider ikke anses mulig og Fentanyl ratiopharm
+anses å være eneste egnede behandlingsalternativ for opioidnaive pasienter, skal kun laveste startdose
+(dvs. 12 mikrog/time) vurderes. I slike tilfeller skal pasienten overvåkes nøye. Faren for alvorlig eller
+livstruende hypoventilering foreligger selv ved bruk av laveste dose av Fentanyl ratiopharm ved
+oppstart av behandling hos opioidnaive pasienter (se pkt. 4.4 og 4.9).
+
+Ekvianalgetisk potenskonvertering
+Hos pasienter som allerede bruker opioidanalgetika skal startdosen av Fentanyl ratiopharm baseres på
+døgndosen av tidligere opioid. For å beregne riktig startdose av Fentanyl ratiopharm, følg trinnene
+nedenfor.
+1. Beregn døgndosen (mg/døgn) av opioidet som brukes.
+2. Konverter denne mengden til ekvianalgetisk døgndose av peroral morfin ved hjelp av
+   multiplikasjonsfaktorene i tabell 1 for aktuell administrasjonsvei.
+3. For å finne doseringen av Fentanyl ratiopharm som tilsvarer den beregnede ekvianalgetiske
+   døgndosen av morfin, bruk dosekonverteringstabell 2 eller 3 som følger:
+   a. Tabell 2 er for voksne pasienter som har behov for skifte av opioid eller som er mindre klinisk
+       stabile (konverteringsrate for peroral morfin til transdermal fentanyl er omtrent 150:1)

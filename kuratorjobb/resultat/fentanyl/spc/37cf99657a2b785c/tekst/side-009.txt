@@ -1,0 +1,57 @@
+Organklassesystem                                       Bivirkning etter frekvens
+                           Svært vanlige         Vanlige          Mindre vanlige       Ikke kjent (kan ikke
+                              1/10          1/100 til <1/10    1/1000 til <1/100         anslås utifra
+                                                                                        tilgjengelige data)
+                                                               Emosjonelle
+                                                               svingninger
+                                                               Oppmerksomhets-
+                                                               forstyrrelser
+                                                               Søvnløshet
+Nevrologiske sykdommer                     Svimmelhet          Amnesi                 Kramper
+                                           Hodepine            Parosmi                Nedsatt bevissthetsnivå
+                                           Søvnighet           Dysgeusi               Bevisstløshet
+                                                               Tremor
+                                                               Letargi
+                                                               Hypoestesi
+                                                               Søvnlidelser
+Øyesykdommer                                                   Uklart syn
+Hjertesykdommer                                                Takykardi
+                                                               Bradykardi
+Karsykdommer                                                   Hypotensjon
+Sykdommer i                                Dyspné              Orofaryngeal smerte Respirasjons-depresjon
+respirasjonsorganer,                                           Tranghet i halsen
+thorax og mediastinum
+Gastrointestinale          Kvalme          Stomatitt           Munnsår                Hoven tunge
+sykdommer                                  Oppkast             Gingivale sår          Diaré
+                                           Forstoppelse        Leppesår
+                                           Munntørrhet         Svekket gastrisk
+                                                               tømming
+                                                               Magesmerter
+                                                               Dyspepsi
+                                                               Mageubehag
+                                                               Tungelidelse
+                                                               Aftøs stomatitt
+Hud- og underhuds-                         Hyperhidrose        Hudlesjoner          Urtikaria
+sykdommer                                                      Utslett
+                                                               Allergisk pruritus
+                                                               Pruritus
+                                                               Nattesvette
+                                                               Økt tendens til
+                                                               bloduttredelser
+Sykdommer i muskler,                                           Artralgi
+bindevev og skjelett                                           Stivhet i muskler og
+                                                               skjelett
+                                                               Stive ledd
+Lidelser i kjønnsorganer                                       Erektil dysfunksjon
+og brystsykdommer
+Generelle lidelser og                      Fatigue             *Abstinenssyndrom      Rødme og hetetokter
+reaksjoner på                                                  Asteni                 Perifert ødem
+administrasjons-stedet                                         Malaise                Pyreksi
+                                                                                      Neonatalt
+                                                                                      abstinenssyndrom
+                                                                                      Toleranse
+
+
+Skader, forgiftninger og                                       Utilsiktet overdose    Fall
+komplikasjoner ved
+medisinske prosedyrer

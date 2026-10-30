@@ -1,0 +1,2281 @@
+{
+  "stoff": "fentanyl",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-10-30T04:15:57.810377+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 33,
+    "hentet": 20,
+    "dokumenter": 11,
+    "mangler": [
+      {
+        "merkevare_id": "ID_213B2D59-F879-48BF-953F-703EA8D75AE8",
+        "varenavn": "Durogesic",
+        "navn_form_styrke": "Durogesic depotplaster 50 mikrog/time",
+        "produsent": "Janssen",
+        "atc": "N02AB03",
+        "legemiddelform": "Depotplaster",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_2C169152-292B-46E5-8960-E7F69B6C6392",
+        "varenavn": "Instanyl",
+        "navn_form_styrke": "Instanyl nesespray oppl 50 mikrog/dose",
+        "produsent": "Istituto Gentili S.r.l.",
+        "atc": "N02AB03",
+        "legemiddelform": "Nesespray, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_8A46EF86-46FF-483A-A90F-B8024136AF85",
+        "varenavn": "Fødeepidural SA",
+        "navn_form_styrke": "Fødeepidural SA inf, oppl 2 mikrog/ml/625 mikrog/ml",
+        "produsent": "Sykehusapoteket Oslo, Rikshospitalet",
+        "atc": "N01AH51",
+        "legemiddelform": "Infusjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_8B31CEC2-589F-45B6-9DD5-DB77F11005DD",
+        "varenavn": "Actiq",
+        "navn_form_styrke": "Actiq sugetab 800 mikrog",
+        "produsent": "Teva",
+        "atc": "N02AB03",
+        "legemiddelform": "Sugetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_B1296B51-DADF-414A-B4B3-DC9F799CB92B",
+        "varenavn": "Durogesic",
+        "navn_form_styrke": "Durogesic depotplaster 100 mikrog/time",
+        "produsent": "Janssen",
+        "atc": "N02AB03",
+        "legemiddelform": "Depotplaster",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_B5CAFA6C-9151-4D8E-A9D0-3829057C1623",
+        "varenavn": "Cynril",
+        "navn_form_styrke": "Cynril sugetab 800 mikrog",
+        "produsent": "Fontus Health",
+        "atc": "N02AB03",
+        "legemiddelform": "Sugetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_C17AEA67-3E83-447E-98D2-249FA51EC81D",
+        "varenavn": "Instanyl",
+        "navn_form_styrke": "Instanyl nesespray oppl 100 mikrog/dose",
+        "produsent": "Istituto Gentili S.r.l.",
+        "atc": "N02AB03",
+        "legemiddelform": "Nesespray, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_C8770786-40D8-4149-8066-BC2163BF0382",
+        "varenavn": "Instanyl",
+        "navn_form_styrke": "Instanyl nesespray oppl 200 mikrog/dose",
+        "produsent": "Istituto Gentili S.r.l.",
+        "atc": "N02AB03",
+        "legemiddelform": "Nesespray, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_E3DA954C-CF77-4C50-A688-02B589CB34F1",
+        "varenavn": "Durogesic",
+        "navn_form_styrke": "Durogesic depotplaster 12 mikrog/time",
+        "produsent": "Janssen",
+        "atc": "N02AB03",
+        "legemiddelform": "Depotplaster",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_E6A85FE1-7E14-4458-AA32-002DCEF43DEB",
+        "varenavn": "Durogesic",
+        "navn_form_styrke": "Durogesic depotplaster 75 mikrog/time",
+        "produsent": "Janssen",
+        "atc": "N02AB03",
+        "legemiddelform": "Depotplaster",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_EB625434-0155-4C1D-990D-02C9C16A8BA0",
+        "varenavn": "Fentanyl SA",
+        "navn_form_styrke": "Fentanyl SA inj, oppl 50 mikrog/ml",
+        "produsent": "Sykehusapoteket Oslo, Rikshospitalet",
+        "atc": "N01AH01",
+        "legemiddelform": "Injeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_EFA5D058-2362-4C25-B3E4-5B9BE55C980C",
+        "varenavn": "Durogesic",
+        "navn_form_styrke": "Durogesic depotplaster 25 mikrog/time",
+        "produsent": "Janssen",
+        "atc": "N02AB03",
+        "legemiddelform": "Depotplaster",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_FE65031B-95FF-4867-BC01-5A526DA9296D",
+        "varenavn": "Standard EDA blanding SA",
+        "navn_form_styrke": "Standard EDA blanding SA inf, oppl",
+        "produsent": "Sykehusapoteket Oslo, Rikshospitalet",
+        "atc": "N01AH51",
+        "legemiddelform": "Infusjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 19 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 19,
+        "ikke_dmp": 0,
+        "uten_omtale": 13
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "13 av 33 preparater i FEST mangler en hentet preparatomtale fra DMP: 13 uten preparatomtale i FEST (f.eks. sentralt godkjente, med omtalen hos EMA). SPC-behovet er ikke dekket; se «dekning.mangler».",
+      "antall": {
+        "preparater": 33,
+        "hentet": 20,
+        "mangler": 13,
+        "dokumenter": 11
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-3939.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-3939.pdf",
+      "hentet_kl": "2026-10-30T18:09:36.388Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "420467",
+        "content-md5": "2f50VnbiQA8GdTOj1AQ3eQ==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:12 GMT",
+        "etag": "0x8DE85F8D64CCB56",
+        "date": "Fri, 30 Oct 2026 18:09:37 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_125BC389-426B-4016-8DB6-AF53A369B122",
+          "varenavn": "Fentanyl ratiopharm",
+          "navn_form_styrke": "Fentanyl ratiopharm depotplaster 25 mikrog/time",
+          "produsent": "ratiopharm GmbH",
+          "atc": "N02AB03",
+          "legemiddelform": "Depotplaster"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-3939.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (420467 byte).",
+          "antall": {
+            "bytes": 420467
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "f2d02763ad84992333ae52201571023f5f619696a4ca4d3d721a1802a0aa299b"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4329.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4329.pdf",
+      "hentet_kl": "2026-10-30T18:09:44.044Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "422814",
+        "content-md5": "f1y/AyO4syfbvsN4ipdYQg==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:52 GMT",
+        "etag": "0x8DE53793D750E4E",
+        "date": "Fri, 30 Oct 2026 18:09:44 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_1E51EA6F-880B-443D-B671-13540AE3FB63",
+          "varenavn": "Abstral",
+          "navn_form_styrke": "Abstral sublingvaltab 100 mikrog",
+          "produsent": "Grünenthal GmbH",
+          "atc": "N02AB03",
+          "legemiddelform": "Sublingvaltablett"
+        },
+        {
+          "merkevare_id": "ID_9EB166D5-735E-418B-86E2-E73B5B75E68C",
+          "varenavn": "Abstral",
+          "navn_form_styrke": "Abstral sublingvaltab 100 mikrog",
+          "produsent": "Orifarm AS",
+          "atc": "N02AB03",
+          "legemiddelform": "Sublingvaltablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4329.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (422814 byte).",
+          "antall": {
+            "bytes": 422814
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "37cf99657a2b785c30bb5e563da1c5ff9b5fdadc492ed6e9ba7e92a04d2f05b0"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4331.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4331.pdf",
+      "hentet_kl": "2026-10-30T18:09:48.620Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "422887",
+        "content-md5": "INkbvqRI+TOEWmUqDfpr+Q==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:52 GMT",
+        "etag": "0x8DE53793D8622DA",
+        "date": "Fri, 30 Oct 2026 18:09:48 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_1FC0722F-954B-43B6-BE4D-EB7692DD198A",
+          "varenavn": "Abstral",
+          "navn_form_styrke": "Abstral sublingvaltab 300 mikrog",
+          "produsent": "Grünenthal GmbH",
+          "atc": "N02AB03",
+          "legemiddelform": "Sublingvaltablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4331.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (422887 byte).",
+          "antall": {
+            "bytes": 422887
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "edf72254d1b20af5d0b671e5b730c278baea86a5d5390bf56d46ab279e3c67eb"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-3942.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-3942.pdf",
+      "hentet_kl": "2026-10-30T18:09:52.121Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "420467",
+        "content-md5": "2f50VnbiQA8GdTOj1AQ3eQ==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:12 GMT",
+        "etag": "0x8DE85F8D6557CA5",
+        "date": "Fri, 30 Oct 2026 18:09:52 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_2078D036-D231-44FC-8785-8147349F7FE4",
+          "varenavn": "Fentanyl ratiopharm",
+          "navn_form_styrke": "Fentanyl ratiopharm depotplaster 100 mikrog/time",
+          "produsent": "ratiopharm GmbH",
+          "atc": "N02AB03",
+          "legemiddelform": "Depotplaster"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-3942.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (420467 byte).",
+          "antall": {
+            "bytes": 420467
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "f2d02763ad84992333ae52201571023f5f619696a4ca4d3d721a1802a0aa299b"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4556.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4556.pdf",
+      "hentet_kl": "2026-10-30T18:09:52.262Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "420467",
+        "content-md5": "2f50VnbiQA8GdTOj1AQ3eQ==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:15 GMT",
+        "etag": "0x8DE85F8D7BE9BB6",
+        "date": "Fri, 30 Oct 2026 18:09:52 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_20D2E3FE-54B7-497C-837A-E1138A677952",
+          "varenavn": "Fentanyl ratiopharm",
+          "navn_form_styrke": "Fentanyl ratiopharm depotplaster 12 mikrog/time",
+          "produsent": "ratiopharm GmbH",
+          "atc": "N02AB03",
+          "legemiddelform": "Depotplaster"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4556.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (420467 byte).",
+          "antall": {
+            "bytes": 420467
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "f2d02763ad84992333ae52201571023f5f619696a4ca4d3d721a1802a0aa299b"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-02395.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-02395.pdf",
+      "hentet_kl": "2026-10-30T18:09:52.772Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "226801",
+        "content-md5": "iMmHLTqbSgIcuAC3029xIA==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:58 GMT",
+        "etag": "0x8DE53794180B20A",
+        "date": "Fri, 30 Oct 2026 18:09:53 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_21F4C1C9-3070-46AE-8989-E58056FD8D98",
+          "varenavn": "Fentanyl Hameln",
+          "navn_form_styrke": "Fentanyl Hameln inj, oppl 50 mikrog/ml",
+          "produsent": "hameln pharma GmbH",
+          "atc": "N01AH01",
+          "legemiddelform": "Injeksjonsvæske, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-02395.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (226801 byte).",
+          "antall": {
+            "bytes": 226801
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "64acf1dcea534c52f3af7b44f2145838215615cee72bc2bbf6454fcebffac259"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07425.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07425.pdf",
+      "hentet_kl": "2026-10-30T18:09:56.890Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "415782",
+        "content-md5": "JZdewb7wzt4rPgRGtvcmcw==",
+        "last-modified": "Thu, 08 Oct 2026 06:49:27 GMT",
+        "etag": "0x8DF25084BD7BD24",
+        "date": "Fri, 30 Oct 2026 18:09:57 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_420232D8-C7EC-4CD4-BB32-F366517FD0F0",
+          "varenavn": "Fentanyl Piramal",
+          "navn_form_styrke": "Fentanyl Piramal inj, oppl 50 mikrog/ml",
+          "produsent": "Piramal Critical Care B.V.",
+          "atc": "N01AH01",
+          "legemiddelform": "Injeksjonsvæske, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07425.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (415782 byte).",
+          "antall": {
+            "bytes": 415782
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "4d5e058c983f5fb67d98a75ffdc13d61c918f464743c5d9976168b65a2c44267"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-3940.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-3940.pdf",
+      "hentet_kl": "2026-10-30T18:10:00.232Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "420467",
+        "content-md5": "2f50VnbiQA8GdTOj1AQ3eQ==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:12 GMT",
+        "etag": "0x8DE85F8D64FB11D",
+        "date": "Fri, 30 Oct 2026 18:10:00 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_45FD32CA-A7A4-454B-ACFD-70E36B6C4A93",
+          "varenavn": "Fentanyl ratiopharm",
+          "navn_form_styrke": "Fentanyl ratiopharm depotplaster 50 mikrog/time",
+          "produsent": "ratiopharm GmbH",
+          "atc": "N02AB03",
+          "legemiddelform": "Depotplaster"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-3940.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (420467 byte).",
+          "antall": {
+            "bytes": 420467
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "f2d02763ad84992333ae52201571023f5f619696a4ca4d3d721a1802a0aa299b"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5005.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5005.pdf",
+      "hentet_kl": "2026-10-30T18:10:00.392Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "568496",
+        "content-md5": "XVCQIWbK7eW+teNVQYKa1g==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:16 GMT",
+        "etag": "0x8DE85F8D8A334DF",
+        "date": "Fri, 30 Oct 2026 18:10:00 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_4A69EB6A-ADE5-4A32-859C-6C7824A40D4C",
+          "varenavn": "Fentanyl Sandoz",
+          "navn_form_styrke": "Fentanyl Sandoz depotplaster 25 mikrog/time",
+          "produsent": "Sandoz - København",
+          "atc": "N02AB03",
+          "legemiddelform": "Depotplaster"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5005.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (568496 byte).",
+          "antall": {
+            "bytes": 568496
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "da8ff77dc15973375cc14910d0b9f9640762e8db0d14fe87c908d9c0d7ef4885"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5007.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5007.pdf",
+      "hentet_kl": "2026-10-30T18:10:06.828Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "568496",
+        "content-md5": "XVCQIWbK7eW+teNVQYKa1g==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:16 GMT",
+        "etag": "0x8DE85F8D8A5F393",
+        "date": "Fri, 30 Oct 2026 18:10:07 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_58BA037C-9493-4511-A5EE-93729C9D3217",
+          "varenavn": "Fentanyl Sandoz",
+          "navn_form_styrke": "Fentanyl Sandoz depotplaster 50 mikrog/time",
+          "produsent": "Sandoz - København",
+          "atc": "N02AB03",
+          "legemiddelform": "Depotplaster"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5007.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (568496 byte).",
+          "antall": {
+            "bytes": 568496
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "da8ff77dc15973375cc14910d0b9f9640762e8db0d14fe87c908d9c0d7ef4885"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4333.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4333.pdf",
+      "hentet_kl": "2026-10-30T18:10:08.329Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "422715",
+        "content-md5": "9zPPpq39IUr29+MgSBXspg==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:54 GMT",
+        "etag": "0x8DE53793EE113DC",
+        "date": "Fri, 30 Oct 2026 18:10:08 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_59B7447B-EE72-4A1C-9AB1-2C89BC1FD508",
+          "varenavn": "Abstral",
+          "navn_form_styrke": "Abstral sublingvaltab 600 mikrog",
+          "produsent": "Grünenthal GmbH",
+          "atc": "N02AB03",
+          "legemiddelform": "Sublingvaltablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4333.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (422715 byte).",
+          "antall": {
+            "bytes": 422715
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "2a9f14ed5b21d9080bc4d3309be0260974ca5c59f3e55d1a08759b56a4d629d9"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5004.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5004.pdf",
+      "hentet_kl": "2026-10-30T18:10:12.879Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "568496",
+        "content-md5": "XVCQIWbK7eW+teNVQYKa1g==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:16 GMT",
+        "etag": "0x8DE85F8D8A02815",
+        "date": "Fri, 30 Oct 2026 18:10:13 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_6D479688-12B0-4F55-ADA6-7DF5DE0A9D77",
+          "varenavn": "Fentanyl Sandoz",
+          "navn_form_styrke": "Fentanyl Sandoz depotplaster 12 mikrog/time",
+          "produsent": "Sandoz - København",
+          "atc": "N02AB03",
+          "legemiddelform": "Depotplaster"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5004.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (568496 byte).",
+          "antall": {
+            "bytes": 568496
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "da8ff77dc15973375cc14910d0b9f9640762e8db0d14fe87c908d9c0d7ef4885"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5008.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5008.pdf",
+      "hentet_kl": "2026-10-30T18:10:14.031Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "568496",
+        "content-md5": "XVCQIWbK7eW+teNVQYKa1g==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:16 GMT",
+        "etag": "0x8DE85F8D8A88B43",
+        "date": "Fri, 30 Oct 2026 18:10:14 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_6E8B8FF6-59F9-48EB-BB44-9F568535986F",
+          "varenavn": "Fentanyl Sandoz",
+          "navn_form_styrke": "Fentanyl Sandoz depotplaster 75 mikrog/time",
+          "produsent": "Sandoz - København",
+          "atc": "N02AB03",
+          "legemiddelform": "Depotplaster"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5008.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (568496 byte).",
+          "antall": {
+            "bytes": 568496
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "da8ff77dc15973375cc14910d0b9f9640762e8db0d14fe87c908d9c0d7ef4885"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13375.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13375.pdf",
+      "hentet_kl": "2026-10-30T18:10:15.382Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "317257",
+        "content-md5": "XVUQyjWNAsCh6+qjIcPqtA==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:55 GMT",
+        "etag": "0x8DE53793F763978",
+        "date": "Fri, 30 Oct 2026 18:10:15 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_81A49CBE-013E-4286-9C85-F13345B0E5B8",
+          "varenavn": "Fentanyl Kalceks",
+          "navn_form_styrke": "Fentanyl Kalceks inj, oppl 50 mikrog/ml",
+          "produsent": "AS Kalceks",
+          "atc": "N01AH01",
+          "legemiddelform": "Injeksjonsvæske, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/20-13375.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (317257 byte).",
+          "antall": {
+            "bytes": 317257
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "e2ff3ac4e4a1b6a6a9b80734006f870fa6792efc14e3ff0ba6c58acd8a6a1d9c"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4332.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4332.pdf",
+      "hentet_kl": "2026-10-30T18:10:17.918Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "422810",
+        "content-md5": "LkwC91+LQQswybQnvjLzvw==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:43 GMT",
+        "etag": "0x8DE53793840CCE4",
+        "date": "Fri, 30 Oct 2026 18:10:18 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_A9D68BCC-1160-46C1-B8CE-4565820BC4DB",
+          "varenavn": "Abstral",
+          "navn_form_styrke": "Abstral sublingvaltab 400 mikrog",
+          "produsent": "Grünenthal GmbH",
+          "atc": "N02AB03",
+          "legemiddelform": "Sublingvaltablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4332.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (422810 byte).",
+          "antall": {
+            "bytes": 422810
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "ec390790246353ee8e9a7fefab20845f90a0f375c4d887757d2311ed4ef7cbf1"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4330.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4330.pdf",
+      "hentet_kl": "2026-10-30T18:10:21.389Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "422830",
+        "content-md5": "89yeb2PFcALqM/Id5HKGzQ==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:52 GMT",
+        "etag": "0x8DE53793DC1C3AB",
+        "date": "Fri, 30 Oct 2026 18:10:21 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_B1E7D75B-ED5E-4853-B9A9-0D67653F41D1",
+          "varenavn": "Abstral",
+          "navn_form_styrke": "Abstral sublingvaltab 200 mikrog",
+          "produsent": "Grünenthal GmbH",
+          "atc": "N02AB03",
+          "legemiddelform": "Sublingvaltablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4330.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (422830 byte).",
+          "antall": {
+            "bytes": 422830
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "18cd6610dfd66b59382e6b9afa2b7d1ec0a14b09aab1ad5c7937e05cfd2569c8"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4334.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4334.pdf",
+      "hentet_kl": "2026-10-30T18:10:24.766Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "422861",
+        "content-md5": "Vvg/PCIoYkeLdf/Uzes95g==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:57 GMT",
+        "etag": "0x8DE537940B25C4A",
+        "date": "Fri, 30 Oct 2026 18:10:24 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_BB05D265-1D1E-4073-A43C-BBBD86F5AF2E",
+          "varenavn": "Abstral",
+          "navn_form_styrke": "Abstral sublingvaltab 800 mikrog",
+          "produsent": "Grünenthal GmbH",
+          "atc": "N02AB03",
+          "legemiddelform": "Sublingvaltablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4334.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (422861 byte).",
+          "antall": {
+            "bytes": 422861
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "33c4c3aeb7ddb80d2c031d6dd3ac9737763081824b02cc982d872323ee03f46f"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-3941.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-3941.pdf",
+      "hentet_kl": "2026-10-30T18:10:28.118Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "420467",
+        "content-md5": "2f50VnbiQA8GdTOj1AQ3eQ==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:12 GMT",
+        "etag": "0x8DE85F8D65296DE",
+        "date": "Fri, 30 Oct 2026 18:10:28 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_C1ED0970-0FC8-4AF3-889D-62705CD55A86",
+          "varenavn": "Fentanyl ratiopharm",
+          "navn_form_styrke": "Fentanyl ratiopharm depotplaster 75 mikrog/time",
+          "produsent": "ratiopharm GmbH",
+          "atc": "N02AB03",
+          "legemiddelform": "Depotplaster"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-3941.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (420467 byte).",
+          "antall": {
+            "bytes": 420467
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "f2d02763ad84992333ae52201571023f5f619696a4ca4d3d721a1802a0aa299b"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5009.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5009.pdf",
+      "hentet_kl": "2026-10-30T18:10:28.265Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "568496",
+        "content-md5": "XVCQIWbK7eW+teNVQYKa1g==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:16 GMT",
+        "etag": "0x8DE85F8D8AB22F0",
+        "date": "Fri, 30 Oct 2026 18:10:28 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_D4EFE281-0235-4C1B-BCD1-0A552D8CC1BA",
+          "varenavn": "Fentanyl Sandoz",
+          "navn_form_styrke": "Fentanyl Sandoz depotplaster 100 mikrog/time",
+          "produsent": "Sandoz - København",
+          "atc": "N02AB03",
+          "legemiddelform": "Depotplaster"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-5009.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (568496 byte).",
+          "antall": {
+            "bytes": 568496
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "da8ff77dc15973375cc14910d0b9f9640762e8db0d14fe87c908d9c0d7ef4885"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "f2d02763ad84992333ae52201571023f5f619696a4ca4d3d721a1802a0aa299b",
+      "bytes": 420467,
+      "mappe": "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923",
+      "pdf": {
+        "sider": 20,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "Version 1",
+        "laget": "Thu Nov 20 12:08:21 2025 UTC",
+        "endret": "Thu Nov 20 12:08:21 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/original.pdf",
+        "tekst": "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/tekst/side-001.txt",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/tekst/side-002.txt",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/tekst/side-003.txt",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/tekst/side-004.txt",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/tekst/side-005.txt",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/tekst/side-006.txt",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/tekst/side-007.txt",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/tekst/side-008.txt",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/tekst/side-009.txt",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/tekst/side-010.txt",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/tekst/side-011.txt",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/tekst/side-012.txt",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/tekst/side-013.txt",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/tekst/side-014.txt",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/tekst/side-015.txt",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/tekst/side-016.txt",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/tekst/side-017.txt",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/tekst/side-018.txt",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/tekst/side-019.txt",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/tekst/side-020.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/sider/side-001.png",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/sider/side-002.png",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/sider/side-003.png",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/sider/side-004.png",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/sider/side-005.png",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/sider/side-006.png",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/sider/side-007.png",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/sider/side-008.png",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/sider/side-009.png",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/sider/side-010.png",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/sider/side-011.png",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/sider/side-012.png",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/sider/side-013.png",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/sider/side-014.png",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/sider/side-015.png",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/sider/side-016.png",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/sider/side-017.png",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/sider/side-018.png",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/sider/side-019.png",
+          "kuratorjobb/resultat/fentanyl/spc/f2d02763ad849923/sider/side-020.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 13,
+        "til": 16
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (20 sider).",
+          "antall": {
+            "sider": 20
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 49865
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 13."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 20
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "37cf99657a2b785c30bb5e563da1c5ff9b5fdadc492ed6e9ba7e92a04d2f05b0",
+      "bytes": 422814,
+      "mappe": "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c",
+      "pdf": {
+        "sider": 14,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Wed Oct 30 05:59:51 2024 UTC",
+        "endret": "Wed Oct 30 05:59:51 2024 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/original.pdf",
+        "tekst": "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/tekst/side-001.txt",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/tekst/side-002.txt",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/tekst/side-003.txt",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/tekst/side-004.txt",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/tekst/side-005.txt",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/tekst/side-006.txt",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/tekst/side-007.txt",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/tekst/side-008.txt",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/tekst/side-009.txt",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/tekst/side-010.txt",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/tekst/side-011.txt",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/tekst/side-012.txt",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/tekst/side-013.txt",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/tekst/side-014.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/sider/side-001.png",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/sider/side-002.png",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/sider/side-003.png",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/sider/side-004.png",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/sider/side-005.png",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/sider/side-006.png",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/sider/side-007.png",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/sider/side-008.png",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/sider/side-009.png",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/sider/side-010.png",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/sider/side-011.png",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/sider/side-012.png",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/sider/side-013.png",
+          "kuratorjobb/resultat/fentanyl/spc/37cf99657a2b785c/sider/side-014.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 10
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (14 sider).",
+          "antall": {
+            "sider": 14
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 28421
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 14
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "edf72254d1b20af5d0b671e5b730c278baea86a5d5390bf56d46ab279e3c67eb",
+      "bytes": 422887,
+      "mappe": "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5",
+      "pdf": {
+        "sider": 14,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Wed Oct 30 06:08:39 2024 UTC",
+        "endret": "Wed Oct 30 06:08:39 2024 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/original.pdf",
+        "tekst": "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/tekst/side-001.txt",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/tekst/side-002.txt",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/tekst/side-003.txt",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/tekst/side-004.txt",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/tekst/side-005.txt",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/tekst/side-006.txt",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/tekst/side-007.txt",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/tekst/side-008.txt",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/tekst/side-009.txt",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/tekst/side-010.txt",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/tekst/side-011.txt",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/tekst/side-012.txt",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/tekst/side-013.txt",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/tekst/side-014.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/sider/side-001.png",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/sider/side-002.png",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/sider/side-003.png",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/sider/side-004.png",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/sider/side-005.png",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/sider/side-006.png",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/sider/side-007.png",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/sider/side-008.png",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/sider/side-009.png",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/sider/side-010.png",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/sider/side-011.png",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/sider/side-012.png",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/sider/side-013.png",
+          "kuratorjobb/resultat/fentanyl/spc/edf72254d1b20af5/sider/side-014.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 10
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (14 sider).",
+          "antall": {
+            "sider": 14
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 28421
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 14
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "64acf1dcea534c52f3af7b44f2145838215615cee72bc2bbf6454fcebffac259",
+      "bytes": 226801,
+      "mappe": "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52",
+      "pdf": {
+        "sider": 14,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Thu Apr 25 07:09:52 2024 UTC",
+        "endret": "Thu Apr 25 07:09:52 2024 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/original.pdf",
+        "tekst": "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/tekst/side-001.txt",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/tekst/side-002.txt",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/tekst/side-003.txt",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/tekst/side-004.txt",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/tekst/side-005.txt",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/tekst/side-006.txt",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/tekst/side-007.txt",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/tekst/side-008.txt",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/tekst/side-009.txt",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/tekst/side-010.txt",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/tekst/side-011.txt",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/tekst/side-012.txt",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/tekst/side-013.txt",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/tekst/side-014.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/sider/side-001.png",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/sider/side-002.png",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/sider/side-003.png",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/sider/side-004.png",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/sider/side-005.png",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/sider/side-006.png",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/sider/side-007.png",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/sider/side-008.png",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/sider/side-009.png",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/sider/side-010.png",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/sider/side-011.png",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/sider/side-012.png",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/sider/side-013.png",
+          "kuratorjobb/resultat/fentanyl/spc/64acf1dcea534c52/sider/side-014.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 10,
+        "til": 11
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (14 sider).",
+          "antall": {
+            "sider": 14
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 29193
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 10."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 14
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "4d5e058c983f5fb67d98a75ffdc13d61c918f464743c5d9976168b65a2c44267",
+      "bytes": 415782,
+      "mappe": "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6",
+      "pdf": {
+        "sider": 13,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "SUMMARY OF PRODUCT CHARACTERISTICS",
+        "laget": "Tue Mar 31 06:32:39 2026 UTC",
+        "endret": "Tue Mar 31 06:32:39 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/original.pdf",
+        "tekst": "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/tekst/side-001.txt",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/tekst/side-002.txt",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/tekst/side-003.txt",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/tekst/side-004.txt",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/tekst/side-005.txt",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/tekst/side-006.txt",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/tekst/side-007.txt",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/tekst/side-008.txt",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/tekst/side-009.txt",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/tekst/side-010.txt",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/tekst/side-011.txt",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/tekst/side-012.txt",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/tekst/side-013.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/sider/side-001.png",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/sider/side-002.png",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/sider/side-003.png",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/sider/side-004.png",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/sider/side-005.png",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/sider/side-006.png",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/sider/side-007.png",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/sider/side-008.png",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/sider/side-009.png",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/sider/side-010.png",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/sider/side-011.png",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/sider/side-012.png",
+          "kuratorjobb/resultat/fentanyl/spc/4d5e058c983f5fb6/sider/side-013.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 6,
+        "til": 8
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (13 sider).",
+          "antall": {
+            "sider": 13
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 25333
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 6."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 13
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "da8ff77dc15973375cc14910d0b9f9640762e8db0d14fe87c908d9c0d7ef4885",
+      "bytes": 568496,
+      "mappe": "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337",
+      "pdf": {
+        "sider": 20,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "1",
+        "laget": "Wed Nov 12 12:23:38 2025 UTC",
+        "endret": "Wed Nov 12 12:23:38 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/original.pdf",
+        "tekst": "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/tekst/side-001.txt",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/tekst/side-002.txt",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/tekst/side-003.txt",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/tekst/side-004.txt",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/tekst/side-005.txt",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/tekst/side-006.txt",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/tekst/side-007.txt",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/tekst/side-008.txt",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/tekst/side-009.txt",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/tekst/side-010.txt",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/tekst/side-011.txt",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/tekst/side-012.txt",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/tekst/side-013.txt",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/tekst/side-014.txt",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/tekst/side-015.txt",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/tekst/side-016.txt",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/tekst/side-017.txt",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/tekst/side-018.txt",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/tekst/side-019.txt",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/tekst/side-020.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/sider/side-001.png",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/sider/side-002.png",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/sider/side-003.png",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/sider/side-004.png",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/sider/side-005.png",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/sider/side-006.png",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/sider/side-007.png",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/sider/side-008.png",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/sider/side-009.png",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/sider/side-010.png",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/sider/side-011.png",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/sider/side-012.png",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/sider/side-013.png",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/sider/side-014.png",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/sider/side-015.png",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/sider/side-016.png",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/sider/side-017.png",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/sider/side-018.png",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/sider/side-019.png",
+          "kuratorjobb/resultat/fentanyl/spc/da8ff77dc1597337/sider/side-020.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 13,
+        "til": 16
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (20 sider).",
+          "antall": {
+            "sider": 20
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 49441
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 13."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 20
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "2a9f14ed5b21d9080bc4d3309be0260974ca5c59f3e55d1a08759b56a4d629d9",
+      "bytes": 422715,
+      "mappe": "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908",
+      "pdf": {
+        "sider": 14,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Wed Oct 30 06:28:12 2024 UTC",
+        "endret": "Wed Oct 30 06:28:12 2024 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/original.pdf",
+        "tekst": "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/tekst/side-001.txt",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/tekst/side-002.txt",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/tekst/side-003.txt",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/tekst/side-004.txt",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/tekst/side-005.txt",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/tekst/side-006.txt",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/tekst/side-007.txt",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/tekst/side-008.txt",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/tekst/side-009.txt",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/tekst/side-010.txt",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/tekst/side-011.txt",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/tekst/side-012.txt",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/tekst/side-013.txt",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/tekst/side-014.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/sider/side-001.png",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/sider/side-002.png",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/sider/side-003.png",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/sider/side-004.png",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/sider/side-005.png",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/sider/side-006.png",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/sider/side-007.png",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/sider/side-008.png",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/sider/side-009.png",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/sider/side-010.png",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/sider/side-011.png",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/sider/side-012.png",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/sider/side-013.png",
+          "kuratorjobb/resultat/fentanyl/spc/2a9f14ed5b21d908/sider/side-014.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 10
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (14 sider).",
+          "antall": {
+            "sider": 14
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 28421
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 14
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "e2ff3ac4e4a1b6a6a9b80734006f870fa6792efc14e3ff0ba6c58acd8a6a1d9c",
+      "bytes": 317257,
+      "mappe": "kuratorjobb/resultat/fentanyl/spc/e2ff3ac4e4a1b6a6",
+      "pdf": {
+        "sider": 9,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "Product profile",
+        "laget": "Thu Apr 25 06:48:09 2024 UTC",
+        "endret": "Thu Apr 25 06:48:09 2024 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/fentanyl/spc/e2ff3ac4e4a1b6a6/original.pdf",
+        "tekst": "kuratorjobb/resultat/fentanyl/spc/e2ff3ac4e4a1b6a6/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/fentanyl/spc/e2ff3ac4e4a1b6a6/tekst/side-001.txt",
+          "kuratorjobb/resultat/fentanyl/spc/e2ff3ac4e4a1b6a6/tekst/side-002.txt",
+          "kuratorjobb/resultat/fentanyl/spc/e2ff3ac4e4a1b6a6/tekst/side-003.txt",
+          "kuratorjobb/resultat/fentanyl/spc/e2ff3ac4e4a1b6a6/tekst/side-004.txt",
+          "kuratorjobb/resultat/fentanyl/spc/e2ff3ac4e4a1b6a6/tekst/side-005.txt",
+          "kuratorjobb/resultat/fentanyl/spc/e2ff3ac4e4a1b6a6/tekst/side-006.txt",
+          "kuratorjobb/resultat/fentanyl/spc/e2ff3ac4e4a1b6a6/tekst/side-007.txt",
+          "kuratorjobb/resultat/fentanyl/spc/e2ff3ac4e4a1b6a6/tekst/side-008.txt",
+          "kuratorjobb/resultat/fentanyl/spc/e2ff3ac4e4a1b6a6/tekst/side-009.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/fentanyl/spc/e2ff3ac4e4a1b6a6/sider/side-001.png",
+          "kuratorjobb/resultat/fentanyl/spc/e2ff3ac4e4a1b6a6/sider/side-002.png",
+          "kuratorjobb/resultat/fentanyl/spc/e2ff3ac4e4a1b6a6/sider/side-003.png",
+          "kuratorjobb/resultat/fentanyl/spc/e2ff3ac4e4a1b6a6/sider/side-004.png",
+          "kuratorjobb/resultat/fentanyl/spc/e2ff3ac4e4a1b6a6/sider/side-005.png",
+          "kuratorjobb/resultat/fentanyl/spc/e2ff3ac4e4a1b6a6/sider/side-006.png",
+          "kuratorjobb/resultat/fentanyl/spc/e2ff3ac4e4a1b6a6/sider/side-007.png",
+          "kuratorjobb/resultat/fentanyl/spc/e2ff3ac4e4a1b6a6/sider/side-008.png",
+          "kuratorjobb/resultat/fentanyl/spc/e2ff3ac4e4a1b6a6/sider/side-009.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 5,
+        "til": 6
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (9 sider).",
+          "antall": {
+            "sider": 9
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 21250
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 5."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 9
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "ec390790246353ee8e9a7fefab20845f90a0f375c4d887757d2311ed4ef7cbf1",
+      "bytes": 422810,
+      "mappe": "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee",
+      "pdf": {
+        "sider": 14,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Wed Oct 30 06:26:31 2024 UTC",
+        "endret": "Wed Oct 30 06:26:31 2024 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/original.pdf",
+        "tekst": "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/tekst/side-001.txt",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/tekst/side-002.txt",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/tekst/side-003.txt",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/tekst/side-004.txt",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/tekst/side-005.txt",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/tekst/side-006.txt",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/tekst/side-007.txt",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/tekst/side-008.txt",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/tekst/side-009.txt",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/tekst/side-010.txt",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/tekst/side-011.txt",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/tekst/side-012.txt",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/tekst/side-013.txt",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/tekst/side-014.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/sider/side-001.png",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/sider/side-002.png",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/sider/side-003.png",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/sider/side-004.png",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/sider/side-005.png",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/sider/side-006.png",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/sider/side-007.png",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/sider/side-008.png",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/sider/side-009.png",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/sider/side-010.png",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/sider/side-011.png",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/sider/side-012.png",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/sider/side-013.png",
+          "kuratorjobb/resultat/fentanyl/spc/ec390790246353ee/sider/side-014.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 10
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (14 sider).",
+          "antall": {
+            "sider": 14
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 28421
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 14
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "18cd6610dfd66b59382e6b9afa2b7d1ec0a14b09aab1ad5c7937e05cfd2569c8",
+      "bytes": 422830,
+      "mappe": "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59",
+      "pdf": {
+        "sider": 14,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Wed Oct 30 06:04:50 2024 UTC",
+        "endret": "Wed Oct 30 06:04:50 2024 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/original.pdf",
+        "tekst": "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/tekst/side-001.txt",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/tekst/side-002.txt",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/tekst/side-003.txt",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/tekst/side-004.txt",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/tekst/side-005.txt",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/tekst/side-006.txt",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/tekst/side-007.txt",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/tekst/side-008.txt",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/tekst/side-009.txt",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/tekst/side-010.txt",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/tekst/side-011.txt",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/tekst/side-012.txt",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/tekst/side-013.txt",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/tekst/side-014.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/sider/side-001.png",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/sider/side-002.png",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/sider/side-003.png",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/sider/side-004.png",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/sider/side-005.png",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/sider/side-006.png",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/sider/side-007.png",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/sider/side-008.png",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/sider/side-009.png",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/sider/side-010.png",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/sider/side-011.png",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/sider/side-012.png",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/sider/side-013.png",
+          "kuratorjobb/resultat/fentanyl/spc/18cd6610dfd66b59/sider/side-014.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 10
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (14 sider).",
+          "antall": {
+            "sider": 14
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 28421
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 14
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "33c4c3aeb7ddb80d2c031d6dd3ac9737763081824b02cc982d872323ee03f46f",
+      "bytes": 422861,
+      "mappe": "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d",
+      "pdf": {
+        "sider": 14,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Wed Oct 30 06:30:17 2024 UTC",
+        "endret": "Wed Oct 30 06:30:17 2024 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/original.pdf",
+        "tekst": "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/tekst/side-001.txt",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/tekst/side-002.txt",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/tekst/side-003.txt",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/tekst/side-004.txt",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/tekst/side-005.txt",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/tekst/side-006.txt",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/tekst/side-007.txt",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/tekst/side-008.txt",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/tekst/side-009.txt",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/tekst/side-010.txt",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/tekst/side-011.txt",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/tekst/side-012.txt",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/tekst/side-013.txt",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/tekst/side-014.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/sider/side-001.png",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/sider/side-002.png",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/sider/side-003.png",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/sider/side-004.png",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/sider/side-005.png",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/sider/side-006.png",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/sider/side-007.png",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/sider/side-008.png",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/sider/side-009.png",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/sider/side-010.png",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/sider/side-011.png",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/sider/side-012.png",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/sider/side-013.png",
+          "kuratorjobb/resultat/fentanyl/spc/33c4c3aeb7ddb80d/sider/side-014.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 10
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (14 sider).",
+          "antall": {
+            "sider": 14
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 28421
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 14
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": []
+}

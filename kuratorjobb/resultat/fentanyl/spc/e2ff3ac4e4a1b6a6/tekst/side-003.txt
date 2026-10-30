@@ -1,0 +1,55 @@
+- Bradykardi og hjertestans kan forekomme dersom pasienten har fått for lav mengde antikolinergt
+  legemiddel eller dersom Fentanyl Kalceks er kombinert med ikke-vagolytiske muskelavslappende
+  legemidler. Brakydardi kan behandles med atropin.
+- Opioider kan forårsake hypotensjon, spesielt hos hypovolemiske pasienter. Passende tiltak må
+  iverksettes for å opprettholde stabilt arterielt trykk.
+- Bruk av hurtige bolus opioidinjeksjoner må unngås. Hos pasienter med svekket intracerebral
+  utskillelse er den midlertidige reduksjonen i gjennomsnittlig arterielt trykk noen ganger ledsaget av
+  en kortvarig reduksjon i perfusjonstrykket.
+- Pasienter som får kronisk behandling med opioider, eller som er avhengige av opioider, kan trenge
+  høyere doser.
+- Dosereduksjon anbefales hos eldre og svekkede pasienter. Opioider må titreres nøye hos pasienter
+  med én eller flere av følgende underliggende tilstander: ukontrollert hypotyreose, lungesykdom,
+  nedsatt lungefunksjon eller alkoholisme. Pasienter med leverdysfunksjon skal doseres med
+  forsiktighet på grunn av mulig nedsatt metabolisme. Pasienter med nedsatt nyrefunksjon bør
+  overvåkes nøye for symptomer på fentanyl-toksisitet. Som et resultat av dialyse kan
+  distribusjonsvolumet av fentanyl endre seg, noe som kan påvirke serumkonsentrasjonen. Disse
+  pasientene bør observeres postoperativt i en lengre periode.
+- Dersom Fentanyl Kalceks administreres sammen med nevroleptika, må legen være kjent med de
+  spesifikke egenskapene til begge legemidlene, spesielt forskjellene i virkningsvarighet. Risikoen
+  for hypotensjon er større når denne kombinasjonen administreres. Nevroleptika kan føre til
+  ekstrapyramidale symptomer som kan motvirkes med antiparkinsonmidler. Kombinasjonen med
+  antiparkinsonmidler kan øke risikoen for tardiv dyskinesi.
+- Som med andre opioider kan administrering av fentanyl på grunn av antikolinerge effekter føre til
+  økt trykk i gallegangen, og det kan av og til sees spasmer i Oddis sfinkter.
+- Hos pasienter med myastenia gravis bør bruken av visse antikolinerge legemidler og
+  nevromuskulære blokkere vurderes nøye før og under administrering av et generelt
+  bedøvelsesregime der fentanyl administreres intravenøst.
+- Forsiktighet anbefales der Fentanyl Kalceks administreres samtidig med legemidler som påvirker
+  serotonerge nevrotransmitter-systemer.
+  Et potensielt livstruende serotonergt syndrom kan utvikle seg med samtidig bruk av serotonerge
+  legemidler som selektive serotoninreopptakshemmere (SSRI) og serotonin noradrenalin
+  reopptakshemmere (SNRI) og med legemidler som hemmer nedbrytingen av serotonin (inkludert
+  monoaminoksidasehemmere [MAO-hemmere]). Dette kan forekomme innenfor den anbefalte
+  dosen.
+  Serotonergt syndrom kan omfatte endringer i psykologisk tilstand (som agitasjon, hallusinasjoner,
+  koma), autonom ustabilitet (som takykardi, labilt blodtrykk, hypertermi), nevromuskulære lidelser
+  (som hyperrefleksi, dårlig koordinasjon, stivhet) og/eller gastrointestinale symptomer (som kvalme,
+  oppkast, diaré).
+  Dersom det er mistanke om serotonergt syndrom, bør rask seponering av Fentanyl Kalceks
+  vurderes.
+
+Toleranse og avvikende opioidbruk (misbruk og avhengighet)
+Toleranse, fysisk og psykologisk avhengighet kan utvikle seg ved gjentatt administrering av opioider.
+Gjentatt bruk av opioider kan medføre avvikende opioidbruk (opioid use disorder, OUD). Misbruk
+eller tilsiktet feilbruk av opioider kan føre til overdosering og/eller død. Risikoen for utvikling av
+OUD er økt hos pasienter med personlig eller familieanamnese (foreldre eller søsken) med
+stoffmisbruk (inkludert alkoholmisbruk), hos tobakksbrukere og hos pasienter med personlig
+anamnese med andre sinnslidelser (f.eks. alvorlig depresjon, angst og personlighetsforstyrrelser).
+
+Abstinenssyndrom
+Gjentatt administrering med kortvarige intervaller i lengre perioder kan føre til utvikling av
+abstinenssyndrom etter opphør av behandlingen. Dette kan manifestere seg som forekomst av følgende
+bivirkninger: kvalme, oppkast, diaré, angst, frysninger, skjelving og svette.
+
+Pediatrisk populasjon
