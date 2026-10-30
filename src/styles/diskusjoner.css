@@ -3,10 +3,12 @@
  * på fagsidene og fortolkningssidene, med kategoriene, trådene, søket og
  * arkivet. Selve tråden bruker `traad.css`, som idéene.
  *
- * På brede flater er menyen en smal kolonne som svever til høyre under
- * toppmenyen. Åpen blir den et panel på samme sted; holdes den åpen, gir
- * resten av appen plass til den (`data-diskusjonsmeny` på rotelementet). På
- * smale flater er den skjult til knappen i dokken åpner den over siden.
+ * På brede flater er menyen lukket en rund boble øverst til høyre under
+ * toppmenyen. Med pekeren over (eller fokus fra tastaturet) vokser den mot
+ * venstre og sier hva den er. Åpen blir den et panel fra samme sted og ned,
+ * og resten av appen gir plass til det (`data-diskusjonsmeny` på
+ * rotelementet). På smale flater er den skjult til knappen i dokken åpner den
+ * over siden.
  *
  * Åpen kan menyen dras bredere i venstre kanten (`Kanthandtak`). Bredden
  * brukeren har valgt, står i `--diskusjonsbredde` på rotelementet, og holdes
@@ -20,7 +22,9 @@
  */
 
 :root {
-  --diskusjonsstolpe: 3.25rem;
+  /* Den lukkede menyen: en sirkel med et stort samtaleikon. */
+  --diskusjonsboble: 6.5rem;
+  --diskusjonsboble-ikon: calc(2 * var(--ikon-ui));
   --diskusjonspanel-minst: 28rem;
   /* Så bred at siden bak fortsatt får plass. */
   --diskusjonspanel-mest: max(var(--diskusjonspanel-minst), 100vw - 32rem);
@@ -38,48 +42,44 @@
 /* --- Plassen resten av appen gir ------------------------------------------ */
 
 @media (width > 47.5em) {
-  :root[data-diskusjonsmeny='smal'] .app {
-    padding-right: calc(var(--diskusjonsstolpe) + var(--diskusjonskant));
+  :root[data-diskusjonsmeny='lukket'] .app {
+    padding-right: calc(var(--diskusjonsboble) + var(--diskusjonskant));
   }
 
-  :root[data-diskusjonsmeny='laast'] .app {
+  :root[data-diskusjonsmeny='apen'] .app {
     padding-right: calc(var(--diskusjonspanel) + var(--diskusjonskant));
   }
 }
 
 /* --- Menyen ------------------------------------------------------------------- */
 
+/* Lukket er menyen bare plassen boblen står i; åpen er den panelet. */
 .diskusjonsmeny {
   position: fixed;
   top: var(--toppmeny-offset);
   right: var(--diskusjonskant);
-  bottom: var(--diskusjonsbunn);
   z-index: var(--lag-innhold);
   display: flex;
   flex-direction: column;
-  width: var(--diskusjonsstolpe);
   text-align: left;
-  background: var(--flate);
-  border: var(--kant) solid var(--linje);
-  border-radius: var(--runding-panel);
-  transition:
-    width var(--fart-glid) var(--kurve),
-    box-shadow var(--fart-glid) var(--kurve);
 }
 
 .diskusjonsmeny[data-apen] {
+  bottom: var(--diskusjonsbunn);
   width: var(--diskusjonspanel);
-  box-shadow: var(--skygge-modal);
+  background: var(--flate);
+  border: var(--kant) solid var(--linje);
+  border-radius: var(--runding-panel);
+  transform-origin: top right;
+  animation: diskusjonsmeny-inn var(--fart-glid) var(--kurve);
 }
 
-/* Mens kanten dras, følger menyen pekeren uten å gli etter. */
-.diskusjonsmeny:has(> .kanthandtak[data-drar]) {
-  transition: none;
-}
-
-/* Holdt åpen står den ved siden av innholdet, ikke over det. */
-.diskusjonsmeny[data-laast] {
-  box-shadow: none;
+/* Panelet vokser ut fra der boblen stod. */
+@keyframes diskusjonsmeny-inn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
 }
 
 .diskusjonsknapp {
@@ -92,19 +92,26 @@
     display: inline-flex;
   }
 
+  /* Smalt står knappen i dokken i stedet for boblen. */
+  .diskusjonsboble {
+    display: none;
+  }
+
   /* Smalt fyller menyen bredden; der er det ingen kant å dra. */
   .diskusjonsmeny > .kanthandtak {
     display: none;
   }
 
   /* Smalt: over siden, fra toppmenyen ned til dokken, og bare når den er bedt om. */
-  .diskusjonsmeny {
+  .diskusjonsmeny,
+  .diskusjonsmeny[data-apen] {
     inset: var(--toppmeny-offset) var(--rom-3) var(--dokk-offset);
     z-index: var(--lag-popover);
     width: auto;
     visibility: hidden;
     opacity: 0;
     transform: translateY(0.5rem);
+    animation: none;
     transition:
       opacity var(--fart-glid) var(--kurve),
       transform var(--fart-glid) var(--kurve),
@@ -113,11 +120,11 @@
 
   .diskusjonsmeny[data-mobil],
   .diskusjonsmeny[data-apen][data-mobil] {
-    width: auto;
     visibility: visible;
     opacity: 1;
     transform: none;
     transition-delay: 0s;
+    box-shadow: var(--skygge-modal);
   }
 }
 
@@ -166,38 +173,105 @@
   padding-inline: calc(var(--rom-4) + var(--helside-innrykk));
 }
 
-/* --- Kolonnen ----------------------------------------------------------------- */
+/* --- Boblen -------------------------------------------------------------------- */
 
-.diskusjonsstolpe {
+/* Lukket: et stort ikon midt i en sirkel. Med pekeren over eller fokus fra
+   tastaturet vokser den litt, mot venstre og ned, og ikonet krymper til vanlig
+   størrelse foran tittelen, med hintet under. */
+.diskusjonsboble {
+  --boble-ikon: var(--diskusjonsboble-ikon);
+  position: relative;
   display: flex;
-  flex: 1;
-  flex-direction: column;
   align-items: center;
-  gap: var(--rom-2);
-  min-height: 0;
-  padding: var(--rom-3) 0;
+  justify-content: center;
+  min-width: var(--diskusjonsboble);
+  min-height: var(--diskusjonsboble);
+  padding: 0 var(--rom-4);
+  font-family: var(--skrift-ui);
+  line-height: 1.25;
+  color: var(--blekk);
+  text-align: left;
+  background: var(--flate);
+  border: var(--kant) solid var(--linje);
+  border-radius: var(--runding-pille);
+  box-shadow: var(--skygge-toppmeny);
+  cursor: pointer;
+  transition:
+    min-height var(--fart-glid) var(--kurve),
+    padding var(--fart-glid) var(--kurve),
+    background-color var(--fart-rask) var(--kurve);
 }
 
-.diskusjonsstolpe[hidden] {
+.diskusjonsboble[hidden] {
   display: none;
 }
 
-.diskusjonsstolpe__kategorier {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--rom-2);
-  min-height: 0;
-  margin: 0;
-  padding: var(--rom-2) 0 0;
-  overflow-y: auto;
-  list-style: none;
-  border-top: var(--kant) solid var(--linje);
+.diskusjonsboble:is(:hover, :focus-visible) {
+  --boble-ikon: var(--ikon-ui);
+  min-height: calc(var(--diskusjonsboble) + var(--rom-3));
+  padding-inline: var(--rom-6);
+  background: var(--flate-hevet);
 }
 
-.diskusjonsmeny__laas,
-.diskusjonsstolpe__knapp,
-.diskusjonsstolpe__kategori,
+/* Ikonet og tittelen deler første rad, hintet står under tittelen. Sporene
+   for tekstene står på 0 til boblen vokser, så den vokser jevnt; rutenettet
+   er så høyt som innholdet, så `1fr` er akkurat det tekstene trenger. */
+.diskusjonsboble__innhold {
+  display: grid;
+  grid-template:
+    'ikon tittel' auto
+    '.    hint' 0fr
+    / auto 0fr;
+  align-items: center;
+  column-gap: 0;
+  transition:
+    grid-template-rows var(--fart-glid) var(--kurve),
+    grid-template-columns var(--fart-glid) var(--kurve),
+    column-gap var(--fart-glid) var(--kurve);
+}
+
+.diskusjonsboble:is(:hover, :focus-visible) .diskusjonsboble__innhold {
+  grid-template-rows: auto 1fr;
+  grid-template-columns: auto 1fr;
+  column-gap: var(--rom-2);
+}
+
+.diskusjonsboble__ikon {
+  grid-area: ikon;
+  width: var(--boble-ikon);
+  height: var(--boble-ikon);
+  transition:
+    width var(--fart-glid) var(--kurve),
+    height var(--fart-glid) var(--kurve);
+}
+
+/* Tekstene kan krympe til ingenting (`overflow`), så sporene kan stå på 0. */
+.diskusjonsboble__tittel,
+.diskusjonsboble__hint {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity var(--fart-glid) var(--kurve);
+}
+
+.diskusjonsboble__tittel {
+  grid-area: tittel;
+  font-size: var(--tekst-ui);
+  font-weight: var(--vekt-halvfet);
+}
+
+.diskusjonsboble__hint {
+  grid-area: hint;
+  font-size: var(--tekst-liten);
+  color: var(--blekk-dempet);
+}
+
+.diskusjonsboble:is(:hover, :focus-visible) :is(.diskusjonsboble__tittel, .diskusjonsboble__hint) {
+  opacity: 1;
+}
+
 .diskusjonspanel__helside,
 .diskusjonspanel__lukk {
   position: relative;
@@ -219,43 +293,11 @@
     border-color var(--fart-rask) var(--kurve);
 }
 
-:is(
-    .diskusjonsmeny__laas,
-    .diskusjonsstolpe__knapp,
-    .diskusjonsstolpe__kategori,
-    .diskusjonspanel__helside,
-    .diskusjonspanel__lukk
-  ):hover {
+:is(.diskusjonspanel__helside, .diskusjonspanel__lukk):hover {
   background: var(--flate-hevet);
 }
 
-/* Holdt åpen: nålen står på en fylt flate. */
-.diskusjonsmeny__laas[aria-pressed='true'] {
-  background: var(--aksent-flate);
-  border-color: var(--aksent);
-}
-
-.diskusjonspanel__lukk {
-  display: none;
-}
-
-@media (max-width: 47.5em) {
-  .diskusjonspanel__lukk {
-    display: grid;
-  }
-
-  .diskusjonspanel .diskusjonsmeny__laas {
-    display: none;
-  }
-}
-
-/* Som helside er knappen for helsiden veien tilbake til menyen, på alle
-   bredder. Lukkeknappen og «Hold åpen» gjelder menyen, ikke helsiden. */
-.diskusjonsmeny[data-helside] .diskusjonspanel :is(.diskusjonspanel__lukk, .diskusjonsmeny__laas) {
-  display: none;
-}
-
-/* Det blå merket for noe nytt: i kolonnen og ved kategorinavnet. */
+/* Det blå merket for noe nytt: på boblen og ved kategorinavnet. */
 .nyttmerke {
   display: inline-grid;
   place-items: center;
@@ -272,10 +314,11 @@
   border-radius: var(--runding-pille);
 }
 
-.nyttmerke--stolpe {
+/* På kanten av boblen, øverst til høyre. */
+.nyttmerke--boble {
   position: absolute;
-  top: -0.125rem;
-  right: -0.25rem;
+  top: var(--rom-1);
+  right: var(--rom-1);
   box-shadow: 0 0 0 2px var(--flate);
 }
 

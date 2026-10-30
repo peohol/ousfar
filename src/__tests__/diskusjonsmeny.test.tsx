@@ -1,10 +1,10 @@
 // @vitest-environment jsdom
 /**
- * Diskusjonsmenyen til høyre på en fagside eller fortolkningsside: kolonnen
- * med «Hold åpen» og emojiene, åpning og lukking med pekeren, kategoriene og
+ * Diskusjonsmenyen til høyre på en fagside eller fortolkningsside: boblen med
+ * merket for noe nytt, åpning og lukking med knappene, kategoriene og
  * trådene, en ny tråd med ny kategori, søket, arkivet, én tråd med det bare
  * forfatteren eller en administrator ser, sletting og flytting til en annen
- * side, en tråd åpnet fra et varsel, og menyen som helside.
+ * side, en tråd åpnet fra et varsel, og menyen maksimert som helside.
  *
  * Økten og kallene mot databasen er erstattet; det er skjermbildene som prøves.
  * Dra-og-slipp prøves ikke her: testmiljøet har ingen peker (se `useSortering`).
@@ -126,8 +126,8 @@ const api = vi.hoisted(() => ({
   endreKommentar: vi.fn(async () => {}),
   slettKommentar: vi.fn(async () => {}),
   settHjerte: vi.fn(async () => {}),
-  hentLaast: vi.fn(),
-  lagreLaast: vi.fn(async () => {}),
+  hentApen: vi.fn(),
+  lagreApen: vi.fn(async () => {}),
   hentBredde: vi.fn(),
   lagreBredde: vi.fn(async () => {}),
 }))
@@ -164,7 +164,7 @@ beforeEach(() => {
     { id: 't2', tittel: 'Barn', tekster: ['Dosering hos barn under 12 år'] },
     { id: 't5', tittel: 'Gammel sak', tekster: ['Kvalme og dosering'] },
   ])
-  api.hentLaast.mockResolvedValue(null)
+  api.hentApen.mockResolvedValue(null)
   api.hentBredde.mockResolvedValue(null)
 })
 
@@ -176,69 +176,103 @@ afterEach(() => {
 const meny = () => screen.getByRole('complementary', { name: 'Diskusjoner om Litium' })
 const panel = () => meny().querySelector<HTMLElement>('.diskusjonspanel')!
 const flyttelag = () => within(within(panel()).getByRole('dialog', { name: 'Flytt tråden' })).getByRole('form', { name: 'Flytt tråden' })
-const stolpe = () => meny().querySelector<HTMLElement>('.diskusjonsstolpe')!
+const boble = () => meny().querySelector<HTMLElement>('.diskusjonsboble')!
 
 async function vis() {
   const bruker = userEvent.setup()
   render(<Diskusjonsmeny side="stoff:litium" sidenavn="Litium" sider={SIDER} />)
-  await within(stolpe()).findByRole('button', { name: 'Dosering, 1 med nytt' })
+  await within(meny()).findByRole('button', { name: 'Vis diskusjonene, 2 med nytt' })
   return bruker
 }
 
 async function apne() {
   const bruker = await vis()
-  fireEvent.mouseEnter(meny())
+  await bruker.click(boble())
   await within(panel()).findByRole('heading', { name: /^Dosering/ })
   return bruker
 }
 
-describe('kolonnen', () => {
-  it('har «Hold åpen» øverst og emojiene med et merke der noe er nytt, også for «Ukategoriserte»', async () => {
+describe('boblen', () => {
+  it('står alene når menyen er lukket, med et merke for trådene med noe nytt, og gir plass i appen', async () => {
     await vis()
     expect(panel().hidden).toBe(true)
-    const knapper = within(stolpe()).getAllByRole('button').map((b) => b.getAttribute('aria-label'))
-    expect(knapper).toEqual(['Hold diskusjonene åpne', 'Vis diskusjonene', 'Ukategoriserte', 'Dosering, 1 med nytt', 'Bivirkninger, 1 med nytt'])
-    expect(document.documentElement.dataset.diskusjonsmeny).toBe('smal')
+    expect(boble().hidden).toBe(false)
+    expect(within(meny()).getAllByRole('button').map((b) => b.getAttribute('aria-label'))).toEqual(['Vis diskusjonene, 2 med nytt'])
+    expect(boble().querySelector('.nyttmerke')!.textContent).toBe('2')
+    // Teksten den viser med pekeren over, står i den, men navnet er knappens.
+    expect(boble().textContent).toContain('Diskusjoner')
+    expect(boble().textContent).toContain('Trykk for å vise')
+    expect(document.documentElement.dataset.diskusjonsmeny).toBe('lukket')
   })
 
-  it('lukkes med Escape uten at tasten går videre til siden bak', async () => {
+  it('åpner ikke menyen når pekeren bare kommer inn over den', async () => {
+    await vis()
+    fireEvent.mouseEnter(boble())
+    fireEvent.mouseEnter(meny())
+    expect(panel().hidden).toBe(true)
+  })
+
+  it('åpner menyen med et trykk, lagrer det på brukeren og gir plass i appen', async () => {
+    await apne()
+    expect(boble().hidden).toBe(true)
+    expect(api.lagreApen).toHaveBeenCalledWith(true)
+    expect(document.documentElement.dataset.diskusjonsmeny).toBe('apen')
+    // Står åpen til lukkeknappen trykkes, også når pekeren går ut.
+    fireEvent.mouseLeave(meny())
+    expect(panel().hidden).toBe(false)
+  })
+
+  it('har ingen knapp for å holde menyen åpen, men «Maksimer» og «Lukk» i den rekkefølgen', async () => {
+    await apne()
+    const topp = panel().querySelector<HTMLElement>('.diskusjonspanel__topp')!
+    expect(within(topp).getAllByRole('button').map((b) => b.getAttribute('aria-label'))).toEqual(['Maksimer', 'Lukk diskusjonene'])
+  })
+
+  it('lukkes med lukkeknappen, tilbake til boblen, og lagrer det', async () => {
+    const bruker = await apne()
+    await bruker.click(within(panel()).getByRole('button', { name: 'Lukk diskusjonene' }))
+    expect(panel().hidden).toBe(true)
+    expect(boble().hidden).toBe(false)
+    expect(api.lagreApen).toHaveBeenLastCalledWith(false)
+    expect(document.documentElement.dataset.diskusjonsmeny).toBe('lukket')
+  })
+
+  it('flytter fokus til lukkeknappen når den åpnes, og tilbake til boblen når den lukkes', async () => {
+    const bruker = await vis()
+    boble().focus()
+    await bruker.keyboard('{Enter}')
+    const lukk = within(panel()).getByRole('button', { name: 'Lukk diskusjonene' })
+    await waitFor(() => expect(document.activeElement).toBe(lukk))
+    await bruker.keyboard('{Enter}')
+    await waitFor(() => expect(document.activeElement).toBe(boble()))
+    expect(panel().hidden).toBe(true)
+  })
+
+  it('står åpen med Escape, uten at tasten går videre til siden bak', async () => {
     await apne()
     const bak = vi.fn()
     window.addEventListener('keydown', bak)
     fireEvent.keyDown(within(panel()).getByRole('searchbox', { name: 'Søk i trådene' }), { key: 'Escape' })
     window.removeEventListener('keydown', bak)
     expect(bak).not.toHaveBeenCalled()
-  })
-
-  it('åpner seg når pekeren kommer inn og lukker seg når den går ut', async () => {
-    await apne()
-    expect(stolpe().hidden).toBe(true)
-    fireEvent.mouseLeave(meny())
-    expect(panel().hidden).toBe(true)
-  })
-
-  it('står åpen når den holdes åpen, lagrer det på brukeren og gir plass i appen', async () => {
-    const bruker = await apne()
-    await bruker.click(within(panel()).getByRole('button', { name: 'Hold diskusjonene åpne' }))
-    expect(api.lagreLaast).toHaveBeenCalledWith(true)
-    fireEvent.mouseLeave(meny())
     expect(panel().hidden).toBe(false)
-    expect(document.documentElement.dataset.diskusjonsmeny).toBe('laast')
   })
 
-  it('står åpen fra start når brukeren har valgt det', async () => {
-    api.hentLaast.mockResolvedValue(true)
+  it('står åpen fra start når brukeren hadde den åpen', async () => {
+    api.hentApen.mockResolvedValue(true)
     render(<Diskusjonsmeny side="stoff:litium" sidenavn="Litium" sider={SIDER} />)
     await waitFor(() => expect(panel().hidden).toBe(false))
+    expect(boble().hidden).toBe(true)
   })
 
   it('har en kant som kan dras når den er åpen, og står i bredden brukeren har dratt den til', async () => {
     api.hentBredde.mockResolvedValue(600)
+    const bruker = userEvent.setup()
     const { unmount } = render(<Diskusjonsmeny side="stoff:litium" sidenavn="Litium" sider={SIDER} />)
     const rot = document.documentElement.style
     await waitFor(() => expect(rot.getPropertyValue('--diskusjonsbredde')).toBe('600px'))
     expect(within(meny()).queryByRole('separator', { name: 'Bredden på diskusjonene' })).toBeNull()
-    fireEvent.mouseEnter(meny())
+    await bruker.click(boble())
     expect(within(meny()).getByRole('separator', { name: 'Bredden på diskusjonene' })).toBeTruthy()
     unmount()
     expect(rot.getPropertyValue('--diskusjonsbredde')).toBe('')
@@ -255,7 +289,7 @@ describe('kolonnen', () => {
   })
 })
 
-describe('som helside', () => {
+describe('maksimert', () => {
   it('dekker vinduet med oversikten, gjør resten inert og går tilbake til menyen med Escape', async () => {
     const bruker = userEvent.setup()
     const { container } = render(
@@ -264,13 +298,14 @@ describe('som helside', () => {
         <Diskusjonsmeny side="stoff:litium" sidenavn="Litium" sider={SIDER} />
       </div>,
     )
-    await within(stolpe()).findByRole('button', { name: 'Dosering, 1 med nytt' })
-    fireEvent.mouseEnter(meny())
-    const knapp = within(panel()).getByRole('button', { name: 'Vis diskusjonene som helside' })
+    await bruker.click(await within(meny()).findByRole('button', { name: 'Vis diskusjonene, 2 med nytt' }))
+    const knapp = within(panel()).getByRole('button', { name: 'Maksimer' })
     expect(knapp.getAttribute('aria-pressed')).toBe('false')
+    expect(knapp.getAttribute('title')).toBe('Maksimer')
     await bruker.click(knapp)
     expect(meny().hasAttribute('data-helside')).toBe(true)
     expect(knapp.getAttribute('aria-pressed')).toBe('true')
+    expect(knapp.getAttribute('title')).toBe('Gjenopprett')
     expect(container.querySelector('main')!.hasAttribute('inert')).toBe(true)
     // Ingen kant å dra, og pekeren som går ut, lukker ingenting.
     expect(within(meny()).queryByRole('separator')).toBeNull()
@@ -289,9 +324,20 @@ describe('som helside', () => {
     expect(panel().hidden).toBe(false)
   })
 
+  it('lukkes helt med lukkeknappen, rett til boblen', async () => {
+    const bruker = await apne()
+    await bruker.click(within(panel()).getByRole('button', { name: 'Maksimer' }))
+    expect(meny().hasAttribute('data-helside')).toBe(true)
+    await bruker.click(within(panel()).getByRole('button', { name: 'Lukk diskusjonene' }))
+    expect(meny().hasAttribute('data-helside')).toBe(false)
+    expect(panel().hidden).toBe(true)
+    expect(boble().hidden).toBe(false)
+    expect(api.lagreApen).toHaveBeenLastCalledWith(false)
+  })
+
   it('gjør også en side som kommer til underveis, inert', async () => {
     const bruker = await apne()
-    await bruker.click(within(panel()).getByRole('button', { name: 'Vis diskusjonene som helside' }))
+    await bruker.click(within(panel()).getByRole('button', { name: 'Maksimer' }))
     const ny = document.createElement('main')
     act(() => meny().parentElement!.append(ny))
     await waitFor(() => expect(ny.hasAttribute('inert')).toBe(true))
@@ -301,12 +347,12 @@ describe('som helside', () => {
 
   it('går tilbake til menyen åpen også når skjermen er blitt smal mens helsiden stod', async () => {
     const knapp = document.body.appendChild(Object.assign(document.createElement('button'), { className: 'diskusjonsknapp' }))
-    knapp.checkVisibility = () => true
     try {
       const bruker = await apne()
-      await bruker.click(within(panel()).getByRole('button', { name: 'Vis diskusjonene som helside' }))
+      await bruker.click(within(panel()).getByRole('button', { name: 'Maksimer' }))
       expect(meny().hasAttribute('data-mobil')).toBe(false)
-      await bruker.click(within(panel()).getByRole('button', { name: 'Vis diskusjonene som helside' }))
+      knapp.checkVisibility = () => true
+      await bruker.click(within(panel()).getByRole('button', { name: 'Maksimer' }))
       expect(meny().hasAttribute('data-mobil')).toBe(true)
     } finally {
       knapp.remove()
@@ -317,10 +363,10 @@ describe('som helside', () => {
     const bruker = await apne()
     await bruker.click(within(panel()).getByRole('button', { name: /Nyresvikt/ }))
     await within(panel()).findByText('Hvordan doserer vi ved nyresvikt?')
-    await bruker.click(within(panel()).getByRole('button', { name: 'Vis diskusjonene som helside' }))
+    await bruker.click(within(panel()).getByRole('button', { name: 'Maksimer' }))
     expect(meny().hasAttribute('data-helside')).toBe(true)
     expect(within(panel()).getByText('Hvordan doserer vi ved nyresvikt?')).toBeTruthy()
-    await bruker.click(within(panel()).getByRole('button', { name: 'Vis diskusjonene som helside' }))
+    await bruker.click(within(panel()).getByRole('button', { name: 'Maksimer' }))
     expect(meny().hasAttribute('data-helside')).toBe(false)
     expect(within(panel()).getByText('Hvordan doserer vi ved nyresvikt?')).toBeTruthy()
     expect(panel().hidden).toBe(false)
@@ -410,9 +456,6 @@ describe('én tråd', () => {
     await bruker.click(within(panel()).getByRole('button', { name: /Nyresvikt/ }))
     await within(panel()).findByText('Hvordan doserer vi ved nyresvikt?')
     await waitFor(() => expect(api.merkDiskusjonSett).toHaveBeenCalledWith(TRAAD))
-    // Tråden holder menyen åpen.
-    fireEvent.mouseLeave(meny())
-    expect(panel().hidden).toBe(false)
 
     expect(within(panel()).queryByRole('button', { name: 'Rediger innlegget' })).toBeNull()
     expect(within(panel()).getByRole('button', { name: 'Endre overskriften' })).toBeTruthy()
@@ -643,7 +686,20 @@ describe('én tråd', () => {
     act(() => visDiskusjon('stoff:litium', 't1'))
     await within(panel()).findByText('Hvordan doserer vi ved nyresvikt?')
     expect(panel().hidden).toBe(false)
-    // Også på smale flater, der menyen ellers står skjult til knappen i toppmenyen trykkes.
-    expect(meny().hasAttribute('data-mobil')).toBe(true)
+    expect(boble().hidden).toBe(true)
+    expect(meny().hasAttribute('data-mobil')).toBe(false)
+  })
+
+  it('åpnes fra et varsel også på smale flater, der menyen ellers står skjult til knappen i toppmenyen trykkes', async () => {
+    const knapp = document.body.appendChild(Object.assign(document.createElement('button'), { className: 'diskusjonsknapp' }))
+    knapp.checkVisibility = () => true
+    try {
+      await vis()
+      act(() => visDiskusjon('stoff:litium', 't1'))
+      await within(panel()).findByText('Hvordan doserer vi ved nyresvikt?')
+      expect(meny().hasAttribute('data-mobil')).toBe(true)
+    } finally {
+      knapp.remove()
+    }
   })
 })
