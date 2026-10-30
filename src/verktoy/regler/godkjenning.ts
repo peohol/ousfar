@@ -11,7 +11,7 @@
  * i nettleseren.
  */
 import { kildeFor } from './kilder'
-import { alleGrunnlag, apneValg, henvisninger, type Regel } from './modell'
+import { alleGrunnlag, apneValg, henvisninger, nulltrinnfeil, type Regel } from './modell'
 
 /** JSON med sorterte nøkler, uten udefinerte felt, og med RegExp som kilde og flagg. */
 export function kanonisk(x: unknown): string {
@@ -99,6 +99,7 @@ export function godkjenningsfeil(r: Regel): string[] {
   }
   if (sist && sist.regelversjon !== r.versjon) feil.push(`Godkjenningen gjelder regelversjon ${sist.regelversjon}, ikke versjon ${r.versjon}.`)
   if (sist && sist.fingeravtrykk !== fingeravtrykk(r)) feil.push('Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke); den må kontrolleres på nytt.')
+  for (const x of nulltrinnfeil(r)) feil.push(`Regelen er ugyldig: ${x}.`)
   const apne = apneValg(r)
   if (apne.length > 0) feil.push(`Regelen har åpne valg som må avklares faglig: ${apne.join(', ')}.`)
   for (const [sti, gr] of alleGrunnlag(r)) {

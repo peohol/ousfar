@@ -125,7 +125,7 @@ Fagvurderingen (beslutning 2) avviste alle de 15 sluttdosene som automatisk trin
 - **Planen går ikke til null.** Nedtrappingen stopper på siste dose over den nedre grensen, og den dosen fortsetter. Planen sier: «Planen går ikke til null. Fra dag N står pasienten på X mg av … til avslutningen er vurdert individuelt; regelen har ingen godkjent avslutning (nulltrinn).» Kortformen og planteksten slutter med «avslutning: vurderes individuelt (ingen nulltrinn)».
 - **Ingen reduksjon før avslutningen:** ville første trinn kommet under den nedre grensen, stopper beregningen og sier at avslutningen må vurderes individuelt.
 - **Under den nedre grensen:** stopper beregningen og sier at regelen ikke har trinn under den og ingen godkjent avslutning.
-- **Kontrollen håndhever det.** En seponeringsregel må ha individuell avslutning, og individuell avslutning kan ikke kombineres med en minste varighet (`kontroll.ts`).
+- **Kontrollen og godkjenningen håndhever det** (`nulltrinnfeil` i `modell.ts`). Hvert forløp i en beregnbar seponeringsregel, også et gruppemedlems egne faser, må slutte med en nedtrapping med individuell avslutning og kan ikke ha en seponeringsfase, så ingen vei fører til null. Bytter (seponering før et annet legemiddel) og regler som bare er tekstlige, som agomelatin, er unntatt. Regelkontrollen avviser en regel som bryter dette, og godkjenningskontrollen regner den aldri som klinisk godkjent, selv om statusen og fingeravtrykket sier det; da gir verktøyet ingen plan. Individuell avslutning kan heller ikke kombineres med en minste varighet.
 
 Den nedre grensen, en firedel av laveste døgndose i preparatomtalen, er **ikke en validert klinisk terskel**. Ingen kilde oppgir en, RCPsych sier at noen trenger doser ned mot 2 % av opprinnelig dose, og den samme kvartregelen tar ikke hensyn til hvert stoffs farmakologi. Den er et åpent forslag i hver regel, så ingen regel kan godkjennes før den er avklart.
 
@@ -221,6 +221,8 @@ Miksturer uten dokumentert dosering per ml brukes ikke. Den nedre grensen avheng
 | Beslutning 2: alle sluttdoser avvist | Ingen plan går til null; avslutningen vurderes individuelt (avsnitt 7). Gjelder også den hyperbolske pilotregelen og studievarianten. Minste varighet er fjernet. |
 | Escitalopram | Flyttet fra pilotsettet til P7-reglene, i middelsgruppen. |
 | Grensetester | 5 % per trinn til den nedre grensen, trinn lengre enn 28 dager, fluoksetin med 42 dager per trinn, begrunnelse ved og rett ved grensene, og at ingen beregning går direkte til «seponert». |
+
+**Kontroll av regelversjon 4** (ChatGPT, 30.10.2026): kravet om individuell avslutning gjaldt bare nedtrappingsfaser, så en beregnbar seponeringsregel som seponerte direkte, slapp gjennom. Kravet gjelder nå hele forløpet og også godkjenningen (avsnitt 7), med negative regresjonstester (direkte seponering, seponering etter nedtrappingen, en fase etter den og et gruppemedlems egne faser, også merket klinisk godkjent) og positive for bytte og agomelatin. Ingen av de faktiske reglene var berørt.
 
 ## 13. Holdt utenfor
 

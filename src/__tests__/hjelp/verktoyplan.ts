@@ -44,15 +44,23 @@ export function godkjennITest(r: Regel, id: string): Regel {
   return regel
 }
 
-/** Nedtrapping av «escitalopram» med syntetiske verdier: 50 % av startdosen per uke. */
-export const TEST_NEDTRAPPING: Regel = godkjennITest(
-  omkoble(nedtrappingsregel({ type: 'prosent_av_startdose', prosent: sp(50, 'prosent') }, { avvik_prosent: sp(10, 'prosent') })),
-  'test-nedtrapping',
-)
+/**
+ * Den syntetiske nedtrappingen: 50 % av aktuell dose per trinn, ikke under
+ * 5 mg. Den går ikke til null, som ingen seponeringsregel kan (P7.5): siste
+ * dose fortsetter til avslutningen er vurdert individuelt.
+ */
+function nedtrapping(id?: string): Regel {
+  const r = nedtrappingsregel({ type: 'prosent_av_aktuell', prosent: sp(50, 'prosent'), sluttdose_mg: sp(5, 'mg') }, { avvik_prosent: sp(10, 'prosent') }, id)
+  for (const fase of r.plan.forlop[0]!.faser) if (fase.type === 'nedtrapping') fase.avslutning = 'individuell'
+  return r
+}
+
+/** Nedtrapping av «escitalopram» med syntetiske verdier: 50 % av aktuell dose per trinn, uten nulltrinn. */
+export const TEST_NEDTRAPPING: Regel = godkjennITest(omkoble(nedtrapping()), 'test-nedtrapping')
 
 /** Som {@link TEST_NEDTRAPPING}, men forskriveren kan velge dager per trinn (14–28). */
 export const TEST_JUSTERBAR: Regel = (() => {
-  const r = nedtrappingsregel({ type: 'prosent_av_startdose', prosent: sp(50, 'prosent') }, { avvik_prosent: sp(10, 'prosent') }, 'justerbar')
+  const r = nedtrapping('justerbar')
   const fase = r.plan.forlop[0]!.faser[0]!
   if (fase.type === 'nedtrapping') fase.trinnlengde = { ...fase.trinnlengde, omrade: [14, 28], justerbar: 'Dager per trinn' }
   return godkjennITest(omkoble(r), 'test-justerbar')
@@ -63,7 +71,7 @@ export const TEST_JUSTERBAR: Regel = (() => {
  * enn 21 dager krever begrunnelse når svaret er ja.
  */
 export const TEST_BEGRUNNELSE: Regel = (() => {
-  const r = nedtrappingsregel({ type: 'prosent_av_startdose', prosent: sp(50, 'prosent') }, { avvik_prosent: sp(10, 'prosent') }, 'begrunnelse')
+  const r = nedtrapping('begrunnelse')
   const grunnlag = { type: 'ousfar_vurdering' as const, begrunnelse: 'Syntetisk.', avklaring: null }
   r.sporsmal = [{ id: 'testsporsmal', tekst: 'Et syntetisk spørsmål som må besvares.', ja: 'syntetisk ja', grunnlag }]
   const fase = r.plan.forlop[0]!.faser[0]!

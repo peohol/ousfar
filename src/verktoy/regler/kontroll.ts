@@ -20,6 +20,7 @@ import { kildeFor } from './kilder'
 import {
   alleGrunnlag,
   henvisninger,
+  nulltrinnfeil,
   parameterfeil,
   parametre,
   REGELMODELLVERSJON,
@@ -189,11 +190,10 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
   for (const s of r.sporsmal ?? []) if (!s.tekst.trim() || !s.ja.trim()) f(`spørsmålet ${s.id} mangler tekst`)
 
   // Ingen seponeringsregel går til 0 av seg selv: ingen avslutning (nulltrinn) er godkjent faglig (P7.5).
+  for (const x of nulltrinnfeil(r)) f(x)
   for (const x of r.plan.forlop) {
     for (const fase of x.faser) {
-      if (fase.type !== 'nedtrapping') continue
-      if (r.plan.form === 'seponering' && fase.avslutning !== 'individuell') f(`forløp ${x.id} går til null etter siste trinn; ingen avslutning er godkjent, så en seponeringsregel må ha avslutning «individuell»`)
-      if (fase.avslutning === 'individuell' && fase.minste_varighet) f(`forløp ${x.id} har både minste varighet og individuell avslutning; uten seponering har nedtrappingen ingen slutt å måle til`)
+      if (fase.type === 'nedtrapping' && fase.avslutning === 'individuell' && fase.minste_varighet) f(`forløp ${x.id} har både minste varighet og individuell avslutning; uten seponering har nedtrappingen ingen slutt å måle til`)
     }
   }
   for (const x of tallfeil(r)) f(x)

@@ -451,10 +451,11 @@ describe('Sperren mot klinisk bruk', () => {
     }
     const r = beregnDoseplan(regel, AZA, { ...g, utvalg: somFest(g.utvalg) }, OMGIVELSE)
     expect(r).toMatchObject({ status: 'doseplan', klinisk: false })
-    expect(r.status === 'doseplan' && r.sperre).toEqual(['Regelen er en syntetisk testregel.', expect.stringMatching(/åpne valg/)])
+    // Den går også til null uten individuell avslutning, så den er ugyldig som seponeringsregel uansett godkjenning.
+    expect(r.status === 'doseplan' && r.sperre).toEqual(['Regelen er en syntetisk testregel.', expect.stringMatching(/^Regelen er ugyldig: forløp fra slutter ikke med en nedtrapping med individuell avslutning/), expect.stringMatching(/åpne valg/)])
     expect(kliniskSperre(regel, g.utvalg, NAA)).toContain('Preparatene er fra «Syntetiske testdata», ikke fra FEST.')
     const k = kliniskDoseplan(regel, AZA, g, OMGIVELSE)
-    expect(k).toMatchObject({ status: 'stoppet', klinisk: false, stoppgrunner: ['Ingen klinisk doseplan kan vises.', 'Regelen er en syntetisk testregel.', expect.anything(), expect.anything()] })
+    expect(k).toMatchObject({ status: 'stoppet', klinisk: false, stoppgrunner: ['Ingen klinisk doseplan kan vises.', 'Regelen er en syntetisk testregel.', expect.anything(), expect.anything(), expect.anything()] })
     for (const t of TESTTILFELLER) expect(kliniskDoseplan(t.regel, t.inndata, syntetiskGrunnlag(t.preparater, t.fest), OMGIVELSE).status, t.id).toBe('stoppet')
   })
 
@@ -465,7 +466,14 @@ describe('Sperren mot klinisk bruk', () => {
    * klinisk. Ingen virkelig regel eller godkjenning endres.
    */
   const positivKontroll = (): Regel => {
-    const regel: Regel = structuredClone({ ...fastDose([15]), id: 'positivkontroll-bare-i-test' })
+    // 30 mg i en uke og så 15 mg til avslutningen er vurdert: som enhver seponeringsregel går den ikke til null (P7.5).
+    const regel: Regel = structuredClone({ ...fastDose([30]), id: 'positivkontroll-bare-i-test' })
+    regel.plan.forlop[0]!.faser.push({
+      type: 'nedtrapping',
+      strategi: { type: 'prosent_av_aktuell', prosent: sp(50, 'prosent'), sluttdose_mg: sp(15, 'mg') },
+      trinnlengde: sp(7, 'dager'),
+      avslutning: 'individuell',
+    })
     const av = { dato: '2026-11-01', av: 'Testkontrollør', rolle: 'uavhengig_kontrollor' as const, regelversjon: 1 }
     const avklar = (x: unknown): void => {
       if (Array.isArray(x)) x.forEach(avklar)

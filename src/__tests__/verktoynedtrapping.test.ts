@@ -36,7 +36,7 @@ import { VERKTOY, virkestoffvalg } from '../verktoy/register'
 import { AVSLUTNING_KORT, beregn, kortform } from '../verktoy/regler/beregning'
 import { erKliniskGodkjent } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett, lesKontrollgrunnlag } from '../verktoy/regler/kontroll'
-import { apneValg, henvisninger, justerbare, type Beregningsinndata, type Regel } from '../verktoy/regler/modell'
+import { apneValg, henvisninger, justerbare, nulltrinnfeil, type Beregningsinndata, type Regel } from '../verktoy/regler/modell'
 import { NICE, RCPSYCH } from '../verktoy/regler/bygg'
 import { JUSTERING, LANG_BEHANDLINGSTID, NEDTRAPPINGSSETT, SAMMENLIGNINGSSETT, STARTFORSLAG, TEKNISK_MAKS_DAGER, TIDLIGERE_SYMPTOMER } from '../verktoy/regler/nedtrapping'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
@@ -424,7 +424,7 @@ describe('Regelutkastene (P7.2)', () => {
     if (fase.type !== 'nedtrapping') throw new Error()
     delete fase.avslutning
     const sett = (x: Regel) => ({ ...NEDTRAPPINGSSETT, regler: [x] })
-    expect(kontrollerRegelsett(sett(r)).join(' ')).toMatch(/går til null etter siste trinn; ingen avslutning er godkjent, så en seponeringsregel må ha avslutning «individuell»/)
+    expect(kontrollerRegelsett(sett(r)).join(' ')).toMatch(/forløp fra slutter ikke med en nedtrapping med individuell avslutning; ingen avslutning er godkjent, så en seponeringsregel kan ikke gå til null/)
     fase.avslutning = 'individuell'
     fase.minste_varighet = { verdi: 28, enhet: 'dager', art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [RCPSYCH.fireUker] } }
     expect(kontrollerRegelsett(sett(r)).join(' ')).toMatch(/har både minste varighet og individuell avslutning/)
@@ -436,6 +436,40 @@ describe('Regelutkastene (P7.2)', () => {
     expect(feil).toMatch(/begrunnelseskrav\[0\] har en grense utenfor området 5–50/)
     expect(feil).toMatch(/begrunnelseskrav\[0\] gjelder spørsmålet ukjent, som regelen ikke har/)
     expect(feil).toMatch(/begrunnelseskrav\[1\] har verken over eller under/)
+  })
+
+  it('godtar ingen annen vei til null i en beregnbar seponeringsregel: ingen seponering, og ingen fase etter nedtrappingen', () => {
+    const sett = (x: Regel) => ({ ...NEDTRAPPINGSSETT, regler: [x] })
+    const med = (faser: (f: Regel['plan']['forlop'][number]['faser']) => Regel['plan']['forlop'][number]['faser']) => {
+      const r = structuredClone(regel('citalopram'))
+      r.plan.forlop[0]!.faser = faser(r.plan.forlop[0]!.faser)
+      return r
+    }
+    // Seponering fra dag 1 i stedet for nedtrappingen, seponering etter den, og en fase etter den som holder dosen og så slutter.
+    const direkte = med(() => [{ type: 'seponer' }])
+    expect(nulltrinnfeil(direkte)).toEqual([
+      'forløp fra seponerer; ingen avslutning er godkjent, så en seponeringsregel kan ikke seponere',
+      'forløp fra slutter ikke med en nedtrapping med individuell avslutning; ingen avslutning er godkjent, så en seponeringsregel kan ikke gå til null',
+    ])
+    expect(kontrollerRegelsett(sett(direkte)).join(' ')).toMatch(/forløp fra seponerer/)
+    expect(nulltrinnfeil(med((f) => [...f, { type: 'seponer' }])).join(' ')).toMatch(/seponerer.*slutter ikke med en nedtrapping/)
+    expect(nulltrinnfeil(med((f) => [...f, { type: 'hold', dose: { type: 'aktuell' }, varighet: { type: 'dager', dager: f[0]!.type === 'nedtrapping' ? f[0]!.trinnlengde : null! } }]))).toHaveLength(1)
+    // Et gruppemedlems egne faser gjelder like mye.
+    const gruppe = { ...structuredClone(regel('citalopram')), medlemmer: [{ nokkel: 'citalopram', validering: 'validert' as const, begrunnelse: 'Syntetisk.', faser: [{ type: 'seponer' as const }] }] }
+    gruppe.plan.forlop[0]!.virkestoff = { type: 'gruppe', gruppe: 'test' }
+    expect(nulltrinnfeil(gruppe)).toHaveLength(2)
+    expect(nulltrinnfeil(gruppe)[0]).toMatch(/^forløp fra for citalopram seponerer/)
+    // Godkjent i testen med riktig fingeravtrykk er regelen likevel ikke klinisk godkjent, og beregningen er ikke klinisk.
+    const godkjent = godkjennITest(direkte, 'test-direkte')
+    expect(godkjent.godkjenning.status).toBe('klinisk_godkjent')
+    expect(erKliniskGodkjent(godkjent)).toBe(false)
+    expect(beregn(godkjent, besvart(godkjent, 20)).klinisk_godkjent).toBe(false)
+    // Tillatt: seponering ved bytte (før et annet legemiddel), og en regel som bare er tekstlig.
+    for (const r of [...PILOTSETT.regler.filter((x) => x.plan.form !== 'seponering'), regel('agomelatin')]) expect(nulltrinnfeil(r), r.id).toEqual([])
+    expect(PILOTSETT.regler.some((x) => x.plan.form !== 'seponering' && x.plan.forlop.some((f) => f.faser.some((fase) => fase.type === 'seponer')))).toBe(true)
+    expect(regel('agomelatin').beregnbarhet).toBe('bare_tekstlig')
+    // Og alle de virkelige seponeringsreglene oppfyller kravet.
+    for (const r of [...P7REGLER, ...PILOTSETT.regler]) expect(nulltrinnfeil(r), r.id).toEqual([])
   })
 
   it('gjelder enhver lav dose opp til høyeste dose; under den nedre grensen, eller når første trinn ville vært under den, stopper den uten å kalle dosen ugyldig', () => {
@@ -608,6 +642,14 @@ describe('Klinisk plan i appen', () => {
     for (const x of [{ bekreftet: [] }, { pasientforhold: {} }, { pasientforhold: { [TIDLIGERE_SYMPTOMER.id]: true } }, { svar: {} }, { begrunnelse: ' ' }]) {
       expect(beregnPlan(GODKJENT, valg, skjema('40', x), fest(), NAA).status, JSON.stringify(x)).toBe('stoppet')
     }
+  })
+
+  it('gir ingen plan etter en regel som seponerer direkte, selv om den er merket klinisk godkjent med riktig fingeravtrykk', () => {
+    const direkte = structuredClone(regel('fluoksetin'))
+    direkte.plan.forlop[0]!.faser = [{ type: 'seponer' }]
+    const r = beregnPlan(godkjennITest(direkte, 'test-direkte'), valg, skjema('40'), fest(), NAA)
+    expect(r.status).toBe('stoppet')
+    expect(r.status === 'stoppet' && r.stoppgrunner.join(' ')).toMatch(/Ingen klinisk doseplan.*forløp fra seponerer/)
   })
 
   it('tar med forskriverens valg, svar og begrunnelse, sier fra om et valg som ikke er et tall over 0, og glemmer alt med en annen strategi', () => {

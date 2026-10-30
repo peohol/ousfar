@@ -146,7 +146,9 @@ describe('med en regel godkjent bare i testen', () => {
     expect(rader[0]).toEqual(['Når', 'Escitalopram peroralt'])
     expect(rader[1]![0]).toBe('Dag 1–14')
     expect(rader[1]![1]).toMatch(/^12,5 mg.*1 tablett à 10 mg.*½ tablett à 5 mg/)
-    expect(rader.at(-1)![1]).toMatch(/Seponert/)
+    // Planen går ikke til null: siste dose fortsetter til avslutningen er vurdert.
+    expect(rader.at(-1)!).toEqual(['Fra dag 15', expect.stringMatching(/^6,25 mg.*1¼ tabletter à 5 mg/)])
+    expect(within(plan).getByText(/Planen går ikke til null\. Fra dag 15 står pasienten på 6,25 mg/)).toBeTruthy()
     expect(within(plan).getByRole('heading', { name: 'Versjoner' })).toBeTruthy()
     expect(within(plan).getByRole('heading', { name: 'Advarsler' })).toBeTruthy()
 

@@ -541,6 +541,34 @@ export function apneValg(r: Regel): string[] {
   ]
 }
 
+/**
+ * Brudd på kravet om at en ren seponering aldri går til 0 av seg selv: ingen
+ * avslutning (nulltrinn) er godkjent faglig (P7.5). Hvert forløp i en
+ * beregnbar seponeringsregel, også et gruppemedlems egne faser, må slutte med
+ * en nedtrapping med individuell avslutning og kan ikke seponere. Bytter
+ * (seponering før et annet legemiddel) og regler som bare er tekstlige, er
+ * unntatt. Kontrollen og godkjenningen bruker begge denne, så en regel som
+ * bryter kravet, er aldri klinisk godkjent, uansett status.
+ */
+export function nulltrinnfeil(r: Pick<Regel, 'plan' | 'beregnbarhet' | 'medlemmer'>): string[] {
+  if (r.plan.form !== 'seponering' || r.beregnbarhet === 'bare_tekstlig') return []
+  return r.plan.forlop.flatMap((f) => {
+    const varianter: [string, Fase[]][] = [
+      [`forløp ${f.id}`, f.faser],
+      ...(f.virkestoff.type === 'gruppe' ? (r.medlemmer ?? []).flatMap((m) => (m.faser ? [[`forløp ${f.id} for ${m.nokkel}`, m.faser] as [string, Fase[]]] : [])) : []),
+    ]
+    return varianter.flatMap(([hvor, faser]) => {
+      const sist = faser.at(-1)
+      return [
+        ...(faser.some((x) => x.type === 'seponer') ? [`${hvor} seponerer; ingen avslutning er godkjent, så en seponeringsregel kan ikke seponere`] : []),
+        ...(sist?.type !== 'nedtrapping' || sist.avslutning !== 'individuell'
+          ? [`${hvor} slutter ikke med en nedtrapping med individuell avslutning; ingen avslutning er godkjent, så en seponeringsregel kan ikke gå til null`]
+          : []),
+      ]
+    })
+  })
+}
+
 /** Grunnlaget for hver omregningstabell i planen. */
 export function grunnlagITabeller(r: Pick<Regel, 'plan'>): [string, Grunnlag][] {
   return r.plan.forlop.flatMap((f) =>
