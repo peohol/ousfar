@@ -1,0 +1,53 @@
+{
+  "stoff": "penfluridol",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-10-30T04:15:57.810377+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 1,
+    "hentet": 0,
+    "dokumenter": 0,
+    "mangler": [
+      {
+        "merkevare_id": "ID_182FFE27-26B3-4D56-AEFC-B2A2F92179CA",
+        "varenavn": "Acemap",
+        "navn_form_styrke": "Acemap tab 20 mg",
+        "produsent": "ACE Pharmaceuticals",
+        "atc": "N05AG03",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 0 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 0,
+        "ikke_dmp": 0,
+        "uten_omtale": 1
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "Ingen preparatomtale ble hentet. SPC-behovet er ikke dekket; se «dekning».",
+      "antall": {
+        "preparater": 1,
+        "hentet": 0,
+        "mangler": 1,
+        "dokumenter": 0
+      }
+    }
+  ],
+  "adresser": [],
+  "dokumenter": [],
+  "utelatt": []
+}
