@@ -1,18 +1,54 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "advarsel",
   "jobb": {
     "gren": "kuratorjobb/manuell-41080590071",
     "foresporsel_commit": "52b16cfbeb58a0695ee0f445f8a9681544ef7bb7",
     "foresporsel_sha256": "cfccfdf835f63ba3eb8da9413444943b9b20d33d1a0deae657172b99b50d0377",
     "kode_commit": "c58509067b9f530f36d25b6953495c5fd634f14f",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/41080590071",
-    "startet_kl": "2026-10-30T15:25:58.876Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-30T15:26:00.551Z",
+    "ferdig_kl": "2026-10-30T15:26:07.267Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "trifluoperazin"
+    ],
+    "oppgaver": [
+      "funksjonstest",
+      "spc"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 709
+    }
+  ],
+  "stoffer": {
+    "trifluoperazin": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/trifluoperazin/funksjonstest.json"
+        },
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/trifluoperazin/spc.json"
+        }
+      }
+    }
+  }
 }
