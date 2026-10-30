@@ -1,0 +1,54 @@
+På grunn av potensialet for å fremkalle ortostatisk hypotensjon (se pkt. 4.4), kan det observeres enda
+en virkning når Palmeux administreres med andre legemidler som har dette potensialet, f.eks. andre
+antipsykotika, trisykliske antidepressiva.
+
+Forsiktighet anbefales hvis paliperidon kombineres med andre legemidler som er kjent for å senke
+krampeterskelen (f.eks. fenotiaziner eller butyrofenoner, trisykliske antidepressiva eller SSRI-er,
+tramadol, meflokin osv.).
+
+Samtidig oral administrering av paliperidon depottabletter ved steady-state (12 mg én gang daglig) og
+valproatnatrium depottabletter (500 mg til 2000 mg én gang daglig) påvirker ikke de farmakokinetiske
+egenskapene til valproat.
+
+En interaksjonsstudie med Palmeux og litium har ikke blitt gjennomført, men en farmakokinetisk
+interaksjon vil sannsynligvis ikke forekomme.
+
+Andre legemidlers potensiale til å påvirke Palmeux
+
+In vitro-studier indikerer at CYP2D6 og CYP3A4 kan være minimalt involvert i metabolismen av
+paliperidon, men det er ingen indikasjoner verken in vitro eller in vivo på at disse isozymene spiller en
+betydelig rolle i metabolismen til paliperidon. Samtidig administrering av oral paliperidon med
+paroksetin, en potensiell CYP2D6-hemmer, viste ingen klinisk signifikant virkning på
+farmakokinetikken til paliperidon.
+
+Samtidig oral administrering av paliperidon depottabletter én gang daglig og karbamazepin 200 mg to
+ganger daglig, forårsaket en reduksjon på ca. 37 % i gjennomsnittlig steady-state Cmax og AUC av
+paliperidon. Denne reduksjonen forårsakes i betydelig grad av en 35 % økning i renal clearance av
+paliperidon, sannsynligvis som et resultat at karbamazepin induserer renalt-P-gp. En mindre reduksjon
+i mengden virkestoff som utskilles uendret i urinen antyder at det var liten virkning på CYP-
+metabolismen eller biotilgjengeligheten til paliperidon ved samtidig administrering av karbamazepin.
+Større reduksjoner i plasmakonsentrasjoner av paliperidon kan forekomme med høyere doser av
+karbamazepin. Ved oppstart av karbamazepin skal Palmeux-dosen revurderes og økes ved behov. Ved
+seponering av karbamazepin derimot, skal Palmeux-dosen revurderes og så reduseres hvis nødvendig.
+
+Samtidig oral administrering av en enkeltdose paliperidon depottablett på 12 mg og valproatnatrium
+depotformulering (to 500 mg tabletter én gang daglig) resulterte i en økning på omtrent 50 % i Cmax og
+AUC for paliperidon, sannsynligvis et resultat av økt oral absorpsjon. Siden ingen virkning på
+systemisk clearance ble observert, vil en klinisk signifikant interaksjon ikke forventes mellom
+valproatnatrium depottabletter og intramuskulær injeksjon av Palmeux. Denne interaksjonen har ikke
+blitt undersøkt med Palmeux.
+
+Samtidig bruk av Palmeux og risperidon eller oral paliperidon
+
+Da paliperidon er risperidons viktigste aktive metabolitt, bør det utvises forsiktighet når Palmeux
+administreres samtidig med risperidon eller med oral paliperidon over lengre tid. Sikkerhetsdata som
+omfatter samtidig bruk av Palmeux og andre antipsykotika, er begrensede.
+
+Samtidig bruk av Palmeux og psykostimulantia
+
+Kombinert bruk av psykostimulantia (f.eks. metylfenidat) og paliperidon kan medføre
+ekstrapyramidale symptomer ved endring av én eller begge behandlinger (se pkt. 4.4).
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet

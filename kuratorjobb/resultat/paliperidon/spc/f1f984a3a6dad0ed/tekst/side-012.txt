@@ -1,0 +1,51 @@
+Labyrint                                   øresmerter
+Hjertesykdommer        takykardi           atrioventrikulær     atrieflimmer,
+                                           blokk, lednings-     sinusarytmi
+                                           forstyrrelser, QT-
+                                           forlengelse i EKG,
+                                           postural ortostatisk
+                                           takykardisyndrom,
+                                           bradykardi,
+                                           abnormal EKG,
+                                           palpitasjoner
+Karsykdommer           hypertensjon       hypotensjon,           venetrombose,       lungeemboli,
+                                          ortostatisk            rødming             iskemi
+                                          hypotensjon
+Sykdommer i            hoste, nesetetthet dyspné, tette          søvnapné-           hyper-
+respirasjonsorganer,                      luftveier, hvesing,    syndrom, tette      ventilering,
+thorax og                                 faryngolaryngeale      lunger, ralling     aspirasjons-
+mediastinum                               smerter, epistakse                         pneumoni,
+                                                                                     dysfoni
+Gastrointestinale      abdominalsmerter, abdominalt              pankreatitt,        tarm-
+sykdommer              oppkast, kvalme, ubehag,                  hoven tunge,        obstruksjon,
+                       forstoppelse,      gastroenteritt,        fekal               ileus
+                       diaré, dyspepsi,   dysfagi,               inkontinens,
+                       tannverk           munntørrhet,           fekalom, cheilitt
+                                          flatulens
+Sykdommer i lever og   økte transaminaser økt gammagluta-                            gulsott
+galleveier                                myltransferase,
+                                          økte leverenzymer
+Hud- og                                   urtikaria, pruritus,   legemiddel-         Stevens-
+underhudssykdom                           utslett, alopeci,      indusert            Johnsons
+mer                                       eksem, tørr hud,       erupsjon,           syndrom,
+                                          erytem, akne           hyperkratose,       toksisk
+                                                                 flass               epidermal
+                                                                                     nekrolyse,
+                                                                                     angioødem,
+                                                                                     hudmis-
+                                                                                     farging,
+                                                                                     seboreisk
+                                                                                     eksem
+Sykdommer i            smerter i muskler   økt kreatin-        rabdomyolyse,         unormal
+muskler, bindevev og   og skjelett,        fosfokinase i blod, leddhevelse           kropps-
+skjelett               ryggsmerte,         muskelspasmer,                            holdning
+                       artralgi            leddstivhet,
+                                           muskelsvakhet,
+                                           nakkesmerter
+Sykdommer i nyre og                        urininkontinens,    urinretensjon
+urinveier                                  pollakiuri, dysuri
+Graviditet,                                                                          legemiddel-
+puerperale og                                                                        abstinens-
+perinatale lidelser                                                                  symptomer
+                                                                                     hos nyfødte
+                                                                                     (se pkt. 4.6)

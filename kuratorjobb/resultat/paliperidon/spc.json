@@ -1,0 +1,881 @@
+{
+  "stoff": "paliperidon",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-10-30T04:15:57.810377+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 24,
+    "hentet": 8,
+    "dokumenter": 2,
+    "mangler": [
+      {
+        "merkevare_id": "ID_1EBA18C9-F51D-4194-B237-38E4CC2ECBEF",
+        "varenavn": "Invega",
+        "navn_form_styrke": "Invega depottab 3 mg",
+        "produsent": "Janssen",
+        "atc": "N05AX13",
+        "legemiddelform": "Depottablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_272DE2DA-FD0F-4C53-B4D3-2BE75B99EB17",
+        "varenavn": "Xeplion",
+        "navn_form_styrke": "Xeplion depotinj væske, susp 75 mg/sprøyte",
+        "produsent": "Janssen-Cilag International N.V.",
+        "atc": "N05AX13",
+        "legemiddelform": "Depotinjeksjonsvæske, suspensjon",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_322056B6-0235-4784-AA39-D27F6ED4175D",
+        "varenavn": "Xeplion",
+        "navn_form_styrke": "Xeplion depotinj væske, susp 50 mg/sprøyte",
+        "produsent": "Janssen-Cilag International N.V.",
+        "atc": "N05AX13",
+        "legemiddelform": "Depotinjeksjonsvæske, suspensjon",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_36F2390E-60A1-47A9-963C-E4DDA91D340B",
+        "varenavn": "Trevicta",
+        "navn_form_styrke": "Trevicta depotinj væske, susp 350 mg/sprøyte",
+        "produsent": "Janssen-Cilag International N.V.",
+        "atc": "N05AX13",
+        "legemiddelform": "Depotinjeksjonsvæske, suspensjon",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_3C329197-AF25-46F3-BC13-73100A5A504C",
+        "varenavn": "Invega",
+        "navn_form_styrke": "Invega depottab 6 mg",
+        "produsent": "Janssen",
+        "atc": "N05AX13",
+        "legemiddelform": "Depottablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_458E8A59-846A-4239-A5AC-88A604556293",
+        "varenavn": "Xeplion",
+        "navn_form_styrke": "Xeplion depotinj væske, susp 150 mg",
+        "produsent": "Orifarm AS",
+        "atc": "N05AX13",
+        "legemiddelform": "Depotinjeksjonsvæske, suspensjon",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_766C1B91-6063-473A-94FB-7C900DF6A4BB",
+        "varenavn": "Niapelf",
+        "navn_form_styrke": "Niapelf depotinj væske, susp 25 mg/sprøyte",
+        "produsent": "Neuraxpharm",
+        "atc": "N05AX13",
+        "legemiddelform": "Depotinjeksjonsvæske, suspensjon",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_84A0C00C-D0FD-478B-9A04-91219E0758DA",
+        "varenavn": "Xeplion",
+        "navn_form_styrke": "Xeplion depotinj væske, susp 150 mg/sprøyte",
+        "produsent": "Janssen",
+        "atc": "N05AX13",
+        "legemiddelform": "Depotinjeksjonsvæske, suspensjon",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_98EB144D-83C6-40DB-A5CE-9EB6A0C4D812",
+        "varenavn": "Trevicta",
+        "navn_form_styrke": "Trevicta depotinj væske, susp 263 mg/sprøyte",
+        "produsent": "Janssen-Cilag International N.V.",
+        "atc": "N05AX13",
+        "legemiddelform": "Depotinjeksjonsvæske, suspensjon",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_A5046B71-9CFC-4F8C-AC35-04FF112FF7E0",
+        "varenavn": "Trevicta",
+        "navn_form_styrke": "Trevicta depotinj væske, susp 175 mg/sprøyte",
+        "produsent": "Janssen-Cilag International N.V.",
+        "atc": "N05AX13",
+        "legemiddelform": "Depotinjeksjonsvæske, suspensjon",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_B0283AAD-33F9-4F66-B50C-3B282B6B50ED",
+        "varenavn": "Trevicta",
+        "navn_form_styrke": "Trevicta depotinj væske, susp 525 mg/sprøyte",
+        "produsent": "Janssen-Cilag International N.V.",
+        "atc": "N05AX13",
+        "legemiddelform": "Depotinjeksjonsvæske, suspensjon",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_B715BBD0-60F8-470B-B097-3D2BAAA196DB",
+        "varenavn": "Xeplion",
+        "navn_form_styrke": "Xeplion depotinj væske, susp 75 mg/sprøyte",
+        "produsent": "Janssen",
+        "atc": "N05AX13",
+        "legemiddelform": "Depotinjeksjonsvæske, suspensjon",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_C80EB60C-C470-4658-BC9E-B39B54EA20C7",
+        "varenavn": "Xeplion",
+        "navn_form_styrke": "Xeplion depotinj væske, susp 100 mg/sprøyte",
+        "produsent": "Janssen-Cilag International N.V.",
+        "atc": "N05AX13",
+        "legemiddelform": "Depotinjeksjonsvæske, suspensjon",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_CC1C214E-0923-4D5C-B1C1-152774BF3842",
+        "varenavn": "Xeplion",
+        "navn_form_styrke": "Xeplion depotinj væske, susp 25 mg/sprøyte",
+        "produsent": "Janssen-Cilag International N.V.",
+        "atc": "N05AX13",
+        "legemiddelform": "Depotinjeksjonsvæske, suspensjon",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_E0320591-795C-46D2-8D42-6945D17D11D4",
+        "varenavn": "Xeplion",
+        "navn_form_styrke": "Xeplion depotinj væske, susp 150 mg/sprøyte",
+        "produsent": "Janssen-Cilag International N.V.",
+        "atc": "N05AX13",
+        "legemiddelform": "Depotinjeksjonsvæske, suspensjon",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_E1FB9C04-C256-4AFA-ABC9-6042B6A9D48F",
+        "varenavn": "Xeplion",
+        "navn_form_styrke": "Xeplion depotinj væske, susp 100 mg/sprøyte",
+        "produsent": "Janssen",
+        "atc": "N05AX13",
+        "legemiddelform": "Depotinjeksjonsvæske, suspensjon",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 8 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 8,
+        "ikke_dmp": 0,
+        "uten_omtale": 16
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "16 av 24 preparater i FEST mangler en hentet preparatomtale fra DMP: 16 uten preparatomtale i FEST (f.eks. sentralt godkjente, med omtalen hos EMA). SPC-behovet er ikke dekket; se «dekning.mangler».",
+      "antall": {
+        "preparater": 24,
+        "hentet": 8,
+        "mangler": 16,
+        "dokumenter": 2
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/19-12995.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/19-12995.pdf",
+      "hentet_kl": "2026-10-30T16:52:10.611Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "370650",
+        "content-md5": "CJAxdzebLOpSMacN2af9eg==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:59 GMT",
+        "etag": "0x8DE85F8F1F36978",
+        "date": "Fri, 30 Oct 2026 16:52:11 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_04F37B21-5E5E-42DB-A377-6337BB33C875",
+          "varenavn": "Palmeux",
+          "navn_form_styrke": "Palmeux depotinj væske, susp 150 mg/sprøyte",
+          "produsent": "Amdipharm Ltd",
+          "atc": "N05AX13",
+          "legemiddelform": "Depotinjeksjonsvæske, suspensjon"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/19-12995.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (370650 byte).",
+          "antall": {
+            "bytes": 370650
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "f1f984a3a6dad0edb37d206d13187f25f6a4d458696a8a0cdd6b33318ccfccea"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-15102.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-15102.pdf",
+      "hentet_kl": "2026-10-30T16:52:21.032Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "438306",
+        "content-md5": "rrLEmCSArWismOWMl60T5g==",
+        "last-modified": "Thu, 19 Mar 2026 20:49:21 GMT",
+        "etag": "0x8DE85F8FF8EFB5F",
+        "date": "Fri, 30 Oct 2026 16:52:21 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_306C9C54-5564-4527-A37D-816DF1274728",
+          "varenavn": "Paliperidon Zentiva",
+          "navn_form_styrke": "Paliperidon Zentiva depotinj væske, susp 75 mg",
+          "produsent": "Zentiva k.s.",
+          "atc": "N05AX13",
+          "legemiddelform": "Depotinjeksjonsvæske, suspensjon i ferdigfylt sprøyte"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-15102.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (438306 byte).",
+          "antall": {
+            "bytes": 438306
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "2f994c3ad37c04ab34fcfea9091c7222a119d7c366a7dfcab5e53483440bb1a8"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/19-12994.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/19-12994.pdf",
+      "hentet_kl": "2026-10-30T16:52:31.376Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "370650",
+        "content-md5": "CJAxdzebLOpSMacN2af9eg==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:59 GMT",
+        "etag": "0x8DE85F8F1EF2462",
+        "date": "Fri, 30 Oct 2026 16:52:31 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_4B3D18F8-7521-41BC-9240-5D28F136EAAF",
+          "varenavn": "Palmeux",
+          "navn_form_styrke": "Palmeux depotinj væske, susp 100 mg/sprøyte",
+          "produsent": "Amdipharm Ltd",
+          "atc": "N05AX13",
+          "legemiddelform": "Depotinjeksjonsvæske, suspensjon"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/19-12994.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (370650 byte).",
+          "antall": {
+            "bytes": 370650
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "f1f984a3a6dad0edb37d206d13187f25f6a4d458696a8a0cdd6b33318ccfccea"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/19-12993.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/19-12993.pdf",
+      "hentet_kl": "2026-10-30T16:52:32.307Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "370650",
+        "content-md5": "CJAxdzebLOpSMacN2af9eg==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:59 GMT",
+        "etag": "0x8DE85F8F1EC17AF",
+        "date": "Fri, 30 Oct 2026 16:52:33 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_85D4CE8C-723F-4EF8-B135-02A42DF23F52",
+          "varenavn": "Palmeux",
+          "navn_form_styrke": "Palmeux depotinj væske, susp 75 mg/sprøyte",
+          "produsent": "Amdipharm Ltd",
+          "atc": "N05AX13",
+          "legemiddelform": "Depotinjeksjonsvæske, suspensjon"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/19-12993.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (370650 byte).",
+          "antall": {
+            "bytes": 370650
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "f1f984a3a6dad0edb37d206d13187f25f6a4d458696a8a0cdd6b33318ccfccea"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-15104.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-15104.pdf",
+      "hentet_kl": "2026-10-30T16:52:33.438Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "438306",
+        "content-md5": "rrLEmCSArWismOWMl60T5g==",
+        "last-modified": "Thu, 19 Mar 2026 20:49:21 GMT",
+        "etag": "0x8DE85F8FF9478CF",
+        "date": "Fri, 30 Oct 2026 16:52:33 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_8A0CB0EE-CB05-4B80-BF59-E1D655E15040",
+          "varenavn": "Paliperidon Zentiva",
+          "navn_form_styrke": "Paliperidon Zentiva depotinj væske, susp 150 mg",
+          "produsent": "Zentiva k.s.",
+          "atc": "N05AX13",
+          "legemiddelform": "Depotinjeksjonsvæske, suspensjon i ferdigfylt sprøyte"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-15104.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (438306 byte).",
+          "antall": {
+            "bytes": 438306
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "2f994c3ad37c04ab34fcfea9091c7222a119d7c366a7dfcab5e53483440bb1a8"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-15103.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-15103.pdf",
+      "hentet_kl": "2026-10-30T16:52:33.644Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "438306",
+        "content-md5": "rrLEmCSArWismOWMl60T5g==",
+        "last-modified": "Thu, 19 Mar 2026 20:49:21 GMT",
+        "etag": "0x8DE85F8FF91E122",
+        "date": "Fri, 30 Oct 2026 16:52:34 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_9475DA27-AC93-4EFE-B56E-31BC22DD2B3C",
+          "varenavn": "Paliperidon Zentiva",
+          "navn_form_styrke": "Paliperidon Zentiva depotinj væske, susp 100 mg",
+          "produsent": "Zentiva k.s.",
+          "atc": "N05AX13",
+          "legemiddelform": "Depotinjeksjonsvæske, suspensjon i ferdigfylt sprøyte"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-15103.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (438306 byte).",
+          "antall": {
+            "bytes": 438306
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "2f994c3ad37c04ab34fcfea9091c7222a119d7c366a7dfcab5e53483440bb1a8"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-15101.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-15101.pdf",
+      "hentet_kl": "2026-10-30T16:52:34.163Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "438306",
+        "content-md5": "rrLEmCSArWismOWMl60T5g==",
+        "last-modified": "Thu, 19 Mar 2026 20:49:21 GMT",
+        "etag": "0x8DE85F8FF8C63AB",
+        "date": "Fri, 30 Oct 2026 16:52:34 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_D17114CF-CFDE-4305-834B-1AACA0C520DC",
+          "varenavn": "Paliperidon Zentiva",
+          "navn_form_styrke": "Paliperidon Zentiva depotinj væske, susp 50 mg",
+          "produsent": "Zentiva k.s.",
+          "atc": "N05AX13",
+          "legemiddelform": "Depotinjeksjonsvæske, suspensjon i ferdigfylt sprøyte"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-15101.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (438306 byte).",
+          "antall": {
+            "bytes": 438306
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "2f994c3ad37c04ab34fcfea9091c7222a119d7c366a7dfcab5e53483440bb1a8"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/19-12992.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/19-12992.pdf",
+      "hentet_kl": "2026-10-30T16:52:34.558Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "370650",
+        "content-md5": "CJAxdzebLOpSMacN2af9eg==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:59 GMT",
+        "etag": "0x8DE85F8F1E8BCAE",
+        "date": "Fri, 30 Oct 2026 16:52:35 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_DA22AA33-6490-4978-8B77-36897C536E62",
+          "varenavn": "Palmeux",
+          "navn_form_styrke": "Palmeux depotinj væske, susp 50 mg/sprøyte",
+          "produsent": "Amdipharm Ltd",
+          "atc": "N05AX13",
+          "legemiddelform": "Depotinjeksjonsvæske, suspensjon"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/19-12992.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (370650 byte).",
+          "antall": {
+            "bytes": 370650
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "f1f984a3a6dad0edb37d206d13187f25f6a4d458696a8a0cdd6b33318ccfccea"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "f1f984a3a6dad0edb37d206d13187f25f6a4d458696a8a0cdd6b33318ccfccea",
+      "bytes": 370650,
+      "mappe": "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed",
+      "pdf": {
+        "sider": 21,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Wed Nov 19 11:56:37 2025 UTC",
+        "endret": "Wed Nov 19 11:56:37 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/original.pdf",
+        "tekst": "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/tekst/side-001.txt",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/tekst/side-002.txt",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/tekst/side-003.txt",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/tekst/side-004.txt",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/tekst/side-005.txt",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/tekst/side-006.txt",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/tekst/side-007.txt",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/tekst/side-008.txt",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/tekst/side-009.txt",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/tekst/side-010.txt",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/tekst/side-011.txt",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/tekst/side-012.txt",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/tekst/side-013.txt",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/tekst/side-014.txt",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/tekst/side-015.txt",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/tekst/side-016.txt",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/tekst/side-017.txt",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/tekst/side-018.txt",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/tekst/side-019.txt",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/tekst/side-020.txt",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/tekst/side-021.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/sider/side-001.png",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/sider/side-002.png",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/sider/side-003.png",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/sider/side-004.png",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/sider/side-005.png",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/sider/side-006.png",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/sider/side-007.png",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/sider/side-008.png",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/sider/side-009.png",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/sider/side-010.png",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/sider/side-011.png",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/sider/side-012.png",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/sider/side-013.png",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/sider/side-014.png",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/sider/side-015.png",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/sider/side-016.png",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/sider/side-017.png",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/sider/side-018.png",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/sider/side-019.png",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/sider/side-020.png",
+          "kuratorjobb/resultat/paliperidon/spc/f1f984a3a6dad0ed/sider/side-021.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 10,
+        "til": 15
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (21 sider).",
+          "antall": {
+            "sider": 21
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 48027
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 10."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 21
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "2f994c3ad37c04ab34fcfea9091c7222a119d7c366a7dfcab5e53483440bb1a8",
+      "bytes": 438306,
+      "mappe": "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab",
+      "pdf": {
+        "sider": 19,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "Hqrdtemplateclean_no",
+        "laget": "Tue Dec 23 15:24:17 2025 UTC",
+        "endret": "Tue Dec 23 15:24:17 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/original.pdf",
+        "tekst": "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/tekst/side-001.txt",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/tekst/side-002.txt",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/tekst/side-003.txt",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/tekst/side-004.txt",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/tekst/side-005.txt",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/tekst/side-006.txt",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/tekst/side-007.txt",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/tekst/side-008.txt",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/tekst/side-009.txt",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/tekst/side-010.txt",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/tekst/side-011.txt",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/tekst/side-012.txt",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/tekst/side-013.txt",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/tekst/side-014.txt",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/tekst/side-015.txt",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/tekst/side-016.txt",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/tekst/side-017.txt",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/tekst/side-018.txt",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/tekst/side-019.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/sider/side-001.png",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/sider/side-002.png",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/sider/side-003.png",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/sider/side-004.png",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/sider/side-005.png",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/sider/side-006.png",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/sider/side-007.png",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/sider/side-008.png",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/sider/side-009.png",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/sider/side-010.png",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/sider/side-011.png",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/sider/side-012.png",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/sider/side-013.png",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/sider/side-014.png",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/sider/side-015.png",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/sider/side-016.png",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/sider/side-017.png",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/sider/side-018.png",
+          "kuratorjobb/resultat/paliperidon/spc/2f994c3ad37c04ab/sider/side-019.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 9,
+        "til": 13
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (19 sider).",
+          "antall": {
+            "sider": 19
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 49751
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 9."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 19
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": []
+}

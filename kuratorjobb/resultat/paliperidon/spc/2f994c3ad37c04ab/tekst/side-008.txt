@@ -1,0 +1,59 @@
+antimalariamidler (f.eks. meflokin). Denne listen er veiledende og ikke fullstendig.
+
+Paliperidon Zentivas potensiale til å påvirke andre legemidler
+Paliperidon forventes ikke å forårsake klinisk relevante farmakokinetiske interaksjoner med
+legemidler som metaboliseres av cytokrom P-450-isozymer.
+
+På grunn av virkningene som paliperidon har på sentralnervesystemet (CNS) (se pkt. 4.8), bør
+Paliperidon Zentiva brukes med forsiktighet i kombinasjon med andre sentralvirkende legemidler,
+f.eks. anxiolytika, de fleste antipsykotika, hypnotika, opiater osv. eller alkohol.
+
+Paliperidon kan antagonisere virkningen av levodopa og andre dopaminagonister. Hvis denne
+kombinasjonen anses som nødvendig, spesielt i sluttfasen av Parkinsons sykdom, skal laveste
+effektive dose av hver behandling forskrives.
+
+På grunn av potensialet for å indusere ortostatisk hypotensjon (se pkt. 4.4), kan det observeres enda en
+virkning når Paliperidon Zentiva administreres med andre legemidler som har dette potensialet, f.eks.
+andre antipsykotika, trisykliske antidepressiva.
+
+Forsiktighet anbefales hvis paliperidon kombineres med andre legemidler som er kjent for å senke
+krampeterskelen (f.eks. fenotiaziner eller butyrofenoner, trisykliske antidepressiva eller SSRI-er,
+tramadol, meflokin osv.).
+
+Samtidig oral administrering av paliperidon depottabletter ved steady-state (12 mg én gang daglig) og
+valproatnatrium depottabletter (500 mg til 2 000 mg én gang daglig) påvirker ikke de
+farmakokinetiske egenskapene til valproat.
+
+En interaksjonsstudie med Paliperidon Zentiva og litium har ikke blitt gjennomført, men en
+farmakokinetisk interaksjon vil sannsynligvis ikke forekomme.
+
+Andre legemidlers potensiale til å påvirke Paliperidon Zentiva
+In vitro-studier indikerer at CYP2D6 og CYP3A4 kan være minimalt involvert i metabolismen av
+paliperidon, men det er ingen indikasjoner verken in vitro eller in vivo på at disse isozymene spiller en
+betydelig rolle i metabolismen til paliperidon. Samtidig administrering av oral paliperidon med
+paroksetin, en potensiell CYP2D6-hemmer, viste ingen klinisk signifikant virkning på
+farmakokinetikken til paliperidon.
+
+Samtidig oral administrering av paliperidon depottabletter én gang daglig og karbamazepin 200 mg to
+ganger daglig, forårsaket en reduksjon på ca. 37 % i gjennomsnittlig steady-state Cmax og AUC av
+paliperidon. Denne reduksjonen forårsakes i betydelig grad av en 35 % økning i renal clearance av
+paliperidon, sannsynligvis som et resultat at karbamazepin induserer renalt-P-gp. En mindre reduksjon
+i mengden virkestoff som utskilles uendret i urinen antyder at det var liten virkning på CYP-
+metabolismen eller biotilgjengeligheten til paliperidon ved samtidig administrering av karbamazepin.
+Større reduksjoner i plasmakonsentrasjoner av paliperidon kan forekomme med høyere doser av
+karbamazepin.
+
+Ved initiering av karbamazepin skal Paliperidon Zentiva-dosen revurderes og økes ved behov.
+
+Ved seponering av karbamazepin derimot, skal Paliperidon Zentiva-dosen revurderes og så reduseres
+hvis nødvendig.
+
+Samtidig oral administrering av en enkeltdose paliperidon depottablett på 12 mg og valproatnatrium
+depotformulering (to 500 mg tabletter én gang daglig) resulterte i en økning på omtrent 50 % i Cmax og
+AUC for paliperidon, sannsynligvis et resultat av økt oral absorpsjon. Siden ingen virkning på
+systemisk clearance ble observert, vil en klinisk signifikant interaksjon ikke forventes mellom
+valproatnatrium depottabletter og intramuskulær injeksjon av Paliperidon Zentiva. Denne
+interaksjonen har ikke blitt studert med Paliperidon Zentiva.
+
+
+                                                   8

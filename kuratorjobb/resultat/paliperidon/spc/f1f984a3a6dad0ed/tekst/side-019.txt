@@ -1,0 +1,54 @@
+6-12 mg orale paliperidon depotformuleringer selv på dagene med lavest konsentrasjon før ny
+dosering (dag 8 og dag 36). På grunn av forskjellen i gjennomsnittlige farmakokinetiske profiler
+mellom de to legemidlene, bør det utvises forsiktighet når det gjøres en direkte sammenligning av de
+farmakokinetiske egenskapene.
+
+Nedsatt leverfunksjon
+
+Paliperidon metaboliseres ikke nevneverdig i leveren. paliperidon injeksjon ble ikke studert hos
+pasienter med nedsatt leverfunksjon, men det kreves ingen dosejustering hos pasienter med lett eller
+moderat nedsatt leverfunksjon. I en studie med oral paliperidon hos forsøkspersoner med moderat
+nedsatt leverfunksjon (Child-Pugh, klasse B) var plasmakonsentrasjoner av fritt paliperidon
+sammenliknbare med plasmakonsentrasjonen hos friske frivillige. Paliperidon har ikke blitt studert hos
+pasienter med alvorlig nedsatt leverfunksjon.
+
+Nedsatt nyrefunksjon
+
+Distribusjonen av en enkeltdose oral paliperidon depotformulering på 3 mg ble studert hos
+forsøkspersoner med ulike grader av nyrefunksjon. Elimineringen av paliperidon ble redusert med
+redusert estimert kreatininclearance. Total clearance av paliperidon ble redusert hos forsøkspersoner
+med nedsatt nyrefunksjon med gjennomsnittlig 32 % ved lett (CrCl = 50 til < 80 ml/min), 64 % ved
+moderat (CrCl = 30 til < 50 ml/min) og 71 % ved alvorlig (CrCl = 10 til < 30 ml/min) nedsatt
+nyrefunksjon, tilsvarende en gjennomsnittlig økning i eksponeringen (AUCinf) på henholdsvis 1,5,
+2,6, og 4,8 ganger, sammenlignet med friske forsøkspersoner. Basert på et begrenset antall
+observasjoner med paliperidon injeksjon hos forsøkspersoner med lett nedsatt nyrefunksjon og
+farmakokinetiske simuleringer, anbefales en redusert dose (se pkt. 4.2).
+
+Eldre
+
+Populasjonsfarmakokinetisk analyse viste ingen holdepunkter for aldersrelaterte farmakokinetiske
+forskjeller.
+
+Kroppsmasseindeks (BMI)/kroppsvekt
+
+Farmakokinetiske studier med paliperidonpalmitat har vist noe lavere (10-20 %)
+plasmakonsentrasjoner av paliperidon hos pasienter som er overvektige eller svært overvektige
+sammenlignet med normalvektige pasienter (se pkt. 4.2).
+
+Rase
+
+Populasjonsfarmakokinetisk analyse av data fra studier med oral paliperidon viste ingen raseforskjeller
+i farmakokinetikken til paliperidon etter paliperidon injeksjon-administrering.
+
+Kjønn
+
+Det ble ikke observert noen klinisk signifikante forskjeller mellom menn og kvinner.
+
+Røykestatus
+
+I følge in vitro-studier med humane leverenzymer, er ikke paliperidon et substrat for CYP1A2.
+Røyking skal derfor ikke ha noen virkning på farmakokinetikken til paliperidon. Effekt av røyking på
+farmakokinetikken til paliperidon ble ikke studert med paliperidon injeksjon. En
+populasjonsfarmakokinetisk analyse basert på data med orale paliperidon depotformuleringer viste en
+litt lavere eksponering for paliperidon hos røykere, sammenlignet med ikke-røykere. Det er imidlertid
+usannsynlig at denne forskjellen har klinisk relevans.

@@ -1,0 +1,42 @@
+*
+ For studien R092670-PSY-3007 ble en initieringsdose på 150 mg gitt til alle forsøkspersoner i paliperidon-
+behandlingsgrupper på dag 1, etterfulgt av den tilordnede dosen etterpå.
+Merk: Negativ endring i skår indikerer forbedring.
+
+Opprettholdelse av symptomkontroll og forsinkelse av tilbakefall av schizofreni
+Effekten av paliperidon for å opprettholde symptomatisk kontroll og forsinke tilbakefall av schizofreni
+ble fastslått i en langsiktig dobbeltblind, placebokontrollert studie med fleksibel dose som omfattet
+849 voksne (ikke eldre) forsøkspersoner som oppfylte DSM-IV-kriteriene for schizofreni. Denne
+studien inkluderte en 33-ukers åpen akutt behandlings- og stabiliseringsfase, en randomisert,
+dobbeltblind, placebokontrollert fase for å observere tilbakefall, samt en 52-ukers åpen
+forlengelsesperiode. I denne studien med doser av paliperidon på 25, 50, 75 og 100 mg administrert en
+gang per måned, var 75 mg dose kun tillatt i den 52-ukers åpne forlengelsen. Forsøkspersonene
+mottok initielt fleksible doser (25-100 mg) paliperidon i løpet av en 9-ukers overføringsperiode,
+etterfulgt av en 24-ukers vedlikeholdsperiode, der forsøkspersonene måtte ha en PANSS-skår på ≤ 75.
+Doseringsjusteringer var kun tillatt i løpet av de første 12 ukene av vedlikeholdsperioden. Totalt 410
+stabiliserte pasienter ble randomisert til enten paliperidon (gjennomsnittlig varighet 171 dager
+[verdiområde 1 dag til 407 dager]) eller til placebo (gjennomsnittlig varighet 105 dager [varierende fra
+8 dager til 441 dager]) inntil de opplevde et tilbakefall av schizofrenisymptomer i den dobbeltblinde
+fasen med variabel lengde. Studien ble stoppet tidlig på grunn av effektårsaker, da en signifikant
+lengre tid før tilbakefall (p < 0,0001, figur 1) ble sett i pasienter som ble behandlet med paliperidon,
+sammenlignet med placebo (hazard ratio = 4,32; 95 % CI: 2,4-7,7).
+
+
+
+
+           v
+Figur 1: Kaplan-Meier-tidsplott før tilbakefall – midlertidig analyse (Interim analyse av Intent-to-
+Treat)
+
+Pediatrisk populasjon
+Det europeiske legemiddelkontoret (the European Medicines Agency) har gitt unntak fra forpliktelsen
+til å presentere resultater fra studier med paliperidon i alle undergrupper av den pediatriske
+populasjonen ved schizofreni (se pkt. 4.2 for informasjon om pediatrisk bruk).
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon og distribusjon
+Paliperidonpalmitat er palmitatester-prodruget av paliperidon. På grunn av den ekstremt lave
+vannløseligheten, oppløses paliperidonpalmitat langsomt etter intramuskulær injeksjon før det
+
+                                                      15

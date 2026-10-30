@@ -1,0 +1,52 @@
+Effekten av paliperidon injeksjon i den akutte behandlingen av schizofreni ble etablert i fire korttids
+(en 9-ukers og tre 13-ukers) dobbeltblinde, randomiserte, placebokontrollerte studier med fast dose
+hos voksne innlagte pasienter med akutt tilbakefall som oppfylte DSM-IV-kriteriene for schizofreni.
+De faste dosene av paliperidon injeksjon i disse studiene ble gitt på dag 1, 8 og 36 i studien over 9
+uker, og i tillegg på dag 64 i studiene over 13 uker. Ingen ekstra oral antipsykotisk supplering var
+nødvendig i løpet av den akutte behandlingen av schizofreni med paliperidon injeksjon. Det primære
+endepunktet for effekt ble definert som en reduksjon i totalskår på PANSS (Positive and Negative
+Syndrome Scale), slik som vist i tabellen nedenfor. PANSS er et validert skåringsverktøy som er
+sammensatt av fem faktorer for å evaluere positive symptomer, negative symptomer, uorganiserte
+tanker, ukontrollert fiendtlighet/opprørthet og angst/depresjon. Funksjonen ble evaluert ved bruk av
+PSP-skalaen (Personal and Social Performance Scale). PSP er en validert klinisk rangert skala som
+måler personlig og sosial funksjon i fire domener: Sosialt nyttige aktiviteter (arbeid og studie),
+personlige og sosiale relasjoner, evne til å ta vare på seg selv og forstyrrende og aggressiv atferd.
+
+I en 13-ukers studie (n = 636) ved sammenligning av tre faste doser av paliperidon injeksjon (initial
+deltamuskelinjeksjon på 150 mg etterfulgt av 3 gluteale eller deltoide doser på enten 25 mg/4 uker,
+100 mg/4 uker eller 150 mg/4 uker) med placebo, var alle tre dosene av paliperidon injeksjon
+overlegne i forhold til placebo med hensyn til å forbedre den totale PANSS-skåren. I denne studien
+viste både behandlingsgruppen på 100 mg/4 uker og 150 mg /4 uker, men ikke behandlingsgruppen på
+25 mg/4 uker, statistisk overlegenhet overfor placebo med hensyn til PSP-skår. Disse resultatene
+underbygger effekt under hele behandlingsvarigheten og forbedringen i PANSS og ble observert så
+tidlig som dag 4 med signifikant forskjell fra placebo i 25 mg og 150 mg paliperidon injeksjon-
+gruppene innen dag 8.
+
+Resultatene av de andre studiene ga statistisk signifikante resultater i favør av paliperidon injeksjon,
+unntatt 50 mg-dosen i én studie (se tabellen nedenfor).
+
+    Totalskår på PANSS (Positive and Negative Syndrome Scale) for schizofreni - Endring fra baseline til
+ endepunkt - LOCF for studiene R092670-SCH-201, R092670-PSY-3003, R092670-PSY-3004 og R092670-
+                                   PSY-3007: Primæreffekt analysesett
+                                 Placebo         25 mg         50 mg            100 mg           150 mg
+R092670-PSY-3007*                n = 160        n = 155                         n = 161          n = 160
+Gjennomsnitt ved baseline (SD) 86,8 (10,31) 86,9 (11,99)                     86,2 (10,77)     88,4 (11,70)
+Gjennomsnittlig endring (SD)   -2,9 (19,26) -8,0 (19,90)          --        -11,6 (17,63)     -13,2 (18,48)
+P-verdi (vs. placebo)                --          0,034                          < 0,001          < 0,001
+R092670-PSY-3003                 n = 132                       n = 93            n = 94           n = 30
+Gjennomsnitt ved baseline (SD) 92,4 (12,55)                 89,9 (10,78)     90,1 (11,66)     92,2 (11,72)
+Gjennomsnittlig endring (SD)   -4,1 (21,01)        --       -7,9 (18,71)    -11,0 (19,06)      -5,5 (19,78)
+P-verdi (vs. placebo)                --                        0,193             0,019               --
+R092670-PSY-3004                 n = 125        n = 129       n = 128           n = 131
+Gjennomsnitt ved baseline (SD) 90,7 (12,22) 90,7 (12,25) 91,2 (12,02)        90,8 (11,70)
+Gjennomsnittlig endring (SD)   -7,0 (20,07) -13,6 (21,45) -13,2 (20,14) -16,1 (20,36)                --
+P-verdi (vs. placebo)                --          0,015         0,017            < 0,001
+R092670-SCH-201                     n = 66                          n = 63           n = 68
+Gjennomsnitt ved baseline (SD) 87,8 (13,90)                      88,0 (12,39)    85,2 (11,09)
+Gjennomsnittlig endring (SD)      6,2 (18,25)         --         -5,2 (21,52)    -7,8 (19,40)         --
+P-verdi (vs. placebo)                  --                           0,001          < 0,0001
+* For studien R092670-PSY-3007 ble en initieringsdose på 150 mg gitt til alle forsøkspersoner i paliperidon
+  injeksjon-behandlingsgrupper på dag 1, etterfulgt av den tilordnede dosen etterpå.
+Merk: Negativ endring i skår indikerer forbedring.
+
+Opprettholdelse av symptomkontroll og forsinkelse av tilbakefall av schizofreni

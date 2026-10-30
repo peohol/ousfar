@@ -1,0 +1,55 @@
+plasmakonsentrasjoner oppnås (median Tmax) etter 13 dager. Frigivelsen av virkestoffet starter så tidlig
+som dag 1 og varer i minst 4 måneder.
+
+Gjennomsnittlig ble en 28 % høyere Cmax observert etter intramuskulær injeksjon av enkeltdoser
+(25-150 mg) i deltamuskelen, sammenlignet med injeksjon i glutealmuskelen. De to initielle
+intramuskulære deltamuskelinjeksjonene på 150 mg på dag 1 og 100 mg på dag 8 bidrar til å oppnå
+terapeutiske konsentrasjoner hurtig. Frigivelsesprofilen og doseringsregimet til paliperidon injeksjon
+resulterer i vedvarende terapeutiske konsentrasjoner. Den totale eksponeringen overfor paliperidon
+etter paliperidon injeksjon-administrering var dose-proporsjonal over et doseområde på 25-150 mg og
+mindre enn dose-proporsjonal for Cmax for doser som overskrider 50 mg. Det gjennomsnittlige
+forholdet for steady-state peak:trough ratio for en paliperidon injeksjon-dose på 100 mg var 1,8 etter
+gluteal administrering og 2,2 etter deltamuskeladministrering. Gjennomsnittlig tilsynelatende
+halveringstid av paliperidon etter paliperidon injeksjon-administrering over doseområdet på 25-150
+mg var fra 25-49 dager.
+
+Den absolutte biotilgjengeligheten av paliperidonpalmitat etter paliperidon injeksjon-administrering er
+100 %.
+
+Etter administrering av paliperidonpalmitat interkonverterer (+)- og (-)-enantiomerene til paliperidon
+og oppnår et AUC (+)- til (-)-ratio på omtrent 1,6-1,8.
+
+Plasmaproteinbindingen av racemisk paliperidon er 74 %.
+
+Biotransformasjon og eliminering
+
+En uke etter administrering av en enkelt oral dose med 1 mg 14C-paliperidon med umiddelbar frigivelse,
+ble 59 % av dosen utskilt uendret i urinen, noe som indikerer at paliperidon ikke er utbredt metabolisert
+i leveren. Ca. 80 % av den administrerte radioaktiviteten ble gjenfunnet i urin og 11 % i avføring. Fire
+metabolismeveier har blitt identifisert in vivo, og ingen av disse utgjorde mer enn 6,5 % av dosen:
+dealkylering, hydroksylering, dehydrogenering og benzisoksazolspaltning. Selv om in vitro-studier
+antydet en rolle for CYP2D6 og CYP3A4 i metabolismen til paliperidon, er det ikke noe tegn in vivo på
+at disse isozymene spiller en vesentlig rolle i metabolismen til paliperidon. Farmakokinetiske analyser
+av populasjonen indikerte ingen detekterbar forskjell i tilsynelatende clearance av paliperidon etter
+administreringen av oral paliperidon mellom de som har en omfattende metabolisering av CYP-2D6-
+substrater (raske omsettere (”extensive metabolisers”)) og de som metaboliserer i liten grad (langsomme
+omsettere (”poor metabolisers”)).
+
+In vitro-studier med humane levermikrosomer viste at paliperidon ikke medfører nevneverdig hemming
+av metabolismen av legemider som metaboliseres av cytokrom P450-isozymer, inkludert CYP1A2,
+CYP2A6, CYP2C8/9/10, CYP2D6, CYP2E1, CYP3A4 og CYP3A5.
+
+In vitro-studier har vist at paliperidon er et P-gp-substrat og en svak hemmer av P-gp ved høye
+konsentrasjoner. Ingen in vivo-data er tilgjengelige og den kliniske relevansen er ukjent.
+
+Langtidsvirkende injeksjoner med paliperidonpalmitat sammenliknet med orale depotformuleringer av
+paliperidon
+
+Paliperidon injeksjon er designet for å frigi paliperidon over en måneds periode mens den orale
+paliperidon depotformuleringen administeres daglig. Initieringsregimet for paliperidon injeksjon (150
+mg/100 mg i deltamuskelen på dag 1/dag 8) ble designet for å oppnå en rask steady-state
+konsentrasjon av paliperidon ved behandlingsinitiering uten å bruke oral supplering.
+
+Generelt var initieringsplasmanivåene til paliperidon injeksjon innenfor eksponeringsområdet som ble
+observert med 6-12 mg oral paliperidon depotformulering. Bruken av paliperidon injeksjon-
+initieringsregimet gjorde det mulig for pasienter å opprettholde samme eksponeringsintervall som med
