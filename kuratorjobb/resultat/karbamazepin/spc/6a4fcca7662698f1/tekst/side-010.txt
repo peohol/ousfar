@@ -1,0 +1,59 @@
+-     platehemmende midler: tiklopidin
+-     midler til behandling av tuberkulose: isoniazid
+-     antivirale stoffer: proteasehemmere for behandling av HIV (f.eks. ritonavir)
+-     kalsiumantagonister (f.eks. verapamil, diltiazem)
+-     diuretika: acetazolamid
+-     muskelrelaksantia: oksybutynin, dantrolen
+-     midler mot ulcus: omeprazol, muligens cimetidin
+-     andre: nikotinamid (i høye doser)
+
+Økt plasmanivå av karbamazepin kan gi symptomene som er beskrevet i pkt. 4.8 (f.eks. svimmelhet,
+tretthet, ustø gange, dobbeltsyn). Derfor skal karbamazepins plasmakonsentrasjon sjekkes og dosen
+reduseres ved behov, dersom slike symptomer oppstår.
+
+Økt plasmakonsentrasjon av den aktive metabolitten karbamazepin-10,11-epoksid
+Menneskelig mikrosomal epoksidhydrolase er blitt identifisert som det enzymet som er ansvarlig for
+dannelsen av 10,11-transdiol, derivat av karbamazepin-10,11 epoksid. Koadministrasjon av hemmere
+av menneskelig mikrosomal epoksidhydrolase kan resultere i økt plasmakonsentrasjon av
+karbamazepin-10,11-epoksid. Økt plasmanivå av karbamazepin-10,11-epoksid kan føre til
+symptomene som er beskrevet i pkt. 4.8 (f.eks. svimmelhet, tretthet, ustø gange, dobbeltsyn). Hvis det
+oppstår slike symptomer, må derfor plasmakonsentrasjonen sjekkes og dosen reduseres om nødvendig.
+Symptomene kan være forårsaket av: brivaracetam, loksapin, primidon, progabid, quetiapin,
+valproinsyre, valnoktamid og valpromid.
+
+Andre interaksjoner
+Samtidig bruk av karbamazepin og levetiracetam kan øke karbamazepins toksisitet.
+
+Samtidig bruk av karbamazepin og eslikarbazepinacetat:
+I en studie med friske forsøkspersoner førte samtidig administrasjon av eslikarbazepinacetat 800 mg
+én gang daglig og karbamazepin 400 mg to ganger daglig til en gjennomsnittlig 32 % lavere
+eksponering for den aktive metabolitten eslikarbazepin. Det ble ikke registrert endret eksponering for
+karbamazepin eller metabolitten karbamazepinepoksid. Avhengig av individuell respons, kan det være
+nødvendig å øke dosen av eslikarbazepinacetat ved samtidig bruk av karbamazepin. Resultater fra
+pasientstudier har vist at samtidig behandling øker faren for følgende bivirkninger: diplopi,
+koordinasjonsvansker og svimmelhet. Risikoen for at andre spesifikke bivirkninger øker på grunn av
+samtidig bruk av karbamazepin og eslikarbazepinacetat, kan ikke utelukkes.
+
+Ved samtidig bruk av karbamazepin og okskarbazepin har det forekommet fall i karbamazepins
+plasmanivå på 0–22 % med en samtidig økning i karbamazepinepoksids plasmanivå på 30 %.
+
+Kombinasjon av karbamazepin med litium, nevroleptika eller metoklopramid kan i sjeldne tilfeller
+føre til reversible nevrotoksiske manifestasjoner (se pkt. 4.4).
+
+Hos pasienter som allerede tar nevroleptika, vil tillegg av karbamazepin kunne øke risikoen for
+malignt antipsykotikasyndrom eller Stevens-Johnsons syndrom.
+
+Levertoksisteten til isoniazid kan økes av karbamazepin.
+
+Samtidig bruk av karbamazepin og visse diuretika (hydroklortiazid, furosemid) kan medføre
+symptomatisk hyponatremi.
+Karbamazepins plasmanivå bør overvåkes ved samtidig bruk av karbamazepin og isotretinoin
+(virkestoff til behandling av akne).
+
+Samtidig bruk av karbamazepin og paracetamol kan redusere paracetamols biotilgjengelighet.
+Langvarig bruk av karbamazepin og paracetamol (acetaminofen) kan føre til hepatotoksisitet.
+
+
+
+
+                                                                                                         10

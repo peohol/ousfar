@@ -1,0 +1,59 @@
+* rapportert som sjelden i enkelte asiatiske land (se pkt. 4.4).
+** se også ”Bivirkninger fra spontane bivirkningsrapporter og funn i litteraturen (ukjent frekvens)”.
+
+Bivirkninger fra spontane bivirkningsrapporter og funn i litteraturen (ukjent frekvens)
+Følgende bivirkninger er erfart under markedsføringen av Tegretol via spontanrapporter og funn i
+litteraturen. Da disse bivirkningene er rapportert frivillig fra en populasjon av ukjent størrelse, er det
+ikke mulig å gi et pålitelig estimat av frekvens, og frekvensen er derfor kategorisert som ikke kjent.
+Bivirkningene er oppført i henhold til MedDRA organklassesystem. Innenfor hver frekvensgruppering
+er bivirkninger presentert etter synkende alvorlighetsgrad.
+
+Infeksjoner og infestasjoner
+Reaktivering av infeksjon med Humant herpesvirus 6.
+
+Blod og lymfesystem
+Benmargssvikt.
+
+Skader, forgiftninger og behandlingskomplikasjoner
+Fall (forbundet med ataksi, svimmelhet, søvnighet, hypotensjon og forvirringstilstander på grunn av
+behandlingen med Tegretol) (se pkt. 4.4).
+
+Nervesystemet
+Sedasjon, hukommelsessvikt.
+
+Mage-tarmkanalen
+Kolitt.
+
+Immunsystemet
+Legemiddelreaksjon med eosinofili og systemiske symptomer (DRESS).
+
+Hud og subkutant vev
+Akutt generalisert eksantematøs pustulose (AGEP), lichenoid keratose, onychomadese, fiksert
+legemiddeleksantem, generalisert bulløst fiksert legemiddeleksantem.
+
+Muskel- og skjelettsystemet samt bindevev
+Det er rapportert tilfeller av redusert bentetthet, osteopeni, osteoporose og frakturer hos pasienter som
+har brukt karbamazepin over lang tid. Virkningsmekanismen for hvordan karbamazepin påvirker
+benmetabolismen er ikke identifisert.
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til
+Direktoratet for medisinske produkter: www.dmp.no/meldeskjema.
+
+4.9   Overdosering
+
+Toksisk dose; barn 1-5 år: 0,4-0,8 g, voksne: ca. 2 g. Toksisk plasmakonsentrasjon: > 45 mol/l
+(> 11 mg/l). Symptomer fra sentralnervesystemet, kardiovaskulære effekter eller respirasjonsdepresjon
+er vanlig ved overdosering.
+
+Sentralnervøse symptomer: CNS depresjon, desorientering, redusert bevissthetsnivå, søvnforstyrrelser,
+agitasjon, hallusinasjoner, koma, tåkesyn, dysartri, nystagmus, ataksi, dyskinesi, initiell hyperrefleksi
+senere hyporefleksi, kramper, psykomotoriske forstyrrelser, myoklonus, hypotermi, mydriasis.
+Respiratoriske symptomer: Respirasjonsdepresjon, lungeødem.
+Kardiovaskulære symptomer: Takykardi, hypotensjon (eller hypertensjon), ledningsforstyrrelser med
+breddeøkende QRS-kompleks, synkope i assosiasjon med hjertestans.
+Gastrointestinalsystemet: Brekninger, forsinket magetømming, redusert tarmmotilitet.
+
+                                                   14

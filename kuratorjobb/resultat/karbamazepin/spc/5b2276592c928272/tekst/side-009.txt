@@ -1,0 +1,59 @@
+Karbamazepin kan redusere plasmakonsentrasjonen eller redusere eller fjerne effekten av visse
+legemidler slik at dosejustering kan være nødvendig. Dette gjelder for følgende legemidler:
+
+Analgetika/antiinflammatoriske midler: buprenorfin, metadon, paracetamol, fenazon, tramadol
+Antibiotika: doksycyklin
+Antikoagulantia: perorale antikoagulantia (f.eks. warfarin, fenprokumon, dikumarol, acenokumarol,
+rivaroksaban, dabigatran, apiksaban, edoksaban)
+Antidepressiva: bupropion, citalopram, mianserin, nefazodon, sertralin, trazodon, trisykliske
+antidepressiva (f.eks. imipramin, amitriptylin, nortriptylin, klomipramin). Samtidig behandling med
+MAO-hemmere kan føre til toksisk serotonin syndrom. Behandling med MAO-hemmere bør avsluttes
+minst 2 uker før behandling med karbamazepin kan starte (se pkt. 4.3).
+Antiemetika: aprepitant
+Antiepileptika: klobazam, klonazepam, etosuksimid, felbamat, lamotrigin, eslikarbazepin,
+okskarbazepin, primidon, tigabin, topiramat, valproinsyre, zonisamid Karbamazepin kan både øke og
+redusere plasmakonsentrasjonen av fenytoin, i enkelte sjeldne tilfeller er plasmanivået av mefenytoin
+rapportert å øke
+Antimykotika: itrakonazol, vorikonazol, reduksjon av plasmakonsentrasjon kan gi tap av effekt.
+Alternative antiepileptika kan anbefales hos pasienter som behandles med vorikonazol eller
+itrakonazol.
+Anthelmintika: praziquantel, albendazol
+Antineoplastiske midler: imatinib, cyklofosfamid, lapatinib, temsirolimus
+Antipsykotika: klozapin, haloperidol og bromperidol, olanzapin, quetiapin, risperidon, ziprasidon,
+aripiprazol, paliperidon
+Antiviral midler: proteasehemmere for behandling av HIV (f.eks. indinavir, ritonavir, saquinavir)
+Anxiolytika: alprazolam, midazolam
+Bronkodilaterende midler: teofyllin
+Antikonseptiva: hormonelle antikonseptiva (alternative prevensjonsmidler bør vurderes)
+Kardiovaskulære legemidler: kalsiumkanalblokkere (dihydropyridingruppen f.eks. felodipin), digoksin
+Kolesterolsenkende legemidler: simvastatin
+Kortikosteroider: kortikosteroider (f.eks. prednisolon, deksametason)
+Legemidler brukt ved erektil dysfunksjon: tadalafil
+Immunsuppressive midler: ciklosporin, everolimus, takrolimus, sirolimus
+Tyreoideapreparater: levotyroksin
+Andre: produkter som inneholder østrogen og/eller progesteron
+
+Kombinasjoner som krever spesiell vurdering
+Samtidig behandling med isoniazid kan øke isoniazid-indusert levertoksisitet. Kombinert bruk med
+litium, metoklopramid eller neuroleptika kan gi økte neurologiske bivirkninger (i kombinasjon med
+neuroleptika som haloperidol, tioridazin, kan dette skje selv ved terapeutiske serumkonsentrasjoner).
+Samtidig behandling med enkelte diuretika (hydroklortiazid, furosemid) kan gi symptomatisk
+hyponatremi. Siden karbamazepin antagoniserer nondepolariserende muskelrelakserende midler
+(f.eks. pankuron), vil kanskje en doseøkning av disse være nødvendig. Pasienten bør også observeres
+med tanke på kortere virketid av den neuromuskulære blokkaden. Som for andre psykoaktive
+legemidler, kan karbamazepin redusere pasientens alkoholtoleranse. Avholdenhet anbefales.
+Det er rapportert at samtidig bruk av karbamazepin og levetiracetam kan øke karbamazepin-indusert
+toksisitet.
+Samtidig bruk av karbamazepin med direktevirkende perorale antikoagulater (rivaroksaban,
+dabigatran, apiksaban og edoksaban) kan føre til redusert plasmakonsentrasjon av den direktevirkende
+perorale antikoagulanten, som medfører risiko for trombose. Dersom samtidig bruk er nødvendig
+anbefales derfor tett oppfølging av tegn og symptomer på trombose.
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet
+
+Risiko relatert til epilepsi og antiepileptika generelt
+
+
+                                                     9

@@ -1,0 +1,58 @@
+Redusert plasmakonsentrasjon av karbamazepin
+Karbamazepin metaboliseres av cytokromsystemet P450 (hovedsakelig av isoenzymet CYP3A4).
+Induktorer av CYP3A4 kan øke metabolismen av karbamazepin og kan slik muligens forårsake en
+nedgang i plasmakonsentrasjonen av karbamazepin og terapeutisk effektivitet. Vice versa kan en
+nedsatt metabolisme av karbamazepin forårsakes av seponering av en CYP3A4-induktor, og dermed
+føre til en økt plasmakonsentrasjonen av karbamazepin.
+Følgende legemidler kan redusere plasmakonsentrasjonen av karbamazepin:
+-       andre antikonvulsiva: okskarbazepin, fenobarbital, fenytoin, fosfenytoin, primidon,
+        valproinsyre. For å unngå fenytoinforgiftning og subterapeutiske konsentrasjoner av
+        karbamazepin, anbefales det å justere plasmakonsentrasjonen av fenytoin til 13 mikrogram/ml
+        før man påbegynner tilleggsbehandling med karbamazepin
+-       bronkodilatorer, antiastmatika, teofyllin, aminofyllin
+-       midler til behandling av tuberkulose: rifampicin
+-       cytostatika: doksorubicin, cisplatin
+-       hudmidler: isotretinoin
+
+Vær oppmerksom på at valproat og primidon øker plasmakonsentrasjonen av den farmakologisk
+aktive metabolitten i karbamazepin, karbamazepin-10, 11-epoksid.
+
+Samtidig bruk av felbamat kan redusere plasmanivået av karbamazepin og øke plasmanivået av
+karbamazepin-10,11-epoksid, og samtidig kan plasmanivået av felbamat reduseres.
+
+Som følge av disse gjensidige interaksjonene, anbefales det at plasmanivået overvåkes, spesielt ved
+samtidig behandling med flere antiepileptika, og at dosen av Trimonil retard justeres ved behov.
+
+Redusert plasmanivå av karbamazepin kan medføre sykdomsforverring, f.eks. tilbakefall av
+epileptiske anfall, krampeanfall ved multippel sklerose eller tilbakefall av ansiktssmerter eller smerter
+i munn og svelg.
+
+Serumkonsentrajonen av karbamazepin kan bli redusert ved samtidig bruk av urtepreparater som
+inneholder johannesurt (Hypericum perforatum). Dette skyldes at johannesurt induserer enzymer som
+metaboliserer legemidler. Urtepreparater som inneholder johannesurt bør derfor ikke kombineres med
+Trimonil. Enzyminduksjonen kan vare i minst 2 uker etter at behandlingen med Johannesurt er stanset.
+Hvis en pasient allerede bruker johannesurt bør konsentrasjonen av karbamazepin måles og
+behandlingen med johannesurt avsluttes. Karbamazepinnivået kan øke når johannesurtbehandling
+avsluttes. Justering av karbamazepindosen kan være påkrevet.
+
+Økt plasmakonsentrasjon av karbamazepin
+Karbamazepin metaboliseres hovedsakelig av cytokromsystemet P450 (hovedsakelig ved isoenzymet
+CYP3A4) til den aktive metabolitten karbamazepin-10,11-epoksid. Det vil si at
+plasmakonsentrasjonen av karbamazepin kan økes også ved samtidig behandling med hemmere av
+cytokrom P450.
+Følgende legemidler kan øke plasmakonsentrasjonen av karbamazepin:
+-     analgetika: dekstropropoksyfen/propoksyfen, ibuprofen
+-     androgener: danazol
+-     antibiotika: ciprofloksacin, makrolidantibiotika (f.eks. erytromycin, klaritromycin,
+      troleandomycin, josamycin)
+-     antidepressiva: fluoksetin, fluvoksamin, nefazodon, paroksetin, trazodon, viloksazin, muligens
+      desipramin
+-     antiepileptika: stiripentol
+-     antimykotika av azoltypen (f.eks. itrakonazol, ketokonazol, flukonazol, vorikonazol). For
+      pasienter under behandling med vorikonazol eller itrakonazol, må alternative antikonvulsiva
+      anbefales.
+-     antihistaminer: terfenadin
+
+
+
+                                                                                                            9

@@ -1,0 +1,1220 @@
+{
+  "stoff": "karbamazepin",
+  "status": "ok",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-10-30T04:15:57.810377+00:00"
+  },
+  "dekning": {
+    "dekket": true,
+    "preparater": 12,
+    "hentet": 12,
+    "dokumenter": 6,
+    "mangler": []
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 10 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 10,
+        "ikke_dmp": 0,
+        "uten_omtale": 0
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "ok",
+      "melding": "Alle 12 preparatene FEST oppgir, har en hentet preparatomtale fra DMP.",
+      "antall": {
+        "preparater": 12,
+        "hentet": 12,
+        "mangler": 0,
+        "dokumenter": 6
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06460.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06460.pdf",
+      "hentet_kl": "2026-10-30T15:48:01.509Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "355974",
+        "content-md5": "SQCcCQ4msBgueD+V3hTqvQ==",
+        "last-modified": "Thu, 08 Oct 2026 06:49:24 GMT",
+        "etag": "0x8DF25084A20F5B0",
+        "date": "Fri, 30 Oct 2026 15:48:02 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_0AA42516-34DA-4E14-B10D-793B8CCE16E5",
+          "varenavn": "Tegretol",
+          "navn_form_styrke": "Tegretol mikst susp 20 mg/ml",
+          "produsent": "Novartis Norge (2)",
+          "atc": "N03AF01",
+          "legemiddelform": "Mikstur, suspensjon"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06460.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (355974 byte).",
+          "antall": {
+            "bytes": 355974
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "bba6f4e7ecac82806811c7b71dccf4f92b5028c4c96d56420ca839b25d99ed84"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07240.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07240.pdf",
+      "hentet_kl": "2026-10-30T15:48:08.249Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "356171",
+        "content-md5": "+EKCzXSYcnVjYqXyqyKW7A==",
+        "last-modified": "Thu, 08 Oct 2026 06:49:26 GMT",
+        "etag": "0x8DF25084B7CD912",
+        "date": "Fri, 30 Oct 2026 15:48:08 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_78DE3D91-7690-4A11-86F3-8753ADC5DA73",
+          "varenavn": "Tegretol Retard",
+          "navn_form_styrke": "Tegretol Retard depottab 400 mg",
+          "produsent": "Novartis Norge (2)",
+          "atc": "N03AF01",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07240.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (356171 byte).",
+          "antall": {
+            "bytes": 356171
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "18e1e6dfb35db1ee4f4bfb80fb3385a809540ac35eaa0a8aaab272d3d319cfe5"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07223.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07223.pdf",
+      "hentet_kl": "2026-10-30T15:48:14.799Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "339731",
+        "content-md5": "kOJJ1gMmM09XwXPhyiUKkg==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:52 GMT",
+        "etag": "0x8DE53793D7ED12C",
+        "date": "Fri, 30 Oct 2026 15:48:15 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_7D0DC484-360E-45CC-B9A9-02174C6CCA6C",
+          "varenavn": "Trimonil Retard",
+          "navn_form_styrke": "Trimonil Retard depottab 300 mg",
+          "produsent": "Orifarm AS",
+          "atc": "N03AF01",
+          "legemiddelform": "Depottablett"
+        },
+        {
+          "merkevare_id": "ID_8EBF09A5-655F-4CE9-B831-3BE40A3574CC",
+          "varenavn": "Trimonil Retard",
+          "navn_form_styrke": "Trimonil Retard depottab 300 mg",
+          "produsent": "Desitin Arzneimittel GmbH",
+          "atc": "N03AF01",
+          "legemiddelform": "Depottablett"
+        },
+        {
+          "merkevare_id": "ID_BC885888-4D63-487D-A40B-44C5B2E718B9",
+          "varenavn": "Trimonil Retard",
+          "navn_form_styrke": "Trimonil Retard depottab 300 mg",
+          "produsent": "Abacus Medicine A/S",
+          "atc": "N03AF01",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07223.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (339731 byte).",
+          "antall": {
+            "bytes": 339731
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "6a4fcca7662698f1f674d01502cfc917db58efb4e30665c1836a68e355d9ddce"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07239.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07239.pdf",
+      "hentet_kl": "2026-10-30T15:48:21.358Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "356171",
+        "content-md5": "+EKCzXSYcnVjYqXyqyKW7A==",
+        "last-modified": "Thu, 08 Oct 2026 06:49:26 GMT",
+        "etag": "0x8DF25084B7A8F76",
+        "date": "Fri, 30 Oct 2026 15:48:21 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_98868B85-937B-468C-9C5A-F5BD6EB1CFD1",
+          "varenavn": "Tegretol Retard",
+          "navn_form_styrke": "Tegretol Retard depottab 200 mg",
+          "produsent": "Novartis Norge (2)",
+          "atc": "N03AF01",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07239.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (356171 byte).",
+          "antall": {
+            "bytes": 356171
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "18e1e6dfb35db1ee4f4bfb80fb3385a809540ac35eaa0a8aaab272d3d319cfe5"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07224.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07224.pdf",
+      "hentet_kl": "2026-10-30T15:48:22.401Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "339731",
+        "content-md5": "kOJJ1gMmM09XwXPhyiUKkg==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:59 GMT",
+        "etag": "0x8DE537941C9E578",
+        "date": "Fri, 30 Oct 2026 15:48:22 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_9D03DC81-3BAC-4E8F-A850-4CD8CCEA0305",
+          "varenavn": "Trimonil Retard",
+          "navn_form_styrke": "Trimonil Retard depottab 600 mg",
+          "produsent": "Desitin Arzneimittel GmbH",
+          "atc": "N03AF01",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07224.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (339731 byte).",
+          "antall": {
+            "bytes": 339731
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "6a4fcca7662698f1f674d01502cfc917db58efb4e30665c1836a68e355d9ddce"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06980.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06980.pdf",
+      "hentet_kl": "2026-10-30T15:48:23.629Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "350913",
+        "content-md5": "8a0vZ0sjfMzAJWkMFsPY9w==",
+        "last-modified": "Thu, 08 Oct 2026 06:49:25 GMT",
+        "etag": "0x8DF25084AF77224",
+        "date": "Fri, 30 Oct 2026 15:48:23 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_BB151EB8-4E98-4F4C-8B65-BB89FA190E04",
+          "varenavn": "Tegretol",
+          "navn_form_styrke": "Tegretol tab 100 mg",
+          "produsent": "Novartis Norge (2)",
+          "atc": "N03AF01",
+          "legemiddelform": "Tablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06980.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (350913 byte).",
+          "antall": {
+            "bytes": 350913
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "5b2276592c928272dbd68fd8aa426698fb8b91733f8d57bf855a13329a3dfe96"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-04851.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-04851.pdf",
+      "hentet_kl": "2026-10-30T15:48:29.208Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "350913",
+        "content-md5": "8a0vZ0sjfMzAJWkMFsPY9w==",
+        "last-modified": "Thu, 08 Oct 2026 06:49:22 GMT",
+        "etag": "0x8DF250848C59532",
+        "date": "Fri, 30 Oct 2026 15:48:30 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_C5806312-2DE6-4E1C-A5D9-573535AF9561",
+          "varenavn": "Tegretol",
+          "navn_form_styrke": "Tegretol tab 200 mg",
+          "produsent": "Novartis Norge (2)",
+          "atc": "N03AF01",
+          "legemiddelform": "Tablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-04851.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (350913 byte).",
+          "antall": {
+            "bytes": 350913
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "5b2276592c928272dbd68fd8aa426698fb8b91733f8d57bf855a13329a3dfe96"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07989.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07989.pdf",
+      "hentet_kl": "2026-10-30T15:48:30.560Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "337109",
+        "content-md5": "acYTWBXCV9njgJvdEdE3/g==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:58 GMT",
+        "etag": "0x8DE5379412D94F9",
+        "date": "Fri, 30 Oct 2026 15:48:31 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_C686CFC3-1FB2-472A-BC63-661E94C9E44E",
+          "varenavn": "Carbamazepine Essential Pharma",
+          "navn_form_styrke": "Carbamazepine Essential Pharma stikkpille 125 mg",
+          "produsent": "Essential Pharma (M) Limited",
+          "atc": "N03AF01",
+          "legemiddelform": "Stikkpille"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07989.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (337109 byte).",
+          "antall": {
+            "bytes": 337109
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "58cee776d7c58b443289e0f116e67b76053d617443a8d827cc2eab3b9ad64715"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07990.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07990.pdf",
+      "hentet_kl": "2026-10-30T15:48:36.196Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "337158",
+        "content-md5": "xstWqIDMAOnivZeOH230Lw==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:56 GMT",
+        "etag": "0x8DE5379404D4094",
+        "date": "Fri, 30 Oct 2026 15:48:36 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_DF0B1C0E-D746-425A-9964-31E88DC176ED",
+          "varenavn": "Carbamazepine Essential Pharma",
+          "navn_form_styrke": "Carbamazepine Essential Pharma stikkpille 250 mg",
+          "produsent": "Essential Pharma (M) Limited",
+          "atc": "N03AF01",
+          "legemiddelform": "Stikkpille"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07990.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (337158 byte).",
+          "antall": {
+            "bytes": 337158
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "7ce5f3413e708968446be6bce580a065ba97f25f583d6baf440bb5d39e1533f6"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07859.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07859.pdf",
+      "hentet_kl": "2026-10-30T15:48:41.735Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "339731",
+        "content-md5": "kOJJ1gMmM09XwXPhyiUKkg==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:58 GMT",
+        "etag": "0x8DE5379419A77E2",
+        "date": "Fri, 30 Oct 2026 15:48:42 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_E5CE590B-A194-42E8-8E50-C70523055449",
+          "varenavn": "Trimonil Retard",
+          "navn_form_styrke": "Trimonil Retard depottab 150 mg",
+          "produsent": "Desitin Arzneimittel GmbH",
+          "atc": "N03AF01",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07859.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (339731 byte).",
+          "antall": {
+            "bytes": 339731
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "6a4fcca7662698f1f674d01502cfc917db58efb4e30665c1836a68e355d9ddce"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "bba6f4e7ecac82806811c7b71dccf4f92b5028c4c96d56420ca839b25d99ed84",
+      "bytes": 355974,
+      "mappe": "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280",
+      "pdf": {
+        "sider": 18,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "Hreferralspcclean_no",
+        "laget": "Mon Sep 21 11:18:55 2026 UTC",
+        "endret": "Mon Sep 21 11:18:55 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/original.pdf",
+        "tekst": "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/tekst/side-001.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/tekst/side-002.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/tekst/side-003.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/tekst/side-004.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/tekst/side-005.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/tekst/side-006.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/tekst/side-007.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/tekst/side-008.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/tekst/side-009.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/tekst/side-010.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/tekst/side-011.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/tekst/side-012.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/tekst/side-013.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/tekst/side-014.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/tekst/side-015.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/tekst/side-016.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/tekst/side-017.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/tekst/side-018.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/sider/side-001.png",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/sider/side-002.png",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/sider/side-003.png",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/sider/side-004.png",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/sider/side-005.png",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/sider/side-006.png",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/sider/side-007.png",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/sider/side-008.png",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/sider/side-009.png",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/sider/side-010.png",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/sider/side-011.png",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/sider/side-012.png",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/sider/side-013.png",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/sider/side-014.png",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/sider/side-015.png",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/sider/side-016.png",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/sider/side-017.png",
+          "kuratorjobb/resultat/karbamazepin/spc/bba6f4e7ecac8280/sider/side-018.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 12,
+        "til": 15
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (18 sider).",
+          "antall": {
+            "sider": 18
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 46419
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 12."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 18
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "18e1e6dfb35db1ee4f4bfb80fb3385a809540ac35eaa0a8aaab272d3d319cfe5",
+      "bytes": 356171,
+      "mappe": "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee",
+      "pdf": {
+        "sider": 18,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "Hreferralspcclean_no",
+        "laget": "Mon Sep 21 11:19:04 2026 UTC",
+        "endret": "Mon Sep 21 11:19:04 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/original.pdf",
+        "tekst": "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/tekst/side-001.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/tekst/side-002.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/tekst/side-003.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/tekst/side-004.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/tekst/side-005.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/tekst/side-006.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/tekst/side-007.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/tekst/side-008.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/tekst/side-009.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/tekst/side-010.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/tekst/side-011.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/tekst/side-012.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/tekst/side-013.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/tekst/side-014.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/tekst/side-015.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/tekst/side-016.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/tekst/side-017.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/tekst/side-018.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/sider/side-001.png",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/sider/side-002.png",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/sider/side-003.png",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/sider/side-004.png",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/sider/side-005.png",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/sider/side-006.png",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/sider/side-007.png",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/sider/side-008.png",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/sider/side-009.png",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/sider/side-010.png",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/sider/side-011.png",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/sider/side-012.png",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/sider/side-013.png",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/sider/side-014.png",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/sider/side-015.png",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/sider/side-016.png",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/sider/side-017.png",
+          "kuratorjobb/resultat/karbamazepin/spc/18e1e6dfb35db1ee/sider/side-018.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 11,
+        "til": 15
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (18 sider).",
+          "antall": {
+            "sider": 18
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 45883
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 11."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 18
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "6a4fcca7662698f1f674d01502cfc917db58efb4e30665c1836a68e355d9ddce",
+      "bytes": 339731,
+      "mappe": "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1",
+      "pdf": {
+        "sider": 19,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "PREPARATOMTALE",
+        "laget": "Thu Jun 20 13:10:04 2024 UTC",
+        "endret": "Thu Jun 20 13:10:04 2024 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/original.pdf",
+        "tekst": "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/tekst/side-001.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/tekst/side-002.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/tekst/side-003.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/tekst/side-004.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/tekst/side-005.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/tekst/side-006.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/tekst/side-007.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/tekst/side-008.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/tekst/side-009.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/tekst/side-010.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/tekst/side-011.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/tekst/side-012.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/tekst/side-013.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/tekst/side-014.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/tekst/side-015.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/tekst/side-016.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/tekst/side-017.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/tekst/side-018.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/tekst/side-019.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/sider/side-001.png",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/sider/side-002.png",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/sider/side-003.png",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/sider/side-004.png",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/sider/side-005.png",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/sider/side-006.png",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/sider/side-007.png",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/sider/side-008.png",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/sider/side-009.png",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/sider/side-010.png",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/sider/side-011.png",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/sider/side-012.png",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/sider/side-013.png",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/sider/side-014.png",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/sider/side-015.png",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/sider/side-016.png",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/sider/side-017.png",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/sider/side-018.png",
+          "kuratorjobb/resultat/karbamazepin/spc/6a4fcca7662698f1/sider/side-019.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 13,
+        "til": 16
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (19 sider).",
+          "antall": {
+            "sider": 19
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 48588
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 13."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 19
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "5b2276592c928272dbd68fd8aa426698fb8b91733f8d57bf855a13329a3dfe96",
+      "bytes": 350913,
+      "mappe": "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272",
+      "pdf": {
+        "sider": 17,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "Hreferralspcclean_no",
+        "laget": "Mon Sep 21 11:18:53 2026 UTC",
+        "endret": "Mon Sep 21 11:18:53 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/original.pdf",
+        "tekst": "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/tekst/side-001.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/tekst/side-002.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/tekst/side-003.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/tekst/side-004.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/tekst/side-005.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/tekst/side-006.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/tekst/side-007.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/tekst/side-008.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/tekst/side-009.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/tekst/side-010.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/tekst/side-011.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/tekst/side-012.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/tekst/side-013.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/tekst/side-014.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/tekst/side-015.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/tekst/side-016.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/tekst/side-017.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/sider/side-001.png",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/sider/side-002.png",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/sider/side-003.png",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/sider/side-004.png",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/sider/side-005.png",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/sider/side-006.png",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/sider/side-007.png",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/sider/side-008.png",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/sider/side-009.png",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/sider/side-010.png",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/sider/side-011.png",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/sider/side-012.png",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/sider/side-013.png",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/sider/side-014.png",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/sider/side-015.png",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/sider/side-016.png",
+          "kuratorjobb/resultat/karbamazepin/spc/5b2276592c928272/sider/side-017.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 11,
+        "til": 14
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (17 sider).",
+          "antall": {
+            "sider": 17
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 44541
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 11."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 17
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "58cee776d7c58b443289e0f116e67b76053d617443a8d827cc2eab3b9ad64715",
+      "bytes": 337109,
+      "mappe": "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44",
+      "pdf": {
+        "sider": 17,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "Z34700",
+        "laget": "Wed Nov 22 13:16:59 2023 UTC",
+        "endret": "Wed Nov 22 13:16:59 2023 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/original.pdf",
+        "tekst": "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/tekst/side-001.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/tekst/side-002.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/tekst/side-003.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/tekst/side-004.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/tekst/side-005.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/tekst/side-006.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/tekst/side-007.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/tekst/side-008.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/tekst/side-009.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/tekst/side-010.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/tekst/side-011.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/tekst/side-012.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/tekst/side-013.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/tekst/side-014.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/tekst/side-015.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/tekst/side-016.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/tekst/side-017.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/sider/side-001.png",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/sider/side-002.png",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/sider/side-003.png",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/sider/side-004.png",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/sider/side-005.png",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/sider/side-006.png",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/sider/side-007.png",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/sider/side-008.png",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/sider/side-009.png",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/sider/side-010.png",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/sider/side-011.png",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/sider/side-012.png",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/sider/side-013.png",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/sider/side-014.png",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/sider/side-015.png",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/sider/side-016.png",
+          "kuratorjobb/resultat/karbamazepin/spc/58cee776d7c58b44/sider/side-017.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 10,
+        "til": 14
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (17 sider).",
+          "antall": {
+            "sider": 17
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 41339
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 10."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 17
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "7ce5f3413e708968446be6bce580a065ba97f25f583d6baf440bb5d39e1533f6",
+      "bytes": 337158,
+      "mappe": "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968",
+      "pdf": {
+        "sider": 17,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "Z34700",
+        "laget": "Wed Jun  4 11:20:45 2025 UTC",
+        "endret": "Wed Jun  4 11:20:45 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/original.pdf",
+        "tekst": "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/tekst/side-001.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/tekst/side-002.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/tekst/side-003.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/tekst/side-004.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/tekst/side-005.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/tekst/side-006.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/tekst/side-007.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/tekst/side-008.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/tekst/side-009.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/tekst/side-010.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/tekst/side-011.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/tekst/side-012.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/tekst/side-013.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/tekst/side-014.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/tekst/side-015.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/tekst/side-016.txt",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/tekst/side-017.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/sider/side-001.png",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/sider/side-002.png",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/sider/side-003.png",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/sider/side-004.png",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/sider/side-005.png",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/sider/side-006.png",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/sider/side-007.png",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/sider/side-008.png",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/sider/side-009.png",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/sider/side-010.png",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/sider/side-011.png",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/sider/side-012.png",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/sider/side-013.png",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/sider/side-014.png",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/sider/side-015.png",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/sider/side-016.png",
+          "kuratorjobb/resultat/karbamazepin/spc/7ce5f3413e708968/sider/side-017.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 10,
+        "til": 14
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (17 sider).",
+          "antall": {
+            "sider": 17
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 41339
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 10."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 17
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": []
+}

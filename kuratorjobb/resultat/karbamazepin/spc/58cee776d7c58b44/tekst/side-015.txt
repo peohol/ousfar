@@ -1,0 +1,57 @@
+Intet spesifikt antidot. Plasmakonsentrasjonen bør måles for å bekrefte karbamazepin-forgiftning og
+bestemme alvorlighetsgrad av forgiftningen. Ventrikkeltømming og administrering av aktivt kull.
+Adekvat behandling av rytmeforstyrrelser. For øvrig gis symptomatisk behandling med observasjon av
+sirkulasjon og elektrolyttstatus. Kramper behandles med benzodiazepiner (f.eks. diazepam) eller et
+annet antiepileptikum som f.eks. fenobarbital (vær oppmerksom på faren for respirasjonsdepresjon).
+Hemoperfusjon har vært anbefalt. Det er beskrevet plutselig tilbakefall i forgiftningsforløpet etter en
+tid (2-3 døgn), noe som kan skyldes forsinket absorpsjon.
+
+
+5.      FARMAKOLOGISKE EGENSKAPER
+
+5.1     Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Antiepileptika, karboksamidderivater.
+ATC-kode: N03A F01
+
+Virkningsmekanisme
+Delvis ukjent. Årsaken til preparatets antiepileptiske effekt er trolig at karbamazepin stabiliserer
+hyperstimulerte nervemembraner (blokkerer Na-kanalene), forhindrer gjentatte utladninger, reduserer
+synaptisk overføring av impulser og hemmer frigjøring av glutamat.
+
+Farmakodynamiske effekter
+Antikonvulsivum.
+
+Klinisk effekt og sikkerhet
+Retrospektive genomvide studier med japanere og nord-europeere viste en sammenheng mellom
+alvorlige hudreaksjoner (SJS, TEN, DRESS, AGEP og makulopapulært utslett) forbundet med
+karbamazepin-bruk og tilstedeværelse av HLA-A*3101-allelet hos disse pasientene.
+
+5.2     Farmakokinetiske egenskaper
+
+Absorpsjon
+Mengden karbamazepin som absorberes fra stikkpillene er omkring 25 % lavere enn for tablettene.
+Maks. plasmakonsentrasjon nås i løpet av 12 timer. “Steady-state” plasmakonsentrasjonen nås innen
+1-2 uker avhengig av pasientens status før behandling, auto-induksjon av karbamazepin,
+heteroinduksjon av andre legemidler, dose og varighet av behandlingen. Ved “Steady-state” finner
+man en svak nedgang i Cmaks og Cmin sammenlignet med tablettene.
+
+Distribusjon
+70-80 % av karbamazepin bindes til serumproteiner. Konsentrasjonen av uforandret legemiddel i
+cerebrospinalvæsken og saliva er ca. 20-30 % av plasmakonsentrasjonen. Konsentrasjon i morsmelk er
+25-60 % sammenlignet med plasmakonsentrasjonen. Karbamazepin passerer placentabarrieren. Ved
+antatt fullstendig absorpsjon av karbamazepin er distribusjonsvolumet omkring 0,8-1,9 l/kg.
+
+Biotransformasjon
+Metaboliseres i leveren der epoksidveien som gir 10,11-transdiol-derivatet og dets glukuronider som
+hovedmetabolitter, er den viktigste. Karbamazepin-10,11-epoksid, som er et mellomprodukt i denne
+metabolismeveien, er farmakologisk aktiv men har kortere halveringstid enn karbamazepin. Cytokrom
+P450 3A4 er identifisert som hovedenzymet bak metaboliseringen av karbamazepin til karbamazepin-
+10,11-epoksid. Human mikrosomal epoksidhydrolase har blitt identifisert som enzymet ansvarlig for
+dannelsen av 10,11-transdiol-derivatet fra karbamazepin-10,11-epoksid. 9-hydroksy-metyl-10-
+karbamoyl akridan er en mindre betydningsfull metabolitt som dannes via den samme
+metabolismeveien som karbamazepin-10,11-epoksid. Etter én oral dose karbamazepin gjenfinnes ca.
+30 % i urin som sluttprodukt av epoksidmetabolismeveien. Karbamazepin metaboliseres også til
+monohydroksylerte og N-glukuronid forbindelser via UGT2B7.
+
+Eliminasjon

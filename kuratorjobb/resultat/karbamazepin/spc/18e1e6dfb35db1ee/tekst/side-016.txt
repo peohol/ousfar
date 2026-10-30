@@ -1,0 +1,56 @@
+Depottablettene gir mindre fluktuasjon i plasmakonsentrasjonen, men Cmin. er ikke signifikant redusert
+ved steady-state sammenlignet med tablettene. Steady-state plasmakonsentrasjonen nås innen 1-2 uker
+avhengig av pasientens status før behandling, auto-induksjon av karbamazepin, heteroinduksjon av
+andre legemidler, dose og varighet av behandlingen. Biotilgjengeligheten er omkring 15 % lavere enn
+for vanlige tabletter.
+
+Distribusjon
+70-80 % av karbamazepin bindes til serumproteiner. Konsentrasjonen av uforandret legemiddel i
+cerebrospinalvæsken og saliva er ca. 20-30 % av plasmakonsentrasjonen. Konsentrasjon i morsmelk er
+25-60 % sammenlignet med plasmakonsentrasjonen. Karbamazepin passerer placentabarrieren. Ved
+antatt fullstendig absorpsjon av karbamazepin er distribusjonsvolumet omkring 0,8-1,9 l/kg.
+
+Biotransformasjon
+Metaboliseres i leveren der epoksidveien som gir 10,11-transdiol-derivatet og dets glukuronider som
+hovedmetabolitter, er den viktigste. Karbamazepin-10,11-epoksid, som er et mellomprodukt i denne
+metabolismeveien, er farmakologisk aktiv, men har kortere halveringstid enn karbamazepin.
+Cytokrom P450 3A4 er identifisert som hovedenzymet bak metaboliseringen av karbamazepin til
+karbamazepin-10,11-epoksid. Human mikrosomal epoksidhydrolase har blitt identifisert som enzymet
+ansvarlig for dannelsen av 10,11-transdiol-derivatet fra karbamazepin-10,11-epoksid. 9-hydroksy-
+metyl-10-karbamoyl akridan er en mindre betydningsfull metabolitt som dannes via den samme
+metabolismeveien som karbamazepin-10,11-epoksid. Etter én peroral dose karbamazepin gjenfinnes
+ca. 30 % i urin som sluttprodukt av epoksidmetabolismeveien. Karbamazepin metaboliseres også til
+monohydroksylerte og N-glukuronid forbindelser via UGT2B7.
+
+Eliminasjon
+Karbamazepin utskilles hovedsakelig i urinen (72 %) og fæces (28 %). I urinen gjenfinnes 2 % som
+uomdannet karbamazepin og ca. 1 % som 10,11-epoksid metabolitten. Barn kan ha behov for høyere
+doser karbamazepin (i mg/kg) enn voksne pga. økt eliminasjon av legemidlet. Det er ingenting som
+tyder på at kinetikken av karbamazepin er endret hos eldre. Lett eller moderat nedsatt leverfunksjon
+påvirker ikke metabolismen av karbamazepin, mens clearance øker ved alvorlig dysfunksjon, noe som
+vil kreve en dosereduksjon. Ved nedsatt nyrefunksjon er det ikke rapportert signifikante endringer i
+kinetikken.
+Etter et enkelt inntak er halveringstiden av uomdannet karbamazepin omkring 36 t. Ved
+langtidsbehandling forkortes halveringstiden til 16-24 timer pga. enzyminduksjon av monooksygenase
+systemet i leveren. Ved samtidig behandling med andre enzyminduserende legemidler (fenytoin,
+fenobarbital) vil halveringstiden forkortes ytterligere til omkring 9-10 timer.
+
+5.3   Prekliniske sikkerhetsdata
+
+Prekliniske data indikerer ingen spesiell fare for mennesker basert på konvensjonelle studier av enkel
+og gjentatt dose toksisitet og gentoksisitet.
+
+Karsinogenitet
+Hos rotter behandlet med karbamazepin i 2 år ble det sett økt forekomst av hepatocellulære tumorer
+hos hunnrotter og benigne testikkeltumorer hos hannrotter. Disse funnene anses lite klinisk relevante
+ved terapeutiske doser av karbamazepin
+
+Reproduksjonstoksisitet
+Dyrestudier er utilstrekkelige til å utelukke en teratogen effekt av karbamazepin. I en studie av pre- og
+postnatal utvikling hos rotter ble det sett redusert vektøkning hos avkom ved et maternalt
+doseringsnivå på 192 mg/kg/dag.
+
+
+
+
+                                                   16

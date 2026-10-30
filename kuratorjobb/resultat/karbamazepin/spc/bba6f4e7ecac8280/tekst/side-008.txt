@@ -1,0 +1,59 @@
+forstyrrelser i nyrefunksjonen (akutt tubulær nekrose), akutt nyresvikt og forstyrrelser i
+leverfunksjonen. Medisinsk overvåking inkludert målinger av osmolaritet og/eller aniongap, anbefales
+hos nyfødte under 4 uker. Samtidig administrering med andre legemidler som inneholder
+propylenglykol eller andre substrater for alkoholdehydrogenase, som etanol, øker risikoen for
+akkumulering og toksisitet av propylenglykol. Etylen- og dietylenglykol som finnes i legemidlet (se
+nedenfor) er også substrater for alkoholdehydrogenase.
+
+Dette legemidlet inneholder 875 mg sorbitol i hver 5 ml mikstur, som tilsvarer 175 mg/ml. Pasienter
+med medfødt fruktoseintoleranse bør ikke gis dette legemidlet. Tilleggseffekt av samtidig
+administrerte legemidler som inneholder sorbitol (eller fruktose) og inntak av sorbitol (eller fruktose)
+gjennom dietten skal tas i betraktning. Sorbitol og propylenglykol inneholder rester av etylen- og
+dietylenglykol. Metabolitter av etylenglykol kan forårsake metabolsk acidose og nyreskade.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Cytokrom P4503A4 (CYP3A4) er det viktigste enzymet i dannelsen av den aktive metabolitten
+karbamazepin-10,11-epoksid. Samtidig bruk av legemidler som hemmer CYP3A4 vil føre til høyere
+plasmakonsentrasjon av karbamazepin og dermed øke faren for bivirkninger. Samtidig bruk av
+legemidler som induserer CYP3A4 vil øke metabolismen av karbamazepin slik at
+plasmakonsentrasjonen, og dermed effekten av behandlingen, kan bli redusert. På samme måte kan
+seponering av en CYP3A4-induser redusere metabolismen av karbamazepin og dermed øke
+plasmanivåene av karbamazepin.
+
+Karbamazepin er en potent induser av CYP3A4 og andre fase I og fase II enzymsystemer i leveren, og
+vil dermed kunne redusere plasmanivåer av samtidig administrerte legemidler som i hovedsak
+metaboliseres av CYP3A4.
+
+Legemidler som kan øke plasmanivået av karbamazepin
+Enkelte legemidler øker plasmakonsentrasjonen av karbamazepin ved samtidig bruk. Ettersom en
+forhøyet plasmakonsentrasjon av karbamazepin øker faren for bivirkninger (f.eks. svimmelhet,
+døsighet, ataksi, dobbeltsyn), bør man vurdere dosejustering av karbamazepin og/eller monitorering av
+plasmanivået ved samtidig administrering med følgende legemidler:
+
+Analgetika/antiinflammatoriske midler: dekstropropoksyfen, ibuprofen
+Androgener: danazol
+Antibiotika: makrolidantibiotika (f.eks. erytromycin, troleandomycin, josamycin, klaritromycin,
+ciprofloksacin)
+Antidepressiva: muligens desipramin, fluoksetin, fluvoksamin, nefazodon, paroksetin, trazodon,
+viloksasin
+Antiepileptika: stiripentol, vigabatrin
+Antimykotika: azoler (f.eks. itrakonazol, ketokonazol, flukonazol, vorikonazol)
+se også "Effekt av karbamazepin på plasmanivåer av andre legemidler".
+Alternative antiepileptika kan anbefales hos pasienter som behandles med vorikonazol eller
+itrakonazol.
+Antihistaminer: terfenadin
+Antipsykotika: olanzapin
+Midler til behandling av tuberkulose: isoniazid
+Antivirale midler: proteasehemmere for behandling av hiv (f.eks. ritonavir)
+Karboanhydrasehemmere: acetazolamid
+Kardiovaskulære legemidler: diltiazem, verapamil
+Gastrointestinale legemidler: muligens cimetidin, omeprazol
+Muskelrelaksantia: oksybutynin, dantrolen
+Hemmere av blodplateaggresjon: tiklopidin
+Andre: grapefruktjuice, nikotinamid (hos voksne, kun ved høye doser)
+
+
+
+
+                                                   8

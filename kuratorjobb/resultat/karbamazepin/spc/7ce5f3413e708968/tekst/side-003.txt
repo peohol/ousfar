@@ -1,0 +1,57 @@
+første behandlingsmånedene med Carbamazepine Essential Pharma. Hos pasienter som har utviklet
+SJS eller TEN ved bruk av Carbamazepine Essential Pharma må behandling med karbamazepin ikke
+startes opp igjen på noe tidspunkt (se også informasjon om mindre alvorlige hudbivirkninger
+nedenfor).
+
+Det er estimert at disse reaksjonene oppstår hos 1- 6 av 10 000 nye brukere i land med hovedsakelig
+kaukasiske innbyggere, men risikoen i enkelte asiatiske land er anslått å være omtrent ti ganger høyere
+(se nedenfor).
+
+Det er økende belegg for at forskjellige humant leukocyttantigen HLA-alleler spiller en rolle hos
+pasienter predisponert for immunmedierte bivirkninger (se pkt. 4.2).
+
+Sammenheng med HLA-A*3101 allelet og alvorlige hudreaksjoner
+Hos personer av europeisk avstamming og japanere er det indikasjoner for at
+HLA-A*3101 allelet er forbundet med en økt risiko for karbamazepin-induserte hudreaksjoner. Disse
+hudreaksjonene inkluderer SJS, TEN, DRESS (legemiddelreaksjon med eosinofili og systemiske
+symptomer), AGEP (akutt generalisert eksematøs pustulose) og makulopapulært utslett.
+
+Forekomsten av HLA-A*3101-allel varierer i stor grad mellom etniske populasjoner. Prevalensen av
+HLA-A*3101-allelet er 2-5 % i europeiske befolkningsgrupper og ca. 10 % i japanske
+befolkningsgrupper. Frekvensen av dette allelet er estimert til å være lavere enn 5 % hos majoriteten
+av australske, asiatiske, afrikanske og nord-amerikanske populasjoner, med noen unntak med frekvens
+mellom 5-12 %. Forekomst over 15 % er estimert i noen etniske grupper i Sør-Amerika (Argentina og
+Brasil), Nord-Amerika (USA Navajo og Sioux og Mexico Sonora Seri) og Sør-India (Tamil Nadu) og
+mellom 10-15 % i andre innfødte etnisiteter i samme regioner.
+
+Risikoen for karbamazepin-induserte hudreaksjoner (hovedsakelig mindre alvorlige) i den generelle
+befolkningen er 5.0 % . Hos personer av europeisk avstamming med HLA-A*3101 allelet øker
+risikoen til 26 %, mens fravær av allelet reduserer risikoen til 3.8 %.
+
+Det er ikke tilstrekkelig grunnlag for å anbefale screening for HLA-A*3101 før behandling med
+karbamazepin igangsettes. Screening er generelt ikke anbefalt for pasienter som allerede behandles
+med karbamazepin, da risikoen for SJS/TEN, AGEP, DRESS og makulopapulært utslett overveiende
+inntreffer under behandlingens første få måneder, uavhengig av HLA-A*3101-status. Se informasjon
+om testing nedenfor.
+
+Om pasienter er kjent å være positive for HLA-A*3101 allelet, kan bruk av karbamazepin vurderes
+dersom fordelene oppveier risikoen.
+
+Sammenheng med HLA-B*1502 og alvorlige hudreaksjoner
+Ved behandling med karbamazepin er allelet HLA-B*1502 i individer av han-kinesisk og thailandsk
+opprinnelse vist å være sterkt assosiert med risiko for utvikling av alvorlige hudreaksjoner, som
+SJS/TEN. Prevalensen av bærere av HLA-B*1502 allelet er omtrent 10 % i den han-kinesiske og
+thailandske befolkningen. Når det er mulig skal disse individene screenes for HLA-B*1502 før
+behandlingsoppstart med karbamazepin (se pkt. 4.2). Ved positiv test bør behandling med
+karbamazepin ikke igangsettes med mindre det ikke er noe annet terapeutisk alternativ. Pasienter som
+tester negativt for HLA-B*1502 har lav risiko for Stevens-Johnson syndrom, men reaksjonen kan
+likevel forekomme i svært sjeldne tilfeller.
+
+Enkelte data antyder en økt risiko for alvorlig karbamazepin-assosiert TEN/SJS i andre asiatiske
+populasjoner enn de ovenfor nevnte. Høyere rapporteringsrater av SJS (sjelden heller enn svært
+sjelden) har blitt rapportert i noen land i Asia (f.eks. Taiwan, Malaysia og Filippinene) hvor det er
+høyere prevalens av allelet HLA-B*1502 i populasjonen. Prevalensen av bærere av dette allelet i den
+asiatiske befolkningen er over 15 % på Filippinene og i Malaysia, mellom
+2-4 % i Sør Asia inkludert indere. På bakgrunn av forekomsten av HLA-B*1502 allelet også i andre
+asiatiske populasjoner (f.eks. over 15 % på Filippinene og i Malaysia) kan det vurderes å genteste også
+disse risikogruppene for forekomst av HLA-B*1502.

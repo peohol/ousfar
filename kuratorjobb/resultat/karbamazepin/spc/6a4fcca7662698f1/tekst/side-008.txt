@@ -1,0 +1,59 @@
+Karbamazepins virkning på plasmakonsentrasjonen av andre legemidler
+Karbamazepin induserer cytokrom-P450-systemet (hovedsakelig isoenzym CYP3A4) og
+transportproteinet P-glykoprotein slik at plasmakonsentrasjonen av substanser som er substrater av
+cytokrom-P450-systemet og/eller P-glykoprotein kan reduseres, og det kan bli nødvendig å justere
+dosen av disse i samsvar med kliniske behov. Karbamazepins induksjonseffekt vedvarer i ca. to uker
+etter at behandlingen er avsluttet.
+
+Dosen av følgende stoffer bør derfor justeres i henhold til de kliniske kravene hvis de administreres
+sammen med karbamazepin:
+-    andre antiepileptika (etosuksimid, primidon, valproinsyre, lamotrigin, klonazepam,
+     eslikarbazepinacetat, felbamat, okskarbazepin, fenytoin, tiagabin, topiramat, zonisamid). For å
+     unngå fenytoinforgiftning og subterapeutiske konsentrasjoner av karbamazepin, anbefales det å
+     justere plasmakonsentrasjonen av fenytoin til 13 mikrogram/ml før tilleggsbehandling med
+     karbamazepin påbegynnes.
+-    benzodiazepiner (alprazolam, klobazam, midazolam - med det resultatet at pasienter kan slutte å
+     respondere på midazolam)
+-    kardiovaskulære legemidler: kalsiumblokkere (av typen dihydropyridin, f.eks. felodipin,
+     nimodipin), digoksin, simvastatin, atorvastatin, lovastatin, cerivastatin, ivabradin
+-    nevroleptika (haloperidol, bromperidol, klozapin, olanzapin, paliperidon, risperidon, ziprasidon,
+     quetiapin, aripiprazol)
+-    kortikosteroider (for eksempel prednisolon, deksametason)
+-    buprenorfin, fentanyl, tramadol, fenazon, metylfenidat, teofyllin, metadon, kinidin, propanolol,
+     flunarizin
+-    immunsuppressiver (ciklosporin, tacrolimus, sirolimus, everolimus)
+-    antidepressiva (citalopram, mianserin, sertralin, mirtazapin)
+-    trisykliske antidepressiva (f.eks. imipramin, amitriptylin, nortriptylin, klomipramin)
+-    antimykotika av azoltypen (f.eks. vorikonazol, itrakonazol, med den følge at pasienten ikke
+     nødvendigvis responderer på antimykotika). For pasienter under behandling med vorikonazol
+     eller itrakonazol, må alternative antikonvulsiva anbefales.
+-    antiemetika (aprepitant, ondansetron)
+-    fexofenadin (antihistamin)
+-    proteasehemmere for behandling av HIV (f.eks. indinavir, saquinavir, ritonavir)
+-    antivirale midler for behandling av hepatitt C (ledipasvir, sofosbuvir)
+-    cytostatika (imatinib, lapatinib, cyklofosfamid, temsirolimus)
+-    prazikvantel, albendazol, caspofungin
+-    tetrasykliner (f.eks. doksysyklin)
+-    antikoagulantia (dikumarol, acenokumarol, warfarin, fenprokumon, rivaroksaban, apiksaban,
+     dabigatran, edoksaban)
+-    østrogener, progesteronderivater, hormonelle antikonsepsjonsmidler (se pkt 4.4 og 4.6)
+-    tadalafil, toremifen, rifabutin
+
+
+Siden karbamazepin motvirker ikke-depolariserende muskelavslappende midler (feks pankuronium
+bromid), kan en doseøkning bli nødvendig for disse.
+
+Fenytoin og karbamazepin kan ha gjensidige induserende virkninger på metabolismen, som kan
+medføre eksepsjonelle tilfeller av forvirringstilstander, eventuelt også koma.
+
+Karbamazepin kan senke plasmanivået av bupropion og øke plasmanivået av metabolitten
+hydroksybupropion, slik at bupropions kliniske effekt og sikkerhet reduseres.
+
+Selv om karbamazepin kan senke plasmanivået av trazodon, synes det å forsterke trazodons
+antidepressive effekt.
+
+Karbamazepin kan muligens akselerere zotepins metabolisme.
+
+
+
+                                                                                                         8

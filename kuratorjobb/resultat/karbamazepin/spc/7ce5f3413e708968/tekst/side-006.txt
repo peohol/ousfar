@@ -1,0 +1,56 @@
+Karbamazepin har svak antikolinerg effekt, og pasienter med økt intraokulært trykk og urinretensjon
+må derfor observeres nøye (se pkt. 4.8). Siden behandling med karbamazepin kan gi munntørrhet, er
+god munnhygiene viktig.
+
+Psykiatriske effekter
+Karbamazepin kan aktivere latente psykoser, og hos eldre også forvirring eller agitasjon.
+
+Selvmordstanker og selvmordsrelatert adferd er rapportert hos pasienter behandlet med antiepileptiske
+legemidler for flere indikasjoner. En meta-analyse av randomiserte placebokontrollerte forsøk med
+antiepileptika har vist en liten økning i risiko for selvmordstanker og selvmordsrelatert adferd.
+Mekanismen bak denne risikoen er ikke kjent og tilgjengelige data kan ikke utelukke muligheten for
+økt risiko ved behandling med karbamazepin.
+Pasientene bør derfor overvåkes for tegn på selvmordstanker eller selvmordsrelatert adferd, og
+nødvendig behandling bør vurderes. Pasienter (og pårørende) bør oppfordres til å kontakte medisinsk
+hjelp omgående dersom selvmordstanker eller selvmordsrelatert adferd oppstår.
+
+Endokrine effekter
+På grunn av enzyminduksjon kan Carbamazepine Essential Pharma føre til svikt i den terapeutiske
+effekten av østrogen- og/eller gestagenpreparater (f.eks. svikt i antikonsepsjonsbehandling).
+Gjennombruddsblødninger kan forekomme hos kvinner som bruker hormonelle antikonseptiva, og
+påliteligheten av disse kan dermed påvirkes. Kvinner i fertil alder bør derfor vurdere alternative
+prevensjonsmidler (se pkt. 4.5 og 4.6).
+
+Monitorering av plasmanivå
+Bestemmelse av serumkonsentrasjonen av karbamazepin kan være nyttig ved dramatisk økning i
+anfallsfrekvensen, verifisering av pasientens compliance, graviditet, behandling av barn og ungdom,
+ved mistanke om nedsatt absorpsjon eller toksisitet pga. interaksjon med annen samtidig medisinering
+(se pkt. 4.5). Forekomsten av CNS bivirkninger kan være tegn på relativ overdosering eller signifikant
+fluktasjon i plasmanivået. I slike tilfeller anbefales det å kontrollere plasmanivået.
+
+Det anbefales initial og regelmessig kontroll av urinanalyse og BUN.
+
+Dosereduksjon og seponering
+Brå seponering av karbamazepin kan utløse anfall. Dersom det likevel er nødvendig med brå
+seponering hos en epilepsipasient bør overgang til annet antiepileptikum skje i kombinasjon med et
+egnet legemiddel, f.eks. diazepam (i.v. eller rektalt).
+
+Fall
+Behandling med Carbamazepine Essential Pharma kan gi ataksi, svimmelhet, søvnighet, hypotensjon
+og forvirringstilstander (se pkt. 4.8) som kan føre til fall og medfølgende benbrudd eller andre skader.
+Hos pasienter med sykdommer eller tilstander eller som bruker legemidler som kan øke disse
+effektene, bør man jevnlig vurdere risikoen for fall ved langvarig bruk av Carbamazepine Essential
+Pharma.
+
+Generelt
+Urtepreparater som inneholder Johannesurt (Hypericum perforatum) bør ikke brukes sammen med
+Carbamazepine Essential Pharma på grunn av risiko for redusert plasmakonsentrasjon og redusert
+klinisk effekt av karbamazepin (se pkt. 4.5).
+
+4.5     Interaksjon med andre legemidler og andre former for interaksjon
+
+Cytokrom P4503A4 (CYP3A4) er det viktigste enzymet i dannelsen av den aktive metabolitten
+karbamazepin-10,11-epoksid. Samtidig bruk av legemidler som hemmer CYP3A4 vil føre til høyere
+plasmakonsentrasjon av karbamazepin og dermed øke faren for bivirkninger. Samtidig bruk av
+legemidler som induserer CYP3A4 vil øke metabolismen av karbamazepin slik at
+plasmakonsentrasjonen, og dermed effekten av behandlingen, kan bli redusert. På samme måte kan

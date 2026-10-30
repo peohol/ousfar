@@ -1,0 +1,59 @@
+Legemidler som kan øke plasmanivået av karbamazepin-10,11-epoksid
+Human mikrosomal epoksidhydrolase har blitt identifisert som enzymet ansvarlig for dannelsen av
+10,11-transdiol-derivatet fra karbamazepin-10,11-epoksid. Samtidig administrering av hemmere av
+human mikrosomal epoksidhydrolase kan resultere i økte plasmakonsentrasjoner av karbamazepin-
+10,11-epoksid.
+
+Ettersom en forhøyet plasmakonsentrasjon av karbamazepin-10,11-epoksid kan medføre bivirkninger
+(f.eks. svimmelhet, døsighet, ataksi, dobbeltsyn), bør man justere karbamazepin-dosen og/eller
+monitorere plasmanivået ved samtidig administrering med følgende legemidler:
+
+Loksapin, quetiapin, primidon, progabid, valproinsyre, valnoktamid, valpromid og brivaracetam.
+
+Legemidler som kan redusere plasmanivået av karbamazepin
+Andre legemidler kan redusere plasmakonsentrasjonen av karbamazepin slik at dosejustering av
+karbamazepin kan være nødvendig. Eksempler på slike legemidler er:
+
+Antiepileptika: felbamat, metsuksimid, okskarbazepin, fenobarbital, fensuksimid, fenytoin,
+fosfenytoin, primidon, og sannsynligvis klonazepam. Antineoplastiske midler: cisplatin eller
+doksorubicin
+Midler til behandling av tuberkulose: rifampicin
+Bronkodilaterende midler: teofyllin, aminofyllin
+Dermatologiske midler: isotretinoin
+
+Andre:
+Serumkonsentrasjonen av karbamazepin kan bli redusert ved samtidig bruk av urtepreparater som
+inneholder Johannesurt (Hypericum perforatum). Dette skyldes at Johannesurt induserer enzymer som
+metaboliserer legemidler. Urtepreparater som inneholder Johannesurt bør derfor ikke kombineres med
+Tegretol. Enzym-induksjonen kan vare i minst 2 uker etter at behandlingen med Johannesurt er
+stanset. Hvis en pasient allerede bruker Johannesurt bør konsentrasjonen av karbamazepin måles og
+behandlingen med Johannesurt avsluttes. Karbamazepin-nivået kan øke når Johannesurt-behandling
+avsluttes. Justering av karbamazepin-dosen kan være påkrevet.
+
+Effekt av karbamazepin på plasmanivåer av andre legemidler
+Karbamazepin kan redusere plasmakonsentrasjonen eller redusere eller fjerne effekten av visse
+legemidler slik at dosejustering kan være nødvendig. Dette gjelder for følgende legemidler:
+
+Analgetika/antiinflammatoriske midler: buprenorfin, metadon, paracetamol, fenazon, tramadol
+Antibiotika: doksycyklin
+Antikoagulantia: perorale antikoagulantia (f.eks. warfarin, fenprokumon, dikumarol, acenokumarol,
+rivaroksaban, dabigatran, apiksaban, edoksaban)
+Antidepressiva: bupropion, citalopram, mianserin, nefazodon, sertralin, trazodon, trisykliske
+antidepressiva (f.eks. imipramin, amitriptylin, nortriptylin, klomipramin). Samtidig behandling med
+MAO-hemmere kan føre til et toksisk serotonin syndrom. Behandling med MAO-hemmere bør
+avsluttes minst 2 uker før behandling med karbamazepin kan starte (se pkt. 4.3).
+Antiemetika: aprepitant
+Antiepileptika: klobazam, klonazepam, etosuksimid, felbamat, lamotrigin, eslikarbazepin,
+okskarbazepin, primidon, tigabin, topiramat, valproinsyre, zonisamid. Karbamazepin kan både øke og
+redusere plasmakonsentrasjonen av fenytoin, i enkelte sjeldne tilfeller er plasmanivået av mefenytoin
+rapportert å øke.
+Antimykotika: itrakonazol, vorikonazol, reduksjon av plasmakonsentrasjon kan gi tap av effekt.
+Alternative antiepileptika kan anbefales hos pasienter som behandles med vorikonazol eller
+itrakonazol.
+Anthelmintika: praziquantel, albendazol
+Antineoplastiske midler: imatinib, cyklofosfamid, lapatinib, temsirolimus
+Antipsykotika: klozapin, haloperidol og bromperidol, olanzapin, quetiapin, risperidon, ziprasidon,
+aripiprazol, paliperidon
+Antiviral midler: proteasehemmere for behandling av HIV (f.eks. indinavir, ritonavir, saquinavir)
+
+                                                  9

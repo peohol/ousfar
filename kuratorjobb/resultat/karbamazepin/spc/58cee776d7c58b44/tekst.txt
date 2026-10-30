@@ -1,0 +1,916 @@
+1.        LEGEMIDLETS NAVN
+
+Carbamazepine Essential Pharma 125 mg stikkpiller
+Carbamazepine Essential Pharma 250 mg stikkpiller
+
+
+2.        KVALITATIV OG KVANTITATIV SAMMENSETNING
+
+1 stikkpille inneholder: Karbamazepin 125 mg og 250 mg
+
+For fullstendig liste over hjelpestoffer, se pkt. 6.1
+
+
+3.        LEGEMIDDELFORM
+
+Stikkpiller
+
+Hvite til nesten hvite, torpedoformede stikkpiller.
+
+4.        KLINISKE OPPLYSNINGER
+
+4.1       Indikasjon(er)
+
+Epilepsi. Komplekse partielle og enkle partielle anfall. Primærgeneraliserte anfall,
+sekundærgeneraliserte anfall med utvikling til tonisk kloniske anfallstyper. Blandede epilepsiformer.
+
+4.2       Dosering og administrasjonsmåte
+
+Dosering
+
+Stikkpillene brukes som erstatning for perorale formuleringer i perioder da pasienten ikke er i stand til
+å innta karbamazepin peroralt (f.eks. ved bevisstløs tilstand), behandlingstiden bør da ikke overstige
+7 døgn pga. manglende erfaring med denne administrasjonsformen. Behandling med stikkpiller krever
+vanligvis 25 % høyere dose sammenlignet med perorale formuleringer av karbamazepin. Maksimal
+døgndose bør ikke overstige 250 mg 4 ganger daglig med 6 timers mellomrom.
+Terapeutisk serumkonsentrasjon ved steady state: Store individuelle variasjoner, men vanligvis i
+området 17-50 mol/l.
+
+Før behandlingsstart skal alle pasienter av han-kinesisk og thailandsk opphav screenes for humant
+leukocyttantigen (HLA)-B*1502 når det er mulig, ettersom dette allelet er en sterk indikator på
+risikoen for å utvikle alvorlig karbamazepin-indusert Stevens-Johnson syndrom (se pkt. 4.4).
+
+Administrasjonsmåte
+
+Doseringsanbefaling for perorale formuleringer:
+Voksne: Initialt 100-200 mg 1-2 ganger daglig. Dosen økes deretter gradvis til effektiv
+vedlikeholdsdose som normalt er 400 mg 2-3 ganger daglig. For noen pasienter er doser opp til 1600-
+2000 mg nødvendig.
+Barn: For barn, 4 år eller yngre, innledes behandlingen med 20-60 mg pr. dag, og økes annenhver dag
+med 20-60 mg. Barn over 4 år kan starte med 100 mg daglig og øke med 100 mg hver uke.
+
+Vedlikeholdsdose for barn: 10-20 mg/kg kroppsvekt fordeles på flere doser.
+
+Opp til
+1 år........................... 100-200 mg daglig
+1-5 år ....................... 200-400 mg daglig
+6-10 år ..................... 400-600 mg daglig
+11-15 år ................... 600-1000 mg daglig
+>15 år ...................... 800-1200 mg daglig
+
+Maksimalt anbefalt dose
+Opp til
+6 år ........................... 35 mg/kg/dag
+6-15 år ..................... 1000 mg/dag
+>15 år ...................... 1200 mg/dag
+
+På grunn av interaksjoner med andre legemidler og endret farmakokinetikk av antiepileptika bør et
+forsiktig doseringsopplegg av karbamazepin etterstrebes, spesielt hos eldre pasienter.
+
+Det finnes ingen kliniske data om bruk av stikkpillene ved andre indikasjoner enn epilepsi.
+
+4.3       Kontraindikasjoner
+
+Overfølsomhet overfor virkestoffet eller overfor (noen av) av hjelpestoffene listet opp i pkt. 6.1 eller
+andre strukturelt nært beslektede forbindelser (f.eks. tricykliske antidepressiva)
+       AV-blokk
+       Benmargsdepresjon
+     Tidligere hepatisk porfyri (f.eks. akutt intermitterende porfyri, porfyria variegata, porfyria
+      cutanea tarda)
+       Samtidig behandling med MAO-hemmere (se pkt. 4.5)
+
+4.4       Advarsler og forsiktighetsregler
+
+Alle pasienter som behandles med karbamazepin bør få medisinsk oppfølging. Karbamazepin bør kun
+gis dersom klinisk effekt oppveier mulig risiko og kun under nøye oppfølging hos pasienter med
+tidligere hjerte-, lever- eller nyreskade og hos pasienter som har vist hematologiske reaksjoner ved
+bruk av andre legemidler eller ved periodevis behandling av karbamazepin.
+
+Behandling med MAO-hemmere bør avsluttes minst 2 uker før behandling med karbamazepin kan
+starte (se pkt. 4.3).
+
+Hematologiske effekter
+Sjeldne tilfeller av aplastisk anemi og agranulocytose har vært rapportert, men meningsfulle
+risikovurderinger ved bruk av karbamazepin er vanskelig å oppnå. Forbigående eller vedvarende
+senking av blodplater og antall hvite blodlegemer kan forekomme ved bruk av karbamazepin.
+Vanligvis er dette forbigående og det er lite trolig at dette signaliserer starten av aplastisk anemi eller
+agranulocytose. Full blodstatus inkludert antall blodplater, og muligens retikulocytter og serumjern,
+bør likevel undersøkes før behandlingen starter og deretter regelmessig under behandlingen. Dersom
+antallet hvite blodceller eller blodplater er lavt eller faller betraktelig i løpet av behandlingen må
+pasienten følges opp med hyppige blodkontroller. Behandling med karbamazepin bør avbrytes ved
+tegn til signifikant benmargsdepresjon. Pasienten bør gjøres oppmerksom på tidlige tegn eller
+symptomer på hematologiske, dermatologiske eller hepatiske reaksjoner.
+Pasienten må oppfordres til å kontakte lege umiddelbart ved opptreden av feber, sår hals, utslett,
+munnsår eller hudblødninger (f.eks. blåmerker, petekkialt utslett eller purpura).
+
+Alvorlige dermatologiske reaksjoner
+Alvorlige hudreaksjoner, inkludert toksisk epidermal nekrolyse (TEN; også kjent som Lyells syndrom)
+og Steven-Johnsson syndrom (SJS) har svært sjelden blitt rapportert. Ved symptomer eller tegn på SJS
+eller TEN (f.eks. progressive hudutslett ofte med blemmer eller lesjoner i slimhinnene) bør
+behandlingen med Carbamazepine Essential Pharma seponeres. Tidlig diagnose og øyeblikkelig
+seponering av det legemidlet som er mistenkt å forårsake SJS eller TEN gir best behandlingsresultat
+og diagnose. Sykehusinnleggelse kan være nødvendig for pasienter med alvorlige dermatologiske
+reaksjoner fordi disse tilstandene kan være livstruende og fatale. Pasienter bør informeres om tegn og
+symptomer på og nøye overvåkes for hudreaksjoner. De fleste tilfeller av SJS og TEN oppstår i de
+første behandlingsmånedene med Carbamazepine Essential Pharma. Hos pasienter som har utviklet
+SJS eller TEN ved bruk av Carbamazepine Essential Pharma må behandling med karbamazepin ikke
+startes opp igjen på noe tidspunkt (se også informasjon om mindre alvorlige hudbivirkninger
+nedenfor).
+
+Det er estimert at disse reaksjonene oppstår hos 1- 6 av 10 000 nye brukere i land med hovedsakelig
+kaukasiske innbyggere, men risikoen i enkelte asiatiske land er anslått å være omtrent ti ganger høyere
+(se nedenfor).
+
+Det er økende belegg for at forskjellige humant leukocyttantigen HLA-alleler spiller en rolle hos
+pasienter predisponert for immunmedierte bivirkninger (se pkt. 4.2).
+
+Sammenheng med HLA-A*3101 allelet og alvorlige hudreaksjoner
+Hos personer av europeisk avstamming og japanere er det indikasjoner for at
+HLA-A*3101 allelet er forbundet med en økt risiko for karbamazepin-induserte hudreaksjoner. Disse
+hudreaksjonene inkluderer SJS, TEN, DRESS (legemiddelreaksjon med eosinofili og systemiske
+symptomer), AGEP (akutt generalisert eksematøs pustulose) og makulopapulært utslett.
+
+Forekomsten av HLA-A*3101-allel varierer i stor grad mellom etniske populasjoner. Prevalensen av
+HLA-A*3101-allelet er 2-5 % i europeiske befolkningsgrupper og ca. 10 % i japanske
+befolkningsgrupper. Frekvensen av dette allelet er estimert til å være lavere enn 5 % hos majoriteten
+av australske, asiatiske, afrikanske og nord-amerikanske populasjoner, med noen unntak med frekvens
+mellom 5-12 %. Forekomst over 15 % er estimert i noen etniske grupper i Sør-Amerika (Argentina og
+Brasil), Nord-Amerika (USA Navajo og Sioux og Mexico Sonora Seri) og Sør-India (Tamil Nadu) og
+mellom 10-15 % i andre innfødte etnisiteter i samme regioner.
+
+Risikoen for karbamazepin-induserte hudreaksjoner (hovedsakelig mindre alvorlige) i den generelle
+befolkningen er 5.0 % . Hos personer av europeisk avstamming med HLA-A*3101 allelet øker
+risikoen til 26 %, mens fravær av allelet reduserer risikoen til 3.8 %.
+
+Det er ikke tilstrekkelig grunnlag for å anbefale screening for HLA-A*3101 før behandling med
+karbamazepin igangsettes. Screening er generelt ikke anbefalt for pasienter som allerede behandles
+med karbamazepin, da risikoen for SJS/TEN, AGEP, DRESS og makulopapulært utslett overveiende
+inntreffer under behandlingens første få måneder, uavhengig av HLA-A*3101-status. Se informasjon
+om testing nedenfor.
+
+Om pasienter er kjent å være positive for HLA-A*3101 allelet, kan bruk av karbamazepin vurderes
+dersom fordelene oppveier risikoen.
+
+Sammenheng med HLA-B*1502 og alvorlige hudreaksjoner
+Ved behandling med karbamazepin er allelet HLA-B*1502 i individer av han-kinesisk og thailandsk
+opprinnelse vist å være sterkt assosiert med risiko for utvikling av alvorlige hudreaksjoner, som
+SJS/TEN. Prevalensen av bærere av HLA-B*1502 allelet er omtrent 10 % i den han-kinesiske og
+thailandske befolkningen. Når det er mulig skal disse individene screenes for HLA-B*1502 før
+behandlingsoppstart med karbamazepin (se pkt. 4.2). Ved positiv test bør behandling med
+karbamazepin ikke igangsettes med mindre det ikke er noe annet terapeutisk alternativ. Pasienter som
+tester negativt for HLA-B*1502 har lav risiko for Stevens-Johnson syndrom, men reaksjonen kan
+likevel forekomme i svært sjeldne tilfeller.
+
+Enkelte data antyder en økt risiko for alvorlig karbamazepin-assosiert TEN/SJS i andre asiatiske
+populasjoner enn de ovenfor nevnte. Høyere rapporteringsrater av SJS (sjelden heller enn svært
+sjelden) har blitt rapportert i noen land i Asia (f.eks. Taiwan, Malaysia og Filippinene) hvor det er
+høyere prevalens av allelet HLA-B*1502 i populasjonen. Prevalensen av bærere av dette allelet i den
+asiatiske befolkningen er over 15 % på Filippinene og i Malaysia, mellom
+2-4 % i Sør Asia inkludert indere. På bakgrunn av forekomsten av HLA-B*1502 allelet også i andre
+asiatiske populasjoner (f.eks. over 15 % på Filippinene og i Malaysia) kan det vurderes å genteste også
+disse risikogruppene for forekomst av HLA-B*1502.
+Prevalensen av allelet HLA-B*1502 er ubetydelig hos europeiske, afrikanske og latin-amerikanske
+befolkningsgrupper og innfødte i Amerika som har blitt testet og hos japanere og koreanere (< 1 %).
+
+Screening er ikke generelt anbefalt hos dem som allerede bruker karbamazepin, siden risiko for
+SJS/TEN stort sett er begrenset til de første få behandlingsmånedene, uavhengig av HLA-B*1502-
+status. Screening er ikke generelt anbefalt hos pasienter hvor prevalensen av HLA-B*1502 er lav.
+
+Bruk av karbamazepin skal unngås hos testede pasienter som er positive for HLA-B*1502 med mindre
+fordeler tydelig oppveier for risiko. Det bør tas hensyn for å unngå bruk av andre legemidler assosiert
+med SJS/TEN hos HLA-B*1502 positive pasienter, når andre behandlingsalternativer er like
+akseptable.
+
+Om testing for tilstedeværelse av HLA-A*3101 eller HLA-B*1502 -allele skal gjøres, er ”high-
+resolution” ”HLA-A*3101\ HLA-B*1502 genotyping anbefalt. Testen er positiv om enten ett eller to
+av det aktuelle allelet påvises og negativ om ingen aktuelle alleler påvises.
+
+Begrensninger med genetisk screening
+Genetiske screeningresultater må aldri erstatte passende klinisk vurdering og pasienthåndtering.
+Mange asiatiske pasienter som er positive for HLA-B*1502 og behandles med karbamazepin vil ikke
+utvikle SJS/TEN og pasienter som er negative for HLA-B*1502 av enhver etnisitet kan fortsatt utvikle
+SJS/TEN.
+Tilsvarende mange pasienter som er positive for HLA-A*3101 og behandles med karbamazepin vil
+ikke utvikle SJS, TEN, DRESS, AGEP eller makulopapulært utslett og pasienter som er negative for
+HLA-A*3101 av andre etnisiteter kan fortsatt utvikle disse kutane bivirkningene. Betydningen andre
+mulige faktorer har i utvikling og morbiditet av disse alvorlige, kutane bivirkningene, som dosering av
+antiepileptika, compliance, andre legemidler, komorbiditeter og grad av dermatologisk monitorering
+har ikke blitt studert.
+
+Andre dermatologiske bivirkninger
+Milde hudutslett som isolert makulær eller makulopapulært eksantem kan også oppstå og er vanligvis
+forbigående og ufarlige. De forsvinner oftest i løpet av noen dager eller uker, enten ved fortsatt
+behandling eller ved dosereduksjon, men siden det kan være vanskelig å skille tidlige tegn på mer
+alvorlige reaksjoner fra milde og forbigående reaksjoner, må pasienten følges nøye opp med tanke på
+at legemidlet skal seponeres umiddelbart dersom reaksjonen forverres ved fortsatt bruk.
+
+HLA-A*3101-allelet er forbundet med mindre alvorlige kutane bivirkninger av karbamazepin og kan
+forutsi risikoen av disse reaksjonene av karbamazepin, som hypersensitivitetssyndrom uten kramper
+eller ikke-alvorlig utslett (makulopapulært utslett). Det har imidlertid ikke blitt vist at allelet HLA-
+B*1502 kan forutsi risiko for disse tidligere nevnte hudreaksjonene.
+
+Hypersensitivitet
+Klasse I (umiddelbare) hypersensitivitetsreaksjoner, inkludert utslett, kløe, urticaria, angioødem og
+rapporter om anafylaksi er rapportert med karbamazepin. Hvis en pasient utvikler disse reaksjonene
+etter behandling med karbamazepin, må legemidlet seponeres og alternativ behandling startes.
+
+Carbamazepine Essential Pharma kan utløse hypersensitivitetsreaksjoner, inkludert legemiddelutslett
+med eosinofili og systemiske symptomer (DRESS). DRESS er en forsinket multiorgan-
+hypersensitivitetsreaksjon med feber, utslett, eosinofili og påvirkning og svikt av ett eller flere indre
+organer (lunger, nyrer, pankreas, hjerte) (se pkt. 4.8). For forbindelse mellom HLA-A*3101-allelet og
+utvikling av hypersensitivitetssyndrom, inkludert makulopapulært utslett se ovenfor. Generelt skal
+Carbamazepine Essential Pharma straks seponeres dersom tegn og symptomer på
+hypersensitivitetsreaksjoner inntreffer.
+
+Pasienter som har opplevd hypersensitivitetsreaksjoner ved bruk av karbamazepin bør informeres om
+at ca. 25-30 % av disse pasientene vil kunne oppleve hypersensitivitetsreaksjoner ved bruk av
+okskarbazepin (f.eks. Trileptal®).
+Krysshypersensitivitet kan også forekomme mellom karbamazepin og aromatiske antiepileptika (f.eks,
+fenytoin, primidon og fenobarbital).
+
+Fertile kvinner
+Karbamazepin kan forårsake fosterskader når det gis til en gravid kvinne. Prenatal eksponering for
+karbamazepin kan øke risikoen for alvorlige medfødte misdannelser og andre uønskede effekter på
+utviklingen (se pkt. 4.6).
+
+Karbamazepin bør ikke gis til fertile kvinner med mindre fordelen anses å oppveie risikoen etter en
+nøye utredning av andre egnede behandlingsalternativer.
+
+Fertile kvinner skal informeres grundig om den potensielle risikoen for fosteret hvis de tar
+karbamazepin under graviditeten.
+
+En graviditetstest bør vurderes hos fertile kvinner før behandlingstart med karbamazepin.
+
+Fertile kvinner skal benytte en pålitelig form for prevensjon under behandlingen og i to uker etter
+avsluttet behandling. På grunn av enzyminduksjon kan karbamazepin resultere i manglende
+terapeutisk effekt av hormonelle prevensjonsmidler. Fertile kvinner bør derfor gis veiledning om bruk
+av andre sikre prevensjonsmetoder (se avsnitt 4.5 og 4.6).
+
+Fertile kvinner bør informeres om nødvendigheten av å konsultere legen sin så snart en graviditet
+planlegges, for å diskutere et mulig bytte til alternative behandlinger før unnfangelse og før
+prevensjonen avbrytes (se avsnitt 4.6).
+
+Fertile kvinner som tar karbamazepin bør rådes til å kontakte legen sin umiddelbart hvis de blir
+gravide eller tror de kan være gravide.
+
+Anfall
+Brukes med forsiktighet hos pasienter med blandede epilepsiformer, som inkluderer typiske og
+atypiske absenser, da karbamazepin kan forverre krampeanfall. I tilfelle forverring av anfallene skal
+preparatet seponeres umiddelbart.
+
+En økning i anfallsfrekvensen kan inntre ved overgang fra perorale formuleringer til stikkpiller.
+
+Leverfunksjon
+Det bør foretas initial og regelmessig kontroll av leverfunksjonen, spesielt hos eldre og pasienter med
+leversykdom i anamnesen. Preparatet skal seponeres ved forverring av leversvikt eller aktiv
+leversykdom.
+
+Nyrefunksjon
+Det anbefales urinanalyse og måling av serum urea før oppstart og ved regelmessig kontroll (se også
+«Hyponatremi»).
+
+Hyponatremi
+Hyponatremi kan oppstå ved karbamazepin-behandling (se pkt. 4.8). Pasienter utsatt for hyponatremi
+(sykdom eller behandling med andre legemidler kjent for å forårsake hyponatremi (f.eks. diuretika) (se
+pkt. 4.5)), spesielt dersom disse er eldre, bør følges spesielt opp med kontroll av natriumbalansen,
+
+Hypotyroidisme
+Karbamazepin kan redusere serumkonsentrasjoner av tyroideahormoner gjennom enzyminduksjon.
+Dette fører til at pasienter med hypotyroidisme trenger å øke dosen av tyroideaerstatningsbehandling.
+Derfor er monitorering av tyroideafunksjonen foreslått for å justere dosen av
+tyroideaerstatningsbehandling.
+
+Antikolinerge effekter
+Karbamazepin har svak antikolinerg effekt, og pasienter med økt intraokulært trykk og urinretensjon
+må derfor observeres nøye (se pkt. 4.8). Siden behandling med karbamazepin kan gi munntørrhet, er
+god munnhygiene viktig.
+
+Psykiatriske effekter
+Karbamazepin kan aktivere latente psykoser, og hos eldre også forvirring eller agitasjon.
+
+Selvmordstanker og selvmordsrelatert adferd er rapportert hos pasienter behandlet med antiepileptiske
+legemidler for flere indikasjoner. En meta-analyse av randomiserte placebokontrollerte forsøk med
+antiepileptika har vist en liten økning i risiko for selvmordstanker og selvmordsrelatert adferd.
+Mekanismen bak denne risikoen er ikke kjent og tilgjengelige data kan ikke utelukke muligheten for
+økt risiko ved behandling med karbamazepin.
+Pasientene bør derfor overvåkes for tegn på selvmordstanker eller selvmordsrelatert adferd, og
+nødvendig behandling bør vurderes. Pasienter (og pårørende) bør oppfordres til å kontakte medisinsk
+hjelp omgående dersom selvmordstanker eller selvmordsrelatert adferd oppstår.
+
+Endokrine effekter
+På grunn av enzyminduksjon kan Carbamazepine Essential Pharma føre til svikt i den terapeutiske
+effekten av østrogen- og/eller gestagenpreparater (f.eks. svikt i antikonsepsjonsbehandling).
+Gjennombruddsblødninger kan forekomme hos kvinner som bruker hormonelle antikonseptiva, og
+påliteligheten av disse kan dermed påvirkes. Kvinner i fertil alder bør derfor vurdere alternative
+prevensjonsmidler (se pkt. 4.5 og 4.6).
+
+Monitorering av plasmanivå
+Bestemmelse av serumkonsentrasjonen av karbamazepin kan være nyttig ved dramatisk økning i
+anfallsfrekvensen, verifisering av pasientens compliance, graviditet, behandling av barn og ungdom,
+ved mistanke om nedsatt absorpsjon eller toksisitet pga. interaksjon med annen samtidig medisinering
+(se pkt. 4.5). Forekomsten av CNS bivirkninger kan være tegn på relativ overdosering eller signifikant
+fluktasjon i plasmanivået. I slike tilfeller anbefales det å kontrollere plasmanivået.
+
+Det anbefales initial og regelmessig kontroll av urinanalyse og BUN.
+
+Dosereduksjon og seponering
+Brå seponering av karbamazepin kan utløse anfall. Dersom det likevel er nødvendig med brå
+seponering hos en epilepsipasient bør overgang til annet antiepileptikum skje i kombinasjon med et
+egnet legemiddel, f.eks. diazepam (i.v. eller rektalt).
+
+Fall
+Behandling med Carbamazepine Essential Pharma kan gi ataksi, svimmelhet, søvnighet, hypotensjon
+og forvirringstilstander (se pkt. 4.8) som kan føre til fall og medfølgende benbrudd eller andre skader.
+Hos pasienter med sykdommer eller tilstander eller som bruker legemidler som kan øke disse
+effektene, bør man jevnlig vurdere risikoen for fall ved langvarig bruk av Carbamazepine Essential
+Pharma.
+
+Generelt
+Urtepreparater som inneholder Johannesurt (Hypericum perforatum) bør ikke brukes sammen med
+Carbamazepine Essential Pharma på grunn av risiko for redusert plasmakonsentrasjon og redusert
+klinisk effekt av karbamazepin (se pkt. 4.5).
+
+4.5     Interaksjon med andre legemidler og andre former for interaksjon
+
+Cytokrom P4503A4 (CYP3A4) er det viktigste enzymet i dannelsen av den aktive metabolitten
+karbamazepin-10,11-epoksid. Samtidig bruk av legemidler som hemmer CYP3A4 vil føre til høyere
+plasmakonsentrasjon av karbamazepin og dermed øke faren for bivirkninger. Samtidig bruk av
+legemidler som induserer CYP3A4 vil øke metabolismen av karbamazepin slik at
+plasmakonsentrasjonen, og dermed effekten av behandlingen, kan bli redusert. På samme måte kan
+seponering av en CYP3A4-induser redusere metabolismen av karbamazepin og dermed øke
+plasmanivåene av karbamazepin.
+
+Karbamazepin er en potent induser av CYP3A4 og andre fase I og fase II enzymsystemer i leveren og
+vil dermed kunne redusere plasmanivåer av samtidig administrerte legemidler som i hovedsak
+metaboliseres av CYP3A4.
+
+Legemidler som kan øke plasmanivået av karbamazepin
+Enkelte legemidler øker plasmakonsentrasjonen av karbamazepin ved samtidig bruk. Ettersom en
+forhøyet plasmakonsentrasjon av karbamazepin øker faren for bivirkninger (f.eks. svimmelhet,
+døsighet, ataksi, dobbeltsyn), bør man vurdere dosejustering av karbamazepin og/eller monitorering av
+plasmanivået ved samtidig administrering med følgende legemidler:
+
+Analgetika/antiinflammatoriske midler: dekstropropoksyfen, ibuprofen
+Androgener: danazol
+Antibiotika: makrolidantibiotika (f.eks. erytromycin, troleandomycin, josamycin, klaritromycin),
+ciprofloksacin
+Antidepressiva: muligens desipramin, fluoksetin, fluvoksamin, nefazodon, paroksetin, trazodon,
+viloksasin
+Antiepileptika: stiripentol, vigabatrin
+Antimykotika: azoler (f.eks. itrakonazol, ketokonazol, flukonazol, vorikonazol) se også "Effekt av
+karbamazepin på plasmanivåer av andre legemidler"
+Alternative antiepileptika kan anbefales hos pasienter som behandles med vorikonazol eller
+itrakonazol.
+Antihistaminer: terfenadin
+Antipsykotika: olanzapin
+Midler til behandling av tuberkulose: isoniazid
+Antivirale midler: proteasehemmere for behandling av HIV (f.eks. ritonavir)
+Karboanhydrasehemmere: acetazolamid
+Kardiovaskulære legemidler: diltiazem, verapamil
+Gastrointestinale legemidler: muligens cimetidin, omeprazol
+Muskelrelaksantia: oksybutynin, dantrolen
+Hemmere av blodplateaggresjon: tiklopidin
+Andre: grapefruktjuice, nikotinamid (hos voksne, kun ved høye doser)
+
+Legemidler som kan øke plasmakonsentrasjonen av den aktive metabolitten karbamazepin-10,11-
+epoksid
+Human mikrosomal epoksidhydrolase har blitt identifisert som enzymet ansvarlig for dannelsen av
+10,11-transdiol-derivatet fra karbamazepin-10,11-epoksid. Samtidig administrering av hemmere av
+human mikrosomal epoksidhydrolase kan resultere i økte plasmakonsentrasjoner av karbamazepin-
+10,11-epoksid.
+
+Siden forhøyede plasmanivåer av karbamazepin-10,11-epoksid kan føre til bivirkninger (f.eks.
+svimmelhet, tretthet, ataksi, diplopi), bør dosen av karbamazepin justeres tilsvarende og/eller
+plasmanivåene overvåkes ved samtidig bruk med de nedenstående stoffene:
+
+Neuroleptika: loksapin, quetiapin.
+Antiepileptika: progabid, valproinsyre, valnoktamid, valpromid, primidon, brivaracetam.
+
+Legemidler som kan redusere plasmanivået av karbamazepin
+Andre legemidler kan redusere plasmakonsentrasjonen av karbamazepin slik at dosejustering av
+karbamazepin kan være nødvendig. Eksempler på slike legemidler er:
+
+Antiepileptika: felbamat, metsuksimid, okskarbazepin, fenobarbital, fensuksimid, fenytoin
+,fosfenytoin, primidon og sannsynligvis klonazepam
+Antineoplastiske midler: cisplatin eller doksorubicin
+Midler til behandling av tuberkulose: rifampicin
+Bronkodilaterende midler: teofyllin, aminofyllin
+Dermatologiske midler: isotretinoin
+
+Andre
+Serumkonsentrasjonen av karbamazepin kan bli redusert ved samtidig bruk av urtepreparater som
+inneholder Johannesurt (Hypericum perforatum). Dette skyldes at Johannesurt induserer enzymer som
+metaboliserer legemidler. Urtepreparater som inneholder Johannesurt bør derfor ikke kombineres med
+Carbamazepine Essential Pharma. Enzym-induksjonen kan vare i minst 2 uker etter at behandlingen
+med Johannesurt er stanset. Hvis en pasient allerede bruker Johannesurt bør konsentrasjonen av
+karbamazepin måles og behandlingen med Johannesurt avsluttes. Karbamazepin-nivået kan øke når
+Johannesurt-behandling avsluttes. Justering av karbamazepin-dosen kan være påkrevet.
+
+Effekt av karbamazepin på plasmanivåer av andre legemidler
+Karbamazepin kan redusere plasmakonsentrasjonen eller redusere eller fjerne effekten av visse
+legemidler slik at dosejustering kan være nødvendig. Dette gjelder for følgende legemidler:
+Analgetika/antiinflammatoriske midler: buprenorfin, metadon, paracetamol, fenazon, tramadol
+Antibiotika: doksycyklin
+Antikoagulantia: orale antikoagulantia (f.eks. warfarin, fenprokumon, dikumarol, acenokumarol,
+rivaroksaban, dabigatran, apiksaban, edoksaban)
+Antidepressiva: bupropion, citalopram, mianserin, nefazodon, sertralin, trazodon, trisykliske
+antidepressiva (f.eks. imipramin, amitriptylin, nortriptylin, klomipramin). Samtidig behandling med
+MAO-hemmere kan føre til et toksisk serotonin syndrom. Behandling med MAO-hemmere bør
+avsluttes minst 2 uker før behandling med karbamazepin kan starte (se pkt. 4.3).
+Antiemetika: aprepitant
+Antiepileptika: klobazam, klonazepam, etosuksimid, felbamat, lamotrigin, eslikarbazepin,
+okskarbazepin, primidon, tigabin, topiramat, valproinsyre, zonisamid. Karbamazepin kan både øke og
+redusere plasmakonsentrasjonen av fenytoin, i enkelte sjeldne tilfeller er plasmanivået av mefenytoin
+rapportert å øke.
+Antimykotika: itrakonazol vorikonazol, reduksjon av plasmakonsentrasjon kan gi tap av effekt.
+Alternative antiepileptika kan anbefales hos pasienter som behandles med vorikonazol eller
+itrakonazol.
+Anthelmintika: praziquantel, albendazol
+Antineoplastiske midler: imatinib, cyklofosfamid, lapatinib, temsirolimus
+Antipsykotika: klozapin, haloperidol og bromperidol, olanzapin, quetiapin, risperidon, ziprasidon,
+aripiprazol, paliperidon
+Antiviral midler: proteasehemmere for behandling av HIV (f.eks. indinavir, ritonavir, saquinavir)
+Anxiolytika: alprazolam, midazolam
+Bronkodilaterende midler: teofyllin
+Antikonseptiva: hormonelle antikonseptiva (alternative prevensjonsmidler bør vurderes)
+Kardiovaskulære legemidler: kalsiumkanalblokkere (dihydropyridingruppen), f.eks. felodipin,
+digoksin
+Kolesterolsenkende legemidler: simvastatin
+Kortikosteroider: kortikosteroider (f.eks. prednisolon, deksametason)
+Legemidler brukt ved erektil dysfunksjon: tadalafil
+Immunsuppressive midler: ciklosporin, everolimus, takrolimus, sirolimus
+Tyreoideapreparater: levotyroksin
+Andre: produkter som inneholder østrogen og/eller progesteron
+
+Kombinasjoner som krever spesiell vurdering
+Samtidig behandling med isoniazid kan øke isoniazid-indusert levertoksisitet. Kombinert bruk med
+litium, metoklopramid eller neuroleptika kan gi økte neurologiske bivirkninger (i kombinasjon med
+neuroleptika som haloperidol, tioridazin kan dette skje selv ved terapeutiske serumkonsentrasjoner).
+Samtidig behandling med enkelte diuretika (hydroklortiazid, furosemid) kan gi symptomatisk
+hyponatremi. Siden karbamazepin antagoniserer nondepolariserende muskelrelakserende midler (f.eks.
+pankuron), vil kanskje en doseøkning av disse være nødvendig. Pasienten bør også observeres med
+tanke på kortere virketid av den neuromuskulære blokkaden. Som for andre psykoaktive legemidler,
+kan karbamazepin redusere pasientens alkoholtoleranse. Avholdenhet anbefales.
+Det er rapportert at samtidig bruk av karbamazepin og levetiracetam kan øke karbamazepin-indusert
+toksisitet.
+Samtidig bruk av karbamazepin med direktevirkende perorale antikoagulater (rivaroksaban,
+dabigatran, apiksaban og edoksaban) kan føre til redusert plasmakonsentrasjon av den direktevirkende
+perorale antikoagulanten, som medfører risiko for trombose. Dersom samtidig bruk er nødvendig
+anbefales derfor tett oppfølging av tegn og symptomer på trombose.
+
+4.6     Fertilitet, graviditet og amming
+
+Graviditet
+
+Risiko relatert til epilepsi og antiepileptika generelt
+Fertile kvinner alder som tar epilepsimedisin bør vurderes av spesialist vedrørende den
+potensielle risikoen for et foster knyttet til både anfall og antiepileptisk behandling og spesielt
+kvinner som planlegger graviditet og gravide kvinner.
+Plutselig seponering av behandling med antiepileptika bør unngås, da dette kan føre til anfall
+som kan ha alvorlige konsekvenser for kvinnen og det ufødte barnet.
+
+Monoterapi er foretrukket for behandling av epilepsi under graviditet når dette er mulig, fordi
+behandling med flere antiepileptika kan være forbundet med en høyere risiko for medfødte
+misdannelser enn monoterapi, avhengig av det gjeldende antiepileptikum.
+
+Risiko relatert til karbamazepin
+Karbamazepin krysser placenta hos mennesker. Prenatal eksponering for karbamazepin kan
+øke risikoen for medfødte misdannelser og andre uønskede utviklingsresultater. Forekomsten
+av alvorlige misdannelser hos barn født av kvinner som tar karbamazepin under graviditeten
+er 2 til 3 ganger høyere enn frekvensen på 2–3 % i pobulasjonen for øvrig. Misdannelser som
+nevralrørsdefekt (spina bifida), kraniofaciale defekter som leppe-ganespalte,
+kardiovaskulære misdannelser, hypospadi, hypoplasi i fingrene og andre anomalier som
+involverer forskjellige kroppssystemer har blitt rapportert hos barn født av kvinner som
+brukte karbamazepin under graviditeten. Spesialisert prenatal overvåkning anbefales for å
+oppdage mulig forekomst misdannelser. Nevroutviklingsforstyrrelse har blitt rapportert blant
+barn født av kvinner med epilepsi som brukte karbamazepin alene eller i kombinasjon med
+andre antiepileptika under graviditeten. Studier av risikoen for nevroutviklingsforstyrrelser
+hos barn eksponert for karbamazepin under graviditeten er motstridende, og en risiko kan
+ikke utelukkes.
+
+Karbamazepin bør ikke gis til kvinner under graviditeten med mindre fordelen anses å oppveie
+risikoen etter en nøye utredning av andre egnede behandlingsalternativer. Kvinnen skal
+informeres grundig og kunne forstå risikoen ved å ta karbamazepin under graviditeten.
+
+Bevis tyder på at risikoen for misdannelser ved bruk av karbamazepin kan være
+doseavhengig. Hvis det, basert på en nøye vurdering av risikoen og fordelene, ikke finnes
+noe annet egnet behandlingsalternativ og behandling med karbamazepin fortsetter, bør
+monoterapi og den laveste effektive dosen av karbamazepin brukes, og en jevnlig kontroll
+av plasmanivåene anbefales. Plasmakonsentrasjonen kan opprettholdes i den nedre delen
+av det terapeutiske området fra 4 til 12 mikrogram/ml, forutsatt at anfallskontrollen
+opprettholdes.
+
+Noen antiepileptika, som karbamazepin, har blitt rapportert å redusere folatnivået i serum.
+Denne mangelen kan bidra til økt forekomst av fødselsdefekter hos barn født av kvinner
+som behandles med epilepsimedisin. Tilskudd av folsyre anbefales før og under graviditeten.
+For å forhindre blødningsproblemer hos barn, har det også blitt anbefalt at vitamin K1 bør
+gis til mor i løpet av de siste ukene av svangerskapet, så vel som til det nyfødte.
+
+Hvis en kvinne planlegger å bli gravid, bør alle anstrengelser gjøres for å bytte til et annet
+egnet behandlingsalternativ før unnfangelse og før hun slutter å bruke prevensjon. Hvis en
+kvinne blir gravid mens hun tar karbamazepin, bør hun henvises til en spesialist for å
+revurdere behandlingen med karbamazepin og vurdere andre behandlingsalternativer.
+
+Fertile kvinner
+Karbamazepin bør ikke gis til fertile kvinner med mindre den potensielle fordelen anses å oppveie
+risikoen etter en nøye utredning av andre egnede behandlingsalternativer. Kvinnen skal informeres
+grundig og kunne forstå den potensielle risikoen for fosterdefekter hvis karbamazepin tas under
+graviditeten, og derfor viktigheten av å planlegge en eventuell graviditet. En graviditetstest bør
+vurderes hos fertile kvinner før behandling med karbamazepin.
+
+Fertile kvinner skal benytte en pålitelig form for prevensjon under behandlingen og i to uker etter
+avsluttet behandling. På grunn av enzyminduksjon kan karbamazepin resultere i manglende
+terapeutisk effekt av hormonelle prevensjonsmidler (se avsnitt 4.5). Fertile kvinner bør derfor gis
+veiledning om bruk av andre sikre prevensjonsmetoder. Minst én sikker prevensjonsmetode (for
+eksempel spiral) eller to komplementære former for prevensjon, inkludert en barrièremetode, bør
+brukes. Individuelle forhold bør evalueres i hvert tilfelle, og pasienten bør involveres i diskusjonen om
+valg av prevensjonsmetode..
+
+Amming
+Beregnet dose barnet får i seg er gjennomsnittlig 3,6-4,1 % og maksimalt 5,0 % av morens vekt-
+justerte daglig dose. Ett tilfelle av alvorlig hudhypersensitivitetsreaksjon hos brysternært barn
+foreligger. Det har vært rapportert tilfeller av kolestatisk hepatitt hos nyfødte som er eksponert for
+karbamazepin før fødsel og/eller under amming. Preparatet bør derfor ikke brukes under amming.
+Dersom mødre allikevel ammer mens de blir behandlet med karbamazepin bør barnet observeres for
+mulige hudreaksjoner og hepatobilliære effekter.
+
+4.7     Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+Carbamazepine Essential Pharma har stor påvirkning på evnen til å kjøre bil eller bruke maskiner,
+særlig i starten av behandlingen. Forsiktighet må utvises.
+
+4.8     Bivirkninger
+
+Oppsummering av sikkerhetsprofilen
+Initialt forekommer ofte doserelaterte sentralnervøse bivirkninger (svimmelhet, hodepine, ataksi,
+døsighet, slapphet, dobbeltsyn), gastrointestinale forstyrrelser (kvalme, oppkast) og allergiske
+hudreaksjoner, spesielt hvis dosen er for høy eller ved behandling av eldre. Reaksjonene avtar
+vanligvis etter noen dager, enten spontant eller ved en midlertidig dosereduksjon.
+
+Bivirkninger fra kliniske studier (Tabell 1) er listet etter MedDRA organklassesystem. Innenfor hver
+systemorganklasse er bivirkningene angitt etter frekvens, med de vanligste bivirkningene først i
+henhold til følgende frekvensinndeling: svært vanlige (≥1/10), vanlige (≥1/100 til < 1/10); mindre
+vanlige (≥ 1/1000 til < 1/100); sjeldne (≥1/10 000 til <1/1000); svært sjeldne (< 1/10 000); ikke kjent
+(kan ikke anslås utifra tilgjengelige data).
+
+Tabell 1
+Sykdommer i blod og lymfatiske
+organer
+Svært vanlige                        Leukopeni
+
+Vanlige                              Trombocytopeni, eosinofili
+
+Sjeldne                              Leukocytose, lymfadenopati
+
+Svært sjeldne                        Agranulocytose, aplastisk anemi,
+                                     pancytopeni, ”pure red cell aplasia”, anemi,
+                                     megaloblastisk anemi, akutt intermittert
+                                     porfyri, retikulocytose og hemolytisk anemi
+Forstyrrelser i immunsystemet
+Sjeldne                              En forsinket multiorgan
+                                     hypersensitivitetsreaksjon karakterisert ved
+                                     feber, utslett, vaskulitt, lymfadenopati,
+                                     pseudolymfom, artralgi, leukopeni,
+                                     eosinofili, hepatosplenomegali, unormale
+                                     leverfunksjonsverdier og ”vanishing bile
+                                     duct”syndrom (destruksjon av
+                                     intrahepatiske galleganger), forekommer i
+                                     ulike kombinasjoner. Andre organer kan
+                                     også påvirkes (f.eks. lunger, nyrer,
+                                     bukspyttkjertel, hjerte, tykktarm)
+
+                                     Anafylaktiske reaksjoner, angioødem,
+Svært sjeldne                        hypogammaglobulinemi
+Endokrine sykdommer
+Svært sjeldne                        Økning i blodprolaktin, galaktoré,
+                                     gynekomasti
+Stoffskifte- og ernæringsbetingede
+sykdommer
+Vanlige                              Ødem, væskeretensjon, vektøkning,
+                                     hyponatremi og redusert plasmaosmolalitet
+                                     pga. en antidiuretisk (ADH)-lignende effekt
+                                     som i sjeldne tilfeller fører til
+                                     vannintoksikasjon etterfulgt av letargi,
+                                     oppkast, hodepine, forvirringstilstand,
+                                     nevrologiske forstyrrelser
+
+                                     Folsyremangel, redusert appetitt
+Sjeldne
+                                     Akutt porfyri (akutt intermittert porfyri, og
+Svært sjeldne                        porfyria variegata) ikke-akutt porfyri
+                                     (porfyria cutanea tarda)
+
+Ikke kjent                           Hyperammonemi
+Psykiatriske lidelser
+Sjeldne                              Hallusinasjoner (både visuelt og hørsel),
+                                     depresjon, aggresivitet, agitasjon, rastløshet,
+                                     forvirringstilstander
+
+Svært sjeldne                        Aktivering av psykoser
+Nevrologiske sykdommer
+Svært vanlige                        Ataksi, svimmelhet, søvnighet
+Vanlige                            Dobbeltsyn, hodepine
+
+Mindre vanlige                     Ukontrollerte bevegelser (f.eks. tremor,
+                                   asterixis, dystoni, tics), nystagmus
+
+Sjeldne                            Orofacial dyskinesi, forstyrrelser i
+                                   øyebevegelser, taleforstyrrelser (f.eks.
+                                   dysartri, utydelig tale), choreoatetose,
+                                   perifer neuropati, parestesier, pareser
+
+Svært sjeldne                      Nevroleptisk malignt syndrom, aseptisk
+                                   meningitt med myoklonus og perifer
+                                   eosinofili, dysgeusi
+Øyesykdommer
+Vanlige                            Akkomodasjonsvansker (f.eks. tåkesyn)
+
+Svært sjeldne                      Linsefordunkling, konjunktivitt, økt
+                                   intraokulært trykk
+Sykdommer i øre og labyrint
+Svært sjeldne                      Hørselsforstyrrelser (f.eks. tinnitus,
+                                   hyperakusis, hypoakusis, forstyrret
+                                   oppfatning av tonefrekvens
+Hjertesykdommer
+Sjeldne                            Ledningsforstyrrelser
+
+Svært sjeldne                      Arytmier, atrioventrikulær blokk med
+                                   synkope, bradykardi, kongestiv hjertesvikt,
+                                   forverring av koronar hjertesykdom
+Karsykdommer
+Sjeldne                            Hypertensjon eller hypotensjon
+
+Svært sjeldne                      Sirkulatorisk kollaps, emboli (f.eks.
+                                   pulmonær emboli), tromboflebitt
+Sykdommer i respirasjonsorganer,
+thorax og mediastinum
+Svært sjeldne
+                                   Pulmonær hypersensitivitet karakterisert
+                                   ved f.eks. feber, dyspné, pneumonitt eller
+                                   pneumoni
+Gastrointestinale sykdommer
+Svært vanlige                      Oppkast, kvalme
+
+Vanlige                            Munntørrhet, rektal irritasjon
+
+Mindre vanlige                     Diaré, konstipasjon
+
+Sjeldne                            Abdominale smerter
+
+Svært sjeldne                      Pankreatitt, glositt, stomatitt
+Sykdommer i lever og galleveier
+Sjeldne                            Gulsott, hepatitt (kolestatisk,
+                                   hepatocellulær eller blandet type)
+
+Svært sjeldne                      Leversvikt, granulomatøs leversykdom,
+                                   ”vanishing bile duct” syndrom.
+      Hud- og underhudssykdommer
+      Svært vanlige                              Urticaria (kan bli alvorlig), allergisk
+                                                 dermatitt
+
+      Mindre vanlige                             Eksfoliativ dermatitt og erytrodermi
+
+      Sjeldne                                    Systemisk lupus erythematosus-lignende
+                                                 syndrom, pruritus
+
+      Svært sjeldne                              Stevens-Johnsons syndrom*, toksisk
+                                                 epidermal nekrolyse,
+                                                 fotosensitivitetsreaksjon, erythema
+                                                 multiforme og knuterosen,
+                                                 hudpigmenteringssykdommer, purpura,
+                                                 akne, hyperhidrose, alopeci, hirsutisme
+      Sykdommer i muskler, bindevev og
+      skjelett
+      Sjeldne                                    Muskelsvakhet
+
+      Svært sjeldne                              Forstyrrelser i benmetabolisme (redusert
+                                                 plasmanivå av kalsium og 25-hydroksy-
+                                                 cholecalciferol)**, artralgi, myalgi,
+                                                 muskelspasmer
+      Sykdommer i nyre og urinveier
+      Svært sjeldne                              Interstitiell nefritt, nyresvikt, nedsatt
+                                                 nyrefunksjon (f.eks. albuminuri, hematuri,
+                                                 oliguri og forhøyet urea/azotemi),
+                                                 urinretensjon, forstyrrelser i urinfrekvens
+      Lidelser i kjønnsorganer og
+      brystsykdommer
+      Svært sjeldne                              Seksuell dysfunksjon/erektil dysfunksjon,
+                                                 unormal spermatogenese (med redusert
+                                                 spermtall og/eller motilitet)
+      Undersøkelser
+      Svært vanlige                              Forhøyet gamma-glutamyltransferase (pga.
+                                                 hepatisk enzyminduksjon), vanligvis ikke
+                                                 klinisk relevant
+
+      Vanlige                                    Forhøyet alkalisk fosfatase i blodet
+
+      Mindre vanlige                             Forhøyede transaminaser
+
+      Svært sjeldne                              Forhøyede kolesterolverdier i blodet
+                                                 (inkl.HDL-kolesterol- og
+                                                 triglyseridverdier). Unormal
+                                                 tyroideafunksjonstest: reduksjon i L-
+                                                 tyroksin (fritt tyroksin, tyroksin, tri-
+                                                 jodotyronin) og økt TSH i blod, vanligvis
+                                                 uten kliniske manifestasjoner
+* rapportert som sjelden i enkelte asiatiske land (se pkt. 4.4).
+** se også "Bivirkninger fra spontane bivirkningsrapporter og funn i litteraturen (ukjent frekvens)".
+
+Bivirkninger fra spontane bivirkningsrapporter og funn i litteraturen (ukjent frekvens)
+Følgende bivirkninger er erfart under markedsføringen av karbamazepine via spontanrapporter og
+funn i litteraturen. Da disse bivirkningene er rapportert frivillig fra en populasjon av ukjent størrelse,
+er det ikke mulig å gi et pålitelig estimat av frekvens, og frekvensen er derfor kategorisert som ikke
+kjent. Bivirkningene er oppført i henhold til MedDRA organklassesystem. Innenfor hver
+frekvensgruppering er bivirkninger presentert etter synkende alvorlighetsgrad.
+
+Infeksiøse og parasittære sykdommer
+Reaktivering av infeksjon med Humant herpesvirus 6.
+
+Sykdommer i blod og lymfatiske organer
+Benmargssvikt.
+
+Skader, forgiftninger og komplikasjoner ved medisinske prosedyrer
+Fall (forbundet med ataksi, svimmelhet, søvnighet, hypotensjon og forvirringstilstander på grunn av
+behandlingen med Carbamazepine Essential Pharma) (se pkt. 4.4).
+
+Nevrologiske sykdommer
+Søvnighet, hukommelsessvikt.
+
+Gastrointestinale sykdommer
+Kolitt.
+
+Forstyrrelser i immunsystemet
+Legemiddelreaksjon med eosinofili og systemiske symptomer (DRESS).
+
+Hud- og underhudssykdommer
+Akutt generalisert eksematøs pustulose (AGEP), likenoid keratose, onychomadese.
+
+Sykdommer i muskler, bindevev og skjelett
+Det er rapportert tilfeller av redusert bentetthet, osteopeni, osteoporose og frakturer hos pasienter som
+har brukt karbamazepin over lang tid. Virkningsmekanismen for hvordan karbamazepin påvirker
+benmetabolismen er ikke identifisert.
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via Statens legemiddelverk:
+www.legemiddelverket.no/meldeskjema.
+
+4.9     Overdosering
+
+Toksisk dose; barn 1-5 år: 0,4-0,8 g, voksne: ca. 2 g. Toksisk plasmakonsentrasjon: >45 mol/l (>11
+mg/l). Symptomer fra sentralnervesystemet, kardiovaskulære effekter, eller respirasjonsdepresjon er
+vanlig ved overdosering.
+
+Sentralnervøse symptomer: CNS depresjon, desorientering, redusert bevissthetsnivå, søvnforstyrrelser,
+agitasjon, hallusinasjoner, koma, tåkesyn, dysartri, nystagmus, ataksi, dyskinesi, initiell hyperrefleksi
+senere hyporefleksi, kramper, psykomotoriske forstyrrelser, myoklonus, hypotermi, mydriasis.
+Respiratoriske symptomer: Respirasjonsdepresjon, lungeødem.
+Kardiovaskulære symptomer: Takykardi, hypotensjon (eller hypertensjon), ledningsforstyrrelser med
+breddeøkende QRS-kompleks, synkope i assosiasjon med hjertestans.
+Gastrointestinalsystemet: Brekninger, forsinket magetømming, redusert tarmmotilitet.
+Muskel/skjelettsystemet: Rhabdomyolyse kan forekomme ved overdosering.
+Renal funksjon: Urinretensjon, oliguri eller anuri, væskeretensjon, vannintoksikasjon (skyldes
+karbamazepinets ADH-lignende effekt).
+Laboratoriefunn: Hyponatremi og økt kreatinfosfokinase. Metabolsk acidose og hyperglykemi kan
+forekomme.
+
+Behandling
+Intet spesifikt antidot. Plasmakonsentrasjonen bør måles for å bekrefte karbamazepin-forgiftning og
+bestemme alvorlighetsgrad av forgiftningen. Ventrikkeltømming og administrering av aktivt kull.
+Adekvat behandling av rytmeforstyrrelser. For øvrig gis symptomatisk behandling med observasjon av
+sirkulasjon og elektrolyttstatus. Kramper behandles med benzodiazepiner (f.eks. diazepam) eller et
+annet antiepileptikum som f.eks. fenobarbital (vær oppmerksom på faren for respirasjonsdepresjon).
+Hemoperfusjon har vært anbefalt. Det er beskrevet plutselig tilbakefall i forgiftningsforløpet etter en
+tid (2-3 døgn), noe som kan skyldes forsinket absorpsjon.
+
+
+5.      FARMAKOLOGISKE EGENSKAPER
+
+5.1     Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Antiepileptika, karboksamidderivater.
+ATC-kode: N03A F01
+
+Virkningsmekanisme
+Delvis ukjent. Årsaken til preparatets antiepileptiske effekt er trolig at karbamazepin stabiliserer
+hyperstimulerte nervemembraner (blokkerer Na-kanalene), forhindrer gjentatte utladninger, reduserer
+synaptisk overføring av impulser og hemmer frigjøring av glutamat.
+
+Farmakodynamiske effekter
+Antikonvulsivum.
+
+Klinisk effekt og sikkerhet
+Retrospektive genomvide studier med japanere og nord-europeere viste en sammenheng mellom
+alvorlige hudreaksjoner (SJS, TEN, DRESS, AGEP og makulopapulært utslett) forbundet med
+karbamazepin-bruk og tilstedeværelse av HLA-A*3101-allelet hos disse pasientene.
+
+5.2     Farmakokinetiske egenskaper
+
+Absorpsjon
+Mengden karbamazepin som absorberes fra stikkpillene er omkring 25 % lavere enn for tablettene.
+Maks. plasmakonsentrasjon nås i løpet av 12 timer. “Steady-state” plasmakonsentrasjonen nås innen
+1-2 uker avhengig av pasientens status før behandling, auto-induksjon av karbamazepin,
+heteroinduksjon av andre legemidler, dose og varighet av behandlingen. Ved “Steady-state” finner
+man en svak nedgang i Cmaks og Cmin sammenlignet med tablettene.
+
+Distribusjon
+70-80 % av karbamazepin bindes til serumproteiner. Konsentrasjonen av uforandret legemiddel i
+cerebrospinalvæsken og saliva er ca. 20-30 % av plasmakonsentrasjonen. Konsentrasjon i morsmelk er
+25-60 % sammenlignet med plasmakonsentrasjonen. Karbamazepin passerer placentabarrieren. Ved
+antatt fullstendig absorpsjon av karbamazepin er distribusjonsvolumet omkring 0,8-1,9 l/kg.
+
+Biotransformasjon
+Metaboliseres i leveren der epoksidveien som gir 10,11-transdiol-derivatet og dets glukuronider som
+hovedmetabolitter, er den viktigste. Karbamazepin-10,11-epoksid, som er et mellomprodukt i denne
+metabolismeveien, er farmakologisk aktiv men har kortere halveringstid enn karbamazepin. Cytokrom
+P450 3A4 er identifisert som hovedenzymet bak metaboliseringen av karbamazepin til karbamazepin-
+10,11-epoksid. Human mikrosomal epoksidhydrolase har blitt identifisert som enzymet ansvarlig for
+dannelsen av 10,11-transdiol-derivatet fra karbamazepin-10,11-epoksid. 9-hydroksy-metyl-10-
+karbamoyl akridan er en mindre betydningsfull metabolitt som dannes via den samme
+metabolismeveien som karbamazepin-10,11-epoksid. Etter én oral dose karbamazepin gjenfinnes ca.
+30 % i urin som sluttprodukt av epoksidmetabolismeveien. Karbamazepin metaboliseres også til
+monohydroksylerte og N-glukuronid forbindelser via UGT2B7.
+
+Eliminasjon
+Karbamazepin utskilles hovedsakelig i urinen (72 %) og fæces (28 %). I urinen gjenfinnes 2 % som
+uomdannet karbamazepin og omkring 1 % som 10,11-epoksid metabolitten. Barn kan ha behov for
+høyere doser karbamazepin (i mg/kg) enn voksne pga. økt eliminasjon av legemidlet. Det er ingenting
+som tyder på at kinetikken av karbamazepin er endret hos eldre. Mild eller moderat nedsatt
+leverfunksjon påvirker ikke metabolismen av karbamazepin, mens clearance øker ved alvorlig
+dysfunksjon, noe som vil kreve en dosereduksjon. Ved nedsatt nyrefunksjon er det ikke rapportert
+signifikante endringer i kinetikken.
+Etter et enkelt inntak er halveringstiden av uomdannet karbamazepin omkring 36 t. Ved
+langtidsbehandling forkortes halveringstiden til 16-24 timer pga. enzyminduksjon av monooksygenase
+systemet i leveren. Ved samtidig behandling med andre enzyminduserende legemidler (fenytoin,
+fenobarbital) vil halveringstiden forkortes ytterligere til omkring 9-10 timer.
+
+5.3     Prekliniske sikkerhetsdata
+
+Prekliniske data indikerer ingen spesielle fare for mennesker basert på konvensjonelle studier av
+sikkerhetsfarmakologi, toksisitetstester ved gjentatt dosering, gentoksisitet og utviklingstoksisitet.
+
+Karsinogenitet
+Hos rotter behandlet med karbamazepin i 2 år ble det sett økt forekomst av hepatocellulære tumorer
+hos hunnrotter og benigne testikkeltumorer hos hannrotter. Disse funnene anses lite klinisk relevante
+ved terapeutiske doser av karbamazepin.
+
+Reproduksjonstoksisitet
+Dyrestudier er utilstrekkelige til å utelukke en teratogen effekt av karbamazepin. I en studie av pre- og
+postnatal utvikling hos rotter ble det sett redusert vektøkning hos avkom ved et maternalt oralt
+doseringsnivå på 192 mg/kg/dag.
+
+
+6.      FARMASØYTISKE EGENSKAPER
+
+6.1     Hjelpestoffer
+
+Hypromellose, hardfett.
+
+6.2     Uforlikeligheter
+
+Ikke relevant.
+
+6.3     Holdbarhet
+
+5 år
+
+6.4     Oppbevaringsbetingelser
+
+Oppbevares ved høyst 30oC
+
+6.5     Emballasje (type og innhold)
+
+125 mg og 250 mg: Blisterpakninger à 5 stikkpiller.
+PE laminert aluminiumsfolie.
+
+6.6     Spesielle forholdsregler for destruksjon
+
+Ingen spesielle forholdsregler for destruksjon.
+Ikke anvendt legemiddel samt avfall bør destrueres i overensstemmelse med lokale krav.
+7.      INNEHAVER AV MARKEDSFØRINGSTILLATELSEN
+
+Essential Pharma (M) Ltd.,
+Vision Exchange Building,
+Triq it-Territorjals, Zone 1,
+Central Business District,
+Birkirkara, CBD 1070,
+Malta
+
+
+8.      MARKEDSFØRINGSTILLATELSESNUMMER (NUMRE)
+
+125 mg:          MTnr. 7989
+250 mg:          MTnr. 7990
+
+
+9.      DATO FOR FØRSTE MARKEDSFØRINGSTILLATELSE / SISTE FORNYELSE
+
+Dato for første markedsføringstillatelse: 125 mg og 250 mg: 3. juni 1994
+Dato for siste fornyelse: 125 mg og 250 mg: 10. desember 2007
+
+
+10.     OPPDATERINGSDATO
+
+22.11.2023
+
