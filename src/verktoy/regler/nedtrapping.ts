@@ -1549,7 +1549,8 @@ const nortriptylin = stoff({
   ],
   tilpasninger: [
     utsagn('Preparatomtalens råd om å redusere 10–25 mg hver 3.–8. dag gjelder justering til vedlikeholdsdose, ikke seponering, og er ikke brukt.', P7.noritrenVedlikehold),
-    utsagn('200 mg er ikke et ordinært maksimum: over 150 mg, og hos eldre over 50 mg, krever en begrunnelse (substanskontrollen 30.10.2026).', P7.noritrenDose),
+    utsagn('200 mg er ikke et ordinært maksimum: over 150 mg krever en begrunnelse (substanskontrollen 30.10.2026).', P7.noritrenDose),
+    utsagn('Hos eldre krever over 50 mg en begrunnelse. Grensen er OUSFARs valg ut fra vedlikeholdsdosen i preparatomtalen, ikke en grense preparatomtalen setter, og «eldre» har ingen bestemt alder der. Den er til uavhengig kontroll.', P7.noritrenDose),
   ],
   forutsetninger: [`${TRISYKLISK} Serumkonsentrasjon (TDM) kan være relevant ved høye doser eller særlig sårbare pasienter.`],
   usikkerhet: ['Preparatomtalen sier ikke hvordan nortriptylin skal trappes ned ved seponering; regelen bygger på NICE og RCPsych.'],

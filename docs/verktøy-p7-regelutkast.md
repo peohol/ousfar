@@ -2142,7 +2142,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Seponering av nortriptylin, gjentatt prosentvis nedtrapping
 
-`seponering-nortriptylin`, versjon 6, fingeravtrykk `ed56e8e71736fe5bdd558ee3e4853b5faf782a4137fd6a65e30cdacdb875c23b`. Seponering: nortriptylin → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`seponering-nortriptylin`, versjon 6, fingeravtrykk `5a7049d830689c4b71d260126038e395e67a0f9a51b8383f4350708161001a6e`. Seponering: nortriptylin → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → utkast (versjon 3, 28.10.2026, Claude Code) → til faglig kontroll (versjon 3, 28.10.2026, Claude Code) → utkast (versjon 4, 29.10.2026, Claude Code) → til faglig kontroll (versjon 4, 29.10.2026, Claude Code) → utkast (versjon 5, 30.10.2026, Claude Code) → til faglig kontroll (versjon 5, 30.10.2026, Claude Code) → utkast (versjon 6, 30.10.2026, Claude Code) → til faglig kontroll (versjon 6, 30.10.2026, Claude Code).
 
@@ -2177,7 +2177,9 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 - Under 18 år, ved akutt alvorlig bivirkning, forgiftning, alvorlig interaksjon eller behov for rask seponering, ved ustabil dose, uregelmessig inntak eller bytte, og ved kontraindikasjoner stopper den ordinære planleggingen; nedtrappingen må da planlegges individuelt. *(OUSFARs vurdering)*
 - Preparatomtalens råd om å redusere 10–25 mg hver 3.–8. dag gjelder justering til vedlikeholdsdose, ikke seponering, og er ikke brukt.
   - Når effekten er inntrådt, holdes dosen minst 2 uker og trappes så gradvis ned, f.eks. 10–25 mg hver 3.–8. dag, til laveste dose som holder symptomene i sjakk. *([dmp-noritren](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-04958.pdf), pkt. 4.2)*
-- 200 mg er ikke et ordinært maksimum: over 150 mg, og hos eldre over 50 mg, krever en begrunnelse (substanskontrollen 30.10.2026).
+- 200 mg er ikke et ordinært maksimum: over 150 mg krever en begrunnelse (substanskontrollen 30.10.2026).
+  - Voksne: vanligvis 50–75 mg daglig i starten (25–30 mg ved lettere tilfeller), opptil 150 mg og sjelden 200 mg. Eldre: start 25–30 mg, vedlikehold 25–50 mg. *([dmp-noritren](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-04958.pdf), pkt. 4.2)*
+- Hos eldre krever over 50 mg en begrunnelse. Grensen er OUSFARs valg ut fra vedlikeholdsdosen i preparatomtalen, ikke en grense preparatomtalen setter, og «eldre» har ingen bestemt alder der. Den er til uavhengig kontroll.
   - Voksne: vanligvis 50–75 mg daglig i starten (25–30 mg ved lettere tilfeller), opptil 150 mg og sjelden 200 mg. Eldre: start 25–30 mg, vedlikehold 25–50 mg. *([dmp-noritren](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-04958.pdf), pkt. 4.2)*
 
 **Den matematiske regelen – parametre:**
@@ -2281,7 +2283,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Seponering av nortriptylin, langsom variant etter tidligere seponeringssymptomer
 
-`seponering-nortriptylin-langsom`, versjon 2, fingeravtrykk `fe7db8cda4de8ca2f0fe3f2eedec06b5f55b16fa5310cf80f9eda007bb3cd1ff`. Seponering: nortriptylin → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`seponering-nortriptylin-langsom`, versjon 2, fingeravtrykk `5b10b4b8006dc8e6bec8cff83079aeb9653f079fa16a0c2fd2562df297399bab`. Seponering: nortriptylin → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 30.10.2026, Claude Code) → til faglig kontroll (versjon 1, 30.10.2026, Claude Code) → utkast (versjon 2, 30.10.2026, Claude Code) → til faglig kontroll (versjon 2, 30.10.2026, Claude Code).
 
@@ -2315,7 +2317,9 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 - Under 18 år, ved akutt alvorlig bivirkning, forgiftning, alvorlig interaksjon eller behov for rask seponering, ved ustabil dose, uregelmessig inntak eller bytte, og ved kontraindikasjoner stopper den ordinære planleggingen; nedtrappingen må da planlegges individuelt. *(OUSFARs vurdering)*
 - Preparatomtalens råd om å redusere 10–25 mg hver 3.–8. dag gjelder justering til vedlikeholdsdose, ikke seponering, og er ikke brukt.
   - Når effekten er inntrådt, holdes dosen minst 2 uker og trappes så gradvis ned, f.eks. 10–25 mg hver 3.–8. dag, til laveste dose som holder symptomene i sjakk. *([dmp-noritren](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-04958.pdf), pkt. 4.2)*
-- 200 mg er ikke et ordinært maksimum: over 150 mg, og hos eldre over 50 mg, krever en begrunnelse (substanskontrollen 30.10.2026).
+- 200 mg er ikke et ordinært maksimum: over 150 mg krever en begrunnelse (substanskontrollen 30.10.2026).
+  - Voksne: vanligvis 50–75 mg daglig i starten (25–30 mg ved lettere tilfeller), opptil 150 mg og sjelden 200 mg. Eldre: start 25–30 mg, vedlikehold 25–50 mg. *([dmp-noritren](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-04958.pdf), pkt. 4.2)*
+- Hos eldre krever over 50 mg en begrunnelse. Grensen er OUSFARs valg ut fra vedlikeholdsdosen i preparatomtalen, ikke en grense preparatomtalen setter, og «eldre» har ingen bestemt alder der. Den er til uavhengig kontroll.
   - Voksne: vanligvis 50–75 mg daglig i starten (25–30 mg ved lettere tilfeller), opptil 150 mg og sjelden 200 mg. Eldre: start 25–30 mg, vedlikehold 25–50 mg. *([dmp-noritren](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-04958.pdf), pkt. 4.2)*
 
 **Den matematiske regelen – parametre:**
