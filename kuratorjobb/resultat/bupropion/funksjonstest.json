@@ -1,0 +1,153 @@
+{
+  "stoff": "bupropion",
+  "status": "ok",
+  "kontroller": [
+    {
+      "id": "les_stoff",
+      "rpc": "les_stoff",
+      "ms": 1097,
+      "status": "ok",
+      "melding": "Den publiserte siden ble lest.",
+      "antall": {
+        "elementer": 54,
+        "referanser": 110
+      }
+    },
+    {
+      "id": "sidemodell",
+      "status": "ok",
+      "melding": "Siden kan settes sammen slik appen viser den."
+    },
+    {
+      "id": "referanser",
+      "status": "ok",
+      "melding": "Alle referansene siden siterer, ble lest med den.",
+      "antall": {
+        "sitert": 107
+      }
+    },
+    {
+      "id": "utkast_skjult",
+      "rpc": "les_stoff",
+      "ms": 162,
+      "status": "ok",
+      "melding": "Utkastet er skjult for en vanlig bruker, som det skal."
+    },
+    {
+      "id": "stoffliste",
+      "rpc": "les_stoffliste",
+      "ms": 182,
+      "status": "ok",
+      "melding": "Siden står i lista over fagsider.",
+      "antall": {
+        "sider": 128
+      }
+    },
+    {
+      "id": "fest",
+      "rpc": "les_legemidler",
+      "ms": 494,
+      "status": "ok",
+      "melding": "Legemiddeldataene ble lest (FEST kontrollert 2026-10-30T04:15:57.810377+00:00).",
+      "antall": {
+        "virkestoff": 2,
+        "merkevarer": 8,
+        "pakninger": 13
+      }
+    },
+    {
+      "id": "preparatvisning",
+      "status": "ok",
+      "melding": "Preparatseksjonen kan bygges av svaret."
+    },
+    {
+      "id": "interaksjoner",
+      "rpc": "les_interaksjoner",
+      "ms": 676,
+      "status": "ok",
+      "melding": "Interaksjonene ble lest.",
+      "antall": {
+        "interaksjoner": 61,
+        "ikke_vurdert": 1
+      }
+    },
+    {
+      "id": "interaksjonsvisning",
+      "status": "ok",
+      "melding": "Interaksjonsseksjonen kan bygges av svaret."
+    },
+    {
+      "id": "bivirkninger",
+      "rpc": "les_bivirkninger",
+      "ms": 189,
+      "status": "ok",
+      "melding": "Bivirkningene ble lest, og appen viser alle radene.",
+      "antall": {
+        "kilder": 6,
+        "rader": 535,
+        "rader_appen_viser": 535
+      }
+    },
+    {
+      "id": "bivirkningsvisning",
+      "status": "ok",
+      "melding": "Bivirkningsseksjonen kan bygges av svaret."
+    },
+    {
+      "id": "clinpgx",
+      "status": "ikke_aktuelt",
+      "melding": "Siden er ikke koblet til ClinPGx."
+    },
+    {
+      "id": "cpic",
+      "status": "ikke_aktuelt",
+      "melding": "Siden er ikke koblet til ClinPGx, som CPIC slås opp etter."
+    },
+    {
+      "id": "kjemi",
+      "rpc": "les_kjemi",
+      "ms": 146,
+      "status": "ok",
+      "melding": "De kjemiske grunndataene ble lest, og koblingene stemmer (kontrollert 2026-10-28T03:15:15.268885+00:00).",
+      "antall": {
+        "forbindelser": 2,
+        "hentet": 2,
+        "ikke_hentet": 0,
+        "uavklarte": 0,
+        "rader": 2,
+        "rader_appen_viser": 2
+      }
+    },
+    {
+      "id": "kjemivisning",
+      "status": "ok",
+      "melding": "Seksjonen «Kjemiske grunndata» kan bygges av svaret."
+    },
+    {
+      "id": "laboratorieanalyser",
+      "rpc": "les_laboratorieanalyser",
+      "ms": 393,
+      "status": "ok",
+      "melding": "Laboratorieanalysene ble lest, og koblingene stemmer (kontrollert 2026-10-30T04:44:40.31927+00:00).",
+      "antall": {
+        "forbindelser": 2,
+        "koblet": 2,
+        "usikre": 0,
+        "komponenter": 3,
+        "analyser": 11,
+        "laboratorier": 6
+      }
+    },
+    {
+      "id": "laboratorievisning",
+      "status": "ok",
+      "melding": "Seksjonen «Analyse ved norske laboratorier» kan bygges av svaret, i alle enhetene.",
+      "antall": {
+        "tabeller": 4,
+        "rader": 9,
+        "ikke_omregnet": 0,
+        "usikre": 0
+      }
+    }
+  ]
+}

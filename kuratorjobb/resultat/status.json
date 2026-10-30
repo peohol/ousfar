@@ -1,18 +1,99 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-41049391089",
     "foresporsel_commit": "1b7310141ab2f661578d7deb5797bf1f639073e7",
     "foresporsel_sha256": "e6091f1881535a132ba41a2e51a22f9c1a9c57023783924b5f0f6ada3a9afbad",
     "kode_commit": "c58509067b9f530f36d25b6953495c5fd634f14f",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/41049391089",
-    "startet_kl": "2026-10-30T11:37:49.204Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-30T11:37:51.079Z",
+    "ferdig_kl": "2026-10-30T11:38:18.201Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "trimipramin",
+      "bupropion",
+      "gabapentin",
+      "litium",
+      "etanol",
+      "mdma"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 448
+    }
+  ],
+  "stoffer": {
+    "trimipramin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/trimipramin/funksjonstest.json"
+        }
+      }
+    },
+    "bupropion": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/bupropion/funksjonstest.json"
+        }
+      }
+    },
+    "gabapentin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/gabapentin/funksjonstest.json"
+        }
+      }
+    },
+    "litium": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/litium/funksjonstest.json"
+        }
+      }
+    },
+    "etanol": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/etanol/funksjonstest.json"
+        }
+      }
+    },
+    "mdma": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/mdma/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
