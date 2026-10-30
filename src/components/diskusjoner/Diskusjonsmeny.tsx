@@ -5,19 +5,18 @@ import { hentAlleProfiler } from '../../auth/api'
 import {
   flyttDiskusjonTil,
   flyttKategoriTil,
+  hentApen,
   hentBredde,
   hentDiskusjoner,
   hentDiskusjonstekster,
-  hentLaast,
+  lagreApen,
   lagreBredde,
-  lagreLaast,
   losOppKategori,
   opprettKategori,
   type Kategorivalg,
 } from '../../diskusjoner/api'
 import {
   TOM_OVERSIKT,
-  UKATEGORISERTE,
   adresseForSide,
   antallNye,
   flyttDiskusjon,
@@ -50,7 +49,7 @@ export const DISKUSJON_LAG = 'diskusjoner'
 
 /**
  * Hvordan menyen står, satt på rotelementet så resten av appen kan gi plass:
- * `smal` for kolonnen med emojiene, `laast` for hele menyen holdt åpen.
+ * `lukket` for boblen, `apen` for hele menyen.
  */
 const ROTMERKE = 'diskusjonsmeny'
 
@@ -76,28 +75,27 @@ const SIST = Number.MAX_SAFE_INTEGER
 
 /**
  * Diskusjonene på siden som står åpen — en fagside eller fortolkningen av én
- * analytt — i en fast meny til høyre.
+ * analytt — i en fast meny til høyre. Den har fire tilstander:
  *
- * På brede flater står menyen som en smal kolonne med «Hold åpen» øverst og
- * emojien til hver kategori under, med et blått merke der noe er nytt. Når
- * pekeren kommer inn over den, åpner den seg, og den lukker seg igjen når
- * pekeren går ut — med mindre den holdes åpen, en tråd står åpen, eller noen
- * skriver i den. «Hold åpen» følger brukeren fra side til side og fra maskin
- * til maskin (brukerinnstillingen `diskusjoner.laast`), og da gir resten av
- * appen plass til den.
+ * 1. Lukket står den på brede flater som en rund boble med samtaleikonet, like
+ *    høy som toppmenyen, der toppen av menyen står åpen, og et blått merke når
+ *    noe er nytt.
+ * 2. Med pekeren over (eller fokus fra tastaturet) vokser boblen litt og sier
+ *    «Diskusjoner — Trykk for å vise». Det er bare utseende (`diskusjoner.css`).
+ * 3. Et trykk på boblen åpner menyen. Den står åpen, også fra side til side og
+ *    fra maskin til maskin (brukerinnstillingen `diskusjoner.laast`), til
+ *    lukkeknappen trykkes, og resten av appen gir plass til den.
+ * 4. «Maksimer» viser den som helside over hele vinduet, med oversikten eller
+ *    én tråd. Det er en tilstand over siden som står, ikke en egen side:
+ *    `Escape` eller knappen igjen tar brukeren tilbake til menyen slik den
+ *    stod, og lukkeknappen lukker den helt. Resten av appen er inert så lenge.
  *
  * Åpen kan menyen gjøres bredere ved å dra i venstre kanten (eller med
- * piltastene på den); bredden følger brukeren som «Hold åpen»
- * (`diskusjoner.bredde`). Den smaleste bredden er den menyen har fra før.
+ * piltastene på den); bredden følger brukeren (`diskusjoner.bredde`). Den
+ * smaleste bredden er den menyen har fra før.
  *
- * På smale flater står en knapp i toppmenyen (dokken) i stedet, som åpner
- * menyen over siden.
- *
- * Åpen kan menyen også vises som helside over hele vinduet, med oversikten
- * eller én tråd. Det er en tilstand over siden som står, ikke en egen side:
- * `Escape` eller knappen for helsiden igjen tar brukeren tilbake
- * til menyen slik den stod, på den samme siden. Resten av appen er inert så
- * lenge.
+ * På smale flater står en knapp i toppmenyen (dokken) i stedet for boblen,
+ * som åpner menyen over siden.
  *
  * Mens fokus står i menyen, er den et lag over appen: tastene i fortolkningen
  * ligger i ro, så det som skrives her, ikke velger eller kopierer noe bak.
@@ -112,20 +110,20 @@ export function Diskusjonsmeny({
   /** Sidene en tråd kan flyttes til. */
   sider: Diskusjonssider
 }) {
-  const [laast, setLaast] = useBevart('diskusjoner/laast', false)
-  // Bredden følger brukeren som «Hold åpen» (`diskusjoner.bredde`).
+  const [apen, setApen] = useBevart('diskusjoner/apen', false)
+  // Bredden følger brukeren som om menyen står åpen (`diskusjoner.bredde`).
   const { lengde: bredde, endrer: endrerBredde, sett: lagreNyBredde } = useDrattLengde('diskusjoner/bredde', BREDDE)
   const [mobilApen, setMobilApen] = useBevart('diskusjoner/mobil', false)
   const [helside, setHelside] = useBevart('diskusjoner/helside', false)
-  const [svever, setSvever] = useState(false)
   const [fokus, setFokus] = useState(false)
-  const [iTraad, setITraad] = useState(false)
   const meny = useRef<HTMLElement>(null)
 
-  // «Hold åpen» er lagret på brukeren. Til det er hentet, gjelder det som stod.
+  // Om menyen står åpen, er lagret på brukeren. Til det er hentet, gjelder det som stod,
+  // og har brukeren åpnet eller lukket den i mellomtiden, vinner det.
+  const endretHer = useRef(false)
   useEffect(() => {
-    void hentLaast().then((lagret) => lagret !== null && setLaast(lagret), () => undefined)
-  }, [setLaast])
+    void hentApen().then((lagret) => lagret !== null && !endretHer.current && setApen(lagret), () => undefined)
+  }, [setApen])
 
   useEffect(() => {
     settBredde(bredde)
@@ -137,41 +135,43 @@ export function Diskusjonsmeny({
     settBredde(ny)
   }
 
-  const veksleLaas = () => {
-    const ny = !laast
-    setLaast(ny)
-    void lagreLaast(ny).catch(() => undefined)
-  }
+  const settApen = useCallback(
+    (ny: boolean) => {
+      endretHer.current = true
+      setApen(ny)
+      void lagreApen(ny).catch(() => undefined)
+    },
+    [setApen],
+  )
 
-  const apen = laast || svever || fokus || iTraad || mobilApen || helside
+  const vist = apen || mobilApen || helside
   useRestenInert(meny, helside)
 
-  // Resten av appen gir plass til kolonnen, og til hele menyen når den holdes åpen.
+  // Resten av appen gir plass til boblen, og til hele menyen når den står åpen.
   useEffect(() => {
     const rot = document.documentElement
-    rot.dataset[ROTMERKE] = laast ? 'laast' : 'smal'
+    rot.dataset[ROTMERKE] = apen ? 'apen' : 'lukket'
     return () => {
       delete rot.dataset[ROTMERKE]
     }
-  }, [laast])
+  }, [apen])
 
-  // Et trykk utenfor lukker en meny som bare står åpen for øyeblikket.
+  // Et trykk utenfor lukker menyen over siden på smale flater.
   useEffect(() => {
-    if (!svever && !mobilApen) return
+    if (!mobilApen) return
     const utenfor = (event: PointerEvent) => {
       if (meny.current?.contains(event.target as Node)) return
       if ((event.target as Element | null)?.closest?.('.diskusjonsknapp')) return
-      setSvever(false)
       setMobilApen(false)
     }
     document.addEventListener('pointerdown', utenfor)
     return () => document.removeEventListener('pointerdown', utenfor)
-  }, [svever, mobilApen, setMobilApen])
+  }, [mobilApen, setMobilApen])
 
   /**
-   * Fokus holder menyen åpen når det står i et felt det skrives i, eller kom
-   * dit med tastaturet. Et museklikk på en knapp i menyen skal ikke hindre at
-   * den lukker seg når pekeren går ut.
+   * Fokus gjør menyen til et lag når det står i et felt det skrives i, eller
+   * kom dit med tastaturet. Et museklikk på en knapp i menyen skal ikke holde
+   * tastene i fortolkningen i ro.
    */
   const inn = (event: FocusEvent<HTMLElement>) => setFokus(holderApen(event.target))
   const ut = (event: FocusEvent<HTMLElement>) => {
@@ -179,8 +179,17 @@ export function Diskusjonsmeny({
     setFokus(false)
   }
 
-  // Et varsel som leder til en tråd, åpner menyen også på smale flater, der den ellers står skjult.
-  const visVarslet = useCallback(() => setMobilApen(true), [setMobilApen])
+  /** Åpner menyen der den står: over siden på smale flater, ellers ved siden av den. */
+  const apne = useCallback(() => {
+    if (smalFlate()) setMobilApen(true)
+    else settApen(true)
+  }, [setMobilApen, settApen])
+
+  /** Boblen ble trykket: menyen åpnes, og fokus går til lukkeknappen, så samme tast lukker igjen. */
+  const apneFraBoblen = () => {
+    apne()
+    flyttFokus('.diskusjonspanel__lukk')
+  }
 
   /**
    * Tilbake fra helsiden til menyen, åpen som før — på smale flater også om
@@ -189,20 +198,43 @@ export function Diskusjonsmeny({
    */
   const avsluttHelside = () => {
     setHelside(false)
-    setSvever(true)
-    if (smalFlate()) setMobilApen(true)
-    requestAnimationFrame(() => {
-      const knapp = meny.current?.querySelector<HTMLElement>('.diskusjonspanel__helside')
-      if (!meny.current?.contains(document.activeElement) || document.activeElement?.checkVisibility?.() === false) knapp?.focus()
-    })
+    apne()
+    flyttFokus('.diskusjonspanel__helside', true)
   }
 
+  /** Lukkeknappen: helt lukket, også fra helsiden. Fokus går til boblen. */
   const lukk = () => {
-    setSvever(false)
+    setHelside(false)
+    settApen(false)
+    setMobilApen(false)
+    setFokus(false)
+    flyttFokus('.diskusjonsboble')
+  }
+
+  /**
+   * Escape uten helside: menyen over siden på smale flater lukkes, og fokus
+   * slippes. Menyen ved siden av siden står åpen til den lukkes med knappen.
+   */
+  const slipp = () => {
     setMobilApen(false)
     setFokus(false)
     ;(document.activeElement as HTMLElement | null)?.blur()
   }
+
+  /**
+   * Fokus til `velger` i menyen når den er tegnet på nytt, så det ikke blir
+   * borte med knappen som ble trykket. Med `bareTapt` bare når fokus ikke
+   * lenger står synlig i menyen. Er målet ikke synlig, slippes fokus.
+   */
+  const flyttFokus = (velger: string, bareTapt = false) =>
+    requestAnimationFrame(() => {
+      const aktiv = document.activeElement as HTMLElement | null
+      const iMenyen = !!meny.current?.contains(aktiv) && aktiv?.checkVisibility?.() !== false
+      if (bareTapt && iMenyen) return
+      const maal = meny.current?.querySelector<HTMLElement>(velger)
+      if (maal && maal.checkVisibility?.() !== false) maal.focus()
+      else if (meny.current?.contains(aktiv)) aktiv?.blur()
+    })
 
   return (
     <>
@@ -220,13 +252,10 @@ export function Diskusjonsmeny({
         ref={meny}
         className="diskusjonsmeny"
         aria-label={`Diskusjoner om ${sidenavn}`}
-        data-apen={apen || undefined}
-        data-laast={laast || undefined}
+        data-apen={vist || undefined}
         data-mobil={mobilApen || undefined}
         data-helside={helside || undefined}
         {...((fokus || helside) && { 'data-lag': DISKUSJON_LAG })}
-        onMouseEnter={() => setSvever(true)}
-        onMouseLeave={() => setSvever(false)}
         onFocus={inn}
         onBlur={ut}
         onKeyDown={(event) => {
@@ -234,14 +263,14 @@ export function Diskusjonsmeny({
           // Et lag over menyen, som flyttingen av en tråd, lukkes for seg.
           if ((event.target as HTMLElement).isContentEditable || (event.target as HTMLElement).closest('dialog')) return
           event.preventDefault()
-          // Escape lukker menyen (eller helsiden) og ikke noe mer: fokus slippes i `lukk()`, så
+          // Escape går ut av helsiden eller menyen og ikke noe mer: fokus slippes i `slipp()`, så
           // uten dette ville fortolkningen bak tatt den som «Bytt analytt».
           event.stopPropagation()
           if (helside) avsluttHelside()
-          else lukk()
+          else slipp()
         }}
       >
-        {apen && !helside && (
+        {vist && !helside && (
           <Kanthandtak
             etikett="Bredden på diskusjonene"
             maal={() => ({
@@ -259,15 +288,12 @@ export function Diskusjonsmeny({
             side={side}
             sidenavn={sidenavn}
             sider={sider}
-            apen={apen}
-            laast={laast}
-            onLaas={veksleLaas}
+            apen={vist}
             helside={helside}
             onHelside={() => (helside ? avsluttHelside() : setHelside(true))}
-            onApne={() => setSvever(true)}
+            onApne={apneFraBoblen}
             onLukk={lukk}
-            onITraad={setITraad}
-            onVarslet={visVarslet}
+            onVarslet={apne}
           />
         </Bevaringsomrade>
       </aside>
@@ -281,27 +307,21 @@ function Diskusjonsflate({
   sidenavn,
   sider,
   apen,
-  laast,
-  onLaas,
   helside,
   onHelside,
   onApne,
   onLukk,
-  onITraad,
   onVarslet,
 }: {
   side: Diskusjonsside
   sidenavn: string
   sider: Diskusjonssider
   apen: boolean
-  laast: boolean
-  onLaas: () => void
   /** Menyen står som helside over hele vinduet. */
   helside: boolean
   onHelside: () => void
   onApne: () => void
   onLukk: () => void
-  onITraad: (iTraad: boolean) => void
   /** En tråd et varsel ba om, er åpnet. */
   onVarslet: () => void
 }) {
@@ -356,12 +376,6 @@ function Diskusjonsflate({
     apneVenter()
     return lyttEtterDiskusjon(apneVenter)
   }, [side, setVisning, onVarslet])
-
-  // En åpen tråd holder menyen åpen.
-  useEffect(() => {
-    onITraad(visning.side !== 'liste')
-    return () => onITraad(false)
-  }, [visning.side, onITraad])
 
   const data = oversikt ?? TOM_OVERSIKT
   const gruppering = useMemo(() => grupper(data), [data])
@@ -502,38 +516,33 @@ function Diskusjonsflate({
     )
   }
 
-  const nyeUten = antallNye(gruppering.ukategoriserte)
+  // Det blå merket på boblen: alle tråder med noe nytt, unntatt de arkiverte.
+  const nye = useMemo(
+    () => gruppering.kategorier.reduce((sum, g) => sum + antallNye(g.diskusjoner), antallNye(gruppering.ukategoriserte)),
+    [gruppering],
+  )
 
   return (
     <Forfatterkilde profiler={profiler}>
-      {/* Kolonnen når menyen er lukket: «Hold åpen» og emojiene. */}
-      <div className="diskusjonsstolpe" hidden={apen}>
-        <Laasknapp laast={laast} onLaas={onLaas} />
-        <button type="button" className="diskusjonsstolpe__knapp" aria-label="Vis diskusjonene" onClick={onApne}>
-          <Ikon navn="diskusjon" storrelse="ui" />
-        </button>
-        <ul className="diskusjonsstolpe__kategorier">
-          {gruppering.ukategoriserte.length > 0 && (
-            <Stolpekategori emoji={UKATEGORISERTE.emoji} navn={UKATEGORISERTE.navn} nye={nyeUten} onApne={onApne} />
-          )}
-          {gruppering.kategorier.map(({ kategori, diskusjoner }) => (
-            <Stolpekategori
-              key={kategori.id}
-              emoji={kategori.emoji}
-              navn={kategori.navn}
-              nye={antallNye(diskusjoner)}
-              onApne={() => {
-                onApne()
-                setVisning(LISTE)
-                setSok('')
-                requestAnimationFrame(() =>
-                  kropp.current?.querySelector(`[data-kategori="${kategori.id}"]`)?.scrollIntoView({ block: 'start' }),
-                )
-              }}
-            />
-          ))}
-        </ul>
-      </div>
+      {/* Lukket: boblen. Med pekeren over vokser den og sier hva den er (`diskusjoner.css`). */}
+      <button
+        type="button"
+        className="diskusjonsboble"
+        hidden={apen}
+        aria-label={nye > 0 ? `Vis diskusjonene, ${nye} med nytt` : 'Vis diskusjonene'}
+        onClick={onApne}
+      >
+        <span className="diskusjonsboble__innhold" aria-hidden="true">
+          <Ikon navn="diskusjon" storrelse="ui" className="diskusjonsboble__ikon" />
+          <span className="diskusjonsboble__tittel">Diskusjoner</span>
+          <span className="diskusjonsboble__hint">Trykk for å vise</span>
+        </span>
+        {nye > 0 && (
+          <span className="nyttmerke nyttmerke--boble" aria-hidden="true">
+            {merketall(nye)}
+          </span>
+        )}
+      </button>
 
       <div className="diskusjonspanel" hidden={!apen}>
         <div className="diskusjonspanel__topp">
@@ -541,13 +550,12 @@ function Diskusjonsflate({
             <Ikon navn="diskusjon" storrelse="ui" />
             <span>Diskusjoner</span>
           </h2>
-          <Laasknapp laast={laast} onLaas={onLaas} />
           <button
             type="button"
             className="diskusjonspanel__helside"
             aria-pressed={helside}
-            aria-label="Vis diskusjonene som helside"
-            title={helside ? 'Tilbake til menyen' : 'Vis som helside'}
+            aria-label="Maksimer"
+            title={helside ? 'Gjenopprett' : 'Maksimer'}
             onClick={onHelside}
           >
             <Ikon navn={helside ? 'helsideAv' : 'helside'} storrelse="ui" />
@@ -556,6 +564,7 @@ function Diskusjonsflate({
             type="button"
             className="diskusjonspanel__lukk"
             aria-label="Lukk diskusjonene"
+            title="Lukk"
             onClick={onLukk}
           >
             <Ikon navn="close" storrelse="ui" />
@@ -621,41 +630,4 @@ function holderApen(element: HTMLElement): boolean {
     // En nettleser som ikke kjenner `:focus-visible`: bare feltene holder den åpen.
     return false
   }
-}
-
-/** «Hold åpen»: menyen står åpen til den slippes, på alle sider. */
-function Laasknapp({ laast, onLaas }: { laast: boolean; onLaas: () => void }) {
-  return (
-    <button
-      type="button"
-      className="diskusjonsmeny__laas"
-      aria-pressed={laast}
-      aria-label="Hold diskusjonene åpne"
-      title={laast ? 'Slipp diskusjonene' : 'Hold diskusjonene åpne'}
-      onClick={onLaas}
-    >
-      <Ikon navn="feste" storrelse="ui" />
-    </button>
-  )
-}
-
-function Stolpekategori({ emoji, navn, nye, onApne }: { emoji: string; navn: string; nye: number; onApne: () => void }) {
-  return (
-    <li>
-      <button
-        type="button"
-        className="diskusjonsstolpe__kategori"
-        aria-label={nye > 0 ? `${navn}, ${nye} med nytt` : navn}
-        title={navn}
-        onClick={onApne}
-      >
-        <span aria-hidden="true">{emoji}</span>
-        {nye > 0 && (
-          <span className="nyttmerke nyttmerke--stolpe" aria-hidden="true">
-            {merketall(nye)}
-          </span>
-        )}
-      </button>
-    </li>
-  )
 }

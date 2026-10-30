@@ -31,9 +31,12 @@ function profil(id: string, fornavn: string): Profil {
 const KARI = profil('kari', 'Kari')
 const OLA = profil('ola', 'Ola')
 
+/** I går, så føringene alltid er innenfor fristen for varsler (`VARSELFRIST_DAGER`), uansett når testen kjøres. */
+const I_GAAR = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10)
+
 const endring = (versjon: string, sammendrag: string): Endring => ({
   versjon,
-  dato: '2026-09-29',
+  dato: I_GAAR,
   sammendrag,
   typer: ['Funksjonalitet'],
   omfang: 'Mindre omfang',

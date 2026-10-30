@@ -12,6 +12,20 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.114.0',
+    dato: '2026-10-30',
+    sammendrag: 'Diskusjonsmenyen er en boble når den er lukket',
+    typer: ['Funksjonalitet', 'Design / layout'],
+    omfang: 'Moderat omfang',
+    gjelder: ['hele appen'],
+    punkter: [
+      'Lukket står diskusjonsmenyen ikke lenger som en stolpe langs hele siden, men som en rund boble med samtaleikonet øverst til høyre. Et blått tall på boblen viser hvor mange tråder som har noe nytt.',
+      'Med pekeren over vokser boblen litt og viser «Diskusjoner» og «Trykk for å vise». Menyen åpnes først når du trykker på boblen, ikke lenger bare av at pekeren kommer over den.',
+      'Åpen står menyen til du lukker den med den nye lukkeknappen øverst til høyre, også når du går til andre sider. Knappen med nålen som holdt menyen åpen, er borte.',
+      'Knappen for å vise diskusjonene som helside heter nå «Maksimer». Maksimert kan du gå tilbake til menyen med den samme knappen eller Escape, eller lukke alt med lukkeknappen.',
+    ],
+  },
+  {
     versjon: '1.113.0',
     dato: '2026-10-28',
     sammendrag: 'Fagsider for kokain, MDMA og etanol, foreløpig uten faginnhold',
