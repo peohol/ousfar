@@ -1,18 +1,49 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "advarsel",
   "jobb": {
     "gren": "kuratorjobb/manuell-41116852936",
     "foresporsel_commit": "3713e8c486d499431e3983a66b681e7b9a41a8a7",
     "foresporsel_sha256": "878d71f536eaaa36d51765117c46c4624d01f86e8eb9b29dc04b8edf3be6272a",
     "kode_commit": "c58509067b9f530f36d25b6953495c5fd634f14f",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/41116852936",
-    "startet_kl": "2026-10-30T19:38:40.068Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-30T19:38:41.984Z",
+    "ferdig_kl": "2026-10-30T19:38:49.475Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "promazin"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 454
+    }
+  ],
+  "stoffer": {
+    "promazin": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/promazin/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
