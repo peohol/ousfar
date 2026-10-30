@@ -1,18 +1,54 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "advarsel",
   "jobb": {
     "gren": "kuratorjobb/manuell-41057700918",
     "foresporsel_commit": "39755cea6977a0ccf9c6310074b7ef97c6f46718",
     "foresporsel_sha256": "772605213612a5b69f56bd683b0cbb1b4aef0e6550645f8da5379f5b67de8b51",
     "kode_commit": "c58509067b9f530f36d25b6953495c5fd634f14f",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/41057700918",
-    "startet_kl": "2026-10-30T12:45:36.236Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-30T12:45:38.365Z",
+    "ferdig_kl": "2026-10-30T12:45:46.290Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "loksapin"
+    ],
+    "oppgaver": [
+      "funksjonstest",
+      "spc"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 701
+    }
+  ],
+  "stoffer": {
+    "loksapin": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/loksapin/funksjonstest.json"
+        },
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/loksapin/spc.json"
+        }
+      }
+    }
+  }
 }
