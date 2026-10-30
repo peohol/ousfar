@@ -1,0 +1,12 @@
+{
+  "versjon": 1,
+  "stoffer": ["metylfenidat"],
+  "oppgaver": ["spc"],
+  "spc": {
+    "adresser": [
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-8123.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-03449.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-15044.pdf"
+    ]
+  }
+}
