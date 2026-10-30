@@ -1,18 +1,54 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "advarsel",
   "jobb": {
     "gren": "kuratorjobb/manuell-41059117394",
     "foresporsel_commit": "c473f387ec1c8d9f3029f289567e8cad5fdff001",
     "foresporsel_sha256": "94cab0379f8a51fbb46be241913b4dc9e1323f662739085e412a1ecc2d3407f6",
     "kode_commit": "c58509067b9f530f36d25b6953495c5fd634f14f",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/41059117394",
-    "startet_kl": "2026-10-30T12:56:38.313Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-30T12:56:40.195Z",
+    "ferdig_kl": "2026-10-30T12:56:47.156Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "maprotilin"
+    ],
+    "oppgaver": [
+      "funksjonstest",
+      "spc"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 236
+    }
+  ],
+  "stoffer": {
+    "maprotilin": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/maprotilin/funksjonstest.json"
+        },
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/maprotilin/spc.json"
+        }
+      }
+    }
+  }
 }
