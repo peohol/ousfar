@@ -1,0 +1,63 @@
+{
+  "stoff": "sulpirid",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-10-30T04:15:57.810377+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 2,
+    "hentet": 0,
+    "dokumenter": 0,
+    "mangler": [
+      {
+        "merkevare_id": "ID_2C75DF03-4B18-4301-B686-9488F3D50FEA",
+        "varenavn": "Sulpirid 1a pharma",
+        "navn_form_styrke": "Sulpirid 1a pharma tab 200 mg",
+        "produsent": "1 A Pharma",
+        "atc": "N05AL01",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_F76CEBA6-0955-4D56-A566-821429D03800",
+        "varenavn": "Dogmatil",
+        "navn_form_styrke": "Dogmatil kaps 50 mg",
+        "produsent": "Neuraxpharm",
+        "atc": "N05AL01",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 0 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 0,
+        "ikke_dmp": 0,
+        "uten_omtale": 2
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "Ingen preparatomtale ble hentet. SPC-behovet er ikke dekket; se «dekning».",
+      "antall": {
+        "preparater": 2,
+        "hentet": 0,
+        "mangler": 2,
+        "dokumenter": 0
+      }
+    }
+  ],
+  "adresser": [],
+  "dokumenter": [],
+  "utelatt": []
+}
