@@ -1,18 +1,82 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "feil",
   "jobb": {
     "gren": "kuratorjobb/manuell-41028259811",
     "foresporsel_commit": "4e43f385b1203544cb2b050443acc539f45d4eb4",
     "foresporsel_sha256": "139ae084c0f7984c373e7cca77da0d0a10ee6c59a0e36fbb72b86df88851b27a",
     "kode_commit": "7812c1863f3e80b86c4e0fc3e93f046d84c0d754",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/41028259811",
-    "startet_kl": "2026-10-30T08:42:57.536Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-30T08:42:59.562Z",
+    "ferdig_kl": "2026-10-30T08:43:14.244Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "agomelatin",
+      "dmt",
+      "dosulepin"
+    ],
+    "oppgaver": [
+      "funksjonstest",
+      "spc"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 738
+    }
+  ],
+  "stoffer": {
+    "agomelatin": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/agomelatin/funksjonstest.json"
+        },
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/agomelatin/spc.json"
+        }
+      }
+    },
+    "dmt": {
+      "status": "feil",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/dmt/funksjonstest.json"
+        },
+        "spc": {
+          "status": "feil",
+          "fil": "kuratorjobb/resultat/dmt/spc.json"
+        }
+      }
+    },
+    "dosulepin": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/dosulepin/funksjonstest.json"
+        },
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/dosulepin/spc.json"
+        }
+      }
+    }
+  }
 }
