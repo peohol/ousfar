@@ -1,0 +1,59 @@
+      Effekt av escitalopram på andre legemidlers farmakokinetikk
+      Escitalopram er en hemmer av CYP2D6. Forsiktighet anbefales når escitalopram gis samtidig
+      med legemidler som i hovedsak metaboliseres via dette enzymet, og som har smal terapeutisk
+      indeks, som for eksempel flekainid, propafenon og metoprolol (ved hjertesvikt) eller enkelte
+      CNS virkende legemidler som i hovedsak metaboliseres via CYP2D6, for eksempel
+      antidepressiva som desipramin, klomipramin og nortriptylin, eller antipsykotika som risperidon,
+      tioridazin og haloperidol. Justering av dosen kan være nødvendig.
+
+      Samtidig administrasjon med desipramin eller metoprolol ga i begge tilfeller en dobling av
+      plasmanivåene for disse to CYP2D6 substratene.
+
+      In vitro studier har vist at escitalopram også kan være en svak hemmer av CYP2C19.
+      Forsiktighet anbefales ved samtidig administrasjon av legemidler som metaboliseres via
+      CYP2C19.
+
+4.6   Fertilitet, graviditet og amming
+
+      Graviditet
+      Det foreligger bare begrensede kliniske data for escitalopram brukt under graviditet. Dyrestudier
+      har vist reproduksjonstoksisitet (se punkt 5.3).
+      Cipralex bør derfor ikke brukes under graviditet uten at det er helt nødvendig og bare etter nøye
+      vurdering av nytte/risiko.
+
+      Nyfødte bør observeres hvis Cipralex er brukt i senere stadier av svangerskapet, særlig i tredje
+      trimester. Brå seponering bør unngås under svangerskapet.
+
+      Følgende symptomer kan forekomme hos nyfødte ved bruk av SSRI/SNRI sent i svangerskapet:
+      pusteproblemer, cyanose, apne, kramper, temperatursvingninger, vanskeligheter med amming,
+      oppkast, hypoglykemi, hypertoni, hypotoni, hyperrefleksi, tremor, skjelving, irritabilitet, døsighet,
+      konstant gråt, søvnighet og søvnvansker. Disse symptomene kan enten være serotonerge effekter
+      eller seponeringssymptomer. I de fleste tilfellene sees symptomene umiddelbart eller kort tid
+      (mindre enn 24 timer) etter fødselen.
+
+      Epidemiologiske data har antydet at bruk av SSRIer under graviditet, særlig sent i
+      svangerskapet, kan øke risikoen for vedvarende pulmonal hypertensjon hos nyfødte. Den
+      observerte risikoen var ca. 5 tilfeller per 1000 graviditeter. I befolkningen ellers ser en 1 til 2
+      tilfeller av pulmonalal hypertensjon per 1000 graviditeter.
+
+      Observasjonsdata indikerer en økt risiko (mindre enn doblet) for postpartumblødning ved
+      eksponering for SSRI/SNRI den siste måneden før fødsel (se punkter 4.4, 4.8).
+
+      Amming
+      Det forventes at escitalopram går over i morsmelk. Amming anbefales derfor ikke under
+      behandling.
+
+      Fertilitet
+      Dyrestudier har vist at citalopram kan påvirke sædkvaliteten (se pkt 5.3).
+      Hos mennesker er det rapportert tilfeller med noen SSRI’er der effekten på sædkvaliteten er
+      reversibel. Så langt er det ikke sett effekter på fertilitet hos mennesker.
+
+
+
+4.7   Påvirkning av evnen til å kjøre bil eller bruke maskiner
+
+      Selv om escitalopram er vist å ikke påvirke intellektuelle funksjoner og psykomotoriske evner, kan
+      alle psykoaktive legemidler påvirke vurderingsevnen og evnen til å utføre oppgaver. Pasientene bør
+      informeres om den mulige risikoen for at evnen til å kjøre bil og bruke maskiner kan påvirkes.
+
+                                                                                                            8/15

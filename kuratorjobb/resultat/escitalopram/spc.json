@@ -1,0 +1,976 @@
+{
+  "stoff": "escitalopram",
+  "status": "ok",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-10-30T04:15:57.810377+00:00"
+  },
+  "dekning": {
+    "dekket": true,
+    "preparater": 14,
+    "hentet": 14,
+    "dokumenter": 4,
+    "mangler": []
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 9 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 9,
+        "ikke_dmp": 0,
+        "uten_omtale": 0
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "ok",
+      "melding": "Alle 14 preparatene FEST oppgir, har en hentet preparatomtale fra DMP.",
+      "antall": {
+        "preparater": 14,
+        "hentet": 14,
+        "mangler": 0,
+        "dokumenter": 4
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-4892.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-4892.pdf",
+      "hentet_kl": "2026-10-30T16:13:59.982Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "212105",
+        "content-md5": "q6xQXh/vC8nRDawIR2pvTQ==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:43 GMT",
+        "etag": "0x8DE53793859A87A",
+        "date": "Fri, 30 Oct 2026 16:14:00 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_089DDB8C-4D7F-4F5E-8FF4-532444241EEE",
+          "varenavn": "Cipralex",
+          "navn_form_styrke": "Cipralex dråper, oppl 20 mg/ml",
+          "produsent": "Abacus Medicine A/S",
+          "atc": "N06AB10",
+          "legemiddelform": "Dråper, oppløsning"
+        },
+        {
+          "merkevare_id": "ID_0C635256-8E52-4CC5-A31A-270E254C478F",
+          "varenavn": "Cipralex",
+          "navn_form_styrke": "Cipralex dråper, oppl 20 mg/ml",
+          "produsent": "2care4 ApS",
+          "atc": "N06AB10",
+          "legemiddelform": "Dråper, oppløsning"
+        },
+        {
+          "merkevare_id": "ID_1BCAA0FD-FFC6-42A1-8A34-6CE4976A0A05",
+          "varenavn": "Cipralex",
+          "navn_form_styrke": "Cipralex dråper, oppl 20 mg/ml",
+          "produsent": "H. Lundbeck A/S",
+          "atc": "N06AB10",
+          "legemiddelform": "Dråper, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-4892.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (212105 byte).",
+          "antall": {
+            "bytes": 212105
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "8cdc32851beab96c1032d10e444ab372186525790f32dd284dec5ec7a78e68ee"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-14547.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-14547.pdf",
+      "hentet_kl": "2026-10-30T16:14:07.128Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "359945",
+        "content-md5": "XE8FyXzOU+LdEPEmYKkDfw==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:52 GMT",
+        "etag": "0x8DE53793D7B9D0A",
+        "date": "Fri, 30 Oct 2026 16:14:07 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_0D060353-0A7F-41C6-A25A-D9B20719D55C",
+          "varenavn": "Escitalopram Grindeks",
+          "navn_form_styrke": "Escitalopram Grindeks tab 20 mg",
+          "produsent": "Grindeks AS",
+          "atc": "N06AB10",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-14547.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (359945 byte).",
+          "antall": {
+            "bytes": 359945
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "a7e7555711e5b5abc45fb31e7112075a268e38c1f60ff51b91cb9b8e5ff84081"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2002-00713.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2002-00713.pdf",
+      "hentet_kl": "2026-10-30T16:14:13.983Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "339804",
+        "content-md5": "IwmYnuSSuPjxWfeeYPntNA==",
+        "last-modified": "Thu, 19 Mar 2026 20:49:12 GMT",
+        "etag": "0x8DE85F8FA0E7CA0",
+        "date": "Fri, 30 Oct 2026 16:14:14 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_1ADC44B8-AA04-480D-8DB3-9CF80EFE5E84",
+          "varenavn": "Cipralex",
+          "navn_form_styrke": "Cipralex tab 10 mg",
+          "produsent": "Orifarm AS",
+          "atc": "N06AB10",
+          "legemiddelform": "Tablett, filmdrasjert"
+        },
+        {
+          "merkevare_id": "ID_379041DC-1650-4A23-A394-7B1A6097A47E",
+          "varenavn": "Cipralex",
+          "navn_form_styrke": "Cipralex tab 10 mg",
+          "produsent": "H. Lundbeck A/S",
+          "atc": "N06AB10",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/2002-00713.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (339804 byte).",
+          "antall": {
+            "bytes": 339804
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "a04d22200055055d2cf48436c3a83f0c9bf6d87044f5d218cd39d0d9984d018a"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-5611.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-5611.pdf",
+      "hentet_kl": "2026-10-30T16:14:21.668Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "219573",
+        "content-md5": "VspITTnPrzBMf7V0aUZapA==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:46 GMT",
+        "etag": "0x8DE537939F0134A",
+        "date": "Fri, 30 Oct 2026 16:14:22 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_7B278549-E67F-4065-9B9F-9553DBD1A2DD",
+          "varenavn": "Escitalopram Actavis",
+          "navn_form_styrke": "Escitalopram Actavis tab 10 mg",
+          "produsent": "Actavis Group PTC ehf",
+          "atc": "N06AB10",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-5611.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (219573 byte).",
+          "antall": {
+            "bytes": 219573
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "b17b56e5cdee7eaaa8ff85a4e0dfcfe449eb531267464b99bc9b1dfc89c7df1b"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2002-00712.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2002-00712.pdf",
+      "hentet_kl": "2026-10-30T16:14:28.534Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "339804",
+        "content-md5": "IwmYnuSSuPjxWfeeYPntNA==",
+        "last-modified": "Thu, 19 Mar 2026 20:49:12 GMT",
+        "etag": "0x8DE85F8FA0C0C00",
+        "date": "Fri, 30 Oct 2026 16:14:29 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_7CBDF5AC-C902-42F3-A999-EB8FA1CD422A",
+          "varenavn": "Cipralex",
+          "navn_form_styrke": "Cipralex tab 5 mg",
+          "produsent": "H. Lundbeck A/S",
+          "atc": "N06AB10",
+          "legemiddelform": "Tablett, filmdrasjert"
+        },
+        {
+          "merkevare_id": "ID_D08E707A-7721-40C4-B879-A725E7544C5A",
+          "varenavn": "Cipralex",
+          "navn_form_styrke": "Cipralex tab 5 mg",
+          "produsent": "Orifarm AS",
+          "atc": "N06AB10",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/2002-00712.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (339804 byte).",
+          "antall": {
+            "bytes": 339804
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "a04d22200055055d2cf48436c3a83f0c9bf6d87044f5d218cd39d0d9984d018a"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-5613.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-5613.pdf",
+      "hentet_kl": "2026-10-30T16:14:29.735Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "219573",
+        "content-md5": "VspITTnPrzBMf7V0aUZapA==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:49 GMT",
+        "etag": "0x8DE53793C1B7C9D",
+        "date": "Fri, 30 Oct 2026 16:14:30 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_A0ACD992-2109-4C6E-B39D-4239CCE4401C",
+          "varenavn": "Escitalopram Actavis",
+          "navn_form_styrke": "Escitalopram Actavis tab 20 mg",
+          "produsent": "Actavis Group PTC ehf",
+          "atc": "N06AB10",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-5613.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (219573 byte).",
+          "antall": {
+            "bytes": 219573
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "b17b56e5cdee7eaaa8ff85a4e0dfcfe449eb531267464b99bc9b1dfc89c7df1b"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-5610.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-5610.pdf",
+      "hentet_kl": "2026-10-30T16:14:30.453Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "219573",
+        "content-md5": "VspITTnPrzBMf7V0aUZapA==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:51 GMT",
+        "etag": "0x8DE53793CE9AB5C",
+        "date": "Fri, 30 Oct 2026 16:14:30 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_B272C76D-3FAB-461B-8B35-AF9318FB37F8",
+          "varenavn": "Escitalopram Actavis",
+          "navn_form_styrke": "Escitalopram Actavis tab 5 mg",
+          "produsent": "Actavis Group PTC ehf",
+          "atc": "N06AB10",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-5610.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (219573 byte).",
+          "antall": {
+            "bytes": 219573
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "b17b56e5cdee7eaaa8ff85a4e0dfcfe449eb531267464b99bc9b1dfc89c7df1b"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-14546.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-14546.pdf",
+      "hentet_kl": "2026-10-30T16:14:30.663Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "359945",
+        "content-md5": "XE8FyXzOU+LdEPEmYKkDfw==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:57 GMT",
+        "etag": "0x8DE537940F99442",
+        "date": "Fri, 30 Oct 2026 16:14:31 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_CBA85B26-4966-44C8-B4B5-B18A34A95392",
+          "varenavn": "Escitalopram Grindeks",
+          "navn_form_styrke": "Escitalopram Grindeks tab 10 mg",
+          "produsent": "Grindeks AS",
+          "atc": "N06AB10",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-14546.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (359945 byte).",
+          "antall": {
+            "bytes": 359945
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "a7e7555711e5b5abc45fb31e7112075a268e38c1f60ff51b91cb9b8e5ff84081"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2002-00715.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2002-00715.pdf",
+      "hentet_kl": "2026-10-30T16:14:31.193Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "339804",
+        "content-md5": "IwmYnuSSuPjxWfeeYPntNA==",
+        "last-modified": "Thu, 19 Mar 2026 20:49:12 GMT",
+        "etag": "0x8DE85F8FA13AC07",
+        "date": "Fri, 30 Oct 2026 16:14:31 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_E868339E-CD90-416D-8CC7-74FE25B040BE",
+          "varenavn": "Cipralex",
+          "navn_form_styrke": "Cipralex tab 20 mg",
+          "produsent": "Orifarm AS",
+          "atc": "N06AB10",
+          "legemiddelform": "Tablett, filmdrasjert"
+        },
+        {
+          "merkevare_id": "ID_F4E6B989-866C-488E-8FD0-93FA13867562",
+          "varenavn": "Cipralex",
+          "navn_form_styrke": "Cipralex tab 20 mg",
+          "produsent": "H. Lundbeck A/S",
+          "atc": "N06AB10",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/2002-00715.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (339804 byte).",
+          "antall": {
+            "bytes": 339804
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "a04d22200055055d2cf48436c3a83f0c9bf6d87044f5d218cd39d0d9984d018a"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "8cdc32851beab96c1032d10e444ab372186525790f32dd284dec5ec7a78e68ee",
+      "bytes": 212105,
+      "mappe": "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c",
+      "pdf": {
+        "sider": 15,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "Portrait SmPC",
+        "laget": "Thu May  2 12:18:12 2024 UTC",
+        "endret": "Thu May  2 12:18:12 2024 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/original.pdf",
+        "tekst": "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/tekst/side-001.txt",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/tekst/side-002.txt",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/tekst/side-003.txt",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/tekst/side-004.txt",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/tekst/side-005.txt",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/tekst/side-006.txt",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/tekst/side-007.txt",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/tekst/side-008.txt",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/tekst/side-009.txt",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/tekst/side-010.txt",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/tekst/side-011.txt",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/tekst/side-012.txt",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/tekst/side-013.txt",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/tekst/side-014.txt",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/tekst/side-015.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/sider/side-001.png",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/sider/side-002.png",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/sider/side-003.png",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/sider/side-004.png",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/sider/side-005.png",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/sider/side-006.png",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/sider/side-007.png",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/sider/side-008.png",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/sider/side-009.png",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/sider/side-010.png",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/sider/side-011.png",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/sider/side-012.png",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/sider/side-013.png",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/sider/side-014.png",
+          "kuratorjobb/resultat/escitalopram/spc/8cdc32851beab96c/sider/side-015.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 9,
+        "til": 11
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (15 sider).",
+          "antall": {
+            "sider": 15
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 33209
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 9."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 15
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "a7e7555711e5b5abc45fb31e7112075a268e38c1f60ff51b91cb9b8e5ff84081",
+      "bytes": 359945,
+      "mappe": "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab",
+      "pdf": {
+        "sider": 14,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Fri Jun 30 08:31:22 2023 UTC",
+        "endret": "Fri Jun 30 08:31:22 2023 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/original.pdf",
+        "tekst": "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/tekst/side-001.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/tekst/side-002.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/tekst/side-003.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/tekst/side-004.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/tekst/side-005.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/tekst/side-006.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/tekst/side-007.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/tekst/side-008.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/tekst/side-009.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/tekst/side-010.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/tekst/side-011.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/tekst/side-012.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/tekst/side-013.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/tekst/side-014.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/sider/side-001.png",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/sider/side-002.png",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/sider/side-003.png",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/sider/side-004.png",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/sider/side-005.png",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/sider/side-006.png",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/sider/side-007.png",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/sider/side-008.png",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/sider/side-009.png",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/sider/side-010.png",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/sider/side-011.png",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/sider/side-012.png",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/sider/side-013.png",
+          "kuratorjobb/resultat/escitalopram/spc/a7e7555711e5b5ab/sider/side-014.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 10
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (14 sider).",
+          "antall": {
+            "sider": 14
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 34590
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 14
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "a04d22200055055d2cf48436c3a83f0c9bf6d87044f5d218cd39d0d9984d018a",
+      "bytes": 339804,
+      "mappe": "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d",
+      "pdf": {
+        "sider": 15,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "Portrait SmPC",
+        "laget": "Mon Feb  9 07:20:49 2026 UTC",
+        "endret": "Mon Feb  9 07:20:49 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/original.pdf",
+        "tekst": "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/tekst/side-001.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/tekst/side-002.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/tekst/side-003.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/tekst/side-004.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/tekst/side-005.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/tekst/side-006.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/tekst/side-007.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/tekst/side-008.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/tekst/side-009.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/tekst/side-010.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/tekst/side-011.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/tekst/side-012.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/tekst/side-013.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/tekst/side-014.txt",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/tekst/side-015.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/sider/side-001.png",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/sider/side-002.png",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/sider/side-003.png",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/sider/side-004.png",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/sider/side-005.png",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/sider/side-006.png",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/sider/side-007.png",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/sider/side-008.png",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/sider/side-009.png",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/sider/side-010.png",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/sider/side-011.png",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/sider/side-012.png",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/sider/side-013.png",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/sider/side-014.png",
+          "kuratorjobb/resultat/escitalopram/spc/a04d22200055055d/sider/side-015.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 9,
+        "til": 11
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (15 sider).",
+          "antall": {
+            "sider": 15
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 33426
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 9."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 15
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "b17b56e5cdee7eaaa8ff85a4e0dfcfe449eb531267464b99bc9b1dfc89c7df1b",
+      "bytes": 219573,
+      "mappe": "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa",
+      "pdf": {
+        "sider": 16,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "SUMMARY OF PRODUCT CHARACTERISTICS",
+        "laget": "Mon Jan 20 09:02:10 2025 UTC",
+        "endret": "Mon Jan 20 09:02:10 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/original.pdf",
+        "tekst": "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/tekst/side-001.txt",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/tekst/side-002.txt",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/tekst/side-003.txt",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/tekst/side-004.txt",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/tekst/side-005.txt",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/tekst/side-006.txt",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/tekst/side-007.txt",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/tekst/side-008.txt",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/tekst/side-009.txt",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/tekst/side-010.txt",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/tekst/side-011.txt",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/tekst/side-012.txt",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/tekst/side-013.txt",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/tekst/side-014.txt",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/tekst/side-015.txt",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/tekst/side-016.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/sider/side-001.png",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/sider/side-002.png",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/sider/side-003.png",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/sider/side-004.png",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/sider/side-005.png",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/sider/side-006.png",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/sider/side-007.png",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/sider/side-008.png",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/sider/side-009.png",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/sider/side-010.png",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/sider/side-011.png",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/sider/side-012.png",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/sider/side-013.png",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/sider/side-014.png",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/sider/side-015.png",
+          "kuratorjobb/resultat/escitalopram/spc/b17b56e5cdee7eaa/sider/side-016.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 9,
+        "til": 12
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (16 sider).",
+          "antall": {
+            "sider": 16
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 34736
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 9."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 16
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": []
+}

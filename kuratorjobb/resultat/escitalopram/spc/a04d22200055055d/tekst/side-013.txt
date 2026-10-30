@@ -1,0 +1,59 @@
+      I en randomisert, dobbelt blind klinisk studie gav escitalopram 20 mg/dag bedre effekt enn placebo
+      på Y-BOCS totalskår etter 12 uker. Etter 24 uker hadde både 10 og 20 mg/dag escitalopram bedre
+      effekt sammenlignet med placebo.
+
+      Escitalopram 10 og 20 mg/dag hindret tilbakefall hos pasienter som responderte på behandlingen
+      med escitalopram i en 16 ukers åpen periode og som deretter gikk over i en 24 ukers, dobbelt blind
+      placebokontrollert periode.
+
+5.2   Farmakokinetiske egenskaper
+
+      Absorpsjon
+      Absorpsjonen er nesten fullstendig og uavhengig av matinntak (gjennomsnittlig tid til
+      maksimumskonsentrasjon nås (gjennomsnittlig Tmax ) er 4 timer etter gjentatt dosering). Som med
+      racemisk citalopram, er absolutt biotilgjengelighet forventet å være omtrent 80 %.
+
+      Distribusjon
+      Tilsynelatende distribusjonsvolum (Vd,β/F) etter peroral administrasjon er ca. 12 til 26 l/kg.
+      Plasmaproteinbinding er mindre enn 80 % for escitalopram og dens hovedmetabolitter.
+
+      Biotransformasjon
+      Escitalopram metaboliseres i leveren til demetylerte og didemetylerte metabolitter. Begge disse er
+      farmakologisk aktive. Alternativt kan nitrogenet oksideres til N-oksidmetabolitten. Både
+      escitalopram og metabolittene utskilles delvis som glukuronider. Etter gjentatt dosering er den
+      gjennomsnittlige konsentrasjonen av demetyl- og didemetylmetabolittene henholdsvis 28-31% og
+      <5 % av escitalopram konsentrasjonen. Biotransformasjon av escitalopram til demetylmetabolitten
+      medieres primært av CYP2C19. Noe bidrag fra CYP3A4 og CYP2D6 er mulig.
+
+      Eliminasjon
+      Halveringstiden (t½ β) etter gjentatt dosering er ca. 30 timer, og oral plasma clearance (Cloral) er
+      ca. 0.6 l/min. Hovedmetabolittene har betydelig lengre halveringstider.
+
+      Escitalopram og hovedmetabolittene er antatt å elimineres både via leveren (metabolsk) og nyrene.
+      Hoveddelen utskilles som metabolitter i urinen.
+
+      Linearitet
+      Farmakokinetikken er lineær. Steady-state plasma nivåer nås innen ca. 1 uke. Gjennomsnittlige
+      steady-state konsentrasjoner på 50 nmol/l (20 to 125 nmol/l) oppnås etter en daglig dose på 10 mg.
+
+      Eldre (> 65 år)
+      Escitalopram ser ut til å elimineres saktere hos eldre enn hos yngre pasienter. Systemisk
+      eksponering (AUC) er omtrent 50 % høyere hos eldre sammenlignet med unge friske frivillige (se
+      punkt 4.2).
+
+      Nedsatt leverfunksjon
+      Hos pasienter med mild til moderat nedsatt leverfunksjon (Child-Pugh kriterier A og B), var
+      halveringstiden for escitalopram dobbelt så lang og eksponeringen ca. 60 % høyere enn hos
+      personer med normal leverfunksjon (se punkt 4.2).
+
+      Nedsatt nyrefunksjon
+      Lenger halveringtid og en ubetydelig økning i eksponering er observert med racemisk citalopram
+      hos pasienter med redusert nyrefunksjon (CLcr 10-53 ml/min). Plasmakonsentrasjonen til
+      metabolittene er ikke studert, men kan være forhøyet (se punkt 4.2).
+
+      Polymorfisme
+      Det er observert at sakte metaboliserere av CYP2C19 har dobbelt så høy plasma konsentrasjon av
+      escitalopram enn raske metaboliserere. Det ble ikke observert signifikante endringer i eksponering
+      hos sakte metaboliserer av CYP 2D6 (se punkt 4.2).
+
+                                                                                                       13/15

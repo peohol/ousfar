@@ -1,0 +1,56 @@
+      Nedsatt leverfunksjon
+      Hos pasienter med mild til moderat nedsatt leverfunksjon (Child-Pugh kriterier A og B), var
+      halveringstiden for escitalopram dobbelt så lang og eksponeringen ca. 60 % høyere enn hos
+      personer med normal leverfunksjon (se punkt 4.2).
+
+      Nedsatt nyrefunksjon
+      Lenger halveringtid og en ubetydelig økning i eksponering er observert med rasemisk citalopram
+      hos pasienter med redusert nyrefunksjon (CLcr 10-53 ml/min). Plasmakonsentrasjonen til
+      metabolittene er ikke studert, men kan være forhøyet (se punkt 4.2).
+
+      Polymorfisme
+      Det er observert at sakte metaboliserere av CYP2C19 har dobbelt så høy plasmakonsentrasjon av
+      escitalopram enn raske metaboliserere. Det ble ikke observert signifikante endringer i eksponering
+      hos sakte metaboliserere av CYP 2D6 (se punkt 4.2).
+
+5.3    Prekliniske sikkerhetsdata
+
+      Det er ikke gjennomført et fullstendig konvensjonelt batteri av prekliniske studier for
+      escitalopram da toksikokinetiske og toksikologiske studier i rotter med escitalopram og
+      citalopram viste lik profil for substansene. All informasjon om citalopram kan derfor
+      ekstrapoleres til escitalopram.
+
+      I sammenlignende toksikologiske studier hos rotter viste citalopram og escitalopram
+      hjertetoksisitet (inkl. hjertesvikt) etter behandling i noen uker med doser som viste generell
+      toksisitet. Den hjertetoksiske effekten korrelerer bedre med maksimum plasmakonsentrasjon
+      enn systemisk eksponering (AUC). Maksimale plasmakonsentrasjoner ved no-effect-level var
+      over (8 ganger) de konsentrasjonene man oppnår ved klinisk bruk, mens AUC for escitalopram
+      bare var 3-4 ganger høyere enn eksponeringen som oppnås ved klinisk bruk. For citalopram var
+      AUC for S-enantiomeren 6-7 ganger høyere enn eksponeringen som oppnås ved klinisk bruk.
+      Disse funnene er trolig relatert til en forsterket påvirkning på biogene aminer, sekundært til de
+      primære farmakologiske effektene, som resulterer i hemodynamiske effekter (redusert
+      blodgjennomstrømning i hjertet) og ischemi. Den eksakte mekanismen for hjertetoksisitet i
+      rotter er ikke klar. Klinisk erfaring med citalopram og de kliniske studiene med escitalopram
+      indikerer ikke at disse funnene har noen klinisk korrelasjon.
+
+      Økt innhold av fosfolipider er observert i noen vev, som lunger, bitestikkel og lever, etter
+      behandling av rotter i lengre perioder med escitalopram og citalopram. Funnene i bitestikkel og
+      lever ble observert ved eksponering tilsvarende nivået i mennesker. Effekten er reversibel etter
+      at behandlingen opphører. Akkumulering av fosfolipider (fosfolipidose) i dyr er observert i
+      sammenheng med mange katione amfifile legemidler. Det er ikke kjent om dette fenomenet har
+      noen betydning for mennesker.
+
+      I utviklingstoksikologiske studier hos rotter ble embryotoksiske effekter (redusert føtal vekt og
+      reversibel forsinket ossifisering) observert ved eksponering (AUC) over den eksponering man
+      oppnår ved klinisk bruk. Ingen økt frekvens av misdannelser ble registrert. Pre- og postnatale
+      studier viser redusert overlevelse i die-perioden ved eksponering (AUC) over den eksponering
+      som oppnås ved klinisk bruk.
+
+      I dyrestudier har citalopram ført til redusert fertilitets- og drektighetsindeks, redusert antall
+      implanteringer og unormale spermier ved eksponeringsnivåer tilstrekkelig over human
+      eksponering. Det foreligger ikke tilsvarende dyrestudier med escitalopram.
+
+
+
+
+6.     FARMASØYTISKE OPPLYSNINGER

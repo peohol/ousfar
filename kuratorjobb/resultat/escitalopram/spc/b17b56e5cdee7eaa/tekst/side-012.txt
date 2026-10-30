@@ -1,0 +1,52 @@
+tremor, forvirring, svetting, hodepine, diare, hjertebank, svingende sinnsstemning, irritabilitet og
+synsforstyrrelser er de mest vanlig rapporterte reaksjonene. Generelt er disse symptomene milde til
+moderate og har forbigående karakter, men hos noen pasienter kan de være alvorlige og/eller langvarige.
+Det anbefales derfor å trappe escitalopramdosen gradvis ned når behandlingen med escitalopram ikke
+lenger er nødvendig (se pkt. 4.2 og 4.4).
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til Direktoratet
+for medisinske produkter: www.dmp.no/meldeskjema.
+
+4.9   Overdosering
+
+Toksisitet
+Kliniske data på overdosering med escitalopram er begrenset og i mange tilfeller er det samtidig overdose
+av flere legemidler. I de fleste tilfellene er milde eller ingen symptomer rapportert. Fatale tilfeller av
+overdosering med escitalopram alene er rapportert i sjeldne tilfeller. I de fleste tilfellene er flere
+legemidler involvert. Doser på mellom 400 og 800 mg escitalopram alene er tatt uten alvorlige
+symptomer.
+
+Symptomer
+Symptomer sett ved overdosering med escitalopram inkluderer hovedsakelig symptomer relatert til
+sentralnervesystemet (fra svimmelhet, tremor og agitasjon til sjeldne tilfeller av serotonergt syndrom,
+kramper og koma), mage/tarm-systemet (kvalme/oppkast) og det kardiovaskulære systemet (hypotensjon,
+takykardi, forlengelse av QT- intervall og arytmier) og lidelser i forbindelse med elektrolytt-
+/væskebalansen (hypokalemi/hyponatremi).
+
+Behandling
+Det finnes intet spesifikt antidot. Etabler og oppretthold frie luftveier, tilstrekkelig oksygenering og
+respirasjonsfunksjon. Mageskylling og bruk av medisinsk kull bør vurderes. Mageskylling bør utføres så
+raskt som mulig etter oralt inntak. Overvåkning av hjertefunksjonen og vitale funksjoner sammen med
+generell symptomatisk behandling anbefales.
+EKG-monitorering anbefales ved overdosering hos pasienter med kongestiv hjertesvikt/bradyarytmier,
+ved samtidig bruker legemidler som forlenger QT-intervallet eller hos pasienter med endret legemiddel
+metabolisme, f eks leversvikt.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe:
+antidepressiva, selektive serotonin-reopptakshemmere.
+ATC-kode: N06AB10
+
+Virkningsmekanisme
+Escitalopram er en selektiv hemmer av serotonin (5-HT) reopptak med høy affinitet for det primære
+bindingssetet. Det bindes også til et allosterisk sete på serotonintransportøren, med 1000 ganger lavere
+affinitet. Escitalopram har ingen, eller lav affinitet for en rekke reseptorer som 5-HT1A, 5-HT2, DA D1 og
+D2 reseptorer, α1-, α2-, β-adrenoreseptorer, histamin H1-, muskarine kolinerge, benzodiazepin, og
+opioidreseptorer.

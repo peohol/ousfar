@@ -1,0 +1,51 @@
+metabolittene utskilles delvis som glukuronider. Etter gjentatt dosering er den gjennomsnittlige
+konsentrasjonen av demetyl- og didemetylmetabolittene henholdsvis 28-31 % og <5 % av escitalopram-
+konsentrasjonen. Biotransformasjon av escitalopram til sen demetylerte metabolitten medieres primært av
+CYP2C19. Noe bidrag fra CYP3A4 og CYP2D6 er mulig.
+
+Eliminasjon
+Eliminasjonshalveringstiden (t½ β) etter gjentatt dosering er ca. 30 timer, og oral plasmaclearance (Cloral) er
+ca. 0,6 l/min. Hovedmetabolittene har betydelig lenger halveringstider.
+Escitalopram og hovedmetabolittene er antatt å elimineres både via leveren (metabolsk) og nyrene.
+Hoveddelen av dosen utskilles som metabolitter i urinen.
+
+Linearitet
+Farmakokinetikken er lineær. Steady-state plasmanivåer nås innen ca. 1 uke. Gjennomsnittlige steady-
+state konsentrasjoner på 50 nmol/l (område 20 til 125 nmol/l) oppnås ved en daglig dose på 10 mg.
+
+Eldre (> 65 år)
+Escitalopram ser ut til å elimineres saktere hos eldre enn hos yngre pasienter. Systemisk eksponering
+(AUC) er omtrent 50 % høyere hos eldre sammenlignet med unge friske frivillige (se pkt. 4.2).
+
+Nedsatt leverfunksjon
+Hos pasienter med lett til moderat nedsatt leverfunksjon (Child-Pugh kriterier A og B), var halveringstiden
+for escitalopram dobbelt så lang og eksponeringen ca. 60 % høyere enn hos personer med normal
+leverfunksjon (se pkt. 4.2).
+
+Nedsatt nyrefunksjon
+Lenger halveringstid og en ubetydelig økning i eksponering er observert med racemisk citalopram hos
+pasienter med redusert nyrefunksjon (CLcr 10-53 ml/min). Plasmakonsentrasjonen av metabolittene er
+ikke studert, men kan være forhøyet (se pkt. 4.2).
+
+Polymorfisme
+Det er observert at langsomme omsettere av CYP2C19 har dobbelt så høy plasmakonsentrasjon av
+escitalopram som raske omsettere. Det ble ikke observert signifikante endringer i eksponering hos
+langsomme omsettere av CYP 2D6 (se pkt. 4.2).
+
+5.3   Prekliniske sikkerhetsdata
+
+Det er ikke gjennomført et fullstendig konvensjonelt sett av prekliniske studier for escitalopram da
+toksikokinetiske og toksikologiske studier i rotter med escitalopram og citalopram viste lignende profil for
+substansene. All informasjon om citalopram kan derfor ekstrapoleres til escitalopram.
+
+I sammenlignende toksikologiske studier hos rotter viste citalopram og escitalopram hjertetoksisitet,
+inkludert kongestiv hjertesvikt, etter behandling i noen uker med doser som viste generell toksisitet.
+Kardiotoksisiteten ser ut til å korrelere med maksimum plasmakonsentrasjon fremfor systemisk
+eksponering (AUC). Maksimale plasmakonsentrasjoner ved nulleffektgrensen (”no-effect-level”) var over
+(8 ganger) de konsentrasjonene man oppnår ved klinisk bruk, mens AUC for escitalopram bare var 3-4
+ganger høyere enn eksponeringen som oppnås ved klinisk bruk. For citalopram var AUC-verdien for S-
+enantiomeren 6-7 ganger høyere enn eksponeringen som oppnås ved klinisk bruk. Disse funnene er trolig
+relatert til en forsterket påvirkning på biogene aminer, sekundært til de primære farmakologiske effektene,
+og fører til hemodynamiske effekter (redusert blodgjennomstrømning i hjertet) og iskemi. Den eksakte
+mekanismen for kardiotoksisitet hos rotter er imidlertid ikke klarlagt. Klinisk erfaring med citalopram og
+de kliniske studiene med escitalopram antyder ingen klinisk korrelasjon for disse funnene.

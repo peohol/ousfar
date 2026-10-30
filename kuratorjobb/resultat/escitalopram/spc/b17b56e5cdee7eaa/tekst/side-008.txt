@@ -1,0 +1,52 @@
+Farmakokinetiske interaksjoner
+
+Andre legemidlers effekt på farmakokinetikken til escitalopram
+
+Metabolismen av escitalopram medieres i hovedsak via CYP2C19. CYP3A4 og CYP2D6 kan også bidra
+til metabolismen, men i mindre grad. Metabolismen av hovedmetabolitten S-DCT (demetylert
+escitalopram) ser ut til å katalyseres delvis av CYP2D6.
+
+Samtidig administrasjon av escitalopram og omeprazol 30 mg én gang daglig (en CYP2C19 hemmer)
+resulterte i en moderat (ca. 50 %) økning av plasmakonsentrasjonen av escitalopram.
+
+Samtidig administrasjon av escitalopram og cimetidin 400 mg to ganger daglig (en moderat potent
+generell enzymhemmer) ga en moderat (ca. 70 %) økning i plasmakonsentrasjonen av escitalopram.
+Forsiktighet bør utvises når escitalopram administreres samtidig med cimetidin. Dosejusteringer kan være
+berettiget.
+Forsiktighet bør derfor utvises når escitalopram tas samtidig med CYP 2C19 hemmere (f.eks. omeprazol,
+esomeprazol, flukonazol, fluvoksamin, lansoprazol, tiklopidin) eller cimetidin. Det kan bli nødvendig å
+redusere dosen av escitalopram basert på klinisk monitorering av bivirkninger ved samtidig behandling (se
+pkt. 4.4).
+
+Effekt av escitalopram på andre legemidlers farmakokinetikk
+
+Escitalopram er en hemmer av enzymet CYP2D6. Forsiktighet anbefales når escitalopram gis samtidig
+med legemidler som i hovedsak metaboliseres via dette enzymet, og som har smal terapeutisk indeks, som
+for eksempel flekainid, propafenon og metoprolol (bruk ved hjertesvikt) eller enkelte legemidler som
+virker på sentralnervesystemet, og som i hovedsak metaboliseres via CYP2D6, for eksempel
+antidepressiva som desipramin, klomipramin og nortriptylin, eller antipsykotika som risperidon, tioridazin
+og haloperidol. Justering av dosen kan være nødvendig.
+
+Samtidig administrasjon med desipramin eller metoprolol ga i begge tilfeller en dobling av plasmanivåene
+for disse to CYP2D6-substratene.
+In vitro studier har vist at escitalopram også kan være en svak hemmer av CYP2C19. Forsiktighet
+anbefales ved samtidig administrasjon av legemidler som metaboliseres via CYP2C19.
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet
+Det foreligger bare begrensede kliniske data for escitalopram brukt under graviditet. Dyrestudier har vist
+reproduksjonstoksisitet (se pkt. 5.3). Escitalopram Actavis bør derfor ikke brukes under graviditet uten at
+det er helt nødvendig og bare etter en nøye vurdering av nytte/risiko.
+Nyfødte bør observeres hvis escitalopram er brukt i senere stadier av svangerskapet, særlig i tredje
+trimester. Brå seponering bør unngås dersom det er brukt under svangerskapet.
+Følgende symptomer kan forekomme hos nyfødte ved bruk av SSRI/SNRI i sene stadier av svangerskapet:
+pusteproblemer, cyanose, apné, anfall, temperatursvingninger, vanskeligheter med matinntak, oppkast,
+hypoglykemi, hypertoni, hypotoni, hyperrefleksi, tremor, skjelving, irritabilitet, døsighet, konstant gråting,
+søvnighet og søvnvansker. Disse symptomene kan skyldes enten serotonerg effekt eller
+seponeringssymptomer. I de fleste tilfellene sees symptomene umiddelbart eller kort tid (mindre enn 24
+timer) etter fødselen.
+Epidemiologiske data antyder at bruk av SSRIer under graviditet, spesielt i siste del av svangerskapet, kan
+øke risikoen for vedvarende pulmonal hypertensjon hos nyfødte (persistent pulmonary hypertension-
+PPHN). Den observerte risikoen gjaldt ca. 5 av 1000 graviditeter. I den generelle populasjonen oppstår 1-2
+tilfeller med PPHN per 1000 graviditet.

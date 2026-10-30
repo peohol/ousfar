@@ -1,0 +1,58 @@
+      Hvis pasienter med stabil hjertesykdom behandles, bør resultatet av EKG-måling
+      vurderes før behandlingen påbegynnes.
+
+      Hvis det er tegn til hjertearytmier under behandling med escitalopram bør behandlingen
+      avsluttes og EKG utføres.
+
+      Trangvinkelglaukom
+      SSRI, inkludert escitalopram, kan ha effekt på pupillen og gi mydriasis. Denne effekten kan
+      potensielt resultere i økt intraokulært trykk og gi trangvinkelglaukom, særlig hos predisponerte
+      pasienter. Escitalopram bør derfor brukes med forsiktighet hos pasienter med
+      trangvinkelglaukom eller tidligere glaukom.
+
+      Hjelpestoffer
+      Dette legemidlet inneholder mindre enn 1 mmol natrium (23 mg) per tablett, og er så godt som
+      ”natriumfritt”.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjoner
+
+      Farmakodynamiske interaksjoner
+
+      Kontraindiserte kombinasjoner:
+
+      Irreversible, ikke-selektive MAOH
+      Tilfeller av alvorlige reaksjoner er rapportert hos pasienter behandlet med SSRI i kombinasjon
+      med en ikke-selektiv, irreversibel monoaminoksidasehemmer (MAOH), og hos pasienter som
+      nylig har avsluttet SSRI behandling og påbegynt en slik MAOH behandling (se punkt 4.3). I
+      noen tilfeller utviklet pasienten serotonergt syndrom (se punkt 4.8).
+
+      Escitalopram er kontraindisert i kombinasjon med ikke-selektive, irreversible MAOH.
+      Behandling med escitalopram kan starte 14 dager etter avsluttet behandling med irreversible
+      MAOH. Det bør gå minst 7 dager etter avsluttet escitalopram behandling før behandling med
+      ikke-selektiv, irreversibel MAOH påbegynnes.
+
+      Reversible, selektive MAO-A hemmere (moklobemid)
+      På grunn av risiko for serotonergt syndrom er kombinasjonen med MAO-A hemmer som for
+      eksempel moklobemid kontraindisert (se punkt 4.3). Hvis kombinasjonen likevel er nødvendig
+      bør den startes ved laveste anbefalte dose og pasienten bør følges nøye.
+
+      Reversibel, ikke-selektiv MAO-hemmer (linezolid)
+      Det antibakterielle midlet linezolid er en reversibel, ikke-selektiv MAO-hemmer og bør ikke
+      gis til pasienter som behandles med escitalopram. Hvis kombinasjonen likevel er nødvendig bør
+      den startes ved laveste dose og under nøye oppfølging (se punkt 4.3)
+
+      Irreversibel, selektiv MAO-B-hemmer (selegilin)
+      I kombinasjon med selegilin (irreversibel MAO-B- hemmer) kreves forsiktighet på grunn av
+      risiko for å utvikle serotonergt syndrom. Selegilin i doser opp til 10 mg/dag har vært gitt
+      sammen med citalopram uten reaksjoner.
+
+      QT-forlengelse
+
+      Farmakokinetiske og farmakodynamiske studier av escitalopram kombinert med andre
+      legemidler som forlenger QT-intervallet er ikke utført. En additiv effekt av escitalopram og
+      disse legemidlene kan ikke utelukkes. Det er derfor kontraindisert å administrere escitalopram
+      samtidig med legemidler som forlenger QT-intervallet, som klasse IA og III antiarytmika,
+      antipsykotika (f.eks. fentiazinderivater, pimozid, haloperidol), trisykliske antidepressiva, visse
+      antibiotika (f.eks. sparfloksacin, moksifloksacin, erytromycin IV, pentamidin og,
+
+                                                                                                      6/15

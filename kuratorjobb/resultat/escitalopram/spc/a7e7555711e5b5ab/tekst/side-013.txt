@@ -1,0 +1,57 @@
+Det er ikke gjennomført et fullstendig konvensjonelt sett av prekliniske studier for escitalopram da
+toksikokinetiske og toksikologiske studier i rotter med escitalopram og citalopram viste lignende profil
+for substansene. All informasjon om citalopram kan derfor ekstrapoleres til escitalopram.
+
+I sammenlignende toksikologiske studier hos rotter viste citalopram og escitalopram hjertetoksisitet,
+inkludert kongestiv hjertesvikt, etter behandling i noen uker med doser som viste generell toksisitet.
+Kardiotoksisiteten ser ut til å korrelere med maksimum plasmakonsentrasjon fremfor systemisk
+eksponering (AUC). Maksimale plasmakonsentrasjoner ved nulleffektgrensen (”no-effect-level”) var
+over (8 ganger) de konsentrasjonene man oppnår ved klinisk bruk, mens AUC for escitalopram bare
+var 3-4 ganger høyere enn eksponeringen som oppnås ved klinisk bruk. For citalopram var AUC-
+verdien for S-enantiomeren 6-7 ganger høyere enn eksponeringen som oppnås ved klinisk bruk. Disse
+funnene er trolig relatert til en forsterket påvirkning på biogene aminer, sekundært til de primære
+farmakologiske effektene, og fører til hemodynamiske effekter (redusert blodgjennomstrømning i
+hjertet) og iskemi. Den eksakte mekanismen for kardiotoksisitet hos rotter er imidlertid ikke klarlagt.
+Klinisk erfaring med citalopram og de kliniske studiene med escitalopram antyder ingen klinisk
+korrelasjon for disse funnene.
+
+Økt innhold av fosfolipider er observert i noen vev, som lunger, bitestikler og lever, etter behandling
+av rotter i lengre perioder med escitalopram og citalopram. Funnene i bitestikler og lever ble observert
+ved eksponering tilsvarende nivået i mennesker. Effekten er reversibel etter at behandlingen opphører.
+Akkumulering av fosfolipider (fosfolipidose) i dyr er observert i sammenheng med mange kationiske
+amfifile legemidler. Det er ikke kjent om dette fenomenet har noen signifikant relevans for mennesker.
+
+I utviklingstoksisitets-studier hos rotter ble embryotoksiske effekter (redusert føtal vekt og reversibel
+forsinket ossifikasjon) observert ved eksponering ved AUC i overkant av den eksponering man oppnår
+ved klinisk bruk. Ingen økt frekvens av misdannelser ble registrert. Pre- og postnatale studier viser
+redusert overlevelse i die-perioden ved eksponering (AUC) over den eksponering som oppnås ved
+klinisk bruk.
+
+I dyrestudier har citalopram indusert en reduksjon i fertilitets- og drektighetsindeks, reduksjon av
+antall implanteringer og unormale spermier ved eksponering tilstrekkelig over human eksponering.
+Ingen tilsvarende dyrestudier med escitalopram er tilgjengelig.
+
+
+6.   FARMASØYTISKE OPPLYSNINGER
+
+6.1 Hjelpestoffer
+
+Tablettkjerne:
+Cellulose, mikrokrystalinsk (E460)
+Krysskarmellosenatrium (E468)
+Hypromellose (E464)
+Talkum (553b)
+Silika kolloidal, vannfri (E551)
+Magnesiumstearat (E470b)
+
+Filmdrasjering
+Hypromellose (E464)
+Makrogol
+Titandioksid (E171)
+
+6.2 Uforlikeligheter
+
+Ikke relevant
+
+6.3 Holdbarhet
+                                                   13

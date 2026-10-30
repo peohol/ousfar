@@ -1,0 +1,55 @@
+      Sakte metaboliserere av CYP 2C19
+      En startdose på 5 mg (5 dråper) daglig de første to behandlingsukene anbefales for pasienter som er
+      kjent som sakte metaboliserere av CYP2C19. Avhengig av individuell respons kan dosen økes til
+      10 mg (10 dråper) daglig (se punkt 5.2).
+
+      Seponeringssymptomer ved avslutning av behandling
+      Brå seponering bør unngås. Når behandlingen med escitalopram avsluttes bør dosen gradvis
+      reduseres over minst en til to uker for å redusere risikoen for seponeringsreaksjoner (se punkt 4.4
+      og 4.8). Hvis det oppstår utålelige symptomer når dosen reduseres eller ved seponering av
+      behandlingen, bør en vurdere å gjenoppta behandlingen med tidligere forskrevet dose. Legen kan så
+      anbefale en mer gradvis reduksjon av dosen.
+
+4.3    Kontraindikasjoner
+
+      Overfølsomhet overfor virkestoffet eller et eller flere av hjelpestoffene listet i punkt 6.1.
+      Samtidig behandling med ikke-selektive, irreversible MAO-hemmere er kontraindisert pga. risiko
+      for serotonergt syndrom med agitasjon, tremor, hypertermi etc. (se punkt 4.5).
+
+      Kombinasjon av escitalopram med reversible MAO-A-hemmere (for eksempel moklobemid) eller
+      den reversible, ikke-selektive MAO-hemmeren linezolid er kontraindisert pga. risiko for
+      serotonergt syndrom (se punkt 4.5)
+
+      Escitalopram er kontraindisert hos pasienter med kjent QT-forlengelse eller medfødt forlenget QT-
+      syndrom.
+
+      Escitalopram er kontraindisert ved samtidig administrering av andre legemidler som er kjent for å
+      forlenge QT-intervallet (se pkt. 4.5).
+
+4.4    Advarsler og forsiktighetsregler
+
+      Følgende advarsler og forsiktighetsregler gjelder den farmakoterapeutiske klassen SSRI
+      (Selektive Serotonin Reopptaks Inhibitorer).
+
+      Pediatrisk populasjonCipralex bør ikke brukes til behandling av pediatrisk populasjon.
+      Selvmordsrelatert oppførsel (suicidforsøk og suicidale tanker), og fiendtlighet (særlig aggresjon,
+      opposisjonell atferd og sinne), er sett oftere i kliniske studier hos pediatrisk populasjonbehandlet
+      med antidepressiva sammenlignet med de som fikk placebo. Dersom man ut fra et klinisk behov
+      likevel bestemmer seg for å behandle, bør pasienten overvåkes nøye med hensyn til suicidale
+      symptomer. I tillegg foreligger det ikke langtids sikkerhetsdata hos pediatrisk populasjon med
+      hensyn til vekst, modning samt kognitiv- og atferdsutvikling.
+
+      Paradoksal angst
+      Noen pasienter med panikklidelse kan oppleve økning i angstsymptomer i begynnelsen av
+      behandlingen med antidepressiva. Denne paradoksale reaksjonen avtar vanligvis innen de to
+      første behandlingsukene ved fortsatt behandling. Lav startdose anbefales for å redusere
+      muligheten for angstskapende effekt (se punkt 4.2).
+
+      Kramper
+      Escitalopram bør seponeres hvis en pasient utvikler kramper for første gang eller hvis det er en
+      økt krampefrekvens (hos pasienter med tidligere epilepsi-diagnose). SSRI bør unngås hos
+      pasienter med ustabil epilepsi. Pasienter med kontrollert epilepsi bør følges nøye.
+
+      Mani
+      SSRI bør brukes med forsiktighet hos pasienter med mani/hypomani i anamnesen. SSRI bør
+      seponeres hvis en pasient går inn i en manisk fase.

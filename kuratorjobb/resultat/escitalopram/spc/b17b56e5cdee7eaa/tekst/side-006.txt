@@ -1,0 +1,52 @@
+Selektive serotoninreopptakshemmere (SSRIer)/serotonin- og noradrenalinreopptakshemmere (SNRIer)
+kan forårsake symptomer på seksuell dysfunksjon (se pkt. 4.8). Det er rapportert om langvarig seksuell
+dysfunksjon der symptomene har fortsatt etter seponering av SSRIer/SNRIer.
+
+Koronar hjertesykdom
+Forsiktighet anbefales ved bruk til pasienter med koronar hjertesykdom på grunn av begrenset klinisk
+erfaring (se pkt. 5.3).
+
+Forlenget QT-intervall
+Escitalopram kan forårsake en dose-avhengig forlengelse av QT-intervallet. Etter markedsføring av
+preparatet har det vært rapportert tilfeller av QT-forlengelse og ventrikulær arytmi, inkludert Torsade de
+Pointes, hovedsakelig hos kvinnelige pasienter med hypokalemi eller med samtidig QT-forlengelse eller
+annen hjertesykdom (se pkt. 4.3, 4.5, 4.8, 4.9 og 5.1).
+Forsiktighet bør utvises ved behandling av pasienter med signifikant bradykardi, eller hos pasienter som
+nylig har hatt akutt hjerteinfarkt eller ukompensert hjertesvikt.
+Elektrolyttforstyrrelser, slik som hypokalemi og hypomagnesemi, øker risikoen for maligne arytmier og
+bør korrigeres før behandling med citalopram igangsettes.
+Dersom pasienter med stabil hjertesykdom behandles, bør EKG vurderes før en starter behandling.
+Dersom det oppstår tegn på hjertearytmier under behandling med citalopram, bør behandlingen seponeres
+og EKG utføres.
+
+Vinkelblokkglaukom
+SSRI-er, inkludert escitalopram, kan ha en effekt på pupillstørrelsen som fører til mydriasis. Denne
+mydriatiske effekten kan potensielt gi en trangere øyevinkel og føre til økt trykk i øyet og
+vinkelblokkglaukom, særlig hos disponerte pasienter. Escitalopram bør derfor brukes med forsiktighet hos
+pasienter med vinkelblokkglaukom eller med vinkelblokkglaukom i anamnesen.
+
+Hjelpestoffer:
+Natrium
+Dette legemidlet inneholder mindre enn 1 mmol natrium (23 mg) i hver filmdrasjerte tablett, og er så godt
+som “natriumfritt”.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Farmakodynamiske interaksjoner
+
+Kontraindiserte kombinasjoner
+
+Irreversible ikke-selektive MAO-hemmere:
+Tilfeller av alvorlige reaksjoner er rapportert hos pasienter behandlet med SSRI i kombinasjon med en
+ikke-selektiv, irreversibel monoaminoksidasehemmer (MAO-hemmer), og hos pasienter som nylig har
+avsluttet SSRI-behandling og har påbegynt en slik MAO-hemmerbehandling (se pkt. 4.3). I noen tilfeller
+utviklet pasienten serotonergt syndrom (se pkt. 4.8).
+Escitalopram er kontraindisert i kombinasjon med ikke-selektive, irreversible MAO-hemmere.
+Behandling med escitalopram kan starte 14 dager etter avsluttet behandling med irreversible MAO-
+hemmere. Det bør gå minst 7 dager etter avsluttet escitalopram-behandling før behandling med ikke-
+selektiv, irreversibel MAO-hemmer påbegynnes.
+
+Reversible, selektive MAO-A hemmere (moklobemid) På grunn av risiko for serotonergt syndrom er
+kombinasjonen med MAO-A hemmer, som for eksempel moklobemid, kontraindisert (se pkt. 4.3). Hvis
+kombinasjonen likevel er nødvendig, bør den startes ved laveste anbefalte dose og pasienten bør følges
+nøye.

@@ -1,0 +1,58 @@
+Samtidig administrasjon med serotonerge legemidler som opioider (inkludert tramadol) og triptaner
+(inkludert sumatriptan) kan føre til serotonergt syndrom (se pkt. 4.4).
+
+Legemidler som senker anfallsterskelen
+SSRIer kan senke anfallsterskelen. Forsiktighet anbefales ved samtidig bruk av andre legemidler som
+kan senke anfallsterskelen (f.eks. antidepressiva (trisykliske, SSRI), nevroleptika (fentiaziner,
+tioksantener og butyrofenoner), meflokin, bupropion og tramadol).
+
+Litium, tryptofan
+Det foreligger rapporter på forsterkede effekter når SSRI har vært gitt samtidig med litium eller
+tryptofan. Forsiktighet bør derfor utvises når SSRI kombineres med disse legemidlene.
+
+Johannnesurt
+Samtidig bruk av SSRI og p som inneholder Johannesurt (Hypericum perforatum) kan gi økt insidens
+av bivirkninger (se pkt. 4.4).
+
+Hemoragi
+Endret antikoagulant effekt kan forekomme når escitalopram kombineres med orale antikoagulantia.
+Hos pasienter som behandles med orale antikoagulantia, bør blødningstiden følges nøye når
+behandlingen med escitalopram startes eller stoppes (se pkt. 4.4).
+Samtidig bruk av ikke-steroide antiinflammatoriske legemidler (NSAIDs) kan øke blødningstendensen
+(se pkt. 4.4).
+
+Alkohol
+Ingen farmakodynamiske eller farmakokinetiske interaksjoner forventes mellom escitalopram og
+alkohol. Som for andre psykotrope legemidler anbefales imidlertid ikke en kombinasjon med alkohol.
+
+Legemidler som inkluderer hypokalemi/hypomagnesemi
+Det skal utvises forsiktighet ved samtidig bruk av legemidler som induserer
+hypokalemi/hypomagnesemi, da disse tilstandene øker risikoen for maligne arytmier (se pkt. 4.4).
+
+Farmakokinetiske interaksjoner
+
+Andre legemidlers effekt på farmakokinetikken til escitalopram
+Metabolismen av escitalopram medieres i hovedsak via CYP2C19. CYP3A4 og CYP2D6 kan også
+bidra til metabolismen, men i mindre grad. Metabolismen av hovedmetabolitten S-DCT (demetylert
+escitalopram) ser ut til å katalyseres delvis av CYP2D6.
+
+Samtidig administrasjon av escitalopram og omeprazol 30 mg én gang daglig (en CYP2C19-hemmer)
+resulterte i en moderat (ca. 50 %) økning av plasmakonsentrasjonen av escitalopram.
+
+Samtidig administrasjon av escitalopram og cimetidin 400 mg to ganger daglig (en moderat potent
+generell enzymhemmer) ga en moderat (ca. 70 %) økning i plasmakonsentrasjonen av escitalopram.
+Forsiktighet bør utvises når escitalopram administreres samtidig med cimetidin. Justering av dosen kan
+være nødvendig.
+
+Forsiktighet bør derfor utvises når escitalopram tas samtidig med CYP 2C19-hemmere (f.eks.
+omeprazol, esomeprazol, flukonazol, fluvoksamin, lansoprazol, tiklopidin) eller cimetidin. Det kan bli
+nødvendig å redusere dosen av escitalopram basert på klinisk monitorering av bivirkninger ved
+samtidig behandling (se pkt. 4.4).
+
+Effekt av escitalopram på andre legemidlers farmakokinetikk
+Escitalopram er en hemmer av enzymet CYP2D6. Forsiktighet anbefales når escitalopram gis samtidig
+med legemidler som i hovedsak metaboliseres via dette enzymet, og som har smal terapeutisk indeks,
+som for eksempel flekainid, propafenon og metoprolol (bruk ved hjertesvikt) eller enkelte legemidler
+som virker på sentralnervesystemet, og som i hovedsak metaboliseres via CYP2D6, for eksempel
+
+                                                  7

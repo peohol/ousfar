@@ -1,0 +1,57 @@
+      Fatale tilfeller av escitalopram overdose er sjelden rapportert for escitalopram alene; i de fleste
+      tilfellene er flere legemidler involvert. Doser på mellom 400 og 800 mg av escitalopram alene er
+      tatt uten alvorlige symptomer.
+
+      Symptomer
+      Symptomer sett ved overdose med escitalopram inkluderer hovedsakelig symptomer relatert til
+      sentralnervesystemet (fra svimmelhet, tremor og agitasjon til sjeldne tilfeller av serotonergt
+      syndrom, kramper og koma), gastrointestinale (kvalme/oppkast) og hjerte-karsystemet
+      (hypotensjon, takykardi, QT-forlengelse og arytmier) og elektrolytt/væskebalanse
+      (hypokalemi/hyponatremi).
+
+      Behandling
+      Ingen spesifikk motgift. Etabler og oppretthold frie luftveier, adekvat oksygenering og
+      ventilering. Mageskylling og bruk av medisinsk kull bør vurderes. Mageskylling bør utføres så
+      raskt som mulig etter oralt inntak. Overvåkning av hjertefunksjonen og vitale funksjoner
+      sammen med generell symptomatisk behandling anbefales.
+
+      EKG-overvåkning anbefales i tilfelle overdose hos pasienter med hjertesvikt/bradyarytmier, hos
+      pasienter som samtidig bruker andre legemidler som forlenger QT–intervallet, eller hos
+      pasienter med endret metabolisme, f.eks. nedsatt leverfunksjon.
+
+
+5.     FARMAKOLOGISKE EGENSKAPER
+
+5.1    Farmakodynamiske egenskaper
+
+      Farmakoterapeutisk gruppe: antidepressiva, selektive serotoninreopptakshemmere.
+      ATC-kode: N06A B10.
+
+      Virkningsmekanisme
+      Escitalopram er en selektiv hemmer av serotonin (5 HT) reopptak med høy affinitet for det primære
+      bindingssetet. Det bindes også til et allosterisk sete på serotonintransportøren, med 1000 ganger
+      lavere affinitet.
+
+      Escitalopram har ingen, eller lav affinitet for en rekke reseptorer som 5 HT1A, 5 HT2, DA D1 og
+      D2 reseptorer, α1-, α2-, β-adrenoreseptorer, histamin H1, muskarine kolinerge, bensodiazepin, og
+      opioidreseptorer. Hemming av 5 HT reopptak er den eneste sannsynlige mekanismen som forklarer
+      escitaloprams farmakologiske og kliniske effekter.
+
+      Farmakodynamiske effekter
+
+      I en dobbelt blind, placebo-kontrollert EKG-studie på friske individer var endringen i QTc
+      (Fridericia korreksjon) fra baseline 4,3 millisekund (90% KI 2.2, 6.4) ved en dose på 10 mg daglig
+      og 10,7 millisekund (90% KI 8.6, 12.8) ved en dose, som er over terapeutisk anbefalt dose, på 30
+      mg daglig (se pkt. 4.3, 4.4, 4.5, 4.8 og 4.9).
+
+      Klinisk effekt:
+
+      Depressive episoder
+      Escitalopram var effektiv i akutt behandling av alvorlige depressive episoder i tre av fire dobbelt
+      blinde, placebokontrollerte korttidsstudier (8 uker). Det ble gjennomført en langtidsstudie av
+      tilbakefall etter initielt 8 ukers åpen behandling med 10 eller 20 mg/dag. 274 pasienter som hadde
+      effekt i den initiale fasen, ble randomisert til å fortsette med escitalopram i samme dose eller
+      placebo i opptil 36 uker. Pasienter som fortsatte med escitalopram hadde en signifikant lengre tid
+      før tilbakefall i løpet av de 36 ukene enn de som fikk placebo.
+
+      Sosial fobi

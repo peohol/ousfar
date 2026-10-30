@@ -1,0 +1,53 @@
+Hemming av 5-HT reopptak er den eneste sannsynlige virkningsmekanismen som kan forklare
+escitaloprams farmakologiske og kliniske effekter.
+
+Farmakodynamiske effekter
+I en dobbeltblindet, placebokontrollert EKG-studie på friske individer, var forandringen fra baselinje QTc
+(Fridericia-korreksjon) 4,3 ms (90 % KI 2,2, 6,4) ved dosering 10 mg/dag og 10,7 ms (90 % KI 8,6,12,8)
+ved den supraterapeutiske doseringen på 30 mg/dag (se pkt. 4.3, 4.4, 4.5, 4.8 og 4.9).
+
+Klinisk effekt
+
+Depressive episoder:
+Escitalopram er påvist effektiv ved akutt behandling av depressive episoder i tre av fire dobbeltblinde,
+placebokontrollerte korttidsstudier (8 uker). Det ble gjennomført en langtidsstudie av tilbakefall etter
+initial 8 ukers åpen behandling med 10 og 20 mg/dag. 274 pasienter som hadde effekt i den initiale fasen,
+ble randomisert til å fortsette med escitalopram i samme dose eller placebo i opptil 36 uker. I denne
+studien hadde pasienter som fortsatte med escitalopram, en signifikant lenger tid før tilbakefall i løpet av
+de påfølgende 36 ukene sammenlignet med de som fikk placebo.
+
+Sosial angstlidelse (sosial fobi)
+Escitalopram var effektiv både i tre korttidsstudier (12 uker) og i en 6-måneders studie på forebygging av
+tilbakefall ved sosial angstlidelse. I en 24-ukers dosefinnende studie, ble det vist effekt av 5, 10 og 20 mg
+escitalopram.
+
+Generalisert angstlidelse
+Escitalopram i doser på 10 og 20 mg/dag hadde effekt i fire av fire placebokontrollerte studier.
+I data samlet fra tre studier med samme design og som omfattet 421 escitalopram-behandlede pasienter og
+419 pasienter behandlet med placebo, var det 47,5 % resp. 28,9 % respondere og 37,1% resp. 20,8% med
+tilbakefall. Vedvarende effekt ble sett fra uke 1.
+Vedvarende effekt er vist for escitalopram 20 mg/dag i en 24 – 76-ukers randomisert effektstudie på 373
+pasienter som hadde oppnådd effekt i en initial 12-ukers åpen behandling.
+
+Tvangslidelse (obsessiv-kompulsiv lidelse (OCD))
+I en randomisert, dobbeltblindet klinisk studie gav escitalopram 20 mg/dag bedre effekt enn placebo på Y-
+BOCS totalscore etter 12 uker. Etter 24 uker hadde både 10 og 20 mg/dag escitalopram bedre effekt enn
+placebo.
+Escitalopram 10 og 20 mg/dag hindret tilbakefall hos pasienter som responderte på behandlingen med
+escitalopram i en 16 ukers åpen studie og som deretter gikk over i en 24-ukers, randomisert,
+dobbeltblindet placebokontrollert periode.
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+Absorpsjonen er nesten fullstendig og uavhengig av matinntak. Gjennomsnittlig tid til
+maksimumskonsentrasjon (gjennomsnittlig tmax) er 4 timer etter gjentatt dosering. Som for racemisk
+citalopram, er absolutt biotilgjengelighet av escitalopram forventet å være omtrent 80 %.
+
+Distribusjon
+Tilsynelatende distribusjonsvolum (Vd,β/F) etter peroral administrasjon er ca. 12 til 26 l/kg.
+Plasmaproteinbinding er mindre enn 80 % for escitalopram og dens hovedmetabolitter.
+
+Metabolisme
+Escitalopram metaboliseres i leveren til demetylerte og didemetylerte metabolitter. Begge metabolittene er
+farmakologisk aktive. Alternativt kan nitrogenet oksideres til N-oksidmetabolitten. Både escitalopram og
