@@ -33,7 +33,7 @@
 import type { Formuleringsklasse } from '../festformuleringer'
 
 /** Økes når formen på regler eller regelsett endres. */
-export const REGELMODELLVERSJON = 6
+export const REGELMODELLVERSJON = 7
 
 /* --- Kilder ----------------------------------------------------------------- */
 
@@ -279,6 +279,14 @@ export interface Forlop {
   preparater?: string[]
   /** Hvor langt de praktiske dosene kan avvike fra den ideelle kurven (P5). */
   dosevalg?: Dosevalg
+  /**
+   * Døgndosen gis fordelt på flere doser slik preparatomtalen krever: med
+   * `over_mg` bare døgndoser over den, hver dose høyst `over_mg` (f.eks.
+   * fluvoksamin), ellers alle (f.eks. moklobemid). `antall` er hvor mange
+   * doser døgndosen kan fordeles på, i den rekkefølgen de foretrekkes. P5
+   * viser fordelingen og stopper når den ikke kan gis med preparatene.
+   */
+  fordeling?: { over_mg?: Parameter; antall: number[]; grunnlag: Grunnlag }
   /** `startdose` når pasienten bruker legemidlet når planen starter; ellers starter forløpet uten dose. */
   utgangsdose: 'startdose' | null
   start: Forlopsstart
@@ -307,6 +315,18 @@ export interface Inndatakrav {
   verdier?: number[]
   /** For en gruppeplan: kravet gjelder bare dette medlemmet. */
   gjelder_medlem?: string
+  /**
+   * Kravet gjelder bare når forskriveren har gitt dette svaret på spørsmålet
+   * (`Sporsmal`), f.eks. en lavere høyeste dose for eldre eller for én
+   * indikasjon. Uten `ved` gjelder kravet alltid.
+   */
+  ved?: { sporsmal: string; svar: boolean }
+  /**
+   * En forsiktighetsgrense: en dose utenfor området stopper ikke, men krever
+   * en skriftlig begrunnelse fra forskriveren. Bare for veiledende krav; et
+   * bindende krav (en uttrykkelig høyeste dose) kan aldri begrunnes bort.
+   */
+  krever_begrunnelse?: true
   art: Parameterart
   grunnlag: Grunnlag
 }
@@ -335,6 +355,8 @@ export interface Sporsmal {
   tekst: string
   /** Hva et ja betyr, kort, til teksten i planen og kravene: «lang behandlingstid». */
   ja: string
+  /** Hva et nei betyr, når et krav gjelder ved nei: «andre indikasjoner enn tvangslidelse og panikklidelse». */
+  nei?: string
   /** Et ja krever en skriftlig begrunnelse fra forskriveren (en særskilt vurdering). */
   krever_begrunnelse?: true
   grunnlag: Grunnlag
@@ -479,6 +501,7 @@ export const FELTENHET: Record<string, Enhet> = {
   avvik_prosent: 'prosent',
   maks_mg: 'mg',
   min_mg: 'mg',
+  over_mg: 'mg',
 }
 
 const feltnavn = (sti: string) => sti.replace(/\[\d+\]/g, '').split('.').at(-1) ?? ''
@@ -617,11 +640,15 @@ export function alleGrunnlag(r: Regel): [string, Grunnlag][] {
       [sti, p.grunnlag] as [string, Grunnlag],
       ...(p.begrunnelseskrav ?? []).map((k, i) => [`${sti}.begrunnelseskrav[${i}]`, k.grunnlag] as [string, Grunnlag]),
     ]),
-    ...r.inndata.map((x) => [`inndata.${x.navn}`, x.grunnlag] as [string, Grunnlag]),
+    ...r.inndata.map((x) => [inndatasti(x), x.grunnlag] as [string, Grunnlag]),
     ...[...r.bekreftelser, ...r.unntak, ...(r.sporsmal ?? [])].map((x) => [x.id, x.grunnlag] as [string, Grunnlag]),
     ...grunnlagITabeller(r),
+    ...r.plan.forlop.flatMap((f) => (f.fordeling ? [[`${f.id}.fordeling`, f.fordeling.grunnlag] as [string, Grunnlag]] : [])),
   ]
 }
+
+/** Stien til et inndatakrav: `inndata.startdose`, eller med vilkåret for et krav som bare gjelder ved et svar. */
+export const inndatasti = (x: Pick<Inndatakrav, 'navn' | 'ved'>) => `inndata.${x.navn}${x.ved ? `[${x.ved.sporsmal}=${x.ved.svar ? 'ja' : 'nei'}]` : ''}`
 
 const erParameter = (x: unknown): x is Parameter =>
   !!x && typeof x === 'object' && 'verdi' in x && 'enhet' in x && 'art' in x && 'grunnlag' in x

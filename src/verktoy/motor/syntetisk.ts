@@ -236,6 +236,13 @@ export function nedtrappingUtenNull(strategi: Nedtrappingsstrategi, dosevalg?: R
   return r
 }
 
+/** Som {@link nedtrappingUtenNull}, der døgndoser over `over` mg skal fordeles på `antall` doser, hver høyst `over` mg. */
+export function fordeltUtenNull(strategi: Nedtrappingsstrategi, over: number, antall: number[]): Regel {
+  const r = nedtrappingUtenNull(strategi, undefined, 'fordelt-uten-null')
+  r.plan.forlop[0]!.fordeling = { over_mg: sp(over, 'mg'), antall, grunnlag: syntetisk }
+  return r
+}
+
 /** Testoksetin hver `hver`. dag i minst 28 dager fra dosen pasienten bruker, uten nulltrinn. */
 export function intervallregel(hver = 2): Regel {
   const r = nedtrappingsregel({ type: 'prosent_av_aktuell', prosent: sp(25, 'prosent') }, undefined, 'intervall')
@@ -655,6 +662,48 @@ export const TESTTILFELLER: Testtilfelle[] = [
     inndata: { startdose_mg: 10, formvalg: { fra: { ...TABLETT, preparater: ['ID_SYNTETISK-OKS-TAB10'] } } },
     preparater: TESTOKSETIN,
     forventet: { stopp: /dag 1–14: den ideelle dosen 7,5 mg kan ikke gis .*5 mg \(-33,33 %, faktisk reduksjon 50 % fra 10 mg\) og 10 mg \(\+33,33 %\)\. En annen dose, et større avvik eller en annen formulering er et nytt forslag/ },
+  },
+  {
+    id: 'uten-nulltrinn-draper-uten-toleranse',
+    beskrivelse: 'Testoksetin-dråper (1 mg per dråpe) fra 20 mg med 10 % av aktuell dose uten nulltrinn og uten toleranse: 18 mg er 18 dråper, men 16,2 mg er ikke et helt antall dråper. Dråpene gir ingen toleranse, så planen stopper ved trinnet før i stedet for å runde av.',
+    kontrollerer: 'P5.6 hele dråper uten toleranse; P5.8 stopp ved trinnet før (substanskontrollen 30.10.2026, escitalopram)',
+    regel: nedtrappingUtenNull({ type: 'prosent_av_aktuell', prosent: sp(10, 'prosent') }),
+    inndata: { startdose_mg: 20, formvalg: { fra: { klasse: 'peroral', legemiddelformer: [FORMER.draper.kode] } } },
+    preparater: TESTOKSETIN,
+    forventet: { fra: ['fra dag 1: 18 mg = 18 dråper à 1 mg', 'neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt'] },
+  },
+  {
+    id: 'uten-nulltrinn-avrundet-bort',
+    beskrivelse: 'Testoksetin 0,5 mg med 1 % av aktuell dose uten nulltrinn: første reduksjon (0,495 mg) blir 0,5 mg når dosen vises med to desimaler. En reduksjon som forsvinner i avrundingen, er ikke et trinn, så beregningen stopper før preparatene vurderes.',
+    kontrollerer: 'P5.5 beregnet, vist og gitt dose er den samme (substanskontrollen 30.10.2026, beslutning 6)',
+    regel: nedtrappingUtenNull({ type: 'prosent_av_aktuell', prosent: sp(1, 'prosent') }),
+    inndata: { startdose_mg: 0.5, formvalg: { fra: TABLETT } },
+    preparater: TESTOKSETIN,
+    forventet: { stopp: /blir første reduksjon \(til 0,495 mg\) borte når dosen vises med to desimaler/ },
+  },
+  {
+    id: 'fordeling-over-grense',
+    beskrivelse: 'Testoksetin 40 mg med 25 % av aktuell dose uten nulltrinn, der døgndoser over 20 mg skal gis fordelt på 2 eller 3 doser, hver høyst 20 mg. Dosene over 20 mg vises fordelt; dosene til og med 20 mg gis som én dose.',
+    kontrollerer: 'P5.5 fordeling av døgndosen når preparatomtalen krever det (substanskontrollen 30.10.2026, fluvoksamin og moklobemid)',
+    regel: fordeltUtenNull({ type: 'prosent_av_aktuell', prosent: sp(25, 'prosent') }, 20, [2, 3]),
+    inndata: { startdose_mg: 40, formvalg: { fra: TABLETT } },
+    preparater: TESTOKSETIN,
+    forventet: {
+      fra: [
+        'dag 1–14: 30 mg = 1 tablett à 10 mg + 1 tablett à 20 mg, fordelt på 2 doser: 20 + 10 mg',
+        'fra dag 15: 22,5 mg = 1 tablett à 20 mg + ½ tablett à 5 mg, fordelt på 2 doser: 20 + 2,5 mg',
+        'neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt',
+      ],
+    },
+  },
+  {
+    id: 'fordeling-kan-ikke-fordeles',
+    beskrivelse: 'Som over fra 40 mg med bare en hel 30 mg-tablett som ikke kan deles: 30 mg kan gis som én dose, men ikke fordeles på doser på høyst 20 mg, så beregningen stopper.',
+    kontrollerer: 'P5.5 fordelingen stopper planen når en nøyaktig dose ikke kan fordeles; P5.8',
+    regel: fordeltUtenNull({ type: 'prosent_av_aktuell', prosent: sp(25, 'prosent') }, 20, [2, 3]),
+    inndata: { startdose_mg: 40, formvalg: { fra: TABLETT } },
+    preparater: [{ id: 'OKS-HEL30', virkestoff: 'testoksetin', varenavn: 'Testoksetin Hel', form: 'tablett', mg: 30, deling: '1' }],
+    forventet: { stopp: /døgndosen 30 mg skal gis fordelt på 2 eller 3 doser, hver høyst 20 mg \(preparatomtalen\), men ingen nøyaktig dose/ },
   },
   {
     id: 'annenhver-dag',

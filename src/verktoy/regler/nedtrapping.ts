@@ -14,34 +14,43 @@
  * begrunnelse) og minst 14 dager (28 for fluoksetin), med 28 dager som
  * standard. Dagene har ingen klinisk øvre grense: et trinn er en minstetid og
  * forlenges så lenge seponeringssymptomene krever det. Forskriveren må oppgi om
- * behandlingstiden er lang; da krever kortere trinn og (ved middels risiko)
- * mer enn 10 % begrunnelse.
+ * behandlingstiden er lang; da krever kortere trinn og (ved middels risiko og
+ * for fluoksetin) mer enn 10 % begrunnelse.
  *
  * **Ingen plan går til null, og ingen har en fast nedre grense**
  * (fagkontrollene 29. og 30.10.2026): planen viser høyst
- * {@link PLANHORISONT_TRINN} reduksjoner frem i tid (en teknisk
- * planhorisont), aldri et trinn under laveste dose formuleringen kan gi (en
- * praktisk grense, for depotkapslene), og stopper ved første trinn som ikke kan
- * gis med norske preparater (P5). Siste dose fortsetter til planen revurderes;
- * avslutningen vurderes alltid individuelt, og planen foreslår aldri en dato
- * for siste dose.
+ * {@link PLANHORISONT_TRINN} reduksjoner frem i tid ({@link PLANHORISONT_LANGSOM}
+ * i de langsomme variantene), aldri et trinn under laveste dose formuleringen
+ * kan gi (en praktisk grense), aldri en reduksjon som forsvinner når dosen
+ * vises med to desimaler, og stopper ved første trinn som ikke kan gis
+ * nøyaktig med norske preparater (P5). Siste dose fortsetter til forskriveren
+ * har vurdert videre nedtrapping; planen foreslår aldri en dato for siste dose.
  *
  * Hver plan er et **startforslag**: forskriveren må bekrefte det og at
- * organfunksjon og interaksjoner er vurdert, og en dose utenfor rammen for
- * indikasjonen eller pasientgruppen krever en begrunnelse. Har et tidligere
- * forsøk gitt seponeringssymptomer, gjelder regelens **langsomme variant**
- * (1–5 % per trinn, minst 28 dager), en egen regel. Fluoksetin har i tillegg
- * dosering annenhver dag som valgfri strategi. Reglene har **ingen
- * toleranse**. **Ingen regel er klinisk godkjent.** Alle er til uavhengig
- * faglig kontroll (P7.5). Bupropion er bare fagtekst: med depottablettene som
- * ikke kan deles, er den prosentvise regelen ikke beregnbar. Den hyperbolske
- * citalopramregelen ligger bare i sammenligningssettet, som ikke er klinisk.
- * Psychiatrienet står bare som referanse til Stop-oppføringen fra P3; ingen
- * regel bygger på eller gjengir teksten der.
+ * organfunksjon og interaksjoner er vurdert. Startdosen kan være enhver
+ * positiv dose opp til høyeste døgndose for voksne i preparatomtalen; over den
+ * stopper beregningen uten overstyring. Innenfor den gjelder preparatomtalens
+ * grenser for eldre, indikasjoner og nedsatt organfunksjon (substanskontrollen
+ * 30.10.2026, beslutning 7): en uttrykkelig høyeste dose stopper, en
+ * forsiktighetsgrense krever begrunnelse. Under 18 år, akutte alvorlige
+ * forhold, ustabil dose, uregelmessig inntak, bytte og kontraindikasjoner
+ * stopper den ordinære planleggingen. Har et tidligere forsøk gitt
+ * seponeringssymptomer, gjelder regelens **langsomme variant** (1–5 % per
+ * trinn, minst 28 dager), en egen regel. Fluoksetin har i tillegg dosering
+ * annenhver dag som valgfri strategi. Reglene har **ingen toleranse**.
+ *
+ * **Bare to regler er klinisk godkjent**, begge tekstregler uten beregning:
+ * bupropion (versjon 5) og agomelatin (versjon 1), med kontrollørens
+ * fingeravtrykk. De beregnbare reglene er godkjent med endring og sendt til ny
+ * uavhengig kontroll (P7.5). Duloksetin og venlafaksin er tekstregler, fordi
+ * depotformuleringene ikke kan gi trinnene. Den hyperbolske citalopramregelen
+ * ligger bare i sammenligningssettet, som ikke er klinisk. Psychiatrienet står
+ * bare som referanse til Stop-oppføringen fra P3; ingen regel bygger på eller
+ * gjengir teksten der.
  */
 import { kravtekst, omradetekst } from './beregning'
-import { FORUTSETNINGER_FELLES, forslag, h, kilde, NICE, planhorisont, PLANHORISONT_TRINN, pn, RCPSYCH, steg, utsagn } from './bygg'
-import type { Avklaring, Begrunnelseskrav, Bekreftelse, Dosevalg, Fase, Grunnlag, Kildehenvisning, Nedtrappingsstrategi, Parameter, Regel, Regelsett, Regneeksempel, Sporsmal, Unntak, Utsagn } from './modell'
+import { FORUTSETNINGER_FELLES, forslag, h, kilde, NICE, planhorisont, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, pn, RCPSYCH, steg, utsagn } from './bygg'
+import type { Avklaring, Begrunnelseskrav, Bekreftelse, Fase, Forlop, Godkjenningssteg, Grunnlag, Inndatakrav, Kildehenvisning, Nedtrappingsstrategi, Parameter, Regel, Regelsett, Regneeksempel, Sporsmal, Unntak, Utsagn } from './modell'
 import { REGELMODELLVERSJON } from './modell'
 import { seponeringCitalopramHyperbolsk, SPC } from './pilotsett'
 
@@ -72,6 +81,27 @@ const P7 = {
   brintellixSeponering: h('ema-brintellix', 'section 4.2', 'Gradvis dosereduksjon kan vurderes for å unngå seponeringssymptomer, men data er for få til å anbefale en bestemt nedtrappingsplan.'),
   valdoxanDose: h('ema-valdoxan', 'section 4.2', 'Anbefalt dose 25 mg ved sengetid; kan økes til 50 mg.'),
   valdoxanSeponering: h('ema-valdoxan', 'section 4.2', 'Ingen nedtrapping er nødvendig når behandlingen avsluttes.'),
+  // Substanskontrollen 30.10.2026 (beslutning 7 og 8): grenser for pasientgrupper, indikasjoner og administrasjon.
+  cipramilEldre: h('dmp-cipramil', 'pkt. 4.2', 'Eldre over 65 år: halv dose, 10–20 mg daglig; høyst 20 mg daglig.'),
+  cipramilLever: h('dmp-cipramil', 'pkt. 4.2', 'Mild eller moderat nedsatt leverfunksjon: start 10 mg, høyst 20 mg daglig. Alvorlig nedsatt: forsiktighet og ekstra omhyggelig dosetitrering.'),
+  cipramilQt: h('dmp-cipramil', 'pkt. 4.3', 'Kontraindisert ved kjent QT-forlengelse eller medfødt langt QT-syndrom, og sammen med andre legemidler som forlenger QT-intervallet.'),
+  cipralexEldre: h('dmp-cipralex', 'pkt. 4.2', 'Eldre over 65 år: start 5 mg; kan økes til 10 mg daglig.'),
+  cipralexLever: h('dmp-cipralex', 'pkt. 4.2', 'Mild eller moderat nedsatt leverfunksjon: start 5 mg, kan økes til 10 mg daglig. Alvorlig nedsatt: forsiktighet og ekstra omhyggelig dosetitrering.'),
+  cipralexQt: h('dmp-cipralex', 'pkt. 4.3', 'Kontraindisert ved kjent QT-forlengelse eller medfødt langt QT-syndrom, og sammen med andre legemidler som forlenger QT-intervallet.'),
+  cipralexCyp2c19: h('dmp-cipralex', 'pkt. 4.2', 'Kjent langsom CYP2C19-metaboliserer: start 5 mg, kan økes til 10 mg daglig.'),
+  seroxatIndikasjon: h('dmp-seroxat', 'pkt. 4.2', 'Høyst 50 mg daglig ved depresjon, sosial angstlidelse, generalisert angstlidelse og posttraumatisk stresslidelse; høyst 60 mg ved tvangslidelse og panikklidelse.'),
+  seroxatEldre: h('dmp-seroxat', 'pkt. 4.2', 'Eldre: startdose som for voksne; dosen bør ikke overstige 40 mg daglig.'),
+  seroxatOrgan: h('dmp-seroxat', 'pkt. 4.2', 'Ved kreatininclearance under 30 ml/min og ved nedsatt leverfunksjon er konsentrasjonen høyere; dosen begrenses til nedre del av doseområdet.'),
+  efexorIndikasjon: h('dmp-efexor-depot', 'pkt. 4.2', 'Høyst 375 mg daglig ved depressive episoder; høyst 225 mg ved generalisert angstlidelse, sosial angstlidelse og panikklidelse.'),
+  anafranilIndikasjon: h('dmp-anafranil', 'pkt. 4.2', 'Depresjon og tvangstilstander: vanligvis 100–150 mg, i vanskelige tilfeller høyst 250 mg daglig. Panikklidelse: vanligvis 25–100 mg, om nødvendig 150 mg. Narkolepsi: 25–100 mg om kvelden.'),
+  sarotexEldre: h('dmp-sarotex', 'pkt. 4.2', 'Depresjon hos eldre over 65 år og ved hjerte- og karsykdom: opptil 100–150 mg fordelt på to doser; doser over 100 mg brukes med forsiktighet.'),
+  sarotexSmerte: h('dmp-sarotex', 'pkt. 4.2', 'Nevropatisk smerte, kronisk spenningshodepine og migreneprofylakse hos voksne: anbefalt 25–75 mg daglig; over 100 mg med forsiktighet, og hos eldre over 75 mg.'),
+  fevarinFordeling: h('dmp-fevarin', 'pkt. 4.2', 'Opptil 150 mg kan gis som én dose; en døgndose over 150 mg bør fordeles på 2 eller 3 doser.'),
+  aurorixFordeling: h('dmp-aurorix', 'pkt. 4.2', 'Døgndosen gis fordelt på 2 doser, rett etter måltid.'),
+  aurorixKontra: h('dmp-aurorix', 'pkt. 4.3', 'Kontraindisert sammen med selegilin, linezolid, triptaner, petidin, tramadol, bupropion og dekstrometorfan, og ved akutte forvirringstilstander.'),
+  cymbaltaKontra: h('ema-cymbalta', 'section 4.3', 'Kontraindisert ved leversykdom med nedsatt leverfunksjon, ved alvorlig nedsatt nyrefunksjon (kreatininclearance under 30 ml/min) og sammen med sterke CYP1A2-hemmere som fluvoksamin.'),
+  brintellixEldre: h('ema-brintellix', 'section 4.2', 'Fra 65 år: start alltid med 5 mg; forsiktighet ved doser over 10 mg, der data er begrenset.'),
+  niceVoksne: h('nice-ng222', 'tittel og omfang', 'Retningslinjen gjelder behandling av depresjon hos voksne.'),
 }
 
 
@@ -80,9 +110,10 @@ const P7 = {
 /* --- Felles byggesteiner for P7 ------------------------------------------------------- */
 
 const TIL_KONTROLL = 'Sendt til uavhengig faglig kontroll av kilder, klinisk innhold og regneeksempler (P7.5). Ikke klinisk godkjent.'
-/** Datoene for de to fagkontrollene versjonene bygger på. */
+/** Datoene for fagkontrollene versjonene bygger på; runde 2 og 3 var samme dag. */
 const RUNDE_1 = '2026-10-29'
 const RUNDE_2 = '2026-10-30'
+const RUNDE_3 = '2026-10-30'
 
 /** Hva som er endret i en versjon, og når; regelversjonen er antallet versjoner. */
 interface Versjon {
@@ -108,6 +139,11 @@ const KONTROLL_4: Versjon = {
     'Omarbeidet etter fagkontrollen 30.10.2026 (P7.5): ingen fast nedre grense, men en teknisk planhorisont og praktiske grenser for formuleringene; planen stopper ved første trinn som ikke kan gis; startdose utenfor rammen for indikasjon eller pasientgruppe krever begrunnelse; organfunksjon og interaksjoner bekreftes; tidligere seponeringssymptomer gir den langsomme varianten.',
   dato: RUNDE_2,
 }
+const KONTROLL_5: Versjon = {
+  merknad:
+    'Omarbeidet etter substanskontrollen 30.10.2026, runde 3 (P7.5): godkjent med endring. Høyst 12 reduksjoner per plan og 6 i de langsomme variantene; hvert trinn avrundes til den viste dosen, og en reduksjon som forsvinner i avrundingen, er ikke et trinn; ny tekst om siste dose; preparatomtalens grenser for eldre, indikasjoner og nedsatt organfunksjon; stopp under 18 år, ved akutte alvorlige forhold, ustabil dose, uregelmessig inntak, bytte og kontraindikasjoner.',
+  dato: RUNDE_3,
+}
 /** Den første versjonen av en regel laget etter fagkontrollen 30.10.2026. */
 const NY_ETTER_RUNDE_2 = (hva: string): Versjon => ({ merknad: `Ny regel etter fagkontrollen 30.10.2026 (P7.5): ${hva}`, dato: RUNDE_2 })
 
@@ -132,7 +168,6 @@ const beslutning1 = (regelversjon: number): Avklaring => ({
 
 /** Beslutningene i fagkontrollen 30.10.2026 som avklarer et valg; ingen av dem er en klinisk godkjenning. */
 const RUNDE_2_BESLUTNING = {
-  praktisk: 'Beslutning 3: ingen fast klinisk nedre grense; formuleringens laveste dose er en praktisk grense, og lavere doser krever en annen dokumentert administrasjonsform',
   langOver: 'Beslutning 5.3: begrunnelse for mer enn 10 % per trinn ved lang behandlingstid i middelsgruppen, ikke utenfor regelen',
   lavtTrinn: 'Beslutning 5.4: høyst 25 % fra laveste døgndose er en konservativ øvre ramme, ikke en anbefaling; en lavere valgt prosent gjelder fortsatt',
   doseramme: 'Beslutning 5.5: høyeste døgndose for voksne er ingen automatisk godkjent ramme; en dose utenfor rammen for indikasjon eller pasientgruppe krever forskriverens særskilte vurdering',
@@ -148,13 +183,32 @@ const runde2 = (regelversjon: number, hva: keyof typeof RUNDE_2_BESLUTNING): Avk
   merknad: `Fagkontrollen 30.10.2026, ${RUNDE_2_BESLUTNING[hva]}`,
 })
 
+/** Beslutningene i substanskontrollen 30.10.2026 (runde 3) som avklarer et valg; ingen av dem er en klinisk godkjenning. */
+const RUNDE_3_BESLUTNING = {
+  horisont: 'Beslutning 6: 12 reduksjoner er godkjent som teknisk maksimalhorisont for hovedreglene, forutsatt at ingen reduksjon skjer automatisk',
+  horisontLangsom: 'Beslutning 6: høyst 6 reduksjoner per plan i de langsomme variantene, et konservativt systemvalg for tettere revurdering, ikke en validert klinisk grense',
+  startdose: 'Beslutning 7: positiv startdose opp til preparatomtalens høyeste voksendose er den ytre beregningsrammen; over den stopper beregningen uten overstyring med fritekst',
+  pasientgruppe: 'Beslutning 7: skill mellom anbefalt dose, forsiktighetsgrense og uttrykkelig høyeste dose for pasientgruppe og indikasjon; avvik fra anbefalt dose kan begrunnes, en sikkerhetsbegrunnet høyeste dose stopper',
+  stopp: 'Beslutning 7: under 18 år, akutt alvorlig bivirkning, forgiftning, alvorlig interaksjon, behov for rask seponering, ustabil dose, uregelmessig inntak og legemiddelbytte stopper ordinær planlegging',
+  kontraindikasjon: 'Beslutning 7 og 8: kontraindikasjoner kan ikke overstyres med en generell begrunnelse',
+  fluoksetinLang: 'Beslutning 8: fluoksetin krever begrunnelse for mer enn 10 % per trinn etter lang behandlingstid',
+  annenhverDag: 'Beslutning 7 og 8: inngangen er nøyaktig 20 mg daglig; symptomer kan kreve vurdering før dag 28; ikke ved annen startdose eller tidligere seponeringsproblemer uten særskilt vurdering',
+} as const
+
+const runde3 = (regelversjon: number, hva: keyof typeof RUNDE_3_BESLUTNING): Avklaring => ({
+  dato: RUNDE_3,
+  ...kontrollor,
+  regelversjon,
+  merknad: `Substanskontrollen 30.10.2026, ${RUNDE_3_BESLUTNING[hva]}`,
+})
+
 const vurdering = (begrunnelse: string, henvisninger: Kildehenvisning[], avklaring: Avklaring | null): Grunnlag => ({ type: 'ousfar_vurdering', begrunnelse, henvisninger, avklaring })
 
 /** Bekreftelsen hver beregnbar regel krever: planen er et startforslag med minstetider, ikke en fast tidsplan. */
 export const STARTFORSLAG: Bekreftelse = {
   id: 'startforslag',
   tekst:
-    'Planen er et startforslag, og dagene per trinn er minstetider. Neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige; til da forlenges trinnet. Ved mer uttalte symptomer vurderes å gå tilbake til siste tolererte dose og senere forsøke mindre trinn. Endres dosen, trinnstørrelsen eller strategien, beregnes en ny plan fra dosen pasienten da bruker.',
+    'Planen er et startforslag, ikke en forhåndsgodkjenning av alle reduksjonene: hvert trinn forutsetter en ny vurdering av toleransen, og dagene per trinn er minstetider. Neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige; til da forlenges trinnet. Ved mer uttalte symptomer vurderes å gå tilbake til siste tolererte dose og senere forsøke mindre trinn. Ved revurdering, eller når dosen, trinnstørrelsen eller strategien endres, beregnes en ny plan fra dosen pasienten faktisk bruker.',
   grunnlag: { type: 'kilde', henvisninger: [NICE.tempo, NICE.alvorlig, RCPSYCH.tid, RCPSYCH.smaa] },
 }
 
@@ -188,6 +242,39 @@ const tidligereSymptomer = (versjon: number): Unntak => ({
   ),
 })
 
+/**
+ * Forholdene som stopper ordinær planlegging for alle stoffene
+ * (substanskontrollen 30.10.2026, beslutning 7): da passer ikke en langsom
+ * standardplan, og nedtrappingen må planlegges individuelt.
+ */
+export const UNDER_18_ID = 'under_18'
+export const AKUTT_ID = 'akutt_situasjon'
+export const USTABIL_ID = 'ustabil_dose_eller_bytte'
+const fellesStopp = (versjon: number): Unntak[] => [
+  {
+    id: UNDER_18_ID,
+    tekst: 'Pasienten er under 18 år. Reglene er laget for voksne; nedtrapping hos barn og ungdom må vurderes særskilt.',
+    grunnlag: vurdering('NICE NG222 og preparatomtalene reglene bygger på, gjelder voksne; pediatrisk bruk må vurderes for seg.', [P7.niceVoksne], runde3(versjon, 'stopp')),
+  },
+  {
+    id: AKUTT_ID,
+    tekst: 'Pasienten har en akutt alvorlig bivirkning, en forgiftning eller en alvorlig interaksjon, eller trenger av andre grunner rask seponering.',
+    grunnlag: vurdering('Ved alvorlige medisinske forhold kan raskere eller umiddelbar seponering være nødvendig; da er en langsom standardplan ikke nødvendigvis riktig.', [NICE.tempo, NICE.alvorlig], runde3(versjon, 'stopp')),
+  },
+  {
+    id: USTABIL_ID,
+    tekst: 'Dosen er ikke stabil, pasienten tar legemidlet uregelmessig, eller seponeringen er del av et bytte til et annet legemiddel.',
+    grunnlag: vurdering('Beregningen forutsetter et kjent, stabilt daglig doseringsregime; bytte og uregelmessig eksponering kan kreve egne modeller.', [NICE.bytte, NICE.halveringstid], runde3(versjon, 'stopp')),
+  },
+]
+
+/** En kontraindikasjon som stopper planleggingen og ikke kan begrunnes bort (beslutning 7). */
+const kontraindikasjon = (versjon: number, id: string, tekst: string, ...henvisninger: Kildehenvisning[]): Unntak => ({
+  id,
+  tekst: `${tekst} Det er en kontraindikasjon i preparatomtalen; en generell begrunnelse kan ikke overstyre den, og nedtrappingen må planlegges individuelt.`,
+  grunnlag: vurdering('Preparatomtalen oppgir forholdet som en kontraindikasjon; ordinær planlegging stoppes i stedet for å kreve en begrunnelse.', henvisninger, runde3(versjon, 'kontraindikasjon')),
+})
+
 /** Spørsmålet hver beregnbar regel stiller: behandlingstiden registreres og avgjør hvilke valg som krever begrunnelse. */
 export const LANG_BEHANDLINGSTID: Sporsmal = {
   id: 'lang_behandlingstid',
@@ -200,7 +287,7 @@ export const LANG_BEHANDLINGSTID: Sporsmal = {
 export const UTENFOR_DOSERAMME_ID = 'utenfor_doseramme'
 const utenforDoseramme = (versjon: number, kilde: Kildehenvisning): Sporsmal => ({
   id: UTENFOR_DOSERAMME_ID,
-  tekst: 'Er dosen utenfor preparatomtalens doseramme for pasientens indikasjon eller pasientgruppe, for eksempel eldre eller nedsatt organfunksjon?',
+  tekst: 'Er dosen ellers utenfor preparatomtalens doseramme for pasientens indikasjon eller pasientgruppe, for eksempel ved nedsatt organfunksjon, utover det spørsmålene om pasientgruppe og indikasjon dekker?',
   ja: 'dose utenfor rammen for indikasjon eller pasientgruppe',
   krever_begrunnelse: true,
   grunnlag: vurdering(
@@ -224,6 +311,30 @@ interface Doser {
 }
 
 /**
+ * En grense for startdosen i preparatomtalen for en pasientgruppe eller
+ * indikasjon (substanskontrollen 30.10.2026, beslutning 7): `maks` er en
+ * uttrykkelig høyeste dose og stopper beregningen; `forsiktighet` er en grense
+ * der en høyere dose krever en skriftlig begrunnelse. `ved` er spørsmålet og
+ * svaret grensen gjelder ved; uten gjelder den alltid.
+ */
+interface Dosegrense {
+  ved?: { sporsmal: Sporsmal; svar: boolean }
+  hoyest: number
+  art: 'maks' | 'forsiktighet'
+  henvisning: Kildehenvisning
+}
+
+/** Et spørsmål om pasientgruppe, indikasjon eller organfunksjon, med preparatomtalen som grunnlag. */
+const sporsmal = (id: string, tekst: string, ja: string, henvisning: Kildehenvisning, valg: { nei?: string; krever_begrunnelse?: true } = {}): Sporsmal => ({
+  id,
+  tekst,
+  ja,
+  ...(valg.nei && { nei: valg.nei }),
+  ...(valg.krever_begrunnelse && { krever_begrunnelse: true as const }),
+  grunnlag: { type: 'kilde', henvisninger: [henvisning] },
+})
+
+/**
  * Valgene for en risikogruppe (fagvurderingen 29.10.2026, beslutning 1, og den
  * langsomme varianten fra fagkontrollen 30.10.2026): reduksjon per trinn og
  * minste antall dager per trinn, med standardverdi, område og når et valg
@@ -232,7 +343,7 @@ interface Doser {
 interface Risikogruppe {
   tittel: string
   prosent: { standard: number; omrade: [number, number]; begrunnelseOver?: number; begrunnelse: string; henvisninger: Kildehenvisning[] }
-  /** Over denne reduksjonen ved lang behandlingstid kreves begrunnelse (beslutning 5.3). */
+  /** Over denne reduksjonen ved lang behandlingstid kreves begrunnelse (beslutning 5.3, for fluoksetin beslutning 8 i runde 3). */
   langOver?: number
   dager: { standard: number; minst: number; begrunnelseUnderVedLang?: number; begrunnelse: string; henvisninger: Kildehenvisning[] }
   /** Mindre trinn (høyst 25 %) fra laveste døgndose når en større reduksjon er valgt (beslutning 5.4). */
@@ -281,7 +392,12 @@ const MIDDELS: Risikogruppe = {
 /** Fluoksetin: middels risiko, men lang virketid gir minst 28 dager per trinn og ingen mindre trinn ved lav dose. */
 const FLUOKSETIN: Risikogruppe = {
   tittel: 'gjentatt prosentvis nedtrapping',
-  prosent: { ...MIDDELS.prosent, begrunnelse: 'Middels potensiell risiko (RCPsych): 25 % av aktuell dose per trinn som standard; forskriveren kan velge 5–50 %, og over 25 % krever begrunnelse.' },
+  prosent: {
+    ...MIDDELS.prosent,
+    begrunnelse:
+      'Middels potensiell risiko (RCPsych): 25 % av aktuell dose per trinn som standard; forskriveren kan velge 5–50 %, og over 25 % krever begrunnelse. Etter lang behandlingstid krever mer enn 10 % begrunnelse: den lange halveringstiden kan gjøre større reduksjoner plausible, men symptomene kan komme sent.',
+  },
+  langOver: 10,
   dager: {
     standard: 28,
     minst: 28,
@@ -345,7 +461,7 @@ function reduksjon(g: Risikogruppe, avklaring: Avklaring, versjon: number): Para
             grunnlag: vurdering(
               'Etter lang behandlingstid bør reduksjonen vanligvis være 5–10 % (RCPsych, fagvurderingen 29.10.2026); mer krever begrunnelse, så et raskere valg aldri står som likeverdig standard.',
               [RCPSYCH.langvarig],
-              runde2(versjon, 'langOver'),
+              g === FLUOKSETIN ? runde3(versjon, 'fluoksetinLang') : runde2(versjon, 'langOver'),
             ),
           },
         ]
@@ -394,23 +510,6 @@ function strategi(d: Doser, g: Risikogruppe, avklaring: Avklaring, versjon: numb
   }
 }
 
-/** Laveste dose formuleringen kan gi, når den setter en praktisk grense (ikke en klinisk) for beregnede trinn. */
-interface Praktiskgrense {
-  mg: number
-  /** Hvorfor ingen lavere dose kan gis, med egne ord. */
-  hvorfor: string
-  henvisninger: Kildehenvisning[]
-}
-
-const dosevalgFor = (p: Praktiskgrense | undefined, versjon: number): Dosevalg | undefined =>
-  p && {
-    min_mg: forslag(p.mg, 'mg', `Praktisk grense, ikke en klinisk: ${p.hvorfor} Planen beregner ingen trinn under ${tall(p.mg)} mg; lavere doser krever en annen dokumentert administrasjonsform.`, {
-      art: 'bindende_krav',
-      henvisninger: p.henvisninger,
-      avklaring: runde2(versjon, 'praktisk'),
-    }),
-  }
-
 /** Hva forskriveren kan velge for en parameter, og hva som krever begrunnelse. */
 function valgområde(p: Parameter): string {
   if (!p.justerbar || !p.omrade) return ''
@@ -418,14 +517,26 @@ function valgområde(p: Parameter): string {
   return ` (forskriveren kan velge ${omradetekst(p as Parameter & { omrade: [number, number] })}${krav.length > 0 ? `; begrunnelse kreves ${krav.join(' og ')}` : ''})`
 }
 
-const UTEN_NULL = `Planen viser høyst ${PLANHORISONT_TRINN} reduksjoner (en teknisk planhorisont) og går ikke til null: siste dose fortsetter til planen revurderes, og avslutningen vurderes individuelt.`
+const utenNull = (horisont: number) =>
+  `Planen viser høyst ${horisont} reduksjoner (en teknisk planhorisont) og går ikke til null: siste dose fortsetter til forskriveren har vurdert videre nedtrapping, og avslutningen vurderes individuelt.`
+
+/** Planhorisonten (beslutning 6): 12 reduksjoner i hovedreglene, 6 i de langsomme variantene. */
+const horisont = (versjon: number, langsom: boolean) =>
+  langsom
+    ? planhorisont(PLANHORISONT_LANGSOM, {
+        begrunnelse: `Teknisk planhorisont, ikke en klinisk grense: den langsomme varianten viser høyst ${PLANHORISONT_LANGSOM} reduksjoner per plan, omtrent et halvt år med 28 dager per trinn, så pasienten revurderes tettere etter tidligere seponeringsproblemer. Ingen reduksjon skjer automatisk, og ved revurdering beregnes en ny plan fra dosen pasienten faktisk bruker.`,
+        avklaring: runde3(versjon, 'horisontLangsom'),
+      })
+    : planhorisont(PLANHORISONT_TRINN, {
+        begrunnelse: `Teknisk planhorisont, ikke en klinisk grense eller anbefalt behandlingsvarighet: planen viser høyst ${PLANHORISONT_TRINN} reduksjoner frem i tid, omtrent ett år med 28 dager per trinn. Ingen reduksjon skjer automatisk, og ved revurdering beregnes en ny plan fra dosen pasienten faktisk bruker.`,
+        avklaring: runde3(versjon, 'horisont'),
+      })
 
 /** OUSFARs valg i en regel, skrevet ut fra verdiene så teksten aldri kan avvike fra dem. */
-function valgtekst(s: Nedtrappingsstrategi, trinnlengde: Parameter, praktisk?: Praktiskgrense): string {
+function valgtekst(s: Nedtrappingsstrategi, trinnlengde: Parameter, horisont: number): string {
   if (s.type !== 'prosent_av_aktuell') throw new Error(`Strategien ${s.type} brukes ikke i P7`)
   const lav = s.lav_grense_mg ? `, høyst ${s.lav_prosent?.verdi} % fra ${tall(s.lav_grense_mg.verdi!)} mg` : ''
-  const grense = praktisk ? ` Ingen trinn under ${tall(praktisk.mg)} mg, den laveste dosen formuleringen kan gi.` : ''
-  return `OUSFAR trapper ned med ${s.prosent.verdi} % av aktuell dose${valgområde(s.prosent)}${lav}, med minst ${trinnlengde.verdi} dager per trinn${valgområde(trinnlengde)}.${grense} ${UTEN_NULL}`
+  return `OUSFAR trapper ned med ${s.prosent.verdi} % av aktuell dose${valgområde(s.prosent)}${lav}, med minst ${trinnlengde.verdi} dager per trinn${valgområde(trinnlengde)}. ${utenNull(horisont)}`
 }
 
 /** Valgene i et regneeksempel: justeringer (prosent, dager), svarene på spørsmålene, og begrunnelsen. */
@@ -433,6 +544,8 @@ interface Eksempelvalg {
   justert?: Partial<Record<keyof typeof JUSTERING, number>>
   lang?: boolean
   utenforRamme?: boolean
+  /** Svar på stoffets egne spørsmål (pasientgruppe, indikasjon); de andre er nei. */
+  svar?: Record<string, boolean>
   begrunnelse?: string
 }
 
@@ -442,7 +555,7 @@ const eks = (id: string, beskrivelse: string, startdose_mg: number, forventet: s
   beskrivelse,
   inndata: {
     startdose_mg,
-    svar: { [LANG_BEHANDLINGSTID.id]: valg.lang ?? false, [UTENFOR_DOSERAMME_ID]: valg.utenforRamme ?? false },
+    svar: { [LANG_BEHANDLINGSTID.id]: valg.lang ?? false, [UTENFOR_DOSERAMME_ID]: valg.utenforRamme ?? false, ...valg.svar },
     ...(valg.justert && { justert: valg.justert as Record<string, number> }),
     ...(valg.begrunnelse && { begrunnelse: valg.begrunnelse }),
   },
@@ -466,12 +579,18 @@ interface Stoffregel {
   dose: Doser
   /** Risikogruppen for seponeringssymptomer etter RCPsych, med valgene fra fagvurderingen. */
   gruppe: Risikogruppe
-  /** Laveste dose formuleringen kan gi, når den er en praktisk grense for trinnene (beslutning 3). */
-  praktisk?: Praktiskgrense
   /** Versjonene før fagkontrollen 30.10.2026, når regelen har en annen historikk enn P7-reglene (f.eks. fra pilotsettet). */
   tidligere?: Versjon[]
-  /** Unntak for stoffet i tillegg til tidligere seponeringssymptomer. */
-  unntak?: Unntak[]
+  /** Unntak for stoffet (kontraindikasjoner og annet) i tillegg til de felles; regelversjonen gir avklaringen. */
+  unntak?: (versjon: number) => Unntak[]
+  /** Preparatomtalens grenser for startdosen ved pasientgruppe og indikasjon, innenfor høyeste døgndose for voksne (beslutning 7). */
+  grenser?: Dosegrense[]
+  /** Spørsmål for stoffet som ikke styrer en dosegrense, f.eks. om nedsatt organfunksjon som krever en særskilt vurdering. */
+  sporsmal?: Sporsmal[]
+  /** Døgndoser som skal fordeles på flere doser (preparatomtalen). */
+  fordeling?: Forlop['fordeling']
+  /** Eksempler for den langsomme varianten i tillegg til standardeksempelet. */
+  langsomEksempler?: Regneeksempel[]
   kildetro: Utsagn[]
   /** Begrunnelser for valg utover det felles prinsippet. */
   tilpasninger?: Utsagn[]
@@ -488,21 +607,29 @@ const FORUTSETNINGER_P7 = [
   'Beregningen kjenner dosen, om behandlingstiden er lang, om dosen er utenfor rammen for indikasjonen eller pasientgruppen, og forskriverens valg av trinnstørrelse og trinnlengde. Den vet ikke hvordan pasienten tåler hvert trinn; trinnene er minstetider, og planen tilpasses symptomene underveis.',
 ]
 
-const FELLES_USIKKERHET = [
+const fellesUsikkerhet = (horisont: number) => [
   'Prosentene og trinnlengdene er tillatte rammer for individuell planlegging (fagvurderingen 29.10.2026), ikke vitenskapelig dokumenterte optimale verdier.',
-  `Ingen fast nedre grense for beregnede trinn er godkjent (fagkontrollen 30.10.2026): en lav dose kan fortsatt gi betydelig reseptorbinding, og noen trenger svært lave doser før seponering (RCPsych). Planen viser derfor høyst ${PLANHORISONT_TRINN} reduksjoner, en teknisk horisont, og videre nedtrapping beregnes fra dosen pasienten da bruker. Hvor langt ned den enkelte trenger å gå, avgjøres individuelt.`,
+  `Ingen fast nedre grense for beregnede trinn er godkjent (fagkontrollen 30.10.2026): en lav dose kan fortsatt gi betydelig reseptorbinding, og noen trenger svært lave doser før seponering (RCPsych). Planen viser derfor høyst ${horisont} reduksjoner, en teknisk horisont uten dokumentasjon for at akkurat dette antallet er bedre enn et annet, og videre nedtrapping beregnes fra dosen pasienten da faktisk bruker. Hvor langt ned den enkelte trenger å gå, avgjøres individuelt.`,
   'Hva som er lang behandlingstid, avgjør forskriveren; RCPsych sier «mange måneder eller lenger» uten en eksakt grense.',
-  'Regelen har ingen toleranse: et trinn som ikke kan gis nøyaktig med norske preparater, stopper planen ved trinnet før, med de nærmeste dosene og den faktiske reduksjonen. En annen dose er et nytt forslag med egen vurdering og godkjenning (fagkontrollen 30.10.2026).',
+  'Regelen har ingen toleranse: hvert trinn avrundes til den viste dosen (to desimaler), og et trinn som ikke kan gis nøyaktig med norske preparater, eller en reduksjon som forsvinner i avrundingen, stopper planen ved trinnet før. En annen dose er et nytt forslag med egen vurdering og godkjenning (fagkontrollene 30.10.2026).',
+]
+
+/** Spørsmålene stoffet stiller om pasientgruppe, indikasjon og organfunksjon, hvert én gang. */
+const stoffsporsmal = (s: Pick<Stoffregel, 'grenser' | 'sporsmal'>): Sporsmal[] => [
+  ...new Map([...(s.sporsmal ?? []), ...(s.grenser ?? []).flatMap((g) => (g.ved ? [g.ved.sporsmal] : []))].map((x) => [x.id, x])).values(),
 ]
 
 /** Det hver beregnbar P7-regel stiller som betingelser: bekreftelsene, unntakene og spørsmålene. */
 function betingelser(s: Stoffregel, versjon: number, langsom: boolean) {
   return {
     bekreftelser: [STARTFORSLAG, organfunksjon(versjon), ...(langsom ? [tidligereVurdert(versjon)] : [])],
-    unntak: [...(langsom ? [] : [tidligereSymptomer(versjon)]), ...(s.unntak ?? [])],
-    sporsmal: [LANG_BEHANDLINGSTID, utenforDoseramme(versjon, s.dose.kilde)],
+    unntak: [...(langsom ? [] : [tidligereSymptomer(versjon)]), ...fellesStopp(versjon), ...(s.unntak?.(versjon) ?? [])],
+    sporsmal: [LANG_BEHANDLINGSTID, ...stoffsporsmal(s), utenforDoseramme(versjon, s.dose.kilde)],
   }
 }
+
+/** Svaret nei på hvert spørsmål, så et eksempel bare oppgir det som avviker. */
+const neiPaAlle = (r: Pick<Regel, 'sporsmal'>) => Object.fromEntries((r.sporsmal ?? []).map((x) => [x.id, false]))
 
 /** Svarene og bekreftelsene et eksempel bygger på, så bare det eksempelet sier noe om, avviker. */
 function besvart(r: Pick<Regel, 'bekreftelser' | 'unntak' | 'sporsmal'>, e: Regneeksempel): Regneeksempel {
@@ -512,16 +639,19 @@ function besvart(r: Pick<Regel, 'bekreftelser' | 'unntak' | 'sporsmal'>, e: Regn
       bekreftet: r.bekreftelser.map((b) => b.id),
       pasientforhold: Object.fromEntries(r.unntak.map((u) => [u.id, false])),
       ...e.inndata,
+      svar: { ...neiPaAlle(r), ...e.inndata.svar },
       ...(e.inndata.justert && { justert: Object.fromEntries(Object.entries(e.inndata.justert).map(([k, v]) => [STI[k as keyof typeof STI], v])) }),
     },
   }
 }
 
-/** Kontrolleksemplene hver beregnbar P7-regel har: hver betingelse som mangler, stopper beregningen. */
+const regexTekst = (x: string) => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+/** Kontrolleksemplene hver beregnbar P7-regel har: hver betingelse som mangler, og hvert unntak som gjelder, stopper beregningen. */
 function kontrolleksempler(r: Pick<Regel, 'bekreftelser' | 'unntak' | 'sporsmal'>, start: number): Regneeksempel[] {
   const avkreftet = Object.fromEntries(r.unntak.map((u) => [u.id, false]))
   const bekreftet = r.bekreftelser.map((b) => b.id)
-  const svar = { [LANG_BEHANDLINGSTID.id]: false, [UTENFOR_DOSERAMME_ID]: false }
+  const svar = neiPaAlle(r)
   const ut: Regneeksempel[] = [
     { id: 'uten-bekreftelse', beskrivelse: 'Uten bekreftelsene stopper beregningen.', inndata: { startdose_mg: start, pasientforhold: avkreftet, svar }, forventet: {}, stopp: /Må bekreftes før beregning: Planen er et startforslag/ },
     {
@@ -555,21 +685,74 @@ function kontrolleksempler(r: Pick<Regel, 'bekreftelser' | 'unntak' | 'sporsmal'
       stopp: /Regelen gjelder ikke: Et tidligere forsøk .* da gjelder den langsomme varianten/,
     })
   }
+  for (const u of r.unntak.filter((x) => x.id !== TIDLIGERE_SYMPTOMER_ID)) {
+    ut.push({
+      id: `unntak-${u.id.replace(/_/g, '-')}`,
+      beskrivelse: 'Når forholdet gjelder, stopper den ordinære planleggingen.',
+      inndata: { startdose_mg: start, bekreftet, pasientforhold: { ...avkreftet, [u.id]: true }, svar },
+      forventet: {},
+      stopp: new RegExp(`Regelen gjelder ikke: ${regexTekst(u.tekst.slice(0, 40))}`),
+    })
+  }
   return ut
 }
 
-/** Inndatakravet for startdosen: fra dosen pasienten bruker, høyst høyeste døgndose for voksne. */
-const startdosekrav = (d: Doser): Regel['inndata'] => [
+/**
+ * Grensetestene for startdosen (beslutning 7): rett over høyeste døgndose for
+ * voksne og over hver grense for pasientgruppe og indikasjon, med svaret
+ * grensen gjelder ved. En høyeste dose stopper; en forsiktighetsgrense
+ * krever begrunnelse.
+ */
+function grenseeksempler(s: Pick<Stoffregel, 'dose' | 'grenser'>): Regneeksempel[] {
+  const over = (x: number) => Math.round((x + 0.01) * 100) / 100
+  return [
+    stopp('over-hoyeste-dose', `${tall(over(s.dose.hoyest))} mg er over høyeste døgndose for voksne (${tall(s.dose.hoyest)} mg); en begrunnelse kan ikke overstyre det.`, over(s.dose.hoyest), utenfor(over(s.dose.hoyest)), { begrunnelse: BEGRUNNELSE_RAMME }),
+    ...(s.grenser ?? []).map((g) => {
+      const svar = g.ved ? { [g.ved.sporsmal.id]: g.ved.svar } : {}
+      const hvor = g.ved ? ` ved ${(g.ved.svar ? g.ved.sporsmal.ja : g.ved.sporsmal.nei) ?? g.ved.sporsmal.id}` : ''
+      const id = `over-${tall(g.hoyest).replace(',', '-')}-mg${g.ved ? `-${g.ved.sporsmal.id.replace(/_/g, '-')}-${g.ved.svar ? 'ja' : 'nei'}` : ''}`
+      return g.art === 'maks'
+        ? stopp(id, `${tall(over(g.hoyest))} mg er over høyeste dose${hvor} (${tall(g.hoyest)} mg); en begrunnelse kan ikke overstyre det.`, over(g.hoyest), utenfor(over(g.hoyest)), { svar, begrunnelse: BEGRUNNELSE_RAMME })
+        : stopp(id, `${tall(over(g.hoyest))} mg er over forsiktighetsgrensen${hvor} (${tall(g.hoyest)} mg) og krever en begrunnelse.`, over(g.hoyest), FORSIKTIGHET, { svar })
+    }),
+  ]
+}
+
+/**
+ * Inndatakravene for startdosen: fra dosen pasienten bruker, høyst høyeste
+ * døgndose for voksne (den ytre rammen), og innenfor den preparatomtalens
+ * grenser for pasientgruppe og indikasjon (beslutning 7).
+ */
+const startdosekrav = (s: Pick<Stoffregel, 'dose' | 'grenser'>, versjon: number): Inndatakrav[] => [
   {
     navn: 'startdose',
-    omrade: [0, d.hoyest],
+    omrade: [0, s.dose.hoyest],
     art: 'bindende_krav',
     grunnlag: vurdering(
-      `Regelen gjelder fra dosen pasienten faktisk bruker, også lave restdoser under det ordinære doseområdet, høyst den høyeste døgndosen preparatomtalen oppgir for voksne (${tall(d.hoyest)} mg). Den er ingen automatisk godkjent ramme for alle: er dosen utenfor rammen for indikasjonen eller pasientgruppen, kreves et ja og en begrunnelse.`,
-      [d.kilde],
-      null,
+      `Regelen gjelder fra dosen pasienten faktisk bruker, også lave restdoser under det ordinære doseområdet, høyst den høyeste døgndosen preparatomtalen oppgir for voksne (${tall(s.dose.hoyest)} mg). Over den stopper beregningen, og en begrunnelse kan ikke overstyre det. Rammen er ingen automatisk godkjenning for alle: grensene for pasientgruppe og indikasjon gjelder i tillegg, og en dose ellers utenfor rammen krever et ja og en begrunnelse.`,
+      [s.dose.kilde],
+      runde3(versjon, 'startdose'),
     ),
   },
+  ...(s.grenser ?? []).map((g): Inndatakrav => {
+    const hvor = g.ved ? ` ved ${(g.ved.svar ? g.ved.sporsmal.ja : g.ved.sporsmal.nei) ?? g.ved.sporsmal.id}` : ''
+    return {
+      navn: 'startdose',
+      omrade: [0, g.hoyest],
+      ...(g.ved && { ved: { sporsmal: g.ved.sporsmal.id, svar: g.ved.svar } }),
+      ...(g.art === 'forsiktighet'
+        ? {
+            krever_begrunnelse: true as const,
+            art: 'veiledende_preferanse' as const,
+            grunnlag: vurdering(
+              `Preparatomtalen anbefaler forsiktighet eller en lavere dose over ${tall(g.hoyest)} mg${hvor}; høyere doser er ikke utelukket, men krever en skriftlig begrunnelse, så de ikke står som automatisk godkjent.`,
+              [g.henvisning],
+              runde3(versjon, 'pasientgruppe'),
+            ),
+          }
+        : { art: 'bindende_krav' as const, grunnlag: { type: 'kilde' as const, henvisninger: [g.henvisning] } }),
+    }
+  }),
 ]
 
 const FELLES_KILDETRO = [
@@ -578,30 +761,38 @@ const FELLES_KILDETRO = [
   utsagn('Neste reduksjon gjøres først når seponeringssymptomene er borte eller tålelige; ved mer alvorlige symptomer kan forrige dose gjenopptas og nedtrappingen gå langsommere.', NICE.tempo, NICE.alvorlig),
 ]
 
-const FELLES_TILPASNINGER = [
+const fellesTilpasninger = (horisont: number) => [
   utsagn(
-    `Planen går ikke til null og foreslår ingen dato for siste dose. Ingen avslutning (nulltrinn) og ingen fast nedre grense er godkjent (fagkontrollene 29. og 30.10.2026). Planen viser høyst ${PLANHORISONT_TRINN} reduksjoner, aldri et trinn under laveste dose formuleringen kan gi, og stopper ved første trinn som ikke kan gis; siste beregnede dose er ikke nødvendigvis den siste pasienten trenger før seponering.`,
+    `Planen går ikke til null og foreslår ingen dato for siste dose. Ingen avslutning (nulltrinn) og ingen fast nedre grense er godkjent (fagkontrollene 29. og 30.10.2026). Planen viser høyst ${horisont} reduksjoner, aldri et trinn under laveste dose formuleringen kan gi, og stopper ved første trinn som ikke kan gis. Der stopper planen av tekniske grunner: pasienten fortsetter med dosen til forskriveren har vurdert videre nedtrapping, og dosen er ikke nødvendigvis en sluttdose. Dagene er tidligste tidspunkt; utsettes et trinn, forskyves resten.`,
     RCPSYCH.lavDose,
   ),
+  ...STARTDOSE_TILPASNINGER,
+]
+
+/** Startdosen og hvem regelen gjelder for (beslutning 7), felles for alle beregnbare P7-regler. */
+const STARTDOSE_TILPASNINGER = [
   utsagn(
-    'Regelen gjelder fra dosen pasienten faktisk bruker. Høyeste døgndose for voksne er ingen automatisk godkjent ramme: en dose utenfor rammen for indikasjonen eller pasientgruppen krever et ja og en begrunnelse fra forskriveren, og organfunksjon og interaksjoner må være vurdert for alle stoffer.',
+    'Regelen gjelder fra dosen pasienten faktisk bruker, opp til høyeste døgndose for voksne i preparatomtalen; over den stopper beregningen, og en begrunnelse kan ikke overstyre det. Innenfor den gjelder preparatomtalens grenser for eldre, indikasjoner og nedsatt organfunksjon: en uttrykkelig høyeste dose stopper, en forsiktighetsgrense krever begrunnelse. En dose ellers utenfor rammen krever et ja og en begrunnelse, og organfunksjon og interaksjoner må være vurdert for alle stoffer.',
   ),
+  utsagn('Under 18 år, ved akutt alvorlig bivirkning, forgiftning, alvorlig interaksjon eller behov for rask seponering, ved ustabil dose, uregelmessig inntak eller bytte, og ved kontraindikasjoner stopper den ordinære planleggingen; nedtrappingen må da planlegges individuelt.'),
 ]
 
 function seponeringsregel(s: Stoffregel, langsom = false): Regel {
-  const versjoner = langsom ? [NY_ETTER_RUNDE_2(`langsom variant for ${s.navn} etter tidligere seponeringssymptomer.`)] : [...(s.tidligere ?? [UTKAST, KONTROLL_1, KONTROLL_2, KONTROLL_3]), KONTROLL_4]
+  const versjoner = langsom
+    ? [NY_ETTER_RUNDE_2(`langsom variant for ${s.navn} etter tidligere seponeringssymptomer.`), KONTROLL_5]
+    : [...(s.tidligere ?? [UTKAST, KONTROLL_1, KONTROLL_2, KONTROLL_3]), KONTROLL_4, KONTROLL_5]
   const versjon = versjoner.length
   const gruppe = langsom ? LANGSOM : s.gruppe
   const avklaring = langsom ? runde2(versjon, 'langsom') : beslutning1(versjon)
   const strat = strategi(s.dose, gruppe, avklaring, versjon)
   const trinnlengde = dagerPerTrinn(gruppe, avklaring)
   const virkestoff = { type: 'virkestoff' as const, nokkel: s.nokkel }
-  const dosevalg = dosevalgFor(s.praktisk, versjon)
   const vilkar = betingelser(s, versjon, langsom)
   const eksempler = langsom
     ? [
         eks(`fra-${tall(s.langsom.startdose_mg).replace(',', '-')}-mg`, `Fra ${tall(s.langsom.startdose_mg)} mg med standardvalgene: 5 % per trinn, minst 28 dager.`, s.langsom.startdose_mg, s.langsom.forventet),
         stopp('over-5-prosent', 'Mer enn 5 % per trinn er utenfor den langsomme varianten.', s.langsom.startdose_mg, /Reduksjon per trinn \(% av aktuell dose\): 10 % er utenfor det regelen tillater \(1–5 %\)/, { justert: { prosent: 10 } }),
+        ...(s.langsomEksempler ?? []),
       ]
     : s.eksempler
   const start = langsom ? s.langsom.startdose_mg : s.eksempler.find((e) => !e.stopp)!.inndata.startdose_mg
@@ -618,20 +809,20 @@ function seponeringsregel(s: Stoffregel, langsom = false): Regel {
           id: 'fra',
           virkestoff,
           administrasjon: 'peroral',
-          ...(dosevalg && { dosevalg }),
+          ...(s.fordeling && { fordeling: s.fordeling }),
           utgangsdose: 'startdose',
           start: { type: 'dag', dag: 1 },
-          faser: [{ type: 'nedtrapping', strategi: strat, trinnlengde, avslutning: 'individuell', horisont: planhorisont() }],
+          faser: [{ type: 'nedtrapping', strategi: strat, trinnlengde, avslutning: 'individuell', horisont: horisont(versjon, langsom) }],
         },
       ],
     },
-    inndata: startdosekrav(s.dose),
+    inndata: startdosekrav(s, versjon),
     ...vilkar,
     beregnbarhet: 'beregnbar_etter_avklaring',
     fortolkning: {
       kildetro: [...s.kildetro, ...FELLES_KILDETRO],
       tilpasninger: [
-        utsagn(valgtekst(strat, trinnlengde, s.praktisk), NICE.andel, RCPSYCH.tid),
+        utsagn(valgtekst(strat, trinnlengde, langsom ? PLANHORISONT_LANGSOM : PLANHORISONT_TRINN), NICE.andel, RCPSYCH.tid),
         langsom
           ? utsagn(
               'Varianten gjelder når et tidligere forsøk har gitt seponeringssymptomer: 1–5 % per trinn (standard 5 %) og minst 28 dager, og dosene må kunne gis. Forskriveren må vurdere og bekrefte at de tidligere symptomene virkelig var seponeringssymptomer.',
@@ -644,14 +835,14 @@ function seponeringsregel(s: Stoffregel, langsom = false): Regel {
               NICE.tidligere,
               RCPSYCH.langvarig,
             ),
-        ...FELLES_TILPASNINGER,
+        ...fellesTilpasninger(langsom ? PLANHORISONT_LANGSOM : PLANHORISONT_TRINN),
         ...(s.tilpasninger ?? []),
       ],
       forutsetninger: [...FORUTSETNINGER_FELLES, ...FORUTSETNINGER_P7, ...(s.forutsetninger ?? [])],
-      usikkerhet: [...FELLES_USIKKERHET, ...s.usikkerhet],
+      usikkerhet: [...fellesUsikkerhet(langsom ? PLANHORISONT_LANGSOM : PLANHORISONT_TRINN), ...s.usikkerhet],
     },
     referanser: [pn(`SwitchAntidepressants:${s.kode}>Stop`)],
-    eksempler: [...eksempler.map((e) => besvart(vilkar, e)), ...kontrolleksempler(vilkar, start)],
+    eksempler: [...[...eksempler, ...grenseeksempler(s)].map((e) => besvart(vilkar, e)), ...kontrolleksempler(vilkar, start)],
     godkjenning: { status: 'til_faglig_kontroll', historikk: historikk(versjoner) },
   }
 }
@@ -661,18 +852,44 @@ const stoff = (s: Stoffregel) => s
 
 const utenfor = (mg: number) => new RegExp(`Startdosen ${tall(mg)} mg er utenfor`)
 const KREVER_BEGRUNNELSE = /krever en skriftlig begrunnelse fra forskriveren/
-const UNDER_PRAKTISK_GRENSE = /den laveste dosen som kan gis med formuleringen regelen gjelder/
+const FORSIKTIGHET = /er over forsiktighetsgrensen .* og krever en skriftlig begrunnelse/
 
 /** Syntetisk begrunnelse i eksemplene; aldri pasientopplysninger. */
 const BEGRUNNELSE = 'Kort behandlingstid (åtte uker) og ingen tidligere seponeringssymptomer; pasienten ønsker raskere nedtrapping.'
 const BEGRUNNELSE_RAMME = 'Dosen er vurdert særskilt for pasientgruppen; syntetisk eksempel.'
 
-/** Kapsler som skal svelges hele, med laveste styrke: en praktisk grense for trinnene. */
-const heleKapsler = (mg: number, formulering: string, ...henvisninger: Kildehenvisning[]): Praktiskgrense => ({
-  mg,
-  hvorfor: `${formulering} skal svelges hele, og laveste styrke er ${tall(mg)} mg, så ingen lavere dose kan gis med dem.`,
-  henvisninger,
+/* --- Spørsmål og grenser for pasientgrupper (beslutning 7) ------------------------------ */
+
+const eldreOver65 = (henvisning: Kildehenvisning) => sporsmal('eldre', 'Er pasienten over 65 år?', 'eldre over 65 år', henvisning)
+const nedsattLever = (henvisning: Kildehenvisning) =>
+  sporsmal('nedsatt_leverfunksjon', 'Har pasienten nedsatt leverfunksjon?', 'nedsatt leverfunksjon, som krever en særskilt vurdering', henvisning, { krever_begrunnelse: true })
+const maks = (hoyest: number, henvisning: Kildehenvisning, ved?: Dosegrense['ved']): Dosegrense => ({ hoyest, art: 'maks', henvisning, ...(ved && { ved }) })
+const forsiktig = (hoyest: number, henvisning: Kildehenvisning, ved?: Dosegrense['ved']): Dosegrense => ({ hoyest, art: 'forsiktighet', henvisning, ...(ved && { ved }) })
+const ja = (sporsmal: Sporsmal) => ({ sporsmal, svar: true })
+const nei = (sporsmal: Sporsmal) => ({ sporsmal, svar: false })
+
+const qtKontraindikasjon = (henvisning: Kildehenvisning) => (v: number) => [
+  kontraindikasjon(v, 'qt_forlengelse', 'Pasienten har kjent QT-forlengelse eller medfødt langt QT-syndrom, eller bruker et annet legemiddel som forlenger QT-intervallet.', henvisning),
+]
+
+const CITALOPRAM_ELDRE = eldreOver65(P7.cipramilEldre)
+const CITALOPRAM_LEVER = nedsattLever(P7.cipramilLever)
+const ESCITALOPRAM_ELDRE = eldreOver65(P7.cipralexEldre)
+const ESCITALOPRAM_LEVER = nedsattLever(P7.cipralexLever)
+const ESCITALOPRAM_CYP = sporsmal('langsom_cyp2c19', 'Er pasienten kjent langsom metaboliserer av CYP2C19?', 'kjent langsom CYP2C19-metaboliserer', P7.cipralexCyp2c19)
+const PAROKSETIN_ELDRE = sporsmal('eldre', 'Er pasienten eldre? Preparatomtalen angir ingen bestemt aldersgrense.', 'eldre', P7.seroxatEldre)
+const PAROKSETIN_INDIKASJON = sporsmal('tvangslidelse_panikklidelse', 'Brukes paroksetin mot tvangslidelse eller panikklidelse?', 'tvangslidelse eller panikklidelse', P7.seroxatIndikasjon, {
+  nei: 'depresjon, sosial angstlidelse, generalisert angstlidelse eller posttraumatisk stresslidelse',
 })
+const PAROKSETIN_ORGAN = sporsmal('nedsatt_nyre_lever', 'Har pasienten kreatininclearance under 30 ml/min eller nedsatt leverfunksjon?', 'alvorlig nedsatt nyrefunksjon eller nedsatt leverfunksjon, som krever en særskilt vurdering', P7.seroxatOrgan, { krever_begrunnelse: true })
+const VORTIOKSETIN_ELDRE = sporsmal('eldre', 'Er pasienten 65 år eller eldre?', '65 år eller eldre', P7.brintellixEldre)
+const AMITRIPTYLIN_SMERTE = sporsmal('smerte_migrene', 'Brukes amitriptylin mot nevropatisk smerte, kronisk spenningshodepine eller migreneprofylakse?', 'nevropatisk smerte, kronisk spenningshodepine eller migreneprofylakse', P7.sarotexSmerte)
+const AMITRIPTYLIN_ELDRE = sporsmal('eldre_hjerte', 'Er pasienten over 65 år eller har hjerte- og karsykdom?', 'eldre over 65 år eller hjerte- og karsykdom', P7.sarotexEldre)
+const KLOMIPRAMIN_INDIKASJON = sporsmal('depresjon_tvang', 'Brukes klomipramin mot depresjon eller tvangstilstander?', 'depresjon eller tvangstilstander', P7.anafranilIndikasjon, { nei: 'panikklidelse eller narkolepsi' })
+const NORTRIPTYLIN_ELDRE = sporsmal('eldre', 'Er pasienten eldre? Preparatomtalen angir ingen bestemt aldersgrense.', 'eldre', P7.noritrenDose)
+
+/** Kardiovaskulær risiko, antikolinerge effekter og interaksjoner for de trisykliske (substanskontrollen 30.10.2026). */
+const TRISYKLISK = 'Kardiovaskulær risiko (blant annet QT-forlengelse og arytmier), antikolinerge effekter og interaksjoner må vurderes særskilt; bekreftelsen om organfunksjon og interaksjoner omfatter dette.'
 
 /* --- Reglene ------------------------------------------------------------------------ */
 
@@ -682,7 +899,12 @@ const citalopram = stoff({
   kode: 'Ci',
   dose: { lavest: 10, hoyest: 40, kilde: SPC.cipramilDose },
   gruppe: MIDDELS,
-  kildetro: [utsagn('Citalopram trappes ned gradvis over minst én til to uker, ikke seponeres brått.', SPC.cipramilSeponering)],
+  grenser: [maks(20, P7.cipramilEldre, ja(CITALOPRAM_ELDRE)), maks(20, P7.cipramilLever, ja(CITALOPRAM_LEVER))],
+  unntak: qtKontraindikasjon(P7.cipramilQt),
+  kildetro: [
+    utsagn('Citalopram trappes ned gradvis over minst én til to uker, ikke seponeres brått.', SPC.cipramilSeponering),
+    utsagn('Hos eldre over 65 år og ved mild eller moderat nedsatt leverfunksjon er høyeste dose 20 mg daglig; ved alvorlig nedsatt leverfunksjon kreves særlig forsiktighet.', P7.cipramilEldre, P7.cipramilLever),
+  ],
   usikkerhet: ['Trinnene under 10 mg krever deling av 10 mg, som FEST ikke oppgir som delbar, eller flytende form; uten det stopper planen ved trinnet før.'],
   eksempler: [
     eks('fra-20-mg', 'Fra 20 mg med standardvalgene: 25 % per trinn, minst 28 dager, til den tekniske planhorisonten.', 20, [
@@ -696,8 +918,8 @@ const citalopram = stoff({
       'dag 197–224: 2 mg',
       'dag 225–252: 1,5 mg',
       'dag 253–280: 1,13 mg',
-      'dag 281–308: 0,84 mg',
-      'fra dag 309: 0,63 mg',
+      'dag 281–308: 0,85 mg',
+      'fra dag 309: 0,64 mg',
       'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
     ]),
     eks('fra-20-mg-lang', 'Fra 20 mg etter lang behandlingstid med 10 % per trinn: ingen begrunnelse trengs.', 20, [
@@ -710,7 +932,7 @@ const citalopram = stoff({
       'dag 169–196: 9,57 mg',
       'dag 197–224: 8,61 mg',
       'dag 225–252: 7,75 mg',
-      'dag 253–280: 6,97 mg',
+      'dag 253–280: 6,98 mg',
       'dag 281–308: 6,28 mg',
       'fra dag 309: 5,65 mg',
       'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
@@ -721,14 +943,14 @@ const citalopram = stoff({
       'dag 29–56: 7,5 mg',
       'dag 57–84: 5,63 mg',
       'dag 85–112: 4,22 mg',
-      'dag 113–140: 3,16 mg',
-      'dag 141–168: 2,37 mg',
-      'dag 169–196: 1,78 mg',
-      'dag 197–224: 1,33 mg',
-      'dag 225–252: 1 mg',
-      'dag 253–280: 0,75 mg',
-      'dag 281–308: 0,56 mg',
-      'fra dag 309: 0,42 mg',
+      'dag 113–140: 3,17 mg',
+      'dag 141–168: 2,38 mg',
+      'dag 169–196: 1,79 mg',
+      'dag 197–224: 1,34 mg',
+      'dag 225–252: 1,01 mg',
+      'dag 253–280: 0,76 mg',
+      'dag 281–308: 0,57 mg',
+      'fra dag 309: 0,43 mg',
       'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
     ], { justert: { prosent: 50 }, begrunnelse: BEGRUNNELSE }),
     stopp('50-uten-begrunnelse', '50 % (over 25 %) uten begrunnelse stopper.', 20, KREVER_BEGRUNNELSE, { justert: { prosent: 50 } }),
@@ -739,16 +961,16 @@ const citalopram = stoff({
       [
         'dag 1–28: 2,38 mg',
         'dag 29–56: 2,26 mg',
-        'dag 57–84: 2,14 mg',
+        'dag 57–84: 2,15 mg',
         'dag 85–112: 2,04 mg',
-        'dag 113–140: 1,93 mg',
+        'dag 113–140: 1,94 mg',
         'dag 141–168: 1,84 mg',
         'dag 169–196: 1,75 mg',
         'dag 197–224: 1,66 mg',
         'dag 225–252: 1,58 mg',
         'dag 253–280: 1,5 mg',
-        'dag 281–308: 1,42 mg',
-        'fra dag 309: 1,35 mg',
+        'dag 281–308: 1,43 mg',
+        'fra dag 309: 1,36 mg',
         'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
       ],
       { justert: { prosent: 5 } },
@@ -764,8 +986,8 @@ const citalopram = stoff({
       'dag 197–224: 2 mg',
       'dag 225–252: 1,5 mg',
       'dag 253–280: 1,13 mg',
-      'dag 281–308: 0,84 mg',
-      'fra dag 309: 0,63 mg',
+      'dag 281–308: 0,85 mg',
+      'fra dag 309: 0,64 mg',
       'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
     ], {
       utenforRamme: true,
@@ -778,15 +1000,20 @@ const citalopram = stoff({
     'dag 57–84: 17,15 mg',
     'dag 85–112: 16,29 mg',
     'dag 113–140: 15,48 mg',
-    'dag 141–168: 14,7 mg',
-    'dag 169–196: 13,97 mg',
-    'dag 197–224: 13,27 mg',
-    'dag 225–252: 12,6 mg',
-    'dag 253–280: 11,97 mg',
-    'dag 281–308: 11,38 mg',
-    'fra dag 309: 10,81 mg',
-    'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
+    'fra dag 141: 14,71 mg',
+    'teknisk planhorisont: 6 reduksjoner; avslutning vurderes individuelt',
   ] },
+  langsomEksempler: [
+    eks('fra-0-55-mg-1-prosent', 'Fra 0,55 mg med 1 % per trinn: hvert trinn avrundes til den viste dosen, og når neste reduksjon forsvinner i avrundingen (0,5 × 0,99 = 0,495, vist som 0,5 mg), stopper planen ved dosen før.', 0.55, [
+      'dag 1–28: 0,54 mg',
+      'dag 29–56: 0,53 mg',
+      'dag 57–84: 0,52 mg',
+      'dag 85–112: 0,51 mg',
+      'fra dag 113: 0,5 mg',
+      'neste reduksjon forsvinner i avrundingen; avslutning vurderes individuelt',
+    ], { justert: { prosent: 1 } }),
+    stopp('fra-0-5-mg-1-prosent', 'Fra 0,5 mg med 1 % per trinn forsvinner første reduksjon i avrundingen: planen har ingen trinn, og beregningen sier hvorfor.', 0.5, /blir første reduksjon \(til 0,495 mg\) borte/, { justert: { prosent: 1 } }),
+  ],
 })
 
 const escitalopram = stoff({
@@ -795,15 +1022,22 @@ const escitalopram = stoff({
   kode: 'Es',
   dose: { lavest: 5, hoyest: 20, kilde: SPC.cipralexDose },
   gruppe: MIDDELS,
+  grenser: [maks(10, P7.cipralexEldre, ja(ESCITALOPRAM_ELDRE)), maks(10, P7.cipralexLever, ja(ESCITALOPRAM_LEVER)), maks(10, P7.cipralexCyp2c19, ja(ESCITALOPRAM_CYP))],
+  unntak: qtKontraindikasjon(P7.cipralexQt),
   tidligere: [
     { merknad: 'Utkast til pilotregel (P4.7).' },
     { merknad: 'Kildegrunnlaget for trinnlengden rettet etter kontrollen av P7 (PR #286): NICEs én til to uker gjelder fluoksetin, så forslaget bygger på RCPsychs to til fire uker.' },
     { merknad: 'Flyttet fra pilotsettet (P4) til nedtrappingsreglene (P7), så escitalopram følger det samme prinsippet som de andre antidepressivene.', dato: RUNDE_1 },
     KONTROLL_3,
   ],
-  kildetro: [utsagn('Escitalopram trappes ned gradvis over minst én til to uker, ikke seponeres brått.', SPC.cipralexSeponering)],
+  kildetro: [
+    utsagn('Escitalopram trappes ned gradvis over minst én til to uker, ikke seponeres brått.', SPC.cipralexSeponering),
+    utsagn('Hos eldre over 65 år, ved mild eller moderat nedsatt leverfunksjon og hos kjente langsomme CYP2C19-metaboliserere er høyeste dose 10 mg daglig.', P7.cipralexEldre, P7.cipralexLever, P7.cipralexCyp2c19),
+  ],
   tilpasninger: [utsagn('Pilotregelens sluttdose på 2,5 mg er fjernet; fagkontrollene 29. og 30.10.2026 avviste både den og en fast nedre grense.', SPC.cipralexDose)],
-  usikkerhet: ['Doser under 5 mg krever dråper (1 mg per dråpe i FEST) eller deling; finnes de ikke, stopper planen ved trinnet før.'],
+  usikkerhet: [
+    'Doser under 5 mg krever dråper (1 mg per dråpe i FEST) eller deling. Hele dråper gir bare hele milligram, og avrunding til hele dråper er ingen toleranse: et trinn som ikke kan gis nøyaktig, stopper planen ved trinnet før.',
+  ],
   eksempler: [
     eks('fra-20-mg', 'Fra 20 mg med standardvalgene: 25 % per trinn, minst 28 dager, til den tekniske planhorisonten.', 20, [
       'dag 1–28: 15 mg',
@@ -816,8 +1050,8 @@ const escitalopram = stoff({
       'dag 197–224: 2 mg',
       'dag 225–252: 1,5 mg',
       'dag 253–280: 1,13 mg',
-      'dag 281–308: 0,84 mg',
-      'fra dag 309: 0,63 mg',
+      'dag 281–308: 0,85 mg',
+      'fra dag 309: 0,64 mg',
       'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
     ]),
     eks('fra-10-mg-lang', 'Fra 10 mg etter lang behandlingstid med 10 % per trinn.', 10, [
@@ -830,27 +1064,20 @@ const escitalopram = stoff({
       'dag 169–196: 4,78 mg',
       'dag 197–224: 4,3 mg',
       'dag 225–252: 3,87 mg',
-      'dag 253–280: 3,49 mg',
-      'dag 281–308: 3,14 mg',
+      'dag 253–280: 3,48 mg',
+      'dag 281–308: 3,13 mg',
       'fra dag 309: 2,82 mg',
       'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
     ], { lang: true, justert: { prosent: 10 } }),
-    stopp('over-maksimum', '25 mg er over dosene regelen gjelder for.', 25, utenfor(25)),
   ],
   langsom: { startdose_mg: 10, forventet: [
     'dag 1–28: 9,5 mg',
     'dag 29–56: 9,03 mg',
-    'dag 57–84: 8,57 mg',
+    'dag 57–84: 8,58 mg',
     'dag 85–112: 8,15 mg',
     'dag 113–140: 7,74 mg',
-    'dag 141–168: 7,35 mg',
-    'dag 169–196: 6,98 mg',
-    'dag 197–224: 6,63 mg',
-    'dag 225–252: 6,3 mg',
-    'dag 253–280: 5,99 mg',
-    'dag 281–308: 5,69 mg',
-    'fra dag 309: 5,4 mg',
-    'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
+    'fra dag 141: 7,35 mg',
+    'teknisk planhorisont: 6 reduksjoner; avslutning vurderes individuelt',
   ] },
 })
 
@@ -885,48 +1112,47 @@ const sertralin = stoff({
       'dag 29–56: 40,5 mg',
       'dag 57–84: 36,45 mg',
       'dag 85–112: 32,81 mg',
-      'dag 113–140: 29,52 mg',
-      'dag 141–168: 26,57 mg',
-      'dag 169–196: 23,91 mg',
-      'dag 197–224: 21,52 mg',
-      'dag 225–252: 19,37 mg',
-      'dag 253–280: 17,43 mg',
-      'dag 281–308: 15,69 mg',
-      'fra dag 309: 14,12 mg',
+      'dag 113–140: 29,53 mg',
+      'dag 141–168: 26,58 mg',
+      'dag 169–196: 23,92 mg',
+      'dag 197–224: 21,53 mg',
+      'dag 225–252: 19,38 mg',
+      'dag 253–280: 17,44 mg',
+      'dag 281–308: 15,7 mg',
+      'fra dag 309: 14,13 mg',
       'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
     ], { lang: true, justert: { prosent: 10 } }),
     stopp('lang-14-dager-uten-begrunnelse', 'Etter lang behandlingstid krever 14 dager per trinn (under 28) en begrunnelse.', 50, KREVER_BEGRUNNELSE, { lang: true, justert: { prosent: 10, dager: 14 } }),
     eks('fra-50-mg-kort-14-dager', 'Fra 50 mg etter kort behandlingstid med 14 dager per trinn: ingen begrunnelse trengs.', 50, [
       'dag 1–14: 37,5 mg',
       'dag 15–28: 28,13 mg',
-      'dag 29–42: 21,09 mg',
-      'dag 43–56: 15,82 mg',
+      'dag 29–42: 21,1 mg',
+      'dag 43–56: 15,83 mg',
       'dag 57–70: 11,87 mg',
       'dag 71–84: 8,9 mg',
-      'dag 85–98: 6,67 mg',
+      'dag 85–98: 6,68 mg',
       'dag 99–112: 5,01 mg',
-      'dag 113–126: 3,75 mg',
+      'dag 113–126: 3,76 mg',
       'dag 127–140: 2,82 mg',
-      'dag 141–154: 2,11 mg',
-      'fra dag 155: 1,58 mg',
+      'dag 141–154: 2,12 mg',
+      'fra dag 155: 1,59 mg',
       'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
     ], { justert: { dager: 14 } }),
     eks('fra-12-5-mg', 'Lav restdose under ordinært doseområde: 25 % per trinn, uten nedre grense.', 12.5, [
       'dag 1–28: 9,38 mg',
-      'dag 29–56: 7,03 mg',
-      'dag 57–84: 5,27 mg',
+      'dag 29–56: 7,04 mg',
+      'dag 57–84: 5,28 mg',
       'dag 85–112: 3,96 mg',
       'dag 113–140: 2,97 mg',
-      'dag 141–168: 2,22 mg',
+      'dag 141–168: 2,23 mg',
       'dag 169–196: 1,67 mg',
       'dag 197–224: 1,25 mg',
       'dag 225–252: 0,94 mg',
-      'dag 253–280: 0,7 mg',
+      'dag 253–280: 0,71 mg',
       'dag 281–308: 0,53 mg',
       'fra dag 309: 0,4 mg',
       'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
     ]),
-    stopp('over-maksimum', '250 mg er over dosene regelen gjelder for.', 250, utenfor(250)),
   ],
   langsom: { startdose_mg: 50, forventet: [
     'dag 1–28: 47,5 mg',
@@ -934,14 +1160,8 @@ const sertralin = stoff({
     'dag 57–84: 42,87 mg',
     'dag 85–112: 40,73 mg',
     'dag 113–140: 38,69 mg',
-    'dag 141–168: 36,75 mg',
-    'dag 169–196: 34,92 mg',
-    'dag 197–224: 33,17 mg',
-    'dag 225–252: 31,51 mg',
-    'dag 253–280: 29,94 mg',
-    'dag 281–308: 28,44 mg',
-    'fra dag 309: 27,02 mg',
-    'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
+    'fra dag 141: 36,76 mg',
+    'teknisk planhorisont: 6 reduksjoner; avslutning vurderes individuelt',
   ] },
 })
 
@@ -972,14 +1192,14 @@ const fluoksetin = stoff({
       'dag 29–56: 22,5 mg',
       'dag 57–84: 16,88 mg',
       'dag 85–112: 12,66 mg',
-      'dag 113–140: 9,49 mg',
-      'dag 141–168: 7,12 mg',
-      'dag 169–196: 5,34 mg',
-      'dag 197–224: 4 mg',
-      'dag 225–252: 3 mg',
-      'dag 253–280: 2,25 mg',
-      'dag 281–308: 1,69 mg',
-      'fra dag 309: 1,27 mg',
+      'dag 113–140: 9,5 mg',
+      'dag 141–168: 7,13 mg',
+      'dag 169–196: 5,35 mg',
+      'dag 197–224: 4,01 mg',
+      'dag 225–252: 3,01 mg',
+      'dag 253–280: 2,26 mg',
+      'dag 281–308: 1,7 mg',
+      'fra dag 309: 1,28 mg',
       'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
     ]),
     eks('fra-20-mg-42-dager', 'Fra 20 mg med 42 dager per trinn, så sene seponeringssymptomer kan fanges opp før neste reduksjon.', 20, [
@@ -993,8 +1213,8 @@ const fluoksetin = stoff({
       'dag 295–336: 2 mg',
       'dag 337–378: 1,5 mg',
       'dag 379–420: 1,13 mg',
-      'dag 421–462: 0,84 mg',
-      'fra dag 463: 0,63 mg',
+      'dag 421–462: 0,85 mg',
+      'fra dag 463: 0,64 mg',
       'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
     ], { justert: { dager: 42 } }),
     eks('fra-20-mg-50-begrunnet', 'Fra 20 mg med 50 % per trinn og begrunnelse: ingen mindre trinn ved lav dose.', 20, [
@@ -1003,12 +1223,13 @@ const fluoksetin = stoff({
       'dag 57–84: 2,5 mg',
       'dag 85–112: 1,25 mg',
       'dag 113–140: 0,63 mg',
-      'dag 141–168: 0,31 mg',
+      'dag 141–168: 0,32 mg',
       'dag 169–196: 0,16 mg',
       'dag 197–224: 0,08 mg',
       'dag 225–252: 0,04 mg',
-      'fra dag 253: 0,02 mg',
-      'teknisk grense: ingen trinn under 0,01 mg; avslutning vurderes individuelt',
+      'dag 253–280: 0,02 mg',
+      'fra dag 281: 0,01 mg',
+      'neste reduksjon forsvinner i avrundingen; avslutning vurderes individuelt',
     ], { justert: { prosent: 50 }, begrunnelse: BEGRUNNELSE }),
     stopp('fra-20-mg-14-dager', 'Kortere trinn enn 28 dager er utenfor regelen.', 20, /Minste antall dager per trinn: 14 dager er utenfor det regelen tillater/, { justert: { dager: 14 } }),
   ],
@@ -1018,14 +1239,8 @@ const fluoksetin = stoff({
     'dag 57–84: 17,15 mg',
     'dag 85–112: 16,29 mg',
     'dag 113–140: 15,48 mg',
-    'dag 141–168: 14,7 mg',
-    'dag 169–196: 13,97 mg',
-    'dag 197–224: 13,27 mg',
-    'dag 225–252: 12,6 mg',
-    'dag 253–280: 11,97 mg',
-    'dag 281–308: 11,38 mg',
-    'fra dag 309: 10,81 mg',
-    'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
+    'fra dag 141: 14,71 mg',
+    'teknisk planhorisont: 6 reduksjoner; avslutning vurderes individuelt',
   ] },
 })
 
@@ -1035,9 +1250,20 @@ const fluvoksamin = stoff({
   kode: 'Fv',
   dose: { lavest: 50, hoyest: 300, kilde: P7.fevarinDose },
   gruppe: MIDDELS,
-  kildetro: [utsagn('Fluvoksamin trappes ned gradvis over minst én til to uker, ikke seponeres brått.', P7.fevarinSeponering)],
+  fordeling: { over_mg: kilde(150, 'mg', 'bindende_krav', P7.fevarinFordeling), antall: [2, 3], grunnlag: { type: 'kilde', henvisninger: [P7.fevarinFordeling] } },
+  kildetro: [
+    utsagn('Fluvoksamin trappes ned gradvis over minst én til to uker, ikke seponeres brått.', P7.fevarinSeponering),
+    utsagn('Opptil 150 mg kan gis som én dose; en døgndose over 150 mg fordeles på 2 eller 3 doser.', P7.fevarinFordeling),
+  ],
+  tilpasninger: [
+    utsagn(
+      'Døgndoser over 150 mg vises fordelt på 2 eller 3 doser, hver høyst 150 mg; doseplanen kontrollerer at hver dose kan gis nøyaktig med tablettene og stopper ellers ved trinnet før. En riktig døgndose er ikke nok når fordelingen ikke kan gis.',
+      P7.fevarinFordeling,
+    ),
+  ],
   usikkerhet: [],
-  eksempler: [eks('fra-100-mg', 'Fra 100 mg med standardvalgene, til den tekniske planhorisonten.', 100, [
+  eksempler: [
+    eks('fra-100-mg', 'Fra 100 mg med standardvalgene, til den tekniske planhorisonten.', 100, [
     'dag 1–28: 75 mg',
     'dag 29–56: 56,25 mg',
     'dag 57–84: 42,19 mg',
@@ -1051,108 +1277,31 @@ const fluvoksamin = stoff({
     'dag 281–308: 4,22 mg',
     'fra dag 309: 3,17 mg',
     'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
-  ])],
+  ]),
+    eks('fra-300-mg', 'Fra 300 mg: døgndoser over 150 mg vises fordelt på 2 eller 3 doser, hver høyst 150 mg.', 300, [
+      'dag 1–28: 225 mg, fordelt på 2 eller 3 doser',
+      'dag 29–56: 168,75 mg, fordelt på 2 eller 3 doser',
+      'dag 57–84: 126,56 mg',
+      'dag 85–112: 94,92 mg',
+      'dag 113–140: 71,19 mg',
+      'dag 141–168: 53,39 mg',
+      'dag 169–196: 40,04 mg',
+      'dag 197–224: 30,03 mg',
+      'dag 225–252: 22,52 mg',
+      'dag 253–280: 16,89 mg',
+      'dag 281–308: 12,67 mg',
+      'fra dag 309: 9,5 mg',
+      'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
+    ]),
+  ],
   langsom: { startdose_mg: 100, forventet: [
     'dag 1–28: 95 mg',
     'dag 29–56: 90,25 mg',
     'dag 57–84: 85,74 mg',
     'dag 85–112: 81,45 mg',
     'dag 113–140: 77,38 mg',
-    'dag 141–168: 73,51 mg',
-    'dag 169–196: 69,83 mg',
-    'dag 197–224: 66,34 mg',
-    'dag 225–252: 63,02 mg',
-    'dag 253–280: 59,87 mg',
-    'dag 281–308: 56,88 mg',
-    'fra dag 309: 54,04 mg',
-    'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
-  ] },
-})
-
-const venlafaksin = stoff({
-  nokkel: 'venlafaksin',
-  navn: 'venlafaksin',
-  kode: 'Ve',
-  dose: { lavest: 37.5, hoyest: 375, kilde: P7.efexorDose },
-  gruppe: HOY,
-  praktisk: heleKapsler(37.5, 'Depotkapslene', P7.efexorSeponering),
-  kildetro: [
-    utsagn('Venlafaksin trappes ned gradvis over minst én til to uker, for noen over måneder; kapslene svelges hele.', P7.efexorSeponering),
-    utsagn('Venlafaksin gir oftere seponeringssymptomer og krever særlig varsomhet.', NICE.saerligRisiko, RCPSYCH.hoyRisiko),
-  ],
-  forutsetninger: ['Alle norske venlafaksinpreparater har modifisert frisetting; kapslene og depottablettene deles ikke.'],
-  usikkerhet: [
-    'De fleste trinnene kan ikke gis nøyaktig med kapsler på 37,5, 75 og 150 mg, så planen stopper ved trinnet før. Doser under 37,5 mg krever en dokumentert annen formulering.',
-  ],
-  eksempler: [
-    eks('fra-75-mg', 'Fra 75 mg: 10 % per trinn, minst 28 dager, til neste trinn ville vært under 37,5 mg (den praktiske grensen for depotkapslene).', 75, [
-      'dag 1–28: 67,5 mg',
-      'dag 29–56: 60,75 mg',
-      'dag 57–84: 54,68 mg',
-      'dag 85–112: 49,21 mg',
-      'dag 113–140: 44,29 mg',
-      'fra dag 141: 39,86 mg',
-      'praktisk grense: ingen trinn under 37,5 mg; avslutning vurderes individuelt',
-    ]),
-    stopp('fra-37-5-mg', 'Fra 37,5 mg kan ingen lavere dose gis med depotkapslene: regelen har ingen trinn, og beregningen sier hvorfor.', 37.5, UNDER_PRAKTISK_GRENSE),
-    stopp('25-prosent', 'Mer enn 10 % per trinn er utenfor regelen ved høyest risiko og krever en individuelt utarbeidet plan.', 150, /Reduksjon per trinn \(% av aktuell dose\): 25 % er utenfor det regelen tillater \(5–10 %\)/, { justert: { prosent: 25 } }),
-  ],
-  langsom: { startdose_mg: 75, forventet: [
-    'dag 1–28: 71,25 mg',
-    'dag 29–56: 67,69 mg',
-    'dag 57–84: 64,3 mg',
-    'dag 85–112: 61,09 mg',
-    'dag 113–140: 58,03 mg',
-    'dag 141–168: 55,13 mg',
-    'dag 169–196: 52,38 mg',
-    'dag 197–224: 49,76 mg',
-    'dag 225–252: 47,27 mg',
-    'dag 253–280: 44,91 mg',
-    'dag 281–308: 42,66 mg',
-    'fra dag 309: 40,53 mg',
-    'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
-  ] },
-})
-
-const duloksetin = stoff({
-  nokkel: 'duloksetin',
-  navn: 'duloksetin',
-  kode: 'Du',
-  dose: { lavest: 30, hoyest: 120, kilde: P7.cymbaltaDose },
-  gruppe: HOY,
-  praktisk: heleKapsler(30, 'Enterokapslene', P7.cymbaltaDose),
-  kildetro: [
-    utsagn('Duloksetin trappes ned gradvis over minst én til to uker, ikke seponeres brått.', P7.cymbaltaSeponering),
-    utsagn('Duloksetin er blant stoffene med høyest potensiell risiko for seponeringssymptomer.', RCPSYCH.hoyRisiko),
-  ],
-  forutsetninger: ['Alle norske duloksetinpreparater er enterokapsler, som ikke deles eller åpnes; 20 mg finnes bare med godkjenningsfritak.'],
-  usikkerhet: ['Trinnene mellom 60 og 30 mg kan ikke gis med registrerte kapsler på 30 og 60 mg, så planen stopper ved trinnet før. Doser under 30 mg krever en dokumentert annen administrasjonsform.'],
-  eksempler: [
-    eks('fra-60-mg', 'Fra 60 mg: 10 % per trinn, minst 28 dager, til neste trinn ville vært under 30 mg (den praktiske grensen for enterokapslene).', 60, [
-      'dag 1–28: 54 mg',
-      'dag 29–56: 48,6 mg',
-      'dag 57–84: 43,74 mg',
-      'dag 85–112: 39,37 mg',
-      'dag 113–140: 35,43 mg',
-      'fra dag 141: 31,89 mg',
-      'praktisk grense: ingen trinn under 30 mg; avslutning vurderes individuelt',
-    ]),
-    stopp('fra-30-mg', 'Fra 30 mg kan ingen lavere dose gis med enterokapslene: regelen har ingen trinn, og beregningen sier hvorfor.', 30, UNDER_PRAKTISK_GRENSE),
-  ],
-  langsom: { startdose_mg: 60, forventet: [
-    'dag 1–28: 57 mg',
-    'dag 29–56: 54,15 mg',
-    'dag 57–84: 51,44 mg',
-    'dag 85–112: 48,87 mg',
-    'dag 113–140: 46,43 mg',
-    'dag 141–168: 44,11 mg',
-    'dag 169–196: 41,9 mg',
-    'dag 197–224: 39,81 mg',
-    'dag 225–252: 37,81 mg',
-    'dag 253–280: 35,92 mg',
-    'dag 281–308: 34,13 mg',
-    'fra dag 309: 32,42 mg',
-    'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
+    'fra dag 141: 73,51 mg',
+    'teknisk planhorisont: 6 reduksjoner; avslutning vurderes individuelt',
   ] },
 })
 
@@ -1162,7 +1311,11 @@ const vortioksetin = stoff({
   kode: 'Vo',
   dose: { lavest: 5, hoyest: 20, kilde: P7.brintellixDose },
   gruppe: LAV,
-  kildetro: [utsagn('Gradvis dosereduksjon kan vurderes, men preparatomtalen har ikke data nok til en bestemt nedtrappingsplan.', P7.brintellixSeponering)],
+  grenser: [forsiktig(10, P7.brintellixEldre, ja(VORTIOKSETIN_ELDRE))],
+  kildetro: [
+    utsagn('Gradvis dosereduksjon kan vurderes, men preparatomtalen har ikke data nok til en bestemt nedtrappingsplan.', P7.brintellixSeponering),
+    utsagn('Fra 65 år anbefales forsiktighet ved doser over 10 mg, fordi data er begrenset; det er ingen kontraindikasjon.', P7.brintellixEldre),
+  ],
   usikkerhet: ['Nedtrappingen bygger på NICEs og RCPsychs generelle råd; preparatomtalen sier uttrykkelig at data mangler for en bestemt plan.', 'Trinnene under 5 mg krever flytende form (dråper); uten det stopper planen ved trinnet før.'],
   eksempler: [
     eks('fra-20-mg', 'Fra 20 mg med standardvalgene, til den tekniske planhorisonten.', 20, [
@@ -1176,22 +1329,22 @@ const vortioksetin = stoff({
       'dag 197–224: 2 mg',
       'dag 225–252: 1,5 mg',
       'dag 253–280: 1,13 mg',
-      'dag 281–308: 0,84 mg',
-      'fra dag 309: 0,63 mg',
+      'dag 281–308: 0,85 mg',
+      'fra dag 309: 0,64 mg',
       'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
     ]),
     eks('fra-10-mg-lang', 'Fra 10 mg etter lang behandlingstid med 25 % og 28 dager: ingen begrunnelse trengs ved lav risiko.', 10, [
       'dag 1–28: 7,5 mg',
       'dag 29–56: 5,63 mg',
       'dag 57–84: 4,22 mg',
-      'dag 85–112: 3,16 mg',
-      'dag 113–140: 2,37 mg',
-      'dag 141–168: 1,78 mg',
-      'dag 169–196: 1,33 mg',
-      'dag 197–224: 1 mg',
-      'dag 225–252: 0,75 mg',
-      'dag 253–280: 0,56 mg',
-      'dag 281–308: 0,42 mg',
+      'dag 85–112: 3,17 mg',
+      'dag 113–140: 2,38 mg',
+      'dag 141–168: 1,79 mg',
+      'dag 169–196: 1,34 mg',
+      'dag 197–224: 1,01 mg',
+      'dag 225–252: 0,76 mg',
+      'dag 253–280: 0,57 mg',
+      'dag 281–308: 0,43 mg',
       'fra dag 309: 0,32 mg',
       'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
     ], { lang: true }),
@@ -1200,17 +1353,11 @@ const vortioksetin = stoff({
   langsom: { startdose_mg: 10, forventet: [
     'dag 1–28: 9,5 mg',
     'dag 29–56: 9,03 mg',
-    'dag 57–84: 8,57 mg',
+    'dag 57–84: 8,58 mg',
     'dag 85–112: 8,15 mg',
     'dag 113–140: 7,74 mg',
-    'dag 141–168: 7,35 mg',
-    'dag 169–196: 6,98 mg',
-    'dag 197–224: 6,63 mg',
-    'dag 225–252: 6,3 mg',
-    'dag 253–280: 5,99 mg',
-    'dag 281–308: 5,69 mg',
-    'fra dag 309: 5,4 mg',
-    'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
+    'fra dag 141: 7,35 mg',
+    'teknisk planhorisont: 6 reduksjoner; avslutning vurderes individuelt',
   ] },
 })
 
@@ -1220,51 +1367,52 @@ const moklobemid = stoff({
   kode: 'Mo',
   dose: { lavest: 300, hoyest: 600, kilde: P7.aurorixDose },
   gruppe: HOY,
-  unntak: [
+  fordeling: { antall: [2], grunnlag: { type: 'kilde', henvisninger: [P7.aurorixFordeling] } },
+  unntak: (v) => [
     {
       id: 'nedsatt_leverfunksjon',
       tekst: 'Pasienten har alvorlig nedsatt leverfunksjon; preparatomtalen reduserer da dosen, og nedtrappingen må vurderes individuelt.',
       grunnlag: { type: 'kilde', henvisninger: [P7.aurorixDose] },
     },
+    kontraindikasjon(v, 'kontraindisert_interaksjon', 'Pasienten bruker et legemiddel som er kontraindisert sammen med moklobemid, eller har en akutt forvirringstilstand.', P7.aurorixKontra),
   ],
   kildetro: [
     utsagn('Preparatomtalen gir ingen anvisning om nedtrapping av moklobemid.', P7.aurorixSeponering),
     utsagn('Moklobemid er blant stoffene med høyest potensiell risiko for seponeringssymptomer.', RCPSYCH.hoyRisiko),
+    utsagn('Døgndosen gis fordelt på 2 doser etter måltid.', P7.aurorixFordeling),
   ],
-  tilpasninger: [utsagn('Unntaket ved alvorlig nedsatt leverfunksjon kommer i tillegg til bekreftelsen om organfunksjon og interaksjoner, som gjelder alle stoffene; det alene er ikke nok (fagkontrollen 30.10.2026).', P7.aurorixDose)],
+  tilpasninger: [
+    utsagn('Unntaket ved alvorlig nedsatt leverfunksjon kommer i tillegg til bekreftelsen om organfunksjon og interaksjoner, som gjelder alle stoffene; det alene er ikke nok (fagkontrollen 30.10.2026).', P7.aurorixDose),
+    utsagn('Kontraindiserte interaksjoner stopper planleggingen i stedet for å inngå i den generelle bekreftelsen (substanskontrollen 30.10.2026).', P7.aurorixKontra),
+    utsagn('Hver døgndose vises fordelt på 2 doser, og doseplanen kontrollerer at begge kan gis med tablettene.', P7.aurorixFordeling),
+  ],
   usikkerhet: [
     'Preparatomtalen og RCPsych trekker i ulik retning: preparatomtalen gir ingen anvisning om nedtrapping, mens RCPsych regner moklobemid blant stoffene med høyest risiko. Regelen følger RCPsych; det må avklares faglig.',
     'Trinnene krever doser som ikke kan settes sammen av tabletter på 150 og 300 mg; uten det stopper planen ved trinnet før.',
   ],
   eksempler: [eks('fra-300-mg', 'Fra 300 mg: 10 % per trinn, minst 28 dager, til den tekniske planhorisonten.', 300, [
-    'dag 1–28: 270 mg',
-    'dag 29–56: 243 mg',
-    'dag 57–84: 218,7 mg',
-    'dag 85–112: 196,83 mg',
-    'dag 113–140: 177,15 mg',
-    'dag 141–168: 159,43 mg',
-    'dag 169–196: 143,49 mg',
-    'dag 197–224: 129,14 mg',
-    'dag 225–252: 116,23 mg',
-    'dag 253–280: 104,6 mg',
-    'dag 281–308: 94,14 mg',
-    'fra dag 309: 84,73 mg',
+    'dag 1–28: 270 mg, fordelt på 2 doser',
+    'dag 29–56: 243 mg, fordelt på 2 doser',
+    'dag 57–84: 218,7 mg, fordelt på 2 doser',
+    'dag 85–112: 196,83 mg, fordelt på 2 doser',
+    'dag 113–140: 177,15 mg, fordelt på 2 doser',
+    'dag 141–168: 159,44 mg, fordelt på 2 doser',
+    'dag 169–196: 143,5 mg, fordelt på 2 doser',
+    'dag 197–224: 129,15 mg, fordelt på 2 doser',
+    'dag 225–252: 116,24 mg, fordelt på 2 doser',
+    'dag 253–280: 104,62 mg, fordelt på 2 doser',
+    'dag 281–308: 94,16 mg, fordelt på 2 doser',
+    'fra dag 309: 84,74 mg, fordelt på 2 doser',
     'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
   ])],
   langsom: { startdose_mg: 300, forventet: [
-    'dag 1–28: 285 mg',
-    'dag 29–56: 270,75 mg',
-    'dag 57–84: 257,21 mg',
-    'dag 85–112: 244,35 mg',
-    'dag 113–140: 232,13 mg',
-    'dag 141–168: 220,53 mg',
-    'dag 169–196: 209,5 mg',
-    'dag 197–224: 199,03 mg',
-    'dag 225–252: 189,07 mg',
-    'dag 253–280: 179,62 mg',
-    'dag 281–308: 170,64 mg',
-    'fra dag 309: 162,11 mg',
-    'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
+    'dag 1–28: 285 mg, fordelt på 2 doser',
+    'dag 29–56: 270,75 mg, fordelt på 2 doser',
+    'dag 57–84: 257,21 mg, fordelt på 2 doser',
+    'dag 85–112: 244,35 mg, fordelt på 2 doser',
+    'dag 113–140: 232,13 mg, fordelt på 2 doser',
+    'fra dag 141: 220,52 mg, fordelt på 2 doser',
+    'teknisk planhorisont: 6 reduksjoner; avslutning vurderes individuelt',
   ] },
 })
 
@@ -1275,15 +1423,16 @@ const mirtazapin = stoff({
   dose: { lavest: 15, hoyest: 45, kilde: SPC.remeronDose },
   gruppe: HOY,
   kildetro: [utsagn('Behandlingen med mirtazapin avsluttes gradvis.', SPC.remeronDose), utsagn('Mirtazapin er blant stoffene med høyest potensiell risiko for seponeringssymptomer.', RCPSYCH.hoyRisiko)],
+  tilpasninger: [utsagn('Har tidligere seponeringssymptomer vært søvnrelaterte, styres senere reduksjoner av responsen (substanskontrollen 30.10.2026). Nyre- og leverfunksjon vurderes i bekreftelsen om organfunksjon.')],
   usikkerhet: ['Smeltetablettene deles ikke; de fleste trinnene krever flytende form; uten det stopper planen ved trinnet før.'],
   eksempler: [eks('fra-15-mg', 'Fra 15 mg: 10 % per trinn, minst 28 dager, til den tekniske planhorisonten.', 15, [
     'dag 1–28: 13,5 mg',
     'dag 29–56: 12,15 mg',
     'dag 57–84: 10,94 mg',
-    'dag 85–112: 9,84 mg',
-    'dag 113–140: 8,86 mg',
-    'dag 141–168: 7,97 mg',
-    'dag 169–196: 7,17 mg',
+    'dag 85–112: 9,85 mg',
+    'dag 113–140: 8,87 mg',
+    'dag 141–168: 7,98 mg',
+    'dag 169–196: 7,18 mg',
     'dag 197–224: 6,46 mg',
     'dag 225–252: 5,81 mg',
     'dag 253–280: 5,23 mg',
@@ -1297,14 +1446,8 @@ const mirtazapin = stoff({
     'dag 57–84: 12,86 mg',
     'dag 85–112: 12,22 mg',
     'dag 113–140: 11,61 mg',
-    'dag 141–168: 11,03 mg',
-    'dag 169–196: 10,48 mg',
-    'dag 197–224: 9,95 mg',
-    'dag 225–252: 9,45 mg',
-    'dag 253–280: 8,98 mg',
-    'dag 281–308: 8,53 mg',
-    'fra dag 309: 8,11 mg',
-    'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
+    'fra dag 141: 11,03 mg',
+    'teknisk planhorisont: 6 reduksjoner; avslutning vurderes individuelt',
   ] },
 })
 
@@ -1314,22 +1457,27 @@ const amitriptylin = stoff({
   kode: 'At',
   dose: { lavest: 10, hoyest: 150, kilde: P7.sarotexDose },
   gruppe: MIDDELS,
-  kildetro: [utsagn('Amitriptylin trappes gradvis ned over flere uker når behandlingen avsluttes.', P7.sarotexSeponering)],
-  forutsetninger: ['Regelen gjelder alle indikasjonene i preparatomtalen, også smerte og migreneprofylakse med lavere doser.'],
+  grenser: [forsiktig(100, P7.sarotexEldre, ja(AMITRIPTYLIN_ELDRE)), forsiktig(75, P7.sarotexSmerte, ja(AMITRIPTYLIN_SMERTE))],
+  kildetro: [
+    utsagn('Amitriptylin trappes gradvis ned over flere uker når behandlingen avsluttes.', P7.sarotexSeponering),
+    utsagn('Ved depresjon hos eldre over 65 år og ved hjerte- og karsykdom brukes doser over 100 mg med forsiktighet.', P7.sarotexEldre),
+    utsagn('Ved nevropatisk smerte, kronisk spenningshodepine og migreneprofylakse er anbefalt dose 25–75 mg daglig.', P7.sarotexSmerte),
+  ],
+  forutsetninger: ['Regelen gjelder alle indikasjonene i preparatomtalen hos voksne, også smerte og migreneprofylakse med lavere doser; en dose under vanlig antidepressivt område er ikke ugyldig.', TRISYKLISK],
   usikkerhet: ['Tablettene på 10, 25 og 50 mg er ikke oppgitt som delbare; mange ideelle trinn kan derfor ikke gis nøyaktig, og planen stopper ved trinnet før.'],
   eksempler: [eks('fra-50-mg', 'Fra 50 mg med standardvalgene, til den tekniske planhorisonten.', 50, [
     'dag 1–28: 37,5 mg',
     'dag 29–56: 28,13 mg',
-    'dag 57–84: 21,09 mg',
-    'dag 85–112: 15,82 mg',
+    'dag 57–84: 21,1 mg',
+    'dag 85–112: 15,83 mg',
     'dag 113–140: 11,87 mg',
     'dag 141–168: 8,9 mg',
-    'dag 169–196: 6,67 mg',
+    'dag 169–196: 6,68 mg',
     'dag 197–224: 5,01 mg',
-    'dag 225–252: 3,75 mg',
+    'dag 225–252: 3,76 mg',
     'dag 253–280: 2,82 mg',
-    'dag 281–308: 2,11 mg',
-    'fra dag 309: 1,58 mg',
+    'dag 281–308: 2,12 mg',
+    'fra dag 309: 1,59 mg',
     'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
   ])],
   langsom: { startdose_mg: 50, forventet: [
@@ -1338,14 +1486,8 @@ const amitriptylin = stoff({
     'dag 57–84: 42,87 mg',
     'dag 85–112: 40,73 mg',
     'dag 113–140: 38,69 mg',
-    'dag 141–168: 36,75 mg',
-    'dag 169–196: 34,92 mg',
-    'dag 197–224: 33,17 mg',
-    'dag 225–252: 31,51 mg',
-    'dag 253–280: 29,94 mg',
-    'dag 281–308: 28,44 mg',
-    'fra dag 309: 27,02 mg',
-    'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
+    'fra dag 141: 36,76 mg',
+    'teknisk planhorisont: 6 reduksjoner; avslutning vurderes individuelt',
   ] },
 })
 
@@ -1355,21 +1497,32 @@ const klomipramin = stoff({
   kode: 'Cl',
   dose: { lavest: 10, hoyest: 250, kilde: P7.anafranilDose },
   gruppe: MIDDELS,
-  kildetro: [utsagn('Brå seponering av klomipramin bør unngås; etter lang bruk trappes dosen gradvis ned.', P7.anafranilSeponering)],
+  grenser: [forsiktig(150, P7.anafranilIndikasjon), maks(150, P7.anafranilIndikasjon, nei(KLOMIPRAMIN_INDIKASJON))],
+  kildetro: [
+    utsagn('Brå seponering av klomipramin bør unngås; etter lang bruk trappes dosen gradvis ned.', P7.anafranilSeponering),
+    utsagn('Høyste dose er indikasjonsspesifikk: ved depresjon og tvangstilstander vanligvis 100–150 mg og i vanskelige tilfeller høyst 250 mg; ved panikklidelse om nødvendig 150 mg; ved narkolepsi 25–100 mg.', P7.anafranilIndikasjon),
+  ],
+  tilpasninger: [
+    utsagn(
+      'Over 150 mg krever en begrunnelse ved alle indikasjoner, fordi preparatomtalen bare gir høyere doser i vanskelige tilfeller ved depresjon og tvangstilstander; ved de andre indikasjonene er 150 mg høyeste dose regelen gjelder for.',
+      P7.anafranilIndikasjon,
+    ),
+  ],
+  forutsetninger: [TRISYKLISK],
   usikkerhet: ['Fra høye doser blir planen lang; flere trinn er ikke automatisk bedre (P4.6).'],
   eksempler: [eks('fra-50-mg', 'Fra 50 mg med standardvalgene, til den tekniske planhorisonten.', 50, [
     'dag 1–28: 37,5 mg',
     'dag 29–56: 28,13 mg',
-    'dag 57–84: 21,09 mg',
-    'dag 85–112: 15,82 mg',
+    'dag 57–84: 21,1 mg',
+    'dag 85–112: 15,83 mg',
     'dag 113–140: 11,87 mg',
     'dag 141–168: 8,9 mg',
-    'dag 169–196: 6,67 mg',
+    'dag 169–196: 6,68 mg',
     'dag 197–224: 5,01 mg',
-    'dag 225–252: 3,75 mg',
+    'dag 225–252: 3,76 mg',
     'dag 253–280: 2,82 mg',
-    'dag 281–308: 2,11 mg',
-    'fra dag 309: 1,58 mg',
+    'dag 281–308: 2,12 mg',
+    'fra dag 309: 1,59 mg',
     'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
   ])],
   langsom: { startdose_mg: 50, forventet: [
@@ -1378,14 +1531,8 @@ const klomipramin = stoff({
     'dag 57–84: 42,87 mg',
     'dag 85–112: 40,73 mg',
     'dag 113–140: 38,69 mg',
-    'dag 141–168: 36,75 mg',
-    'dag 169–196: 34,92 mg',
-    'dag 197–224: 33,17 mg',
-    'dag 225–252: 31,51 mg',
-    'dag 253–280: 29,94 mg',
-    'dag 281–308: 28,44 mg',
-    'fra dag 309: 27,02 mg',
-    'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
+    'fra dag 141: 36,76 mg',
+    'teknisk planhorisont: 6 reduksjoner; avslutning vurderes individuelt',
   ] },
 })
 
@@ -1395,23 +1542,31 @@ const nortriptylin = stoff({
   kode: 'No',
   dose: { lavest: 25, hoyest: 200, kilde: P7.noritrenDose },
   gruppe: MIDDELS,
-  kildetro: [utsagn('Brå seponering av nortriptylin etter lang tids bruk kan gi abstinenssymptomer.', P7.noritrenSeponering)],
-  tilpasninger: [utsagn('Preparatomtalens råd om å redusere 10–25 mg hver 3.–8. dag gjelder justering til vedlikeholdsdose, ikke seponering, og er ikke brukt.', P7.noritrenVedlikehold)],
+  grenser: [forsiktig(150, P7.noritrenDose), forsiktig(50, P7.noritrenDose, ja(NORTRIPTYLIN_ELDRE))],
+  kildetro: [
+    utsagn('Brå seponering av nortriptylin etter lang tids bruk kan gi abstinenssymptomer.', P7.noritrenSeponering),
+    utsagn('Dosen økes om nødvendig til 150 mg daglig og bare i sjeldne tilfeller til 200 mg; hos eldre er vanlig vedlikeholdsdose 25–50 mg.', P7.noritrenDose),
+  ],
+  tilpasninger: [
+    utsagn('Preparatomtalens råd om å redusere 10–25 mg hver 3.–8. dag gjelder justering til vedlikeholdsdose, ikke seponering, og er ikke brukt.', P7.noritrenVedlikehold),
+    utsagn('200 mg er ikke et ordinært maksimum: over 150 mg, og hos eldre over 50 mg, krever en begrunnelse (substanskontrollen 30.10.2026).', P7.noritrenDose),
+  ],
+  forutsetninger: [`${TRISYKLISK} Serumkonsentrasjon (TDM) kan være relevant ved høye doser eller særlig sårbare pasienter.`],
   usikkerhet: ['Preparatomtalen sier ikke hvordan nortriptylin skal trappes ned ved seponering; regelen bygger på NICE og RCPsych.'],
   eksempler: [
     eks('fra-50-mg', 'Fra 50 mg med standardvalgene, til den tekniske planhorisonten.', 50, [
       'dag 1–28: 37,5 mg',
       'dag 29–56: 28,13 mg',
-      'dag 57–84: 21,09 mg',
-      'dag 85–112: 15,82 mg',
+      'dag 57–84: 21,1 mg',
+      'dag 85–112: 15,83 mg',
       'dag 113–140: 11,87 mg',
       'dag 141–168: 8,9 mg',
-      'dag 169–196: 6,67 mg',
+      'dag 169–196: 6,68 mg',
       'dag 197–224: 5,01 mg',
-      'dag 225–252: 3,75 mg',
+      'dag 225–252: 3,76 mg',
       'dag 253–280: 2,82 mg',
-      'dag 281–308: 2,11 mg',
-      'fra dag 309: 1,58 mg',
+      'dag 281–308: 2,12 mg',
+      'fra dag 309: 1,59 mg',
       'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
     ]),
     eks('fra-15-mg', 'Lav restdose under ordinært doseområde: 25 % per trinn, uten nedre grense.', 15, [
@@ -1424,8 +1579,8 @@ const nortriptylin = stoff({
       'dag 169–196: 2 mg',
       'dag 197–224: 1,5 mg',
       'dag 225–252: 1,13 mg',
-      'dag 253–280: 0,84 mg',
-      'dag 281–308: 0,63 mg',
+      'dag 253–280: 0,85 mg',
+      'dag 281–308: 0,64 mg',
       'fra dag 309: 0,48 mg',
       'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
     ]),
@@ -1436,14 +1591,8 @@ const nortriptylin = stoff({
     'dag 57–84: 42,87 mg',
     'dag 85–112: 40,73 mg',
     'dag 113–140: 38,69 mg',
-    'dag 141–168: 36,75 mg',
-    'dag 169–196: 34,92 mg',
-    'dag 197–224: 33,17 mg',
-    'dag 225–252: 31,51 mg',
-    'dag 253–280: 29,94 mg',
-    'dag 281–308: 28,44 mg',
-    'fra dag 309: 27,02 mg',
-    'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
+    'fra dag 141: 36,76 mg',
+    'teknisk planhorisont: 6 reduksjoner; avslutning vurderes individuelt',
   ] },
 })
 
@@ -1453,7 +1602,11 @@ const paroksetin = stoff({
   kode: 'Pa',
   dose: { lavest: 10, hoyest: 60, kilde: P7.seroxatDose },
   gruppe: HOY,
+  grenser: [maks(50, P7.seroxatIndikasjon, nei(PAROKSETIN_INDIKASJON)), maks(40, P7.seroxatEldre, ja(PAROKSETIN_ELDRE))],
+  sporsmal: [PAROKSETIN_ORGAN],
   kildetro: [
+    utsagn('Høyeste dose er 50 mg daglig ved depresjon og de fleste angstlidelser og 60 mg ved tvangslidelse og panikklidelse; hos eldre bør dosen ikke overstige 40 mg.', P7.seroxatIndikasjon, P7.seroxatEldre),
+    utsagn('Ved alvorlig nedsatt nyrefunksjon og nedsatt leverfunksjon holdes dosen i nedre del av doseområdet.', P7.seroxatOrgan),
     utsagn('Paroksetin bør trappes ned gradvis over flere uker eller måneder etter pasientens behov.', P7.seroxatVarighet),
     utsagn('Ved utålelige symptomer kan forrige dose gjenopptas og nedtrappingen gå langsommere.', P7.seroxatRegime),
     utsagn('Paroksetin gir oftere seponeringssymptomer og krever særlig varsomhet.', NICE.saerligRisiko, RCPSYCH.hoyRisiko),
@@ -1477,7 +1630,7 @@ const paroksetin = stoff({
       'dag 169–196: 9,57 mg',
       'dag 197–224: 8,61 mg',
       'dag 225–252: 7,75 mg',
-      'dag 253–280: 6,97 mg',
+      'dag 253–280: 6,98 mg',
       'dag 281–308: 6,28 mg',
       'fra dag 309: 5,65 mg',
       'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
@@ -1492,11 +1645,11 @@ const paroksetin = stoff({
         'dag 57–84: 17,15 mg',
         'dag 85–112: 16,29 mg',
         'dag 113–140: 15,48 mg',
-        'dag 141–168: 14,7 mg',
+        'dag 141–168: 14,71 mg',
         'dag 169–196: 13,97 mg',
         'dag 197–224: 13,27 mg',
-        'dag 225–252: 12,6 mg',
-        'dag 253–280: 11,97 mg',
+        'dag 225–252: 12,61 mg',
+        'dag 253–280: 11,98 mg',
         'dag 281–308: 11,38 mg',
         'fra dag 309: 10,81 mg',
         'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
@@ -1510,14 +1663,8 @@ const paroksetin = stoff({
     'dag 57–84: 17,15 mg',
     'dag 85–112: 16,29 mg',
     'dag 113–140: 15,48 mg',
-    'dag 141–168: 14,7 mg',
-    'dag 169–196: 13,97 mg',
-    'dag 197–224: 13,27 mg',
-    'dag 225–252: 12,6 mg',
-    'dag 253–280: 11,97 mg',
-    'dag 281–308: 11,38 mg',
-    'fra dag 309: 10,81 mg',
-    'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
+    'fra dag 141: 14,71 mg',
+    'teknisk planhorisont: 6 reduksjoner; avslutning vurderes individuelt',
   ] },
 })
 
@@ -1525,15 +1672,16 @@ const paroksetin = stoff({
 
 /** Fluoksetin 20 mg annenhver dag: en valgfri strategi ved 20 mg daglig, bare for fluoksetin (beslutning 5.10). */
 function fluoksetinAnnenhverDag(): Regel {
-  const versjoner = [NY_ETTER_RUNDE_2('fluoksetin 20 mg annenhver dag som valgfri strategi ved 20 mg daglig.')]
+  const versjoner = [NY_ETTER_RUNDE_2('fluoksetin 20 mg annenhver dag som valgfri strategi ved 20 mg daglig.'), KONTROLL_5]
   const versjon = versjoner.length
   const avklaring = runde2(versjon, 'annenhverDag')
+  const inngang = runde3(versjon, 'annenhverDag')
   const virkestoff = { type: 'virkestoff' as const, nokkel: 'fluoksetin' }
-  const vilkar = betingelser({ ...fluoksetin, unntak: [] }, versjon, false)
+  const vilkar = betingelser({ ...fluoksetin, unntak: undefined }, versjon, false)
   const revurdering: Bekreftelse = {
     id: 'revurdering',
     tekst:
-      'Dosering annenhver dag er et valgfritt alternativ forskriveren velger. Etter minst fire uker revurderes pasienten; videre nedtrapping eller seponering er forskriverens beslutning og beregnes ikke av planen.',
+      'Dosering annenhver dag er et valgfritt alternativ forskriveren velger. Etter minst fire uker revurderes pasienten, og symptomer kan kreve en vurdering tidligere enn dag 28; videre nedtrapping eller seponering er forskriverens beslutning og beregnes ikke av planen.',
     grunnlag: vurdering('Fagkontrollen godkjente strategien uten automatisk seponering: planen sier ikke hva som skjer etter revurderingen.', [NICE.fluoksetin, RCPSYCH.fluoksetin], avklaring),
   }
   const r: Regel = {
@@ -1569,9 +1717,20 @@ function fluoksetinAnnenhverDag(): Regel {
         },
       ],
     },
-    inndata: [{ navn: 'startdose', verdier: [20], art: 'bindende_krav', grunnlag: vurdering('Strategien gjelder bare ved 20 mg daglig; ved 40–60 mg brukes gradvis nedtrapping.', [NICE.fluoksetin], avklaring) }],
+    inndata: [
+      {
+        navn: 'startdose',
+        verdier: [20],
+        art: 'bindende_krav',
+        grunnlag: vurdering(
+          'Strategien gjelder bare ved nøyaktig 20 mg daglig, ikke ved en annen startdose eller et annet regime med samme gjennomsnittlige døgndose; ved 40–60 mg brukes gradvis nedtrapping.',
+          [NICE.fluoksetin],
+          inngang,
+        ),
+      },
+    ],
     bekreftelser: [...vilkar.bekreftelser.filter((b) => b.id !== STARTFORSLAG.id), revurdering],
-    unntak: [tidligereSymptomer(versjon)],
+    unntak: [tidligereSymptomer(versjon), ...fellesStopp(versjon)],
     sporsmal: vilkar.sporsmal,
     beregnbarhet: 'beregnbar_etter_avklaring',
     fortolkning: {
@@ -1579,7 +1738,8 @@ function fluoksetinAnnenhverDag(): Regel {
       tilpasninger: [
         utsagn('Fra 20 mg daglig gis 20 mg annenhver dag i minst 28 dager før pasienten revurderes. Planen gjør ingen ny reduksjon og går ikke til null; videre nedtrapping eller seponering er forskriverens beslutning.', NICE.fluoksetin, RCPSYCH.fluoksetin),
         utsagn('Strategien gjelder bare fluoksetin, fordi den lange virketiden jevner ut konsentrasjonen mellom dosene; den gjelder ikke andre antidepressiva (fagkontrollen 30.10.2026).', NICE.fluoksetin),
-        ...FELLES_TILPASNINGER.slice(1),
+        utsagn('Inngangen er nøyaktig 20 mg daglig. Ved en annen startdose eller tidligere seponeringsproblemer brukes strategien ikke uten særskilt vurdering; symptomer kan kreve en vurdering før dag 28 (substanskontrollen 30.10.2026).', NICE.fluoksetin, RCPSYCH.fluoksetin),
+        ...STARTDOSE_TILPASNINGER,
       ],
       forutsetninger: [...FORUTSETNINGER_FELLES, FORUTSETNINGER_P7[0]!],
       usikkerhet: ['At dosering annenhver dag gir færre seponeringssymptomer enn en lavere daglig dose, er ikke vist i kontrollerte studier; NICE omtaler den som en mulig egnet reduksjon.'],
@@ -1592,6 +1752,8 @@ function fluoksetinAnnenhverDag(): Regel {
   r.eksempler = [
     ok(eks('fra-20-mg', 'Fra 20 mg daglig: 20 mg annenhver dag i minst 28 dager før revurdering, uten automatisk seponering.', 20, ['fra dag 1: 20 mg annenhver dag', 'annenhver dag i minst 28 dager; avslutning vurderes individuelt'])),
     ok(stopp('fra-40-mg', 'Ved 40 mg gjelder ikke strategien; da brukes gradvis nedtrapping.', 40, utenfor(40))),
+    ok(stopp('fra-19-99-mg', 'Rett under 20 mg gjelder ikke strategien: inngangen er nøyaktig 20 mg daglig.', 19.99, utenfor(19.99))),
+    ok(stopp('fra-20-01-mg', 'Rett over 20 mg gjelder ikke strategien: inngangen er nøyaktig 20 mg daglig.', 20.01, utenfor(20.01))),
     ...kontrolleksempler({ ...r, bekreftelser: [STARTFORSLAG, ...r.bekreftelser] }, 20).filter((e) => e.id !== 'uten-bekreftelse'),
   ]
   return r
@@ -1599,8 +1761,26 @@ function fluoksetinAnnenhverDag(): Regel {
 
 /* --- Regler uten beregning ------------------------------------------------------------- */
 
+/**
+ * En klinisk godkjenning fra den uavhengige kontrolløren i substanskontrollen
+ * 30.10.2026 (runde 3). OUSFAR Dev setter aldri en klinisk godkjenning selv;
+ * den registreres bare der kontrolløren uttrykkelig har godkjent en bestemt
+ * regelversjon, med fingeravtrykket kontrolløren oppga.
+ */
+const klinisk = (regelversjon: number, fingeravtrykk: string, merknad: string): Godkjenningssteg => ({
+  status: 'klinisk_godkjent',
+  dato: RUNDE_3,
+  av: 'ChatGPT (uavhengig fagkontrollør)',
+  rolle: 'uavhengig_kontrollor',
+  regelversjon,
+  fingeravtrykk,
+  merknad: `Substanskontrollen 30.10.2026, runde 3: ${merknad}`,
+})
+
 /** En seponeringsregel som bare er fagtekst, uten beregnet plan. */
-const tekstregel = (r: Pick<Regel, 'id' | 'versjon' | 'tittel' | 'inndata' | 'fortolkning' | 'referanser' | 'godkjenning'> & { nokkel: string; fase: Fase }): Regel => ({
+const tekstregel = (
+  r: Pick<Regel, 'id' | 'versjon' | 'tittel' | 'inndata' | 'fortolkning' | 'referanser' | 'godkjenning'> & Partial<Pick<Regel, 'unntak' | 'sporsmal'>> & { nokkel: string; fase: Fase },
+): Regel => ({
   id: r.id,
   versjon: r.versjon,
   tittel: r.tittel,
@@ -1609,7 +1789,8 @@ const tekstregel = (r: Pick<Regel, 'id' | 'versjon' | 'tittel' | 'inndata' | 'fo
   plan: { form: 'seponering', forlop: [{ id: 'fra', virkestoff: { type: 'virkestoff', nokkel: r.nokkel }, administrasjon: 'peroral', utgangsdose: 'startdose', start: { type: 'dag', dag: 1 }, faser: [r.fase] }] },
   inndata: r.inndata,
   bekreftelser: [],
-  unntak: [],
+  unntak: r.unntak ?? [],
+  ...(r.sporsmal && { sporsmal: r.sporsmal }),
   beregnbarhet: 'bare_tekstlig',
   fortolkning: r.fortolkning,
   referanser: r.referanser,
@@ -1640,8 +1821,11 @@ const bupropion = tekstregel({
   },
   referanser: [pn('SwitchAntidepressants:Bu>Stop')],
   godkjenning: {
-    status: 'til_faglig_kontroll',
-    historikk: historikk([UTKAST, KONTROLL_1, KONTROLL_2, KONTROLL_3, { merknad: 'Gjort om til fagtekst etter fagkontrollen 30.10.2026 (P7.5): med depottablettene som ikke kan deles, er den prosentvise regelen ikke beregnbar, og avslutningen vurderes individuelt fra en dose som kan gis.', dato: RUNDE_2 }]),
+    status: 'klinisk_godkjent',
+    historikk: [
+      ...historikk([UTKAST, KONTROLL_1, KONTROLL_2, KONTROLL_3, { merknad: 'Gjort om til fagtekst etter fagkontrollen 30.10.2026 (P7.5): med depottablettene som ikke kan deles, er den prosentvise regelen ikke beregnbar, og avslutningen vurderes individuelt fra en dose som kan gis.', dato: RUNDE_2 }]),
+      klinisk(5, 'e7536668ac7f2d4dfd9959f24cfdfc4874182a4fc295355f0d10a05f438b5f5f', 'Godkjent som den står, bare som tekstregel: regelen beregner ingen doseplan og overlater avslutningen til forskriveren.'),
+    ],
   },
 })
 
@@ -1660,18 +1844,103 @@ const agomelatin = tekstregel({
     usikkerhet: ['Preparatomtalen er den sentralt godkjente fra EMA; det finnes ingen norsk preparatomtale fordi preparatet ikke er markedsført i Norge.'],
   },
   referanser: [pn('SwitchAntidepressants:Ag>Stop')],
-  godkjenning: { status: 'til_faglig_kontroll', historikk: historikk([UTKAST]) },
+  godkjenning: {
+    status: 'klinisk_godkjent',
+    historikk: [
+      ...historikk([UTKAST]),
+      klinisk(
+        1,
+        '6d42863f3573fb2e0d6dbffd27ff78a7f1c2b539c8dce2cfcd36ad417b61a2d1',
+        'Godkjent som egen beslutning (beslutning 9). Godkjenningen gjelder bare agomelatin og utsagnet om at nedtrapping ikke er nødvendig; den gjelder ikke tilbakefallsrisiko, oppfølging av depresjon, leverskade eller overgang til andre legemidler.',
+      ),
+    ],
+  },
 })
 
-const STOFFER = [amitriptylin, citalopram, duloksetin, escitalopram, fluoksetin, fluvoksamin, klomipramin, mirtazapin, moklobemid, nortriptylin, paroksetin, sertralin, venlafaksin, vortioksetin]
+/**
+ * Duloksetin og venlafaksin: substanskontrollen 30.10.2026 (runde 3) godkjente
+ * ingen beregnbar plan med dagens formuleringer, verken hovedregelen eller den
+ * langsomme varianten. Reglene står som fagtekst til en dokumentert metode for
+ * mindre doser foreligger.
+ */
+const IKKE_BEREGNBAR: Versjon = {
+  merknad:
+    'Gjort om til fagtekst etter substanskontrollen 30.10.2026, runde 3 (P7.5): ikke godkjent som klinisk beregnbar plan med dagens formuleringer, verken hovedregelen eller den langsomme varianten; kontraindikasjoner og grenser for indikasjon stopper fortsatt.',
+  dato: RUNDE_3,
+}
+const ikkeBeregnbar = (navn: string, formulering: string) =>
+  `Med ${formulering}, som ikke kan deles eller åpnes, kan de fleste trinnene i en prosentvis nedtrapping ikke gis nøyaktig; en beregnet ${navn}plan er derfor ikke godkjent før en dokumentert metode for mindre doser foreligger (substanskontrollen 30.10.2026).`
+const tekstForutsetninger = (...egne: string[]) => [...FORUTSETNINGER_FELLES.filter((f) => !f.startsWith('Dosene er')), ...egne]
+
+const DULOKSETIN_GRUNN = 'Med enterokapsler på 30 og 60 mg kan ingen trinn mellom 60 og 30 mg eller under 30 mg gis; regelen beregner ingen trinn.'
+const duloksetin = tekstregel({
+  id: 'seponering-duloksetin',
+  versjon: 6,
+  tittel: 'Seponering av duloksetin',
+  nokkel: 'duloksetin',
+  fase: { type: 'uten_beregning', grunn: DULOKSETIN_GRUNN },
+  inndata: startdosekrav({ dose: { lavest: 30, hoyest: 120, kilde: P7.cymbaltaDose } }, 6),
+  unntak: [
+    ...fellesStopp(6),
+    kontraindikasjon(6, 'leversykdom', 'Pasienten har leversykdom med nedsatt leverfunksjon.', P7.cymbaltaKontra),
+    kontraindikasjon(6, 'alvorlig_nyresvikt', 'Pasienten har alvorlig nedsatt nyrefunksjon (kreatininclearance under 30 ml/min).', P7.cymbaltaKontra),
+  ],
+  fortolkning: {
+    kildetro: [
+      utsagn('Duloksetin trappes ned gradvis over minst én til to uker, ikke seponeres brått.', P7.cymbaltaSeponering),
+      utsagn('Duloksetin er blant stoffene med høyest potensiell risiko for seponeringssymptomer.', RCPSYCH.hoyRisiko),
+      utsagn('Duloksetin er kontraindisert ved leversykdom med nedsatt leverfunksjon og ved kreatininclearance under 30 ml/min.', P7.cymbaltaKontra),
+    ],
+    tilpasninger: [
+      utsagn(ikkeBeregnbar('duloksetin', 'enterokapsler på 30 og 60 mg'), P7.cymbaltaDose),
+      utsagn('Nedtrappingen planlegges individuelt, og etter tidligere seponeringssymptomer med mindre trinn og lengre tid; OUSFAR beregner ingen plan og foreslår ingen dato for siste dose.', P7.cymbaltaSeponering, NICE.tidligere),
+    ],
+    forutsetninger: tekstForutsetninger(FORUTSETNINGER_P7[0]!, 'Alle norske duloksetinpreparater er enterokapsler, som ikke deles eller åpnes; 20 mg finnes bare med godkjenningsfritak.'),
+    usikkerhet: ['Det finnes ingen dokumentert metode for doser mellom kapselstyrkene; preparatomtalen sier ikke hvor lenge en nedtrapping bør vare.'],
+  },
+  referanser: [pn('SwitchAntidepressants:Du>Stop')],
+  godkjenning: { status: 'til_faglig_kontroll', historikk: historikk([UTKAST, KONTROLL_1, KONTROLL_2, KONTROLL_3, KONTROLL_4, IKKE_BEREGNBAR]) },
+})
+
+const VENLAFAKSIN_DEPRESJON = sporsmal('depressive_episoder', 'Brukes venlafaksin mot depressive episoder?', 'depressive episoder', P7.efexorIndikasjon, {
+  nei: 'generalisert angstlidelse, sosial angstlidelse eller panikklidelse',
+})
+const VENLAFAKSIN_GRUNN = 'Med depotkapsler og depottabletter på 37,5, 75 og 150 mg kan de fleste trinnene ikke gis; regelen beregner ingen trinn.'
+const venlafaksin = tekstregel({
+  id: 'seponering-venlafaksin',
+  versjon: 6,
+  tittel: 'Seponering av venlafaksin',
+  nokkel: 'venlafaksin',
+  fase: { type: 'uten_beregning', grunn: VENLAFAKSIN_GRUNN },
+  inndata: startdosekrav({ dose: { lavest: 37.5, hoyest: 375, kilde: P7.efexorDose }, grenser: [maks(225, P7.efexorIndikasjon, nei(VENLAFAKSIN_DEPRESJON))] }, 6),
+  unntak: fellesStopp(6),
+  sporsmal: [VENLAFAKSIN_DEPRESJON],
+  fortolkning: {
+    kildetro: [
+      utsagn('Venlafaksin trappes ned gradvis over minst én til to uker, for noen over måneder; kapslene svelges hele.', P7.efexorSeponering),
+      utsagn('Venlafaksin gir oftere seponeringssymptomer og krever særlig varsomhet.', NICE.saerligRisiko, RCPSYCH.hoyRisiko),
+      utsagn('Høyeste døgndose er 375 mg ved depressive episoder og 225 mg ved generalisert angstlidelse, sosial angstlidelse og panikklidelse.', P7.efexorIndikasjon),
+    ],
+    tilpasninger: [
+      utsagn(ikkeBeregnbar('venlafaksin', 'depotkapsler og depottabletter på 37,5, 75 og 150 mg'), P7.efexorSeponering),
+      utsagn('Nedtrappingen planlegges individuelt, og etter tidligere seponeringssymptomer med mindre trinn og lengre tid; OUSFAR beregner ingen plan og foreslår ingen dato for siste dose.', P7.efexorSeponering, NICE.tidligere),
+    ],
+    forutsetninger: tekstForutsetninger(FORUTSETNINGER_P7[0]!, 'Alle norske venlafaksinpreparater har modifisert frisetting; kapslene og depottablettene deles ikke.'),
+    usikkerhet: ['Det finnes ingen dokumentert metode for doser mellom kapselstyrkene eller under 37,5 mg.'],
+  },
+  referanser: [pn('SwitchAntidepressants:Ve>Stop')],
+  godkjenning: { status: 'til_faglig_kontroll', historikk: historikk([UTKAST, KONTROLL_1, KONTROLL_2, KONTROLL_3, KONTROLL_4, IKKE_BEREGNBAR]) },
+})
+
+const STOFFER = [amitriptylin, citalopram, escitalopram, fluoksetin, fluvoksamin, klomipramin, mirtazapin, moklobemid, nortriptylin, paroksetin, sertralin, vortioksetin]
 
 export const NEDTRAPPINGSSETT: Regelsett = {
   id: 'ousfar-verktoy-nedtrapping',
-  versjon: 5,
+  versjon: 6,
   modell: REGELMODELLVERSJON,
   beskrivelse:
-    'Utkast til nedtrappingsregler for antidepressiva (P7): én regel per virkestoff med forsvarlig kildegrunnlag, laget fra preparatomtalen, NICE og RCPsych, og en langsom variant av hver etter tidligere seponeringssymptomer. Hver plan er et startforslag med minstetider som forskriveren kan justere innenfor valgområdene fra fagvurderingen; ingen plan går til null eller har en fast nedre grense. Til faglig kontroll; ingen regel er klinisk godkjent.',
-  regler: [...STOFFER.flatMap((s) => [seponeringsregel(s), seponeringsregel(s, true)]), fluoksetinAnnenhverDag(), bupropion, agomelatin],
+    'Utkast til nedtrappingsregler for antidepressiva (P7): én regel per virkestoff med forsvarlig kildegrunnlag, laget fra preparatomtalen, NICE og RCPsych, og en langsom variant av hver etter tidligere seponeringssymptomer. Hver plan er et startforslag med minstetider som forskriveren kan justere innenfor valgområdene fra fagvurderingen; ingen plan går til null eller har en fast nedre grense. Tekstreglene for bupropion og agomelatin er klinisk godkjent etter substanskontrollen 30.10.2026; duloksetin og venlafaksin er tekstregler uten beregning. De øvrige reglene er til ny faglig kontroll, og ingen beregnet plan er klinisk godkjent.',
+  regler: [...STOFFER.flatMap((s) => [seponeringsregel(s), seponeringsregel(s, true)]), fluoksetinAnnenhverDag(), bupropion, agomelatin, duloksetin, venlafaksin],
 }
 
 /**

@@ -103,7 +103,7 @@ describe('Søket etter verktøy', () => {
 })
 
 describe('Regelstatusen', () => {
-  it('sier at faglig kontroll gjenstår for alle reglene i pilotsettet og P7, som ingen er godkjent', () => {
+  it('sier at faglig kontroll gjenstår for reglene i pilotsettet og P7, unntatt fagteksten som er klinisk godkjent', () => {
     // Hovedregelen, den langsomme varianten og for fluoksetin annenhver dag står side om side; klinikeren velger strategi.
     const perStoff = new Map<string, string[]>()
     for (const r of NEDTRAPPINGSSETT.regler) {
@@ -119,16 +119,22 @@ describe('Regelstatusen', () => {
       [BYTTE_AP, { fra: v('paliperidon'), til: v('paliperidon', 'ER') }, ['depot-paliperidon-xeplion']],
       ...[...perStoff].map(([n, regler]): [typeof TRAPPE_NED, Verktoyvalg, string[]] => [TRAPPE_NED, { fra: v(n) }, regler]),
     ]
+    // Bare tekstreglene for bupropion og agomelatin er klinisk godkjent (substanskontrollen 30.10.2026); de gir fagtekst, ingen beregning.
+    const GODKJENT_FAGTEKST = ['seponering-bupropion', 'seponering-agomelatin']
     for (const [verktoy, valg, regler] of tilfeller) {
       const t = tilgjengelighet(verktoy!, valg)
-      expect(t.status, regler[0]).toBe('til_kontroll')
       expect(t.regler.map((r) => r.id)).toEqual(regler)
-      expect(t.grunner.join(' ')).toMatch(/faglig kontroll/)
+      if (GODKJENT_FAGTEKST.includes(regler[0]!)) {
+        expect(t, regler[0]).toMatchObject({ status: 'fagtekst', grunner: [`Regelen «${t.regler[0]!.tittel}» har ingen beregning.`] })
+      } else {
+        expect(t.status, regler[0]).toBe('til_kontroll')
+        expect(t.grunner.join(' ')).toMatch(/faglig kontroll/)
+      }
     }
     expect(new Set(tilfeller.flatMap(([, , r]) => r))).toEqual(new Set(REGELSETT.regler.map((r) => r.id)))
     expect(REGELSETT.regler).toHaveLength(PILOTSETT.regler.length + NEDTRAPPINGSSETT.regler.length)
     for (const x of VERKTOY) expect(regeloversikt(x).tilgjengelige).toBe(0)
-    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([NEDTRAPPINGSSETT.regler.length, 2, 4])
+    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length, 2, 4])
   })
 
   it('forklarer hvorfor et antidepressivum uten regel ikke kan trappes ned, med dekningen fra P7', () => {

@@ -12,18 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.113.1',
-    dato: '2026-10-29',
-    sammendrag: 'Regelutkast for nedtrapping av antidepressiva, til faglig kontroll',
-    typer: ['Funksjonalitet'],
+    versjon: '1.114.0',
+    dato: '2026-10-30',
+    sammendrag: 'Nedtrapping av antidepressiva: godkjent fagtekst for bupropion og agomelatin, regelutkast for resten til faglig kontroll',
+    typer: ['Funksjonalitet', 'Fag'],
     omfang: 'Mindre omfang',
     gjelder: ['verktoy'],
     punkter: [
-      'Trappe ned antidepressiv har fått utkast til nedtrappingsregler for 14 antidepressiva, bygd på preparatomtalene, NICE-retningslinjen, rådene fra Royal College of Psychiatrists og to uavhengige fagvurderinger, og tekstregler for agomelatin, som ikke trenger nedtrapping, og bupropion, der depottablettene ikke kan deles. Ingen er klinisk godkjent, så verktøyet sier fortsatt at faglig kontroll gjenstår, og viser ingen doseplan.',
+      'Trappe ned antidepressiv viser nå klinisk godkjent fagtekst for bupropion, der depottablettene ikke kan deles og avslutningen vurderes individuelt, og agomelatin, som ikke trenger nedtrapping. Teksten sier hvem som godkjente den, når og hva godkjenningen gjelder; for agomelatin gjelder den bare at nedtrapping ikke er nødvendig.',
+      'De øvrige antidepressivene har utkast til nedtrappingsregler, bygd på preparatomtalene, NICE-retningslinjen, rådene fra Royal College of Psychiatrists og flere uavhengige fagkontroller. De er ikke klinisk godkjent, så verktøyet sier at faglig kontroll gjenstår, og viser ingen doseplan. Duloksetin og venlafaksin får bare fagtekst, fordi trinnene ikke kan gis med norske kapsler.',
       'For antidepressiva uten regel forklarer verktøyet hvorfor, for eksempel at stoffet ikke har preparater i FEST, bare finnes med godkjenningsfritak eller mangler kildegrunnlag.',
-      'Når reglene er godkjent, er planen et startforslag som må bekreftes sammen med at organfunksjon og interaksjoner er vurdert. Forskriveren må oppgi om pasienten har brukt legemidlet lenge og om dosen er utenfor rammen for indikasjonen eller pasientgruppen, og kan velge trinnstørrelse og dager per trinn innenfor det regelen tillater for stoffets risikogruppe. Et raskere valg eller en dose utenfor rammen krever en skriftlig begrunnelse, som står i planen.',
-      'Etter tidligere seponeringssymptomer kan forskriveren velge en langsom variant med 1–5 % per trinn, og for fluoksetin finnes 20 mg annenhver dag som et valgfritt alternativ.',
-      'Dagene per trinn er minstetider: neste reduksjon venter til eventuelle seponeringssymptomer er borte eller tålelige. Planen går ikke til null og har ingen fast nedre grense: den viser høyst 12 reduksjoner, eller stopper ved laveste dose formuleringen kan gi, og siste dose fortsetter til avslutningen er vurdert individuelt. Planen sier at siste beregnede dose ikke er siste dose før seponering, og foreslår ingen dato for den. Kan et trinn ikke gis nøyaktig med norske preparater, stopper planen ved trinnet før og forklarer hvorfor, i stedet for å avvike fra regelen.',
+      'Når reglene er godkjent, er planen et startforslag som må bekreftes sammen med at organfunksjon og interaksjoner er vurdert. Den gjelder ikke ved alder under 18 år, akutt seponering, ustabil sykdom, bytte til et annet legemiddel eller kontraindikasjoner. En dose over største dose for indikasjonen eller pasientgruppen stopper planen; en dose over en forsiktighetsgrense, som for eldre, krever en skriftlig begrunnelse. Forskriveren kan velge trinnstørrelse og dager per trinn innenfor det regelen tillater for stoffets risikogruppe, og et raskere valg krever også begrunnelse.',
+      'Etter tidligere seponeringssymptomer kan forskriveren velge en langsom variant med 1–5 % per trinn, og for pasienter som bruker fluoksetin 20 mg, finnes 20 mg annenhver dag som et valgfritt alternativ.',
+      'Dagene per trinn er minstetider, og datoene i planen er tidligst mulige: neste reduksjon venter til eventuelle seponeringssymptomer er borte eller tålelige. Planen går ikke til null: den viser høyst 12 reduksjoner (6 i den langsomme varianten), hvert trinn avrundes til dosen som vises, og en reduksjon som forsvinner i avrundingen, regnes ikke som et trinn. Siste dose fortsetter til avslutningen er vurdert individuelt. Kan et trinn ikke gis nøyaktig med norske preparater, eller ikke fordeles på flere doser der preparatomtalen krever det, stopper planen ved trinnet før og forklarer hvorfor.',
     ],
   },
   {

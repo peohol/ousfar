@@ -79,12 +79,17 @@ const XEPLION = { startdose_mg: 6, bekreftet: ['indikasjon'], pasientforhold: { 
 const MAINTENA = { startdose_mg: 15, bekreftet: ['indikasjon'], pasientforhold: { cyp2d6_langsom: false, sterk_cyp_hemmer: false, cyp3a4_induktor: false } }
 const AP = ['indikasjon', 'peroral_formulering']
 /** Alt seponeringsregelen for escitalopram spør om, fra 20 mg. */
+/** Escitalopram 20 mg med alt bekreftet, hvert unntak avkreftet og nei på hvert spørsmål. */
+const ESCITALOPRAM = regel('seponering-escitalopram')
 const ESC = {
   startdose_mg: 20,
-  bekreftet: ['startforslag', 'organfunksjon_interaksjoner'],
-  pasientforhold: { tidligere_seponeringssymptomer: false },
-  svar: { lang_behandlingstid: false, utenfor_doseramme: false },
+  bekreftet: ESCITALOPRAM.bekreftelser.map((b) => b.id),
+  pasientforhold: Object.fromEntries(ESCITALOPRAM.unntak.map((u) => [u.id, false])),
+  svar: Object.fromEntries((ESCITALOPRAM.sporsmal ?? []).map((x) => [x.id, false])),
 }
+/** Den hyperbolske citalopramregelen i sammenligningssettet har fortsatt åpne forslag. */
+const HYPERBOLSK = 'seponering-citalopram-hyperbolsk'
+const HYP = { startdose_mg: 20 }
 
 describe('Nedtrappingsstrategiene', () => {
   it('prosent av aktuell dose: beholder en dose lik sluttdosen, seponerer like under', () => {
@@ -289,16 +294,16 @@ describe('Beregningen', () => {
     expect(beregn(v, XEPLION).klinisk_godkjent).toBe(false)
     const u = godkjenn(regel('depot-paliperidon-xeplion'), 'Claude Code')
     expect(godkjenningsfeil(u).join()).toMatch(/ikke en klinisk godkjenning fra en uavhengig kontrollør/)
-    const a = godkjenn(regel('seponering-escitalopram'))
+    const a = godkjenn(regel(HYPERBOLSK))
     expect(godkjenningsfeil(a).join()).toMatch(/åpne valg som må avklares faglig: .*horisont \(åpent forslag\)/)
-    expect(beregn(a, ESC).klinisk_godkjent).toBe(false)
+    expect(beregn(a, HYP).klinisk_godkjent).toBe(false)
     const uten = godkjenn(regel('depot-paliperidon-xeplion'))
     delete uten.godkjenning.historikk.at(-1)!.fingeravtrykk
     expect(beregn(uten, XEPLION).klinisk_godkjent).toBe(false)
   })
 
   it('kan godkjenne OUSFARs egne valg etter eksplisitt uavhengig avklaring, uten å endre opprinnelsen (regresjon)', () => {
-    const r = regel('seponering-escitalopram')
+    const r = regel(HYPERBOLSK)
     const for0 = alleGrunnlag(r)
     // Først blokkerer de åpne forslagene godkjenningen.
     expect(apneValg(r).length).toBeGreaterThan(0)
@@ -309,7 +314,7 @@ describe('Beregningen', () => {
     godkjenn(r)
     expect(godkjenningsfeil(r)).toEqual([])
     expect(kontrollerRegelsett(sett([r]), GRUNNLAG)).toEqual([])
-    expect(beregn(r, ESC)).toMatchObject({ klinisk_godkjent: true, forbehold: FORBEHOLD_GODKJENT })
+    expect(beregn(r, HYP)).toMatchObject({ klinisk_godkjent: true, forbehold: FORBEHOLD_GODKJENT })
     // Opprinnelsen er uendret: fortsatt OUSFARs vurdering med samme begrunnelse, og regelen er fortsatt klassifisert som beregnbar etter avklaring.
     const etter = alleGrunnlag(r)
     expect(etter.map(([sti, g]) => [sti, g.type, g.type === 'ousfar_vurdering' ? g.begrunnelse : null])).toEqual(
@@ -324,10 +329,10 @@ describe('Beregningen', () => {
   })
 
   it('godtar ikke en avklaring fra en utvikler av regelen', () => {
-    const r = godkjenn(avklarAlle(regel('seponering-escitalopram'), 'Claude Code'))
+    const r = godkjenn(avklarAlle(regel(HYPERBOLSK), 'Claude Code'))
     expect(godkjenningsfeil(r).join()).toMatch(/avklart av en utvikler av regelen, ikke uavhengig/)
     expect(kontrollerRegelsett(sett([r]), GRUNNLAG).join()).toMatch(/er avklart av en utvikler av regelen; avklaringen må være uavhengig/)
-    expect(beregn(r, ESC).klinisk_godkjent).toBe(false)
+    expect(beregn(r, HYP).klinisk_godkjent).toBe(false)
     // Rest AP: et medlem som bare er foreslått, er også et åpent valg.
     const g = regel('gruppe-rest-ap-aripiprazol')
     expect(apneValg(g)).toContain('zuklopentiksol (medlem foreslått, ikke validert)')
@@ -607,8 +612,8 @@ describe('Kontrollene av et regelsett', () => {
     a.eksempler = a.eksempler.filter((e) => !/nyre/.test(e.id))
     expect(feil(a)).toMatch(/fingeravtrykket stemmer ikke/)
     const b = regel('seponering-escitalopram')
-    b.versjon = 6
-    expect(feil(b)).toMatch(/siste godkjenningssteg gjelder regelversjon 5, ikke versjon 6; en endret regel må sendes til kontroll på nytt/)
+    b.versjon = 7
+    expect(feil(b)).toMatch(/siste godkjenningssteg gjelder regelversjon 6, ikke versjon 7; en endret regel må sendes til kontroll på nytt/)
   })
 
   it('slår ut når en Psychiatrienet-referanse har feil retning, virkestoff, type eller formulering', () => {
@@ -662,24 +667,24 @@ describe('Kontrollene av et regelsett', () => {
 
   it('slår ut når beregnbarheten ikke stemmer med opprinnelsen, og på avklaringer uten innhold', () => {
     // Avklarte OUSFAR-vurderinger gjør ikke regelen entydig: den bygger fortsatt på OUSFARs valg.
-    const a = { ...avklarAlle(regel('seponering-escitalopram')), beregnbarhet: 'entydig_beregnbar' as const }
+    const a = { ...regel('seponering-escitalopram'), beregnbarhet: 'entydig_beregnbar' as const }
     expect(feil(a)).toMatch(/merket entydig beregnbar, men har OUSFAR-vurderinger/)
     const b = { ...regel('depot-paliperidon-xeplion'), beregnbarhet: 'beregnbar_etter_avklaring' as const }
     expect(feil(b)).toMatch(/merket beregnbar etter avklaring, men har ingen OUSFAR-vurderinger/)
     const c = avklarAlle(regel('seponering-escitalopram'))
     const g = alleGrunnlag(c).find(([, x]) => x.type === 'ousfar_vurdering')![1]
     if (g.type !== 'ousfar_vurdering') throw new Error()
-    g.avklaring = { ...g.avklaring!, merknad: ' ', regelversjon: 6 }
+    g.avklaring = { ...g.avklaring!, merknad: ' ', regelversjon: 7 }
     expect(feil(c)).toMatch(/mangler dato, navn eller merknad/)
-    expect(feil(c)).toMatch(/gjelder en ukjent regelversjon \(6\)/)
+    expect(feil(c)).toMatch(/gjelder en ukjent regelversjon \(7\)/)
   })
 
   it('slår ut når et regneeksempel ikke stemmer med beregningen', () => {
     const a = regel('seponering-escitalopram')
     a.eksempler[0]!.forventet = { fra: ['dag 1–14: 10 mg', 'fra dag 15: seponert'] }
-    a.eksempler[2]!.stopp = /noe annet/
+    a.eksempler.find((e) => e.id === 'over-hoyeste-dose')!.stopp = /noe annet/
     expect(feil(a)).toMatch(/eksempel fra-20-mg gir/)
-    expect(feil(a)).toMatch(/eksempel over-maksimum stopper ikke som forventet/)
+    expect(feil(a)).toMatch(/eksempel over-hoyeste-dose stopper ikke som forventet/)
   })
 
   it('slår ut på formuleringer og varenavn for P5 som ikke passer forløpet', () => {

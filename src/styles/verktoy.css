@@ -262,6 +262,11 @@
   margin: 0;
 }
 
+.verktoyfagtekst__godkjenning {
+  font-size: var(--tekst-liten);
+  color: var(--blekk-dempet);
+}
+
 /* --- Doseplanen -------------------------------------------------------------- */
 .doseplan {
   display: flex;

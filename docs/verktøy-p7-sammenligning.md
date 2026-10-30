@@ -2,7 +2,7 @@
 
 <!-- Laget av `npm run verktoy:regler -- rapport` fra reglene i src/verktoy/regler/. Ikke rediger for hånd; endre reglene og lag rapporten på nytt. -->
 
-Regelsett `ousfar-verktoy-nedtrapping-sammenligning` versjon 4, regelmodell 6, beregningsmotor 4. Sammenlignings- og utviklingssett for nedtrappingsreglene (P7.5): strategier som ikke er godkjent som valgbare kliniske strategier. Ikke i verktøyet og ikke kliniske anbefalinger.
+Regelsett `ousfar-verktoy-nedtrapping-sammenligning` versjon 4, regelmodell 7, beregningsmotor 5. Sammenlignings- og utviklingssett for nedtrappingsreglene (P7.5): strategier som ikke er godkjent som valgbare kliniske strategier. Ikke i verktøyet og ikke kliniske anbefalinger.
 
 **1 regler, 0 klinisk godkjent.** Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. De er ikke empirisk validerte kliniske anbefalinger, og ingen av reglene er klinisk godkjent. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-p7-nedtrapping.md` og `docs/verktøy-p4-regelmodell.md`.
 
@@ -82,6 +82,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 - *Fra 20 mg: like trinn i beregnet binding (85,5 % av maksimum ved 20 mg), uten det åttende trinnet til null.* Inndata: startdose 20 mg.
   - **fra:** dag 1–14: 10,08 mg; dag 15–28: 6,07 mg; dag 29–42: 3,9 mg; dag 43–56: 2,54 mg; dag 57–70: 1,6 mg; dag 71–84: 0,92 mg; fra dag 85: 0,41 mg; siste trinn før null; avslutning vurderes individuelt
   - Kontroll: Startdosen er 10–40 mg (bindende) – oppfylt. 20 mg.
-  - Merknad: Regelens siste trinn før null er nådd. Fra dag 85 står pasienten på 0,41 mg av citalopram til planen revurderes. Siste beregnede dose er ikke nødvendigvis den siste dosen pasienten trenger før seponering. Planen går ikke til null og foreslår ingen dato for siste dose: avslutningen vurderes individuelt ut fra dosen pasienten da bruker, reduksjonene så langt og hvordan pasienten har reagert på dem, og videre seponering krever forskriverens beslutning.
+  - Merknad: Regelens siste trinn før null er nådd. Fra dag 85 står pasienten på 0,41 mg av citalopram til planen revurderes. Planen stopper her av tekniske grunner. Fortsett med denne dosen inntil forskriveren har vurdert videre nedtrapping. Dosen er ikke nødvendigvis en sluttdose. Planen går ikke til null og foreslår ingen dato for siste dose. En ny plan beregnes fra dosen pasienten faktisk bruker når forskriveren revurderer, ikke nødvendigvis siste dose her, og tidligere symptomer, toleranse og utsettelser må vurderes.
+  - Merknad: Dagene og datoene er tidligste mulige tidspunkt dersom alle tidligere reduksjoner gjennomføres som planlagt; utsettes et trinn, forskyves alle senere tidspunkter tilsvarende.
 
 **Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntidepressants:Ci>Stop`.

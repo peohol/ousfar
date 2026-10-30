@@ -11,10 +11,10 @@
  * kildeoppføringen, aldri med innhold.
  */
 import { norskDato } from './motor/byggesteiner'
-import { elementtekst, preparatliste, type Doseplanresultat, type Praktiskforlop } from './motor/plan'
+import { elementtekst, fordelingSuffiks, preparatliste, type Doseplanresultat, type Praktiskforlop } from './motor/plan'
 import { KARTLEGGING } from './register'
 import { avrund, hverTekst, injeksjonstidspunkt } from './regler/beregning'
-import { fingeravtrykk } from './regler/godkjenning'
+import { erKliniskGodkjent, fingeravtrykk } from './regler/godkjenning'
 import { kildeFor } from './regler/kilder'
 import { henvisninger, type Regel } from './regler/modell'
 
@@ -94,7 +94,7 @@ function rader(forlop: Praktiskforlop[], startdato: string | undefined): Planrad
       const p = f.perioder.find((x) => x.fra <= fra && (x.til === null || x.til >= fra))
       if (p) {
         const avvik = Math.abs(p.avvik_prosent) > 1e-7 ? `ideelt ${mg(p.ideell_mg)} (${p.avvik_prosent > 0 ? '+' : ''}${String(avrund(p.avvik_prosent)).replace('.', ',')} %)` : undefined
-        return { dose: `${mg(p.mg)}${p.hver ? ` ${hverTekst(p.hver)}` : ''}`, elementer: p.elementer.map(elementtekst), ...(avvik && { avvik }) }
+        return { dose: `${mg(p.mg)}${p.hver ? ` ${hverTekst(p.hver)}` : ''}${fordelingSuffiks(p)}`, elementer: p.elementer.map(elementtekst), ...(avvik && { avvik }) }
       }
       return f.perioder.length > 0 && f.siste_dosedag !== null && fra === f.siste_dosedag + 1 ? { dose: 'Seponert', elementer: [] } : null
     })
@@ -123,6 +123,17 @@ function rader(forlop: Praktiskforlop[], startdato: string | undefined): Planrad
   }
   // Stabil sortering: en injeksjon står etter perioden som starter samme dag.
   return ut.sort((a, b) => a.dag - b.dag).map((x) => x.rad)
+}
+
+/**
+ * Hvem som har godkjent regelen klinisk, når, for hvilken versjon og med
+ * hvilken avgrensning (kontrollørens merknad); null når regelen ikke er gyldig
+ * klinisk godkjent.
+ */
+export function godkjenningstekst(regel: Regel): string | null {
+  const sist = regel.godkjenning.historikk.at(-1)
+  if (!sist || !erKliniskGodkjent(regel)) return null
+  return `Klinisk godkjent ${norskDato(sist.dato)} av ${sist.av}, regelversjon ${sist.regelversjon}. ${sist.merknad}`
 }
 
 /** Kildene regelen henviser til, med stedene i hver; Psychiatrienet bare med kildeoppføringen. */

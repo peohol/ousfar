@@ -235,3 +235,49 @@ export function velgSerie(perioder: readonly Periodevalg[], start: number): Dose
   }
   return serie
 }
+
+/**
+ * Fordelingen av en døgndose på flere doser over døgnet, når regelen krever
+ * det (`Forlop.fordeling`, f.eks. fluvoksamin over 150 mg): det første
+ * antallet i `antall` som lar enhetene i dosen (hele og delte tabletter,
+ * kapsler eller dråper) fordeles så hver dose er over 0 og høyst `maks` mg.
+ * En delt tablett hører til én dose. Blant mulige fordelinger velges den
+ * jevneste (minst største dose). Dosene i mg, største først; `null` når ingen
+ * fordeling går.
+ */
+export function fordel(k: Pick<Dosekandidat, 'elementer'>, antall: readonly number[], maks: number): number[] | null {
+  // Enhetene som stykker av samme størrelse med et antall: hele enheter, og en eventuell delt enhet per styrke.
+  const stykker = new Map<number, number>()
+  const legg = (mg: number, n: number) => n > 0 && stykker.set(mg, (stykker.get(mg) ?? 0) + n)
+  for (const e of k.elementer) {
+    const hele = Math.floor(e.antall + EPS)
+    legg(e.mg, hele)
+    if (e.antall - hele > EPS) legg((e.antall - hele) * e.mg, 1)
+  }
+  const typer = [...stykker.entries()].sort((a, b) => b[0] - a[0])
+  for (const n of antall) {
+    let best: number[] | null = null
+    // Fordeler stykkene dose for dose; den siste dosen får resten.
+    const sok = (igjen: number[], doser: number[]) => {
+      if (doser.length === n - 1) {
+        const rest = igjen.reduce((s, c, i) => s + c * typer[i]![0], 0)
+        const alle = [...doser, rest].sort((a, b) => b - a)
+        if (alle.some((d) => d <= EPS || d > maks + EPS)) return
+        if (!best || sammenlign(alle, best) < 0) best = alle
+        return
+      }
+      const valg = (i: number, bruk: number[]): void => {
+        if (i === typer.length) {
+          const mg = bruk.reduce((s, c, j) => s + c * typer[j]![0], 0)
+          if (mg > EPS && mg <= maks + EPS) sok(igjen.map((c, j) => c - bruk[j]!), [...doser, mg])
+          return
+        }
+        for (let c = 0; c <= igjen[i]!; c++) valg(i + 1, [...bruk, c])
+      }
+      valg(0, [])
+    }
+    sok(typer.map(([, c]) => c), [])
+    if (best) return best
+  }
+  return null
+}

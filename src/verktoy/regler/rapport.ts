@@ -5,7 +5,7 @@
  * `npm run verktoy:regler -- rapport` skriver dem; testene sier fra når de
  * ikke er oppdatert. Psychiatrienet vises bare som kildeoppføringens id.
  */
-import { beregn, inndatagrenser, kortform, kravtekst, MOTORVERSJON, omradetekst } from './beregning'
+import { beregn, inndatagrenser, inndatavilkar, kortform, kravtekst, MOTORVERSJON, omradetekst } from './beregning'
 import { erKliniskGodkjent, fingeravtrykk, godkjenningsfeil } from './godkjenning'
 import { KILDER, kildeFor } from './kilder'
 import {
@@ -115,6 +115,7 @@ function parametertabell(r: Regel): string {
   for (const f of r.plan.forlop) {
     if (f.start.type === 'etter_utvasking') legg(`${f.id}: start`, f.start)
     if (f.dosevalg) legg(`${f.id}: dosevalg`, f.dosevalg)
+    if (f.fordeling) legg(`${f.id}: fordeling på ${f.fordeling.antall.join(' eller ')} doser`, f.fordeling)
     f.faser.forEach((fase, i) => legg(`${f.id}: fase ${i + 1} (${fase.type})`, fase))
   }
   for (const m of r.medlemmer ?? []) (m.faser ?? []).forEach((fase, i) => legg(`${m.nokkel}: fase ${i + 1} (${fase.type})`, fase))
@@ -154,7 +155,8 @@ function regelavsnitt(r: Regel, sett: Regelsett): string {
   const betingelser = [
     ...r.inndata.map((x) => {
       const gyldig = inndatagrenser(x)
-      return `${x.navn === 'startdose' ? 'Startdose' : 'Måldose (må oppgis)'} ${gyldig}${x.gjelder_medlem ? ` for ${x.gjelder_medlem}` : ''} (${x.art === 'bindende_krav' ? 'bindende' : 'veiledende'}; ${grunnlag(x.grunnlag)})`
+      const art = x.art === 'bindende_krav' ? 'bindende' : x.krever_begrunnelse ? 'forsiktighetsgrense: utenfor krever begrunnelse' : 'veiledende'
+      return `${x.navn === 'startdose' ? 'Startdose' : 'Måldose (må oppgis)'} ${gyldig}${inndatavilkar(x, r.sporsmal)}${x.gjelder_medlem ? ` for ${x.gjelder_medlem}` : ''} (${art}; ${grunnlag(x.grunnlag)})`
     }),
     ...r.bekreftelser.map((b) => `Må bekreftes (\`${b.id}\`): ${b.tekst} (${grunnlag(b.grunnlag)})`),
     ...r.unntak.map((u) => `Unntak (\`${u.id}\`): ${u.tekst} (${grunnlag(u.grunnlag)})`),

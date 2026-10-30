@@ -72,6 +72,14 @@ Kontrollene krever at grensene i et krav er innenfor området, at `ved` er et sp
 - Fasen `intervalldosering`: dosen (`aktuell` eller en dosekilde) gis hver `hver`. dag i minst `minstetid` dager, uten ny reduksjon og uten slutt. Den teller som slutt uten null i `nulltrinnfeil` (`fortsetterUtenNull`), og perioden får `hver` i resultatet.
 - `Sporsmal.krever_begrunnelse`: et ja krever en skriftlig begrunnelse, f.eks. en dose utenfor rammen for indikasjon eller pasientgruppe.
 
+**Betingede grenser, fordeling og avrunding (regelmodell 7, beregningsmotor 5).** Etter substanskontrollen 30.10.2026, runde 3 (`docs/verktøy-p7-nedtrapping.md` §4 og §7):
+
+- `Inndatakrav.ved`: kravet gjelder bare når et spørsmål er besvart slik, f.eks. høyst 20 mg citalopram for eldre over 65 år. Kontrollene krever at spørsmålet finnes i regelen.
+- `Inndatakrav.krever_begrunnelse`: en forsiktighetsgrense. En dose over den stopper ikke, men krever en skriftlig begrunnelse, og kravet og begrunnelsen står som kontroll. Bare for veiledende krav; en uttrykkelig høyeste dose (bindende) kan aldri begrunnes bort.
+- `Sporsmal.nei`: teksten for nei-svaret når grensen gjelder ved nei, f.eks. paroksetin utenom tvangslidelse og panikklidelse.
+- `Forlop.fordeling`: døgndosen gis fordelt på et av antallene i `antall` (hele tall, minst 2), over `over_mg` når den er satt, med eget grunnlag. Planen viser fordelingen, og doseplanmotoren gir bare doser som kan fordeles slik.
+- Med individuell avslutning avrundes hvert trinn til den viste dosen (to desimaler), og neste trinn regnes fra den. En reduksjon som forsvinner i avrundingen, er ikke et trinn (`avrundet_bort`); forsvinner allerede den første, stopper beregningen.
+
 **Gyldige verdier.** Doser og varigheter er endelige tall over 0, prosenter over 0 og høyst 100, og dager, måneder og trinn hele tall (`parameterfeil`). En startdato må være en gyldig kalenderdato som `ÅÅÅÅ-MM-DD`; `2027-02-31` normaliseres ikke. Ugyldige verdier i regelen eller inndata gir en stopp med grunnen, og beregningen kaster aldri: også en feil i regelen selv blir en kontrollert stopp.
 
 **Måneder.** Månedlige injeksjoner regnes fra forrige injeksjon. Med startdato er én måned senere samme dato, eller siste dag i måneden når den er kortere (31. januar → 28. februar); tidsvinduet i preparatomtalen gjelder rundt den datoen.
@@ -166,3 +174,5 @@ Reglene for olanzapin → kvetiapin, Rest AP → aripiprazol, Abilify Maintena o
 **Etter fagvurderingen av P7 (29.10.2026).** Fagvurderingen avviste alle sluttdoser som automatisk trinn til null. Den hyperbolske citalopramregelen er versjon 3: den har individuell avslutning, står på 0,41 mg fra dag 85 og har ingen minste varighet. Escitalopram er flyttet til P7-reglene (versjon 4, i middelsgruppen), med historikken fra pilotsettet. Bytteregelene seponerer fortsatt, fordi bytte og utvasking krever det. Pilotsettet var da versjon 4 med sju regler, og regelmodellen versjon 5.
 
 **Etter fagkontrollen av P7 (30.10.2026).** Den hyperbolske citalopramregelen er versjon 4 med teknisk planhorisont og status utkast, og er flyttet til sammenligningssettet i P7, fordi kontrolløren ikke godkjente den som valgbar klinisk strategi. Pilotsettet er versjon 5 med seks regler, og regelmodellen er versjon 6.
+
+**Etter substanskontrollen av P7 (30.10.2026, runde 3).** Regelmodellen er versjon 7 og beregningsmotoren versjon 5 (§3). Pilotreglene er uendret i innhold; den hyperbolske citalopramregelen avrunder nå hvert trinn til den viste dosen.

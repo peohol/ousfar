@@ -12,7 +12,7 @@ import type { Legemiddelutvalg } from '../legemiddeldata/lesing'
 import type { Preparatgrunnlag } from './motor/byggesteiner'
 import { festFerskhet, formvalgSomTrengs, kliniskDoseplan, type Doseplaninndata, type Doseplanresultat, type Formalternativer, type Formvalg } from './motor/plan'
 import { festkoblinger, KARTLEGGING } from './register'
-import { kravtekst, medEnhet, omradetekst } from './regler/beregning'
+import { inndatagrenser, inndatavilkar, kravtekst, medEnhet, omradetekst } from './regler/beregning'
 import { justerbare, parametre, type Regel, type Regelsett } from './regler/modell'
 import type { Formuleringsklasse } from './festformuleringer'
 import { medlemFor, REGELSETT, settFor, type Verktoyvalg } from './tilgjengelighet'
@@ -106,14 +106,19 @@ export function mangler(r: Regel, skjema: Planskjema): string[] {
 /** Spørsmålene der et ja krever en skriftlig begrunnelse. */
 const sporsmalMedBegrunnelse = (r: Regel) => (r.sporsmal ?? []).filter((s) => s.krever_begrunnelse)
 
-/** Om et valg eller svar i regelen kan kreve en skriftlig begrunnelse; da viser skjemaet feltet for den. */
-export const kanKreveBegrunnelse = (r: Regel) => parametre(r.plan).some(([, p]) => (p.begrunnelseskrav ?? []).length > 0) || sporsmalMedBegrunnelse(r).length > 0
+/** Forsiktighetsgrensene for dosene: en dose utenfor krever begrunnelse i stedet for å stoppe. */
+const doserMedBegrunnelse = (r: Regel) => r.inndata.filter((k) => k.krever_begrunnelse)
+
+/** Om et valg, svar eller en dose i regelen kan kreve en skriftlig begrunnelse; da viser skjemaet feltet for den. */
+export const kanKreveBegrunnelse = (r: Regel) =>
+  parametre(r.plan).some(([, p]) => (p.begrunnelseskrav ?? []).length > 0) || sporsmalMedBegrunnelse(r).length > 0 || doserMedBegrunnelse(r).length > 0
 
 /** Når regelen krever begrunnelse, i klartekst: «Reduksjon per trinn over 25 %; …; dose utenfor rammen …». */
 export const begrunnelseshjelp = (r: Regel): string =>
   [
     ...parametre(r.plan).flatMap(([sti, p]) => (p.begrunnelseskrav ?? []).map((k) => `${p.justerbar ?? sti} ${kravtekst(k, p, r.sporsmal)}`)),
     ...sporsmalMedBegrunnelse(r).map((s) => s.ja),
+    ...doserMedBegrunnelse(r).map((k) => `${k.navn === 'startdose' ? 'Aktuell døgndose' : 'Måldose'} over ${inndatagrenser(k)}${inndatavilkar(k, r.sporsmal)}`),
   ].join('; ')
 
 /** Verdiene forskriveren kan justere i regelen: stien, navnet og en hjelpetekst med forslaget og området. */

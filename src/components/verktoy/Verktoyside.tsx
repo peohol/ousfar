@@ -21,7 +21,7 @@ import {
 } from '../../verktoy/doseplan'
 import type { Kildeformulering } from '../../verktoy/kartlegging'
 import type { Doseplanresultat, Formalternativer } from '../../verktoy/motor/plan'
-import { kildeliste, planvisning } from '../../verktoy/planvisning'
+import { godkjenningstekst, kildeliste, planvisning } from '../../verktoy/planvisning'
 import { finnVirkestoff, KARTLEGGING, VERKTOY, verktoyFor, virkestoffvalg, type Verktoy } from '../../verktoy/register'
 import type { Regel, Regelsett } from '../../verktoy/regler/modell'
 import {
@@ -304,9 +304,11 @@ function Statusvisning({ status }: { status: Tilgjengelighet }) {
 function Fagtekst({ regel }: { regel: Regel }) {
   const utsagn = [...regel.fortolkning.kildetro, ...regel.fortolkning.tilpasninger].map((u) => u.tekst)
   const kilder = kildeliste(regel)
+  const godkjent = godkjenningstekst(regel)
   return (
     <article className="verktoyfagtekst">
       <h3>{regel.tittel}</h3>
+      {godkjent && <p className="verktoyfagtekst__godkjenning">{godkjent}</p>}
       {utsagn.map((t) => (
         <p key={t}>{t}</p>
       ))}

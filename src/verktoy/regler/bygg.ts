@@ -119,11 +119,21 @@ export const halvering = (sluttdose: Parameter, lav?: { prosent: Parameter; gren
  */
 export const PLANHORISONT_TRINN = 12
 
-export const planhorisont = () =>
+/**
+ * Planhorisonten i de langsomme variantene etter tidligere
+ * seponeringssymptomer (substanskontrollen 30.10.2026, beslutning 6): færre
+ * reduksjoner per plan, så pasienten revurderes tettere.
+ */
+export const PLANHORISONT_LANGSOM = 6
+
+/** Planhorisonten som parameter: `trinn` reduksjoner, med en egen begrunnelse og avklaring når regelen har det. */
+export const planhorisont = (trinn = PLANHORISONT_TRINN, valg?: { begrunnelse: string; avklaring: Avklaring }) =>
   forslag(
-    PLANHORISONT_TRINN,
+    trinn,
     'trinn',
-    `Teknisk planhorisont, ikke en klinisk grense: planen viser høyst ${PLANHORISONT_TRINN} reduksjoner frem i tid, omtrent ett år med 28 dager per trinn. Ved revurdering beregnes en ny plan fra dosen pasienten da bruker. At planen skal ha en slik horisont i stedet for en nedre grense, bestemte fagkontrollen 30.10.2026 (beslutning 3); antallet er OUSFARs tekniske valg.`,
+    valg?.begrunnelse ??
+      `Teknisk planhorisont, ikke en klinisk grense: planen viser høyst ${trinn} reduksjoner frem i tid, omtrent ett år med 28 dager per trinn. Ved revurdering beregnes en ny plan fra dosen pasienten da bruker. At planen skal ha en slik horisont i stedet for en nedre grense, bestemte fagkontrollen 30.10.2026 (beslutning 3); antallet er OUSFARs tekniske valg.`,
+    valg && { avklaring: valg.avklaring },
   )
 
 export const FORUTSETNINGER_FELLES = [

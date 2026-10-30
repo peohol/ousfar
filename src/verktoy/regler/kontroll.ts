@@ -125,6 +125,13 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
   for (const x of r.inndata) {
     if (!x.omrade && !x.verdier) f(`inndatakravet for ${x.navn} har verken område eller verdier`)
     if (x.gjelder_medlem && !r.medlemmer?.some((m) => m.nokkel === x.gjelder_medlem)) f(`inndatakravet gjelder ${x.gjelder_medlem}, som ikke er medlem`)
+    if (x.ved && !r.sporsmal?.some((s) => s.id === x.ved!.sporsmal)) f(`inndatakravet for ${x.navn} gjelder spørsmålet ${x.ved.sporsmal}, som regelen ikke har`)
+    if (x.krever_begrunnelse && x.art === 'bindende_krav') f(`inndatakravet for ${x.navn} er bindende, men kan begrunnes bort; en forsiktighetsgrense må være veiledende`)
+  }
+  // Fordelingen av døgndosen: en grense og minst to doser.
+  for (const x of r.plan.forlop) {
+    const a = x.fordeling?.antall
+    if (a && (a.length === 0 || a.some((n) => !Number.isInteger(n) || n < 2))) f(`forløp ${x.id} fordeler døgndosen på et ugyldig antall doser (${a.join(', ')})`)
   }
 
   // Grupper: medlemmene er nøyaktig P1-gruppens, og hvert har en begrunnelse.

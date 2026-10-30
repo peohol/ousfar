@@ -64,7 +64,13 @@ export const NEDTRAPPINGSDEKNING: readonly Dekning[] = [
   regel('citalopram', 'Ci'),
   begrenset('doksepin', 'Dx', 'mangler_preparatomtale', 'stop_alternativ_adresse'),
   begrenset('dosulepin', 'Ds', 'ingen_preparater'),
-  regel('duloksetin', 'Du'),
+  {
+    nokkel: 'duloksetin',
+    kode: 'Du',
+    status: 'bare_fagtekst',
+    forhold: [],
+    merknad: 'Med norske enterokapsler på 30 og 60 mg, som ikke kan deles eller åpnes, kan de fleste trinnene ikke gis nøyaktig, så en beregnet plan er ikke godkjent (substanskontrollen 30.10.2026). Nedtrappingen planlegges individuelt til en dokumentert metode for mindre doser foreligger.',
+  },
   regel('escitalopram', 'Es'),
   {
     nokkel: 'fenelzin',
@@ -84,7 +90,13 @@ export const NEDTRAPPINGSDEKNING: readonly Dekning[] = [
   regel('sertralin', 'Se'),
   begrenset('tranylcypromin', 'Tc', 'bare_godkjenningsfritak'),
   begrenset('trazodon', 'Td', 'bare_godkjenningsfritak'),
-  regel('venlafaksin', 'Ve'),
+  {
+    nokkel: 'venlafaksin',
+    kode: 'Ve',
+    status: 'bare_fagtekst',
+    forhold: [],
+    merknad: 'Med norske depotkapsler og depottabletter på 37,5, 75 og 150 mg, som ikke kan deles, kan de fleste trinnene ikke gis nøyaktig, så en beregnet plan er ikke godkjent (substanskontrollen 30.10.2026). Nedtrappingen planlegges individuelt til en dokumentert metode for mindre doser foreligger.',
+  },
   regel('vortioksetin', 'Vo', 'stop_alternativ_adresse'),
 ]
 

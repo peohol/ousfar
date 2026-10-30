@@ -2,7 +2,7 @@
 
 <!-- Laget av `npm run verktoy:regler -- rapport` fra reglene i src/verktoy/regler/. Ikke rediger for hånd; endre reglene og lag rapporten på nytt. -->
 
-Regelsett `ousfar-verktoy-pilot` versjon 5, regelmodell 6, beregningsmotor 4. Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.
+Regelsett `ousfar-verktoy-pilot` versjon 5, regelmodell 7, beregningsmotor 5. Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.
 
 **6 regler, 0 klinisk godkjent.** Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. De er ikke empirisk validerte kliniske anbefalinger, og ingen av reglene er klinisk godkjent. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-p4-regelmodell.md`.
 
