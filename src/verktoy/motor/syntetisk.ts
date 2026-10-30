@@ -225,6 +225,24 @@ export function nedtrappingsregel(strategi: Nedtrappingsstrategi, dosevalg?: Reg
   }
 }
 
+/**
+ * Som {@link nedtrappingsregel}, men uten nulltrinn, slik seponeringsreglene i
+ * P7 er: høyst `horisont` reduksjoner, og siste dose fortsetter til
+ * avslutningen er vurdert individuelt.
+ */
+export function nedtrappingUtenNull(strategi: Nedtrappingsstrategi, dosevalg?: Regel['plan']['forlop'][number]['dosevalg'], id = 'nedtrapping-uten-null', horisont = 12): Regel {
+  const r = nedtrappingsregel(strategi, dosevalg, id)
+  for (const fase of r.plan.forlop[0]!.faser) if (fase.type === 'nedtrapping') Object.assign(fase, { avslutning: 'individuell', horisont: sp(horisont, 'trinn') })
+  return r
+}
+
+/** Testoksetin hver `hver`. dag i minst 28 dager fra dosen pasienten bruker, uten nulltrinn. */
+export function intervallregel(hver = 2): Regel {
+  const r = nedtrappingsregel({ type: 'prosent_av_aktuell', prosent: sp(25, 'prosent') }, undefined, 'intervall')
+  r.plan.forlop[0]!.faser = [{ type: 'intervalldosering', dose: { type: 'aktuell' }, hver: sp(hver, 'dager'), minstetid: sp(28, 'dager') }]
+  return r
+}
+
 /** Kryssnedtrapping testoksetin → testazapin: testazapin trappes opp mens testoksetin trappes ned. */
 export const KRYSSREGEL: Regel = {
   ...grunnregel('kryss', 'kryssnedtrapping testoksetin → testazapin'),
@@ -390,12 +408,12 @@ export const TESTTILFELLER: Testtilfelle[] = [
   },
   {
     id: 'prosent-av-aktuell-toleranse-10',
-    beskrivelse: 'Testoksetin 20 mg trappes ned med 25 % av aktuell dose til under 2,5 mg, med høyst 10 % avvik, og forskriveren har valgt bare 10 og 20 mg-tablettene. 11,25 mg kan ikke gis innenfor 10 %: nærmeste doser er 10 mg (−11,1 %) og 15 mg; 12,5 mg krever en kvart 10 mg-tablett, som ikke er delbar i 4.',
+    beskrivelse: 'Testoksetin 20 mg trappes ned med 25 % av aktuell dose til under 2,5 mg, med høyst 10 % avvik, og forskriveren har valgt bare 10 og 20 mg-tablettene. 11,25 mg kan ikke gis innenfor 10 %: nærmeste doser er 10 mg (−11,1 %, en faktisk reduksjon på 33,3 % fra 15 mg) og 15 mg; 12,5 mg krever en kvart 10 mg-tablett, som ikke er delbar i 4.',
     kontrollerer: 'P5.5 prosent av aktuell dose; valgte preparater; P5.8 stopp uten gjennomførbar dose, med de nærmeste dosene',
     regel: nedtrappingsregel(prosent25(2.5), { avvik_prosent: sp(10, 'prosent') }),
     inndata: { startdose_mg: 20, formvalg: { fra: { ...TABLETT, preparater: ['ID_SYNTETISK-OKS-TAB10', 'ID_SYNTETISK-OKS-TAB20'] } } },
     preparater: TESTOKSETIN,
-    forventet: { stopp: /dag 15–28: den ideelle dosen 11,25 mg kan ikke gis .* innenfor ±10 %.*Nærmeste doser som kan settes sammen: 10 mg \(-11,11 %\) og 15 mg \(\+33,33 %\)/ },
+    forventet: { stopp: /dag 15–28: den ideelle dosen 11,25 mg kan ikke gis .* innenfor ±10 %.*Nærmeste doser som kan settes sammen: 10 mg \(-11,11 %, faktisk reduksjon 33,33 % fra 15 mg\) og 15 mg \(\+33,33 %\)/ },
   },
   {
     id: 'prosent-av-aktuell-toleranse-15',
@@ -619,5 +637,32 @@ export const TESTTILFELLER: Testtilfelle[] = [
     inndata: { startdose_mg: 1, formvalg: { fra: { klasse: 'peroral', legemiddelformer: [FORMER.draper.kode] } } },
     preparater: [1, 2].map((per_drape) => ({ id: `AZA-DRAP${per_drape}`, virkestoff: 'testazapin' as const, varenavn: `Testazapin Dråper ${per_drape}`, form: 'draper' as const, mg: 20 * per_drape, nevner: { verdi: 1, enhet: 'ml' }, per_drape })),
     forventet: { stopp: /121 mg kan ikke gis med preparatene i FEST nøyaktig/ },
+  },
+  {
+    id: 'uten-nulltrinn-stopper-ved-trinnet-for',
+    beskrivelse: 'Testoksetin 20 mg trappes ned med 25 % av aktuell dose uten nulltrinn (individuell avslutning), med 10 og 20 mg-tablettene. 15 mg kan gis, men 11,25 mg ikke: planen stopper ved trinnet før og står på 15 mg til avslutningen er vurdert, i stedet for å runde av eller seponere.',
+    kontrollerer: 'P5.8 en plan uten nulltrinn stopper ved siste trinn som kan gis, med forklaring (fagkontrollen 30.10.2026, beslutning 3 og 7)',
+    regel: nedtrappingUtenNull({ type: 'prosent_av_aktuell', prosent: sp(25, 'prosent') }),
+    inndata: { startdose_mg: 20, formvalg: { fra: { ...TABLETT, preparater: ['ID_SYNTETISK-OKS-TAB10', 'ID_SYNTETISK-OKS-TAB20'] } } },
+    preparater: TESTOKSETIN,
+    forventet: { fra: ['fra dag 1: 15 mg = 1½ tabletter à 10 mg', 'neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt'] },
+  },
+  {
+    id: 'uten-nulltrinn-forste-trinn-kan-ikke-gis',
+    beskrivelse: 'Som over fra 10 mg med bare 10 mg-tabletten: allerede 7,5 mg kan ikke gis, så beregningen stopper med de nærmeste dosene og den faktiske reduksjonen.',
+    kontrollerer: 'P5.8 stopp med faktisk reduksjon når første trinn ikke kan gis; en annen dose er et nytt forslag',
+    regel: nedtrappingUtenNull({ type: 'prosent_av_aktuell', prosent: sp(25, 'prosent') }),
+    inndata: { startdose_mg: 10, formvalg: { fra: { ...TABLETT, preparater: ['ID_SYNTETISK-OKS-TAB10'] } } },
+    preparater: TESTOKSETIN,
+    forventet: { stopp: /dag 1–14: den ideelle dosen 7,5 mg kan ikke gis .*5 mg \(-33,33 %, faktisk reduksjon 50 % fra 10 mg\) og 10 mg \(\+33,33 %\)\. En annen dose, et større avvik eller en annen formulering er et nytt forslag/ },
+  },
+  {
+    id: 'annenhver-dag',
+    beskrivelse: 'Testoksetin 20 mg gis annenhver dag i minst 28 dager: én tablett hver gang, aldri 0 mg, og ingen ny reduksjon av seg selv.',
+    kontrollerer: 'P5 intervalldosering: dosen per gang settes sammen som en vanlig dose (fagkontrollen 30.10.2026, beslutning 5.10)',
+    regel: intervallregel(),
+    inndata: { startdose_mg: 20, formvalg: { fra: TABLETT } },
+    preparater: TESTOKSETIN,
+    forventet: { fra: ['fra dag 1: 20 mg annenhver dag = 1 tablett à 20 mg', 'annenhver dag i minst 28 dager; avslutning vurderes individuelt'] },
   },
 ]

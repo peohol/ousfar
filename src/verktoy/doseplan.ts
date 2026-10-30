@@ -103,14 +103,18 @@ export function mangler(r: Regel, skjema: Planskjema): string[] {
   return ut
 }
 
-/** Om et valg i regelen kan kreve en skriftlig begrunnelse; da viser skjemaet feltet for den. */
-export const kanKreveBegrunnelse = (r: Regel) => parametre(r.plan).some(([, p]) => (p.begrunnelseskrav ?? []).length > 0)
+/** Spørsmålene der et ja krever en skriftlig begrunnelse. */
+const sporsmalMedBegrunnelse = (r: Regel) => (r.sporsmal ?? []).filter((s) => s.krever_begrunnelse)
 
-/** Når regelen krever begrunnelse, i klartekst: «Reduksjon per trinn over 25 %; …». */
+/** Om et valg eller svar i regelen kan kreve en skriftlig begrunnelse; da viser skjemaet feltet for den. */
+export const kanKreveBegrunnelse = (r: Regel) => parametre(r.plan).some(([, p]) => (p.begrunnelseskrav ?? []).length > 0) || sporsmalMedBegrunnelse(r).length > 0
+
+/** Når regelen krever begrunnelse, i klartekst: «Reduksjon per trinn over 25 %; …; dose utenfor rammen …». */
 export const begrunnelseshjelp = (r: Regel): string =>
-  parametre(r.plan)
-    .flatMap(([sti, p]) => (p.begrunnelseskrav ?? []).map((k) => `${p.justerbar ?? sti} ${kravtekst(k, p, r.sporsmal)}`))
-    .join('; ')
+  [
+    ...parametre(r.plan).flatMap(([sti, p]) => (p.begrunnelseskrav ?? []).map((k) => `${p.justerbar ?? sti} ${kravtekst(k, p, r.sporsmal)}`)),
+    ...sporsmalMedBegrunnelse(r).map((s) => s.ja),
+  ].join('; ')
 
 /** Verdiene forskriveren kan justere i regelen: stien, navnet og en hjelpetekst med forslaget og området. */
 export const justeringsfelt = (r: Regel): { sti: string; navn: string; forslag: string; hjelp: string }[] =>

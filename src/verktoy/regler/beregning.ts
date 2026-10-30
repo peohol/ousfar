@@ -39,13 +39,16 @@ import {
 } from './modell'
 
 /** Økes når beregningen endres slik at like inndata kan gi et annet resultat. */
-export const MOTORVERSJON = 3
+export const MOTORVERSJON = 4
 
-/** En sammenhengende periode med samme daglige dose. `til` er `null` når dosen fortsetter. */
+/** En sammenhengende periode med samme dose. `til` er `null` når dosen fortsetter. */
 export interface Periode {
   fra: number
   til: number | null
+  /** Døgndosen, eller med `hver` dosen hver av dagene den gis. */
   mg: number
+  /** Dosen gis hver `hver`. dag (2 er annenhver dag); uten den daglig. */
+  hver?: number
   fra_dato?: string
   til_dato?: string | null
 }
@@ -79,10 +82,13 @@ export interface Forlopsresultat {
   start_dato?: string
   seponert_dato?: string
   /**
-   * Når nedtrappingen ikke går til 0 (`avslutning: 'individuell'`): hvorfor,
-   * med dosen pasienten står på. Siste periode fortsetter da (`til` er `null`).
+   * Når planen ikke går til 0 (individuell avslutning eller intervalldosering):
+   * hvorfor planen stopper der, med dosen pasienten står på. Siste periode
+   * fortsetter da (`til` er `null`).
    */
   avslutning?: string
+  /** Det samme kort, til kortformen og rapporten. */
+  avslutning_kort?: string
 }
 
 /** Et bindende krav beregningen er kontrollert mot. */
@@ -150,19 +156,15 @@ export function leggTilMaaneder(dato: string, n: number): string {
 
 /* --- Nedtrapping ---------------------------------------------------------------- */
 
-/**
- * Dosene etter `d0` til og med siste dose over 0, uavrundet. Første dose er
- * allerede redusert; etter siste dose seponeres legemidlet.
- */
-export function trinnserie(s: Nedtrappingsstrategi, d0: number): number[] {
-  const serie: number[] = []
-  const neste = (aktuell: number, k: number): number => {
+/** Neste dose etter `aktuell` i trinn `k` (fra 1), uavrundet; 0 når strategien seponerer. */
+function nesteFor(s: Nedtrappingsstrategi, d0: number): (aktuell: number, k: number) => number {
+  return (aktuell, k) => {
     switch (s.type) {
       case 'prosent_av_aktuell': {
         // Ved lav dose blir trinnet mindre, aldri større enn ellers (også når prosenten er justert ned).
         const lav = s.lav_prosent && s.lav_grense_mg && aktuell <= verdi(s.lav_grense_mg) + EPS
         const d = aktuell * (1 - (lav ? Math.min(verdi(s.lav_prosent!), verdi(s.prosent)) : verdi(s.prosent)) / 100)
-        return d < verdi(s.sluttdose_mg) - EPS ? 0 : d
+        return s.sluttdose_mg && d < verdi(s.sluttdose_mg) - EPS ? 0 : d
       }
       case 'prosent_av_startdose':
         return aktuell - (d0 * verdi(s.prosent)) / 100
@@ -177,6 +179,15 @@ export function trinnserie(s: Nedtrappingsstrategi, d0: number): number[] {
       }
     }
   }
+}
+
+/**
+ * Dosene etter `d0` til og med siste dose over 0, uavrundet. Første dose er
+ * allerede redusert; etter siste dose seponeres legemidlet.
+ */
+export function trinnserie(s: Nedtrappingsstrategi, d0: number): number[] {
+  const neste = nesteFor(s, d0)
+  const serie: number[] = []
   let aktuell = d0
   for (let k = 1; k <= MAKS_TRINN; k++) {
     const d = neste(aktuell, k)
@@ -186,6 +197,43 @@ export function trinnserie(s: Nedtrappingsstrategi, d0: number): number[] {
   }
   throw new Error(`Nedtrappingen (${s.type}) når ikke 0 på ${MAKS_TRINN} trinn`)
 }
+
+/** Hvorfor en nedtrapping uten nulltrinn stopper: horisonten, laveste dose som kan gis, minste dose beregningen viser, eller strategiens siste trinn før 0. */
+export type Trinnslutt = 'horisont' | 'praktisk_grense' | 'minste_viste_dose' | 'siste_trinn'
+
+/** Den minste dosen beregningen viser (to desimaler); et trinn under den ville sett ut som 0 mg. En teknisk grense, ikke en klinisk. */
+export const MINSTE_VISTE_MG = 0.01
+
+/**
+ * Dosene etter `d0` når planen ikke går til 0 (individuell avslutning): høyst
+ * `horisont` reduksjoner (den tekniske planhorisonten), og aldri et trinn
+ * under `min_mg` eller til 0. `neste` er dosen som ville kommet etter siste.
+ */
+export function trinnTilHorisont(s: Nedtrappingsstrategi, d0: number, horisont: number, min_mg?: number): { serie: number[]; slutt: Trinnslutt; neste: number } {
+  const neste = nesteFor(s, d0)
+  const serie: number[] = []
+  let aktuell = d0
+  for (let k = 1; k <= Math.min(horisont, MAKS_TRINN); k++) {
+    const d = neste(aktuell, k)
+    if (d <= EPS) return { serie, slutt: 'siste_trinn', neste: 0 }
+    if (min_mg !== undefined && d < min_mg - EPS) return { serie, slutt: 'praktisk_grense', neste: d }
+    if (d < MINSTE_VISTE_MG - EPS) return { serie, slutt: 'minste_viste_dose', neste: d }
+    serie.push(d)
+    aktuell = d
+  }
+  return { serie, slutt: 'horisont', neste: neste(aktuell, serie.length + 1) }
+}
+
+/** «annenhver dag» eller «hver 3. dag». */
+export const hverTekst = (hver: number) => (hver === 2 ? 'annenhver dag' : `hver ${hver}. dag`)
+
+/**
+ * Det hver plan uten nulltrinn sier om slutten: siste beregnede dose er ikke
+ * nødvendigvis den siste pasienten trenger, og planen foreslår aldri en dato
+ * for siste dose (fagkontrollen 30.10.2026, beslutning 3 og 4).
+ */
+export const AVSLUTNING_FELLES =
+  'Siste beregnede dose er ikke nødvendigvis den siste dosen pasienten trenger før seponering. Planen går ikke til null og foreslår ingen dato for siste dose: avslutningen vurderes individuelt ut fra dosen pasienten da bruker, reduksjonene så langt og hvordan pasienten har reagert på dem, og videre seponering krever forskriverens beslutning.'
 
 /* --- Beregningen ------------------------------------------------------------------ */
 
@@ -257,11 +305,11 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
 
   const perioder: Periode[] = []
   const injeksjoner: Injeksjon[] = []
-  const legg = (fra: number, til: number | null, mg: number) => {
+  const legg = (fra: number, til: number | null, mg: number, hver?: number) => {
     if (til !== null && til < fra) return
     const forrige = perioder.at(-1)
-    if (forrige && forrige.til === fra - 1 && Math.abs(forrige.mg - mg) < EPS) forrige.til = til
-    else perioder.push({ fra, til, mg })
+    if (forrige && forrige.til === fra - 1 && Math.abs(forrige.mg - mg) < EPS && forrige.hver === hver) forrige.til = til
+    else perioder.push({ fra, til, mg, ...(hver !== undefined && { hver }) })
   }
 
   let dag = start
@@ -269,6 +317,7 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
   let fortsetter = false
   let uten: string | undefined
   let avslutning: string | undefined
+  let avslutning_kort: string | undefined
 
   for (const fase of faserFor(regel, f, ctx.medlem)) {
     switch (fase.type) {
@@ -291,20 +340,16 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
         const fasestart = dag
         const lengde = verdi(fase.trinnlengde)
         const individuell = fase.avslutning === 'individuell'
-        // Under sluttdosen har regelen ingen trinn; dosen er ikke ugyldig, men videre nedtrapping er ikke en del av regelen.
-        if (fase.strategi.type === 'prosent_av_aktuell' && aktuell < verdi(fase.strategi.sluttdose_mg) - EPS) {
-          const grense = tall(verdi(fase.strategi.sluttdose_mg))
-          throw new Stopp(
-            individuell
-              ? `Dosen ${tall(aktuell)} mg av ${virkestoff} er under regelens nedre grense (${grense} mg). Regelen har ingen trinn under den og ingen godkjent avslutning; videre nedtrapping og avslutning må vurderes individuelt.`
-              : `Dosen ${tall(aktuell)} mg av ${virkestoff} er under regelens sluttdose (${grense} mg), der regelen går over til seponering. Regelen har ingen godkjent videre nedtrapping eller seponering fra en så lav dose; det må vurderes individuelt.`,
-          )
-        }
-        const serie = trinnserie(fase.strategi, aktuell)
         if (individuell) {
-          // Uten godkjent avslutning tas aldri trinnet til 0: siste dose fortsetter til avslutningen er vurdert.
+          // Uten godkjent avslutning tas aldri trinnet til 0: planen viser trinnene frem til horisonten eller laveste dose som kan gis, og siste dose fortsetter.
+          const min = f.dosevalg?.min_mg?.verdi ?? undefined
+          const { serie, slutt, neste } = trinnTilHorisont(fase.strategi, aktuell, verdi(fase.horisont!), min)
           if (serie.length === 0) {
-            throw new Stopp(`Fra ${tall(aktuell)} mg av ${virkestoff} har regelen ingen reduksjon før avslutningen, og regelen har ingen godkjent avslutning; den må vurderes individuelt.`)
+            throw new Stopp(
+              slutt === 'praktisk_grense'
+                ? `Fra ${tall(aktuell)} mg av ${virkestoff} ville neste trinn (${tall(neste)} mg) vært under ${tall(min!)} mg, den laveste dosen som kan gis med formuleringen regelen gjelder. Regelen har ingen beregnede trinn under den; lavere doser krever en annen dokumentert formulering, og videre nedtrapping eller avslutning må vurderes individuelt.`
+                : `Fra ${tall(aktuell)} mg av ${virkestoff} har regelen ingen reduksjon før avslutningen, og regelen har ingen godkjent avslutning; den må vurderes individuelt.`,
+            )
           }
           for (const mg of serie.slice(0, -1)) {
             legg(dag, dag + lengde - 1, mg)
@@ -312,10 +357,30 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
           }
           aktuell = serie.at(-1)!
           legg(dag, null, aktuell)
-          avslutning = `Planen går ikke til null. Fra dag ${dag} står pasienten på ${tall(aktuell)} mg av ${virkestoff} til avslutningen er vurdert individuelt; regelen har ingen godkjent avslutning (nulltrinn).`
+          const star = `Fra dag ${dag} står pasienten på ${tall(aktuell)} mg av ${virkestoff} til planen revurderes`
+          if (slutt === 'horisont') {
+            avslutning = `Planen viser ${serie.length} reduksjoner, regelens tekniske planhorisont, ikke en klinisk grense. ${star}; videre nedtrapping beregnes da fra dosen pasienten bruker. ${AVSLUTNING_FELLES}`
+            avslutning_kort = `teknisk planhorisont: ${serie.length} reduksjoner; avslutning vurderes individuelt`
+          } else if (slutt === 'praktisk_grense') {
+            avslutning = `Neste trinn (${tall(neste)} mg) ville vært under ${tall(min!)} mg, den laveste dosen som kan gis med formuleringen regelen gjelder (en praktisk grense, ikke en klinisk). ${star}; lavere doser krever en annen dokumentert formulering. ${AVSLUTNING_FELLES}`
+            avslutning_kort = `praktisk grense: ingen trinn under ${tall(min!)} mg; avslutning vurderes individuelt`
+          } else if (slutt === 'minste_viste_dose') {
+            avslutning = `Neste trinn ville vært under ${tall(MINSTE_VISTE_MG)} mg, den minste dosen beregningen viser (en teknisk grense, ikke en klinisk). ${star}. ${AVSLUTNING_FELLES}`
+            avslutning_kort = `teknisk grense: ingen trinn under ${tall(MINSTE_VISTE_MG)} mg; avslutning vurderes individuelt`
+          } else {
+            avslutning = `Regelens siste trinn før null er nådd. ${star}. ${AVSLUTNING_FELLES}`
+            avslutning_kort = 'siste trinn før null; avslutning vurderes individuelt'
+          }
           fortsetter = true
           break
         }
+        // Under sluttdosen har regelen ingen trinn; dosen er ikke ugyldig, men videre nedtrapping er ikke en del av regelen.
+        if (fase.strategi.type === 'prosent_av_aktuell' && fase.strategi.sluttdose_mg && aktuell < verdi(fase.strategi.sluttdose_mg) - EPS) {
+          throw new Stopp(
+            `Dosen ${tall(aktuell)} mg av ${virkestoff} er under regelens sluttdose (${tall(verdi(fase.strategi.sluttdose_mg))} mg), der regelen går over til seponering. Regelen har ingen godkjent videre nedtrapping eller seponering fra en så lav dose; det må vurderes individuelt.`,
+          )
+        }
+        const serie = trinnserie(fase.strategi, aktuell)
         for (const mg of serie) {
           legg(dag, dag + lengde - 1, mg)
           dag += lengde
@@ -350,6 +415,17 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
         legg(dag, null, aktuell)
         fortsetter = true
         break
+      case 'intervalldosering': {
+        const mg = dose(fase.dose, aktuell, ctx)
+        const hver = verdi(fase.hver)
+        const minst = verdi(fase.minstetid)
+        legg(dag, null, mg, hver)
+        aktuell = mg
+        avslutning = `Fra dag ${dag} gis ${tall(mg)} mg av ${virkestoff} ${hverTekst(hver)}, i minst ${minst} dager før pasienten revurderes; planen gjør ingen ny reduksjon av seg selv. ${AVSLUTNING_FELLES}`
+        avslutning_kort = `${hverTekst(hver)} i minst ${minst} dager; avslutning vurderes individuelt`
+        fortsetter = true
+        break
+      }
       case 'seponer':
         aktuell = 0
         break
@@ -394,7 +470,7 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
     injeksjoner,
     siste_dosedag: fortsetter ? null : dag - 1,
     ...(uten ? { uten_beregning: uten } : {}),
-    ...(avslutning ? { avslutning } : {}),
+    ...(avslutning ? { avslutning, avslutning_kort } : {}),
   }
   if (inndata.startdato) dater(resultat, inndata.startdato)
   return resultat
@@ -478,6 +554,7 @@ function planfeil(forlop: Forlopsresultat[]): string[] {
     if (!dag(f.start)) feil.push(`${f.id} starter dag ${String(f.start)}`)
     for (const p of f.perioder) {
       if (!dag(p.fra) || (p.til !== null && (!dag(p.til) || p.til < p.fra)) || !dose(p.mg)) feil.push(`${f.id} har perioden dag ${p.fra}–${String(p.til)} med ${p.mg} mg`)
+      if (p.hver !== undefined && !(Number.isInteger(p.hver) && p.hver >= 2)) feil.push(`${f.id} har perioden dag ${p.fra}–${String(p.til)} med dose hver ${String(p.hver)}. dag`)
     }
     for (const i of f.injeksjoner) {
       if ((i.dag !== null && !dag(i.dag)) || !dose(i.mg)) feil.push(`${f.id} har en injeksjon dag ${String(i.dag)} med ${i.mg} mg`)
@@ -538,6 +615,13 @@ function kontrollerBegrunnelser(regel: Regel, inndata: Beregningsinndata, stopp:
       if (begrunnelse) kontroller.push({ krav, oppfylt: true, detalj: `Forskriverens begrunnelse: «${begrunnelse}».` })
       else stopp.push(`${navn} ${medEnhet(x, p)} krever en skriftlig begrunnelse fra forskriveren (${kravtekst(k, p, regel.sporsmal)}). Skriv begrunnelsen, eller velg en annen verdi.`)
     }
+  }
+  // Et ja på et spørsmål som krever en særskilt vurdering, krever en begrunnelse uansett verdiene.
+  for (const s of regel.sporsmal ?? []) {
+    if (!s.krever_begrunnelse || inndata.svar?.[s.id] !== true) continue
+    const krav = `${s.tekst} Ja: krever begrunnelse (${s.ja})`
+    if (begrunnelse) kontroller.push({ krav, oppfylt: true, detalj: `Forskriverens begrunnelse: «${begrunnelse}».` })
+    else stopp.push(`Svaret ja (${s.ja}) krever en skriftlig begrunnelse fra forskriveren, en særskilt vurdering. Skriv begrunnelsen, eller vurder om regelen passer.`)
   }
 }
 
@@ -713,7 +797,7 @@ const parentes = (...deler: (string | undefined | false)[]) => {
 function periodetekst(p: Periode): string {
   const dager = p.til === null ? `fra dag ${p.fra}` : p.til === p.fra ? `dag ${p.fra}` : `dag ${p.fra}–${p.til}`
   const dato = p.fra_dato && (p.til_dato && p.til !== p.fra ? `${norskDato(p.fra_dato)}–${norskDato(p.til_dato)}` : norskDato(p.fra_dato))
-  return `${dager}${parentes(dato)}: ${mg(p.mg)} mg`
+  return `${dager}${parentes(dato)}: ${mg(p.mg)} mg${p.hver ? ` ${hverTekst(p.hver)}` : ''}`
 }
 
 /** Når injeksjonen gis: `dag 8`, eller for vedlikehold intervallet og første gang (`hver måned fra 1 måned etter dag 8`). */
@@ -732,9 +816,6 @@ function injeksjonstekst(i: Injeksjon): string {
   return `${injeksjonstidspunkt(i)}${parentes(dato && norskDato(dato), vindu)}${tidligst}: ${mg(i.mg)} mg injeksjon${sted}`
 }
 
-/** Linjen i kortformen når planen ikke går til null. */
-export const AVSLUTNING_KORT = 'avslutning: vurderes individuelt (ingen nulltrinn)'
-
 /** Hvert forløp som korte linjer (`dag 1–14: 10 mg`), eller `stopp` med grunnene. */
 export function kortform(r: Beregningsresultat): Record<string, string[]> {
   if (r.status === 'stoppet') return { stopp: r.stoppgrunner }
@@ -743,7 +824,7 @@ export function kortform(r: Beregningsresultat): Record<string, string[]> {
       const linjer = [...f.perioder.map(periodetekst), ...f.injeksjoner.map(injeksjonstekst)]
       if (f.uten_beregning) linjer.push(`tidligst dag ${f.start}${parentes(f.start_dato && norskDato(f.start_dato))}: oppstart, dosering beregnes ikke`)
       if (f.siste_dosedag !== null) linjer.push(`fra dag ${f.siste_dosedag + 1}${parentes(f.seponert_dato && norskDato(f.seponert_dato))}: seponert`)
-      if (f.avslutning) linjer.push(AVSLUTNING_KORT)
+      if (f.avslutning_kort) linjer.push(f.avslutning_kort)
       return [f.id, linjer]
     }),
   )

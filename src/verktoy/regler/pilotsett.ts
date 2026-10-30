@@ -1,10 +1,12 @@
 /**
- * Pilotsettet i P4 (`docs/verktøy-p4-regelmodell.md`): sju regler som
- * prøver regelmodellen på hver regelklasse planen prioriterer – hyperbolsk
- * seponering av antidepressiv, kryssnedtrapping, MAO-relatert utvasking,
- * antipsykotikabytte med fast opptrapping, gruppebasert bytte og to oppstarter
- * med depot. Den gjentatt prosentvise seponeringen av escitalopram er flyttet
- * til nedtrappingsreglene i P7 (`nedtrapping.ts`).
+ * Pilotsettet i P4 (`docs/verktøy-p4-regelmodell.md`): seks regler som
+ * prøver regelmodellen på hver regelklasse planen prioriterer –
+ * kryssnedtrapping, MAO-relatert utvasking, antipsykotikabytte med fast
+ * opptrapping, gruppebasert bytte og to oppstarter med depot. Den gjentatt
+ * prosentvise seponeringen av escitalopram er flyttet til nedtrappingsreglene
+ * i P7 (`nedtrapping.ts`), og den hyperbolske seponeringen av citalopram til
+ * sammenligningssettet der: den er ikke en valgbar klinisk strategi
+ * (fagkontrollen 30.10.2026).
  *
  * Hver regel er OUSFARs egen faglige vurdering, bygget på preparatomtaler,
  * NICE og litteratur (`kilder.ts`), med fakta gjengitt med egne ord.
@@ -17,11 +19,9 @@
  * er regnet ut for hånd og kontrolleres av testene mot beregningen. Reglene
  * som ble endret etter første uavhengige kontroll (PR #282), eller fikk rettet
  * kildegrunnlaget for trinnlengden etter kontrollen av P7 (PR #286), har
- * versjon 2 og er sendt til kontroll på nytt. Den hyperbolske seponeringen har
- * versjon 3: etter fagvurderingen av P7 går den ikke til null.
+ * versjon 2 og er sendt til kontroll på nytt.
  */
-import { AVSLUTNING_KORT } from './beregning'
-import { fluoksetinTrinn28, FORUTSETNINGER_FELLES, forslag, h, halvering, kilde, minst14, NICE, pn, RCPSYCH, steg, trinn14, utsagn } from './bygg'
+import { fluoksetinTrinn28, FORUTSETNINGER_FELLES, forslag, h, halvering, kilde, minst14, NICE, planhorisont, pn, RCPSYCH, steg, trinn14, utsagn } from './bygg'
 import type { Bekreftelse, Godkjenning, Regel, Regelsett, Unntak } from './modell'
 import { REGELMODELLVERSJON } from './modell'
 
@@ -34,6 +34,9 @@ function tilKontroll(...rettinger: { merknad: string; dato?: string }[]): Godkje
   const versjoner = [{ merknad: 'Utkast til pilotregel (P4.7).' }, ...rettinger]
   return { status: 'til_faglig_kontroll', historikk: versjoner.flatMap((v, i) => [steg('utkast', i + 1, v.merknad, v.dato), steg('til_faglig_kontroll', i + 1, TIL_KONTROLL, v.dato)]) }
 }
+
+/** Tar en regel ut av verktøyet: en ny versjon som utkast i sammenligningssettet, ikke til klinisk kontroll. */
+const utAvVerktoyet = (g: Godkjenning, versjon: number): Godkjenning => ({ status: 'utkast', historikk: [...g.historikk, steg('utkast', versjon, UT_AV_VERKTOYET, '2026-10-30')] })
 
 const etterPilotkontrollen = (rettet: string) => ({ merknad: `Rettet etter første uavhengige kontroll (PR #282): ${rettet}` })
 
@@ -110,9 +113,17 @@ const perorFormulering = (tekst: string): Bekreftelse => ({ id: 'peroral_formule
 
 /* --- Reglene ------------------------------------------------------------------------------- */
 
-const seponeringCitalopramHyperbolsk: Regel = {
+/** Fagkontrollen 30.10.2026 (beslutning 5.8): den hyperbolske regelen er ikke en valgbar klinisk strategi. */
+const UT_AV_VERKTOYET =
+  'Tatt ut av verktøyet etter fagkontrollen 30.10.2026 (beslutning 5.8): ikke godkjent som valgbar klinisk strategi. Beholdes bare i sammenlignings- og utviklingssettet, med teknisk planhorisont som de andre planene uten nulltrinn.'
+
+/**
+ * Den hyperbolske seponeringen av citalopram (B2). Ikke i verktøyet: bare i
+ * sammenligningssettet i `nedtrapping.ts`, som ikke er klinisk.
+ */
+export const seponeringCitalopramHyperbolsk: Regel = {
   id: 'seponering-citalopram-hyperbolsk',
-  versjon: 3,
+  versjon: 4,
   tittel: 'Seponering av citalopram, hyperbolsk nedtrapping (alternativ strategi)',
   fra: { type: 'virkestoff', nokkel: 'citalopram' },
   til: null,
@@ -135,6 +146,7 @@ const seponeringCitalopramHyperbolsk: Regel = {
             },
             trinnlengde: trinn14('Nedre del av RCPsychs to til fire uker mellom reduksjonene; en minstetid.'),
             avslutning: 'individuell',
+            horisont: planhorisont(),
           },
         ],
       },
@@ -156,7 +168,7 @@ const seponeringCitalopramHyperbolsk: Regel = {
         LITTERATUR.ed50,
         LITTERATUR.horowitz,
       ),
-      utsagn('Strategien er et alternativ ved siden av gjentatt prosentvis nedtrapping, ikke en standard (B2).'),
+      utsagn('Strategien er ikke en valgbar klinisk strategi (fagkontrollen 30.10.2026); den regnes bare ut til sammenligning med gjentatt prosentvis nedtrapping (B2).'),
       utsagn('Planen tar ikke det åttende trinnet til null: ingen avslutning er godkjent etter fagvurderingen av P7, så siste dose fortsetter til avslutningen er vurdert individuelt. Trinnlengden er en minstetid.'),
     ],
     forutsetninger: [...FORUTSETNINGER_FELLES, 'ED50 fra PET-studier av SERT-binding gjelder pasienten tilnærmet.'],
@@ -164,7 +176,7 @@ const seponeringCitalopramHyperbolsk: Regel = {
       'Bindingskurven bygger på få og små studier med ulike metoder; at like trinn i binding gir mindre seponeringssymptomer, er ikke vist i kontrollerte studier av denne planen.',
       'De siste dosene (under 1 mg) krever flytende form; om det finnes, avgjøres i P5.',
       'Flere trinn er ikke automatisk bedre (P4.6): fra 20 mg tar de sju trinnene før null 12 uker.',
-      'Om den hyperbolske strategien skal være valgbar i verktøyet (B2), og hvordan avslutningen fra den siste lave dosen skal gjøres, er ikke avklart.',
+      'Fagkontrollen 30.10.2026 godkjente ikke strategien som valgbar i verktøyet (B2). Om den senere skal vurderes klinisk, er et eget utviklingsspørsmål, adskilt fra P7.',
     ],
   },
   referanser: [pn('SwitchAntidepressants:Ci>Stop')],
@@ -174,11 +186,11 @@ const seponeringCitalopramHyperbolsk: Regel = {
       beskrivelse: 'Fra 20 mg: like trinn i beregnet binding (85,5 % av maksimum ved 20 mg), uten det åttende trinnet til null.',
       inndata: { startdose_mg: 20 },
       forventet: {
-        fra: ['dag 1–14: 10,08 mg', 'dag 15–28: 6,07 mg', 'dag 29–42: 3,9 mg', 'dag 43–56: 2,54 mg', 'dag 57–70: 1,6 mg', 'dag 71–84: 0,92 mg', 'fra dag 85: 0,41 mg', AVSLUTNING_KORT],
+        fra: ['dag 1–14: 10,08 mg', 'dag 15–28: 6,07 mg', 'dag 29–42: 3,9 mg', 'dag 43–56: 2,54 mg', 'dag 57–70: 1,6 mg', 'dag 71–84: 0,92 mg', 'fra dag 85: 0,41 mg', 'siste trinn før null; avslutning vurderes individuelt'],
       },
     },
   ],
-  godkjenning: tilKontroll(TRINNLENGDE_RETTET, UTEN_NULLTRINN),
+  godkjenning: utAvVerktoyet(tilKontroll(TRINNLENGDE_RETTET, UTEN_NULLTRINN), 4),
 }
 
 const kryssSertralinMirtazapin: Regel = {
@@ -853,12 +865,11 @@ const depotPaliperidon: Regel = {
 
 export const PILOTSETT: Regelsett = {
   id: 'ousfar-verktoy-pilot',
-  versjon: 4,
+  versjon: 5,
   modell: REGELMODELLVERSJON,
   beskrivelse:
     'Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.',
   regler: [
-    seponeringCitalopramHyperbolsk,
     kryssSertralinMirtazapin,
     maoFluoksetinFenelzin,
     antipsykotikabytteOlanzapinKvetiapin,

@@ -67,7 +67,7 @@ describe('oversikten', () => {
     const kort = screen.getAllByRole('link').filter((a) => a.classList.contains('verktoykort__lenke'))
     expect(kort.map((a) => a.getAttribute('href'))).toEqual(['#/verktoy/trappe-ned-antidepressiv', '#/verktoy/bytte-antidepressiv', '#/verktoy/bytte-antipsykotikum'])
     expect(kort.map((a) => a.querySelector('.verktoykort__status')?.textContent)).toEqual([
-      'Ingen beregning tilgjengelig ennå · 17 til faglig kontroll',
+      'Ingen beregning tilgjengelig ennå · 31 til faglig kontroll',
       'Ingen beregning tilgjengelig ennå · 2 til faglig kontroll',
       'Ingen beregning tilgjengelig ennå · 4 til faglig kontroll',
     ])
@@ -146,9 +146,9 @@ describe('med en regel godkjent bare i testen', () => {
     expect(rader[0]).toEqual(['Når', 'Escitalopram peroralt'])
     expect(rader[1]![0]).toBe('Dag 1–14')
     expect(rader[1]![1]).toMatch(/^12,5 mg.*1 tablett à 10 mg.*½ tablett à 5 mg/)
-    // Planen går ikke til null: siste dose fortsetter til avslutningen er vurdert.
+    // Planen går ikke til null: siste dose fortsetter til avslutningen er vurdert, og den er ikke «siste dose før seponering».
     expect(rader.at(-1)!).toEqual(['Fra dag 15', expect.stringMatching(/^6,25 mg.*1¼ tabletter à 5 mg/)])
-    expect(within(plan).getByText(/Planen går ikke til null\. Fra dag 15 står pasienten på 6,25 mg/)).toBeTruthy()
+    expect(within(plan).getByText(/Fra dag 15 står pasienten på 6,25 mg av escitalopram til planen revurderes.*Siste beregnede dose er ikke nødvendigvis den siste dosen pasienten trenger før seponering/)).toBeTruthy()
     expect(within(plan).getByRole('heading', { name: 'Versjoner' })).toBeTruthy()
     expect(within(plan).getByRole('heading', { name: 'Advarsler' })).toBeTruthy()
 

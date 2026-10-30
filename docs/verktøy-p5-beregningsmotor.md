@@ -1,6 +1,6 @@
 # OUSFAR Verktøy – P5: doseplanmotoren med FEST
 
-**Status 28.10.2026:** til faglig kontroll. Motoren er ferdig og testet med syntetiske regler og preparater. Ingen av P4s sju pilotregler er klinisk godkjent (P4.8 er åpen), så motoren kan ikke gi en klinisk doseplan i appen. Ingen brukerflate er laget (P6–P10).
+**Status 30.10.2026:** til faglig kontroll. Motoren er ferdig og testet med syntetiske regler og preparater; doseplanmotoren er versjon 2 etter fagkontrollen av P7 30.10.2026 (§5). Ingen pilotregel eller P7-regel er klinisk godkjent (P4.8 er åpen), så motoren kan ikke gi en klinisk doseplan i appen.
 
 Notatet beskriver hvordan OUSFAR går fra den ideelle dosekurven i P4 til en doseplan med preparater som faktisk finnes i Norge, og hvorfor. Testtilfellene står i `docs/verktøy-p5-testtilfeller.md`, som lages av koden (`npm run verktoy:regler -- motorrapport`) og derfor alltid stemmer med den. Koden ligger i `src/verktoy/motor/`.
 
@@ -43,7 +43,7 @@ FEST sier hva som er registrert og markedsført, ikke hva apoteket har på lager
 
 ## 4. Hva regelen bestemmer (regelmodell 3)
 
-P4-modellen har fått tre valgfrie felt per forløp. Ingen av pilotreglene har dem, så fingeravtrykkene deres er uendret. Regelmodell 4 har i tillegg justerbare verdier, som forskriveren kan velge innenfor regelens område før den ideelle kurven beregnes (`docs/verktøy-p4-regelmodell.md` §3); motoren får kurven slik den da blir. Regelmodell 5 (beregningsmotor 3 i P4) har spørsmål, krav om begrunnelse og individuell avslutning: en seponering går da ikke til null, og siste dose fortsetter til avslutningen er vurdert. Motoren setter sammen dosene til og med den siste dosen og tar med merknaden om avslutningen i planen (`docs/verktøy-p7-nedtrapping.md` §7).
+P4-modellen har fått tre valgfrie felt per forløp. Ingen av pilotreglene har dem, så fingeravtrykkene deres er uendret. Regelmodell 4 har i tillegg justerbare verdier, som forskriveren kan velge innenfor regelens område før den ideelle kurven beregnes (`docs/verktøy-p4-regelmodell.md` §3); motoren får kurven slik den da blir. Regelmodell 5 og 6 (beregningsmotor 3 og 4 i P4) har spørsmål, krav om begrunnelse, individuell avslutning med teknisk planhorisont og dosering med intervall: en seponering går da ikke til null, og siste dose fortsetter til avslutningen er vurdert. Motoren setter sammen dosene til og med den siste dosen og tar med merknaden om avslutningen i planen (`docs/verktøy-p7-nedtrapping.md` §7). En periode med intervall (annenhver dag) settes sammen som en vanlig dose per gang og vises med «annenhver dag».
 
 - **`dosevalg`**: `avvik_prosent` (største avvik fra den ideelle døgndosen, begge veier), `maks_mg` og `min_mg`. Hver er en parameter med art og grunnlag, som andre verdier i en regel. **Uten `avvik_prosent` godtas bare doser som kan gis nøyaktig**; motoren velger aldri en toleranse selv.
 - **`klasser`**: formuleringsklassene (P1) forløpet gjelder, f.eks. bare vanlig frisetting.
@@ -72,6 +72,10 @@ Valget gjøres for hele forløpet samlet (dynamisk programmering), ikke periode 
 **Praktiske rammer.** En døgndose settes sammen av høyst 2 styrker og til sammen høyst 4 tabletter eller kapsler eller 60 dråper, talt over alle styrkene i dosen. Det er en ramme for søket, ikke en klinisk grense. Finnes ingen dose innenfor den, stopper beregningen og sier det.
 
 **Stopp (P5.8).** Kan en periode ikke gis innenfor rammene, stopper beregningen med perioden, den ideelle dosen, toleransen, de nærmeste dosene som kan settes sammen med avviket, og preparater som er utelatt fordi de ikke er markedsført hele perioden. Motoren utvider aldri toleransen, bytter formulering eller endrer trinnene selv; det er en ny faglig beslutning.
+
+**Planer uten nulltrinn (doseplanmotor 2).** Etter fagkontrollen 30.10.2026 (beslutning 3 og 7) stopper en plan med individuell avslutning eller intervall ved trinnet før det første trinnet som ikke kan gis, eller som ville gått mot kurvens retning. Siste periode som kan gis, fortsetter uten slutt, med forklaringen om hvilket trinn som ikke kan gis, de nærmeste dosene, at planen stopper ved trinnet før og at siste beregnede dose ikke er siste dose før seponering. Forklaringen erstatter den ideelle planens merknad om hvor planen stopper. Kan allerede første trinn ikke gis, stopper beregningen som før. Ved hver nærmeste dose under dosen pasienten bruker, oppgir stoppen den faktiske reduksjonen («faktisk reduksjon 50 % fra 60 mg»), og den sier at en annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning. Testtilfellene `uten-nulltrinn-stopper-ved-trinnet-for`, `uten-nulltrinn-forste-trinn-kan-ikke-gis` og `annenhver-dag` viser det.
+
+**Flytende former.** Dråper med dokumentert mg per dråpe i FEST kan brukes når de er valgt; Cipralex dråper har 1 mg per dråpe. Miksturer og konsentrater uten dokumentert oppløsning for oppmålingen brukes ikke. Zoloft konsentrat (20 mg/ml) står i FEST uten slik oppløsning, så det er fortsatt sperret til dose per ml, oppmålingsoppløsning og nøyaktighet er dokumentert (`docs/verktøy-p7-nedtrapping.md` §10).
 
 **Avrunding og enheter (P5.6).** Alle doser regnes i mg moderstoff per døgn. Den ideelle dosen bevares uavrundet ved siden av den praktiske, og avviket i prosent av den ideelle. Delte tabletter vises som brøk (½, ¼, 1¾). Tall vises med to desimaler.
 
@@ -115,7 +119,7 @@ Testene kontrollerer at ingen av de sju pilotreglene kan gi en klinisk plan, hel
 Motoren ble kjørt på pilotreglenes regneeksempler med FEST-filen lastet ned 28.10.2026 (uttrekk 08.10.2026). Dette var en modellberegning for å kontrollere byggesteinene på virkelige data. Ingenting er lagret, og ingenting er klinisk.
 
 - Escitalopram, sertralin, mirtazapin, paliperidon og aripiprazol ble lest som forventet. Delbarheten følger FEST per preparat (f.eks. Cipralex 10 og 20 mg delbar i 2, 5 mg ikke spesifisert). Preparater med godkjenningsfritak er skilt ut.
-- **Seponering av escitalopram og citalopram** stopper, fordi pilotreglene ikke har toleranse og 3,75 mg og 10,08 mg ikke kan gis nøyaktig. Det er riktig etter reglene slik de står. Om de skal ha en toleranse eller en flytende form, er et faglig valg (§11).
+- **Seponering av escitalopram og citalopram** stoppet, fordi pilotreglene ikke hadde toleranse og 3,75 mg og 10,08 mg ikke kan gis nøyaktig. Fagkontrollen av P7 30.10.2026 avgjorde at ingen regel skal ha toleranse, og at et trinn som ikke kan gis, gir en forklart stopp (§5).
 - **Sertralin → mirtazapin, fluoksetin → fenelzin og olanzapin → kvetiapin** gir planer med registrerte tabletter.
 - **Zuklopentiksol i gruppen Rest AP** stopper på 15 mg, som ikke kan gis nøyaktig.
 - **Abilify Maintena og Xeplion** stopper, fordi depotforløpene ikke sier hvilket preparat de gjelder (§4).

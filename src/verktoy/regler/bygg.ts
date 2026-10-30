@@ -112,6 +112,20 @@ export const halvering = (sluttdose: Parameter, lav?: { prosent: Parameter; gren
   sluttdose_mg: sluttdose,
 })
 
+/**
+ * Den tekniske planhorisonten for en plan uten nulltrinn: hvor mange
+ * reduksjoner planen viser frem i tid (fagkontrollen 30.10.2026, beslutning
+ * 3). Ingen klinisk sluttdose eller varighet; antallet er OUSFARs tekniske valg.
+ */
+export const PLANHORISONT_TRINN = 12
+
+export const planhorisont = () =>
+  forslag(
+    PLANHORISONT_TRINN,
+    'trinn',
+    `Teknisk planhorisont, ikke en klinisk grense: planen viser høyst ${PLANHORISONT_TRINN} reduksjoner frem i tid, omtrent ett år med 28 dager per trinn. Ved revurdering beregnes en ny plan fra dosen pasienten da bruker. At planen skal ha en slik horisont i stedet for en nedre grense, bestemte fagkontrollen 30.10.2026 (beslutning 3); antallet er OUSFARs tekniske valg.`,
+  )
+
 export const FORUTSETNINGER_FELLES = [
   'Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.',
   'Dosene er den ideelle dosekurven, avrundet til to desimaler; hvilke doser som kan gis med norske preparater (styrker, deling, flytende form), avgjøres i P5.',

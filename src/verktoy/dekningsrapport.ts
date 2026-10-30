@@ -11,6 +11,7 @@ import { lesKartdata } from './kartdata'
 import { MARKEDSGRUNNLAG, markedsgrunnlag, preparaterFor, type Kartdata } from './kartlegging'
 import { lesKontrollgrunnlag, type Kontrollgrunnlag } from './regler/kontroll'
 import { henvisninger, type Regel, type Regelsett } from './regler/modell'
+import { PLANHORISONT_TRINN } from './regler/bygg'
 import { BEREGNBARHET, dato, liste, statustekst, tabell, tall } from './regler/rapport'
 import { REGELSETT } from './tilgjengelighet'
 
@@ -40,11 +41,8 @@ export function lavesteStyrke(preparater: readonly Festpreparat[]): number | nul
   return styrker.length > 0 ? Math.min(...styrker) : null
 }
 
-/** Planens nedre grense i regelen (mg): et klinisk valg, uavhengig av styrkene, og aldri et automatisk sluttpunkt. */
-const nedreGrenseI = (r: Regel): number | null => {
-  for (const f of r.plan.forlop.flatMap((l) => l.faser)) if (f.type === 'nedtrapping' && f.strategi.type === 'prosent_av_aktuell') return f.strategi.sluttdose_mg.verdi
-  return null
-}
+/** Den praktiske grensen i regelen (mg): laveste dose formuleringen kan gi, ikke en klinisk grense eller et sluttpunkt. */
+const praktiskGrenseI = (r: Regel): number | null => r.plan.forlop.find((f) => f.dosevalg?.min_mg)?.dosevalg?.min_mg?.verdi ?? null
 
 const TILGJENGELIGHET = { hentet: 'hentet', alternativ_adresse: 'hentet fra annen adresse', utilgjengelig: '**utilgjengelig**' } as const
 
@@ -54,7 +52,7 @@ function rad(d: Dekning, kart: Kartdata, g: Kontrollgrunnlag): string[] {
   const preparater = preparaterFor(kart, d.nokkel)
   const laveste = lavesteStyrke(preparater)
   const regler = seponeringsregler(d.nokkel)
-  const grenser = [...new Set(regler.flatMap((r) => nedreGrenseI(r) ?? []))]
+  const grenser = [...new Set(regler.flatMap((r) => praktiskGrenseI(r) ?? []))]
   const kilder = [...new Set(regler.flatMap((r) => henvisninger(r).map((h) => h.kilde)))].filter((k) => k !== 'psychiatrienet')
   return [
     navn,
@@ -77,14 +75,14 @@ export function lagDekningsrapport(kart: Kartdata = lesKartdata(), g: Kontrollgr
 
 <!-- Laget av \`npm run verktoy:regler -- rapport\` fra src/verktoy/dekning.ts, regelsettet, P3-kildearkivet og FEST-uttrekket. Ikke rediger for hånd. -->
 
-Én rad per antidepressivum i kildetabellen (${NEDTRAPPINGSDEKNING.length} virkestoffer; johannesurt er utelatt). Statusen skiller kildens Stop-oppføring fra OUSFARs egen regel: at kilden har en Stop-oppføring, gir aldri i seg selv en regel, og ingen regel bygger på teksten der. **Ingen regel er klinisk godkjent**, så verktøyet viser ingen doseplan før uavhengig faglig kontroll (P7.5). Valgene og de åpne faglige spørsmålene står i \`docs/verktøy-p7-nedtrapping.md\`, reglene i \`docs/verktøy-p7-regelutkast.md\`, og paroksetins raske studievariant, som bare er til sammenligning og ikke i verktøyet, i \`docs/verktøy-p7-sammenligning.md\`.
+Én rad per antidepressivum i kildetabellen (${NEDTRAPPINGSDEKNING.length} virkestoffer; johannesurt er utelatt). Statusen skiller kildens Stop-oppføring fra OUSFARs egen regel: at kilden har en Stop-oppføring, gir aldri i seg selv en regel, og ingen regel bygger på teksten der. **Ingen regel er klinisk godkjent**, så verktøyet viser ingen doseplan før uavhengig faglig kontroll (P7.5). Valgene og de åpne faglige spørsmålene står i \`docs/verktøy-p7-nedtrapping.md\`, reglene i \`docs/verktøy-p7-regelutkast.md\`, og den hyperbolske citalopramregelen, som bare er til sammenligning og ikke i verktøyet, i \`docs/verktøy-p7-sammenligning.md\`.
 
 ${liste(telling)}
 
-Norske preparater og laveste styrke er lest fra FEST-uttrekket ${fest} (\`src/data/verktoy/fest-formuleringer.json\`): laveste styrke blant tabletter og kapsler med markedsføringstillatelse som er markedsført. Den nedre grensen er regelens kliniske grense for beregnede trinn (en firedel av laveste døgndose i preparatomtalen), ikke en styrke og ikke en sluttdose: planen går aldri til null, og avslutningen vurderes individuelt (fagvurderingen 29.10.2026). Hvilke trinn som kan gis med preparatene, avgjøres når doseplanen beregnes, og et trinn som ikke kan gis, stopper beregningen med begrunnelse.
+Norske preparater og laveste styrke er lest fra FEST-uttrekket ${fest} (\`src/data/verktoy/fest-formuleringer.json\`): laveste styrke blant tabletter og kapsler med markedsføringstillatelse som er markedsført. Ingen regel har en fast klinisk nedre grense (fagkontrollen 30.10.2026): planen viser høyst ${PLANHORISONT_TRINN} reduksjoner, en teknisk planhorisont, går aldri til null, og avslutningen vurderes individuelt. Den praktiske grensen er laveste dose formuleringen kan gi når den begrenser trinnene (depotkapsler som skal svelges hele), ikke en klinisk grense. Hvilke trinn som ellers kan gis med preparatene, avgjøres når doseplanen beregnes, og planen stopper ved første trinn som ikke kan gis.
 
 ${tabell(
-  ['Virkestoff', 'Stop-oppføring (P3)', 'Norske preparater', 'Laveste styrke (FEST)', 'Nedre grense i regelen', 'Status', 'Regel', 'Kildegrunnlag for regelen', 'Forklaring'],
+  ['Virkestoff', 'Stop-oppføring (P3)', 'Norske preparater', 'Laveste styrke (FEST)', 'Praktisk grense i regelen', 'Status', 'Regel', 'Kildegrunnlag for regelen', 'Forklaring'],
   NEDTRAPPINGSDEKNING.map((d) => rad(d, kart, g)),
 )}
 `

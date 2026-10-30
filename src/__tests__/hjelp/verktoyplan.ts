@@ -6,7 +6,7 @@
  * verdiene har klinisk innhold.
  */
 import type { Legemiddelutvalg } from '../../legemiddeldata/lesing'
-import { KRYSSREGEL, depotregel, nedtrappingsregel, sp, syntetiskUtvalg, TESTAZAPIN, TESTOKSETIN, TESTPERIDON, type Testpreparat } from '../../verktoy/motor/syntetisk'
+import { KRYSSREGEL, depotregel, nedtrappingUtenNull, sp, syntetiskUtvalg, TESTAZAPIN, TESTOKSETIN, TESTPERIDON, type Testpreparat } from '../../verktoy/motor/syntetisk'
 import { KARTLEGGING } from '../../verktoy/register'
 import { fingeravtrykk } from '../../verktoy/regler/godkjenning'
 import type { Regel, Regelsett, Virkestoffvalg } from '../../verktoy/regler/modell'
@@ -45,15 +45,12 @@ export function godkjennITest(r: Regel, id: string): Regel {
 }
 
 /**
- * Den syntetiske nedtrappingen: 50 % av aktuell dose per trinn, ikke under
- * 5 mg. Den går ikke til null, som ingen seponeringsregel kan (P7.5): siste
- * dose fortsetter til avslutningen er vurdert individuelt.
+ * Den syntetiske nedtrappingen: 50 % av aktuell dose per trinn, ingen trinn
+ * under 5 mg (en syntetisk praktisk grense) og høyst 12 reduksjoner. Den går
+ * ikke til null, som ingen seponeringsregel kan (P7.5): siste dose fortsetter
+ * til avslutningen er vurdert individuelt.
  */
-function nedtrapping(id?: string): Regel {
-  const r = nedtrappingsregel({ type: 'prosent_av_aktuell', prosent: sp(50, 'prosent'), sluttdose_mg: sp(5, 'mg') }, { avvik_prosent: sp(10, 'prosent') }, id)
-  for (const fase of r.plan.forlop[0]!.faser) if (fase.type === 'nedtrapping') fase.avslutning = 'individuell'
-  return r
-}
+const nedtrapping = (id?: string): Regel => nedtrappingUtenNull({ type: 'prosent_av_aktuell', prosent: sp(50, 'prosent') }, { avvik_prosent: sp(10, 'prosent'), min_mg: sp(5, 'mg') }, id)
 
 /** Nedtrapping av «escitalopram» med syntetiske verdier: 50 % av aktuell dose per trinn, uten nulltrinn. */
 export const TEST_NEDTRAPPING: Regel = godkjennITest(omkoble(nedtrapping()), 'test-nedtrapping')

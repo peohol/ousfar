@@ -1,6 +1,6 @@
 # OUSFAR Verktøy – P5: testtilfeller for doseplanmotoren
 
-**Laget av `src/verktoy/motor/rapport.ts`; ikke rediger for hånd.** Lag den på nytt med `npm run verktoy:regler -- motorrapport`. Doseplanmotor 1. Bakgrunnen står i `docs/verktøy-p5-beregningsmotor.md`.
+**Laget av `src/verktoy/motor/rapport.ts`; ikke rediger for hånd.** Lag den på nytt med `npm run verktoy:regler -- motorrapport`. Doseplanmotor 2. Bakgrunnen står i `docs/verktøy-p5-beregningsmotor.md`.
 
 **Alt her er syntetisk.** Virkestoffene (testoksetin, testazapin, testperidon), preparatene og reglene finnes ikke og har ingen klinisk betydning. De er laget for å prøve motoren ved grenseverdiene: deling, formuleringer og former, godkjenningsfritak, avregistrering, toleranse, dosegrenser, utvasking, depot og datoer. Ingen av P4s pilotregler er brukt eller godkjent, og ingen plan her er klinisk. Hvert tilfelle kontrolleres av `src/__tests__/verktoymotor.test.ts`.
 
@@ -85,7 +85,7 @@ Testoksetin 20 mg trappes ned med 25 % av startdosen (5 mg) per trinn. Uten tole
 
 ### prosent-av-aktuell-toleranse-10
 
-Testoksetin 20 mg trappes ned med 25 % av aktuell dose til under 2,5 mg, med høyst 10 % avvik, og forskriveren har valgt bare 10 og 20 mg-tablettene. 11,25 mg kan ikke gis innenfor 10 %: nærmeste doser er 10 mg (−11,1 %) og 15 mg; 12,5 mg krever en kvart 10 mg-tablett, som ikke er delbar i 4.
+Testoksetin 20 mg trappes ned med 25 % av aktuell dose til under 2,5 mg, med høyst 10 % avvik, og forskriveren har valgt bare 10 og 20 mg-tablettene. 11,25 mg kan ikke gis innenfor 10 %: nærmeste doser er 10 mg (−11,1 %, en faktisk reduksjon på 33,3 % fra 15 mg) og 15 mg; 12,5 mg krever en kvart 10 mg-tablett, som ikke er delbar i 4.
 
 *Kontrollerer:* P5.5 prosent av aktuell dose; valgte preparater; P5.8 stopp uten gjennomførbar dose, med de nærmeste dosene. *Regel:* SYNTETISK TESTREGEL: seponering av testoksetin. *Inndata:* startdose 20 mg, valg: fra peroral, SYN-TAB, OKS-TAB10, OKS-TAB20. *Preparatstatus:* 2026-11-01.
 
@@ -106,7 +106,7 @@ Testoksetin 20 mg trappes ned med 25 % av aktuell dose til under 2,5 mg, med hø
 
 *Stopper:*
 
-- testoksetin dag 15–28: den ideelle dosen 11,25 mg kan ikke gis med preparatene i FEST innenfor ±10 %. Nærmeste doser som kan settes sammen: 10 mg (-11,11 %) og 15 mg (+33,33 %). Et større avvik eller en annen formulering krever en ny faglig beslutning; beregningen gjør det ikke selv.
+- testoksetin dag 15–28: den ideelle dosen 11,25 mg kan ikke gis med preparatene i FEST innenfor ±10 %. Nærmeste doser som kan settes sammen: 10 mg (-11,11 %, faktisk reduksjon 33,33 % fra 15 mg) og 15 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 ### prosent-av-aktuell-toleranse-15
 
@@ -220,7 +220,7 @@ Som over, uten valget: 2 mg kan ikke gis, og beregningen stopper.
 
 *Stopper:*
 
-- testoksetin dag 1–14: den ideelle dosen 2 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 1,25 mg (-37,5 %) og 2,5 mg (+25 %). Et større avvik eller en annen formulering krever en ny faglig beslutning; beregningen gjør det ikke selv.
+- testoksetin dag 1–14: den ideelle dosen 2 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 1,25 mg (-37,5 %, faktisk reduksjon 68,75 % fra 4 mg) og 2,5 mg (+25 %, faktisk reduksjon 37,5 % fra 4 mg). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 ### flere-former-uten-valg
 
@@ -334,7 +334,7 @@ Bare kapsler à 20 mg: 15 mg kan ikke gis, siden kapsler aldri deles eller åpne
 
 *Stopper:*
 
-- testoksetin dag 1–14: den ideelle dosen 15 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 20 mg (+33,33 %). Et større avvik eller en annen formulering krever en ny faglig beslutning; beregningen gjør det ikke selv.
+- testoksetin dag 1–14: den ideelle dosen 15 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 20 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 ### depottablett-delbar-i-fest
 
@@ -444,7 +444,7 @@ Som over med måldose 60 mg: over regelens høyeste døgndose 45 mg.
 
 *Stopper:*
 
-- testazapin fra dag 8: den ideelle dosen 60 mg kan ikke gis med preparatene i FEST nøyaktig og ikke over 45 mg. Nærmeste doser som kan settes sammen: 45 mg (-25 %) og 75 mg (+25 %). Testazapin Syntetisk tablett 45 mg brukes ikke her, fordi FEST melder at det ikke er markedsført hele perioden. Et større avvik eller en annen formulering krever en ny faglig beslutning; beregningen gjør det ikke selv.
+- testazapin fra dag 8: den ideelle dosen 60 mg kan ikke gis med preparatene i FEST nøyaktig og ikke over 45 mg. Nærmeste doser som kan settes sammen: 45 mg (-25 %) og 75 mg (+25 %). Testazapin Syntetisk tablett 45 mg brukes ikke her, fordi FEST melder at det ikke er markedsført hele perioden. En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
 
 ### avregistrering-i-planperioden
 
@@ -761,4 +761,118 @@ Testazapin-dråper à 1 og 2 mg: 120 mg er 60 dråper, men 121 mg ville krevd 61
 
 *Stopper:*
 
-- testazapin dag 8–14: den ideelle dosen 121 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 120 mg (-0,83 %). Et større avvik eller en annen formulering krever en ny faglig beslutning; beregningen gjør det ikke selv.
+- testazapin dag 8–14: den ideelle dosen 121 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 120 mg (-0,83 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+
+### uten-nulltrinn-stopper-ved-trinnet-for
+
+Testoksetin 20 mg trappes ned med 25 % av aktuell dose uten nulltrinn (individuell avslutning), med 10 og 20 mg-tablettene. 15 mg kan gis, men 11,25 mg ikke: planen stopper ved trinnet før og står på 15 mg til avslutningen er vurdert, i stedet for å runde av eller seponere.
+
+*Kontrollerer:* P5.8 en plan uten nulltrinn stopper ved siste trinn som kan gis, med forklaring (fagkontrollen 30.10.2026, beslutning 3 og 7). *Regel:* SYNTETISK TESTREGEL: seponering av testoksetin. *Inndata:* startdose 20 mg, valg: fra peroral, SYN-TAB, OKS-TAB10, OKS-TAB20. *Preparatstatus:* 2026-11-01.
+
+**Ideell kurve (P4):**
+
+*fra:*
+
+- dag 1–14: 15 mg
+- dag 15–28: 11,25 mg
+- dag 29–42: 8,44 mg
+- dag 43–56: 6,33 mg
+- dag 57–70: 4,75 mg
+- dag 71–84: 3,56 mg
+- dag 85–98: 2,67 mg
+- dag 99–112: 2 mg
+- dag 113–126: 1,5 mg
+- dag 127–140: 1,13 mg
+- dag 141–154: 0,84 mg
+- fra dag 155: 0,63 mg
+- teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt
+
+**Doseplan:**
+
+*fra:*
+
+- fra dag 1: 15 mg = 1½ tabletter à 10 mg
+- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
+
+**Avvik fra den ideelle kurven:**
+
+- Ingen.
+
+**Preparater (FESTs navn, deling):**
+
+- Testoksetin Syntetisk tablett 10 mg (FEST: «Delbar i 2»)
+
+**Begrensninger (preparater som ikke brukes):**
+
+- Ingen.
+
+**Klinisk:** nei. Regelen er en syntetisk testregel. Regelversjonen er utkast, ikke klinisk godkjent. Preparatene er fra «Syntetiske testdata», ikke fra FEST.
+
+### uten-nulltrinn-forste-trinn-kan-ikke-gis
+
+Som over fra 10 mg med bare 10 mg-tabletten: allerede 7,5 mg kan ikke gis, så beregningen stopper med de nærmeste dosene og den faktiske reduksjonen.
+
+*Kontrollerer:* P5.8 stopp med faktisk reduksjon når første trinn ikke kan gis; en annen dose er et nytt forslag. *Regel:* SYNTETISK TESTREGEL: seponering av testoksetin. *Inndata:* startdose 10 mg, valg: fra peroral, SYN-TAB, OKS-TAB10. *Preparatstatus:* 2026-11-01.
+
+**Ideell kurve (P4):**
+
+*fra:*
+
+- dag 1–14: 7,5 mg
+- dag 15–28: 5,63 mg
+- dag 29–42: 4,22 mg
+- dag 43–56: 3,16 mg
+- dag 57–70: 2,37 mg
+- dag 71–84: 1,78 mg
+- dag 85–98: 1,33 mg
+- dag 99–112: 1 mg
+- dag 113–126: 0,75 mg
+- dag 127–140: 0,56 mg
+- dag 141–154: 0,42 mg
+- fra dag 155: 0,32 mg
+- teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt
+
+**Doseplan:**
+
+*Stopper:*
+
+- testoksetin dag 1–14: den ideelle dosen 7,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 5 mg (-33,33 %, faktisk reduksjon 50 % fra 10 mg) og 10 mg (+33,33 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.
+
+### annenhver-dag
+
+Testoksetin 20 mg gis annenhver dag i minst 28 dager: én tablett hver gang, aldri 0 mg, og ingen ny reduksjon av seg selv.
+
+*Kontrollerer:* P5 intervalldosering: dosen per gang settes sammen som en vanlig dose (fagkontrollen 30.10.2026, beslutning 5.10). *Regel:* SYNTETISK TESTREGEL: seponering av testoksetin. *Inndata:* startdose 20 mg, valg: fra peroral, SYN-TAB. *Preparatstatus:* 2026-11-01.
+
+**Ideell kurve (P4):**
+
+*fra:*
+
+- fra dag 1: 20 mg annenhver dag
+- annenhver dag i minst 28 dager; avslutning vurderes individuelt
+
+**Doseplan:**
+
+*fra:*
+
+- fra dag 1: 20 mg annenhver dag = 1 tablett à 20 mg
+- annenhver dag i minst 28 dager; avslutning vurderes individuelt
+
+**Avvik fra den ideelle kurven:**
+
+- Ingen.
+
+**Preparater (FESTs navn, deling):**
+
+- Testoksetin Syntetisk tablett 20 mg (FEST: «Delbar i 4»)
+
+**Begrensninger (preparater som ikke brukes):**
+
+- Testoksetin Avregistrert tablett 1 mg: er avregistrert i FEST
+- Testoksetin Fritak tablett 2 mg: krever godkjenningsfritak, som ikke er valgt
+- Testoksetin Kombi tablett 6 mg: er et kombinasjonspreparat
+- Testoksetin Salt tablett 4 mg: har styrken oppgitt for saltet Testoksetinsalt; omregning til moderstoffet er ikke dokumentert i FEST
+- Testoksetin Sykehus tablett 3 mg: har preparattypen «Sykehuspreparat», som ikke brukes i automatiske doseplaner
+- Testoksetin Utgått tablett 7,5 mg: er midlertidig utgått i FEST fra 01.09.2026
+
+**Klinisk:** nei. Regelen er en syntetisk testregel. Regelversjonen er utkast, ikke klinisk godkjent. Preparatene er fra «Syntetiske testdata», ikke fra FEST.

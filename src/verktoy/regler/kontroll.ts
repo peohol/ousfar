@@ -111,7 +111,7 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
     const viser = [x.start.type === 'etter_utvasking' ? x.start.forlop : null, ...x.faser.map((y) => (y.type === 'hold' && y.varighet.type === 'til_forlop_er_avsluttet' ? y.varighet.forlop : null))]
     for (const v of viser) if (v && !tidligere.includes(v)) f(`forløp ${x.id} viser til ${v}, som ikke kommer før`)
     const forste = x.faser[0]
-    const trengerDose = forste && (forste.type === 'nedtrapping' || (forste.type === 'hold' && forste.dose.type === 'aktuell'))
+    const trengerDose = forste && (forste.type === 'nedtrapping' || ((forste.type === 'hold' || forste.type === 'intervalldosering') && forste.dose.type === 'aktuell'))
     if (trengerDose && x.utgangsdose !== 'startdose') f(`forløp ${x.id} trapper ned eller holder en dose uten utgangsdose`)
     // Avgrensningene P5 regner med: formuleringene passer administrasjonen, og varenavnene er oppgitt.
     for (const k of x.klasser ?? []) if (!KLASSER[x.administrasjon].includes(k)) f(`forløp ${x.id} gjelder formuleringen ${k}, som ikke er ${x.administrasjon}`)
@@ -193,7 +193,15 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
   for (const x of nulltrinnfeil(r)) f(x)
   for (const x of r.plan.forlop) {
     for (const fase of x.faser) {
-      if (fase.type === 'nedtrapping' && fase.avslutning === 'individuell' && fase.minste_varighet) f(`forløp ${x.id} har både minste varighet og individuell avslutning; uten seponering har nedtrappingen ingen slutt å måle til`)
+      if (fase.type !== 'nedtrapping') continue
+      const individuell = fase.avslutning === 'individuell'
+      const sluttdose = fase.strategi.type === 'prosent_av_aktuell' && !!fase.strategi.sluttdose_mg
+      if (individuell && fase.minste_varighet) f(`forløp ${x.id} har både minste varighet og individuell avslutning; uten seponering har nedtrappingen ingen slutt å måle til`)
+      // Uten seponering trengs en teknisk planhorisont, og en sluttdose ville vært en nedre grense ingen har godkjent.
+      if (individuell && !fase.horisont) f(`forløp ${x.id} har individuell avslutning uten teknisk planhorisont; planen ville ikke hatt noen grense`)
+      if (!individuell && fase.horisont) f(`forløp ${x.id} har en planhorisont uten individuell avslutning; en nedtrapping til 0 har ingen horisont`)
+      if (individuell && sluttdose) f(`forløp ${x.id} har både sluttdose og individuell avslutning; ingen nedre grense for beregnede trinn er godkjent`)
+      if (!individuell && fase.strategi.type === 'prosent_av_aktuell' && !sluttdose) f(`forløp ${x.id} trapper ned prosentvis uten sluttdose og uten individuell avslutning; dosen når aldri 0`)
     }
   }
   for (const x of tallfeil(r)) f(x)

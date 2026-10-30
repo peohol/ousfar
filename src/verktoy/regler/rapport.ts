@@ -42,9 +42,9 @@ export const P7RAPPORT: Regelrapport = {
 }
 export const P7SAMMENLIGNING: Regelrapport = {
   fil: 'docs/verktøy-p7-sammenligning.md',
-  tittel: 'P7: varianter til sammenligning (ikke i verktøyet)',
+  tittel: 'P7: sammenlignings- og utviklingssett (ikke i verktøyet, ikke klinisk)',
   sett: SAMMENLIGNINGSSETT,
-  notater: ['docs/verktøy-p7-nedtrapping.md'],
+  notater: ['docs/verktøy-p7-nedtrapping.md', 'docs/verktøy-p4-regelmodell.md'],
 }
 export const REGELRAPPORTER: readonly Regelrapport[] = [P4RAPPORT, P7RAPPORT, P7SAMMENLIGNING]
 
@@ -114,6 +114,7 @@ function parametertabell(r: Regel): string {
   }
   for (const f of r.plan.forlop) {
     if (f.start.type === 'etter_utvasking') legg(`${f.id}: start`, f.start)
+    if (f.dosevalg) legg(`${f.id}: dosevalg`, f.dosevalg)
     f.faser.forEach((fase, i) => legg(`${f.id}: fase ${i + 1} (${fase.type})`, fase))
   }
   for (const m of r.medlemmer ?? []) (m.faser ?? []).forEach((fase, i) => legg(`${m.nokkel}: fase ${i + 1} (${fase.type})`, fase))
@@ -157,7 +158,7 @@ function regelavsnitt(r: Regel, sett: Regelsett): string {
     }),
     ...r.bekreftelser.map((b) => `Må bekreftes (\`${b.id}\`): ${b.tekst} (${grunnlag(b.grunnlag)})`),
     ...r.unntak.map((u) => `Unntak (\`${u.id}\`): ${u.tekst} (${grunnlag(u.grunnlag)})`),
-    ...(r.sporsmal ?? []).map((x) => `Må besvares (\`${x.id}\`): ${x.tekst} (${grunnlag(x.grunnlag)})`),
+    ...(r.sporsmal ?? []).map((x) => `Må besvares (\`${x.id}\`): ${x.tekst}${x.krever_begrunnelse ? ' Et ja krever en skriftlig begrunnelse.' : ''} (${grunnlag(x.grunnlag)})`),
   ]
   const medlemmer = r.medlemmer
     ? `\n\n**Gruppemedlemmer (B4).** Bare medlemmer som er foreslått eller validert, kan beregnes.\n\n${tabell(

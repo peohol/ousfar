@@ -33,7 +33,7 @@
 import type { Formuleringsklasse } from '../festformuleringer'
 
 /** Økes når formen på regler eller regelsett endres. */
-export const REGELMODELLVERSJON = 5
+export const REGELMODELLVERSJON = 6
 
 /* --- Kilder ----------------------------------------------------------------- */
 
@@ -183,8 +183,13 @@ export type Dosekilde =
  * startdosen eller av den aktuelle dosen, aldri uspesifisert (B1).
  */
 export type Nedtrappingsstrategi =
-  /** Hvert trinn er `prosent` lavere enn forrige dose (gjentatt prosentvis); `lav_prosent` når dosen er nådd `lav_grense_mg`. Under `sluttdose_mg` seponeres. */
-  | { type: 'prosent_av_aktuell'; prosent: Parameter; lav_prosent?: Parameter; lav_grense_mg?: Parameter; sluttdose_mg: Parameter }
+  /**
+   * Hvert trinn er `prosent` lavere enn forrige dose (gjentatt prosentvis);
+   * `lav_prosent` når dosen er nådd `lav_grense_mg`. Under `sluttdose_mg`
+   * seponeres. Uten sluttdose når dosen aldri 0; da må fasen ha individuell
+   * avslutning og en teknisk planhorisont.
+   */
+  | { type: 'prosent_av_aktuell'; prosent: Parameter; lav_prosent?: Parameter; lav_grense_mg?: Parameter; sluttdose_mg?: Parameter }
   /** Hvert trinn er `prosent` av startdosen lavere (lineært). */
   | { type: 'prosent_av_startdose'; prosent: Parameter }
   /** Hvert trinn er `mg` lavere (lineært, absolutt). */
@@ -210,9 +215,18 @@ export type Fase =
    * `minste_varighet` dager, stopper beregningen i stedet for å forlenge den.
    * Med `avslutning: 'individuell'` går planen ikke til 0: siste trinn
    * fortsetter, og avslutningen må vurderes individuelt, fordi regelen ikke
-   * har noen godkjent avslutning (nulltrinn). Da er trinnlengden en minstetid.
+   * har noen godkjent avslutning (nulltrinn). Da er trinnlengden en minstetid,
+   * og `horisont` er hvor mange reduksjoner planen viser frem i tid: en
+   * teknisk planhorisont, ikke en klinisk sluttdose. Planen stopper også før
+   * et trinn under forløpets laveste dose som kan gis (`dosevalg.min_mg`).
    */
-  | { type: 'nedtrapping'; strategi: Nedtrappingsstrategi; trinnlengde: Parameter; minste_varighet?: Parameter; avslutning?: 'individuell' }
+  | { type: 'nedtrapping'; strategi: Nedtrappingsstrategi; trinnlengde: Parameter; minste_varighet?: Parameter; avslutning?: 'individuell'; horisont?: Parameter }
+  /**
+   * Dosen gis hver `hver`. dag i stedet for daglig, fra fasen starter og uten
+   * slutt: minst `minstetid` dager før pasienten revurderes. Går aldri til 0;
+   * videre nedtrapping eller seponering er forskriverens beslutning.
+   */
+  | { type: 'intervalldosering'; dose: Dosekilde | { type: 'aktuell' }; hver: Parameter; minstetid: Parameter }
   /** Fast opptrapping: hver dose i sitt antall dager. */
   | { type: 'opptrapping'; trinn: { mg: Parameter; dager: Parameter }[] }
   /** Dosen planen ender med (ingen sluttdato). */
@@ -321,6 +335,8 @@ export interface Sporsmal {
   tekst: string
   /** Hva et ja betyr, kort, til teksten i planen og kravene: «lang behandlingstid». */
   ja: string
+  /** Et ja krever en skriftlig begrunnelse fra forskriveren (en særskilt vurdering). */
+  krever_begrunnelse?: true
   grunnlag: Grunnlag
 }
 
@@ -451,6 +467,9 @@ export const FELTENHET: Record<string, Enhet> = {
   dag: 'dag',
   maaneder: 'maaneder',
   trinn: 'trinn',
+  horisont: 'trinn',
+  hver: 'dager',
+  minstetid: 'dager',
   prosent: 'prosent',
   lav_prosent: 'prosent',
   mg: 'mg',
@@ -545,7 +564,8 @@ export function apneValg(r: Regel): string[] {
  * Brudd på kravet om at en ren seponering aldri går til 0 av seg selv: ingen
  * avslutning (nulltrinn) er godkjent faglig (P7.5). Hvert forløp i en
  * beregnbar seponeringsregel, også et gruppemedlems egne faser, må slutte med
- * en nedtrapping med individuell avslutning, kan ikke trappe ned før den og
+ * en nedtrapping med individuell avslutning eller en intervalldosering
+ * ({@link fortsetterUtenNull}), kan ikke trappe ned før den og
  * kan ikke seponere. Bytter (seponering før et annet legemiddel) og regler som
  * bare er tekstlige, er unntatt. Kontrollen og godkjenningen bruker begge
  * denne, så en regel som bryter kravet, er aldri klinisk godkjent, uansett
@@ -567,13 +587,16 @@ export function nulltrinnfeil(r: Pick<Regel, 'plan' | 'beregnbarhet' | 'medlemme
         ...(faser.slice(0, -1).some((x) => x.type === 'nedtrapping')
           ? [`${hvor} trapper ned før siste fase; bare siste fase kan trappe ned, så forløpet aldri er på 0 mg underveis`]
           : []),
-        ...(sist?.type !== 'nedtrapping' || sist.avslutning !== 'individuell'
-          ? [`${hvor} slutter ikke med en nedtrapping med individuell avslutning; ingen avslutning er godkjent, så en seponeringsregel kan ikke gå til null`]
+        ...(!fortsetterUtenNull(sist)
+          ? [`${hvor} slutter ikke med en nedtrapping med individuell avslutning eller en intervalldosering; ingen avslutning er godkjent, så en seponeringsregel kan ikke gå til null`]
           : []),
       ]
     })
   })
 }
+
+/** Om en fase avslutter et forløp uten å gå til 0: en nedtrapping med individuell avslutning eller en intervalldosering. */
+export const fortsetterUtenNull = (f: Fase | undefined) => (f?.type === 'nedtrapping' && f.avslutning === 'individuell') || f?.type === 'intervalldosering'
 
 /** En beregnbar ren seponering: ingen avslutning er godkjent, så den kan aldri gå til 0 ({@link nulltrinnfeil}). */
 export const erRenSeponering = (r: Pick<Regel, 'plan' | 'beregnbarhet'>) => r.plan.form === 'seponering' && r.beregnbarhet !== 'bare_tekstlig'

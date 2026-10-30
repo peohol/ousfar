@@ -428,7 +428,7 @@ describe('Sperren mot klinisk bruk', () => {
   const NAA = new Date('2026-11-01T12:00:00Z')
 
   it('ingen av P4s pilotregler kan gi en klinisk plan, uansett preparatdata', () => {
-    expect(PILOTSETT.regler).toHaveLength(7)
+    expect(PILOTSETT.regler).toHaveLength(6)
     const fest = somFest(g.utvalg)
     for (const r of PILOTSETT.regler) {
       expect(r.godkjenning.status).not.toBe('klinisk_godkjent')
@@ -470,9 +470,10 @@ describe('Sperren mot klinisk bruk', () => {
     const regel: Regel = structuredClone({ ...fastDose([30]), id: 'positivkontroll-bare-i-test' })
     regel.plan.forlop[0]!.faser.push({
       type: 'nedtrapping',
-      strategi: { type: 'prosent_av_aktuell', prosent: sp(50, 'prosent'), sluttdose_mg: sp(15, 'mg') },
+      strategi: { type: 'prosent_av_aktuell', prosent: sp(50, 'prosent') },
       trinnlengde: sp(7, 'dager'),
       avslutning: 'individuell',
+      horisont: sp(1, 'trinn'),
     })
     const av = { dato: '2026-11-01', av: 'Testkontrollør', rolle: 'uavhengig_kontrollor' as const, regelversjon: 1 }
     const avklar = (x: unknown): void => {
