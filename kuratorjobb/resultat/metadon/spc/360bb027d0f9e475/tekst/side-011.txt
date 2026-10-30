@@ -1,0 +1,59 @@
+administrering av en antagonist føre til akutte abstinenssymptomer. Hvis det er mulig bør bruk av
+antagonister unngås hos slike pasienter. Dersom det likevel er nødvendig å administrere
+antagonister på grunn av alvorlig respirasjonsdepresjon, må det utvises stor forsiktighet, og
+antagonistdosen må være lav ved mistanke om metadonforgiftning.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Midler ved opioidavhengighet, ATC-kode: N07B C02
+
+Metadon er et narkotisk analgetikum som tilhører samme gruppe som morfin. Substansen har en
+agonistisk effekt på opioidreseptorene i hjernen, beinmargen og nervesystemet, med høy affinitet til
+my-reseptorer og noe affinitet til delta- og kappa-reseptorer. Metadon virker på samme måte som
+morfin, men har en mindre sedativ effekt. Bruk av metadon kan redusere eller eliminere effektene
+av andre opioider. Metadon kan i nøye titrert dose gis peroralt uten å gi noen eufori, men kun en
+"normal" tilstand i 24-32 timer, etterfulgt av gradvis økning av seponeringssymptomer, med mindre
+det gis en ny dose.
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+Metadon absorberes raskt etter peroral administrering, men gjennomgår en betydelig
+førstepassasjemetabolisme. Biotilgjengeligheten er > 80 %. Steady state-konsentrasjoner oppnås
+innen 5-7 dager.
+
+Distribusjon
+Distribusjonsvolumet er 5 liter/kg. Proteinbinding: Opptil 90 %, med en høyere grad av
+proteinbinding av den inaktive S-enantiomeren, men med store individuelle forskjeller. Metadon
+bindes hovedsakelig til alfa-1-surt glykoprotein, men også til albumin og andre plasma- og
+vevsproteiner. Forholdet mellom plasma:fullblod er ca. 1:3. Metadon distribueres til vev, med
+høyere konsentrasjoner i lever, lunger og nyrer enn i blodet.
+
+Metabolisme
+Katalyseres hovedsakelig via CYP3A4, men CYP2D6 og CYP2B6 er også involvert, i mindre
+omfang. Metabolismen foregår hovedsakelig ved N-demetylering, som gir de viktigste
+metabolittene 2-etylidin-1,5-dimetyl-3,3-difenylpyrrolidin (EDDP) og 2-etyl-5-metyl-3,3-difenyl-
+1-pyrrolidin (EMDP), som begge er inaktive. Hydroksylering til metanol etterfulgt av N-
+demetylering til normetadol foregår også til en viss grad. Andre metabolske reaksjoner forekommer
+også og minst åtte andre metabolitter er kjent.
+
+Eliminasjon
+Eliminasjonshalveringstid: Enkeltdose 10-25 timer. Gjentatt dosering: 13-55 timer.
+Plasmaclearance er ca. 2 ml/minutt/kg. Cirka 20-60 % av dosen elimineres i urinen i løpet av
+96 timer (ca. 33 % i uendret form, ca. 43 % som EDDP og ca. 5-10 % som EMDP). Forholdet
+mellom EDDP og uendret metadon er vanligvis mye høyere i urinen hos pasienter som får
+metadonbehandling enn ved vanlig overdosering. Eliminasjon av uendret metadon i urinen er pH-
+avhengig og øker med økende surhetsgrad i urinen. Cirka 30 % av dosen elimineres via feces, men
+denne andelen reduseres vanligvis ved høyere doser. Cirka 75 % av substans som elimineres er i
+ukonjugert form.
+
+Spesielle pasientpopulasjoner
+Det er ingen signifikante forskjeller i farmakokinetikken mellom menn og kvinner. Eliminasjon av
+metadon reduseres kun i noen grad hos eldre (> 65 år).
+
+
+
+                                                11

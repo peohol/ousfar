@@ -1,0 +1,1329 @@
+{
+  "stoff": "metadon",
+  "status": "advarsel",
+  "kilde": "foresporsel",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-10-30T04:15:57.810377+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 115,
+    "hentet": 1,
+    "dokumenter": 1,
+    "mangler": [
+      {
+        "merkevare_id": "ID_01A39B65-092E-47ED-9915-C1873AEB9D42",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 160 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10168.pdf"
+      },
+      {
+        "merkevare_id": "ID_060E81B5-D06B-4404-8021-15D18DD13B2A",
+        "varenavn": "Levopidon",
+        "navn_form_styrke": "Levopidon mikst oppl 45 mg",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC05",
+        "legemiddelform": "Mikstur, oppløsning i endosebeholder",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11965.pdf"
+      },
+      {
+        "merkevare_id": "ID_0F2E5885-2AAA-4177-AA25-17DC1E741F2B",
+        "varenavn": "Levopidon",
+        "navn_form_styrke": "Levopidon tab 30 mg",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC05",
+        "legemiddelform": "Tablett",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/18-12541.pdf"
+      },
+      {
+        "merkevare_id": "ID_15CD46A8-A812-4016-9C7D-026128E19F5C",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 90 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10161.pdf"
+      },
+      {
+        "merkevare_id": "ID_179C1DA2-A493-4781-8059-F77A8579E5F5",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 180 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10170.pdf"
+      },
+      {
+        "merkevare_id": "ID_17D35115-AC71-4307-A368-A2F420876978",
+        "varenavn": "Metadon dne",
+        "navn_form_styrke": "Metadon dne mikst oppl 110 mg/flaske",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2424.pdf"
+      },
+      {
+        "merkevare_id": "ID_1E97CF57-E006-4A7F-ADC4-BDD0BB09AF79",
+        "varenavn": "Metadon dne",
+        "navn_form_styrke": "Metadon dne mikst oppl 80 mg/flaske",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2424.pdf"
+      },
+      {
+        "merkevare_id": "ID_2448C34D-5325-4D37-AD20-58A557CFF69F",
+        "varenavn": "Metadon dne",
+        "navn_form_styrke": "Metadon dne mikst oppl 130 mg/flaske",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2424.pdf"
+      },
+      {
+        "merkevare_id": "ID_55C1BCE8-DE40-4E7A-927E-86C24EF3ACB8",
+        "varenavn": "Metadon dne",
+        "navn_form_styrke": "Metadon dne mikst oppl 70 mg/flaske",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2424.pdf"
+      },
+      {
+        "merkevare_id": "ID_65E1FF59-FD8E-4BF8-A5A1-1FA69323AE54",
+        "varenavn": "Metadon dne",
+        "navn_form_styrke": "Metadon dne mikst oppl 90 mg/flaske",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2424.pdf"
+      },
+      {
+        "merkevare_id": "ID_73BB0FCF-B004-4CD6-82C0-621BD6644F6E",
+        "varenavn": "Metadon dne",
+        "navn_form_styrke": "Metadon dne mikst oppl 150 mg/flaske",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2424.pdf"
+      },
+      {
+        "merkevare_id": "ID_86C1A21F-6484-4579-AD3E-6E9CCCABCFB7",
+        "varenavn": "Metadon dne",
+        "navn_form_styrke": "Metadon dne mikst oppl 140 mg/flaske",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2424.pdf"
+      },
+      {
+        "merkevare_id": "ID_9E23B63C-11CC-487F-A223-D9610B9DDC1F",
+        "varenavn": "Metadon dne",
+        "navn_form_styrke": "Metadon dne mikst oppl 100 mg/flaske",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2424.pdf"
+      },
+      {
+        "merkevare_id": "ID_E8969389-6248-4419-A7BB-1CF8F2ECCEA9",
+        "varenavn": "Metadon dne",
+        "navn_form_styrke": "Metadon dne mikst oppl 120 mg/flaske",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2424.pdf"
+      },
+      {
+        "merkevare_id": "ID_1AC90883-B92F-4446-8276-23A81A29042E",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 55 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10157.pdf"
+      },
+      {
+        "merkevare_id": "ID_1E41F24C-BFE0-480C-8B21-6CC8E36AA819",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 40 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10153.pdf"
+      },
+      {
+        "merkevare_id": "ID_1F3E3626-ADDF-4783-A979-1DD0DE007CD8",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 110 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10163.pdf"
+      },
+      {
+        "merkevare_id": "ID_20B2F81D-9431-474C-B798-FB0126FA4915",
+        "varenavn": "Metadon dne",
+        "navn_form_styrke": "Metadon dne mikst oppl 110 mg/flaske",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8175.pdf"
+      },
+      {
+        "merkevare_id": "ID_2DE75CC2-9CBD-4307-92ED-6E1C91B044A5",
+        "varenavn": "Metadon dne",
+        "navn_form_styrke": "Metadon dne mikst oppl 80 mg/flaske",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8175.pdf"
+      },
+      {
+        "merkevare_id": "ID_675B3C27-8164-47EC-AA28-1D08233504DA",
+        "varenavn": "Metadon dne",
+        "navn_form_styrke": "Metadon dne mikst oppl 100 mg/flaske",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8175.pdf"
+      },
+      {
+        "merkevare_id": "ID_7CE9ECB0-6E50-4C52-A7A0-F06868E03DD1",
+        "varenavn": "Metadon dne",
+        "navn_form_styrke": "Metadon dne mikst oppl 120 mg/flaske",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8175.pdf"
+      },
+      {
+        "merkevare_id": "ID_8FB8F50D-D7CC-481C-814C-6EEE5116DCE7",
+        "varenavn": "Metadon dne",
+        "navn_form_styrke": "Metadon dne mikst oppl 60 mg/flaske",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8175.pdf"
+      },
+      {
+        "merkevare_id": "ID_97B08444-1ECB-4038-80FA-A1E3C7DD48A1",
+        "varenavn": "Metadon dne",
+        "navn_form_styrke": "Metadon dne mikst oppl 90 mg/flaske",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8175.pdf"
+      },
+      {
+        "merkevare_id": "ID_F8A2ABE3-126F-4599-87E5-7916591BB26C",
+        "varenavn": "Metadon dne",
+        "navn_form_styrke": "Metadon dne mikst oppl 70 mg/flaske",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8175.pdf"
+      },
+      {
+        "merkevare_id": "ID_2796C405-39B1-4606-9D6B-E66FE53EE935",
+        "varenavn": "Metadon Martindale Pharma",
+        "navn_form_styrke": "Metadon Martindale Pharma mikst oppl 150 mg/flaske",
+        "produsent": "Ethypharm (2)",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/05-3241.pdf"
+      },
+      {
+        "merkevare_id": "ID_48CCAEE2-2F30-456E-B3E8-A4DCE535EBEF",
+        "varenavn": "Metadon Martindale Pharma",
+        "navn_form_styrke": "Metadon Martindale Pharma mikst oppl 130 mg/flaske",
+        "produsent": "Ethypharm (2)",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/05-3241.pdf"
+      },
+      {
+        "merkevare_id": "ID_92A293A2-683D-4A7E-A154-C7FDAB78B448",
+        "varenavn": "Metadon Martindale Pharma",
+        "navn_form_styrke": "Metadon Martindale Pharma mikst oppl 50 mg/flaske",
+        "produsent": "Ethypharm (2)",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/05-3241.pdf"
+      },
+      {
+        "merkevare_id": "ID_9C2633CB-EDA4-4CAF-A87A-12B1AF2F2623",
+        "varenavn": "Metadon Martindale Pharma",
+        "navn_form_styrke": "Metadon Martindale Pharma mikst oppl 110 mg/flaske",
+        "produsent": "Ethypharm (2)",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/05-3241.pdf"
+      },
+      {
+        "merkevare_id": "ID_2B07E354-A35D-4DE1-B05E-4CFBC58A53A1",
+        "varenavn": "Metadon dne",
+        "navn_form_styrke": "Metadon dne mikst oppl 15 mg/flaske",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2423.pdf"
+      },
+      {
+        "merkevare_id": "ID_378BB632-722B-4EC0-B382-C31D2922D951",
+        "varenavn": "Metadon dne",
+        "navn_form_styrke": "Metadon dne mikst oppl 30 mg/flaske",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2423.pdf"
+      },
+      {
+        "merkevare_id": "ID_80455F75-1FAF-4A05-AEF8-C621590A753D",
+        "varenavn": "Metadon dne",
+        "navn_form_styrke": "Metadon dne mikst oppl 50 mg/flaske",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2423.pdf"
+      },
+      {
+        "merkevare_id": "ID_990BF08E-D137-4912-8045-1404B5CD373C",
+        "varenavn": "Metadon dne",
+        "navn_form_styrke": "Metadon dne mikst oppl 20 mg/flaske",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2423.pdf"
+      },
+      {
+        "merkevare_id": "ID_E6F6F3F1-DBC0-4F4C-AF3F-1CA5A0A6565D",
+        "varenavn": "Metadon dne",
+        "navn_form_styrke": "Metadon dne mikst oppl 40 mg/flaske",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2423.pdf"
+      },
+      {
+        "merkevare_id": "ID_32ACBE73-9716-48DA-BCB4-ABDB2D97F89A",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 190 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10171.pdf"
+      },
+      {
+        "merkevare_id": "ID_37472F43-7448-49E0-BE5B-34151802D415",
+        "varenavn": "Levopidon",
+        "navn_form_styrke": "Levopidon mikst oppl 25 mg",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC05",
+        "legemiddelform": "Mikstur, oppløsning i endosebeholder",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-12070.pdf"
+      },
+      {
+        "merkevare_id": "ID_3B77EA9F-B09D-4A4F-9665-185BA2F6FAF7",
+        "varenavn": "Levopidon",
+        "navn_form_styrke": "Levopidon tab 10 mg",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC05",
+        "legemiddelform": "Tablett",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/18-12539.pdf"
+      },
+      {
+        "merkevare_id": "ID_466B4862-76E2-4F65-BB5E-C96F6618FD40",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 50 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10156.pdf"
+      },
+      {
+        "merkevare_id": "ID_57C48AB9-FCC4-4095-A886-377B01B9753D",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 45 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10155.pdf"
+      },
+      {
+        "merkevare_id": "ID_5BF99448-3D74-45AA-8156-204369759B8B",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 20 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10149.pdf"
+      },
+      {
+        "merkevare_id": "ID_6AD536A1-0546-4DA7-922E-D41AC9254065",
+        "varenavn": "Levopidon",
+        "navn_form_styrke": "Levopidon tab 20 mg",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC05",
+        "legemiddelform": "Tablett",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/18-12540.pdf"
+      },
+      {
+        "merkevare_id": "ID_6BAD6CD5-2707-45AF-89C0-011959EEA826",
+        "varenavn": "Metadon Abcur",
+        "navn_form_styrke": "Metadon Abcur tab 20 mg",
+        "produsent": "Abcur AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Tablett",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/16-11473.pdf"
+      },
+      {
+        "merkevare_id": "ID_70ABECC1-904D-458A-8FDB-BF9684029117",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 30 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10151.pdf"
+      },
+      {
+        "merkevare_id": "ID_7271D240-FC37-4776-B988-9A21FBE4D131",
+        "varenavn": "Levopidon",
+        "navn_form_styrke": "Levopidon mikst oppl 75 mg",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC05",
+        "legemiddelform": "Mikstur, oppløsning i endosebeholder",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11971.pdf"
+      },
+      {
+        "merkevare_id": "ID_78AE1F8C-7EA0-4B2A-9C02-C38546241662",
+        "varenavn": "Levopidon",
+        "navn_form_styrke": "Levopidon mikst oppl 30 mg",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC05",
+        "legemiddelform": "Mikstur, oppløsning i endosebeholder",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/16-11328.pdf"
+      },
+      {
+        "merkevare_id": "ID_7AA8E9A4-4081-4927-B421-66C825CF9982",
+        "varenavn": "Metadon Abcur",
+        "navn_form_styrke": "Metadon Abcur tab 10 mg",
+        "produsent": "Abcur AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Tablett",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/16-11472.pdf"
+      },
+      {
+        "merkevare_id": "ID_7B91A6CA-E7E6-40AE-B93F-682933D4FC98",
+        "varenavn": "Levopidon",
+        "navn_form_styrke": "Levopidon mikst oppl 35 mg",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC05",
+        "legemiddelform": "Mikstur, oppløsning i endosebeholder",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/16-11329.pdf"
+      },
+      {
+        "merkevare_id": "ID_846A8FC6-B5DF-4CE5-B624-43B63A2C5588",
+        "varenavn": "Levopidon",
+        "navn_form_styrke": "Levopidon mikst oppl 15 mg",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC05",
+        "legemiddelform": "Mikstur, oppløsning i endosebeholder",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-12047.pdf"
+      },
+      {
+        "merkevare_id": "ID_8682CC58-CC2A-4B75-8F8B-0590496F7A6E",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 15 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10152.pdf"
+      },
+      {
+        "merkevare_id": "ID_89847E83-1A42-490B-9952-3AAC8A91F0D6",
+        "varenavn": "Levopidon",
+        "navn_form_styrke": "Levopidon mikst oppl 60 mg",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC05",
+        "legemiddelform": "Mikstur, oppløsning i endosebeholder",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11968.pdf"
+      },
+      {
+        "merkevare_id": "ID_8CC184A8-05EF-4DB6-A77A-762FAABEACB3",
+        "varenavn": "Levopidon",
+        "navn_form_styrke": "Levopidon mikst oppl 20 mg",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC05",
+        "legemiddelform": "Mikstur, oppløsning i endosebeholder",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-12069.pdf"
+      },
+      {
+        "merkevare_id": "ID_94FC05E4-55F7-4D62-86A7-A31DAA88B85F",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 80 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10160.pdf"
+      },
+      {
+        "merkevare_id": "ID_95AC2393-583C-4BB1-868A-2FBD016BF8E2",
+        "varenavn": "Metadon Abcur",
+        "navn_form_styrke": "Metadon Abcur tab 40 mg",
+        "produsent": "Abcur AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Tablett",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/16-11474.pdf"
+      },
+      {
+        "merkevare_id": "ID_9CE1E4CF-B266-4C4F-9609-C122B942E4E7",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 130 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10165.pdf"
+      },
+      {
+        "merkevare_id": "ID_A10383D1-541F-4233-9D73-AFC27F9D816D",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 10 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10148.pdf"
+      },
+      {
+        "merkevare_id": "ID_A1CFE813-1D7B-4DAD-9C42-9D4C217067A4",
+        "varenavn": "Levopidon",
+        "navn_form_styrke": "Levopidon mikst oppl 50 mg",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC05",
+        "legemiddelform": "Mikstur, oppløsning i endosebeholder",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11966.pdf"
+      },
+      {
+        "merkevare_id": "ID_A3F6C1DF-6188-4B8A-97CF-469B0C33F9C6",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 150 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10167.pdf"
+      },
+      {
+        "merkevare_id": "ID_A7AB3672-CA1A-417F-81F6-3BF60BBA0243",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 140 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10166.pdf"
+      },
+      {
+        "merkevare_id": "ID_A7EB581B-5CEB-4FB1-909B-A8159D783F82",
+        "varenavn": "Levopidon",
+        "navn_form_styrke": "Levopidon mikst oppl 70 mg",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC05",
+        "legemiddelform": "Mikstur, oppløsning i endosebeholder",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11970.pdf"
+      },
+      {
+        "merkevare_id": "ID_AE016309-F311-4FE0-BB47-548271869E20",
+        "varenavn": "Levopidon",
+        "navn_form_styrke": "Levopidon mikst oppl 65 mg",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC05",
+        "legemiddelform": "Mikstur, oppløsning i endosebeholder",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11969.pdf"
+      },
+      {
+        "merkevare_id": "ID_AF6BFF9D-5D15-4FAC-83D5-3B56382E2C5A",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 25 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10150.pdf"
+      },
+      {
+        "merkevare_id": "ID_B76E031D-0041-4A1C-88C4-885807531543",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 35 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10154.pdf"
+      },
+      {
+        "merkevare_id": "ID_BC4722B9-B412-4D7F-A285-0F3E808A92AD",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 100 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10162.pdf"
+      },
+      {
+        "merkevare_id": "ID_CC84DD53-D0EF-4DC2-80E4-659A7404D179",
+        "varenavn": "Levopidon",
+        "navn_form_styrke": "Levopidon mikst oppl 10 mg",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC05",
+        "legemiddelform": "Mikstur, oppløsning i endosebeholder",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-12068.pdf"
+      },
+      {
+        "merkevare_id": "ID_CDBE9BEE-C258-4CB9-B846-E8DB26680A76",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 200 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10172.pdf"
+      },
+      {
+        "merkevare_id": "ID_D1925C84-0237-4C70-8DF8-D5CD4F33C00B",
+        "varenavn": "Levopidon",
+        "navn_form_styrke": "Levopidon mikst oppl 40 mg",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC05",
+        "legemiddelform": "Mikstur, oppløsning i endosebeholder",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/16-11330.pdf"
+      },
+      {
+        "merkevare_id": "ID_D5202952-4034-43D7-B53F-C3D5504B2082",
+        "varenavn": "Levopidon",
+        "navn_form_styrke": "Levopidon mikst oppl 5 mg",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC05",
+        "legemiddelform": "Mikstur, oppløsning i endosebeholder",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-12046.pdf"
+      },
+      {
+        "merkevare_id": "ID_E14525D2-C720-49CD-9D7D-D628320C12A2",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 120 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10164.pdf"
+      },
+      {
+        "merkevare_id": "ID_EF8C52CB-5759-4F91-8BCA-90DA79D9112E",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 170 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10169.pdf"
+      },
+      {
+        "merkevare_id": "ID_F2BAAE7A-DB12-4F42-80E0-E30BD902B2BE",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 60 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10158.pdf"
+      },
+      {
+        "merkevare_id": "ID_F587AF44-F603-45CA-BA5E-0C760ED0CB9B",
+        "varenavn": "Metadon Nordic Drugs",
+        "navn_form_styrke": "Metadon Nordic Drugs mikst oppl 70 mg/flaske",
+        "produsent": "Nordic Drugs AB",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10159.pdf"
+      },
+      {
+        "merkevare_id": "ID_FD1E695E-598A-46F3-B6D7-44D1EDB92A69",
+        "varenavn": "Levopidon",
+        "navn_form_styrke": "Levopidon tab 5 mg",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC05",
+        "legemiddelform": "Tablett",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/18-12538.pdf"
+      },
+      {
+        "merkevare_id": "ID_FE4FACD6-1FCA-4115-9A76-D549D9EBFDD6",
+        "varenavn": "Levopidon",
+        "navn_form_styrke": "Levopidon mikst oppl 55 mg",
+        "produsent": "Navamedic ASA",
+        "atc": "N07BC05",
+        "legemiddelform": "Mikstur, oppløsning i endosebeholder",
+        "grunn": "ikke_valgt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11967.pdf"
+      },
+      {
+        "merkevare_id": "ID_0A1B614A-549F-4772-9CB3-F15CAB81AEC1",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 105 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_0CE37B0A-33C9-49A8-AD33-BF7BA4F544B3",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 10 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_138E7C59-EE09-4D4C-9BE7-2654BF9EDE50",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 85 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_1E59688A-8DAD-44C7-8A92-94288CCF500F",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 75 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_2951DE70-00A5-4848-9716-7E351E3D00FB",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 185 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_2F5F57C4-C63F-4AF9-8CEB-613D9D6B4177",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 125 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_30323F0B-C802-44BD-9EF3-D5CD18B123F9",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 195 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_46F9B3ED-CEB2-4350-BE7E-BED92FEA1946",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 5 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_5058194D-EA01-48E7-B401-1BD9561A93C9",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 100 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_5D77583F-5BA0-4E11-B3D0-04F8125ED8E2",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 135 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_5FE81C97-7CA4-4348-921F-55AF07C4FB12",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 120 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_61B057A7-96A3-42AA-A625-E476A6E7CA99",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 60 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_6E88036C-D50E-4E81-ADD4-85A69BB60E34",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 30 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_71FD938F-B7F5-4122-B92D-AD01D18FADEB",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 50 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_7917C0B8-C80E-481E-A36D-6D5F76DBF6D7",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 175 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_7D647C01-B150-4D9D-9244-4C6696E09A07",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 150 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_83066F71-A94F-479E-AB44-0558AD4A8DD0",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 165 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_8E1EBEC0-F576-46DD-8F9B-4FE38E4FC914",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 20 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_8F122F66-E5F7-411E-B85A-2B51CAE89226",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 45 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_90CFAEE9-B1BC-4244-84EA-6DFA607F447B",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 25 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_94933519-94A5-4F58-84C0-29EFC16EC359",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 190 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_97576869-C981-4EB5-9A0D-6D9A442D8148",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 130 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_9A499926-547E-4153-8733-EECED688232C",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 90 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_A209CF8C-EDBE-4532-9AD3-854CBEA84138",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 110 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_A688CD6A-4853-451F-9BC8-098E4BA57BD1",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 70 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_A944AB42-7E84-47DC-97EE-7CA9CFB5B76D",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 80 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_BBD3BDE3-BE3D-48C6-98F5-34074CD084A7",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 95 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_C6CB9CA4-6ABC-4A3D-923E-8C8F70D675FC",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 170 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_CDD94394-0279-4B0E-B365-9C49D3233CE5",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 200 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_DE141266-4666-4BE0-819D-693F9D90309A",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 40 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_E6DF832E-B385-42D2-B162-3B6CF2CE4EAB",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 15 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_E753944C-3517-4859-BBF2-7759495647A0",
+        "varenavn": "Metadon NAF",
+        "navn_form_styrke": "Metadon NAF inj, oppl 10 mg/ml",
+        "produsent": "Sykehusapoteket Oslo, Rikshospitalet",
+        "atc": "N07BC02",
+        "legemiddelform": "Injeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_E7ECA63B-0E93-44DB-BCE3-9397288D1458",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 160 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_EC552C59-52F1-4AE7-A472-30569FCA6B7E",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 65 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_EFA4034D-46E2-4AF3-8998-661503F38884",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 35 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_F15BF5DE-8910-4F55-B455-A3F18CF4F3BB",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 180 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_F172A2D4-144A-4B52-B736-C99CC70ABEB7",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 155 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_F36DA3BD-F5DA-483B-A35C-16034CE3C448",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 115 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_F4F02DE3-AC01-4620-9E90-1FE132061080",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 55 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_F98ADB88-75FF-4D2C-BB80-D8B4A894F6CF",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 145 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_FB85DEE6-15BC-45A0-880B-289815235129",
+        "varenavn": "Metadon SA",
+        "navn_form_styrke": "Metadon SA mikst oppl 10 mg/ml",
+        "produsent": "Sykehusapoteket Oslo, Ullevål",
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_FC748EBF-3148-466C-8B7E-56C0D2A0CDE4",
+        "varenavn": "Metadon apotektilvirket",
+        "navn_form_styrke": "Metadon apotektilvirket mikst oppl med solbærsmak 140 mg/dose",
+        "produsent": null,
+        "atc": "N07BC02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 52 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 52,
+        "ikke_dmp": 0,
+        "uten_omtale": 42
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "114 av 115 preparater i FEST mangler en hentet preparatomtale fra DMP: 42 uten preparatomtale i FEST (f.eks. sentralt godkjente, med omtalen hos EMA); 72 ikke valgt i forespørselen. SPC-behovet er ikke dekket; se «dekning.mangler».",
+      "antall": {
+        "preparater": 115,
+        "hentet": 1,
+        "mangler": 114,
+        "dokumenter": 1
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/16-11471.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/16-11471.pdf",
+      "hentet_kl": "2026-10-30T18:56:39.742Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "359321",
+        "content-md5": "UUle+Jpbd82BVsGIQ4w9Xw==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:09 GMT",
+        "etag": "0x8DF250864E464BA",
+        "date": "Fri, 30 Oct 2026 18:56:40 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_D3AD5E05-9A6B-490D-AD2F-F50BB53B18CD",
+          "varenavn": "Metadon Abcur",
+          "navn_form_styrke": "Metadon Abcur tab 5 mg",
+          "produsent": "Abcur AB",
+          "atc": "N07BC02",
+          "legemiddelform": "Tablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/16-11471.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (359321 byte).",
+          "antall": {
+            "bytes": 359321
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "360bb027d0f9e4756777a3bd33c8d915acd05d57b69110b4481bd82c8c429a97"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "360bb027d0f9e4756777a3bd33c8d915acd05d57b69110b4481bd82c8c429a97",
+      "bytes": 359321,
+      "mappe": "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475",
+      "pdf": {
+        "sider": 13,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Wed Jun 10 07:58:26 2026 UTC",
+        "endret": "Wed Jun 10 07:58:26 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/original.pdf",
+        "tekst": "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/tekst/side-001.txt",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/tekst/side-002.txt",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/tekst/side-003.txt",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/tekst/side-004.txt",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/tekst/side-005.txt",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/tekst/side-006.txt",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/tekst/side-007.txt",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/tekst/side-008.txt",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/tekst/side-009.txt",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/tekst/side-010.txt",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/tekst/side-011.txt",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/tekst/side-012.txt",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/tekst/side-013.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/sider/side-001.png",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/sider/side-002.png",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/sider/side-003.png",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/sider/side-004.png",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/sider/side-005.png",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/sider/side-006.png",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/sider/side-007.png",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/sider/side-008.png",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/sider/side-009.png",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/sider/side-010.png",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/sider/side-011.png",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/sider/side-012.png",
+          "kuratorjobb/resultat/metadon/spc/360bb027d0f9e475/sider/side-013.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 9,
+        "til": 10
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (13 sider).",
+          "antall": {
+            "sider": 13
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 30792
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 9."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 13
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": []
+}
