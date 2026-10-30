@@ -251,7 +251,7 @@ Ingen regel har toleranse (beslutning 5.7), heller ikke med dråper: en dose som
 3. **Like store deldoser** for fluvoksamin og moklobemid står som et åpent forslag til faglig avklaring.
 4. **Zoloft konsentrat (P5):** dokumentert dose per ml, oppmålingsoppløsning og nøyaktighet før konsentratet kan brukes.
 5. **Duloksetin og venlafaksin:** en dokumentert metode for mindre doser før en beregnbar regel kan vurderes på nytt.
-6. **Pilotreglene (P4.8):** en egen regel for zuklopentiksol med et kontrollert forløp hvis gruppebyttet skal beregnes; om seponeringen fra 25 mg sertralin kan bli et fast sluttpunkt; kontroll av resten av fenelzinbyttet mot den britiske preparatomtalen, som nå er kilde for minimum 5 uker; og siste kontroll av preparatomtale, doser, enheter og injeksjonsvinduer for depotreglene.
+6. **Pilotreglene (P4.8):** en egen regel for zuklopentiksol med et kontrollert forløp hvis gruppebyttet skal beregnes; om seponeringen fra 25 mg sertralin kan bli et fast sluttpunkt; kontroll av resten av fenelzinbyttet og fenelzins øvrige kontraindikasjoner mot den britiske preparatomtalen; og siste kontroll av preparatomtale, doser, enheter og injeksjonsvinduer for depotreglene.
 7. **Senere, når det bestemmes:** utkast for doksepin, imipramin og trazodon fra utenlandske preparatomtaler. Fenelzin og tranylcypromin får ingen regler nå; dosulepin og maprotilin venter.
 
 ## 12. Endret etter kontrollene
@@ -325,7 +325,7 @@ Kontrollene av regelversjon 4 (ChatGPT, 30.10.2026) fant to veier til null som k
 | --- | --- |
 | P5: like store deldoser skilt fra preparatomtalen | Kravet står i reglene for fluvoksamin og moklobemid (`fordeling.like_store`, åpent forslag), som er versjon 7 og de langsomme variantene versjon 3. Andre legemidler får den jevneste fordelingen som kan gis. |
 | P4.8: gruppebyttet og sertralin → mirtazapin | Pilotreglene er versjon 4, uten beregnet nedtrapping av det gamle antipsykotikumet og uten trinnet fra 25 mg sertralin til 0. |
-| P4.8: fluoksetin → fenelzin | Versjon 4 med den britiske preparatomtalen for Nardil (pkt. 4.5) som kilde for minimum 5 uker. |
+| P4.8: fluoksetin → fenelzin | Versjon 5 med den britiske preparatomtalen for Nardil (pkt. 4.5) som støttende kilde (5 uker etter fluoksetin som eksempel); minimumet på 35 dager bygger på preparatomtalen for fluoksetin. |
 | E.3: navngitt lege | Bidragsyterens avgjørelse står (§11). |
 
 ## 13. Holdt utenfor

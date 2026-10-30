@@ -195,10 +195,10 @@ describe('Pilotsettet', () => {
     expect(rettet('PR #282')).toEqual(['antipsykotikabytte-olanzapin-kvetiapin', 'gruppe-rest-ap-aripiprazol', 'depot-aripiprazol-maintena', 'depot-paliperidon-xeplion'])
     expect(rettet('PR #286')).toEqual(['kryssnedtrapping-sertralin-mirtazapin', 'mao-fluoksetin-fenelzin'])
     // Kontrollrunden 30.10.2026 (P4.8): de fire byttereglene er rettet eller avgrenset (versjon 3), og ved gjennomgangen samme dag
-    // ble tre av dem rettet på nytt (versjon 4); depotreglene er uendret.
+    // ble tre av dem rettet på nytt (versjon 4, fenelzin versjon 5 etter en presisering av kilden); depotreglene er uendret.
     expect(PILOTSETT.regler.map((r) => [r.id, r.versjon])).toEqual([
       ['kryssnedtrapping-sertralin-mirtazapin', 4],
-      ['mao-fluoksetin-fenelzin', 4],
+      ['mao-fluoksetin-fenelzin', 5],
       ['antipsykotikabytte-olanzapin-kvetiapin', 3],
       ['gruppe-rest-ap-aripiprazol', 4],
       ['depot-aripiprazol-maintena', 2],

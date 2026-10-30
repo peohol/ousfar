@@ -352,7 +352,7 @@ const kryssSertralinMirtazapin: Regel = {
 
 const maoFluoksetinFenelzin: Regel = {
   id: 'mao-fluoksetin-fenelzin',
-  versjon: 4,
+  versjon: 5,
   tittel: 'Bytte fra fluoksetin til fenelzin, sekvensielt med utvasking',
   fra: { type: 'virkestoff', nokkel: 'fluoksetin' },
   til: { type: 'virkestoff', nokkel: 'fenelzin' },
@@ -379,7 +379,7 @@ const maoFluoksetinFenelzin: Regel = {
         virkestoff: { type: 'virkestoff', nokkel: 'fenelzin' },
         administrasjon: 'peroral',
         utgangsdose: null,
-        start: { type: 'etter_utvasking', forlop: 'fra', utvasking: kilde(35, 'dager', 'bindende_krav', SPC.fluoksetinMao, SPC.nardilSsri, KEKS16.fluoksetinMao) },
+        start: { type: 'etter_utvasking', forlop: 'fra', utvasking: kilde(35, 'dager', 'bindende_krav', SPC.fluoksetinMao, KEKS16.fluoksetinMao) },
         faser: [
           {
             type: 'uten_beregning',
@@ -403,7 +403,7 @@ const maoFluoksetinFenelzin: Regel = {
   fortolkning: {
     kildetro: [
       utsagn('Fluoksetin og en irreversibel, ikke-selektiv MAO-hemmer skal ikke brukes samtidig; det skal gå minst 5 uker fra fluoksetin er seponert til MAO-hemmeren startes.', SPC.fluoksetinMao),
-      utsagn('Den britiske preparatomtalen for fenelzin sier det samme fra fenelzins side: minst 5 uker etter fluoksetin.', SPC.nardilSsri),
+      utsagn('Den britiske preparatomtalen for fenelzin sier at det må gå lang nok tid til at fluoksetin er skilt ut, med 5 uker som eksempel; den gir ikke et eget minimum. Minimumet på 35 dager kommer fra preparatomtalen for fluoksetin.', SPC.nardilSsri),
       utsagn('Litteraturen anbefaler 5–6 ukers utvasking, og at MAO-hemmeren startes forsiktig i lav dose.', KEKS16.fluoksetinMao),
       utsagn('Fluoksetin trappes ned gradvis over minst én til to uker.', SPC.fluoksetinSeponering),
       utsagn('Seponeringssymptomer kan komme dager til uker etter en reduksjon av fluoksetin; det er best å vente minst fire uker før neste.', RCPSYCH.fluoksetin),
@@ -423,7 +423,7 @@ const maoFluoksetinFenelzin: Regel = {
       'Kildene er ikke enige om nedtrappingen: preparatomtalen sier gradvis over minst én til to uker, NICE nevner dosering annenhver dag ved 20 mg, og Keks mfl. seponerer uten nedtrapping ved 40 mg daglig eller mindre. Regelen følger preparatomtalen; valget må avklares faglig.',
       'Ved høye doser og lang behandling kan 6 uker være tryggere enn 5; regelen bruker minimum fra preparatomtalen.',
       'Utvaskingen gjør at pasienten er uten antidepressiv i minst fem uker; risikoen for tilbakefall må vurderes individuelt.',
-      'Den britiske preparatomtalen for fenelzin støtter 35 dager som minimum (pkt. 4.5). Resten av bytteforløpet og fenelzins øvrige kontraindikasjoner er ikke kontrollert mot den.',
+      'Den britiske preparatomtalen for fenelzin er i samsvar med 35 dager (pkt. 4.5, 5 uker som eksempel). Resten av bytteforløpet og fenelzins øvrige kontraindikasjoner er ikke kontrollert mot den.',
     ],
   },
   referanser: [pn('SwitchAntidepressants:Fo>Fe')],
@@ -452,6 +452,7 @@ const maoFluoksetinFenelzin: Regel = {
     TRINNLENGDE_RETTET,
     etterKontrollrunden('fenelzin startes ikke automatisk på dagen planen viser; utvaskingen er et minimum, og senere oppstart kan være nødvendig.'),
     etterGjennomgangen('den britiske preparatomtalen for fenelzin (pkt. 4.5) er lagt til som kilde for minimum 5 uker etter fluoksetin.'),
+    etterGjennomgangen('den britiske preparatomtalen for fenelzin gir 5 uker etter fluoksetin som eksempel, ikke som eget minimum; minimumet på 35 dager bygger på preparatomtalen for fluoksetin.'),
   ),
 }
 
