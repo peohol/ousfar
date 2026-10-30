@@ -1,0 +1,35 @@
+{
+  "stoff": "lsd",
+  "status": "feil",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": null,
+  "dekning": {
+    "dekket": false,
+    "preparater": 0,
+    "hentet": 0,
+    "dokumenter": 0,
+    "mangler": []
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "feil",
+      "melding": "Siden finnes ikke eller er ikke koblet til FEST; FEST oppgir ingen preparatomtaler."
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "Ingen preparatomtale ble hentet. SPC-behovet er ikke dekket; se «dekning».",
+      "antall": {
+        "preparater": 0,
+        "hentet": 0,
+        "mangler": 0,
+        "dokumenter": 0
+      }
+    }
+  ],
+  "adresser": [],
+  "dokumenter": [],
+  "utelatt": []
+}

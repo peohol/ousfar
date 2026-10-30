@@ -1,18 +1,54 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "feil",
   "jobb": {
     "gren": "kuratorjobb/manuell-41057739977",
     "foresporsel_commit": "29ccb03af111a969ab8cdc01498a1431767115d6",
     "foresporsel_sha256": "d0e0280101a2adc49557bffe40420485f0257ba3d202a77fc6466efb94ded718",
     "kode_commit": "c58509067b9f530f36d25b6953495c5fd634f14f",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/41057739977",
-    "startet_kl": "2026-10-30T12:45:58.161Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-30T12:46:00.947Z",
+    "ferdig_kl": "2026-10-30T12:46:06.161Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "lsd"
+    ],
+    "oppgaver": [
+      "funksjonstest",
+      "spc"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 264
+    }
+  ],
+  "stoffer": {
+    "lsd": {
+      "status": "feil",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/lsd/funksjonstest.json"
+        },
+        "spc": {
+          "status": "feil",
+          "fil": "kuratorjobb/resultat/lsd/spc.json"
+        }
+      }
+    }
+  }
 }
