@@ -1,0 +1,52 @@
+<1/100), sjeldne (≥1/10 000 til <1/1 000), svært sjeldne (<1/10 000), ikke kjent (kan ikke anslås ut fra
+tilgjengelige data).
+
+
+ Organklassesystem                      Frekvens               Bivirkning
+
+ Sykdommer i blod og lymfatiske         Ikke kjent             Reversibel trombocytopeni er rapportert hos
+ organer                                                       opioidpasienter med kronisk hepatitt
+
+ Stoffskifte- og                        Vanlige                Væskeretensjon
+ ernæringsbetingede sykdommer
+                                        Mindre vanlige         Anoreksi
+
+                                        Ikke kjent             Hypokalemi, hypomagnesemi, hypoglykemi
+
+
+ Psykiatriske lidelser                  Vanlige                Eufori, hallusinasjoner
+
+                                        Mindre vanlige         Dysfori, agitasjon, søvnløshet, desorientering,
+                                                               redusert libido
+
+                                        Ikke kjent             Avhengighet
+
+ Nevrologiske sykdommer                 Vanlige                Sedasjon
+
+                                        Mindre vanlige         Hodepine, synkope
+
+ Øyesykdommer                           Vanlige                Uklart syn, miose
+
+ Hjertesykdommer                        Sjeldne                Bradykardi, palpitasjoner, tilfeller av forlenget
+                                                               QT-intervall og «torsades de pointes» er
+                                                               rapportert ved behandling med levometadon,
+                                                               særlig ved høye doser
+
+ Karsykdommer                           Mindre vanlige         Ansiktsrødme, hypotensjon
+
+ Sykdommer i                            Mindre vanlige         Lungeødem, respirasjonsdepresjon
+ respirasjonsorganer, thorax og
+ mediastinum                            Ikke kjent             Sentral søvnapné-syndrom
+
+ Gastrointestinale sykdommer            Svært vanlige          Kvalme, oppkast
+
+                                        Vanlige                Forstoppelse
+
+                                        Mindre vanlige         Xerostomi, glossitt
+
+
+ Sykdommer i lever og galleveier        Mindre vanlige         Dyskinesi i gallegangene
+
+ Hud- og underhudssykdommer             Vanlige                Forbigående utslett, svette
+
+                                        Mindre vanlige

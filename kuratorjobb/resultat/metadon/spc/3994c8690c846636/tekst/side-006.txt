@@ -1,0 +1,54 @@
+Reduserte nivåer av kjønnshormoner og økt nivå av prolaktin: Langtidsbruk av opioider kan være
+assosiert med reduserte nivåer av kjønnshormoner og økt nivå av prolaktin. Symptomer inkluderer
+redusert libido, impotens eller amenoré.
+
+Hypoglykemi: Hypoglykemi er sett i sammenheng med overdose eller doseøkning av metadon (en
+racemisk blanding av levometadon og dekstrometadon). Regelmessig kontroll av blodsukkeret
+anbefales ved doseøkning (se pkt. 4.8 og 4.9).
+
+Det må utvises stor forsiktighet ved mulige hodeskader eller tilstander som omfatter økt intrakranialt
+trykk. Levometadon skal ikke brukes til pasienter med intestinal pseudoobstruksjon, akutt
+magesykdom og inflammatorisk tarmsykdom.
+
+Hos pasienter med nyrestein og pasienter med gallestein kan det være nødvendig å administrere
+atropin eller andre spasmolytika profylaktisk.
+
+Eldre pasienter og pasienter som lider av kardiovaskulær sykdom, har økt risiko for hypotensjon og
+synkope.
+
+Levopidon skal kun tas peroralt. Misbruk med intravenøs administrasjon av Levopidon kan gi
+alvorlige bivirkninger slik som sepsis, flebitt eller lungeemboli.
+
+Levopidon inneholder hjelpestoffet metylparahydroksybenzoat (E218) som kan forårsake allergiske
+reaksjoner (muligens først etter en stund).
+
+Levopidon inneholder hjelpestoffet glyserol (E422). Dersom det er nødvendig å innta flere flasker for
+å oppnå riktig dose av levometadon og totalvolumet overstiger 55 ml mikstur, vil totalt inntak av
+glyserol per dose overstige 10 g. Dette kan forårsake hodepine, urolig mage og diaré.
+
+Pediatrisk populasjon
+Barn er mer sensitive enn voksne, og derfor kan forgiftning oppstå ved svært lave doser. For å unngå
+utilsiktet inntak hos barn skal levometadon som tas med hjem, oppbevares på et trygt sted utilgjengelig
+for barn.
+
+4.5     Interaksjon med andre legemidler og andre former for interaksjon
+
+Farmakokinetiske interaksjoner
+P-glykoproteinhemmere:
+Levometadon er et P-glykoproteinsubstrat; alle legemidler som hemmer P-glykoprotein (f.eks. kinidin,
+verapamil, ciklosporin) kan derfor øke serumkonsentrasjonen av levometadon. Den
+farmakodynamiske effekten av levometadon kan også øke på grunn av økt passasje over blod-hjerne-
+barrieren.
+
+CYP3A4-enzymindusere:
+Levometadon er et CYP3A4-substrat (se pkt. 5.2). Ved induksjon av CYP3A4 vil clearance av
+levometadon øke og plasmanivåene reduseres. Indusere av dette enzymet (barbiturater, karbamazepin,
+fenytoin, nevirapin, rifampicin, efavirenz, amprenavir, spironolakton, deksametason, hypericum
+perforatum (johannesurt) kan øke levermetabolismen. Eksempelvis ble gjennomsnittlig maksimal
+plasmakonsentrasjon og AUC redusert med henholdsvis 48 % og 57 % etter tre ukers behandling med
+600 mg efavirenz daglig hos pasienter behandlet med levometadon (15–50 mg daglig).
+
+Konsekvensene av enzyminduksjon er mer uttalte dersom induseren administreres etter at
+behandlingen med levometadon er påbegynt. Det har vært rapportert om abstinenssymptomer etter
+slike interaksjoner, og det kan derfor være nødvendig å øke levometadondosen. Hvis behandling med
+en CYP3A4-induser avbrytes, bør dosen med levometadon reduseres.

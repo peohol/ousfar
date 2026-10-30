@@ -1,0 +1,58 @@
+Samtidig behandling av HIV-infeksjon: Noen proteasehemmere (amprenavir, nelfinavir,
+lopinavir/ritonavir og ritonavir/sakinavir) ser ut til å redusere serumnivåene av metadon. Når ritonavir
+administreres alene er det sett en 50 % reduksjon av AUC for metadon. Plasmanivåene av zidovudin
+(en nukleosidanalog) øker ved bruk av metadon, ved både peroral og intravenøs administrering av
+zidovudin. Dette er mer uttalt når zidovudin gis peroralt enn intravenøst. Disse observasjonene
+forårsakes sannsynligvis av en hemming av zidovudinglukuronideringen og dermed redusert
+eliminasjon av zidovudin. Ved behandling med metadon må pasientene overvåkes nøye for tegn på
+toksiske effekter forårsaket av zidovudin, og det er mulig at dosen av zidovudin må reduseres.
+
+Didanosin og stavudin: Metadon forsinker absorpsjonen og øker førstepassasjemetabolismen av
+stavudin og didanosin, noe som fører til en redusert biotilgjengelighet av stavudin og didanosin.
+
+Metadon kan fordoble serumnivåene av desipramin, et substrat for CYP2D6. Hemming av CYP2D6
+kan føre til økt plasmakonsentrasjon av legemidler som administreres samtidig og som metaboliseres
+via disse enzymene. Dette omfatter noen trisykliske antidepressiva (f.eks. klomipramin, nortriptylin og
+desipramin), fentiazin-nevroleptika (f.eks. perfenazin og tioridazin), risperidon, atomoksetin, noen
+typer 1c-antiarytmika (f.eks. propafenon og flekainid) og metoprolol. Tamoksifen er et prodrug som
+krever metabolsk aktivering via CYP2D6. Tamoksifen har en viktig aktiv metabolitt, endoksifen, som
+dannes via CYP2D6 og som bidrar signifikant til effekten av tamoksifen. Hemming av CYP2D6 av
+metadon kan føre til redusert plasmakonsentrasjon av endoksifen.
+
+Farmakodynamiske interaksjoner
+Opioidantagonister: Nalokson og naltrekson motvirker effekten av metadon og forårsaker abstinens.
+
+CNS-hemmende legemidler: Legemidler med en sedativ effekt på sentralnervesystemet kan føre til økt
+respirasjonsdepresjon, hypotensjon, sterk sedasjon eller koma. Det kan derfor være nødvendig å
+redusere dosen av det ene eller begge legemidlene. Metadon er en substans som elimineres langsomt,
+og metadonbehandling fører til en langsom toleranseutvikling, og hver doseøkning kan forårsake
+symptomer på respirasjonsdepresjon etter 1–2 uker. Dosejusteringene må derfor gjøres med
+forsiktighet, og dosen må økes gradvis under nøye observasjon.
+
+Sedativa som benzodiazepiner eller lignende legemidler:
+Samtidig bruk av opioider med sedativa, som benzodiazepiner eller lignende legemidler, øker risikoen
+for sedasjon, respirasjonsdepresjon, koma og dødsfall på grunn av additiv CNS-hemmende effekt.
+Dose og varighet ved samtidig bruk bør begrenses (se pkt. 4.4).
+
+Peristaltikkhemmende legemidler: Samtidig bruk av metadon og peristaltikkhemmende legemidler
+(loperamid og difenoksylat) kan føre til kraftig obstipasjon og øke de CNS-hemmende effektene. I
+kombinasjon med antimuskarine legemidler kan opioidanalgetika gi kraftig obstipasjon eller paralytisk
+ileus, særlig ved langvarig bruk.
+
+QT-forlengelse: Metadon bør ikke kombineres med legemidler som kan forlenge QT-intervallet, slik
+som antiarytmika (sotalol, amiodaron, flekainid), antipsykotika (tioridazin, haloperidol, sertindol,
+fentiaziner), antidepressiva (paroksetin, sertralin) eller antibiotika (erytromycin, klaritromycin).
+
+MAO-hemmere: Samtidig administrering av MAO-hemmere kan føre til forsterket CNS-hemming,
+alvorlig hypotoni og/eller apné. Metadon bør ikke gis i kombinasjon med MAO-hemmere eller brukes
+innen to uker etter slik behandling (se pkt. 4.3).
+
+Opioidanalgetika forsinker gastrisk tømming slik at enkelte prøveresultater kan bli uriktige. Passasjen
+av technetium Tc 99m-disofenin til tynntarmen kan bli hindret, og amylase- og lipaseaktiviteten i
+plasma kan økes fordi opioidanalgetika kan forårsake konstriksjon i Oddis sfinkter og økt trykk i
+gallegangen. Dette fører til forsinket visualisering og ligner dermed en obstruksjon av gallegangen.
+Den diagnostiske verdien av bestemmelsen av disse enzymene kan derfor være svekket i opptil 24
+timer etter at legemidlet er gitt. Trykket i cerebrospinalvæsken kan øke, og denne effekten er sekundær
+til karbondioksidretensjon indusert av respirasjonsdepresjon.
+
+                                                   6

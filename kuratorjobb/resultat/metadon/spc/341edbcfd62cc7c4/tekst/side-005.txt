@@ -1,0 +1,46 @@
+      pseudoobstruksjon i tarmene, akutt magesykdom eller akutt inflammatorisk
+      tarmsykdom.
+
+      Hos pasienter med nyrestein og hos pasienter med gallestein kan det være
+      nødvendig å administrere atropin eller andre spasmolytika profylaktisk.
+
+      Eldre pasienter og pasienter som lider av kardiovaskulære sykdommer har økt
+      risiko for hypotensjon og synkope.
+
+      Dette legemidlet inneholder paraoransje (E110), som kan forårsake allergiske
+      reaksjoner, og appelsinsmak (inkludert propylenglykol), som kan forårsake
+      alkohollignende symptomer.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+      Farmakokinetiske interaksjoner
+      P-glykoproteinhemmere: Metadon er et substrat av p-glykoprotein. Alle
+      legemidler som hemmer P-glykoprotein (f.eks. kinidin, verapamil, cyklosporin)
+      kan derfor øke serumkonsentrasjonen av metadon. Den farmakodynamiske
+      effekten av metadon kan også øke på grunn av økt passasje av blod-hjerne-
+      barrieren.
+
+      CYP3A4-enzymfremmere: Metadon er et substrat av CYP3A4 (se pkt. 5.2). Ved
+      induksjon av CYP3A4 øker clearance av metadon, og plasmanivåene reduseres.
+      Fremmere av dette enzymet (barbiturater, karbamazepin, fenytoin, nevirapin,
+      rifampicin, efavirenz, amprenavir, spirononlakton, deksametason, Hypericum
+      perforatum [johannesurt]) kan fremme levermetabolisme. Etter tre ukers
+      behandling med 600 mg efavirenz daglig ble for eksempel den gjennomsnittlige
+      maksimale plasmakonsentrasjonen og AUC redusert med henholdsvis 48 % og 57
+      % hos pasienter som ble behandlet med metadon (35–100 mg daglig).
+
+      Følgene av enzyminduksjon er mer markert hvis fremmeren administreres etter at
+      behandlingen med metadon har startet. Det har vært rapportert om
+      abstinenssymptomer etter slike interaksjoner, og det kan da være nødvendig å øke
+      metadondosen. Hvis behandling med en CYP3A4-fremmer avbrytes, bør
+      metadondosen reduseres.
+
+      CYP3A4-enzymhemmere: Metadon er et substrat av CYP3A4 (se pkt. 5.2). Ved
+      hemming av CYP3A4 reduseres clearance av metadon. Samtidig administrasjon
+      av CYP3A4-hemmere (f.eks. cannabinoider, klaritromycin, delaviridin,
+      erytromycin, fluconazol, grapefruktjuice, itrakonazol, ketokonazol, fluoxetin,
+      fluvoxamin, nefazodon og telitromycin) kan føre til økte plasmakonsentrasjoner
+      av metadon. En økning på 40–100 % i forholdet mellom serumnivå og
+      metadondose er påvist ved samtidig fluvoxaminbehandling. Hvis disse
+      legemidlene forskrives til pasienter på vedlikeholdsbehandling med metadon, bør
+      en være klar over risikoen for overdose.

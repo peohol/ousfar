@@ -1,0 +1,45 @@
+4.7      Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+         Metadon påvirker de psykomotoriske funksjonene til pasienten er stabilisert på et
+         egnet nivå. Pasienten bør derfor ikke kjøre eller bruke maskiner før stabilisering
+         er oppnådd og det ikke har vært symptomer eller misbruk i de siste seks
+         månedene. Når kjøring og bruk av maskiner kan gjenopptas, er i hovedsak
+         avhengig av den individuelle pasienten og må bestemmes av lege. Se de nasjonale
+         retningslinjene for metadonbehandling for ytterligere informasjon.
+
+4.8      Bivirkninger
+
+         Bivirkningene av metadonbehandling er i hovedsak de samme som ved
+         behandling med andre opioider. De vanligste bivirkningene er kvalme og oppkast,
+         og dette observeres hos omtrent 20 % av pasientene som gjennomgår poliklinisk
+         metadonbehandling, der legemiddelkontrollen ofte er utilfredsstillende.
+         Den mest alvorlige bivirkningen av metadon er respirasjonsdepresjon, som kan
+         oppstå under stabiliseringsfasen. Apné, sjokk og hjertestans har forekommet.
+         Bivirkningene oppført nedenfor er klassifisert etter frekvens og organklasse. Disse
+         bivirkningene observeres oftere hos ikke-opioidtolerante personer.
+         Frekvenskategoriene defineres ved bruk av følgende konvensjoner: Svært vanlige
+         (≥ 1/10), vanlige (≥1/100 til <1/10), mindre vanlige (≥1/1 000, til <1/100), sjeldne
+         (≥1/10 000 til <1/1 000), svært sjeldne (<1/10 000), ikke kjent (kan ikke anslås ut
+         fra tilgjengelige data).
+
+      Organklassesystem        Frekvens              Bivirkning
+      MedDRA
+
+      Undersøkelser            Vanlige               Vektøkning
+
+      Stoffskifte- og          Ikke kjent            Hypokalemi, hypomagnesemi
+      ernæringsbetingede
+      sykdommer                Vanlige               Væskeretensjon
+
+                               Mindre vanlige        Anoreksi
+
+      Sykdommer i blod og      Ikke kjent            Reversibel trombocytopeni er
+      lymfatiske organer                             rapportert hos opioidpasienter med
+                                                     kronisk hepatitt
+
+      Sykdommer i              Mindre vanlige        Lungeødem, respirasjonsdepresjon
+      respirasjonsorganer,
+      thorax og mediastinum    Ikke kjent             Sentral søvnapné-syndrom
+
+      Gastrointestinale        Svært vanlige         Kvalme, oppkast.
+      sykdommer

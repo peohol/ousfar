@@ -1,0 +1,55 @@
+Samtidig bruk av opioider og legemidler med depressiv effekt på sentralnervesystemet slik som
+benzodiazepiner eller lignende legemidler, kan føre til økt respirasjonsdepresjon, hypotensjon, sterk
+sedasjon, koma og dødsfall på grunn av additiv CNS-hemmende effekt. Det kan derfor være
+nødvendig å redusere dosen av det ene eller begge legemidlene. Dose og varighet ved samtidig bruk
+bør begrenses (se pkt. 4.4). Ved levometadonbehandling fører levometadon, som er en substans som
+elimineres langsomt, til en sakte toleranseutvikling, og hver doseøkning kan etter 1–2 uker forårsake
+symptomer på respirasjonsdepresjon. Dosejusteringene må derfor foretas med forsiktighet, og dosen
+økes gradvis under nøye observasjon.
+
+Gabapentinoider: Samtidig bruk av opioider og gabapentinoider (gabapentin og pregabalin) øker
+risikoen for opioidoverdose, respirasjonsdepresjon og død.
+
+Peristaltikkhemming:
+Samtidig bruk av levometadon og peristaltikkhemmende legemidler (loperamid og difenoksylat) kan
+føre til kraftig forstoppelse og økt CNS-hemmende effekt. Opioidanalgetika kan, i kombinasjon med
+antikolinerge legemidler, føre til kraftig forstoppelse eller paralytisk ileus, særlig ved langvarig bruk.
+
+QT-forlengelse:
+Levometadon skal ikke kombineres med legemidler som kan gi forlenget QT-intervall slik som
+antiarytmika (sotalol, amiodaron, flekainid), antipsykotika (tioridazin, haloperidol, sertindol,
+fenotiaziner), antidepressiva (paroksetin, sertralin) eller antibiotika (erytromycin, klaritromycin).
+
+MAO-hemmere:
+Samtidig administrasjon av MAO-hemmere kan føre til kraftigere CNS-hemming, alvorlig hypotoni
+og/eller apné. Levometadon skal ikke kombineres med MAO-hemmere eller brukes innen to uker etter
+slik behandling (se pkt. 4.3).
+
+Serotonerge legemidler:
+Serotonergt syndrom kan oppstå ved samtidig administrasjon av metadon (en racemisk blanding av
+levometadon og dekstrometadon) med petidin, monoaminoksidase (MAO)-hemmere og serotonerge
+legemidler som selektive serotoninreopptakshemmere (SSRI), serotonin- og noradrenalin
+reopptakshemmere (SNRI) og trisykliske antidepressiva (TCAs). Symptomene på serotonergt syndrom
+kan være endret mentalstatus, overaktivitet i det autonome nervesystemet, nevromuskulær
+overaktivitet og/eller gastrointestinale symptomer.
+
+Opioidanalgetika forsinker den gastriske tømmingen og gjør derfor prøveresultater invalide. Tilførsel
+av teknetium Tc 99m-disofenin til tynntarmen kan forhindres og plasmaamylase- og
+plasmalipaseaktiviteten kan øke, fordi opioidanalgetika kan forårsake konstriksjon i sphincter Oddi og
+dermed økt trykk på galleveiene. Dette fører til forsinket visualisering og likner derfor obstruksjon av
+gallegangen. Diagnostisk bestemmelse av disse enzymene kan derfor være usikker i opptil 24 timer
+etter at legemidlet er gitt. Trykket i cerebrospinalvæsken kan øke. Effekten er sekundær til
+respirasjonsdepresjonsindusert karbondioksidretensjon.
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet
+Bruk av levometadon ved graviditet må være strengt indisert og overvåkes tett av
+spesialisthelsetjenesten. Levometadon krysser placentabarrieren. Abstinenssymptomer, respiratorisk
+depresjon og lav kroppsvekt kan forekomme hos nyfødte av mødre som står på fast behandling med
+levometadon under svangerskapet. Data fra dyrestudier har vist reproduksjonstoksisitet (se pkt. 5.3).
+Begrensede data på bruk av levometadon hos gravide kvinner viser ingen forhøyet risiko for medfødte
+misdannelser.
+
+For å redusere skader på fosteret under graviditet bør det igangsettes substitusjonsbehandling og
+forebyggende tiltak mot abstinenssymptomer. Doseøkning kan være nødvendig på grunn av

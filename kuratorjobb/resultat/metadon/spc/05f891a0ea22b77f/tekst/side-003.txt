@@ -1,0 +1,50 @@
+Behandlingen bør seponeres hvis effekten ikke er tilstrekkelig, eller hvis pasienten ikke tolererer
+behandlingen. Effekten må evalueres i henhold til nasjonale retningslinjer.
+
+Dersom behandlingen må seponeres, bør dette skje ved gradvis dosereduksjon. Dosen kan reduseres
+relativt raskt i begynnelsen, men dosereduksjonen må være langsom i sluttfasen (fra 20 mg daglig og
+nedover).
+
+Det henvises for øvrig til nasjonale retningslinjer for metadonbehandling.
+
+Administrasjonsmåte
+Kun til peroral administrering. Legemidlet skal ikke injiseres.
+
+4.3   Kontraindikasjoner
+
+Respirasjonsdepresjon.
+Overfølsomhet overfor virkestoffet eller overfor noen av hjelpestoffene listet opp i pkt. 6.1.
+Akutt obstruktiv luftveissykdom.
+Samtidig administrering av MAO-hemmere, eller administrering innen to uker etter avsluttet
+behandling med MAO-hemmere.
+Kontraindisert hos barn.
+
+4.4   Advarsler og forsiktighetsregler
+
+Det har vært rapportert om tilfeller med forlenget QT-intervall og torsades de pointes under
+behandling med metadon, særlig ved høye doser (> 100 mg daglig). Metadon bør administreres med
+forsiktighet hos pasienter med risiko for å utvikle forlenget QT-intervall, f.eks. ved:
+-        kjent QT-forlengelse i anamnesen
+-        fremskreden hjertesykdom
+-        samtidig behandling med legemidler som har potensiale for QT-forlengelse
+-        samtidig behandling med CYP3A4-hemmere
+
+EKG-overvåking bør vurderes hos pasienter med risikofaktorer for QT-forlengelse, spesielt hos
+kvinner.
+
+Forsiktighetsregler ved bruk av metadon er som for opioider generelt.
+
+Problematisk opioidbruk (misbruk og avhengighet)
+Som med andre opioider kan det utvikle seg toleranse, fysisk og/eller psykisk avhengighet ved gjentatt
+administrering av metadon.
+
+Misbruk eller tilsiktet misbruk av Metadon Nordic Drugs kan føre til overdose og/eller død. Risikoen
+for å utvikle problematisk opioidbruk er forhøyet hos pasienter med en personlig eller familiehistorikk
+(foreldre eller søsken) med legemiddelavhengighet (inkludert alkoholavhengighet), hos personer som
+bruker tobakk eller hos pasienter med en personlig historikk med andre mentale sykdommer (f.eks.
+alvorlig depresjon, angst og personlighetsforstyrrelser).
+
+Pasienter vil kreve overvåking med tanke på tegn på legemiddeloppsøkende atferd (f.eks. for tidlig
+forespørsel om påfyll). Dette inkluderer gjennomgang av samtidige opioider og psykoaktive
+legemidler (som benzodiazepiner). For pasienter med tegn og symptomer på opioidavhengighet skal
+konsultasjon med en avhengighetsspesialist vurderes.

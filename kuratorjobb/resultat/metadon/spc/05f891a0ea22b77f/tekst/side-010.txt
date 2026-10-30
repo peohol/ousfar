@@ -1,0 +1,55 @@
+plasma- og vevsproteiner. Fullblodforholdet i plasma er ca. 1:3. Metadon distribueres til vev, med
+høyere konsentrasjoner i lever, lunger og nyrer enn i blodet.
+
+Biotransformasjon
+Katalyseres hovedsakelig via CYP3A4, men CYP2D6 og CYP2B6 er også involvert i mindre omfang.
+Metabolismen foregår hovedsakelig ved N-demetylering, som gir de viktigste metabolittene: 2-
+etylidin-1,5-dimetyl-3,3-difenylpyrrolidin (EDDP) og 2-etyl-5-metyl-3,3-difenyl-1-pyrrolidin
+(EMDP), som begge er inaktive. Hydroksylering til metanol etterfulgt av N-demetylering til
+normetadol foregår også til en viss grad. Andre metabolske reaksjoner forekommer også, og minst åtte
+andre metabolitter er kjent.
+
+Eliminasjon
+Halveringstid: Enkeltdose 10-25 timer. Gjentatt dosering: 13-55 timer. Plasmaclearance er ca.
+2 ml/minutt/kg. Cirka 20-60 % av dosen elimineres i urinen i løpet av 96 timer (ca. 33 % i uendret
+form, ca. 43 % som EDDP og ca. 5-10 % som EMDP). Forholdet mellom EDDP og umodifisert
+metadon er vanligvis mye høyere i urinen hos pasienter som får metadonbehandling enn ved vanlig
+overdosering. Eliminasjon av umodifisert metadon i urinen er pH-avhengig og øker med økende
+surhetsgrad i urinen. Cirka 30 % av dosen elimineres via feces, men denne andelen reduseres vanligvis
+ved høyere doser. Cirka 75 % av total eliminering er ukonjugert.
+
+Spesielle populasjoner
+Det er ingen signifikante forskjeller i farmakokinetikken mellom menn og kvinner. Eliminasjon av
+metadon reduseres kun i noen grad hos eldre (> 65 år).
+
+På grunn av økt eksponering bør det utvises forsiktighet ved behandling av pasienter med nedsatt
+nyre- og leverfunksjon (se pkt. 4.2 og 4.4).
+
+5.3     Prekliniske sikkerhetsdata
+
+Metadon i høye doser forårsaket fødselsdefekter hos murmeldyr, hamster og mus, der de fleste
+rapportene gjaldt eksencefali og defekter i sentralnervesystemet. Det er sett noen tilfeller av rakiskisis
+(nevralrørsdefekter) i cervikalområdet hos mus. Hos kyllingembryo ble det funnet manglende lukking
+av nevralrøret. Metadon er ikke teratogent hos rotte eller kanin. Det er sett redusert antall avkom hos
+rotte og økt mortalitet, vekstretardasjon, nevrologiske atferdseffekter og redusert hjernevekt hos
+avkom. Redusert forbeining av ekstremiteter, sternum (brystbeinet) og kranium er funnet hos mus,
+samt redusert kullstørrelse. Karsinogenitetsstudier er ikke utført.
+
+
+6.      FARMASØYTISKE OPPLYSNINGER
+
+6.1     Hjelpestoffer
+
+Sukrose
+Glukosemonohydrat
+Metylparahydroksybenzoat (E 218)
+Bringebæraroma
+Vann
+
+6.2     Uforlikeligheter
+
+Ikke relevant.
+
+6.3     Holdbarhet
+
+3 år.

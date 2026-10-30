@@ -1,0 +1,55 @@
+4.2   Dosering og administrasjonsmåte
+
+Behandling med metadon forutsetter at pasienten er med i tiltak med legemiddelassistert rehabilitering
+ved narkotikamisbruk, godkjent av en relevant myndighet.
+
+Dosering
+Doseringen skal være individuell og tilpasses den enkelte pasient.
+
+Vanlig innledende dose er 10-30 mg. For pasienter med høy opioidtoleranse er startdosen 25-40 mg.
+Dosen økes i trinn på 10 mg av gangen over en periode på tre uker, vanligvis til 70 eller 80 mg. Etter
+en anbefalt stabiliseringsperiode på fire uker, justeres dosen til pasienten ikke lenger har rustrang og er
+uten kliniske tegn på effekter på psykomotorisk funksjon eller abstinenssymptomer. Vanlig dose er
+60–120 mg metadon daglig, men enkelte kan trenge høyere doser. Dosen bestemmes etter klinisk
+vurdering, understøttet av overvåking av plasmanivå. Anbefalt plasmanivå ved steady state etter
+24 timer er 600–1200 nmol/liter (200–400 ng/ml). Den kliniske vurderingen tillegges stor betydning.
+Metadon administreres vanligvis én gang daglig. Ved hyppigere administrering er det risiko for
+akkumulering og overdose. Høyeste anbefalte dose, som sjelden skal brukes, er 150 mg daglig (med
+mindre nasjonale retningslinjer anbefaler annet). Årsaken til denne dosebegrensningen er en økt
+frekvens av QT-forlengelse, torsades de pointes og tilfeller av hjertestans ved høyere doseområder (se
+pkt. 4.4). Høye doser kan også føre til lav grad av (men uønsket) eufori i et par timer etter den daglige
+dosen. Høyere doser kan være nødvendig hos pasienter som får samtidig behandling med CYP3A4-
+enzyminduktorer (f.eks. HIV-pasienter). Doser >150 mg bør administreres med forsiktighet, siden det
+er individuelle variasjoner i den induserende effekten (se pkt. 4.4 og 4.5).
+
+Pasienten skal observeres ved doseøkninger slik at uønskede reaksjoner kan oppdages. Pasienten har
+stigende serumnivå i inntil to timer, og det er viktig at tegn på overdosering eller andre
+alvorlige/ubehagelige reaksjoner oppdages.
+
+En del pasienter utvikler autoinduksjon, som resulterer i at legemidlet metaboliseres raskere i kroppen.
+I slike tilfeller må dosen økes én eller flere ganger for å opprettholde optimal effekt.
+
+Dersom pasienten har fått kombinasjonsbehandling med agonist/antagonist (f.eks. buprenorfin), bør
+dosen reduseres gradvis når metadonbehandlingen igangsettes. Dersom metadonbehandlingen
+avbrytes og en overgang til sublingval buprenorfin planlegges (spesielt i kombinasjon med nalokson),
+bør metadondosen først reduseres til 30 mg daglig for å unngå abstinenssymptomer forårsaket av
+buprenorfin/nalokson.
+
+Forsiktighet må utvises etter administrering til eldre eller syke pasienter. Pasienter med
+hypotyreoidisme, myksødem, uretrastriktur, astma eller redusert lungevolum eller prostatahypertrofi
+må få lavere startdose.
+
+Pediatrisk populasjon
+Metadon skal ikke administreres til barn (se pkt. 4.3).
+
+Nedsatt leverfunksjon
+Kronisk virushepatitt er vanlig hos rusmisbrukere. Forsiktighet bør utvises dersom metadon må brukes
+hos pasienter med nedsatt leverfunksjon. Hos pasienter med levercirrhose er metabolismen forsinket
+og førstepassasjeeffekten er nedsatt. Dette kan føre til høyere plasmanivåer av metadon. En lavere
+metadondose enn anbefalt bør administreres, og den kliniske responsen til pasienten bør være
+veiledende for videre dosering.
+
+Nedsatt nyrefunksjon
+Forsiktighet bør utvises ved bruk av metadon hos pasienter med nedsatt nyrefunksjon.
+Doseringsintervallet bør forlenges til minst 32 timer hvis glomulær filtrasjon (GFR) er 10–
+50 ml/minutt, og til minst 36 timer hvis GFR er lavere enn 10 ml/minutt.

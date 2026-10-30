@@ -1,0 +1,58 @@
+Pasienten skal observeres etter inntaket i begynnelsen av opptrappingen slik at uhensiktsmessige
+reaksjoner kan bli oppdaget. Pasienten har stigende serumnivå i inntil to timer, og det er viktig at
+reaksjoner på overdosering eller andre farlige/besværlige reaksjoner kan fanges opp.
+
+En del pasienter utvikler autoinduksjon, slik at nedbrytning i kroppen øker. I slike tilfeller vil man
+måtte justere dosen opp en eller flere ganger for å beholde optimal effekt.
+Dersom en pasient tidligere har fått kombinasjonsbehandling med agonist/antagonist (f.eks.
+buprenorfin), bør dosen reduseres gradvis mens metadon introduseres. Når metadonbehandlingen
+seponeres og det planlegges en overgang til sublingval buprenorfin (spesielt dersom den kombineres
+med nalokson), bør metadondosen først reduseres til 30 mg/dag for å unngå abstinenssymptomer
+indusert av buprenorfin/nalokson.
+
+Forsiktighet må utvises etter administrasjon til eldre eller syke pasienter.
+Metadon må ikke administreres til barn (se pkt. 4.3).
+Pasienter med hypotyreoidisme, myksødem, uretrastriktur, astma eller redusert lungevolum eller
+prostatahypertrofi må få en lavere initial dose.
+
+Nedsatt leverfunksjon
+Kronisk virushepatitt er vanlig hos rusmisbrukere. En må utvise forsiktighet hvis Metadon må brukes
+til pasienter med nedsatt leverfunksjon. Hos pasienter med levercirrhose er metabolismen av metadon
+forsinket og førstepassasjeeffekten reduseres. Det kan føre til høyere plasmanivåer av metadon. En
+lavere dose enn anbefalt av Metadon bør administreres, og den kliniske responsen til pasienten bør
+brukes som veiledning for videre dosering.
+
+Nedsatt nyrefunksjon
+Forsiktighet bør utvises ved bruk av metadon til pasienter med nedsatt nyrefunksjon. Doseintervallet
+bør forlenges til minst 32 timer hvis GFR er 10–50 ml/min, og til minst 36 timer hvis GFR er lavere
+enn 10 ml/min.
+
+Behandlingen bør seponeres hvis effekten ikke er tilstrekkelig, eller hvis pasienten ikke tolererer
+behandlingen. Effekten må evalueres i samsvar med nasjonale retningslinjer.
+
+Når behandlingen skal avsluttes, bør dette skje ved gradvis reduksjon av dosen. Dosen kan reduseres
+relativt raskt i begynnelsen, men dosereduksjonen må være langsom i sluttfasen (fra 20 mg daglig og
+nedover).
+
+Det henvises for øvrig til nasjonale retningslinjer for metadonbehandling.
+
+4.3   Kontraindikasjoner
+
+Overfølsomhet overfor virkestoffet eller overfor noen av hjelpestoffene listet opp i pkt. 6.1.
+Respirasjonsdepresjon.
+Akutt obstruktiv luftveissykdom.
+Samtidig administrasjon av MAO-hemmere, eller administrasjon innen to uker etter avsluttet
+behandling med MAO-hemmere.
+
+Kontraindisert hos barn.
+
+4.4   Advarsler og forsiktighetsregler
+
+Det har vært rapportert om tilfeller med forlenget QT-intervall og torsades de pointes under
+behandling med metadon, særlig ved høye doser (>100 mg/dag). Metadon bør administreres med
+forsiktighet til pasienter med risiko for å utvikle forlenget QT-intervall, f.eks. ved:
+           - kjent QT-forlengelse i anamnesen
+           - fremskreden hjertesykdom
+           - samtidig behandling med legemidler som har potensiale for QT-forlengelse
+
+                                                    2

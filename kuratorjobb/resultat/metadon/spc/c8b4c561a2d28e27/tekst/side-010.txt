@@ -1,0 +1,59 @@
+førstepassasjemetabolisme. Biotilgjengeligheten er over 80 %. Steady state-konsentrasjoner oppnås
+innen 5–7 dager. Metadon kan måles i plasma innen 30 minutter etter peroralt inntak, og når
+maksimum konsentrasjon etter ca 4 timer.
+Distribusjon
+Metadon er vidt distribuert i vev, distribusjonsvolum: 5 l/kg, krysser placenta og blir utskilt i
+brystmelk. Protein binding: ca 90 %, men med store individuelle forskjeller. Metadon bindes
+hovedsakelig til alfa-glykoproteinsyre, men også til albumin og andre plasma- og vevsproteiner.
+Plasma: fullblodsforholdet er rundt 1:3. Det distribueres til vevet med høyere konsentrasjoner i
+leveren, lungene og nyrene enn i blodet.
+
+Biotransformasjon
+Katalyseres hovedsakelig av CYP3A4, men CYP2D6 og CYP2B6 er også involvert, men i mindre
+omfang. Metabolismen foregår hovedsakelig ved N-demetylisering, som produserer de viktigste
+metabolittene: 2-etylidin, 1,5-dimetyl-3,3 -difenylpyrrolidin (EDDP) og 2-etyl-5-metyl-3,3-difenyl-1-
+pyrrolidin (EMDP), som begge er inaktive. Hydroksylering til metanol etterfulgt av N-demetylisering
+til normetadol forekommer også i et visst omfang. Andre metabolske reaksjoner forekommer også, og
+minst åtte andre metabolitter er kjent.
+
+Eliminasjon
+Halveringstid: Verdier mellom 15-60 timer er rapportert, men det er store inter-individuelle
+variasjoner. Relativt kort halveringstid er sett i studier ved kronisk administrasjon av metadon, delvis
+grunnet autoinduksjon av eliminasjonen.
+Plasmaclearance er ca. 2 ml/min/kg. Omtrent 20–60 % av dosen elimineres i urin i løpet av 96 timer
+(ca. 33 % i uendret form, ca. 43 % som EDDP og ca. 5–10 % som EMDP). Forholdet mellom EDDP
+og umodifisert metadon er vanligvis mye høyere i urinen hos pasienter som får metadonbehandling,
+sammenlignet med normale overdoser. Eliminering av uendret metadon i urinen er pH-avhengig og
+øker med økende surhetsgrad i urinen. Ca. 30 % av dosen elimineres i faeces, men denne
+prosentandelen vil vanligvis reduseres ved høyere doser. Ca. 75 % av den generelle elimineringen er
+ukonjugert.
+
+Spesielle populasjoner
+Det er ingen signifikante forskjeller i farmakokinetikken hos menn og kvinner. Clearance av metadon
+reduseres kun i noen grad hos eldre (> 65 år).
+
+På grunn av økt eksponering bør det utvises forsiktighet ved behandling av pasienter med nedsatt
+nyre- og leverfunksjon (se pkt. 4.2 og 4.4).
+
+5.3     Prekliniske sikkerhetsdata
+
+Metadon i høye doser forårsaket misdannelser hos marmot (ekorndyrfamilien), hamstere og mus, hvor
+de fleste rapporter var på eksencefali og defekter i sentralnervesystemet. Rachischis i den cervicale
+region er i noen tilfeller funnet hos mus. Mangel på lukking av nevralrøret ble funnet hos
+kyllingfostre. Metadon var ikke teratogent i rotter og kaniner. Hos rotter er det sett reduserte
+kullstørrelser, og øket dødelighet, vekstretardasjon, neurologiske atferdseffekter og redusert
+hjernevekt ble funnet hos avkommet. Redusert forbening av ekstremiteter, sternum og skalle er funnet
+hos mus, samt redusert kullstørrelse.
+Karsinogenitetsstudier er ikke utført.
+
+
+6.    FARMASØYTISKE OPPLYSNINGER
+
+6.1     Hjelpestoffer
+
+Metylparahydroksybenzoat
+Etanol
+Natriumsitrat
+Sitronsyre, vannfri
+
+                                                   10

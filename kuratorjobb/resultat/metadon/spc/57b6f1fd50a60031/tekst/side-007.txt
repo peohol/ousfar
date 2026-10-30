@@ -1,0 +1,58 @@
+CYP2D6-substrater
+Levometadon kan fordoble serumnivåene av desipramin, et CYP2D6-substrat. Hemming av CYP2D6
+kan føre til økte plasmakonsentrasjoner av samtidig administrerte legemidler som metaboliseres via
+dette enzymet. Disse produktene inkluderer, men er ikke begrenset til, trisykliske antidepressiva (som
+klomipramin, nortriptylin og desipramin), fenotiazin-nevroleptika (f.eks. perfenazin og tioridazin),
+risperidon, atomoksetin, noen Type 1c-antiarytmika (f.eks. propafenon og flekainid) og metoprolol.
+
+Tamoksifen er et prodrug som krever metabolsk aktivering av CYP2D6. Tamoksifen har en aktiv
+metabolitt, endoksifen, som dannes via CYP2D6 og bidrar betydelig til effekten av tamoksifen.
+Hemming av CYP2D6 av levometadon kan føre til reduserte plasmakonsentrasjoner av endoksifen.
+
+Farmakodynamiske interaksjoner
+Opioidantagonister
+Nalokson og naltrekson motvirker effekten av levometadon og induserer abstinens. På samme måte
+kan buprenorfin også utløse abstinenssymptomer.
+
+Sedative legemidler som benzodiazepiner og relaterte legemidler
+Samtidig bruk av opioider og legemidler med sedativ effekt på sentralnervesystemet, som
+benzodiazepiner eller relaterte legemidler, øker risikoen for respirasjonsdepresjon, hypotensjon, sterk
+sedering, koma og død på grunn av den addititve CNS-deprimerende effekten. Derfor kan det være
+nødvendig å redusere dosen av en eller begge legemidlene. Dosen og varigheten av samtidig bruk bør
+begrenses (se pkt. 4.4). Ved levometadonbehandling forårsaker det langsomt eliminerte stoffet
+levometadon en langsom toleranseutvikling, og hver doseøkning kan etter 1–2 uker gi symptomer på
+respirasjonsdepresjon. Dosejusteringer må derfor foretas med forsiktighet, og dosen økes gradvis
+under tett observasjon.
+
+Hemming av peristaltikk
+Samtidig bruk av levometadon og peristaltikkhemmende legemidler (loperamid og difenoksylat) kan
+føre til alvorlig konstipasjon og øke de CNS-deprimerende effektene. Opioider i kombinasjon med
+antikolinergika kan føre til alvorlig konstipasjon eller paralytisk ileus, særlig under langvarig bruk.
+
+QT-forlengelse
+Levometadon skal ikke kombineres med legemidler som kan forlenge QT-intervallet, som
+antiarytmika (sotalol, amiodaron, flekainid), antipsykotika (tioridazin, haloperidol, sertindol,
+fenotiaziner, ziprasidon og risperidon), antidepressiva (paroksetin, fluoksetin, citalopram,
+escitalopram, sertraline) eller antibiotika (erytromycin, klaritromycin, levofloksacin, moksifloksacin).
+
+MAO-hemmere
+Samtidig administrering av MAO-hemmere kan føre til forsterket CNS-hemming, alvorlig hypotoni
+eller apné. Levometadon skal ikke kombineres med MAO-hemmere eller brukes før to uker etter slik
+behandling (se pkt. 4.3).
+
+Serotonerge legemidler:
+Serotonergt syndrom kan oppstå ved samtidig administrasjon av metadon med petidin,
+monoaminoksidase (MAO)-hemmere og serotonerge legemidler som selektive
+serotoninreopptakshemmere (SSRI), serotonin- og noradrenalin reopptakshemmere (SNRI) og
+trisykliske antidepressiva (TCAs). Symptomene på serotonergt syndrom kan være endret mentalstatus,
+overaktivitet i det autonome nervesystemet, nevromuskulær overaktivitet og/eller gastrointestinale
+symptomer.
+
+Opioider som levometadon forsinker gastrisk tømming og gjør dermed prøveresultater ugyldige.
+Levering av teknetium Tc 99m disofenin til tynntarmen kan forebygges, og plasmaamylase- og
+plasmalipaseaktivitet kan økes ettersom opioide analgetika kan forårsake sammentrekning av Oddis
+sfinkter og øke trykket i gallegangen. Disse virkningene fører til forsinket visualisering og ligner
+dermed på obstruksjon av den felles gallegangen. Den diagnostiske fastsettelsen av disse enzymene
+
+
+                                                   7

@@ -1,0 +1,43 @@
+Produkter som påvirker surhetsgraden til urinen: Metadon er en svak base.
+Syredannere i urinen (som ammoniumklorid og askorbinsyre) kan øke nyrenes
+clearance av metadon. Pasienter som behandles med metadon, anbefales å unngå
+produkter som inneholder ammoniumklorid.
+
+Samtidig behandling av HIV-infeksjon: Noen proteasehemmere (amprenavir,
+nelfinavir, lopinavir/ritonavir og ritonavir/saquinavir) ser ut til å redusere
+serumnivåene av metadon. Når ritonavir administreres alene, er det observert en
+økning på to ganger AUC av metadon. Plasmanivåene av zidovudin (en nukleosid
+analog) øker ved metadonbruk etter både oral og intravenøs administrasjon av
+zidovudin. Dette er mer merkbart etter oral enn intravenøs bruk av zidovudin.
+Disse observasjonene forårsakes trolig av hemming av
+zidovudinglukoronideringen og reduserer derfor clearance av zidovudin. Under
+behandling med metadon må pasientene overvåkes nøye for tegn på toksisitet
+forårsaket av zidovudin. Derfor kan det være nødvendig å redusere dosen av
+zidovudin. På grunn av gjensidige interaksjoner mellom zidovudin og metadon
+(zidovudin er en CYP3A4-fremmer), kan det utvikles typiske
+opioidabstinenssymptomer under samtidig bruk (hodepine, myalgi, tretthet og
+irritabilitet).
+
+Didanosin og stavudin: Metadon forsinker absorpsjonen og øker
+førstepasseringsmetabolismen av stavudin og didanosin, som fører til redusert
+biotilgjengelighet av stavudin og didanosin.
+
+Metadon kan doble serumnivåene av desipramin.
+
+Farmakodynamiske interaksjoner
+
+Opioidantagonister:
+Naloxon og Naltrexon motvirker effektene av metadon og fremmer abstinens.
+
+CNS-hemmende midler: Legemidler med sedativ effekt på sentralnervesystemet
+kan føre til økt respirasjonsdepresjon, hypotensjon, sterk sedasjon eller koma.
+Derfor kan det være nødvendig å redusere dosen av ett eller begge legemidler.
+Ved metadonbehandling forårsaker den sakte elimineringen av metadon en sakte
+toleranseutvikling, og hver doseøkning kan etter 1–2 uker føre til symptomer på
+respirasjonsdepresjon. Dosejusteringer må derfor gjøres med forsiktighet, og
+dosen må økes gradvis under nøye overvåking.
+
+Hemming av peristaltikk: Samtidig bruk av metadon og peristaltikkhemmende
+legemidler (loperamid og difenoksylat) kan føre til kraftig forstoppelse og økt
+CNS-hemming. Opioidanalgetika i kombinasjon med antimuskariner kan føre til
+kraftig forstoppelse eller paralytisk ileus, særlig ved langvarig bruk.

@@ -1,0 +1,46 @@
+      QT-forlengelse: Metadon bør ikke kombineres med legemidler som forlenger QT-
+      intervallet, som antiarytmika (sotalol, amiodaron, flecainid), antipsykotika
+      (tioridazin, haloperidol, sertindol, fenotiaziner), antidepressiva (paroxetin,
+      sertralin) eller antibiotika (erytromycin, klarytromycin).
+
+      MAO-hemmere: Samtidig administrasjon av MAO-hemmere kan føre til
+      forsterket CNS-hemming, kraftig hypotoni og/eller apné. Metadon må ikke tas før
+      etter to uker etter behandling med MAO-hemmere (se pkt. 4.3).
+
+      Opioidanalgetika forsinker tømmingen av tarmen, og prøveresultater er derfor
+      misvisende. Tilførselen av technetium Tc 99m-disofenin til tynntarmen kan
+      forhindres og plasmaamylase- og plasmalipaseaktiviteten kan økes fordi
+      opioidanalgetika kan forårsake konstriksjon i sphincter Oddi og øke trykket i
+      galleveiene. Disse virkningene fører til forsinket visualisering og ligner dermed
+      obstruksjon i choledochus. Det kan gå opptil 24 timer etter at legemidlet er gitt før
+      det er noen diagnostisknytte i å bestemme forekomsten av disse enzymene.
+      Trykket i cerebrospinalvæsken (CSF) kan økes. Effekten er sekundær til
+      respirasjonsdepresjon – indusert karbondioksidretensjon.
+
+      Samtidig bruk av opioider og gabapentinoider (gabapentin og pregabalin) øker
+      risikoen for opioidoverdose, respirasjonsdepresjon og død.
+
+      Cannabidiol
+      Samtidig administrering av cannabidiol kan føre til økte plasmakonsentrasjoner
+      av metadon.
+
+4.6   Fertilitet, graviditet og amming
+
+      Graviditet:
+      Begrensede data om bruk av metadon under graviditet hos mennesker viste ingen
+      økt risiko for medfødte misdannelser.
+      Seponeringssymptomer/respirasjonsdepresjon kan oppstå hos nyfødte av mødre
+      som Har vært kronisk behandlet med metadon under svangerskapet. En QT-
+      forlengende effekt etter eksponering av moren for metadon kan ikke utelukkes, og
+      et 12-avledningers elektrokardiogram bør utføres hvis den nyfødte har bradykardi,
+      takykardi eller uregelmessig hjerterytme.
+      Dyrestudier har vist reproduksjonstoksiske effekter (se pkt. 5.3). Det anbefales
+      vanligvis ikke å detoksifisere pasienten, særlig etter 20. svangerskapsuke, men å
+      administrere vedlikeholdsbehandling med metadon. Bruk av metadon mikstur,
+      oppløsning like før og under fødsel anbefales vanligvis ikke, på grunn av risiko
+      for respirasjonsdepresjon hos den nyfødte.
+
+      Amming:
+      Metadon utskilles i morsmelk, og gjennomsnittlig melk/plasma-forhold er 0,8.
+      Amming kan gis i doser opptil 20 mg per dag. Ved høyere doser må fordelene ved
+      amming veies opp mot de mulige ugunstige effektene på spedbarnet.

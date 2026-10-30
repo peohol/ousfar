@@ -1,0 +1,53 @@
+Didanosin og stavudin: Metadon forsinker absorpsjonen og øker førstepassasjemetabolismen av
+stavudin og didanosin, noe som fører til en redusert biotilgjengelighet av stavudin og didanosin.
+
+Metadon kan doble serumnivåene av desipramin.
+
+Farmakodynamiske interaksjoner
+Opioidantagonister: Nalokson og naltrekson motvirker effektene av metadon og forårsaker abstinens.
+
+CNS-hemmende midler: Legemidler med sedativ effekt på sentralnervesystemet kan føre til økt
+respirasjonsdepresjon, hypotensjon, sterk sedasjon eller koma. Det kan derfor være nødvendig å
+redusere dosen av det ene eller begge legemidlene. Ved metadonbehandling fører metadon, som er en
+substans som elimineres langsomt, til en sakte toleranseutvikling, og hver doseøkning kan etter 1–
+2 uker forårsake symptomer på respirasjonsdepresjon. Dosejusteringene må derfor gjøres med
+forsiktighet, og dosen økes gradvis under nøye observasjon.
+
+Peristaltikkhemming: Samtidig bruk av metadon og peristaltikkhemmende legemidler (loperamid og
+difenoksylat) kan føre til alvorlig forstoppelse og økt CNS-hemmende effekt. Opioidanalgetika kan, i
+kombinasjon med antikolinerge legemidler, føre til alvorlig forstoppelse eller paralytisk ileus, særlig
+ved langvarig bruk.
+
+QT-forlengelse: Metadon bør ikke kombineres med legemidler som gir forlenget QT-intervall, slik
+som antiarytmika (sotalol, amiodaron, flekainid), antipsykotika (tioridazin, haloperidol, sertindol,
+fenotiaziner), antidepressiver (paroksetin, sertralin) eller antibiotika (erytromycin, klaritromycin).
+
+Serotonergiske legemidler: Serotonergt syndrom kan oppstå ved samtidig administrasjon av metadon
+med petidin, monoaminoksidasehemmere (MAO) og serotoninmidler som selektive
+serotoninreopptakshemmer (SSRI), serotonin- og noradrenalinreopptakshemmere (SNRI) og
+trisykliske antidepressiva (TCA). Symptomene på serotonergt syndrom kan inkludere endret mental
+status, autonom instabilitet, nevromuskulære abnormaliteter og/eller gastrointestinale symptomer.
+
+MAO-hemmere: Samtidig administrering av MAO-hemmere kan føre til kraftigere CNS-hemming,
+alvorlig hypotensjon og/eller apné. Metadon skal ikke kombineres med MAO-hemmere eller brukes
+innen to uker etter slik behandling (se pkt. 4.3).
+
+Gabapentinoider: Samtidig bruk av opioider og gabapentinoider (gabapentin og pregabalin) øker
+risikoen for opioidoverdose, respirasjonsdepresjon og død.
+
+Opioidanalgetika forsinker gastrisk tømming og gjør derfor prøveresultater ugyldige. Tilførsel av
+teknetium Tc 99m-disofenin til tynntarmen kan forhindres, og amylase- og lipaseaktiviteten i plasma
+kan øke fordi opioidanalgetika kan forårsake konstriksjon i Oddis sfinkter og økt trykk i galleveiene.
+Dette fører til forsinket visualisering og likner derfor en obstruksjon av gallegangen. Den diagnostiske
+nytten av å bestemme disse enzymene kan derfor være usikker i opptil 24 timer etter at legemidlet er
+gitt. Trykket i cerebrospinalvæsken kan øke. Effekten er sekundær til karbondioksidretensjon indusert
+av respirasjonsdepresjon.
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet
+Visse observasjonsstudier har rapportert medfødte misdannelser og nevroutviklingsforstyrrelser hos
+barn født av kvinner behandlet med metadon for opioidbruklidelse under graviditet. På grunn av
+studiebegrensninger og blanding av årsaksfaktorer knyttet til maternelle, familiære og
+sosiomiljømessige faktorer assosiert med opioidbrukslidelser, kan det imidlertid ikke trekkes noen
+konklusjoner med hensyn til metadons bidrag.

@@ -1,0 +1,59 @@
+Farmakodynamiske interaksjoner
+Opioidantagonister:
+Naloxon og naltrexon motvirker effektene av metadon og forårsaker abstinens.
+
+CNS-hemmende midler (f.eks. sedative midler som benzodiazepiner eller lignende legemidler):
+Samtidig bruk av opioider og legemidler med depressiv effekt på sentralnervesystemet (f.eks. sedative
+midler som benzodiazepiner eller lignende legemidler), øker risikoen for hypotensjon, sedasjon,
+respirasjonsdepresjon, koma og dødsfall på grunn av additiv CNS-hemmende effekt. Dose og varighet
+ved samtidig bruk bør begrenses (se pkt. 4.4). Ved metadonbehandling fører metadon, som er en
+substans som elimineres langsomt, til en sakte toleranseutvikling, og hver doseøkning kan etter 1–2
+uker forårsake symptomer på respirasjonsdepresjon. Dosejusteringene må derfor foretas med
+forsiktighet, og dosen økes gradvis ved nøye observasjon.
+
+Gabapentinoider: Samtidig bruk av opioider og gabapentinoider (gabapentin og pregabalin) øker
+risikoen for opioidoverdose, respirasjonsdepresjon og død.
+
+Peristaltikkhemming:
+Samtidig bruk av metadon og peristaltikkhemmende legemidler (loperamid og difenoksylat) kan føre
+til kraftig forstoppelse og økt CNS-hemmende effekt. Opioidanalgetika kan, i kombinasjon med
+antikolinerge legemidler, føre til kraftig forstoppelse eller paralytisk ileus, særlig ved langvarig bruk.
+
+QT-forlengelse:
+Metadon bør ikke kombineres med legemidler som gir forlenget QT-tid slik som antiarytmika (sotalol,
+amiodaron, flekainid), antipsykotika (tioridazin, haloperidol, sertindol, fenotiaziner), antidepressiva
+(paroksetin, sertralin) eller antibiotika (erytromycin, klaritromycin).
+
+MAO-hemmere:
+Samtidig administrasjon av MAO-hemmere kan føre til kraftigere CNS-hemming, alvorlig hypotoni
+og/eller apné. Metadon skal ikke kombineres med MAO-hemmere eller brukes innen to uker etter slik
+behandling (se pkt. 4.3).
+
+Serotonerge legemidler:
+Serotonergt syndrom kan oppstå ved samtidig administrasjon av metadon med petidin,
+monoaminoksidase (MAO)-hemmere og serotonerge legemidler som selektive
+serotoninreopptakshemmere (SSRI), serotonin- og noradrenalin reopptakshemmere (SNRI) og
+trisykliske antidepressiva (TCAs). Symptomene på serotonergt syndrom kan være endret mentalstatus,
+overaktivitet i det autonome nervesystemet, nevromuskulær overaktivitet og/eller gastrointestinale
+symptomer.
+
+Opioide analgetika forsinker den gastriske tømmingen og gjør derfor prøveresultater invalide.
+Tilførsel av teknetium Tc 99m-disofenin til tynntarmen kan hindres, og plasma-amylase- og
+plasmalipaseaktiviteten kan økes fordi opioide analgetika kan forårsake konstriksjon i Sphincter Oddi,
+og dermed økt trykk på galleveiene. Dette fører til forsinket visualisering og likner derfor obstruksjon
+av gallegangen. Diagnostisk bestemmelse av disse enzymene kan derfor være usikker i opptil 24 timer
+etter at legemidlet er gitt. Trykket i cerebrospinalvæsken kan økes. Effekten er sekundær til
+respirasjonsdepresjonsindusert karbondioksidretensjon.
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet
+Begrensede data for bruk av metadon hos gravide kvinner viser ingen forhøyet risiko for medfødte
+misdannelser. Seponeringssymptomer og respiratorisk depresjon kan forekomme hos nyfødte av
+mødre som har vært kronisk behandlet med metadon under graviditeten. En QT prolongerende effekt
+etter påvirkning av metadon under graviditeten kan ikke utelukkes og et 12-avlednings-EKG bør tas
+dersom den nyfødte har bradykardi, takykardi eller uregelmessig hjerterytme.
+
+
+
+                                                    6

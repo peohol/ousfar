@@ -1,0 +1,53 @@
+Kronisk virushepatitt er vanlig hos rusmisbrukere. Det må utvises forsiktighet hvis levometadon må
+brukes til pasienter med nedsatt leverfunksjon. Hos pasienter med levercirrhose, er metabolismen av
+levometadon forsinket og førstepassasjeeffekten redusert. Dette kan føre til høyere plasmanivåer av
+levometadon. Det bør administreres en lavere dose enn anbefalt av levometadon, og den kliniske
+responsen til pasienten bør brukes som veiledning for videre dosering.
+
+Nedsatt nyrefunksjon
+Forsiktighet bør utvises ved bruk av levometadon til pasienter med nedsatt nyrefunksjon.
+Doseringsintervallet bør forlenges til minst 32 timer hvis GFR er 10–50 ml/min, og til minst 36 timer
+hvis GFR er lavere enn 10 ml/min.
+
+Pediatrisk populasjon
+Sikkerhet og effekt av levometadon hos barn og ungdom under 18 år har ikke blitt fastslått.
+Levopidon er kontraindisert hos barn og ungdom under 18 år (se pkt. 4.3).
+
+Administrasjonsmåte
+Levopidon er kun til peroral administrasjon og må ikke injiseres.
+
+4.3     Kontraindikasjoner
+
+•     Overfølsomhet overfor virkestoffet eller overfor noen av hjelpestoffene listet opp i pkt. 6.1.
+•     Samtidig administrasjon med MAO-hemmere, eller administrasjon innen to uker etter avsluttet
+      behandling med MAO-hemmere.
+•     Under behandling med levometadon må det ikke gis opioidantagonister eller andre
+      agonister/antagonister (f.eks. pentazosin og buprenorfin) med unntak av ved behandling av
+      overdose.
+•     Respirasjonsdepresjon.
+•     Obstruktiv lungesykdom.
+•     Pasienter med avhengighet til ikke-opioide legemidler.
+•     Barn og ungdom under 18 år.
+
+4.4     Advarsler og forsiktighetsregler
+
+Når levometadon brukes, er det viktig å ta med i betraktningen at levometadon er ca. dobbelt så potent
+som racemisk metadon (se også pkt. 4.2). Pasientene må informeres om risikoen for overdose.
+
+Det har vært rapportert om tilfeller med forlenget QT-intervall og torsade de pointes under behandling
+med levometadon, særlig ved høye doser. Levometadon skal administreres med forsiktighet til
+pasienter med risiko for å utvikle forlenget QT-intervall, f.eks. ved:
+    - kjent QT-forlengelse i anamnesen
+    - fremskreden hjertesykdom
+    - samtidig behandling med legemidler som har potensiale for QT-forlengelse
+    - samtidig behandling med CYP3A4-hemmere
+    - elektrolyttanomalier (hypokalemi, hypomagnesemi)
+
+EKG-overvåking skal vurderes hos pasienter med risikofaktorer for QT-forlengelse, spesielt hos
+kvinner.
+
+Barn er mer sensitive enn voksne, og derfor kan forgiftning oppstå ved svært lave doser. For å unngå
+utilsiktet inntak hos barn, skal levometadon som tas med hjem, oppbevares på et trygt sted
+utilgjengelig for barn.
+
+Forsiktighetsregler ved bruk av levometadon er som for opioider generelt.

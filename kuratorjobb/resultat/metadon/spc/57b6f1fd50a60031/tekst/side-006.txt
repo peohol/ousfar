@@ -1,0 +1,59 @@
+Levometadon er et substrat for P-glykoprotein; alle legemidler som hemmer P-glykoprotein (f.eks.
+kinidin, verapamil, ciklosporin) kan derfor øke serumkonsentrasjonen av levometadon. Den
+farmakodynamiske effekten av levometadon kan også øke som følge av økt passasje gjennom blod-
+hjerne-barrieren.
+
+CYP3A4-indusere
+Levometadon er et substrat for CYP3A4 (se pkt. 5.2). Induksjon av CYP3A4 øker eliminasjonen av
+levometadon og fører til reduserte plasmanivåer. Indusere av dette enzymet (barbiturater,
+carbamazepin, fenytoin, nevirapin, rifampicin, efavirenz, amprenavir, spironolakton, deksametason.
+Hypericum perforatum (johannesurt)) kan indusere metabolismen i leveren. For eksempel, etter tre
+ukers behandling med 600 mg efavirenz daglig var gjennomsnittlig maksimal plasmakonsentrasjon og
+AUC redusert med henholdsvis 48 % og 57 % hos pasienter behandlet med levometadon (15–50 mg
+daglig).
+
+Konsekvensene av enzyminduksjon er mer markert hvis induseren administreres etter at behandlingen
+med levometadon er igangsatt. Abstinenssymptomer har vært rapportert etter slike interaksjoner, og
+det kan derfor være nødvendig å øke levometadondosen. Hvis behandlingen med en CYP3A4-induser
+avbrytes, skal levometadondosen reduseres.
+
+CYP3A4-hemmere
+Levometadon er et substrat for CYP3A4 (se pkt. 5.2). Hemming av CYP3A4 reduserer eliminasjonen
+av levometadon. Samtidig administrering av CYP3A4-hemmer (f.eks. cannabinoider, klaritromycin,
+delavirdin, erytromycin, flukonazol, grapefruktjuice, itrakonazol, ketokonazol, fluvoksamin,
+cimetidin, nefazodon og telitromycin) kan øke plasmakonsentrasjonen av levometadon. En 40–100 %
+økning av forholdet mellom serumverdiene og levometadondosen har vært påvist med samtidig
+behandling med fluvoksamin. Hvis disse legemidlene forskrives til pasienter på
+levometadonbehandling, må man være oppmerksom på faren for overdose.
+
+Fluoksetin øker konsentrasjonene av levometadon ved hemming av CYP2D6.
+
+Legemidler som påvirker urinens surhet
+Levometadon er en svak base. Urinforsurere (som ammoniumklorid og askorbinsyre) kan øke
+nyreclearance av levometadon. Det anbefales at pasienter som behandles med levometadon, unngår
+produkter som inneholder ammoniumklorid.
+
+Samtidig hiv-behandling
+Noen proteasehemmere (amprenavir, nelfinavir, abakavir, lopinavir/ritonavir og ritonavir/sakvinavir)
+ser ut til å redusere serumnivåene av levometadon. Når ritonavir administreres alene har en dobling av
+AUC for levometadon vært påvist. Plasmanivåer av zidovudin (en nukleosidanalog) øker ved bruk av
+levometadon, etter både oral og intravenøs administrering av zidovudin. Dette er mer uttalt når
+zidovudin gis oralt enn etter intravenøs administrering. Disse observasjonene er mest trolig forårsaket
+av en hemming av zidovudin-glukoronidering og av den dermed reduserte eliminasjonen av
+zidovudin. Under levometadonbehandling må pasientene overvåkes tett for tegn på toksiske effekter
+av zidovudin, som kan kreve at zidovudindosen reduseres.
+
+Didanosin og stavudin
+Levometadon forsinker absorpsjonen og øker førstepassasjemetabolismen av stavudin og didanosin,
+noe som fører til redusert biotilgjengelighet for stavudin og didanosin.
+
+Abacavir
+I en farmakokinetisk studie viste samtidig administrering av 600 mg abacavir to ganger daglig med
+levometadon en 35 % reduksjon i abacavir Cmax og en én times forsinkelse i tmax, men AUC var
+uendret. Endringene i farmakokinetikken til abacavir anses ikke som klinisk relevante. I denne studien
+økte abacavir den gjennomsnittlige systemiske clearance av levometadon med 22 %. Induksjonen av
+legemiddelmetaboliserende enzymer kan derfor ikke utelukkes. Pasienter som blir behandlet med
+levometadon og abacavir, skal overvåkes for tegn på abstinenssymptomer som indikerer
+underdosering, ettersom det noen ganger kan være nødvendig å retitrere levometadon.
+
+                                                  6

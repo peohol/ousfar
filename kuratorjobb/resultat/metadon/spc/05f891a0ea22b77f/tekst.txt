@@ -1,0 +1,595 @@
+1.    LEGEMIDLETS NAVN
+
+Metadon Nordic Drugs 10 mg mikstur, oppløsning
+Metadon Nordic Drugs 15 mg mikstur, oppløsning
+Metadon Nordic Drugs 20 mg mikstur, oppløsning
+Metadon Nordic Drugs 25 mg mikstur, oppløsning
+Metadon Nordic Drugs 30 mg mikstur, oppløsning
+Metadon Nordic Drugs 35 mg mikstur, oppløsning
+Metadon Nordic Drugs 40 mg mikstur, oppløsning
+Metadon Nordic Drugs 45 mg mikstur, oppløsning
+Metadon Nordic Drugs 50 mg mikstur, oppløsning
+Metadon Nordic Drugs 55 mg mikstur, oppløsning
+Metadon Nordic Drugs 60 mg mikstur, oppløsning
+Metadon Nordic Drugs 70 mg mikstur, oppløsning
+Metadon Nordic Drugs 80 mg mikstur, oppløsning
+Metadon Nordic Drugs 90 mg mikstur, oppløsning
+Metadon Nordic Drugs 100 mg mikstur, oppløsning
+Metadon Nordic Drugs 110 mg mikstur, oppløsning
+Metadon Nordic Drugs 120 mg mikstur, oppløsning
+Metadon Nordic Drugs 130 mg mikstur, oppløsning
+Metadon Nordic Drugs 140 mg mikstur, oppløsning
+Metadon Nordic Drugs 150 mg mikstur, oppløsning
+Metadon Nordic Drugs 160 mg mikstur, oppløsning
+Metadon Nordic Drugs 170 mg mikstur, oppløsning
+Metadon Nordic Drugs 180 mg mikstur, oppløsning
+Metadon Nordic Drugs 190 mg mikstur, oppløsning
+Metadon Nordic Drugs 200 mg mikstur, oppløsning
+
+
+2.    KVALITATIV OG KVANTITATIV SAMMENSETNING
+
+Hver dose (50 ml mikstur) inneholder 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 70, 80, 90, 100, 110,
+120, 130, 140, 150, 160, 170, 180, 190 eller 200 mg metadonhydroklorid.
+
+Hjelpestoffer med kjent effekt: sukrose (11 g/dose), glukose, metylparahydroksybenzoat (E 218).
+
+For fullstendig liste over hjelpestoffer, se pkt. 6.1.
+
+
+3.    LEGEMIDDELFORM
+
+Mikstur, oppløsning.
+Klar, fargeløs oppløsning med bringebærlukt og -smak.
+Osmolalitet: ca. 920 mOm/kg
+
+
+4.    KLINISKE OPPLYSNINGER
+
+4.1   Indikasjoner
+
+Substitusjonsbehandling ved opiatavhengighet, i sammenheng med medisinsk, psykologisk og sosial
+behandling.
+4.2   Dosering og administrasjonsmåte
+
+Behandling med metadon forutsetter at pasienten er med i tiltak med legemiddelassistert rehabilitering
+ved narkotikamisbruk, godkjent av en relevant myndighet.
+
+Dosering
+Doseringen skal være individuell og tilpasses den enkelte pasient.
+
+Vanlig innledende dose er 10-30 mg. For pasienter med høy opioidtoleranse er startdosen 25-40 mg.
+Dosen økes i trinn på 10 mg av gangen over en periode på tre uker, vanligvis til 70 eller 80 mg. Etter
+en anbefalt stabiliseringsperiode på fire uker, justeres dosen til pasienten ikke lenger har rustrang og er
+uten kliniske tegn på effekter på psykomotorisk funksjon eller abstinenssymptomer. Vanlig dose er
+60–120 mg metadon daglig, men enkelte kan trenge høyere doser. Dosen bestemmes etter klinisk
+vurdering, understøttet av overvåking av plasmanivå. Anbefalt plasmanivå ved steady state etter
+24 timer er 600–1200 nmol/liter (200–400 ng/ml). Den kliniske vurderingen tillegges stor betydning.
+Metadon administreres vanligvis én gang daglig. Ved hyppigere administrering er det risiko for
+akkumulering og overdose. Høyeste anbefalte dose, som sjelden skal brukes, er 150 mg daglig (med
+mindre nasjonale retningslinjer anbefaler annet). Årsaken til denne dosebegrensningen er en økt
+frekvens av QT-forlengelse, torsades de pointes og tilfeller av hjertestans ved høyere doseområder (se
+pkt. 4.4). Høye doser kan også føre til lav grad av (men uønsket) eufori i et par timer etter den daglige
+dosen. Høyere doser kan være nødvendig hos pasienter som får samtidig behandling med CYP3A4-
+enzyminduktorer (f.eks. HIV-pasienter). Doser >150 mg bør administreres med forsiktighet, siden det
+er individuelle variasjoner i den induserende effekten (se pkt. 4.4 og 4.5).
+
+Pasienten skal observeres ved doseøkninger slik at uønskede reaksjoner kan oppdages. Pasienten har
+stigende serumnivå i inntil to timer, og det er viktig at tegn på overdosering eller andre
+alvorlige/ubehagelige reaksjoner oppdages.
+
+En del pasienter utvikler autoinduksjon, som resulterer i at legemidlet metaboliseres raskere i kroppen.
+I slike tilfeller må dosen økes én eller flere ganger for å opprettholde optimal effekt.
+
+Dersom pasienten har fått kombinasjonsbehandling med agonist/antagonist (f.eks. buprenorfin), bør
+dosen reduseres gradvis når metadonbehandlingen igangsettes. Dersom metadonbehandlingen
+avbrytes og en overgang til sublingval buprenorfin planlegges (spesielt i kombinasjon med nalokson),
+bør metadondosen først reduseres til 30 mg daglig for å unngå abstinenssymptomer forårsaket av
+buprenorfin/nalokson.
+
+Forsiktighet må utvises etter administrering til eldre eller syke pasienter. Pasienter med
+hypotyreoidisme, myksødem, uretrastriktur, astma eller redusert lungevolum eller prostatahypertrofi
+må få lavere startdose.
+
+Pediatrisk populasjon
+Metadon skal ikke administreres til barn (se pkt. 4.3).
+
+Nedsatt leverfunksjon
+Kronisk virushepatitt er vanlig hos rusmisbrukere. Forsiktighet bør utvises dersom metadon må brukes
+hos pasienter med nedsatt leverfunksjon. Hos pasienter med levercirrhose er metabolismen forsinket
+og førstepassasjeeffekten er nedsatt. Dette kan føre til høyere plasmanivåer av metadon. En lavere
+metadondose enn anbefalt bør administreres, og den kliniske responsen til pasienten bør være
+veiledende for videre dosering.
+
+Nedsatt nyrefunksjon
+Forsiktighet bør utvises ved bruk av metadon hos pasienter med nedsatt nyrefunksjon.
+Doseringsintervallet bør forlenges til minst 32 timer hvis glomulær filtrasjon (GFR) er 10–
+50 ml/minutt, og til minst 36 timer hvis GFR er lavere enn 10 ml/minutt.
+Behandlingen bør seponeres hvis effekten ikke er tilstrekkelig, eller hvis pasienten ikke tolererer
+behandlingen. Effekten må evalueres i henhold til nasjonale retningslinjer.
+
+Dersom behandlingen må seponeres, bør dette skje ved gradvis dosereduksjon. Dosen kan reduseres
+relativt raskt i begynnelsen, men dosereduksjonen må være langsom i sluttfasen (fra 20 mg daglig og
+nedover).
+
+Det henvises for øvrig til nasjonale retningslinjer for metadonbehandling.
+
+Administrasjonsmåte
+Kun til peroral administrering. Legemidlet skal ikke injiseres.
+
+4.3   Kontraindikasjoner
+
+Respirasjonsdepresjon.
+Overfølsomhet overfor virkestoffet eller overfor noen av hjelpestoffene listet opp i pkt. 6.1.
+Akutt obstruktiv luftveissykdom.
+Samtidig administrering av MAO-hemmere, eller administrering innen to uker etter avsluttet
+behandling med MAO-hemmere.
+Kontraindisert hos barn.
+
+4.4   Advarsler og forsiktighetsregler
+
+Det har vært rapportert om tilfeller med forlenget QT-intervall og torsades de pointes under
+behandling med metadon, særlig ved høye doser (> 100 mg daglig). Metadon bør administreres med
+forsiktighet hos pasienter med risiko for å utvikle forlenget QT-intervall, f.eks. ved:
+-        kjent QT-forlengelse i anamnesen
+-        fremskreden hjertesykdom
+-        samtidig behandling med legemidler som har potensiale for QT-forlengelse
+-        samtidig behandling med CYP3A4-hemmere
+
+EKG-overvåking bør vurderes hos pasienter med risikofaktorer for QT-forlengelse, spesielt hos
+kvinner.
+
+Forsiktighetsregler ved bruk av metadon er som for opioider generelt.
+
+Problematisk opioidbruk (misbruk og avhengighet)
+Som med andre opioider kan det utvikle seg toleranse, fysisk og/eller psykisk avhengighet ved gjentatt
+administrering av metadon.
+
+Misbruk eller tilsiktet misbruk av Metadon Nordic Drugs kan føre til overdose og/eller død. Risikoen
+for å utvikle problematisk opioidbruk er forhøyet hos pasienter med en personlig eller familiehistorikk
+(foreldre eller søsken) med legemiddelavhengighet (inkludert alkoholavhengighet), hos personer som
+bruker tobakk eller hos pasienter med en personlig historikk med andre mentale sykdommer (f.eks.
+alvorlig depresjon, angst og personlighetsforstyrrelser).
+
+Pasienter vil kreve overvåking med tanke på tegn på legemiddeloppsøkende atferd (f.eks. for tidlig
+forespørsel om påfyll). Dette inkluderer gjennomgang av samtidige opioider og psykoaktive
+legemidler (som benzodiazepiner). For pasienter med tegn og symptomer på opioidavhengighet skal
+konsultasjon med en avhengighetsspesialist vurderes.
+Søvnrelaterte pusteforstyrrelser
+Opioider kan forårsake søvnrelaterte pusteforstyrrelser, inkludert sentral søvnapné (CSA) og
+søvnrelatert hypoksemi. Opioidbruk øker risikoen for CSA på en doseavhengig måte. Hos pasienter
+som har CSA, skal det vurderes å redusere den totale opioiddosen.
+
+Akutte astmaanfall, kronisk obstruktiv lungesykdom, cor pulmonale, nedsatt respirasjonsreserve,
+hypoksi eller hyperkapni er relative kontraindikasjoner. Hvert enkelt tilfelle må vurderes individuelt.
+
+Samtidig administrering av andre opiater, alkohol, barbiturater, benzodiazepiner og andre sterke,
+sedative og psykoaktive legemidler kan forsterke effektene og bivirkningene av metadon, og bør
+unngås.
+
+Samtidig behandling med narkotiske antagonister eller med kombinert agonist/antagonist bør unngås
+(med unntak av behandling av overdose), da det kan føre til abstinenssymptomer hos fysisk avhengige
+pasienter.
+
+I begynnelsen av dosetitreringsperioden må pasienten observeres etter administrering for å oppdage
+enhver unormal reaksjon eller bivirkning. Pasienten vil ha økte serumnivåer i opptil to timer, og det er
+viktig at tegn på overdose eller andre farlige/alvorlige reaksjoner kan registreres.
+
+Ved nedsatt lever- og nyrefunksjon må metadon brukes med forsiktighet. Metabolismen av metadon
+kan bli redusert ved nedsatt leverfunksjon, og dosejustering kan være nødvendig (se pkt. 4.2). En
+lavere startdose skal administreres til pasienter med hypotyreoidisme, myksødem (legemidlet kan øke
+risikoen for respirasjonsdepresjon og forlenget CNS-depresjon), nedsatt nyre- (økt risiko for kramper)
+og leverfunksjon (opioider metaboliseres i leveren), astma eller redusert lungevolum (legemidlet kan
+redusere respirasjonsfrekvensen og øke luftveismotstanden), uretrastriktur eller prostatahypertrofi
+(legemidlet kan forårsake urinretensjon) (se pkt. 4.2).
+
+Lever- og galleveisforstyrrelser
+Metadon kan forårsake dysfunksjon og spasmer i Oddis sfinkter, noe som øker risikoen for
+galleveissymptomer og pankreatitt. Metadon må derfor administreres med forsiktighet hos
+pasienter med pankreatitt og sykdommer i galleveiene.
+
+Binyrebarksvikt
+Smertestillende opioider kan forårsake reversibel binyrebarksvikt som krever overvåking og
+substitusjonsbehandling med glukokortikoider. Symptomer på binyrebarksvikt kan inkludere kvalme,
+oppkast, tap av appetitt, fatigue, svakhet, svimmelhet eller lavt blodtrykk.
+
+Reduserte nivåer av kjønnshormoner og økt nivå av prolaktin
+Langtidsbruk av smertestillende opioider kan være assosiert med reduserte nivåer av kjønnshormoner
+og økt nivå av prolaktin. Symptomer inkluderer redusert libido, impotens eller amenoré.
+
+Hypoglykemi
+Hypoglykemi er sett i sammenheng med overdose eller doseøkning av metadon. Regelmessig kontroll
+av blodsukkeret anbefales ved doseøkning (se pkt. 4.8 og 4.9)
+
+Særlig forsiktighet må utvises ved mulige hodeskader eller tilstander som omfatter økt intrakranielt
+trykk. Metadon bør ikke brukes hos pasienter med intestinal pseudoobstruksjon, akutt mage- og
+inflammatorisk tarmsykdom.
+
+Hos pasienter med nyrestein og pasienter med gallestein kan det være nødvendig å administrere
+atropin eller andre spasmolytika profylaktisk.
+
+Eldre pasienter og pasienter med kardiovaskulær sykdom har økt risiko for hypotensjon og synkope.
+Dette legemidlet inneholder 11 g sukrose og 2,5 g glukose per dose. Pasienter med sjeldne arvelige
+problemer med fruktoseintoleranse, glukose-galaktose malabsorpsjon eller sukrase-isomaltasemangel
+bør ikke ta dette legemidlet. Dette bør også tas hensyn til hos pasienter med diabetes mellitus.
+Metadon Nordic Drugs inneholder metylparahydroksybenzoat (E 218) som kan forårsake allergiske
+reaksjoner, muligens forsinket.
+
+Pediatrisk populasjon
+Barn er mer sensitive enn voksne, og forgiftning kan derfor oppstå ved svært lave doser. For å unngå
+at barn får i seg metadon ved et uhell når det brukes hjemme, bør metadon oppbevares på et trygt sted,
+utilgjengelig for barn.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Farmakokinetiske interaksjoner
+P-glykoproteinhemmere: Metadon er et P-glykoprotein-substrat; alle legemidler som hemmer P-
+glykoprotein (f.eks. kinidin, verapamil, ciklosporin) kan derfor øke serumkonsentrasjonen av metadon.
+Den farmakodynamiske effekten av metadon kan også økes på grunn av økt passasje over blod-hjerne-
+barrieren.
+
+CYP3A4-enzyminduktorer: Metadon er et CYP3A4-substrat (se pkt. 5.2). Ved induksjon av CYP3A4
+vil metadonclearance øke og plasmanivåene reduseres. Induktorer av dette enzymet (barbiturater,
+karbamazepin, fenytoin, nevirapin, rifampicin, efavirenz, amprenavir, spironolakton, deksametason,
+prikkperikum (hypericum perforatum)) kan indusere levermetabolismen. For eksempel, ble
+gjennomsnittlig maksimal plasmakonsentrasjon og AUC redusert med henholdsvis 48 % og 57 % etter
+tre ukers behandling med 600 mg efavirenz daglig hos pasienter behandlet med metadon (35–100 mg
+daglig).
+
+Konsekvensene av enzyminduksjon er mer markerte dersom induktoren administreres etter at
+metadonbehandlingen er påbegynt. Det er rapportert om abstinenssymptomer som følge av slike
+interaksjoner, og det kan derfor være nødvendig å øke metadondosen. Hvis behandling med en
+CYP3A4-induktor avbrytes, bør metadondosen reduseres.
+
+CYP3A4-enzyminhibitorer: Metadon er et CYP3A4-substrat (se pkt. 5.2). Ved hemming av CYP3A4
+reduseres eliminasjonen av metadon. Samtidig administrering av CYP3A4-hemmere (f.eks.
+kannabinoider inkludert cannabidiol, klaritromycin, delavirdin, erytromycin, flukonazol, itrakonazol,
+ketokonazol, fluoksetin, fluvoksamin, nefazodon, telitromycin og grapefruktjuice) kan føre til økte
+plasmakonsentrasjoner av metadon. En økning på 40-100 % i forholdet mellom serumnivået og
+metadondosen er påvist ved samtidig fluvoksaminbehandling. Dersom disse legemidlene forskrives til
+pasienter som får substitusjonsbehandling med metadon, bør en være klar over risikoen for overdose.
+
+Legemidler som påvirker surhetsgrad i urinen: Metadon er en svak base. Substanser som gjør urinen
+surere (som ammoniumklorid og askorbinsyre) kan øke renal clearance av metadon. Pasienter som
+behandles med metadon, anbefales å unngå preparater som inneholder ammoniumklorid.
+
+Samtidig behandling av HIV-infeksjon: Enkelte proteasehemmere (amprenavir, nelfinavir,
+lopinavir/ritonavir og ritanovir/sakinavir) ser ut til å redusere serumnivået av metadon. Når ritanovir
+administreres alene er det vist en dobling av AUC for metadon. Plasmanivåene av zidovudin (en
+nukleosidanalog) øker ved bruk av metadon etter både peroral og intravenøs administrering av
+zidovudin. Dette er mer uttalt når zidovudin gis peroralt enn intravenøst. Denne effekten forårsakes
+trolig ved hemming av glukoronideringen av zidovudin, og dermed redusert clearance av zidovudin.
+Under behandling med metadon skal pasientene overvåkes nøye for tegn på toksisitet forårsaket av
+zidovudin. Det kan derfor være nødvendig å redusere dosen av zidovudin. På grunn av gjensidige
+interaksjoner mellom zidovudin (en CYP3A4-induktor) og metadon, kan typiske symptomer på
+opioidabstinens utvikles ved samtidig bruk (hodepine, myalgi, fatigue og irritabilitet).
+Didanosin og stavudin: Metadon forsinker absorpsjonen og øker førstepassasjemetabolismen av
+stavudin og didanosin, noe som fører til en redusert biotilgjengelighet av stavudin og didanosin.
+
+Metadon kan doble serumnivåene av desipramin.
+
+Farmakodynamiske interaksjoner
+Opioidantagonister: Nalokson og naltrekson motvirker effektene av metadon og forårsaker abstinens.
+
+CNS-hemmende midler: Legemidler med sedativ effekt på sentralnervesystemet kan føre til økt
+respirasjonsdepresjon, hypotensjon, sterk sedasjon eller koma. Det kan derfor være nødvendig å
+redusere dosen av det ene eller begge legemidlene. Ved metadonbehandling fører metadon, som er en
+substans som elimineres langsomt, til en sakte toleranseutvikling, og hver doseøkning kan etter 1–
+2 uker forårsake symptomer på respirasjonsdepresjon. Dosejusteringene må derfor gjøres med
+forsiktighet, og dosen økes gradvis under nøye observasjon.
+
+Peristaltikkhemming: Samtidig bruk av metadon og peristaltikkhemmende legemidler (loperamid og
+difenoksylat) kan føre til alvorlig forstoppelse og økt CNS-hemmende effekt. Opioidanalgetika kan, i
+kombinasjon med antikolinerge legemidler, føre til alvorlig forstoppelse eller paralytisk ileus, særlig
+ved langvarig bruk.
+
+QT-forlengelse: Metadon bør ikke kombineres med legemidler som gir forlenget QT-intervall, slik
+som antiarytmika (sotalol, amiodaron, flekainid), antipsykotika (tioridazin, haloperidol, sertindol,
+fenotiaziner), antidepressiver (paroksetin, sertralin) eller antibiotika (erytromycin, klaritromycin).
+
+Serotonergiske legemidler: Serotonergt syndrom kan oppstå ved samtidig administrasjon av metadon
+med petidin, monoaminoksidasehemmere (MAO) og serotoninmidler som selektive
+serotoninreopptakshemmer (SSRI), serotonin- og noradrenalinreopptakshemmere (SNRI) og
+trisykliske antidepressiva (TCA). Symptomene på serotonergt syndrom kan inkludere endret mental
+status, autonom instabilitet, nevromuskulære abnormaliteter og/eller gastrointestinale symptomer.
+
+MAO-hemmere: Samtidig administrering av MAO-hemmere kan føre til kraftigere CNS-hemming,
+alvorlig hypotensjon og/eller apné. Metadon skal ikke kombineres med MAO-hemmere eller brukes
+innen to uker etter slik behandling (se pkt. 4.3).
+
+Gabapentinoider: Samtidig bruk av opioider og gabapentinoider (gabapentin og pregabalin) øker
+risikoen for opioidoverdose, respirasjonsdepresjon og død.
+
+Opioidanalgetika forsinker gastrisk tømming og gjør derfor prøveresultater ugyldige. Tilførsel av
+teknetium Tc 99m-disofenin til tynntarmen kan forhindres, og amylase- og lipaseaktiviteten i plasma
+kan øke fordi opioidanalgetika kan forårsake konstriksjon i Oddis sfinkter og økt trykk i galleveiene.
+Dette fører til forsinket visualisering og likner derfor en obstruksjon av gallegangen. Den diagnostiske
+nytten av å bestemme disse enzymene kan derfor være usikker i opptil 24 timer etter at legemidlet er
+gitt. Trykket i cerebrospinalvæsken kan øke. Effekten er sekundær til karbondioksidretensjon indusert
+av respirasjonsdepresjon.
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet
+Visse observasjonsstudier har rapportert medfødte misdannelser og nevroutviklingsforstyrrelser hos
+barn født av kvinner behandlet med metadon for opioidbruklidelse under graviditet. På grunn av
+studiebegrensninger og blanding av årsaksfaktorer knyttet til maternelle, familiære og
+sosiomiljømessige faktorer assosiert med opioidbrukslidelser, kan det imidlertid ikke trekkes noen
+konklusjoner med hensyn til metadons bidrag.
+Seponeringssymptomer/respirasjonsdepresjon kan forekomme hos nyfødte av mødre som har fått
+kronisk behandling med metadon under graviditeten. En QT-forlengende effekt etter at moren har vært
+eksponert for metadon under graviditeten kan ikke utelukkes, og EKG med 12 avledninger bør foretas
+dersom den nyfødte har bradykardi, takykardi eller uregelmessig hjerterytme, siden. Dyrestudier har
+vist reproduksjonstoksisitet (se pkt. 5.3). Det anbefales generelt ikke å detoksifisere pasienten, spesielt
+ikke etter 20. svangerskapsuke, men å fortsette substitusjonsbehandling med metadon. Bruk av
+metadon like før og under fødselen anbefales ikke på grunn av risiko for respirasjonsdepresjon hos den
+nyfødte.
+
+Amming
+Metadon utskilles i morsmelk i små mengder. Ved avgjørelsen om å anbefale amming skal råd fra
+klinisk spesialist tas med i betraktning. Det skal vurderes hvorvidt kvinnen står på en stabil
+vedlikeholdsdose av metadon, samt mulig fortsatt bruk av ulovlige substanser. Dersom amming
+vurderes, skal dosen av metadon være så lav som mulig. Forskrivere skal gi råd til kvinner som ammer
+om å overvåke spedbarnet for sedasjon og pusteproblemer, og søke medisinsk hjelp umiddelbart
+dersom dette inntreffer. Selv om mengden metadon som skilles ut i morsmelk ikke er tilstrekkelig til å
+fullstendig undertrykke abstinenssymptomer hos diende spedbarn, kan det dempe alvorlighetsgraden
+av neonatalt abstinenssyndrom. Dersom det er nødvendig å avbryte ammingen, bør det gjøres gradvis,
+siden brå avvenning kan gi økt abstinenssymptomer hos spedbarnet.
+
+4.7   Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+Metadon påvirker psykomotoriske funksjoner inntil pasienten er stabilisert på et egnet nivå. Bilkjøring
+eller bruk av maskiner bør derfor ikke skje før pasienten er stabilisert og har vært uten tegn på misbruk
+i de siste seks månedene. Hvor snart pasienten er i stand til å kjøre og bruke maskiner varierer mye fra
+person til person og må bestemmes av legen. Se nasjonale retningslinjer for metadonbehandling for
+ytterligere informasjon.
+
+4.8   Bivirkninger
+
+Bivirkningene av metadonbehandling er hovedsakelig de samme som ved behandling med andre
+opioider. De vanligste bivirkningene er kvalme og oppkast, som er sett hos ca. 20 % av pasientene
+som gjennomgår poliklinisk metadonbehandling, der legemiddelkontrollen ofte er utilfredsstillende.
+
+Den alvorligste bivirkningen er respirasjonsdepresjon, som kan oppstå under stabiliseringsfasen.
+Apné, sjokk og hjertestans har forekommet. Bivirkningene som er angitt nedenfor, forekommer oftere
+hos personer som ikke er opioidtolerante.
+
+ Organklassesystem        Svært      Vanlige        Mindre             Sjeldne          Ikke kjent (kan
+                          vanlige    (≥             vanlige            (≥ 1/10 000 til <ikke anslås ut ifra
+                          (≥ 1/10)   1/100 til <    (≥ 1/1000 til <    1/1000)          tilgjengelige data)
+                                     1/10)          1/100)
+ Sykdommer i blod                                                                       Reversibel
+ og lymfatiske                                                                          trombocytopeni er
+ organer                                                                                rapportert hos
+                                                                                        opioidpasienter
+                                                                                        med kronisk
+                                                                                        hepatitt
+ Stoffskifte- og                     Væske-         Anoreksi                            Hypokalemi
+ ernæringsbetingede                  retensjon                                          Hypomagnesemi
+ sykdommer                                                                              Hypoglykemi
+ Psykiatriske lidelser               Eufori         Dysfori                             Avhengighet
+                                     Hallu-         Agitasjon
+                                     sinasjoner     Insomni
+Organklassesystem       Svært      Vanlige       Mindre            Sjeldne          Ikke kjent (kan
+                        vanlige    (≥            vanlige           (≥ 1/10 000 til <ikke anslås ut ifra
+                        (≥ 1/10)   1/100 til <   (≥ 1/1000 til <   1/1000)          tilgjengelige data)
+                                   1/10)         1/100)
+                                                 Desorientering
+                                                 Nedsatt libido
+Nevrologiske                       Sedasjon      Hodepine
+sykdommer                                        Synkope
+Øyesykdommer                       Tåkesyn
+                                   Miose
+Sykdommer i øre og                 Vertigo
+labyrint
+Hjertesykdommer                                                    Bradykardi
+                                                                   Palpitasjoner
+                                                                   Tilfeller av
+                                                                   forlenget
+                                                                   QT-intervall
+                                                                   og torsades
+                                                                   de pointes er
+                                                                   rapportert
+                                                                   ved
+                                                                   metadon-
+                                                                   behandling,
+                                                                   særlig ved
+                                                                   høye doser
+Karsykdommer                                     Ansiktsrødme
+                                                 Hypotensjon
+Sykdommer i                                      Lungeødem                         Sentralt
+respirasjonsorganer,                             Respirasjons-                     søvnapnésyndrom
+thorax og                                        depresjon
+mediastinum
+Gastrointestinale       Kvalme     Obstipasjon   Munntørrhet                       Akutt pankreatitt
+sykdommer               Oppkast                  Glossitt
+Lever- og                                        Dyskinesi i                       Dysfunksjon av
+galleveissykdommer                               gallegangen                       Oddis sfinkter
+Hud- og                            Forbi-        Pruritus
+underhudssykdomm                   gående        Urtikaria
+er                                 utslett       Andre utslett
+                                   Svetting      og i svært
+                                                 uvanlige
+                                                 tilfeller
+                                                 blødende
+                                                 urtikaria
+Sykdommer i nyrer                                Urinretensjon
+og urinveier                                     Antidiuretisk
+                                                 effekt
+Lidelser i                                       Nedsatt potens
+kjønnsorganer og                                 Amenoré
+brystsykdommer
+Generelle lidelser og              Fatigue       Ødem i nedre
+reaksjoner på                                    ekstremiteter,
+administrasjonsstede                             Asteni
+t                                                Ødem
+Undersøkelser                      Vektøkning
+Ved langvarig bruk av metadon, som ved substitusjonsbehandling, forsvinner bivirkningene gradvis
+og progressivt over en periode på flere uker. Forstoppelse og svetting vedvarer imidlertid ofte.
+
+Langvarig bruk metadon kan føre til morfinlignende avhengighet. Abstinenssymptomene ligner de
+som observeres for morfin eller heroin, men er imidlertid mindre intense og mer langvarige.
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til Statens
+legemiddelverk: www.legemiddelverket.no/meldeskjema.
+
+4.9   Overdosering
+
+Symptomer: Alvorlig overdose er karakterisert av respirasjonssvikt, ekstrem døsighet som utvikles til
+stupor eller koma, maksimal konstriksjon av pupiller, slapp muskulatur, kald og klam hud og enkelte
+ganger bradykardi og hypotensjon. I alvorlige tilfeller av overdosering, særlig ved intravenøs
+administrering, kan apné, kardiovaskulær svikt, hjertestans og død forekomme. Hypoglykemi har blitt
+rapportert. Toksisk leukoencefalopati har vært observert ved metadonoverdose.
+
+Behandling: Sikre åpne luftveier med assistert eller kontrollert ventilasjon. Opioidantagonister kan
+være nødvendig, men siden metadon har lang virketid (36-48 timer), og den mest brukte antagonisten
+nalokson bare 1-3 timer, bør behandlingen med en slik korttidsvirkende antagonist gjentas hvis
+nødvendig. En antagonist bør ikke gis dersom det ikke er tegn på respirasjonssvikt eller bevissthetstap.
+Dersom pasienten er fysisk avhengig av narkotiske stoffer, kan administrering av en antagonist føre til
+akutte abstinenssymptomer. Bruk av antagonister hos disse pasientene bør unngås, hvis mulig. Dersom
+det likevel er nødvendig å administrere en antagonist på grunn av alvorlig respirasjonsdepresjon, skal
+det utvises særlig forsiktighet og antagonistdosen bør være lav ved mistenkt metadonforgiftning.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Midler ved opioidavhengighet, ATC-kode: N07B C02
+
+Metadon er et narkotisk analgetikum som tilhører samme gruppe som morfin. Substansen har en
+agonistisk effekt på opioidreseptorene i hjernen, beinmargen og nervesystemet, med høy affinitet til
+my-reseptorer og noe affinitet til delta- og kappa-reseptorer. Metadon virker på samme måte som
+morfin, men har en mindre sedativ effekt. Bruk av metadon kan redusere eller eliminere effektene av
+andre opiater. Metadon kan i nøye titrert dose gis peroralt uten å gi noen eufori, men kun en "normal"
+tilstand i 24-32 timer, etterfulgt av gradvis økning av seponeringssymptomer, med mindre det gis en
+ny dose.
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+Metadon absorberes raskt etter peroral administrering, men gjennomgår en betydelig
+førstepassasjemetabolisme. Biotilgjengeligheten er > 80 %. Steady state-konsentrasjoner oppnås innen
+5-7 dager.
+
+Distribusjon
+Distribusjonsvolumet er 5 liter/kg. Proteinbindinger er opptil 90 %, men med store individuelle
+forskjeller. Metadon bindes hovedsakelig til alfa-1-glykoproteinsyre, men også til albumin og andre
+plasma- og vevsproteiner. Fullblodforholdet i plasma er ca. 1:3. Metadon distribueres til vev, med
+høyere konsentrasjoner i lever, lunger og nyrer enn i blodet.
+
+Biotransformasjon
+Katalyseres hovedsakelig via CYP3A4, men CYP2D6 og CYP2B6 er også involvert i mindre omfang.
+Metabolismen foregår hovedsakelig ved N-demetylering, som gir de viktigste metabolittene: 2-
+etylidin-1,5-dimetyl-3,3-difenylpyrrolidin (EDDP) og 2-etyl-5-metyl-3,3-difenyl-1-pyrrolidin
+(EMDP), som begge er inaktive. Hydroksylering til metanol etterfulgt av N-demetylering til
+normetadol foregår også til en viss grad. Andre metabolske reaksjoner forekommer også, og minst åtte
+andre metabolitter er kjent.
+
+Eliminasjon
+Halveringstid: Enkeltdose 10-25 timer. Gjentatt dosering: 13-55 timer. Plasmaclearance er ca.
+2 ml/minutt/kg. Cirka 20-60 % av dosen elimineres i urinen i løpet av 96 timer (ca. 33 % i uendret
+form, ca. 43 % som EDDP og ca. 5-10 % som EMDP). Forholdet mellom EDDP og umodifisert
+metadon er vanligvis mye høyere i urinen hos pasienter som får metadonbehandling enn ved vanlig
+overdosering. Eliminasjon av umodifisert metadon i urinen er pH-avhengig og øker med økende
+surhetsgrad i urinen. Cirka 30 % av dosen elimineres via feces, men denne andelen reduseres vanligvis
+ved høyere doser. Cirka 75 % av total eliminering er ukonjugert.
+
+Spesielle populasjoner
+Det er ingen signifikante forskjeller i farmakokinetikken mellom menn og kvinner. Eliminasjon av
+metadon reduseres kun i noen grad hos eldre (> 65 år).
+
+På grunn av økt eksponering bør det utvises forsiktighet ved behandling av pasienter med nedsatt
+nyre- og leverfunksjon (se pkt. 4.2 og 4.4).
+
+5.3     Prekliniske sikkerhetsdata
+
+Metadon i høye doser forårsaket fødselsdefekter hos murmeldyr, hamster og mus, der de fleste
+rapportene gjaldt eksencefali og defekter i sentralnervesystemet. Det er sett noen tilfeller av rakiskisis
+(nevralrørsdefekter) i cervikalområdet hos mus. Hos kyllingembryo ble det funnet manglende lukking
+av nevralrøret. Metadon er ikke teratogent hos rotte eller kanin. Det er sett redusert antall avkom hos
+rotte og økt mortalitet, vekstretardasjon, nevrologiske atferdseffekter og redusert hjernevekt hos
+avkom. Redusert forbeining av ekstremiteter, sternum (brystbeinet) og kranium er funnet hos mus,
+samt redusert kullstørrelse. Karsinogenitetsstudier er ikke utført.
+
+
+6.      FARMASØYTISKE OPPLYSNINGER
+
+6.1     Hjelpestoffer
+
+Sukrose
+Glukosemonohydrat
+Metylparahydroksybenzoat (E 218)
+Bringebæraroma
+Vann
+
+6.2     Uforlikeligheter
+
+Ikke relevant.
+
+6.3     Holdbarhet
+
+3 år.
+6.4   Oppbevaringsbetingelser
+
+Dette legemidlet krever ingen spesielle oppbevaringsbetingelser.
+
+6.5     Emballasje (type og innhold)
+
+Plastflaske med barnesikret kork av polyetylen.
+Flasken inneholder 50 ml mikstur, oppløsning. Enkeltflasker eller pakninger med 7 flasker.
+Ikke alle pakningsstørrelser vil nødvendigvis bli markedsført.
+
+6.6   Spesielle forholdsregler for destruksjon og annen håndtering
+
+Ingen spesielle forholdsregler for destruksjon.
+
+
+7.    INNEHAVER AV MARKEDSFØRINGSTILLATELSEN
+
+Nordic Drugs AB
+Postboks 30035
+SE-200 61 Limhamn
+Sverige
+
+
+8.    MARKEDSFØRINGSTILLATELSESNUMMER (NUMRE)
+
+10 mg: 14-10148
+15 mg: 14-10152
+20 mg: 14-10149
+25 mg: 14-10150
+30 mg: 14-10151
+35 mg: 14-10154
+40 mg: 14-10153
+45 mg: 14-10155
+50 mg: 14-10156
+55 mg: 14-10157
+60 mg: 14-10158
+70 mg: 14-10159
+80 mg: 14-10160
+90 mg: 14-10161
+100 mg: 14-10162
+110 mg: 14-10163
+120 mg: 14-10164
+130 mg: 14-10165
+140 mg: 14-10166
+150 mg: 14-10167
+160 mg: 14-10168
+170 mg: 14-10169
+180 mg: 14-10170
+190 mg: 14-10171
+200 mg: 14-10172
+9.    DATO FOR FØRSTE MARKEDSFØRINGSTILLATELSE / SISTE FORNYELSE
+
+Dato for første markedsføringstillatelse: 28. august 2014
+Dato for siste fornyelse: 16. juli 2015
+
+
+10.   OPPDATERINGSDATO
+
+27.03.2026
+

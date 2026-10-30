@@ -1,0 +1,54 @@
+Dette legemidlet inneholder 11 g sukrose og 2,5 g glukose per dose. Pasienter med sjeldne arvelige
+problemer med fruktoseintoleranse, glukose-galaktose malabsorpsjon eller sukrase-isomaltasemangel
+bør ikke ta dette legemidlet. Dette bør også tas hensyn til hos pasienter med diabetes mellitus.
+Metadon Nordic Drugs inneholder metylparahydroksybenzoat (E 218) som kan forårsake allergiske
+reaksjoner, muligens forsinket.
+
+Pediatrisk populasjon
+Barn er mer sensitive enn voksne, og forgiftning kan derfor oppstå ved svært lave doser. For å unngå
+at barn får i seg metadon ved et uhell når det brukes hjemme, bør metadon oppbevares på et trygt sted,
+utilgjengelig for barn.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Farmakokinetiske interaksjoner
+P-glykoproteinhemmere: Metadon er et P-glykoprotein-substrat; alle legemidler som hemmer P-
+glykoprotein (f.eks. kinidin, verapamil, ciklosporin) kan derfor øke serumkonsentrasjonen av metadon.
+Den farmakodynamiske effekten av metadon kan også økes på grunn av økt passasje over blod-hjerne-
+barrieren.
+
+CYP3A4-enzyminduktorer: Metadon er et CYP3A4-substrat (se pkt. 5.2). Ved induksjon av CYP3A4
+vil metadonclearance øke og plasmanivåene reduseres. Induktorer av dette enzymet (barbiturater,
+karbamazepin, fenytoin, nevirapin, rifampicin, efavirenz, amprenavir, spironolakton, deksametason,
+prikkperikum (hypericum perforatum)) kan indusere levermetabolismen. For eksempel, ble
+gjennomsnittlig maksimal plasmakonsentrasjon og AUC redusert med henholdsvis 48 % og 57 % etter
+tre ukers behandling med 600 mg efavirenz daglig hos pasienter behandlet med metadon (35–100 mg
+daglig).
+
+Konsekvensene av enzyminduksjon er mer markerte dersom induktoren administreres etter at
+metadonbehandlingen er påbegynt. Det er rapportert om abstinenssymptomer som følge av slike
+interaksjoner, og det kan derfor være nødvendig å øke metadondosen. Hvis behandling med en
+CYP3A4-induktor avbrytes, bør metadondosen reduseres.
+
+CYP3A4-enzyminhibitorer: Metadon er et CYP3A4-substrat (se pkt. 5.2). Ved hemming av CYP3A4
+reduseres eliminasjonen av metadon. Samtidig administrering av CYP3A4-hemmere (f.eks.
+kannabinoider inkludert cannabidiol, klaritromycin, delavirdin, erytromycin, flukonazol, itrakonazol,
+ketokonazol, fluoksetin, fluvoksamin, nefazodon, telitromycin og grapefruktjuice) kan føre til økte
+plasmakonsentrasjoner av metadon. En økning på 40-100 % i forholdet mellom serumnivået og
+metadondosen er påvist ved samtidig fluvoksaminbehandling. Dersom disse legemidlene forskrives til
+pasienter som får substitusjonsbehandling med metadon, bør en være klar over risikoen for overdose.
+
+Legemidler som påvirker surhetsgrad i urinen: Metadon er en svak base. Substanser som gjør urinen
+surere (som ammoniumklorid og askorbinsyre) kan øke renal clearance av metadon. Pasienter som
+behandles med metadon, anbefales å unngå preparater som inneholder ammoniumklorid.
+
+Samtidig behandling av HIV-infeksjon: Enkelte proteasehemmere (amprenavir, nelfinavir,
+lopinavir/ritonavir og ritanovir/sakinavir) ser ut til å redusere serumnivået av metadon. Når ritanovir
+administreres alene er det vist en dobling av AUC for metadon. Plasmanivåene av zidovudin (en
+nukleosidanalog) øker ved bruk av metadon etter både peroral og intravenøs administrering av
+zidovudin. Dette er mer uttalt når zidovudin gis peroralt enn intravenøst. Denne effekten forårsakes
+trolig ved hemming av glukoronideringen av zidovudin, og dermed redusert clearance av zidovudin.
+Under behandling med metadon skal pasientene overvåkes nøye for tegn på toksisitet forårsaket av
+zidovudin. Det kan derfor være nødvendig å redusere dosen av zidovudin. På grunn av gjensidige
+interaksjoner mellom zidovudin (en CYP3A4-induktor) og metadon, kan typiske symptomer på
+opioidabstinens utvikles ved samtidig bruk (hodepine, myalgi, fatigue og irritabilitet).

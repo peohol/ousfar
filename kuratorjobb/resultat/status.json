@@ -1,18 +1,54 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "advarsel",
   "jobb": {
     "gren": "kuratorjobb/manuell-41084533981",
     "foresporsel_commit": "43536f2c3878f6faadbf7bc68d366dba2a3ac79c",
     "foresporsel_sha256": "7f414b923efbe959aa165d3670a023aaf7976391a36da880baee93831c75bb8b",
     "kode_commit": "c58509067b9f530f36d25b6953495c5fd634f14f",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/41084533981",
-    "startet_kl": "2026-10-30T15:52:04.986Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-30T15:52:06.999Z",
+    "ferdig_kl": "2026-10-30T15:53:02.132Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "metadon"
+    ],
+    "oppgaver": [
+      "funksjonstest",
+      "spc"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 258
+    }
+  ],
+  "stoffer": {
+    "metadon": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/metadon/funksjonstest.json"
+        },
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/metadon/spc.json"
+        }
+      }
+    }
+  }
 }

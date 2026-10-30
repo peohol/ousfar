@@ -1,0 +1,59 @@
+plasmakonsentrasjon og AUC redusert med henholdsvis 48 % og 57 % etter tre ukers behandling med
+600 mg efavirenz daglig hos pasienter behandlet med metadon (35–100 mg daglig).
+
+Konsekvensene av enzyminduksjon er mer markerte dersom induseren administreres etter at
+behandlingen med metadon har begynt. Det har vært rapportert om abstinenssymptomer etter slike
+interaksjoner, og det kan derfor være nødvendig å øke metadondosen. Hvis behandling med en
+CYP3A4-induser avbrytes, bør metadondosen reduseres.
+
+CYP3A4-enzyminhibitorer:
+Metadon er et CYP3A4-substrat (se pkt. 5.2). Ved hemming av CYP3A reduseres clearance av
+metadon. Samtidig administrasjon av CYP3A4-hemmere (f.eks. kannabinoider, klaritromycin,
+delavirdin, erytromycin, flukonazol, grapefruktjuice, itrakonazol, ketokonazol, vorikonazol,
+fluvoksamin, nefazodon og telitromycin) kan føre til økte plasmakonsentrasjoner av metadon. En
+økning på 40-100 % i forholdet mellom serumnivået og metadondosen er påvist ved samtidig
+fluvoksaminbehandling. Hvis disse legemidlene forskrives til pasienter som får
+vedlikeholdsbehandling med metadon, bør en være klar over risikoen for overdose.
+
+Fluoksetin øker konsentrasjonen av R-metadon gjennom hemming av CYP2D6.
+
+Produkter som påvirker surhetsgrad i urinen:
+Metadon er en svak base. Surgjørere av urinen (som ammoniumklorid og askorbinsyre) kan øke renal
+clearance av metadon. Pasienter som behandles med metadon, anbefales å unngå produkter som
+inneholder ammoniumklorid.
+
+Samtidig behandling av HIV infeksjon:
+Visse proteasehemmere (amprenavir, nelfinavir, lopinavir/ritonavir og ritanovir/saquinavir) ser ut til å
+være i stand til å minke serumnivået av metadon. For ritanovir gitt alene er det vist en dobling av AUC
+for metadon. Plasmanivåene av zidovudin (en nukleosid analog) øker ved metadonbruk etter både
+peroral og intravenøs administrasjon av zidovudin. Dette er mer merkbart etter peroral enn intravenøs
+bruk av zidovudin. Denne effekten forårsakes trolig av hemming av zidovudinglukoronideringen og
+dermed redusert renal clearance av zidovudin. Under behandling med metadon må pasientene
+overvåkes nøye for tegn på toksisitet forårsaket av zidovudin. Derfor kan det være nødvendig å
+redusere dosen av zidovudin.
+
+Didanosin og stavudin:
+Metadon forsinker absorpsjonen og øker førstepassasjemetabolismen av stavudin og didanosin, noe
+som fører til en redusert biotilgjengelighet av stavudin og didanosin.
+
+Abakavir:
+En farmakokinetisk studie viste at administrering av abakavir 600 mg to ganger daglig sammen med
+metadon ga 35 % reduksjon i Cmax for abakavir, og en times forsinkelse i tmax, men AUC var
+uforandret. Endringene i farmakokinetikken for abakavir vurderes ikke som klinisk relevante. I denne
+studien økte abakavir det gjennomsnittlige systemiske metadon clearance med 22 %. Induksjon av
+legemiddel metaboliserende enzymer kan derfor ikke utelukkes. Pasienter som behandles med
+metadon og abakavir må følges opp med tanke på abstinens symptomer som tyder på underdosering,
+og retitrering av metadon kan av og til være nødvendig.
+
+Metadon kan fordoble serumnivåene av desipramin et CYP2D6 substrat. Hemming av CYP2D6 kan
+føre til økt plasmakonsentrasjon av legemidler gitt samtidig hvis disse metaboliseres via dette
+enzymet. Disse legemidlene inkluderer, men er ikke begrenset til, trisykliske antidepressiva (slik som
+klomipramin, nortriptylin og desipiramin), fentiazin-nevroleptika (f.eks. perfenazin og tioridazin),
+risperidon, atomoksetin, visse Type 1c-antiarrytmika (f.eks. propafenon og flekainid) og metoprolol.
+
+Tamoksifen er en pro-drug som krever metabolsk aktivering via CYP2D6. Tamoksifen har en aktiv
+metabolitt, endoksifen, som dannes via CYP2D6 og som bidrar signifikant til effekten av tamoksifen,
+Hemming av CYP2D6 av metadon kan føre til redusert plasmakonsentrasjon av endoksifen.
+
+
+                                                  5

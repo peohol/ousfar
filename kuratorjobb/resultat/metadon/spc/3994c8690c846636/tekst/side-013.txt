@@ -1,0 +1,54 @@
+serumproteiner, hovedsakelig til alfa-glykoproteinsyre og albumin.
+
+Biotransformasjon
+Så langt er 32 metabolitter av metadon identifisert. To farmakologisk aktive metabolitter står for kun 2
+% av administrert dose. Metadon og dens metabolitter akkumuleres hovedsakelig i lunger, lever,
+nyrer, milt og muskler.
+
+Eliminasjon
+Eliminasjonen av metadon og dens metabolitter finner sted i nyrene og i gallen. Eliminasjonen via
+nyrene, som er sterkt pH-avhengig, er hovedveien ved høye doser. Ved doser over 160 mg vil ca. 60 %
+utskilles som uforandret metadon. 10 til 45 % av den totalt gjenfunnene mengden er utskilt i gallen.
+
+Plasmahalveringstid er gjenstand for stor individuell variabilitet (mellom 14 og 55 timer). Den øker
+med økt behandlingslengde, hos eldre og i tilfeller med kronisk leversykdom.
+
+Levometadon er ikke dialyserbar. I tilfeller med anuri er det imidlertid ikke risiko for akkumulering da
+eliminasjon i dette tilfellet kun foregår via fæces.
+
+Spesielle populasjoner
+Levometadon utskilles i human melk og passerer placenta. Konsentrasjonen i blodet i navlestrengen er
+lavere enn plasmakonsentrasjonen hos moren. Det er ingen korrelasjon mellom
+plasmakonsentrasjonen til moren/i blodet i navlestrengen og nivået funnet i fostervannet.
+På grunn av økt eksponering bør det utvises forsiktighet ved behandling av pasienter med nedsatt
+nyre- og leverfunksjon (se pkt. 4.2 og 4.4).
+
+5.3   Prekliniske sikkerhetsdata
+
+I prekliniske studier er målorganene etter subkronisk og kronisk administrasjon hovedsakelig
+respirasjonssystemet (respirasjonsdepresjon) og leveren (økt SGTP aktivitet, hypertrofi av
+levercellene, eosinofile cytoplasmiske forandringer).
+
+Mutagent- og karsinogent potensiale
+In vitro og in vivo studier utført på gentoksisitet av metadon har vist motstridende resultater, noe som
+indikerer et svakt klastogent potensiale. Foreløpig kan det ikke konkluderes vedrørende risiko ved
+klinisk bruk. Langtidsstudier utført på rotter og mus har ikke vist karsinogent potensiale.
+
+Toksisitet på reproduksjon
+Levometadon er ikke tilstrekkelig studert. I høye doser forårsaket metadon fødselsdefekter hos
+murmeldyr, hamstre og mus. De fleste av rapportene gjaldt eksencefali og defekter i
+sentralnervesystemet. Rachischis i cervikalområdet ble av og til sett hos mus. Hos kylling-embryo ble
+det påvist manglende lukning av nevralrøret. Metadon var ikke teratogent hos rotter eller kaniner. Et
+redusert antall avkom ble påvist hos rotter, og økte mortalitet, veksthemning, nevrologiske
+atferdseffekter og redusert hjernevekt ble påvist hos avkommet. Redusert bendannelse i digiti, sternum
+og skalle ble påvist hos mus, samt et mindre antall fostre per kull.
+
+Hos rotter behandlet med metadon 20 mg/kg/dag i 5 dager ble det observert vektnedgang av prostata,
+sædvesikkel og testikler. Avkommet til metadonbehandlende menn (opptil 38 mg/kg/dag) viste økt
+neonatal dødelighet (opptil 74 %).
+
+Oral administrering av metadon i rotter mellom gestasjonsdag 14 og 19 førte til signifikant reduksjon i
+testosteronnivået i blodet hos mannlige avkom (antagonisering med nalokson er mulig).
+
+
+6.    FARMASØYTISKE OPPLYSNINGER

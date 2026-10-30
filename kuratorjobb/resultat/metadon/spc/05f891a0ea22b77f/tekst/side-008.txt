@@ -1,0 +1,54 @@
+Organklassesystem       Svært      Vanlige       Mindre            Sjeldne          Ikke kjent (kan
+                        vanlige    (≥            vanlige           (≥ 1/10 000 til <ikke anslås ut ifra
+                        (≥ 1/10)   1/100 til <   (≥ 1/1000 til <   1/1000)          tilgjengelige data)
+                                   1/10)         1/100)
+                                                 Desorientering
+                                                 Nedsatt libido
+Nevrologiske                       Sedasjon      Hodepine
+sykdommer                                        Synkope
+Øyesykdommer                       Tåkesyn
+                                   Miose
+Sykdommer i øre og                 Vertigo
+labyrint
+Hjertesykdommer                                                    Bradykardi
+                                                                   Palpitasjoner
+                                                                   Tilfeller av
+                                                                   forlenget
+                                                                   QT-intervall
+                                                                   og torsades
+                                                                   de pointes er
+                                                                   rapportert
+                                                                   ved
+                                                                   metadon-
+                                                                   behandling,
+                                                                   særlig ved
+                                                                   høye doser
+Karsykdommer                                     Ansiktsrødme
+                                                 Hypotensjon
+Sykdommer i                                      Lungeødem                         Sentralt
+respirasjonsorganer,                             Respirasjons-                     søvnapnésyndrom
+thorax og                                        depresjon
+mediastinum
+Gastrointestinale       Kvalme     Obstipasjon   Munntørrhet                       Akutt pankreatitt
+sykdommer               Oppkast                  Glossitt
+Lever- og                                        Dyskinesi i                       Dysfunksjon av
+galleveissykdommer                               gallegangen                       Oddis sfinkter
+Hud- og                            Forbi-        Pruritus
+underhudssykdomm                   gående        Urtikaria
+er                                 utslett       Andre utslett
+                                   Svetting      og i svært
+                                                 uvanlige
+                                                 tilfeller
+                                                 blødende
+                                                 urtikaria
+Sykdommer i nyrer                                Urinretensjon
+og urinveier                                     Antidiuretisk
+                                                 effekt
+Lidelser i                                       Nedsatt potens
+kjønnsorganer og                                 Amenoré
+brystsykdommer
+Generelle lidelser og              Fatigue       Ødem i nedre
+reaksjoner på                                    ekstremiteter,
+administrasjonsstede                             Asteni
+t                                                Ødem
+Undersøkelser                      Vektøkning

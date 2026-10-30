@@ -1,0 +1,59 @@
+Hos pasienter med nyrestein eller gallestein kan det være nødvendig å gi profylaktisk behandling med
+atropin eller andre spasmolytika.
+
+Eldre pasienter og pasienter med kardiovaskulær sykdom har økt risiko for hypotensjon og synkope.
+
+Reduserte nivåer av kjønnshormoner og økt nivå av prolaktin
+Langtidsbruk av smertestillende opioider kan være assosiert med reduserte nivåer av kjønnshormoner
+og økt nivå av prolaktin. Symptomer inkluderer redusert libido, impotens eller amenoré.
+
+Hypoglykemi
+Hypoglykemi er sett i sammenheng med overdose eller doseøkning av metadon. Regelmessig kontroll
+av blodsukkeret anbefales ved doseøkning (se pkt. 4.8 og 4.9).
+
+Dette legemidlet inneholder laktose. Pasienter med sjeldne arvelige problemer med
+galaktoseintoleranse, total laktasemangel eller glukose-galaktosemalabsorpsjon bør ikke ta dette
+legemidlet.
+
+Pediatrisk populasjon
+Barn er mer sensitive enn voksne, og forgiftning kan derfor oppstå ved svært lave doser. For å unngå
+at barn får i seg metadon ved et uhell når det brukes hjemme, skal metadon oppbevares på et trygt sted
+som er utilgjengelig for barn.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Farmakokinetiske interaksjoner
+P-glykoproteinhemmere: Metadon er et substrat for P-glykoprotein. Alle legemidler som hemmer
+P-glykoprotein (f.eks. kinidin, verapamil, ciklosporin) kan derfor øke serumkonsentrasjonen av
+metadon. Den farmakodynamiske effekten av metadon kan også øke, som en konsekvens av økt
+passasje over blod-hjernebarrieren.
+
+CYP3A4-induktor: Metadon er et substrat for CYP3A4 (se pkt. 5.2). Induksjon av CYP3A4 øker
+eliminasjonen av metadon og fører til reduksjon i plasmanivåene. Substanser som induserer dette
+enzymet (barbiturater, karbamazepin, fenytoin, nevirapin, rifampicin, efavirenz, amprenavir,
+spironolakton, deksametason, hypericum perforatum (prikkperikum/johannesurt)) kan indusere
+levermetabolismen. Gjennomsnittlig maksimal plasmakonsentrasjon og AUC ble f.eks. redusert med
+henholdsvis 48 % og 57 % etter tre ukers behandling med 600 mg efavirenz daglig hos pasienter som
+ble behandlet med metadon (35–100 mg daglig).
+
+Konsekvensene av enzyminduksjon er mer uttalte dersom induktoren administreres etter at
+behandlingen med metadon har startet. Det er rapportert abstinenssymptomer som følge av slike
+interaksjoner, og det kan derfor være nødvendig å øke metadondosen. Dersom behandling med en
+CYP3A4-induktor avsluttes, bør metadondosen reduseres.
+
+CYP3A4-hemmere: Metadon er et substrat for CYP3A4 (se pkt. 5.2). Hemming av CYP3A4 reduserer
+eliminasjonen av metadon. Samtidig administrering av CYP3A4-hemmere (f.eks. kannabinoider,
+klaritromycin, delavirdin, erytromycin, flukonazol, grapefruktjuice, itrakonazol, ketokonazol,
+fluvoksamin, cimetidin, nefazodon og telitromycin) kan føre til økte plasmakonsentrasjoner av
+metadon. Ved samtidig fluvoksaminbehandling er det vist en økning på 40-100 % i forholdet mellom
+serumkonsentrasjonen og metadondosen. Dersom disse legemidlene forskrives til pasienter som får
+vedlikeholdsbehandling med metadon, bør en være klar over risikoen for overdosering.
+
+Fluoksetin øker konsentrasjonen av R-metadon ved å hemme CYP2D6.
+
+Legemidler som påvirker surhetsgraden i urinen: Metadon er en svak base. Substanser som øker
+surhetsgraden i urinen (som ammoniumklorid og askorbinsyre) kan øke renal clearance av metadon.
+Pasienter som behandles med metadon bør anbefales å unngå produkter som inneholder
+ammoniumklorid (salmiakk).
+
+                                                  5
