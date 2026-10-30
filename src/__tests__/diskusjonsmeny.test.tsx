@@ -265,6 +265,14 @@ describe('boblen', () => {
     expect(boble().hidden).toBe(true)
   })
 
+  it('står åpen når brukeren åpnet den før det lagrede valget kom fram', async () => {
+    let svar: (apen: boolean) => void = () => undefined
+    api.hentApen.mockReturnValue(new Promise((ferdig) => (svar = ferdig)))
+    await apne()
+    await act(async () => svar(false))
+    expect(panel().hidden).toBe(false)
+  })
+
   it('har en kant som kan dras når den er åpen, og står i bredden brukeren har dratt den til', async () => {
     api.hentBredde.mockResolvedValue(600)
     const bruker = userEvent.setup()

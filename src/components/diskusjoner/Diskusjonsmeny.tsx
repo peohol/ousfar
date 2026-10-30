@@ -117,9 +117,11 @@ export function Diskusjonsmeny({
   const [fokus, setFokus] = useState(false)
   const meny = useRef<HTMLElement>(null)
 
-  // Om menyen står åpen, er lagret på brukeren. Til det er hentet, gjelder det som stod.
+  // Om menyen står åpen, er lagret på brukeren. Til det er hentet, gjelder det som stod,
+  // og har brukeren åpnet eller lukket den i mellomtiden, vinner det.
+  const endretHer = useRef(false)
   useEffect(() => {
-    void hentApen().then((lagret) => lagret !== null && setApen(lagret), () => undefined)
+    void hentApen().then((lagret) => lagret !== null && !endretHer.current && setApen(lagret), () => undefined)
   }, [setApen])
 
   useEffect(() => {
@@ -134,6 +136,7 @@ export function Diskusjonsmeny({
 
   const settApen = useCallback(
     (ny: boolean) => {
+      endretHer.current = true
       setApen(ny)
       void lagreApen(ny).catch(() => undefined)
     },
