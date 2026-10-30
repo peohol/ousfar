@@ -1,0 +1,58 @@
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+
+Metylfenidat absorberes raskt. Etter peroral administrering av metylfenidat-depottabletter til voksne vil
+tablettskallet løses opp, og plasmakonsentrasjonen av legemiddel når raskt sitt første maksimum i løpet av 1
+til 2 timer. Metylfenidat i tablettkjernen frigjøres gradvis over de neste timene. Toppkonsentrasjon i plasma
+nås etter om lag 6 til 8 timer, etterfulgt av en gradvis reduksjon i plasmanivå. Ved administrasjon av
+metylfenidat-depottabletter én gang daglig minimeres fluktuasjonene mellom topp- og bunn-konsentrasjoner
+som man får ved inntak av metylfenidat med umiddelbar frisetting gitt tre ganger daglig. Absorpsjonsgraden
+av metylfenidat-depottabletter gitt én gang daglig er generelt sammenlignbar med metylfenidat fra
+konvensjonelle formuleringer med umiddelbar frisetting.
+
+Etter administrasjon av metylfenidat-depottabletter 18 mg én gang daglig hos 36 voksne, var
+gjennomsnittsverdien for farmakokinetiske parametre: Cmax 3,7 ± 1,0 (ng/ml), tmax 6.8 ± 1,8 (timer), AUCinf
+41,8 ± 13,9 (ng•h/ml), and t½ 3,5 ± 0,4 (timer).
+
+Det var ingen forskjeller i metylfenidat-depottablettenes farmakokinetikk etter éngangsdosering og gjentatt
+daglig éngangsdosering. Dette indikerer at akkumuleringen av metylfenidat ikke er signifikant. AUC og t½
+etter gjentatt daglig éngangsdosering er sammenlignbar med tilsvarende parametre observert etter første gitte
+dose på 18 mg metylfenidat-depottabletter.
+
+Etter administrasjon av metylfenidat-depottabletter i éngangsdoser på 18 til 72 mg/dag til voksne, viste Cmax
+ogAUCinf for metylfenidat doseproporsjonalitet.
+
+Distribusjon
+
+Plasmakonsentrasjonen av metylfenidat hos voksne avtar bieksponensielt etter peroral administrasjon.
+Halveringstiden for metylfenidat hos voksne etter peroralt inntak av metylfenidat-depottabletter, var ca.
+3,5 time. Proteinbindingsgraden for metylfenidat og metabolittene er ca. 15 %. Det tilsynelatende
+distribusjonsvolumet er ca. 13 liter/kg.
+
+Biotransformasjon
+
+Hos mennesker blir metylfenidat metabolisert hovedsakelig ved de-esterifisering til alfa-fenyl-piperidin-
+eddiksyre (PPA, ca. 50 ganger så høyt nivå i forhold til uforandret substans), som har liten eller ingen
+farmakologisk aktivitet. Hos voksne er metabolismen (målt ved PPA) ved metylfenidat-depottabletter gitt én
+gang daglig lik metabolismen ved metylfenidat gitt tre ganger daglig. Metabolismen for metylfenidat-
+depottabletter gitt én gang daglig endres ikke ved gjentatt dosering.
+
+Eliminasjon
+
+Halveringstiden for metylfenidat hos voksne etter administrering av metylfenidat-depottabletter, var ca.
+3,5 time. Innen 48 til 96 timer etter peroral administrering er ca 90 % av dosen eliminert i urin og 1 til 3 %
+av dosen i feces som metabolitter. Små mengder med uforandret metylfenidat gjenfinnes i urin (mindre enn 1
+%). PPA er hovedmetabolitten i urin (60-90 %).
+
+Etter peroral dosering av radiomerket metylfenidat hos mennesker ble om lag 90 % av radioaktiviteten
+gjenfunnet i urinen. Hovedmetabolitten i urin var PPA, som stod for ca. 80 % av dosen.
+
+Effekt av mat
+
+Det var det ingen forskjell hverken i farmakokinetikk eller i farmakodynamikk når metylfenidat-
+depottabletter ble gitt til pasienter etter en fettrik frokost eller på tom mage.
+
+Spesielle populasjoner
+
+                                                     17

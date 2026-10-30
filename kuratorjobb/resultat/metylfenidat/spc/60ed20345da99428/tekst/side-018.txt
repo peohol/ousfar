@@ -1,0 +1,55 @@
+kapsler uten placebokontroll; periode 3= randomisert seponeringsfase). Denne «core»-studien ble
+etterfulgt av en 26-ukers åpen forlengelsesstudie.
+
+«Core»-studien var en randomisert, dobbeltblindet, placebokontrollert multisenter studie med
+725 voksne pasienter (395 menn og 330 kvinner) diagnostisert med ADHD i henhold til DSM-IV
+ADHD kriteriene. Studien var designet til å:
+
+     1) Bekrefte effekten og sikkerheten av Ritalin kapsler hos voksne (18 til 60 år) i en 9 ukers,
+        dobbeltblindet, randomisert, placebokontrollert, parallellgruppe periode (periode 1) bestående
+        av en 3 ukers titreringsfase etterfulgt av en 6 ukers fase med fast dose (40, 60, 80 mg/dag eller
+        placebo). Senere ble pasientene re-titrert til deres optimale dose med Ritalin kapsler (40, 60
+        eller 80 mg/dag) over en 5 ukers periode (periode 2).
+     2) Evaluere opprettholdelsen av effekten av Ritalin kapsler hos voksne med ADHD i en 6-
+        måneders dobbeltblindet, randomisert, seponeringsstudie (periode 3).
+
+Effekten ble vurdert ved bruk av vurderingsskalaen «DSM-IV ADHD» (DSM-IV ADHD RS) for
+symptomatisk kontroll og «Sheehan Disability Score» (SDS) for funksjonell forbedring som
+forbedring i respektive totalresultat fra baseline til slutten av første periode. Alle dosenivåer for Ritalin
+kapsler viste signifikant større symptomkontroll (p<0,0001 for alle dosenivåer) sammenlignet med
+placebo målt som en reduksjon i totalresultat for DSM-IV ADHD RS. Alle doser av Ritalin kapsler
+viste signifikant høyere funksjonell forbedring (p=0,0003 ved 40 mg, p=0,0176 ved 60 mg, p<0,0001
+ved 80 mg) sammenlignet med placebo målt som forbedring i total SDS score (se Tabell 2).
+
+Klinisk effekt ble vist for alle tre dosenivåer av Ritalin kapsler ved bruk av legens vurderingsskalaer
+(Clinical Global Impression- Improvement (CGI-I) og Clinical Global Improvement- Severity (CGI-
+S)), selvvurderingsskalaer (Adult Self-Rating Scale (ASRS)) og observasjonsvurderingsskalaer
+(Conners’ Adult ADHD Rating Scale Observer Short Version (CAARS O:S)). Resultatene var i favør
+av Ritalin kapsler i forhold til placebo på tvers av alle vurderinger i periode 1.
+
+Tabell 1      Analyse av forbedring fra baseline 1 til slutten av Periode 1 for totalresultat av DSM
+IV ADHD RS og totalresultat av SDS ved behandling / (LOCF*) i Periode 1
+                                           Ritalin kapsler           Ritalin kapsler            Ritalin kapsler          Placebo
+                                           40 mg                     60 mg                      80 mg
+Forbedring i           N                   160                       155                        156                      161
+DSM- IV ADHD
+RS fra baseline        LS                  15,45                     14,71                      16,36                    9,35
+                       gjennomsnitt*
+                       p-verdi****         <0,0001                   <0,0001                    <0,0001
+
+                       Signifikansniv      0,0167                    0,0208                     0,0313
+                       å
+Forbedring i           N                   151                       146                        148                      152
+SDS
+                       LS                  5,89                      4,9                        6,47                     3,03
+totalresultat fra
+                       gjennomsnitt
+baseline
+                       p-verdi****         0,0003                    0,0176                     <0,0001
+                       Signifikansniv      0,0167                    0,0208                     0,0313
+                       å***
+* LOCF – «Last Observation Carried Forward» ved bruk av siste visitt for hver pasient med data fra den 6-ukers faste dose
+fasen i Periode 1, **LS gjennomsnitt- Minste kvadraters (Least Square) gjennomsnittlige forbedringer fra modellen «Analysis of
+Covariance» (ANCOVA) med behandlingsgruppe og senter som faktorer og baseline DSM-IV ADHD RS totalresultat og SDS
+totalresultat som kovariat, ***Signifikansnivå = siste tosidige signifikansnivå (alfa) for testen etterfulgt av utvidet «gatekeeping»
+prosedyre ****p-verdi refererer til sammenligning mot placebo.

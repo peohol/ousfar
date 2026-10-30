@@ -1,0 +1,54 @@
+Opprettholdelse av effekt av Ritalin kapsler ble evaluert ved å måle prosentandelen av
+behandlingssvikt hos pasienter som fikk Ritalin kapsler sammenlignet med placebogruppen ved
+slutten på en 6-måneders vedlikeholdsperiode (se Tabell 3). Med den samme dosen for Ritalin kapsler
+som var optimalisert i periode 2, fortsatte ca. 79 % av pasientene å opprettholde sykdomskontroll i en
+periode på minst 6 måneder (p<0,0001 vs placebo). En odds ratio på 0,3 viste at pasienter behandlet
+med placebo hadde 3 ganger høyere sjanse for behandlingssvikt sammenlignet med Ritalin kapsler.
+
+Tabell 2            Prosentandel av behandlingssvikt under Periode 3
+                                                                                        Alle Ritalin kapsler vs placebo
+                                     Alle Ritalin kapsler    Placebo
+                                     N=352                   N=115                      Odds ratio          P-verdi*
+                                     n (%)                   n (%)                      (95% KI)            (signifikansnivå**)
+Behandlingssvikt                     75 (21,3)               57 (49,6)                  0.3 (0,2, 0,4)      <0,0001 (0,0500)
+Ikke behandlingssvikt                277 (78,7)              58 (50,4)
+* Tosidig p-verdi basert på sammenligning mellom hver gruppe Ritalin kapsler og placebo ved bruk av logistisk
+regresjonsmodell.
+**Signifikansnivå = endelig tosidig signifikansnivå (alfa) for testen etterfulgt forlenget gatekeeping prosedyre
+
+
+Pasienter som ble med i periode 3 hadde fullført totalt mellom 5-14 ukers behandling med Ritalin
+kapsler i periodene 1 og 2. Pasienter som fikk placebo i periode 3 opplevde ikke økning i symptomer
+på grunn av seponering og rebound sammenlignet med pasienter som fortsatte behandling med Ritalin
+kapsler.
+
+Under korttidsbehandling hadde både kvinner og menn en statistisk forbedring av DSM-IV ADHD RS
+sammenlignet med placebo i alle Ritalingruppene. For menn var beste forbedring av scoren oppnådd
+med Ritalin kapsler 80 mg, mens for kvinner var det Ritalin kapsler 40 mg. Denne trenden var ikke
+signifikant og ble ikke sett ved langtidsbehandling. En noe høyere forekomst av bivirkninger ble
+observert hos kvinner enn hos menn. Generelt ble en tilsvarende sikkerhetsprofil demonstrert for menn
+og kvinner. Derfor bør dosen titreres individuelt (maksimal mulig dose 80 mg /dag).
+Behandlingsregimet som oppnår tilfredsstillende symptomkontroll med den laveste totale daglige
+dosen, bør brukes.
+
+Den 26 ukers åpne forlengelsen av «core»-studien på Ritalin kapsler hos 298 voksne pasienter med
+ADHD bekreftet langtidssikkerhet av Ritalin kapsler.Ved å kombinere den kontinuerlige
+eksponeringen for Ritalin kapsler for alle pasientene behandlet i «core» og forlengelsesstudien, fikk
+totalt 354 pasienter Ritalin kapsler kontinuerlig i > 6 måneder og 136 pasienter i > 12 måneder.
+
+Som det ble observert under forlengelsesstudien, så ble ikke sikkerhetsprofilen til Ritalin kapsler
+endret med lengre behandlingsvarighet hos voksne pasienter med ADHD. Bivirkningsprofilen sett i
+forlengelsesstudien var lik den som ble observert i «core»-studien. Ingen uventede alvorlige
+bivirkninger eller bivirkninger ble observert i denne forlengelsesstudien og de fleste av de observerte
+bivirkningene var forventet.
+
+Den totale frekvensen av bivirkninger og noen spesielle bivirkninger økte med eksponeringstiden.
+Redusert vekt forekom hos 0,7 % (≤ 2 måneder), 5,6 % (> 6 måneder) og 7,4 % (> 12 måneder) av
+pasientene. I periode 3 var det en signifikant vektnedgang ≥ 7 % hos 13,8 % av pasientene i periode 3
+(i den 6 måneders vedlikeholdsperioden) sammenlignet med baseline. Søvnløshet/initial
+søvnløshet/søvnforstyrrelser økte med langtidsbehandling >12 måneder. Forekomsten av nedstemthet
+økte litt over tid (4,8 % i perioden på < 2 måneder, 4,5 % på > 6 måneder og 6,6 % > 12 måneder)
+mens depresjon ble redusert over tid (0 % på > 12 måneder). Forekomsten av takykardi og
+palpitasjoner økte litt under langtidseksponering (takykardi; 4,8 % med eksponering < 2 måneder og
+6,6 % med eksponering > 12 måneder; palpitasjoner: 6,9 % med eksponering < 2 måneder og 9,6 %
+med eksponering > 12 måneder). Også forekomsten av høyt blodtrykk økte litt under

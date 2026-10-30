@@ -1,0 +1,62 @@
+Behandling
+
+Det finnes ikke noe spesifikt antidot ved overdosering med metylfenidat.
+
+Behandling består av adekvate støttetiltak.
+
+Pasienten må beskyttes mot selvskading og mot eksterne stimuli som kan forverre overstimuleringen
+som allerede er til stede. Dersom tegnene og symptomene ikke er for alvorlige og pasienten er bevisst,
+kan mageinnholdet tømmes ved å fremkalle brekninger eller ved mageskylling. Før mageskylling bør
+agitasjon og eventuelle krampeanfall kontrolleres og frie luftveier sikres. Andre tiltak for å
+detoksifisere tarmen kan være administrering av aktivt kull og avføringsmiddel. Ved alvorlig
+forgiftning skal en nøye titrert dose av et benzodiazepin gis før mageskylling utføres.
+
+Intensivbehandling må gis for å opprettholde nødvendig sirkulasjon og respirasjon. Ytre avkjøling kan
+være nødvendig ved hyperpyreksi.
+
+Effekten av peritoneal dialyse eller ekstrakorporeal hemodialyse ved overdosering med metylfenidat er
+ikke dokumentert.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Psykoanaleptika, psykostimulantia, midler ved ADHD og nootropika,
+sentralt virkende sympatomimetika, ATC-kode: N06BA04
+
+Virkningsmekanisme
+
+Equasym Depot er et mildt sentralstimulerende middel med mer uttalt effekt på mentale enn motoriske
+aktiviteter. Virkningsmekanismen hos mennesker er ikke fullstendig klarlagt, men det antas at effekten
+skyldes stimulering av hjernebarken og muligens stimulering av det retikulære aktiverende system.
+
+I en pivotal studie fikk 318 personer, i alderen 6 til 12 år, av 327 randomiserte personer minst én dose
+studielegemiddel. Score for IOWA Conners rating, primært effektendepunkt som ble bedømt av lærere
+i løpet av skoledagen, viste følgende resultater for per protokoll-populasjonen (279 pasienter behandlet
+i 21 dager):
+
+                                    Placebo             Metylfenidat med           Equasym Depot
+                                    (N=39) a            umiddelbar frisetting         (N=120)
+                                                              (N=120) b
+ Gj.snitt ved oppstart (SD)        6,0 (3,64)                 6,1 (3,74)       5,8 (3,59)
+ Dag 21/seponering
+ LS-gj.snitt (SE)                  7,7 (0,50)            4,3 (0,29)            4,5 (0,29)
+ 95 % KI                           6,69; 8,66            3,71; 4,84            3,98; 5,10
+ Forskjell fra placebo                  -                   -3,4                  -3,1
+ 95 % KI for forskjellen                -               -4,53; -2,26          -4,26; -2,00
+ P-verdic                               -                 <0,001                <0,001
+ Forskjell fra MIR                      -                     -                   -0,3
+ 97,5 % nedre KI for                    -                     -                  -1,06
+ forskjellen
+ a
+          N=38 ved dag 7
+ b
+          N=118 ved dag 7
+ c
+          Behandlingsgrupper er sammenlignet ved bruk av ANCOVA, med effekter for behandling
+          og oppstart som kovariabler
+
+
+
+                                                   15

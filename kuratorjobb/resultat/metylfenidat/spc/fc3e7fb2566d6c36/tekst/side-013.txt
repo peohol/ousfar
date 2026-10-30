@@ -1,0 +1,59 @@
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Psykoanaleptika, psykostimulantia, midler ved ADHD og nootropika,
+sentralt virkende sympatomimetika
+ATC-kode: N06BA04
+
+Virkningsmekanisme
+Medikinet er et svakt sentralstimulerende legemiddel med mer uttalte effekter på mentale enn
+motoriske funksjoner. Virkningsmekanismen hos mennesker er ikke fullstendig kjent, men dets
+effekter antas å skyldes kortikal stimulering og muligens stimulering av det retikulæraktiverende
+system.
+Mekanismen bak Medikinets mentale og atferdseffekter hos barn er ikke helt klarlagt og det er ingen
+overbevisende holdepunkter for at disse effektene er relatert til tilstanden i sentralnervesystemet. Det
+antas å blokkere reopptaket av noradrenalin og dopamin i presynaptiske nevroner og øke frisettingen
+av disse monaminene i det ekstranevronale rom. Medikinet er en racemisk blanding av d- og l-
+treoenantiomerene av metylfenidat. d-enantiomeren er mer farmakologisk aktiv enn l-enantiomeren.
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+Medikinet absorberes raskt og nesten fullstendig. På grunn av uttalt “first pass”-metabolisme er den
+absolutte biotilgjengeligheten lav, kun 30 % (11-51 %) av dosen. Absorpsjonen akselereres når
+legemidlet tas til måltider, men dette har ingen effekt på den totale mengden som absorberes.
+Maksimal plasmakonsentrasjon på 7 ng/ml nås gjennomsnittlig 1-2 timer etter administrasjon av 10
+mg. Det er betydelig individuelle variasjoner i maksimal plasmakonsentrasjon.
+
+Det er betydelige individuelle variasjoner i plasmakonsentrasjoner som imidlertid gir lite
+overbevisende holdepunkter for den terapeutiske effekten. Den relativt korte halveringstiden korrelerer
+bra med virketiden på 1-4 timer.
+
+Distribusjon
+Metylfenidat og metabolittene distribueres i plasma (57 %) og erytrocytter (43 %). Metylfenidat og
+metabolittene har lav plasmaproteinbinding (10-33 %). Distribusjonsvolumet etter en enkel intravenøs
+dose er 2,2 l/kg (2,65±1,1 l/kg for d-metylfenidat og 1,8±0,9 l/kg for l-metylfenidat).
+
+Biotransformasjon
+Metylfenidats metabolisme er rask og omfattende. Maksimale plasmakonsentrasjoner av 2-fenyl-2-
+piperidyleddiksyre (PPAA) oppnås ca. 2 timer etter administrasjon av metylfenidat og er 30-50 ganger
+høyere enn for modersubstansen. Halveringstiden til PPAA er omtrent dobbelt så lang som for
+metylfenidat og gjennomsnittlig systemisk clearance er 0,17 l/time/kg. Kun små mengder av
+hydroksylerte metabolitter (f.eks. hydroksymetylfenidat og hydroksyritalinsyre) kan påvises.
+Terapeutisk aktivitet synes hovedsakelig å skyldes modersubstansen.
+
+Eliminasjon
+Metylfenidat elimineres fra plasma med en gjennomsnittlig halveringstid på ca. 2 timer.
+Gjennomsnittlig clearance etter en intravenøs enkeltdose er 0,565 l/time/kg (0,40± 0,12 l/time/kg for
+d-metylfenidat og 0,73±0,28 l/time/kg for l-metylfenidat). Etter oral administrasjon utskilles ca. 78-
+97 % av dosen innen 48-96 timer via urin og 1-3 % via feces i form av metabolitter. Kun små mengder
+(< 1 %) av uendret metylfenidat utskilles i urinen. En større andel av en intravenøs dose (89 %)
+elimineres i urinen innen 16 timer, trolig uavhengig av pH-verdien, som ritalinsyre.
+
+Det er tilsynelatende ingen forskjell i metylfenidats farmakokinetikk hos barn med hyperkinetisk
+forstyrrelse/ADHD og friske voksne forsøkspersoner. Metylfenidats farmakokinetiske egenskaper er
+ikke undersøkt hos barn under 6 år eller hos eldre over 65 år.
+
+
+                                                   13

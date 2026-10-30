@@ -1,0 +1,58 @@
+I studie 2 med fleksibel dose var graden av bedring i total AISRS-score statistisk signifikant høyere i
+Concerta-gruppen enn i placebogruppen (p = 0,0037). Minste kvadraters gjennomsnittlige (95 % KI)
+forskjell fra placebo var -5,3 (-8,9, -1,7). I studie 3 med fleksibel dose var graden av bedring i
+CAARS-O:SV-score statistisk signifikant høyere i Concerta-gruppen enn i placebogruppen
+(p = 0,0063). Minste kvadraters gjennomsnittlige (95 % KI) forskjell fra placebo var -3,9 (-6,6, -1,1).
+
+Voksne behandlet med Concerta i fire åpne langtidsstudier over 6 til 12 måneder viste bedring i alle
+evaluerte effektendepunkter, noe som indikerer stabile effekter over tid på reduksjonen i ADHD-
+symptomer. I én åpen studie i en gruppesetting viste behandling med Concerta i opptil 9 måneder
+bedring fra baselineverdier i både pasientens og utprøvers gjennomsnittlig totalvurdering av
+effektscore. En annen studie hvor voksne med ADHD fikk Concerta i opptil 1 år med en
+gjennomsnittlig endelig dose på 67,4 mg/dag, viste klinisk relevante bedringer fra baseline i AISRS
+totalscore med en gjennomsnittlig endring på -18,7 ved siste kontroll. En tredje langtidssstudie på
+48 uker hvor voksne med ADHD fikk Concerta i en gjennomsnittlig endelig dose på 46,6 mg/dag,
+viste en endring fra baseline i gjennomsnittlig DSM-IV CAARS totalscore for ADHD-symptomer
+på -17,2 ved endepunkt. I den fjerde studien ble Concerta evaluert i en 52 ukers åpen studie hos
+forsøkspersoner som tidligere hadde fullført en korttids, placebokontrollert studie og korttids, åpen
+forlengelse. Voksne med ADHD som fikk Concerta i en gjennomsnittlig endelig dose på 53,8 mg/dag
+viste stabile reduksjoner i ADHD-symptomer over tid. Utprøvervurdert CAARS ble bedre gjennom
+den åpne fasen og var lavere ved endepunktet (gjennomsnittlig reduksjon på 1,9 fra baseline).
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+Metylfenidat absorberes raskt. Etter peroral administrering av Concerta til voksne vil overtrekket på
+tabletten løses opp, og plasmakonsentrasjonen av legemiddel når raskt sitt første maksimum i løpet av
+1 til 2 timer. Metylfenidat i de to indre legemiddellagene frigjøres gradvis over de neste timene.
+Toppkonsentrasjon i plasma nås etter om lag 6 til 8 timer, etterfulgt av en gradvis reduksjon i
+plasmanivå. Ved administrasjon av Concerta én gang daglig minimeres fluktuasjonene mellom topp-
+og bunn-konsentrasjoner som man får ved inntak av metylfenidat gitt tre ganger daglig.
+Absorpsjonsgraden av metylfenidat i Concerta gitt én gang daglig er sammenlignbar med metylfenidat
+fra konvensjonelle tabletter.
+
+Etter administrasjon av Concerta 18 mg én gang daglig hos 36 voksne, var gjennomsnittsverdien for
+farmakokinetiske parametre: Cmax 3,7 ± 1,0 (ng/ml), Tmax 6,8 ± 1,8 (timer),
+AUCinf 41,8 ± 13,9 (ng timer/ml), og t1/2 3,5 ± 0,4 (timer).
+
+Det var ingen forskjeller i Concertas farmakokinetikk etter éngangsdosering og gjentatt daglig
+éngangsdosering. Dette indikerer at man ikke har noen signifikant akkumulering av legemiddel. AUC
+og t1/2 etter gjentatt daglig éngangsdosering er sammenlignbar med tilsvarende parametre observert
+etter første gitte dose på 18 mg Concerta.
+
+Etter administrasjon av Concerta i éngangsdoser på 18 til 72 mg/dag til voksne, viste Cmax og AUCinf
+for metylfenidat doseproporsjonalitet.
+
+Distribusjon
+Plasmakonsentrasjonen av metylfenidat hos voksne avtar bi-eksponensielt etter peroral administrasjon.
+Halveringstiden for metylfenidat hos voksne etter peroralt inntak av Concerta, var ca. 3 ½ time.
+Proteinbindingsgraden for metylfenidat og metabolittene er ca 15 %. Det tilsynelatende
+distribusjonsvolumet er ca 13 liter/kg.
+
+Biotransformasjon
+Hos mennesker blir metylfenidat metabolisert hovedsakelig ved de-esterifisering til alfa-fenyl-
+piperidin-eddiksyre (PPA, ca 50 ganger så høyt nivå i forhold til uforandret substans), som har liten
+eller ingen farmakologisk aktivitet. Hos voksne er metabolismen (til PPA) ved Concerta gitt én gang
+daglig lik metabolismen ved metylfenidat gitt tre ganger daglig. Metabolismen for Concerta gitt én
+gang daglig endres ikke ved gjentatt dosering.
+                                                   17

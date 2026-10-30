@@ -1,0 +1,54 @@
+Ritalin og metylfenidatformuleringen var forskjellig, ble den høyeste frekvensen i de to databasene
+brukt. Tabellen gjelder for barn, ungdom og voksne.
+
+Frekvensene er definert som:
+svært vanlige (≥1/10)
+vanlige (≥1/100 til <1/10)
+mindre vanlige (≥1/1000 til <1/100)
+sjeldne (≥1/10 000 til <1/1000)
+svært sjeldne (<1/10 000)
+ikke kjent (kan ikke anslås utifra tilgjengelige data)
+
+ Organsyste                                                Bivirkning
+     m                                                     Frekvens
+                    Svært         Vanlige         Mindre vanlige    Sjeldne           Svært           Ikke kjent
+                   vanlige                                                           sjeldne
+ Infeksiøse                    Nasofaryngitt      Gastroenteritt3
+ og
+ parasittære
+ sykdommer
+ Sykdomme                                                                          Anemi,       Pancytopeni
+ r i blod og                                                                       leukopeni,
+ lymfatiske                                                                        trombocytope
+ organer                                                                           ni,
+                                                                                   trombocytope
+                                                                                   nisk purpura
+ Forstyrrels                                      Overfølsomhetsr
+ er i                                             eaksjoner, som
+ immunsyste                                       angionevrotisk
+ met                                              ødem,
+                                                  anafylaktiske
+                                                  reaksjoner,
+                                                  hevelse i øret,
+                                                  bulløse
+                                                  tilstander,
+                                                  eksfoliative
+                                                  tilstander,
+                                                  urtikaria,
+                                                  pruritus1, utslett
+                                                  og erupsjoner1
+ Stoffskifte     Redusert      Anoreksi,
+ og              appetitt2     moderat
+ ernæringsb                    reduksjon i
+ etingede                      vektøkning og
+ sykdommer                     høydeøkning
+ 1
+                               ved
+                               langtidsbruk
+                               hos barn1
+ Psykiatrisk     Insomni,      Anoreksi,          Psykotiske           Mani1,      Selvmords-    Vrangforestil-
+ e lidelser1     nervøsitet    affektlabilitet,   lidelser1,           desorien-   forsøk        linger1,
+                               aggresjon1,        hallusinasjoner      tering,     (inkludert    tankeforstyrrel
+                               agitasjon1,        knyttet til          forstyr-    fullbyrdet    ser1,
+                               angst1,            hørsel, syn og       relser i    selvmord)1,   forvirringstilst
+                               depresjon1,        berøring1, sinne,    libido,     forbigående   and, sykelig

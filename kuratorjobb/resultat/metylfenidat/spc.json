@@ -1,0 +1,2320 @@
+{
+  "stoff": "metylfenidat",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-10-30T04:15:57.810377+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 47,
+    "hentet": 22,
+    "dokumenter": 8,
+    "mangler": [
+      {
+        "merkevare_id": "ID_5D77A5BC-50FA-4AF8-A788-038012555183",
+        "varenavn": "Metylfenidat Medical Valley",
+        "navn_form_styrke": "Metylfenidat Medical Valley depottab 54 mg",
+        "produsent": "Medical Valley Invest AB",
+        "atc": "N06BA04",
+        "legemiddelform": "Depottablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/19-12984.pdf"
+      },
+      {
+        "merkevare_id": "ID_622E6F9B-555B-4EEC-A0E6-9AEC2D9F4B0A",
+        "varenavn": "Medikinet",
+        "navn_form_styrke": "Medikinet kaps modif frisett 40 mg",
+        "produsent": "Medice Arzneimittel Pütter GmbH & Co KG",
+        "atc": "N06BA04",
+        "legemiddelform": "Kapsel med modifisert frisetting, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4122.pdf"
+      },
+      {
+        "merkevare_id": "ID_7DD58853-6EA4-4C2C-A312-273EB6A4822C",
+        "varenavn": "Medikinet",
+        "navn_form_styrke": "Medikinet kaps modif frisett 30 mg",
+        "produsent": "Medice Arzneimittel Pütter GmbH & Co KG",
+        "atc": "N06BA04",
+        "legemiddelform": "Kapsel med modifisert frisetting, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4121.pdf"
+      },
+      {
+        "merkevare_id": "ID_8B484B10-ECAB-4984-AC3D-984132D9F93C",
+        "varenavn": "Metylfenidat Medical Valley",
+        "navn_form_styrke": "Metylfenidat Medical Valley depottab 36 mg",
+        "produsent": "Medical Valley Invest AB",
+        "atc": "N06BA04",
+        "legemiddelform": "Depottablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/19-12983.pdf"
+      },
+      {
+        "merkevare_id": "ID_8C3DB344-0504-44B0-AB3E-8BF530BB13A8",
+        "varenavn": "Methylphenidate Sandoz",
+        "navn_form_styrke": "Methylphenidate Sandoz depottab 36 mg",
+        "produsent": "Sandoz - København",
+        "atc": "N06BA04",
+        "legemiddelform": "Depottablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-8124.pdf"
+      },
+      {
+        "merkevare_id": "ID_9088EA9E-E5FF-41F3-88CA-02CB08499D5A",
+        "varenavn": "Methylphenidate Sandoz",
+        "navn_form_styrke": "Methylphenidate Sandoz depottab 54 mg",
+        "produsent": "Sandoz - København",
+        "atc": "N06BA04",
+        "legemiddelform": "Depottablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-8125.pdf"
+      },
+      {
+        "merkevare_id": "ID_93A7FF4A-F41C-4A46-8AAA-EEB00507E972",
+        "varenavn": "Methylphenidate Teva",
+        "navn_form_styrke": "Methylphenidate Teva kaps modif frisett 30 mg",
+        "produsent": "Teva B.V.",
+        "atc": "N06BA04",
+        "legemiddelform": "Kapsel med modifisert frisetting, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11809.pdf"
+      },
+      {
+        "merkevare_id": "ID_96E71CE7-E475-4580-919A-252749E16CD0",
+        "varenavn": "Methylphenidate Consilient Health",
+        "navn_form_styrke": "Methylphenidate Consilient Health mikst oppl 2 mg/ml",
+        "produsent": "Consilient Health Limited",
+        "atc": "N06BA04",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-15044.pdf"
+      },
+      {
+        "merkevare_id": "ID_97930BA5-5878-46F3-89E0-2E3209165406",
+        "varenavn": "Methylphenidate Teva",
+        "navn_form_styrke": "Methylphenidate Teva kaps modif frisett 60 mg",
+        "produsent": "Teva B.V.",
+        "atc": "N06BA04",
+        "legemiddelform": "Kapsel med modifisert frisetting, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11811.pdf"
+      },
+      {
+        "merkevare_id": "ID_97A9B981-B452-4D5D-BAF0-F781407C917A",
+        "varenavn": "Methylphenidate Sandoz",
+        "navn_form_styrke": "Methylphenidate Sandoz depottab 27 mg",
+        "produsent": "Sandoz - København",
+        "atc": "N06BA04",
+        "legemiddelform": "Depottablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8679.pdf"
+      },
+      {
+        "merkevare_id": "ID_9A0D6927-48D4-4078-956E-2FBFA4EED66F",
+        "varenavn": "Ritalin",
+        "navn_form_styrke": "Ritalin tab 10 mg",
+        "produsent": "InfectoPharm Arzneimittel und Consilium GmbH",
+        "atc": "N06BA04",
+        "legemiddelform": "Tablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-03449.pdf"
+      },
+      {
+        "merkevare_id": "ID_9E8122FC-2593-463A-B3CB-FA05C19501BC",
+        "varenavn": "Concerta",
+        "navn_form_styrke": "Concerta depottab 36 mg",
+        "produsent": "Janssen Pharmaceutica",
+        "atc": "N06BA04",
+        "legemiddelform": "Depottablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/02-1222.pdf"
+      },
+      {
+        "merkevare_id": "ID_B1D8F691-9DEE-48CE-823D-247288A9C81E",
+        "varenavn": "Medikinet",
+        "navn_form_styrke": "Medikinet tab 10 mg",
+        "produsent": "Medice Arzneimittel Pütter GmbH & Co KG",
+        "atc": "N06BA04",
+        "legemiddelform": "Tablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4117.pdf"
+      },
+      {
+        "merkevare_id": "ID_BDDD08F5-97F6-4078-9273-E413E8C6BD4E",
+        "varenavn": "Medikinet",
+        "navn_form_styrke": "Medikinet kaps modif frisett 60 mg",
+        "produsent": "Medice Arzneimittel Pütter GmbH & Co KG",
+        "atc": "N06BA04",
+        "legemiddelform": "Kapsel med modifisert frisetting, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9268.pdf"
+      },
+      {
+        "merkevare_id": "ID_CB41A077-72B5-4C12-9E68-B80FA552B2D2",
+        "varenavn": "Methylphenidate Teva",
+        "navn_form_styrke": "Methylphenidate Teva kaps modif frisett 20 mg",
+        "produsent": "Teva B.V.",
+        "atc": "N06BA04",
+        "legemiddelform": "Kapsel med modifisert frisetting, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11808.pdf"
+      },
+      {
+        "merkevare_id": "ID_D9EAC5F7-F3CE-445D-BA3D-D5ACA4CEA6C3",
+        "varenavn": "Medikinet",
+        "navn_form_styrke": "Medikinet tab 20 mg",
+        "produsent": "Medice Arzneimittel Pütter GmbH & Co KG",
+        "atc": "N06BA04",
+        "legemiddelform": "Tablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4118.pdf"
+      },
+      {
+        "merkevare_id": "ID_E99F2490-47D3-4D18-B4A1-E0C6E35D199F",
+        "varenavn": "Methylphenidate Sandoz",
+        "navn_form_styrke": "Methylphenidate Sandoz depottab 18 mg",
+        "produsent": "Sandoz - København",
+        "atc": "N06BA04",
+        "legemiddelform": "Depottablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-8123.pdf"
+      },
+      {
+        "merkevare_id": "ID_EB63A212-C262-43B7-BF7A-8FF11339DFB2",
+        "varenavn": "Metylfenidat Medical Valley",
+        "navn_form_styrke": "Metylfenidat Medical Valley depottab 27 mg",
+        "produsent": "Medical Valley Invest AB",
+        "atc": "N06BA04",
+        "legemiddelform": "Depottablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/19-12982.pdf"
+      },
+      {
+        "merkevare_id": "ID_EF0E43AE-3F4D-4F07-B8E8-181E2246C4AC",
+        "varenavn": "Delmosart",
+        "navn_form_styrke": "Delmosart depottab 18 mg",
+        "produsent": "Teva B.V.",
+        "atc": "N06BA04",
+        "legemiddelform": "Depottablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/15-10786.pdf"
+      },
+      {
+        "merkevare_id": "ID_FA794456-23CE-4B0B-AA20-4208AB763E5F",
+        "varenavn": "Ritalin",
+        "navn_form_styrke": "Ritalin kaps modif frisett 10 mg",
+        "produsent": "InfectoPharm Arzneimittel und Consilium GmbH",
+        "atc": "N06BA04",
+        "legemiddelform": "Kapsel med modifisert frisetting, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6501.pdf"
+      },
+      {
+        "merkevare_id": "ID_FF218F38-D938-4C86-9767-A804D5049447",
+        "varenavn": "Equasym Depot",
+        "navn_form_styrke": "Equasym Depot kaps modif frisett 10 mg",
+        "produsent": "Takeda Pharmaceuticals International AG Ireland Branch",
+        "atc": "N06BA04",
+        "legemiddelform": "Kapsel med modifisert frisetting, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/05-3711.pdf"
+      },
+      {
+        "merkevare_id": "ID_05B507AB-6CFE-422E-9678-3D458E0089E2",
+        "varenavn": "Tuzulby",
+        "navn_form_styrke": "Tuzulby depottyggetab 40 mg",
+        "produsent": "Neuraxpharm Pharmaceuticals,  S.L.",
+        "atc": "N06BA04",
+        "legemiddelform": "Depottyggetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_66460382-082E-4A2A-90A8-1EE8F8A70C0F",
+        "varenavn": "Metylfenidat SA",
+        "navn_form_styrke": "Metylfenidat SA kaps 10 mg",
+        "produsent": "Sykehusapotekene HF",
+        "atc": "N06BA04",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_A97D78C1-3AFD-4CAE-AC49-635738213159",
+        "varenavn": "Tuzulby",
+        "navn_form_styrke": "Tuzulby depottyggetab 30 mg",
+        "produsent": "Neuraxpharm Pharmaceuticals,  S.L.",
+        "atc": "N06BA04",
+        "legemiddelform": "Depottyggetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_AE78D5B7-038F-4CDD-9CB0-135E8788FCBE",
+        "varenavn": "Tuzulby",
+        "navn_form_styrke": "Tuzulby depottyggetab 20 mg",
+        "produsent": "Neuraxpharm Pharmaceuticals,  S.L.",
+        "atc": "N06BA04",
+        "legemiddelform": "Depottyggetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 41 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 41,
+        "ikke_dmp": 0,
+        "uten_omtale": 4
+      }
+    },
+    {
+      "id": "maks",
+      "status": "advarsel",
+      "melding": "21 preparatomtaler er utelatt (maks 20); se «utelatt»."
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "25 av 47 preparater i FEST mangler en hentet preparatomtale fra DMP: 4 uten preparatomtale i FEST (f.eks. sentralt godkjente, med omtalen hos EMA); 21 utelatt over grensen. SPC-behovet er ikke dekket; se «dekning.mangler».",
+      "antall": {
+        "preparater": 47,
+        "hentet": 22,
+        "mangler": 25,
+        "dokumenter": 8
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-5646.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-5646.pdf",
+      "hentet_kl": "2026-10-30T17:15:51.854Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "387572",
+        "content-md5": "mB5ff7vZzCOXUe1ywiA4vg==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:18 GMT",
+        "etag": "0x8DE85F8D9DA9CD8",
+        "date": "Fri, 30 Oct 2026 17:15:52 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_0C0C8847-CFED-4E72-A3A7-26EDBDABA30D",
+          "varenavn": "Concerta",
+          "navn_form_styrke": "Concerta depottab 27 mg",
+          "produsent": "Janssen-Cilag AS",
+          "atc": "N06BA04",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-5646.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (387572 byte).",
+          "antall": {
+            "bytes": 387572
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "26192827ca1c6a83626529f3141388c17df764f26e18b73cc6e8ef0603487e0d"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-7785.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-7785.pdf",
+      "hentet_kl": "2026-10-30T17:16:00.471Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "392944",
+        "content-md5": "z4UsYiv//j/6VBqibFOheA==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:28 GMT",
+        "etag": "0x8DE85F8DFAED492",
+        "date": "Fri, 30 Oct 2026 17:16:01 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_0E00084D-C6A2-4D91-B4FB-98536BC8CC58",
+          "varenavn": "Medikinet",
+          "navn_form_styrke": "Medikinet kaps modif frisett 5 mg",
+          "produsent": "2care4 ApS",
+          "atc": "N06BA04",
+          "legemiddelform": "Kapsel med modifisert frisetting, hard"
+        },
+        {
+          "merkevare_id": "ID_CD36FDC5-D447-4E01-A51B-3D388A395CF8",
+          "varenavn": "Medikinet",
+          "navn_form_styrke": "Medikinet kaps modif frisett 5 mg",
+          "produsent": "Medice Arzneimittel Pütter GmbH & Co KG",
+          "atc": "N06BA04",
+          "legemiddelform": "Kapsel med modifisert frisetting, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-7785.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (392944 byte).",
+          "antall": {
+            "bytes": 392944
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "7d5661b0cd73cb81a1f489038343a231459a2f74b8e18e4613168b3a3efaec18"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/05-3712.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/05-3712.pdf",
+      "hentet_kl": "2026-10-30T17:16:09.499Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "353419",
+        "content-md5": "hNNfaVAqS4Ar7UVo/jkrpA==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:12 GMT",
+        "etag": "0x8DE85F8D5EA2067",
+        "date": "Fri, 30 Oct 2026 17:16:10 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_10B564AF-7058-444C-8380-824FF6ED67A1",
+          "varenavn": "Equasym Depot",
+          "navn_form_styrke": "Equasym Depot kaps modif frisett 20 mg",
+          "produsent": "Takeda Pharmaceuticals International AG Ireland Branch",
+          "atc": "N06BA04",
+          "legemiddelform": "Kapsel med modifisert frisetting, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/05-3712.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (353419 byte).",
+          "antall": {
+            "bytes": 353419
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "dff90dd99e64a73a2f52defd7549da3722870a4cffb4a04293c85d58a982ea2a"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4119.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4119.pdf",
+      "hentet_kl": "2026-10-30T17:16:17.346Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "392944",
+        "content-md5": "z4UsYiv//j/6VBqibFOheA==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:13 GMT",
+        "etag": "0x8DE85F8D6C71988",
+        "date": "Fri, 30 Oct 2026 17:16:18 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_126E0819-0F97-47D0-9A60-44B9E5B2FBEB",
+          "varenavn": "Medikinet",
+          "navn_form_styrke": "Medikinet kaps modif frisett 10 mg",
+          "produsent": "Medice Arzneimittel Pütter GmbH & Co KG",
+          "atc": "N06BA04",
+          "legemiddelform": "Kapsel med modifisert frisetting, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4119.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (392944 byte).",
+          "antall": {
+            "bytes": 392944
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "7d5661b0cd73cb81a1f489038343a231459a2f74b8e18e4613168b3a3efaec18"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/05-3713.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/05-3713.pdf",
+      "hentet_kl": "2026-10-30T17:16:18.773Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "353419",
+        "content-md5": "hNNfaVAqS4Ar7UVo/jkrpA==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:12 GMT",
+        "etag": "0x8DE85F8D5EDF061",
+        "date": "Fri, 30 Oct 2026 17:16:19 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_16DD641B-66B5-4313-942C-6B5362A58EED",
+          "varenavn": "Equasym Depot",
+          "navn_form_styrke": "Equasym Depot kaps modif frisett 30 mg",
+          "produsent": "Takeda Pharmaceuticals International AG Ireland Branch",
+          "atc": "N06BA04",
+          "legemiddelform": "Kapsel med modifisert frisetting, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/05-3713.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (353419 byte).",
+          "antall": {
+            "bytes": 353419
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "dff90dd99e64a73a2f52defd7549da3722870a4cffb4a04293c85d58a982ea2a"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/19-12981.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/19-12981.pdf",
+      "hentet_kl": "2026-10-30T17:16:19.969Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "371399",
+        "content-md5": "tAF3rlquvRRvDB8qIFrCVA==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:16 GMT",
+        "etag": "0x8DF250869190E37",
+        "date": "Fri, 30 Oct 2026 17:16:20 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_1900774A-19EA-497A-A686-519B656CAD8B",
+          "varenavn": "Metylfenidat Medical Valley",
+          "navn_form_styrke": "Metylfenidat Medical Valley depottab 18 mg",
+          "produsent": "Medical Valley Invest AB",
+          "atc": "N06BA04",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/19-12981.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (371399 byte).",
+          "antall": {
+            "bytes": 371399
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "dda0d23f70726d28a4be213f6b49a006bc6202db0a288e6e1f79c5648f4cb5d7"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11810.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11810.pdf",
+      "hentet_kl": "2026-10-30T17:16:27.360Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "693697",
+        "content-md5": "87+oek3EcdlMw7cmm6MLSg==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:52 GMT",
+        "etag": "0x8DE85F8EDF44935",
+        "date": "Fri, 30 Oct 2026 17:16:27 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_1A761F6D-7296-4C0E-A99C-D00F9F39B8E7",
+          "varenavn": "Methylphenidate Teva",
+          "navn_form_styrke": "Methylphenidate Teva kaps modif frisett 40 mg",
+          "produsent": "Teva B.V.",
+          "atc": "N06BA04",
+          "legemiddelform": "Kapsel med modifisert frisetting, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11810.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (693697 byte).",
+          "antall": {
+            "bytes": 693697
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "6398796272be2269462d1f4f780931d55ae3ac6eec7be4461ac1c0f248125777"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/05-3197.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/05-3197.pdf",
+      "hentet_kl": "2026-10-30T17:16:36.010Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "468732",
+        "content-md5": "LuaM2hDN9DnY3ya3i+9O7Q==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:10 GMT",
+        "etag": "0x8DE85F8D5038BB3",
+        "date": "Fri, 30 Oct 2026 17:16:36 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_1CAF0150-4F3A-4155-A195-F3E73D1E62FB",
+          "varenavn": "Ritalin",
+          "navn_form_styrke": "Ritalin kaps modif frisett 30 mg",
+          "produsent": "InfectoPharm Arzneimittel und Consilium GmbH",
+          "atc": "N06BA04",
+          "legemiddelform": "Kapsel med modifisert frisetting, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/05-3197.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (468732 byte).",
+          "antall": {
+            "bytes": 468732
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "60ed20345da99428ae0b1996da0053c91d56d44932efe24f3d2cbec25afc8046"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/15-10788.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/15-10788.pdf",
+      "hentet_kl": "2026-10-30T17:16:44.474Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "413447",
+        "content-md5": "mZQJLVMnBmh6QheSKWL70A==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:46 GMT",
+        "etag": "0x8DE85F8EAB687D2",
+        "date": "Fri, 30 Oct 2026 17:16:45 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_235AE74B-19E1-4BFB-94CD-E335867E530D",
+          "varenavn": "Delmosart",
+          "navn_form_styrke": "Delmosart depottab 36 mg",
+          "produsent": "Teva B.V.",
+          "atc": "N06BA04",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/15-10788.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (413447 byte).",
+          "antall": {
+            "bytes": 413447
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "cda1058367deea9479eedc4b8a6b57f2f21dab52022027abf09cb7dee4828e37"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4120.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4120.pdf",
+      "hentet_kl": "2026-10-30T17:16:53.046Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "392944",
+        "content-md5": "z4UsYiv//j/6VBqibFOheA==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:13 GMT",
+        "etag": "0x8DE85F8D6C98A32",
+        "date": "Fri, 30 Oct 2026 17:16:54 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_261CD418-5A9B-4731-8BCB-83EB73C2EF6C",
+          "varenavn": "Medikinet",
+          "navn_form_styrke": "Medikinet kaps modif frisett 20 mg",
+          "produsent": "Medice Arzneimittel Pütter GmbH & Co KG",
+          "atc": "N06BA04",
+          "legemiddelform": "Kapsel med modifisert frisetting, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4120.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (392944 byte).",
+          "antall": {
+            "bytes": 392944
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "7d5661b0cd73cb81a1f489038343a231459a2f74b8e18e4613168b3a3efaec18"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/05-3198.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/05-3198.pdf",
+      "hentet_kl": "2026-10-30T17:16:54.618Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "468732",
+        "content-md5": "LuaM2hDN9DnY3ya3i+9O7Q==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:10 GMT",
+        "etag": "0x8DE85F8D5067187",
+        "date": "Fri, 30 Oct 2026 17:16:55 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_290AFBFA-BB7E-445C-94B4-AB942A31057E",
+          "varenavn": "Ritalin",
+          "navn_form_styrke": "Ritalin kaps modif frisett 40 mg",
+          "produsent": "InfectoPharm Arzneimittel und Consilium GmbH",
+          "atc": "N06BA04",
+          "legemiddelform": "Kapsel med modifisert frisetting, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/05-3198.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (468732 byte).",
+          "antall": {
+            "bytes": 468732
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "60ed20345da99428ae0b1996da0053c91d56d44932efe24f3d2cbec25afc8046"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9267.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9267.pdf",
+      "hentet_kl": "2026-10-30T17:16:55.809Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "392944",
+        "content-md5": "z4UsYiv//j/6VBqibFOheA==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:37 GMT",
+        "etag": "0x8DE85F8E4F3166F",
+        "date": "Fri, 30 Oct 2026 17:16:55 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_2E4C12AA-078F-4C99-AF3D-9FE16A9929E3",
+          "varenavn": "Medikinet",
+          "navn_form_styrke": "Medikinet kaps modif frisett 50 mg",
+          "produsent": "Medice Arzneimittel Pütter GmbH & Co KG",
+          "atc": "N06BA04",
+          "legemiddelform": "Kapsel med modifisert frisetting, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9267.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (392944 byte).",
+          "antall": {
+            "bytes": 392944
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "7d5661b0cd73cb81a1f489038343a231459a2f74b8e18e4613168b3a3efaec18"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11807.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11807.pdf",
+      "hentet_kl": "2026-10-30T17:16:56.130Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "693697",
+        "content-md5": "87+oek3EcdlMw7cmm6MLSg==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:52 GMT",
+        "etag": "0x8DE85F8EDE9EA77",
+        "date": "Fri, 30 Oct 2026 17:16:56 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_31E12E87-4457-436D-A04A-8CD1B530517F",
+          "varenavn": "Methylphenidate Teva",
+          "navn_form_styrke": "Methylphenidate Teva kaps modif frisett 10 mg",
+          "produsent": "Teva B.V.",
+          "atc": "N06BA04",
+          "legemiddelform": "Kapsel med modifisert frisetting, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11807.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (693697 byte).",
+          "antall": {
+            "bytes": 693697
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "6398796272be2269462d1f4f780931d55ae3ac6eec7be4461ac1c0f248125777"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/02-1221.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/02-1221.pdf",
+      "hentet_kl": "2026-10-30T17:16:56.623Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "387572",
+        "content-md5": "mB5ff7vZzCOXUe1ywiA4vg==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:05 GMT",
+        "etag": "0x8DE85F8D24B135D",
+        "date": "Fri, 30 Oct 2026 17:16:56 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_3D8ABD0D-39B4-45A2-890F-76003A3A1188",
+          "varenavn": "Concerta",
+          "navn_form_styrke": "Concerta depottab 18 mg",
+          "produsent": "Janssen-Cilag AS",
+          "atc": "N06BA04",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/02-1221.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (387572 byte).",
+          "antall": {
+            "bytes": 387572
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "26192827ca1c6a83626529f3141388c17df764f26e18b73cc6e8ef0603487e0d"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/02-1223.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/02-1223.pdf",
+      "hentet_kl": "2026-10-30T17:16:56.997Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "387572",
+        "content-md5": "mB5ff7vZzCOXUe1ywiA4vg==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:06 GMT",
+        "etag": "0x8DE85F8D2515402",
+        "date": "Fri, 30 Oct 2026 17:16:57 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_3E1E330A-E7DF-492C-9AF4-F8722E96A9BC",
+          "varenavn": "Concerta",
+          "navn_form_styrke": "Concerta depottab 54 mg",
+          "produsent": "Janssen Pharmaceutica",
+          "atc": "N06BA04",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/02-1223.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (387572 byte).",
+          "antall": {
+            "bytes": 387572
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "26192827ca1c6a83626529f3141388c17df764f26e18b73cc6e8ef0603487e0d"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/15-10787.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/15-10787.pdf",
+      "hentet_kl": "2026-10-30T17:16:57.486Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "413447",
+        "content-md5": "mZQJLVMnBmh6QheSKWL70A==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:46 GMT",
+        "etag": "0x8DE85F8EAB3A208",
+        "date": "Fri, 30 Oct 2026 17:16:57 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_466079B3-A18A-41B7-8DDE-72DAD19B4E7D",
+          "varenavn": "Delmosart",
+          "navn_form_styrke": "Delmosart depottab 27 mg",
+          "produsent": "Teva B.V.",
+          "atc": "N06BA04",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/15-10787.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (413447 byte).",
+          "antall": {
+            "bytes": 413447
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "cda1058367deea9479eedc4b8a6b57f2f21dab52022027abf09cb7dee4828e37"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/15-10789.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/15-10789.pdf",
+      "hentet_kl": "2026-10-30T17:16:57.980Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "413447",
+        "content-md5": "mZQJLVMnBmh6QheSKWL70A==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:46 GMT",
+        "etag": "0x8DE85F8EABAF3F4",
+        "date": "Fri, 30 Oct 2026 17:16:58 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_48D4E2B3-17D6-4813-A6BB-63602922225D",
+          "varenavn": "Delmosart",
+          "navn_form_styrke": "Delmosart depottab 54 mg",
+          "produsent": "Teva B.V.",
+          "atc": "N06BA04",
+          "legemiddelform": "Depottablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/15-10789.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (413447 byte).",
+          "antall": {
+            "bytes": 413447
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "cda1058367deea9479eedc4b8a6b57f2f21dab52022027abf09cb7dee4828e37"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9867.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9867.pdf",
+      "hentet_kl": "2026-10-30T17:16:58.469Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "468732",
+        "content-md5": "LuaM2hDN9DnY3ya3i+9O7Q==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:41 GMT",
+        "etag": "0x8DE85F8E76B81F1",
+        "date": "Fri, 30 Oct 2026 17:16:58 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_545C6A16-022A-44F2-800C-0DCFDF411DF7",
+          "varenavn": "Ritalin",
+          "navn_form_styrke": "Ritalin kaps modif frisett 60 mg",
+          "produsent": "InfectoPharm Arzneimittel und Consilium GmbH",
+          "atc": "N06BA04",
+          "legemiddelform": "Kapsel med modifisert frisetting, hard"
+        },
+        {
+          "merkevare_id": "ID_EBC3E632-A1AE-486C-B44E-E81332E930DF",
+          "varenavn": "Ritalina",
+          "navn_form_styrke": "Ritalina kaps modif frisett 60 mg",
+          "produsent": "Orifarm AS",
+          "atc": "N06BA04",
+          "legemiddelform": "Kapsel med modifisert frisetting, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9867.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (468732 byte).",
+          "antall": {
+            "bytes": 468732
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "60ed20345da99428ae0b1996da0053c91d56d44932efe24f3d2cbec25afc8046"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4110.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4110.pdf",
+      "hentet_kl": "2026-10-30T17:16:58.985Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "303094",
+        "content-md5": "oNX5u+hR8bTdBiQt63ZCbQ==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:13 GMT",
+        "etag": "0x8DE85F8D6BF2B7B",
+        "date": "Fri, 30 Oct 2026 17:16:59 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_5807C616-22B4-4DB3-B8B2-A9C1B6C0F5EE",
+          "varenavn": "Medikinet",
+          "navn_form_styrke": "Medikinet tab 5 mg",
+          "produsent": "Medice Arzneimittel Pütter GmbH & Co KG",
+          "atc": "N06BA04",
+          "legemiddelform": "Tablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4110.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (303094 byte).",
+          "antall": {
+            "bytes": 303094
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "fc3e7fb2566d6c36fb7589cc5227159049e0cb40b89eb939fb33ed98f917574b"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2876.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2876.pdf",
+      "hentet_kl": "2026-10-30T17:17:04.835Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "468732",
+        "content-md5": "LuaM2hDN9DnY3ya3i+9O7Q==",
+        "last-modified": "Thu, 19 Mar 2026 20:48:09 GMT",
+        "etag": "0x8DE85F8D4740AEB",
+        "date": "Fri, 30 Oct 2026 17:17:05 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_5854AE32-5FE5-4262-9E04-CF3C25606E04",
+          "varenavn": "Ritalin",
+          "navn_form_styrke": "Ritalin kaps modif frisett 20 mg",
+          "produsent": "InfectoPharm Arzneimittel und Consilium GmbH",
+          "atc": "N06BA04",
+          "legemiddelform": "Kapsel med modifisert frisetting, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2876.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (468732 byte).",
+          "antall": {
+            "bytes": 468732
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "60ed20345da99428ae0b1996da0053c91d56d44932efe24f3d2cbec25afc8046"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "26192827ca1c6a83626529f3141388c17df764f26e18b73cc6e8ef0603487e0d",
+      "bytes": 387572,
+      "mappe": "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83",
+      "pdf": {
+        "sider": 20,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "Datablad – CONCERTA",
+        "laget": "Tue Mar 17 12:45:43 2026 UTC",
+        "endret": "Tue Mar 17 12:45:43 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/original.pdf",
+        "tekst": "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/tekst/side-001.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/tekst/side-002.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/tekst/side-003.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/tekst/side-004.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/tekst/side-005.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/tekst/side-006.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/tekst/side-007.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/tekst/side-008.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/tekst/side-009.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/tekst/side-010.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/tekst/side-011.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/tekst/side-012.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/tekst/side-013.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/tekst/side-014.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/tekst/side-015.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/tekst/side-016.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/tekst/side-017.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/tekst/side-018.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/tekst/side-019.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/tekst/side-020.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/sider/side-001.png",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/sider/side-002.png",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/sider/side-003.png",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/sider/side-004.png",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/sider/side-005.png",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/sider/side-006.png",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/sider/side-007.png",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/sider/side-008.png",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/sider/side-009.png",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/sider/side-010.png",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/sider/side-011.png",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/sider/side-012.png",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/sider/side-013.png",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/sider/side-014.png",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/sider/side-015.png",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/sider/side-016.png",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/sider/side-017.png",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/sider/side-018.png",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/sider/side-019.png",
+          "kuratorjobb/resultat/metylfenidat/spc/26192827ca1c6a83/sider/side-020.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 12,
+        "til": 15
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (20 sider).",
+          "antall": {
+            "sider": 20
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 46553
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 12."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 20
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "7d5661b0cd73cb81a1f489038343a231459a2f74b8e18e4613168b3a3efaec18",
+      "bytes": 392944,
+      "mappe": "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81",
+      "pdf": {
+        "sider": 21,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Tue Mar 17 14:44:03 2026 UTC",
+        "endret": "Tue Mar 17 14:44:03 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/original.pdf",
+        "tekst": "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/tekst/side-001.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/tekst/side-002.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/tekst/side-003.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/tekst/side-004.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/tekst/side-005.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/tekst/side-006.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/tekst/side-007.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/tekst/side-008.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/tekst/side-009.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/tekst/side-010.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/tekst/side-011.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/tekst/side-012.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/tekst/side-013.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/tekst/side-014.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/tekst/side-015.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/tekst/side-016.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/tekst/side-017.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/tekst/side-018.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/tekst/side-019.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/tekst/side-020.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/tekst/side-021.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/sider/side-001.png",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/sider/side-002.png",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/sider/side-003.png",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/sider/side-004.png",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/sider/side-005.png",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/sider/side-006.png",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/sider/side-007.png",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/sider/side-008.png",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/sider/side-009.png",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/sider/side-010.png",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/sider/side-011.png",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/sider/side-012.png",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/sider/side-013.png",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/sider/side-014.png",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/sider/side-015.png",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/sider/side-016.png",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/sider/side-017.png",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/sider/side-018.png",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/sider/side-019.png",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/sider/side-020.png",
+          "kuratorjobb/resultat/metylfenidat/spc/7d5661b0cd73cb81/sider/side-021.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 12,
+        "til": 15
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (21 sider).",
+          "antall": {
+            "sider": 21
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 50681
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 12."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 21
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "dff90dd99e64a73a2f52defd7549da3722870a4cffb4a04293c85d58a982ea2a",
+      "bytes": 353419,
+      "mappe": "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a",
+      "pdf": {
+        "sider": 19,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "Z24207",
+        "laget": "Wed Dec 17 07:19:34 2025 UTC",
+        "endret": "Wed Dec 17 07:19:34 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/original.pdf",
+        "tekst": "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/tekst/side-001.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/tekst/side-002.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/tekst/side-003.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/tekst/side-004.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/tekst/side-005.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/tekst/side-006.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/tekst/side-007.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/tekst/side-008.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/tekst/side-009.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/tekst/side-010.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/tekst/side-011.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/tekst/side-012.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/tekst/side-013.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/tekst/side-014.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/tekst/side-015.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/tekst/side-016.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/tekst/side-017.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/tekst/side-018.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/tekst/side-019.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/sider/side-001.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/sider/side-002.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/sider/side-003.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/sider/side-004.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/sider/side-005.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/sider/side-006.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/sider/side-007.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/sider/side-008.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/sider/side-009.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/sider/side-010.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/sider/side-011.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/sider/side-012.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/sider/side-013.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/sider/side-014.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/sider/side-015.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/sider/side-016.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/sider/side-017.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/sider/side-018.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dff90dd99e64a73a/sider/side-019.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 11,
+        "til": 14
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (19 sider).",
+          "antall": {
+            "sider": 19
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 39802
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 11."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 19
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "dda0d23f70726d28a4be213f6b49a006bc6202db0a288e6e1f79c5648f4cb5d7",
+      "bytes": 371399,
+      "mappe": "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28",
+      "pdf": {
+        "sider": 20,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "mutual-recognition-decentralised-referral-pi-template-version-42_en_CLEAN_NO",
+        "laget": "Thu Jul  2 11:11:04 2026 UTC",
+        "endret": "Thu Jul  2 11:11:04 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/original.pdf",
+        "tekst": "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/tekst/side-001.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/tekst/side-002.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/tekst/side-003.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/tekst/side-004.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/tekst/side-005.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/tekst/side-006.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/tekst/side-007.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/tekst/side-008.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/tekst/side-009.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/tekst/side-010.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/tekst/side-011.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/tekst/side-012.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/tekst/side-013.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/tekst/side-014.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/tekst/side-015.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/tekst/side-016.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/tekst/side-017.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/tekst/side-018.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/tekst/side-019.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/tekst/side-020.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/sider/side-001.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/sider/side-002.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/sider/side-003.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/sider/side-004.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/sider/side-005.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/sider/side-006.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/sider/side-007.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/sider/side-008.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/sider/side-009.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/sider/side-010.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/sider/side-011.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/sider/side-012.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/sider/side-013.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/sider/side-014.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/sider/side-015.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/sider/side-016.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/sider/side-017.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/sider/side-018.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/sider/side-019.png",
+          "kuratorjobb/resultat/metylfenidat/spc/dda0d23f70726d28/sider/side-020.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 12,
+        "til": 16
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (20 sider).",
+          "antall": {
+            "sider": 20
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 46963
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 12."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 20
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "6398796272be2269462d1f4f780931d55ae3ac6eec7be4461ac1c0f248125777",
+      "bytes": 693697,
+      "mappe": "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269",
+      "pdf": {
+        "sider": 21,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "Ritalin kapsler med modifisert frisetting",
+        "laget": "Mon Nov 24 11:27:04 2025 UTC",
+        "endret": "Mon Nov 24 11:27:04 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/original.pdf",
+        "tekst": "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/tekst/side-001.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/tekst/side-002.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/tekst/side-003.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/tekst/side-004.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/tekst/side-005.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/tekst/side-006.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/tekst/side-007.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/tekst/side-008.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/tekst/side-009.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/tekst/side-010.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/tekst/side-011.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/tekst/side-012.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/tekst/side-013.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/tekst/side-014.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/tekst/side-015.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/tekst/side-016.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/tekst/side-017.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/tekst/side-018.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/tekst/side-019.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/tekst/side-020.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/tekst/side-021.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/sider/side-001.png",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/sider/side-002.png",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/sider/side-003.png",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/sider/side-004.png",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/sider/side-005.png",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/sider/side-006.png",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/sider/side-007.png",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/sider/side-008.png",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/sider/side-009.png",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/sider/side-010.png",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/sider/side-011.png",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/sider/side-012.png",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/sider/side-013.png",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/sider/side-014.png",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/sider/side-015.png",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/sider/side-016.png",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/sider/side-017.png",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/sider/side-018.png",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/sider/side-019.png",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/sider/side-020.png",
+          "kuratorjobb/resultat/metylfenidat/spc/6398796272be2269/sider/side-021.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 12,
+        "til": 15
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (21 sider).",
+          "antall": {
+            "sider": 21
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 53672
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 12."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 21
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "60ed20345da99428ae0b1996da0053c91d56d44932efe24f3d2cbec25afc8046",
+      "bytes": 468732,
+      "mappe": "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428",
+      "pdf": {
+        "sider": 23,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "Ritalin kapsler med modifisert frisetting",
+        "laget": "Thu Oct 16 11:28:01 2025 UTC",
+        "endret": "Thu Oct 16 11:28:01 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/original.pdf",
+        "tekst": "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-001.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-002.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-003.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-004.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-005.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-006.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-007.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-008.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-009.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-010.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-011.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-012.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-013.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-014.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-015.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-016.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-017.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-018.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-019.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-020.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-021.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-022.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/tekst/side-023.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-001.png",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-002.png",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-003.png",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-004.png",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-005.png",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-006.png",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-007.png",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-008.png",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-009.png",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-010.png",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-011.png",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-012.png",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-013.png",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-014.png",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-015.png",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-016.png",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-017.png",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-018.png",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-019.png",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-020.png",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-021.png",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-022.png",
+          "kuratorjobb/resultat/metylfenidat/spc/60ed20345da99428/sider/side-023.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 12,
+        "til": 16
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (23 sider).",
+          "antall": {
+            "sider": 23
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 51411
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 12."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 23
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "cda1058367deea9479eedc4b8a6b57f2f21dab52022027abf09cb7dee4828e37",
+      "bytes": 413447,
+      "mappe": "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94",
+      "pdf": {
+        "sider": 20,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "Hreferralspccleanen",
+        "laget": "Tue Jan  6 07:43:41 2026 UTC",
+        "endret": "Tue Jan  6 07:43:41 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/original.pdf",
+        "tekst": "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/tekst/side-001.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/tekst/side-002.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/tekst/side-003.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/tekst/side-004.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/tekst/side-005.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/tekst/side-006.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/tekst/side-007.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/tekst/side-008.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/tekst/side-009.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/tekst/side-010.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/tekst/side-011.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/tekst/side-012.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/tekst/side-013.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/tekst/side-014.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/tekst/side-015.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/tekst/side-016.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/tekst/side-017.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/tekst/side-018.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/tekst/side-019.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/tekst/side-020.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/sider/side-001.png",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/sider/side-002.png",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/sider/side-003.png",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/sider/side-004.png",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/sider/side-005.png",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/sider/side-006.png",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/sider/side-007.png",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/sider/side-008.png",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/sider/side-009.png",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/sider/side-010.png",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/sider/side-011.png",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/sider/side-012.png",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/sider/side-013.png",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/sider/side-014.png",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/sider/side-015.png",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/sider/side-016.png",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/sider/side-017.png",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/sider/side-018.png",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/sider/side-019.png",
+          "kuratorjobb/resultat/metylfenidat/spc/cda1058367deea94/sider/side-020.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 11,
+        "til": 15
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (20 sider).",
+          "antall": {
+            "sider": 20
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 46581
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 11."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 20
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "fc3e7fb2566d6c36fb7589cc5227159049e0cb40b89eb939fb33ed98f917574b",
+      "bytes": 303094,
+      "mappe": "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36",
+      "pdf": {
+        "sider": 15,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "Version 1",
+        "laget": "Mon Mar  2 09:13:20 2026 UTC",
+        "endret": "Mon Mar  2 09:13:20 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/original.pdf",
+        "tekst": "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/tekst/side-001.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/tekst/side-002.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/tekst/side-003.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/tekst/side-004.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/tekst/side-005.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/tekst/side-006.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/tekst/side-007.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/tekst/side-008.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/tekst/side-009.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/tekst/side-010.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/tekst/side-011.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/tekst/side-012.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/tekst/side-013.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/tekst/side-014.txt",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/tekst/side-015.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/sider/side-001.png",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/sider/side-002.png",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/sider/side-003.png",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/sider/side-004.png",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/sider/side-005.png",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/sider/side-006.png",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/sider/side-007.png",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/sider/side-008.png",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/sider/side-009.png",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/sider/side-010.png",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/sider/side-011.png",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/sider/side-012.png",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/sider/side-013.png",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/sider/side-014.png",
+          "kuratorjobb/resultat/metylfenidat/spc/fc3e7fb2566d6c36/sider/side-015.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 10,
+        "til": 12
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (15 sider).",
+          "antall": {
+            "sider": 15
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 35833
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 10."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 15
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": [
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/19-12984.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4122.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4121.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/19-12983.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-8124.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-8125.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11809.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-15044.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11811.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8679.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-03449.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/02-1222.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4117.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/12-9268.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11808.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/06-4118.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/10-8123.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/19-12982.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/15-10786.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-6501.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/05-3711.pdf"
+  ]
+}

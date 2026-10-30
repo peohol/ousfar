@@ -1,0 +1,64 @@
+  Organklasse-                                                      Bivirkning
+  system                                                            Frekvens
+                   Svært            Vanlige            Mindre             Sjeldne      Svært sjeldne    Ikke kjent
+                   vanlige                             vanlige
+  Sykdommer                         Artralgi,          Myalgi†,                        Muskel-          Trismus^
+  i muskler                         muskel-            muskel-                         kramper
+  bindevev og                       spenning#,         rykninger
+  skjelett                          muskel-
+                                    spasmer#
+  Sykdommer                                            Hematuri,                                        Inkontinens
+  i nyre og                                            pollakiuri
+  urinveier
+  Lidelser i                        Erektil                              Gynekomasti                    Priapisme*,
+  kjønns-                           dysfunksjon#                                                        forsterket og
+  organer og                                                                                            forlenget
+  brystsyk-                                                                                             ereksjon*
+  dommer
+  Generelle                         Pyreksi,           Brystsmerter                    Plutselig        Ubehag i
+  lidelser og                       vekst-                                             hjertedød*       brystet†,
+  reaksjoner                        hemming ved                                                         hyperpyreksi
+  på                                langtidsbruk
+  administra-                       hos barn*,
+  sjonsstedet                       fatigue†,
+                                    irritabilitet#,
+                                    nervøsitet#,
+                                    asteni#, tørste#
+  Under-                            Endringer i        Bilyd på                        Redusert
+  søkelser                          blodtrykk og       hjertet*                        blodplatetall,
+                                    puls                                               unormalt
+                                    (vanligvis                                         antall hvite
+                                    økning)*,                                          blodceller
+                                    vekttap*
+* Se pkt. 4.4.
+#
+   Frekvens fra kliniske studier med voksne, ikke data fra kliniske studier med barn og ungdom. Kan også være
+   relevant for barn og ungdom.
+†
+   Bivirkning fra kliniske studier med voksne pasienter som ble rapportert med høyere frekvens enn hos barn og
+   ungdom.
+^
+   Basert på frekvensen beregnet i ADHD-studier hos voksne (ingen tilfeller ble rapportert i studier hos barn).
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til
+Direktoratet for medisinske produkter: www.dmp.no/meldeskjema.
+
+4.9   Overdosering
+
+Ved behandling av overdosering må det tas hensyn til den forlengede frigjøringen av metylfenidat fra
+formuleringer med forlenget virketid.
+
+Tegn og symptomer
+Akutt overdose, som i hovedsak skyldes overstimulering av det sentrale og sympatiske nervesystem,
+kan føre til oppkast, agitasjon, tremor, hyperrefleksi, muskelrykninger, konvulsjoner (kan være
+etterfulgt av koma), eufori, forvirring, hallusinasjoner, delirium, svetting, flushing, hodepine,
+hyperpyreksi, takykardi, palpitasjoner, hjertearytmier, hypertensjon, mydriasis og tørre slimhinner.
+
+Behandling
+Det finnes ikke noe spesifikt antidot ved overdosering med metylfenidat.
+
+Behandling består av adekvate støttetiltak.
+                                                        15

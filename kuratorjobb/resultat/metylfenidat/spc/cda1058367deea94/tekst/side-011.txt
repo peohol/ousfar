@@ -1,0 +1,59 @@
+ Dyrestudier har kun gitt holdepunkter for reproduksjonstoksiske effekter ved maternelle toksiske doser (se
+ pkt. 5.3.).
+
+ Metylfenidat anbefales ikke under graviditet, med mindre det tas en klinisk avgjørelse på at utsettelse av
+ behandlingen kan utgjøre en større risiko for graviditetsforløpet.
+
+ Amming
+
+ Metylfenidat blir skilt ut i morsmelk hos mennesker. Basert på rapporter om brystmelkprøver fra fem mødre,
+ medførte metylfenidatkonsentrasjonen i morsmelk doser hos spedbarna tilsvarende 0,16 % til 0,7 % av
+ mødrenes vektjusterte dose, og et forhold mellom melk og maternalt plasma fra 1,1 til 2,7.
+
+ Det er rapportert ett tilfelle der et spedbarn hadde et uspesifisert vekttap i løpet av eksponeringsperioden,
+ men dette gikk over og barnet økte i vekt etter at moren avbrøt behandlingen med metylfenidat. En risiko for
+ det diende barnet kan ikke utelukkes.
+
+ Tatt i betraktning fordelene av amming for barnet og fordelene av behandling for moren, må det tas en
+ beslutning om ammingen skal opphøre eller behandlingen med metylfenidat skal avsluttes/avstås fra.
+
+ Fertilitet
+
+ Det foreligger ingen data fra mennesker på effekten av metylfenidat på fertilitet. Ingen relevante effekter ble
+ observert i de prekliniske studiene.
+
+ 4.7    Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+ Metylfenidat kan forårsake svimmelhet, døsighet og synsforstyrrelser, inkludert akkommodasjonsproblemer,
+ diplopi og tåkesyn. Det kan ha moderat påvirkning på evnen til å kjøre bil og bruke maskiner. Pasientene bør
+ advares om disse mulige effektene og rådes til å unngå potensielt farlige aktiviteter som kjøring og betjening
+ av maskiner dersom de blir påvirket.
+
+ 4.8    Bivirkninger
+
+ Tabellen nedenfor viser alle bivirkninger som er sett i kliniske studier hos barn, ungdom og voksne og ved
+ spontanrapportering etter markedsføring av metylfenidat depottabletter samt bivirkninger som er rapportert
+ ved bruk av andre formuleringer av metylfenidathydroklorid. Dersom hyppigheten av bivirkningene ved
+ bruk av metylfenidat depottabletter og andre metylfenidatformuleringen var forskjellig, er den høyeste
+ frekvensen i de to databasene brukt.
+
+ Frekvensene er definert som:
+ Svært vanlige (≥ 1/10)
+ Vanlige (≥ 1/100 til < 1/10)
+ Mindre vanlige (≥ 1/1 000 til < 1/100)
+ Sjeldne (≥ 1/10 000 til < 1/1 000)
+ Svært sjeldne (<1/10 000)
+ Ikke kjent (hyppighet kan ikke anslås ut fra tilgjengelige data):
+
+Organklasse-                                                  Bivirkning
+system                                                         Frekvens
+
+                Svært       Vanlige            Mindre              Sjeldne     Svært sjeldne     Ikke kjent
+                vanlige                        vanlige
+Infeksiøse og               Nasofaryngitt,
+parasittære                 øvre luftveis-
+sykdommer                   infeksjon#,
+                            sinusitt#
+
+
+                                                         11

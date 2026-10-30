@@ -1,0 +1,58 @@
+Kjønn
+Hos friske voksne var gjennomsnittlig dosejusterte AUCinf-verdier for metylfenidat-depottabletter på
+36,7 ng•timer/ml hos menn og 37,1 ng•timer/ml hos kvinner, uten påviste forskjeller mellom de to gruppene.
+
+Etnisitet
+Hos friske voksne som fikk metylfenidat-depottabletter var dosejustert AUCinf konsistent på tvers av etniske
+grupper. Imidlertid kan antallet personer ha vært utilstrekkelig for å oppdage etniske variasjoner i
+farmakokinetikk.
+
+Alder
+Farmakokinetikken for metylfenidat-depottabletter har ikke vært undersøkt hos barn under 6 år. Hos barn på
+7-12 år er farmakokinetikken til henholdsvis 18 mg, 36 mg og 54 mg metylfenidat-depottabletter
+(gjennomsnitt±SD): Cmax 6,0 ± 1,3, 11,3 ± 2,6 og 15,0 ± 3,8 ng/ml, tmax 9,4 ± 0,02, 8,1 ± 1,1, 9,1 ± 2.5 timer,
+og AUC0-11.5 50,4 ± 7,8, 87,7 ± 18,2, 121,5 ± 37,3 ng•timer/ml.
+
+Nedsatt nyrefunksjon
+Det er ingen erfaring med bruk av metylfenidat-depottabletter hos pasienter med nedsatt nyrefunksjon. Etter
+peroral administrasjon av radiomerket metylfenidat til mennesker, ble det observert en omfattende
+metabolisering av metylfenidat, og om lag 80 % av radioaktiviteten ble gjenfunnet i urinen i form av PPA.
+Da renal clearance ikke er viktig for totalclearance av metylfenidat, regner man med at nedsatt nyrefunksjon
+har liten effekt på farmakokinetikken til metylfenidat-depottabletter.
+
+Nedsatt leverfunksjon
+Det er ingen erfaring med bruk av metylfenidat-depottabletter hos pasienter med nedsatt leverfunksjon.
+
+5.3   Prekliniske sikkerhetsdata
+
+Karsinogenitet
+I livsløpsstudier av karsinogenitet hos rotte og mus, ble økt antall maligne levertumorer funnet kun hos
+hannmus. Betydningen av dette funnet for mennesker er ikke kjent.
+
+Metylfenidat hadde ingen effekt på reproduksjonsevnen eller fertiliteten ved få gjentatte doseringer av
+klinisk dose.
+
+Drektighetsforløp, embryo-/fosterutvikling
+Metylfenidat regnes ikke for å være teratogent hos rotte og kanin. Føtal toksisitet (dvs. tap av hele kullet) og
+maternell toksisitet ble sett hos rotter ved doser som var toksiske for moren.
+
+
+6.    FARMASØYTISKE OPPLYSNINGER
+
+6.1   Hjelpestoffer
+
+Tablettkjernen
+Laktosemonohydrat
+Hypromellose
+Silika, kolloidal vannfri
+Magnesiumstearat
+Fumarsyre
+Metakrylsyremetylmetakrylatkopolymer
+Trietylsitrat
+Talkum
+
+Tablettdrasjering
+18 mg depottabletter
+Polyvinylalkohol delv. hydrolysert
+
+                                                       18

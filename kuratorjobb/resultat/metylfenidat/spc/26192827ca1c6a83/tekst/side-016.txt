@@ -1,0 +1,57 @@
+Pasienten må beskyttes mot selvskading og mot eksterne stimuli som kan forverre overstimuleringen
+som allerede er til stede. Effekten av medisinsk kull har ikke blitt fastslått.
+
+Intensivbehandling må gis for å opprettholde nødvendig sirkulasjon og respirasjon. Ytre avkjøling kan
+være nødvendig ved hyperpyreksi.
+
+Effekten av peritoneal dialyse eller ekstrakorporeal hemodialyse ved overdosering med metylfenidat
+er ikke dokumentert.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakodynamisk gruppe: Sentralt virkende sympatomimetika, ATC-kode: N06B A04.
+
+Virkningsmekanisme
+Metylfenidathydroklorid er en mild CNS-stimulant. Virkningsmekanismen ved ADHD er ikke kjent.
+Man antar at metylfenidat blokkerer gjenopptaket av noradrenalin og dopamin presynaptisk, og øker
+frigjøringen av disse monoaminene i det ekstraneuronale rom. Metylfenidat er en racemisk blanding
+som består av d- og l-isomerene. D-isomeren er mer farmakologisk aktiv enn l-isomeren.
+
+Klinisk effekt og sikkerhet
+
+Barn
+I de pivotale kliniske studiene ble Concerta gitt til 321 pediatriske pasienter som allerede var
+stabilisert på formuleringer med umiddelbar frisetting (IR) av metylfenidat og til 95 pediatriske
+pasienter som ikke tidligere hadde brukt metylfenidat.
+
+Kliniske studier hos pediatriske pasienter har vist at effekten av Concerta vedvarer i inntil 12 timer
+etter inntak når tabletten blir tatt én gang daglig om morgenen.
+
+Voksne
+Korttidseffekt er vist for Concerta i et doseområde på 18 til 72 mg/døgn. Ett tusen femhundre og
+tjuetre (1523) voksne med ADHD i alderen 18 til 65 år ble undersøkt i fem dobbeltblindede,
+placebokontrollerte studier av 5 til 13 ukers varighet. Concerta ble evaluert i 2 fastdosestudier og
+3 studier med fleksibel dose, ved bruk av DSM-IV-baserte instrumenter til vurdering av
+alvorlighetsgraden av ADHD-symptomer hos voksne. I to fastdosestudier viste ”Conner’s Adult
+ADHD Rating Scales” (CAARS) at totalscore for ADHD-symptomer ble redusert, noe som indikerer
+en bedring i alvorlighetsgraden av ADHD-symptomer fra baseline til dobbeltblindet endepunkt. I én
+fastdosestudie viste alle dosenivåer av Concerta klinisk signifikant større symptomkontroll (p < 0,05
+for alle dosenivåer) sammenlignet med placebo målt som en reduksjon i CAARS totalscore. I den
+andre fastdosestudien var Concerta 72 mg/dag, men ikke Concerta 54 mg/dag, statistisk signifikant
+bedre enn placebo i å redusere CAARS totalscore for ADHD-symptomer fra baseline til
+dobbeltblindet endepunkt hos voksne forsøkspersoner med ADHD (p-verdi 0,0024).
+
+I to studier med fleksibel dose var minste kvadraters gjennomsnittlige endringer fra baseline i ”Adult
+ADHD Investigator Symptom Rating Scale” (AISRS) totalscore ved endepunkt statistisk signifikante
+(studie 1: p = 0,012; studie 2: p < 0,001) for behandling med endelige doser av Concerta sammenlignet
+med placebo (studie 1: -10,6 for Concerta vs. –6,8 for placebo; studie 2: -16,9 for Concerta vs. -12,0
+for placebo). I den tredje studien med fleksibel dose (sudie 3) viste Concerta klinisk signifikant større
+symptomkontroll (p < 0,0001) sammenlignet med placebo målt som en reduksjon i CAARS totalscore.
+Minste kvadraters gjennomsnittlige endring fra baseline til siste kontroll (uke 8) i total CAARS-O:SV-
+score for ADHD-symptomer var -10,9 i Concerta-gruppen og -6,9 i placebogruppen (basert på ITT-
+populasjonen).
+
+                                                    16

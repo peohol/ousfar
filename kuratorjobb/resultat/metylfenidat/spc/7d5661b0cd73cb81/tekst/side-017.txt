@@ -1,0 +1,59 @@
+I den andre studien (QUMEA) kunne ikke disse kjønnsspesifikke effektene bekreftes. Dette fordi
+lavdoseområdet ikke ble brukt og kun få pasienter ble behandlet i det midtre doseområdet. I
+høydosegruppen var responsgraden hos kvinner signifikant høyere sammenlignet med placebo. Hos
+menn ble det oppnådd et ikke-signifikant resultat. Med hensyn til hovedparameteren (WRI-reduksjon i
+uke 8) ble det oppnådd en signifikant skårreduksjon sammenlignet med placebo hos både menn og
+kvinner.
+
+Følgende data fremkom for samlet studiepopulasjon:
+Med hensyn til reduksjon i total WRI-skår i EMMA-studien var endringen fra baseline til uke 24 -
+18,88 sammenlignet med -13,99 med placebo, noe som gir en effektstørrelse på 0,39, 95 % KI (0,18,
+0,63, for effektstørrelse), p=0,002 (ANOVA med LOCF for manglende verdier). I QUMEA var
+endringen fra baseline til uke 8 -13,2 sammenlignet med -6,2 med placebo, noe som gir en
+effektstørrelse på 0,54, 95 % KI (0,22, 0,85, for effektstørrelse), p=0,0001 (ANOVA med LOCF for
+manglende verdier).
+Omregnet responsandel ble bestemt som: Responder: % pasienter med WRAADDS-skår 30 %
+reduksjon eller mer og uten studieavbrudd, ikke-responder: % pasienter med mindre reduksjon i
+WRAADDS-skår eller tidlig studieavbrudd uavhengig av årsak, som medførte manglende verdier i
+uke 24 eller 8). I EMMA-studien var omregnet responderandel 128 (53 %) sammenlignet med 44
+(37 %) i placebogruppen (uke 24, Fisher's exact test, to-sidig, 0,0051). Omregnet responderandel i
+QUMEA-studien i uke 8 var 41 (49 %) mot 14 (18 %) med placebo (Fisher's exact test, to-sidig, p<
+0,0001).
+
+Medikinet ble også studert i en ytterligere, randomisert, dobbeltblindet, placebokontrollert klinisk
+studie (COMPAS-studien, sammenlignende studie av metylfenidat og psykoterapi) hos 433 voksne
+pasienter. Denne studien ble gjennomført da Medikinet var godkjent nasjonalt i Tyskland som
+"Medikinet adult".
+Deltakerne fikk enten kognitiv atferdsterapi i gruppe eller individuell klinisk håndtering med tilbud
+om individuell rådgivning i tillegg til daglige doser med placebo eller Medikinet. Behandlingen varte i
+52 uker.
+Det primære utfallet av studien var en reduksjon i ADHD-symptomer, vurdert som en nedgang i
+CAARS-O: L-skår fra baseline til utgangen av de første 12 ukene med behandling.
+Det fulgte at en kombinasjon av gruppeterapi eller klinisk håndtering med Medikinet ga bedre resultat
+enn samme kombinasjon med placebo med hensyn til en bedring i ADHD-symptomer. ADHD-
+symptomer ble betydelig forbedret under behandling med Medikinet (n = 210; justert gjennomsnittlig
+ADHD-indeksskår, 16,2; ES = –0,81) sammenlignet med placebo (n = 209; justert gjennomsnittlig
+ADHD-indeksskår 17,9; ES = –0,50). Differansen var statistisk signifikant (differanse i verdier for
+ADHD-indeksskår for Medikinet vs. placebo –1,7; 97,5 % KI, –3,0 vs. –0,4; 95 % KI, –2,8 vs. –0,6; P
+= ,003).
+Gjennomsnittlig døgndose (SD) hos de 179 pasientene som ble behandlet med Medikinet, var 48,8
+(20,2) mg.
+COMPAS-studien viste for voksne at psykologiske intervensjoner under kontrollerte forhold ga et
+bedre behandlingsutfall (over 52 uker) når de ble kombinert med Medikinet, sammenlignet med en
+kombinasjon med placebo.
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+Medikinet kapsler med modifisert frisetting gir en plasmaprofil med to faser med frisetting av
+virkestoff, med en bratt innledende stigning tilsvarende som for en metylfenidathydrokloridtablett med
+umiddelbar frisetting, og en ny stigning ca. tre timer senere, etterfulgt av et gradvis fall.
+Tatt av voksne om morgenen etter frokost vil den delen av kapselinnholdet som frisettes umiddelbart
+raskt løses opp og gi en innledende plasmakonsentrasjonstopp. Etter å ha passert magesekken og inn i
+tynntarmen, vil den delen av kapselinnholdet som har forsinket frisetting frigi
+metylfenidathydroklorid. Dette gir en 3-4 timers platåfase hvor konsentrasjonen ikke faller under 75 %
+av den maksimale plasmakonsentrasjonen. Mengden av metylfenidathydroklorid som absorberes ved
+administrasjon en gang daglig er sammenlignbar med konvensjonelle formuleringer med umiddelbar
+frisetting tatt to ganger daglig.
+
+                                                  17

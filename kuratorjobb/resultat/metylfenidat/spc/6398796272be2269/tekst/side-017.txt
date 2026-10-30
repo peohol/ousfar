@@ -1,0 +1,59 @@
+vurderinger i periode 1.
+
+Tabell 2 Analyse av forbedring fra baseline 1 til slutten av Periode 1 for totalresultat av DSM
+IV ADHD RS og totalresultat av SDS ved behandling / (LOCF*) i Periode 1
+
+                                        Metylfenidat     Metylfenidat          Metylfenidat      Placebo
+                                        40 mg            60 mg                 80 mg
+ Forbedring i       N                   160              155                   156              161
+ DSM- IV            LS
+                                        15,45            14,71                 16,36            9,35
+ ADHD RS            gjennomsnitt*
+ fra baseline       p- verdi****        <0,0001          <0,0001               <0,0001
+                    Signifikans-        0,0167           0,0208                0,0313
+                    nivå
+ Forbedring i       N                   151              146                   148              152
+ SDS                LS
+                                        5,89             4,9                   6,47             3,03
+ totalresultat      gjennomsnitt
+ fra baseline       p-verdi****         0,0003           0,0176                <0,0001
+                    Signifikans-        0,0167           0,0208                0,0313
+                    nivå ***
+*LOCF – «Last Observation Carried Forward» ved bruk av siste visitt for hver pasient med data fra
+den 6-ukers faste dose fasen i Periode 1, **LS gjennomsnitt- Minste kvadraters (Least Square)
+gjennomsnittlige forbedringer fra modellen «Analysis of Covariance» (ANCOVA) med
+behandlingsgruppe og senter som faktorer og baseline DSM-IV ADHD RS totalresultat og SDS
+totalresultat som kovariat, ***Signifikansnivå = siste tosidige signifikansnivå (alfa) for testen
+etterfulgt av utvidet «gatekeeping» prosedyre ****p-verdi refererer til sammenligning mot placebo
+
+Opprettholdelse av effekt av metylfenidat ble evaluert ved å måle prosentandelen av
+behandlingssvikt hos pasienter som fikk metylfenidat sammenlignet med placebogruppen ved slutten
+på en 6-måneders vedlikeholdsperiode (se tabell 3). Da dosen for metylfenidat var optimalisert i
+periode 2, fortsatte ca. 79 % av pasientene å opprettholde sykdomskontroll i en periode på minst
+6 måneder (p<0,0001 vs. placebo). En odds ratio på 0,3 viste at pasienter behandlet med placebo
+hadde 3 ganger høyere sjanse for behandlingssvikt sammenlignet med metylfenidat.
+
+Tabell 3 Prosentandel av behandlingssvikt under Periode 3
+
+                                                                      Alle metylfenidat vs. placebo
+                           Alle metylfenidat       Placebo                        P-verdi*
+                           N=352                   N=115           Odds ratio     (signifikansnivå**)
+                           n (%)                   n (%)           (95 % KI)
+ Behandlingssvikt          75 (21,3)               57 (49,6)       0,3 (0,2, 0,4)     < 0,0001 (0,0500)
+ Ikke                      277 (78,7)              58 (50,4)
+ behandlingssvikt
+
+* Tosidig p-verdi basert på sammenligning mellom hver gruppe metylfenidat og placebo ved bruk
+av logistisk regresjonsmodell.
+**Signifikansnivå = endelig tosidig signifikansnivå (alfa) for testen etterfulgt forlenget gatekeeping
+prosedyre.
+
+Pasienter som ble med i periode 3 hadde fullført totalt mellom 5-14 ukers behandling med
+metylfenidat i periodene 1 og 2. Pasienter som fikk placebo i periode 3 opplevde ikke økning i
+symptomer på grunn av seponering og rebound sammenlignet med pasienter som fortsatte
+behandling med metylfenidat.
+
+Under korttidsbehandling hadde både kvinner og menn en statistisk forbedring av DSM-IV ADHD
+RS sammenlignet med placebo i alle metylfenidat-gruppene. For menn var beste forbedring av
+scoren oppnådd med metylfenidat 80 mg, mens for kvinner var beste forbedring oppnådd med
+laveste dosegruppe metylfenidat 40 mg. Denne trenden var ikke signifikant og ble ikke sett ved

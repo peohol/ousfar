@@ -1,0 +1,59 @@
+foretas skal eventuell uro og kramper kontrolleres og luftveiene beskyttes. Andre tiltak for
+gastrointestinal avgiftning omfatter bruk av medisinsk kull og laksantia. Ved alvorlig forgiftning kan
+det gis en godt titrert dose av et benzodiazepin før ventrikkelskylling foretas.
+
+Intensivbehandling skal gis for å opprettholde god sirkulasjon og respirasjon, og eksterne
+avkjølingstiltak kan være nødvendig ved hyperpyreksi.
+
+Effekten av peritonealdialyse eller ekstrakorporal hemodialyse ved overdosering med
+metylfenidathydroklorid er ikke klarlagt.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Psykoanaleptika, psykostimulantia, midler ved ADHD og nootropika,
+sentralt virkende sympatomimetika
+ATC-kode: N06BA04
+
+Virkningsmekanisme
+Medikinet er et svakt sentralstimulerende legemiddel med mer uttalte effekter på mentale enn
+motoriske funksjoner. Virkningsmekanismen hos mennesker er ikke fullstendig kjent, men dets
+effekter antas å skyldes kortikal stimulering og muligens stimulering av det retikulæraktiverende
+system.
+Mekanismen bak Medikinets mentale og atferdseffekter hos pasienter er ikke helt klarlagt, og det er
+ingen overbevisende holdepunkter for at disse effektene er relatert til tilstanden i sentralnervesystemet.
+Det antas å blokkere reopptaket av noradrenalin og dopamin i presynaptiske nevroner og øke
+frisettingen av disse monaminene i det ekstranevronale rom. Medikinet er en racemisk blanding av d-
+og l-treoenantiomerene av metylfenidat. d-enantiomeren er mer farmakologisk aktiv enn l-
+enantiomeren.
+
+Klinisk effekt og sikkerhet
+Etter godkjenning til behandling av ADHD hos barn har Medikinet blitt undersøkt i to randomiserte,
+dobbeltblindede, placebokontrollerte kliniske studier med voksne pasienter. 363 pasienter ble
+undersøkt i EMMA-studien (1) gjennom en behandlingsperiode på 24 uker. I QUMEA-studien (2) ble
+162 pasienter behandlet i totalt 20 uker. Etter den 8 uker lange dobbeltblindede fasen ble alle pasienter
+behandlet i den åpne fasen i ytterligere 12 uker med Medikinet. Hovedparameter i begge studier var
+WRI-skårreduksjon (Wender-Reimherr-Interview = WRAADS). Måletidspunktet var uke 24 (studie 1)
+eller uke 8 (studie 2).
+Døgndosen ble titrert individuelt i ukentlige trinn, avhengig av effekt og tolerabilitet, med en startdose
+på 10 mg daglig (studie 1) eller en startdose på 0,5 mg/kg kroppsvekt (studie 2). En dose på 60 mg
+daglig (studie 1) eller 1 mg/kg kroppsvekt (studie 2) skulle ikke overskrides. I den første studien var
+gjennomsnittlig metylfenidatdose ved endepunktet lavere, 0,55 mg/kg kroppsvekt (gitt døgndose min.
+10 mg, maks. 60 mg), sammenlignet med den andre studien med gjennomsnittlig 0,9 mg/kg
+kroppsvekt (gitt døgndose min. 20 mg, maks. 120 mg). En større effektstørrelse for samlet
+studiepopulasjon ble beregnet ved administrasjon av en høyere gjennomsnittsdose (0,9 mg/kg
+kroppsvekt), som i QUMEA-studien. De kliniske studiene ga kun begrenset erfaring med døgndoser
+over 80 mg, da kun 2 pasienter ble behandlet med 120 mg/døgn.
+
+Dose/Kjønnseffekter
+Resultatene fra den første studien (EMMA) viste at kjønnsspesifikke forskjeller i respons på
+metylfenidat og muligheten for at kvinner kan ha effekt av lavere doser, ikke kan utelukkes. Denne
+studien viste effekt hos menn kun i det høyeste doseområdet med MPH > 0,7 mg/kg kroppsvekt. Hos
+kvinner ble det imidlertid vist effekt selv i det laveste (< 0,3 mg/kg kroppsvekt) og midtre
+doseområdet (0,3–0,7 mg/kg kroppsvekt). Med hensyn til symptomreduksjon viste kvinner i
+høydosegruppen ingen signifikant effekt, og med hensyn til responsgrad var effekten sammenlignbar
+med den i gruppene med lavere dose.
+
+                                                   16

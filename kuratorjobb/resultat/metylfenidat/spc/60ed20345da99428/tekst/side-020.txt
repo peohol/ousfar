@@ -1,0 +1,52 @@
+langtidseksponering; fra 2,1 % med eksponering < 2 måneder til 5,1 % med eksponering > 12
+måneder. Gjennomsnittlig endring i hjerterytme økte fra 2,4 slag/min (eksponering <2 måneder) til 4,9
+respektive 4,8 bpm (eksponering > 6 måneder respektive eksponering > 12 måneder).
+
+Ved baseline var prosentandelen av pasienter med hjertefrekvens > 100 slag/min veldig liten; kun
+0,4 % i hele gruppen som fikk Ritalin kapsler og 0,6 % i placebogruppen, mens 11,3 % av de med en
+baseline hjerterytme på > 60 til 100 slag/min utviklet høyest hjertefrekvens-verdier > 100 slag/min i
+minst en av visittene under kortidsbehandling med Ritalin kapsler (og kun 2,2 % i placebogruppen).
+
+Ved langtidsbehandling utviklet 8,6% av de av pasientene med en normal startpuls i Ritalingruppen en
+høy puls på >100 slag/min ved minst en av kontrollvisittene sammenlignet med 3,4 % i
+placebogruppen.
+
+5.2     Farmakokinetiske egenskaper
+
+Absorpsjon
+Metylfenidat absorberes raskt. Etter oral administrering av Ritalin kapsler med modifisert frisetting til
+voksne, oppløses det rasktvirkende granulatet i kapselen og gir en initial maksimal
+plasmakonsentrasjon innen 1-2 timer. Metylfenidat som inngår i det modifiserte granulatet løses opp
+avhengig av pH etter noen timer og gir en ny topp i plasmakonsentrasjon 5-7 timer etter
+administrering. Tidskurven for plasmakonsentrasjon av metylfenidat ved inntak av Ritalin kapsler er
+svært lik den profilen som ses etter at to korttidsvirkende Ritalin tabletter inntas med 4 timers
+intervall. Etter administrering av Ritalin 20 mg kapsler én gang daglig til barn med ADHD er
+gjennomsnittet av de farmakokinetiske parametrene som følger: Cmax0-4 10,3  5,10 ng/ml,
+Cmax4-11 10,3  5,92 ng/ml, tmax0-4 2  0,8 timer, tmax4-11 6,4  1,7 timer, AUC0- 84,2  65,3 ng.t/ml.
+
+Det er ikke observert relevante forskjeller i farmakokinetikken av metylfenidat etter én dose og
+gjentatt dosering. Dette tyder på at det ikke er signifikant akkumulering av legemidlet.
+
+Effekt av mat
+Inntak av fettrik frokost sammen med Ritalin kapsler med modifisert frisetting hadde ingen klinisk
+relevant effekt på den totale eksponeringen av metylfenidat (AUC) eller Cmax. Mat forlenger imidlertid
+absorpsjonen og Cmax nås ca. 1 time senere sammenlignet med fastende tilstand. Variabiliteten i tmax
+(tiden før første og andre Cmax) øker med økende grad av fettrik frokost.
+
+Distribusjon
+I blod blir metylfenidat og dens metabolitter fordelt i plasma (57%) og erytrocytter (43%).
+Plasmaproteinbindingsgraden er lav (10-33%). Distribusjonsvolum var 2,65±1,11 l/kg for d-MPH og
+1,80±0,91 l/kg for l-MPH.
+
+Biotransformasjon
+Rask og uttalt metabolisme via karboksylesterase CES1A1. Maks plasmakonsentrasjon av
+hovedmetabolitten (-fenyl-2-piperidin eddiksyre (ritalinsyre)) nås etter ca. 2 timer og er 30-
+50 ganger høyere enn for uomdannet substans. Hovedmetabolitten har ca. dobbelt så lang
+eliminasjonshalveringstid som metylfenidat og systemisk clearance er 0,17 L/time/kg. Den
+terapeutiske
+effekten til preparatet synes i hovedsak å skyldes metylfenidat.
+
+Eliminasjon
+Metylfenidat utskilles fra plasma med en eliminasjonshalveringstid på ca. 2 timer. Systemisk
+clearance er 0,40±0,12 l/time/kg for d-MPH og 0,73±0,28 l/time/kg for l-MPH. 78-97% av dosen
+utskilles i urinen og 1-3% utskilles i fæces i form av metabolitter innen 48-96 timer. Kun små

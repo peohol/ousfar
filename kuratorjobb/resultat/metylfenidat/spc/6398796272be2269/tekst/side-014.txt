@@ -1,0 +1,54 @@
+    Mindre vanlige            Diplopi, tåkesyn, tørre øyne*****
+    Sjeldne                   Akkomodasjonsproblemer, mydriasis, synsforstyrrelser
+    Ikke kjent                Økt intraokulært trykk, glaukom
+    Hjertesykdommer
+    Vanlige                   Takykardi**, palpitasjoner, arytmi
+    Mindre vanlige            Brystsmerter
+    Sjeldne                   Angina pectoris
+    Svært sjeldne             Hjertestans, myokardinfarkt
+    Ikke kjent                Supraventrikulær takykardi, bradykardi, ventrikulære ekstrasystoler,
+                              ekstrasystoler
+   Karsykdommer*
+   Vanlige                   Hypertensjon, perifer kuldefølelse**
+   Svært sjeldne             Cerebral arteritt og/eller okklusjon, Raynaud’s fenomen
+   Sykdommer i respirasjonsorganer, thorax og mediastinum
+   Vanlige                   Hoste, smerter i svelget, dyspné**
+   Ikke kjent                Epistakse
+   Gastrointestinale sykdommer
+   Svært vanlige             Kvalme**, munntørrhet**
+   Vanlige                   Magesmerter, ubehag i magen, oppkast, dyspepsi***, tannverk***, diaré
+                             (Dette forekommer vanligvis i begynnelsen av behandlingen og kan
+                             lindres ved samtidig inntak av mat.)
+   Mindre vanlige            Obstipasjon
+   Sykdommer i lever og galleveier
+   Mindre vanlige            Forhøyede leverenzymer
+   Svært sjeldne             Unormal leverfunksjon, inkludert hepatisk koma
+   Hud- og underhudssykdommer
+   Vanlige                   Hyperhidrose**, alopesi, pruritus, utslett, urtikaria
+   Mindre vanlige            Angionevrotisk ødem, bulløse tilstander, eksfoliative tilstander
+   Sjeldne                   Makuløst utslett, erytem
+   Svært sjeldne             Erythema multiforme, eksfoliativ dermatitt, fast lokalisert utbrudd
+   Sykdommer i muskler, bindevev og skjelett
+   Vanlige                   Artralgi
+   Mindre vanlige            Myalgi, muskelrykninger, muskelstrekk***
+   Svært sjeldne             Muskelkramper
+   Ikke kjent                Trismus****
+   Sykdommer i nyre og urinveier
+   Mindre vanlige            Hematuri
+   Ikke kjent                Inkontinens
+   Lidelser i kjønnsorganer og brystsykdommer
+   Sjeldne                   Gynekomasti
+   Ikke kjent                Erektil dysfunksjon, priapisme, forsterket ereksjon, forlenget ereksjon
+   Generelle lidelser og reaksjoner på administrasjonsstedet
+   Vanlige                   Pyreksi, veksthemming ved langtidsbruk hos barn*, følelse av
+                             nervøsitet***, fatigue**, tørste***
+   Mindre vanlige            Brystsmerter
+   Svært sjeldne             Plutselig hjertedød*
+   Ikke kjent                Ubehag i brystet, hyperpyreksi
+   Undersøkelser
+   Vanlige                   Endringer i blodtrykk og puls (vanligvis økning)*, vekttap*
+   Mindre vanlige            Bilyd på hjertet*, økte leverenzymer
+   Svært sjeldne             Økt alkalisk fosfatase i blodet, økt bilirubin i blodet, redusert blodplatetall,
+                             unormalt antall hvite blodceller
+*      Se pkt. 4.4.
+**     Bivirkninger fra kliniske studier hos voksne pasienter som ble rapportert med en høyere

@@ -1,0 +1,57 @@
+Methylphenidate Teva kan administeres med og uten mat. Det var ingen forskjell i biotilgjengelighet
+av metylfenidat med modifisert frisetting når det ble administrert med enten en fettrik frokost eller
+eplemos sammenlignet med administrasjon i fastene tilstand. Det var ingen bevis for dosereduksjon
+med eller uten mat.
+
+For pasienter som ikke kan svelge den harde kapselen med modifisert frisetting, kan innholdet
+drysses over myk mat (som eplemos) og administreres umiddelbart (se pkt. 4.2).
+
+Distribusjon
+I blod blir metylfenidat og dens metabolitter fordelt i plasma (57 %) og erytrocytter (43 %).
+Metylfenidat og dets metabolitter har lav plasmaproteinbindingsgrad (10-33 %).
+Distribusjonsvolumet var 2,65±1,11 l/kg for d-MPH og 1,80±0,91 l/kg for l-MPH. Metylfenidat
+passerer blod-hjerne-barrieren.
+
+Biotransformasjon
+Biotransformasjon av metylfenidat via karboksylesterase CES1A1 er rask og omfattende.
+Metylfenidat metaboliseres hovedsakelig til α-fenyl-2-piperidin eddiksyre (ritalinsyre). Maksimal
+plasmakonsentrasjon av til α-fenyl-2-piperidin eddiksyre oppnås omtrent 2 timer etter
+administrasjon og er 30-50 ganger høyere enn for uendret substans. Halveringstiden til α-fenyl-2-
+piperidin eddiksyre er omtrent to ganger den for metylfenidat, og gjennomsnittlig clearance er
+0,17 l/t/kg. Akkumulering er derfor mulig hos pasienter med nedsatt nyrefunksjon. Siden α-fenyl-2-
+piperidin eddiksyre har liten eller ingen farmakologisk aktivitet, har dette underordnet terapeutisk
+betydning. Kun små mengder av hydroksylerte metabolitter (f.eks. hydroksymetylfenidat og
+hdroksysyre) er detekterbare.
+
+Terapeutisk aktivitet synes å hovedsakelig skyldes modersubstansen.
+
+Eliminasjon
+Metylfenidat utskilles fra plasma med en halveringstid på ca. 2 timer. Systemisk clearance er
+0,40±0,12 l/time/kg for d-MPH og 0,73±0,28 l/time/kg for l-MPH. Etter oral administrasjon utskilles
+78-97 % av dosen i urinen og 1-3 % utskilles i feces i form av metabolitter innen 48-96 timer. Kun
+små mengder (<1 %) metylfenidat gjenfinnes i uforandret form i urinen. Det meste av dosen
+utskilles som α-fenyl-2-piperidin eddiksyre (60-86 %), antagelig pH-avhengig.
+
+Det er ingen synlige forskjeller i farmakokinetikken av metylfenidat hos hyperaktive barn/barn med
+ADHD og friske frivillige voksne. Data vedrørende eliminasjon fra pasienter med normal
+nyrefunksjon indikerer at utskillelse via nyrene neppe reduseres ved nedsatt nyrefunksjon. Renal
+utskillelse av hovedmetabolitten α-fenyl-2-piperidin eddiksyre kan imidlertid reduseres.
+
+5.3   Prekliniske sikkerhetsdata
+
+Metylfenidat regnes for å være potensielt teratogent hos kanin. Spina bifida med deformasjoner av
+bakre lemmer ble observert i to separate kull ved doser på 200 mg/kg/døgn. Denne dosen var, regnet
+ut fra mg/kg, omtrent 116 ganger høyere enn maksimal anbefalt dose hos menneske (maximum
+tolerated dose in humans, MRHD) på 60 mg hos barn og ungdom. Ved 200 mg/kg/døgn var den
+systemiske eksponeringen (AUC) dl-metylfenidat hos kanin 5,1 ganger den ekstrapolerte MRHD
+etter administrasjon av 60 mg (hos barn og ungdom). Eksponering ved neste lavere dose der spina
+bifida ikke ble observert, var 0,72 ganger den ekstrapolerte MRHD hos barn og ungdom. I en annen
+studie med den høye dosen 300 mg/kg, hvilket er vurdert å være toksisk for mor, ble ingen tilfeller
+av spina bifida observert hos 12 kull med 92 levende fostre. Ved 300 mg/kg var den systemiske
+eksponeringen 7,5 ganger høyere enn ekstrapolert maksimal terapeutisk eksponering hos barn og
+ungdom.
+
+Gentoksisistetsstudier viste ingen spesiell skade for mennesker.
+
+Gjentatt oral administrasjon av metylfenidat til unge rotter identifiserte nedsatt spontan
+muskelaktivitet ved 50 mg/kg/dag (29 ganger høyere enn MRHD hos barn og ungdom) pga. en

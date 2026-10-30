@@ -1,0 +1,54 @@
+Frekvenser:
+Svært vanlige (≥1/10)
+Vanlige        (≥1/100 til <1/10)
+Mindre vanlige (≥1/1 000 til <1/100)
+Sjeldne        (≥1/10 000 til <1/1 000)
+Svært sjeldne (<1/10 000)
+Ikke kjent     (kan ikke anslås ut ifra tilgjengelige data)
+
+    Infeksiøse og parasittære sykdommer
+    Vanlige                   Nasofaryngitt
+    Mindre vanlige            Gastroenteritt
+    Sykdommer i blod og lymfatiske organer
+    Svært sjeldne             Leukopeni, trombocytopeni, anemi, trombocytopenisk purpura
+    Ikke kjent                Pancytopeni
+    Forstyrrelser i immunsystemet
+    Mindre vanlige            Overfølsomhetsreaksjoner som angionevrotisk ødem, anafylaktiske
+                              reaksjoner, hevelse i øret, bulløse tilstander, eksfoliative tilstander,
+                              urtikaria, pruritus*, utslett og erupsjoner*
+    Stoffskifte og ernæringsbetingede sykdommer*
+    Svært vanlige             Redusert appetitt**
+    Vanlige                   Anoreksi, moderat reduksjon i vekt- og høydeøkning ved langtidsbruk hos
+                              barn*
+                              Vektnedgang hos voksne*
+    Psykiatriske lidelser *
+    Svært vanlige             Insomni, nervøsitet
+    Vanlige                   Unormal oppførsel*, aggresjon*, agitasjon*, angst*, depresjon*,
+                              irritabilitet, affektlabilitet, rastløshet**, søvnforstyrrelse**, redusert
+                              libido***, panikkanfall***, stress***, bruksisme****
+    Mindre vanlige            Vaktsomhet, hallusinasjoner knyttet til hørsel, syn og berøring*, endret
+                              sinnsstemning, humørsvingninger, sinne, selvmordstanker, lett for å gråte,
+                              hallusinasjoner, psykotiske lidelser*, tics* eller forverring av eksisterende
+                              tics i forbindelse med Tourettes syndrom*, anspenthet***
+    Sjeldne                   Mani*, desorientering, forstyrrelser i libido, tvangslidelser (OCD)
+                              (inkludert trikotillomani og dermatillomani)
+    Svært sjeldne             Selvmordsforsøk (inkludert fullbyrdet selvmord)*, forbigående
+                              nedstemthet*, unormale tanker, apati
+    Ikke kjent                Vrangforestillinger*, tankeforstyrrelser*, forvirringstilstand, avhengighet,
+                              sykelig taletrang.
+                              Tilfeller av misbruk og avhengighet er beskrevet, hyppigere med
+                              formuleringer med umiddelbar frisetting.
+    Nevrologiske sykdommer
+    Svært vanlige             Hodepine
+    Vanlige                   Tremor**, somnolens, svimmelhet, dyskinesi, psykomotorisk
+                              hyperaktivitet
+    Mindre vanlige            Sedasjon, akatisi***
+    Svært sjeldne             Konvulsjoner, koreoatetoide bevegelser, reversibelt iskemisk nevrologisk
+                              attakk (reversible ischaemic neurological deficit, nevroleptisk malignt
+                              syndrom (NMS; Rapportene var mangelfullt dokumentert og i de fleste av
+                              tilfellene brukte pasientene også andre legemidler, og det er dermed uklart
+                              hvilken rolle metylfenidat hadde.)
+    Ikke kjent                Cerebrovaskulære lidelser* (inkludert vaskulitt, hjerneblødning, cerebral
+                              arteritt, cerebral okklusjon og cerebrovaskulære hendelser), grand mal-
+                              anfall*, migrene, stamming
+    Øyesykdommer
