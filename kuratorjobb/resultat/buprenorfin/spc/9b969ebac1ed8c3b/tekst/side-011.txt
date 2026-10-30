@@ -1,0 +1,56 @@
+gradvis fall i buprenorfins plasmakonsentrasjon (vanligvis over en periode på 30 timer etter fjerning av
+siste plaster). Abstinenssymptomer tilsvarende de som oppstår ved opioidseponering, kan imidlertid ikke
+utelukkes helt etter langtidsbruk av Norspan. Disse symptomene inkluderer agitasjon, angst, nervøsitet,
+insomni, hyperkinesi, tremor og gastrointestinale plager.
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til Statens
+legemiddelverk: www.legemiddelverket.no/meldeskjema.
+
+4.9   Overdosering
+
+Symptomer
+
+Det forventes symptomer tilsvarende som for andre sentraltvirkende analgetika. Disse kan omfatte
+respirasjonshemming (inkludert apné), sedasjon, døsighet, kvalme, oppkast, sirkulasjonssvikt og uttalt
+miose.
+
+Behandling
+
+Fjern eventuelle plastre fra pasientens hud. Sikre og oppretthold frie luftveier, hjelp eller kontroller
+respirasjonen etter behov og oppretthold adekvat kroppstemperatur og væskebalanse. Oksygen,
+intravenøse væsker, vasopressorer og andre støttende tiltak bør brukes etter behov.
+
+En spesifikk opioidantagonist som nalokson kan reversere effektene av buprenorfin, selv om nalokson
+kan være mindre effektivt med hensyn til å reversere effektene av buprenorfin enn andre µ-
+opioidagonister. Oppstart av kontinuerlig intravenøs naloksonbehandling bør starte med standard
+doseringsprotokoller, med erkjennelse av at høyere doser kan være nødvendige for å oppnå ønsket
+reversering.
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Analgetika, opioider, ATC-kode: N02A E01
+
+Buprenorfin er en μ-opioidagonist som virker som en full agonist med hensyn til smertelindring og
+partiell agonist med hensyn til respirasjonsdepressive egenskaper. Den har også antagonistaktivitet på
+kappa-reseptoren.
+
+Andre farmakologiske effekter
+In vitro og dyrestudier indikerer ulike effekter av naturlige opioider, som morfin, på komponenter av
+immunsystemet. Den kliniske betydningen av disse funnene er ukjent. Det er ikke kjent om buprenorfin,
+et semisyntetisk opioid, har immunologiske effekter tilsvarende morfin.
+
+Som med andre opioidanalgetika har buprenorfin en potensiell risiko for respirasjonsdepresjon.
+Det finnes likevel bevis som tyder på at buprenofin er en partiell agonist på grunn av den
+respirasjonsdepressive aktiviteten, og en «takeffekt» har blitt rapportert etter intravenøse doser større enn
+2 mikrogram/kg. Respirasjonsdepresjon ser ut til å forekomme sjelden ved terapeutiske doser av den
+transdermale legemiddelformen [inntil 40 mikrogram/t].
+
+Effekt er vist i syv pivotale fase III studier med opptil 12 ukers varighet hos pasienter med ikke-maligne
+smerter av ulik etiologi. Disse inkluderer pasienter med moderate og sterke artrose- og ryggsmerter.
+Norspan har vist klinisk signifikant reduksjon i smertescore (ca. 3 punkter på BS-11 skalaen) og
+signifikant bedre smertekontroll sammenlignet med placebo.

@@ -1,0 +1,59 @@
+      kombinasjonene øker sentralnervøs depresjon. Den reduserte årvåkenheten kan gjøre det farlig å
+      kjøre bil og bruke maskiner.
+-     Gabapentinoider: Samtidig bruk av buprenorfin og gabapentinoider (gabapentin og pregabalin)
+      kan medføre respirasjonsdepresjon, hypotensjon, dyp sedasjon, koma eller død. Denne
+      kombinasjonen kan føre til sentral respirasjonsdepresjon med dødelig utgang. Derfor må
+      doseringen monitoreres nøye, og denne kombinasjonen bør unngås i tilfeller hvor det er fare for
+      misbruk. Pasientene skal få informasjon om at de kun skal bruke gabapentinoider (som
+      pregabalin og gabapentin) sammen med dette legemidlet som anvist av legen (se pkt. 4.4).
+-     Smertestillende opioider: Adekvat analgesi kan være vanskelig å oppnå når det administreres
+      en opioid-fullagonist til pasienter som får buprenorfin. Potensialet for en overdose eksisterer
+      også med en fullagonist, særlig når man prøver å overgå buprenorfins partielle agonisteffekt,
+      eller når plasmanivåene av buprenorfin reduseres.
+-     Antikolinergika eller legemidler med antikolinerg aktivitet: Samtidig administrasjon av
+      buprenorfin og antikolinergika eller legemidler med antikolinerg aktivitet (f.eks. trisykliske
+      antidepressiva, antihistaminer, antipsykotika, muskelavslappende midler og Parkinson-
+      legemidler) kan resultere i økte antikolinerge bivirkninger.
+-     Naltrekson: Dette er en opioidantagonist som kan blokkere de farmakologiske effektene av
+      buprenorfin. For opioidavhengige pasienter som får behandling med burprenorfin, kan
+      naltrekson gi symptomer på plutselig innsettende forlenget opioidabstinens. For pasienter som
+      får naltrekson, kan den tilsiktede terapeutiske effekten av buprenorfin bli blokkert av naltrekson.
+-     CYP3A4-hemmere: En interaksjonsstudie med buprenorfin og ketokonazol (en potent
+      CYP3A4-hemmer) viste økt Cmax og AUC for buprenorfin (henholdsvis ca. 50 % og 70 %) og, i
+      mindre grad, for metabolitten norbuprenorfin. Pasienter som får buprenorfin sublingvaltabletter,
+      bør overvåkes nøye og kan trenge en reduksjon av dosen dersom den kombineres med en potent
+      CYP3A4-hemmer (f.eks. proteasehemmere som ritonavir, nelfinavir eller indinavir, eller
+      antimykotiske stoffer i azolgruppen som ketokonazol og itrakonazol eller makrolidantibiotika.
+-     CYPA4-induktorer: Samtidig bruk av buprenorfin og CYP3A4-induktorer kan redusere
+      plasmakonsentrasjoner av buprenorfin, og potensielt føre til suboptimal behandling av
+      opioidavhengighet med buprenorfin. Det anbefales at pasienter som bruker buprenorfin
+      samtidig med enzyminduktorer (f.eks. fenobarbital, karbamazepin, fenytoin eller rifampicin)
+      følges nøye. Det kan være nødvendig å justere dosen med enten buprenorfin eller CYP3A4-
+      induktoren.
+-     Monoaminoksidasehemmere (MAOI): Mulig eksaserbasjon av effektene av opioider, basert på
+      erfaring med morfin.
+-     Serotonerge legemidler: Serotonerge legemidler slik som MAO-hemmere, selektive
+      serotoninreopptakshemmere (SSRIer), serotonin- og noradrenalinreopptakshemmere (SNRIer)
+      eller trisykliske antidepressiva, på grunn av økt risiko for serotonergt syndrom, en potensielt
+      livstruende tilstand (se pkt. 4.4).
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet
+Det foreligger ikke tilstrekkelige data fra bruken av buprenorfin hos gravide kvinner.
+Buprenorfin bør kun brukes under graviditet hvis den potensielle nytten ved behandling er større enn
+den potensielle risikoen for fosteret.
+
+Brukt mot slutten av svangerskapet kan buprenorfin indusere respirasjonsdepresjon hos den nyfødte,
+selv etter en kort tids administrering. Administrering over lang tid i siste trimester av svangerskapet
+kan forårsake abstinenssyndrom hos det nyfødte barnet (f.eks. hypertoni, neonatal skjelving, neonatal
+rastløshet, myoklonus eller kramper). Dette syndromet er vanligvis forsinket med flere timer til flere
+dager etter fødsel. På grunn av buprenorfins lange halveringstid bør det vurderes å overvåke den
+nyfødte over flere dager etter fødselen for å forebygge risikoen for respirasjonsdepresjon eller
+abstinenssyndrom hos det nyfødte barnet.
+
+Amming
+
+
+
+                                                   7

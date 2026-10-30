@@ -1,0 +1,51 @@
+Symptomer på serotonergt syndrom kan være endret mental status, overaktivitet i det autonome
+nervesystemet, nevromuskulær overaktivitet og/eller gastrointestinale symptomer.
+Hvis serotonergt syndrom mistenkes bør dosereduksjon eller seponering av behandlingen vurderes,
+avhengig av symptomenes alvorlighetsgrad.
+
+Avhengighet
+Buprenorfin er en partiell agonist på μ- (mu)-opioidreseptoren, og kronisk tilførsel fører til
+opioidavhengighet. Dyrestudier og klinisk erfaring har vist at buprenorfin kan føre til avhengighet, men i
+mindre grad enn en full agonist, f.eks. morfin.
+
+Brå avbrytelse av behandlingen anbefales ikke siden det kan føre til et forsinket abstinenssyndrom.
+
+Hepatitt og leverskade
+Tilfeller av akutt leverskade er rapportert hos opioidavhengige både i kliniske forsøk og i
+bivirkningsrapporter etter markedsføring. Spekteret av avvik går fra forbigående og asymptomatisk
+forhøyede levertransaminaser til rapporterte tilfeller av leversvikt, levernekrose, hepatorenalt syndrom,
+hepatisk encefalopati og død. I mange tilfeller kan allerede eksisterende mitokondrisk svekkelse (genetisk
+sykdom, avvikende leverenzymer, infeksjoner med hepatitt B- eller hepatitt C-virus, alkoholmisbruk,
+anoreksi, samtidig bruk av andre potensielt levertoksiske legemidler) og kronisk sprøytebruk ha en kausativ
+eller medvirkende rolle. Disse underliggende faktorene må tas i betraktning før forskrivning av
+buprenorfin/nalokson og under behandlingen.
+Ved mistanke om leverpåvirkning er ytterligere biologisk og etiologisk evaluering nødvendig. På bakgrunn
+av funnene kan legemidlet seponeres forsiktig for å forebygge abstinenssymptomer og tilbakefall til
+stoffmisbruk. Dersom behandlingen fortsettes, bør leverfunksjonen overvåkes nøye.
+
+Induksjon av opioid abstinenssyndrom
+Når behandling med buprenorfin/nalokson påbegynnes, må legen være oppmerksom på at buprenorfin er en
+partiell agonist og at dette kan fremkalle abstinens hos opioidavhengige pasienter, spesielt dersom det gis
+mindre enn 6 timer etter forrige bruk av heroin eller annet korttidsvirkende opioid, eller dersom det gis
+mindre enn 24 timer etter siste metadondose. Pasienten bør overvåkes nøye i overgangsperioden fra
+buprenorfin eller metadon til buprenorfin/nalokson, ettersom abstinenssymptomer er rapportert. For å unngå
+å indusere abstinens bør oppstart med buprenorfin/nalokson foretas når objektive tegn på abstinens er
+tydelige (se pkt. 4.2).
+
+Abstinenssymptomer kan også være forbundet med suboptimal dosering.
+
+Nedsatt leverfunksjon
+Effekten av nedsatt leverfunksjon på farmakokinetikken til buprenorfin og nalokson, ble evaluert i en studie
+utført etter markedsføring. Både buprenorfin og nalokson gjennomgår omfattende metabolisering i leveren,
+og plasmanivået av både buprenorfin og nalokson var høyere hos pasienter med moderat og alvorlig nedsatt
+leverfunksjon sammenlignet med friske forsøkspersoner. Pasienten bør overvåkes for tegn og symptomer på
+plutselig opioidabstinens, toksisitet eller overdose forårsaket av økt nivå av nalokson og/eller buprenorfin.
+
+Leverfunksjonsprøver og dokumentasjon av status for virushepatitt anbefales før behandlingen startes.
+Pasienter som tester positivt for virushepatitt, som tar andre legemidler (se pkt. 4.5) og/eller som har
+eksisterende leverdysfunksjon, har større risiko for leverskade. Regelmessig overvåkning av leverfunksjonen
+anbefales (se pkt. 4.4).
+
+Bunalict sublingvaltabletter bør brukes med forsiktighet hos pasienter med moderat nedsatt leverfunksjon (se
+pkt. 4.3 og 5.2). Hos pasienter med alvorlig nedsatt leverfunksjon er bruk av buprenorfin/nalokson
+kontraindisert.

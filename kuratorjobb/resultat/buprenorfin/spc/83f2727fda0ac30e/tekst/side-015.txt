@@ -1,0 +1,55 @@
+samsvar med den kjente farmakologiske virkningen til opioid-agonistiske og/eller opioid-antagonistiske
+forbindelser.
+
+Kombinasjonen (4:1) av buprenorfinhydroklorid og naloksonhydroklorid var ikke mutagent i en bakteriell
+mutasjonstest (Ames-test) og var ikke klastogent i en in vitro cytogenetisk analyse av humane lymfocytter
+eller en intravenøs mikronukleustest med rotter.
+
+Reproduksjonsstudier med buprenorfin og nalokson (forhold 1:1) gitt peroralt, indikerte at embryodødelighet
+forekom hos rotter ved toksisitet hos mordyret ved alle doser. Den laveste undersøkte dosen representerte
+eksponeringsrater på 1x maksimal human terapeutisk dose for buprenorfin og 5x maksimal human
+terapeutisk dose for nalokson, regnet som mg/m². Ingen utviklingstoksisitet ble observert hos kaniner ved
+doser som var toksiske for mordyret. Videre er ingen teratogenitet observert hos rotter eller kaniner. Det er
+ikke utført noen peri-postnatal studie med buprenorfin/nalokson, men maternal peroral administrering av
+buprenorfin i høye doser under drektighet og diegivning, resulterte i vanskelig fødsel (kanskje som et resultat
+av den sedative effekten av buprenorfin), høy neonatal dødelighet og en lett forsinket utvikling av visse
+nevrologiske funksjoner (underlagskorrigerende refleks og skrekkreaksjon) hos nyfødte rotter.
+
+Administrering av buprenorfin/nalokson i fôret til rotter i doser på 500 ppm eller mer, ga redusert fertilitet,
+vist ved redusert konsepsjonsrate hos hunner. En dose på 100 ppm gitt i fôret (estimert eksponering for
+buprenorfin var ca 2,4 ganger høyere enn ved en dose på 24 mg buprenorfin/nalokson hos mennesker, basert
+på AUC, og plasmanivået av nalokson var under deteksjonsgrensen hos rotter) hadde ingen negativ effekt på
+fertilitet hos hunner.
+
+En karsinogenitetsstudie med buprenorfin/nalokson ble utført på rotter ved doser på 7, 30 og 120 mg/kg/dag,
+med estimert eksponeringsrate på 3 til 75 ganger en daglig sublingval dose hos mennesker på 16 mg, regnet
+som mg/m². En statistisk signifikant økning i forekomsten av godartede interstitielle (Leydigs)
+celleadenomer i testikler ble observert i alle doseringsgrupper.
+
+
+6.      FARMASØYTISKE OPPLYSNINGER
+
+6.1     Hjelpestoffer
+
+Laktosemonohydrat
+Mannitol (E 421)
+Maisstivelse
+Povidon K 30
+Sitronsyre, vannfri
+Natriumsitrat
+Limesmak
+Sitronsmak
+Acesulfamkalium
+Natriumstearylfumarat
+
+6.2    Uforlikeligheter
+
+Ikke relevant.
+
+6.3     Holdbarhet
+
+2 år
+
+6.4     Oppbevaringsbetingelser
+
+Oppbevares ved høyst 30 ºC.

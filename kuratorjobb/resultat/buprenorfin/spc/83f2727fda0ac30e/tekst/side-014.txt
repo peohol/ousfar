@@ -1,0 +1,53 @@
+           Distribusjon
+           Nalokson er ca. 45 % proteinbundet, primært til albumin.
+
+           Biotransformasjon
+           Nalokson metaboliseres i leveren, primært ved glukuronidkonjugering, og skilles ut i urin.
+           Nalokson gjennomgår direkte glukuronidering til nalokson-3-glukuronid, samt N-dealkylering og reduksjon
+           av 6-oksogruppen.
+
+           Eliminasjon
+           Nalokson skilles ut i urin, med en gjennomsnittlig eliminasjonshalveringstid fra plasma på 0,9 til 9 timer.
+
+           Spesielle pasientgrupper
+
+           Eldre
+           Det finnes ingen tilgjengelige farmakokinetiske data for eldre pasienter.
+
+           Nedsatt nyrefunksjon
+           Renal eliminasjon spiller en relativt liten rolle (~ 30 %) i total clearance av buprenorfin/nalokson. Ingen
+           doseendring er nødvendig på bakgrunn av nyrefunksjonen, men forsiktighet anbefales ved behandling av
+           pasienter med alvorlig nedsatt nyrefunksjon (se pkt. 4.3).
+
+           Nedsatt leverfunksjon
+           Effekten av nedsatt leverfunksjon på farmakokinetikken til buprenorfin og nalokson, ble evaluert i en studie
+           utført etter markedsføring.
+
+           I tabell 4 oppsummeres resultatene fra en klinisk studie klinisk studie hvor eksponeringen av buprenorfin og
+           nalokson ble fastslått etter administrasjon av en buprenorfin/nalokson 2,0/0,5 mg sublingvaltablett til friske
+           forsøkspersoner og til forsøkspersoner med ulik grad av nedsatt leverfunksjon.
+
+Tabell 3. Tabell 4. Effekt av nedsatt leverfunksjon på farmakokinetiske parametre til buprenorfin og
+           nalokson etter administrering av buprenorfin/nalokson (endring sammenlignet med friske
+           personer)
+                                     Lett nedsatt           Moderat nedsatt             Alvorlig nedsatt
+                                    leverfunksjon             leverfunksjon              leverfunksjon
+           PK parameter
+                                (Child-Pugh-klasse A)     (Child-Pugh-klasse B)      (Child-Pugh-klasse C)
+                                         (n=9)                    (n=8)                      (n=8)
+                                                      Buprenorfin
+           Cmax                   1,2 ganger økning         1,1 ganger økning          1,7 ganger økning
+           AUClast                    Lik kontroll          1,6 ganger økning          2,8 ganger økning
+
+                                                          Nalokson
+          Cmax                        Lik kontroll             2,7 ganger økning              11,3 ganger økning
+          AUClast                  0,2 ganger lavere           3,2 ganger økning              14,0 ganger økning
+
+
+           Totalt var plasmaeksponeringen for buprenorfin ca. 3 ganger høyere hos pasienter med alvorlig nedsatt
+           leverfunksjon, mens plasmaeksponeringen for nalokson økte 14 ganger ved alvorlig nedsatt leverfunksjon.
+
+           5.3      Prekliniske sikkerhetsdata
+
+           Kombinasjonen av buprenorfin og nalokson er undersøkt i dyrestudier av toksisitet ved akutt og gjentatt
+           dosering (inntil 90 dager hos rotter). Ingen synergistisk økning av toksisitet er observert. Bivirkningene var i

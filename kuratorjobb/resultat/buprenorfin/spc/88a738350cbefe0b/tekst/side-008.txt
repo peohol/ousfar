@@ -1,0 +1,59 @@
+                Tabell 1. Bivirkninger rapportert fra kliniske studier
+Organklassesystem       Svært        Vanlige        Mindre vanlige         Sjeldne           Svært           Ikke kjent
+                        vanlige      (≥ 1/100 til   ( 1/1000 til          ( 1/10 000 til   sjeldne         (kan ikke
+                        (≥ 1/10)     < 1/10)         < 1/100)              < 1/1000)         (<1/10          anslås ut
+                                                                                             000),           ifra
+                                                                                                             tilgjengeli
+                                                                                                             ge data)
+Gastrointestinale       Kvalme       Oppkast        Tap av matlyst         Diaré                             Karies
+sykdommer                                           Konstipasjon
+                                                    Dyspepsi
+                                                    Flatulens
+Hud- og                              Hyperhi-       Kløe                   Urtikaria         Angioøde
+underhudssykdomme                    drose          Utslett                                  m
+r                                                                                            (Quinckes
+                                                                                             ødem)
+Sykdommer i                                         Urinretensjon
+nyre og
+urinveier
+Generelle lidelser og                               Asteni
+reaksjoner på                                       Utmattelse
+administrasjonsste                                  Malaise
+
+Legemiddelavhengighet
+Gjentatt bruk av Buprenorphine G. L. Pharma kan føre til legemiddelavhengighet, også ved
+terapeutiske doser. Risikoen for legemiddelavhengighet kan variere ut fra pasientens individuelle
+risikofaktorer, dosering og varigheten av opioidbehandlingen (se pkt. 4.4).
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til
+Direktoratet for medisinske produkter: www.dmp.no/meldeskjema.
+
+4.9   Overdosering
+
+Buprenorfin har en høy sikkerhetsmargin på grunn av sine egenskaper som en partiell
+opioidagonist/antagonist. Imidlertid kan terapeutiske doser, spesielt hos individer uten toleranse
+(særlig barn), føre til alvorlig forgiftning. Selv om antagonistaktiviteten til buprenorfin kan oppstå ved
+doser litt over det anbefalte terapeutiske området, kan doser innenfor det anbefalte området under
+visse omstendigheter forårsake klinisk signifikant respirasjonsdepresjon (se pkt. 4.4).
+
+Symptomer
+Symptomer på overdreven buprenorfineffekt kjennetegnes av symptomer som "merkelig følelse",
+dårlig konsentrasjonsevne, søvnighet og muligens ortostatisk svimmelhet. Manifestasjoner av en akutt
+overdose inkluderer miose, sedasjon, hypotensjon, respirasjonsdepresjon (reduksjon i pustefrekvens
+og/eller respirasjonsvolum, Cheyne-Stokes-respirasjon, cyanose), ekstrem søvnighet, nedsatt
+bevissthet og til og med koma, slapphet i skjelettmuskulaturen, klam hud og bradykardi. Kvalme og
+oppkast kan forekomme. Det viktigste symptomet som krever intervensjon er respirasjonsdepresjon,
+som kan føre til respirasjonsstans og død.
+
+Behandling
+Ved en overdose må pasientens kardiorespiratoriske status overvåkes nøye, og passende støttetiltak
+iverksettes. Etter standard intensivbehandling må symptomer på respirasjonsdepresjon behandles. Det
+er viktig å sikre frie luftveier og enten støttende eller kontrollert kunstig ventilasjon. Ved oppkast må
+det tas forholdsregler for å forhindre aspirasjon. Pasienten bør overføres til en institusjon med
+fullstendig gjenopplivningsutstyr. Bruk av en opioidantagonist, som nalokson, anbefales, selv om
+effekten på respirasjonssymptomene fra buprenorfin er begrenset sammenlignet med full agonist-
+
+                                                    8

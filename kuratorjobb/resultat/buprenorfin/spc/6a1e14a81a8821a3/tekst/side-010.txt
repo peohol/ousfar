@@ -1,0 +1,53 @@
+Organklasse-       Svært        Vanlige         Mindre vanlige   Sjeldne        Svært sjeldne   Ikke kjent
+system             vanlige      (≥ 1/100,       (≥ 1/1 000,      (≥ 1/10 000,   (< 1/10 000)    (kan ikke
+MedDRA             (≥ 1/10)     < 1/10)         < 1/100)         < 1/1 000)                     anslås ut ifra
+                                                                                                tilgjengelige
+                                                                                                data)
+                                                                 forverret
+                                                                 astma,
+                                                                 hyper-
+                                                                 ventilering,
+                                                                 rhinitt
+Gastro-            Forstopp-    Abdominal-      Flatulens        Dysfagi,                       Divertikulitt
+intestinale        else,        smerte,                          ileus
+sykdommer          Kvalme,      diaré,
+                   oppkast      dyspepsi,
+                                munntørrhet
+Sykdommer i                                                                                     Galleveis-
+lever og                                                                                        kolikk
+galleveier
+Hud- og            Kløe,        Utslett,        Tørr hud,        Ansiktsødem    Pustler,        Kontakt-
+underhuds-         erytem       svetting,       urtikaria                       vesikler        dermatitt,
+sykdommer                       eksantem                                                        misfarging
+                                                                                                på
+                                                                                                applikasjons-
+                                                                                                stedet
+Sykdommer i                     Muskel-         Myalgi,
+muskler,                        svakhet         muskel-
+bindevev og                                     kramper
+skjelett
+Sykdommer i                                     Urin-
+nyre og                                         inkontinens,
+urinveier                                       Urinretensjon,
+                                                urinhesitasjon
+Lidelser i                                                       Erektil
+kjønnsorganer                                                    dysfunksjon,
+og bryst-                                                        seksuell
+sykdommer                                                        dysfunksjon
+Generelle          Reaksjon     Tretthet,       Fatigue,         Influensa-                     Neonatalt
+lidelser og        på           asteni-         feber,           lignende                       legemiddel-
+reaksjoner på      applikasjo   tilstander,     kulde-           sykdom                         seponerings-
+administrasjons-   nsstedet1*   perifert ødem   skjelvinger,                                    syndrom,
+stedet                                          ødem,                                           legemiddel-
+                                                seponerings-                                    toleranse
+                                                symptomer,
+                                                brystsmerter
+Undersøkelser                                   Økt ALAT
+                                                (alaninamino-
+                                                transferase),
+                                                redusert vekt
+Skader,                                         Skade ved
+forgiftninger og                                uhell,
+komplikasjoner                                  fall
+ved medisinske
+prosedyrer

@@ -1,0 +1,53 @@
+forårsaker nalokson i Bunalict betydelige opioidantagonistiske effekter og opioidabstinens og hindrer derfor
+intravenøst misbruk.
+
+Klinisk effekt og sikkerhet
+Data på effekt og sikkerhet av buprenorfin/nalokson er primært hentet fra en ettårig klinisk studie som
+omfatter en 4-ukers randomisert, dobbeltblind sammenligning av buprenorfin/nalokson, buprenorfin og
+placebo, etterfulgt av en 48-ukers sikkerhetsstudie av buprenorfin/nalokson. I denne studien ble 326
+heroinavhengige pasienter randomisert til å få enten 16 mg buprenorfin/nalokson per dag, 16 mg buprenorfin
+per dag eller placebo. For pasienter som var randomisert til en av de aktive behandlingene, begynte
+doseringen med 8 mg buprenorfin på dag 1, etterfulgt av 16 mg (to 8 mg) buprenorfin på dag 2. På dag 3
+byttet de som var randomisert til å få buprenorfin/nalokson, til kombinasjonstabletten. Pasientene ble fulgt
+opp daglig på klinikken (mandag til fredag) for vurdering av dosering og effekt. For helgene fikk de doser de
+skulle ta hjemme. Studiens primære hensikt var å sammenligne og vurdere effekten av buprenorfin og
+buprenorfin/nalokson individuelt mot placebo. Andelen av de urinprøvene som ble tatt tre ganger i uken og
+som var negative for opioider som ikke var med i studien, var statistisk høyere for både buprenorfin/nalokson
+kontra placebo (p < 0,0001) og buprenorfin kontra placebo (p < 0,0001).
+
+I en dobbeltblind, dobbeldummy, parallellgruppestudie der man sammenlignet etanolisk
+buprenorfinoppløsning med en aktiv kontroll (full agonist), ble 162 personer randomisert til å få den
+etanoliske, sublingvale oppløsningen av buprenorfin i doser på 8 mg/dag (en dose som grovt sett kan
+sammenlignes med en daglig dose på 12 mg buprenorfin/nalokson), eller to relativt lave doser aktiv kontroll,
+der én av disse var lav nok til å fungere som et alternativ til placebo, i løpet av en 3 til 10 dagers
+oppstartsfase, en 16-ukers vedlikeholdsfase og en 7-ukers avrusningsfase. Buprenorfin ble titrert til
+vedlikeholdsdose ved dag 3, mens doser av aktiv kontroll ble titrert mer gradvis. Basert på andelen pasienter
+som fortsatte behandlingen og andelen urinprøver som ble tatt tre ganger i uken og som var negative for
+opioider som ikke var med i studien, var buprenorfin mer effektivt enn den lave kontrolldosen når det gjaldt
+å beholde heroinavhengige pasienter i behandling og å redusere deres bruk av opioider under behandling.
+Effekten av buprenorfin, 8 mg per dag, lignet effekten av den moderate dosen av aktiv kontroll, men
+ekvivalens ble ikke påvist.
+
+5.2     Farmakokinetiske egenskaper
+
+Buprenorfin
+
+Absorpsjon
+Ved peroralt inntak gjennomgår buprenorfin førstepassasje-metabolisme i leveren og N-dealkylering og
+glukuronidering i tynntarmen og leveren. Peroral administrering av dette legemidlet er derfor ikke
+hensiktsmessig.
+
+Maksimal plasmakonsentrasjon oppnås 90 minutter etter sublingval administrering. Plasmanivået av
+buprenorfin økte med økende sublingval dose av buprenorfin/nalokson. Både Cmax og AUC for buprenorfin
+økte med økende dose (i størrelsesorden 4-16 mg), men økningen var ikke doseproporsjonal.
+
+Tabell 2. Buprenorfins gjennomsnittlige farmakokinetiske parametere
+
+Farmakokinetisk      buprenorfin/nalokson       buprenorfin/nalokson         buprenorfin/nalokson
+parameter                     4 mg                      8 mg                        16 mg
+Cmax ng/ml                  1,84 (39)                  3,0 (51)                    5,95 (38)
+AUC0-48 timer              12,52 (35)                 20,22 (43)                  34,89 (33)
+ng/ml
+
+Tabell 3. Endringer i farmakokinetiske parametere for buprenorfin/nalokson film administrert
+sublingvalt eller bukkalt sammenlignet med buprenorfin/nalokson sublingvaltablett

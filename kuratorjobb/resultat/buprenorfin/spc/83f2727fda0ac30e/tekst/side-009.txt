@@ -1,0 +1,53 @@
+Tabell 1: Behandlingsrelaterte bivirkninger rapportert i kliniske studier av buprenorfin/nalokson,
+samt under overvåking etter markedsføring
+
+Organ-                  Svært vanlige   Vanlige           Mindre vanlige           Ikke kjent
+klassesystem
+Infeksiøse og                           Influensa         Urinveisinfeksjon
+parasittære                             Infeksjon         Vaginal infeksjon
+sykdommer                               Faryngitt
+                                        Rhinitt
+
+
+
+Sykdommer i blod og                                       Anemi
+lymfatiske organer                                        Leukocytose
+                                                          Leukopeni
+                                                          Lymfadenopati
+                                                          Trombocytopeni
+Forstyrrelser i                                           Overfølsomhet            Anafylaktisk
+immunsystemet                                                                      sjokk
+Stoffskifte- og                                           Nedsatt appetitt
+ernæringsbetingede                                        Hyperglykemi
+sykdommer                                                 Hyperlipidemi
+                                                          Hypoglykemi
+
+Psykiatriske lidelser   Søvnløshet      Angst             Unormale drømmer         Hallusinasjoner
+                                        Depresjon         Uro
+                                        Nedsatt libido    Apati
+                                        Nervøsitet        Depersonalisering
+                                        Unormale tanker   Legemiddelavhengighet
+                                                          Euforisk stemningsleie
+                                                          Fiendtlighet
+Nevrologiske            Hodepine        Migrene           Amnesi                   Hepatisk
+sykdommer                               Svimmelhet        Hyperkinesi              encefalopati
+                                        Hypertoni         Anfall                   Synkope
+                                        Parestesi         Taleforstyrrelser
+                                        Somnolens         Tremor
+Øyesykdommer                            Amblyopi          Konjunktivitt
+                                        Forstyrret        Miose
+                                        tårefunksjon
+Sykdommer i øre og                                                                 Vertigo
+labyrint
+Hjertesykdommer                                           Angina pectoris
+                                                          Bradykardi
+                                                          Hjerteinfarkt
+                                                          Palpitasjoner
+                                                          Takykardi
+
+Karsykdommer                            Hypertensjon      Hypotensjon              Ortostatisk
+                                        Vasodilatasjon                             hypotensjon
+Sykdommer i                             Hoste             Astma                    Bronkospasme
+respirasjonsorganer,                                      Dyspné                   Respirasjons-
+thorax og                                                 Gjesping                 depresjon
+mediastinum

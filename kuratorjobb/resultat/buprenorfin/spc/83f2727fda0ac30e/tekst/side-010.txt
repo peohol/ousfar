@@ -1,0 +1,54 @@
+Gastrointestinale       Konstipasjon      Magesmerter            Munnsår                     Dental karies
+sykdommer               Kvalme            Diaré                  Misfarget tunge
+                                          Dyspepsi
+                                          Flatulens
+                                          Oppkast
+Sykdommer i lever og                                                                        Hepatitt
+galleveier                                                                                  Akutt hepatitt
+                                                                                            Ikterus
+                                                                                            Levernekrose
+                                                                                            Hepatorenalt
+                                                                                            syndrom
+Hud og             Hyperhidrose           Kløe                   Akne                       Angioødem
+underhudssykdommer                        Utslett                Alopesi
+                                          Urtikaria              Eksfoliativ dermatitt
+                                                                 Tørr hud
+                                                                 Hudutvekst
+
+Sykdommer i                               Ryggsmerter            Artritt
+muskler, bindevev og                      Artralgi
+skjelett                                  Muskelspasmer
+                                          Myalgi
+Sykdommer i nyre og                       Unormal             Albuminuri
+urinveier                                 urin                Dysuri
+                                                              Hematuri
+                                                              Nefrolitiase
+                                                              Urinretensjon
+Lidelser i                                Erektil dysfunksjon Amenoré
+kjønnsorganer og                                              Ejakulasjonsforstyrrelser
+brystsykdommer                                                Menoragi
+                                                              Metroragi
+
+Generelle lidelser og Abstinens-          Asteni                 Hypotermi                  Neonatalt
+reaksjoner på         syndrom             Brystsmerte                                       abstinenssyndrom
+administrasjonsstedet                     Frysninger
+                                          Pyreksi
+                                          Sykdomsfølelse
+                                          Smerter
+                                          Perifert
+                                          ødem
+Undersøkelser                             Unormal                Økt kreatinin i blodet     Forhøyede
+                                          leverfunksjonstest                                transaminaser
+                                          Vekttap
+Skader, forgiftninger                     Skade                  Heteslag
+og komplikasjoner
+ved medisinske
+prosedyrer
+
+Beskrivelse av utvalgte bivirkninger
+Ved intravenøs misbruk av narkotika kan noen rapporterte bivirkninger tilskrives selve misbruket og ikke
+legemidlet, og disse omfatter lokale reaksjoner, iblant septiske (abscess, cellulitt), og potensielt alvorlig akutt
+hepatitt og andre infeksjoner, som lungebetennelse, endokarditt (se pkt. 4.4).
+
+Hos pasienter med betydelig narkotikaavhengighet, kan begynnende behandling med buprenorfin føre til
+lignende abstinenssyndrom som nalokson (se pkt. 4.2 og 4.4).

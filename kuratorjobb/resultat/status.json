@@ -1,18 +1,54 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "advarsel",
   "jobb": {
     "gren": "kuratorjobb/manuell-41099905244",
     "foresporsel_commit": "ab3c900aebc14315132f0ec18d8591fcc2a442e1",
     "foresporsel_sha256": "0acfe74eae77eff0d5b83b298876532b8478f69804ae8ae34fb3e2413c44c737",
     "kode_commit": "c58509067b9f530f36d25b6953495c5fd634f14f",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/41099905244",
-    "startet_kl": "2026-10-30T17:34:19.994Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-30T17:34:22.018Z",
+    "ferdig_kl": "2026-10-30T17:36:03.366Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "buprenorfin"
+    ],
+    "oppgaver": [
+      "funksjonstest",
+      "spc"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 430
+    }
+  ],
+  "stoffer": {
+    "buprenorfin": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/buprenorfin/funksjonstest.json"
+        },
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/buprenorfin/spc.json"
+        }
+      }
+    }
+  }
 }

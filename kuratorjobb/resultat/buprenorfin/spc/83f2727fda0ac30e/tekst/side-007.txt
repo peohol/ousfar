@@ -1,0 +1,52 @@
+o     alkoholholdige drikker eller legemidler som inneholder alkohol, da alkohol øker den sedative effekten
+      av buprenorfin (se pkt. 4.7).
+
+Bunalict bør brukes med forsiktighet når det brukes samtidig med:
+
+o     Sedativa som benzodiazepiner eller lignende legemidler:
+      Samtidig bruk av opioider med sedativa, som benzodiazepiner eller lignende legemidler, øker risikoen
+      for sedasjon, respirasjonsdepresjon, koma og dødsfall på grunn av additiv CNS-hemmende effekt. Dose
+      og varighet ved samtidig bruk bør begrenses (se pkt. 4.4). Pasienten skal advares om at det er ekstremt
+      farlig å selvmedisinere ikke-forskrevne benzodiazepiner samtidig med bruk av dette preparatet, og bør
+      også informeres om at bruk av benzodiazepiner samtidig med dette preparatet, kun skal skje etter
+      ordinasjon fra lege (se pkt. 4.4).
+
+o     Samtidig bruk av buprenorfin/nalokson og gabapentinoider (gabapentin og pregabalin) kan medføre
+      respirasjonshemming, hypotensjon, uttalt sedasjon, koma eller dødsfall (se pkt. 4.4).
+
+o     Andre legemidler som virker hemmende på sentralnervesystemet, andre opioidderivater (f.eks. metadon,
+      analgetika og antitussiva), enkelte antidepressiva, sedative H1-reseptorantagonister, barbiturater, andre
+      anxiolytika enn benzodiazepiner, nevroleptika, klonidin og beslektede substanser: slike kombinasjoner
+      forsterker hemmingen av sentralnervesystemet. Den nedsatte årvåkenheten kan gjøre det farlig å kjøre
+      bil og betjene maskiner.
+
+o     Dessuten kan det være vanskelig å oppnå tilstrekkelig analgesi ved administrering av en full
+      opioidagonist til pasienter som får buprenorfin/nalokson. Det er derfor mulighet for overdosering ved
+      bruk av en full agonist, spesielt ved forsøk på å overvinne buprenorfins effekt som partiell agonist, eller
+      når plasmanivået av buprenorfin avtar.
+
+o     Serotonerge legemidler slik som MAO-hemmere, selektive serotoninreopptakshemmere (SSRIer),
+      serotonin- og noradrenalinreopptakshemmere (SNRIer) eller trisykliske antidepressiva, på grunn av økt
+      risiko for serotonergt syndrom, en potensielt livstruende tilstand (se pkt. 4.4).
+
+o     Naltrekson og nalmefen er opioidantagonister som kan blokkere de farmakologiske effektene av
+      buprenorfin. Samtidig administrering med buprenorfin/nalokson er kontraindisert på grunn av den
+      potensielt farlige interaksjonen som plutselig kan utløse langvarig og intens opioidabstinens (se pkt. 4.3).
+
+o     CYP3A4-hemmere: en interaksjonsstudie med buprenorfin og ketokonazol (en potent hemmer av
+      CYP3A4) viste økt Cmax og AUC (arealet under kurven) av buprenorfin (henholdsvis ca. 50 % og 70 %),
+      og i mindre grad, av norbuprenorfin. Pasienter som får buprenorfin/nalokson, bør overvåkes nøye og
+      kan behøve dosereduksjon dersom de samtidig får potente CYP3A4-hemmere (f.eks. proteasehemmere
+      som ritonavir, nelfinavir eller indinavir, eller azol-antimykotika som ketokonazol eller itrakonazol,
+      makrolidantibiotika).
+
+o     CYP3A4-induktorer: Samtidig bruk av CYP3A4-induktorer og buprenorfin kan redusere
+      plasmakonsentrasjonen av buprenorfin, noe som potensielt kan føre til suboptimal behandling av
+      opioidavhengighet med buprenorfin. Det anbefales at pasienter som får buprenorfin/nalokson,
+      overvåkes nøye dersom induktorer (f.eks. fenobarbital, karbamazepin, fenytoin, rifampicin) gis samtidig.
+      Det kan være nødvendig å justere buprenorfindosen eller dosen av CYP3A4-induktoren.
+
+o     Samtidig bruk av monoaminooksidase-hemmere (MAO-hemmere) kan føre til forsterkede
+      opioideffekter, basert på erfaring med morfin.
+
+4.6      Fertilitet, graviditet og amming

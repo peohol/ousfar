@@ -1,0 +1,37 @@
+Merknad 1. "–" representerer ingen endring når 90 % konfidensintervall for geometrisk gjennomsnittsratio
+for Cmax- og AUC0-last-verdier er innenfor 80 % til 125 %.
+Merknad 2. Det er ingen data for film styrke 4 mg/1 mg, som har proporsjonal sammensetning med film
+styrke 2 mg/0,5 mg og samme størrelse som film styrke 2 × 2 mg/0,5 mg.
+
+Distribusjon
+Absorpsjonen av buprenorfin etterfølges av en rask distribusjonsfase (distribusjonshalveringstiden er 2 til 5
+timer).
+
+Buprenorfin er svært lipofilt, noe som gir rask penetrasjon av blod-hjernebarrieren.
+Buprenorfin er ca. 96 % proteinbundet, primært til alfa- og betaglobulin.
+
+Biotransformasjon
+Buprenorfin metaboliseres primært ved N-dealkylering via CYP3A4 i levermikrosomer. Modermolekylet og
+den primære dealkylerte metabolitten norbuprenorfin gjennomgår påfølgende glukuronidering.
+Norbuprenorfin bindes til opioidreseptorer in vitro, men det er ikke kjent om norbuprenorfin bidrar til samlet
+effekt av buprenorfin/nalokson.
+
+Eliminasjon
+Eliminasjonen av buprenorfin er bi- eller tri-eksponensiell og har en gjennomsnittlig halveringstid fra plasma
+på 32 timer.
+Buprenorfin utskilles hovedsakelig i feces (~70 %) via galleekskresjon av de glukuroniderte metabolittene,
+mens resten (~30 %) utskilles via urinen.
+
+Linearitet/ikke-linearitet
+Buprenorfins Cmax og AUC øker lineært ved økende dose (i området 4 til 16 mg), selv om økningen ikke er
+direkte doseproporsjonal.
+
+Nalokson
+
+Absorpsjon og distribusjon
+Naloksons maksimale plasmakonsentrasjon var for lav til å vurdere doseproporsjonalitet, og hos syv av åtte
+forsøkspersoner som hadde plasmanivå av nalokson over kvantifiseringsgrensen (0,05 ng/ml), ble nalokson
+ikke påvist senere enn 2 timer etter dosering.
+
+Nalokson er ikke vist å påvirke farmakokinetikken til buprenorfin, og buprenorfin sublingvaltabletter og
+buprenorfin/nalokson sublingvalfilm gir tilsvarende plasmakonsentrasjoner av buprenorfin.

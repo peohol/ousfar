@@ -1,0 +1,59 @@
+-     Andre opioidderivater (f.eks. metadon, analgetika og antitussiva), visse antidepressiva,
+      beroligende H1-reseptorantagonister, barbiturater, andre anxiolytika enn benzodiazepiner,
+      neuroleptika, klonidin og relaterte substanser. Denne kombinasjonen øker CNS-demping. Det
+      reduserte bevissthetsnivået kan gjøre det farlig å kjøre og bruke maskiner.
+
+-     Antikolinergika eller legemidler med antikolinerg effekt: Samtidig administrering av
+      buprenorfin og antikolinergika eller legemidler med antikolinerg effekt (f.eks. trisykliske
+      antidepressiver, antihistaminer, antipsykotika, muskelrelakserende legemidler, legemidler til
+      bruk ved Parkinsons sykdom) kan føre til økning i antikolinerge bivirkninger.
+
+-     Opioidanalgetika: tilstrekkelig analgesi kan være vanskelig å oppnå ved administrasjon av en
+      full opioidagonist hos pasienter som får buprenorfin. Potensialet for overdosering er også til
+      stede med en full agonist, spesielt ved forsøk på å overvinne buprenorfins delvise agonisteffekt
+      eller når buprenorfinnivået i plasma synker. Pasienter med behov for analgetika og behandling
+      for opioidavhengighet kan ha best nytte av et tverrfaglig team som omfatter spesialister innen
+      både smertebehandling og behandling av opioidavhengighet.
+
+-     Naltrekson er en opioidantagonist som kan blokkere de farmakologiske effektene av
+      buprenorfin. Samtidig administrasjon under buprenorfinbehandling skal unngås såfremt det er
+      mulig, på grunn av den potensielt farlige interaksjonen som plutselig kan utløse langvarige og
+      intense opioidabstinenssymptomer. For pasienter som for tiden får naltreksonbehandling, kan de
+      tiltenkte terapeutiske effektene av buprenorfinadministrasjon bli blokkert av naltrekson.
+
+-     CYP3A4-hemmere: en interaksjonsstudie på buprenorfin med ketokonazol (en potent hemmer
+      av CYP3A4) resulterte i økt Cmax og AUC (areal under kurven) for buprenorfin (henholdsvis ca.
+      50 % og 70 %), og til en mindre grad for norbuprenorfin. Pasienter som får Espranor skal
+      overvåkes nøye, og kan kreve dosereduksjon ved kombinasjon med potente CYP3A4-hemmere
+      (f.eks. proteasehemmere slik som ritonavir, nelfinavir eller indinavir, eller soppdrepende azol-
+      midler slik som ketokonazol, makrolidantibiotika eller itrakonazol).
+
+-     CYP3A4-induktorer: Samtidig bruk av CYP3A4-induktorer med buprenorfin kan redusere
+      buprenorfinkonsentrasjonen i plasma og potensielt føre til suboptimal behandling av
+      opioidavhengighet med buprenorfin. Det anbefales at pasienter som får buprenorfin overvåkes
+      nøye dersom induktorer (f.eks. fenobarbital, karbamazepin, fenytoin, rifampicin) administreres
+      samtidig. Dosen av buprenorfin eller CYP3A4-induktoren kan måtte justeres tilsvarende.
+
+-     Samtidig bruk av monoaminoksidasehemmere (MAOI): Mulig forsterkning av effektene av
+      opioider, basert på erfaring med morfin.
+
+-     Serotonerge legemidler, slik som MAO-hemmere, selektive serotoninreopptakshemmere (SSRI-
+      er), serotonin-norepinefrinreopptakshemmere (SNRI-er) eller trisykliske antidepressiva, da
+      risikoen for serotonergt syndrom, en potensielt livstruende tilstand, er økt (se pkt. 4.4).
+
+Buprenorfin er en CYP3A4-hemmer in vitro. Risikoen for hemming in vivo ved terapeutiske
+konsentrasjoner virker lav, men kan ikke utelukkes. Når buprenorfin kombineres med CYP3A4-
+substrater, kan plasmanivåene til disse substratene øke, og doseavhengige bivirkninger kan
+forekomme.
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet
+
+Det foreligger ikke tilstrekkelige data på bruk av buprenorfin hos gravide kvinner. Dyrestudier har vist
+reproduksjonstoksiske effekter (se pkt. 5.3). Den potensielle risikoen for mennesker er ukjent.
+Mot slutten av svangerskapet kan høye doser, selv i en kort periode, fremkalle respirasjonsdepresjon
+hos nyfødte. I løpet av de siste tre månedene i svangerskapet kan kronisk bruk av buprenorfin være
+ansvarlig for abstinenssyndrom hos nyfødte (f.eks. hypertoni, neonatal tremor, neonatal agitasjon,
+
+                                                   8

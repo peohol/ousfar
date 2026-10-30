@@ -1,0 +1,59 @@
+-     Hos pasienter med tydelig legemiddelavhengighet kan initial administrasjon av buprenorfin gi
+      et abstinenssyndrom som ligner det som er assosiert med nalokson.
+-     De vanligste tegn og symptomer på overfølsomhet inkluderer utslett, urtikaria og pruritus.
+      Tilfeller av bronkospasmer, angioødem og anafylaktisk sjokk er rapportert (se pkt. 4.3).
+-     Økning i transaminaser, akutt hepatitt, cytolytisk hepatitt, gulsott, hepatorenalt syndrom og
+      hepatisk encefalopati har forekommet (se pkt. 4.4).
+-     Neonatalt abstinenssyndrom er rapportert hos nyfødte barn av kvinner som har fått
+      buprenorfin under svangerskapet. Syndromet kan være mildere enn det som er sett med
+      en μ-opioid fullagonist og kan være forsinket. Syndromets karakter kan variere
+      avhengig av morens misbrukshistorikk (se pkt. 4.6).
+-     Legemiddelavhengighet: Gjentatt bruk av Buprenorphine Sandoz kan føre til
+      legemiddelavhengighet, selv ved terapeutiske doser. Risikoen for legemiddelavhengighet kan
+      variere avhengig av pasientenes individuelle risikofaktorer, dosering og varighet av
+      opioidbehandling (se pkt. 4.4).
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til
+Direktoratet for medisinske produkter: www.dmp.no/meldeskjema.
+
+4.9   Overdosering
+
+Symptomer
+Respirasjonsdepresjon, som et resultat av depresjon av sentralnervesystemet, er det viktigste
+symptomet som krever behandling ved overdose, fordi det kan føre til pustestans og død. Tidlige
+symptomer på overdose kan også inkludere somnolens, amblyopi, miose, hypotensjon, kvalme,
+oppkast og/eller taleforstyrrelser.
+
+Behandling
+Generelle støttetiltak bør iverksettes, deriblant nøye overvåking av pasientens lunge- og
+hjertefunksjon. Symptomatisk behandling av respirasjonsdepresjon skal iverksettes, etter standard
+retningslinjer for intensivbehandling. Åpne luftveier må sikres, og assistert eller kontrollert ventilering
+må iverksettes. Pasienten skal flyttes til et sted hvor fullt utstyr for gjenopplivning er tilgjengelig. Bruk
+av en opioidantagonist (dvs. nalokson) anbefales, til tross for den muligens beskjedne effekten på
+reversering av respirasjonssymptomene ved overdosering med buprenorfin, sammenlignet med
+naloksons effekt på fulle opioidagonister.
+
+Den lange virketiden til buprenorfin må tas i betraktning ved bestemmelse av nødvendig
+behandlingstid for å reversere effektene av en overdose. Symptomer på overdose av buprenorfin som
+tidligere var kontrollert, kan komme tilbake fordi nalokson kan skilles ut mye raskere enn buprenorfin.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Andre midler med virkning på nervesystemet. Midler ved
+opioidavhengighet, ATC-kode: N07B C01
+
+Virkningsmekanisme
+Buprenorfin er en partiell opioid-agonist/antagonist som bindes til µ- (mu) og κ- (kappa) reseptorene i
+hjernen. Effekten ved opioid vedlikeholdsbehandling tilskrives blant annet langsomt reversibel
+binding til µ-reseptorer, noe som over en lang periode reduserer den opioidavhengige pasientens
+stoffbehov.
+
+
+
+                                                     10

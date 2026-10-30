@@ -1,0 +1,58 @@
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres
+til å melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til
+Direktoratet for medisinske produkter: www.dmp.no/meldeskjema.
+
+4.9 Overdosering
+
+Symptomer: Symptomer tilsvarende som for andre sentraltvirkende analgetika må forventes. Disse
+kan omfatte respirasjonsdepresjon, inkludert apné, sedasjon, søvnighet, kvalme, oppkast,
+kardiovaskulær kollaps og betydelig miose.
+
+Behandling: Fjern eventuelle plastre fra pasientens hud. Sikre og oppretthold frie luftveier, hjelp
+eller kontroller respirasjonen etter behov og oppretthold adekvat kroppstemperatur og
+væskebalanse. Oksygen, intravenøse væsker, vasopressorer og andre støttende tiltak skal brukes
+ved behov.
+
+En spesifikk opioidantagonist som f.eks. nalokson kan reversere effekten av buprenofin, selv om
+nalokson kan være mindre effektiv for å reversere effekten av buprenorfin enn andre my-
+opioidagonister. Behandling med kontinuerlig intravenøs nalokson bør starte med de vanlige
+dosene, men høye doser kan være nødvendig.
+
+
+5.   FARMAKOLOGISKE EGENSKAPER
+
+5.1 Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Analgetika, opioider, oripavinderivater
+ATC-kode: N02A E01
+
+Buprenorfin er en partiell opioidagonist som virker på my-opiodreseptoren. Den har også en
+antagonistisk aktivitet på kappa-opioidreseptoren.
+
+Andre farmakologiske effekter
+In vitro og dyrestudier indikerer ulike effekter av naturlige opioider, som morfin, på komponenter
+av immunsystemet. Den kliniske betydningen av disse funnene er ukjent. Det er ikke kjent om
+buprenorfin, et semisyntetisk opioid, har immunologiske effekter tilsvarende morfin.
+
+Som med andre opioidanalgetika har buprenorfin en potensiell risiko for respirasjonsdepresjon. Det
+finnes likevel bevis som tyder på at buprenofin er en partiell agonist på grunn av den
+respirasjonsdepressive aktiviteten, og en «takeffekt» har blitt rapportert etter intravenøse doser
+større enn 2 mikrogram/kg. Respirasjonsdepresjon ser ut til å forekomme sjelden ved terapeutiske
+doser av den transdermale legemiddelformen [inntil 40 mikrogram/t].
+
+Effekten har blitt vist i sju pivotale fase III-studier av opptil 12 ukers varighet hos pasienter med
+ikke-malign smerte av forskjellige etiologier. Disse inkluderte pasienter med moderate og alvorlige
+artrose- og ryggsmerter. Buprenorfin viste klinisk signifikante reduksjoner i smerteskåringer (ca. 3
+punkter på BS-11-skalaen) og signifikant bedre smertekontroll sammenlignet med placebo.
+
+En langvarig åpen forlengelsesstudie (n=384) har også blitt utført hos pasienter med ikke-malign
+smerte. Med fast dosering fikk 63 % av pasientene smertekontroll i 6 måneder, 39 % av pasientene
+i 12 måneder, 13 % av pasientene i 18 måneder og 6 % av pasientene i 21 måneder. Omtrent 17 %
+ble stabilisert på dosen med 5 mg, 35 % på 10 mg og 48 % på 20 mg.
+
+5.2 Farmakokinetiske egenskaper
+
+Det er holdepunkter for enterohepatisk kretsløp.
+                                                10

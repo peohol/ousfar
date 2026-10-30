@@ -1,0 +1,58 @@
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Midler ved opioidavhengighet, ATC-kode: N07BC01
+
+Espranor lyofilisattablett har en doseringsform utviklet for rask oppløsning på tungen, vanligvis på
+under 15 sekunder.
+
+Buprenorfin er en delvis opioid-agonist/-antagonist som fester seg til μ (mu)- og κ (kappa)-reseptorene
+i hjernen. Legemidlets aktivitet ved opioidvedlikeholdsbehandling tilskrives dets langsomt reversible
+kobling med μ-reseptorene som, over en lengre periode, minimerer narkotikabehovet hos den
+avhengige pasienten.
+
+Under kliniske farmakologiske studier hos opiatavhengige forsøkspersoner demonstrerte buprenorfin
+en takeffekt på et antall parametere, inkludert positivt humør, «god effekt» og respirasjonsdepresjon.
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+
+Når det tas oralt, gjennomgår buprenorfin førstepassasjes levermetabolisme med N-dealkylering og
+glukurokonjugering i tynntarmen og leveren. Bruk av dette legemidlet via oral administrasjonsvei er
+derfor uegnet.
+
+Maksimal plasmakonsentrasjon oppnås ca. 70 minutter etter oromukosal administrasjon, og forholdet
+mellom maksimal dose og konsentrasjon er lineært, mellom 2 mg og 8 mg.
+
+Distribusjon
+
+Absorpsjonen av buprenorfin etterfølges av en rask distribusjonsfase og en distribusjonshalveringstid
+på 2 til 5 timer.
+
+Biotransformasjon og eliminasjon
+
+Buprenorfin metaboliseres gjennom 14-N-dealkylering og glukurokonjugering av det overordnede
+molekylet og den dealkylerte metabolitten. Kliniske data bekrefter at CYP3A4 er ansvarlig for N-
+dealkyleringen av buprenorfin. N-dealkylbuprenorfin (også kalt norbuprenorfin) er en μ (mu)-agonist
+med svak iboende aktivitet.
+
+Eliminasjon av buprenorfin er bi- eller tri-eksponentiell og har en gjennomsnittlig halveringstid i
+plasma på 32 timer.
+
+Buprenorfin elimineres i avføring gjennom galleutskillelse av de glukurokonjugerte metabolittene
+(70 %); resten elimineres i urin.
+
+5.3   Prekliniske sikkerhetsdata
+
+Kronisk toksisitet studert hos fire arter (gnagere og ikke-gnagere) med fire forskjellige
+administrasjonsveier har ikke vist noe klinisk relevant element. I én oral studie over ett år hos hunder
+ble det observert levertoksisitet ved svært høy dose (75 mg/kg).
+
+Ut fra teratologistudier hos rotter og kaniner ble det konkludert at buprenorfin ikke er embryotoksisk
+eller teratogent, og det har ingen markante effekter på avvenningspotensial. Det var ingen bivirkninger
+på fertilitet eller generell reproduksjonsfunksjon hos rotter, men ved den høyeste intramuskulære
+dosen (5 mg/kg/dag) erfarte mødre noen vanskeligheter med fødselen, og det var høy neonatal
+mortalitet.
+
+
+                                                   12

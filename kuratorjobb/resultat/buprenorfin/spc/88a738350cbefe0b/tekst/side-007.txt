@@ -1,0 +1,58 @@
+Tabell 1 oppsummer bivirkninger:
+ Bivirkninger rapportert under kliniske studier. Alle bivirkninger er oppført etter frekvens:
+Svært vanlige (≥1/10), vanlige (≥1/100 til <1/10), mindre vanlige (≥1/1000 til <1/100), sjeldne (≥1/10
+000 til <1/1000), svært sjeldne (<1/10 000), ikke kjent (kan ikke anslås ut ifra tilgjengelige data).
+ De vanligst rapporterte bivirkningene etter markedsføring.
+Bivirkninger som forekommer i minst 1% av rapportene fra helsepersonell og som kan
+forventes, er inkludert. Hyppigheten av bivirkninger som ikke er rapportert i pivotale
+studier, kan ikke anslås og er oppgitt som ikke kjent.
+
+               Tabell 1. Bivirkninger rapportert fra kliniske studier
+Organklassesystem       Svært       Vanlige        Mindre vanlige        Sjeldne           Svært         Ikke kjent
+                        vanlige     (≥ 1/100 til   ( 1/1000 til         ( 1/10 000 til   sjeldne       (kan ikke
+                        (≥ 1/10)    < 1/10)         < 1/100)             < 1/1000)         (<1/10        anslås ut
+                                                                                           000),         ifra
+                                                                                                         tilgjengeli
+                                                                                                         ge data)
+Forstyrrelser i                                                          Overfølsom-       Anafy-
+immunsystemet                                                            hetsreaksjoner    laktisk
+                                                                                           sjokk
+Stoffskifte- og                                                          Nedsatt
+ernæringsbetingede                                                       appetitt
+sykdommer
+Psykiatriske                                       Forvirringstilstand   Nedstemthet
+lidelser                                           Euforisk              Agitasjon
+                                                   stemningsleie
+                                                   Nervøsitet
+                                                   Depresjon
+                                                   Psykotisk
+                                                   lidelse
+                                                   Hallusinasjoner
+                                                   Depersonalisering
+Nevrologiske            Sedasjon    Hodepine       Dysartri              Krampeanfall
+sykdommer               Svimmel                    Parestesi             Unormal
+                        -het                       Koma                  koordinasjon
+                                                   Tremor
+Øyesykdommer                        Miose          Sløret syn
+                                                   Diplopi
+                                                   Svekket syn
+                                                   Konjunktivitt
+Sykdommer i             Vertigo                    Tinnitus
+øre og labyrint
+Hjertesykdommer                                    Takykardi
+                                                   Bradykardi
+                                                   Cyanose
+                                                   Atrioventrikulært
+                                                   blokk,
+                                                   annengrads
+Karsykdommer                        Ortostatisk    Hypertensjon
+                                    hypoten-       Pallor
+                                    sjon
+Sykdommer i                         Hypoventil     Dyspné                                  Bronko-
+respirasjonsorganer,                ering          (åndedretts-                            spasme
+thorax og                                          problemer)
+mediastinum                                        Apné
+                                                   (åndedrettsstans)
+
+
+                                                   7

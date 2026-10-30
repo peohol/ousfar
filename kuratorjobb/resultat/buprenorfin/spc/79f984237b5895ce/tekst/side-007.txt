@@ -1,0 +1,59 @@
+som ikke bruker sikker prevensjon med mindre den potensielle nytten overveier den potensielle
+risikoen for fosteret.
+
+Amming
+Buprenorfin går over i morsmelk hos mennesker. Studier på rotter har vist at buprenorfin kan
+hemme melkeproduksjonen. Tilgjengelige farmakodynamiske/toksikologiske data på dyr har
+vist at buprenorfin går over i melk (se pkt. 5.3). En risiko for nyfødte/spedbarn kan ikke
+utelukkes. Buprefarm skal brukes med forsiktighet ved amming.
+
+Fertilitet
+Det foreligger ingen data vedrørende effekten av buprenorfin på fertilitet hos mennesker. I en
+studie av fertilitet og tidlig embryoutvikling ble det ikke observert noen påvirkning av
+reproduksjonsparametre hos hann- og hunnrotter (se pkt. 5.3).
+
+4.7   Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+Buprenorfin har stor påvirkning på evnen til å kjøre bil og bruke maskiner. Selv når det brukes
+som forskrevet og i henhold til instruksjoner, kan buprenorfin påvirke pasientens reaksjonsevne i
+en slik grad at trafikksikkerheten og evnen til å betjene maskiner kan bli svekket. Dette gjelder
+spesielt i begynnelsen av behandlingen og i kombinasjon med andre sentraltvirkende substanser
+inkludert alkohol, beroligende midler, sedativa og hypnotika. En individuell anbefaling skal gis av
+legen. En generell restriksjon er ikke nødvendig når en stabil dose brukes.
+
+Pasienter som er påvirket og som opplever bivirkninger (f.eks. svimmelhet, søvnighet, tåkesyn) i
+løpet av oppstart av behandlingen eller ved titrering til en høyere dose, bør ikke kjøre bil eller bruke
+maskiner i minst 24 timer etter at plasteret er fjernet.
+
+4.8   Bivirkninger
+
+Alvorlige bivirkninger som kan være forbundet med buprenorfinbehandling i klinisk bruk er lik de
+som man ser ved andre opioidanalgetika, inkludert respirasjonsdepresjon (spesielt når den brukes
+med andre CNS-hemmere) og hypotensjon (se pkt. 4.4).
+
+Følgende bivirkninger har forekommet:
+
+Organ-            Svært          Vanlige        Mindre         Sjeldne        Svært          Ikke kjent
+klassesystem      vanlige        (≥ 1/100 til   vanlige        (≥ 1/10 000    sjeldne        (kan ikke
+MedDRA            (≥ 1/10)       < 1/10)        (≥ 1/1000      til            (< 1/10 000    anslås
+                                                til < 1/100)   < 1/1000)      )              ut ifra til-
+                                                                                             gjengelige
+                                                                                             data)
+Forstyrrelser i                                 Hyper-         Anafylak-                     Anafylak-
+immun-                                          sensitivitet   tisk                          toid
+systemet                                                       reaksjon                      reaksjon
+Stoffskifte-                     Anoreksi                      Dehy-
+og ernærings-                                                  drering
+betingede
+sykdommer
+Psykiatriske                     Forvirring,    Søvn-          Psykotisk      Legemiddel     De-
+lidelser                         depresjon,     lidelser,      lidelse        avhengig-      personalisa
+                                 søvnløshet,    rastløshet,                   het,           sjon
+                                 nervøsitet,    agitasjon                     humør-
+                                 angst          euforisk,                     svingninger
+                                                sinns-
+                                                tilstand,
+                                                affekt-
+                                                potensiale,
+                                                hallusina-
+                                                  7

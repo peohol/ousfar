@@ -1,0 +1,59 @@
+Klinisk effekt og sikkerhet
+I kliniske farmakologiske studier med opiatavhengige pasienter, hadde buprenorfin maksimal effekt på
+en rekke parametre, blant annet positiv sinnsstemning, “god effekt” og respirasjonsdepresjon.
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+Ved peroralt inntak gjennomgår buprenorfin førstepassasje-metabolisme i leveren og N-dealkylering
+og glukuronidering i tynntarmen og leveren. Peroral administrasjon av dette legemidlet er derfor ikke
+hensiktsmessig.
+
+Maksimal plasmakonsentrasjon oppnås 90 minutter etter sublingval administrasjon, og forholdet
+mellom maksimal dose og konsentrasjon er lineært mellom 2 mg og 16 mg.
+
+Distribusjon
+Absorpsjonen av buprenorfin følges av en rask distribusjonsfase, og halveringstiden er 2 til 5 timer.
+
+Biotransformasjon og eliminasjon
+Buprenorfin metaboliseres oksidativt ved 14-N-dealkylering til N-desalkyl-buprenorfin (også kalt
+norbuprenorfin) via cytokrom P450 CYP3A4 og ved glukuronidering av utgangsmolekylet og den
+dealkylerte metabolitten. Norbuprenorfin er en µ-agonist med svak egenaktivitet.
+
+Eliminasjonen av buprenorfin er bi- eller trieksponensiell, med en lang terminal elimineringsfase på
+20 til 25 timer. Dette skyldes delvis reabsorpsjon av buprenorfin etter hydrolyse av det konjugerte
+derivatet i tynntarmen, og delvis at molekylet er svært lipofilt.
+
+Buprenorfin utskilles hovedsakelig i feces via galleekskresjon av de glukuroniderte metabolittene (70
+%), mens resten utskilles via urinen.
+
+Nedsatt leverfunksjon
+Effekten av nedsatt leverfunksjon på farmakokinetikken til buprenorfin og nalokson ble evaluert i en
+studie etter markedsføring.
+
+Tabell 2 oppsummerer resultatene fra en klinisk studie der eksponering av buprenorfin ble fastslått
+etter administrasjon av buprenorfin/nalokson 2 mg/0,5 mg sublingvaltablett til friske personer, samt
+personer med varierende grad av nedsatt leverfunksjon.
+
+ Tabell 2: Effekt av nedsatt leverfunksjon på farmakokinetiske parametre for buprenorfin
+ etter admininstrering av buprenorfin/nalokson (endring i forhold til friske personer)
+ FK parameter       Lett nedsatt              Moderat nedsatt            Alvorlig nedsatt
+                    leverfunksjon             leverfunksjon              leverfunksjon
+                    (Child-Pugh klasse A)     (Child-Pugh klasse B)      (Child-Pugh klasse C)
+                    (n=9)                     (n=8)                      (n=8)
+ Buprenorfin
+ Cmax               1,2 ganger økning         1,1 ganger økning          1,7 ganger økning
+ AUClast            Tilsvarende               1,6 ganger økning          2,8 ganger økning
+                    kontrollgruppe
+
+Generelt økte plasmaeksponeringen for buprenorfin omtrent 3 ganger hos pasienter med alvorlig
+nedsatt leverfunksjon.
+
+5.3   Prekliniske sikkerhetsdata
+
+Akutt buprenorfintoksisitet ble observert hos mus og rotter etter oral og parenteral administrasjon.
+Median for letal dose (LD50) hos mus var 26, 94 og 261 mg/kg ved henholdsvis intravenøs,
+intraperitoneal og oral administrasjon. Median for letal dose (LD50) hos rotte var 35, 243 og 600
+mg/kg ved henholdsvis intravenøs, intraperitoneal og oral administrasjon.
+
+                                                   11

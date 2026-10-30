@@ -1,0 +1,52 @@
+Buprenorfin er ca. 96 % bundet til plasmaproteiner.
+
+Studier av intravenøs buprenorfin har vist et stort distribusjonsvolum, noe som tyder på bred
+distribusjon av buprenorfin. I en studie av intravenøs buprenorfin hos friske forsøkspersoner var
+distribusjonsvolumet ved «steady-state» 430 liter, noe som gjenspeiler virkestoffets store
+distribusjonsvolum og lipofilitet. Etter intravenøs administrasjon utskilles buprenorfin og dets
+metabolitter i gallen, og distribueres i løpet av minutter til cerebrospinalvæsken. Buprenorfin-
+konsentrasjonen i cerebrospinalvæsken synes å være fra omtrent 15 % til 25 % av samtidig
+plasmakonsentrasjon.
+
+Biotransformasjon og eliminasjon
+Metabolisme av buprenorfin i huden etter påføring av buprenorfin depotplaster er ubetydelig. Etter
+transdermal påføring elimineres buprenorfin via levermetabolisme med påfølgende galleutskillelse og
+nyreutskillelse av oppløselige metabolitter. Levermetabolisme, via CYP3A4- og UGT1A1/1A3-
+enzymer, gir to hovedmetabolitter, henholdsvis norbuprenorfin og buprenorfin-3-O-glukuronid.
+Norbuprenorfin glukuronideres før eliminasjon. Buprenorfin elimineres også i feces. I en studie med
+postoperative pasienter viste total eliminasjon av buprenorfin seg å være ca. 55 liter/time.
+
+Norbuprenorfin er den eneste kjente aktive metabolitten av buprenorfin.
+
+Effekt av buprenorfin på farmakokinetikken til andre virkestoffer
+Basert på in vitro-studier med humane mikrosomer og hepatocytter, har ikke buprenorfin potensiale til
+å hemme metabolisme katalysert av CYP450-enzymene CYP1A2, CYP2A6 og CYP3A4 ved
+konsentrasjoner som oppnås ved bruk av Bugnanto 20 mikrogram/time depotplaster. Effekt på
+metabolisme katalysert av CYP2C8, CYP2C9 og CYP2C19 er ikke undersøkt.
+
+5.3   Prekliniske sikkerhetsdata
+
+Reproduksjons- og utviklingstoksisitet
+Det ble ikke observert påvirkning av fertilitet eller generell reproduksjonsevne hos rotter behandlet
+med buprenorfin. I embryoføtale utviklingstoksisitetsstudier av buprenorfin hos rotter og kaniner, ble
+det ikke observert embryoføtal toksisitet. I en studie av pre- og postnatal utviklingstoksisitet av
+buprenorfin hos rotter forekom mortalitet hos avkom, nedsatt kroppsvekt hos avkom og samtidig
+redusert maternelt fødeinntak og kliniske tegn.
+
+Gentoksisitet
+Et standardoppsett av gentoksisitetstester indikerer at buprenorfin ikke er gentoksisk.
+
+Karsinogenitet
+I langtidsstudier med rotter og mus var det ingen holdepunkter for karsinogent potensiale av betydning
+for mennesker.
+
+Systemisk toksisitet og hudtoksisitet
+I toksisitetsstudier med enkeltdoser og gjentatt dosering hos rotter, kaniner, marsvin, hunder og
+minigriser ga buprenorfin depotplaster minimale eller ingen systemiske bivirkninger, mens
+hudirritasjon ble observert hos alle undersøkte arter. Tilgjengelige toksikologiske data indikerer ikke
+at tilsetningsstoffene i depotplasteret har et allergifremkallende potensiale.
+
+
+6.    FARMASØYTISKE OPPLYSNINGER
+
+6.1   Hjelpestoffer

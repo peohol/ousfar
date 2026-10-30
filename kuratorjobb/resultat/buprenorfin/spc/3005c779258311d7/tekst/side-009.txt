@@ -1,0 +1,50 @@
+Organklassesyst    Svært       Vanlige       Mindre             Sjeldne        Svært         Ikke kjent
+em                 vanlige                   vanlige                           sjeldne
+
+Nevrologiske       Hodepine,   Tremor        Sedasjon,          Balansefor     Ufrivillige   Krampe-
+sykdommer          svimmel-                  dysgeusi,          -styrrelser,   muskel-       anfall,
+                   het,                      dysartri,          talefor-       sammen-       søvnapné-
+                   somnolens                 hypoestesi,        styrrelser     trekkninger   syndrom,
+                                             hukommelses-                                    hyperalgesi
+                                             svikt,
+                                             migrene,
+                                             synkope,
+                                             unormal
+                                             koordinasjons-
+                                             evne,
+                                             oppmerksom-
+                                             hetsforstyrrelse
+                                             , parestesi
+Øyesykdommer                                 Tørre øyne,        Synsfor-
+                                             tåkesyn            styrrelser,
+                                                                øyelokks-
+                                                                ødem,
+                                                                miose
+Sykdommer i                                  Tinnitus,                         Øresmerter
+øre og labyrint                              vertigo
+Hjertesykdomm                                Palpitasjoner,     Angina
+er                                           takykardi          pectoris
+
+Karsykdommer                                 Hypotensjon,       Vasodila-
+                                             sirkulasjons-      sjon,
+                                             kollaps,           ortostatisk
+                                             hypertensjon,      hypo-
+                                             rødming            tensjon
+Sykdommer i                    Dyspné        Hoste,             Respira-
+respirasjonsorga                             tungpustethet,     sjons-
+-ner, thorax og                              hikke              depresjon,
+mediastinum                                                     respira-
+                                                                sjonssvikt,
+                                                                forverret
+                                                                astma,
+                                                                hyper-
+                                                                ventilering,
+                                                                rhinitt
+Gastrointestinal   Forstop-    Mage-         Flatulens          Dysfagi,                     Divertikulitt
+e sykdommer        pelse,      smerter,                         ileus
+                   kvalme,     diaré,
+                   oppkast     dyspepsi,
+                               munntørrhet
+Sykdommer i                                                                                  Gallekolikk
+lever og
+galleveier

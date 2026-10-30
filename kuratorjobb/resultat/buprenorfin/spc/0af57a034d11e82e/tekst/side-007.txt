@@ -1,0 +1,56 @@
+      •    Andre substanser som kan gi sentralnervøs depresjon: Andre opioidderivater (f.eks. metadon,
+           analgetika og hostedempende midler); visse antidepressiva, sederende H1-reseptorantagonister,
+           barbiturater, anxiolytika utover benzodiazepiner, neuroleptika, klonidin og beslektede substanser.
+           Disse kombinasjonene øker den sentralnervøse depresjonen og den reduserte våkenheten kan gjøre
+           bilkjøring og bruk av maskiner risikofylt.
+
+      •    Samtidig bruk av buprenorfin og gabapentinoider (gabapentin og pregabalin) kan føre til
+           respirasjonsdepresjon, hypotensjon, uttalt sedasjon, koma eller dødsfall (se pkt. 4.4).
+
+      •    Samtidig administrering av buprenorfin og antikolinergika eller legemidler med antikolinerg effekt
+           (f.eks. trisykliske antidepressiver, antihistaminer, antipsykotika, muskelrelakserende midler,
+           legemidler til bruk ved Parkinsons sykdom) kan føre til økning i antikolinerge bivirkninger.
+
+      •    Smertestillende opioider: Adekvat analgesi kan være vanskelig å oppnå når det administreres en
+           opioid-fullagonist til pasienter som får buprenorfin. Potensialet for en overdose eksisterer også med
+           en fullagonist, særlig når man prøver å overgå buprenorfins partielle agonisteffekt, eller når
+           plasmanivåene av buprenofin reduseres. Pasienter som har behov for både smertestillende og
+           opioidavhengig behandling kan oppnå best behandling av tverrfaglige team som omfatter både
+           spesialister på smerte og på opioidavhengig behandling.
+
+      •    Naltrekson: Dette er en opioidantagonist som kan blokkere de farmakologiske effektene av
+           buprenorfin. For opioidavhengige pasienter som får behandling med buprenorfin, kan naltrekson gi
+           symptomer på plutselig innsettende forlenget opioidabstinens. For pasienter som
+           får naltrekson, kan den tilsiktede terapeutiske effekten av buprenorfin bli blokkert av naltrekson.
+
+      •    CYP3A4-hemmere: en interaksjonsstudie med buprenorfin og ketokonazol (en potent hemmer av
+           CYP3A4) viste økt Cmax og AUC (arealet under kurven) av buprenorfin (henholdsvis ca.
+           50 % og 70 %), og i mindre grad, av norbuprenorfin. Pasienter som får buprenorfin skal
+           overvåkes nøye, og kan behøve reduksjon av dosen hvis den kombineres med potente CYP3A4-
+           hemmere (f. eks proteasehemmere som ritonavir, nelfinavir eller indinavir, eller azol- antimykotika
+           slik som ketokonazol eller itrakonazol, makrolidantibiotika).
+
+      •    CYP3A4-induktorer: Samtidig bruk av CYP3A4-induktorer og buprenorfin kan redusere
+           plasmakonsentrasjonen av buprenorfin, noe som potensielt kan føre til suboptimal behandling av
+           opioidavhengighet med buprenorfin. Det anbefales at pasienter som får Buprenorfine Orifarm bør
+           overvåkes nøye dersom induktorer (f.eks. fenobarbital, karbamazepin, fenytoin, rifampicin) gis
+           samtidig. Det kan være nødvendig å justere buprenorfindosen eller dosen med CYP3A4-induktorer
+           tilsvarende.
+
+      •    Samtidig bruk av MAO-hemmere kan føre til at opioidene får overdreven effekt, basert på erfaring
+           med morfin.
+
+      •    Serotonerge legemidler slik som MAO-hemmere, selektive serotoninreopptakshemmere (SSRIer),
+           serotonin- og noradrenalinreopptakshemmere (SNRIer) eller trisykliske antidepressiva, på grunn av
+           økt risiko for serotonergt syndrom, en potensielt livstruende tilstand (se pkt. 4.4).
+
+4.6       Fertilitet, graviditet og amming
+
+Graviditet
+Sikkerhet ved bruk av buprenorfin under graviditet er ikke klarlagt da erfaring fra mennesker er
+utilstrekkelig. Dyreforsøk har vist reproduksjonstoksiske effekter (se pkt. 5.3). Buprenorfin bør kun brukes
+under graviditet hvis fordelene oppveier mulig risiko for fosteret.
+
+
+
+                                                         7

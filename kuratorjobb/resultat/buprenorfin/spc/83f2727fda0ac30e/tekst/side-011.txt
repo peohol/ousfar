@@ -1,0 +1,53 @@
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å overvåke
+forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å melde enhver
+mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til Statens legemiddelverk:
+www.legemiddelverket.no/meldeskjema.
+
+4.9     Overdosering
+
+Symptomer
+Respirasjonsdepresjon som et resultat av hemming av sentralnervesystemet, er det viktigste symptomet som
+krever intervensjon ved overdose, fordi det kan føre til respirasjonsstans og død.
+Tegn på overdose omfatter også søvnighet, amblyopi, miose, hypotensjon, kvalme, oppkast og/eller
+taleforstyrrelser.
+
+Behandling
+Generelle støttetiltak skal iverksettes, blant annet nøye overvåking av pasientens lunge- og hjertefunksjon.
+Symptomatisk behandling av respirasjonsdepresjon samt standard intensivbehandling skal iverksettes. Åpne
+luftveier må sikres, og assistert eller kontrollert ventilering må iverksettes. Pasienten bør flyttes til et sted
+hvor fullt utstyr for gjenopplivning er tilgjengelig.
+
+Dersom pasienten kaster opp, må det tas forholdsregler for å unngå aspirasjon av oppkastet.
+
+Bruk av en opioidantagonist (dvs. nalokson) anbefales, til tross for den muligens beskjedne effekten på
+reversering av respirasjonssymptomene ved overdosering med buprenorfin, sammenlignet med naloksons
+effekt på fulle opioidagonister.
+
+Dersom nalokson brukes, skal den lange virkningstiden til buprenorfin tas i betraktning ved bestemmelse av
+varigheten av behandling og overvåking for å reversere effektene av en overdose. Nalokson kan bli eliminert
+raskere enn buprenorfin, noe som kan gjøre at tidligere kontrollerte symptomer på buprenorfinoverdose
+kommer tilbake, så det kan være nødvendig med en kontinuerlig infusjon. Dersom infusjon ikke er mulig,
+kan det være nødvendig med gjentatt dosering av nalokson. Pågående intravenøs infusjonshastighet skal
+titreres i henhold til pasientens respons.
+
+
+5.      FARMAKOLOGISKE EGENSKAPER
+
+5.1     Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Andre legemidler med virkning på nervesystemet, legemidler ved
+opioidavhengighet, ATC-kode: N07BC51
+
+Virkningsmekanisme
+Buprenorfin er en partiell opioid-agonist/antagonist som bindes til µ- og κ- (kappa)-opioidreseptorene i
+hjernen. Effekten ved opioid vedlikeholdsbehandling tilskrives langsomt reversibel binding til µ-
+opioidreseptorer, noe som over en lengre periode kan redusere den misbrukende pasientens behov for
+narkotika.
+
+En maksimaleffekt av opioidagonister ble observert i kliniske farmakologistudier med opioidavhengige
+personer.
+
+Nalokson er en antagonist til μ-opioidreseptorer. Når det gis oralt eller sublingvalt i vanlige doser til
+pasienter som opplever opioidabstinens, har nalokson liten eller ingen farmakologisk effekt på grunn av den
+nesten fullstendige førstepassasje-metabolismen. Men når det gis intravenøst til opioidavhengige personer,

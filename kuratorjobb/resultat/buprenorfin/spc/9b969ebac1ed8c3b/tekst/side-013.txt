@@ -1,0 +1,57 @@
+Biotransformasjon og eliminasjon
+
+Buprenorfinmetabolisme i huden etter påføring av Norspan er ubetydelig. Etter transdermal
+administrasjon elimineres buprenorfin via levermetabolisme med påfølgende galleutskillelse og
+nyreutskillelse av løselige metabolitter. Levermetabolisme, via CYP3A4- og UGT1A1/1A3-enzymer, gir
+to hovedmetabolitter, henholdsvis norbuprenorfin og buprenorfin-3-O-glukuronid. Norbuprenorfin
+glukuronideres før eliminasjon. Buprenorfin elimineres også i fæces. I en studie med postoperative
+pasienter ble total eliminasjon av buprenorfin vist å være ca. 55 liter/time.
+Norbuprenorfin er den eneste kjente aktive metabolitten av buprenorfin.
+
+Effekt av buprenorfin på andre virkestoffers farmakokinetikk
+
+Ut fra in vitro-studier med humane mikrosomer og leverceller har ikke buprenorfin potensiale til å
+hemme metabolisme katalysert av CYP450-enzymene CYP1A2, CYP2A6 og CYP3A4 ved
+konsentrasjoner som oppnås ved bruk av Norspan 20 mikrog/time depotplaster. Effekt på metabolisme
+katalysert av CYP2C8, CYP2C9 og CYP2C19 er ikke undersøkt.
+
+5.3   Prekliniske sikkerhetsdata
+
+Studier av reproduksjons- og utviklingstoksisitet
+Det ble ikke observert påvirkning av fertilitet eller generell reproduksjonsevne hos rotter behandlet med
+buprenorfin. I studier av embryoføtal utviklingstoksisitet av buprenorfin hos rotter og kaniner ble det ikke
+observert embryoføtal toksisitet. I en studie av pre- og postnatal utviklingstoksisitet av buprenorfin hos
+rotter forekom mortalitet hos avkom, nedsatt kroppsvekt hos avkom og samtidig redusert maternelt
+fødeinntak og kliniske tegn.
+
+Gentoksisitet
+
+Et standardoppsett av gentoksisitetstester indikerer at buprenorfin ikke er gentoksisk.
+
+Karsinogenitet
+
+I langtidsstudier med rotter og mus var det ingen holdepunkter for karsinogent potensiale av betydning
+for mennesker.
+
+Systemisk toksisitet og hudtoksisitet
+
+I toksisitetsstudier med enkeltdoser og gjentatt dosering med rotter, kaniner, marsvin, hunder og
+minigriser ga Norspan minimale eller ingen systemiske bivirkninger, mens hudirritasjon ble observert hos
+alle undersøkte arter. Tilgjengelige toksikologidata indikerer ikke at tilsetningsstoffene i depotplasteret
+har et sensitiverende potensiale.
+
+
+6.    FARMASØYTISKE OPPLYSNINGER
+
+6.1   Hjelpestoffer
+
+Klebende matriks (med buprenorfin):
+[(Z)-octadec-9-en-1-yl] (oleyloleat),
+povidon K90,
+4-oxopentanic acid (levulinsyre),
+poly[akrylsyre-kobutylakrylat-ko-(2-etylheksyl)akrylat-kovinylacetat] (5:15:75:5), kryssbundet (DuroTak
+387-2054).
+
+Klebende matriks (uten buprenorfin):
+poly[akrylsyre-kobutylakrylat-ko-(2-etylheksyl)akrylat-kovinylacetat] (5:15:75:5),
+ikke-kryssbundet (DuroTak 387-2051).

@@ -1,0 +1,57 @@
+Pasienter og omsorgspersoner skal instrueres om å overvåke applikasjonsstedene for slike reaksjoner.
+Hvis det er mistanke om allergisk kontaktdermatitt bør det iverksettes relevante diagnostiske prosedyrer
+for å fastslå om sensibilisering har oppstått og hva som er årsaken (buprenorfin og/eller andre
+innholdsstoffer i plasteret).
+
+Da CYP3A4-hemmere kan øke buprenorfinkonsentrasjonen (se pkt. 4.5), bør dosen av Norspan titreres
+forsiktig hos pasienter som allerede behandles med CYP3A4-hemmere. En redusert dosering kan være
+tilstrekkelig hos disse pasientene.
+
+Nalmefen og naltrekson
+Nalmefen og naltrekson er indisert for behandling av alkoholisme, men er opioidantagonister som
+reduserer effektene av buprenorfin. Ved samtidig bruk vil dette føre til behov for høyere doser
+buprenorfin og dermed økt risiko for respirasjonsdepresjon på grunn av overdose, dersom samtidig bruk
+av nalmefen- eller naltrekson avbrytes eller avsluttes. På grunn av den lange halveringstiden til nalmefen,
+naltrekson og buprenorfin, kan forekomsten av respiratorisk depresjon bli forsinket. Nalmefen og
+naltrekson kan også utløse en plutselig inntreden av langvarige og intense opioidabstinenssymptomer hos
+personer som er avhengige av opioider. Samtidig bruk av buprenorfin og nalmefen eller naltrekson bør
+unngås.
+
+Norspan anbefales ikke til analgesi i umiddelbar postoperativ periode eller i andre situasjoner med smal
+terapeutisk indeks eller raskt svingende analgetisk behov.
+
+Buprenorfin kan senke krampeterskelen hos pasienter som har en historie med krampeanfall.
+
+Alvorlig febril sykdom kan øke absorpsjonshastigheten av buprenorfin fra Norspan depotplasteret.
+
+Hos mennesker er begrensede euforiske effekter observert med buprenorfin. Dette kan gi noe misbruk av
+preparatet.
+
+Det endokrine systemet
+Opioider kan påvirke hypothalamus-hypofyse-binyre- eller gonade-aksen. Økt serum prolaktin og nedsatt
+plasma kortisol og testosteron er noen av endringene som kan bli sett. Kliniske symptomer kan
+forekomme på grunn av disse hormonelle endringene.
+
+Norspan bør ikke brukes i høyere doser enn anbefalt.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Effekt av andre virkestoffer på buprenorfins farmakokinetikk
+
+Buprenorfin metaboliseres hovedsakelig ved glukuronidering og i mindre grad (ca. 30 %) via CYP3A4.
+Samtidig behandling med CYP3A4-hemmere kan gi forhøyede plasmakonsentrasjoner med forsterket
+buprenorfineffekt.
+Studier med CYP3A4-hemmeren ketokonazol ga ikke klinisk relevante økninger i gjennomsnittlig
+maksimal (Cmax) eller total (AUC) buprenorfineksponering etter Norspan med ketokonazol i forhold til
+Norspan alene.
+Interaksjonen mellom buprenorfin og CYP3A4-indusere er ikke undersøkt. Samtidig administrasjon av
+Norspan og enzymindusere (f.eks. fenobarbital, karbamazepin, fenytoin og rifampicin) kan gi økt
+clearance som kan medføre redusert effekt.
+
+Reduksjon av leverens blodgjennomstrømning indusert av visse generelle anestetika (f.eks. halotan) og
+andre legemidler kan gi nedsatt eliminasjonshastighet for buprenorfin via leveren.
+
+Farmakodynamiske interaksjoner
+
+Norspan skal ikke brukes samtidig med MAO-hemmere eller hos pasienter som har fått MAO-hemmere
+de siste to ukene (se pkt. 4.3).
