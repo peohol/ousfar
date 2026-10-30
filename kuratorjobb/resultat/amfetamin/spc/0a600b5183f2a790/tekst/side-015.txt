@@ -1,0 +1,56 @@
+   Forskjell i bedring fra placebo          60,8                            N/A                 44,7
+   p-verdi (mot placebo)                    < 0,001                         N/A                 < 0,001
+ Endring i CHIP-CE: PRF
+ Achievement Domain
+   Minste kvadraters metode                 9,4                             -1,1                6,4
+   Effektstørrelse (mot placebo)            1,280                           N/A                 0,912
+   p-verdi (mot placebo)                    < 0,001                         N/A                 < 0,001
+1 Endepunkt = siste besøk under behandlingen etter baseline, i doseoptimaliserings- eller dosevedlikeholdsperioden (besøk 1-7)
+
+med en valid verdi
+2 Respons er definert som prosentvis reduksjon fra baseline i ADHD-RS-IV totalscore ≥ 30 %
+3Bedring (“svært mye bedret” eller “mye bedret”)
+
+
+
+Tilsvarende resultater for ADHD-RS og CGI-I er vist i to placebokontrollerte studier, én med barn
+(n=297) og én med ungdom (n=314), begge gjennomført i USA.
+
+En dobbeltblindet, randomisert, doseoptimalisert studie med aktiv kontroll ble gjennomført hos barn og
+ungdom i alderen 6 til 17 år (n=267) som oppfylte DSM-IV-kriteriene for ADHD. I denne ni uker lange
+studien ble pasienter randomisert (1:1) til en daglig morgendose med lisdeksamfetamindimesilat (30, 50
+eller 70 mg/døgn) eller atomoksetin (dosert etter pasientens vekt opp til 100 mg). I en 4 ukers
+doseoptimaliseringsperiode ble pasientene titrert til en optimal dose, basert på behandlingsrelaterte
+bivirkninger og klinisk vurdering, ble nådd. Pasienter behandlet med lisdeksamfetamindimesilat hadde
+kortere tid til første respons sammenlignet med pasienter behandlet med atomoksetin (median 13,0 mot
+21,0 dager, p=0,003), hvor respons var definert som en CGI-I score på 1 (svært mye bedret) eller 2 (mye
+bedret) på ett av besøkene i den dobbeltblindede behandlingsperioden. På tvers av alle besøkene i den
+dobbeltblindede behandlingsperioden var andelen av respondere i lisdeksamfetamindimesilatgruppen
+konsekvent høyere enn andelen av respondere i atomoksetingruppen. Forskjellen varierte fra 16 til 24 %.
+Ved studieendepunktet var endringen fra baseline i ADHD-RS-IV totalscore beregnet ved minste
+kvadraters metode, for lisdeksamfetamindimesilat og atomoksetin henholdsvis -26,1 og -19,7, med en
+forskjell mellom gruppene på -6,4.
+
+To dobbeltblindede aktivt kontrollerte studier med parallelle grupper (OROS-MPH [Concerta]) er utført
+hos ungdom med ADHD mellom 13 og 17 år. Begge studiene omfattet også en referansearm som fikk
+placebo. Den 8-ukers doseoptimaliseringsstudien (SPD489-405) hadde en 5-ukers
+doseoptimaliseringsperiode og en 3-ukers dosevedlikeholdsperiode. I løpet av
+doseoptimaliseringsperioden ble forsøkspersonene titrert én gang ukentlig basert på behandlingstrengende
+bivirkninger og klinisk respons på en optimal dose på 30, 50 eller 70 mg/døgn (for forsøkspersoner i
+SPD489-gruppen) eller 18, 36, 54 eller 72 mg/døgn (for forsøkspersoner i OROS-MPH-gruppen), som ble
+opprettholdt gjennom en 3-ukers dosevedlikeholdsperiode.
+Gjennomsnittsdosen ved endepunktet var 57,9 mg og 55,8 mg for henholdsvis SPD489 og OROS- MPH.
+Ved denne studien ble verken SPD489 eller OROS-MPH påvist å være statistisk overlegen de andre
+produktene ved uke 8. 6-ukersstudien med fast dose (SPD489-406) hadde en 4-ukers titreringsperiode
+med tvungen dose og en 2-ukers dosevedlikeholdsperiode. Ved høyeste dose av SPD489 (70 mg) og
+OROS-MPH (72 mg) ble SPD489-behandlingen påvist å være overlegen OROS- MPH målt både ved
+primær (endring fra baseline i uke 6 i totalscore for ADHD-RS) og sentral sekundær effektanalyse (ved
+siste studieavtale på CGI-I) (se tabell 2).
+
+Tabell 2: Endring fra baseline i ADHD-RS-IV totalscore og endepunkt på CGI-I (fullt analysesett)
+
+ SPD489-405 Primær ved uke 8 ADHD-RS-IV            Placebo                              SPD489          OROS-MPH
+            Baseline totalscore  N                 89                                   179             184
+                                 Gjennomsnitt (SE) 38,2 (0,73)                          36,6 (0,48)     37,8 (0,45)
+            Endring fra baseline N                 67                                   139             152
+            ved

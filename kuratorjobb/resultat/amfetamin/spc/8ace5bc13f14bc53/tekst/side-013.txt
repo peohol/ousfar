@@ -1,0 +1,57 @@
+Lisdeksamfetamindimesilat viste signifikant bedring i barns oppnåelse med hensyn til akademisk
+yteevne, målt med helserelatert livskvalitetsinstrument, foreldres rapportskjema for barns helse- og
+sykdomsprofil i barneversjon (Child Health and Illness Profile-Child Edition, CHIP-CE:PRF,
+Achievement Domain). Lisdeksamfetamindimesilat viste en signifikant bedring fra baseline
+sammenlignet med placebo (lisdeksamfetamindimesilat 9,4 mot placebo -1,1) med en gjennomsnittlig
+forskjell mellom de to behandlingsgruppene på 10,5 (p < 0,001).
+
+Tabell 1: Resultater fra studie SPD489-325 ved endepunktet1 (fullt analysesett)
+
+                                         Lisdeksamfetamin-     Placebo              Metylfenidat-
+                                         dimesilat                                  hydroklorid
+Endring i ADHD-RS IV totalscore
+Minste kvadraters metode                 -24,3                 -5,7                 -18,7
+Effektstørrelse (mot placebo)            1,804                 N/A                  1,263
+p-verdi (mot placebo)                    <0,001                N/A                  <0,001
+ADHD-RS-IV-respondere
+Pasienter som viste respons2             83,7 % (87/104)       22,6 % (24/106)      68,2 % (73/107)
+Forskjell i respons fra placebo          61,0                  N/A                  45,6
+p-verdi (mot placebo)                    <0,001                N/A                  <0,001
+CGI-I-respondere
+Pasienter som viste bedring3             75,0 % (78/104)       14,2 % (15/106)      58,9 % (63/107)
+Forskjell i bedring fra placebo          60,8                  N/A                  44,7
+ p-verdi (mot placebo)                    <0,001                 N/A                  <0,001
+ Endring i CHIP-CE: PRF
+ Achievement Domain
+ Minste kvadraters metode                 9,4                    -1,1                 6,4
+ Effektstørrelse (mot placebo)            1,280                  N/A                  0,912
+ p-verdi (mot placebo)                    <0,001                 N/A                  <0,001
+1
+  Endepunkt = siste besøk under behandlingen etter baseline, i doseoptimaliserings- eller
+dosevedlikeholdsperioden (besøk 1-7) med en valid verdi
+2
+  Respons er definert som prosentvis reduksjon fra baseline i ADHD-RS-IV totalscore ≥ 30 %
+3
+  Bedring (“svært mye bedret” eller “mye bedret”)
+
+Tilsvarende resultater for ADHD-RS og CGI-I er vist i to placebokontrollerte studier, én med barn
+(n=297) og én med ungdom (n=314), begge gjennomført i USA.
+
+En dobbeltblindet, randomisert, doseoptimaliseringsstudie med aktiv kontroll ble gjennomført hos
+barn og ungdom i alderen 6 til 17 år (n=267) som oppfylte DSM-IV-kriteriene for ADHD. I denne ni
+uker lange studien ble pasienter randomisert (1:1) til en daglig morgendose med
+lisdeksamfetamindimesilat (30, 50 eller 70 mg/døgn) eller atomoksetin (dosert etter pasientens vekt
+opp til 100 mg). I en 4 ukers doseoptimaliseringsperiode ble pasientene titrert til en optimal dose,
+basert på behandlingsoppståtte bivirkninger og klinisk vurdering, ble nådd. Pasienter behandlet med
+lisdeksamfetamindimesilat hadde kortere tid til første respons sammenlignet med pasienter behandlet
+med atomoksetin (median henholdsvis 13,0 mot 21,0 dager, p=0,003), hvor respons var definert som
+en CGI-I score på 1 (svært mye bedret) eller 2 (mye bedret) på hvilket som helst av besøkene i den
+dobbeltblindede behandlingsperioden. På tvers av alle besøkene i den dobbeltblindede
+behandlingsperioden var andelen av respondere i lisdeksamfetamindimesilat-gruppen konsekvent
+høyere enn andelen av respondere i atomoksetin-gruppen. Forskjellen varierte fra 16 til
+24 prosentpoeng. Ved studieendepunktet var endringen fra baseline i ADHD-RS-IV totalscore for
+lisdeksamfetamindimesilat og atomoksetin, beregnet ved minste kvadraters metode,
+henholdsvis -26,1 og -19,7, med en forskjell mellom gruppene på -6,4.
+
+
+                                                  13

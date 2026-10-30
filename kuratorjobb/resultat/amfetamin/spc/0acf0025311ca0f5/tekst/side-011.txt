@@ -1,0 +1,56 @@
+Farmakoterapeutisk gruppe: psykostimulantia, sentralt virkende sympatomimetika,
+ATC-kode: N06B A12
+
+Virkningsmekanisme
+Lisdeksamfetamindimesilat er et farmakologisk inaktivt prodrug. Etter oral administrasjon blir
+lisdeksamfetamin raskt absorbert fra gastrointestinaltraktus og hydrolysert hovedsakelig av røde
+blodceller til deksamfetamin, som er ansvarlig for legemidlets aktivitet.
+
+Amfetamin er et ikke-katekolamin, sympatomimetiske amin med CNS-stimulerende aktivitet. Den
+terapeutiske virkemåten til amfetamin ved ADHD er ikke helt klarlagt, men den antas å skyldes evnen
+til å blokkere reopptak av noradrenalin og dopamin i det presynaptiske nevron og øke frisettingen av
+disse monoaminene i det ekstranevronale rommet. Prodruget lisdeksamfetamin bindes ikke til seter
+ansvarlige for reopptak av noradrenalin og dopamin in vitro.
+
+Klinisk effekt og sikkerhet
+Lisdeksamfetamindimesilats effekt ved behandling av ADHD er vist i tre kontrollerte studier med barn
+i alderen 6 til 12 år, tre kontrollerte studier med ungdom i alderen 13 til 17 år, tre kontrollerte studier
+med barn og ungdom (6 til 17 år) og fire kontrollerte studier med voksne som oppfylte DSM-IV-TR-
+kriteriene for ADHD.
+
+I kliniske studier med barn og voksne hvor lisdeksamfetamin ble tatt én gang daglig om morgenen,
+vedvarte effekten 14 timer etter dosering hos voksne og 13 timer hos barn.
+
+Pediatrisk populasjon
+Totalt336 pasienter i alderen 6-17 år ble evaluert i den avgjørende europeiske fase 3-studien SPD489-
+325. I denne syv ukers, randomiserte, dobbeltblindede, doseoptimaliserte studien med placebo og
+aktiv kontroll viste lisdeksamfetamindimesilat signifikant større effekt enn placebo.
+
+ADHD graderingsskala (RS, rating scale) er et mål for kjernesymptomene ved ADHD. Placebojustert
+gjennomsnittlig reduksjon fra baseline i ADHD-RS-IV totalscore var 18,6 (p < 0,001) hos pasienter
+behandlet med lisdeksamfetamindimesilat. Ved hvert besøk under behandlingen og ved endepunktet
+var prosentandelen av forsøkspersoner som oppfylte forhåndsdefinerte responskriterier (en ≥ 30 %
+reduksjon fra baseline i ADHD-RS-IV totalscore og en CGI-I-verdi på 1 eller 2) signifikant høyere
+(p < 0,001) for lisdeksamfetamindimesilat enn for placebo. Endepunktet i denne studien er definert i
+tabell 2. Resultatene var også signifikant høyere for lisdeksamfetamindimesilat enn for placebo når
+responskriterienes enkeltkomponenter ble evaluert. I tillegg overskred ikke gjennomsnittlig score for
+ADHD-symptomer etter seponering baselinescore før behandling, noe som indikerer at det ikke var
+noen tilbakevirkende effekt.
+
+I tillegg til en reduksjon av symptomer, har kliniske studier vist at lisdeksamfetamindimesilat bedrer
+funksjonelle utfall signifikant. Spesifikt viste 75,0 % av forsøkspersonene som fikk
+lisdeksamfetamindimesilat i studie SPD489-325 bedring (definert som “svært mye bedret” eller “mye
+bedret”) på graderingsskala for bedring av klinisk totalinntrykk (Clinical Global Impression
+Improvement, CGI-I) sammenlignet med 14,2 % for placebo (p < 0,001).
+
+Lisdeksamfetamindimesilat viste signifikant bedring i barns oppnåelse med hensyn til akademisk
+yteevne, målt med helserelatert livskvalitetsinstrument, foreldres rapportskjema for barns helse- og
+sykdomsprofil i barneversjon (Child Health and Illness Profile-Child Edition, CHIP-CE:PRF,
+Achievement Domain). Lisdeksamfetamindimesilat viste en signifikant bedring fra baseline
+sammenlignet med placebo (lisdeksamfetamindimesilat 9,4 mot placebo -1,1) med en gjennomsnittig
+forskjell mellom de to behandlingsgruppene på 10,5 (p < 0,001).
+
+
+
+
+                                                   11

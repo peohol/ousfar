@@ -1,0 +1,61 @@
+                    Sentralt sekundært endepunkt CGI-I
+                    Forsøkspersoner analysert (n)                             106                 210                 216
+                    Bedret (%) [c]                                          53 (50,0)          171 (81,4)          154 (71,3)
+                    Ikke bedret (%) [d]                                     53 (50,0)           39 (18,6)           62 (28,7)
+                    Lisdeksamfetamin mot OROS-MPH[e]                          NA                 0,0188                NA
+                    Aktiv behandling mot placebo [e]                          NA                <0,0001              0,0002
+[a] Fra en blandet effektmodell for gjentatte målinger (MMRM) som inkluderer behandlingsgruppe, nominelt besøk,
+interaksjon mellom behandlingsgruppe og besøk som faktorer, baseline ADHD-RS-IV totalscore som kovariat og justering
+for interaksjon mellom baseline ADHD-RS-IV totalscore og besøk. Modellen er basert på en REML-estimeringsmetode og
+bruker en ustrukturert kovarianstype.
+
+[b] Effektstørrelsen er forskjellen i minste kvadraters metode delt på estimert standardavvik fra ustrukturert kovariansmatriks.
+
+[c] Kategorien “Bedret” omfatter responsen “Svært mye bedret” og “Mye bedret”.
+
+[d] Kategorien “Ikke bedret” omfatter responsen “Minimalt bedret”, “Ingen endring”, “'Minimalt forverret”, “'Mye forverret”
+og “Svært mye forverret”.
+
+[e] Fra en CMH-test stratifisert etter baseline CGI-S.
+
+Merk: N = antall forsøkspersoner i hver behandlingsgruppe, n = antall forsøkspersoner analysert.
+
+I en åpen sikkerhetsstudie over 2 år som ble utført hos barn og ungdom (i alderen 6-17 år) med ADHD
+ble 314 pasienter inkludert. Av disse fullførte 191 pasienter studien.
+
+Vedvarende effekt ble vist i en dobbeltblindet, placebokontrollert, randomisert seponeringsstudie med
+barn og ungdom i alderen 6 til 17 år (n=157) som oppfylte diagnosekriteriene for ADHD (DSM-IV-
+kriteriene). Pasienter ble optimalisert med åpen behandling med lisdeksamfetamindimesilat over en
+lengre periode (minst 26 uker) før inklusjon i den 6 uker lange randomiserte seponeringsperioden.
+Egnede pasienter ble randomisert til å fortsette å få sin optimaliserte dose av
+lisdeksamfetamindimesilat eller bytte til placebo. Pasienter ble observert for tilbakefall
+(behandlingssvikt) i den 6 uker lange dobbeltblindede fasen. Behandlingssvikt ble definert som en
+økning ≥ 50 % (forverring) i ADHD-RS totalscore og en økning ≥ 2 poeng i CGI-S-score
+sammenlignet med score ved inklusjon i den dobbeltblindede, randomiserte seponeringsperioden.
+Behandlingssvikten var signifikant lavere hos forsøkspersoner som fikk lisdeksamfetamindimesilat
+(15,8 %) sammenlignet med placebo (67,5 %) (p <0,001). Hos de fleste forsøkspersonene (70,3 %)
+med behandlingssvikt uavhengig av behandling, ble ADHD-symptomene forverret ved eller før
+besøket i uke 2 etter randomisering.
+
+En studie av sikkerhet og effekt med faste doser ble utført hos barn i alderen 4 til 5 år med ADHD.
+Forsøkspersonene ble randomisert i forholdet 5:5:5:5:6 til lisdeksamfetamindimesilat (5, 10, 20, 30 mg
+dosestyrke) eller placebo (se også pkt. 5.2). Varigheten av den dobbeltblindede evalueringsperioden
+var 6 uker. I denne studien var de vanligste rapporterte behandlingsrelaterte bivirkningene for
+forsøkspersoner som fikk lisdeksamfetamindimesilat, redusert appetitt (13,7 % av forsøkspersonene),
+irritabilitet (9,6 % av forsøkspersonene) og affektlabilitet og hoste (4,8 % av forsøkspersonene for
+hver). I en 52 ukers åpen studie var den vanligste behandlingsrelaterte bivirkningen redusert appetitt
+(15,9 %) (se pkt. 4.8).
+
+Studier av tilbøyelighet for misbruk
+I en studie av tilbøyelighet for misbruk hos mennesker, når ekvivalente orale doser på 100 mg
+lisdeksamfetamindimesilat og 40 mg deksamfetaminsulfat med umiddelbar frisetting ble gitt til
+individer med tidligere legemiddelmisbruk, ga 100 mg lisdeksamfetamindimesilat subjektive
+responser på en skala for “legemiddelbehagende effekter” (Drug Liking Effects) (primært endepunkt)
+som var signifikant lavere sammenlignet med 40 mg deksamfetamin med umiddelbar frisetting. Oral
+administrasjon av 150 mg lisdeksamfetamindimesilat ga imidlertid økninger i positive subjektive
+responser på denne skalaen, som var sammenlignbare med de positive subjektive responsene
+forårsaket av 40 mg oral deksamfetamin med umiddelbar frisetting og 200 mg dietylpropion.
+
+
+
+                                                              15

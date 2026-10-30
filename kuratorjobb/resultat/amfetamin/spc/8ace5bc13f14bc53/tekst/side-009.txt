@@ -1,0 +1,42 @@
+Psykiatriske lidelser   Insomni*            Svært vanlige    Svært vanlige     Svært vanlige
+                        Agitasjon           Mindre vanlige   Mindre vanlige    Vanlige
+                        Angst               Mindre vanlige   Vanlige           Vanlige
+                        Logoré              Mindre vanlige   Mindre vanlige    Mindre vanlige
+                        Redusert libido     Ikke relevant    Ikke rapportert   Vanlige
+                        Depresjon           Mindre vanlige   Vanlige           Mindre vanlige
+                        Tics                Vanlige          Mindre vanlige    Mindre vanlige
+                        Affektlabilitet     Vanlige          Mindre vanlige    Vanlige
+                        Dysfori             Mindre vanlige   Mindre vanlige    Mindre vanlige
+                        Eufori              Ikke kjent       Mindre vanlige    Mindre vanlige
+                        Psykomotorisk       Mindre vanlige   Mindre vanlige    Vanlige
+                        hyperaktivitet
+                        Bruksisme           Mindre vanlige   Mindre vanlige    Vanlige
+                        Dermatillomani      Mindre vanlige   Mindre vanlige    Mindre vanlige
+                        Psykotiske episoder Ikke kjent       Ikke kjent        Ikke kjent
+                        Mani                Mindre vanlige   Mindre vanlige    Mindre vanlige
+                        Hallusinasjon       Mindre vanlige   Mindre vanlige    Ikke kjent
+                        Aggresjon           Vanlige          Mindre vanlige    Ikke kjent
+Nevrologiske            Hodepine            Svært vanlige    Svært vanlige     Svært vanlige
+sykdommer
+                        Svimmelhet          Vanlige          Vanlige           Vanlige
+                        Rastløshet          Mindre vanlige   Vanlige           Vanlige
+                        Tremor              Mindre vanlige   Vanlige           Vanlige
+                        Somnolens           Vanlige          Vanlige           Mindre vanlige
+                        Krampeanfall        Ikke kjent       Ikke kjent        Ikke kjent
+                        Dyskinesi           Mindre vanlige   Mindre vanlige    Mindre vanlige
+                        Dysgeusi            Mindre vanlige   Mindre vanlige    Mindre vanlige
+                        Synkope             Mindre vanlige   Mindre vanlige    Mindre vanlige
+Øyesykdommer            Tåkesyn             Mindre vanlige   Ikke kjent        Mindre vanlige
+                        Mydriasis           Mindre vanlige   Mindre vanlige    Ikke kjent
+Hjertesykdommer         Takykardi           Vanlige          Vanlige           Vanlige
+                        Palpitasjon         Mindre vanlige   Vanlige           Vanlige
+                        QTc-forlengelse     Ikke kjent       Ikke kjent        Ikke kjent
+                        Kardiomyopati       Ikke kjent       Mindre vanlige    Ikke kjent
+Karsykdommer            Raynauds fenomen Mindre vanlige      Ikke kjent        Ikke kjent
+
+                        Epistakse           Mindre vanlige   Mindre vanlige    Mindre vanlige
+
+
+
+
+                                               9

@@ -1,0 +1,66 @@
+System/Organklasse      Bivirkning            Barn                  Ungdom                Voksne
+                                              (6 til 12 år)         (13 til 17 år)
+Forstyrrelser i         Anafylaktisk          Frekvens ikke kjent   Frekvens ikke kjent   Frekvens ikke kjent
+immunsystemet           reaksjon
+                        Overfølsomhet         Mindre vanlige        Mindre vanlige        Mindre vanlige
+Stoffskifte- og         Redusert appetitt     Svært vanlige         Svært vanlige         Svært vanlige
+ernæringsbetingede
+sykdommer
+Psykiatriske lidelser   *Søvnløshet           Svært vanlige         Svært vanlige         Svært vanlige
+                        Uro                   Mindre vanlige        Mindre vanlige        Vanlige
+                        Angst                 Mindre vanlige        Vanlige               Vanlige
+                        Logoré                Mindre vanlige        Mindre vanlige        Mindre vanlige
+                        Redusert libido       Ikke relevant         Ikke rapportert       Vanlige
+                        Depresjon             Mindre vanlige        Vanlige               Mindre vanlige
+                        Tics                  Vanlige               Mindre vanlige        Mindre vanlige
+                        Affektlabilitet       Vanlige               Mindre vanlige        Vanlige
+                        Dysfori               Mindre vanlige        Mindre vanlige        Mindre vanlige
+                        Eufori                Frekvens ikke kjent   Mindre vanlige        Mindre vanlige
+                        Psykomotorisk         Mindre vanlige        Mindre vanlige        Vanlige
+                        hyperaktivitet
+                        Bruksisme             Mindre vanlige        Mindre vanlige        Vanlige
+                        Obsessiv kompulsiv    Mindre vanlige        Mindre vanlige        Mindre vanlige
+                        lidelse (inkludert
+                        trikotillomani og
+                        dermatillomani)
+                        Psykotiske episoder   Frekvens ikke kjent   Frekvens ikke kjent   Frekvens ikke kjent
+                        Mani                  Mindre vanlige        Mindre vanlige        Mindre vanlige
+                        Hallusinasjon         Mindre vanlige        Mindre vanlige        Frekvens ikke kjent
+                        Aggresjon             Vanlige               Mindre vanlige        Frekvens ikke kjent
+                        Forverret Tourettes   Frekvens ikke kjent   Frekvens ikke kjent   Frekvens ikke kjent
+                        syndrom
+Nevrologiske            Hodepine              Svært vanlige         Svært vanlige         Svært vanlige
+sykdommer               Svimmelhet            Vanlige               Vanlige               Vanlige
+                        Rastløshet            Mindre vanlige        Vanlige               Vanlige
+                        Skjelving             Mindre vanlige        Vanlige               Vanlige
+                        Søvnighet             Vanlige               Vanlige               Mindre vanlige
+                        Krampeanfall          Frekvens ikke kjent   Frekvens ikke kjent   Frekvens ikke kjent
+                        Dyskinesi             Mindre vanlige        Mindre vanlige        Mindre vanlige
+                        Dysgeusi              Mindre vanlige        Mindre vanlige        Mindre vanlige
+                        Synkope               Mindre vanlige        Mindre vanlige        Mindre vanlige
+Øyesykdommer            Tåkesyn               Mindre vanlige        Frekvens ikke kjent   Mindre vanlige
+                        Mydriasis             Mindre vanlige        Mindre vanlige        Frekvens ikke kjent
+Hjertesykdommer         Takykardi             Vanlige               Vanlige               Vanlige
+                        Hjertebank            Mindre vanlige        Vanlige               Vanlige
+                        QTc forlengning       Frekvens ikke kjent   Frekvens ikke kjent   Frekvens ikke kjent
+                        Kardiomyopati         Frekvens ikke kjent   Mindre vanlige        Frekvens ikke kjent
+Karsykdommer            Raynauds fenomen      Mindre vanlige        Frekvens ikke kjent   Frekvens ikke kjent
+                        Epistaksis            Mindre vanlige        Mindre vanlige        Mindre vanlige
+Sykdommer i             Dyspné                Mindre vanlige        Vanlige               Vanlige
+respirasjonsorganer,
+thorax og mediastinum
+Gastrointestinale       Munntørrhet           Vanlige               Vanlige               Svært vanlige
+sykdommer               Diaré                 Vanlige               Vanlige               Vanlige
+                        Forstoppelse          Vanlige               Mindre vanlige        Vanlige
+                        Smerter i øvre        Svært vanlige         Vanlige               Vanlige
+                        abdomen
+                        Kvalme                Vanlige               Vanlige               Vanlige
+                        Oppkast               Vanlige               Vanlige               Mindre vanlige
+Sykdommer i lever og    *Eosinofil hepatitt   Frekvens ikke kjent   Frekvens ikke kjent   Frekvens ikke kjent
+galleveier
+Hud- og underhuds-      Hyperhidrose          Mindre vanlige        Mindre vanlige        Vanlige
+sykdommer               Urticaria             Mindre vanlige        Mindre vanlige        Mindre vanlige
+                        Utslett               Vanlige               Mindre vanlige        Mindre vanlige
+                        *Angioødem            Frekvens ikke kjent   Frekvens ikke kjent   Frekvens ikke kjent
+
+                                                   10

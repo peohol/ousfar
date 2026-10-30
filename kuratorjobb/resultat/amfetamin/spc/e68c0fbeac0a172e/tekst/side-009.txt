@@ -1,0 +1,49 @@
+                       Synkope             Mindre vanlige   Mindre vanlige   Mindre vanlige
+Øyesykdommer           Tåkesyn             Mindre vanlige   Frekvens ikke    Mindre vanlige
+                                                            kjent
+                       Mydriasis           Mindre vanlige   Mindre vanlige   Frekvens ikke
+                                                                             kjent
+Hjertesykdommer        Takykardi           Vanlige          Vanlige          Vanlige
+                       Palpitasjon         Mindre vanlige   Vanlige          Vanlige
+                       QTc-forlengelse     Frekvens ikke    Frekvens ikke    Frekvens ikke
+                                           kjent            kjent            kjent
+                       Kardiomyopati       Frekvens ikke    Mindre vanlige   Frekvens ikke
+                                           kjent                             kjent
+Karsykdommer           Raynauds fenomen Mindre vanlige      Frekvens ikke    Frekvens ikke
+                                                            kjent            kjent
+                       Epistakse           Mindre vanlige   Mindre vanlige   Mindre vanlige
+Sykdommer i            Dyspné              Mindre vanlige   Vanlige          Vanlige
+respirasjonsorganer,
+thorax og
+mediastinum
+Gastrointestinale      Munntørrhet         Vanlige          Vanlige          Svært vanlige
+sykdommer              Diaré               Vanlige          Vanlige          Vanlige
+                       Forstoppelse        Vanlige          Mindre vanlige   Vanlige
+                       Øvre                Svært vanlige    Vanlige          Vanlige
+                       abdominalsmerter
+                       Kvalme              Vanlige          Vanlige          Vanlige
+                       Oppkast             Vanlige          Vanlige          Mindre vanlige
+Sykdommer i lever og *Eosinofil hepatitt   Frekvens ikke    Frekvens ikke    Frekvens ikke
+galleveier                                 kjent            kjent            kjent
+Hud- og            Hyperhidrose            Mindre vanlige   Mindre vanlige   Vanlige
+underhudssykdommer
+                   Urtikaria               Mindre vanlige   Mindre vanlige   Mindre vanlige
+                       Utslett             Vanlige          Mindre vanlige   Mindre vanlige
+                       *Angioødem          Frekvens ikke    Frekvens ikke    Frekvens ikke
+                                           kjent            kjent            kjent
+                       *Stevens-Johnsons Frekvens ikke      Frekvens ikke    Frekvens ikke
+                       syndrom           kjent              kjent            kjent
+Lidelser i             Erektil dysfunksjon Ikke aktuelt     Mindre vanlige   Vanlige
+kjønnsorganer og
+brystsykdommer
+Generelle lidelser og Brystsmerter         Mindre vanlige   Mindre vanlige   Vanlige
+reaksjoner på
+                      Irritabilitet        Vanlige          Vanlige          Vanlige
+administrasjonsstedet
+                      Fatigue              Vanlige          Vanlige          Vanlige
+                       Føle seg skjelven   Mindre vanlige   Vanlige          Vanlige
+                       Feber               Vanlige          Vanlige          Mindre vanlige
+
+
+
+                                               9

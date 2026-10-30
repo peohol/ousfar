@@ -1,0 +1,53 @@
+Klinisk effekt og sikkerhet
+
+Lisdeksamfetamindimesilats effekt ved behandling av ADHD er vist i tre kontrollerte studier med barn i
+alderen 6 til 12 år, tre kontrollerte studier med ungdom i alderen 13 til 17 år, tre kontrollerte studier med
+barn og ungdom (6 til 17 år) og fire kontrollerte studier med voksne som oppfylte DSM-IV-TR- kriteriene
+for ADHD.
+
+I kliniske studier med barn og voksne vedvarte effekten av lisdeksamfetamin 13 timer etter dosering hos
+barn og 14 timer hos voksne, når legemidlet ble tatt én gang daglig om morgenen.
+
+Pediatrisk populasjon
+
+Trehundreogtrettiseks (336) pasienter i alderen 6-17 år ble evaluert i den avgjørende europeiske fase 3-
+studien SPD489-325. I denne syv ukers, randomiserte, dobbeltblindede, doseoptimaliserte studien med
+placebo og aktiv kontroll viste lisdeksamfetamin signifikant større effekt enn placebo.
+
+ADHD graderingsskala (RS, rating scale) er et mål for kjernesymptomene ved ADHD. Placebojustert
+gjennomsnittlig reduksjon fra baseline i ADHD-RS-IV totalscore var 18,6 (p < 0,001) hos pasienter
+behandlet med lisdeksamfetamin. Ved hvert besøk under behandlingen og ved endepunktet var
+prosentandelen av forsøkspersoner som oppfylte forhåndsdefinerte responskriterier (en ≥ 30 % reduksjon
+fra baseline i ADHD-RS-IV totalscore og en CGI-I-verdi på 1 eller 2) signifikant høyere (p < 0,001) for
+lisdeksamfetamin enn for placebo. Endepunktet i denne studien er definert i tabell 1. Resultatene var også
+signifikant høyere for lisdeksamfetamin enn for placebo når responskriterienes enkeltkomponenter ble
+evaluert. I tillegg overskred ikke gjennomsnittlig score for ADHD-symptomer etter seponering av
+behandlingen baselinescore før behandling, noe som indikerer at det ikke var noen tilbakevirkende effekt.
+
+I tillegg til en reduksjon av symptomer, har kliniske studier vist at lisdeksamfetamin bedrer funksjonelle
+utfall signifikant. Spesifikt viste 75,0 % av forsøkspersonene som fikk lisdeksamfetamin i studie SPD489-
+325 bedring (definert som “svært mye bedret” eller “mye bedret”) på graderingsskala for bedring av
+klinisk totalinntrykk (Clinical Global Impression- Improvement, CGI-I) sammenlignet med 14,2 % for
+placebo (p < 0,001).
+
+Lisdeksamfetamin viste signifikant bedring i barns oppnåelse med hensyn til akademisk yteevne, målt
+med helserelatert livskvalitetsinstrument, foreldres rapportskjema for barns helse- og sykdomsprofil i
+barneversjon (Child Health and Illness Profile-Child Edition, CHIP-CE:PRF, Achievement Domain).
+Lisdeksamfetamin viste en signifikant bedring fra baseline sammenlignet med placebo (lisdeksamfetamin
+9,4 mot placebo -1,1) med en gjennomsnittlig forskjell mellom de to behandlingsgruppene på 10,5 (p <
+0,001).
+
+Tabell 1: Resultater fra studie SPD489-325 ved endepunktet1 (fullt analysesett)
+                                   Lisdeksamfetamin      Placebo           Metylfenidathydroklori
+                                                                           d
+ Endring i ADHD-RS IV
+ totalscore
+    Minste kvadraters metode       -24,3                 -5,7              -18,7
+    Effektstørrelse (mot placebo) 1,804                  N/A               1,263
+    p-verdi (mot placebo)          < 0,001               N/A               < 0,001
+ ADHD-RS-IV-respondere
+ Pasienter som viste respons2      83,7 % (87/104)       22,6 % (24/106) 68,2 % (73/107)
+ Forskjell i respons fra placebo   61,0                  N/A               45,6
+ p-verdi (mot placebo)             < 0,001               N/A               < 0,001
+ CGI-I-respondere
+    Pasienter som viste bedring3   75,0 % (78/104)       14,2 % (15/106) 58,9 % (63/107)

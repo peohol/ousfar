@@ -1,18 +1,54 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "advarsel",
   "jobb": {
     "gren": "kuratorjobb/manuell-41095718787",
     "foresporsel_commit": "f13e146c91eaea6d3bf6be5313f41f6fbc39b809",
     "foresporsel_sha256": "b190573ace022f2a79b0745572fb2cfcd1c4775d4f72710abe1040944ea10179",
     "kode_commit": "c58509067b9f530f36d25b6953495c5fd634f14f",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/41095718787",
-    "startet_kl": "2026-10-30T17:05:46.296Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-30T17:05:51.090Z",
+    "ferdig_kl": "2026-10-30T17:07:09.853Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "amfetamin"
+    ],
+    "oppgaver": [
+      "funksjonstest",
+      "spc"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 305
+    }
+  ],
+  "stoffer": {
+    "amfetamin": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/amfetamin/funksjonstest.json"
+        },
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/amfetamin/spc.json"
+        }
+      }
+    }
+  }
 }

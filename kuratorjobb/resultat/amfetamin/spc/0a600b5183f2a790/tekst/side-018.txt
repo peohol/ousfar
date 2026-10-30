@@ -1,0 +1,53 @@
+SD= standardavvik, SE=standardfeil.
+
+Voksenstudie 2 var en 10-ukers dobbeltblindet, placebokontrollert studie som ble gjennomført for å
+vurdere endring i eksekutivfunksjonsatferd, nøkkelresultater for livskvalitet og ADHD-symptomer hos
+voksne med ADHD og en klinisk signifikant nedsatt eksekutivfunksjon. Studien omfattet voksne i alderen
+18 til 55 år (n=161) som oppfylte DSM-IV-kriteriene for ADHD som vurderte ved en totalscore på ≥ 65
+på BRIEF-A (Behaviour Rating Inventory of Executive Function – Adult Version) GEC (Global
+Executive Composite) T-score etter pasientrapportering og en score på ≥ 28 ved hjelp av ADHD-RS med
+spørsmål for voksne ved baselinebesøket. Ved uke 10 var gjennomsnittlig pasientrapportert BRIEF-A
+GEC T-score 68,3 for placebogruppen og 57,2 for SPD489-gruppen, noe som representerte endringer i
+minste kvadraters metode fra baseline på henholdsvis -11,1 og -22,3. Effektstørrelsen var 0,74 til fordel
+for SPD489-gruppen. Forskjellen i endring i minste kvadraters metode fra baseline til uke 10 (-11,2) var
+signifikant bedre i lisdeksamfetamindimesylatgruppen sammenlignet med placebo (p < 0,0001).
+Sekundære effektmål på AIM-A (Adult ADHD Impact Module), ADHD-RS med spørsmål for voksne,
+CGI-I og ADHD-indeks T-score på CAARS-O:S (Connors’ Adult ADHD Rating Scale – Observer: Short
+Version) var alle signifikant bedre i lisdeksamfetamindimesylatgruppen sammenlignet med placebo.
+
+Voksenstudie 3 var en randomisert, dobbeltblindet, placebokontrollert multisenteroverkrysningsstudie.
+Denne studien med lisdeksamfetamindimesylat var utformet for å simulere et arbeidsmiljø og omfattet 142
+voksne. Etter en 4-ukers åpen doseoptimaliseringsfase med lisdeksamfetamindimesylat (30, 50 eller 70
+mg/dag om morgenen) ble pasientene randomisert til én av to behandlingssekvenser: 1)
+lisdeksamfetamindimesylat (optimalisert dose) etterfulgt av placebo, hver i én uke, eller 2) placebo
+etterfulgt av lisdeksamfetamindimesylat hver i én uke. Effektvurderinger fant sted i slutten av hver uke,
+ved hjelp av PERMP (Permanent Product Measure of Performanc). PERMP er en ferdighetsjustert
+matteprøve som måler oppmerksomhet ved ADHD. Behandling med lisdeksamfetamindimesylat
+sammenlignet med placebo førte til en statistisk signifikant bedring i oppmerksomheten på alle tidspunkt
+etter dosering, som målt ved gjennomsnittlige PERMP totalscore i løpet av én vurderingsdag samt ved
+hvert målt tidspunkt. PERMP-vurderingen ble administrert før dosering (-0,5 time) og 2, 4, 8, 10, 12 og 14
+timer etter dosering.
+
+Voksenstudie 4 undersøkte effektopprettholdelse. Denne studien var en dobbeltblindet, placebokontrollert,
+randomisert studie utformet med avslutning av behandling hos voksne i alderen 18 til 55 (n=123) som
+oppfylte DSM-IV-kriteriene for ADHD. Ved studiestart måtte pasientene ha hatt dokumentert behandling
+med lisdeksamfetamindimesylat i minst 6 måneder og måtte dokumentere behandlingsrespons som
+definert ved CGI-S ≤ 3 og totalscore på ADHD-RS med spørsmål for voksne < 22. ADHD-RS totalscore
+med spørsmål for voksne et mål på kjernesymptomer på ADHD. Pasienter som opprettholdt
+behandlingsrespons ved uke 3 av den åpne behandlingsfasen (n=116) var kvalifisert til å bli med i den
+dobbeltblindede, randomiserte fasen for avslutning av behandling og fikk sin startdose med
+lisdeksamfetamindimesylat (n=56) eller placebo (n=60). Opprettholdelse av effekt for pasienter behandlet
+med lisdeksamfetamindimesylat ble dokumentert med signifikant lavere andel behandlingssvikt (< 9 %)
+sammenlignet med pasienter som fikk placebo (75 %) i den dobbeltblindede, randomiserte fasen for
+avslutning av behandling. Behandlingssvikt var definert som en ≥ 50 % økning (forverring) i ADHD-RS
+totalscore med spørsmål for voksne og ≥ 2-punkts økning i CGI-S-score sammenlignet med score ved start
+av den dobbeltblindede randomiserte fasen for avslutning av behandlingen.
+
+Studier av misbrukstendens
+
+I en studie av misbrukstendens hos mennesker, når ekvivalente orale doser på 100 mg
+lisdeksamfetamindimesilat og 40 mg deksamfetaminsulfat med umiddelbar frisetting ble gitt til individer
+med tidligere legemiddelmisbruk, ga 100 mg lisdeksamfetamindimesilat subjektive responser på en skala
+for “legemiddelbehagende effekter (Drug Liking Effects)” (primært endepunkt) som var signifikant lavere
+sammenlignet med 40 mg deksamfetamin med umiddelbar frisetting. Oral administrasjon av 150 mg
+lisdeksamfetamindimesilat ga imidlertid økninger i positive subjektive responser på denne skalaen, som

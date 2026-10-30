@@ -1,0 +1,2581 @@
+{
+  "stoff": "amfetamin",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-10-30T04:15:57.810377+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 66,
+    "hentet": 21,
+    "dokumenter": 9,
+    "mangler": [
+      {
+        "merkevare_id": "ID_A7E2BB21-9E12-476B-AB50-80EF44B52809",
+        "varenavn": "Volidax",
+        "navn_form_styrke": "Volidax kaps 50 mg",
+        "produsent": "Teva B.V.",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14474.pdf"
+      },
+      {
+        "merkevare_id": "ID_AE75C15E-77D7-4574-BD79-6810AE95E29E",
+        "varenavn": "Aduvanz",
+        "navn_form_styrke": "Aduvanz kaps 40 mg",
+        "produsent": "Takeda Pharmaceuticals International AG Ireland Branch",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14358.pdf"
+      },
+      {
+        "merkevare_id": "ID_B056203A-31B5-4C6B-AAB2-E8FFAF5B1487",
+        "varenavn": "Elvanse",
+        "navn_form_styrke": "Elvanse kaps 20 mg",
+        "produsent": "Takeda Pharmaceuticals International AG Ireland Branch",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10265.pdf"
+      },
+      {
+        "merkevare_id": "ID_B47F87C5-8A6D-4AD2-88CF-9341E105887E",
+        "varenavn": "Balidax",
+        "navn_form_styrke": "Balidax kaps 70 mg",
+        "produsent": "Teva B.V.",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14481.pdf"
+      },
+      {
+        "merkevare_id": "ID_C632EF6F-DF85-44AB-961E-1D053ABA1B7D",
+        "varenavn": "Balidax",
+        "navn_form_styrke": "Balidax kaps 20 mg",
+        "produsent": "Teva B.V.",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14476.pdf"
+      },
+      {
+        "merkevare_id": "ID_C7589F04-A92F-4AC1-94D7-A78E1F3FF36B",
+        "varenavn": "Elvanse",
+        "navn_form_styrke": "Elvanse kaps 40 mg",
+        "produsent": "Takeda Pharmaceuticals International AG Ireland Branch",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10266.pdf"
+      },
+      {
+        "merkevare_id": "ID_CD9CCDB7-9163-419C-BCBD-42AC905AC680",
+        "varenavn": "Dexhility",
+        "navn_form_styrke": "Dexhility kaps 40 mg",
+        "produsent": "Sandoz A/S",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-14624.pdf"
+      },
+      {
+        "merkevare_id": "ID_D1513164-665D-4762-8220-44F01026D691",
+        "varenavn": "Balidax",
+        "navn_form_styrke": "Balidax kaps 30 mg",
+        "produsent": "Teva B.V.",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14477.pdf"
+      },
+      {
+        "merkevare_id": "ID_D3362E36-B569-4BA5-B569-788E9DD2269F",
+        "varenavn": "Attentin",
+        "navn_form_styrke": "Attentin tab 10 mg",
+        "produsent": "Medice Arzneimittel Pütter GmbH & Co KG",
+        "atc": "N06BA02",
+        "legemiddelform": "Tablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/15-10771.pdf"
+      },
+      {
+        "merkevare_id": "ID_DB3010B0-C319-46F0-96FE-62FD3C86CD8D",
+        "varenavn": "Dexhility",
+        "navn_form_styrke": "Dexhility kaps 50 mg",
+        "produsent": "Sandoz A/S",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-14625.pdf"
+      },
+      {
+        "merkevare_id": "ID_E62B5147-F0E8-4ABD-A5C6-A6E22FFA71CF",
+        "varenavn": "Balidax",
+        "navn_form_styrke": "Balidax kaps 40 mg",
+        "produsent": "Teva B.V.",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14478.pdf"
+      },
+      {
+        "merkevare_id": "ID_E843AD12-F667-4A03-B570-8185580559E8",
+        "varenavn": "Elvanse",
+        "navn_form_styrke": "Elvanse kaps 30 mg",
+        "produsent": "Takeda Pharmaceuticals International AG Ireland Branch",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8762.pdf"
+      },
+      {
+        "merkevare_id": "ID_F09CBA46-7F70-4533-93D5-E40DF6726701",
+        "varenavn": "Dexfarm",
+        "navn_form_styrke": "Dexfarm tab 10 mg",
+        "produsent": "Orifarm Healthcare A/S",
+        "atc": "N06BA02",
+        "legemiddelform": "Tablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15314.pdf"
+      },
+      {
+        "merkevare_id": "ID_F5D241E5-9F0E-4EC2-B3D6-346C7A3C7563",
+        "varenavn": "Aduvanz",
+        "navn_form_styrke": "Aduvanz kaps 20 mg",
+        "produsent": "Takeda Pharmaceuticals International AG Ireland Branch",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14357.pdf"
+      },
+      {
+        "merkevare_id": "ID_F84E9CAB-C30E-471A-A268-3D8FF9E49D00",
+        "varenavn": "Volidax",
+        "navn_form_styrke": "Volidax kaps 70 mg",
+        "produsent": "Teva B.V.",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14475.pdf"
+      },
+      {
+        "merkevare_id": "ID_FCFC2413-47F5-4DF8-A230-C906036F3A6C",
+        "varenavn": "Dexfarm",
+        "navn_form_styrke": "Dexfarm tab 5 mg",
+        "produsent": "Orifarm Healthcare A/S",
+        "atc": "N06BA02",
+        "legemiddelform": "Tablett",
+        "grunn": "utelatt",
+        "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15313.pdf"
+      },
+      {
+        "merkevare_id": "ID_05DB6AAB-A9C3-4BCB-9A5D-C761F287E5FE",
+        "varenavn": "Dextroamphetamine Mixed Salts lannett",
+        "navn_form_styrke": "Dextroamphetamine Mixed Salts lannett tab",
+        "produsent": "Lannett",
+        "atc": "N06BA01",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_0CA86C6D-1402-427F-8833-51F352F13619",
+        "varenavn": "Elvanse",
+        "navn_form_styrke": "Elvanse kaps 30 mg",
+        "produsent": "Takeda",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_18755FFE-8EEF-4552-BE6C-FECE1376C7A0",
+        "varenavn": "Vyvanse",
+        "navn_form_styrke": "Vyvanse kaps 60 mg",
+        "produsent": "Takeda",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_1C2C0927-1A18-4C11-AB55-7239792C7ADB",
+        "varenavn": "Dextroamphetamine Sulfate mallinckrodt",
+        "navn_form_styrke": "Dextroamphetamine Sulfate mallinckrodt depotkaps, hard 10 mg",
+        "produsent": "Mallinckrodt",
+        "atc": "N06BA02",
+        "legemiddelform": "Depotkapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_1D91F52F-759A-4DE3-A980-D54BE30F2258",
+        "varenavn": "Dexamfetamine Sulfate teva",
+        "navn_form_styrke": "Dexamfetamine Sulfate teva tab 5 mg",
+        "produsent": "Teva",
+        "atc": "N06BA02",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_1DE2CD3A-407C-4D14-B483-01585EA8BE05",
+        "varenavn": "Elvanse Adultos",
+        "navn_form_styrke": "Elvanse Adultos kaps 30 mg",
+        "produsent": "Takeda Pharmaceuticals International AG Ireland Branch",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_22FE8320-0277-4B4B-BBAB-818C25609E84",
+        "varenavn": "Vyvanse",
+        "navn_form_styrke": "Vyvanse kaps 50 mg",
+        "produsent": "Takeda",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_26A8130B-BA0B-4ADC-92FC-C83D30809FB3",
+        "varenavn": "Elvanse",
+        "navn_form_styrke": "Elvanse kaps 70 mg",
+        "produsent": "Takeda",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_3A8CD705-0868-47B7-98AC-42C92E228B22",
+        "varenavn": "Act Dextroamphetamine SR",
+        "navn_form_styrke": "Act Dextroamphetamine SR depotkaps, hard 10 mg",
+        "produsent": "Teva",
+        "atc": "N06BA02",
+        "legemiddelform": "Depotkapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_3CF70895-CD9C-46F4-A603-6F3ED4507D2C",
+        "varenavn": "Dextroamphetamine Mixed Salts epic 15 mg",
+        "navn_form_styrke": "Dextroamphetamine Mixed Salts epic 15 mg tab",
+        "produsent": "Epic Pharma",
+        "atc": "N06BA01",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_44504B21-5244-4CFF-8125-AAC18C47D126",
+        "varenavn": "Elvanse Adultos",
+        "navn_form_styrke": "Elvanse Adultos kaps 50 mg",
+        "produsent": "Takeda Pharmaceuticals International AG Ireland Branch",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_4723D3E5-A9D5-47D1-B4A9-0660196E8D51",
+        "varenavn": "Vyvanse",
+        "navn_form_styrke": "Vyvanse kaps 20 mg",
+        "produsent": "Takeda",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_4AF9C0B8-EDAF-4003-A797-9C7398FAD5AD",
+        "varenavn": "Elvanse 2care4",
+        "navn_form_styrke": "Elvanse 2care4 kaps 50 mg",
+        "produsent": "2care4",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_5883FA88-11BB-4BBC-8130-38714D1D9B77",
+        "varenavn": "Dextroamphetamine Mixed Salts epic 30 mg",
+        "navn_form_styrke": "Dextroamphetamine Mixed Salts epic 30 mg tab",
+        "produsent": "Epic Pharma",
+        "atc": "N06BA01",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_5C99EE19-0C9F-445E-9CB4-B6103054605A",
+        "varenavn": "Elvanse",
+        "navn_form_styrke": "Elvanse kaps 50 mg",
+        "produsent": "Takeda",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_5CB7EB0F-BD13-4E07-A2AD-DECFE88F3A0E",
+        "varenavn": "Elvanse 2care4",
+        "navn_form_styrke": "Elvanse 2care4 kaps 30 mg",
+        "produsent": "2care4",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_5CBEE5C8-1D42-4FC4-8F50-74743693220A",
+        "varenavn": "Elvanse Adultos",
+        "navn_form_styrke": "Elvanse Adultos kaps 70 mg",
+        "produsent": "Takeda Pharmaceuticals International AG Ireland Branch",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_765F8707-FDDD-4EB2-BBBC-B0E9E6E4F299",
+        "varenavn": "Vyvanse",
+        "navn_form_styrke": "Vyvanse kaps 40 mg",
+        "produsent": "Takeda",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_8151013A-63D8-42F3-AD2E-04CBAFFDADF6",
+        "varenavn": "Dexamfetamine Sulfate brown + burk",
+        "navn_form_styrke": "Dexamfetamine Sulfate brown + burk tab 5 mg",
+        "produsent": "Brown & Burk",
+        "atc": "N06BA02",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_818EED40-9550-49AC-93F8-7D9DEC2BE59D",
+        "varenavn": "Dextroamphetamine Mixed Salts epic 10 mg",
+        "navn_form_styrke": "Dextroamphetamine Mixed Salts epic 10 mg tab",
+        "produsent": "Epic Pharma",
+        "atc": "N06BA01",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_AFA8C6CF-A1AD-43B2-9AEE-2ACC1BBA7BF7",
+        "varenavn": "Dexamfetamine Sulfate rosemont",
+        "navn_form_styrke": "Dexamfetamine Sulfate rosemont mikst oppl 1 mg/ml",
+        "produsent": "Rosemont Pharmaceuticals",
+        "atc": "N06BA02",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_B7762CB8-40EA-42C1-A016-1D3350CC9D01",
+        "varenavn": "Vyvanse",
+        "navn_form_styrke": "Vyvanse kaps 30 mg",
+        "produsent": "Takeda",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_B83223D2-FDF2-44FA-BBB2-3965FAE804AC",
+        "varenavn": "Dextroamphetamine Sulfate mallinckrodt",
+        "navn_form_styrke": "Dextroamphetamine Sulfate mallinckrodt depotkaps, hard 15 mg",
+        "produsent": "Mallinckrodt",
+        "atc": "N06BA02",
+        "legemiddelform": "Depotkapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_C1E0D659-C4D5-4258-B71D-2198586F07BA",
+        "varenavn": "Dextroamphetamine Mixed Salts epic 20 mg",
+        "navn_form_styrke": "Dextroamphetamine Mixed Salts epic 20 mg tab",
+        "produsent": "Epic Pharma",
+        "atc": "N06BA01",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_D7C32244-78AD-4109-89DE-D512F3E9B1DE",
+        "varenavn": "Dexedrine Spansule",
+        "navn_form_styrke": "Dexedrine Spansule depotkaps, hard 10 mg",
+        "produsent": "Paladin Labs",
+        "atc": "N06BA02",
+        "legemiddelform": "Depotkapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_D885F56E-F2C9-4F0A-B35B-3A64450A289E",
+        "varenavn": "Act Dextroamphetamine SR",
+        "navn_form_styrke": "Act Dextroamphetamine SR depotkaps, hard 15 mg",
+        "produsent": "Teva",
+        "atc": "N06BA02",
+        "legemiddelform": "Depotkapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_DA39EED2-EA28-4BFD-BF86-FBA7CF3234D9",
+        "varenavn": "Vyvanse",
+        "navn_form_styrke": "Vyvanse kaps 70 mg",
+        "produsent": "Takeda",
+        "atc": "N06BA12",
+        "legemiddelform": "Kapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_E0331840-56E4-49E7-A933-8E5B615F4DB5",
+        "varenavn": "Dextroamphetamine Mixed Salts epic 5 mg",
+        "navn_form_styrke": "Dextroamphetamine Mixed Salts epic 5 mg tab",
+        "produsent": "Epic Pharma",
+        "atc": "N06BA01",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_F45C0A4B-6B72-44B1-A35E-C48C5FD5AFBE",
+        "varenavn": "Dexedrine Spansule",
+        "navn_form_styrke": "Dexedrine Spansule depotkaps, hard 15 mg",
+        "produsent": "Paladin Labs",
+        "atc": "N06BA02",
+        "legemiddelform": "Depotkapsel, hard",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 36 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 36,
+        "ikke_dmp": 0,
+        "uten_omtale": 29
+      }
+    },
+    {
+      "id": "maks",
+      "status": "advarsel",
+      "melding": "16 preparatomtaler er utelatt (maks 20); se «utelatt»."
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "45 av 66 preparater i FEST mangler en hentet preparatomtale fra DMP: 29 uten preparatomtale i FEST (f.eks. sentralt godkjente, med omtalen hos EMA); 16 utelatt over grensen. SPC-behovet er ikke dekket; se «dekning.mangler».",
+      "antall": {
+        "preparater": 66,
+        "hentet": 21,
+        "mangler": 45,
+        "dokumenter": 9
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14479.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14479.pdf",
+      "hentet_kl": "2026-10-30T17:06:01.480Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "473229",
+        "content-md5": "82DJPq/bh9DcfygSSKuFnQ==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:30 GMT",
+        "etag": "0x8DF250871750489",
+        "date": "Fri, 30 Oct 2026 17:06:02 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_089D2E3C-4ACF-4ADC-A316-44B7F6199C91",
+          "varenavn": "Balidax",
+          "navn_form_styrke": "Balidax kaps 50 mg",
+          "produsent": "Teva B.V.",
+          "atc": "N06BA12",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14479.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (473229 byte).",
+          "antall": {
+            "bytes": 473229
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "8ace5bc13f14bc53af6896d7f0cd4522fbb87a10bc16ca0ae4a55208b75bddc4"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8763.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8763.pdf",
+      "hentet_kl": "2026-10-30T17:06:09.160Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "424162",
+        "content-md5": "yMKRgFzxRfnnEZR7WEKgUw==",
+        "last-modified": "Thu, 08 Oct 2026 06:49:54 GMT",
+        "etag": "0x8DF25085C3BCCC8",
+        "date": "Fri, 30 Oct 2026 17:06:09 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_0B1CBB3F-0854-4F8B-B0C2-E4E7D052BE5E",
+          "varenavn": "Elvanse",
+          "navn_form_styrke": "Elvanse kaps 50 mg",
+          "produsent": "Takeda Pharmaceuticals International AG Ireland Branch",
+          "atc": "N06BA12",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8763.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (424162 byte).",
+          "antall": {
+            "bytes": 424162
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "3e16fc87a77dff84baa4a2ea2d53c7ffefb3f652b40a48d8628d3e566cf7e7b9"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-14627.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-14627.pdf",
+      "hentet_kl": "2026-10-30T17:06:16.598Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "408701",
+        "content-md5": "1Gr5zOwABIfhDsnj5yf1hQ==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:31 GMT",
+        "etag": "0x8DF250871FCBE41",
+        "date": "Fri, 30 Oct 2026 17:06:17 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_0B69F94D-7E11-4663-8A05-A85AFA233A11",
+          "varenavn": "Dexhility",
+          "navn_form_styrke": "Dexhility kaps 70 mg",
+          "produsent": "Sandoz A/S",
+          "atc": "N06BA12",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-14627.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (408701 byte).",
+          "antall": {
+            "bytes": 408701
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "0a600b5183f2a790e304c497f1f090a6e271a1ff0dd945387fd01f90d5bf7277"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15744.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15744.pdf",
+      "hentet_kl": "2026-10-30T17:06:24.220Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "309194",
+        "content-md5": "bJDk2vmhVHARqg4jlUVbug==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:38 GMT",
+        "etag": "0x8DF25087608313A",
+        "date": "Fri, 30 Oct 2026 17:06:24 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_15F2031D-166C-475A-B026-68FFCCE90B54",
+          "varenavn": "Dexatin",
+          "navn_form_styrke": "Dexatin tab 10 mg",
+          "produsent": "Abboxia AB",
+          "atc": "N06BA02",
+          "legemiddelform": "Tablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15744.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (309194 byte).",
+          "antall": {
+            "bytes": 309194
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "a19a6cece7d7b5bf7924511c4d81d30fd8a92a45347a0986344af9bd213629e1"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8764.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8764.pdf",
+      "hentet_kl": "2026-10-30T17:06:29.588Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "424162",
+        "content-md5": "yMKRgFzxRfnnEZR7WEKgUw==",
+        "last-modified": "Thu, 08 Oct 2026 06:49:54 GMT",
+        "etag": "0x8DF25085C3E647F",
+        "date": "Fri, 30 Oct 2026 17:06:30 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_1A675870-B695-479E-85FF-4A6ABBD69E7F",
+          "varenavn": "Elvanse",
+          "navn_form_styrke": "Elvanse kaps 70 mg",
+          "produsent": "Takeda Pharmaceuticals International AG Ireland Branch",
+          "atc": "N06BA12",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8764.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (424162 byte).",
+          "antall": {
+            "bytes": 424162
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "3e16fc87a77dff84baa4a2ea2d53c7ffefb3f652b40a48d8628d3e566cf7e7b9"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11551.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11551.pdf",
+      "hentet_kl": "2026-10-30T17:06:31.005Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "410682",
+        "content-md5": "xajaQ9m2h2xRalCZagTUeQ==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:09 GMT",
+        "etag": "0x8DF2508650E7BC8",
+        "date": "Fri, 30 Oct 2026 17:06:31 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_1DB458C7-AC30-4073-9C52-EA2150DD9E3A",
+          "varenavn": "Aduvanz",
+          "navn_form_styrke": "Aduvanz kaps 50 mg",
+          "produsent": "2care4 ApS",
+          "atc": "N06BA12",
+          "legemiddelform": "Kapsel, hard"
+        },
+        {
+          "merkevare_id": "ID_6ADD591C-8912-41FF-94B0-78EDF17C7FFE",
+          "varenavn": "Aduvanz",
+          "navn_form_styrke": "Aduvanz kaps 50 mg",
+          "produsent": "Takeda Pharmaceuticals International AG Ireland Branch",
+          "atc": "N06BA12",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11551.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (410682 byte).",
+          "antall": {
+            "bytes": 410682
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "6312a4d7e153c40c566aa8e5d790b53d769fee03cb740b7823e57075b8d0ddcf"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-14623.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-14623.pdf",
+      "hentet_kl": "2026-10-30T17:06:38.166Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "408701",
+        "content-md5": "1Gr5zOwABIfhDsnj5yf1hQ==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:31 GMT",
+        "etag": "0x8DF250871F286A4",
+        "date": "Fri, 30 Oct 2026 17:06:38 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_2F7E77FC-2756-443C-B542-3726FD1C383C",
+          "varenavn": "Dexhility",
+          "navn_form_styrke": "Dexhility kaps 30 mg",
+          "produsent": "Sandoz A/S",
+          "atc": "N06BA12",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-14623.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (408701 byte).",
+          "antall": {
+            "bytes": 408701
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "0a600b5183f2a790e304c497f1f090a6e271a1ff0dd945387fd01f90d5bf7277"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11550.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11550.pdf",
+      "hentet_kl": "2026-10-30T17:06:39.418Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "410682",
+        "content-md5": "xajaQ9m2h2xRalCZagTUeQ==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:09 GMT",
+        "etag": "0x8DF2508650C0B20",
+        "date": "Fri, 30 Oct 2026 17:06:40 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_350317F4-F4C7-40E9-B747-23032433D65F",
+          "varenavn": "Aduvanz",
+          "navn_form_styrke": "Aduvanz kaps 30 mg",
+          "produsent": "2care4 ApS",
+          "atc": "N06BA12",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11550.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (410682 byte).",
+          "antall": {
+            "bytes": 410682
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "6312a4d7e153c40c566aa8e5d790b53d769fee03cb740b7823e57075b8d0ddcf"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15315.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15315.pdf",
+      "hentet_kl": "2026-10-30T17:06:40.741Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "213069",
+        "content-md5": "iGNkQShFCQTTYW0XCEW70Q==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:55 GMT",
+        "etag": "0x8DE53793F8E2ACD",
+        "date": "Fri, 30 Oct 2026 17:06:40 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_3CE91B98-1369-441D-AB89-6B6A853E6066",
+          "varenavn": "Dexfarm",
+          "navn_form_styrke": "Dexfarm tab 20 mg",
+          "produsent": "Orifarm Healthcare A/S",
+          "atc": "N06BA02",
+          "legemiddelform": "Tablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15315.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (213069 byte).",
+          "antall": {
+            "bytes": 213069
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "26d704c785f9b0f945544c5c2eecc866963258845d2db3f761630c27e8c2563f"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15745.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15745.pdf",
+      "hentet_kl": "2026-10-30T17:06:44.518Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "309194",
+        "content-md5": "bJDk2vmhVHARqg4jlUVbug==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:38 GMT",
+        "etag": "0x8DF2508760AC8E9",
+        "date": "Fri, 30 Oct 2026 17:06:44 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_3EC65CE7-1370-4FC4-ADAF-5F740619E7AC",
+          "varenavn": "Dexatin",
+          "navn_form_styrke": "Dexatin tab 20 mg",
+          "produsent": "Abboxia AB",
+          "atc": "N06BA02",
+          "legemiddelform": "Tablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15745.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (309194 byte).",
+          "antall": {
+            "bytes": 309194
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "a19a6cece7d7b5bf7924511c4d81d30fd8a92a45347a0986344af9bd213629e1"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/15-10772.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/15-10772.pdf",
+      "hentet_kl": "2026-10-30T17:06:44.694Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "345639",
+        "content-md5": "Jc2ebeEKxMJz3RVXgmorsw==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:06 GMT",
+        "etag": "0x8DF2508630082E7",
+        "date": "Fri, 30 Oct 2026 17:06:45 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_4CD9B4D4-32A5-4AF1-8346-C893D5A7DEA9",
+          "varenavn": "Attentin",
+          "navn_form_styrke": "Attentin tab 20 mg",
+          "produsent": "Medice Arzneimittel Pütter GmbH & Co KG",
+          "atc": "N06BA02",
+          "legemiddelform": "Tablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/15-10772.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (345639 byte).",
+          "antall": {
+            "bytes": 345639
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "6f8b9bbd1d5631daa0fb83802ec749bee9572bee93f742947ecead804fba9558"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14480.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14480.pdf",
+      "hentet_kl": "2026-10-30T17:06:49.330Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "473229",
+        "content-md5": "82DJPq/bh9DcfygSSKuFnQ==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:30 GMT",
+        "etag": "0x8DF250871777526",
+        "date": "Fri, 30 Oct 2026 17:06:50 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_5B39B00C-C2BF-44D7-84ED-D7889AAA8274",
+          "varenavn": "Balidax",
+          "navn_form_styrke": "Balidax kaps 60 mg",
+          "produsent": "Teva B.V.",
+          "atc": "N06BA12",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14480.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (473229 byte).",
+          "antall": {
+            "bytes": 473229
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "8ace5bc13f14bc53af6896d7f0cd4522fbb87a10bc16ca0ae4a55208b75bddc4"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11552.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11552.pdf",
+      "hentet_kl": "2026-10-30T17:06:50.825Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "410682",
+        "content-md5": "xajaQ9m2h2xRalCZagTUeQ==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:09 GMT",
+        "etag": "0x8DF250865114E41",
+        "date": "Fri, 30 Oct 2026 17:06:51 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_5E9992DE-855E-469C-A310-E8F659687529",
+          "varenavn": "Aduvanz",
+          "navn_form_styrke": "Aduvanz kaps 70 mg",
+          "produsent": "2care4 ApS",
+          "atc": "N06BA12",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11552.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (410682 byte).",
+          "antall": {
+            "bytes": 410682
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "6312a4d7e153c40c566aa8e5d790b53d769fee03cb740b7823e57075b8d0ddcf"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15743.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15743.pdf",
+      "hentet_kl": "2026-10-30T17:06:52.048Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "309194",
+        "content-md5": "bJDk2vmhVHARqg4jlUVbug==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:37 GMT",
+        "etag": "0x8DF25087605C087",
+        "date": "Fri, 30 Oct 2026 17:06:52 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_6DD42139-67A3-4D72-BB42-65D341CF230B",
+          "varenavn": "Dexatin",
+          "navn_form_styrke": "Dexatin tab 5 mg",
+          "produsent": "Abboxia AB",
+          "atc": "N06BA02",
+          "legemiddelform": "Tablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15743.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (309194 byte).",
+          "antall": {
+            "bytes": 309194
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "a19a6cece7d7b5bf7924511c4d81d30fd8a92a45347a0986344af9bd213629e1"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14473.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14473.pdf",
+      "hentet_kl": "2026-10-30T17:06:52.206Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "301689",
+        "content-md5": "n4NfRCjd1x3LrJT6E7wEUg==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:59 GMT",
+        "etag": "0x8DE537941A8588C",
+        "date": "Fri, 30 Oct 2026 17:06:52 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_832A86BA-1E51-4C2E-B161-44D3841A5E95",
+          "varenavn": "Volidax",
+          "navn_form_styrke": "Volidax kaps 30 mg",
+          "produsent": "Teva B.V.",
+          "atc": "N06BA12",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14473.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (301689 byte).",
+          "antall": {
+            "bytes": 301689
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "e68c0fbeac0a172e3123dcb7eff1d5f62fd82aeb8ce26a0b166e7c2d74765276"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-14622.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-14622.pdf",
+      "hentet_kl": "2026-10-30T17:06:57.885Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "408701",
+        "content-md5": "1Gr5zOwABIfhDsnj5yf1hQ==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:31 GMT",
+        "etag": "0x8DF250871EFA0D2",
+        "date": "Fri, 30 Oct 2026 17:07:01 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_83B66E8E-78EC-4BD6-AA95-A3C387D4B6B7",
+          "varenavn": "Dexhility",
+          "navn_form_styrke": "Dexhility kaps 20 mg",
+          "produsent": "Sandoz A/S",
+          "atc": "N06BA12",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-14622.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (408701 byte).",
+          "antall": {
+            "bytes": 408701
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "0a600b5183f2a790e304c497f1f090a6e271a1ff0dd945387fd01f90d5bf7277"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-14626.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-14626.pdf",
+      "hentet_kl": "2026-10-30T17:07:01.613Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "408701",
+        "content-md5": "1Gr5zOwABIfhDsnj5yf1hQ==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:31 GMT",
+        "etag": "0x8DF250871FA4D9D",
+        "date": "Fri, 30 Oct 2026 17:07:02 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_843EF963-51CA-42DC-B37E-7B2DC63684BB",
+          "varenavn": "Dexhility",
+          "navn_form_styrke": "Dexhility kaps 60 mg",
+          "produsent": "Sandoz A/S",
+          "atc": "N06BA12",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-14626.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (408701 byte).",
+          "antall": {
+            "bytes": 408701
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "0a600b5183f2a790e304c497f1f090a6e271a1ff0dd945387fd01f90d5bf7277"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14346.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14346.pdf",
+      "hentet_kl": "2026-10-30T17:07:02.922Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "428715",
+        "content-md5": "/Y9s7uWxS6mlqK+gpPf08A==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:50 GMT",
+        "etag": "0x8DE53793C76D5D8",
+        "date": "Fri, 30 Oct 2026 17:07:03 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_8882BC5B-0815-4328-975C-34BDFB63362A",
+          "varenavn": "Silarosa",
+          "navn_form_styrke": "Silarosa mikst oppl 10 mg/ml",
+          "produsent": "FrostPharma AB",
+          "atc": "N06BA12",
+          "legemiddelform": "Mikstur, oppløsning"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14346.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (428715 byte).",
+          "antall": {
+            "bytes": 428715
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "0acf0025311ca0f5ed613752c2ca7d89159c99a04adc56a7cf6e6bc480013efa"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10267.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10267.pdf",
+      "hentet_kl": "2026-10-30T17:07:08.442Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "424162",
+        "content-md5": "yMKRgFzxRfnnEZR7WEKgUw==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:03 GMT",
+        "etag": "0x8DF250861735ECC",
+        "date": "Fri, 30 Oct 2026 17:07:09 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_94C7A2EF-B24F-4D74-9C0C-B1AEC05D0D04",
+          "varenavn": "Elvanse",
+          "navn_form_styrke": "Elvanse kaps 60 mg",
+          "produsent": "Takeda Pharmaceuticals International AG Ireland Branch",
+          "atc": "N06BA12",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10267.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (424162 byte).",
+          "antall": {
+            "bytes": 424162
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "3e16fc87a77dff84baa4a2ea2d53c7ffefb3f652b40a48d8628d3e566cf7e7b9"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8529.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8529.pdf",
+      "hentet_kl": "2026-10-30T17:07:09.647Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "345639",
+        "content-md5": "Jc2ebeEKxMJz3RVXgmorsw==",
+        "last-modified": "Thu, 08 Oct 2026 06:49:53 GMT",
+        "etag": "0x8DF25085B8F9B0D",
+        "date": "Fri, 30 Oct 2026 17:07:09 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_9A1A0A14-F27E-409A-A477-A2BA02963296",
+          "varenavn": "Attentin",
+          "navn_form_styrke": "Attentin tab 5 mg",
+          "produsent": "Medice Arzneimittel Pütter GmbH & Co KG",
+          "atc": "N06BA02",
+          "legemiddelform": "Tablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8529.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (345639 byte).",
+          "antall": {
+            "bytes": 345639
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "6f8b9bbd1d5631daa0fb83802ec749bee9572bee93f742947ecead804fba9558"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "8ace5bc13f14bc53af6896d7f0cd4522fbb87a10bc16ca0ae4a55208b75bddc4",
+      "bytes": 473229,
+      "mappe": "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53",
+      "pdf": {
+        "sider": 20,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "mutual-recognition-decentralised-referral-pi-template-version-42_en_CLEAN_NO",
+        "laget": "Tue Jun  2 07:44:18 2026 UTC",
+        "endret": "Tue Jun  2 07:44:18 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/original.pdf",
+        "tekst": "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/tekst/side-001.txt",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/tekst/side-002.txt",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/tekst/side-003.txt",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/tekst/side-004.txt",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/tekst/side-005.txt",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/tekst/side-006.txt",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/tekst/side-007.txt",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/tekst/side-008.txt",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/tekst/side-009.txt",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/tekst/side-010.txt",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/tekst/side-011.txt",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/tekst/side-012.txt",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/tekst/side-013.txt",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/tekst/side-014.txt",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/tekst/side-015.txt",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/tekst/side-016.txt",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/tekst/side-017.txt",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/tekst/side-018.txt",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/tekst/side-019.txt",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/tekst/side-020.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/sider/side-001.png",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/sider/side-002.png",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/sider/side-003.png",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/sider/side-004.png",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/sider/side-005.png",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/sider/side-006.png",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/sider/side-007.png",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/sider/side-008.png",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/sider/side-009.png",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/sider/side-010.png",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/sider/side-011.png",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/sider/side-012.png",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/sider/side-013.png",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/sider/side-014.png",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/sider/side-015.png",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/sider/side-016.png",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/sider/side-017.png",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/sider/side-018.png",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/sider/side-019.png",
+          "kuratorjobb/resultat/amfetamin/spc/8ace5bc13f14bc53/sider/side-020.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 8,
+        "til": 11
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (20 sider).",
+          "antall": {
+            "sider": 20
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 52673
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 8."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 20
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "3e16fc87a77dff84baa4a2ea2d53c7ffefb3f652b40a48d8628d3e566cf7e7b9",
+      "bytes": 424162,
+      "mappe": "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84",
+      "pdf": {
+        "sider": 21,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "SUMMARY OF PRODUCT CHARACTERISTICS",
+        "laget": "Fri Sep 18 14:27:39 2026 UTC",
+        "endret": "Fri Sep 18 14:27:39 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/original.pdf",
+        "tekst": "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/tekst/side-001.txt",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/tekst/side-002.txt",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/tekst/side-003.txt",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/tekst/side-004.txt",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/tekst/side-005.txt",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/tekst/side-006.txt",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/tekst/side-007.txt",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/tekst/side-008.txt",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/tekst/side-009.txt",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/tekst/side-010.txt",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/tekst/side-011.txt",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/tekst/side-012.txt",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/tekst/side-013.txt",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/tekst/side-014.txt",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/tekst/side-015.txt",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/tekst/side-016.txt",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/tekst/side-017.txt",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/tekst/side-018.txt",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/tekst/side-019.txt",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/tekst/side-020.txt",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/tekst/side-021.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/sider/side-001.png",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/sider/side-002.png",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/sider/side-003.png",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/sider/side-004.png",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/sider/side-005.png",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/sider/side-006.png",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/sider/side-007.png",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/sider/side-008.png",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/sider/side-009.png",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/sider/side-010.png",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/sider/side-011.png",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/sider/side-012.png",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/sider/side-013.png",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/sider/side-014.png",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/sider/side-015.png",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/sider/side-016.png",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/sider/side-017.png",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/sider/side-018.png",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/sider/side-019.png",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/sider/side-020.png",
+          "kuratorjobb/resultat/amfetamin/spc/3e16fc87a77dff84/sider/side-021.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 9,
+        "til": 12
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (21 sider).",
+          "antall": {
+            "sider": 21
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 53533
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 9."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 21
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "0a600b5183f2a790e304c497f1f090a6e271a1ff0dd945387fd01f90d5bf7277",
+      "bytes": 408701,
+      "mappe": "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790",
+      "pdf": {
+        "sider": 23,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Mon Sep 28 08:02:56 2026 UTC",
+        "endret": "Mon Sep 28 08:02:56 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/original.pdf",
+        "tekst": "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-001.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-002.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-003.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-004.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-005.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-006.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-007.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-008.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-009.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-010.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-011.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-012.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-013.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-014.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-015.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-016.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-017.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-018.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-019.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-020.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-021.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-022.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/tekst/side-023.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-001.png",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-002.png",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-003.png",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-004.png",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-005.png",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-006.png",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-007.png",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-008.png",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-009.png",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-010.png",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-011.png",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-012.png",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-013.png",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-014.png",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-015.png",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-016.png",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-017.png",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-018.png",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-019.png",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-020.png",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-021.png",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-022.png",
+          "kuratorjobb/resultat/amfetamin/spc/0a600b5183f2a790/sider/side-023.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 9,
+        "til": 13
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (23 sider).",
+          "antall": {
+            "sider": 23
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 53366
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 9."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 23
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "a19a6cece7d7b5bf7924511c4d81d30fd8a92a45347a0986344af9bd213629e1",
+      "bytes": 309194,
+      "mappe": "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf",
+      "pdf": {
+        "sider": 16,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "mutual-recognition-decentralised-referral-pi-template-version-42_en_CLEAN_NO",
+        "laget": "Wed Aug 19 07:12:40 2026 UTC",
+        "endret": "Wed Aug 19 07:12:40 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/original.pdf",
+        "tekst": "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/tekst/side-001.txt",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/tekst/side-002.txt",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/tekst/side-003.txt",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/tekst/side-004.txt",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/tekst/side-005.txt",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/tekst/side-006.txt",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/tekst/side-007.txt",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/tekst/side-008.txt",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/tekst/side-009.txt",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/tekst/side-010.txt",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/tekst/side-011.txt",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/tekst/side-012.txt",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/tekst/side-013.txt",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/tekst/side-014.txt",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/tekst/side-015.txt",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/tekst/side-016.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/sider/side-001.png",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/sider/side-002.png",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/sider/side-003.png",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/sider/side-004.png",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/sider/side-005.png",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/sider/side-006.png",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/sider/side-007.png",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/sider/side-008.png",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/sider/side-009.png",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/sider/side-010.png",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/sider/side-011.png",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/sider/side-012.png",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/sider/side-013.png",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/sider/side-014.png",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/sider/side-015.png",
+          "kuratorjobb/resultat/amfetamin/spc/a19a6cece7d7b5bf/sider/side-016.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 10,
+        "til": 13
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (16 sider).",
+          "antall": {
+            "sider": 16
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 35637
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 10."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 16
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "6312a4d7e153c40c566aa8e5d790b53d769fee03cb740b7823e57075b8d0ddcf",
+      "bytes": 410682,
+      "mappe": "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c",
+      "pdf": {
+        "sider": 20,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "SUMMARY OF PRODUCT CHARACTERISTICS",
+        "laget": "Fri Sep 18 14:27:44 2026 UTC",
+        "endret": "Fri Sep 18 14:27:44 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/original.pdf",
+        "tekst": "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/tekst/side-001.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/tekst/side-002.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/tekst/side-003.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/tekst/side-004.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/tekst/side-005.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/tekst/side-006.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/tekst/side-007.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/tekst/side-008.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/tekst/side-009.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/tekst/side-010.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/tekst/side-011.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/tekst/side-012.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/tekst/side-013.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/tekst/side-014.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/tekst/side-015.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/tekst/side-016.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/tekst/side-017.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/tekst/side-018.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/tekst/side-019.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/tekst/side-020.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/sider/side-001.png",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/sider/side-002.png",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/sider/side-003.png",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/sider/side-004.png",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/sider/side-005.png",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/sider/side-006.png",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/sider/side-007.png",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/sider/side-008.png",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/sider/side-009.png",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/sider/side-010.png",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/sider/side-011.png",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/sider/side-012.png",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/sider/side-013.png",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/sider/side-014.png",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/sider/side-015.png",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/sider/side-016.png",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/sider/side-017.png",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/sider/side-018.png",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/sider/side-019.png",
+          "kuratorjobb/resultat/amfetamin/spc/6312a4d7e153c40c/sider/side-020.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 9,
+        "til": 11
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (20 sider).",
+          "antall": {
+            "sider": 20
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 50615
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 9."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 20
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "26d704c785f9b0f945544c5c2eecc866963258845d2db3f761630c27e8c2563f",
+      "bytes": 213069,
+      "mappe": "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9",
+      "pdf": {
+        "sider": 14,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "mutual-recognition-decentralised-referral-pi-template-version-42_en_CLEAN_NO",
+        "laget": "Fri May  3 10:39:45 2024 UTC",
+        "endret": "Fri May  3 10:39:45 2024 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/original.pdf",
+        "tekst": "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/tekst/side-001.txt",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/tekst/side-002.txt",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/tekst/side-003.txt",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/tekst/side-004.txt",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/tekst/side-005.txt",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/tekst/side-006.txt",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/tekst/side-007.txt",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/tekst/side-008.txt",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/tekst/side-009.txt",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/tekst/side-010.txt",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/tekst/side-011.txt",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/tekst/side-012.txt",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/tekst/side-013.txt",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/tekst/side-014.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/sider/side-001.png",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/sider/side-002.png",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/sider/side-003.png",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/sider/side-004.png",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/sider/side-005.png",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/sider/side-006.png",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/sider/side-007.png",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/sider/side-008.png",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/sider/side-009.png",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/sider/side-010.png",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/sider/side-011.png",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/sider/side-012.png",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/sider/side-013.png",
+          "kuratorjobb/resultat/amfetamin/spc/26d704c785f9b0f9/sider/side-014.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 10,
+        "til": 12
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (14 sider).",
+          "antall": {
+            "sider": 14
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 33905
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 10."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 14
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "6f8b9bbd1d5631daa0fb83802ec749bee9572bee93f742947ecead804fba9558",
+      "bytes": 345639,
+      "mappe": "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da",
+      "pdf": {
+        "sider": 16,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Mon Jun  8 07:44:32 2026 UTC",
+        "endret": "Mon Jun  8 07:44:32 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/original.pdf",
+        "tekst": "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/tekst/side-001.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/tekst/side-002.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/tekst/side-003.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/tekst/side-004.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/tekst/side-005.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/tekst/side-006.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/tekst/side-007.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/tekst/side-008.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/tekst/side-009.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/tekst/side-010.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/tekst/side-011.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/tekst/side-012.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/tekst/side-013.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/tekst/side-014.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/tekst/side-015.txt",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/tekst/side-016.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/sider/side-001.png",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/sider/side-002.png",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/sider/side-003.png",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/sider/side-004.png",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/sider/side-005.png",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/sider/side-006.png",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/sider/side-007.png",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/sider/side-008.png",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/sider/side-009.png",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/sider/side-010.png",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/sider/side-011.png",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/sider/side-012.png",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/sider/side-013.png",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/sider/side-014.png",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/sider/side-015.png",
+          "kuratorjobb/resultat/amfetamin/spc/6f8b9bbd1d5631da/sider/side-016.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 11,
+        "til": 13
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (16 sider).",
+          "antall": {
+            "sider": 16
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 35687
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 11."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 16
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "e68c0fbeac0a172e3123dcb7eff1d5f62fd82aeb8ce26a0b166e7c2d74765276",
+      "bytes": 301689,
+      "mappe": "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e",
+      "pdf": {
+        "sider": 19,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "mutual-recognition-decentralised-referral-pi-template-version-42_en_CLEAN_NO",
+        "laget": "Tue Jul 30 07:46:06 2024 UTC",
+        "endret": "Tue Jul 30 07:46:06 2024 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/original.pdf",
+        "tekst": "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/tekst/side-001.txt",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/tekst/side-002.txt",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/tekst/side-003.txt",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/tekst/side-004.txt",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/tekst/side-005.txt",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/tekst/side-006.txt",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/tekst/side-007.txt",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/tekst/side-008.txt",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/tekst/side-009.txt",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/tekst/side-010.txt",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/tekst/side-011.txt",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/tekst/side-012.txt",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/tekst/side-013.txt",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/tekst/side-014.txt",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/tekst/side-015.txt",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/tekst/side-016.txt",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/tekst/side-017.txt",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/tekst/side-018.txt",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/tekst/side-019.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/sider/side-001.png",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/sider/side-002.png",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/sider/side-003.png",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/sider/side-004.png",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/sider/side-005.png",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/sider/side-006.png",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/sider/side-007.png",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/sider/side-008.png",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/sider/side-009.png",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/sider/side-010.png",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/sider/side-011.png",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/sider/side-012.png",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/sider/side-013.png",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/sider/side-014.png",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/sider/side-015.png",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/sider/side-016.png",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/sider/side-017.png",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/sider/side-018.png",
+          "kuratorjobb/resultat/amfetamin/spc/e68c0fbeac0a172e/sider/side-019.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 7,
+        "til": 11
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (19 sider).",
+          "antall": {
+            "sider": 19
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 48276
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 7."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 19
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "0acf0025311ca0f5ed613752c2ca7d89159c99a04adc56a7cf6e6bc480013efa",
+      "bytes": 428715,
+      "mappe": "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5",
+      "pdf": {
+        "sider": 18,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "mutual-recognition-decentralised-referral-pi-template-version-42_en_CLEAN_NO",
+        "laget": "Fri Jan  3 09:07:22 2025 UTC",
+        "endret": "Fri Jan  3 09:07:22 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/original.pdf",
+        "tekst": "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/tekst/side-001.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/tekst/side-002.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/tekst/side-003.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/tekst/side-004.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/tekst/side-005.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/tekst/side-006.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/tekst/side-007.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/tekst/side-008.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/tekst/side-009.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/tekst/side-010.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/tekst/side-011.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/tekst/side-012.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/tekst/side-013.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/tekst/side-014.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/tekst/side-015.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/tekst/side-016.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/tekst/side-017.txt",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/tekst/side-018.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/sider/side-001.png",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/sider/side-002.png",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/sider/side-003.png",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/sider/side-004.png",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/sider/side-005.png",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/sider/side-006.png",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/sider/side-007.png",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/sider/side-008.png",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/sider/side-009.png",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/sider/side-010.png",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/sider/side-011.png",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/sider/side-012.png",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/sider/side-013.png",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/sider/side-014.png",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/sider/side-015.png",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/sider/side-016.png",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/sider/side-017.png",
+          "kuratorjobb/resultat/amfetamin/spc/0acf0025311ca0f5/sider/side-018.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 7,
+        "til": 10
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (18 sider).",
+          "antall": {
+            "sider": 18
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 47430
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 7."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 18
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": [
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14474.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14358.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10265.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14481.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14476.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-10266.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-14624.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14477.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/15-10771.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/22-14625.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14478.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/11-8762.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15314.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14357.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14475.pdf",
+    "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15313.pdf"
+  ]
+}

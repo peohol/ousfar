@@ -1,0 +1,19 @@
+9.    DATO FOR FØRSTE MARKEDSFØRINGSTILLATELSE / SISTE FORNYELSE
+
+30 mg, 50 mg, 70 mg:
+Dato for første markedsføringstillatelse: 06. juli 2017
+Dato for siste fornyelse: 12. januar 2020
+
+20 mg, 40 mg, 60 mg:
+Dato for første markedsføringstillatelse: 26. april 2023
+Dato for siste fornyelse: {DD måned ÅÅÅÅ}
+
+
+10.   OPPDATERINGSDATO
+
+18.09.2026
+
+
+
+
+                                                   20

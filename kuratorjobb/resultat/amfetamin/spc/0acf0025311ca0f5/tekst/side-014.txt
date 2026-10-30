@@ -1,0 +1,64 @@
+kovariat og justering for interaksjon mellom baseline ADHD-RS-IV totalscore og besøk. Modellen er basert på
+en REML-estimeringsmetode og bruker en ustrukturert kovarianstype.
+[b]
+    Effektstørrelsen er forskjellen i minste kvadraters metode delt på estimert standardavvik fra ustrukturert
+kovariansmatriks.
+[c]
+    Kategorien Bedret omfatter responsen Svært mye bedret og Mye bedret.
+[d]
+    Kategorien Ikke bedret omfatter responsen Minimalt bedret, Ingen endring, 'Minimalt forverret, Mye forverret
+og Svært my forverret.
+[e]
+    Fra en CMH-test stratifisert etter baseline CGI-S.
+Merk: N = antall forsøkspersoner i hver behandlingsgruppe, n = antall forsøkspersoner analysert.
+
+I en åpen sikkerhetsstudie over 2 år som ble utført hos barn og ungdom (mellom 6 og 17 år) med
+ADHD deltok 314 pasienter. Av disse fullførte 191 pasienter studien.
+
+I tillegg ble vedvarende effekt vist i en dobbeltblindet, placebokontrollert, randomisert
+seponeringsstudie med barn og ungdom i alderen 6 til 17 år (n=157) som oppfylte diagnosekriteriene
+for ADHD (DSM-IV-kriteriene). Pasienter ble optimalisert med åpen behandling med
+lisdeksamfetamindimesilat over en lengre periode (minst 26 uker) før inklusjon i den 6 uker lange
+randomiserte seponeringsperioden. Egnede pasienter ble randomisert til å fortsette å få sin
+optimaliserte dose av lisdeksamfetamindimesilat eller bytte til placebo. Pasienter ble observert for
+tilbakefall (behandlingssvikt) i den 6 uker lange dobbeltblindede fasen. Behandlingssvikt ble definert
+som en økning ≥ 50 % (forverring) i ADHD-RS totalscore og en økning ≥ 2 poeng i CGI-S-score
+sammenlignet med score ved inklusjon i den dobbeltblindede, randomiserte seponeringsperioden.
+Behandlingssvikten var signifikant lavere (p < 0,001) hos forsøkspersoner som fikk
+lisdeksamfetamindimesilat (15,8 %) sammenlignet med placebo (67,5 %). Hos de fleste
+forsøkspersonene (70,3 %) med behandlingssvikt uavhengig av behandling, ble ADHD-symptomene
+forverret i eller før besøket i uke 2 etter randomisering.
+
+En studie av sikkerhet og effekt med faste doser ble utført på barn i alderen 4 til 5 år med ADHD.
+Forsøkspersonene ble randomisert i forholdet 5:5:5:5:6 til lisdeksamfetamindimesilat (5, 10, 20, 30 mg
+dosestyrke) eller placebo (se også pkt. 5.2). Varigheten av den dobbeltblindede evalueringsperioden
+var 6 uker. I denne studien var de vanligste rapporterte behandlingstrengende bivirkningene for
+forsøkspersoner som fikk Elvanse, redusert appetitt (13,7 % av forsøkspersonene), irritabilitet (9,6 %
+av forsøkspersonene) og affektlabilitet og hoste (4,8 % av forsøkspersonene hver). I en 52 ukers åpen
+studie var den vanligste behandlingstrengende bivirkningen redusert appetitt (15,9 %) (se pkt. 4.8).
+
+Voksen populasjon
+Effekten til lisdeksamfetamindimesilat ved behandling av ADHD ble fastslått i en dobbeltblindet,
+randomisert, placebokontrollert studie med parallelle grupper som ble gjennomført hos 420 voksne
+pasienter i alderen 18 til 55 år som oppfylte DSM-IV-kriteriene for ADHD. Signifikant bedring av
+ADHD-symptomer, basert på utprøvers vurdering på ADHD-RS totalscore for spørsmål for voksne,
+ble observert for alle doser av lisdeksamfetamindimesilat sammenlignet med placebo. Behandling med
+lisdeksamfetamindimesilat reduserte graden av funksjonshemming signifikant målt som bedring på
+CGI-I graderingsskala sammenlignet med placebo.
+
+I tillegg ble effektopprettholdelse vist i en dobbeltblindet, placebokontrollert, randomisert studie
+utformet med avslutning av behandling hos voksne (n=123) som oppfylte DSM-IV-kriteriene for
+ADHD. Ved studiestart måtte pasientene ha hatt dokumentert behandling med
+lisdeksamfetamindimesilat i minst 6 måneder. Opprettholdelse av effekt for pasienter behandlet med
+lisdeksamfetamindimesilat ble dokumentert med signifikant lavere andel behandlingssvikt (< 8,9 %)
+sammenlignet med pasienter som fikk placebo (75 %) i den dobbeltblindede, randomiserte fasen for
+avslutning av behandling. Behandlingssvikt var definert som en ≥ 50 % økning (forverring) i ADHD-
+RS-IV totalscore og ≥ 2-punkts økning i CGI-S-score sammenlignet med CGI-S-score ved
+randomisering.
+
+Studier av misbrukstendens
+I en studie av misbrukstendens hos mennesker, når ekvivalente orale doser på 100 mg
+lisdeksamfetamindimesilat og 40 mg deksamfetaminsulfat med umiddelbar frisetting ble gitt til
+individer med tidligere legemiddelmisbruk, ga 100 mg lisdeksamfetamindimesilat subjektive
+
+                                                      14

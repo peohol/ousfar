@@ -1,0 +1,61 @@
+fastsatte doser hvor de fikk sluttdoser på 30, 50 eller 70 mg lisdeksamfetamindimesylat eller placebo.
+Alle forsøkspersoner som fikk lisdeksamfetamindimesylat ble satt på 30 mg i den første
+behandlingsuken.
+Forsøkspersoner som ble plassert i 50 og 70 mg dosegrupper ble titrert med 20 mg per uke til de
+oppnådde sin tildelte dose. Signifikant bedring av ADHD-symptomer, basert på utprøvers vurdering
+på ADHD graderingsskala (ADHD-RS) med spørsmål for voksne (ADHD-Rating Scale with Adult
+Prompts total score), ble observert ved endepunkt ved alle doser av lisdeksamfetamindimesilat
+sammenlignet med placebo (se tabell 1). Behandling med lisdeksamfetamindimesilat reduserte graden
+av funksjonssvekkelse signifikant målt som bedring på CGI-I graderingsskala (Clinical Global
+Impression-Improvement) sammenlignet med placebo.
+
+Tabell 3: Endring i totalscore i ADHD-RS med spørsmål for voksne fra baseline til endepunkt1
+(fullt analysesett)
+
+                                            Placebo            30 mg                 50 mg                 70 mg
+ Baseline              N                    62                 115                   117                   120
+ totalscore            Gjennomsnitt         39,4 (6,42)        40,5 (6,21)           40,8 (7,30)           41,0 (6,02)
+                       (SD)
+ Endring fra           N                    62                 115                   117                   120
+ baseline ved          Minste               -8,2 (1,43)        -16,2 (1,06)          -17,4 (1,05)          -18,6 (1,03)
+ endepunkt             kvadraters
+                       metode (SE)
+ Placebojustert        Minste               Ikke               -8,04                 -9,16                 -10,41
+ forskjell             kvadraters           relevant
+                       metode
+                       (95 % KI)                               (-12,14, -3,95)       (-13,25, -5,08)       (-14,49, -6,33)
+                       p-verdi                                 < 0,0001              < 0,0001              < 0,0001
+1 Endepunkt er siste behandlingsuke etter randomisering der en gyldig ADHD-RS-IV totalscore oppnås.
+
+Merk: Dunnetts test ble brukt til konstruksjon av konfidensintervaller og p-verdier; p-verdier er de justerte p-verdiene og bør
+sammenlignes med en kritisk alfa på 0,05.
+SD= standardavvik, SE=standardfeil.
+
+Voksenstudie 2 var en 10-ukers dobbeltblindet, placebokontrollert studie som ble gjennomført for å
+vurdere endring i eksekutivfunksjonsatferd, nøkkelresultater for livskvalitet og ADHD-symptomer hos
+voksne med ADHD og en klinisk signifikant nedsatt eksekutivfunksjon. Studien omfattet voksne i
+alderen 18 til 55 år (n=161) som oppfylte DSM-IV-kriteriene for ADHD som vurdert ved en totalscore
+på ≥ 65 på BRIEF-A (Behaviour Rating Inventory of Executive Function – Adult Version) GEC
+(Global Executive Composite) T-score etter pasientrapportering og en score på ≥ 28 ved hjelp av
+ADHD-RS med spørsmål for voksne ved baselinebesøket. Ved uke 10 var gjennomsnittlig
+pasientrapportert BRIEF-A GEC T-score 68,3 for placebogruppen og 57,2 for SPD489-gruppen, noe
+som representerte endringer fra baseline beregnet ved minste kvadraters metode på henholdsvis -11,1
+og -22,3. Effektstørrelsen var 0,74 i favør av SPD489-gruppen. Forskjellen beregnet ved minste
+kvadraters metode fra baseline til uke 10 (-11,2) var signifikant bedre i
+lisdeksamfetamindimesylatgruppen sammenlignet med placebo (p < 0,0001). Sekundære effektmål på
+AIM-A (Adult ADHD Impact Module), ADHD-RS med spørsmål for voksne, CGI-I og ADHD-
+indeks T-score på CAARS-O:S (Conners’ Adult ADHD Rating Scale – Observer: Short Version) var
+alle signifikant bedre i lisdeksamfetamindimesylatgruppen sammenlignet med placebo.
+
+Voksenstudie 3 var en randomisert, dobbeltblindet, placebokontrollert multisenterstudie med
+overkrysning. Denne studien med lisdeksamfetamindimesylat var utformet for å simulere et
+arbeidsmiljø og omfattet 142 voksne. Etter en 4-ukers åpen doseoptimaliseringsfase med
+lisdeksamfetamindimesylat (30, 50 eller 70 mg/dag om morgenen) ble forsøkspersonene randomisert
+til én av to behandlingssekvenser: 1) lisdeksamfetamindimesylat (optimalisert dose) etterfulgt av
+placebo, hver i én uke, eller 2) placebo etterfulgt av lisdeksamfetamindimesylat, hver i én uke.
+Effektvurderinger fant sted i slutten av hver uke, ved hjelp av PERMP (Permanent Product Measure of
+Performance). PERMP er en ferdighetsjustert matematikkprøve som måler oppmerksomhet ved
+ADHD. Behandling med lisdeksamfetamindimesylat sammenlignet med placebo førte til en statistisk
+signifikant bedring i oppmerksomheten på alle tidspunkt etter dosering, målt ved gjennomsnittlige
+
+                                                              16

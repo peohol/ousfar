@@ -1,0 +1,63 @@
+Informasjon om frekvensen av disse effektene er hentet fra publiserte kliniske studier og metaanalyser.
+
+Vurderingen av bivirkninger er basert på følgende kategorier:
+Svært vanlige (≥ 1/10)
+Vanlige (≥ 1/100 til < 1/10)
+Mindre vanlige (≥ 1/1000 til < 1/100)
+Sjeldne (≥ 1/10 000 til < 1/1000)
+Svært sjeldne (< 1/10 000)
+Ikke kjent (kan ikke anslås utifra tilgjengelige data)
+
+
+ Organklasse     Svært         Vanlige          Sjeldne         Svært sjeldne           Ikke kjent (kan ikke
+                 vanlige       (≥ 1/100, <      (≥ 1/10 000,    (< 1/10 000)            anslås utifra
+                 (≥1/10)       1/10)            < 1/1 000)                              tilgjengelige data)
+
+ Blod og                                                        Anemi, leukopeni,
+ lymfesystem                                                    trombocytopeni,
+                                                                trombocytopenisk
+                                                                purpura
+ Hjerte                        Arytmi,          Angina          Hjertestans             Kardiomyopati,
+                               palpitasjoner,   pectoris                                myokardinfarkt
+                               takykardi
+ Medfødte,                                                      Tourettes syndrome
+ familiære och
+ genetiske
+ forstyrrelser
+ Øye                                            Vanskelighet
+                                                er med
+                                                tilpasning av
+                                                synet, uklart
+                                                syn,
+                                                mydriasis
+ Mage-                         Abdominalsm                                              Iskemisk kolitt, diaré
+ tarmkanalen                   erter og -
+                               kramper,
+                               kvalme,
+                               oppkast, tørr
+                               munn
+                               Disse
+                               virkningene
+                               forekommer
+                               vanligvis i
+                               begynnelsen
+                               av
+                               behandlingen,
+                               og kan lindres
+                               ved samtidig
+                               matinntak.
+ Generelle                                                                              Smerter i brystet,
+ symptomer                                                                              hyperpyreksi, fatigue,
+ og reaksjoner                                                                          plutselig død (se pkt.
+ på                                                                                     4.4)
+ administrasjo
+ nsstedet
+ Lever og                                                       Unormal
+ galleveier                                                     leverfunksjon
+                                                                inkludert økte nivåer
+                                                                av hepatiske
+                                                                enzymer og hepatisk
+                                                                koma
+
+
+                                                  11

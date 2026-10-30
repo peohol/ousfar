@@ -1,0 +1,59 @@
+Vekt-/dosenormalisert AUC og Cmax for deksamfetamin var henholdsvis 22 % og 12 % lavere hos
+voksne kvinner enn hos menn på dag 7 etter en lisdeksamfetamindose på 70 mg/døgn i 7 dager.
+Vekt-/dosenormaliserte AUC- og Cmax-verdier var de samme hos jenter og gutter etter enkeltdoser på
+30-70 mg.
+
+Det er ingen akkumulering av deksamfetamin ved steady state hos friske voksne, og ingen
+akkumulering av lisdeksamfetamindimesilat etter dosering én gang daglig i 7 påfølgende dager.
+
+Biotransformasjon
+
+Lisdeksamfetamindimesilat omdannes til deksamfetamin og l-lysin ved metabolisme i blod,
+hovedsakelig som følge av hydrolytisk aktivitet i røde blodceller. Røde blodceller har høy kapasitet for
+metabolisme av lisdeksamfetamin, da in vitro-data har vist at betydelig hydrolyse finner sted selv ved
+lave hematokrittnivåer. Lisdeksamfetamin metaboliseres ikke av cytokrom P450-enzymer.
+
+Amfetamin oksideres på posisjon 4 i benzenringen slik at 4-hydroksyamfetamin dannes, eller på
+sidekjedens α- eller β-karboner slik at henholdsvis alfahydroksyamfetamin eller norefedrin dannes.
+Både norefedrin og 4-hydroksyamfetamin er aktive og oksideres deretter til 4-hydroksynorefedrin.
+Alfahydroksyamfetamin deamineres til fenylaceton som til slutt danner benzosyre og dets glukuronid
+og glysinkonjugatet hippursyre. Selv om enzymene involvert i amfetaminmetabolisme ikke er klart
+definert, er det kjent at CYP2D6 er involvert ved dannelse av 4-hydroksamfetamin.
+
+Eliminasjon
+
+Etter peroral administrasjon av en 70 mg dose radioaktivmerket lisdeksamfetamindimesilat til 6 friske
+forsøkspersoner, ble ca. 96 % av den perorale dosens radioaktivitet gjenfunnet i urin og kun 0,3 % ble
+gjenfunnet i feces i løpet av 120 timer. Av radioaktiviteten som ble gjenfunnet i urin var 42 % av
+dosen relatert til amfetamin, 25 % til hippursyre og 2 % til intakt lisdeksamfetamin.
+Plasmakonsentrasjon av uforandret lisdeksamfetamin er lav og midlertidig, og vanligvis ikke
+kvantifiserbar 8 timer etter administrasjon. Lisdeksamfetamins eliminasjonshalveringstid i plasma var
+vanligvis i gjennomsnitt kortere enn én time i studier med lisdeksamfetamindimesilat hos friske
+forsøkspersoner. Deksamfetamins halveringstid er 11 timer.
+
+Spesielle populasjoner
+
+Farmakokinetikken til deksamfetamin, evaluert ved clearance, er lik hos barn (i alderen 6 til 12 år) og
+ungdom (i alderen 13 til 17 år) med ADHD og friske voksne forsøkspersoner etter korrigering for
+kroppsvekt.
+
+Systemisk deksamfetamineksponering er lik hos menn og kvinner som får samme mg/kg dose.
+
+Formelle farmakokinetiske studier av etnisitet er ikke utført. Det er ingen holdepunkter for at etnisitet
+påvirker farmakokinetikken til deksamfetamin.
+
+I en farmakokinetisk studie med 40 forsøkspersoner (8 forsøkspersoner i hver av fem
+nyrefunksjonsgrupper: normal, lett nedsatt, moderat nedsatt, alvorlig nedsatt og terminal nyresykdom)
+var deksamfetaminclearance redusert fra 0,7 l/time/kg hos normale forsøkspersoner til 0,4 l/time/kg
+hos forsøkspersoner med alvorlig nedsatt nyrefunksjon (GFR 15 til < 30 ml/minutt/1,73 m2 eller
+CrCl < 30 ml/minutt).
+
+Gjennomsnittlig steady state-eksponering overfor deksamfetamin var ca. 44 % høyere hos pediatriske
+pasienter i alderen 4 til 5 år sammenlignet med pasienter i alderen 6 til 11 år i pediatriske populasjoner
+som fikk samme dose (30 mg/dag), basert på en populasjonsfarmakokinetisk analyse.
+
+I en studie med 47 forsøkspersoner i alderen 55 år eller eldre var deksamfetaminclearance ca.
+0,7 l/time/kg hos forsøkspersoner i alderen 55 til 74 år og 0,55 l/time/kg hos forsøkspersoner i alderen
+
+
+                                                   17

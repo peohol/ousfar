@@ -1,0 +1,58 @@
+Venlafaksin med forlenget frisetting: I en legemiddelinteraksjonsstudie medførte bruk av 225 mg
+venlafaksin med forlenget frisetting, et CYP2D6-substrat, i kombinasjon med 70 mg
+lisdeksamfetamindimesilat en 9 % reduksjon i Cmax og 17 % reduksjon i AUC for den primære aktive
+metabolitten o-desmetylvenlafaksin og en 10 % økning i Cmax og 13 % økning i AUC for venlafaksin.
+Deksamfetamin kan være en svak CYP2D6-hemmer. Lisdeksamfetamin har ingen effekt på AUC og
+Cmax for venlafaksin og o-desmetylvenlafaksin samlet. Disse små endringene forventes ikke å være av
+klinisk betydning. I denne studien ble det ikke observert noen effekt på deksamfetamineksponeringen
+etter samtidig administrering av venlafaksin med forlenget frisetting og lisdeksamfetamindimesilat.
+
+Legemidler og tilstander som endrer pH i urin og påvirker amfetamins urinutskillelse og halveringstid
+Askorbinsyre og andre legemidler og tilstander (tiaziddiuretika, kosthold med høyt innhold av
+animalske proteiner, diabetes, respiratorisk acidose) som øker surhetsgraden i urinen, øker
+urinutskillelsen og reduserer halveringstiden til amfetamin. Natriumbikarbonat og andre legemidler og
+tilstander (kosthold med høyt innhold av frukt og grønnsaker, urinveisinfeksjoner og oppkast) som
+alkaliserer urinen, reduserer urinutskillelsen og øker halveringstiden til amfetamin.
+
+Monoaminoksidasehemmere
+Amfetamin skal ikke gis under eller de første 14 dagene etter administrasjon av monoaminoksidase
+(MAO)-hemmere, fordi det kan øke frisettingen av noradrenalin og andre monoaminer. Dette kan
+medføre sterk hodepine og andre tegn på hypertensiv krise. Det kan oppstå forskjellige toksiske,
+nevrologiske effekter og malign hyperpyreksi, noen ganger med fatalt utfall (se pkt. 4.3).
+
+Serotonerge legemidler
+Serotonergt syndrom har oppstått i sjeldne tilfeller i forbindelse med bruk av amfetaminer som
+lisdeksamfetamindimesilat når de gis sammen med serotonerge legemidler, inkludert selektive
+serotoninreopptakshemmere (SSRI-er) og serotonin- og noradrenalinreopptakshemmere (SNRI-er).
+Det er også rapportert i forbindelse med overdose av amfetaminer, inkludert
+lisdeksamfetamindimesilat (se pkt. 4.9).
+
+Legemidler med effekt som kan reduseres av amfetaminer
+Antihypertensiva: Amfetaminer kan redusere effekten av guanetidin eller andre antihypertensiva.
+
+Legemidler med effekt som kan forsterkes av amfetaminer
+Amfetaminer forsterker den analgetiske effekten av narkotiske analgetika.
+
+Legemidler som kan redusere amfetaminers effekt
+Klorpromazin: Klorpromazin blokkerer dopamin- og noradrenalinreseptorer, og hemmer dermed
+amfetaminers sentralstimulerende effekter.
+
+Haloperidol: Haloperidol blokkerer dopaminreseptorer, og hemmer dermed amfetaminers
+sentralstimulerende effekter.
+
+Litiumkarbonat: Amfetaminers anorektiske og stimulerende effekter kan hemmes av litiumkarbonat.
+
+Bruk sammen med alkohol
+Det foreligger begrensede data vedrørende en mulig interaksjon med alkohol.
+
+Interaksjoner med legemiddel/laboratorieprøver
+Amfetaminer kan forårsake en signifikant økning i plasmanivå av kortikosteroider. Denne økningen er
+størst om kvelden. Amfetamin kan interferere med steroidbestemmelser i urin.
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet
+Deksamfetamin, lisdeksamfetamins aktive metabolitt, passerer placenta. Data fra en kohortstudie med
+totalt ca. 5570 graviditeter eksponert for amfetamin i første trimester antyder ingen økt risiko for
+
+                                                 7

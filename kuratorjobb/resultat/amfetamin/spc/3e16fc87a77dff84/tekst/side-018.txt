@@ -1,0 +1,58 @@
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+
+Etter oral administrasjon absorberes lisdeksamfetamindimesilat raskt fra gastrointestinaltraktus hos
+friske voksne og barn (6 til 12 år) med ADHD, og dette antas å medieres av transportproteinet PEPT1
+som har høy kapasitet.
+
+Mat påvirker ikke observert AUC og Cmax for deksamfetamin hos friske forsøkspersoner etter orale
+enkeltdoser av 70 mg lisdeksamfetamindimesilat, men det forlenger tmax med ca. 1 time (fra 3,8 timer i
+fastende tilstand til 4,7 timer etter et fettrikt måltid). Etter 8 timers faste var AUC for deksamfetamin
+ekvivalent etter oral administrasjon av lisdeksamfetamindimesilat som oppløsning og intakte kapsler.
+
+Distribusjon
+
+Hos 18 barn (6 til 12 år) med ADHD var tmax for deksamfetamin ca. 3,5 timer etter orale enkeltdoser
+av lisdeksamfetamindimesilat på 30 mg, 50 mg eller 70 mg gitt etter 8 timers faste over natten. tmax for
+lisdeksamfetamindimesilat var ca. 1 time. Det ble fastslått en lineær farmakokinetikk for
+deksamfetamin i doseområdet 30 mg til 70 mg etter orale enkeltdoser av lisdeksamfetamindimesilat
+hos barn i alderen 6 til 12 år.
+
+Vekt-/dosenormalisert AUC og Cmax for deksamfetamin var henholdsvis 22 % og 12 % lavere hos
+voksne kvinner enn hos menn på dag 7 etter en lisdeksamfetamindose på 70 mg/døgn i 7 dager. Vekt-
+/dosenormaliserte AUC- og Cmax-verdier var de samme hos jenter og gutter etter enkeltdoser på
+30-70 mg.
+
+Det er ingen akkumulering av deksamfetamin ved steady state hos friske voksne, og ingen
+akkumulering av lisdeksamfetamindimesilat etter dosering én gang daglig i 7 påfølgende dager.
+
+Biotransformasjon
+
+Lisdeksamfetamindimesilat omdannes til deksamfetamin og l-lysin ved metabolisme i blod,
+hovedsakelig som følge av hydrolytisk aktivitet i røde blodceller. Røde blodceller har høy kapasitet for
+metabolisme av lisdeksamfetamin, da in vitro-data har vist at betydelig hydrolyse finner sted selv ved
+lave hematokrittnivåer. Lisdeksamfetamin metaboliseres ikke av cytokrom P450-enzymer.
+
+Amfetamin oksideres i posisjon 4 i benzenringen slik at 4-hydroksyamfetamin dannes, eller i
+sidekjedens α- eller β-karboner slik at henholdsvis alfahydroksyamfetamin eller noradrenalin dannes.
+Både noradrenalin og 4-hydroksyamfetamin er aktive og oksideres deretter til 4-hydroksynoradrenalin.
+Alfahydroksyamfetamin deamineres til fenylaceton som til slutt danner benzosyre og dets glukuronid
+og glysinkonjugatet hippursyre. Selv om enzymene involvert i amfetaminmetabolisme ikke er klart
+definert, er det kjent at CYP2D6 er involvert ved dannelse av 4-hydroksamfetamin.
+
+Eliminasjon
+
+Etter oral administrasjon av en 70 mg dose radioaktivmerket lisdeksamfetamindimesilat til 6 friske
+forsøkspersoner, ble ca. 96 % av den orale dosens radioaktivitet gjenfunnet i urin og kun 0,3 % ble
+gjenfunnet i feces i løpet av 120 timer. Av radioaktiviteten som ble gjenfunnet i urin var 42 % av
+dosen relatert til amfetamin, 25 % til hippursyre og 2 % til intakt lisdeksamfetamin.
+Plasmakonsentrasjon av uforandret lisdeksamfetamin er lav og midlertidig, og vanligvis ikke
+kvantifiserbar 8 timer etter administrasjon. Lisdeksamfetamins eliminasjonshalveringstid i plasma var
+vanligvis i gjennomsnitt kortere enn én time i studier med lisdeksamfetamindimesilat hos friske
+forsøkspersoner. Deksamfetamins halveringstid er 11 timer.
+
+
+
+
+                                                   18

@@ -1,0 +1,59 @@
+Krampeanfall
+
+Det foreligger visse kliniske holdepunkter for at stimulerende legemidler kan senke krampeterskelen
+hos pasienter med en anamnese med krampeanfall, hos pasienter med tidligere EEG-avvik uten anfall
+og i svært sjeldne tilfeller hos pasienter uten tidligere krampeanfall eller EEG-holdepunkter for
+krampeanfall. Ved utvikling eller forverring av krampeanfall bør legemidlet seponeres.
+
+Synsforstyrrelser
+
+Akkommodasjonsvansker og tåkesyn er rapportert ved behandling med stimulerende legemidler.
+
+Forskrivning og utlevering
+
+For å begrense risikoen for at pasienten overdoserer bør minste mulige pakningsstørrelse av
+lisdeksamfetamindimesilat forskrives eller utleveres.
+
+Bruk sammen med andre sympatomimetika
+
+Lisdeksamfetamindimesilat bør brukes med forsiktighet hos pasienter som bruker andre
+sympatomimetika (se pkt. 4.5).
+
+Hjelpestoff
+
+Dette legemidlet inneholder mindre enn 1 mmol natrium (23 mg) per kapsel, og er så godt som
+”natriumfritt”.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+In vitro enzymhemming
+
+Lisdeksamfetamindimesylat var ikke en in vitro-inhibitor av de større humane CYP450-isoformene
+(CYP1A2, CYP2A6, CYP2B6, CYP2C8, CYP2C9, CYP2C19, CYP2D6 og CYP3A4) i humane
+hepatiske mikrosomale suspensjoner, og var ikke en in vitro-inducer av CYP1A2, CYP2B6 eller
+CYP3A4/5 i dyrkede ferske humane hepatocytter. Lisdeksamfetamindimesylat var ikke et in vitro-
+substrat for P-gp i MDCKII-celler eller en in vitro-inhibitor av P-gp i Caco-2-celler og er derfor
+sannsynligvis ikke involvert i kliniske interaksjoner med legemidler som transporteres av P-gp-
+pumpen. En human in vivo-studie av lisdeksamfetamindimesylat førte ikke til en klinisk
+betydningsfull påvirkning på farmakokinetikken til legemidler som ble metabolisert av CYP1A2,
+CYP2D6, CYP2C19 eller CYP3A.
+
+Legemidler hvor blodnivå kan påvirkes av lisdeksamfetamindimesilat
+
+Guanfacin med forsinket frisetting: I en legemiddelinteraksjonsstudie medførte bruk av guanfacin med
+forsinket frisetting sammen med lisdeksamfetamindimesilat en 19 % økning i guanfacins maksimale
+plasmakonsentrasjon (Cmax), mens eksponeringen (areal under kurven, AUC) økte med 7 %. Disse små
+endringene forventes ikke å være av klinisk betydning. I denne studien ble det ikke observert noen
+effekt på deksamfetamineksponeringen etter samtidig bruk av guanfacin med forsinket frisetting og
+lisdeksamfetamindimesilat.
+
+Venlafaksin med forsinket frisetting: I en legemiddelinteraksjonsstudie medførte bruk av 225 mg
+venlafaksin med forsinket frisetting, et CYP2D6-substrat, i kombinasjon med 70 mg
+lisdeksamfetamindimesilat en 9 % reduksjon i Cmax og 17 % reduksjon i AUC for den primære aktive
+metabolitten o-desmetylvenlafaksin og en 10 % økning i Cmax og 13 % økning i AUC for venlafaksin.
+Deksamfetamin kan være en svak CYP2D6-hemmer. Lisdeksamfetamin har ingen effekt på AUC og
+Cmax for venlafaksin og o-desmetylvenlafaksin samlet. Disse små endringene forventes ikke å være av
+klinisk betydning. I denne studien ble det ikke observert noen effekt på deksamfetamineksponeringen
+etter samtidig bruk av venlafaksin med forsinket frisetting og lisdeksamfetamindimesilat.
+
+                                                  7

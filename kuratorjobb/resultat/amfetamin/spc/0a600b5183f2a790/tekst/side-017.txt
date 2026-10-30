@@ -1,0 +1,55 @@
+I tillegg ble vedvarende effekt vist i en dobbeltblindet, placebokontrollert, randomisert seponeringsstudie
+med barn og ungdom i alderen 6 til 17 år (n=157) som oppfylte diagnosekriteriene for ADHD (DSM-IV-
+kriteriene). Pasienter ble optimalisert med åpen behandling med lisdeksamfetamin over en lengre periode
+(minst 26 uker) før inklusjon i den 6 uker lange randomiserte seponeringsperioden. Egnede pasienter ble
+randomisert til å fortsette å få sin optimaliserte dose av lisdeksamfetamindimesilat eller bytte til placebo.
+Pasienter ble observert for tilbakefall (behandlingssvikt) i den 6 uker lange dobbeltblindede fasen.
+Behandlingssvikt ble definert som en økning ≥ 50 % (forverring) i ADHD-RS totalscore og en økning ≥ 2
+poeng i CGI-S-score sammenlignet med score ved inklusjon i den dobbeltblindede, randomiserte
+seponeringsperioden.
+Behandlingssvikten var signifikant lavere (p <0,001) hos forsøkspersoner som fikk lisdeksamfetamin
+(15,8 %) sammenlignet med placebo (67,5 %). Hos de fleste forsøkspersonene (70,3 %) med
+behandlingssvikt uavhengig av behandling, ble ADHD-symptomene forverret i eller før besøket i uke 2
+etter randomisering.
+
+En studie av sikkerhet og effekt med faste doser ble utført på barn i alderen 4 til 5 år med ADHD.
+Forsøkspersonene ble randomisert i forholdet 5:5:5:5:6 til lisdeksamfetamindimesilat (5, 10, 20, 30 mg
+dosestyrke) eller placebo (se også pkt. 5.2). Varigheten av den dobbeltblindede evalueringsperioden var 6
+uker. I denne studien var de vanligste rapporterte behandlingstrengende bivirkningene for forsøkspersoner
+som fikk lisdeksamfetamindimesilat, redusert appetitt (13,7 % av forsøkspersonene), irritabilitet (9,6 % av
+forsøkspersonene) og affektlabilitet og hoste (4,8 % av forsøkspersonene hver). I en 52 ukers åpen studie
+var den vanligste behandlingstrengende bivirkningen redusert appetitt (15,9 %) (se pkt. 4.8).
+
+Voksen populasjon
+
+Effekten til lisdeksamfetamindimesilat ved behandling av voksne som oppfylte DSM-IV-kriteriene for
+ADHD, ble fastslått i fire kontrollerte studier med 846 pasienter.
+
+Voksenstudie 1 var en dobbeltblindet, randomisert, placebokontrollert studie med parallelle grupper som
+ble gjennomført hos voksne (n=420). I denne 4-ukers studien ble pasientene randomisert til faste
+dosebehandlingsgrupper som fikk sluttdoser på 30, 50 eller 70 mg lisdeksamfetamindimesylat eller
+placebo. Alle pasienter som fikk lisdeksamfetamindimesylat, ble satt på 30 mg i den første
+behandlingsuken. Pasienter som ble plassert i 50 og 70 mg dosegruppene, ble titrert med 20 mg per uke til
+de oppnådde sin tildelte dose. Signifikant bedring av ADHD-symptomer, basert på utprøvers vurdering på
+ADHD-RS totalscore for spørsmål for voksne, ble observert ved endepunkt for alle doser av
+lisdeksamfetamindimesilat sammenlignet med placebo (se tabell 1). Behandling med
+lisdeksamfetamindimesilat reduserte graden av funksjonshemming signifikant målt som bedring på CGI-I
+graderingsskala sammenlignet med placebo.
+
+Tabell 3: Endring fra baseline til endepunkt i ADHD-RS totalscore for spørsmål for voksne på endepunkt1
+(fullt analysesett)
+
+                                           Placebo              30 mg               50 mg                70 mg
+    Baseline          N Gjennomsnitt       62                   115                 117                  120
+    totalscore        (SD)                 39.4 (6.42)          40.5 (6.21)          40.8 (7.30)         41.0 (6.02)
+    Endring fra       N          Minste    62                   115                 117                  120
+    baseline ved      kvadraters           -8.2 (1.43)          -16.2 (1.06)         -17.4 (1.05)        -18.6 (1.03)
+    endepunkt         metode (SE)
+    Placebojustert    Minste kvadraters    Ikke relevant        -8.04               -9.16                -10.41
+    forskjell         metode (95% KI)                           (-12.14, -3.95)     (-13.25, -5.08)      (-14.49, -6.33)
+                      p-verdi                                   < 0.0001            < 0.0001             < 0.0001
+
+1
+ Endepunkt er siste behandlingsuke etter randomisering der en gyldig ADHD-RS-IV totalscore oppnås.
+Merk: Dunnetts test ble brukt til konstruksjon av Cis og p-verdier; p-verdier er de justerte p-verdiene og bør sammenlignes med
+en kritisk alfa på 0,05.

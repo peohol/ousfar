@@ -1,0 +1,59 @@
+Spesielle populasjoner
+Farmakokinetikken til deksamfetamin, evaluert ved clearance, er lik hos barn (i alderen 6 til 12 år) og
+ungdom (i alderen 13 til 17 år) med ADHD og friske voksne frivillige etter korrigering for kroppsvekt.
+
+Systemisk deksamfetamineksponering er lik hos menn og kvinner som får samme mg/kg dose.
+
+Formelle farmakokinetiske studier av rase er ikke utført. Det er ingen holdepunkter for at etnisitet
+påvirker farmakokinetikken til deksamfetamin.
+
+I en farmakokinetisk studie med 40 forsøkspersoner (8 forsøkspersoner i hver av fem
+nyrefunksjonsgrupper: normal, lett nedsatt, moderat nedsatt, alvorlig nedsatt og terminal nyresykdom)
+var deksamfetaminclearance redusert fra 0,7 l/time/kg hos normale forsøkspersoner til 0,4 l/time/kg
+hos forsøkspersoner med alvorlig nedsatt nyrefunksjon (GFR 15 til < 30 ml/minutt/1,73 m2 eller CrCl
+< 30 ml/minutt).
+
+Gjennomsnittlig steady state-eksponering overfor deksamfetamin var ca. 44 % høyere hos pediatriske
+pasienter i alderen 4 til 5 år sammenlignet med pasienter i den pediatriske populasjonen i alderen 6 til
+11 år som fikk samme dose (30 mg/dag), basert på en populasjonsfarmakokinetisk analyse.
+
+I en studie med 47 forsøkspersoner i alderen 55 år eller eldre var deksamfetaminclearance ca.
+0,7 l/time/kg hos forsøkspersoner i alderen 55 til 74 år og 0,55 l/time/kg hos forsøkspersoner i alderen
+≥ 75 år. Dette er lett redusert sammenlignet med hos yngre voksne (ca. 1 l/time/kg hos
+forsøkspersoner i alderen 18 til 45 år).
+
+5.3   Prekliniske sikkerhetsdata
+
+Prekliniske studier av tilbøyelighet for misbruk indikerer at lisdeksamfetamindimesilat kan gi
+subjektive effekter hos rotter og aper tilsvarende de fra det sentralstimulerende legemidlet
+deksamfetamin, men at de starter senere og er forbigående. Belønningseffektene fastsatt i studier med
+egenadministrering er lavere enn med metylfenidat eller kokain.
+
+I toksisitetstester ved gjentatt dosering var hovedfunnene atferdsendringer, slik som økt aktivitet
+typisk for bruk av stimulerende legemidler, med relatert reduksjon i kroppsvektøkning, vekstmålinger
+og matinntak, som anses å være en følge av en forsterket farmakologisk respons.
+
+Lisdeksamfetamindimesilat var ikke gentoksisk når det ble testet in vitro i Ames test og
+muselymfomtest, eller in vivo i mikronukleustest i musebenmarg. Karsinogenitetsstudier av
+lisdeksamfetamindimesilat har ikke blitt utført. Det ble ikke funnet holdepunkter for karsinogenitet i
+studier hvor d-, l-amfetamin (enantiomerforhold 1:1) ble gitt i fôret til mus og rotter i 2 år i doser inntil
+30 mg/kg/døgn hos hannmus, 19 mg/kg/døgn hos hunnmus og 5 mg/kg/døgn hos hann- og hunnrotter.
+
+Lisdeksamfetamindimesilat hadde ingen effekt på embryo-/fosterutvikling eller -overlevelse når det
+ble gitt oralt til drektige rotter i doser inntil 40 mg/kg/døgn og kaniner i doser inntil 120 mg/kg/døgn.
+
+Akutt administrering av høye doser amfetamin (d- eller d,l-) har vist seg å gi langvarige nevrotoksiske
+effekter hos gnagere, inkludert irreversibel nervefiberskade. I definitive toksisitetsstudier med
+lisdeksamfetamindimesilat hos juvenile rotter og hunder ble det imidlertid ikke observert noen
+uønskede endringer i sentralnervesystemet. Hvilken signifikans disse funnene har for mennesker er
+ikke kjent.
+
+Amfetamin (d- til l-enantiomerforhold 3:1) hadde ingen negativ effekt på fertilitet eller tidlig
+embryoutvikling hos rotter ved doser inntil 20 mg/kg/døgn.
+
+Flere studier med gnagere indikerer at prenatal eller tidlig postnatal eksponering for amfetamin (d-
+eller d,l-) i doser tilsvarende de som brukes klinisk, kan medføre langsiktige nevrokjemiske endringer
+og atferdsendringer. Rapporterte atferdseffekter omfatter lærings- og hukommelsesvansker, endret
+lokomotorisk aktivitet og endret seksualfunksjon. Tilsvarende studier er ikke utført med
+
+                                                    17

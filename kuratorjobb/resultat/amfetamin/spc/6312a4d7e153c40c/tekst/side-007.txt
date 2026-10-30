@@ -1,0 +1,59 @@
+pumpen. En human in vivo-studie av lisdeksamfetamindimesilat viste ingen klinisk relevant effekt på
+farmakokinetikken til legemidler som metaboliseres av CYP1A2, CYP2D6, CYP2C19 eller CYP3A.
+
+Legemidler hvor blodnivå kan påvirkes av lisdeksamfetamindimesilat
+
+Guanfacin med forsinket frisetting: I en legemiddelinteraksjonsstudie medførte bruk av guanfacin med
+forsinket frisetting sammen med lisdeksamfetamindimesilat en 19 % økning i guanfacins maksimale
+plasmakonsentrasjon (Cmax), mens eksponeringen (areal under kurven, AUC) økte med 7 %. Disse små
+endringene forventes ikke å være av klinisk betydning. I denne studien ble det ikke observert noen
+effekt på deksamfetamineksponeringen etter samtidig bruk av guanfacin med forsinket frisetting og
+lisdeksamfetamindimesilat.
+
+Venlafaksin med forsinket frisetting: I en legemiddelinteraksjonsstudie medførte bruk av 225 mg
+venlafaksin med forsinket frisetting, et CYP2D6-substrat, i kombinasjon med 70 mg
+lisdeksamfetamindimesilat en 9 % reduksjon i Cmax og 17 % reduksjon i AUC for den primære aktive
+metabolitten o-desmetylvenlafaksin og en 10 % økning i Cmax og 13 % økning i AUC for venlafaksin.
+Deksamfetamin kan være en svak CYP2D6-hemmer. Lisdeksamfetamin har ingen effekt på AUC og
+Cmax for venlafaksin og o-desmetylvenlafaksin samlet. Disse små endringene forventes ikke å være av
+klinisk betydning. I denne studien ble det ikke observert noen effekt på deksamfetamineksponeringen
+etter samtidig bruk av venlafaksin med forsinket frisetting og lisdeksamfetamindimesilat.
+
+Legemidler og tilstander som endrer pH i urin og påvirker amfetamins urinutskillelse og halveringstid
+
+Askorbinsyre og andre legemidler og tilstander (tiaziddiuretika, kosthold med høyt innhold av
+animalske proteiner, diabetes, respiratorisk acidose) som øker surhetsgraden i urinen, øker
+urinutskillelsen og reduserer halveringstiden for amfetamin. Natriumbikarbonat og andre legemidler
+og tilstander (kosthold med høyt innhold av frukt og grønnsaker, urinveisinfeksjoner og oppkast) som
+alkaliniserer urinen, reduserer urinutskillelsen og øker halveringstiden for amfetamin.
+
+Monoaminoksidasehemmere
+
+Amfetamin bør ikke gis under eller de første 14 dagene etter administrasjon av monoaminoksidase
+(MAO)-hemmere, fordi det kan øke frisettingen av noradrenalin og andre monoaminer. Dette kan
+medføre sterk hodepine og andre tegn på hypertensiv krise. Det kan oppstå forskjellige toksiske,
+nevrologiske effekter og malign hyperpyreksi, av og til med fatalt utfall (se pkt. 4.3).
+
+Serotonerge legemidler
+
+Serotonergt syndrom har oppstått i sjeldne tilfeller i forbindelse med bruk av amfetaminer som
+lisdeksamfetamindimesilat når de gis sammen med serotonerge legemidler, inkludert selektive
+serotininreopptakshemmere (SSRI-er) og serotonin- og noradrenalinreopptakshemmere (SNRI-er).
+Det er også rapportert i forbindelse med overdose av amfetaminer, inkludert
+lisdeksamfetamindimesilat (se pkt 4.9).
+
+Legemidler med effekt som kan reduseres av amfetamin
+
+Antihypertensiva: Amfetamin kan redusere effekten til guanetidin og andre antihypertensiva.
+
+Legemidler med effekt som kan forsterkes av amfetamin
+
+Amfetamin forsterker den analgetiske effekten til narkotiske analgetika.
+
+Legemidler som kan redusere amfetamins effekt
+
+Klorpromazin: Klorpromazin blokkerer dopamin- og noradrenalinreseptorer, og hemmer dermed
+amfetamins sentralstimulerende effekter.
+
+
+                                                  7

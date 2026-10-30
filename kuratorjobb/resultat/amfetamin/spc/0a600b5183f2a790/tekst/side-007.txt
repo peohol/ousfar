@@ -1,0 +1,53 @@
+I en kontrollert studie med pasienter i alderen 6 til 17 år var gjennomsnittlig (SD) endring i kroppsvekt
+etter syv uker -2,35 (2,084) kg for lisdeksamfetamin, +0,87 (1,102) kg for placebo og -1,36 (1,552) kg for
+metylfenidathydroklorid.
+
+Hos voksne
+
+Stimulerende legemidler har vært forbundet med vekttap. Vekt bør følges under behandling med
+stimulerende legemidler, og det kan være nødvendig å avbryte behandlingen hos pasienter som mister
+vekt.
+
+Krampeanfall
+
+Det foreligger visse kliniske holdepunkter for at stimulerende legemidler kan senke krampeterskelen hos
+pasienter med en anamnese med krampeanfall, hos pasienter med tidligere EEG-avvik uten anfall og i
+svært sjeldne tilfeller hos pasienter uten tidligere krampeanfall eller EEG-holdepunkter for krampeanfall.
+Ved utvikling eller forverring av krampeanfall bør legemidlet seponeres.
+
+Synsforstyrrelser
+
+Akkommodasjonsvansker og tåkesyn er rapportert ved behandling med stimulerende legemidler.
+
+Forskrivning og utlevering
+
+For å begrense risikoen for at pasienten overdoserer bør minste mulige pakningsstørrelse av Dexhility
+forskrives eller utleveres.
+
+Bruk sammen med andre sympatomimetika
+
+Dexhility bør brukes med forsiktighet hos pasienter som bruker andre sympatomimetika (se pkt. 4.5).
+
+Dexhility inneholder natrium
+
+Dette legemidlet inneholder mindre enn 1 mmol natrium (23 mg) i hver kapsel, og er så godt som
+”natriumfritt”.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+In vitro enzymhemming
+
+Lisdeksamfetamindimesylat var ikke en in vitro-inhibitor av de større humane CYP450-isoformene
+(CYP1A2, CYP2A6, CYP2B6, CYP2C8, CYP2C9, CYP2C19, CYP2D6 og CYP3A4) i humane
+hepatiske mikrosomale suspensjoner, og var ikke en in vitro-inducer av CYP1A2, CYP2B6 eller
+CYP3A4/5 i dyrkede ferske humane hepatocytter. Lisdeksamfetamindimesylat var ikke et in vitro-substrat
+for P-gp i MDCKII-celler eller en in vitro-inhibitor av P-gp i Caco-2-celler og er derfor sannsynligvis ikke
+involvert i kliniske interaksjoner med legemidler som transporteres av P-gp-pumpen. En human in vivo-
+studie av lisdeksamfetamindimesylat førte ikke til en klinisk betydningsfull påvirkning på
+farmakokinetikken til legemidler som ble metabolisert av CYP1A2, CYP2D6, CYP2C19 eller CYP3A.
+Legemidler hvor blodnivå kan påvirkes av lisdeksamfetamin
+
+Guanfacin med forlenget frisetting: I en legemiddelinteraksjonsstudie medførte bruk av guanfacin med
+forlenget frisetting i kombinasjon med lisdeksamfetamin en 19 % økning i guanfacins maksimale
+plasmakonsentrasjon (Cmax), mens eksponeringen (areal under kurven, AUC) økte med 7 %. Disse små
+endringene forventes ikke å være av klinisk betydning. I denne studien ble det ikke observert noen effekt
