@@ -10,7 +10,7 @@ de berører ikke den kliniske delen.
 | --- | --- |
 | `supabase/migrations/*_diskusjoner.sql` | Tabellene, radsikkerheten, rekkefølgen, funksjonene appen kaller, og varslene |
 | `src/diskusjoner/modell.ts` | Sidene, lesingen av svarene, grupperingen, flyttingene, reglene for navn og emoji, og søket (rene funksjoner) |
-| `src/diskusjoner/api.ts` | Kallene mot Supabase, om menyen holdes åpen og hvor bred den er (`diskusjoner.laast` og `diskusjoner.bredde` i brukerinnstillingene) |
+| `src/diskusjoner/api.ts` | Kallene mot Supabase, om menyen står åpen og hvor bred den er (`diskusjoner.laast` og `diskusjoner.bredde` i brukerinnstillingene; nøkkelen for åpen har beholdt navnet fra da menyen kunne «holdes åpen») |
 | `src/components/diskusjoner/` | Menyen (`Diskusjonsmeny`), lista (`Diskusjonsoversikt`), én tråd (`Diskusjonsside`) og skjemaene |
 | `src/hooks/useSortering.ts`, `src/styles/sortering.css` | Dra-og-slipp, felles med redigeringen av stoffregisteret |
 | `src/traad/modell.ts`, `src/components/traad/` | Kommentartråden, felles med idéene |
@@ -70,11 +70,19 @@ til en kategori, eller flyttes med valget på tråden.
 
 ## Menyen
 
-`Diskusjonsmeny` står fast til høyre på sider med diskusjoner. Lukket er den en
-smal stolpe med knappen som holder den åpen, og emojien til hver kategori med
-et blått tall for tråder med noe nytt. Den åpnes mens pekeren er over den eller
-fokus er i den, og står åpen mens en tråd eller et skjema er åpent. Å holde den
-åpen lagres på brukeren og gjelder alle sider.
+`Diskusjonsmeny` står fast til høyre på sider med diskusjoner, i fire
+tilstander:
+
+1. **Lukket**: en rund boble (`--diskusjonsboble`) øverst til høyre under
+   toppmenyen, like høy som den og med samme luft rundt ikonet, og et blått
+   tall for tråder med noe nytt. Resten av appen gir plass til den.
+2. **Pekeren over** (eller fokus fra tastaturet): boblen vokser litt mot
+   venstre, med «Diskusjoner» ved siden av ikonet og «Trykk for å vise» under. Bare CSS; den går tilbake når pekeren går ut.
+3. **Åpen**: et trykk på boblen åpner menyen, og fokus går til lukkeknappen.
+   Den står åpen til lukkeknappen (✕ øverst til høyre) trykkes, også fra side
+   til side; det lagres på brukeren. Resten av appen gir plass til den.
+   Escape slipper bare fokus. Lukket går fokus tilbake til boblen.
+4. **Maksimert**: se under.
 
 Åpen kan menyen gjøres bredere ved å dra i venstre kanten, eller med
 piltastene når kanten har fokus (Shift for større steg, Home og End for
@@ -98,12 +106,13 @@ siden fra knappen «Diskusjoner» i toppmenyen, eller av seg selv når et
 varsel leder til en tråd. Mens fokus er i menyen, er den et
 lag (`data-lag`), så appens hurtigtaster venter.
 
-Knappen ved siden av «Hold åpen» viser menyen som **helside** over hele
-vinduet (`data-helside`), med det som stod åpent — oversikten eller en tråd —
-i en lesebredde midt på (`--diskusjonshelside`). Det er en tilstand over siden
-som står, ikke en egen adresse. Escape eller den samme knappen
-går tilbake til menyen, åpen som før. Så lenge er resten av appen `inert`
-(`useRestenInert`) og menyen et lag, også uten fokus.
+«Maksimer», til venstre for lukkeknappen, viser menyen som **helside** over
+hele vinduet (`data-helside`), med det som stod åpent — oversikten eller en
+tråd — i en lesebredde midt på (`--diskusjonshelside`). Det er en tilstand over
+siden som står, ikke en egen adresse. Escape eller den samme knappen
+(«Gjenopprett») går tilbake til menyen, åpen som før; lukkeknappen lukker den
+helt, til boblen. Så lenge er resten av appen `inert` (`useRestenInert`) og
+menyen et lag, også uten fokus.
 
 Det brukeren har åpent (tråd, skjema, søk, arkiv, helside) bevares med
 `useBevart`, tråden og skjemaet per side.

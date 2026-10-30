@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.114.0',
+    versjon: '1.115.0',
     dato: '2026-10-30',
     sammendrag: 'Nedtrapping av antidepressiva: godkjent fagtekst for bupropion og agomelatin, regelutkast for resten til faglig kontroll',
     typer: ['Funksjonalitet', 'Fag'],
@@ -25,6 +25,20 @@ export const ENDRINGSLOGG: Endring[] = [
       'Når reglene er godkjent, er planen et startforslag som må bekreftes sammen med at organfunksjon og interaksjoner er vurdert. Den gjelder ikke ved alder under 18 år, akutt seponering, ustabil sykdom, bytte til et annet legemiddel eller kontraindikasjoner. En dose over største dose for indikasjonen eller pasientgruppen stopper planen; en dose over en forsiktighetsgrense, som for eldre, krever en skriftlig begrunnelse. Forskriveren kan velge trinnstørrelse og dager per trinn innenfor det regelen tillater for stoffets risikogruppe, og et raskere valg krever også begrunnelse.',
       'Etter tidligere seponeringssymptomer kan forskriveren velge en langsom variant med 1–5 % per trinn, og for pasienter som bruker fluoksetin 20 mg, finnes 20 mg annenhver dag som et valgfritt alternativ.',
       'Dagene per trinn er minstetider, og datoene i planen er tidligst mulige: neste reduksjon venter til eventuelle seponeringssymptomer er borte eller tålelige. Planen går ikke til null: den viser høyst 12 reduksjoner (6 i den langsomme varianten), hvert trinn avrundes til dosen som vises, og en reduksjon som forsvinner i avrundingen, regnes ikke som et trinn. Siste dose fortsetter til avslutningen er vurdert individuelt. Kan et trinn ikke gis nøyaktig med norske preparater, eller ikke fordeles på flere doser der preparatomtalen krever det, stopper planen ved trinnet før og forklarer hvorfor.',
+    ],
+  },
+  {
+    versjon: '1.114.0',
+    dato: '2026-10-30',
+    sammendrag: 'Diskusjonsmenyen er en boble når den er lukket',
+    typer: ['Funksjonalitet', 'Design / layout'],
+    omfang: 'Moderat omfang',
+    gjelder: ['hele appen'],
+    punkter: [
+      'Lukket står diskusjonsmenyen ikke lenger som en stolpe langs hele siden, men som en rund boble med samtaleikonet øverst til høyre. Et blått tall på boblen viser hvor mange tråder som har noe nytt.',
+      'Med pekeren over vokser boblen litt og viser «Diskusjoner» og «Trykk for å vise». Menyen åpnes først når du trykker på boblen, ikke lenger bare av at pekeren kommer over den.',
+      'Åpen står menyen til du lukker den med den nye lukkeknappen øverst til høyre, også når du går til andre sider. Knappen med nålen som holdt menyen åpen, er borte.',
+      'Knappen for å vise diskusjonene som helside heter nå «Maksimer». Maksimert kan du gå tilbake til menyen med den samme knappen eller Escape, eller lukke alt med lukkeknappen.',
     ],
   },
   {

@@ -4,7 +4,7 @@
  * unike navn og emojier, arkivet som fryser); kommentarene og hjertene går
  * rett mot tabellene, der radsikkerheten avgjør hvem som får gjøre hva.
  */
-import { hentInnstilling, lagreInnstilling, lengdeinnstilling } from '../auth/innstillinger'
+import { hentInnstilling, lagreSisteValg, lengdeinnstilling } from '../auth/innstillinger'
 import { lesbarFeil, UVENTET_FEIL, type Databasefeil } from '../auth/databasefeil'
 import { klient } from '../auth/klient'
 import type { Riktekstdokument } from '../faginnhold/riktekst'
@@ -163,17 +163,20 @@ export async function settHjerte(diskusjon: string, kommentar: string | null, br
 
 /* --- Menyen ------------------------------------------------------------------------ */
 
-/** Nøkkelen i brukerinnstillingene for om menyen holdes åpen. */
-export const LAASNOKKEL = 'diskusjoner.laast'
+/**
+ * Nøkkelen i brukerinnstillingene for om menyen står åpen. Navnet er fra da
+ * menyen kunne «holdes åpen»; det beholdes, så de som holdt den åpen, finner
+ * den åpen.
+ */
+export const APENNOKKEL = 'diskusjoner.laast'
 
-export async function hentLaast(): Promise<boolean | null> {
-  const verdi = await hentInnstilling(LAASNOKKEL)
+export async function hentApen(): Promise<boolean | null> {
+  const verdi = await hentInnstilling(APENNOKKEL)
   return typeof verdi === 'boolean' ? verdi : null
 }
 
-export function lagreLaast(laast: boolean): Promise<void> {
-  return lagreInnstilling(LAASNOKKEL, laast)
-}
+/** Åpnes og lukkes menyen raskt etter hverandre, vinner det siste. */
+export const lagreApen = lagreSisteValg<boolean>(APENNOKKEL)
 
 /** Nøkkelen i brukerinnstillingene for hvor bred menyen er dratt, i piksler. */
 export const BREDDENOKKEL = 'diskusjoner.bredde'
