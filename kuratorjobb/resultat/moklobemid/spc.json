@@ -1,0 +1,277 @@
+{
+  "stoff": "moklobemid",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-10-30T04:15:57.810377+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 6,
+    "hentet": 3,
+    "dokumenter": 1,
+    "mangler": [
+      {
+        "merkevare_id": "ID_46203A00-ED18-4883-BC8A-4A14DBF69AFC",
+        "varenavn": "Moclostad",
+        "navn_form_styrke": "Moclostad tab 150 mg",
+        "produsent": "Stada",
+        "atc": "N06AG02",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_8DA5E935-D452-4A17-8E96-336ADFF3369F",
+        "varenavn": "Manerix",
+        "navn_form_styrke": "Manerix tab 300 mg",
+        "produsent": "Mylan",
+        "atc": "N06AG02",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_E678BB85-737F-4260-BDC3-90D7D0F79F50",
+        "varenavn": "Moclobemid",
+        "navn_form_styrke": "Moclobemid tab 150 mg",
+        "produsent": "Ratiopharm",
+        "atc": "N06AG02",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 2 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 2,
+        "ikke_dmp": 0,
+        "uten_omtale": 3
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "3 av 6 preparater i FEST mangler en hentet preparatomtale fra DMP: 3 uten preparatomtale i FEST (f.eks. sentralt godkjente, med omtalen hos EMA). SPC-behovet er ikke dekket; se «dekning.mangler».",
+      "antall": {
+        "preparater": 6,
+        "hentet": 3,
+        "mangler": 3,
+        "dokumenter": 1
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07547.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07547.pdf",
+      "hentet_kl": "2026-10-30T13:32:46.545Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "163091",
+        "content-md5": "Ua2WbRmT3WycgNfra3oxuQ==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:48 GMT",
+        "etag": "0x8DE53793B194D21",
+        "date": "Fri, 30 Oct 2026 13:32:47 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_2174885A-1D02-48E3-BCBA-5E9EEEDEE64D",
+          "varenavn": "Aurorix",
+          "navn_form_styrke": "Aurorix tab 150 mg",
+          "produsent": "2care4 ApS",
+          "atc": "N06AG02",
+          "legemiddelform": "Tablett, filmdrasjert"
+        },
+        {
+          "merkevare_id": "ID_7EC7E1DA-18EF-49FE-B81D-5A308D4400DD",
+          "varenavn": "Aurorix",
+          "navn_form_styrke": "Aurorix tab 150 mg",
+          "produsent": "Viatris AS",
+          "atc": "N06AG02",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07547.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (163091 byte).",
+          "antall": {
+            "bytes": 163091
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "70238657f0f1c309b966e0be1eda0afce295b72b7012c4bce665a4805b286c84"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07983.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07983.pdf",
+      "hentet_kl": "2026-10-30T13:32:50.927Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "163091",
+        "content-md5": "Ua2WbRmT3WycgNfra3oxuQ==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:50 GMT",
+        "etag": "0x8DE53793CCADD32",
+        "date": "Fri, 30 Oct 2026 13:32:51 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_31BA1874-A4CB-497E-BDD7-C894BD3A1E8F",
+          "varenavn": "Aurorix",
+          "navn_form_styrke": "Aurorix tab 300 mg",
+          "produsent": "Viatris AS",
+          "atc": "N06AG02",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07983.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (163091 byte).",
+          "antall": {
+            "bytes": 163091
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "70238657f0f1c309b966e0be1eda0afce295b72b7012c4bce665a4805b286c84"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "70238657f0f1c309b966e0be1eda0afce295b72b7012c4bce665a4805b286c84",
+      "bytes": 163091,
+      "mappe": "kuratorjobb/resultat/moklobemid/spc/70238657f0f1c309",
+      "pdf": {
+        "sider": 8,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "[Version 4",
+        "laget": "Fri Oct 13 08:06:06 2023 UTC",
+        "endret": "Fri Oct 13 08:06:06 2023 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/moklobemid/spc/70238657f0f1c309/original.pdf",
+        "tekst": "kuratorjobb/resultat/moklobemid/spc/70238657f0f1c309/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/moklobemid/spc/70238657f0f1c309/tekst/side-001.txt",
+          "kuratorjobb/resultat/moklobemid/spc/70238657f0f1c309/tekst/side-002.txt",
+          "kuratorjobb/resultat/moklobemid/spc/70238657f0f1c309/tekst/side-003.txt",
+          "kuratorjobb/resultat/moklobemid/spc/70238657f0f1c309/tekst/side-004.txt",
+          "kuratorjobb/resultat/moklobemid/spc/70238657f0f1c309/tekst/side-005.txt",
+          "kuratorjobb/resultat/moklobemid/spc/70238657f0f1c309/tekst/side-006.txt",
+          "kuratorjobb/resultat/moklobemid/spc/70238657f0f1c309/tekst/side-007.txt",
+          "kuratorjobb/resultat/moklobemid/spc/70238657f0f1c309/tekst/side-008.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/moklobemid/spc/70238657f0f1c309/sider/side-001.png",
+          "kuratorjobb/resultat/moklobemid/spc/70238657f0f1c309/sider/side-002.png",
+          "kuratorjobb/resultat/moklobemid/spc/70238657f0f1c309/sider/side-003.png",
+          "kuratorjobb/resultat/moklobemid/spc/70238657f0f1c309/sider/side-004.png",
+          "kuratorjobb/resultat/moklobemid/spc/70238657f0f1c309/sider/side-005.png",
+          "kuratorjobb/resultat/moklobemid/spc/70238657f0f1c309/sider/side-006.png",
+          "kuratorjobb/resultat/moklobemid/spc/70238657f0f1c309/sider/side-007.png",
+          "kuratorjobb/resultat/moklobemid/spc/70238657f0f1c309/sider/side-008.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 5,
+        "til": 6
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (8 sider).",
+          "antall": {
+            "sider": 8
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 15238
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 5."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 8
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": []
+}

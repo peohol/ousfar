@@ -1,0 +1,59 @@
+antidepressiva som venlafaksin, fluvoksamin, klomipramin, citalopram, escitalopram, paroksetin,
+sertralin, bupropion. Det skyldes at det har vært vist alvorlige kliniske symptomer som hypertermi,
+forvirringstillstander, hyperrefleksi og mykolonus som er tegn på serotonergt syndrom. Skulle slike
+symptomer oppstå, bør pasienten observeres nøye av lege (evt. innlegges på sykehus) og egnet
+behandling gis. Behandling med trisykliske eller andre antidepressiva kan startes neste dag etter
+seponering av moklobemid. Ved bytte fra en serotonin reopptakshemmer til moklobemid, bør
+halveringstiden tas med i betraktning (se pkt. 4.4). En pause på 14 dager anbefales ved bytte fra en
+irreversibel MAO hemmer til moklobemid (for eksempel fenelzin og tranlycypromin).
+Samtidig bruk av Johannesurt (Prikkperikum) anbefales ikke, da dette kan øke
+serotoninkonsentrasjonen i sentralnervesystemet.
+Isolerte tilfeller av alvorlige sentralnervøse bivirkninger er rapportert etter samtidig bruk av Aurorix
+og dekstrometorfan. Legemidler mot hoste og forkjølelse kan inneholde dekstrometorfan, og bør ikke
+tas uten samråd med lege, og hvis mulig, bør legemidler uten dekstrometorfan gis (se pkt 4.4.).
+Data fra kliniske studier tyder ikke på interaksjoner mellom moklobemid og hydroklortiazid (HTC),
+med høyt blodtrykk , p-piller, digoxin, fenprokumon og alkohol.
+Ettersom sibutramin hemmer reopptak av noradrenalin og serotonin, noe som kan øke effekten av
+MAO-hemmere, anbefales ikke samtidig bruk med moklobemid. Samtidig bruk av dekstropropoksyfen
+anbefales ikke da moklobemid kan potensere effekten av dekstropropoksyfen.
+
+4.6     Graviditet og amming
+
+Graviditet
+Dyrestudier gir ikke holdepunkter for fosterskade. Bruk under graviditet er foreløpig ikke tilstrekkelig
+undersøkt og bør i størst mulig grad unngås.
+
+Amming
+Mindre enn 1/30 av dosen går over i morsmelk. Fordeler ved fortsatt behandling må vurderes mot
+mulig risiko for barnet.
+
+4.7     Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+Aurorix har ingen eller ubetydelig påvirkning på evnen til å kjøre bil og bruke maskiner.
+Individuell reaksjon bør likevel observeres i begynnelsen av behandlingen.
+
+4.8     Bivirkninger
+
+Tabellen under viser bivirkningsprofilen for moklobemid basert på data fra kliniske studier og
+omfattende erfaring etter markedsføring.
+
+Estimert bivirkningsfrekvens er angitt som følger: svært vanlige (≥1/10), vanlige (≥1/100 til <1/10),
+mindre vanlige (≥1/1000 til <1/100), sjeldne (≥1/10 000 til <1/1000), svært sjeldne (≤1/10 000), ikke
+kjent (kan ikke anslås ut ifra tilgjengelige data).
+
+ Organklassesystem       Bivirkning                                          Frekvens
+ Gastrointestinale       Munntørrhet, kvalme                                 Svært vanlige
+ sykdommer
+                         Oppkast, diaré, forstoppelse                        Vanlige
+ Stoffskifte- og         Nedsatt appetitt*, hyponatremi*                     Sjeldne
+ ernæringsbetingede
+ sykdommer
+ Psykiatriske lidelser   Søvnforstyrrelser                                   Svært vanlige
+
+                         Agitasjon, angst, rastløshet                        Vanlige
+
+                         Selvmordstanker, forvirringstilstander (disse har   Mindre vanlige
+                         gått raskt over ved seponering av behandling)
+                         Suicidal oppførsel, vrangforestillinger*            Sjeldne
+
+                                                  5

@@ -1,18 +1,54 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "advarsel",
   "jobb": {
     "gren": "kuratorjobb/manuell-41063998925",
     "foresporsel_commit": "4df0fec6b46eb59b5cbf06ed8688dbaf0c47d76b",
     "foresporsel_sha256": "9fdf8850d15c995f7dd1b84b08ef6493fd490cfa36e4aa7e5d17b112996e8970",
     "kode_commit": "c58509067b9f530f36d25b6953495c5fd634f14f",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/41063998925",
-    "startet_kl": "2026-10-30T13:32:35.664Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-10-30T13:32:37.771Z",
+    "ferdig_kl": "2026-10-30T13:32:51.231Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "moklobemid"
+    ],
+    "oppgaver": [
+      "funksjonstest",
+      "spc"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 269
+    }
+  ],
+  "stoffer": {
+    "moklobemid": {
+      "status": "advarsel",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/moklobemid/funksjonstest.json"
+        },
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/moklobemid/spc.json"
+        }
+      }
+    }
+  }
 }

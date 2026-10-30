@@ -1,0 +1,415 @@
+PREPARATOMTALE
+
+
+
+
+      1
+1.      LEGEMIDLETS NAVN
+
+Aurorix 150 mg filmdrasjerte tabletter
+Aurorix 300 mg filmdrasjerte tabletter
+
+
+2.    KVALITATIV OG KVANTITATIV SAMMENSETNING
+
+150 mg filmdrasjerte tabletter
+Hver filmdrasjerte tablett inneholder 150 mg moklobemid.
+
+300 mg filmdrasjerte tabletter
+Hver filmdrasjerte tablett inneholder 300 mg moklobemid.
+
+Hjelpestoff(er) med kjent effekt
+
+150 mg filmdrasjerte tabletter
+Hver filmdrasjerte tablett inneholder 148 mg laktose (som monohydrat).
+
+300 mg filmdrasjerte tabletter
+Hver filmdrasjerte tablett inneholder 26,5 mg laktose (som monohydrat).
+
+For fullstendig liste over hjelpestoffer, se pkt. 6.1.
+
+
+3.    LEGEMIDDELFORM
+
+Tablett, filmdrasjert.
+
+
+4.    KLINISKE OPPLYSNINGER
+
+4.1   Indikasjoner
+
+Depresjoner.
+
+4.2   Dosering og administrasjonsmåte
+
+Dosering
+
+Anbefalt startdose er 300 mg i døgnet fordelt på 2 doser. Ved behov kan døgndosen økes til 600 mg
+fordelt på 2 doser. Da biotilgjengeligheten er økende de første dagene bør en eventuell doseøkning
+først finne sted etter en ukes behandling. Vurdering av klinisk effekt bør foretas etter 4-6 ukers
+behandling. Det er ikke nødvendig med spesiell dosejustering hos eldre pasienter eller hos pasienter
+med nedsatt nyrefunksjon. Ved alvorlig nedsatt leverfunksjon, bør dosen halveres eller senkes til en
+tredjedel. Behandling med tricykliske- eller andre antidepressiva kan startes det påfølgende døgn etter
+avsluttet moklobemid-behandling. Etter avsluttet behandling med selektive serotoninopptakshemmere
+må det derimot beregnes en utvaskingsperiode før oppstart med moklobemid-behandling (se 4.4
+Forsiktighetsregler).
+
+Administrasjonsmåte
+
+Tablettene skal tas rett etter måltid for å gjøre eventuell risiko for tyramininteraksjon minst mulig.
+
+4.3   Kontraindikasjoner
+
+
+                                                         2
+Overfølsomhet overfor virkestoffet eller overfor noen av hjelpestoffene listet opp i pkt. 6.1.
+Samtidig administrering av selegilin.
+Akutte forvirringstilstander.
+Bør foreløpig unngås til barn pga. manglende erfaring.
+Bruk av Aurorix sammen med følgende legemidler er kontraindisert (se også pkt 4.5):
+    - Seleglin
+    - Linezolid
+    - Triptaner
+    - Petidin
+    - Tramadol
+    - Bupropion
+    - Dekstrometorfan
+
+4.4   Advarsler og forsiktighetsregler
+
+Deprimerte pasienter med agitasjon og uro som hovedsymptomer bør enten ikke behandles med
+moklobemid eller forsøksvis behandles i kombinasjon med beroligende midler (f.eks.
+benzodiazepiner). I likhet med andre antidepressiva kan moklobemid forverre schizofrene symptomer
+hos pasienter med schizofreni eller schizoaffektive psykoser. Påbegynt langtidsbehandling med
+antipsykotika hos slike pasienter bør fortsette.
+
+Serotonergt syndrom
+Samtidig administrering av moklobemid og opioider (som buprenorfin) kan føre til serotonergt
+syndrom, en potensielt livstruende tilstand (se pkt. 4.5). Dersom samtidig behandling med opioider er
+klinisk nødvendig, anbefales nøye observasjon av pasienten, spesielt ved behandlingsstart og ved
+doseøkninger. Symptomer på serotonergt syndrom kan omfatte endret mental status, overaktivitet i det
+autonome nervesystemet, nevromuskulær overaktivitet og/eller gastrointestinale symptomer.
+Ved mistanke om serotonergt syndrom bør dosereduksjon eller seponering av behandlingen vurderes,
+avhengig av symptomenes alvorlighetsgrad.
+
+
+Behandling med moklobemid nødvendiggjør ikke diettrestriksjoner hos pasienter med normale
+spisevaner. Da overfølsomhet overfor tyramin kan forekomme hos enkelte pasienter, bør alle pasienter
+bli rådet til å unngå konsumering av store mengder med tyraminrik mat (f.eks. moden ost eller rødvin).
+Hypersensitivitetsreaksjoner (utslett og ødem) kan forekomme hos sensitive personer. Teoretiske
+farmakologiske betraktninger indikerer at MAO-hemmere kan føre til hypertensive reaksjoner hos
+pasienter med tyreotoksikose eller feokromocytom. Erfaring med moklobemid til disse pasientene
+mangler, forsiktighet må derfor utvises. Det bør utvises forsiktighet ved kombinasjonsbehandling med
+andre substanser som øker serotonin, spesielt klomipramin (se pkt. 4.5). Samtidig administrering av
+moklobemid og dekstrometorfan, som kan finnes i legemidler mot hoste og forkjølelse, anbefales ikke
+(se pkt. 4.5). Johannesurt (Prikkperikum) bør brukes med forsiktighet i kombinasjon med
+moklobemid, da dette kan øke serotonin konsentrasjonen. Pasienter med sjeldne arvelige problemer
+med galaktoseintoleranse, total laktasemangel eller glukose-galaktose malabsorpsjon, bør ikke ta dette
+legemidlet. Ved serotonergt syndrom må pasienten følges nøye opp med adekvat behandling.
+Behandling med moklobemid kan igangsettes 2 uker etter seponering av de selektive
+serotoninopptakshemmere (SSRI), citalopram, fluvoksamin, paroxetin og sertralin, samt 5 uker etter
+avsluttet behandling med fluoksetin. Skifte fra moklobemid til en SSRI kan skje det påfølgende døgn.
+Det forventes ikke nedsatt evne til å utføre aktiviteter som krever full reaksjonskapasitet. Individuell
+reaksjon bør likevel observeres i begynnelsen av behandlingen.
+
+Selvmord/selvmordstanker eller klinisk forverring
+Depresjon er assosiert med en økt risiko for selvmordstanker, selvskading og selvmord
+(selvmordsrelaterte hendelser). Denne risikoen vedvarer til det oppnås signifikant bedring. Siden
+bedring ikke alltid oppstår i løpet av de første ukene av behandlingen, bør pasienter følges opp nøye
+inntil bedring inntrer. Generell klinisk erfaring viser at risikoen for selvmord kan øke i de første fasene
+av bedringen.
+
+
+                                                    3
+Aurorix kan være forskrevet for andre psykiatriske lidelser, som også kan være forbundet med en
+økende risiko for selvmordsrelaterte hendelser. I tillegg kan disse forholdene være komorbide med
+alvorlig depressive lidelser. De samme forholdsregler bør derfor utvises ved behandling av pasienter
+med alvorlige depressive lidelser som hos pasienter med andre psykiatriske lidelser.
+
+Det er kjent at pasienter med en historie med selvmordsrelaterte hendelser eller som har betydelig grad
+av selvmordstanker før oppstart av behandlingen, har en større risiko for selvmordstanker og
+selvmordsforsøk. Disse pasientene bør derfor følges nøye under behandlingen. En meta-analyse av
+placebokontrollerte kliniske forsøk på voksne pasienter med psykiatriske lidelser, viste en økt risiko
+for suicidal adferd ved behandling med antidepressiva sammenlignet med placebo for pasienter yngre
+enn 25 år. Behandlingen av pasienter, særlig de med høy risiko, bør ledsages av nøye oppfølging,
+spesielt tidlig i behandlingen og ved doseendringer. Pasienter (og pårørende) bør oppfordres til å være
+oppmerksomme på klinisk forverring, selvmordsrelatert adferd eller selvmordstanker, samt uvanlige
+endringer i oppførsel, og til å kontakte medisinsk hjelp omgående dersom disse symptomene oppstår.
+
+Søvnløshet, nervøsitet eller skjelvinger i begynnelsen av behandlingen med moklobemid kan gi grunn
+for dosereduksjon eller midlertidig symptomatisk behandling. Ved tilfeller av mani, hypomani eller
+tidlige symptomer på disse reaksjonene som hyperaktivitet (inkludert økt talestrøm, storhetstanker,
+impulsiv og uvøren oppførsel), vil behandling med moklobemid avsluttes og alternativ behandling
+startes.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Samtidig bruk av Aurorix med selegilin eller med linezolid er kontraindisert. Samtidig bruk av
+Aurorix med triptaner er kontraindisert fordi de er potente serotonin reseptoragonister og
+metaboliseres av monoaminoksidase (MAOs) og ulike Cytokrom P450-enzymer og
+plasmakonsentrasjonen av triptaner øker, for eksempel sumatriptan, rizatriptan, zolmitriptan og
+almotriptan.
+
+Samtidig bruk av Aurorix med tramadol er kontraindisert. Det er i dyreforsøk vist at moklobemid
+forsterker effekten av opioider, og en dosejustering av opioider som for eksempel buprenorfin, morfin,
+fentanyl og kodein kan derfor bli nødvendig. Samtidig bruk av moklobemid og opioider (f.eks.
+buprenorfin) kan føre til serotonergt syndrom, en potensielt livstruende tilstand (se pkt. 4.4).
+Kombinasjon med petidin frarådes på grunn av økt risiko for serotonergt syndrom (forvirring, feber,
+kramper, ataksi, hyperrefleksi, myoklonus, diaré).
+
+Farmakologiske studier viser et minimalt potensiale for interaksjon med tyramin (se pkt. 4.4).
+Interaksjon med tyraminrik mat er uten klinisk betydning under normale forhold og når moklobemid
+tas etter måltidet.
+
+Effekten av systemiske sympatomimetika kan potenseres og forlenges ved samtidig inntak av
+moklobemid. Samtidig inntak av cimetidin hemmer metabolismen av moklobemid, og vanlig dose av
+moklobemid bør halveres eller reduseres til en tredjedel (se pkt. 4.2)
+
+Forsiktighet bør utvises ved samtidig bruk av legemidler som metaboliseres av CYP2C19 som
+moklobemid som er en hemmer av dette enzymet. Plasmakonsentrasjonen av disse legemidlene (som
+protonpumpehemmere (for eksempel omeprazol, fluoksetin og fluvoksamin) kan økes ved samtidig
+bruk av moklobemid. Tilsvarende hemmer moklobemid metabolismen av omeprazol i CP2C19-
+ekstensive metaboliserere, noe som gir en dobling av omeprazoleksponeringen.
+
+Forsiktighet bør utvises ved samtidig bruk av trimipramin og maprotiline da plasmakonsentrasjonen til
+disse monoamin reopptakshemmere øker ved samtidig behandling med moklobemid.
+
+Den farmakologiske virkningen av systemiske regimer av sympatomimetika kan muligens bli
+forsterket og forlenget ved samtidig behandling med moklobemid (for eksempel adrenergika).
+Ved kombinasjon med legemidler som øker serotonin, slik som mange andre antidepressiva, særlig
+kombinasjoner av flere legemidler, bør Aurorix gis med forsiktighet. Dette gjelder spesielt for
+
+                                                  4
+antidepressiva som venlafaksin, fluvoksamin, klomipramin, citalopram, escitalopram, paroksetin,
+sertralin, bupropion. Det skyldes at det har vært vist alvorlige kliniske symptomer som hypertermi,
+forvirringstillstander, hyperrefleksi og mykolonus som er tegn på serotonergt syndrom. Skulle slike
+symptomer oppstå, bør pasienten observeres nøye av lege (evt. innlegges på sykehus) og egnet
+behandling gis. Behandling med trisykliske eller andre antidepressiva kan startes neste dag etter
+seponering av moklobemid. Ved bytte fra en serotonin reopptakshemmer til moklobemid, bør
+halveringstiden tas med i betraktning (se pkt. 4.4). En pause på 14 dager anbefales ved bytte fra en
+irreversibel MAO hemmer til moklobemid (for eksempel fenelzin og tranlycypromin).
+Samtidig bruk av Johannesurt (Prikkperikum) anbefales ikke, da dette kan øke
+serotoninkonsentrasjonen i sentralnervesystemet.
+Isolerte tilfeller av alvorlige sentralnervøse bivirkninger er rapportert etter samtidig bruk av Aurorix
+og dekstrometorfan. Legemidler mot hoste og forkjølelse kan inneholde dekstrometorfan, og bør ikke
+tas uten samråd med lege, og hvis mulig, bør legemidler uten dekstrometorfan gis (se pkt 4.4.).
+Data fra kliniske studier tyder ikke på interaksjoner mellom moklobemid og hydroklortiazid (HTC),
+med høyt blodtrykk , p-piller, digoxin, fenprokumon og alkohol.
+Ettersom sibutramin hemmer reopptak av noradrenalin og serotonin, noe som kan øke effekten av
+MAO-hemmere, anbefales ikke samtidig bruk med moklobemid. Samtidig bruk av dekstropropoksyfen
+anbefales ikke da moklobemid kan potensere effekten av dekstropropoksyfen.
+
+4.6     Graviditet og amming
+
+Graviditet
+Dyrestudier gir ikke holdepunkter for fosterskade. Bruk under graviditet er foreløpig ikke tilstrekkelig
+undersøkt og bør i størst mulig grad unngås.
+
+Amming
+Mindre enn 1/30 av dosen går over i morsmelk. Fordeler ved fortsatt behandling må vurderes mot
+mulig risiko for barnet.
+
+4.7     Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+Aurorix har ingen eller ubetydelig påvirkning på evnen til å kjøre bil og bruke maskiner.
+Individuell reaksjon bør likevel observeres i begynnelsen av behandlingen.
+
+4.8     Bivirkninger
+
+Tabellen under viser bivirkningsprofilen for moklobemid basert på data fra kliniske studier og
+omfattende erfaring etter markedsføring.
+
+Estimert bivirkningsfrekvens er angitt som følger: svært vanlige (≥1/10), vanlige (≥1/100 til <1/10),
+mindre vanlige (≥1/1000 til <1/100), sjeldne (≥1/10 000 til <1/1000), svært sjeldne (≤1/10 000), ikke
+kjent (kan ikke anslås ut ifra tilgjengelige data).
+
+ Organklassesystem       Bivirkning                                          Frekvens
+ Gastrointestinale       Munntørrhet, kvalme                                 Svært vanlige
+ sykdommer
+                         Oppkast, diaré, forstoppelse                        Vanlige
+ Stoffskifte- og         Nedsatt appetitt*, hyponatremi*                     Sjeldne
+ ernæringsbetingede
+ sykdommer
+ Psykiatriske lidelser   Søvnforstyrrelser                                   Svært vanlige
+
+                         Agitasjon, angst, rastløshet                        Vanlige
+
+                         Selvmordstanker, forvirringstilstander (disse har   Mindre vanlige
+                         gått raskt over ved seponering av behandling)
+                         Suicidal oppførsel, vrangforestillinger*            Sjeldne
+
+                                                  5
+ Nevrologiske             Svimmelhet, hodepine                                Svært vanlige
+ sykdommer
+                          Parestesier                                         Vanlige
+
+                          Smaksforstyrrelser                                  Mindre vanlige
+ Øyesykdommer             Synsforstyrrelser                                   Mindre vanlige
+
+ Karsykdommer             Hypotensjon                                         Vanlige
+
+                          Flushing                                            Mindre vanlige
+ Lidelser og              Irritabiltet                                        Vanlige
+ reaksjoner på
+ administrasjonsstedet    Asteni                                              Mindre vanlige
+ Hud- og                  Utslett                                             Vanlige
+ underhudssykdomme
+ r                        Ødem, kløe, urticaria                               Mindre vanlige
+ Undersøkelser            Serotonergt syndrom* (gitt samtidig med             Sjeldne
+                          legemidler som forhøyer serotonin, som
+                          serotonin reopptakshemmere og mange andre
+                          antidepressiva), økte leverenzymer (uten
+                          assosiert klinisk sekvele).
+
+
+*: Bivirkninger som ikke var rapportert i kliniske studier, men ble bare rapportert etter post-marketing
+er merket med stjerne (*).
+
+Tilfeller av selvmordstanker og selvmordsrelatert adferd har vært rapportert i forbindelse med Aurorix
+behandling eller like etter behandlingsstopp (se pkt. 4.4).
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettisden til Statens
+legemiddelverk: www.legemiddelverket.no/meldeskjema.
+
+4.9   Overdosering
+
+Symptomer
+Overdosering med moklobemid alene induserer generelt lette og reversible tegn på CNS og
+gastrointestinal irritasjon.
+
+Behandling
+Ved behov må behandling settes inn ved nedsatt vital funksjon. Overdose sammen med andre
+legemidler som påvirker CNS kan være livstruende, og pasienten må behandles i sykehus. Det finnes
+ingen spesifikt antidot.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Antidepressivum, MAO-hemmer, ATC-kode: N06AG02
+
+Virkningsmekanisme
+
+
+                                                   6
+Moklobemid er et benzamid med en morfolinring. Det er en reversibel MAO-A-hemmer som påvirker
+det monoaminerge cerebrale neurotransmittorsystemet gjennom en reversibel hemming av
+monoaminoxidas (MAO), fortrinnsvis type A.
+
+Farmakodynamiske effekter
+Nedbryting av nordadrenalin, dopamin og serotonin avtar som følge av hemmingen av MAO, og dette
+medfører høyere konsentrasjoner av nevnte neurotransmittorer. Dette gjør at moklobemid har
+antidepressiv effekt som hever stemningsleiet og øker psykomotorisk aktivitet. Symptomer som
+ulystfølelse, tretthet, initiativløshet og konsentrasjonsvansker dempes som regel innen en uke etter
+behandlingsstart. Søvnkvaliteten bedres innen noen dager, til tross for at preparatet ikke har sedativ
+effekt. Da moklobemid hemmer enzymet reversibelt er en tyramininteraksjon lite sannsynlig.
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+Etter oral tilførsel absorberes moklobemid inntil 95 % fra mage-tarmkanalen. Biologisk tilgjengelighet
+er ca 60 % etter enkeltdose og ca. 80 % etter gjentatt dosering. Dette skyldes at det foreligger
+metningskinetikk slik at den metabolske kapasiteten er mettet. Maks. plasmakonsentrasjon nås etter
+ca. 1 time. Det er doseavhengig kinetikk slik at dobbel dose gir mer enn dobbel plasmakonsentrasjon.
+Ved normal dosering kan ”steady state” forventes etter ca 1 uke.
+
+Distribusjon
+Plasmaprotein-bindingen er ca 50 %. Distribusjonsvolumet er 1,2 l/kg. Konsentrasjonen i
+cerebrospinalvæsken er ca 50 % av plasmakonsentrasjonen.
+
+Biotransformasjon
+Metaboliseres i lever. Morfolindelen av molekylet oksideres. Over 20 metabolitter er påvist hos
+mennesker. Aktive metabolitter er påvist i lave konsentrasjoner i serum.
+
+Eliminasjon
+Metningskinetikk ved høy dosering. Ved vanlig dosering er halveringstiden 1-4 timer. ”Clearance” er
+ca 30 l/timen ved dosering 150 mg 3 ganger daglig. Skilles ut i urin. Mindre enn 1 % utskilles
+uforandret.
+
+5.3   Prekliniske sikkerhetsdata
+
+Dyre-ekperimentelle data viser ikke økt risiko for fosterskade.
+
+
+6.    FARMASØYTISKE OPPLYSNINGER
+
+6.1   Hjelpestoffer
+
+Tablettkjerne:
+Laktosemonohydrat
+Maisstivelse
+Povidon
+Natriumstivelseglykolat
+Magnesiumstearat
+
+Drasjélag:
+Hypromellose
+Etylcellulose
+Makrogol 6000
+Talkum
+Titandioksid (E171)
+Jernoksid, gult (E172).
+
+                                                   7
+Det er ikke jernoksid, gult (E172) i tablettene på 300 mg.
+
+6.2    Uforlikeligheter
+
+Ikke relevant
+
+6.3    Holdbarhet
+
+5 år
+
+6.4    Oppbevaringsbetingelser
+
+Oppbevares ved høyst 25 °C.
+
+6.5    Emballasje (type og innhold)
+
+Aurorix 150 mg tabletter 30 stk. og 100 stk. i blisterpakning.
+Aurorix 300 mg tabletter 60 stk. i blisterpakning.
+
+
+6.6    Spesielle forholdsregler for destruksjon og annen håndtering
+
+Ikke anvendt legemiddel samt avfall bør destrueres i overensstemmelse med lokale krav.
+
+
+7.     INNEHAVER AV MARKEDSFØRINGSTILLATELSEN
+
+Viatris AS
+Postboks 194
+1371 Asker
+
+
+8.     MARKEDSFØRINGSTILLATELSESNUMMER (NUMRE)
+
+Aurorix 150 mg tabletter MTnr: 7547
+Aurorix 300 mg tabletter MTnr: 7983
+
+
+9.     DATO FOR FØRSTE MARKEDSFØRINGSTILLATELSE / SISTE FORNYELSE
+
+150 mg
+Dato for første markedsføringstillatelse: 08.08.1990
+Dato for siste fornyelse: 08.08.2005
+
+300 mg
+Dato for første markedsføringstillatelse: 30.05.1994
+Dato for siste fornyelse: 30.05.2004
+
+
+10.    OPPDATERINGSDATO
+
+13.10.2023
+
+
+
+
+                                                   8
+
