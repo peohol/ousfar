@@ -235,16 +235,15 @@ Ingen regel har toleranse (beslutning 5.7), heller ikke med dråper: en dose som
 - **Aksepttest med norske preparater (E.2).** Hver hovedregel og langsom variant er regnet med de faktiske preparatene i et lagret FEST-uttrekk, for hver legemiddelform, ved vanlig dose, lang behandlingstid, tidligere seponeringssymptomer, lav dose og videreføring (`docs/verktøy-p7-aksepttest.md`). **Resultatet er at reglene sjelden gir mer enn én reduksjon:** i halvparten av kombinasjonene av virkestoff og form stopper planen allerede ved første trinn, fordi prosenttrinnene ikke kan gis nøyaktig med tablettstyrkene og delingen i FEST, og ingen toleranse er godkjent. Hvordan reglene eventuelt skal tilpasses tilgjengelige doser, er et faglig valg til neste kontroll; verktøyet viser ingen av planene.
 - **Fordeling bare på like store doser.** Doseplanmotoren bruker ikke lenger ujevne fordelinger av døgndosen (som 20 + 10 mg), fordi ingen regel dokumenterer dem; en dose som bare kan fordeles ujevnt, stopper planen (doseplanmotor 4).
 - **Pilotreglene (P4.8).** De fire byttereglene er rettet eller avgrenset (versjon 3), og depotreglene er registrert som kildemessig akseptable som avgrensede varianter, ikke klinisk godkjent (`docs/verktøy-p4-regelmodell.md`).
-- **Klinisk ansvar.** Kontrollen sier at en signert klinisk godkjenning må knyttes til en navngitt fagansvarlig lege etter bestått uavhengig kontroll; en AI-kontroll alene overfører ikke klinisk ansvar. Hvordan dette skal gjelde for godkjenningene av bupropion og agomelatin, er lagt fram for bidragsyteren.
+- **Klinisk ansvar.** Kontrollen sier at en signert klinisk godkjenning må knyttes til en navngitt fagansvarlig lege etter bestått uavhengig kontroll; en AI-kontroll alene overfører ikke klinisk ansvar. Bidragsyteren avgjorde 30.10.2026 at en klinisk godkjenning ikke skal kreve signatur fra en navngitt lege: godkjenninger registreres som før, med kontrollør, dato, regelversjon, omfang og fingeravtrykk, og godkjenningene av bupropion og agomelatin står. Dette avviker bevisst fra kontrollens anbefaling (E.3).
 
 **Gjenstår før P4.8 og P7.5 kan godkjennes for de beregnbare reglene:**
 
 1. **Ny uavhengig kontroll av regelversjon 6:** de 12 hovedreglene, de 12 langsomme variantene, fluoksetin annenhver dag og tekstreglene for duloksetin og venlafaksin. Særlig grensene for startdosen i avsnitt 4, der grensen for nortriptylin hos eldre (50 mg) og det at paroksetin og nortriptylin spør om «eldre» uten alder, er OUSFARs valg ut fra preparatomtalen.
 2. **Klinisk nytte med norske preparater:** aksepttesten viser at de fleste planene stopper ved første eller andre trinn. Det må avgjøres faglig om reglene skal tilpasses dosene som kan gis, eller vises som forklarende tekst (kontrollrunden 30.10.2026, B.3).
-3. **Navngitt fagansvarlig lege:** en signert klinisk godkjenning knyttes til en navngitt fagansvarlig lege etter bestått uavhengig kontroll.
-4. **Zoloft konsentrat (P5):** dokumentert dose per ml, oppmålingsoppløsning og nøyaktighet før konsentratet kan brukes.
-5. **Duloksetin og venlafaksin:** en dokumentert metode for mindre doser før en beregnbar regel kan vurderes på nytt.
-6. **Senere, når det bestemmes:** utkast for doksepin, imipramin og trazodon fra utenlandske preparatomtaler. Fenelzin og tranylcypromin får ingen regler nå; dosulepin og maprotilin venter.
+3. **Zoloft konsentrat (P5):** dokumentert dose per ml, oppmålingsoppløsning og nøyaktighet før konsentratet kan brukes.
+4. **Duloksetin og venlafaksin:** en dokumentert metode for mindre doser før en beregnbar regel kan vurderes på nytt.
+5. **Senere, når det bestemmes:** utkast for doksepin, imipramin og trazodon fra utenlandske preparatomtaler. Fenelzin og tranylcypromin får ingen regler nå; dosulepin og maprotilin venter.
 
 ## 12. Endret etter kontrollene
 
