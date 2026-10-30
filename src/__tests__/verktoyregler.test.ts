@@ -184,8 +184,10 @@ describe('Pilotsettet', () => {
       const steg = Array.from({ length: r.versjon }, (_, i) => ['utkast', 'til_faglig_kontroll', ...(depot && i === 1 ? ['til_faglig_kontroll'] : [])]).flat()
       expect(r.godkjenning.historikk.map((s) => s.status), r.id).toEqual(steg)
       if (depot) expect(r.godkjenning.historikk[4]!.merknad, r.id).toMatch(/^Kontrollrunden 30\.10\.2026 \(P4\.8\): kildemessig akseptabel som avgrenset .*Ikke klinisk godkjent/)
-      // Hver regel i pilotsettet er rettet etter kontrollørens beslutninger 30.10.2026 (P4-A og P4-B).
-      expect(r.godkjenning.historikk.at(-2)!.merknad, r.id).toMatch(/^Rettet etter kontrollørens beslutninger 30\.10\.2026 \(P4\.8\)/)
+      // Hver regel i pilotsettet er rettet etter kontrollørens beslutninger 30.10.2026 (P4-A og P4-B); fenelzin og kvetiapin i tillegg etter gjennomgangen av fe08fac.
+      const gjennomgang = ['mao-fluoksetin-fenelzin', 'antipsykotikabytte-olanzapin-kvetiapin'].includes(r.id)
+      expect(r.godkjenning.historikk.at(gjennomgang ? -4 : -2)!.merknad, r.id).toMatch(/^Rettet etter kontrollørens beslutninger 30\.10\.2026 \(P4\.8\)/)
+      if (gjennomgang) expect(r.godkjenning.historikk.at(-2)!.merknad, r.id).toMatch(/^Rettet etter kontrollørens gjennomgang av fe08fac 30\.10\.2026 \(P4\.8\)/)
       expect(r.godkjenning.historikk.at(-1)!.regelversjon, r.id).toBe(r.versjon)
       expect(r.godkjenning.historikk.every((s) => s.rolle === 'utvikler')).toBe(true)
     }
@@ -194,11 +196,11 @@ describe('Pilotsettet', () => {
     const rettet = (pr: string) => PILOTSETT.regler.filter((r) => r.godkjenning.historikk[2]!.merknad.includes(pr)).map((r) => r.id)
     expect(rettet('PR #282')).toEqual(['antipsykotikabytte-olanzapin-kvetiapin', 'depot-aripiprazol-maintena', 'depot-paliperidon-xeplion'])
     expect(rettet('PR #286')).toEqual(['kryssnedtrapping-sertralin-mirtazapin', 'mao-fluoksetin-fenelzin'])
-    // Kontrollrunden og gjennomgangen 30.10.2026 ga versjon 3–5; kontrollørens beslutninger samme dag én versjon til for hver regel.
+    // Kontrollrunden og gjennomgangen 30.10.2026 ga versjon 3–5; kontrollørens beslutninger samme dag én versjon til for hver regel, og gjennomgangen av fe08fac én til for fenelzin og kvetiapin.
     expect(PILOTSETT.regler.map((r) => [r.id, r.versjon])).toEqual([
       ['kryssnedtrapping-sertralin-mirtazapin', 5],
-      ['mao-fluoksetin-fenelzin', 6],
-      ['antipsykotikabytte-olanzapin-kvetiapin', 4],
+      ['mao-fluoksetin-fenelzin', 7],
+      ['antipsykotikabytte-olanzapin-kvetiapin', 5],
       ['depot-aripiprazol-maintena', 3],
       ['depot-paliperidon-xeplion', 3],
     ])

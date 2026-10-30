@@ -19,7 +19,7 @@
  */
 import type { Legemiddelutvalg } from '../../legemiddeldata/lesing'
 import { byggesteiner, norskDato, type Preparatgrunnlag } from '../motor/byggesteiner'
-import { beregnDoseplan, formvalgSomTrengs, planform, type Doseplaninndata, type Doseplanresultat, type Omgivelse, type Trinnvalg } from '../motor/plan'
+import { beregnDoseplan, formvalgSomTrengs, planform, trinndosetekst, type Doseplaninndata, type Doseplanresultat, type Omgivelse, type Trinnvalg } from '../motor/plan'
 import { festkoblinger, KARTLEGGING } from '../register'
 import { avrund } from './beregning'
 import { PLANHORISONT_TRINN } from './bygg'
@@ -28,8 +28,8 @@ import { LANG_BEHANDLINGSTID, NEDTRAPPINGSSETT, UTENFOR_DOSERAMME_ID } from './n
 
 export const AKSEPTTESTFIL = 'docs/verktøy-p7-aksepttest.md'
 export const FEST_AKSEPTTEST = 'src/data/verktoy/fest-aksepttest.json'
-/** FEST-uttrekket ende-til-ende-testene av depotreglene i pilotsettet regnes fra (P4.8, beslutning P4-B). */
-export const FEST_DEPOT = 'src/data/verktoy/fest-depot.json'
+/** FEST-uttrekket ende-til-ende-testene av pilotreglene som er bundet til preparater eller legemiddelformer i FEST, regnes fra (P4.8, beslutning P4-B). */
+export const FEST_PILOT = 'src/data/verktoy/fest-pilotsett.json'
 
 /** Stien til trinnstørrelsen forskriveren kan justere i en P7-regel. */
 export const PROSENTSTI = 'plan.forlop[0].faser[0].strategi.prosent'
@@ -205,9 +205,9 @@ function utfall(r: Akseptresultat): string {
   return n === 0 ? 'stopper ved første trinn' : `${n} ${n === 1 ? 'reduksjon' : 'reduksjoner'}`
 }
 
-/** «Kan velges for trinn 2 (dag 29, beregnet 56,25 mg, fra 75 mg): 50 mg (−33,33 %, krever begrunnelse).» */
+/** «Kan velges for trinn 2 (dag 29, beregnet 56,25 mg, fra 75 mg): 50 mg (−33,33 %, avvik som krever begrunnelse).» */
 export const valgtekst = (t: Trinnvalg) =>
-  `Kan velges for trinn ${t.trinn} (dag ${t.fra_dag}, beregnet ${tall(avrund(t.beregnet_mg))} mg, fra ${tall(t.fra_mg)} mg): ${t.doser.map((d) => `${tall(d.mg)} mg (−${tall(avrund(d.prosent))} %${d.krever_begrunnelse ? ', krever begrunnelse' : ''})`).join(' eller ')}.`
+  `Kan velges for trinn ${t.trinn} (dag ${t.fra_dag}, beregnet ${tall(avrund(t.beregnet_mg))} mg, fra ${tall(t.fra_mg)} mg): ${t.doser.map((d) => trinndosetekst({ ...d, prosent: avrund(d.prosent) })).join(' eller ')}.`
 
 const linjer = (p: Doseplanresultat) => {
   const form = planform(p)

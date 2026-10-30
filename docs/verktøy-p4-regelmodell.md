@@ -89,6 +89,12 @@ Kontrollene krever at grensene i et krav er innenfor området, at `ved` er et sp
 - Raden i en omregningstabell kan ha `sted`: injeksjonsstedet for den dosen, når det avviker fra fasens, f.eks. deltoideus som bør vurderes ved Xeplion etter 9–12 mg peroralt. Stedet står i planen.
 - Et forløp *uten beregning* gir grunnen som merknad i resultatet (`virkestoff: grunn`), så planen sier hvorfor det ikke beregnes.
 
+**Bundne former, fordeling hver dag og utvasking (beregningsmotor 8, doseplanmotor 7).** Etter kontrollørens gjennomgang av fe08fac 30.10.2026 (P4.8):
+
+- `Forlop.legemiddelformer` gjelder også når forskriveren har valgt formen selv: et formvalg utenfor formene regelen gjelder, stopper planen, og et formvalg som også omfatter andre former, gir bare regelens former.
+- `Forlop.fordeling` uten `over_mg` gjelder hver døgndose i forløpet, også vedlikeholdet. Doseplanmotoren velger den enkleste sammensetningen *som kan fordeles* (ikke den enkleste først og så fordelingen), f.eks. 100 mg som 4 tabletter à 25 mg (50 + 50 mg) når én tablett à 100 mg ikke kan deles. Kan ingen sammensetning fordeles, stopper planen.
+- Et forløp som starter etter utvasking og ikke beregnes, vises som «tidligst dag 92: 35 dagers utvasking fullført; fenelzin er ikke startet eller dosert av planen. Klinisk oppstart kan først vurderes etter kontroll av kontraindikasjoner, interaksjoner og øvrige forhold», aldri som en oppstart. Uten utvasking står det at legemidlet ikke er startet eller dosert av planen, og at oppstarten vurderes individuelt. Et forløp som fortsetter uten beregning etter beregnede perioder, er uendret («videre dosering beregnes ikke; planlegges individuelt»).
+
 **Gyldige verdier.** Doser og varigheter er endelige tall over 0, prosenter over 0 og høyst 100, og dager, måneder og trinn hele tall (`parameterfeil`). En startdato må være en gyldig kalenderdato som `ÅÅÅÅ-MM-DD`; `2027-02-31` normaliseres ikke. Ugyldige verdier i regelen eller inndata gir en stopp med grunnen, og beregningen kaster aldri: også en feil i regelen selv blir en kontrollert stopp.
 
 **Måneder.** Månedlige injeksjoner regnes fra forrige injeksjon. Med startdato er én måned senere samme dato, eller siste dag i måneden når den er kortere (31. januar → 28. februar); tidsvinduet i preparatomtalen gjelder rundt den datoen.
@@ -222,4 +228,13 @@ Ingen pilotregel bruker lenger prosent av startdosen; strategien er fortsatt en 
 | Abilify Maintena (versjon 3) | Koble regelen eksplisitt til depotpreparatet i FEST; testes ende til ende. | Depotforløpet har `preparater: ['Abilify Maintena']` og legemiddelform 819, så P5 kan bygge planen med preparatene i FEST. |
 | Xeplion (versjon 3) | Som Maintena; ved 9–12 mg peroralt skal deltoideus fremheves i selve planen. | `preparater: ['Xeplion']`; radene for 9 og 12 mg har injeksjonsstedet «deltoideus eller setemuskel; … deltoideus bør vurderes», som står i planen. Omregningen mellom paliperidon og paliperidonpalmitat (150 mg ≙ 234 mg, 100 mg ≙ 156 mg) står som kildetro utsagn. |
 
-Depotreglene testes ende til ende med et lagret FEST-uttrekk (`src/data/verktoy/fest-depot.json`, hentes med `npm run verktoy:regler -- hent-fest`): start, tidligste neste injeksjon, doser og enheter, deltoideus ved 9–12 mg, stopp ved nedsatt nyrefunksjon og ved CYP-interaksjoner, feil depotform og en styrke som ikke finnes eller er utgått. Med en godkjenning bare i testen gir planen et klinisk resultat; i appen er ingen av dem godkjent.
+Depotreglene testes ende til ende med et lagret FEST-uttrekk (`src/data/verktoy/fest-pilotsett.json`, hentes med `npm run verktoy:regler -- hent-fest`): start, tidligste neste injeksjon, doser og enheter, deltoideus ved 9–12 mg, stopp ved nedsatt nyrefunksjon og ved CYP-interaksjoner, feil depotform og en styrke som ikke finnes eller er utgått. Med en godkjenning bare i testen gir planen et klinisk resultat; i appen er ingen av dem godkjent.
+
+**Etter kontrollørens gjennomgang av fe08fac (30.10.2026).** Depotreglene (P4-B) er verifisert. To kliniske sikkerhetsfeil gjensto; ingen regel er godkjent, og ingen beregnbar regel vises i en klinisk doseplan før en ny uavhengig kontroll av den eksakte rettede versjonen. Pilotsettet er versjon 9:
+
+| Regel | Funn | Endring |
+| --- | --- | --- |
+| Olanzapin → kvetiapin (versjon 5) | Regelen var ikke bundet til tabletter med vanlig frisetting og krevde ikke to doser daglig; depottabletter har en annen opptrapping og gis én gang daglig. | Kvetiapin er bundet til FEST-form 53 (tablett), også ved eksplisitt formvalg, og hver døgndose, også vedlikeholdet, er fordelt på to doser med grunnlag i Seroquels preparatomtale pkt. 4.2. Med preparatene i FEST: dag 1 50 mg = 25 + 25 mg, dag 2 50 + 50 mg, dag 3 100 + 100 mg, dag 4 200 + 100 mg (ulik fordeling) og vedlikehold 400 mg som 200 + 200 mg. |
+| Fluoksetin → fenelzin (versjon 7) | Linjen «tidligst dag 92: oppstart, dosering beregnes ikke» framstilte en oppstart av fenelzin. | Linjen sier at utvaskingen er fullført og at fenelzin ikke er startet eller dosert av planen, i regneeksemplene, i doseplanen og med dato. |
+
+Kvetiapinregelen testes ende til ende med det samme FEST-uttrekket, som nå også har olanzapin og kvetiapin: døgndosene og fordelingen hver dag, at bare registrerte tabletter med vanlig frisetting brukes, at depottabletter og mikstur avvises også ved eksplisitt formvalg, og at planen stopper når en døgndose ikke kan fordeles. Fenelzinlinjen testes med fluoksetin fra FEST.

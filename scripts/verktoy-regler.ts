@@ -6,13 +6,13 @@
  *   npm run verktoy:regler -- rapport    docs/verktøy-p4-pilotsett.md, docs/verktøy-p7-regelutkast.md og docs/verktøy-p7-dekning.md
  *   npm run verktoy:regler -- motorrapport   docs/verktøy-p5-testtilfeller.md (doseplanmotoren, syntetiske data)
  *   npm run verktoy:regler -- aksepttest     docs/verktøy-p7-aksepttest.md (P7-reglene med de norske preparatene i FEST-uttrekket)
- *   npm run verktoy:regler -- hent-fest      Henter FEST-uttrekkene til aksepttesten og depottestene på nytt (krever VITE_SUPABASE_URL og SUPABASE_SECRET_KEY)
+ *   npm run verktoy:regler -- hent-fest      Henter FEST-uttrekkene til aksepttesten og pilotreglenes ende-til-ende-tester på nytt (krever VITE_SUPABASE_URL og SUPABASE_SECRET_KEY)
  *
  * Bare `hent-fest` henter noe, og bare ved å lese med `les_legemidler`. Skriptet
  * skriver ikke til databasen og godkjenner ingen regel.
  */
 import { readFileSync, writeFileSync } from 'node:fs'
-import { AKSEPTSTOFFER, AKSEPTTESTFIL, FEST_AKSEPTTEST, FEST_DEPOT, lagAksepttestrapport, type Festuttrekk } from '../src/verktoy/regler/aksepttest'
+import { AKSEPTSTOFFER, AKSEPTTESTFIL, FEST_AKSEPTTEST, FEST_PILOT, lagAksepttestrapport, type Festuttrekk } from '../src/verktoy/regler/aksepttest'
 import { PILOTSETT } from '../src/verktoy/regler/pilotsett'
 import { festkoblinger } from '../src/verktoy/register'
 import { DEKNINGSRAPPORTFIL, lagDekningsrapport } from '../src/verktoy/dekningsrapport'
@@ -51,8 +51,11 @@ async function aksepttest() {
 }
 
 /** Virkestoffene i depotforløpene i pilotsettet. */
-const depotstoffer = () =>
-  PILOTSETT.regler.flatMap((r) => r.plan.forlop.flatMap((f) => (f.administrasjon === 'depotinjeksjon' && f.virkestoff.type === 'virkestoff' ? [f.virkestoff.nokkel] : [])))
+/** Virkestoffene i pilotreglene som har et forløp bundet til legemiddelformer i FEST; de testes ende til ende. */
+const bundneStoffer = () =>
+  PILOTSETT.regler
+    .filter((r) => r.plan.forlop.some((f) => f.legemiddelformer || f.preparater))
+    .flatMap((r) => r.plan.forlop.flatMap((f) => (f.virkestoff.type === 'virkestoff' ? [f.virkestoff.nokkel] : [])))
 
 async function hentFest() {
   const url = process.env.VITE_SUPABASE_URL
@@ -60,7 +63,7 @@ async function hentFest() {
   if (!url || !nokkel) throw new Error('VITE_SUPABASE_URL og SUPABASE_SECRET_KEY må være satt.')
   for (const [fil, nokler] of [
     [FEST_AKSEPTTEST, AKSEPTSTOFFER.map((s) => s.nokkel)],
-    [FEST_DEPOT, depotstoffer()],
+    [FEST_PILOT, [...new Set(bundneStoffer())]],
   ] as const) {
     const ider = [...new Set(Object.values(festkoblinger(nokler)).flat())].sort()
     const svar = await fetch(`${url}/rest/v1/rpc/les_legemidler`, {

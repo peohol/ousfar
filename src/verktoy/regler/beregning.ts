@@ -41,7 +41,7 @@ import {
 } from './modell'
 
 /** Økes når beregningen endres slik at like inndata kan gi et annet resultat. */
-export const MOTORVERSJON = 7
+export const MOTORVERSJON = 8
 
 /** En sammenhengende periode med samme dose. `til` er `null` når dosen fortsetter. */
 export interface Periode {
@@ -86,6 +86,8 @@ export interface Forlopsresultat {
   siste_dosedag: number | null
   /** Når doseringen ikke beregnes: hvorfor. */
   uten_beregning?: string
+  /** Utvaskingen før forløpet, når det starter etter et annet: antall dager uten det andre legemidlet. */
+  utvasking_dager?: number
   /** Datoene for `start` og dagen etter `siste_dosedag`, når planen har startdato. */
   start_dato?: string
   seponert_dato?: string
@@ -384,12 +386,14 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
   const { inndata } = ctx
   const virkestoff = f.virkestoff.type === 'virkestoff' ? f.virkestoff.nokkel : (ctx.medlem as string)
   let start: number
+  let utvaskingDager: number | undefined
   if (f.start.type === 'dag') start = f.start.dag
   else {
     const forrige = ctx.resultater.get(f.start.forlop)
     if (!forrige) throw new Error(`${regel.id}: forløpet ${f.id} starter etter ${f.start.forlop}, som ikke er beregnet før`)
     if (forrige.siste_dosedag === null) throw new Stopp(`${forrige.virkestoff} avsluttes ikke i planen, så utvaskingen før ${virkestoff} kan ikke beregnes.`)
     const utvasking = verdi(f.start.utvasking)
+    utvaskingDager = utvasking
     start = forrige.siste_dosedag + utvasking + 1
     const fra = forrige.siste_dosedag + 1
     ctx.kontroller.push({
@@ -592,6 +596,7 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
     injeksjoner,
     siste_dosedag: fortsetter ? null : dag - 1,
     ...(uten ? { uten_beregning: uten } : {}),
+    ...(utvaskingDager !== undefined ? { utvasking_dager: utvaskingDager } : {}),
     ...(avslutning ? { avslutning, avslutning_kort } : {}),
   }
   if (inndata.startdato) dater(resultat, inndata.startdato)
@@ -1005,13 +1010,23 @@ function injeksjonstekst(i: Injeksjon): string {
 }
 
 /**
- * Linjen for et forløp regelen ikke beregner videre: en oppstart som ikke
- * doseres (som fenelzin etter utvasking), eller dosering etter de beregnede
- * periodene som planlegges individuelt (som olanzapin etter de første dagene).
+ * Linjen for et forløp regelen ikke beregner videre: et legemiddel planen
+ * verken starter eller doserer (som fenelzin etter utvasking), eller dosering
+ * etter de beregnede periodene som planlegges individuelt (som olanzapin etter
+ * de første dagene). Dagen for et legemiddel som ikke startes, er bare en nedre
+ * grense, aldri en oppstart (kontrollørens gjennomgang av fe08fac, P4.8).
  */
-export function utenBeregningLinje(f: Pick<Forlopsresultat, 'start' | 'start_dato' | 'perioder'>, datotekst = (d: string | undefined) => parentes(d && norskDato(d))): string {
+export function utenBeregningLinje(
+  f: Pick<Forlopsresultat, 'virkestoff' | 'start' | 'start_dato' | 'perioder' | 'utvasking_dager'>,
+  datotekst = (d: string | undefined) => parentes(d && norskDato(d)),
+): string {
   const siste = f.perioder.at(-1)
-  if (!siste) return `tidligst dag ${f.start}${datotekst(f.start_dato)}: oppstart, dosering beregnes ikke`
+  if (!siste) {
+    const ikkeStartet = `${f.virkestoff} er ikke startet eller dosert av planen.`
+    return f.utvasking_dager === undefined
+      ? `tidligst dag ${f.start}${datotekst(f.start_dato)}: ${ikkeStartet} Klinisk oppstart vurderes individuelt`
+      : `tidligst dag ${f.start}${datotekst(f.start_dato)}: ${f.utvasking_dager} dagers utvasking fullført; ${ikkeStartet} Klinisk oppstart kan først vurderes etter kontroll av kontraindikasjoner, interaksjoner og øvrige forhold`
+  }
   const dag = (siste.til ?? siste.fra) + 1
   return `fra dag ${dag}${datotekst(siste.til_dato ? datoFor(siste.til_dato, 2) : undefined)}: videre dosering beregnes ikke; planlegges individuelt`
 }

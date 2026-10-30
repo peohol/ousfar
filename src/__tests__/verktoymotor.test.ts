@@ -18,7 +18,7 @@ import { fingeravtrykk } from '../verktoy/regler/godkjenning'
 import { REGELMODELLVERSJON, type Nedtrappingsstrategi, type Regel } from '../verktoy/regler/modell'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
 import { byggesteiner, type Byggestein } from '../verktoy/motor/byggesteiner'
-import { doser, MAKS_DRAPER, MAKS_ENHETER, styrkevalg, velgSerie, type Dosekandidat } from '../verktoy/motor/dosevalg'
+import { doser, fordel, MAKS_DRAPER, MAKS_ENHETER, styrkevalg, velgSerie, type Dosekandidat } from '../verktoy/motor/dosevalg'
 import {
   antallTekst,
   beregnDoseplan,
@@ -33,7 +33,7 @@ import {
   type Omgivelse,
 } from '../verktoy/motor/plan'
 import { lagMotorrapport, MOTORRAPPORTFIL } from '../verktoy/motor/rapport'
-import { FEST_DEPOT, omgivelseFor, type Festuttrekk } from '../verktoy/regler/aksepttest'
+import { FEST_AKSEPTTEST, FEST_PILOT, omgivelseFor, type Festuttrekk } from '../verktoy/regler/aksepttest'
 import { festkoblinger, KARTLEGGING } from '../verktoy/register'
 import { godkjennITest } from './hjelp/verktoyplan'
 import {
@@ -162,6 +162,15 @@ describe('Dosene som kan settes sammen', () => {
     expect(k(15)).toBe('1×10+1×5')
     expect(k(20)).toBe('1×20')
     expect(k(11.25)).toBe('1×10+0.25×5')
+  })
+
+  it('velger den enkleste sammensetningen som kan fordeles, når døgndosen må fordeles', () => {
+    // 100 mg som én tablett kan ikke fordeles på to doser; fire tabletter à 25 mg kan (50 + 50 mg).
+    const v = valg(tab('A', 25), tab('B', 100))
+    const k = (godta?: (k: Dosekandidat) => boolean) => doser(v, 100, 100, godta)[0]!.elementer.map((e) => `${e.antall}×${e.mg}`).join('+')
+    expect(k()).toBe('1×100')
+    expect(k((x) => fordel(x, [2], Infinity) !== null)).toBe('4×25')
+    expect(doser(v, 100, 100, () => false)).toEqual([])
   })
 
   it('setter aldri sammen injeksjoner', () => {
@@ -375,7 +384,10 @@ describe('Kildedata, versjoner og determinisme', () => {
     expect(r.trinnvalg?.map((x) => [x.trinn, x.fra_mg, x.beregnet_mg, x.omrade, x.doser.map((d) => [d.mg, Math.round(d.prosent * 100) / 100, d.krever_begrunnelse])])).toEqual([
       [2, 18.75, 14.06, [5, 50], [[13.75, 26.67, true], [15, 20, false]]],
     ])
-    expect(r.merknader.join(' ')).toMatch(/Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 18,75 mg innenfor valgområdet 5–50 %: 13,75 mg \(−26,67 %, krever begrunnelse\) eller 15 mg \(−20 %\)\. Beregningen velger ikke selv\./)
+    // Den foretrukne reduksjonen står først; en dose som krever begrunnelse, er merket som avvik, ikke som et anbefalt trinn.
+    expect(r.merknader.join(' ')).toMatch(
+      /Den foretrukne reduksjonen til 14,06 mg \(−25,01 % fra 18,75 mg\) kan ikke gis med preparatene\. Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 18,75 mg innenfor valgområdet 5–50 %: 13,75 mg \(−26,67 %, avvik som krever begrunnelse\) eller 15 mg \(−20 %\)\. En dose som krever begrunnelse, er et avvik fra den foretrukne reduksjonen og ikke et anbefalt trinn; den kan bare velges etter uttrykkelig individuell vurdering\. Beregningen velger ikke selv\./,
+    )
     // Uten valg per trinn i regelen: ingen doser tilbys, og stoppet sier at en annen dose krever en ny faglig vurdering.
     const uten = structuredClone(t.regel)
     const fase = uten.plan.forlop[0]!.faser[0]!
@@ -590,7 +602,7 @@ describe('Sperren mot klinisk bruk', () => {
 })
 
 describe('Depotreglene i pilotsettet med preparatene i FEST (P4.8, beslutning P4-B)', () => {
-  const u = JSON.parse(readFileSync(new URL(`../../${FEST_DEPOT}`, import.meta.url), 'utf8')) as Festuttrekk
+  const u = JSON.parse(readFileSync(new URL(`../../${FEST_PILOT}`, import.meta.url), 'utf8')) as Festuttrekk
   const grunnlag = { utvalg: u.utvalg, koblinger: festkoblinger(['aripiprazol', 'paliperidon']), overstyringer: KARTLEGGING.festoverstyringer }
   const omgivelse = omgivelseFor(u)
   const regel = (id: string) => PILOTSETT.regler.find((x) => x.id === id)!
@@ -670,6 +682,90 @@ describe('Depotreglene i pilotsettet med preparatene i FEST (P4.8, beslutning P4
     }
     // Uten godkjenning sperres planen som før.
     expect(kliniskDoseplan(XEPLION, xeplion(6), grunnlag, omgivelse).status).toBe('stoppet')
+  })
+})
+
+describe('Kvetiapin i byttet fra olanzapin med preparatene i FEST (P4.8, gjennomgangen av fe08fac)', () => {
+  const u = JSON.parse(readFileSync(new URL(`../../${FEST_PILOT}`, import.meta.url), 'utf8')) as Festuttrekk
+  const grunnlag = { utvalg: u.utvalg, koblinger: festkoblinger(['olanzapin', 'kvetiapin']), overstyringer: KARTLEGGING.festoverstyringer }
+  const omgivelse = omgivelseFor(u)
+  const REGEL = PILOTSETT.regler.find((x) => x.id === 'antipsykotikabytte-olanzapin-kvetiapin')!
+  const tabletter = (koder: string[]) => ({ klasse: 'peroral' as const, legemiddelformer: koder })
+  const inndata = (maldose_mg: number, til?: ReturnType<typeof tabletter>): Doseplaninndata => ({
+    startdose_mg: 10,
+    maldose_mg,
+    bekreftet: REGEL.bekreftelser.map((b) => b.id),
+    formvalg: { fra: tabletter(['53']), ...(til && { til }) },
+  })
+  const kvetiapin = (r: Doseplanresultat) => (r.status === 'doseplan' ? r.forlop.find((f) => f.id === 'til')! : undefined)
+
+  it('regelen er bundet til tabletter med vanlig frisetting og krever to doser hver dag, også ved vedlikehold', () => {
+    const til = REGEL.plan.forlop.find((f) => f.id === 'til')!
+    expect(til.legemiddelformer).toEqual(['53'])
+    expect(til.fordeling).toMatchObject({ antall: [2] })
+    expect(til.fordeling!.over_mg).toBeUndefined()
+  })
+
+  it('dag 1 er 25 + 25 mg, og hver døgndose etter det er fordelt på to doser med de faktiske tablettene', () => {
+    const r = beregnDoseplan(REGEL, inndata(400), grunnlag, omgivelse)
+    expect(planform(r).til).toEqual([
+      'dag 1: 50 mg = 2 tabletter à 25 mg, fordelt på 2 doser: 25 + 25 mg',
+      'dag 2: 100 mg = 4 tabletter à 25 mg, fordelt på 2 doser: 50 + 50 mg',
+      'dag 3: 200 mg = 2 tabletter à 100 mg, fordelt på 2 doser: 100 + 100 mg',
+      'dag 4: 300 mg = 1 tablett à 100 mg + 1 tablett à 200 mg, fordelt på 2 doser: 200 + 100 mg (ulik fordeling)',
+      'fra dag 5: 400 mg = 2 tabletter à 200 mg, fordelt på 2 doser: 200 + 200 mg',
+    ])
+    const f = kvetiapin(r)!
+    expect(f.perioder.map((p) => p.doser)).toEqual([[25, 25], [50, 50], [100, 100], [200, 100], [200, 200]])
+    // Bare registrerte tabletter med vanlig frisetting (FEST-form 53), aldri depottabletter eller mikstur.
+    const preparater = f.perioder.flatMap((p) => p.elementer.flatMap((e) => e.preparater))
+    expect(new Set(preparater.map((b) => `${b.legemiddelform?.kode} ${b.registrering}`))).toEqual(new Set(['53 registrert']))
+    expect(preparater.some((b) => b.varenavn === 'Seroquel')).toBe(true)
+    expect(f.perioder.flatMap((p) => p.elementer.map((e) => e.mg)).every((mg) => [25, 100, 200, 300].includes(mg))).toBe(true)
+    // Vedlikeholdsdosen 300 og 450 mg er også fordelt på to doser.
+    expect(planform(beregnDoseplan(REGEL, inndata(300), grunnlag, omgivelse)).til!.at(-1)).toBe(
+      'fra dag 4: 300 mg = 1 tablett à 100 mg + 1 tablett à 200 mg, fordelt på 2 doser: 200 + 100 mg (ulik fordeling)',
+    )
+    expect(planform(beregnDoseplan(REGEL, inndata(450), grunnlag, omgivelse)).til!.at(-1)).toBe(
+      'fra dag 5: 450 mg = 2 tabletter à 200 mg + 2 tabletter à 25 mg, fordelt på 2 doser: 225 + 225 mg',
+    )
+  })
+
+  it('avviser depottabletter og mikstur, også ved eksplisitt formvalg', () => {
+    for (const koder of [['25'], ['840'], ['25', '53']]) {
+      const r = beregnDoseplan(REGEL, inndata(400, tabletter(koder)), grunnlag, omgivelse)
+      if (koder.includes('53')) {
+        // Et formvalg som også omfatter depottabletter, gir bare tablettene med vanlig frisetting.
+        expect(new Set(kvetiapin(r)!.perioder.flatMap((p) => p.elementer.flatMap((e) => e.preparater.map((b) => b.legemiddelform?.kode)))), koder.join()).toEqual(new Set(['53']))
+      } else expect(stopp(r), koder.join()).toMatch(/Ingen av de perorale preparatene av kvetiapin i FEST kan brukes med valgene som er gjort/)
+    }
+    expect(stopp(beregnDoseplan(REGEL, { ...inndata(400, tabletter(['25'])), godkjenningsfritak: true }, grunnlag, omgivelse))).toMatch(/Ingen av de perorale preparatene av kvetiapin/)
+  })
+
+  it('stopper når en døgndose ikke kan fordeles på to doser med preparatene, i stedet for å gi den som én dose', () => {
+    const uten25 = structuredClone(grunnlag)
+    const styrke25 = byggesteiner(grunnlag, 'kvetiapin', omgivelse.idag).filter((b) => b.legemiddelform?.kode === '53' && b.mg === 25).map((b) => b.id)
+    for (const p of uten25.utvalg.pakninger) if (p.merkevarer.some((m) => styrke25.includes(m))) p.avregistrert_dato = '2026-01-01'
+    expect(stopp(beregnDoseplan(REGEL, inndata(400), uten25, omgivelse))).toMatch(/kvetiapin dag 1: døgndosen 50 mg skal gis fordelt på 2 doser \(preparatomtalen\), men ingen nøyaktig dose/)
+  })
+})
+
+describe('Fenelzin etter fluoksetin med preparatene i FEST (P4.8, gjennomgangen av fe08fac)', () => {
+  const u = JSON.parse(readFileSync(new URL(`../../${FEST_AKSEPTTEST}`, import.meta.url), 'utf8')) as Festuttrekk
+  const grunnlag = { utvalg: u.utvalg, koblinger: festkoblinger(['fluoksetin', 'fenelzin']), overstyringer: KARTLEGGING.festoverstyringer }
+  const REGEL = PILOTSETT.regler.find((x) => x.id === 'mao-fluoksetin-fenelzin')!
+  const utvasket = (dag: number, dato: string) =>
+    `tidligst dag ${dag} [${dato}]: 35 dagers utvasking fullført; fenelzin er ikke startet eller dosert av planen. Klinisk oppstart kan først vurderes etter kontroll av kontraindikasjoner, interaksjoner og øvrige forhold`
+
+  it('viser at utvaskingen er fullført og at fenelzin ikke er startet, aldri en oppstart', () => {
+    for (const [startdose_mg, dag, dato] of [
+      [20, 64, '04.01.2027'],
+      [40, 92, '01.02.2027'],
+    ] as const) {
+      const r = beregnDoseplan(REGEL, { startdose_mg, startdato: '2026-11-02', bekreftet: REGEL.bekreftelser.map((b) => b.id), formvalg: { fra: { klasse: 'peroral', legemiddelformer: ['53'] } } }, grunnlag, omgivelseFor(u))
+      expect(planform(r).til, `${startdose_mg} mg`).toEqual([utvasket(dag, dato)])
+      expect(planform(r).til!.join(' ')).not.toMatch(/oppstart, dosering|: oppstart/)
+    }
   })
 })
 

@@ -2,7 +2,7 @@
 
 <!-- Laget av `npm run verktoy:regler -- rapport` fra reglene i src/verktoy/regler/. Ikke rediger for hånd; endre reglene og lag rapporten på nytt. -->
 
-Regelsett `ousfar-verktoy-pilot` versjon 8, regelmodell 9, beregningsmotor 7. Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Etter kontrollrunden 30.10.2026 er byttereglene rettet eller avgrenset og sendt til ny kontroll, og de to depotreglene er funnet kildemessig akseptable som avgrensede varianter. Etter kontrollørens beslutninger samme dag er byttene avgrenset slik kontrolløren godtok dem, gruppebyttet til aripiprazol er tatt ut av verktøyet (en modelleringsdemonstrasjon i utviklingssettet), og depotreglene er koblet til preparatet sitt i FEST. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.
+Regelsett `ousfar-verktoy-pilot` versjon 9, regelmodell 9, beregningsmotor 8. Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Etter kontrollrunden 30.10.2026 er byttereglene rettet eller avgrenset og sendt til ny kontroll, og de to depotreglene er funnet kildemessig akseptable som avgrensede varianter. Etter kontrollørens beslutninger samme dag er byttene avgrenset slik kontrolløren godtok dem, gruppebyttet til aripiprazol er tatt ut av verktøyet (en modelleringsdemonstrasjon i utviklingssettet), og depotreglene er koblet til preparatet sitt i FEST. Etter kontrollørens gjennomgang av de rettede versjonene er kvetiapin bundet til tabletter med vanlig frisetting fordelt på to doser, og fenelzin vises som utvasking fullført, ikke som oppstart. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.
 
 **5 regler, 0 klinisk godkjent.** Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. De er ikke empirisk validerte kliniske anbefalinger, og ingen av reglene er klinisk godkjent. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-p4-regelmodell.md`.
 
@@ -128,9 +128,9 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
 
 ## Bytte fra fluoksetin til fenelzin, sekvensielt med utvasking
 
-`mao-fluoksetin-fenelzin`, versjon 6, fingeravtrykk `4066601968d931e1ed1612909fa6358d84b6b62b40f18bc3a8c408f8fddd17d8`. Sekvensielt bytte: fluoksetin → fenelzin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`mao-fluoksetin-fenelzin`, versjon 7, fingeravtrykk `f5a08286869d143797cb3f032b0781c7c0e5785265d1a9198c7ebaa280402b6a`. Sekvensielt bytte: fluoksetin → fenelzin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → utkast (versjon 3, 30.10.2026, Claude Code) → til faglig kontroll (versjon 3, 30.10.2026, Claude Code) → utkast (versjon 4, 30.10.2026, Claude Code) → til faglig kontroll (versjon 4, 30.10.2026, Claude Code) → utkast (versjon 5, 30.10.2026, Claude Code) → til faglig kontroll (versjon 5, 30.10.2026, Claude Code) → utkast (versjon 6, 30.10.2026, Claude Code) → til faglig kontroll (versjon 6, 30.10.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → utkast (versjon 3, 30.10.2026, Claude Code) → til faglig kontroll (versjon 3, 30.10.2026, Claude Code) → utkast (versjon 4, 30.10.2026, Claude Code) → til faglig kontroll (versjon 4, 30.10.2026, Claude Code) → utkast (versjon 5, 30.10.2026, Claude Code) → til faglig kontroll (versjon 5, 30.10.2026, Claude Code) → utkast (versjon 6, 30.10.2026, Claude Code) → til faglig kontroll (versjon 6, 30.10.2026, Claude Code) → utkast (versjon 7, 30.10.2026, Claude Code) → til faglig kontroll (versjon 7, 30.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -189,17 +189,17 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
 
 **Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
 
-- *Fluoksetin 40 mg: to reduksjoner med 28 dager per trinn, 35 dager utvasking, fenelzin tidligst dag 92.* Inndata: startdose 40 mg; bekreftet: spesialisthelsetjeneste.
+- *Fluoksetin 40 mg: to reduksjoner med 28 dager per trinn og 35 dager utvasking; dag 92 er tidligste dag en oppstart av fenelzin kan vurderes, ikke en oppstart.* Inndata: startdose 40 mg; bekreftet: spesialisthelsetjeneste.
   - **fra:** dag 1–28: 20 mg; dag 29–56: 10 mg; fra dag 57: seponert
-  - **til:** tidligst dag 92: oppstart, dosering beregnes ikke
+  - **til:** tidligst dag 92: 35 dagers utvasking fullført; fenelzin er ikke startet eller dosert av planen. Klinisk oppstart kan først vurderes etter kontroll av kontraindikasjoner, interaksjoner og øvrige forhold
   - Kontroll: Bekreftet: Byttet gjøres i, eller med råd fra, spesialisthelsetjenesten. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 20–60 mg (bindende) – oppfylt. 40 mg.
   - Kontroll: Nedtrappingen av fluoksetin varer minst 14 dager (bindende) – oppfylt. Nedtrapping dag 1–56 (56 dager).
   - Kontroll: Minst 35 dager uten fluoksetin før fenelzin (bindende) – oppfylt. Uten legemiddel dag 57–91 (35 dager); fenelzin tidligst dag 92.
   - Merknad: fenelzin: Fenelzin startes ikke automatisk: dagen planen viser, er den tidligste etter minimum 35 dagers utvasking, ikke en anbefalt startdag. Senere oppstart kan være nødvendig etter høy dose eller lang behandling med fluoksetin, ved interaksjoner og etter klinisk vurdering. Fenelzin har ingen norsk preparatomtale (bare godkjenningsfritak); startdose og opptrapping vurderes i spesialisthelsetjenesten. Før en eventuell oppstart må fenelzins kontraindikasjoner og interaksjoner kontrolleres klinisk (den britiske preparatomtalen, pkt. 4.3 og 4.5), blant annet ved hjertesvikt, cerebrovaskulær sykdom og leversykdom, og med serotonerge legemidler, sympatomimetika, enkelte opioider og tyramin.
-- *Fluoksetin 20 mg: én reduksjon, fenelzin tidligst dag 64.* Inndata: startdose 20 mg; bekreftet: spesialisthelsetjeneste.
+- *Fluoksetin 20 mg: én reduksjon; dag 64 er tidligste dag en oppstart av fenelzin kan vurderes.* Inndata: startdose 20 mg; bekreftet: spesialisthelsetjeneste.
   - **fra:** dag 1–28: 10 mg; fra dag 29: seponert
-  - **til:** tidligst dag 64: oppstart, dosering beregnes ikke
+  - **til:** tidligst dag 64: 35 dagers utvasking fullført; fenelzin er ikke startet eller dosert av planen. Klinisk oppstart kan først vurderes etter kontroll av kontraindikasjoner, interaksjoner og øvrige forhold
   - Kontroll: Bekreftet: Byttet gjøres i, eller med råd fra, spesialisthelsetjenesten. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 20–60 mg (bindende) – oppfylt. 20 mg.
   - Kontroll: Nedtrappingen av fluoksetin varer minst 14 dager (bindende) – oppfylt. Nedtrapping dag 1–28 (28 dager).
@@ -212,14 +212,16 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
 
 ## Bytte fra olanzapin til kvetiapin, kryss-titrering med fast opptrapping
 
-`antipsykotikabytte-olanzapin-kvetiapin`, versjon 4, fingeravtrykk `a5ecf8488285d100576ad7291bd8c0a744452e6c4161f2791ba04fc45a559419`. Kryssnedtrapping: olanzapin → kvetiapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`antipsykotikabytte-olanzapin-kvetiapin`, versjon 5, fingeravtrykk `af1093a3a02176f584d783b567656bffe5fad00cfffefb75390122a11b951f12`. Kryssnedtrapping: olanzapin → kvetiapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → utkast (versjon 3, 30.10.2026, Claude Code) → til faglig kontroll (versjon 3, 30.10.2026, Claude Code) → utkast (versjon 4, 30.10.2026, Claude Code) → til faglig kontroll (versjon 4, 30.10.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → utkast (versjon 3, 30.10.2026, Claude Code) → til faglig kontroll (versjon 3, 30.10.2026, Claude Code) → utkast (versjon 4, 30.10.2026, Claude Code) → til faglig kontroll (versjon 4, 30.10.2026, Claude Code) → utkast (versjon 5, 30.10.2026, Claude Code) → til faglig kontroll (versjon 5, 30.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
 - Kvetiapin (vanlig frisetting) trappes opp med 50, 100, 200 og 300 mg de fire første dagene ved schizofreni, deretter 300–450 mg daglig.
   - Schizofreni: døgndose 50, 100, 200 og 300 mg dag 1–4; fra dag 4 anbefales 300–450 mg daglig, individuelt innenfor 150–750 mg. *([dmp-seroquel](https://produktinformasjon.legemiddelsok.no/preparatomtaler/02-1435.pdf), pkt. 4.2)*
+- Tablettene med vanlig frisetting tas to ganger daglig.
+  - Tablettene med vanlig frisetting tas to ganger daglig; ved schizofreni gjelder døgndosene dag 1–4 og vedlikeholdsdosen fordelt på to doser. *([dmp-seroquel](https://produktinformasjon.legemiddelsok.no/preparatomtaler/02-1435.pdf), pkt. 4.2)*
 - Ved kryss-titrering trappes det første antipsykotikumet ned mens det andre innføres, uten opphold.
   - Ved kryss-titrering trappes det første antipsykotikumet ned mens det andre innføres. Et opphold uten antipsykotikum anbefales ikke. *([keks-2019](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6787301/fullTextXML), tabell 4 og avsnittet om byttestrategier)*
 - Gradvis nedtrapping av olanzapin bør vurderes.
@@ -232,6 +234,8 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
   - Ved kryss-titrering trappes det første antipsykotikumet ned mens det andre innføres. Et opphold uten antipsykotikum anbefales ikke. *([keks-2019](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6787301/fullTextXML), tabell 4 og avsnittet om byttestrategier)*
 - Regelen gjelder bare måldoser i det anbefalte vedlikeholdsområdet 300–450 mg; andre måldoser krever individuell vurdering.
   - Schizofreni: døgndose 50, 100, 200 og 300 mg dag 1–4; fra dag 4 anbefales 300–450 mg daglig, individuelt innenfor 150–750 mg. *([dmp-seroquel](https://produktinformasjon.legemiddelsok.no/preparatomtaler/02-1435.pdf), pkt. 4.2)*
+- Planen bruker bare tabletter med vanlig frisetting i FEST, aldri depottabletter, som har en annen opptrapping og vanligvis gis én gang daglig. Hver døgndose, også vedlikeholdsdosen, gis fordelt på to doser som kan settes sammen av tablettene; kan den ikke det, stopper planen.
+  - Tablettene med vanlig frisetting tas to ganger daglig; ved schizofreni gjelder døgndosene dag 1–4 og vedlikeholdsdosen fordelt på to doser. *([dmp-seroquel](https://produktinformasjon.legemiddelsok.no/preparatomtaler/02-1435.pdf), pkt. 4.2)*
 
 **Den matematiske regelen – parametre:**
 
@@ -260,7 +264,7 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
 - Dosene er den ideelle dosekurven, avrundet til to desimaler; hvilke doser som kan gis med norske preparater (styrker, deling, flytende form), avgjøres i P5.
 - Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet, interaksjoner, graviditet, etterlevelse eller individuell toleranse fra dosen (B7); dette må vurderes av forskriveren.
-- Kvetiapin gis som tabletter med vanlig frisetting, to ganger daglig; døgndosen er oppgitt.
+- Kvetiapin gis som tabletter med vanlig frisetting, to ganger daglig; planen viser døgndosen og fordelingen.
 
 **Usikkerhet:**
 
@@ -272,7 +276,7 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
 
 - *Olanzapin 20 mg til kvetiapin 300 mg.* Inndata: startdose 20 mg; måldose 300 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko.
   - **fra:** dag 1–4: 20 mg; fra dag 5: videre dosering beregnes ikke; planlegges individuelt
-  - **til:** dag 1: 50 mg; dag 2: 100 mg; dag 3: 200 mg; fra dag 4: 300 mg
+  - **til:** dag 1: 50 mg, fordelt på 2 doser; dag 2: 100 mg, fordelt på 2 doser; dag 3: 200 mg, fordelt på 2 doser; fra dag 4: 300 mg, fordelt på 2 doser
   - Kontroll: Bekreftet: Indikasjonen er schizofreni; opptrappingen av kvetiapin i regelen gjelder schizofreni. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten bruker peroral olanzapin, ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Byttet gjøres i, eller med råd fra, spesialisthelsetjenesten, og indikasjonen, risikoen for tilbakefall og tempoet er vurdert. Byttet tilpasses toleransen og symptomene; sedasjon, ortostatisk blodtrykksfall, akatisi og forverring følges. – oppfylt. Bekreftet av forskriveren.
@@ -281,7 +285,7 @@ Hentet og lest 28.10.2026 og 30.10.2026. Kontrollsummen (SHA-256) er av dokument
   - Merknad: olanzapin: Nedtrappingen av olanzapin beregnes ikke: et fast skjema er ikke validert (kontrollrunden 30.10.2026). Den planlegges i, eller med råd fra, spesialisthelsetjenesten og tilpasses toleransen og symptomene; olanzapin seponeres ikke brått.
 - *Olanzapin 10 mg til kvetiapin 400 mg med startdato 2. november 2026.* Inndata: startdose 10 mg; måldose 400 mg; startdato 02.11.2026; bekreftet: indikasjon, peroral_formulering, spesialist_risiko.
   - **fra:** dag 1–4 (02.11.2026–05.11.2026): 10 mg; fra dag 5 (06.11.2026): videre dosering beregnes ikke; planlegges individuelt
-  - **til:** dag 1 (02.11.2026): 50 mg; dag 2 (03.11.2026): 100 mg; dag 3 (04.11.2026): 200 mg; dag 4 (05.11.2026): 300 mg; fra dag 5 (06.11.2026): 400 mg
+  - **til:** dag 1 (02.11.2026): 50 mg, fordelt på 2 doser; dag 2 (03.11.2026): 100 mg, fordelt på 2 doser; dag 3 (04.11.2026): 200 mg, fordelt på 2 doser; dag 4 (05.11.2026): 300 mg, fordelt på 2 doser; fra dag 5 (06.11.2026): 400 mg, fordelt på 2 doser
   - Kontroll: Bekreftet: Indikasjonen er schizofreni; opptrappingen av kvetiapin i regelen gjelder schizofreni. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten bruker peroral olanzapin, ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Byttet gjøres i, eller med råd fra, spesialisthelsetjenesten, og indikasjonen, risikoen for tilbakefall og tempoet er vurdert. Byttet tilpasses toleransen og symptomene; sedasjon, ortostatisk blodtrykksfall, akatisi og forverring følges. – oppfylt. Bekreftet av forskriveren.

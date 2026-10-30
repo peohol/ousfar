@@ -21,7 +21,7 @@ import {
   type Planskjema,
 } from '../../verktoy/doseplan'
 import type { Kildeformulering } from '../../verktoy/kartlegging'
-import type { Doseplanresultat, Formalternativer, Trinnvalg } from '../../verktoy/motor/plan'
+import { AVVIK_FRA_FORSLAGET, foretrukketTekst, trinndosetekst, type Doseplanresultat, type Formalternativer, type Trinnvalg } from '../../verktoy/motor/plan'
 import { godkjenningstekst, kildeliste, planvisning } from '../../verktoy/planvisning'
 import { finnVirkestoff, KARTLEGGING, VERKTOY, verktoyFor, virkestoffvalg, type Verktoy } from '../../verktoy/register'
 import { avrund } from '../../verktoy/regler/beregning'
@@ -683,13 +683,13 @@ function Trinnvalgdel({ resultat, navn, onVelg }: { resultat: Doseplanresultat |
             Trinn {t.trinn} av {navn(t.forlop)} kan ikke gis nøyaktig
           </legend>
           <p className="feltgruppe__hjelp">
-            Beregnet {tall(t.beregnet_mg)} mg fra {tall(t.fra_mg)} mg. Velg en dose som kan gis; den faktiske reduksjonen må være {tall(t.omrade[0])}–{tall(t.omrade[1])} %. Verktøyet velger ikke selv, og
-            planen beregnes på nytt fra dosen du velger.
+            Den foretrukne reduksjonen til {foretrukketTekst(t)} kan ikke gis med preparatene. Velg en dose som kan gis; den faktiske reduksjonen må være {tall(t.omrade[0])}–
+            {tall(t.omrade[1])} %. {t.doser.some((d) => d.krever_begrunnelse) && `${AVVIK_FRA_FORSLAGET} `}Verktøyet velger ikke selv, og planen beregnes på nytt fra dosen du velger.
           </p>
           <div className="verktoyskjema__handlinger">
             {t.doser.map((d) => (
               <Button key={d.mg} variant="kant" onClick={() => onVelg(t, d.mg)}>
-                {tall(d.mg)} mg (−{tall(d.prosent)} %){d.krever_begrunnelse ? ', krever begrunnelse' : ''}
+                {trinndosetekst(d)}
               </Button>
             ))}
           </div>

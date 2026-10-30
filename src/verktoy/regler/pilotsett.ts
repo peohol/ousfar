@@ -64,6 +64,8 @@ const etterGjennomgangen = (rettet: string) => ({ merknad: `Rettet etter gjennom
 /** Kontrollørens beslutninger 30.10.2026 om byttene og depotreglene (P4-A og P4-B); ingen av dem er en klinisk godkjenning. */
 const RUNDE_5 = '2026-10-30'
 const etterBeslutningene = (rettet: string) => ({ merknad: `Rettet etter kontrollørens beslutninger 30.10.2026 (P4.8): ${rettet}`, dato: RUNDE_5 })
+/** Rettet etter kontrollørens gjennomgang av de rettede versjonene (HEAD fe08fac, 30.10.2026). */
+const etterGjennomgangenAvFe08fac = (rettet: string) => ({ merknad: `Rettet etter kontrollørens gjennomgang av fe08fac 30.10.2026 (P4.8): ${rettet}`, dato: RUNDE_5 })
 
 /** En ny versjon til kontroll etter en historikk som allerede har steg for den forrige. */
 const nyVersjon = (g: Godkjenning, versjon: number, v: { merknad: string; dato: string }): Godkjenning => ({
@@ -121,6 +123,7 @@ export const SPC = {
   ),
   nardilSsri: h('emc-nardil', 'section 4.5', 'Fenelzin brukes ikke sammen med serotoninreopptakshemmere; det må gå lang nok tid til at de og metabolittene er skilt ut, for eksempel 5 uker etter fluoksetin.'),
   seroquel: h('dmp-seroquel', 'pkt. 4.2', 'Schizofreni: døgndose 50, 100, 200 og 300 mg dag 1–4; fra dag 4 anbefales 300–450 mg daglig, individuelt innenfor 150–750 mg.'),
+  seroquelToGanger: h('dmp-seroquel', 'pkt. 4.2', 'Tablettene med vanlig frisetting tas to ganger daglig; ved schizofreni gjelder døgndosene dag 1–4 og vedlikeholdsdosen fordelt på to doser.'),
   zyprexaDose: h('ema-zyprexa', 'section 4.2', 'Doseområdet er 5–20 mg daglig.'),
   zyprexaSeponering: h('ema-zyprexa', 'section 4.2 og 4.4', 'Gradvis nedtrapping bør vurderes ved seponering; akutte symptomer ved brå seponering er sjeldne.'),
   cisordinolDose: h('dmp-cisordinol', 'pkt. 4.2', 'Vedlikeholdsdose ved kronisk schizofreni og andre kroniske psykoser er vanligvis 20–40 mg daglig.'),
@@ -372,7 +375,7 @@ const kryssSertralinMirtazapin: Regel = {
 
 const maoFluoksetinFenelzin: Regel = {
   id: 'mao-fluoksetin-fenelzin',
-  versjon: 6,
+  versjon: 7,
   tittel: 'Bytte fra fluoksetin til fenelzin, sekvensielt med utvasking',
   fra: { type: 'virkestoff', nokkel: 'fluoksetin' },
   til: { type: 'virkestoff', nokkel: 'fenelzin' },
@@ -451,15 +454,15 @@ const maoFluoksetinFenelzin: Regel = {
   eksempler: [
     {
       id: 'fra-40-mg',
-      beskrivelse: 'Fluoksetin 40 mg: to reduksjoner med 28 dager per trinn, 35 dager utvasking, fenelzin tidligst dag 92.',
+      beskrivelse: 'Fluoksetin 40 mg: to reduksjoner med 28 dager per trinn og 35 dager utvasking; dag 92 er tidligste dag en oppstart av fenelzin kan vurderes, ikke en oppstart.',
       inndata: { startdose_mg: 40, bekreftet: ['spesialisthelsetjeneste'] },
-      forventet: { fra: ['dag 1–28: 20 mg', 'dag 29–56: 10 mg', 'fra dag 57: seponert'], til: ['tidligst dag 92: oppstart, dosering beregnes ikke'] },
+      forventet: { fra: ['dag 1–28: 20 mg', 'dag 29–56: 10 mg', 'fra dag 57: seponert'], til: ['tidligst dag 92: 35 dagers utvasking fullført; fenelzin er ikke startet eller dosert av planen. Klinisk oppstart kan først vurderes etter kontroll av kontraindikasjoner, interaksjoner og øvrige forhold'] },
     },
     {
       id: 'fra-20-mg',
-      beskrivelse: 'Fluoksetin 20 mg: én reduksjon, fenelzin tidligst dag 64.',
+      beskrivelse: 'Fluoksetin 20 mg: én reduksjon; dag 64 er tidligste dag en oppstart av fenelzin kan vurderes.',
       inndata: { startdose_mg: 20, bekreftet: ['spesialisthelsetjeneste'] },
-      forventet: { fra: ['dag 1–28: 10 mg', 'fra dag 29: seponert'], til: ['tidligst dag 64: oppstart, dosering beregnes ikke'] },
+      forventet: { fra: ['dag 1–28: 10 mg', 'fra dag 29: seponert'], til: ['tidligst dag 64: 35 dagers utvasking fullført; fenelzin er ikke startet eller dosert av planen. Klinisk oppstart kan først vurderes etter kontroll av kontraindikasjoner, interaksjoner og øvrige forhold'] },
     },
     {
       id: 'uten-spesialist',
@@ -475,6 +478,7 @@ const maoFluoksetinFenelzin: Regel = {
     etterGjennomgangen('den britiske preparatomtalen for fenelzin (pkt. 4.5) er lagt til som kilde for minimum 5 uker etter fluoksetin.'),
     etterGjennomgangen('den britiske preparatomtalen for fenelzin gir 5 uker etter fluoksetin som eksempel, ikke som eget minimum; minimumet på 35 dager bygger på preparatomtalen for fluoksetin.'),
     etterBeslutningene('35 døgn uten fluoksetin er godtatt bare som kildebasert tidligste utvasking, ikke en anbefalt startdato; fenelzin startes og doseres ikke, og fenelzins kontraindikasjoner og interaksjoner (den britiske preparatomtalen, pkt. 4.3 og 4.5) står framhevet i planen.'),
+    etterGjennomgangenAvFe08fac('planlinjen for fenelzin sier ikke lenger «oppstart», men at utvaskingen er fullført, at fenelzin ikke er startet eller dosert av planen, og at klinisk oppstart først kan vurderes etter kontroll av kontraindikasjoner, interaksjoner og øvrige forhold.'),
   ),
 }
 
@@ -499,7 +503,7 @@ const BEKREFTET_AP = ['indikasjon', 'peroral_formulering', VURDERT_AP.id]
 
 const antipsykotikabytteOlanzapinKvetiapin: Regel = {
   id: 'antipsykotikabytte-olanzapin-kvetiapin',
-  versjon: 4,
+  versjon: 5,
   tittel: 'Bytte fra olanzapin til kvetiapin, kryss-titrering med fast opptrapping',
   fra: { type: 'virkestoff', nokkel: 'olanzapin' },
   til: { type: 'virkestoff', nokkel: 'kvetiapin' },
@@ -526,6 +530,9 @@ const antipsykotikabytteOlanzapinKvetiapin: Regel = {
         virkestoff: { type: 'virkestoff', nokkel: 'kvetiapin' },
         administrasjon: 'peroral',
         formulering: 'vanlig frisetting',
+        // Bare tabletter med vanlig frisetting (FEST-form 53), aldri depottabletter, også ved eksplisitt formvalg.
+        legemiddelformer: ['53'],
+        fordeling: { antall: [2], grunnlag: { type: 'kilde', henvisninger: [SPC.seroquelToGanger] } },
         utgangsdose: null,
         start: { type: 'dag', dag: 1 },
         faser: [
@@ -556,14 +563,16 @@ const antipsykotikabytteOlanzapinKvetiapin: Regel = {
   fortolkning: {
     kildetro: [
       utsagn('Kvetiapin (vanlig frisetting) trappes opp med 50, 100, 200 og 300 mg de fire første dagene ved schizofreni, deretter 300–450 mg daglig.', SPC.seroquel),
+      utsagn('Tablettene med vanlig frisetting tas to ganger daglig.', SPC.seroquelToGanger),
       utsagn('Ved kryss-titrering trappes det første antipsykotikumet ned mens det andre innføres, uten opphold.', KEKS19.kryss),
       utsagn('Gradvis nedtrapping av olanzapin bør vurderes.', SPC.zyprexaSeponering),
     ],
     tilpasninger: [
       utsagn('OUSFAR holder olanzapin uendret til kvetiapin er på 300 mg (dag 4). Nedtrappingen av olanzapin deretter beregnes ikke, men planlegges individuelt (kontrollrunden 30.10.2026).', SPC.seroquel, KEKS19.kryss),
       utsagn('Regelen gjelder bare måldoser i det anbefalte vedlikeholdsområdet 300–450 mg; andre måldoser krever individuell vurdering.', SPC.seroquel),
+      utsagn('Planen bruker bare tabletter med vanlig frisetting i FEST, aldri depottabletter, som har en annen opptrapping og vanligvis gis én gang daglig. Hver døgndose, også vedlikeholdsdosen, gis fordelt på to doser som kan settes sammen av tablettene; kan den ikke det, stopper planen.', SPC.seroquelToGanger),
     ],
-    forutsetninger: [...FORUTSETNINGER_FELLES, 'Kvetiapin gis som tabletter med vanlig frisetting, to ganger daglig; døgndosen er oppgitt.'],
+    forutsetninger: [...FORUTSETNINGER_FELLES, 'Kvetiapin gis som tabletter med vanlig frisetting, to ganger daglig; planen viser døgndosen og fordelingen.'],
     usikkerhet: [
       'Kildene oppgir ingen varighet for nedtrappingen av olanzapin; den faste nedtrappingen med 25 % av startdosen per uke i versjon 2 var OUSFARs valg og er tatt ut.',
       'Sedasjon og ortostatisk blodtrykksfall kan øke mens begge brukes; det må følges klinisk.',
@@ -578,7 +587,7 @@ const antipsykotikabytteOlanzapinKvetiapin: Regel = {
       inndata: { startdose_mg: 20, maldose_mg: 300, bekreftet: BEKREFTET_AP },
       forventet: {
         fra: ['dag 1–4: 20 mg', 'fra dag 5: videre dosering beregnes ikke; planlegges individuelt'],
-        til: ['dag 1: 50 mg', 'dag 2: 100 mg', 'dag 3: 200 mg', 'fra dag 4: 300 mg'],
+        til: ['dag 1: 50 mg, fordelt på 2 doser', 'dag 2: 100 mg, fordelt på 2 doser', 'dag 3: 200 mg, fordelt på 2 doser', 'fra dag 4: 300 mg, fordelt på 2 doser'],
       },
     },
     {
@@ -587,7 +596,13 @@ const antipsykotikabytteOlanzapinKvetiapin: Regel = {
       inndata: { startdose_mg: 10, maldose_mg: 400, startdato: '2026-11-02', bekreftet: BEKREFTET_AP },
       forventet: {
         fra: ['dag 1–4 (02.11.2026–05.11.2026): 10 mg', 'fra dag 5 (06.11.2026): videre dosering beregnes ikke; planlegges individuelt'],
-        til: ['dag 1 (02.11.2026): 50 mg', 'dag 2 (03.11.2026): 100 mg', 'dag 3 (04.11.2026): 200 mg', 'dag 4 (05.11.2026): 300 mg', 'fra dag 5 (06.11.2026): 400 mg'],
+        til: [
+          'dag 1 (02.11.2026): 50 mg, fordelt på 2 doser',
+          'dag 2 (03.11.2026): 100 mg, fordelt på 2 doser',
+          'dag 3 (04.11.2026): 200 mg, fordelt på 2 doser',
+          'dag 4 (05.11.2026): 300 mg, fordelt på 2 doser',
+          'fra dag 5 (06.11.2026): 400 mg, fordelt på 2 doser',
+        ],
       },
     },
     {
@@ -609,6 +624,7 @@ const antipsykotikabytteOlanzapinKvetiapin: Regel = {
     etterPilotkontrollen('indikasjonen (schizofreni) og at olanzapin er peroral, må bekreftes.'),
     etterKontrollrunden('nedtrappingen av olanzapin beregnes ikke, men planlegges individuelt; vurderingen av risiko og tempo i, eller med råd fra, spesialisthelsetjenesten må bekreftes.'),
     etterBeslutningene('opptrappingen av kvetiapin er godtatt som avgrenset modell ved schizofreni, med klinisk vurdering av toleransen og overvåking; nedtrappingen av olanzapin er fortsatt individuell, uten nulltrinn, og opptrappingen validerer ikke kryssbyttet som helhet.'),
+    etterGjennomgangenAvFe08fac('kvetiapin er bundet til tabletter med vanlig frisetting i FEST (form 53), så depottabletter avvises også ved eksplisitt formvalg, og hver døgndose, også vedlikeholdsdosen, gis fordelt på to doser.'),
   ),
 }
 
@@ -1035,9 +1051,9 @@ const depotPaliperidon: Regel = {
 
 export const PILOTSETT: Regelsett = {
   id: 'ousfar-verktoy-pilot',
-  versjon: 8,
+  versjon: 9,
   modell: REGELMODELLVERSJON,
   beskrivelse:
-    'Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Etter kontrollrunden 30.10.2026 er byttereglene rettet eller avgrenset og sendt til ny kontroll, og de to depotreglene er funnet kildemessig akseptable som avgrensede varianter. Etter kontrollørens beslutninger samme dag er byttene avgrenset slik kontrolløren godtok dem, gruppebyttet til aripiprazol er tatt ut av verktøyet (en modelleringsdemonstrasjon i utviklingssettet), og depotreglene er koblet til preparatet sitt i FEST. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.',
+    'Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Etter kontrollrunden 30.10.2026 er byttereglene rettet eller avgrenset og sendt til ny kontroll, og de to depotreglene er funnet kildemessig akseptable som avgrensede varianter. Etter kontrollørens beslutninger samme dag er byttene avgrenset slik kontrolløren godtok dem, gruppebyttet til aripiprazol er tatt ut av verktøyet (en modelleringsdemonstrasjon i utviklingssettet), og depotreglene er koblet til preparatet sitt i FEST. Etter kontrollørens gjennomgang av de rettede versjonene er kvetiapin bundet til tabletter med vanlig frisetting fordelt på to doser, og fenelzin vises som utvasking fullført, ikke som oppstart. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.',
   regler: [kryssSertralinMirtazapin, maoFluoksetinFenelzin, antipsykotikabytteOlanzapinKvetiapin, depotAripiprazol, depotPaliperidon],
 }

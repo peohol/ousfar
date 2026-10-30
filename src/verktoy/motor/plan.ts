@@ -32,7 +32,7 @@ import { byggesteiner, DOSEENHETER, norskDato, type Byggestein, type Preparatgru
 import { doser, fordel, styrkevalg, velgSerie, type Dosekandidat, type Doseelement, type Periodevalg, type Styrkevalg } from './dosevalg'
 
 /** Økes når doseplanen endres slik at like inndata kan gi et annet resultat. */
-export const PLANMOTORVERSJON = 6
+export const PLANMOTORVERSJON = 7
 
 /** Id-ene til syntetiske testregler begynner slik; de kan aldri gi en klinisk plan. */
 export const SYNTETISK_REGEL = 'syntetisk-'
@@ -367,11 +367,21 @@ function ingenDose(f: Forlopsresultat, p: Periode, valg: Styrkevalg[], alleValg:
 
 const ANNEN_DOSE = 'En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.'
 
+/** Den foretrukne reduksjonen i trinnet, fra dosen før til den beregnede dosen, i klartekst. */
+export const foretrukketTekst = (tv: Pick<Trinnvalg, 'fra_mg' | 'beregnet_mg'>) => `${tall(tv.beregnet_mg)} mg (−${tall((1 - tv.beregnet_mg / tv.fra_mg) * 100)} % fra ${tall(tv.fra_mg)} mg)`
+
+/** En dose forskriveren kan velge; en dose som krever begrunnelse, er et avvik og merkes slik (kontrollørens gjennomgang av fe08fac, P7.5). */
+export const trinndosetekst = (d: Pick<Trinndose, 'mg' | 'prosent' | 'krever_begrunnelse'>) => `${tall(d.mg)} mg (−${tall(d.prosent)} %${d.krever_begrunnelse ? ', avvik som krever begrunnelse' : ''})`
+
+/** Det planen sier når en dose som kan velges, krever begrunnelse: et avvik, ikke et anbefalt trinn. */
+export const AVVIK_FRA_FORSLAGET =
+  'En dose som krever begrunnelse, er et avvik fra den foretrukne reduksjonen og ikke et anbefalt trinn; den kan bare velges etter uttrykkelig individuell vurdering.'
+
 /** Det stoppet sier når regelen lar forskriveren velge dosen for trinnet (`tv`), eller når ingen dose er innenfor valgområdet (`null`). */
 function trinnvalgtekst(tv: Trinnvalg | null): string {
   if (!tv) return `Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet. ${ANNEN_DOSE}`
-  const valg = tv.doser.map((d) => `${tall(d.mg)} mg (−${tall(d.prosent)} %${d.krever_begrunnelse ? ', krever begrunnelse' : ''})`)
-  return `Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra ${tall(tv.fra_mg)} mg innenfor valgområdet ${tall(tv.omrade[0])}–${tall(tv.omrade[1])} %: ${valg.join(' eller ')}. Beregningen velger ikke selv.`
+  const avvik = tv.doser.some((d) => d.krever_begrunnelse) ? ` ${AVVIK_FRA_FORSLAGET}` : ''
+  return `Den foretrukne reduksjonen til ${foretrukketTekst(tv)} kan ikke gis med preparatene. Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra ${tall(tv.fra_mg)} mg innenfor valgområdet ${tall(tv.omrade[0])}–${tall(tv.omrade[1])} %: ${tv.doser.map(trinndosetekst).join(' eller ')}.${avvik} Beregningen velger ikke selv.`
 }
 
 /** Nedtrappingsfasen i forløpet der forskriveren kan velge dosen per trinn. */
@@ -387,8 +397,8 @@ function trinnvalgFor(def: Forlop, f: Forlopsresultat, p: Periode, v: Styrkevalg
   const fase = trinnvalgFase(def)!
   const omrade = trinnvalgOmrade(fase.strategi, fra)!
   const prosent = (mg: number) => (1 - mg / fra) * 100
-  const mulige = doser(v, Math.max(fra * (1 - omrade[1] / 100), min ?? 0, EPS) - EPS * fra, fra * (1 - omrade[0] / 100) + EPS * fra).filter(
-    (k) => k.mg < fra - EPS && Math.abs(avrund(k.mg) - k.mg) < EPS && prosent(k.mg) >= omrade[0] - EPS && prosent(k.mg) <= omrade[1] + EPS && fordelt(k) !== null,
+  const mulige = doser(v, Math.max(fra * (1 - omrade[1] / 100), min ?? 0, EPS) - EPS * fra, fra * (1 - omrade[0] / 100) + EPS * fra, (k) => fordelt(k) !== null).filter(
+    (k) => k.mg < fra - EPS && Math.abs(avrund(k.mg) - k.mg) < EPS && prosent(k.mg) >= omrade[0] - EPS && prosent(k.mg) <= omrade[1] + EPS,
   )
   const naermeste = [mulige.filter((k) => k.mg < p.mg).at(-1), mulige.find((k) => k.mg > p.mg)].filter((k): k is Dosekandidat => !!k)
   if (naermeste.length === 0) return null
@@ -454,17 +464,20 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
     const start = def.utgangsdose === 'startdose' ? inndata.startdose_mg : 0
     const perioder: Periodevalg[] = []
     let stans: string | undefined
-    const kanGis = (v: Styrkevalg[], mg: number) => doser(v, Math.max(mg * (1 - tol), min ?? 0, EPS), Math.min(mg * (1 + tol), maks ?? Infinity))
+    // Med `p` bare doser som kan fordeles slik preparatomtalen krever, den enkleste av dem per dose.
+    const kanGis = (v: Styrkevalg[], mg: number, p?: Periode) =>
+      doser(v, Math.max(mg * (1 - tol), min ?? 0, EPS), Math.min(mg * (1 + tol), maks ?? Infinity), p?.fordeles ? (k) => fordelt(p, k) !== null : undefined)
     const valgbar = !!trinnvalgFase(def)
     for (const [i, p] of f.perioder.entries()) {
       const v = tilgjengelig(alleValg, sluttdato(p))
       const forrige = i === 0 ? start : f.perioder[i - 1]!.mg
       // Et valgt trinn gjelder bare når den beregnede dosen faktisk ikke kan gis.
-      if (p.valgt && kanGis(v, p.valgt.beregnet_mg).some((k) => Math.abs(k.mg - p.valgt!.beregnet_mg) < EPS * Math.max(1, k.mg) && fordelt(p, k) !== null)) {
+      if (p.valgt && kanGis(v, p.valgt.beregnet_mg, p).some((k) => Math.abs(k.mg - p.valgt!.beregnet_mg) < EPS * Math.max(1, k.mg))) {
         throw new Stopp(`${f.virkestoff} ${dager(p)}: den beregnede dosen ${tall(p.valgt.beregnet_mg)} mg for trinn ${p.trinn} kan gis med preparatene i FEST, så valget ${tall(p.mg)} mg gjelder ikke. Fjern valget.`)
       }
-      const innenfor = kanGis(v, p.mg).filter((k) => Math.abs(k.mg - p.mg) <= p.mg * tol + EPS * Math.max(1, p.mg))
-      const kandidater = innenfor.filter((k) => fordelt(p, k) !== null)
+      const naer = (k: Dosekandidat) => Math.abs(k.mg - p.mg) <= p.mg * tol + EPS * Math.max(1, p.mg)
+      const innenfor = kanGis(v, p.mg).filter(naer)
+      const kandidater = p.fordeles ? kanGis(v, p.mg, p).filter(naer) : innenfor
       if (kandidater.length === 0) {
         // Et valg som ikke kan gis (preparatet er utgått eller valgene endret), avvises; planen stopper ikke stille ved trinnet før (P7.5, beslutning P7-A).
         if (p.valgt) throw new Stopp(`${f.virkestoff} ${dager(p)}: den valgte dosen ${tall(p.mg)} mg for trinn ${p.trinn} kan ikke gis${p.fordeles ? ' og fordeles' : ''} med preparatene i FEST for perioden. Fjern valget, og velg på nytt.`)

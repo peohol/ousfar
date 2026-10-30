@@ -365,8 +365,8 @@ describe('med en regel der forskriveren kan velge dosen for et trinn som ikke ka
     const tabell = await screen.findByRole('region', { name: TEST_TRINNVALG.tittel })
     expect(within(tabell).getAllByRole('row').at(-1)!.textContent).toMatch(/18,75 mg/)
     const valg = screen.getByRole('group', { name: 'Trinn 2 av Escitalopram kan ikke gis nøyaktig' })
-    expect(within(valg).getByText(/Beregnet 14,06 mg fra 18,75 mg\. Velg en dose som kan gis; den faktiske reduksjonen må være 5–50 %\./)).toBeTruthy()
-    expect(within(valg).getAllByRole('button').map((b) => b.textContent)).toEqual(['13,75 mg (−26,67 %), krever begrunnelse', '15 mg (−20 %)'])
+    expect(within(valg).getByText(/Den foretrukne reduksjonen til 14,06 mg \(−25,01 % fra 18,75 mg\) kan ikke gis med preparatene\. Velg en dose som kan gis; den faktiske reduksjonen må være 5–50 %\. En dose som krever begrunnelse, er et avvik/)).toBeTruthy()
+    expect(within(valg).getAllByRole('button').map((b) => b.textContent)).toEqual(['13,75 mg (−26,67 %, avvik som krever begrunnelse)', '15 mg (−20 %)'])
     // Valget gir en ny plan med en gang, fra den valgte dosen, og står i planen og i skjemaet.
     await user.click(within(valg).getByRole('button', { name: '15 mg (−20 %)' }))
     expect(await screen.findByText(/valgt av forskriveren \(beregnet 14,06 mg; −20 %\)/)).toBeTruthy()
@@ -376,8 +376,8 @@ describe('med en regel der forskriveren kan velge dosen for et trinn som ikke ka
     // Et valg som krever begrunnelse, stopper uten den.
     // 15 mg → 11,25 mg kan gis; 8,44 mg kan ikke, og 7,5 mg (−33,33 %) krever begrunnelse.
     const neste = await screen.findByRole('group', { name: 'Trinn 4 av Escitalopram kan ikke gis nøyaktig' })
-    expect(within(neste).getAllByRole('button').map((b) => b.textContent)).toEqual(['7,5 mg (−33,33 %), krever begrunnelse', '8,75 mg (−22,22 %)'])
-    await user.click(within(neste).getByRole('button', { name: '7,5 mg (−33,33 %), krever begrunnelse' }))
+    expect(within(neste).getAllByRole('button').map((b) => b.textContent)).toEqual(['7,5 mg (−33,33 %, avvik som krever begrunnelse)', '8,75 mg (−22,22 %)'])
+    await user.click(within(neste).getByRole('button', { name: '7,5 mg (−33,33 %, avvik som krever begrunnelse)' }))
     expect(await screen.findByText(/Trinn 4 av escitalopram: den valgte dosen 7,5 mg er en reduksjon på 33,33 % og krever en skriftlig begrunnelse fra forskriveren \(over 25 %\)\. Skriv begrunnelsen, eller velg en annen dose\./)).toBeTruthy()
     expect(within(screen.getByRole('group', { name: 'Valgte doser per trinn' })).getAllByRole('listitem').map((x) => x.textContent)).toEqual([
       'Trinn 2 av Escitalopram: 15 mg (fra 18,75 mg)',

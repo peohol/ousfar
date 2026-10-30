@@ -142,17 +142,19 @@ function antallFor(v: Styrkevalg, maksMg: number): number[] {
 
 /**
  * Alle doser mellom `fra` og `til` mg (inklusive) som kan settes sammen av
- * styrkevalgene innenfor rammene, én kandidat per dose: den enkleste.
- * Injeksjoner settes aldri sammen; én dose er én hel injeksjon.
+ * styrkevalgene innenfor rammene, én kandidat per dose: den enkleste som
+ * `godta` godtar (for eksempel at døgndosen kan fordeles slik
+ * preparatomtalen krever). Injeksjoner settes aldri sammen; én dose er én
+ * hel injeksjon.
  */
-export function doser(valg: readonly Styrkevalg[], fra: number, til: number): Dosekandidat[] {
+export function doser(valg: readonly Styrkevalg[], fra: number, til: number, godta: (k: Dosekandidat) => boolean = () => true): Dosekandidat[] {
   const fritak = new Set(valg.filter((v) => v.registrering === 'godkjenningsfritak').map((v) => v.nokkel))
   const beste = new Map<string, Dosekandidat>()
   const legg = (elementer: Doseelement[]) => {
     if (elementer.some((e) => e.preparater.length === 0)) return
     const k = kandidat(elementer, fritak)
     if (k.mg < fra - EPS || k.mg > til + EPS) return
-    if (!innenforRammene(elementer)) return
+    if (!innenforRammene(elementer) || !godta(k)) return
     const nokkel = k.mg.toFixed(6)
     const forrige = beste.get(nokkel)
     if (!forrige || sammenlign(k.kompleksitet, forrige.kompleksitet) < 0 || (sammenlign(k.kompleksitet, forrige.kompleksitet) === 0 && elementnokkel(k) < elementnokkel(forrige))) {

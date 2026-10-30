@@ -904,7 +904,11 @@ describe('Doseplanene (P7.3–P7.4)', () => {
     const s = stopp('sertralin', 50, SERTRALIN)
     expect(s).toMatch(/dag 1–28: den ideelle dosen 37,5 mg kan ikke gis.*25 mg \(-33,33 %, faktisk reduksjon 50 % fra 50 mg\) og 50 mg \(\+33,33 %\)/)
     // Her kan forskriveren velge en dose som kan gis (se testene av valgene); beregningen velger ikke selv.
-    expect(s).toMatch(/Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 50 mg innenfor valgområdet 5–50 %: 25 mg \(−50 %, krever begrunnelse\)\. Beregningen velger ikke selv\./)
+    expect(s).toMatch(/Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 50 mg innenfor valgområdet 5–50 %: 25 mg \(−50 %, avvik som krever begrunnelse\)\. En dose som krever begrunnelse, er et avvik fra den foretrukne reduksjonen og ikke et anbefalt trinn/)
+    // Ved lang behandlingstid er 10 % foretrukket; kan det ikke gis, sier planen det, og 50 % er bare et begrunnet avvik (kontrollørens gjennomgang av fe08fac).
+    const lang = stopp('sertralin', 50, SERTRALIN, undefined, { svar: LANG })
+    expect(lang).toMatch(/Den foretrukne reduksjonen til 45 mg \(−10 % fra 50 mg\) kan ikke gis med preparatene\./)
+    expect(lang).toMatch(/25 mg \(−50 %, avvik som krever begrunnelse\)\. En dose som krever begrunnelse, er et avvik/)
     expect(stopp('vortioksetin', 5, [p('V5', 'tablett', 5), p('V10', 'tablett', 10)])).toMatch(
       /dag 1–28: den ideelle dosen 3,75 mg kan ikke gis.*Nærmeste doser som kan settes sammen: 5 mg \(\+33,33 %\)\. Regelen lar forskriveren velge en dose som kan gis, men ingen gir en faktisk reduksjon innenfor valgområdet for trinnet\. En annen dose/,
     )
