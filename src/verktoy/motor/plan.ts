@@ -328,13 +328,18 @@ function ingenDose(f: Forlopsresultat, p: Periode, valg: Styrkevalg[], alleValg:
   )
 }
 
-/** Hvorfor perioden ikke kan gis når døgndosen må fordeles og ingen dose som kan gis, kan fordeles slik regelen krever. */
-const ingenFordeling = (f: Forlopsresultat, p: Periode, over: number | null) =>
-  `${f.virkestoff} ${dager(p)}: døgndosen ${tall(p.mg)} mg skal gis ${fordelingstekst(p.fordeles!)}${over !== null ? `, hver høyst ${tall(over)} mg` : ''} (preparatomtalen), og dosene skal være like store, men ingen nøyaktig dose med preparatene i FEST kan fordeles slik. En annen dose eller fordeling er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.`
-
-/** Om en dose innenfor rammene kan settes sammen for perioden, uten krav til fordelingen. */
-const kanGis = (v: Styrkevalg[], p: Periode, tol: number, fra: number, til: number) =>
-  fra <= til + EPS && doser(v, fra, til).some((k) => Math.abs(k.mg - p.mg) <= p.mg * tol + EPS * Math.max(1, p.mg))
+/**
+ * Hvorfor perioden ikke kan gis når døgndosen må fordeles og ingen dose som
+ * kan gis, kan fordeles slik regelen krever. `ujevn` er en fordeling som
+ * ellers kunne vært gitt, når det bare er regelens krav om like store doser
+ * som stopper.
+ */
+const ingenFordeling = (f: Forlopsresultat, p: Periode, over: number | null, likeStore: boolean, ujevn: number[] | null) =>
+  `${f.virkestoff} ${dager(p)}: døgndosen ${tall(p.mg)} mg skal gis ${fordelingstekst(p.fordeles!)}${over !== null ? `, hver høyst ${tall(over)} mg` : ''} (preparatomtalen)` +
+  (ujevn
+    ? `. Den kan gis fordelt som ${ujevn.map(tall).join(' + ')} mg, men regelen krever like store doser (regelens eget valg, ikke et krav i preparatomtalen), og ingen nøyaktig dose med preparatene i FEST kan fordeles på like store doser.`
+    : `${likeStore ? ' og like store doser (regelens eget valg)' : ''}, men ingen nøyaktig dose med preparatene i FEST kan fordeles slik.`) +
+  ' En annen dose eller fordeling er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.'
 
 /** Hvorfor perioden ikke kan gis i kurvens retning, når hver dose for seg kan gis. */
 const motKurven = (f: Forlopsresultat, p: Periode) =>
@@ -367,7 +372,8 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
     const grenser = [min !== null && ` og ikke under ${tall(min)} mg`, maks !== null && ` og ikke over ${tall(maks)} mg`].filter(Boolean).join('')
     // Døgndoser over grensen for én dose må kunne fordeles på doser som hver kan gis (preparatomtalen).
     const over = dosegrense(def.fordeling?.over_mg, `${f.id}.fordeling.over_mg`)
-    const fordelt = (p: Periode, k: Dosekandidat) => (p.fordeles ? fordel(k, p.fordeles, over ?? Infinity) : undefined)
+    const likeStore = !!def.fordeling?.like_store
+    const fordelt = (p: Periode, k: Dosekandidat) => (p.fordeles ? fordel(k, p.fordeles, over ?? Infinity, likeStore) : undefined)
     ut.toleranse_prosent = tol * 100
     // En plan uten nulltrinn stopper ved første trinn som ikke kan gis (P7.5, beslutning 3); en annen plan stopper helt.
     const avkortbar = !!f.avslutning
@@ -378,11 +384,14 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
       const v = tilgjengelig(alleValg, sluttdato(p))
       const fra = Math.max(p.mg * (1 - tol), min ?? 0, EPS)
       const til = Math.min(p.mg * (1 + tol), maks ?? Infinity)
-      const kandidater = fra <= til + EPS ? doser(v, fra, til).filter((k) => Math.abs(k.mg - p.mg) <= p.mg * tol + EPS * Math.max(1, p.mg) && fordelt(p, k) !== null) : []
+      const innenfor = fra <= til + EPS ? doser(v, fra, til).filter((k) => Math.abs(k.mg - p.mg) <= p.mg * tol + EPS * Math.max(1, p.mg)) : []
+      const kandidater = innenfor.filter((k) => fordelt(p, k) !== null)
       if (kandidater.length === 0) {
         // Kan en nøyaktig dose gis, men ikke fordeles, er det fordelingen som stopper planen.
-        const fordelingen = p.fordeles && kanGis(v, p, tol, fra, til)
-        const hvorfor = fordelingen ? ingenFordeling(f, p, over) : ingenDose(f, p, v, alleValg, tol, grenser, i === 0 ? start : f.perioder[i - 1]!.mg)
+        const fordelingen = !!p.fordeles && innenfor.length > 0
+        // Stopper bare kravet om like store doser, vises fordelingen som ellers kunne vært gitt.
+        const ujevn = fordelingen && likeStore ? (innenfor.map((k) => fordel(k, p.fordeles!, over ?? Infinity)).find((x) => x !== null) ?? null) : null
+        const hvorfor = fordelingen ? ingenFordeling(f, p, over, likeStore, ujevn) : ingenDose(f, p, v, alleValg, tol, grenser, i === 0 ? start : f.perioder[i - 1]!.mg)
         if (!avkortbar || i === 0) throw new Stopp(hvorfor)
         stans = fordelingen ? hvorfor : ingenDose(f, p, v, alleValg, tol, grenser)
         break
@@ -422,7 +431,7 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
     }
     if (ut.perioder.some((p) => p.doser)) {
       kontroller.push({
-        krav: `${over !== null ? `Døgndoser av ${f.virkestoff} over ${tall(over)} mg` : `Døgndosene av ${f.virkestoff}`} er ${fordelingstekst(def.fordeling!.antall)}${over !== null ? `, hver høyst ${tall(over)} mg` : ''}`,
+        krav: `${over !== null ? `Døgndoser av ${f.virkestoff} over ${tall(over)} mg` : `Døgndosene av ${f.virkestoff}`} er ${fordelingstekst(def.fordeling!.antall)}${over !== null ? `, hver høyst ${tall(over)} mg` : ''}${likeStore ? ', like store (regelens eget valg)' : ''}`,
         oppfylt: true,
         detalj: ut.perioder.filter((p) => p.doser).map((p) => `${dager(p)}: ${p.doser!.map(tall).join(' + ')} mg`).join('; '),
       })

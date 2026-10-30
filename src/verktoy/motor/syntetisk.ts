@@ -236,10 +236,10 @@ export function nedtrappingUtenNull(strategi: Nedtrappingsstrategi, dosevalg?: R
   return r
 }
 
-/** Som {@link nedtrappingUtenNull}, der døgndoser over `over` mg skal fordeles på `antall` doser, hver høyst `over` mg. */
-export function fordeltUtenNull(strategi: Nedtrappingsstrategi, over: number, antall: number[]): Regel {
+/** Som {@link nedtrappingUtenNull}, der døgndoser over `over` mg skal fordeles på `antall` doser, hver høyst `over` mg, og med `likeStore` på like store doser. */
+export function fordeltUtenNull(strategi: Nedtrappingsstrategi, over: number, antall: number[], likeStore = false): Regel {
   const r = nedtrappingUtenNull(strategi, undefined, 'fordelt-uten-null')
-  r.plan.forlop[0]!.fordeling = { over_mg: sp(over, 'mg'), antall, grunnlag: syntetisk }
+  r.plan.forlop[0]!.fordeling = { over_mg: sp(over, 'mg'), antall, grunnlag: syntetisk, ...(likeStore && { like_store: syntetisk }) }
   return r
 }
 
@@ -683,9 +683,24 @@ export const TESTTILFELLER: Testtilfelle[] = [
   },
   {
     id: 'fordeling-over-grense',
-    beskrivelse: 'Testoksetin 80 mg med 50 % av aktuell dose uten nulltrinn, der døgndoser over 20 mg skal gis fordelt på 2 eller 3 like store doser, hver høyst 20 mg. 40 mg vises fordelt på 2 doser; dosene til og med 20 mg gis som én dose.',
-    kontrollerer: 'P5.5 fordeling av døgndosen på like store doser når preparatomtalen krever det (substanskontrollen og kontrollrunden 30.10.2026, fluvoksamin og moklobemid)',
-    regel: fordeltUtenNull({ type: 'prosent_av_aktuell', prosent: sp(50, 'prosent') }, 20, [2, 3]),
+    beskrivelse: 'Testoksetin 40 mg med 25 % av aktuell dose uten nulltrinn, der døgndoser over 20 mg skal gis fordelt på 2 eller 3 doser, hver høyst 20 mg. Dosene over 20 mg vises med den jevneste fordelingen som kan gis; dosene til og med 20 mg gis som én dose.',
+    kontrollerer: 'P5.5 fordeling av døgndosen når preparatomtalen krever det (substanskontrollen 30.10.2026, fluvoksamin og moklobemid)',
+    regel: fordeltUtenNull({ type: 'prosent_av_aktuell', prosent: sp(25, 'prosent') }, 20, [2, 3]),
+    inndata: { startdose_mg: 40, formvalg: { fra: TABLETT } },
+    preparater: TESTOKSETIN,
+    forventet: {
+      fra: [
+        'dag 1–14: 30 mg = 1 tablett à 10 mg + 1 tablett à 20 mg, fordelt på 2 doser: 20 + 10 mg',
+        'fra dag 15: 22,5 mg = 1 tablett à 20 mg + ½ tablett à 5 mg, fordelt på 2 doser: 20 + 2,5 mg',
+        'neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt',
+      ],
+    },
+  },
+  {
+    id: 'fordeling-like-store',
+    beskrivelse: 'Testoksetin 80 mg med 50 % av aktuell dose uten nulltrinn, der regelen i tillegg krever like store doser. 40 mg vises fordelt på 2 like store doser; dosene til og med 20 mg gis som én dose.',
+    kontrollerer: 'P5.5 like store doser når regelen selv krever det (kontrollrunden 30.10.2026, fluvoksamin og moklobemid)',
+    regel: fordeltUtenNull({ type: 'prosent_av_aktuell', prosent: sp(50, 'prosent') }, 20, [2, 3], true),
     inndata: { startdose_mg: 80, formvalg: { fra: TABLETT } },
     preparater: TESTOKSETIN,
     forventet: {
@@ -701,13 +716,13 @@ export const TESTTILFELLER: Testtilfelle[] = [
     },
   },
   {
-    id: 'fordeling-ujevn',
-    beskrivelse: 'Testoksetin 40 mg med 25 % av aktuell dose: 30 mg kan gis som 10 + 20 mg, men ikke som like store doser på høyst 20 mg. En ujevn fordeling er ikke dokumentert i noen regel, så beregningen stopper.',
-    kontrollerer: 'P5.5 fordelingen bruker aldri ujevne doser (kontrollrunden 30.10.2026, fluvoksamin)',
-    regel: fordeltUtenNull({ type: 'prosent_av_aktuell', prosent: sp(25, 'prosent') }, 20, [2, 3]),
+    id: 'fordeling-like-store-stopper',
+    beskrivelse: 'Som «fordeling-over-grense», der regelen krever like store doser: 30 mg kan gis som 20 + 10 mg, men ikke som like store doser på høyst 20 mg. Beregningen stopper og viser hvorfor.',
+    kontrollerer: 'P5.5 regelens krav om like store doser stopper planen og sier hvilken fordeling som ellers kunne vært gitt (kontrollrunden 30.10.2026)',
+    regel: fordeltUtenNull({ type: 'prosent_av_aktuell', prosent: sp(25, 'prosent') }, 20, [2, 3], true),
     inndata: { startdose_mg: 40, formvalg: { fra: TABLETT } },
     preparater: TESTOKSETIN,
-    forventet: { stopp: /døgndosen 30 mg skal gis fordelt på 2 eller 3 doser, hver høyst 20 mg \(preparatomtalen\), og dosene skal være like store, men ingen nøyaktig dose/ },
+    forventet: { stopp: /døgndosen 30 mg skal gis fordelt på 2 eller 3 doser, hver høyst 20 mg \(preparatomtalen\)\. Den kan gis fordelt som 20 \+ 10 mg, men regelen krever like store doser \(regelens eget valg, ikke et krav i preparatomtalen\)/ },
   },
   {
     id: 'fordeling-kan-ikke-fordeles',
@@ -716,7 +731,7 @@ export const TESTTILFELLER: Testtilfelle[] = [
     regel: fordeltUtenNull({ type: 'prosent_av_aktuell', prosent: sp(25, 'prosent') }, 20, [2, 3]),
     inndata: { startdose_mg: 40, formvalg: { fra: TABLETT } },
     preparater: [{ id: 'OKS-HEL30', virkestoff: 'testoksetin', varenavn: 'Testoksetin Hel', form: 'tablett', mg: 30, deling: '1' }],
-    forventet: { stopp: /døgndosen 30 mg skal gis fordelt på 2 eller 3 doser, hver høyst 20 mg \(preparatomtalen\), og dosene skal være like store, men ingen nøyaktig dose/ },
+    forventet: { stopp: /døgndosen 30 mg skal gis fordelt på 2 eller 3 doser, hver høyst 20 mg \(preparatomtalen\), men ingen nøyaktig dose/ },
   },
   {
     id: 'annenhver-dag',

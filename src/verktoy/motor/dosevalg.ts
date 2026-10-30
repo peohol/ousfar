@@ -240,12 +240,13 @@ export function velgSerie(perioder: readonly Periodevalg[], start: number): Dose
  * Fordelingen av en døgndose på flere doser over døgnet, når regelen krever
  * det (`Forlop.fordeling`, f.eks. fluvoksamin over 150 mg): det første
  * antallet i `antall` som lar enhetene i dosen (hele og delte tabletter,
- * kapsler eller dråper) fordeles på like store doser på høyst `maks` mg. En
- * delt tablett hører til én dose. Ujevne fordelinger brukes ikke, fordi ingen
- * regel dokumenterer dem (kontrollrunden 30.10.2026, fluvoksamin). Dosene i
- * mg; `null` når ingen fordeling går.
+ * kapsler eller dråper) fordeles så hver dose er over 0 og høyst `maks` mg.
+ * En delt tablett hører til én dose. Blant mulige fordelinger velges den
+ * jevneste (minst største dose); med `likeStore` brukes bare like store doser,
+ * når regelen krever det (`Forlop.fordeling.like_store`). Dosene i mg,
+ * største først; `null` når ingen fordeling går.
  */
-export function fordel(k: Pick<Dosekandidat, 'elementer'>, antall: readonly number[], maks: number): number[] | null {
+export function fordel(k: Pick<Dosekandidat, 'elementer'>, antall: readonly number[], maks: number, likeStore = false): number[] | null {
   // Enhetene som stykker av samme størrelse med et antall: hele enheter, og en eventuell delt enhet per styrke.
   const stykker = new Map<number, number>()
   const legg = (mg: number, n: number) => n > 0 && stykker.set(mg, (stykker.get(mg) ?? 0) + n)
@@ -262,7 +263,7 @@ export function fordel(k: Pick<Dosekandidat, 'elementer'>, antall: readonly numb
       if (doser.length === n - 1) {
         const rest = igjen.reduce((s, c, i) => s + c * typer[i]![0], 0)
         const alle = [...doser, rest].sort((a, b) => b - a)
-        if (alle.some((d) => d <= EPS || d > maks + EPS || Math.abs(d - alle[0]!) > EPS)) return
+        if (alle.some((d) => d <= EPS || d > maks + EPS || (likeStore && Math.abs(d - alle[0]!) > EPS))) return
         if (!best || sammenlign(alle, best) < 0) best = alle
         return
       }

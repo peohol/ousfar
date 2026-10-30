@@ -202,12 +202,15 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
     for (const fase of x.faser) {
       if (fase.type !== 'nedtrapping') continue
       const individuell = fase.avslutning === 'individuell'
-      const sluttdose = fase.strategi.type === 'prosent_av_aktuell' && !!fase.strategi.sluttdose_mg
+      const slutt = fase.strategi.type === 'prosent_av_aktuell' ? fase.strategi.sluttdose_mg : undefined
+      const sluttdose = !!slutt
       if (individuell && fase.minste_varighet) f(`forløp ${x.id} har både minste varighet og individuell avslutning; uten seponering har nedtrappingen ingen slutt å måle til`)
-      // Uten seponering trengs en teknisk planhorisont, og en sluttdose ville vært en nedre grense ingen har godkjent.
+      // Uten seponering trengs en teknisk planhorisont. Ved seponering ville en sluttdose vært en nedre grense ingen har godkjent (P7.5);
+      // ved bytte er den der beregningen stopper og resten vurderes individuelt, og den må ha en kilde.
       if (individuell && !fase.horisont) f(`forløp ${x.id} har individuell avslutning uten teknisk planhorisont; planen ville ikke hatt noen grense`)
       if (!individuell && fase.horisont) f(`forløp ${x.id} har en planhorisont uten individuell avslutning; en nedtrapping til 0 har ingen horisont`)
-      if (individuell && sluttdose) f(`forløp ${x.id} har både sluttdose og individuell avslutning; ingen nedre grense for beregnede trinn er godkjent`)
+      if (individuell && sluttdose && r.plan.form === 'seponering') f(`forløp ${x.id} har både sluttdose og individuell avslutning; ingen nedre grense for beregnede trinn ved seponering er godkjent`)
+      if (individuell && slutt && r.plan.form !== 'seponering' && !slutt.grunnlag.henvisninger?.length) f(`forløp ${x.id} stopper beregningen ved en sluttdose uten kilde`)
       if (!individuell && fase.strategi.type === 'prosent_av_aktuell' && !sluttdose) f(`forløp ${x.id} trapper ned prosentvis uten sluttdose og uten individuell avslutning; dosen når aldri 0`)
     }
   }

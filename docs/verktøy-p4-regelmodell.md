@@ -67,7 +67,7 @@ Kontrollene krever at grensene i et krav er innenfor området, at `ved` er et sp
 **Planhorisont, praktisk grense og intervall (regelmodell 6).** Etter fagkontrollen 30.10.2026, som avviste en fast nedre grense (`docs/verktøy-p7-nedtrapping.md` §7):
 
 - `horisont` (enhet trinn) i en nedtrappingsfase med individuell avslutning: høyst så mange reduksjoner i planen. En teknisk grense, ikke en klinisk; neste plan beregnes fra faktisk dose. Kontrollene krever en horisont ved individuell avslutning og ingen ellers.
-- `sluttdose_mg` i prosent av aktuell dose er valgfri: en nedtrapping med individuell avslutning har ingen (ingen nedre grense er godkjent), en som går til 0 må ha en.
+- `sluttdose_mg` i prosent av aktuell dose er valgfri: en nedtrapping som går til 0 må ha en. Ved seponering har en nedtrapping med individuell avslutning ingen (ingen nedre grense er godkjent). Ved bytte kan den ha en med kilde: beregningen stopper da ved sluttdosen, og avslutningen derfra vurderes individuelt (kontrollrunden 30.10.2026).
 - `dosevalg.min_mg` i et forløp er laveste dose formuleringen kan gi (en praktisk grense). En nedtrapping med individuell avslutning beregner ingen trinn under den. Beregningen viser heller ingen dose under 0,01 mg (`MINSTE_VISTE_MG`).
 - Fasen `intervalldosering`: dosen (`aktuell` eller en dosekilde) gis hver `hver`. dag i minst `minstetid` dager, uten ny reduksjon og uten slutt. Den teller som slutt uten null i `nulltrinnfeil` (`fortsetterUtenNull`), og perioden får `hver` i resultatet.
 - `Sporsmal.krever_begrunnelse`: et ja krever en skriftlig begrunnelse, f.eks. en dose utenfor rammen for indikasjon eller pasientgruppe.
@@ -77,7 +77,8 @@ Kontrollene krever at grensene i et krav er innenfor området, at `ved` er et sp
 - `Inndatakrav.ved`: kravet gjelder bare når et spørsmål er besvart slik, f.eks. høyst 20 mg citalopram for eldre over 65 år. Kontrollene krever at spørsmålet finnes i regelen.
 - `Inndatakrav.krever_begrunnelse`: en forsiktighetsgrense. En dose over den stopper ikke, men krever en skriftlig begrunnelse, og kravet og begrunnelsen står som kontroll. Bare for veiledende krav; en uttrykkelig høyeste dose (bindende) kan aldri begrunnes bort.
 - `Sporsmal.nei`: teksten for nei-svaret når grensen gjelder ved nei, f.eks. paroksetin utenom tvangslidelse og panikklidelse.
-- `Forlop.fordeling`: døgndosen gis fordelt på et av antallene i `antall` (hele tall, minst 2), over `over_mg` når den er satt, med eget grunnlag. Planen viser fordelingen, og doseplanmotoren gir bare doser som kan fordeles slik.
+- `Forlop.fordeling`: døgndosen gis fordelt på et av antallene i `antall` (hele tall, minst 2), over `over_mg` når den er satt, med eget grunnlag. Planen viser fordelingen, og doseplanmotoren gir bare doser som kan fordeles slik, med den jevneste fordelingen. `like_store` er et eget valg i regelen, med eget grunnlag, om at dosene skal være like store; det er ikke en felles regel for alle legemidler (kontrollrunden 30.10.2026).
+- *Hold til et annet forløp er avsluttet*, når det andre forløpet avsluttes individuelt eller uten beregning: dosen holdes til da, og resten av forløpet planlegges også individuelt (`holdes til sertralin er avsluttet; videre dosering planlegges individuelt`).
 - Med individuell avslutning avrundes hvert trinn til den viste dosen (to desimaler), og neste trinn regnes fra den. En reduksjon som forsvinner i avrundingen, er ikke et trinn (`avrundet_bort`); forsvinner allerede den første, stopper beregningen.
 
 **Gyldige verdier.** Doser og varigheter er endelige tall over 0, prosenter over 0 og høyst 100, og dager, måneder og trinn hele tall (`parameterfeil`). En startdato må være en gyldig kalenderdato som `ÅÅÅÅ-MM-DD`; `2027-02-31` normaliseres ikke. Ugyldige verdier i regelen eller inndata gir en stopp med grunnen, og beregningen kaster aldri: også en feil i regelen selv blir en kontrollert stopp.
@@ -191,3 +192,12 @@ Reglene for olanzapin → kvetiapin, Rest AP → aripiprazol, Abilify Maintena o
 | Xeplion (versjon 2) | Kildemessig akseptabel som avgrenset overgang fra perorale paliperidon-depottabletter med normal nyrefunksjon. | Uendret, og registrert på samme måte. Dosene er mg paliperidon, som styrkene i den europeiske preparatomtalen; det skal kontrolleres på nytt før en signert godkjenning. |
 
 Beregningen viser nå et forløp som fortsetter uten beregning etter de første periodene, som «fra dag 5: videre dosering beregnes ikke; planlegges individuelt».
+
+**Etter gjennomgangen av de rettede versjonene (30.10.2026).** Kontrolløren fant at to bytteregler fortsatt beregnet en del som ikke er kontrollert for hvert stoff. Begge er versjon 4, og pilotsettet er versjon 7:
+
+| Regel | Vurdering | Endring |
+| --- | --- | --- |
+| Sertralin → mirtazapin (versjon 4) | Trinnet fra 25 mg til 0 var fortsatt et fast, ubesluttet sluttpunkt. | Beregningen stopper ved 25 mg sertralin, som fortsetter til avslutningen er vurdert individuelt. Mirtazapin holdes på 15 mg til da; måldosen beregnes ikke, og regelen spør ikke lenger etter den. |
+| Rest AP → aripiprazol (versjon 4) | Regelen beregnet fortsatt 25 % av startdosen per uke til null, også for zuklopentiksol. | Bare første uke beregnes. Nedtrappingen av det gamle antipsykotikumet og måldosen for aripiprazol planlegges individuelt; aripiprazol holdes på 10 mg til da. En beregnet nedtrapping krever en egen regel for zuklopentiksol. |
+
+Ingen pilotregel bruker lenger prosent av startdosen; strategien er fortsatt en del av modellen og testes for seg.

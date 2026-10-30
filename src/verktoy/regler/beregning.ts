@@ -350,7 +350,16 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
         else {
           const annet = ctx.resultater.get(fase.varighet.forlop)
           if (!annet) throw new Error(`${regel.id}: ${f.id} holder til ${fase.varighet.forlop}, som ikke er beregnet før`)
-          if (annet.siste_dosedag === null) throw new Stopp(`${annet.virkestoff} avsluttes ikke i planen, så ${virkestoff} kan ikke holdes til da.`)
+          if (annet.siste_dosedag === null) {
+            // Avsluttes det andre individuelt eller uten beregning, holdes dosen til da, og resten av dette forløpet planlegges også individuelt.
+            if (!annet.avslutning && !annet.uten_beregning) throw new Stopp(`${annet.virkestoff} avsluttes ikke i planen, så ${virkestoff} kan ikke holdes til da.`)
+            legg(dag, null, mg)
+            aktuell = mg
+            avslutning = `Dosen av ${virkestoff} holdes på ${tall(mg)} mg til ${annet.virkestoff} er avsluttet. Avslutningen av ${annet.virkestoff} vurderes individuelt, og videre dosering av ${virkestoff} beregnes ikke, men planlegges individuelt sammen med den.`
+            avslutning_kort = `holdes til ${annet.virkestoff} er avsluttet; videre dosering planlegges individuelt`
+            fortsetter = true
+            break
+          }
           n = Math.max(0, annet.siste_dosedag - dag + 1)
         }
         legg(dag, dag + n - 1, mg)

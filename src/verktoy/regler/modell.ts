@@ -285,8 +285,11 @@ export interface Forlop {
    * fluvoksamin), ellers alle (f.eks. moklobemid). `antall` er hvor mange
    * doser døgndosen kan fordeles på, i den rekkefølgen de foretrekkes. P5
    * viser fordelingen og stopper når den ikke kan gis med preparatene.
+   * `like_store` er regelens eget valg om at dosene skal være like store,
+   * med sitt eget grunnlag; preparatomtalen krever det ikke nødvendigvis.
+   * Uten det velger P5 den jevneste fordelingen som kan gis.
    */
-  fordeling?: { over_mg?: Parameter; antall: number[]; grunnlag: Grunnlag }
+  fordeling?: { over_mg?: Parameter; antall: number[]; grunnlag: Grunnlag; like_store?: Grunnlag }
   /** `startdose` når pasienten bruker legemidlet når planen starter; ellers starter forløpet uten dose. */
   utgangsdose: 'startdose' | null
   start: Forlopsstart
@@ -643,7 +646,11 @@ export function alleGrunnlag(r: Regel): [string, Grunnlag][] {
     ...r.inndata.map((x) => [inndatasti(x), x.grunnlag] as [string, Grunnlag]),
     ...[...r.bekreftelser, ...r.unntak, ...(r.sporsmal ?? [])].map((x) => [x.id, x.grunnlag] as [string, Grunnlag]),
     ...grunnlagITabeller(r),
-    ...r.plan.forlop.flatMap((f) => (f.fordeling ? [[`${f.id}.fordeling`, f.fordeling.grunnlag] as [string, Grunnlag]] : [])),
+    ...r.plan.forlop.flatMap((f) =>
+      f.fordeling
+        ? [[`${f.id}.fordeling`, f.fordeling.grunnlag] as [string, Grunnlag], ...(f.fordeling.like_store ? [[`${f.id}.fordeling.like_store`, f.fordeling.like_store] as [string, Grunnlag]] : [])]
+        : [],
+    ),
   ]
 }
 

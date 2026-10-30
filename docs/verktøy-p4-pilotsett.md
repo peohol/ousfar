@@ -2,7 +2,7 @@
 
 <!-- Laget av `npm run verktoy:regler -- rapport` fra reglene i src/verktoy/regler/. Ikke rediger for hånd; endre reglene og lag rapporten på nytt. -->
 
-Regelsett `ousfar-verktoy-pilot` versjon 6, regelmodell 7, beregningsmotor 5. Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Etter kontrollrunden 30.10.2026 er de fire byttereglene rettet eller avgrenset og sendt til ny kontroll, og de to depotreglene er funnet kildemessig akseptable som avgrensede varianter. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.
+Regelsett `ousfar-verktoy-pilot` versjon 7, regelmodell 7, beregningsmotor 5. Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Etter kontrollrunden 30.10.2026 er de fire byttereglene rettet eller avgrenset og sendt til ny kontroll, og de to depotreglene er funnet kildemessig akseptable som avgrensede varianter. Ved gjennomgangen samme dag ble de beregnede sluttdelene av sertralin→mirtazapin og gruppebyttet til aripiprazol tatt ut; de planlegges individuelt. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.
 
 **6 regler, 0 klinisk godkjent.** Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. De er ikke empirisk validerte kliniske anbefalinger, og ingen av reglene er klinisk godkjent. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-p4-regelmodell.md`.
 
@@ -12,10 +12,10 @@ Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel by
 
 | Regel | Form | Fra → til | Beregnbarhet | Åpne valg | Status | Eksempler |
 | --- | --- | --- | --- | --- | --- | --- |
-| `kryssnedtrapping-sertralin-mirtazapin` | kryssnedtrapping | sertralin → mirtazapin | beregnbar etter faglig avklaring | 4 | til faglig kontroll | 5 |
+| `kryssnedtrapping-sertralin-mirtazapin` | kryssnedtrapping | sertralin → mirtazapin | beregnbar etter faglig avklaring | 4 | til faglig kontroll | 4 |
 | `mao-fluoksetin-fenelzin` | sekvensielt bytte | fluoksetin → fenelzin | beregnbar etter faglig avklaring | 4 | til faglig kontroll | 3 |
 | `antipsykotikabytte-olanzapin-kvetiapin` | kryssnedtrapping | olanzapin → kvetiapin | beregnbar etter faglig avklaring | 2 | til faglig kontroll | 4 |
-| `gruppe-rest-ap-aripiprazol` | kryssnedtrapping | gruppen rest-ap → aripiprazol | beregnbar etter faglig avklaring | 5 | til faglig kontroll | 2 |
+| `gruppe-rest-ap-aripiprazol` | kryssnedtrapping | gruppen rest-ap → aripiprazol | beregnbar etter faglig avklaring | 3 | til faglig kontroll | 2 |
 | `depot-aripiprazol-maintena` | oppstart av depot | aripiprazol → aripiprazol | entydig beregnbar | 0 | til faglig kontroll | 4 |
 | `depot-paliperidon-xeplion` | oppstart av depot | paliperidon → paliperidon | entydig beregnbar | 0 | til faglig kontroll | 6 |
 
@@ -42,9 +42,9 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra sertralin til mirtazapin, kryssnedtrapping
 
-`kryssnedtrapping-sertralin-mirtazapin`, versjon 3, fingeravtrykk `054bf1304240f9f56504774cfb4367c7bcc189ec720569a547b3f4243c56b0aa`. Kryssnedtrapping: sertralin → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`kryssnedtrapping-sertralin-mirtazapin`, versjon 4, fingeravtrykk `e9043380fa21ed7c59cab20a75d88de5c9c6a8a3e9f570896064bc60af73b6f9`. Kryssnedtrapping: sertralin → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → utkast (versjon 3, 30.10.2026, Claude Code) → til faglig kontroll (versjon 3, 30.10.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → utkast (versjon 3, 30.10.2026, Claude Code) → til faglig kontroll (versjon 3, 30.10.2026, Claude Code) → utkast (versjon 4, 30.10.2026, Claude Code) → til faglig kontroll (versjon 4, 30.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -59,10 +59,12 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 **OUSFARs selvstendige tilpasninger (må kontrolleres):**
 
-- OUSFAR halverer sertralin hver 14. dag ned til 25 mg og starter mirtazapin 15 mg dag 1, holdt til sertralin er seponert, deretter måldosen.
+- OUSFAR halverer sertralin hver 14. dag ned til 25 mg og starter mirtazapin 15 mg dag 1.
   - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
   - Effektiv døgndose er vanligvis 15–45 mg; startdosen er 15 eller 30 mg. Behandlingen avsluttes gradvis. *([dmp-remeron](https://produktinformasjon.legemiddelsok.no/preparatomtaler/1997-03657.pdf), pkt. 4.2)*
-- Måldosen for mirtazapin må oppgis; regelen har ingen standard måldose (P6.8). *(OUSFARs vurdering)*
+- Seponeringen av sertralin fra 25 mg beregnes ikke, og heller ikke økningen av mirtazapin til måldosen: begge planlegges individuelt ut fra toleransen (kontrollrunden 30.10.2026). Mirtazapin holdes på 15 mg til da.
+  - Tempoet avtales med pasienten; neste reduksjon først når seponeringssymptomene er borte eller tålelige. Nedtrapping kan ta uker til måneder. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
+  - Effektiv døgndose er vanligvis 15–45 mg; startdosen er 15 eller 30 mg. Behandlingen avsluttes gradvis. *([dmp-remeron](https://produktinformasjon.legemiddelsok.no/preparatomtaler/1997-03657.pdf), pkt. 4.2)*
 - At dette er et bytte, kan begrunne raskere nedtrapping enn ved seponering, men ikke samme tempo for alle (kontrollrunden 30.10.2026). Etter tidligere seponeringssymptomer stopper regelen; ved lang behandlingstid krever halvering hver 14. dag en skriftlig begrunnelse, ellers planlegges byttet individuelt.
   - Raskere nedtrapping kan være aktuelt ved bytte av antidepressiv. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
   - Mange trenger mer støtte for å lykkes med seponering, særlig når tidligere forsøk har gitt seponeringssymptomer eller ikke har lyktes. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.15)*
@@ -73,15 +75,14 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 | Hvor | Parameter | Verdi | Art | Grunnlag |
 | --- | --- | --- | --- | --- |
 | fra: fase 1 (nedtrapping) | strategi.prosent | 50 % | veiledende | **OUSFAR-vurdering, åpent forslag:** Eksempelet i NICE er 50 % av forrige dose. (bygger på nice-ng222 anbefaling 1.4.16) |
-| fra: fase 1 (nedtrapping) | strategi.sluttdose_mg | 25 mg | veiledende | **OUSFAR-vurdering, åpent forslag:** Laveste startdose i preparatomtalen; under den seponeres. (bygger på dmp-zoloft pkt. 4.2) |
+| fra: fase 1 (nedtrapping) | strategi.sluttdose_mg | 25 mg | veiledende | **OUSFAR-vurdering, åpent forslag:** Laveste startdose i preparatomtalen; her stopper beregningen, og seponeringen derfra planlegges individuelt. (bygger på dmp-zoloft pkt. 4.2) |
 | fra: fase 1 (nedtrapping) | trinnlengde | 14 dager (område 7–14) | veiledende | **OUSFAR-vurdering, åpent forslag:** NICE åpner for raskere nedtrapping ved bytte; OUSFAR foreslår likevel 14 dager. (bygger på rcpsych-stopping How should I gradually reduce my dose?; nice-ng222 anbefaling 1.4.16) |
-| fra: fase 1 (nedtrapping) | minste_varighet | 14 dager | bindende krav | **OUSFAR-vurdering, åpent forslag:** «Minst én til to uker» er lest konservativt som minst 14 dager. (bygger på dmp-zoloft pkt. 4.2 og 4.4) |
+| fra: fase 1 (nedtrapping) | horisont | 3 trinn | veiledende | **OUSFAR-vurdering, åpent forslag:** Teknisk planhorisont: halvering fra høyeste startdose (200 mg) når 25 mg på tre reduksjoner; beregningen stopper uansett ved 25 mg. |
 | til: fase 1 (hold) | dose.mg | 15 mg | veiledende | dmp-remeron pkt. 4.2 |
 
 **Betingelser:**
 
 - Startdose 50–200 mg (bindende; dmp-zoloft pkt. 4.2)
-- Måldose (må oppgis) 15–45 mg (bindende; dmp-remeron pkt. 4.2)
 - Må bekreftes (`toleranse_overlapp`): Toleransen vurderes før hver reduksjon av sertralin: dagene er minstetider, og neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. (nice-ng222 anbefaling 1.4.16; rcpsych-stopping How should I gradually reduce my dose?; nice-ng222 anbefaling 1.9.9)
 - Unntak (`tidligere_seponeringssymptomer`): Et tidligere forsøk på å trappe ned eller seponere sertralin har gitt seponeringssymptomer eller mislyktes. Da passer ikke den faste kryssnedtrappingen, og byttet planlegges individuelt med mindre trinn. (nice-ng222 anbefaling 1.4.15; rcpsych-stopping If you have been taking antidepressants for longer)
 - Må besvares (`lang_behandlingstid`): Har pasienten brukt sertralin i mange måneder eller lenger? Et ja krever en skriftlig begrunnelse. (rcpsych-stopping If you have been taking antidepressants for longer; nice-ng222 anbefaling 1.4.16)
@@ -97,33 +98,32 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 - Ved samtidig bruk kan serotonerge bivirkninger øke; overlappens lengde er OUSFARs valg.
 - NICE åpner for raskere nedtrapping ved bytte; 14 dager per trinn kan være lengre enn nødvendig.
-- Om seponeringen fra 25 mg skal være et fast sluttpunkt i byttet, eller vurderes individuelt som ved ren seponering, er ikke avklart (kontrollrunden 30.10.2026).
+- Om seponeringen fra 25 mg kan bli et fast sluttpunkt i byttet, og for hvilke pasienter, er ikke avklart (kontrollrunden 30.10.2026); til da beregnes den ikke.
 
 **Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
 
-- *Sertralin 100 mg til mirtazapin 30 mg.* Inndata: startdose 100 mg; måldose 30 mg; bekreftet: toleranse_overlapp; pasientforhold: tidligere_seponeringssymptomer nei; svar: lang_behandlingstid nei.
-  - **fra:** dag 1–14: 50 mg; dag 15–28: 25 mg; fra dag 29: seponert
-  - **til:** dag 1–28: 15 mg; fra dag 29: 30 mg
+- *Sertralin 100 mg til mirtazapin: halvering til 25 mg; seponeringen derfra og måldosen for mirtazapin planlegges individuelt.* Inndata: startdose 100 mg; bekreftet: toleranse_overlapp; pasientforhold: tidligere_seponeringssymptomer nei; svar: lang_behandlingstid nei.
+  - **fra:** dag 1–14: 50 mg; fra dag 15: 25 mg; siste trinn før null; avslutning vurderes individuelt
+  - **til:** fra dag 1: 15 mg; holdes til sertralin er avsluttet; videre dosering planlegges individuelt
   - Kontroll: Avkreftet: Et tidligere forsøk på å trappe ned eller seponere sertralin har gitt seponeringssymptomer eller mislyktes. Da passer ikke den faste kryssnedtrappingen, og byttet planlegges individuelt med mindre trinn. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Toleransen vurderes før hver reduksjon av sertralin: dagene er minstetider, og neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Har pasienten brukt sertralin i mange måneder eller lenger? Nei – oppfylt. Oppgitt av forskriveren.
   - Kontroll: Startdosen er 50–200 mg (bindende) – oppfylt. 100 mg.
-  - Kontroll: Måldosen er 15–45 mg (bindende) – oppfylt. 30 mg.
-  - Kontroll: Nedtrappingen av sertralin varer minst 14 dager (bindende) – oppfylt. Nedtrapping dag 1–28 (28 dager).
-- *Sertralin 50 mg til mirtazapin 15 mg: én reduksjon, og mirtazapin fortsetter på 15 mg.* Inndata: startdose 50 mg; måldose 15 mg; bekreftet: toleranse_overlapp; pasientforhold: tidligere_seponeringssymptomer nei; svar: lang_behandlingstid nei.
-  - **fra:** dag 1–14: 25 mg; fra dag 15: seponert
-  - **til:** fra dag 1: 15 mg
+  - Merknad: Regelens siste trinn før null er nådd. Fra dag 15 står pasienten på 25 mg av sertralin til planen revurderes. Planen stopper her av tekniske grunner. Fortsett med denne dosen inntil forskriveren har vurdert videre nedtrapping. Dosen er ikke nødvendigvis en sluttdose. Planen går ikke til null og foreslår ingen dato for siste dose. En ny plan beregnes fra dosen pasienten faktisk bruker når forskriveren revurderer, ikke nødvendigvis siste dose her, og tidligere symptomer, toleranse og utsettelser må vurderes.
+  - Merknad: Dosen av mirtazapin holdes på 15 mg til sertralin er avsluttet. Avslutningen av sertralin vurderes individuelt, og videre dosering av mirtazapin beregnes ikke, men planlegges individuelt sammen med den.
+  - Merknad: Dagene og datoene er tidligste mulige tidspunkt dersom alle tidligere reduksjoner gjennomføres som planlagt; utsettes et trinn, forskyves alle senere tidspunkter tilsvarende.
+- *Sertralin 50 mg til mirtazapin: én reduksjon til 25 mg, som fortsetter til avslutningen er vurdert.* Inndata: startdose 50 mg; bekreftet: toleranse_overlapp; pasientforhold: tidligere_seponeringssymptomer nei; svar: lang_behandlingstid nei.
+  - **fra:** fra dag 1: 25 mg; siste trinn før null; avslutning vurderes individuelt
+  - **til:** fra dag 1: 15 mg; holdes til sertralin er avsluttet; videre dosering planlegges individuelt
   - Kontroll: Avkreftet: Et tidligere forsøk på å trappe ned eller seponere sertralin har gitt seponeringssymptomer eller mislyktes. Da passer ikke den faste kryssnedtrappingen, og byttet planlegges individuelt med mindre trinn. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Toleransen vurderes før hver reduksjon av sertralin: dagene er minstetider, og neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Har pasienten brukt sertralin i mange måneder eller lenger? Nei – oppfylt. Oppgitt av forskriveren.
   - Kontroll: Startdosen er 50–200 mg (bindende) – oppfylt. 50 mg.
-  - Kontroll: Måldosen er 15–45 mg (bindende) – oppfylt. 15 mg.
-  - Kontroll: Nedtrappingen av sertralin varer minst 14 dager (bindende) – oppfylt. Nedtrapping dag 1–14 (14 dager).
-- *Uten måldose stopper beregningen; det finnes ingen skjult standard.* Inndata: startdose 100 mg; bekreftet: toleranse_overlapp; pasientforhold: tidligere_seponeringssymptomer nei; svar: lang_behandlingstid nei.
-  - **Stoppet:** Måldosen må oppgis; regelen har ingen standard måldose.
-- *Etter seponeringssymptomer ved et tidligere forsøk gjelder ikke regelen; byttet planlegges individuelt.* Inndata: startdose 100 mg; måldose 30 mg; bekreftet: toleranse_overlapp; pasientforhold: tidligere_seponeringssymptomer ja; svar: lang_behandlingstid nei.
+  - Merknad: Regelens siste trinn før null er nådd. Fra dag 1 står pasienten på 25 mg av sertralin til planen revurderes. Planen stopper her av tekniske grunner. Fortsett med denne dosen inntil forskriveren har vurdert videre nedtrapping. Dosen er ikke nødvendigvis en sluttdose. Planen går ikke til null og foreslår ingen dato for siste dose. En ny plan beregnes fra dosen pasienten faktisk bruker når forskriveren revurderer, ikke nødvendigvis siste dose her, og tidligere symptomer, toleranse og utsettelser må vurderes.
+  - Merknad: Dosen av mirtazapin holdes på 15 mg til sertralin er avsluttet. Avslutningen av sertralin vurderes individuelt, og videre dosering av mirtazapin beregnes ikke, men planlegges individuelt sammen med den.
+- *Etter seponeringssymptomer ved et tidligere forsøk gjelder ikke regelen; byttet planlegges individuelt.* Inndata: startdose 100 mg; bekreftet: toleranse_overlapp; pasientforhold: tidligere_seponeringssymptomer ja; svar: lang_behandlingstid nei.
   - **Stoppet:** Regelen gjelder ikke: Et tidligere forsøk på å trappe ned eller seponere sertralin har gitt seponeringssymptomer eller mislyktes. Da passer ikke den faste kryssnedtrappingen, og byttet planlegges individuelt med mindre trinn.
-- *Ved lang behandlingstid krever den faste halveringen en skriftlig begrunnelse.* Inndata: startdose 100 mg; måldose 30 mg; bekreftet: toleranse_overlapp; pasientforhold: tidligere_seponeringssymptomer nei; svar: lang_behandlingstid ja.
+- *Ved lang behandlingstid krever den faste halveringen en skriftlig begrunnelse.* Inndata: startdose 100 mg; bekreftet: toleranse_overlapp; pasientforhold: tidligere_seponeringssymptomer nei; svar: lang_behandlingstid ja.
   - **Stoppet:** Svaret ja (lang behandlingstid) krever en skriftlig begrunnelse fra forskriveren, en særskilt vurdering. Skriv begrunnelsen, eller vurder om regelen passer.
 
 **Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntidepressants:Se>Mz`.
@@ -290,9 +290,9 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra et antipsykotikum i gruppen «øvrige antipsykotika» til aripiprazol, kryss-titrering
 
-`gruppe-rest-ap-aripiprazol`, versjon 3, fingeravtrykk `75e657417953cae1a70134a37f5adf244bd40e2ea5200c8c8a0820c425a77ed3`. Kryssnedtrapping: gruppen rest-ap → aripiprazol. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`gruppe-rest-ap-aripiprazol`, versjon 4, fingeravtrykk `be187975c27404d81fc3e2446528516bdc5c5e6b5be7640c512cd527a071d433`. Kryssnedtrapping: gruppen rest-ap → aripiprazol. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → utkast (versjon 3, 30.10.2026, Claude Code) → til faglig kontroll (versjon 3, 30.10.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → utkast (versjon 3, 30.10.2026, Claude Code) → til faglig kontroll (versjon 3, 30.10.2026, Claude Code) → utkast (versjon 4, 30.10.2026, Claude Code) → til faglig kontroll (versjon 4, 30.10.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -305,7 +305,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 **OUSFARs selvstendige tilpasninger (må kontrolleres):**
 
-- OUSFAR starter aripiprazol 10 mg dag 1, holder det gamle antipsykotikumet uendret i én uke og trapper det så ned med 25 % av startdosen per uke. Aripiprazol går til måldosen når det gamle er seponert.
+- OUSFAR starter aripiprazol 10 mg dag 1 og holder det gamle antipsykotikumet uendret i én uke. Nedtrappingen av det gamle og økningen av aripiprazol til måldosen beregnes ikke, men planlegges individuelt (kontrollrunden 30.10.2026); aripiprazol holdes på 10 mg til da.
   - Schizofreni: startdose 10 eller 15 mg daglig, vedlikehold 15 mg; effektivt doseområde 10–30 mg daglig. *([ema-abilify](https://www.ema.europa.eu/en/documents/product-information/abilify-epar-product-information_en.pdf), section 4.2)*
   - Ved kryss-titrering trappes det første antipsykotikumet ned mens det andre innføres. Et opphold uten antipsykotikum anbefales ikke. *([keks-2019](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6787301/fullTextXML), tabell 4 og avsnittet om byttestrategier)*
 - Gruppen følger P1-kartleggingen (tabellens medlemmer). Bare medlemmer som er vurdert hver for seg, kan beregnes (B4); i piloten gjelder det bare zuklopentiksol, som forslag. *(OUSFARs vurdering)*
@@ -316,14 +316,11 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 | Hvor | Parameter | Verdi | Art | Grunnlag |
 | --- | --- | --- | --- | --- |
 | fra: fase 1 (hold) | varighet.dager | 7 dager | veiledende | **OUSFAR-vurdering, åpent forslag:** Første uke med aripiprazol før nedtrappingen starter. |
-| fra: fase 2 (nedtrapping) | strategi.prosent | 25 % | veiledende | **OUSFAR-vurdering, åpent forslag:** Fire like store trinn. |
-| fra: fase 2 (nedtrapping) | trinnlengde | 7 dager (område 7–14) | veiledende | **OUSFAR-vurdering, åpent forslag:** Én uke per trinn. |
 | til: fase 1 (hold) | dose.mg | 10 mg | veiledende | ema-abilify section 4.2 |
 
 **Betingelser:**
 
 - Startdose 20–40 mg for zuklopentiksol (veiledende; dmp-cisordinol pkt. 4.2)
-- Måldose (må oppgis) 10–30 mg (bindende; ema-abilify section 4.2)
 - Må bekreftes (`indikasjon`): Indikasjonen er schizofreni. (ema-abilify section 4.2)
 - Må bekreftes (`peroral_formulering`): Pasienten bruker en peroral formulering, ikke depotinjeksjon eller korttidsvirkende injeksjon. (keks-2019 avsnittet om byttestrategier)
 - Må bekreftes (`spesialist_risiko`): Byttet gjøres i, eller med råd fra, spesialisthelsetjenesten, og indikasjonen, risikoen for tilbakefall og tempoet er vurdert. Byttet tilpasses toleransen og symptomene; sedasjon, ortostatisk blodtrykksfall, akatisi og forverring følges. (**OUSFAR-vurdering, åpent forslag:** Kontrollrunden 30.10.2026 fant at ingen fast byttemodell er validert for alle pasienter: redusert antipsykotisk dekning kan gi tilbakefall, og overlapp kan gi sedasjon og ortostase. (bygger på keks-2019 tabell 4 og avsnittet om byttestrategier))
@@ -354,18 +351,19 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 - Kildesidene og tabellen er ikke enige om hvem som er med i gruppen (P3); gruppens sammensetning må avklares faglig.
 - Medlemmene har ulik halveringstid og ulike doser; samme plan passer ikke nødvendigvis alle.
 - Aripiprazol er en partiell agonist og kan gi forverring eller akatisi ved bytte fra en full antagonist; overlappens lengde er OUSFARs valg.
+- Den faste nedtrappingen med 25 % av startdosen per uke i versjon 3 var OUSFARs valg og er tatt ut. En beregnet nedtrapping krever en egen regel for zuklopentiksol med et substansspesifikt, kontrollert forløp.
 
 **Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
 
-- *Zuklopentiksol 20 mg til aripiprazol 15 mg.* Inndata: startdose 20 mg; måldose 15 mg; virkestoff zuklopentiksol; bekreftet: indikasjon, peroral_formulering, spesialist_risiko.
-  - **fra:** dag 1–7: 20 mg; dag 8–14: 15 mg; dag 15–21: 10 mg; dag 22–28: 5 mg; fra dag 29: seponert
-  - **til:** dag 1–28: 10 mg; fra dag 29: 15 mg
+- *Zuklopentiksol 20 mg til aripiprazol: første uke beregnes; nedtrappingen og måldosen planlegges individuelt.* Inndata: startdose 20 mg; virkestoff zuklopentiksol; bekreftet: indikasjon, peroral_formulering, spesialist_risiko.
+  - **fra:** dag 1–7: 20 mg; fra dag 8: videre dosering beregnes ikke; planlegges individuelt
+  - **til:** fra dag 1: 10 mg; holdes til zuklopentiksol er avsluttet; videre dosering planlegges individuelt
   - Kontroll: Bekreftet: Indikasjonen er schizofreni. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten bruker en peroral formulering, ikke depotinjeksjon eller korttidsvirkende injeksjon. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Byttet gjøres i, eller med råd fra, spesialisthelsetjenesten, og indikasjonen, risikoen for tilbakefall og tempoet er vurdert. Byttet tilpasses toleransen og symptomene; sedasjon, ortostatisk blodtrykksfall, akatisi og forverring følges. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 20–40 mg (veiledende) – oppfylt. 20 mg.
-  - Kontroll: Måldosen er 10–30 mg (bindende) – oppfylt. 15 mg.
-- *Flupentiksol er medlem av gruppen, men ikke vurdert individuelt, så beregningen stopper.* Inndata: startdose 6 mg; måldose 15 mg; virkestoff flupentiksol; bekreftet: indikasjon, peroral_formulering, spesialist_risiko.
+  - Merknad: Dosen av aripiprazol holdes på 10 mg til zuklopentiksol er avsluttet. Avslutningen av zuklopentiksol vurderes individuelt, og videre dosering av aripiprazol beregnes ikke, men planlegges individuelt sammen med den.
+- *Flupentiksol er medlem av gruppen, men ikke vurdert individuelt, så beregningen stopper.* Inndata: startdose 6 mg; virkestoff flupentiksol; bekreftet: indikasjon, peroral_formulering, spesialist_risiko.
   - **Stoppet:** flupentiksol er ikke vurdert individuelt for gruppeanbefalingen: Ikke vurdert individuelt (halveringstid, formulering og norske preparater); gruppeanbefalingen alene er ikke nok (B4).
 
 **Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntipsychotics:RA>Pa`.

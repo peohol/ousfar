@@ -114,6 +114,7 @@ const TIL_KONTROLL = 'Sendt til uavhengig faglig kontroll av kilder, klinisk inn
 const RUNDE_1 = '2026-10-29'
 const RUNDE_2 = '2026-10-30'
 const RUNDE_3 = '2026-10-30'
+const RUNDE_4 = '2026-10-30'
 
 /** Hva som er endret i en versjon, og når; regelversjonen er antallet versjoner. */
 interface Versjon {
@@ -143,6 +144,11 @@ const KONTROLL_5: Versjon = {
   merknad:
     'Omarbeidet etter substanskontrollen 30.10.2026, runde 3 (P7.5): godkjent med endring. Høyst 12 reduksjoner per plan og 6 i de langsomme variantene; hvert trinn avrundes til den viste dosen, og en reduksjon som forsvinner i avrundingen, er ikke et trinn; ny tekst om siste dose; preparatomtalens grenser for eldre, indikasjoner og nedsatt organfunksjon; stopp under 18 år, ved akutte alvorlige forhold, ustabil dose, uregelmessig inntak, bytte og kontraindikasjoner.',
   dato: RUNDE_3,
+}
+/** Fluvoksamin og moklobemid etter kontrollrunden 30.10.2026 (P7.5, punkt 4). */
+const LIKE_STORE_DOSER: Versjon = {
+  merknad: 'Rettet etter kontrollrunden 30.10.2026 (P7.5): at deldosene skal være like store, er regelens eget konservative valg med eget grunnlag, ikke et krav i preparatomtalen eller en felles regel for alle legemidler.',
+  dato: RUNDE_4,
 }
 /** Den første versjonen av en regel laget etter fagkontrollen 30.10.2026. */
 const NY_ETTER_RUNDE_2 = (hva: string): Versjon => ({ merknad: `Ny regel etter fagkontrollen 30.10.2026 (P7.5): ${hva}`, dato: RUNDE_2 })
@@ -203,6 +209,14 @@ const runde3 = (regelversjon: number, hva: keyof typeof RUNDE_3_BESLUTNING): Avk
 })
 
 const vurdering = (begrunnelse: string, henvisninger: Kildehenvisning[], avklaring: Avklaring | null): Grunnlag => ({ type: 'ousfar_vurdering', begrunnelse, henvisninger, avklaring })
+
+/**
+ * At deldosene skal være like store (kontrollrunden 30.10.2026, punkt 4): et
+ * konservativt OUSFAR-valg, fordi ingen kilde dokumenterer en bestemt ujevn
+ * fordeling; preparatomtalen sier bare hvor mange doser. Åpent forslag.
+ */
+const likeStore = (fordeling: Kildehenvisning): Grunnlag =>
+  vurdering('Preparatomtalen sier hvor mange doser døgndosen fordeles på, men ikke at de skal være like store. OUSFAR bruker bare like store doser fordi ingen kilde dokumenterer en bestemt ujevn fordeling; et konservativt valg som må avklares faglig.', [fordeling], null)
 
 /** Bekreftelsen hver beregnbar regel krever: planen er et startforslag med minstetider, ikke en fast tidsplan. */
 export const STARTFORSLAG: Bekreftelse = {
@@ -589,6 +603,8 @@ interface Stoffregel {
   sporsmal?: Sporsmal[]
   /** Døgndoser som skal fordeles på flere doser (preparatomtalen). */
   fordeling?: Forlop['fordeling']
+  /** Versjoner etter substanskontrollen (runde 3) for dette stoffet, i begge variantene. */
+  senere?: Versjon[]
   /** Eksempler for den langsomme varianten i tillegg til standardeksempelet. */
   langsomEksempler?: Regneeksempel[]
   kildetro: Utsagn[]
@@ -779,8 +795,8 @@ const STARTDOSE_TILPASNINGER = [
 
 function seponeringsregel(s: Stoffregel, langsom = false): Regel {
   const versjoner = langsom
-    ? [NY_ETTER_RUNDE_2(`langsom variant for ${s.navn} etter tidligere seponeringssymptomer.`), KONTROLL_5]
-    : [...(s.tidligere ?? [UTKAST, KONTROLL_1, KONTROLL_2, KONTROLL_3]), KONTROLL_4, KONTROLL_5]
+    ? [NY_ETTER_RUNDE_2(`langsom variant for ${s.navn} etter tidligere seponeringssymptomer.`), KONTROLL_5, ...(s.senere ?? [])]
+    : [...(s.tidligere ?? [UTKAST, KONTROLL_1, KONTROLL_2, KONTROLL_3]), KONTROLL_4, KONTROLL_5, ...(s.senere ?? [])]
   const versjon = versjoner.length
   const gruppe = langsom ? LANGSOM : s.gruppe
   const avklaring = langsom ? runde2(versjon, 'langsom') : beslutning1(versjon)
@@ -1250,14 +1266,15 @@ const fluvoksamin = stoff({
   kode: 'Fv',
   dose: { lavest: 50, hoyest: 300, kilde: P7.fevarinDose },
   gruppe: MIDDELS,
-  fordeling: { over_mg: kilde(150, 'mg', 'bindende_krav', P7.fevarinFordeling), antall: [2, 3], grunnlag: { type: 'kilde', henvisninger: [P7.fevarinFordeling] } },
+  fordeling: { over_mg: kilde(150, 'mg', 'bindende_krav', P7.fevarinFordeling), antall: [2, 3], grunnlag: { type: 'kilde', henvisninger: [P7.fevarinFordeling] }, like_store: likeStore(P7.fevarinFordeling) },
+  senere: [LIKE_STORE_DOSER],
   kildetro: [
     utsagn('Fluvoksamin trappes ned gradvis over minst én til to uker, ikke seponeres brått.', P7.fevarinSeponering),
     utsagn('Opptil 150 mg kan gis som én dose; en døgndose over 150 mg fordeles på 2 eller 3 doser.', P7.fevarinFordeling),
   ],
   tilpasninger: [
     utsagn(
-      'Døgndoser over 150 mg vises fordelt på 2 eller 3 doser, hver høyst 150 mg; doseplanen kontrollerer at hver dose kan gis nøyaktig med tablettene og stopper ellers ved trinnet før. En riktig døgndose er ikke nok når fordelingen ikke kan gis.',
+      'Døgndoser over 150 mg vises fordelt på 2 eller 3 like store doser, hver høyst 150 mg; doseplanen kontrollerer at hver dose kan gis nøyaktig med tablettene og stopper ellers ved trinnet før. En riktig døgndose er ikke nok når fordelingen ikke kan gis. At dosene skal være like store, er OUSFARs konservative valg; preparatomtalen krever det ikke uttrykkelig (kontrollrunden 30.10.2026).',
       P7.fevarinFordeling,
     ),
   ],
@@ -1367,7 +1384,8 @@ const moklobemid = stoff({
   kode: 'Mo',
   dose: { lavest: 300, hoyest: 600, kilde: P7.aurorixDose },
   gruppe: HOY,
-  fordeling: { antall: [2], grunnlag: { type: 'kilde', henvisninger: [P7.aurorixFordeling] } },
+  fordeling: { antall: [2], grunnlag: { type: 'kilde', henvisninger: [P7.aurorixFordeling] }, like_store: likeStore(P7.aurorixFordeling) },
+  senere: [LIKE_STORE_DOSER],
   unntak: (v) => [
     {
       id: 'nedsatt_leverfunksjon',
@@ -1384,7 +1402,7 @@ const moklobemid = stoff({
   tilpasninger: [
     utsagn('Unntaket ved alvorlig nedsatt leverfunksjon kommer i tillegg til bekreftelsen om organfunksjon og interaksjoner, som gjelder alle stoffene; det alene er ikke nok (fagkontrollen 30.10.2026).', P7.aurorixDose),
     utsagn('Kontraindiserte interaksjoner stopper planleggingen i stedet for å inngå i den generelle bekreftelsen (substanskontrollen 30.10.2026).', P7.aurorixKontra),
-    utsagn('Hver døgndose vises fordelt på 2 doser, og doseplanen kontrollerer at begge kan gis med tablettene.', P7.aurorixFordeling),
+    utsagn('Hver døgndose vises fordelt på 2 like store doser, og doseplanen kontrollerer at begge kan gis med tablettene. At dosene skal være like store, er OUSFARs konservative valg; preparatomtalen krever det ikke uttrykkelig (kontrollrunden 30.10.2026).', P7.aurorixFordeling),
   ],
   usikkerhet: [
     'Preparatomtalen og RCPsych trekker i ulik retning: preparatomtalen gir ingen anvisning om nedtrapping, mens RCPsych regner moklobemid blant stoffene med høyest risiko. Regelen følger RCPsych; det må avklares faglig.',
@@ -1937,7 +1955,7 @@ const STOFFER = [amitriptylin, citalopram, escitalopram, fluoksetin, fluvoksamin
 
 export const NEDTRAPPINGSSETT: Regelsett = {
   id: 'ousfar-verktoy-nedtrapping',
-  versjon: 6,
+  versjon: 7,
   modell: REGELMODELLVERSJON,
   beskrivelse:
     'Utkast til nedtrappingsregler for antidepressiva (P7): én regel per virkestoff med forsvarlig kildegrunnlag, laget fra preparatomtalen, NICE og RCPsych, og en langsom variant av hver etter tidligere seponeringssymptomer. Hver plan er et startforslag med minstetider som forskriveren kan justere innenfor valgområdene fra fagvurderingen; ingen plan går til null eller har en fast nedre grense. Tekstreglene for bupropion og agomelatin er klinisk godkjent etter substanskontrollen 30.10.2026; duloksetin og venlafaksin er tekstregler uten beregning. De øvrige reglene er til ny faglig kontroll, og ingen beregnet plan er klinisk godkjent.',

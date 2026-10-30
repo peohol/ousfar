@@ -54,6 +54,8 @@ const UTEN_NULLTRINN = {
 /** Kontrollrunden 30.10.2026 (P4.8): byttereglene ble ikke godkjent som de sto, og er rettet eller avgrenset. */
 const RUNDE_4 = '2026-10-30'
 const etterKontrollrunden = (rettet: string) => ({ merknad: `Rettet etter kontrollrunden 30.10.2026 (P4.8): ${rettet}`, dato: RUNDE_4 })
+/** Gjennomgangen av de rettede versjonene samme dag: ingen beregnet del uten et substansspesifikt, kontrollert forløp. */
+const etterGjennomgangen = (rettet: string) => ({ merknad: `Rettet etter gjennomgangen av de rettede versjonene 30.10.2026 (P4.8): ${rettet}`, dato: RUNDE_4 })
 
 /**
  * Depotreglene ble funnet kildemessig akseptable som avgrensede varianter i
@@ -221,7 +223,7 @@ const KRYSS_BESVART = { bekreftet: ['toleranse_overlapp'], pasientforhold: { tid
 
 const kryssSertralinMirtazapin: Regel = {
   id: 'kryssnedtrapping-sertralin-mirtazapin',
-  versjon: 3,
+  versjon: 4,
   tittel: 'Bytte fra sertralin til mirtazapin, kryssnedtrapping',
   fra: { type: 'virkestoff', nokkel: 'sertralin' },
   til: { type: 'virkestoff', nokkel: 'mirtazapin' },
@@ -237,9 +239,10 @@ const kryssSertralinMirtazapin: Regel = {
         faser: [
           {
             type: 'nedtrapping',
-            strategi: halvering(forslag(25, 'mg', 'Laveste startdose i preparatomtalen; under den seponeres.', { henvisninger: [SPC.zoloftDose] })),
+            strategi: halvering(forslag(25, 'mg', 'Laveste startdose i preparatomtalen; her stopper beregningen, og seponeringen derfra planlegges individuelt.', { henvisninger: [SPC.zoloftDose] })),
             trinnlengde: trinn14('NICE åpner for raskere nedtrapping ved bytte; OUSFAR foreslår likevel 14 dager.', { omrade: [7, 14], henvisninger: [NICE.bytte] }),
-            minste_varighet: minst14(SPC.zoloftSeponering),
+            avslutning: 'individuell',
+            horisont: forslag(3, 'trinn', 'Teknisk planhorisont: halvering fra høyeste startdose (200 mg) når 25 mg på tre reduksjoner; beregningen stopper uansett ved 25 mg.'),
           },
         ],
       },
@@ -251,15 +254,12 @@ const kryssSertralinMirtazapin: Regel = {
         start: { type: 'dag', dag: 1 },
         faser: [
           { type: 'hold', dose: { type: 'fast', mg: kilde(15, 'mg', 'veiledende_preferanse', SPC.remeronDose) }, varighet: { type: 'til_forlop_er_avsluttet', forlop: 'fra' } },
-          { type: 'vedlikehold', dose: { type: 'inndata', navn: 'maldose' } },
+          { type: 'vedlikehold', dose: { type: 'aktuell' } },
         ],
       },
     ],
   },
-  inndata: [
-    { navn: 'startdose', omrade: [50, 200], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [SPC.zoloftDose] } },
-    { navn: 'maldose', omrade: [15, 45], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [SPC.remeronDose] } },
-  ],
+  inndata: [{ navn: 'startdose', omrade: [50, 200], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [SPC.zoloftDose] } }],
   bekreftelser: [
     {
       id: 'toleranse_overlapp',
@@ -293,8 +293,12 @@ const kryssSertralinMirtazapin: Regel = {
       utsagn('Mirtazapin startes med 15 eller 30 mg; effektiv dose er 15–45 mg.', SPC.remeronDose),
     ],
     tilpasninger: [
-      utsagn('OUSFAR halverer sertralin hver 14. dag ned til 25 mg og starter mirtazapin 15 mg dag 1, holdt til sertralin er seponert, deretter måldosen.', NICE.andel, SPC.remeronDose),
-      utsagn('Måldosen for mirtazapin må oppgis; regelen har ingen standard måldose (P6.8).'),
+      utsagn('OUSFAR halverer sertralin hver 14. dag ned til 25 mg og starter mirtazapin 15 mg dag 1.', NICE.andel, SPC.remeronDose),
+      utsagn(
+        'Seponeringen av sertralin fra 25 mg beregnes ikke, og heller ikke økningen av mirtazapin til måldosen: begge planlegges individuelt ut fra toleransen (kontrollrunden 30.10.2026). Mirtazapin holdes på 15 mg til da.',
+        NICE.tempo,
+        SPC.remeronDose,
+      ),
       utsagn(
         'At dette er et bytte, kan begrunne raskere nedtrapping enn ved seponering, men ikke samme tempo for alle (kontrollrunden 30.10.2026). Etter tidligere seponeringssymptomer stopper regelen; ved lang behandlingstid krever halvering hver 14. dag en skriftlig begrunnelse, ellers planlegges byttet individuelt.',
         NICE.bytte,
@@ -306,41 +310,34 @@ const kryssSertralinMirtazapin: Regel = {
     usikkerhet: [
       'Ved samtidig bruk kan serotonerge bivirkninger øke; overlappens lengde er OUSFARs valg.',
       'NICE åpner for raskere nedtrapping ved bytte; 14 dager per trinn kan være lengre enn nødvendig.',
-      'Om seponeringen fra 25 mg skal være et fast sluttpunkt i byttet, eller vurderes individuelt som ved ren seponering, er ikke avklart (kontrollrunden 30.10.2026).',
+      'Om seponeringen fra 25 mg kan bli et fast sluttpunkt i byttet, og for hvilke pasienter, er ikke avklart (kontrollrunden 30.10.2026); til da beregnes den ikke.',
     ],
   },
   referanser: [pn('SwitchAntidepressants:Se>Mz')],
   eksempler: [
     {
       id: 'fra-100-mg',
-      beskrivelse: 'Sertralin 100 mg til mirtazapin 30 mg.',
-      inndata: { startdose_mg: 100, maldose_mg: 30, ...KRYSS_BESVART },
-      forventet: { fra: ['dag 1–14: 50 mg', 'dag 15–28: 25 mg', 'fra dag 29: seponert'], til: ['dag 1–28: 15 mg', 'fra dag 29: 30 mg'] },
+      beskrivelse: 'Sertralin 100 mg til mirtazapin: halvering til 25 mg; seponeringen derfra og måldosen for mirtazapin planlegges individuelt.',
+      inndata: { startdose_mg: 100, ...KRYSS_BESVART },
+      forventet: { fra: ['dag 1–14: 50 mg', 'fra dag 15: 25 mg', 'siste trinn før null; avslutning vurderes individuelt'], til: ['fra dag 1: 15 mg', 'holdes til sertralin er avsluttet; videre dosering planlegges individuelt'] },
     },
     {
       id: 'fra-50-mg',
-      beskrivelse: 'Sertralin 50 mg til mirtazapin 15 mg: én reduksjon, og mirtazapin fortsetter på 15 mg.',
-      inndata: { startdose_mg: 50, maldose_mg: 15, ...KRYSS_BESVART },
-      forventet: { fra: ['dag 1–14: 25 mg', 'fra dag 15: seponert'], til: ['fra dag 1: 15 mg'] },
-    },
-    {
-      id: 'uten-maldose',
-      beskrivelse: 'Uten måldose stopper beregningen; det finnes ingen skjult standard.',
-      inndata: { startdose_mg: 100, ...KRYSS_BESVART },
-      forventet: {},
-      stopp: /Måldosen må oppgis/,
+      beskrivelse: 'Sertralin 50 mg til mirtazapin: én reduksjon til 25 mg, som fortsetter til avslutningen er vurdert.',
+      inndata: { startdose_mg: 50, ...KRYSS_BESVART },
+      forventet: { fra: ['fra dag 1: 25 mg', 'siste trinn før null; avslutning vurderes individuelt'], til: ['fra dag 1: 15 mg', 'holdes til sertralin er avsluttet; videre dosering planlegges individuelt'] },
     },
     {
       id: 'tidligere-seponeringssymptomer',
       beskrivelse: 'Etter seponeringssymptomer ved et tidligere forsøk gjelder ikke regelen; byttet planlegges individuelt.',
-      inndata: { startdose_mg: 100, maldose_mg: 30, ...KRYSS_BESVART, pasientforhold: { tidligere_seponeringssymptomer: true } },
+      inndata: { startdose_mg: 100, ...KRYSS_BESVART, pasientforhold: { tidligere_seponeringssymptomer: true } },
       forventet: {},
       stopp: /Regelen gjelder ikke: Et tidligere forsøk på å trappe ned eller seponere sertralin/,
     },
     {
       id: 'lang-behandlingstid',
       beskrivelse: 'Ved lang behandlingstid krever den faste halveringen en skriftlig begrunnelse.',
-      inndata: { startdose_mg: 100, maldose_mg: 30, ...KRYSS_BESVART, svar: { lang_behandlingstid: true } },
+      inndata: { startdose_mg: 100, ...KRYSS_BESVART, svar: { lang_behandlingstid: true } },
       forventet: {},
       stopp: /Svaret ja \(lang behandlingstid\) krever en skriftlig begrunnelse/,
     },
@@ -348,6 +345,7 @@ const kryssSertralinMirtazapin: Regel = {
   godkjenning: tilKontroll(
     TRINNLENGDE_RETTET,
     etterKontrollrunden('tidligere seponeringssymptomer stopper regelen, lang behandlingstid krever begrunnelse, og toleransen og overlappen må følges før hver reduksjon.'),
+    etterGjennomgangen('beregningen stopper ved 25 mg sertralin; seponeringen derfra og måldosen for mirtazapin planlegges individuelt.'),
   ),
 }
 
@@ -588,7 +586,7 @@ const UTEN_PREPARAT = 'Har ingen preparater i FEST (P2.5); ikke vurdert individu
 
 const gruppeRestApAripiprazol: Regel = {
   id: 'gruppe-rest-ap-aripiprazol',
-  versjon: 3,
+  versjon: 4,
   tittel: 'Bytte fra et antipsykotikum i gruppen «øvrige antipsykotika» til aripiprazol, kryss-titrering',
   fra: { type: 'gruppe', gruppe: 'rest-ap' },
   til: { type: 'virkestoff', nokkel: 'aripiprazol' },
@@ -604,9 +602,9 @@ const gruppeRestApAripiprazol: Regel = {
         faser: [
           { type: 'hold', dose: { type: 'aktuell' }, varighet: { type: 'dager', dager: forslag(7, 'dager', 'Første uke med aripiprazol før nedtrappingen starter.') } },
           {
-            type: 'nedtrapping',
-            strategi: { type: 'prosent_av_startdose', prosent: forslag(25, 'prosent', 'Fire like store trinn.') },
-            trinnlengde: forslag(7, 'dager', 'Én uke per trinn.', { omrade: [7, 14] }),
+            type: 'uten_beregning',
+            grunn:
+              'Nedtrappingen av det gamle antipsykotikumet beregnes ikke: ingen felles algoritme er validert for gruppen, og ingen substansspesifikk plan er kontrollert (kontrollrunden 30.10.2026). Den planlegges i, eller med råd fra, spesialisthelsetjenesten og tilpasses toleransen og symptomene; legemidlet seponeres ikke brått.',
           },
         ],
       },
@@ -618,15 +616,12 @@ const gruppeRestApAripiprazol: Regel = {
         start: { type: 'dag', dag: 1 },
         faser: [
           { type: 'hold', dose: { type: 'fast', mg: kilde(10, 'mg', 'veiledende_preferanse', SPC.abilifyDose) }, varighet: { type: 'til_forlop_er_avsluttet', forlop: 'fra' } },
-          { type: 'vedlikehold', dose: { type: 'inndata', navn: 'maldose' } },
+          { type: 'vedlikehold', dose: { type: 'aktuell' } },
         ],
       },
     ],
   },
-  inndata: [
-    { navn: 'startdose', omrade: [20, 40], gjelder_medlem: 'zuklopentiksol', art: 'veiledende_preferanse', grunnlag: { type: 'kilde', henvisninger: [SPC.cisordinolDose] } },
-    { navn: 'maldose', omrade: [10, 30], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [SPC.abilifyDose] } },
-  ],
+  inndata: [{ navn: 'startdose', omrade: [20, 40], gjelder_medlem: 'zuklopentiksol', art: 'veiledende_preferanse', grunnlag: { type: 'kilde', henvisninger: [SPC.cisordinolDose] } }],
   bekreftelser: [
     { id: 'indikasjon', tekst: 'Indikasjonen er schizofreni.', grunnlag: { type: 'kilde', henvisninger: [SPC.abilifyDose] } },
     perorFormulering('Pasienten bruker en peroral formulering, ikke depotinjeksjon eller korttidsvirkende injeksjon.'),
@@ -657,7 +652,7 @@ const gruppeRestApAripiprazol: Regel = {
       utsagn('Ved kryss-titrering trappes det første antipsykotikumet ned mens det andre innføres, uten opphold.', KEKS19.kryss),
     ],
     tilpasninger: [
-      utsagn('OUSFAR starter aripiprazol 10 mg dag 1, holder det gamle antipsykotikumet uendret i én uke og trapper det så ned med 25 % av startdosen per uke. Aripiprazol går til måldosen når det gamle er seponert.', SPC.abilifyDose, KEKS19.kryss),
+      utsagn('OUSFAR starter aripiprazol 10 mg dag 1 og holder det gamle antipsykotikumet uendret i én uke. Nedtrappingen av det gamle og økningen av aripiprazol til måldosen beregnes ikke, men planlegges individuelt (kontrollrunden 30.10.2026); aripiprazol holdes på 10 mg til da.', SPC.abilifyDose, KEKS19.kryss),
       utsagn('Gruppen følger P1-kartleggingen (tabellens medlemmer). Bare medlemmer som er vurdert hver for seg, kan beregnes (B4); i piloten gjelder det bare zuklopentiksol, som forslag.'),
       utsagn('Regelen er ikke en gruppebasert klinisk doseplan (kontrollrunden 30.10.2026): én felles algoritme er ikke validert for antipsykotika med ulik farmakologi. Gruppen viser bare hvordan modellen håndterer medlemmer; det kliniske kandidatforslaget er zuklopentiksol alene, helst som en egen regel til ny kontroll.'),
     ],
@@ -666,23 +661,24 @@ const gruppeRestApAripiprazol: Regel = {
       'Kildesidene og tabellen er ikke enige om hvem som er med i gruppen (P3); gruppens sammensetning må avklares faglig.',
       'Medlemmene har ulik halveringstid og ulike doser; samme plan passer ikke nødvendigvis alle.',
       'Aripiprazol er en partiell agonist og kan gi forverring eller akatisi ved bytte fra en full antagonist; overlappens lengde er OUSFARs valg.',
+      'Den faste nedtrappingen med 25 % av startdosen per uke i versjon 3 var OUSFARs valg og er tatt ut. En beregnet nedtrapping krever en egen regel for zuklopentiksol med et substansspesifikt, kontrollert forløp.',
     ],
   },
   referanser: [pn('SwitchAntipsychotics:RA>Pa')],
   eksempler: [
     {
       id: 'zuklopentiksol-20-mg',
-      beskrivelse: 'Zuklopentiksol 20 mg til aripiprazol 15 mg.',
-      inndata: { startdose_mg: 20, maldose_mg: 15, medlem: 'zuklopentiksol', bekreftet: BEKREFTET_AP },
+      beskrivelse: 'Zuklopentiksol 20 mg til aripiprazol: første uke beregnes; nedtrappingen og måldosen planlegges individuelt.',
+      inndata: { startdose_mg: 20, medlem: 'zuklopentiksol', bekreftet: BEKREFTET_AP },
       forventet: {
-        fra: ['dag 1–7: 20 mg', 'dag 8–14: 15 mg', 'dag 15–21: 10 mg', 'dag 22–28: 5 mg', 'fra dag 29: seponert'],
-        til: ['dag 1–28: 10 mg', 'fra dag 29: 15 mg'],
+        fra: ['dag 1–7: 20 mg', 'fra dag 8: videre dosering beregnes ikke; planlegges individuelt'],
+        til: ['fra dag 1: 10 mg', 'holdes til zuklopentiksol er avsluttet; videre dosering planlegges individuelt'],
       },
     },
     {
       id: 'flupentiksol-ikke-vurdert',
       beskrivelse: 'Flupentiksol er medlem av gruppen, men ikke vurdert individuelt, så beregningen stopper.',
-      inndata: { startdose_mg: 6, maldose_mg: 15, medlem: 'flupentiksol', bekreftet: BEKREFTET_AP },
+      inndata: { startdose_mg: 6, medlem: 'flupentiksol', bekreftet: BEKREFTET_AP },
       forventet: {},
       stopp: /flupentiksol er ikke vurdert individuelt/,
     },
@@ -690,6 +686,7 @@ const gruppeRestApAripiprazol: Regel = {
   godkjenning: tilKontroll(
     etterPilotkontrollen('indikasjonen (schizofreni) og peroral formulering må bekreftes.'),
     etterKontrollrunden('ikke en gruppebasert klinisk doseplan; vurderingen av indikasjon, tilbakefallsrisiko og tempo i, eller med råd fra, spesialisthelsetjenesten må bekreftes.'),
+    etterGjennomgangen('nedtrappingen av det gamle antipsykotikumet og måldosen for aripiprazol beregnes ikke, heller ikke for zuklopentiksol.'),
   ),
 }
 
@@ -972,10 +969,10 @@ const depotPaliperidon: Regel = {
 
 export const PILOTSETT: Regelsett = {
   id: 'ousfar-verktoy-pilot',
-  versjon: 6,
+  versjon: 7,
   modell: REGELMODELLVERSJON,
   beskrivelse:
-    'Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Etter kontrollrunden 30.10.2026 er de fire byttereglene rettet eller avgrenset og sendt til ny kontroll, og de to depotreglene er funnet kildemessig akseptable som avgrensede varianter. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.',
+    'Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Etter kontrollrunden 30.10.2026 er de fire byttereglene rettet eller avgrenset og sendt til ny kontroll, og de to depotreglene er funnet kildemessig akseptable som avgrensede varianter. Ved gjennomgangen samme dag ble de beregnede sluttdelene av sertralin→mirtazapin og gruppebyttet til aripiprazol tatt ut; de planlegges individuelt. Til faglig kontroll; ingen regel er klinisk godkjent eller skal brukes i appen.',
   regler: [
     kryssSertralinMirtazapin,
     maoFluoksetinFenelzin,

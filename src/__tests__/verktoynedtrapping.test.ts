@@ -244,18 +244,22 @@ describe('Regelutkastene (P7.2)', () => {
     // Reglene er omarbeidet etter hver kontroll og sendt til kontroll på nytt hver gang.
     const steg = (n: number) => Array.from({ length: n }, (_, i) => [`utkast ${i + 1}`, `til_faglig_kontroll ${i + 1}`]).flat()
     const historikk = (r: Regel) => [r.versjon, r.godkjenning.historikk.map((x) => `${x.status} ${x.regelversjon}`)]
-    for (const r of [...HOVEDREGLER, regel('duloksetin'), regel('venlafaksin')]) expect(historikk(r), r.id).toEqual([6, steg(6)])
-    for (const r of [...LANGSOMME, ANNENHVER_DAG]) expect(historikk(r), r.id).toEqual([2, steg(2)])
+    // Fluvoksamin og moklobemid har én versjon til: like store deldoser er regelens eget valg (kontrollrunden 30.10.2026).
+    const likeStore = (r: Regel) => !!r.plan.forlop[0]?.fordeling?.like_store
+    expect(BEREGNBARE.filter(likeStore).map((r) => r.id).sort()).toEqual(['seponering-fluvoksamin', 'seponering-fluvoksamin-langsom', 'seponering-moklobemid', 'seponering-moklobemid-langsom'])
+    for (const r of [...HOVEDREGLER, regel('duloksetin'), regel('venlafaksin')]) expect(historikk(r), r.id).toEqual(likeStore(r) ? [7, steg(7)] : [6, steg(6)])
+    for (const r of [...LANGSOMME, ANNENHVER_DAG]) expect(historikk(r), r.id).toEqual(likeStore(r) ? [3, steg(3)] : [2, steg(2)])
     for (const r of BEREGNBARE) {
-      expect(r.godkjenning.historikk.at(-2)!.merknad, r.id).toMatch(/^Omarbeidet etter substanskontrollen 30\.10\.2026, runde 3 \(P7\.5\): godkjent med endring/)
+      if (likeStore(r)) expect(r.godkjenning.historikk.at(-2)!.merknad, r.id).toMatch(/^Rettet etter kontrollrunden 30\.10\.2026 \(P7\.5\): at deldosene skal være like store, er regelens eget konservative valg/)
+      expect(r.godkjenning.historikk.at(likeStore(r) ? -4 : -2)!.merknad, r.id).toMatch(/^Omarbeidet etter substanskontrollen 30\.10\.2026, runde 3 \(P7\.5\): godkjent med endring/)
       expect(r.godkjenning.historikk.at(-1)!.dato, r.id).toBe('2026-10-30')
       // Valgområdene (prosent og dager, med kravene om begrunnelse) er avklart av den uavhengige kontrolløren for denne versjonen.
       for (const [sti, p] of justerbare(r)) {
         const g = p.grunnlag
         expect(g.type === 'ousfar_vurdering' && g.avklaring, `${r.id} ${sti}`).toMatchObject({ rolle: 'uavhengig_kontrollor', regelversjon: r.versjon, merknad: expect.stringMatching(/^(Beslutning 1 i fagvurderingen 29\.10|Fagkontrollen 30\.10\.2026, Beslutning|Substanskontrollen 30\.10\.2026, Beslutning)/) })
       }
-      // Ingen valg står åpne lenger: planhorisonten og startdosen er avklart i beslutning 6 og 7.
-      expect(apneValg(r), r.id).toEqual([])
+      // Planhorisonten og startdosen er avklart i beslutning 6 og 7; bare kravet om like store deldoser står åpent.
+      expect(apneValg(r), r.id).toEqual(likeStore(r) ? ['fra.fordeling.like_store (åpent forslag)'] : [])
     }
     for (const r of NEDTRAPPINGER) {
       const fase = r.plan.forlop[0]!.faser[0]!
@@ -660,7 +664,7 @@ describe('Regelutkastene (P7.2)', () => {
     expect(utenAvslutning).toMatch(/har en planhorisont uten individuell avslutning/)
     expect(utenAvslutning).toMatch(/trapper ned prosentvis uten sluttdose og uten individuell avslutning; dosen når aldri 0/)
     expect(variant((f) => delete f.horisont)).toMatch(/har individuell avslutning uten teknisk planhorisont/)
-    expect(variant((f) => f.strategi.type === 'prosent_av_aktuell' && (f.strategi.sluttdose_mg = { ...f.horisont!, verdi: 2.5, enhet: 'mg' }))).toMatch(/har både sluttdose og individuell avslutning; ingen nedre grense for beregnede trinn er godkjent/)
+    expect(variant((f) => f.strategi.type === 'prosent_av_aktuell' && (f.strategi.sluttdose_mg = { ...f.horisont!, verdi: 2.5, enhet: 'mg' }))).toMatch(/har både sluttdose og individuell avslutning; ingen nedre grense for beregnede trinn ved seponering er godkjent/)
     expect(variant((f) => (f.minste_varighet = { verdi: 28, enhet: 'dager', art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [RCPSYCH.fireUker] } }))).toMatch(/har både minste varighet og individuell avslutning/)
     expect(variant((f) => (f.horisont = { ...f.horisont!, enhet: 'dager' }))).toMatch(/horisont er ugyldig: enheten er dager, men horisont skal være i trinn/)
     expect(variant(() => undefined)).toBe('')
