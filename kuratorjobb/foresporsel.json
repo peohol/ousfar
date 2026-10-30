@@ -1,0 +1,16 @@
+{
+  "versjon": 1,
+  "stoffer": ["buprenorfin"],
+  "oppgaver": ["spc"],
+  "spc": {
+    "adresser": [
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06800.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07615.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-3091.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/13-9541.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/09-7232.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/18-12234.pdf",
+      "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-14068.pdf"
+    ]
+  }
+}
