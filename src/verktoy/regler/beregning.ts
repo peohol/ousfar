@@ -18,6 +18,7 @@
  */
 import { godkjenningsfeil } from './godkjenning'
 import {
+  erRenSeponering,
   parameterfeil,
   parametre,
   REGELMODELLVERSJON,
@@ -486,6 +487,24 @@ function planfeil(forlop: Forlopsresultat[]): string[] {
   return feil
 }
 
+/**
+ * Dagene uten dose i en klinisk godkjent ren seponering, uansett hvordan
+ * regelen er bygd: hvert forløp må ha dose hver dag fra start og fortsette
+ * uten slutt, fordi ingen avslutning (nulltrinn) er godkjent (`nulltrinnfeil`
+ * i `modell.ts`). Syntetiske modellberegninger uten godkjenning (P5) kan gå
+ * til 0; de blir aldri en klinisk plan.
+ */
+export function nulldagfeil(forlop: Forlopsresultat[]): string[] {
+  return forlop.flatMap((f) => {
+    const p = f.perioder
+    const hull = p.findIndex((x, i) => x.fra !== (i === 0 ? f.start : (p[i - 1]!.til ?? Number.NaN) + 1))
+    return [
+      ...(hull >= 0 ? [`${f.id} er uten dose før dag ${p[hull]!.fra}, men regelen har ingen godkjent avslutning`] : []),
+      ...(p.length === 0 || p.at(-1)!.til !== null || f.siste_dosedag !== null ? [`${f.id} går til 0 mg, men regelen har ingen godkjent avslutning`] : []),
+    ]
+  })
+}
+
 const ENHETSTEKST: Partial<Record<Parameter['enhet'], string>> = { prosent: '%', dager: 'dager', mg: 'mg' }
 /** Et tall med parameterens enhet, slik forskriveren ser det. */
 export const medEnhet = (x: number, p: Parameter) => `${tall(x)}${p.enhet === 'prosent' ? ' %' : ` ${ENHETSTEKST[p.enhet] ?? p.enhet}`}`
@@ -663,7 +682,8 @@ export function beregn(regel: Regel, inndata: Beregningsinndata, regelsett?: Reg
     stopp.push(e instanceof Stopp ? e.message : `Beregningen kunne ikke fullføres: ${e instanceof Error ? e.message : String(e)}`)
     return stoppet()
   }
-  const ugyldigPlan = planfeil([...ctx.resultater.values()])
+  // En klinisk godkjent ren seponering kontrolleres også på selve planen, i tillegg til regelens oppbygning (`nulltrinnfeil`).
+  const ugyldigPlan = [...planfeil([...ctx.resultater.values()]), ...(klinisk_godkjent && erRenSeponering(regel) ? nulldagfeil([...ctx.resultater.values()]) : [])]
   if (ugyldigPlan.length > 0) {
     stopp.push(...ugyldigPlan.map((x) => `Beregningen ga en ugyldig plan: ${x}.`))
     return stoppet()

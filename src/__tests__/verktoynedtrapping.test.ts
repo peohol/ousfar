@@ -33,7 +33,7 @@ import { markedsgrunnlag, preparaterFor } from '../verktoy/kartlegging'
 import { beregnDoseplan, planform } from '../verktoy/motor/plan'
 import { syntetiskUtvalg, type Testpreparat } from '../verktoy/motor/syntetisk'
 import { VERKTOY, virkestoffvalg } from '../verktoy/register'
-import { AVSLUTNING_KORT, beregn, kortform } from '../verktoy/regler/beregning'
+import { AVSLUTNING_KORT, beregn, kortform, nulldagfeil, type Forlopsresultat, type Periode } from '../verktoy/regler/beregning'
 import { erKliniskGodkjent } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett, lesKontrollgrunnlag } from '../verktoy/regler/kontroll'
 import { apneValg, henvisninger, justerbare, nulltrinnfeil, type Beregningsinndata, type Regel } from '../verktoy/regler/modell'
@@ -75,6 +75,25 @@ const DAGER = 'plan.forlop[0].faser[0].trinnlengde'
 /** Stoffene RCPsych regner med høyest potensiell risiko for seponeringssymptomer. */
 const HOY_RISIKO = ['duloksetin', 'mirtazapin', 'moklobemid', 'paroksetin', 'venlafaksin']
 const nokkel = (r: Regel) => (r.fra.type === 'virkestoff' ? r.fra.nokkel : '')
+/**
+ * En feilbygd variant av regelen som går via 0 mg og opp igjen: en vanlig
+ * nedtrapping til 0, så 0 mg i 14 dager, opptrapping til 20 mg og til slutt
+ * regelens egen nedtrapping med individuell avslutning.
+ */
+function viaNullFor(r: Regel): Regel {
+  const x = structuredClone(r)
+  const ned = x.plan.forlop[0]!.faser[0]!
+  if (ned.type !== 'nedtrapping') throw new Error(r.id)
+  const { avslutning: _, ...tilNull } = ned
+  const dager = { ...ned.trinnlengde, verdi: 14 }
+  x.plan.forlop[0]!.faser = [
+    tilNull,
+    { type: 'hold', dose: { type: 'aktuell' }, varighet: { type: 'dager', dager } },
+    { type: 'opptrapping', trinn: [{ mg: { ...dager, verdi: 20, enhet: 'mg' }, dager }] },
+    ned,
+  ]
+  return x
+}
 const nedreGrense = (r: Regel) => {
   const fase = r.plan.forlop[0]!.faser[0]!
   return fase.type === 'nedtrapping' && fase.strategi.type === 'prosent_av_aktuell' ? fase.strategi.sluttdose_mg.verdi : null
@@ -438,7 +457,7 @@ describe('Regelutkastene (P7.2)', () => {
     expect(feil).toMatch(/begrunnelseskrav\[1\] har verken over eller under/)
   })
 
-  it('godtar ingen annen vei til null i en beregnbar seponeringsregel: ingen seponering, og ingen fase etter nedtrappingen', () => {
+  it('godtar ingen annen vei til null i en beregnbar seponeringsregel: ingen seponering, ingen nedtrapping før den siste, og ingen fase etter den', () => {
     const sett = (x: Regel) => ({ ...NEDTRAPPINGSSETT, regler: [x] })
     const med = (faser: (f: Regel['plan']['forlop'][number]['faser']) => Regel['plan']['forlop'][number]['faser']) => {
       const r = structuredClone(regel('citalopram'))
@@ -453,7 +472,7 @@ describe('Regelutkastene (P7.2)', () => {
     ])
     expect(kontrollerRegelsett(sett(direkte)).join(' ')).toMatch(/forløp fra seponerer/)
     expect(nulltrinnfeil(med((f) => [...f, { type: 'seponer' }])).join(' ')).toMatch(/seponerer.*slutter ikke med en nedtrapping/)
-    expect(nulltrinnfeil(med((f) => [...f, { type: 'hold', dose: { type: 'aktuell' }, varighet: { type: 'dager', dager: f[0]!.type === 'nedtrapping' ? f[0]!.trinnlengde : null! } }]))).toHaveLength(1)
+    expect(nulltrinnfeil(med((f) => [...f, { type: 'hold', dose: { type: 'aktuell' }, varighet: { type: 'dager', dager: f[0]!.type === 'nedtrapping' ? f[0]!.trinnlengde : null! } }])).join(' ')).toMatch(/trapper ned før siste fase.*slutter ikke med en nedtrapping/)
     // Et gruppemedlems egne faser gjelder like mye.
     const gruppe = { ...structuredClone(regel('citalopram')), medlemmer: [{ nokkel: 'citalopram', validering: 'validert' as const, begrunnelse: 'Syntetisk.', faser: [{ type: 'seponer' as const }] }] }
     gruppe.plan.forlop[0]!.virkestoff = { type: 'gruppe', gruppe: 'test' }
@@ -464,6 +483,24 @@ describe('Regelutkastene (P7.2)', () => {
     expect(godkjent.godkjenning.status).toBe('klinisk_godkjent')
     expect(erKliniskGodkjent(godkjent)).toBe(false)
     expect(beregn(godkjent, besvart(godkjent, 20)).klinisk_godkjent).toBe(false)
+    // For en godkjent regel kontrollerer beregningen i tillegg selve planen, uavhengig av hvordan regelen er bygd: ingen dag uten dose, og ingen slutt.
+    const forlop = (perioder: Periode[], siste_dosedag: number | null = null): Forlopsresultat => ({ id: 'fra', virkestoff: 'x', administrasjon: 'peroral', start: 1, perioder, injeksjoner: [], siste_dosedag })
+    expect(nulldagfeil([forlop([{ fra: 1, til: 28, mg: 10 }, { fra: 29, til: null, mg: 5 }])])).toEqual([])
+    expect(nulldagfeil([forlop([{ fra: 1, til: 28, mg: 10 }, { fra: 43, til: null, mg: 5 }])])).toEqual(['fra er uten dose før dag 43, men regelen har ingen godkjent avslutning'])
+    expect(nulldagfeil([forlop([{ fra: 2, til: null, mg: 5 }])])).toEqual(['fra er uten dose før dag 2, men regelen har ingen godkjent avslutning'])
+    for (const x of [forlop([{ fra: 1, til: 28, mg: 10 }], 28), forlop([], 0), forlop([{ fra: 1, til: 28, mg: 10 }])]) {
+      expect(nulldagfeil([x])).toEqual(['fra går til 0 mg, men regelen har ingen godkjent avslutning'])
+    }
+    // Via 0 mg og opp igjen: en vanlig nedtrapping til 0, så 0 mg i 14 dager, opptrapping og til slutt en nedtrapping med individuell avslutning.
+    const viaNull = viaNullFor(regel('citalopram'))
+    expect(nulltrinnfeil(viaNull)).toEqual(['forløp fra trapper ned før siste fase; bare siste fase kan trappe ned, så forløpet aldri er på 0 mg underveis'])
+    expect(kontrollerRegelsett(sett(viaNull)).join(' ')).toMatch(/forløp fra trapper ned før siste fase/)
+    const viaNullGodkjent = godkjennITest(viaNull, 'test-via-null')
+    expect(viaNullGodkjent.godkjenning.status).toBe('klinisk_godkjent')
+    expect(erKliniskGodkjent(viaNullGodkjent)).toBe(false)
+    const res = beregn(viaNullGodkjent, besvart(viaNullGodkjent, 20))
+    expect(res.klinisk_godkjent).toBe(false)
+    expect(kortform(res).stopp!.join(' ')).toMatch(/0 mg/)
     // Tillatt: seponering ved bytte (før et annet legemiddel), og en regel som bare er tekstlig.
     for (const r of [...PILOTSETT.regler.filter((x) => x.plan.form !== 'seponering'), regel('agomelatin')]) expect(nulltrinnfeil(r), r.id).toEqual([])
     expect(PILOTSETT.regler.some((x) => x.plan.form !== 'seponering' && x.plan.forlop.some((f) => f.faser.some((fase) => fase.type === 'seponer')))).toBe(true)
@@ -644,12 +681,17 @@ describe('Klinisk plan i appen', () => {
     }
   })
 
-  it('gir ingen plan etter en regel som seponerer direkte, selv om den er merket klinisk godkjent med riktig fingeravtrykk', () => {
+  it('gir ingen plan etter en regel som seponerer direkte eller går via 0 mg, selv om den er merket klinisk godkjent med riktig fingeravtrykk', () => {
     const direkte = structuredClone(regel('fluoksetin'))
     direkte.plan.forlop[0]!.faser = [{ type: 'seponer' }]
-    const r = beregnPlan(godkjennITest(direkte, 'test-direkte'), valg, skjema('40'), fest(), NAA)
-    expect(r.status).toBe('stoppet')
-    expect(r.status === 'stoppet' && r.stoppgrunner.join(' ')).toMatch(/Ingen klinisk doseplan.*forløp fra seponerer/)
+    for (const [r, grunn] of [
+      [direkte, /Ingen klinisk doseplan.*forløp fra seponerer/],
+      [viaNullFor(regel('fluoksetin')), /^Beregningen ga en ugyldig plan: fra har perioden dag 85–98 med 0 mg\.$/],
+    ] as const) {
+      const res = beregnPlan(godkjennITest(r, 'test-feilbygd'), valg, skjema('40'), fest(), NAA)
+      expect(res.status).toBe('stoppet')
+      expect(res.status === 'stoppet' && res.stoppgrunner.join(' | ')).toMatch(grunn)
+    }
   })
 
   it('tar med forskriverens valg, svar og begrunnelse, sier fra om et valg som ikke er et tall over 0, og glemmer alt med en annen strategi', () => {
