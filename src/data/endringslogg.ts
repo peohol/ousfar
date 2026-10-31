@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.117.2',
+    dato: '2026-10-31',
+    sammendrag: 'Fremdriften for kildeovervåkingen oppdatert',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Fremdriftsloggen viser at den første kildekontrollen og prøvefunnet er registrert og vises i adminmenyen, og hva som gjenstår før kildeovervåkingen regnes som ferdig.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.117.1',
     dato: '2026-10-31',
     sammendrag: 'Den ukentlige kildekontrollen startet ikke; rettet',
