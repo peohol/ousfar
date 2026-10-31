@@ -87,7 +87,7 @@ export async function registrer(kall: Databasekall, r: Overvakingsrapport, utlos
   return (await kall('registrer_kildeovervaking', { melding: melding(r, utlost, lenke) })) as Registrert
 }
 
-/** Den tekniske vurderingen fra en agent, for det åpne funnet med nøkkelen. */
-export async function tekniskFraAgent(kall: Databasekall, funn: string, vurdering: string, agent: string): Promise<number> {
+/** Den tekniske vurderingen fra en agent, for nøyaktig funnet med nummeret; avvises når det er avløst eller avsluttet. */
+export async function tekniskFraAgent(kall: Databasekall, funn: number, vurdering: string, agent: string): Promise<number> {
   return Number(await kall('kildefunn_teknisk_fra_agent', { funn, vurdering, agent }))
 }

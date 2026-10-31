@@ -677,3 +677,11 @@
 .kildeovervaking__vurdering {
   margin: var(--rom-2) 0;
 }
+
+.kildeovervaking__ulest {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rom-3) var(--rom-5);
+  margin-top: var(--rom-5);
+}

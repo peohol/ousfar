@@ -14,20 +14,27 @@ import { Kurateringsoversikt } from '../kuratering/Utgavelister'
 import { Kildeovervaking, kildeovervakingslager } from './Kildeovervaking'
 import { Verktoysperrer } from './Verktoysperrer'
 
+/** Teksten ved prikken når kildeovervåkingen ikke kunne leses. */
+const KILDEOVERVAKING_ULEST = 'kildeovervåkingen kunne ikke leses'
+
 type Panel = 'brukere' | 'datakilder' | 'autoerstatt' | 'kurateringer' | 'verktoysperrer' | 'kildeovervaking' | null
 
 /**
  * Det som bør ses over, sjekket som idémenyen ser etter nye kommentarer: når
  * appen og fanen åpnes, jevnlig og når et panel lukkes. `hent` gir det i korte
  * tekster (tomt når ingenting venter), og bør ha fast identitet. En sjekk som
- * feiler, endrer ingenting.
+ * feiler, endrer ingenting, med mindre `vedFeil` er gitt: da står den teksten,
+ * så «kunne ikke leses» aldri ser ut som «ingenting venter». Neste sjekk
+ * prøver igjen.
  */
-function useTilsyn(admin: boolean, hent: () => Promise<string[]>) {
+function useTilsyn(admin: boolean, hent: () => Promise<string[]>, vedFeil?: string) {
   const [meldinger, setMeldinger] = useState<string[]>([])
   const sjekk = useCallback(() => {
     if (!admin) return
-    hent().then(setMeldinger, () => undefined)
-  }, [admin, hent])
+    hent().then(setMeldinger, () => {
+      if (vedFeil) setMeldinger([vedFeil])
+    })
+  }, [admin, hent, vedFeil])
   useJevnligSjekk(sjekk)
   return { meldinger, sjekk }
 }
@@ -50,9 +57,11 @@ export function Adminmeny({ leser, kuratering, kildelager }: { leser?: Datakilde
     useCallback(async () => kilderSomBorSesOver(await (leser ?? lagDatakildeleser(klient())).status(1)), [leser]),
   )
   // Bare de åpne funnene og den siste kjøringen; fristene regnes som i vinduet.
+  // Kildeovervåkingen er en sikkerhetskontroll, så en lesing som feiler, vises.
   const kilder = useTilsyn(
     admin,
     useCallback(async () => oppmerksomhet(await (kildelager ?? kildeovervakingslager()).les(0), Date.now()), [kildelager]),
+    KILDEOVERVAKING_ULEST,
   )
   const { sjekk: sjekkDatakilder } = datakilder
   const { sjekk: sjekkKilder } = kilder

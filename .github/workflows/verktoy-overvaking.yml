@@ -11,9 +11,10 @@
 # beslutning. Et funn avsluttes av den som har tatt stilling til det, i appen,
 # aldri av arbeidsflyten.
 #
-# Oppgaven «teknisk-vurdering» skriver den tekniske vurderingen av et åpent
-# funn i appen, når Claude (eller noen andre med tilgang til repoet) har
-# vurdert det.
+# Oppgaven «teknisk-vurdering» skriver den tekniske vurderingen av nøyaktig ett
+# åpent funn (nummeret i appen), når Claude (eller noen andre med tilgang til
+# repoet) har vurdert det. Er funnet avløst av et nyere med endret innhold,
+# avvises vurderingen.
 name: Kildeovervåking for Verktøy
 
 on:
@@ -32,7 +33,7 @@ on:
         type: boolean
         default: false
       funn:
-        description: Bare for teknisk-vurdering. Funnets nøkkel, slik den står i appen (for eksempel dokument:keks-2016).
+        description: Bare for teknisk-vurdering. Funnets nummer, slik det står i appen (for eksempel 12). Er funnet avløst av et nyere, avvises vurderingen.
         type: string
         default: ''
       vurdering:

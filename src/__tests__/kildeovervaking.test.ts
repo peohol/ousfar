@@ -75,7 +75,7 @@ describe('kildeovervåkingen i databasen', () => {
     const r = melding(rapport('2026-11-02T06:20:00Z', []), 'cron', null)
     for (const hvem of [admin, bruker]) {
       expect(await feilFra(() => kallFor(hvem)('registrer_kildeovervaking', { melding: JSON.stringify(r) }))).toMatchObject({ code: '42501' })
-      expect(await feilFra(() => kallFor(hvem)('kildefunn_teknisk_fra_agent', { funn: 'x', vurdering: 'Syntetisk.', agent: 'Claude' }))).toMatchObject({ code: '42501' })
+      expect(await feilFra(() => kallFor(hvem)('kildefunn_teknisk_fra_agent', { funn: 1, vurdering: 'Syntetisk.', agent: 'Claude' }))).toMatchObject({ code: '42501' })
       for (const tabell of ['kildefunn', 'kildeovervaking_kjoringer']) {
         expect(await feilFra(() => som(db, hvem, (tx) => tx.query(`select * from public.${tabell}`)))).toMatchObject({ code: '42501' })
         expect(await feilFra(() => som(db, hvem, (tx) => tx.query(`delete from public.${tabell}`)))).toMatchObject({ code: '42501' })
@@ -135,14 +135,31 @@ describe('kildeovervåkingen i databasen', () => {
     const ny = (await apne()).find((x) => x.funn === 'psychiatrienet:x')!
     expect(ny).toMatchObject({ erstatter: null, teknisk_vurdering: null, beslutning: null })
 
-    // Claude skriver den tekniske vurderingen gjennom arbeidsflyten, for funnet med nøkkelen.
-    expect(await tekniskFraAgent(tjener, 'psychiatrienet:x', 'Syntetisk: anbefalingen er endret, se detaljene.', 'Claude (startet av syntetisk)')).toBe(ny.id)
+    // Claude skriver den tekniske vurderingen gjennom arbeidsflyten, for nøyaktig funnet med nummeret.
+    expect(await tekniskFraAgent(tjener, ny.id, 'Syntetisk: anbefalingen er endret, se detaljene.', 'Claude (startet av syntetisk)')).toBe(ny.id)
     expect((await apne()).find((x) => x.id === ny.id)).toMatchObject({ teknisk_av: 'Claude (startet av syntetisk)' })
-    expect(await feilFra(() => tekniskFraAgent(tjener, 'psychiatrienet:x', 'En gang til.', 'Claude'))).toMatchObject({ message: expect.stringMatching(/Ingen åpent funn/) })
-    expect(await feilFra(() => tekniskFraAgent(tjener, 'finnes:ikke', 'Syntetisk vurdering.', 'Claude'))).toMatchObject({ message: expect.stringMatching(/Ingen åpent funn/) })
+    expect(await feilFra(() => tekniskFraAgent(tjener, ny.id, 'En gang til.', 'Claude'))).toMatchObject({ message: expect.stringMatching(/har allerede en teknisk vurdering/) })
+    expect(await feilFra(() => tekniskFraAgent(tjener, 999_999, 'Syntetisk vurdering.', 'Claude'))).toMatchObject({ message: expect.stringMatching(/finnes ikke/) })
+    expect(await feilFra(() => tekniskFraAgent(tjener, f!.id, 'Syntetisk vurdering.', 'Claude'))).toMatchObject({ message: expect.stringMatching(/er avsluttet/) })
     // Ingen rad slettes: alle står i historikken.
     const { rows } = await db.query<{ n: number }>('select count(*)::int as n from public.kildefunn')
     expect(rows[0]!.n).toBe(5)
+  })
+
+  it('avviser en teknisk vurdering av et funn som ble avløst mens det ble vurdert, så den aldri festes til det nye innholdet', async () => {
+    const gammel = funn({ id: 'fest:sertralin:ID_Z', kilde: 'fest', art: 'endret', objekt: 'ID_Z', prioritet: 'hoy', detaljer: ['Styrken er 50 mg.'] })
+    await meld(rapport('2026-12-15T06:20:00Z', [gammel], ['fest']))
+    const lest = (await apne()).find((x) => x.funn === 'fest:sertralin:ID_Z')!
+    // Mens Claude vurderer det, endres kilden igjen.
+    await meld(rapport('2026-12-22T06:20:00Z', [{ ...gammel, detaljer: ['Styrken er 100 mg.'] }], ['fest']))
+    const ny = (await apne()).find((x) => x.funn === 'fest:sertralin:ID_Z')!
+    expect(ny.id).not.toBe(lest.id)
+    expect(await feilFra(() => tekniskFraAgent(tjener, lest.id, 'Syntetisk: 50 mg er fortsatt i omfanget.', 'Claude'))).toMatchObject({ code: '55000', message: expect.stringMatching(/avløst av et nyere funn/) })
+    expect(await feilFra(() => lager(admin).vurder(lest.id, 'Syntetisk: 50 mg er fortsatt i omfanget.'))).toMatchObject({ code: '55000', message: expect.stringMatching(/avløst/) })
+    // Ingenting er festet til noen av radene, og det nye funnet kan vurderes for seg.
+    const begge = (await lager(admin).les()).funn.filter((x) => x.funn === 'fest:sertralin:ID_Z')
+    expect(begge.map((x) => x.teknisk_vurdering)).toEqual([null, null])
+    expect(await tekniskFraAgent(tjener, ny.id, 'Syntetisk: 100 mg er utenfor det godkjente omfanget.', 'Claude')).toBe(ny.id)
   })
 
   it('holder en prøvekjøring for seg, med en ny prøverad hver gang, og viser den siste reelle kjøringen', async () => {
@@ -216,7 +233,10 @@ describe('serverendepunktet /api/kildeovervaking', () => {
       { oppgave: 'registrer', rapport: r, lenke: 'https://example.invalid/kjoring' },
       { oppgave: 'registrer', rapport: { ...r, provesak: true } },
       { oppgave: 'registrer', rapport: { ...r, funn: [PROVEFUNN] } },
-      { oppgave: 'teknisk_vurdering', funn: 'dokument:a', vurdering: 'kort', av: 'Claude' },
+      { oppgave: 'teknisk_vurdering', funn: 7, vurdering: 'kort', av: 'Claude' },
+      { oppgave: 'teknisk_vurdering', funn: 'dokument:a', vurdering: 'Syntetisk vurdering.', av: 'Claude' },
+      { oppgave: 'teknisk_vurdering', funn: 0, vurdering: 'Syntetisk vurdering.', av: 'Claude' },
+      { oppgave: 'teknisk_vurdering', funn: 1.5, vurdering: 'Syntetisk vurdering.', av: 'Claude' },
     ]) {
       const svar = await behandle(forespor(innhold))
       expect(svar.status, JSON.stringify(innhold)).toBe(400)
@@ -226,18 +246,19 @@ describe('serverendepunktet /api/kildeovervaking', () => {
     expect(lesRapport(rapport('2026-11-02T06:20:00Z', [PROVEFUNN], [], { provesak: true }))).toMatchObject({ provesak: true })
   })
 
-  it('skriver en teknisk vurdering for funnet med nøkkelen, og sier fra når det ikke går', async () => {
+  it('skriver en teknisk vurdering for funnet med nummeret, og sier fra når det ikke går', async () => {
     const kall = vi.fn(async () => 7)
-    const ok = await behandle(forespor({ oppgave: 'teknisk_vurdering', funn: ' dokument:a ', vurdering: 'Syntetisk vurdering.', av: 'Claude' }), kall)
+    // Arbeidsflyten sender nummeret som tekst.
+    const ok = await behandle(forespor({ oppgave: 'teknisk_vurdering', funn: ' 7 ', vurdering: 'Syntetisk vurdering.', av: 'Claude' }), kall)
     expect(ok).toMatchObject({ status: 200, innhold: { funn: 7 } })
-    expect(kall).toHaveBeenCalledWith('kildefunn_teknisk_fra_agent', { funn: 'dokument:a', vurdering: 'Syntetisk vurdering.', agent: 'Claude' })
+    expect(kall).toHaveBeenCalledWith('kildefunn_teknisk_fra_agent', { funn: 7, vurdering: 'Syntetisk vurdering.', agent: 'Claude' })
     const feil = await behandle(
-      forespor({ oppgave: 'teknisk_vurdering', funn: 'dokument:a', vurdering: 'Syntetisk vurdering.', av: 'Claude' }),
+      forespor({ oppgave: 'teknisk_vurdering', funn: 7, vurdering: 'Syntetisk vurdering.', av: 'Claude' }),
       vi.fn(async () => {
-        throw new Error('Ingen åpent funn uten teknisk vurdering har nøkkelen dokument:a.')
+        throw new Error('Funn nr. 7 er avløst av et nyere funn med endret innhold; vurder det nye. Vurderingen er ikke lagret.')
       }),
     )
-    expect(feil).toMatchObject({ status: 409, innhold: { feil: expect.stringMatching(/Ingen åpent funn/) } })
+    expect(feil).toMatchObject({ status: 409, innhold: { feil: expect.stringMatching(/avløst/) } })
   })
 })
 

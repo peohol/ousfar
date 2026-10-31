@@ -204,24 +204,33 @@ end;
 $$;
 
 -- Den tekniske vurderingen fra en agent (Claude), gjennom arbeidsflyten og
--- serverendepunktet: for det åpne funnet med nøkkelen.
-create function public.kildefunn_teknisk_fra_agent(funn text, vurdering text, agent text)
+-- serverendepunktet: for nøyaktig den raden (funnets nummer) som ble vurdert.
+-- Er funnet avløst av et nyere funn med endret innhold mens det ble vurdert,
+-- avvises vurderingen, så en vurdering av det gamle innholdet aldri festes
+-- til det nye.
+create function public.kildefunn_teknisk_fra_agent(funn bigint, vurdering text, agent text)
 returns bigint
 language plpgsql
 security definer
 set search_path = ''
 as $$
 declare
-  rad bigint;
+  rad public.kildefunn;
 begin
+  select * into rad from public.kildefunn k where k.id = kildefunn_teknisk_fra_agent.funn for update;
+  if not found then
+    raise exception 'Funn nr. % finnes ikke.', kildefunn_teknisk_fra_agent.funn using errcode = '55000';
+  elsif rad.erstattet_kl is not null then
+    raise exception 'Funn nr. % er avløst av et nyere funn med endret innhold; vurder det nye. Vurderingen er ikke lagret.', rad.id using errcode = '55000';
+  elsif rad.beslutning_kl is not null then
+    raise exception 'Funn nr. % er avsluttet. Vurderingen er ikke lagret.', rad.id using errcode = '55000';
+  elsif rad.teknisk_kl is not null then
+    raise exception 'Funn nr. % har allerede en teknisk vurdering. Vurderingen er ikke lagret.', rad.id using errcode = '55000';
+  end if;
   update public.kildefunn k
   set teknisk_vurdering = btrim(kildefunn_teknisk_fra_agent.vurdering), teknisk_agent = btrim(kildefunn_teknisk_fra_agent.agent), teknisk_kl = now()
-  where k.funn = kildefunn_teknisk_fra_agent.funn and k.beslutning_kl is null and k.erstattet_kl is null and k.teknisk_kl is null
-  returning k.id into rad;
-  if rad is null then
-    raise exception 'Ingen åpent funn uten teknisk vurdering har nøkkelen %.', kildefunn_teknisk_fra_agent.funn using errcode = '55000';
-  end if;
-  return rad;
+  where k.id = rad.id;
+  return rad.id;
 end;
 $$;
 
@@ -322,7 +331,7 @@ begin
   set teknisk_vurdering = btrim(vurder_kildefunn.vurdering), teknisk_av = (select auth.uid()), teknisk_kl = now()
   where k.id = vurder_kildefunn.funn and k.beslutning_kl is null and k.erstattet_kl is null and k.teknisk_kl is null;
   if not found then
-    raise exception 'Funnet finnes ikke, er allerede vurdert eller er avsluttet.' using errcode = '55000';
+    raise exception 'Funnet finnes ikke, er avløst av et nyere funn med endret innhold, er allerede vurdert eller er avsluttet. Hent funnene på nytt.' using errcode = '55000';
   end if;
 end;
 $$;
@@ -341,15 +350,15 @@ begin
   set beslutning = btrim(beslutt_kildefunn.beslutning), beslutning_av = (select auth.uid()), beslutning_kl = greatest(now(), k.opprettet_kl)
   where k.id = beslutt_kildefunn.funn and k.beslutning_kl is null and k.erstattet_kl is null;
   if not found then
-    raise exception 'Funnet finnes ikke, eller er allerede avsluttet.' using errcode = '55000';
+    raise exception 'Funnet finnes ikke, er avløst av et nyere funn med endret innhold eller er allerede avsluttet. Hent funnene på nytt.' using errcode = '55000';
   end if;
 end;
 $$;
 
 comment on function public.registrer_kildeovervaking(jsonb) is
   'Registrerer en kjøring av kildeovervåkingen og funnene som krever vurdering. Bare for serverendepunktet.';
-comment on function public.kildefunn_teknisk_fra_agent(text, text, text) is
-  'Den tekniske vurderingen av et åpent funn fra en agent, gjennom arbeidsflyten. Bare for serverendepunktet.';
+comment on function public.kildefunn_teknisk_fra_agent(bigint, text, text) is
+  'Den tekniske vurderingen av nøyaktig ett åpent funn fra en agent, gjennom arbeidsflyten; avvises når funnet er avløst. Bare for serverendepunktet.';
 comment on function public.les_kildeovervaking(integer) is
   'De åpne funnene fra kildeovervåkingen, de sist avsluttede og de siste kjøringene. Bare for administratorer.';
 comment on function public.vurder_kildefunn(bigint, text) is
@@ -360,13 +369,13 @@ comment on function public.beslutt_kildefunn(bigint, text) is
 -- --- Rettigheter ---------------------------------------------------------------------
 
 revoke all on function public.registrer_kildeovervaking(jsonb) from public, anon, authenticated;
-revoke all on function public.kildefunn_teknisk_fra_agent(text, text, text) from public, anon, authenticated;
+revoke all on function public.kildefunn_teknisk_fra_agent(bigint, text, text) from public, anon, authenticated;
 revoke all on function intern.kildeovervaking_kjoring(public.kildeovervaking_kjoringer) from public, anon, authenticated, service_role;
 revoke all on function public.les_kildeovervaking(integer) from public, anon, authenticated, service_role;
 revoke all on function public.vurder_kildefunn(bigint, text) from public, anon, authenticated, service_role;
 revoke all on function public.beslutt_kildefunn(bigint, text) from public, anon, authenticated, service_role;
 grant execute on function public.registrer_kildeovervaking(jsonb) to service_role;
-grant execute on function public.kildefunn_teknisk_fra_agent(text, text, text) to service_role;
+grant execute on function public.kildefunn_teknisk_fra_agent(bigint, text, text) to service_role;
 grant execute on function public.les_kildeovervaking(integer) to authenticated;
 grant execute on function public.vurder_kildefunn(bigint, text) to authenticated;
 grant execute on function public.beslutt_kildefunn(bigint, text) to authenticated;

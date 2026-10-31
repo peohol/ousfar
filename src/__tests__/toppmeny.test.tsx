@@ -9,6 +9,7 @@ import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import type { Datakildestatus, Kjoring } from '../datakilder/status'
+import type { Kildeovervaking } from '../verktoy/overvaking/varsling'
 import type { Bevegelse, Tema, Valg } from '../domain/systemvalg'
 
 const loggUt = vi.fn(async () => {})
@@ -39,7 +40,10 @@ vi.mock('../components/kuratering/Utgavelister', () => ({
 }))
 vi.mock('../components/konto/Kildeovervaking', () => ({
   Kildeovervaking: ({ apen }: { apen: boolean }) => (apen ? <p>Kildeovervåkingen</p> : null),
-  kildeovervakingslager: () => ({ les: () => Promise.reject(new Error('Ikke i testen.')) }),
+  // En kontroll i orden, uten funn, så prikken ikke står i de andre testene.
+  kildeovervakingslager: () => ({
+    les: async () => ({ funn: [], kjoringer: [], siste: { id: 1, kjort_kl: new Date().toISOString(), utlost: 'cron', prove: false, grunnlag: [], feil: [], informative: [], lenke: null } }),
+  }),
 }))
 vi.mock('../components/konto/Verktoysperrer', () => ({
   Verktoysperrer: ({ apen }: { apen: boolean }) => (apen ? <p>Nødstoppen</p> : null),
@@ -596,6 +600,28 @@ describe('adminmenyen', () => {
     act(() => datakildepanel.lukk?.())
     expect(await screen.findByRole('button', { name: 'Administrasjon' })).toBeTruthy()
     expect(document.querySelector('.adminmeny .toppmeny__prikk')).toBeNull()
+  })
+
+  it('viser en prikk når kildeovervåkingen ikke kan leses, så det aldri ser ut som at ingen funn venter, og prøver igjen', async () => {
+    const naa = new Date().toISOString()
+    const les = vi.fn(async (): Promise<Kildeovervaking> => {
+      throw new Error('Nettverket svarte ikke.')
+    })
+    render(
+      <Ramme>
+        <Adminmeny kildelager={{ les, vurder: vi.fn(), beslutt: vi.fn() }} />
+      </Ramme>,
+    )
+    const knapp = await screen.findByRole('button', { name: 'Administrasjon (kildeovervåkingen kunne ikke leses)' })
+    expect(knapp.parentElement!.querySelector('.toppmeny__prikk')).toBeTruthy()
+    await userEvent.click(knapp)
+    expect(within(panel(knapp)).getByRole('img', { name: 'kildeovervåkingen kunne ikke leses' })).toBeTruthy()
+
+    // Neste sjekk lykkes: prikken forsvinner.
+    les.mockResolvedValue({ funn: [], kjoringer: [], siste: { id: 1, kjort_kl: naa, utlost: 'cron', prove: false, grunnlag: [], feil: [], informative: [], lenke: null } })
+    await userEvent.click(within(panel(knapp)).getByRole('button', { name: /^Datakilder/ }))
+    act(() => datakildepanel.lukk?.())
+    expect(await screen.findByRole('button', { name: 'Administrasjon' })).toBeTruthy()
   })
 
   it('har en prikk når et funn fra kildeovervåkingen venter, også sammen med en datakilde, og ser etter på nytt når et panel lukkes', async () => {

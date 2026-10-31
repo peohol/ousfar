@@ -16,7 +16,8 @@
  * Miljøet for FEST: `SUPABASE_URL` og `SUPABASE_PUBLISHABLE_KEY` med
  * testbrukeren (`OUSFAR_TESTBRUKER`, `OUSFAR_TESTPASSORD`), som i
  * kuratorjobbene, eller `VITE_SUPABASE_URL` og `SUPABASE_SECRET_KEY`. Uten
- * noen av dem kontrolleres ikke FEST, og rapporten sier det.
+ * noen av dem er FEST ikke kontrollert: rapporten har det som en feil, og
+ * arbeidsflyten blir rød. `--uten-fest` utelater FEST med vilje, for prøving.
  *
  * Skriptet bare leser: det skriver ikke til databasen, til grunnlaget eller
  * til kildearkivet, og endrer, godkjenner eller sperrer ingen regel.
@@ -38,8 +39,15 @@ import { kreverVurdering, lagOvervakingsrapport } from '../src/verktoy/overvakin
 
 const lesJson = <T>(fil: string) => JSON.parse(readFileSync(new URL(`../${fil}`, import.meta.url), 'utf8')) as T
 
-/** En lesing av FEST nå, med testbrukeren eller nøkkelen; `null` når ingen av dem er satt. */
-async function festlesing(): Promise<((ider: string[]) => Promise<Legemiddelutvalg>) | { feil: string } | null> {
+/** Det FEST-delen står som når ingen tilkobling er satt; da er FEST ikke kontrollert, og kjøringen er ikke i orden. */
+const MANGLER_FEST = 'mangler tilkoblingen (verken testbrukeren eller nøkkelen er satt), så FEST er ikke kontrollert.'
+
+/**
+ * En lesing av FEST nå, med testbrukeren eller nøkkelen, eller feilen som
+ * hindret den. En ordinær kontroll uten tilkobling er en feil, ikke en del som
+ * bare ikke ble kjørt; bare `--uten-fest` utelater FEST med vilje.
+ */
+async function festlesing(): Promise<((ider: string[]) => Promise<Legemiddelutvalg>) | { feil: string }> {
   const url = process.env.VITE_SUPABASE_URL
   const nokkel = process.env.SUPABASE_SECRET_KEY
   if (url && nokkel) {
@@ -53,8 +61,8 @@ async function festlesing(): Promise<((ider: string[]) => Promise<Legemiddelutva
       return (await svar.json()) as Legemiddelutvalg
     }
   }
-  if (!process.env.OUSFAR_TESTBRUKER) return null
-  const innlogget = await loggInnSomTestbruker()
+  if (!process.env.OUSFAR_TESTBRUKER) return { feil: MANGLER_FEST }
+  const innlogget = await loggInnSomTestbruker().catch((e: unknown) => ({ feil: e instanceof Error ? e.message : String(e) }))
   if ('feil' in innlogget) return innlogget
   const leser = lagLegemiddelleser(innlogget.klient)
   return (ider) => leser.les(ider)

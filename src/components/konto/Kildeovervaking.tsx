@@ -74,6 +74,8 @@ export function Kildeovervaking({ apen, onLukk, lager: egetLager, na = Date.now 
   const [data, setData] = useState<Overvaking | null>(null)
   const [feil, setFeil] = useState<string | null>(null)
   const [arbeider, setArbeider] = useState(false)
+  // Siste lesing feilet: da er det ukjent om funn venter, og det skal ikke se ut som «ingen funn».
+  const [ulest, setUlest] = useState(false)
   // Vurderingene og beslutningene som skrives, overlever en oppdatering av appen.
   const [tekniske, setTekniske] = useBevart<Record<number, string>>('kildefunn-teknisk', {})
   const [beslutninger, setBeslutninger] = useBevart<Record<number, string>>('kildefunn-beslutning', {})
@@ -82,7 +84,9 @@ export function Kildeovervaking({ apen, onLukk, lager: egetLager, na = Date.now 
     if (!lager) return
     try {
       setData(await lager.les())
+      setUlest(false)
     } catch (e) {
+      setUlest(true)
       setFeil(e instanceof Error ? e.message : 'Fikk ikke hentet kildeovervåkingen.')
     }
   }, [lager])
@@ -132,10 +136,30 @@ export function Kildeovervaking({ apen, onLukk, lager: egetLager, na = Date.now 
         </p>
       )}
 
+      {ulest && (
+        <div className="kildeovervaking__ulest">
+          <p className="kildeovervaking__over">
+            {data ? 'Kildeovervåkingen kunne ikke leses på nytt, så det som vises, kan være utdatert.' : 'Kildeovervåkingen kunne ikke leses, så det er ukjent om funn venter.'}
+          </p>
+          <Button
+            variant="kant"
+            disabled={arbeider}
+            onClick={() => {
+              setFeil(null)
+              void les()
+            }}
+          >
+            Prøv igjen
+          </Button>
+        </div>
+      )}
+
       <section aria-labelledby={`${id}-apne`} className="verktoysperrer__del">
         <h3 id={`${id}-apne`}>Venter på faglig beslutning</h3>
         {data === null ? (
+          ulest ? null : (
           <p className="autoerstatt__tomt">Henter kildeovervåkingen …</p>
+          )
         ) : apne.length === 0 ? (
           <p className="autoerstatt__tomt">Ingen funn venter.</p>
         ) : (
@@ -152,7 +176,7 @@ export function Kildeovervaking({ apen, onLukk, lager: egetLager, na = Date.now 
                 <p className="felt__hjelp">
                   Funnet {tidspunkt(f.opprettet_kl)}
                   {f.erstatter !== null && ', med endret innhold siden et tidligere funn'}.{' '}
-                  {f.borte_kl ? `Ikke funnet igjen i kontrollen ${tidspunkt(f.borte_kl)}; ta stilling til om det kan avsluttes.` : f.sist_sett_kl ? `Sist sett ${tidspunkt(f.sist_sett_kl)}.` : ''} Nøkkel: {f.funn}
+                  {f.borte_kl ? `Ikke funnet igjen i kontrollen ${tidspunkt(f.borte_kl)}; ta stilling til om det kan avsluttes.` : f.sist_sett_kl ? `Sist sett ${tidspunkt(f.sist_sett_kl)}.` : ''} Funn nr. {f.id} ({f.funn})
                 </p>
                 <Frister f={f} na={naa} />
                 {f.teknisk_vurdering ? (
@@ -167,7 +191,7 @@ export function Kildeovervaking({ apen, onLukk, lager: egetLager, na = Date.now 
                     <label className="felt">
                       <span className="felt__merkelapp">Teknisk vurdering</span>
                       <textarea className="felt__inndata" rows={3} maxLength={5000} value={tekniske[f.id] ?? ''} onChange={(e) => setTekniske((t) => ({ ...t, [f.id]: e.target.value }))} />
-                      <span className="felt__hjelp">Hva er endret, og hva betyr det for reglene? Claude kan skrive den når du ber om det.</span>
+                      <span className="felt__hjelp">Hva er endret, og hva betyr det for reglene? Claude kan skrive den når du ber om det, med funnets nummer.</span>
                     </label>
                     <div className="autoerstatt__knapper">
                       <Button variant="kant" disabled={arbeider} onClick={() => void lagre(f.id, tekniske[f.id], 'vurder')}>

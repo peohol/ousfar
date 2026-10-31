@@ -90,7 +90,7 @@ describe('kildeovervåkingen i administrasjonsmenyen', () => {
     expect(within(rad).getByText('Høy prioritet')).toBeTruthy()
     expect(within(rad).getByText('Preparatet er borte fra FEST.')).toBeTruthy()
     expect(rad.textContent).toMatch(/Kan berøre: .*\(versjon 9\)\./)
-    expect(rad.textContent).toContain('Nøkkel: fest:sertralin:ID_X')
+    expect(rad.textContent).toContain('Funn nr. 1 (fest:sertralin:ID_X)')
     expect(within(rad).getByText(/Teknisk vurdering mangler, over fristen på 24 timer/)).toBeTruthy()
     expect(within(rad).getByText(/Faglig beslutning mangler, over fristen på 72 timer/)).toBeTruthy()
 
@@ -144,5 +144,24 @@ describe('kildeovervåkingen i administrasjonsmenyen', () => {
     const borte = screen.getByText('Syntetisk kilde').closest('li')!
     expect(borte.textContent).toMatch(/Ikke funnet igjen i kontrollen .*; ta stilling til om det kan avsluttes\./)
     expect(within(borte).queryByText(/Faglig beslutning mangler/)).toBeNull()
+  })
+
+  it('sier at kildeovervåkingen ikke kunne leses, i stedet for at ingen funn venter, og prøver igjen', async () => {
+    const user = userEvent.setup()
+    const data = { funn: [funn({})], kjoringer: [SISTE], siste: SISTE }
+    const les = vi.fn(async (): Promise<Overvaking> => {
+      throw new Error('Nettverket svarte ikke.')
+    })
+    render(<Kildeovervaking apen onLukk={() => {}} lager={{ les, vurder: vi.fn(), beslutt: vi.fn() }} na={() => NA} />)
+    expect(await screen.findByText('Kildeovervåkingen kunne ikke leses, så det er ukjent om funn venter.')).toBeTruthy()
+    expect(screen.getByRole('alert').textContent).toBe('Nettverket svarte ikke.')
+    expect(screen.queryByText('Ingen funn venter.')).toBeNull()
+    expect(screen.queryByText('Henter kildeovervåkingen …')).toBeNull()
+
+    les.mockResolvedValue(structuredClone(data))
+    await user.click(screen.getByRole('button', { name: 'Prøv igjen' }))
+    expect(await screen.findByText('Syntetin 50 mg tablett')).toBeTruthy()
+    expect(screen.queryByText(/kunne ikke leses/)).toBeNull()
+    expect(screen.queryByRole('alert')).toBeNull()
   })
 })

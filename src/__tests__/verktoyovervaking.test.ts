@@ -407,6 +407,28 @@ describe('en kjøring og rapporten', () => {
   })
 })
 
+/* --- Skriptet ---------------------------------------------------------------- */
+
+describe('skriptet', () => {
+  /** Kjører det ekte skriptet uten nettverk og uten tilkobling til FEST; gir funn.json. */
+  const kontroll = (...valg: string[]) => {
+    const ut = mkdtempSync(join(tmpdir(), 'overvaking-skript-'))
+    const env = { ...process.env }
+    for (const n of ['VITE_SUPABASE_URL', 'SUPABASE_URL', 'SUPABASE_SECRET_KEY', 'OUSFAR_TESTBRUKER', 'OUSFAR_TESTPASSORD']) delete env[n]
+    execFileSync(`${ROT}node_modules/.bin/vite-node`, ['--root', ROT, `${ROT}scripts/verktoy-overvaking.ts`, '--', 'kontroll', '--uten-dokumenter', ...valg, '--ut', ut], { env, stdio: 'pipe' })
+    return JSON.parse(readFileSync(join(ut, 'funn.json'), 'utf8')) as { feil: string[]; grunnlag: { kilde: string; kjort: boolean }[] }
+  }
+
+  it('gir en feil, ikke en grønn kjøring, når FEST ikke kan kontrolleres fordi tilkoblingen mangler, og utelater FEST bare med --uten-fest', () => {
+    const uten = kontroll()
+    expect(uten.grunnlag.find((g) => g.kilde === 'fest')).toMatchObject({ kjort: false })
+    expect(uten.feil).toEqual(['FEST: mangler tilkoblingen (verken testbrukeren eller nøkkelen er satt), så FEST er ikke kontrollert.'])
+    // Det er feilen arbeidsflyten gjør kjøringen rød på, og appen viser «siste kildekontroll stoppet» for.
+    expect(les('.github/workflows/verktoy-overvaking.yml')).toContain("feil=$(jq '.feil | length' overvaking-resultat/funn.json)")
+    expect(kontroll('--uten-fest').feil).toEqual([])
+  }, 60_000)
+})
+
 /* --- Arbeidsflyten ----------------------------------------------------------- */
 
 describe('arbeidsflyten', () => {
@@ -491,8 +513,8 @@ describe('arbeidsflyten', () => {
 
   it('skriver en teknisk vurdering nøyaktig slik den ble gitt, uten at teksten kan kjøres som kode', () => {
     const vurdering = 'Bare en ny "skrifttype" i dokumentet; $(touch hacket) `id` endrer ingenting.'
-    const r = kjorSteg('Skriv vurderingen i appen', { env: { FUNN: 'dokument:keks-2016', VURDERING: vurdering, AV: 'Claude', AKTOR: 'syntetisk-bruker' } })
+    const r = kjorSteg('Skriv vurderingen i appen', { env: { FUNN: '12', VURDERING: vurdering, AV: 'Claude', AKTOR: 'syntetisk-bruker' } })
     expect(r.lyktes).toBe(true)
-    expect(r.melding).toEqual({ oppgave: 'teknisk_vurdering', funn: 'dokument:keks-2016', vurdering, av: 'Claude (startet av syntetisk-bruker)' })
+    expect(r.melding).toEqual({ oppgave: 'teknisk_vurdering', funn: '12', vurdering, av: 'Claude (startet av syntetisk-bruker)' })
   })
 })

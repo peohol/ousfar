@@ -7,9 +7,10 @@
  *
  * - `{ "oppgave": "registrer", "rapport": <funn.json>, "lenke": <kjøringen> }`
  *   melder en kjøring og funnene som krever vurdering.
- * - `{ "oppgave": "teknisk_vurdering", "funn": <nøkkel>, "vurdering": <tekst>, "av": <hvem> }`
- *   skriver den tekniske vurderingen av et åpent funn, når Claude (eller noen
- *   andre med tilgang til repoet) har vurdert det.
+ * - `{ "oppgave": "teknisk_vurdering", "funn": <nummer>, "vurdering": <tekst>, "av": <hvem> }`
+ *   skriver den tekniske vurderingen av nøyaktig det funnet, når Claude (eller
+ *   noen andre med tilgang til repoet) har vurdert det. Nummeret står i
+ *   vinduet; er funnet avløst av et nyere med endret innhold, avvises den.
  *
  * Endepunktet endrer, godkjenner eller sperrer ingen regel.
  */
@@ -63,10 +64,11 @@ export async function behandleKildeovervaking(
     }
     if (innhold?.oppgave === 'teknisk_vurdering') {
       const { funn, vurdering, av } = innhold
-      if (!tekst(funn, 3, 300) || !tekst(vurdering, 5, 5000) || !tekst(av, 2, 200)) {
-        return svar(400, { feil: 'Oppgi funnets nøkkel, vurderingen (5–5000 tegn) og hvem som har vurdert.' })
+      const nummer = typeof funn === 'number' ? funn : typeof funn === 'string' && /^\s*\d{1,15}\s*$/.test(funn) ? Number(funn) : NaN
+      if (!Number.isSafeInteger(nummer) || nummer < 1 || !tekst(vurdering, 5, 5000) || !tekst(av, 2, 200)) {
+        return svar(400, { feil: 'Oppgi funnets nummer, vurderingen (5–5000 tegn) og hvem som har vurdert.' })
       }
-      return svar(200, { funn: await tekniskFraAgent(databasen, funn.trim(), vurdering, av) })
+      return svar(200, { funn: await tekniskFraAgent(databasen, nummer, vurdering, av) })
     }
   } catch (e) {
     // Et funn som ikke finnes eller allerede er vurdert, eller en databasefeil; ingenting er endret.
