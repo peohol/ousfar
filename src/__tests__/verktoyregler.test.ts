@@ -199,12 +199,13 @@ describe('Pilotsettet', () => {
       if (k === 'til_faglig_kontroll') expect(r.godkjenning.historikk.at(-1)!.fingeravtrykk, r.id).toBeUndefined()
       if (r.id === 'mao-fluoksetin-fenelzin') expect(r.godkjenning.historikk.at(-1)!.merknad).toMatch(/akseptert bare som kildebasert utvaskingsinformasjon.*kan derfor ikke godkjennes som en samlet klinisk doseplan/)
       const historikk = r.godkjenning.historikk.filter((s) => s.rolle === 'utvikler')
-      // Kontrolløren har bare egne steg der den har gitt en beslutning: det siste for de tre over, og for sertralin avgrensningene av versjon 5 og 6 i gjennomgangene av 9cb420b og 0ae6d07.
+      // Kontrolløren har bare egne steg der den har gitt en beslutning: det siste for de tre over, og for sertralin avgrensningene av versjon 5, 6 og 7 i gjennomgangene av 9cb420b, 0ae6d07 og d6cc3dd.
       const kontrollor = r.godkjenning.historikk.filter((s) => s.rolle === 'uavhengig_kontrollor')
-      expect(kontrollor.length, r.id).toBe(k ? 1 : r.id === 'kryssnedtrapping-sertralin-mirtazapin' ? 2 : 0)
+      expect(kontrollor.length, r.id).toBe(k ? 1 : r.id === 'kryssnedtrapping-sertralin-mirtazapin' ? 3 : 0)
       if (r.id === 'kryssnedtrapping-sertralin-mirtazapin') {
         expect(kontrollor[0]).toMatchObject({ status: 'til_faglig_kontroll', regelversjon: 5, merknad: expect.stringMatching(/^Kontrollørens gjennomgang av 9cb420b 31\.10\.2026 \(P4\.8\): .*ved 50 og 100 mg/) })
         expect(kontrollor[1]).toMatchObject({ status: 'til_faglig_kontroll', regelversjon: 6, merknad: expect.stringMatching(/^Kontrollørens gjennomgang av 0ae6d07 31\.10\.2026 \(P4\.8\): .*sammenhengende område.*ikke godkjent/) })
+        expect(kontrollor[2]).toMatchObject({ status: 'til_faglig_kontroll', regelversjon: 7, merknad: expect.stringMatching(/^Kontrollørens gjennomgang av d6cc3dd 31\.10\.2026 \(P4\.8\): .*lang behandlingstid er ikke del av det godkjennbare omfanget.*ikke godkjent/) })
         expect(kontrollor.every((x) => x.fingeravtrykk === undefined)).toBe(true)
       }
       // Depotreglene har i tillegg et steg fra kontrollrunden 30.10.2026 for versjon 2: kildemessig akseptable, ikke klinisk godkjent.
@@ -216,12 +217,15 @@ describe('Pilotsettet', () => {
       const senere: Record<string, RegExp> = {
         'mao-fluoksetin-fenelzin': /^Rettet etter kontrollørens gjennomgang av fe08fac 30\.10\.2026 \(P4\.8\)/,
         'antipsykotikabytte-olanzapin-kvetiapin': /^Rettet etter kontrollørens gjennomgang av fe08fac 30\.10\.2026 \(P4\.8\)/,
-        'kryssnedtrapping-sertralin-mirtazapin': /^Avgrenset etter kontrollørens gjennomgang av 0ae6d07 31\.10\.2026 \(P4\.8\): startdosen er bare 50 mg eller 100 mg/,
+        'kryssnedtrapping-sertralin-mirtazapin': /^Avgrenset etter kontrollørens gjennomgang av d6cc3dd 31\.10\.2026 \(P4\.8\): det kliniske omfanget er bare sertralin 50 eller 100 mg ved kort behandlingstid/,
       }
-      const etterBeslutningene = r.id === 'kryssnedtrapping-sertralin-mirtazapin' ? 2 : senere[r.id] ? 1 : 0
+      const etterBeslutningene = r.id === 'kryssnedtrapping-sertralin-mirtazapin' ? 3 : senere[r.id] ? 1 : 0
       expect(historikk.at(-2 - 2 * etterBeslutningene)!.merknad, r.id).toMatch(/^Rettet etter kontrollørens beslutninger 30\.10\.2026 \(P4\.8\)/)
       if (senere[r.id]) expect(historikk.at(-2)!.merknad, r.id).toMatch(senere[r.id]!)
-      if (r.id === 'kryssnedtrapping-sertralin-mirtazapin') expect(historikk.at(-4)!.merknad).toMatch(/^Avgrenset etter kontrollørens gjennomgang av 9cb420b 31\.10\.2026 \(P4\.8\): startdosen er innskrenket til 50–100 mg/)
+      if (r.id === 'kryssnedtrapping-sertralin-mirtazapin') {
+        expect(historikk.at(-4)!.merknad).toMatch(/^Avgrenset etter kontrollørens gjennomgang av 0ae6d07 31\.10\.2026 \(P4\.8\): startdosen er bare 50 mg eller 100 mg/)
+        expect(historikk.at(-6)!.merknad).toMatch(/^Avgrenset etter kontrollørens gjennomgang av 9cb420b 31\.10\.2026 \(P4\.8\): startdosen er innskrenket til 50–100 mg/)
+      }
       expect(historikk.at(-1)!.regelversjon, r.id).toBe(r.versjon)
     }
     // Alle reglene er nye versjoner: tre rettet etter første kontroll av piloten, og to fikk kildegrunnlaget for trinnlengden rettet etter kontrollen av P7.
@@ -229,9 +233,9 @@ describe('Pilotsettet', () => {
     const rettet = (pr: string) => PILOTSETT.regler.filter((r) => r.godkjenning.historikk[2]!.merknad.includes(pr)).map((r) => r.id)
     expect(rettet('PR #282')).toEqual(['antipsykotikabytte-olanzapin-kvetiapin', 'depot-aripiprazol-maintena', 'depot-paliperidon-xeplion'])
     expect(rettet('PR #286')).toEqual(['kryssnedtrapping-sertralin-mirtazapin', 'mao-fluoksetin-fenelzin'])
-    // Kontrollrunden og gjennomgangen 30.10.2026 ga versjon 3–5; kontrollørens beslutninger samme dag én versjon til for hver regel, gjennomgangen av fe08fac én til for fenelzin og kvetiapin, og gjennomgangene av 9cb420b og 0ae6d07 én til hver for sertralin.
+    // Kontrollrunden og gjennomgangen 30.10.2026 ga versjon 3–5; kontrollørens beslutninger samme dag én versjon til for hver regel, gjennomgangen av fe08fac én til for fenelzin og kvetiapin, og gjennomgangene av 9cb420b, 0ae6d07 og d6cc3dd én til hver for sertralin.
     expect(PILOTSETT.regler.map((r) => [r.id, r.versjon])).toEqual([
-      ['kryssnedtrapping-sertralin-mirtazapin', 7],
+      ['kryssnedtrapping-sertralin-mirtazapin', 8],
       ['mao-fluoksetin-fenelzin', 7],
       ['antipsykotikabytte-olanzapin-kvetiapin', 5],
       ['depot-aripiprazol-maintena', 3],
@@ -315,7 +319,7 @@ describe('Beregningen', () => {
       status: 'modellberegning',
       klinisk_godkjent: false,
       forbehold: FORBEHOLD_IKKE_GODKJENT,
-      regel: { id: r.id, versjon: 7, godkjenning: 'til_faglig_kontroll' },
+      regel: { id: r.id, versjon: 8, godkjenning: 'til_faglig_kontroll' },
       regelsett: { id: PILOTSETT.id, versjon: PILOTSETT.versjon },
       modell: REGELMODELLVERSJON,
       motor: MOTORVERSJON,

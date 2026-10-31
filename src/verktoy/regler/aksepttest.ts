@@ -91,7 +91,7 @@ export function formerFor(u: Festuttrekk, r: Regel): Formalternativ[] {
 }
 
 /** Styrkene i én enhet blant preparatene som kan brukes i formen: markedsført, med markedsføringstillatelse. */
-const styrker = (u: Festuttrekk, n: string, form: Formalternativ) =>
+export const styrker = (u: Festuttrekk, n: string, form: Formalternativ) =>
   byggesteiner(grunnlagFor(u, n), n, omgivelseFor(u).idag)
     .filter((b) => b.begrensninger.length === 0 && b.registrering === 'registrert' && b.marked === 'markedsfort' && b.mg !== null)
     .filter((b) => form.kode === null || b.legemiddelform?.kode === form.kode)

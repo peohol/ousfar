@@ -28,6 +28,7 @@ import {
   kliniskSperre,
   PLANMOTORVERSJON,
   planform,
+  UTENFOR_OMFANG,
   type Doseplaninndata,
   type Doseplanresultat,
   type Omgivelse,
@@ -49,6 +50,7 @@ import {
   TESTTILFELLER,
   type Testpreparat,
 } from '../verktoy/motor/syntetisk'
+import { godkjennITest } from './hjelp/verktoyplan'
 
 const TABLETT = { klasse: 'peroral' as const, legemiddelformer: [FORMER.tablett.kode] }
 const ALLE = [...TESTOKSETIN, ...TESTAZAPIN, ...TESTPERIDON]
@@ -800,7 +802,7 @@ describe('Fenelzin etter fluoksetin med preparatene i FEST (P4.8, gjennomgangen 
   })
 })
 
-describe('Sertralin til mirtazapin med preparatene i FEST (P4.8, gjennomgangene av 62ebb21, 9cb420b og 0ae6d07)', () => {
+describe('Sertralin til mirtazapin med preparatene i FEST (P4.8, gjennomgangene av 62ebb21, 9cb420b, 0ae6d07 og d6cc3dd)', () => {
   const grunnlag = pilotgrunnlag('sertralin', 'mirtazapin')
   const REGEL = pilotregel('kryssnedtrapping-sertralin-mirtazapin')
   const tabletter = { klasse: 'peroral' as const, legemiddelformer: ['53'] }
@@ -865,8 +867,36 @@ describe('Sertralin til mirtazapin med preparatene i FEST (P4.8, gjennomgangene 
 
   it('er ikke klinisk godkjent og gir ingen klinisk plan', () => {
     expect(erKliniskGodkjent(REGEL)).toBe(false)
-    expect(REGEL.versjon).toBe(7)
+    expect(REGEL.versjon).toBe(8)
     expect(kliniskDoseplan(REGEL, inndata(100), grunnlag, PILOTOMGIVELSE)).toMatchObject({ status: 'stoppet', klinisk: false })
+  })
+
+  it('har et klinisk omfang med bare kort behandlingstid, tabletter og styrkene i FEST: lang behandlingstid stopper også med begrunnelse (gjennomgangen av d6cc3dd)', () => {
+    expect(REGEL.klinisk_omfang!.tilfeller).toEqual([{ legemiddelform: '53', startdoser: [50, 100], svar: {}, styrker: { fra: [25, 50, 100], til: [15, 30, 45] } }])
+    // Med regelen godkjent bare i testen.
+    const GODKJENT = godkjennITest(REGEL, 'test-kryssnedtrapping-sertralin-mirtazapin')
+    const klinisk = (startdose_mg: number, x?: Partial<Doseplaninndata>) => kliniskDoseplan(GODKJENT, inndata(startdose_mg, x), grunnlag, PILOTOMGIVELSE)
+    for (const sd of [50, 100]) {
+      expect(klinisk(sd), `${sd} mg`).toMatchObject({ status: 'doseplan', klinisk: true })
+      // Lang behandlingstid er utenfor omfanget, også med en vilkårlig begrunnelse.
+      for (const begrunnelse of ['Syntetisk begrunnelse.', 'x']) {
+        const lang = klinisk(sd, { svar: { lang_behandlingstid: true }, begrunnelse })
+        expect(lang, `${sd} mg lang`).toMatchObject({ status: 'stoppet', klinisk: false })
+        expect(stopp(lang), `${sd} mg lang`).toContain(UTENFOR_OMFANG)
+        expect(lang, `${sd} mg lang`).not.toHaveProperty('trinnvalg')
+      }
+      // De negative vilkårene gjelder fortsatt.
+      for (const x of [{ pasientforhold: { tidligere_seponeringssymptomer: true } }, { bekreftet: [] }, { svar: { lang_behandlingstid: true } }]) {
+        expect(klinisk(sd, x), `${sd} mg ${JSON.stringify(x)}`).toMatchObject({ status: 'stoppet', klinisk: false })
+      }
+      // Andre legemiddelformer enn tabletter er utenfor: sertralin som kapsel og mirtazapin som smeltetablett.
+      for (const formvalg of [{ fra: { klasse: 'peroral' as const, legemiddelformer: ['891'] }, til: tabletter }, { fra: tabletter, til: { klasse: 'peroral' as const, legemiddelformer: ['48'] } }]) {
+        const p = klinisk(sd, { formvalg })
+        expect(p, `${sd} mg ${JSON.stringify(formvalg)}`).toMatchObject({ status: 'stoppet', klinisk: false })
+        expect(stopp(p), `${sd} mg ${JSON.stringify(formvalg)}`).toContain(UTENFOR_OMFANG)
+      }
+    }
+    for (const sd of [75, 150]) expect(stopp(klinisk(sd)), `${sd} mg`).toContain(UTENFOR_OMFANG)
   })
 })
 

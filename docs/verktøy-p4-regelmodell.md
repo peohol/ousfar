@@ -264,3 +264,9 @@ Godkjenningen av depotreglene er registrert med fingeravtrykket for versjonen i 
 | Regel | Beslutning | Endring |
 | --- | --- | --- |
 | Sertralin → mirtazapin (versjon 7) | Versjon 6 er ikke godkjent: 50–100 mg er et sammenhengende område, mens avgrensningen bare gjelder 50 og 100 mg. Bruk bindende verdier og test mellomliggende doser, manglende bekreftelser, tidligere plager og lang behandlingstid uten begrunnelse. | Startdosen er bindende 50 eller 100 mg (`verdier: [50, 100]`), ikke et område; enhver annen dose stopper, også 60, 62,5, 75, 80 og 90 mg. Ved 50 og 100 mg stopper hver manglende bekreftelse, tidligere seponeringssymptomer og lang behandlingstid uten begrunnelse (ende-til-ende-tester med FEST). Kontrollørens avgrensning av versjon 6 står i historikken. Ikke godkjent: fingeravtrykket for versjon 7 er sendt til ny kontroll. |
+
+**Etter kontrollørens gjennomgang av d6cc3dd (31.10.2026).** Pilotsettet er versjon 13; depotreglene og de andre byttereglene er uendret:
+
+| Regel | Beslutning | Endring |
+| --- | --- | --- |
+| Sertralin → mirtazapin (versjon 8) | Versjon 7 er ikke godkjent: lang behandlingstid er ikke del av det godkjennbare kliniske omfanget, heller ikke med en begrunnelse for 50 %-trinn. Godkjennbart bare som begrenset innledende kryssnedtrapping ved ikke-langvarig behandling. | Nytt klinisk omfang (`Regel.klinisk_omfang`): bare 50 eller 100 mg ved kort behandlingstid, tabletter (FEST-form 53) og styrkene sertralin 25, 50 og 100 mg og mirtazapin 15, 30 og 45 mg. Med regelen godkjent bare i testen gir kort behandlingstid en klinisk plan, mens lang behandlingstid stopper også med en vilkårlig begrunnelse, og det gjør også en annen form, en annen startdose og hvert av de negative vilkårene. En ny eller endret styrke i et senere FEST-uttrekk er utenfor. Kontrollørens avgrensning av versjon 7 står i historikken. Ikke godkjent: fingeravtrykket for versjon 8 er sendt til ny kontroll. |

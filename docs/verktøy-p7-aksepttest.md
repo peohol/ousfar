@@ -1,7 +1,7 @@
 <!-- Laget av `npm run verktoy:regler -- aksepttest` fra src/data/verktoy/fest-aksepttest.json; rediger ikke for hånd. -->
 # P7: aksepttest med norske preparater
 
-Aksepttesten etter kontrollrunden 30.10.2026 (P7.5, del E.2). Hver hovedregel og langsom variant i `ousfar-verktoy-nedtrapping` versjon 11 er regnet med de faktiske preparatene i FEST, ikke syntetiske, for hver legemiddelform forskriveren kan velge. FEST-uttrekket er hentet 30.10.2026 (kildedato 27.10.2026); bare preparater med markedsføringstillatelse som er markedsført, brukes, ikke godkjenningsfritak.
+Aksepttesten etter kontrollrunden 30.10.2026 (P7.5, del E.2). Hver hovedregel og langsom variant i `ousfar-verktoy-nedtrapping` versjon 12 er regnet med de faktiske preparatene i FEST, ikke syntetiske, for hver legemiddelform forskriveren kan velge. FEST-uttrekket er hentet 30.10.2026 (kildedato 27.10.2026); bare preparater med markedsføringstillatelse som er markedsført, brukes, ikke godkjenningsfritak.
 
 **Dette er modellberegninger til faglig kontroll, ikke kliniske planer.** Ingen beregnbar P7-regel er klinisk godkjent, og verktøyet viser ingen av planene. Pasientopplysninger inngår ikke.
 
@@ -58,7 +58,7 @@ Til kontrollørens regel- og formspesifikke kontroll (gjennomgangen av 62ebb21 o
 | klomipramin | eneste form | én reduksjon med revurdering | én reduksjon med revurdering | én reduksjon med revurdering | stopp | valgt dose |
 | nortriptylin | eneste form | valgt dose | én reduksjon med revurdering | stopp | stopp | én reduksjon med revurdering |
 | sertralin | eneste form | én reduksjon med revurdering | stopp | stopp | stopp | stopp |
-| vortioksetin | eneste form | én reduksjon med revurdering | valgt dose | stopp | stopp | stopp |
+| vortioksetin | eneste form | én reduksjon med revurdering | stopp | stopp | stopp | stopp |
 
 Ingen av lavdoseeksemplene (d) gir et ordinært første trinn: fra laveste styrke i formen er planen et forklarende stopp i alle kombinasjonene.
 
@@ -106,7 +106,7 @@ Omfanget for hver markedsført styrke i formen, regelens vanlige dose og grensen
 | vortioksetin | eneste form | 5 mg | stopp | stopp | stopp | – |
 | vortioksetin | eneste form | 10 mg | stopp | stopp | stopp | – |
 | vortioksetin | eneste form | 15 mg | stopp | stopp | stopp | – |
-| vortioksetin | eneste form | 20 mg | én reduksjon med revurdering **[klinisk omfang]** | valgt dose **[klinisk omfang]** | stopp | fra 15 mg: stopp |
+| vortioksetin | eneste form | 20 mg | én reduksjon med revurdering **[klinisk omfang]** | stopp | stopp | fra 15 mg: stopp |
 
 ## Per virkestoff
 
@@ -478,9 +478,7 @@ Stopper:
 
 Stopper:
 
-- vortioksetin dag 1–28: den ideelle dosen 18 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (-16,67 %, faktisk reduksjon 25 % fra 20 mg) og 20 mg (+11,11 %). Den foretrukne reduksjonen til 18 mg (−10 % fra 20 mg) kan ikke gis med preparatene. Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 20 mg innenfor det foretrukne området 5–25 %: 15 mg (−25 %). Beregningen velger ikke selv.
-
-- Kan velges for trinn 1 (dag 1, beregnet 18 mg, fra 20 mg): 15 mg (−25 %).
+- vortioksetin dag 1–28: den ideelle dosen 18 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (-16,67 %, faktisk reduksjon 25 % fra 20 mg) og 20 mg (+11,11 %). Den foretrukne reduksjonen til 18 mg (−10 % fra 20 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 5–10 %. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet.
 
 **(c) Tidligere seponeringssymptomer (langsom variant), fra 20 mg.**
 

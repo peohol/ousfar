@@ -119,9 +119,10 @@ const RUNDE_2 = '2026-10-30'
 const RUNDE_3 = '2026-10-30'
 const RUNDE_4 = '2026-10-30'
 const RUNDE_5 = '2026-10-30'
-/** Kontrollørens gjennomganger av 9cb420b og 0ae6d07, samme dag. */
+/** Kontrollørens gjennomganger av 9cb420b, 0ae6d07 og d6cc3dd, samme dag. */
 const RUNDE_7 = '2026-10-31'
 const RUNDE_8 = '2026-10-31'
+const RUNDE_9 = '2026-10-31'
 
 /** Hva som er endret i en versjon, og når; regelversjonen er antallet versjoner. */
 interface Versjon {
@@ -180,6 +181,12 @@ const KONTROLL_8: Versjon = {
   merknad:
     'Avgrenset etter kontrollørens gjennomgang av 0ae6d07 31.10.2026 (P7.5): en klinisk godkjenning kan bare gjelde de kontrollerte tilfellene i regelens kliniske omfang (legemiddelform, startdose, behandlingstid og tidligere seponeringssymptomer, med trinnstørrelsen og trinnlengden som er kontrollert). Alt annet stopper med forklaring, også et større trinn forskriveren velger med begrunnelse, og en plan med delte klomipramintabletter.',
   dato: RUNDE_8,
+}
+/** Alle beregnbare P7-regler etter kontrollørens gjennomgang av d6cc3dd 31.10.2026 (P7.5). */
+const KONTROLL_9: Versjon = {
+  merknad:
+    'Avgrenset etter kontrollørens gjennomgang av d6cc3dd 31.10.2026 (P7.5): hvert tilfelle i det kliniske omfanget gjelder bare preparatstyrkene i FEST som er kontrollert, så en ny styrke i et senere uttrekk ikke stilltiende utvider en plan. Klomipramin har bare 50 mg ved lang behandlingstid med hele tabletter, og vortioksetin ved lang behandlingstid er tatt ut. Etter lang behandlingstid krever mer enn 10 % per trinn begrunnelse også for vortioksetin, så 25 % ikke er en foretrukket reduksjon.',
+  dato: RUNDE_9,
 }
 /**
  * Mirtazapin, moklobemid og paroksetin etter kontrollørens beslutning P7-A:
@@ -268,11 +275,15 @@ const RUNDE_7_BESLUTNING =
 
 const runde7 = (regelversjon: number): Avklaring => ({ dato: RUNDE_7, ...kontrollor, regelversjon, merknad: `Kontrollørens gjennomgang av 9cb420b 31.10.2026, ${RUNDE_7_BESLUTNING}` })
 
-/** Kontrollørens beslutning i gjennomgangen av 0ae6d07 31.10.2026; ingen klinisk godkjenning. */
-const RUNDE_8_BESLUTNING =
-  'en matriseklassifikasjon er ikke en godkjenning; bare nøyaktig kontrollerte kandidatscenarier med foretrukket faktisk reduksjon kan være grunnlag for en mulig første reduksjon eller delplan, aldri full nedtrapping, og andre startdoser, former, doseringsendringer og videreføringer stopper med forklaring til de er særskilt verifisert'
+/** Kontrollørens beslutninger i gjennomgangen av d6cc3dd 31.10.2026; ingen klinisk godkjenning. */
+const RUNDE_9_BESLUTNING = {
+  omfang:
+    'bare kontrollerte tilfeller med faktisk tilgjengelig foretrukket reduksjon er med: vortioksetin ved lang behandlingstid er tatt ut, klomipramin bare 50 → 45 mg ved lang behandlingstid med hele tabletter og bare nei til depresjon og tvangstilstander, og nye eller endrede styrker i FEST utvider ikke et tilfelle',
+  vortioksetinLang:
+    'vortioksetin ved lang behandlingstid: uten en tilgjengelig reduksjon på 5–10 % er planen et forklarende stopp, ikke et valgbart trinn på 25 %; 25 % skal ikke kalles foretrukket i dette scenariet',
+} as const
 
-const runde8 = (regelversjon: number): Avklaring => ({ dato: RUNDE_8, ...kontrollor, regelversjon, merknad: `Kontrollørens gjennomgang av 0ae6d07 31.10.2026, ${RUNDE_8_BESLUTNING}` })
+const runde9 = (regelversjon: number, hva: keyof typeof RUNDE_9_BESLUTNING): Avklaring => ({ dato: RUNDE_9, ...kontrollor, regelversjon, merknad: `Kontrollørens gjennomgang av d6cc3dd 31.10.2026, ${RUNDE_9_BESLUTNING[hva]}` })
 
 const runde5 = (regelversjon: number, hva: keyof typeof RUNDE_5_BESLUTNING): Avklaring => ({
   dato: RUNDE_5,
@@ -504,9 +515,11 @@ const LAV: Risikogruppe = {
   tittel: 'gjentatt prosentvis nedtrapping',
   prosent: {
     ...MIDDELS.prosent,
-    begrunnelse: 'Lav potensiell risiko (RCPsych) og lang halveringstid: 25 % av aktuell dose per trinn som standard; forskriveren kan velge 5–50 %, og over 25 % krever begrunnelse.',
-    henvisninger: [RCPSYCH.middelsRisiko, RCPSYCH.plan, RCPSYCH.tid],
+    begrunnelse:
+      'Lav potensiell risiko (RCPsych) og lang halveringstid: 25 % av aktuell dose per trinn som standard ved kort behandlingstid; forskriveren kan velge 5–50 %, og over 25 % krever begrunnelse. Etter lang behandlingstid er forslaget 10 %, og mer enn 10 % krever begrunnelse (kontrollørens gjennomgang av d6cc3dd).',
+    henvisninger: [RCPSYCH.middelsRisiko, RCPSYCH.plan, RCPSYCH.tid, RCPSYCH.langvarig],
   },
+  langOver: 10,
   dager: MIDDELS.dager,
   lavtTrinn: true,
 }
@@ -553,7 +566,7 @@ function reduksjon(g: Risikogruppe, avklaring: Avklaring, versjon: number): Para
             grunnlag: vurdering(
               'Etter lang behandlingstid bør reduksjonen vanligvis være 5–10 % (RCPsych, fagvurderingen 29.10.2026); mer krever begrunnelse, så et raskere valg aldri står som likeverdig standard.',
               [RCPSYCH.langvarig],
-              g === FLUOKSETIN ? runde3(versjon, 'fluoksetinLang') : runde2(versjon, 'langOver'),
+              g === FLUOKSETIN ? runde3(versjon, 'fluoksetinLang') : g === LAV ? runde9(versjon, 'vortioksetinLang') : runde2(versjon, 'langOver'),
             ),
           },
         ]
@@ -576,7 +589,7 @@ function reduksjon(g: Risikogruppe, avklaring: Avklaring, versjon: number): Para
       grunnlag: vurdering(
         `Etter lang behandlingstid er 5–10 % per trinn det foretrukne utgangspunktet (RCPsych), så forslaget er ${g.langOver} % i stedet for ${g.prosent.standard} %. Et større trinn er et synlig, begrunnet avvik fra det, aldri et likeverdig standardforslag. Et konservativt OUSFAR-valg, ikke en empirisk validert terskel.`,
         [RCPSYCH.langvarig],
-        runde5(versjon, 'langStandard'),
+        g === LAV ? runde9(versjon, 'vortioksetinLang') : runde5(versjon, 'langStandard'),
       ),
     },
   }
@@ -733,19 +746,20 @@ interface Stoffregel {
    * Tilfellene kontrolløren har avgrenset en mulig klinisk godkjenning til
    * (gjennomgangen av 0ae6d07, P7.5): startdosene per legemiddelform (FEST-kode)
    * ved kort og lang behandlingstid i hovedregelen og i den langsomme
-   * varianten. Uten tilfeller gir regelen aldri en klinisk plan.
+   * varianten, og styrkene i FEST per form som er kontrollert (gjennomgangen
+   * av d6cc3dd). Uten tilfeller gir regelen aldri en klinisk plan.
    */
-  klinisk?: { kort?: Startdoser; lang?: Startdoser; langsom?: Startdoser; uten_deling?: Utsagn }
+  klinisk?: { kort?: Startdoser; lang?: Startdoser; langsom?: Startdoser; styrker: Startdoser; uten_deling?: Utsagn }
 }
 
-/** Startdosene per legemiddelform (FEST-kode). */
+/** Doser i mg per legemiddelform (FEST-kode): startdosene eller styrkene. */
 type Startdoser = Partial<Record<string, number[]>>
 
 /**
  * Det kliniske omfanget av en P7-regel ({@link Kliniskomfang}): tilfellene i
  * `doser`, ved lang behandlingstid med trinnstørrelsen som er kontrollert.
  */
-function kliniskOmfang(doser: [Startdoser | undefined, boolean][], versjon: number, uten_deling?: Utsagn): Kliniskomfang {
+function kliniskOmfang(doser: [Startdoser | undefined, boolean][], versjon: number, klinisk?: Stoffregel['klinisk']): Kliniskomfang {
   return {
     tilfeller: doser.flatMap(([d, lang]) =>
       Object.entries(d ?? {}).map(([legemiddelform, startdoser]) => ({
@@ -753,13 +767,14 @@ function kliniskOmfang(doser: [Startdoser | undefined, boolean][], versjon: numb
         startdoser: startdoser!,
         svar: lang ? { [LANG_BEHANDLINGSTID.id]: true } : {},
         ...(lang && { justert: { [STI.prosent]: LANG_PROSENT } }),
+        styrker: { fra: klinisk!.styrker[legemiddelform]! },
       })),
     ),
-    ...(uten_deling && { uten_deling: { grunnlag: vurdering(uten_deling.tekst, uten_deling.henvisninger, runde8(versjon)) } }),
+    ...(klinisk?.uten_deling && { uten_deling: { grunnlag: vurdering(klinisk.uten_deling.tekst, klinisk.uten_deling.henvisninger, runde9(versjon, 'omfang')) } }),
     grunnlag: vurdering(
-      'Tilfellene er cellene i aksepttesten med FEST (startdose, form og scenario) der en første reduksjon med foretrukket faktisk reduksjon kan gis, slik kontrolløren valgte dem ut; ingen laveste styrke og ingen videreføring er med.',
+      'Tilfellene er cellene i aksepttesten med FEST (startdose, form, scenario og preparatstyrkene) der en første reduksjon med foretrukket faktisk reduksjon kan gis, slik kontrolløren valgte dem ut; ingen laveste styrke og ingen videreføring er med, og bare svarene nei på stoffets spørsmål om pasientgruppe og indikasjon.',
       [],
-      runde8(versjon),
+      runde9(versjon, 'omfang'),
     ),
   }
 }
@@ -944,8 +959,8 @@ const hovedversjoner = (s: Stoffregel) => [...(s.tidligere ?? [UTKAST, KONTROLL_
 
 function seponeringsregel(s: Stoffregel, langsom = false): Regel {
   const versjoner = langsom
-    ? [NY_ETTER_RUNDE_2(`langsom variant for ${s.navn} etter tidligere seponeringssymptomer.`), KONTROLL_5, ...(s.senere ?? []), VALG_AV_DOSE, KONTROLL_6, KONTROLL_7, KONTROLL_8]
-    : [...hovedversjoner(s), KONTROLL_6, KONTROLL_7, KONTROLL_8]
+    ? [NY_ETTER_RUNDE_2(`langsom variant for ${s.navn} etter tidligere seponeringssymptomer.`), KONTROLL_5, ...(s.senere ?? []), VALG_AV_DOSE, KONTROLL_6, KONTROLL_7, KONTROLL_8, KONTROLL_9]
+    : [...hovedversjoner(s), KONTROLL_6, KONTROLL_7, KONTROLL_8, KONTROLL_9]
   const versjon = versjoner.length
   const gruppe = langsom ? LANGSOM : s.gruppe
   const avklaring = langsom ? runde2(versjon, 'langsom') : beslutning1(versjon)
@@ -1010,7 +1025,7 @@ function seponeringsregel(s: Stoffregel, langsom = false): Regel {
     },
     referanser: [pn(`SwitchAntidepressants:${s.kode}>Stop`)],
     eksempler: [...[...eksempler, ...grenseeksempler(s)].map((e) => besvart(vilkar, e)), ...kontrolleksempler(vilkar, start)],
-    klinisk_omfang: kliniskOmfang(langsom ? [[s.klinisk?.langsom, false]] : [[s.klinisk?.kort, false], [s.klinisk?.lang, true]], versjon, s.klinisk?.uten_deling),
+    klinisk_omfang: kliniskOmfang(langsom ? [[s.klinisk?.langsom, false]] : [[s.klinisk?.kort, false], [s.klinisk?.lang, true]], versjon, s.klinisk),
     godkjenning: { status: 'til_faglig_kontroll', historikk: historikk(versjoner) },
   }
 }
@@ -1209,7 +1224,12 @@ const escitalopram = stoff({
     { merknad: 'Flyttet fra pilotsettet (P4) til nedtrappingsreglene (P7), så escitalopram følger det samme prinsippet som de andre antidepressivene.', dato: RUNDE_1 },
     KONTROLL_3,
   ],
-  klinisk: { kort: { [FEST_FORM.tablett]: [20], [FEST_FORM.draper]: [10, 20] }, lang: { [FEST_FORM.draper]: [10, 20] }, langsom: { [FEST_FORM.draper]: [20] } },
+  klinisk: {
+    kort: { [FEST_FORM.tablett]: [20], [FEST_FORM.draper]: [10, 20] },
+    lang: { [FEST_FORM.draper]: [10, 20] },
+    langsom: { [FEST_FORM.draper]: [20] },
+    styrker: { [FEST_FORM.tablett]: [5, 10, 20], [FEST_FORM.draper]: [1] },
+  },
   kildetro: [
     utsagn('Escitalopram trappes ned gradvis over minst én til to uker, ikke seponeres brått.', SPC.cipralexSeponering),
     utsagn('Hos eldre over 65 år, ved mild eller moderat nedsatt leverfunksjon og hos kjente langsomme CYP2C19-metaboliserere er høyeste dose 10 mg daglig.', P7.cipralexEldre, P7.cipralexLever, P7.cipralexCyp2c19),
@@ -1267,7 +1287,7 @@ const sertralin = stoff({
   kode: 'Se',
   dose: { lavest: 25, hoyest: 200, kilde: SPC.zoloftDose },
   gruppe: MIDDELS,
-  klinisk: { kort: { [FEST_FORM.tablett]: [100, 200] } },
+  klinisk: { kort: { [FEST_FORM.tablett]: [100, 200] }, styrker: { [FEST_FORM.tablett]: [25, 50, 100] } },
   kildetro: [utsagn('Sertralin trappes ned gradvis over minst én til to uker; noen trenger flere uker eller måneder.', SPC.zoloftSeponering)],
   usikkerhet: [
     'Trinnene under 25 mg kan ikke gis med hele tabletter på 25, 50 og 100 mg. Konsentratet til mikstur (20 mg/ml) brukes ikke før doseringen per ml og måleoppløsningen er dokumentert og nøyaktigheten kontrollert (P5).',
@@ -1352,7 +1372,7 @@ const fluoksetin = stoff({
   kode: 'Fo',
   dose: { lavest: 20, hoyest: 60, kilde: SPC.fluoksetinDose },
   gruppe: FLUOKSETIN,
-  klinisk: { kort: { [FEST_FORM.dispergerbarTablett]: [40, 60], [FEST_FORM.tablett]: [40, 60] } },
+  klinisk: { kort: { [FEST_FORM.dispergerbarTablett]: [40, 60], [FEST_FORM.tablett]: [40, 60] }, styrker: { [FEST_FORM.dispergerbarTablett]: [20], [FEST_FORM.tablett]: [20] } },
   kildetro: [
     utsagn('Fluoksetin trappes ned gradvis over minst én til to uker; aktivt stoff finnes i kroppen i flere uker etter seponering.', SPC.fluoksetinSeponering),
     utsagn('Ved 20 mg daglig kan dosering annenhver dag være en egnet reduksjon; ved 40–60 mg brukes gradvis nedtrapping.', NICE.fluoksetin),
@@ -1441,7 +1461,7 @@ const fluvoksamin = stoff({
   gruppe: MIDDELS,
   fordeling: { over_mg: kilde(150, 'mg', 'bindende_krav', P7.fevarinFordeling), antall: [2, 3], grunnlag: { type: 'kilde', henvisninger: [P7.fevarinFordeling] } },
   senere: [LIKE_STORE_DOSER],
-  klinisk: { kort: { [FEST_FORM.tablett]: [100, 300] } },
+  klinisk: { kort: { [FEST_FORM.tablett]: [100, 300] }, styrker: { [FEST_FORM.tablett]: [50, 100] } },
   kildetro: [
     utsagn('Fluvoksamin trappes ned gradvis over minst én til to uker, ikke seponeres brått.', P7.fevarinSeponering),
     utsagn('Opptil 150 mg kan gis som én dose; en døgndose over 150 mg fordeles på 2 eller 3 doser.', P7.fevarinFordeling),
@@ -1503,7 +1523,7 @@ const vortioksetin = stoff({
   dose: { lavest: 5, hoyest: 20, kilde: P7.brintellixDose },
   gruppe: LAV,
   grenser: [forsiktig(10, P7.brintellixEldre, ja(VORTIOKSETIN_ELDRE))],
-  klinisk: { kort: { [FEST_FORM.tablett]: [20] }, lang: { [FEST_FORM.tablett]: [20] } },
+  klinisk: { kort: { [FEST_FORM.tablett]: [20] }, styrker: { [FEST_FORM.tablett]: [5, 10, 15, 20] } },
   kildetro: [
     utsagn('Gradvis dosereduksjon kan vurderes, men preparatomtalen har ikke data nok til en bestemt nedtrappingsplan.', P7.brintellixSeponering),
     utsagn('Fra 65 år anbefales forsiktighet ved doser over 10 mg, fordi data er begrenset; det er ingen kontraindikasjon.', P7.brintellixEldre),
@@ -1525,21 +1545,22 @@ const vortioksetin = stoff({
       'fra dag 309: 0,64 mg',
       'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
     ]),
-    eks('fra-10-mg-lang', 'Fra 10 mg etter lang behandlingstid med 25 % og 28 dager: ingen begrunnelse trengs ved lav risiko.', 10, [
-      'dag 1–28: 7,5 mg',
-      'dag 29–56: 5,63 mg',
-      'dag 57–84: 4,22 mg',
-      'dag 85–112: 3,17 mg',
-      'dag 113–140: 2,38 mg',
-      'dag 141–168: 1,79 mg',
-      'dag 169–196: 1,34 mg',
-      'dag 197–224: 1,01 mg',
-      'dag 225–252: 0,76 mg',
-      'dag 253–280: 0,57 mg',
-      'dag 281–308: 0,43 mg',
-      'fra dag 309: 0,32 mg',
+    eks('fra-10-mg-lang', 'Fra 10 mg etter lang behandlingstid med forslaget 10 % og 28 dager (gjennomgangen av d6cc3dd).', 10, [
+      'dag 1–28: 9 mg',
+      'dag 29–56: 8,1 mg',
+      'dag 57–84: 7,29 mg',
+      'dag 85–112: 6,56 mg',
+      'dag 113–140: 5,9 mg',
+      'dag 141–168: 5,31 mg',
+      'dag 169–196: 4,78 mg',
+      'dag 197–224: 4,3 mg',
+      'dag 225–252: 3,87 mg',
+      'dag 253–280: 3,48 mg',
+      'dag 281–308: 3,13 mg',
+      'fra dag 309: 2,82 mg',
       'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt',
     ], { lang: true }),
+    stopp('lang-25-prosent-uten-begrunnelse', 'Etter lang behandlingstid krever mer enn 10 % per trinn en begrunnelse, også ved lav risiko (gjennomgangen av d6cc3dd).', 10, KREVER_BEGRUNNELSE, { lang: true, justert: { prosent: 25 } }),
     stopp('lang-14-dager-uten-begrunnelse', 'Etter lang behandlingstid krever 14 dager per trinn en begrunnelse.', 10, KREVER_BEGRUNNELSE, { lang: true, justert: { dager: 14 } }),
   ],
   langsom: { startdose_mg: 10, forventet: [
@@ -1661,7 +1682,7 @@ const amitriptylin = stoff({
   dose: { lavest: 10, hoyest: 150, kilde: P7.sarotexDose },
   gruppe: MIDDELS,
   grenser: [forsiktig(100, P7.sarotexEldre, ja(AMITRIPTYLIN_ELDRE)), forsiktig(75, P7.sarotexSmerte, ja(AMITRIPTYLIN_SMERTE))],
-  klinisk: { kort: { [FEST_FORM.tablett]: [25, 50, 75, 100, 150] }, lang: { [FEST_FORM.tablett]: [50, 75] } },
+  klinisk: { kort: { [FEST_FORM.tablett]: [25, 50, 75, 100, 150] }, lang: { [FEST_FORM.tablett]: [50, 75] }, styrker: { [FEST_FORM.tablett]: [10, 25, 50] } },
   kildetro: [
     utsagn('Amitriptylin trappes gradvis ned over flere uker når behandlingen avsluttes.', P7.sarotexSeponering),
     utsagn('Ved depresjon hos eldre over 65 år og ved hjerte- og karsykdom brukes doser over 100 mg med forsiktighet.', P7.sarotexEldre),
@@ -1703,9 +1724,9 @@ const klomipramin = stoff({
   gruppe: MIDDELS,
   grenser: [forsiktig(150, P7.anafranilIndikasjon), maks(150, P7.anafranilIndikasjon, nei(KLOMIPRAMIN_INDIKASJON))],
   klinisk: {
-    kort: { [FEST_FORM.tablett]: [25, 50] },
-    lang: { [FEST_FORM.tablett]: [25, 50] },
-    langsom: { [FEST_FORM.tablett]: [50] },
+    // Bare 50 → 45 mg ved lang behandlingstid gis med hele tabletter (gjennomgangen av d6cc3dd).
+    lang: { [FEST_FORM.tablett]: [50] },
+    styrker: { [FEST_FORM.tablett]: [10, 25] },
     uten_deling: utsagn(
       'Anafranil 10 mg og 25 mg har ingen delestrek, og at tablettene kan deles, er ikke dokumentert. En plan som deler en tablett, er derfor utenfor det kliniske omfanget til delingen er dokumentert (kontrollørens gjennomgang av 0ae6d07 31.10.2026).',
       P7.anafranilDose,
@@ -1756,7 +1777,7 @@ const nortriptylin = stoff({
   dose: { lavest: 25, hoyest: 200, kilde: P7.noritrenDose },
   gruppe: MIDDELS,
   grenser: [forsiktig(150, P7.noritrenDose), forsiktig(50, P7.noritrenDose, ja(NORTRIPTYLIN_ELDRE))],
-  klinisk: { kort: { [FEST_FORM.tablett]: [25, 50, 150] }, lang: { [FEST_FORM.tablett]: [50] } },
+  klinisk: { kort: { [FEST_FORM.tablett]: [25, 50, 150] }, lang: { [FEST_FORM.tablett]: [50] }, styrker: { [FEST_FORM.tablett]: [10, 25, 50] } },
   kildetro: [
     utsagn('Brå seponering av nortriptylin etter lang tids bruk kan gi abstinenssymptomer.', P7.noritrenSeponering),
     utsagn('Dosen økes om nødvendig til 150 mg daglig og bare i sjeldne tilfeller til 200 mg; hos eldre er vanlig vedlikeholdsdose 25–50 mg.', P7.noritrenDose),
@@ -1896,9 +1917,15 @@ const ANNENHVER_DAG_UTEN_OMFANG: Versjon = {
   dato: RUNDE_8,
 }
 
+/** Annenhver dag etter kontrollørens gjennomgang av d6cc3dd 31.10.2026: grunnlaget for omfanget er felles med de andre reglene, og omfanget er fortsatt tomt. */
+const ANNENHVER_DAG_GRUNNLAG: Versjon = {
+  merknad: 'Grunnlaget for det kliniske omfanget er oppdatert etter kontrollørens gjennomgang av d6cc3dd 31.10.2026 (P7.5); omfanget er fortsatt tomt, så regelen gir ingen klinisk plan.',
+  dato: RUNDE_9,
+}
+
 /** Fluoksetin 20 mg annenhver dag: en valgfri strategi ved 20 mg daglig, bare for fluoksetin (beslutning 5.10). */
 function fluoksetinAnnenhverDag(): Regel {
-  const versjoner = [NY_ETTER_RUNDE_2('fluoksetin 20 mg annenhver dag som valgfri strategi ved 20 mg daglig.'), KONTROLL_5, ANNENHVER_DAG_UTEN_OMFANG]
+  const versjoner = [NY_ETTER_RUNDE_2('fluoksetin 20 mg annenhver dag som valgfri strategi ved 20 mg daglig.'), KONTROLL_5, ANNENHVER_DAG_UTEN_OMFANG, ANNENHVER_DAG_GRUNNLAG]
   const versjon = versjoner.length
   const avklaring = runde2(versjon, 'annenhverDag')
   const inngang = runde3(versjon, 'annenhverDag')
@@ -2200,10 +2227,10 @@ const harTekst = (s: Stoffregel): s is Stoffregel & { ikkeBeregnbar: NonNullable
 
 export const NEDTRAPPINGSSETT: Regelsett = {
   id: 'ousfar-verktoy-nedtrapping',
-  versjon: 11,
+  versjon: 12,
   modell: REGELMODELLVERSJON,
   beskrivelse:
-    'Utkast til nedtrappingsregler for antidepressiva (P7): én regel per virkestoff med forsvarlig kildegrunnlag, laget fra preparatomtalen, NICE og RCPsych, og en langsom variant av hver beregnbar regel etter tidligere seponeringssymptomer. Hver plan er et startforslag med minstetider som forskriveren kan justere innenfor valgområdene fra fagvurderingen; ingen plan går til null eller har en fast nedre grense. Kan et trinn ikke gis nøyaktig med preparatene, kan forskriveren velge blant de nærmeste dosene som kan gis, innenfor det foretrukne området der ingen begrunnelse kreves (beslutning P7-A og gjennomgangen av 9cb420b); et avvik tilbys ikke, og planen er da et forklarende stopp. Hver beregnbar regel har et klinisk omfang (gjennomgangen av 0ae6d07): en godkjenning kan bare gjelde de kontrollerte tilfellene av legemiddelform, startdose, behandlingstid, tidligere seponeringssymptomer og trinnstørrelse, og alt annet stopper med forklaring. Tekstreglene for bupropion og agomelatin er klinisk godkjent etter substanskontrollen 30.10.2026; duloksetin, venlafaksin, citalopram, mirtazapin, moklobemid og paroksetin er tekstregler uten beregning, og fluoksetinregelen gjelder ikke de harde kapslene. De øvrige reglene er til ny faglig kontroll, og ingen beregnet plan er klinisk godkjent.',
+    'Utkast til nedtrappingsregler for antidepressiva (P7): én regel per virkestoff med forsvarlig kildegrunnlag, laget fra preparatomtalen, NICE og RCPsych, og en langsom variant av hver beregnbar regel etter tidligere seponeringssymptomer. Hver plan er et startforslag med minstetider som forskriveren kan justere innenfor valgområdene fra fagvurderingen; ingen plan går til null eller har en fast nedre grense. Kan et trinn ikke gis nøyaktig med preparatene, kan forskriveren velge blant de nærmeste dosene som kan gis, innenfor det foretrukne området der ingen begrunnelse kreves (beslutning P7-A og gjennomgangen av 9cb420b); et avvik tilbys ikke, og planen er da et forklarende stopp. Hver beregnbar regel har et klinisk omfang (gjennomgangen av 0ae6d07): en godkjenning kan bare gjelde de kontrollerte tilfellene av legemiddelform, startdose, behandlingstid, tidligere seponeringssymptomer og trinnstørrelse, og alt annet stopper med forklaring, også en plan med en preparatstyrke som ikke er kontrollert (gjennomgangen av d6cc3dd). Tekstreglene for bupropion og agomelatin er klinisk godkjent etter substanskontrollen 30.10.2026; duloksetin, venlafaksin, citalopram, mirtazapin, moklobemid og paroksetin er tekstregler uten beregning, og fluoksetinregelen gjelder ikke de harde kapslene. De øvrige reglene er til ny faglig kontroll, og ingen beregnet plan er klinisk godkjent.',
   regler: [
     ...STOFFER.flatMap((s) => (harTekst(s) ? [] : [seponeringsregel(s), seponeringsregel(s, true)])),
     fluoksetinAnnenhverDag(),

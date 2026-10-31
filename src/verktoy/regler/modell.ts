@@ -33,7 +33,7 @@
 import type { Formuleringsklasse } from '../festformuleringer'
 
 /** Økes når formen på regler eller regelsett endres. */
-export const REGELMODELLVERSJON = 10
+export const REGELMODELLVERSJON = 11
 
 /* --- Kilder ----------------------------------------------------------------- */
 
@@ -542,6 +542,12 @@ export interface Klinisktilfelle {
   svar: Record<string, boolean>
   /** Verdiene for justerbare parametre tilfellet er kontrollert med (sti → verdi); ellers regelens forslag for svarene. */
   justert?: Record<string, number>
+  /**
+   * Styrkene (mg per enhet) planen kan bruke per forløp (id → styrker), de
+   * som var i FEST da tilfellet ble kontrollert. En ny styrke i et senere
+   * FEST-uttrekk utvider ikke tilfellet: en plan som bruker den, er utenfor.
+   */
+  styrker?: Record<string, number[]>
 }
 
 export interface Regelsett {
@@ -647,6 +653,9 @@ export function tallfeil(r: Pick<Regel, 'plan' | 'inndata' | 'klinisk_omfang'>):
   }
   for (const [i, t] of (r.klinisk_omfang?.tilfeller ?? []).entries()) {
     if (t.startdoser.length === 0 || !t.startdoser.every(positiv)) feil.push(`det kliniske omfanget har ugyldige startdoser i tilfelle ${i + 1}`)
+    for (const [f, mg] of Object.entries(t.styrker ?? {})) {
+      if (!r.plan.forlop.some((x) => x.id === f) || mg.length === 0 || !mg.every(positiv)) feil.push(`det kliniske omfanget har ugyldige styrker for ${f} i tilfelle ${i + 1}`)
+    }
   }
   return feil
 }

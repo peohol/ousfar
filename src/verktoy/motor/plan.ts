@@ -243,7 +243,10 @@ export function tilfelletekst(regel: Regel, t: Klinisktilfelle): string {
     const p = parametere.get(sti)
     return p ? [`${p.justerbar.toLowerCase()} ${medEnhet(x, p)}`] : []
   })
-  return [`${listeOg(t.startdoser.map(tall))} mg`, t.legemiddelform && `FEST-legemiddelform ${t.legemiddelform}`, ja.length > 0 ? `ved ${listeOg(ja)} og nei på de andre spørsmålene` : 'med nei på alle spørsmålene', ...verdier].filter(Boolean).join(', ')
+  const styrker = Object.entries(t.styrker ?? {}).map(([f, mg]) => `styrker (${f}) ${listeOg(mg.map(tall))} mg`)
+  return [`${listeOg(t.startdoser.map(tall))} mg`, t.legemiddelform && `FEST-legemiddelform ${t.legemiddelform}`, ja.length > 0 ? `ved ${listeOg(ja)} og nei på de andre spørsmålene` : 'med nei på alle spørsmålene', ...verdier, ...styrker]
+    .filter(Boolean)
+    .join(', ')
 }
 
 /**
@@ -268,13 +271,21 @@ export function omfangsfeil(regel: Regel, inndata: Doseplaninndata, forlop: Prak
       Object.entries(svar).every(([id, v]) => (t.svar[id] ?? false) === v) &&
       (!t.legemiddelform || [...former].every((k) => k === t.legemiddelform)),
   )
-  // Verdiene planen bruker (forskriverens valg eller forslaget) mot verdiene tilfellet er kontrollert med.
-  const avvik = (t: Klinisktilfelle) =>
-    forslag.flatMap(([sti, p]) => {
+  // Verdiene planen bruker (forskriverens valg eller forslaget) og styrkene i planen mot det tilfellet er kontrollert med.
+  const avvik = (t: Klinisktilfelle) => [
+    ...forslag.flatMap(([sti, p]) => {
       const brukt = inndata.justert?.[sti] ?? p.verdi
       const kontrollert = t.justert?.[sti] ?? p.verdi
       return brukt === null || kontrollert === null || Math.abs(brukt - kontrollert) < 1e-9 ? [] : [`${p.justerbar} ${medEnhet(brukt, p)} er ikke verdien som er kontrollert (${medEnhet(kontrollert, p)}), heller ikke med begrunnelse.`]
-    })
+    }),
+    ...(t.styrker
+      ? forlop.flatMap((f) => {
+          const kontrollert = t.styrker![f.id] ?? []
+          const nye = [...new Set(f.perioder.flatMap((p) => p.elementer.map((e) => e.mg)))].filter((mg) => !kontrollert.some((k) => Math.abs(k - mg) < 1e-9)).sort((a, b) => a - b)
+          return nye.length === 0 ? [] : [`Planen bruker ${nye.length > 1 ? 'styrkene' : 'styrken'} ${listeOg(nye.map(tall))} mg (forløp ${f.id}), som ikke er blant styrkene i FEST som er kontrollert (${kontrollert.length > 0 ? `${listeOg(kontrollert.map(tall))} mg` : 'ingen'}).`]
+        })
+      : []),
+  ]
   if (kandidater.length === 0) {
     const kontrollert = omfang.tilfeller.map((t) => tilfelletekst(regel, t))
     feil.push(
