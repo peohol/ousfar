@@ -12,6 +12,21 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.116.0',
+    dato: '2026-10-31',
+    sammendrag: 'Nødstopp for de kliniske verktøyene, og tydeligere doseplaner etter en pilotgjennomgang',
+    typer: ['Funksjonalitet', 'Fag', 'Design / layout'],
+    omfang: 'Mindre omfang',
+    gjelder: ['verktoy', 'vinduer'],
+    punkter: [
+      'Administratorer kan deaktivere alle verktøyene, ett verktøy eller én klinisk godkjent regel med en gang, fra «Kliniske verktøy» i adminmenyen, og oppheve sperren når feilen er rettet. Grunnen vises for brukerne, og hver sperre står i en historikk. Kan verktøyet ikke kontrollere om det er deaktivert, viser det verken doseplan eller fagtekst.',
+      'Xeplion fra 3 mg peroral paliperidon kan nå beregnes: skjemaet ber om vedlikeholdsdosen i spennet 25–50 mg, som forskriveren velger. Måldosen for depot står i mg per injeksjon.',
+      'Planen for Xeplion viser nå at den perorale paliperidonen er seponert fra dag 1.',
+      'Planen for bytte fra sertralin til mirtazapin sier rett under tittelen at den er et startforløp med revurdering, ikke en fullstendig plan.',
+      'Verktøyene beskrives som beregnede forslag etter regler som er godkjent for et avgrenset omfang, ikke som fullstendige doseplaner.',
+    ],
+  },
+  {
     versjon: '1.115.0',
     dato: '2026-10-30',
     sammendrag: 'Doseplan for oppstart av Abilify Maintena og Xeplion, bytte fra sertralin til mirtazapin og nedtrapping av antidepressiva',

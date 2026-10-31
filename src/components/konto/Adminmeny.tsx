@@ -10,8 +10,9 @@ import { Brukerliste } from './Brukerliste'
 import { Datakilder } from './Datakilder'
 import type { Kurateringsklient } from '../../kuratering/klient'
 import { Kurateringsoversikt } from '../kuratering/Utgavelister'
+import { Verktoysperrer } from './Verktoysperrer'
 
-type Panel = 'brukere' | 'datakilder' | 'autoerstatt' | 'kurateringer' | null
+type Panel = 'brukere' | 'datakilder' | 'autoerstatt' | 'kurateringer' | 'verktoysperrer' | null
 
 /**
  * Navnene på datakildene som bør ses over, sjekket som idémenyen ser etter nye
@@ -34,7 +35,7 @@ function useDatakildetilsyn(admin: boolean, egenLeser?: Datakildeleser) {
 
 /**
  * Administratorenes egen meny i toppmenyen, til venstre for kontoen: brukerne,
- * driftstatusen for datakildene og autoerstatt-reglene i teksteditorene. Andre ser den ikke. Den er et grensesnitt,
+ * driftstatusen for datakildene, nødstoppen for de kliniske verktøyene og autoerstatt-reglene i teksteditorene. Andre ser den ikke. Den er et grensesnitt,
  * ikke en tilgangskontroll: databasen og Edge-funksjonene slår opp rollen selv.
  * Bør en datakilde ses over, står det en prikk på knappen og på «Datakilder».
  */
@@ -83,6 +84,9 @@ export function Adminmeny({ leser, kuratering }: { leser?: Datakildeleser; kurat
                 <Menyvalg ikon="oppgaver" tekst="Kurateringer" onClick={apne('kurateringer')} />
               </li>
               <li>
+                <Menyvalg ikon="lock" tekst="Kliniske verktøy" onClick={apne('verktoysperrer')} />
+              </li>
+              <li>
                 <Menyvalg ikon="edit" tekst="Autoerstatt" onClick={apne('autoerstatt')} />
               </li>
             </ul>
@@ -93,6 +97,7 @@ export function Adminmeny({ leser, kuratering }: { leser?: Datakildeleser; kurat
       <Datakilder apen={panel === 'datakilder'} onLukk={lukkPanel} />
       <Autoerstattregler apen={panel === 'autoerstatt'} onLukk={lukkPanel} />
       <Kurateringsoversikt apen={panel === 'kurateringer'} klient={kuratering} onLukk={lukkPanel} />
+      <Verktoysperrer apen={panel === 'verktoysperrer'} onLukk={lukkPanel} />
     </>
   )
 }

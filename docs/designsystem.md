@@ -414,7 +414,9 @@ Helt til høyre står tre knapper:
 - **Idéer** (`src/components/ideer/Ideknapp.tsx`) åpner idéene. Har noen
   kommentert noe brukeren ikke har sett, står det en prikk på knappen.
 - **Administrasjon** (`src/components/konto/Adminmeny.tsx`), bare for
-  administratorer: brukerne og datakildene.
+  administratorer: brukerne, datakildene, kurateringene, nødstoppen for de
+  kliniske verktøyene («Kliniske verktøy», `docs/verktøy-p11-publisering.md`)
+  og autoerstatt.
 - **Kontoen** (`src/components/konto/Kontomeny.tsx`), avataren: hvem som er
   logget inn, «Endre navn og profilbilde», «Preferanser» og «Logg ut».
   «Preferanser» er en skuff i menyen med bryteren for hurtigtastene

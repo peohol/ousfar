@@ -2,10 +2,11 @@
  * Regelmodellen og pilotsettet (P4), doseplanmotoren (P5) og nedtrappingsreglene (P7) for OUSFAR
  * Verktøy (`docs/verktøy-utviklingsplan.md`).
  *
- *   npm run verktoy:regler -- kontroll   Kontrollerer regelsettene (kilder, grunnlag, godkjenning, regneeksempler)
+ *   npm run verktoy:regler -- kontroll   Kontrollerer regelsettene (kilder, grunnlag, godkjenning, regneeksempler) og testmatrisen fra P11
  *   npm run verktoy:regler -- rapport    docs/verktøy-p4-pilotsett.md, docs/verktøy-p7-regelutkast.md og docs/verktøy-p7-dekning.md
  *   npm run verktoy:regler -- motorrapport   docs/verktøy-p5-testtilfeller.md (doseplanmotoren, syntetiske data)
  *   npm run verktoy:regler -- aksepttest     docs/verktøy-p7-aksepttest.md (P7-reglene med de norske preparatene i FEST-uttrekket)
+ *   npm run verktoy:regler -- pilotmatrise   docs/verktøy-p11-testmatrise.md (de godkjente reglene ende til ende med syntetiske kasus, P11)
  *   npm run verktoy:regler -- hent-fest      Henter FEST-uttrekkene til aksepttesten og pilotreglenes ende-til-ende-tester på nytt (krever VITE_SUPABASE_URL og SUPABASE_SECRET_KEY)
  *
  * Bare `hent-fest` henter noe, og bare ved å lese med `les_legemidler`. Skriptet
@@ -20,11 +21,14 @@ import { disposisjonsfeil } from '../src/verktoy/regler/godkjenning'
 import { kontrollerRegelsett } from '../src/verktoy/regler/kontroll'
 import { lagRegelrapport, REGELRAPPORTER } from '../src/verktoy/regler/rapport'
 import { lagMotorrapport, MOTORRAPPORTFIL } from '../src/verktoy/motor/rapport'
+import { avvikFra, kjorKasus, lagPilotmatriserapport, PILOTKASUS, PILOTMATRISEFIL } from '../src/verktoy/regler/pilotmatrise'
 
 const skriv = (fil: string, innhold: string) => {
   writeFileSync(new URL(`../${fil}`, import.meta.url), innhold)
   console.log(`→ ${fil}`)
 }
+
+const lesUttrekk = (fil: string) => JSON.parse(readFileSync(new URL(`../${fil}`, import.meta.url), 'utf8')) as Festuttrekk
 
 async function kontroll() {
   let antall = 0
@@ -34,6 +38,12 @@ async function kontroll() {
     console.log(feil.length === 0 ? `✓ ${sett.id}: ${sett.regler.length} regler uten feil` : `${sett.id}: ${feil.length} feil`)
     antall += feil.length
   }
+  // De godkjente reglene ende til ende (P11): hvert kasus må gi utfallet det forventer.
+  const uttrekkene = { pilot: lesUttrekk(FEST_PILOT), aksept: lesUttrekk(FEST_AKSEPTTEST) }
+  const avvik = PILOTKASUS.flatMap((k) => avvikFra(k, kjorKasus(k, uttrekkene)).map((f) => `${k.id}: ${f}`))
+  for (const f of avvik) console.error(`✗ testmatrisen: ${f}`)
+  console.log(avvik.length === 0 ? `✓ testmatrisen: ${PILOTKASUS.length} kasus som forventet` : `testmatrisen: ${avvik.length} avvik`)
+  antall += avvik.length
   if (antall > 0) process.exit(1)
 }
 
@@ -47,8 +57,11 @@ async function motorrapport() {
 }
 
 async function aksepttest() {
-  const uttrekk = JSON.parse(readFileSync(new URL(`../${FEST_AKSEPTTEST}`, import.meta.url), 'utf8')) as Festuttrekk
-  skriv(AKSEPTTESTFIL, lagAksepttestrapport(uttrekk))
+  skriv(AKSEPTTESTFIL, lagAksepttestrapport(lesUttrekk(FEST_AKSEPTTEST)))
+}
+
+async function pilotmatrise() {
+  skriv(PILOTMATRISEFIL, lagPilotmatriserapport({ pilot: lesUttrekk(FEST_PILOT), aksept: lesUttrekk(FEST_AKSEPTTEST) }))
 }
 
 /** Virkestoffene i pilotreglene; reglene testes ende til ende med preparatene i FEST. */
@@ -75,7 +88,7 @@ async function hentFest() {
 }
 
 const [kommando] = process.argv.slice(2).filter((a) => a !== '--')
-const kommandoer: Record<string, () => Promise<void>> = { kontroll, rapport, motorrapport, aksepttest, 'hent-fest': hentFest }
+const kommandoer: Record<string, () => Promise<void>> = { kontroll, rapport, motorrapport, aksepttest, pilotmatrise, 'hent-fest': hentFest }
 const k = kommando ? kommandoer[kommando] : undefined
 if (!k) {
   console.error(`Bruk: npm run verktoy:regler -- <${Object.keys(kommandoer).join(' | ')}>`)

@@ -105,14 +105,43 @@ export function lesDose(tekst: string): number | undefined {
   return x > 0 && Number.isFinite(x) ? x : undefined
 }
 
-/** Om regelen spør etter en måldose. Ingen regel har en skjult standardverdi. */
-export const trengerMaldose = (r: Regel) => r.inndata.some((k) => k.navn === 'maldose')
+/** Radene i regelens omregningstabeller (`Dosekilde` av typen `tabell`), som de står i regelen. */
+export function omregningsrader(r: Regel): { fra_mg: number; til_mg: number | [number, number] }[] {
+  const ut: { fra_mg: number; til_mg: number | [number, number] }[] = []
+  const finn = (x: unknown): void => {
+    if (!x || typeof x !== 'object') return
+    if (Array.isArray(x)) return x.forEach(finn)
+    const o = x as Record<string, unknown>
+    if (o.type === 'tabell' && Array.isArray(o.rader)) ut.push(...(o.rader as typeof ut))
+    else Object.values(o).forEach(finn)
+  }
+  finn(r.plan)
+  return ut
+}
+
+/** Radene der omregningstabellen gir et spenn, ikke én dose. */
+export const dosespenn = (r: Regel): { fra_mg: number; til_mg: [number, number] }[] =>
+  omregningsrader(r).flatMap((x) => (Array.isArray(x.til_mg) ? [{ fra_mg: x.fra_mg, til_mg: x.til_mg }] : []))
+
+/** Spennet i omregningstabellen for dosen som er skrevet inn; `undefined` når tabellen gir én dose eller ingen. */
+export const spennFor = (r: Regel, skjema: Pick<Planskjema, 'startdose'>) => {
+  const start = lesDose(skjema.startdose)
+  return start === undefined ? undefined : dosespenn(r).find((x) => Math.abs(x.fra_mg - start) < 1e-9)
+}
+
+/**
+ * Om regelen spør etter en måldose: alltid når den har en, og ellers når
+ * omregningstabellen gir et spenn for dosen som er skrevet inn, så
+ * forskriveren må velge dosen i spennet. Ingen regel har en skjult standardverdi.
+ */
+export const trengerMaldose = (r: Regel, skjema: Pick<Planskjema, 'startdose'> = { startdose: '' }) =>
+  r.inndata.some((k) => k.navn === 'maldose') || spennFor(r, skjema) !== undefined
 
 /** Det som mangler før planen kan beregnes, i klartekst; tom når alt er fylt inn. */
 export function mangler(r: Regel, skjema: Planskjema): string[] {
   const ut: string[] = []
   if (lesDose(skjema.startdose) === undefined) ut.push('Aktuell døgndose må fylles inn som et tall større enn 0.')
-  if (trengerMaldose(r) && lesDose(skjema.maldose) === undefined) ut.push('Måldosen må fylles inn som et tall større enn 0.')
+  if (trengerMaldose(r, skjema) && lesDose(skjema.maldose) === undefined) ut.push('Måldosen må fylles inn som et tall større enn 0.')
   if (skjema.startdato && !/^\d{4}-\d{2}-\d{2}$/.test(skjema.startdato)) ut.push('Startdatoen er ikke en gyldig dato.')
   for (const [sti, p] of justerbare(r)) {
     if (skjema.justert[sti]?.trim() && justertVerdi(skjema, sti) === undefined) ut.push(`${p.justerbar} må være et tall større enn 0, eller stå tomt for regelens forslag.`)
@@ -164,7 +193,7 @@ export function inndataFor(r: Regel, valg: Verktoyvalg, skjema: Planskjema): Dos
     }
   }
   const medlem = medlemFor(r, valg)
-  const maldose = trengerMaldose(r) ? lesDose(skjema.maldose) : undefined
+  const maldose = trengerMaldose(r, skjema) ? lesDose(skjema.maldose) : undefined
   const pasientforhold = Object.fromEntries(r.unntak.flatMap((u) => (u.id in skjema.pasientforhold ? [[u.id, skjema.pasientforhold[u.id]!]] : [])))
   const svar = Object.fromEntries((r.sporsmal ?? []).flatMap((x) => (x.id in skjema.svar ? [[x.id, skjema.svar[x.id]!]] : [])))
   const begrunnelse = kanKreveBegrunnelse(r) ? skjema.begrunnelse.trim() : ''
