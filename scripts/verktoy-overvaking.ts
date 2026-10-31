@@ -4,21 +4,14 @@
  * GitHub Actions kjører den hver uke (`.github/workflows/verktoy-overvaking.yml`);
  * den kan også kjøres for hånd.
  *
- *   npm run verktoy:overvaking -- kontroll [--psychiatrienet] [--uten-dokumenter] [--uten-fest] [--forrige <fil>] [--provesak] [--ut <mappe>]
- *   npm run verktoy:overvaking -- vakt <saker.json>
+ *   npm run verktoy:overvaking -- kontroll [--psychiatrienet] [--uten-dokumenter] [--uten-fest] [--provesak] [--ut <mappe>]
  *
- * `--forrige` er funnene som krevde vurdering i forrige kjøring (fra saken);
- * de står videre for en del som ikke blir kontrollert på nytt. `--provesak`
- * legger til et syntetisk funn som prøver varslingen.
+ * `--provesak` lager bare et syntetisk funn som prøver varslingen i appen.
  *
- * `vakt` leser de åpne sakene (`gh issue list --json
- * number,createdAt,labels,comments`) og skriver tiltakene vakten skal gjøre
- * som JSON (`src/verktoy/overvaking/vakt.ts`), med den ansvarlige fra
- * `ANSVARLIG`. Arbeidsflyten `verktoy-overvaking-vakt.yml` utfører dem.
- *
- * Skriver `rapport.md` og `funn.json` i `<mappe>` (standard `overvaking-resultat`,
- * som ikke er en del av repoet) og et sammendrag i terminalen. Avslutter med 0
- * også når noe krever vurdering; arbeidsflyten leser `funn.json`.
+ * Skriver `rapport.md` og `funn.json` (`Overvakingsrapport`) i `<mappe>`
+ * (standard `overvaking-resultat`, som ikke er en del av repoet) og et
+ * sammendrag i terminalen. Avslutter med 0 også når noe krever vurdering;
+ * arbeidsflyten sender `funn.json` til appen (`/api/kildeovervaking`).
  *
  * Miljøet for FEST: `SUPABASE_URL` og `SUPABASE_PUBLISHABLE_KEY` med
  * testbrukeren (`OUSFAR_TESTBRUKER`, `OUSFAR_TESTPASSORD`), som i
@@ -41,9 +34,7 @@ import { NEDTRAPPINGSSETT } from '../src/verktoy/regler/nedtrapping'
 import { PILOTSETT } from '../src/verktoy/regler/pilotsett'
 import { godkjenteRegler, virkestofferForFest } from '../src/verktoy/overvaking/berorte'
 import { kjorOvervaking } from '../src/verktoy/overvaking/kjoring'
-import type { Overvakingsrapport } from '../src/verktoy/overvaking/modell'
-import { avtrykk, hoyPrioritet, kreverVurdering, lagOvervakingsrapport } from '../src/verktoy/overvaking/rapport'
-import { vaktTiltak, type Sak } from '../src/verktoy/overvaking/vakt'
+import { kreverVurdering, lagOvervakingsrapport } from '../src/verktoy/overvaking/rapport'
 
 const lesJson = <T>(fil: string) => JSON.parse(readFileSync(new URL(`../${fil}`, import.meta.url), 'utf8')) as T
 
@@ -76,8 +67,6 @@ async function kontroll(argumenter: string[]) {
     return i >= 0 && argumenter[i + 1] ? argumenter[i + 1]! : null
   }
   const ut = verdi('--ut') ?? 'overvaking-resultat'
-  const forrigefil = verdi('--forrige')
-  const forrige = forrigefil ? (JSON.parse(readFileSync(forrigefil, 'utf8')) as Pick<Overvakingsrapport, 'kjort_kl' | 'funn'>) : undefined
   const regler = godkjenteRegler()
 
   const lesing = flagg.has('--uten-fest') ? null : await festlesing()
@@ -86,7 +75,6 @@ async function kontroll(argumenter: string[]) {
 
   const rapport = await kjorOvervaking({
     regler,
-    forrige,
     provesak: flagg.has('--provesak'),
     dokumenter: flagg.has('--uten-dokumenter') ? undefined : (url) => hentDokument(url),
     psychiatrienet: flagg.has('--psychiatrienet')
@@ -110,7 +98,7 @@ async function kontroll(argumenter: string[]) {
 
   mkdirSync(ut, { recursive: true })
   writeFileSync(join(ut, 'rapport.md'), lagOvervakingsrapport(rapport))
-  writeFileSync(join(ut, 'funn.json'), `${JSON.stringify({ ...rapport, avtrykk: avtrykk(rapport), krever_vurdering: kreverVurdering(rapport).length, hoy_prioritet: hoyPrioritet(rapport).length }, null, 1)}\n`)
+  writeFileSync(join(ut, 'funn.json'), `${JSON.stringify(rapport, null, 1)}\n`)
   console.log(`→ ${join(ut, 'rapport.md')}, ${join(ut, 'funn.json')}`)
   for (const g of rapport.grunnlag) console.log(`${g.kjort ? '✓' : '–'} ${g.kilde}: ${g.beskrivelse}`)
   console.log(`${kreverVurdering(rapport).length} krever ny faglig vurdering, ${rapport.funn.length - kreverVurdering(rapport).length} informative, ${rapport.feil.length} feil`)
@@ -118,19 +106,9 @@ async function kontroll(argumenter: string[]) {
   for (const f of rapport.feil) console.error(`✗ ${f}`)
 }
 
-function vakt([fil]: string[]) {
-  const ansvarlig = process.env.ANSVARLIG
-  if (!fil || !ansvarlig) {
-    console.error('Bruk: ANSVARLIG=<GitHub-bruker> npm run verktoy:overvaking -- vakt <saker.json>')
-    process.exit(1)
-  }
-  console.log(JSON.stringify(vaktTiltak(JSON.parse(readFileSync(fil, 'utf8')) as Sak[], new Date().toISOString(), ansvarlig)))
-}
-
-const BRUK = 'Bruk: npm run verktoy:overvaking -- kontroll [--psychiatrienet] [--uten-dokumenter] [--uten-fest] [--forrige <fil>] [--provesak] [--ut <mappe>] | vakt <saker.json>'
+const BRUK = 'Bruk: npm run verktoy:overvaking -- kontroll [--psychiatrienet] [--uten-dokumenter] [--uten-fest] [--provesak] [--ut <mappe>]'
 const [kommando, ...resten] = process.argv.slice(2).filter((a) => a !== '--')
 if (kommando === 'kontroll') await kontroll(resten)
-else if (kommando === 'vakt') vakt(resten)
 else {
   console.error(BRUK)
   process.exit(1)

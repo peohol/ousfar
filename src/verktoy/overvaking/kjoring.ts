@@ -4,9 +4,8 @@
  * leses), står som ikke kontrollert i rapporten uten å stoppe de andre.
  * Hentingen gis inn, så testene kan kjøre hele flyten med syntetiske data.
  *
- * Funnene som krevde vurdering i forrige kjøring, står videre for en del som
- * ikke er kontrollert på nytt, så en kjøring uten Psychiatrienet, eller der
- * FEST ikke kunne leses, aldri gjør et funn i den delen avklart.
+ * Hvilke funn som er åpne, avgjør databasen når kjøringen meldes inn
+ * (`registrering.ts`): en del som ikke ble kontrollert, rører ingen funn der.
  */
 import type { Innhenting, Kildearkiv } from '../kildearkiv'
 import type { Virkestoffkartlegging } from '../kartlegging'
@@ -28,9 +27,7 @@ export interface Overvakingsvalg {
   regler?: readonly Godkjentregel[]
   kartlegging?: Virkestoffkartlegging
   na?: () => string
-  /** Funnene som krevde vurdering i forrige kjøring (fra saken), og når den ble gjort. */
-  forrige?: Pick<Overvakingsrapport, 'kjort_kl' | 'funn'>
-  /** Legg til et syntetisk funn som prøver varslingen (en prøvesak); ingen kilde eller regel er endret. */
+  /** Legg til et syntetisk funn som prøver varslingen i appen (en prøvesak); ingen kilde eller regel er endret. */
   provesak?: boolean
 }
 
@@ -43,17 +40,11 @@ export const PROVEFUNN: Overvakingsfunn = {
   objekt: 'syntetisk-provesak',
   etikett: 'Syntetisk prøvesak (ingen reell kilde)',
   detaljer: [
-    'Syntetisk funn som prøver varslingen: saken skal være tildelt den ansvarlige, få en teknisk vurdering og merkes som ubehandlet etter fristene. Ingen kilde, preparat eller regel er endret.',
+    'Syntetisk funn som prøver varslingen: det skal vises i Adminmeny → Kildeovervåking, få en teknisk vurdering og stå som over fristen for den faglige beslutningen etter tre døgn, før det avsluttes. Ingen kilde, preparat eller regel er endret.',
   ],
   berorte: [],
   prioritet: 'hoy',
 }
-
-/** Forrige kjørings funn som krevde vurdering i delen, merket med kjøringen de først ble gjort i. */
-const videreforte = (forrige: Overvakingsvalg['forrige'], kilde: Funnkilde): Overvakingsfunn[] =>
-  (forrige?.funn ?? []).filter((f) => f.kilde === kilde && f.niva === 'krever_vurdering').map((f) => ({ ...f, viderefort_fra: f.viderefort_fra ?? forrige!.kjort_kl }))
-
-const videreforteTekst = (n: number) => (n === 0 ? '' : ` ${n} funn fra en tidligere kjøring står videre til delen er kontrollert igjen.`)
 
 const IKKE_KJORT: Record<Funnkilde, string> = {
   dokument: 'Kildedokumentene ble ikke kontrollert i denne kjøringen.',
@@ -68,19 +59,14 @@ export async function kjorOvervaking(v: Overvakingsvalg): Promise<Overvakingsrap
   const grunnlag: Grunnlagsdel[] = []
   const feil: string[] = []
   const del = async (kilde: Funnkilde, kjor: (() => Promise<{ funn: Overvakingsfunn[]; grunnlag: Grunnlagsdel }>) | null) => {
-    const tidligere = videreforte(v.forrige, kilde)
-    if (!kjor) {
-      funn.push(...tidligere)
-      return grunnlag.push({ kilde, kjort: false, kontrollert: 0, beskrivelse: IKKE_KJORT[kilde] + videreforteTekst(tidligere.length) })
-    }
+    if (!kjor) return grunnlag.push({ kilde, kjort: false, kontrollert: 0, beskrivelse: IKKE_KJORT[kilde] })
     try {
       const r = await kjor()
       funn.push(...r.funn)
       grunnlag.push(r.grunnlag)
     } catch (e) {
       feil.push(`${kilde === 'dokument' ? 'Kildedokumentene' : kilde === 'fest' ? 'FEST' : 'Psychiatrienet'}: ${e instanceof Error ? e.message : String(e)}`)
-      funn.push(...tidligere)
-      grunnlag.push({ kilde, kjort: false, kontrollert: 0, beskrivelse: `Stoppet; se «Ikke kontrollert».${videreforteTekst(tidligere.length)}` })
+      grunnlag.push({ kilde, kjort: false, kontrollert: 0, beskrivelse: 'Stoppet; se «Ikke kontrollert».' })
     }
   }
   await del('dokument', v.dokumenter ? () => kontrollerDokumenter(regler, v.dokumenter) : null)
@@ -100,5 +86,12 @@ export async function kjorOvervaking(v: Overvakingsvalg): Promise<Overvakingsrap
   )
   if (v.provesak) funn.push(PROVEFUNN)
   const medPrioritet = funn.map((f) => (f.prioritet || !prioritetFor(f) ? f : { ...f, prioritet: prioritetFor(f) }))
-  return { versjon: 1, kjort_kl: (v.na ?? (() => new Date().toISOString().replace(/\.\d+Z$/, 'Z')))(), grunnlag, funn: sorterFunn(medPrioritet), feil }
+  return {
+    versjon: 1,
+    kjort_kl: (v.na ?? (() => new Date().toISOString().replace(/\.\d+Z$/, 'Z')))(),
+    grunnlag,
+    funn: sorterFunn(medPrioritet),
+    feil,
+    ...(v.provesak ? { provesak: true } : {}),
+  }
 }

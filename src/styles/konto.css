@@ -641,3 +641,39 @@
   margin: var(--rom-2) 0;
   color: var(--blekk);
 }
+
+/* Kildeovervåkingen: funnene, fristene og vurderingene. */
+.kildeovervaking__merker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rom-2) var(--rom-3);
+  margin: var(--rom-2) 0;
+  font-size: var(--tekst-ui);
+  color: var(--blekk-dempet);
+}
+
+.kildeovervaking__detaljer,
+.kildeovervaking__frister {
+  margin: var(--rom-2) 0;
+  padding-left: var(--rom-6);
+  font-size: var(--tekst-ui);
+  color: var(--blekk);
+  overflow-wrap: anywhere;
+}
+
+.kildeovervaking__frister {
+  padding-left: 0;
+  list-style: none;
+  color: var(--blekk-dempet);
+}
+
+.kildeovervaking__over {
+  margin: 0;
+  font-weight: var(--vekt-halvfet);
+  color: var(--alvorlig-blekk);
+}
+
+.kildeovervaking__vurdering {
+  margin: var(--rom-2) 0;
+}

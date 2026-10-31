@@ -107,7 +107,7 @@ En administrator kan deaktivere alle verktøyene, ett verktøy eller én klinisk
 | Piloten er gjort med syntetiske kasus av utvikleren, ikke av klinikere i bruk | Den uavhengige sluttkontrollen; en klinisk pilot med brukere kan legges til før bred bruk |
 | Endringene i 3.1 (særlig Xeplion 3 mg og undertittelen for sertralin) er ikke kontrollert ennå | Merket «Til kontrolløren»; kan stoppes med en regelsperre om kontrolløren ønsker det før en rettelse |
 | Vercel tilbyr også versjoner eldre enn 1.116.0 ved tilbakeføring av appen, og de har ikke nødstoppen | 5.2 punkt 4 sier at de aldri skal velges; en regelsperre er førstevalget og krever ingen tilbakeføring |
-| En kilde eller FEST kan endres etter godkjenningen uten at regelen endres | Kildeovervåkingen (P12.1, P12.5) kontrollerer kildene og FEST hver uke og melder det som krever ny faglig vurdering i en sak (`docs/verktøy-p12-overvaking.md`); en sperre settes når en endring kan gjøre en plan uforsvarlig |
+| En kilde eller FEST kan endres etter godkjenningen uten at regelen endres | Kildeovervåkingen (P12.1, P12.5) kontrollerer kildene og FEST hver uke og melder det som krever ny faglig vurdering i Adminmeny → Kildeovervåking (`docs/verktøy-p12-overvaking.md`); en sperre settes når en endring kan gjøre en plan uforsvarlig |
 
 ## 7. Akseptkriterier for PR-en
 

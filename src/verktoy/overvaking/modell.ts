@@ -56,13 +56,6 @@ export interface Overvakingsfunn {
   /** Hva som er endret, ett punkt per forhold. Aldri kildetekst. */
   detaljer: string[]
   berorte: Berort[]
-  /**
-   * Når funnet er fra en tidligere kjøring og delen det gjelder ikke ble
-   * kontrollert på nytt (ikke kjørt, eller stoppet): kjøringen funnet først ble
-   * gjort i. Funnet står da videre, så en sak aldri regnes som avklart før
-   * delen er kontrollert igjen. Inngår ikke i avtrykket.
-   */
-  viderefort_fra?: string
   /** Bare for et funn som krever vurdering. */
   prioritet?: Funnprioritet
 }
@@ -84,6 +77,8 @@ export interface Overvakingsrapport {
   funn: Overvakingsfunn[]
   /** Det som stoppet en del av kontrollen; da er den delen ikke kontrollert. */
   feil: string[]
+  /** En prøvekjøring med bare det syntetiske funnet, som prøver varslingen i appen. */
+  provesak?: boolean
 }
 
 export const ARTTEKST: Record<Funnart, string> = { ny: 'ny', endret: 'endret', fjernet: 'fjernet', utilgjengelig: 'kunne ikke kontrolleres' }

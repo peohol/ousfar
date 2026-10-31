@@ -12,16 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.116.2',
+    versjon: '1.117.0',
     dato: '2026-10-31',
-    sammendrag: 'Ukentlig overvåking av kildene og FEST-dataene de godkjente verktøyreglene bygger på',
+    sammendrag: 'Varsel i adminmenyen når kildene eller FEST-dataene de godkjente verktøyreglene bygger på, er endret',
     typer: ['Funksjonalitet'],
-    omfang: 'Minimalt omfang',
+    omfang: 'Mindre omfang',
+    gjelder: ['vinduer'],
     punkter: [
-      'Ingen endring i appen. Kildedokumentene de kliniske verktøyreglene bygger på, og preparatene i FEST kontrolleres hver uke, og Psychiatrienets anbefalinger hver måned. Endrede, fjernede og nye kilder og preparater samles i en rapport som sier hvilke klinisk godkjente regler som kan være berørt. Den ansvarlige får saken tildelt og blir påminnet når den ikke er behandlet innen fristen.',
-      'Rapporten skiller mellom endringer som bare registreres, og endringer som krever ny faglig vurdering, som et preparat i det godkjente omfanget som er borte eller har fått endret styrke eller form. Ingen regel endres, godkjennes eller sperres automatisk, og ingen tekst fra kildene lagres eller vises.',
+      'Kildedokumentene de kliniske verktøyreglene bygger på, og preparatene i FEST kontrolleres hver uke, og Psychiatrienets anbefalinger hver måned. De sammenlignes med det reglene ble godkjent mot, og hver endring sier hvilke klinisk godkjente regler den kan berøre.',
+      'Administratorer får en prikk i adminmenyen når en endring krever ny faglig vurdering, og ser den under «Kildeovervåking», med frister for teknisk vurdering og faglig beslutning. Der skrives vurderingen og beslutningen, med hvem og når, og beslutningen avslutter funnet. Prikken står også når kontrollen har stoppet eller ikke har kjørt på over en uke.',
+      'Endringer som bare registreres, holdes adskilt fra dem som krever ny faglig vurdering, som et preparat i det godkjente omfanget som er borte eller har fått endret styrke eller form. Ingen regel endres, godkjennes eller sperres automatisk, og ingen tekst fra kildene lagres eller vises.',
     ],
-    utenVarsel: true,
   },
   {
     versjon: '1.116.3',

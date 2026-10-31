@@ -9,46 +9,61 @@ import { Autoerstattregler } from './Autoerstattregler'
 import { Brukerliste } from './Brukerliste'
 import { Datakilder } from './Datakilder'
 import type { Kurateringsklient } from '../../kuratering/klient'
+import { oppmerksomhet, type Kildeovervakingslager } from '../../verktoy/overvaking/varsling'
 import { Kurateringsoversikt } from '../kuratering/Utgavelister'
+import { Kildeovervaking, kildeovervakingslager } from './Kildeovervaking'
 import { Verktoysperrer } from './Verktoysperrer'
 
-type Panel = 'brukere' | 'datakilder' | 'autoerstatt' | 'kurateringer' | 'verktoysperrer' | null
+type Panel = 'brukere' | 'datakilder' | 'autoerstatt' | 'kurateringer' | 'verktoysperrer' | 'kildeovervaking' | null
 
 /**
- * Navnene på datakildene som bør ses over, sjekket som idémenyen ser etter nye
- * kommentarer: når appen og fanen åpnes, jevnlig og når «Datakilder» lukkes.
- * Bare én endring per kilde hentes; vurderingen er den samme som i panelet.
- * En sjekk som feiler, endrer ingenting.
+ * Det som bør ses over, sjekket som idémenyen ser etter nye kommentarer: når
+ * appen og fanen åpnes, jevnlig og når et panel lukkes. `hent` gir det i korte
+ * tekster (tomt når ingenting venter), og bør ha fast identitet. En sjekk som
+ * feiler, endrer ingenting.
  */
-function useDatakildetilsyn(admin: boolean, egenLeser?: Datakildeleser) {
-  const [kilder, setKilder] = useState<string[]>([])
+function useTilsyn(admin: boolean, hent: () => Promise<string[]>) {
+  const [meldinger, setMeldinger] = useState<string[]>([])
   const sjekk = useCallback(() => {
     if (!admin) return
-    void (async () => {
-      const status = await (egenLeser ?? lagDatakildeleser(klient())).status(1)
-      setKilder(kilderSomBorSesOver(status))
-    })().catch(() => undefined)
-  }, [admin, egenLeser])
+    hent().then(setMeldinger, () => undefined)
+  }, [admin, hent])
   useJevnligSjekk(sjekk)
-  return { kilder, sjekk }
+  return { meldinger, sjekk }
 }
 
 /**
  * Administratorenes egen meny i toppmenyen, til venstre for kontoen: brukerne,
- * driftstatusen for datakildene, nødstoppen for de kliniske verktøyene og autoerstatt-reglene i teksteditorene. Andre ser den ikke. Den er et grensesnitt,
- * ikke en tilgangskontroll: databasen og Edge-funksjonene slår opp rollen selv.
- * Bør en datakilde ses over, står det en prikk på knappen og på «Datakilder».
+ * driftstatusen for datakildene, kildeovervåkingen og nødstoppen for de
+ * kliniske verktøyene, og autoerstatt-reglene i teksteditorene. Andre ser den
+ * ikke. Den er et grensesnitt, ikke en tilgangskontroll: databasen og
+ * Edge-funksjonene slår opp rollen selv. Bør en datakilde ses over, eller
+ * venter et funn fra kildeovervåkingen, står det en prikk på knappen og på
+ * valget.
  */
-export function Adminmeny({ leser, kuratering }: { leser?: Datakildeleser; kuratering?: Kurateringsklient } = {}) {
+export function Adminmeny({ leser, kuratering, kildelager }: { leser?: Datakildeleser; kuratering?: Kurateringsklient; kildelager?: Kildeovervakingslager } = {}) {
   const admin = useProfil().role === 'admin'
   const [panel, setPanel] = useBevart<Panel>('adminmeny', null)
-  const tilsyn = useDatakildetilsyn(admin, leser)
-  const { sjekk } = tilsyn
+  // Bare én endring per datakilde hentes; vurderingen er den samme som i panelet.
+  const datakilder = useTilsyn(
+    admin,
+    useCallback(async () => kilderSomBorSesOver(await (leser ?? lagDatakildeleser(klient())).status(1)), [leser]),
+  )
+  // Bare de åpne funnene og den siste kjøringen; fristene regnes som i vinduet.
+  const kilder = useTilsyn(
+    admin,
+    useCallback(async () => oppmerksomhet(await (kildelager ?? kildeovervakingslager()).les(0), Date.now()), [kildelager]),
+  )
+  const { sjekk: sjekkDatakilder } = datakilder
+  const { sjekk: sjekkKilder } = kilder
   const lukkPanel = useCallback(() => {
     setPanel(null)
-    sjekk()
-  }, [sjekk])
-  const sesOver = tilsyn.kilder.length ? `${tilsyn.kilder.join(', ')} bør ses over` : undefined
+    sjekkDatakilder()
+    sjekkKilder()
+  }, [sjekkDatakilder, sjekkKilder])
+  const sesOver = datakilder.meldinger.length ? `${datakilder.meldinger.join(', ')} bør ses over` : undefined
+  const kildevarsel = kilder.meldinger.length ? kilder.meldinger.join('; ') : undefined
+  const varsel = [sesOver, kildevarsel].filter(Boolean).join('; ') || undefined
 
   if (!admin) return null
 
@@ -58,13 +73,13 @@ export function Adminmeny({ leser, kuratering }: { leser?: Datakildeleser; kurat
         className="adminmeny"
         knapp={{
           ikon: 'shield',
-          etikett: `Administrasjon${sesOver ? ` (${sesOver})` : ''}`,
+          etikett: `Administrasjon${varsel ? ` (${varsel})` : ''}`,
           variant: 'stille',
           storrelse: 'liten',
         }}
         etikett="Administrasjon"
         lag="adminmeny"
-        ved={sesOver && <span className="nyprikk toppmeny__prikk" aria-hidden="true" />}
+        ved={varsel && <span className="nyprikk toppmeny__prikk" aria-hidden="true" />}
       >
         {(lukk) => {
           /** Et valg lukker menyen først, så vinduet det åpner gir fokus tilbake til knappen. */
@@ -84,6 +99,9 @@ export function Adminmeny({ leser, kuratering }: { leser?: Datakildeleser; kurat
                 <Menyvalg ikon="oppgaver" tekst="Kurateringer" onClick={apne('kurateringer')} />
               </li>
               <li>
+                <Menyvalg ikon="refs" tekst="Kildeovervåking" nytt={kildevarsel} onClick={apne('kildeovervaking')} />
+              </li>
+              <li>
                 <Menyvalg ikon="lock" tekst="Kliniske verktøy" onClick={apne('verktoysperrer')} />
               </li>
               <li>
@@ -97,6 +115,7 @@ export function Adminmeny({ leser, kuratering }: { leser?: Datakildeleser; kurat
       <Datakilder apen={panel === 'datakilder'} onLukk={lukkPanel} />
       <Autoerstattregler apen={panel === 'autoerstatt'} onLukk={lukkPanel} />
       <Kurateringsoversikt apen={panel === 'kurateringer'} klient={kuratering} onLukk={lukkPanel} />
+      <Kildeovervaking apen={panel === 'kildeovervaking'} lager={kildelager} onLukk={lukkPanel} />
       <Verktoysperrer apen={panel === 'verktoysperrer'} onLukk={lukkPanel} />
     </>
   )

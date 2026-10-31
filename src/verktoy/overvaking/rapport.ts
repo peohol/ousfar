@@ -6,7 +6,7 @@
  * kontrollsummer.
  */
 import { createHash } from 'node:crypto'
-import { ARTTEKST, KILDETEKST, PRIORITETSTEKST, sorterFunn, type Overvakingsfunn, type Overvakingsrapport } from './modell'
+import { ARTTEKST, KILDETEKST, PRIORITETSTEKST, sorterFunn, type Overvakingsfunn, type Overvakingsrapport } from './modell.js'
 
 const celle = (t: string) => t.replace(/\|/g, '\\|').replace(/\n/g, ' ')
 const tabell = (hode: string[], rader: string[][]) =>
@@ -21,22 +21,20 @@ const rader = (funn: Overvakingsfunn[], medRegler: boolean, medPrioritet = false
     KILDETEKST[f.kilde],
     f.etikett,
     ARTTEKST[f.art],
-    [...f.detaljer, ...(f.viderefort_fra ? [`Funnet i kjøringen ${f.viderefort_fra}; delen er ikke kontrollert på nytt siden, så funnet står videre.`] : [])].join('<br>'),
+    f.detaljer.join('<br>'),
     ...(medRegler ? [berorte(f)] : []),
   ])
 
 /** Funnene som krever vurdering. */
 export const kreverVurdering = (r: Pick<Overvakingsrapport, 'funn'>) => r.funn.filter((f) => f.niva === 'krever_vurdering')
 
-/** Funnene som krever vurdering med høy prioritet. */
-export const hoyPrioritet = (r: Pick<Overvakingsrapport, 'funn'>) => kreverVurdering(r).filter((f) => f.prioritet === 'hoy')
-
 /**
- * Avtrykket av det som krever vurdering: det samme så lenge de samme funnene
- * står med det samme innholdet, så en sak bare oppdateres når noe er nytt.
+ * Avtrykket av et funn: det samme så lenge funnet har det samme innholdet,
+ * uten tidspunktet kilden ble hentet, så et funn bare regnes som nytt når noe
+ * i det er endret (`registrering.ts`).
  */
-export function avtrykk(r: Pick<Overvakingsrapport, 'funn'>): string {
-  const x = sorterFunn(kreverVurdering(r)).map((f) => ({ id: f.id, art: f.art, detaljer: f.detaljer.map((d) => d.replace(/hentet \d{4}-\d{2}-\d{2}T[\d:.]+Z/g, 'hentet')), berorte: f.berorte }))
+export function funnavtrykk(f: Overvakingsfunn): string {
+  const x = { id: f.id, art: f.art, prioritet: f.prioritet ?? null, detaljer: f.detaljer.map((d) => d.replace(/hentet \d{4}-\d{2}-\d{2}T[\d:.]+Z/g, 'hentet')), berorte: f.berorte }
   return createHash('sha256').update(JSON.stringify(x)).digest('hex')
 }
 
@@ -49,12 +47,12 @@ export function lagOvervakingsrapport(r: Overvakingsrapport): string {
     '',
     `Kjørt ${r.kjort_kl}. ${krever.length === 0 ? 'Ingen endringer krever ny faglig vurdering.' : `**${krever.length} ${krever.length === 1 ? 'endring krever' : 'endringer krever'} ny faglig vurdering.**`} ${info.length === 0 ? 'Ingen informative endringer.' : `${info.length} ${info.length === 1 ? 'endring er informativ' : 'endringer er informative'}.`}${r.feil.length > 0 ? ` ${r.feil.length} ${r.feil.length === 1 ? 'del' : 'deler'} av kontrollen stoppet.` : ''}`,
     '',
-    'Overvåkingen endrer, godkjenner eller sperrer ingen regel, og den oppdaterer ikke grunnlaget. Godkjenningene står til en faglig vurdering avgjør noe annet. Kan en endring gjøre en plan uforsvarlig, settes en sperre i Adminmeny → Kliniske verktøy (`docs/verktøy-p11-publisering.md` §5.2). Fremgangsmåten står i `docs/verktøy-p12-overvaking.md`.',
+    'Overvåkingen endrer, godkjenner eller sperrer ingen regel, og den oppdaterer ikke grunnlaget. Godkjenningene står til en faglig vurdering avgjør noe annet. Funnene som krever vurdering, vises i Adminmeny → Kildeovervåking i appen. Kan en endring gjøre en plan uforsvarlig, settes en sperre i Adminmeny → Kliniske verktøy (`docs/verktøy-p11-publisering.md` §5.2). Fremgangsmåten står i `docs/verktøy-p12-overvaking.md`.',
   ]
   if (krever.length > 0) deler.push('', '## Krever ny faglig vurdering', '', tabell(['Prioritet', 'Kilde', 'Hva', 'Endring', 'Detaljer', 'Godkjente regler som berøres'], rader(krever, true, true)))
   if (info.length > 0) deler.push('', '## Informative endringer', '', tabell(['Kilde', 'Hva', 'Endring', 'Detaljer', 'Godkjente regler'], rader(info, true)))
   if (r.feil.length > 0) deler.push('', '## Ikke kontrollert', '', ...r.feil.map((f) => `- ${f}`))
   deler.push('', '## Hva som ble sammenlignet', '', tabell(['Kilde', 'Kjørt', 'Kontrollert', 'Grunnlag'], r.grunnlag.map((g) => [KILDETEKST[g.kilde], g.kjort ? 'ja' : 'nei', String(g.kontrollert), g.beskrivelse])))
-  deler.push('', `Avtrykk av det som krever vurdering: \`${avtrykk(r)}\``, '')
+  deler.push('')
   return deler.join('\n')
 }
