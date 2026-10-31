@@ -70,13 +70,13 @@ Appen importerer bare versjonene manifestet peker på (4.4). De eldre versjonene
 
 ### 4.3 Godkjenningslogg (P12.2)
 
-Godkjenningsstegene flyttes ut av regelkoden til en logg som bare kan få tillegg, én fil per regel for å unngå konflikter mellom parallelle PR-er: `src/data/verktoy/godkjenningslogg/<regel-id>.json`. Hvert steg har regelversjon, fingeravtrykk, status, dato, hvem, rolle, merknad og lenke til kontrollen (PR-kommentaren eller commit-en kontrolløren vurderte). `Regel.godkjenning` settes sammen fra loggen når regelen lastes, med samme type og samme rekkefølge, så `godkjenningsfeil`, `kontrollutfall` og alt som bruker dem, er uendret. En disposisjon som `leveransen` blir vanlige steg i loggen for hver regel den gjelder.
+Godkjenningsstegene flyttes ut av regelkoden til en logg som bare kan få tillegg, én fil per regel for å unngå konflikter mellom parallelle PR-er: `src/data/verktoy/godkjenningslogg/<regel-id>.json`. Hvert steg har regelversjon, fingeravtrykk, status, dato, hvem, rolle, merknad og lenke til kontrollen (PR-kommentaren eller commit-en kontrolløren vurderte). `Regel.godkjenning` settes sammen fra loggen når regelen lastes, med samme type og samme rekkefølge, så `godkjenningsfeil`, `kontrollutfall` og alt som bruker dem, er uendret. Fordi loggen har steg for alle versjonene av regelen, settes godkjenningen sammen **for den versjonen som lastes**: historikken til og med siste steg for den versjonen, uten steg for nyere versjoner. Ellers ville et steg for versjon 2 gjøre at versjon 1 aldri kunne være godkjent igjen, fordi `godkjenningsfeil` ser på siste steg. For dagens regler er det det samme som i dag, siden siste steg gjelder gjeldende versjon. En disposisjon som `leveransen` blir vanlige steg i loggen for hver regel den gjelder.
 
 Avklaringene av OUSFARs egne vurderinger (`grunnlag.avklaring`) er en del av regelinnholdet og fingeravtrykket i dag, og blir der. De flyttes ikke til loggen.
 
 ### 4.4 Regelsettmanifest og koblingen til appen
 
-`src/data/verktoy/regelsett.json` sier hvilken versjon av hvilke regler hvert regelsett har (pilotsettet, nedtrappingsreglene og sammenligningssettet), med regelsettets versjon. `REGELSETTENE` i `tilgjengelighet.ts` bygges av manifestet, registeret og loggen i stedet for byggerne. `planvisning.ts` viser kildeversjonen regelen er festet til, ikke den gjeldende. Det er de eneste endringene på appsiden; motorene og komponentene er uendret. Å publisere en ny regelversjon er å endre én linje i manifestet, i en PR. Å føre tilbake til en tidligere godkjent versjon er det samme, fordi den versjonen og godkjenningen av den fortsatt finnes.
+`src/data/verktoy/regelsett.json` sier hvilken versjon av hvilke regler hvert regelsett har (pilotsettet, nedtrappingsreglene og sammenligningssettet), med regelsettets versjon. `REGELSETTENE` i `tilgjengelighet.ts` bygges av manifestet, registeret og loggen i stedet for byggerne. `planvisning.ts` viser kildeversjonen regelen er festet til, ikke den gjeldende. Det er de eneste endringene på appsiden; motorene og komponentene er uendret. Å publisere en ny regelversjon er å endre én linje i manifestet, i en PR. Å føre tilbake til en tidligere godkjent versjon er det samme, fordi den versjonen og godkjenningen av den fortsatt finnes og godkjenningen settes sammen for den versjonen (4.3); om det i tillegg skal kreves et nytt kontrollørsteg, er spørsmål 2 i §10.
 
 ### 4.5 Hvorfor i repoet og ikke i databasen
 
@@ -128,12 +128,12 @@ Hvem som faktisk skrev et kontrollørsteg, kan ikke bevises teknisk, verken i da
 
 ## 7. Motoren holdes uavhengig av godkjenningen
 
-Hull 5 lukkes med et **resultatavtrykk**: SHA-256 av utfallene en godkjent regel gir i sine kasus i testmatrisen og aksepttesten (radene i planen, eller stoppgrunnene). Det registreres sammen med godkjenningen, med motor- og planmotorversjonen kontrolløren så. CI regner det ut på nytt:
+Hull 5 lukkes i to deler:
 
-- En endring i motoren som ikke endrer utfallene for noen godkjent regel, går gjennom uten ny klinisk kontroll.
-- En endring som endrer utfallet for en godkjent regel, stopper PR-en med beskjeden «krever ny kontroll» og regelens navn. Den kan ikke rettes ved å endre forventningen i samme PR; det krever et nytt kontrollørsteg med det nye avtrykket.
+1. **Godkjenningen bindes til motorversjonene.** Et godkjenningssteg registrerer `MOTORVERSJON` og `PLANMOTORVERSJON` kontrolløren så. CI krever at versjonen økes når koden i motorene endres, og en godkjent regel er bare klinisk tilgjengelig med motorversjonene i sitt siste kontrollørsteg. En ny motorversjon krever derfor et nytt kontrollørsteg for hver godkjent regel. Dette er garantien: testkasusene er et utvalg og dekker ikke hver mulig inndata i det kliniske omfanget (for eksempel hver startdato), så et uendret utfall i kasusene alene kan ikke bevise at ingen plan er endret.
+2. **Et resultatavtrykk gjør den nye kontrollen rask.** Avtrykket er SHA-256 av utfallene regelen gir i sine kasus i testmatrisen og aksepttesten (radene i planen, eller stoppgrunnene), registrert med steget. Er avtrykket uendret med den nye motoren, kan kontrolløren bekrefte motorversjonen som en teknisk kontroll; er det endret, viser CI hvilke kasus og regler som gir andre planer, og steget krever en faglig vurdering. Forventningene kan ikke endres i samme PR uten et nytt kontrollørsteg.
 
-Det gjør motoren og reglene uavhengige i begge retninger: reglene kan endres uten motoren, og motoren kan forbedres uten at godkjente planer endres i det stille.
+Det gjør motoren og reglene uavhengige: reglene kan endres uten å røre motoren, og motoren kan forbedres uten at en godkjent regel noen gang beregnes med en motorversjon kontrolløren ikke har sett.
 
 ## 8. Dagens godkjenninger og fingeravtrykk
 
@@ -159,7 +159,7 @@ Hvert trinn er en egen, avgrenset PR som kan føres tilbake, med `npm test`, `np
 | **3** Regelregister og manifest | Versjonsfil for hver av dagens 32 regelversjoner; `regelsett.json`; `tilgjengelighet.ts` leser registeret; `-- registrer`; CI-kontrollene i §6 | §8; appen gir samme planer i matrisen; byggerne importeres ikke av appen | Middels. Revert gir dagens bygging tilbake; ingen data i produksjonen berøres |
 | **4** Versjonsforskjell og historikk | `-- diff`, `-- status` og en generert historikk per regel (versjoner, fingeravtrykk, kildeversjoner, steg) | Diffen viser parametre, betingelser, kilder og eksempler med sti; rapporten er oppdatert (test) | Lav |
 | **5** Sammenligningskataloger | `kataloger.ts`, Psychiatrienet som første katalog, `kontroll.ts` via katalogen; rettighetsklassen håndheves for alle kilder | Fingeravtrykk uendret; en syntetisk katalog bare i testene kan brukes av en syntetisk regel uten endring i motor eller grensesnitt; tekst i en `bare_henvisning`-kilde stopper | Lav |
-| **6** Resultatavtrykk | Avtrykk per godkjent regel, registrert med godkjenningen; CI-kontrollen i §7 | En motorendring som ikke endrer utfall, går gjennom; en som endrer ett utfall for en godkjent regel, stopper | Middels. De første avtrykkene for dagens seks godkjenninger må bekreftes av kontrolløren som en teknisk registrering, ikke en ny godkjenning |
+| **6** Motorbinding og resultatavtrykk | Motorversjonene og avtrykket i hvert kontrollørsteg; CI krever økt versjon ved endret motorkode; en godkjent regel er bare tilgjengelig med motorversjonene i sitt siste kontrollørsteg (§7) | En motorendring uten nytt kontrollørsteg gir ingen plan for de godkjente reglene; med uendret avtrykk kan steget være en teknisk bekreftelse; et endret utfall vises per kasus | Middels. Motorversjonene og avtrykkene for dagens seks godkjenninger må bekreftes av kontrolløren som en teknisk registrering, ikke en ny godkjenning |
 | **7** Kildeskifte i praksis | Første reelle kildeskifte (det første funnet fra overvåkingen som krever vurdering) gjennomføres etter §5, som prøve av hele kjeden | Ny kildeversjon registrert; berørte regler i ny versjon, kontrollert og publisert; de gamle versjonene og godkjenningene står i historikken | Klinisk; kontrolløren sperrer etter behov |
 
 Rekkefølgen er valgt slik at hvert trinn kan stå alene: trinn 1 og 5 kan gjøres uten 2–3, og 2 uten 3. Trinn 3 forutsetter 1 og 2.
