@@ -1,7 +1,7 @@
 <!-- Laget av `npm run verktoy:regler -- aksepttest` fra src/data/verktoy/fest-aksepttest.json; rediger ikke for hånd. -->
 # P7: aksepttest med norske preparater
 
-Aksepttesten etter kontrollrunden 30.10.2026 (P7.5, del E.2). Hver hovedregel og langsom variant i `ousfar-verktoy-nedtrapping` versjon 10 er regnet med de faktiske preparatene i FEST, ikke syntetiske, for hver legemiddelform forskriveren kan velge. FEST-uttrekket er hentet 30.10.2026 (kildedato 27.10.2026); bare preparater med markedsføringstillatelse som er markedsført, brukes, ikke godkjenningsfritak.
+Aksepttesten etter kontrollrunden 30.10.2026 (P7.5, del E.2). Hver hovedregel og langsom variant i `ousfar-verktoy-nedtrapping` versjon 11 er regnet med de faktiske preparatene i FEST, ikke syntetiske, for hver legemiddelform forskriveren kan velge. FEST-uttrekket er hentet 30.10.2026 (kildedato 27.10.2026); bare preparater med markedsføringstillatelse som er markedsført, brukes, ikke godkjenningsfritak.
 
 **Dette er modellberegninger til faglig kontroll, ikke kliniske planer.** Ingen beregnbar P7-regel er klinisk godkjent, og verktøyet viser ingen av planene. Pasientopplysninger inngår ikke.
 
@@ -66,45 +66,47 @@ Ingen av lavdoseeksemplene (d) gir et ordinært første trinn: fra laveste styrk
 
 Omfanget for hver markedsført styrke i formen, regelens vanlige dose og grensene for startdosen, så doseområdets grenser og andre faktiske startdoser er med, opp til den høyeste startdosen svarene over tillater uten begrunnelse; en høyere dose krever et ja eller en begrunnelse og er ikke med. Videreføringen (f) regnes fra siste dose i (a), eller fra dosen forskriveren velger ved første trinn når (a) bare gir et valg (den tilbudte dosen med reduksjon nærmest standardvalget, en simulering).
 
+**[klinisk omfang]** markerer cellene som er innenfor regelens kliniske omfang etter kontrollørens gjennomgang av 0ae6d07 (legemiddelform, startdose, behandlingstid, tidligere seponeringssymptomer og trinnstørrelse som kontrollert, og for klomipramin uten delte tabletter). Merkingen er ingen godkjenning: en klinisk godkjenning kan bare gjelde disse tilfellene, og alle andre celler stopper med forklaring i verktøyet, også om regelen blir godkjent. En videreføring er bare med når dosen den regnes fra, selv er et kontrollert tilfelle.
+
 | Virkestoff | Form | Startdose | (a) | (b) | (c) | (f) |
 | --- | --- | --- | --- | --- | --- | --- |
 | amitriptylin | eneste form | 10 mg | stopp | stopp | stopp | – |
-| amitriptylin | eneste form | 25 mg | valgt dose | stopp | stopp | fra 20 mg: stopp |
-| amitriptylin | eneste form | 50 mg | valgt dose | én reduksjon med revurdering | stopp | fra 40 mg: én reduksjon med revurdering |
-| amitriptylin | eneste form | 75 mg | valgt dose | valgt dose | stopp | fra 60 mg: én reduksjon med revurdering |
-| amitriptylin | eneste form | 100 mg | én reduksjon med revurdering | stopp | stopp | fra 75 mg: valgt dose |
-| amitriptylin | eneste form | 150 mg | valgt dose | stopp | stopp | fra 120 mg: valgt dose |
+| amitriptylin | eneste form | 25 mg | valgt dose **[klinisk omfang]** | stopp | stopp | fra 20 mg: stopp |
+| amitriptylin | eneste form | 50 mg | valgt dose **[klinisk omfang]** | én reduksjon med revurdering **[klinisk omfang]** | stopp | fra 40 mg: én reduksjon med revurdering |
+| amitriptylin | eneste form | 75 mg | valgt dose **[klinisk omfang]** | valgt dose **[klinisk omfang]** | stopp | fra 60 mg: én reduksjon med revurdering |
+| amitriptylin | eneste form | 100 mg | én reduksjon med revurdering **[klinisk omfang]** | stopp | stopp | fra 75 mg: valgt dose **[klinisk omfang]** |
+| amitriptylin | eneste form | 150 mg | valgt dose **[klinisk omfang]** | stopp | stopp | fra 120 mg: valgt dose |
 | escitalopram | Tablett [53] | 5 mg | stopp | stopp | stopp | – |
 | escitalopram | Tablett [53] | 10 mg | stopp | stopp | stopp | – |
-| escitalopram | Tablett [53] | 20 mg | én reduksjon med revurdering | stopp | stopp | fra 15 mg: stopp |
+| escitalopram | Tablett [53] | 20 mg | én reduksjon med revurdering **[klinisk omfang]** | stopp | stopp | fra 15 mg: stopp |
 | escitalopram | Dråper, oppløsning [748] | 1 mg | stopp | stopp | stopp | – |
-| escitalopram | Dråper, oppløsning [748] | 10 mg | valgt dose | én reduksjon med revurdering | stopp | fra 8 mg: én reduksjon med revurdering |
-| escitalopram | Dråper, oppløsning [748] | 20 mg | én reduksjon med revurdering | én reduksjon med revurdering | én reduksjon med revurdering | fra 15 mg: valgt dose |
+| escitalopram | Dråper, oppløsning [748] | 10 mg | valgt dose **[klinisk omfang]** | én reduksjon med revurdering **[klinisk omfang]** | stopp | fra 8 mg: én reduksjon med revurdering |
+| escitalopram | Dråper, oppløsning [748] | 20 mg | én reduksjon med revurdering **[klinisk omfang]** | én reduksjon med revurdering **[klinisk omfang]** | én reduksjon med revurdering **[klinisk omfang]** | fra 15 mg: valgt dose |
 | fluoksetin | Dispergerbar tablett [5] | 20 mg | stopp | stopp | stopp | – |
-| fluoksetin | Dispergerbar tablett [5] | 40 mg | én reduksjon med revurdering | stopp | stopp | fra 30 mg: stopp |
-| fluoksetin | Dispergerbar tablett [5] | 60 mg | valgt dose | stopp | stopp | fra 50 mg: valgt dose |
+| fluoksetin | Dispergerbar tablett [5] | 40 mg | én reduksjon med revurdering **[klinisk omfang]** | stopp | stopp | fra 30 mg: stopp |
+| fluoksetin | Dispergerbar tablett [5] | 60 mg | valgt dose **[klinisk omfang]** | stopp | stopp | fra 50 mg: valgt dose |
 | fluoksetin | Tablett [53] | 20 mg | stopp | stopp | stopp | – |
-| fluoksetin | Tablett [53] | 40 mg | én reduksjon med revurdering | stopp | stopp | fra 30 mg: stopp |
-| fluoksetin | Tablett [53] | 60 mg | valgt dose | stopp | stopp | fra 50 mg: valgt dose |
+| fluoksetin | Tablett [53] | 40 mg | én reduksjon med revurdering **[klinisk omfang]** | stopp | stopp | fra 30 mg: stopp |
+| fluoksetin | Tablett [53] | 60 mg | valgt dose **[klinisk omfang]** | stopp | stopp | fra 50 mg: valgt dose |
 | fluvoksamin | eneste form | 50 mg | stopp | stopp | stopp | – |
-| fluvoksamin | eneste form | 100 mg | én reduksjon med revurdering | stopp | stopp | fra 75 mg: stopp |
-| fluvoksamin | eneste form | 300 mg | én reduksjon med revurdering | valgt dose | stopp | fra 225 mg: valgt dose |
+| fluvoksamin | eneste form | 100 mg | én reduksjon med revurdering **[klinisk omfang]** | stopp | stopp | fra 75 mg: stopp |
+| fluvoksamin | eneste form | 300 mg | én reduksjon med revurdering **[klinisk omfang]** | valgt dose | stopp | fra 225 mg: valgt dose |
 | klomipramin | eneste form | 10 mg | stopp | stopp | stopp | – |
 | klomipramin | eneste form | 25 mg | valgt dose | én reduksjon med revurdering | stopp | fra 20 mg: én reduksjon med revurdering |
-| klomipramin | eneste form | 50 mg | én reduksjon med revurdering | én reduksjon med revurdering | én reduksjon med revurdering | fra 37,5 mg: valgt dose |
+| klomipramin | eneste form | 50 mg | én reduksjon med revurdering | én reduksjon med revurdering **[klinisk omfang]** | én reduksjon med revurdering | fra 37,5 mg: valgt dose |
 | klomipramin | eneste form | 150 mg | stopp | stopp | stopp | – |
 | nortriptylin | eneste form | 10 mg | stopp | stopp | stopp | – |
-| nortriptylin | eneste form | 25 mg | valgt dose | stopp | stopp | fra 20 mg: stopp |
-| nortriptylin | eneste form | 50 mg | valgt dose | én reduksjon med revurdering | stopp | fra 40 mg: én reduksjon med revurdering |
-| nortriptylin | eneste form | 150 mg | valgt dose | stopp | stopp | fra 120 mg: valgt dose |
+| nortriptylin | eneste form | 25 mg | valgt dose **[klinisk omfang]** | stopp | stopp | fra 20 mg: stopp |
+| nortriptylin | eneste form | 50 mg | valgt dose **[klinisk omfang]** | én reduksjon med revurdering **[klinisk omfang]** | stopp | fra 40 mg: én reduksjon med revurdering |
+| nortriptylin | eneste form | 150 mg | valgt dose **[klinisk omfang]** | stopp | stopp | fra 120 mg: valgt dose |
 | sertralin | eneste form | 25 mg | stopp | stopp | stopp | – |
 | sertralin | eneste form | 50 mg | stopp | stopp | stopp | – |
-| sertralin | eneste form | 100 mg | én reduksjon med revurdering | stopp | stopp | fra 75 mg: stopp |
-| sertralin | eneste form | 200 mg | én reduksjon med revurdering | stopp | stopp | fra 150 mg: valgt dose |
+| sertralin | eneste form | 100 mg | én reduksjon med revurdering **[klinisk omfang]** | stopp | stopp | fra 75 mg: stopp |
+| sertralin | eneste form | 200 mg | én reduksjon med revurdering **[klinisk omfang]** | stopp | stopp | fra 150 mg: valgt dose |
 | vortioksetin | eneste form | 5 mg | stopp | stopp | stopp | – |
 | vortioksetin | eneste form | 10 mg | stopp | stopp | stopp | – |
 | vortioksetin | eneste form | 15 mg | stopp | stopp | stopp | – |
-| vortioksetin | eneste form | 20 mg | én reduksjon med revurdering | valgt dose | stopp | fra 15 mg: stopp |
+| vortioksetin | eneste form | 20 mg | én reduksjon med revurdering **[klinisk omfang]** | valgt dose **[klinisk omfang]** | stopp | fra 15 mg: stopp |
 
 ## Per virkestoff
 

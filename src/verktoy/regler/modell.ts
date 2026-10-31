@@ -33,7 +33,7 @@
 import type { Formuleringsklasse } from '../festformuleringer'
 
 /** Økes når formen på regler eller regelsett endres. */
-export const REGELMODELLVERSJON = 9
+export const REGELMODELLVERSJON = 10
 
 /* --- Kilder ----------------------------------------------------------------- */
 
@@ -510,7 +510,38 @@ export interface Regel {
   /** Psychiatrienet og andre referanser regelen kan sammenlignes med, uten at den bygger på teksten deres. */
   referanser: Kildehenvisning[]
   eksempler: Regneeksempel[]
+  /**
+   * Tilfellene en klinisk godkjenning av regelen kan gjelde for (P7.5). Med
+   * feltet er en plan bare klinisk innenfor ett av tilfellene; alt annet
+   * stopper med forklaring, også om regelen er godkjent. Uten feltet gjelder
+   * godkjenningen hele regelen.
+   */
+  klinisk_omfang?: Kliniskomfang
   godkjenning: Godkjenning
+}
+
+/**
+ * Den kontrollerte delmengden av en regel: per legemiddelform, startdose,
+ * svar og verdiene for de justerbare parametrene (regelens forslag for
+ * svarene, med mindre tilfellet sier noe annet). Et valg av dose per trinn må
+ * ligge i det foretrukne området, som beregningen allerede krever.
+ */
+export interface Kliniskomfang {
+  tilfeller: Klinisktilfelle[]
+  /** Planen kan ikke bruke delte tabletter: en plan som deler, er utenfor omfanget. */
+  uten_deling?: { grunnlag: Grunnlag }
+  grunnlag: Grunnlag
+}
+
+export interface Klinisktilfelle {
+  /** Legemiddelformen i FEST (kode) alle preparatene i planen må ha; uten den gjelder regelens former. */
+  legemiddelform?: string
+  /** Startdosene som er kontrollert, nøyaktig. */
+  startdoser: number[]
+  /** Svarene tilfellet er kontrollert med; et spørsmål som ikke står her, må være besvart nei. */
+  svar: Record<string, boolean>
+  /** Verdiene for justerbare parametre tilfellet er kontrollert med (sti → verdi); ellers regelens forslag for svarene. */
+  justert?: Record<string, number>
 }
 
 export interface Regelsett {
@@ -595,7 +626,7 @@ const heltallFra1 = (x: unknown) => typeof x === 'number' && Number.isInteger(x)
  * radene i en omregningstabell og grensene i inndatakravene. Brukes både av
  * regelkontrollen og før en beregning.
  */
-export function tallfeil(r: Pick<Regel, 'plan' | 'inndata'>): string[] {
+export function tallfeil(r: Pick<Regel, 'plan' | 'inndata' | 'klinisk_omfang'>): string[] {
   const feil: string[] = []
   for (const f of r.plan.forlop) {
     if (f.start.type === 'dag' && !heltallFra1(f.start.dag)) feil.push(`forløp ${f.id} starter dag ${String(f.start.dag)}; startdagen må være et helt tall fra 1`)
@@ -613,6 +644,9 @@ export function tallfeil(r: Pick<Regel, 'plan' | 'inndata'>): string[] {
   for (const x of r.inndata) {
     const tall = [...(x.omrade ?? []), ...(x.verdier ?? [])].filter((v, i) => !(i === 0 && x.omrade && v === 0))
     if (!tall.every(positiv) || (x.omrade && x.omrade[0] > x.omrade[1])) feil.push(`inndatakravet for ${x.navn} har ugyldige grenser`)
+  }
+  for (const [i, t] of (r.klinisk_omfang?.tilfeller ?? []).entries()) {
+    if (t.startdoser.length === 0 || !t.startdoser.every(positiv)) feil.push(`det kliniske omfanget har ugyldige startdoser i tilfelle ${i + 1}`)
   }
   return feil
 }
@@ -684,7 +718,7 @@ export function grunnlagITabeller(r: Pick<Regel, 'plan'>): [string, Grunnlag][] 
   )
 }
 
-/** Alle grunnlag i regelen med stien dit: parametre med begrunnelseskravene og forslagene ved svar, inndata, bekreftelser, unntak, spørsmål, tabeller, valg av dose per trinn og fordeling. */
+/** Alle grunnlag i regelen med stien dit: parametre med begrunnelseskravene og forslagene ved svar, inndata, bekreftelser, unntak, spørsmål, tabeller, valg av dose per trinn, fordeling og det kliniske omfanget. */
 export function alleGrunnlag(r: Regel): [string, Grunnlag][] {
   return [
     ...parametre(r).flatMap(([sti, p]) => [
@@ -697,6 +731,8 @@ export function alleGrunnlag(r: Regel): [string, Grunnlag][] {
     ...grunnlagITabeller(r),
     ...r.plan.forlop.flatMap((f) => f.faser.flatMap((x, i) => (x.type === 'nedtrapping' && x.trinnvalg ? [[`${f.id}.faser[${i}].trinnvalg`, x.trinnvalg] as [string, Grunnlag]] : []))),
     ...r.plan.forlop.flatMap((f) => (f.fordeling ? [[`${f.id}.fordeling`, f.fordeling.grunnlag] as [string, Grunnlag]] : [])),
+    ...(r.klinisk_omfang ? [['klinisk_omfang', r.klinisk_omfang.grunnlag] as [string, Grunnlag]] : []),
+    ...(r.klinisk_omfang?.uten_deling ? [['klinisk_omfang.uten_deling', r.klinisk_omfang.uten_deling.grunnlag] as [string, Grunnlag]] : []),
   ]
 }
 

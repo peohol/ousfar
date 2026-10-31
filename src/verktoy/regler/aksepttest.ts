@@ -19,12 +19,12 @@
  */
 import type { Legemiddelutvalg } from '../../legemiddeldata/lesing'
 import { byggesteiner, norskDato, type Preparatgrunnlag } from '../motor/byggesteiner'
-import { beregnDoseplan, formvalgSomTrengs, planform, trinndosetekst, type Doseplaninndata, type Doseplanresultat, type Omgivelse, type Trinnvalg } from '../motor/plan'
+import { beregnDoseplan, formvalgSomTrengs, omfangsfeil, planform, trinndosetekst, type Doseplaninndata, type Doseplanresultat, type Omgivelse, type Trinnvalg } from '../motor/plan'
 import { festkoblinger, KARTLEGGING } from '../register'
 import { avrund } from './beregning'
 import { PLANHORISONT_TRINN } from './bygg'
 import type { Beregningsinndata, Regel, Trinnvalgsvar } from './modell'
-import { LANG_BEHANDLINGSTID, NEDTRAPPINGSSETT, UTENFOR_DOSERAMME_ID } from './nedtrapping'
+import { LANG_BEHANDLINGSTID, LANG_PROSENT, NEDTRAPPINGSSETT, STI, UTENFOR_DOSERAMME_ID } from './nedtrapping'
 
 export const AKSEPTTESTFIL = 'docs/verktøy-p7-aksepttest.md'
 export const FEST_AKSEPTTEST = 'src/data/verktoy/fest-aksepttest.json'
@@ -32,9 +32,7 @@ export const FEST_AKSEPTTEST = 'src/data/verktoy/fest-aksepttest.json'
 export const FEST_PILOT = 'src/data/verktoy/fest-pilotsett.json'
 
 /** Stien til trinnstørrelsen forskriveren kan justere i en P7-regel. */
-export const PROSENTSTI = 'plan.forlop[0].faser[0].strategi.prosent'
-/** Trinnstørrelsen ved lang behandlingstid i (b): høyst 10 %, som ikke krever begrunnelse i noen risikogruppe. */
-const LANG_PROSENT = 10
+export const PROSENTSTI = STI.prosent
 
 /** Kort behandlingstid og dose innenfor rammen. */
 export const KORT = { [LANG_BEHANDLINGSTID.id]: false, [UTENFOR_DOSERAMME_ID]: false }
@@ -105,9 +103,10 @@ export function lavesteStyrke(u: Festuttrekk, n: string, form: Formalternativ): 
   return mg.length > 0 ? Math.min(...mg) : null
 }
 
-export function beregnAksept(u: Festuttrekk, r: Regel, form: Formalternativ, inndata: Beregningsinndata): Doseplanresultat {
+/** Planen med de faktiske preparatene i FEST; `motor` er `kliniskDoseplan` når testen skal se det appen viser. */
+export function beregnAksept(u: Festuttrekk, r: Regel, form: Formalternativ, inndata: Beregningsinndata, motor = beregnDoseplan): Doseplanresultat {
   const x: Doseplaninndata = { ...inndata, godkjenningsfritak: false, ...(form.kode && { formvalg: { fra: { legemiddelformer: [form.kode] } } }) }
-  return beregnDoseplan(r, x, grunnlagFor(u, nokkel(r)), omgivelseFor(u), NEDTRAPPINGSSETT)
+  return motor(r, x, grunnlagFor(u, nokkel(r)), omgivelseFor(u), NEDTRAPPINGSSETT)
 }
 
 /** Antall reduksjoner planen kan gi med preparatene; 0 når den stopper før første trinn. */
@@ -269,24 +268,37 @@ export type Dosescenario = 'a' | 'b' | 'c' | 'f'
 export interface Doseomfang {
   startdose_mg: number
   planer: Record<Dosescenario, Doseplanresultat | null>
+  /** Om planen i scenariet er innenfor regelens kliniske omfang ({@link omfangsfeil}). */
+  innenfor: Record<Dosescenario, boolean>
   /** Dosen (f) er videreført fra, eller `null` når (a) ikke gir noen. */
   videre_mg: number | null
 }
 
+/**
+ * Om planen er innenfor regelens kliniske omfang: en delplan som den er, og
+ * ved et valg for første trinn planen med dosen {@link simulertValg} gir.
+ */
+export function iOmfang(u: Festuttrekk, r: Regel, form: Formalternativ, inndata: Beregningsinndata, p: Doseplanresultat): boolean {
+  const tv = p.trinnvalg?.find((t) => t.trinn === 1)
+  const plan = reduksjoner(p) > 0 ? p : tv ? beregnAksept(u, r, form, { ...inndata, trinnvalg: [simulertValg(r, tv)] }) : null
+  return plan?.status === 'doseplan' && reduksjoner(plan) > 0 && omfangsfeil(r, inndata, plan.forlop).length === 0
+}
+
 /** (a), (b), (c) og videreføringen (f) fra én startdose i én form. */
 export function omfangFor(u: Festuttrekk, s: (typeof AKSEPTSTOFFER)[number], form: Formalternativ, startdose_mg: number): Doseomfang {
-  const a = beregnAksept(u, s.hoved, form, besvart(s.hoved, startdose_mg))
-  const videre_mg = videreforingsdose(s.hoved, a)
-  return {
-    startdose_mg,
-    videre_mg,
-    planer: {
-      a,
-      b: beregnAksept(u, s.hoved, form, besvart(s.hoved, startdose_mg, { svar: LANG, justert: { [PROSENTSTI]: LANG_PROSENT } })),
-      c: beregnAksept(u, s.langsom, form, besvart(s.langsom, startdose_mg)),
-      f: videre_mg === null ? null : beregnAksept(u, s.hoved, form, besvart(s.hoved, videre_mg)),
-    },
+  const a = besvart(s.hoved, startdose_mg)
+  const videre_mg = videreforingsdose(s.hoved, beregnAksept(u, s.hoved, form, a))
+  const inndata: Record<Dosescenario, [Regel, Beregningsinndata] | null> = {
+    a: [s.hoved, a],
+    b: [s.hoved, besvart(s.hoved, startdose_mg, { svar: LANG, justert: { [PROSENTSTI]: LANG_PROSENT } })],
+    c: [s.langsom, besvart(s.langsom, startdose_mg)],
+    f: videre_mg === null ? null : [s.hoved, besvart(s.hoved, videre_mg)],
   }
+  const planer = Object.fromEntries(Object.entries(inndata).map(([k, x]) => [k, x && beregnAksept(u, x[0], form, x[1])])) as Doseomfang['planer']
+  const innenfor = Object.fromEntries(
+    Object.entries(inndata).map(([k, x]) => [k, !!x && !!planer[k as Dosescenario] && iOmfang(u, x[0], form, x[1], planer[k as Dosescenario]!)]),
+  ) as Doseomfang['innenfor']
+  return { startdose_mg, videre_mg, planer, innenfor }
 }
 
 export function omfangssett(u: Festuttrekk): { nokkel: string; form: Formalternativ; doser: Doseomfang[] }[] {
@@ -328,7 +340,10 @@ export function lagAksepttestrapport(u: Festuttrekk): string {
   const dosetabell = tabell(
     ['Virkestoff', 'Form', 'Startdose', '(a)', '(b)', '(c)', '(f)'],
     perDose.flatMap((t) =>
-      t.doser.map((d) => [t.nokkel, formnavn(t.form), `${tall(d.startdose_mg)} mg`, omfangscelle(d.planer.a), omfangscelle(d.planer.b), omfangscelle(d.planer.c), d.videre_mg === null ? '–' : `fra ${tall(d.videre_mg)} mg: ${omfangscelle(d.planer.f)}`]),
+      t.doser.map((d) => {
+        const celle = (x: Dosescenario) => `${omfangscelle(d.planer[x])}${d.innenfor[x] ? ' **[klinisk omfang]**' : ''}`
+        return [t.nokkel, formnavn(t.form), `${tall(d.startdose_mg)} mg`, celle('a'), celle('b'), celle('c'), d.videre_mg === null ? '–' : `fra ${tall(d.videre_mg)} mg: ${celle('f')}`]
+      }),
     ),
   )
   const lave = sett.flatMap((t) => {
@@ -374,6 +389,8 @@ ${lave.length === 0 ? 'Ingen av lavdoseeksemplene (d) gir et ordinært første t
 ### Per startdose
 
 Omfanget for hver markedsført styrke i formen, regelens vanlige dose og grensene for startdosen, så doseområdets grenser og andre faktiske startdoser er med, opp til den høyeste startdosen svarene over tillater uten begrunnelse; en høyere dose krever et ja eller en begrunnelse og er ikke med. Videreføringen (f) regnes fra siste dose i (a), eller fra dosen forskriveren velger ved første trinn når (a) bare gir et valg (den tilbudte dosen med reduksjon nærmest standardvalget, en simulering).
+
+**[klinisk omfang]** markerer cellene som er innenfor regelens kliniske omfang etter kontrollørens gjennomgang av 0ae6d07 (legemiddelform, startdose, behandlingstid, tidligere seponeringssymptomer og trinnstørrelse som kontrollert, og for klomipramin uten delte tabletter). Merkingen er ingen godkjenning: en klinisk godkjenning kan bare gjelde disse tilfellene, og alle andre celler stopper med forklaring i verktøyet, også om regelen blir godkjent. En videreføring er bare med når dosen den regnes fra, selv er et kontrollert tilfelle.
 
 ${dosetabell}
 

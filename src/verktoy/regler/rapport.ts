@@ -5,6 +5,7 @@
  * `npm run verktoy:regler -- rapport` skriver dem; testene sier fra når de
  * ikke er oppdatert. Psychiatrienet vises bare som kildeoppføringens id.
  */
+import { tilfelletekst } from '../motor/plan'
 import { beregn, inndatagrenser, inndatavilkar, kortform, kravtekst, MOTORVERSJON, omradetekst } from './beregning'
 import { erKliniskGodkjent, fingeravtrykk, godkjenningsfeil } from './godkjenning'
 import { KILDER, kildeFor } from './kilder'
@@ -162,6 +163,13 @@ function regelavsnitt(r: Regel, sett: Regelsett): string {
     ...r.unntak.map((u) => `Unntak (\`${u.id}\`): ${u.tekst} (${grunnlag(u.grunnlag)})`),
     ...(r.sporsmal ?? []).map((x) => `Må besvares (\`${x.id}\`): ${x.tekst}${x.krever_begrunnelse ? ' Et ja krever en skriftlig begrunnelse.' : ''} (${grunnlag(x.grunnlag)})`),
   ]
+  const o = r.klinisk_omfang
+  const omfang = o
+    ? `\n\n**Klinisk omfang** (en klinisk godkjenning kan bare gjelde disse tilfellene; alt annet stopper med forklaring, også et annet valg av trinnstørrelse eller trinnlengde, med eller uten begrunnelse; ${grunnlag(o.grunnlag)}):\n\n${liste([
+        ...(o.tilfeller.length > 0 ? o.tilfeller.map((t) => tilfelletekst(r, t)) : ['Ingen tilfeller er kontrollert; regelen gir aldri en klinisk plan.']),
+        ...(o.uten_deling ? [`Uten delte tabletter: en plan som deler en tablett, er utenfor omfanget (${grunnlag(o.uten_deling.grunnlag)})`] : []),
+      ])}`
+    : ''
   const medlemmer = r.medlemmer
     ? `\n\n**Gruppemedlemmer (B4).** Bare medlemmer som er foreslått eller validert, kan beregnes.\n\n${tabell(
         ['Virkestoff', 'Vurdering', 'Begrunnelse'],
@@ -198,7 +206,7 @@ ${parametertabell(r)}
 
 **Betingelser:**
 
-${liste(betingelser)}${medlemmer}
+${liste(betingelser)}${omfang}${medlemmer}
 
 **Kliniske forutsetninger:**
 

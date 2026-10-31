@@ -39,10 +39,10 @@ import { DEKNINGSRAPPORTFIL, lagDekningsrapport, seponeringsregler, stopOppforin
 import { begrunnelseshjelp, beregnPlan, inndataFor, kanKreveBegrunnelse, mangler, medRegel, TOMT_SKJEMA, type Planskjema } from '../verktoy/doseplan'
 import { lesKartdata } from '../verktoy/kartdata'
 import { markedsgrunnlag, preparaterFor } from '../verktoy/kartlegging'
-import { beregnDoseplan, kliniskDoseplan, planform } from '../verktoy/motor/plan'
+import { beregnDoseplan, kliniskDoseplan, planform, UTENFOR_OMFANG } from '../verktoy/motor/plan'
 import { syntetiskUtvalg, type Testpreparat } from '../verktoy/motor/syntetisk'
 import { VERKTOY, virkestoffvalg } from '../verktoy/register'
-import { akseptsett, AKSEPTSTOFFER, AKSEPTTESTFIL, annenhverDag, beregnAksept, besvart, FEST_AKSEPTTEST, KORT, LANG, lagAksepttestrapport, omfang, omfangssett, reduksjoner, sisteDose, valgtekst, vanligDose, type Festuttrekk } from '../verktoy/regler/aksepttest'
+import { akseptsett, AKSEPTSTOFFER, AKSEPTTESTFIL, annenhverDag, beregnAksept, besvart, FEST_AKSEPTTEST, KORT, LANG, lagAksepttestrapport, omfang, omfangssett, PROSENTSTI, reduksjoner, sisteDose, valgtekst, vanligDose, type Festuttrekk } from '../verktoy/regler/aksepttest'
 import { AVSLUTNING_FELLES, avrund, beregn, kortform, MINSTE_VISTE_MG, nulldagfeil, SISTE_DOSE, TIDLIGSTE_DATOER, trinnTilHorisont, type Forlopsresultat, type Periode } from '../verktoy/regler/beregning'
 import { erKliniskGodkjent, fingeravtrykk } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett, lesKontrollgrunnlag } from '../verktoy/regler/kontroll'
@@ -52,10 +52,12 @@ import {
   AKUTT_ID,
   JUSTERING,
   LANG_BEHANDLINGSTID,
+  LANG_PROSENT,
   NEDTRAPPINGSSETT,
   ORGANFUNKSJON_ID,
   SAMMENLIGNINGSSETT,
   STARTFORSLAG,
+  STI,
   TEKNISK_MAKS_DAGER,
   TIDLIGERE_SYMPTOMER_ID,
   TIDLIGERE_VURDERT_ID,
@@ -214,7 +216,7 @@ describe('Regelutkastene (P7.2)', () => {
     expect(SAMMENLIGNINGSSETT.regler.map((r) => r.id)).toEqual(['seponering-citalopram-hyperbolsk', 'gruppe-rest-ap-aripiprazol'])
     // Escitalopram er flyttet fra pilotsettet til P7; appen bruker begge, og ingen regel-ID finnes i begge.
     expect(PILOTSETT.regler.map((r) => r.id)).not.toContain('seponering-escitalopram')
-    expect(regel('escitalopram').godkjenning.historikk.at(-8)!.merknad).toMatch(/substanskontrollen 30\.10\.2026, runde 3/)
+    expect(regel('escitalopram').godkjenning.historikk.at(-10)!.merknad).toMatch(/substanskontrollen 30\.10\.2026, runde 3/)
     expect(new Set(REGELSETT.regler.map((r) => r.id)).size).toBe(REGELSETT.regler.length)
   })
 
@@ -262,15 +264,25 @@ describe('Regelutkastene (P7.2)', () => {
     const etterBeslutning = valgAvDose
     // Og én etter kontrollørens gjennomgang av 9cb420b 31.10.2026: rettet (nedtrappingene) eller gjort om til fagtekst (citalopram).
     const etterGjennomgang = (r: Regel) => NEDTRAPPINGER.includes(r) || r === CITALOPRAM
-    const etter = (r: Regel) => Number(likeStore(r)) + Number(valgAvDose(r)) + Number(etterBeslutning(r)) + Number(etterGjennomgang(r))
+    // Og én etter kontrollørens gjennomgang av 0ae6d07 31.10.2026: hver beregnbar regel har fått et klinisk omfang, annenhver dag et tomt.
+    const etterOmfang = (r: Regel) => BEREGNBARE.includes(r)
+    const etter = (r: Regel) => Number(likeStore(r)) + Number(valgAvDose(r)) + Number(etterBeslutning(r)) + Number(etterGjennomgang(r)) + Number(etterOmfang(r))
     for (const r of [...HOVEDREGLER, ...formtekst, CITALOPRAM, regel('duloksetin'), regel('venlafaksin')]) expect(historikk(r), r.id).toEqual([6 + etter(r), steg(6 + etter(r))])
     for (const r of [...LANGSOMME, ANNENHVER_DAG]) expect(historikk(r), r.id).toEqual([2 + etter(r), steg(2 + etter(r))])
-    expect(ANNENHVER_DAG.versjon).toBe(2)
+    expect(ANNENHVER_DAG.versjon).toBe(3)
     for (const r of [...BEREGNBARE, ...formtekst, CITALOPRAM]) {
-      const forskyvning = 2 * Number(etterGjennomgang(r))
+      const omfangssteg = 2 * Number(etterOmfang(r))
+      const forskyvning = 2 * Number(etterGjennomgang(r)) + omfangssteg
+      if (etterOmfang(r)) {
+        const merknad =
+          r === ANNENHVER_DAG
+            ? /^Avgrenset etter kontrollørens gjennomgang av 0ae6d07 31\.10\.2026 \(P7\.5\): strategien var ikke blant de kontrollerte tilfellene, så regelen har et tomt klinisk omfang/
+            : /^Avgrenset etter kontrollørens gjennomgang av 0ae6d07 31\.10\.2026 \(P7\.5\): en klinisk godkjenning kan bare gjelde de kontrollerte tilfellene i regelens kliniske omfang/
+        expect(r.godkjenning.historikk.at(-2)!.merknad, r.id).toMatch(merknad)
+      }
       if (etterGjennomgang(r)) {
         const merknad = r === CITALOPRAM ? /^Gjort om til fagtekst etter kontrollørens gjennomgang av 9cb420b 31\.10\.2026 \(P7\.5\): med tablettene i FEST er den eneste dosen/ : /^Rettet etter kontrollørens gjennomgang av 9cb420b 31\.10\.2026 \(P7\.5\): et avvik som krever begrunnelse, er ikke et godkjent planområde og tilbys ikke lenger som valg/
-        expect(r.godkjenning.historikk.at(-2)!.merknad, r.id).toMatch(merknad)
+        expect(r.godkjenning.historikk.at(-2 - omfangssteg)!.merknad, r.id).toMatch(merknad)
       }
       if (etterBeslutning(r)) {
         const merknad = formtekst.includes(r) ? /^Gjort om til fagtekst etter kontrollørens beslutninger 30\.10\.2026 \(P7\.5, beslutning P7-A\)/ : /^Rettet etter kontrollørens beslutninger 30\.10\.2026 \(P7\.5, P7-A og P7-B\)/
@@ -279,7 +291,7 @@ describe('Regelutkastene (P7.2)', () => {
       }
       if (likeStore(r)) expect(r.godkjenning.historikk.at(-6 - forskyvning)!.merknad, r.id).toMatch(/^Rettet etter kontrollrunden 30\.10\.2026 \(P7\.5\): at deldosene skal være like store, er regelens eget konservative valg/)
       expect(r.godkjenning.historikk.at(-2 - 2 * etter(r))!.merknad, r.id).toMatch(/^Omarbeidet etter substanskontrollen 30\.10\.2026, runde 3 \(P7\.5\): godkjent med endring/)
-      expect(r.godkjenning.historikk.at(-1)!.dato, r.id).toBe(etterGjennomgang(r) ? '2026-10-31' : '2026-10-30')
+      expect(r.godkjenning.historikk.at(-1)!.dato, r.id).toBe(etterGjennomgang(r) || etterOmfang(r) ? '2026-10-31' : '2026-10-30')
       // Valgområdene (prosent og dager, med kravene om begrunnelse) er avklart av den uavhengige kontrolløren for denne versjonen.
       for (const [sti, p] of justerbare(r)) {
         const g = p.grunnlag
@@ -874,10 +886,12 @@ const TABLETTER = { fra: { klasse: 'peroral' as const, legemiddelformer: ['SYN-T
 /**
  * Regelen med de syntetiske tablettene der den er avgrenset til tablettene i
  * FEST (fluoksetin etter gjennomgangen av 9cb420b), så de syntetiske
- * preparatene kan brukes; de syntetiske kapslene er fortsatt utenfor.
+ * preparatene kan brukes; de syntetiske kapslene er fortsatt utenfor. Det
+ * kliniske omfanget (gjennomgangen av 0ae6d07) er tatt bort, fordi det gjelder
+ * formene i FEST; det testes med de faktiske preparatene i aksepttesten.
  */
 const SYNTETISKE_FORMER: Record<string, string> = { '5': 'SYN-TAB', '53': 'SYN-TAB' }
-const medSyntetiskeFormer = (r: Regel): Regel => ({
+const medSyntetiskeFormer = ({ klinisk_omfang: _o, ...r }: Regel): Regel => ({
   ...r,
   plan: { ...r.plan, forlop: r.plan.forlop.map((f) => (f.legemiddelformer ? { ...f, legemiddelformer: [...new Set(f.legemiddelformer.map((k) => SYNTETISKE_FORMER[k] ?? k))] } : f)) },
 })
@@ -1299,5 +1313,194 @@ describe('Aksepttesten med norske preparater (P7.5, del E.2)', () => {
     const vanlig = sett.map((t) => reduksjoner(t.resultater[0]!.plan!))
     expect(vanlig.some((n) => n === 0)).toBe(true)
     expect(readFileSync(new URL(`../../${AKSEPTTESTFIL}`, import.meta.url), 'utf8')).toContain(`I (a) stopper ${vanlig.filter((n) => n === 0).length} av ${sett.length} kombinasjoner`)
+  })
+})
+
+describe('Klinisk omfang med de faktiske preparatene i FEST (gjennomgangen av 0ae6d07)', () => {
+  const uttrekk = JSON.parse(readFileSync(new URL(`../../${FEST_AKSEPTTEST}`, import.meta.url), 'utf8')) as Festuttrekk
+  const ENESTE = { kode: null, navn: 'eneste form' }
+  const form = (kode: string) => ({ kode, navn: kode })
+  /** Planen appen ville vist om regelen var godkjent: godkjent bare i testen, med fersk FEST. */
+  const klinisk = (id: string, f: { kode: string | null; navn: string }, startdose_mg: number, x: Partial<Beregningsinndata> = {}) => {
+    const r = NEDTRAPPINGSSETT.regler.find((y) => y.id === id)!
+    const g = godkjennITest(r, `test-${id}`)
+    return beregnAksept(uttrekk, g, f, besvart(g, startdose_mg, x), kliniskDoseplan)
+  }
+  const grunner = (p: ReturnType<typeof klinisk>) => (p.status === 'stoppet' ? p.stoppgrunner.join(' | ') : '')
+  const LANG_SVAR = { svar: LANG, justert: { [PROSENTSTI]: LANG_PROSENT } }
+  const tall = (x: number) => String(x).replace('.', ',')
+
+  it('har et bindende omfang i hver beregnbar regel, nøyaktig tilfellene kontrolløren valgte ut, og ingen tilfeller for annenhver dag', () => {
+    const omfang = Object.fromEntries(
+      BEREGNBARE.map((r) => [
+        r.id,
+        r.klinisk_omfang!.tilfeller.map((t) => `${t.legemiddelform} ${t.startdoser.join('/')}${t.svar[LANG_BEHANDLINGSTID.id] ? ` lang ${t.justert?.[PROSENTSTI]} %` : ''}`),
+      ]),
+    )
+    expect(omfang).toEqual({
+      'seponering-amitriptylin': ['53 25/50/75/100/150', '53 50/75 lang 10 %'],
+      'seponering-amitriptylin-langsom': [],
+      'seponering-escitalopram': ['53 20', '748 10/20', '748 10/20 lang 10 %'],
+      'seponering-escitalopram-langsom': ['748 20'],
+      'seponering-fluoksetin': ['5 40/60', '53 40/60'],
+      'seponering-fluoksetin-langsom': [],
+      'seponering-fluvoksamin': ['53 100/300'],
+      'seponering-fluvoksamin-langsom': [],
+      'seponering-klomipramin': ['53 25/50', '53 25/50 lang 10 %'],
+      'seponering-klomipramin-langsom': ['53 50'],
+      'seponering-nortriptylin': ['53 25/50/150', '53 50 lang 10 %'],
+      'seponering-nortriptylin-langsom': [],
+      'seponering-sertralin': ['53 100/200'],
+      'seponering-sertralin-langsom': [],
+      'seponering-vortioksetin': ['53 20', '53 20 lang 10 %'],
+      'seponering-vortioksetin-langsom': [],
+      'seponering-fluoksetin-annenhver-dag': [],
+    })
+    expect(BEREGNBARE.filter((r) => r.klinisk_omfang!.uten_deling).map((r) => r.id)).toEqual(['seponering-klomipramin', 'seponering-klomipramin-langsom'])
+    // Omfanget er en del av fingeravtrykket: en godkjenning kan ikke flyttes til et annet omfang.
+    const r = regel('sertralin')
+    expect(fingeravtrykk({ ...r, klinisk_omfang: { ...r.klinisk_omfang!, tilfeller: [] } })).not.toBe(fingeravtrykk(r))
+  })
+
+  it('gir en klinisk plan innenfor omfanget når regelen er godkjent i testen', () => {
+    const innenfor: [string, { kode: string | null; navn: string }, number, Partial<Beregningsinndata>][] = [
+      ['seponering-sertralin', ENESTE, 100, {}],
+      ['seponering-sertralin', ENESTE, 200, {}],
+      ['seponering-escitalopram', form('748'), 20, LANG_SVAR],
+      ['seponering-escitalopram', form('53'), 20, {}],
+      ['seponering-escitalopram-langsom', form('748'), 20, {}],
+      ['seponering-fluoksetin', form('5'), 40, {}],
+      ['seponering-klomipramin', ENESTE, 50, LANG_SVAR],
+    ]
+    for (const [id, f, mg, x] of innenfor) expect(klinisk(id, f, mg, x), `${id} ${f.kode} ${mg} mg`).toMatchObject({ status: 'doseplan', klinisk: true })
+    // Vortioksetin 20 mg ved lang behandlingstid: 18 mg kan ikke gis, og 15 mg (−25 %) er over 10 %, så valget tilbys bare innenfor det foretrukne området.
+    const v = klinisk('seponering-vortioksetin', ENESTE, 20, LANG_SVAR)
+    expect(v.status === 'stoppet' && v.trinnvalg?.[0]?.doser.map((d) => d.mg), JSON.stringify(v.status === 'stoppet' && v.stoppgrunner)).toBeTruthy()
+    // Med et valg for første trinn: amitriptylin 50 mg kan bare gis som 40 mg (−20 %).
+    const a = klinisk('seponering-amitriptylin', ENESTE, 50)
+    expect(a.status === 'stoppet' && a.trinnvalg?.[0]?.doser.map((d) => d.mg)).toEqual([40])
+    const valgt = klinisk('seponering-amitriptylin', ENESTE, 50, { trinnvalg: [{ forlop: 'fra', trinn: 1, fra_mg: 50, mg: 40 }] })
+    expect(valgt).toMatchObject({ status: 'doseplan', klinisk: true })
+  })
+
+  it('stopper med forklaring utenfor omfanget: annen startdose, laveste styrke, videreføring, annen form, andre svar og lang behandlingstid der den ikke er kontrollert', () => {
+    const utenfor: [string, { kode: string | null; navn: string }, number, Partial<Beregningsinndata>][] = [
+      ['seponering-sertralin', ENESTE, 150, {}],
+      ['seponering-sertralin', ENESTE, 25, {}],
+      // Videreføring fra 75 mg, siste dose fra 100 mg.
+      ['seponering-sertralin', ENESTE, 75, {}],
+      ['seponering-sertralin', ENESTE, 100, LANG_SVAR],
+      ['seponering-escitalopram', form('53'), 10, {}],
+      ['seponering-escitalopram', form('53'), 20, LANG_SVAR],
+      ['seponering-escitalopram', form('748'), 15, {}],
+      ['seponering-escitalopram', form('748'), 20, { svar: { eldre: true } }],
+      ['seponering-escitalopram-langsom', form('748'), 10, {}],
+      ['seponering-fluvoksamin', ENESTE, 300, LANG_SVAR],
+      ['seponering-amitriptylin', ENESTE, 100, LANG_SVAR],
+      ['seponering-sertralin-langsom', ENESTE, 100, {}],
+    ]
+    for (const [id, f, mg, x] of utenfor) {
+      const p = klinisk(id, f, mg, x)
+      expect(p, `${id} ${f.kode} ${mg} mg`).toMatchObject({ status: 'stoppet', klinisk: false })
+      expect(grunner(p), `${id} ${f.kode} ${mg} mg`).toMatch(/Startdosen [\d,]+ mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for/)
+      expect(grunner(p), `${id} ${f.kode} ${mg} mg`).toContain(UTENFOR_OMFANG)
+      // Et valg for første trinn tilbys ikke når planen ikke kan bli klinisk.
+      expect(p, `${id} ${f.kode} ${mg} mg`).not.toHaveProperty('trinnvalg')
+    }
+    expect(grunner(klinisk('seponering-sertralin', ENESTE, 150))).toMatch(/\(kontrollert: 100 og 200 mg, FEST-legemiddelform 53, med nei på alle spørsmålene\)/)
+    // Annenhver dag har ingen kontrollerte tilfeller, uansett form.
+    for (const f of [ENESTE, form('5'), form('53')]) {
+      expect(grunner(klinisk('seponering-fluoksetin-annenhver-dag', f, 20)), `${f.kode}`).toMatch(/ingen tilfeller er kontrollert/)
+    }
+  })
+
+  it('stopper når forskriveren overstyrer trinnstørrelsen eller trinnlengden, også innenfor regelens område og med begrunnelse', () => {
+    const BEGRUNNET = { begrunnelse: BEGRUNNELSE }
+    // Kontrollørens eksempel: sertralin 100 mg, lang behandlingstid og 25 % med begrunnelse; lang behandlingstid er ikke kontrollert for sertralin.
+    expect(grunner(klinisk('seponering-sertralin', ENESTE, 100, { svar: LANG, justert: { [PROSENTSTI]: 25 }, ...BEGRUNNET }))).toMatch(/Startdosen 100 mg med disse svarene .*ikke et tilfelle/)
+    // Der lang behandlingstid er kontrollert, gjelder det bare 10 %: et større trinn med begrunnelse er utenfor.
+    for (const [id, f, mg] of [
+      ['seponering-escitalopram', form('748'), 20],
+      ['seponering-vortioksetin', ENESTE, 20],
+      ['seponering-klomipramin', ENESTE, 50],
+    ] as const) {
+      for (const prosent of [5, 15, 25]) {
+        const p = klinisk(id, f, mg, { svar: LANG, justert: { [PROSENTSTI]: prosent }, ...BEGRUNNET })
+        expect(p.status, `${id} ${prosent} %`).toBe('stoppet')
+        expect(grunner(p), `${id} ${prosent} %`).toMatch(new RegExp(`${prosent} % er ikke verdien som er kontrollert \\(10 %\\), heller ikke med begrunnelse\\. ${UTENFOR_OMFANG.replace(/[.]/g, '\\.')}`))
+      }
+    }
+    // Ved kort behandlingstid gjelder regelens forslag; både et mindre og et større trinn og en annen trinnlengde er utenfor.
+    const overstyrt: Partial<Beregningsinndata>[] = [{ justert: { [PROSENTSTI]: 10 } }, { justert: { [PROSENTSTI]: 50 }, ...BEGRUNNET }, { justert: { [STI.dager]: 42 } }]
+    for (const x of overstyrt) {
+      const p = klinisk('seponering-sertralin', ENESTE, 100, x)
+      expect(p.status, JSON.stringify(x)).toBe('stoppet')
+      expect(grunner(p), JSON.stringify(x)).toMatch(/er ikke verdien som er kontrollert .*heller ikke med begrunnelse/)
+    }
+  })
+
+  it('sperrer klomipraminplaner som deler tabletter, så bare 50 mg ved lang behandlingstid gir en plan', () => {
+    const DELT = /Planen bruker delte tabletter, og delingen er ikke dokumentert for klinisk bruk/
+    expect(grunner(klinisk('seponering-klomipramin', ENESTE, 50))).toMatch(DELT)
+    expect(grunner(klinisk('seponering-klomipramin', ENESTE, 25, LANG_SVAR))).toMatch(DELT)
+    expect(grunner(klinisk('seponering-klomipramin-langsom', ENESTE, 50))).toMatch(DELT)
+    // Fra 25 mg kan 20 mg velges med hele tabletter, men neste trinn (15 mg) deler en tablett.
+    expect(grunner(klinisk('seponering-klomipramin', ENESTE, 25, { trinnvalg: [{ forlop: 'fra', trinn: 1, fra_mg: 25, mg: 20 }] }))).toMatch(DELT)
+    const lang = klinisk('seponering-klomipramin', ENESTE, 50, LANG_SVAR)
+    expect(lang).toMatchObject({ status: 'doseplan', klinisk: true })
+    expect(lang.status === 'doseplan' && lang.forlop[0]!.perioder.every((p) => p.elementer.every((e) => Number.isInteger(e.antall)))).toBe(true)
+  })
+
+  it('markerer i aksepttesten nøyaktig cellene innenfor omfanget, og hver av dem gir en klinisk plan når regelen er godkjent', () => {
+    const celler = omfangssett(uttrekk).flatMap((t) =>
+      t.doser.flatMap((d) => (['a', 'b', 'c', 'f'] as const).filter((x) => d.innenfor[x]).map((x) => `${t.nokkel} ${t.form.kode ?? '–'} ${tall(d.startdose_mg)} ${x}`)),
+    )
+    expect(celler).toEqual([
+      'amitriptylin – 25 a',
+      'amitriptylin – 50 a',
+      'amitriptylin – 50 b',
+      'amitriptylin – 75 a',
+      'amitriptylin – 75 b',
+      'amitriptylin – 100 a',
+      // Videreføringen fra 100 mg ender på 75 mg, som selv er et kontrollert tilfelle.
+      'amitriptylin – 100 f',
+      'amitriptylin – 150 a',
+      'escitalopram 53 20 a',
+      'escitalopram 748 10 a',
+      'escitalopram 748 10 b',
+      'escitalopram 748 20 a',
+      'escitalopram 748 20 b',
+      'escitalopram 748 20 c',
+      'fluoksetin 5 40 a',
+      'fluoksetin 5 60 a',
+      'fluoksetin 53 40 a',
+      'fluoksetin 53 60 a',
+      'fluvoksamin – 100 a',
+      'fluvoksamin – 300 a',
+      'klomipramin – 50 b',
+      'nortriptylin – 25 a',
+      'nortriptylin – 50 a',
+      'nortriptylin – 50 b',
+      'nortriptylin – 150 a',
+      'sertralin – 100 a',
+      'sertralin – 200 a',
+      'vortioksetin – 20 a',
+      'vortioksetin – 20 b',
+    ])
+    expect(readFileSync(new URL(`../../${AKSEPTTESTFIL}`, import.meta.url), 'utf8').match(/ \*\*\[klinisk omfang\]\*\*/g)).toHaveLength(celler.length)
+    // Hver celle gir en klinisk plan med regelen godkjent i testen, direkte eller med en av dosene som tilbys for første trinn.
+    for (const t of omfangssett(uttrekk)) {
+      for (const d of t.doser) {
+        for (const x of (['a', 'b', 'c', 'f'] as const).filter((y) => d.innenfor[y])) {
+          const id = `seponering-${t.nokkel}${x === 'c' ? '-langsom' : ''}`
+          const mg = x === 'f' ? d.videre_mg! : d.startdose_mg
+          const inn = x === 'b' ? LANG_SVAR : {}
+          const p = klinisk(id, t.form, mg, inn)
+          const valg = p.status === 'stoppet' ? (p.trinnvalg?.find((v) => v.trinn === 1)?.doser ?? []) : []
+          const planer = p.status === 'doseplan' ? [p] : valg.map((v) => klinisk(id, t.form, mg, { ...inn, trinnvalg: [{ forlop: 'fra', trinn: 1, fra_mg: mg, mg: v.mg }] }))
+          expect(planer.some((q) => q.status === 'doseplan' && q.klinisk), `${id} ${t.form.kode} ${mg} mg (${x})`).toBe(true)
+        }
+      }
+    }
   })
 })

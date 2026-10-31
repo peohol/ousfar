@@ -25,9 +25,9 @@
  */
 import { FEST_FORELDET_ETTER_TIMER, festForeldet } from '../../legemiddeldata/referanser'
 import { FORMULERINGSKLASSER, type Formuleringsklasse } from '../festformuleringer'
-import { AVSLUTNING_FELLES, AVVIK_IKKE_BEREGNET, avrund, beregn, erIsoDato, fordelingstekst, hverTekst, injeksjonstidspunkt, utenBeregningLinje, valgtSuffiks, trinnvalgOmrade, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
+import { AVSLUTNING_FELLES, AVVIK_IKKE_BEREGNET, avrund, beregn, erIsoDato, fordelingstekst, hverTekst, injeksjonstidspunkt, medEnhet, medSvarforslag, utenBeregningLinje, valgtSuffiks, trinnvalgOmrade, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
 import { fingeravtrykk, godkjenningsfeil, kanonisk, sha256 } from '../regler/godkjenning'
-import { parameterfeil, type Beregningsinndata, type Fase, type Forlop, type Parameter, type Regel, type Regelsett } from '../regler/modell'
+import { justerbare, parameterfeil, type Beregningsinndata, type Fase, type Forlop, type Klinisktilfelle, type Parameter, type Regel, type Regelsett } from '../regler/modell'
 import { byggesteiner, DOSEENHETER, norskDato, type Byggestein, type Preparatgrunnlag } from './byggesteiner'
 import { doser, fordel, styrkevalg, velgSerie, type Dosekandidat, type Doseelement, type Periodevalg, type Styrkevalg } from './dosevalg'
 
@@ -232,6 +232,61 @@ export function kliniskSperre(regel: Regel, utvalg: Preparatgrunnlag['utvalg'], 
   sperre.push(...festFerskhet(utvalg, naa))
   return sperre
 }
+
+const svarene = (regel: Regel, svar: Record<string, boolean> | undefined) => Object.fromEntries((regel.sporsmal ?? []).map((x) => [x.id, svar?.[x.id] ?? false]))
+
+/** Tilfellet i klartekst: «10 og 20 mg, FEST-legemiddelform 748, ved lang behandlingstid, reduksjon per trinn 10 %». */
+export function tilfelletekst(regel: Regel, t: Klinisktilfelle): string {
+  const ja = (regel.sporsmal ?? []).filter((x) => t.svar[x.id] === true).map((x) => x.ja)
+  const parametere = new Map(justerbare(regel))
+  const verdier = Object.entries(t.justert ?? {}).flatMap(([sti, x]) => {
+    const p = parametere.get(sti)
+    return p ? [`${p.justerbar.toLowerCase()} ${medEnhet(x, p)}`] : []
+  })
+  return [`${listeOg(t.startdoser.map(tall))} mg`, t.legemiddelform && `FEST-legemiddelform ${t.legemiddelform}`, ja.length > 0 ? `ved ${listeOg(ja)} og nei på de andre spørsmålene` : 'med nei på alle spørsmålene', ...verdier].filter(Boolean).join(', ')
+}
+
+/**
+ * Hvorfor planen er utenfor regelens kliniske omfang (`Regel.klinisk_omfang`,
+ * P7.5); tom når den er innenfor, eller når regelen ikke har et. En plan
+ * utenfor omfanget er aldri klinisk, selv om regelen er godkjent.
+ */
+export function omfangsfeil(regel: Regel, inndata: Doseplaninndata, forlop: Praktiskforlop[]): string[] {
+  const omfang = regel.klinisk_omfang
+  // Uten en gyldig startdose stopper beregningen allerede på den.
+  if (!omfang || !(inndata.startdose_mg > 0)) return []
+  const feil: string[] = []
+  const elementer = forlop.flatMap((f) => f.perioder.flatMap((p) => p.elementer))
+  // Formene planen bruker, eller formene forskriveren har valgt når planen har stoppet.
+  const brukt = elementer.flatMap((e) => e.preparater.map((b) => b.legemiddelform?.kode ?? ''))
+  const former = new Set(brukt.length > 0 ? brukt : Object.values(inndata.formvalg ?? {}).flatMap((v) => v.legemiddelformer ?? []))
+  const svar = svarene(regel, inndata.svar)
+  const forslag = justerbare(medSvarforslag(regel, inndata.svar).regel)
+  const kandidater = omfang.tilfeller.filter(
+    (t) =>
+      t.startdoser.some((x) => Math.abs(x - inndata.startdose_mg) < 1e-9) &&
+      Object.entries(svar).every(([id, v]) => (t.svar[id] ?? false) === v) &&
+      (!t.legemiddelform || [...former].every((k) => k === t.legemiddelform)),
+  )
+  // Verdiene planen bruker (forskriverens valg eller forslaget) mot verdiene tilfellet er kontrollert med.
+  const avvik = (t: Klinisktilfelle) =>
+    forslag.flatMap(([sti, p]) => {
+      const brukt = inndata.justert?.[sti] ?? p.verdi
+      const kontrollert = t.justert?.[sti] ?? p.verdi
+      return brukt === null || kontrollert === null || Math.abs(brukt - kontrollert) < 1e-9 ? [] : [`${p.justerbar} ${medEnhet(brukt, p)} er ikke verdien som er kontrollert (${medEnhet(kontrollert, p)}), heller ikke med begrunnelse.`]
+    })
+  if (kandidater.length === 0) {
+    const kontrollert = omfang.tilfeller.map((t) => tilfelletekst(regel, t))
+    feil.push(
+      `Startdosen ${tall(inndata.startdose_mg)} mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for${kontrollert.length > 0 ? ` (kontrollert: ${kontrollert.join('; ')})` : '; ingen tilfeller er kontrollert'}. ${UTENFOR_OMFANG}`,
+    )
+  } else if (kandidater.every((t) => avvik(t).length > 0)) feil.push(`${avvik(kandidater[0]!).join(' ')} ${UTENFOR_OMFANG}`)
+  if (omfang.uten_deling && elementer.some((e) => !Number.isInteger(e.antall))) feil.push(`Planen bruker delte tabletter, og delingen er ikke dokumentert for klinisk bruk. ${UTENFOR_OMFANG}`)
+  return feil
+}
+
+/** Felles for planer utenfor det kliniske omfanget. */
+export const UTENFOR_OMFANG = 'Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.'
 
 class Stopp extends Error {}
 
@@ -652,7 +707,7 @@ export function beregnDoseplan(regel: Regel, inndata: Doseplaninndata, grunnlag:
 
   const brukte = forlop.flatMap((f) => [...f.perioder.flatMap((p) => p.elementer), ...f.injeksjoner.map((i) => i.element)]).flatMap((e) => e.preparater)
   const unike = [...new Map(brukte.map((b) => [b.id, b])).values()].sort((a, b) => (a.id < b.id ? -1 : 1))
-  const sperre = kliniskSperre(regel, utvalg, naa)
+  const sperre = [...kliniskSperre(regel, utvalg, naa), ...omfangsfeil(regel, inndata, forlop)]
   const klinisk = sperre.length === 0 && ideell.klinisk_godkjent
   return medValg({
     ...versjoner(sha256(kanonisk({ kildedato: utvalg.kildedato, preparater: unike }))),
@@ -674,10 +729,12 @@ export function beregnDoseplan(regel: Regel, inndata: Doseplaninndata, grunnlag:
 export function kliniskDoseplan(...args: Parameters<typeof beregnDoseplan>): Doseplanresultat {
   const r = beregnDoseplan(...args)
   if (r.status === 'stoppet') {
-    // Valg av dose per trinn tilbys bare når planen kan bli klinisk.
-    const [regel, , grunnlag, omgivelse] = args
-    if (!r.trinnvalg || kliniskSperre(regel, grunnlag.utvalg, new Date(omgivelse.naa)).length === 0) return r
-    const { trinnvalg: _t, ...uten } = r
+    // Valg av dose per trinn tilbys bare når planen kan bli klinisk, og en plan utenfor omfanget sier det, så et valg ikke ser ut til å kunne hjelpe.
+    const [regel, inndata, grunnlag, omgivelse] = args
+    const utenfor = omfangsfeil(regel, inndata, [])
+    const med = utenfor.length > 0 ? { ...r, stoppgrunner: [...r.stoppgrunner, ...utenfor] } : r
+    if (!med.trinnvalg || [...kliniskSperre(regel, grunnlag.utvalg, new Date(omgivelse.naa)), ...utenfor].length === 0) return med
+    const { trinnvalg: _t, ...uten } = med
     return uten
   }
   if (r.klinisk) return r

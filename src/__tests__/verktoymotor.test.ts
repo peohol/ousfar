@@ -800,7 +800,7 @@ describe('Fenelzin etter fluoksetin med preparatene i FEST (P4.8, gjennomgangen 
   })
 })
 
-describe('Sertralin til mirtazapin med preparatene i FEST (P4.8, gjennomgangene av 62ebb21 og 9cb420b)', () => {
+describe('Sertralin til mirtazapin med preparatene i FEST (P4.8, gjennomgangene av 62ebb21, 9cb420b og 0ae6d07)', () => {
   const grunnlag = pilotgrunnlag('sertralin', 'mirtazapin')
   const REGEL = pilotregel('kryssnedtrapping-sertralin-mirtazapin')
   const tabletter = { klasse: 'peroral' as const, legemiddelformer: ['53'] }
@@ -842,17 +842,30 @@ describe('Sertralin til mirtazapin med preparatene i FEST (P4.8, gjennomgangene 
     expect(stopp(plan(100, { formvalg: { fra: tabletter } }))).toMatch(/mirtazapin \(til\) finnes i flere legemiddelformer/)
   })
 
-  it('gjelder bare 50–100 mg, startforløpet som er verifisert ende til ende (gjennomgangen av 9cb420b)', () => {
-    // Doser mellom grensene gir ingen plan når trinnet ikke kan gis med hele tabletter.
-    expect(stopp(plan(75))).toMatch(/37,5 mg kan ikke gis/)
-    for (const sd of [101, 125, 150, 200]) expect(stopp(plan(sd)), `${sd} mg`).toMatch(new RegExp(`Startdosen ${sd} mg er utenfor .*50–100 mg`))
-    expect(stopp(plan(49))).toMatch(/Startdosen 49 mg er utenfor .*50–100 mg/)
+  it('gjelder bare 50 mg og 100 mg, bindende verdier og ikke et område (gjennomgangen av 0ae6d07)', () => {
+    // Også dosene mellom 50 og 100 mg stopper, selv om noen av dem kunne gis med hele tabletter.
+    for (const sd of [49, 60, 62.5, 75, 80, 90, 101, 125, 150, 200]) {
+      expect(stopp(plan(sd)), `${sd} mg`).toMatch(new RegExp(`Startdosen ${String(sd).replace('.', ',')} mg er utenfor det regelen gjelder for \\(50, 100 mg\\)`))
+    }
     for (const sd of [50, 100]) expect(plan(sd).status, `${sd} mg`).toBe('doseplan')
+    expect(REGEL.inndata.find((k) => k.navn === 'startdose')).toMatchObject({ verdier: [50, 100], art: 'bindende_krav' })
+    expect(REGEL.inndata.find((k) => k.navn === 'startdose')).not.toHaveProperty('omrade')
+  })
+
+  it('stopper også ved 50 mg og 100 mg uten hver av bekreftelsene, ved tidligere plager og ved lang behandlingstid uten begrunnelse', () => {
+    for (const sd of [50, 100]) {
+      for (const b of REGEL.bekreftelser) {
+        const bekreftet = REGEL.eksempler[0]!.inndata.bekreftet!.filter((x) => x !== b.id)
+        expect(stopp(plan(sd, { bekreftet })), `${sd} mg uten ${b.id}`).toMatch(/Må bekreftes før beregning/)
+      }
+      expect(stopp(plan(sd, { pasientforhold: { tidligere_seponeringssymptomer: true } })), `${sd} mg`).toMatch(/Regelen gjelder ikke: Et tidligere forsøk/)
+      expect(stopp(plan(sd, { svar: { lang_behandlingstid: true } })), `${sd} mg`).toMatch(/Svaret ja \(lang behandlingstid\) krever en skriftlig begrunnelse/)
+    }
   })
 
   it('er ikke klinisk godkjent og gir ingen klinisk plan', () => {
     expect(erKliniskGodkjent(REGEL)).toBe(false)
-    expect(REGEL.versjon).toBe(6)
+    expect(REGEL.versjon).toBe(7)
     expect(kliniskDoseplan(REGEL, inndata(100), grunnlag, PILOTOMGIVELSE)).toMatchObject({ status: 'stoppet', klinisk: false })
   })
 })
