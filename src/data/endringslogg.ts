@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.116.1',
+    dato: '2026-10-31',
+    sammendrag: 'Plan for hvordan de kliniske reglene i verktøyene skal vedlikeholdes',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. En plan beskriver hvordan reglene i verktøyene, godkjenningene av dem og kildene de bygger på skal kunne oppdateres og spores over tid, uten at beregningen eller visningen endres og uten at noen godkjent regel endres.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.116.0',
     dato: '2026-10-31',
     sammendrag: 'Nødstopp for de kliniske verktøyene, og tydeligere doseplaner etter en pilotgjennomgang',
