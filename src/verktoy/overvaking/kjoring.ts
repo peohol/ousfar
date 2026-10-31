@@ -15,7 +15,7 @@ import type { Festuttrekk } from '../regler/aksepttest'
 import { godkjenteRegler, type Godkjentregel } from './berorte'
 import { kontrollerDokumenter, type Dokumenthenter } from './dokumenter'
 import { kontrollerFest, type Festsammenligning } from './fest'
-import { sorterFunn, type Funnkilde, type Grunnlagsdel, type Overvakingsfunn, type Overvakingsrapport } from './modell'
+import { prioritetFor, sorterFunn, type Funnkilde, type Grunnlagsdel, type Overvakingsfunn, type Overvakingsrapport } from './modell'
 import { psychiatrienetfunn } from './psychiatrienet'
 
 export interface Overvakingsvalg {
@@ -30,6 +30,23 @@ export interface Overvakingsvalg {
   na?: () => string
   /** Funnene som krevde vurdering i forrige kjøring (fra saken), og når den ble gjort. */
   forrige?: Pick<Overvakingsrapport, 'kjort_kl' | 'funn'>
+  /** Legg til et syntetisk funn som prøver varslingen (en prøvesak); ingen kilde eller regel er endret. */
+  provesak?: boolean
+}
+
+/** Det syntetiske funnet i en prøvesak: krever vurdering med høy prioritet, men berører ingen regel. */
+export const PROVEFUNN: Overvakingsfunn = {
+  id: 'provesak:syntetisk',
+  kilde: 'dokument',
+  art: 'endret',
+  niva: 'krever_vurdering',
+  objekt: 'syntetisk-provesak',
+  etikett: 'Syntetisk prøvesak (ingen reell kilde)',
+  detaljer: [
+    'Syntetisk funn som prøver varslingen: saken skal være tildelt den ansvarlige, få en teknisk vurdering og merkes som ubehandlet etter fristene. Ingen kilde, preparat eller regel er endret.',
+  ],
+  berorte: [],
+  prioritet: 'hoy',
 }
 
 /** Forrige kjørings funn som krevde vurdering i delen, merket med kjøringen de først ble gjort i. */
@@ -81,5 +98,7 @@ export async function kjorOvervaking(v: Overvakingsvalg): Promise<Overvakingsrap
         }
       : null,
   )
-  return { versjon: 1, kjort_kl: (v.na ?? (() => new Date().toISOString().replace(/\.\d+Z$/, 'Z')))(), grunnlag, funn: sorterFunn(funn), feil }
+  if (v.provesak) funn.push(PROVEFUNN)
+  const medPrioritet = funn.map((f) => (f.prioritet || !prioritetFor(f) ? f : { ...f, prioritet: prioritetFor(f) }))
+  return { versjon: 1, kjort_kl: (v.na ?? (() => new Date().toISOString().replace(/\.\d+Z$/, 'Z')))(), grunnlag, funn: sorterFunn(medPrioritet), feil }
 }

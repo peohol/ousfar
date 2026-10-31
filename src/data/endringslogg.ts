@@ -18,7 +18,7 @@ export const ENDRINGSLOGG: Endring[] = [
     typer: ['Funksjonalitet'],
     omfang: 'Minimalt omfang',
     punkter: [
-      'Ingen endring i appen. Kildedokumentene de kliniske verktøyreglene bygger på, og preparatene i FEST kontrolleres hver uke, og Psychiatrienets anbefalinger hver måned. Endrede, fjernede og nye kilder og preparater samles i en rapport som sier hvilke klinisk godkjente regler som kan være berørt.',
+      'Ingen endring i appen. Kildedokumentene de kliniske verktøyreglene bygger på, og preparatene i FEST kontrolleres hver uke, og Psychiatrienets anbefalinger hver måned. Endrede, fjernede og nye kilder og preparater samles i en rapport som sier hvilke klinisk godkjente regler som kan være berørt. Den ansvarlige får saken tildelt og blir påminnet når den ikke er behandlet innen fristen.',
       'Rapporten skiller mellom endringer som bare registreres, og endringer som krever ny faglig vurdering, som et preparat i det godkjente omfanget som er borte eller har fått endret styrke eller form. Ingen regel endres, godkjennes eller sperres automatisk, og ingen tekst fra kildene lagres eller vises.',
     ],
     utenVarsel: true,

@@ -41,7 +41,7 @@ En nettside har ofte innhold som skifter fra gang til gang, som skript og engang
 
 Hver kjøring gir en forskjellsrapport på norsk (`rapport.ts`). Rapporten har fire deler:
 
-1. Det som krever vurdering, med regelversjonene og fingeravtrykkene det berører.
+1. Det som krever vurdering, med prioritet og med regelversjonene og fingeravtrykkene det berører. Prioriteten er **høy** for det som kan være en reell sikkerhetsrisiko: en kilde eller et preparat som er borte, en endret styrke eller form i det godkjente omfanget, et nytt preparat beregningen kan bruke, eller en endret anbefaling i kildeoppføringen regelen sammenlignes med. Den er **vanlig** for en endret kontrollsum i et kildedokument, der det ikke er påvist hva som er endret (`prioritetFor` i `modell.ts`).
 2. Det informative.
 3. Det som ikke kunne kontrolleres.
 4. Hva som ble sammenlignet.
@@ -51,24 +51,36 @@ Rapporten har aldri kildetekst, bare titler, id-er, svarkoder, revisjoner, FEST-
 Arbeidsflyten `.github/workflows/verktoy-overvaking.yml` kjører mandag kl. 06:20 UTC, etter den nattlige FEST-synkroniseringen. Den kan også startes for hånd, med eller uten Psychiatrienet. Kjøringen gjør dette:
 
 - Rapporten står i sammendraget for kjøringen i GitHub Actions.
-- Krever noe vurdering, åpnes én sak med merkelappen `kildeovervaking`. Saken oppdateres og får en kommentar bare når avtrykket endres.
+- Krever noe vurdering, åpnes én sak med merkelappen `kildeovervaking`, og `kildeovervaking-hoy` når noe har høy prioritet. Saken **tildeles den ansvarlige**, som da får varsel fra GitHub. Den ansvarlige står i én verdi i arbeidsflyten (`ANSVARLIG`, nå `peohol`). Saken oppdateres og får en kommentar bare når avtrykket endres.
 - Funnene som krever vurdering, lagres i saken. Kontrolleres en del ikke på nytt i en kjøring, fordi Psychiatrienet bare kjøres første uke i måneden eller fordi delen stopper, står funnene fra den delen videre, merket med kjøringen de ble gjort i. En sak regnes derfor aldri som avklart før hver del med funn er kontrollert igjen.
 - Krever ingenting vurdering lenger, får en åpen sak en kommentar. Saken **lukkes aldri av arbeidsflyten**, bare av den som har vurdert funnene.
 - Stopper en hel del av kontrollen, for eksempel fordi FEST ikke kan leses, blir kjøringen rød. Delen står da under «Ikke kontrollert» i rapporten.
+
+**Vakten** er en egen jobb i samme arbeidsflyt. Den kjører hver dag kl. 07:40 UTC, uten Claude og uten hemmeligheter (`vakt.ts`). Fristene er forslag; de er prosessfrister, ikke kliniske verdier (`FRISTER`).
+
+- En åpen sak uten en kommentar som begynner med «Teknisk vurdering:» ett døgn etter at funnene kom, merkes `kildeovervaking-ubehandlet`, og den ansvarlige nevnes.
+- En sak med høy prioritet uten en kommentar som begynner med «Faglig beslutning:» tre døgn etter, merkes på samme måte.
+- Fristene regnes fra siste gang funnene ble endret. Bare kommentarer fra noen med tilgang til repoet teller. Merket tas bort når saken er behandlet, og vakten lukker aldri en sak.
+
+En daglig Claude-rutine i prosjektet kan lese sakene, skrive den tekniske vurderingen og si fra til den ansvarlige (`docs/verktøy-p12-regelforvaltning.md` §5). Den er ikke en del av repoet og opprettes for seg.
+
+En **prøvesak** startes for hånd med oppgaven `provesak`. Den lager en egen sak med merket `kildeovervaking-prove` og bare et syntetisk funn med høy prioritet, som ikke berører noen regel, og blandes aldri med de reelle funnene. Den prøver at saken tildeles den ansvarlige, at den vurderes og at vakten merker den etter fristene. P12.1 regnes som ferdig først når prøven er gjort og ført i fremdriftsloggen.
 
 FEST leses med testbrukeren i miljøet `kuratortest`, som i kuratorjobbene (`docs/kuratorjobber.md`). Arbeidsflyten har bare lesetilgang til repoet.
 
 For hånd:
 
 ```
-npm run verktoy:overvaking -- kontroll [--psychiatrienet] [--uten-dokumenter] [--uten-fest] [--ut <mappe>]
+npm run verktoy:overvaking -- kontroll [--psychiatrienet] [--uten-dokumenter] [--uten-fest] [--forrige <fil>] [--provesak] [--ut <mappe>]
+ANSVARLIG=<GitHub-bruker> npm run verktoy:overvaking -- vakt <saker.json>
 ```
 
 Kommandoen skriver `rapport.md` og `funn.json` i mappen, som standard `overvaking-resultat/`. Mappen er ikke en del av repoet.
 
 ## 5. Fremgangsmåte ved et funn som krever vurdering
 
-1. **Vurder om planene fortsatt er forsvarlige.** Kan endringen gjøre en plan uforsvarlig, settes en sperre for regelen med en gang (`docs/verktøy-p11-publisering.md` §5.2).
+0. **Teknisk vurdering**, som en kommentar i saken som begynner med «Teknisk vurdering:»: kan endringen gjenskapes, hvilken del av kilden gjelder den, og hvilke godkjente regler bygger på akkurat den delen.
+1. **Vurder om planene fortsatt er forsvarlige.** For en sak med høy prioritet skrives beslutningen som en kommentar som begynner med «Faglig beslutning:». Kan endringen gjøre en plan uforsvarlig, settes en sperre for regelen med en gang (`docs/verktøy-p11-publisering.md` §5.2).
 2. **Les kilden selv.** Overvåkingen sier bare at noe er endret, ikke hva. Sammenlign med det regelen bygger på (`henvisninger` i regelen, versjonen i `KILDER`).
 3. **Legg vurderingen frem for uavhengig kontroll** i en PR, med funnets id og avtrykket fra saken.
 4. **Ingen endring i det regelen bygger på:** den samme PR-en fastsetter et nytt grunnlag, uten å endre regelen:
@@ -109,4 +121,7 @@ Det kan være en reell revisjon, eller bare at siden rundt teksten er endret. De
 2. Bare det som treffer en godkjent regelversjon og sier noe om innholdet, krever vurdering, og funnet nevner regelversjonen og fingeravtrykket.
 3. Rapporten og saken har ingen kildetekst.
 4. Overvåkingen endrer ingen regel, godkjenning, sperre, grunnlag eller arkiv. De seks godkjente reglene har uendret versjon og fingeravtrykk (`verktoyklinisktilgang.test.ts`).
-5. Arbeidsflyten kjører bare fra main, har bare lesetilgang til repoet, åpner én sak og oppdaterer den bare når funnene endres, og lukker den aldri.
+5. Arbeidsflyten kjører bare fra main, har bare lesetilgang til repoet, åpner én sak tildelt den ansvarlige og oppdaterer den bare når funnene endres, og lukker den aldri.
+6. Funn i en del som ikke er kontrollert på nytt, står videre.
+7. Vakten merker ubehandlede saker etter fristene og nevner den ansvarlige, uten Claude.
+8. Etter sammenslåing: en prøvesak er tildelt den ansvarlige, vurdert og merket av vakten, og resultatet er ført i fremdriftsloggen.

@@ -27,10 +27,11 @@ import { REGELSETTENE } from '../verktoy/tilgjengelighet'
 import { godkjenteRegler, virkestofferForFest } from '../verktoy/overvaking/berorte'
 import { dokumentgrunnlag, kontrollerDokumenter, kontrollsummer, synligTekst, uovervaketeKilder, type Fastsattgrunnlag } from '../verktoy/overvaking/dokumenter'
 import { festfunn, kontrollerFest } from '../verktoy/overvaking/fest'
-import { kjorOvervaking } from '../verktoy/overvaking/kjoring'
-import { nivaFor, type Overvakingsfunn } from '../verktoy/overvaking/modell'
+import { kjorOvervaking, PROVEFUNN } from '../verktoy/overvaking/kjoring'
+import { nivaFor, prioritetFor, type Overvakingsfunn } from '../verktoy/overvaking/modell'
 import { psychiatrienetfunn } from '../verktoy/overvaking/psychiatrienet'
-import { avtrykk, kreverVurdering, lagOvervakingsrapport } from '../verktoy/overvaking/rapport'
+import { avtrykk, hoyPrioritet, kreverVurdering, lagOvervakingsrapport } from '../verktoy/overvaking/rapport'
+import { ENDRET_MERKE, MERKER, vaktTiltak, type Sak } from '../verktoy/overvaking/vakt'
 
 const ROT = new URL('../../', import.meta.url).pathname
 const les = (fil: string) => readFileSync(`${ROT}${fil}`, 'utf8')
@@ -380,6 +381,26 @@ describe('en kjøring og rapporten', () => {
     expect(kreverVurdering(ingen).map((f) => f.id).sort()).toEqual(['dokument:keks-2016', 'fest:sertralin:ID_X', 'psychiatrienet:SwitchAntidepressants:Se>Mz'])
   })
 
+  it('gir funnene som krever vurdering en prioritet: vanlig bare for en endret kontrollsum i et kildedokument', async () => {
+    expect(prioritetFor({ niva: 'krever_vurdering', kilde: 'dokument', art: 'endret' })).toBe('vanlig')
+    expect(prioritetFor({ niva: 'krever_vurdering', kilde: 'dokument', art: 'fjernet' })).toBe('hoy')
+    expect(prioritetFor({ niva: 'krever_vurdering', kilde: 'fest', art: 'endret' })).toBe('hoy')
+    expect(prioritetFor({ niva: 'krever_vurdering', kilde: 'psychiatrienet', art: 'endret' })).toBe('hoy')
+    expect(prioritetFor({ niva: 'informativ', kilde: 'fest', art: 'fjernet' })).toBeUndefined()
+    const r = await kjorOvervaking({ regler: REGLER, forrige: { kjort_kl: 'x', funn: [funn({ id: 'fest:a', kilde: 'fest' })] } })
+    expect(r.funn.map((f) => f.prioritet)).toEqual(['hoy'])
+    expect(hoyPrioritet(r)).toHaveLength(1)
+    expect(lagOvervakingsrapport(r)).toContain('| Prioritet | Kilde |')
+  })
+
+  it('lager en prøvesak med bare det syntetiske funnet, som krever vurdering med høy prioritet uten å berøre noen regel', async () => {
+    const r = await kjorOvervaking({ regler: REGLER, provesak: true })
+    expect(r.funn).toEqual([PROVEFUNN])
+    expect(kreverVurdering(r)).toEqual([PROVEFUNN])
+    expect(PROVEFUNN).toMatchObject({ prioritet: 'hoy', berorte: [] })
+    expect(lagOvervakingsrapport(r)).toContain('Syntetisk prøvesak')
+  })
+
   it('ordner rapporten med det som krever vurdering først, med regelversjon og fingeravtrykk', () => {
     const r = {
       versjon: 1 as const,
@@ -451,22 +472,34 @@ describe('arbeidsflyten', () => {
     return kropp.map((l) => l.slice(fjern)).join('\n')
   }
 
-  /** Kjører et steg med en falsk `gh` som skriver ned kallene og svarer med den åpne saken. */
-  const kjorSteg = (navn: string, resultat: { krever_vurdering: number; avtrykk: string; kjort_kl?: string; funn?: Overvakingsfunn[] }, apen: { nr: number; kropp: string } | null) => {
+  interface Steg {
+    resultat?: { krever_vurdering: number; avtrykk: string; hoy_prioritet?: number; kjort_kl?: string; funn?: Overvakingsfunn[] }
+    apen?: { nr: number; kropp: string } | null
+    /** Det `gh issue list` svarer, når det ikke er den åpne saken. */
+    liste?: string
+    env?: Record<string, string>
+  }
+
+  /** Kjører et steg med en falsk `gh` som skriver ned kallene og svarer med den åpne saken, og en `npm` som kjører det ekte skriptet. */
+  const kjorSteg = (navn: string, { resultat = { krever_vurdering: 0, avtrykk: '' }, apen = null, liste, env = {} }: Steg = {}) => {
     const mappe = mkdtempSync(join(tmpdir(), 'overvaking-'))
     mkdirSync(join(mappe, 'bin'))
     mkdirSync(join(mappe, 'overvaking-resultat'))
-    writeFileSync(join(mappe, 'overvaking-resultat', 'funn.json'), JSON.stringify({ kjort_kl: '2026-11-02T06:20:00Z', funn: [], feil: [], ...resultat }))
+    writeFileSync(join(mappe, 'overvaking-resultat', 'funn.json'), JSON.stringify({ kjort_kl: '2026-11-02T06:20:00Z', funn: [], feil: [], hoy_prioritet: 0, ...resultat }))
     writeFileSync(join(mappe, 'overvaking-resultat', 'rapport.md'), '# Syntetisk rapport\n')
     writeFileSync(join(mappe, 'kropp'), apen?.kropp ?? '')
+    writeFileSync(join(mappe, 'liste'), liste ?? `${apen?.nr ?? ''}\n`)
     writeFileSync(
       join(mappe, 'bin', 'gh'),
-      `#!/usr/bin/env bash\nprintf '%s\\n' "$*" >> "${mappe}/kall"\ncase "$1 $2" in\n  "issue list") echo "${apen?.nr ?? ''}" ;;\n  "issue view") cat "${mappe}/kropp" ;;\nesac\n`,
+      `#!/usr/bin/env bash\nalle="$*"\nprintf '%s\\n' "\${alle//$'\\n'/ }" >> "${mappe}/kall"\ncase "$1 $2" in\n  "issue list") cat "${mappe}/liste" ;;\n  "issue view") cat "${mappe}/kropp" ;;\nesac\n`,
     )
+    // npm run -s verktoy:overvaking -- <argumenter>
+    writeFileSync(join(mappe, 'bin', 'npm'), `#!/usr/bin/env bash\nshift 4\nexec "${ROT}node_modules/.bin/vite-node" --root "${ROT}" "${ROT}scripts/verktoy-overvaking.ts" -- "$@"\n`)
     chmodSync(join(mappe, 'bin', 'gh'), 0o755)
+    chmodSync(join(mappe, 'bin', 'npm'), 0o755)
     execFileSync('bash', ['--noprofile', '--norc', '-eo', 'pipefail', '-c', stegskript(navn)], {
       cwd: mappe,
-      env: { ...process.env, PATH: `${join(mappe, 'bin')}:${process.env.PATH}`, REPO: 'eier/repo', KJORING: 'https://example.invalid/kjoring/1' },
+      env: { ...process.env, PATH: `${join(mappe, 'bin')}:${process.env.PATH}`, REPO: 'eier/repo', KJORING: 'https://example.invalid/kjoring/1', ANSVARLIG: 'syntetisk-ansvarlig', OPPGAVE: '', ...env },
       stdio: 'pipe',
     })
     const lesOm = (fil: string) => {
@@ -476,33 +509,118 @@ describe('arbeidsflyten', () => {
         return null
       }
     }
-    return { kall: (lesOm('kall') ?? '').trim().split('\n').filter(Boolean).map((k) => k.split(' ').slice(0, 2).join(' ')), sak: lesOm('sak.md'), forrige: lesOm('forrige.json') }
+    const raa = (lesOm('kall') ?? '').trim().split('\n').filter(Boolean)
+    return { raa, kall: raa.map((k) => k.split(' ').slice(0, 2).join(' ')), sak: lesOm('sak.md'), forrige: lesOm('forrige.json') }
   }
   const MELD = 'Åpne eller oppdater saken'
-  const meld = (krever: number, avtrykk: string, apen: { nr: number; kropp: string } | null) => kjorSteg(MELD, { krever_vurdering: krever, avtrykk }, apen)
+  const HENT = 'Hent funnene fra den åpne saken'
+  const meld = (krever: number, avtrykk: string, apen: Steg['apen'], hoy = 0) => kjorSteg(MELD, { resultat: { krever_vurdering: krever, avtrykk, hoy_prioritet: hoy }, apen })
 
-  it('åpner én sak når noe krever vurdering, oppdaterer den bare når funnene endres, og lukker den aldri', () => {
+  it('åpner én sak tildelt den ansvarlige når noe krever vurdering, oppdaterer den bare når funnene endres, og lukker den aldri', () => {
     const ny = meld(2, 'a'.repeat(64), null)
-    expect(ny.kall).toEqual(['issue list', 'label create', 'issue create'])
+    expect(ny.kall).toEqual(['issue list', 'label create', 'label create', 'issue create'])
+    expect(ny.raa.at(-1)).toContain('--assignee syntetisk-ansvarlig')
+    expect(ny.raa.at(-1)).not.toContain('kildeovervaking-hoy')
+    expect(ny.raa[0]).toContain('--search -label:kildeovervaking-prove')
     expect(ny.sak).toContain(`<!-- kildeovervaking-avtrykk: ${'a'.repeat(64)} -->`)
     expect(ny.sak).toContain('# Syntetisk rapport')
+    expect(meld(2, 'a'.repeat(64), null, 1).raa.at(-1)).toContain('--label kildeovervaking-hoy')
 
     expect(meld(2, 'a'.repeat(64), { nr: 7, kropp: ny.sak! }).kall).toEqual(['issue list', 'issue view'])
-    expect(meld(1, 'b'.repeat(64), { nr: 7, kropp: ny.sak! }).kall).toEqual(['issue list', 'issue view', 'issue edit', 'issue edit', 'issue comment'])
-    expect(meld(0, 'c'.repeat(64), { nr: 7, kropp: ny.sak! }).kall).toEqual(['issue list', 'issue view', 'issue edit', 'issue comment'])
+    const endret = meld(1, 'b'.repeat(64), { nr: 7, kropp: ny.sak! }, 1)
+    expect(endret.kall).toEqual(['issue list', 'issue view', 'issue edit', 'issue edit', 'issue edit', 'issue comment'])
+    expect(endret.raa[2]).toContain('--add-assignee syntetisk-ansvarlig')
+    expect(endret.raa[3]).toContain('--add-label kildeovervaking-hoy')
+    // Kommentaren om endrede funn har merket vakten regner fristene fra.
+    expect(endret.raa[5]).toContain(ENDRET_MERKE)
+    expect(meld(0, 'c'.repeat(64), { nr: 7, kropp: ny.sak! }).kall).toEqual(['issue list', 'issue view', 'issue edit', 'issue edit', 'issue comment'])
     expect(meld(0, 'c'.repeat(64), null).kall).toEqual(['issue list'])
     expect(flyt).not.toMatch(/issue close/)
+  })
+
+  it('holder en prøvesak for seg, med eget merke og tittel', () => {
+    const prove = kjorSteg(MELD, { resultat: { krever_vurdering: 1, avtrykk: 'd'.repeat(64), hoy_prioritet: 1 }, env: { OPPGAVE: 'provesak' } })
+    expect(prove.raa[0]).toContain('--label kildeovervaking-prove')
+    expect(prove.raa.at(-1)).toMatch(/--label kildeovervaking --label kildeovervaking-hoy --label kildeovervaking-prove --assignee syntetisk-ansvarlig --title Prøvesak: Kildeovervåking/)
+    expect(kjorSteg(HENT, { env: { OPPGAVE: 'provesak' } }).raa[0]).toContain('--label kildeovervaking-prove')
   })
 
   it('tar vare på funnene som krever vurdering i saken, så neste kjøring kan føre dem videre', () => {
     const krever: Overvakingsfunn = { id: 'psychiatrienet:x', kilde: 'psychiatrienet', art: 'endret', niva: 'krever_vurdering', objekt: 'x', etikett: 'Syntetisk', detaljer: ['sha256_anbefaling: aaa → bbb'], berorte: [] }
     const info: Overvakingsfunn = { ...krever, id: 'fest:y', kilde: 'fest', niva: 'informativ' }
-    const ny = kjorSteg(MELD, { krever_vurdering: 1, avtrykk: 'a'.repeat(64), funn: [krever, info] }, null)
+    const ny = kjorSteg(MELD, { resultat: { krever_vurdering: 1, avtrykk: 'a'.repeat(64), funn: [krever, info] } })
     expect(ny.sak).toMatch(/^<!-- kildeovervaking-funn: [A-Za-z0-9+/=]+ -->$/m)
-    const hentet = kjorSteg('Hent funnene fra den åpne saken', { krever_vurdering: 0, avtrykk: '' }, { nr: 7, kropp: ny.sak! })
+    const hentet = kjorSteg(HENT, { apen: { nr: 7, kropp: ny.sak! } })
     expect(JSON.parse(hentet.forrige!)).toEqual({ kjort_kl: '2026-11-02T06:20:00Z', funn: [krever] })
     // Uten sak, eller en sak uten funnene, kjøres overvåkingen uten forrige.
-    expect(kjorSteg('Hent funnene fra den åpne saken', { krever_vurdering: 0, avtrykk: '' }, null).forrige).toBeNull()
-    expect(kjorSteg('Hent funnene fra den åpne saken', { krever_vurdering: 0, avtrykk: '' }, { nr: 7, kropp: 'Skrevet for hånd' }).forrige).toBeNull()
+    expect(kjorSteg(HENT).forrige).toBeNull()
+    expect(kjorSteg(HENT, { apen: { nr: 7, kropp: 'Skrevet for hånd' } }).forrige).toBeNull()
+  })
+
+  it('har en daglig vakt uten hemmeligheter og uten Claude, som merker og kommenterer etter tiltakene fra skriptet', () => {
+    const vakt = flyt.slice(flyt.indexOf('\n  vakt:'))
+    expect(vakt).not.toMatch(/secrets\.|environment:/)
+    expect(flyt).toMatch(/- cron: '40 7 \* \* \*'/)
+    expect(flyt.match(/^\s+ANSVARLIG: /gm)).toHaveLength(1)
+    const gammel = (timer: number) => new Date(Date.now() - timer * 3_600_000).toISOString()
+    const saker: Sak[] = [
+      { number: 3, createdAt: gammel(30), labels: [{ name: MERKER.sak }], comments: [] },
+      { number: 4, createdAt: gammel(2), labels: [{ name: MERKER.sak }], comments: [] },
+    ]
+    const r = kjorSteg('Merk ubehandlede saker', { liste: JSON.stringify(saker) })
+    expect(r.kall).toEqual(['issue list', 'label create', 'issue edit', 'issue comment'])
+    expect(r.raa[2]).toBe('issue edit 3 --repo eier/repo --add-label kildeovervaking-ubehandlet')
+    expect(r.raa[3]).toMatch(/^issue comment 3 --repo eier\/repo --body <!-- kildeovervaking-vakt: teknisk -->/)
+    expect(readFileSync(new URL('../../.github/workflows/verktoy-overvaking.yml', import.meta.url), 'utf8')).not.toMatch(/issue close/)
+  })
+})
+
+/* --- Vakten ------------------------------------------------------------------ */
+
+describe('vakten over sakene', () => {
+  const NA = '2026-11-10T07:40:00Z'
+  const for_ = (timer: number) => new Date(Date.parse(NA) - timer * 3_600_000).toISOString()
+  const kommentar = (body: string, timer: number, authorAssociation = 'OWNER', login = 'syntetisk') => ({ body, createdAt: for_(timer), authorAssociation, author: { login } })
+  const sak = (timer: number, merker: string[] = [], comments: Sak['comments'] = []): Sak => ({ number: 1, createdAt: for_(timer), labels: [MERKER.sak, ...merker].map((name) => ({ name })), comments })
+  const tiltak = (s: Sak) => vaktTiltak([s], NA, 'syntetisk-ansvarlig')
+
+  it('gjør ingenting med en ny sak, eller en sak uten merket', () => {
+    expect(tiltak(sak(23))).toEqual([])
+    expect(vaktTiltak([{ ...sak(100), labels: [] }], NA, 'x')).toEqual([])
+  })
+
+  it('merker en sak uten teknisk vurdering etter ett døgn, og nevner den ansvarlige én gang', () => {
+    const t = tiltak(sak(24))
+    expect(t).toMatchObject([{ sak: 1, leggTil: [MERKER.ubehandlet], fjern: [] }])
+    expect(t[0]!.kommentarer).toHaveLength(1)
+    expect(t[0]!.kommentarer[0]).toMatch(/^<!-- kildeovervaking-vakt: teknisk -->\n@syntetisk-ansvarlig .*«Teknisk vurdering:»/)
+    // Merket og kommentaren står alt: ingenting nytt.
+    expect(tiltak(sak(48, [MERKER.ubehandlet], [kommentar(t[0]!.kommentarer[0]!, 20, 'NONE', 'github-actions[bot]')]))).toEqual([])
+  })
+
+  it('godtar bare en teknisk vurdering fra noen med tilgang til repoet', () => {
+    expect(tiltak(sak(30, [], [kommentar('Teknisk vurdering: syntetisk', 10)]))).toEqual([])
+    expect(tiltak(sak(30, [], [kommentar('Teknisk vurdering: syntetisk', 10, 'NONE')]))).toMatchObject([{ leggTil: [MERKER.ubehandlet] }])
+  })
+
+  it('krever en faglig beslutning etter tre døgn for en sak med høy prioritet', () => {
+    const teknisk = kommentar('Teknisk vurdering: syntetisk', 60)
+    expect(tiltak(sak(71, [MERKER.hoy], [teknisk]))).toEqual([])
+    const t = tiltak(sak(72, [MERKER.hoy], [teknisk]))
+    expect(t).toMatchObject([{ leggTil: [MERKER.ubehandlet] }])
+    expect(t[0]!.kommentarer[0]).toMatch(/kildeovervaking-vakt: faglig[\s\S]*«Faglig beslutning:»[\s\S]*nødstoppen/)
+    // En vanlig sak trenger ingen faglig beslutning innen fristen.
+    expect(tiltak(sak(100, [], [teknisk]))).toEqual([])
+    // Med begge behandlingene tas merket bort.
+    expect(tiltak(sak(100, [MERKER.hoy, MERKER.ubehandlet], [teknisk, kommentar('Faglig beslutning: syntetisk', 5)]))).toEqual([{ sak: 1, leggTil: [], fjern: [MERKER.ubehandlet], kommentarer: [] }])
+  })
+
+  it('regner fristene fra siste gang funnene ble endret, så en vurdering av de gamle funnene ikke gjelder de nye', () => {
+    const vurdert = kommentar('Teknisk vurdering: syntetisk', 50)
+    const endret = kommentar(`${ENDRET_MERKE}\nFunnene er endret.`, 30, 'NONE', 'github-actions[bot]')
+    expect(tiltak(sak(60, [], [vurdert, endret]))).toMatchObject([{ leggTil: [MERKER.ubehandlet] }])
+    expect(tiltak(sak(60, [MERKER.ubehandlet], [vurdert, { ...endret, createdAt: for_(10) }]))).toEqual([{ sak: 1, leggTil: [], fjern: [MERKER.ubehandlet], kommentarer: [] }])
+    // Et merke fra noen uten tilgang flytter ikke fristen.
+    expect(tiltak(sak(60, [], [vurdert, { ...endret, createdAt: for_(10), author: { login: 'fremmed' } }]))).toEqual([])
   })
 })

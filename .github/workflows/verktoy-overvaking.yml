@@ -6,22 +6,38 @@
 # Overvåkingen bare leser. Den endrer, godkjenner eller sperrer ingen regel og
 # skriver ingenting til repoet eller databasen. Rapporten står i sammendraget
 # for kjøringen. Krever noe ny faglig vurdering, åpnes eller oppdateres én sak
-# med merkelappen «kildeovervaking»; saken lukkes av den som har vurdert
-# funnene, aldri av arbeidsflyten.
+# med merkelappen «kildeovervaking», tildelt den ansvarlige; saken lukkes av
+# den som har vurdert funnene, aldri av arbeidsflyten.
+#
+# Vakten kjører hver dag, uten Claude: en åpen sak uten teknisk vurdering etter
+# ett døgn, eller med høy prioritet og uten faglig beslutning etter tre døgn,
+# merkes «kildeovervaking-ubehandlet», og den ansvarlige nevnes.
 name: Kildeovervåking for Verktøy
 
 on:
   schedule:
-    # Mandag 06:20 UTC, etter den nattlige FEST-synkroniseringen.
+    # Kontrollen: mandag 06:20 UTC, etter den nattlige FEST-synkroniseringen.
     - cron: '20 6 * * 1'
+    # Vakten: hver dag 07:40 UTC.
+    - cron: '40 7 * * *'
   workflow_dispatch:
     inputs:
+      oppgave:
+        description: kontroll, provesak (en sak med bare et syntetisk funn, for å prøve varslingen) eller vakt.
+        type: choice
+        options: [kontroll, provesak, vakt]
+        default: kontroll
       psychiatrienet:
-        description: Kontroller også Psychiatrienet (om lag ti minutter).
+        description: Bare for kontroll. Kontroller også Psychiatrienet (om lag ti minutter).
         type: boolean
         default: false
 
 permissions: {}
+
+env:
+  # Den ansvarlige for sakene: får dem tildelt og nevnes av vakten. Den ene
+  # stedet verdien står.
+  ANSVARLIG: peohol
 
 concurrency:
   group: verktoy-overvaking
@@ -30,7 +46,7 @@ concurrency:
 jobs:
   kontroll:
     name: Kontroller kildegrunnlaget
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && (github.event.schedule == '20 6 * * 1' || (github.event_name == 'workflow_dispatch' && inputs.oppgave != 'vakt'))
     runs-on: ubuntu-latest
     timeout-minutes: 45
     # Testbrukeren som leser FEST, ligger i miljøet, som bare main får bruke.
@@ -47,6 +63,7 @@ jobs:
       OUSFAR_TESTBRUKER: ${{ secrets.OUSFAR_TESTBRUKER }}
       OUSFAR_TESTPASSORD: ${{ secrets.OUSFAR_TESTPASSORD }}
       MED_PSYCHIATRIENET: ${{ inputs.psychiatrienet }}
+      OPPGAVE: ${{ inputs.oppgave }}
       HENDELSE: ${{ github.event_name }}
       KJORING: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
       GH_TOKEN: ${{ github.token }}
@@ -69,7 +86,9 @@ jobs:
       # avklart før delen er kontrollert igjen.
       - name: Hent funnene fra den åpne saken
         run: |
-          sak=$(gh issue list --repo "$REPO" --label kildeovervaking --state open --limit 1 --json number --jq '.[0].number // empty')
+          # En prøvesak holdes for seg, så den aldri blandes med de reelle funnene.
+          if [ "$OPPGAVE" = "provesak" ]; then utvalg=(--label kildeovervaking-prove); else utvalg=(--label kildeovervaking --search "-label:kildeovervaking-prove"); fi
+          sak=$(gh issue list --repo "$REPO" "${utvalg[@]}" --state open --limit 1 --json number --jq '.[0].number // empty')
           if [ -n "$sak" ]; then
             gh issue view "$sak" --repo "$REPO" --json body --jq '.body' | sed -n 's/^<!-- kildeovervaking-funn: \([A-Za-z0-9+/=]*\) -->$/\1/p' | head -n 1 | base64 -d | gunzip > forrige.json || rm -f forrige.json
           fi
@@ -77,6 +96,12 @@ jobs:
       - name: Kjør overvåkingen
         run: |
           valg=()
+          if [ "$OPPGAVE" = "provesak" ]; then
+            # Bare det syntetiske funnet: ingen kilde kontrolleres, og ingen tidligere funn føres videre.
+            npm run -s verktoy:overvaking -- kontroll --provesak --uten-dokumenter --uten-fest --ut overvaking-resultat
+            cat overvaking-resultat/rapport.md >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
           if [ -s forrige.json ]; then
             valg+=(--forrige forrige.json)
           fi
@@ -88,11 +113,15 @@ jobs:
 
       - name: Åpne eller oppdater saken
         run: |
+          if [ "$OPPGAVE" = "provesak" ]; then utvalg=(--label kildeovervaking-prove); else utvalg=(--label kildeovervaking --search "-label:kildeovervaking-prove"); fi
           krever=$(jq '.krever_vurdering' overvaking-resultat/funn.json)
+          hoy=$(jq '.hoy_prioritet' overvaking-resultat/funn.json)
+          tittel="Kildeovervåking: $krever endring(er) krever ny faglig vurdering"
+          if [ "$OPPGAVE" = "provesak" ]; then tittel="Prøvesak: $tittel"; fi
           avtrykk=$(jq -r '.avtrykk' overvaking-resultat/funn.json)
           merke="<!-- kildeovervaking-avtrykk: $avtrykk -->"
           blokk=$(jq -c '{kjort_kl, funn: [.funn[] | select(.niva == "krever_vurdering")]}' overvaking-resultat/funn.json | gzip -9n | base64 -w0)
-          sak=$(gh issue list --repo "$REPO" --label kildeovervaking --state open --limit 1 --json number --jq '.[0].number // empty')
+          sak=$(gh issue list --repo "$REPO" "${utvalg[@]}" --state open --limit 1 --json number --jq '.[0].number // empty')
           if [ -n "$sak" ] && gh issue view "$sak" --repo "$REPO" --json body --jq '.body' | grep -qF "$merke"; then
             echo "Saken #$sak har allerede disse funnene."
             exit 0
@@ -111,14 +140,26 @@ jobs:
           } > sak.md
           if [ -z "$sak" ]; then
             gh label create kildeovervaking --repo "$REPO" --force --color D93F0B --description "Kildeovervåkingen for Verktøy: endringer som kan kreve ny faglig vurdering"
-            gh issue create --repo "$REPO" --label kildeovervaking --title "Kildeovervåking: $krever endring(er) krever ny faglig vurdering" --body-file sak.md
+            gh label create kildeovervaking-hoy --repo "$REPO" --force --color B60205 --description "Kildeovervåkingen: høy prioritet, kan være en reell sikkerhetsrisiko"
+            prioritet=()
+            if [ "$hoy" -gt 0 ]; then prioritet=(--label kildeovervaking-hoy); fi
+            if [ "$OPPGAVE" = "provesak" ]; then
+              gh label create kildeovervaking-prove --repo "$REPO" --force --color C5DEF5 --description "Kildeovervåkingen: syntetisk prøvesak, ingen reell endring"
+              prioritet+=(--label kildeovervaking-prove)
+            fi
+            gh issue create --repo "$REPO" --label kildeovervaking "${prioritet[@]}" --assignee "$ANSVARLIG" --title "$tittel" --body-file sak.md
           else
-            gh issue edit "$sak" --repo "$REPO" --body-file sak.md
+            gh issue edit "$sak" --repo "$REPO" --body-file sak.md --add-assignee "$ANSVARLIG"
+            if [ "$hoy" -gt 0 ]; then
+              gh issue edit "$sak" --repo "$REPO" --add-label kildeovervaking-hoy
+            else
+              gh issue edit "$sak" --repo "$REPO" --remove-label kildeovervaking-hoy
+            fi
             if [ "$krever" -eq 0 ]; then
               gh issue comment "$sak" --repo "$REPO" --body "Ingen funn krever lenger ny faglig vurdering ($KJORING). Saken står åpen til den som har vurdert, lukker den."
             else
-              gh issue edit "$sak" --repo "$REPO" --title "Kildeovervåking: $krever endring(er) krever ny faglig vurdering"
-              gh issue comment "$sak" --repo "$REPO" --body "Funnene er endret siden sist; saken er oppdatert ($KJORING)."
+              gh issue edit "$sak" --repo "$REPO" --title "$tittel"
+              gh issue comment "$sak" --repo "$REPO" --body "$(printf '%s\n%s' '<!-- kildeovervaking-endret -->' "Funnene er endret siden sist; saken er oppdatert ($KJORING). Fristene for teknisk vurdering og faglig beslutning regnes fra nå.")"
             fi
           fi
 
@@ -129,3 +170,40 @@ jobs:
             jq -r '.feil[]' overvaking-resultat/funn.json | while read -r linje; do echo "::error::$linje"; done
             exit 1
           fi
+
+  vakt:
+    name: Vakt over åpne saker
+    if: github.ref == 'refs/heads/main' && (github.event.schedule == '40 7 * * *' || (github.event_name == 'workflow_dispatch' && inputs.oppgave == 'vakt'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      # For å merke og kommentere sakene. Ingen hemmeligheter her.
+      issues: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          package-manager-cache: false
+
+      - run: npm ci --ignore-scripts
+
+      - name: Merk ubehandlede saker
+        run: |
+          gh issue list --repo "$REPO" --label kildeovervaking --state open --limit 100 --json number,createdAt,labels,comments > saker.json
+          npm run -s verktoy:overvaking -- vakt saker.json > tiltak.json
+          gh label create kildeovervaking-ubehandlet --repo "$REPO" --force --color FBCA04 --description "Kildeovervåkingen: saken er ikke behandlet innen fristen"
+          jq -c '.[]' tiltak.json | while read -r t; do
+            sak=$(jq -r '.sak' <<< "$t")
+            for merke in $(jq -r '.leggTil[]' <<< "$t"); do gh issue edit "$sak" --repo "$REPO" --add-label "$merke"; done
+            for merke in $(jq -r '.fjern[]' <<< "$t"); do gh issue edit "$sak" --repo "$REPO" --remove-label "$merke"; done
+            jq -r '.kommentarer[] | @base64' <<< "$t" | while read -r k; do gh issue comment "$sak" --repo "$REPO" --body "$(base64 -d <<< "$k")"; done
+          done
+          echo "$(jq length tiltak.json) sak(er) fikk tiltak."

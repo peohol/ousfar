@@ -23,6 +23,16 @@ export type Funnart = 'ny' | 'endret' | 'fjernet' | 'utilgjengelig'
  */
 export type Funnniva = 'informativ' | 'krever_vurdering'
 
+/**
+ * Prioriteten til et funn som krever vurdering (`docs/verktøy-p12-regelforvaltning.md`
+ * §5 punkt 3). `hoy`: kan være en reell sikkerhetsrisiko, som en kilde eller et
+ * preparat som er borte, en styrke eller form i det godkjente omfanget som er
+ * endret, eller en endret anbefaling i kildeoppføringen regelen sammenlignes
+ * med. `vanlig`: en endret kontrollsum for et kildedokument, uten at det er
+ * påvist hva som er endret.
+ */
+export type Funnprioritet = 'hoy' | 'vanlig'
+
 /** En klinisk godkjent regelversjon et funn kan berøre, med fingeravtrykket godkjenningen gjelder. */
 export interface Berort {
   regelsett: string
@@ -53,6 +63,8 @@ export interface Overvakingsfunn {
    * delen er kontrollert igjen. Inngår ikke i avtrykket.
    */
   viderefort_fra?: string
+  /** Bare for et funn som krever vurdering. */
+  prioritet?: Funnprioritet
 }
 
 /** Hva en del av overvåkingen sammenlignet med, og om den ble kjørt. */
@@ -83,6 +95,12 @@ export const KILDETEKST: Record<Funnkilde, string> = { dokument: 'Kildedokument'
 /** Nivået et funn får: krever vurdering når det berører en godkjent regel og sier noe om innholdet. */
 export const nivaFor = (art: Funnart, berorte: readonly Berort[], vesentlig = true): Funnniva =>
   art !== 'utilgjengelig' && vesentlig && berorte.length > 0 ? 'krever_vurdering' : 'informativ'
+
+export const PRIORITETSTEKST: Record<Funnprioritet, string> = { hoy: 'høy', vanlig: 'vanlig' }
+
+/** Prioriteten et funn som krever vurdering, får; et informativt funn har ingen. */
+export const prioritetFor = (f: Pick<Overvakingsfunn, 'niva' | 'kilde' | 'art'>): Funnprioritet | undefined =>
+  f.niva !== 'krever_vurdering' ? undefined : f.kilde === 'dokument' && f.art === 'endret' ? 'vanlig' : 'hoy'
 
 /** Funnene som krever vurdering først, så etter kilde og id, så rapporten og avtrykket er stabile. */
 export function sorterFunn(funn: readonly Overvakingsfunn[]): Overvakingsfunn[] {

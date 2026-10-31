@@ -6,7 +6,7 @@
  * kontrollsummer.
  */
 import { createHash } from 'node:crypto'
-import { ARTTEKST, KILDETEKST, sorterFunn, type Overvakingsfunn, type Overvakingsrapport } from './modell'
+import { ARTTEKST, KILDETEKST, PRIORITETSTEKST, sorterFunn, type Overvakingsfunn, type Overvakingsrapport } from './modell'
 
 const celle = (t: string) => t.replace(/\|/g, '\\|').replace(/\n/g, ' ')
 const tabell = (hode: string[], rader: string[][]) =>
@@ -15,8 +15,9 @@ const tabell = (hode: string[], rader: string[][]) =>
 const berorte = (f: Overvakingsfunn) =>
   f.berorte.length === 0 ? '–' : f.berorte.map((b) => `${b.regel} v${b.versjon} (${b.fingeravtrykk.slice(0, 12)}): ${b.hvorfor}`).join('<br>')
 
-const rader = (funn: Overvakingsfunn[], medRegler: boolean) =>
+const rader = (funn: Overvakingsfunn[], medRegler: boolean, medPrioritet = false) =>
   funn.map((f) => [
+    ...(medPrioritet ? [f.prioritet ? PRIORITETSTEKST[f.prioritet] : '–'] : []),
     KILDETEKST[f.kilde],
     f.etikett,
     ARTTEKST[f.art],
@@ -26,6 +27,9 @@ const rader = (funn: Overvakingsfunn[], medRegler: boolean) =>
 
 /** Funnene som krever vurdering. */
 export const kreverVurdering = (r: Pick<Overvakingsrapport, 'funn'>) => r.funn.filter((f) => f.niva === 'krever_vurdering')
+
+/** Funnene som krever vurdering med høy prioritet. */
+export const hoyPrioritet = (r: Pick<Overvakingsrapport, 'funn'>) => kreverVurdering(r).filter((f) => f.prioritet === 'hoy')
 
 /**
  * Avtrykket av det som krever vurdering: det samme så lenge de samme funnene
@@ -47,7 +51,7 @@ export function lagOvervakingsrapport(r: Overvakingsrapport): string {
     '',
     'Overvåkingen endrer, godkjenner eller sperrer ingen regel, og den oppdaterer ikke grunnlaget. Godkjenningene står til en faglig vurdering avgjør noe annet. Kan en endring gjøre en plan uforsvarlig, settes en sperre i Adminmeny → Kliniske verktøy (`docs/verktøy-p11-publisering.md` §5.2). Fremgangsmåten står i `docs/verktøy-p12-overvaking.md`.',
   ]
-  if (krever.length > 0) deler.push('', '## Krever ny faglig vurdering', '', tabell(['Kilde', 'Hva', 'Endring', 'Detaljer', 'Godkjente regler som berøres'], rader(krever, true)))
+  if (krever.length > 0) deler.push('', '## Krever ny faglig vurdering', '', tabell(['Prioritet', 'Kilde', 'Hva', 'Endring', 'Detaljer', 'Godkjente regler som berøres'], rader(krever, true, true)))
   if (info.length > 0) deler.push('', '## Informative endringer', '', tabell(['Kilde', 'Hva', 'Endring', 'Detaljer', 'Godkjente regler'], rader(info, true)))
   if (r.feil.length > 0) deler.push('', '## Ikke kontrollert', '', ...r.feil.map((f) => `- ${f}`))
   deler.push('', '## Hva som ble sammenlignet', '', tabell(['Kilde', 'Kjørt', 'Kontrollert', 'Grunnlag'], r.grunnlag.map((g) => [KILDETEKST[g.kilde], g.kjort ? 'ja' : 'nei', String(g.kontrollert), g.beskrivelse])))
