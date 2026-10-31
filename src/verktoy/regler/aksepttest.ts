@@ -23,6 +23,7 @@ import { beregnDoseplan, formvalgSomTrengs, omfangsfeil, planform, trinndoseteks
 import { festkoblinger, KARTLEGGING } from '../register'
 import { avrund } from './beregning'
 import { PLANHORISONT_TRINN } from './bygg'
+import { erKliniskGodkjent } from './godkjenning'
 import type { Beregningsinndata, Regel, Trinnvalgsvar } from './modell'
 import { LANG_BEHANDLINGSTID, LANG_PROSENT, NEDTRAPPINGSSETT, STI, UTENFOR_DOSERAMME_ID } from './nedtrapping'
 
@@ -351,12 +352,13 @@ export function lagAksepttestrapport(u: Festuttrekk): string {
     return d && omfang(d) !== 'stopp' ? [`${t.nokkel} (${formnavn(t.form)})`] : []
   })
   const annenhver = annenhverDag(u)
+  const godkjente = NEDTRAPPINGSSETT.regler.filter((r) => r.beregnbarhet !== 'bare_tekstlig' && erKliniskGodkjent(r)).map((r) => `\`${r.id}\``)
   return `<!-- Laget av \`npm run verktoy:regler -- aksepttest\` fra ${FEST_AKSEPTTEST}; rediger ikke for hånd. -->
 # P7: aksepttest med norske preparater
 
 Aksepttesten etter kontrollrunden 30.10.2026 (P7.5, del E.2). Hver hovedregel og langsom variant i \`ousfar-verktoy-nedtrapping\` versjon ${NEDTRAPPINGSSETT.versjon} er regnet med de faktiske preparatene i FEST, ikke syntetiske, for hver legemiddelform forskriveren kan velge. FEST-uttrekket er hentet ${norskDato(u.hentet.slice(0, 10))} (kildedato ${u.utvalg.kildedato ? norskDato(u.utvalg.kildedato.slice(0, 10)) : 'ukjent'}); bare preparater med markedsføringstillatelse som er markedsført, brukes, ikke godkjenningsfritak.
 
-**Dette er modellberegninger til faglig kontroll, ikke kliniske planer.** Ingen beregnbar P7-regel er klinisk godkjent, og verktøyet viser ingen av planene. Pasientopplysninger inngår ikke.
+**Dette er modellberegninger til faglig kontroll, ikke kliniske planer.** ${godkjente.length === 0 ? 'Ingen beregnbar P7-regel er klinisk godkjent, og verktøyet viser ingen av planene.' : `Av de beregnbare P7-reglene er bare ${godkjente.join(', ')} klinisk godkjent, og bare for cellene i det kliniske omfanget (**[klinisk omfang]** under); verktøyet viser ingen andre av planene.`} Pasientopplysninger inngår ikke.
 
 Scenariene er:
 

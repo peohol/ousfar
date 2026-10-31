@@ -119,10 +119,14 @@ const RUNDE_2 = '2026-10-30'
 const RUNDE_3 = '2026-10-30'
 const RUNDE_4 = '2026-10-30'
 const RUNDE_5 = '2026-10-30'
-/** Kontrollørens gjennomganger av 9cb420b, 0ae6d07 og d6cc3dd, samme dag. */
+/** Kontrollørens gjennomganger av 9cb420b, 0ae6d07, d6cc3dd og f77e1a9, samme dag. */
 const RUNDE_7 = '2026-10-31'
 const RUNDE_8 = '2026-10-31'
 const RUNDE_9 = '2026-10-31'
+const RUNDE_11 = '2026-10-31'
+/** Kontrollene der kontrolløren har gitt en klinisk godkjenning ({@link klinisk}). */
+const SUBSTANSKONTROLLEN = { navn: 'Substanskontrollen 30.10.2026, runde 3', dato: RUNDE_3 }
+const GJENNOMGANG_F77E1A9 = { navn: 'Kontrollørens gjennomgang av f77e1a9 31.10.2026 (P7.5), faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen', dato: RUNDE_11 }
 
 /** Hva som er endret i en versjon, og når; regelversjonen er antallet versjoner. */
 interface Versjon {
@@ -750,6 +754,12 @@ interface Stoffregel {
    * av d6cc3dd). Uten tilfeller gir regelen aldri en klinisk plan.
    */
   klinisk?: { kort?: Startdoser; lang?: Startdoser; langsom?: Startdoser; styrker: Startdoser; uten_deling?: Utsagn }
+  /**
+   * Kontrollørens avgrensede kliniske godkjenning av hovedregelen (ikke den
+   * langsomme varianten), med fingeravtrykket kontrolløren oppga for
+   * nøyaktig den regelversjonen. OUSFAR Dev setter den aldri selv.
+   */
+  godkjent?: { regelversjon: number; fingeravtrykk: string; avgrensning: string }
 }
 
 /** Doser i mg per legemiddelform (FEST-kode): startdosene eller styrkene. */
@@ -1026,7 +1036,10 @@ function seponeringsregel(s: Stoffregel, langsom = false): Regel {
     referanser: [pn(`SwitchAntidepressants:${s.kode}>Stop`)],
     eksempler: [...[...eksempler, ...grenseeksempler(s)].map((e) => besvart(vilkar, e)), ...kontrolleksempler(vilkar, start)],
     klinisk_omfang: kliniskOmfang(langsom ? [[s.klinisk?.langsom, false]] : [[s.klinisk?.kort, false], [s.klinisk?.lang, true]], versjon, s.klinisk),
-    godkjenning: { status: 'til_faglig_kontroll', historikk: historikk(versjoner) },
+    godkjenning:
+      s.godkjent && !langsom
+        ? { status: 'klinisk_godkjent', historikk: [...historikk(versjoner), klinisk(s.godkjent.regelversjon, s.godkjent.fingeravtrykk, s.godkjent.avgrensning, GJENNOMGANG_F77E1A9)] }
+        : { status: 'til_faglig_kontroll', historikk: historikk(versjoner) },
   }
 }
 
@@ -1524,6 +1537,12 @@ const vortioksetin = stoff({
   gruppe: LAV,
   grenser: [forsiktig(10, P7.brintellixEldre, ja(VORTIOKSETIN_ELDRE))],
   klinisk: { kort: { [FEST_FORM.tablett]: [20] }, styrker: { [FEST_FORM.tablett]: [5, 10, 15, 20] } },
+  godkjent: {
+    regelversjon: 11,
+    fingeravtrykk: 'a6e488637de88c9bb109d42153a56a8e616935638c0536d1335076210dd1351e',
+    avgrensning:
+      'bare én første reduksjon fra vortioksetin 20 til 15 mg én gang daglig, med minst 28 dager på 15 mg før en ny symptomstyrt vurdering, hos voksne under 65 år ved ikke-langvarig behandling og uten tidligere seponeringsplager, etter regelens obligatoriske vurdering av organfunksjon og interaksjoner og de andre stoppene, og bare med markedsførte tabletter (FEST-form 53) og de kontrollerte styrkene 5, 10, 15 og 20 mg. Gjelder ikke dosejusteringer, lavdose, lang behandlingstid (heller ikke med begrunnelse), den langsomme varianten eller neste reduksjon.',
+  },
   kildetro: [
     utsagn('Gradvis dosereduksjon kan vurderes, men preparatomtalen har ikke data nok til en bestemt nedtrappingsplan.', P7.brintellixSeponering),
     utsagn('Fra 65 år anbefales forsiktighet ved doser over 10 mg, fordi data er begrenset; det er ingen kontraindikasjon.', P7.brintellixEldre),
@@ -2021,14 +2040,14 @@ function fluoksetinAnnenhverDag(): Regel {
  * den registreres bare der kontrolløren uttrykkelig har godkjent en bestemt
  * regelversjon, med fingeravtrykket kontrolløren oppga.
  */
-const klinisk = (regelversjon: number, fingeravtrykk: string, merknad: string): Godkjenningssteg => ({
+const klinisk = (regelversjon: number, fingeravtrykk: string, merknad: string, kontroll = SUBSTANSKONTROLLEN): Godkjenningssteg => ({
   status: 'klinisk_godkjent',
-  dato: RUNDE_3,
+  dato: kontroll.dato,
   av: 'ChatGPT (uavhengig fagkontrollør)',
   rolle: 'uavhengig_kontrollor',
   regelversjon,
   fingeravtrykk,
-  merknad: `Substanskontrollen 30.10.2026, runde 3: ${merknad}`,
+  merknad: `${kontroll.navn}: ${merknad}`,
 })
 
 /** En seponeringsregel som bare er fagtekst, uten beregnet plan. */
@@ -2227,10 +2246,10 @@ const harTekst = (s: Stoffregel): s is Stoffregel & { ikkeBeregnbar: NonNullable
 
 export const NEDTRAPPINGSSETT: Regelsett = {
   id: 'ousfar-verktoy-nedtrapping',
-  versjon: 12,
+  versjon: 13,
   modell: REGELMODELLVERSJON,
   beskrivelse:
-    'Utkast til nedtrappingsregler for antidepressiva (P7): én regel per virkestoff med forsvarlig kildegrunnlag, laget fra preparatomtalen, NICE og RCPsych, og en langsom variant av hver beregnbar regel etter tidligere seponeringssymptomer. Hver plan er et startforslag med minstetider som forskriveren kan justere innenfor valgområdene fra fagvurderingen; ingen plan går til null eller har en fast nedre grense. Kan et trinn ikke gis nøyaktig med preparatene, kan forskriveren velge blant de nærmeste dosene som kan gis, innenfor det foretrukne området der ingen begrunnelse kreves (beslutning P7-A og gjennomgangen av 9cb420b); et avvik tilbys ikke, og planen er da et forklarende stopp. Hver beregnbar regel har et klinisk omfang (gjennomgangen av 0ae6d07): en godkjenning kan bare gjelde de kontrollerte tilfellene av legemiddelform, startdose, behandlingstid, tidligere seponeringssymptomer og trinnstørrelse, og alt annet stopper med forklaring, også en plan med en preparatstyrke som ikke er kontrollert (gjennomgangen av d6cc3dd). Tekstreglene for bupropion og agomelatin er klinisk godkjent etter substanskontrollen 30.10.2026; duloksetin, venlafaksin, citalopram, mirtazapin, moklobemid og paroksetin er tekstregler uten beregning, og fluoksetinregelen gjelder ikke de harde kapslene. De øvrige reglene er til ny faglig kontroll, og ingen beregnet plan er klinisk godkjent.',
+    'Utkast til nedtrappingsregler for antidepressiva (P7): én regel per virkestoff med forsvarlig kildegrunnlag, laget fra preparatomtalen, NICE og RCPsych, og en langsom variant av hver beregnbar regel etter tidligere seponeringssymptomer. Hver plan er et startforslag med minstetider som forskriveren kan justere innenfor valgområdene fra fagvurderingen; ingen plan går til null eller har en fast nedre grense. Kan et trinn ikke gis nøyaktig med preparatene, kan forskriveren velge blant de nærmeste dosene som kan gis, innenfor det foretrukne området der ingen begrunnelse kreves (beslutning P7-A og gjennomgangen av 9cb420b); et avvik tilbys ikke, og planen er da et forklarende stopp. Hver beregnbar regel har et klinisk omfang (gjennomgangen av 0ae6d07): en godkjenning kan bare gjelde de kontrollerte tilfellene av legemiddelform, startdose, behandlingstid, tidligere seponeringssymptomer og trinnstørrelse, og alt annet stopper med forklaring, også en plan med en preparatstyrke som ikke er kontrollert (gjennomgangen av d6cc3dd). Tekstreglene for bupropion og agomelatin er klinisk godkjent etter substanskontrollen 30.10.2026; duloksetin, venlafaksin, citalopram, mirtazapin, moklobemid og paroksetin er tekstregler uten beregning, og fluoksetinregelen gjelder ikke de harde kapslene. Etter gjennomgangen av f77e1a9 er hovedregelen for vortioksetin (versjon 11) klinisk godkjent bare for én første reduksjon fra 20 til 15 mg ved kort behandlingstid hos voksne under 65 år, med tabletter og de kontrollerte styrkene; neste reduksjon beregnes ikke. De øvrige reglene er til ny faglig kontroll, og ingen annen beregnet plan er klinisk godkjent.',
   regler: [
     ...STOFFER.flatMap((s) => (harTekst(s) ? [] : [seponeringsregel(s), seponeringsregel(s, true)])),
     fluoksetinAnnenhverDag(),

@@ -276,3 +276,9 @@ Godkjenningen av depotreglene er registrert med fingeravtrykket for versjonen i 
 | Regel | Beslutning | Endring |
 | --- | --- | --- |
 | Sertralin → mirtazapin (versjon 9) | Nøyaktig versjon 8 (fingeravtrykk `89db19ef…f512d`) er godtatt som snever klinisk godkjenning: startforløpet fra 50 eller 100 mg ved kort behandlingstid, tabletter og de kontrollerte styrkene, 100 → 50 mg i 14 dager → 25 mg eller 50 → 25 mg, parallelt med mirtazapin 15 mg, uten automatisk 25 → 0 mg eller opptrapping av mirtazapin. | Godkjenningen kunne ikke registreres som gyldig: trinnstørrelsen, sluttdosen, trinnlengden og planhorisonten stod som åpne forslag uten avklaring, og en regel med åpne valg er aldri klinisk godkjent. Kontrollørens godtakelse av versjon 8 står i historikken, og verdiene er avklart med beslutningen i versjon 9, ellers uendret. Ikke godkjent ennå: fingeravtrykket for versjon 9 er sendt til kontrolløren for registrering. |
+
+**Etter kontrollørens gjennomgang av f77e1a9 (31.10.2026).** Pilotsettet er versjon 15; regelinnholdet er uendret:
+
+| Regel | Beslutning | Endring |
+| --- | --- | --- |
+| Sertralin → mirtazapin (versjon 9) | Nøyaktig versjon 9 (fingeravtrykk `dc878aa9…77881`) er klinisk godkjent for det avgrensede startforløpet: sertralin nøyaktig 50 eller 100 mg ved ikke-langvarig behandling, tabletter for begge og de kontrollerte styrkene, bekreftet toleranse og kontroll av serotonerg sammedisinering, ingen tidligere seponeringsplager; 100 → 50 mg i minst 14 dager → 25 mg eller 50 → 25 mg, parallelt med mirtazapin 15 mg. | Godkjenningen er registrert med fingeravtrykket. Med fersk FEST gir appen planen bare i dette omfanget; lang behandlingstid (også med begrunnelse), andre doser og former, tidligere plager, ukjente forhold, manglende bekreftelser, et endret fingeravtrykk og foreldet FEST stopper. Aldri 25 → 0 mg eller opptrapping av mirtazapin. |

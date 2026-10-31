@@ -103,7 +103,7 @@ describe('Søket etter verktøy', () => {
 })
 
 describe('Regelstatusen', () => {
-  it('sier at faglig kontroll gjenstår for reglene i pilotsettet og P7, unntatt de klinisk godkjente depotreglene og fagteksten', () => {
+  it('sier at faglig kontroll gjenstår for reglene i pilotsettet og P7, unntatt de klinisk godkjente beregningene og fagteksten', () => {
     // Hovedregelen, den langsomme varianten og for fluoksetin annenhver dag står side om side; klinikeren velger strategi.
     const perStoff = new Map<string, string[]>()
     for (const r of NEDTRAPPINGSSETT.regler) {
@@ -120,10 +120,14 @@ describe('Regelstatusen', () => {
     ]
     // Bare tekstreglene for bupropion og agomelatin er klinisk godkjent (substanskontrollen 30.10.2026); de gir fagtekst, ingen beregning.
     const GODKJENT_FAGTEKST = ['seponering-bupropion', 'seponering-agomelatin']
-    // Depotreglene er klinisk godkjent for de avgrensede oppstartene (kontrollørens gjennomgang av 62ebb21); de kan beregnes.
-    const GODKJENT_BEREGNING = ['depot-aripiprazol-maintena', 'depot-paliperidon-xeplion']
-    for (const [verktoy, valg, regler] of tilfeller) {
+    // Depotreglene er klinisk godkjent for de avgrensede oppstartene (kontrollørens gjennomgang av 62ebb21), og sertralin → mirtazapin
+    // og hovedregelen for vortioksetin for de avgrensede startforløpene (gjennomgangen av f77e1a9); de kan beregnes. Den langsomme
+    // varianten for vortioksetin er fortsatt til kontroll og vises ikke ved siden av.
+    const GODKJENT_BEREGNING = ['kryssnedtrapping-sertralin-mirtazapin', 'depot-aripiprazol-maintena', 'depot-paliperidon-xeplion', 'seponering-vortioksetin']
+    for (const [verktoy, valg, alle] of tilfeller) {
       const t = tilgjengelighet(verktoy!, valg)
+      const godkjente = alle.filter((id) => GODKJENT_BEREGNING.includes(id))
+      const regler = godkjente.length > 0 ? godkjente : alle
       expect(t.regler.map((r) => r.id)).toEqual(regler)
       if (GODKJENT_BEREGNING.includes(regler[0]!)) {
         expect(t, regler[0]).toMatchObject({ status: 'tilgjengelig', grunner: [] })
@@ -138,8 +142,8 @@ describe('Regelstatusen', () => {
     expect(tilgjengelighet(BYTTE_AP!, { fra: v('zuklopentiksol'), til: v('aripiprazol') })).toMatchObject({ status: 'ikke_stottet', regler: [] })
     expect(new Set(tilfeller.flatMap(([, , r]) => r))).toEqual(new Set(REGELSETT.regler.map((r) => r.id)))
     expect(REGELSETT.regler).toHaveLength(PILOTSETT.regler.length + NEDTRAPPINGSSETT.regler.length)
-    expect(VERKTOY.map((x) => regeloversikt(x).tilgjengelige)).toEqual([0, 0, 2])
-    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length, 2, 1])
+    expect(VERKTOY.map((x) => regeloversikt(x).tilgjengelige)).toEqual([1, 1, 2])
+    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length - 1, 1, 1])
   })
 
   it('forklarer hvorfor et antidepressivum uten regel ikke kan trappes ned, med dekningen fra P7', () => {

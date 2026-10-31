@@ -14,7 +14,7 @@ import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import type { Legemiddelutvalg } from '../legemiddeldata/lesing'
 import { beregn, MOTORVERSJON } from '../verktoy/regler/beregning'
-import { erKliniskGodkjent, fingeravtrykk } from '../verktoy/regler/godkjenning'
+import { erKliniskGodkjent, fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
 import { apneValg, REGELMODELLVERSJON, type Nedtrappingsstrategi, type Regel } from '../verktoy/regler/modell'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
 import { byggesteiner, type Byggestein } from '../verktoy/motor/byggesteiner'
@@ -50,7 +50,6 @@ import {
   TESTTILFELLER,
   type Testpreparat,
 } from '../verktoy/motor/syntetisk'
-import { godkjennITest } from './hjelp/verktoyplan'
 
 const TABLETT = { klasse: 'peroral' as const, legemiddelformer: [FORMER.tablett.kode] }
 const ALLE = [...TESTOKSETIN, ...TESTAZAPIN, ...TESTPERIDON]
@@ -477,9 +476,9 @@ describe('Sporet til preparatene', () => {
 describe('Sperren mot klinisk bruk', () => {
   const NAA = new Date('2026-11-01T12:00:00Z')
 
-  it('bare de to depotreglene kontrolløren godkjente, er klinisk godkjent; de andre pilotreglene kan ikke gi en klinisk plan, uansett preparatdata', () => {
+  it('bare de to depotreglene og sertralin → mirtazapin, som kontrolløren godkjente, er klinisk godkjent; de andre pilotreglene kan ikke gi en klinisk plan, uansett preparatdata', () => {
     expect(PILOTSETT.regler).toHaveLength(5)
-    expect(PILOTSETT.regler.filter(erKliniskGodkjent).map((r) => r.id)).toEqual(['depot-aripiprazol-maintena', 'depot-paliperidon-xeplion'])
+    expect(PILOTSETT.regler.filter(erKliniskGodkjent).map((r) => r.id)).toEqual(['kryssnedtrapping-sertralin-mirtazapin', 'depot-aripiprazol-maintena', 'depot-paliperidon-xeplion'])
     const fest = somFest(g.utvalg)
     for (const r of PILOTSETT.regler.filter((x) => !erKliniskGodkjent(x))) {
       expect(r.godkjenning.status).not.toBe('klinisk_godkjent')
@@ -802,7 +801,7 @@ describe('Fenelzin etter fluoksetin med preparatene i FEST (P4.8, gjennomgangen 
   })
 })
 
-describe('Sertralin til mirtazapin med preparatene i FEST (P4.8, gjennomgangene av 62ebb21, 9cb420b, 0ae6d07, d6cc3dd og 74a775f)', () => {
+describe('Sertralin til mirtazapin med preparatene i FEST (P4.8, gjennomgangene av 62ebb21, 9cb420b, 0ae6d07, d6cc3dd, 74a775f og f77e1a9)', () => {
   const grunnlag = pilotgrunnlag('sertralin', 'mirtazapin')
   const REGEL = pilotregel('kryssnedtrapping-sertralin-mirtazapin')
   const tabletter = { klasse: 'peroral' as const, legemiddelformer: ['53'] }
@@ -865,10 +864,67 @@ describe('Sertralin til mirtazapin med preparatene i FEST (P4.8, gjennomgangene 
     }
   })
 
-  it('er ikke klinisk godkjent og gir ingen klinisk plan', () => {
-    expect(erKliniskGodkjent(REGEL)).toBe(false)
-    expect(REGEL.versjon).toBe(9)
-    expect(kliniskDoseplan(REGEL, inndata(100), grunnlag, PILOTOMGIVELSE)).toMatchObject({ status: 'stoppet', klinisk: false })
+  it('er klinisk godkjent for nøyaktig versjon 9 med kontrollørens fingeravtrykk (gjennomgangen av f77e1a9)', () => {
+    expect([REGEL.versjon, fingeravtrykk(REGEL)]).toEqual([9, 'dc878aa9065c8330f3850567b226ab8d392bcad4cb1dd5cf5cebacda54277881'])
+    expect(godkjenningsfeil(REGEL)).toEqual([])
+    expect(erKliniskGodkjent(REGEL)).toBe(true)
+    expect(REGEL.godkjenning.historikk.at(-1)).toEqual({
+      status: 'klinisk_godkjent',
+      dato: '2026-10-31',
+      av: 'ChatGPT (uavhengig fagkontrollør)',
+      rolle: 'uavhengig_kontrollor',
+      regelversjon: 9,
+      fingeravtrykk: 'dc878aa9065c8330f3850567b226ab8d392bcad4cb1dd5cf5cebacda54277881',
+      merknad: expect.stringMatching(/^Kontrollørens gjennomgang av f77e1a9 31\.10\.2026 \(P4\.8\): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: begrenset innledende kryssnedtrapping fra sertralin nøyaktig 50 eller 100 mg ved ikke-langvarig behandlingstid/),
+    })
+    // Ingen tidligere steg er en klinisk godkjenning.
+    expect(REGEL.godkjenning.historikk.slice(0, -1).every((x) => x.status !== 'klinisk_godkjent')).toBe(true)
+  })
+
+  it('gir med den godkjente regelen og fersk FEST en klinisk plan bare for 50 og 100 mg, kort behandlingstid og tabletter med de kontrollerte styrkene (gjennomgangen av f77e1a9)', () => {
+    const klinisk = (startdose_mg: number, x?: Partial<Doseplaninndata>, o = PILOTOMGIVELSE) => kliniskDoseplan(REGEL, inndata(startdose_mg, x), grunnlag, o)
+    const ikke = (p: ReturnType<typeof klinisk>, hva: string) => {
+      expect(p, hva).toMatchObject({ status: 'stoppet', klinisk: false })
+      expect(p, hva).not.toHaveProperty('trinnvalg')
+    }
+    // Positivt: 100 → 50 mg i 14 dager → 25 mg, eller 50 → 25 mg, med mirtazapin 15 mg samtidig, og ingen 25 → 0 mg eller opptrapping av mirtazapin.
+    expect(planform(klinisk(100))).toEqual({
+      fra: ['dag 1–14: 50 mg = 1 tablett à 50 mg', 'fra dag 15: 25 mg = 1 tablett à 25 mg', 'siste trinn før null; avslutning vurderes individuelt'],
+      til: MIRTAZAPIN,
+    })
+    expect(planform(klinisk(50))).toEqual({ fra: ['fra dag 1: 25 mg = 1 tablett à 25 mg', 'siste trinn før null; avslutning vurderes individuelt'], til: MIRTAZAPIN })
+    for (const sd of [50, 100]) {
+      const p = klinisk(sd)
+      expect(p, `${sd} mg`).toMatchObject({ status: 'doseplan', klinisk: true, sperre: [] })
+      if (p.status !== 'doseplan') continue
+      const brukt = (id: string) => [...new Set(p.forlop.find((f) => f.id === id)!.perioder.flatMap((q) => q.elementer.flatMap((e) => e.preparater.map((b) => `${b.legemiddelform?.kode} ${b.mg}`))))]
+      expect(brukt('fra').every((x) => ['53 25', '53 50', '53 100'].includes(x)), `${sd} mg`).toBe(true)
+      expect(brukt('til')).toEqual(['53 15'])
+      expect(p.forlop.find((f) => f.id === 'fra')!.perioder.at(-1)!.mg, `${sd} mg`).toBe(25)
+      // Lang behandlingstid gir ingen plan, også med begrunnelse.
+      for (const begrunnelse of [undefined, 'Syntetisk begrunnelse.', 'x']) ikke(klinisk(sd, { svar: { lang_behandlingstid: true }, ...(begrunnelse && { begrunnelse }) }), `${sd} mg lang ${begrunnelse}`)
+      // Tidligere plager, ukjente forhold og hver manglende bekreftelse stopper.
+      ikke(klinisk(sd, { pasientforhold: { tidligere_seponeringssymptomer: true } }), `${sd} mg tidligere plager`)
+      ikke(klinisk(sd, { pasientforhold: {} }), `${sd} mg ukjente forhold`)
+      for (const b of [...REGEL.bekreftelser.map((x) => x.id), 'alle']) {
+        ikke(klinisk(sd, { bekreftet: b === 'alle' ? [] : REGEL.eksempler[0]!.inndata.bekreftet!.filter((x) => x !== b) }), `${sd} mg uten ${b}`)
+      }
+      // Andre former: sertralin som kapsel og mirtazapin som smeltetablett.
+      for (const formvalg of [{ fra: { klasse: 'peroral' as const, legemiddelformer: ['891'] }, til: tabletter }, { fra: tabletter, til: { klasse: 'peroral' as const, legemiddelformer: ['48'] } }]) {
+        ikke(klinisk(sd, { formvalg }), `${sd} mg ${JSON.stringify(formvalg)}`)
+      }
+      // Et foreldet FEST-uttrekk (mer enn 48 timer) sperrer.
+      ikke(klinisk(sd, {}, { ...PILOTOMGIVELSE, naa: new Date(Date.parse(PILOTOMGIVELSE.naa) + 49 * 3600e3).toISOString() }), `${sd} mg foreldet FEST`)
+    }
+    // Andre startdoser stopper.
+    for (const sd of [25, 49, 60, 75, 101, 150, 200]) ikke(klinisk(sd), `${sd} mg`)
+    // Endres regelen, endres fingeravtrykket, og godkjenningen faller bort.
+    const endret = structuredClone(REGEL)
+    const fase = endret.plan.forlop[0]!.faser[0]!
+    if (fase.type === 'nedtrapping') fase.trinnlengde.verdi = 21
+    expect(fingeravtrykk(endret)).not.toBe(fingeravtrykk(REGEL))
+    expect(godkjenningsfeil(endret).join(' ')).toMatch(/fingeravtrykk/i)
+    ikke(kliniskDoseplan(endret, inndata(100), grunnlag, PILOTOMGIVELSE), 'endret regel')
   })
 
   it('har ingen åpne valg: verdiene som stod som forslag i versjon 8, er avklart med kontrollørens beslutning (gjennomgangen av 74a775f)', () => {
@@ -884,9 +940,7 @@ describe('Sertralin til mirtazapin med preparatene i FEST (P4.8, gjennomgangene 
 
   it('har et klinisk omfang med bare kort behandlingstid, tabletter og styrkene i FEST: lang behandlingstid stopper også med begrunnelse (gjennomgangen av d6cc3dd)', () => {
     expect(REGEL.klinisk_omfang!.tilfeller).toEqual([{ legemiddelform: '53', startdoser: [50, 100], svar: {}, styrker: { fra: [25, 50, 100], til: [15, 30, 45] } }])
-    // Med regelen godkjent bare i testen.
-    const GODKJENT = godkjennITest(REGEL, 'test-kryssnedtrapping-sertralin-mirtazapin')
-    const klinisk = (startdose_mg: number, x?: Partial<Doseplaninndata>) => kliniskDoseplan(GODKJENT, inndata(startdose_mg, x), grunnlag, PILOTOMGIVELSE)
+    const klinisk = (startdose_mg: number, x?: Partial<Doseplaninndata>) => kliniskDoseplan(REGEL, inndata(startdose_mg, x), grunnlag, PILOTOMGIVELSE)
     for (const sd of [50, 100]) {
       expect(klinisk(sd), `${sd} mg`).toMatchObject({ status: 'doseplan', klinisk: true })
       // Lang behandlingstid er utenfor omfanget, også med en vilkårlig begrunnelse.

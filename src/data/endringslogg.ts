@@ -14,12 +14,14 @@ export const ENDRINGSLOGG: Endring[] = [
   {
     versjon: '1.115.0',
     dato: '2026-10-30',
-    sammendrag: 'Doseplan for oppstart av Abilify Maintena og Xeplion, og nedtrapping av antidepressiva',
+    sammendrag: 'Doseplan for oppstart av Abilify Maintena og Xeplion, bytte fra sertralin til mirtazapin og nedtrapping av antidepressiva',
     typer: ['Funksjonalitet', 'Fag'],
     omfang: 'Moderat omfang',
     gjelder: ['verktoy'],
     punkter: [
       'Bytte antipsykotikum beregner nå en doseplan for to klinisk godkjente oppstarter av depotinjeksjon, med preparatene i FEST: Abilify Maintena fra stabilisert og tolerert peroral aripiprazol (én injeksjon 400 mg, tablettene i 14 dager, deretter månedlig), og Xeplion fra paliperidon-depottabletter ved normal nyrefunksjon (dag 1 og dag 8 i deltoideus, deretter månedlig). Planen gjelder bare voksne med schizofreni og stopper ved forhold utenfor godkjenningen, som kjent langsom CYP2D6-omsetning, interaksjoner eller nedsatt nyrefunksjon. Andre bytter mellom antipsykotika venter fortsatt på faglig kontroll.',
+      'Bytte antidepressiv beregner nå en klinisk godkjent startplan for bytte fra sertralin 50 eller 100 mg til mirtazapin ved kort behandlingstid, med tabletter: sertralin trappes ned til 25 mg, fra 100 mg via 50 mg i minst 14 dager, mens mirtazapin 15 mg gis samtidig. Planen forutsetter bekreftet toleranse og kontroll av andre serotonerge legemidler. Den går ikke til null og trapper ikke opp mirtazapin; det vurderes individuelt. Lang behandlingstid, tidligere seponeringsplager og andre doser eller former gir ingen plan.',
+      'Trappe ned antidepressiv beregner nå én første reduksjon for vortioksetin, fra 20 til 15 mg, ved kort behandlingstid hos voksne under 65 år uten tidligere seponeringsplager, med tabletter. Videre nedtrapping vurderes individuelt etter minst 28 dager; verktøyet beregner ikke neste trinn.',
       'Trappe ned antidepressiv viser nå klinisk godkjent fagtekst for bupropion, der depottablettene ikke kan deles og avslutningen vurderes individuelt, og agomelatin, som ikke trenger nedtrapping. Teksten sier hvem som godkjente den, når og hva godkjenningen gjelder; for agomelatin gjelder den bare at nedtrapping ikke er nødvendig.',
       'De øvrige antidepressivene har utkast til nedtrappingsregler, bygd på preparatomtalene, NICE-retningslinjen, rådene fra Royal College of Psychiatrists og flere uavhengige fagkontroller. De er ikke klinisk godkjent, så verktøyet sier at faglig kontroll gjenstår, og viser ingen doseplan. Duloksetin og venlafaksin får bare fagtekst, fordi trinnene ikke kan gis med norske kapsler, og det samme gjelder mirtazapin, moklobemid og paroksetin, der ingen dose som kan gis med norske tabletter, gir et forsvarlig første trinn, og citalopram, der den eneste reduksjonen tablettene gir, er for stor. For fluoksetin gjelder regelen bare tablettene, ikke de harde kapslene.',
       'For antidepressiva uten regel forklarer verktøyet hvorfor, for eksempel at stoffet ikke har preparater i FEST, bare finnes med godkjenningsfritak eller mangler kildegrunnlag.',

@@ -175,9 +175,11 @@ describe('Pilotsettet', () => {
     expect(kontrollerRegelsett({ ...PILOTSETT, regler: [r] }, GRUNNLAG).join(' ')).toMatch(/forløp fra stopper beregningen ved en sluttdose uten kilde/)
   })
 
-  it('har bare de to depotreglene klinisk godkjent av kontrolløren; de andre er til faglig kontroll i sin gjeldende versjon, med historikk', () => {
+  it('har bare de to depotreglene og sertralin → mirtazapin klinisk godkjent av kontrolløren; de andre er til faglig kontroll i sin gjeldende versjon, med historikk', () => {
     // Kontrollørens gjennomgang av 62ebb21 30.10.2026: depotreglene godkjent for de avgrensede oppstartene, fenelzin bare som utvaskingsinformasjon.
+    // Gjennomgangen av f77e1a9 31.10.2026: sertralin → mirtazapin versjon 9 godkjent for det avgrensede startforløpet.
     const KONTROLLOREN: Record<string, 'klinisk_godkjent' | 'til_faglig_kontroll'> = {
+      'kryssnedtrapping-sertralin-mirtazapin': 'klinisk_godkjent',
       'depot-aripiprazol-maintena': 'klinisk_godkjent',
       'depot-paliperidon-xeplion': 'klinisk_godkjent',
       'mao-fluoksetin-fenelzin': 'til_faglig_kontroll',
@@ -193,22 +195,25 @@ describe('Pilotsettet', () => {
           rolle: 'uavhengig_kontrollor',
           regelversjon: r.versjon,
           ...(k === 'klinisk_godkjent' && { fingeravtrykk: fingeravtrykk(r) }),
-          merknad: expect.stringMatching(/^Kontrollørens gjennomgang av 62ebb21 30\.10\.2026 \(P4\.8\): /),
+          merknad: expect.stringMatching(r.id === 'kryssnedtrapping-sertralin-mirtazapin' ? /^Kontrollørens gjennomgang av f77e1a9 31\.10\.2026 \(P4\.8\): / : /^Kontrollørens gjennomgang av 62ebb21 30\.10\.2026 \(P4\.8\): /),
         })
       }
       if (k === 'til_faglig_kontroll') expect(r.godkjenning.historikk.at(-1)!.fingeravtrykk, r.id).toBeUndefined()
       if (r.id === 'mao-fluoksetin-fenelzin') expect(r.godkjenning.historikk.at(-1)!.merknad).toMatch(/akseptert bare som kildebasert utvaskingsinformasjon.*kan derfor ikke godkjennes som en samlet klinisk doseplan/)
       const historikk = r.godkjenning.historikk.filter((s) => s.rolle === 'utvikler')
-      // Kontrolløren har bare egne steg der den har gitt en beslutning: det siste for de tre over, og for sertralin avgrensningene av versjon 5, 6 og 7 i gjennomgangene av 9cb420b, 0ae6d07 og d6cc3dd og godtakelsen av versjon 8 i gjennomgangen av 74a775f.
+      // Kontrolløren har bare egne steg der den har gitt en beslutning: det siste for depotreglene og fenelzin, og for sertralin avgrensningene av versjon 5, 6 og 7 i gjennomgangene av 9cb420b, 0ae6d07 og d6cc3dd, godtakelsen av versjon 8 i gjennomgangen av 74a775f og godkjenningen av versjon 9 i gjennomgangen av f77e1a9.
       const kontrollor = r.godkjenning.historikk.filter((s) => s.rolle === 'uavhengig_kontrollor')
-      expect(kontrollor.length, r.id).toBe(k ? 1 : r.id === 'kryssnedtrapping-sertralin-mirtazapin' ? 4 : 0)
+      expect(kontrollor.length, r.id).toBe(r.id === 'kryssnedtrapping-sertralin-mirtazapin' ? 5 : k ? 1 : 0)
       if (r.id === 'kryssnedtrapping-sertralin-mirtazapin') {
         expect(kontrollor[0]).toMatchObject({ status: 'til_faglig_kontroll', regelversjon: 5, merknad: expect.stringMatching(/^Kontrollørens gjennomgang av 9cb420b 31\.10\.2026 \(P4\.8\): .*ved 50 og 100 mg/) })
         expect(kontrollor[1]).toMatchObject({ status: 'til_faglig_kontroll', regelversjon: 6, merknad: expect.stringMatching(/^Kontrollørens gjennomgang av 0ae6d07 31\.10\.2026 \(P4\.8\): .*sammenhengende område.*ikke godkjent/) })
         expect(kontrollor[2]).toMatchObject({ status: 'til_faglig_kontroll', regelversjon: 7, merknad: expect.stringMatching(/^Kontrollørens gjennomgang av d6cc3dd 31\.10\.2026 \(P4\.8\): .*lang behandlingstid er ikke del av det godkjennbare omfanget.*ikke godkjent/) })
         // Kontrolløren godtok versjon 8, men godkjenningen kunne ikke registreres gyldig fordi fire verdier stod som åpne forslag; de er avklart i versjon 9.
         expect(kontrollor[3]).toMatchObject({ status: 'til_faglig_kontroll', regelversjon: 8, merknad: expect.stringMatching(/^Kontrollørens gjennomgang av 74a775f 31\.10\.2026 \(P4\.8\): den snevre kliniske godkjenningen er gitt for nøyaktig versjon 8 \(fingeravtrykk 89db19ef05c928ee8e3f58581f55a4476821d5eb765b7bf749f5d5d0cedf512d\).*åpne forslag uten avklaring; ikke godkjent\.$/) })
-        expect(kontrollor.every((x) => x.fingeravtrykk === undefined)).toBe(true)
+        expect(kontrollor.slice(0, 4).every((x) => x.fingeravtrykk === undefined)).toBe(true)
+        // Godkjenningen gjelder nøyaktig versjon 9 og fingeravtrykket kontrolløren oppga.
+        expect(kontrollor[4]).toMatchObject({ status: 'klinisk_godkjent', regelversjon: 9, fingeravtrykk: 'dc878aa9065c8330f3850567b226ab8d392bcad4cb1dd5cf5cebacda54277881' })
+        expect(kontrollor[4]!.merknad).toMatch(/Gjelder ikke automatisk 25 → 0 mg, opptrapping av mirtazapin, lang behandlingstid \(heller ikke med begrunnelse\), andre startdoser, former eller styrker\.$/)
       }
       // Depotreglene har i tillegg et steg fra kontrollrunden 30.10.2026 for versjon 2: kildemessig akseptable, ikke klinisk godkjent.
       const depot = r.plan.form === 'oppstart_depot'
@@ -320,9 +325,9 @@ describe('Beregningen', () => {
     expect(beregn(r, { startdose_mg: 100, ...KRYSS }, PILOTSETT)).toEqual(a)
     expect(a).toMatchObject({
       status: 'modellberegning',
-      klinisk_godkjent: false,
-      forbehold: FORBEHOLD_IKKE_GODKJENT,
-      regel: { id: r.id, versjon: 9, godkjenning: 'til_faglig_kontroll' },
+      klinisk_godkjent: true,
+      forbehold: FORBEHOLD_GODKJENT,
+      regel: { id: r.id, versjon: 9, godkjenning: 'klinisk_godkjent' },
       regelsett: { id: PILOTSETT.id, versjon: PILOTSETT.versjon },
       modell: REGELMODELLVERSJON,
       motor: MOTORVERSJON,
@@ -783,7 +788,7 @@ describe('Kontrollene av et regelsett', () => {
 
 describe('Reglene', () => {
   it('rapporten sier hvor mange regler som faktisk er gyldig klinisk godkjent', () => {
-    expect(lagRegelrapport()).toMatch(/\*\*5 regler, 2 klinisk godkjent\.\*\*.*2 av reglene er klinisk godkjent/)
+    expect(lagRegelrapport()).toMatch(/\*\*5 regler, 3 klinisk godkjent\.\*\*.*3 av reglene er klinisk godkjent/)
     const en = lagRegelrapport(sett([godkjenn(regel('depot-paliperidon-xeplion')), regel('seponering-escitalopram')]))
     expect(en).toMatch(/\*\*2 regler, 1 klinisk godkjent\.\*\*.*1 av reglene er klinisk godkjent/)
     expect(en).not.toMatch(/ingen av reglene/)

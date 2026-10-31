@@ -62,7 +62,7 @@ async function fyllInn(user: ReturnType<typeof userEvent.setup>) {
 }
 
 describe('oversikten', () => {
-  it('viser de tre verktøyene, og at bare de to godkjente depotreglene kan beregnes', () => {
+  it('viser de tre verktøyene, og at bare de godkjente reglene kan beregnes: vortioksetin, sertralin → mirtazapin og de to depotreglene', () => {
     vis()
     expect(screen.getByRole('heading', { level: 1, name: 'Verktøy' })).toBeTruthy()
     expect(document.activeElement).toBe(screen.getByRole('heading', { level: 1 }))
@@ -70,8 +70,8 @@ describe('oversikten', () => {
     const kort = screen.getAllByRole('link').filter((a) => a.classList.contains('verktoykort__lenke'))
     expect(kort.map((a) => a.getAttribute('href'))).toEqual(['#/verktoy/trappe-ned-antidepressiv', '#/verktoy/bytte-antidepressiv', '#/verktoy/bytte-antipsykotikum'])
     expect(kort.map((a) => a.querySelector('.verktoykort__status')?.textContent)).toEqual([
-      'Ingen beregning tilgjengelig ennå · 23 til faglig kontroll',
-      'Ingen beregning tilgjengelig ennå · 2 til faglig kontroll',
+      '1 regel kan beregnes · 22 til faglig kontroll',
+      '1 regel kan beregnes · 1 til faglig kontroll',
       '2 regler kan beregnes · 1 til faglig kontroll',
     ])
     expect(screen.queryByText(/Ingen beregninger er tilgjengelige ennå/)).toBeNull()
