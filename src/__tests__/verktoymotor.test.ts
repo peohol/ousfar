@@ -15,7 +15,7 @@ import { describe, expect, it } from 'vitest'
 import type { Legemiddelutvalg } from '../legemiddeldata/lesing'
 import { beregn, MOTORVERSJON } from '../verktoy/regler/beregning'
 import { erKliniskGodkjent, fingeravtrykk } from '../verktoy/regler/godkjenning'
-import { REGELMODELLVERSJON, type Nedtrappingsstrategi, type Regel } from '../verktoy/regler/modell'
+import { apneValg, REGELMODELLVERSJON, type Nedtrappingsstrategi, type Regel } from '../verktoy/regler/modell'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
 import { byggesteiner, type Byggestein } from '../verktoy/motor/byggesteiner'
 import { doser, fordel, MAKS_DRAPER, MAKS_ENHETER, styrkevalg, velgSerie, type Dosekandidat } from '../verktoy/motor/dosevalg'
@@ -802,7 +802,7 @@ describe('Fenelzin etter fluoksetin med preparatene i FEST (P4.8, gjennomgangen 
   })
 })
 
-describe('Sertralin til mirtazapin med preparatene i FEST (P4.8, gjennomgangene av 62ebb21, 9cb420b, 0ae6d07 og d6cc3dd)', () => {
+describe('Sertralin til mirtazapin med preparatene i FEST (P4.8, gjennomgangene av 62ebb21, 9cb420b, 0ae6d07, d6cc3dd og 74a775f)', () => {
   const grunnlag = pilotgrunnlag('sertralin', 'mirtazapin')
   const REGEL = pilotregel('kryssnedtrapping-sertralin-mirtazapin')
   const tabletter = { klasse: 'peroral' as const, legemiddelformer: ['53'] }
@@ -867,8 +867,19 @@ describe('Sertralin til mirtazapin med preparatene i FEST (P4.8, gjennomgangene 
 
   it('er ikke klinisk godkjent og gir ingen klinisk plan', () => {
     expect(erKliniskGodkjent(REGEL)).toBe(false)
-    expect(REGEL.versjon).toBe(8)
+    expect(REGEL.versjon).toBe(9)
     expect(kliniskDoseplan(REGEL, inndata(100), grunnlag, PILOTOMGIVELSE)).toMatchObject({ status: 'stoppet', klinisk: false })
+  })
+
+  it('har ingen åpne valg: verdiene som stod som forslag i versjon 8, er avklart med kontrollørens beslutning (gjennomgangen av 74a775f)', () => {
+    // Med åpne forslag kunne kontrollørens godkjenning av versjon 8 ikke registreres gyldig.
+    expect(apneValg(REGEL)).toEqual([])
+    const fase = REGEL.plan.forlop[0]!.faser[0]!
+    const verdier = fase.type === 'nedtrapping' && fase.strategi.type === 'prosent_av_aktuell' ? [fase.strategi.prosent, fase.strategi.sluttdose_mg!, fase.trinnlengde, fase.horisont!] : []
+    expect(verdier.map((p) => p.verdi)).toEqual([50, 25, 14, 3])
+    for (const p of verdier) {
+      expect(p.grunnlag).toMatchObject({ type: 'ousfar_vurdering', avklaring: { rolle: 'uavhengig_kontrollor', regelversjon: 8, merknad: expect.stringMatching(/^Kontrollørens gjennomgang av 74a775f \(P4\.8\): .*i den snevre kliniske godkjenningen av versjon 8$/) } })
+    }
   })
 
   it('har et klinisk omfang med bare kort behandlingstid, tabletter og styrkene i FEST: lang behandlingstid stopper også med begrunnelse (gjennomgangen av d6cc3dd)', () => {

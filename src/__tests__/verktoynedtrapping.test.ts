@@ -39,14 +39,15 @@ import { DEKNINGSRAPPORTFIL, lagDekningsrapport, seponeringsregler, stopOppforin
 import { begrunnelseshjelp, beregnPlan, inndataFor, kanKreveBegrunnelse, mangler, medRegel, TOMT_SKJEMA, type Planskjema } from '../verktoy/doseplan'
 import { lesKartdata } from '../verktoy/kartdata'
 import { markedsgrunnlag, preparaterFor } from '../verktoy/kartlegging'
-import { beregnDoseplan, kliniskDoseplan, planform, UTENFOR_OMFANG } from '../verktoy/motor/plan'
+import type { Preparatgrunnlag } from '../verktoy/motor/byggesteiner'
+import { beregnDoseplan, kliniskDoseplan, planform, UTENFOR_OMFANG, type Doseplaninndata, type Omgivelse } from '../verktoy/motor/plan'
 import { syntetiskUtvalg, type Testpreparat } from '../verktoy/motor/syntetisk'
 import { VERKTOY, virkestoffvalg } from '../verktoy/register'
 import { akseptsett, AKSEPTSTOFFER, AKSEPTTESTFIL, annenhverDag, beregnAksept, besvart, FEST_AKSEPTTEST, KORT, LANG, lagAksepttestrapport, omfang, omfangssett, PROSENTSTI, reduksjoner, sisteDose, styrker, valgtekst, vanligDose, type Festuttrekk } from '../verktoy/regler/aksepttest'
 import { AVSLUTNING_FELLES, avrund, beregn, kortform, MINSTE_VISTE_MG, nulldagfeil, SISTE_DOSE, TIDLIGSTE_DATOER, trinnTilHorisont, type Forlopsresultat, type Periode } from '../verktoy/regler/beregning'
 import { erKliniskGodkjent, fingeravtrykk } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett, lesKontrollgrunnlag } from '../verktoy/regler/kontroll'
-import { apneValg, henvisninger, justerbare, nulltrinnfeil, type Beregningsinndata, type Fase, type Nedtrappingsstrategi, type Regel } from '../verktoy/regler/modell'
+import { apneValg, henvisninger, justerbare, nulltrinnfeil, type Beregningsinndata, type Fase, type Nedtrappingsstrategi, type Regel, type Regelsett } from '../verktoy/regler/modell'
 import { NICE, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, RCPSYCH } from '../verktoy/regler/bygg'
 import {
   AKUTT_ID,
@@ -1470,43 +1471,109 @@ describe('Klinisk omfang med de faktiske preparatene i FEST (gjennomgangene av 0
     expect(klinisk('seponering-vortioksetin', ENESTE, 20)).toMatchObject({ status: 'doseplan', klinisk: true })
   })
 
-  it('gjelder bare preparatstyrkene i FEST som er kontrollert: en ny eller endret styrke i et senere uttrekk utvider ikke omfanget (gjennomgangen av d6cc3dd)', () => {
+  /**
+   * Et senere, ellers uendret FEST-uttrekk med en ny styrke for virkestoffet
+   * (ATC-kode): som et nytt preparat ved siden av det med `fra` mg, eller ved at
+   * styrken `fra` mg er endret i alle preparatene.
+   */
+  const senereFest = (atc: string, fra: number, ny: number, hvordan: 'nytt' | 'endret'): Festuttrekk => {
+    const u = structuredClone(uttrekk)
+    const styrke = (id: string) => u.utvalg.styrker.find((x) => x.id === id)!
+    const medNy = (id: string, eier: string) => {
+      const x = styrke(id)
+      if (x.styrke?.verdi !== fra) return id
+      u.utvalg.styrker.push({ ...x, id: `${id}-${ny}-${eier}`, styrke: { ...x.styrke, verdi: ny } })
+      return `${id}-${ny}-${eier}`
+    }
+    const preparater = u.utvalg.merkevarer.filter((m) => m.atc?.kode === atc && m.virkestoff_med_styrke.some((id) => styrke(id).styrke?.verdi === fra))
+    for (const m of hvordan === 'endret' ? preparater : preparater.slice(0, 1)) {
+      if (hvordan === 'endret') {
+        m.virkestoff_med_styrke = m.virkestoff_med_styrke.map((id) => medNy(id, m.id))
+        continue
+      }
+      const id = `${m.id}-${ny}`
+      u.utvalg.merkevarer.push({ ...m, id, navn_form_styrke: m.navn_form_styrke.replace(`${fra} mg`, `${ny} mg`), virkestoff_med_styrke: m.virkestoff_med_styrke.map((x) => medNy(x, id)) })
+      for (const p of u.utvalg.pakninger.filter((x) => x.merkevarer.includes(m.id))) {
+        u.utvalg.pakninger.push({ ...structuredClone(p), id: `${p.id}-${ny}`, varenr: `${p.varenr}-${ny}`, ean: [], byttegrupper: [], byttegrupper_fra: {}, merkevarer: [id], innhold: p.innhold.map((i) => ({ ...i, merkevare_id: i.merkevare_id === m.id ? id : i.merkevare_id })) })
+      }
+    }
+    return u
+  }
+  const godkjent = (id: string) => godkjennITest(NEDTRAPPINGSSETT.regler.find((y) => y.id === id)!, `test-${id}`)
+  const iFest = (u: Festuttrekk, id: string, startdose_mg: number, x: Partial<Beregningsinndata> = {}, motor = kliniskDoseplan) => {
+    const g = godkjent(id)
+    return beregnAksept(u, g, ENESTE, besvart(g, startdose_mg, x), motor)
+  }
+  const elementer = (p: ReturnType<typeof klinisk>) => [
+    ...(p.status === 'doseplan' ? p.forlop.flatMap((f) => f.perioder.flatMap((q) => q.elementer.map((e) => e.mg))) : []),
+    ...(p.trinnvalg ?? []).flatMap((t) => t.doser.flatMap((d) => d.elementer.map((e) => e.mg))),
+  ]
+
+  it('gjelder bare preparatstyrkene i FEST som er kontrollert: en ny eller endret styrke i et senere uttrekk utvider ikke omfanget (gjennomgangene av d6cc3dd og 74a775f)', () => {
     const unike = (mg: number[]) => [...new Set(mg)].sort((a, b) => a - b)
     // Hvert tilfelle har nøyaktig styrkene som var markedsført i uttrekket da det ble kontrollert.
     for (const r of BEREGNBARE) {
       for (const t of r.klinisk_omfang!.tilfeller) expect(t.styrker, `${r.id} ${t.legemiddelform}`).toEqual({ fra: unike(styrker(uttrekk, nokkel(r), t.legemiddelform ? form(t.legemiddelform) : ENESTE)) })
     }
-    // Et senere uttrekk der sertralin 50 mg er endret til 75 mg, og ett der ett av preparatene på 50 mg i stedet har fått den nye styrken 75 mg.
-    const senere = (alle: boolean): Festuttrekk => {
-      const u = structuredClone(uttrekk)
-      const femti = new Set(u.utvalg.styrker.filter((x) => x.styrke?.verdi === 50).map((x) => x.id))
-      const preparater = u.utvalg.merkevarer.filter((m) => m.atc?.kode === 'N06AB06' && m.virkestoff_med_styrke.some((id) => femti.has(id)))
-      for (const m of alle ? preparater : preparater.slice(0, 1)) {
-        m.virkestoff_med_styrke = m.virkestoff_med_styrke.map((id) => {
-          const x = u.utvalg.styrker.find((y) => y.id === id)!
-          if (!femti.has(id)) return id
-          u.utvalg.styrker.push({ ...x, id: `${id}-75-${m.id}`, styrke: { ...x.styrke!, verdi: 75 } })
-          return `${id}-75-${m.id}`
-        })
-      }
-      return u
-    }
-    for (const alle of [true, false]) {
-      const u = senere(alle)
-      expect(unike(styrker(u, 'sertralin', ENESTE)), String(alle)).toEqual(alle ? [25, 75, 100] : [25, 50, 75, 100])
-      const g = godkjennITest(regel('sertralin'), 'test-styrker')
-      const p = beregnAksept(u, g, ENESTE, besvart(g, 100), kliniskDoseplan)
-      expect(p, String(alle)).toMatchObject({ status: 'stoppet', klinisk: false })
-      expect(grunner(p), String(alle)).toContain('Planen bruker styrken 75 mg (forløp fra), som ikke er blant styrkene i FEST som er kontrollert (25, 50 og 100 mg).')
-      expect(grunner(p), String(alle)).toContain(UTENFOR_OMFANG)
-      expect(p, String(alle)).not.toHaveProperty('trinnvalg')
-    }
-    // Med uttrekket som ble kontrollert, gir samme tilfelle en klinisk plan.
-    expect(klinisk('seponering-sertralin', ENESTE, 100)).toMatchObject({ status: 'doseplan', klinisk: true })
+    // Med uttrekket som ble kontrollert, gir sertralin 100 mg en klinisk plan.
+    const kontrollert = klinisk('seponering-sertralin', ENESTE, 100)
+    expect(kontrollert).toMatchObject({ status: 'doseplan', klinisk: true })
+    // Et nytt preparat på 75 mg: modellen ville brukt det, men den kliniske planen bruker bare de kontrollerte styrkene og er den samme som før.
+    const nytt = senereFest('N06AB06', 50, 75, 'nytt')
+    expect(unike(styrker(nytt, 'sertralin', ENESTE))).toEqual([25, 50, 75, 100])
+    expect(elementer(iFest(nytt, 'seponering-sertralin', 100, {}, beregnDoseplan))).toContain(75)
+    const medNytt = iFest(nytt, 'seponering-sertralin', 100)
+    expect(medNytt).toMatchObject({ status: 'doseplan', klinisk: true })
+    expect(planform(medNytt)).toEqual(planform(kontrollert))
+    expect(elementer(medNytt)).not.toContain(75)
+    // Styrken 50 mg endret til 75 mg i alle preparatene: planen ville blitt satt sammen annerledes enn den som er kontrollert, så den stopper.
+    const endret = senereFest('N06AB06', 50, 75, 'endret')
+    expect(unike(styrker(endret, 'sertralin', ENESTE))).toEqual([25, 75, 100])
+    const medEndret = iFest(endret, 'seponering-sertralin', 100)
+    expect(medEndret).toMatchObject({ status: 'stoppet', klinisk: false })
+    expect(grunner(medEndret)).toContain('sertralin (fra): styrken 50 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST, så planen ville blitt satt sammen annerledes enn den som er kontrollert.')
+    expect(grunner(medEndret)).toContain(UTENFOR_OMFANG)
+    expect(medEndret).not.toHaveProperty('trinnvalg')
     // Styrkene er en del av fingeravtrykket: en godkjenning kan ikke flyttes til andre styrker.
     const r = regel('sertralin')
     const flere = { ...r, klinisk_omfang: { ...r.klinisk_omfang!, tilfeller: r.klinisk_omfang!.tilfeller.map((t) => ({ ...t, styrker: { fra: [25, 50, 75, 100] } })) } }
     expect(fingeravtrykk(flere)).not.toBe(fingeravtrykk(r))
+  })
+
+  it('tilbyr bare doser med de kontrollerte styrkene som valg for et trinn, også når FEST har fått en ny styrke (gjennomgangen av 74a775f)', () => {
+    const A = 'seponering-amitriptylin'
+    const VALG = (mg: number) => ({ trinnvalg: [{ forlop: 'fra', trinn: 1, fra_mg: 50, mg }] })
+    // Kontrollørens eksempel: en ny amitriptylintablett på 38 mg. Fra 50 mg er det ideelle trinnet 37,5 mg.
+    const nytt = senereFest('N06AA09', 25, 38, 'nytt')
+    expect([...new Set(styrker(nytt, 'amitriptylin', ENESTE))].sort((a, b) => a - b)).toEqual([10, 25, 38, 50])
+    // Uten avgrensningen ville modellen tilbudt 38 mg (−24 %).
+    const modell = iFest(nytt, A, 50, {}, beregnDoseplan)
+    expect(modell.trinnvalg?.[0]?.doser.map((d) => d.mg)).toContain(38)
+    // Den kliniske beregningen tilbyr bare 40 mg (−20 %), som med uttrekket som ble kontrollert.
+    const p = iFest(nytt, A, 50)
+    expect(p).toMatchObject({ status: 'stoppet', klinisk: false })
+    expect(p.trinnvalg?.map((t) => [t.trinn, t.doser.map((d) => [d.mg, Math.round(d.prosent * 100) / 100])])).toEqual([[1, [[40, 20]]]])
+    expect(p.trinnvalg).toEqual(klinisk(A, ENESTE, 50).trinnvalg)
+    expect(elementer(p)).not.toContain(38)
+    // Et valg av 38 mg gir ingen klinisk plan.
+    const valgt38 = iFest(nytt, A, 50, VALG(38))
+    expect(valgt38).toMatchObject({ status: 'stoppet', klinisk: false })
+    expect(grunner(valgt38)).toMatch(/den valgte dosen 38 mg for trinn 1 kan ikke gis/)
+    // Med 40 mg er planen klinisk, den samme som med uttrekket som ble kontrollert, og ingen senere dose eller valg bruker 38 mg.
+    const valgt40 = iFest(nytt, A, 50, VALG(40))
+    expect(valgt40).toMatchObject({ status: 'doseplan', klinisk: true })
+    expect(planform(valgt40)).toEqual(planform(klinisk(A, ENESTE, 50, VALG(40))))
+    expect(elementer(valgt40)).not.toContain(38)
+    // Uten ny styrke gjelder det samme som før.
+    expect(klinisk(A, ENESTE, 50, VALG(40))).toMatchObject({ status: 'doseplan', klinisk: true })
+    // Med et foreldet FEST-uttrekk (mer enn 48 timer) tilbys ingen valg og vises ingen klinisk plan.
+    const senere = (timer: number) => (r: Regel, x: Doseplaninndata, g: Preparatgrunnlag, o: Omgivelse, s?: Regelsett) => kliniskDoseplan(r, x, g, { ...o, naa: new Date(Date.parse(o.naa) + timer * 3600e3).toISOString() }, s)
+    for (const u of [uttrekk, nytt]) {
+      const foreldet = iFest(u, A, 50, {}, senere(49))
+      expect(foreldet).toMatchObject({ status: 'stoppet', klinisk: false })
+      expect(foreldet).not.toHaveProperty('trinnvalg')
+      expect(iFest(u, A, 50, VALG(40), senere(49))).toMatchObject({ status: 'stoppet', klinisk: false })
+    }
   })
 
   it('sperrer klomipraminplaner som deler tabletter, så bare 50 mg ved lang behandlingstid gir en plan', () => {
@@ -1519,6 +1586,10 @@ describe('Klinisk omfang med de faktiske preparatene i FEST (gjennomgangene av 0
     const lang = klinisk('seponering-klomipramin', ENESTE, 50, LANG_SVAR)
     expect(lang).toMatchObject({ status: 'doseplan', klinisk: true })
     expect(lang.status === 'doseplan' && lang.forlop[0]!.perioder.every((p) => p.elementer.every((e) => Number.isInteger(e.antall)))).toBe(true)
+    // Et valg for et senere trinn som deler en tablett, tilbys heller ikke (gjennomgangen av 74a775f): modellen tilbyr 42,5 mg for trinn 2.
+    const delt = (p: ReturnType<typeof klinisk>) => (p.trinnvalg ?? []).flatMap((t) => t.doser.filter((d) => d.elementer.some((e) => !Number.isInteger(e.antall))).map((d) => d.mg))
+    expect(delt(iFest(uttrekk, 'seponering-klomipramin', 50, LANG_SVAR, beregnDoseplan))).toEqual([42.5])
+    expect(delt(lang)).toEqual([])
   })
 
   it('markerer i aksepttesten nøyaktig cellene innenfor omfanget, og hver av dem gir en klinisk plan når regelen er godkjent', () => {

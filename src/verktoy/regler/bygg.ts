@@ -93,8 +93,8 @@ export const minst14 = (seponering: Kildehenvisning) =>
   forslag(14, 'dager', '«Minst én til to uker» er lest konservativt som minst 14 dager.', { art: 'bindende_krav', henvisninger: [seponering] })
 
 /** 14 dager per trinn: nedre del av RCPsychs to til fire uker; et åpent forslag, ikke en regel fra NICE. */
-export const trinn14 = (begrunnelse: string, valg: { omrade?: [number, number]; henvisninger?: Kildehenvisning[] } = {}) =>
-  forslag(14, 'dager', begrunnelse, { omrade: valg.omrade ?? [14, 28], henvisninger: [RCPSYCH.tid, ...(valg.henvisninger ?? [])] })
+export const trinn14 = (begrunnelse: string, valg: { omrade?: [number, number]; henvisninger?: Kildehenvisning[]; avklaring?: Avklaring } = {}) =>
+  forslag(14, 'dager', begrunnelse, { omrade: valg.omrade ?? [14, 28], henvisninger: [RCPSYCH.tid, ...(valg.henvisninger ?? [])], ...(valg.avklaring && { avklaring: valg.avklaring }) })
 
 /** 28 dager per trinn for fluoksetin: RCPsychs minst fire uker før neste reduksjon er strengere enn NICEs én til to uker. */
 export const fluoksetinTrinn28 = () =>
@@ -105,9 +105,9 @@ export const fluoksetinTrinn28 = () =>
     { henvisninger: [RCPSYCH.fluoksetin, NICE.fluoksetinVurdering] },
   )
 
-export const halvering = (sluttdose: Parameter, lav?: { prosent: Parameter; grense: Parameter }) => ({
+export const halvering = (sluttdose: Parameter, lav?: { prosent: Parameter; grense: Parameter }, avklaring?: Avklaring) => ({
   type: 'prosent_av_aktuell' as const,
-  prosent: forslag(50, 'prosent', 'Eksempelet i NICE er 50 % av forrige dose.', { henvisninger: [NICE.andel] }),
+  prosent: forslag(50, 'prosent', 'Eksempelet i NICE er 50 % av forrige dose.', { henvisninger: [NICE.andel], ...(avklaring && { avklaring }) }),
   ...(lav ? { lav_prosent: lav.prosent, lav_grense_mg: lav.grense } : {}),
   sluttdose_mg: sluttdose,
 })
