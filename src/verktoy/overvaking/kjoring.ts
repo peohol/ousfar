@@ -3,6 +3,10 @@
  * seg, og en del som stopper (en kilde som ikke svarer, FEST som ikke kan
  * leses), står som ikke kontrollert i rapporten uten å stoppe de andre.
  * Hentingen gis inn, så testene kan kjøre hele flyten med syntetiske data.
+ *
+ * Funnene som krevde vurdering i forrige kjøring, står videre for en del som
+ * ikke er kontrollert på nytt, så en kjøring uten Psychiatrienet, eller der
+ * FEST ikke kunne leses, aldri gjør et funn i den delen avklart.
  */
 import type { Innhenting, Kildearkiv } from '../kildearkiv'
 import type { Virkestoffkartlegging } from '../kartlegging'
@@ -24,7 +28,15 @@ export interface Overvakingsvalg {
   regler?: readonly Godkjentregel[]
   kartlegging?: Virkestoffkartlegging
   na?: () => string
+  /** Funnene som krevde vurdering i forrige kjøring (fra saken), og når den ble gjort. */
+  forrige?: Pick<Overvakingsrapport, 'kjort_kl' | 'funn'>
 }
+
+/** Forrige kjørings funn som krevde vurdering i delen, merket med kjøringen de først ble gjort i. */
+const videreforte = (forrige: Overvakingsvalg['forrige'], kilde: Funnkilde): Overvakingsfunn[] =>
+  (forrige?.funn ?? []).filter((f) => f.kilde === kilde && f.niva === 'krever_vurdering').map((f) => ({ ...f, viderefort_fra: f.viderefort_fra ?? forrige!.kjort_kl }))
+
+const videreforteTekst = (n: number) => (n === 0 ? '' : ` ${n} funn fra en tidligere kjøring står videre til delen er kontrollert igjen.`)
 
 const IKKE_KJORT: Record<Funnkilde, string> = {
   dokument: 'Kildedokumentene ble ikke kontrollert i denne kjøringen.',
@@ -39,14 +51,19 @@ export async function kjorOvervaking(v: Overvakingsvalg): Promise<Overvakingsrap
   const grunnlag: Grunnlagsdel[] = []
   const feil: string[] = []
   const del = async (kilde: Funnkilde, kjor: (() => Promise<{ funn: Overvakingsfunn[]; grunnlag: Grunnlagsdel }>) | null) => {
-    if (!kjor) return grunnlag.push({ kilde, kjort: false, kontrollert: 0, beskrivelse: IKKE_KJORT[kilde] })
+    const tidligere = videreforte(v.forrige, kilde)
+    if (!kjor) {
+      funn.push(...tidligere)
+      return grunnlag.push({ kilde, kjort: false, kontrollert: 0, beskrivelse: IKKE_KJORT[kilde] + videreforteTekst(tidligere.length) })
+    }
     try {
       const r = await kjor()
       funn.push(...r.funn)
       grunnlag.push(r.grunnlag)
     } catch (e) {
       feil.push(`${kilde === 'dokument' ? 'Kildedokumentene' : kilde === 'fest' ? 'FEST' : 'Psychiatrienet'}: ${e instanceof Error ? e.message : String(e)}`)
-      grunnlag.push({ kilde, kjort: false, kontrollert: 0, beskrivelse: 'Stoppet; se «Ikke kontrollert».' })
+      funn.push(...tidligere)
+      grunnlag.push({ kilde, kjort: false, kontrollert: 0, beskrivelse: `Stoppet; se «Ikke kontrollert».${videreforteTekst(tidligere.length)}` })
     }
   }
   await del('dokument', v.dokumenter ? () => kontrollerDokumenter(regler, v.dokumenter) : null)

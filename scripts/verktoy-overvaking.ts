@@ -4,7 +4,10 @@
  * GitHub Actions kjører den hver uke (`.github/workflows/verktoy-overvaking.yml`);
  * den kan også kjøres for hånd.
  *
- *   npm run verktoy:overvaking -- kontroll [--psychiatrienet] [--uten-dokumenter] [--uten-fest] [--ut <mappe>]
+ *   npm run verktoy:overvaking -- kontroll [--psychiatrienet] [--uten-dokumenter] [--uten-fest] [--forrige <fil>] [--ut <mappe>]
+ *
+ * `--forrige` er funnene som krevde vurdering i forrige kjøring (fra saken);
+ * de står videre for en del som ikke blir kontrollert på nytt.
  *
  * Skriver `rapport.md` og `funn.json` i `<mappe>` (standard `overvaking-resultat`,
  * som ikke er en del av repoet) og et sammendrag i terminalen. Avslutter med 0
@@ -31,6 +34,7 @@ import { NEDTRAPPINGSSETT } from '../src/verktoy/regler/nedtrapping'
 import { PILOTSETT } from '../src/verktoy/regler/pilotsett'
 import { godkjenteRegler, virkestofferForFest } from '../src/verktoy/overvaking/berorte'
 import { kjorOvervaking } from '../src/verktoy/overvaking/kjoring'
+import type { Overvakingsrapport } from '../src/verktoy/overvaking/modell'
 import { avtrykk, kreverVurdering, lagOvervakingsrapport } from '../src/verktoy/overvaking/rapport'
 
 const lesJson = <T>(fil: string) => JSON.parse(readFileSync(new URL(`../${fil}`, import.meta.url), 'utf8')) as T
@@ -59,8 +63,13 @@ async function festlesing(): Promise<((ider: string[]) => Promise<Legemiddelutva
 
 async function kontroll(argumenter: string[]) {
   const flagg = new Set(argumenter.filter((a) => a.startsWith('--')))
-  const i = argumenter.indexOf('--ut')
-  const ut = i >= 0 && argumenter[i + 1] ? argumenter[i + 1]! : 'overvaking-resultat'
+  const verdi = (navn: string) => {
+    const i = argumenter.indexOf(navn)
+    return i >= 0 && argumenter[i + 1] ? argumenter[i + 1]! : null
+  }
+  const ut = verdi('--ut') ?? 'overvaking-resultat'
+  const forrigefil = verdi('--forrige')
+  const forrige = forrigefil ? (JSON.parse(readFileSync(forrigefil, 'utf8')) as Pick<Overvakingsrapport, 'kjort_kl' | 'funn'>) : undefined
   const regler = godkjenteRegler()
 
   const lesing = flagg.has('--uten-fest') ? null : await festlesing()
@@ -69,6 +78,7 @@ async function kontroll(argumenter: string[]) {
 
   const rapport = await kjorOvervaking({
     regler,
+    forrige,
     dokumenter: flagg.has('--uten-dokumenter') ? undefined : (url) => hentDokument(url),
     psychiatrienet: flagg.has('--psychiatrienet')
       ? { arkiv: lesJson<Kildearkiv>('src/data/verktoy/psychiatrienet-kildearkiv.json'), innhent: () => innhentPsychiatrienet(KARTLEGGING, { framdrift: (n) => console.log(`Psychiatrienet: ${n} sider`) }) }
@@ -101,7 +111,7 @@ async function kontroll(argumenter: string[]) {
 
 const [kommando, ...resten] = process.argv.slice(2).filter((a) => a !== '--')
 if (kommando !== 'kontroll') {
-  console.error('Bruk: npm run verktoy:overvaking -- kontroll [--psychiatrienet] [--uten-dokumenter] [--uten-fest] [--ut <mappe>]')
+  console.error('Bruk: npm run verktoy:overvaking -- kontroll [--psychiatrienet] [--uten-dokumenter] [--uten-fest] [--forrige <fil>] [--ut <mappe>]')
   process.exit(1)
 }
 await kontroll(resten)

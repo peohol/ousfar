@@ -46,6 +46,13 @@ export interface Overvakingsfunn {
   /** Hva som er endret, ett punkt per forhold. Aldri kildetekst. */
   detaljer: string[]
   berorte: Berort[]
+  /**
+   * Når funnet er fra en tidligere kjøring og delen det gjelder ikke ble
+   * kontrollert på nytt (ikke kjørt, eller stoppet): kjøringen funnet først ble
+   * gjort i. Funnet står da videre, så en sak aldri regnes som avklart før
+   * delen er kontrollert igjen. Inngår ikke i avtrykket.
+   */
+  viderefort_fra?: string
 }
 
 /** Hva en del av overvåkingen sammenlignet med, og om den ble kjørt. */

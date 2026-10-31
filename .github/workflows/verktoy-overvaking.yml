@@ -63,9 +63,23 @@ jobs:
 
       - run: npm ci --ignore-scripts
 
+      # Funnene som krevde vurdering sist, står i saken. De føres videre for en
+      # del som ikke kontrolleres på nytt nå (Psychiatrienet utenom den første
+      # uken i måneden, eller en del som stopper), så saken aldri regnes som
+      # avklart før delen er kontrollert igjen.
+      - name: Hent funnene fra den åpne saken
+        run: |
+          sak=$(gh issue list --repo "$REPO" --label kildeovervaking --state open --limit 1 --json number --jq '.[0].number // empty')
+          if [ -n "$sak" ]; then
+            gh issue view "$sak" --repo "$REPO" --json body --jq '.body' | sed -n 's/^<!-- kildeovervaking-funn: \([A-Za-z0-9+/=]*\) -->$/\1/p' | head -n 1 | base64 -d | gunzip > forrige.json || rm -f forrige.json
+          fi
+
       - name: Kjør overvåkingen
         run: |
           valg=()
+          if [ -s forrige.json ]; then
+            valg+=(--forrige forrige.json)
+          fi
           if [ "$MED_PSYCHIATRIENET" = "true" ] || { [ "$HENDELSE" = "schedule" ] && [ "$(date -u +%-d)" -le 7 ]; }; then
             valg+=(--psychiatrienet)
           fi
@@ -77,6 +91,7 @@ jobs:
           krever=$(jq '.krever_vurdering' overvaking-resultat/funn.json)
           avtrykk=$(jq -r '.avtrykk' overvaking-resultat/funn.json)
           merke="<!-- kildeovervaking-avtrykk: $avtrykk -->"
+          blokk=$(jq -c '{kjort_kl, funn: [.funn[] | select(.niva == "krever_vurdering")]}' overvaking-resultat/funn.json | gzip -9n | base64 -w0)
           sak=$(gh issue list --repo "$REPO" --label kildeovervaking --state open --limit 1 --json number --jq '.[0].number // empty')
           if [ -n "$sak" ] && gh issue view "$sak" --repo "$REPO" --json body --jq '.body' | grep -qF "$merke"; then
             echo "Saken #$sak har allerede disse funnene."
@@ -88,10 +103,11 @@ jobs:
           fi
           {
             echo "$merke"
+            echo "<!-- kildeovervaking-funn: $blokk -->"
             echo
             echo "Fra [kjøringen]($KJORING). Saken lukkes av den som har vurdert funnene etter fremgangsmåten i \`docs/verktøy-p12-overvaking.md\`."
             echo
-            head -c 60000 overvaking-resultat/rapport.md
+            head -c $((60000 - ${#blokk})) overvaking-resultat/rapport.md
           } > sak.md
           if [ -z "$sak" ]; then
             gh label create kildeovervaking --repo "$REPO" --force --color D93F0B --description "Kildeovervåkingen for Verktøy: endringer som kan kreve ny faglig vurdering"

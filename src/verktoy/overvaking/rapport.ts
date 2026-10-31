@@ -16,7 +16,13 @@ const berorte = (f: Overvakingsfunn) =>
   f.berorte.length === 0 ? '–' : f.berorte.map((b) => `${b.regel} v${b.versjon} (${b.fingeravtrykk.slice(0, 12)}): ${b.hvorfor}`).join('<br>')
 
 const rader = (funn: Overvakingsfunn[], medRegler: boolean) =>
-  funn.map((f) => [KILDETEKST[f.kilde], f.etikett, ARTTEKST[f.art], f.detaljer.join('<br>'), ...(medRegler ? [berorte(f)] : [])])
+  funn.map((f) => [
+    KILDETEKST[f.kilde],
+    f.etikett,
+    ARTTEKST[f.art],
+    [...f.detaljer, ...(f.viderefort_fra ? [`Funnet i kjøringen ${f.viderefort_fra}; delen er ikke kontrollert på nytt siden, så funnet står videre.`] : [])].join('<br>'),
+    ...(medRegler ? [berorte(f)] : []),
+  ])
 
 /** Funnene som krever vurdering. */
 export const kreverVurdering = (r: Pick<Overvakingsrapport, 'funn'>) => r.funn.filter((f) => f.niva === 'krever_vurdering')

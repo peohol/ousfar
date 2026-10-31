@@ -52,6 +52,7 @@ Arbeidsflyten `.github/workflows/verktoy-overvaking.yml` kjører mandag kl. 06:2
 
 - Rapporten står i sammendraget for kjøringen i GitHub Actions.
 - Krever noe vurdering, åpnes én sak med merkelappen `kildeovervaking`. Saken oppdateres og får en kommentar bare når avtrykket endres.
+- Funnene som krever vurdering, lagres i saken. Kontrolleres en del ikke på nytt i en kjøring, fordi Psychiatrienet bare kjøres første uke i måneden eller fordi delen stopper, står funnene fra den delen videre, merket med kjøringen de ble gjort i. En sak regnes derfor aldri som avklart før hver del med funn er kontrollert igjen.
 - Krever ingenting vurdering lenger, får en åpen sak en kommentar. Saken **lukkes aldri av arbeidsflyten**, bare av den som har vurdert funnene.
 - Stopper en hel del av kontrollen, for eksempel fordi FEST ikke kan leses, blir kjøringen rød. Delen står da under «Ikke kontrollert» i rapporten.
 
