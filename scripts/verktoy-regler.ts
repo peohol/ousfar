@@ -16,6 +16,7 @@ import { AKSEPTSTOFFER, AKSEPTTESTFIL, FEST_AKSEPTTEST, FEST_PILOT, lagAksepttes
 import { PILOTSETT } from '../src/verktoy/regler/pilotsett'
 import { festkoblinger } from '../src/verktoy/register'
 import { DEKNINGSRAPPORTFIL, lagDekningsrapport } from '../src/verktoy/dekningsrapport'
+import { disposisjonsfeil } from '../src/verktoy/regler/godkjenning'
 import { kontrollerRegelsett } from '../src/verktoy/regler/kontroll'
 import { lagRegelrapport, REGELRAPPORTER } from '../src/verktoy/regler/rapport'
 import { lagMotorrapport, MOTORRAPPORTFIL } from '../src/verktoy/motor/rapport'
@@ -27,8 +28,8 @@ const skriv = (fil: string, innhold: string) => {
 
 async function kontroll() {
   let antall = 0
-  for (const { sett } of REGELRAPPORTER) {
-    const feil = kontrollerRegelsett(sett)
+  for (const { sett, disposisjoner = [] } of REGELRAPPORTER) {
+    const feil = [...kontrollerRegelsett(sett), ...disposisjoner.flatMap((d) => disposisjonsfeil(sett.regler, d))]
     for (const f of feil) console.error(`✗ ${sett.id}: ${f}`)
     console.log(feil.length === 0 ? `✓ ${sett.id}: ${sett.regler.length} regler uten feil` : `${sett.id}: ${feil.length} feil`)
     antall += feil.length

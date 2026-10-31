@@ -5,8 +5,11 @@
  * i P7 – og hver annen regel i leveransen er kontrollert og ikke godkjent.
  * Ingen av dem, og ingen regel i sammenligningssettet, gir noen gang en
  * klinisk plan, uansett legemiddelform, startdose eller en ny styrke i et
- * senere FEST-uttrekk. Alle data er
- * syntetiske inndata mot de lagrede FEST-uttrekkene.
+ * senere FEST-uttrekk. Vurderingen «kontrollert, ikke godkjent» gjelder bare
+ * nøyaktig de 24 regelversjonene og fingeravtrykkene kontrolløren vurderte: en
+ * regel som endres, får ny versjon eller er ny, får ikke kontrollørens steg og
+ * står som ikke ferdig kontrollert. Alle data er syntetiske inndata mot de
+ * lagrede FEST-uttrekkene.
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
@@ -14,10 +17,12 @@ import { byggesteiner, type Preparatgrunnlag } from '../verktoy/motor/byggestein
 import { kliniskDoseplan, type Doseplaninndata, type Doseplanresultat } from '../verktoy/motor/plan'
 import { festkoblinger, KARTLEGGING, VERKTOY, virkestoffvalg } from '../verktoy/register'
 import { besvart, FEST_AKSEPTTEST, FEST_PILOT, omgivelseFor, type Festuttrekk } from '../verktoy/regler/aksepttest'
-import { erKliniskGodkjent, fingeravtrykk, harBeregning, kontrollutfall } from '../verktoy/regler/godkjenning'
-import type { Forlop, Regel } from '../verktoy/regler/modell'
-import { NEDTRAPPINGSSETT, SAMMENLIGNINGSSETT } from '../verktoy/regler/nedtrapping'
-import { PILOTSETT } from '../verktoy/regler/pilotsett'
+import { type Disposisjon, disponer, disposisjonsfeil, erKliniskGodkjent, fingeravtrykk, harBeregning, kontrollutfall, vurderingsfeil } from '../verktoy/regler/godkjenning'
+import { kontrollerRegelsett } from '../verktoy/regler/kontroll'
+import type { Forlop, Regel, Regelsett } from '../verktoy/regler/modell'
+import { NEDTRAPPINGSDISPOSISJON, NEDTRAPPINGSSETT, SAMMENLIGNINGSSETT } from '../verktoy/regler/nedtrapping'
+import { PILOTDISPOSISJON, PILOTSETT } from '../verktoy/regler/pilotsett'
+import { REGELRAPPORTER, statustekst } from '../verktoy/regler/rapport'
 import { REGELSETT, tilgjengelighet } from '../verktoy/tilgjengelighet'
 import { godkjennITest } from './hjelp/verktoyplan'
 
@@ -160,5 +165,108 @@ describe('Klinisk tilgjengelige regler i den første avgrensede leveransen (P4.8
     }
     // Hver av de seks kan nås fra et verktøy.
     expect([...sett].sort()).toEqual([...godkjente].sort())
+  })
+
+  describe('Vurderingen «kontrollert, ikke godkjent» gjelder bare nøyaktig de vurderte regelversjonene', () => {
+    const DISPOSISJONER: readonly [Regelsett, Disposisjon][] = [
+      [PILOTSETT, PILOTDISPOSISJON],
+      [NEDTRAPPINGSSETT, NEDTRAPPINGSDISPOSISJON],
+    ]
+    const disposisjonFor = (id: string) => DISPOSISJONER.find(([, d]) => id in d.regler)!
+    /** Regelen slik den var før disposisjonen: uten kontrollørens siste steg. */
+    const foer = (r: Regel): Regel => {
+      const historikk = structuredClone(r.godkjenning.historikk.slice(0, -1))
+      return { ...structuredClone(r), godkjenning: { status: historikk.at(-1)!.status, historikk } }
+    }
+    const endretInnhold = (r: Regel): Regel => {
+      const x = structuredClone(r)
+      x.fortolkning.forutsetninger.push('Syntetisk testendring av det faglige innholdet etter vurderingen.')
+      return x
+    }
+    const VARIANTER = [
+      ['endret innhold uten ny versjon', endretInnhold],
+      ['ny versjon', (r: Regel): Regel => ({ ...structuredClone(r), versjon: r.versjon + 1 })],
+      ['ny regel', (r: Regel): Regel => ({ ...structuredClone(r), id: `${r.id}-ny` })],
+    ] as const
+    const VERKTOYVALG = VERKTOY.flatMap((v) => {
+      const valgene = virkestoffvalg(v).flatMap((x) => x.formuleringer.map((formulering) => ({ nokkel: x.nokkel, formulering })))
+      return (v.type === 'seponering' ? valgene.map((fra) => ({ fra })) : valgene.flatMap((fra) => valgene.map((til) => ({ fra, til })))).map((valg) => ({ v, valg }))
+    })
+
+    it('er registrert for en fast liste med nøyaktig de 24 reglene, versjonene og fingeravtrykkene', () => {
+      const vurderte = DISPOSISJONER.flatMap(([, d]) => Object.entries(d.regler).map(([id, v]) => [id, v.versjon, v.fingeravtrykk]))
+      expect(vurderte.map(([id]) => id).sort()).toEqual(IKKE_GODKJENTE.map(({ r }) => r.id).sort())
+      for (const { r } of IKKE_GODKJENTE) expect(vurderte.find(([id]) => id === r.id), r.id).toEqual([r.id, r.versjon, fingeravtrykk(r)])
+      // Ingen av de seks godkjente og ingen regel i sammenligningssettet står i listen.
+      for (const id of [...Object.keys(GODKJENTE), ...SAMMENLIGNINGSSETT.regler.map((r) => r.id)]) expect(disposisjonFor(id), id).toBeUndefined()
+      // Listen er frosset og stemmer med regelsettet, slik kontrollen i CI krever.
+      for (const [sett, d] of DISPOSISJONER) {
+        expect(Object.isFrozen(d) && Object.isFrozen(d.regler) && Object.values(d.regler).every(Object.isFrozen), sett.id).toBe(true)
+        expect(disposisjonsfeil(sett.regler, d), sett.id).toEqual([])
+      }
+      expect(REGELRAPPORTER.flatMap((x) => (x.disposisjoner ?? []).flatMap((d) => disposisjonsfeil(x.sett.regler, d)))).toEqual([])
+      for (const { r } of IKKE_GODKJENTE) {
+        expect(vurderingsfeil(r), r.id).toEqual([])
+        expect(statustekst(r), r.id).toBe('kontrollert, ikke godkjent')
+      }
+    })
+
+    it('gir en uendret regel nøyaktig kontrollørens steg, med fingeravtrykket som ble vurdert', () => {
+      for (const { r } of IKKE_GODKJENTE) {
+        const [, d] = disposisjonFor(r.id)
+        const f = foer(r)
+        expect(kontrollutfall(f), r.id).toBe('til_kontroll')
+        expect(disponer([f], d)[0], r.id).toEqual(r)
+      }
+    })
+
+    it('gir aldri en endret regel, en ny versjon eller en ny regel kontrollørens steg, og viser den ikke som vurdert', { timeout: 60_000 }, () => {
+      const iVerktoyene = new Set<string>()
+      for (const { sett, r } of IKKE_GODKJENTE) {
+        const [, d] = disposisjonFor(r.id)
+        for (const [hva, endre] of VARIANTER) {
+          const x = endre(foer(r))
+          const navn = `${r.id}, ${hva}`
+          // Ingen automatisk steg: regelen kommer uendret tilbake og står som før vurderingen.
+          const etter = disponer([x], d)[0]!
+          expect(etter, navn).toBe(x)
+          expect(etter.godkjenning.historikk.some((s) => s.status === 'ikke_godkjent' || (s.rolle === 'uavhengig_kontrollor' && s.dato === d.dato)), navn).toBe(false)
+          expect(kontrollutfall(etter), navn).toBe('til_kontroll')
+          expect(statustekst(etter), navn).not.toMatch(/kontrollert, ikke godkjent/)
+          expect(erKliniskGodkjent(etter), navn).toBe(false)
+          // En endret eller ny versjon av en vurdert regel stopper kontrollen i CI til listen er oppdatert.
+          const regler = sett.regler.map((y) => (y.id === r.id && hva !== 'ny regel' ? etter : y))
+          if (hva !== 'ny regel') expect(disposisjonsfeil(regler, d).join(), navn).toMatch(new RegExp(`^${r.id}: `))
+          // I verktøyene vises den som ikke ferdig kontrollert, aldri som kontrollert og ikke godkjent, og den gir ingen beregning.
+          const medEndring: Regelsett = { ...REGELSETT, regler: [...REGELSETT.regler.filter((y) => y.id !== r.id), etter] }
+          for (const { v, valg } of VERKTOYVALG) {
+            const t = tilgjengelighet(v, valg, medEndring)
+            if (!t.regler.includes(etter)) continue
+            iVerktoyene.add(r.id)
+            expect(t.status, `${navn}, ${v.id} ${JSON.stringify(valg)}`).toBe('til_kontroll')
+          }
+          if (harBeregning(etter)) {
+            for (const e of etter.eksempler) ikkeKlinisk(kliniskDoseplan(etter, { ...e.inndata, godkjenningsfritak: false }, grunnlagFor(UTTREKK[0]!, etter), omgivelseFor(UTTREKK[0]!), sett), navn)
+          }
+        }
+      }
+      // Prøven er ikke tom: hver av de 24 vises i et verktøy, unntatt den langsomme vortioksetinregelen, der verktøyet viser den godkjente hovedregelen.
+      expect([...iVerktoyene].sort()).toEqual(IKKE_GODKJENTE.map(({ r }) => r.id).filter((id) => id !== 'seponering-vortioksetin-langsom').sort())
+    })
+
+    it('godtar ikke en vurdering som ikke lenger stemmer med regelen, eller som mangler fingeravtrykk', () => {
+      for (const { sett, r } of IKKE_GODKJENTE) {
+        const endret = endretInnhold(r)
+        const utenAvtrykk = structuredClone(r)
+        delete utenAvtrykk.godkjenning.historikk.at(-1)!.fingeravtrykk
+        for (const [hva, x] of [['endret etter vurderingen', endret], ['uten fingeravtrykk', utenAvtrykk]] as const) {
+          const navn = `${r.id}, ${hva}`
+          expect(vurderingsfeil(x).join(), navn).toMatch(/fingeravtrykket stemmer ikke/)
+          expect(kontrollutfall(x), navn).toBe('til_kontroll')
+          expect(statustekst(x), navn).toMatch(/^merket kontrollert og ikke godkjent, men ugyldig/)
+          expect(kontrollerRegelsett({ ...sett, regler: [x] }).join(), navn).toMatch(/vurderingen er ikke gyldig: Regelen er endret etter vurderingen/)
+        }
+      }
+    })
   })
 })

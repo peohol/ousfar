@@ -4,7 +4,7 @@
  * fakta fra NICE som flere regler bygger på. Faktaene er gjengitt med egne
  * ord, med sted i kilden (`kilder.ts`).
  */
-import type { Disposisjon } from './godkjenning'
+import type { Disposisjon, Vurdertregel } from './godkjenning'
 import type { Avklaring, Begrunnelseskrav, Godkjenningssteg, Kildehenvisning, Parameter, Parameterart, Utsagn } from './modell'
 
 export const h = (kilde: string, sted: string, faktum: string): Kildehenvisning => ({ kilde, sted, faktum })
@@ -151,14 +151,19 @@ const LEVERANSEN = 'Kontrollørens disposisjon av leveranseomfanget 31.10.2026 (
  * regelversjonene som allerede er klinisk godkjent i oppgitt omfang, kan
  * brukes klinisk; hver annen regel står som kontrollert og ikke godkjent, og
  * en senere aktivering krever en ny kontroll i en egen PR. Ingen ny
- * godkjenning er gitt med disposisjonen.
+ * godkjenning er gitt med disposisjonen. Den gjelder bare de oppgitte reglene,
+ * med nøyaktig versjonen og fingeravtrykket kontrolløren vurderte (se
+ * `disponer`); listen er frosset.
  */
-export const leveransen = (tillegg?: Disposisjon['tillegg']): Disposisjon => ({
+export const leveransen = (regler: Record<string, Vurdertregel>): Disposisjon => Object.freeze({
   av: 'ChatGPT (uavhengig fagkontrollør)',
   dato: '2026-10-31',
   merknad: {
     beregnbar: `${LEVERANSEN}: kontrollert og ikke godkjent for klinisk doseberegning i denne første avgrensede leveransen. Regelen er et kontrollutkast og sperret for klinisk bruk; et tilfelle i det kliniske omfanget er teknisk, ikke et godkjenningsvedtak. En senere aktivering krever en ny, separat kontroll av kilder, FEST, risiko og dosebygging for nøyaktig den versjonen, med positive og negative tester, i en egen PR.`,
     uten_beregning: `${LEVERANSEN}: bare fagtekst, sperret for beregning. Det som mangler, er en dokumentert dosebygging med dagens preparater, ikke et klinisk behov for mindre doser. Fagteksten er ikke klinisk godkjent; en beregnbar regel kan bare vurderes på nytt med en dokumentert formulering eller metode og en ny kontroll i en egen PR.`,
   },
-  ...(tillegg && { tillegg }),
+  regler: Object.freeze(Object.fromEntries(Object.entries(regler).map(([id, v]) => [id, Object.freeze({ ...v })]))),
 })
+
+/** En regel slik kontrolløren vurderte den: versjon, fingeravtrykk og eventuelt det som ble sagt om akkurat den. */
+export const vurdert = (versjon: number, fingeravtrykk: string, tillegg?: string): Vurdertregel => ({ versjon, fingeravtrykk, ...(tillegg && { tillegg }) })

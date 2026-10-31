@@ -15,7 +15,7 @@ import type { Kildearkiv } from '../kildearkiv'
 import { kildegrunnlag, type Kildeanbefaling, type Kildepart } from '../kildeanbefalinger'
 import { erSperret, KILDEFORMULERINGER, type Virkestoffkartlegging } from '../kartlegging'
 import { beregn, kortform, utlosteKrav } from './beregning'
-import { godkjenningsfeil } from './godkjenning'
+import { godkjenningsfeil, vurderingsfeil } from './godkjenning'
 import { kildeFor } from './kilder'
 import {
   alleGrunnlag,
@@ -248,7 +248,7 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
   if (sist && sist.regelversjon !== r.versjon) f(`siste godkjenningssteg gjelder regelversjon ${sist.regelversjon}, ikke versjon ${r.versjon}; en endret regel må sendes til kontroll på nytt`)
   for (const s of r.godkjenning.historikk) if (!Number.isInteger(s.regelversjon) || s.regelversjon < 1 || s.regelversjon > r.versjon) f(`et godkjenningssteg gjelder en ukjent regelversjon (${s.regelversjon})`)
   if (r.godkjenning.status === 'klinisk_godkjent') for (const x of godkjenningsfeil(r)) f(`er merket klinisk godkjent, men godkjenningen er ikke gyldig: ${x}`)
-  if (r.godkjenning.status === 'ikke_godkjent' && sist && (sist.rolle !== 'uavhengig_kontrollor' || utviklere.has(sist.av))) f('er merket kontrollert og ikke godkjent, men siste steg er ikke fra en uavhengig kontrollør')
+  if (r.godkjenning.status === 'ikke_godkjent') for (const x of vurderingsfeil(r)) f(`er merket kontrollert og ikke godkjent, men vurderingen er ikke gyldig: ${x}`)
 
   // Regneeksemplene: et beregnbart eksempel gir nøyaktig det forventede, et stopp-eksempel stopper av riktig grunn.
   if (r.beregnbarhet !== 'bare_tekstlig' && r.beregnbarhet !== 'mangler_anbefaling' && !r.eksempler.some((e) => !e.stopp)) f('har ingen regneeksempler med beregnet plan')

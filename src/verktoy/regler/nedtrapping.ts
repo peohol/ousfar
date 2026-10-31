@@ -52,7 +52,7 @@
  * gjengir teksten der.
  */
 import { kravtekst, omradetekst } from './beregning'
-import { FORUTSETNINGER_FELLES, forslag, h, kilde, leveransen, NICE, planhorisont, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, pn, RCPSYCH, steg, utsagn } from './bygg'
+import { FORUTSETNINGER_FELLES, forslag, h, kilde, leveransen, NICE, planhorisont, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, pn, RCPSYCH, steg, utsagn, vurdert } from './bygg'
 import { disponer } from './godkjenning'
 import type { Avklaring, Begrunnelseskrav, Bekreftelse, Fase, Forlop, Godkjenningssteg, Grunnlag, Inndatakrav, Kildehenvisning, Kliniskomfang, Nedtrappingsstrategi, Parameter, Regel, Regelsett, Regneeksempel, Sporsmal, Unntak, Utsagn } from './modell'
 import { REGELMODELLVERSJON } from './modell'
@@ -2245,6 +2245,32 @@ function tekstFraStoff(s: Stoffregel & { ikkeBeregnbar: NonNullable<Stoffregel['
 }
 const harTekst = (s: Stoffregel): s is Stoffregel & { ikkeBeregnbar: NonNullable<Stoffregel['ikkeBeregnbar']> } => !!s.ikkeBeregnbar
 
+/** Kontrollørens disposisjon av nedtrappingsreglene 31.10.2026: de 22 reglene, med versjonen og fingeravtrykket som ble vurdert. */
+export const NEDTRAPPINGSDISPOSISJON = leveransen({
+  'seponering-amitriptylin': vurdert(11, 'dcc526c4db9db4e5a77994b49d7e18890e1799a19c9f4fbc2bf63e31151c4eb7'),
+  'seponering-amitriptylin-langsom': vurdert(7, '0f4d32df4883fd056d1f1b19a4f8ba8b52ec1343f3e6b64653c311fbce727deb'),
+  'seponering-escitalopram': vurdert(11, 'a2d959cae2780053d15188ae0e160292e06af5155dfacafcfa41b1d850b127db'),
+  'seponering-escitalopram-langsom': vurdert(7, '8dcd4f992fe4f9fb55aebf1dc4eda04bc0399d2ef91ca90a14d699979cd53e3d'),
+  'seponering-fluoksetin': vurdert(11, '796b98a07017e16850df9f80e53b0fa33ded69a8729df91141dd64934da2caf8'),
+  'seponering-fluoksetin-langsom': vurdert(7, '7c8691fc8d08a6fb1fd7423a0c2dec65855fac778c08706cf675290993124dbe'),
+  'seponering-fluvoksamin': vurdert(12, '3f1d1e9523137bae72521bc2c7f396eff2aba59080a2af779f07970fa1f53e86'),
+  'seponering-fluvoksamin-langsom': vurdert(8, '98fe10b187901eec697df69aa4055f5a36ec6231f9d532c47e9a2a48c8d3b5f0'),
+  'seponering-klomipramin': vurdert(11, 'fdf267f7ee7efef2411424e28d78b29a5b98b87c6a0edeacbabb1f5dc2ddc58c'),
+  'seponering-klomipramin-langsom': vurdert(7, '78f33b643775fbedd9218be27d5d27a3f4fbdf974451286cfbb1b0fce70bd7af'),
+  'seponering-nortriptylin': vurdert(11, 'c2594aabadd1c4ecb41776ab1bac5f2c7cc1b781027fa544726f96c210c25fcd'),
+  'seponering-nortriptylin-langsom': vurdert(7, 'dfdb03c5334e9e9d921b3fcdb342b8f7784a398742624a85dff4934b70cce244'),
+  'seponering-sertralin': vurdert(11, 'ef83fd9ddbbdf92643ef766a0963a410e1afa5df4aea0db0c81cf6bc2b225953'),
+  'seponering-sertralin-langsom': vurdert(7, '7de218da5d775e8785fc6700ca3468fae2bf813d83c68b5012402aa803fb2427'),
+  'seponering-vortioksetin-langsom': vurdert(7, '06955d6152fe1060b8f144b9a826d1af56df5a8c16586a471c2f6be45605c05d', 'Bare hovedregelens første reduksjon fra 20 til 15 mg er godkjent; den langsomme varianten er ikke det.'),
+  'seponering-fluoksetin-annenhver-dag': vurdert(4, 'cb1187568a3814434df286f6b9f89704956c8ab2d048055233532f3c35bd4f3f'),
+  'seponering-duloksetin': vurdert(6, '2c01051c6eebd4a3ff287c2b15c9c89b2870e2b15fd5db0184c6874c21c04edb'),
+  'seponering-venlafaksin': vurdert(6, 'b26a1f0cb66af26725bbf55b7f9cfc04c02004ef38611026b8af3baccc313776'),
+  'seponering-citalopram': vurdert(9, '88744299aa74fa280c6138fbaaec5d972ef02d7cc49ba3c0fbbaa8422f53d541'),
+  'seponering-mirtazapin': vurdert(8, 'c473d6f10c63c423f54886f72456fa87500ec35233651f26de9638333c9efb9f'),
+  'seponering-moklobemid': vurdert(9, '15b8fba1db32d3e677c966e69c8f10aad673201089e30f0462034c3f1692dbc4'),
+  'seponering-paroksetin': vurdert(8, 'afacbd5ff69e87bb36260cb9def2b4d61c573ef5dc38513375778ea679cc4cda'),
+})
+
 export const NEDTRAPPINGSSETT: Regelsett = {
   id: 'ousfar-verktoy-nedtrapping',
   versjon: 14,
@@ -2261,9 +2287,7 @@ export const NEDTRAPPINGSSETT: Regelsett = {
       venlafaksin,
       ...STOFFER.filter(harTekst).map(tekstFraStoff),
     ],
-    leveransen({
-      'seponering-vortioksetin-langsom': 'Bare hovedregelens første reduksjon fra 20 til 15 mg er godkjent; den langsomme varianten er ikke det.',
-    }),
+    NEDTRAPPINGSDISPOSISJON,
   ),
 }
 

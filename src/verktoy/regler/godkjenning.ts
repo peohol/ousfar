@@ -132,36 +132,73 @@ export const harBeregning = (r: Regel) => r.beregnbarhet !== 'bare_tekstlig' && 
 /** Statusene der kontrollen er avsluttet uten godkjenning. */
 const AVSLUTTET: readonly Regel['godkjenning']['status'][] = ['ikke_godkjent', 'avvist', 'trukket']
 
+/**
+ * Om en avsluttet vurdering uten godkjenning gjelder nøyaktig denne regelen:
+ * siste steg er fra en uavhengig kontrollør, for denne versjonen og dette
+ * fingeravtrykket. Endres regelen etterpå, gjelder vurderingen ikke lenger.
+ */
+export function vurderingsfeil(r: Regel): string[] {
+  const sist = r.godkjenning.historikk.at(-1)
+  if (!AVSLUTTET.includes(r.godkjenning.status)) return [`Regelversjonen er ${r.godkjenning.status.replace(/_/g, ' ')}, ikke vurdert.`]
+  const feil: string[] = []
+  const utviklere = new Set(r.godkjenning.historikk.filter((x) => x.rolle === 'utvikler').map((x) => x.av))
+  if (!sist || sist.status !== r.godkjenning.status || sist.rolle !== 'uavhengig_kontrollor' || utviklere.has(sist.av)) feil.push('Siste steg er ikke en vurdering fra en uavhengig kontrollør.')
+  if (sist && sist.regelversjon !== r.versjon) feil.push(`Vurderingen gjelder regelversjon ${sist.regelversjon}, ikke versjon ${r.versjon}.`)
+  if (sist && sist.fingeravtrykk !== fingeravtrykk(r)) feil.push('Regelen er endret etter vurderingen (fingeravtrykket stemmer ikke); den må kontrolleres på nytt.')
+  return feil
+}
+
 export function kontrollutfall(r: Regel): Kontrollutfall {
   if (erKliniskGodkjent(r)) return 'godkjent'
-  // En godkjenning som ikke lenger er gyldig (endret regel), må kontrolleres på nytt.
-  if (!AVSLUTTET.includes(r.godkjenning.status)) return 'til_kontroll'
+  // En godkjenning eller vurdering som ikke lenger gjelder innholdet (endret regel), må kontrolleres på nytt.
+  if (vurderingsfeil(r).length > 0) return 'til_kontroll'
   return harBeregning(r) ? 'ikke_godkjent' : 'bare_fagtekst'
 }
 
-/** Kontrollørens vurdering av en leveranse: hvem, når og hva den sier om regler med og uten beregning. */
+/** Én regel kontrolløren har vurdert og ikke godkjent: nøyaktig versjonen og innholdet som ble vurdert. */
+export interface Vurdertregel {
+  versjon: number
+  fingeravtrykk: string
+  /** Det kontrolløren sa om akkurat denne regelen, i tillegg til den felles merknaden. */
+  tillegg?: string
+}
+
+/** Kontrollørens vurdering av en leveranse: hvem, når, hva den sier om regler med og uten beregning, og hvilke regler den gjelder. */
 export interface Disposisjon {
   av: string
   dato: string
   /** Begrunnelsen for en beregnbar regel og for en regel uten beregning. */
   merknad: { beregnbar: string; uten_beregning: string }
-  /** Det kontrolløren sa om en bestemt regel (id → tillegg til merknaden). */
-  tillegg?: Record<string, string>
+  /** De vurderte reglene (id → versjon og fingeravtrykk); en regel som ikke står her, er ikke vurdert. */
+  regler: Readonly<Record<string, Vurdertregel>>
 }
 
 /**
- * Hver regel som ikke er klinisk godkjent, står etter disposisjonen som
- * kontrollert og ikke godkjent for nøyaktig sin versjon. En godkjent regel er
- * uendret, og fingeravtrykkene endres ikke, siden godkjenningen ikke inngår i
- * dem.
+ * Registrerer disposisjonen bare for reglene den nevner, og bare når versjonen
+ * og fingeravtrykket er nøyaktig det kontrolløren vurderte; steget får
+ * fingeravtrykket. En regel som er endret, har fått ny versjon eller ikke står
+ * i listen, får ikke noe steg og står som før, til en ny vurdering er
+ * registrert. En klinisk godkjent regel er uendret. Fingeravtrykkene endres
+ * ikke, siden godkjenningen ikke inngår i dem.
  */
 export function disponer(regler: Regel[], d: Disposisjon): Regel[] {
-  const ukjente = Object.keys(d.tillegg ?? {}).filter((id) => !regler.some((r) => r.id === id))
-  if (ukjente.length > 0) throw new Error(`Disposisjonen nevner regler som ikke finnes: ${ukjente.join(', ')}`)
   return regler.map((r) => {
-    if (r.godkjenning.status === 'klinisk_godkjent') return r
-    const merknad = [harBeregning(r) ? d.merknad.beregnbar : d.merknad.uten_beregning, d.tillegg?.[r.id]].filter(Boolean).join(' ')
-    const steg: Godkjenningssteg = { status: 'ikke_godkjent', dato: d.dato, av: d.av, rolle: 'uavhengig_kontrollor', regelversjon: r.versjon, merknad }
+    const v = d.regler[r.id]
+    if (!v || r.godkjenning.status === 'klinisk_godkjent' || v.versjon !== r.versjon) return r
+    const avtrykk = fingeravtrykk(r)
+    if (avtrykk !== v.fingeravtrykk) return r
+    const merknad = [harBeregning(r) ? d.merknad.beregnbar : d.merknad.uten_beregning, v.tillegg].filter(Boolean).join(' ')
+    const steg: Godkjenningssteg = { status: 'ikke_godkjent', dato: d.dato, av: d.av, rolle: 'uavhengig_kontrollor', regelversjon: r.versjon, fingeravtrykk: avtrykk, merknad }
     return { ...r, godkjenning: { status: 'ikke_godkjent', historikk: [...r.godkjenning.historikk, steg] } }
+  })
+}
+
+/** De vurderte reglene disposisjonen ikke kunne registreres for: regelen mangler, har en annen versjon eller et annet innhold. */
+export function disposisjonsfeil(regler: readonly Regel[], d: Disposisjon): string[] {
+  return Object.entries(d.regler).flatMap(([id, v]) => {
+    const r = regler.find((x) => x.id === id)
+    if (!r) return [`${id}: regelen finnes ikke i settet`]
+    if (r.versjon !== v.versjon) return [`${id}: vurdert som versjon ${v.versjon}, men regelen er versjon ${r.versjon}`]
+    return fingeravtrykk(r) === v.fingeravtrykk ? [] : [`${id}: innholdet er endret etter vurderingen (fingeravtrykket stemmer ikke)`]
   })
 }

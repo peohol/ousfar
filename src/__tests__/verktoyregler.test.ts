@@ -198,11 +198,10 @@ describe('Pilotsettet', () => {
         av: 'ChatGPT (uavhengig fagkontrollør)',
         rolle: 'uavhengig_kontrollor',
         regelversjon: r.versjon,
-        ...(godkjent && { fingeravtrykk: fingeravtrykk(r) }),
+        fingeravtrykk: fingeravtrykk(r),
         merknad: expect.stringMatching(godkjent ? GODKJENT[r.id]! : /^Kontrollørens disposisjon av leveranseomfanget 31\.10\.2026 \(P4\.8 og P7\.5, kontrollert i 52b22a4\): /),
       })
       if (!godkjent) {
-        expect(r.godkjenning.historikk.at(-1)!.fingeravtrykk, r.id).toBeUndefined()
         expect(r.godkjenning.historikk.at(-1)!.merknad, r.id).toMatch(IKKE_GODKJENT[r.id]!)
       }
       const historikk = r.godkjenning.historikk.filter((s) => s.rolle === 'utvikler')

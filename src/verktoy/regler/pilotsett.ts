@@ -22,7 +22,7 @@
  * som forslag til de er avklart; eksemplene er regnet ut for hånd og
  * kontrolleres av testene mot beregningen.
  */
-import { fluoksetinTrinn28, FORUTSETNINGER_FELLES, forslag, h, halvering, kilde, leveransen, minst14, NICE, planhorisont, pn, RCPSYCH, steg, trinn14, utsagn } from './bygg'
+import { fluoksetinTrinn28, FORUTSETNINGER_FELLES, forslag, h, halvering, kilde, leveransen, minst14, NICE, planhorisont, pn, RCPSYCH, steg, trinn14, utsagn, vurdert } from './bygg'
 import { disponer } from './godkjenning'
 import type { Avklaring, Bekreftelse, Godkjenning, Godkjenningssteg, Regel, Regelsett, Sporsmal, Unntak } from './modell'
 import { REGELMODELLVERSJON } from './modell'
@@ -1217,6 +1217,20 @@ const depotPaliperidon: Regel = {
   ),
 }
 
+/** Kontrollørens disposisjon av pilotreglene 31.10.2026: de to reglene, med versjonen og fingeravtrykket som ble vurdert. */
+export const PILOTDISPOSISJON = leveransen({
+  'mao-fluoksetin-fenelzin': vurdert(
+    7,
+    'f5a08286869d143797cb3f032b0781c7c0e5785265d1a9198c7ebaa280402b6a',
+    'Sperret som doseplan og ikke godkjent som samlet bytteplan. Kravet om minst 35 hele døgn uten fluoksetin før fenelzin har støtte i preparatomtalen for fluoksetin; halveringen av fluoksetin hver 28. dag til 10 mg er et eget klinisk utkast, og fenelzin doseres ikke. Separat, kildebasert informasjon om utvaskingen, med sist inntatte fluoksetindose som inndata, kan utarbeides og vurderes senere.',
+  ),
+  'antipsykotikabytte-olanzapin-kvetiapin': vurdert(
+    5,
+    'af1093a3a02176f584d783b567656bffe5fad00cfffefb75390122a11b951f12',
+    'Ikke godkjent som klinisk bytteplan. Opptrappingen av kvetiapin med vanlig frisetting dag 1–4, fordelt på to doser ved schizofreni, har støtte i preparatomtalen, men ikke kombinasjonen med uendret olanzapin i fire dager, individuell nedtrapping av olanzapin og valget av måldose for kvetiapin dag 5. En egen regel for opptrappingen av kvetiapin kan kontrolleres senere, ikke som et godkjent fullt bytte.',
+  ),
+})
+
 export const PILOTSETT: Regelsett = {
   id: 'ousfar-verktoy-pilot',
   versjon: 16,
@@ -1225,11 +1239,7 @@ export const PILOTSETT: Regelsett = {
     'Pilotsett for regelmodellen i P4: én regel per regelklasse planen prioriterer. Etter kontrollrunden 30.10.2026 er byttereglene rettet eller avgrenset og sendt til ny kontroll, og de to depotreglene er funnet kildemessig akseptable som avgrensede varianter. Etter kontrollørens beslutninger samme dag er byttene avgrenset slik kontrolløren godtok dem, gruppebyttet til aripiprazol er tatt ut av verktøyet (en modelleringsdemonstrasjon i utviklingssettet), og depotreglene er koblet til preparatet sitt i FEST. Etter kontrollørens gjennomgang av de rettede versjonene er kvetiapin bundet til tabletter med vanlig frisetting fordelt på to doser, og fenelzin vises som utvasking fullført, ikke som oppstart. Etter gjennomgangen av 62ebb21 er de to depotreglene (versjon 3) klinisk godkjent av den uavhengige kontrolløren, bare for nøyaktig de avgrensede oppstartene, og fenelzinregelen står som modell for utvaskingen, ikke som en godkjennbar samlet doseplan. Etter gjennomgangene av 9cb420b, 0ae6d07 og d6cc3dd gjelder byttet fra sertralin til mirtazapin (versjon 8) bare 50 mg og 100 mg sertralin, med bekreftet kontroll av serotonerg sammedisinering, og det kliniske omfanget er bare kort behandlingstid med tablettene og styrkene i FEST som er kontrollert. Etter gjennomgangen av 74a775f har kontrolløren godtatt versjon 8 som snever klinisk godkjenning for nøyaktig dette omfanget, men fire verdier stod som åpne forslag; de er avklart med kontrollørens beslutning i versjon 9. Etter gjennomgangen av f77e1a9 er versjon 9 klinisk godkjent av den uavhengige kontrolløren, bare for nøyaktig det avgrensede startforløpet, og kan beregnes i appen. Etter kontrollørens disposisjon av leveransen 31.10.2026 er fenelzinregelen (versjon 7) og byttet fra olanzapin til kvetiapin (versjon 5) kontrollert og ikke godkjent: de er sperret for klinisk bruk og brukes ikke i appen, og en senere aktivering krever en ny kontroll i en egen PR.',
   regler: disponer(
     [kryssSertralinMirtazapin, maoFluoksetinFenelzin, antipsykotikabytteOlanzapinKvetiapin, depotAripiprazol, depotPaliperidon],
-    leveransen({
-      'mao-fluoksetin-fenelzin':
-        'Sperret som doseplan og ikke godkjent som samlet bytteplan. Kravet om minst 35 hele døgn uten fluoksetin før fenelzin har støtte i preparatomtalen for fluoksetin; halveringen av fluoksetin hver 28. dag til 10 mg er et eget klinisk utkast, og fenelzin doseres ikke. Separat, kildebasert informasjon om utvaskingen, med sist inntatte fluoksetindose som inndata, kan utarbeides og vurderes senere.',
-      'antipsykotikabytte-olanzapin-kvetiapin':
-        'Ikke godkjent som klinisk bytteplan. Opptrappingen av kvetiapin med vanlig frisetting dag 1–4, fordelt på to doser ved schizofreni, har støtte i preparatomtalen, men ikke kombinasjonen med uendret olanzapin i fire dager, individuell nedtrapping av olanzapin og valget av måldose for kvetiapin dag 5. En egen regel for opptrappingen av kvetiapin kan kontrolleres senere, ikke som et godkjent fullt bytte.',
-    }),
+    PILOTDISPOSISJON,
   ),
 }
+

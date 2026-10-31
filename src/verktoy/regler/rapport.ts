@@ -7,7 +7,7 @@
  */
 import { tilfelletekst } from '../motor/plan'
 import { beregn, inndatagrenser, inndatavilkar, kortform, kravtekst, MOTORVERSJON, omradetekst } from './beregning'
-import { erKliniskGodkjent, fingeravtrykk, godkjenningsfeil, KONTROLLUTFALL, kontrollutfall, type Kontrollutfall } from './godkjenning'
+import { type Disposisjon, erKliniskGodkjent, fingeravtrykk, godkjenningsfeil, KONTROLLUTFALL, kontrollutfall, type Kontrollutfall, vurderingsfeil } from './godkjenning'
 import { KILDER, kildeFor } from './kilder'
 import {
   apneValg,
@@ -23,8 +23,8 @@ import {
   type Utsagn,
   type Virkestoffvalg,
 } from './modell'
-import { NEDTRAPPINGSSETT, SAMMENLIGNINGSSETT } from './nedtrapping'
-import { PILOTSETT } from './pilotsett'
+import { NEDTRAPPINGSDISPOSISJON, NEDTRAPPINGSSETT, SAMMENLIGNINGSSETT } from './nedtrapping'
+import { PILOTDISPOSISJON, PILOTSETT } from './pilotsett'
 
 /** En rapport om ett regelsett: filen, overskriften og notatene som beskriver valgene. */
 export interface Regelrapport {
@@ -32,14 +32,17 @@ export interface Regelrapport {
   tittel: string
   sett: Regelsett
   notater: readonly string[]
+  /** Kontrollørens disposisjoner av settet; hver vurdert regel må finnes med nøyaktig versjonen og fingeravtrykket som ble vurdert. */
+  disposisjoner?: readonly Disposisjon[]
 }
 
-export const P4RAPPORT: Regelrapport = { fil: 'docs/verktøy-p4-pilotsett.md', tittel: 'P4: pilotsettet', sett: PILOTSETT, notater: ['docs/verktøy-p4-regelmodell.md'] }
+export const P4RAPPORT: Regelrapport = { fil: 'docs/verktøy-p4-pilotsett.md', tittel: 'P4: pilotsettet', sett: PILOTSETT, notater: ['docs/verktøy-p4-regelmodell.md'], disposisjoner: [PILOTDISPOSISJON] }
 export const P7RAPPORT: Regelrapport = {
   fil: 'docs/verktøy-p7-regelutkast.md',
   tittel: 'P7: regelutkast for nedtrapping av antidepressiva',
   sett: NEDTRAPPINGSSETT,
   notater: ['docs/verktøy-p4-regelmodell.md', 'docs/verktøy-p7-nedtrapping.md'],
+  disposisjoner: [NEDTRAPPINGSDISPOSISJON],
 }
 export const P7SAMMENLIGNING: Regelrapport = {
   fil: 'docs/verktøy-p7-sammenligning.md',
@@ -83,7 +86,9 @@ const ENHET: Record<Parameter['enhet'], string> = { mg: 'mg', dager: 'dager', da
 export const statustekst = (r: Regel) =>
   r.godkjenning.status === 'klinisk_godkjent' && !erKliniskGodkjent(r)
     ? `merket klinisk godkjent, men ugyldig (${godkjenningsfeil(r).join(' ')})`
-    : STATUS[r.godkjenning.status]
+    : r.godkjenning.status === 'ikke_godkjent' && vurderingsfeil(r).length > 0
+      ? `merket kontrollert og ikke godkjent, men ugyldig (${vurderingsfeil(r).join(' ')})`
+      : STATUS[r.godkjenning.status]
 
 const valg = (v: Virkestoffvalg | null) => (!v ? '–' : v.type === 'virkestoff' ? v.nokkel : `gruppen ${v.gruppe}`)
 

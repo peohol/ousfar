@@ -270,6 +270,7 @@ describe('Regelutkastene (P7.2)', () => {
         av: 'ChatGPT (uavhengig fagkontrollør)',
         rolle: 'uavhengig_kontrollor',
         regelversjon: r.versjon,
+        fingeravtrykk: fingeravtrykk(r),
         merknad: expect.stringMatching(
           r.beregnbarhet === 'bare_tekstlig'
             ? /^Kontrollørens disposisjon av leveranseomfanget 31\.10\.2026 \(P4\.8 og P7\.5, kontrollert i 52b22a4\): bare fagtekst, sperret for beregning\. Det som mangler, er en dokumentert dosebygging med dagens preparater, ikke et klinisk behov for mindre doser\./
