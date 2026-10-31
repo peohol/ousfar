@@ -1,0 +1,4 @@
+{
+ "om": "Kontrollsummer for kildedokumentene i src/verktoy/regler/kilder.ts som er fastsatt på nytt etter en faglig vurdering av en endring funnet av kildeovervåkingen (docs/verktøy-p12-overvaking.md). En føring gjelder i stedet for kontrollsummen i KILDER. Føringer legges bare til i en PR med vurderingen, og endres eller slettes aldri.",
+ "dokumenter": []
+}

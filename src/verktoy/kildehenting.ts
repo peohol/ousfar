@@ -40,19 +40,43 @@ export class ForbigaendeFeil extends Error {}
 const standardVent = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))
 const standardNa = () => new Date().toISOString().replace(/\.\d+Z$/, 'Z')
 
-export async function hentKilde(url: string, valg: Hentevalg = {}): Promise<Kildesvar> {
+/** Henter `url` med `les` og prøver på nytt ved et forbigående svar; et svar som sier noe om adressen, gis tilbake. */
+async function medForsok<T>(url: string, valg: Hentevalg, les: (svar: Response) => Promise<T>): Promise<{ status: number; endelig: string; innhold: T; hentet: string }> {
   const { hent = fetch, vent = standardVent, forsok = 5, pause = 2000, na = standardNa } = valg
   let siste = ''
   for (let i = 1; i <= forsok; i++) {
     if (i > 1) await vent(pause * 2 ** (i - 2))
     try {
       const svar = await hent(url, { redirect: 'follow' })
-      const html = await svar.text()
-      if (!erForbigaende(svar.status)) return { status: svar.status, endelig: svar.url || url, html, hentet: na() }
+      const innhold = await les(svar)
+      if (!erForbigaende(svar.status)) return { status: svar.status, endelig: svar.url || url, innhold, hentet: na() }
       siste = `svarte ${svar.status}`
     } catch (e) {
       siste = `feilet (${e instanceof Error ? e.message : String(e)})`
     }
   }
   throw new ForbigaendeFeil(`${url} ${siste} ${forsok} ganger på rad; innhentingen er stoppet uten å skrive noe`)
+}
+
+export async function hentKilde(url: string, valg: Hentevalg = {}): Promise<Kildesvar> {
+  const { status, endelig, innhold: html, hentet } = await medForsok(url, valg, (s) => s.text())
+  return { status, endelig, html, hentet }
+}
+
+export interface Dokumentsvar {
+  status: number
+  endelig: string
+  /** Innholdstypen serveren oppga, uten parametre (`application/pdf`, `text/html`). */
+  type: string
+  bytes: Uint8Array
+  hentet: string
+}
+
+/** Et dokument (PDF, HTML, XML) som bytes, med de samme forsøkene som `hentKilde`. */
+export async function hentDokument(url: string, valg: Hentevalg = {}): Promise<Dokumentsvar> {
+  const { status, endelig, innhold, hentet } = await medForsok(url, valg, async (s) => ({
+    type: (s.headers.get('content-type') ?? '').split(';')[0]!.trim().toLowerCase(),
+    bytes: new Uint8Array(await s.arrayBuffer()),
+  }))
+  return { status, endelig, hentet, ...innhold }
 }

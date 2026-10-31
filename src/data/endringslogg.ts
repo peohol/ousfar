@@ -12,6 +12,18 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.116.2',
+    dato: '2026-10-31',
+    sammendrag: 'Ukentlig overvåking av kildene og FEST-dataene de godkjente verktøyreglene bygger på',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Kildedokumentene de kliniske verktøyreglene bygger på, og preparatene i FEST kontrolleres hver uke, og Psychiatrienets anbefalinger hver måned. Endrede, fjernede og nye kilder og preparater samles i en rapport som sier hvilke klinisk godkjente regler som kan være berørt.',
+      'Rapporten skiller mellom endringer som bare registreres, og endringer som krever ny faglig vurdering, som et preparat i det godkjente omfanget som er borte eller har fått endret styrke eller form. Ingen regel endres, godkjennes eller sperres automatisk, og ingen tekst fra kildene lagres eller vises.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.116.0',
     dato: '2026-10-31',
     sammendrag: 'Nødstopp for de kliniske verktøyene, og tydeligere doseplaner etter en pilotgjennomgang',

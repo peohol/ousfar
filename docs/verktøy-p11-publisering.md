@@ -84,7 +84,9 @@ En administrator kan deaktivere alle verktøyene, ett verktøy eller én klinisk
 2. Den uavhengige sluttkontrollen (ChatGPT) har godtatt PR-en, også funnene i avsnitt 3.1 som merkes «Til kontrolløren».
 3. PR-en slås sammen. GitHub Actions ruller ut migrasjonen (`docs/migrasjoner.md`), og Vercel publiserer appen.
 4. Etter publiseringen kontrolleres at migrasjonen `20261031080000_verktoysperrer` er registrert i produksjonen.
-5. **Reell tilbakerullingsprøve (P11.6, gjenstår etter sammenslåing):** en administrator åpner Adminmeny → Kliniske verktøy og setter en sperre for én regel (for eksempel Xeplion) med grunnen «Prøve av nødstoppen». I et annet vindu, innlogget som vanlig bruker, skal «Bytte antipsykotikum» med paliperidon → paliperidon depot vise «Midlertidig deaktivert» og ingen beregning, mens Abilify Maintena fortsatt kan beregnes. Sperren oppheves med grunnen «Prøve fullført», og Xeplion kan beregnes igjen. Resultatet føres inn i fremdriftsloggen. Prøven gjøres utenom klinisk bruk og tar under fem minutter.
+5. **Reell tilbakerullingsprøve (P11.6):** en administrator åpner Adminmeny → Kliniske verktøy og setter en sperre for én regel (for eksempel Xeplion) med grunnen «Prøve av nødstoppen». I et annet vindu, innlogget som vanlig bruker, skal «Bytte antipsykotikum» med paliperidon → paliperidon depot vise «Midlertidig deaktivert» og ingen beregning, mens Abilify Maintena fortsatt kan beregnes. Sperren oppheves med grunnen «Prøve fullført», og Xeplion kan beregnes igjen. Resultatet føres inn i fremdriftsloggen. Prøven gjøres utenom klinisk bruk og tar under fem minutter.
+
+   *Gjennomført 31.10.2026 etter sammenslåingen av PR #289, mot produksjonen med versjon 1.116.0 (migrasjonen `20261031080000_verktoysperrer` registrert, Vercel-utrullingen klar). En administrator satte en sperre for regelen `depot-paliperidon-xeplion` kl. 10:39 UTC. «Bytte antipsykotikum» med paliperidon → paliperidon depot viste deretter ingen beregning, mens Abilify Maintena fortsatt kunne beregnes. Sperren ble opphevet kl. 10:44 UTC med grunnen «Prøve fullført», og det står ingen aktiv sperre igjen (lest i produksjonsdatabasen). At Xeplion kan beregnes igjen etter opphevingen, er kontrollert gjennom databasetilstanden og de automatiske testene for opphevede sperrer, ikke ved å beregne en ny plan for hånd. Ingen regel er endret eller aktivert.*
 
 ### 5.2 Ved en kritisk feil
 
@@ -104,6 +106,8 @@ En administrator kan deaktivere alle verktøyene, ett verktøy eller én klinisk
 | Stopper den nattlige FEST-synken, blir verktøyene utilgjengelige etter 48 timer | Feilen er trygg (ingen plan), og «Datakilder» i adminmenyen viser synken |
 | Piloten er gjort med syntetiske kasus av utvikleren, ikke av klinikere i bruk | Den uavhengige sluttkontrollen; en klinisk pilot med brukere kan legges til før bred bruk |
 | Endringene i 3.1 (særlig Xeplion 3 mg og undertittelen for sertralin) er ikke kontrollert ennå | Merket «Til kontrolløren»; kan stoppes med en regelsperre om kontrolløren ønsker det før en rettelse |
+| Vercel tilbyr også versjoner eldre enn 1.116.0 ved tilbakeføring av appen, og de har ikke nødstoppen | 5.2 punkt 4 sier at de aldri skal velges; en regelsperre er førstevalget og krever ingen tilbakeføring |
+| En kilde eller FEST kan endres etter godkjenningen uten at regelen endres | Kildeovervåkingen (P12.1, P12.5) kontrollerer kildene og FEST hver uke og melder det som krever ny faglig vurdering i en sak (`docs/verktøy-p12-overvaking.md`); en sperre settes når en endring kan gjøre en plan uforsvarlig |
 
 ## 7. Akseptkriterier for PR-en
 
@@ -113,4 +117,4 @@ En administrator kan deaktivere alle verktøyene, ett verktøy eller én klinisk
 4. De seks godkjente reglene har uendret versjon og fingeravtrykk, og ingen ny regel er godkjent (`verktoyklinisktilgang.test.ts`).
 5. En sperre for alle, ett verktøy eller én regel tar bort beregning og fagtekst med en gang, også en plan som står og en beregning som pågår; kan sperrene ikke leses, svarer de ikke innen 15 sekunder eller er siste vellykkede lesing eldre enn to minutter, vises ingenting klinisk; en sperre kan ikke oppheves uten grunn; bare administratorer kan sette og oppheve sperrer, og ingen sperre slettes.
 6. Rettelsene i avsnitt 3.1 står på skjermen og i kopien, og er testet.
-7. Etter sammenslåing: tilbakerullingsprøven i 5.1 punkt 5 er gjennomført og ført inn i fremdriftsloggen.
+7. Etter sammenslåing: tilbakerullingsprøven i 5.1 punkt 5 er gjennomført og ført inn i fremdriftsloggen. *Oppfylt 31.10.2026.*
