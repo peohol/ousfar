@@ -64,7 +64,7 @@ Arbeidsflyten `.github/workflows/verktoy-overvaking.yml` kjører mandag kl. 06:2
 
 Det er ingen daglig Claude-rutine som leser sakene (bidragsyterens beslutning 31.10.2026: kildene endres sjelden, og en daglig rutine er unødvendig ofte). Den ansvarlige får saken tildelt og påminnelsen fra vakten, og ber Claude om den tekniske vurderingen i prosjektet. Vakten gjør ingenting når ingen sak er åpen.
 
-En **prøvesak** startes for hånd med oppgaven `provesak`. Den lager en egen sak med merket `kildeovervaking-prove` og bare et syntetisk funn med høy prioritet, som ikke berører noen regel, og blandes aldri med de reelle funnene. Den prøver at saken tildeles den ansvarlige, at den vurderes og at vakten merker den etter fristene. P12.1 regnes som ferdig først når prøven er gjort og ført i fremdriftsloggen.
+En **prøvesak** startes for hånd med oppgaven `provesak`. Den lager en egen sak med merket `kildeovervaking-prove` og bare et syntetisk funn med høy prioritet, som ikke berører noen regel, og blandes aldri med de reelle funnene. Prøven går i denne rekkefølgen. Saken skal være tildelt den ansvarlige. Den får en «Teknisk vurdering:» innen ett døgn, så vakten ikke merker den da. Den får ingen «Faglig beslutning:», så vakten merker den `kildeovervaking-ubehandlet` og nevner den ansvarlige etter tre døgn, fordi den har høy prioritet. Til slutt lukkes den med en kommentar om at det var en prøve. P12.1 regnes som ferdig først når prøven er gjort og ført i fremdriftsloggen.
 
 FEST leses med testbrukeren i miljøet `kuratortest`, som i kuratorjobbene (`docs/kuratorjobber.md`). Arbeidsflyten har bare lesetilgang til repoet.
 
@@ -124,4 +124,4 @@ Det kan være en reell revisjon, eller bare at siden rundt teksten er endret. De
 5. Arbeidsflyten kjører bare fra main, har bare lesetilgang til repoet, åpner én sak tildelt den ansvarlige og oppdaterer den bare når funnene endres, og lukker den aldri.
 6. Funn i en del som ikke er kontrollert på nytt, står videre.
 7. Vakten merker ubehandlede saker etter fristene og nevner den ansvarlige, uten Claude.
-8. Etter sammenslåing: en prøvesak er tildelt den ansvarlige, vurdert og merket av vakten, og resultatet er ført i fremdriftsloggen.
+8. Etter sammenslåing: en prøvesak er tildelt den ansvarlige, har fått en teknisk vurdering innen ett døgn uten å bli merket, er merket av vakten etter tre døgn uten faglig beslutning, og resultatet er ført i fremdriftsloggen.
