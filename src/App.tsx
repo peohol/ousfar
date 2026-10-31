@@ -101,6 +101,7 @@ import { useBevart } from './oppdatering/Bevaring'
 import { meldSide, roligOyeblikk } from './oppdatering/sider'
 import { fortolkningsform, initialState, isIdle, reducer, stageOf, type Action, type Stage } from './state'
 import type { Analyte } from './types'
+import { lagVerktoysperrelager } from './verktoy/sperrer'
 
 const KOPIFEIL = 'Fikk ikke tilgang til utklippstavlen. Kopier teksten manuelt.'
 
@@ -175,6 +176,8 @@ export default function App() {
   useEffect(() => meldSide(side), [side])
   useEffect(() => () => meldSide(null), [])
 
+  // Nødstoppen for de kliniske verktøyene, lest av verktøysidene.
+  const verktoysperrer = useMemo(() => lagVerktoysperrelager(klient()), [])
   const faginnhold = useMemo<Faginnholdskilde>(
     () => ({
       leser: lagFaginnholdsleser(klient()),
@@ -776,7 +779,7 @@ export default function App() {
 
                 {rute.side === 'verktoy' && (
                   <main className="scene scene--verktoy">
-                    <Verktoyside verktoy={rute.verktoy} legemidler={faginnhold.legemidler} onLukk={lukkInfoside} />
+                    <Verktoyside verktoy={rute.verktoy} legemidler={faginnhold.legemidler} sperrer={verktoysperrer} onLukk={lukkInfoside} />
                   </main>
                 )}
 

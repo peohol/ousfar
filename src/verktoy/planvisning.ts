@@ -77,6 +77,15 @@ function datotekst(startdato: string | undefined, fra: number, til: number | nul
   return til === fra ? dato(startdato, fra) : `${dato(startdato, fra)}–${dato(startdato, til)}`
 }
 
+/**
+ * Dagen et peroralt legemiddel er seponert fra, også når det seponeres før
+ * første dag i planen (bytte til depot, P11.4): da står seponeringen i
+ * tabellen, så planen aldri kan leses som om det perorale skal fortsette.
+ * Et forløp med bare injeksjoner har ingen seponeringsdag.
+ */
+const seponeringsdag = (f: Praktiskforlop): number | null =>
+  f.siste_dosedag !== null && (f.perioder.length > 0 || f.administrasjon === 'peroral') ? f.siste_dosedag + 1 : null
+
 /** Periodene i alle forløpene slått sammen til felles dager, og injeksjonene som egne rader, i dagenes rekkefølge. */
 function rader(forlop: Praktiskforlop[], startdato: string | undefined): Planrad[] {
   const grenser = new Set<number>()
@@ -85,6 +94,8 @@ function rader(forlop: Praktiskforlop[], startdato: string | undefined): Planrad
       grenser.add(p.fra)
       if (p.til !== null) grenser.add(p.til + 1)
     }
+    const s = seponeringsdag(f)
+    if (s !== null) grenser.add(s)
   }
   const starter = [...grenser].sort((a, b) => a - b)
   const apen = forlop.some((f) => f.perioder.some((p) => p.til === null))
@@ -98,7 +109,7 @@ function rader(forlop: Praktiskforlop[], startdato: string | undefined): Planrad
         const avvik = [Math.abs(p.avvik_prosent) > 1e-7 && `ideelt ${mg(p.ideell_mg)} (${p.avvik_prosent > 0 ? '+' : ''}${String(avrund(p.avvik_prosent)).replace('.', ',')} %)`, valgtTekst(p)].filter(Boolean).join('; ')
         return { dose: `${mg(p.mg)}${p.hver ? ` ${hverTekst(p.hver)}` : ''}${fordelingSuffiks(p)}`, elementer: p.elementer.map(elementtekst), ...(avvik && { avvik }) }
       }
-      return f.perioder.length > 0 && f.siste_dosedag !== null && fra === f.siste_dosedag + 1 ? { dose: 'Seponert', elementer: [] } : null
+      return fra === seponeringsdag(f) ? { dose: 'Seponert', elementer: [] } : null
     })
     // Etter siste periode står bare dagen legemidlene er seponert.
     const sisteDag = neste === undefined && !apen
@@ -158,13 +169,24 @@ export function kildeliste(regel: Regel): Plankilde[] {
  */
 export const EN_FORSTE_REDUKSJON = 'Én mulig første reduksjon med revurdering, ikke en validert fullstendig nedtrappingsplan.'
 
+/**
+ * Undertittelen til en plan som stopper før forløpet er avsluttet (et
+ * startforløp, som kryssnedtrappingen fra sertralin): planen viser starten,
+ * og resten vurderes individuelt (pilotgjennomgangen P11.4).
+ */
+export const STARTFORLOP = 'Et startforløp med revurdering, ikke en fullstendig plan: avslutningen vurderes individuelt.'
+
+/** Undertittelen som sier at planen ikke er fullstendig; `null` når alle forløpene er beregnet til ende. */
+const undertittelFor = (forlop: readonly Praktiskforlop[]) =>
+  forlop.some((f) => f.avslutning_kort === EN_REDUKSJON_KORT) ? EN_FORSTE_REDUKSJON : forlop.some((f) => f.avslutning_kort) ? STARTFORLOP : null
+
 /** Visningen av en klinisk doseplan; `null` for alt som ikke er en klinisk plan. */
 export function planvisning(r: Doseplanresultat, regel: Regel, startdato?: string): Planvisning | null {
   if (r.status !== 'doseplan' || !r.klinisk || r.sperre.length > 0 || r.regel.id !== regel.id || r.regel.fingeravtrykk !== fingeravtrykk(regel)) return null
   const kolonner = r.forlop.map((f) => ({ navn: virkestoffnavn(f.virkestoff), administrasjon: ADMINISTRASJON[f.administrasjon] }))
   return {
     tittel: regel.tittel,
-    undertittel: r.forlop.some((f) => f.avslutning_kort === EN_REDUKSJON_KORT) ? EN_FORSTE_REDUKSJON : null,
+    undertittel: undertittelFor(r.forlop),
     kolonner,
     rader: rader(r.forlop, startdato),
     advarsler: [...r.forbehold, ...r.merknader, ...r.forlop.flatMap((f, i) => f.begrensninger.map((b) => `${kolonner[i]!.navn}: ${b}`))],

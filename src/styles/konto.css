@@ -607,3 +607,37 @@
     gap: var(--rom-5);
   }
 }
+
+/* Nødstoppen for de kliniske verktøyene: aktive sperrer, ny sperre og historikken. */
+.verktoysperrer__del {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-4);
+  margin-top: var(--rom-6);
+}
+
+.verktoysperrer__del h3 {
+  margin: 0;
+  font-size: var(--tekst-ui);
+  font-weight: var(--vekt-halvfet);
+}
+
+.verktoysperrer__omfang {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rom-3) var(--rom-5);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.verktoysperrer__mal {
+  margin: 0;
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk);
+}
+
+.verktoysperrer__grunn {
+  margin: var(--rom-2) 0;
+  color: var(--blekk);
+}

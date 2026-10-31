@@ -37,6 +37,9 @@ vi.mock('../components/konto/Datakilder', () => ({
 vi.mock('../components/kuratering/Utgavelister', () => ({
   Kurateringsoversikt: ({ apen }: { apen: boolean }) => (apen ? <p>Kurateringsoversikten</p> : null),
 }))
+vi.mock('../components/konto/Verktoysperrer', () => ({
+  Verktoysperrer: ({ apen }: { apen: boolean }) => (apen ? <p>Nødstoppen</p> : null),
+}))
 vi.mock('../components/konto/Autoerstattregler', () => ({
   Autoerstattregler: ({ apen }: { apen: boolean }) => (apen ? <p>Autoerstatt-reglene</p> : null),
 }))
@@ -522,7 +525,7 @@ describe('kontomenyen', () => {
 })
 
 describe('adminmenyen', () => {
-  it('fører til brukerne, datakildene, kurateringene og autoerstatt-reglene, og er et eget lag', async () => {
+  it('fører til brukerne, datakildene, kurateringene, nødstoppen for verktøyene og autoerstatt-reglene, og er et eget lag', async () => {
     render(
       <Ramme>
         <Adminmeny />
@@ -532,7 +535,7 @@ describe('adminmenyen', () => {
     await userEvent.click(knapp)
     const meny = panel(knapp)
     expect(meny.getAttribute('data-lag')).toBe('adminmeny')
-    expect(within(meny).getAllByRole('button').map((v) => v.textContent)).toEqual(['Brukere', 'Datakilder', 'Kurateringer', 'Autoerstatt'])
+    expect(within(meny).getAllByRole('button').map((v) => v.textContent)).toEqual(['Brukere', 'Datakilder', 'Kurateringer', 'Kliniske verktøy', 'Autoerstatt'])
 
     await userEvent.click(within(meny).getByRole('button', { name: 'Brukere' }))
     expect(screen.getByText('Brukerlista')).toBeTruthy()
@@ -545,6 +548,10 @@ describe('adminmenyen', () => {
     await userEvent.click(knapp)
     await userEvent.click(within(meny).getByRole('button', { name: 'Kurateringer' }))
     expect(screen.getByText('Kurateringsoversikten')).toBeTruthy()
+
+    await userEvent.click(knapp)
+    await userEvent.click(within(meny).getByRole('button', { name: 'Kliniske verktøy' }))
+    expect(screen.getByText('Nødstoppen')).toBeTruthy()
 
     await userEvent.click(knapp)
     await userEvent.click(within(meny).getByRole('button', { name: 'Autoerstatt' }))

@@ -1,4 +1,6 @@
-import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react'
+import { tidspunkt } from '../../faginnhold/historikk'
+import { useJevnligSjekk } from '../../hooks/useJevnligSjekk'
 import { useLukkMedEscape } from '../../hooks/useLukkMedEscape'
 import type { Legemiddelleser } from '../../legemiddeldata/lesing'
 import { Bevaringsomrade, useBevart, type Bevaringsform } from '../../oppdatering/Bevaring'
@@ -16,6 +18,7 @@ import {
   medTrinnvalg,
   skjemaFor,
   TOMT_SKJEMA,
+  spennFor,
   trengerMaldose,
   valgidentitet,
   type Planskjema,
@@ -27,6 +30,21 @@ import { finnVirkestoff, KARTLEGGING, VERKTOY, verktoyFor, virkestoffvalg, type 
 import { avrund } from '../../verktoy/regler/beregning'
 import { KONTROLLUTFALL, kontrollutfall } from '../../verktoy/regler/godkjenning'
 import type { Regel, Regelsett } from '../../verktoy/regler/modell'
+import {
+  FOR_SEN,
+  gjelder,
+  LES_SPERRENE_HVER_MS,
+  LESEFRIST_MS,
+  medFrist,
+  OMFANGSTEKST,
+  SPERRENE_GJELDER_MS,
+  SPERRET,
+  UKONTROLLERT,
+  usperrede,
+  verktoysperrer,
+  type Verktoysperre,
+  type Verktoysperreleser,
+} from '../../verktoy/sperrer'
 import {
   fraForlop,
   medlemFor,
@@ -55,6 +73,8 @@ export interface VerktoysideProps {
   verktoy?: string
   /** Lesingen av legemiddeldataene, den samme som fagsidene bruker. Uten den kan ingenting beregnes. */
   legemidler: Pick<Legemiddelleser, 'les'> | undefined
+  /** Lesingen av nødstoppen (`src/verktoy/sperrer.ts`). Uten den, eller når den feiler, vises ingenting klinisk. */
+  sperrer: Verktoysperreleser | undefined
   onLukk: () => void
   /** Regelsettet; appens eget når det ikke er gitt. */
   regelsett?: Regelsett
@@ -63,6 +83,56 @@ export interface VerktoysideProps {
 }
 
 const naa = () => new Date()
+
+/** `lest` er når sperrene sist ble lest (`Date.now()`); lesingen gjelder i `SPERRENE_GJELDER_MS`. */
+type Sperretilstand = { status: 'henter' } | { status: 'feil'; melding: string } | { status: 'klar'; sperrer: Verktoysperre[]; lest: number }
+
+const utlopt = (t: Sperretilstand) => t.status === 'klar' && Date.now() - t.lest >= SPERRENE_GJELDER_MS
+
+/** En sperre som ikke kunne leses: beregningen vises ikke, og grunnen er ikke FEST. */
+class Sperrefeil extends Error {}
+
+/**
+ * De aktive sperrene, lest med en gang, når fanen får fokus og jevnlig mens
+ * siden står åpen. `hent` leser dem på nytt, gir dem og oppdaterer siden; den
+ * kaster når de ikke kan leses eller ikke svarer innen `LESEFRIST_MS`, og da
+ * vises ingenting klinisk. En lesing gjelder i `SPERRENE_GJELDER_MS`: er den
+ * eldre, vises ingenting klinisk før sperrene er lest på nytt.
+ */
+function useSperrer(leser: Verktoysperreleser | undefined) {
+  const [tilstand, setTilstand] = useState<Sperretilstand>({ status: 'henter' })
+  // Lesingene nummereres; svaret fra en lesing brukes når ingen lesing som ble startet senere, har svart før den.
+  const startet = useRef(0)
+  const brukt = useRef(0)
+  const hent = useCallback(async () => {
+    const denne = ++startet.current
+    const bruk = (ny: Sperretilstand) => {
+      if (denne <= brukt.current) return
+      brukt.current = denne
+      setTilstand(ny)
+    }
+    // En lesing som er for gammel, gjelder ikke mens den nye pågår.
+    setTilstand((t) => (utlopt(t) ? { status: 'henter' } : t))
+    try {
+      if (!leser) throw new Error('Sperrene kan ikke leses her.')
+      const sperrer = await medFrist(leser.les(), LESEFRIST_MS, FOR_SEN)
+      bruk({ status: 'klar', sperrer, lest: Date.now() })
+      return sperrer
+    } catch (e) {
+      const melding = e instanceof Error ? e.message : String(e)
+      bruk({ status: 'feil', melding })
+      throw new Sperrefeil(melding)
+    }
+  }, [leser])
+  useJevnligSjekk(useCallback(() => void hent().catch(() => undefined), [hent]), LES_SPERRENE_HVER_MS)
+  // Kommer det ingen ny lesing før den siste går ut (for eksempel når fanen ikke er synlig), tas det kliniske bort og sperrene leses på nytt.
+  useEffect(() => {
+    if (tilstand.status !== 'klar') return
+    const t = window.setTimeout(() => void hent().catch(() => undefined), Math.max(0, tilstand.lest + SPERRENE_GJELDER_MS - Date.now()))
+    return () => window.clearTimeout(t)
+  }, [tilstand, hent])
+  return { tilstand, hent }
+}
 
 /**
  * Verktøyene (`#/verktoy` og `#/verktoy/<ID>`, P6 i
@@ -77,9 +147,10 @@ const naa = () => new Date()
  * appen oppdateres; planen gjør aldri det, og må beregnes på nytt, med ny
  * kontroll av datagrunnlaget og godkjenningen.
  */
-export function Verktoyside({ verktoy: id, legemidler, onLukk, regelsett = REGELSETT, klokke = naa }: VerktoysideProps) {
+export function Verktoyside({ verktoy: id, legemidler, sperrer: sperreleser, onLukk, regelsett = REGELSETT, klokke = naa }: VerktoysideProps) {
   const overskrift = useId()
   const verktoy = verktoyFor(id)
+  const sperrer = useSperrer(sperreleser)
   useLukkMedEscape(onLukk)
 
   useEffect(() => {
@@ -103,10 +174,10 @@ export function Verktoyside({ verktoy: id, legemidler, onLukk, regelsett = REGEL
       </ToppmenyInnhold>
       {verktoy ? (
         <Bevaringsomrade navn={`verktoy:${verktoy.id}`}>
-          <Verktoyskjema key={verktoy.id} verktoy={verktoy} overskrift={overskrift} legemidler={legemidler} regelsett={regelsett} klokke={klokke} />
+          <Verktoyskjema key={verktoy.id} verktoy={verktoy} overskrift={overskrift} legemidler={legemidler} sperrer={sperrer} regelsett={regelsett} klokke={klokke} />
         </Bevaringsomrade>
       ) : (
-        <Oversikt overskrift={overskrift} ukjent={id !== undefined} regelsett={regelsett} />
+        <Oversikt overskrift={overskrift} ukjent={id !== undefined} regelsett={regelsett} sperrer={sperrer.tilstand} />
       )}
     </section>
   )
@@ -114,9 +185,11 @@ export function Verktoyside({ verktoy: id, legemidler, onLukk, regelsett = REGEL
 
 /* --- Oversikten -------------------------------------------------------------- */
 
-function Oversikt({ overskrift, ukjent, regelsett }: { overskrift: string; ukjent: boolean; regelsett: Regelsett }) {
-  const status = VERKTOY.map((v) => ({ verktoy: v, ...regeloversikt(v, regelsett) }))
+function Oversikt({ overskrift, ukjent, regelsett, sperrer }: { overskrift: string; ukjent: boolean; regelsett: Regelsett; sperrer: Sperretilstand }) {
+  const aktive = sperrer.status === 'klar' ? sperrer.sperrer : []
+  const status = VERKTOY.map((v) => ({ verktoy: v, sperret: verktoysperrer(aktive, v).length > 0, ...regeloversikt(v, regelsett) }))
   const ingen = status.every((s) => s.tilgjengelige === 0)
+  const alle = aktive.filter((s) => s.omfang === 'alle')
   return (
     <>
       <header className="verktoyside__hode">
@@ -125,7 +198,8 @@ function Oversikt({ overskrift, ukjent, regelsett }: { overskrift: string; ukjen
           Verktøy
         </h1>
         <p className="verktoyside__ingress">
-          Doseplaner for nedtrapping og bytte, beregnet med preparatene i FEST etter klinisk godkjente regler.
+          Beregnede forslag til nedtrapping og bytte, med preparatene i FEST, bare etter regler som er klinisk godkjent og bare i omfanget de er godkjent for. Et forslag
+          erstatter ikke klinisk vurdering og er ikke en fullstendig behandlingsplan.
         </p>
       </header>
       {ukjent && (
@@ -133,13 +207,14 @@ function Oversikt({ overskrift, ukjent, regelsett }: { overskrift: string; ukjen
           Fant ikke verktøyet adressen peker på. Velg et av verktøyene under.
         </p>
       )}
+      {alle.length > 0 && <Sperremelding sperrer={alle} />}
       {ingen && (
         <p className="verktoystatus" data-status="til_kontroll">
           Ingen beregninger er tilgjengelige ennå: reglene venter på faglig kontroll og klinisk godkjenning.
         </p>
       )}
       <ul className="verktoykort">
-        {status.map(({ verktoy, tilgjengelige, ikkeGodkjent, tilKontroll }) => (
+        {status.map(({ verktoy, sperret, tilgjengelige, ikkeGodkjent, tilKontroll }) => (
           <li key={verktoy.id}>
             <a className="verktoykort__lenke" href={verktoyadresse(verktoy.id)}>
               <Ikon navn={verktoy.ikon} className="verktoykort__ikon" />
@@ -147,6 +222,7 @@ function Oversikt({ overskrift, ukjent, regelsett }: { overskrift: string; ukjen
                 <span className="verktoykort__navn">{verktoy.navn}</span>
                 <span className="verktoykort__beskrivelse">{verktoy.beskrivelse}</span>
                 <span className="verktoykort__status">
+                  {sperret && 'Midlertidig deaktivert · '}
                   {tilgjengelige > 0
                     ? `${tilgjengelige} ${tilgjengelige === 1 ? 'regel kan' : 'regler kan'} beregnes`
                     : 'Ingen beregning tilgjengelig ennå'}
@@ -177,7 +253,7 @@ const SKJEMAFORM: Bevaringsform<Planskjema> = {
 
 type Beregning =
   | { nokkel: string; status: 'henter' }
-  | { nokkel: string; status: 'feil'; melding: string }
+  | { nokkel: string; status: 'feil'; melding: string; sperre?: boolean }
   | { nokkel: string; status: 'formvalg' }
   | { nokkel: string; status: 'ferdig'; resultat: Doseplanresultat }
 
@@ -187,12 +263,14 @@ function Verktoyskjema({
   verktoy,
   overskrift,
   legemidler,
+  sperrer,
   regelsett,
   klokke,
 }: {
   verktoy: Verktoy
   overskrift: string
   legemidler: Pick<Legemiddelleser, 'les'> | undefined
+  sperrer: ReturnType<typeof useSperrer>
   regelsett: Regelsett
   klokke: () => Date
 }) {
@@ -219,6 +297,11 @@ function Verktoyskjema({
     settTekst(tekst)
   }
   const status = useMemo(() => (valg ? tilgjengelighet(verktoy, valg, regelsett) : undefined), [verktoy, regelsett, valg?.fra.nokkel, valg?.fra.formulering, valg?.til?.nokkel, valg?.til?.formulering]) // eslint-disable-line react-hooks/exhaustive-deps
+  // Klinisk innhold (en beregning eller fagtekst) vises bare når sperrene er lest, og bare for regler som ikke er sperret.
+  const klinisk = status?.status === 'tilgjengelig' || status?.status === 'fagtekst'
+  const aktive = sperrer.tilstand.status === 'klar' ? sperrer.tilstand.sperrer : []
+  const regler = klinisk && status ? usperrede(aktive, verktoy, status.regler) : []
+  const hele = verktoysperrer(aktive, verktoy)
 
   return (
     <>
@@ -251,26 +334,65 @@ function Verktoyskjema({
         </fieldset>
       </form>
 
+      {hele.length > 0 && <Sperremelding sperrer={hele} />}
       {!valg || !status ? (
         <p className="verktoyside__hint">
           {verktoy.type === 'seponering' ? 'Velg virkestoffet' : 'Velg begge virkestoffene'} for å se hva verktøyet kan beregne.
         </p>
+      ) : !klinisk ? (
+        <Statusvisning status={status} />
+      ) : sperrer.tilstand.status === 'henter' ? (
+        <p className="verktoyside__hint" role="status">
+          <Lastesirkel /> Kontrollerer om verktøyet er tilgjengelig …
+        </p>
+      ) : sperrer.tilstand.status === 'feil' ? (
+        <section className="verktoystatus" data-status="sperret" role="alert">
+          <h2>Ingen doseplan eller fagtekst</h2>
+          <p>{UKONTROLLERT}</p>
+          <div className="verktoyskjema__handlinger">
+            <Button variant="kant" onClick={() => void sperrer.hent().catch(() => undefined)}>
+              Prøv igjen
+            </Button>
+          </div>
+        </section>
+      ) : regler.length === 0 ? (
+        hele.length > 0 ? null : <Sperremelding sperrer={aktive.filter((x) => status.regler.some((r) => gjelder(x, verktoy, r)))} />
       ) : status.status === 'tilgjengelig' ? (
         <Beregningsdel
           key={JSON.stringify(valg)}
           verktoy={verktoy}
           valg={valg}
-          regler={status.regler}
+          regler={regler}
           skjema={skjema}
           setSkjema={settSkjema}
           legemidler={legemidler}
+          hentSperrer={sperrer.hent}
           regelsett={regelsett}
           klokke={klokke}
         />
       ) : (
-        <Statusvisning status={status} />
+        <Statusvisning status={{ ...status, regler }} />
       )}
     </>
+  )
+}
+
+/** At det som ellers ville stått her, er midlertidig deaktivert: av hvem, når og hvorfor. */
+function Sperremelding({ sperrer }: { sperrer: readonly Verktoysperre[] }) {
+  return (
+    <section className="verktoystatus" data-status="sperret" role="alert" aria-label="Midlertidig deaktivert">
+      <h2>Midlertidig deaktivert</h2>
+      <p>{SPERRET}</p>
+      <ul className="verktoystatus__regler">
+        {sperrer.map((s) => (
+          <li key={s.id}>
+            {OMFANGSTEKST[s.omfang]}
+            {s.omfang === 'regel' && s.mal ? ` ${s.mal}` : ''}: {s.grunn}
+            {s.satt_av && <span className="verktoystatus__merke">{`${s.satt_av}, ${tidspunkt(s.satt_kl)}`}</span>}
+          </li>
+        ))}
+      </ul>
+    </section>
   )
 }
 
@@ -353,6 +475,7 @@ function Beregningsdel({
   skjema,
   setSkjema,
   legemidler,
+  hentSperrer,
   regelsett,
   klokke,
 }: {
@@ -362,6 +485,8 @@ function Beregningsdel({
   skjema: Planskjema
   setSkjema: (endre: (s: Planskjema) => Planskjema) => void
   legemidler: Pick<Legemiddelleser, 'les'> | undefined
+  /** Leser sperrene på nytt rett før en beregnet plan vises; kaster når de ikke kan leses. */
+  hentSperrer: () => Promise<Verktoysperre[]>
   regelsett: Regelsett
   klokke: () => Date
 }) {
@@ -377,6 +502,7 @@ function Beregningsdel({
   const gjeldende = beregning?.nokkel === nokkel ? beregning : null
   const formvalg = alternativer && alternativer.regel === regel?.id ? alternativer.valg : {}
   const justeringer = useMemo(() => (regel ? justeringsfelt(regel, skjema.svar) : []), [regel, skjema.svar])
+  const spenn = regel && spennFor(regel, skjema)
 
   // En plan som står, kontrolleres mot klokken: den gjelder bare så lenge FEST-kopien er fersk og dagen den samme.
   const harPlan = gjeldende?.status === 'ferdig' && gjeldende.resultat.status === 'doseplan'
@@ -401,6 +527,10 @@ function Beregningsdel({
       if (!legemidler) throw new Error('Legemiddeldataene kan ikke leses her.')
       const utvalg = await legemidler.les(festIderFor(regel, valg))
       if (denne !== siste.current) return
+      // Sperrene leses på nytt etter FEST, rett før resultatet vises: en sperre som kom mens preparatene ble hentet, gir ingen plan.
+      const sperrer = await hentSperrer()
+      if (denne !== siste.current) return
+      if (usperrede(sperrer, verktoy, [regel]).length === 0) return setBeregning(null)
       const tid = klokke()
       const alt = formvalgFor(regel, valg, sk, utvalg, tid)
       setAlternativer({ regel: regel.id, valg: alt })
@@ -411,7 +541,7 @@ function Beregningsdel({
       setBeregning({ nokkel: n, status: 'ferdig', resultat: beregnPlan(regel, valg, sk, utvalg, tid, regelsett) })
     } catch (e) {
       if (denne !== siste.current) return
-      setBeregning({ nokkel: n, status: 'feil', melding: e instanceof Error ? e.message : String(e) })
+      setBeregning({ nokkel: n, status: 'feil', melding: e instanceof Error ? e.message : String(e), sperre: e instanceof Sperrefeil })
     }
   }
 
@@ -434,7 +564,8 @@ function Beregningsdel({
   return (
     <>
       <p className="verktoystatus" data-status="tilgjengelig">
-        Beregningen er tilgjengelig: {regler.length === 1 ? 'regelen er' : 'reglene er'} klinisk godkjent.
+        Beregning er tilgjengelig: {regler.length === 1 ? 'regelen er' : 'reglene er'} klinisk godkjent, men bare for et avgrenset omfang. Utenfor det stopper beregningen og
+        sier hvorfor.
       </p>
       <form
         className="verktoyskjema"
@@ -468,11 +599,11 @@ function Beregningsdel({
               </span>
               <Tallfelt value={skjema.startdose} onChange={(v) => sett('startdose', v)} />
             </label>
-            {regel && trengerMaldose(regel) && (
+            {regel && trengerMaldose(regel, skjema) && (
               <label className="skjemafelt">
                 <span>
                   Måldose av {tilNavn.toLowerCase()}
-                  {tilAdm} (mg per døgn)
+                  {tilAdm} ({tilAdm ? 'mg per injeksjon' : 'mg per døgn'})
                 </span>
                 <Tallfelt value={skjema.maldose} onChange={(v) => sett('maldose', v)} />
               </label>
@@ -482,7 +613,12 @@ function Beregningsdel({
               <input className="inndatafelt" type="date" value={skjema.startdato} onChange={(e) => sett('startdato', e.target.value)} />
             </label>
           </div>
-          {regel && trengerMaldose(regel) && <p className="feltgruppe__hjelp">Måldosen fylles aldri inn av verktøyet; den må skrives inn.</p>}
+          {regel && spenn && (
+            <p className="feltgruppe__hjelp">
+              Ved {tall(spenn.fra_mg)} mg gir omregningstabellen et spenn på {tall(spenn.til_mg[0])}–{tall(spenn.til_mg[1])} mg. Dosen i spennet er et klinisk valg og skrives inn som måldose.
+            </p>
+          )}
+          {regel && trengerMaldose(regel, skjema) && <p className="feltgruppe__hjelp">Måldosen fylles aldri inn av verktøyet; den må skrives inn.</p>}
           {!skjema.startdato && <p className="feltgruppe__hjelp">Uten startdato står planen med dagnummer.</p>}
         </fieldset>
 
@@ -737,7 +873,7 @@ function Resultat({
   if (beregning.status === 'feil') {
     return (
       <p className="sidevarsel" role="alert">
-        Fikk ikke hentet preparatene fra FEST. {beregning.melding}
+        {beregning.sperre ? UKONTROLLERT : `Fikk ikke hentet preparatene fra FEST. ${beregning.melding}`}
       </p>
     )
   }
