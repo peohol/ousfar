@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.116.3',
+    dato: '2026-10-31',
+    sammendrag: 'Planen for kildevarsler tilpasset: ingen daglig rutine',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Planen for regelvedlikeholdet beskriver nå at den ansvarlige får varsel om endrede kilder og selv ber om en vurdering, i stedet for at en daglig rutine leser varslene.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.116.1',
     dato: '2026-10-31',
     sammendrag: 'Plan for hvordan de kliniske reglene i verktøyene skal vedlikeholdes',
