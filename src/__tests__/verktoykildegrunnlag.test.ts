@@ -187,10 +187,22 @@ describe('Hentingen av en kildeside', () => {
   const skriverTil = (skript: string) => [...skript.matchAll(/writeFileSync\(([^,]+),/g)].map((m) => m[1]!.trim())
   const skript = (navn: string) => readFileSync(new URL(`../../scripts/${navn}`, import.meta.url), 'utf8')
 
-  it.each(['verktoy-kildeimport.ts', 'verktoy-kartlegging.ts'])('%s henter sidene med hentKilde og har ingen mellomlagring på disk', (navn) => {
-    expect(skript(navn)).not.toMatch(/mellomlager|mkdirSync|appendFileSync|createWriteStream|copyFileSync|existsSync\(`/)
-    expect(skript(navn)).toMatch(/hentKilde\(/)
-    expect(skript(navn)).not.toMatch(/\bfetch\((url|`\$\{PSYCHIATRIENET)/)
+  const kode = (sti: string) => readFileSync(new URL(`../../${sti}`, import.meta.url), 'utf8')
+  const UTEN_MELLOMLAGRING = /mellomlager|mkdirSync|appendFileSync|createWriteStream|copyFileSync|existsSync\(`/
+
+  it.each(['src/verktoy/kildeinnhenting.ts', 'scripts/verktoy-kartlegging.ts'])('%s henter sidene med hentKilde og har ingen mellomlagring på disk', (sti) => {
+    expect(kode(sti)).not.toMatch(UTEN_MELLOMLAGRING)
+    expect(kode(sti)).toMatch(/hentKilde\(/)
+    expect(kode(sti)).not.toMatch(/\bfetch\((url|`\$\{PSYCHIATRIENET)/)
+  })
+
+  it('P3 henter Psychiatrienet bare med den felles innhentingen, som kildeovervåkingen også bruker', () => {
+    const s = skript('verktoy-kildeimport.ts')
+    expect(s).not.toMatch(UTEN_MELLOMLAGRING)
+    expect(s).toMatch(/innhentPsychiatrienet\(/)
+    expect(s).not.toMatch(/\bfetch\(|hentKilde\(/)
+    expect(kode('src/verktoy/kildeinnhenting.ts')).not.toMatch(/writeFileSync/)
+    expect(skript('verktoy-overvaking.ts')).toMatch(/innhentPsychiatrienet\(/)
   })
 
   it('P3 skriver bare arkivet, etter feltkontrollen, og rapporten', () => {

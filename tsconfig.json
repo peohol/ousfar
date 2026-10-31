@@ -37,6 +37,8 @@
     "scripts/kurateringsko.ts",
     "scripts/kurateringsagent.ts",
     "scripts/verktoy-kartlegging.ts",
+    "scripts/verktoy-overvaking.ts",
+    "scripts/verktoy-kildeimport.ts",
     "supabase/functions/_delt",
     "api"
   ]
