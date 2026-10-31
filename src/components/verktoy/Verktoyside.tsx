@@ -30,7 +30,21 @@ import { finnVirkestoff, KARTLEGGING, VERKTOY, verktoyFor, virkestoffvalg, type 
 import { avrund } from '../../verktoy/regler/beregning'
 import { KONTROLLUTFALL, kontrollutfall } from '../../verktoy/regler/godkjenning'
 import type { Regel, Regelsett } from '../../verktoy/regler/modell'
-import { gjelder, OMFANGSTEKST, SPERRET, UKONTROLLERT, usperrede, verktoysperrer, type Verktoysperre, type Verktoysperreleser } from '../../verktoy/sperrer'
+import {
+  FOR_SEN,
+  gjelder,
+  LES_SPERRENE_HVER_MS,
+  LESEFRIST_MS,
+  medFrist,
+  OMFANGSTEKST,
+  SPERRENE_GJELDER_MS,
+  SPERRET,
+  UKONTROLLERT,
+  usperrede,
+  verktoysperrer,
+  type Verktoysperre,
+  type Verktoysperreleser,
+} from '../../verktoy/sperrer'
 import {
   fraForlop,
   medlemFor,
@@ -70,7 +84,10 @@ export interface VerktoysideProps {
 
 const naa = () => new Date()
 
-type Sperretilstand = { status: 'henter' } | { status: 'feil'; melding: string } | { status: 'klar'; sperrer: Verktoysperre[] }
+/** `lest` er når sperrene sist ble lest (`Date.now()`); lesingen gjelder i `SPERRENE_GJELDER_MS`. */
+type Sperretilstand = { status: 'henter' } | { status: 'feil'; melding: string } | { status: 'klar'; sperrer: Verktoysperre[]; lest: number }
+
+const utlopt = (t: Sperretilstand) => t.status === 'klar' && Date.now() - t.lest >= SPERRENE_GJELDER_MS
 
 /** En sperre som ikke kunne leses: beregningen vises ikke, og grunnen er ikke FEST. */
 class Sperrefeil extends Error {}
@@ -78,26 +95,42 @@ class Sperrefeil extends Error {}
 /**
  * De aktive sperrene, lest med en gang, når fanen får fokus og jevnlig mens
  * siden står åpen. `hent` leser dem på nytt, gir dem og oppdaterer siden; den
- * kaster når de ikke kan leses, og da vises ingenting klinisk.
+ * kaster når de ikke kan leses eller ikke svarer innen `LESEFRIST_MS`, og da
+ * vises ingenting klinisk. En lesing gjelder i `SPERRENE_GJELDER_MS`: er den
+ * eldre, vises ingenting klinisk før sperrene er lest på nytt.
  */
 function useSperrer(leser: Verktoysperreleser | undefined) {
   const [tilstand, setTilstand] = useState<Sperretilstand>({ status: 'henter' })
-  // Bare den siste lesingen som er startet, får sette tilstanden.
-  const siste = useRef(0)
+  // Lesingene nummereres; svaret fra en lesing brukes når ingen lesing som ble startet senere, har svart før den.
+  const startet = useRef(0)
+  const brukt = useRef(0)
   const hent = useCallback(async () => {
-    const denne = ++siste.current
+    const denne = ++startet.current
+    const bruk = (ny: Sperretilstand) => {
+      if (denne <= brukt.current) return
+      brukt.current = denne
+      setTilstand(ny)
+    }
+    // En lesing som er for gammel, gjelder ikke mens den nye pågår.
+    setTilstand((t) => (utlopt(t) ? { status: 'henter' } : t))
     try {
       if (!leser) throw new Error('Sperrene kan ikke leses her.')
-      const sperrer = await leser.les()
-      if (denne === siste.current) setTilstand({ status: 'klar', sperrer })
+      const sperrer = await medFrist(leser.les(), LESEFRIST_MS, FOR_SEN)
+      bruk({ status: 'klar', sperrer, lest: Date.now() })
       return sperrer
     } catch (e) {
       const melding = e instanceof Error ? e.message : String(e)
-      if (denne === siste.current) setTilstand({ status: 'feil', melding })
+      bruk({ status: 'feil', melding })
       throw new Sperrefeil(melding)
     }
   }, [leser])
-  useJevnligSjekk(useCallback(() => void hent().catch(() => undefined), [hent]), KONTROLLER_PLANEN_MS)
+  useJevnligSjekk(useCallback(() => void hent().catch(() => undefined), [hent]), LES_SPERRENE_HVER_MS)
+  // Kommer det ingen ny lesing før den siste går ut (for eksempel når fanen ikke er synlig), tas det kliniske bort og sperrene leses på nytt.
+  useEffect(() => {
+    if (tilstand.status !== 'klar') return
+    const t = window.setTimeout(() => void hent().catch(() => undefined), Math.max(0, tilstand.lest + SPERRENE_GJELDER_MS - Date.now()))
+    return () => window.clearTimeout(t)
+  }, [tilstand, hent])
   return { tilstand, hent }
 }
 

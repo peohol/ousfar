@@ -21,7 +21,7 @@ describe('nødstoppen for de kliniske verktøyene', () => {
   const en = async <T>(hvem: string | null, tekst: string, parametre: unknown[] = []) => Object.values((await sql<Record<string, T>>(hvem, tekst, parametre))[0]!)[0] as T
   const aktive = (hvem: string) => en<Verktoysperre[]>(hvem, 'select public.les_verktoysperrer()')
   const sett = (hvem: string, omfang: string, mal: string | null, grunn: string) => en<string>(hvem, 'select public.sett_verktoysperre($1, $2, $3)', [omfang, mal, grunn])
-  const opphev = (hvem: string, id: string, grunn: string) => sql(hvem, 'select public.opphev_verktoysperre($1, $2)', [id, grunn])
+  const opphev = (hvem: string, id: string, grunn: string | null) => sql(hvem, 'select public.opphev_verktoysperre($1, $2)', [id, grunn])
 
   /** Den samme lesingen appen bruker, med kallene gjort som `hvem` mot testdatabasen. */
   const klientFor = (hvem: string) =>
@@ -73,7 +73,12 @@ describe('nødstoppen for de kliniske verktøyene', () => {
     }
     const forste = await sett(admin, 'alle', null, 'Første stopp.')
     expect(await feilFra(() => sett(admin, 'alle', null, 'Andre stopp.'))).toMatchObject({ code: '23505' })
-    expect(await feilFra(() => opphev(admin, forste, 'kort'))).toMatchObject({ code: '23514' })
+    expect(await feilFra(() => sett(admin, 'verktoy', 'trappe-ned-antidepressiv', null as unknown as string))).toMatchObject({ code: '23502' })
+    // En sperre kan aldri oppheves uten en grunn på 5–500 tegn, heller ikke med NULL eller bare mellomrom; den er fortsatt aktiv.
+    for (const grunn of ['kort', null, '     ', 'x'.repeat(501)]) {
+      expect(await feilFra(() => opphev(admin, forste, grunn)), String(grunn)).toMatchObject({ code: '23514' })
+    }
+    expect((await aktive(bruker)).map((s) => s.id)).toEqual([forste])
     await opphev(admin, forste, 'Kontrollert og opphevet.')
     const andre = await sett(admin, 'alle', null, 'Andre stopp.')
     const historikk = await en<Sperrehistorikk[]>(admin, 'select public.verktoysperrehistorikk()')

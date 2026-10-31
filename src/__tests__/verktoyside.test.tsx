@@ -27,7 +27,7 @@ import { Verktoyside, type VerktoysideProps } from '../components/verktoy/Verkto
 import type { Legemiddelutvalg } from '../legemiddeldata/lesing'
 import { glemBildet, oppdaterOgTaVare, taBilde } from '../oppdatering/bevaring'
 import { KARTLEGGING } from '../verktoy/register'
-import type { Verktoysperre } from '../verktoy/sperrer'
+import { LESEFRIST_MS, SPERRENE_GJELDER_MS, type Verktoysperre } from '../verktoy/sperrer'
 import { osloDato } from '../verktoy/doseplan'
 import { STARTFORLOP } from '../verktoy/planvisning'
 import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from '../verktoy/regler/aksepttest'
@@ -608,6 +608,90 @@ describe('nødstoppen (P11.6)', () => {
     await act(async () => slipp())
     expect(await screen.findByRole('alert', { name: 'Midlertidig deaktivert' })).toBeTruthy()
     expect(screen.queryByRole('table')).toBeNull()
+  })
+
+  describe('når kontrollen av sperrene henger, er for gammel eller svarer i en annen rekkefølge', () => {
+    beforeEach(() => vi.useFakeTimers({ shouldAdvanceTime: true }))
+    afterEach(() => vi.useRealTimers())
+    const vent = (ms: number) => act(() => vi.advanceTimersByTimeAsync(ms))
+    const fokus = () => act(async () => window.dispatchEvent(new Event('focus')))
+
+    /** Viser nedtrappingen med `lager` som nødstopp og beregner en plan. */
+    async function medPlan(lager: ReturnType<typeof nodstopp>) {
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+      vis({ verktoy: 'trappe-ned-antidepressiv', legemidler: lesing(), sperrer: lager, regelsett, klokke: TESTKLOKKE })
+      await fyllInn(user)
+      await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+      expect(await screen.findByRole('table')).toBeTruthy()
+      return user
+    }
+
+    it('tar bort en plan som står når en lesing ikke svarer innen fristen, og viser den igjen etter en ny vellykket lesing', async () => {
+      let henger = false
+      const lager = nodstopp(() => (henger ? new Promise<Verktoysperre[]>(() => {}) : []))
+      const user = await medPlan(lager)
+      henger = true
+      await fokus()
+      // Mens lesingen pågår, gjelder den forrige, men bare til fristen.
+      await vent(LESEFRIST_MS - 1_000)
+      expect(screen.queryByRole('table')).toBeTruthy()
+      await vent(1_000)
+      expect((await screen.findByRole('alert')).textContent).toMatch(/fikk ikke kontrollert om verktøyet er midlertidig deaktivert/)
+      expect(screen.queryByRole('table')).toBeNull()
+      expect(screen.queryByRole('button', { name: 'Beregn doseplan' })).toBeNull()
+      henger = false
+      await user.click(screen.getByRole('button', { name: 'Prøv igjen' }))
+      await user.click(await screen.findByRole('button', { name: 'Beregn doseplan' }))
+      expect(await screen.findByRole('table')).toBeTruthy()
+    })
+
+    it('tar bort en plan som står når ingen ny lesing kommer før den forrige går ut, og leser sperrene på nytt', async () => {
+      let henger = false
+      const lager = nodstopp(() => (henger ? new Promise<Verktoysperre[]>(() => {}) : []))
+      await medPlan(lager)
+      // Fanen er ikke synlig, så de jevnlige lesingene uteblir.
+      Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => 'hidden' })
+      try {
+        henger = true
+        const lest = lager.les.mock.calls.length
+        await vent(SPERRENE_GJELDER_MS - 1_000)
+        expect(screen.queryByRole('table')).toBeTruthy()
+        expect(lager.les.mock.calls.length).toBe(lest)
+        await vent(1_000)
+        expect(screen.queryByRole('table')).toBeNull()
+        expect(screen.getByText(/Kontrollerer om verktøyet er tilgjengelig/)).toBeTruthy()
+        expect(lager.les.mock.calls.length).toBe(lest + 1)
+      } finally {
+        delete (document as { visibilityState?: unknown }).visibilityState
+      }
+    })
+
+    it('bruker svaret fra en langsom lesing når en nyere ikke har svart, men aldri et eldre svar etter et nyere', async () => {
+      const svar: ((s: Verktoysperre[]) => void)[] = []
+      let venter = false
+      const lager = nodstopp(() => (venter ? new Promise<Verktoysperre[]>((ok) => svar.push(ok)) : []))
+      await medPlan(lager)
+      const stopp = [sperre('regel', TEST_NEDTRAPPING.id)]
+      venter = true
+      await fokus()
+      await vent(5_000)
+      await fokus()
+      // Den første svarer med en sperre mens den andre fortsatt venter: sperren gjelder med en gang.
+      await act(async () => svar[0]!(stopp))
+      expect(await screen.findByRole('alert', { name: 'Midlertidig deaktivert' })).toBeTruthy()
+      expect(screen.queryByRole('table')).toBeNull()
+      await act(async () => svar[1]!([]))
+      expect(await screen.findByRole('button', { name: 'Beregn doseplan' })).toBeTruthy()
+
+      // Den nyeste svarer først med en sperre; det eldre svaret uten sperre som kommer etterpå, brukes ikke.
+      await fokus()
+      await fokus()
+      await act(async () => svar[3]!(stopp))
+      expect(await screen.findByRole('alert', { name: 'Midlertidig deaktivert' })).toBeTruthy()
+      await act(async () => svar[2]!([]))
+      expect(screen.getByRole('alert', { name: 'Midlertidig deaktivert' })).toBeTruthy()
+      expect(screen.queryByRole('button', { name: 'Beregn doseplan' })).toBeNull()
+    })
   })
 })
 

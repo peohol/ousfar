@@ -25,9 +25,10 @@ create table public.verktoysperrer (
     case when omfang = 'alle' then mal is null else mal is not null and mal ~ '^[a-z0-9][a-z0-9-]{0,99}$' end
   ),
   constraint verktoysperrer_grunn check (char_length(btrim(grunn)) between 5 and 500),
+  -- En CHECK som gir NULL, godtas; derfor står `is not null` eksplisitt, så en sperre aldri kan oppheves uten grunn.
   constraint verktoysperrer_opphevet check (
     (opphevet_kl is null and opphevet_av is null and opphevet_grunn is null)
-    or (opphevet_kl is not null and opphevet_av is not null and char_length(btrim(opphevet_grunn)) between 5 and 500 and opphevet_kl >= satt_kl)
+    or (opphevet_kl is not null and opphevet_av is not null and opphevet_grunn is not null and char_length(btrim(opphevet_grunn)) between 5 and 500 and opphevet_kl >= satt_kl)
   )
 );
 
