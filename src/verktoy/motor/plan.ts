@@ -344,7 +344,7 @@ function dosegrense(p: Parameter | undefined, sti: string): number | null {
 const listeOg = (xs: string[]) => (xs.length <= 1 ? xs.join('') : `${xs.slice(0, -1).join(', ')} og ${xs.at(-1)}`)
 
 /** Om preparatet ligger utenfor det forløpet gjelder: administrasjonsveien, og formuleringen, varenavnet og legemiddelformen når regelen avgrenser dem. */
-function utenforForlop(def: Forlop, b: Byggestein): boolean {
+export function utenforForlop(def: Forlop, b: Byggestein): boolean {
   if (def.administrasjon === 'peroral') {
     if (!(b.klasse === 'peroral' || b.klasse === 'peroral_modifisert') || !b.administrasjonsveier.includes('Oral bruk')) return true
   } else if (b.klasse !== 'depotinjeksjon') return true

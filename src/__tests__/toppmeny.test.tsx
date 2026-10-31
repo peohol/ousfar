@@ -9,6 +9,7 @@ import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import type { Datakildestatus, Kjoring } from '../datakilder/status'
+import type { Kildeovervaking } from '../verktoy/overvaking/varsling'
 import type { Bevegelse, Tema, Valg } from '../domain/systemvalg'
 
 const loggUt = vi.fn(async () => {})
@@ -36,6 +37,13 @@ vi.mock('../components/konto/Datakilder', () => ({
 }))
 vi.mock('../components/kuratering/Utgavelister', () => ({
   Kurateringsoversikt: ({ apen }: { apen: boolean }) => (apen ? <p>Kurateringsoversikten</p> : null),
+}))
+vi.mock('../components/konto/Kildeovervaking', () => ({
+  Kildeovervaking: ({ apen }: { apen: boolean }) => (apen ? <p>Kildeovervåkingen</p> : null),
+  // En kontroll i orden, uten funn, så prikken ikke står i de andre testene.
+  kildeovervakingslager: () => ({
+    les: async () => ({ funn: [], kjoringer: [], siste: { id: 1, kjort_kl: new Date().toISOString(), utlost: 'cron', prove: false, grunnlag: [], feil: [], informative: [], lenke: null } }),
+  }),
 }))
 vi.mock('../components/konto/Verktoysperrer', () => ({
   Verktoysperrer: ({ apen }: { apen: boolean }) => (apen ? <p>Nødstoppen</p> : null),
@@ -525,7 +533,7 @@ describe('kontomenyen', () => {
 })
 
 describe('adminmenyen', () => {
-  it('fører til brukerne, datakildene, kurateringene, nødstoppen for verktøyene og autoerstatt-reglene, og er et eget lag', async () => {
+  it('fører til brukerne, datakildene, kurateringene, kildeovervåkingen, nødstoppen for verktøyene og autoerstatt-reglene, og er et eget lag', async () => {
     render(
       <Ramme>
         <Adminmeny />
@@ -535,7 +543,7 @@ describe('adminmenyen', () => {
     await userEvent.click(knapp)
     const meny = panel(knapp)
     expect(meny.getAttribute('data-lag')).toBe('adminmeny')
-    expect(within(meny).getAllByRole('button').map((v) => v.textContent)).toEqual(['Brukere', 'Datakilder', 'Kurateringer', 'Kliniske verktøy', 'Autoerstatt'])
+    expect(within(meny).getAllByRole('button').map((v) => v.textContent)).toEqual(['Brukere', 'Datakilder', 'Kurateringer', 'Kildeovervåking', 'Kliniske verktøy', 'Autoerstatt'])
 
     await userEvent.click(within(meny).getByRole('button', { name: 'Brukere' }))
     expect(screen.getByText('Brukerlista')).toBeTruthy()
@@ -548,6 +556,10 @@ describe('adminmenyen', () => {
     await userEvent.click(knapp)
     await userEvent.click(within(meny).getByRole('button', { name: 'Kurateringer' }))
     expect(screen.getByText('Kurateringsoversikten')).toBeTruthy()
+
+    await userEvent.click(knapp)
+    await userEvent.click(within(meny).getByRole('button', { name: 'Kildeovervåking' }))
+    expect(screen.getByText('Kildeovervåkingen')).toBeTruthy()
 
     await userEvent.click(knapp)
     await userEvent.click(within(meny).getByRole('button', { name: 'Kliniske verktøy' }))
@@ -585,6 +597,57 @@ describe('adminmenyen', () => {
     status.mockResolvedValue({ kjoringer: iOrden, endringer: [] })
     await userEvent.click(within(panel(knapp)).getByRole('button', { name: /^Datakilder/ }))
     expect(screen.getByText('Datakildene')).toBeTruthy()
+    act(() => datakildepanel.lukk?.())
+    expect(await screen.findByRole('button', { name: 'Administrasjon' })).toBeTruthy()
+    expect(document.querySelector('.adminmeny .toppmeny__prikk')).toBeNull()
+  })
+
+  it('viser en prikk når kildeovervåkingen ikke kan leses, så det aldri ser ut som at ingen funn venter, og prøver igjen', async () => {
+    const naa = new Date().toISOString()
+    const les = vi.fn(async (): Promise<Kildeovervaking> => {
+      throw new Error('Nettverket svarte ikke.')
+    })
+    render(
+      <Ramme>
+        <Adminmeny kildelager={{ les, vurder: vi.fn(), beslutt: vi.fn() }} />
+      </Ramme>,
+    )
+    const knapp = await screen.findByRole('button', { name: 'Administrasjon (kildeovervåkingen kunne ikke leses)' })
+    expect(knapp.parentElement!.querySelector('.toppmeny__prikk')).toBeTruthy()
+    await userEvent.click(knapp)
+    expect(within(panel(knapp)).getByRole('img', { name: 'kildeovervåkingen kunne ikke leses' })).toBeTruthy()
+
+    // Neste sjekk lykkes: prikken forsvinner.
+    les.mockResolvedValue({ funn: [], kjoringer: [], siste: { id: 1, kjort_kl: naa, utlost: 'cron', prove: false, grunnlag: [], feil: [], informative: [], lenke: null } })
+    await userEvent.click(within(panel(knapp)).getByRole('button', { name: /^Datakilder/ }))
+    act(() => datakildepanel.lukk?.())
+    expect(await screen.findByRole('button', { name: 'Administrasjon' })).toBeTruthy()
+  })
+
+  it('har en prikk når et funn fra kildeovervåkingen venter, også sammen med en datakilde, og ser etter på nytt når et panel lukkes', async () => {
+    const naa = new Date().toISOString()
+    const apent = {
+      id: 1, funn: 'dokument:a', kilde: 'dokument' as const, art: 'endret' as const, prioritet: 'vanlig' as const, prove: false, etikett: 'Syntetisk kilde',
+      detaljer: [], berorte: [], opprettet_kl: naa, sist_sett_kl: naa, borte_kl: null, erstatter: null, erstattet_kl: null,
+      teknisk_vurdering: null, teknisk_av: null, teknisk_kl: null, beslutning: null, beslutning_av: null, beslutning_kl: null,
+    }
+    const siste = { id: 1, kjort_kl: naa, utlost: 'cron' as const, prove: false, grunnlag: [], feil: [], informative: [], lenke: null }
+    const les = vi.fn(async () => ({ funn: [apent], kjoringer: [], siste }))
+    const kildelager = { les, vurder: vi.fn(), beslutt: vi.fn() }
+    render(
+      <Ramme>
+        <Adminmeny kildelager={kildelager} />
+      </Ramme>,
+    )
+    const knapp = await screen.findByRole('button', { name: 'Administrasjon (1 funn venter på faglig beslutning)' })
+    expect(les).toHaveBeenCalledWith(0)
+    expect(knapp.parentElement!.querySelector('.toppmeny__prikk')).toBeTruthy()
+    await userEvent.click(knapp)
+    expect(within(panel(knapp)).getByRole('img', { name: '1 funn venter på faglig beslutning' })).toBeTruthy()
+
+    // Avsluttet: prikken forsvinner når et panel lukkes og det sjekkes på nytt.
+    les.mockResolvedValue({ funn: [], kjoringer: [], siste })
+    await userEvent.click(within(panel(knapp)).getByRole('button', { name: /^Datakilder/ }))
     act(() => datakildepanel.lukk?.())
     expect(await screen.findByRole('button', { name: 'Administrasjon' })).toBeTruthy()
     expect(document.querySelector('.adminmeny .toppmeny__prikk')).toBeNull()

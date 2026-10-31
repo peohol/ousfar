@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.117.0',
+    dato: '2026-10-31',
+    sammendrag: 'Varsel i adminmenyen når kildene eller FEST-dataene de godkjente verktøyreglene bygger på, er endret',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['vinduer'],
+    punkter: [
+      'Kildedokumentene de kliniske verktøyreglene bygger på, og preparatene i FEST kontrolleres hver uke, og Psychiatrienets anbefalinger hver måned. De sammenlignes med det reglene ble godkjent mot, og hver endring sier hvilke klinisk godkjente regler den kan berøre.',
+      'Administratorer får en prikk i adminmenyen når en endring krever ny faglig vurdering, og ser den under «Kildeovervåking», med frister for teknisk vurdering og faglig beslutning. Der skrives vurderingen og beslutningen, med hvem og når, og beslutningen avslutter funnet. Prikken står også når kontrollen har stoppet, ikke har kjørt på over en uke, eller ikke kunne leses.',
+      'Endringer som bare registreres, holdes adskilt fra dem som krever ny faglig vurdering, som et preparat i det godkjente omfanget som er borte eller har fått endret styrke eller form. Ingen regel endres, godkjennes eller sperres automatisk, og ingen tekst fra kildene lagres eller vises.',
+    ],
+  },
+  {
     versjon: '1.116.3',
     dato: '2026-10-31',
     sammendrag: 'Planen for kildevarsler tilpasset: ingen daglig rutine',

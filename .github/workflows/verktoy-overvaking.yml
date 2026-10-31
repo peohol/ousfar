@@ -1,0 +1,143 @@
+# Kildeovervåkingen for OUSFAR Verktøy (P12.1 og P12.5,
+# docs/verktøy-p12-overvaking.md): kildedokumentene og preparatene i FEST hver
+# uke, Psychiatrienet den første kjøringen i måneden (det tar om lag ti
+# minutter og belaster kilden), eller når den startes for hånd med valget under.
+#
+# Overvåkingen leser kildene og endrer, godkjenner eller sperrer ingen regel.
+# Rapporten står i sammendraget for kjøringen. Funnene meldes til appen
+# (/api/kildeovervaking), med et OIDC-token GitHub utsteder for denne
+# arbeidsflyten på main: der får administratorene en prikk i Adminmeny og
+# vinduet «Kildeovervåking», med fristene for teknisk vurdering og faglig
+# beslutning. Et funn avsluttes av den som har tatt stilling til det, i appen,
+# aldri av arbeidsflyten.
+#
+# Oppgaven «teknisk-vurdering» skriver den tekniske vurderingen av nøyaktig ett
+# åpent funn (nummeret i appen), når Claude (eller noen andre med tilgang til
+# repoet) har vurdert det. Er funnet avløst av et nyere med endret innhold,
+# avvises vurderingen.
+name: Kildeovervåking for Verktøy
+
+on:
+  schedule:
+    # Mandag 06:20 UTC, etter den nattlige FEST-synkroniseringen.
+    - cron: '20 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      oppgave:
+        description: kontroll, provesak (bare et syntetisk funn, for å prøve varslingen i appen) eller teknisk-vurdering.
+        type: choice
+        options: [kontroll, provesak, teknisk-vurdering]
+        default: kontroll
+      psychiatrienet:
+        description: Bare for kontroll. Kontroller også Psychiatrienet (om lag ti minutter).
+        type: boolean
+        default: false
+      funn:
+        description: Bare for teknisk-vurdering. Funnets nummer, slik det står i appen (for eksempel 12). Er funnet avløst av et nyere, avvises vurderingen.
+        type: string
+        default: ''
+      vurdering:
+        description: Bare for teknisk-vurdering. Den tekniske vurderingen.
+        type: string
+        default: ''
+      av:
+        description: Bare for teknisk-vurdering. Hvem som har vurdert.
+        type: string
+        default: Claude
+
+permissions: {}
+
+env:
+  ADRESSE: https://ousfar.vercel.app/api/kildeovervaking
+
+concurrency:
+  group: verktoy-overvaking
+  cancel-in-progress: false
+
+jobs:
+  kontroll:
+    name: Kontroller kildegrunnlaget
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || inputs.oppgave == 'kontroll' || inputs.oppgave == 'provesak')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    # Testbrukeren som leser FEST, ligger i miljøet, som bare main får bruke.
+    environment: kuratortest
+    permissions:
+      contents: read
+      # Bare for OIDC-tokenet funnene meldes til appen med.
+      id-token: write
+    env:
+      # OUSFARs prosjekt i Supabase og den offentlige nøkkelen, de samme verdiene
+      # appen har i nettleseren. Ingen av dem er hemmelige.
+      SUPABASE_URL: https://jfzqowsmjtthpbipnxnf.supabase.co
+      SUPABASE_PUBLISHABLE_KEY: sb_publishable_-xx8oSXHh9dBqs3EnxyprA_vijEb2AU
+      OUSFAR_TESTBRUKER: ${{ secrets.OUSFAR_TESTBRUKER }}
+      OUSFAR_TESTPASSORD: ${{ secrets.OUSFAR_TESTPASSORD }}
+      MED_PSYCHIATRIENET: ${{ inputs.psychiatrienet }}
+      OPPGAVE: ${{ inputs.oppgave }}
+      HENDELSE: ${{ github.event_name }}
+      KJORING: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          package-manager-cache: false
+
+      - run: npm ci --ignore-scripts
+
+      - name: Kjør overvåkingen
+        run: |
+          valg=()
+          if [ "$OPPGAVE" = "provesak" ]; then
+            # Bare det syntetiske funnet: ingen kilde kontrolleres, og ingen reelle funn røres.
+            valg=(--provesak --uten-dokumenter --uten-fest)
+          elif [ "$MED_PSYCHIATRIENET" = "true" ] || { [ "$HENDELSE" = "schedule" ] && [ "$(date -u +%-d)" -le 7 ]; }; then
+            valg=(--psychiatrienet)
+          fi
+          npm run -s verktoy:overvaking -- kontroll "${valg[@]}" --ut overvaking-resultat
+          cat overvaking-resultat/rapport.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Meld funnene til appen
+        run: |
+          set -euo pipefail
+          jq -n --slurpfile rapport overvaking-resultat/funn.json --arg lenke "$KJORING" \
+            '{oppgave: "registrer", rapport: $rapport[0], lenke: $lenke}' > melding.json
+          bash scripts/meld-kildeovervaking.sh melding.json
+
+      - name: Meld deler som ikke ble kontrollert
+        run: |
+          feil=$(jq '.feil | length' overvaking-resultat/funn.json)
+          if [ "$feil" -gt 0 ]; then
+            jq -r '.feil[]' overvaking-resultat/funn.json | while read -r linje; do echo "::error::$linje"; done
+            exit 1
+          fi
+
+  teknisk-vurdering:
+    name: Skriv den tekniske vurderingen
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && inputs.oppgave == 'teknisk-vurdering'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      # Bare for OIDC-tokenet; ingen hemmeligheter.
+      id-token: write
+    env:
+      FUNN: ${{ inputs.funn }}
+      VURDERING: ${{ inputs.vurdering }}
+      AV: ${{ inputs.av }}
+      AKTOR: ${{ github.actor }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Skriv vurderingen i appen
+        run: |
+          set -euo pipefail
+          jq -n --arg funn "$FUNN" --arg vurdering "$VURDERING" --arg av "$AV (startet av $AKTOR)" \
+            '{oppgave: "teknisk_vurdering", funn: $funn, vurdering: $vurdering, av: $av}' > melding.json
+          bash scripts/meld-kildeovervaking.sh melding.json
