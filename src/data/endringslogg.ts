@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.117.1',
+    dato: '2026-10-31',
+    sammendrag: 'Den ukentlige kildekontrollen startet ikke; rettet',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Kontrollen av kildene og FEST-dataene stoppet før den kom i gang, så adminmenyen ville vist at den stoppet. Nå starter den som den skal.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.117.0',
     dato: '2026-10-31',
     sammendrag: 'Varsel i adminmenyen når kildene eller FEST-dataene de godkjente verktøyreglene bygger på, er endret',
