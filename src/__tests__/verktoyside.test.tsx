@@ -586,6 +586,29 @@ describe('nødstoppen (P11.6)', () => {
     expect(await screen.findByRole('alert', { name: 'Midlertidig deaktivert' })).toBeTruthy()
     expect(screen.queryByRole('table')).toBeNull()
   })
+
+  it('gir ingen plan når sperren settes mens preparatene hentes fra FEST', async () => {
+    const user = userEvent.setup()
+    let aktive: Verktoysperre[] = []
+    const lager = nodstopp(() => aktive)
+    let slipp: () => void = () => {}
+    const legemidler = lesing()
+    vis({ verktoy: 'trappe-ned-antidepressiv', legemidler, sperrer: lager, regelsett, klokke: TESTKLOKKE })
+    await fyllInn(user)
+    await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+    expect(await screen.findByRole('table')).toBeTruthy()
+
+    // FEST svarer sent; sperren settes etter at beregningen startet, men før preparatene er hentet.
+    legemidler.les.mockImplementationOnce(() => new Promise((ok) => (slipp = () => ok(testFest()))))
+    const dose = screen.getByRole('textbox', { name: /Aktuell døgndose/ })
+    await user.clear(dose)
+    await user.type(dose, '20')
+    await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+    aktive = [sperre('regel', TEST_NEDTRAPPING.id)]
+    await act(async () => slipp())
+    expect(await screen.findByRole('alert', { name: 'Midlertidig deaktivert' })).toBeTruthy()
+    expect(screen.queryByRole('table')).toBeNull()
+  })
 })
 
 /**

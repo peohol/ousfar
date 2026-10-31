@@ -452,7 +452,7 @@ function Beregningsdel({
   skjema: Planskjema
   setSkjema: (endre: (s: Planskjema) => Planskjema) => void
   legemidler: Pick<Legemiddelleser, 'les'> | undefined
-  /** Leser sperrene på nytt i det planen beregnes; kaster når de ikke kan leses. */
+  /** Leser sperrene på nytt rett før en beregnet plan vises; kaster når de ikke kan leses. */
   hentSperrer: () => Promise<Verktoysperre[]>
   regelsett: Regelsett
   klokke: () => Date
@@ -492,8 +492,10 @@ function Beregningsdel({
     setBeregning({ nokkel: n, status: 'henter' })
     try {
       if (!legemidler) throw new Error('Legemiddeldataene kan ikke leses her.')
-      // Sperrene leses på nytt i det planen beregnes; er regelen sperret nå, vises ingen plan.
-      const [utvalg, sperrer] = await Promise.all([legemidler.les(festIderFor(regel, valg)), hentSperrer()])
+      const utvalg = await legemidler.les(festIderFor(regel, valg))
+      if (denne !== siste.current) return
+      // Sperrene leses på nytt etter FEST, rett før resultatet vises: en sperre som kom mens preparatene ble hentet, gir ingen plan.
+      const sperrer = await hentSperrer()
       if (denne !== siste.current) return
       if (usperrede(sperrer, verktoy, [regel]).length === 0) return setBeregning(null)
       const tid = klokke()

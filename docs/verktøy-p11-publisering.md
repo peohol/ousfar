@@ -70,7 +70,7 @@ Gjennomgått med kasusene i matrisen, både som beregning og slik planen står p
 En administrator kan deaktivere alle verktøyene, ett verktøy eller én klinisk godkjent regel med en gang, uten en ny versjon av appen: Adminmeny → **Kliniske verktøy** → «Ny sperre» → velg hva → skriv grunnen → **Deaktiver nå**. Sperren oppheves samme sted med en grunn. Ingen sperre slettes; historikken viser hvem som satte og opphevet hver sperre, når og hvorfor.
 
 - Sperrene står i `public.verktoysperrer` og leses og skrives bare gjennom funksjonene `les_verktoysperrer` (alle innloggede), `verktoysperrehistorikk`, `sett_verktoysperre` og `opphev_verktoysperre` (bare administratorer). Tabellen kan ikke leses eller skrives direkte.
-- Verktøysidene leser sperrene før de viser en beregning eller fagtekst, hvert minutt, når fanen får fokus igjen, og på nytt i det en plan beregnes (`src/verktoy/sperrer.ts`). En plan som står, forsvinner ved neste lesing.
+- Verktøysidene leser sperrene før de viser en beregning eller fagtekst, hvert minutt, når fanen får fokus igjen, og på nytt når en plan er beregnet, etter at preparatene er hentet fra FEST og rett før planen vises (`src/verktoy/sperrer.ts`). En plan som står, forsvinner ved neste lesing.
 - **Feiler lesingen, vises ingenting klinisk** («OUSFAR fikk ikke kontrollert om verktøyet er midlertidig deaktivert …»), med «Prøv igjen».
 - Testet mot en ekte database bygd av migrasjonene (`verktoysperrer.test.ts`: tilganger, begrensninger, historikk og et helt tilbakerullingsscenario), i verktøysiden (`verktoyside.test.tsx`, «nødstoppen (P11.6)») og i administrasjonspanelet (`verktoysperrepanel.test.tsx`). I matrisen: V36, V37, S19, M18, X20, F03, F04.
 
@@ -97,7 +97,7 @@ En administrator kan deaktivere alle verktøyene, ett verktøy eller én klinisk
 | Risiko | Hva som begrenser den |
 |---|---|
 | En plan som allerede er kopiert eller skrevet ut, kan ikke trekkes tilbake | Planen har regelversjon, fingeravtrykk og FEST-tidspunkt; en sperre stopper nye planer med en gang |
-| En plan som står åpen, kan stå til neste lesing av sperrene (høyst ett minutt, eller til fanen får fokus) | Ny lesing i det en plan beregnes; planen forsvinner også når FEST blir eldre enn 48 timer eller dagen skifter |
+| En plan som står åpen, kan stå til neste lesing av sperrene (høyst ett minutt, eller til fanen får fokus) | Ny lesing rett før en beregnet plan vises; planen forsvinner også når FEST blir eldre enn 48 timer eller dagen skifter |
 | FEST viser registrering og markedsføring, ikke lagerstatus | Advarsel i hver plan |
 | Stopper den nattlige FEST-synken, blir verktøyene utilgjengelige etter 48 timer | Feilen er trygg (ingen plan), og «Datakilder» i adminmenyen viser synken |
 | Piloten er gjort med syntetiske kasus av utvikleren, ikke av klinikere i bruk | Den uavhengige sluttkontrollen; en klinisk pilot med brukere kan legges til før bred bruk |
