@@ -67,6 +67,7 @@ import {
   UTENFOR_DOSERAMME_ID,
 } from '../verktoy/regler/nedtrapping'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
+import { EN_FORSTE_REDUKSJON, planTekst, planvisning } from '../verktoy/planvisning'
 import { REGELSETT, tilgjengelighet } from '../verktoy/tilgjengelighet'
 import { godkjennITest, testFestFor, TESTKLOKKE } from './hjelp/verktoyplan'
 
@@ -1611,6 +1612,10 @@ describe('Klinisk omfang med de faktiske preparatene i FEST (gjennomgangene av 0
       expect(p.status === 'doseplan' && p.forlop[0]!.avslutning, f.navn).toMatch(/^vortioksetin dag 29–56: .*Planen stopper derfor ved trinnet før: fra dag 1 står pasienten på 15 mg av vortioksetin til planen revurderes\. Dette er én mulig reduksjon med revurdering/)
       expect(new Set(elementer(p)), f.navn).toEqual(new Set([15]))
       expect(p, f.navn).not.toHaveProperty('trinnvalg')
+      // Visningen sier rett under tittelen at dette er én mulig første reduksjon, ikke en fullstendig plan (gjennomgangen av 5699ce6).
+      const v = planvisning(p, V)!
+      expect(v.undertittel, f.navn).toBe(EN_FORSTE_REDUKSJON)
+      expect(planTekst(v, 'Trappe ned antidepressiv').split('\n').slice(0, 3), f.navn).toEqual(['Trappe ned antidepressiv', V.tittel, EN_FORSTE_REDUKSJON])
     }
     const fase = V.plan.forlop[0]!.faser[0]!
     expect(fase.type === 'nedtrapping' && [fase.strategi.type === 'prosent_av_aktuell' && fase.strategi.prosent.verdi, fase.trinnlengde.verdi]).toEqual([25, 28])

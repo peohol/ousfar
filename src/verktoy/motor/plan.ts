@@ -463,6 +463,8 @@ function ingenDose(f: Forlopsresultat, p: Periode, valg: Styrkevalg[], alleValg:
 
 /** Det en plan med bare én reduksjon er (kontrollørens gjennomgang av 9cb420b, P7.5). */
 export const EN_REDUKSJON = 'Dette er én mulig reduksjon med revurdering, ikke en fullstendig nedtrappingsplan.'
+/** Den korte avslutningen i et forløp med bare én reduksjon. */
+export const EN_REDUKSJON_KORT = 'én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene'
 
 const ANNEN_DOSE = 'En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.'
 
@@ -625,7 +627,7 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
       // Én reduksjon er én mulig reduksjon med revurdering, ikke en nedtrappingsplan (kontrollørens gjennomgang av 9cb420b, P7.5).
       const en = ut.perioder.length === 1
       ut.avslutning = `${stans} Planen stopper derfor ved trinnet før: fra dag ${sist.fra} står pasienten på ${tall(sist.mg)} mg${hverSuffiks(sist)}${fordelingSuffiks(sist)} av ${f.virkestoff} til planen revurderes.${en ? ` ${EN_REDUKSJON}` : ''} ${AVSLUTNING_FELLES}`
-      ut.avslutning_kort = en ? 'én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene' : 'neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt'
+      ut.avslutning_kort = en ? EN_REDUKSJON_KORT : 'neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt'
     }
     if (ut.perioder.some((p) => p.doser)) {
       kontroller.push({

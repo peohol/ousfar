@@ -34,6 +34,7 @@ import {
   type Omgivelse,
 } from '../verktoy/motor/plan'
 import { lagMotorrapport, MOTORRAPPORTFIL } from '../verktoy/motor/rapport'
+import { planvisning } from '../verktoy/planvisning'
 import { FEST_PILOT, omgivelseFor, type Festuttrekk } from '../verktoy/regler/aksepttest'
 import { festkoblinger, KARTLEGGING } from '../verktoy/register'
 import {
@@ -901,6 +902,8 @@ describe('Sertralin til mirtazapin med preparatene i FEST (P4.8, gjennomgangene 
       expect(brukt('fra').every((x) => ['53 25', '53 50', '53 100'].includes(x)), `${sd} mg`).toBe(true)
       expect(brukt('til')).toEqual(['53 15'])
       expect(p.forlop.find((f) => f.id === 'fra')!.perioder.at(-1)!.mg, `${sd} mg`).toBe(25)
+      // Planen når regelens sluttdose og er ikke «én mulig første reduksjon».
+      expect(planvisning(p, REGEL)!.undertittel, `${sd} mg`).toBeNull()
       // Lang behandlingstid gir ingen plan, også med begrunnelse.
       for (const begrunnelse of [undefined, 'Syntetisk begrunnelse.', 'x']) ikke(klinisk(sd, { svar: { lang_behandlingstid: true }, ...(begrunnelse && { begrunnelse }) }), `${sd} mg lang ${begrunnelse}`)
       // Tidligere plager, ukjente forhold og hver manglende bekreftelse stopper.

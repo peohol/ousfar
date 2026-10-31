@@ -11,7 +11,7 @@
  * kildeoppføringen, aldri med innhold.
  */
 import { norskDato } from './motor/byggesteiner'
-import { elementtekst, fordelingSuffiks, preparatliste, type Doseplanresultat, type Praktiskforlop } from './motor/plan'
+import { elementtekst, EN_REDUKSJON_KORT, fordelingSuffiks, preparatliste, type Doseplanresultat, type Praktiskforlop } from './motor/plan'
 import { KARTLEGGING } from './register'
 import { avrund, hverTekst, injeksjonstidspunkt, valgtTekst } from './regler/beregning'
 import { erKliniskGodkjent, fingeravtrykk } from './regler/godkjenning'
@@ -42,6 +42,8 @@ export interface Plankilde {
 
 export interface Planvisning {
   tittel: string
+  /** Hva planen er når den ikke er en fullstendig nedtrapping, rett under tittelen; ellers `null`. */
+  undertittel: string | null
   kolonner: { navn: string; administrasjon: string }[]
   rader: Planrad[]
   advarsler: string[]
@@ -150,12 +152,19 @@ export function kildeliste(regel: Regel): Plankilde[] {
   })
 }
 
+/**
+ * Undertittelen til en plan med bare én reduksjon: regeltittelen sier hva
+ * regelen kan, ikke hva planen er (kontrollørens gjennomgang av 5699ce6, P7.5).
+ */
+export const EN_FORSTE_REDUKSJON = 'Én mulig første reduksjon med revurdering, ikke en validert fullstendig nedtrappingsplan.'
+
 /** Visningen av en klinisk doseplan; `null` for alt som ikke er en klinisk plan. */
 export function planvisning(r: Doseplanresultat, regel: Regel, startdato?: string): Planvisning | null {
   if (r.status !== 'doseplan' || !r.klinisk || r.sperre.length > 0 || r.regel.id !== regel.id || r.regel.fingeravtrykk !== fingeravtrykk(regel)) return null
   const kolonner = r.forlop.map((f) => ({ navn: virkestoffnavn(f.virkestoff), administrasjon: ADMINISTRASJON[f.administrasjon] }))
   return {
     tittel: regel.tittel,
+    undertittel: r.forlop.some((f) => f.avslutning_kort === EN_REDUKSJON_KORT) ? EN_FORSTE_REDUKSJON : null,
     kolonner,
     rader: rader(r.forlop, startdato),
     advarsler: [...r.forbehold, ...r.merknader, ...r.forlop.flatMap((f, i) => f.begrensninger.map((b) => `${kolonner[i]!.navn}: ${b}`))],
@@ -205,6 +214,7 @@ export function planTekst(v: Planvisning, overskrift: string): string {
   return [
     overskrift,
     v.tittel,
+    ...(v.undertittel ? [v.undertittel] : []),
     '',
     ...linjer,
     ...PLANDELER.flatMap((d) => punkter(d.tittel, v[d.felt])),

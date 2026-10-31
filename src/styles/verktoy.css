@@ -312,6 +312,11 @@
   line-height: var(--linjehoyde-tett);
 }
 
+.doseplan__undertittel {
+  margin: 0;
+  font-weight: var(--vekt-halvfet);
+}
+
 .doseplan__handlinger {
   display: flex;
   flex-wrap: wrap;
