@@ -62,7 +62,7 @@ Arbeidsflyten `.github/workflows/verktoy-overvaking.yml` kjører mandag kl. 06:2
 - En sak med høy prioritet uten en kommentar som begynner med «Faglig beslutning:» tre døgn etter, merkes på samme måte.
 - Fristene regnes fra siste gang funnene ble endret. Bare kommentarer fra noen med tilgang til repoet teller. Merket tas bort når saken er behandlet, og vakten lukker aldri en sak.
 
-En daglig Claude-rutine i prosjektet kan lese sakene, skrive den tekniske vurderingen og si fra til den ansvarlige (`docs/verktøy-p12-regelforvaltning.md` §5). Den er ikke en del av repoet og opprettes for seg.
+Det er ingen daglig Claude-rutine som leser sakene (bidragsyterens beslutning 31.10.2026: kildene endres sjelden, og en daglig rutine er unødvendig ofte). Den ansvarlige får saken tildelt og påminnelsen fra vakten, og ber Claude om den tekniske vurderingen i prosjektet. Vakten gjør ingenting når ingen sak er åpen.
 
 En **prøvesak** startes for hånd med oppgaven `provesak`. Den lager en egen sak med merket `kildeovervaking-prove` og bare et syntetisk funn med høy prioritet, som ikke berører noen regel, og blandes aldri med de reelle funnene. Den prøver at saken tildeles den ansvarlige, at den vurderes og at vakten merker den etter fristene. P12.1 regnes som ferdig først når prøven er gjort og ført i fremdriftsloggen.
 
