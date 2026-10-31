@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-10-31T07:26:43.419Z",
+  "oppdatert_kl": "2026-10-31T08:26:45.740Z",
   "malt_kl": "2026-10-30T12:35:22.398Z",
   "teller": 82,
   "stoffer": {
@@ -73,7 +73,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.",
-          "kl": "2026-10-31T07:26:43.419Z",
+          "kl": "2026-10-31T08:26:45.740Z",
           "kilde": "system"
         }
       ],
@@ -719,7 +719,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.",
-          "kl": "2026-10-31T07:26:43.419Z",
+          "kl": "2026-10-31T08:26:45.740Z",
           "kilde": "system"
         }
       ],
@@ -1663,7 +1663,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, godkjent); den må avsluttes først.",
-          "kl": "2026-10-31T07:26:43.419Z",
+          "kl": "2026-10-31T08:26:45.740Z",
           "kilde": "system"
         }
       ],
@@ -1886,7 +1886,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.",
-          "kl": "2026-10-31T07:26:43.419Z",
+          "kl": "2026-10-31T08:26:45.740Z",
           "kilde": "system"
         }
       ],
@@ -2936,7 +2936,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, godkjent); den må avsluttes først.",
-          "kl": "2026-10-31T07:26:43.419Z",
+          "kl": "2026-10-31T08:26:45.740Z",
           "kilde": "system"
         }
       ],
@@ -4886,7 +4886,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, retting); den må avsluttes først.",
-          "kl": "2026-10-31T07:26:43.419Z",
+          "kl": "2026-10-31T08:26:45.740Z",
           "kilde": "system"
         }
       ],
@@ -5408,7 +5408,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, godkjent); den må avsluttes først.",
-          "kl": "2026-10-31T07:26:43.419Z",
+          "kl": "2026-10-31T08:26:45.740Z",
           "kilde": "system"
         }
       ],
@@ -6083,7 +6083,7 @@
       "status": "klar",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 55.5,
+        "poeng": 55.8,
         "grunner": [
           "De novo-kuratering i runden som gjelder.",
           "Sist kuratert 2026-10-10."
@@ -7879,31 +7879,6 @@
       },
       "besvart_commit": "ebd5ad8eae4928b91119289be7c05d0839eba8e4",
       "sist_brukt_kl": "2026-10-19T02:16:11.129Z"
-    },
-    "kurateringsko/okt/20261017-retting": {
-      "ider": [
-        "fullfort-doksepin-0028",
-        "reserver-doksepin-070049",
-        "fullfort-brekspiprazol-0027",
-        "reserver-brekspiprazol-065921",
-        "reserver-brekspiprazol-064802"
-      ],
-      "siste": {
-        "id": "fullfort-doksepin-0028",
-        "sha256": "2057571c9becdf2cf1103743d995acd24f7b33a27da241ac0f039c4517df84b6",
-        "svar": {
-          "versjon": 1,
-          "foresporsel_id": "fullfort-doksepin-0028",
-          "foresporsel_sha256": "2057571c9becdf2cf1103743d995acd24f7b33a27da241ac0f039c4517df84b6",
-          "handling": "fullfort",
-          "utfall": "ok",
-          "melding": "doksepin er sendt til kontroll; køen følger kurateringsgrenen til den er publisert.",
-          "behandlet_kl": "2026-10-17T07:01:58.764Z",
-          "kjoring": "https://github.com/peohol/far/actions/runs/39012098244"
-        }
-      },
-      "besvart_commit": "c185b7ada166730b1fa4b9afbe5ed08752b237e8",
-      "sist_brukt_kl": "2026-10-17T07:01:58.764Z"
     }
   }
 }
