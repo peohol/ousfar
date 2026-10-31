@@ -7,7 +7,7 @@
  */
 import { tilfelletekst } from '../motor/plan'
 import { beregn, inndatagrenser, inndatavilkar, kortform, kravtekst, MOTORVERSJON, omradetekst } from './beregning'
-import { erKliniskGodkjent, fingeravtrykk, godkjenningsfeil } from './godkjenning'
+import { erKliniskGodkjent, fingeravtrykk, godkjenningsfeil, KONTROLLUTFALL, kontrollutfall, type Kontrollutfall } from './godkjenning'
 import { KILDER, kildeFor } from './kilder'
 import {
   apneValg,
@@ -66,6 +66,7 @@ const STATUS: Record<Regel['godkjenning']['status'], string> = {
   utkast: 'utkast',
   til_faglig_kontroll: 'til faglig kontroll',
   klinisk_godkjent: 'klinisk godkjent',
+  ikke_godkjent: 'kontrollert, ikke godkjent',
   avvist: 'avvist',
   trukket: 'trukket',
 }
@@ -229,6 +230,14 @@ const kilderI = (sett: Regelsett) => {
   return KILDER.filter((k) => brukt.has(k.id))
 }
 
+/** Hvor mange regler i settet som har hvert utfall av kontrollen, f.eks. «3 kontrollert og godkjent i oppgitt omfang, 2 kontrollert, ikke godkjent». */
+const utfallstekst = (sett: Regelsett) =>
+  (Object.keys(KONTROLLUTFALL) as Kontrollutfall[])
+    .map((u) => [sett.regler.filter((r) => kontrollutfall(r) === u).length, KONTROLLUTFALL[u]] as const)
+    .filter(([antall]) => antall > 0)
+    .map(([antall, tekst]) => `${antall} ${tekst}`)
+    .join(', ')
+
 export function lagRegelrapport(sett: Regelsett = PILOTSETT, rapport: Omit<Regelrapport, 'sett' | 'fil'> = P4RAPPORT): string {
   const kilder = kilderI(sett)
   // Psychiatrienet er bare referanse (P3-arkivet), ikke et dokument som er lest.
@@ -247,7 +256,7 @@ export function lagRegelrapport(sett: Regelsett = PILOTSETT, rapport: Omit<Regel
 
 Regelsett \`${sett.id}\` versjon ${sett.versjon}, regelmodell ${REGELMODELLVERSJON}, beregningsmotor ${MOTORVERSJON}. ${sett.beskrivelse}
 
-**${n} regler, ${godkjent} klinisk godkjent.** Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. ${godkjenningstekst} En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i ${rapport.notater.map((n) => `\`${n}\``).join(' og ')}.
+**${n} regler, ${godkjent} klinisk godkjent.** Utfallet av kontrollen: ${utfallstekst(sett)}. Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. ${godkjenningstekst} En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i ${rapport.notater.map((n) => `\`${n}\``).join(' og ')}.
 
 Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel bygger på teksten der, og den vises ikke (\`docs/verktøy-p3-rettigheter.md\`).
 

@@ -103,7 +103,7 @@ describe('Søket etter verktøy', () => {
 })
 
 describe('Regelstatusen', () => {
-  it('sier at faglig kontroll gjenstår for reglene i pilotsettet og P7, unntatt de klinisk godkjente beregningene og fagteksten', () => {
+  it('sier at reglene i pilotsettet og P7 er kontrollert og ikke godkjent, unntatt de klinisk godkjente beregningene og fagteksten', () => {
     // Hovedregelen, den langsomme varianten og for fluoksetin annenhver dag står side om side; klinikeren velger strategi.
     const perStoff = new Map<string, string[]>()
     for (const r of NEDTRAPPINGSSETT.regler) {
@@ -122,7 +122,7 @@ describe('Regelstatusen', () => {
     const GODKJENT_FAGTEKST = ['seponering-bupropion', 'seponering-agomelatin']
     // Depotreglene er klinisk godkjent for de avgrensede oppstartene (kontrollørens gjennomgang av 62ebb21), og sertralin → mirtazapin
     // og hovedregelen for vortioksetin for de avgrensede startforløpene (gjennomgangen av f77e1a9); de kan beregnes. Den langsomme
-    // varianten for vortioksetin er fortsatt til kontroll og vises ikke ved siden av.
+    // varianten for vortioksetin er kontrollert og ikke godkjent og vises ikke ved siden av.
     const GODKJENT_BEREGNING = ['kryssnedtrapping-sertralin-mirtazapin', 'depot-aripiprazol-maintena', 'depot-paliperidon-xeplion', 'seponering-vortioksetin']
     for (const [verktoy, valg, alle] of tilfeller) {
       const t = tilgjengelighet(verktoy!, valg)
@@ -134,8 +134,15 @@ describe('Regelstatusen', () => {
       } else if (GODKJENT_FAGTEKST.includes(regler[0]!)) {
         expect(t, regler[0]).toMatchObject({ status: 'fagtekst', grunner: [`Regelen «${t.regler[0]!.tittel}» har ingen beregning.`] })
       } else {
-        expect(t.status, regler[0]).toBe('til_kontroll')
-        expect(t.grunner.join(' ')).toMatch(/faglig kontroll/)
+        // Etter kontrollørens disposisjon av leveransen: kontrollert og ikke godkjent, ikke et åpent spørsmål.
+        expect(t.status, regler[0]).toBe('ikke_godkjent')
+        const tekst = t.regler.some((r) => r.beregnbarhet === 'bare_tekstlig')
+        expect(t.grunner, regler[0]).toEqual([
+          tekst
+            ? 'Beregning er ikke tilgjengelig: regelen er bare fagtekst, fordi det ikke finnes en dokumentert måte å gi trinnene med dagens norske preparater. Fagteksten er ikke klinisk godkjent.'
+            : 'Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning.',
+        ])
+        expect(t.grunner.join(' ')).not.toMatch(/faglig kontroll/)
       }
     }
     // Gruppebyttet til aripiprazol er ikke godkjent som modell (beslutning P4-A) og står bare i sammenligningssettet.
@@ -143,7 +150,8 @@ describe('Regelstatusen', () => {
     expect(new Set(tilfeller.flatMap(([, , r]) => r))).toEqual(new Set(REGELSETT.regler.map((r) => r.id)))
     expect(REGELSETT.regler).toHaveLength(PILOTSETT.regler.length + NEDTRAPPINGSSETT.regler.length)
     expect(VERKTOY.map((x) => regeloversikt(x).tilgjengelige)).toEqual([1, 1, 2])
-    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length - 1, 1, 1])
+    expect(VERKTOY.map((x) => regeloversikt(x).ikkeGodkjent)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length - 1, 1, 1])
+    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([0, 0, 0])
   })
 
   it('forklarer hvorfor et antidepressivum uten regel ikke kan trappes ned, med dekningen fra P7', () => {
@@ -173,7 +181,7 @@ describe('Regelstatusen', () => {
     endret.tittel = 'Endret etter godkjenningen'
     expect(tilgjengelighet(TRAPPE_NED!, { fra: v('escitalopram') }, testsett(endret)).status).toBe('til_kontroll')
     // Pilotsettet har ingen seponeringsregel lenger (den hyperbolske er i sammenligningssettet), så ingen annen regel venter.
-    expect(regeloversikt(TRAPPE_NED!, testsett(TEST_NEDTRAPPING))).toEqual({ tilgjengelige: 1, tilKontroll: 0 })
+    expect(regeloversikt(TRAPPE_NED!, testsett(TEST_NEDTRAPPING))).toEqual({ tilgjengelige: 1, ikkeGodkjent: 0, tilKontroll: 0 })
   })
 
   it('viser bare fagtekst for en godkjent regel uten beregning', () => {
@@ -182,7 +190,7 @@ describe('Regelstatusen', () => {
     const r = godkjennITest(tekst, 'test-fagtekst')
     expect(tilgjengelighet(TRAPPE_NED!, { fra: v('escitalopram') }, testsett(r))).toMatchObject({ status: 'fagtekst', regler: [r] })
     // Oversikten sier det samme: en godkjent regel uten beregning kan ikke beregnes, og venter ikke på kontroll.
-    expect(regeloversikt(TRAPPE_NED!, testsett(r))).toEqual({ tilgjengelige: 0, tilKontroll: 0 })
+    expect(regeloversikt(TRAPPE_NED!, testsett(r))).toEqual({ tilgjengelige: 0, ikkeGodkjent: 0, tilKontroll: 0 })
   })
 })
 

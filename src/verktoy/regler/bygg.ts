@@ -4,6 +4,7 @@
  * fakta fra NICE som flere regler bygger på. Faktaene er gjengitt med egne
  * ord, med sted i kilden (`kilder.ts`).
  */
+import type { Disposisjon } from './godkjenning'
 import type { Avklaring, Begrunnelseskrav, Godkjenningssteg, Kildehenvisning, Parameter, Parameterart, Utsagn } from './modell'
 
 export const h = (kilde: string, sted: string, faktum: string): Kildehenvisning => ({ kilde, sted, faktum })
@@ -141,3 +142,23 @@ export const FORUTSETNINGER_FELLES = [
   'Dosene er den ideelle dosekurven, avrundet til to desimaler; hvilke doser som kan gis med norske preparater (styrker, deling, flytende form), avgjøres i P5.',
   'Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet, interaksjoner, graviditet, etterlevelse eller individuell toleranse fra dosen (B7); dette må vurderes av forskriveren.',
 ]
+
+const LEVERANSEN = 'Kontrollørens disposisjon av leveranseomfanget 31.10.2026 (P4.8 og P7.5, kontrollert i 52b22a4)'
+
+/**
+ * Kontrollørens disposisjon av den første avgrensede leveransen (P4.8 og
+ * P7.5): ikke alle regler skal godkjennes før publisering. Bare de seks
+ * regelversjonene som allerede er klinisk godkjent i oppgitt omfang, kan
+ * brukes klinisk; hver annen regel står som kontrollert og ikke godkjent, og
+ * en senere aktivering krever en ny kontroll i en egen PR. Ingen ny
+ * godkjenning er gitt med disposisjonen.
+ */
+export const leveransen = (tillegg?: Disposisjon['tillegg']): Disposisjon => ({
+  av: 'ChatGPT (uavhengig fagkontrollør)',
+  dato: '2026-10-31',
+  merknad: {
+    beregnbar: `${LEVERANSEN}: kontrollert og ikke godkjent for klinisk doseberegning i denne første avgrensede leveransen. Regelen er et kontrollutkast og sperret for klinisk bruk; et tilfelle i det kliniske omfanget er teknisk, ikke et godkjenningsvedtak. En senere aktivering krever en ny, separat kontroll av kilder, FEST, risiko og dosebygging for nøyaktig den versjonen, med positive og negative tester, i en egen PR.`,
+    uten_beregning: `${LEVERANSEN}: bare fagtekst, sperret for beregning. Det som mangler, er en dokumentert dosebygging med dagens preparater, ikke et klinisk behov for mindre doser. Fagteksten er ikke klinisk godkjent; en beregnbar regel kan bare vurderes på nytt med en dokumentert formulering eller metode og en ny kontroll i en egen PR.`,
+  },
+  ...(tillegg && { tillegg }),
+})

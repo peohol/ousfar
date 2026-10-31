@@ -20,7 +20,8 @@
  *    når regelen gjelder, hva forskriveren må bekrefte og svare på, og når den
  *    ikke gjelder.
  * 5. **Godkjenningen** (`Godkjenning`): utkast, til faglig kontroll, klinisk
- *    godkjent, avvist eller trukket, med historikk.
+ *    godkjent, kontrollert og ikke godkjent, avvist eller trukket, med
+ *    historikk.
  * 6. **Beregningsresultatet** (`Beregningsresultat`, i `beregning.ts`): en
  *    modellberegning knyttet til regel-, regelsett-, modell- og motorversjon,
  *    aldri en klinisk anbefaling i seg selv.
@@ -412,7 +413,14 @@ export interface Gruppemedlem {
 
 /* --- Godkjenning -------------------------------------------------------------- */
 
-export type Godkjenningsstatus = 'utkast' | 'til_faglig_kontroll' | 'klinisk_godkjent' | 'avvist' | 'trukket'
+/**
+ * `ikke_godkjent`: en uavhengig kontrollør har vurdert nøyaktig denne
+ * regelversjonen og ikke godkjent den for klinisk bruk i leveransen. Den er et
+ * kontrollutkast som fortsatt kan regnes ut til sammenligning, men aldri gir
+ * en klinisk plan; en senere aktivering krever en ny kontroll av en bestemt
+ * versjon. `avvist` og `trukket` stopper også modellberegningen.
+ */
+export type Godkjenningsstatus = 'utkast' | 'til_faglig_kontroll' | 'klinisk_godkjent' | 'ikke_godkjent' | 'avvist' | 'trukket'
 
 export type Rolle = 'utvikler' | 'uavhengig_kontrollor' | 'faglig_beslutningstaker'
 

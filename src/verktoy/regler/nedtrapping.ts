@@ -52,7 +52,8 @@
  * gjengir teksten der.
  */
 import { kravtekst, omradetekst } from './beregning'
-import { FORUTSETNINGER_FELLES, forslag, h, kilde, NICE, planhorisont, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, pn, RCPSYCH, steg, utsagn } from './bygg'
+import { FORUTSETNINGER_FELLES, forslag, h, kilde, leveransen, NICE, planhorisont, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, pn, RCPSYCH, steg, utsagn } from './bygg'
+import { disponer } from './godkjenning'
 import type { Avklaring, Begrunnelseskrav, Bekreftelse, Fase, Forlop, Godkjenningssteg, Grunnlag, Inndatakrav, Kildehenvisning, Kliniskomfang, Nedtrappingsstrategi, Parameter, Regel, Regelsett, Regneeksempel, Sporsmal, Unntak, Utsagn } from './modell'
 import { REGELMODELLVERSJON } from './modell'
 import { gruppeRestApAripiprazol, seponeringCitalopramHyperbolsk, SPC } from './pilotsett'
@@ -2246,19 +2247,24 @@ const harTekst = (s: Stoffregel): s is Stoffregel & { ikkeBeregnbar: NonNullable
 
 export const NEDTRAPPINGSSETT: Regelsett = {
   id: 'ousfar-verktoy-nedtrapping',
-  versjon: 13,
+  versjon: 14,
   modell: REGELMODELLVERSJON,
   beskrivelse:
-    'Utkast til nedtrappingsregler for antidepressiva (P7): én regel per virkestoff med forsvarlig kildegrunnlag, laget fra preparatomtalen, NICE og RCPsych, og en langsom variant av hver beregnbar regel etter tidligere seponeringssymptomer. Hver plan er et startforslag med minstetider som forskriveren kan justere innenfor valgområdene fra fagvurderingen; ingen plan går til null eller har en fast nedre grense. Kan et trinn ikke gis nøyaktig med preparatene, kan forskriveren velge blant de nærmeste dosene som kan gis, innenfor det foretrukne området der ingen begrunnelse kreves (beslutning P7-A og gjennomgangen av 9cb420b); et avvik tilbys ikke, og planen er da et forklarende stopp. Hver beregnbar regel har et klinisk omfang (gjennomgangen av 0ae6d07): en godkjenning kan bare gjelde de kontrollerte tilfellene av legemiddelform, startdose, behandlingstid, tidligere seponeringssymptomer og trinnstørrelse, og alt annet stopper med forklaring, også en plan med en preparatstyrke som ikke er kontrollert (gjennomgangen av d6cc3dd). Tekstreglene for bupropion og agomelatin er klinisk godkjent etter substanskontrollen 30.10.2026; duloksetin, venlafaksin, citalopram, mirtazapin, moklobemid og paroksetin er tekstregler uten beregning, og fluoksetinregelen gjelder ikke de harde kapslene. Etter gjennomgangen av f77e1a9 er hovedregelen for vortioksetin (versjon 11) klinisk godkjent bare for én første reduksjon fra 20 til 15 mg ved kort behandlingstid hos voksne under 65 år, med tabletter og de kontrollerte styrkene; neste reduksjon beregnes ikke. De øvrige reglene er til ny faglig kontroll, og ingen annen beregnet plan er klinisk godkjent.',
-  regler: [
-    ...STOFFER.flatMap((s) => (harTekst(s) ? [] : [seponeringsregel(s), seponeringsregel(s, true)])),
-    fluoksetinAnnenhverDag(),
-    bupropion,
-    agomelatin,
-    duloksetin,
-    venlafaksin,
-    ...STOFFER.filter(harTekst).map(tekstFraStoff),
-  ],
+    'Utkast til nedtrappingsregler for antidepressiva (P7): én regel per virkestoff med forsvarlig kildegrunnlag, laget fra preparatomtalen, NICE og RCPsych, og en langsom variant av hver beregnbar regel etter tidligere seponeringssymptomer. Hver plan er et startforslag med minstetider som forskriveren kan justere innenfor valgområdene fra fagvurderingen; ingen plan går til null eller har en fast nedre grense. Kan et trinn ikke gis nøyaktig med preparatene, kan forskriveren velge blant de nærmeste dosene som kan gis, innenfor det foretrukne området der ingen begrunnelse kreves (beslutning P7-A og gjennomgangen av 9cb420b); et avvik tilbys ikke, og planen er da et forklarende stopp. Hver beregnbar regel har et klinisk omfang (gjennomgangen av 0ae6d07): en godkjenning kan bare gjelde de kontrollerte tilfellene av legemiddelform, startdose, behandlingstid, tidligere seponeringssymptomer og trinnstørrelse, og alt annet stopper med forklaring, også en plan med en preparatstyrke som ikke er kontrollert (gjennomgangen av d6cc3dd). Tekstreglene for bupropion og agomelatin er klinisk godkjent etter substanskontrollen 30.10.2026; duloksetin, venlafaksin, citalopram, mirtazapin, moklobemid og paroksetin er tekstregler uten beregning, og fluoksetinregelen gjelder ikke de harde kapslene. Etter gjennomgangen av f77e1a9 er hovedregelen for vortioksetin (versjon 11) klinisk godkjent bare for én første reduksjon fra 20 til 15 mg ved kort behandlingstid hos voksne under 65 år, med tabletter og de kontrollerte styrkene; neste reduksjon beregnes ikke. Etter kontrollørens disposisjon av leveransen 31.10.2026 er alle de øvrige reglene kontrollert og ikke godkjent (tekstreglene som bare fagtekst): de er sperret for klinisk bruk, og en senere aktivering krever en ny kontroll av nøyaktig den versjonen i en egen PR.',
+  regler: disponer(
+    [
+      ...STOFFER.flatMap((s) => (harTekst(s) ? [] : [seponeringsregel(s), seponeringsregel(s, true)])),
+      fluoksetinAnnenhverDag(),
+      bupropion,
+      agomelatin,
+      duloksetin,
+      venlafaksin,
+      ...STOFFER.filter(harTekst).map(tekstFraStoff),
+    ],
+    leveransen({
+      'seponering-vortioksetin-langsom': 'Bare hovedregelens første reduksjon fra 20 til 15 mg er godkjent; den langsomme varianten er ikke det.',
+    }),
+  ),
 }
 
 /**

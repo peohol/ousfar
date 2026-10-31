@@ -4,7 +4,7 @@
 
 Regelsett `ousfar-verktoy-nedtrapping-sammenligning` versjon 5, regelmodell 11, beregningsmotor 9. Sammenlignings- og utviklingssett for reglene (P4.8 og P7.5): strategier som ikke er godkjent som valgbare kliniske strategier, og gruppebyttet til aripiprazol som modelleringsdemonstrasjon av gruppebaserte regler. Ikke i verktøyet og ikke kliniske anbefalinger.
 
-**2 regler, 0 klinisk godkjent.** Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. De er ikke empirisk validerte kliniske anbefalinger, og ingen av reglene er klinisk godkjent. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-p7-nedtrapping.md` og `docs/verktøy-p4-regelmodell.md`.
+**2 regler, 0 klinisk godkjent.** Utfallet av kontrollen: 2 ikke ferdig kontrollert. Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. De er ikke empirisk validerte kliniske anbefalinger, og ingen av reglene er klinisk godkjent. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-p7-nedtrapping.md` og `docs/verktøy-p4-regelmodell.md`.
 
 Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel bygger på teksten der, og den vises ikke (`docs/verktøy-p3-rettigheter.md`).
 

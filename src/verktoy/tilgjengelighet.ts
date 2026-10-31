@@ -1,15 +1,16 @@
 /**
  * Hva et verktøy kan gi for valgene som er gjort (P6.8 i
  * `docs/verktøy-utviklingsplan.md`): en beregnet doseplan, bare publisert
- * OUSFAR-fagtekst, eller ingenting fordi faglig kontroll gjenstår eller
- * kombinasjonen ikke er støttet. Statusen følger reglene slik de faktisk står
- * i regelsettet, med godkjenningen kontrollert mot regelversjon og
- * fingeravtrykk (`godkjenningsfeil`), aldri etter et flagg i appen.
+ * OUSFAR-fagtekst, eller ingenting fordi regelen er kontrollert og ikke
+ * godkjent, faglig kontroll gjenstår eller kombinasjonen ikke er støttet.
+ * Statusen følger reglene slik de faktisk står i regelsettet, med
+ * godkjenningen kontrollert mot regelversjon og fingeravtrykk
+ * (`godkjenningsfeil`), aldri etter et flagg i appen.
  */
 import { dekningFor, dekningstekst } from './dekning'
 import { KILDEFORMULERINGER, type Kildeformulering, type Virkestoffkartlegging } from './kartlegging'
 import { KARTLEGGING, virkestoffvalg, type Verktoy } from './register'
-import { godkjenningsfeil } from './regler/godkjenning'
+import { godkjenningsfeil, harBeregning, kontrollutfall } from './regler/godkjenning'
 import { REGELMODELLVERSJON, type Administrasjon, type Forlop, type Regel, type Regelsett, type Virkestoffvalg } from './regler/modell'
 import { NEDTRAPPINGSSETT } from './regler/nedtrapping'
 import { PILOTSETT } from './regler/pilotsett'
@@ -41,7 +42,7 @@ export interface Verktoyvalg {
   til?: Valgtvirkestoff
 }
 
-export type Regelstatus = 'tilgjengelig' | 'fagtekst' | 'til_kontroll' | 'ikke_stottet'
+export type Regelstatus = 'tilgjengelig' | 'fagtekst' | 'ikke_godkjent' | 'til_kontroll' | 'ikke_stottet'
 
 export interface Tilgjengelighet {
   status: Regelstatus
@@ -86,11 +87,15 @@ export function medlemFor(r: Regel, valg: Verktoyvalg): string | undefined {
   return r.til?.type === 'gruppe' ? valg.til?.nokkel : undefined
 }
 
-/** Om regelen har en beregning; en regel som bare er tekstlig eller mangler anbefaling, har det ikke. */
-const harBeregning = (r: Regel) => r.beregnbarhet !== 'bare_tekstlig' && r.beregnbarhet !== 'mangler_anbefaling'
+/** Om regelen er uten gyldig godkjenning, med en anbefaling som er eller kan bli kontrollert. */
+const utenGodkjenning = (r: Regel) => godkjenningsfeil(r).length > 0 && r.beregnbarhet !== 'mangler_anbefaling'
 
-/** Om regelen venter på faglig kontroll: ikke godkjent, og med en anbefaling å kontrollere. */
-const venterPaKontroll = (r: Regel) => godkjenningsfeil(r).length > 0 && r.beregnbarhet !== 'mangler_anbefaling'
+/** Hvorfor reglene uten godkjenning ikke kan beregnes, etter utfallet av kontrollen. */
+const UTEN_GODKJENNING: Record<'ikke_godkjent' | 'bare_fagtekst' | 'til_kontroll', string> = {
+  ikke_godkjent: 'Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning.',
+  bare_fagtekst: 'Beregning er ikke tilgjengelig: regelen er bare fagtekst, fordi det ikke finnes en dokumentert måte å gi trinnene med dagens norske preparater. Fagteksten er ikke klinisk godkjent.',
+  til_kontroll: 'Beregning er ikke tilgjengelig fordi faglig kontroll av regelen gjenstår.',
+}
 
 /** Hvorfor en godkjent regel likevel ikke kan beregnes for valgene; tom når den kan. */
 function beregningsfeil(r: Regel, valg: Verktoyvalg): string[] {
@@ -104,8 +109,9 @@ function beregningsfeil(r: Regel, valg: Verktoyvalg): string[] {
 /**
  * Hva verktøyet kan gi for valgene: en beregning når en gjeldende klinisk
  * godkjent regel kan beregnes, ellers fagtekst fra en godkjent regel uten
- * beregning, ellers at faglig kontroll gjenstår når det finnes regler som
- * ikke er godkjent, og ellers at kombinasjonen ikke er støttet.
+ * beregning, ellers at reglene er kontrollert og ikke godkjent, eller at
+ * faglig kontroll gjenstår når én av dem ikke er kontrollert ennå, og ellers
+ * at kombinasjonen ikke er støttet.
  */
 export function tilgjengelighet(verktoy: Verktoy, valg: Verktoyvalg, regelsett: Regelsett = REGELSETT, k: Virkestoffkartlegging = KARTLEGGING): Tilgjengelighet {
   if (valg.til && valg.til.nokkel === valg.fra.nokkel && valg.til.formulering === valg.fra.formulering) {
@@ -120,9 +126,10 @@ export function tilgjengelighet(verktoy: Verktoy, valg: Verktoyvalg, regelsett: 
   if (beregnbare.length > 0) return { status: 'tilgjengelig', regler: beregnbare, grunner: [] }
   const fagtekst = godkjente.filter((r) => r.beregnbarhet === 'bare_tekstlig')
   if (fagtekst.length > 0) return { status: 'fagtekst', regler: fagtekst, grunner: fagtekst.flatMap((r) => beregningsfeil(r, valg)) }
-  const tilKontroll = regler.filter(venterPaKontroll)
-  if (tilKontroll.length > 0) {
-    return { status: 'til_kontroll', regler: tilKontroll, grunner: ['Beregning er ikke tilgjengelig fordi faglig kontroll av regelen gjenstår.'] }
+  const uten = regler.filter(utenGodkjenning)
+  if (uten.length > 0) {
+    const utfall = [...new Set(uten.map(kontrollutfall))].filter((u) => u !== 'godkjent')
+    return { status: utfall.includes('til_kontroll') ? 'til_kontroll' : 'ikke_godkjent', regler: uten, grunner: utfall.map((u) => UTEN_GODKJENNING[u]) }
   }
   const grunner = godkjente.flatMap((r) => beregningsfeil(r, valg))
   if (grunner.length > 0) return { status: 'ikke_stottet', regler: [], grunner }
@@ -131,18 +138,24 @@ export function tilgjengelighet(verktoy: Verktoy, valg: Verktoyvalg, regelsett: 
 }
 
 /**
- * Hvor mange regler for verktøyets virkestoffer som kan beregnes nå, og hvor
+ * Hvor mange regler for verktøyets virkestoffer som kan beregnes nå, hvor
+ * mange som er kontrollert og ikke godkjent (også bare fagtekst), og hvor
  * mange som venter på faglig kontroll, med de samme kravene som
  * {@link tilgjengelighet}: en godkjent regel uten beregning telles ikke som
  * tilgjengelig.
  */
-export function regeloversikt(verktoy: Verktoy, regelsett: Regelsett = REGELSETT, k: Virkestoffkartlegging = KARTLEGGING): { tilgjengelige: number; tilKontroll: number } {
+export function regeloversikt(
+  verktoy: Verktoy,
+  regelsett: Regelsett = REGELSETT,
+  k: Virkestoffkartlegging = KARTLEGGING,
+): { tilgjengelige: number; ikkeGodkjent: number; tilKontroll: number } {
   const nokler = new Set(virkestoffvalg(verktoy, k).map((v) => v.nokkel))
   const iVerktoyet = (v: Virkestoffvalg) =>
     v.type === 'virkestoff' ? nokler.has(v.nokkel) : (k.grupper.find((g) => g.id === v.gruppe)?.medlemmer.some((m) => nokler.has(m.virkestoff)) ?? false)
   const egne = regelsett.regler.filter((r) => (verktoy.type === 'seponering') === (r.til === null) && iVerktoyet(r.fra) && (!r.til || iVerktoyet(r.til)))
   return {
     tilgjengelige: egne.filter((r) => godkjenningsfeil(r).length === 0 && harBeregning(r)).length,
-    tilKontroll: egne.filter(venterPaKontroll).length,
+    ikkeGodkjent: egne.filter((r) => utenGodkjenning(r) && kontrollutfall(r) !== 'til_kontroll').length,
+    tilKontroll: egne.filter((r) => utenGodkjenning(r) && kontrollutfall(r) === 'til_kontroll').length,
   }
 }

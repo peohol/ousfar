@@ -27,7 +27,7 @@ export interface Dekning {
 }
 
 export const DEKNINGSSTATUS: Record<Dekningsstatus, string> = {
-  regel_til_kontroll: 'beregnbar regel under faglig kontroll',
+  regel_til_kontroll: 'beregnbar regel (status per regel)',
   bare_fagtekst: 'bare fagtekst',
   mangler_anbefaling: 'mangler anbefaling',
   begrenset: 'annen begrunnet begrensning',

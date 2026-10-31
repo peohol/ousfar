@@ -11,7 +11,7 @@
  * i nettleseren.
  */
 import { kildeFor } from './kilder'
-import { alleGrunnlag, apneValg, henvisninger, nulltrinnfeil, type Regel } from './modell'
+import { alleGrunnlag, apneValg, henvisninger, nulltrinnfeil, type Godkjenningssteg, type Regel } from './modell'
 
 /** JSON med sorterte nøkler, uten udefinerte felt, og med RegExp som kilde og flagg. */
 export function kanonisk(x: unknown): string {
@@ -109,3 +109,59 @@ export function godkjenningsfeil(r: Regel): string[] {
 }
 
 export const erKliniskGodkjent = (r: Regel) => godkjenningsfeil(r).length === 0
+
+/**
+ * Utfallet av den faglige kontrollen for en regel, slik verktøyet og
+ * rapportene sier det: godkjent i det oppgitte omfanget, kontrollert og ikke
+ * godkjent, bare fagtekst (kontrollert, men uten beregning), eller fortsatt
+ * til kontroll. En regel som er vurdert og ikke godkjent, er ikke et åpent
+ * klinisk spørsmål.
+ */
+export type Kontrollutfall = 'godkjent' | 'ikke_godkjent' | 'bare_fagtekst' | 'til_kontroll'
+
+export const KONTROLLUTFALL: Record<Kontrollutfall, string> = {
+  godkjent: 'kontrollert og godkjent i oppgitt omfang',
+  ikke_godkjent: 'kontrollert, ikke godkjent',
+  bare_fagtekst: 'bare fagtekst, ikke beregnbar',
+  til_kontroll: 'ikke ferdig kontrollert',
+}
+
+/** Om regelen har en beregning; en regel som bare er tekstlig eller mangler anbefaling, har det ikke. */
+export const harBeregning = (r: Regel) => r.beregnbarhet !== 'bare_tekstlig' && r.beregnbarhet !== 'mangler_anbefaling'
+
+/** Statusene der kontrollen er avsluttet uten godkjenning. */
+const AVSLUTTET: readonly Regel['godkjenning']['status'][] = ['ikke_godkjent', 'avvist', 'trukket']
+
+export function kontrollutfall(r: Regel): Kontrollutfall {
+  if (erKliniskGodkjent(r)) return 'godkjent'
+  // En godkjenning som ikke lenger er gyldig (endret regel), må kontrolleres på nytt.
+  if (!AVSLUTTET.includes(r.godkjenning.status)) return 'til_kontroll'
+  return harBeregning(r) ? 'ikke_godkjent' : 'bare_fagtekst'
+}
+
+/** Kontrollørens vurdering av en leveranse: hvem, når og hva den sier om regler med og uten beregning. */
+export interface Disposisjon {
+  av: string
+  dato: string
+  /** Begrunnelsen for en beregnbar regel og for en regel uten beregning. */
+  merknad: { beregnbar: string; uten_beregning: string }
+  /** Det kontrolløren sa om en bestemt regel (id → tillegg til merknaden). */
+  tillegg?: Record<string, string>
+}
+
+/**
+ * Hver regel som ikke er klinisk godkjent, står etter disposisjonen som
+ * kontrollert og ikke godkjent for nøyaktig sin versjon. En godkjent regel er
+ * uendret, og fingeravtrykkene endres ikke, siden godkjenningen ikke inngår i
+ * dem.
+ */
+export function disponer(regler: Regel[], d: Disposisjon): Regel[] {
+  const ukjente = Object.keys(d.tillegg ?? {}).filter((id) => !regler.some((r) => r.id === id))
+  if (ukjente.length > 0) throw new Error(`Disposisjonen nevner regler som ikke finnes: ${ukjente.join(', ')}`)
+  return regler.map((r) => {
+    if (r.godkjenning.status === 'klinisk_godkjent') return r
+    const merknad = [harBeregning(r) ? d.merknad.beregnbar : d.merknad.uten_beregning, d.tillegg?.[r.id]].filter(Boolean).join(' ')
+    const steg: Godkjenningssteg = { status: 'ikke_godkjent', dato: d.dato, av: d.av, rolle: 'uavhengig_kontrollor', regelversjon: r.versjon, merknad }
+    return { ...r, godkjenning: { status: 'ikke_godkjent', historikk: [...r.godkjenning.historikk, steg] } }
+  })
+}

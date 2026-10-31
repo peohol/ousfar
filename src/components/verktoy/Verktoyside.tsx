@@ -25,6 +25,7 @@ import { foretrukketTekst, trinndosetekst, type Doseplanresultat, type Formalter
 import { godkjenningstekst, kildeliste, planvisning } from '../../verktoy/planvisning'
 import { finnVirkestoff, KARTLEGGING, VERKTOY, verktoyFor, virkestoffvalg, type Verktoy } from '../../verktoy/register'
 import { avrund } from '../../verktoy/regler/beregning'
+import { KONTROLLUTFALL, kontrollutfall } from '../../verktoy/regler/godkjenning'
 import type { Regel, Regelsett } from '../../verktoy/regler/modell'
 import {
   fraForlop,
@@ -138,7 +139,7 @@ function Oversikt({ overskrift, ukjent, regelsett }: { overskrift: string; ukjen
         </p>
       )}
       <ul className="verktoykort">
-        {status.map(({ verktoy, tilgjengelige, tilKontroll }) => (
+        {status.map(({ verktoy, tilgjengelige, ikkeGodkjent, tilKontroll }) => (
           <li key={verktoy.id}>
             <a className="verktoykort__lenke" href={verktoyadresse(verktoy.id)}>
               <Ikon navn={verktoy.ikon} className="verktoykort__ikon" />
@@ -149,6 +150,7 @@ function Oversikt({ overskrift, ukjent, regelsett }: { overskrift: string; ukjen
                   {tilgjengelige > 0
                     ? `${tilgjengelige} ${tilgjengelige === 1 ? 'regel kan' : 'regler kan'} beregnes`
                     : 'Ingen beregning tilgjengelig ennå'}
+                  {ikkeGodkjent > 0 && ` · ${ikkeGodkjent} ikke godkjent`}
                   {tilKontroll > 0 && ` · ${tilKontroll} til faglig kontroll`}
                 </span>
               </span>
@@ -284,19 +286,20 @@ function Statusvisning({ status }: { status: Tilgjengelighet }) {
       </section>
     )
   }
+  const utenGodkjenning = status.status === 'ikke_godkjent' || status.status === 'til_kontroll'
   return (
     <section className="verktoystatus" data-status={status.status} role="status">
-      <h2>{status.status === 'til_kontroll' ? 'Beregning er ikke tilgjengelig' : 'Ikke støttet'}</h2>
+      <h2>{utenGodkjenning ? 'Beregning er ikke tilgjengelig' : 'Ikke støttet'}</h2>
       {status.grunner.map((g) => (
         <p key={g}>{g}</p>
       ))}
-      {status.status === 'til_kontroll' && (
+      {utenGodkjenning && (
         <>
-          <p>OUSFAR viser ingen doseplan før regelen er kontrollert og klinisk godkjent.</p>
+          <p>OUSFAR viser bare doseplaner etter regler som er kontrollert og klinisk godkjent.</p>
           <ul className="verktoystatus__regler">
             {status.regler.map((r) => (
               <li key={r.id}>
-                {r.tittel} <span className="verktoystatus__merke">til faglig kontroll</span>
+                {r.tittel} <span className="verktoystatus__merke">{KONTROLLUTFALL[kontrollutfall(r)]}</span>
               </li>
             ))}
           </ul>

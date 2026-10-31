@@ -154,7 +154,7 @@ Motoren ble kjørt på pilotreglenes regneeksempler med FEST-filen lastet ned 28
 ## 12. Hva som ikke er gjort
 
 - Brukerflaten kom i P6: appen bruker motoren bare gjennom `kliniskDoseplan` i `src/verktoy/doseplan.ts`, og `src/__tests__/verktoyapp.test.ts` håndhever at modellberegningene og de syntetiske testdataene ikke når appen. De enkelte verktøyene (P7–P10) gjenstår.
-- Ingen regel er klinisk godkjent.
+- Ingen regel var klinisk godkjent i P5; godkjenningene som er gitt senere, står i `docs/verktøy-p7-nedtrapping.md` §11.
 - **Fordeling over døgnet** er ikke en del av reglene; dosene er døgndoser.
 - **Deler av en sprøyte** brukes ikke, selv om en preparatomtale kan beskrive det (f.eks. lavere dose fra et sett). Det krever en egen, kildebasert byggestein.
 - **Flytende former per ml** og **styrke oppgitt for et salt** brukes ikke før doseringsoppløsningen eller omregningen er dokumentert.

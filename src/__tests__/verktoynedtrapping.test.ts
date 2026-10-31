@@ -195,13 +195,13 @@ describe('Dekningen (P7.1)', () => {
     expect(REGELSETT.regler.filter((r) => r.til === null && virkestoffvalg(TRAPPE_NED).some((v) => r.fra.type === 'virkestoff' && v.nokkel === r.fra.nokkel)).map((r) => r.id).sort()).toEqual([...dekket].sort())
   })
 
-  it('gir verktøyet statusen: faglig kontroll gjenstår for stoffene med regel, og en forklaring for de andre', () => {
+  it('gir verktøyet statusen: kontrollert og ikke godkjent for stoffene med regel, og en forklaring for de andre', () => {
     for (const d of NEDTRAPPINGSDEKNING) {
       const t = tilgjengelighet(TRAPPE_NED, { fra: { nokkel: d.nokkel, formulering: 'standard' } })
       if (d.status === 'regel_til_kontroll' || d.status === 'bare_fagtekst') {
-        // Fagteksten for bupropion og agomelatin er klinisk godkjent og vises, og vortioksetin kan beregnes; de andre venter på kontroll.
+        // Fagteksten for bupropion og agomelatin er klinisk godkjent og vises, og vortioksetin kan beregnes; de andre er kontrollert og ikke godkjent.
         const ider = seponeringsregler(d.nokkel).map((r) => r.id)
-        expect(t.status, d.nokkel).toBe(ider.some((id) => GODKJENT_FAGTEKST.includes(id)) ? 'fagtekst' : ider.some((id) => id in GODKJENT) ? 'tilgjengelig' : 'til_kontroll')
+        expect(t.status, d.nokkel).toBe(ider.some((id) => GODKJENT_FAGTEKST.includes(id)) ? 'fagtekst' : ider.some((id) => id in GODKJENT) ? 'tilgjengelig' : 'ikke_godkjent')
       } else {
         expect(t, d.nokkel).toEqual({ status: 'ikke_stottet', regler: [], grunner: [dekningstekst(d)] })
         expect(t.grunner[0], d.nokkel).toMatch(/OUSFAR har derfor ingen regel/)
@@ -226,11 +226,11 @@ describe('Regelutkastene (P7.2)', () => {
     expect(SAMMENLIGNINGSSETT.regler.map((r) => r.id)).toEqual(['seponering-citalopram-hyperbolsk', 'gruppe-rest-ap-aripiprazol'])
     // Escitalopram er flyttet fra pilotsettet til P7; appen bruker begge, og ingen regel-ID finnes i begge.
     expect(PILOTSETT.regler.map((r) => r.id)).not.toContain('seponering-escitalopram')
-    expect(regel('escitalopram').godkjenning.historikk.at(-12)!.merknad).toMatch(/substanskontrollen 30\.10\.2026, runde 3/)
+    expect(regel('escitalopram').godkjenning.historikk.filter((x) => x.rolle === 'utvikler').at(-12)!.merknad).toMatch(/substanskontrollen 30\.10\.2026, runde 3/)
     expect(new Set(REGELSETT.regler.map((r) => r.id)).size).toBe(REGELSETT.regler.length)
   })
 
-  it('er klinisk godkjent bare for tekstreglene for bupropion og agomelatin og hovedregelen for vortioksetin, med kontrollørens fingeravtrykk; resten er til faglig kontroll, uten åpne valg', () => {
+  it('er klinisk godkjent bare for tekstreglene for bupropion og agomelatin og hovedregelen for vortioksetin, med kontrollørens fingeravtrykk; resten er kontrollert og ikke godkjent, uten åpne valg', () => {
     // Bare de uttrykkelige godkjenningene er registrert, og de gjelder nøyaktig det kontrollerte innholdet.
     expect(P7REGLER.filter(erKliniskGodkjent).map((r) => r.id)).toEqual(Object.keys(GODKJENT))
     for (const [id, g] of Object.entries(GODKJENT)) {
@@ -261,7 +261,23 @@ describe('Regelutkastene (P7.2)', () => {
       expect(erKliniskGodkjent(r), r.id).toBe(false)
       expect(r.godkjenning.historikk.every((x) => x.status !== 'klinisk_godkjent'), r.id).toBe(true)
     }
-    for (const r of NEDTRAPPINGSSETT.regler.filter((x) => !(x.id in GODKJENT))) expect(r.godkjenning.status, r.id).toBe('til_faglig_kontroll')
+    // Kontrollørens disposisjon av leveransen 31.10.2026: hver annen regel er kontrollert og ikke godkjent for nøyaktig sin versjon, tekstreglene som bare fagtekst.
+    for (const r of NEDTRAPPINGSSETT.regler.filter((x) => !(x.id in GODKJENT))) {
+      expect(r.godkjenning.status, r.id).toBe('ikke_godkjent')
+      expect(r.godkjenning.historikk.at(-1), r.id).toEqual({
+        status: 'ikke_godkjent',
+        dato: '2026-10-31',
+        av: 'ChatGPT (uavhengig fagkontrollør)',
+        rolle: 'uavhengig_kontrollor',
+        regelversjon: r.versjon,
+        merknad: expect.stringMatching(
+          r.beregnbarhet === 'bare_tekstlig'
+            ? /^Kontrollørens disposisjon av leveranseomfanget 31\.10\.2026 \(P4\.8 og P7\.5, kontrollert i 52b22a4\): bare fagtekst, sperret for beregning\. Det som mangler, er en dokumentert dosebygging med dagens preparater, ikke et klinisk behov for mindre doser\./
+            : /^Kontrollørens disposisjon av leveranseomfanget 31\.10\.2026 \(P4\.8 og P7\.5, kontrollert i 52b22a4\): kontrollert og ikke godkjent for klinisk doseberegning i denne første avgrensede leveransen\./,
+        ),
+      })
+    }
+    expect(regel('vortioksetin-langsom').godkjenning.historikk.at(-1)!.merknad).toMatch(/den langsomme varianten er ikke det\.$/)
     // Reglene er omarbeidet etter hver kontroll og sendt til kontroll på nytt hver gang.
     const steg = (n: number) => Array.from({ length: n }, (_, i) => [`utkast ${i + 1}`, `til_faglig_kontroll ${i + 1}`]).flat()
     // Utviklerens steg; kontrollørens godkjenning av vortioksetin kommer i tillegg.

@@ -9,6 +9,7 @@ import { DEKNINGSSTATUS, dekningstekst, NEDTRAPPINGSDEKNING, type Dekning } from
 import type { Festpreparat } from './festformuleringer'
 import { lesKartdata } from './kartdata'
 import { MARKEDSGRUNNLAG, markedsgrunnlag, preparaterFor, type Kartdata } from './kartlegging'
+import { erKliniskGodkjent } from './regler/godkjenning'
 import { lesKontrollgrunnlag, type Kontrollgrunnlag } from './regler/kontroll'
 import { henvisninger, type Regel, type Regelsett } from './regler/modell'
 import { PLANHORISONT_TRINN } from './regler/bygg'
@@ -67,6 +68,13 @@ function rad(d: Dekning, kart: Kartdata, g: Kontrollgrunnlag): string[] {
   ]
 }
 
+/** Hvilke seponeringsregler som er klinisk godkjent; verktøyet bruker bare dem, og bare i omfanget de er godkjent for. */
+function godkjenningstekst(): string {
+  const godkjente = NEDTRAPPINGSDEKNING.flatMap((d) => seponeringsregler(d.nokkel).filter(erKliniskGodkjent).map((r) => `\`${r.id}\``))
+  const alle = godkjente.length === 0 ? '**Ingen regel er klinisk godkjent**' : `**Bare ${godkjente.join(', ')} er klinisk godkjent**, hver bare i omfanget den er godkjent for`
+  return `${alle}. Etter kontrollørens disposisjon av leveransen (P7.5) er de andre reglene kontrollert og ikke godkjent eller bare fagtekst, og verktøyet viser ingen doseplan etter dem.`
+}
+
 export function lagDekningsrapport(kart: Kartdata = lesKartdata(), g: Kontrollgrunnlag = lesKontrollgrunnlag()): string {
   const antall = (s: Dekning['status']) => NEDTRAPPINGSDEKNING.filter((d) => d.status === s).length
   const telling = (Object.keys(DEKNINGSSTATUS) as Dekning['status'][]).map((s) => `${DEKNINGSSTATUS[s]}: ${antall(s)}`)
@@ -75,7 +83,7 @@ export function lagDekningsrapport(kart: Kartdata = lesKartdata(), g: Kontrollgr
 
 <!-- Laget av \`npm run verktoy:regler -- rapport\` fra src/verktoy/dekning.ts, regelsettet, P3-kildearkivet og FEST-uttrekket. Ikke rediger for hånd. -->
 
-Én rad per antidepressivum i kildetabellen (${NEDTRAPPINGSDEKNING.length} virkestoffer; johannesurt er utelatt). Statusen skiller kildens Stop-oppføring fra OUSFARs egen regel: at kilden har en Stop-oppføring, gir aldri i seg selv en regel, og ingen regel bygger på teksten der. **Ingen regel er klinisk godkjent**, så verktøyet viser ingen doseplan før uavhengig faglig kontroll (P7.5). Valgene og de åpne faglige spørsmålene står i \`docs/verktøy-p7-nedtrapping.md\`, reglene i \`docs/verktøy-p7-regelutkast.md\`, og den hyperbolske citalopramregelen, som bare er til sammenligning og ikke i verktøyet, i \`docs/verktøy-p7-sammenligning.md\`.
+Én rad per antidepressivum i kildetabellen (${NEDTRAPPINGSDEKNING.length} virkestoffer; johannesurt er utelatt). Statusen skiller kildens Stop-oppføring fra OUSFARs egen regel: at kilden har en Stop-oppføring, gir aldri i seg selv en regel, og ingen regel bygger på teksten der. ${godkjenningstekst()} Valgene og de åpne faglige spørsmålene står i \`docs/verktøy-p7-nedtrapping.md\`, reglene i \`docs/verktøy-p7-regelutkast.md\`, og den hyperbolske citalopramregelen, som bare er til sammenligning og ikke i verktøyet, i \`docs/verktøy-p7-sammenligning.md\`.
 
 ${liste(telling)}
 

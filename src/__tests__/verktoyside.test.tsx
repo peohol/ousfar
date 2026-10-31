@@ -70,9 +70,9 @@ describe('oversikten', () => {
     const kort = screen.getAllByRole('link').filter((a) => a.classList.contains('verktoykort__lenke'))
     expect(kort.map((a) => a.getAttribute('href'))).toEqual(['#/verktoy/trappe-ned-antidepressiv', '#/verktoy/bytte-antidepressiv', '#/verktoy/bytte-antipsykotikum'])
     expect(kort.map((a) => a.querySelector('.verktoykort__status')?.textContent)).toEqual([
-      '1 regel kan beregnes · 22 til faglig kontroll',
-      '1 regel kan beregnes · 1 til faglig kontroll',
-      '2 regler kan beregnes · 1 til faglig kontroll',
+      '1 regel kan beregnes · 22 ikke godkjent',
+      '1 regel kan beregnes · 1 ikke godkjent',
+      '2 regler kan beregnes · 1 ikke godkjent',
     ])
     expect(screen.queryByText(/Ingen beregninger er tilgjengelige ennå/)).toBeNull()
     expect(screen.queryByRole('alert')).toBeNull()
@@ -87,7 +87,7 @@ describe('oversikten', () => {
 })
 
 describe('med pilotreglene', () => {
-  it('sier at beregning ikke er tilgjengelig fordi faglig kontroll gjenstår, og henter ingenting', async () => {
+  it('sier at beregning ikke er tilgjengelig fordi regelen er kontrollert og ikke godkjent, og henter ingenting', async () => {
     const user = userEvent.setup()
     const legemidler = lesing()
     vis({ verktoy: 'bytte-antipsykotikum', legemidler })
@@ -101,8 +101,10 @@ describe('med pilotreglene', () => {
 
     const status = screen.getByRole('status')
     expect(within(status).getByRole('heading', { name: 'Beregning er ikke tilgjengelig' })).toBeTruthy()
-    expect(status.textContent).toMatch(/faglig kontroll av regelen gjenstår/)
-    expect(status.textContent).toMatch(/til faglig kontroll/)
+    expect(status.textContent).toMatch(/regelen er kontrollert, men ikke godkjent for klinisk beregning/)
+    expect(within(status).getByText('Bytte fra olanzapin til kvetiapin', { exact: false }).textContent).toMatch(/kontrollert, ikke godkjent$/)
+    // En regel kontrolløren har vurdert, står ikke som et åpent spørsmål.
+    expect(status.textContent).not.toMatch(/faglig kontroll/)
     expect(screen.queryByRole('button', { name: 'Beregn doseplan' })).toBeNull()
     expect(screen.queryByRole('table')).toBeNull()
     expect(legemidler.les).not.toHaveBeenCalled()
@@ -147,11 +149,11 @@ describe('med pilotreglene', () => {
     expect(within(fagtekst).getByText('Agomelatin kan seponeres uten nedtrapping.')).toBeTruthy()
     expect(within(fagtekst).getByText(/^Klinisk godkjent 30\.10\.2026 av ChatGPT \(uavhengig fagkontrollør\), regelversjon 1\..*gjelder ikke tilbakefallsrisiko, oppfølging av depresjon, leverskade eller overgang til andre legemidler\.$/)).toBeTruthy()
     expect(screen.queryByRole('button', { name: 'Beregn doseplan' })).toBeNull()
-    // Duloksetin er også bare fagtekst, men ikke godkjent: da står bare at faglig kontroll gjenstår.
+    // Duloksetin er også bare fagtekst, men ikke godkjent: da står at det ikke finnes en dokumentert måte å gi trinnene på.
     await user.clear(felt)
     await user.type(felt, 'Duloksetin')
     expect(screen.queryByRole('region', { name: 'Fagtekst' })).toBeNull()
-    expect(screen.getByRole('status').textContent).toMatch(/Beregning er ikke tilgjengelig.*Seponering av duloksetin.*til faglig kontroll/)
+    expect(screen.getByRole('status').textContent).toMatch(/Beregning er ikke tilgjengelig.*regelen er bare fagtekst, fordi det ikke finnes en dokumentert måte å gi trinnene med dagens norske preparater.*Seponering av duloksetin.*bare fagtekst, ikke beregnbar/)
   })
 })
 
