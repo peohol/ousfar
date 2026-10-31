@@ -10,11 +10,12 @@
  */
 import type { Legemiddelutvalg } from '../legemiddeldata/lesing'
 import type { Preparatgrunnlag } from './motor/byggesteiner'
-import { festFerskhet, formvalgSomTrengs, kliniskDoseplan, type Doseplaninndata, type Doseplanresultat, type Formalternativer, type Formvalg } from './motor/plan'
+import { festFerskhet, formvalgSomTrengs, kliniskDoseplan, type Doseplaninndata, type Doseplanresultat, type Formalternativer, type Formvalg, type Trinnvalg } from './motor/plan'
 import { festkoblinger, KARTLEGGING } from './register'
-import type { Regel, Regelsett } from './regler/modell'
+import { inndatagrenser, inndatavilkar, kravtekst, medEnhet, omradetekst } from './regler/beregning'
+import { forslagsverdi, justerbare, parametre, type Regel, type Regelsett, type Trinnvalgsvar } from './regler/modell'
 import type { Formuleringsklasse } from './festformuleringer'
-import { medlemFor, REGELSETT, type Verktoyvalg } from './tilgjengelighet'
+import { medlemFor, REGELSETT, settFor, type Verktoyvalg } from './tilgjengelighet'
 
 /** Det forskriveren har fylt inn, slik feltene står. Tas vare på når appen oppdateres; planen gjør aldri det. */
 export interface Planskjema {
@@ -27,9 +28,25 @@ export interface Planskjema {
   bekreftet: string[]
   /** Unntakets id → om forholdet gjelder. Et unntak uten svar er ukjent. */
   pasientforhold: Record<string, boolean>
+  /** Spørsmålets id → forskriverens svar (ja eller nei). Et spørsmål uten svar stopper beregningen. */
+  svar: Record<string, boolean>
+  /** Forskriverens begrunnelse for valg som krever det; står i planen. */
+  begrunnelse: string
   /** Forløpets id → formuleringen og legemiddelformen som er valgt. */
   formvalg: Record<string, { klasse?: string; legemiddelform?: string }>
   godkjenningsfritak: boolean
+  /**
+   * Parameterstien → forskriverens valg for en verdi regelen lar forskriveren
+   * justere (f.eks. dager per trinn), slik feltet står. Tomt felt gir regelens
+   * forslag; om valget er innenfor regelens område, avgjør beregningen.
+   */
+  justert: Record<string, string>
+  /**
+   * Dosene forskriveren har valgt for trinn som ikke kan gis nøyaktig
+   * (`Fase.trinnvalg`), i trinnenes rekkefølge. Et valg gjelder bare fra dosen
+   * det ble gjort fra; ellers sier planen at det ikke er brukt.
+   */
+  trinnvalg: Trinnvalgsvar[]
   /**
    * Valgene skjemaet er fylt ut for ({@link valgidentitet}). Skifter
    * virkestoffet eller formuleringen, begynner skjemaet på nytt, så ingen dose,
@@ -45,8 +62,12 @@ export const TOMT_SKJEMA: Planskjema = {
   regel: '',
   bekreftet: [],
   pasientforhold: {},
+  svar: {},
+  begrunnelse: '',
   formvalg: {},
   godkjenningsfritak: false,
+  justert: {},
+  trinnvalg: [],
   gjelder: '',
 }
 
@@ -59,11 +80,22 @@ export const skjemaFor = (s: Planskjema, gjelder: string): Planskjema => (s.gjel
 
 /**
  * Skjemaet med en annen strategi. Alt som hører til regelen — måldosen,
- * bekreftelsene, svarene på unntakene, formvalgene og godkjenningsfritaket —
+ * bekreftelsene, svarene på unntakene og spørsmålene, formvalgene, justeringene,
+ * begrunnelsen, valgene av dose per trinn og godkjenningsfritaket —
  * begynner på nytt; dosen pasienten bruker og startdatoen står.
  */
 export const medRegel = (s: Planskjema, regel: string): Planskjema =>
   s.regel === regel ? s : { ...TOMT_SKJEMA, gjelder: s.gjelder, regel, startdose: s.startdose, startdato: s.startdato }
+
+/**
+ * Skjemaet med forskriverens valg av `mg` for trinnet i `t`. Valg for senere
+ * trinn i samme forløp faller bort, fordi de ble gjort fra en plan som nå
+ * endres.
+ */
+export const medTrinnvalg = (s: Planskjema, t: Pick<Trinnvalg, 'forlop' | 'trinn' | 'fra_mg'>, mg: number): Planskjema => ({
+  ...s,
+  trinnvalg: [...s.trinnvalg.filter((v) => v.forlop !== t.forlop || v.trinn < t.trinn), { forlop: t.forlop, trinn: t.trinn, fra_mg: t.fra_mg, mg }],
+})
 
 /** Et tall slik det er skrevet, med komma eller punktum; `undefined` når feltet er tomt eller ikke et positivt tall. */
 export function lesDose(tekst: string): number | undefined {
@@ -82,8 +114,44 @@ export function mangler(r: Regel, skjema: Planskjema): string[] {
   if (lesDose(skjema.startdose) === undefined) ut.push('Aktuell døgndose må fylles inn som et tall større enn 0.')
   if (trengerMaldose(r) && lesDose(skjema.maldose) === undefined) ut.push('Måldosen må fylles inn som et tall større enn 0.')
   if (skjema.startdato && !/^\d{4}-\d{2}-\d{2}$/.test(skjema.startdato)) ut.push('Startdatoen er ikke en gyldig dato.')
+  for (const [sti, p] of justerbare(r)) {
+    if (skjema.justert[sti]?.trim() && justertVerdi(skjema, sti) === undefined) ut.push(`${p.justerbar} må være et tall større enn 0, eller stå tomt for regelens forslag.`)
+  }
   return ut
 }
+
+/** Spørsmålene der et ja krever en skriftlig begrunnelse. */
+const sporsmalMedBegrunnelse = (r: Regel) => (r.sporsmal ?? []).filter((s) => s.krever_begrunnelse)
+
+/** Forsiktighetsgrensene for dosene: en dose utenfor krever begrunnelse i stedet for å stoppe. */
+const doserMedBegrunnelse = (r: Regel) => r.inndata.filter((k) => k.krever_begrunnelse)
+
+/** Om et valg, svar eller en dose i regelen kan kreve en skriftlig begrunnelse; da viser skjemaet feltet for den. */
+export const kanKreveBegrunnelse = (r: Regel) =>
+  parametre(r.plan).some(([, p]) => (p.begrunnelseskrav ?? []).length > 0) || sporsmalMedBegrunnelse(r).length > 0 || doserMedBegrunnelse(r).length > 0
+
+/** Når regelen krever begrunnelse, i klartekst: «Reduksjon per trinn over 25 %; …; dose utenfor rammen …». */
+export const begrunnelseshjelp = (r: Regel): string =>
+  [
+    ...parametre(r.plan).flatMap(([sti, p]) => (p.begrunnelseskrav ?? []).map((k) => `${p.justerbar ?? sti} ${kravtekst(k, p, r.sporsmal)}`)),
+    ...sporsmalMedBegrunnelse(r).map((s) => s.ja),
+    ...doserMedBegrunnelse(r).map((k) => `${k.navn === 'startdose' ? 'Aktuell døgndose' : 'Måldose'} over ${inndatagrenser(k)}${inndatavilkar(k, r.sporsmal)}`),
+  ].join('; ')
+
+/**
+ * Verdiene forskriveren kan justere i regelen: stien, navnet og en hjelpetekst
+ * med forslaget og området. Forslaget følger svarene (`Parameter.standard_ved`).
+ */
+export const justeringsfelt = (r: Regel, svar: Record<string, boolean> = {}): { sti: string; navn: string; forslag: string; hjelp: string }[] =>
+  justerbare(r).map(([sti, p]) => {
+    const x = forslagsverdi(p, svar)
+    const forslag = x === null ? '' : medEnhet(x, p)
+    const ved = x !== p.verdi && p.standard_ved ? ` ved ${r.sporsmal?.find((s) => s.id === p.standard_ved!.ved)?.ja ?? p.standard_ved.ved}${p.verdi === null ? '' : ` (ellers ${medEnhet(p.verdi, p)})`}` : ''
+    return { sti, navn: p.justerbar, forslag, hjelp: `${forslag ? `Regelens forslag er ${forslag}${ved}; tomt felt bruker forslaget. ` : ''}Regelen tillater ${omradetekst(p)}.` }
+  })
+
+/** Forskriverens valg for den justerbare verdien på `sti`; `undefined` når feltet er tomt eller ikke et tall. */
+const justertVerdi = (skjema: Planskjema, sti: string) => lesDose(skjema.justert[sti] ?? '')
 
 /** Inndataene til motoren, fra valgene i verktøyet og skjemaet. */
 export function inndataFor(r: Regel, valg: Verktoyvalg, skjema: Planskjema): Doseplaninndata {
@@ -98,6 +166,12 @@ export function inndataFor(r: Regel, valg: Verktoyvalg, skjema: Planskjema): Dos
   const medlem = medlemFor(r, valg)
   const maldose = trengerMaldose(r) ? lesDose(skjema.maldose) : undefined
   const pasientforhold = Object.fromEntries(r.unntak.flatMap((u) => (u.id in skjema.pasientforhold ? [[u.id, skjema.pasientforhold[u.id]!]] : [])))
+  const svar = Object.fromEntries((r.sporsmal ?? []).flatMap((x) => (x.id in skjema.svar ? [[x.id, skjema.svar[x.id]!]] : [])))
+  const begrunnelse = kanKreveBegrunnelse(r) ? skjema.begrunnelse.trim() : ''
+  const justert = Object.fromEntries(justerbare(r).flatMap(([sti]) => {
+    const x = justertVerdi(skjema, sti)
+    return x === undefined ? [] : [[sti, x]]
+  }))
   return {
     startdose_mg: lesDose(skjema.startdose) ?? 0,
     ...(maldose !== undefined && { maldose_mg: maldose }),
@@ -105,6 +179,10 @@ export function inndataFor(r: Regel, valg: Verktoyvalg, skjema: Planskjema): Dos
     ...(medlem && { medlem }),
     bekreftet: skjema.bekreftet.filter((id) => r.bekreftelser.some((b) => b.id === id)),
     pasientforhold,
+    ...(Object.keys(svar).length > 0 && { svar }),
+    ...(Object.keys(justert).length > 0 && { justert }),
+    ...(begrunnelse && { begrunnelse }),
+    ...(skjema.trinnvalg.length > 0 && { trinnvalg: skjema.trinnvalg.filter((v) => r.plan.forlop.some((f) => f.id === v.forlop)) }),
     formvalg,
     godkjenningsfritak: skjema.godkjenningsfritak,
   }
@@ -135,7 +213,7 @@ export function formvalgFor(r: Regel, valg: Verktoyvalg, skjema: Planskjema, utv
 
 /** Doseplanen, bare når den er klinisk; ellers en stopp med grunnene. */
 export function beregnPlan(r: Regel, valg: Verktoyvalg, skjema: Planskjema, utvalg: Legemiddelutvalg, naa: Date, regelsett: Regelsett = REGELSETT): Doseplanresultat {
-  return kliniskDoseplan(r, inndataFor(r, valg, skjema), grunnlagFor(r, valg, utvalg), { idag: osloDato(naa), naa: naa.toISOString(), fagtekst: [] }, regelsett)
+  return kliniskDoseplan(r, inndataFor(r, valg, skjema), grunnlagFor(r, valg, utvalg), { idag: osloDato(naa), naa: naa.toISOString(), fagtekst: [] }, settFor(r, regelsett))
 }
 
 /**

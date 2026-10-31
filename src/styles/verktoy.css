@@ -204,7 +204,22 @@
 
 .verktoyskjema__handlinger {
   display: flex;
+  flex-wrap: wrap;
+  gap: var(--rom-3);
   justify-content: flex-start;
+}
+
+.verktoyskjema__valgte {
+  margin: 0;
+  padding-left: var(--rom-6);
+  font-size: var(--tekst-ui);
+}
+
+/* Dosene forskriveren kan velge for et trinn som ikke kan gis nøyaktig (P7.5). */
+.trinnvalg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-4);
 }
 
 /* --- Statusen for valgene ----------------------------------------------------
@@ -262,6 +277,11 @@
   margin: 0;
 }
 
+.verktoyfagtekst__godkjenning {
+  font-size: var(--tekst-liten);
+  color: var(--blekk-dempet);
+}
+
 /* --- Doseplanen -------------------------------------------------------------- */
 .doseplan {
   display: flex;
@@ -290,6 +310,11 @@
   font-size: var(--tekst-seksjon);
   font-weight: var(--vekt-medium);
   line-height: var(--linjehoyde-tett);
+}
+
+.doseplan__undertittel {
+  margin: 0;
+  font-weight: var(--vekt-halvfet);
 }
 
 .doseplan__handlinger {
@@ -507,4 +532,12 @@
   .doseplan tr {
     break-inside: avoid;
   }
+}
+
+/* Begrunnelsen for valgene er vanlig tekst over flere linjer, ikke et tall. */
+.verktoyskjema__begrunnelse {
+  padding-block: var(--rom-3);
+  font-weight: var(--vekt-normal);
+  font-variant-numeric: normal;
+  resize: vertical;
 }

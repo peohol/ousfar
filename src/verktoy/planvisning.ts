@@ -11,10 +11,10 @@
  * kildeoppføringen, aldri med innhold.
  */
 import { norskDato } from './motor/byggesteiner'
-import { elementtekst, preparatliste, type Doseplanresultat, type Praktiskforlop } from './motor/plan'
+import { elementtekst, EN_REDUKSJON_KORT, fordelingSuffiks, preparatliste, type Doseplanresultat, type Praktiskforlop } from './motor/plan'
 import { KARTLEGGING } from './register'
-import { avrund, injeksjonstidspunkt } from './regler/beregning'
-import { fingeravtrykk } from './regler/godkjenning'
+import { avrund, hverTekst, injeksjonstidspunkt, valgtTekst } from './regler/beregning'
+import { erKliniskGodkjent, fingeravtrykk } from './regler/godkjenning'
 import { kildeFor } from './regler/kilder'
 import { henvisninger, type Regel } from './regler/modell'
 
@@ -42,6 +42,8 @@ export interface Plankilde {
 
 export interface Planvisning {
   tittel: string
+  /** Hva planen er når den ikke er en fullstendig nedtrapping, rett under tittelen; ellers `null`. */
+  undertittel: string | null
   kolonner: { navn: string; administrasjon: string }[]
   rader: Planrad[]
   advarsler: string[]
@@ -93,8 +95,8 @@ function rader(forlop: Praktiskforlop[], startdato: string | undefined): Planrad
     const celler = forlop.map((f): Dosecelle | null => {
       const p = f.perioder.find((x) => x.fra <= fra && (x.til === null || x.til >= fra))
       if (p) {
-        const avvik = Math.abs(p.avvik_prosent) > 1e-7 ? `ideelt ${mg(p.ideell_mg)} (${p.avvik_prosent > 0 ? '+' : ''}${String(avrund(p.avvik_prosent)).replace('.', ',')} %)` : undefined
-        return { dose: mg(p.mg), elementer: p.elementer.map(elementtekst), ...(avvik && { avvik }) }
+        const avvik = [Math.abs(p.avvik_prosent) > 1e-7 && `ideelt ${mg(p.ideell_mg)} (${p.avvik_prosent > 0 ? '+' : ''}${String(avrund(p.avvik_prosent)).replace('.', ',')} %)`, valgtTekst(p)].filter(Boolean).join('; ')
+        return { dose: `${mg(p.mg)}${p.hver ? ` ${hverTekst(p.hver)}` : ''}${fordelingSuffiks(p)}`, elementer: p.elementer.map(elementtekst), ...(avvik && { avvik }) }
       }
       return f.perioder.length > 0 && f.siste_dosedag !== null && fra === f.siste_dosedag + 1 ? { dose: 'Seponert', elementer: [] } : null
     })
@@ -125,6 +127,17 @@ function rader(forlop: Praktiskforlop[], startdato: string | undefined): Planrad
   return ut.sort((a, b) => a.dag - b.dag).map((x) => x.rad)
 }
 
+/**
+ * Hvem som har godkjent regelen klinisk, når, for hvilken versjon og med
+ * hvilken avgrensning (kontrollørens merknad); null når regelen ikke er gyldig
+ * klinisk godkjent.
+ */
+export function godkjenningstekst(regel: Regel): string | null {
+  const sist = regel.godkjenning.historikk.at(-1)
+  if (!sist || !erKliniskGodkjent(regel)) return null
+  return `Klinisk godkjent ${norskDato(sist.dato)} av ${sist.av}, regelversjon ${sist.regelversjon}. ${sist.merknad}`
+}
+
 /** Kildene regelen henviser til, med stedene i hver; Psychiatrienet bare med kildeoppføringen. */
 export function kildeliste(regel: Regel): Plankilde[] {
   const per = new Map<string, Set<string>>()
@@ -139,12 +152,19 @@ export function kildeliste(regel: Regel): Plankilde[] {
   })
 }
 
+/**
+ * Undertittelen til en plan med bare én reduksjon: regeltittelen sier hva
+ * regelen kan, ikke hva planen er (kontrollørens gjennomgang av 5699ce6, P7.5).
+ */
+export const EN_FORSTE_REDUKSJON = 'Én mulig første reduksjon med revurdering, ikke en validert fullstendig nedtrappingsplan.'
+
 /** Visningen av en klinisk doseplan; `null` for alt som ikke er en klinisk plan. */
 export function planvisning(r: Doseplanresultat, regel: Regel, startdato?: string): Planvisning | null {
   if (r.status !== 'doseplan' || !r.klinisk || r.sperre.length > 0 || r.regel.id !== regel.id || r.regel.fingeravtrykk !== fingeravtrykk(regel)) return null
   const kolonner = r.forlop.map((f) => ({ navn: virkestoffnavn(f.virkestoff), administrasjon: ADMINISTRASJON[f.administrasjon] }))
   return {
     tittel: regel.tittel,
+    undertittel: r.forlop.some((f) => f.avslutning_kort === EN_REDUKSJON_KORT) ? EN_FORSTE_REDUKSJON : null,
     kolonner,
     rader: rader(r.forlop, startdato),
     advarsler: [...r.forbehold, ...r.merknader, ...r.forlop.flatMap((f, i) => f.begrensninger.map((b) => `${kolonner[i]!.navn}: ${b}`))],
@@ -194,6 +214,7 @@ export function planTekst(v: Planvisning, overskrift: string): string {
   return [
     overskrift,
     v.tittel,
+    ...(v.undertittel ? [v.undertittel] : []),
     '',
     ...linjer,
     ...PLANDELER.flatMap((d) => punkter(d.tittel, v[d.felt])),

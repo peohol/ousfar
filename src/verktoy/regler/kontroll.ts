@@ -14,12 +14,13 @@ import type { Formuleringsklasse } from '../festformuleringer'
 import type { Kildearkiv } from '../kildearkiv'
 import { kildegrunnlag, type Kildeanbefaling, type Kildepart } from '../kildeanbefalinger'
 import { erSperret, KILDEFORMULERINGER, type Virkestoffkartlegging } from '../kartlegging'
-import { beregn, kortform } from './beregning'
-import { godkjenningsfeil } from './godkjenning'
+import { beregn, kortform, utlosteKrav } from './beregning'
+import { godkjenningsfeil, vurderingsfeil } from './godkjenning'
 import { kildeFor } from './kilder'
 import {
   alleGrunnlag,
   henvisninger,
+  nulltrinnfeil,
   parameterfeil,
   parametre,
   REGELMODELLVERSJON,
@@ -110,12 +111,15 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
     const viser = [x.start.type === 'etter_utvasking' ? x.start.forlop : null, ...x.faser.map((y) => (y.type === 'hold' && y.varighet.type === 'til_forlop_er_avsluttet' ? y.varighet.forlop : null))]
     for (const v of viser) if (v && !tidligere.includes(v)) f(`forløp ${x.id} viser til ${v}, som ikke kommer før`)
     const forste = x.faser[0]
-    const trengerDose = forste && (forste.type === 'nedtrapping' || (forste.type === 'hold' && forste.dose.type === 'aktuell'))
+    const trengerDose = forste && (forste.type === 'nedtrapping' || ((forste.type === 'hold' || forste.type === 'intervalldosering') && forste.dose.type === 'aktuell'))
     if (trengerDose && x.utgangsdose !== 'startdose') f(`forløp ${x.id} trapper ned eller holder en dose uten utgangsdose`)
     // Avgrensningene P5 regner med: formuleringene passer administrasjonen, og varenavnene er oppgitt.
     for (const k of x.klasser ?? []) if (!KLASSER[x.administrasjon].includes(k)) f(`forløp ${x.id} gjelder formuleringen ${k}, som ikke er ${x.administrasjon}`)
     if (x.klasser?.length === 0) f(`forløp ${x.id} har en tom liste med formuleringer`)
     if (x.preparater && (x.preparater.length === 0 || x.preparater.some((v) => !v.trim()))) f(`forløp ${x.id} har en tom liste eller et tomt varenavn`)
+    if (x.legemiddelformer && (x.legemiddelformer.length === 0 || x.legemiddelformer.some((v) => !v.trim()))) f(`forløp ${x.id} har en tom liste eller en tom legemiddelform`)
+    // FEST skiller ikke depotformuleringer med ulike intervaller i formen; et depotforløp uten varenavn kan aldri gi en plan.
+    if (x.administrasjon === 'depotinjeksjon' && !x.preparater && r.beregnbarhet !== 'bare_tekstlig') f(`depotforløpet ${x.id} sier ikke hvilket depotpreparat det gjelder (varenavn i FEST)`)
   })
 
   // Inndata: en måldose i planen krever et eksplisitt krav, og ingen skjult standard.
@@ -124,6 +128,13 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
   for (const x of r.inndata) {
     if (!x.omrade && !x.verdier) f(`inndatakravet for ${x.navn} har verken område eller verdier`)
     if (x.gjelder_medlem && !r.medlemmer?.some((m) => m.nokkel === x.gjelder_medlem)) f(`inndatakravet gjelder ${x.gjelder_medlem}, som ikke er medlem`)
+    if (x.ved && !r.sporsmal?.some((s) => s.id === x.ved!.sporsmal)) f(`inndatakravet for ${x.navn} gjelder spørsmålet ${x.ved.sporsmal}, som regelen ikke har`)
+    if (x.krever_begrunnelse && x.art === 'bindende_krav') f(`inndatakravet for ${x.navn} er bindende, men kan begrunnes bort; en forsiktighetsgrense må være veiledende`)
+  }
+  // Fordelingen av døgndosen: en grense og minst to doser.
+  for (const x of r.plan.forlop) {
+    const a = x.fordeling?.antall
+    if (a && (a.length === 0 || a.some((n) => !Number.isInteger(n) || n < 2))) f(`forløp ${x.id} fordeler døgndosen på et ugyldig antall doser (${a.join(', ')})`)
   }
 
   // Grupper: medlemmene er nøyaktig P1-gruppens, og hvert har en begrunnelse.
@@ -173,6 +184,51 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
     const ugyldig = parameterfeil(p, sti)
     if (ugyldig) f(`${sti} er ugyldig: ${ugyldig}`)
     else if (p.verdi !== null && p.omrade && (p.verdi < p.omrade[0] || p.verdi > p.omrade[1])) f(`${sti} er utenfor sitt eget område`)
+    if (p.justerbar !== undefined && (!p.justerbar.trim() || !p.omrade || p.omrade[0] === p.omrade[1])) f(`${sti} er justerbar uten tekst eller uten et område å velge i`)
+    if (p.teknisk_maks && !p.omrade) f(`${sti} har en teknisk øvre grense uten et område`)
+    for (const [i, k] of (p.begrunnelseskrav ?? []).entries()) {
+      const grenser = [k.over, k.under].filter((x): x is number => x !== undefined)
+      if (grenser.length === 0) f(`${sti}.begrunnelseskrav[${i}] har verken over eller under`)
+      if (p.omrade && grenser.some((x) => x < p.omrade![0] || x > p.omrade![1])) f(`${sti}.begrunnelseskrav[${i}] har en grense utenfor området ${p.omrade.join('–')}`)
+      if (k.ved && !r.sporsmal?.some((s) => s.id === k.ved)) f(`${sti}.begrunnelseskrav[${i}] gjelder spørsmålet ${k.ved}, som regelen ikke har`)
+    }
+    // Et forslag ved et svar er et utgangspunkt: innenfor området, og uten selv å kreve begrunnelse ved det svaret.
+    const sv = p.standard_ved
+    if (sv) {
+      if (!r.sporsmal?.some((s) => s.id === sv.ved)) f(`${sti}.standard_ved gjelder spørsmålet ${sv.ved}, som regelen ikke har`)
+      if (!p.justerbar || !p.omrade || sv.verdi < p.omrade[0] || sv.verdi > p.omrade[1]) f(`${sti}.standard_ved er ikke et valg innenfor parameterens område`)
+      if (utlosteKrav(p, sv.verdi, { [sv.ved]: true }).length > 0) f(`${sti}.standard_ved krever selv begrunnelse ved svaret det gjelder; et utgangspunkt kan ikke være et avvik`)
+    }
+  }
+
+  // Spørsmålene har tekst og en id ingen bekreftelse eller unntak bruker.
+  const betingelser = [...r.bekreftelser, ...r.unntak, ...(r.sporsmal ?? [])].map((x) => x.id)
+  for (const id of new Set(betingelser)) if (betingelser.filter((x) => x === id).length > 1) f(`id-en ${id} brukes av flere bekreftelser, unntak eller spørsmål`)
+  for (const s of r.sporsmal ?? []) if (!s.tekst.trim() || !s.ja.trim()) f(`spørsmålet ${s.id} mangler tekst`)
+
+  // Ingen seponeringsregel går til 0 av seg selv: ingen avslutning (nulltrinn) er godkjent faglig (P7.5).
+  for (const x of nulltrinnfeil(r)) f(x)
+  for (const x of r.plan.forlop) {
+    for (const fase of x.faser) {
+      if (fase.type !== 'nedtrapping') continue
+      const individuell = fase.avslutning === 'individuell'
+      const slutt = fase.strategi.type === 'prosent_av_aktuell' ? fase.strategi.sluttdose_mg : undefined
+      const sluttdose = !!slutt
+      if (individuell && fase.minste_varighet) f(`forløp ${x.id} har både minste varighet og individuell avslutning; uten seponering har nedtrappingen ingen slutt å måle til`)
+      // Uten seponering trengs en teknisk planhorisont. Ved seponering ville en sluttdose vært en nedre grense ingen har godkjent (P7.5);
+      // ved bytte er den der beregningen stopper og resten vurderes individuelt, og den må ha en kilde.
+      if (individuell && !fase.horisont) f(`forløp ${x.id} har individuell avslutning uten teknisk planhorisont; planen ville ikke hatt noen grense`)
+      if (!individuell && fase.horisont) f(`forløp ${x.id} har en planhorisont uten individuell avslutning; en nedtrapping til 0 har ingen horisont`)
+      if (individuell && sluttdose && r.plan.form === 'seponering') f(`forløp ${x.id} har både sluttdose og individuell avslutning; ingen nedre grense for beregnede trinn ved seponering er godkjent`)
+      if (individuell && slutt && r.plan.form !== 'seponering' && !slutt.grunnlag.henvisninger?.length) f(`forløp ${x.id} stopper beregningen ved en sluttdose uten kilde`)
+      if (!individuell && fase.strategi.type === 'prosent_av_aktuell' && !sluttdose) f(`forløp ${x.id} trapper ned prosentvis uten sluttdose og uten individuell avslutning; dosen når aldri 0`)
+      // Valg av dose per trinn (P7.5) gjelder bare innenfor regelens område for reduksjonen, når planen stopper ved et trinn som ikke kan gis, og uten toleranse.
+      if (fase.trinnvalg) {
+        if (fase.strategi.type !== 'prosent_av_aktuell' || !fase.strategi.prosent.omrade) f(`forløp ${x.id} lar forskriveren velge dose per trinn uten et område for reduksjonen i prosent av aktuell dose`)
+        if (!individuell) f(`forløp ${x.id} lar forskriveren velge dose per trinn uten individuell avslutning`)
+        if (x.dosevalg?.avvik_prosent?.verdi) f(`forløp ${x.id} lar forskriveren velge dose per trinn og har samtidig en toleranse`)
+      }
+    }
   }
   for (const x of tallfeil(r)) f(x)
   const vurderinger = grunnlag.filter(([, gr]) => gr.type === 'ousfar_vurdering').map(([sti]) => sti)
@@ -192,6 +248,7 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
   if (sist && sist.regelversjon !== r.versjon) f(`siste godkjenningssteg gjelder regelversjon ${sist.regelversjon}, ikke versjon ${r.versjon}; en endret regel må sendes til kontroll på nytt`)
   for (const s of r.godkjenning.historikk) if (!Number.isInteger(s.regelversjon) || s.regelversjon < 1 || s.regelversjon > r.versjon) f(`et godkjenningssteg gjelder en ukjent regelversjon (${s.regelversjon})`)
   if (r.godkjenning.status === 'klinisk_godkjent') for (const x of godkjenningsfeil(r)) f(`er merket klinisk godkjent, men godkjenningen er ikke gyldig: ${x}`)
+  if (r.godkjenning.status === 'ikke_godkjent') for (const x of vurderingsfeil(r)) f(`er merket kontrollert og ikke godkjent, men vurderingen er ikke gyldig: ${x}`)
 
   // Regneeksemplene: et beregnbart eksempel gir nøyaktig det forventede, et stopp-eksempel stopper av riktig grunn.
   if (r.beregnbarhet !== 'bare_tekstlig' && r.beregnbarhet !== 'mangler_anbefaling' && !r.eksempler.some((e) => !e.stopp)) f('har ingen regneeksempler med beregnet plan')

@@ -1,6 +1,6 @@
 # OUSFAR Verktøy – P4: regelmodellen
 
-**Status 28.10.2026:** til faglig kontroll (P4.8), tredje runde. De to første uavhengige kontrollene fant feil i modellen og beregningen; de er rettet (§11). De fire reglene som ble endret faglig, er versjon 2 og sendt til kontroll på nytt. Ingen regel er klinisk godkjent. Fra P6 leser appen regelstatusen for å vise hva som kan beregnes, og får en plan bare gjennom `kliniskDoseplan`; med dagens regler viser den at faglig kontroll gjenstår.
+**Status 31.10.2026:** P4.8 er lukket som kontrolloppdrag for den første avgrensede leveransen (kontrollørens disposisjon av leveranseomfanget, §11). Kontrolløren krever ikke at alle pilotregler godkjennes: depotreglene for Abilify Maintena og Xeplion (versjon 3) og startforløpet fra sertralin til mirtazapin (versjon 9) er klinisk godkjent i oppgitt omfang, mens fluoksetin → fenelzin (versjon 7) og olanzapin → kvetiapin (versjon 5) er kontrollert og ikke godkjent og sperret for klinisk bruk. Gruppebyttet til aripiprazol og den hyperbolske citalopramregelen står som utkast i sammenligningssettet i P7, som verktøyet ikke bruker. En senere klinisk utvidelse krever en ny kontroll av en bestemt regelversjon i en egen PR. Fra P6 leser appen regelstatusen for å vise hva som kan beregnes, og får en plan bare gjennom `kliniskDoseplan`.
 
 Dette notatet beskriver hvordan OUSFAR skriver regler for nedtrapping og bytte av psykofarmaka, uavhengig av kilde, og hvorfor. Pilotsettet med alle regler, parametre, kilder og regneeksempler står i `docs/verktøy-p4-pilotsett.md`, som lages av koden (`npm run verktoy:regler -- rapport`) og derfor alltid stemmer med den. Koden ligger i `src/verktoy/regler/`.
 
@@ -8,7 +8,7 @@ Dette notatet beskriver hvordan OUSFAR skriver regler for nedtrapping og bytte a
 
 - En regel er **OUSFARs egen faglige vurdering**, formulert matematisk og bygget på kilder OUSFAR kan vise til: preparatomtaler (DMP, EMA), retningslinjer (NICE) og primær- og oversiktslitteratur. Fakta fra kildene gjengis kort med egne ord, med sted i kilden.
 - **Psychiatrienet er én referanse blant flere, ikke grunnlag.** En regel kan vise til P3-kildeoppføringen den kan sammenlignes med (id-en, f.eks. `SwitchAntidepressants:Es>Stop`), men modellen har ikke felt for innholdet, og ingen regel gjengir anbefalingen, verken ordrett, oversatt eller omskrevet (`docs/verktøy-p3-rettigheter.md`). Kontrollene stopper en regel som har Psychiatrienet som grunnlag eller med innhold.
-- **Tabellsettet overføres ikke systematisk** så lenge spørsmålet om databasevern er uavklart. Pilotsettet er åtte regler valgt for å prøve modellen på hver regelklasse, ikke et utdrag av tabellene.
+- **Tabellsettet overføres ikke systematisk** så lenge spørsmålet om databasevern er uavklart. Pilotsettet var åtte regler valgt for å prøve modellen på hver regelklasse, ikke et utdrag av tabellene. Seks er igjen: escitalopram er flyttet til P7-reglene, og den hyperbolske citalopramregelen til sammenligningssettet i P7.
 - **En modellberegning er ikke en klinisk anbefaling.** Den viser dosekurven en regel gir for syntetiske inndata. Den er ikke empirisk validert som plan, og den blir ikke klinisk godkjent fordi koden er riktig.
 
 ## 2. Seks ting som holdes fra hverandre
@@ -53,6 +53,48 @@ Et regelsett (`Regelsett`) har id, versjon og regelmodellversjon, og kan innehol
 
 **Avrunding.** Beregningen bruker uavrundede doser; de vises med to desimaler. Det er den ideelle dosekurven. Hvilke doser som faktisk kan gis (styrker, delbarhet, flytende form) og valget mellom oppnåelige doser gjør doseplanmotoren i P5 (B3, B5; `docs/verktøy-p5-beregningsmotor.md`). Regelmodell 3 har tre valgfrie felt per forløp for det: tillatt avvik og dosegrenser (`dosevalg`), formuleringsklasser (`klasser`) og varenavn (`preparater`).
 
+**Justerbare verdier (regelmodell 4).** En parameter med område kan merkes `justerbar` med navnet forskriveren ser. Forskriveren kan da velge en annen verdi innenfor området (`Beregningsinndata.justert`, nøkkel er parameterens sti). Valget brukes etter godkjenningskontrollen, så godkjenningen gjelder området og ikke hvert valg; et valg utenfor området eller for en verdi som ikke er justerbar, stopper beregningen, og hvert valg står som kontroll i resultatet. Kontrollene krever navn og et område med to ulike grenser. Ingen pilotregel har justerbare verdier; P7-reglene bruker dem (`docs/verktøy-p7-nedtrapping.md` §5). Et inndatakrav med nedre grense 0 har bare en øvre grense. Er dosen ved starten av en nedtrapping med prosent av aktuell dose under sluttdosen, stopper beregningen: regelen har ingen trinn derfra, og dosen kalles ikke ugyldig.
+
+**Spørsmål, krav om begrunnelse og individuell avslutning (regelmodell 5).** Etter fagvurderingen av P7 har modellen fire tillegg (`docs/verktøy-p7-nedtrapping.md` §5 og §7):
+
+- `Regel.sporsmal`: ja/nei-spørsmål som må besvares før beregningen (`Beregningsinndata.svar`), f.eks. om behandlingstiden er lang. Ubesvart stopper; svaret står som kontroll i resultatet.
+- `Parameter.begrunnelseskrav`: et valg over eller under en grense, eventuelt bare når et spørsmål er besvart med ja, krever en skriftlig begrunnelse (`Beregningsinndata.begrunnelse`). Uten den stopper beregningen; med den står valget, kravet og begrunnelsen som kontroll. Hvert krav har sitt eget grunnlag og kan avklares for seg.
+- `Parameter.teknisk_maks`: øvre grense i et område som bare er teknisk; den vises som «av tekniske grunner høyst».
+- `avslutning: 'individuell'` i en nedtrappingsfase: planen går ikke til null. Siste beregnede dose fortsetter, og resultatet sier hvorfor planen stopper der og at avslutningen må vurderes individuelt (`Forlopsresultat.avslutning`). Hvert forløp i en beregnbar ren seponeringsregel må slutte med den, kan ikke trappe ned før den og kan ikke seponere (`nulltrinnfeil`); både kontrollene og godkjenningen bruker kravet, så en regel som bryter det, aldri er klinisk godkjent. Bytter og tekstlige regler er unntatt. For en godkjent regel kontrollerer beregningen også planen: ingen dag uten dose og ingen slutt (`nulldagfeil`). Den kan ikke kombineres med `minste_varighet`.
+
+Kontrollene krever at grensene i et krav er innenfor området, at `ved` er et spørsmål i regelen, og at id-ene for bekreftelser, unntak og spørsmål er unike.
+
+**Planhorisont, praktisk grense og intervall (regelmodell 6).** Etter fagkontrollen 30.10.2026, som avviste en fast nedre grense (`docs/verktøy-p7-nedtrapping.md` §7):
+
+- `horisont` (enhet trinn) i en nedtrappingsfase med individuell avslutning: høyst så mange reduksjoner i planen. En teknisk grense, ikke en klinisk; neste plan beregnes fra faktisk dose. Kontrollene krever en horisont ved individuell avslutning og ingen ellers.
+- `sluttdose_mg` i prosent av aktuell dose er valgfri: en nedtrapping som går til 0 må ha en. Ved seponering har en nedtrapping med individuell avslutning ingen (ingen nedre grense er godkjent). Ved bytte kan den ha en med kilde: beregningen stopper da ved sluttdosen, og avslutningen derfra vurderes individuelt (kontrollrunden 30.10.2026).
+- `dosevalg.min_mg` i et forløp er laveste dose formuleringen kan gi (en praktisk grense). En nedtrapping med individuell avslutning beregner ingen trinn under den. Beregningen viser heller ingen dose under 0,01 mg (`MINSTE_VISTE_MG`).
+- Fasen `intervalldosering`: dosen (`aktuell` eller en dosekilde) gis hver `hver`. dag i minst `minstetid` dager, uten ny reduksjon og uten slutt. Den teller som slutt uten null i `nulltrinnfeil` (`fortsetterUtenNull`), og perioden får `hver` i resultatet.
+- `Sporsmal.krever_begrunnelse`: et ja krever en skriftlig begrunnelse, f.eks. en dose utenfor rammen for indikasjon eller pasientgruppe.
+
+**Betingede grenser, fordeling og avrunding (regelmodell 7, beregningsmotor 5).** Etter substanskontrollen 30.10.2026, runde 3 (`docs/verktøy-p7-nedtrapping.md` §4 og §7):
+
+- `Inndatakrav.ved`: kravet gjelder bare når et spørsmål er besvart slik, f.eks. høyst 20 mg citalopram for eldre over 65 år. Kontrollene krever at spørsmålet finnes i regelen.
+- `Inndatakrav.krever_begrunnelse`: en forsiktighetsgrense. En dose over den stopper ikke, men krever en skriftlig begrunnelse, og kravet og begrunnelsen står som kontroll. Bare for veiledende krav; en uttrykkelig høyeste dose (bindende) kan aldri begrunnes bort.
+- `Sporsmal.nei`: teksten for nei-svaret når grensen gjelder ved nei, f.eks. paroksetin utenom tvangslidelse og panikklidelse.
+- `Fase.trinnvalg` (regelmodell 8, beregningsmotor 6): grunnlaget for at forskriveren kan velge blant dosene som kan gis når et trinn i en nedtrapping med individuell avslutning ikke kan gis nøyaktig (P7.5, bidragsyterens valg 30.10.2026). Valget gis inn som `Beregningsinndata.trinnvalg` (forløp, trinn, dosen før og valgt dose). Beregningen bruker det bare for trinnet fra den dosen; den valgte dosen må være lavere, ikke under `dosevalg.min_mg`, vises nøyaktig med to desimaler og gi en faktisk reduksjon innenfor `strategi.prosent.omrade` (høyst `lav_prosent` ved lav dose), og begrunnelseskravene for reduksjonen gjelder den faktiske reduksjonen. Neste trinn regnes fra den valgte dosen, og perioden får `valgt` med den beregnede dosen og reduksjonen. Kontrollen krever `prosent_av_aktuell` med område, individuell avslutning og ingen toleranse. Et valg som ikke brukes fordi planen ikke har trinnet fra den dosen, stopper beregningen (beregningsmotor 7, beslutning P7-A).
+- `Forlop.fordeling`: døgndosen gis fordelt på et av antallene i `antall` (hele tall, minst 2), over `over_mg` når den er satt, med eget grunnlag. Planen viser fordelingen, og doseplanmotoren gir bare doser som kan fordeles slik, med den jevneste fordelingen som kan gis; en ulik fordeling merkes. Valget `like_store` er fjernet etter kontrollørens beslutning P7-B (regelmodell 9).
+- *Hold til et annet forløp er avsluttet*, når det andre forløpet avsluttes individuelt eller uten beregning: dosen holdes til da, og resten av forløpet planlegges også individuelt (`holdes til sertralin er avsluttet; videre dosering planlegges individuelt`).
+- Med individuell avslutning avrundes hvert trinn til den viste dosen (to desimaler), og neste trinn regnes fra den. En reduksjon som forsvinner i avrundingen, er ikke et trinn (`avrundet_bort`); forsvinner allerede den første, stopper beregningen.
+
+**Forslag etter svar, depotpreparater og stoppgrunner (regelmodell 9, beregningsmotor 7).** Etter kontrollørens beslutninger 30.10.2026 (P7-A og P4-B; `docs/verktøy-p7-nedtrapping.md` §11):
+
+- `Parameter.standard_ved`: et annet forslag for en justerbar parameter når et spørsmål er besvart med ja, med eget grunnlag, f.eks. 10 % per trinn etter lang behandlingstid. Beregningen bruker forslaget før forskriverens valg (`medSvarforslag`), og planen viser det som kontroll; et valg overstyrer det som ellers. Kontrollen krever at spørsmålet finnes, at parameteren er justerbar med område, at forslaget ligger i området og ikke selv utløser et krav om begrunnelse.
+- `Forlop.legemiddelformer`: FEST-kodene for legemiddelformene forløpet gjelder, f.eks. depotinjeksjonsvæsken for Abilify Maintena (819). Doseplanmotoren bruker bare preparater i disse formene, sammen med `preparater` (varenavn). Et forløp med depotinjeksjon må ha `preparater` i en regel som ikke bare er tekstlig.
+- Raden i en omregningstabell kan ha `sted`: injeksjonsstedet for den dosen, når det avviker fra fasens, f.eks. deltoideus som bør vurderes ved Xeplion etter 9–12 mg peroralt. Stedet står i planen.
+- Et forløp *uten beregning* gir grunnen som merknad i resultatet (`virkestoff: grunn`), så planen sier hvorfor det ikke beregnes.
+
+**Bundne former, fordeling hver dag og utvasking (beregningsmotor 8, doseplanmotor 7).** Etter kontrollørens gjennomgang av fe08fac 30.10.2026 (P4.8):
+
+- `Forlop.legemiddelformer` gjelder også når forskriveren har valgt formen selv: et formvalg utenfor formene regelen gjelder, stopper planen, og et formvalg som også omfatter andre former, gir bare regelens former.
+- `Forlop.fordeling` uten `over_mg` gjelder hver døgndose i forløpet, også vedlikeholdet. Doseplanmotoren velger den enkleste sammensetningen *som kan fordeles* (ikke den enkleste først og så fordelingen), f.eks. 100 mg som 4 tabletter à 25 mg (50 + 50 mg) når én tablett à 100 mg ikke kan deles. Kan ingen sammensetning fordeles, stopper planen.
+- Et forløp som starter etter utvasking og ikke beregnes, vises som «tidligst dag 92: 35 dagers utvasking fullført; fenelzin er ikke startet eller dosert av planen. Klinisk oppstart kan først vurderes etter kontroll av kontraindikasjoner, interaksjoner og øvrige forhold», aldri som en oppstart. Uten utvasking står det at legemidlet ikke er startet eller dosert av planen, og at oppstarten vurderes individuelt. Et forløp som fortsetter uten beregning etter beregnede perioder, er uendret («videre dosering beregnes ikke; planlegges individuelt»).
+
 **Gyldige verdier.** Doser og varigheter er endelige tall over 0, prosenter over 0 og høyst 100, og dager, måneder og trinn hele tall (`parameterfeil`). En startdato må være en gyldig kalenderdato som `ÅÅÅÅ-MM-DD`; `2027-02-31` normaliseres ikke. Ugyldige verdier i regelen eller inndata gir en stopp med grunnen, og beregningen kaster aldri: også en feil i regelen selv blir en kontrollert stopp.
 
 **Måneder.** Månedlige injeksjoner regnes fra forrige injeksjon. Med startdato er én måned senere samme dato, eller siste dag i måneden når den er kortere (31. januar → 28. februar); tidsvinduet i preparatomtalen gjelder rundt den datoen.
@@ -61,7 +103,7 @@ Et regelsett (`Regelsett`) har id, versjon og regelmodellversjon, og kan innehol
 
 **Art (P4.3).** Hver parameter og hvert inndatakrav er enten et *bindende krav* (utvasking, minste varighet, doseområde regelen gjelder for, tidligste injeksjonsintervall) eller en *veiledende preferanse* (prosent, trinnlengde, overlapp). Et bindende krav som ikke er oppfylt, stopper beregningen; en veiledende grense gir en merknad.
 
-**Grunnlag.** Hver verdi har et grunnlag: enten *kilde* (verdien står i kilden, med henvisning) eller *OUSFAR-vurdering* (med begrunnelse, og henvisning når det er et valg innenfor det kilden tillater, f.eks. 14 dager av NICEs «én til to uker»). En verdi kan også mangle (`null`); da kan regelen ikke beregnes før den er avklart.
+**Grunnlag.** Hver verdi har et grunnlag: enten *kilde* (verdien står i kilden, med henvisning) eller *OUSFAR-vurdering* (med begrunnelse, og henvisning når det er et valg innenfor det kilden tillater, f.eks. 14 dager av RCPsychs «to til fire uker»). En verdi kan også mangle (`null`); da kan regelen ikke beregnes før den er avklart.
 
 **Opprinnelse og avklaring er to ting.** En OUSFAR-vurdering er alltid OUSFARs, også etter at den er godtatt. Statusen står i `avklaring`: `null` er et *åpent forslag*; ellers dato, navn, rolle (uavhengig kontrollør eller faglig beslutningstaker), regelversjon og merknad for den eksplisitte avklaringen. En avklaring må komme fra en som aldri har vært utvikler av regelen (kontrollert). Åpne forslag, manglende verdier og gruppemedlemmer som bare er foreslått, er regelens *åpne valg* (`apneValg`); en regel kan bli klinisk godkjent først når listen er tom, og avklaringene inngår i fingeravtrykket som godkjenningen gjelder.
 
@@ -110,16 +152,17 @@ Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet
 
 ## 9. Spørsmål til faglig kontroll (P4.8)
 
-1. Er «minst én til to uker» i preparatomtalene riktig lest som et bindende minimum på 14 dager?
-2. Er gjentatt prosentvis nedtrapping (50 %, så 25 % fra 5 mg, sluttdose 2,5 mg for escitalopram; 14 dager per trinn) et forsvarlig utgangspunkt?
-3. Skal den hyperbolske strategien være et valg i P7, og er ED50 fra PET-studier og åtte trinn rimelige verdier?
-4. Sertralin → mirtazapin: er mirtazapin 15 mg fra dag 1 med overlapp til sertralin er seponert forsvarlig, og bør trinnene være kortere ved bytte (NICE åpner for raskere nedtrapping)?
-5. Fluoksetin → fenelzin: kildene er uenige om nedtrapping av fluoksetin før utvasking (preparatomtalen: gradvis over minst én til to uker; NICE: annenhver dag ved 20 mg; Keks mfl.: seponering uten nedtrapping ved 40 mg eller mindre). Regelen følger preparatomtalen. Er 35 dagers utvasking (minimum i preparatomtalen) nok, eller skal høye doser ha 42?
-6. Olanzapin → kvetiapin: er det riktig å holde olanzapin til kvetiapin er på 300 mg (dag 4) og deretter trappe ned 25 % av startdosen per uke? Er det riktig å begrense regelen til måldoser 300–450 mg?
-7. Rest AP → aripiprazol: hvilke medlemmer skal gruppen ha, kan zuklopentiksol valideres, og er én ukes overlapp før nedtrapping riktig for en partiell agonist?
-8. Abilify Maintena: skal oppstart med to injeksjoner og 300 mg-regimene modelleres senere, eller bare vises som begrensning?
-9. Xeplion: skal den perorale behandlingen alltid seponeres ved første injeksjon, eller skal gradvis seponering være et valg? Skal bytte fra peroral risperidon få en egen regel?
-10. Er de kliniske forutsetningene og unntakene i hver regel dekkende for en pilot med syntetiske kasus?
+1. *Escitalopram (minstevarighet og prosentvis nedtrapping) er flyttet til P7 og vurdert i fagvurderingen 29.10.2026; se `docs/verktøy-p7-nedtrapping.md` §11.*
+2. *Den hyperbolske strategien: fagkontrollen 30.10.2026 godkjente den ikke som valgbar klinisk strategi. Den står bare i sammenligningssettet i P7; se `docs/verktøy-p7-nedtrapping.md` §6.*
+*Punkt 3–8 er vurdert i kontrollrunden 30.10.2026 (§11); det som gjenstår, står der.*
+
+3. Sertralin → mirtazapin: er mirtazapin 15 mg fra dag 1 med overlapp til sertralin er seponert forsvarlig, og bør trinnene være kortere ved bytte (NICE åpner for raskere nedtrapping)?
+4. Fluoksetin → fenelzin: kildene er uenige om nedtrapping av fluoksetin før utvasking (preparatomtalen: gradvis over minst én til to uker; NICE: annenhver dag ved 20 mg; Keks mfl.: seponering uten nedtrapping ved 40 mg eller mindre). Regelen følger preparatomtalen, med 28 dager per trinn fordi RCPsych anbefaler minst fire uker før neste reduksjon av fluoksetin. Er 35 dagers utvasking (minimum i preparatomtalen) nok, eller skal høye doser ha 42?
+5. Olanzapin → kvetiapin: er det riktig å holde olanzapin til kvetiapin er på 300 mg (dag 4) og deretter trappe ned 25 % av startdosen per uke? Er det riktig å begrense regelen til måldoser 300–450 mg?
+6. Rest AP → aripiprazol: hvilke medlemmer skal gruppen ha, kan zuklopentiksol valideres, og er én ukes overlapp før nedtrapping riktig for en partiell agonist?
+7. Abilify Maintena: skal oppstart med to injeksjoner og 300 mg-regimene modelleres senere, eller bare vises som begrensning?
+8. Xeplion: skal den perorale behandlingen alltid seponeres ved første injeksjon, eller skal gradvis seponering være et valg? Skal bytte fra peroral risperidon få en egen regel?
+9. Er de kliniske forutsetningene og unntakene i hver regel dekkende for en pilot med syntetiske kasus?
 
 ## 10. Hva som ikke er gjort
 
@@ -141,4 +184,111 @@ Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet
 | *Andre runde:* En regel med OUSFARs egne valg kunne aldri godkjennes uten å ommerke valgene som kildefakta | OUSFAR-vurderinger har opprinnelse og avklaring hver for seg; godkjenning krever at alle åpne valg er avklart uavhengig (§4). Regelmodellen er versjon 2 | Regresjonstest som først blokkerer, så godkjenner samme regel etter uavhengig avklaring, med uendret opprinnelse; avklaring fra utvikler avvises |
 | *Andre runde:* Enheten ble ikke kontrollert mot feltet, og et forløps startdag ble ikke kontrollert | Fast enhet per felt (`FELTENHET`), kontroll av startdager, tabellrader og inndatagrenser (`tallfeil`), og kontroll av planen før den returneres (§4) | Trinnlengde i mg, prosent i mg, dose i dager, sluttdose i prosent, startdag 0, −1, 1,5, NaN og uendelig |
 
-Reglene for olanzapin → kvetiapin, Rest AP → aripiprazol, Abilify Maintena og Xeplion er versjon 2 (nye bekreftelser og unntakssvar, og dosevalget for Xeplion). De fire andre er uendret i versjon 1. Den faglige vurderingen av valgene i §9 er ikke endret av rettingen.
+Reglene for olanzapin → kvetiapin, Rest AP → aripiprazol, Abilify Maintena og Xeplion er versjon 2 (nye bekreftelser og unntakssvar, og dosevalget for Xeplion). Den faglige vurderingen av valgene i §9 er ikke endret av rettingen.
+
+**Etter kontrollen av P7 (PR #286).** Trinnlengden i de fire antidepressivreglene viste til NICE 1.4.18 («én til to uker»), men det rådet står under fluoksetin. Kildegrunnlaget er rettet til RCPsychs to til fire uker mellom reduksjonene, og reglene er versjon 2. Escitalopram og den hyperbolske citalopramregelen har 14 dager med område 14–28. Sertralin → mirtazapin har fortsatt 14 dager med område 7–14, med NICEs åpning for raskere nedtrapping ved bytte. Fluoksetin → fenelzin har 28 dager per trinn etter RCPsych, så fenelzin tidligst kan startes dag 92 fra 40 mg og dag 64 fra 20 mg. Pilotsettet var da versjon 3.
+
+**Etter fagvurderingen av P7 (29.10.2026).** Fagvurderingen avviste alle sluttdoser som automatisk trinn til null. Den hyperbolske citalopramregelen er versjon 3: den har individuell avslutning, står på 0,41 mg fra dag 85 og har ingen minste varighet. Escitalopram er flyttet til P7-reglene (versjon 4, i middelsgruppen), med historikken fra pilotsettet. Bytteregelene seponerer fortsatt, fordi bytte og utvasking krever det. Pilotsettet var da versjon 4 med sju regler, og regelmodellen versjon 5.
+
+**Etter fagkontrollen av P7 (30.10.2026).** Den hyperbolske citalopramregelen er versjon 4 med teknisk planhorisont og status utkast, og er flyttet til sammenligningssettet i P7, fordi kontrolløren ikke godkjente den som valgbar klinisk strategi. Pilotsettet er versjon 5 med seks regler, og regelmodellen er versjon 6.
+
+**Etter substanskontrollen av P7 (30.10.2026, runde 3).** Regelmodellen er versjon 7 og beregningsmotoren versjon 5 (§3). Pilotreglene er uendret i innhold; den hyperbolske citalopramregelen avrunder nå hvert trinn til den viste dosen.
+
+**Etter kontrollrunden 30.10.2026 (P4.8).** Kontrolløren vurderte hver pilotregel mot kildene. P4.8 er gjennomgått, men ikke bestått, og ingen regel er klinisk godkjent. Pilotsettet er versjon 6:
+
+| Regel | Vurdering | Endring |
+| --- | --- | --- |
+| Sertralin → mirtazapin (versjon 3) | En fast sekvens er ikke trygg for alle etter lang SSRI-bruk eller tidligere seponeringssymptomer; et bytte kan begrunne raskere nedtrapping, men ikke samme tempo for alle. | Tidligere seponeringssymptomer stopper regelen. Lang behandlingstid er et spørsmål der et ja krever skriftlig begrunnelse. Forskriveren må bekrefte at toleransen vurderes før hver reduksjon og at sedasjon og serotonerg belastning følges under overlappen. Om seponeringen fra 25 mg skal være et fast sluttpunkt, står åpent. |
+| Fluoksetin → fenelzin (versjon 3) | 35 dagers utvasking, spesialistkravet og ingen automatisk fenelzindose er godtatt som minimum, ikke som et fast klinisk forløp. | Planen sier at fenelzin ikke startes automatisk: dagen er den tidligste, og senere oppstart kan være nødvendig. Produktinformasjon for fenelzin fra en godkjent utenlandsk kilde er ikke kontrollert ennå. |
+| Olanzapin → kvetiapin (versjon 3) | Kvetiapinopptrappingen er et regime fra preparatomtalen; den faste nedtrappingen av olanzapin er ikke validert. Ikke godkjent. | Nedtrappingen av olanzapin beregnes ikke lenger; planen viser kvetiapinopptrappingen og at olanzapin deretter planlegges individuelt. Vurderingen av risiko og tempo i, eller med råd fra, spesialisthelsetjenesten må bekreftes. |
+| Rest AP → aripiprazol (versjon 3) | Én felles algoritme er ikke validert for antipsykotika med ulik farmakologi. Ikke godkjent som gruppebasert klinisk doseplan. | Regelen sier at den ikke er en gruppebasert klinisk plan, og at zuklopentiksol alene er kandidat, helst som egen regel til ny kontroll. Samme bekreftelse om risiko og tempo som over. |
+| Abilify Maintena (versjon 2) | Kildemessig akseptabel som avgrenset oppstart med én injeksjon. | Uendret. Registrert som kildemessig akseptabel, ikke klinisk godkjent; siste kontroll av preparatomtale, doser og regneeksempler gjenstår. |
+| Xeplion (versjon 2) | Kildemessig akseptabel som avgrenset overgang fra perorale paliperidon-depottabletter med normal nyrefunksjon. | Uendret, og registrert på samme måte. Dosene er mg paliperidon, som styrkene i den europeiske preparatomtalen; det skal kontrolleres på nytt før en signert godkjenning. |
+
+Beregningen viser nå et forløp som fortsetter uten beregning etter de første periodene, som «fra dag 5: videre dosering beregnes ikke; planlegges individuelt».
+
+**Etter gjennomgangen av de rettede versjonene (30.10.2026).** Kontrolløren fant at to bytteregler fortsatt beregnet en del som ikke er kontrollert for hvert stoff, og pekte på en utenlandsk preparatomtale for fenelzin. De tre reglene er versjon 4 (fenelzinregelen versjon 5), og pilotsettet er versjon 7:
+
+| Regel | Vurdering | Endring |
+| --- | --- | --- |
+| Sertralin → mirtazapin (versjon 4) | Trinnet fra 25 mg til 0 var fortsatt et fast, ubesluttet sluttpunkt. | Beregningen stopper ved 25 mg sertralin, som fortsetter til avslutningen er vurdert individuelt. Mirtazapin holdes på 15 mg til da; måldosen beregnes ikke, og regelen spør ikke lenger etter den. |
+| Fluoksetin → fenelzin (versjon 4 og 5) | Utenlandsk produktinformasjon for fenelzin var ikke kontrollert. | Den britiske preparatomtalen for Nardil (pkt. 4.5, revidert 02.07.2025) er lagt til som kilde. Den sier at det må gå lang nok tid til at fluoksetin er skilt ut, med 5 uker som eksempel, og er i samsvar med 35 dager; selve minimumet bygger på preparatomtalen for fluoksetin (versjon 5). Resten av bytteforløpet og fenelzins øvrige kontraindikasjoner er ikke kontrollert mot den. |
+| Rest AP → aripiprazol (versjon 4) | Regelen beregnet fortsatt 25 % av startdosen per uke til null, også for zuklopentiksol. | Bare første uke beregnes. Nedtrappingen av det gamle antipsykotikumet og måldosen for aripiprazol planlegges individuelt; aripiprazol holdes på 10 mg til da. En beregnet nedtrapping krever en egen regel for zuklopentiksol. |
+
+Ingen pilotregel bruker lenger prosent av startdosen; strategien er fortsatt en del av modellen og testes for seg.
+
+**Etter kontrollørens beslutninger 30.10.2026 (P4-A og P4-B).** Beslutningene er uavhengige faglige beslutninger, ikke klinisk godkjenning; ingen regel er godkjent. Pilotsettet er versjon 8 med fem regler, og regelmodellen er versjon 9:
+
+| Regel | Beslutning | Endring |
+| --- | --- | --- |
+| Sertralin → mirtazapin (versjon 5) | Akseptert bare som avgrenset startplan; siste sertralindose er forskriverens valg. | Usikkerheten sier at planen bare er en avgrenset start, og at siste dose og avslutningen fra 25 mg er forskriverens valg. |
+| Fluoksetin → fenelzin (versjon 6) | 35 dager er et minimum, ikke en anbefalt startdato; fenelzin startes aldri automatisk, og kontraindikasjonene i Nardils preparatomtale pkt. 4.3 og 4.5 skal fremheves. | Planen sier at fenelzin ikke startes automatisk, og at kontraindikasjonene og interaksjonene i pkt. 4.3 og 4.5 må gås gjennom før oppstart; kildehenvisningen står på utsagnet. |
+| Olanzapin → kvetiapin (versjon 4) | Akseptert som avgrenset modell. | Usikkerheten sier at regelen bare er en avgrenset modell. |
+| Rest AP → aripiprazol (versjon 5) | Ikke godkjent; beholdes som sperret modelleringsdemonstrasjon. | Flyttet ut av pilotsettet til sammenligningssettet i P7 (`ousfar-verktoy-nedtrapping-sammenligning`), uten beregning (`uten_beregning`) og ikke i verktøyet. Verktøyet sier at OUSFAR ikke har en regel for kombinasjonen. |
+| Abilify Maintena (versjon 3) | Koble regelen eksplisitt til depotpreparatet i FEST; testes ende til ende. | Depotforløpet har `preparater: ['Abilify Maintena']` og legemiddelform 819, så P5 kan bygge planen med preparatene i FEST. |
+| Xeplion (versjon 3) | Som Maintena; ved 9–12 mg peroralt skal deltoideus fremheves i selve planen. | `preparater: ['Xeplion']`; radene for 9 og 12 mg har injeksjonsstedet «deltoideus eller setemuskel; … deltoideus bør vurderes», som står i planen. Omregningen mellom paliperidon og paliperidonpalmitat (150 mg ≙ 234 mg, 100 mg ≙ 156 mg) står som kildetro utsagn. |
+
+Depotreglene testes ende til ende med et lagret FEST-uttrekk (`src/data/verktoy/fest-pilotsett.json`, hentes med `npm run verktoy:regler -- hent-fest`): start, tidligste neste injeksjon, doser og enheter, deltoideus ved 9–12 mg, stopp ved nedsatt nyrefunksjon og ved CYP-interaksjoner, feil depotform og en styrke som ikke finnes eller er utgått. Med en godkjenning bare i testen gir planen et klinisk resultat; i appen er ingen av dem godkjent.
+
+**Etter kontrollørens gjennomgang av fe08fac (30.10.2026).** Depotreglene (P4-B) er verifisert. To kliniske sikkerhetsfeil gjensto; ingen regel er godkjent, og ingen beregnbar regel vises i en klinisk doseplan før en ny uavhengig kontroll av den eksakte rettede versjonen. Pilotsettet er versjon 9:
+
+| Regel | Funn | Endring |
+| --- | --- | --- |
+| Olanzapin → kvetiapin (versjon 5) | Regelen var ikke bundet til tabletter med vanlig frisetting og krevde ikke to doser daglig; depottabletter har en annen opptrapping og gis én gang daglig. | Kvetiapin er bundet til FEST-form 53 (tablett), også ved eksplisitt formvalg, og hver døgndose, også vedlikeholdet, er fordelt på to doser med grunnlag i Seroquels preparatomtale pkt. 4.2. Med preparatene i FEST: dag 1 50 mg = 25 + 25 mg, dag 2 50 + 50 mg, dag 3 100 + 100 mg, dag 4 200 + 100 mg (ulik fordeling) og vedlikehold 400 mg som 200 + 200 mg. |
+| Fluoksetin → fenelzin (versjon 7) | Linjen «tidligst dag 92: oppstart, dosering beregnes ikke» framstilte en oppstart av fenelzin. | Linjen sier at utvaskingen er fullført og at fenelzin ikke er startet eller dosert av planen, i regneeksemplene, i doseplanen og med dato. |
+
+Kvetiapinregelen testes ende til ende med det samme FEST-uttrekket, som nå også har olanzapin og kvetiapin: døgndosene og fordelingen hver dag, at bare registrerte tabletter med vanlig frisetting brukes, at depottabletter og mikstur avvises også ved eksplisitt formvalg, og at planen stopper når en døgndose ikke kan fordeles. Fenelzinlinjen testes med fluoksetin fra FEST.
+
+**Etter kontrollørens gjennomgang av 62ebb21 (30.10.2026).** Begge feilene er lukket, uten nye funn. Kontrollørens faglige sluttbeslutninger, registrert i historikken til hver regel; pilotsettet er versjon 10, og ingen regel har nytt innhold:
+
+| Regel | Beslutning | Registrert |
+| --- | --- | --- |
+| Abilify Maintena (versjon 3) | Faglig akseptert og klinisk godkjent for nøyaktig den avgrensede oppstarten: én injeksjon 400 mg, peroral aripiprazol i 14 dager, deretter 400 mg månedlig, hos voksne med schizofreni som er stabilisert på og har tålt peroral aripiprazol. Ikke andre depottyper, CYP-forhold utenfor regelen eller ubekreftet stabilisering eller toleranse. | Klinisk godkjent av den uavhengige kontrolløren, med fingeravtrykket for versjon 3 (`04d1debe…7f20`). |
+| Xeplion (versjon 3) | Faglig akseptert og klinisk godkjent for nøyaktig den avgrensede overgangen fra paliperidon-depottabletter: 150 mg dag 1 og 100 mg dag 8 i deltoideus, deretter månedlig, med kreatininclearance minst 80 ml/min og deltoideus framhevet etter 9–12 mg. Ikke andre depotregimer, nedsatt nyrefunksjon eller ubekreftet stabilisering eller toleranse. | Klinisk godkjent som over (`21a335ee…7bdf`). |
+| Fluoksetin → fenelzin (versjon 7) | Akseptert bare som kildebasert utvaskingsinformasjon, ikke som klinisk godkjent fast nedtrapping av fluoksetin; kan ikke godkjennes som samlet doseplan. | Et steg fra kontrolløren i historikken; regelen står som modell, til faglig kontroll. En godkjennbar regel må skille utvaskingen fra nedtrappingen, for eksempel med bekreftet dato for siste fluoksetindose. |
+| Sertralin → mirtazapin (versjon 5) | Bare som avgrenset innledende forløp; før en eventuell aktivering trengs ende-til-ende-tester med FEST for 50 og 100 mg. | Testene er lagt til: hele tabletter ned til 25 mg og stopp der, mirtazapin 15 mg samtidig, og stopp ved tidligere seponeringssymptomer, ubesvarte forhold, manglende bekreftelse og lang behandlingstid uten begrunnelse. Til faglig kontroll. |
+| Olanzapin → kvetiapin (versjon 5) | Kvetiapinopptrappingen er akseptert som modell; olanzapin er individuell etter dag 4, og byttet som helhet er ikke validert. | Uendret, til faglig kontroll. |
+
+Godkjenningen av depotreglene er registrert med fingeravtrykket for versjonen i commit 62ebb21, som kontrolløren kontrollerte; fingeravtrykkene sto i PR-kommentaren kontrolløren svarte på. Testene viser at de to reglene gir en klinisk plan med de faktiske preparatene og fersk FEST, og at planen sperres utenfor avgrensningen (CYP2D6, induktorer, nyrefunksjon og manglende bekreftelse), med FEST eldre enn 48 timer og når regelen er endret etter godkjenningen. I verktøyet «Bytte antipsykotikum» kan de to oppstartene nå beregnes. FEST-uttrekket for pilotreglene (`src/data/verktoy/fest-pilotsett.json`) har nå preparatene for alle virkestoffene i pilotsettet.
+
+**Etter kontrollørens gjennomgang av 9cb420b (31.10.2026).** Fingeravtrykkene for Abilify Maintena og Xeplion versjon 3 er bekreftet som godkjenningsgrunnlag; reglene er uendret. Pilotsettet er versjon 11:
+
+| Regel | Beslutning | Endring |
+| --- | --- | --- |
+| Sertralin → mirtazapin (versjon 6) | Ende-til-ende-testene er akseptert. En snever godkjenning er mulig ved 50 og 100 mg sertralin, uten tidligere seponeringsplager og med bekreftet kontroll av serotonerg sammedisinering og toleranse, men ikke for versjon 5, der startdosen tillot 50–200 mg og sammedisineringen bare var en forutsetning. Lang behandlingstid krever fortsatt begrunnelse. | Startdosen er avgrenset til 50–100 mg (OUSFARs vurdering med kontrollørens avklaring), og «Serotonerg sammedisinering er kontrollert» er en egen bekreftelse i stedet for en forutsetning. Kontrollørens avgrensning av versjon 5 står i historikken. 75 mg stopper fordi 37,5 mg ikke kan gis med hele tabletter; under 50 og over 100 mg er utenfor regelen. Ikke godkjent: fingeravtrykket for versjon 6 er sendt til ny kontroll. |
+| Olanzapin → kvetiapin (versjon 5) | Akseptert bare som opptitrering av kvetiapin med vanlig frisetting, ikke som et validert bytte. | Uendret, til faglig kontroll. |
+| Fluoksetin → fenelzin (versjon 7) | Bare modellen er akseptert, ikke en samlet plan. | Uendret, til faglig kontroll. |
+
+**Etter kontrollørens gjennomgang av 0ae6d07 (31.10.2026).** Pilotsettet er versjon 12; depotreglene og de andre byttereglene er uendret:
+
+| Regel | Beslutning | Endring |
+| --- | --- | --- |
+| Sertralin → mirtazapin (versjon 7) | Versjon 6 er ikke godkjent: 50–100 mg er et sammenhengende område, mens avgrensningen bare gjelder 50 og 100 mg. Bruk bindende verdier og test mellomliggende doser, manglende bekreftelser, tidligere plager og lang behandlingstid uten begrunnelse. | Startdosen er bindende 50 eller 100 mg (`verdier: [50, 100]`), ikke et område; enhver annen dose stopper, også 60, 62,5, 75, 80 og 90 mg. Ved 50 og 100 mg stopper hver manglende bekreftelse, tidligere seponeringssymptomer og lang behandlingstid uten begrunnelse (ende-til-ende-tester med FEST). Kontrollørens avgrensning av versjon 6 står i historikken. Ikke godkjent: fingeravtrykket for versjon 7 er sendt til ny kontroll. |
+
+**Etter kontrollørens gjennomgang av d6cc3dd (31.10.2026).** Pilotsettet er versjon 13; depotreglene og de andre byttereglene er uendret:
+
+| Regel | Beslutning | Endring |
+| --- | --- | --- |
+| Sertralin → mirtazapin (versjon 8) | Versjon 7 er ikke godkjent: lang behandlingstid er ikke del av det godkjennbare kliniske omfanget, heller ikke med en begrunnelse for 50 %-trinn. Godkjennbart bare som begrenset innledende kryssnedtrapping ved ikke-langvarig behandling. | Nytt klinisk omfang (`Regel.klinisk_omfang`): bare 50 eller 100 mg ved kort behandlingstid, tabletter (FEST-form 53) og styrkene sertralin 25, 50 og 100 mg og mirtazapin 15, 30 og 45 mg. Med regelen godkjent bare i testen gir kort behandlingstid en klinisk plan, mens lang behandlingstid stopper også med en vilkårlig begrunnelse, og det gjør også en annen form, en annen startdose og hvert av de negative vilkårene. En ny eller endret styrke i et senere FEST-uttrekk er utenfor. Kontrollørens avgrensning av versjon 7 står i historikken. Ikke godkjent: fingeravtrykket for versjon 8 er sendt til ny kontroll. |
+
+**Etter kontrollørens gjennomgang av 74a775f (31.10.2026).** Pilotsettet er versjon 14; depotreglene og de andre byttereglene er uendret:
+
+| Regel | Beslutning | Endring |
+| --- | --- | --- |
+| Sertralin → mirtazapin (versjon 9) | Nøyaktig versjon 8 (fingeravtrykk `89db19ef…f512d`) er godtatt som snever klinisk godkjenning: startforløpet fra 50 eller 100 mg ved kort behandlingstid, tabletter og de kontrollerte styrkene, 100 → 50 mg i 14 dager → 25 mg eller 50 → 25 mg, parallelt med mirtazapin 15 mg, uten automatisk 25 → 0 mg eller opptrapping av mirtazapin. | Godkjenningen kunne ikke registreres som gyldig: trinnstørrelsen, sluttdosen, trinnlengden og planhorisonten stod som åpne forslag uten avklaring, og en regel med åpne valg er aldri klinisk godkjent. Kontrollørens godtakelse av versjon 8 står i historikken, og verdiene er avklart med beslutningen i versjon 9, ellers uendret. Ikke godkjent ennå: fingeravtrykket for versjon 9 er sendt til kontrolløren for registrering. |
+
+**Etter kontrollørens gjennomgang av f77e1a9 (31.10.2026).** Pilotsettet er versjon 15; regelinnholdet er uendret:
+
+| Regel | Beslutning | Endring |
+| --- | --- | --- |
+| Sertralin → mirtazapin (versjon 9) | Nøyaktig versjon 9 (fingeravtrykk `dc878aa9…77881`) er klinisk godkjent for det avgrensede startforløpet: sertralin nøyaktig 50 eller 100 mg ved ikke-langvarig behandling, tabletter for begge og de kontrollerte styrkene, bekreftet toleranse og kontroll av serotonerg sammedisinering, ingen tidligere seponeringsplager; 100 → 50 mg i minst 14 dager → 25 mg eller 50 → 25 mg, parallelt med mirtazapin 15 mg. | Godkjenningen er registrert med fingeravtrykket. Med fersk FEST gir appen planen bare i dette omfanget; lang behandlingstid (også med begrunnelse), andre doser og former, tidligere plager, ukjente forhold, manglende bekreftelser, et endret fingeravtrykk og foreldet FEST stopper. Aldri 25 → 0 mg eller opptrapping av mirtazapin. |
+
+**Kontrollørens disposisjon av leveranseomfanget (31.10.2026, kontrollert i 52b22a4).** Pilotsettet er versjon 16; regelinnholdet og fingeravtrykkene er uendret, og ingen ny godkjenning er gitt. Hver regel som ikke er godkjent, har fått et siste steg fra kontrolløren med status «kontrollert, ikke godkjent» (`ikke_godkjent`) for nøyaktig sin versjon og sitt fingeravtrykk. Vurderingen gjelder bare reglene i en fast liste med versjon og fingeravtrykk (`PILOTDISPOSISJON`); en endret, ny eller ny versjon av en regel får ikke steget og står som ikke ferdig kontrollert (gjennomgangen av c7d91d1):
+
+| Regel | Beslutning | Endring |
+| --- | --- | --- |
+| Abilify Maintena og Xeplion (versjon 3), sertralin → mirtazapin (versjon 9) | Godkjent i det eksisterende, smale omfanget; ingen utvidelse. | Ingen. |
+| Olanzapin → kvetiapin (versjon 5) | Ikke godkjent som klinisk bytteplan. Opptrappingen av kvetiapin med vanlig frisetting dag 1–4, fordelt på to doser ved schizofreni, har støtte i preparatomtalen, men ikke kombinasjonen med uendret olanzapin i fire dager, individuell nedtrapping av olanzapin og valget av måldose dag 5. | Kontrollert og ikke godkjent; sperret for klinisk bruk. En egen regel for opptrappingen kan kontrolleres senere, ikke som et fullt bytte. |
+| Fluoksetin → fenelzin (versjon 7) | Ikke godkjent som samlet bytteplan. Minst 35 hele døgn uten fluoksetin før fenelzin har støtte i preparatomtalen for fluoksetin; halveringen av fluoksetin er et eget utkast, og fenelzin doseres ikke. | Kontrollert og ikke godkjent; sperret som doseplan. Separat utvaskingsinformasjon med sist inntatte fluoksetindose som inndata kan vurderes senere. |
+| Rest AP → aripiprazol | Allerede holdt utenfor som uvalidert gruppebytte; gjenåpnes ikke. | Ingen; står som utkast i sammenligningssettet. |
+

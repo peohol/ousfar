@@ -1,14 +1,17 @@
 /**
- * Rapporten om pilotsettet (`docs/verktøy-p4-pilotsett.md`), laget av
- * reglene og beregningen så den aldri kan avvike fra dem.
- * `npm run verktoy:regler -- rapport` skriver den; testene sier fra når den
+ * Rapportene om regelsettene (`docs/verktøy-p4-pilotsett.md` for pilotsettet,
+ * `docs/verktøy-p7-regelutkast.md` for nedtrappingsreglene), laget av
+ * reglene og beregningen så de aldri kan avvike fra dem.
+ * `npm run verktoy:regler -- rapport` skriver dem; testene sier fra når de
  * ikke er oppdatert. Psychiatrienet vises bare som kildeoppføringens id.
  */
-import { beregn, kortform, MOTORVERSJON } from './beregning'
-import { erKliniskGodkjent, fingeravtrykk, godkjenningsfeil } from './godkjenning'
+import { tilfelletekst } from '../motor/plan'
+import { beregn, inndatagrenser, inndatavilkar, kortform, kravtekst, MOTORVERSJON, omradetekst } from './beregning'
+import { type Disposisjon, erKliniskGodkjent, fingeravtrykk, godkjenningsfeil, KONTROLLUTFALL, kontrollutfall, type Kontrollutfall, vurderingsfeil } from './godkjenning'
 import { KILDER, kildeFor } from './kilder'
 import {
   apneValg,
+  henvisninger,
   parametre,
   REGELMODELLVERSJON,
   type Beregningsinndata,
@@ -20,18 +23,43 @@ import {
   type Utsagn,
   type Virkestoffvalg,
 } from './modell'
-import { PILOTSETT } from './pilotsett'
+import { NEDTRAPPINGSDISPOSISJON, NEDTRAPPINGSSETT, SAMMENLIGNINGSSETT } from './nedtrapping'
+import { PILOTDISPOSISJON, PILOTSETT } from './pilotsett'
 
-export const REGELRAPPORTFIL = 'docs/verktøy-p4-pilotsett.md'
+/** En rapport om ett regelsett: filen, overskriften og notatene som beskriver valgene. */
+export interface Regelrapport {
+  fil: string
+  tittel: string
+  sett: Regelsett
+  notater: readonly string[]
+  /** Kontrollørens disposisjoner av settet; hver vurdert regel må finnes med nøyaktig versjonen og fingeravtrykket som ble vurdert. */
+  disposisjoner?: readonly Disposisjon[]
+}
+
+export const P4RAPPORT: Regelrapport = { fil: 'docs/verktøy-p4-pilotsett.md', tittel: 'P4: pilotsettet', sett: PILOTSETT, notater: ['docs/verktøy-p4-regelmodell.md'], disposisjoner: [PILOTDISPOSISJON] }
+export const P7RAPPORT: Regelrapport = {
+  fil: 'docs/verktøy-p7-regelutkast.md',
+  tittel: 'P7: regelutkast for nedtrapping av antidepressiva',
+  sett: NEDTRAPPINGSSETT,
+  notater: ['docs/verktøy-p4-regelmodell.md', 'docs/verktøy-p7-nedtrapping.md'],
+  disposisjoner: [NEDTRAPPINGSDISPOSISJON],
+}
+export const P7SAMMENLIGNING: Regelrapport = {
+  fil: 'docs/verktøy-p7-sammenligning.md',
+  tittel: 'P7: sammenlignings- og utviklingssett (ikke i verktøyet, ikke klinisk)',
+  sett: SAMMENLIGNINGSSETT,
+  notater: ['docs/verktøy-p7-nedtrapping.md', 'docs/verktøy-p4-regelmodell.md'],
+}
+export const REGELRAPPORTER: readonly Regelrapport[] = [P4RAPPORT, P7RAPPORT, P7SAMMENLIGNING]
 
 const celle = (t: string) => t.replace(/\|/g, '\\|').replace(/\n/g, ' ')
-const tabell = (hode: string[], rader: string[][]) =>
+export const tabell = (hode: string[], rader: string[][]) =>
   [`| ${hode.join(' | ')} |`, `| ${hode.map(() => '---').join(' | ')} |`, ...rader.map((r) => `| ${r.map(celle).join(' | ')} |`)].join('\n')
-const liste = (xs: string[], ingen = '- Ingen.') => (xs.length > 0 ? xs.map((x) => `- ${x}`).join('\n') : ingen)
-const tall = (x: number) => String(x).replace('.', ',')
-const dato = (iso: string) => `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}`
+export const liste = (xs: string[], ingen = '- Ingen.') => (xs.length > 0 ? xs.map((x) => `- ${x}`).join('\n') : ingen)
+export const tall = (x: number) => String(x).replace('.', ',')
+export const dato = (iso: string) => `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}`
 
-const BEREGNBARHET: Record<Regel['beregnbarhet'], string> = {
+export const BEREGNBARHET: Record<Regel['beregnbarhet'], string> = {
   entydig_beregnbar: 'entydig beregnbar',
   beregnbar_etter_avklaring: 'beregnbar etter faglig avklaring',
   bare_tekstlig: 'bare tekstlig veiledning',
@@ -41,6 +69,7 @@ const STATUS: Record<Regel['godkjenning']['status'], string> = {
   utkast: 'utkast',
   til_faglig_kontroll: 'til faglig kontroll',
   klinisk_godkjent: 'klinisk godkjent',
+  ikke_godkjent: 'kontrollert, ikke godkjent',
   avvist: 'avvist',
   trukket: 'trukket',
 }
@@ -54,10 +83,12 @@ const FORM: Record<Regel['plan']['form'], string> = {
 const ENHET: Record<Parameter['enhet'], string> = { mg: 'mg', dager: 'dager', dag: '(dag)', maaneder: 'måned(er)', prosent: '%', trinn: 'trinn' }
 
 /** Statusen slik den faktisk gjelder: en klinisk godkjenning som ikke gjelder denne versjonen, sies rett ut. */
-const statustekst = (r: Regel) =>
+export const statustekst = (r: Regel) =>
   r.godkjenning.status === 'klinisk_godkjent' && !erKliniskGodkjent(r)
     ? `merket klinisk godkjent, men ugyldig (${godkjenningsfeil(r).join(' ')})`
-    : STATUS[r.godkjenning.status]
+    : r.godkjenning.status === 'ikke_godkjent' && vurderingsfeil(r).length > 0
+      ? `merket kontrollert og ikke godkjent, men ugyldig (${vurderingsfeil(r).join(' ')})`
+      : STATUS[r.godkjenning.status]
 
 const valg = (v: Virkestoffvalg | null) => (!v ? '–' : v.type === 'virkestoff' ? v.nokkel : `gruppen ${v.gruppe}`)
 
@@ -82,12 +113,16 @@ function parametertabell(r: Regel): string {
   const rader: string[][] = []
   const legg = (hvor: string, x: unknown) => {
     for (const [sti, p] of parametre(x)) {
-      const verdi = p.verdi === null ? '**mangler**' : `${tall(p.verdi)} ${ENHET[p.enhet]}${p.omrade ? ` (område ${tall(p.omrade[0])}–${tall(p.omrade[1])})` : ''}`
-      rader.push([hvor, sti, verdi, p.art === 'bindende_krav' ? 'bindende krav' : 'veiledende', grunnlag(p.grunnlag)])
+      const omrade = p.omrade && (p.justerbar ? `forskriveren kan velge ${omradetekst(p as Parameter & { omrade: [number, number] })}` : `område ${tall(p.omrade[0])}–${tall(p.omrade[1])}`)
+      const verdi = p.verdi === null ? '**mangler**' : `${tall(p.verdi)} ${ENHET[p.enhet]}${omrade ? ` (${omrade})` : ''}`
+      const krav = (p.begrunnelseskrav ?? []).map((k) => `<br>Begrunnelse kreves ${kravtekst(k, p, r.sporsmal)} (${grunnlag(k.grunnlag)})`).join('')
+      rader.push([hvor, sti, verdi, p.art === 'bindende_krav' ? 'bindende krav' : 'veiledende', `${grunnlag(p.grunnlag)}${krav}`])
     }
   }
   for (const f of r.plan.forlop) {
     if (f.start.type === 'etter_utvasking') legg(`${f.id}: start`, f.start)
+    if (f.dosevalg) legg(`${f.id}: dosevalg`, f.dosevalg)
+    if (f.fordeling) legg(`${f.id}: fordeling på ${f.fordeling.antall.join(' eller ')} doser`, f.fordeling)
     f.faser.forEach((fase, i) => legg(`${f.id}: fase ${i + 1} (${fase.type})`, fase))
   }
   for (const m of r.medlemmer ?? []) (m.faser ?? []).forEach((fase, i) => legg(`${m.nokkel}: fase ${i + 1} (${fase.type})`, fase))
@@ -115,18 +150,32 @@ function inndatatekst(i: Beregningsinndata): string {
   if (i.bekreftet?.length) deler.push(`bekreftet: ${i.bekreftet.join(', ')}`)
   const forhold = Object.entries(i.pasientforhold ?? {})
   if (forhold.length) deler.push(`pasientforhold: ${forhold.map(([id, ja]) => `${id} ${ja ? 'ja' : 'nei'}`).join(', ')}`)
+  const svar = Object.entries(i.svar ?? {})
+  if (svar.length) deler.push(`svar: ${svar.map(([id, ja]) => `${id} ${ja ? 'ja' : 'nei'}`).join(', ')}`)
+  const justert = Object.entries(i.justert ?? {})
+  if (justert.length) deler.push(`valgt: ${justert.map(([sti, x]) => `${sti.split('.').at(-1)} ${tall(x)}`).join(', ')}`)
+  if (i.begrunnelse) deler.push(`begrunnelse: «${i.begrunnelse}»`)
   return deler.join('; ')
 }
 
 function regelavsnitt(r: Regel, sett: Regelsett): string {
   const betingelser = [
     ...r.inndata.map((x) => {
-      const gyldig = x.omrade ? `${tall(x.omrade[0])}–${tall(x.omrade[1])} mg` : `${x.verdier!.map(tall).join(', ')} mg`
-      return `${x.navn === 'startdose' ? 'Startdose' : 'Måldose (må oppgis)'} ${gyldig}${x.gjelder_medlem ? ` for ${x.gjelder_medlem}` : ''} (${x.art === 'bindende_krav' ? 'bindende' : 'veiledende'}; ${grunnlag(x.grunnlag)})`
+      const gyldig = inndatagrenser(x)
+      const art = x.art === 'bindende_krav' ? 'bindende' : x.krever_begrunnelse ? 'forsiktighetsgrense: utenfor krever begrunnelse' : 'veiledende'
+      return `${x.navn === 'startdose' ? 'Startdose' : 'Måldose (må oppgis)'} ${gyldig}${inndatavilkar(x, r.sporsmal)}${x.gjelder_medlem ? ` for ${x.gjelder_medlem}` : ''} (${art}; ${grunnlag(x.grunnlag)})`
     }),
     ...r.bekreftelser.map((b) => `Må bekreftes (\`${b.id}\`): ${b.tekst} (${grunnlag(b.grunnlag)})`),
     ...r.unntak.map((u) => `Unntak (\`${u.id}\`): ${u.tekst} (${grunnlag(u.grunnlag)})`),
+    ...(r.sporsmal ?? []).map((x) => `Må besvares (\`${x.id}\`): ${x.tekst}${x.krever_begrunnelse ? ' Et ja krever en skriftlig begrunnelse.' : ''} (${grunnlag(x.grunnlag)})`),
   ]
+  const o = r.klinisk_omfang
+  const omfang = o
+    ? `\n\n**Klinisk omfang** (en klinisk godkjenning kan bare gjelde disse tilfellene; alt annet stopper med forklaring, også et annet valg av trinnstørrelse eller trinnlengde, med eller uten begrunnelse; ${grunnlag(o.grunnlag)}):\n\n${liste([
+        ...(o.tilfeller.length > 0 ? o.tilfeller.map((t) => tilfelletekst(r, t)) : ['Ingen tilfeller er kontrollert; regelen gir aldri en klinisk plan.']),
+        ...(o.uten_deling ? [`Uten delte tabletter: en plan som deler en tablett, er utenfor omfanget (${grunnlag(o.uten_deling.grunnlag)})`] : []),
+      ])}`
+    : ''
   const medlemmer = r.medlemmer
     ? `\n\n**Gruppemedlemmer (B4).** Bare medlemmer som er foreslått eller validert, kan beregnes.\n\n${tabell(
         ['Virkestoff', 'Vurdering', 'Begrunnelse'],
@@ -163,7 +212,7 @@ ${parametertabell(r)}
 
 **Betingelser:**
 
-${liste(betingelser)}${medlemmer}
+${liste(betingelser)}${omfang}${medlemmer}
 
 **Kliniske forutsetninger:**
 
@@ -180,7 +229,24 @@ ${eksempler}
 **Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): ${r.referanser.map(henvisning).join('; ') || 'ingen'}.`
 }
 
-export function lagRegelrapport(sett: Regelsett = PILOTSETT): string {
+/** Kildene reglene i settet faktisk viser til, i kilderegisterets rekkefølge. */
+const kilderI = (sett: Regelsett) => {
+  const brukt = new Set(sett.regler.flatMap((r) => henvisninger(r).map((h) => h.kilde)))
+  return KILDER.filter((k) => brukt.has(k.id))
+}
+
+/** Hvor mange regler i settet som har hvert utfall av kontrollen, f.eks. «3 kontrollert og godkjent i oppgitt omfang, 2 kontrollert, ikke godkjent». */
+const utfallstekst = (sett: Regelsett) =>
+  (Object.keys(KONTROLLUTFALL) as Kontrollutfall[])
+    .map((u) => [sett.regler.filter((r) => kontrollutfall(r) === u).length, KONTROLLUTFALL[u]] as const)
+    .filter(([antall]) => antall > 0)
+    .map(([antall, tekst]) => `${antall} ${tekst}`)
+    .join(', ')
+
+export function lagRegelrapport(sett: Regelsett = PILOTSETT, rapport: Omit<Regelrapport, 'sett' | 'fil'> = P4RAPPORT): string {
+  const kilder = kilderI(sett)
+  // Psychiatrienet er bare referanse (P3-arkivet), ikke et dokument som er lest.
+  const hentet = [...new Set(kilder.filter((k) => k.type !== 'kildeoppføring').map((k) => k.hentet.slice(0, 10)))].sort().map(dato).join(' og ')
   const godkjent = sett.regler.filter(erKliniskGodkjent).length
   const n = sett.regler.length
   const godkjenningstekst =
@@ -189,13 +255,13 @@ export function lagRegelrapport(sett: Regelsett = PILOTSETT): string {
       : godkjent === n
         ? 'Alle reglene er klinisk godkjent etter uavhengig faglig kontroll i nøyaktig denne versjonen; beregningene er likevel ikke empirisk validerte og erstatter ikke klinisk vurdering av den enkelte pasient.'
         : `${godkjent} av reglene er klinisk godkjent etter uavhengig faglig kontroll i nøyaktig denne versjonen; de andre er ikke, og beregningene etter dem er ikke kliniske anbefalinger. Ingen av beregningene er empirisk validerte.`
-  return `# OUSFAR Verktøy – P4: pilotsettet
+  return `# OUSFAR Verktøy – ${rapport.tittel}
 
 <!-- Laget av \`npm run verktoy:regler -- rapport\` fra reglene i src/verktoy/regler/. Ikke rediger for hånd; endre reglene og lag rapporten på nytt. -->
 
 Regelsett \`${sett.id}\` versjon ${sett.versjon}, regelmodell ${REGELMODELLVERSJON}, beregningsmotor ${MOTORVERSJON}. ${sett.beskrivelse}
 
-**${n} regler, ${godkjent} klinisk godkjent.** Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. ${godkjenningstekst} En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i \`docs/verktøy-p4-regelmodell.md\`.
+**${n} regler, ${godkjent} klinisk godkjent.** Utfallet av kontrollen: ${utfallstekst(sett)}. Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. ${godkjenningstekst} En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i ${rapport.notater.map((n) => `\`${n}\``).join(' og ')}.
 
 Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel bygger på teksten der, og den vises ikke (\`docs/verktøy-p3-rettigheter.md\`).
 
@@ -216,11 +282,11 @@ ${tabell(
 
 ## Kilder
 
-Hentet og lest ${dato(KILDER[0]!.hentet)}. Kontrollsummen (SHA-256) er av dokumentet slik det ble hentet.
+Hentet og lest ${hentet}. Kontrollsummen (SHA-256) er av dokumentet slik det ble hentet.
 
 ${tabell(
   ['Id', 'Type', 'Kilde', 'Versjon', 'SHA-256'],
-  KILDER.map((k) => [`[${k.id}](${k.url})`, k.type, k.tittel, k.versjon, k.sha256 ? `\`${k.sha256.slice(0, 16)}…\`` : '–']),
+  kilder.map((k) => [`[${k.id}](${k.url})`, k.type, k.tittel, k.versjon, k.sha256 ? `\`${k.sha256.slice(0, 16)}…\`` : '–']),
 )}
 
 ${sett.regler.map((r) => regelavsnitt(r, sett)).join('\n\n')}

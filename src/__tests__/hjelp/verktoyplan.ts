@@ -6,7 +6,7 @@
  * verdiene har klinisk innhold.
  */
 import type { Legemiddelutvalg } from '../../legemiddeldata/lesing'
-import { KRYSSREGEL, depotregel, nedtrappingsregel, sp, syntetiskUtvalg, TESTAZAPIN, TESTOKSETIN, TESTPERIDON } from '../../verktoy/motor/syntetisk'
+import { KRYSSREGEL, depotregel, nedtrappingUtenNull, sp, syntetiskUtvalg, TESTAZAPIN, TESTOKSETIN, TESTPERIDON, trinnvalgUtenNull, type Testpreparat } from '../../verktoy/motor/syntetisk'
 import { KARTLEGGING } from '../../verktoy/register'
 import { fingeravtrykk } from '../../verktoy/regler/godkjenning'
 import type { Regel, Regelsett, Virkestoffvalg } from '../../verktoy/regler/modell'
@@ -17,10 +17,10 @@ export const TESTKOBLING = { testoksetin: 'escitalopram', testazapin: 'mirtazapi
 
 const festId = (nokkel: string) => KARTLEGGING.virkestoffer.find((v) => v.nokkel === nokkel)!.fest[0]!
 
-/** Erstatter testvirkestoffene med virkestoffene i kartleggingen, overalt i `x`. */
-function omkoble<T>(x: T, ider = false): T {
+/** Erstatter testvirkestoffene med virkestoffene i kartleggingen etter `kobling`, overalt i `x`. */
+function omkoble<T>(x: T, ider = false, kobling: Readonly<Record<string, string>> = TESTKOBLING): T {
   let tekst = JSON.stringify(x)
-  for (const [test, ekte] of Object.entries(TESTKOBLING)) {
+  for (const [test, ekte] of Object.entries(kobling)) {
     tekst = ider
       ? tekst.replaceAll(`ID_SYNTETISK-${test.toUpperCase()}"`, `${festId(ekte)}"`)
       : tekst.replaceAll(`"${test}"`, `"${ekte}"`)
@@ -44,11 +44,42 @@ export function godkjennITest(r: Regel, id: string): Regel {
   return regel
 }
 
-/** Nedtrapping av «escitalopram» med syntetiske verdier: 50 % av startdosen per uke. */
-export const TEST_NEDTRAPPING: Regel = godkjennITest(
-  omkoble(nedtrappingsregel({ type: 'prosent_av_startdose', prosent: sp(50, 'prosent') }, { avvik_prosent: sp(10, 'prosent') })),
-  'test-nedtrapping',
-)
+/**
+ * Den syntetiske nedtrappingen: 50 % av aktuell dose per trinn, ingen trinn
+ * under 5 mg (en syntetisk praktisk grense) og høyst 12 reduksjoner. Den går
+ * ikke til null, som ingen seponeringsregel kan (P7.5): siste dose fortsetter
+ * til avslutningen er vurdert individuelt.
+ */
+const nedtrapping = (id?: string): Regel => nedtrappingUtenNull({ type: 'prosent_av_aktuell', prosent: sp(50, 'prosent') }, { avvik_prosent: sp(10, 'prosent'), min_mg: sp(5, 'mg') }, id)
+
+/** Nedtrapping av «escitalopram» med syntetiske verdier: 50 % av aktuell dose per trinn, uten nulltrinn. */
+export const TEST_NEDTRAPPING: Regel = godkjennITest(omkoble(nedtrapping()), 'test-nedtrapping')
+
+/** Som {@link TEST_NEDTRAPPING}, men forskriveren kan velge dager per trinn (14–28). */
+export const TEST_JUSTERBAR: Regel = (() => {
+  const r = nedtrapping('justerbar')
+  const fase = r.plan.forlop[0]!.faser[0]!
+  if (fase.type === 'nedtrapping') fase.trinnlengde = { ...fase.trinnlengde, omrade: [14, 28], justerbar: 'Dager per trinn' }
+  return godkjennITest(omkoble(r), 'test-justerbar')
+})()
+
+/**
+ * Som {@link TEST_JUSTERBAR}, med et spørsmål som må besvares, og kortere trinn
+ * enn 21 dager krever begrunnelse når svaret er ja.
+ */
+export const TEST_BEGRUNNELSE: Regel = (() => {
+  const r = nedtrapping('begrunnelse')
+  const grunnlag = { type: 'ousfar_vurdering' as const, begrunnelse: 'Syntetisk.', avklaring: null }
+  r.sporsmal = [{ id: 'testsporsmal', tekst: 'Et syntetisk spørsmål som må besvares.', ja: 'syntetisk ja', grunnlag }]
+  const fase = r.plan.forlop[0]!.faser[0]!
+  if (fase.type === 'nedtrapping') {
+    fase.trinnlengde = { ...fase.trinnlengde, omrade: [14, 28], justerbar: 'Dager per trinn', begrunnelseskrav: [{ under: 21, ved: 'testsporsmal', grunnlag }] }
+  }
+  return godkjennITest(omkoble(r), 'test-begrunnelse')
+})()
+
+/** Nedtrapping av «escitalopram» der forskriveren kan velge blant dosene som kan gis når et trinn ikke kan gis nøyaktig (P7.5), med syntetiske verdier. */
+export const TEST_TRINNVALG: Regel = godkjennITest(omkoble(trinnvalgUtenNull()), 'test-trinnvalg')
 
 /** Kryssnedtrapping «escitalopram» → «mirtazapin» med syntetiske verdier og måldose fra inndata. */
 export const TEST_KRYSS: Regel = godkjennITest(omkoble({ ...KRYSSREGEL, inndata: [{ navn: 'maldose', art: 'bindende_krav', grunnlag: { type: 'ousfar_vurdering', begrunnelse: 'Syntetisk.', avklaring: null } }] } as Regel), 'test-kryss')
@@ -75,6 +106,15 @@ export function testsett(...regler: Regel[]): Regelsett {
 /** Preparatene for testvirkestoffene i FESTs form, kontrollert `kontrollert_kl`. */
 export function testFest(kontrollert_kl: string | null = '2026-11-01T04:20:00Z', kildedato: string | null = '2026-10-15'): Legemiddelutvalg {
   return { ...omkoble(syntetiskUtvalg([...TESTOKSETIN, ...TESTAZAPIN, ...TESTPERIDON], { kontrollert_kl, kildedato }), true), kilde: 'FEST' }
+}
+
+/**
+ * Syntetiske preparater i FESTs form for et hvilket som helst virkestoff i
+ * kartleggingen: testoksetin-preparatene står for `nokkel`, så en ekte regel
+ * kan beregnes med preparater som bare finnes i testen.
+ */
+export function testFestFor(nokkel: string, preparater: readonly Testpreparat[], kontroll: Parameters<typeof syntetiskUtvalg>[1] = {}): Legemiddelutvalg {
+  return { ...omkoble(syntetiskUtvalg(preparater, kontroll), true, { testoksetin: nokkel }), kilde: 'FEST' }
 }
 
 /** Tidspunktet testene regner fra: samme dag som FEST-kopien er kontrollert. */

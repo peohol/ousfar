@@ -13,12 +13,12 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import type { Legemiddelutvalg } from '../legemiddeldata/lesing'
-import { beregn } from '../verktoy/regler/beregning'
-import { fingeravtrykk } from '../verktoy/regler/godkjenning'
-import { REGELMODELLVERSJON, type Nedtrappingsstrategi, type Regel } from '../verktoy/regler/modell'
+import { beregn, MOTORVERSJON } from '../verktoy/regler/beregning'
+import { erKliniskGodkjent, fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
+import { apneValg, REGELMODELLVERSJON, type Nedtrappingsstrategi, type Regel } from '../verktoy/regler/modell'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
 import { byggesteiner, type Byggestein } from '../verktoy/motor/byggesteiner'
-import { doser, MAKS_DRAPER, MAKS_ENHETER, styrkevalg, velgSerie, type Dosekandidat } from '../verktoy/motor/dosevalg'
+import { doser, fordel, MAKS_DRAPER, MAKS_ENHETER, styrkevalg, velgSerie, type Dosekandidat } from '../verktoy/motor/dosevalg'
 import {
   antallTekst,
   beregnDoseplan,
@@ -28,11 +28,15 @@ import {
   kliniskSperre,
   PLANMOTORVERSJON,
   planform,
+  UTENFOR_OMFANG,
   type Doseplaninndata,
   type Doseplanresultat,
   type Omgivelse,
 } from '../verktoy/motor/plan'
 import { lagMotorrapport, MOTORRAPPORTFIL } from '../verktoy/motor/rapport'
+import { planvisning } from '../verktoy/planvisning'
+import { FEST_PILOT, omgivelseFor, type Festuttrekk } from '../verktoy/regler/aksepttest'
+import { festkoblinger, KARTLEGGING } from '../verktoy/register'
 import {
   depotregel,
   fastDose,
@@ -159,6 +163,15 @@ describe('Dosene som kan settes sammen', () => {
     expect(k(15)).toBe('1×10+1×5')
     expect(k(20)).toBe('1×20')
     expect(k(11.25)).toBe('1×10+0.25×5')
+  })
+
+  it('velger den enkleste sammensetningen som kan fordeles, når døgndosen må fordeles', () => {
+    // 100 mg som én tablett kan ikke fordeles på to doser; fire tabletter à 25 mg kan (50 + 50 mg).
+    const v = valg(tab('A', 25), tab('B', 100))
+    const k = (godta?: (k: Dosekandidat) => boolean) => doser(v, 100, 100, godta)[0]!.elementer.map((e) => `${e.antall}×${e.mg}`).join('+')
+    expect(k()).toBe('1×100')
+    expect(k((x) => fordel(x, [2], Infinity) !== null)).toBe('4×25')
+    expect(doser(v, 100, 100, () => false)).toEqual([])
   })
 
   it('setter aldri sammen injeksjoner', () => {
@@ -346,7 +359,7 @@ describe('Kildedata, versjoner og determinisme', () => {
     expect(r).toMatchObject({
       regel: { id: 'syntetisk-fast', versjon: 1, fingeravtrykk: fingeravtrykk(regel), godkjenning: 'utkast' },
       modell: REGELMODELLVERSJON,
-      motor: 1,
+      motor: MOTORVERSJON,
       planmotor: PLANMOTORVERSJON,
       fest: { kilde: 'Syntetiske testdata', kildedato: '2026-10-15', kontrollert_kl: '2026-11-01T04:20:00Z', statusdato: '2026-11-01' },
       preparatgrunnlag: expect.stringMatching(/^[0-9a-f]{64}$/),
@@ -363,6 +376,43 @@ describe('Kildedata, versjoner og determinisme', () => {
       for (const k of ['virkestoff', 'styrker', 'merkevarer', 'pakninger'] as const) snudd.utvalg[k].reverse()
       expect(beregnDoseplan(t.regel, t.inndata, snudd, t.omgivelse ?? OMGIVELSE), t.id).toEqual(a)
     }
+  })
+
+  it('tilbyr de nærmeste dosene som kan gis bare når regelen tillater det, og velger ikke selv (P7.5)', () => {
+    const t = TESTTILFELLER.find((x) => x.id === 'trinnvalg-tilbys')!
+    const beregnet = (r: typeof t.regel) => beregnDoseplan(r, t.inndata, syntetiskGrunnlag(t.preparater), OMGIVELSE)
+    const r = beregnet(t.regel)
+    // Det foretrukne området er 5–25 %: over 25 % ville krevd begrunnelse, så 13,75 mg (−26,67 %) er et avvik og tilbys ikke (kontrollørens gjennomgang av 9cb420b).
+    expect(r.trinnvalg?.map((x) => [x.trinn, x.fra_mg, x.beregnet_mg, x.omrade, x.doser.map((d) => [d.mg, Math.round(d.prosent * 100) / 100])])).toEqual([[2, 18.75, 14.06, [5, 25], [[15, 20]]]])
+    // Den foretrukne reduksjonen står først.
+    expect(r.merknader.join(' ')).toMatch(
+      /Den foretrukne reduksjonen til 14,06 mg \(−25,01 % fra 18,75 mg\) kan ikke gis med preparatene\. Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 18,75 mg innenfor det foretrukne området 5–25 %: 15 mg \(−20 %\)\. Beregningen velger ikke selv\./,
+    )
+    // Et avvik kan heller ikke velges, også med begrunnelse: planen stopper og sier at verktøyet ikke beregner det.
+    const avvik = beregnDoseplan(t.regel, { ...t.inndata, trinnvalg: [{ forlop: 'fra', trinn: 2, fra_mg: 18.75, mg: 13.75 }], begrunnelse: 'Syntetisk begrunnelse.' }, syntetiskGrunnlag(t.preparater), OMGIVELSE)
+    expect(avvik.status === 'stoppet' && avvik.stoppgrunner.join(' ')).toMatch(/den valgte dosen 13,75 mg er en reduksjon på 26,67 % fra 18,75 mg, utenfor valgområdet 5–25 % regelen tillater for dette trinnet\. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke/)
+    // Finnes ingen dose i det foretrukne området, er planen et forklarende stopp uten valg.
+    // Fra 20 mg med bare 10 mg-tabletter: 15 mg kan gis, 11,25 mg ikke, og fra 15 mg er 10 mg (−33,33 %) nærmeste dose under.
+    const ingen = beregnDoseplan(t.regel, { ...t.inndata, startdose_mg: 20 }, syntetiskGrunnlag(t.preparater.filter((x) => x.id === 'OKS-TAB10')), OMGIVELSE)
+    expect(ingen.trinnvalg).toBeUndefined()
+    expect(ingen.merknader.join(' ') + (ingen.status === 'stoppet' ? ingen.stoppgrunner.join(' ') : '')).toMatch(/kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 5–25 %\. En større reduksjon er et avvik/)
+    // Uten valg per trinn i regelen: ingen doser tilbys, og stoppet sier at en annen dose krever en ny faglig vurdering.
+    const uten = structuredClone(t.regel)
+    const fase = uten.plan.forlop[0]!.faser[0]!
+    if (fase.type === 'nedtrapping') delete fase.trinnvalg
+    const u = beregnet(uten)
+    expect(u.trinnvalg).toBeUndefined()
+    expect(u.merknader.join(' ')).toMatch(/En annen dose, et større avvik eller en annen formulering er et nytt forslag/)
+  })
+
+  it('avviser et valg som ikke lenger passer planen eller ikke kan gis, i stedet for å la det stå ubrukt (P7.5, beslutning P7-A)', () => {
+    const t = TESTTILFELLER.find((x) => x.id === 'trinnvalg-valgt')!
+    const med = (trinnvalg: Doseplaninndata['trinnvalg']) => beregnDoseplan(t.regel, { ...t.inndata, trinnvalg }, syntetiskGrunnlag(t.preparater), OMGIVELSE)
+    expect(med(t.inndata.trinnvalg).status).toBe('doseplan')
+    // Fra en annen dose (f.eks. etter endret startdose) gjelder valget ikke lenger.
+    expect(stopp(med([{ forlop: 'fra', trinn: 2, fra_mg: 20, mg: 15 }]))).toMatch(/Valget 15 mg for trinn 2 \(fra, fra 20 mg\) gjelder ikke lenger: planen har ikke det trinnet fra den dosen.*Fjern valget/)
+    // 14,5 mg er innenfor valgområdet (−22,67 %), men kan ikke gis med tablettene.
+    expect(stopp(med([{ forlop: 'fra', trinn: 2, fra_mg: 18.75, mg: 14.5 }]))).toMatch(/testoksetin dag 15–28: den valgte dosen 14,5 mg for trinn 2 kan ikke gis med preparatene i FEST for perioden\. Fjern valget, og velg på nytt\./)
   })
 
   it('kaster aldri, heller ikke på meningsløse inndata', () => {
@@ -427,10 +477,11 @@ describe('Sporet til preparatene', () => {
 describe('Sperren mot klinisk bruk', () => {
   const NAA = new Date('2026-11-01T12:00:00Z')
 
-  it('ingen av P4s pilotregler kan gi en klinisk plan, uansett preparatdata', () => {
-    expect(PILOTSETT.regler).toHaveLength(8)
+  it('bare de to depotreglene og sertralin → mirtazapin, som kontrolløren godkjente, er klinisk godkjent; de andre pilotreglene kan ikke gi en klinisk plan, uansett preparatdata', () => {
+    expect(PILOTSETT.regler).toHaveLength(5)
+    expect(PILOTSETT.regler.filter(erKliniskGodkjent).map((r) => r.id)).toEqual(['kryssnedtrapping-sertralin-mirtazapin', 'depot-aripiprazol-maintena', 'depot-paliperidon-xeplion'])
     const fest = somFest(g.utvalg)
-    for (const r of PILOTSETT.regler) {
+    for (const r of PILOTSETT.regler.filter((x) => !erKliniskGodkjent(x))) {
       expect(r.godkjenning.status).not.toBe('klinisk_godkjent')
       expect(kliniskSperre(r, fest, NAA).join(' '), r.id).toMatch(/ikke klinisk godkjent/)
       // Med preparater for virkestoffene (syntetiske, merket som FEST) stopper den kliniske planen likevel.
@@ -451,10 +502,11 @@ describe('Sperren mot klinisk bruk', () => {
     }
     const r = beregnDoseplan(regel, AZA, { ...g, utvalg: somFest(g.utvalg) }, OMGIVELSE)
     expect(r).toMatchObject({ status: 'doseplan', klinisk: false })
-    expect(r.status === 'doseplan' && r.sperre).toEqual(['Regelen er en syntetisk testregel.', expect.stringMatching(/åpne valg/)])
+    // Den går også til null uten individuell avslutning, så den er ugyldig som seponeringsregel uansett godkjenning.
+    expect(r.status === 'doseplan' && r.sperre).toEqual(['Regelen er en syntetisk testregel.', expect.stringMatching(/^Regelen er ugyldig: forløp fra slutter ikke med en nedtrapping med individuell avslutning/), expect.stringMatching(/åpne valg/)])
     expect(kliniskSperre(regel, g.utvalg, NAA)).toContain('Preparatene er fra «Syntetiske testdata», ikke fra FEST.')
     const k = kliniskDoseplan(regel, AZA, g, OMGIVELSE)
-    expect(k).toMatchObject({ status: 'stoppet', klinisk: false, stoppgrunner: ['Ingen klinisk doseplan kan vises.', 'Regelen er en syntetisk testregel.', expect.anything(), expect.anything()] })
+    expect(k).toMatchObject({ status: 'stoppet', klinisk: false, stoppgrunner: ['Ingen klinisk doseplan kan vises.', 'Regelen er en syntetisk testregel.', expect.anything(), expect.anything(), expect.anything()] })
     for (const t of TESTTILFELLER) expect(kliniskDoseplan(t.regel, t.inndata, syntetiskGrunnlag(t.preparater, t.fest), OMGIVELSE).status, t.id).toBe('stoppet')
   })
 
@@ -465,7 +517,15 @@ describe('Sperren mot klinisk bruk', () => {
    * klinisk. Ingen virkelig regel eller godkjenning endres.
    */
   const positivKontroll = (): Regel => {
-    const regel: Regel = structuredClone({ ...fastDose([15]), id: 'positivkontroll-bare-i-test' })
+    // 30 mg i en uke og så 15 mg til avslutningen er vurdert: som enhver seponeringsregel går den ikke til null (P7.5).
+    const regel: Regel = structuredClone({ ...fastDose([30]), id: 'positivkontroll-bare-i-test' })
+    regel.plan.forlop[0]!.faser.push({
+      type: 'nedtrapping',
+      strategi: { type: 'prosent_av_aktuell', prosent: sp(50, 'prosent') },
+      trinnlengde: sp(7, 'dager'),
+      avslutning: 'individuell',
+      horisont: sp(1, 'trinn'),
+    })
     const av = { dato: '2026-11-01', av: 'Testkontrollør', rolle: 'uavhengig_kontrollor' as const, regelversjon: 1 }
     const avklar = (x: unknown): void => {
       if (Array.isArray(x)) x.forEach(avklar)
@@ -548,15 +608,363 @@ describe('Sperren mot klinisk bruk', () => {
     expect(kliniskDoseplan(fastDose([15]), AZA, g, { ...OMGIVELSE, fagtekst })).toMatchObject({ fagtekst: [fagtekst[0]] })
   })
 
-  it('pilotreglenes depotforløp sier ikke hvilket preparat de gjelder, så motoren stopper for dem', () => {
-    for (const id of ['depot-paliperidon-xeplion', 'depot-aripiprazol-maintena']) {
-      const r = PILOTSETT.regler.find((x) => x.id === id)
-      expect(r, id).toBeDefined()
-      expect(r!.plan.forlop.filter((f) => f.administrasjon === 'depotinjeksjon').every((f) => !f.preparater)).toBe(true)
+})
+
+/** FEST-uttrekket med preparatene for virkestoffene i pilotsettet (P4.8). */
+const PILOTFEST = JSON.parse(readFileSync(new URL(`../../${FEST_PILOT}`, import.meta.url), 'utf8')) as Festuttrekk
+const pilotgrunnlag = (...stoffer: string[]) => ({ utvalg: PILOTFEST.utvalg, koblinger: festkoblinger(stoffer), overstyringer: KARTLEGGING.festoverstyringer })
+const PILOTOMGIVELSE = omgivelseFor(PILOTFEST)
+const pilotregel = (id: string) => PILOTSETT.regler.find((x) => x.id === id)!
+
+describe('Depotreglene i pilotsettet med preparatene i FEST (P4.8, beslutning P4-B)', () => {
+  const grunnlag = pilotgrunnlag('aripiprazol', 'paliperidon')
+  const omgivelse = PILOTOMGIVELSE
+  const MAINTENA = pilotregel('depot-aripiprazol-maintena')
+  const XEPLION = pilotregel('depot-paliperidon-xeplion')
+  const TABLETT_FEST = { legemiddelformer: ['53'] }
+  const maintena: Doseplaninndata = { startdose_mg: 15, bekreftet: ['indikasjon'], pasientforhold: { cyp2d6_langsom: false, sterk_cyp_hemmer: false, cyp3a4_induktor: false }, formvalg: { fra: TABLETT_FEST } }
+  const xeplion = (startdose_mg: number, x: Partial<Doseplaninndata> = {}): Doseplaninndata => ({ startdose_mg, bekreftet: ['indikasjon'], pasientforhold: { nedsatt_nyrefunksjon: false }, ...x })
+  const depotpreparater = (r: Doseplanresultat) =>
+    r.status === 'doseplan' ? [...new Set(r.forlop.flatMap((f) => f.injeksjoner.flatMap((i) => i.element.preparater.map((b) => `${b.varenavn} [${b.legemiddelform?.kode}] ${b.registrering}`))))].sort() : []
+
+  it('hver depotregel sier hvilket depotpreparat den gjelder, så motoren aldri velger selv', () => {
+    for (const r of [MAINTENA, XEPLION]) expect(r.plan.forlop.filter((f) => f.administrasjon === 'depotinjeksjon').map((f) => f.preparater), r.id).toEqual([[r === MAINTENA ? 'Abilify Maintena' : 'Xeplion']])
+    expect(MAINTENA.plan.forlop[1]!.legemiddelformer).toEqual(['819'])
+  })
+
+  it('Abilify Maintena: oppstart og etterfølgende injeksjoner med den månedlige presentasjonen, aldri den annenhver måned', () => {
+    const r = beregnDoseplan(MAINTENA, maintena, grunnlag, omgivelse)
+    expect(planform(r)).toEqual({
+      fra: ['dag 1–14: 15 mg = 1 tablett à 15 mg', 'fra dag 15: seponert'],
+      til: ['dag 1: 400 mg = 1 injeksjon à 400 mg', 'hver måned fra 1 måned etter dag 1: 400 mg = 1 injeksjon à 400 mg'],
+    })
+    expect(r.status === 'doseplan' && r.forlop[1]!.injeksjoner.map((i) => [i.mg, i.element.doseenhet, i.vedlikehold?.tidligst_dager ?? null])).toEqual([
+      [400, 'injeksjon', null],
+      [400, 'injeksjon', 26],
+    ])
+    expect(depotpreparater(r)).toEqual(['Abilify Maintena [819] registrert'])
+    // Presentasjonen til injeksjon annenhver måned (720 og 960 mg) kan ikke velges.
+    expect(stopp(beregnDoseplan(MAINTENA, { ...maintena, formvalg: { ...maintena.formvalg, til: { legemiddelformer: ['913'] } } }, grunnlag, omgivelse))).toMatch(
+      /Ingen av depotpreparatene \(Abilify Maintena\) av aripiprazol i FEST kan brukes med valgene som er gjort/,
+    )
+  })
+
+  it('Abilify Maintena: CYP2D6, hemmere og induktorer stopper, også ubesvart', () => {
+    expect(stopp(beregnDoseplan(MAINTENA, { ...maintena, pasientforhold: { ...maintena.pasientforhold, cyp2d6_langsom: true } }, grunnlag, omgivelse))).toMatch(/Regelen gjelder ikke: Pasienten er kjent langsom CYP2D6-omsetter/)
+    expect(stopp(beregnDoseplan(MAINTENA, { ...maintena, pasientforhold: { cyp2d6_langsom: false } }, grunnlag, omgivelse))).toMatch(/Må avklares før beregning \(ukjent\): Pasienten bruker en sterk CYP2D6- eller CYP3A4-hemmer/)
+  })
+
+  it('Xeplion: oppstart i deltoideus, vedlikehold etter omregningen, og deltoideus framhevet etter bytte fra 9–12 mg', () => {
+    const fra6 = beregnDoseplan(XEPLION, xeplion(6, { startdato: '2026-11-02' }), grunnlag, omgivelse)
+    expect(planform(fra6).til).toEqual([
+      'dag 1 [02.11.2026]: 150 mg = 1 injeksjon à 150 mg, deltoideus',
+      'dag 8 [09.11.2026]: 100 mg = 1 injeksjon à 100 mg, deltoideus',
+      'hver måned fra 1 måned etter dag 8 [09.12.2026]: 75 mg = 1 injeksjon à 75 mg, deltoideus eller setemuskel',
+    ])
+    // Bare registrerte Xeplion-preparater uten godkjenningsfritak; Trevicta, Palmeux og de andre paliperidondepotene brukes aldri.
+    expect(depotpreparater(fra6)).toEqual(['Xeplion [913] registrert'])
+    for (const [start, vedlikehold] of [[9, 100], [12, 150]] as const) {
+      expect(planform(beregnDoseplan(XEPLION, xeplion(start), grunnlag, omgivelse)).til!.at(-1), `${start} mg`).toBe(
+        `hver måned fra 1 måned etter dag 8: ${vedlikehold} mg = 1 injeksjon à ${vedlikehold} mg, deltoideus eller setemuskel; etter bytte fra 9–12 mg kan setemuskelen gi lavere eksponering de første seks månedene, så deltoideus bør vurderes`,
+      )
     }
-    const xeplion = PILOTSETT.regler.find((x) => x.id === 'depot-paliperidon-xeplion')!
-    const res = beregnDoseplan(xeplion, { startdose_mg: 6, bekreftet: ['indikasjon'], pasientforhold: { nedsatt_nyrefunksjon: false } }, { ...g, koblinger: { paliperidon: ['ID_SYNTETISK-TESTPERIDON'] } }, OMGIVELSE)
-    expect(stopp(res)).toMatch(/Regelen sier ikke hvilket depotpreparat paliperidon \(til\) gjelder/)
+    expect(planform(beregnDoseplan(XEPLION, xeplion(3, { maldose_mg: 50 }), grunnlag, omgivelse)).til!.at(-1)).toBe('hver måned fra 1 måned etter dag 8: 50 mg = 1 injeksjon à 50 mg, deltoideus eller setemuskel')
+  })
+
+  it('Xeplion: nedsatt nyrefunksjon stopper, også ubesvart', () => {
+    expect(stopp(beregnDoseplan(XEPLION, xeplion(6, { pasientforhold: { nedsatt_nyrefunksjon: true } }), grunnlag, omgivelse))).toMatch(/Regelen gjelder ikke: Pasienten har kreatininclearance under 80 ml\/min/)
+    expect(stopp(beregnDoseplan(XEPLION, xeplion(6, { pasientforhold: {} }), grunnlag, omgivelse))).toMatch(/Må avklares før beregning \(ukjent\): Pasienten har kreatininclearance under 80 ml\/min/)
+  })
+
+  it('stopper når depotpreparatet med dosen er utgått, og bruker ikke et annet depot i stedet', () => {
+    const utgatt = structuredClone(grunnlag)
+    const ider = new Set(utgatt.utvalg.merkevarer.filter((m) => m.varenavn === 'Xeplion').map((m) => m.id))
+    const styrke75 = byggesteiner(grunnlag, 'paliperidon', omgivelse.idag).filter((b) => b.varenavn === 'Xeplion' && b.mg === 75).map((b) => b.id)
+    for (const p of utgatt.utvalg.pakninger) if (p.merkevarer.some((m) => styrke75.includes(m) && ider.has(m))) p.avregistrert_dato = '2026-01-01'
+    expect(stopp(beregnDoseplan(XEPLION, xeplion(6), utgatt, omgivelse))).toMatch(/paliperidon \(til\): vedlikeholdet er 75 mg, men FEST har ingen brukbar injeksjon med den styrken \(brukbare styrker: 50, 100, 150 mg\)/)
+  })
+
+  it('er klinisk godkjent av kontrolløren for nøyaktig versjon 3, og gir da en klinisk plan med de faktiske preparatene (gjennomgangen av 62ebb21)', () => {
+    for (const [r, inndata, fingeravtrykket] of [
+      [MAINTENA, maintena, '04d1debe48f02ea03a31aab3d7cd5cdeb15c56d4b43797bda353f3d857297f20'],
+      [XEPLION, xeplion(6), '21a335eec8c3816ee21627ceec3197e52957ccdf99cdbfaa00a3ca3cb5987bdf'],
+    ] as const) {
+      expect(r.versjon, r.id).toBe(3)
+      expect(fingeravtrykk(r), r.id).toBe(fingeravtrykket)
+      expect(r.godkjenning.historikk.at(-1), r.id).toMatchObject({ status: 'klinisk_godkjent', rolle: 'uavhengig_kontrollor', regelversjon: 3, fingeravtrykk: fingeravtrykket })
+      expect(erKliniskGodkjent(r), r.id).toBe(true)
+      const res = kliniskDoseplan(r, inndata, grunnlag, omgivelse)
+      expect(res, r.id).toMatchObject({ status: 'doseplan', klinisk: true })
+      expect(planform(res).til, r.id).toEqual(planform(beregnDoseplan(r, inndata, grunnlag, omgivelse)).til)
+    }
+  })
+
+  it('sperrer den kliniske planen utenfor avgrensningen, med gamle FEST-data og når regelen er endret', () => {
+    const klinisk = (r: Regel, inndata: Doseplaninndata, o = omgivelse, gr = grunnlag) => kliniskDoseplan(r, inndata, gr, o)
+    // Utenfor avgrensningen: CYP2D6, hemmere og induktorer for Maintena, nyrefunksjonen for Xeplion, og ubekreftet indikasjon og stabilisering.
+    expect(stopp(klinisk(MAINTENA, { ...maintena, pasientforhold: { ...maintena.pasientforhold, cyp2d6_langsom: true } }))).toMatch(/Regelen gjelder ikke: Pasienten er kjent langsom CYP2D6-omsetter/)
+    expect(stopp(klinisk(MAINTENA, { ...maintena, pasientforhold: { ...maintena.pasientforhold, cyp3a4_induktor: true } }))).toMatch(/Regelen gjelder ikke: Pasienten bruker en CYP3A4-induktor/)
+    expect(stopp(klinisk(MAINTENA, { ...maintena, bekreftet: [] }))).toMatch(/Må bekreftes før beregning: Pasienten er voksen, har schizofreni og er stabilisert på, og har tålt, peroral aripiprazol/)
+    expect(stopp(klinisk(XEPLION, xeplion(6, { pasientforhold: { nedsatt_nyrefunksjon: true } })))).toMatch(/Regelen gjelder ikke: Pasienten har kreatininclearance under 80 ml\/min/)
+    expect(stopp(klinisk(XEPLION, xeplion(6, { bekreftet: [] })))).toMatch(/Må bekreftes før beregning: Pasienten er voksen, har schizofreni og er stabilisert på peroral paliperidon depottablett/)
+    // FEST-data eldre enn grensen gir ingen klinisk plan.
+    const senere = { ...omgivelse, naa: new Date(Date.parse(omgivelse.naa) + 3 * 24 * 3600 * 1000).toISOString() }
+    for (const [r, inndata] of [[MAINTENA, maintena], [XEPLION, xeplion(6)]] as const) {
+      expect(klinisk(r, inndata, senere).status, r.id).toBe('stoppet')
+      // Enhver endring i regelen etter godkjenningen, her et regneeksempel som er fjernet, opphever godkjenningen.
+      const endret = structuredClone(r)
+      endret.eksempler = endret.eksempler.slice(1)
+      expect(erKliniskGodkjent(endret), r.id).toBe(false)
+      expect(stopp(klinisk(endret, inndata)), r.id).toMatch(/fingeravtrykket stemmer ikke/)
+    }
+  })
+})
+
+describe('Kvetiapin i byttet fra olanzapin med preparatene i FEST (P4.8, gjennomgangen av fe08fac)', () => {
+  const grunnlag = pilotgrunnlag('olanzapin', 'kvetiapin')
+  const omgivelse = PILOTOMGIVELSE
+  const REGEL = pilotregel('antipsykotikabytte-olanzapin-kvetiapin')
+  const tabletter = (koder: string[]) => ({ klasse: 'peroral' as const, legemiddelformer: koder })
+  const inndata = (maldose_mg: number, til?: ReturnType<typeof tabletter>): Doseplaninndata => ({
+    startdose_mg: 10,
+    maldose_mg,
+    bekreftet: REGEL.bekreftelser.map((b) => b.id),
+    formvalg: { fra: tabletter(['53']), ...(til && { til }) },
+  })
+  const kvetiapin = (r: Doseplanresultat) => (r.status === 'doseplan' ? r.forlop.find((f) => f.id === 'til')! : undefined)
+
+  it('regelen er bundet til tabletter med vanlig frisetting og krever to doser hver dag, også ved vedlikehold', () => {
+    const til = REGEL.plan.forlop.find((f) => f.id === 'til')!
+    expect(til.legemiddelformer).toEqual(['53'])
+    expect(til.fordeling).toMatchObject({ antall: [2] })
+    expect(til.fordeling!.over_mg).toBeUndefined()
+  })
+
+  it('dag 1 er 25 + 25 mg, og hver døgndose etter det er fordelt på to doser med de faktiske tablettene', () => {
+    const r = beregnDoseplan(REGEL, inndata(400), grunnlag, omgivelse)
+    expect(planform(r).til).toEqual([
+      'dag 1: 50 mg = 2 tabletter à 25 mg, fordelt på 2 doser: 25 + 25 mg',
+      'dag 2: 100 mg = 4 tabletter à 25 mg, fordelt på 2 doser: 50 + 50 mg',
+      'dag 3: 200 mg = 2 tabletter à 100 mg, fordelt på 2 doser: 100 + 100 mg',
+      'dag 4: 300 mg = 1 tablett à 100 mg + 1 tablett à 200 mg, fordelt på 2 doser: 200 + 100 mg (ulik fordeling)',
+      'fra dag 5: 400 mg = 2 tabletter à 200 mg, fordelt på 2 doser: 200 + 200 mg',
+    ])
+    const f = kvetiapin(r)!
+    expect(f.perioder.map((p) => p.doser)).toEqual([[25, 25], [50, 50], [100, 100], [200, 100], [200, 200]])
+    // Bare registrerte tabletter med vanlig frisetting (FEST-form 53), aldri depottabletter eller mikstur.
+    const preparater = f.perioder.flatMap((p) => p.elementer.flatMap((e) => e.preparater))
+    expect(new Set(preparater.map((b) => `${b.legemiddelform?.kode} ${b.registrering}`))).toEqual(new Set(['53 registrert']))
+    expect(preparater.some((b) => b.varenavn === 'Seroquel')).toBe(true)
+    expect(f.perioder.flatMap((p) => p.elementer.map((e) => e.mg)).every((mg) => [25, 100, 200, 300].includes(mg))).toBe(true)
+    // Vedlikeholdsdosen 300 og 450 mg er også fordelt på to doser.
+    expect(planform(beregnDoseplan(REGEL, inndata(300), grunnlag, omgivelse)).til!.at(-1)).toBe(
+      'fra dag 4: 300 mg = 1 tablett à 100 mg + 1 tablett à 200 mg, fordelt på 2 doser: 200 + 100 mg (ulik fordeling)',
+    )
+    expect(planform(beregnDoseplan(REGEL, inndata(450), grunnlag, omgivelse)).til!.at(-1)).toBe(
+      'fra dag 5: 450 mg = 2 tabletter à 200 mg + 2 tabletter à 25 mg, fordelt på 2 doser: 225 + 225 mg',
+    )
+  })
+
+  it('avviser depottabletter og mikstur, også ved eksplisitt formvalg', () => {
+    for (const koder of [['25'], ['840'], ['25', '53']]) {
+      const r = beregnDoseplan(REGEL, inndata(400, tabletter(koder)), grunnlag, omgivelse)
+      if (koder.includes('53')) {
+        // Et formvalg som også omfatter depottabletter, gir bare tablettene med vanlig frisetting.
+        expect(new Set(kvetiapin(r)!.perioder.flatMap((p) => p.elementer.flatMap((e) => e.preparater.map((b) => b.legemiddelform?.kode)))), koder.join()).toEqual(new Set(['53']))
+      } else expect(stopp(r), koder.join()).toMatch(/Ingen av de perorale preparatene av kvetiapin i FEST kan brukes med valgene som er gjort/)
+    }
+    expect(stopp(beregnDoseplan(REGEL, { ...inndata(400, tabletter(['25'])), godkjenningsfritak: true }, grunnlag, omgivelse))).toMatch(/Ingen av de perorale preparatene av kvetiapin/)
+  })
+
+  it('stopper når en døgndose ikke kan fordeles på to doser med preparatene, i stedet for å gi den som én dose', () => {
+    const uten25 = structuredClone(grunnlag)
+    const styrke25 = byggesteiner(grunnlag, 'kvetiapin', omgivelse.idag).filter((b) => b.legemiddelform?.kode === '53' && b.mg === 25).map((b) => b.id)
+    for (const p of uten25.utvalg.pakninger) if (p.merkevarer.some((m) => styrke25.includes(m))) p.avregistrert_dato = '2026-01-01'
+    expect(stopp(beregnDoseplan(REGEL, inndata(400), uten25, omgivelse))).toMatch(/kvetiapin dag 1: døgndosen 50 mg skal gis fordelt på 2 doser \(preparatomtalen\), men ingen nøyaktig dose/)
+  })
+})
+
+describe('Fenelzin etter fluoksetin med preparatene i FEST (P4.8, gjennomgangen av fe08fac)', () => {
+  const grunnlag = pilotgrunnlag('fluoksetin', 'fenelzin')
+  const REGEL = pilotregel('mao-fluoksetin-fenelzin')
+  const utvasket = (dag: number, dato: string) =>
+    `tidligst dag ${dag} [${dato}]: 35 dagers utvasking fullført; fenelzin er ikke startet eller dosert av planen. Klinisk oppstart kan først vurderes etter kontroll av kontraindikasjoner, interaksjoner og øvrige forhold`
+
+  it('viser at utvaskingen er fullført og at fenelzin ikke er startet, aldri en oppstart', () => {
+    for (const [startdose_mg, dag, dato] of [
+      [20, 64, '04.01.2027'],
+      [40, 92, '01.02.2027'],
+    ] as const) {
+      const r = beregnDoseplan(REGEL, { startdose_mg, startdato: '2026-11-02', bekreftet: REGEL.bekreftelser.map((b) => b.id), formvalg: { fra: { klasse: 'peroral', legemiddelformer: ['53'] } } }, grunnlag, PILOTOMGIVELSE)
+      expect(planform(r).til, `${startdose_mg} mg`).toEqual([utvasket(dag, dato)])
+      expect(planform(r).til!.join(' ')).not.toMatch(/oppstart, dosering|: oppstart/)
+    }
+  })
+})
+
+describe('Sertralin til mirtazapin med preparatene i FEST (P4.8, gjennomgangene av 62ebb21, 9cb420b, 0ae6d07, d6cc3dd, 74a775f og f77e1a9)', () => {
+  const grunnlag = pilotgrunnlag('sertralin', 'mirtazapin')
+  const REGEL = pilotregel('kryssnedtrapping-sertralin-mirtazapin')
+  const tabletter = { klasse: 'peroral' as const, legemiddelformer: ['53'] }
+  const inndata = (startdose_mg: number, x: Partial<Doseplaninndata> = {}): Doseplaninndata => ({
+    ...REGEL.eksempler[0]!.inndata,
+    startdose_mg,
+    formvalg: { fra: tabletter, til: tabletter },
+    ...x,
+  })
+  const plan = (startdose_mg: number, x?: Partial<Doseplaninndata>) => beregnDoseplan(REGEL, inndata(startdose_mg, x), grunnlag, PILOTOMGIVELSE)
+  const MIRTAZAPIN = ['fra dag 1: 15 mg = 1 tablett à 15 mg', 'holdes til sertralin er avsluttet; videre dosering planlegges individuelt']
+
+  it('trapper ned med hele tabletter til 25 mg og stopper der, ved en positiv dose, med mirtazapin 15 mg samtidig', () => {
+    expect(planform(plan(100))).toEqual({
+      fra: ['dag 1–14: 50 mg = 1 tablett à 50 mg', 'fra dag 15: 25 mg = 1 tablett à 25 mg', 'siste trinn før null; avslutning vurderes individuelt'],
+      til: MIRTAZAPIN,
+    })
+    expect(planform(plan(50))).toEqual({ fra: ['fra dag 1: 25 mg = 1 tablett à 25 mg', 'siste trinn før null; avslutning vurderes individuelt'], til: MIRTAZAPIN })
+    for (const sd of [50, 100]) {
+      const r = plan(sd)
+      expect(r.status, `${sd} mg`).toBe('doseplan')
+      if (r.status !== 'doseplan') continue
+      const sertralin = r.forlop.find((f) => f.id === 'fra')!
+      // Ingen dose under 25 mg og ingen seponering; hver dose er hele, registrerte tabletter.
+      expect(sertralin.perioder.at(-1)!.mg, `${sd} mg`).toBe(25)
+      expect(sertralin.perioder.every((p) => p.mg > 0 && p.elementer.every((e) => Number.isInteger(e.antall))), `${sd} mg`).toBe(true)
+      expect(new Set(r.forlop.flatMap((f) => f.perioder.flatMap((p) => p.elementer.flatMap((e) => e.preparater.map((b) => `${b.legemiddelform?.kode} ${b.registrering}`))))), `${sd} mg`).toEqual(new Set(['53 registrert']))
+    }
+  })
+
+  it('stopper ved tidligere seponeringssymptomer, ubesvarte forhold, manglende bekreftelse og lang behandlingstid uten begrunnelse', () => {
+    expect(stopp(plan(100, { pasientforhold: { tidligere_seponeringssymptomer: true } }))).toMatch(/Regelen gjelder ikke: Et tidligere forsøk på å trappe ned eller seponere sertralin/)
+    expect(stopp(plan(100, { pasientforhold: {} }))).toMatch(/Må avklares før beregning \(ukjent\): Et tidligere forsøk/)
+    expect(stopp(plan(100, { bekreftet: [] }))).toMatch(/Må bekreftes før beregning: Toleransen vurderes før hver reduksjon av sertralin/)
+    expect(stopp(plan(100, { svar: { lang_behandlingstid: true } }))).toMatch(/Svaret ja \(lang behandlingstid\) krever en skriftlig begrunnelse/)
+    // Kontroll av serotonerg sammedisinering må bekreftes for seg (gjennomgangen av 9cb420b).
+    expect(stopp(plan(100, { bekreftet: ['toleranse_overlapp'] }))).toMatch(/Må bekreftes før beregning: .*serotonerg/i)
+    // Mirtazapin finnes som tabletter og smeltetabletter; uten formvalg blander ikke beregningen dem.
+    expect(stopp(plan(100, { formvalg: { fra: tabletter } }))).toMatch(/mirtazapin \(til\) finnes i flere legemiddelformer/)
+  })
+
+  it('gjelder bare 50 mg og 100 mg, bindende verdier og ikke et område (gjennomgangen av 0ae6d07)', () => {
+    // Også dosene mellom 50 og 100 mg stopper, selv om noen av dem kunne gis med hele tabletter.
+    for (const sd of [49, 60, 62.5, 75, 80, 90, 101, 125, 150, 200]) {
+      expect(stopp(plan(sd)), `${sd} mg`).toMatch(new RegExp(`Startdosen ${String(sd).replace('.', ',')} mg er utenfor det regelen gjelder for \\(50, 100 mg\\)`))
+    }
+    for (const sd of [50, 100]) expect(plan(sd).status, `${sd} mg`).toBe('doseplan')
+    expect(REGEL.inndata.find((k) => k.navn === 'startdose')).toMatchObject({ verdier: [50, 100], art: 'bindende_krav' })
+    expect(REGEL.inndata.find((k) => k.navn === 'startdose')).not.toHaveProperty('omrade')
+  })
+
+  it('stopper også ved 50 mg og 100 mg uten hver av bekreftelsene, ved tidligere plager og ved lang behandlingstid uten begrunnelse', () => {
+    for (const sd of [50, 100]) {
+      for (const b of REGEL.bekreftelser) {
+        const bekreftet = REGEL.eksempler[0]!.inndata.bekreftet!.filter((x) => x !== b.id)
+        expect(stopp(plan(sd, { bekreftet })), `${sd} mg uten ${b.id}`).toMatch(/Må bekreftes før beregning/)
+      }
+      expect(stopp(plan(sd, { pasientforhold: { tidligere_seponeringssymptomer: true } })), `${sd} mg`).toMatch(/Regelen gjelder ikke: Et tidligere forsøk/)
+      expect(stopp(plan(sd, { svar: { lang_behandlingstid: true } })), `${sd} mg`).toMatch(/Svaret ja \(lang behandlingstid\) krever en skriftlig begrunnelse/)
+    }
+  })
+
+  it('er klinisk godkjent for nøyaktig versjon 9 med kontrollørens fingeravtrykk (gjennomgangen av f77e1a9)', () => {
+    expect([REGEL.versjon, fingeravtrykk(REGEL)]).toEqual([9, 'dc878aa9065c8330f3850567b226ab8d392bcad4cb1dd5cf5cebacda54277881'])
+    expect(godkjenningsfeil(REGEL)).toEqual([])
+    expect(erKliniskGodkjent(REGEL)).toBe(true)
+    expect(REGEL.godkjenning.historikk.at(-1)).toEqual({
+      status: 'klinisk_godkjent',
+      dato: '2026-10-31',
+      av: 'ChatGPT (uavhengig fagkontrollør)',
+      rolle: 'uavhengig_kontrollor',
+      regelversjon: 9,
+      fingeravtrykk: 'dc878aa9065c8330f3850567b226ab8d392bcad4cb1dd5cf5cebacda54277881',
+      merknad: expect.stringMatching(/^Kontrollørens gjennomgang av f77e1a9 31\.10\.2026 \(P4\.8\): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: begrenset innledende kryssnedtrapping fra sertralin nøyaktig 50 eller 100 mg ved ikke-langvarig behandlingstid/),
+    })
+    // Ingen tidligere steg er en klinisk godkjenning.
+    expect(REGEL.godkjenning.historikk.slice(0, -1).every((x) => x.status !== 'klinisk_godkjent')).toBe(true)
+  })
+
+  it('gir med den godkjente regelen og fersk FEST en klinisk plan bare for 50 og 100 mg, kort behandlingstid og tabletter med de kontrollerte styrkene (gjennomgangen av f77e1a9)', () => {
+    const klinisk = (startdose_mg: number, x?: Partial<Doseplaninndata>, o = PILOTOMGIVELSE) => kliniskDoseplan(REGEL, inndata(startdose_mg, x), grunnlag, o)
+    const ikke = (p: ReturnType<typeof klinisk>, hva: string) => {
+      expect(p, hva).toMatchObject({ status: 'stoppet', klinisk: false })
+      expect(p, hva).not.toHaveProperty('trinnvalg')
+    }
+    // Positivt: 100 → 50 mg i 14 dager → 25 mg, eller 50 → 25 mg, med mirtazapin 15 mg samtidig, og ingen 25 → 0 mg eller opptrapping av mirtazapin.
+    expect(planform(klinisk(100))).toEqual({
+      fra: ['dag 1–14: 50 mg = 1 tablett à 50 mg', 'fra dag 15: 25 mg = 1 tablett à 25 mg', 'siste trinn før null; avslutning vurderes individuelt'],
+      til: MIRTAZAPIN,
+    })
+    expect(planform(klinisk(50))).toEqual({ fra: ['fra dag 1: 25 mg = 1 tablett à 25 mg', 'siste trinn før null; avslutning vurderes individuelt'], til: MIRTAZAPIN })
+    for (const sd of [50, 100]) {
+      const p = klinisk(sd)
+      expect(p, `${sd} mg`).toMatchObject({ status: 'doseplan', klinisk: true, sperre: [] })
+      if (p.status !== 'doseplan') continue
+      const brukt = (id: string) => [...new Set(p.forlop.find((f) => f.id === id)!.perioder.flatMap((q) => q.elementer.flatMap((e) => e.preparater.map((b) => `${b.legemiddelform?.kode} ${b.mg}`))))]
+      expect(brukt('fra').every((x) => ['53 25', '53 50', '53 100'].includes(x)), `${sd} mg`).toBe(true)
+      expect(brukt('til')).toEqual(['53 15'])
+      expect(p.forlop.find((f) => f.id === 'fra')!.perioder.at(-1)!.mg, `${sd} mg`).toBe(25)
+      // Planen når regelens sluttdose og er ikke «én mulig første reduksjon».
+      expect(planvisning(p, REGEL)!.undertittel, `${sd} mg`).toBeNull()
+      // Lang behandlingstid gir ingen plan, også med begrunnelse.
+      for (const begrunnelse of [undefined, 'Syntetisk begrunnelse.', 'x']) ikke(klinisk(sd, { svar: { lang_behandlingstid: true }, ...(begrunnelse && { begrunnelse }) }), `${sd} mg lang ${begrunnelse}`)
+      // Tidligere plager, ukjente forhold og hver manglende bekreftelse stopper.
+      ikke(klinisk(sd, { pasientforhold: { tidligere_seponeringssymptomer: true } }), `${sd} mg tidligere plager`)
+      ikke(klinisk(sd, { pasientforhold: {} }), `${sd} mg ukjente forhold`)
+      for (const b of [...REGEL.bekreftelser.map((x) => x.id), 'alle']) {
+        ikke(klinisk(sd, { bekreftet: b === 'alle' ? [] : REGEL.eksempler[0]!.inndata.bekreftet!.filter((x) => x !== b) }), `${sd} mg uten ${b}`)
+      }
+      // Andre former: sertralin som kapsel og mirtazapin som smeltetablett.
+      for (const formvalg of [{ fra: { klasse: 'peroral' as const, legemiddelformer: ['891'] }, til: tabletter }, { fra: tabletter, til: { klasse: 'peroral' as const, legemiddelformer: ['48'] } }]) {
+        ikke(klinisk(sd, { formvalg }), `${sd} mg ${JSON.stringify(formvalg)}`)
+      }
+      // Et foreldet FEST-uttrekk (mer enn 48 timer) sperrer.
+      ikke(klinisk(sd, {}, { ...PILOTOMGIVELSE, naa: new Date(Date.parse(PILOTOMGIVELSE.naa) + 49 * 3600e3).toISOString() }), `${sd} mg foreldet FEST`)
+    }
+    // Andre startdoser stopper.
+    for (const sd of [25, 49, 60, 75, 101, 150, 200]) ikke(klinisk(sd), `${sd} mg`)
+    // Endres regelen, endres fingeravtrykket, og godkjenningen faller bort.
+    const endret = structuredClone(REGEL)
+    const fase = endret.plan.forlop[0]!.faser[0]!
+    if (fase.type === 'nedtrapping') fase.trinnlengde.verdi = 21
+    expect(fingeravtrykk(endret)).not.toBe(fingeravtrykk(REGEL))
+    expect(godkjenningsfeil(endret).join(' ')).toMatch(/fingeravtrykk/i)
+    ikke(kliniskDoseplan(endret, inndata(100), grunnlag, PILOTOMGIVELSE), 'endret regel')
+  })
+
+  it('har ingen åpne valg: verdiene som stod som forslag i versjon 8, er avklart med kontrollørens beslutning (gjennomgangen av 74a775f)', () => {
+    // Med åpne forslag kunne kontrollørens godkjenning av versjon 8 ikke registreres gyldig.
+    expect(apneValg(REGEL)).toEqual([])
+    const fase = REGEL.plan.forlop[0]!.faser[0]!
+    const verdier = fase.type === 'nedtrapping' && fase.strategi.type === 'prosent_av_aktuell' ? [fase.strategi.prosent, fase.strategi.sluttdose_mg!, fase.trinnlengde, fase.horisont!] : []
+    expect(verdier.map((p) => p.verdi)).toEqual([50, 25, 14, 3])
+    for (const p of verdier) {
+      expect(p.grunnlag).toMatchObject({ type: 'ousfar_vurdering', avklaring: { rolle: 'uavhengig_kontrollor', regelversjon: 8, merknad: expect.stringMatching(/^Kontrollørens gjennomgang av 74a775f \(P4\.8\): .*i den snevre kliniske godkjenningen av versjon 8$/) } })
+    }
+  })
+
+  it('har et klinisk omfang med bare kort behandlingstid, tabletter og styrkene i FEST: lang behandlingstid stopper også med begrunnelse (gjennomgangen av d6cc3dd)', () => {
+    expect(REGEL.klinisk_omfang!.tilfeller).toEqual([{ legemiddelform: '53', startdoser: [50, 100], svar: {}, styrker: { fra: [25, 50, 100], til: [15, 30, 45] } }])
+    const klinisk = (startdose_mg: number, x?: Partial<Doseplaninndata>) => kliniskDoseplan(REGEL, inndata(startdose_mg, x), grunnlag, PILOTOMGIVELSE)
+    for (const sd of [50, 100]) {
+      expect(klinisk(sd), `${sd} mg`).toMatchObject({ status: 'doseplan', klinisk: true })
+      // Lang behandlingstid er utenfor omfanget, også med en vilkårlig begrunnelse.
+      for (const begrunnelse of ['Syntetisk begrunnelse.', 'x']) {
+        const lang = klinisk(sd, { svar: { lang_behandlingstid: true }, begrunnelse })
+        expect(lang, `${sd} mg lang`).toMatchObject({ status: 'stoppet', klinisk: false })
+        expect(stopp(lang), `${sd} mg lang`).toContain(UTENFOR_OMFANG)
+        expect(lang, `${sd} mg lang`).not.toHaveProperty('trinnvalg')
+      }
+      // De negative vilkårene gjelder fortsatt.
+      for (const x of [{ pasientforhold: { tidligere_seponeringssymptomer: true } }, { bekreftet: [] }, { svar: { lang_behandlingstid: true } }]) {
+        expect(klinisk(sd, x), `${sd} mg ${JSON.stringify(x)}`).toMatchObject({ status: 'stoppet', klinisk: false })
+      }
+      // Andre legemiddelformer enn tabletter er utenfor: sertralin som kapsel og mirtazapin som smeltetablett.
+      for (const formvalg of [{ fra: { klasse: 'peroral' as const, legemiddelformer: ['891'] }, til: tabletter }, { fra: tabletter, til: { klasse: 'peroral' as const, legemiddelformer: ['48'] } }]) {
+        const p = klinisk(sd, { formvalg })
+        expect(p, `${sd} mg ${JSON.stringify(formvalg)}`).toMatchObject({ status: 'stoppet', klinisk: false })
+        expect(stopp(p), `${sd} mg ${JSON.stringify(formvalg)}`).toContain(UTENFOR_OMFANG)
+      }
+    }
+    for (const sd of [75, 150]) expect(stopp(klinisk(sd)), `${sd} mg`).toContain(UTENFOR_OMFANG)
   })
 })
 

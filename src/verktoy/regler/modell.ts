@@ -16,10 +16,12 @@
  * 3. **Den matematiske regelen** (`Plan`): doseforløp med faser, strategier og
  *    tidsrelasjoner, og parametre som hver sier om de er bindende krav eller
  *    veiledende preferanser, og hva de bygger på.
- * 4. **Betingelsene** (`Inndatakrav`, `Bekreftelse`, `Unntak`): når regelen
- *    gjelder, hva forskriveren må bekrefte, og når den ikke gjelder.
+ * 4. **Betingelsene** (`Inndatakrav`, `Bekreftelse`, `Unntak`, `Sporsmal`):
+ *    når regelen gjelder, hva forskriveren må bekrefte og svare på, og når den
+ *    ikke gjelder.
  * 5. **Godkjenningen** (`Godkjenning`): utkast, til faglig kontroll, klinisk
- *    godkjent, avvist eller trukket, med historikk.
+ *    godkjent, kontrollert og ikke godkjent, avvist eller trukket, med
+ *    historikk.
  * 6. **Beregningsresultatet** (`Beregningsresultat`, i `beregning.ts`): en
  *    modellberegning knyttet til regel-, regelsett-, modell- og motorversjon,
  *    aldri en klinisk anbefaling i seg selv.
@@ -32,7 +34,7 @@
 import type { Formuleringsklasse } from '../festformuleringer'
 
 /** Økes når formen på regler eller regelsett endres. */
-export const REGELMODELLVERSJON = 3
+export const REGELMODELLVERSJON = 11
 
 /* --- Kilder ----------------------------------------------------------------- */
 
@@ -134,6 +136,42 @@ export interface Parameter {
   grunnlag: Grunnlag
   /** Området kilden eller vurderingen tillater, når verdien er et valg innenfor det. */
   omrade?: [number, number]
+  /**
+   * Når forskriveren kan velge en annen verdi innenfor `omrade` for den enkelte
+   * planen: teksten feltet vises med, f.eks. «Dager per trinn». Verdien i
+   * regelen er da forslaget; området er det som godkjennes.
+   */
+  justerbar?: string
+  /**
+   * Den øvre grensen i `omrade` er bare teknisk (en grense for hvor lang en
+   * beregnet plan kan bli), ikke klinisk: verdien har ingen klinisk fastsatt
+   * øvre grense, og teksten sier «minst …».
+   */
+  teknisk_maks?: true
+  /** Verdier som bare kan brukes med en skriftlig begrunnelse fra forskriveren. */
+  begrunnelseskrav?: Begrunnelseskrav[]
+  /**
+   * Et annet forslag når forskriveren har svart ja på spørsmålet `ved`
+   * (`Sporsmal`), f.eks. 10 % per trinn etter lang behandlingstid. Forslaget
+   * er da utgangspunktet; verdien over gjelder ellers ({@link forslagsverdi}).
+   */
+  standard_ved?: { ved: string; verdi: number; grunnlag: Grunnlag }
+}
+
+/** Forslaget for parameteren med forskriverens svar: `standard_ved` når svaret er ja, ellers verdien. */
+export const forslagsverdi = (p: Pick<Parameter, 'verdi' | 'standard_ved'>, svar: Record<string, boolean> | undefined): number | null =>
+  p.standard_ved && svar?.[p.standard_ved.ved] === true ? p.standard_ved.verdi : p.verdi
+
+/**
+ * En verdi over `over` eller under `under` krever en skriftlig begrunnelse fra
+ * forskriveren; med `ved` bare når forskriveren har svart ja på det spørsmålet
+ * (`Sporsmal`). Kravet gjelder verdien som brukes, også regelens forslag.
+ */
+export interface Begrunnelseskrav {
+  over?: number
+  under?: number
+  ved?: string
+  grunnlag: Grunnlag
 }
 
 /* --- Planen ------------------------------------------------------------------- */
@@ -149,15 +187,21 @@ export type Dosekilde =
   /** Pasientens dose når planen starter, eller måldosen forskriveren oppgir. */
   | { type: 'inndata'; navn: 'startdose' | 'maldose' }
   /** Slått opp i en tabell fra startdosen, f.eks. peroral dose → depotdose. */
-  | { type: 'tabell'; rader: { fra_mg: number; til_mg: number | [number, number] }[]; grunnlag: Grunnlag }
+  /** Med `sted` på en rad gjelder det injeksjonsstedet for vedlikeholdet fra den startdosen i stedet for fasens. */
+  | { type: 'tabell'; rader: { fra_mg: number; til_mg: number | [number, number]; sted?: string }[]; grunnlag: Grunnlag }
 
 /**
  * Hvordan en nedtrapping regner ut neste dose. «Prosent» er alltid enten av
  * startdosen eller av den aktuelle dosen, aldri uspesifisert (B1).
  */
 export type Nedtrappingsstrategi =
-  /** Hvert trinn er `prosent` lavere enn forrige dose (gjentatt prosentvis); `lav_prosent` når dosen er nådd `lav_grense_mg`. Under `sluttdose_mg` seponeres. */
-  | { type: 'prosent_av_aktuell'; prosent: Parameter; lav_prosent?: Parameter; lav_grense_mg?: Parameter; sluttdose_mg: Parameter }
+  /**
+   * Hvert trinn er `prosent` lavere enn forrige dose (gjentatt prosentvis);
+   * `lav_prosent` når dosen er nådd `lav_grense_mg`. Under `sluttdose_mg`
+   * seponeres. Uten sluttdose når dosen aldri 0; da må fasen ha individuell
+   * avslutning og en teknisk planhorisont.
+   */
+  | { type: 'prosent_av_aktuell'; prosent: Parameter; lav_prosent?: Parameter; lav_grense_mg?: Parameter; sluttdose_mg?: Parameter }
   /** Hvert trinn er `prosent` av startdosen lavere (lineært). */
   | { type: 'prosent_av_startdose'; prosent: Parameter }
   /** Hvert trinn er `mg` lavere (lineært, absolutt). */
@@ -181,8 +225,38 @@ export type Fase =
    * Trapper ned fra den aktuelle dosen til 0, med `trinnlengde` dager per
    * trinn. Første trinn er allerede redusert. Blir nedtrappingen kortere enn
    * `minste_varighet` dager, stopper beregningen i stedet for å forlenge den.
+   * Med `avslutning: 'individuell'` går planen ikke til 0: siste trinn
+   * fortsetter, og avslutningen må vurderes individuelt, fordi regelen ikke
+   * har noen godkjent avslutning (nulltrinn). Da er trinnlengden en minstetid,
+   * og `horisont` er hvor mange reduksjoner planen viser frem i tid: en
+   * teknisk planhorisont, ikke en klinisk sluttdose. Planen stopper også før
+   * et trinn under forløpets laveste dose som kan gis (`dosevalg.min_mg`).
+   *
+   * `trinnvalg` er grunnlaget for at forskriveren kan velge blant dosene som
+   * kan gis når et trinn ikke kan gis nøyaktig med preparatene (P7.5):
+   * doseplanen viser de nærmeste, med faktisk reduksjon fra dosen før, og
+   * bare doser med faktisk reduksjon innenfor det foretrukne området kan
+   * velges: `strategi.prosent.omrade`, høyst `lav_prosent` ved lav dose og
+   * under grensen der et begrunnelseskrav slår inn. Et avvik som krever
+   * begrunnelse, tilbys ikke. Valget er forskriverens (`Beregningsinndata.trinnvalg`);
+   * beregningen velger aldri selv. Bare med `prosent_av_aktuell`, individuell
+   * avslutning og uten toleranse ({@link trinnvalgOmrade} i `beregning.ts`).
    */
-  | { type: 'nedtrapping'; strategi: Nedtrappingsstrategi; trinnlengde: Parameter; minste_varighet?: Parameter }
+  | {
+      type: 'nedtrapping'
+      strategi: Nedtrappingsstrategi
+      trinnlengde: Parameter
+      minste_varighet?: Parameter
+      avslutning?: 'individuell'
+      horisont?: Parameter
+      trinnvalg?: Grunnlag
+    }
+  /**
+   * Dosen gis hver `hver`. dag i stedet for daglig, fra fasen starter og uten
+   * slutt: minst `minstetid` dager før pasienten revurderes. Går aldri til 0;
+   * videre nedtrapping eller seponering er forskriverens beslutning.
+   */
+  | { type: 'intervalldosering'; dose: Dosekilde | { type: 'aktuell' }; hver: Parameter; minstetid: Parameter }
   /** Fast opptrapping: hver dose i sitt antall dager. */
   | { type: 'opptrapping'; trinn: { mg: Parameter; dager: Parameter }[] }
   /** Dosen planen ender med (ingen sluttdato). */
@@ -233,8 +307,24 @@ export interface Forlop {
    * f.eks. månedlig og tremånedlig paliperidon i formen (P5).
    */
   preparater?: string[]
+  /**
+   * Legemiddelformene (FEST-koder) forløpet gjelder, når et varenavn dekker
+   * flere presentasjoner med ulike regimer (f.eks. Abilify Maintena månedlig
+   * og annenhver måned); forskriveren kan bare velge blant dem.
+   */
+  legemiddelformer?: string[]
   /** Hvor langt de praktiske dosene kan avvike fra den ideelle kurven (P5). */
   dosevalg?: Dosevalg
+  /**
+   * Døgndosen gis fordelt på flere doser slik preparatomtalen krever: med
+   * `over_mg` bare døgndoser over den, hver dose høyst `over_mg` (f.eks.
+   * fluvoksamin), ellers alle (f.eks. moklobemid). `antall` er hvor mange
+   * doser døgndosen kan fordeles på, i den rekkefølgen de foretrekkes. P5
+   * viser fordelingen og stopper når den ikke kan gis med preparatene.
+   * P5 velger den jevneste fordelingen som kan gis og merker en ulik
+   * fordeling; like store doser kreves ikke (P7.5, beslutning P7-B).
+   */
+  fordeling?: { over_mg?: Parameter; antall: number[]; grunnlag: Grunnlag }
   /** `startdose` når pasienten bruker legemidlet når planen starter; ellers starter forløpet uten dose. */
   utgangsdose: 'startdose' | null
   start: Forlopsstart
@@ -258,10 +348,23 @@ export interface Plan {
  */
 export interface Inndatakrav {
   navn: 'startdose' | 'maldose'
+  /** Dosene regelen gjelder for. Nedre grense 0 betyr enhver positiv dose (bare en øvre grense). */
   omrade?: [number, number]
   verdier?: number[]
   /** For en gruppeplan: kravet gjelder bare dette medlemmet. */
   gjelder_medlem?: string
+  /**
+   * Kravet gjelder bare når forskriveren har gitt dette svaret på spørsmålet
+   * (`Sporsmal`), f.eks. en lavere høyeste dose for eldre eller for én
+   * indikasjon. Uten `ved` gjelder kravet alltid.
+   */
+  ved?: { sporsmal: string; svar: boolean }
+  /**
+   * En forsiktighetsgrense: en dose utenfor området stopper ikke, men krever
+   * en skriftlig begrunnelse fra forskriveren. Bare for veiledende krav; et
+   * bindende krav (en uttrykkelig høyeste dose) kan aldri begrunnes bort.
+   */
+  krever_begrunnelse?: true
   art: Parameterart
   grunnlag: Grunnlag
 }
@@ -280,6 +383,23 @@ export interface Unntak {
   grunnlag: Grunnlag
 }
 
+/**
+ * Et spørsmål forskriveren må svare ja eller nei på før beregningen, f.eks. om
+ * behandlingstiden er lang. Svaret står i planen og kan avgjøre om et
+ * begrunnelseskrav gjelder. Et spørsmål uten svar stopper beregningen.
+ */
+export interface Sporsmal {
+  id: string
+  tekst: string
+  /** Hva et ja betyr, kort, til teksten i planen og kravene: «lang behandlingstid». */
+  ja: string
+  /** Hva et nei betyr, når et krav gjelder ved nei: «andre indikasjoner enn tvangslidelse og panikklidelse». */
+  nei?: string
+  /** Et ja krever en skriftlig begrunnelse fra forskriveren (en særskilt vurdering). */
+  krever_begrunnelse?: true
+  grunnlag: Grunnlag
+}
+
 /** Gruppemedlemmer må valideres hver for seg (B4); bare `foreslatt` og `validert` kan beregnes. */
 export type Medlemsvalidering = 'ikke_vurdert' | 'foreslatt' | 'validert'
 
@@ -293,7 +413,14 @@ export interface Gruppemedlem {
 
 /* --- Godkjenning -------------------------------------------------------------- */
 
-export type Godkjenningsstatus = 'utkast' | 'til_faglig_kontroll' | 'klinisk_godkjent' | 'avvist' | 'trukket'
+/**
+ * `ikke_godkjent`: en uavhengig kontrollør har vurdert nøyaktig denne
+ * regelversjonen og ikke godkjent den for klinisk bruk i leveransen. Den er et
+ * kontrollutkast som fortsatt kan regnes ut til sammenligning, men aldri gir
+ * en klinisk plan; en senere aktivering krever en ny kontroll av en bestemt
+ * versjon. `avvist` og `trukket` stopper også modellberegningen.
+ */
+export type Godkjenningsstatus = 'utkast' | 'til_faglig_kontroll' | 'klinisk_godkjent' | 'ikke_godkjent' | 'avvist' | 'trukket'
 
 export type Rolle = 'utvikler' | 'uavhengig_kontrollor' | 'faglig_beslutningstaker'
 
@@ -346,6 +473,29 @@ export interface Beregningsinndata {
    * og ukjent stopper beregningen like mye som et forhold som gjelder.
    */
   pasientforhold?: Record<string, boolean>
+  /**
+   * Forskriverens valg for parametrene som er justerbare (stien fra
+   * {@link parametre} → verdien), innenfor området regelen tillater.
+   */
+  justert?: Record<string, number>
+  /** Forskriverens svar på spørsmålene (id → ja eller nei). Et spørsmål uten svar stopper beregningen. */
+  svar?: Record<string, boolean>
+  /** Forskriverens skriftlige begrunnelse, når et valg krever det (`Begrunnelseskrav`). */
+  begrunnelse?: string
+  /**
+   * Dosene forskriveren har valgt for trinn som ikke kan gis nøyaktig
+   * (`Fase.trinnvalg`). Et valg gjelder bare trinnet i forløpet når dosen før
+   * er `fra_mg`; ellers brukes det ikke, og planen sier det.
+   */
+  trinnvalg?: Trinnvalgsvar[]
+}
+
+/** Forskriverens valg av dose for ett trinn: trinnet (fra 1) i forløpet, dosen før og den valgte dosen. */
+export interface Trinnvalgsvar {
+  forlop: string
+  trinn: number
+  fra_mg: number
+  mg: number
 }
 
 export interface Regel {
@@ -359,6 +509,8 @@ export interface Regel {
   inndata: Inndatakrav[]
   bekreftelser: Bekreftelse[]
   unntak: Unntak[]
+  /** Spørsmål forskriveren må svare på før beregningen. */
+  sporsmal?: Sporsmal[]
   /** For en gruppe: hvert medlem og om det er validert. */
   medlemmer?: Gruppemedlem[]
   beregnbarhet: Beregnbarhet
@@ -366,7 +518,44 @@ export interface Regel {
   /** Psychiatrienet og andre referanser regelen kan sammenlignes med, uten at den bygger på teksten deres. */
   referanser: Kildehenvisning[]
   eksempler: Regneeksempel[]
+  /**
+   * Tilfellene en klinisk godkjenning av regelen kan gjelde for (P7.5). Med
+   * feltet er en plan bare klinisk innenfor ett av tilfellene; alt annet
+   * stopper med forklaring, også om regelen er godkjent. Uten feltet gjelder
+   * godkjenningen hele regelen.
+   */
+  klinisk_omfang?: Kliniskomfang
   godkjenning: Godkjenning
+}
+
+/**
+ * Den kontrollerte delmengden av en regel: per legemiddelform, startdose,
+ * svar og verdiene for de justerbare parametrene (regelens forslag for
+ * svarene, med mindre tilfellet sier noe annet). Et valg av dose per trinn må
+ * ligge i det foretrukne området, som beregningen allerede krever.
+ */
+export interface Kliniskomfang {
+  tilfeller: Klinisktilfelle[]
+  /** Planen kan ikke bruke delte tabletter: en plan som deler, er utenfor omfanget. */
+  uten_deling?: { grunnlag: Grunnlag }
+  grunnlag: Grunnlag
+}
+
+export interface Klinisktilfelle {
+  /** Legemiddelformen i FEST (kode) alle preparatene i planen må ha; uten den gjelder regelens former. */
+  legemiddelform?: string
+  /** Startdosene som er kontrollert, nøyaktig. */
+  startdoser: number[]
+  /** Svarene tilfellet er kontrollert med; et spørsmål som ikke står her, må være besvart nei. */
+  svar: Record<string, boolean>
+  /** Verdiene for justerbare parametre tilfellet er kontrollert med (sti → verdi); ellers regelens forslag for svarene. */
+  justert?: Record<string, number>
+  /**
+   * Styrkene (mg per enhet) planen kan bruke per forløp (id → styrker), de
+   * som var i FEST da tilfellet ble kontrollert. En ny styrke i et senere
+   * FEST-uttrekk utvider ikke tilfellet: en plan som bruker den, er utenfor.
+   */
+  styrker?: Record<string, number[]>
 }
 
 export interface Regelsett {
@@ -396,6 +585,9 @@ export const FELTENHET: Record<string, Enhet> = {
   dag: 'dag',
   maaneder: 'maaneder',
   trinn: 'trinn',
+  horisont: 'trinn',
+  hver: 'dager',
+  minstetid: 'dager',
   prosent: 'prosent',
   lav_prosent: 'prosent',
   mg: 'mg',
@@ -405,6 +597,7 @@ export const FELTENHET: Record<string, Enhet> = {
   avvik_prosent: 'prosent',
   maks_mg: 'mg',
   min_mg: 'mg',
+  over_mg: 'mg',
 }
 
 const feltnavn = (sti: string) => sti.replace(/\[\d+\]/g, '').split('.').at(-1) ?? ''
@@ -447,7 +640,7 @@ const heltallFra1 = (x: unknown) => typeof x === 'number' && Number.isInteger(x)
  * radene i en omregningstabell og grensene i inndatakravene. Brukes både av
  * regelkontrollen og før en beregning.
  */
-export function tallfeil(r: Pick<Regel, 'plan' | 'inndata'>): string[] {
+export function tallfeil(r: Pick<Regel, 'plan' | 'inndata' | 'klinisk_omfang'>): string[] {
   const feil: string[] = []
   for (const f of r.plan.forlop) {
     if (f.start.type === 'dag' && !heltallFra1(f.start.dag)) feil.push(`forløp ${f.id} starter dag ${String(f.start.dag)}; startdagen må være et helt tall fra 1`)
@@ -463,8 +656,14 @@ export function tallfeil(r: Pick<Regel, 'plan' | 'inndata'>): string[] {
     }
   }
   for (const x of r.inndata) {
-    const tall = [...(x.omrade ?? []), ...(x.verdier ?? [])]
+    const tall = [...(x.omrade ?? []), ...(x.verdier ?? [])].filter((v, i) => !(i === 0 && x.omrade && v === 0))
     if (!tall.every(positiv) || (x.omrade && x.omrade[0] > x.omrade[1])) feil.push(`inndatakravet for ${x.navn} har ugyldige grenser`)
+  }
+  for (const [i, t] of (r.klinisk_omfang?.tilfeller ?? []).entries()) {
+    if (t.startdoser.length === 0 || !t.startdoser.every(positiv)) feil.push(`det kliniske omfanget har ugyldige startdoser i tilfelle ${i + 1}`)
+    for (const [f, mg] of Object.entries(t.styrker ?? {})) {
+      if (!r.plan.forlop.some((x) => x.id === f) || mg.length === 0 || !mg.every(positiv)) feil.push(`det kliniske omfanget har ugyldige styrker for ${f} i tilfelle ${i + 1}`)
+    }
   }
   return feil
 }
@@ -486,6 +685,47 @@ export function apneValg(r: Regel): string[] {
   ]
 }
 
+/**
+ * Brudd på kravet om at en ren seponering aldri går til 0 av seg selv: ingen
+ * avslutning (nulltrinn) er godkjent faglig (P7.5). Hvert forløp i en
+ * beregnbar seponeringsregel, også et gruppemedlems egne faser, må slutte med
+ * en nedtrapping med individuell avslutning eller en intervalldosering
+ * ({@link fortsetterUtenNull}), kan ikke trappe ned før den og
+ * kan ikke seponere. Bytter (seponering før et annet legemiddel) og regler som
+ * bare er tekstlige, er unntatt. Kontrollen og godkjenningen bruker begge
+ * denne, så en regel som bryter kravet, er aldri klinisk godkjent, uansett
+ * status. Beregningen kontrollerer i tillegg selve planen: den stopper hvis
+ * forløpet likevel har en dag uten dose (`nulldagfeil` i `beregning.ts`).
+ */
+export function nulltrinnfeil(r: Pick<Regel, 'plan' | 'beregnbarhet' | 'medlemmer'>): string[] {
+  if (!erRenSeponering(r)) return []
+  return r.plan.forlop.flatMap((f) => {
+    const varianter: [string, Fase[]][] = [
+      [`forløp ${f.id}`, f.faser],
+      ...(f.virkestoff.type === 'gruppe' ? (r.medlemmer ?? []).flatMap((m) => (m.faser ? [[`forløp ${f.id} for ${m.nokkel}`, m.faser] as [string, Fase[]]] : [])) : []),
+    ]
+    return varianter.flatMap(([hvor, faser]) => {
+      const sist = faser.at(-1)
+      return [
+        ...(faser.some((x) => x.type === 'seponer') ? [`${hvor} seponerer; ingen avslutning er godkjent, så en seponeringsregel kan ikke seponere`] : []),
+        // En nedtrapping uten individuell avslutning går til 0, så bare den siste fasen kan trappe ned.
+        ...(faser.slice(0, -1).some((x) => x.type === 'nedtrapping')
+          ? [`${hvor} trapper ned før siste fase; bare siste fase kan trappe ned, så forløpet aldri er på 0 mg underveis`]
+          : []),
+        ...(!fortsetterUtenNull(sist)
+          ? [`${hvor} slutter ikke med en nedtrapping med individuell avslutning eller en intervalldosering; ingen avslutning er godkjent, så en seponeringsregel kan ikke gå til null`]
+          : []),
+      ]
+    })
+  })
+}
+
+/** Om en fase avslutter et forløp uten å gå til 0: en nedtrapping med individuell avslutning eller en intervalldosering. */
+export const fortsetterUtenNull = (f: Fase | undefined) => (f?.type === 'nedtrapping' && f.avslutning === 'individuell') || f?.type === 'intervalldosering'
+
+/** En beregnbar ren seponering: ingen avslutning er godkjent, så den kan aldri gå til 0 ({@link nulltrinnfeil}). */
+export const erRenSeponering = (r: Pick<Regel, 'plan' | 'beregnbarhet'>) => r.plan.form === 'seponering' && r.beregnbarhet !== 'bare_tekstlig'
+
 /** Grunnlaget for hver omregningstabell i planen. */
 export function grunnlagITabeller(r: Pick<Regel, 'plan'>): [string, Grunnlag][] {
   return r.plan.forlop.flatMap((f) =>
@@ -495,15 +735,26 @@ export function grunnlagITabeller(r: Pick<Regel, 'plan'>): [string, Grunnlag][] 
   )
 }
 
-/** Alle grunnlag i regelen med stien dit: parametre, inndata, bekreftelser, unntak og tabeller. */
+/** Alle grunnlag i regelen med stien dit: parametre med begrunnelseskravene og forslagene ved svar, inndata, bekreftelser, unntak, spørsmål, tabeller, valg av dose per trinn, fordeling og det kliniske omfanget. */
 export function alleGrunnlag(r: Regel): [string, Grunnlag][] {
   return [
-    ...parametre(r).map(([sti, p]) => [sti, p.grunnlag] as [string, Grunnlag]),
-    ...r.inndata.map((x) => [`inndata.${x.navn}`, x.grunnlag] as [string, Grunnlag]),
-    ...[...r.bekreftelser, ...r.unntak].map((x) => [x.id, x.grunnlag] as [string, Grunnlag]),
+    ...parametre(r).flatMap(([sti, p]) => [
+      [sti, p.grunnlag] as [string, Grunnlag],
+      ...(p.begrunnelseskrav ?? []).map((k, i) => [`${sti}.begrunnelseskrav[${i}]`, k.grunnlag] as [string, Grunnlag]),
+      ...(p.standard_ved ? [[`${sti}.standard_ved`, p.standard_ved.grunnlag] as [string, Grunnlag]] : []),
+    ]),
+    ...r.inndata.map((x) => [inndatasti(x), x.grunnlag] as [string, Grunnlag]),
+    ...[...r.bekreftelser, ...r.unntak, ...(r.sporsmal ?? [])].map((x) => [x.id, x.grunnlag] as [string, Grunnlag]),
     ...grunnlagITabeller(r),
+    ...r.plan.forlop.flatMap((f) => f.faser.flatMap((x, i) => (x.type === 'nedtrapping' && x.trinnvalg ? [[`${f.id}.faser[${i}].trinnvalg`, x.trinnvalg] as [string, Grunnlag]] : []))),
+    ...r.plan.forlop.flatMap((f) => (f.fordeling ? [[`${f.id}.fordeling`, f.fordeling.grunnlag] as [string, Grunnlag]] : [])),
+    ...(r.klinisk_omfang ? [['klinisk_omfang', r.klinisk_omfang.grunnlag] as [string, Grunnlag]] : []),
+    ...(r.klinisk_omfang?.uten_deling ? [['klinisk_omfang.uten_deling', r.klinisk_omfang.uten_deling.grunnlag] as [string, Grunnlag]] : []),
   ]
 }
+
+/** Stien til et inndatakrav: `inndata.startdose`, eller med vilkåret for et krav som bare gjelder ved et svar. */
+export const inndatasti = (x: Pick<Inndatakrav, 'navn' | 'ved'>) => `inndata.${x.navn}${x.ved ? `[${x.ved.sporsmal}=${x.ved.svar ? 'ja' : 'nei'}]` : ''}`
 
 const erParameter = (x: unknown): x is Parameter =>
   !!x && typeof x === 'object' && 'verdi' in x && 'enhet' in x && 'art' in x && 'grunnlag' in x
@@ -515,6 +766,10 @@ export function parametre(x: unknown, sti = ''): [string, Parameter][] {
   if (x && typeof x === 'object') return Object.entries(x).flatMap(([n, y]) => parametre(y, sti ? `${sti}.${n}` : n))
   return []
 }
+
+/** Parametrene forskriveren kan justere for den enkelte planen, med stien dit. */
+export const justerbare = (r: Pick<Regel, 'plan'>): [string, Parameter & { justerbar: string; omrade: [number, number] }][] =>
+  parametre(r.plan, 'plan').filter((x): x is [string, Parameter & { justerbar: string; omrade: [number, number] }] => !!x[1].justerbar && !!x[1].omrade)
 
 /** Alle kildehenvisninger i `x`. */
 export function henvisninger(x: unknown): Kildehenvisning[] {

@@ -24,6 +24,7 @@ export function Doseplanvisning({ plan, overskrift }: { plan: Planvisning; overs
         <h2 id={tittel} className="doseplan__tittel">
           {plan.tittel}
         </h2>
+        {plan.undertittel && <p className="doseplan__undertittel">{plan.undertittel}</p>}
         <div className="doseplan__handlinger">
           <Button
             variant="kant"

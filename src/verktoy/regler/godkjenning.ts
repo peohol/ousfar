@@ -11,7 +11,7 @@
  * i nettleseren.
  */
 import { kildeFor } from './kilder'
-import { alleGrunnlag, apneValg, henvisninger, type Regel } from './modell'
+import { alleGrunnlag, apneValg, henvisninger, nulltrinnfeil, type Godkjenningssteg, type Regel } from './modell'
 
 /** JSON med sorterte nøkler, uten udefinerte felt, og med RegExp som kilde og flagg. */
 export function kanonisk(x: unknown): string {
@@ -99,6 +99,7 @@ export function godkjenningsfeil(r: Regel): string[] {
   }
   if (sist && sist.regelversjon !== r.versjon) feil.push(`Godkjenningen gjelder regelversjon ${sist.regelversjon}, ikke versjon ${r.versjon}.`)
   if (sist && sist.fingeravtrykk !== fingeravtrykk(r)) feil.push('Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke); den må kontrolleres på nytt.')
+  for (const x of nulltrinnfeil(r)) feil.push(`Regelen er ugyldig: ${x}.`)
   const apne = apneValg(r)
   if (apne.length > 0) feil.push(`Regelen har åpne valg som må avklares faglig: ${apne.join(', ')}.`)
   for (const [sti, gr] of alleGrunnlag(r)) {
@@ -108,3 +109,96 @@ export function godkjenningsfeil(r: Regel): string[] {
 }
 
 export const erKliniskGodkjent = (r: Regel) => godkjenningsfeil(r).length === 0
+
+/**
+ * Utfallet av den faglige kontrollen for en regel, slik verktøyet og
+ * rapportene sier det: godkjent i det oppgitte omfanget, kontrollert og ikke
+ * godkjent, bare fagtekst (kontrollert, men uten beregning), eller fortsatt
+ * til kontroll. En regel som er vurdert og ikke godkjent, er ikke et åpent
+ * klinisk spørsmål.
+ */
+export type Kontrollutfall = 'godkjent' | 'ikke_godkjent' | 'bare_fagtekst' | 'til_kontroll'
+
+export const KONTROLLUTFALL: Record<Kontrollutfall, string> = {
+  godkjent: 'kontrollert og godkjent i oppgitt omfang',
+  ikke_godkjent: 'kontrollert, ikke godkjent',
+  bare_fagtekst: 'bare fagtekst, ikke beregnbar',
+  til_kontroll: 'ikke ferdig kontrollert',
+}
+
+/** Om regelen har en beregning; en regel som bare er tekstlig eller mangler anbefaling, har det ikke. */
+export const harBeregning = (r: Regel) => r.beregnbarhet !== 'bare_tekstlig' && r.beregnbarhet !== 'mangler_anbefaling'
+
+/** Statusene der kontrollen er avsluttet uten godkjenning. */
+const AVSLUTTET: readonly Regel['godkjenning']['status'][] = ['ikke_godkjent', 'avvist', 'trukket']
+
+/**
+ * Om en avsluttet vurdering uten godkjenning gjelder nøyaktig denne regelen:
+ * siste steg er fra en uavhengig kontrollør, for denne versjonen og dette
+ * fingeravtrykket. Endres regelen etterpå, gjelder vurderingen ikke lenger.
+ */
+export function vurderingsfeil(r: Regel): string[] {
+  const sist = r.godkjenning.historikk.at(-1)
+  if (!AVSLUTTET.includes(r.godkjenning.status)) return [`Regelversjonen er ${r.godkjenning.status.replace(/_/g, ' ')}, ikke vurdert.`]
+  const feil: string[] = []
+  const utviklere = new Set(r.godkjenning.historikk.filter((x) => x.rolle === 'utvikler').map((x) => x.av))
+  if (!sist || sist.status !== r.godkjenning.status || sist.rolle !== 'uavhengig_kontrollor' || utviklere.has(sist.av)) feil.push('Siste steg er ikke en vurdering fra en uavhengig kontrollør.')
+  if (sist && sist.regelversjon !== r.versjon) feil.push(`Vurderingen gjelder regelversjon ${sist.regelversjon}, ikke versjon ${r.versjon}.`)
+  if (sist && sist.fingeravtrykk !== fingeravtrykk(r)) feil.push('Regelen er endret etter vurderingen (fingeravtrykket stemmer ikke); den må kontrolleres på nytt.')
+  return feil
+}
+
+export function kontrollutfall(r: Regel): Kontrollutfall {
+  if (erKliniskGodkjent(r)) return 'godkjent'
+  // En godkjenning eller vurdering som ikke lenger gjelder innholdet (endret regel), må kontrolleres på nytt.
+  if (vurderingsfeil(r).length > 0) return 'til_kontroll'
+  return harBeregning(r) ? 'ikke_godkjent' : 'bare_fagtekst'
+}
+
+/** Én regel kontrolløren har vurdert og ikke godkjent: nøyaktig versjonen og innholdet som ble vurdert. */
+export interface Vurdertregel {
+  versjon: number
+  fingeravtrykk: string
+  /** Det kontrolløren sa om akkurat denne regelen, i tillegg til den felles merknaden. */
+  tillegg?: string
+}
+
+/** Kontrollørens vurdering av en leveranse: hvem, når, hva den sier om regler med og uten beregning, og hvilke regler den gjelder. */
+export interface Disposisjon {
+  av: string
+  dato: string
+  /** Begrunnelsen for en beregnbar regel og for en regel uten beregning. */
+  merknad: { beregnbar: string; uten_beregning: string }
+  /** De vurderte reglene (id → versjon og fingeravtrykk); en regel som ikke står her, er ikke vurdert. */
+  regler: Readonly<Record<string, Vurdertregel>>
+}
+
+/**
+ * Registrerer disposisjonen bare for reglene den nevner, og bare når versjonen
+ * og fingeravtrykket er nøyaktig det kontrolløren vurderte; steget får
+ * fingeravtrykket. En regel som er endret, har fått ny versjon eller ikke står
+ * i listen, får ikke noe steg og står som før, til en ny vurdering er
+ * registrert. En klinisk godkjent regel er uendret. Fingeravtrykkene endres
+ * ikke, siden godkjenningen ikke inngår i dem.
+ */
+export function disponer(regler: Regel[], d: Disposisjon): Regel[] {
+  return regler.map((r) => {
+    const v = d.regler[r.id]
+    if (!v || r.godkjenning.status === 'klinisk_godkjent' || v.versjon !== r.versjon) return r
+    const avtrykk = fingeravtrykk(r)
+    if (avtrykk !== v.fingeravtrykk) return r
+    const merknad = [harBeregning(r) ? d.merknad.beregnbar : d.merknad.uten_beregning, v.tillegg].filter(Boolean).join(' ')
+    const steg: Godkjenningssteg = { status: 'ikke_godkjent', dato: d.dato, av: d.av, rolle: 'uavhengig_kontrollor', regelversjon: r.versjon, fingeravtrykk: avtrykk, merknad }
+    return { ...r, godkjenning: { status: 'ikke_godkjent', historikk: [...r.godkjenning.historikk, steg] } }
+  })
+}
+
+/** De vurderte reglene disposisjonen ikke kunne registreres for: regelen mangler, har en annen versjon eller et annet innhold. */
+export function disposisjonsfeil(regler: readonly Regel[], d: Disposisjon): string[] {
+  return Object.entries(d.regler).flatMap(([id, v]) => {
+    const r = regler.find((x) => x.id === id)
+    if (!r) return [`${id}: regelen finnes ikke i settet`]
+    if (r.versjon !== v.versjon) return [`${id}: vurdert som versjon ${v.versjon}, men regelen er versjon ${r.versjon}`]
+    return fingeravtrykk(r) === v.fingeravtrykk ? [] : [`${id}: innholdet er endret etter vurderingen (fingeravtrykket stemmer ikke)`]
+  })
+}
