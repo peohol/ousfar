@@ -1,5 +1,7 @@
 # OUSFAR Verktøy – P12.1 og P12.5: overvåking av kildegrunnlaget og FEST
 
+> **Ny produktbeslutning 01.11.2026 – ikke implementert:** Den eksisterende løsningen nedenfor beskriver dagens tekniske atferd, men fristene på 24/72 timer, tekniske vurderinger i admin-UI og varsling ved bare endrede kontrollsummer skal ikke videreføres som krav. Ny målmodell, sikkerhetsgrenser, arbeidsdeling og sjekklister står i **docs/verktøy-omlegging-2026-11.md**. Fram til endrings-PR-ene er publisert, gjelder dagens faktisk implementerte grensesnitt og adgangskontroll; ingen regel eller godkjenning er endret.
+
 ## 1. Avgrensning
 
 Dette notatet gjelder P12.1 (endringer i kildene) og P12.5 (endringer i FEST) i `docs/verktøy-utviklingsplan.md`. Hvordan regelversjoner og kilder skal forvaltes uavhengig av beregningsmotoren (P12.2–P12.4), står i `docs/verktøy-p12-regelforvaltning.md`.

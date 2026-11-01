@@ -1,5 +1,7 @@
 # OUSFAR Verktøy – P12.2–P12.4: forvaltning av kliniske regler
 
+> **Ny produktbeslutning 01.11.2026 – ikke implementert:** Arbeidsflyten for kildefunn, de tekniske administratoroppgavene og fristene beskrevet særlig i §5 skal omarbeides etter **docs/verktøy-omlegging-2026-11.md**. Teksten nedenfor dokumenterer eldre beslutninger og dagens løsning inntil ny kode er publisert; den er ikke en bestilling om å bevare 24/72-timersfristene. Krav om uavhengig klinisk godkjenning, uendrede regelversjoner og sporbar publisering gjelder fortsatt.
+
 **Status 31.10.2026:** arkitektur og trinnvis plan, til vurdering (arbeidspakke C). Rettet etter kontrollørens gjennomganger av `a090786` og `177e1de` (§11). Ingen kode, regel, regelversjon, godkjenning eller fingeravtrykk er endret. Planen gjelder P12.2–P12.4 i `docs/verktøy-utviklingsplan.md` og bygger på overvåkingen av kilder og FEST i P12.1/P12.5 (`src/verktoy/overvaking/`), som lages i en egen PR. Ingen omlegging gjøres før planen er vurdert av den uavhengige kontrolløren (ChatGPT) og bidragsyteren.
 
 ## 1. Mål og avgrensning
