@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.117.3',
+    dato: '2026-11-01',
+    sammendrag: 'Plan for enklere kildeoppfølging og kliniske verktøy',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Det er laget en gjennomføringsplan som skal flytte tekniske kildekontroller ut av adminmenyen, fjerne korte standardfrister og gjøre faglige varsler og beslutninger tydeligere. Flere anvendelige kliniske regler skal utvikles i et separat spor.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.117.2',
     dato: '2026-11-01',
     sammendrag: 'Fremdriften for kildeovervåkingen oppdatert',
