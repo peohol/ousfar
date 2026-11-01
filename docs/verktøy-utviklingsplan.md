@@ -1,7 +1,7 @@
 # OUSFAR – Verktøy: utviklingsplan og fremdrift
 
 **Opprettet:** 27.10.2026  
-**Status:** P1–P3 og P5 ferdige; P4 til faglig kontroll; P6 til produktkontroll – verktøyene finnes i appen, men ingen regel er klinisk godkjent, så ingen doseplan kan beregnes ennå  
+**Status (01.11.2026):** P1–P6 er etablert; seks regelversjoner har avgrenset klinisk godkjenning. P12-overvåkingen kjører, men redaktør- og oppfølgingsflyten må omarbeides før fasen kan regnes som ferdig. Klinisk regeldekning utvides i et eget, parallelt spor.  
 **Omfang:** Tre første verktøy, felles regel- og beregningsmotor, kildedata og videre drift  
 **Hovedansvar for implementering og oppdatering av denne planen:** Claude Code  
 **Uavhengig faglig kontroll:** ChatGPT, etter eksplisitt forespørsel ved kontrollpunktene nedenfor
@@ -62,7 +62,9 @@ Statusene er **Ikke startet / Pågår / Til faglig kontroll / Blokkert / Ferdig*
 | P9 | Bytte antipsykotikum, peroralt | Claude | **ChatGPT – sperrende** | Ikke startet | – |
 | P10 | Depotantipsykotika og formuleringsovergang | Claude | **ChatGPT – sperrende** | Ikke startet | – |
 | P11 | Klinisk godkjenning, pilot og publisering | Claude | ChatGPT + faglig beslutningstaker ved behov | Publisert 31.10.2026 (PR #289, 1.116.0); nødstopprøven i produksjonen bestått 31.10.2026. P11.3 er ikke dokumentert som godtatt av kontrolløren for siste versjon | `docs/verktøy-p11-publisering.md`, `docs/verktøy-p11-testmatrise.md`, PR #289 |
-| P12 | Vedlikehold, revisjon og kildeskifte | Claude | ChatGPT ved klinisk endring | Påbegynt 31.10.2026: overvåking av kilder og FEST (P12.1, P12.5) til kontroll; arkitektur for P12.2–P12.4 utredet, ikke gjennomført | `docs/verktøy-p12-overvaking.md`, `docs/verktøy-p12-regelforvaltning.md` |
+| P12 | Vedlikehold, revisjon og kildeskifte | Claude | ChatGPT ved klinisk endring | Teknisk overvåking publisert 31.10.2026, men dagens admin- og fristflyt skal omlegges; P12.1 er ikke ferdig | `docs/verktøy-p12-overvaking.md`, `docs/verktøy-p12-regelforvaltning.md`, `docs/verktøy-omlegging-2026-11.md` |
+| VDR | Omlegging av kildeoppfølging, faglig redaktørflyt, målrettede sikkerhetstiltak og enkel verktøyvisning | Claude | ChatGPT ved risiko/faglige beslutninger | **Plan vedtatt 01.11.2026, ikke implementert** | `docs/verktøy-omlegging-2026-11.md` (VDR-0–VDR-5) |
+| VDK | Parallell utvidelse av klinisk anvendelige regler | Claude | **ChatGPT – sperrende ved ny klinisk regel** | **Planlagt, ingen nye regler godkjent** | `docs/verktøy-omlegging-2026-11.md` (VDK-1–VDK-4) |
 
 **Avhengigheter:** P1 før P2; P1 og rettighetsavklaring før P3; P3 før faglig sluttgodkjenning av P4; P4 og P5 før P7–P10; P6 før brukerrettet pilot; P7–P10 kan publiseres hver for seg når sine kontrollporter er bestått. P12 etableres som del av utrullingen.
 
@@ -284,7 +286,7 @@ Doseplanen (`src/verktoy/planvisning.ts`, `Doseplanvisning.tsx`) er en tabell me
 
 ### P12 – Vedlikehold og utskifting av kunnskapsgrunnlag
 
-- [ ] **P12.1** Etabler kontroll av kildesidenes endringer og forskjellsrapport per nytt uttrekk. Ikke automatisk overskriv godkjente regler. *Laget 31.10.2026, til kontroll: kildedokumentene hver uke og Psychiatrienet hver måned, med forskjellsrapport og de berørte godkjente regelversjonene. Det som krever ny faglig vurdering, står som et funn i Adminmeny → Kildeovervåking i appen, med en prikk til den faglige beslutningen er skrevet, og med frister for teknisk vurdering (ett døgn) og faglig beslutning ved høy prioritet (tre døgn). Ingenting endres automatisk (`docs/verktøy-p12-overvaking.md`). Krysses av når prøvefunnet etter sammenslåing er gjennomført og ført i loggen.*
+- [ ] **P12.1** Kontroller kildene og rapporter reelle, relevante endringer uten automatisk å overskrive godkjente regler. *Teknisk kildekontroll publisert 31.10.2026, men dagens redaktør-UI og 24/72-timersfrister er ikke et godkjent sluttprodukt. Målbildet og akseptansekriteriene for omleggingen står i `docs/verktøy-omlegging-2026-11.md` (VDR-0–VDR-5). Den gamle 72-timers prøvesaken alene fullfører ikke P12.1.*
 - [ ] **P12.2** Legg kliniske regelversjoner og fullstendig revisjonshistorikk i et datalag uavhengig av visningen og beregningsmotoren. *P12.2–P12.4: arkitektur og trinnvis plan i `docs/verktøy-p12-regelforvaltning.md`, til vurdering før datamodellen legges om.*
 - [ ] **P12.3** Lag mekanisme for å erstatte/utfylle Psychiatrienet med nye kilder uten endringer i doseberegningsmotor eller brukergrensesnitt.
 - [ ] **P12.4** Nye faglige regler går samme vei: import → tydelig tolkning → tester → uavhengig kontroll → publisering.
@@ -292,6 +294,8 @@ Doseplanen (`src/verktoy/planvisning.ts`, `Doseplanvisning.tsx`) er en tabell me
 - [ ] **P12.6** Avklar senere om Combining Moodstabilizers skal få et eget brukerrettet verktøy. Ikke snikinnfør det i dette prosjektet.
 
 **Akseptanse:** Kildeskifte og nye preparatdata kan håndteres kontrollert uten skjult endring i allerede godkjente kliniske regler.
+
+**Revidert beslutning 01.11.2026:** Kliniske administratorer er faglige redaktører, ikke teknisk driftspersonell. Det skal ikke være standardfrister på 24/72 timer, tekniske beslutningsfelt eller uforståelige kontrollsummer i admin-UI. Vanlige kildeavvik skal ikke stenge verktøy. Bruk målrettet klinisk varsel eller nødstoppen bare når en vurdert risiko tilsier det. Gjennomføring, risiko- og ferdigporter står i **`docs/verktøy-omlegging-2026-11.md`**. Endringen er en plan: inntil implementasjon beskriver de gamle P12-notatene fortsatt faktisk produksjonsatferd. Parallelt prioriteres avgrensede, uavhengig godkjente regler (VDK).
 
 ## 5. Kliniske designbeslutninger som må protokollføres
 
@@ -381,14 +385,10 @@ Før en oppgave eller fase krysses av:
 | 31.10.2026 | PR #291 merget, P12.1 og P12.5 | Publisert som 1.117.0: produksjonsmigreringen gikk grønt, og tabellene `kildefunn` og `kildeovervaking_kjoringer` finnes i produksjonen (tomme; `les_kildeovervaking` avviser andre enn administratorer). Vercel-utrullingen av main er klar og viser 1.117.0, og `/api/kildeovervaking` avviser kall uten OIDC-token. Den første ordinære kontrollen stoppet før den startet, fordi npm-skriptet `verktoy:overvaking` manglet i `package.json`; ingenting ble meldt til appen. Rettet i PR #293 (1.117.1), med en test av alle arbeidsflytenes npm-skript | Etter at PR #293 er slått sammen: kontrollen på nytt, så prøvefunnet. P12.1 er ikke krysset av |
 | 31.10.2026 | PR #293 merget, P12.1: første kontroll og prøvefunnet | Den ordinære kontrollen fra main ([kjøring 41241387877](https://github.com/peohol/ousfar/actions/runs/41241387877)) gikk grønt og er registrert som kjøring 1: 28 kildedokumenter og 5 FEST-byggesteiner kontrollert, Psychiatrienet ikke denne gangen, ingen feil. Funnene fra første kjøring (§8) står som funn 1 (`keks-2016`) og 2 (`rcpsych-stopping`), begge vanlig prioritet; `emc-nardil` er informativ. Prøvesaken ([kjøring 41241943343](https://github.com/peohol/ousfar/actions/runs/41241943343)) ga funn 3, høy prioritet, merket «Prøve», kl. 21:05:51 UTC. Innlogget som administrator i produksjonen (1.117.1) viste Adminmeny prikken med «3 funn venter på faglig beslutning», og vinduet Kildeovervåking viste de tre funnene med frister. Den tekniske vurderingen av funn 3 ble skrevet fra arbeidsflyten kl. 21:07:10 UTC, innenfor fristen på 24 timer. Ingen faglig beslutning er skrevet. Ingen regel er endret | Gjenstår: at funn 3 står som over fristen for faglig beslutning etter 72 timer (fra 3.11.2026 kl. 21:05 UTC), og at en administrator deretter avslutter det med en faglig beslutning. P12.1 er ikke krysset av |
 
-## 8. Startoppdrag til Claude Code
+| 01.11.2026 | VDR og VDK: ny produktbeslutning og gjennomføringsplan | `docs/verktøy-omlegging-2026-11.md` definerer risikobasert oppfølging uten generelle 24/72-timersfrister, en faglig redaktørflyt uten tekniske beslutninger, avgrensede varsler/sperrer og et separat spor for klinisk regeldekning | **Kun planlagt.** Ingen UI, database, regel eller teknisk jobb er endret; P12.1 og relevante VDR-/VDK-punkter står åpne |
 
-**Neste arbeid er P1, ikke implementasjon av verktøyet.**
+## 8. Neste oppdrag til Claude Code (01.11.2026)
 
-1. Les dette dokumentet, docs/legemiddeldata.md, docs/stoffregister.md, docs/faginnhold.md, docs/stoffsider-og-redigering.md og relevante nåværende filer. Bekreft faktisk tilstand – ikke anta at gammel repooversikt er oppdatert.
-2. Lag den fulle matrisekartleggingen og navnelisten med norske navn, kilde-ID-er, gruppe-/formuleringsvarianter og sammenligning mot OUSFAR/FEST. Arbeid kun med syntetiske/testdata.
-3. Verifiser at johannesurt er ekskludert **før** eventuelle importer eller fagsideopprettelser, og at generisk Start-kolonne ikke inkluderes.
-4. Legg kartleggingen, testene, dekningsstatus og en kort rapport i én avgrenset PR. Oppdater fremdriftstabellen og avkryssede punkter.
-5. Be om uavhengig gjennomgang av avvik/uklare koblinger før neste fase. Fortsett ikke med å publisere doseberegningsregler før P4-kontrollporten er passert.
+Følg **docs/verktøy-omlegging-2026-11.md**. Begynn med VDR-0 og VDR-1: kartlegg de faktiske sakstilstandene og de tre eksisterende funnene, innfør en teknisk oppfølgingsflyt som ikke legger beslutninger og 24/72-timersfrister på den faglige redaktøren, og bevar sikkerhetskontroller og sporbarhet. Legg fram en avgrenset PR med tester. Ikke erklær funn 1/2 faglig irrelevante på grunnlag av en endret kontrollsum; ikke endre kliniske regler eller godkjenninger i denne PR-en.
 
-**Hovedregel:** Kildetilfang og klinisk regelpublisering er to separate leveranser. Prioriter etterprøvbar faglig korrekthet over automatisk dekning.
+VDK-1 (dekningsoversikt) kan utredes parallelt i en separat PR. Kliniske regelendringer krever fortsatt uavhengig kontroll og eksplisitt godkjenning.
