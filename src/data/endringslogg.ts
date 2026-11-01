@@ -13,7 +13,7 @@ import type { Endring } from '../domain/versjon'
 export const ENDRINGSLOGG: Endring[] = [
   {
     versjon: '1.117.2',
-    dato: '2026-10-31',
+    dato: '2026-11-01',
     sammendrag: 'Fremdriften for kildeovervåkingen oppdatert',
     typer: ['Funksjonalitet'],
     omfang: 'Minimalt omfang',
