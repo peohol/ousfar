@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react'
 import { sokeord, sokGlobalt, type Soketreff } from '../../faginnhold/sok'
 import type { Sokeindekstilstand } from '../../hooks/useSokeindeks'
 import { sokVerktoy } from '../../verktoy/register'
+import { useVerktoyeneVises } from '../../verktoy/synlighet'
 import { visTreff, visVerktoy, type Treffvisning } from './treffvisning'
 
 /**
@@ -11,7 +12,8 @@ import { visTreff, visVerktoy, type Treffvisning } from './treffvisning'
  *
  * `verktoy` er verktøyene søket finner, som en egen trefftype. De søkes i
  * verktøyregisteret i appen og står der med én gang, også mens fagstoffet
- * hentes.
+ * hentes. For dem som ikke skal se verktøyene (`src/verktoy/synlighet.ts`),
+ * er lista tom.
  */
 export function useFagsoketreff(
   tilstand: Sokeindekstilstand,
@@ -19,7 +21,11 @@ export function useFagsoketreff(
   beskrivSide?: (stoff: string) => string | undefined,
 ): { treff: Soketreff[]; vis: (treff: Soketreff) => Treffvisning; verktoy: Treffvisning[] } {
   const ord = useMemo(() => sokeord(sporring), [sporring])
-  const verktoy = useMemo(() => sokVerktoy(sporring).map((t) => visVerktoy(t, ord)), [sporring, ord])
+  const visVerktoyene = useVerktoyeneVises()
+  const verktoy = useMemo(
+    () => (visVerktoyene ? sokVerktoy(sporring).map((t) => visVerktoy(t, ord)) : []),
+    [visVerktoyene, sporring, ord],
+  )
   const treff = useMemo(
     () => (tilstand.status === 'klar' && ord.length > 0 ? sokGlobalt(tilstand.indeks, sporring, Infinity) : []),
     [tilstand, sporring, ord],

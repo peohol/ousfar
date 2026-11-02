@@ -12,6 +12,7 @@ import { fokusIFagsok, lagLiggerOver } from '../hooks/useKeyboard'
 import { rullefart } from '../hooks/useKortHopp'
 import { useTrykkUtenfor } from '../hooks/useTrykkUtenfor'
 import { VERKTOY } from '../verktoy/register'
+import { useVerktoyeneVises } from '../verktoy/synlighet'
 
 /**
  * Sidemenyen: to faner, Stoffregister og Verktøy (P6.2 i
@@ -20,7 +21,9 @@ import { VERKTOY } from '../verktoy/register'
  * bytter fane, som i andre fanelister.
  *
  * Verktøyfanen har verktøyene fra verktøyregisteret (`src/verktoy/register.ts`)
- * som lenker til sidene deres, og lenken til oversikten.
+ * som lenker til sidene deres, og lenken til oversikten. Den står bare for
+ * dem som skal se verktøyene (`src/verktoy/synlighet.ts`); for andre har
+ * menyen bare stoffregisteret.
  *
  * Stoffregisterfanen er veien inn til stoffsiden for hvert stoff, ordnet etter
  * farmakologisk klasse (`src/domain/stoffregister.ts`). Hvert stoff lenker
@@ -54,10 +57,11 @@ const TITTEL = 'Meny'
 /** Fanene i menyen, i rekkefølgen de står. */
 const FANER = [
   { id: 'stoffregister', navn: 'Stoffregister', ikon: 'stoffregister' },
-  { id: 'verktoy', navn: 'Verktøy', ikon: 'gears' },
+  { id: 'verktoy', navn: 'Verktøy', ikon: 'verktoy' },
 ] as const
 
-type Fane = (typeof FANER)[number]['id']
+type Fanedefinisjon = (typeof FANER)[number]
+type Fane = Fanedefinisjon['id']
 
 /** Merket menyen bærer som `data-lag` mens den står åpen. */
 const MENY_LAG = 'meny'
@@ -96,7 +100,11 @@ export function Sidemeny({ register }: SidemenyProps) {
   const [apenSkuff, setApenSkuff] = useBevart<string | null>('sidemeny/skuff', null)
   const favoritter = useFavoritter()
   const [favoritterApen, setFavoritterApen] = useBevart('sidemeny/favoritter', false)
-  const [fane, setFane] = useBevart<Fane>('sidemeny/fane', 'stoffregister')
+  const visVerktoy = useVerktoyeneVises()
+  const faner = visVerktoy ? FANER : FANER.filter((f) => f.id !== 'verktoy')
+  const [valgtFane, setFane] = useBevart<Fane>('sidemeny/fane', 'stoffregister')
+  // En fane som er valgt fra før, men ikke vises, gir den første.
+  const fane = faner.some((f) => f.id === valgtFane) ? valgtFane : faner[0]!.id
   const panelId = useId()
   const panel = useRef<HTMLElement>(null)
   const knapp = useRef<HTMLButtonElement | null>(null)
@@ -228,7 +236,7 @@ export function Sidemeny({ register }: SidemenyProps) {
         tabIndex={-1}
       >
         <div className="sidemeny__topp">
-          <Fanevalg fane={fane} panelId={panelId} onVelg={setFane} />
+          <Fanevalg faner={faner} fane={fane} panelId={panelId} onVelg={setFane} />
           <button
             type="button"
             className="sidemeny__lukk"
@@ -285,31 +293,33 @@ export function Sidemeny({ register }: SidemenyProps) {
           </a>
         </div>
 
-        <div
-          id={`${panelId}-verktoy`}
-          role="tabpanel"
-          aria-labelledby={`${panelId}-fane-verktoy`}
-          className="sidemeny__fane"
-          hidden={fane !== 'verktoy'}
-        >
-          <ul className="menyverktoy">
-            {VERKTOY.map((v) => (
-              <li key={v.id}>
-                <a className="menyverktoy__lenke" href={verktoyadresse(v.id)} onClick={velg}>
-                  <Ikon navn={v.ikon} storrelse="ui" className="menyskuff__ikon" />
-                  <span className="menyverktoy__tekst">
-                    <span className="menyverktoy__navn">{v.navn}</span>
-                    <span className="menyverktoy__beskrivelse">{v.beskrivelse}</span>
-                  </span>
-                </a>
-              </li>
-            ))}
-          </ul>
-          <a className="menyhelside" href={verktoyadresse()} onClick={velg}>
-            <Ikon navn="ext" storrelse="ui" />
-            Åpne verktøyoversikten
-          </a>
-        </div>
+        {visVerktoy && (
+          <div
+            id={`${panelId}-verktoy`}
+            role="tabpanel"
+            aria-labelledby={`${panelId}-fane-verktoy`}
+            className="sidemeny__fane"
+            hidden={fane !== 'verktoy'}
+          >
+            <ul className="menyverktoy">
+              {VERKTOY.map((v) => (
+                <li key={v.id}>
+                  <a className="menyverktoy__lenke" href={verktoyadresse(v.id)} onClick={velg}>
+                    <Ikon navn={v.ikon} storrelse="ui" className="menyskuff__ikon" />
+                    <span className="menyverktoy__tekst">
+                      <span className="menyverktoy__navn">{v.navn}</span>
+                      <span className="menyverktoy__beskrivelse">{v.beskrivelse}</span>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <a className="menyhelside" href={verktoyadresse()} onClick={velg}>
+              <Ikon navn="ext" storrelse="ui" />
+              Åpne verktøyoversikten
+            </a>
+          </div>
+        )}
       </nav>
     </>
   )
@@ -319,23 +329,33 @@ export function Sidemeny({ register }: SidemenyProps) {
  * Fanene øverst i menyen. Bare den valgte fanen nås med tabulator; piltastene,
  * Home og End flytter mellom fanene og velger dem.
  */
-function Fanevalg({ fane, panelId, onVelg }: { fane: Fane; panelId: string; onVelg: (fane: Fane) => void }) {
+function Fanevalg({
+  faner,
+  fane,
+  panelId,
+  onVelg,
+}: {
+  faner: readonly Fanedefinisjon[]
+  fane: Fane
+  panelId: string
+  onVelg: (fane: Fane) => void
+}) {
   const paaTast = (event: Tastetrykk<HTMLDivElement>) => {
-    const i = FANER.findIndex((f) => f.id === fane)
+    const i = faner.findIndex((f) => f.id === fane)
     const ny =
-      event.key === 'ArrowRight' ? (i + 1) % FANER.length
-      : event.key === 'ArrowLeft' ? (i - 1 + FANER.length) % FANER.length
+      event.key === 'ArrowRight' ? (i + 1) % faner.length
+      : event.key === 'ArrowLeft' ? (i - 1 + faner.length) % faner.length
       : event.key === 'Home' ? 0
-      : event.key === 'End' ? FANER.length - 1
+      : event.key === 'End' ? faner.length - 1
       : -1
     if (ny < 0) return
     event.preventDefault()
-    onVelg(FANER[ny]!.id)
-    document.getElementById(`${panelId}-fane-${FANER[ny]!.id}`)?.focus()
+    onVelg(faner[ny]!.id)
+    document.getElementById(`${panelId}-fane-${faner[ny]!.id}`)?.focus()
   }
   return (
     <div role="tablist" aria-label="Menyvalg" className="sidemeny__faner" onKeyDown={paaTast}>
-      {FANER.map((f) => (
+      {faner.map((f) => (
         <button
           key={f.id}
           id={`${panelId}-fane-${f.id}`}

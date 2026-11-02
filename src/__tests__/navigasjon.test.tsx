@@ -209,6 +209,7 @@ describe('sidemenyen', { timeout: 20_000 }, () => {
   })
 
   it('har verktøyene i en egen fane, med piltastene, og åpner et verktøy på sin egen adresse', async () => {
+    okt.rolle = 'admin'
     const user = userEvent.setup()
     visApp()
     await user.keyboard('{Control>}m{/Control}')
@@ -666,6 +667,7 @@ describe('fagsøket i hele appen', () => {
   })
 
   it('viser verktøyene som egne treff, og åpner et verktøy med Enter', async () => {
+    okt.rolle = 'admin'
     const user = userEvent.setup()
     visApp()
     await user.keyboard('{Control>}k{/Control}')
@@ -683,6 +685,7 @@ describe('fagsøket i hele appen', () => {
   }, 20_000)
 
   it('åpner et verktøy og verktøyoversikten direkte fra adressen, og følger tilbake og fram', async () => {
+    okt.rolle = 'admin'
     window.location.hash = '#/verktoy/trappe-ned-antidepressiv'
     visApp()
     expect(await screen.findByRole('heading', { level: 1, name: 'Trappe ned antidepressiv' })).toBeTruthy()
@@ -697,6 +700,30 @@ describe('fagsøket i hele appen', () => {
     window.location.hash = '#/verktoy/trappe-ned-antidepressiv'
     window.dispatchEvent(new HashChangeEvent('hashchange'))
     expect(await screen.findByRole('heading', { level: 1, name: 'Trappe ned antidepressiv' })).toBeTruthy()
+  }, 20_000)
+
+  it('skjuler verktøyene for den som ikke er administrator: ingen fane, ingen treff, og adressen gir fortolkningen', async () => {
+    const user = userEvent.setup()
+    window.location.hash = '#/verktoy/bytte-antidepressiv'
+    visApp()
+    await waitFor(() => expect(window.location.hash).toBe('#/'))
+    expect(fortolkningen().hidden).toBe(false)
+    expect(screen.queryByRole('heading', { level: 1, name: 'Bytte antidepressiv' })).toBeNull()
+
+    await user.keyboard('{Control>}m{/Control}')
+    const meny = screen.getByRole('navigation', { name: 'Meny' })
+    expect(within(meny).getAllByRole('tab').map((t) => t.textContent)).toEqual(['Stoffregister'])
+    expect(within(meny).queryByRole('tabpanel', { name: 'Verktøy' })).toBeNull()
+    expect(meny.querySelector('a[href^="#/verktoy"]')).toBeNull()
+    await user.keyboard('{Escape}')
+
+    await user.keyboard('{Control>}k{/Control}')
+    await user.keyboard('bytte')
+    // Verktøyene søkes i appen og ville stått der med én gang.
+    expect(await screen.findByRole('button', { name: /^Vis alle treff/ })).toBeTruthy()
+    expect(screen.queryByRole('group', { name: 'Verktøy' })).toBeNull()
+    expect(screen.queryByRole('option', { name: /Bytte antidepressiv|Bytte antipsykotikum/ })).toBeNull()
+    expect(document.querySelector('a[href^="#/verktoy"]')).toBeNull()
   }, 20_000)
 
   it('åpner søkesiden direkte fra adressen, med søket i feltet', async () => {
