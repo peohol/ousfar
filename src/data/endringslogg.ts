@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.117.5',
+    dato: '2026-11-02',
+    sammendrag: 'Vurdering av når verktøyene stopper av tekniske grunner',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. En vurdering av om kravet til ferske FEST-data og den jevnlige kontrollen av nødstoppen stopper verktøyene oftere enn nødvendig, med forslag som skal kontrolleres uavhengig før noe endres.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.117.4',
     dato: '2026-11-02',
     sammendrag: 'Verktøyene er skjult for andre enn administratorene inntil videre, og har fått nytt ikon',
