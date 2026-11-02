@@ -134,6 +134,8 @@ Redaktøren ser bare saker i `beslutning` og `oppfolging`, mulige sikkerhetsprob
 
 En registrert beslutning er ikke et utført tiltak: saken står som «Oppfølging pågår» til hvert tiltak er utført og kontrollert.
 
+**Vinduet (VDR-2).** Adminmeny → «Kildeovervåking» (`src/components/konto/Kildeovervaking.tsx`) viser de faglige sakene først (`Fagsaker.tsx`): hvordan verktøyet virker nå, hva som er endret med kildelenke, hvilke anbefalinger som berøres (med regelnavn og godkjent versjon, aldri regel-ID), hvorfor det er relevant, anbefalt beslutning, valgene med hva hvert betyr for klinikerne, og for valget som er tatt hva som skjer straks og hva som må gjøres og kontrolleres etterpå, før «Registrer beslutningen». En sikkerhetssak uten spørsmål ennå viser «Sikkerhetsproblem under vurdering» og en knapp til nødstoppen, uten valg. Saker i oppfølging viser beslutningen og tiltakene med status; avsluttede saker ligger samlet og lukket. Det tekniske sporet (alle åpne saker med teknisk logg, og siste kontroll) står lukket nederst, merket for kontrollører. Valget og merknaden overlever en oppdatering av appen (`useBevart`).
+
 ### 5.5 Klinikervarsler
 
 `les_regelvarsler()` gir varslene for alle innloggede (`src/verktoy/overvaking/regelvarsler.ts`): regel, versjon, tekst og når. Verktøyet viser et varsel bare når regel og versjon er lik regelversjonen det bruker. Et varsel sperrer ingenting, og en lesing som feiler, stopper ikke beregningen; sperrene leses for seg som før.

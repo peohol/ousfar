@@ -39,7 +39,13 @@ vi.mock('../components/kuratering/Utgavelister', () => ({
   Kurateringsoversikt: ({ apen }: { apen: boolean }) => (apen ? <p>Kurateringsoversikten</p> : null),
 }))
 vi.mock('../components/konto/Kildeovervaking', () => ({
-  Kildeovervaking: ({ apen }: { apen: boolean }) => (apen ? <p>Kildeovervåkingen</p> : null),
+  Kildeovervaking: ({ apen, onNodstopp }: { apen: boolean; onNodstopp?: () => void }) =>
+    apen ? (
+      <>
+        <p>Kildeovervåkingen</p>
+        <button onClick={onNodstopp}>Åpne nødstoppen</button>
+      </>
+    ) : null,
   // Ingen faglige saker, så prikken ikke står i de andre testene.
   fagsaklager: () => ({ les: async () => ({ saker: [], teknisk: 'normal', sist_kontrollert_kl: null }), beslutt: async () => 'registrert' }),
 }))
@@ -558,6 +564,10 @@ describe('adminmenyen', () => {
     await userEvent.click(knapp)
     await userEvent.click(within(meny).getByRole('button', { name: 'Kildeovervåking' }))
     expect(screen.getByText('Kildeovervåkingen')).toBeTruthy()
+    // En sikkerhetssak peker til nødstoppen, som åpnes i stedet for kildeovervåkingen.
+    await userEvent.click(screen.getByRole('button', { name: 'Åpne nødstoppen' }))
+    expect(screen.getByText('Nødstoppen')).toBeTruthy()
+    expect(screen.queryByText('Kildeovervåkingen')).toBeNull()
 
     await userEvent.click(knapp)
     await userEvent.click(within(meny).getByRole('button', { name: 'Kliniske verktøy' }))

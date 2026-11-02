@@ -131,7 +131,7 @@ export function Adminmeny({
       <Datakilder apen={panel === 'datakilder'} onLukk={lukkPanel} />
       <Autoerstattregler apen={panel === 'autoerstatt'} onLukk={lukkPanel} />
       <Kurateringsoversikt apen={panel === 'kurateringer'} klient={kuratering} onLukk={lukkPanel} />
-      <Kildeovervaking apen={panel === 'kildeovervaking'} lager={kildelager} onLukk={lukkPanel} />
+      <Kildeovervaking apen={panel === 'kildeovervaking'} lager={kildelager} fagsaker={fagsaker} onNodstopp={() => setPanel('verktoysperrer')} onLukk={lukkPanel} />
       <Verktoysperrer apen={panel === 'verktoysperrer'} onLukk={lukkPanel} />
     </>
   )

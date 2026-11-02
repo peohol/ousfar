@@ -88,7 +88,7 @@ describe('redaktørvisningen av kildesakene', () => {
   it('viser de seks svarene og hva valget vil gjøre før beslutningen kan registreres, og følger saken opp i stedet for å avslutte den', async () => {
     const user = userEvent.setup()
     const lager = minnelager(oversikt([sak()]))
-    render(<Fagsaker apen onLukk={() => {}} lager={lager} />)
+    render(<Fagsaker apen lager={lager} />)
 
     const kort = within((await screen.findByRole('article', { name: /langsommere siste trinn/ })) as HTMLElement)
     // 1–3: hva er endret, hva berøres (med navnet, aldri ID-en), hvorfor relevant.
@@ -129,7 +129,7 @@ describe('redaktørvisningen av kildesakene', () => {
   })
 
   it('viser ingen kontrollsum, ID, regelnøkkel eller tidsfrist', async () => {
-    render(<Fagsaker apen onLukk={() => {}} lager={minnelager(oversikt([sak()]))} />)
+    render(<Fagsaker apen lager={minnelager(oversikt([sak()]))} />)
     await screen.findByRole('article')
     const tekst = document.body.textContent!
     expect(tekst).not.toContain(HASH)
@@ -143,7 +143,7 @@ describe('redaktørvisningen av kildesakene', () => {
     const user = userEvent.setup()
     const data = oversikt([sak()])
     const lager = minnelager(data)
-    render(<Fagsaker apen onLukk={() => {}} lager={lager} />)
+    render(<Fagsaker apen lager={lager} />)
     const kort = within(await screen.findByRole('article'))
     // Noen andre endret saken mens den var åpen.
     data.saker[0]!.versjon = 4
@@ -160,7 +160,7 @@ describe('redaktørvisningen av kildesakene', () => {
     const user = userEvent.setup()
     const lager = minnelager(oversikt([sak()]))
     lager.beslutt.mockRejectedValueOnce(new Error('Beslutningen ble ikke registrert: ingen forbindelse.'))
-    render(<Fagsaker apen onLukk={() => {}} lager={lager} />)
+    render(<Fagsaker apen lager={lager} />)
     const kort = within(await screen.findByRole('article'))
     await user.click(kort.getByRole('radio', { name: /Utsett beslutningen/ }))
     await user.type(kort.getByRole('textbox', { name: /Merknad/ }), 'Venter på ny utgave.')
@@ -173,7 +173,7 @@ describe('redaktørvisningen av kildesakene', () => {
   it('lar en utsatt sak vente med hvem som utsatte den, og kan besluttes senere', async () => {
     const user = userEvent.setup()
     const lager = minnelager(oversikt([sak()]))
-    render(<Fagsaker apen onLukk={() => {}} lager={lager} />)
+    render(<Fagsaker apen lager={lager} />)
     let kort = within(await screen.findByRole('article'))
     await user.click(kort.getByRole('radio', { name: /Utsett beslutningen/ }))
     await user.click(kort.getByRole('button', { name: 'Registrer beslutningen' }))
@@ -186,7 +186,7 @@ describe('redaktørvisningen av kildesakene', () => {
     const user = userEvent.setup()
     const nodstopp = vi.fn()
     const s = sak({ alvor: 'sikkerhet', anbefaling: null, valg: [], status_na: 'Planen beregnes fortsatt; ingen sperre er satt.' })
-    render(<Fagsaker apen onLukk={() => {}} lager={minnelager(oversikt([s]))} onNodstopp={nodstopp} />)
+    render(<Fagsaker apen lager={minnelager(oversikt([s]))} onNodstopp={nodstopp} />)
     const kort = within(await screen.findByRole('article'))
     expect(kort.getByText('Sikkerhet')).toBeTruthy()
     expect(kort.getByText('Sikkerhetsproblem under vurdering')).toBeTruthy()
@@ -205,7 +205,7 @@ describe('redaktørvisningen av kildesakene', () => {
       beslutning: null,
       avsluttet: { kl: '2026-11-10T09:00:00Z', utfall: 'prove' },
     })
-    render(<Fagsaker apen onLukk={() => {}} lager={minnelager(oversikt([avsluttet]))} />)
+    render(<Fagsaker apen lager={minnelager(oversikt([avsluttet]))} />)
     const del = within(await screen.findByRole('region', { name: 'Avsluttede saker' }))
     expect(del.getByText('Avsluttede saker (1)')).toBeTruthy()
     expect(del.getByText('Syntetisk prøvesak (prøve)')).toBeTruthy()
@@ -213,7 +213,7 @@ describe('redaktørvisningen av kildesakene', () => {
   })
 
   it('sier rolig fra om det tekniske sporet uten å gi redaktøren en oppgave', async () => {
-    render(<Fagsaker apen onLukk={() => {}} lager={minnelager(oversikt([], { teknisk: 'oppfolging' }))} />)
+    render(<Fagsaker apen lager={minnelager(oversikt([], { teknisk: 'oppfolging' }))} />)
     expect(await screen.findByText(/Noen kilder følges opp teknisk\. Det krever ingenting av deg/)).toBeTruthy()
     expect(screen.getByText('Ingenting venter på deg.')).toBeTruthy()
   })
@@ -229,7 +229,7 @@ describe('redaktørvisningen av kildesakene', () => {
       },
       beslutt: async () => 'registrert',
     }
-    render(<Fagsaker apen onLukk={() => {}} lager={lager} />)
+    render(<Fagsaker apen lager={lager} />)
     expect(await screen.findByText('Sakene kunne ikke leses, så det er ukjent om noe venter på deg.')).toBeTruthy()
     expect(screen.queryByText('Ingenting venter på deg.')).toBeNull()
     feiler = false
@@ -240,7 +240,7 @@ describe('redaktørvisningen av kildesakene', () => {
   it('kan brukes med tastaturet alene', async () => {
     const user = userEvent.setup()
     const lager = minnelager(oversikt([sak()]))
-    render(<Fagsaker apen onLukk={() => {}} lager={lager} />)
+    render(<Fagsaker apen lager={lager} />)
     const kort = within(await screen.findByRole('article'))
     kort.getByRole('radio', { name: /Be om revidert anbefaling/ }).focus()
     await user.keyboard(' ')

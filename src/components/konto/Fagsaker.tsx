@@ -20,7 +20,6 @@ import { REGELSETTENE } from '../../verktoy/tilgjengelighet'
 import { Button } from '../Button'
 import { Details } from '../Details'
 import { Merke } from '../Merke'
-import { Modallag } from '../Modallag'
 
 const REGLER = REGELSETTENE.flatMap((s) => s.regler)
 
@@ -312,9 +311,10 @@ const TOMT: Utkast = { valg: null, merknad: '' }
  * beslutning trengs, med grunnlaget, anbefalingen og hva hvert valg vil gjøre,
  * og saker som følges opp til tiltakene er utført og kontrollert. Tekniske
  * avvik, kontrollsummer og interne nøkler vises ikke. Tilgangen og
- * overgangene avgjøres i databasen; dette er bare visningen.
+ * overgangene avgjøres i databasen; dette er bare visningen. Innholdet i
+ * vinduet «Kildeovervåking» (`Kildeovervaking.tsx`).
  */
-export function Fagsaker({ apen, onLukk, lager, onNodstopp }: { apen: boolean; onLukk: () => void; lager: Fagsaklager | null; onNodstopp?: () => void }) {
+export function Fagsaker({ apen, lager, onNodstopp }: { apen: boolean; lager: Fagsaklager | null; onNodstopp?: () => void }) {
   const [data, setData] = useState<Redaktoroversikt | null>(null)
   const [feil, setFeil] = useState<string | null>(null)
   const [ulest, setUlest] = useState(false)
@@ -366,7 +366,7 @@ export function Fagsaker({ apen, onLukk, lager, onNodstopp }: { apen: boolean; o
   const avsluttede = saker.filter((s) => s.fase === 'avsluttet')
 
   return (
-    <Modallag apen={apen} tittel="Kildeovervåking" ikon="refs" bred onLukk={onLukk}>
+    <>
       <p className="autoerstatt__ingress">
         Kildene de godkjente anbefalingene i verktøyene bygger på, kontrolleres hver uke. Du får en sak her bare når en endring krever en faglig beslutning. Tekniske avvik
         følges opp uten deg.
@@ -437,6 +437,6 @@ export function Fagsaker({ apen, onLukk, lager, onNodstopp }: { apen: boolean; o
           </Details>
         </section>
       )}
-    </Modallag>
+    </>
   )
 }
