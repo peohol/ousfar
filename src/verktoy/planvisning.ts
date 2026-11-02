@@ -46,7 +46,12 @@ export interface Planvisning {
   undertittel: string | null
   kolonner: { navn: string; administrasjon: string }[]
   rader: Planrad[]
+  /** Alt som står under «Advarsler» i kopien: de generelle forbeholdene først, så det som gjelder denne planen. */
   advarsler: string[]
+  /** De generelle forbeholdene, som står for hver plan; siden viser dem for seg, foran det som gjelder akkurat denne planen. */
+  forbehold: string[]
+  /** Hvem som har godkjent regelen, når og for hvilken versjon ({@link godkjenningstekst}). */
+  godkjenning: string | null
   antakelser: string[]
   usikkerhet: string[]
   avvik: string[]
@@ -190,6 +195,8 @@ export function planvisning(r: Doseplanresultat, regel: Regel, startdato?: strin
     kolonner,
     rader: rader(r.forlop, startdato),
     advarsler: [...r.forbehold, ...r.merknader, ...r.forlop.flatMap((f, i) => f.begrensninger.map((b) => `${kolonner[i]!.navn}: ${b}`))],
+    forbehold: r.forbehold,
+    godkjenning: godkjenningstekst(regel),
     antakelser: regel.fortolkning.forutsetninger,
     usikkerhet: regel.fortolkning.usikkerhet,
     avvik: r.avvik,
@@ -206,19 +213,23 @@ export function planvisning(r: Doseplanresultat, regel: Regel, startdato?: strin
   }
 }
 
+/** Advarslene som gjelder akkurat denne planen, uten de generelle forbeholdene foran. */
+export const egneAdvarsler = (v: Pick<Planvisning, 'advarsler' | 'forbehold'>): string[] => v.advarsler.slice(v.forbehold.length)
+
 /**
- * Listene under tabellen, i rekkefølgen de står i. Skjermen og teksten som
- * kopieres, bruker den samme lista, så kopien har alt skjermen har. Kildene
- * og versjonene står etter dem.
+ * Listene etter tabellen i teksten som kopieres, i rekkefølgen de står i;
+ * kildene og versjonene står etter dem. Skjermen har de samme listene, men
+ * viser advarslene for planen ved tabellen og resten under «Faglig grunnlag»
+ * (`Doseplanvisning`), så kopien har alt skjermen har.
  */
 export const PLANDELER = [
-  { tittel: 'Advarsler', felt: 'advarsler', tone: 'advarsel' },
+  { tittel: 'Advarsler', felt: 'advarsler' },
   { tittel: 'Avvik fra regelens kurve', felt: 'avvik' },
   { tittel: 'Antakelser', felt: 'antakelser' },
   { tittel: 'Usikkerhet', felt: 'usikkerhet' },
   { tittel: 'Preparater planen bygger på', felt: 'preparater' },
   { tittel: 'Kontroller', felt: 'kontroller' },
-] as const satisfies readonly { tittel: string; felt: keyof Planvisning; tone?: 'advarsel' | 'spor' }[]
+] as const satisfies readonly { tittel: string; felt: keyof Planvisning }[]
 
 const punkter = (overskrift: string, linjer: readonly string[]) => (linjer.length > 0 ? [``, `${overskrift}:`, ...linjer.map((l) => `- ${l}`)] : [])
 

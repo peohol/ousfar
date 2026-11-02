@@ -12,6 +12,22 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.118.0',
+    dato: '2026-11-02',
+    sammendrag: 'Enklere kliniske verktøy: det som kan beregnes står øverst, og det faglige grunnlaget er samlet',
+    typer: ['Funksjonalitet', 'Design / layout'],
+    omfang: 'Moderat omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Oversikten og hvert verktøy viser hvilke legemidler og bytter som kan beregnes nå, og hvilke som bare har fagtekst. Et klikk på et av dem fyller ut feltene.',
+      'Skjemaet er delt i «Doser og start», «Om pasienten» og «Bekreft før beregning». Tilpasning av trinn og tid ligger i en egen del som bare åpnes ved behov.',
+      'Mangler et svar eller en bekreftelse, sier verktøyet kort hva som mangler og merker feltene, før noe beregnes. Svarer du at et forhold gjelder, står det med en gang at verktøyet da ikke gir en plan.',
+      'Under planen står de generelle forbeholdene og «Viktig for denne planen». Forutsetninger, usikkerhet, det som ble kontrollert, preparatene, kildene og versjonene er samlet i «Faglig grunnlag», som åpnes ved behov og alltid kommer med i utskriften og kopien.',
+      'En deaktivert regel nevnes ved navn i stedet for med den interne betegnelsen.',
+      'Ingen doser, grenser, regler eller godkjenninger er endret.',
+    ],
+  },
+  {
     versjon: '1.117.4',
     dato: '2026-11-02',
     sammendrag: 'Verktøyene er skjult for andre enn administratorene inntil videre, og har fått nytt ikon',

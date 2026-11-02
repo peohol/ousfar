@@ -120,6 +120,9 @@
 }
 
 .verktoykort__status {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-1);
   font-size: var(--tekst-liten);
   font-weight: var(--vekt-halvfet);
   color: var(--blekk-dempet);
@@ -168,6 +171,101 @@
   padding: 0;
   font-size: var(--tekst-liten);
   font-weight: var(--vekt-halvfet);
+  color: var(--blekk-dempet);
+}
+
+/* Spørsmålene om pasienten leses som spørsmål, ikke som små etiketter. */
+.verktoyskjema__unntak > legend {
+  font-size: var(--tekst-etikett);
+  font-weight: var(--vekt-medium);
+  line-height: var(--linjehoyde-lesing);
+  color: var(--blekk);
+}
+
+/* Det som mangler svar etter et forsøk på å beregne: en strek i varselfargen og en kort tekst. */
+.verktoyskjema__unntak[data-mangler],
+.avkryssing[data-mangler] {
+  padding-left: var(--rom-4);
+  border-left: 3px solid var(--alvorlig-blekk);
+  border-radius: 0;
+}
+
+.verktoyskjema__mangler {
+  font-weight: var(--vekt-halvfet);
+  color: var(--alvorlig-blekk);
+}
+
+.verktoyskjema__merknad {
+  margin: 0;
+  font-size: var(--tekst-etikett);
+  color: var(--toksisk-blekk);
+}
+
+.verktoyskjema__tilpasning {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-3);
+  padding-bottom: var(--rom-4);
+}
+
+/* Snarvalgene under virkestoffene: det verktøyet kan gi nå, som knapper. */
+.snarvalg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-3);
+}
+
+.snarvalg__gruppe {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rom-2) var(--rom-3);
+}
+
+.snarvalg__tittel {
+  font-size: var(--tekst-liten);
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk-dempet);
+}
+
+.snarvalg .knapp {
+  max-width: 100%;
+  white-space: normal;
+  text-align: left;
+}
+
+.snarvalg .knapp[aria-pressed='true'] {
+  color: var(--blekk);
+  background: var(--aksent-flate);
+  border-color: var(--aksent);
+}
+
+/* Et faglig varsel ved anbefalingen det gjelder: kort, i aksentfargen, aldri som en sperre. */
+.regelvarsel {
+  display: flex;
+  gap: var(--rom-3);
+  align-items: flex-start;
+  padding: var(--rom-4) var(--rom-5);
+  font-size: var(--tekst-etikett);
+  line-height: var(--linjehoyde-lesing);
+  color: var(--blekk);
+  background: var(--aksent-flate);
+  border-left: 3px solid var(--aksent);
+  border-radius: var(--runding-underkort);
+}
+
+.regelvarsel p {
+  margin: 0;
+}
+
+.regelvarsel__ikon {
+  flex: none;
+  width: 1.25em;
+  height: 1.25em;
+  margin-top: 0.1em;
+}
+
+.regelvarsel__siden {
   color: var(--blekk-dempet);
 }
 
@@ -277,10 +375,6 @@
   margin: 0;
 }
 
-.verktoyfagtekst__godkjenning {
-  font-size: var(--tekst-liten);
-  color: var(--blekk-dempet);
-}
 
 /* --- Doseplanen -------------------------------------------------------------- */
 .doseplan {
@@ -434,12 +528,62 @@
   color: var(--toksisk-blekk);
 }
 
-.doseplan__del[data-tone='spor'] ul {
+/* De generelle forbeholdene, som står for hver plan: små, rett under tabellen. */
+.doseplan__forbehold {
+  margin: 0;
+  padding-left: var(--rom-6);
   font-size: var(--tekst-liten);
+  line-height: var(--linjehoyde-lesing);
   color: var(--blekk-dempet);
 }
 
-.doseplan__kilde {
+/* --- Faglig grunnlag ----------------------------------------------------------
+   Det forslaget bygger på, i en sammenleggbar del (`Details`) under planen
+   eller fagteksten. */
+.faglig-grunnlag {
+  border-bottom: var(--kant) solid var(--linje);
+}
+
+.faglig-grunnlag__innhold {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-5);
+  padding-bottom: var(--rom-5);
+}
+
+.faglig-grunnlag__del {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+}
+
+.faglig-grunnlag__del :is(h3, p, ul) {
+  margin: 0;
+}
+
+.faglig-grunnlag__del h3 {
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-ingress);
+  font-weight: var(--vekt-medium);
+}
+
+.faglig-grunnlag__del :is(p, ul) {
+  font-size: var(--tekst-etikett);
+  line-height: var(--linjehoyde-lesing);
+}
+
+.faglig-grunnlag__del ul {
+  padding-left: var(--rom-6);
+}
+
+.faglig-grunnlag__forklaring,
+.faglig-grunnlag__godkjenning,
+.faglig-grunnlag__kilde {
+  color: var(--blekk-dempet);
+}
+
+.faglig-grunnlag__del[data-tone='spor'] ul {
+  font-size: var(--tekst-liten);
   color: var(--blekk-dempet);
 }
 

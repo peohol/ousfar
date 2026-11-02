@@ -149,6 +149,20 @@ export function mangler(r: Regel, skjema: Planskjema): string[] {
   return ut
 }
 
+/**
+ * Det i skjemaet forskriveren ikke har tatt stilling til ennå: spørsmål og
+ * pasientforhold uten svar og forutsetninger som ikke er bekreftet. Siden
+ * viser dem ved feltene før noe hentes; beregningen (`beregning.ts`) stopper
+ * på nøyaktig de samme, så dette avgjør ingenting klinisk alene.
+ */
+export function ubesvart(r: Regel, skjema: Planskjema): { sporsmal: string[]; unntak: string[]; bekreftelser: string[] } {
+  return {
+    sporsmal: (r.sporsmal ?? []).filter((x) => !(x.id in skjema.svar)).map((x) => x.id),
+    unntak: r.unntak.filter((u) => !(u.id in skjema.pasientforhold)).map((u) => u.id),
+    bekreftelser: r.bekreftelser.filter((b) => !skjema.bekreftet.includes(b.id)).map((b) => b.id),
+  }
+}
+
 /** Spørsmålene der et ja krever en skriftlig begrunnelse. */
 const sporsmalMedBegrunnelse = (r: Regel) => (r.sporsmal ?? []).filter((s) => s.krever_begrunnelse)
 

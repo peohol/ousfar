@@ -79,10 +79,11 @@ describe('oversikten', () => {
     expect(document.title).toBe('Verktøy – OUSFAR')
     const kort = screen.getAllByRole('link').filter((a) => a.classList.contains('verktoykort__lenke'))
     expect(kort.map((a) => a.getAttribute('href'))).toEqual(['#/verktoy/trappe-ned-antidepressiv', '#/verktoy/bytte-antidepressiv', '#/verktoy/bytte-antipsykotikum'])
-    expect(kort.map((a) => a.querySelector('.verktoykort__status')?.textContent)).toEqual([
-      '1 regel kan beregnes · 22 ikke godkjent',
-      '1 regel kan beregnes · 1 ikke godkjent',
-      '2 regler kan beregnes · 1 ikke godkjent',
+    // Kortene sier hva som faktisk kan brukes, ikke hvor mange regler som venter.
+    expect(kort.map((a) => [...a.querySelectorAll('.verktoykort__linje')].map((l) => l.textContent))).toEqual([
+      ['Kan beregnes: Vortioksetin', 'Fagtekst: Agomelatin, Bupropion'],
+      ['Kan beregnes: Sertralin → mirtazapin'],
+      ['Kan beregnes: Aripiprazol: peroral → depotinjeksjon, Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)'],
     ])
     expect(screen.queryByText(/Ingen beregninger er tilgjengelige ennå/)).toBeNull()
     expect(screen.queryByRole('alert')).toBeNull()
@@ -177,7 +178,9 @@ describe('med en regel godkjent bare i testen', () => {
     vis({ verktoy: 'trappe-ned-antidepressiv', legemidler, regelsett, klokke: TESTKLOKKE })
 
     await user.type(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' }), 'Escitalopram')
-    expect(screen.getByText(/Beregning er tilgjengelig: regelen er klinisk godkjent, men bare for et avgrenset omfang/)).toBeTruthy()
+    // Snarvalget for det som er valgt, er markert, og det faglige grunnlaget for regelen står lukket under skjemaet.
+    expect(within(screen.getByRole('group', { name: 'Kan beregnes nå:' })).getByRole('button', { name: 'Escitalopram', pressed: true })).toBeTruthy()
+    expect(screen.getByText('Faglig grunnlag').closest('details')!.open).toBe(false)
     // Regelen har ingen måldose, og ingen er skjult.
     expect(screen.queryByRole('textbox', { name: /Måldose/ })).toBeNull()
     await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
@@ -196,18 +199,23 @@ describe('med en regel godkjent bare i testen', () => {
     // Planen går ikke til null: siste dose fortsetter til avslutningen er vurdert, og den er ikke «siste dose før seponering».
     expect(rader.at(-1)!).toEqual(['Fra dag 15', expect.stringMatching(/^6,25 mg.*1¼ tabletter à 5 mg/)])
     expect(within(plan).getByText(/Fra dag 15 står pasienten på 6,25 mg av escitalopram til planen revurderes.*Planen stopper her av tekniske grunner\. Fortsett med denne dosen inntil forskriveren har vurdert videre nedtrapping\. Dosen er ikke nødvendigvis en sluttdose\./)).toBeTruthy()
-    expect(within(plan).getByRole('heading', { name: 'Versjoner' })).toBeTruthy()
-    expect(within(plan).getByRole('heading', { name: 'Advarsler' })).toBeTruthy()
+    // Det som gjelder akkurat denne planen, står ved tabellen; resten av grunnlaget i «Faglig grunnlag», lukket.
+    expect(within(plan).getByRole('heading', { name: 'Viktig for denne planen' })).toBeTruthy()
+    const grunnlag = within(plan).getByText('Faglig grunnlag').closest('details')!
+    expect(grunnlag.open).toBe(false)
+    for (const h of ['Slik er forslaget laget', 'Forutsetninger', 'Kontrollert ved beregningen', 'Preparater fra FEST', 'Sporbarhet']) {
+      expect(within(grunnlag).getByRole('heading', { name: h, hidden: true })).toBeTruthy()
+    }
+    expect(within(grunnlag).getByText(/^Regel test-nedtrapping, versjon \d+, fingeravtrykk/)).toBeTruthy()
+    // Interne versjoner og fingeravtrykk står bare i det faglige grunnlaget.
+    expect([...plan.querySelectorAll('li')].filter((li) => !grunnlag.contains(li) && /fingeravtrykk/.test(li.textContent!))).toEqual([])
 
     await user.click(within(plan).getByRole('button', { name: 'Kopier planen' }))
     const tekst = await navigator.clipboard.readText()
-    // Kopien har det samme som skjermen: hver del under tabellen, med hver linje.
-    for (const del of plan.querySelectorAll('.doseplan__del')) {
-      const tittel = del.querySelector('h3')!.textContent!
-      if (tittel === 'Kilder') continue
-      expect(tekst).toContain(`\n${tittel}:\n`)
-      for (const li of del.querySelectorAll('li')) expect(tekst).toContain(`- ${li.textContent}`)
-    }
+    // Kopien har alt skjermen har, også det faglige grunnlaget: hver linje i planen, unntatt kildene, som står med lenken.
+    expect(tekst).toContain('\nAdvarsler:\n')
+    const kilder = within(grunnlag).queryByRole('heading', { name: 'Kilder', hidden: true })?.parentElement
+    for (const li of plan.querySelectorAll('li')) if (!kilder?.contains(li)) expect(tekst).toContain(`- ${li.textContent}`)
     expect(tekst).toMatch(/\nKontroller:\n- Hver døgndose av escitalopram/)
     expect(tekst).toMatch(/^Trappe ned antidepressiv\n/)
     expect(tekst).toMatch(/Dag 1–14: Escitalopram peroralt: 12,5 mg = 1 tablett à 10 mg \+ ½ tablett à 5 mg/)
@@ -345,18 +353,28 @@ describe('med en regel forskriveren kan justere', () => {
 
   it('krever svar på regelens spørsmål, og begrunnelse for et valg som krever det, og viser begge i planen', async () => {
     const user = userEvent.setup()
-    vis({ verktoy: 'trappe-ned-antidepressiv', legemidler: lesing(), regelsett: testsett(TEST_BEGRUNNELSE), klokke: TESTKLOKKE })
-    await fyllInn(user)
+    const legemidler = lesing()
+    vis({ verktoy: 'trappe-ned-antidepressiv', legemidler, regelsett: testsett(TEST_BEGRUNNELSE), klokke: TESTKLOKKE })
+    await user.type(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' }), 'Escitalopram')
+    await user.type(screen.getByRole('textbox', { name: /Aktuell døgndose av escitalopram/ }), '25')
     const sporsmal = screen.getByRole('group', { name: 'Et syntetisk spørsmål som må besvares.' })
     const felt = screen.getByRole('textbox', { name: 'Dager per trinn' })
     const begrunnelse = screen.getByRole('textbox', { name: 'Begrunnelse for valgene' })
     expect(document.getElementById(begrunnelse.getAttribute('aria-describedby')!)?.textContent).toMatch(/^Begrunnelse kreves ved Dager per trinn under 21 dager ved syntetisk ja, .*skriv ikke navn eller andre personopplysninger\.$/)
-    // Uten svar: ingen plan.
+    // Uten svar: ingenting hentes, spørsmålet er merket, og siden sier kort hva som mangler.
     await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
-    expect(await screen.findByText(/Må besvares før beregning: Et syntetisk spørsmål som må besvares\./)).toBeTruthy()
-    expect(screen.queryByRole('table')).toBeNull()
-    // Ja, og 14 dager uten begrunnelse: ingen plan.
+    expect(screen.getByRole('alert').textContent).toBe('Før beregning: svar på ett spørsmål om pasienten. Det som mangler, er merket over.')
+    expect(sporsmal.textContent).toMatch(/Mangler svar\./)
+    expect(sporsmal.getAttribute('aria-invalid')).toBe('true')
+    expect(legemidler.les).not.toHaveBeenCalled()
+    // Ja: merket er borte, og siden ber om formulering og form.
     await user.click(within(sporsmal).getByRole('radio', { name: 'Ja' }))
+    expect(sporsmal.textContent).not.toMatch(/Mangler svar/)
+    await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+    expect(await screen.findByText('Velg formulering og legemiddelform over, og beregn på nytt.')).toBeTruthy()
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Formulering av escitalopram' }), 'peroral')
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Legemiddelform av escitalopram' }), 'SYN-TAB')
+    // 14 dager uten begrunnelse: ingen plan.
     await user.type(felt, '14')
     await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
     expect(await screen.findByText(/Dager per trinn 14 dager krever en skriftlig begrunnelse fra forskriveren/)).toBeTruthy()
@@ -379,7 +397,7 @@ describe('med en regel forskriveren kan justere', () => {
     const user = userEvent.setup()
     vis({ verktoy: 'trappe-ned-antidepressiv', legemidler: lesing(), regelsett: testsett(TEST_NEDTRAPPING), klokke: TESTKLOKKE })
     await user.type(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' }), 'Escitalopram')
-    expect(screen.queryByRole('group', { name: /Tilpasning av planen/ })).toBeNull()
+    expect(screen.queryByText('Tilpass planen (valgfritt)')).toBeNull()
   })
 })
 
@@ -531,20 +549,20 @@ describe('nødstoppen (P11.6)', () => {
     vis({ sperrer: nodstopp(() => [sperre('alle', null, 'Kritisk feil i doseplanmotoren.')]) })
     const melding = await screen.findByRole('alert', { name: 'Midlertidig deaktivert' })
     expect(melding.textContent).toMatch(/Alle verktøyene: Kritisk feil i doseplanmotoren\.Ada Admin, 01\.11\.2026/)
-    const status = () => [...document.querySelectorAll('.verktoykort__status')].map((x) => x.textContent)
-    expect(status().every((t) => t!.startsWith('Midlertidig deaktivert · '))).toBe(true)
+    const deaktivert = () => [...document.querySelectorAll('.verktoykort__status')].map((x) => x.firstElementChild?.textContent === 'Midlertidig deaktivert')
+    expect(deaktivert()).toEqual([true, true, true])
     cleanup()
 
     vis({ sperrer: nodstopp(() => [sperre('verktoy', 'bytte-antipsykotikum')]) })
-    await screen.findAllByText(/^Midlertidig deaktivert · /)
-    expect(status()).toEqual(['1 regel kan beregnes · 22 ikke godkjent', '1 regel kan beregnes · 1 ikke godkjent', 'Midlertidig deaktivert · 2 regler kan beregnes · 1 ikke godkjent'])
+    await screen.findByText('Midlertidig deaktivert')
+    expect(deaktivert()).toEqual([false, false, true])
     cleanup()
 
     // Én regel: fagteksten for agomelatin er borte, mens bupropion fortsatt vises.
     vis({ verktoy: 'trappe-ned-antidepressiv', sperrer: nodstopp(() => [sperre('regel', 'seponering-agomelatin', 'Fagteksten må kontrolleres på nytt.')]) })
     const felt = screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' })
     await user.type(felt, 'Agomelatin')
-    expect((await screen.findByRole('alert', { name: 'Midlertidig deaktivert' })).textContent).toMatch(/Regelen seponering-agomelatin: Fagteksten må kontrolleres på nytt\./)
+    expect((await screen.findByRole('alert', { name: 'Midlertidig deaktivert' })).textContent).toMatch(/Regelen «Seponering av agomelatin»: Fagteksten må kontrolleres på nytt\./)
     expect(screen.queryByRole('region', { name: 'Fagtekst' })).toBeNull()
     await user.clear(felt)
     await user.type(felt, 'Bupropion')
@@ -716,9 +734,10 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
 
   /** Krysser av hver bekreftelse og svarer nei på hvert spørsmål og unntak; `ja` er unntakene og spørsmålene som gjelder. */
   async function besvar(user: ReturnType<typeof userEvent.setup>, ja: RegExp[] = []) {
-    const felt = screen.getByRole('group', { name: 'Forutsetninger for regelen' })
-    for (const boks of within(felt).queryAllByRole('checkbox')) if (!(boks as HTMLInputElement).checked) await user.click(boks)
-    for (const gruppe of within(felt).queryAllByRole('group')) {
+    const bekreft = screen.queryByRole('group', { name: 'Bekreft før beregning' })
+    for (const boks of bekreft ? within(bekreft).getAllByRole('checkbox') : []) if (!(boks as HTMLInputElement).checked) await user.click(boks)
+    const pasient = screen.queryByRole('group', { name: 'Om pasienten' })
+    for (const gruppe of pasient ? within(pasient).getAllByRole('group') : []) {
       const tekst = gruppe.querySelector('legend')!.textContent!
       const radioer = within(gruppe).getAllByRole('radio')
       await user.click(radioer[ja.some((j) => j.test(tekst)) ? 0 : 1]!)
@@ -842,5 +861,67 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
     await user.click(await screen.findByRole('button', { name: 'Beregn doseplan' }))
     expect((await ingenPlan()).textContent).toMatch(/styrken 15 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST/)
     expect(screen.queryByRole('table')).toBeNull()
+  })
+
+  describe('forenklingen (VDR-3)', () => {
+    const SERTRALIN = 'kryssnedtrapping-sertralin-mirtazapin'
+    const versjon = REGELSETT.regler.find((r) => r.id === SERTRALIN)!.versjon
+
+    it('fyller ut feltene med et snarvalg, viser et faglig varsel bare ved regelversjonen det gjelder uten å sperre, og skriver ut det faglige grunnlaget', async () => {
+      const user = userEvent.setup()
+      const regelvarsler = [
+        { regel: SERTRALIN, versjon, tekst: 'Under faglig gjennomgang: syntetisk varsel.', siden: '2026-11-01T08:00:00Z' },
+        { regel: SERTRALIN, versjon: versjon - 1, tekst: 'Syntetisk varsel for en eldre versjon.', siden: '2026-11-01T08:00:00Z' },
+        { regel: 'depot-aripiprazol-maintena', versjon: 3, tekst: 'Syntetisk varsel for en annen regel.', siden: '2026-11-01T08:00:00Z' },
+      ]
+      vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT), regelvarsler })
+      expect(screen.queryByRole('note')).toBeNull()
+      await user.click(within(screen.getByRole('group', { name: 'Kan beregnes nå:' })).getByRole('button', { name: 'Sertralin → mirtazapin', pressed: false }))
+      expect((screen.getByRole('combobox', { name: 'Bytte fra' }) as HTMLInputElement).value).toBe('Sertralin')
+      expect((screen.getByRole('combobox', { name: 'Bytte til' }) as HTMLInputElement).value).toBe('Mirtazapin')
+      expect(screen.getByRole('button', { name: 'Sertralin → mirtazapin', pressed: true })).toBeTruthy()
+      expect(screen.getByRole('note').textContent).toBe('Under faglig gjennomgang: syntetisk varsel. Fra 01.11.2026 kl. 09:00.')
+      expect(screen.queryByText(/eldre versjon|annen regel/)).toBeNull()
+
+      await user.type(screen.getByRole('textbox', { name: /Aktuell døgndose av sertralin/ }), '100')
+      await besvar(user)
+      await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+      await user.selectOptions(await screen.findByRole('combobox', { name: 'Legemiddelform av mirtazapin' }), '53')
+      await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+      await screen.findByRole('table')
+      // Varselet sperrer ikke, og står én gang: i planen den gjelder.
+      const plan = screen.getByRole('region', { name: REGELSETT.regler.find((r) => r.id === SERTRALIN)!.tittel })
+      expect(screen.getAllByRole('note')).toHaveLength(1)
+      expect(within(plan).getByRole('note')).toBeTruthy()
+
+      const grunnlag = within(plan).getByText('Faglig grunnlag').closest('details')!
+      expect(grunnlag.open).toBe(false)
+      fireEvent(window, new Event('beforeprint'))
+      expect(grunnlag.open).toBe(true)
+      fireEvent(window, new Event('afterprint'))
+      expect(grunnlag.open).toBe(false)
+    })
+
+    it('merker det som mangler før noe hentes, og sier med en gang hva et pasientforhold som gjelder betyr', async () => {
+      const user = userEvent.setup()
+      const legemidler = fra(PILOT)
+      vis({ verktoy: 'bytte-antipsykotikum', legemidler, klokke: klokke(PILOT) })
+      await user.click(screen.getByRole('button', { name: 'Aripiprazol: peroral → depotinjeksjon' }))
+      await user.type(await screen.findByRole('textbox', { name: /Aktuell døgndose av aripiprazol/ }), '10')
+      await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+      expect(screen.getByRole('alert').textContent).toMatch(/^Før beregning: svar på \d+ spørsmål om pasienten og bekreft én forutsetning\. Det som mangler, er merket over\.$/)
+      expect(legemidler.les).not.toHaveBeenCalled()
+      const boks = within(screen.getByRole('group', { name: 'Bekreft før beregning' })).getByRole('checkbox')
+      expect(boks.getAttribute('aria-invalid')).toBe('true')
+      await user.click(boks)
+      expect(boks.getAttribute('aria-invalid')).toBeNull()
+
+      const forhold = within(screen.getByRole('group', { name: 'Om pasienten' })).getAllByRole('group')[0]!
+      expect(within(forhold).queryByText(/gir verktøyet ingen plan/)).toBeNull()
+      await user.click(within(forhold).getByRole('radio', { name: 'Gjelder' }))
+      expect(within(forhold).getByText('Når dette gjelder, gir verktøyet ingen plan. Det må vurderes individuelt.')).toBeTruthy()
+      await user.click(within(forhold).getByRole('radio', { name: 'Gjelder ikke' }))
+      expect(within(forhold).queryByText(/gir verktøyet ingen plan/)).toBeNull()
+    })
   })
 })

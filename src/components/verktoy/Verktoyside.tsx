@@ -20,12 +20,13 @@ import {
   TOMT_SKJEMA,
   spennFor,
   trengerMaldose,
+  ubesvart,
   valgidentitet,
   type Planskjema,
 } from '../../verktoy/doseplan'
 import type { Kildeformulering } from '../../verktoy/kartlegging'
 import { foretrukketTekst, trinndosetekst, type Doseplanresultat, type Formalternativer, type Trinnvalg } from '../../verktoy/motor/plan'
-import { godkjenningstekst, kildeliste, planvisning } from '../../verktoy/planvisning'
+import { planvisning, type Planvisning } from '../../verktoy/planvisning'
 import { finnVirkestoff, KARTLEGGING, VERKTOY, verktoyFor, virkestoffvalg, type Verktoy } from '../../verktoy/register'
 import { avrund } from '../../verktoy/regler/beregning'
 import { KONTROLLUTFALL, kontrollutfall } from '../../verktoy/regler/godkjenning'
@@ -49,19 +50,22 @@ import {
   fraForlop,
   medlemFor,
   REGELSETT,
-  regeloversikt,
   tilForlop,
   tilgjengelighet,
   type Tilgjengelighet,
   type Verktoyvalg,
 } from '../../verktoy/tilgjengelighet'
+import { snarvalg, type Snarvalg } from '../../verktoy/snarvalg'
 import { Button } from '../Button'
+import { Details } from '../Details'
 import { Lastesirkel } from '../Lasteindikator'
 import { Lukkeknapp } from '../Lukkeknapp'
 import { Tallfelt } from '../Tallfelt'
 import { Ikon } from '../ikon/Ikon'
 import { ToppmenyInnhold } from '../toppmeny/Toppmenykilde'
 import { Doseplanvisning } from './Doseplanvisning'
+import { FagligGrunnlag, regelgrunnlag } from './FagligGrunnlag'
+import { Regelvarsler, type Regelvarsel } from './Regelvarsler'
 import { lesVirkestoffvalg, Virkestoffelt } from './Virkestoffelt'
 import '../../styles/verktoy.css'
 
@@ -80,9 +84,16 @@ export interface VerktoysideProps {
   regelsett?: Regelsett
   /** Klokken; nå når den ikke er gitt. */
   klokke?: () => Date
+  /**
+   * De faglige varslene fra kildeoppfølgingen (`les_regelvarsler`). Hvert vises
+   * bare ved regelversjonen det gjelder, og sperrer ingenting; uten dem vises
+   * ingen varsler.
+   */
+  regelvarsler?: readonly Regelvarsel[]
 }
 
 const naa = () => new Date()
+const INGEN_VARSLER: readonly Regelvarsel[] = []
 
 /** `lest` er når sperrene sist ble lest (`Date.now()`); lesingen gjelder i `SPERRENE_GJELDER_MS`. */
 type Sperretilstand = { status: 'henter' } | { status: 'feil'; melding: string } | { status: 'klar'; sperrer: Verktoysperre[]; lest: number }
@@ -147,7 +158,7 @@ function useSperrer(leser: Verktoysperreleser | undefined) {
  * appen oppdateres; planen gjør aldri det, og må beregnes på nytt, med ny
  * kontroll av datagrunnlaget og godkjenningen.
  */
-export function Verktoyside({ verktoy: id, legemidler, sperrer: sperreleser, onLukk, regelsett = REGELSETT, klokke = naa }: VerktoysideProps) {
+export function Verktoyside({ verktoy: id, legemidler, sperrer: sperreleser, onLukk, regelsett = REGELSETT, klokke = naa, regelvarsler = INGEN_VARSLER }: VerktoysideProps) {
   const overskrift = useId()
   const verktoy = verktoyFor(id)
   const sperrer = useSperrer(sperreleser)
@@ -174,7 +185,16 @@ export function Verktoyside({ verktoy: id, legemidler, sperrer: sperreleser, onL
       </ToppmenyInnhold>
       {verktoy ? (
         <Bevaringsomrade navn={`verktoy:${verktoy.id}`}>
-          <Verktoyskjema key={verktoy.id} verktoy={verktoy} overskrift={overskrift} legemidler={legemidler} sperrer={sperrer} regelsett={regelsett} klokke={klokke} />
+          <Verktoyskjema
+            key={verktoy.id}
+            verktoy={verktoy}
+            overskrift={overskrift}
+            legemidler={legemidler}
+            sperrer={sperrer}
+            regelsett={regelsett}
+            klokke={klokke}
+            varsler={regelvarsler}
+          />
         </Bevaringsomrade>
       ) : (
         <Oversikt overskrift={overskrift} ukjent={id !== undefined} regelsett={regelsett} sperrer={sperrer.tilstand} />
@@ -187,8 +207,8 @@ export function Verktoyside({ verktoy: id, legemidler, sperrer: sperreleser, onL
 
 function Oversikt({ overskrift, ukjent, regelsett, sperrer }: { overskrift: string; ukjent: boolean; regelsett: Regelsett; sperrer: Sperretilstand }) {
   const aktive = sperrer.status === 'klar' ? sperrer.sperrer : []
-  const status = VERKTOY.map((v) => ({ verktoy: v, sperret: verktoysperrer(aktive, v).length > 0, ...regeloversikt(v, regelsett) }))
-  const ingen = status.every((s) => s.tilgjengelige === 0)
+  const status = VERKTOY.map((v) => ({ verktoy: v, sperret: verktoysperrer(aktive, v).length > 0, valg: snarvalg(v, regelsett) }))
+  const ingen = status.every((s) => s.valg.every((x) => x.status !== 'tilgjengelig'))
   const alle = aktive.filter((s) => s.omfang === 'alle')
   return (
     <>
@@ -207,28 +227,21 @@ function Oversikt({ overskrift, ukjent, regelsett, sperrer }: { overskrift: stri
           Fant ikke verktøyet adressen peker på. Velg et av verktøyene under.
         </p>
       )}
-      {alle.length > 0 && <Sperremelding sperrer={alle} />}
+      {alle.length > 0 && <Sperremelding sperrer={alle} regelsett={regelsett} />}
       {ingen && (
         <p className="verktoystatus" data-status="til_kontroll">
           Ingen beregninger er tilgjengelige ennå: reglene venter på faglig kontroll og klinisk godkjenning.
         </p>
       )}
       <ul className="verktoykort">
-        {status.map(({ verktoy, sperret, tilgjengelige, ikkeGodkjent, tilKontroll }) => (
+        {status.map(({ verktoy, sperret, valg }) => (
           <li key={verktoy.id}>
             <a className="verktoykort__lenke" href={verktoyadresse(verktoy.id)}>
               <Ikon navn={verktoy.ikon} className="verktoykort__ikon" />
               <span className="verktoykort__tekst">
                 <span className="verktoykort__navn">{verktoy.navn}</span>
                 <span className="verktoykort__beskrivelse">{verktoy.beskrivelse}</span>
-                <span className="verktoykort__status">
-                  {sperret && 'Midlertidig deaktivert · '}
-                  {tilgjengelige > 0
-                    ? `${tilgjengelige} ${tilgjengelige === 1 ? 'regel kan' : 'regler kan'} beregnes`
-                    : 'Ingen beregning tilgjengelig ennå'}
-                  {ikkeGodkjent > 0 && ` · ${ikkeGodkjent} ikke godkjent`}
-                  {tilKontroll > 0 && ` · ${tilKontroll} til faglig kontroll`}
-                </span>
+                <Dekning valg={valg} sperret={sperret} />
               </span>
               <Ikon navn="chev" className="verktoykort__pil" />
             </a>
@@ -236,6 +249,59 @@ function Oversikt({ overskrift, ukjent, regelsett, sperrer }: { overskrift: stri
         ))}
       </ul>
     </>
+  )
+}
+
+/** Det verktøyet kan gi nå, i oversiktens kort: hva som kan beregnes, og hva som bare har fagtekst. */
+function Dekning({ valg, sperret }: { valg: readonly Snarvalg[]; sperret: boolean }) {
+  const liste = (status: Snarvalg['status']) =>
+    valg
+      .filter((x) => x.status === status)
+      .map((x) => x.tekst)
+      .join(', ')
+  const beregnes = liste('tilgjengelig')
+  const fagtekst = liste('fagtekst')
+  return (
+    <span className="verktoykort__status">
+      {sperret && <span className="verktoykort__linje">Midlertidig deaktivert</span>}
+      <span className="verktoykort__linje">{beregnes ? `Kan beregnes: ${beregnes}` : 'Ingen beregning tilgjengelig ennå'}</span>
+      {fagtekst && <span className="verktoykort__linje">Fagtekst: {fagtekst}</span>}
+    </span>
+  )
+}
+
+/**
+ * Valgene som kan beregnes eller har fagtekst, som knapper som fyller ut
+ * feltene. Valget kontrolleres som om det var skrevet inn.
+ */
+function Snarvalgliste({ valg, valgt, onVelg }: { valg: readonly Snarvalg[]; valgt: Verktoyvalg | undefined; onVelg: (s: Snarvalg) => void }) {
+  const merke = useId()
+  if (valg.length === 0) return null
+  const gjeldende = valgt && valgidentitet(valgt)
+  const grupper = [
+    { status: 'tilgjengelig', tittel: 'Kan beregnes nå' },
+    { status: 'fagtekst', tittel: 'Bare fagtekst' },
+  ] as const
+  return (
+    <div className="snarvalg">
+      {grupper.map((g) => {
+        const egne = valg.filter((x) => x.status === g.status)
+        return (
+          egne.length > 0 && (
+            <div key={g.status} className="snarvalg__gruppe" role="group" aria-labelledby={`${merke}-${g.status}`}>
+              <span id={`${merke}-${g.status}`} className="snarvalg__tittel">
+                {g.tittel}:
+              </span>
+              {egne.map((x) => (
+                <Button key={x.tekst} variant="kant" aria-pressed={gjeldende === valgidentitet(x.valg)} onClick={() => onVelg(x)}>
+                  {x.tekst}
+                </Button>
+              ))}
+            </div>
+          )
+        )
+      })}
+    </div>
   )
 }
 
@@ -266,6 +332,7 @@ function Verktoyskjema({
   sperrer,
   regelsett,
   klokke,
+  varsler,
 }: {
   verktoy: Verktoy
   overskrift: string
@@ -273,8 +340,10 @@ function Verktoyskjema({
   sperrer: ReturnType<typeof useSperrer>
   regelsett: Regelsett
   klokke: () => Date
+  varsler: readonly Regelvarsel[]
 }) {
   const valgene = useMemo(() => virkestoffvalg(verktoy), [verktoy])
+  const snarvalgene = useMemo(() => snarvalg(verktoy, regelsett), [verktoy, regelsett])
   const [fraTekst, setFraTekst] = useBevart('fra', '')
   const [fraForm, setFraForm] = useBevart<Kildeformulering | ''>('fra/formulering', '')
   const [tilTekst, setTilTekst] = useBevart('til', '')
@@ -295,6 +364,15 @@ function Verktoyskjema({
   const nyttVirkestoff = (forrige: string, settTekst: (t: string) => void, settForm: (f: Kildeformulering | '') => void) => (tekst: string) => {
     if (finnVirkestoff(valgene, tekst)?.nokkel !== finnVirkestoff(valgene, forrige)?.nokkel) settForm('')
     settTekst(tekst)
+  }
+  /** Et snarvalg fyller ut feltene som om det var skrevet inn. */
+  const velg = ({ valg: v }: Snarvalg) => {
+    setFraTekst(navnPaa(v.fra.nokkel))
+    setFraForm(v.fra.formulering)
+    if (v.til) {
+      setTilTekst(navnPaa(v.til.nokkel))
+      setTilForm(v.til.formulering)
+    }
   }
   const status = useMemo(() => (valg ? tilgjengelighet(verktoy, valg, regelsett) : undefined), [verktoy, regelsett, valg?.fra.nokkel, valg?.fra.formulering, valg?.til?.nokkel, valg?.til?.formulering]) // eslint-disable-line react-hooks/exhaustive-deps
   // Klinisk innhold (en beregning eller fagtekst) vises bare når sperrene er lest, og bare for regler som ikke er sperret.
@@ -332,15 +410,16 @@ function Verktoyskjema({
             )}
           </div>
         </fieldset>
+        <Snarvalgliste valg={snarvalgene} valgt={valg} onVelg={velg} />
       </form>
 
-      {hele.length > 0 && <Sperremelding sperrer={hele} />}
+      {hele.length > 0 && <Sperremelding sperrer={hele} regelsett={regelsett} />}
       {!valg || !status ? (
         <p className="verktoyside__hint">
           {verktoy.type === 'seponering' ? 'Velg virkestoffet' : 'Velg begge virkestoffene'} for å se hva verktøyet kan beregne.
         </p>
       ) : !klinisk ? (
-        <Statusvisning status={status} />
+        <Statusvisning status={status} varsler={varsler} />
       ) : sperrer.tilstand.status === 'henter' ? (
         <p className="verktoyside__hint" role="status">
           <Lastesirkel /> Kontrollerer om verktøyet er tilgjengelig …
@@ -356,7 +435,7 @@ function Verktoyskjema({
           </div>
         </section>
       ) : regler.length === 0 ? (
-        hele.length > 0 ? null : <Sperremelding sperrer={aktive.filter((x) => status.regler.some((r) => gjelder(x, verktoy, r)))} />
+        hele.length > 0 ? null : <Sperremelding sperrer={aktive.filter((x) => status.regler.some((r) => gjelder(x, verktoy, r)))} regelsett={regelsett} />
       ) : status.status === 'tilgjengelig' ? (
         <Beregningsdel
           key={JSON.stringify(valg)}
@@ -369,16 +448,19 @@ function Verktoyskjema({
           hentSperrer={sperrer.hent}
           regelsett={regelsett}
           klokke={klokke}
+          varsler={varsler}
         />
       ) : (
-        <Statusvisning status={{ ...status, regler }} />
+        <Statusvisning status={{ ...status, regler }} varsler={varsler} />
       )}
     </>
   )
 }
 
 /** At det som ellers ville stått her, er midlertidig deaktivert: av hvem, når og hvorfor. */
-function Sperremelding({ sperrer }: { sperrer: readonly Verktoysperre[] }) {
+function Sperremelding({ sperrer, regelsett }: { sperrer: readonly Verktoysperre[]; regelsett: Regelsett }) {
+  // En sperre for én regel nevner regelen ved navn, ikke ved den interne ID-en.
+  const regelnavn = (id: string) => regelsett.regler.find((r) => r.id === id)?.tittel ?? id
   return (
     <section className="verktoystatus" data-status="sperret" role="alert" aria-label="Midlertidig deaktivert">
       <h2>Midlertidig deaktivert</h2>
@@ -387,7 +469,7 @@ function Sperremelding({ sperrer }: { sperrer: readonly Verktoysperre[] }) {
         {sperrer.map((s) => (
           <li key={s.id}>
             {OMFANGSTEKST[s.omfang]}
-            {s.omfang === 'regel' && s.mal ? ` ${s.mal}` : ''}: {s.grunn}
+            {s.omfang === 'regel' && s.mal ? ` «${regelnavn(s.mal)}»` : ''}: {s.grunn}
             {s.satt_av && <span className="verktoystatus__merke">{`${s.satt_av}, ${tidspunkt(s.satt_kl)}`}</span>}
           </li>
         ))}
@@ -397,13 +479,13 @@ function Sperremelding({ sperrer }: { sperrer: readonly Verktoysperre[] }) {
 }
 
 /** Det som står når verktøyet ikke kan beregne for valgene. */
-function Statusvisning({ status }: { status: Tilgjengelighet }) {
+function Statusvisning({ status, varsler }: { status: Tilgjengelighet; varsler: readonly Regelvarsel[] }) {
   if (status.status === 'fagtekst') {
     return (
       <section className="verktoystatus" data-status="fagtekst" aria-label="Fagtekst">
         <h2>Bare fagtekst – ingen beregning</h2>
         {status.regler.map((r) => (
-          <Fagtekst key={r.id} regel={r} />
+          <Fagtekst key={r.id} regel={r} varsler={varsler} />
         ))}
       </section>
     )
@@ -431,38 +513,17 @@ function Statusvisning({ status }: { status: Tilgjengelighet }) {
   )
 }
 
-/** OUSFARs egen tekst i en godkjent regel uten beregning, med kildehenvisningene. */
-function Fagtekst({ regel }: { regel: Regel }) {
+/** OUSFARs egen tekst i en godkjent regel uten beregning; godkjenningen, forutsetningene og kildene står i «Faglig grunnlag». */
+function Fagtekst({ regel, varsler }: { regel: Regel; varsler: readonly Regelvarsel[] }) {
   const utsagn = [...regel.fortolkning.kildetro, ...regel.fortolkning.tilpasninger].map((u) => u.tekst)
-  const kilder = kildeliste(regel)
-  const godkjent = godkjenningstekst(regel)
   return (
     <article className="verktoyfagtekst">
       <h3>{regel.tittel}</h3>
-      {godkjent && <p className="verktoyfagtekst__godkjenning">{godkjent}</p>}
+      <Regelvarsler varsler={varsler} regel={regel} />
       {utsagn.map((t) => (
         <p key={t}>{t}</p>
       ))}
-      {regel.fortolkning.forutsetninger.length > 0 && (
-        <ul>
-          {regel.fortolkning.forutsetninger.map((f) => (
-            <li key={f}>{f}</li>
-          ))}
-        </ul>
-      )}
-      {kilder.length > 0 && (
-        <p className="verktoyfagtekst__kilder">
-          Kilder:{' '}
-          {kilder.map((k, i) => (
-            <span key={k.url}>
-              {i > 0 && '; '}
-              <a href={k.url} target="_blank" rel="noreferrer">
-                {k.tittel}
-              </a>
-            </span>
-          ))}
-        </p>
-      )}
+      <FagligGrunnlag grunnlag={regelgrunnlag(regel)} />
     </article>
   )
 }
@@ -478,6 +539,7 @@ function Beregningsdel({
   hentSperrer,
   regelsett,
   klokke,
+  varsler,
 }: {
   verktoy: Verktoy
   valg: Verktoyvalg
@@ -489,12 +551,15 @@ function Beregningsdel({
   hentSperrer: () => Promise<Verktoysperre[]>
   regelsett: Regelsett
   klokke: () => Date
+  varsler: readonly Regelvarsel[]
 }) {
   const id = useId()
   const regel = regler.length === 1 ? regler[0] : regler.find((r) => r.id === skjema.regel)
   const [beregning, setBeregning] = useState<Beregning | null>(null)
   const [alternativer, setAlternativer] = useState<{ regel: string; valg: Record<string, Formalternativer> } | null>(null)
   const [feil, setFeil] = useState<string[]>([])
+  // Først når det er forsøkt beregnet, merkes det som mangler svar ved feltene.
+  const [forsokt, setForsokt] = useState(false)
   const [, setTikk] = useState(0)
   // Bare den siste beregningen som er startet, får vise resultatet sitt; en eldre som blir ferdig senere, forkastes.
   const siste = useRef(0)
@@ -503,6 +568,7 @@ function Beregningsdel({
   const formvalg = alternativer && alternativer.regel === regel?.id ? alternativer.valg : {}
   const justeringer = useMemo(() => (regel ? justeringsfelt(regel, skjema.svar) : []), [regel, skjema.svar])
   const spenn = regel && spennFor(regel, skjema)
+  const apne = forsokt && regel ? ubesvart(regel, skjema) : INGEN_APNE
 
   // En plan som står, kontrolleres mot klokken: den gjelder bare så lenge FEST-kopien er fersk og dagen den samme.
   const harPlan = gjeldende?.status === 'ferdig' && gjeldende.resultat.status === 'doseplan'
@@ -511,13 +577,18 @@ function Beregningsdel({
     const t = window.setInterval(() => setTikk((x) => x + 1), KONTROLLER_PLANEN_MS)
     return () => window.clearInterval(t)
   }, [harPlan])
+  const plan =
+    harPlan && regel && gjeldende.resultat.status === 'doseplan' && gjelderFortsatt(gjeldende.resultat, klokke())
+      ? planvisning(gjeldende.resultat, regel, skjema.startdato || undefined)
+      : null
 
   const sett = <K extends keyof Planskjema>(felt: K, verdi: Planskjema[K]) => setSkjema((s) => ({ ...s, [felt]: verdi }))
 
   // `sk` er skjemaet slik det blir når beregningen startes av et valg i resultatet, før det er vist.
   async function beregn(sk: Planskjema = skjema) {
     if (!regel) return setFeil(['Velg strategien planen skal beregnes etter.'])
-    const mangel = mangler(regel, sk)
+    setForsokt(true)
+    const mangel = [...mangler(regel, sk), ...ubesvarttekst(ubesvart(regel, sk))]
     setFeil(mangel)
     if (mangel.length > 0) return
     const n = JSON.stringify({ regel: regel.id, valg, skjema: sk })
@@ -560,16 +631,16 @@ function Beregningsdel({
   const tilNavn = navnPaa(valg.til?.nokkel)
   const fraAdm = regel && fraForlop(regel)?.administrasjon === 'depotinjeksjon' ? ' (depot)' : ''
   const tilAdm = regel && tilForlop(regel)?.administrasjon === 'depotinjeksjon' ? ' (depot)' : ''
+  const sporsmal = regel?.sporsmal ?? []
+  const varsel = regel && <Regelvarsler varsler={varsler} regel={regel} />
 
   return (
     <>
-      <p className="verktoystatus" data-status="tilgjengelig">
-        Beregning er tilgjengelig: {regler.length === 1 ? 'regelen er' : 'reglene er'} klinisk godkjent, men bare for et avgrenset omfang. Utenfor det stopper beregningen og
-        sier hvorfor.
-      </p>
+      {!plan && varsel}
       <form
         className="verktoyskjema"
         aria-label="Inndata til doseplanen"
+        noValidate
         onSubmit={(e) => {
           e.preventDefault()
           void beregn()
@@ -622,21 +693,19 @@ function Beregningsdel({
           {!skjema.startdato && <p className="feltgruppe__hjelp">Uten startdato står planen med dagnummer.</p>}
         </fieldset>
 
-        {regel && (regel.bekreftelser.length > 0 || regel.unntak.length > 0 || (regel.sporsmal ?? []).length > 0) && (
+        {regel && (sporsmal.length > 0 || regel.unntak.length > 0) && (
           <fieldset className="feltgruppe">
-            <legend>Forutsetninger for regelen</legend>
-            {regel.bekreftelser.map((b) => (
-              <label key={b.id} className="avkryssing avkryssing--felt">
-                <input
-                  type="checkbox"
-                  checked={skjema.bekreftet.includes(b.id)}
-                  onChange={(e) => sett('bekreftet', e.target.checked ? [...skjema.bekreftet, b.id] : skjema.bekreftet.filter((x) => x !== b.id))}
-                />
-                {b.tekst}
-              </label>
-            ))}
-            {(regel.sporsmal ?? []).map((x) => (
-              <JaNei key={x.id} navn={`${id}-${x.id}`} tekst={x.tekst} svar={['Ja', 'Nei']} verdi={skjema.svar[x.id]} onVelg={(v) => sett('svar', { ...skjema.svar, [x.id]: v })} />
+            <legend>Om pasienten</legend>
+            {sporsmal.map((x) => (
+              <JaNei
+                key={x.id}
+                navn={`${id}-${x.id}`}
+                tekst={x.tekst}
+                svar={['Ja', 'Nei']}
+                verdi={skjema.svar[x.id]}
+                mangler={apne.sporsmal.includes(x.id)}
+                onVelg={(v) => sett('svar', { ...skjema.svar, [x.id]: v })}
+              />
             ))}
             {regel.unntak.map((u) => (
               <JaNei
@@ -645,6 +714,8 @@ function Beregningsdel({
                 tekst={u.tekst}
                 svar={['Gjelder', 'Gjelder ikke']}
                 verdi={skjema.pasientforhold[u.id]}
+                mangler={apne.unntak.includes(u.id)}
+                merknad={skjema.pasientforhold[u.id] === true ? UNNTAK_GJELDER : undefined}
                 onVelg={(v) => sett('pasientforhold', { ...skjema.pasientforhold, [u.id]: v })}
               />
             ))}
@@ -652,44 +723,47 @@ function Beregningsdel({
         )}
 
         {justeringer.length > 0 && (
-          <fieldset className="feltgruppe">
-            <legend>Tilpasning av planen</legend>
-            <p className="feltgruppe__hjelp">Velg mindre trinn eller lengre tid innenfor det regelen tillater. Dagene er minstetider. Valget vises i planen.</p>
-            <div className="feltrad">
+          <Details summary="Tilpass planen (valgfritt)" startApen={Object.values(skjema.justert).some((v) => v.trim() !== '')}>
+            <div className="verktoyskjema__tilpasning">
+              <p className="feltgruppe__hjelp">Velg mindre trinn eller lengre tid innenfor det regelen tillater. Tomt felt bruker regelens forslag. Dagene er minstetider. Valget vises i planen.</p>
+              <div className="feltrad">
+                {justeringer.map((j) => (
+                  <label key={j.sti} className="skjemafelt">
+                    <span>{j.navn}</span>
+                    <Tallfelt
+                      value={skjema.justert[j.sti] ?? ''}
+                      placeholder={j.forslag}
+                      aria-describedby={`${id}-${j.sti}`}
+                      onChange={(v) => sett('justert', { ...skjema.justert, [j.sti]: v })}
+                    />
+                  </label>
+                ))}
+              </div>
               {justeringer.map((j) => (
-                <label key={j.sti} className="skjemafelt">
-                  <span>{j.navn}</span>
-                  <Tallfelt
-                    value={skjema.justert[j.sti] ?? ''}
-                    placeholder={j.forslag}
-                    aria-describedby={`${id}-${j.sti}`}
-                    onChange={(v) => sett('justert', { ...skjema.justert, [j.sti]: v })}
-                  />
-                </label>
+                <p key={j.sti} id={`${id}-${j.sti}`} className="feltgruppe__hjelp">
+                  {j.navn}: {j.hjelp}
+                </p>
               ))}
             </div>
-            {justeringer.map((j) => (
-              <p key={j.sti} id={`${id}-${j.sti}`} className="feltgruppe__hjelp">
-                {j.navn}: {j.hjelp}
-              </p>
-            ))}
-            {regel && kanKreveBegrunnelse(regel) && (
-              <>
-                <label className="skjemafelt">
-                  <span>Begrunnelse for valgene</span>
-                  <textarea
-                    className="inndatafelt verktoyskjema__begrunnelse"
-                    rows={3}
-                    value={skjema.begrunnelse}
-                    aria-describedby={`${id}-begrunnelse`}
-                    onChange={(e) => sett('begrunnelse', e.target.value)}
-                  />
-                </label>
-                <p id={`${id}-begrunnelse`} className="feltgruppe__hjelp">
-                  Begrunnelse kreves ved {begrunnelseshjelp(regel)}, f.eks. om behandlingstid og tidligere toleranse. Den står i planen; skriv ikke navn eller andre personopplysninger.
-                </p>
-              </>
-            )}
+          </Details>
+        )}
+
+        {regel && kanKreveBegrunnelse(regel) && (
+          <fieldset className="feltgruppe">
+            <legend>Begrunnelse</legend>
+            <label className="skjemafelt">
+              <span>Begrunnelse for valgene</span>
+              <textarea
+                className="inndatafelt verktoyskjema__begrunnelse"
+                rows={3}
+                value={skjema.begrunnelse}
+                aria-describedby={`${id}-begrunnelse`}
+                onChange={(e) => sett('begrunnelse', e.target.value)}
+              />
+            </label>
+            <p id={`${id}-begrunnelse`} className="feltgruppe__hjelp">
+              Begrunnelse kreves ved {begrunnelseshjelp(regel)}, f.eks. om behandlingstid og tidligere toleranse. Den står i planen; skriv ikke navn eller andre personopplysninger.
+            </p>
           </fieldset>
         )}
 
@@ -754,6 +828,29 @@ function Beregningsdel({
           </fieldset>
         )}
 
+        {regel && regel.bekreftelser.length > 0 && (
+          <fieldset className="feltgruppe">
+            <legend>Bekreft før beregning</legend>
+            {regel.bekreftelser.map((b) => {
+              const mangler = apne.bekreftelser.includes(b.id)
+              return (
+                <label key={b.id} className="avkryssing avkryssing--felt" data-mangler={mangler || undefined}>
+                  <input
+                    type="checkbox"
+                    checked={skjema.bekreftet.includes(b.id)}
+                    aria-invalid={mangler || undefined}
+                    onChange={(e) => sett('bekreftet', e.target.checked ? [...skjema.bekreftet, b.id] : skjema.bekreftet.filter((x) => x !== b.id))}
+                  />
+                  <span>
+                    {b.tekst}
+                    {mangler && <span className="verktoyskjema__mangler"> Ikke bekreftet.</span>}
+                  </span>
+                </label>
+              )
+            })}
+          </fieldset>
+        )}
+
         <label className="avkryssing avkryssing--felt">
           <input type="checkbox" checked={skjema.godkjenningsfritak} onChange={(e) => sett('godkjenningsfritak', e.target.checked)} />
           Bruk også preparater som krever godkjenningsfritak
@@ -776,22 +873,60 @@ function Beregningsdel({
 
       <Resultat
         beregning={gjeldende}
+        plan={plan}
         utdatert={!!beregning && !gjeldende}
         verktoy={verktoy}
-        regel={regel}
-        startdato={skjema.startdato}
-        klokke={klokke}
+        varsel={varsel}
         valg={<Trinnvalgdel resultat={gjeldende?.status === 'ferdig' ? gjeldende.resultat : null} navn={forlopsnavn} onVelg={velgTrinn} />}
       />
+      {!plan && regel && <FagligGrunnlag grunnlag={regelgrunnlag(regel)} />}
     </>
   )
 }
 
+const INGEN_APNE: ReturnType<typeof ubesvart> = { sporsmal: [], unntak: [], bekreftelser: [] }
+
+/** Det samme som står ved et pasientforhold som gjelder: beregningen gir da ingen plan (`beregning.ts`). */
+const UNNTAK_GJELDER = 'Når dette gjelder, gir verktøyet ingen plan. Det må vurderes individuelt.'
+
+/** Hva som mangler før beregning, kort; feltene det gjelder er merket. */
+function ubesvarttekst(u: ReturnType<typeof ubesvart>): string[] {
+  const svar = u.sporsmal.length + u.unntak.length
+  const deler = [
+    svar > 0 && `svar på ${svar === 1 ? 'ett spørsmål' : `${svar} spørsmål`} om pasienten`,
+    u.bekreftelser.length > 0 && `bekreft ${u.bekreftelser.length === 1 ? 'én forutsetning' : `${u.bekreftelser.length} forutsetninger`}`,
+  ].filter(Boolean)
+  if (deler.length === 0) return []
+  const tekst = deler.join(' og ')
+  return [`Før beregning: ${tekst}. Det som mangler, er merket over.`]
+}
+
 /** Et ja/nei-valg med to svar, f.eks. et unntak («Gjelder» / «Gjelder ikke») eller et spørsmål («Ja» / «Nei»). */
-function JaNei({ navn, tekst, svar, verdi, onVelg }: { navn: string; tekst: string; svar: [string, string]; verdi: boolean | undefined; onVelg: (verdi: boolean) => void }) {
+function JaNei({
+  navn,
+  tekst,
+  svar,
+  verdi,
+  mangler = false,
+  merknad,
+  onVelg,
+}: {
+  navn: string
+  tekst: string
+  svar: [string, string]
+  verdi: boolean | undefined
+  /** Ubesvart etter et forsøk på å beregne. */
+  mangler?: boolean
+  /** Hva svaret betyr, når det betyr noe for beregningen. */
+  merknad?: string
+  onVelg: (verdi: boolean) => void
+}) {
   return (
-    <fieldset className="verktoyskjema__unntak">
-      <legend>{tekst}</legend>
+    <fieldset className="verktoyskjema__unntak" data-mangler={mangler || undefined} aria-invalid={mangler || undefined}>
+      <legend>
+        {tekst}
+        {mangler && <span className="verktoyskjema__mangler"> Mangler svar.</span>}
+      </legend>
       <div className="avkryssinger">
         {([true, false] as const).map((v, i) => (
           <label key={String(v)} className="avkryssing">
@@ -800,6 +935,7 @@ function JaNei({ navn, tekst, svar, verdi, onVelg }: { navn: string; tekst: stri
           </label>
         ))}
       </div>
+      {merknad && <p className="verktoyskjema__merknad">{merknad}</p>}
     </fieldset>
   )
 }
@@ -841,19 +977,19 @@ function Trinnvalgdel({ resultat, navn, onVelg }: { resultat: Doseplanresultat |
 /** Resultatet av siste beregning for inndataene slik de står, med dosene som kan velges (`valg`). */
 function Resultat({
   beregning,
+  plan,
   utdatert,
   verktoy,
-  regel,
-  startdato,
-  klokke,
+  varsel,
   valg,
 }: {
   beregning: Beregning | null
+  /** Planen slik den vises, når beregningen ga en klinisk plan som fortsatt gjelder; ellers `null`. */
+  plan: Planvisning | null
   utdatert: boolean
   verktoy: Verktoy
-  regel: Regel | undefined
-  startdato: string
-  klokke: () => Date
+  /** Et eventuelt faglig varsel for regelen, som står i planen. */
+  varsel: ReactNode
   valg: ReactNode
 }) {
   if (!beregning) {
@@ -904,7 +1040,6 @@ function Resultat({
       </>
     )
   }
-  const plan = regel && gjelderFortsatt(r, klokke()) ? planvisning(r, regel, startdato || undefined) : null
   if (!plan) {
     return (
       <p className="verktoystatus" data-status="stoppet" role="status">
@@ -915,7 +1050,7 @@ function Resultat({
   return (
     <>
       {valg}
-      <Doseplanvisning plan={plan} overskrift={verktoy.navn} />
+      <Doseplanvisning plan={plan} overskrift={verktoy.navn} varsel={varsel} />
     </>
   )
 }
