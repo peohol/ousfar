@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-02T00:44:32.819Z",
+  "oppdatert_kl": "2026-11-02T01:26:09.721Z",
   "malt_kl": "2026-11-01T05:26:24.078Z",
   "teller": 82,
   "stoffer": {
@@ -73,7 +73,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.",
-          "kl": "2026-11-02T00:44:32.819Z",
+          "kl": "2026-11-02T01:26:09.721Z",
           "kilde": "system"
         }
       ],
@@ -719,7 +719,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.",
-          "kl": "2026-11-02T00:44:32.819Z",
+          "kl": "2026-11-02T01:26:09.721Z",
           "kilde": "system"
         }
       ],
@@ -1663,7 +1663,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, godkjent); den må avsluttes først.",
-          "kl": "2026-11-02T00:44:32.819Z",
+          "kl": "2026-11-02T01:26:09.721Z",
           "kilde": "system"
         }
       ],
@@ -1886,7 +1886,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.",
-          "kl": "2026-11-02T00:44:32.819Z",
+          "kl": "2026-11-02T01:26:09.721Z",
           "kilde": "system"
         }
       ],
@@ -2936,7 +2936,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, godkjent); den må avsluttes først.",
-          "kl": "2026-11-02T00:44:32.819Z",
+          "kl": "2026-11-02T01:26:09.721Z",
           "kilde": "system"
         }
       ],
@@ -4886,7 +4886,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, retting); den må avsluttes først.",
-          "kl": "2026-11-02T00:44:32.819Z",
+          "kl": "2026-11-02T01:26:09.721Z",
           "kilde": "system"
         }
       ],
@@ -5408,7 +5408,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, godkjent); den må avsluttes først.",
-          "kl": "2026-11-02T00:44:32.819Z",
+          "kl": "2026-11-02T01:26:09.721Z",
           "kilde": "system"
         }
       ],
