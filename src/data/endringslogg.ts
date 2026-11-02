@@ -12,6 +12,18 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.117.4',
+    dato: '2026-11-02',
+    sammendrag: 'Verktøyene er skjult for andre enn administratorene inntil videre, og har fått nytt ikon',
+    typer: ['Funksjonalitet', 'Design / layout'],
+    omfang: 'Mindre omfang',
+    gjelder: ['hele appen'],
+    punkter: [
+      'Verktøy-fanen i menyen, verktøyene i søket og verktøysidene vises nå bare for administratorene, til verktøyene er klare til bruk. Andre som åpner en lenke til et verktøy, kommer til fortolkningen.',
+      'Verktøy-fanen har fått et nytt ikon: en fastnøkkel og en hammer i kryss.',
+    ],
+  },
+  {
     versjon: '1.117.3',
     dato: '2026-11-01',
     sammendrag: 'Plan for enklere kildeoppfølging og kliniske verktøy',

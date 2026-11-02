@@ -304,6 +304,10 @@ const runde = (() => {
   return `M${polar(24, 24, 15, 30)}A15 15 0 1 1 ${x.toFixed(2)} ${y.toFixed(2)}M${punkt(5, 4)}L${x.toFixed(2)} ${y.toFixed(2)}L${punkt(5, -4)}`
 })()
 
+/** Delene dreid `grader` om midten av 24-rutenettet, så et verktøy kan stå på skrå. */
+const paaSkraa = (grader: number, deler: Ikondel[]): Ikondel[] =>
+  deler.map((del) => (del.t === 'g' ? del : { ...del, a: { ...del.a, transform: `rotate(${grader} 12 12)` } }))
+
 /** Frekvensen i bivirkningene: fem prikker på rad, de `n` første fylt. */
 function prikker(n: number): Ikondel[] {
   return [0, 1, 2, 3, 4].map((i) =>
@@ -410,6 +414,19 @@ const REGISTER = {
       C(19, 20, 4, 'f2', 'paper'),
       P(gear(34.5, 34, 9.5, 7, 6), 'f2', 'accent2', 'spinm60'),
       C(34.5, 34, 2.6, 'f1', 'paper'),
+    ],
+  },
+  // OUSFAR Verktøy: en fastnøkkel og en hammer i kryss, som 🛠️. Begge tegnes
+  // loddrett med hodet øverst og dreies på skrå; hammeren ligger over.
+  verktoy: {
+    vb: 24,
+    ga: 'shake',
+    parts: [
+      ...paaSkraa(45, [
+        R(10.5, 8, 3, 14.5, 1.5, 'o1', 'accent'),
+        P('M10.3 1.33V5.5h3.4V1.33A4.5 4.5 0 1 1 10.3 1.33z', 'o1', 'accent'),
+      ]),
+      ...paaSkraa(-45, [R(10.6, 5, 2.8, 17, 1.4, 'o1', 'warn'), R(7.5, 1.5, 9, 4, 1, 'o2', 'accent2')]),
     ],
   },
   indik: {
