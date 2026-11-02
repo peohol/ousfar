@@ -685,3 +685,289 @@
   gap: var(--rom-3) var(--rom-5);
   margin-top: var(--rom-5);
 }
+
+/*
+ * Faglige saker fra kildeovervåkingen (VDR-2): ett kort per sak, lest ovenfra
+ * og ned som en begrunnelse — hvordan verktøyet virker nå, hva som er endret,
+ * hva det berører, hvorfor det betyr noe, anbefalingen, valgene og hva valget
+ * vil gjøre — før beslutningen kan registreres.
+ */
+.fagsak {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-5);
+  padding: var(--rom-6);
+  background: var(--flate);
+  border: var(--kant) solid var(--linje);
+  border-radius: var(--runding-kort);
+}
+
+.fagsak__hode {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-3);
+}
+
+.fagsak__merker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rom-2);
+  margin: 0;
+}
+
+.fagsak__tittel {
+  margin: 0;
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-seksjon);
+  font-weight: var(--vekt-halvfet);
+  line-height: var(--linjehoyde-titler);
+  color: var(--blekk-sterk);
+  text-wrap: balance;
+}
+
+/* Forløpet er en ekte rekkefølge, så det vises som trinn. */
+.fagsak__forlop {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rom-2) var(--rom-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--tekst-meta);
+  color: var(--blekk-dempet);
+}
+
+.fagsak__forlop li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rom-2);
+}
+
+.fagsak__forlop li::before {
+  content: '';
+  width: 0.5rem;
+  height: 0.5rem;
+  border: var(--kant-tykk) solid var(--linje-sterk);
+  border-radius: 50%;
+}
+
+.fagsak__forlop .fagsak__trinn--forbi::before {
+  background: var(--blekk-dempet);
+  border-color: var(--blekk-dempet);
+}
+
+.fagsak__forlop .fagsak__trinn--her {
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk);
+}
+
+.fagsak__forlop .fagsak__trinn--her::before {
+  background: var(--aksent);
+  border-color: var(--aksent);
+}
+
+/* Det som betyr noe for pasientene, først og tydelig. */
+.fagsak__na {
+  margin: 0;
+  padding: var(--rom-3) var(--rom-5);
+  font-size: var(--tekst-ui);
+  color: var(--blekk);
+  background: var(--flate-hevet);
+  border-left: var(--kant-tykk) solid var(--linje-sterk);
+  border-radius: var(--runding-underkort);
+}
+
+.fagsak__na--sikkerhet {
+  color: var(--alvorlig-blekk);
+  background: var(--alvorlig-flate);
+  border-left-color: var(--alvorlig);
+}
+
+.fagsak__naetikett {
+  font-weight: var(--vekt-halvfet);
+}
+
+.fagsak__grunnlag,
+.fagsak__virkning dl {
+  display: grid;
+  gap: var(--rom-2) var(--rom-6);
+  margin: 0;
+}
+
+.fagsak__grunnlag dt,
+.fagsak__virkning dt {
+  font-size: var(--tekst-liten);
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk-dempet);
+}
+
+.fagsak__grunnlag dd,
+.fagsak__virkning dd {
+  margin: 0 0 var(--rom-3);
+  color: var(--blekk);
+  overflow-wrap: anywhere;
+}
+
+.fagsak__grunnlag p,
+.fagsak__virkning p,
+.fagsak__anbefaling p {
+  margin: 0 0 var(--rom-2);
+}
+
+.fagsak__grunnlag ul,
+.fagsak__virkning ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 40rem) {
+  .fagsak__grunnlag {
+    grid-template-columns: minmax(9rem, 13rem) 1fr;
+  }
+
+  .fagsak__grunnlag dd {
+    margin-bottom: var(--rom-4);
+  }
+}
+
+.fagsak__anbefaling {
+  padding: var(--rom-4) var(--rom-5);
+  background: var(--aksent-flate);
+  border-radius: var(--runding-underkort);
+}
+
+.fagsak__anbefaling--vurderes {
+  background: var(--flate-hevet);
+}
+
+.fagsak__virkningstittel {
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk-sterk);
+}
+
+.fagsak__valg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.fagsak__valg legend {
+  margin-bottom: var(--rom-3);
+  font-size: var(--tekst-ui);
+  font-weight: var(--vekt-halvfet);
+}
+
+.fagsak__valgrad {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--rom-4);
+  padding: var(--rom-4) var(--rom-5);
+  cursor: pointer;
+  background: var(--flate-bunn);
+  border: var(--kant) solid var(--linje-kontroll);
+  border-radius: var(--runding-felt);
+  transition: border-color var(--fart-rask) var(--kurve);
+}
+
+.fagsak__valgrad:hover {
+  border-color: var(--kant-aktiv);
+}
+
+.fagsak__valgrad--valgt {
+  background: var(--flate);
+  border-color: var(--aksent);
+}
+
+.fagsak__valgrad input {
+  margin-top: 0.2rem;
+  accent-color: var(--aksent);
+}
+
+.fagsak__valgrad:has(input:focus-visible) {
+  outline: var(--fokusring) solid var(--fokus);
+  outline-offset: var(--fokusring);
+}
+
+.fagsak__valgtekst {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-1);
+}
+
+.fagsak__valgnavn {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rom-3);
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk);
+}
+
+.fagsak__virkning {
+  padding: var(--rom-4) var(--rom-5);
+  border: var(--kant) dashed var(--aksent);
+  border-radius: var(--runding-underkort);
+}
+
+.fagsak__beslutning {
+  margin: 0;
+  font-size: var(--tekst-ui);
+  color: var(--blekk);
+}
+
+.fagsak__tiltak {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--tekst-ui);
+}
+
+.fagsak__tiltak li {
+  display: grid;
+  grid-template-columns: minmax(8rem, 12rem) 1fr;
+  gap: var(--rom-4);
+}
+
+.fagsak__tiltakstatus {
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk-dempet);
+}
+
+.fagsak__tiltak--kontrollert .fagsak__tiltakstatus {
+  color: var(--blekk);
+}
+
+.fagsak__tiltak--feilet .fagsak__tiltakstatus {
+  color: var(--alvorlig-blekk);
+}
+
+@media (max-width: 30rem) {
+  .fagsak {
+    padding: var(--rom-5);
+  }
+
+  .fagsak__tiltak li {
+    grid-template-columns: 1fr;
+    gap: var(--rom-1);
+  }
+}
+
+.fagsak__teknisk {
+  margin: var(--rom-4) 0 0;
+  font-size: var(--tekst-ui);
+  color: var(--blekk-dempet);
+}
+
+.fagsak__teknisk--merk {
+  color: var(--blekk);
+}
