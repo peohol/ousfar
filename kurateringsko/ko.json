@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-02T02:28:08.044Z",
+  "oppdatert_kl": "2026-11-02T03:29:13.105Z",
   "malt_kl": "2026-11-02T02:28:08.044Z",
   "teller": 82,
   "stoffer": {
@@ -73,7 +73,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.",
-          "kl": "2026-11-02T02:28:08.044Z",
+          "kl": "2026-11-02T03:29:13.105Z",
           "kilde": "system"
         }
       ],
@@ -719,7 +719,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.",
-          "kl": "2026-11-02T02:28:08.044Z",
+          "kl": "2026-11-02T03:29:13.105Z",
           "kilde": "system"
         }
       ],
@@ -1663,7 +1663,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, godkjent); den må avsluttes først.",
-          "kl": "2026-11-02T02:28:08.044Z",
+          "kl": "2026-11-02T03:29:13.105Z",
           "kilde": "system"
         }
       ],
@@ -1886,7 +1886,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.",
-          "kl": "2026-11-02T02:28:08.044Z",
+          "kl": "2026-11-02T03:29:13.105Z",
           "kilde": "system"
         }
       ],
@@ -2936,7 +2936,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, godkjent); den må avsluttes først.",
-          "kl": "2026-11-02T02:28:08.044Z",
+          "kl": "2026-11-02T03:29:13.105Z",
           "kilde": "system"
         }
       ],
@@ -4886,7 +4886,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, retting); den må avsluttes først.",
-          "kl": "2026-11-02T02:28:08.044Z",
+          "kl": "2026-11-02T03:29:13.105Z",
           "kilde": "system"
         }
       ],
@@ -5408,7 +5408,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, godkjent); den må avsluttes først.",
-          "kl": "2026-11-02T02:28:08.044Z",
+          "kl": "2026-11-02T03:29:13.105Z",
           "kilde": "system"
         }
       ],
@@ -7801,76 +7801,5 @@
       ]
     }
   },
-  "okter": {
-    "kurateringsko/okt/20261016-125910": {
-      "ider": [
-        "fullfort-kariprazin-0082",
-        "reserver-kariprazin-021456",
-        "fullfort-fenytoin-0081",
-        "reserver-fenytoin-020216",
-        "fullfort-topiramat-0080",
-        "reserver-topiramat-011815",
-        "fullfort-lamotrigin-0079",
-        "reserver-lamotrigin-010703",
-        "fullfort-sertindol-0078",
-        "reserver-sertindol-194929",
-        "fullfort-doksepin-0077",
-        "reserver-doksepin-192900",
-        "fullfort-topiramat-0076",
-        "reserver-topiramat-192727",
-        "fullfort-fenytoin-0075",
-        "reserver-fenytoin-180547",
-        "fullfort-levetiracetam-0074",
-        "reserver-levetiracetam-180414",
-        "fullfort-topiramat-0073",
-        "reserver-topiramat-180153",
-        "fullfort-flunitrazepam-0072",
-        "reserver-flunitrazepam-180021",
-        "fullfort-cbd-0071",
-        "reserver-cbd-174747",
-        "fullfort-lamotrigin-0070",
-        "reserver-lamotrigin-174615",
-        "fullfort-ketobemidon-0069",
-        "reserver-ketobemidon-172515",
-        "fullfort-vortioksetin-0068",
-        "reserver-vortioksetin-043350",
-        "fullfort-topiramat-0067",
-        "reserver-topiramat-042719",
-        "fullfort-fenytoin-0066",
-        "reserver-fenytoin-042531",
-        "fullfort-flunitrazepam-0065",
-        "reserver-flunitrazepam-042359",
-        "fullfort-brekspiprazol-0064",
-        "reserver-brekspiprazol-042214",
-        "fullfort-levetiracetam-0063",
-        "reserver-levetiracetam-035856",
-        "fullfort-topiramat-0062",
-        "reserver-topiramat-034145",
-        "fullfort-cbd-0061",
-        "reserver-cbd-034014",
-        "fullfort-doksepin-0060",
-        "reserver-doksepin-033842",
-        "fullfort-vortioksetin-0059",
-        "reserver-vortioksetin-033654",
-        "fullfort-flunitrazepam-0058",
-        "reserver-flunitrazepam-033502"
-      ],
-      "siste": {
-        "id": "fullfort-kariprazin-0082",
-        "sha256": "aa8a7d9214995a33a7043df32a4e39b5ed5853f2abd8bbfeaa51d396085f1a9f",
-        "svar": {
-          "versjon": 1,
-          "foresporsel_id": "fullfort-kariprazin-0082",
-          "foresporsel_sha256": "aa8a7d9214995a33a7043df32a4e39b5ed5853f2abd8bbfeaa51d396085f1a9f",
-          "handling": "fullfort",
-          "utfall": "ok",
-          "melding": "kariprazin er sendt til kontroll; køen følger kurateringsgrenen til den er publisert.",
-          "behandlet_kl": "2026-10-19T02:16:11.129Z",
-          "kjoring": "https://github.com/peohol/far/actions/runs/39189139453"
-        }
-      },
-      "besvart_commit": "ebd5ad8eae4928b91119289be7c05d0839eba8e4",
-      "sist_brukt_kl": "2026-10-19T02:16:11.129Z"
-    }
-  }
+  "okter": {}
 }
