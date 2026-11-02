@@ -1,6 +1,6 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-02T11:26:03.072Z. Stoffene sist lest fra databasen 2026-11-02T02:28:08.044Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-02T12:30:46.758Z. Stoffene sist lest fra databasen 2026-11-02T02:28:08.044Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
 Klar: 93 · Publisert: 16 · Blokkert: 9 · Utenfor køen: 1
 
