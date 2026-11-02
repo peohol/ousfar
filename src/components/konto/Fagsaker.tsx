@@ -141,6 +141,8 @@ function Virkning({ s, valg }: { s: Fagsak; valg: Beslutningsvalg }) {
 interface Utkast {
   valg: Beslutningsvalg | null
   merknad: string
+  /** Utgaven av saken valget ble tatt for. */
+  versjon: number
 }
 
 /** En sak som venter på en beslutning: grunnlaget, anbefalingen, valgene og hva hvert av dem vil gjøre. */
@@ -303,7 +305,15 @@ function Avsluttet({ s }: { s: Fagsak }) {
   )
 }
 
-const TOMT: Utkast = { valg: null, merknad: '' }
+/**
+ * Utkastet som gjelder saken slik den er nå. Er saken endret siden valget ble
+ * tatt (et annet spørsmål eller andre valg), gjelder ikke valget lenger og må
+ * tas på nytt; merknaden beholdes.
+ */
+function utkastFor(s: Pick<Fagsak, 'versjon' | 'valg'>, u: Utkast | undefined): Utkast {
+  if (!u) return { valg: null, merknad: '', versjon: s.versjon }
+  return u.versjon === s.versjon && (u.valg === null || s.valg.some((v) => v.valg === u.valg)) ? u : { ...u, valg: null, versjon: s.versjon }
+}
 
 /**
  * Kildeovervåkingen slik en faglig redaktør ser den (VDR-2,
@@ -343,8 +353,8 @@ export function Fagsaker({ apen, lager, onNodstopp }: { apen: boolean; lager: Fa
   const glem = (sak: string) => setUtkast(({ [sak]: _, ...resten }) => resten)
 
   const beslutt = async (s: Fagsak) => {
-    const u = utkast[s.id]
-    if (!lager || arbeider || !u?.valg) return
+    const u = utkastFor(s, utkast[s.id])
+    if (!lager || arbeider || !u.valg) return
     setArbeider(true)
     setFeil(null)
     try {
@@ -409,7 +419,7 @@ export function Fagsaker({ apen, lager, onNodstopp }: { apen: boolean; lager: Fa
           <p className="autoerstatt__tomt">Ingenting venter på deg.</p>
         ) : (
           venter.map((s) => (
-            <Beslutningskort key={s.id} s={s} utkast={utkast[s.id] ?? TOMT} setUtkast={(u) => setUtkast((alle) => ({ ...alle, [s.id]: u }))} arbeider={arbeider}
+            <Beslutningskort key={s.id} s={s} utkast={utkastFor(s, utkast[s.id])} setUtkast={(u) => setUtkast((alle) => ({ ...alle, [s.id]: u }))} arbeider={arbeider}
               onBeslutt={() => void beslutt(s)}
               onNodstopp={onNodstopp}
             />

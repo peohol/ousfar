@@ -8,7 +8,7 @@
  * opp til tiltakene er utført og kontrollert. Ingen kontrollsummer, interne
  * nøkler eller tidsfrister. Syntetiske data.
  */
-import { cleanup, render, screen, within } from '@testing-library/react'
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Fagsaker } from '../components/konto/Fagsaker'
@@ -154,6 +154,28 @@ describe('redaktørvisningen av kildesakene', () => {
     const ny = within(await screen.findByRole('article'))
     expect((ny.getByRole('radio', { name: /Behold godkjent regel/ }) as HTMLInputElement).checked).toBe(false)
     expect(lager.beslutt).toHaveBeenCalledTimes(1)
+  })
+
+  it('forkaster et valg som ikke lenger gjelder når saken er endret, men beholder merknaden', async () => {
+    const user = userEvent.setup()
+    const data = oversikt([sak()])
+    const lager = minnelager(data)
+    const { rerender } = render(<Fagsaker apen lager={lager} />)
+    let kort = within(await screen.findByRole('article'))
+    await user.click(kort.getByRole('radio', { name: /Deaktiver berørt regel/ }))
+    await user.type(kort.getByRole('textbox', { name: /Merknad/ }), 'Syntetisk merknad.')
+    // Vinduet lukkes, og agenten erstatter spørsmålet: deaktivering tilbys ikke lenger.
+    rerender(<Fagsaker apen={false} lager={lager} />)
+    Object.assign(data.saker[0]!, { versjon: 4, valg: sak().valg.filter((v) => v.valg !== 'deaktiver') })
+    rerender(<Fagsaker apen lager={lager} />)
+    await waitFor(() => expect(screen.getAllByRole('radio')).toHaveLength(3))
+    kort = within(screen.getByRole('article'))
+    expect(kort.queryAllByRole('radio').some((r) => (r as HTMLInputElement).checked)).toBe(false)
+    expect(kort.queryByRole('button', { name: 'Registrer beslutningen' })).toBeNull()
+    await user.click(kort.getByRole('radio', { name: /Behold godkjent regel/ }))
+    expect((kort.getByRole('textbox', { name: /Merknad/ }) as HTMLTextAreaElement).value).toBe('Syntetisk merknad.')
+    await user.click(kort.getByRole('button', { name: 'Registrer beslutningen' }))
+    expect(lager.beslutt).toHaveBeenCalledWith('7', 4, 'behold', 'Syntetisk merknad.')
   })
 
   it('beholder valget og merknaden ved en databasefeil, og sier at beslutningen ikke ble registrert', async () => {
