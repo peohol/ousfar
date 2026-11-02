@@ -154,6 +154,19 @@ describe('Rapporten', () => {
     expect(rapport).not.toMatch(/switchdetail|psychiatrienet\.nl/i)
   })
 
+  it('tar med hver regel uten godkjenning, også når en annen regel for samme kombinasjon er godkjent', () => {
+    const utenPlan = rapport.split('## 5.')[1]!.split('## 6.')[0]!
+    const uten = REGELSETT.regler.filter((r) => !erKliniskGodkjent(r) && r.beregnbarhet !== 'mangler_anbefaling')
+    expect(uten.map((r) => r.id)).toContain('seponering-vortioksetin-langsom')
+    for (const r of uten) expect(utenPlan, r.id).toContain(`\`${r.id}\` v${r.versjon}`)
+    for (const r of REGELSETT.regler.filter(erKliniskGodkjent)) expect(utenPlan).not.toContain(`\`${r.id}\` `)
+  })
+
+  it('regner 33⅓ % nøyaktig, ikke avrundet', () => {
+    expect(TRINNGRENSER.kort[1]).toBe(100 / 3)
+    expect(rapport).toContain('høyst 33⅓ %')
+  })
+
   it('sier at modellberegningen ikke er en regel eller noe verktøyet bruker', () => {
     expect(rapport).toContain('ikke en regel, en anbefaling eller noe verktøyet bruker')
   })

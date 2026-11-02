@@ -138,8 +138,11 @@ export const forskriverkasus = (id: string) =>
 
 /* --- Modellberegningen: følsomheten for trinngrensen --------------------------- */
 
-/** Øvre grense for det foretrukne området i dag ved kort og lang behandlingstid, og grensene modellberegningen prøver. */
-export const TRINNGRENSER = { kort: [25, 34, 50], lang: [LANG_PROSENT, 25] } as const
+/** Øvre grense for det foretrukne området i dag ved kort og lang behandlingstid, og grensene modellberegningen prøver (33⅓ % nøyaktig). */
+export const TRINNGRENSER = { kort: [25, 100 / 3, 50], lang: [LANG_PROSENT, 25] } as const
+
+/** En grense slik rapporten viser den: en tredjedel som brøk, ellers tallet. */
+const grensetekst = (g: number) => (Math.abs(g - 100 / 3) < 1e-9 ? '33⅓' : tall(g))
 
 /**
  * En kopi av regelen der faktisk reduksjon opp til `grense` % ikke krever
@@ -265,10 +268,16 @@ function stoppendeValg(alle: Map<Verktoy, Kombinasjon[]>): string {
     .join('\n\n')
 }
 
+/**
+ * Hver regel uten gyldig klinisk godkjenning, med kombinasjonene den gjelder.
+ * Reglene telles for seg, ikke ut fra utfallet for kombinasjonen, så en regel
+ * som ikke er godkjent, er med også når en annen regel for samme kombinasjon er
+ * godkjent (som den langsomme varianten for vortioksetin).
+ */
 function reglerUtenPlan(d: Kartdata, alle: Map<Verktoy, Kombinasjon[]>): string {
   const rader = [...alle].flatMap(([v, ks]) => {
     const perRegel = new Map<Regel, Kombinasjon[]>()
-    for (const k of ks.filter((x) => ['ikke_godkjent', 'fagtekst_ikke_godkjent', 'til_kontroll'].includes(x.utfall))) for (const r of k.regler) perRegel.set(r, [...(perRegel.get(r) ?? []), k])
+    for (const k of ks) for (const r of reglerFor(v, k.valg).filter((x) => !erKliniskGodkjent(x) && x.beregnbarhet !== 'mangler_anbefaling')) perRegel.set(r, [...(perRegel.get(r) ?? []), k])
     return [...perRegel]
       .sort(([a], [b]) => a.id.localeCompare(b.id))
       .map(([r, k]) => [v.navn, `\`${r.id}\` v${r.versjon}`, [...new Set(k.map((x) => kombinasjonsnavn(d, v, x.valg)))].join('; '), harBeregning(r) ? 'beregnbar' : 'fagtekst', kontrollutfall(r).replace(/_/g, ' ')])
@@ -308,7 +317,7 @@ function utenRegelBytte(d: Kartdata, v: Verktoy, ks: readonly Kombinasjon[]): st
 
 function folsomhetstabell(rader: readonly Folsomhetsrad[], lang: boolean): string {
   const grenser = lang ? TRINNGRENSER.lang : TRINNGRENSER.kort
-  const hode = ['Virkestoff', 'Form', 'Startdose', ...grenser.map((g, i) => `${i === 0 ? 'I dag: ' : ''}høyst ${g === 34 ? '33⅓' : g} %`)]
+  const hode = ['Virkestoff', 'Form', 'Startdose', ...grenser.map((g, i) => `${i === 0 ? 'I dag: ' : ''}høyst ${grensetekst(g)} %`)]
   return tabell(
     hode,
     rader.filter((r) => r.lang === lang).map((r) => [r.nokkel, r.form.navn, `${tall(r.startdose_mg)} mg`, ...r.planer.map((p) => stigetekst(r.startdose_mg, p))]),
@@ -355,7 +364,7 @@ ${stoppendeValg(alle)}
 
 ## 5. Regler som finnes, men ikke gir plan
 
-Regelutkast som er kontrollert og ikke godkjent (eller bare fagtekst), og som verktøyet derfor viser som «kontrollert, ikke godkjent» eller «bare fagtekst, ikke beregnbar». Hvorfor hver av dem ikke er godkjent, står i \`docs/verktøy-p7-nedtrapping.md\` §11 og \`docs/verktøy-p4-regelmodell.md\` §11.
+Regelutkast som er kontrollert og ikke godkjent (eller bare fagtekst), og som derfor aldri gir en plan: verktøyet viser «kontrollert, ikke godkjent» eller «bare fagtekst, ikke beregnbar», eller, der en annen regel for samme kombinasjon er godkjent, stopper når valgene peker på denne regelen (som den langsomme varianten for vortioksetin etter tidligere seponeringsplager). Hvorfor hver av dem ikke er godkjent, står i \`docs/verktøy-p7-nedtrapping.md\` §11 og \`docs/verktøy-p4-regelmodell.md\` §11.
 
 ${reglerUtenPlan(d, alle)}
 

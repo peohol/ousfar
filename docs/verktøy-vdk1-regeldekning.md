@@ -106,7 +106,7 @@ Valgene i testmatrisen som ikke gir en plan, selv om regelen er godkjent: dosen,
 
 ## 5. Regler som finnes, men ikke gir plan
 
-Regelutkast som er kontrollert og ikke godkjent (eller bare fagtekst), og som verktøyet derfor viser som «kontrollert, ikke godkjent» eller «bare fagtekst, ikke beregnbar». Hvorfor hver av dem ikke er godkjent, står i `docs/verktøy-p7-nedtrapping.md` §11 og `docs/verktøy-p4-regelmodell.md` §11.
+Regelutkast som er kontrollert og ikke godkjent (eller bare fagtekst), og som derfor aldri gir en plan: verktøyet viser «kontrollert, ikke godkjent» eller «bare fagtekst, ikke beregnbar», eller, der en annen regel for samme kombinasjon er godkjent, stopper når valgene peker på denne regelen (som den langsomme varianten for vortioksetin etter tidligere seponeringsplager). Hvorfor hver av dem ikke er godkjent, står i `docs/verktøy-p7-nedtrapping.md` §11 og `docs/verktøy-p4-regelmodell.md` §11.
 
 | Verktøy | Regel | Kombinasjon | Type | Kontrollutfall |
 | --- | --- | --- | --- | --- |
@@ -131,6 +131,7 @@ Regelutkast som er kontrollert og ikke godkjent (eller bare fagtekst), og som ve
 | Trappe ned antidepressiv | `seponering-sertralin` v11 | Sertralin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-sertralin-langsom` v7 | Sertralin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-venlafaksin` v6 | Venlafaksin | fagtekst | bare fagtekst |
+| Trappe ned antidepressiv | `seponering-vortioksetin-langsom` v7 | Vortioksetin | beregnbar | ikke godkjent |
 | Bytte antidepressiv | `mao-fluoksetin-fenelzin` v7 | Fluoksetin → Fenelzin | beregnbar | ikke godkjent |
 | Bytte antipsykotikum | `antipsykotikabytte-olanzapin-kvetiapin` v5 | Olanzapin (peroral) → Kvetiapin | beregnbar | ikke godkjent |
 
