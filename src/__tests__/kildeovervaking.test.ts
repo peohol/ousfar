@@ -248,13 +248,17 @@ describe('kildesakene i databasen', () => {
 
     // Tiltaket utføres og kontrolleres av agenten, med bevis; kontrollert kan bare følge utført.
     const t = (await logg()).funn.find((f) => f.id === psy.id)!.tiltak[0]!
-    expect(await feilFra(() => agent('tiltak', { tiltak: t.id, status: 'kontrollert', bevis: 'For tidlig.' }))).toMatchObject({ code: '55000' })
-    expect(await feilFra(() => agent('tiltak', { tiltak: t.id, status: 'utfort' }))).toMatchObject({ code: '23514' })
-    expect(await agent('tiltak', { tiltak: t.id, status: 'utfort', bevis: 'Ny versjon 4 i PR, godkjent av kontrollør.', lenke: 'https://github.com/eier/repo/pull/2' })).toBe('utfort')
+    const lest = (await sak('psychiatrienet:x')).versjon
+    expect(await feilFra(() => agent('tiltak', { tiltak: t.id, versjon: lest, status: 'kontrollert', bevis: 'For tidlig.' }))).toMatchObject({ code: '55000' })
+    expect(await feilFra(() => agent('tiltak', { tiltak: t.id, versjon: lest, status: 'utfort' }))).toMatchObject({ code: '23514' })
+    expect(await agent('tiltak', { tiltak: t.id, versjon: lest, status: 'utfort', bevis: 'Ny versjon 4 i PR, godkjent av kontrollør.', lenke: 'https://github.com/eier/repo/pull/2' })).toBe('utfort')
+    // En forsinket oppgave som leste saken før dette, overskriver ikke den nyere statusen.
+    expect(await feilFra(() => agent('tiltak', { tiltak: t.id, versjon: lest, status: 'pagar' }))).toMatchObject({ code: '55000', message: expect.stringMatching(/endret siden versjon/) })
+    expect((await logg()).funn.find((f) => f.id === psy.id)!.tiltak[0]).toMatchObject({ status: 'utfort' })
     expect((await redaktor().les()).saker.find((s) => s.id === fagsak.id)).toMatchObject({ fase: 'oppfolging' })
     // Varselet står så lenge saken følges opp.
     expect(await lagRegelvarsellager(kallFor(bruker)).les()).toHaveLength(1)
-    expect(await agent('tiltak', { tiltak: t.id, status: 'kontrollert', bevis: 'Versjon 4 er publisert og gir planen i produksjonen.' })).toBe('kontrollert')
+    expect(await agent('tiltak', { tiltak: t.id, versjon: (await sak('psychiatrienet:x')).versjon, status: 'kontrollert', bevis: 'Versjon 4 er publisert og gir planen i produksjonen.' })).toBe('kontrollert')
     const ferdig = (await redaktor().les()).saker.find((s) => s.id === fagsak.id)!
     expect(ferdig).toMatchObject({ fase: 'avsluttet', avsluttet: { utfall: 'tiltak_kontrollert' }, tiltak: [{ status: 'kontrollert', lenke: 'https://github.com/eier/repo/pull/2' }] })
     expect(await lagRegelvarsellager(kallFor(bruker)).les()).toEqual([])
@@ -276,7 +280,7 @@ describe('kildesakene i databasen', () => {
     expect((await redaktor().les()).saker.find((x) => x.id === String(s.id))).toMatchObject({ beslutning: { valg: 'behold' } })
 
     // Grunnlaget er lagt inn (utført); en kontroll uten avvik bekrefter det og avslutter saken.
-    await agent('tiltak', { tiltak: merket.tiltak[0]!.id, status: 'utfort', bevis: 'Nytt grunnlag i kildekontroll-grunnlag.json.' })
+    await agent('tiltak', { tiltak: merket.tiltak[0]!.id, versjon: merket.versjon, status: 'utfort', bevis: 'Nytt grunnlag i kildekontroll-grunnlag.json.' })
     expect(await meld(rapport('2027-01-18T06:20:00Z', [], ['dokument']))).toMatchObject({ borte: 1, avsluttede: 1 })
     const lukket = (await logg()).funn.find((f) => f.id === s.id)!
     expect(lukket).toMatchObject({ tilstand: 'avsluttet', utfall: 'tiltak_kontrollert', tiltak: [{ status: 'kontrollert', bevis: expect.stringMatching(/i samsvar med det nye grunnlaget/) }] })
@@ -426,7 +430,8 @@ describe('serverendepunktet /api/kildeovervaking', () => {
       { oppgave: 'teknisk_konklusjon', funn: 0, versjon: 1, konklusjon: 'uavklart', begrunnelse: 'Syntetisk begrunnelse.', av: 'Claude' },
       { oppgave: 'teknisk_konklusjon', funn: 7, versjon: 1, konklusjon: 'uavklart', begrunnelse: 'Syntetisk begrunnelse.' },
       { oppgave: 'faglig_sporsmal', funn: 7, versjon: 1, sporsmal: 'tekst', av: 'Claude' },
-      { oppgave: 'tiltak', tiltak: 3, status: 'bestilt', av: 'Claude' },
+      { oppgave: 'tiltak', tiltak: 3, versjon: 1, status: 'bestilt', av: 'Claude' },
+      { oppgave: 'tiltak', tiltak: 3, status: 'utfort', bevis: 'Syntetisk bevis.', av: 'Claude' },
       { oppgave: 'avslutt_prove', funn: 7, versjon: 1, bevis: 'kort', av: 'Claude' },
     ]) {
       const svar = await behandle(forespor(innhold))

@@ -49,7 +49,7 @@ export const AGENTOPPGAVER = {
   brukervarsel: { funksjon: 'kildesak_brukervarsel', felt: { funn: nummer, versjon: nummer, tekst: valgfri(tekst(10, 300)), regler: valgfri(liste) } },
   tiltak: {
     funksjon: 'kildesak_tiltak',
-    felt: { tiltak: nummer, status: enAv('pagar', 'utfort', 'kontrollert', 'feilet'), bevis: valgfri(tekst(5, 2000)), lenke: valgfri(tekst(9, 500)) },
+    felt: { tiltak: nummer, versjon: nummer, status: enAv('pagar', 'utfort', 'kontrollert', 'feilet'), bevis: valgfri(tekst(5, 2000)), lenke: valgfri(tekst(9, 500)) },
   },
   avslutt_prove: { funksjon: 'kildesak_avslutt_prove', felt: { funn: nummer, versjon: nummer, bevis: tekst(10, 5000) } },
 } as const satisfies Record<string, { funksjon: string; felt: Record<string, Felt> }>

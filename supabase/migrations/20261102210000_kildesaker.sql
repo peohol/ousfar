@@ -707,8 +707,9 @@ $$;
 
 -- Et tiltak er påbegynt, utført, kontrollert eller stoppet. Kontrollert kan
 -- bare følge utført; utført, kontrollert og stoppet krever bevis. Når hvert
--- tiltak er kontrollert, avsluttes saken.
-create function public.kildesak_tiltak(tiltak bigint, status text, bevis text, lenke text, agent text)
+-- tiltak er kontrollert, avsluttes saken. Som de andre agentoppgavene tar det
+-- sakens versjon, så en forsinket oppgave aldri overskriver en nyere status.
+create function public.kildesak_tiltak(tiltak bigint, versjon integer, status text, bevis text, lenke text, agent text)
 returns text
 language plpgsql
 security definer
@@ -716,19 +717,20 @@ set search_path = ''
 as $$
 declare
   t public.kildefunn_tiltak;
+  sak bigint;
+  rad public.kildefunn;
   ny text := kildesak_tiltak.status;
 begin
-  if not intern.kildesak_tekst(agent, 2, 200) then
-    raise exception 'Oppgi hvem som har gjort arbeidet (2–200 tegn).' using errcode = '22023';
-  end if;
-  select * into t from public.kildefunn_tiltak x where x.id = kildesak_tiltak.tiltak for update;
+  select x.funn into sak from public.kildefunn_tiltak x where x.id = kildesak_tiltak.tiltak;
   if not found then
     raise exception 'Tiltak nr. % finnes ikke.', kildesak_tiltak.tiltak using errcode = '55000';
   end if;
-  perform 1 from public.kildefunn k where k.id = t.funn and k.tilstand = 'oppfolging' for update;
-  if not found then
-    raise exception 'Saken til tiltak nr. % følges ikke opp lenger.', t.id using errcode = '55000';
+  -- Saken låses først, som i beslutningen, og versjonen må være den agenten leste.
+  rad := intern.kildesak_for_agent(sak, kildesak_tiltak.versjon, kildesak_tiltak.agent);
+  if rad.tilstand <> 'oppfolging' then
+    raise exception 'Saken til tiltak nr. % følges ikke opp lenger.', kildesak_tiltak.tiltak using errcode = '55000';
   end if;
+  select * into t from public.kildefunn_tiltak x where x.id = kildesak_tiltak.tiltak for update;
   if ny is null or ny not in ('pagar', 'utfort', 'kontrollert', 'feilet')
      or t.status = 'kontrollert'
      or (ny = 'kontrollert' and t.status <> 'utfort')
@@ -982,7 +984,7 @@ comment on function public.kildesak_faglig_sporsmal(bigint, integer, jsonb, text
   'Det konkrete faglige spørsmålet til redaktøren, med valg og konsekvenser. Bare for serverendepunktet.';
 comment on function public.kildesak_brukervarsel(bigint, integer, text, jsonb, text) is
   'Et kort varsel på de berørte regelversjonene i verktøyene, eller null for å fjerne det. Bare for serverendepunktet.';
-comment on function public.kildesak_tiltak(bigint, text, text, text, text) is
+comment on function public.kildesak_tiltak(bigint, integer, text, text, text, text) is
   'Et tiltak er påbegynt, utført, kontrollert eller stoppet, med bevis. Bare for serverendepunktet.';
 comment on function public.kildesak_avslutt_prove(bigint, integer, text, text) is
   'Avslutter en syntetisk prøve med testbeviset. Bare for serverendepunktet.';
@@ -1007,7 +1009,7 @@ revoke all on function intern.kildesak_for_agent(bigint, integer, text) from pub
 revoke all on function public.kildesak_teknisk_konklusjon(bigint, integer, text, text, jsonb, text) from public, anon, authenticated;
 revoke all on function public.kildesak_faglig_sporsmal(bigint, integer, jsonb, text) from public, anon, authenticated;
 revoke all on function public.kildesak_brukervarsel(bigint, integer, text, jsonb, text) from public, anon, authenticated;
-revoke all on function public.kildesak_tiltak(bigint, text, text, text, text) from public, anon, authenticated;
+revoke all on function public.kildesak_tiltak(bigint, integer, text, text, text, text) from public, anon, authenticated;
 revoke all on function public.kildesak_avslutt_prove(bigint, integer, text, text) from public, anon, authenticated;
 revoke all on function public.les_fagsaker() from public, anon, authenticated, service_role;
 revoke all on function public.beslutt_fagsak(bigint, integer, text, text) from public, anon, authenticated, service_role;
@@ -1015,7 +1017,7 @@ revoke all on function public.les_regelvarsler() from public, anon, authenticate
 grant execute on function public.kildesak_teknisk_konklusjon(bigint, integer, text, text, jsonb, text) to service_role;
 grant execute on function public.kildesak_faglig_sporsmal(bigint, integer, jsonb, text) to service_role;
 grant execute on function public.kildesak_brukervarsel(bigint, integer, text, jsonb, text) to service_role;
-grant execute on function public.kildesak_tiltak(bigint, text, text, text, text) to service_role;
+grant execute on function public.kildesak_tiltak(bigint, integer, text, text, text, text) to service_role;
 grant execute on function public.kildesak_avslutt_prove(bigint, integer, text, text) to service_role;
 grant execute on function public.les_fagsaker() to authenticated;
 grant execute on function public.beslutt_fagsak(bigint, integer, text, text) to authenticated;
