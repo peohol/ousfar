@@ -12,6 +12,18 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.117.5',
+    dato: '2026-11-02',
+    sammendrag: 'Oversikt over hva de kliniske verktøyene kan beregne, og plan for hvilke regler som bør gjøres ferdig først',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen eller i noen klinisk regel. Det er laget en oversikt over hva de tre kliniske verktøyene faktisk kan beregne i dag, hva som bare gir fagtekst, og hvorfor de andre valgene stopper.',
+      'Det er også laget en prioritert plan for hvilke nedtrappings- og bytteregler som bør gjøres ferdig først, med kilder, norske preparater, spørsmål til faglig kontroll og syntetiske testeksempler. Ingen regel tas i bruk før den er uavhengig kontrollert og godkjent.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.117.4',
     dato: '2026-11-02',
     sammendrag: 'Verktøyene er skjult for andre enn administratorene inntil videre, og har fått nytt ikon',
