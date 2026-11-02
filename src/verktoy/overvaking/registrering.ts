@@ -5,8 +5,10 @@
  * funn som krever vurdering. Databasen avgjør hvilke funn som er nye, endret
  * eller borte; en del som ikke ble kontrollert, rører ingen funn der.
  *
- * Bare funnene som krever vurdering, lagres som funn. De informative står i
- * kjøringen med id, kilde, art og etikett. Ingen kildetekst lagres.
+ * Bare funnene som krever vurdering, lagres som saker. De informative står i
+ * kjøringen med id, kilde, art og etikett; en sak hvis nøkkel står der (for
+ * eksempel en kilde som ikke svarte), regnes ikke som tilbake i samsvar med
+ * grunnlaget. Ingen kildetekst lagres.
  */
 import type { Databasekall } from '../../legemiddeldata/lager.js'
 import type { Utlost } from '../../server/tilgang.js'
@@ -34,7 +36,8 @@ function erFunn(x: unknown): x is Overvakingsfunn {
     tekster(f.detaljer) &&
     Array.isArray(f.berorte) &&
     f.berorte.every((b) => !!b && tekst(b.regelsett, 200) && tekst(b.regel, 200) && Number.isInteger(b.versjon) && tekst(b.fingeravtrykk, 200) && tekst(b.hvorfor, 2000)) &&
-    (f.niva === 'krever_vurdering' ? en(f.prioritet, PRIORITETSTEKST) : f.prioritet === undefined)
+    (f.niva === 'krever_vurdering' ? en(f.prioritet, PRIORITETSTEKST) : f.prioritet === undefined) &&
+    (f.tilstandsavtrykk === undefined || (typeof f.tilstandsavtrykk === 'string' && /^[0-9a-f]{64}$/.test(f.tilstandsavtrykk)))
   )
 }
 
@@ -79,15 +82,14 @@ export function melding(r: Overvakingsrapport, utlost: Utlost, lenke: string | n
 export interface Registrert {
   kjoring: number
   nye: number
+  /** Åpne saker som fikk nytt innhold. */
+  endrede: number
   borte: number
+  /** Saker som ble avsluttet fordi delen ble kontrollert uten avvik, eller fordi et utført nytt grunnlag ble bekreftet. */
+  avsluttede: number
   apne: number
 }
 
 export async function registrer(kall: Databasekall, r: Overvakingsrapport, utlost: Utlost, lenke: string | null): Promise<Registrert> {
   return (await kall('registrer_kildeovervaking', { melding: melding(r, utlost, lenke) })) as Registrert
-}
-
-/** Den tekniske vurderingen fra en agent, for nøyaktig funnet med nummeret; avvises når det er avløst eller avsluttet. */
-export async function tekniskFraAgent(kall: Databasekall, funn: number, vurdering: string, agent: string): Promise<number> {
-  return Number(await kall('kildefunn_teknisk_fra_agent', { funn, vurdering, agent }))
 }

@@ -1,4 +1,4 @@
-# Kildeovervåkingen for OUSFAR Verktøy (P12.1 og P12.5,
+# Kildeovervåkingen for OUSFAR Verktøy (P12.1 og P12.5, VDR-1,
 # docs/verktøy-p12-overvaking.md): kildedokumentene og preparatene i FEST hver
 # uke, Psychiatrienet den første kjøringen i måneden (det tar om lag ti
 # minutter og belaster kilden), eller når den startes for hånd med valget under.
@@ -6,15 +6,16 @@
 # Overvåkingen leser kildene og endrer, godkjenner eller sperrer ingen regel.
 # Rapporten står i sammendraget for kjøringen. Funnene meldes til appen
 # (/api/kildeovervaking), med et OIDC-token GitHub utsteder for denne
-# arbeidsflyten på main: der får administratorene en prikk i Adminmeny og
-# vinduet «Kildeovervåking», med fristene for teknisk vurdering og faglig
-# beslutning. Et funn avsluttes av den som har tatt stilling til det, i appen,
-# aldri av arbeidsflyten.
+# arbeidsflyten på main. Der blir hvert funn en kildesak som først undersøkes
+# teknisk; den faglige redaktøren får bare konkrete faglige spørsmål, og
+# prioriteten følger klinisk risiko, ikke tid.
 #
-# Oppgaven «teknisk-vurdering» skriver den tekniske vurderingen av nøyaktig ett
-# åpent funn (nummeret i appen), når Claude (eller noen andre med tilgang til
-# repoet) har vurdert det. Er funnet avløst av et nyere med endret innhold,
-# avvises vurderingen.
+# Oppgaven «agent» er agentens arbeid med én sak (Claude, eller noen andre med
+# tilgang til repoet): teknisk konklusjon med bevis, faglig spørsmål til
+# redaktøren, varsel i verktøyene, tiltak eller avslutning av en prøve. Feltet
+# «melding» er JSON-en, for eksempel
+#   {"oppgave":"teknisk_konklusjon","funn":12,"versjon":3,"konklusjon":"uavklart","begrunnelse":"…"}
+# Hver oppgave tar sakens versjon og avvises når saken er endret siden.
 name: Kildeovervåking for Verktøy
 
 on:
@@ -24,24 +25,20 @@ on:
   workflow_dispatch:
     inputs:
       oppgave:
-        description: kontroll, provesak (bare et syntetisk funn, for å prøve varslingen i appen) eller teknisk-vurdering.
+        description: kontroll, provesak (bare et syntetisk funn, for å prøve saksgangen i appen) eller agent (arbeid med én sak, se «melding»).
         type: choice
-        options: [kontroll, provesak, teknisk-vurdering]
+        options: [kontroll, provesak, agent]
         default: kontroll
       psychiatrienet:
         description: Bare for kontroll. Kontroller også Psychiatrienet (om lag ti minutter).
         type: boolean
         default: false
-      funn:
-        description: Bare for teknisk-vurdering. Funnets nummer, slik det står i appen (for eksempel 12). Er funnet avløst av et nyere, avvises vurderingen.
-        type: string
-        default: ''
-      vurdering:
-        description: Bare for teknisk-vurdering. Den tekniske vurderingen.
+      melding:
+        description: Bare for agent. JSON med oppgave (teknisk_konklusjon, faglig_sporsmal, brukervarsel, tiltak, avslutt_prove) og feltene den tar, se src/verktoy/overvaking/agentoppgaver.ts.
         type: string
         default: ''
       av:
-        description: Bare for teknisk-vurdering. Hvem som har vurdert.
+        description: Bare for agent. Hvem som har gjort arbeidet.
         type: string
         default: Claude
 
@@ -116,9 +113,9 @@ jobs:
             exit 1
           fi
 
-  teknisk-vurdering:
-    name: Skriv den tekniske vurderingen
-    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && inputs.oppgave == 'teknisk-vurdering'
+  agent:
+    name: Agentens arbeid med én sak
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && inputs.oppgave == 'agent'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
@@ -126,8 +123,7 @@ jobs:
       # Bare for OIDC-tokenet; ingen hemmeligheter.
       id-token: write
     env:
-      FUNN: ${{ inputs.funn }}
-      VURDERING: ${{ inputs.vurdering }}
+      MELDING: ${{ inputs.melding }}
       AV: ${{ inputs.av }}
       AKTOR: ${{ github.actor }}
     steps:
@@ -135,9 +131,11 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Skriv vurderingen i appen
+      - name: Send arbeidet til appen
         run: |
           set -euo pipefail
-          jq -n --arg funn "$FUNN" --arg vurdering "$VURDERING" --arg av "$AV (startet av $AKTOR)" \
-            '{oppgave: "teknisk_vurdering", funn: $funn, vurdering: $vurdering, av: $av}' > melding.json
+          # Et JSON-objekt med en agentoppgave; aldri en registrering av en kjøring.
+          printf '%s' "$MELDING" | jq -e 'type == "object" and (.oppgave | type == "string") and .oppgave != "registrer"' > /dev/null \
+            || { echo "::error::Feltet «melding» må være et JSON-objekt med en agentoppgave."; exit 1; }
+          printf '%s' "$MELDING" | jq --arg av "$AV (startet av $AKTOR)" '. + {av: $av}' > melding.json
           bash scripts/meld-kildeovervaking.sh melding.json

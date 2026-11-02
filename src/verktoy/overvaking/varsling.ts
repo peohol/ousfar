@@ -1,27 +1,42 @@
 /**
- * Funnene fra kildeovervåkingen slik administratorene ser dem i appen
- * (P12.1, `docs/verktøy-p12-overvaking.md` §5): Adminmeny har en prikk når et
- * funn venter på en faglig beslutning, når siste kontroll stoppet, eller når
- * kontrollen ikke har kjørt på over en uke, og vinduet «Kildeovervåking»
- * viser funnene, fristene og vurderingene.
+ * Den tekniske loggen for kildeovervåkingen (VDR-1, `docs/verktøy-p12-overvaking.md`
+ * §5): sakene med tilstand, konklusjon, tiltak og hendelser, og kjøringene. Den
+ * er for teknisk ansvarlig og kontrollører; den faglige redaktøren ser bare
+ * `fagsak.ts`. Det finnes ingen tidsfrister.
  *
- * Funnene og vurderingene står i databasen (`public.kildefunn`); tilgangen
- * avgjøres der. Ingenting her endrer, godkjenner eller sperrer en regel.
+ * Sakene står i databasen (`public.kildefunn`); tilgangen avgjøres der.
+ * Ingenting her endrer, godkjenner eller sperrer en regel.
  */
 import type { Databasekall } from '../../legemiddeldata/lager'
 import type { Berort, Funnart, Funnkilde, Funnprioritet, Grunnlagsdel } from './modell'
 
-/**
- * Fristene i timer fra funnet kom: for den tekniske vurderingen, og for den
- * faglige beslutningen når funnet har høy prioritet. Prosessfrister, ikke
- * kliniske verdier.
- */
-export const FRISTER = { teknisk: 24, faglig: 72 } as const
-
 /** Kontrollen går hver uke; har den ikke meldt seg på så lenge, er noe galt. */
 export const UTEBLITT_ETTER_TIMER = 8 * 24
 
-/** Et funn som krever ny faglig vurdering, med vurderingene. */
+/** Hvor saken står: agentens spor, redaktørens spor, eller avsluttet. */
+export type Sakstilstand = 'teknisk_utredning' | 'uavklart' | 'faglig_gjennomgang' | 'beslutning' | 'oppfolging' | 'avsluttet'
+
+export const TILSTANDSTEKST: Record<Sakstilstand, string> = {
+  teknisk_utredning: 'Teknisk utredning',
+  uavklart: 'Teknisk uavklart',
+  faglig_gjennomgang: 'Faglig gjennomgang',
+  beslutning: 'Venter på faglig beslutning',
+  oppfolging: 'Oppfølging pågår',
+  avsluttet: 'Avsluttet',
+}
+
+export type Saksutfall = 'teknisk_avklart' | 'ikke_funnet_igjen' | 'tiltak_kontrollert' | 'prove' | 'avlost' | 'tidligere_beslutning'
+
+export const UTFALLSTEKST: Record<Saksutfall, string> = {
+  teknisk_avklart: 'teknisk avklart uten faglig betydning',
+  ikke_funnet_igjen: 'kilden stemte igjen med grunnlaget',
+  tiltak_kontrollert: 'tiltakene er utført og kontrollert',
+  prove: 'prøven er fullført',
+  avlost: 'avløst av et nyere funn',
+  tidligere_beslutning: 'avsluttet med en faglig beslutning (før kildesakene)',
+}
+
+/** Et funn som sak, med det tekniske sporet. */
 export interface Kildefunn {
   id: number
   /** Overvåkingens stabile nøkkel, som `dokument:keks-2016`. */
@@ -37,15 +52,25 @@ export interface Kildefunn {
   sist_sett_kl: string | null
   /** Kontrollen av delen fant ikke funnet igjen. */
   borte_kl: string | null
-  /** Funnet med samme nøkkel denne raden avløste. */
+  /** Saken med samme nøkkel denne kom etter. */
   erstatter: number | null
-  erstattet_kl: string | null
+  tilstand: Sakstilstand
+  versjon: number
+  alvor: 'faglig' | 'sikkerhet'
+  konklusjon: 'uten_faglig_betydning' | 'uavklart' | 'faglig_relevant' | 'mulig_alvorlig_risiko' | null
+  konklusjon_tekst: string | null
+  konklusjon_kl: string | null
+  /** Kilden har fått nytt innhold etter at saken ble vurdert faglig. */
+  nytt_innhold_kl: string | null
+  utfall: Saksutfall | null
+  avsluttet_kl: string | null
+  /** Fritekstene fra P12.1-modellen, som står urørt. */
   teknisk_vurdering: string | null
   teknisk_av: string | null
-  teknisk_kl: string | null
   beslutning: string | null
   beslutning_av: string | null
-  beslutning_kl: string | null
+  tiltak: { id: number; art: string; regel: string | null; status: string; lenke: string | null; bevis: string | null; endret_kl: string }[]
+  hendelser: { kl: string; art: string; fra: string | null; til: string | null; av: string | null }[]
 }
 
 export interface Kildekjoring {
@@ -66,28 +91,11 @@ export interface Kildeovervaking {
   siste: Kildekjoring | null
 }
 
-export const erApen = (f: Pick<Kildefunn, 'beslutning_kl' | 'erstattet_kl'>) => !f.beslutning_kl && !f.erstattet_kl
+export const erApen = (f: Pick<Kildefunn, 'tilstand'>) => f.tilstand !== 'avsluttet'
 
 const timerSiden = (iso: string, na: number) => (na - Date.parse(iso)) / 3_600_000
 
-/** Hva som mangler for et åpent funn, og om fristen for det er passert. */
-export function fristene(f: Kildefunn, na: number): { teknisk: 'gjort' | 'venter' | 'over_fristen'; faglig: 'venter' | 'over_fristen' } {
-  const timer = timerSiden(f.opprettet_kl, na)
-  return {
-    teknisk: f.teknisk_kl ? 'gjort' : timer >= FRISTER.teknisk ? 'over_fristen' : 'venter',
-    faglig: f.prioritet === 'hoy' && timer >= FRISTER.faglig ? 'over_fristen' : 'venter',
-  }
-}
-
-/** Hvor mange åpne funn som venter, og hvor mange er over en frist; `null` når ingen venter. */
-export function funnSomVenter(o: Pick<Kildeovervaking, 'funn'>, na: number): string | null {
-  const apne = o.funn.filter(erApen)
-  if (apne.length === 0) return null
-  const over = apne.filter((f) => Object.values(fristene(f, na)).includes('over_fristen')).length
-  return `${apne.length} funn venter på faglig beslutning${over > 0 ? `, ${over} over fristen` : ''}`
-}
-
-/** Når kontrollen ikke har meldt seg som den skal, eller siste kjøring stoppet; ellers `null`. */
+/** Når kontrollen ikke har meldt seg som den skal, eller siste kjøring stoppet; ellers `null`. Et driftsforhold, ikke en faglig sak. */
 export function kontrollstatus(o: Pick<Kildeovervaking, 'siste'>, na: number): string | null {
   if (!o.siste) return 'kildeovervåkingen har ikke kjørt ennå'
   if (timerSiden(o.siste.kjort_kl, na) > UTEBLITT_ETTER_TIMER) return 'kildeovervåkingen har ikke kjørt på over en uke'
@@ -95,16 +103,8 @@ export function kontrollstatus(o: Pick<Kildeovervaking, 'siste'>, na: number): s
   return null
 }
 
-/**
- * Det en administrator bør ta stilling til, i korte setninger: tomt når
- * ingenting venter. Det samme gir prikken i Adminmeny og teksten ved den.
- */
-export const oppmerksomhet = (o: Kildeovervaking, na: number): string[] => [funnSomVenter(o, na), kontrollstatus(o, na)].filter((t): t is string => t !== null)
-
 export interface Kildeovervakingslager {
   les(historikk?: number): Promise<Kildeovervaking>
-  vurder(funn: number, vurdering: string): Promise<void>
-  beslutt(funn: number, beslutning: string): Promise<void>
 }
 
 const FORM = 'Kildeovervåkingen har en form appen ikke kjenner.'
@@ -114,19 +114,11 @@ export function lesKildeovervaking(x: unknown): Kildeovervaking {
   const o = x as Partial<Kildeovervaking> | null
   if (!o || !Array.isArray(o.funn) || !Array.isArray(o.kjoringer)) throw new Error(FORM)
   for (const f of o.funn) {
-    if (typeof f?.id !== 'number' || typeof f.funn !== 'string' || typeof f.etikett !== 'string' || !Array.isArray(f.detaljer) || !Array.isArray(f.berorte)) throw new Error(FORM)
+    if (typeof f?.id !== 'number' || typeof f.funn !== 'string' || typeof f.etikett !== 'string' || typeof f.tilstand !== 'string' || !Array.isArray(f.detaljer) || !Array.isArray(f.berorte) || !Array.isArray(f.tiltak) || !Array.isArray(f.hendelser)) throw new Error(FORM)
   }
   return { funn: o.funn, kjoringer: o.kjoringer, siste: o.siste ?? null }
 }
 
 export function lagKildeovervakingslager(kall: Databasekall): Kildeovervakingslager {
-  return {
-    les: async (historikk = 20) => lesKildeovervaking(await kall('les_kildeovervaking', { historikk })),
-    vurder: async (funn, vurdering) => {
-      await kall('vurder_kildefunn', { funn, vurdering })
-    },
-    beslutt: async (funn, beslutning) => {
-      await kall('beslutt_kildefunn', { funn, beslutning })
-    },
-  }
+  return { les: async (historikk = 20) => lesKildeovervaking(await kall('les_kildeovervaking', { historikk })) }
 }
