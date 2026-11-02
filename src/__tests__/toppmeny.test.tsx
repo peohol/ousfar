@@ -38,17 +38,27 @@ vi.mock('../components/konto/Datakilder', () => ({
 vi.mock('../components/kuratering/Utgavelister', () => ({
   Kurateringsoversikt: ({ apen }: { apen: boolean }) => (apen ? <p>Kurateringsoversikten</p> : null),
 }))
-vi.mock('../components/konto/Kildeovervaking', () => ({
-  Kildeovervaking: ({ apen, onNodstopp }: { apen: boolean; onNodstopp?: () => void }) =>
-    apen ? (
-      <>
-        <p>Kildeovervåkingen</p>
-        <button onClick={onNodstopp}>Åpne nødstoppen</button>
-      </>
-    ) : null,
-  // Ingen faglige saker, så prikken ikke står i de andre testene.
-  fagsaklager: () => ({ les: async () => ({ saker: [], teknisk: 'normal', sist_kontrollert_kl: null }), beslutt: async () => 'registrert' }),
-}))
+vi.mock('../components/konto/Kildeovervaking', async () => {
+  const { useEffect, useRef } = await import('react')
+  return {
+    // Som det ekte vinduet (Modallag): å lukke dialogen kaller onLukk, også når vinduet lukkes fordi et annet åpnes.
+    Kildeovervaking: function Kildeovervaking({ apen, onLukk, onNodstopp }: { apen: boolean; onLukk: () => void; onNodstopp?: () => void }) {
+      const forrige = useRef(apen)
+      useEffect(() => {
+        if (forrige.current && !apen) onLukk()
+        forrige.current = apen
+      }, [apen, onLukk])
+      return apen ? (
+        <>
+          <p>Kildeovervåkingen</p>
+          <button onClick={onNodstopp}>Åpne nødstoppen</button>
+        </>
+      ) : null
+    },
+    // Ingen faglige saker, så prikken ikke står i de andre testene.
+    fagsaklager: () => ({ les: async () => ({ saker: [], teknisk: 'normal', sist_kontrollert_kl: null }), beslutt: async () => 'registrert' }),
+  }
+})
 vi.mock('../components/konto/Verktoysperrer', () => ({
   Verktoysperrer: ({ apen }: { apen: boolean }) => (apen ? <p>Nødstoppen</p> : null),
 }))
