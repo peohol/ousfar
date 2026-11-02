@@ -19,7 +19,7 @@ Samlet: ingen av endringene som anbefales, lar noe klinisk vises uten den samme 
 | # | Mekanisme | Hvor | Hva den gjør | Gjelder |
 | --- | --- | --- | --- | --- |
 | K1 | FEST-ferskhet | `festFerskhet` i `src/verktoy/motor/plan.ts`, grensen `FEST_FORELDET_ETTER_TIMER = 48` i `src/legemiddeldata/referanser.ts` | En plan er ikke klinisk når siste vellykkede FEST-kjøring (`kontrollert_kl` = siste `avsluttet_kl` med status `fullfort` eller `uendret`) er mer enn 48 timer gammel. Da vises «Ingen doseplan» med grunnen. | De fire beregningsreglene (Maintena v3, Xeplion v3, sertralin → mirtazapin v9, vortioksetin v11). Ikke fagtekstreglene (bupropion v5, agomelatin v1), som ikke bruker FEST. |
-| K2 | Gyldige tidsstempler | samme sted | Kontrolltidspunktet må kunne tolkes og ligge høyst 5 minutter fram i tid; kildedatoen må være gyldig og ikke etter kontrollen. | Som K1 |
+| K2 | Gyldige tidsstempler | samme sted | Kontrolltidspunktet må kunne tolkes og ligge høyst 5 minutter fram i tid; kildedatoen må være en gyldig dato og ikke senere enn kalenderdatoen (UTC) for kontrolltidspunktet + 24 timer. Den ene dagens slingring er der fordi kontrolltidspunktet kan være skrevet i en annen tidssone enn kildedatoen; en kildedato dagen etter kontrollen godtas altså. | Som K1 |
 | K3 | Plan som står | `gjelderFortsatt` i `src/verktoy/doseplan.ts`, kontrollert hvert minutt | En vist plan tas bort når K1 slår ut eller dagen i Norge skifter (markedsstatusen gjelder én dato). | Som K1 |
 | K4 | Sperrelesing | `src/verktoy/sperrer.ts`, `useSperrer` i `src/components/verktoy/Verktoyside.tsx` | Sperrene leses ved åpning, hvert minutt mens fanen er synlig, og når fanen får fokus. En lesing som ikke svarer innen 15 s, har feilet. En vellykket lesing gjelder i 2 min; etter det, eller når en lesing feiler, vises verken beregning eller fagtekst. | Alle seks godkjente regler, også fagtekst |
 | K5 | Ny lesing før plan | `beregn` i `Beregningsdel` | Sperrene leses på nytt etter at FEST er hentet og rett før en plan vises. | Beregningsreglene |
@@ -126,6 +126,8 @@ Alle med syntetiske data og kontrollert klokke, i `verktoyside.test.tsx`, `verkt
 | T-F3 | 48 t + 1 s | Ingen plan, med grunnen om FEST |
 | T-F4 | Plan står, klokken passerer 48 t | Planen tas bort innen ett minutt |
 | T-F5 | Kontrollert 5 min + 1 s fram i tid | Ingen plan |
+| T-F6 | Kontrollert 2026-11-02T00:00:00Z, kildedato 2026-11-03 | Plan (innenfor dagens slingring) |
+| T-F7 | Kontrollert 2026-11-02T00:00:00Z, kildedato 2026-11-04 | Ingen plan, kildedatoen ligger etter kontrollen |
 
 **F4:** en kjøring som feiler etter at ny ETag er sett, lagrer ETag og «ny fil kjent»; en som feiler før svar, lagrer «ukjent»; den tekniske vakten melder etter første mislykkede natt, og en ende-til-ende-prøve viser at den faktisk kjører og når fram; ingenting av dette vises for forskriveren eller redaktøren.
 
