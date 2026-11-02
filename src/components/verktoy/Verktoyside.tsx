@@ -55,7 +55,7 @@ import {
   type Tilgjengelighet,
   type Verktoyvalg,
 } from '../../verktoy/tilgjengelighet'
-import { snarvalg, type Snarvalg } from '../../verktoy/snarvalg'
+import { snarvalg, utenSperrede, type Snarvalg } from '../../verktoy/snarvalg'
 import { Button } from '../Button'
 import { Details } from '../Details'
 import { Lastesirkel } from '../Lasteindikator'
@@ -207,7 +207,7 @@ export function Verktoyside({ verktoy: id, legemidler, sperrer: sperreleser, onL
 
 function Oversikt({ overskrift, ukjent, regelsett, sperrer }: { overskrift: string; ukjent: boolean; regelsett: Regelsett; sperrer: Sperretilstand }) {
   const aktive = sperrer.status === 'klar' ? sperrer.sperrer : []
-  const status = VERKTOY.map((v) => ({ verktoy: v, sperret: verktoysperrer(aktive, v).length > 0, valg: snarvalg(v, regelsett) }))
+  const status = VERKTOY.map((v) => ({ verktoy: v, sperret: verktoysperrer(aktive, v).length > 0, valg: utenSperrede(snarvalg(v, regelsett), aktive, v) }))
   const ingen = status.every((s) => s.valg.every((x) => x.status !== 'tilgjengelig'))
   const alle = aktive.filter((s) => s.omfang === 'alle')
   return (
@@ -263,9 +263,14 @@ function Dekning({ valg, sperret }: { valg: readonly Snarvalg[]; sperret: boolea
   const fagtekst = liste('fagtekst')
   return (
     <span className="verktoykort__status">
-      {sperret && <span className="verktoykort__linje">Midlertidig deaktivert</span>}
-      <span className="verktoykort__linje">{beregnes ? `Kan beregnes: ${beregnes}` : 'Ingen beregning tilgjengelig ennå'}</span>
-      {fagtekst && <span className="verktoykort__linje">Fagtekst: {fagtekst}</span>}
+      {sperret ? (
+        <span className="verktoykort__linje">Midlertidig deaktivert</span>
+      ) : (
+        <>
+          <span className="verktoykort__linje">{beregnes ? `Kan beregnes: ${beregnes}` : 'Ingen beregning tilgjengelig ennå'}</span>
+          {fagtekst && <span className="verktoykort__linje">Fagtekst: {fagtekst}</span>}
+        </>
+      )}
     </span>
   )
 }
@@ -343,7 +348,7 @@ function Verktoyskjema({
   varsler: readonly Regelvarsel[]
 }) {
   const valgene = useMemo(() => virkestoffvalg(verktoy), [verktoy])
-  const snarvalgene = useMemo(() => snarvalg(verktoy, regelsett), [verktoy, regelsett])
+  const alleSnarvalg = useMemo(() => snarvalg(verktoy, regelsett), [verktoy, regelsett])
   const [fraTekst, setFraTekst] = useBevart('fra', '')
   const [fraForm, setFraForm] = useBevart<Kildeformulering | ''>('fra/formulering', '')
   const [tilTekst, setTilTekst] = useBevart('til', '')
@@ -380,6 +385,8 @@ function Verktoyskjema({
   const aktive = sperrer.tilstand.status === 'klar' ? sperrer.tilstand.sperrer : []
   const regler = klinisk && status ? usperrede(aktive, verktoy, status.regler) : []
   const hele = verktoysperrer(aktive, verktoy)
+  // Det som er stanset av en nødstopp, tilbys ikke som tilgjengelig.
+  const snarvalgene = utenSperrede(alleSnarvalg, aktive, verktoy)
 
   return (
     <>

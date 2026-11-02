@@ -220,7 +220,9 @@ export const egneAdvarsler = (v: Pick<Planvisning, 'advarsler' | 'forbehold'>): 
  * Listene etter tabellen i teksten som kopieres, i rekkefølgen de står i;
  * kildene og versjonene står etter dem. Skjermen har de samme listene, men
  * viser advarslene for planen ved tabellen og resten under «Faglig grunnlag»
- * (`Doseplanvisning`), så kopien har alt skjermen har.
+ * (`Doseplanvisning`). Kopien har hver linje i disse listene; godkjenningen
+ * ({@link Planvisning.godkjenning}) står bare på skjermen, og
+ * regelversjonen står i kopien under «Versjoner».
  */
 export const PLANDELER = [
   { tittel: 'Advarsler', felt: 'advarsler' },

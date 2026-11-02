@@ -212,7 +212,7 @@ describe('med en regel godkjent bare i testen', () => {
 
     await user.click(within(plan).getByRole('button', { name: 'Kopier planen' }))
     const tekst = await navigator.clipboard.readText()
-    // Kopien har alt skjermen har, også det faglige grunnlaget: hver linje i planen, unntatt kildene, som står med lenken.
+    // Kopien har hver linje i planen, også i det faglige grunnlaget, unntatt kildene, som står med lenken.
     expect(tekst).toContain('\nAdvarsler:\n')
     const kilder = within(grunnlag).queryByRole('heading', { name: 'Kilder', hidden: true })?.parentElement
     for (const li of plan.querySelectorAll('li')) if (!kilder?.contains(li)) expect(tekst).toContain(`- ${li.textContent}`)
@@ -556,11 +556,16 @@ describe('nødstoppen (P11.6)', () => {
     vis({ sperrer: nodstopp(() => [sperre('verktoy', 'bytte-antipsykotikum')]) })
     await screen.findByText('Midlertidig deaktivert')
     expect(deaktivert()).toEqual([false, false, true])
+    // Et deaktivert verktøy lover ingen beregning i oversikten.
+    expect(document.querySelectorAll('.verktoykort__status')[2]!.textContent).toBe('Midlertidig deaktivert')
     cleanup()
 
     // Én regel: fagteksten for agomelatin er borte, mens bupropion fortsatt vises.
     vis({ verktoy: 'trappe-ned-antidepressiv', sperrer: nodstopp(() => [sperre('regel', 'seponering-agomelatin', 'Fagteksten må kontrolleres på nytt.')]) })
     const felt = screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' })
+    // Den sperrede regelen tilbys ikke som snarvalg; de andre gjør det.
+    const fagtekstvalg = await screen.findByRole('group', { name: 'Bare fagtekst:' })
+    expect(within(fagtekstvalg).getAllByRole('button').map((b) => b.textContent)).toEqual(['Bupropion'])
     await user.type(felt, 'Agomelatin')
     expect((await screen.findByRole('alert', { name: 'Midlertidig deaktivert' })).textContent).toMatch(/Regelen «Seponering av agomelatin»: Fagteksten må kontrolleres på nytt\./)
     expect(screen.queryByRole('region', { name: 'Fagtekst' })).toBeNull()

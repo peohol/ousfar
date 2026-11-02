@@ -13,7 +13,8 @@
  */
 import type { Kildeformulering } from './kartlegging'
 import { FORMULERINGSNAVN, virkestoffvalg, type Verktoy, type Verktoyvirkestoff } from './register'
-import type { Regelsett } from './regler/modell'
+import type { Regel, Regelsett } from './regler/modell'
+import { usperrede, type Verktoysperre } from './sperrer'
 import { REGELSETT, tilgjengelighet, type Valgtvirkestoff, type Verktoyvalg } from './tilgjengelighet'
 
 export interface Snarvalg {
@@ -22,6 +23,8 @@ export interface Snarvalg {
   status: 'tilgjengelig' | 'fagtekst'
   /** «Vortioksetin», «Sertralin → mirtazapin» eller «Aripiprazol: peroral → depotinjeksjon». */
   tekst: string
+  /** Reglene valget gir beregning eller fagtekst etter, så en nødstopp kan holde det utenfor ({@link utenSperrede}). */
+  regler: Pick<Regel, 'id'>[]
 }
 
 type Valgbar = { v: Verktoyvirkestoff; valgt: Valgtvirkestoff }
@@ -58,10 +61,18 @@ export function snarvalg(verktoy: Verktoy, regelsett: Regelsett = REGELSETT): Sn
   const rang = { tilgjengelig: 0, fagtekst: 1 } as const
   const ut = par
     .flatMap(({ valg, tekst }): Snarvalg[] => {
-      const { status } = tilgjengelighet(verktoy, valg, regelsett)
-      return status === 'tilgjengelig' || status === 'fagtekst' ? [{ valg, status, tekst }] : []
+      const { status, regler } = tilgjengelighet(verktoy, valg, regelsett)
+      return status === 'tilgjengelig' || status === 'fagtekst' ? [{ valg, status, tekst, regler: regler.map((r) => ({ id: r.id })) }] : []
     })
     .sort((a, b) => rang[a.status] - rang[b.status] || a.tekst.localeCompare(b.tekst, 'nb'))
   perVerktoy.set(verktoy.id, ut)
   return ut
 }
+
+/**
+ * Snarvalgene som ikke er stanset av en aktiv nødstopp: et valg der hver regel
+ * er sperret (for regelen, verktøyet eller alle), tilbys ikke som tilgjengelig.
+ * Sperrene kontrolleres uansett på nytt når noe beregnes.
+ */
+export const utenSperrede = (valg: readonly Snarvalg[], sperrer: readonly Verktoysperre[], verktoy: Pick<Verktoy, 'id'>): Snarvalg[] =>
+  valg.filter((s) => usperrede(sperrer, verktoy, s.regler).length > 0)

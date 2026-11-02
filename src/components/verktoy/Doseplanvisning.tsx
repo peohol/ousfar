@@ -11,7 +11,8 @@ import { FagligGrunnlag, plangrunnlag } from './FagligGrunnlag'
  * gjelder akkurat denne planen (de generelle forbeholdene, advarslene og
  * avvikene), og resten av det planen bygger på i den sammenleggbare delen
  * «Faglig grunnlag» (VDR-3). Den kan kopieres som tekst og skrives ut;
- * kopien har alt, og utskriften har bare planen med det faglige grunnlaget
+ * kopien er den samme som før VDR-3, med hver liste i planen, kildene og
+ * versjonene, og utskriften har bare planen med det faglige grunnlaget
  * åpnet (`verktoy.css`). Komponenten får bare en plan som er klinisk
  * ({@link Planvisning} fra `planvisning`), aldri en modellberegning.
  * `varsel` er et eventuelt faglig varsel for regelen planen er beregnet etter.
