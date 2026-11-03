@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.117.9',
+    versjon: '1.119.1',
     dato: '2026-11-03',
     sammendrag: 'Grunnlag for faglig kontroll av nedtrappingsreglene for amitriptylin, nortriptylin og escitalopram',
     typer: ['Funksjonalitet'],
@@ -22,6 +22,22 @@ export const ENDRINGSLOGG: Endring[] = [
       'Grunnlaget viser kildene, hvilke tilfeller en godkjenning kan gjelde, alle planene verktøyet ville vist om reglene ble godkjent, og spørsmål til kontrolløren. 40 syntetiske testeksempler kontrolleres automatisk. Ingen regel tas i bruk før den er uavhengig kontrollert og godkjent.',
     ],
     utenVarsel: true,
+  },
+  {
+    versjon: '1.119.0',
+    dato: '2026-11-03',
+    sammendrag: 'Kildeovervåkingen: tekniske avvik følges opp uten frister, og redaktøren får bare faglige spørsmål',
+    typer: ['Funksjonalitet'],
+    omfang: 'Moderat omfang',
+    gjelder: ['hele appen'],
+    punkter: [
+      'Et funn fra kildeovervåkingen undersøkes nå først teknisk. En endret kontrollsum alene gir ingen oppgave for administratoren, ingen prikk i adminmenyen og ingen sperre.',
+      'Fristene på ett og tre døgn er fjernet, sammen med skjemaene for teknisk vurdering og for å avslutte et funn med fritekst.',
+      'Adminmenyen har en prikk bare når et konkret faglig spørsmål venter på beslutning, eller når en eksisterende plan kan være uforsvarlig.',
+      'En beslutning avslutter ikke saken av seg selv: saken står som «Oppfølging pågår» til tiltakene er utført og kontrollert. Velger administratoren å deaktivere en regel, settes nødstoppen for den straks.',
+      'Samme kilde med samme innhold gir ikke lenger en ny sak hver uke.',
+      'Ingen klinisk regel, beregning eller godkjenning er endret.',
+    ],
   },
   {
     versjon: '1.117.7',

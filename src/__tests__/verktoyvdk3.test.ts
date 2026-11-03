@@ -137,6 +137,7 @@ describe('Kontrollgrunnlaget', () => {
   it('sier at ingen regel er godkjent, viser ingen tekst eller lenker fra Psychiatrienet, og har ingen avvik', () => {
     const tekst = les(FORSLAG_1.fil)
     expect(tekst).toContain('**Ingen regel er godkjent eller aktivert, og denne PR-en endrer ingen regel.**')
+    expect(tekst).toContain('er ingen klinisk godkjenning av forslag 1 eller av spørsmålene 1.1–1.7')
     expect(tekst).not.toMatch(/psychiatrienet\.(nl|org|com)/i)
     expect(tekst).not.toContain('**avvik:**')
     expect(tekst).not.toContain('**nei**')

@@ -24,12 +24,13 @@ export type Funnart = 'ny' | 'endret' | 'fjernet' | 'utilgjengelig'
 export type Funnniva = 'informativ' | 'krever_vurdering'
 
 /**
- * Prioriteten til et funn som krever vurdering (`docs/verktøy-p12-regelforvaltning.md`
- * §5 punkt 3). `hoy`: kan være en reell sikkerhetsrisiko, som en kilde eller et
+ * En maskinell indikasjon på hvor mye et funn kan bety, ikke en frist eller en
+ * klinisk vurdering. `hoy`: noe som kan bety mye, som en kilde eller et
  * preparat som er borte, en styrke eller form i det godkjente omfanget som er
  * endret, eller en endret anbefaling i kildeoppføringen regelen sammenlignes
  * med. `vanlig`: en endret kontrollsum for et kildedokument, uten at det er
- * påvist hva som er endret.
+ * påvist hva som er endret. Den kliniske alvorligheten avgjøres i saken
+ * (`alvor` i `public.kildefunn`, `docs/verktøy-p12-overvaking.md` §5).
  */
 export type Funnprioritet = 'hoy' | 'vanlig'
 
@@ -41,6 +42,8 @@ export interface Berort {
   fingeravtrykk: string
   /** Hva i regelen funnet treffer. */
   hvorfor: string
+  /** Verktøyene regelen hører til, så en nødstopp for et verktøy også gjelder regelen. Ikke med i funnavtrykket. */
+  verktoy?: string[]
 }
 
 export interface Overvakingsfunn {
@@ -58,6 +61,13 @@ export interface Overvakingsfunn {
   berorte: Berort[]
   /** Bare for et funn som krever vurdering. */
   prioritet?: Funnprioritet
+  /**
+   * Avtrykket av det som er målt, uten det som skifter ved hver henting (for
+   * en nettside den synlige teksten eller de relevante avsnittene, ikke siden
+   * slik den kom). Gir et stabilt `funnavtrykk`, så samme innhold ikke blir en
+   * ny sak hver uke (`rapport.ts`).
+   */
+  tilstandsavtrykk?: string
 }
 
 /** Hva en del av overvåkingen sammenlignet med, og om den ble kjørt. */
