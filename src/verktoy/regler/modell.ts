@@ -203,8 +203,12 @@ export type Nedtrappingsstrategi =
    * forskriveren ved lave doser velge et minste trinn ({@link Minstetrinn}).
    */
   | { type: 'prosent_av_aktuell'; prosent: Parameter; lav_prosent?: Parameter; lav_grense_mg?: Parameter; sluttdose_mg?: Parameter; minste_trinn?: Minstetrinn }
-  /** Hvert trinn er `prosent` av startdosen lavere (lineært). */
-  | { type: 'prosent_av_startdose'; prosent: Parameter }
+  /**
+   * Hvert trinn er `prosent` av startdosen lavere (lineært). Med `trinnvalg`
+   * og `mellomtrinn` kan forskriveren velge et mindre siste trinn før
+   * seponeringen ({@link Fase}).
+   */
+  | { type: 'prosent_av_startdose'; prosent: Parameter; mellomtrinn?: Grunnlag }
   /** Hvert trinn er `mg` lavere (lineært, absolutt). */
   | { type: 'absolutt'; mg: Parameter }
   /**
@@ -245,7 +249,12 @@ export type Fase =
    * Med `prosent_av_startdose` og nedtrapping til 0 (regelmodell 12) tilbys
    * den nærmeste dosen under og over den beregnede, et valgt trinn varer så
    * lenge at nedtrappingen aldri går raskere enn regelen (`tempolengde`), og
-   * neste trinn regnes fra den valgte dosen.
+   * neste trinn regnes fra den valgte dosen. Med `strategi.mellomtrinn` tilbys
+   * også et mindre siste trinn der planen ellers går fra siste dose til 0 (en
+   * reduksjon på 100 %): den nærmeste lavere dosen og den laveste dosen som
+   * kan gis, med samme regel for trinnlengden. Seponeringen kommer etter
+   * mellomtrinnet; uten valg gjelder trinnet til 0, og bare ett mellomtrinn
+   * kan velges per forløp.
    */
   | {
       type: 'nedtrapping'
@@ -894,7 +903,7 @@ export function grunnlagITabeller(r: Pick<Regel, 'plan'>): [string, Grunnlag][] 
   )
 }
 
-/** Alle grunnlag i regelen med stien dit: parametre med begrunnelseskravene og forslagene ved svar, inndata, bekreftelser, unntak, spørsmål, tabeller, valg av dose per trinn, fordeling og det kliniske omfanget. */
+/** Alle grunnlag i regelen med stien dit: parametre med begrunnelseskravene og forslagene ved svar, inndata, bekreftelser, unntak, spørsmål, tabeller, valg av dose per trinn og mellomtrinn, fordeling og det kliniske omfanget. */
 export function alleGrunnlag(r: Regel): [string, Grunnlag][] {
   return [
     ...parametre(r).flatMap(([sti, p]) => [
@@ -906,6 +915,9 @@ export function alleGrunnlag(r: Regel): [string, Grunnlag][] {
     ...[...r.bekreftelser, ...r.unntak, ...(r.sporsmal ?? [])].map((x) => [x.id, x.grunnlag] as [string, Grunnlag]),
     ...grunnlagITabeller(r),
     ...r.plan.forlop.flatMap((f) => f.faser.flatMap((x, i) => (x.type === 'nedtrapping' && x.trinnvalg ? [[`${f.id}.faser[${i}].trinnvalg`, x.trinnvalg] as [string, Grunnlag]] : []))),
+    ...r.plan.forlop.flatMap((f) =>
+      f.faser.flatMap((x, i) => (x.type === 'nedtrapping' && x.strategi.type === 'prosent_av_startdose' && x.strategi.mellomtrinn ? [[`${f.id}.faser[${i}].strategi.mellomtrinn`, x.strategi.mellomtrinn] as [string, Grunnlag]] : [])),
+    ),
     ...r.plan.forlop.flatMap((f) => (f.fordeling ? [[`${f.id}.fordeling`, f.fordeling.grunnlag] as [string, Grunnlag]] : [])),
     ...r.plan.forlop.flatMap((f) => (f.vurderinger ?? []).map((v) => [`${f.id}.vurderinger.${v.id}`, v.grunnlag] as [string, Grunnlag])),
     ...r.plan.forlop.flatMap((f) =>

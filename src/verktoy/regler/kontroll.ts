@@ -233,6 +233,8 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
       if (fase.trinnvalg && fase.strategi.type === 'prosent_av_startdose') {
         if (individuell) f(`forløp ${x.id} lar forskriveren velge dose per trinn i prosent av startdosen med individuell eller godkjent avslutning; det gjelder bare en nedtrapping til 0`)
         if (x.dosevalg?.avvik_prosent?.verdi) f(`forløp ${x.id} lar forskriveren velge dose per trinn og har samtidig en toleranse`)
+      } else if (fase.strategi.type === 'prosent_av_startdose' && fase.strategi.mellomtrinn) {
+        f(`forløp ${x.id} har et mellomtrinn før seponeringen uten valg av dose per trinn`)
       } else if (fase.trinnvalg) {
         if (fase.strategi.type !== 'prosent_av_aktuell' || !fase.strategi.prosent.omrade) f(`forløp ${x.id} lar forskriveren velge dose per trinn uten et område for reduksjonen i prosent av aktuell dose`)
         if (!individuell) f(`forløp ${x.id} lar forskriveren velge dose per trinn uten individuell eller godkjent avslutning`)

@@ -57,8 +57,12 @@ export interface Periode {
   fordeles?: number[]
   /** Trinnet (fra 1) i en nedtrapping der forskriveren kan velge dose per trinn (`Fase.trinnvalg`). */
   trinn?: number
-  /** Når forskriveren har valgt dosen for trinnet: den beregnede dosen, som ikke kunne gis, og den faktiske reduksjonen i prosent. */
-  valgt?: { beregnet_mg: number; prosent: number }
+  /**
+   * Når forskriveren har valgt dosen for trinnet: den beregnede dosen, som
+   * ikke kunne gis, og den faktiske reduksjonen i prosent; `mellomtrinn` når
+   * trinnet er et mindre siste trinn før seponeringen (beregnet 0 mg).
+   */
+  valgt?: { beregnet_mg: number; prosent: number; mellomtrinn?: true }
   fra_dato?: string
   til_dato?: string | null
 }
@@ -356,10 +360,13 @@ function tempotrinn(
 ): number {
   const steg = (d0 * verdi(s.prosent)) / 100
   let aktuell = d0
+  let mellomtrinn = false
   for (let k = 1; k <= MAKS_TRINN; k++) {
     const beregnet = aktuell - steg
-    if (beregnet <= EPS) return dag
     const v = valg.find((x) => x.trinn === k && Math.abs(x.fra_mg - aktuell) < EPS)
+    // Trinnet til 0 er seponeringen; med `mellomtrinn` kan forskriveren én gang velge et mindre siste trinn før den.
+    const mellom: boolean = beregnet <= EPS && !!s.mellomtrinn && !mellomtrinn && !!v
+    if (beregnet <= EPS && !mellom) return dag
     if (!v) {
       legg(dag, dag + lengde - 1, beregnet, undefined, { trinn: k })
       dag += lengde
@@ -374,12 +381,16 @@ function tempotrinn(
     if (min !== undefined && v.mg < min - EPS) throw new Stopp(`${hva} er under ${tall(min)} mg, den laveste dosen som kan gis med formuleringen regelen gjelder.`)
     const n = tempolengde(lengde, steg, aktuell - v.mg)
     const prosent = (1 - v.mg / aktuell) * 100
+    const tempo = `trinnet varer så lenge at nedtrappingen ikke går raskere enn ${tall(verdi(s.prosent))} % av startdosen per ${lengde} dager`
     ctx.kontroller.push({
-      krav: `Trinn ${k} av ${virkestoff} er valgt av forskriveren fordi den beregnede dosen (${tall(beregnet)} mg) ikke kan gis; trinnet varer så lenge at nedtrappingen ikke går raskere enn ${tall(verdi(s.prosent))} % av startdosen per ${lengde} dager`,
+      krav: mellom
+        ? `Trinn ${k} av ${virkestoff} er et mindre siste trinn før seponeringen, valgt av forskriveren i stedet for trinnet fra ${tall(aktuell)} mg til 0; ${tempo}`
+        : `Trinn ${k} av ${virkestoff} er valgt av forskriveren fordi den beregnede dosen (${tall(beregnet)} mg) ikke kan gis; ${tempo}`,
       oppfylt: true,
       detalj: `${tall(v.mg)} mg, ${tall(aktuell - v.mg)} mg reduksjon fra ${tall(aktuell)} mg, ${n} dager.`,
     })
-    legg(dag, dag + n - 1, v.mg, undefined, { trinn: k, valgt: { beregnet_mg: beregnet, prosent } })
+    mellomtrinn ||= mellom
+    legg(dag, dag + n - 1, v.mg, undefined, { trinn: k, valgt: { beregnet_mg: Math.max(0, beregnet), prosent, ...(mellom && { mellomtrinn: true }) } })
     dag += n
     aktuell = v.mg
   }
@@ -1168,7 +1179,8 @@ function periodetekst(p: Periode): string {
 }
 
 /** «valgt av forskriveren (beregnet 37,5 mg; −30 %)» for et trinn forskriveren har valgt dosen for. */
-export const valgtTekst = (p: Pick<Periode, 'valgt'>) => (p.valgt ? `valgt av forskriveren (beregnet ${mg(p.valgt.beregnet_mg)} mg; −${mg(p.valgt.prosent)} %)` : '')
+export const valgtTekst = (p: Pick<Periode, 'valgt'>) =>
+  !p.valgt ? '' : p.valgt.mellomtrinn ? `mindre siste trinn valgt av forskriveren (−${mg(p.valgt.prosent)} %)` : `valgt av forskriveren (beregnet ${mg(p.valgt.beregnet_mg)} mg; −${mg(p.valgt.prosent)} %)`
 /** Det samme etter dosen: «, valgt av forskriveren (…)». */
 export const valgtSuffiks = (p: Pick<Periode, 'valgt'>) => (p.valgt ? `, ${valgtTekst(p)}` : '')
 
