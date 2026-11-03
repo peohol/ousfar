@@ -186,7 +186,7 @@ Det kan være en reell revisjon, eller bare at siden rundt teksten er endret. De
 1. Endrede, fjernede, nye og utilgjengelige kildedokumenter, Psychiatrienet-oppføringer og FEST-preparater oppdages. Det er testet med syntetiske endringer (`src/__tests__/verktoyovervaking.test.ts`).
 2. Bare det som treffer en godkjent regelversjon og sier noe om innholdet, krever vurdering, og funnet nevner regelversjonen og fingeravtrykket.
 3. Rapporten og funnene i appen har ingen kildetekst.
-4. Overvåkingen endrer ingen regel, godkjenning, sperre, grunnlag eller arkiv. De seks godkjente reglene har uendret versjon og fingeravtrykk (`verktoyklinisktilgang.test.ts`).
+4. Overvåkingen endrer ingen regel, godkjenning, sperre, grunnlag eller arkiv. `verktoyklinisktilgang.test.ts` kontrollerer de seks regelversjonene og fingeravtrykkene som er godkjent nå. Nye regelversjoner godkjennes særskilt, slik som de to kildekorrigerte versjonene i PR #309; kildeovervåkingen utfører ikke denne godkjenningen.
 5. Arbeidsflyten kjører bare fra main, har bare lesetilgang til repoet, og melder kjøringen til appen med et OIDC-token. Endepunktet tar bare imot fra den arbeidsflyten, og bare administratorer kan lese og vurdere funnene (`kildeovervaking.test.ts`).
 6. Et nytt funn er en teknisk sak og når ikke redaktøren alene. Samme innhold gir ingen ny sak; nytt innhold oppdaterer den åpne saken uten å viske ut en beslutning; en del som ikke er kontrollert, rører ingen sak; ingen rad slettes (`kildeovervaking.test.ts`).
 7. En teknisk sak avsluttes bare med bevis som ikke er en kontrollsum alene, eller når en kontroll av delen fant kilden i samsvar med grunnlaget; en kilde som ikke svarte, avslutter ingenting. Et mulig sikkerhetsproblem avsluttes aldri teknisk.

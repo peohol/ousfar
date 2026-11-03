@@ -131,7 +131,7 @@ Alle punkter er **ikke påbegynt** per 01.11.2026. Claude gjennomfører tekniske
 
 **Kontrollport:** Dokumenterte kjøringer, sikkerhetstester, UI-test og kontrollørtillatelse. P12.1 skal ikke krysses av kun fordi den gamle prøvesaken har passert 72 timer.
 
-**Status 03.11.2026 (til kontroll):** Flyt 1–3 er prøvd fra kjøringen til verktøysiden (`src/__tests__/kildesakflyt.test.tsx`). Produksjonen er kontrollert ved lesing, funn 3 er avsluttet som prøve, og den gamle påminnelsen er avklart (`docs/verktøy-vdr5-produksjonskontroll.md`). Kontrolløren godtok testbevisene og at en ny sperre i produksjonen ikke trengs. Sak 4 og 5, som avløste funn 1 og 2, avsluttes teknisk etter PR #306. P12.1 står åpen til de er avsluttet og en ordinær kontroll etterpå er uten nye saker.
+**Status 03.11.2026 (til kontroll):** Flyt 1–3 er prøvd fra kjøringen til verktøysiden (`src/__tests__/kildesakflyt.test.tsx`). Produksjonen er kontrollert ved lesing, funn 3 er avsluttet som prøve, og den gamle påminnelsen er avklart (`docs/verktøy-vdr5-produksjonskontroll.md`). Kontrolløren godtok testbevisene og at en ny sperre i produksjonen ikke trengs. Sak 4 og 5, som avløste funn 1 og 2, ble teknisk avsluttet etter PR #306, med etterprøvbart kildebevis ([sak 4](https://github.com/peohol/ousfar/actions/runs/41605290757), [sak 5](https://github.com/peohol/ousfar/actions/runs/41605365060)). En [ordinær kontroll](https://github.com/peohol/ousfar/actions/runs/41605399129) fant ingen nye saker. P12.1 står åpen frem til VDR-5 er publisert og fremdriftsplanen er oppdatert.
 
 ## 7. Parallelt arbeid: øk klinisk nytte og regeldekning
 

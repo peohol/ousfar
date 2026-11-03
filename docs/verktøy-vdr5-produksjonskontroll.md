@@ -47,3 +47,7 @@ P12.1 krysses ikke av fordi 72 timer har gått.
 1. **Flyt 1–3 sammen med lesingen i §2 er tilstrekkelig bevis for VDR-5.** Kontrolløren presiserer at det er en kontrollert testdatabase og lesing i produksjonen, ikke en ny skriveprøve i produksjonen.
 2. **En ny sperre i produksjonen trengs ikke.** Prøven 31.10.2026 viste at en regelsperre ble satt og opphevet, og mekanismen er uendret. Flyt 3 binder kildesakens beslutning til den samme sperren og viser at den er målrettet og kan oppheves.
 3. **P12.1 krysses ikke av ennå.** Først må sak 4 og 5 få et nytt, kontrollert kildegrunnlag gjennom PR #306. Deretter må de avsluttes teknisk med et bevis som kan etterprøves, og en ordinær kontroll etterpå må gå uten nye saker for de samme kildene. Prøvefunn 3 behandles fortsatt som en prøve, ikke med en faglig beslutning.
+
+## 5. Etterkontroll av de to reelle kildesakene
+
+Etter det nye avsnittsgrunnlaget i PR #306 ble sak 4 (`keks-2016`) [avsluttet teknisk](https://github.com/peohol/ousfar/actions/runs/41605290757) og sak 5 (`rcpsych-stopping`) [avsluttet teknisk](https://github.com/peohol/ousfar/actions/runs/41605365060) 03.11.2026. [Etterfølgende ordinær kontroll](https://github.com/peohol/ousfar/actions/runs/41605399129) fant ingen nye saker. Dette er etterfølgende resultater, ikke del av den historiske lesekontrollen i §2. Ingen faglig beslutning ble simulert.
