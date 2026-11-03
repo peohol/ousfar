@@ -384,6 +384,25 @@ function eksempler(e: Eksisterende, plan: Gruppeplan, bekreftet: string[], pasie
 const aktuellDose = (e: Eksisterende): Bekreftelse => ({ id: 'aktuell_dose', tekst: e.dose.tekst, grunnlag: { type: 'kilde', henvisninger: e.dose.henvisninger } })
 
 /**
+ * Måldosen er et klinisk avgrensningsvilkår, ikke en anbefaling til alle:
+ * forskriveren bekrefter at preparatomtalens første stabiliserende måldose er
+ * pasientens mål, og ved østrogenholdig behandling at målet er vurdert særskilt.
+ */
+const maldosebekreftelser = (plan: Gruppeplan, e: Eksisterende, ostrogen: Sporsmal): Bekreftelse[] => [
+  {
+    id: 'maldose_valgt',
+    tekst: `Den første stabiliserende måldosen (${plan.maldose} mg/dag) er det kliniske målet for denne opptrappingen hos pasienten, vurdert ut fra indikasjon, forventet respons og interaksjoner. Er et annet mål ønsket, gjelder ikke regelen.`,
+    grunnlag: { type: 'kilde', henvisninger: [plan.henvisning, LAMICTAL.respons] },
+  },
+  {
+    id: 'ostrogen_maldose',
+    tekst: `Måldosen er vurdert særskilt fordi østrogenholdig behandling kan kreve en vedlikeholdsdose opptil det dobbelte: opptrappingen går likevel bare til ${plan.maldose} mg/dag, og en senere økning planlegges individuelt etter respons og eventuelt serumkonsentrasjon av lamotrigin.`,
+    ved: { sporsmal: ostrogen.id, svar: true },
+    grunnlag: ostrogen.grunnlag,
+  },
+]
+
+/**
  * Østrogenholdige legemidler kan gjøre den vanlige måldosen for lav (opptil
  * det dobbelte trengs etter titreringen). Opptrappingen er den samme, men et ja
  * krever en skriftlig vurdering av måldosen.
@@ -401,8 +420,9 @@ const ostrogensporsmal = (e: Eksisterende): Sporsmal => ({
 export function lamotrigintillegg(e: Eksisterende): Regel {
   const plan = OPPTRAPPING[e.gruppe]
   const unntak = unntakFor(e)
-  const bekreftelser = [...e.bekreftelser, aktuellDose(e), UTSLETTSINFORMASJON]
-  const sporsmal = [...(e.sporsmal ?? []), ostrogensporsmal(e)]
+  const ostrogen = ostrogensporsmal(e)
+  const bekreftelser = [...e.bekreftelser, aktuellDose(e), ...maldosebekreftelser(plan, e, ostrogen), UTSLETTSINFORMASJON]
+  const sporsmal = [...(e.sporsmal ?? []), ostrogen]
   const fra: Forlop = {
     id: 'fra',
     virkestoff: { type: 'virkestoff', nokkel: e.nokkel },

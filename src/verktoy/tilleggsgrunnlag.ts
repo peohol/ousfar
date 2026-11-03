@@ -209,6 +209,14 @@ export const TILLEGGSKASUS: readonly Tilleggskasus[] = [
   kasus('K4-38', L, 'litium', 'uvanlig_dose', 'grensen: 10 tabletter (420 mg Li⁺) er innenfor', '420', { utfall: 'plan', linjer: PLAN_LITIUM.map((l) => l.replace('168 mg = uendret', '420 mg = uendret')) }, { regel: simulert(L) }),
   kasus('K4-39', L, 'litium', 'uvanlig_dose', 'grensen: 11 tabletter (462 mg Li⁺) er over den høyeste veiledende vedlikeholdsdosen og stopper', '462', { utfall: 'stopp', grunner: [LITIUMDOSE] }, { regel: simulert(L) }),
   kasus('K4-40', L, 'litium', 'uvanlig_dose', 'forskriveren velger 300 mg som mål: regelen trapper bare opp til den første stabiliserende måldosen', '168', { utfall: 'stopp', grunner: ['Måldosen 300 mg er utenfor det regelen gjelder for (200 mg)'] }, { regel: simulert(L), skjema: { maldose: '300' } }),
+  kasus('K4-41', L, 'litium', 'pasientforhold', 'måldosen er ikke bekreftet som pasientens kliniske mål', '168', { utfall: 'stopp', grunner: ['Må bekreftes før beregning: Den første stabiliserende måldosen (200 mg/dag) er det kliniske målet'] }, {
+    regel: simulert(L),
+    skjema: { bekreftet: L.bekreftelser.map((b) => b.id).filter((id) => id !== 'maldose_valgt') },
+  }),
+  kasus('K4-42', L, 'litium', 'interaksjon', 'østrogenholdig behandling med skriftlig begrunnelse, men den særskilte vurderingen av måldosen er ikke bekreftet', '168', { utfall: 'stopp', grunner: ['Må bekreftes før beregning: Måldosen er vurdert særskilt'] }, {
+    regel: simulert(L),
+    skjema: { svar: { ostrogen: true }, begrunnelse: 'Syntetisk: vurdert.', bekreftet: L.bekreftelser.map((b) => b.id).filter((id) => id !== 'ostrogen_maldose') },
+  }),
   // Kombinasjoner uten regel: verktøyet sier det, og beregner ingenting.
   kasus('K4-50', null, 'karbamazepin', 'ikke_godkjent', 'karbamazepin → lamotrigin (induserende legemiddel) har ingen regel', '600', { utfall: 'ingen', status: 'ikke_stottet' }),
   { ...kasus('K4-51', null, 'lamotrigin', 'ikke_godkjent', 'motsatt retning: lamotrigin → valproat har ingen regel', '200', { utfall: 'ingen', status: 'ikke_stottet' }), valg: { fra: peroral('lamotrigin'), til: peroral('valproat') } },
@@ -256,7 +264,7 @@ export const TILLEGGSSPORSMAL: readonly { nr: string; sporsmal: string; anbefalt
   },
   {
     nr: 'K4.2',
-    sporsmal: 'Forskriveren må nå velge måldosen, og regelen gjelder bare preparatomtalens vanlige første stabiliserende måldose (100 mg med valproat, 200 mg ellers); et annet mål stopper (K4-22, K4-40), og videre justering er et vurderingspunkt som ikke beregnes. Er planen da riktig betegnet som komplett til det valgte målet?',
+    sporsmal: 'Forskriveren må nå velge måldosen, og regelen gjelder bare preparatomtalens vanlige første stabiliserende måldose (100 mg med valproat, 200 mg ellers); et annet mål stopper (K4-22, K4-40), og videre justering er et vurderingspunkt som ikke beregnes. Forskriveren bekrefter i tillegg at denne måldosen er pasientens kliniske mål etter indikasjon, respons og interaksjoner; uten det beregnes ingen plan (K4-41). Er planen da riktig betegnet som komplett til det valgte målet?',
     anbefalt: 'Ja; preparatomtalen kaller dem vanlige måldoser og sier at måldosen avhenger av klinisk respons. Etter kontrollen 03.11.2026 er målet gjort til et eksplisitt valg i stedet for en skjult forutsetning.',
   },
   {
@@ -286,7 +294,7 @@ export const TILLEGGSSPORSMAL: readonly { nr: string; sporsmal: string; anbefalt
   },
   {
     nr: 'K4.8',
-    sporsmal: 'Opptrappingen er den samme ved østrogenholdig prevensjon eller behandling, men forskriveren må svare på det, og et ja krever en skriftlig vurdering av måldosen fordi vedlikeholdsdosen kan måtte bli opptil dobbelt så høy (K4-23–K4-25). I tillegg står det som vurderingspunkt ved måldosen. Er det tilstrekkelig?',
+    sporsmal: 'Opptrappingen er den samme ved østrogenholdig prevensjon eller behandling, men forskriveren må svare på det. Et ja krever både en bekreftet særskilt vurdering av måldosen og en skriftlig begrunnelse, fordi vedlikeholdsdosen kan måtte bli opptil dobbelt så høy (K4-23–K4-25, K4-42). I tillegg står det som vurderingspunkt ved måldosen. Er det tilstrekkelig?',
     anbefalt: 'Ja; preparatomtalen endrer ikke opptrappingen, men sier at vedlikeholdsdosen kan måtte økes.',
   },
 ]

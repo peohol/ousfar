@@ -10,21 +10,21 @@ FEST-uttrekket: `src/data/verktoy/fest-tillegg.json` (hentet 2026-11-03T16:53:31
 
 | Regel | Versjon | Fingeravtrykk |
 | --- | --- | --- |
-| `tillegg-valproat-lamotrigin` | 2 | `ca32dfe6497ef150ea5ce0a09ea1f504274e7daa63fc3860ffe9f103de124467` |
-| `tillegg-litium-lamotrigin` | 2 | `0957451ee2d5edf0954541712cb5ef272a3966c096828810643a72ebf6cf9922` |
+| `tillegg-valproat-lamotrigin` | 2 | `eec8fe358fb8c702a3f8dfd5fd5c884ba0fe272942d5e302a25385e76d677f82` |
+| `tillegg-litium-lamotrigin` | 2 | `cfa731b9011a01c8f2cfa84c96467ac7674a51ee8da9f39c598f0b0aeda93bc5` |
 
 ## Kontrollspørsmål
 
 | Nr. | Spørsmål | OUSFARs anbefaling |
 | --- | --- | --- |
 | K4.1 | Er opptrappingene og måldosene gjengitt riktig fra tabell 3 i Lamictal-preparatomtalen (valproat: 25 mg annenhver dag i 14 dager, 25 mg i 14 dager, 50 mg i 7 dager, 100 mg; uten valproat og induserende legemidler: 25, 50 og 100 mg, så 200 mg)? | Ja; dosene er hentet direkte fra tabellen, og planen går ikke over dem. |
-| K4.2 | Forskriveren må nå velge måldosen, og regelen gjelder bare preparatomtalens vanlige første stabiliserende måldose (100 mg med valproat, 200 mg ellers); et annet mål stopper (K4-22, K4-40), og videre justering er et vurderingspunkt som ikke beregnes. Er planen da riktig betegnet som komplett til det valgte målet? | Ja; preparatomtalen kaller dem vanlige måldoser og sier at måldosen avhenger av klinisk respons. Etter kontrollen 03.11.2026 er målet gjort til et eksplisitt valg i stedet for en skjult forutsetning. |
+| K4.2 | Forskriveren må nå velge måldosen, og regelen gjelder bare preparatomtalens vanlige første stabiliserende måldose (100 mg med valproat, 200 mg ellers); et annet mål stopper (K4-22, K4-40), og videre justering er et vurderingspunkt som ikke beregnes. Forskriveren bekrefter i tillegg at denne måldosen er pasientens kliniske mål etter indikasjon, respons og interaksjoner; uten det beregnes ingen plan (K4-41). Er planen da riktig betegnet som komplett til det valgte målet? | Ja; preparatomtalen kaller dem vanlige måldoser og sier at måldosen avhenger av klinisk respons. Etter kontrollen 03.11.2026 er målet gjort til et eksplisitt valg i stedet for en skjult forutsetning. |
 | K4.3 | Skal planen bare bruke Lamictal tyggetabletter/dispergerbare tabletter (FEST-form 524), siden vanlige lamotrigintabletter i FEST krever godkjenningsfritak? | Ja; alle dosene kan gis med hele dispergerbare tabletter. |
 | K4.4 | Er unntakene (under 18 år, tidligere alvorlig reaksjon, lamotrigin i bruk eller nylig avsluttet, moderat/alvorlig leversvikt, betydelig nyresvikt, graviditet/amming, HLA-B*1502) og bekreftelsene riktige og tilstrekkelige som stopp? | Ja, som en forsiktig første avgrensning; hver av dem har en egen dosering eller vurdering i preparatomtalen som regelen ikke beregner. |
 | K4.5 | Unntaket for nylig avsluttet lamotrigin oppgir ca. 7 og ca. 15 døgn (fem gjennomsnittlige halveringstider, alene og med valproat, fra pkt. 5.2). Er det forsvarlig å vise disse omtrentlige tallene? | Ja, som veiledning i teksten; regelen bruker dem ikke i beregningen. |
 | K4.6 | Etter kontrollen 03.11.2026 må forskriveren svare på om pasienten kan bli gravid. Ved ja må fire vilkår i det graviditetsforebyggende programmet bekreftes hver for seg (indikasjon og årlig spesialistvurdering, informasjon og risikoskjema, sikker prevensjon, graviditetstest og kontakt ved graviditet); hvert som mangler, stopper (K4-14, K4-26–K4-29). Graviditet, planlagt graviditet og amming stopper uansett, også når vilkårene er bekreftet. Er vilkårene og formuleringene riktige og tilstrekkelige? | Ja; de følger vilkårene i pkt. 4.4 i Orfiril-preparatomtalen, gjelder ikke menn, og et ja løser aldri en graviditet. |
 | K4.7 | Litiumdosen oppgis i mg litium (Li⁺) som på Lithionit 42 mg (6 mmol per tablett), og regelen gjelder bare hele Lithionit 42 mg-tabletter fra 1 til 10 tabletter daglig (den høyeste veiledende vedlikeholdsdosen); andre doser og andre litiumpreparater stopper (K4-36–K4-39). Er avgrensningen og enhetsangivelsen riktig? | Ja; den fjerner forvekslingen mellom mg Li⁺ og mg litiumsalt og hindrer en dose som ikke kan gis med Lithionit. |
-| K4.8 | Opptrappingen er den samme ved østrogenholdig prevensjon eller behandling, men forskriveren må svare på det, og et ja krever en skriftlig vurdering av måldosen fordi vedlikeholdsdosen kan måtte bli opptil dobbelt så høy (K4-23–K4-25). I tillegg står det som vurderingspunkt ved måldosen. Er det tilstrekkelig? | Ja; preparatomtalen endrer ikke opptrappingen, men sier at vedlikeholdsdosen kan måtte økes. |
+| K4.8 | Opptrappingen er den samme ved østrogenholdig prevensjon eller behandling, men forskriveren må svare på det. Et ja krever både en bekreftet særskilt vurdering av måldosen og en skriftlig begrunnelse, fordi vedlikeholdsdosen kan måtte bli opptil dobbelt så høy (K4-23–K4-25, K4-42). I tillegg står det som vurderingspunkt ved måldosen. Er det tilstrekkelig? | Ja; preparatomtalen endrer ikke opptrappingen, men sier at vedlikeholdsdosen kan måtte økes. |
 
 ## Ikke dekket
 
@@ -39,7 +39,7 @@ FEST-uttrekket: `src/data/verktoy/fest-tillegg.json` (hentet 2026-11-03T16:53:31
 
 ## Kasusene
 
-**36 kasus.** Alle utfallene er som forventet.
+**38 kasus.** Alle utfallene er som forventet.
 
 | Kasus | Regel | Kategori | Hva | Dose | Utfall |
 | --- | --- | --- | --- | --- | --- |
@@ -70,12 +70,14 @@ FEST-uttrekket: `src/data/verktoy/fest-tillegg.json` (hentet 2026-11-03T16:53:31
 | K4-32 | `tillegg-litium-lamotrigin` | Interaksjonssperrer | pasienten bruker et legemiddel med ukjent interaksjon med lamotrigin | «168» | stopp: Regelen gjelder ikke: Pasienten bruker et annet legemiddel med ukjent farmakokinetisk interaksjon med lamotrigin. Da skal opptrappingen for samtidig valproat brukes, og planen må lages for det. (Østrogenholdig prevensjon alene er ikke et slikt forhold; se spørsmålet om østrogenholdig behandling.) |
 | K4-33 | `tillegg-litium-lamotrigin` | Pasientforhold, også ubesvarte | moderat nedsatt leverfunksjon | «168» | stopp: Regelen gjelder ikke: Pasienten har moderat eller alvorlig nedsatt leverfunksjon (Child-Pugh B eller C). |
 | K4-34 | `tillegg-litium-lamotrigin` | Pasientforhold, også ubesvarte | bruker lamotrigin allerede (ikke en oppstart) | «168» | stopp: Regelen gjelder ikke: Pasienten bruker lamotrigin nå, eller har sluttet så nylig at det er under fem halveringstider siden siste dose (ca. 7 døgn alene og ca. 15 døgn sammen med valproat, ut fra gjennomsnittlig halveringstid). Da er dette ikke en oppstart. |
-| K4-35 | `tillegg-litium-lamotrigin` | Pasientforhold, også ubesvarte | det er ikke bekreftet at den innfylte litiumdosen er den pasienten bruker nå | «168» | stopp: Må bekreftes før beregning: Pasienten bruker Lithionit 42 mg depottabletter, og døgndosen er fylt inn i mg litium (Li⁺): antall tabletter × 42 mg (6 mmol litium per tablett). Andre litiumpreparater, også de der styrken oppgis som mg litiumsalt, er utenfor regelen. |
+| K4-35 | `tillegg-litium-lamotrigin` | Pasientforhold, også ubesvarte | det er ikke bekreftet at den innfylte litiumdosen er den pasienten bruker nå | «168» | stopp: Må bekreftes før beregning: Pasienten bruker Lithionit 42 mg depottabletter, og døgndosen er fylt inn i mg litium (Li⁺): antall tabletter × 42 mg (6 mmol litium per tablett). Andre litiumpreparater, også de der styrken oppgis som mg litiumsalt, er utenfor regelen. Må bekreftes før beregning: Den første stabiliserende måldosen (200 mg/dag) er det kliniske målet for denne opptrappingen hos pasienten, vurdert ut fra indikasjon, forventet respons og interaksjoner. Er et annet mål ønsket, gjelder ikke regelen. |
 | K4-36 | `tillegg-litium-lamotrigin` | Uvanlige doser og grenseverdier | en usannsynlig litiumdose (0,5 mg) stopper | «0,5» | stopp: Startdosen 0,5 mg er utenfor det regelen gjelder for (42, 84, 126, 168, 210, 252, 294, 336, 378, 420 mg). |
 | K4-37 | `tillegg-litium-lamotrigin` | Uvanlige doser og grenseverdier | en dose som ikke er hele Lithionit-tabletter (170 mg, for eksempel mg litiumsalt), stopper | «170» | stopp: Startdosen 170 mg er utenfor det regelen gjelder for (42, 84, 126, 168, 210, 252, 294, 336, 378, 420 mg). |
 | K4-38 | `tillegg-litium-lamotrigin` | Uvanlige doser og grenseverdier | grensen: 10 tabletter (420 mg Li⁺) er innenfor | «420» | plan (12 rader) |
 | K4-39 | `tillegg-litium-lamotrigin` | Uvanlige doser og grenseverdier | grensen: 11 tabletter (462 mg Li⁺) er over den høyeste veiledende vedlikeholdsdosen og stopper | «462» | stopp: Startdosen 462 mg er utenfor det regelen gjelder for (42, 84, 126, 168, 210, 252, 294, 336, 378, 420 mg). |
 | K4-40 | `tillegg-litium-lamotrigin` | Uvanlige doser og grenseverdier | forskriveren velger 300 mg som mål: regelen trapper bare opp til den første stabiliserende måldosen | «168» | stopp: Måldosen 300 mg er utenfor det regelen gjelder for (200 mg). |
+| K4-41 | `tillegg-litium-lamotrigin` | Pasientforhold, også ubesvarte | måldosen er ikke bekreftet som pasientens kliniske mål | «168» | stopp: Må bekreftes før beregning: Den første stabiliserende måldosen (200 mg/dag) er det kliniske målet for denne opptrappingen hos pasienten, vurdert ut fra indikasjon, forventet respons og interaksjoner. Er et annet mål ønsket, gjelder ikke regelen. |
+| K4-42 | `tillegg-litium-lamotrigin` | Interaksjonssperrer | østrogenholdig behandling med skriftlig begrunnelse, men den særskilte vurderingen av måldosen er ikke bekreftet | «168» | stopp: Må bekreftes før beregning: Måldosen er vurdert særskilt fordi østrogenholdig behandling kan kreve en vedlikeholdsdose opptil det dobbelte: opptrappingen går likevel bare til 200 mg/dag, og en senere økning planlegges individuelt etter respons og eventuelt serumkonsentrasjon av lamotrigin. |
 | K4-50 | – | Regler som ikke er godkjent | karbamazepin → lamotrigin (induserende legemiddel) har ingen regel | «600» | ingen plan (ikke_stottet): OUSFAR har ingen regel for denne kombinasjonen. |
 | K4-51 | – | Regler som ikke er godkjent | motsatt retning: lamotrigin → valproat har ingen regel | «200» | ingen plan (ikke_stottet): OUSFAR har ingen regel for denne kombinasjonen. |
 | K4-52 | – | Regler som ikke er godkjent | kvetiapin → lamotrigin har ingen regel | «300» | ingen plan (ikke_stottet): OUSFAR har ingen regel for denne kombinasjonen. |
@@ -140,6 +142,7 @@ Kontroller:
 - Avkreftet: Pasienten er kjent positiv for HLA-B*1502: oppfylt (Vurdert og avkreftet av forskriveren.)
 - Bekreftet: Pasienten bruker valproat fast og skal fortsette med det uendret gjennom hele opptrappingen: oppfylt (Bekreftet av forskriveren.)
 - Bekreftet: Døgndosen som er fylt inn for valproat, er den pasienten bruker nå, i mg slik styrken står på pasientens valproatpreparat. Verktøyet kontrollerer ikke denne dosen mot noe preparat eller område; planen gjentar den bare: oppfylt (Bekreftet av forskriveren.)
+- Bekreftet: Den første stabiliserende måldosen (100 mg/dag) er det kliniske målet for denne opptrappingen hos pasienten, vurdert ut fra indikasjon, forventet respons og interaksjoner. Er et annet mål ønsket, gjelder ikke regelen: oppfylt (Bekreftet av forskriveren.)
 - Bekreftet: Pasienten er informert om å stoppe lamotrigin og ta kontakt straks ved utslett, feber, hovne lymfeknuter eller sår i munn eller øyne, og om ikke å øke dosen raskere enn planen eller ta igjen glemte doser med ekstra tabletter: oppfylt (Bekreftet av forskriveren.)
 - Er pasienten jente eller kvinne som kan bli gravid? Det gjelder også den som ikke er seksuelt aktiv, med mindre det er sterke grunner til at det ikke er risiko for graviditet. Nei: oppfylt (Oppgitt av forskriveren.)
 - Bruker pasienten østrogenholdig prevensjon eller annen østrogenholdig behandling, som hormonsubstitusjon? Nei: oppfylt (Oppgitt av forskriveren.)
@@ -152,7 +155,7 @@ Kilder:
 - Orfiril (natriumvalproat) enterotabletter, preparatomtale (Direktoratet for medisinske produkter (DMP), Oppdatert 03.09.2026): https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06565.pdf – pkt. 4.5, Lamotrigin
 
 Versjoner:
-- Regel tillegg-valproat-lamotrigin, versjon 2, fingeravtrykk ca32dfe6497e
+- Regel tillegg-valproat-lamotrigin, versjon 2, fingeravtrykk eec8fe358fb8
 - Regelsett ousfar-verktoy-tillegg, versjon 1
 - Regelmodell 12, beregningsmotor 10, doseplanmotor 10
 - FEST-uttrekk 2026-10-27T12:25:20, kontrollert 2026-11-03T04:15:06.046601+00:00, preparatstatus per 03.11.2026
@@ -223,6 +226,7 @@ Kontroller:
 - Bekreftet: Pasienten bruker sikker prevensjon uten avbrudd: minst én sikker, helst brukeruavhengig metode (som spiral eller implantat), eller to komplementære metoder med en barrieremetode: oppfylt (Bekreftet av forskriveren.)
 - Bekreftet: Graviditet er utelukket med graviditetstest når det er behov for det, og pasienten vet at hun straks skal kontakte lege ved planlagt eller mistenkt graviditet: oppfylt (Bekreftet av forskriveren.)
 - Bekreftet: Døgndosen som er fylt inn for valproat, er den pasienten bruker nå, i mg slik styrken står på pasientens valproatpreparat. Verktøyet kontrollerer ikke denne dosen mot noe preparat eller område; planen gjentar den bare: oppfylt (Bekreftet av forskriveren.)
+- Bekreftet: Den første stabiliserende måldosen (100 mg/dag) er det kliniske målet for denne opptrappingen hos pasienten, vurdert ut fra indikasjon, forventet respons og interaksjoner. Er et annet mål ønsket, gjelder ikke regelen: oppfylt (Bekreftet av forskriveren.)
 - Bekreftet: Pasienten er informert om å stoppe lamotrigin og ta kontakt straks ved utslett, feber, hovne lymfeknuter eller sår i munn eller øyne, og om ikke å øke dosen raskere enn planen eller ta igjen glemte doser med ekstra tabletter: oppfylt (Bekreftet av forskriveren.)
 - Er pasienten jente eller kvinne som kan bli gravid? Det gjelder også den som ikke er seksuelt aktiv, med mindre det er sterke grunner til at det ikke er risiko for graviditet. Ja: oppfylt (Oppgitt av forskriveren.)
 - Bruker pasienten østrogenholdig prevensjon eller annen østrogenholdig behandling, som hormonsubstitusjon? Nei: oppfylt (Oppgitt av forskriveren.)
@@ -235,7 +239,7 @@ Kilder:
 - Orfiril (natriumvalproat) enterotabletter, preparatomtale (Direktoratet for medisinske produkter (DMP), Oppdatert 03.09.2026): https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06565.pdf – pkt. 4.5, Lamotrigin
 
 Versjoner:
-- Regel tillegg-valproat-lamotrigin, versjon 2, fingeravtrykk ca32dfe6497e
+- Regel tillegg-valproat-lamotrigin, versjon 2, fingeravtrykk eec8fe358fb8
 - Regelsett ousfar-verktoy-tillegg, versjon 1
 - Regelmodell 12, beregningsmotor 10, doseplanmotor 10
 - FEST-uttrekk 2026-10-27T12:25:20, kontrollert 2026-11-03T04:15:06.046601+00:00, preparatstatus per 03.11.2026
@@ -302,6 +306,7 @@ Kontroller:
 - Avkreftet: Pasienten er kjent positiv for HLA-B*1502: oppfylt (Vurdert og avkreftet av forskriveren.)
 - Bekreftet: Pasienten bruker valproat fast og skal fortsette med det uendret gjennom hele opptrappingen: oppfylt (Bekreftet av forskriveren.)
 - Bekreftet: Døgndosen som er fylt inn for valproat, er den pasienten bruker nå, i mg slik styrken står på pasientens valproatpreparat. Verktøyet kontrollerer ikke denne dosen mot noe preparat eller område; planen gjentar den bare: oppfylt (Bekreftet av forskriveren.)
+- Bekreftet: Den første stabiliserende måldosen (100 mg/dag) er det kliniske målet for denne opptrappingen hos pasienten, vurdert ut fra indikasjon, forventet respons og interaksjoner. Er et annet mål ønsket, gjelder ikke regelen: oppfylt (Bekreftet av forskriveren.)
 - Bekreftet: Pasienten er informert om å stoppe lamotrigin og ta kontakt straks ved utslett, feber, hovne lymfeknuter eller sår i munn eller øyne, og om ikke å øke dosen raskere enn planen eller ta igjen glemte doser med ekstra tabletter: oppfylt (Bekreftet av forskriveren.)
 - Er pasienten jente eller kvinne som kan bli gravid? Det gjelder også den som ikke er seksuelt aktiv, med mindre det er sterke grunner til at det ikke er risiko for graviditet. Nei: oppfylt (Oppgitt av forskriveren.)
 - Bruker pasienten østrogenholdig prevensjon eller annen østrogenholdig behandling, som hormonsubstitusjon? Nei: oppfylt (Oppgitt av forskriveren.)
@@ -314,7 +319,7 @@ Kilder:
 - Orfiril (natriumvalproat) enterotabletter, preparatomtale (Direktoratet for medisinske produkter (DMP), Oppdatert 03.09.2026): https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06565.pdf – pkt. 4.5, Lamotrigin
 
 Versjoner:
-- Regel tillegg-valproat-lamotrigin, versjon 2, fingeravtrykk ca32dfe6497e
+- Regel tillegg-valproat-lamotrigin, versjon 2, fingeravtrykk eec8fe358fb8
 - Regelsett ousfar-verktoy-tillegg, versjon 1
 - Regelmodell 12, beregningsmotor 10, doseplanmotor 10
 - FEST-uttrekk 2026-10-27T12:25:20, kontrollert 2026-11-03T04:15:06.046601+00:00, preparatstatus per 03.11.2026
@@ -381,6 +386,8 @@ Kontroller:
 - Avkreftet: Pasienten er kjent positiv for HLA-B*1502: oppfylt (Vurdert og avkreftet av forskriveren.)
 - Bekreftet: Pasienten bruker valproat fast og skal fortsette med det uendret gjennom hele opptrappingen: oppfylt (Bekreftet av forskriveren.)
 - Bekreftet: Døgndosen som er fylt inn for valproat, er den pasienten bruker nå, i mg slik styrken står på pasientens valproatpreparat. Verktøyet kontrollerer ikke denne dosen mot noe preparat eller område; planen gjentar den bare: oppfylt (Bekreftet av forskriveren.)
+- Bekreftet: Den første stabiliserende måldosen (100 mg/dag) er det kliniske målet for denne opptrappingen hos pasienten, vurdert ut fra indikasjon, forventet respons og interaksjoner. Er et annet mål ønsket, gjelder ikke regelen: oppfylt (Bekreftet av forskriveren.)
+- Bekreftet: Måldosen er vurdert særskilt fordi østrogenholdig behandling kan kreve en vedlikeholdsdose opptil det dobbelte: opptrappingen går likevel bare til 100 mg/dag, og en senere økning planlegges individuelt etter respons og eventuelt serumkonsentrasjon av lamotrigin: oppfylt (Bekreftet av forskriveren.)
 - Bekreftet: Pasienten er informert om å stoppe lamotrigin og ta kontakt straks ved utslett, feber, hovne lymfeknuter eller sår i munn eller øyne, og om ikke å øke dosen raskere enn planen eller ta igjen glemte doser med ekstra tabletter: oppfylt (Bekreftet av forskriveren.)
 - Er pasienten jente eller kvinne som kan bli gravid? Det gjelder også den som ikke er seksuelt aktiv, med mindre det er sterke grunner til at det ikke er risiko for graviditet. Nei: oppfylt (Oppgitt av forskriveren.)
 - Bruker pasienten østrogenholdig prevensjon eller annen østrogenholdig behandling, som hormonsubstitusjon? Ja: oppfylt (Oppgitt av forskriveren.)
@@ -394,7 +401,7 @@ Kilder:
 - Orfiril (natriumvalproat) enterotabletter, preparatomtale (Direktoratet for medisinske produkter (DMP), Oppdatert 03.09.2026): https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06565.pdf – pkt. 4.5, Lamotrigin
 
 Versjoner:
-- Regel tillegg-valproat-lamotrigin, versjon 2, fingeravtrykk ca32dfe6497e
+- Regel tillegg-valproat-lamotrigin, versjon 2, fingeravtrykk eec8fe358fb8
 - Regelsett ousfar-verktoy-tillegg, versjon 1
 - Regelmodell 12, beregningsmotor 10, doseplanmotor 10
 - FEST-uttrekk 2026-10-27T12:25:20, kontrollert 2026-11-03T04:15:06.046601+00:00, preparatstatus per 03.11.2026
@@ -464,6 +471,7 @@ Kontroller:
 - Avkreftet: Pasienten bruker et annet legemiddel med ukjent farmakokinetisk interaksjon med lamotrigin. Da skal opptrappingen for samtidig valproat brukes, og planen må lages for det. (Østrogenholdig prevensjon alene er ikke et slikt forhold; se spørsmålet om østrogenholdig behandling.): oppfylt (Vurdert og avkreftet av forskriveren.)
 - Bekreftet: Pasienten bruker litium fast, skal fortsette med det uendret gjennom hele opptrappingen, og serumlitium følges som vanlig: oppfylt (Bekreftet av forskriveren.)
 - Bekreftet: Pasienten bruker Lithionit 42 mg depottabletter, og døgndosen er fylt inn i mg litium (Li⁺): antall tabletter × 42 mg (6 mmol litium per tablett). Andre litiumpreparater, også de der styrken oppgis som mg litiumsalt, er utenfor regelen: oppfylt (Bekreftet av forskriveren.)
+- Bekreftet: Den første stabiliserende måldosen (200 mg/dag) er det kliniske målet for denne opptrappingen hos pasienten, vurdert ut fra indikasjon, forventet respons og interaksjoner. Er et annet mål ønsket, gjelder ikke regelen: oppfylt (Bekreftet av forskriveren.)
 - Bekreftet: Pasienten er informert om å stoppe lamotrigin og ta kontakt straks ved utslett, feber, hovne lymfeknuter eller sår i munn eller øyne, og om ikke å øke dosen raskere enn planen eller ta igjen glemte doser med ekstra tabletter: oppfylt (Bekreftet av forskriveren.)
 - Bruker pasienten østrogenholdig prevensjon eller annen østrogenholdig behandling, som hormonsubstitusjon? Nei: oppfylt (Oppgitt av forskriveren.)
 - Startdosen er 42, 84, 126, 168, 210, 252, 294, 336, 378, 420 mg (bindende): oppfylt (168 mg.)
@@ -475,7 +483,7 @@ Kilder:
 - Lamictal (lamotrigin) tyggetabletter/dispergerbare tabletter 2–200 mg, preparatomtale (Direktoratet for medisinske produkter (DMP), Oppdatert 30.06.2025): https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08198.pdf – pkt. 4.2, Bipolar lidelse; pkt. 4.2, Bipolar lidelse, tabell 3; pkt. 4.2, Dosering; pkt. 4.4, Hudutslett; pkt. 4.5, tabell 6
 
 Versjoner:
-- Regel tillegg-litium-lamotrigin, versjon 2, fingeravtrykk 0957451ee2d5
+- Regel tillegg-litium-lamotrigin, versjon 2, fingeravtrykk cfa731b9011a
 - Regelsett ousfar-verktoy-tillegg, versjon 1
 - Regelmodell 12, beregningsmotor 10, doseplanmotor 10
 - FEST-uttrekk 2026-10-27T12:25:20, kontrollert 2026-11-03T04:15:06.046601+00:00, preparatstatus per 03.11.2026
@@ -545,6 +553,7 @@ Kontroller:
 - Avkreftet: Pasienten bruker et annet legemiddel med ukjent farmakokinetisk interaksjon med lamotrigin. Da skal opptrappingen for samtidig valproat brukes, og planen må lages for det. (Østrogenholdig prevensjon alene er ikke et slikt forhold; se spørsmålet om østrogenholdig behandling.): oppfylt (Vurdert og avkreftet av forskriveren.)
 - Bekreftet: Pasienten bruker litium fast, skal fortsette med det uendret gjennom hele opptrappingen, og serumlitium følges som vanlig: oppfylt (Bekreftet av forskriveren.)
 - Bekreftet: Pasienten bruker Lithionit 42 mg depottabletter, og døgndosen er fylt inn i mg litium (Li⁺): antall tabletter × 42 mg (6 mmol litium per tablett). Andre litiumpreparater, også de der styrken oppgis som mg litiumsalt, er utenfor regelen: oppfylt (Bekreftet av forskriveren.)
+- Bekreftet: Den første stabiliserende måldosen (200 mg/dag) er det kliniske målet for denne opptrappingen hos pasienten, vurdert ut fra indikasjon, forventet respons og interaksjoner. Er et annet mål ønsket, gjelder ikke regelen: oppfylt (Bekreftet av forskriveren.)
 - Bekreftet: Pasienten er informert om å stoppe lamotrigin og ta kontakt straks ved utslett, feber, hovne lymfeknuter eller sår i munn eller øyne, og om ikke å øke dosen raskere enn planen eller ta igjen glemte doser med ekstra tabletter: oppfylt (Bekreftet av forskriveren.)
 - Bruker pasienten østrogenholdig prevensjon eller annen østrogenholdig behandling, som hormonsubstitusjon? Nei: oppfylt (Oppgitt av forskriveren.)
 - Startdosen er 42, 84, 126, 168, 210, 252, 294, 336, 378, 420 mg (bindende): oppfylt (420 mg.)
@@ -556,7 +565,7 @@ Kilder:
 - Lamictal (lamotrigin) tyggetabletter/dispergerbare tabletter 2–200 mg, preparatomtale (Direktoratet for medisinske produkter (DMP), Oppdatert 30.06.2025): https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08198.pdf – pkt. 4.2, Bipolar lidelse; pkt. 4.2, Bipolar lidelse, tabell 3; pkt. 4.2, Dosering; pkt. 4.4, Hudutslett; pkt. 4.5, tabell 6
 
 Versjoner:
-- Regel tillegg-litium-lamotrigin, versjon 2, fingeravtrykk 0957451ee2d5
+- Regel tillegg-litium-lamotrigin, versjon 2, fingeravtrykk cfa731b9011a
 - Regelsett ousfar-verktoy-tillegg, versjon 1
 - Regelmodell 12, beregningsmotor 10, doseplanmotor 10
 - FEST-uttrekk 2026-10-27T12:25:20, kontrollert 2026-11-03T04:15:06.046601+00:00, preparatstatus per 03.11.2026

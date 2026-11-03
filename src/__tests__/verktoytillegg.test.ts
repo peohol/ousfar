@@ -61,16 +61,21 @@ describe('Tilleggsreglene', () => {
     for (const id of ['K4-22', 'K4-40']) expect(resultat(id).res.utfall, id).toBe('stopp')
     expect(resultat('K4-10').res.tekst).toContain('Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd.')
     // Østrogenholdig behandling: ubesvart eller uten skriftlig vurdering stopper; med vurdering står den i planen.
-    for (const id of ['K4-23', 'K4-25']) expect(resultat(id).res.utfall, id).toBe('stopp')
+    for (const id of ['K4-23', 'K4-25', 'K4-41', 'K4-42']) expect(resultat(id).res.utfall, id).toBe('stopp')
+    // Målet er et klinisk avgrensningsvilkår som bekreftes, og ved østrogen en egen bekreftet vurdering, ikke bare fritekst.
+    for (const r of TILLEGGSSETT.regler) {
+      expect(r.bekreftelser.find((b) => b.id === 'maldose_valgt')?.ved, r.id).toBeUndefined()
+      expect(r.bekreftelser.find((b) => b.id === 'ostrogen_maldose')?.ved, r.id).toEqual({ sporsmal: 'ostrogen', svar: true })
+    }
     expect(resultat('K4-24').res.tekst).toContain('Syntetisk: måldosen vurderes på nytt')
   })
 
   it('krever hvert vilkår i det graviditetsforebyggende programmet for valproat bekreftet for seg, bare når pasienten kan bli gravid', () => {
-    const ppp = VALPROAT_LAMOTRIGIN.bekreftelser.filter((b) => b.ved)
+    const ppp = VALPROAT_LAMOTRIGIN.bekreftelser.filter((b) => b.ved?.sporsmal === 'kan_bli_gravid')
     expect(ppp.map((b) => b.id)).toEqual(['ppp_indikasjon', 'ppp_informasjon', 'ppp_prevensjon', 'ppp_graviditet'])
     for (const b of ppp) expect(b.ved, b.id).toEqual({ sporsmal: 'kan_bli_gravid', svar: true })
     expect(VALPROAT_LAMOTRIGIN.sporsmal?.map((x) => x.id)).toContain('kan_bli_gravid')
-    expect(LITIUM_LAMOTRIGIN.bekreftelser.some((b) => b.ved)).toBe(false)
+    expect(LITIUM_LAMOTRIGIN.bekreftelser.some((b) => b.ved?.sporsmal === 'kan_bli_gravid')).toBe(false)
     // Ja og alt bekreftet gir plan med vilkårene i kontrollene; ett som mangler, eller et ubesvart spørsmål, stopper.
     const ja = resultat('K4-14').res.tekst!
     for (const b of ppp) expect(ja, b.id).toContain(`Bekreftet: ${b.tekst.replace(/\.$/, '')}: oppfylt`)
