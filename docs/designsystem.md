@@ -354,17 +354,29 @@ rad i dokken og på to:
 
 ### Når plassen ikke strekker til
 
-Hvor mye plass søkene får, kommer an på hva siden legger i menyen. Fagsøket
-har forrang, og menyen viker i denne rekkefølgen, så ingenting noen gang
-flyter inn over noe annet:
+Hvor mye som står i menyen, kommer an på siden og på hvem som er logget inn,
+så `Toppmeny` måler selv om alt får plass (`useDokk`, `velgTrinn`). Den
+velger det romsligste av tre trinn (`TRINN`) der sidens plasser får plass ved
+siden av alt det andre og et fagsøk på minst `--bredde-fagsok-minst` (10rem,
+så «Søk i fagstoff» fortsatt står i feltet):
 
-- Under 1024 px krymper de sekundære handlingene og søket på siden til
-  runde ikonknapper. Står det et søk i søket på siden, er kanten i
-  aksentfargen.
+1. `hel`: knappene med tekst, og søket på siden som felt.
+2. `kompakt` (`data-kompakt` på toppmenyen): de sekundære handlingene og
+   søket på siden krymper til runde ikonknapper. Står det et søk i søket på
+   siden, er kanten i aksentfargen.
+3. `dokk` (`data-dokk` på dokumentet): sidens plasser flytter til dokken
+   nederst i vinduet (se under). På smale flater står de alltid der.
+
+Et romsligere trinn må ha litt plass til overs før menyen går tilbake til
+det, så den ikke vipper fram og tilbake ved grensen. Mens det søkes på
+siden, står trinnet som det var. Ingenting i sidens plasser presses sammen,
+så knappene legger seg aldri over hverandre.
+
 - Fagsøket svarer på sin egen bredde (et spørrefelt, `@container fagsok`),
-  ikke vinduets. Snarveimerket viker først. Til slutt står bare lupen igjen,
-  og mens søket da brukes, legger feltet seg over sidens handlinger i full
-  bredde. Innholdet i feltet klippes i kanten.
+  ikke vinduets. Snarveimerket viker først. Står ingen av sidens plasser i
+  menyen, kan det til slutt bli bare lupen, og mens søket da brukes, legger
+  feltet seg over resten av menyen i full bredde. Innholdet i feltet klippes
+  i kanten.
 - Søket på siden tar plassen fra fagsøket mens det brukes, og krymper selv
   heller enn å skyve resten av menyen ut av pillen.
 - Rullegardinen og treffpanelet er aldri smalere enn `--bredde-sokepanel`.
@@ -381,12 +393,12 @@ menyen, bruker den:
 - Seksjonene gjør det samme (se `docs/seksjoner.md`).
 - Rulling i skript regner fra menyens underkant (`toppmenyensBunn()`).
 
-### Smale flater
+### Dokken og smale flater
 
-Under 760 px bredde gjelder dette:
+Under 760 px bredde får søket all plassen i pillen, skillet viker,
+nedtrekksmenyene henger ved vinduets høyre kant, og knappene i dokken har
+trykkstørrelse. Dokken selv er den samme på alle bredder (`data-dokk`):
 
-- Søket får all plassen i pillen.
-- Skillet viker. Nedtrekksmenyene henger ved vinduets høyre kant.
 - Sidens plasser flytter til en **dokk** nederst i vinduet, og siden får
   `--dokk-offset` luft nederst. Dokken står midt i vinduet og er ikke
   bredere enn den bredeste raden med knapper; hovedhandlingen er så bred som
@@ -403,6 +415,8 @@ Under 760 px bredde gjelder dette:
   hovedhandlingen flytter ned først på raden under, som bare ikonet.
 - Nedtrekksmenyer fra dokken (som «Mer for fagsiden») åpner seg oppover,
   rett over dokken.
+- Står dokken nederst på en bredere flate, blir diskusjonene stående som
+  boblen øverst til høyre, og panelet deres slutter over dokken.
 - Fortolkningen har dokken når en analytt er valgt: «Åpne fagside» (én
   knapp per stoff når modulen har koder for flere, som Diazepam og
   Oksazepam) og «Diskusjoner».

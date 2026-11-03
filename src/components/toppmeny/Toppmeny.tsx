@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useLayoutEffect, useState, type ReactNode } from 'react'
 import { TOPPMENYSPOR, useMeldSpor, type Toppmenygruppe, type Toppmenyspor } from './Toppmenykilde'
 
 export interface ToppmenyProps {
@@ -18,8 +18,9 @@ export interface ToppmenyProps {
  * · idéer, adminmeny, varsler og konto. Ingen logo.
  *
  * Sidene fyller sine plasser i menyen med `ToppmenyInnhold` (se
- * `TOPPMENYSPOR`). På smale flater flyttes de til en dokk nederst i vinduet.
- * Får ikke alt plass på én rad der, står hovedgruppen (søket i siden og
+ * `TOPPMENYSPOR`). Får de ikke plass i menyen ved siden av et brukbart
+ * fagsøk, og alltid på smale flater, flyttes de til en dokk nederst i
+ * vinduet (se `useDokk`). Får ikke alt plass på én rad der, står hovedgruppen (søket i siden og
  * hovedhandlingen) på første rad og resten på andre.
  *
  * Menyen tar `--toppmeny-offset` av vinduet øverst; innhold og ankere legger
@@ -54,71 +55,210 @@ function Spor({ navn }: { navn: Toppmenyspor }) {
   return <div ref={useMeldSpor(navn)} className="toppmeny__spor" data-spor={navn} />
 }
 
+/**
+ * Smal flate, som i CSS-en: her står sidens plasser alltid i dokken, med
+ * knapper i trykkstørrelse.
+ */
+const SMAL_FLATE = '(max-width: 47.5em)'
+
+/**
+ * Trinnene menyen går gjennom når plassen ikke strekker til, fra romsligst
+ * til trangest:
+ *
+ * - `hel`: alt i toppmenyen, med tekst på knappene og søket i siden som felt
+ * - `kompakt`: de sekundære handlingene og søket i siden krymper til runde
+ *   ikonknapper (`data-kompakt` på toppmenyen)
+ * - `dokk`: sidens plasser flytter til dokken nederst i vinduet, kompakte
+ *   (også `data-dokk` på dokumentet, for det som skal gi plass til dokken)
+ */
+export const TRINN = ['hel', 'kompakt', 'dokk'] as const
+export type Trinn = (typeof TRINN)[number]
+
+const KOMPAKT = 'data-kompakt'
+const DOKK = 'data-dokk'
+/** Merket på toppmenyen mens trinnene prøves (se `toppmeny.css`). */
+const MALER = 'data-maler'
+
 /** Dokkens målte høyde, på dokumentet (se `tokens.css`). */
 const DOKKHOYDE = '--dokkhoyde'
 
+/** Hvor smalt fagsøket kan bli før sidens plasser flytter til dokken (`tokens.css`). */
+const FAGSOK_MINST = '--bredde-fagsok-minst'
+
 /** Merket dokken bærer når gruppene står på hver sin rad (se `toppmeny.css`). */
 const TO_RADER = 'data-to-rader'
+
+/**
+ * Hvor mye plass et romsligere trinn må ha til overs før menyen går tilbake
+ * til det (se `velgTrinn`).
+ */
+const SLINGRING = 8
+
+/** Hvor bredt det blir å sette bitene etter hverandre, med mellomrom imellom. */
+export function samletBredde(bredder: readonly number[], mellomrom: number) {
+  return bredder.reduce((sum, bredde) => sum + bredde, 0) + mellomrom * Math.max(0, bredder.length - 1)
+}
+
+/** Om bitene får plass etter hverandre på én rad (en halv piksel slingring for avrunding). */
+export function faarPlass(bredder: readonly number[], mellomrom: number, plass: number) {
+  return samletBredde(bredder, mellomrom) <= plass + 0.5
+}
 
 /**
  * Om gruppene i dokken trenger hver sin rad: når de ikke får plass ved siden
  * av hverandre, med mellomrommet mellom dem.
  */
 export function trengerToRader(bredder: readonly number[], mellomrom: number, plass: number) {
-  const behov = bredder.reduce((sum, bredde) => sum + bredde, 0) + mellomrom * Math.max(0, bredder.length - 1)
-  return behov > plass + 0.5
+  return !faarPlass(bredder, mellomrom, plass)
+}
+
+const px = (verdi: string) => parseFloat(verdi) || 0
+
+/** En lengde fra et token (`rem` eller `px`) i piksler. */
+function lengde(verdi: string) {
+  const tall = parseFloat(verdi) || 0
+  return verdi.trim().endsWith('rem') ? tall * px(getComputedStyle(document.documentElement).fontSize) : tall
+}
+
+/** Elementene som står i raden, og ikke er skjult eller festet et annet sted. */
+function iRaden(elementer: Iterable<Element>) {
+  return Array.from(elementer).filter((element): element is HTMLElement => {
+    if (!(element instanceof HTMLElement) || element.getClientRects().length === 0) return false
+    const plassering = getComputedStyle(element).position
+    return plassering !== 'fixed' && plassering !== 'absolute'
+  })
+}
+
+/** Bredden et element tar i en rad: selve boksen og margen rundt. */
+function ytreBredde(element: HTMLElement) {
+  const stil = getComputedStyle(element)
+  return element.getBoundingClientRect().width + px(stil.marginLeft) + px(stil.marginRight)
 }
 
 /**
- * Holder dokken på smale flater i orden:
+ * Hvor bred raden av sidens plasser er når ingenting i den presses sammen:
+ * knappene i hver gruppe, og gruppene etter hverandre. Målt på knappene og
+ * ikke på gruppene, for i toppmenyen kan gruppene krympe.
+ */
+function plassenesBredde(dokk: HTMLElement, grupper: readonly HTMLElement[]) {
+  const mellomrom = px(getComputedStyle(dokk).columnGap)
+  const bredder = iRaden(grupper).map((gruppe) =>
+    samletBredde(iRaden(gruppe.querySelectorAll(':scope > .toppmeny__spor > *')).map(ytreBredde), px(getComputedStyle(gruppe).columnGap)),
+  )
+  return samletBredde(bredder, mellomrom)
+}
+
+/**
+ * Det romsligste trinnet som får plass. På smale flater står plassene alltid
+ * i dokken. Et romsligere trinn enn det menyen står i nå, må få plass med
+ * slingring, så menyen ikke vipper fram og tilbake ved grensen.
+ */
+export function velgTrinn(smal: boolean, naa: Trinn, faarPlassMed: (trinn: Trinn, slingring: boolean) => boolean): Trinn {
+  if (smal) return 'dokk'
+  const grense = TRINN.indexOf(naa)
+  return TRINN.find((trinn, i) => trinn === 'dokk' || faarPlassMed(trinn, i < grense)) ?? 'dokk'
+}
+
+/**
+ * Om sidens plasser får plass i toppmenyen: alt annet i menyen, plassene og
+ * fagsøket i minst `--bredde-fagsok-minst`, ved siden av hverandre.
+ */
+function faarPlassITopp(pille: HTMLElement, dokk: HTMLElement, grupper: readonly HTMLElement[], slingring: number) {
+  const plassene = plassenesBredde(dokk, grupper)
+  if (plassene === 0) return true
+  const stil = getComputedStyle(pille)
+  const sok = pille.querySelector<HTMLElement>(':scope > .toppmeny__sok')
+  const resten = iRaden(pille.children)
+    .filter((element) => element !== dokk && element !== sok)
+    .map(ytreBredde)
+  const bredder = [...resten, plassene, ...(sok ? [lengde(stil.getPropertyValue(FAGSOK_MINST))] : [])]
+  const plass = pille.clientWidth - px(stil.paddingLeft) - px(stil.paddingRight) - slingring
+  return faarPlass(bredder, px(stil.columnGap), plass)
+}
+
+/**
+ * Holder sidens plasser i orden:
  *
- * - Får ikke gruppene plass på én rad, står de på hver sin (`data-to-rader`),
- *   og dokken blir ikke bredere enn den bredeste raden. Det kan ikke CSS
- *   avgjøre selv: en rad som brytes, gjør boksen rundt like bred som det er
- *   plass til. Mens det søkes på siden, står valget slik det var.
+ * - De står i toppmenyen så lenge de får plass der ved siden av alt det andre
+ *   og et fagsøk som fortsatt er et søkefelt (`--bredde-fagsok-minst`): først
+ *   med tekst, så kompakte. Ellers flytter de til dokken nederst i vinduet, og
+ *   på smale flater står de alltid der (se `TRINN`). Plassen måles, for hvor
+ *   mye som står i menyen, kommer an på siden og på hvem som er logget inn.
+ * - Får ikke gruppene plass på én rad i dokken, står de på hver sin
+ *   (`data-to-rader`), og dokken blir ikke bredere enn den bredeste raden.
+ *   Det kan ikke CSS avgjøre selv: en rad som brytes, gjør boksen rundt like
+ *   bred som det er plass til.
+ * - Mens det søkes på siden, står valgene slik de var: feltet vokser, og
+ *   menyen skal ikke flytte seg under markøren.
  * - Høyden meldes til resten av appen som `--dokkhoyde`, så siden og det som
  *   står over dokken, gir plass også når den går over to rader. Står plassene
- *   i toppmenyen (brede flater) eller er de tomme, gjelder høyden på én rad
- *   fra `tokens.css`.
+ *   i toppmenyen eller er de tomme, gjelder høyden på én rad fra `tokens.css`.
+ *
+ * Målingen gjøres før nettleseren tegner, så menyen aldri vises halvveis.
  */
 function useDokk() {
   const [dokk, setDokk] = useState<HTMLElement | null>(null)
 
-  useEffect(() => {
-    if (!dokk || typeof ResizeObserver !== 'function') return
-    const rot = document.documentElement.style
+  useLayoutEffect(() => {
+    const pille = dokk?.parentElement
+    const meny = pille?.parentElement
+    if (!dokk || !pille || !meny) return
+    const rot = document.documentElement
+    const smal = typeof window.matchMedia === 'function' ? window.matchMedia(SMAL_FLATE) : null
     const grupper = Array.from(dokk.querySelectorAll<HTMLElement>(':scope > .toppmeny__gruppe'))
     const maal = () => {
+      const soker = dokk.querySelector('.sidesok')?.contains(document.activeElement) ?? false
+      if (!soker) {
+        const naa: Trinn = rot.hasAttribute(DOKK) ? 'dokk' : meny.hasAttribute(KOMPAKT) ? 'kompakt' : 'hel'
+        // Knappene er like brede i toppmenyen og i dokken, så hvert trinn kan
+        // prøves med bare `data-kompakt`, som bare rører menyen. Mens det
+        // måles, står overgangene stille, så bredden som måles, er den
+        // knappene får, og ikke en underveis.
+        meny.setAttribute(MALER, '')
+        const trinn = velgTrinn(!!smal?.matches, naa, (prov, slingring) => {
+          meny.toggleAttribute(KOMPAKT, prov !== 'hel')
+          return faarPlassITopp(pille, dokk, grupper, slingring ? SLINGRING : 0)
+        })
+        meny.toggleAttribute(KOMPAKT, trinn !== 'hel')
+        rot.toggleAttribute(DOKK, trinn === 'dokk')
+        // Det valgte trinnet slår igjennom før overgangene slås på igjen, så
+        // ingenting glir fra et av forsøkene.
+        void meny.offsetWidth
+        meny.removeAttribute(MALER)
+      }
       const stil = getComputedStyle(dokk)
       const fast = stil.position === 'fixed'
-      const soker = dokk.querySelector('.sidesok')?.contains(document.activeElement) ?? false
       if (!fast) dokk.removeAttribute(TO_RADER)
       else if (!soker) {
-        const px = (verdi: string) => parseFloat(verdi) || 0
         const plass =
-          document.documentElement.clientWidth -
+          rot.clientWidth -
           px(stil.left) -
           px(stil.right) -
           px(stil.paddingLeft) -
           px(stil.paddingRight) -
           px(stil.borderLeftWidth) -
           px(stil.borderRightWidth)
-        const bredder = grupper.filter((g) => g.getClientRects().length > 0).map((g) => g.getBoundingClientRect().width)
+        const bredder = iRaden(grupper).map((g) => g.getBoundingClientRect().width)
         dokk.toggleAttribute(TO_RADER, trengerToRader(bredder, px(stil.columnGap), plass))
       }
       const hoyde = dokk.getBoundingClientRect().height
-      if (hoyde > 0 && fast) rot.setProperty(DOKKHOYDE, `${hoyde}px`)
-      else rot.removeProperty(DOKKHOYDE)
+      if (hoyde > 0 && fast) rot.style.setProperty(DOKKHOYDE, `${hoyde}px`)
+      else rot.style.removeProperty(DOKKHOYDE)
     }
-    const vakt = new ResizeObserver(maal)
-    for (const element of [dokk, ...grupper]) vakt.observe(element)
+    // Knappene som kommer og går (sidens og verktøyenes), og vinduets bredde.
+    const vakt = typeof ResizeObserver === 'function' ? new ResizeObserver(maal) : null
+    for (const element of [dokk, ...grupper, ...pille.children]) {
+      if (!element.classList.contains('toppmeny__sok')) vakt?.observe(element)
+    }
     window.addEventListener('resize', maal)
     maal()
     return () => {
-      vakt.disconnect()
+      vakt?.disconnect()
       window.removeEventListener('resize', maal)
       dokk.removeAttribute(TO_RADER)
-      rot.removeProperty(DOKKHOYDE)
+      meny.removeAttribute(KOMPAKT)
+      rot.removeAttribute(DOKK)
+      rot.style.removeProperty(DOKKHOYDE)
     }
   }, [dokk])
 

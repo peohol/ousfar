@@ -19,11 +19,9 @@
   scroll-margin-block: var(--toppmeny-offset) var(--rom-7);
 }
 
-/* På smale flater står dokken nederst, og feltet slutter over den. */
-@media (max-width: 47.5em) {
-  .skuff {
-    scroll-margin-bottom: var(--dokk-offset);
-  }
+/* Står dokken nederst, slutter feltet over den. */
+:root[data-dokk] .skuff {
+  scroll-margin-bottom: var(--dokk-offset);
 }
 
 /* --- Nivå 1: seksjonen -------------------------------------------------- */

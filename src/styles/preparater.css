@@ -511,17 +511,17 @@
   color: var(--aksent);
 }
 
+/* Et åpnet kort rulles fram over dokken, som skuffene (`seksjoner.css`). */
+:root[data-dokk] .styrkekort {
+  scroll-margin-bottom: var(--dokk-offset);
+}
+
 /* --- Smale flater ---------------------------------------------------------
    Styrkene står tre i bredden som kvadrater, og preparatnavnene i én kolonne. */
 @media (max-width: 47.5em) {
   .styrkerutenett {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--rom-2);
-  }
-
-  /* Et åpnet kort rulles fram over dokken, som skuffene (`seksjoner.css`). */
-  .styrkekort {
-    scroll-margin-bottom: var(--dokk-offset);
   }
 
   .styrkekort__knapp {
