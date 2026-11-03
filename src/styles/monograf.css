@@ -206,8 +206,9 @@
 /* --- Serumkonsentrasjoner ---------------------------------------------------
    Som i kilden: én kolonne per dose og én rad per mål, med den samlede
    kolonnen «Alle» sist og tonet. Tallene står med tabellsiffer, medianen
-   uthevet. På smale skjermer ruller tabellen sidelengs, og radoverskriftene
-   står fast til venstre. */
+   uthevet. Tabellene ruller aldri sidelengs: radoverskriftene brytes over to
+   linjer, og får tabellen likevel ikke plass, snus den (`Serumtabell.tsx`),
+   så dosene blir rader og «Alle» står nederst. */
 .serumtabell {
   display: flex;
   flex-direction: column;
@@ -235,6 +236,7 @@
   color: var(--blekk-sterk);
 }
 
+/* Rullefeltet brukes av kjemi- og laboratorietabellene, som deler oppsettet. */
 .serumtabell__rull {
   max-width: 100%;
   overflow-x: auto;
@@ -246,6 +248,13 @@
 .serumtabell__rull:focus-visible {
   outline: var(--fokusring) solid var(--fokus);
   outline-offset: var(--fokusring);
+}
+
+.serumtabell__ramme {
+  background: var(--flate);
+  border: var(--kant) solid var(--linje);
+  border-radius: var(--runding-underkort);
+  overflow: hidden;
 }
 
 .serumtabell__tabell {
@@ -275,11 +284,17 @@
   background: var(--flate-hevet);
 }
 
-/* Matrisen: dosene i serif over kolonnene, tallene høyrejustert. */
+/* Matrisen: dosene i serif, tallene høyrejustert. Mål og enhet («Median
+   (nmol/L)») kan brytes over to linjer, så tabellen tar mindre plass. */
 .serumtabell__tabell--persentiler td,
 .serumtabell__tabell--prosjekt td,
 .serumtabell__dose {
   text-align: right;
+}
+
+.serumtabell__tabell--persentiler tbody th[scope='row']:not(.serumtabell__dose),
+.serumtabell__tabell--snudd thead th {
+  white-space: normal;
 }
 
 .serumtabell__tabell .serumtabell__dose {
@@ -293,29 +308,45 @@
   text-align: right;
 }
 
-/* Radoverskriftene står fast når tabellen ruller sidelengs. */
 .serumtabell__tabell--persentiler th:first-child {
-  position: sticky;
-  left: 0;
-  z-index: 1;
   border-right: var(--kant) solid var(--linje);
 }
 
-.serumtabell__tabell tr[data-felt='antall'] td {
+.serumtabell__tabell td[data-felt='antall'] {
   color: var(--blekk-dempet);
 }
 
-.serumtabell__tabell tr[data-felt='median'] td {
+.serumtabell__tabell td[data-felt='median'] {
   font-weight: var(--vekt-fet);
   color: var(--blekk-sterk);
 }
 
-.serumtabell__tabell [data-samlet] {
+.serumtabell__tabell th[data-samlet],
+.serumtabell__tabell td[data-samlet] {
   border-left: var(--kant) solid var(--linje-sterk);
 }
 
-.serumtabell__tabell td[data-samlet] {
+.serumtabell__tabell td[data-samlet],
+.serumtabell__tabell tr[data-samlet] > td {
   background: var(--flate-hevet);
+}
+
+/* Snudd: målene står over kolonnene, og «Alle» er den nederste raden. */
+.serumtabell__tabell--snudd thead th {
+  vertical-align: bottom;
+  text-align: right;
+}
+
+.serumtabell__tabell--snudd thead th:first-child {
+  text-align: left;
+}
+
+.serumtabell__tabell--snudd tbody th[scope='row'] {
+  text-align: left;
+}
+
+.serumtabell__tabell--snudd tr[data-samlet] > * {
+  border-top: var(--kant) solid var(--linje-sterk);
 }
 
 /* Referanseområdeprosjektet: to rader, bare så bred som den trenger. */
@@ -328,7 +359,9 @@
   overflow: hidden;
 }
 
-/* Rader som ikke er en persentiltabell: vanlig tabell med tekst som brytes. */
+/* Rader som ikke er en persentiltabell: vanlig tabell med tekst som brytes.
+   Kolonnene trenger en lesbar minstebredde; får de den ikke, vises radene
+   hver for seg i stedet (`serumtabell__stabel`). */
 .serumtabell__tabell--rader th,
 .serumtabell__tabell--rader td {
   text-align: left;
@@ -336,19 +369,91 @@
   white-space: normal;
 }
 
-.serumtabell__tabell--rader th {
-  white-space: nowrap;
+.serumtabell__tabell--rader td {
+  min-width: 7rem;
+  line-height: 1.4;
 }
 
-.serumtabell__tabell--rader td {
-  min-width: 8rem;
-  line-height: 1.4;
+.serumtabell__stabel {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.serumtabell__stabel > li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+  padding: var(--rom-3);
+}
+
+.serumtabell__stabel > li + li {
+  border-top: var(--kant) solid var(--linje);
+}
+
+.serumtabell__stabel > li[data-samlet] {
+  background: var(--flate-hevet);
+  border-top-color: var(--linje-sterk);
+}
+
+.serumtabell__stabel .serumtabell__dose {
+  margin: 0;
+  text-align: left;
+  font: var(--vekt-medium) var(--tekst-ui) / 1.2 var(--skrift-display);
+  color: var(--blekk-sterk);
+}
+
+.serumtabell__stabel dl {
+  display: grid;
+  grid-template-columns: minmax(0, max-content) minmax(0, 1fr);
+  gap: var(--rom-1) var(--rom-4);
+  align-items: baseline;
+  margin: 0;
+}
+
+.serumtabell__stabel dl > div {
+  display: contents;
+}
+
+.serumtabell__stabel dt {
+  font: var(--vekt-halvfet) var(--tekst-liten) / 1.4 var(--skrift-ui);
+  color: var(--blekk-dempet);
+}
+
+.serumtabell__stabel dd {
+  margin: 0;
+  font: var(--vekt-normal) var(--tekst-ui) / 1.4 var(--skrift-ui);
+  font-variant-numeric: tabular-nums;
+  color: var(--blekk);
+  overflow-wrap: anywhere;
+}
+
+.serumtabell__stabel [data-felt='antall'] dd {
+  color: var(--blekk-dempet);
+}
+
+.serumtabell__stabel [data-felt='median'] dd {
+  font-weight: var(--vekt-fet);
+  color: var(--blekk-sterk);
+}
+
+/* Serumtabellene står tettere sideveis, så flere doser får plass. */
+.serumtabell__ramme .serumtabell__tabell th,
+.serumtabell__ramme .serumtabell__tabell td {
+  padding-inline: var(--rom-3);
 }
 
 @media (max-width: 47.5em) {
   .serumtabell__tabell th,
   .serumtabell__tabell td {
     padding: var(--rom-2) var(--rom-3);
+  }
+
+  .serumtabell__ramme .serumtabell__tabell th,
+  .serumtabell__ramme .serumtabell__tabell td {
+    padding-inline: var(--rom-2);
   }
 }
 
