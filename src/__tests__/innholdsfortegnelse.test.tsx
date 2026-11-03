@@ -60,6 +60,8 @@ describe('innholdsfortegnelsen', () => {
     rerender(<Side seksjoner={['Dosering', 'Preparater', 'Interaksjoner']} />)
     expect(punktene().map((p) => p.textContent)).toEqual(['Dosering', 'Preparater', 'Interaksjoner'])
     expect(within(fortegnelsen()).queryByText(/Kort i/)).toBeNull()
+    // Seksjonens ikon står foran tittelen.
+    expect(punktene().map((p) => p.querySelector('svg.ikon')?.getAttribute('data-ikon'))).toEqual(['dose', 'dose', 'dose'])
   })
 
   it('tar bare med seksjoner som har et navn, og vises ikke før siden har minst to', () => {
@@ -124,7 +126,7 @@ describe('innholdsfortegnelsen', () => {
 
   it('står enten ved siden av innholdet eller i toppmenyen, aldri begge, og ikke på utskrift', () => {
     const css = readFileSync('src/styles/innholdsfortegnelse.css', 'utf8')
-    const bred = css.slice(css.indexOf('@media (min-width: 84em)'), css.indexOf('.innholdsfortegnelse__tittel'))
+    const bred = css.slice(css.indexOf('@media (min-width: 90em)'), css.indexOf('.innholdsfortegnelse__tittel'))
     expect(css.indexOf('.innholdsfortegnelse {\n  display: none;')).toBeGreaterThanOrEqual(0)
     expect(bred).toContain('position: fixed')
     expect(bred).toMatch(/\.innholdsmeny \{\s*display: none;/)
