@@ -233,10 +233,24 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
       if (fase.trinnvalg && fase.strategi.type === 'prosent_av_startdose') {
         if (individuell) f(`forløp ${x.id} lar forskriveren velge dose per trinn i prosent av startdosen med individuell eller godkjent avslutning; det gjelder bare en nedtrapping til 0`)
         if (x.dosevalg?.avvik_prosent?.verdi) f(`forløp ${x.id} lar forskriveren velge dose per trinn og har samtidig en toleranse`)
+      } else if (fase.strategi.type === 'prosent_av_startdose' && fase.strategi.mellomtrinn) {
+        f(`forløp ${x.id} har et mellomtrinn før seponeringen uten valg av dose per trinn`)
       } else if (fase.trinnvalg) {
         if (fase.strategi.type !== 'prosent_av_aktuell' || !fase.strategi.prosent.omrade) f(`forløp ${x.id} lar forskriveren velge dose per trinn uten et område for reduksjonen i prosent av aktuell dose`)
         if (!individuell) f(`forløp ${x.id} lar forskriveren velge dose per trinn uten individuell eller godkjent avslutning`)
         if (x.dosevalg?.avvik_prosent?.verdi) f(`forløp ${x.id} lar forskriveren velge dose per trinn og har samtidig en toleranse`)
+      }
+      // Et minste trinn ved lav dose er et valg av dose per trinn, større enn valgområdet, men aldri en seponering (regelmodell 12).
+      const minste = fase.strategi.type === 'prosent_av_aktuell' ? fase.strategi.minste_trinn : undefined
+      if (minste) {
+        const omrade = fase.strategi.type === 'prosent_av_aktuell' ? fase.strategi.prosent.omrade : undefined
+        if (!fase.trinnvalg || !omrade) f(`forløp ${x.id} har et minste trinn uten valg av dose per trinn innenfor et område`)
+        const maks = minste.maks_prosent.verdi
+        // Valgområdet uten begrunnelse er høyst det laveste begrunnelseskravet som alltid gjelder (`trinnvalgOmrade` i `beregning.ts`).
+        const krav = fase.strategi.type === 'prosent_av_aktuell' ? (fase.strategi.prosent.begrunnelseskrav ?? []).flatMap((k) => (k.over !== undefined && !k.ved ? [k.over] : [])) : []
+        const ovre = omrade ? Math.min(omrade[1], ...krav) : undefined
+        if (maks !== null && maks >= 100) f(`forløp ${x.id} har et minste trinn på ${maks} %; et minste trinn går aldri til 0`)
+        if (maks !== null && ovre !== undefined && maks <= ovre) f(`forløp ${x.id} har et minste trinn på høyst ${maks} %, som ikke er større enn valgområdet (${omrade![0]}–${ovre} %)`)
       }
     }
   }
@@ -248,6 +262,13 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
     for (const v of x.vurderinger ?? []) if (!v.tekst.trim()) f(`vurderingspunktet ${x.id}.${v.id} mangler tekst`)
     for (const [i, fase] of x.faser.entries()) {
       if (fase.type === 'seponer' && fase.avslutning && i !== x.faser.length - 1) f(`forløp ${x.id} har en godkjent avslutning før siste fase`)
+      // Visningen av en uendret dose må kunne leses entydig (regelmodell 12).
+      const vis = fase.type === 'uendret' ? fase.visning : undefined
+      const positiv = (v: number) => Number.isFinite(v) && v > 0
+      if (vis?.enhet !== undefined && !vis.enhet.trim()) f(`forløp ${x.id} viser den uendrede dosen med en tom enhet`)
+      if (vis?.tablett && !vis.tablett.navn.trim()) f(`forløp ${x.id} viser den uendrede dosen med en tablett uten navn`)
+      if (vis?.tablett && !positiv(vis.tablett.mg)) f(`forløp ${x.id} viser den uendrede dosen med ${String(vis.tablett.mg)} per tablett; det må være over 0`)
+      if (vis?.tablett?.mmol !== undefined && !positiv(vis.tablett.mmol)) f(`forløp ${x.id} viser den uendrede dosen med ${String(vis.tablett.mmol)} mmol per tablett; det må være over 0`)
     }
   }
   for (const x of tallfeil(r)) f(x)

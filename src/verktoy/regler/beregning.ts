@@ -39,6 +39,7 @@ import {
   type Trinnvalgsvar,
   forslagsverdi,
   justerbare,
+  type Uendretvisning,
 } from './modell'
 
 /** Økes når beregningen endres slik at like inndata kan gi et annet resultat. */
@@ -56,8 +57,12 @@ export interface Periode {
   fordeles?: number[]
   /** Trinnet (fra 1) i en nedtrapping der forskriveren kan velge dose per trinn (`Fase.trinnvalg`). */
   trinn?: number
-  /** Når forskriveren har valgt dosen for trinnet: den beregnede dosen, som ikke kunne gis, og den faktiske reduksjonen i prosent. */
-  valgt?: { beregnet_mg: number; prosent: number }
+  /**
+   * Når forskriveren har valgt dosen for trinnet: den beregnede dosen, som
+   * ikke kunne gis, og den faktiske reduksjonen i prosent; `mellomtrinn` når
+   * trinnet er et mindre siste trinn før seponeringen (beregnet 0 mg).
+   */
+  valgt?: { beregnet_mg: number; prosent: number; mellomtrinn?: true }
   fra_dato?: string
   til_dato?: string | null
 }
@@ -111,6 +116,14 @@ export interface Forlopsresultat {
   avsluttes?: { fra_hoyst_mg: number; trinnlengde: number }
   /** Legemidlet fortsetter med uendret dose, som planen ikke beregner (`uendret`, regelmodell 12). */
   uendret_mg?: number
+  /** Hvordan den uendrede dosen står i planen ({@link Uendretvisning}). */
+  uendret_visning?: Uendretvisning
+  /**
+   * Om den uendrede dosen er kontrollert mot regelens doser (et krav til
+   * startdosen med verdier eller område, som er oppfylt); ellers er den bare
+   * bekreftet av forskriveren.
+   */
+  uendret_kontrollert?: boolean
 }
 
 /** Et bindende krav beregningen er kontrollert mot. */
@@ -287,6 +300,35 @@ export function trinnvalgOmrade(s: Nedtrappingsstrategi, aktuell: number, svar: 
 }
 
 /**
+ * Om startdosen `mg` er kontrollert mot regelens doser: et krav til startdosen
+ * som gjelder (for medlemmet og svarene), har verdier eller et område, og dosen
+ * er blant verdiene eller innenfor området. Et krav med nedre grense 0 er bare
+ * en øvre grense.
+ */
+export function kontrollertStartdose(regel: Pick<Regel, 'inndata'>, mg: number, svar: Beregningsinndata['svar'], medlem?: string): boolean {
+  return regel.inndata.some(
+    (k) =>
+      k.navn === 'startdose' &&
+      (!k.gjelder_medlem || k.gjelder_medlem === medlem) &&
+      (!k.ved || svar?.[k.ved.sporsmal] === k.ved.svar) &&
+      ((k.verdier?.length ?? 0) > 0 || !!k.omrade) &&
+      (!k.verdier?.length || k.verdier.some((v) => Math.abs(v - mg) < EPS)) &&
+      (!k.omrade || (mg > (k.omrade[0] === 0 ? EPS : k.omrade[0] - EPS) && mg <= k.omrade[1] + EPS)),
+  )
+}
+
+/**
+ * Den høyeste faktiske reduksjonen i prosent et minste trinn ({@link Minstetrinn})
+ * kan ha fra `aktuell` mg, når regelen har et og dosen er høyst `fra_mg`;
+ * ellers `null`.
+ */
+export function minstetrinnFra(s: Nedtrappingsstrategi, aktuell: number): number | null {
+  if (s.type !== 'prosent_av_aktuell' || !s.minste_trinn) return null
+  const { fra_mg, maks_prosent } = s.minste_trinn
+  return fra_mg.verdi !== null && maks_prosent.verdi !== null && aktuell <= fra_mg.verdi + EPS ? maks_prosent.verdi : null
+}
+
+/**
  * Trinnlengden når forskriveren har valgt en annen reduksjon enn den beregnede
  * for en nedtrapping med fast reduksjon i prosent av startdosen (`steg_mg` per
  * `lengde` dager): aldri kortere enn regelens trinnlengde, og lenger når
@@ -318,10 +360,13 @@ function tempotrinn(
 ): number {
   const steg = (d0 * verdi(s.prosent)) / 100
   let aktuell = d0
+  let mellomtrinn = false
   for (let k = 1; k <= MAKS_TRINN; k++) {
     const beregnet = aktuell - steg
-    if (beregnet <= EPS) return dag
     const v = valg.find((x) => x.trinn === k && Math.abs(x.fra_mg - aktuell) < EPS)
+    // Trinnet til 0 er seponeringen; med `mellomtrinn` kan forskriveren én gang velge et mindre siste trinn før den.
+    const mellom: boolean = beregnet <= EPS && !!s.mellomtrinn && !mellomtrinn && !!v
+    if (beregnet <= EPS && !mellom) return dag
     if (!v) {
       legg(dag, dag + lengde - 1, beregnet, undefined, { trinn: k })
       dag += lengde
@@ -336,12 +381,16 @@ function tempotrinn(
     if (min !== undefined && v.mg < min - EPS) throw new Stopp(`${hva} er under ${tall(min)} mg, den laveste dosen som kan gis med formuleringen regelen gjelder.`)
     const n = tempolengde(lengde, steg, aktuell - v.mg)
     const prosent = (1 - v.mg / aktuell) * 100
+    const tempo = `trinnet varer så lenge at nedtrappingen ikke går raskere enn ${tall(verdi(s.prosent))} % av startdosen per ${lengde} dager`
     ctx.kontroller.push({
-      krav: `Trinn ${k} av ${virkestoff} er valgt av forskriveren fordi den beregnede dosen (${tall(beregnet)} mg) ikke kan gis; trinnet varer så lenge at nedtrappingen ikke går raskere enn ${tall(verdi(s.prosent))} % av startdosen per ${lengde} dager`,
+      krav: mellom
+        ? `Trinn ${k} av ${virkestoff} er et mindre siste trinn før seponeringen, valgt av forskriveren i stedet for trinnet fra ${tall(aktuell)} mg til 0; ${tempo}`
+        : `Trinn ${k} av ${virkestoff} er valgt av forskriveren fordi den beregnede dosen (${tall(beregnet)} mg) ikke kan gis; ${tempo}`,
       oppfylt: true,
       detalj: `${tall(v.mg)} mg, ${tall(aktuell - v.mg)} mg reduksjon fra ${tall(aktuell)} mg, ${n} dager.`,
     })
-    legg(dag, dag + n - 1, v.mg, undefined, { trinn: k, valgt: { beregnet_mg: beregnet, prosent } })
+    mellomtrinn ||= mellom
+    legg(dag, dag + n - 1, v.mg, undefined, { trinn: k, valgt: { beregnet_mg: Math.max(0, beregnet), prosent, ...(mellom && { mellomtrinn: true }) } })
     dag += n
     aktuell = v.mg
   }
@@ -450,6 +499,17 @@ function trinnvelger(s: Nedtrappingsstrategi, virkestoff: string, valg: Trinnval
     if (v.mg >= aktuell - EPS) throw new Stopp(`${hva} er ikke lavere enn dosen før (${tall(aktuell)} mg).`)
     if (Math.abs(avrund(v.mg) - v.mg) > EPS) throw new Stopp(`${hva} kan ikke vises nøyaktig med to desimaler.`)
     if (min !== undefined && v.mg < min - EPS) throw new Stopp(`${hva} er under ${tall(min)} mg, den laveste dosen som kan gis med formuleringen regelen gjelder.`)
+    // Et minste trinn ved lav dose kan være større enn valgområdet; at ingen dose innenfor området kan gis og at dosen er den nærmeste lavere,
+    // kontrollerer doseplanmotoren (P5).
+    const minste = minstetrinnFra(s, aktuell)
+    if (minste !== null && prosent > omrade[1] + EPS && prosent <= minste + EPS) {
+      ctx.kontroller.push({
+        krav: `Trinn ${k} av ${virkestoff} er et minste trinn valgt av forskriveren fordi den beregnede dosen (${tall(beregnet)} mg) ikke kan gis og ingen dose innenfor valgområdet kan det; den faktiske reduksjonen er høyst ${tall(minste)} %`,
+        oppfylt: true,
+        detalj: `${tall(v.mg)} mg, ${tall(prosent)} % fra ${tall(aktuell)} mg.`,
+      })
+      return v.mg
+    }
     if (prosent < omrade[0] - EPS || prosent > omrade[1] + EPS) {
       throw new Stopp(
         `${hva} er en reduksjon på ${tall(prosent)} % fra ${tall(aktuell)} mg, utenfor valgområdet ${tall(omrade[0])}–${tall(omrade[1])} % regelen tillater for dette trinnet.${prosent > omrade[1] ? ` ${AVVIK_IKKE_BEREGNET}` : ''}`,
@@ -503,6 +563,8 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
   let avslutning_kort: string | undefined
   let avsluttes: Forlopsresultat['avsluttes']
   let uendret: number | undefined
+  let uendret_visning: Uendretvisning | undefined
+  let uendret_kontrollert = false
 
   for (const fase of faserFor(regel, f, ctx.medlem)) {
     switch (fase.type) {
@@ -670,6 +732,8 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
         break
       case 'uendret':
         uendret = aktuell
+        if (fase.visning) uendret_visning = fase.visning
+        uendret_kontrollert = f.utgangsdose === 'startdose' && kontrollertStartdose(regel, aktuell, inndata.svar, ctx.medlem ?? undefined)
         fortsetter = true
         break
       case 'uten_beregning':
@@ -719,7 +783,7 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
     ...(utvaskingDager !== undefined ? { utvasking_dager: utvaskingDager } : {}),
     ...(avslutning ? { avslutning, avslutning_kort } : {}),
     ...(avsluttes && !fortsetter ? { avsluttes } : {}),
-    ...(uendret !== undefined ? { uendret_mg: uendret } : {}),
+    ...(uendret !== undefined ? { uendret_mg: uendret, uendret_kontrollert, ...(uendret_visning && { uendret_visning }) } : {}),
   }
   if (inndata.startdato) dater(resultat, inndata.startdato)
   return resultat
@@ -1115,7 +1179,8 @@ function periodetekst(p: Periode): string {
 }
 
 /** «valgt av forskriveren (beregnet 37,5 mg; −30 %)» for et trinn forskriveren har valgt dosen for. */
-export const valgtTekst = (p: Pick<Periode, 'valgt'>) => (p.valgt ? `valgt av forskriveren (beregnet ${mg(p.valgt.beregnet_mg)} mg; −${mg(p.valgt.prosent)} %)` : '')
+export const valgtTekst = (p: Pick<Periode, 'valgt'>) =>
+  !p.valgt ? '' : p.valgt.mellomtrinn ? `mindre siste trinn valgt av forskriveren (−${mg(p.valgt.prosent)} %)` : `valgt av forskriveren (beregnet ${mg(p.valgt.beregnet_mg)} mg; −${mg(p.valgt.prosent)} %)`
 /** Det samme etter dosen: «, valgt av forskriveren (…)». */
 export const valgtSuffiks = (p: Pick<Periode, 'valgt'>) => (p.valgt ? `, ${valgtTekst(p)}` : '')
 

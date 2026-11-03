@@ -12,13 +12,13 @@ Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel by
 
 | Regel | Form | Fra → til | Beregnbarhet | Åpne valg | Status | Eksempler |
 | --- | --- | --- | --- | --- | --- | --- |
-| `depot-risperidon-xeplion` | oppstart av depot | risperidon → paliperidon | entydig beregnbar | 0 | til faglig kontroll | 12 |
+| `depot-risperidon-xeplion` | oppstart av depot | risperidon → paliperidon | beregnbar etter faglig avklaring | 1 | til faglig kontroll | 16 |
 | `depot-consta-xeplion` | direkte bytte | risperidon → paliperidon | entydig beregnbar | 0 | til faglig kontroll | 7 |
 | `antipsykotikabytte-aripiprazol-olanzapin` | direkte bytte | aripiprazol → olanzapin | beregnbar etter faglig avklaring | 1 | til faglig kontroll | 9 |
 | `antipsykotikabytte-aripiprazol-risperidon` | direkte bytte | aripiprazol → risperidon | beregnbar etter faglig avklaring | 1 | til faglig kontroll | 8 |
 | `antipsykotikabytte-kariprazin-kvetiapin` | direkte bytte | kariprazin → kvetiapin | entydig beregnbar | 0 | til faglig kontroll | 7 |
-| `antipsykotikabytte-olanzapin-aripiprazol` | kryssnedtrapping | olanzapin → aripiprazol | beregnbar etter faglig avklaring | 3 | til faglig kontroll | 8 |
-| `antipsykotikabytte-risperidon-aripiprazol` | kryssnedtrapping | risperidon → aripiprazol | beregnbar etter faglig avklaring | 3 | til faglig kontroll | 5 |
+| `antipsykotikabytte-olanzapin-aripiprazol` | kryssnedtrapping | olanzapin → aripiprazol | beregnbar etter faglig avklaring | 4 | til faglig kontroll | 9 |
+| `antipsykotikabytte-risperidon-aripiprazol` | kryssnedtrapping | risperidon → aripiprazol | beregnbar etter faglig avklaring | 4 | til faglig kontroll | 5 |
 
 ## Kilder
 
@@ -39,9 +39,9 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 
 ## Fra peroral risperidon til Xeplion
 
-`depot-risperidon-xeplion`, versjon 4, fingeravtrykk `37200ee495f64f5bc91d88d1eeca8c12ee9d4b132e5e770ae2fb4bc84ede03b2`. Oppstart av depot: risperidon → paliperidon. **Entydig beregnbar**; status **til faglig kontroll**.
+`depot-risperidon-xeplion`, versjon 5, fingeravtrykk `46d3c55893141ddefa6a3df6f2978391dfb9bb265f6898fbd815f49ec8c44784`. Oppstart av depot: risperidon → paliperidon. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code) → utkast (versjon 3, 03.11.2026, Claude Code) → til faglig kontroll (versjon 3, 03.11.2026, Claude Code) → utkast (versjon 4, 03.11.2026, Claude Code) → til faglig kontroll (versjon 4, 03.11.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code) → utkast (versjon 3, 03.11.2026, Claude Code) → til faglig kontroll (versjon 3, 03.11.2026, Claude Code) → utkast (versjon 4, 03.11.2026, Claude Code) → til faglig kontroll (versjon 4, 03.11.2026, Claude Code) → utkast (versjon 5, 03.11.2026, Claude Code) → til faglig kontroll (versjon 5, 03.11.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -69,8 +69,10 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 - Regelen gir bare en komplett plan med den anbefalte vedlikeholdsdosen 75 mg. Preparatomtalen har ingen omregning fra risperidondosen, og OUSFAR finner ikke på en, så regelen kan ikke stå for at en annen dose passer til pasientens risperidondose. En annen vedlikeholdsdose (25–150 mg etter toleranse og effekt, for eksempel høyere ved overvekt) stopper med beskjed om individuell planlegging, også med begrunnelse. Planen bruker bare styrker av Xeplion som finnes i FEST.
   - Anbefalt månedlig vedlikeholdsdose er 75 mg; noen kan ha nytte av lavere eller høyere dose innenfor 25–150 mg ut fra toleranse og effekt. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2)*
   - Pasienter med overvekt eller fedme kan trenge doser i den øvre delen av området. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2)*
-- Risperidondosen oppgis som dokumentasjon av stabiliseringen og må være innenfor det preparatomtalen anbefaler (høyst 16 mg daglig); den brukes ikke i beregningen.
+- Planen gjelder bare 4–6 mg risperidon daglig, dosen preparatomtalen sier de fleste har effekt av (åpent OUSFAR-valg til kontrolløren). Lavere eller høyere risperidondose, utilstrekkelig effekt, bivirkninger som har begrenset dosen, og overvekt eller fedme stopper, fordi 75 mg da ikke kan antas å passe. Risperidondosen brukes ikke i beregningen.
+  - Schizofreni hos voksne: start med 2 mg daglig; dosen kan økes til 4 mg dag 2 og deretter holdes eller tilpasses. De fleste har effekt av 4–6 mg daglig. *([dmp-risperdal](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08037.pdf), pkt. 4.2)*
   - Doser over 10 mg daglig har ikke vist bedre effekt; doser over 16 mg daglig er ikke vurdert for sikkerhet og anbefales ikke. *([dmp-risperdal](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08037.pdf), pkt. 4.2)*
+  - Pasienter med overvekt eller fedme kan trenge doser i den øvre delen av området. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2)*
 
 **Den matematiske regelen – parametre:**
 
@@ -86,12 +88,14 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 
 **Betingelser:**
 
-- Startdose høyst 16 mg (bindende; dmp-risperdal pkt. 4.2)
+- Startdose 4–6 mg (bindende; **OUSFAR-vurdering, åpent forslag:** Planen gjelder bare pasienter på 4–6 mg risperidon daglig, dosen preparatomtalen sier de fleste har effekt av, fordi anbefalte 75 mg Xeplion er dosen for de fleste. Dette er ingen omregning: ingen kilde sier hvilken Xeplion-dose som tilsvarer en risperidondose, og regelen stopper utenfor området i stedet for å anta at 75 mg passer. Avgrensningen er OUSFARs og må avklares av kontrolløren. (bygger på dmp-risperdal pkt. 4.2; dmp-risperdal pkt. 4.2; ema-xeplion section 4.2; ema-xeplion section 4.2 (bytte fra peroral)))
 - Måldose (må oppgis) 75 mg (bindende; ema-xeplion section 4.2)
 - Må bekreftes (`indikasjon`): Pasienten er voksen, har schizofreni og er stabilisert på peroral risperidon. (ema-xeplion section 4.1; ema-xeplion section 4.2 (bytte fra peroral))
 - Må bekreftes (`tidligere_toleranse`): Det er dokumentert i journalen at pasienten har tålt peroral risperidon over tid, uten tegn til overfølsomhet. Anafylaksi er likevel mulig etter injeksjon. (ema-xeplion section 4.1; ema-xeplion section 4.3 og 4.4)
+- Må bekreftes (`effekt_toleranse`): Forskriveren har vurdert det konkrete forløpet: dagens risperidondose har gitt god og stabil effekt, uten bivirkninger som har begrenset dosen og uten planer om å endre den. Er effekten utilstrekkelig, eller har bivirkninger holdt dosen nede, planlegges vedlikeholdsdosen individuelt. (ema-xeplion section 4.2; ema-xeplion section 4.2; ema-xeplion section 4.2 (bytte fra peroral))
 - Unntak (`nedsatt_nyrefunksjon`): Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min. (ema-xeplion section 4.2 (nedsatt nyrefunksjon))
 - Unntak (`over_65`): Pasienten er over 65 år; effekt og sikkerhet av Xeplion er ikke fastslått i denne gruppen. (ema-xeplion section 4.2 (eldre))
+- Unntak (`overvekt`): Pasienten har overvekt eller fedme; preparatomtalen sier at doser i den øvre delen av området kan trengs, så anbefalte 75 mg er ikke nødvendigvis riktig. (ema-xeplion section 4.2)
 
 **Kliniske forutsetninger:**
 
@@ -99,52 +103,64 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 - Dosene er den ideelle dosekurven, avrundet til to desimaler; hvilke doser som kan gis med norske preparater (styrker, deling, flytende form), avgjøres i P5.
 - Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet, interaksjoner, graviditet, etterlevelse eller individuell toleranse fra dosen (B7); dette må vurderes av forskriveren.
 - Pasienten bruker peroral risperidon (tabletter eller mikstur) daglig.
-- Forskriveren har vurdert nyrefunksjonen og alderen og svart at kreatininclearance ikke er under 80 ml/min og at pasienten ikke er over 65 år; ubesvart stopper beregningen.
+- Forskriveren har vurdert nyrefunksjonen, alderen og vekten og svart at kreatininclearance ikke er under 80 ml/min, at pasienten ikke er over 65 år og ikke har overvekt eller fedme; ubesvart stopper beregningen.
 
 **Usikkerhet:**
 
-- Hvilken vedlikeholdsdose som gir samme effekt som pasientens risperidondose, sier preparatomtalen ikke; en annen dose enn 75 mg er et klinisk valg utenfor regelen, og full effekt av en dose kan først sees etter flere måneder.
+- Hvilken vedlikeholdsdose som gir samme effekt som pasientens risperidondose, sier preparatomtalen ikke. At 75 mg passer ved 4–6 mg risperidon med god effekt og toleranse, er en avgrensning, ikke en omregning; en annen dose enn 75 mg er et klinisk valg utenfor regelen, og full effekt av en dose kan først sees etter flere måneder.
 - Generiske paliperidonpalmitat (Niapelf, Palmeux, Paliperidon Zentiva) og tremånedersdepotene er ikke kontrollert mot regelen og er ikke omfattet.
 
 **Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
 
-- *Risperidon 4 mg, vedlikehold 75 mg, startdato 1. desember 2026.* Inndata: startdose 4 mg; måldose 75 mg; startdato 01.12.2026; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
+- *Risperidon 4 mg, vedlikehold 75 mg, startdato 1. desember 2026.* Inndata: startdose 4 mg; måldose 75 mg; startdato 01.12.2026; bekreftet: indikasjon, tidligere_toleranse, effekt_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei, overvekt nei.
   - **fra:** fra dag 1 (01.12.2026): seponert
   - **til:** dag 1 (01.12.2026): 150 mg injeksjon, deltoideus; dag 8 (08.12.2026, ±4 dager): 100 mg injeksjon, deltoideus; hver måned fra 1 måned etter dag 8 (08.01.2027, ±7 dager): 75 mg injeksjon, deltoideus eller setemuskel
   - Kontroll: Avkreftet: Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten er over 65 år; effekt og sikkerhet av Xeplion er ikke fastslått i denne gruppen. – oppfylt. Vurdert og avkreftet av forskriveren.
+  - Kontroll: Avkreftet: Pasienten har overvekt eller fedme; preparatomtalen sier at doser i den øvre delen av området kan trengs, så anbefalte 75 mg er ikke nødvendigvis riktig. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen, har schizofreni og er stabilisert på peroral risperidon. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Det er dokumentert i journalen at pasienten har tålt peroral risperidon over tid, uten tegn til overfølsomhet. Anafylaksi er likevel mulig etter injeksjon. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Startdosen er høyst 16 mg (bindende) – oppfylt. 4 mg.
+  - Kontroll: Bekreftet: Forskriveren har vurdert det konkrete forløpet: dagens risperidondose har gitt god og stabil effekt, uten bivirkninger som har begrenset dosen og uten planer om å endre den. Er effekten utilstrekkelig, eller har bivirkninger holdt dosen nede, planlegges vedlikeholdsdosen individuelt. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Startdosen er 4–6 mg (bindende) – oppfylt. 4 mg.
   - Kontroll: Måldosen er 75 mg (bindende) – oppfylt. 75 mg.
-- *Risperidon 2 mg og vedlikehold 50 mg med begrunnelse: en annen dose enn 75 mg planlegges individuelt.* Inndata: startdose 2 mg; måldose 50 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei; begrunnelse: «Syntetisk eksempel.».
+- *Risperidon 5 mg og vedlikehold 50 mg med begrunnelse: en annen dose enn 75 mg planlegges individuelt.* Inndata: startdose 5 mg; måldose 50 mg; bekreftet: indikasjon, tidligere_toleranse, effekt_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei, overvekt nei; begrunnelse: «Syntetisk eksempel.».
   - **Stoppet:** Måldosen 50 mg er utenfor det regelen gjelder for (75 mg).
-- *Risperidon 0,5 mg og vedlikehold 150 mg med begrunnelse: ingen komplett plan.* Inndata: startdose 0,5 mg; måldose 150 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei; begrunnelse: «Syntetisk eksempel.».
-  - **Stoppet:** Måldosen 150 mg er utenfor det regelen gjelder for (75 mg).
-- *Risperidon 16 mg og vedlikehold 50 mg med begrunnelse: ingen komplett plan.* Inndata: startdose 16 mg; måldose 50 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei; begrunnelse: «Syntetisk eksempel.».
-  - **Stoppet:** Måldosen 50 mg er utenfor det regelen gjelder for (75 mg).
-- *Risperidon 0,5 mg (laveste dose) og vedlikehold 75 mg: oppstarten og vedlikeholdet fra preparatomtalen.* Inndata: startdose 0,5 mg; måldose 75 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
+- *Risperidon 6 mg (øvre grense for avgrensningen) og vedlikehold 75 mg: oppstarten og vedlikeholdet fra preparatomtalen.* Inndata: startdose 6 mg; måldose 75 mg; bekreftet: indikasjon, tidligere_toleranse, effekt_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei, overvekt nei.
   - **fra:** fra dag 1: seponert
   - **til:** dag 1: 150 mg injeksjon, deltoideus; dag 8 (±4 dager): 100 mg injeksjon, deltoideus; hver måned fra 1 måned etter dag 8 (±7 dager): 75 mg injeksjon, deltoideus eller setemuskel
   - Kontroll: Avkreftet: Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten er over 65 år; effekt og sikkerhet av Xeplion er ikke fastslått i denne gruppen. – oppfylt. Vurdert og avkreftet av forskriveren.
+  - Kontroll: Avkreftet: Pasienten har overvekt eller fedme; preparatomtalen sier at doser i den øvre delen av området kan trengs, så anbefalte 75 mg er ikke nødvendigvis riktig. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen, har schizofreni og er stabilisert på peroral risperidon. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Det er dokumentert i journalen at pasienten har tålt peroral risperidon over tid, uten tegn til overfølsomhet. Anafylaksi er likevel mulig etter injeksjon. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Startdosen er høyst 16 mg (bindende) – oppfylt. 0,5 mg.
+  - Kontroll: Bekreftet: Forskriveren har vurdert det konkrete forløpet: dagens risperidondose har gitt god og stabil effekt, uten bivirkninger som har begrenset dosen og uten planer om å endre den. Er effekten utilstrekkelig, eller har bivirkninger holdt dosen nede, planlegges vedlikeholdsdosen individuelt. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Startdosen er 4–6 mg (bindende) – oppfylt. 6 mg.
   - Kontroll: Måldosen er 75 mg (bindende) – oppfylt. 75 mg.
-- *Uten dokumentert tidligere toleranse stopper beregningen.* Inndata: startdose 4 mg; måldose 75 mg; bekreftet: indikasjon; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
+- *Risperidon 0,5 mg: 75 mg kan ikke antas å passe ved en så lav dose, så ingen komplett plan.* Inndata: startdose 0,5 mg; måldose 75 mg; bekreftet: indikasjon, tidligere_toleranse, effekt_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei, overvekt nei.
+  - **Stoppet:** Startdosen 0,5 mg er utenfor det regelen gjelder for (4–6 mg).
+- *Risperidon 3,5 mg, rett under avgrensningen: ingen komplett plan.* Inndata: startdose 3,5 mg; måldose 75 mg; bekreftet: indikasjon, tidligere_toleranse, effekt_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei, overvekt nei.
+  - **Stoppet:** Startdosen 3,5 mg er utenfor det regelen gjelder for (4–6 mg).
+- *Risperidon 6,5 mg, rett over avgrensningen: ingen komplett plan.* Inndata: startdose 6,5 mg; måldose 75 mg; bekreftet: indikasjon, tidligere_toleranse, effekt_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei, overvekt nei.
+  - **Stoppet:** Startdosen 6,5 mg er utenfor det regelen gjelder for (4–6 mg).
+- *Risperidon 16 mg (høyeste dose preparatomtalen vurderer): 75 mg kan ikke antas å passe, så ingen komplett plan.* Inndata: startdose 16 mg; måldose 75 mg; bekreftet: indikasjon, tidligere_toleranse, effekt_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei, overvekt nei.
+  - **Stoppet:** Startdosen 16 mg er utenfor det regelen gjelder for (4–6 mg).
+- *Uten bekreftet god effekt og toleranse av dagens dose stopper beregningen.* Inndata: startdose 4 mg; måldose 75 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei, overvekt nei.
+  - **Stoppet:** Må bekreftes før beregning: Forskriveren har vurdert det konkrete forløpet: dagens risperidondose har gitt god og stabil effekt, uten bivirkninger som har begrenset dosen og uten planer om å endre den. Er effekten utilstrekkelig, eller har bivirkninger holdt dosen nede, planlegges vedlikeholdsdosen individuelt.
+- *Overvekt eller fedme: høyere dose kan trengs, så regelen gjelder ikke.* Inndata: startdose 4 mg; måldose 75 mg; bekreftet: indikasjon, tidligere_toleranse, effekt_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei, overvekt ja.
+  - **Stoppet:** Regelen gjelder ikke: Pasienten har overvekt eller fedme; preparatomtalen sier at doser i den øvre delen av området kan trengs, så anbefalte 75 mg er ikke nødvendigvis riktig.
+- *Uten dokumentert tidligere toleranse stopper beregningen.* Inndata: startdose 4 mg; måldose 75 mg; bekreftet: indikasjon, effekt_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei, overvekt nei.
   - **Stoppet:** Må bekreftes før beregning: Det er dokumentert i journalen at pasienten har tålt peroral risperidon over tid, uten tegn til overfølsomhet. Anafylaksi er likevel mulig etter injeksjon.
-- *Uten valgt vedlikeholdsdose: beregningen velger ikke selv.* Inndata: startdose 4 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
+- *Uten valgt vedlikeholdsdose: beregningen velger ikke selv.* Inndata: startdose 4 mg; bekreftet: indikasjon, tidligere_toleranse, effekt_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei, overvekt nei.
   - **Stoppet:** Måldosen må oppgis; regelen har ingen standard måldose.
-- *Vedlikehold 175 mg er over området i preparatomtalen.* Inndata: startdose 6 mg; måldose 175 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
+- *Vedlikehold 175 mg er over området i preparatomtalen.* Inndata: startdose 6 mg; måldose 175 mg; bekreftet: indikasjon, tidligere_toleranse, effekt_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei, overvekt nei.
   - **Stoppet:** Måldosen 175 mg er utenfor det regelen gjelder for (75 mg).
-- *Risperidon 20 mg er over det preparatomtalen anbefaler.* Inndata: startdose 20 mg; måldose 150 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
-  - **Stoppet:** Startdosen 20 mg er utenfor det regelen gjelder for (høyst 16 mg).; Måldosen 150 mg er utenfor det regelen gjelder for (75 mg).
-- *Kreatininclearance under 80 ml/min: regelen gjelder ikke.* Inndata: startdose 4 mg; måldose 75 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon ja, over_65 nei.
+- *Risperidon 20 mg er over det preparatomtalen anbefaler.* Inndata: startdose 20 mg; måldose 150 mg; bekreftet: indikasjon, tidligere_toleranse, effekt_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei, overvekt nei.
+  - **Stoppet:** Startdosen 20 mg er utenfor det regelen gjelder for (4–6 mg).; Måldosen 150 mg er utenfor det regelen gjelder for (75 mg).
+- *Kreatininclearance under 80 ml/min: regelen gjelder ikke.* Inndata: startdose 4 mg; måldose 75 mg; bekreftet: indikasjon, tidligere_toleranse, effekt_toleranse; pasientforhold: nedsatt_nyrefunksjon ja, over_65 nei, overvekt nei.
   - **Stoppet:** Regelen gjelder ikke: Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min.
-- *Alderen er ikke vurdert: ukjent stopper like mye som over 65 år.* Inndata: startdose 4 mg; måldose 75 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei.
+- *Alderen er ikke vurdert: ukjent stopper like mye som over 65 år.* Inndata: startdose 4 mg; måldose 75 mg; bekreftet: indikasjon, tidligere_toleranse, effekt_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, overvekt nei.
   - **Stoppet:** Må avklares før beregning (ukjent): Pasienten er over 65 år; effekt og sikkerhet av Xeplion er ikke fastslått i denne gruppen.
-- *Uten bekreftet stabilisering og toleranse stopper beregningen.* Inndata: startdose 4 mg; måldose 75 mg; bekreftet: tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
+- *Uten bekreftet stabilisering og toleranse stopper beregningen.* Inndata: startdose 4 mg; måldose 75 mg; bekreftet: tidligere_toleranse, effekt_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei, overvekt nei.
   - **Stoppet:** Må bekreftes før beregning: Pasienten er voksen, har schizofreni og er stabilisert på peroral risperidon.
 
 **Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntipsychotics:Rd>Dp`.
@@ -594,9 +610,9 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 
 ## Fra olanzapin til aripiprazol, kryss-titrering
 
-`antipsykotikabytte-olanzapin-aripiprazol`, versjon 2, fingeravtrykk `50697f94e775cf88d808b72dfb1259f2543768a2cab8c6ecbe90ce0ed964c4a8`. Kryssnedtrapping: olanzapin → aripiprazol. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`antipsykotikabytte-olanzapin-aripiprazol`, versjon 3, fingeravtrykk `d5dc8b2b2741d59d9e9743ab458eaf6c9a4dd0422ac40dccf74f8fad135203cc`. Kryssnedtrapping: olanzapin → aripiprazol. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code) → utkast (versjon 3, 03.11.2026, Claude Code) → til faglig kontroll (versjon 3, 03.11.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -626,7 +642,7 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
   - Aripiprazol legges til den eksisterende behandlingen: 2,5–5 mg daglig den første uken, 5–10 mg daglig fra slutten av første uke og 10–15 mg daglig fra slutten av andre uke. *([tarc-2018](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6130089/fullTextXML), avsnittet om bytte hos stabile polikliniske pasienter med schizofreni (figur 1))*
   - Når måldosen 10–15 mg er nådd, brukes aripiprazol og det forrige antipsykotikumet sammen i minst 2 uker. *([tarc-2018](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6130089/fullTextXML), avsnittet om bytte hos stabile polikliniske pasienter med schizofreni (figur 1))*
   - Deretter trappes det forrige antipsykotikumet ned med 25 % av dosen, minst 2 uker mellom hver reduksjon, til det er stoppet; for eksempel 20 → 15 → 10 → 5 mg eller 4 → 3 → 2 → 1 mg og så stopp. *([tarc-2018](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6130089/fullTextXML), avsnittet om bytte hos stabile polikliniske pasienter med schizofreni (figur 1))*
-- Hver reduksjon er 25 % av startdosen. Kan et trinn ikke gis med tablettene i FEST, stopper planen og viser de nærmeste dosene under og over som kan gis, med faktisk reduksjon og dager; forskriveren velger, og verktøyet runder aldri av selv (kontrollørens valg c). Et større trinn varer så lenge at nedtrappingen aldri går raskere enn 25 % av startdosen per 14 dager, og neste trinn regnes fra den valgte dosen. Legemidlet seponeres når neste beregnede dose er 0 eller lavere.
+- Hver reduksjon er 25 % av startdosen. Kan et trinn ikke gis med tablettene i FEST, stopper planen og viser de nærmeste dosene under og over som kan gis, med faktisk reduksjon og dager; forskriveren velger, og verktøyet runder aldri av selv (kontrollørens valg c). Et større trinn varer så lenge at nedtrappingen aldri går raskere enn 25 % av startdosen per 14 dager, og neste trinn regnes fra den valgte dosen. Legemidlet seponeres når neste beregnede dose er 0 eller lavere, så siste dose før seponering er aldri mer enn 25 % av startdosen og har stått minst 14 dager, som i kildens eksempler. I stedet for trinnet til 0 kan forskriveren velge ett mindre siste trinn med en lavere dose som kan gis (for eksempel olanzapin 2,5 mg etter 5 mg), med samme fartsregel; seponeringen kommer da etter det trinnet. Uten valg gjelder kildens siste trinn.
   - Deretter trappes det forrige antipsykotikumet ned med 25 % av dosen, minst 2 uker mellom hver reduksjon, til det er stoppet; for eksempel 20 → 15 → 10 → 5 mg eller 4 → 3 → 2 → 1 mg og så stopp. *([tarc-2018](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6130089/fullTextXML), avsnittet om bytte hos stabile polikliniske pasienter med schizofreni (figur 1))*
 
 **Den matematiske regelen – parametre:**
@@ -690,6 +706,18 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
   - Kontroll: Bekreftet: Byttet er vurdert i, eller med råd fra, spesialisthelsetjenesten, og pasienten kan følges tett de første ukene: forverring av psykosen, søvn, uro og akatisi, sedasjon og ortostatisk blodtrykksfall. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 5–20 mg (bindende) – oppfylt. 10 mg.
   - Kontroll: Måldosen er 10, 15 mg (bindende) – oppfylt. 10 mg.
+- *Olanzapin 20 mg med et mindre siste trinn valgt av forskriveren: 2,5 mg i 14 dager i stedet for trinnet fra 5 mg til 0.* Inndata: startdose 20 mg; måldose 15 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: tilbakefall_innlagt nei, alder_65 nei, cyp_aripiprazol nei.
+  - **fra:** dag 1–28: 20 mg; dag 29–42: 15 mg; dag 43–56: 10 mg; dag 57–70: 5 mg; dag 71–84: 2,5 mg, mindre siste trinn valgt av forskriveren (−50 %); fra dag 85: seponert
+  - **til:** dag 1–7: 5 mg; dag 8–14: 10 mg; fra dag 15: 15 mg
+  - Kontroll: Avkreftet: Pasienten har hatt gjentatte psykotiske tilbakefall, er innlagt eller er ikke stabil; kilden anbefaler da en annen opptrapping, som ikke er omfattet. – oppfylt. Vurdert og avkreftet av forskriveren.
+  - Kontroll: Avkreftet: Pasienten er 65 år eller eldre; effekt og sikkerhet av aripiprazol er ikke fastslått i denne gruppen. – oppfylt. Vurdert og avkreftet av forskriveren.
+  - Kontroll: Avkreftet: Pasienten bruker en sterk CYP3A4- eller CYP2D6-hemmer eller en sterk CYP3A4-induktor; aripiprazoldosen skal da justeres. – oppfylt. Vurdert og avkreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten er voksen, har schizofreni, er stabil og følges poliklinisk, og byttes fra olanzapin på grunn av bivirkninger eller utilstrekkelig effekt. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten bruker peroral olanzapin (tabletter, smeltetabletter eller mikstur), ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Byttet er vurdert i, eller med råd fra, spesialisthelsetjenesten, og pasienten kan følges tett de første ukene: forverring av psykosen, søvn, uro og akatisi, sedasjon og ortostatisk blodtrykksfall. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Startdosen er 5–20 mg (bindende) – oppfylt. 20 mg.
+  - Kontroll: Måldosen er 10, 15 mg (bindende) – oppfylt. 15 mg.
+  - Kontroll: Trinn 4 av olanzapin er et mindre siste trinn før seponeringen, valgt av forskriveren i stedet for trinnet fra 5 mg til 0; trinnet varer så lenge at nedtrappingen ikke går raskere enn 25 % av startdosen per 14 dager – oppfylt. 2,5 mg, 2,5 mg reduksjon fra 5 mg, 14 dager.
 - *Olanzapin 15 mg: 11,25, 6,25 og 1,25 mg kan ikke gis, og forskriveren har valgt 10, 5 og 2,5 mg (valg c); de større trinnene varer lenger.* Inndata: startdose 15 mg; måldose 15 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: tilbakefall_innlagt nei, alder_65 nei, cyp_aripiprazol nei.
   - **fra:** dag 1–28: 15 mg; dag 29–47: 10 mg, valgt av forskriveren (beregnet 11,25 mg; −33,33 %); dag 48–66: 5 mg, valgt av forskriveren (beregnet 6,25 mg; −50 %); dag 67–80: 2,5 mg, valgt av forskriveren (beregnet 1,25 mg; −50 %); fra dag 81: seponert
   - **til:** dag 1–7: 5 mg; dag 8–14: 10 mg; fra dag 15: 15 mg
@@ -719,9 +747,9 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 
 ## Fra risperidon til aripiprazol, kryss-titrering
 
-`antipsykotikabytte-risperidon-aripiprazol`, versjon 2, fingeravtrykk `59fc2be201089d2591da45c0c67e3a98e9053bad3dffb0137a8f2b8de94a908b`. Kryssnedtrapping: risperidon → aripiprazol. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`antipsykotikabytte-risperidon-aripiprazol`, versjon 3, fingeravtrykk `097dc7747fc4ac86e80e280673c8e07fb51fd8aa267b20d24249ca85eae5d4bd`. Kryssnedtrapping: risperidon → aripiprazol. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code) → utkast (versjon 3, 03.11.2026, Claude Code) → til faglig kontroll (versjon 3, 03.11.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -751,7 +779,7 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
   - Aripiprazol legges til den eksisterende behandlingen: 2,5–5 mg daglig den første uken, 5–10 mg daglig fra slutten av første uke og 10–15 mg daglig fra slutten av andre uke. *([tarc-2018](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6130089/fullTextXML), avsnittet om bytte hos stabile polikliniske pasienter med schizofreni (figur 1))*
   - Når måldosen 10–15 mg er nådd, brukes aripiprazol og det forrige antipsykotikumet sammen i minst 2 uker. *([tarc-2018](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6130089/fullTextXML), avsnittet om bytte hos stabile polikliniske pasienter med schizofreni (figur 1))*
   - Deretter trappes det forrige antipsykotikumet ned med 25 % av dosen, minst 2 uker mellom hver reduksjon, til det er stoppet; for eksempel 20 → 15 → 10 → 5 mg eller 4 → 3 → 2 → 1 mg og så stopp. *([tarc-2018](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6130089/fullTextXML), avsnittet om bytte hos stabile polikliniske pasienter med schizofreni (figur 1))*
-- Hver reduksjon er 25 % av startdosen. Kan et trinn ikke gis med tablettene i FEST, stopper planen og viser de nærmeste dosene under og over som kan gis, med faktisk reduksjon og dager; forskriveren velger, og verktøyet runder aldri av selv (kontrollørens valg c). Et større trinn varer så lenge at nedtrappingen aldri går raskere enn 25 % av startdosen per 14 dager, og neste trinn regnes fra den valgte dosen. Legemidlet seponeres når neste beregnede dose er 0 eller lavere.
+- Hver reduksjon er 25 % av startdosen. Kan et trinn ikke gis med tablettene i FEST, stopper planen og viser de nærmeste dosene under og over som kan gis, med faktisk reduksjon og dager; forskriveren velger, og verktøyet runder aldri av selv (kontrollørens valg c). Et større trinn varer så lenge at nedtrappingen aldri går raskere enn 25 % av startdosen per 14 dager, og neste trinn regnes fra den valgte dosen. Legemidlet seponeres når neste beregnede dose er 0 eller lavere, så siste dose før seponering er aldri mer enn 25 % av startdosen og har stått minst 14 dager, som i kildens eksempler. I stedet for trinnet til 0 kan forskriveren velge ett mindre siste trinn med en lavere dose som kan gis (for eksempel olanzapin 2,5 mg etter 5 mg), med samme fartsregel; seponeringen kommer da etter det trinnet. Uten valg gjelder kildens siste trinn.
   - Deretter trappes det forrige antipsykotikumet ned med 25 % av dosen, minst 2 uker mellom hver reduksjon, til det er stoppet; for eksempel 20 → 15 → 10 → 5 mg eller 4 → 3 → 2 → 1 mg og så stopp. *([tarc-2018](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6130089/fullTextXML), avsnittet om bytte hos stabile polikliniske pasienter med schizofreni (figur 1))*
 
 **Den matematiske regelen – parametre:**

@@ -11,7 +11,7 @@
  * kildeoppføringen, aldri med innhold.
  */
 import { norskDato } from './motor/byggesteiner'
-import { elementtekst, EN_REDUKSJON_KORT, fordelingSuffiks, preparatliste, type Doseplanresultat, type Praktiskforlop } from './motor/plan'
+import { elementtekst, EN_REDUKSJON_KORT, fordelingSuffiks, preparatliste, seponeringsdag, sluttmalMangler, type Doseplanresultat, type Praktiskforlop } from './motor/plan'
 import { KARTLEGGING } from './register'
 import { avrund, hverTekst, injeksjonstidspunkt, valgtTekst } from './regler/beregning'
 import { erKliniskGodkjent, fingeravtrykk } from './regler/godkjenning'
@@ -104,16 +104,6 @@ function datotekst(startdato: string | undefined, fra: number, til: number | nul
   return til === fra ? dato(startdato, fra) : `${dato(startdato, fra)}–${dato(startdato, til)}`
 }
 
-/**
- * Dagen et peroralt legemiddel er seponert fra, også når det seponeres før
- * første dag i planen (bytte til depot, P11.4): da står seponeringen i
- * tabellen, så planen aldri kan leses som om det perorale skal fortsette.
- * Det samme gjelder et depot som bare stoppes (depot til depot, regelmodell
- * 12). Et forløp med injeksjoner har ingen seponeringsdag.
- */
-const seponeringsdag = (f: Praktiskforlop): number | null =>
-  f.siste_dosedag !== null && (f.perioder.length > 0 || f.administrasjon === 'peroral' || f.injeksjoner.length === 0) ? f.siste_dosedag + 1 : null
-
 /** Hva cellen sier dagen legemidlet er seponert: et depot som stoppes, får ingen flere injeksjoner. */
 const seponert = (f: Praktiskforlop): Dosecelle =>
   f.administrasjon === 'depotinjeksjon' && f.perioder.length === 0 ? { dose: 'Seponert', elementer: ['ingen flere injeksjoner'] } : { dose: 'Seponert', elementer: [] }
@@ -143,7 +133,7 @@ function rader(forlop: Praktiskforlop[], startdato: string | undefined, vurderin
         const avvik = [Math.abs(p.avvik_prosent) > 1e-7 && `ideelt ${mg(p.ideell_mg)} (${p.avvik_prosent > 0 ? '+' : ''}${String(avrund(p.avvik_prosent)).replace('.', ',')} %)`, valgtTekst(p)].filter(Boolean).join('; ')
         return { dose: `${mg(p.mg)}${p.hver ? ` ${hverTekst(p.hver)}` : ''}${fordelingSuffiks(p)}`, elementer: p.elementer.map(elementtekst), ...(avvik && { avvik }) }
       }
-      if (f.uendret_mg !== undefined && fra >= f.start) return { dose: mg(f.uendret_mg), elementer: [UENDRET] }
+      if (f.uendret_mg !== undefined && fra >= f.start) return uendretCelle(f)
       return fra === seponeringsdag(f) ? seponert(f) : null
     })
     // Etter siste periode står bare dagen legemidlene er seponert.
@@ -179,8 +169,30 @@ function rader(forlop: Praktiskforlop[], startdato: string | undefined, vurderin
   return ut.sort((a, b) => a.dag - b.dag).map((x) => x.rad)
 }
 
-/** Det som står i cellen for et legemiddel som fortsetter med uendret dose. */
-export const UENDRET = 'uendret dose; planen beregner den ikke'
+/** Hva planen sier om en uendret dose, etter om den er kontrollert mot regelens doser eller bare bekreftet av forskriveren. */
+export const UENDRET = {
+  kontrollert: 'uendret dose, kontrollert mot regelens doser; planen beregner den ikke',
+  bekreftet: 'uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke',
+} as const
+
+const tallord = (x: number) => String(avrund(x)).replace('.', ',')
+
+/** Den uendrede dosen i regelens enhet, med mmol når tabletten har det: «168 mg Li⁺ (24 mmol)». */
+export function uendretDose(f: Pick<Praktiskforlop, 'uendret_mg' | 'uendret_visning'>): string {
+  const x = f.uendret_mg!
+  const t = f.uendret_visning?.tablett
+  const mmol = t?.mmol !== undefined ? ` (${tallord((x * t.mmol) / t.mg)} mmol)` : ''
+  return `${tallord(x)} ${f.uendret_visning?.enhet ?? 'mg'}${mmol}`
+}
+
+/** Cellen for et legemiddel som fortsetter med uendret dose: dosen, tablettene den gis med og om den er kontrollert. */
+function uendretCelle(f: Praktiskforlop): Dosecelle {
+  const t = f.uendret_visning?.tablett
+  const antall = t ? f.uendret_mg! / t.mg : 0
+  const hel = Math.abs(antall - Math.round(antall)) < 1e-9 && Math.round(antall) > 0
+  const tabletter = !t ? [] : hel ? [`${Math.round(antall)} ${Math.round(antall) === 1 ? 'tablett' : 'tabletter'} ${t.navn}`] : [`ikke et helt antall tabletter ${t.navn}`]
+  return { dose: uendretDose(f), elementer: [[...tabletter, UENDRET[f.uendret_kontrollert ? 'kontrollert' : 'bekreftet']].join('; ')] }
+}
 
 /** Ett vurderingspunkt i en plan, med dagene det gjelder. */
 interface Vurdering {
@@ -249,16 +261,15 @@ const vurderingslinje = (v: Vurdering, navn: string) =>
 
 /** Sluttmålet for ett forløp, eller hva planen ikke dekker for det. */
 function sluttFor(f: Praktiskforlop, navn: string): { sluttmal?: string; mangler?: string } {
-  if (f.uten_beregning) return { mangler: `${navn}: ikke beregnet (${f.uten_beregning.replace(/\.$/, '')})` }
-  if (f.avslutning) return { mangler: `${navn}: ${f.avslutning_kort ?? 'avslutningen vurderes individuelt'}` }
-  if (f.uendret_mg !== undefined) return { sluttmal: `${navn} fortsetter uendret på ${mg(f.uendret_mg)}` }
+  const ikke = sluttmalMangler(f)
+  if (ikke) return { mangler: `${navn}: ${ikke}` }
+  if (f.uendret_mg !== undefined) return { sluttmal: `${navn} fortsetter uendret på ${uendretDose(f)}` }
   const s = seponeringsdag(f)
   if (s !== null) return { sluttmal: `${navn} seponert fra dag ${s}` }
   const vedlikehold = f.injeksjoner.find((i) => i.vedlikehold)
   if (vedlikehold) return { sluttmal: `${navn} vedlikehold ${mg(vedlikehold.mg)} ${injeksjonstidspunkt(vedlikehold)}` }
   const sist = f.perioder.at(-1)
-  if (sist && sist.til === null) return { sluttmal: `${navn} fortsetter på ${mg(sist.mg)}${sist.hver ? ` ${hverTekst(sist.hver)}` : ''} fra dag ${sist.fra}` }
-  return { mangler: `${navn}: planen har ikke et definert sluttmål` }
+  return { sluttmal: `${navn} fortsetter på ${mg(sist!.mg)}${sist!.hver ? ` ${hverTekst(sist!.hver)}` : ''} fra dag ${sist!.fra}` }
 }
 
 /** Om planen er komplett eller en delplan ({@link Planutfall}). */

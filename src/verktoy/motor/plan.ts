@@ -25,7 +25,7 @@
  */
 import { FEST_FORELDET_ETTER_TIMER, festForeldet } from '../../legemiddeldata/referanser'
 import { FORMULERINGSKLASSER, type Formuleringsklasse } from '../festformuleringer'
-import { AVSLUTNING_FELLES, AVVIK_IKKE_BEREGNET, avrund, beregn, datoFor, overAvslutning, overAvslutningKort, erIsoDato, tempolengde, fordelingstekst, hverTekst, injeksjonstidspunkt, medEnhet, medSvarforslag, utenBeregningLinje, valgtSuffiks, trinnvalgOmrade, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
+import { AVSLUTNING_FELLES, AVVIK_IKKE_BEREGNET, avrund, beregn, datoFor, overAvslutning, overAvslutningKort, erIsoDato, tempolengde, fordelingstekst, hverTekst, injeksjonstidspunkt, medEnhet, medSvarforslag, utenBeregningLinje, valgtSuffiks, trinnvalgOmrade, minstetrinnFra, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
 import { fingeravtrykk, godkjenningsfeil, kanonisk, sha256 } from '../regler/godkjenning'
 import { avslutningFor, justerbare, parameterfeil, type Beregningsinndata, type Fase, type Forlop, type Klinisktilfelle, type Parameter, type Regel, type Regelsett } from '../regler/modell'
 import { byggesteiner, DOSEENHETER, norskDato, type Byggestein, type Preparatgrunnlag } from './byggesteiner'
@@ -107,6 +107,14 @@ export interface Trinnvalg {
    * trinn (`Trinndose.dager`).
    */
   tempo?: Tempo
+  /** Når ingen dose innenfor `omrade` kan gis ved lav dose: den høyeste faktiske reduksjonen det minste trinnet kan ha ({@link Minstetrinn}). */
+  minste_trinn?: { maks_prosent: number }
+  /**
+   * Et valgfritt mindre siste trinn før seponeringen (`strategi.mellomtrinn`,
+   * regelmodell 12): planen er komplett uten valget og går da fra `fra_mg`
+   * til 0; `beregnet_mg` er 0.
+   */
+  mellomtrinn?: true
   doser: Trinndose[]
 }
 
@@ -514,6 +522,9 @@ function trinnvalgtekst(tv: Trinnvalg | null, trinn: Pick<Trinnvalg, 'fra_mg' | 
   const omrade = `det foretrukne området ${tall(trinn.omrade[0])}–${tall(trinn.omrade[1])} %`
   const foretrukket = `Den foretrukne reduksjonen til ${foretrukketTekst(trinn)} kan ikke gis med preparatene`
   if (!tv) return `${foretrukket}, og ingen dose som kan gis, har en faktisk reduksjon innenfor ${omrade}. ${AVVIK_IKKE_BEREGNET}`
+  if (tv.minste_trinn) {
+    return `${foretrukket}, og ingen dose som kan gis, har en faktisk reduksjon innenfor ${omrade}. Ved denne lave dosen lar regelen forskriveren velge det minste trinnet som kan gis, med faktisk reduksjon høyst ${tall(tv.minste_trinn.maks_prosent)} %: ${tv.doser.map(trinndosetekst).join(' eller ')}. Beregningen velger ikke selv.`
+  }
   return `${foretrukket}. Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra ${tall(tv.fra_mg)} mg innenfor ${omrade}: ${tv.doser.map(trinndosetekst).join(' eller ')}. Beregningen velger ikke selv.`
 }
 
@@ -539,6 +550,33 @@ function tempovalgFor(f: Forlopsresultat, p: Periode, beregnet: number, v: Styrk
     doser: naermeste.map((k) => ({ mg: k.mg, prosent: (1 - k.mg / fra) * 100, elementer: k.elementer, dager: tempolengde(tempo.dager, tempo.steg_mg, fra - k.mg), ...(p.fordeles && { doser: fordelt(k)! }) })),
   }
 }
+
+/**
+ * Et mindre siste trinn forskriveren kan velge før seponeringen fra `fra` mg
+ * (`strategi.mellomtrinn`, regelmodell 12): blant dosene som kan gis og
+ * fordeles, lavere enn `fra`, over 0 og vist nøyaktig, den laveste og den
+ * nærmeste lavere, med trinnlengden for hver ({@link tempolengde}). `null`
+ * når ingen er det.
+ */
+function mellomtrinnFor(f: Forlopsresultat, trinn: Pick<Trinnvalg, 'trinn' | 'fra_dag' | 'fra_mg'>, v: Styrkevalg[], tempo: Tempo, min: number | null, fordeles: boolean, fordelt: (k: Dosekandidat) => number[] | null | undefined): Trinnvalg | null {
+  const fra = trinn.fra_mg
+  const mulige = doser(v, Math.max(min ?? 0, EPS), fra, (k) => fordelt(k) !== null).filter((k) => k.mg < fra - EPS && Math.abs(avrund(k.mg) - k.mg) < EPS)
+  const valgbare = [...new Set([mulige[0], mulige.at(-1)])].filter((k): k is Dosekandidat => !!k)
+  if (valgbare.length === 0) return null
+  return {
+    forlop: f.id,
+    virkestoff: f.virkestoff,
+    ...trinn,
+    beregnet_mg: 0,
+    tempo,
+    mellomtrinn: true,
+    doser: valgbare.map((k) => ({ mg: k.mg, prosent: (1 - k.mg / fra) * 100, elementer: k.elementer, dager: tempolengde(tempo.dager, tempo.steg_mg, fra - k.mg), ...(fordeles && { doser: fordelt(k)! }) })),
+  }
+}
+
+/** Hva et mellomtrinn er, i klartekst: planen er komplett uten det. */
+export const mellomtrinntekst = (t: Pick<Trinnvalg, 'fra_mg'>) =>
+  `Siste trinn går fra ${tall(t.fra_mg)} mg til 0 (−100 %), og så seponeres legemidlet. Regelen lar forskriveren velge et mindre siste trinn før seponeringen; uten valg gjelder trinnet til 0.`
 
 /** Det stoppet sier når trinnet i en nedtrapping i prosent av startdosen ikke kan gis: dosene som kan velges, eller at ingen kan det. */
 function tempovalgtekst(tv: Trinnvalg | null, trinn: Pick<Trinnvalg, 'fra_mg' | 'beregnet_mg'>, tempo: Tempo): string {
@@ -579,6 +617,31 @@ function trinnvalgFor(f: Forlopsresultat, p: Periode, v: Styrkevalg[], fra: numb
     beregnet_mg: p.mg,
     omrade,
     doser: naermeste.map((k) => ({ mg: k.mg, prosent: prosent(k.mg), elementer: k.elementer, ...(p.fordeles && { doser: fordelt(k)! }) })),
+  }
+}
+
+/**
+ * Det minste trinnet forskriveren kan velge for periode `p` fra `fra` mg ved
+ * lav dose ({@link Minstetrinn}): bare den nærmeste lavere dosen som kan gis
+ * og fordeles, over 0, ikke under laveste dose og vist nøyaktig, med faktisk
+ * reduksjon høyst `maks` %. `null` når ingen er det.
+ */
+function minstetrinnFor(f: Forlopsresultat, p: Periode, beregnet: number, v: Styrkevalg[], fra: number, omrade: [number, number], maks: number, min: number | null, fordelt: (k: Dosekandidat) => number[] | null | undefined): Trinnvalg | null {
+  const prosent = (mg: number) => (1 - mg / fra) * 100
+  const k = doser(v, Math.max(fra * (1 - maks / 100), min ?? 0, EPS) - EPS * fra, fra, (x) => fordelt(x) !== null)
+    .filter((x) => x.mg < fra - EPS && Math.abs(avrund(x.mg) - x.mg) < EPS && prosent(x.mg) <= maks + EPS)
+    .at(-1)
+  if (!k) return null
+  return {
+    forlop: f.id,
+    virkestoff: f.virkestoff,
+    trinn: p.trinn!,
+    fra_dag: p.fra,
+    fra_mg: fra,
+    beregnet_mg: beregnet,
+    omrade,
+    minste_trinn: { maks_prosent: maks },
+    doser: [{ mg: k.mg, prosent: prosent(k.mg), elementer: k.elementer, ...(p.fordeles && { doser: fordelt(k)! }) }],
   }
 }
 
@@ -643,9 +706,24 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
       // Med fast reduksjon i prosent av startdosen er et valgt trinn en av de nærmeste dosene som kan gis (regelmodell 12).
       const tempo = tempoFor(def, forrige, p)
       if (p.valgt && tempo) {
-        const t = tempovalgFor(f, p, p.valgt.beregnet_mg, v, forrige, tempo, min, (k) => fordelt(p, k))
+        const t = p.valgt.mellomtrinn
+          ? mellomtrinnFor(f, { trinn: p.trinn!, fra_dag: p.fra, fra_mg: forrige }, v, tempo, min, !!p.fordeles, (k) => fordelt(p, k))
+          : tempovalgFor(f, p, p.valgt.beregnet_mg, v, forrige, tempo, min, (k) => fordelt(p, k))
         if (!t?.doser.some((d) => Math.abs(d.mg - p.mg) < EPS)) {
-          throw new Stopp(`${f.virkestoff} ${dager(p)}: den valgte dosen ${tall(p.mg)} mg for trinn ${p.trinn} er ikke en av de nærmeste dosene som kan gis${t ? ` (${t.doser.map((d) => `${tall(d.mg)} mg`).join(' eller ')})` : ''}. Fjern valget, og velg på nytt.`)
+          const hva = p.valgt.mellomtrinn ? 'en av dosene som kan velges som et mindre siste trinn' : 'en av de nærmeste dosene som kan gis'
+          throw new Stopp(`${f.virkestoff} ${dager(p)}: den valgte dosen ${tall(p.mg)} mg for trinn ${p.trinn} er ikke ${hva}${t ? ` (${t.doser.map((d) => `${tall(d.mg)} mg`).join(' eller ')})` : ''}. Fjern valget, og velg på nytt.`)
+        }
+      }
+      // Et minste trinn gjelder bare når ingen dose innenfor valgområdet kan gis, og er den nærmeste lavere dosen som kan gis.
+      const valgfase = p.valgt && !tempo ? trinnvalgFase(def) : undefined
+      const minsteValgt = valgfase ? minstetrinnFra(valgfase.strategi, forrige) : null
+      const valgomrade = valgfase && minsteValgt !== null ? trinnvalgOmrade(valgfase.strategi, forrige, inndata.svar) : null
+      if (valgomrade && (1 - p.mg / forrige) * 100 > valgomrade[1] + EPS) {
+        const beregnet = { ...p, mg: p.valgt!.beregnet_mg }
+        const vanlig = trinnvalgFor(f, beregnet, v, forrige, valgomrade, min, (k) => fordelt(p, k))
+        const minst = minstetrinnFor(f, beregnet, p.valgt!.beregnet_mg, v, forrige, valgomrade, minsteValgt!, min, (k) => fordelt(p, k))
+        if (vanlig || !minst || Math.abs(minst.doser[0]!.mg - p.mg) > EPS) {
+          throw new Stopp(`${f.virkestoff} ${dager(p)}: den valgte dosen ${tall(p.mg)} mg for trinn ${p.trinn} er ikke det minste trinnet regelen tilbyr${vanlig ? ', fordi en dose innenfor valgområdet kan gis' : minst ? ` (${tall(minst.doser[0]!.mg)} mg)` : ''}. Fjern valget, og velg på nytt.`)
         }
       }
       const naer = (k: Dosekandidat) => Math.abs(k.mg - p.mg) <= p.mg * tol + EPS * Math.max(1, p.mg)
@@ -659,7 +737,10 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
         // Lar regelen forskriveren velge en dose som kan gis, regnes de nærmeste ut; et valgt trinn tilbys ikke på nytt.
         const fase = valgbar && p.trinn !== undefined && !p.valgt ? trinnvalgFase(def) : undefined
         const omrade = fase && !tempo && avkortbar ? trinnvalgOmrade(fase.strategi, forrige, inndata.svar)! : undefined
-        const tv = omrade ? trinnvalgFor(f, p, v, forrige, omrade, min, (k) => fordelt(p, k)) : fase && tempo ? tempovalgFor(f, p, p.mg, v, forrige, tempo, min, (k) => fordelt(p, k)) : undefined
+        const minste = omrade ? minstetrinnFra(fase!.strategi, forrige) : null
+        const tv = omrade
+          ? (trinnvalgFor(f, p, v, forrige, omrade, min, (k) => fordelt(p, k)) ?? (minste !== null ? minstetrinnFor(f, p, p.mg, v, forrige, omrade, minste, min, (k) => fordelt(p, k)) : null))
+          : fase && tempo ? tempovalgFor(f, p, p.mg, v, forrige, tempo, min, (k) => fordelt(p, k)) : undefined
         const valgtekst = omrade
           ? trinnvalgtekst(tv!, { fra_mg: forrige, beregnet_mg: p.mg, omrade })
           : fase && tempo
@@ -723,10 +804,26 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
       delete ut.avsluttes
       ut.avslutning = `${stans}${over} Planen stopper derfor ved trinnet før: fra dag ${sist.fra} står pasienten på ${tall(sist.mg)} mg${hverSuffiks(sist)}${fordelingSuffiks(sist)} av ${f.virkestoff} til planen revurderes.${en ? ` ${EN_REDUKSJON}` : ''} ${AVSLUTNING_FELLES}`
       ut.avslutning_kort = en
-        ? EN_REDUKSJON_KORT
+        ? `${EN_REDUKSJON_KORT}${overGrensen ? `, og ${overAvslutningKort(sist.mg, grense!)}` : ''}`
         : overGrensen
           ? `neste trinn kan ikke gis med preparatene, og ${overAvslutningKort(sist.mg, grense!)}`
           : 'neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt'
+    }
+    // Går planen fra siste dose til 0 og regelen tillater et mellomtrinn, tilbys et mindre siste trinn; planen er komplett uten valget (K3).
+    const sist = f.perioder.at(-1)!
+    const nedtrapping = trinnvalgFase(def)
+    if (
+      serie.length === f.perioder.length &&
+      f.siste_dosedag !== null &&
+      sist.trinn !== undefined &&
+      sist.til !== null &&
+      nedtrapping?.strategi.type === 'prosent_av_startdose' &&
+      nedtrapping.strategi.mellomtrinn &&
+      !f.perioder.some((p) => p.valgt?.mellomtrinn)
+    ) {
+      const tempo = tempoFor(def, f.perioder.at(-2)?.mg ?? start, sist)!
+      const tv = mellomtrinnFor(f, { trinn: sist.trinn + 1, fra_dag: sist.til + 1, fra_mg: sist.mg }, tilgjengelig(alleValg, sluttdato(sist)), tempo, min, !!sist.fordeles, (k) => fordelt(sist, k))
+      if (tv) trinnvalg.push(tv)
     }
     if (ut.perioder.some((p) => p.doser)) {
       kontroller.push({
@@ -788,15 +885,29 @@ export function beregnDoseplan(regel: Regel, inndata: Doseplaninndata, grunnlag:
 }
 
 /** Doseplanen, med preparatene avgrenset til de kontrollerte styrkene når tilfellene er gitt. */
-/** Starten på stoppet når regelen krever en komplett plan og planen ikke når sluttmålet. */
+/** Starten på stoppet når planen ikke når sluttmålet: klinikere får aldri en delplan (Peders beslutning 03.11.2026). */
 export const KOMPLETT_IKKE_TILGJENGELIG = 'Komplett plan ikke tilgjengelig'
 
-/** Hvorfor forløpet ikke når sluttmålet: ikke beregnet, eller avsluttet uten seponering; tom når det når det. */
-function ikkeKomplett(f: Praktiskforlop): string[] {
-  if (f.uten_beregning) return [`${KOMPLETT_IKKE_TILGJENGELIG} for ${f.virkestoff}: forløpet er ikke beregnet. ${f.uten_beregning}`]
-  // Bare grunnen: dosene i delplanen gjentas ikke i stoppet.
-  if (f.avslutning) return [`${KOMPLETT_IKKE_TILGJENGELIG} for ${f.virkestoff}: ${f.avslutning_kort ?? 'avslutningen vurderes individuelt'}.`]
-  return []
+/**
+ * Dagen et peroralt legemiddel er seponert fra, også når det seponeres før
+ * første dag i planen (bytte til depot, P11.4): da står seponeringen i
+ * tabellen, så planen aldri kan leses som om det perorale skal fortsette.
+ * Det samme gjelder et depot som bare stoppes (depot til depot, regelmodell
+ * 12). Et forløp med injeksjoner har ingen seponeringsdag.
+ */
+export const seponeringsdag = (f: Praktiskforlop): number | null =>
+  f.siste_dosedag !== null && (f.perioder.length > 0 || f.administrasjon === 'peroral' || f.injeksjoner.length === 0) ? f.siste_dosedag + 1 : null
+
+/**
+ * Hvorfor forløpet ikke når et sluttmål (seponert, uendret, vedlikehold eller
+ * en dose som fortsetter), kort; `undefined` når det når det. Den ene
+ * definisjonen av en komplett plan, for planutfallet og sperren mot delplaner.
+ */
+export function sluttmalMangler(f: Praktiskforlop): string | undefined {
+  if (f.uten_beregning) return `ikke beregnet (${f.uten_beregning.replace(/\.$/, '')})`
+  if (f.avslutning) return f.avslutning_kort ?? 'avslutningen vurderes individuelt'
+  if (f.uendret_mg !== undefined || seponeringsdag(f) !== null || f.injeksjoner.some((i) => i.vedlikehold) || f.perioder.at(-1)?.til === null) return undefined
+  return 'planen har ikke et definert sluttmål'
 }
 
 function beregnPlan(regel: Regel, inndata: Doseplaninndata, grunnlag: Preparatgrunnlag, omgivelse: Omgivelse, regelsett?: Regelsett, kontrollerte?: Klinisktilfelle[]): Doseplanresultat {
@@ -860,9 +971,6 @@ function beregnPlan(regel: Regel, inndata: Doseplaninndata, grunnlag: Preparatgr
     kontroller.push({ krav: `Utvasking i doseplanen: minst ${krav} dager uten ${forrige.virkestoff} før ${denne.virkestoff}`, oppfylt: fri >= krav, detalj: `${fri} dager uten legemiddel.` })
     if (fri < krav) return stopp([`Doseplanen har bare ${fri} dager uten ${forrige.virkestoff} før ${denne.virkestoff}, mindre enn ${krav}.`])
   }
-  // Krever regelen en komplett plan for et forløp, vises ingen delplan med doser (regelmodell 12); et valg av dose for neste trinn tilbys fortsatt.
-  const ufullstendige = forlop.flatMap((f) => (regel.plan.forlop.find((x) => x.id === f.id)?.krever_komplett ? ikkeKomplett(f) : []))
-  if (ufullstendige.length > 0) return medValg(stopp(ufullstendige))
   for (const f of forlop) if (f.avslutningsmerknad) merknader.push(f.avslutningsmerknad)
   // Stopper planen tidligere enn den ideelle kurven fordi et trinn ikke kan gis, gjelder den nye forklaringen.
   for (const f of forlop) {
@@ -893,10 +1001,26 @@ function beregnPlan(regel: Regel, inndata: Doseplaninndata, grunnlag: Preparatgr
  * testregel eller preparatdata som ikke er en fersk FEST-kopi gir aldri en plan.
  */
 export function kliniskDoseplan(...args: Parameters<typeof beregnDoseplan>): Doseplanresultat {
+  return klinisk(args, true)
+}
+
+/**
+ * Som {@link kliniskDoseplan}, men uten kravet om at planen når sluttmålet:
+ * en klinisk plan som ikke gjør det (en delplan), kommer med doser. Bare for
+ * kontrollgrunnlag og tester som skal se hva motoren beregner; klinikere får
+ * aldri en delplan, så appen bruker bare {@link kliniskDoseplan}.
+ */
+export function kliniskDelplan(...args: Parameters<typeof beregnDoseplan>): Doseplanresultat {
+  return klinisk(args, false)
+}
+
+function klinisk(args: Parameters<typeof beregnDoseplan>, komplett: boolean): Doseplanresultat {
   const [regel, inndata, grunnlag, omgivelse, regelsett] = args
   // Med et klinisk omfang regnes planen, også dosene som tilbys som valg, bare med styrkene tilfellet er kontrollert med.
   const kontrollerte = tilfellerFor(regel, inndata)
-  const r = utenDelteValg(regel, beregnPlan(regel, inndata, grunnlag, omgivelse, regelsett, kontrollerte.length > 0 ? kontrollerte : undefined))
+  const beregnet = utenDelteValg(regel, beregnPlan(regel, inndata, grunnlag, omgivelse, regelsett, kontrollerte.length > 0 ? kontrollerte : undefined))
+  // Et mindre siste trinn er et valg i en komplett plan; det gjør ikke en stoppet plan komplett, så det tilbys ikke med et stopp.
+  const r = beregnet.status === 'stoppet' ? utenMellomtrinn(beregnet) : beregnet
   if (r.status === 'stoppet') {
     // Valg av dose per trinn tilbys bare når planen kan bli klinisk, og en plan utenfor omfanget sier det, så et valg ikke ser ut til å kunne hjelpe.
     const utenfor = omfangsfeil(regel, inndata, [])
@@ -905,16 +1029,45 @@ export function kliniskDoseplan(...args: Parameters<typeof beregnDoseplan>): Dos
     const { trinnvalg: _t, ...uten } = med
     return uten
   }
-  if (r.klinisk) return r
-  const { status: _s, klinisk: _k, sperre, forbehold: _f, forlop: _fl, kontroller: _ko, avvik: _a, trinnvalg: _t, ...versjoner } = r
-  return { ...versjoner, status: 'stoppet', klinisk: false, stoppgrunner: ['Ingen klinisk doseplan kan vises.', ...sperre], fagtekst: (args[3].fagtekst ?? []).filter((t) => t.publisert === true) }
+  // Klinikere får aldri en delplan (Peders beslutning 03.11.2026): når et forløp ikke når sluttmålet, vises ingen doser, bare grunnen, og
+  // et valg av dose for neste trinn som kan gjøre planen komplett. Er planen heller ikke klinisk, står sperren også.
+  const mangler = komplett
+    ? r.forlop.flatMap((f) => {
+        const m = sluttmalMangler(f)
+        return m ? [`${f.virkestoff}: ${m}`] : []
+      })
+    : []
+  if (r.klinisk && mangler.length === 0) return r
+  const { status: _s, klinisk: _k, sperre, forbehold: _f, forlop: _fl, kontroller: _ko, avvik: _a, trinnvalg, ...versjoner } = r
+  const fagtekst = (omgivelse.fagtekst ?? []).filter((t) => t.publisert === true)
+  if (mangler.length === 0) return { ...versjoner, status: 'stoppet', klinisk: false, stoppgrunner: ['Ingen klinisk doseplan kan vises.', ...sperre], fagtekst }
+  const komplettGrunn = `${KOMPLETT_IKKE_TILGJENGELIG}: ${mangler.join('; ')}.`
+  // Merknadene kan gjenta dosene i delplanen, så de vises ikke med stoppet.
+  return {
+    ...versjoner,
+    merknader: [],
+    status: 'stoppet',
+    klinisk: false,
+    // Er planen heller ikke klinisk, står sperren først, så det viktigste ikke drukner.
+    stoppgrunner: r.klinisk ? [komplettGrunn] : ['Ingen klinisk doseplan kan vises.', ...sperre, komplettGrunn],
+    fagtekst,
+    ...(r.klinisk && trinnvalg?.some((t) => !t.mellomtrinn) && { trinnvalg: trinnvalg.filter((t) => !t.mellomtrinn) }),
+  }
+}
+
+function utenMellomtrinn(r: Doseplanresultat): Doseplanresultat {
+  if (!r.trinnvalg?.some((t) => t.mellomtrinn)) return r
+  const { trinnvalg, ...uten } = r
+  const andre = trinnvalg.filter((t) => !t.mellomtrinn)
+  return andre.length > 0 ? { ...uten, trinnvalg: andre } : uten
 }
 
 /** Uten dokumentert deling (`uten_deling`) tilbys ingen dose som deler en tablett; står ingen dose igjen for et trinn, sier stoppet det. */
 function utenDelteValg(regel: Regel, r: Doseplanresultat): Doseplanresultat {
   if (!regel.klinisk_omfang?.uten_deling || !r.trinnvalg) return r
   const hele = r.trinnvalg.map((t) => ({ ...t, doser: t.doser.filter((d) => d.elementer.every((e) => Number.isInteger(e.antall))) }))
-  const tomme = hele.filter((t) => t.doser.length === 0)
+  // Et mellomtrinn er valgfritt: står ingen dose igjen, tilbys det bare ikke.
+  const tomme = hele.filter((t) => t.doser.length === 0 && !t.mellomtrinn)
   const { trinnvalg: _t, ...uten } = r
   const med = hele.length > tomme.length ? { ...uten, trinnvalg: hele.filter((t) => t.doser.length > 0) } : uten
   if (tomme.length === 0) return med

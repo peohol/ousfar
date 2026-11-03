@@ -16,6 +16,7 @@ import { erKliniskGodkjent, fingeravtrykk, kanonisk, KONTROLLUTFALL, kontrollutf
 import type { Kildehenvisning, Regel, Regelsett } from './regler/modell'
 import { NEDTRAPPINGSSETT_FOR_RETTELSENE } from './regler/nedtrapping'
 import { kildelinje, kildeliste, regellinje, settlinje } from './planvisning'
+import { kliniskDelplan } from './motor/plan'
 import { kjorKasus, PILOTKASUS, type Pilotkasus, type Pilotutfall, type Uttrekkene } from './regler/pilotmatrise'
 import { PILOTSETT_FOR_RETTELSENE } from './regler/pilotsett'
 import { liste, tabell } from './regler/rapport'
@@ -126,8 +127,8 @@ export interface Matrisesammenligning {
 export function matrisesammenligning(rader: readonly Rettelsesrad[], uttrekkene: Uttrekkene): Matrisesammenligning[] {
   const endringer = forventedeLinjeendringer(rader)
   return PILOTKASUS.map((kasus) => {
-    const for_ = kjorKasus(kasus, uttrekkene, FOR_RETTELSENE)
-    const etter = kjorKasus(kasus, uttrekkene)
+    const for_ = kjorKasus(kasus, uttrekkene, FOR_RETTELSENE, kliniskDelplan)
+    const etter = kjorKasus(kasus, uttrekkene, REGELSETTENE, kliniskDelplan)
     return { kasus, for: for_, etter, lik: synlig(for_) === synlig(etter, endringer) }
   })
 }
@@ -246,7 +247,7 @@ ${endringer}
 
 ## 5. Testmatrisen før og etter
 
-Alle ${sammenligning.length} kasusene i testmatrisen fra P11 (\`docs/verktøy-p11-testmatrise.md\`) er kjørt to ganger: med regelsettene slik de var før rettelsene (appversjon 1.122.1), og med regelsettene appen bruker nå. Sammenligningen gjelder hele det brukeren ser: radene i planen og hele teksten som kopieres, med advarsler, avvik, antakelser, usikkerhet, preparater, kontroller, kilder og versjoner, og grunnene når planen stopper. Før sammenligningen er bare linjene i tabellen under ført tilbake: regelversjonen og regelsettets versjon under «Versjoner» og stedene i RCPsych under «Kilder». Hver av dem må stå nøyaktig som i tabellen for å bli ført tilbake. Godkjenningslinjen på skjermen står i avsnitt 3. ${sammenligning.length - ulike.length} kasus gir nøyaktig det samme for brukeren. ${ulike.length === 0 ? 'Ingen gir noe annet.' : `${ulike.length} gir noe annet, og bare fordi kasuset prøver neste versjonsnummer, som nå er ett høyere:`}
+Alle ${sammenligning.length} kasusene i testmatrisen fra P11 (\`docs/verktøy-p11-testmatrise.md\`) er kjørt to ganger: med regelsettene slik de var før rettelsene (appversjon 1.122.1), og med regelsettene appen bruker nå. Sammenligningen gjelder hele det brukeren ser: radene i planen og hele teksten som kopieres, med advarsler, avvik, antakelser, usikkerhet, preparater, kontroller, kilder og versjoner, og grunnene når planen stopper. En plan som ikke når sluttmålet (en delplan), sammenlignes slik motoren beregner den, selv om verktøysiden ikke viser den (Peders beslutning 03.11.2026). Før sammenligningen er bare linjene i tabellen under ført tilbake: regelversjonen og regelsettets versjon under «Versjoner» og stedene i RCPsych under «Kilder». Hver av dem må stå nøyaktig som i tabellen for å bli ført tilbake. Godkjenningslinjen på skjermen står i avsnitt 3. ${sammenligning.length - ulike.length} kasus gir nøyaktig det samme for brukeren. ${ulike.length === 0 ? 'Ingen gir noe annet.' : `${ulike.length} gir noe annet, og bare fordi kasuset prøver neste versjonsnummer, som nå er ett høyere:`}
 
 ${ulike.length > 0 ? avvikstabell : ''}
 
