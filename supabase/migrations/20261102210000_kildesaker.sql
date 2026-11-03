@@ -195,14 +195,16 @@ begin
 end;
 $$;
 
--- Avslutter en sak i oppfølging når hvert tiltak er kontrollert.
+-- Avslutter en sak i oppfølging når hvert tiltak er kontrollert, men aldri
+-- mens kilden har nytt innhold som ikke er vurdert: da er saken ikke ferdig
+-- selv om tiltakene for det gamle innholdet er det.
 create function intern.kildesak_ferdig(sak bigint, av uuid, agent text)
 returns boolean
 language plpgsql
 set search_path = ''
 as $$
 begin
-  if exists (select 1 from public.kildefunn k where k.id = sak and k.tilstand = 'oppfolging')
+  if exists (select 1 from public.kildefunn k where k.id = sak and k.tilstand = 'oppfolging' and k.nytt_innhold_kl is null)
      and exists (select 1 from public.kildefunn_tiltak t where t.funn = sak)
      and not exists (select 1 from public.kildefunn_tiltak t where t.funn = sak and t.status <> 'kontrollert') then
     perform intern.kildesak_avslutt(sak, 'tiltak_kontrollert', av, agent, '{}'::jsonb);
@@ -343,12 +345,18 @@ stable
 set search_path = ''
 as $$
   with
-    sperret as (
-      select exists (
-        select 1 from public.verktoysperrer s
-        where s.opphevet_kl is null and s.omfang = 'regel'
-          and s.mal in (select g ->> 'regel' from jsonb_array_elements(coalesce(k.innhold -> 'berorte', '[]'::jsonb)) g)
-      ) as ja
+    -- De berørte regelversjonene slik redaktøren ser dem, hver med om nødstoppen er satt for akkurat den regelen.
+    berorte as (
+      select o, jsonb_build_object('regel', b ->> 'regel', 'versjon', (b ->> 'versjon')::integer, 'hva', b ->> 'hva') as b,
+        exists (select 1 from public.verktoysperrer s where s.opphevet_kl is null and s.omfang = 'regel' and s.mal = b ->> 'regel') as sperret
+      from jsonb_array_elements(coalesce(k.sporsmal -> 'berorte', (
+        select coalesce(jsonb_agg(jsonb_build_object('regel', g ->> 'regel', 'versjon', (g ->> 'versjon')::integer, 'hva', g ->> 'hvorfor')), '[]'::jsonb)
+        from jsonb_array_elements(coalesce(k.innhold -> 'berorte', '[]'::jsonb)) g))) with ordinality as x(b, o)
+    ),
+    sperring as (
+      select count(*) as alle, count(*) filter (where sperret) as sperrede,
+        string_agg(b ->> 'regel', ', ' order by o) filter (where sperret) as hvilke
+      from berorte
     )
   select jsonb_build_object(
     'id', k.id::text,
@@ -361,18 +369,22 @@ as $$
     'kilde', coalesce(k.sporsmal -> 'kilde', jsonb_build_object(
       'navn', k.etikett, 'lenke', null,
       'sammenlignet_kl', (select j.kjort_kl from public.kildeovervaking_kjoringer j where j.id = k.sist_sett_kjoring))),
-    'berorte', coalesce(k.sporsmal -> 'berorte', (
-      select coalesce(jsonb_agg(jsonb_build_object('regel', g ->> 'regel', 'versjon', (g ->> 'versjon')::integer, 'hva', g ->> 'hvorfor')), '[]'::jsonb)
-      from jsonb_array_elements(coalesce(k.innhold -> 'berorte', '[]'::jsonb)) g)),
+    'berorte', (select coalesce(jsonb_agg(b || jsonb_build_object('sperret', sperret) order by o), '[]'::jsonb) from berorte),
     'relevans', coalesce(k.sporsmal ->> 'relevans', 'En agent har vurdert at en eksisterende plan kan være uforsvarlig. Det faglige spørsmålet og valgene legges frem så snart vurderingen er ferdig. Ved konkret fare kan regelen sperres med nødstoppen straks.'),
     'anbefaling', k.sporsmal -> 'anbefaling',
     'valg', coalesce((
       select jsonb_agg(v || intern.kildesak_valgvirkning(v ->> 'valg') order by o)
       from jsonb_array_elements(k.sporsmal -> 'valg') with ordinality as x(v, o)), '[]'::jsonb),
-    'status_na', case
-      when (select ja from sperret) and k.tilstand <> 'avsluttet' then 'Den berørte regelen er sperret med nødstoppen og gir ingen plan.'
-      else coalesce(k.sporsmal ->> 'status_na', 'Verktøyet virker som før til en eventuell nødstopp settes.')
-    end,
+    -- Nødstoppen omtales bare for reglene den faktisk gjelder; de andre gir fortsatt planer.
+    'status_na', (
+      select case
+        when k.tilstand = 'avsluttet' or p.sperrede = 0 then coalesce(k.sporsmal ->> 'status_na', 'Verktøyet virker som før til en eventuell nødstopp settes.')
+        when p.sperrede = p.alle and p.alle = 1 then 'Den berørte regelen er sperret med nødstoppen og gir ingen plan.'
+        when p.sperrede = p.alle then format('Alle de %s berørte reglene er sperret med nødstoppen og gir ingen plan.', p.alle)
+        else format('Nødstoppen er satt for %s av %s berørte regler (%s), som ikke gir noen plan. De andre berørte reglene gir fortsatt planer som før.',
+          p.sperrede, p.alle, p.hvilke)
+      end
+      from sperring p),
     'opprettet_kl', k.opprettet_kl,
     'beslutning', case when k.valg is null then null else jsonb_build_object('valg', k.valg, 'merknad', k.valg_merknad, 'av', intern.profilnavn(k.valg_av), 'kl', k.valg_kl) end,
     'tiltak', (
@@ -389,11 +401,17 @@ $$;
 -- Som før, med disse forskjellene: et nytt avtrykk for en åpen sak oppdaterer
 -- saken (det gamle innholdet står i hendelsen); en teknisk konklusjon gjelder
 -- da ikke lenger, og en sak i det faglige sporet merkes med nytt innhold. Et
+-- spørsmål som venter på beslutning, trekkes tilbake til faglig gjennomgang
+-- (spørsmålet og en eventuell utsettelse står i hendelsen), så redaktøren
+-- aldri velger ut fra et spørsmål om eldre kildeinnhold. En sak i oppfølging
+-- beholder beslutningen og tiltakene, men avsluttes ikke før det nye
+-- innholdet er vurdert (`intern.kildesak_ferdig`). Et
 -- avsluttet funn med samme avtrykk står bare avsluttet når utfallet dekker
 -- innholdet. En sak i det tekniske sporet som ikke finnes igjen i en del som
 -- faktisk ble kontrollert (og ikke står som informativ, for eksempel en kilde
 -- som ikke svarte), avsluttes som `ikke_funnet_igjen`; i det faglige sporet
--- merkes den bare, og et utført nytt grunnlag regnes da som kontrollert.
+-- merkes den bare, et utført nytt grunnlag regnes da som kontrollert, og et
+-- nyere kildeinnhold finnes ikke lenger i kilden.
 create or replace function public.registrer_kildeovervaking(melding jsonb)
 returns jsonb
 language plpgsql
@@ -453,7 +471,12 @@ begin
         update public.kildefunn k
         set avtrykk = f ->> 'avtrykk', innhold = inn, etikett = inn ->> 'etikett', art = inn ->> 'art', prioritet = inn ->> 'prioritet',
             sist_sett_kjoring = kjoring, borte_kjoring = null, versjon = k.versjon + 1, endret_kl = now(),
-            tilstand = case when k.tilstand = 'uavklart' then 'teknisk_utredning' else k.tilstand end,
+            tilstand = case k.tilstand when 'uavklart' then 'teknisk_utredning' when 'beslutning' then 'faglig_gjennomgang' else k.tilstand end,
+            sporsmal = case when k.tilstand = 'beslutning' then null else k.sporsmal end,
+            valg = case when k.tilstand = 'beslutning' then null else k.valg end,
+            valg_merknad = case when k.tilstand = 'beslutning' then null else k.valg_merknad end,
+            valg_av = case when k.tilstand = 'beslutning' then null else k.valg_av end,
+            valg_kl = case when k.tilstand = 'beslutning' then null else k.valg_kl end,
             konklusjon = case when k.tilstand in ('teknisk_utredning', 'uavklart') then null else k.konklusjon end,
             konklusjon_kl = case when k.tilstand in ('teknisk_utredning', 'uavklart') then null else k.konklusjon_kl end,
             konklusjon_tekst = case when k.tilstand in ('teknisk_utredning', 'uavklart') then null else k.konklusjon_tekst end,
@@ -461,7 +484,11 @@ begin
         where k.id = forrige.id;
         perform intern.kildesak_hendelse(forrige.id, 'nytt_innhold', forrige.tilstand,
           (select k.tilstand from public.kildefunn k where k.id = forrige.id), null, null,
-          jsonb_build_object('kjoring', kjoring, 'avtrykk_for', forrige.avtrykk, 'avtrykk', f ->> 'avtrykk', 'innhold_for', forrige.innhold, 'konklusjon_for', forrige.konklusjon));
+          jsonb_build_object('kjoring', kjoring, 'avtrykk_for', forrige.avtrykk, 'avtrykk', f ->> 'avtrykk', 'innhold_for', forrige.innhold, 'konklusjon_for', forrige.konklusjon)
+          || case when forrige.tilstand = 'beslutning' then jsonb_build_object(
+               'sporsmal_tilbaketrukket', forrige.sporsmal,
+               'valg_for', case when forrige.valg is null then null else jsonb_build_object('valg', forrige.valg, 'merknad', forrige.valg_merknad, 'av', forrige.valg_av, 'kl', forrige.valg_kl) end)
+             else '{}'::jsonb end);
         endrede := endrede + 1;
       end if;
     elsif fantes and not er_prove and forrige.avtrykk = f ->> 'avtrykk'
@@ -507,9 +534,12 @@ begin
           'grunn', 'Delen ble kontrollert uten avvik for denne nøkkelen: kilden stemmer igjen med grunnlaget reglene ble kontrollert mot.'));
         avsluttede := avsluttede + 1;
       else
-        if rad.borte_kjoring is null then
-          perform intern.kildesak_hendelse(rad.id, 'borte', rad.tilstand, rad.tilstand, null, null, jsonb_build_object('kjoring', kjoring));
+        -- Kilden stemmer igjen med det kontrollerte grunnlaget, så et nyere innhold finnes ikke lenger i kilden.
+        if rad.borte_kjoring is null or rad.nytt_innhold_kl is not null then
+          perform intern.kildesak_hendelse(rad.id, 'borte', rad.tilstand, rad.tilstand, null, null,
+            jsonb_build_object('kjoring', kjoring, 'nytt_innhold_kl_for', rad.nytt_innhold_kl));
         end if;
+        update public.kildefunn k set nytt_innhold_kl = null where k.id = rad.id;
         for t in select * from public.kildefunn_tiltak x where x.funn = rad.id and x.art = 'nytt_grunnlag' and x.status = 'utfort' for update loop
           update public.kildefunn_tiltak x
           set status = 'kontrollert', endret_kl = now(), endret_av = null, endret_agent = 'Kildeovervåkingen',
@@ -633,6 +663,9 @@ begin
     jsonb_build_object('konklusjon', k, 'begrunnelse', btrim(begrunnelse), 'bevis', b, 'avtrykk', rad.avtrykk));
   if til = 'avsluttet' then
     perform intern.kildesak_avslutt(rad.id, 'teknisk_avklart', null, btrim(agent), jsonb_build_object('bevis', b));
+  elsif rad.tilstand = 'oppfolging' then
+    -- Det nye innholdet er vurdert og dekket av beslutningen; er tiltakene allerede kontrollert, er saken ferdig.
+    perform intern.kildesak_ferdig(rad.id, null, btrim(agent));
   end if;
   return (select x.versjon from public.kildefunn x where x.id = rad.id);
 end;
@@ -640,7 +673,9 @@ $$;
 
 -- Det konkrete faglige spørsmålet til redaktøren, etter faglig gjennomgang
 -- (og uavhengig kontroll der det trengs). Kan erstattes mens saken venter på
--- beslutning; da gjelder ikke en tidligere `utsett`.
+-- beslutning; da gjelder ikke en tidligere `utsett`. Har kilden fått nytt
+-- innhold mens beslutningen følges opp, kan et nytt spørsmål legges frem; de
+-- bestilte og utførte tiltakene står, og den nye beslutningen kommer i tillegg.
 create function public.kildesak_faglig_sporsmal(funn bigint, versjon integer, sporsmal jsonb, agent text)
 returns integer
 language plpgsql
@@ -651,8 +686,8 @@ declare
   rad public.kildefunn := intern.kildesak_for_agent(kildesak_faglig_sporsmal.funn, kildesak_faglig_sporsmal.versjon, kildesak_faglig_sporsmal.agent);
   s jsonb;
 begin
-  if rad.tilstand not in ('faglig_gjennomgang', 'beslutning') then
-    raise exception 'Sak nr. % må ha en teknisk konklusjon om faglig relevans før et spørsmål legges frem for redaktøren.', rad.id using errcode = '55000';
+  if not (rad.tilstand in ('faglig_gjennomgang', 'beslutning') or (rad.tilstand = 'oppfolging' and rad.nytt_innhold_kl is not null)) then
+    raise exception 'Sak nr. % må ha en teknisk konklusjon om faglig relevans (eller nytt kildeinnhold under oppfølging) før et spørsmål legges frem for redaktøren.', rad.id using errcode = '55000';
   end if;
   s := intern.kildesak_sporsmal(rad, sporsmal);
   update public.kildefunn x
@@ -844,7 +879,7 @@ begin
   if rad.versjon <> beslutt_fagsak.versjon then
     return 'endret';
   end if;
-  if rad.tilstand <> 'beslutning' or rad.sporsmal is null then
+  if rad.tilstand <> 'beslutning' or rad.sporsmal is null or rad.nytt_innhold_kl is not null then
     raise exception 'Saken venter ikke på en beslutning. Hent sakene på nytt.' using errcode = '55000';
   end if;
   if v is null or not exists (select 1 from jsonb_array_elements(rad.sporsmal -> 'valg') x where x ->> 'valg' = v) then

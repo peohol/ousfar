@@ -54,6 +54,8 @@ export interface Berortanbefaling {
   versjon: number
   /** Hva i anbefalingen endringen gjelder, med vanlige ord. */
   hva: string
+  /** Om nødstoppen er satt for akkurat denne regelen (de andre berørte kan fortsatt gi planer). */
+  sperret?: boolean
 }
 
 /** Hva ett valg vil gjøre, sagt før det bekreftes. */
