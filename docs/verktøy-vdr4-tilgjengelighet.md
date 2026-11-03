@@ -173,4 +173,15 @@ Hver del gjennomføres i en egen PR med egen kontroll, og ingen PR slås sammen 
 1. **S6, N1 og K6** (verktøysiden og testene i §8, og oppdatering av §4 og §7 i `docs/verktøy-p11-publisering.md`).
 2. **F4** (FEST-synkroniseringen, «Datakilder», en teknisk vakt som faktisk kjører, og ende-til-ende-prøven).
 
+**F4, gjennomføring (03.11.2026, til kontroll):**
+
+- *Feilstatus:* en FEST-kjøring som feiler, lagrer trinnet den stoppet i og om en ny fil var oppdaget (`ny_fil`), med ETag og kontrollsum. Dette skjer i migrasjonen `20261103030000_fest_feilinfo.sql`, i en ny utgave av `legemiddeldata_avbryt_synk` med tre argumenter. Den gamle utgaven står, så en server med eldre kode fortsatt kan avbryte, og den nye koden faller tilbake til den gamle hvis migrasjonen ikke er kjørt ennå. `kontrollert_kl`, 48-timersgrensen og ETag-en neste kjøring spør med leser fortsatt bare vellykkede kjøringer, og det er testet.
+- *Vakten:* `src/legemiddeldata/vakt.ts` og `npm run legemiddeldata:vakt` (se `docs/legemiddeldata.md`). Vakten sier fra etter første natt som feilet, når en kjøring henger, eller når ingen kjøring har gått bra på 26 timer, og den sier når verktøyene stopper. Den skriver ingenting og viser ingenting for forskriveren eller redaktøren. Tegnet i Adminmenyen for «Datakilder» er uendret.
+- *Varslingen:* den planlagte oppgaven «FEST-vakt: daglig kontroll» kjører vakten hver morgen 06:07 UTC. Teksten står i `scripts/legemiddeldata-vakt-oppgave.md`. Hver kjøring blir en ny tråd i prosjektet. Ved kode 1 eller 2, eller når skriptet ikke kan kjøres, sender tråden én melding til eieren av kontoen (teknisk ansvarlig), og meldingen gir varsel. Ved kode 0 løses tråden uten melding. Oppgaven ble opprettet 03.11.2026, men er slått av til denne PR-en er slått sammen, fordi den kjører skriptet fra `main`. Den slås på ved sammenslåingen, og samtidig slås den gamle oppgaven av. Den gamle har ikke kjørt siden 29.09.2026.
+- *Ende-til-ende-prøvene (03.11.2026, før sammenslåing):* to egne oppgaver uten tidsplan har den samme teksten som den daglige, pluss en linje «Prøvemodus» som peker på PR-grenen. Hver prøve går fra planlagt oppgave, via ny tråd, `npm ci` og skriptet, til melding til teknisk ansvarlig.
+  - «PRØVE» bruker en syntetisk feilet kjøring og skal gi kode 1.
+  - «PRØVE LESEFEIL» bruker en syntetisk lesefeil og skal gi kode 2.
+
+  Begge postet en melding som begynte med «PRØVE:», med vaktens utskrift (se PR-en for tidspunkter). Prøven er bestått når teknisk ansvarlig har bekreftet at varselet kom frem. Etter sammenslåingen kjøres «PRØVE» én gang til fra `main`. Til da omtales vakten ikke som virksom.
+
 F2 og S2 gjennomføres ikke. Ingen endring i godkjenninger, regelversjoner, fingeravtrykk, 48-timersgrensen eller nødstoppens database.

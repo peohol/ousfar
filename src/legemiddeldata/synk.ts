@@ -15,8 +15,9 @@
  *    inn nye, oppdaterer endrede og merker de som er borte som utgått — alt i
  *    én transaksjon, og bare om uttrekket ser fullstendig ut.
  *
- * Går noe galt underveis, avbrytes kjøringen og merkes som feilet. Det som lå
- * i databasen fra før, står urørt, så sidene viser siste gyldige data.
+ * Går noe galt underveis, avbrytes kjøringen og merkes som feilet, med
+ * trinnet den stoppet i og om en ny fil var oppdaget ({@link Feilinfo}). Det
+ * som lå i databasen fra før, står urørt, så sidene viser siste gyldige data.
  *
  * Hvor dataene lagres, bestemmer {@link Legemiddellager}; testene bruker et i
  * minnet, serveren det i `lager.ts`.
@@ -30,6 +31,25 @@ export const FEST_URL =
   'https://www.dmp.no/globalassets/documents/om-oss/distribusjon-av-legemiddeldata/fest/festfiler/fest251.zip'
 
 export const KILDE = 'FEST'
+
+/** Trinnet en kjøring stoppet i: kontakten med FEST, nedlastingen, lesingen av filen eller innbyttet i databasen. */
+export type Synktrinn = 'kontakt' | 'nedlasting' | 'lesing' | 'innbytte'
+
+/**
+ * Det som er kjent om en kjøring som feilet. `ny_fil` er `true` når FEST ga en
+ * annen fil enn forrige vellykkede (annen kontrollsum, eller en annen ETag før
+ * filen var lastet ned), `false` når det var den samme filen, og `null` når
+ * det ikke er kjent. Det er driftsdata: at ingen ny fil er kjent, betyr ikke
+ * at ingen finnes, og det endrer aldri hvor gammel kopien regnes som.
+ */
+export interface Feilinfo {
+  trinn: Synktrinn
+  ny_fil: boolean | null
+  etag: string | null
+  sist_endret: string | null
+  sha256: string | null
+  parserversjon: number
+}
 
 /** Det som er kjent om filen en kjøring leste. */
 export interface Filinfo {
@@ -65,13 +85,13 @@ export interface Legemiddellager {
   lastInn(synk: number, entitet: Entitetnavn, rader: Innlastingsrad[]): Promise<void>
   fullfor(synk: number, fil: Filinfo): Promise<Opptelling>
   uendret(synk: number, fil: Filinfo): Promise<void>
-  avbryt(synk: number, feil: string): Promise<void>
+  avbryt(synk: number, feil: string, info: Feilinfo): Promise<void>
 }
 
 export type Synkresultat =
   | { status: 'fullfort'; synk: number; antall: Opptelling; kildedato: string | null }
   | { status: 'uendret'; synk: number }
-  | { status: 'feilet'; synk: number; feil: string }
+  | { status: 'feilet'; synk: number; feil: string; trinn: Synktrinn; ny_fil: boolean | null }
 
 export interface Synkvalg {
   lager: Legemiddellager
@@ -96,6 +116,7 @@ export async function synkroniserFest({
   const synk = await lager.start(KILDE, utlostAv)
   // Forrige kjøring leste filen med en eldre parser: les alt på nytt.
   const sammeParser = forrige?.parserversjon === PARSERVERSJON
+  const info: Feilinfo = { trinn: 'kontakt', ny_fil: null, etag: null, sist_endret: null, sha256: null, parserversjon: PARSERVERSJON }
 
   try {
     const svar = await hent(url, {
@@ -108,14 +129,26 @@ export async function synkroniserFest({
       parserversjon: PARSERVERSJON,
     }
     if (svar.status === 304) {
-      await lager.uendret(synk, { ...grunninfo, etag: forrige?.etag ?? grunninfo.etag, sha256: forrige?.sha256 ?? null, kildedato: null })
+      const uendret = { ...grunninfo, etag: forrige?.etag ?? grunninfo.etag, sha256: forrige?.sha256 ?? null }
+      // FEST har bekreftet at filen er den samme; feiler noe nå, er det innbyttet i databasen.
+      Object.assign(info, uendret, { trinn: 'innbytte', ny_fil: false })
+      await lager.uendret(synk, { ...uendret, kildedato: null })
       return { status: 'uendret', synk }
     }
     if (!svar.ok) throw new Error(`FEST svarte ${svar.status} ${svar.statusText}`.trim())
 
+    info.trinn = 'nedlasting'
+    info.etag = grunninfo.etag
+    info.sist_endret = grunninfo.sist_endret
+    // En annen ETag enn forrige vellykkede tyder på en ny fil, til kontrollsummen avgjør det.
+    if (grunninfo.etag && forrige?.etag && grunninfo.etag !== forrige.etag) info.ny_fil = true
     const zip = Buffer.from(await svar.arrayBuffer())
     const sha256 = createHash('sha256').update(zip).digest('hex')
+    info.sha256 = sha256
+    info.ny_fil = forrige?.sha256 ? forrige.sha256 !== sha256 : info.ny_fil
+    info.trinn = 'lesing'
     if (sammeParser && forrige?.sha256 === sha256) {
+      info.trinn = 'innbytte'
       await lager.uendret(synk, { ...grunninfo, sha256, kildedato: null })
       return { status: 'uendret', synk }
     }
@@ -141,12 +174,13 @@ export async function synkroniserFest({
     if (avvik.length > 0) throw new Error(avvikstekst(avvik))
     for (const entitet of ENTITETER) await tom(entitet)
 
+    info.trinn = 'innbytte'
     const antall = await lager.fullfor(synk, { ...grunninfo, sha256, kildedato: fil.hentetDato })
     return { status: 'fullfort', synk, antall, kildedato: fil.hentetDato }
   } catch (e) {
     const feil = e instanceof Error ? e.message : String(e)
-    await lager.avbryt(synk, feil)
-    return { status: 'feilet', synk, feil }
+    await lager.avbryt(synk, feil, info)
+    return { status: 'feilet', synk, feil, trinn: info.trinn, ny_fil: info.ny_fil }
   }
 }
 

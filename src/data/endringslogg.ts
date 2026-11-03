@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.119.1',
+    dato: '2026-11-03',
+    sammendrag: 'Tidligere varsel til teknisk ansvarlig når den nattlige FEST-oppdateringen feiler',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i det brukerne ser. Når den nattlige oppdateringen av legemiddeldataene fra FEST feiler, lagres det nå hvor langt den kom og om en ny fil var oppdaget. En daglig kontroll varsler teknisk ansvarlig allerede etter første natt som feiler, eller når den ikke får lest statusen, lenge før verktøyene stopper etter 48 timer uten oppdaterte data. Grensen på 48 timer er uendret.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.119.0',
     dato: '2026-11-03',
     sammendrag: 'Kildeovervåkingen: tekniske avvik følges opp uten frister, og redaktøren får bare faglige spørsmål',
