@@ -480,15 +480,15 @@ function Verktoyskjema({
   const usperret = regler.map((r) => r.id).join()
   useEffect(() => {
     if (sperrer.tilstand.status !== 'klar') {
-      // Sperrene kunne ikke leses eller er for gamle: en plan som sto, er tatt bort av det.
+      // Det eneste stedet meldingen oppstår: sperrene kunne ikke leses eller er for gamle, og en plan som sto, er tatt bort av det.
       if (vistPlan.current) setTattBort(vistPlan.current)
       vistPlan.current = null
       return
     }
-    // Etter en vellykket lesing gjelder meldingen, og planen som sist ble vist, bare de samme valgene og en regel som ikke er sperret.
+    // En vellykket lesing gir aldri en ny melding. Den beholder en melding som alt står, og planen som vises, bare for de samme valgene og en regel som ikke er sperret.
     const gjelderNa = (m: Planmerke | null) => (m && m.valg === valgnokkel && usperret.split(',').includes(m.regel) ? m : null)
     vistPlan.current = gjelderNa(vistPlan.current)
-    setTattBort(gjelderNa)
+    setTattBort((staende) => gjelderNa(staende))
   }, [sperrer.tilstand, valgnokkel, usperret])
 
   return (

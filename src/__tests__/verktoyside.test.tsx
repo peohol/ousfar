@@ -834,6 +834,30 @@ describe('nødstoppen (P11.6)', () => {
         expect(legemidler.les.mock.calls.length).toBe(hentet + 1)
       })
 
+      it('viser ikke meldingen når vellykkede lesinger bare bekrefter planen som står, heller ikke etter en ny beregning etter et brudd', async () => {
+        const { svikt, lager } = ustabil()
+        const user = await medPlan(lager)
+        /** Vellykkede lesinger, både ved fokus og hvert minutt: planen står, og meldingen vises ikke. */
+        const bekreftet = async () => {
+          const lest = lager.les.mock.calls.length
+          await fokus()
+          await vent(LES_SPERRENE_HVER_MS)
+          await fokus()
+          expect(lager.les.mock.calls.length).toBeGreaterThanOrEqual(lest + 3)
+          expect(screen.getByRole('table')).toBeTruthy()
+          expect(tattBort()).toBeNull()
+        }
+        await bekreftet()
+
+        // Et reelt tap gir meldingen; etter en ny beregning kommer den ikke tilbake ved nye vellykkede lesinger.
+        await kortBrudd(svikt)
+        expect(tattBort()).toBeTruthy()
+        await user.click(beregnknapp())
+        expect(await screen.findByRole('table')).toBeTruthy()
+        expect(tattBort()).toBeNull()
+        await bekreftet()
+      })
+
       it('ber om en ny beregning når planen ble tatt bort fordi lesingen ble for gammel mens fanen var skjult', async () => {
         // Lesingen tar et øyeblikk, som over nettet.
         let treg = false
