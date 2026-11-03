@@ -17,10 +17,11 @@ import { norskDato } from './motor/byggesteiner'
 import { FAKTUMRETTELSER } from './regler/bygg'
 import { erKliniskGodkjent, fingeravtrykk, kanonisk, KONTROLLUTFALL, kontrollutfall } from './regler/godkjenning'
 import type { Kildehenvisning, Regel, Regelsett } from './regler/modell'
+import { kildelinje, kildeliste, regellinje, settlinje } from './planvisning'
 import { kjorKasus, PILOTKASUS, type Pilotkasus, type Pilotutfall, SIMULERT_KONTROLLOR, simulerGodkjenning, type Uttrekkene } from './regler/pilotmatrise'
 import { liste, tabell } from './regler/rapport'
 import { rett } from './regler/rettelse'
-import { REGELSETT, REGELSETTENE } from './tilgjengelighet'
+import { REGELSETT, REGELSETTENE, settFor } from './tilgjengelighet'
 
 export const RETTELSESKONTROLLFIL = 'docs/verktøy-rettelse-langvarig.md'
 
@@ -68,23 +69,73 @@ export function settMedNyeVersjoner(rader: readonly Rettelsesrad[], dato = FAKTU
   return { ...REGELSETT, regler: REGELSETT.regler.map((r) => nye.get(r.id) ?? r) }
 }
 
-/** Det brukeren ser av et utfall, uten beregningen bak. */
-const synlig = ({ resultat: _, tekst: __, ...u }: Pilotutfall & { resultat?: unknown; tekst?: unknown }) => JSON.stringify(u)
+/** Én linje i teksten brukeren ser og kopierer som er ulik med den nye versjonen, og hvorfor. */
+export interface Linjeendring {
+  ny: string
+  i_dag: string
+  hvorfor: string
+}
+
+/**
+ * Linjene i teksten brukeren ser og kopierer (`planTekst`) som er ulike med den
+ * nye versjonen av hver godkjent regel, uten at planen er det: regelversjonen,
+ * kildene der stedene er endret, og regelsettet, som kopien med den simulerte
+ * godkjenningen ikke hører til. Alt annet i planen skal være likt.
+ */
+export function forventedeLinjeendringer(rader: readonly Rettelsesrad[]): Map<string, Linjeendring[]> {
+  const linje = (r: Regel) => regellinje({ ...r, fingeravtrykk: fingeravtrykk(r) })
+  return new Map(
+    tilGodkjenning(rader).map(({ for: f, etter }) => {
+      const for_ = new Map(kildeliste(f).map((k) => [k.url, kildelinje(k)]))
+      const kilder = kildeliste(etter).flatMap((k): Linjeendring[] => {
+        const i_dag = for_.get(k.url)
+        return i_dag !== undefined && i_dag !== kildelinje(k) ? [{ ny: kildelinje(k), i_dag, hvorfor: 'Stedene i kilden der de nye faktaene står.' }] : []
+      })
+      const sett = settFor(f)
+      return [
+        etter.id,
+        [
+          { ny: linje(etter), i_dag: linje(f), hvorfor: 'Den nye regelversjonen.' },
+          ...kilder,
+          {
+            ny: settlinje(REGELSETT),
+            i_dag: settlinje(sett),
+            hvorfor: `Kopien med den simulerte godkjenningen hører ikke til noe regelsett appen bruker. Når rettelsen tas i bruk, står regelen i ${sett.id} med ny versjon av settet.`,
+          },
+        ],
+      ] as const
+    }),
+  )
+}
+
+type Kjoring = ReturnType<typeof kjorKasus>
+
+/**
+ * Det brukeren ser av et utfall: hele teksten for en plan, med de forventede
+ * linjeendringene for regelen planen er beregnet etter ført tilbake, og
+ * grunnene ellers. Godkjenningslinjen står bare på skjermen og sier hvem som
+ * har godkjent versjonen; for den nye versjonen er den simulert.
+ */
+export function synlig({ resultat, tekst, ...u }: Kjoring, endringer: ReadonlyMap<string, readonly Linjeendring[]> = new Map()): string {
+  const tilbake = (endringer.get(resultat?.regel.id ?? '') ?? []).reduce((t, { ny, i_dag }) => t.split(`\n- ${ny}\n`).join(`\n- ${i_dag}\n`), `${tekst ?? ''}\n`)
+  return JSON.stringify({ ...u, tekst: tilbake })
+}
 
 export interface Matrisesammenligning {
   kasus: Pilotkasus
-  i_dag: Pilotutfall
-  ny_versjon: Pilotutfall
+  i_dag: Kjoring
+  ny_versjon: Kjoring
   lik: boolean
 }
 
 /** Hvert kasus i testmatrisen med appens regler og med de nye versjonene av de godkjente reglene. */
 export function matrisesammenligning(rader: readonly Rettelsesrad[], uttrekkene: Uttrekkene): Matrisesammenligning[] {
   const nye = settMedNyeVersjoner(rader)
+  const endringer = forventedeLinjeendringer(rader)
   return PILOTKASUS.map((kasus) => {
     const i_dag = kjorKasus(kasus, uttrekkene)
     const ny_versjon = kjorKasus(kasus, uttrekkene, nye)
-    return { kasus, i_dag, ny_versjon, lik: synlig(i_dag) === synlig(ny_versjon) }
+    return { kasus, i_dag, ny_versjon, lik: synlig(i_dag) === synlig(ny_versjon, endringer) }
   })
 }
 
@@ -144,6 +195,10 @@ export function lagRettelseskontroll(uttrekkene: Uttrekkene): string {
     ['Regel', 'Godkjent i dag', 'Ny versjon til godkjenning', 'Avgrensningen i dagens godkjenning'],
     godkjente.map((x) => [kode(x.for.id), versjonstekst(x.for), versjonstekst(x.etter), avgrensning(x.for)]),
   )
+  const linjetabell = tabell(
+    ['Regel', 'Med den nye versjonen', 'I dag', 'Hvorfor'],
+    [...forventedeLinjeendringer(rader)].flatMap(([id, linjer]) => linjer.map((x) => [kode(id), x.ny, x.i_dag, x.hvorfor])),
+  )
   const avvikstabell = tabell(
     ['Kasus', 'Hva', 'I dag', 'Med den nye versjonen'],
     ulike.map((x) => [x.kasus.id, x.kasus.hva, utfallstekst(x.i_dag), utfallstekst(x.ny_versjon)]),
@@ -185,9 +240,13 @@ ${endringer}
 
 ## 5. De godkjente reglene i testmatrisen
 
-Alle ${sammenligning.length} kasusene i testmatrisen fra P11 (\`docs/verktøy-p11-testmatrise.md\`) er kjørt to ganger: med appens regler i dag, og med den nye versjonen av hver godkjent regel på en kopi med en simulert godkjenning («${SIMULERT_KONTROLLOR}»). ${sammenligning.length - ulike.length} kasus gir nøyaktig det samme for brukeren. ${ulike.length === 0 ? 'Ingen gir noe annet.' : `${ulike.length} gir noe annet, og bare fordi kasuset prøver neste versjonsnummer, som nå er ett høyere:`}
+Alle ${sammenligning.length} kasusene i testmatrisen fra P11 (\`docs/verktøy-p11-testmatrise.md\`) er kjørt to ganger: med appens regler i dag, og med den nye versjonen av hver godkjent regel på en kopi med en simulert godkjenning («${SIMULERT_KONTROLLOR}»). Sammenligningen gjelder hele det brukeren ser: radene i planen og hele teksten som kopieres, med advarsler, avvik, antakelser, usikkerhet, preparater, kontroller, kilder og versjoner, og grunnene når planen stopper. Før sammenligningen er bare linjene i tabellen under ført tilbake: regelversjonen og regelsettet under «Versjoner» og stedene i RCPsych under «Kilder». Hver av dem må stå nøyaktig som i tabellen for å bli ført tilbake. Godkjenningslinjen på skjermen er utelatt, fordi den for den nye versjonen er simulert. ${sammenligning.length - ulike.length} kasus gir nøyaktig det samme for brukeren. ${ulike.length === 0 ? 'Ingen gir noe annet.' : `${ulike.length} gir noe annet, og bare fordi kasuset prøver neste versjonsnummer, som nå er ett høyere:`}
 
 ${ulike.length > 0 ? avvikstabell : ''}
+
+Linjene som er ført tilbake:
+
+${linjetabell}
 
 ## 6. Spørsmål til kontrolløren
 

@@ -185,6 +185,15 @@ export const STARTFORLOP = 'Et startforløp med revurdering, ikke en fullstendig
 const undertittelFor = (forlop: readonly Praktiskforlop[]) =>
   forlop.some((f) => f.avslutning_kort === EN_REDUKSJON_KORT) ? EN_FORSTE_REDUKSJON : forlop.some((f) => f.avslutning_kort) ? STARTFORLOP : null
 
+/** Linjen under «Versjoner» som sier hvilken regelversjon planen er beregnet etter. */
+export const regellinje = (r: Pick<Regel, 'id' | 'versjon'> & { fingeravtrykk: string }) => `Regel ${r.id}, versjon ${r.versjon}, fingeravtrykk ${r.fingeravtrykk.slice(0, 12)}`
+
+/** Linjen under «Versjoner» som sier hvilket regelsett regelen hører til. */
+export const settlinje = (s: { id: string; versjon: number }) => `Regelsett ${s.id}, versjon ${s.versjon}`
+
+/** Én kilde under «Kilder» i teksten som kopieres. */
+export const kildelinje = (k: Plankilde) => `${k.tittel} (${k.utgiver}, ${k.versjon}): ${k.url}${k.steder.length > 0 ? ` – ${k.steder.join('; ')}` : ''}`
+
 /** Visningen av en klinisk doseplan; `null` for alt som ikke er en klinisk plan. */
 export function planvisning(r: Doseplanresultat, regel: Regel, startdato?: string): Planvisning | null {
   if (r.status !== 'doseplan' || !r.klinisk || r.sperre.length > 0 || r.regel.id !== regel.id || r.regel.fingeravtrykk !== fingeravtrykk(regel)) return null
@@ -204,8 +213,8 @@ export function planvisning(r: Doseplanresultat, regel: Regel, startdato?: strin
     preparater: preparatliste(r),
     kilder: kildeliste(regel),
     versjoner: [
-      `Regel ${r.regel.id}, versjon ${r.regel.versjon}, fingeravtrykk ${r.regel.fingeravtrykk.slice(0, 12)}`,
-      ...(r.regelsett ? [`Regelsett ${r.regelsett.id}, versjon ${r.regelsett.versjon}`] : []),
+      regellinje(r.regel),
+      ...(r.regelsett ? [settlinje(r.regelsett)] : []),
       `Regelmodell ${r.modell}, beregningsmotor ${r.motor}, doseplanmotor ${r.planmotor}`,
       `FEST-uttrekk ${r.fest.kildedato ?? 'ukjent'}, kontrollert ${r.fest.kontrollert_kl ?? 'ukjent'}, preparatstatus per ${norskDato(r.fest.statusdato)}`,
       ...(r.preparatgrunnlag ? [`Preparatgrunnlag ${r.preparatgrunnlag.slice(0, 12)}`] : []),
@@ -253,7 +262,7 @@ export function planTekst(v: Planvisning, overskrift: string): string {
     '',
     ...linjer,
     ...PLANDELER.flatMap((d) => punkter(d.tittel, v[d.felt])),
-    ...punkter('Kilder', v.kilder.map((k) => `${k.tittel} (${k.utgiver}, ${k.versjon}): ${k.url}${k.steder.length > 0 ? ` – ${k.steder.join('; ')}` : ''}`)),
+    ...punkter('Kilder', v.kilder.map(kildelinje)),
     ...punkter('Versjoner', v.versjoner),
   ].join('\n')
 }

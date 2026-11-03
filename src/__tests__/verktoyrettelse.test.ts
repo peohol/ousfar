@@ -13,7 +13,7 @@ import { erKliniskGodkjent, fingeravtrykk, kanonisk } from '../verktoy/regler/go
 import { MAKS_FAKTUM } from '../verktoy/regler/kontroll'
 import { henvisninger, type Kildehenvisning, type Regel } from '../verktoy/regler/modell'
 import { rett, rettRegel } from '../verktoy/regler/rettelse'
-import { lagRettelseskontroll, matrisesammenligning, RETTELSESKONTROLLFIL, rettelsesrader, tilGodkjenning } from '../verktoy/rettelseskontroll'
+import { forventedeLinjeendringer, lagRettelseskontroll, matrisesammenligning, RETTELSESKONTROLLFIL, rettelsesrader, synlig, tilGodkjenning } from '../verktoy/rettelseskontroll'
 import { REGELSETT } from '../verktoy/tilgjengelighet'
 
 const les = (fil: string) => readFileSync(new URL(`../../${fil}`, import.meta.url), 'utf8')
@@ -136,6 +136,37 @@ describe('Kontrollgrunnlaget', () => {
     for (const x of ulike) {
       const tekst = (u: typeof x.i_dag) => ('grunner' in u ? u.grunner.join(' ') : '')
       expect(tekst(x.ny_versjon).replace(/regelversjon (\d+), ikke versjon (\d+)/, (_, a, b) => `regelversjon ${Number(a) - 1}, ikke versjon ${Number(b) - 1}`), x.kasus.id).toBe(tekst(x.i_dag))
+    }
+  })
+
+  it('sammenligner hele teksten brukeren ser, og fører bare de forventede linjene tilbake', () => {
+    const endringer = forventedeLinjeendringer(RADER)
+    const planer = matrisesammenligning(RADER, uttrekkene).filter((x) => x.i_dag.utfall === 'plan')
+    expect(planer.length).toBeGreaterThan(0)
+    const brukt = new Set<string>()
+    for (const x of planer) {
+      expect(x.lik, x.kasus.id).toBe(true)
+      const i_dag = x.i_dag.tekst!.split('\n')
+      const ny = x.ny_versjon.tekst!.split('\n')
+      expect(ny.length, x.kasus.id).toBe(i_dag.length)
+      const forventet = endringer.get(x.ny_versjon.resultat!.regel.id) ?? []
+      // Hver linje som er ulik, er en av de forventede, og står med samme linje i dag på samme plass.
+      ny.forEach((l, i) => {
+        if (l === i_dag[i]) return
+        const e = forventet.find((f) => l === `- ${f.ny}`)
+        expect(e, `${x.kasus.id}: ${l}`).toBeDefined()
+        expect(i_dag[i], x.kasus.id).toBe(`- ${e!.i_dag}`)
+        brukt.add(e!.ny)
+      })
+    }
+    // Hver forventet linjeendring forekommer faktisk, så ingen av dem skjuler noe den ikke trenger.
+    expect([...endringer.values()].flat().map((e) => e.ny).filter((l) => !brukt.has(l))).toEqual([])
+    // En endring utenfor de forventede linjene blir oppdaget, også i advarslene, kildene og versjonene.
+    const x = planer.find((p) => endringer.has(p.ny_versjon.resultat!.regel.id))!
+    for (const del of ['Advarsler:', 'Kilder:', 'Versjoner:']) {
+      const endret = { ...x.ny_versjon, tekst: x.ny_versjon.tekst!.replace(`${del}\n- `, `${del}\n- endret `) }
+      expect(endret.tekst, del).not.toBe(x.ny_versjon.tekst)
+      expect(synlig(endret, endringer), del).not.toBe(synlig(x.i_dag))
     }
   })
 
