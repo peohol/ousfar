@@ -85,6 +85,9 @@ const DOKKHOYDE = '--dokkhoyde'
 /** Hvor smalt fagsøket kan bli før sidens plasser flytter til dokken (`tokens.css`). */
 const FAGSOK_MINST = '--bredde-fagsok-minst'
 
+/** Hvor bredt søket på siden er i toppmenyen mens det brukes (`tokens.css`). */
+const SIDESOK_I_BRUK = '--bredde-sidesok-i-bruk'
+
 /** Merket dokken bærer når gruppene står på hver sin rad (se `toppmeny.css`). */
 const TO_RADER = 'data-to-rader'
 
@@ -140,10 +143,12 @@ function ytreBredde(element: HTMLElement) {
  * knappene i hver gruppe, og gruppene etter hverandre. Målt på knappene og
  * ikke på gruppene, for i toppmenyen kan gruppene krympe.
  */
-function plassenesBredde(dokk: HTMLElement, grupper: readonly HTMLElement[]) {
+function plassenesBredde(dokk: HTMLElement, grupper: readonly HTMLElement[], sidesok?: number) {
   const mellomrom = px(getComputedStyle(dokk).columnGap)
+  const bredde = (element: HTMLElement) =>
+    sidesok !== undefined && element.matches('.sidesok') ? sidesok : ytreBredde(element)
   const bredder = iRaden(grupper).map((gruppe) =>
-    samletBredde(iRaden(gruppe.querySelectorAll(':scope > .toppmeny__spor > *')).map(ytreBredde), px(getComputedStyle(gruppe).columnGap)),
+    samletBredde(iRaden(gruppe.querySelectorAll(':scope > .toppmeny__spor > *')).map(bredde), px(getComputedStyle(gruppe).columnGap)),
   )
   return samletBredde(bredder, mellomrom)
 }
@@ -160,10 +165,17 @@ export function velgTrinn(smal: boolean, naa: Trinn, faarPlassMed: (trinn: Trinn
 }
 
 /**
- * Om sidens plasser får plass i toppmenyen: alt annet i menyen, plassene og
- * fagsøket i minst `--bredde-fagsok-minst`, ved siden av hverandre.
+ * Om sidens plasser får plass i toppmenyen, ved siden av alt annet i menyen,
+ * både når søket på siden står i ro og når det brukes:
+ *
+ * - i ro med fagsøket i minst `--bredde-fagsok-minst`;
+ * - i bruk, i hele `--bredde-sidesok-i-bruk`, med fagsøket som bare lupen
+ *   (det gir fra seg plassen mens søket på siden brukes).
+ *
+ * Mens søket på siden brukes (`soker`), kan bredden i ro ikke måles; da
+ * gjelder bare det siste.
  */
-function faarPlassITopp(pille: HTMLElement, dokk: HTMLElement, grupper: readonly HTMLElement[], slingring: number) {
+function faarPlassITopp(pille: HTMLElement, dokk: HTMLElement, grupper: readonly HTMLElement[], slingring: number, soker: boolean) {
   const plassene = plassenesBredde(dokk, grupper)
   if (plassene === 0) return true
   const stil = getComputedStyle(pille)
@@ -171,9 +183,14 @@ function faarPlassITopp(pille: HTMLElement, dokk: HTMLElement, grupper: readonly
   const resten = iRaden(pille.children)
     .filter((element) => element !== dokk && element !== sok)
     .map(ytreBredde)
-  const bredder = [...resten, plassene, ...(sok ? [lengde(stil.getPropertyValue(FAGSOK_MINST))] : [])]
   const plass = pille.clientWidth - px(stil.paddingLeft) - px(stil.paddingRight) - slingring
-  return faarPlass(bredder, px(stil.columnGap), plass)
+  const raden = (sidens: number, fagsok: number) =>
+    faarPlass([...resten, sidens, ...(sok ? [fagsok] : [])], px(stil.columnGap), plass)
+  const iBruk = raden(
+    plassenesBredde(dokk, grupper, lengde(stil.getPropertyValue(SIDESOK_I_BRUK))),
+    sok ? px(getComputedStyle(sok).minWidth) : 0,
+  )
+  return iBruk && (soker || raden(plassene, lengde(stil.getPropertyValue(FAGSOK_MINST))))
 }
 
 /**
@@ -188,10 +205,10 @@ function faarPlassITopp(pille: HTMLElement, dokk: HTMLElement, grupper: readonly
  *   (`data-to-rader`), og dokken blir ikke bredere enn den bredeste raden.
  *   Det kan ikke CSS avgjøre selv: en rad som brytes, gjør boksen rundt like
  *   bred som det er plass til.
- * - Mens det søkes på siden, står valgene slik de var: feltet vokser, og
- *   menyen skal ikke flytte seg under markøren. Blir flaten smal midt i et
- *   søk, flytter plassene likevel til dokken, for der får de ikke plass i
- *   toppmenyen.
+ * - Søket på siden får alltid plass i toppmenyen også mens det brukes, da i
+ *   hele `--bredde-sidesok-i-bruk`, så det som skrives, synes. Mens det
+ *   søkes, går menyen bare til et trangere trinn (når vinduet blir smalere),
+ *   aldri tilbake, så feltet ikke flytter seg under markøren uten grunn.
  * - Høyden meldes til resten av appen som `--dokkhoyde`, så siden og det som
  *   står over dokken, gir plass også når den går over to rader. Står plassene
  *   i toppmenyen eller er de tomme, gjelder høyden på én rad fra `tokens.css`.
@@ -210,27 +227,26 @@ function useDokk() {
     const grupper = Array.from(dokk.querySelectorAll<HTMLElement>(':scope > .toppmeny__gruppe'))
     const maal = () => {
       const soker = dokk.querySelector('.sidesok')?.contains(document.activeElement) ?? false
-      const erSmal = !!smal?.matches
-      // Mens det søkes, står trinnet stille, men på smale flater står plassene
-      // alltid i dokken, også om vinduet blir smalt midt i et søk.
-      if (!soker || (erSmal && !rot.hasAttribute(DOKK))) {
-        const naa: Trinn = rot.hasAttribute(DOKK) ? 'dokk' : meny.hasAttribute(KOMPAKT) ? 'kompakt' : 'hel'
-        // Knappene er like brede i toppmenyen og i dokken, så hvert trinn kan
-        // prøves med bare `data-kompakt`, som bare rører menyen. Mens det
-        // måles, står overgangene stille, så bredden som måles, er den
-        // knappene får, og ikke en underveis.
-        meny.setAttribute(MALER, '')
-        const trinn = velgTrinn(erSmal, naa, (prov, slingring) => {
-          meny.toggleAttribute(KOMPAKT, prov !== 'hel')
-          return faarPlassITopp(pille, dokk, grupper, slingring ? SLINGRING : 0)
-        })
-        meny.toggleAttribute(KOMPAKT, trinn !== 'hel')
-        rot.toggleAttribute(DOKK, trinn === 'dokk')
-        // Det valgte trinnet slår igjennom før overgangene slås på igjen, så
-        // ingenting glir fra et av forsøkene.
-        void meny.offsetWidth
-        meny.removeAttribute(MALER)
-      }
+      const naa: Trinn = rot.hasAttribute(DOKK) ? 'dokk' : meny.hasAttribute(KOMPAKT) ? 'kompakt' : 'hel'
+      // Knappene er like brede i toppmenyen og i dokken, så hvert trinn kan
+      // prøves med bare `data-kompakt`, som bare rører menyen. Mens det
+      // måles, står overgangene stille, så bredden som måles, er den
+      // knappene får, og ikke en underveis.
+      meny.setAttribute(MALER, '')
+      const valgt = velgTrinn(!!smal?.matches, naa, (prov, slingring) => {
+        meny.toggleAttribute(KOMPAKT, prov !== 'hel')
+        return faarPlassITopp(pille, dokk, grupper, slingring ? SLINGRING : 0, soker)
+      })
+      // Mens det søkes på siden, går menyen bare til et trangere trinn når
+      // feltet ikke lenger får plass (som på en smal flate), aldri tilbake:
+      // feltet skal ikke flytte seg under markøren uten grunn.
+      const trinn = soker && TRINN.indexOf(valgt) < TRINN.indexOf(naa) ? naa : valgt
+      meny.toggleAttribute(KOMPAKT, trinn !== 'hel')
+      rot.toggleAttribute(DOKK, trinn === 'dokk')
+      // Det valgte trinnet slår igjennom før overgangene slås på igjen, så
+      // ingenting glir fra et av forsøkene.
+      void meny.offsetWidth
+      meny.removeAttribute(MALER)
       const stil = getComputedStyle(dokk)
       const fast = stil.position === 'fixed'
       if (!fast) dokk.removeAttribute(TO_RADER)

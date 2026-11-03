@@ -553,19 +553,22 @@
   display: none;
 }
 
-/* Mens det brukes i toppmenyen, tar det plassen fra fagsøket (som da krymper
-   til lupen) og ikke mer enn det er plass til, så resten av menyen blir
-   stående. Ellers presses ingenting i sidens plasser sammen: får de ikke
-   plass, flytter de til dokken (se `toppmeny.css`). */
-:root:not([data-dokk]) .toppmeny__kontekst:has(.sidesok:focus-within) {
-  flex-shrink: 1;
-  min-width: 0;
+/* Mens det brukes i toppmenyen, er det like bredt hver gang
+   (`--bredde-sidesok-i-bruk`), så det som skrives, synes, og tar plassen fra
+   fagsøket (som da kan krympe til lupen). `Toppmeny` sørger for at det får
+   plass; ellers presses ingenting i sidens plasser sammen. Snarveien trengs
+   ikke mens feltet alt er i bruk. */
+:root:not([data-dokk]) .toppmeny__kontekst .sidesok:focus-within {
+  width: var(--bredde-sidesok-i-bruk);
 }
 
-:root:not([data-dokk]) .toppmeny__gruppe[data-gruppe='hoved']:has(.sidesok:focus-within),
-:root:not([data-dokk]) .toppmeny__kontekst .sidesok:focus-within {
-  flex-shrink: 1;
-  min-width: var(--hoyde-kontroll);
+:root:not([data-dokk]) .toppmeny__kontekst .sidesok:focus-within .sidesok__input {
+  flex: 1 1 0;
+  width: auto;
+}
+
+.toppmeny__kontekst .sidesok:focus-within .hurtigtast {
+  display: none;
 }
 
 @media (width > 47.5em) {

@@ -384,6 +384,16 @@ describe('plassene i toppmenyen', () => {
     expect(rot.hasAttribute('data-dokk')).toBe(false)
   })
 
+  it('gir søket på siden en fast, lesbar bredde mens det brukes i toppmenyen, uten å presse noe sammen', () => {
+    const css = readFileSync('src/styles/sok.css', 'utf8')
+    expect(css).toMatch(
+      /:root:not\(\[data-dokk\]\) \.toppmeny__kontekst \.sidesok:focus-within \{\s*width: var\(--bredde-sidesok-i-bruk\);/,
+    )
+    // Ingenting i sidens plasser krymper (det la knappene over hverandre).
+    expect(css).not.toMatch(/\.toppmeny__(kontekst|gruppe)[^{]*\{[^}]*flex-shrink:\s*1/)
+    expect(readFileSync('src/styles/tokens.css', 'utf8')).toMatch(/--bredde-sidesok-i-bruk:\s*16rem/)
+  })
+
   it('lar fagsøkets rullegardin slutte over dokken også på bredere flater', () => {
     const css = readFileSync('src/styles/sok.css', 'utf8')
     expect(css).toMatch(

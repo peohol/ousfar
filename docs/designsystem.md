@@ -368,8 +368,7 @@ så «Søk i fagstoff» fortsatt står i feltet):
    nederst i vinduet (se under). På smale flater står de alltid der.
 
 Et romsligere trinn må ha litt plass til overs før menyen går tilbake til
-det, så den ikke vipper fram og tilbake ved grensen. Mens det søkes på
-siden, står trinnet som det var. Ingenting i sidens plasser presses sammen,
+det, så den ikke vipper fram og tilbake ved grensen. Ingenting i sidens plasser presses sammen,
 så knappene legger seg aldri over hverandre.
 
 - Fagsøket svarer på sin egen bredde (et spørrefelt, `@container fagsok`),
@@ -377,8 +376,11 @@ så knappene legger seg aldri over hverandre.
   menyen, kan det til slutt bli bare lupen, og mens søket da brukes, legger
   feltet seg over resten av menyen i full bredde. Innholdet i feltet klippes
   i kanten.
-- Søket på siden tar plassen fra fagsøket mens det brukes, og krymper selv
-  heller enn å skyve resten av menyen ut av pillen.
+- Søket på siden er like bredt hver gang det brukes i toppmenyen
+  (`--bredde-sidesok-i-bruk`, 16rem), så det som skrives, synes, og tar
+  plassen fra fagsøket, som da kan bli bare lupen. Trinnet velges slik at
+  også dette får plass. Mens det søkes, går menyen bare til et trangere
+  trinn (når vinduet blir smalere), aldri tilbake.
 - Rullegardinen og treffpanelet er aldri smalere enn `--bredde-sokepanel`.
 
 ### Høyden og rullingen

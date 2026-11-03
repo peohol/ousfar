@@ -128,6 +128,9 @@
      fagstoff». Trengs mer for sidens handlinger, blir de kompakte og så
      flytter de ned i dokken (`Toppmeny`). */
   --bredde-fagsok-minst: 10rem;
+  /* Så bredt søket på siden er i toppmenyen mens det brukes, så det som
+     skrives, synes. Menyen sørger for at det alltid får plass (`Toppmeny`). */
+  --bredde-sidesok-i-bruk: 16rem;
 
   /* --- Lag ----------------------------------------------------------------
      `--lag-innhold` er det som flyter over siden, men under toppmenyen og
