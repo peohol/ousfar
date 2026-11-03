@@ -9,7 +9,7 @@
  */
 import { dekningFor, dekningstekst } from './dekning'
 import { KILDEFORMULERINGER, type Kildeformulering, type Virkestoffkartlegging } from './kartlegging'
-import { KARTLEGGING, virkestoffvalg, type Verktoy } from './register'
+import { KARTLEGGING, VERKTOY, virkestoffvalg, type Verktoy } from './register'
 import { godkjenningsfeil, harBeregning, kontrollutfall } from './regler/godkjenning'
 import { REGELMODELLVERSJON, type Administrasjon, type Forlop, type Regel, type Regelsett, type Virkestoffvalg } from './regler/modell'
 import { NEDTRAPPINGSSETT } from './regler/nedtrapping'
@@ -137,6 +137,18 @@ export function tilgjengelighet(verktoy: Verktoy, valg: Verktoyvalg, regelsett: 
   return { status: 'ikke_stottet', regler: [], grunner: [dekning ? dekningstekst(dekning) : 'OUSFAR har ingen regel for denne kombinasjonen.'] }
 }
 
+/** Om regelen hører til verktøyet: samme type (seponering eller bytte) og bare virkestoffer verktøyet tilbyr. */
+export function iVerktoyet(verktoy: Verktoy, k: Virkestoffkartlegging = KARTLEGGING): (r: Pick<Regel, 'fra' | 'til'>) => boolean {
+  const nokler = new Set(virkestoffvalg(verktoy, k).map((v) => v.nokkel))
+  const tilbys = (v: Virkestoffvalg) =>
+    v.type === 'virkestoff' ? nokler.has(v.nokkel) : (k.grupper.find((g) => g.id === v.gruppe)?.medlemmer.some((m) => nokler.has(m.virkestoff)) ?? false)
+  return (r) => (verktoy.type === 'seponering') === (r.til === null) && tilbys(r.fra) && (!r.til || tilbys(r.til))
+}
+
+/** Verktøyene regelen hører til (en sperre for et av dem sperrer også regelen). */
+export const verktoyeneFor = (r: Pick<Regel, 'fra' | 'til'>, verktoyene: readonly Verktoy[] = VERKTOY, k: Virkestoffkartlegging = KARTLEGGING): string[] =>
+  verktoyene.filter((v) => iVerktoyet(v, k)(r)).map((v) => v.id)
+
 /**
  * Hvor mange regler for verktøyets virkestoffer som kan beregnes nå, hvor
  * mange som er kontrollert og ikke godkjent (også bare fagtekst), og hvor
@@ -149,10 +161,7 @@ export function regeloversikt(
   regelsett: Regelsett = REGELSETT,
   k: Virkestoffkartlegging = KARTLEGGING,
 ): { tilgjengelige: number; ikkeGodkjent: number; tilKontroll: number } {
-  const nokler = new Set(virkestoffvalg(verktoy, k).map((v) => v.nokkel))
-  const iVerktoyet = (v: Virkestoffvalg) =>
-    v.type === 'virkestoff' ? nokler.has(v.nokkel) : (k.grupper.find((g) => g.id === v.gruppe)?.medlemmer.some((m) => nokler.has(m.virkestoff)) ?? false)
-  const egne = regelsett.regler.filter((r) => (verktoy.type === 'seponering') === (r.til === null) && iVerktoyet(r.fra) && (!r.til || iVerktoyet(r.til)))
+  const egne = regelsett.regler.filter(iVerktoyet(verktoy, k))
   return {
     tilgjengelige: egne.filter((r) => godkjenningsfeil(r).length === 0 && harBeregning(r)).length,
     ikkeGodkjent: egne.filter((r) => utenGodkjenning(r) && kontrollutfall(r) !== 'til_kontroll').length,

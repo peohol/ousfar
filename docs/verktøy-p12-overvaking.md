@@ -93,6 +93,8 @@ Hver sak har én tilstand (`public.kildefunn.tilstand`, migrasjonen `20261102210
 
 Et nytt funn starter alltid i `teknisk_utredning`. En endret kontrollsum alene når aldri redaktøren, gir ingen varsel i verktøyene og sperrer ingenting. Ukjent eller uavklart er ikke det samme som «ingen endring».
 
+**Nytt kildeinnhold i en åpen sak.** I det tekniske sporet gjelder en tidligere konklusjon ikke lenger, og saken undersøkes på nytt. Venter et spørsmål på beslutning, trekkes det tilbake til `faglig_gjennomgang`; spørsmålet og en eventuell utsettelse står i hendelsen, og redaktøren får ikke velge ut fra et spørsmål om eldre innhold før agenten har vurdert det siste innholdet og lagt frem spørsmålet på nytt. Under `oppfolging` står beslutningen, tiltakene og en eventuell nødstopp, men saken avsluttes ikke før det nye innholdet er vurdert: enten med en eksplisitt, dokumentert avgjørelse om at det er dekket av beslutningen (`teknisk_konklusjon` med `dekket_av_beslutning` og bevis på hvor vurderingen kan etterprøves; `faglig_relevant` alene er ikke nok), med et nytt spørsmål til redaktøren (`faglig_sporsmal`, de tidligere tiltakene står), eller ved at en kontroll finner kilden i samsvar med det kontrollerte grunnlaget igjen. Meldes et mulig sikkerhetsproblem (`mulig_alvorlig_risiko`) mens et spørsmål venter eller en beslutning følges opp, også uten nytt kildeinnhold, går saken tilbake til `faglig_gjennomgang` som sikkerhetsproblem under vurdering, med prikk: spørsmålet og anbefalingen ble formulert før risikovurderingen og trekkes tilbake (de står i hendelsen), en beslutning står i `tidligere`, og tiltakene står.
+
 ### 5.2 Hva som avslutter en sak
 
 | Utfall | Når | Bevis |
@@ -111,8 +113,8 @@ Claude (eller noen andre med tilgang til repoet) gjør arbeidet med oppgaven `ag
 
 | Oppgave | Hva | Fra tilstand |
 |---|---|---|
-| `teknisk_konklusjon` | `uten_faglig_betydning` (med bevis, avslutter), `uavklart`, `faglig_relevant` (til faglig gjennomgang) eller `mulig_alvorlig_risiko` (til faglig gjennomgang, og redaktøren ser saken straks som sikkerhetsproblem med begrunnelsen) | teknisk; i det faglige sporet bare `faglig_relevant` (bekrefter nytt innhold) og `mulig_alvorlig_risiko` |
-| `faglig_sporsmal` | Spørsmålet til redaktøren: tittel, hva som er endret, kilden, de berørte regelversjonene med hva som treffes, hvorfor det er relevant, anbefalt valg med begrunnelse og hvem som anbefaler, to til fire valg med hvordan verktøyet virker imens, og hvordan verktøyet virker nå. Ingen kontrollsummer | `faglig_gjennomgang`, eller `beslutning` for å erstatte spørsmålet |
+| `teknisk_konklusjon` | `uten_faglig_betydning` (med bevis, avslutter), `uavklart`, `faglig_relevant` (til faglig gjennomgang) eller `mulig_alvorlig_risiko` (til faglig gjennomgang, og redaktøren ser saken straks som sikkerhetsproblem med begrunnelsen) | teknisk; i det faglige sporet bare `faglig_relevant`, `mulig_alvorlig_risiko` og, for nytt innhold under oppfølging, `dekket_av_beslutning` (med bevis) |
+| `faglig_sporsmal` | Spørsmålet til redaktøren: tittel, hva som er endret, kilden, de berørte regelversjonene med hva som treffes, hvorfor det er relevant, anbefalt valg med begrunnelse og hvem som anbefaler, to til fire valg med hvordan verktøyet virker imens, og hvordan verktøyet virker nå. Ingen kontrollsummer | `faglig_gjennomgang`, `beslutning` for å erstatte spørsmålet, eller `oppfolging` når kilden har fått nytt innhold |
 | `brukervarsel` | Et kort varsel (10–300 tegn) på akkurat de berørte regelversjonene i verktøyene, eller `null` for å fjerne det. Bare for en reell sak i det faglige sporet; forsvinner når saken avsluttes | faglig spor |
 | `tiltak` | Et tiltak er påbegynt, utført, kontrollert eller stoppet, med bevis og eventuelt lenke. Tar tiltakets nummer og sakens versjon. Kontrollert kan bare følge utført | `oppfolging` |
 | `avslutt_prove` | Avslutter en prøve med testbeviset | alle |
@@ -132,7 +134,7 @@ Redaktøren ser bare saker i `beslutning` og `oppfolging`, mulige sikkerhetsprob
 | Deaktiver berørt regel | Nødstoppen for hver berørt regel, med den eksisterende nødstoppen, i samme transaksjon; tiltaket står som kontrollert, og saken avsluttes | Sperren oppheves i Adminmeny → Kliniske verktøy når regelen er vurdert på nytt |
 | Utsett beslutningen | – | Saken venter fortsatt |
 
-En registrert beslutning er ikke et utført tiltak: saken står som «Oppfølging pågår» til hvert tiltak er utført og kontrollert.
+En registrert beslutning er ikke et utført tiltak: saken står som «Oppfølging pågår» til hvert tiltak er utført og kontrollert. Hvordan verktøyet virker nå, sier hvor mange av de berørte reglene nødstoppen gjelder (uten interne nøkler; hvilke står på hver regel), enten sperren er satt for regelen, for et verktøy regelen hører til, eller for alle verktøyene; hver berørt regel har også `sperret`, så en delvis nødstopp aldri ser ut som at alle er sperret. Hvilke verktøy en regel hører til, følger med funnet (`verktoy` på hver berørt regel, ikke med i avtrykket). Mangler det i et eldre funn mens en verktøysperre er aktiv, er `sperret` `null` (ukjent), og teksten sier at det ikke kan avgjøres om sperren gjelder reglene; neste kontroll fyller inn verktøyene. Tidligere beslutninger i saken, også en utsettelse eller en beslutning som ble fulgt av et nytt spørsmål, står i `tidligere`, eldste først.
 
 ### 5.5 Klinikervarsler
 

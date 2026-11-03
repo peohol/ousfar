@@ -54,6 +54,12 @@ export interface Berortanbefaling {
   versjon: number
   /** Hva i anbefalingen endringen gjelder, med vanlige ord. */
   hva: string
+  /**
+   * Om en aktiv nødstopp gjelder regelen (for regelen, et verktøy den hører til,
+   * eller alle verktøyene). `null`: ukjent, fordi en verktøysperre er aktiv og
+   * funnet ikke oppgir regelens verktøy; vis det aldri som at regelen virker.
+   */
+  sperret?: boolean | null
 }
 
 /** Hva ett valg vil gjøre, sagt før det bekreftes. */
@@ -73,6 +79,13 @@ export interface Tiltak {
   endret_kl: string
   /** Lenke til endringen, når det finnes en. */
   lenke: string | null
+}
+
+export interface Beslutning {
+  valg: Beslutningsvalg
+  merknad: string | null
+  av: string
+  kl: string
 }
 
 export interface Fagsak {
@@ -102,7 +115,18 @@ export interface Fagsak {
   /** Hvordan verktøyet virker for klinikerne akkurat nå. */
   status_na: string
   opprettet_kl: string
-  beslutning: { valg: Beslutningsvalg; merknad: string | null; av: string; kl: string } | null
+  /**
+   * Når kilden fikk nytt innhold som ennå ikke er vurdert; `null` når ingenting
+   * nytt venter. Saken avsluttes ikke før det er vurdert, selv om tiltakene er kontrollert.
+   */
+  nytt_innhold_kl: string | null
+  beslutning: Beslutning | null
+  /**
+   * Tidligere beslutninger i saken, eldste først, aldri den som gjelder nå;
+   * alltid en liste. Fylles når et nytt spørsmål er lagt frem eller nytt
+   * kildeinnhold trakk tilbake det forrige.
+   */
+  tidligere: Beslutning[]
   tiltak: Tiltak[]
   avsluttet: { kl: string; utfall: Utfall } | null
 }
@@ -188,6 +212,8 @@ function erFagsak(s: Partial<Fagsak> | null | undefined): s is Fagsak {
   if (s.fase === 'beslutning' && s.valg.length === 0 && s.alvor !== 'sikkerhet') return false
   if (!Array.isArray(s.tiltak) || !s.tiltak.every((t) => tekst(t?.tekst) && TILTAK.includes(t.status) && tekst(t.endret_kl))) return false
   if (s.beslutning && !VALG.includes(s.beslutning.valg)) return false
+  if (s.nytt_innhold_kl !== null && !tekst(s.nytt_innhold_kl)) return false
+  if (!Array.isArray(s.tidligere) || !s.tidligere.every((b) => VALG.includes(b?.valg) && tekst(b.av) && tekst(b.kl))) return false
   // En sak med tiltak som ikke er kontrollert, kan ikke stå som avsluttet.
   if (s.fase === 'avsluttet' && (!s.avsluttet || !(s.avsluttet.utfall in UTFALLTEKST) || gjenstaende(s as Fagsak).length > 0)) return false
   return true

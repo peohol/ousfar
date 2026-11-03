@@ -35,7 +35,7 @@ function erFunn(x: unknown): x is Overvakingsfunn {
     tekst(f.etikett, 500) &&
     tekster(f.detaljer) &&
     Array.isArray(f.berorte) &&
-    f.berorte.every((b) => !!b && tekst(b.regelsett, 200) && tekst(b.regel, 200) && Number.isInteger(b.versjon) && tekst(b.fingeravtrykk, 200) && tekst(b.hvorfor, 2000)) &&
+    f.berorte.every((b) => !!b && tekst(b.regelsett, 200) && tekst(b.regel, 200) && Number.isInteger(b.versjon) && tekst(b.fingeravtrykk, 200) && tekst(b.hvorfor, 2000) && (b.verktoy === undefined || (Array.isArray(b.verktoy) && b.verktoy.every((v) => typeof v === 'string' && /^[a-z0-9][a-z0-9-]{0,99}$/.test(v))))) &&
     (f.niva === 'krever_vurdering' ? en(f.prioritet, PRIORITETSTEKST) : f.prioritet === undefined) &&
     (f.tilstandsavtrykk === undefined || (typeof f.tilstandsavtrykk === 'string' && /^[0-9a-f]{64}$/.test(f.tilstandsavtrykk)))
   )

@@ -306,6 +306,176 @@ describe('kildesakene i databasen', () => {
     expect(lukket).toMatchObject({ fase: 'avsluttet', avsluttet: { utfall: 'tiltak_kontrollert' }, tiltak: [{ tekst: 'Nødstopp for den berørte regelen', status: 'kontrollert', regel: REGEL.regel }] })
   })
 
+  it('trekker tilbake et spørsmål om eldre kildeinnhold, og avslutter ikke en oppfølging før nytt innhold er vurdert', async () => {
+    const regel = { ...REGEL, regel: 'syntetisk-regel-ny-kilde' }
+    const z = (avtrykk: string) => funn({ id: 'psychiatrienet:z', kilde: 'psychiatrienet', objekt: 'z', berorte: [regel], tilstandsavtrykk: avtrykk.repeat(64) })
+    const sporsmalZ = () => sporsmal({ berorte: [{ regel: regel.regel, versjon: regel.versjon, hva: 'takten de siste ukene' }] })
+    await meld(rapport('2027-02-15T06:20:00Z', [z('1')], ['psychiatrienet']))
+    let s = await sak('psychiatrienet:z')
+    s = { ...s, versjon: (await agent('teknisk_konklusjon', { funn: s.id, versjon: s.versjon, konklusjon: 'faglig_relevant', begrunnelse: 'Et relevant avsnitt er endret.' })) as number }
+    s = { ...s, versjon: (await agent('faglig_sporsmal', { funn: s.id, versjon: s.versjon, sporsmal: sporsmalZ() })) as number }
+    const klar = (await redaktor().les()).saker.find((x) => x.id === String(s.id))!
+    expect(await redaktor().beslutt(klar.id, klar.versjon, 'utsett', 'Venter på mer.')).toBe('registrert')
+
+    // Kilden endres igjen mens spørsmålet venter: spørsmålet trekkes tilbake til faglig gjennomgang.
+    expect(await meld(rapport('2027-02-22T06:20:00Z', [z('2')], ['psychiatrienet']))).toMatchObject({ nye: 0, endrede: 1 })
+    const trukket = await sak('psychiatrienet:z')
+    expect(trukket).toMatchObject({ id: s.id, tilstand: 'faglig_gjennomgang', nytt_innhold_kl: expect.any(String) })
+    // Redaktøren åpner sakene på nytt: det gamle spørsmålet tilbys ikke, og ingen beslutning tas på det, heller ikke på den nye versjonen.
+    const etter = await redaktor().les()
+    expect(etter.saker.find((x) => x.id === String(s.id))).toBeUndefined()
+    expect(await redaktor().beslutt(String(s.id), trukket.versjon, 'behold', null).catch((e: { code: string }) => e.code)).toBe('55000')
+    // Spørsmålet og utsettelsen står i historikken.
+    const historikk = (await db.query<{ data: { sporsmal_tilbaketrukket: { tittel: string }; valg_for: { valg: string } } }>(
+      `select data from public.kildefunn_hendelser where funn = $1 and art = 'nytt_innhold' order by id desc limit 1`, [s.id])).rows[0]!.data
+    expect(historikk).toMatchObject({ sporsmal_tilbaketrukket: { tittel: sporsmalZ().tittel }, valg_for: { valg: 'utsett' } })
+
+    // Etter faglig vurdering av det siste innholdet legges spørsmålet frem igjen og kan besluttes.
+    await agent('faglig_sporsmal', { funn: s.id, versjon: trukket.versjon, sporsmal: sporsmalZ() })
+    const igjen = (await redaktor().les()).saker.find((x) => x.id === String(s.id))!
+    // Den tilbaketrukne utsettelsen står som tidligere beslutning, ikke som gjeldende.
+    expect(igjen).toMatchObject({ fase: 'beslutning', beslutning: null, nytt_innhold_kl: null, tidligere: [{ valg: 'utsett', merknad: 'Venter på mer.', av: 'Ada Admin' }] })
+    expect(await redaktor().beslutt(igjen.id, igjen.versjon, 'revider', null)).toBe('registrert')
+    expect((await redaktor().les()).saker.find((x) => x.id === String(s.id))).toMatchObject({ beslutning: { valg: 'revider' }, tidligere: [{ valg: 'utsett' }] })
+
+    // Ny kildeendring under oppfølgingen: beslutningen og tiltaket står, men saken avsluttes ikke før det nye innholdet er vurdert.
+    expect(await meld(rapport('2027-03-01T06:20:00Z', [z('3')], ['psychiatrienet']))).toMatchObject({ endrede: 1 })
+    let o = await sak('psychiatrienet:z')
+    expect(o).toMatchObject({ tilstand: 'oppfolging', nytt_innhold_kl: expect.any(String), tiltak: [{ art: 'ny_regelversjon', status: 'bestilt' }] })
+    // «Faglig relevant» alene er ingen avgjørelse om at det nye innholdet er dekket.
+    await agent('teknisk_konklusjon', { funn: o.id, versjon: o.versjon, konklusjon: 'faglig_relevant', begrunnelse: 'Den siste endringen gjelder det samme avsnittet.' })
+    o = await sak('psychiatrienet:z')
+    expect(o).toMatchObject({ tilstand: 'oppfolging', nytt_innhold_kl: expect.any(String) })
+    // Et nytt spørsmål kan legges frem; tiltaket og de tidligere beslutningene står.
+    await agent('faglig_sporsmal', { funn: o.id, versjon: o.versjon, sporsmal: sporsmalZ() })
+    const nytt = (await redaktor().les()).saker.find((x) => x.id === String(s.id))!
+    expect(nytt).toMatchObject({ fase: 'beslutning', beslutning: null, tidligere: [{ valg: 'utsett' }, { valg: 'revider' }], tiltak: [{ status: 'bestilt' }] })
+    expect(await redaktor().beslutt(nytt.id, nytt.versjon, 'revider', 'Samme revisjon dekker begge endringene.')).toBe('registrert')
+
+    // Enda en endring under oppfølgingen; tiltakene blir utført og kontrollert, men saken står åpen til det nye innholdet er avgjort.
+    expect(await meld(rapport('2027-03-01T12:20:00Z', [z('4')], ['psychiatrienet']))).toMatchObject({ endrede: 1 })
+    o = await sak('psychiatrienet:z')
+    for (const t of o.tiltak) {
+      await agent('tiltak', { tiltak: t.id, versjon: (await sak('psychiatrienet:z')).versjon, status: 'utfort', bevis: 'Ny versjon i PR, godkjent av kontrollør.' })
+      await agent('tiltak', { tiltak: t.id, versjon: (await sak('psychiatrienet:z')).versjon, status: 'kontrollert', bevis: 'Ny versjon publisert.' })
+    }
+    o = await sak('psychiatrienet:z')
+    expect(o).toMatchObject({ tilstand: 'oppfolging', nytt_innhold_kl: expect.any(String), tiltak: [{ status: 'kontrollert' }, { status: 'kontrollert' }] })
+    // Redaktøren ser at nytt innhold venter på vurdering, så tiltakene alene ikke ser ut til å avslutte saken.
+    expect((await redaktor().les()).saker.find((x) => x.id === String(s.id))).toMatchObject({ fase: 'oppfolging', nytt_innhold_kl: expect.any(String) })
+    // Avgjørelsen om dekning krever bevis og gjelder bare nytt innhold under oppfølging.
+    const dekket = { funn: o.id, versjon: o.versjon, konklusjon: 'dekket_av_beslutning', begrunnelse: 'Den siste endringen er dekket av den nye versjonen.' }
+    expect(await feilFra(() => agent('teknisk_konklusjon', dekket))).toMatchObject({ code: '22023' })
+    await agent('teknisk_konklusjon', { ...dekket, bevis: { kontroll: 'https://github.com/eier/repo/pull/3' } })
+    expect((await logg()).funn.find((f) => f.id === s.id)).toMatchObject({ tilstand: 'avsluttet', utfall: 'tiltak_kontrollert', konklusjon: 'dekket_av_beslutning' })
+  })
+
+  it('lukker aldri en oppfølging når nytt innhold er meldt som mulig sikkerhetsproblem eller bare som faglig relevant', async () => {
+    const regel = { ...REGEL, regel: 'syntetisk-regel-risiko' }
+    const v = (avtrykk: string) => funn({ id: 'psychiatrienet:v', kilde: 'psychiatrienet', objekt: 'v', berorte: [regel], tilstandsavtrykk: avtrykk.repeat(64) })
+    await meld(rapport('2027-03-01T18:20:00Z', [v('5')], ['psychiatrienet']))
+    let s = await sak('psychiatrienet:v')
+    s = { ...s, versjon: (await agent('teknisk_konklusjon', { funn: s.id, versjon: s.versjon, konklusjon: 'faglig_relevant', begrunnelse: 'Et relevant avsnitt er endret.' })) as number }
+    s = { ...s, versjon: (await agent('faglig_sporsmal', { funn: s.id, versjon: s.versjon, sporsmal: sporsmal({ berorte: [{ regel: regel.regel, versjon: regel.versjon, hva: 'takten' }] }) })) as number }
+    const klar = (await redaktor().les()).saker.find((x) => x.id === String(s.id))!
+    expect(await redaktor().beslutt(klar.id, klar.versjon, 'revider', null)).toBe('registrert')
+
+    // Ny kildeendring; alle tiltakene fra den forrige beslutningen blir utført og kontrollert.
+    await meld(rapport('2027-03-01T19:20:00Z', [v('6')], ['psychiatrienet']))
+    for (const t of (await sak('psychiatrienet:v')).tiltak) {
+      await agent('tiltak', { tiltak: t.id, versjon: (await sak('psychiatrienet:v')).versjon, status: 'utfort', bevis: 'Ny versjon i PR, godkjent av kontrollør.' })
+      await agent('tiltak', { tiltak: t.id, versjon: (await sak('psychiatrienet:v')).versjon, status: 'kontrollert', bevis: 'Ny versjon publisert.' })
+    }
+    let o = await sak('psychiatrienet:v')
+    expect(o).toMatchObject({ tilstand: 'oppfolging', nytt_innhold_kl: expect.any(String) })
+
+    // «Faglig relevant» uten dokumentert dekning lukker ikke saken.
+    await agent('teknisk_konklusjon', { funn: o.id, versjon: o.versjon, konklusjon: 'faglig_relevant', begrunnelse: 'Den nye endringen er faglig relevant.' })
+    o = await sak('psychiatrienet:v')
+    expect(o).toMatchObject({ tilstand: 'oppfolging', nytt_innhold_kl: expect.any(String) })
+
+    // Et mulig sikkerhetsproblem i det nye innholdet: saken står åpen, som sikkerhetsproblem under vurdering, med prikk.
+    await agent('teknisk_konklusjon', { funn: o.id, versjon: o.versjon, konklusjon: 'mulig_alvorlig_risiko', begrunnelse: 'Kilden fraråder nå planen for en vanlig pasientgruppe.' })
+    expect(await sak('psychiatrienet:v')).toMatchObject({ tilstand: 'faglig_gjennomgang', alvor: 'sikkerhet' })
+    const oversikt = await redaktor().les()
+    const synlig = oversikt.saker.find((x) => x.id === String(s.id))!
+    expect(synlig).toMatchObject({ fase: 'beslutning', alvor: 'sikkerhet', anbefaling: null, valg: [], beslutning: null, tidligere: [{ valg: 'revider' }], endring: 'Kilden fraråder nå planen for en vanlig pasientgruppe.', tiltak: [{ status: 'kontrollert' }] })
+    expect(redaktorvarsel({ saker: [synlig] })).toEqual(['Et sikkerhetsproblem under faglig vurdering'])
+  })
+
+  it('trekker tilbake et ventende spørsmål når agenten melder et mulig sikkerhetsproblem på samme kildeinnhold', async () => {
+    const regel = { ...REGEL, regel: 'syntetisk-regel-sen-risiko' }
+    await meld(rapport('2027-03-02T01:20:00Z', [funn({ id: 'psychiatrienet:t', kilde: 'psychiatrienet', objekt: 't', berorte: [regel] })], ['psychiatrienet']))
+    let s = await sak('psychiatrienet:t')
+    s = { ...s, versjon: (await agent('teknisk_konklusjon', { funn: s.id, versjon: s.versjon, konklusjon: 'faglig_relevant', begrunnelse: 'Et relevant avsnitt er endret.' })) as number }
+    const behold = sporsmal({ berorte: [{ regel: regel.regel, versjon: regel.versjon, hva: 'takten' }], anbefaling: { valg: 'behold', begrunnelse: 'Endringen gjelder ikke det regelen bygger på.', av: 'Claude' } })
+    s = { ...s, versjon: (await agent('faglig_sporsmal', { funn: s.id, versjon: s.versjon, sporsmal: behold })) as number }
+    expect((await redaktor().les()).saker.find((x) => x.id === String(s.id))).toMatchObject({ fase: 'beslutning', anbefaling: { valg: 'behold' } })
+
+    // Risikovurderingen kommer etter at spørsmålet ble lagt frem, på samme kildeinnhold.
+    s = { ...s, versjon: (await agent('teknisk_konklusjon', { funn: s.id, versjon: s.versjon, konklusjon: 'mulig_alvorlig_risiko', begrunnelse: 'Kilden fraråder nå planen for en vanlig pasientgruppe.' })) as number }
+    expect(await sak('psychiatrienet:t')).toMatchObject({ tilstand: 'faglig_gjennomgang', alvor: 'sikkerhet' })
+    const synlig = (await redaktor().les()).saker.find((x) => x.id === String(s.id))!
+    expect(synlig).toMatchObject({ fase: 'beslutning', alvor: 'sikkerhet', anbefaling: null, valg: [], endring: 'Kilden fraråder nå planen for en vanlig pasientgruppe.' })
+    expect(redaktorvarsel({ saker: [synlig] })).toEqual(['Et sikkerhetsproblem under faglig vurdering'])
+    // Den gamle «behold» kan ikke registreres, heller ikke på versjonen redaktøren nettopp leste.
+    expect(await redaktor().beslutt(synlig.id, synlig.versjon, 'behold', null).catch((e: { code: string }) => e.code)).toBe('55000')
+    const historikk = (await db.query<{ data: { sporsmal_tilbaketrukket: { anbefaling: { valg: string } } } }>(
+      `select data from public.kildefunn_hendelser where funn = $1 and art = 'teknisk_konklusjon' order by id desc limit 1`, [s.id])).rows[0]!.data
+    expect(historikk.sporsmal_tilbaketrukket.anbefaling.valg).toBe('behold')
+  })
+
+  it('sier ikke at verktøyet virker når en verktøysperre er aktiv og et eldre funn ikke oppgir regelens verktøy', async () => {
+    const eldre = funn({ id: 'psychiatrienet:u', kilde: 'psychiatrienet', objekt: 'u', berorte: [{ ...REGEL, regel: 'syntetisk-regel-eldre' }] })
+    await meld(rapport('2027-03-02T02:20:00Z', [eldre], ['psychiatrienet']))
+    const u = await sak('psychiatrienet:u')
+    expect(u.berorte[0]).not.toHaveProperty('verktoy')
+    await agent('teknisk_konklusjon', { funn: u.id, versjon: u.versjon, konklusjon: 'mulig_alvorlig_risiko', begrunnelse: 'Kilden fraråder nå planen for en vanlig pasientgruppe.' })
+    const fagsak = async () => (await redaktor().les()).saker.find((x) => x.id === String(u.id))!
+    expect((await fagsak()).berorte).toEqual([expect.objectContaining({ sperret: false })])
+
+    // Bare en verktøysperre, ingen regelsperre: omfanget er ukjent for det eldre funnet, og det sies rett ut.
+    await db.query(`insert into public.verktoysperrer (omfang, mal, grunn, satt_av) values ('verktoy', 'bytte-antidepressiv', 'Syntetisk sperre', $1)`, [admin])
+    const ukjent = await fagsak()
+    expect(ukjent.berorte).toEqual([expect.objectContaining({ sperret: null })])
+    expect(ukjent.status_na).toBe('En nødstopp for et helt verktøy er aktiv, og det kan ikke avgjøres her om den gjelder alle de berørte reglene. Se Adminmeny → Kliniske verktøy.')
+
+    // Neste kontroll fyller inn verktøyene uten å endre avtrykket: nå er det kjent at sperren ikke gjelder regelen.
+    expect(await meld(rapport('2027-03-02T03:20:00Z', [{ ...eldre, berorte: eldre.berorte.map((b) => ({ ...b, verktoy: ['trappe-ned-antidepressiv'] })) }], ['psychiatrienet']))).toMatchObject({ nye: 0, endrede: 0 })
+    const kjent = await fagsak()
+    expect(kjent.berorte).toEqual([expect.objectContaining({ sperret: false })])
+    expect(kjent.status_na).toBe('Verktøyet virker som før til en eventuell nødstopp settes.')
+    await db.query(`update public.verktoysperrer set opphevet_kl = now(), opphevet_av = $1, opphevet_grunn = 'Syntetisk opphevet' where opphevet_kl is null and omfang = 'verktoy'`, [admin])
+  })
+
+  it('sier presist hvilke berørte regler nødstoppen gjelder når bare noen av dem er sperret', async () => {
+    const a = { ...REGEL, regel: 'syntetisk-regel-a' }
+    const b = { ...REGEL, regel: 'syntetisk-regel-b', verktoy: ['bytte-antidepressiv'] }
+    await meld(rapport('2027-03-02T06:20:00Z', [funn({ id: 'psychiatrienet:w', kilde: 'psychiatrienet', objekt: 'w', berorte: [a, b], prioritet: 'hoy' })], ['psychiatrienet']))
+    const w = await sak('psychiatrienet:w')
+    await agent('teknisk_konklusjon', { funn: w.id, versjon: w.versjon, konklusjon: 'mulig_alvorlig_risiko', begrunnelse: 'Kilden fraråder nå planen for en vanlig pasientgruppe.' })
+    const fagsak = async () => (await redaktor().les()).saker.find((x) => x.id === String(w.id))!
+    expect((await fagsak()).status_na).toBe('Verktøyet virker som før til en eventuell nødstopp settes.')
+
+    await db.query(`insert into public.verktoysperrer (omfang, mal, grunn, satt_av) values ('regel', $1, 'Syntetisk sperre', $2)`, [a.regel, admin])
+    const delvis = await fagsak()
+    expect(delvis.status_na).toBe('Nødstoppen er satt for 1 av 2 berørte regler, som ikke gir noen plan. De andre berørte reglene gir fortsatt planer som før.')
+    expect(delvis.berorte).toEqual([expect.objectContaining({ regel: a.regel, sperret: true }), expect.objectContaining({ regel: b.regel, sperret: false })])
+
+    // En sperre for verktøyet regelen hører til, gjelder også regelen.
+    await db.query(`insert into public.verktoysperrer (omfang, mal, grunn, satt_av) values ('verktoy', 'bytte-antidepressiv', 'Syntetisk sperre', $1)`, [admin])
+    expect((await fagsak()).status_na).toBe('Alle de 2 berørte reglene er sperret med nødstoppen og gir ingen plan.')
+    expect((await fagsak()).berorte.map((x) => x.sperret)).toEqual([true, true])
+
+    // Bare en sperre for alle verktøyene: alle berørte regler er sperret.
+    const opphev = () => db.query(`update public.verktoysperrer set opphevet_kl = now(), opphevet_av = $1, opphevet_grunn = 'Syntetisk opphevet' where opphevet_kl is null and mal is distinct from $2`, [admin, REGEL.regel])
+    await opphev()
+    expect((await fagsak()).status_na).toBe('Verktøyet virker som før til en eventuell nødstopp settes.')
+    await db.query(`insert into public.verktoysperrer (omfang, mal, grunn, satt_av) values ('alle', null, 'Syntetisk sperre', $1)`, [admin])
+    expect((await fagsak()).berorte.map((x) => x.sperret)).toEqual([true, true])
+    await opphev()
+  })
+
   it('holder prøver for seg, lar dem ikke sperre noe, og avslutter dem bare med testbevis', async () => {
     const prove = rapport('2027-03-01T10:00:00Z', [PROVEFUNN], [], { provesak: true })
     expect(await meld(prove, 'manuell')).toMatchObject({ nye: 1, borte: 0 })

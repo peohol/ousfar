@@ -36,7 +36,12 @@ const valgfri =
   (x) =>
     x === undefined || x === null ? null : f(x)
 
-export const KONKLUSJONER = ['uten_faglig_betydning', 'uavklart', 'faglig_relevant', 'mulig_alvorlig_risiko'] as const
+/**
+ * `dekket_av_beslutning` gjelder bare en sak i oppfølging med nytt kildeinnhold:
+ * den eksplisitte, dokumenterte avgjørelsen om at det nye innholdet er dekket
+ * av beslutningen som følges opp. `faglig_relevant` alene avslutter aldri en slik sak.
+ */
+export const KONKLUSJONER = ['uten_faglig_betydning', 'uavklart', 'faglig_relevant', 'mulig_alvorlig_risiko', 'dekket_av_beslutning'] as const
 export type Konklusjon = (typeof KONKLUSJONER)[number]
 
 /** Oppgavene, med databasefunksjonen og feltene den tar (`av` blir `agent`). */

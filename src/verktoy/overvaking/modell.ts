@@ -42,6 +42,8 @@ export interface Berort {
   fingeravtrykk: string
   /** Hva i regelen funnet treffer. */
   hvorfor: string
+  /** Verktøyene regelen hører til, så en nødstopp for et verktøy også gjelder regelen. Ikke med i funnavtrykket. */
+  verktoy?: string[]
 }
 
 export interface Overvakingsfunn {
