@@ -12,8 +12,8 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.118.0',
-    dato: '2026-11-02',
+    versjon: '1.120.0',
+    dato: '2026-11-03',
     sammendrag: 'Enklere kliniske verktøy: det som kan beregnes står øverst, og det faglige grunnlaget er samlet',
     typer: ['Funksjonalitet', 'Design / layout'],
     omfang: 'Moderat omfang',
@@ -22,9 +22,26 @@ export const ENDRINGSLOGG: Endring[] = [
       'Oversikten og hvert verktøy viser hvilke legemidler og bytter som kan beregnes nå, og hvilke som bare har fagtekst. Et klikk på et av dem fyller ut feltene.',
       'Skjemaet er delt i «Doser og start», «Om pasienten» og «Bekreft før beregning». Tilpasning av trinn og tid ligger i en egen del som bare åpnes ved behov.',
       'Mangler et svar eller en bekreftelse, sier verktøyet kort hva som mangler og merker feltene, før noe beregnes. Svarer du at et forhold gjelder, står det med en gang at verktøyet da ikke gir en plan.',
-      'Under planen står de generelle forbeholdene og «Viktig for denne planen». Forutsetninger, usikkerhet, det som ble kontrollert, preparatene, kildene og versjonene er samlet i «Faglig grunnlag», som åpnes ved behov og alltid kommer med i utskriften og kopien.',
+      'Under planen står de generelle forbeholdene og «Viktig for denne planen». Forutsetninger, usikkerhet, det som ble kontrollert, preparatene, kildene og versjonene er samlet i «Faglig grunnlag», som åpnes ved behov og alltid kommer med i utskriften. Teksten som kopieres, er den samme som før.',
+      'Faglige merknader fra kildeoppfølgingen vises ved akkurat den regelversjonen de gjelder, og stanser ingenting. Kan merknadene ikke hentes, står det kort ved anbefalingen; beregningen og nødstoppen virker som før.',
       'En deaktivert regel nevnes ved navn i stedet for med den interne betegnelsen.',
       'Ingen doser, grenser, regler eller godkjenninger er endret.',
+    ],
+  },
+  {
+    versjon: '1.119.0',
+    dato: '2026-11-02',
+    sammendrag: 'Kildeovervåkingen: tekniske avvik følges opp uten frister, og redaktøren får bare faglige spørsmål',
+    typer: ['Funksjonalitet'],
+    omfang: 'Moderat omfang',
+    gjelder: ['hele appen'],
+    punkter: [
+      'Et funn fra kildeovervåkingen undersøkes nå først teknisk. En endret kontrollsum alene gir ingen oppgave for administratoren, ingen prikk i adminmenyen og ingen sperre.',
+      'Fristene på ett og tre døgn er fjernet, sammen med skjemaene for teknisk vurdering og for å avslutte et funn med fritekst.',
+      'Adminmenyen har en prikk bare når et konkret faglig spørsmål venter på beslutning, eller når en eksisterende plan kan være uforsvarlig.',
+      'En beslutning avslutter ikke saken av seg selv: saken står som «Oppfølging pågår» til tiltakene er utført og kontrollert. Velger administratoren å deaktivere en regel, settes nødstoppen for den straks.',
+      'Samme kilde med samme innhold gir ikke lenger en ny sak hver uke.',
+      'Ingen klinisk regel, beregning eller godkjenning er endret.',
     ],
   },
   {

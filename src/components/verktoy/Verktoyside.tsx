@@ -65,7 +65,8 @@ import { Ikon } from '../ikon/Ikon'
 import { ToppmenyInnhold } from '../toppmeny/Toppmenykilde'
 import { Doseplanvisning } from './Doseplanvisning'
 import { FagligGrunnlag, regelgrunnlag } from './FagligGrunnlag'
-import { Regelvarsler, type Regelvarsel } from './Regelvarsler'
+import type { Regelvarsellager } from '../../verktoy/overvaking/regelvarsler'
+import { Regelvarsler, useRegelvarsler, type Varseltilstand } from './Regelvarsler'
 import { lesVirkestoffvalg, Virkestoffelt } from './Virkestoffelt'
 import '../../styles/verktoy.css'
 
@@ -86,14 +87,14 @@ export interface VerktoysideProps {
   klokke?: () => Date
   /**
    * De faglige varslene fra kildeoppfølgingen (`les_regelvarsler`). Hvert vises
-   * bare ved regelversjonen det gjelder, og sperrer ingenting; uten dem vises
-   * ingen varsler.
+   * bare ved regelversjonen det gjelder, og sperrer ingenting. Uten lageret,
+   * eller når lesingen feiler, står det kort ved anbefalingen at merknadene
+   * ikke kunne hentes; beregningen fortsetter.
    */
-  regelvarsler?: readonly Regelvarsel[]
+  regelvarsler: Regelvarsellager | undefined
 }
 
 const naa = () => new Date()
-const INGEN_VARSLER: readonly Regelvarsel[] = []
 
 /** `lest` er når sperrene sist ble lest (`Date.now()`); lesingen gjelder i `SPERRENE_GJELDER_MS`. */
 type Sperretilstand = { status: 'henter' } | { status: 'feil'; melding: string } | { status: 'klar'; sperrer: Verktoysperre[]; lest: number }
@@ -158,10 +159,11 @@ function useSperrer(leser: Verktoysperreleser | undefined) {
  * appen oppdateres; planen gjør aldri det, og må beregnes på nytt, med ny
  * kontroll av datagrunnlaget og godkjenningen.
  */
-export function Verktoyside({ verktoy: id, legemidler, sperrer: sperreleser, onLukk, regelsett = REGELSETT, klokke = naa, regelvarsler = INGEN_VARSLER }: VerktoysideProps) {
+export function Verktoyside({ verktoy: id, legemidler, sperrer: sperreleser, onLukk, regelsett = REGELSETT, klokke = naa, regelvarsler }: VerktoysideProps) {
   const overskrift = useId()
   const verktoy = verktoyFor(id)
   const sperrer = useSperrer(sperreleser)
+  const varsler = useRegelvarsler(regelvarsler)
   useLukkMedEscape(onLukk)
 
   useEffect(() => {
@@ -193,7 +195,7 @@ export function Verktoyside({ verktoy: id, legemidler, sperrer: sperreleser, onL
             sperrer={sperrer}
             regelsett={regelsett}
             klokke={klokke}
-            varsler={regelvarsler}
+            varsler={varsler}
           />
         </Bevaringsomrade>
       ) : (
@@ -345,7 +347,7 @@ function Verktoyskjema({
   sperrer: ReturnType<typeof useSperrer>
   regelsett: Regelsett
   klokke: () => Date
-  varsler: readonly Regelvarsel[]
+  varsler: Varseltilstand
 }) {
   const valgene = useMemo(() => virkestoffvalg(verktoy), [verktoy])
   const alleSnarvalg = useMemo(() => snarvalg(verktoy, regelsett), [verktoy, regelsett])
@@ -486,7 +488,7 @@ function Sperremelding({ sperrer, regelsett }: { sperrer: readonly Verktoysperre
 }
 
 /** Det som står når verktøyet ikke kan beregne for valgene. */
-function Statusvisning({ status, varsler }: { status: Tilgjengelighet; varsler: readonly Regelvarsel[] }) {
+function Statusvisning({ status, varsler }: { status: Tilgjengelighet; varsler: Varseltilstand }) {
   if (status.status === 'fagtekst') {
     return (
       <section className="verktoystatus" data-status="fagtekst" aria-label="Fagtekst">
@@ -521,12 +523,12 @@ function Statusvisning({ status, varsler }: { status: Tilgjengelighet; varsler: 
 }
 
 /** OUSFARs egen tekst i en godkjent regel uten beregning; godkjenningen, forutsetningene og kildene står i «Faglig grunnlag». */
-function Fagtekst({ regel, varsler }: { regel: Regel; varsler: readonly Regelvarsel[] }) {
+function Fagtekst({ regel, varsler }: { regel: Regel; varsler: Varseltilstand }) {
   const utsagn = [...regel.fortolkning.kildetro, ...regel.fortolkning.tilpasninger].map((u) => u.tekst)
   return (
     <article className="verktoyfagtekst">
       <h3>{regel.tittel}</h3>
-      <Regelvarsler varsler={varsler} regel={regel} />
+      <Regelvarsler tilstand={varsler} regel={regel} />
       {utsagn.map((t) => (
         <p key={t}>{t}</p>
       ))}
@@ -558,7 +560,7 @@ function Beregningsdel({
   hentSperrer: () => Promise<Verktoysperre[]>
   regelsett: Regelsett
   klokke: () => Date
-  varsler: readonly Regelvarsel[]
+  varsler: Varseltilstand
 }) {
   const id = useId()
   const regel = regler.length === 1 ? regler[0] : regler.find((r) => r.id === skjema.regel)
@@ -639,7 +641,7 @@ function Beregningsdel({
   const fraAdm = regel && fraForlop(regel)?.administrasjon === 'depotinjeksjon' ? ' (depot)' : ''
   const tilAdm = regel && tilForlop(regel)?.administrasjon === 'depotinjeksjon' ? ' (depot)' : ''
   const sporsmal = regel?.sporsmal ?? []
-  const varsel = regel && <Regelvarsler varsler={varsler} regel={regel} />
+  const varsel = regel && <Regelvarsler tilstand={varsler} regel={regel} />
 
   return (
     <>

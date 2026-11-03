@@ -1,10 +1,11 @@
 // @vitest-environment jsdom
 /**
- * Vinduet «Kildeovervåking» i administrasjonsmenyen (P12.1): en administrator
- * ser funnene som venter, med fristene og de godkjente reglene de kan berøre,
- * skriver den tekniske vurderingen og den faglige beslutningen som avslutter
- * funnet, og ser hva siste kontroll sammenlignet. Tilgangen og reglene for
- * funnene avgjøres i databasen (`kildeovervaking.test.ts`). Syntetiske data.
+ * Vinduet «Kildeovervåking» i administrasjonsmenyen (VDR-1): en administrator
+ * ser de åpne sakene med tilstand og de godkjente reglene de kan berøre, uten
+ * frister og uten skjema for tekniske vurderinger eller fritekstavslutning, og
+ * hva siste kontroll sammenlignet. Det tekniske står i en lukket «Teknisk
+ * logg». Tilgangen og reglene for sakene avgjøres i databasen
+ * (`kildeovervaking.test.ts`). Syntetiske data.
  */
 import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -42,29 +43,25 @@ const funn = (over: Partial<Kildefunn>): Kildefunn => ({
   sist_sett_kl: timerFor(80),
   borte_kl: null,
   erstatter: null,
-  erstattet_kl: null,
+  tilstand: 'teknisk_utredning',
+  versjon: 1,
+  alvor: 'faglig',
+  konklusjon: null,
+  konklusjon_tekst: null,
+  konklusjon_kl: null,
+  nytt_innhold_kl: null,
+  utfall: null,
+  avsluttet_kl: null,
   teknisk_vurdering: null,
   teknisk_av: null,
-  teknisk_kl: null,
   beslutning: null,
   beslutning_av: null,
-  beslutning_kl: null,
+  tiltak: [],
+  hendelser: [{ kl: timerFor(80), art: 'opprettet', fra: null, til: 'teknisk_utredning', av: null }],
   ...over,
 })
 
-/** Et lager i minnet som oppfører seg som databasen for de åpne funnene. */
-function minnelager(data: Overvaking): Kildeovervakingslager & { data: Overvaking } {
-  return {
-    data,
-    les: async () => structuredClone(data),
-    vurder: vi.fn(async (id: number, vurdering: string) => {
-      Object.assign(data.funn.find((f) => f.id === id)!, { teknisk_vurdering: vurdering.trim(), teknisk_av: 'Ada Admin', teknisk_kl: timerFor(0) })
-    }),
-    beslutt: vi.fn(async (id: number, beslutning: string) => {
-      Object.assign(data.funn.find((f) => f.id === id)!, { beslutning: beslutning.trim(), beslutning_av: 'Ada Admin', beslutning_kl: timerFor(0) })
-    }),
-  }
-}
+const minnelager = (data: Overvaking): Kildeovervakingslager => ({ les: async () => structuredClone(data) })
 
 const SISTE = {
   id: 3,
@@ -81,37 +78,40 @@ const SISTE = {
 }
 
 describe('kildeovervåkingen i administrasjonsmenyen', () => {
-  it('viser et funn med fristene og regelen det kan berøre, og avslutter det med en teknisk vurdering og en faglig beslutning', async () => {
-    const user = userEvent.setup()
+  it('viser en åpen sak med tilstand og regelen den kan berøre, uten frister eller skjema, og det tekniske bare i den lukkede loggen', async () => {
     const lager = minnelager({ funn: [funn({})], kjoringer: [SISTE], siste: SISTE })
     render(<Kildeovervaking apen onLukk={() => {}} lager={lager} na={() => NA} />)
 
     const rad = (await screen.findByText('Syntetin 50 mg tablett')).closest('li')!
-    expect(within(rad).getByText('Høy prioritet')).toBeTruthy()
-    expect(within(rad).getByText('Preparatet er borte fra FEST.')).toBeTruthy()
+    expect(within(rad).getByText('Teknisk utredning')).toBeTruthy()
     expect(rad.textContent).toMatch(/Kan berøre: .*\(versjon 9\)\./)
-    expect(rad.textContent).toContain('Funn nr. 1 (fest:sertralin:ID_X)')
-    expect(within(rad).getByText(/Teknisk vurdering mangler, over fristen på 24 timer/)).toBeTruthy()
-    expect(within(rad).getByText(/Faglig beslutning mangler, over fristen på 72 timer/)).toBeTruthy()
+    expect(rad.textContent).toContain('Følges opp teknisk; ingen handling fra deg.')
+    expect(rad.textContent).not.toMatch(/frist/i)
+    expect(within(rad).queryByRole('textbox')).toBeNull()
+    expect(within(rad).queryByRole('button', { name: /Lagre/ })).toBeNull()
+    const logg = rad.querySelector('details')!
+    expect(logg.open).toBe(false)
+    expect(within(logg).getByText('Teknisk logg')).toBeTruthy()
+    expect(logg.textContent).toContain('Sak nr. 1, versjon 1 (fest:sertralin:ID_X)')
+  })
 
-    // For kort: ingenting lagres.
-    await user.click(within(rad).getByRole('button', { name: 'Lagre teknisk vurdering' }))
-    expect(screen.getByRole('alert').textContent).toBe('Skriv den tekniske vurderingen, minst fem tegn.')
-    expect(lager.vurder).not.toHaveBeenCalled()
-
-    await user.type(within(rad).getByRole('textbox', { name: /Teknisk vurdering/ }), 'Syntetisk: preparatet er avregistrert.')
-    await user.click(within(rad).getByRole('button', { name: 'Lagre teknisk vurdering' }))
-    expect(lager.vurder).toHaveBeenCalledWith(1, 'Syntetisk: preparatet er avregistrert.')
-    const vurdert = (await screen.findByText('Syntetisk: preparatet er avregistrert.')).closest('li')!
-    expect(within(vurdert).queryByText(/Teknisk vurdering mangler/)).toBeNull()
-    expect(within(vurdert).getByText(/Teknisk vurdering av Ada Admin/)).toBeTruthy()
-
-    await user.type(within(vurdert).getByRole('textbox', { name: /Faglig beslutning/ }), 'Ny regelversjon lages; nødstopp ikke nødvendig.')
-    await user.click(within(vurdert).getByRole('button', { name: 'Lagre beslutning og avslutt' }))
-    expect(lager.beslutt).toHaveBeenCalledWith(1, 'Ny regelversjon lages; nødstopp ikke nødvendig.')
-    expect(await screen.findByText('Ingen funn venter.')).toBeTruthy()
-    const avsluttet = within(screen.getByRole('region', { name: 'Avsluttede funn' }))
-    expect(avsluttet.getByText(/Avsluttet .* av Ada Admin: Ny regelversjon lages/)).toBeTruthy()
+  it('merker et mulig sikkerhetsproblem og en prøve, og viser hvordan en avsluttet sak endte', async () => {
+    const lager = minnelager({
+      funn: [
+        funn({ id: 4, alvor: 'sikkerhet', tilstand: 'faglig_gjennomgang', etikett: 'Syntetisk kilde' }),
+        funn({ id: 2, funn: 'provesak:syntetisk', prove: true, etikett: 'Syntetisk prøvesak (ingen reell kilde)', berorte: [] }),
+        funn({ id: 1, etikett: 'Avsluttet kilde', tilstand: 'avsluttet', utfall: 'ikke_funnet_igjen', avsluttet_kl: timerFor(2) }),
+      ],
+      kjoringer: [],
+      siste: { ...SISTE, feil: [] },
+    })
+    render(<Kildeovervaking apen onLukk={() => {}} lager={lager} na={() => NA} />)
+    const sikker = (await screen.findByText('Syntetisk kilde')).closest('li')!
+    expect(within(sikker).getByText('Mulig sikkerhetsproblem')).toBeTruthy()
+    expect(sikker.textContent).not.toContain('ingen handling fra deg')
+    expect(within(screen.getByText('Syntetisk prøvesak (ingen reell kilde)').closest('li')!).getByText('Prøve')).toBeTruthy()
+    const avsluttet = within(screen.getByRole('region', { name: 'Avsluttede saker' }))
+    expect(avsluttet.getByText(/Avsluttet .*: kilden stemte igjen med grunnlaget\./)).toBeTruthy()
   })
 
   it('viser hva siste kontroll sammenlignet, det som stoppet og de informative endringene, og sier fra når den har uteblitt', async () => {
@@ -122,40 +122,23 @@ describe('kildeovervåkingen i administrasjonsmenyen', () => {
     expect(siste.getByText(/Kildedokument: 3 kontrollert/)).toBeTruthy()
     expect(siste.getByText('Kildedokument: Syntetisk preparatomtale (kunne ikke kontrolleres)')).toBeTruthy()
     expect(siste.getByRole('link', { name: 'Hele rapporten' }).getAttribute('href')).toBe(SISTE.lenke)
+    expect(screen.getByText('Ingen åpne saker.')).toBeTruthy()
     cleanup()
 
     render(<Kildeovervaking apen onLukk={() => {}} lager={minnelager({ funn: [], kjoringer: [], siste: { ...SISTE, feil: [], kjort_kl: timerFor(9 * 24) } })} na={() => NA} />)
     expect(await screen.findByText('Kildeovervåkingen har ikke kjørt på over en uke.')).toBeTruthy()
   })
 
-  it('merker en prøve og et funn som ikke lenger finnes, uten frist for den faglige beslutningen ved vanlig prioritet', async () => {
-    const lager = minnelager({
-      funn: [
-        funn({ id: 2, funn: 'provesak:syntetisk', prove: true, etikett: 'Syntetisk prøvesak (ingen reell kilde)', opprettet_kl: timerFor(1), berorte: [] }),
-        funn({ id: 3, funn: 'dokument:a', kilde: 'dokument', art: 'endret', prioritet: 'vanlig', etikett: 'Syntetisk kilde', opprettet_kl: timerFor(30), borte_kl: timerFor(2) }),
-      ],
-      kjoringer: [],
-      siste: { ...SISTE, feil: [] },
-    })
-    render(<Kildeovervaking apen onLukk={() => {}} lager={lager} na={() => NA} />)
-    const prove = (await screen.findByText('Syntetisk prøvesak (ingen reell kilde)')).closest('li')!
-    expect(within(prove).getByText('Prøve')).toBeTruthy()
-    expect(within(prove).getByText(/Teknisk vurdering mangler \(frist 24 timer etter funnet\)/)).toBeTruthy()
-    const borte = screen.getByText('Syntetisk kilde').closest('li')!
-    expect(borte.textContent).toMatch(/Ikke funnet igjen i kontrollen .*; ta stilling til om det kan avsluttes\./)
-    expect(within(borte).queryByText(/Faglig beslutning mangler/)).toBeNull()
-  })
-
-  it('sier at kildeovervåkingen ikke kunne leses, i stedet for at ingen funn venter, og prøver igjen', async () => {
+  it('sier at kildeovervåkingen ikke kunne leses, i stedet for at ingen saker er åpne, og prøver igjen', async () => {
     const user = userEvent.setup()
     const data = { funn: [funn({})], kjoringer: [SISTE], siste: SISTE }
     const les = vi.fn(async (): Promise<Overvaking> => {
       throw new Error('Nettverket svarte ikke.')
     })
-    render(<Kildeovervaking apen onLukk={() => {}} lager={{ les, vurder: vi.fn(), beslutt: vi.fn() }} na={() => NA} />)
-    expect(await screen.findByText('Kildeovervåkingen kunne ikke leses, så det er ukjent om funn venter.')).toBeTruthy()
+    render(<Kildeovervaking apen onLukk={() => {}} lager={{ les }} na={() => NA} />)
+    expect(await screen.findByText('Kildeovervåkingen kunne ikke leses, så det er ukjent om saker venter.')).toBeTruthy()
     expect(screen.getByRole('alert').textContent).toBe('Nettverket svarte ikke.')
-    expect(screen.queryByText('Ingen funn venter.')).toBeNull()
+    expect(screen.queryByText('Ingen åpne saker.')).toBeNull()
     expect(screen.queryByText('Henter kildeovervåkingen …')).toBeNull()
 
     les.mockResolvedValue(structuredClone(data))

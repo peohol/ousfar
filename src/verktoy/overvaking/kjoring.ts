@@ -31,7 +31,7 @@ export interface Overvakingsvalg {
   provesak?: boolean
 }
 
-/** Det syntetiske funnet i en prøvesak: krever vurdering med høy prioritet, men berører ingen regel. */
+/** Det syntetiske funnet i en prøvesak: krever vurdering, men berører ingen regel og har ingen klinisk betydning. */
 export const PROVEFUNN: Overvakingsfunn = {
   id: 'provesak:syntetisk',
   kilde: 'dokument',
@@ -40,7 +40,7 @@ export const PROVEFUNN: Overvakingsfunn = {
   objekt: 'syntetisk-provesak',
   etikett: 'Syntetisk prøvesak (ingen reell kilde)',
   detaljer: [
-    'Syntetisk funn som prøver varslingen: det skal vises i Adminmeny → Kildeovervåking, få en teknisk vurdering og stå som over fristen for den faglige beslutningen etter tre døgn, før det avsluttes. Ingen kilde, preparat eller regel er endret.',
+    'Syntetisk funn som prøver saksgangen for kildefunn i appen, fra teknisk utredning til avslutning som prøve. Ingen kilde, preparat eller regel er endret.',
   ],
   berorte: [],
   prioritet: 'hoy',

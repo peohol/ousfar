@@ -685,3 +685,8 @@
   font-variant-numeric: normal;
   resize: vertical;
 }
+
+/* Når varslene ikke kunne leses: dempet, for det er ikke en påvist endring. */
+.regelvarsel__ulest {
+  color: var(--blekk-dempet);
+}

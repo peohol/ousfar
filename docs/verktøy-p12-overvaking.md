@@ -1,12 +1,12 @@
 # OUSFAR Verktøy – P12.1 og P12.5: overvåking av kildegrunnlaget og FEST
 
-> **Ny produktbeslutning 01.11.2026 – ikke implementert:** Den eksisterende løsningen nedenfor beskriver dagens tekniske atferd, men fristene på 24/72 timer, tekniske vurderinger i admin-UI og varsling ved bare endrede kontrollsummer skal ikke videreføres som krav. Ny målmodell, sikkerhetsgrenser, arbeidsdeling og sjekklister står i **docs/verktøy-omlegging-2026-11.md**. Fram til endrings-PR-ene er publisert, gjelder dagens faktisk implementerte grensesnitt og adgangskontroll; ingen regel eller godkjenning er endret.
+> **Kildesaker (VDR-1, `docs/verktøy-omlegging-2026-11.md`):** Fra versjon 1.119.0 er hvert funn en sak som først undersøkes teknisk. Fristene på 24/72 timer, den tekniske vurderingen i fritekst og avslutningen med en fritekst er fjernet. Redaktørvisningen for faglige spørsmål (VDR-2) og varslene i verktøyene (VDR-3) bygger på datagrensesnittet i §5.
 
 ## 1. Avgrensning
 
 Dette notatet gjelder P12.1 (endringer i kildene) og P12.5 (endringer i FEST) i `docs/verktøy-utviklingsplan.md`. Hvordan regelversjoner og kilder skal forvaltes uavhengig av beregningsmotoren (P12.2–P12.4), står i `docs/verktøy-p12-regelforvaltning.md`.
 
-Overvåkingen **leser kildene** og endrer, godkjenner, aktiverer eller sperrer ingen regel. Den skriver ikke til grunnlaget i repoet eller til kildearkivet. Det eneste den skriver, er kjøringene og funnene i appens database, der administratorene ser dem (§4). En godkjenning gjelder fortsatt nøyaktig den regelversjonen og det fingeravtrykket som ble kontrollert. Overvåkingen sier bare at noe den bygger på, kan ha endret seg.
+Overvåkingen **leser kildene** og endrer, godkjenner, aktiverer eller sperrer ingen regel. Den skriver ikke til grunnlaget i repoet eller til kildearkivet. Det eneste den skriver, er kjøringene og sakene i appens database (§4 og §5). En nødstopp settes bare av en administrator, også når den følger av en beslutning i en sak. En godkjenning gjelder fortsatt nøyaktig den regelversjonen og det fingeravtrykket som ble kontrollert. Overvåkingen sier bare at noe den bygger på, kan ha endret seg.
 
 ## 2. Hva som kontrolleres
 
@@ -39,6 +39,8 @@ Et preparat som var i det godkjente omfanget før endringen, berører regelen se
 
 En nettside har ofte innhold som skifter fra gang til gang, som skript og engangsverdier. For en nettside godtas derfor både kontrollsummen av siden slik den kom og kontrollsummen av den **synlige teksten**: uten skript, stil, kommentarer og tagger, med mellomrom samlet. Et grunnlag som er fastsatt på nytt (§5), gjelder bare med metoden det ble fastsatt med.
 
+Den synlige teksten omfatter også menyen og bunnteksten på nettstedet. Den treffsikre metoden er derfor **`avsnitt`**: grunnlaget er kontrollsummen av hvert avsnitt reglene bygger på, under sin overskrift (til neste overskrift på samme eller høyere nivå, med underavsnittene). Da gir en endring i menyen, oppsettet eller et annet avsnitt ingen sak, og en endring i et relevant avsnitt sier hvilket (`avsnittI` og `avsnittssummer` i `dokumenter.ts`). Bare kontrollsummene og overskriftene lagres. Et slikt grunnlag fastsettes etter §5 punkt 4, når avsnittene er sammenlignet med det regelen ble kontrollert mot.
+
 ## 4. Rapporten og varselet i appen
 
 Hver kjøring gir en forskjellsrapport på norsk (`rapport.ts`). Rapporten har fire deler:
@@ -58,13 +60,11 @@ Arbeidsflyten `.github/workflows/verktoy-overvaking.yml` kjører mandag kl. 06:2
 - De informative funnene står i kjøringen, med id, kilde, art og etikett.
 - Stopper en hel del av kontrollen, for eksempel fordi FEST ikke kan leses eller tilkoblingen til FEST mangler, blir kjøringen rød. Delen står da under «Ikke kontrollert» i rapporten og i appen.
 
-**I appen** har Adminmeny en prikk, og valget **Kildeovervåking** en prikk med en kort tekst, når noe av dette gjelder (`varsling.ts`): et funn venter på faglig beslutning, siste kontroll stoppet, kontrollen har ikke meldt seg på over åtte døgn, eller kildeovervåkingen kunne ikke leses. Det siste står som en egen tekst, så «ukjent» aldri ser ut som «ingen funn»; appen prøver igjen jevnlig, og vinduet har «Prøv igjen». Vinduet «Kildeovervåking» viser hvert åpent funn med prioritet, detaljer, de godkjente regelversjonene det kan berøre, når det ble funnet og sist sett, og fristene. Der skrives den tekniske vurderingen og den faglige beslutningen, med hvem og når. Vinduet viser også hva siste kontroll sammenlignet, det som stoppet, de informative endringene og de sist avsluttede funnene.
+**I appen** blir hvert funn som krever vurdering, en **kildesak** (§5). En sak for et funn med samme nøkkel og samme innhold som sist, står som før. For en nettside er innholdet den synlige teksten eller de relevante avsnittene (`tilstandsavtrykk`), ikke siden slik den kom, så engangsverdier ikke gir en ny sak hver uke. Et nytt innhold i en åpen sak oppdaterer saken i stedet for å lage en ny; det gamle innholdet står i sakens hendelser.
 
-Fristene er prosessfrister, ikke kliniske verdier (`FRISTER`): den tekniske vurderingen innen ett døgn etter at funnet kom, og for høy prioritet den faglige beslutningen innen tre døgn. Et funn over fristen står som det i vinduet og i teksten ved prikken. Et funn avsluttes bare av den faglige beslutningen, aldri av arbeidsflyten.
+Adminmeny har en prikk bare når en faglig sak venter på redaktørens beslutning, når en agent har vurdert at en eksisterende plan kan være uforsvarlig, eller når sakene ikke kunne leses. Tekniske avvik, en kontroll som stoppet eller har uteblitt, og saker i det tekniske sporet gir ingen prikk; de står som én samlet teknisk tilstand (`normal`, `oppfolging` eller `ukjent`) og i vinduet «Kildeovervåking», med hva siste kontroll sammenlignet. Det finnes ingen frister. Prioriteten følger den kliniske risikoen agenten har vurdert, ikke tiden som har gått.
 
-Det er ingen daglig Claude-rutine (bidragsyterens beslutning 31.10.2026: kildene endres sjelden, og en daglig rutine er unødvendig ofte). Den ansvarlige ser prikken i appen og ber Claude om den tekniske vurderingen. Claude skriver den i appen med oppgaven `teknisk-vurdering` i arbeidsflyten, med funnets nummer (står i vinduet), vurderingen og hvem som har vurdert. Nummeret gjelder nøyaktig det innholdet som ble vurdert: er funnet avløst av et nyere med endret innhold i mellomtiden, avvises vurderingen, så den aldri festes til det nye. Den kan også skrives i vinduet, med samme kontroll.
-
-En **prøvesak** startes for hånd med oppgaven `provesak`. Den melder bare et syntetisk funn med høy prioritet, som ikke berører noen regel, kontrollerer ingen kilde og rører aldri de reelle funnene; i appen er den merket «Prøve». Prøven går i denne rekkefølgen. Funnet skal gi prikken i Adminmeny. Det får en teknisk vurdering innen ett døgn, så den fristen ikke passeres. Det får ingen faglig beslutning, så det står som over fristen etter tre døgn. Til slutt avsluttes det med en faglig beslutning om at det var en prøve. P12.1 regnes som ferdig først når prøven er gjort og ført i fremdriftsloggen.
+En **prøvesak** startes for hånd med oppgaven `provesak`. Den melder bare et syntetisk funn som ikke berører noen regel, kontrollerer ingen kilde og rører aldri de reelle sakene; i appen er den merket «Prøve», gir ingen prikk og kan ikke gi et varsel i verktøyene eller en nødstopp. Den avsluttes med testbeviset (`avslutt_prove`), aldri med en fiktiv faglig beslutning.
 
 FEST leses med testbrukeren i miljøet `kuratortest`, som i kuratorjobbene (`docs/kuratorjobber.md`). Arbeidsflyten har bare lesetilgang til repoet.
 
@@ -76,23 +76,86 @@ npm run verktoy:overvaking -- kontroll [--psychiatrienet] [--uten-dokumenter] [-
 
 Kommandoen skriver `rapport.md` og `funn.json` i mappen, som standard `overvaking-resultat/`. Mappen er ikke en del av repoet. Bare arbeidsflyten melder kjøringen til appen.
 
-## 5. Fremgangsmåte ved et funn som krever vurdering
+## 5. Kildesakene: teknisk oppfølging og faglige beslutninger
 
-0. **Teknisk vurdering**, i vinduet «Kildeovervåking» eller av Claude gjennom arbeidsflyten: kan endringen gjenskapes, hvilken del av kilden gjelder den, og hvilke godkjente regler bygger på akkurat den delen.
-1. **Vurder om planene fortsatt er forsvarlige.** For et funn med høy prioritet skrives den faglige beslutningen innen fristen, eller først en foreløpig vurdering der. Kan endringen gjøre en plan uforsvarlig, settes en sperre for regelen med en gang (`docs/verktøy-p11-publisering.md` §5.2).
-2. **Les kilden selv.** Overvåkingen sier bare at noe er endret, ikke hva. Sammenlign med det regelen bygger på (`henvisninger` i regelen, versjonen i `KILDER`).
-3. **Legg vurderingen frem for uavhengig kontroll** i en PR, med funnets nøkkel og avtrykk.
-4. **Ingen endring i det regelen bygger på:** den samme PR-en fastsetter et nytt grunnlag, uten å endre regelen:
-   - For et kildedokument legges en føring til i `src/data/verktoy/kildekontroll-grunnlag.json` med kilde, metode (`dokument` eller `synlig_tekst`), kontrollsummen fra funnet («Nå (til et nytt grunnlag etter vurdering)»), tidspunktet og hvem som vurderte. Føringene legges bare til; den nyeste per kilde gjelder, så de tidligere står som spor.
+### 5.1 Tilstandene
+
+Hver sak har én tilstand (`public.kildefunn.tilstand`, migrasjonen `20261102210000_kildesaker.sql`). Alt som skjer, står i `public.kildefunn_hendelser` med hvem og når, og ingen rad slettes.
+
+| Tilstand | Spor | Hvem arbeider | Synlig for redaktøren |
+|---|---|---|---|
+| `teknisk_utredning` | teknisk | agent (Claude) | nei |
+| `uavklart` | teknisk: undersøkt, men det kan ikke fastslås hva som er endret | agent | nei |
+| `faglig_gjennomgang` | klinisk relevant innhold kan være endret; kilde- og konsekvensvurdering | agent, uavhengig kontroll ved behov | bare et mulig sikkerhetsproblem, straks |
+| `beslutning` | et konkret faglig spørsmål | faglig redaktør | ja |
+| `oppfolging` | beslutningen er tatt; tiltakene utføres | agent; databasen eller agenten kontrollerer | ja, «Oppfølging pågår» |
+| `avsluttet` | med utfall | – | ja, når saken var en faglig sak |
+
+Et nytt funn starter alltid i `teknisk_utredning`. En endret kontrollsum alene når aldri redaktøren, gir ingen varsel i verktøyene og sperrer ingenting. Ukjent eller uavklart er ikke det samme som «ingen endring».
+
+### 5.2 Hva som avslutter en sak
+
+| Utfall | Når | Bevis |
+|---|---|---|
+| `teknisk_avklart` | Agentens konklusjon `uten_faglig_betydning`, bare for et endret kildedokument (aldri en prøve, en fjernet eller utilgjengelig kilde, FEST eller Psychiatrienet) | Metode (`avsnittsavtrykk`, `kildeversjon` eller `manuell_sammenligning`, aldri en kontrollsum alene), hva som ble sammenlignet, grunnlaget og hvor kontrollen kan etterprøves |
+| `ikke_funnet_igjen` | En sak i det tekniske sporet, uten mulig sikkerhetsproblem, der en senere kontroll av delen ikke fant avviket igjen | Kjøringen. Delen må ha kontrollert noe, og nøkkelen må ikke stå som informativ (en kilde som ikke svarte, er ukjent, ikke uendret) |
+| `tiltak_kontrollert` | Hvert tiltak redaktørens beslutning bestilte, er utført og kontrollert | Bevis per tiltak |
+| `prove` | En syntetisk prøve | Testbeviset |
+| `avlost`, `tidligere_beslutning` | Bare for prøver som ble avløst, og for funn fra før kildesakene | – |
+
+Et avsluttet funn med samme innhold som siden står avsluttet når utfallet dekker innholdet (`teknisk_avklart`, `tiltak_kontrollert`, `tidligere_beslutning`). Kommer et avvik tilbake etter `ikke_funnet_igjen`, er det en ny sak.
+
+### 5.3 Agentens arbeid
+
+Claude (eller noen andre med tilgang til repoet) gjør arbeidet med oppgaven `agent` i arbeidsflyten, med feltet `melding` som JSON (`src/verktoy/overvaking/agentoppgaver.ts`). Hver oppgave tar sakens nummer og versjonen agenten leste, og avvises når saken er endret siden, så en utløst oppgave aldri overskriver en nyere vurdering.
+
+| Oppgave | Hva | Fra tilstand |
+|---|---|---|
+| `teknisk_konklusjon` | `uten_faglig_betydning` (med bevis, avslutter), `uavklart`, `faglig_relevant` (til faglig gjennomgang) eller `mulig_alvorlig_risiko` (til faglig gjennomgang, og redaktøren ser saken straks som sikkerhetsproblem med begrunnelsen) | teknisk; i det faglige sporet bare `faglig_relevant` (bekrefter nytt innhold) og `mulig_alvorlig_risiko` |
+| `faglig_sporsmal` | Spørsmålet til redaktøren: tittel, hva som er endret, kilden, de berørte regelversjonene med hva som treffes, hvorfor det er relevant, anbefalt valg med begrunnelse og hvem som anbefaler, to til fire valg med hvordan verktøyet virker imens, og hvordan verktøyet virker nå. Ingen kontrollsummer | `faglig_gjennomgang`, eller `beslutning` for å erstatte spørsmålet |
+| `brukervarsel` | Et kort varsel (10–300 tegn) på akkurat de berørte regelversjonene i verktøyene, eller `null` for å fjerne det. Bare for en reell sak i det faglige sporet; forsvinner når saken avsluttes | faglig spor |
+| `tiltak` | Et tiltak er påbegynt, utført, kontrollert eller stoppet, med bevis og eventuelt lenke. Tar tiltakets nummer og sakens versjon. Kontrollert kan bare følge utført | `oppfolging` |
+| `avslutt_prove` | Avslutter en prøve med testbeviset | alle |
+
+Eksempel: `{"oppgave":"teknisk_konklusjon","funn":12,"versjon":3,"konklusjon":"uavklart","begrunnelse":"Den opprinnelige siden kan ikke gjenskapes."}`. Hvem som gjorde arbeidet, settes av arbeidsflyten fra feltet `av` og den som startet den.
+
+**Hva som starter arbeidet.** Det er ingen automatisk start av en agent når et funn registreres: GitHub Actions kan ikke starte Claude uten en ny API-nøkkel, og det er en ny betalt tjeneste. Det som er automatisk, er det som kan avgjøres maskinelt: samme innhold gir ingen ny sak, en kontroll som finner kilden i samsvar med grunnlaget igjen avslutter en teknisk sak, en endring bare utenfor de relevante avsnittene gir ingen sak, og et utført nytt grunnlag kontrolleres av neste kjøring. Resten er en sporbar **teknisk arbeidskø**: de åpne sakene i det tekniske sporet, med samlet tilstand `oppfolging` hos redaktøren. Teknisk ansvarlig (Claude i prosjektet) går gjennom køen når en kjøring har meldt nye saker, som en midlertidig, manuell start; det er ikke merket automatisk. Mislykkes en oppgave, er ingenting endret (svar 409 med årsaken), og den kan sendes på nytt med versjonen saken har nå.
+
+### 5.4 Redaktørens beslutning
+
+Redaktøren ser bare saker i `beslutning` og `oppfolging`, mulige sikkerhetsproblemer og de sist avsluttede faglige sakene (`les_fagsaker`, `src/verktoy/overvaking/fagsak.ts`). Beslutningen (`beslutt_fagsak`) gjelder versjonen redaktøren så; er saken endret siden, skjer ingenting, og appen viser den oppdaterte saken. Hva hvert valg gjør, lages av databasen, så teksten alltid er det som faktisk skjer:
+
+| Valg | Straks | Deretter |
+|---|---|---|
+| Behold godkjent regel | – | Tiltaket «nytt kontrollert sammenligningsgrunnlag» (punkt 4 under). Neste kontroll som finner kilden i samsvar med det, kontrollerer tiltaket og avslutter saken |
+| Be om revidert anbefaling | – | Tiltaket «ny regelversjon med uavhengig klinisk godkjenning» (punkt 5 under) |
+| Deaktiver berørt regel | Nødstoppen for hver berørt regel, med den eksisterende nødstoppen, i samme transaksjon; tiltaket står som kontrollert, og saken avsluttes | Sperren oppheves i Adminmeny → Kliniske verktøy når regelen er vurdert på nytt |
+| Utsett beslutningen | – | Saken venter fortsatt |
+
+En registrert beslutning er ikke et utført tiltak: saken står som «Oppfølging pågår» til hvert tiltak er utført og kontrollert.
+
+### 5.5 Klinikervarsler
+
+`les_regelvarsler()` gir varslene for alle innloggede (`src/verktoy/overvaking/regelvarsler.ts`): regel, versjon, tekst og når. Verktøyet viser et varsel bare når regel og versjon er lik regelversjonen det bruker. Et varsel sperrer ingenting, og en lesing som feiler, stopper ikke beregningen; sperrene leses for seg som før.
+
+### 5.6 Fremgangsmåten for agenten
+
+**Rekkefølge ved innføringen.** Redaktørens vindu med valgene (VDR-2) og varslene i verktøyene (VDR-3) kommer i egne PR-er som bygger på denne. Til begge er i produksjon, sender agenten verken `faglig_sporsmal` eller `brukervarsel`, så ingen sak venter på en beslutning redaktøren ikke kan ta, og ingen varsel lagres uten å vises. Et mulig alvorlig problem løftes likevel straks (`mulig_alvorlig_risiko`): redaktøren ser det i Adminmeny → Kildeovervåking, og nødstoppen i Adminmeny → Kliniske verktøy er tilgjengelig.
+
+1. **Teknisk utredning.** Kan endringen gjenskapes, hvilken del av kilden gjelder den, og hvilke godkjente regler bygger på akkurat den delen? Et uendret klinisk innhold kan ikke erklæres på grunnlag av en kontrollsum alene eller en eldre kilde som ikke kan sammenlignes.
+2. **Mulig alvorlig risiko** løftes straks (`mulig_alvorlig_risiko`), og redaktøren kan sette nødstoppen (`docs/verktøy-p11-publisering.md` §5.2).
+3. **Les kilden selv**, og legg kilde- og konsekvensvurderingen frem for uavhengig kontroll i en PR, med sakens nummer og avtrykk.
+4. **Ingen endring i det regelen bygger på:** en PR fastsetter et nytt grunnlag uten å endre regelen:
+   - For et kildedokument legges en føring til i `src/data/verktoy/kildekontroll-grunnlag.json` med kilde, metode (`dokument`, `synlig_tekst` eller `avsnitt` med overskriftene og kontrollsummene), kontrollsummen, tidspunktet og hvem som vurderte. Føringene legges bare til; den nyeste per kilde gjelder.
    - For FEST hentes uttrekkene på nytt med `npm run verktoy:regler -- hent-fest`, og testene og testmatrisen må være grønne med dem.
-   - For Psychiatrienet gjøres et nytt uttrekk med `npm run verktoy:kildeimport -- hent`. Arkivet vokser bare, så det tidligere uttrekket står.
-5. **Endring i det regelen bygger på:** regelen endres i en egen PR. Det gir en ny versjon og et nytt fingeravtrykk, og den nye versjonen kan ikke gi en plan før den er kontrollert og godkjent på nytt (`docs/verktøy-p4-regelmodell.md`). Den tidligere godkjenningen står i historikken med sitt fingeravtrykk.
-6. Funnet avsluttes med den faglige beslutningen i vinduet, med en lenke til PR-en når det er en.
+   - For Psychiatrienet gjøres et nytt uttrekk med `npm run verktoy:kildeimport -- hent`. Arkivet vokser bare.
+5. **Endring i det regelen bygger på:** regelen endres i en egen PR. Det gir en ny versjon og et nytt fingeravtrykk, og den nye versjonen kan ikke gi en plan før den er kontrollert og godkjent på nytt (`docs/verktøy-p4-regelmodell.md`).
+6. Saken avsluttes etter §5.2.
 
 ## 6. Sporbarhet og det som aldri skjer automatisk
 
-- Ingen regel, godkjenning eller sperre endres av overvåkingen. En test kjører hele overvåkingen og kontrollerer at regelsettene og de godkjente fingeravtrykkene er uendret. Den kontrollerer også at modulene ikke skriver filer, og at de bare kaller databasefunksjonene for kjøringene, funnene og vurderingene.
-- Funnene, vurderingene og beslutningene står i databasen med hvem og når, og ingen rad slettes. Et funn med nytt innhold avløser det gamle, som står med vurderingene sine.
+- Ingen regel eller godkjenning endres av overvåkingen, og ingen sperre settes uten en administrators beslutning. En test kjører hele overvåkingen og kontrollerer at regelsettene og de godkjente fingeravtrykkene er uendret. Den kontrollerer også at modulene ikke skriver filer, og at de bare kaller databasefunksjonene for kjøringene og sakene.
+- Sakene, konklusjonene, spørsmålene, beslutningene og tiltakene står i databasen med hvem og når, og hver endring står som en hendelse. Ingen rad slettes. Et nytt innhold i en åpen sak oppdaterer saken, og det gamle innholdet står i hendelsen.
 - Grunnlaget endres bare i en PR med ny kontroll (§5). Kontrollsummen i `KILDER` står urørt, og en ny kontrollsum legges ved siden av, med hvem som vurderte. FEST-uttrekkene og kildearkivet er versjonert i git, og arkivet vokser bare.
 - Hvert funn som krever vurdering, nevner regelversjonen og fingeravtrykket det gjelder. Det kan derfor alltid ses hvilken godkjenning funnet ble vurdert mot.
 
@@ -110,10 +173,9 @@ Dokumentene hentes for å beregne en kontrollsum. Ingenting av dem lagres, skriv
 
 De tre dokumentene er nettsider. Kontrollsummen fra 28.–30.10.2026 kunne ikke gjenskapes, verken for siden slik den kom eller for den synlige teksten:
 
-- RCPsych-siden er lik fra gang til gang nå, men ulik den gang.
-- Australian Prescriber og emc har innhold som skifter ved hver henting. Den synlige teksten er derimot stabil.
+- Australian Prescriber (PMC), RCPsych og emc har innhold i siden som skifter ved hentinger. Den synlige teksten var lik mellom kjøringene 31.10. og 2.11.2026, men den omfatter også menyen og bunnteksten.
 
-Det kan være en reell revisjon, eller bare at siden rundt teksten er endret. Det avgjøres ikke av overvåkingen. Funnene står til en faglig vurdering etter §5, som kan fastsette den synlige teksten som nytt grunnlag. Til det er gjort, melder hver kjøring de samme funnene. Har en nettside innhold som skifter ved hver henting, kan avtrykket skifte også, og funnet kommer da på nytt i appen til grunnlaget er fastsatt.
+Det kan være en reell revisjon, eller bare at siden rundt teksten er endret. Det avgjøres ikke av overvåkingen; kildeundersøkelsen står i `docs/verktøy-kildefunn-1-2.md`. Fordi avtrykket tok med kontrollsummen av siden slik den kom, ble funnene registrert på nytt som nr. 4 og 5 ved kjøringen 2.11.2026 (nr. 1 og 2 står som avløst). Fra kildesakene brukes den synlige teksten eller avsnittene, og et nytt innhold oppdaterer den åpne saken. Ved overgangen står nr. 4 og 5 i `teknisk_utredning` og avsluttes ikke før den uavhengige kontrollen er gjort. For PMC-artikler kan Europe PMCs XML-uttrekk være et mer stabilt grunnlag, slik `keks-2019` bruker; det er en endring i kildegrunnlaget og gjøres etter §5.6.
 
 ## 9. Akseptkriterier
 
@@ -122,6 +184,7 @@ Det kan være en reell revisjon, eller bare at siden rundt teksten er endret. De
 3. Rapporten og funnene i appen har ingen kildetekst.
 4. Overvåkingen endrer ingen regel, godkjenning, sperre, grunnlag eller arkiv. De seks godkjente reglene har uendret versjon og fingeravtrykk (`verktoyklinisktilgang.test.ts`).
 5. Arbeidsflyten kjører bare fra main, har bare lesetilgang til repoet, og melder kjøringen til appen med et OIDC-token. Endepunktet tar bare imot fra den arbeidsflyten, og bare administratorer kan lese og vurdere funnene (`kildeovervaking.test.ts`).
-6. Et funn står åpent til den faglige beslutningen; en del som ikke er kontrollert på nytt, rører ingen funn, og et funn med nytt innhold avløser det gamle uten at noe slettes.
-7. Adminmeny har en prikk når et funn venter, når kontrollen stoppet eller har uteblitt, og vinduet viser fristene for teknisk vurdering og faglig beslutning, uten Claude.
-8. Etter sammenslåing: et prøvefunn gir prikken i Adminmeny, har fått en teknisk vurdering innen ett døgn, står som over fristen etter tre døgn uten faglig beslutning, er avsluttet, og resultatet er ført i fremdriftsloggen.
+6. Et nytt funn er en teknisk sak og når ikke redaktøren alene. Samme innhold gir ingen ny sak; nytt innhold oppdaterer den åpne saken uten å viske ut en beslutning; en del som ikke er kontrollert, rører ingen sak; ingen rad slettes (`kildeovervaking.test.ts`).
+7. En teknisk sak avsluttes bare med bevis som ikke er en kontrollsum alene, eller når en kontroll av delen fant kilden i samsvar med grunnlaget; en kilde som ikke svarte, avslutter ingenting. Et mulig sikkerhetsproblem avsluttes aldri teknisk.
+8. Redaktøren får en prikk bare for en faglig sak som venter på beslutning eller et mulig sikkerhetsproblem, med valg og virkning; en beslutning bestiller tiltak, og saken avsluttes først når de er kontrollert. Det finnes ingen frister.
+9. Etter sammenslåing: overgangen er kontrollert i produksjonen, og hele saksgangen er prøvd med en prøvesak (VDR-5).

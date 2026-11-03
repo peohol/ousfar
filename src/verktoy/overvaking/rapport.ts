@@ -30,11 +30,14 @@ export const kreverVurdering = (r: Pick<Overvakingsrapport, 'funn'>) => r.funn.f
 
 /**
  * Avtrykket av et funn: det samme så lenge funnet har det samme innholdet,
- * uten tidspunktet kilden ble hentet, så et funn bare regnes som nytt når noe
- * i det er endret (`registrering.ts`).
+ * uten tidspunktet kilden ble hentet og, når funnet har et tilstandsavtrykk,
+ * uten kontrollsummer som skifter ved hver henting, så et funn bare regnes som
+ * endret når innholdet er det (`registrering.ts`).
  */
 export function funnavtrykk(f: Overvakingsfunn): string {
-  const x = { id: f.id, art: f.art, prioritet: f.prioritet ?? null, detaljer: f.detaljer.map((d) => d.replace(/hentet \d{4}-\d{2}-\d{2}T[\d:.]+Z/g, 'hentet')), berorte: f.berorte }
+  // Med et tilstandsavtrykk avgjør det målte innholdet, ikke detaljteksten, som kan ha kontrollsummer som skifter ved hver henting.
+  const innhold = f.tilstandsavtrykk ? { tilstand: f.tilstandsavtrykk } : { detaljer: f.detaljer.map((d) => d.replace(/hentet \d{4}-\d{2}-\d{2}T[\d:.]+Z/g, 'hentet')) }
+  const x = { id: f.id, art: f.art, prioritet: f.prioritet ?? null, ...innhold, berorte: f.berorte }
   return createHash('sha256').update(JSON.stringify(x)).digest('hex')
 }
 
@@ -47,7 +50,7 @@ export function lagOvervakingsrapport(r: Overvakingsrapport): string {
     '',
     `Kjørt ${r.kjort_kl}. ${krever.length === 0 ? 'Ingen endringer krever ny faglig vurdering.' : `**${krever.length} ${krever.length === 1 ? 'endring krever' : 'endringer krever'} ny faglig vurdering.**`} ${info.length === 0 ? 'Ingen informative endringer.' : `${info.length} ${info.length === 1 ? 'endring er informativ' : 'endringer er informative'}.`}${r.feil.length > 0 ? ` ${r.feil.length} ${r.feil.length === 1 ? 'del' : 'deler'} av kontrollen stoppet.` : ''}`,
     '',
-    'Overvåkingen endrer, godkjenner eller sperrer ingen regel, og den oppdaterer ikke grunnlaget. Godkjenningene står til en faglig vurdering avgjør noe annet. Funnene som krever vurdering, vises i Adminmeny → Kildeovervåking i appen. Kan en endring gjøre en plan uforsvarlig, settes en sperre i Adminmeny → Kliniske verktøy (`docs/verktøy-p11-publisering.md` §5.2). Fremgangsmåten står i `docs/verktøy-p12-overvaking.md`.',
+    'Overvåkingen endrer, godkjenner eller sperrer ingen regel, og den oppdaterer ikke grunnlaget. Godkjenningene står til en faglig vurdering avgjør noe annet. Et funn som krever vurdering, blir en sak i appen som først undersøkes teknisk; den faglige redaktøren får bare konkrete faglige spørsmål. Kan en endring gjøre en plan uforsvarlig, settes en sperre i Adminmeny → Kliniske verktøy (`docs/verktøy-p11-publisering.md` §5.2). Fremgangsmåten står i `docs/verktøy-p12-overvaking.md`.',
   ]
   if (krever.length > 0) deler.push('', '## Krever ny faglig vurdering', '', tabell(['Prioritet', 'Kilde', 'Hva', 'Endring', 'Detaljer', 'Godkjente regler som berøres'], rader(krever, true, true)))
   if (info.length > 0) deler.push('', '## Informative endringer', '', tabell(['Kilde', 'Hva', 'Endring', 'Detaljer', 'Godkjente regler'], rader(info, true)))

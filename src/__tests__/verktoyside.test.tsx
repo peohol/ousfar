@@ -23,7 +23,9 @@ import { readFileSync } from 'node:fs'
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { VARSLER_ULEST } from '../components/verktoy/Regelvarsler'
 import { Verktoyside, type VerktoysideProps } from '../components/verktoy/Verktoyside'
+import { lagRegelvarsellager } from '../verktoy/overvaking/regelvarsler'
 import type { Legemiddelutvalg } from '../legemiddeldata/lesing'
 import { glemBildet, oppdaterOgTaVare, taBilde } from '../oppdatering/bevaring'
 import { KARTLEGGING } from '../verktoy/register'
@@ -49,9 +51,12 @@ afterEach(() => {
 /** Nødstoppen uten aktive sperrer. */
 const INGEN_SPERRER = { les: async () => [] }
 
+/** Kildeoppfølgingen uten faglige varsler. */
+const INGEN_VARSLER = { les: async () => [] }
+
 function vis(props: Partial<VerktoysideProps> = {}) {
   const onLukk = vi.fn()
-  const utskrift = render(<Verktoyside legemidler={undefined} sperrer={INGEN_SPERRER} onLukk={onLukk} {...props} />)
+  const utskrift = render(<Verktoyside legemidler={undefined} sperrer={INGEN_SPERRER} regelvarsler={INGEN_VARSLER} onLukk={onLukk} {...props} />)
   return { onLukk, ...utskrift }
 }
 
@@ -263,7 +268,7 @@ describe('med en regel godkjent bare i testen', () => {
 
     // Midnatt i Norge: preparatstatusen gjaldt i går.
     tid = new Date('2026-11-01T23:30:00Z')
-    rerender(<Verktoyside verktoy="trappe-ned-antidepressiv" legemidler={legemidler} sperrer={INGEN_SPERRER} onLukk={onLukk} regelsett={regelsett} klokke={() => tid} />)
+    rerender(<Verktoyside verktoy="trappe-ned-antidepressiv" legemidler={legemidler} sperrer={INGEN_SPERRER} regelvarsler={INGEN_VARSLER} onLukk={onLukk} regelsett={regelsett} klokke={() => tid} />)
     expect(screen.queryByRole('table')).toBeNull()
     expect(screen.getByText(/Planen gjelder ikke lenger/)).toBeTruthy()
 
@@ -821,7 +826,7 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
     expect(screen.queryByRole('table')).toBeNull()
 
     // Til et annet verktøy og tilbake: ingen plan før en ny beregning, og den stopper fortsatt.
-    const side = (verktoy: string) => <Verktoyside verktoy={verktoy} legemidler={legemidler} sperrer={INGEN_SPERRER} onLukk={onLukk} klokke={klokke(AKSEPT)} />
+    const side = (verktoy: string) => <Verktoyside verktoy={verktoy} legemidler={legemidler} sperrer={INGEN_SPERRER} regelvarsler={INGEN_VARSLER} onLukk={onLukk} klokke={klokke(AKSEPT)} />
     rerender(side('bytte-antidepressiv'))
     expect(screen.queryByRole('heading', { name: 'Ingen doseplan' })).toBeNull()
     rerender(side('trappe-ned-antidepressiv'))
@@ -856,12 +861,12 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
     // En ny regelversjon uten ny godkjenning: verken planen eller beregningen står igjen.
     const regelsett = structuredClone(REGELSETT)
     regelsett.regler.find((r) => r.id === 'seponering-vortioksetin')!.versjon += 1
-    rerender(<Verktoyside verktoy="trappe-ned-antidepressiv" legemidler={legemidler} sperrer={INGEN_SPERRER} onLukk={onLukk} regelsett={regelsett} klokke={klokke(AKSEPT)} />)
+    rerender(<Verktoyside verktoy="trappe-ned-antidepressiv" legemidler={legemidler} sperrer={INGEN_SPERRER} regelvarsler={INGEN_VARSLER} onLukk={onLukk} regelsett={regelsett} klokke={klokke(AKSEPT)} />)
     expect(screen.queryByRole('table')).toBeNull()
     expect(screen.queryByRole('button', { name: 'Beregn doseplan' })).toBeNull()
 
     // Tilbake til den godkjente versjonen, men 15 mg er avregistrert i FEST: ingen plan.
-    rerender(<Verktoyside verktoy="trappe-ned-antidepressiv" legemidler={legemidler} sperrer={INGEN_SPERRER} onLukk={onLukk} klokke={klokke(AKSEPT)} />)
+    rerender(<Verktoyside verktoy="trappe-ned-antidepressiv" legemidler={legemidler} sperrer={INGEN_SPERRER} regelvarsler={INGEN_VARSLER} onLukk={onLukk} klokke={klokke(AKSEPT)} />)
     endre = (x) => avregistrert('vortioksetin', 15).endre(x, osloDato(klokke(AKSEPT)()))
     await user.click(await screen.findByRole('button', { name: 'Beregn doseplan' }))
     expect((await ingenPlan()).textContent).toMatch(/styrken 15 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST/)
@@ -874,12 +879,18 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
 
     it('fyller ut feltene med et snarvalg, viser et faglig varsel bare ved regelversjonen det gjelder uten å sperre, og skriver ut det faglige grunnlaget', async () => {
       const user = userEvent.setup()
-      const regelvarsler = [
-        { regel: SERTRALIN, versjon, tekst: 'Under faglig gjennomgang: syntetisk varsel.', siden: '2026-11-01T08:00:00Z' },
-        { regel: SERTRALIN, versjon: versjon - 1, tekst: 'Syntetisk varsel for en eldre versjon.', siden: '2026-11-01T08:00:00Z' },
-        { regel: 'depot-aripiprazol-maintena', versjon: 3, tekst: 'Syntetisk varsel for en annen regel.', siden: '2026-11-01T08:00:00Z' },
-      ]
-      vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT), regelvarsler })
+      // Hele kjeden fra databasesvaret: lageret appen bruker, med `les_regelvarsler` som syntetisk databasekall.
+      const kall = vi.fn(async (funksjon: string) => {
+        expect(funksjon).toBe('les_regelvarsler')
+        return [
+          { regel: SERTRALIN, versjon, tekst: 'Under faglig gjennomgang: syntetisk varsel.', siden: '2026-11-01T08:00:00Z' },
+          { regel: SERTRALIN, versjon: versjon - 1, tekst: 'Syntetisk varsel for en eldre versjon.', siden: '2026-11-01T08:00:00Z' },
+          { regel: 'depot-aripiprazol-maintena', versjon: 3, tekst: 'Syntetisk varsel for en annen regel.', siden: '2026-11-01T08:00:00Z' },
+        ]
+      })
+      vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT), regelvarsler: lagRegelvarsellager(kall) })
+      await act(async () => {})
+      expect(kall).toHaveBeenCalled()
       expect(screen.queryByRole('note')).toBeNull()
       await user.click(within(screen.getByRole('group', { name: 'Kan beregnes nå:' })).getByRole('button', { name: 'Sertralin → mirtazapin', pressed: false }))
       expect((screen.getByRole('combobox', { name: 'Bytte fra' }) as HTMLInputElement).value).toBe('Sertralin')
@@ -905,6 +916,46 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
       expect(grunnlag.open).toBe(true)
       fireEvent(window, new Event('afterprint'))
       expect(grunnlag.open).toBe(false)
+    })
+
+    it('sier kort fra ved anbefalingen når varslene ikke kan leses, og beregner likevel med nødstoppen kontrollert som før', async () => {
+      const user = userEvent.setup()
+      const sperrer = { les: vi.fn(async () => []) }
+      const varsler = { les: vi.fn(async (): Promise<never> => Promise.reject(new Error('nettverksfeil'))) }
+      vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT), sperrer, regelvarsler: varsler })
+      await user.click(screen.getByRole('button', { name: 'Sertralin → mirtazapin' }))
+      expect(varsler.les).toHaveBeenCalled()
+      expect(screen.getByRole('note').textContent).toBe(VARSLER_ULEST)
+      await user.type(screen.getByRole('textbox', { name: /Aktuell døgndose av sertralin/ }), '100')
+      await besvar(user)
+      await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+      await user.selectOptions(await screen.findByRole('combobox', { name: 'Legemiddelform av mirtazapin' }), '53')
+      const lest = sperrer.les.mock.calls.length
+      await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+      const plan = (await screen.findByRole('table')).closest('section')!
+      // Sperrene leses på nytt rett før planen vises, som før; merknaden står i planen.
+      expect(sperrer.les.mock.calls.length).toBeGreaterThan(lest)
+      expect(within(plan).getByRole('note').textContent).toBe(VARSLER_ULEST)
+      cleanup()
+
+      // En aktiv nødstopp gjelder fortsatt når varslene ikke kan leses.
+      vis({
+        verktoy: 'bytte-antidepressiv',
+        legemidler: fra(PILOT),
+        klokke: klokke(PILOT),
+        regelvarsler: varsler,
+        sperrer: { les: async () => [{ id: 's', omfang: 'regel' as const, mal: SERTRALIN, grunn: 'Syntetisk sperre.', satt_kl: '2026-11-01T08:00:00Z', satt_av: 'Ada Admin' }] },
+      })
+      await user.type(screen.getByRole('combobox', { name: 'Bytte fra' }), 'Sertralin')
+      await user.type(screen.getByRole('combobox', { name: 'Bytte til' }), 'Mirtazapin')
+      expect((await screen.findByRole('alert', { name: 'Midlertidig deaktivert' })).textContent).toMatch(/Syntetisk sperre\./)
+      expect(screen.queryByRole('button', { name: 'Beregn doseplan' })).toBeNull()
+
+      // Uten lager sies det samme, ikke ingenting.
+      cleanup()
+      vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT), regelvarsler: undefined })
+      await user.click(screen.getByRole('button', { name: 'Sertralin → mirtazapin' }))
+      expect(screen.getByRole('note').textContent).toBe(VARSLER_ULEST)
     })
 
     it('merker det som mangler før noe hentes, og sier med en gang hva et pasientforhold som gjelder betyr', async () => {
