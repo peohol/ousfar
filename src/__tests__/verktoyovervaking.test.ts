@@ -18,13 +18,13 @@ import { utsnitt, type Innhenting, type Kildearkiv } from '../verktoy/kildearkiv
 import { kildegrunnlag } from '../verktoy/kildeanbefalinger'
 import { ForbigaendeFeil, type Dokumentsvar } from '../verktoy/kildehenting'
 import { byggesteiner } from '../verktoy/motor/byggesteiner'
-import { festkoblinger, KARTLEGGING } from '../verktoy/register'
+import { festkoblinger, KARTLEGGING, VERKTOY } from '../verktoy/register'
 import { FEST_AKSEPTTEST, FEST_PILOT, omgivelseFor, type Festuttrekk } from '../verktoy/regler/aksepttest'
 import { erKliniskGodkjent, fingeravtrykk } from '../verktoy/regler/godkjenning'
 import { KILDER } from '../verktoy/regler/kilder'
 import type { Kilde } from '../verktoy/regler/modell'
-import { REGELSETTENE } from '../verktoy/tilgjengelighet'
-import { godkjenteRegler, virkestofferForFest } from '../verktoy/overvaking/berorte'
+import { iVerktoyet, REGELSETTENE } from '../verktoy/tilgjengelighet'
+import { berort, godkjenteRegler, virkestofferForFest } from '../verktoy/overvaking/berorte'
 import { AGENTOPPGAVER } from '../verktoy/overvaking/agentoppgaver'
 import { avsnittI, avsnittsavtrykk, avsnittssummer, dokumentgrunnlag, kontrollerDokumenter, kontrollsummer, synligTekst, uovervaketeKilder, type Fastsattgrunnlag } from '../verktoy/overvaking/dokumenter'
 import { festfunn, kontrollerFest } from '../verktoy/overvaking/fest'
@@ -444,6 +444,20 @@ describe('en kjøring og rapporten', () => {
     expect(funnavtrykk(a)).toMatch(/^[0-9a-f]{64}$/)
     for (const endret of [funn({ detaljer: ['Nå: dokumentet def'] }), funn({ berorte: [] }), funn({ art: 'fjernet' }), funn({ prioritet: 'hoy' }), funn({ id: 'dokument:y' })]) {
       expect(funnavtrykk(endret)).not.toBe(funnavtrykk(a))
+    }
+    // Verktøyene en regel hører til, er avledet og endrer ikke funnet.
+    expect(funnavtrykk({ ...a, berorte: a.berorte.map((b) => ({ ...b, verktoy: ['bytte-antidepressiv'] })) })).toBe(funnavtrykk(a))
+  })
+
+  it('oppgir verktøyene hver berørt regel hører til, så en nødstopp for verktøyet kan knyttes til regelen', () => {
+    const regler = godkjenteRegler()
+    expect(regler.length).toBeGreaterThan(0)
+    for (const g of regler) {
+      const b = berort(g, 'syntetisk')
+      expect(b.verktoy, g.regel.id).toEqual(VERKTOY.filter((v) => iVerktoyet(v)(g.regel)).map((v) => v.id))
+      expect(b.verktoy!.length, g.regel.id).toBeGreaterThan(0)
+      // Seponering og bytte hører til hvert sitt verktøy.
+      for (const id of b.verktoy!) expect(VERKTOY.find((v) => v.id === id)!.type).toBe(g.regel.til === null ? 'seponering' : 'bytte')
     }
   })
 

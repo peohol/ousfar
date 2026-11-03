@@ -57,7 +57,7 @@ export interface Kildefunn {
   tilstand: Sakstilstand
   versjon: number
   alvor: 'faglig' | 'sikkerhet'
-  konklusjon: 'uten_faglig_betydning' | 'uavklart' | 'faglig_relevant' | 'mulig_alvorlig_risiko' | null
+  konklusjon: 'uten_faglig_betydning' | 'uavklart' | 'faglig_relevant' | 'mulig_alvorlig_risiko' | 'dekket_av_beslutning' | null
   konklusjon_tekst: string | null
   konklusjon_kl: string | null
   /** Kilden har fått nytt innhold etter at saken ble vurdert faglig. */

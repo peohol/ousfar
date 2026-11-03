@@ -77,6 +77,13 @@ export interface Tiltak {
   lenke: string | null
 }
 
+export interface Beslutning {
+  valg: Beslutningsvalg
+  merknad: string | null
+  av: string
+  kl: string
+}
+
 export interface Fagsak {
   id: string
   /** Øker ved hver endring; en beslutning på en eldre versjon avvises. */
@@ -104,7 +111,13 @@ export interface Fagsak {
   /** Hvordan verktøyet virker for klinikerne akkurat nå. */
   status_na: string
   opprettet_kl: string
-  beslutning: { valg: Beslutningsvalg; merknad: string | null; av: string; kl: string } | null
+  beslutning: Beslutning | null
+  /**
+   * Tidligere beslutninger i saken, eldste først, aldri den som gjelder nå;
+   * alltid en liste. Fylles når et nytt spørsmål er lagt frem eller nytt
+   * kildeinnhold trakk tilbake det forrige.
+   */
+  tidligere: Beslutning[]
   tiltak: Tiltak[]
   avsluttet: { kl: string; utfall: Utfall } | null
 }
@@ -190,6 +203,7 @@ function erFagsak(s: Partial<Fagsak> | null | undefined): s is Fagsak {
   if (s.fase === 'beslutning' && s.valg.length === 0 && s.alvor !== 'sikkerhet') return false
   if (!Array.isArray(s.tiltak) || !s.tiltak.every((t) => tekst(t?.tekst) && TILTAK.includes(t.status) && tekst(t.endret_kl))) return false
   if (s.beslutning && !VALG.includes(s.beslutning.valg)) return false
+  if (!Array.isArray(s.tidligere) || !s.tidligere.every((b) => VALG.includes(b?.valg) && tekst(b.av) && tekst(b.kl))) return false
   // En sak med tiltak som ikke er kontrollert, kan ikke stå som avsluttet.
   if (s.fase === 'avsluttet' && (!s.avsluttet || !(s.avsluttet.utfall in UTFALLTEKST) || gjenstaende(s as Fagsak).length > 0)) return false
   return true

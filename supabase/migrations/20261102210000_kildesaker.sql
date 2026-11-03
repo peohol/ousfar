@@ -54,7 +54,7 @@ alter table public.kildefunn
   add constraint kildefunn_tilstand check (tilstand in ('teknisk_utredning', 'uavklart', 'faglig_gjennomgang', 'beslutning', 'oppfolging', 'avsluttet')),
   add constraint kildefunn_konklusjon check (
     (konklusjon is null and konklusjon_kl is null and konklusjon_tekst is null)
-    or (konklusjon in ('uten_faglig_betydning', 'uavklart', 'faglig_relevant', 'mulig_alvorlig_risiko') and konklusjon_kl is not null and konklusjon_tekst is not null)
+    or (konklusjon in ('uten_faglig_betydning', 'uavklart', 'faglig_relevant', 'mulig_alvorlig_risiko', 'dekket_av_beslutning') and konklusjon_kl is not null and konklusjon_tekst is not null)
   ),
   add constraint kildefunn_alvor check (alvor in ('faglig', 'sikkerhet')),
   add constraint kildefunn_sporsmal check (
@@ -348,7 +348,16 @@ as $$
     -- De berørte regelversjonene slik redaktøren ser dem, hver med om nødstoppen er satt for akkurat den regelen.
     berorte as (
       select o, jsonb_build_object('regel', b ->> 'regel', 'versjon', (b ->> 'versjon')::integer, 'hva', b ->> 'hva') as b,
-        exists (select 1 from public.verktoysperrer s where s.opphevet_kl is null and s.omfang = 'regel' and s.mal = b ->> 'regel') as sperret
+        exists (
+          select 1 from public.verktoysperrer s
+          where s.opphevet_kl is null and (
+            s.omfang = 'alle'
+            or (s.omfang = 'regel' and s.mal = b ->> 'regel')
+            -- Verktøyene regelen hører til, slik funnet oppga dem.
+            or (s.omfang = 'verktoy' and exists (
+              select 1 from jsonb_array_elements(coalesce(k.innhold -> 'berorte', '[]'::jsonb)) g, jsonb_array_elements_text(coalesce(g -> 'verktoy', '[]'::jsonb)) v
+              where g ->> 'regel' = b ->> 'regel' and v = s.mal)))
+        ) as sperret
       from jsonb_array_elements(coalesce(k.sporsmal -> 'berorte', (
         select coalesce(jsonb_agg(jsonb_build_object('regel', g ->> 'regel', 'versjon', (g ->> 'versjon')::integer, 'hva', g ->> 'hvorfor')), '[]'::jsonb)
         from jsonb_array_elements(coalesce(k.innhold -> 'berorte', '[]'::jsonb)) g))) with ordinality as x(b, o)
@@ -387,6 +396,12 @@ as $$
       from sperring p),
     'opprettet_kl', k.opprettet_kl,
     'beslutning', case when k.valg is null then null else jsonb_build_object('valg', k.valg, 'merknad', k.valg_merknad, 'av', intern.profilnavn(k.valg_av), 'kl', k.valg_kl) end,
+    -- Tidligere beslutninger i saken, eldste først, uten den som gjelder nå (et nytt spørsmål eller nytt kildeinnhold nullstiller den gjeldende).
+    'tidligere', (
+      select coalesce(jsonb_agg(jsonb_build_object('valg', h.data ->> 'valg', 'merknad', h.data ->> 'merknad', 'av', coalesce(intern.profilnavn(h.av), h.agent, 'Ukjent'), 'kl', h.kl) order by h.id), '[]'::jsonb)
+      from public.kildefunn_hendelser h
+      where h.funn = k.id and h.art = 'beslutning'
+        and (k.valg is null or h.id <> (select max(x.id) from public.kildefunn_hendelser x where x.funn = k.id and x.art = 'beslutning'))),
     'tiltak', (
       select coalesce(jsonb_agg(jsonb_build_object(
           'tekst', intern.kildesak_tiltakstekst(t.art), 'art', t.art, 'regel', t.regel, 'status', t.status, 'endret_kl', t.endret_kl, 'lenke', t.lenke
@@ -617,8 +632,8 @@ declare
   b jsonb := kildesak_teknisk_konklusjon.bevis;
   til text;
 begin
-  if k is null or k not in ('uten_faglig_betydning', 'uavklart', 'faglig_relevant', 'mulig_alvorlig_risiko') then
-    raise exception 'Ukjent konklusjon; bruk uten_faglig_betydning, uavklart, faglig_relevant eller mulig_alvorlig_risiko.' using errcode = '22023';
+  if k is null or k not in ('uten_faglig_betydning', 'uavklart', 'faglig_relevant', 'mulig_alvorlig_risiko', 'dekket_av_beslutning') then
+    raise exception 'Ukjent konklusjon; bruk uten_faglig_betydning, uavklart, faglig_relevant, mulig_alvorlig_risiko eller dekket_av_beslutning.' using errcode = '22023';
   end if;
   if begrunnelse is null or char_length(btrim(begrunnelse)) not between 10 and 5000 then
     raise exception 'Begrunnelsen må ha 10–5000 tegn.' using errcode = '22023';
@@ -626,8 +641,16 @@ begin
   if b is not null and jsonb_typeof(b) <> 'object' then
     raise exception 'Beviset må være et objekt.' using errcode = '22023';
   end if;
-  if rad.tilstand not in ('teknisk_utredning', 'uavklart') and k not in ('faglig_relevant', 'mulig_alvorlig_risiko') then
-    raise exception 'Sak nr. % er allerede i det faglige sporet; den kan bare bekreftes som faglig relevant eller løftes som mulig alvorlig risiko.', rad.id using errcode = '55000';
+  if rad.tilstand not in ('teknisk_utredning', 'uavklart') and k not in ('faglig_relevant', 'mulig_alvorlig_risiko', 'dekket_av_beslutning') then
+    raise exception 'Sak nr. % er allerede i det faglige sporet; den kan bare bekreftes som faglig relevant, løftes som mulig alvorlig risiko eller, under oppfølging, avgjøres som dekket av beslutningen.', rad.id using errcode = '55000';
+  end if;
+  if k = 'dekket_av_beslutning' then
+    if rad.tilstand <> 'oppfolging' or rad.nytt_innhold_kl is null then
+      raise exception 'Dekket av beslutningen gjelder bare nytt kildeinnhold i en sak under oppfølging.' using errcode = '55000';
+    end if;
+    if b is null or b ->> 'kontroll' is null or char_length(btrim(b ->> 'kontroll')) not between 5 and 500 then
+      raise exception 'Dekket av beslutningen krever bevis med hvor vurderingen kan etterprøves (kontroll).' using errcode = '22023';
+    end if;
   end if;
 
   if k = 'uten_faglig_betydning' then
@@ -657,13 +680,15 @@ begin
   set konklusjon = k, konklusjon_kl = now(), konklusjon_tekst = btrim(begrunnelse),
       alvor = case when k = 'mulig_alvorlig_risiko' then 'sikkerhet' else x.alvor end,
       tilstand = case when til = 'avsluttet' then x.tilstand else til end,
-      nytt_innhold_kl = null, versjon = x.versjon + 1, endret_kl = now()
+      -- Under oppfølging er nytt innhold bare vurdert med en eksplisitt avgjørelse om dekning (eller et nytt spørsmål).
+      nytt_innhold_kl = case when x.tilstand = 'oppfolging' and k <> 'dekket_av_beslutning' then x.nytt_innhold_kl end,
+      versjon = x.versjon + 1, endret_kl = now()
   where x.id = rad.id;
   perform intern.kildesak_hendelse(rad.id, 'teknisk_konklusjon', rad.tilstand, til, null, btrim(agent),
     jsonb_build_object('konklusjon', k, 'begrunnelse', btrim(begrunnelse), 'bevis', b, 'avtrykk', rad.avtrykk));
   if til = 'avsluttet' then
     perform intern.kildesak_avslutt(rad.id, 'teknisk_avklart', null, btrim(agent), jsonb_build_object('bevis', b));
-  elsif rad.tilstand = 'oppfolging' then
+  elsif k = 'dekket_av_beslutning' then
     -- Det nye innholdet er vurdert og dekket av beslutningen; er tiltakene allerede kontrollert, er saken ferdig.
     perform intern.kildesak_ferdig(rad.id, null, btrim(agent));
   end if;
