@@ -183,7 +183,8 @@ Syntetiske, vanlige situasjoner for voksne 18–64 år uten tidligere seponering
 | 2 | #319 | G – felles motor | 1.125.0 | – | Til kontroll |
 | 3 | #318 | D – K2, fem bytteregler til kontroll | 1.125.1 | #319 | Til kontroll; QA uten blokkerende funn |
 | 4 | #320 | E – K3, fem bytteregler til kontroll (dekker K0-10; K0-07 og K0-08 åpne) | 1.125.2 | #319 | Til kontroll |
-| 5 | #321 | H – testkasus K0-01–K0-12 og kontroll i den publiserte appen (K0-09 prøveverifisert) | 1.125.3 | #320 (rapporten lages på nytt etter den) | Til kontroll |
-| – | K1- og K4-PR | C og F | tildeles | #319 | Under arbeid |
+| 5 | #322 | F – K4, lamotrigin lagt til valproat eller litium, til kontroll (K0-11 og K0-12) | 1.125.3 | #319 | Til kontroll |
+| 6 | #321 | H – testkasus K0-01–K0-12 og kontroll i den publiserte appen (K0-09 prøveverifisert) | 1.125.4 | #322 (rapporten lages på nytt etter den) | Til kontroll |
+| – | K1-PR | C | tildeles | #319 | Under arbeid |
 
 Godkjenner ChatGPT i en annen rekkefølge, nummererer koordinatoren om de uavhengige PR-ene; PR-er som avhenger av #319, merges etter den.
