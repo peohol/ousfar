@@ -143,9 +143,9 @@ Regelutkast som er kontrollert og ikke godkjent (eller bare fagtekst), og som de
 | Bytte antipsykotikum | `antipsykotikabytte-aripiprazol-olanzapin` v2 | Aripiprazol (peroral) → Olanzapin (peroral) | beregnbar | til kontroll |
 | Bytte antipsykotikum | `antipsykotikabytte-aripiprazol-risperidon` v2 | Aripiprazol (peroral) → Risperidon (peroral) | beregnbar | til kontroll |
 | Bytte antipsykotikum | `antipsykotikabytte-kariprazin-kvetiapin` v2 | Kariprazin → Kvetiapin | beregnbar | til kontroll |
-| Bytte antipsykotikum | `antipsykotikabytte-olanzapin-aripiprazol` v3 | Olanzapin (peroral) → Aripiprazol (peroral) | beregnbar | til kontroll |
+| Bytte antipsykotikum | `antipsykotikabytte-olanzapin-aripiprazol` v4 | Olanzapin (peroral) → Aripiprazol (peroral) | beregnbar | til kontroll |
 | Bytte antipsykotikum | `antipsykotikabytte-olanzapin-kvetiapin` v5 | Olanzapin (peroral) → Kvetiapin | beregnbar | ikke godkjent |
-| Bytte antipsykotikum | `antipsykotikabytte-risperidon-aripiprazol` v3 | Risperidon (peroral) → Aripiprazol (peroral) | beregnbar | til kontroll |
+| Bytte antipsykotikum | `antipsykotikabytte-risperidon-aripiprazol` v4 | Risperidon (peroral) → Aripiprazol (peroral) | beregnbar | til kontroll |
 | Bytte antipsykotikum | `depot-consta-xeplion` v2 | Risperidon (depotinjeksjon) → Paliperidon (depotinjeksjon (paliperidonpalmitat)) | beregnbar | til kontroll |
 | Bytte antipsykotikum | `depot-risperidon-xeplion` v5 | Risperidon (peroral) → Paliperidon (depotinjeksjon (paliperidonpalmitat)) | beregnbar | til kontroll |
 

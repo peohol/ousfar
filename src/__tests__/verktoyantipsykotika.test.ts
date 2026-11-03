@@ -60,8 +60,8 @@ const VERSJON: Partial<Record<string, number>> = {
   'antipsykotikabytte-aripiprazol-olanzapin': 2,
   'antipsykotikabytte-aripiprazol-risperidon': 2,
   'antipsykotikabytte-kariprazin-kvetiapin': 2,
-  'antipsykotikabytte-olanzapin-aripiprazol': 3,
-  'antipsykotikabytte-risperidon-aripiprazol': 3,
+  'antipsykotikabytte-olanzapin-aripiprazol': 4,
+  'antipsykotikabytte-risperidon-aripiprazol': 4,
 }
 /** Krever skriftlig begrunnelse (ordlyden om over eller under grensen er motorens). */
 const BEGRUNNES = /krever en skriftlig begrunnelse/
@@ -270,9 +270,17 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
       'Dag 57–70 (26.01.2027–08.02.2027): Olanzapin peroralt: 5 mg = 1 tablett à 5 mg; Aripiprazol peroralt: 15 mg = 1 tablett à 15 mg',
       'Fra dag 71 (fra 09.02.2027): Olanzapin peroralt: Seponert; Aripiprazol peroralt: 15 mg = 1 tablett à 15 mg',
     ])
-    // Vurderingspunktet står før hver reduksjon og før seponeringen.
+    // Vurderingspunktet står før hver reduksjon og før siste trinn til 0, og pasienten vurderes igjen 14 dager etter seponeringen (forslag).
     const vurderinger = linjer(kjor('antipsykotikabytte-olanzapin-aripiprazol', '20', { ...TO_TABLETTER, maldose: '15' })).filter((l) => l.includes('Vurdering'))
-    expect(vurderinger.map((l) => l.split(':')[0])).toEqual(['Dag 29', 'Dag 43', 'Dag 57', 'Dag 71'])
+    expect(vurderinger.map((l) => l.split(':')[0])).toEqual(['Dag 29', 'Dag 43', 'Dag 57', 'Dag 71', 'Dag 84'])
+    expect(vurderinger[3]).toMatch(/også det siste trinnet til 0: tilstanden vurderes/)
+    // Hva som gjøres ved funn, står i planen.
+    expect(kjor('antipsykotikabytte-olanzapin-aripiprazol', '20', { ...TO_TABLETTER, maldose: '15' }).tekst).toMatch(/Ved funn: Ved forverring, uro eller seponeringsplager holdes dosen, og resten av nedtrappingen planlegges individuelt/)
+    expect(vurderinger[4]).toMatch(/Olanzapin er seponert: tilstanden vurderes på nytt/)
+    // Siste trinn til 0 krever en egen vurdering av pasienten, og tidligere seponeringsplager stopper planen.
+    expect(grunner(kjor('antipsykotikabytte-olanzapin-aripiprazol', '20', { ...TO_TABLETTER, maldose: '15', bekreftet: ['indikasjon', 'peroral_formulering', 'spesialist_risiko'] }))).toMatch(/Må bekreftes før beregning: Siste trinn er vurdert for denne pasienten/)
+    expect(grunner(kjor('antipsykotikabytte-olanzapin-aripiprazol', '20', { ...TO_TABLETTER, maldose: '15', pasientforhold: { seponeringsplager: true } }))).toMatch(/tidligere fått seponeringsplager/)
+    expect(grunner(kjor('antipsykotikabytte-risperidon-aripiprazol', '4', { ...TO_TABLETTER, maldose: '10' }, { ubesvart: ['seponeringsplager'] }))).toMatch(/seponeringsplager/)
     expect(grunner(kjor('antipsykotikabytte-olanzapin-aripiprazol', '20', { ...TO_TABLETTER, maldose: '20' }))).toMatch(/Måldosen 20 mg er utenfor/)
     expect(grunner(kjor('antipsykotikabytte-olanzapin-aripiprazol', '20', { ...TO_TABLETTER, maldose: '15', pasientforhold: { tilbakefall_innlagt: true } }))).toMatch(/gjentatte psykotiske tilbakefall/)
   })

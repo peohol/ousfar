@@ -24,7 +24,8 @@
  *   som forsvarlig for pasienten.
  * - Kryss-titrering fra olanzapin og fra risperidon til aripiprazol hos stabile
  *   polikliniske pasienter (TARC 2018, figur 1): det forrige stoffet trappes
- *   ned til seponering, og aripiprazol står på måldosen 10 eller 15 mg.
+ *   ned til seponering, og aripiprazol står på måldosen 10 eller 15 mg. Siste
+ *   trinn til 0 krever en egen vurdering av pasienten.
  *
  * **Ingen av reglene er klinisk godkjent.** De står til uavhengig faglig
  * kontroll og gir ingen klinisk plan i appen før en kontrollør har godkjent
@@ -57,6 +58,8 @@ const GJENNOMGANG_2 = 'Etter kontrollørens andre gjennomgang av #320 03.11.2026
 const GJENNOMGANG_3 = 'Etter kontrollørens tredje gjennomgang av #320 03.11.2026:'
 /** Kontrollørens fjerde gjennomgang av #320 (03.11.2026, head b0a996d). */
 const GJENNOMGANG_4 = 'Etter kontrollørens fjerde gjennomgang av #320 03.11.2026:'
+/** Kontrollørens femte gjennomgang av #320 (03.11.2026, head 9024c87). */
+const GJENNOMGANG_5 = 'Etter kontrollørens femte gjennomgang av #320 03.11.2026:'
 
 /* --- Fakta fra kildene, med egne ord ------------------------------------------------- */
 
@@ -1023,8 +1026,8 @@ const ABILIFY = {
   eldre: h('ema-abilify', 'section 4.2 (eldre)', 'Effekt og sikkerhet ved schizofreni er ikke fastslått fra 65 år; lavere startdose bør vurderes når kliniske forhold tilsier det.'),
 }
 
-const TIL_ARIPIPRAZOL_BEKREFTET = ['indikasjon', 'peroral_formulering', 'spesialist_risiko']
-const TIL_ARIPIPRAZOL_NEI = { tilbakefall_innlagt: false, alder_65: false, cyp_aripiprazol: false }
+const TIL_ARIPIPRAZOL_BEKREFTET = ['indikasjon', 'peroral_formulering', 'spesialist_risiko', 'siste_trinn']
+const TIL_ARIPIPRAZOL_NEI = { tilbakefall_innlagt: false, alder_65: false, cyp_aripiprazol: false, seponeringsplager: false }
 
 /** Det felles for bytte til aripiprazol: fra-stoffet holdes i 4 uker og trappes så ned med 25 % av startdosen minst hver 2. uke. */
 function tilAripiprazol(a: {
@@ -1033,6 +1036,8 @@ function tilAripiprazol(a: {
   fraNavn: string
   startdose: Inndatakrav
   fraKilder: Kildehenvisning[]
+  /** Det preparatomtalen for fra-stoffet sier om seponering, i tillegg til TARC. */
+  seponering: Kildehenvisning[]
   referanse: string
   eksempler: Regel['eksempler']
   merknad: string
@@ -1045,7 +1050,7 @@ function tilAripiprazol(a: {
     })
   return {
     id: a.id,
-    versjon: 3,
+    versjon: 4,
     tittel: `Fra ${a.fraNavn} til aripiprazol, kryss-titrering`,
     fra: { type: 'virkestoff', nokkel: a.fra },
     til: { type: 'virkestoff', nokkel: 'aripiprazol' },
@@ -1088,8 +1093,20 @@ function tilAripiprazol(a: {
             {
               id: 'for_reduksjon',
               nar: { type: 'for_hvert_trinn' },
-              tekst: `Før hver reduksjon av ${a.fraNavn}: tilstanden vurderes, og pasienten følges tett gjennom hele byttet.`,
-              grunnlag: { type: 'kilde', henvisninger: [TARC.oppfolging, KEKS.spesialist] },
+              tekst: `Før hver reduksjon av ${a.fraNavn}, også det siste trinnet til 0: tilstanden vurderes (forverring av psykosen, søvn, uro og akatisi og seponeringsplager), og pasienten følges tett gjennom hele byttet.`,
+              ved_funn: 'Ved forverring, uro eller seponeringsplager holdes dosen, og resten av nedtrappingen planlegges individuelt.',
+              grunnlag: { type: 'kilde', henvisninger: [TARC.oppfolging, KEKS.spesialist, ...a.seponering] },
+            },
+            // Kontrollørens femte gjennomgang: oppfølging etter siste trinn til 0.
+            {
+              id: 'etter_seponering',
+              nar: {
+                type: 'etter_seponering',
+                dager: forslag(14, 'dager', 'Samme minstetid som mellom reduksjonene i kilden (minst 2 uker); kilden oppgir ikke når pasienten skal vurderes etter seponeringen.', { henvisninger: [TARC.nedtrapping, TARC.oppfolging] }),
+              },
+              tekst: `${a.fraNavn[0]!.toUpperCase()}${a.fraNavn.slice(1)} er seponert: tilstanden vurderes på nytt (forverring av psykosen, søvn, uro og akatisi og seponeringsplager).`,
+              ved_funn: 'Ved forverring eller seponeringsplager vurderes behandlingen individuelt; planen gir ingen ny dose.',
+              grunnlag: { type: 'kilde', henvisninger: [TARC.oppfolging, KEKS.spesialist, ...a.seponering] },
             },
           ],
         },
@@ -1111,6 +1128,18 @@ function tilAripiprazol(a: {
       },
       peroral(a.fraNavn),
       spesialist(),
+      // Kontrollørens femte gjennomgang: siste trinn til 0 er 100 % av dosen som gjenstår, og må vurderes for pasienten.
+      {
+        id: 'siste_trinn',
+        tekst: `Siste trinn er vurdert for denne pasienten: ${a.fraNavn} seponeres helt fra den siste lave dosen (hele dosen som gjenstår) mens aripiprazol har stått på måldosen i flere uker. Pasienten vet hvilke seponeringsplager og tegn på tilbakefall som skal meldes, og vurderes før siste trinn og etter seponeringen. Ved forverring, uro eller seponeringsplager holdes siste dose, og resten planlegges individuelt.`,
+        grunnlag: {
+          type: 'ousfar_vurdering',
+          begrunnelse:
+            'Kilden avslutter med et trinn til 0 (20 → 15 → 10 → 5 mg og 4 → 3 → 2 → 1 mg og så stopp), mens aripiprazol står på måldosen. Trinnet er 25 % av startdosen, men 100 % av dosen som gjenstår, og kilden begrunner det ikke farmakologisk. OUSFAR kan ikke selv fastslå at siste trinn er forsvarlig; regelen krever derfor en vurdering av den enkelte pasienten, stopper ved tidligere seponeringsplager og må avklares av kontrolløren før den kan gi en plan.',
+          henvisninger: [TARC.nedtrapping, TARC.overlapp, TARC.oppfolging, ...a.seponering],
+          avklaring: null,
+        },
+      },
     ],
     unntak: [
       {
@@ -1123,6 +1152,11 @@ function tilAripiprazol(a: {
         id: 'cyp_aripiprazol',
         tekst: 'Pasienten bruker en sterk CYP3A4- eller CYP2D6-hemmer eller en sterk CYP3A4-induktor; aripiprazoldosen skal da justeres.',
         grunnlag: { type: 'kilde', henvisninger: [ABILIFY.interaksjoner] },
+      },
+      {
+        id: 'seponeringsplager',
+        tekst: `Pasienten har tidligere fått seponeringsplager, uro, søvnvansker eller forverring av psykosen ved dosereduksjon eller seponering av ${a.fraNavn}; regelen kan da ikke stå for siste trinn til 0, og nedtrappingen planlegges individuelt.`,
+        grunnlag: { type: 'kilde', henvisninger: [TARC.oppfolging, ...a.seponering] },
       },
     ],
     beregnbarhet: 'beregnbar_etter_avklaring',
@@ -1138,7 +1172,7 @@ function tilAripiprazol(a: {
       tilpasninger: [
         utsagn('Aripiprazol foreslås som 5 mg den første uken og 10 mg den andre, øverst i kildens områder, fordi den laveste tablettstyrken i FEST er 5 mg og ikke er delbar; forskriveren kan velge 2,5 mg (mikstur) og 5–10 mg. Måldosen 10 eller 15 mg velges av forskriveren.', TARC.opptrapping),
         utsagn(`${a.fraNavn[0]!.toUpperCase()}${a.fraNavn.slice(1)} holdes uendret i 28 dager: 14 dagers opptrapping og 14 dager sammen med aripiprazol på måldosen. Første reduksjon er dag 29, og hver reduksjon står i minst 14 dager.`, TARC.opptrapping, TARC.overlapp, TARC.nedtrapping),
-        utsagn('Hver reduksjon er 25 % av startdosen. Kan et trinn ikke gis med tablettene i FEST, stopper planen og viser de nærmeste dosene under og over som kan gis, med faktisk reduksjon og dager; forskriveren velger, og verktøyet runder aldri av selv (kontrollørens valg c). Et større trinn varer så lenge at nedtrappingen aldri går raskere enn 25 % av startdosen per 14 dager, og neste trinn regnes fra den valgte dosen. Legemidlet seponeres når neste beregnede dose er 0 eller lavere, så siste dose før seponering er aldri mer enn 25 % av startdosen og har stått minst 14 dager, som i kildens eksempler. I stedet for trinnet til 0 kan forskriveren velge ett mindre siste trinn med en lavere dose som kan gis (for eksempel olanzapin 2,5 mg etter 5 mg), med samme fartsregel; seponeringen kommer da etter det trinnet. Uten valg gjelder kildens siste trinn.', TARC.nedtrapping),
+        utsagn('Hver reduksjon er 25 % av startdosen. Kan et trinn ikke gis med tablettene i FEST, stopper planen og viser de nærmeste dosene under og over som kan gis, med faktisk reduksjon og dager; forskriveren velger, og verktøyet runder aldri av selv (kontrollørens valg c). Et større trinn varer så lenge at nedtrappingen aldri går raskere enn 25 % av startdosen per 14 dager, og neste trinn regnes fra den valgte dosen. Legemidlet seponeres når neste beregnede dose er 0 eller lavere, så siste dose før seponering er aldri mer enn 25 % av startdosen og har stått minst 14 dager, som i kildens eksempler. I stedet for trinnet til 0 kan forskriveren velge ett mindre siste trinn med en lavere dose som kan gis (for eksempel olanzapin 2,5 mg etter 5 mg), med samme fartsregel; seponeringen kommer da etter det trinnet. Uten valg gjelder kildens siste trinn. Siste trinn til 0 er alltid hele dosen som gjenstår; det krever derfor en egen vurdering av pasienten, stopper ved tidligere seponeringsplager, og pasienten vurderes før siste trinn og etter seponeringen (forslag: 14 dager etter).', TARC.nedtrapping, TARC.oppfolging),
       ],
       forutsetninger: forutsetninger(
         `Pasienten bruker peroral ${a.fraNavn} som eneste antipsykotikum, i en stabil dose.`,
@@ -1156,6 +1190,7 @@ function tilAripiprazol(a: {
       a.merknad,
       `${GJENNOMGANG} kontrollørens valg c: når et trinn på 25 % av startdosen ikke kan gis, velger forskriveren blant de nærmeste dosene som kan gis, et større trinn varer tilsvarende lenger (aldri raskere enn 25 % av startdosen per 14 dager), og resten av forløpet regnes fra den valgte dosen.`,
       `${GJENNOMGANG_4} forskriveren kan velge ett mindre siste trinn før seponeringen (åpent OUSFAR-valg), med samme fartsregel; uten valg gjelder kildens siste trinn, der siste dose er høyst 25 % av startdosen.`,
+      `${GJENNOMGANG_5} siste trinn til 0 krever en bekreftet vurdering av pasienten (åpent OUSFAR-valg), tidligere seponeringsplager er et unntak, og pasienten vurderes før siste trinn og etter seponeringen (forslag 14 dager).`,
     ),
   }
 }
@@ -1166,6 +1201,7 @@ const olanzapinAripiprazol = tilAripiprazol({
   fraNavn: 'olanzapin',
   startdose: { navn: 'startdose', omrade: [5, 20], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [SPC.zyprexaDose] } },
   fraKilder: [SPC.zyprexaDose, SPC.zyprexaSeponering],
+  seponering: [SPC.zyprexaSeponering],
   referanse: 'SwitchAntipsychotics:Ol>Pa',
   eksempler: [
     {
@@ -1197,6 +1233,20 @@ const olanzapinAripiprazol = tilAripiprazol({
         fra: ['dag 1–28: 20 mg', 'dag 29–42: 15 mg', 'dag 43–56: 10 mg', 'dag 57–70: 5 mg', 'dag 71–84: 2,5 mg, mindre siste trinn valgt av forskriveren (−50 %)', 'fra dag 85: seponert'],
         til: ['dag 1–7: 5 mg', 'dag 8–14: 10 mg', 'fra dag 15: 15 mg'],
       },
+    },
+    {
+      id: 'tidligere-seponeringsplager',
+      beskrivelse: 'Tidligere seponeringsplager eller forverring ved dosereduksjon av olanzapin: regelen kan ikke stå for siste trinn til 0, og planen stopper.',
+      inndata: { startdose_mg: 20, maldose_mg: 15, bekreftet: TIL_ARIPIPRAZOL_BEKREFTET, pasientforhold: { ...TIL_ARIPIPRAZOL_NEI, seponeringsplager: true } },
+      forventet: {},
+      stopp: /Regelen gjelder ikke: Pasienten har tidligere fått seponeringsplager/,
+    },
+    {
+      id: 'uten-vurdering-siste-trinn',
+      beskrivelse: 'Uten bekreftet vurdering av siste trinn til 0 stopper beregningen.',
+      inndata: { startdose_mg: 20, maldose_mg: 15, bekreftet: ['indikasjon', 'peroral_formulering', 'spesialist_risiko'], pasientforhold: TIL_ARIPIPRAZOL_NEI },
+      forventet: {},
+      stopp: /Må bekreftes før beregning: Siste trinn er vurdert for denne pasienten/,
     },
     {
       id: 'fra-15-mg-valgte-trinn',
@@ -1268,6 +1318,7 @@ const risperidonAripiprazol = tilAripiprazol({
   fraNavn: 'risperidon',
   startdose: { navn: 'startdose', omrade: [0, 16], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [RISPERDAL.maks] } },
   fraKilder: [RISPERDAL.dose, RISPERDAL.maks],
+  seponering: [],
   referanse: 'SwitchAntipsychotics:Rd>Pa',
   eksempler: [
     {
