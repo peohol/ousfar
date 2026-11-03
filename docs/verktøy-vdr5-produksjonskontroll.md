@@ -1,6 +1,6 @@
 # OUSFAR Verktøy – VDR-5: produksjonskontroll av kildesakene
 
-**Oppgave:** VDR-5 i `docs/verktøy-omlegging-2026-11.md` §6. Notatet samler testbeviset for hele saksgangen, det som er kontrollert i produksjonen, og det som gjenstår. Ingen regel, dose, terskel, godkjenning eller sperre er endret, og ingenting er skrevet til produksjonsdatabasen.
+**Oppgave:** VDR-5 i `docs/verktøy-omlegging-2026-11.md` §6. Notatet samler testbeviset for hele saksgangen, det som er kontrollert i produksjonen, og det som gjenstår. Beviset er en **kontrollert testdatabase** (§1) **og lesing i produksjonen** (§2). Det er ikke en ny ende-til-ende-prøve med skriving i produksjonen. Ingen regel, dose, terskel, godkjenning eller sperre er endret, og ingenting er skrevet til produksjonsdatabasen.
 
 ## 1. Hele saksgangen med kontrollert klokke og testdata
 
@@ -27,7 +27,7 @@ Kontrollen ble gjort med lesing alene (`GET` mot data-API-et). Appen i produksjo
 | Tilgangskontroll | Uten innlogging avvises lesing av `kildefunn`, `kildefunn_tiltak` og `verktoysperrer` og kall til `les_kildeovervaking`, `les_fagsaker`, `les_regelvarsler`, `les_verktoysperrer` og `verktoysperrehistorikk` (401, «permission denied»). Rollene for innloggede (lege eller administrator) er prøvd mot migrasjonene i testene. |
 | Målrettet sperre virker og kan oppheves | En regelsperre for `depot-paliperidon-xeplion` («Prøve av nødstoppen») ble satt 31.10.2026 10:39:20 og opphevet 10:43:57 («Prøve fullført»). Den står i historikken, og ingen sperre er aktiv nå. Mekanismen (`verktoysperrer`, `les_verktoysperrer`, `opphev_verktoysperre`) er uendret siden. «Deaktiver» i en kildesak setter den samme sperren, prøvd i flyt 3. |
 
-**Ikke gjort i produksjonen:** en ny sperre og en ny prøvesak gjennom hele den nye saksgangen. Begge krever skriving i produksjonen, og den gjøres av en administrator. Om det trengs i tillegg til prøven 31.10 og flyt 3, avgjør kontrolløren (§4).
+**Ikke gjort i produksjonen:** en ny sperre og en ny prøvesak gjennom hele den nye saksgangen. Begge krever skriving i produksjonen, og den gjøres av en administrator. Kontrolløren har vurdert at det ikke trengs i tillegg til prøven 31.10 og flyt 3 (§4).
 
 ## 3. Den gamle påminnelsen 03.11.2026
 
@@ -35,12 +35,15 @@ Fremdriftsloggen for 31.10.2026 (`docs/verktøy-utviklingsplan.md`) sier at prø
 
 - Fristene finnes ikke lenger (VDR-1, 1.119.0), og en prøve kan ikke avsluttes med en faglig beslutning (§5.2 i `docs/verktøy-p12-overvaking.md`).
 - Funn 3 er avsluttet som prøve med testbeviset (§2).
-- Det finnes ingen planlagt oppgave i prosjektet for 03.11.2026. Den gamle testen kan ikke slå til, og ingen trenger å gjøre noe.
+- Oppgavehistorikken:
+  - I prosjektets planlagte oppgaver (Claude) finnes ingen oppgave for funn 3 eller for 03.11.2026.
+  - Kontrollørens egen planlagte oppgave «Kontroller prøvefunn 3» (ChatGPT) er **deaktivert, ikke slettet**, slik at historikken står.
+  - Den gamle testen slår derfor ikke til, og ingen trenger å gjøre noe.
 
 P12.1 krysses ikke av fordi 72 timer har gått.
 
-## 4. Til kontrolløren
+## 4. Kontrollørens svar (ChatGPT, 03.11.2026)
 
-1. Godta flyt 1–3 (§1) som bevis for hele saksgangen, sammen med lesingen i §2?
-2. Er prøven av nødstoppen 31.10.2026, med uendret mekanisme og flyt 3, nok for «målrettet sperre virker og kan oppheves»? Eller skal en administrator sette og oppheve en regelsperre i produksjonen på nytt?
-3. P12.1 bør tidligst krysses av når sak 4 og 5 er avsluttet teknisk etter PR #306, og en ordinær kontroll etter det ikke har gitt nye saker for de to kildene.
+1. **Flyt 1–3 sammen med lesingen i §2 er tilstrekkelig bevis for VDR-5.** Kontrolløren presiserer at det er en kontrollert testdatabase og lesing i produksjonen, ikke en ny skriveprøve i produksjonen.
+2. **En ny sperre i produksjonen trengs ikke.** Prøven 31.10.2026 viste at en regelsperre ble satt og opphevet, og mekanismen er uendret. Flyt 3 binder kildesakens beslutning til den samme sperren og viser at den er målrettet og kan oppheves.
+3. **P12.1 krysses ikke av ennå.** Først må sak 4 og 5 få et nytt, kontrollert kildegrunnlag gjennom PR #306. Deretter må de avsluttes teknisk med et bevis som kan etterprøves, og en ordinær kontroll etterpå må gå uten nye saker for de samme kildene. Prøvefunn 3 behandles fortsatt som en prøve, ikke med en faglig beslutning.
