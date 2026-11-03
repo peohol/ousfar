@@ -159,6 +159,18 @@ export const KILDER: readonly Kilde[] = [
     bruk: OFFENTLIG,
   },
   {
+    id: 'russu-2018',
+    type: 'primærlitteratur',
+    tittel:
+      'Russu A, Kern Sliwa J, Ravenstijn P, et al. Maintenance dose conversion between oral risperidone and paliperidone palmitate 1 month: practical guidance based on pharmacokinetic simulations. Int J Clin Pract 2018;72(6):e13089',
+    utgiver: 'International Journal of Clinical Practice (CC BY-NC-ND 4.0). Alle forfatterne var ansatt i og aksjonærer i Janssen (produsenten av Xeplion), som også finansierte studien.',
+    url: 'https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6175146/fullTextXML',
+    versjon: 'doi:10.1111/ijcp.13089, PMC6175146',
+    hentet: '2026-11-03T23:29:28Z',
+    sha256: 'c8999978cbd3f95f0b89d2d170a628d643973bdcfa78e30f098ab687b4273cca',
+    bruk: OFFENTLIG,
+  },
+  {
     id: 'psychiatrienet',
     type: 'kildeoppføring',
     tittel: 'Psychiatrienet, switchtabellene (kildearkivet fra P3)',

@@ -4,7 +4,7 @@
  * depotrelaterte og fem perorale. Bakgrunnen, kildene og hva som fortsatt
  * ikke er dekket, står i `docs/verktøy-k3-antipsykotika.md` (rapporten over reglene: `docs/verktøy-k3-antipsykotikabytter.md`). Filen eies av K3; registreringen står i `domenesett.ts`.
  *
- * Hver regel bygger bare på preparatomtaler (DMP og EMA), Keks 2019 og TARC 2018; ingen
+ * Hver regel bygger bare på preparatomtaler (DMP og EMA), Keks 2019, TARC 2018 og Russu 2018; ingen
  * bygger på Psychiatrienet, som bare står som referanse til kildeoppføringen
  * (`docs/verktøy-p3-rettigheter.md`). Reglene er valgt fordi kildene selv
  * beskriver hele forløpet, så ingen dose, frist eller nedtrapping er OUSFARs
@@ -13,7 +13,8 @@
  * - Depot: Xeplion fra peroral risperidon og fra Risperdal Consta
  *   (Xeplion pkt. 4.2). Sluttmålet er fast månedlig vedlikehold; etter
  *   peroral risperidon gir regelen bare en plan med anbefalte 75 mg, og bare
- *   ved 4–6 mg risperidon daglig med god effekt og toleranse.
+ *   ved 3 mg risperidon daglig med god effekt og toleranse, der
+ *   preparatomtalen og Russu 2018 er enige.
  * - Peroralt: direkte bytte fra aripiprazol til olanzapin eller risperidon
  *   (Keks 2019: direkte bytte er mulig fra aripiprazol, som har svært lang
  *   halveringstid og ingen antikolinerg effekt), og fra kariprazin til
@@ -33,7 +34,7 @@
  */
 import { FORUTSETNINGER_FELLES, forslag, h, kilde, pn, steg, utsagn } from './bygg'
 import type { Domenesett } from './domenesett'
-import type { Bekreftelse, Fase, Forlop, Godkjenning, Inndatakrav, Kildehenvisning, Regel, Regelsett, Unntak } from './modell'
+import type { Bekreftelse, Fase, Forlop, Godkjenning, Kildehenvisning, Regel, Regelsett, Unntak } from './modell'
 import { REGELMODELLVERSJON } from './modell'
 import { TEKNISK_MAKS_DAGER } from './nedtrapping'
 import { SPC } from './pilotsett'
@@ -60,6 +61,8 @@ const GJENNOMGANG_3 = 'Etter kontrollørens tredje gjennomgang av #320 03.11.202
 const GJENNOMGANG_4 = 'Etter kontrollørens fjerde gjennomgang av #320 03.11.2026:'
 /** Kontrollørens femte gjennomgang av #320 (03.11.2026, head 9024c87). */
 const GJENNOMGANG_5 = 'Etter kontrollørens femte gjennomgang av #320 03.11.2026:'
+/** Kontrollørens sjette gjennomgang av #320 (03.11.2026, head c5a06b0). */
+const GJENNOMGANG_6 = 'Etter kontrollørens sjette gjennomgang av #320 03.11.2026:'
 
 /* --- Fakta fra kildene, med egne ord ------------------------------------------------- */
 
@@ -82,6 +85,15 @@ const XEPLION = {
   fraConsta: h('ema-xeplion', 'section 4.2 (bytte fra risperidon depotinjeksjon)', 'Fra risperidon depotinjeksjon gis Xeplion i stedet for neste planlagte injeksjon og deretter månedlig, uten oppstartsdosene dag 1 og dag 8.'),
   constaTabell: h('ema-xeplion', 'section 4.2 (bytte fra risperidon depotinjeksjon)', 'Risperidon depotinjeksjon 25, 37,5 og 50 mg hver 2. uke tilsvarer ved vedlikehold Xeplion 50, 75 og 100 mg månedlig.'),
   eldre: h('ema-xeplion', 'section 4.2 (eldre)', 'Effekt og sikkerhet hos eldre over 65 år er ikke fastslått; eldre kan ha nedsatt nyrefunksjon som krever andre doser.'),
+}
+
+/** Farmakokinetiske simuleringer fra produsenten (alle forfatterne fra Janssen); ikke kliniske forskrivningsdata. */
+const RUSSU = {
+  tabell: h('russu-2018', 'Results, tabell 1', 'Simuleringer: risperidon 1, 2, 3, 4 og 6 mg daglig gir omtrent samme eksponering ved steady state som Xeplion 25, 50, 75, 100 og 150 mg månedlig, også når døgndosen deles på to.'),
+  interaksjoner: h('russu-2018', 'Discussion', 'Omregningen tar ikke hensyn til CYP2D6-hemmere (f.eks. paroksetin, sertralin, fluoksetin) eller CYP3A- og P-gp-induktorer (f.eks. karbamazepin).'),
+  klinikk: h('russu-2018', 'Discussion', 'Etterlevelse, effekt og toleranse er avgjørende når vedlikeholdsdosen velges.'),
+  sponsor: h('russu-2018', 'Disclosures', 'Studien er sponset av Janssen, og alle forfatterne er ansatt der og aksjonærer i morselskapet.'),
+  oppfolging: h('russu-2018', 'Conclusion', 'Kliniske symptomer skal alltid vurderes ved bytte, og pasienten skal følges tett før og etter byttet.'),
 }
 
 const RISPERDAL = {
@@ -174,16 +186,21 @@ const XEPLION_STED = 'deltoideus eller setemuskel'
 
 const NYRE_AVKREFTET = { nedsatt_nyrefunksjon: false, over_65: false }
 const XEPLION_BEKREFTET = ['indikasjon', 'tidligere_toleranse', 'effekt_toleranse']
-const XEPLION_AVKREFTET = { ...NYRE_AVKREFTET, overvekt: false }
+const XEPLION_AVKREFTET = { ...NYRE_AVKREFTET, overvekt: false, risperidon_interaksjon: false }
 const XEPLION_OVERVEKT: Unntak = {
   id: 'overvekt',
   tekst: 'Pasienten har overvekt eller fedme; preparatomtalen sier at doser i den øvre delen av området kan trengs, så anbefalte 75 mg er ikke nødvendigvis riktig.',
   grunnlag: { type: 'kilde', henvisninger: [XEPLION.overvekt] },
 }
+const XEPLION_INTERAKSJON: Unntak = {
+  id: 'risperidon_interaksjon',
+  tekst: 'Pasienten bruker en CYP2D6-hemmer (f.eks. paroksetin, sertralin, fluoksetin) eller en CYP3A4-induktor (f.eks. karbamazepin); da sier risperidondosen ikke hvilken eksponering Xeplion må gi.',
+  grunnlag: { type: 'kilde', henvisninger: [RUSSU.interaksjoner, RISPERDAL.interaksjoner] },
+}
 
 const risperidonXeplion: Regel = {
   id: 'depot-risperidon-xeplion',
-  versjon: 5,
+  versjon: 6,
   tittel: 'Fra peroral risperidon til Xeplion',
   fra: { type: 'virkestoff', nokkel: 'risperidon' },
   til: { type: 'virkestoff', nokkel: 'paliperidon' },
@@ -220,20 +237,31 @@ const risperidonXeplion: Regel = {
             },
           },
         ],
+        // Kontrollørens sjette gjennomgang: oppfølgingen er en del av planen, ikke bare en bekreftelse.
+        vurderinger: [
+          {
+            id: 'for_injeksjon',
+            nar: { type: 'for_hvert_trinn' },
+            tekst: 'Før injeksjonen dag 8 og før hver månedlige vedlikeholdsinjeksjon: psykotiske symptomer, ekstrapyramidale og andre bivirkninger og reaksjoner etter forrige injeksjon vurderes, og pasienten følges tett gjennom byttet.',
+            ved_funn:
+              'Ved forverring, bivirkninger eller overfølsomhet planlegges videre behandling individuelt; vedlikeholdsdosen kan justeres månedlig, men full effekt av en endret dose kan først sees etter flere måneder.',
+            grunnlag: { type: 'kilde', henvisninger: [RUSSU.oppfolging, KEKS.spesialist, XEPLION.justering, XEPLION.overfolsomhet] },
+          },
+        ],
       },
     ],
   },
   inndata: [
-    // Kontrollørens fjerde gjennomgang: 75 mg passer ikke automatisk ved enhver risperidondose. Planen gjelder bare den vanlige effektive risperidondosen.
+    // Kontrollørens sjette gjennomgang: 4–6 mg → 75 mg kan gi for lav vedlikeholdseksponering (Russu 2018). Planen gjelder bare der preparatomtalens anbefalte 75 mg og simuleringen er enige.
     {
       navn: 'startdose',
-      omrade: [4, 6],
+      verdier: [3],
       art: 'bindende_krav',
       grunnlag: {
         type: 'ousfar_vurdering',
         begrunnelse:
-          'Planen gjelder bare pasienter på 4–6 mg risperidon daglig, dosen preparatomtalen sier de fleste har effekt av, fordi anbefalte 75 mg Xeplion er dosen for de fleste. Dette er ingen omregning: ingen kilde sier hvilken Xeplion-dose som tilsvarer en risperidondose, og regelen stopper utenfor området i stedet for å anta at 75 mg passer. Avgrensningen er OUSFARs og må avklares av kontrolløren.',
-        henvisninger: [RISPERDAL.dose, RISPERDAL.maks, XEPLION.vedlikehold, SPC.xeplionOmregning],
+          'Planen gjelder bare pasienter på 3 mg risperidon daglig, den eneste dosen der preparatomtalens anbefalte vedlikeholdsdose 75 mg og Russu 2018 er enige (3 mg risperidon gir omtrent samme eksponering som 75 mg Xeplion). Ved 4–6 mg tilsvarer 75 mg etter simuleringen en lavere eksponering enn dagens (4 mg ≈ 100 mg, 6 mg ≈ 150 mg), så 75 mg kan gi for lav vedlikeholdseksponering. OUSFAR tar ikke i bruk de høyere dosene fra simuleringen, fordi den er farmakokinetisk, sponset av produsenten og ikke prøvd ut på pasienter; de planlegges individuelt. Avgrensningen er OUSFARs og må avklares av kontrolløren.',
+        henvisninger: [RUSSU.tabell, RUSSU.sponsor, XEPLION.vedlikehold, RISPERDAL.dose, SPC.xeplionOmregning],
         avklaring: null,
       },
     },
@@ -254,11 +282,11 @@ const risperidonXeplion: Regel = {
     {
       id: 'effekt_toleranse',
       tekst:
-        'Forskriveren har vurdert det konkrete forløpet: dagens risperidondose har gitt god og stabil effekt, uten bivirkninger som har begrenset dosen og uten planer om å endre den. Er effekten utilstrekkelig, eller har bivirkninger holdt dosen nede, planlegges vedlikeholdsdosen individuelt.',
-      grunnlag: { type: 'kilde', henvisninger: [XEPLION.vedlikehold, XEPLION.justering, XEPLION.fraRisperidon] },
+        'Forskriveren har vurdert det konkrete forløpet: dagens risperidondose har gitt god og stabil effekt, uten bivirkninger som har begrenset dosen og uten planer om å endre den, og pasienten har tatt den regelmessig. Er effekten utilstrekkelig, eller har bivirkninger holdt dosen nede, planlegges vedlikeholdsdosen individuelt.',
+      grunnlag: { type: 'kilde', henvisninger: [XEPLION.vedlikehold, XEPLION.justering, XEPLION.fraRisperidon, RUSSU.klinikk] },
     },
   ],
-  unntak: [NYRE, XEPLION_ELDRE, XEPLION_OVERVEKT],
+  unntak: [NYRE, XEPLION_ELDRE, XEPLION_OVERVEKT, XEPLION_INTERAKSJON],
   beregnbarhet: 'beregnbar_etter_avklaring',
   fortolkning: {
     kildetro: [
@@ -267,28 +295,30 @@ const risperidonXeplion: Regel = {
       utsagn('Anbefalt vedlikeholdsdose er 75 mg månedlig, innenfor 25–150 mg etter toleranse og effekt, i deltoideus eller setemuskel.', XEPLION.vedlikehold, SPC.xeplionStart),
       utsagn('Peroral risperidon kan seponeres når Xeplion startes.', SPC.xeplionSeponering),
       utsagn('Preparatomtalen har ingen tabell fra peroral risperidondose til Xeplion-dose; tabellen gjelder paliperidon depottabletter.', SPC.xeplionOmregning),
+      utsagn('Farmakokinetiske simuleringer fra produsenten gir omtrent samme eksponering ved 1, 2, 3, 4 og 6 mg risperidon daglig som ved 25, 50, 75, 100 og 150 mg Xeplion månedlig; de tar ikke hensyn til CYP2D6-hemmere eller CYP3A-induktorer.', RUSSU.tabell, RUSSU.interaksjoner),
       utsagn('Ved nedsatt nyrefunksjon er dosene andre, og effekt og sikkerhet er ikke fastslått over 65 år.', SPC.xeplionNyre, XEPLION.eldre),
     ],
     tilpasninger: [
       utsagn('OUSFAR seponerer peroral risperidon dagen før første injeksjon; gradvis seponering, som preparatomtalen nevner for noen, er ikke modellert.', SPC.xeplionSeponering),
       utsagn('Regelen gir bare en komplett plan med den anbefalte vedlikeholdsdosen 75 mg. Preparatomtalen har ingen omregning fra risperidondosen, og OUSFAR finner ikke på en, så regelen kan ikke stå for at en annen dose passer til pasientens risperidondose. En annen vedlikeholdsdose (25–150 mg etter toleranse og effekt, for eksempel høyere ved overvekt) stopper med beskjed om individuell planlegging, også med begrunnelse. Planen bruker bare styrker av Xeplion som finnes i FEST.', XEPLION.vedlikehold, XEPLION.overvekt),
-      utsagn('Planen gjelder bare 4–6 mg risperidon daglig, dosen preparatomtalen sier de fleste har effekt av (åpent OUSFAR-valg til kontrolløren). Lavere eller høyere risperidondose, utilstrekkelig effekt, bivirkninger som har begrenset dosen, og overvekt eller fedme stopper, fordi 75 mg da ikke kan antas å passe. Risperidondosen brukes ikke i beregningen.', RISPERDAL.dose, RISPERDAL.maks, XEPLION.overvekt),
+      utsagn('Planen gjelder bare 3 mg risperidon daglig, der anbefalte 75 mg og simuleringene er enige (åpent OUSFAR-valg til kontrolløren). Ved 4–6 mg kan 75 mg gi for lav vedlikeholdseksponering, og de høyere dosene fra simuleringene (100 og 150 mg) tas ikke i bruk uten klinisk grunnlag; de stopper med beskjed om individuell planlegging. Lavere risperidondose, utilstrekkelig effekt, bivirkninger som har begrenset dosen, overvekt eller fedme og legemidler som endrer omsetningen av risperidon stopper også. Risperidondosen brukes ikke i beregningen.', RUSSU.tabell, RISPERDAL.dose, XEPLION.overvekt, RUSSU.interaksjoner, RUSSU.sponsor),
+      utsagn('Før injeksjonen dag 8 og før hver vedlikeholdsinjeksjon står et vurderingspunkt for symptomer, bivirkninger og reaksjoner etter injeksjonen.', RUSSU.oppfolging, KEKS.spesialist, XEPLION.justering),
     ],
     forutsetninger: forutsetninger(
       'Pasienten bruker peroral risperidon (tabletter eller mikstur) daglig.',
-      'Forskriveren har vurdert nyrefunksjonen, alderen og vekten og svart at kreatininclearance ikke er under 80 ml/min, at pasienten ikke er over 65 år og ikke har overvekt eller fedme; ubesvart stopper beregningen.',
+      'Forskriveren har vurdert nyrefunksjonen, alderen, vekten og de andre legemidlene og svart at kreatininclearance ikke er under 80 ml/min, at pasienten ikke er over 65 år, ikke har overvekt eller fedme og ikke bruker legemidler som endrer omsetningen av risperidon; ubesvart stopper beregningen.',
     ),
     usikkerhet: [
-      'Hvilken vedlikeholdsdose som gir samme effekt som pasientens risperidondose, sier preparatomtalen ikke. At 75 mg passer ved 4–6 mg risperidon med god effekt og toleranse, er en avgrensning, ikke en omregning; en annen dose enn 75 mg er et klinisk valg utenfor regelen, og full effekt av en dose kan først sees etter flere måneder.',
+      'Hvilken vedlikeholdsdose som gir samme effekt som pasientens risperidondose, sier preparatomtalen ikke. Russu 2018 sammenligner bare eksponering i simuleringer, er sponset av produsenten og er ikke prøvd ut på pasienter. At 75 mg passer ved 3 mg risperidon med god effekt og toleranse, er en avgrensning der kildene er enige, ikke en validert omregning; full effekt av en dose kan først sees etter flere måneder.',
       'Generiske paliperidonpalmitat (Niapelf, Palmeux, Paliperidon Zentiva) og tremånedersdepotene er ikke kontrollert mot regelen og er ikke omfattet.',
     ],
   },
   referanser: [pn('SwitchAntipsychotics:Rd>Dp')],
   eksempler: [
     {
-      id: 'fra-4-mg-75',
-      beskrivelse: 'Risperidon 4 mg, vedlikehold 75 mg, startdato 1. desember 2026.',
-      inndata: { startdose_mg: 4, maldose_mg: 75, startdato: '2026-12-01', bekreftet: XEPLION_BEKREFTET, pasientforhold: XEPLION_AVKREFTET },
+      id: 'fra-3-mg-75',
+      beskrivelse: 'Risperidon 3 mg, vedlikehold 75 mg, startdato 1. desember 2026.',
+      inndata: { startdose_mg: 3, maldose_mg: 75, startdato: '2026-12-01', bekreftet: XEPLION_BEKREFTET, pasientforhold: XEPLION_AVKREFTET },
       forventet: {
         fra: ['fra dag 1 (01.12.2026): seponert'],
         til: [
@@ -299,81 +329,100 @@ const risperidonXeplion: Regel = {
       },
     },
     {
-      id: 'annen-dose-50',
-      beskrivelse: 'Risperidon 5 mg og vedlikehold 50 mg med begrunnelse: en annen dose enn 75 mg planlegges individuelt.',
-      inndata: { startdose_mg: 5, maldose_mg: 50, begrunnelse: 'Syntetisk eksempel.', bekreftet: XEPLION_BEKREFTET, pasientforhold: XEPLION_AVKREFTET },
+      id: 'fra-4-mg-for-lav-eksponering',
+      beskrivelse: 'Risperidon 4 mg og vedlikehold 75 mg: etter simuleringene gir 75 mg lavere eksponering enn dagens dose (4 mg ≈ 100 mg), så ingen komplett plan.',
+      inndata: { startdose_mg: 4, maldose_mg: 75, bekreftet: XEPLION_BEKREFTET, pasientforhold: XEPLION_AVKREFTET },
       forventet: {},
-      stopp: /Måldosen 50 mg er utenfor det regelen gjelder for \(75 mg\)/,
+      stopp: /Startdosen 4 mg er utenfor det regelen gjelder for \(3 mg\)/,
     },
     {
-      id: 'fra-6-mg-75',
-      beskrivelse: 'Risperidon 6 mg (øvre grense for avgrensningen) og vedlikehold 75 mg: oppstarten og vedlikeholdet fra preparatomtalen.',
+      id: 'fra-6-mg-for-lav-eksponering',
+      beskrivelse: 'Risperidon 6 mg og vedlikehold 75 mg: etter simuleringene tilsvarer 6 mg omtrent 150 mg, så 75 mg kan gi for lav eksponering og ingen komplett plan.',
       inndata: { startdose_mg: 6, maldose_mg: 75, bekreftet: XEPLION_BEKREFTET, pasientforhold: XEPLION_AVKREFTET },
-      forventet: {
-        fra: ['fra dag 1: seponert'],
-        til: ['dag 1: 150 mg injeksjon, deltoideus', 'dag 8 (±4 dager): 100 mg injeksjon, deltoideus', 'hver måned fra 1 måned etter dag 8 (±7 dager): 75 mg injeksjon, deltoideus eller setemuskel'],
-      },
+      forventet: {},
+      stopp: /Startdosen 6 mg er utenfor det regelen gjelder for \(3 mg\)/,
+    },
+    {
+      id: 'fra-6-mg-150',
+      beskrivelse: 'Risperidon 6 mg og vedlikehold 150 mg med begrunnelse: simuleringens dose tas ikke i bruk, så ingen komplett plan.',
+      inndata: { startdose_mg: 6, maldose_mg: 150, begrunnelse: 'Syntetisk eksempel.', bekreftet: XEPLION_BEKREFTET, pasientforhold: XEPLION_AVKREFTET },
+      forventet: {},
+      stopp: /Måldosen 150 mg er utenfor det regelen gjelder for \(75 mg\)/,
+    },
+    {
+      id: 'annen-dose-50',
+      beskrivelse: 'Risperidon 3 mg og vedlikehold 50 mg med begrunnelse: en annen dose enn 75 mg planlegges individuelt.',
+      inndata: { startdose_mg: 3, maldose_mg: 50, begrunnelse: 'Syntetisk eksempel.', bekreftet: XEPLION_BEKREFTET, pasientforhold: XEPLION_AVKREFTET },
+      forventet: {},
+      stopp: /Måldosen 50 mg er utenfor det regelen gjelder for \(75 mg\)/,
     },
     {
       id: 'lav-risperidondose',
       beskrivelse: 'Risperidon 0,5 mg: 75 mg kan ikke antas å passe ved en så lav dose, så ingen komplett plan.',
       inndata: { startdose_mg: 0.5, maldose_mg: 75, bekreftet: XEPLION_BEKREFTET, pasientforhold: XEPLION_AVKREFTET },
       forventet: {},
-      stopp: /Startdosen 0,5 mg er utenfor det regelen gjelder for \(4–6 mg\)/,
+      stopp: /Startdosen 0,5 mg er utenfor det regelen gjelder for \(3 mg\)/,
     },
     {
-      id: 'under-4-mg',
-      beskrivelse: 'Risperidon 3,5 mg, rett under avgrensningen: ingen komplett plan.',
+      id: 'under-3-mg',
+      beskrivelse: 'Risperidon 2,5 mg, rett under avgrensningen: 75 mg kan gi høyere eksponering enn dagens dose, så ingen komplett plan.',
+      inndata: { startdose_mg: 2.5, maldose_mg: 75, bekreftet: XEPLION_BEKREFTET, pasientforhold: XEPLION_AVKREFTET },
+      forventet: {},
+      stopp: /Startdosen 2,5 mg er utenfor det regelen gjelder for \(3 mg\)/,
+    },
+    {
+      id: 'over-3-mg',
+      beskrivelse: 'Risperidon 3,5 mg, rett over avgrensningen: ingen komplett plan.',
       inndata: { startdose_mg: 3.5, maldose_mg: 75, bekreftet: XEPLION_BEKREFTET, pasientforhold: XEPLION_AVKREFTET },
       forventet: {},
-      stopp: /Startdosen 3,5 mg er utenfor det regelen gjelder for \(4–6 mg\)/,
-    },
-    {
-      id: 'over-6-mg',
-      beskrivelse: 'Risperidon 6,5 mg, rett over avgrensningen: ingen komplett plan.',
-      inndata: { startdose_mg: 6.5, maldose_mg: 75, bekreftet: XEPLION_BEKREFTET, pasientforhold: XEPLION_AVKREFTET },
-      forventet: {},
-      stopp: /Startdosen 6,5 mg er utenfor det regelen gjelder for \(4–6 mg\)/,
+      stopp: /Startdosen 3,5 mg er utenfor det regelen gjelder for \(3 mg\)/,
     },
     {
       id: 'hoy-risperidondose',
       beskrivelse: 'Risperidon 16 mg (høyeste dose preparatomtalen vurderer): 75 mg kan ikke antas å passe, så ingen komplett plan.',
       inndata: { startdose_mg: 16, maldose_mg: 75, bekreftet: XEPLION_BEKREFTET, pasientforhold: XEPLION_AVKREFTET },
       forventet: {},
-      stopp: /Startdosen 16 mg er utenfor det regelen gjelder for \(4–6 mg\)/,
+      stopp: /Startdosen 16 mg er utenfor det regelen gjelder for \(3 mg\)/,
     },
     {
       id: 'uten-effekt-toleranse',
       beskrivelse: 'Uten bekreftet god effekt og toleranse av dagens dose stopper beregningen.',
-      inndata: { startdose_mg: 4, maldose_mg: 75, bekreftet: ['indikasjon', 'tidligere_toleranse'], pasientforhold: XEPLION_AVKREFTET },
+      inndata: { startdose_mg: 3, maldose_mg: 75, bekreftet: ['indikasjon', 'tidligere_toleranse'], pasientforhold: XEPLION_AVKREFTET },
       forventet: {},
       stopp: /Må bekreftes før beregning: Forskriveren har vurdert det konkrete forløpet/,
     },
     {
       id: 'overvekt',
       beskrivelse: 'Overvekt eller fedme: høyere dose kan trengs, så regelen gjelder ikke.',
-      inndata: { startdose_mg: 4, maldose_mg: 75, bekreftet: XEPLION_BEKREFTET, pasientforhold: { ...XEPLION_AVKREFTET, overvekt: true } },
+      inndata: { startdose_mg: 3, maldose_mg: 75, bekreftet: XEPLION_BEKREFTET, pasientforhold: { ...XEPLION_AVKREFTET, overvekt: true } },
       forventet: {},
       stopp: /Regelen gjelder ikke: Pasienten har overvekt eller fedme/,
     },
     {
+      id: 'interaksjon',
+      beskrivelse: 'CYP2D6-hemmer eller CYP3A4-induktor: risperidondosen sier ikke hvilken eksponering Xeplion må gi, så regelen gjelder ikke.',
+      inndata: { startdose_mg: 3, maldose_mg: 75, bekreftet: XEPLION_BEKREFTET, pasientforhold: { ...XEPLION_AVKREFTET, risperidon_interaksjon: true } },
+      forventet: {},
+      stopp: /Regelen gjelder ikke: Pasienten bruker en CYP2D6-hemmer/,
+    },
+    {
       id: 'uten-toleranse',
       beskrivelse: 'Uten dokumentert tidligere toleranse stopper beregningen.',
-      inndata: { startdose_mg: 4, maldose_mg: 75, bekreftet: ['indikasjon', 'effekt_toleranse'], pasientforhold: XEPLION_AVKREFTET },
+      inndata: { startdose_mg: 3, maldose_mg: 75, bekreftet: ['indikasjon', 'effekt_toleranse'], pasientforhold: XEPLION_AVKREFTET },
       forventet: {},
       stopp: /Må bekreftes før beregning: Det er dokumentert i journalen at pasienten har tålt peroral risperidon/,
     },
     {
       id: 'uten-maldose',
       beskrivelse: 'Uten valgt vedlikeholdsdose: beregningen velger ikke selv.',
-      inndata: { startdose_mg: 4, bekreftet: XEPLION_BEKREFTET, pasientforhold: XEPLION_AVKREFTET },
+      inndata: { startdose_mg: 3, bekreftet: XEPLION_BEKREFTET, pasientforhold: XEPLION_AVKREFTET },
       forventet: {},
       stopp: /Måldosen må oppgis/,
     },
     {
       id: 'maldose-over-150',
       beskrivelse: 'Vedlikehold 175 mg er over området i preparatomtalen.',
-      inndata: { startdose_mg: 6, maldose_mg: 175, bekreftet: XEPLION_BEKREFTET, pasientforhold: XEPLION_AVKREFTET },
+      inndata: { startdose_mg: 3, maldose_mg: 175, bekreftet: XEPLION_BEKREFTET, pasientforhold: XEPLION_AVKREFTET },
       forventet: {},
       stopp: /Måldosen 175 mg er utenfor/,
     },
@@ -387,21 +436,21 @@ const risperidonXeplion: Regel = {
     {
       id: 'nedsatt-nyrefunksjon',
       beskrivelse: 'Kreatininclearance under 80 ml/min: regelen gjelder ikke.',
-      inndata: { startdose_mg: 4, maldose_mg: 75, bekreftet: XEPLION_BEKREFTET, pasientforhold: { ...XEPLION_AVKREFTET, nedsatt_nyrefunksjon: true } },
+      inndata: { startdose_mg: 3, maldose_mg: 75, bekreftet: XEPLION_BEKREFTET, pasientforhold: { ...XEPLION_AVKREFTET, nedsatt_nyrefunksjon: true } },
       forventet: {},
       stopp: /Regelen gjelder ikke: Pasienten har kreatininclearance under 80 ml\/min/,
     },
     {
       id: 'alder-ukjent',
       beskrivelse: 'Alderen er ikke vurdert: ukjent stopper like mye som over 65 år.',
-      inndata: { startdose_mg: 4, maldose_mg: 75, bekreftet: XEPLION_BEKREFTET, pasientforhold: { nedsatt_nyrefunksjon: false, overvekt: false } },
+      inndata: { startdose_mg: 3, maldose_mg: 75, bekreftet: XEPLION_BEKREFTET, pasientforhold: { nedsatt_nyrefunksjon: false, overvekt: false, risperidon_interaksjon: false } },
       forventet: {},
       stopp: /Må avklares før beregning \(ukjent\): Pasienten er over 65 år/,
     },
     {
       id: 'uten-indikasjon',
       beskrivelse: 'Uten bekreftet stabilisering og toleranse stopper beregningen.',
-      inndata: { startdose_mg: 4, maldose_mg: 75, bekreftet: ['tidligere_toleranse', 'effekt_toleranse'], pasientforhold: XEPLION_AVKREFTET },
+      inndata: { startdose_mg: 3, maldose_mg: 75, bekreftet: ['tidligere_toleranse', 'effekt_toleranse'], pasientforhold: XEPLION_AVKREFTET },
       forventet: {},
       stopp: /Må bekreftes før beregning: Pasienten er voksen, har schizofreni og er stabilisert på/,
     },
@@ -412,6 +461,7 @@ const risperidonXeplion: Regel = {
     `${GJENNOMGANG_2} en annen vedlikeholdsdose enn 75 mg er et ja i én retning (høyere: 100 eller 150 mg; lavere: 50 mg) med en bekreftet, dokumentert vurdering av behandling og eksponering for den retningen og en skriftlig begrunnelse; fritekst alene stopper.`,
     `${GJENNOMGANG_3} regelen gir bare en komplett plan med anbefalt vedlikehold 75 mg; en annen dose stopper med beskjed om individuell planlegging, fordi regelen ikke kan stå for at den passer til risperidondosen.`,
     `${GJENNOMGANG_4} planen gjelder bare 4–6 mg risperidon daglig (åpent OUSFAR-valg til kontrolløren), med en bekreftet vurdering av effekt og toleranse av dagens dose og overvekt eller fedme som unntak; 0,5 og 16 mg og andre doser utenfor området stopper.`,
+    `${GJENNOMGANG_6} etter Russu 2018 kan 75 mg gi for lav vedlikeholdseksponering ved 4–6 mg risperidon, så planen gjelder bare 3 mg risperidon daglig, der preparatomtalens anbefalte 75 mg og simuleringene er enige (åpent OUSFAR-valg til kontrolløren). Legemidler som endrer omsetningen av risperidon er et nytt unntak, og planen har et vurderingspunkt før hver injeksjon.`,
   ),
 }
 
@@ -1034,7 +1084,9 @@ function tilAripiprazol(a: {
   id: string
   fra: string
   fraNavn: string
-  startdose: Inndatakrav
+  /** Startdosen i kildens eget eksempel (20 → 15 → 10 → 5 mg eller 4 → 3 → 2 → 1 mg og så stopp), og doseområdet i preparatomtalen. */
+  kildeeksempel: number
+  doseomrade: Kildehenvisning[]
   fraKilder: Kildehenvisning[]
   /** Det preparatomtalen for fra-stoffet sier om seponering, i tillegg til TARC. */
   seponering: Kildehenvisning[]
@@ -1048,9 +1100,11 @@ function tilAripiprazol(a: {
       justerbar: `Aripiprazol ${uke} (mg)`,
       henvisninger: [TARC.opptrapping],
     })
+  // Kildens eget eksempel: ned 25 % av startdosen per trinn, 20 → 15 → 10 → 5 mg eller 4 → 3 → 2 → 1 mg og så stopp.
+  const kildeforlop = `${[4, 3, 2, 1].map((n) => (a.kildeeksempel * n) / 4).join(' → ')} mg`
   return {
     id: a.id,
-    versjon: 4,
+    versjon: 5,
     tittel: `Fra ${a.fraNavn} til aripiprazol, kryss-titrering`,
     fra: { type: 'virkestoff', nokkel: a.fra },
     til: { type: 'virkestoff', nokkel: 'aripiprazol' },
@@ -1070,23 +1124,8 @@ function tilAripiprazol(a: {
               strategi: {
                 type: 'prosent_av_startdose',
                 prosent: kilde(25, 'prosent', 'bindende_krav', TARC.nedtrapping),
-                // Kontrollørens fjerde gjennomgang: et valgfritt mindre siste trinn der planen ellers går fra siste dose til 0.
-                mellomtrinn: {
-                  type: 'ousfar_vurdering',
-                  begrunnelse:
-                    'Kildens siste trinn går fra 25 % av startdosen til 0 (20 → 15 → 10 → 5 mg og 4 → 3 → 2 → 1 mg og så stopp), og planen er komplett uten valg. Forskriveren kan i stedet velge ett mindre siste trinn med en lavere dose som kan gis, med samme fartsregel, så nedtrappingen aldri går raskere enn kilden, bare saktere. Kilden beskriver ikke et slikt trinn; valget er OUSFARs og må avklares av kontrolløren.',
-                  henvisninger: [TARC.nedtrapping],
-                  avklaring: null,
-                },
               },
               trinnlengde: { ...kilde(14, 'dager', 'bindende_krav', TARC.nedtrapping), omrade: [14, TEKNISK_MAKS_DAGER], justerbar: 'Minste antall dager per reduksjon', teknisk_maks: true },
-              // Kontrollørens valg c (03.11.2026): forskriveren velger blant de nærmeste dosene som kan gis når et trinn ikke kan gis nøyaktig.
-              trinnvalg: {
-                type: 'ousfar_vurdering',
-                begrunnelse:
-                  'Kontrollørens valg c: når 25 % av startdosen ikke kan gis med tablettene, velger forskriveren den nærmeste dosen under eller over som kan gis; verktøyet runder aldri av selv. Sikkerhetskravet er OUSFARs forslag og følger kildens fart uten nye tall: aldri raskere enn 25 % av startdosen per 14 dager, så et større trinn varer tilsvarende lenger. Neste trinn regnes fra den valgte dosen, og seponeringen kommer når neste beregnede dose er 0 eller lavere.',
-                avklaring: null,
-              },
             },
           ],
           vurderinger: [
@@ -1119,7 +1158,20 @@ function tilAripiprazol(a: {
         ]),
       ],
     },
-    inndata: [a.startdose, { navn: 'maldose', verdier: [10, 15], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [TARC.opptrapping, SPC.abilifyDose] } }],
+    inndata: [
+      // Kontrollørens sjette gjennomgang: bare kildens eget forløp, der hvert trinn og siste dose før seponering står i kilden.
+      {
+        navn: 'startdose',
+        verdier: [a.kildeeksempel],
+        art: 'bindende_krav',
+        grunnlag: {
+          type: 'ousfar_vurdering',
+          begrunnelse: `Planen gjelder bare ${a.kildeeksempel} mg ${a.fraNavn} daglig, startdosen i kildens eget eksempel (${kildeforlop} og så stopp), slik at hvert trinn og siste dose før seponering står i kilden. Kilden knytter ikke eksemplene til et bestemt stoff; at dosen gjelder ${a.fraNavn}, er OUSFARs avgrensning innenfor preparatomtalens doseområde og må avklares av kontrolløren. Andre startdoser og egne lavdosetrinn er ikke validert og stopper.`,
+          henvisninger: [TARC.nedtrapping, ...a.doseomrade],
+          avklaring: null,
+        },
+      },
+      { navn: 'maldose', verdier: [10, 15], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [TARC.opptrapping, SPC.abilifyDose] } }],
     bekreftelser: [
       {
         id: 'indikasjon',
@@ -1132,13 +1184,7 @@ function tilAripiprazol(a: {
       {
         id: 'siste_trinn',
         tekst: `Siste trinn er vurdert for denne pasienten: ${a.fraNavn} seponeres helt fra den siste lave dosen (hele dosen som gjenstår) mens aripiprazol har stått på måldosen i flere uker. Pasienten vet hvilke seponeringsplager og tegn på tilbakefall som skal meldes, og vurderes før siste trinn og etter seponeringen. Ved forverring, uro eller seponeringsplager holdes siste dose, og resten planlegges individuelt.`,
-        grunnlag: {
-          type: 'ousfar_vurdering',
-          begrunnelse:
-            'Kilden avslutter med et trinn til 0 (20 → 15 → 10 → 5 mg og 4 → 3 → 2 → 1 mg og så stopp), mens aripiprazol står på måldosen. Trinnet er 25 % av startdosen, men 100 % av dosen som gjenstår, og kilden begrunner det ikke farmakologisk. OUSFAR kan ikke selv fastslå at siste trinn er forsvarlig; regelen krever derfor en vurdering av den enkelte pasienten, stopper ved tidligere seponeringsplager og må avklares av kontrolløren før den kan gi en plan.',
-          henvisninger: [TARC.nedtrapping, TARC.overlapp, TARC.oppfolging, ...a.seponering],
-          avklaring: null,
-        },
+        grunnlag: { type: 'kilde', henvisninger: [TARC.nedtrapping, TARC.overlapp, TARC.oppfolging, KEKS.spesialist, ...a.seponering] },
       },
     ],
     unntak: [
@@ -1172,7 +1218,8 @@ function tilAripiprazol(a: {
       tilpasninger: [
         utsagn('Aripiprazol foreslås som 5 mg den første uken og 10 mg den andre, øverst i kildens områder, fordi den laveste tablettstyrken i FEST er 5 mg og ikke er delbar; forskriveren kan velge 2,5 mg (mikstur) og 5–10 mg. Måldosen 10 eller 15 mg velges av forskriveren.', TARC.opptrapping),
         utsagn(`${a.fraNavn[0]!.toUpperCase()}${a.fraNavn.slice(1)} holdes uendret i 28 dager: 14 dagers opptrapping og 14 dager sammen med aripiprazol på måldosen. Første reduksjon er dag 29, og hver reduksjon står i minst 14 dager.`, TARC.opptrapping, TARC.overlapp, TARC.nedtrapping),
-        utsagn('Hver reduksjon er 25 % av startdosen. Kan et trinn ikke gis med tablettene i FEST, stopper planen og viser de nærmeste dosene under og over som kan gis, med faktisk reduksjon og dager; forskriveren velger, og verktøyet runder aldri av selv (kontrollørens valg c). Et større trinn varer så lenge at nedtrappingen aldri går raskere enn 25 % av startdosen per 14 dager, og neste trinn regnes fra den valgte dosen. Legemidlet seponeres når neste beregnede dose er 0 eller lavere, så siste dose før seponering er aldri mer enn 25 % av startdosen og har stått minst 14 dager, som i kildens eksempler. I stedet for trinnet til 0 kan forskriveren velge ett mindre siste trinn med en lavere dose som kan gis (for eksempel olanzapin 2,5 mg etter 5 mg), med samme fartsregel; seponeringen kommer da etter det trinnet. Uten valg gjelder kildens siste trinn. Siste trinn til 0 er alltid hele dosen som gjenstår; det krever derfor en egen vurdering av pasienten, stopper ved tidligere seponeringsplager, og pasienten vurderes før siste trinn og etter seponeringen (forslag: 14 dager etter).', TARC.nedtrapping, TARC.oppfolging),
+        utsagn(`Planen gjelder bare startdosen i kildens eget eksempel, ${a.kildeeksempel} mg (åpent OUSFAR-valg til kontrolløren), så hvert trinn, også siste dose før seponering, er kildens: ${kildeforlop} og så stopp, hvert trinn i minst 14 dager. Andre startdoser stopper, fordi kilden ikke viser hvordan de skal trappes ned når trinnene ikke kan gis med tablettene, og OUSFAR legger ikke inn egne lavdosetrinn som ikke er validert.`, TARC.nedtrapping, ...a.doseomrade),
+        utsagn('Siste trinn til 0 er hele dosen som gjenstår. Det krever en egen vurdering av pasienten, stopper ved tidligere seponeringsplager, og pasienten vurderes før hver reduksjon, før siste trinn og etter seponeringen (forslag: 14 dager etter).', TARC.nedtrapping, TARC.oppfolging),
       ],
       forutsetninger: forutsetninger(
         `Pasienten bruker peroral ${a.fraNavn} som eneste antipsykotikum, i en stabil dose.`,
@@ -1191,6 +1238,7 @@ function tilAripiprazol(a: {
       `${GJENNOMGANG} kontrollørens valg c: når et trinn på 25 % av startdosen ikke kan gis, velger forskriveren blant de nærmeste dosene som kan gis, et større trinn varer tilsvarende lenger (aldri raskere enn 25 % av startdosen per 14 dager), og resten av forløpet regnes fra den valgte dosen.`,
       `${GJENNOMGANG_4} forskriveren kan velge ett mindre siste trinn før seponeringen (åpent OUSFAR-valg), med samme fartsregel; uten valg gjelder kildens siste trinn, der siste dose er høyst 25 % av startdosen.`,
       `${GJENNOMGANG_5} siste trinn til 0 krever en bekreftet vurdering av pasienten (åpent OUSFAR-valg), tidligere seponeringsplager er et unntak, og pasienten vurderes før siste trinn og etter seponeringen (forslag 14 dager).`,
+      `${GJENNOMGANG_6} regelen gjelder bare startdosen i kildens eget eksempel (åpent OUSFAR-valg), så hvert trinn og siste dose før seponering står i kilden; valget av nærmeste dose (valg c) og det valgfrie mindre siste trinnet er fjernet, fordi de ga trinn kilden ikke har validert. Vurderingen av siste trinn bygger nå på kildens forløp.`,
     ),
   }
 }
@@ -1199,7 +1247,8 @@ const olanzapinAripiprazol = tilAripiprazol({
   id: 'antipsykotikabytte-olanzapin-aripiprazol',
   fra: 'olanzapin',
   fraNavn: 'olanzapin',
-  startdose: { navn: 'startdose', omrade: [5, 20], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [SPC.zyprexaDose] } },
+  kildeeksempel: 20,
+  doseomrade: [SPC.zyprexaDose],
   fraKilder: [SPC.zyprexaDose, SPC.zyprexaSeponering],
   seponering: [SPC.zyprexaSeponering],
   referanse: 'SwitchAntipsychotics:Ol>Pa',
@@ -1220,19 +1269,17 @@ const olanzapinAripiprazol = tilAripiprazol({
       },
     },
     {
-      id: 'fra-10-mg-10',
-      beskrivelse: 'Olanzapin 10 mg, aripiprazol til 10 mg.',
-      inndata: { startdose_mg: 10, maldose_mg: 10, bekreftet: TIL_ARIPIPRAZOL_BEKREFTET, pasientforhold: TIL_ARIPIPRAZOL_NEI },
-      forventet: { fra: ['dag 1–28: 10 mg', 'dag 29–42: 7,5 mg', 'dag 43–56: 5 mg', 'dag 57–70: 2,5 mg', 'fra dag 71: seponert'], til: ['dag 1–7: 5 mg', 'fra dag 8: 10 mg'] },
+      id: 'fra-20-mg-10',
+      beskrivelse: 'Olanzapin 20 mg, aripiprazol til 10 mg.',
+      inndata: { startdose_mg: 20, maldose_mg: 10, bekreftet: TIL_ARIPIPRAZOL_BEKREFTET, pasientforhold: TIL_ARIPIPRAZOL_NEI },
+      forventet: { fra: ['dag 1–28: 20 mg', 'dag 29–42: 15 mg', 'dag 43–56: 10 mg', 'dag 57–70: 5 mg', 'fra dag 71: seponert'], til: ['dag 1–7: 5 mg', 'fra dag 8: 10 mg'] },
     },
     {
-      id: 'fra-20-mg-mindre-siste-trinn',
-      beskrivelse: 'Olanzapin 20 mg med et mindre siste trinn valgt av forskriveren: 2,5 mg i 14 dager i stedet for trinnet fra 5 mg til 0.',
-      inndata: { startdose_mg: 20, maldose_mg: 15, bekreftet: TIL_ARIPIPRAZOL_BEKREFTET, pasientforhold: TIL_ARIPIPRAZOL_NEI, trinnvalg: [{ forlop: 'fra', trinn: 4, fra_mg: 5, mg: 2.5 }] },
-      forventet: {
-        fra: ['dag 1–28: 20 mg', 'dag 29–42: 15 mg', 'dag 43–56: 10 mg', 'dag 57–70: 5 mg', 'dag 71–84: 2,5 mg, mindre siste trinn valgt av forskriveren (−50 %)', 'fra dag 85: seponert'],
-        til: ['dag 1–7: 5 mg', 'dag 8–14: 10 mg', 'fra dag 15: 15 mg'],
-      },
+      id: 'fra-10-mg',
+      beskrivelse: 'Olanzapin 10 mg: kilden viser ikke forløpet fra denne dosen, og siste trinn (2,5 mg til 0) er ikke validert, så ingen komplett plan.',
+      inndata: { startdose_mg: 10, maldose_mg: 10, bekreftet: TIL_ARIPIPRAZOL_BEKREFTET, pasientforhold: TIL_ARIPIPRAZOL_NEI },
+      forventet: {},
+      stopp: /Startdosen 10 mg er utenfor det regelen gjelder for \(20 mg\)/,
     },
     {
       id: 'tidligere-seponeringsplager',
@@ -1249,29 +1296,11 @@ const olanzapinAripiprazol = tilAripiprazol({
       stopp: /Må bekreftes før beregning: Siste trinn er vurdert for denne pasienten/,
     },
     {
-      id: 'fra-15-mg-valgte-trinn',
-      beskrivelse: 'Olanzapin 15 mg: 11,25, 6,25 og 1,25 mg kan ikke gis, og forskriveren har valgt 10, 5 og 2,5 mg (valg c); de større trinnene varer lenger.',
-      inndata: {
-        startdose_mg: 15,
-        maldose_mg: 15,
-        bekreftet: TIL_ARIPIPRAZOL_BEKREFTET,
-        pasientforhold: TIL_ARIPIPRAZOL_NEI,
-        trinnvalg: [
-          { forlop: 'fra', trinn: 1, fra_mg: 15, mg: 10 },
-          { forlop: 'fra', trinn: 2, fra_mg: 10, mg: 5 },
-          { forlop: 'fra', trinn: 3, fra_mg: 5, mg: 2.5 },
-        ],
-      },
-      forventet: {
-        fra: [
-          'dag 1–28: 15 mg',
-          'dag 29–47: 10 mg, valgt av forskriveren (beregnet 11,25 mg; −33,33 %)',
-          'dag 48–66: 5 mg, valgt av forskriveren (beregnet 6,25 mg; −50 %)',
-          'dag 67–80: 2,5 mg, valgt av forskriveren (beregnet 1,25 mg; −50 %)',
-          'fra dag 81: seponert',
-        ],
-        til: ['dag 1–7: 5 mg', 'dag 8–14: 10 mg', 'fra dag 15: 15 mg'],
-      },
+      id: 'fra-15-mg',
+      beskrivelse: 'Olanzapin 15 mg: 11,25 mg kan ikke gis med tablettene, og kilden viser ikke hvordan det skal trappes ned, så ingen komplett plan.',
+      inndata: { startdose_mg: 15, maldose_mg: 15, bekreftet: TIL_ARIPIPRAZOL_BEKREFTET, pasientforhold: TIL_ARIPIPRAZOL_NEI },
+      forventet: {},
+      stopp: /Startdosen 15 mg er utenfor det regelen gjelder for \(20 mg\)/,
     },
     {
       id: 'maldose-20',
@@ -1316,7 +1345,8 @@ const risperidonAripiprazol = tilAripiprazol({
   id: 'antipsykotikabytte-risperidon-aripiprazol',
   fra: 'risperidon',
   fraNavn: 'risperidon',
-  startdose: { navn: 'startdose', omrade: [0, 16], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [RISPERDAL.maks] } },
+  kildeeksempel: 4,
+  doseomrade: [RISPERDAL.dose, RISPERDAL.maks],
   fraKilder: [RISPERDAL.dose, RISPERDAL.maks],
   seponering: [],
   referanse: 'SwitchAntipsychotics:Rd>Pa',
@@ -1328,10 +1358,24 @@ const risperidonAripiprazol = tilAripiprazol({
       forventet: { fra: ['dag 1–28: 4 mg', 'dag 29–42: 3 mg', 'dag 43–56: 2 mg', 'dag 57–70: 1 mg', 'fra dag 71: seponert'], til: ['dag 1–7: 5 mg', 'dag 8–14: 10 mg', 'fra dag 15: 15 mg'] },
     },
     {
-      id: 'fra-6-mg-10',
-      beskrivelse: 'Risperidon 6 mg, aripiprazol til 10 mg.',
+      id: 'fra-4-mg-10',
+      beskrivelse: 'Risperidon 4 mg, aripiprazol til 10 mg.',
+      inndata: { startdose_mg: 4, maldose_mg: 10, bekreftet: TIL_ARIPIPRAZOL_BEKREFTET, pasientforhold: TIL_ARIPIPRAZOL_NEI },
+      forventet: { fra: ['dag 1–28: 4 mg', 'dag 29–42: 3 mg', 'dag 43–56: 2 mg', 'dag 57–70: 1 mg', 'fra dag 71: seponert'], til: ['dag 1–7: 5 mg', 'fra dag 8: 10 mg'] },
+    },
+    {
+      id: 'fra-6-mg',
+      beskrivelse: 'Risperidon 6 mg: kilden viser ikke forløpet fra denne dosen (siste trinn 1,5 mg til 0), så ingen komplett plan.',
       inndata: { startdose_mg: 6, maldose_mg: 10, bekreftet: TIL_ARIPIPRAZOL_BEKREFTET, pasientforhold: TIL_ARIPIPRAZOL_NEI },
-      forventet: { fra: ['dag 1–28: 6 mg', 'dag 29–42: 4,5 mg', 'dag 43–56: 3 mg', 'dag 57–70: 1,5 mg', 'fra dag 71: seponert'], til: ['dag 1–7: 5 mg', 'fra dag 8: 10 mg'] },
+      forventet: {},
+      stopp: /Startdosen 6 mg er utenfor det regelen gjelder for \(4 mg\)/,
+    },
+    {
+      id: 'fra-2-mg',
+      beskrivelse: 'Risperidon 2 mg: kilden viser ikke forløpet fra denne dosen (siste trinn 0,5 mg til 0), så ingen komplett plan.',
+      inndata: { startdose_mg: 2, maldose_mg: 10, bekreftet: TIL_ARIPIPRAZOL_BEKREFTET, pasientforhold: TIL_ARIPIPRAZOL_NEI },
+      forventet: {},
+      stopp: /Startdosen 2 mg er utenfor det regelen gjelder for \(4 mg\)/,
     },
     {
       id: 'risperidon-over-16',

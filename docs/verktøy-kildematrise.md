@@ -60,6 +60,7 @@
 | --- | --- | --- |
 | Strategier for peroralt bytte, seponering og rebound | `keks-2019`; preparatomtalene pkt. 4.2 og 4.4 | Ingen fri, autoritativ kilde gir ferdige byttetabeller. Hver kombinasjon må bygges fra preparatomtalene til begge stoffene. |
 | Peroral → depot, dose og overlapp | Preparatomtalene pkt. 4.2 (tabell under) | Hvert depotpreparat har sin egen regel. |
+| Peroral risperidon → Xeplion, vedlikeholdsdose | `russu-2018` (farmakokinetiske simuleringer, CC BY-NC-ND 4.0) | Sponset av Janssen; bare eksponering, ikke klinisk utprøvd. K3 bruker den bare til å avgrense regelen, ikke som omregning. |
 | Depot → depot | Trevicta: 3,5 ganger siste Xeplion-dose (EPAR); Abilify Maintena 400 → 960 mg (`ema-abilify-maintena`) | Krever preparatvalg i verktøyet (VDK-2, «depot til depot»). |
 | Norsk ramme | Helsedirektoratet, «Psykoselidelser – behandling» (depot kan tilbys); NICE CG178 1.5.6 | Ingen doser. |
 
