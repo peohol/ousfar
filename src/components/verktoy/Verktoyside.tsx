@@ -26,7 +26,7 @@ import {
   type Planskjema,
 } from '../../verktoy/doseplan'
 import type { Kildeformulering } from '../../verktoy/kartlegging'
-import { foretrukketTekst, trinndosetekst, type Doseplanresultat, type Formalternativer, type Trinnvalg } from '../../verktoy/motor/plan'
+import { foretrukketTekst, tempotekst, trinndosetekst, type Doseplanresultat, type Formalternativer, type Trinnvalg } from '../../verktoy/motor/plan'
 import { planvisning, type Planvisning } from '../../verktoy/planvisning'
 import { finnVirkestoff, KARTLEGGING, VALGTEKSTER, VERKTOY, verktoyFor, virkestoffvalg, type Verktoy } from '../../verktoy/register'
 import { avrund } from '../../verktoy/regler/beregning'
@@ -1108,8 +1108,17 @@ function Trinnvalgdel({ resultat, navn, onVelg }: { resultat: Doseplanresultat |
             Trinn {t.trinn} av {navn(t.forlop)} kan ikke gis nøyaktig
           </legend>
           <p className="feltgruppe__hjelp">
-            Den foretrukne reduksjonen til {foretrukketTekst(t)} kan ikke gis med preparatene. Velg en dose som kan gis; den faktiske reduksjonen må være innenfor det foretrukne
-            området {tall(t.omrade[0])}–{tall(t.omrade[1])} %. Verktøyet velger ikke selv, og planen beregnes på nytt fra dosen du velger.
+            {t.omrade ? (
+              <>
+                Den foretrukne reduksjonen til {foretrukketTekst(t)} kan ikke gis med preparatene. Velg en dose som kan gis; den faktiske reduksjonen må være innenfor det
+                foretrukne området {tall(t.omrade[0])}–{tall(t.omrade[1])} %.
+              </>
+            ) : (
+              <>
+                Den beregnede reduksjonen til {foretrukketTekst(t)} kan ikke gis med preparatene. Velg en av de nærmeste dosene som kan gis. {t.tempo && tempotekst(t.tempo)}
+              </>
+            )}{' '}
+            Verktøyet velger ikke selv, og planen beregnes på nytt fra dosen du velger.
           </p>
           <div className="verktoyskjema__handlinger">
             {t.doser.map((d) => (

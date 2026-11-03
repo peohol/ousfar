@@ -25,7 +25,7 @@
  */
 import { FEST_FORELDET_ETTER_TIMER, festForeldet } from '../../legemiddeldata/referanser'
 import { FORMULERINGSKLASSER, type Formuleringsklasse } from '../festformuleringer'
-import { AVSLUTNING_FELLES, AVVIK_IKKE_BEREGNET, avrund, beregn, datoFor, overAvslutning, overAvslutningKort, erIsoDato, fordelingstekst, hverTekst, injeksjonstidspunkt, medEnhet, medSvarforslag, utenBeregningLinje, valgtSuffiks, trinnvalgOmrade, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
+import { AVSLUTNING_FELLES, AVVIK_IKKE_BEREGNET, avrund, beregn, datoFor, overAvslutning, overAvslutningKort, erIsoDato, tempolengde, fordelingstekst, hverTekst, injeksjonstidspunkt, medEnhet, medSvarforslag, utenBeregningLinje, valgtSuffiks, trinnvalgOmrade, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
 import { fingeravtrykk, godkjenningsfeil, kanonisk, sha256 } from '../regler/godkjenning'
 import { avslutningFor, justerbare, parameterfeil, type Beregningsinndata, type Fase, type Forlop, type Klinisktilfelle, type Parameter, type Regel, type Regelsett } from '../regler/modell'
 import { byggesteiner, DOSEENHETER, norskDato, type Byggestein, type Preparatgrunnlag } from './byggesteiner'
@@ -98,9 +98,22 @@ export interface Trinnvalg {
   fra_mg: number
   /** Den beregnede dosen, som ikke kan gis nøyaktig. */
   beregnet_mg: number
-  /** Valgområdet for faktisk reduksjon, i prosent. */
-  omrade: [number, number]
+  /** Valgområdet for faktisk reduksjon, i prosent, når regelen trapper ned i prosent av aktuell dose. */
+  omrade?: [number, number]
+  /**
+   * Når regelen trapper ned med fast reduksjon i prosent av startdosen
+   * (regelmodell 12): reduksjonen per trinn (`steg_mg`, `prosent` av
+   * startdosen) og regelens trinnlengde; en større reduksjon gir et lengre
+   * trinn (`Trinndose.dager`).
+   */
+  tempo?: Tempo
   doser: Trinndose[]
+}
+
+export interface Tempo {
+  steg_mg: number
+  prosent: number
+  dager: number
 }
 
 export interface Trinndose {
@@ -110,6 +123,8 @@ export interface Trinndose {
   elementer: Doseelement[]
   /** Fordelingen når døgndosen skal fordeles. */
   doser?: number[]
+  /** Hvor lenge trinnet varer med denne dosen, når det avhenger av reduksjonen ({@link Tempo}). */
+  dager?: number
 }
 
 export interface Praktiskinjeksjon extends Injeksjon {
@@ -482,7 +497,11 @@ const ANNEN_DOSE = 'En annen dose, et større avvik eller en annen formulering e
 export const foretrukketTekst = (tv: Pick<Trinnvalg, 'fra_mg' | 'beregnet_mg'>) => `${tall(tv.beregnet_mg)} mg (−${tall((1 - tv.beregnet_mg / tv.fra_mg) * 100)} % fra ${tall(tv.fra_mg)} mg)`
 
 /** En dose forskriveren kan velge, med faktisk reduksjon fra dosen før. */
-export const trinndosetekst = (d: Pick<Trinndose, 'mg' | 'prosent'>) => `${tall(d.mg)} mg (−${tall(d.prosent)} %)`
+export const trinndosetekst = (d: Pick<Trinndose, 'mg' | 'prosent' | 'dager'>) => `${tall(d.mg)} mg (−${tall(d.prosent)} %${d.dager !== undefined ? `, ${d.dager} dager` : ''})`
+
+/** Hva tempoet betyr for valget: ingen dose gir en raskere nedtrapping enn regelen. */
+export const tempotekst = (t: Tempo) =>
+  `Trinnet varer da minst ${t.dager} dager, og lenger når reduksjonen er større enn ${tall(t.steg_mg)} mg, så nedtrappingen ikke går raskere enn ${tall(t.prosent)} % av startdosen per ${t.dager} dager.`
 
 /**
  * Det stoppet sier om trinnet fra `fra_mg` til den beregnede dosen: dosene
@@ -491,11 +510,48 @@ export const trinndosetekst = (d: Pick<Trinndose, 'mg' | 'prosent'>) => `${tall(
  * planen er et forklarende stopp og et avvik ikke tilbys (kontrollørens
  * gjennomgang av 9cb420b, P7.5).
  */
-function trinnvalgtekst(tv: Trinnvalg | null, trinn: Pick<Trinnvalg, 'fra_mg' | 'beregnet_mg' | 'omrade'>): string {
+function trinnvalgtekst(tv: Trinnvalg | null, trinn: Pick<Trinnvalg, 'fra_mg' | 'beregnet_mg'> & { omrade: [number, number] }): string {
   const omrade = `det foretrukne området ${tall(trinn.omrade[0])}–${tall(trinn.omrade[1])} %`
   const foretrukket = `Den foretrukne reduksjonen til ${foretrukketTekst(trinn)} kan ikke gis med preparatene`
   if (!tv) return `${foretrukket}, og ingen dose som kan gis, har en faktisk reduksjon innenfor ${omrade}. ${AVVIK_IKKE_BEREGNET}`
   return `${foretrukket}. Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra ${tall(tv.fra_mg)} mg innenfor ${omrade}: ${tv.doser.map(trinndosetekst).join(' eller ')}. Beregningen velger ikke selv.`
+}
+
+/**
+ * Dosene forskriveren kan velge for periode `p` fra `fra` mg i en nedtrapping
+ * med fast reduksjon i prosent av startdosen (regelmodell 12): blant dosene
+ * som kan gis og fordeles, den nærmeste under og den nærmeste over den
+ * beregnede, lavere enn dosen før, over 0 og vist nøyaktig, med trinnlengden
+ * for hver ({@link tempolengde}). `null` når ingen er det.
+ */
+function tempovalgFor(f: Forlopsresultat, p: Periode, beregnet: number, v: Styrkevalg[], fra: number, tempo: Tempo, min: number | null, fordelt: (k: Dosekandidat) => number[] | null | undefined): Trinnvalg | null {
+  const mulige = doser(v, Math.max(min ?? 0, EPS), fra, (k) => fordelt(k) !== null).filter((k) => k.mg < fra - EPS && Math.abs(avrund(k.mg) - k.mg) < EPS)
+  const naermeste = [mulige.filter((k) => k.mg < beregnet - EPS).at(-1), mulige.find((k) => k.mg > beregnet + EPS)].filter((k): k is Dosekandidat => !!k)
+  if (naermeste.length === 0) return null
+  return {
+    forlop: f.id,
+    virkestoff: f.virkestoff,
+    trinn: p.trinn!,
+    fra_dag: p.fra,
+    fra_mg: fra,
+    beregnet_mg: beregnet,
+    tempo,
+    doser: naermeste.map((k) => ({ mg: k.mg, prosent: (1 - k.mg / fra) * 100, elementer: k.elementer, dager: tempolengde(tempo.dager, tempo.steg_mg, fra - k.mg), ...(p.fordeles && { doser: fordelt(k)! }) })),
+  }
+}
+
+/** Det stoppet sier når trinnet i en nedtrapping i prosent av startdosen ikke kan gis: dosene som kan velges, eller at ingen kan det. */
+function tempovalgtekst(tv: Trinnvalg | null, trinn: Pick<Trinnvalg, 'fra_mg' | 'beregnet_mg'>, tempo: Tempo): string {
+  const foretrukket = `Den beregnede reduksjonen til ${foretrukketTekst(trinn)} kan ikke gis med preparatene`
+  if (!tv) return `${foretrukket}, og ingen lavere dose kan gis. En annen plan må vurderes individuelt.`
+  return `${foretrukket}. Regelen lar forskriveren velge en av de nærmeste dosene som kan gis: ${tv.doser.map(trinndosetekst).join(' eller ')}. ${tempotekst(tempo)} Beregningen velger ikke selv.`
+}
+
+/** Tempoet for periode `p` fra `forrige` mg, når forløpet trapper ned med valg av dose per trinn i prosent av startdosen; ellers `undefined`. */
+function tempoFor(def: Forlop, forrige: number, p: Periode): Tempo | undefined {
+  const fase = trinnvalgFase(def)
+  if (fase?.strategi.type !== 'prosent_av_startdose' || p.trinn === undefined) return undefined
+  return { steg_mg: forrige - (p.valgt?.beregnet_mg ?? p.mg), prosent: fase.strategi.prosent.verdi ?? 0, dager: fase.trinnlengde.verdi ?? 0 }
 }
 
 /** Nedtrappingsfasen i forløpet der forskriveren kan velge dosen per trinn. */
@@ -584,6 +640,14 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
       if (p.valgt && kanGis(v, p.valgt.beregnet_mg, p).some((k) => Math.abs(k.mg - p.valgt!.beregnet_mg) < EPS * Math.max(1, k.mg))) {
         throw new Stopp(`${f.virkestoff} ${dager(p)}: den beregnede dosen ${tall(p.valgt.beregnet_mg)} mg for trinn ${p.trinn} kan gis med preparatene i FEST, så valget ${tall(p.mg)} mg gjelder ikke. Fjern valget.`)
       }
+      // Med fast reduksjon i prosent av startdosen er et valgt trinn en av de nærmeste dosene som kan gis (regelmodell 12).
+      const tempo = tempoFor(def, forrige, p)
+      if (p.valgt && tempo) {
+        const t = tempovalgFor(f, p, p.valgt.beregnet_mg, v, forrige, tempo, min, (k) => fordelt(p, k))
+        if (!t?.doser.some((d) => Math.abs(d.mg - p.mg) < EPS)) {
+          throw new Stopp(`${f.virkestoff} ${dager(p)}: den valgte dosen ${tall(p.mg)} mg for trinn ${p.trinn} er ikke en av de nærmeste dosene som kan gis${t ? ` (${t.doser.map((d) => `${tall(d.mg)} mg`).join(' eller ')})` : ''}. Fjern valget, og velg på nytt.`)
+        }
+      }
       const naer = (k: Dosekandidat) => Math.abs(k.mg - p.mg) <= p.mg * tol + EPS * Math.max(1, p.mg)
       const innenfor = kanGis(v, p.mg).filter(naer)
       const kandidater = p.fordeles ? kanGis(v, p.mg, p).filter(naer) : innenfor
@@ -593,10 +657,14 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
         // Kan en nøyaktig dose gis, men ikke fordeles, er det fordelingen som stopper planen.
         const fordelingen = !!p.fordeles && innenfor.length > 0
         // Lar regelen forskriveren velge en dose som kan gis, regnes de nærmeste ut; et valgt trinn tilbys ikke på nytt.
-        const fase = valgbar && avkortbar && p.trinn !== undefined && !p.valgt ? trinnvalgFase(def) : undefined
-        const omrade = fase && trinnvalgOmrade(fase.strategi, forrige, inndata.svar)!
-        const tv = omrade ? trinnvalgFor(f, p, v, forrige, omrade, min, (k) => fordelt(p, k)) : undefined
-        const valgtekst = omrade ? trinnvalgtekst(tv!, { fra_mg: forrige, beregnet_mg: p.mg, omrade }) : undefined
+        const fase = valgbar && p.trinn !== undefined && !p.valgt ? trinnvalgFase(def) : undefined
+        const omrade = fase && !tempo && avkortbar ? trinnvalgOmrade(fase.strategi, forrige, inndata.svar)! : undefined
+        const tv = omrade ? trinnvalgFor(f, p, v, forrige, omrade, min, (k) => fordelt(p, k)) : fase && tempo ? tempovalgFor(f, p, p.mg, v, forrige, tempo, min, (k) => fordelt(p, k)) : undefined
+        const valgtekst = omrade
+          ? trinnvalgtekst(tv!, { fra_mg: forrige, beregnet_mg: p.mg, omrade })
+          : fase && tempo
+            ? tempovalgtekst(tv!, { fra_mg: forrige, beregnet_mg: p.mg }, tempo)
+            : undefined
         const hvorfor = fordelingen
           ? ingenFordeling(f, p, over) + (valgtekst === undefined ? '' : ` ${valgtekst}`)
           : ingenDose(f, p, v, alleValg, tol, grenser, forrige, valgtekst)

@@ -286,6 +286,68 @@ export function trinnvalgOmrade(s: Nedtrappingsstrategi, aktuell: number, svar: 
   return [fra, Math.min(til, ...(lav ? [s.lav_prosent!.verdi!] : []), ...begrunnes)]
 }
 
+/**
+ * Trinnlengden når forskriveren har valgt en annen reduksjon enn den beregnede
+ * for en nedtrapping med fast reduksjon i prosent av startdosen (`steg_mg` per
+ * `lengde` dager): aldri kortere enn regelens trinnlengde, og lenger når
+ * reduksjonen er større, så nedtrappingen aldri går raskere enn regelen
+ * (regelmodell 12).
+ */
+export const tempolengde = (lengde: number, steg_mg: number, reduksjon_mg: number) => Math.max(lengde, Math.ceil((lengde * reduksjon_mg) / steg_mg - EPS))
+
+/**
+ * Nedtrappingen med fast reduksjon i prosent av startdosen til 0, med
+ * forskriverens valg av dose per trinn (`Fase.trinnvalg`): hvert trinn er
+ * dosen før minus reduksjonen, eller den valgte dosen når den beregnede ikke
+ * kan gis, med lengden fra {@link tempolengde}. Neste trinn regnes fra den
+ * valgte dosen. Den valgte dosen må være lavere enn dosen før, over 0, ikke
+ * under laveste dose som kan gis og vises nøyaktig; at den er en av de
+ * nærmeste dosene som kan gis, kontrollerer doseplanmotoren (P5). Gir dagen
+ * etter siste trinn.
+ */
+function tempotrinn(
+  s: Extract<Nedtrappingsstrategi, { type: 'prosent_av_startdose' }>,
+  d0: number,
+  lengde: number,
+  dag: number,
+  virkestoff: string,
+  valg: Trinnvalgsvar[],
+  min: number | undefined,
+  legg: (fra: number, til: number | null, mg: number, hver?: number, trinn?: Pick<Periode, 'trinn' | 'valgt'>) => void,
+  ctx: Kontekst,
+): number {
+  const steg = (d0 * verdi(s.prosent)) / 100
+  let aktuell = d0
+  for (let k = 1; k <= MAKS_TRINN; k++) {
+    const beregnet = aktuell - steg
+    if (beregnet <= EPS) return dag
+    const v = valg.find((x) => x.trinn === k && Math.abs(x.fra_mg - aktuell) < EPS)
+    if (!v) {
+      legg(dag, dag + lengde - 1, beregnet, undefined, { trinn: k })
+      dag += lengde
+      aktuell = beregnet
+      continue
+    }
+    ctx.brukteValg.add(v)
+    const hva = `Trinn ${k} av ${virkestoff}: den valgte dosen ${tall(v.mg)} mg`
+    if (v.mg >= aktuell - EPS) throw new Stopp(`${hva} er ikke lavere enn dosen før (${tall(aktuell)} mg).`)
+    if (v.mg <= EPS) throw new Stopp(`${hva} er ikke en dose; seponeringen kommer etter siste trinn.`)
+    if (Math.abs(avrund(v.mg) - v.mg) > EPS) throw new Stopp(`${hva} kan ikke vises nøyaktig med to desimaler.`)
+    if (min !== undefined && v.mg < min - EPS) throw new Stopp(`${hva} er under ${tall(min)} mg, den laveste dosen som kan gis med formuleringen regelen gjelder.`)
+    const n = tempolengde(lengde, steg, aktuell - v.mg)
+    const prosent = (1 - v.mg / aktuell) * 100
+    ctx.kontroller.push({
+      krav: `Trinn ${k} av ${virkestoff} er valgt av forskriveren fordi den beregnede dosen (${tall(beregnet)} mg) ikke kan gis; trinnet varer så lenge at nedtrappingen ikke går raskere enn ${tall(verdi(s.prosent))} % av startdosen per ${lengde} dager`,
+      oppfylt: true,
+      detalj: `${tall(v.mg)} mg, ${tall(aktuell - v.mg)} mg reduksjon fra ${tall(aktuell)} mg, ${n} dager.`,
+    })
+    legg(dag, dag + n - 1, v.mg, undefined, { trinn: k, valgt: { beregnet_mg: beregnet, prosent } })
+    dag += n
+    aktuell = v.mg
+  }
+  throw new Error(`Nedtrappingen av ${virkestoff} når ikke 0 på ${MAKS_TRINN} trinn`)
+}
+
 /** Hva et valg utenfor det foretrukne området er: et avvik verktøyet ikke beregner (kontrollørens gjennomgang av 9cb420b, P7.5). */
 export const AVVIK_IKKE_BEREGNET =
   'En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet.'
@@ -548,10 +610,15 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
             `Dosen ${tall(aktuell)} mg av ${virkestoff} er under regelens sluttdose (${tall(verdi(fase.strategi.sluttdose_mg))} mg), der regelen går over til seponering. Regelen har ingen godkjent videre nedtrapping eller seponering fra en så lav dose; det må vurderes individuelt.`,
           )
         }
-        const serie = trinnserie(fase.strategi, aktuell)
-        for (const mg of serie) {
-          legg(dag, dag + lengde - 1, mg)
-          dag += lengde
+        if (fase.trinnvalg && fase.strategi.type === 'prosent_av_startdose') {
+          // Med valg av dose per trinn regnes hvert trinn fra dosen før, så et valgt trinn gir neste beregnede dose (regelmodell 12).
+          dag = tempotrinn(fase.strategi, aktuell, lengde, dag, virkestoff, (inndata.trinnvalg ?? []).filter((v) => v.forlop === f.id), f.dosevalg?.min_mg?.verdi ?? undefined, legg, ctx)
+        } else {
+          const serie = trinnserie(fase.strategi, aktuell)
+          for (const mg of serie) {
+            legg(dag, dag + lengde - 1, mg)
+            dag += lengde
+          }
         }
         aktuell = 0
         if (fase.minste_varighet) {

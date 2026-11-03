@@ -241,6 +241,10 @@ export type Fase =
    * begrunnelse, tilbys ikke. Valget er forskriverens (`Beregningsinndata.trinnvalg`);
    * beregningen velger aldri selv. Bare med `prosent_av_aktuell`, individuell
    * avslutning og uten toleranse ({@link trinnvalgOmrade} i `beregning.ts`).
+   * Med `prosent_av_startdose` og nedtrapping til 0 (regelmodell 12) tilbys
+   * den nærmeste dosen under og over den beregnede, et valgt trinn varer så
+   * lenge at nedtrappingen aldri går raskere enn regelen (`tempolengde`), og
+   * neste trinn regnes fra den valgte dosen.
    */
   | {
       type: 'nedtrapping'

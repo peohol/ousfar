@@ -1390,8 +1390,8 @@ describe('Aksepttesten med norske preparater (P7.5, del E.2)', () => {
       expect(rapport).toContain(valgtekst(t))
       // Hver dose som tilbys, er innenfor valgområdet, lavere enn dosen før og vises nøyaktig.
       for (const d of t.doser) {
-        expect(d.prosent).toBeGreaterThanOrEqual(t.omrade[0] - 1e-9)
-        expect(d.prosent).toBeLessThanOrEqual(t.omrade[1] + 1e-9)
+        expect(d.prosent).toBeGreaterThanOrEqual(t.omrade![0] - 1e-9)
+        expect(d.prosent).toBeLessThanOrEqual(t.omrade![1] + 1e-9)
         expect(d.mg).toBeLessThan(t.fra_mg)
         expect(avrund(d.mg)).toBe(d.mg)
       }
