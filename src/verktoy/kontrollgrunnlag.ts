@@ -20,20 +20,15 @@ import type { Trinnvalg } from './motor/plan'
 import { norskDato } from './motor/byggesteiner'
 import { valgtekst } from './regler/aksepttest'
 import { fingeravtrykk, godkjenningsfeil, KONTROLLUTFALL, kontrollutfall } from './regler/godkjenning'
-import type { Godkjenningssteg, Klinisktilfelle, Regel } from './regler/modell'
-import { NEDTRAPPINGSDISPOSISJON, STI } from './regler/nedtrapping'
-import { avregistrert, avvikFra, kjorKasus, nyStyrke, type Pilotkasus, type Pilotutfall, type Uttrekkene } from './regler/pilotmatrise'
+import type { Klinisktilfelle, Regel } from './regler/modell'
+import { STI } from './regler/nedtrapping'
+import { avregistrert, avvikFra, kjorKasus, type Kontrollregel, nyStyrke, type Pilotkasus, type Pilotutfall, SIMULERT_KONTROLLOR, simulerGodkjenning, type Uttrekkene } from './regler/pilotmatrise'
 import { grunnlag, liste, tabell, tall, utsagn } from './regler/rapport'
 import { EN_FORSTE_REDUKSJON, STARTFORLOP } from './planvisning'
 import { tilfelletekst, UTENFOR_OMFANG } from './motor/plan'
 import { REGELSETT, type Verktoyvalg } from './tilgjengelighet'
 
-/** Én regelversjon kontrolløren bes vurdere: nøyaktig versjonen og innholdet (fingeravtrykket). */
-export interface Kontrollregel {
-  id: string
-  versjon: number
-  fingeravtrykk: string
-}
+export { type Kontrollregel, SIMULERT_KONTROLLOR }
 
 export interface Kontrollsporsmal {
   nr: string
@@ -72,32 +67,13 @@ export interface Kontrollforslag {
 
 /* --- Den simulerte godkjenningen ------------------------------------------------ */
 
-export const SIMULERT_KONTROLLOR = 'Simulert kontrollør (bare i kontrollgrunnlaget, ingen godkjenning)'
-
 /**
  * Regelen på en kopi med en simulert klinisk godkjenning av nøyaktig
  * versjonen og fingeravtrykket under kontroll, til `regel` i et kasus. Er
  * regelen endret, stemmer ikke fingeravtrykket, og ingen plan vises.
  */
 export function somGodkjent(k: Kontrollregel, dato: string): NonNullable<Pilotkasus['regel']> {
-  return {
-    id: k.id,
-    endre: {
-      hva: `simulert klinisk godkjenning av versjon ${k.versjon}, bare på en kopi`,
-      endre: (r: Regel) => {
-        const steg: Godkjenningssteg = {
-          status: 'klinisk_godkjent',
-          dato,
-          av: SIMULERT_KONTROLLOR,
-          rolle: 'uavhengig_kontrollor',
-          regelversjon: k.versjon,
-          fingeravtrykk: k.fingeravtrykk,
-          merknad: 'Simulert for å vise hva verktøyet ville vist; ingen klinisk godkjenning.',
-        }
-        r.godkjenning = { status: 'klinisk_godkjent', historikk: [...r.godkjenning.historikk, steg] }
-      },
-    },
-  }
+  return { id: k.id, endre: { hva: `simulert klinisk godkjenning av versjon ${k.versjon}, bare på en kopi`, endre: (r: Regel) => simulerGodkjenning(r, k, dato) } }
 }
 
 const regelMedId = (id: string) => {
@@ -220,10 +196,10 @@ export function omfangsplaner(f: Kontrollforslag, uttrekkene: Uttrekkene): Omfan
 
 const SEPONERING = 'trappe-ned-antidepressiv'
 
-const AMITRIPTYLIN: Kontrollregel = { id: 'seponering-amitriptylin', versjon: 11, fingeravtrykk: 'dcc526c4db9db4e5a77994b49d7e18890e1799a19c9f4fbc2bf63e31151c4eb7' }
-const NORTRIPTYLIN: Kontrollregel = { id: 'seponering-nortriptylin', versjon: 11, fingeravtrykk: 'c2594aabadd1c4ecb41776ab1bac5f2c7cc1b781027fa544726f96c210c25fcd' }
-const ESCITALOPRAM: Kontrollregel = { id: 'seponering-escitalopram', versjon: 11, fingeravtrykk: 'a2d959cae2780053d15188ae0e160292e06af5155dfacafcfa41b1d850b127db' }
-const ESCITALOPRAM_LANGSOM: Kontrollregel = { id: 'seponering-escitalopram-langsom', versjon: 7, fingeravtrykk: '8dcd4f992fe4f9fb55aebf1dc4eda04bc0399d2ef91ca90a14d699979cd53e3d' }
+const AMITRIPTYLIN: Kontrollregel = { id: 'seponering-amitriptylin', versjon: 12, fingeravtrykk: 'a43c1164e4061a1757fefea381da027b8cefe92c077d742855fd4e2f5486b6e3' }
+const NORTRIPTYLIN: Kontrollregel = { id: 'seponering-nortriptylin', versjon: 12, fingeravtrykk: '300a71b147bf87eb61dbeaeccd27aa07add900435b579c14291061f38f63616c' }
+const ESCITALOPRAM: Kontrollregel = { id: 'seponering-escitalopram', versjon: 12, fingeravtrykk: '7710be648e96682c1c8a35a8e4d9c4428109b294f29b63ae9401ef29b41bd3c1' }
+const ESCITALOPRAM_LANGSOM: Kontrollregel = { id: 'seponering-escitalopram-langsom', versjon: 8, fingeravtrykk: '4e49c175ac6aa49cba89d7db711f710c14b654681cc3138994dbaaaebb69c095' }
 
 const DATO_1 = '2026-11-03'
 const TABLETT = '53'
@@ -283,6 +259,7 @@ export const FORSLAG_1: Kontrollforslag = {
     'Tråd F har slått fast at delene av RCPsych «Stopping antidepressants» (`rcpsych-stopping`) reglene bygger på, tempo og risikogrupper, er uendret etter kildefunnet (`docs/verktøy-kildefunn-1-2.md`). Kontrollen kan gjøres nå, men en godkjenning bør først registreres etterpå.',
     'Godkjenningen registreres i en egen PR, for nøyaktig versjonen og fingeravtrykket i tabellen over og med kontrollørens avgrensning, slik den godkjente vortioksetinregelen. Registreringen (`godkjent` i `src/verktoy/regler/nedtrapping.ts`) gjelder i dag bare hovedreglene og viser til kontrollørens gjennomgang av f77e1a9; den må få navnet og datoen for den nye kontrollen og kunne dekke den langsomme varianten. Det er en teknisk endring som ikke endrer fingeravtrykkene.',
     'Ingen regel endres i denne PR-en, og ingen godkjenning registreres. Endres en regel før kontrollen, stemmer ikke fingeravtrykket, og kontrollen må gjøres på nytt for den nye versjonen.',
+    'Etter kontrollørens vurdering 03.11.2026 er faktumet fra RCPsych om små reduksjoner fra starten presisert (`RCPSYCH.langvarig`, `docs/verktøy-rettelse-langvarig.md`). De fire reglene viser til det og har derfor fått en ny versjon som bare skiller seg i dette faktumet fra versjonen som ble vurdert 31.10.2026. Kontrolløren har vurdert de nye versjonene som kontrollert, ikke godkjent, som før. Tabellen over gjelder de nye versjonene, og planene og kasusene er uendret.',
   ],
   sporsmal: [
     {
@@ -322,7 +299,7 @@ export const FORSLAG_1: Kontrollforslag = {
     },
   ],
   kasus: [
-    // --- Amitriptylin v11
+    // --- Amitriptylin v12
     k1('F1-01', 'vanlig_dose', 'amitriptylin 50 mg, kort behandlingstid, før forskriveren har valgt', AMITRIPTYLIN, '50', stopp('amitriptylin dag 1–28: den ideelle dosen 37,5 mg kan ikke gis med preparatene i FEST nøyaktig.'), [40], { vdk2: 'K1-01' }),
     k1('F1-02', 'vanlig_dose', 'amitriptylin 50 mg, kort, forskriveren velger dosen som tilbys ved hvert trinn', AMITRIPTYLIN, '50', plan(STARTFORLOP, 'Dag 1–28: Amitriptylin peroralt: 40 mg = 4 tabletter à 10 mg (valgt av forskriveren (beregnet 37,5 mg; −20 %))', 'Dag 29–56: Amitriptylin peroralt: 30 mg = 3 tabletter à 10 mg', 'Dag 57–84: Amitriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))', 'Fra dag 85: Amitriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))'), [], { velger: [40, 25, 20] , vdk2: 'K1-02' }),
     k1('F1-03', 'vanlig_dose', 'amitriptylin 25 mg, kort, laveste startdose i omfanget', AMITRIPTYLIN, '25', plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Amitriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))'), [], { velger: [20] }),
@@ -337,13 +314,13 @@ export const FORSLAG_1: Kontrollforslag = {
     k1('F1-12', 'pasientforhold', 'amitriptylin 50 mg, tidligere seponeringssymptomer', AMITRIPTYLIN, '50', stopp('Regelen gjelder ikke: Et tidligere forsøk på å trappe ned eller seponere dette legemidlet har gitt seponeringssymptomer eller mislyktes; da gjelder den langsomme varianten av regelen.'), [], { skjema: { pasientforhold: { tidligere_seponeringssymptomer: true } } }),
     k1('F1-13', 'ikke_godkjent', 'amitriptylin 50 mg, den langsomme varianten (ikke i forslaget)', AMITRIPTYLIN, '50', stopp('ikke et tilfelle godkjenningen kan gjelde for; ingen tilfeller er kontrollert', UTENFOR_OMFANG), [], { regel: { id: 'seponering-amitriptylin-langsom' }, vdk2: 'K1-04' }),
     k1('F1-14', 'interaksjon', 'amitriptylin 50 mg, organfunksjon og interaksjoner ikke vurdert', AMITRIPTYLIN, '50', stopp('Må bekreftes før beregning: Lever- og nyrefunksjon og interaksjoner er vurdert.'), [], { skjema: { bekreftet: ['startforslag'] } }),
-    // --- Nortriptylin v11
+    // --- Nortriptylin v12
     k1('F1-15', 'vanlig_dose', 'nortriptylin 50 mg, kort, forskriveren velger ved hvert trinn', NORTRIPTYLIN, '50', plan(STARTFORLOP, 'Dag 1–28: Nortriptylin peroralt: 40 mg = 4 tabletter à 10 mg (valgt av forskriveren (beregnet 37,5 mg; −20 %))', 'Dag 29–56: Nortriptylin peroralt: 30 mg = 3 tabletter à 10 mg', 'Dag 57–84: Nortriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))', 'Fra dag 85: Nortriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))'), [], { velger: [40, 25, 20] , vdk2: 'K1-07' }),
     k1('F1-16', 'vanlig_dose', 'nortriptylin 150 mg, kort', NORTRIPTYLIN, '150', plan(STARTFORLOP, 'Dag 1–28: Nortriptylin peroralt: 120 mg = 2 tabletter à 10 mg + 2 tabletter à 50 mg (valgt av forskriveren (beregnet 112,5 mg; −20 %))', 'Dag 29–56: Nortriptylin peroralt: 100 mg = 2 tabletter à 50 mg (valgt av forskriveren (beregnet 90 mg; −16,67 %))', 'Dag 57–84: Nortriptylin peroralt: 75 mg = 1 tablett à 25 mg + 1 tablett à 50 mg', 'Dag 85–112: Nortriptylin peroralt: 60 mg = 1 tablett à 10 mg + 1 tablett à 50 mg (valgt av forskriveren (beregnet 56,25 mg; −20 %))', 'Dag 113–140: Nortriptylin peroralt: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg', 'Dag 141–168: Nortriptylin peroralt: 35 mg = 1 tablett à 10 mg + 1 tablett à 25 mg (valgt av forskriveren (beregnet 33,75 mg; −22,22 %))', 'Dag 169–196: Nortriptylin peroralt: 30 mg = 3 tabletter à 10 mg (valgt av forskriveren (beregnet 26,25 mg; −14,29 %))', 'Dag 197–224: Nortriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))', 'Fra dag 225: Nortriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))'), [], { velger: [120, 100, 60, 35, 30, 25, 20] }),
     k1('F1-17', 'pasientforhold', 'nortriptylin 50 mg, lang behandlingstid', NORTRIPTYLIN, '50', plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Nortriptylin peroralt: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg'), [], { skjema: { svar: LANG } }),
     k1('F1-18', 'uvanlig_dose', 'nortriptylin 75 mg, kort (startdose utenfor omfanget)', NORTRIPTYLIN, '75', stopp(utenforOmfang(75), UTENFOR_OMFANG), [], { vdk2: 'K1-08' }),
     k1('F1-19', 'pasientforhold', 'nortriptylin 50 mg, eldre', NORTRIPTYLIN, '50', stopp(utenforOmfang(50), UTENFOR_OMFANG), [], { skjema: { svar: { eldre: true } } }),
-    // --- Escitalopram v11 og den langsomme varianten v7
+    // --- Escitalopram v12 og den langsomme varianten v8
     k1('F1-20', 'vanlig_dose', 'escitalopram tablett 20 mg, kort', ESCITALOPRAM, '20', plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Escitalopram peroralt: 15 mg = 1 tablett à 10 mg + 1 tablett à 5 mg'), [], { skjema: form(TABLETT) , vdk2: 'K1-12' }),
     k1('F1-21', 'uvanlig_dose', 'escitalopram tablett 10 mg, kort (utenfor omfanget)', ESCITALOPRAM, '10', stopp(utenforOmfang(10), UTENFOR_OMFANG), [], { skjema: form(TABLETT) , vdk2: 'K1-13' }),
     k1('F1-22', 'uvanlig_dose', 'escitalopram tablett 20 mg, lang behandlingstid (utenfor omfanget)', ESCITALOPRAM, '20', stopp(utenforOmfang(20), UTENFOR_OMFANG), [], { skjema: { ...form(TABLETT), svar: LANG } }),
@@ -414,16 +391,17 @@ export function lagKontrollgrunnlag(f: Kontrollforslag, uttrekkene: Uttrekkene):
   const alleValg = planer.flatMap((o) => o.veier.flatMap((v) => v.valg))
   const enDose = alleValg.every((v) => v.trinn.doser.length === 1)
   const identitet = tabell(
-    ['Regel', 'Versjon', 'Fingeravtrykk', 'Status i dag', 'Som vurdert 31.10.2026', 'Tekniske hindringer for en godkjenning'],
+    ['Regel', 'Versjon', 'Fingeravtrykk', 'Status i dag', 'Vurdert av kontrolløren', 'Tekniske hindringer for en godkjenning'],
     regler.map(({ k, r }) => {
-      const vurdert = NEDTRAPPINGSDISPOSISJON.regler[k.id]
+      // Kontrollørens vurdering av nøyaktig denne versjonen og dette innholdet, om den finnes.
+      const vurdert = r.godkjenning.historikk.find((x) => x.status === 'ikke_godkjent' && x.rolle === 'uavhengig_kontrollor' && x.regelversjon === k.versjon && x.fingeravtrykk === k.fingeravtrykk)
       const hindringer = godkjenningshindringer(k, f.dato)
       return [
         `\`${k.id}\``,
         String(r.versjon === k.versjon ? k.versjon : `${r.versjon} (kontrollen gjelder ${k.versjon})`),
         fingeravtrykk(r) === k.fingeravtrykk ? `\`${k.fingeravtrykk}\`` : `**endret:** ${fingerkort(fingeravtrykk(r))} (kontrollen gjelder ${fingerkort(k.fingeravtrykk)})`,
         KONTROLLUTFALL[kontrollutfall(r)],
-        vurdert && vurdert.versjon === k.versjon && vurdert.fingeravtrykk === k.fingeravtrykk ? 'ja' : '**nei**',
+        vurdert ? `ja, ${norskDato(vurdert.dato)}` : '**nei**',
         hindringer.length === 0 ? 'ingen' : hindringer.join(' '),
       ]
     }),

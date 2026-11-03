@@ -8,6 +8,7 @@ import { hentInnstilling, lagreSisteValg, lengdeinnstilling } from '../auth/inns
 import { lesbarFeil, UVENTET_FEIL, type Databasefeil } from '../auth/databasefeil'
 import { klient } from '../auth/klient'
 import type { Riktekstdokument } from '../faginnhold/riktekst'
+import type { Skjulehandling } from '../traad/modell'
 import {
   lesDiskusjonsoversikt,
   lesDiskusjonstekster,
@@ -129,10 +130,22 @@ export async function arkiverDiskusjon(diskusjon: string, arkivert: boolean): Pr
   sjekk(await klient().rpc('arkiver_diskusjon', { diskusjon, arkivert }))
 }
 
-/** En administrator fjerner teksten i det første innlegget, eller i en kommentar, for godt. */
-export async function skjulInnhold(diskusjon: string, kommentar: string | null): Promise<void> {
-  sjekk(await klient().rpc('skjul_i_diskusjon', { diskusjon, kommentar }))
-}
+/**
+ * Det en administrator kan gjøre med innholdet i det første innlegget
+ * (`kommentar` null) eller i en kommentar: skjule det, vise det igjen, eller
+ * fjerne det skjulte for godt.
+ */
+export const skjuling = {
+  skjul: async (diskusjon: string, kommentar: string | null): Promise<void> => {
+    sjekk(await klient().rpc('skjul_i_diskusjon', { diskusjon, kommentar }))
+  },
+  vis: async (diskusjon: string, kommentar: string | null): Promise<void> => {
+    sjekk(await klient().rpc('vis_i_diskusjon', { diskusjon, kommentar }))
+  },
+  fjern: async (diskusjon: string, kommentar: string | null): Promise<void> => {
+    sjekk(await klient().rpc('fjern_skjult_i_diskusjon', { diskusjon, kommentar }))
+  },
+} satisfies Record<Skjulehandling, (diskusjon: string, kommentar: string | null) => Promise<void>>
 
 /* --- Kommentarene og hjertene ---------------------------------------------------- */
 

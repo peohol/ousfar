@@ -18,14 +18,17 @@ import { PILOTSETT } from './regler/pilotsett'
 /** Regelsettene appen bruker: pilotsettet (P4) og nedtrappingsreglene (P7). Hver regel hører til ett av dem. */
 export const REGELSETTENE: readonly Regelsett[] = [PILOTSETT, NEDTRAPPINGSSETT]
 
-/** Alle reglene appen bruker, samlet så verktøyene kan slå opp i dem. */
-export const REGELSETT: Regelsett = {
+/** Reglene i settene, samlet så verktøyene kan slå opp i dem. */
+export const samlet = (settene: readonly Regelsett[]): Regelsett => ({
   id: 'ousfar-verktoy',
   versjon: 1,
   modell: REGELMODELLVERSJON,
-  beskrivelse: `Reglene i ${REGELSETTENE.map((s) => s.id).join(' og ')}.`,
-  regler: REGELSETTENE.flatMap((s) => s.regler),
-}
+  beskrivelse: `Reglene i ${settene.map((s) => s.id).join(' og ')}.`,
+  regler: settene.flatMap((s) => s.regler),
+})
+
+/** Alle reglene appen bruker, samlet så verktøyene kan slå opp i dem. */
+export const REGELSETT: Regelsett = samlet(REGELSETTENE)
 
 /** Settet regelen hører til, så planen oppgir det settets id og versjon; ellers `regelsett`. */
 export const settFor = (r: Regel, regelsett: Regelsett = REGELSETT): Regelsett => REGELSETTENE.find((s) => s.regler.includes(r)) ?? regelsett

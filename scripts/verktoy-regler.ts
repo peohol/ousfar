@@ -9,6 +9,7 @@
  *   npm run verktoy:regler -- pilotmatrise   docs/verktøy-p11-testmatrise.md (de godkjente reglene ende til ende med syntetiske kasus, P11)
  *   npm run verktoy:regler -- regeldekning   docs/verktøy-vdk1-regeldekning.md (hva de tre verktøyene kan beregne, og hvorfor resten stopper, VDK-1)
  *   npm run verktoy:regler -- kontrollgrunnlag   docs/verktøy-vdk3-forslag*-kontrollgrunnlag.md (faglig kontrollgrunnlag for et forslag fra VDK-2, VDK-3)
+ *   npm run verktoy:regler -- rettelse       docs/verktøy-rettelse-langvarig.md (kontrollgrunnlag for de nye regelversjonene etter en faktumrettelse)
  *   npm run verktoy:regler -- hent-fest      Henter FEST-uttrekkene til aksepttesten og pilotreglenes ende-til-ende-tester på nytt (krever VITE_SUPABASE_URL og SUPABASE_SECRET_KEY)
  *
  * Bare `hent-fest` henter noe, og bare ved å lese med `les_legemidler`. Skriptet
@@ -25,6 +26,7 @@ import { lagRegelrapport, REGELRAPPORTER } from '../src/verktoy/regler/rapport'
 import { lagMotorrapport, MOTORRAPPORTFIL } from '../src/verktoy/motor/rapport'
 import { lagRegeldekningsrapport, REGELDEKNINGSFIL } from '../src/verktoy/regeldekning'
 import { KONTROLLFORSLAG, lagKontrollgrunnlag } from '../src/verktoy/kontrollgrunnlag'
+import { lagRettelseskontroll, RETTELSESKONTROLLFIL } from '../src/verktoy/rettelseskontroll'
 import { avvikFra, kjorKasus, lagPilotmatriserapport, PILOTKASUS, PILOTMATRISEFIL } from '../src/verktoy/regler/pilotmatrise'
 
 const skriv = (fil: string, innhold: string) => {
@@ -77,6 +79,10 @@ async function kontrollgrunnlag() {
   for (const f of KONTROLLFORSLAG) skriv(f.fil, lagKontrollgrunnlag(f, uttrekkene))
 }
 
+async function rettelse() {
+  skriv(RETTELSESKONTROLLFIL, lagRettelseskontroll({ pilot: lesUttrekk(FEST_PILOT), aksept: lesUttrekk(FEST_AKSEPTTEST) }))
+}
+
 /** Virkestoffene i pilotreglene; reglene testes ende til ende med preparatene i FEST. */
 const pilotstoffer = () => PILOTSETT.regler.flatMap((r) => r.plan.forlop.flatMap((f) => (f.virkestoff.type === 'virkestoff' ? [f.virkestoff.nokkel] : [])))
 
@@ -101,7 +107,7 @@ async function hentFest() {
 }
 
 const [kommando] = process.argv.slice(2).filter((a) => a !== '--')
-const kommandoer: Record<string, () => Promise<void>> = { kontroll, rapport, motorrapport, aksepttest, pilotmatrise, regeldekning, kontrollgrunnlag, 'hent-fest': hentFest }
+const kommandoer: Record<string, () => Promise<void>> = { kontroll, rapport, motorrapport, aksepttest, pilotmatrise, regeldekning, kontrollgrunnlag, rettelse, 'hent-fest': hentFest }
 const k = kommando ? kommandoer[kommando] : undefined
 if (!k) {
   console.error(`Bruk: npm run verktoy:regler -- <${Object.keys(kommandoer).join(' | ')}>`)

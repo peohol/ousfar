@@ -12,13 +12,63 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.122.4',
+    versjon: '1.123.3',
     dato: '2026-11-03',
     sammendrag: 'Prøven av kildeovervåkingen avsluttet',
     typer: ['Funksjonalitet'],
     omfang: 'Minimalt omfang',
     punkter: [
       'Ingen endring i appen. Den syntetiske prøvesaken i kildeovervåkingen er avsluttet som prøve, og den gamle prøven av fristene, som ikke lenger finnes, er merket som utgått i fremdriftsplanen.',
+    ],
+    utenVarsel: true,
+  },
+  {
+    versjon: '1.123.1',
+    dato: '2026-11-03',
+    sammendrag: 'Presisert kildefaktum fra RCPsych i nye, kontrollerte versjoner av nedtrappingsreglene',
+    typer: ['Fag'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Etter kontrollørens vurdering er faktumet fra RCPsych om små reduksjoner fra starten presisert: kilden regner 5–10 % av den opprinnelige dosen, og andre deler av veiledningen beskriver reduksjoner beregnet fra sist brukte dose.',
+      'De 18 nedtrappingsreglene som viser til faktumet, har fått en ny versjon der bare dette er endret. Kontrolløren har godkjent de nye versjonene av vortioksetin og byttet fra sertralin til mirtazapin med nøyaktig samme kliniske omfang som før, så planene er de samme bortsett fra regelversjonen. De andre reglene er fortsatt ikke godkjent og gir ingen doseplan.',
+    ],
+    utenVarsel: true,
+  },
+  {
+    versjon: '1.123.0',
+    dato: '2026-11-03',
+    sammendrag: 'Skjult innhold i diskusjonene kan vises igjen',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['hele appen'],
+    punkter: [
+      'Når en administrator skjuler et innlegg eller en kommentar i diskusjonene, tas teksten nå vare på. Administratorene kan da trykke «Vis igjen» for å hente den tilbake, eller «Fjern for godt» hvis den ikke skal kunne hentes, for eksempel når det var pasientopplysninger.',
+      'Knappen på tråden heter nå «Skjul innlegget», siden det er innlegget som skjules, ikke hele tråden.',
+      'Innhold som ble skjult før denne endringen, er alt borte og kan ikke vises igjen.',
+    ],
+  },
+  {
+    versjon: '1.122.5',
+    dato: '2026-11-03',
+    sammendrag: 'Serumkonsentrasjonstabellene ruller ikke lenger sidelengs',
+    typer: ['Design / layout'],
+    omfang: 'Mindre omfang',
+    gjelder: ['stoff'],
+    punkter: [
+      'Tabellene over serumkonsentrasjoner på fagsidene får alltid plass i bredden, uten rullefelt. Kolonnene står litt tettere, og mål og enhet kan stå på to linjer.',
+      'Er det ikke plass til dosene som kolonner, snus tabellen så dosene står som rader og «Alle» nederst. På de smaleste skjermene vises én dose om gangen, med målene under.',
+      'Tabeller med doseringsregime og merknader vises rad for rad når de ikke får plass.',
+      'Ingen tall eller tekster er endret.',
+    ],
+  },
+  {
+    versjon: '1.122.1',
+    dato: '2026-11-03',
+    sammendrag: 'Kildekontrollen sammenligner nå bare de relevante avsnittene i to kilder',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen eller i verktøyreglene. Etter en uavhengig kontroll sammenligner kildekontrollen nå bare de avsnittene i Australian Prescriber og Royal College of Psychiatrists som reglene bygger på. Endringer ellers på nettsidene gir dermed ikke lenger nye kildesaker.',
     ],
     utenVarsel: true,
   },

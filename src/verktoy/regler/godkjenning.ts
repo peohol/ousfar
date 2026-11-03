@@ -193,12 +193,74 @@ export function disponer(regler: Regel[], d: Disposisjon): Regel[] {
   })
 }
 
-/** De vurderte reglene disposisjonen ikke kunne registreres for: regelen mangler, har en annen versjon eller et annet innhold. */
+/**
+ * Om disposisjonen ble registrert for nøyaktig versjonen og fingeravtrykket
+ * kontrolløren vurderte, og regelen siden har fått en nyere versjon med egne
+ * steg (etter en faktumrettelse, `rettelse.ts`). Vurderingen står da i
+ * historikken, men gjelder ikke den nye versjonen.
+ */
+const erstattetEtterDisposisjon = (r: Regel, d: Disposisjon, v: Vurdertregel) =>
+  r.versjon > v.versjon &&
+  r.godkjenning.historikk.some((s) => s.status === 'ikke_godkjent' && s.dato === d.dato && s.av === d.av && s.regelversjon === v.versjon && s.fingeravtrykk === v.fingeravtrykk) &&
+  r.godkjenning.historikk.some((s) => s.status === 'utkast' && s.regelversjon === r.versjon)
+
+/**
+ * De vurderte reglene disposisjonen ikke kunne registreres for: regelen
+ * mangler, har en annen versjon eller et annet innhold. En regel som er
+ * disponert og siden har fått en ny versjon, er ingen feil.
+ */
 export function disposisjonsfeil(regler: readonly Regel[], d: Disposisjon): string[] {
   return Object.entries(d.regler).flatMap(([id, v]) => {
     const r = regler.find((x) => x.id === id)
     if (!r) return [`${id}: regelen finnes ikke i settet`]
+    if (erstattetEtterDisposisjon(r, d, v)) return []
     if (r.versjon !== v.versjon) return [`${id}: vurdert som versjon ${v.versjon}, men regelen er versjon ${r.versjon}`]
     return fingeravtrykk(r) === v.fingeravtrykk ? [] : [`${id}: innholdet er endret etter vurderingen (fingeravtrykket stemmer ikke)`]
+  })
+}
+
+/** Én regelversjon kontrolløren har godkjent klinisk: nøyaktig versjonen og innholdet, med kontrollørens avgrensning. */
+export interface Godkjentregel {
+  versjon: number
+  fingeravtrykk: string
+  avgrensning: string
+}
+
+/** Kontrollørens kliniske godkjenning av bestemte regelversjoner: hvem, når, i hvilken gjennomgang, og avgrensningen for hver. */
+export interface Godkjenningsvedtak {
+  av: string
+  dato: string
+  /** Gjennomgangen godkjenningen ble gitt i, som innledning til merknaden. */
+  gjennomgang: string
+  regler: Readonly<Record<string, Godkjentregel>>
+}
+
+/**
+ * Registrerer kontrollørens kliniske godkjenning, som `disponer`, bare for
+ * reglene vedtaket nevner og bare når versjonen og fingeravtrykket er nøyaktig
+ * det kontrolløren godkjente, og regelen står til faglig kontroll. OUSFAR Dev
+ * setter aldri en godkjenning kontrolløren ikke har gitt; en regel som er
+ * endret, får ikke steget og er ikke godkjent.
+ */
+export function godkjenn(regler: Regel[], v: Godkjenningsvedtak): Regel[] {
+  return regler.map((r) => {
+    const g = v.regler[r.id]
+    if (!g || g.versjon !== r.versjon || r.godkjenning.status !== 'til_faglig_kontroll') return r
+    const avtrykk = fingeravtrykk(r)
+    if (avtrykk !== g.fingeravtrykk) return r
+    const merknad = `${v.gjennomgang}: faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: ${g.avgrensning}`
+    const steg: Godkjenningssteg = { status: 'klinisk_godkjent', dato: v.dato, av: v.av, rolle: 'uavhengig_kontrollor', regelversjon: r.versjon, fingeravtrykk: avtrykk, merknad }
+    return { ...r, godkjenning: { status: 'klinisk_godkjent', historikk: [...r.godkjenning.historikk, steg] } }
+  })
+}
+
+/** De godkjente reglene som ikke er gyldig klinisk godkjent i settet: regelen mangler, har en annen versjon eller et annet innhold. */
+export function vedtaksfeil(regler: readonly Regel[], v: Godkjenningsvedtak): string[] {
+  return Object.entries(v.regler).flatMap(([id, g]) => {
+    const r = regler.find((x) => x.id === id)
+    if (!r) return [`${id}: regelen finnes ikke i settet`]
+    if (r.versjon !== g.versjon) return [`${id}: godkjent som versjon ${g.versjon}, men regelen er versjon ${r.versjon}`]
+    if (fingeravtrykk(r) !== g.fingeravtrykk) return [`${id}: innholdet er endret etter godkjenningen (fingeravtrykket stemmer ikke)`]
+    return godkjenningsfeil(r).map((f) => `${id}: ${f}`)
   })
 }
