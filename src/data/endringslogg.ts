@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.124.8',
+    dato: '2026-11-03',
+    sammendrag: 'Uavhengig kontroll av verktøyenes vanlige brukerforløp',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Vanlige situasjoner i de fire verktøyene prøves nå automatisk, både i testene og i den publiserte appen, slik at det vises hvilke forløp som gir en komplett plan, en delplan, fagtekst eller ingen plan, og at de godkjente reglene ikke endres i det stille.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.124.4',
     dato: '2026-11-03',
     sammendrag: 'Prøven av kildeovervåkingen avsluttet',

@@ -204,6 +204,12 @@ export interface Forlopsresultat {
 
 const regelFor = (u: Pilotutfall & { resultat?: Doseplanresultat }) => u.resultat && REGELSETT.regler.find((r) => r.id === u.resultat!.regel.id && r.versjon === u.resultat!.regel.versjon)
 
+const endretKopi = (r: Regel, endring: NonNullable<Pilotkasus['regel']>) => {
+  const kopi = structuredClone(r)
+  endring.endre?.endre(kopi)
+  return kopi
+}
+
 /** Kjører forløpet som verktøysiden ville gjort, med automatiske formvalg der siden ber om det. */
 export function kjorForlop(f: Brukerforlop, u: Uttrekkene, ekstra: Partial<Pilotkasus> = {}): Forlopsresultat {
   const verktoy = VERKTOY.find(VERKTOY_FOR[f.leveranse])
@@ -251,7 +257,8 @@ export function kjorForlop(f: Brukerforlop, u: Uttrekkene, ekstra: Partial<Pilot
       utfall = kjorKasus({ ...kasus, skjema: { ...kasus.skjema, formvalg: valgt } }, u)
     }
   }
-  const regel = regelFor(utfall)
+  // En regel som er endret på en kopi (simulert godkjenning i et kontrollgrunnlag), vurderes som kopien.
+  const regel = ekstra.regel && regelFor(utfall) ? endretKopi(regelFor(utfall)!, ekstra.regel) : regelFor(utfall)
   const grunner = 'grunner' in utfall ? utfall.grunner : []
   const base = { forlop: f, verktoy, uttrekk, utfall, formvalg, regel }
   switch (utfall.utfall) {
@@ -438,68 +445,52 @@ export interface Sveip {
  * måldose, hver hele måldose rundt tabellens spenn.
  */
 export function omfangssveip(u: Uttrekkene): Sveip[] {
-  const ut: Sveip[] = []
-  for (const verktoy of VERKTOY) {
-    const leveranse = (Object.keys(VERKTOY_FOR) as Leveranse[]).find((l) => VERKTOY_FOR[l](verktoy))!
-    for (const valg of kombinasjoner(verktoy)) {
+  return VERKTOY.flatMap((verktoy) =>
+    kombinasjoner(verktoy).flatMap((valg) => {
       const t = tilgjengelighet(verktoy, valg)
-      if (t.status !== 'tilgjengelig') continue
-      for (const regel of t.regler) {
-        const treff: Sveiptreff[] = []
-        const forlop = (dose: number, skjema: Partial<Planskjema>): Brukerforlop => ({
-          id: 'sveip',
-          leveranse,
-          hva: '',
-          valg,
-          dose: tall(dose),
-          skjema: { regel: regel.id, ...skjema },
-        })
-        for (const dose of SVEIPDOSER) {
-          const spenn = spennFor(regel, { startdose: tall(dose) })
-          const maldoser = spenn ? Array.from({ length: spenn.til_mg[1] - spenn.til_mg[0] + 3 }, (_, i) => spenn.til_mg[0] - 1 + i) : [undefined]
-          for (const formvalg of formkombinasjoner(regel, valg, tall(dose), u)) {
-            for (const maldose of maldoser) {
-              const r = kjorForlop(
-                forlop(dose, {
-                  formvalg,
-                  ...(maldose !== undefined ? { maldose: tall(maldose) } : {}),
-                }),
-                u,
-              )
-              if (r.klasse === 'komplett' || r.klasse === 'delplan')
-                treff.push({
-                  dose,
-                  ...(maldose !== undefined ? { maldose } : {}),
-                  formvalg,
-                  resultat: r,
-                })
-            }
-          }
-        }
-        const endringer: Sveip['endringer'] = []
-        const forste = treff[0]
-        if (forste) {
-          const skjema = {
-            formvalg: forste.formvalg,
-            ...(forste.maldose !== undefined ? { maldose: tall(forste.maldose) } : {}),
-          }
-          const prov = (hva: string, x: Partial<Planskjema>) =>
-            endringer.push({
-              hva,
-              klasse: kjorForlop(forlop(forste.dose, { ...skjema, ...x }), u).klasse,
-            })
-          for (const x of regel.unntak) prov(`unntak ${x.id} = ja`, { pasientforhold: { [x.id]: true } })
-          for (const x of regel.sporsmal ?? []) prov(`spørsmål ${x.id} = ja`, { svar: { [x.id]: true } })
-          for (const x of regel.bekreftelser)
-            prov(`bekreftelse ${x.id} mangler`, {
-              bekreftet: regel.bekreftelser.map((b) => b.id).filter((b) => b !== x.id),
-            })
-        }
-        ut.push({ verktoy, valg, regel, treff, endringer })
+      return t.status === 'tilgjengelig' ? t.regler.map((regel) => sveipRegel(verktoy, valg, regel, u)) : []
+    }),
+  )
+}
+
+/** Måldosene å prøve ved dosen: rundt tabellens spenn, rundt regelens område i trinn på 5 mg, eller regelens verdier. */
+function maldoser(regel: Regel, dose: number): (number | undefined)[] {
+  const spenn = spennFor(regel, { startdose: tall(dose) })
+  if (spenn) return Array.from({ length: spenn.til_mg[1] - spenn.til_mg[0] + 3 }, (_, i) => spenn.til_mg[0] - 1 + i)
+  const m = regel.inndata.find((k) => k.navn === 'maldose')
+  if (m?.omrade) return Array.from({ length: (m.omrade[1] - m.omrade[0]) / 5 + 3 }, (_, i) => m.omrade![0] - 5 + i * 5).filter((x) => x > 0)
+  if (m?.verdier) return [...m.verdier, ...m.verdier.map((x) => x + 1)]
+  return [undefined]
+}
+
+/**
+ * Sveipet for én regel: hver dose, legemiddelform og måldose. `regelendring`
+ * brukes når en domene-PR kontrolleres før regelen er godkjent: regelen
+ * godkjennes da (simulert) på en kopi, slik kontrollgrunnlagene gjør.
+ */
+export function sveipRegel(verktoy: Verktoy, valg: Verktoyvalg, regel: Regel, u: Uttrekkene, regelendring?: Pilotkasus['regel']): Sveip {
+  const leveranse = (Object.keys(VERKTOY_FOR) as Leveranse[]).find((l) => VERKTOY_FOR[l](verktoy))!
+  const ekstra = regelendring ? { regel: regelendring } : {}
+  const forlop = (dose: number, skjema: Partial<Planskjema>): Brukerforlop => ({ id: 'sveip', leveranse, hva: '', valg, dose: tall(dose), skjema: { regel: regel.id, ...skjema } })
+  const treff: Sveiptreff[] = []
+  for (const dose of SVEIPDOSER) {
+    for (const formvalg of formkombinasjoner(regel, valg, tall(dose), u)) {
+      for (const maldose of maldoser(regel, dose)) {
+        const r = kjorForlop(forlop(dose, { formvalg, ...(maldose !== undefined ? { maldose: tall(maldose) } : {}) }), u, ekstra)
+        if (r.klasse === 'komplett' || r.klasse === 'delplan') treff.push({ dose, ...(maldose !== undefined ? { maldose } : {}), formvalg, resultat: r })
       }
     }
   }
-  return ut
+  const endringer: Sveip['endringer'] = []
+  const forste = treff[0]
+  if (forste) {
+    const skjema = { formvalg: forste.formvalg, ...(forste.maldose !== undefined ? { maldose: tall(forste.maldose) } : {}) }
+    const prov = (hva: string, x: Partial<Planskjema>) => endringer.push({ hva, klasse: kjorForlop(forlop(forste.dose, { ...skjema, ...x }), u, ekstra).klasse })
+    for (const x of regel.unntak) prov(`unntak ${x.id} = ja`, { pasientforhold: { [x.id]: true } })
+    for (const x of regel.sporsmal ?? []) prov(`spørsmål ${x.id} = ja`, { svar: { [x.id]: true } })
+    for (const x of regel.bekreftelser) prov(`bekreftelse ${x.id} mangler`, { bekreftet: regel.bekreftelser.map((b) => b.id).filter((b) => b !== x.id) })
+  }
+  return { verktoy, valg, regel, treff, endringer }
 }
 
 const intervaller = (doser: readonly number[]) =>
