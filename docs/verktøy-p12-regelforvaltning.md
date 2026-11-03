@@ -1,6 +1,6 @@
 # OUSFAR Verktøy – P12.2–P12.4: forvaltning av kliniske regler
 
-> **Kildesaker (VDR-1, 1.119.0):** Behandlingen av funn fra overvåkingen i §5 punkt 1–5 er erstattet av kildesakene i `docs/verktøy-p12-overvaking.md` §5: teknisk utredning først, ingen frister, faglige spørsmål med valg og virkning, og avslutning først når tiltakene er kontrollert. Krav om uavhengig klinisk godkjenning, uendrede regelversjoner og sporbar publisering gjelder fortsatt.
+> **Kildesaker (VDR-1, 1.119.0):** Behandlingen av funn fra overvåkingen i §5 punkt 1–5 er erstattet av kildesakene i `docs/verktøy-p12-overvaking.md` §5: teknisk utredning først, ingen frister, faglige spørsmål med valg og virkning, og avslutning først når tiltakene er kontrollert. Krav om uavhengig klinisk godkjenning, uendrede regelversjoner og sporbar publisering gjelder fortsatt. Hele saksgangen, også «Deaktiver berørt regel» som målrettet nødstopp, er prøvd og kontrollert i VDR-5 (`docs/verktøy-vdr5-produksjonskontroll.md`).
 
 **Status 31.10.2026:** arkitektur og trinnvis plan, til vurdering (arbeidspakke C). Rettet etter kontrollørens gjennomganger av `a090786` og `177e1de` (§11). Ingen kode, regel, regelversjon, godkjenning eller fingeravtrykk er endret. Planen gjelder P12.2–P12.4 i `docs/verktøy-utviklingsplan.md` og bygger på overvåkingen av kilder og FEST i P12.1/P12.5 (`src/verktoy/overvaking/`), som lages i en egen PR. Ingen omlegging gjøres før planen er vurdert av den uavhengige kontrolløren (ChatGPT) og bidragsyteren.
 

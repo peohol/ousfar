@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.124.1',
+    versjon: '1.124.2',
     dato: '2026-11-03',
     sammendrag: 'Toppmenyen er ryddig på alle skjermbredder',
     typer: ['Design / layout'],
@@ -23,6 +23,17 @@ export const ENDRINGSLOGG: Endring[] = [
       'Når det blir trangt, blir sidens knapper først til runde ikonknapper. Er det fortsatt ikke plass, flytter de ned i menyen nederst på skjermen, slik de gjør på mobil. Søket i fagstoffet beholder alltid et brukbart felt.',
       'Menyene er litt mer gjennomskinnelige, med mindre uskarphet bak.',
     ],
+  },
+  {
+    versjon: '1.124.1',
+    dato: '2026-11-03',
+    sammendrag: 'Kontroll av hele oppfølgingen når en kilde for de kliniske verktøyene endres',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i det brukerne ser. Hele veien fra en endret kilde til det klinikeren ser i verktøyet er prøvd med syntetiske funn: en endring uten faglig betydning avsluttes uten å nå redaktøren, et faglig spørsmål gir en merknad bare ved den berørte anbefalingen og avsluttes først når tiltaket er kontrollert, og en alvorlig risiko stanser bare den berørte regelen, mens andre godkjente beregninger virker. Produksjonen er kontrollert, og den gamle prøvesaken med frist er avsluttet. Ingen doser, grenser, regler eller godkjenninger er endret.',
+    ],
+    utenVarsel: true,
   },
   {
     versjon: '1.124.0',
