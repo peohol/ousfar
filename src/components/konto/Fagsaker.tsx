@@ -106,10 +106,11 @@ function Grunnlag({ s }: { s: Fagsak }) {
             {s.berorte.map((b) => (
               <li key={`${b.regel}-${b.versjon}`}>
                 <strong>{anbefalingsnavn(b)}</strong>
-                {b.sperret && (
+                {b.sperret !== false && b.sperret !== undefined && (
                   <>
                     {' '}
-                    <Merke tone="alvorlig">Sperret med nødstoppen</Merke>
+                    {/* Ukjent omfang vises aldri som at regelen virker (`Berortanbefaling.sperret`). */}
+                    <Merke tone="alvorlig">{b.sperret ? 'Sperret med nødstoppen' : 'Kan være sperret med nødstoppen'}</Merke>
                   </>
                 )}
                 : {b.hva}
@@ -241,7 +242,7 @@ function Vurderingskort({ s, onNodstopp }: { s: Fagsak; onNodstopp?: () => void 
         <p className="fagsak__virkningstittel">Sikkerhetsproblem under vurdering</p>
         <p>Problemet vurderes faglig nå, og du får et konkret spørsmål med en anbefaling her når vurderingen er ferdig.</p>
         {/* Om noe er sperret, og hva verktøyet gjør nå, sier «Nå:» over: den teksten lager databasen ut fra de faktiske sperrene. */}
-        {s.berorte.some((b) => !b.sperret) && (
+        {s.berorte.some((b) => b.sperret !== true) && (
           <p>Mener du at en plan kan være uforsvarlig før det, kan du deaktivere den berørte regelen med nødstoppen.</p>
         )}
       </div>
@@ -324,9 +325,11 @@ function Oppfolgingskort({ s }: { s: Fagsak }) {
       <Beslutningslinje b={s.beslutning} />
       <Tiltaksliste s={s} />
       <p className="felt__hjelp">
-        {gjenstaende(s).length === 0
-          ? 'Alle tiltakene er utført og kontrollert; saken avsluttes ved neste kontroll.'
-          : 'Saken avsluttes når alle tiltakene er utført og kontrollert. Du trenger ikke gjøre noe mer.'}
+        {s.nytt_innhold_kl
+          ? `Kilden ble endret igjen ${tidspunkt(s.nytt_innhold_kl)}, etter beslutningen. Endringen vurderes nå, og saken avsluttes ikke før det er gjort. Trengs en ny beslutning, kommer spørsmålet her.`
+          : gjenstaende(s).length === 0
+            ? 'Alle tiltakene er utført og kontrollert; saken avsluttes ved neste kontroll.'
+            : 'Saken avsluttes når alle tiltakene er utført og kontrollert. Du trenger ikke gjøre noe mer.'}
       </p>
     </article>
   )

@@ -57,6 +57,7 @@ const sak = (over: Partial<Fagsak> = {}): Fagsak => ({
   ],
   status_na: 'Planen beregnes som normalt.',
   opprettet_kl: '2026-11-09T06:21:00Z',
+  nytt_innhold_kl: null,
   beslutning: null,
   tidligere: [],
   tiltak: [],
@@ -219,6 +220,51 @@ describe('redaktørvisningen av kildesakene', () => {
     expect(rader).toHaveLength(2)
     expect(within(rader[0]!).getByText('Sperret med nødstoppen')).toBeTruthy()
     expect(within(rader[1]!).queryByText('Sperret med nødstoppen')).toBeNull()
+  })
+
+  it('viser aldri en regel med ukjent sperreomfang som om den virker, og foreslår nødstoppen for den', async () => {
+    const s = sak({
+      alvor: 'sikkerhet',
+      anbefaling: null,
+      valg: [],
+      berorte: [{ regel: 'seponering-escitalopram', versjon: 11, hva: 'varigheten av siste trinn', sperret: null }],
+      status_na: 'En nødstopp for et verktøy er satt, men det kan ikke avgjøres om den gjelder den berørte regelen.',
+    })
+    render(<Fagsaker apen lager={minnelager(oversikt([s]))} onNodstopp={() => {}} />)
+    const kort = within(await screen.findByRole('article'))
+    expect(kort.getByText('Kan være sperret med nødstoppen')).toBeTruthy()
+    expect(kort.queryByText('Sperret med nødstoppen')).toBeNull()
+    expect(kort.queryByText(/virker som før/)).toBeNull()
+    expect(kort.getByText(/kan du deaktivere den berørte regelen med nødstoppen/)).toBeTruthy()
+  })
+
+  it.each([
+    ['alle tiltakene er kontrollert', 'kontrollert'],
+    ['et tiltak gjenstår', 'bestilt'],
+  ] as const)('sier at kilden er endret igjen og vurderes når %s, i stedet for at saken avsluttes', async (_navn, status) => {
+    const s = sak({
+      fase: 'oppfolging',
+      nytt_innhold_kl: '2026-11-11T06:20:00Z',
+      beslutning: { valg: 'revider', merknad: null, av: 'Ada Admin', kl: '2026-11-10T08:00:00Z' },
+      tiltak: [{ tekst: 'Ny regelversjon med uavhengig klinisk godkjenning', status, endret_kl: '2026-11-10T09:00:00Z', lenke: null }],
+    })
+    render(<Fagsaker apen lager={minnelager(oversikt([s]))} />)
+    const kort = within(await screen.findByRole('article'))
+    expect(kort.getByText(/Kilden ble endret igjen .*, etter beslutningen\. Endringen vurderes nå, og saken avsluttes ikke før det er gjort\. Trengs en ny beslutning, kommer spørsmålet her\./)).toBeTruthy()
+    expect(kort.queryByText(/avsluttes ved neste kontroll/)).toBeNull()
+    expect(kort.queryByText(/Saken avsluttes når alle tiltakene/)).toBeNull()
+  })
+
+  it('sier at saken avsluttes ved neste kontroll bare når alle tiltakene er kontrollert og ingenting nytt venter', async () => {
+    const s = sak({
+      fase: 'oppfolging',
+      beslutning: { valg: 'revider', merknad: null, av: 'Ada Admin', kl: '2026-11-10T08:00:00Z' },
+      tiltak: [{ tekst: 'Ny regelversjon med uavhengig klinisk godkjenning', status: 'kontrollert', endret_kl: '2026-11-10T09:00:00Z', lenke: null }],
+    })
+    render(<Fagsaker apen lager={minnelager(oversikt([s]))} />)
+    const kort = within(await screen.findByRole('article'))
+    expect(kort.getByText('Alle tiltakene er utført og kontrollert; saken avsluttes ved neste kontroll.')).toBeTruthy()
+    expect(kort.queryByText(/Kilden ble endret igjen/)).toBeNull()
   })
 
   it('viser tidligere beslutninger og tiltak når en sak i oppfølging får et nytt spørsmål', async () => {

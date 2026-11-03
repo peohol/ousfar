@@ -115,7 +115,7 @@ describe('kildesakene fra databasen til redaktørvisningen', () => {
     tjener = kallSom(db, 'service_role')
   }, 60_000)
 
-  it('viser den tidligere beslutningen og tiltaket når kilden endres og et nytt spørsmål kommer, og sperrestatusen ved nødstopp for alt', async () => {
+  it('sier at kilden er endret igjen, viser den tidligere beslutningen og tiltaket når et nytt spørsmål kommer, og sperrestatusen ved nødstopp for alt', async () => {
     const user = userEvent.setup()
     await meld(rapport('2027-04-01T06:20:00Z', [funn('kjede', '1')]))
     let s = await sak('kjede')
@@ -136,6 +136,9 @@ describe('kildesakene fra databasen til redaktørvisningen', () => {
 
     // Kilden endres igjen under oppfølgingen, og den faglige vurderingen gir et nytt spørsmål.
     await meld(rapport('2027-04-08T06:20:00Z', [funn('kjede', '2')]))
+    kort = await visKortet(s.id)
+    expect(kort.getByText(/Kilden ble endret igjen .*, etter beslutningen\. Endringen vurderes nå/)).toBeTruthy()
+    expect(kort.queryByText(/avsluttes ved neste kontroll/)).toBeNull()
     const o = await sak('kjede')
     await agent('faglig_sporsmal', { funn: o.id, versjon: o.versjon, sporsmal: sporsmal({ endring: 'Kilden anbefaler nå også lengre tid mellom de to siste trinnene.' }) })
 
