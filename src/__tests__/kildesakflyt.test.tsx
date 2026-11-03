@@ -148,12 +148,16 @@ describe('produksjonsflyten fra kildesak til verktøysiden (VDR-5)', () => {
 
   /**
    * Bytte fra 100 mg sertralin til mirtazapin; gir siden når beregningen er gjort. Startforløpet når ikke sluttmålet, så
-   * klinikeren får ingen delplan, bare at en komplett plan ikke er tilgjengelig (Peders beslutning 03.11.2026).
+   * klinikeren får ingen delplan, bare at en komplett plan ikke er tilgjengelig (Peders beslutning 03.11.2026). Byttet står derfor
+   * ikke blant snarvalgene og skrives inn.
    */
   async function sertralinTilMirtazapin() {
     const user = verktoyside('bytte-antidepressiv')
-    await user.click(await screen.findByRole('button', { name: 'Sertralin → mirtazapin' }))
-    await user.type(screen.getByRole('textbox', { name: /Aktuell døgndose av sertralin/ }), '100')
+    await waitFor(() => expect(screen.queryByText(TILGJENGELIGHET_UKONTROLLERT.henter)).toBeNull())
+    expect(screen.queryByRole('button', { name: 'Sertralin → mirtazapin' })).toBeNull()
+    await user.type(screen.getByRole('combobox', { name: 'Bytte fra' }), 'Sertralin')
+    await user.type(screen.getByRole('combobox', { name: 'Bytte til' }), 'Mirtazapin')
+    await user.type(await screen.findByRole('textbox', { name: /Aktuell døgndose av sertralin/ }), '100')
     await besvarAlt(user)
     await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
     await user.selectOptions(await screen.findByRole('combobox', { name: 'Legemiddelform av mirtazapin' }), '53')
@@ -202,7 +206,9 @@ describe('produksjonsflyten fra kildesak til verktøysiden (VDR-5)', () => {
     expect(within(plan).getByRole('note').textContent).toMatch(/^Under faglig gjennomgang: kilden for takten er revidert\./)
     // Ved vortioksetin, som ikke er berørt, står det ingenting.
     const user = verktoyside('trappe-ned-antidepressiv')
-    await user.click(await screen.findByRole('button', { name: 'Vortioksetin' }))
+    await waitFor(() => expect(screen.queryByText(TILGJENGELIGHET_UKONTROLLERT.henter)).toBeNull())
+    await user.type(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' }), 'Vortioksetin')
+    expect(await screen.findByRole('textbox', { name: /Aktuell døgndose av vortioksetin/ })).toBeTruthy()
     expect(screen.queryByRole('note')).toBeNull()
 
     // Redaktøren får spørsmålet med valg og virkning, og en prikk.

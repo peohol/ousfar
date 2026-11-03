@@ -852,6 +852,20 @@ export function nulltrinnfeil(r: Pick<Regel, 'plan' | 'beregnbarhet' | 'medlemme
 export const avslutningFor = (f: Fase | undefined): Avslutning | undefined =>
   f?.type === 'nedtrapping' && typeof f.avslutning === 'object' ? f.avslutning : f?.type === 'seponer' ? f.avslutning : undefined
 
+/**
+ * Hvorfor regelen aldri kan gi en komplett plan til sluttmålet for
+ * gruppemedlemmet `medlem` (Peders beslutning 03.11.2026): et forløp uten
+ * beregning, en nedtrapping med individuell avslutning eller en
+ * intervalldosering avsluttes alltid individuelt. Tom når planen kan bli
+ * komplett; om den blir det, avgjør beregningen med dosene og FEST.
+ */
+export function komplettfeil(r: Pick<Regel, 'plan' | 'medlemmer'>, medlem?: string): string[] {
+  return r.plan.forlop.flatMap((f) => {
+    const faser = (f.virkestoff.type === 'gruppe' && r.medlemmer?.find((m) => m.nokkel === medlem)?.faser) || f.faser
+    return faser.some((x) => x.type === 'uten_beregning' || fortsetterUtenNull(x)) ? [`forløp ${f.id} avsluttes alltid individuelt eller uten beregning`] : []
+  })
+}
+
 /** Om en fase avslutter et forløp uten å gå til 0: en nedtrapping med individuell avslutning eller en intervalldosering. */
 export const fortsetterUtenNull = (f: Fase | undefined) => (f?.type === 'nedtrapping' && f.avslutning === 'individuell') || f?.type === 'intervalldosering'
 

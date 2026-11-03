@@ -34,7 +34,7 @@ export const ENDRINGSLOGG: Endring[] = [
     punkter: [
       'Gjelder bare administratorene, som fortsatt er de eneste som ser verktøyene. Ingen godkjente regler, doser eller godkjenninger er endret.',
       'Verktøyene viser bare komplette planer, som går helt til sluttmålet: seponert, fast vedlikeholdsdose eller uendret dose. En plan som ikke kommer dit, vises ikke. I stedet står det «Komplett plan ikke tilgjengelig» og hvorfor, og ingen doser vises.',
-      'Det betyr at to planer som ble vist før, ikke vises lenger: startforløpet for bytte fra sertralin til mirtazapin (regelversjon 10) og den ene reduksjonen av vortioksetin fra 20 til 15 mg (regelversjon 12). Ingen av dem går helt til sluttmålet. Oppstartene av Abilify Maintena og Xeplion vises som før.',
+      'Det betyr at to planer som ble vist før, ikke vises lenger: startforløpet for bytte fra sertralin til mirtazapin (regelversjon 10) og den ene reduksjonen av vortioksetin fra 20 til 15 mg (regelversjon 12). Ingen av dem går helt til sluttmålet, så de står heller ikke lenger blant valgene som kan beregnes. Oppstartene av Abilify Maintena og Xeplion vises som før.',
       'En komplett plan sier øverst at den går til sluttmålet, og hva sluttmålet er. Det står også i teksten som kopieres.',
       'Planene kan ha vurderingspunkter, for eksempel en vurdering før hver doseendring eller en kontroll et antall dager etter hver endring eller etter siste dose. De står på riktig dag i tabellen og samlet under «Vurderingspunkter».',
       'En nedtrapping kan nå gå helt til seponering når regelen har en faglig godkjent avslutning, og bare fra en dose avslutningen gjelder for. Ellers stopper planen som før og sier hvorfor.',
@@ -43,7 +43,7 @@ export const ENDRINGSLOGG: Endring[] = [
       'Bruker pasienten et depot, spør verktøyet etter dosen per injeksjon i stedet for døgndosen.',
       'Forutsetninger som bare gjelder ved et bestemt svar, for eksempel for kvinner som kan bli gravide, må bekreftes hver for seg bare når svaret er gitt.',
       'Når et trinn i en nedtrapping med fast reduksjon av startdosen ikke kan gis, kan forskriveren velge en av de nærmeste dosene. Trinnet varer da så lenge at nedtrappingen ikke går raskere enn regelen. Når regelen tillater det, kan forskriveren også velge et mindre siste trinn før seponeringen, for eksempel 2,5 mg fra 5 mg i stedet for rett til 0. Uten et valg gjelder regelens siste trinn.',
-      'Et legemiddel som fortsetter uendret, står med enhet, tabletter og eventuelt mmol, og planen sier om dosen er kontrollert mot regelens doser eller bare bekreftet av forskriveren.',
+      'Et legemiddel som fortsetter uendret, står med enhet, tabletter og eventuelt mmol, og planen sier om dosen er kontrollert mot regelens tillatte doser (ikke mot FEST) eller bare bekreftet av forskriveren.',
       'Ved lave doser kan en regel la forskriveren velge et minste trinn, for eksempel fra 3 til 2 mg dråper, når ingen dose innenfor det vanlige området kan gis. Verktøyet velger aldri selv.',
     ],
   },
