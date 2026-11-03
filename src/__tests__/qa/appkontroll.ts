@@ -94,25 +94,50 @@ async function kjorIApp(p: Side, url: string, r: Forlopsresultat): Promise<Appre
     await beregn.click()
     await beregnet(p)
   }
+  // Der siden lar forskriveren velge dosen for et trinn, velges den samme dosen som i den lokale kjøringen (første eller siste).
+  const trinn = p.getByRole('region', { name: 'Doser som kan velges' })
+  for (let n = 0; n < r.trinnvalg.length && (await trinn.count()) > 0; n++) {
+    const knapper = trinn.getByRole('group').first().getByRole('button')
+    await (f.trinn === 'siste' ? knapper.last() : knapper.first()).click()
+    await beregnet(p)
+  }
   if ((await p.locator('table').count()) === 0) return { tabell: false, tekst: await p.getByRole('main').innerText() }
   await p.getByRole('button', { name: 'Kopier planen' }).click()
   return { tabell: true, tekst: await p.evaluate(() => navigator.clipboard.readText()) }
 }
 
-/** Om appen gir det samme som den lokale kjøringen: samme rader og undertittel, eller ingen plan og samme første grunn. */
+/** Linjer i kopien som avhenger av når FEST ble lest, og derfor ventes å være ulike lokalt og i appen. */
+const FESTLINJE = /^- (FEST-uttrekk|Preparatgrunnlag) /
+
+/** Linjene i `a` som ikke står like mange ganger i `b`. */
+function utenMotstykke(a: readonly string[], b: readonly string[]): string[] {
+  const igjen = new Map<string, number>()
+  for (const l of b) igjen.set(l, (igjen.get(l) ?? 0) + 1)
+  return a.filter((l) => {
+    const n = igjen.get(l) ?? 0
+    igjen.set(l, n - 1)
+    return n <= 0
+  })
+}
+
+/**
+ * Om appen gir det samme som den lokale kjøringen: hele den kopierte planen
+ * linje for linje begge veier (rader, undertittel, hver liste, kilder og
+ * regelversjon; bare FEST-tidspunktet er unntatt), eller ingen plan og samme
+ * første grunn.
+ */
 function sammenlign(r: Forlopsresultat, a: Appresultat): string[] {
-  const avvik: string[] = []
   const lokalPlan = r.klasse === 'komplett' || r.klasse === 'delplan'
   if (lokalPlan !== a.tabell) return [`lokalt ${KLASSENAVN[r.klasse]}, i appen ${a.tabell ? 'en plan' : 'ingen plan'}`]
   if (lokalPlan && r.utfall?.utfall === 'plan') {
-    for (const l of r.utfall.linjer) if (!a.tekst.includes(l)) avvik.push(`raden «${l}» står ikke i appens kopi`)
-    if (r.utfall.undertittel && !a.tekst.includes(r.utfall.undertittel)) avvik.push('undertittelen står ikke i appens kopi')
-    if (r.regel && !a.tekst.includes(`Regel ${r.regel.id}, versjon ${r.regel.versjon}`)) avvik.push('regelversjonen står ikke i appens kopi')
-    if (!/\nKilder:\n- \S/.test(a.tekst)) avvik.push('kildene står ikke i appens kopi')
-  } else if (r.klasse === 'fagtekst') {
-    if (/Beregning er ikke tilgjengelig/.test(a.tekst)) avvik.push('appen sier at beregning ikke er tilgjengelig, men viser ikke fagteksten')
-  } else if (r.vist[0] && !a.tekst.includes(r.vist[0].slice(0, 60))) avvik.push(`appens tekst nevner ikke «${r.vist[0].slice(0, 60)}…»`)
-  return avvik
+    const linjer = (t: string) => t.split('\n').filter((l) => !FESTLINJE.test(l))
+    const lokal = linjer(r.utfall.tekst ?? '')
+    const app = linjer(a.tekst)
+    if (lokal.length === 0) return ['den lokale kjøringen har ingen kopi å sammenligne med']
+    return [...utenMotstykke(lokal, app).map((l) => `«${l}» mangler i appens kopi`), ...utenMotstykke(app, lokal).map((l) => `appens kopi har i tillegg «${l}»`)]
+  }
+  if (r.klasse === 'fagtekst') return /Beregning er ikke tilgjengelig/.test(a.tekst) ? ['appen sier at beregning ikke er tilgjengelig, men viser ikke fagteksten'] : []
+  return r.vist[0] && !a.tekst.includes(r.vist[0].slice(0, 60)) ? [`appens tekst nevner ikke «${r.vist[0].slice(0, 60)}…»`] : []
 }
 
 const celle = (x: string) => x.replace(/\|/g, '\\|').replace(/\n/g, ' ')
@@ -176,7 +201,7 @@ async function main() {
       '',
       `Kjørt ${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC mot ${url} (${versjon}) som administrator, med dagens FEST. Hvert forløp er det samme som i \`docs/verktøy-qa-brukerforlop.md\`: syntetiske doser, alle bekreftelser og nei på hvert unntak og spørsmål, tablett når siden ber om legemiddelform. Bare lesing; ingenting er lagret. «Avvik» sammenligner med den lokale kjøringen mot de lagrede FEST-uttrekkene.`,
       '',
-      `Planer prøvd i appen uten avvik (samme rader, undertittel, kilder og regelversjon i kopien; «klinisk prøveverifisert» i plan §8): **${verifisert}**.`,
+      `Planer prøvd i appen uten avvik (hele kopien lik linje for linje, bortsett fra FEST-tidspunktet; «klinisk prøveverifisert» i plan §8): **${verifisert}**.`,
       '',
       '| Id | Situasjon | Lokalt | I appen | Avvik |',
       '| --- | --- | --- | --- | --- |',

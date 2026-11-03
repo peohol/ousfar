@@ -1,9 +1,9 @@
 <!-- Laget av `npx vite-node src/__tests__/qa/appkontroll.ts`; rediger ikke for hånd. -->
 # OUSFAR Verktøy – brukerforløpene i den publiserte appen
 
-Kjørt 2026-11-03 17:44 UTC mot https://ousfar.vercel.app (v1.124.4) som administrator, med dagens FEST. Hvert forløp er det samme som i `docs/verktøy-qa-brukerforlop.md`: syntetiske doser, alle bekreftelser og nei på hvert unntak og spørsmål, tablett når siden ber om legemiddelform. Bare lesing; ingenting er lagret. «Avvik» sammenligner med den lokale kjøringen mot de lagrede FEST-uttrekkene.
+Kjørt 2026-11-03 18:14 UTC mot https://ousfar.vercel.app (v1.124.4) som administrator, med dagens FEST. Hvert forløp er det samme som i `docs/verktøy-qa-brukerforlop.md`: syntetiske doser, alle bekreftelser og nei på hvert unntak og spørsmål, tablett når siden ber om legemiddelform. Bare lesing; ingenting er lagret. «Avvik» sammenligner med den lokale kjøringen mot de lagrede FEST-uttrekkene.
 
-Planer prøvd i appen uten avvik (samme rader, undertittel, kilder og regelversjon i kopien; «klinisk prøveverifisert» i plan §8): **5**.
+Planer prøvd i appen uten avvik (hele kopien lik linje for linje, bortsett fra FEST-tidspunktet; «klinisk prøveverifisert» i plan §8): **5**.
 
 | Id | Situasjon | Lokalt | I appen | Avvik |
 | --- | --- | --- | --- | --- |

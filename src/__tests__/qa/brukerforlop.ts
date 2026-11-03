@@ -18,15 +18,16 @@
  *
  * Ingen regel endres eller godkjennes her, og ingenting her er pasientdata.
  */
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
+import { dirname } from 'node:path'
 import { formvalgFor, spennFor, type Planskjema } from '../../verktoy/doseplan'
 import type { Doseplanresultat } from '../../verktoy/motor/plan'
 import { kombinasjoner } from '../../verktoy/regeldekning'
 import { festkoblinger, VERKTOY, type Verktoy } from '../../verktoy/register'
-import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from '../../verktoy/regler/aksepttest'
+import { FEST_PILOT, type Festuttrekk } from '../../verktoy/regler/aksepttest'
 import { erKliniskGodkjent, fingeravtrykk, harBeregning } from '../../verktoy/regler/godkjenning'
 import type { Regel } from '../../verktoy/regler/modell'
-import { besvartSkjema, kjorKasus, tidFor, type Pilotkasus, type Pilotutfall, type Uttrekkene, type Uttrekksnavn } from '../../verktoy/regler/pilotmatrise'
+import { besvartSkjema, kjorKasus, tidFor, type Pilotkasus, type Pilotutfall, type Uttrekkene as Kasusuttrekk } from '../../verktoy/regler/pilotmatrise'
 import { fraForlop, REGELSETT, tilForlop, tilgjengelighet, type Verktoyvalg } from '../../verktoy/tilgjengelighet'
 
 export const QA_RAPPORT = 'docs/verktøy-qa-brukerforlop.md'
@@ -75,6 +76,11 @@ export interface Brukerforlop {
   /** Aktuell døgndose (for K4: dosen av legemidlet pasienten allerede bruker), slik den skrives i feltet. */
   dose: string
   skjema?: Partial<Planskjema>
+  /**
+   * Dosen forløpet velger når siden lar forskriveren velge dose for et trinn
+   * (`Fase.trinnvalg`): den første siden tilbyr (standard) eller den siste.
+   */
+  trinn?: 'forste' | 'siste'
 }
 
 const p = (nokkel: string) => ({ nokkel, formulering: 'standard' as const })
@@ -154,20 +160,37 @@ export const BRUKERFORLOP: readonly Brukerforlop[] = [
 
 /* --- Kjøringen ------------------------------------------------------------------- */
 
-const les = (fil: string) => JSON.parse(readFileSync(fil, 'utf8')) as Festuttrekk
-export const lesUttrekkene = (): Uttrekkene => ({
-  pilot: les(FEST_PILOT),
-  aksept: les(FEST_AKSEPTTEST),
-})
+/** De lagrede FEST-uttrekkene, etter filnavn; domene-PR-ene legger sine egne ved siden av pilotsettet. */
+export type Uttrekkene = Record<string, Festuttrekk>
+
+const UTTREKKSMAPPE = dirname(FEST_PILOT)
+const les = (fil: string) => JSON.parse(readFileSync(fil, 'utf8')) as Partial<Festuttrekk>
+
+/** Hvert `fest-*.json` med et preparatutvalg, pilotsettet først (det vinner ved lik dekning). */
+export const lesUttrekkene = (): Uttrekkene =>
+  Object.fromEntries(
+    readdirSync(UTTREKKSMAPPE)
+      .filter((f) => /^fest-.+\.json$/.test(f))
+      .map((f) => `${UTTREKKSMAPPE}/${f}`)
+      .sort((a, b) => Number(b === FEST_PILOT) - Number(a === FEST_PILOT) || a.localeCompare(b))
+      .map((fil) => [fil.slice(UTTREKKSMAPPE.length + 1), les(fil)] as const)
+      .filter((x): x is readonly [string, Festuttrekk] => Array.isArray(x[1].utvalg?.virkestoff)),
+  )
 
 const virkestoffene = (valg: Verktoyvalg) => [valg.fra.nokkel, ...(valg.til ? [valg.til.nokkel] : [])]
 
 /** Uttrekket som har flest av valgets virkestoffer (helst alle), så forløpet prøves mot preparater som finnes. */
-export function uttrekkFor(valg: Verktoyvalg, u: Uttrekkene): Uttrekksnavn {
+export function uttrekkFor(valg: Verktoyvalg, u: Uttrekkene): string {
   const ider = Object.values(festkoblinger(virkestoffene(valg))).flat()
-  const dekning = (n: Uttrekksnavn) => ider.filter((id) => u[n].utvalg.virkestoff.some((v) => v.id === id)).length
-  return (['pilot', 'aksept'] as const).reduce((a, b) => (dekning(b) > dekning(a) ? b : a))
+  const dekning = (n: string) => ider.filter((id) => u[n]!.utvalg.virkestoff.some((v) => v.id === id)).length
+  return Object.keys(u).reduce((a, b) => (dekning(b) > dekning(a) ? b : a))
 }
+
+/** Det valgte uttrekket i formen kontrollmatrisen tar imot. */
+const kasusuttrekk = (u: Uttrekkene, navn: string): Kasusuttrekk => ({ pilot: u[navn]!, aksept: u[navn]! })
+
+/** Flere trinnvalg enn dette i ett forløp regnes som en løkke. */
+const MAKS_TRINNVALG = 60
 
 /** Tabletter (FEST-kode 53) når de finnes; ellers det første alternativet. Vises i rapporten. */
 const FORETRUKKET_FORM = '53'
@@ -191,10 +214,13 @@ export interface Forlopsresultat {
   forlop: Brukerforlop
   klasse: Utfallsklasse
   verktoy?: Verktoy
-  uttrekk?: Uttrekksnavn
+  /** Filnavnet til FEST-uttrekket forløpet ble prøvd mot. */
+  uttrekk?: string
   utfall?: Pilotutfall & { resultat?: Doseplanresultat; tekst?: string }
   /** Formvalg gjort automatisk, i klartekst. */
   formvalg: string[]
+  /** Doser valgt automatisk der siden lot forskriveren velge, i klartekst. */
+  trinnvalg: string[]
   regel?: Regel
   /** Hva brukeren ser som grunn eller plan, kort. */
   vist: string[]
@@ -218,6 +244,7 @@ export function kjorForlop(f: Brukerforlop, u: Uttrekkene, ekstra: Partial<Pilot
       forlop: f,
       klasse: 'verktoy_mangler',
       formvalg: [],
+      trinnvalg: [],
       vist: [`Ingen verktøy av typen «${LEVERANSER[f.leveranse].verktoytype}» i registeret.`],
       feil: [],
     }
@@ -228,22 +255,26 @@ export function kjorForlop(f: Brukerforlop, u: Uttrekkene, ekstra: Partial<Pilot
     hva: f.hva,
     verktoy: verktoy.id,
     valg: f.valg,
-    uttrekk,
+    uttrekk: 'pilot',
     dose: f.dose,
     skjema: f.skjema,
     forventet: { utfall: 'sperret' },
     ...ekstra,
   }
-  let utfall = kjorKasus(kasus, u)
+  const kasusU = kasusuttrekk(u, uttrekk)
+  let skjema: Partial<Planskjema> = kasus.skjema ?? {}
+  let utfall = kjorKasus(kasus, kasusU)
   const formvalg: string[] = []
   if (utfall.utfall === 'formvalg') {
+    // En regel som kjøres som endret kopi (kasus.regel), velges slik kjorKasus gjør; ellers den siden tilbyr.
     const t = tilgjengelighet(verktoy, f.valg)
-    const regel = t.regler.length === 1 ? t.regler[0]! : t.regler.find((r) => r.id === kasus.skjema?.regel)
+    const endret = kasus.regel && REGELSETT.regler.find((r) => r.id === kasus.regel!.id)
+    const regel = endret ? endretKopi(endret, kasus.regel!) : t.regler.length === 1 ? t.regler[0]! : t.regler.find((r) => r.id === kasus.skjema?.regel)
     if (regel) {
-      const naa = tidFor(kasus, u)
-      const skjema = besvartSkjema(regel, f.dose, kasus.skjema)
-      const alternativer = formvalgFor(regel, f.valg, skjema, structuredClone(u[uttrekk].utvalg), naa)
-      const valgt: Planskjema['formvalg'] = { ...skjema.formvalg }
+      const naa = tidFor(kasus, kasusU)
+      const besvart = besvartSkjema(regel, f.dose, kasus.skjema)
+      const alternativer = formvalgFor(regel, f.valg, besvart, structuredClone(u[uttrekk]!.utvalg), naa)
+      const valgt: Planskjema['formvalg'] = { ...besvart.formvalg }
       for (const forlop of utfall.forlop) {
         const a = alternativer[forlop]!
         const form = a.legemiddelformer.find((x) => x.kode === FORETRUKKET_FORM) ?? a.legemiddelformer[0]
@@ -254,13 +285,22 @@ export function kjorForlop(f: Brukerforlop, u: Uttrekkene, ekstra: Partial<Pilot
         }
         formvalg.push(`${forlop}: ${[a.klasser.length > 1 ? klasse?.navn : null, form?.navn].filter(Boolean).join(', ')}`)
       }
-      utfall = kjorKasus({ ...kasus, skjema: { ...kasus.skjema, formvalg: valgt } }, u)
+      skjema = { ...skjema, formvalg: valgt }
+      utfall = kjorKasus({ ...kasus, skjema }, kasusU)
     }
+  }
+  // Der siden lar forskriveren velge dosen for et trinn, velger forløpet én av dosene som tilbys, trinn for trinn.
+  const trinnvalg: string[] = []
+  for (let t = utfall.resultat?.trinnvalg?.[0]; t && t.doser.length > 0 && trinnvalg.length < MAKS_TRINNVALG; t = utfall.resultat?.trinnvalg?.[0]) {
+    const mg = (f.trinn === 'siste' ? t.doser.at(-1) : t.doser[0])!.mg
+    skjema = { ...skjema, trinnvalg: [...(skjema.trinnvalg ?? []), { forlop: t.forlop, trinn: t.trinn, fra_mg: t.fra_mg, mg }] }
+    trinnvalg.push(`${t.virkestoff} trinn ${t.trinn}: ${tall(mg)} mg`)
+    utfall = kjorKasus({ ...kasus, skjema }, kasusU)
   }
   // En regel som er endret på en kopi (simulert godkjenning i et kontrollgrunnlag), vurderes som kopien.
   const regel = ekstra.regel && regelFor(utfall) ? endretKopi(regelFor(utfall)!, ekstra.regel) : regelFor(utfall)
   const grunner = 'grunner' in utfall ? utfall.grunner : []
-  const base = { forlop: f, verktoy, uttrekk, utfall, formvalg, regel }
+  const base = { forlop: f, verktoy, uttrekk, utfall, formvalg, trinnvalg, regel }
   switch (utfall.utfall) {
     case 'plan': {
       const klasse = komplett(regel!, utfall.resultat!) ? 'komplett' : 'delplan'
@@ -365,6 +405,7 @@ export function planfeil(regel: Regel | undefined, u: Pilotutfall & { resultat?:
       if (!Number.isFinite(per.mg) || per.mg < 0) feil.push(`${f.virkestoff}: ugyldig dose ${per.mg}.`)
       if (per.fra < forrige || (per.til !== null && per.til < per.fra)) feil.push(`${f.virkestoff}: periodene går ikke framover (dag ${per.fra}–${per.til}).`)
       forrige = per.fra
+      if (per.mg > 0 && per.elementer.length === 0) feil.push(`${f.virkestoff} dag ${per.fra}: ${per.mg} mg uten enheter som kan gis.`)
       if (per.mg > 0 && per.elementer.length > 0) {
         const sum = per.elementer.reduce((s, e) => s + e.mg * e.antall, 0)
         if (
@@ -406,8 +447,8 @@ const tall = (x: number) => String(x).replace('.', ',')
 /** Hver kombinasjon av legemiddelformer siden kan be om for valget, ved dosen. */
 function formkombinasjoner(regel: Regel, valg: Verktoyvalg, dose: string, u: Uttrekkene): Planskjema['formvalg'][] {
   const uttrekk = uttrekkFor(valg, u)
-  const naa = tidFor({ uttrekk }, u)
-  const alternativer = formvalgFor(regel, valg, besvartSkjema(regel, dose), structuredClone(u[uttrekk].utvalg), naa)
+  const naa = tidFor({ uttrekk: 'pilot' }, kasusuttrekk(u, uttrekk))
+  const alternativer = formvalgFor(regel, valg, besvartSkjema(regel, dose), structuredClone(u[uttrekk]!.utvalg), naa)
   let kombinasjoner: Planskjema['formvalg'][] = [{}]
   for (const [forlop, a] of Object.entries(alternativer)) {
     if (a.legemiddelformer.length <= 1 && a.klasser.length <= 1) continue
@@ -482,8 +523,11 @@ export function sveipRegel(verktoy: Verktoy, valg: Verktoyvalg, regel: Regel, u:
   for (const dose of SVEIPDOSER) {
     for (const formvalg of formkombinasjoner(regel, valg, tall(dose), u)) {
       for (const maldose of maldoser(regel, dose)) {
-        const r = kjorForlop(forlop(dose, { formvalg, ...(maldose !== undefined ? { maldose: tall(maldose) } : {}) }), u, ekstra)
-        if (r.klasse === 'komplett' || r.klasse === 'delplan') treff.push({ dose, ...(maldose !== undefined ? { maldose } : {}), formvalg, resultat: r })
+        const f = forlop(dose, { formvalg, ...(maldose !== undefined ? { maldose: tall(maldose) } : {}) })
+        const forsteDose = kjorForlop(f, u, ekstra)
+        // Der siden tilbyr doser å velge mellom, prøves både den første og den siste hele veien.
+        for (const r of forsteDose.trinnvalg.length > 0 ? [forsteDose, kjorForlop({ ...f, trinn: 'siste' }, u, ekstra)] : [forsteDose])
+          if (r.klasse === 'komplett' || r.klasse === 'delplan') treff.push({ dose, ...(maldose !== undefined ? { maldose } : {}), formvalg, resultat: r })
       }
     }
   }
@@ -558,7 +602,7 @@ export function lagQaRapport(resultater: readonly Forlopsresultat[], tillegg: re
           r.forlop.id,
           celle(r.forlop.hva),
           `${KLASSENAVN[r.klasse]}${r.regel ? ` (${r.regel.id} v${r.regel.versjon})` : ''}`,
-          celle([...r.formvalg.map((f) => `[formvalg ${f}]`), ...r.vist].join(' / ')),
+          celle([...r.formvalg.map((f) => `[formvalg ${f}]`), ...r.trinnvalg.map((t) => `[valgt dose ${t}]`), ...r.vist].join(' / ')),
           celle(r.feil.join(' / ') || '–'),
         ].join(' | '),
       )

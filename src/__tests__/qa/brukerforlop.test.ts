@@ -97,6 +97,11 @@ describe('QA: regelversjonene (regresjon)', () => {
     }
   })
 
+  it('har hver klinisk godkjente regel i nøyaktig gjeldende versjon og innhold', () => {
+    for (const { nokkel, r } of ALLE.filter((x) => erKliniskGodkjent(x.r)))
+      expect(REGELVERSJONER[nokkel], `${nokkel} v${r.versjon} er godkjent, men står ikke slik i REGELVERSJONER`).toEqual([r.versjon, fingeravtrykk(r)])
+  })
+
   it('har de seks godkjente versjonene uendret og fortsatt klinisk godkjent', () => {
     for (const nokkel of GODKJENT) {
       const x = ALLE.find((y) => y.nokkel === nokkel)!
