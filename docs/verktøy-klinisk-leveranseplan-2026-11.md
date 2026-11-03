@@ -180,10 +180,10 @@ Syntetiske, vanlige situasjoner for voksne 18–64 år uten tidligere seponering
 | Rekkefølge | PR | Spor | Versjon | Avhenger av | Status |
 | --- | --- | --- | --- | --- | --- |
 | 1 | #316 | A – K0-nullpunkt | 1.124.5 | – | Til kontroll |
-| 2 | QA-PR (kommer) | H – testkasus K0-01–K0-12 | 1.124.8 | – | Under arbeid |
-| 3 | #319 | G – felles motor | 1.125.0 | – | Til kontroll |
-| 4 | #318 | D – K2, fem bytteregler til kontroll | 1.125.1 | #319 | Til kontroll; QA uten blokkerende funn |
-| 5 | #320 | E – K3, fem bytteregler til kontroll (dekker K0-10; K0-07 og K0-08 åpne) | 1.125.2 | #319 | Til kontroll |
+| 2 | #319 | G – felles motor | 1.125.0 | – | Til kontroll |
+| 3 | #318 | D – K2, fem bytteregler til kontroll | 1.125.1 | #319 | Til kontroll; QA uten blokkerende funn |
+| 4 | #320 | E – K3, fem bytteregler til kontroll (dekker K0-10; K0-07 og K0-08 åpne) | 1.125.2 | #319 | Til kontroll |
+| 5 | #321 | H – testkasus K0-01–K0-12 og kontroll i den publiserte appen (K0-09 prøveverifisert) | 1.125.3 | #320 (rapporten lages på nytt etter den) | Til kontroll |
 | – | K1- og K4-PR | C og F | tildeles | #319 | Under arbeid |
 
 Godkjenner ChatGPT i en annen rekkefølge, nummererer koordinatoren om de uavhengige PR-ene; PR-er som avhenger av #319, merges etter den.
