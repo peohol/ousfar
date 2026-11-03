@@ -1,12 +1,12 @@
 # OUSFAR – Verktøy: utviklingsplan og fremdrift
 
 **Opprettet:** 27.10.2026  
-**Status (01.11.2026):** P1–P6 er etablert; seks regelversjoner har avgrenset klinisk godkjenning. P12-overvåkingen kjører, men redaktør- og oppfølgingsflyten må omarbeides før fasen kan regnes som ferdig. Klinisk regeldekning utvides i et eget, parallelt spor.  
-**Omfang:** Tre første verktøy, felles regel- og beregningsmotor, kildedata og videre drift  
+**Status (03.11.2026):** P1–P6 er etablert; P12.1/VDR-1–VDR-5 er gjennomført, mens klinisk dekning fortsatt er svært begrenset. **Ny styrende plan for klinisk funksjon, prioriteringer og ferdigkriterier:** [Klinisk leveranseplan 03.11.2026](verktøy-klinisk-leveranseplan-2026-11.md). Den gjelder foran P7–P10 og VDK-prioriteringer her ved motstrid. De historiske fremdriftslinjene nedenfor beskriver det som faktisk ble gjort, og betyr ikke at de kliniske verktøyene er ferdige.  
+**Omfang:** Historisk P0–P12-plan for de tre først bygde verktøyene. Den gjeldende kliniske leveranseplanen omfatter fire brukerrettede verktøy (inkludert kombinering av stemningsstabiliserende).  
 **Hovedansvar for implementering og oppdatering av denne planen:** Claude Code  
 **Uavhengig faglig kontroll:** ChatGPT, etter eksplisitt forespørsel ved kontrollpunktene nedenfor
 
-Dette er prosjektets **kanoniske fremdriftsplan**. Oppgaver krysses av først når resultatet finnes i repoet eller i en dokumentert kjøring. Hver gjennomførings-PR skal oppdatere relevant sjekkliste, evidens/kontroll og PR-lenke her. Arbeidet skal ikke deklareres ferdig på grunnlag av en plan eller en bestått byggtest alene.
+Dette er prosjektets **historiske fremdriftsplan for P0–P12**. For videre klinisk produktutvikling gjelder den nye [kliniske leveranseplanen](verktøy-klinisk-leveranseplan-2026-11.md) ved motstrid. Oppgaver krysses av først når resultatet finnes i repoet eller i en dokumentert kjøring. Hver gjennomførings-PR skal oppdatere relevant sjekkliste, evidens/kontroll og PR-lenke her. Arbeidet skal ikke deklareres ferdig på grunnlag av en plan eller en bestått byggtest alene.
 
 ## 1. Mål og ufravikelig avgrensning
 
@@ -391,8 +391,8 @@ Før en oppgave eller fase krysses av:
 
 | 03.11.2026 | P12.1 fullført etter VDR-5 og kildeavslutning | VDR-5 er publisert etter kontroll av tre syntetiske ende-til-ende-forløp i migrert testdatabase og lesekontroll i produksjonen (PR #307, 1.124.1). Sak 4 og 5 ble teknisk avsluttet med kildebevis ([sak 4](https://github.com/peohol/ousfar/actions/runs/41605290757), [sak 5](https://github.com/peohol/ousfar/actions/runs/41605365060)), og [ordinær etterkontroll](https://github.com/peohol/ousfar/actions/runs/41605399129) ga ingen nye saker. Prøvefunn 3 er avsluttet som prøve; den gamle fristtesten er utgått. Det ble ikke gjennomført en ny skriveprøve eller nødstopp i produksjon | P12.1 og VDR-5 gjennomført og godkjent. P12.2–P12.4 er fortsatt egne, åpne oppgaver |
 
-## 8. Neste oppdrag til Claude Code (01.11.2026)
+## 8. Gjeldende neste oppdrag (03.11.2026)
 
-Følg **docs/verktøy-omlegging-2026-11.md**. Begynn med VDR-0 og VDR-1: kartlegg de faktiske sakstilstandene og de tre eksisterende funnene, innfør en teknisk oppfølgingsflyt som ikke legger beslutninger og 24/72-timersfrister på den faglige redaktøren, og bevar sikkerhetskontroller og sporbarhet. Legg fram en avgrenset PR med tester. Ikke erklær funn 1/2 faglig irrelevante på grunnlag av en endret kontrollsum; ikke endre kliniske regler eller godkjenninger i denne PR-en.
+**Den tidligere ordre om VDR-0/VDR-1 fra 01.11.2026 er utgått.** VDR-arbeidet og kildeoppfølgingen er gjennomført for den avgrensede leveransen, men verktøyene har fortsatt svært få reelt anvendelige kliniske forløp.
 
-VDK-1 (dekningsoversikt) kan utredes parallelt i en separat PR. Kliniske regelendringer krever fortsatt uavhengig kontroll og eksplisitt godkjenning.
+**Følg [den nye kliniske leveranseplanen](verktøy-klinisk-leveranseplan-2026-11.md)**: bygg komplette, uavhengig kontrollerte brukerforløp med norske preparater, i parallelle Claude Code Projects-spor. Gjeninnfør også Combining Moodstabilizers som eget brukerrettet verktøy. Unngå nye administrasjons-/overvåkingsprosjekter uten en påvist nødvendig feil eller risiko. En ferdig PR eller grønn byggtest er ikke en ferdig klinisk leveranse. Bevar uavhengig kontroll og eksisterende sikkerhetssperrer.
