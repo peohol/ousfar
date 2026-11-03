@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.124.2',
+    versjon: '1.124.3',
     dato: '2026-11-03',
     sammendrag: 'Innholdsfortegnelsen på fagsidene viser seksjonsikonene og står litt lenger fra innholdet',
     typer: ['Design / layout'],
