@@ -865,21 +865,29 @@ describe('Sertralin til mirtazapin med preparatene i FEST (P4.8, gjennomgangene 
     }
   })
 
-  it('er klinisk godkjent for nøyaktig versjon 9 med kontrollørens fingeravtrykk (gjennomgangen av f77e1a9)', () => {
-    expect([REGEL.versjon, fingeravtrykk(REGEL)]).toEqual([9, 'dc878aa9065c8330f3850567b226ab8d392bcad4cb1dd5cf5cebacda54277881'])
+  it('er klinisk godkjent for nøyaktig versjon 10 med kontrollørens fingeravtrykk (gjennomgangene av f77e1a9 og a38fac14)', () => {
+    expect([REGEL.versjon, fingeravtrykk(REGEL)]).toEqual([10, '12801aa22a0ca2a576b9ba737d5d5cb52db3a73dc1b437bde7f20a896214c81a'])
     expect(godkjenningsfeil(REGEL)).toEqual([])
     expect(erKliniskGodkjent(REGEL)).toBe(true)
     expect(REGEL.godkjenning.historikk.at(-1)).toEqual({
       status: 'klinisk_godkjent',
-      dato: '2026-10-31',
+      dato: '2026-11-03',
       av: 'ChatGPT (uavhengig fagkontrollør)',
       rolle: 'uavhengig_kontrollor',
-      regelversjon: 9,
-      fingeravtrykk: 'dc878aa9065c8330f3850567b226ab8d392bcad4cb1dd5cf5cebacda54277881',
-      merknad: expect.stringMatching(/^Kontrollørens gjennomgang av f77e1a9 31\.10\.2026 \(P4\.8\): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: begrenset innledende kryssnedtrapping fra sertralin nøyaktig 50 eller 100 mg ved ikke-langvarig behandlingstid/),
+      regelversjon: 10,
+      fingeravtrykk: '12801aa22a0ca2a576b9ba737d5d5cb52db3a73dc1b437bde7f20a896214c81a',
+      merknad: expect.stringMatching(/^Kontrollørens gjennomgang av a38fac14 03\.11\.2026 \(rettelsen av RCPsych-faktumet, PR #309\): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare det tidligere godkjente startforløpet fra sertralin 50 eller 100 mg, kort\/ikke-langvarig behandling.*Identisk klinisk omfang som v9\. Godkjenningen gjelder bare dette eksakte fingeravtrykket/),
     })
-    // Ingen tidligere steg er en klinisk godkjenning.
-    expect(REGEL.godkjenning.historikk.slice(0, -1).every((x) => x.status !== 'klinisk_godkjent')).toBe(true)
+    // Den eneste tidligere kliniske godkjenningen er den av versjon 9 (gjennomgangen av f77e1a9); versjon 10 skiller seg bare i det rettede RCPsych-faktumet.
+    const tidligere = REGEL.godkjenning.historikk.slice(0, -1).filter((x) => x.status === 'klinisk_godkjent')
+    expect(tidligere).toEqual([
+      expect.objectContaining({
+        dato: '2026-10-31',
+        regelversjon: 9,
+        fingeravtrykk: 'dc878aa9065c8330f3850567b226ab8d392bcad4cb1dd5cf5cebacda54277881',
+        merknad: expect.stringMatching(/^Kontrollørens gjennomgang av f77e1a9 31\.10\.2026 \(P4\.8\): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: begrenset innledende kryssnedtrapping fra sertralin nøyaktig 50 eller 100 mg ved ikke-langvarig behandlingstid/),
+      }),
+    ])
   })
 
   it('gir med den godkjente regelen og fersk FEST en klinisk plan bare for 50 og 100 mg, kort behandlingstid og tabletter med de kontrollerte styrkene (gjennomgangen av f77e1a9)', () => {

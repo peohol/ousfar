@@ -26,7 +26,15 @@ export interface Kommentar extends Innlegg {
   slettet: boolean
   /** En administrator har skjult innholdet. Bare i diskusjonene. */
   skjult?: boolean
+  /** Det skjulte kan vises igjen. Bare administratorene får vite det. */
+  kan_vises?: boolean
 }
+
+/**
+ * Det en administrator kan gjøre med innholdet i et innlegg i diskusjonene:
+ * skjule det, vise det skjulte igjen, eller fjerne det skjulte for godt.
+ */
+export type Skjulehandling = 'skjul' | 'vis' | 'fjern'
 
 /** Lengste overskrift på en idé eller en diskusjon. Samme grense som databasen setter. */
 export const TITTEL_MEST = 140
@@ -89,6 +97,7 @@ export function lesKommentarer(verdi: unknown): Kommentar[] {
         forelder_id: tekstEllerNull(rad.forelder_id),
         slettet,
         skjult,
+        kan_vises: skjult && rad.kan_vises === true,
         tekst: slettet || skjult ? rensInnleggstekst(null) : rensInnleggstekst(rad.tekst),
       },
     ]

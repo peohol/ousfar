@@ -48,13 +48,14 @@ import { AVSLUTNING_FELLES, avrund, beregn, kortform, MINSTE_VISTE_MG, nulldagfe
 import { erKliniskGodkjent, fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett, lesKontrollgrunnlag } from '../verktoy/regler/kontroll'
 import { apneValg, henvisninger, justerbare, nulltrinnfeil, type Beregningsinndata, type Fase, type Nedtrappingsstrategi, type Regel, type Regelsett } from '../verktoy/regler/modell'
-import { NICE, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, RCPSYCH } from '../verktoy/regler/bygg'
+import { NICE, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, RCPSYCH, RCPSYCH_TIDLIGERE } from '../verktoy/regler/bygg'
 import {
   AKUTT_ID,
   JUSTERING,
   LANG_BEHANDLINGSTID,
   LANG_PROSENT,
   NEDTRAPPINGSSETT,
+  NEDTRAPPINGSSETT_FOR_RETTELSENE,
   ORGANFUNKSJON_ID,
   SAMMENLIGNINGSSETT,
   STARTFORSLAG,
@@ -80,6 +81,15 @@ const P7SETT = [NEDTRAPPINGSSETT, SAMMENLIGNINGSSETT]
 const P7REGLER = P7SETT.flatMap((s) => s.regler).filter((r) => r.plan.form === 'seponering')
 const BEREGNBARE = NEDTRAPPINGSSETT.regler.filter((r) => r.beregnbarhet !== 'bare_tekstlig')
 /**
+ * Rettelsen av RCPsych-faktumet (PR #309) ga reglene som viser til det, én versjon til, med utkastet og innsendingen
+ * av den nye versjonen i historikken. `rettet` er antall slike versjoner; `egne` er utviklerens steg før rettelsen.
+ */
+const rettet = (r: Regel) => r.versjon - (NEDTRAPPINGSSETT_FOR_RETTELSENE.regler.find((x) => x.id === r.id) ?? r).versjon
+const egne = (r: Regel) => {
+  const e = r.godkjenning.historikk.filter((x) => x.rolle === 'utvikler')
+  return e.slice(0, e.length - 2 * rettet(r))
+}
+/**
  * Stoffene med høyest risiko der ingen dose i valgområdet for første trinn kan
  * gis med de norske formene; kontrolløren besluttet 30.10.2026 (P7-A) at de
  * står som fagtekst uten langsom variant.
@@ -91,10 +101,11 @@ const TEKSTREGLER = ['seponering-bupropion', 'seponering-agomelatin', 'seponerin
 /**
  * De kliniske godkjenningene i P7, med fingeravtrykkene kontrolløren oppga:
  * tekstreglene for bupropion og agomelatin fra substanskontrollen 30.10.2026
- * og hovedregelen for vortioksetin fra gjennomgangen av f77e1a9 31.10.2026.
+ * og hovedregelen for vortioksetin fra gjennomgangen av f77e1a9 31.10.2026, for versjon 12 (med det rettede
+ * RCPsych-faktumet) fra gjennomgangen av a38fac14 03.11.2026.
  */
 const GODKJENT = {
-  'seponering-vortioksetin': { versjon: 11, fingeravtrykk: 'a6e488637de88c9bb109d42153a56a8e616935638c0536d1335076210dd1351e', beregnbarhet: 'beregnbar_etter_avklaring', dato: '2026-10-31', merknad: /^Kontrollørens gjennomgang av f77e1a9 31\.10\.2026 \(P7\.5\), faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare én første reduksjon fra vortioksetin 20 til 15 mg/ },
+  'seponering-vortioksetin': { versjon: 12, fingeravtrykk: 'b28dec93f5ede06c6565e1ce5d6aa62606c69250f1a9088dae0c57d3121101f3', beregnbarhet: 'beregnbar_etter_avklaring', dato: '2026-11-03', merknad: /^Kontrollørens gjennomgang av a38fac14 03\.11\.2026 \(rettelsen av RCPsych-faktumet, PR #309\): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare én første reduksjon 20 → 15 mg\/døgn, med minst 28 dager før ny symptomstyrt vurdering, hos voksne under 65 år.*Identisk klinisk omfang som v11\./ },
   'seponering-bupropion': { versjon: 5, fingeravtrykk: 'e7536668ac7f2d4dfd9959f24cfdfc4874182a4fc295355f0d10a05f438b5f5f', beregnbarhet: 'bare_tekstlig', dato: '2026-10-30', merknad: /^Substanskontrollen 30\.10\.2026, runde 3: / },
   'seponering-agomelatin': { versjon: 1, fingeravtrykk: '6d42863f3573fb2e0d6dbffd27ff78a7f1c2b539c8dce2cfcd36ad417b61a2d1', beregnbarhet: 'bare_tekstlig', dato: '2026-10-30', merknad: /^Substanskontrollen 30\.10\.2026, runde 3: / },
 } as const
@@ -226,7 +237,7 @@ describe('Regelutkastene (P7.2)', () => {
     expect(SAMMENLIGNINGSSETT.regler.map((r) => r.id)).toEqual(['seponering-citalopram-hyperbolsk', 'gruppe-rest-ap-aripiprazol'])
     // Escitalopram er flyttet fra pilotsettet til P7; appen bruker begge, og ingen regel-ID finnes i begge.
     expect(PILOTSETT.regler.map((r) => r.id)).not.toContain('seponering-escitalopram')
-    expect(regel('escitalopram').godkjenning.historikk.filter((x) => x.rolle === 'utvikler').at(-12)!.merknad).toMatch(/substanskontrollen 30\.10\.2026, runde 3/)
+    expect(egne(regel('escitalopram')).at(-12)!.merknad).toMatch(/substanskontrollen 30\.10\.2026, runde 3/)
     expect(new Set(REGELSETT.regler.map((r) => r.id)).size).toBe(REGELSETT.regler.length)
   })
 
@@ -247,8 +258,12 @@ describe('Regelutkastene (P7.2)', () => {
         fingeravtrykk: g.fingeravtrykk,
         merknad: expect.stringMatching(g.merknad),
       })
-      // Ingen tidligere steg er en klinisk godkjenning; ingen ble satt av OUSFAR Dev.
-      expect(r.godkjenning.historikk.slice(0, -1).every((x) => x.status !== 'klinisk_godkjent' && x.rolle === 'utvikler'), id).toBe(true)
+      // Ingen ble satt av OUSFAR Dev. Den eneste tidligere kontrollørbeslutningen er godkjenningen av vortioksetin versjon 11 (gjennomgangen av f77e1a9).
+      expect(r.godkjenning.historikk.slice(0, -1).filter((x) => x.status === 'klinisk_godkjent' || x.rolle !== 'utvikler'), id).toEqual(
+        id === 'seponering-vortioksetin'
+          ? [expect.objectContaining({ status: 'klinisk_godkjent', dato: '2026-10-31', regelversjon: 11, fingeravtrykk: 'a6e488637de88c9bb109d42153a56a8e616935638c0536d1335076210dd1351e', merknad: expect.stringMatching(/^Kontrollørens gjennomgang av f77e1a9 31\.10\.2026 \(P7\.5\), faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare én første reduksjon fra vortioksetin 20 til 15 mg/) })]
+          : [],
+      )
     }
     // Avgrensningen står i godkjenningen: bupropion bare som tekstregel, agomelatin bare utsagnet om at nedtrapping ikke trengs.
     expect(regel('bupropion').godkjenning.historikk.at(-1)!.merknad).toMatch(/Godkjent som den står, bare som tekstregel/)
@@ -262,15 +277,30 @@ describe('Regelutkastene (P7.2)', () => {
       expect(r.godkjenning.historikk.every((x) => x.status !== 'klinisk_godkjent'), r.id).toBe(true)
     }
     // Kontrollørens disposisjon av leveransen 31.10.2026: hver annen regel er kontrollert og ikke godkjent for nøyaktig sin versjon, tekstreglene som bare fagtekst.
+    // De rettede reglene har i tillegg kontrollørens disposisjon 03.11.2026 av den nye versjonen (gjennomgangen av a38fac14).
     for (const r of NEDTRAPPINGSSETT.regler.filter((x) => !(x.id in GODKJENT))) {
       expect(r.godkjenning.status, r.id).toBe('ikke_godkjent')
-      expect(r.godkjenning.historikk.at(-1), r.id).toEqual({
+      const [forrige, ...etterRettelsen] = r.godkjenning.historikk.filter((x) => x.status === 'ikke_godkjent').slice(-1 - rettet(r))
+      if (rettet(r)) {
+        expect(etterRettelsen, r.id).toEqual([r.godkjenning.historikk.at(-1)])
+        expect(etterRettelsen[0], r.id).toEqual({
+          status: 'ikke_godkjent',
+          dato: '2026-11-03',
+          av: 'ChatGPT (uavhengig fagkontrollør)',
+          rolle: 'uavhengig_kontrollor',
+          regelversjon: r.versjon,
+          fingeravtrykk: fingeravtrykk(r),
+          merknad: expect.stringMatching(/^Kontrollørens gjennomgang av a38fac14 03\.11\.2026 \(rettelsen av RCPsych-faktumet, PR #309\): kontrollert, ikke klinisk godkjent, for nøyaktig denne versjonen og dette fingeravtrykket.*den separate substanskontrollen som kreves før en senere aktivering, bortfaller ikke\.$/),
+        })
+      }
+      const vurdert = NEDTRAPPINGSSETT_FOR_RETTELSENE.regler.find((x) => x.id === r.id)!
+      expect(forrige, r.id).toEqual({
         status: 'ikke_godkjent',
         dato: '2026-10-31',
         av: 'ChatGPT (uavhengig fagkontrollør)',
         rolle: 'uavhengig_kontrollor',
-        regelversjon: r.versjon,
-        fingeravtrykk: fingeravtrykk(r),
+        regelversjon: vurdert.versjon,
+        fingeravtrykk: fingeravtrykk(vurdert),
         merknad: expect.stringMatching(
           r.beregnbarhet === 'bare_tekstlig'
             ? /^Kontrollørens disposisjon av leveranseomfanget 31\.10\.2026 \(P4\.8 og P7\.5, kontrollert i 52b22a4\): bare fagtekst, sperret for beregning\. Det som mangler, er en dokumentert dosebygging med dagens preparater, ikke et klinisk behov for mindre doser\./
@@ -278,12 +308,16 @@ describe('Regelutkastene (P7.2)', () => {
         ),
       })
     }
-    expect(regel('vortioksetin-langsom').godkjenning.historikk.at(-1)!.merknad).toMatch(/den langsomme varianten er ikke det\.$/)
+    expect(regel('vortioksetin-langsom').godkjenning.historikk.filter((x) => x.dato === '2026-10-31').at(-1)!.merknad).toMatch(/den langsomme varianten er ikke det\.$/)
     // Reglene er omarbeidet etter hver kontroll og sendt til kontroll på nytt hver gang.
     const steg = (n: number) => Array.from({ length: n }, (_, i) => [`utkast ${i + 1}`, `til_faglig_kontroll ${i + 1}`]).flat()
-    // Utviklerens steg; kontrollørens godkjenning av vortioksetin kommer i tillegg.
-    const egne = (r: Regel) => r.godkjenning.historikk.filter((x) => x.rolle === 'utvikler')
-    const historikk = (r: Regel) => [r.versjon, egne(r).map((x) => `${x.status} ${x.regelversjon}`)]
+    // Utviklerens steg før rettelsen av RCPsych-faktumet; kontrollørens steg kommer i tillegg.
+    const historikk = (r: Regel) => [r.versjon - rettet(r), egne(r).map((x) => `${x.status} ${x.regelversjon}`)]
+    // Rettelsen (PR #309) gir de rettede reglene utkastet og innsendingen av nøyaktig én ny versjon.
+    for (const r of P7REGLER.filter((x) => rettet(x))) {
+      expect(rettet(r), r.id).toBe(1)
+      expect(r.godkjenning.historikk.filter((x) => x.rolle === 'utvikler').slice(-2).map((x) => [x.status, x.regelversjon, x.dato]), r.id).toEqual([['utkast', r.versjon, '2026-11-03'], ['til_faglig_kontroll', r.versjon, '2026-11-03']])
+    }
     const formtekst = FORMTEKST.map((n) => regel(n))
     // Fluvoksamin og moklobemid har én versjon fra kontrollrunden 30.10.2026 med like store deldoser; kravet er tatt bort igjen (P7-B).
     const LIKE_STORE = ['seponering-fluvoksamin', 'seponering-fluvoksamin-langsom', 'seponering-moklobemid']
@@ -301,7 +335,7 @@ describe('Regelutkastene (P7.2)', () => {
     const etter = (r: Regel) => Number(likeStore(r)) + Number(valgAvDose(r)) + Number(etterBeslutning(r)) + Number(etterGjennomgang(r)) + Number(etterOmfang(r)) + Number(etterStyrker(r))
     for (const r of [...HOVEDREGLER, ...formtekst, CITALOPRAM, regel('duloksetin'), regel('venlafaksin')]) expect(historikk(r), r.id).toEqual([6 + etter(r), steg(6 + etter(r))])
     for (const r of [...LANGSOMME, ANNENHVER_DAG]) expect(historikk(r), r.id).toEqual([2 + etter(r), steg(2 + etter(r))])
-    expect(ANNENHVER_DAG.versjon).toBe(4)
+    expect([ANNENHVER_DAG.versjon, rettet(ANNENHVER_DAG)]).toEqual([5, 1])
     for (const r of [...BEREGNBARE, ...formtekst, CITALOPRAM]) {
       const styrkesteg = 2 * Number(etterStyrker(r))
       const omfangssteg = 2 * Number(etterOmfang(r)) + styrkesteg
@@ -335,7 +369,7 @@ describe('Regelutkastene (P7.2)', () => {
       // Valgområdene (prosent og dager, med kravene om begrunnelse) er avklart av den uavhengige kontrolløren for denne versjonen.
       for (const [sti, p] of justerbare(r)) {
         const g = p.grunnlag
-        expect(g.type === 'ousfar_vurdering' && g.avklaring, `${r.id} ${sti}`).toMatchObject({ rolle: 'uavhengig_kontrollor', regelversjon: r.versjon, merknad: expect.stringMatching(/^(Beslutning 1 i fagvurderingen 29\.10|Fagkontrollen 30\.10\.2026, Beslutning|Substanskontrollen 30\.10\.2026, Beslutning)/) })
+        expect(g.type === 'ousfar_vurdering' && g.avklaring, `${r.id} ${sti}`).toMatchObject({ rolle: 'uavhengig_kontrollor', regelversjon: r.versjon - rettet(r), merknad: expect.stringMatching(/^(Beslutning 1 i fagvurderingen 29\.10|Fagkontrollen 30\.10\.2026, Beslutning|Substanskontrollen 30\.10\.2026, Beslutning)/) })
       }
       // Planhorisonten og startdosen er avklart i beslutning 6 og 7, og valget blant dosene som kan gis i beslutning P7-A; ingen valg står åpne.
       expect(apneValg(r), r.id).toEqual([])
@@ -343,7 +377,7 @@ describe('Regelutkastene (P7.2)', () => {
       if (NEDTRAPPINGER.includes(r)) {
         expect(fase.type === 'nedtrapping' && fase.trinnvalg, r.id).toMatchObject({
           type: 'ousfar_vurdering',
-          avklaring: { regelversjon: r.versjon, merknad: expect.stringMatching(/^Kontrollørens gjennomgang av 9cb420b 31\.10\.2026, P7-A–C er grunnlaget for delplaner, men «bare avvik» og «stopp» er ikke godkjente kliniske planområder/) },
+          avklaring: { regelversjon: r.versjon - rettet(r), merknad: expect.stringMatching(/^Kontrollørens gjennomgang av 9cb420b 31\.10\.2026, P7-A–C er grunnlaget for delplaner, men «bare avvik» og «stopp» er ikke godkjente kliniske planområder/) },
         })
       }
       // Ingen regel krever lenger like store deldoser (P7-B).
@@ -351,7 +385,7 @@ describe('Regelutkastene (P7.2)', () => {
     }
     for (const r of NEDTRAPPINGER) {
       const fase = r.plan.forlop[0]!.faser[0]!
-      expect(fase.type === 'nedtrapping' && fase.horisont!.grunnlag, r.id).toMatchObject({ type: 'ousfar_vurdering', avklaring: { regelversjon: r.versjon, merknad: expect.stringMatching(/^Substanskontrollen 30\.10\.2026, Beslutning 6: /) } })
+      expect(fase.type === 'nedtrapping' && fase.horisont!.grunnlag, r.id).toMatchObject({ type: 'ousfar_vurdering', avklaring: { regelversjon: r.versjon - rettet(r), merknad: expect.stringMatching(/^Substanskontrollen 30\.10\.2026, Beslutning 6: /) } })
       expect(r.inndata[0]!.grunnlag, r.id).toMatchObject({ type: 'ousfar_vurdering', avklaring: { merknad: expect.stringMatching(/Beslutning 7: positiv startdose opp til preparatomtalens høyeste voksendose/) } })
     }
   })
@@ -396,7 +430,7 @@ describe('Regelutkastene (P7.2)', () => {
     expect(STARTFORSLAG.tekst).toMatch(/dagene per trinn er minstetider\. Neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige; til da forlenges trinnet/)
     expect(STARTFORSLAG.tekst).toMatch(/^Planen er et startforslag, ikke en forhåndsgodkjenning av alle reduksjonene: hvert trinn forutsetter en ny vurdering av toleransen/)
     expect(STARTFORSLAG.tekst).toMatch(/beregnes en ny plan fra dosen pasienten faktisk bruker\.$/)
-    expect(LANG_BEHANDLINGSTID.grunnlag).toEqual({ type: 'kilde', henvisninger: [RCPSYCH.langvarig, RCPSYCH.fireUker, NICE.halveringstid] })
+    expect(LANG_BEHANDLINGSTID.grunnlag).toEqual({ type: 'kilde', henvisninger: [RCPSYCH_TIDLIGERE.langvarig, RCPSYCH.fireUker, NICE.halveringstid] })
     // Unntaket, den langsomme varianten og organfunksjonen er avklart i fagkontrollen 30.10.2026.
     const c = regel('escitalopram')
     expect(c.unntak.find((u) => u.id === TIDLIGERE_SYMPTOMER_ID)!.grunnlag).toMatchObject({ type: 'ousfar_vurdering', avklaring: { dato: '2026-10-30', merknad: expect.stringMatching(/Beslutning 5\.6: en egen langsom variant/) } })
@@ -564,7 +598,7 @@ describe('Regelutkastene (P7.2)', () => {
       ])
       const forslag = justerbare(r)[0]![1].standard_ved!.grunnlag
       const avklaring = lav ? /^Kontrollørens gjennomgang av d6cc3dd 31\.10\.2026, vortioksetin ved lang behandlingstid: .*25 % skal ikke kalles foretrukket/ : /Beslutning P7-A: etter lang behandlingstid i middelsgruppen er 5–10 % det foretrukne utgangspunktet/
-      expect(forslag, r.id).toMatchObject({ type: 'ousfar_vurdering', avklaring: { rolle: 'uavhengig_kontrollor', regelversjon: r.versjon, merknad: expect.stringMatching(avklaring) } })
+      expect(forslag, r.id).toMatchObject({ type: 'ousfar_vurdering', avklaring: { rolle: 'uavhengig_kontrollor', regelversjon: r.versjon - rettet(r), merknad: expect.stringMatching(avklaring) } })
       if (lav) continue
       // Risikogruppen er det RCPsych oppgir for stoffet; NICEs særlige varsomhet gjelder paroksetin og venlafaksin, som er fagtekst.
       expect(henvisninger(r), r.id).toContainEqual(RCPSYCH.middelsRisiko)
@@ -1609,9 +1643,9 @@ describe('Klinisk omfang med de faktiske preparatene i FEST (gjennomgangene av 0
     }
   })
 
-  it('gir med den godkjente vortioksetinregelen bare én første reduksjon, 20 → 15 mg ved kort behandlingstid hos voksne under 65 år, og ingen neste trinn (gjennomgangen av f77e1a9)', () => {
+  it('gir med den godkjente vortioksetinregelen bare én første reduksjon, 20 → 15 mg ved kort behandlingstid hos voksne under 65 år, og ingen neste trinn (gjennomgangene av f77e1a9 og a38fac14)', () => {
     const V = regel('vortioksetin')
-    expect([V.versjon, fingeravtrykk(V), godkjenningsfeil(V), erKliniskGodkjent(V)]).toEqual([11, 'a6e488637de88c9bb109d42153a56a8e616935638c0536d1335076210dd1351e', [], true])
+    expect([V.versjon, fingeravtrykk(V), godkjenningsfeil(V), erKliniskGodkjent(V)]).toEqual([12, 'b28dec93f5ede06c6565e1ce5d6aa62606c69250f1a9088dae0c57d3121101f3', [], true])
     // Den langsomme varianten er ikke godkjent.
     expect(erKliniskGodkjent(regel('vortioksetin-langsom'))).toBe(false)
     const TABLETT = form('53')

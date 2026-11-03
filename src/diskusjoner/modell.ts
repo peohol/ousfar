@@ -147,6 +147,8 @@ export interface Diskusjonstraad extends Innlegg {
   tekst: Riktekstdokument
   /** En administrator har skjult innholdet i det første innlegget. */
   skjult: boolean
+  /** Det skjulte kan vises igjen. Bare administratorene får vite det. */
+  kan_vises: boolean
   arkivert_kl: string | null
   /** Når tråden ble lest; det er det tråden merkes som sett etter. */
   lest_kl: string
@@ -226,6 +228,7 @@ export function lesDiskusjonstraad(data: unknown): Diskusjonstraad | null {
     tittel: tekst(data.tittel),
     tekst: rensInnleggstekst(skjult ? null : data.tekst),
     skjult,
+    kan_vises: skjult && data.kan_vises === true,
     arkivert_kl: tekstEllerNull(data.arkivert_kl),
     lest_kl: tekst(data.lest_kl),
     sist_sett: tekstEllerNull(data.sist_sett),

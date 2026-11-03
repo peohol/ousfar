@@ -1253,6 +1253,14 @@ const REGISTER = {
       P('M4.5 19.5 19.5 4.5', 'l', 'danger', 'pop'),
     ],
   },
+  // Det samme øyet uten streken: vis det skjulte igjen.
+  vis: {
+    vb: 24,
+    parts: [
+      P('M2.8 12S6.2 5.8 12 5.8 21.2 12 21.2 12 17.8 18.2 12 18.2 2.8 12 2.8 12z', 'f1', 'glass'),
+      G([C(12, 12, 2.6, 'h', 'i-ink')], 'pop'),
+    ],
+  },
   // Vis som helside: hjørnene trekkes ut mot kanten.
   helside: {
     vb: 24,
