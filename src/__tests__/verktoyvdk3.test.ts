@@ -84,8 +84,8 @@ describe('Alle planer i det kliniske omfanget', () => {
         expect(v.utfall.utfall, `${o.regel.id} ${o.startdose_mg} mg`).toBe('plan')
         for (const x of v.valg) {
           const d = x.trinn.doser.find((y) => y.mg === x.valgt)!
-          expect(d.prosent).toBeGreaterThanOrEqual(x.trinn.omrade[0])
-          expect(d.prosent).toBeLessThanOrEqual(x.trinn.omrade[1] + 1e-9)
+          expect(d.prosent).toBeGreaterThanOrEqual(x.trinn.omrade![0])
+          expect(d.prosent).toBeLessThanOrEqual(x.trinn.omrade![1] + 1e-9)
         }
       }
     }

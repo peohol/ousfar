@@ -28,6 +28,7 @@ export const ENDRINGSLOGG: Endring[] = [
       'Bruker pasienten et depot, spør verktøyet etter dosen per injeksjon i stedet for døgndosen.',
       'En regel kan kreve en komplett plan. Når planen da ikke når sluttmålet, står det «Komplett plan ikke tilgjengelig» og hvorfor, og ingen doser vises.',
       'Forutsetninger som bare gjelder ved et bestemt svar, for eksempel for kvinner som kan bli gravide, må bekreftes hver for seg bare når svaret er gitt.',
+      'Når et trinn i en nedtrapping med fast reduksjon av startdosen ikke kan gis, kan forskriveren velge en av de nærmeste dosene. Trinnet varer da så lenge at nedtrappingen ikke går raskere enn regelen.',
     ],
   },
   {

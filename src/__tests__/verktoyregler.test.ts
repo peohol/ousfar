@@ -737,6 +737,11 @@ describe('Kontrollene av et regelsett', () => {
     expect(feil(u)).toMatch(/Es>Ci passer ikke regelen: den er en anbefaling om bytte, men regelen legger til et legemiddel/)
     u.referanser = [{ kilde: 'psychiatrienet', kildeoppforing: 'CombiningMoodstabilizers:Va>La' }]
     expect(feil(u)).not.toMatch(/Va>La passer ikke regelen: den er en anbefaling/)
+    // Valg av dose per trinn i prosent av startdosen gjelder bare en nedtrapping til 0 (regelmodell 12).
+    const ps = regel('seponering-escitalopram')
+    const tf = ps.plan.forlop[0]!.faser.find((x) => x.type === 'nedtrapping')!
+    Object.assign(tf, { strategi: { type: 'prosent_av_startdose', prosent: { verdi: 25, enhet: 'prosent', art: 'veiledende_preferanse', grunnlag: ps.unntak[0]!.grunnlag } }, trinnvalg: ps.unntak[0]!.grunnlag })
+    expect(feil(ps)).toMatch(/velge dose per trinn i prosent av startdosen med individuell eller godkjent avslutning; det gjelder bare en nedtrapping til 0/)
     // En bekreftelse som gjelder ved et svar, må vise til et spørsmål regelen har (regelmodell 12).
     const v = regel('seponering-escitalopram')
     v.bekreftelser = [...v.bekreftelser, { id: 'ppp', tekst: 'Syntetisk.', ved: { sporsmal: 'finnes_ikke', svar: true }, grunnlag: v.bekreftelser[0]?.grunnlag ?? v.unntak[0]!.grunnlag }]

@@ -331,6 +331,47 @@ describe('Startdosen for et depot (K3)', () => {
   })
 })
 
+describe('Valg av dose per trinn i prosent av startdosen (K3)', () => {
+  const nedtrapping = (prosent: number): Fase => ({ type: 'nedtrapping', strategi: { type: 'prosent_av_startdose', prosent: sp(prosent, 'prosent') }, trinnlengde: sp(14, 'dager', 'veiledende_preferanse'), trinnvalg: vurdert })
+  /** Kryssnedtrapping fra testoksetin til testazapin: testoksetin trappes ned til 0 med `prosent` % av startdosen per 14 dager, og forskriveren kan velge dosen når et trinn ikke kan gis. */
+  function tempo(prosent = 30, endre?: (f: Extract<Fase, { type: 'nedtrapping' }>) => void): Regel {
+    const t = tillegg()
+    const fase = nedtrapping(prosent) as Extract<Fase, { type: 'nedtrapping' }>
+    endre?.(fase)
+    const r: Regel = { ...t, plan: { form: 'kryssnedtrapping', forlop: [{ ...t.plan.forlop[0]!, faser: [fase] }, t.plan.forlop[1]!] } }
+    return godkjennITest(r, `test-tempo-${prosent}`)
+  }
+  const grunner = (p: Doseplanresultat) => (p.status === 'stoppet' ? p.stoppgrunner.join(' ') : '')
+  const valg = (...trinn: [number, number, number][]) => ({ trinnvalg: trinn.map(([t, fra_mg, mg]) => ({ forlop: 'fra', trinn: t, fra_mg, mg })) })
+  const kryss = (r: Regel, startdose: number, ekstra: object = {}) => kliniskDoseplan(r, { startdose_mg: startdose, maldose_mg: 30, formvalg: TABLETT, ...ekstra }, GRUNNLAG, OMGIVELSE)
+  const fra = (p: Doseplanresultat) => (p.status === 'doseplan' ? kort(p)[0] : p.stoppgrunner)
+
+  it('tilbyr de nærmeste dosene, med et lengre trinn for en større reduksjon, og regner neste trinn fra den valgte dosen', () => {
+    const r = tempo()
+    expect(godkjenningsfeil(r)).toEqual([])
+    // 15 mg − 4,5 mg = 10,5 mg kan ikke gis; 10 mg er 5 mg reduksjon og varer 14 × 5 / 4,5 → 16 dager, 11,25 mg varer 14 dager.
+    const forste = kryss(r, 15)
+    expect(forste.status).toBe('stoppet')
+    expect(forste.trinnvalg).toMatchObject([{ trinn: 1, fra_mg: 15, beregnet_mg: 10.5, tempo: { steg_mg: 4.5, prosent: 30, dager: 14 }, doser: [{ mg: 10, dager: 16 }, { mg: 11.25, dager: 14 }] }])
+    expect(forste.status === 'stoppet' && forste.stoppgrunner.join(' ')).toMatch(/nærmeste dosene som kan gis: 10 mg \(−33,33 %, 16 dager\) eller 11,25 mg \(−25 %, 14 dager\)\. Trinnet varer da minst 14 dager/)
+    // Etter 10 mg er neste beregnede 5,5 mg; etter 5 mg er det 0,5 mg, der bare 1,25 mg over kan velges; etter 1,25 mg seponeres legemidlet.
+    expect(kryss(r, 15, valg([1, 15, 10])).trinnvalg).toMatchObject([{ trinn: 2, fra_mg: 10, doser: [{ mg: 5, dager: 16 }, { mg: 6.25, dager: 14 }] }])
+    expect(kryss(r, 15, valg([1, 15, 10], [2, 10, 5])).trinnvalg).toMatchObject([{ trinn: 3, fra_mg: 5, doser: [{ mg: 1.25, dager: 14 }] }])
+    const ferdig = kryss(r, 15, valg([1, 15, 10], [2, 10, 5], [3, 5, 1.25]))
+    expect(fra(ferdig)).toEqual([['1–16: 10', '17–32: 5', '33–46: 1.25'], 46])
+    expect(planvisning(ferdig, r)!.utfall.komplett).toBe(true)
+  })
+
+  it('godtar bare en av de nærmeste dosene, og bare når den beregnede ikke kan gis', () => {
+    const r = tempo()
+    expect(grunner(kryss(r, 15, valg([1, 15, 5])))).toMatch(/den valgte dosen 5 mg for trinn 1 er ikke en av de nærmeste dosene som kan gis \(10 mg eller 11,25 mg\)/)
+    // 25 % av 20 mg = 5 mg kan gis, så ingen dose tilbys, og et valg avvises.
+    const g = tempo(25)
+    expect(kryss(g, 20).trinnvalg).toBeUndefined()
+    expect(grunner(kryss(g, 20, valg([1, 20, 10])))).toMatch(/den beregnede dosen 15 mg for trinn 1 kan gis med preparatene i FEST, så valget 10 mg gjelder ikke/)
+  })
+})
+
 describe('Forsiktighetsgrensen (K3)', () => {
   it('sier om dosen er over, under eller utenfor grensen', () => {
     const r = nedtrappingsregel({ type: 'prosent_av_aktuell', prosent: sp(50, 'prosent') }, undefined, 'forsiktig')
