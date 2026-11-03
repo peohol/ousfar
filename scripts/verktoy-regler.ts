@@ -10,7 +10,8 @@
  *   npm run verktoy:regler -- regeldekning   docs/verktøy-vdk1-regeldekning.md (hva de tre verktøyene kan beregne, og hvorfor resten stopper, VDK-1)
  *   npm run verktoy:regler -- kontrollgrunnlag   docs/verktøy-vdk3-forslag*-kontrollgrunnlag.md (faglig kontrollgrunnlag for et forslag fra VDK-2, VDK-3)
  *   npm run verktoy:regler -- rettelse       docs/verktøy-rettelse-langvarig.md (kontrollgrunnlag for de nye regelversjonene etter en faktumrettelse)
- *   npm run verktoy:regler -- hent-fest      Henter FEST-uttrekkene til aksepttesten og pilotreglenes ende-til-ende-tester på nytt (krever VITE_SUPABASE_URL og SUPABASE_SECRET_KEY)
+ *   npm run verktoy:regler -- tilleggsgrunnlag   docs/verktøy-k4-kontrollgrunnlag.md (faglig kontrollgrunnlag for tilleggsreglene i K4)
+ *   npm run verktoy:regler -- hent-fest      Henter FEST-uttrekkene til aksepttesten, pilotreglenes og tilleggsreglenes ende-til-ende-tester på nytt (krever VITE_SUPABASE_URL og SUPABASE_SECRET_KEY)
  *
  * Bare `hent-fest` henter noe, og bare ved å lese med `les_legemidler`. Skriptet
  * skriver ikke til databasen og godkjenner ingen regel.
@@ -28,6 +29,7 @@ import { lagRegeldekningsrapport, REGELDEKNINGSFIL } from '../src/verktoy/regeld
 import { KONTROLLFORSLAG, lagKontrollgrunnlag } from '../src/verktoy/kontrollgrunnlag'
 import { lagRettelseskontroll, RETTELSESKONTROLLFIL } from '../src/verktoy/rettelseskontroll'
 import { avvikFra, kjorKasus, lagPilotmatriserapport, PILOTKASUS, PILOTMATRISEFIL } from '../src/verktoy/regler/pilotmatrise'
+import { FEST_TILLEGG, lagTilleggsgrunnlag, TILLEGGSGRUNNLAGFIL, TILLEGGSSTOFFER } from '../src/verktoy/tilleggsgrunnlag'
 
 const skriv = (fil: string, innhold: string) => {
   writeFileSync(new URL(`../${fil}`, import.meta.url), innhold)
@@ -79,6 +81,10 @@ async function kontrollgrunnlag() {
   for (const f of KONTROLLFORSLAG) skriv(f.fil, lagKontrollgrunnlag(f, uttrekkene))
 }
 
+async function tilleggsgrunnlag() {
+  skriv(TILLEGGSGRUNNLAGFIL, lagTilleggsgrunnlag(lesUttrekk(FEST_TILLEGG)))
+}
+
 async function rettelse() {
   skriv(RETTELSESKONTROLLFIL, lagRettelseskontroll({ pilot: lesUttrekk(FEST_PILOT), aksept: lesUttrekk(FEST_AKSEPTTEST) }))
 }
@@ -93,6 +99,7 @@ async function hentFest() {
   for (const [fil, nokler] of [
     [FEST_AKSEPTTEST, AKSEPTSTOFFER.map((s) => s.nokkel)],
     [FEST_PILOT, [...new Set(pilotstoffer())]],
+    [FEST_TILLEGG, TILLEGGSSTOFFER],
   ] as const) {
     const ider = [...new Set(Object.values(festkoblinger(nokler)).flat())].sort()
     const svar = await fetch(`${url}/rest/v1/rpc/les_legemidler`, {
@@ -107,7 +114,7 @@ async function hentFest() {
 }
 
 const [kommando] = process.argv.slice(2).filter((a) => a !== '--')
-const kommandoer: Record<string, () => Promise<void>> = { kontroll, rapport, motorrapport, aksepttest, pilotmatrise, regeldekning, kontrollgrunnlag, rettelse, 'hent-fest': hentFest }
+const kommandoer: Record<string, () => Promise<void>> = { kontroll, rapport, motorrapport, aksepttest, pilotmatrise, regeldekning, kontrollgrunnlag, tilleggsgrunnlag, rettelse, 'hent-fest': hentFest }
 const k = kommando ? kommandoer[kommando] : undefined
 if (!k) {
   console.error(`Bruk: npm run verktoy:regler -- <${Object.keys(kommandoer).join(' | ')}>`)

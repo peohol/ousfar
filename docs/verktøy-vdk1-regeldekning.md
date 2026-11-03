@@ -20,7 +20,8 @@ Antall kombinasjoner etter hva verktøyet gir. For seponering er en kombinasjon 
 | Klinisk godkjent fagtekst, ingen beregning | 2 | 0 | 0 | 0 |
 | Regel finnes, kontrollert og ikke godkjent | 7 | 1 | 1 | 0 |
 | Regel finnes som fagtekst, ikke godkjent | 6 | 0 | 0 | 0 |
-| Ingen OUSFAR-regel; kilden har en anbefaling | 0 | 504 | 892 | 110 |
+| Regel finnes, ikke ferdig kontrollert | 0 | 0 | 0 | 2 |
+| Ingen OUSFAR-regel; kilden har en anbefaling | 0 | 504 | 892 | 108 |
 | Ingen OUSFAR-regel; kilden har ingen anbefaling | 0 | 0 | 161 | 0 |
 | Ingen OUSFAR-regel; begrenset av preparater eller kilde | 7 | 0 | 0 | 0 |
 | Ikke støttet: middels langtidsvirkende injeksjon | 0 | 0 | 66 | 0 |
@@ -140,6 +141,8 @@ Regelutkast som er kontrollert og ikke godkjent (eller bare fagtekst), og som de
 | Trappe ned antidepressiv | `seponering-vortioksetin-langsom` v8 | Vortioksetin | beregnbar | ikke godkjent |
 | Bytte antidepressiv | `mao-fluoksetin-fenelzin` v7 | Fluoksetin → Fenelzin | beregnbar | ikke godkjent |
 | Bytte antipsykotikum | `antipsykotikabytte-olanzapin-kvetiapin` v5 | Olanzapin (peroral) → Kvetiapin | beregnbar | ikke godkjent |
+| Kombinere stemningsstabiliserende | `tillegg-litium-lamotrigin` v1 | Litium → Lamotrigin | beregnbar | til kontroll |
+| Kombinere stemningsstabiliserende | `tillegg-valproat-lamotrigin` v1 | Valproat → Lamotrigin | beregnbar | til kontroll |
 
 ## 6. Hvorfor de andre kombinasjonene stopper
 
