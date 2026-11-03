@@ -9,15 +9,16 @@
  * eller en annen tekst enn det som er lagret. Derfor prøves den mot hele
  * importdatasettet.
  */
-import { cleanup, render, screen, within } from '@testing-library/react'
-import { afterEach, beforeAll, describe, expect, it } from 'vitest'
+import { readFileSync } from 'node:fs'
+import { act, cleanup, render, screen, within } from '@testing-library/react'
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Serumtabell } from '../components/stoffside/Serumtabell'
 import { kinetikkikon, seksjonsikon, tekstvisning } from '../components/stoffside/panelvisning'
 import { IKONNAVN } from '../components/ikon/register'
 import { Detaljkort, Seksjon } from '../components/seksjoner/Seksjon'
 import { doseringskort } from '../faginnhold/doseringskort'
 import { doserader, kinetikktittel, tilDokument, type Persentiltabell } from '../faginnhold/import'
-import { PANELER, PANELER_MED_FASTE_KORT, fasteKort, panelFor, type Doserad } from '../faginnhold/paneler'
+import { PANELER, PANELER_MED_FASTE_KORT, fasteKort, formaterTall, panelFor, type Doserad } from '../faginnhold/paneler'
 import { PSYKOFARMAKA_FILER } from '../faginnhold/psykofarmaka'
 import { klartekst } from '../faginnhold/riktekst'
 import { lesSerumtabell, persentiltekst, PROSJEKTMERKNAD, type Serumblokk } from '../faginnhold/serumtabell'
@@ -130,8 +131,9 @@ describe('serumtabellen på siden', () => {
     expect(screen.getByRole('heading', { name: 'Referanseområdeprosjektet 2005–2008, dose 50–1000 mg' })).toBeTruthy()
     // Kildene står i panelets referansefelt, ikke som tekst over tabellene.
     expect(screen.queryByText(/Jönsson|Diakonhjemmet/)).toBeNull()
-    // Tabellen kan rulles sidelengs med tastaturet.
-    expect(matrise!.closest('[role="region"]')!.getAttribute('tabindex')).toBe('0')
+    // Tabellen ruller aldri sidelengs, så den trenger ikke noe rullefelt å stoppe på med tastaturet.
+    expect(matrise!.closest('[role="region"]')).toBeNull()
+    expect(matrise!.closest('[tabindex]')).toBeNull()
   })
 
   it('merker et tall kilden ikke har, i stedet for å la cellen stå tom', () => {
@@ -150,6 +152,140 @@ describe('serumtabellen på siden', () => {
     expect(screen.getAllByRole('cell').map((td) => td.textContent)).toEqual(
       rader.flatMap((r) => [r.dose, r.regime, r.konsentrasjon, r.merknad]),
     )
+  })
+})
+
+describe('serumtabellen ruller aldri sidelengs', () => {
+  /** Hvor bred rammen rundt tabellen er, og hvor brede utformingene vil være. */
+  const bredder = { ramme: 0, kolonner: 0, snudd: 0, rader: 0 }
+  const vakter: (() => void)[] = []
+  const opprinneligRamme = Element.prototype.getBoundingClientRect
+
+  beforeEach(() => {
+    vakter.length = 0
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        constructor(private readonly kall: () => void) {}
+        observe() {
+          vakter.push(() => this.kall())
+        }
+        disconnect() {}
+      },
+    )
+    Object.defineProperty(HTMLElement.prototype, 'clientWidth', {
+      configurable: true,
+      get(this: HTMLElement) {
+        return this.classList.contains('serumtabell__ramme') ? bredder.ramme : 0
+      },
+    })
+    Element.prototype.getBoundingClientRect = function (this: Element) {
+      const bredde = this.classList.contains('serumtabell__tabell--snudd')
+        ? bredder.snudd
+        : this.classList.contains('serumtabell__tabell--persentiler')
+          ? bredder.kolonner
+          : this.classList.contains('serumtabell__tabell--rader')
+            ? bredder.rader
+            : 0
+      return { width: bredde } as DOMRect
+    }
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    // Bredden er bare overstyrt for HTML-elementer; jsdom har sin egen på Element.
+    delete (HTMLElement.prototype as { clientWidth?: number }).clientWidth
+    Element.prototype.getBoundingClientRect = opprinneligRamme
+  })
+
+  /** Rammen endrer bredde, som når vinduet gjøres smalere eller bredere. */
+  function nyBredde(ramme: number) {
+    bredder.ramme = ramme
+    act(() => vakter.forEach((vakt) => vakt()))
+  }
+
+  const matrise = () => screen.getAllByRole('table')[0]!
+  const kolonner = () => within(matrise()).getAllByRole('columnheader').map((th) => th.textContent)
+  const radoverskrifter = () => within(matrise()).getAllByRole('rowheader').map((th) => th.textContent)
+
+  it('har dosene som kolonner når de får plass', () => {
+    Object.assign(bredder, { ramme: 800, kolonner: 800, snudd: 400 })
+    render(<Serumtabell rader={kvetiapinrader()} tittel="Serumkonsentrasjoner" />)
+    expect(kolonner()[1]).toBe('50 mg')
+    expect(document.querySelector('.serumtabell__tabell--snudd')).toBeNull()
+  })
+
+  it('snur tabellen når dosene ikke får plass som kolonner, og snur den tilbake når det blir plass', () => {
+    Object.assign(bredder, { ramme: 799, kolonner: 800, snudd: 400 })
+    render(<Serumtabell rader={kvetiapinrader()} tittel="Serumkonsentrasjoner" />)
+    expect(kolonner()).toEqual(['Dose', 'Antall prøver', '10-persentil (nmol/L)', 'Median (nmol/L)', '90-persentil (nmol/L)'])
+    expect(radoverskrifter()).toEqual(['50 mg', '100 mg', '200 mg', '300 mg', '400 mg', '600 mg', '800 mg', '1000 mg', 'Alle'])
+    const alle = within(matrise()).getByRole('rowheader', { name: 'Alle' }).parentElement!
+    expect([...alle.querySelectorAll('td')].map((td) => td.textContent)).toEqual([5853, 37, 198, 1406].map(formaterTall))
+    expect(alle.querySelector('[data-felt="median"]')!.textContent).toBe('198')
+    // Det trengs hele bredden tabellen trengte, før den snus tilbake.
+    nyBredde(799)
+    expect(kolonner()[1]).toBe('Antall prøver')
+    nyBredde(800)
+    expect(kolonner()[1]).toBe('50 mg')
+  })
+
+  it('viser én dose om gangen når heller ikke den snudde tabellen får plass', () => {
+    Object.assign(bredder, { ramme: 300, kolonner: 800, snudd: 400 })
+    render(<Serumtabell rader={kvetiapinrader()} tittel="Serumkonsentrasjoner" />)
+    // Bare referanseområdeprosjektets lille tabell er igjen som tabell.
+    expect(screen.getAllByRole('table')).toHaveLength(1)
+    const liste = screen.getByRole('list', { name: /Kvetiapin/ })
+    const doser = within(liste).getAllByRole('listitem')
+    expect(doser).toHaveLength(9)
+    const forste = doser[0]!
+    expect(forste.querySelector('.serumtabell__dose')!.textContent).toBe('50 mg')
+    expect([...forste.querySelectorAll('dt')].map((dt) => dt.textContent)).toEqual(
+      ['Antall prøver', '10-persentil (nmol/L)', 'Median (nmol/L)', '90-persentil (nmol/L)'],
+    )
+    expect([...forste.querySelectorAll('dd')].map((dd) => dd.textContent)).toEqual(['252', '16', '46', '756'])
+    expect(doser[8]!.hasAttribute('data-samlet')).toBe(true)
+    // Bredere igjen: først den snudde tabellen, så dosene som kolonner.
+    nyBredde(400)
+    expect(kolonner()[1]).toBe('Antall prøver')
+    nyBredde(800)
+    expect(kolonner()[1]).toBe('50 mg')
+  })
+
+  it('prøver dosene som kolonner på nytt når radene endres', () => {
+    Object.assign(bredder, { ramme: 500, kolonner: 800, snudd: 400 })
+    const alle = kvetiapinrader()
+    const { rerender } = render(<Serumtabell rader={alle} tittel="Serumkonsentrasjoner" />)
+    expect(kolonner()[1]).toBe('Antall prøver')
+    // Færre doser: tabellen blir smal nok til at dosene får plass som kolonner.
+    bredder.kolonner = 450
+    rerender(<Serumtabell rader={[...alle]} tittel="Serumkonsentrasjoner" />)
+    expect(kolonner()[1]).toBe('50 mg')
+  })
+
+  it('viser vanlige rader hver for seg når tabellen ikke får plass', () => {
+    const rader = PSYKOFARMAKA_FILER.find((f) => f.kode === 'HBUP')!.serumkonsentrasjoner!.rader!
+    Object.assign(bredder, { ramme: 300, rader: 500 })
+    render(<Serumtabell rader={rader} tittel="Serumkonsentrasjoner" />)
+    expect(screen.queryByRole('table')).toBeNull()
+    const elementer = within(screen.getByRole('list', { name: 'Serumkonsentrasjoner' })).getAllByRole('listitem')
+    expect(elementer).toHaveLength(rader.length)
+    expect([...elementer[0]!.querySelectorAll('dt')].map((dt) => dt.textContent)).toEqual(
+      ['Dose', 'Doseringsregime', 'Serumkonsentrasjon', 'Betingelser og merknader'].filter(
+        (_, i) => Object.values(rader[0]!)[i] !== '',
+      ),
+    )
+    expect([...elementer[0]!.querySelectorAll('dd')].map((dd) => dd.textContent)).toEqual(
+      Object.values(rader[0]!).filter((v) => v !== ''),
+    )
+    nyBredde(500)
+    expect(screen.getByRole('table', { name: 'Serumkonsentrasjoner' })).toBeTruthy()
+  })
+
+  it('har ingen rullefelt i stilarket', () => {
+    const css = readFileSync('src/styles/monograf.css', 'utf8')
+    const ramme = css.match(/\.serumtabell__ramme\s*\{[^}]*\}/)![0]
+    expect(ramme).not.toMatch(/overflow(-x)?:\s*(auto|scroll)/)
   })
 })
 

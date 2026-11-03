@@ -25,7 +25,7 @@ FEST-uttrekkene: `src/data/verktoy/fest-pilotsett.json` (hentet 2026-10-30T22:21
 | Endret regel eller regelversjon | V33, V34, S18, X19, I07 |
 | Nødstoppen | V36, V37, S19, M18, X20, F03, F04 |
 
-## Seponering av vortioksetin (versjon 11)
+## Seponering av vortioksetin (versjon 12)
 
 | Kasus | Kategori | Hva | Dose | Endring | Utfall |
 |---|---|---|---|---|---|
@@ -62,12 +62,12 @@ FEST-uttrekkene: `src/data/verktoy/fest-pilotsett.json` (hentet 2026-10-30T22:21
 | V31 | Feil fra datakildene | preparatene er ikke fra FEST | «20» | kilden er «Testdata» | **Ingen plan.** Preparatdataene er fra «Testdata», ikke fra FEST. |
 | V32 | Feil fra datakildene | FEST-lesingen ga ingen preparater | «20» | ingen preparater i svaret fra FEST-lesingen | **Ingen plan.** FEST har ingen perorale preparater av vortioksetin. Det finnes ingen bekreftet norsk løsning, og beregningen antar ikke at noe er tilgjengelig. |
 | V33 | Endret regel eller regelversjon | trinnlengden endret uten ny godkjenning | «20» | regelen seponering-vortioksetin direkte, trinnlengden 28 → 21 dager | **Ingen plan.** Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke); den må kontrolleres på nytt. |
-| V34 | Endret regel eller regelversjon | ny regelversjon uten ny godkjenning | «20» | regelen seponering-vortioksetin direkte, samme regel med neste versjonsnummer, uten ny godkjenning | **Ingen plan.** Godkjenningen gjelder regelversjon 11, ikke versjon 12. Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke); den må kontrolleres på nytt. |
+| V34 | Endret regel eller regelversjon | ny regelversjon uten ny godkjenning | «20» | regelen seponering-vortioksetin direkte, samme regel med neste versjonsnummer, uten ny godkjenning | **Ingen plan.** Godkjenningen gjelder regelversjon 12, ikke versjon 13. Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke); den må kontrolleres på nytt. |
 | V35 | Regler som ikke er godkjent | den langsomme varianten, som ikke er godkjent | «20» | regelen seponering-vortioksetin-langsom direkte | **Ingen plan.** vortioksetin dag 1–28: den ideelle dosen 19 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (-21,05 %, faktisk reduksjon 25 % fra 20 mg) og 20 mg (+5,26 %). Den foretrukne reduksjonen til 19 mg (−5 % fra 20 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 1–5 %. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet. Startdosen 20 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for; ingen tilfeller er kontrollert. Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet. |
 | V36 | Nødstoppen | regelen er deaktivert | «20» | sperre: regel seponering-vortioksetin | **Midlertidig deaktivert** – ingen plan eller fagtekst |
 | V37 | Nødstoppen | en annen regel er deaktivert | «20» | sperre: regel depot-paliperidon-xeplion | **Plan** – *Én mulig første reduksjon med revurdering, ikke en validert fullstendig nedtrappingsplan.*<br>Fra dag 1: Vortioksetin peroralt: 15 mg = 1 tablett à 15 mg |
 
-## Sertralin → mirtazapin (versjon 9)
+## Sertralin → mirtazapin (versjon 10)
 
 | Kasus | Kategori | Hva | Dose | Endring | Utfall |
 |---|---|---|---|---|---|
@@ -89,7 +89,7 @@ FEST-uttrekkene: `src/data/verktoy/fest-pilotsett.json` (hentet 2026-10-30T22:21
 | S15 | Utilgjengelige eller endrede preparater | sertralin 25 mg avregistrert | «50» | sertralin 25 mg avregistrert | **Ingen plan.** sertralin (fra): styrken 25 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST, så planen ville blitt satt sammen annerledes enn den som er kontrollert. Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet. |
 | S16 | Utilgjengelige eller endrede preparater | sertralin 50 mg meldt avregistrert om 7 dager | «100» | sertralin 50 mg meldt avregistrert om 7 dager | **Plan** – *Et startforløp med revurdering, ikke en fullstendig plan: avslutningen vurderes individuelt.*<br>Dag 1–14: Sertralin peroralt: 50 mg = 2 tabletter à 25 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg<br>Fra dag 15: Sertralin peroralt: 25 mg = 1 tablett à 25 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg |
 | S17 | Foreldet FEST | FEST kontrollert for 49 timer siden | «100» | 49 timer etter FEST-kontrollen | **Ingen plan.** Legemiddeldataene ble sist kontrollert mot FEST 30. oktober 2026. Den nattlige oppdateringen har ikke gått siden, så nyere endringer i FEST kan mangle. |
-| S18 | Endret regel eller regelversjon | ny regelversjon uten ny godkjenning | «100» | regelen kryssnedtrapping-sertralin-mirtazapin direkte, samme regel med neste versjonsnummer, uten ny godkjenning | **Ingen plan.** Godkjenningen gjelder regelversjon 9, ikke versjon 10. Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke); den må kontrolleres på nytt. |
+| S18 | Endret regel eller regelversjon | ny regelversjon uten ny godkjenning | «100» | regelen kryssnedtrapping-sertralin-mirtazapin direkte, samme regel med neste versjonsnummer, uten ny godkjenning | **Ingen plan.** Godkjenningen gjelder regelversjon 10, ikke versjon 11. Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke); den må kontrolleres på nytt. |
 | S19 | Nødstoppen | verktøyet er deaktivert | «100» | sperre: verktoy bytte-antidepressiv | **Midlertidig deaktivert** – ingen plan eller fagtekst |
 
 ## Peroral aripiprazol → Abilify Maintena (versjon 3)

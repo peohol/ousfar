@@ -177,10 +177,10 @@ describe('Pilotsettet', () => {
 
   it('har bare de to depotreglene og sertralin → mirtazapin klinisk godkjent av kontrolløren; de andre er kontrollert og ikke godkjent i sin gjeldende versjon, med historikk', () => {
     // Kontrollørens gjennomgang av 62ebb21 30.10.2026: depotreglene godkjent for de avgrensede oppstartene, fenelzin bare som utvaskingsinformasjon.
-    // Gjennomgangen av f77e1a9 31.10.2026: sertralin → mirtazapin versjon 9 godkjent for det avgrensede startforløpet.
+    // Gjennomgangen av f77e1a9 31.10.2026: sertralin → mirtazapin versjon 9 godkjent for det avgrensede startforløpet; gjennomgangen av a38fac14 03.11.2026: versjon 10, med det rettede RCPsych-faktumet, godkjent med samme omfang.
     // Disposisjonen av leveransen 31.10.2026: fenelzin og kvetiapin er kontrollert og ikke godkjent.
     const GODKJENT: Record<string, RegExp> = {
-      'kryssnedtrapping-sertralin-mirtazapin': /^Kontrollørens gjennomgang av f77e1a9 31\.10\.2026 \(P4\.8\): /,
+      'kryssnedtrapping-sertralin-mirtazapin': /^Kontrollørens gjennomgang av a38fac14 03\.11\.2026 \(rettelsen av RCPsych-faktumet, PR #309\): /,
       'depot-aripiprazol-maintena': /^Kontrollørens gjennomgang av 62ebb21 30\.10\.2026 \(P4\.8\): /,
       'depot-paliperidon-xeplion': /^Kontrollørens gjennomgang av 62ebb21 30\.10\.2026 \(P4\.8\): /,
     }
@@ -205,9 +205,13 @@ describe('Pilotsettet', () => {
         expect(r.godkjenning.historikk.at(-1)!.merknad, r.id).toMatch(IKKE_GODKJENT[r.id]!)
       }
       const historikk = r.godkjenning.historikk.filter((s) => s.rolle === 'utvikler')
+      // Sertralin → mirtazapin har til slutt utkastet og innsendingen av versjon 10 etter rettelsen av RCPsych-faktumet (PR #309); stegene før gjelder versjon 1–9.
+      const rettelse = r.id === 'kryssnedtrapping-sertralin-mirtazapin' ? 2 : 0
+      if (rettelse) expect(historikk.slice(-rettelse).map((s) => [s.status, s.regelversjon, s.dato])).toEqual([['utkast', 10, '2026-11-03'], ['til_faglig_kontroll', 10, '2026-11-03']])
+      const forRettelsen = historikk.slice(0, historikk.length - rettelse)
       // Kontrolløren har bare egne steg der den har gitt en beslutning: det siste for depotreglene, for fenelzin utvaskingsinformasjonen og disposisjonen, for kvetiapin disposisjonen, og for sertralin avgrensningene av versjon 5, 6 og 7 i gjennomgangene av 9cb420b, 0ae6d07 og d6cc3dd, godtakelsen av versjon 8 i gjennomgangen av 74a775f og godkjenningen av versjon 9 i gjennomgangen av f77e1a9.
       const kontrollor = r.godkjenning.historikk.filter((s) => s.rolle === 'uavhengig_kontrollor')
-      expect(kontrollor.length, r.id).toBe({ 'kryssnedtrapping-sertralin-mirtazapin': 5, 'mao-fluoksetin-fenelzin': 2 }[r.id] ?? 1)
+      expect(kontrollor.length, r.id).toBe({ 'kryssnedtrapping-sertralin-mirtazapin': 6, 'mao-fluoksetin-fenelzin': 2 }[r.id] ?? 1)
       if (r.id === 'mao-fluoksetin-fenelzin') expect(kontrollor[0]!.merknad).toMatch(/akseptert bare som kildebasert utvaskingsinformasjon.*kan derfor ikke godkjennes som en samlet klinisk doseplan/)
       if (r.id === 'kryssnedtrapping-sertralin-mirtazapin') {
         expect(kontrollor[0]).toMatchObject({ status: 'til_faglig_kontroll', regelversjon: 5, merknad: expect.stringMatching(/^Kontrollørens gjennomgang av 9cb420b 31\.10\.2026 \(P4\.8\): .*ved 50 og 100 mg/) })
@@ -219,6 +223,9 @@ describe('Pilotsettet', () => {
         // Godkjenningen gjelder nøyaktig versjon 9 og fingeravtrykket kontrolløren oppga.
         expect(kontrollor[4]).toMatchObject({ status: 'klinisk_godkjent', regelversjon: 9, fingeravtrykk: 'dc878aa9065c8330f3850567b226ab8d392bcad4cb1dd5cf5cebacda54277881' })
         expect(kontrollor[4]!.merknad).toMatch(/Gjelder ikke automatisk 25 → 0 mg, opptrapping av mirtazapin, lang behandlingstid \(heller ikke med begrunnelse\), andre startdoser, former eller styrker\.$/)
+        // Versjon 10 skiller seg bare i det rettede RCPsych-faktumet og er godkjent for nøyaktig fingeravtrykket og omfanget kontrolløren oppga 03.11.2026.
+        expect(kontrollor[5]).toMatchObject({ status: 'klinisk_godkjent', dato: '2026-11-03', regelversjon: 10, fingeravtrykk: '12801aa22a0ca2a576b9ba737d5d5cb52db3a73dc1b437bde7f20a896214c81a' })
+        expect(kontrollor[5]!.merknad).toMatch(/Dette omfatter ikke videre 25 → 0, opptrapping av mirtazapin, andre doser, langtidsbehandling eller endret trinnlengde\. Identisk klinisk omfang som v9\./)
       }
       // Depotreglene har i tillegg et steg fra kontrollrunden 30.10.2026 for versjon 2: kildemessig akseptable, ikke klinisk godkjent.
       const depot = r.plan.form === 'oppstart_depot'
@@ -232,12 +239,12 @@ describe('Pilotsettet', () => {
         'kryssnedtrapping-sertralin-mirtazapin': /^Avklart etter kontrollørens gjennomgang av 74a775f 31\.10\.2026 \(P4\.8\): trinnstørrelsen 50 %, sluttdosen 25 mg, trinnlengden 14 dager og planhorisonten/,
       }
       const etterBeslutningene = r.id === 'kryssnedtrapping-sertralin-mirtazapin' ? 4 : senere[r.id] ? 1 : 0
-      expect(historikk.at(-2 - 2 * etterBeslutningene)!.merknad, r.id).toMatch(/^Rettet etter kontrollørens beslutninger 30\.10\.2026 \(P4\.8\)/)
-      if (senere[r.id]) expect(historikk.at(-2)!.merknad, r.id).toMatch(senere[r.id]!)
+      expect(forRettelsen.at(-2 - 2 * etterBeslutningene)!.merknad, r.id).toMatch(/^Rettet etter kontrollørens beslutninger 30\.10\.2026 \(P4\.8\)/)
+      if (senere[r.id]) expect(forRettelsen.at(-2)!.merknad, r.id).toMatch(senere[r.id]!)
       if (r.id === 'kryssnedtrapping-sertralin-mirtazapin') {
-        expect(historikk.at(-4)!.merknad).toMatch(/^Avgrenset etter kontrollørens gjennomgang av d6cc3dd 31\.10\.2026 \(P4\.8\): det kliniske omfanget er bare sertralin 50 eller 100 mg ved kort behandlingstid/)
-        expect(historikk.at(-6)!.merknad).toMatch(/^Avgrenset etter kontrollørens gjennomgang av 0ae6d07 31\.10\.2026 \(P4\.8\): startdosen er bare 50 mg eller 100 mg/)
-        expect(historikk.at(-8)!.merknad).toMatch(/^Avgrenset etter kontrollørens gjennomgang av 9cb420b 31\.10\.2026 \(P4\.8\): startdosen er innskrenket til 50–100 mg/)
+        expect(forRettelsen.at(-4)!.merknad).toMatch(/^Avgrenset etter kontrollørens gjennomgang av d6cc3dd 31\.10\.2026 \(P4\.8\): det kliniske omfanget er bare sertralin 50 eller 100 mg ved kort behandlingstid/)
+        expect(forRettelsen.at(-6)!.merknad).toMatch(/^Avgrenset etter kontrollørens gjennomgang av 0ae6d07 31\.10\.2026 \(P4\.8\): startdosen er bare 50 mg eller 100 mg/)
+        expect(forRettelsen.at(-8)!.merknad).toMatch(/^Avgrenset etter kontrollørens gjennomgang av 9cb420b 31\.10\.2026 \(P4\.8\): startdosen er innskrenket til 50–100 mg/)
       }
       expect(historikk.at(-1)!.regelversjon, r.id).toBe(r.versjon)
     }
@@ -246,9 +253,9 @@ describe('Pilotsettet', () => {
     const rettet = (pr: string) => PILOTSETT.regler.filter((r) => r.godkjenning.historikk[2]!.merknad.includes(pr)).map((r) => r.id)
     expect(rettet('PR #282')).toEqual(['antipsykotikabytte-olanzapin-kvetiapin', 'depot-aripiprazol-maintena', 'depot-paliperidon-xeplion'])
     expect(rettet('PR #286')).toEqual(['kryssnedtrapping-sertralin-mirtazapin', 'mao-fluoksetin-fenelzin'])
-    // Kontrollrunden og gjennomgangen 30.10.2026 ga versjon 3–5; kontrollørens beslutninger samme dag én versjon til for hver regel, gjennomgangen av fe08fac én til for fenelzin og kvetiapin, og gjennomgangene av 9cb420b, 0ae6d07, d6cc3dd og 74a775f én til hver for sertralin.
+    // Kontrollrunden og gjennomgangen 30.10.2026 ga versjon 3–5; kontrollørens beslutninger samme dag én versjon til for hver regel, gjennomgangen av fe08fac én til for fenelzin og kvetiapin, og gjennomgangene av 9cb420b, 0ae6d07, d6cc3dd og 74a775f én til hver for sertralin; rettelsen av RCPsych-faktumet (PR #309) én til for sertralin.
     expect(PILOTSETT.regler.map((r) => [r.id, r.versjon])).toEqual([
-      ['kryssnedtrapping-sertralin-mirtazapin', 9],
+      ['kryssnedtrapping-sertralin-mirtazapin', 10],
       ['mao-fluoksetin-fenelzin', 7],
       ['antipsykotikabytte-olanzapin-kvetiapin', 5],
       ['depot-aripiprazol-maintena', 3],
@@ -332,7 +339,7 @@ describe('Beregningen', () => {
       status: 'modellberegning',
       klinisk_godkjent: true,
       forbehold: FORBEHOLD_GODKJENT,
-      regel: { id: r.id, versjon: 9, godkjenning: 'klinisk_godkjent' },
+      regel: { id: r.id, versjon: 10, godkjenning: 'klinisk_godkjent' },
       regelsett: { id: PILOTSETT.id, versjon: PILOTSETT.versjon },
       modell: REGELMODELLVERSJON,
       motor: MOTORVERSJON,

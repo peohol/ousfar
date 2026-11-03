@@ -95,7 +95,7 @@ Disse er ikke kliniske og er ikke endret her.
 ## 6. Spørsmål til ChatGPT (uavhengig kontrollør)
 
 1. **Nettarkivet.** Internet Archive har kopier av begge sidene før grunnlaget: RCPsych 24.10.2026 (`web.archive.org/web/20261024063524/…stopping-antidepressants`) og PMC 20.10.2026 (`web.archive.org/web/20261020103950/https://pmc.ncbi.nlm.nih.gov/articles/PMC4919171/`). Dette miljøet når ikke web.archive.org. Vil du sammenligne stedene i §4 i disse kopiene med sidene nå? Stemmer de, er en endring mellom 24.10 og 28.10 som senere er reversert, svært usannsynlig.
-2. **Klassifisering.** Er du enig i at funn 1/4 og 2/5 er tekniske avvik i dokumentavtrykket, at det regelen bygger på, er påvist å stå slik regelen gjengir det nå (med unntaket i spørsmål 3), og at uendret innhold 28.10 er sannsynlig, men ikke påvist? Er det tilstrekkelig til å fastsette den synlige teksten som nytt grunnlag, eller må spørsmål 3 avklares først (`kildekontroll-grunnlag.json`, `synlig_tekst`, med kontrollsummene `5a5bd2e2411c…` og `c35339d41f62…`) i en egen PR, uten å endre reglene eller fingeravtrykkene? Eller skal det vente på den nye saksmodellen fra tråd A?
+2. **Klassifisering.** Er du enig i at funn 1/4 og 2/5 er tekniske avvik i dokumentavtrykket, at det regelen bygger på, er påvist å stå slik regelen gjengir det nå (med unntaket i spørsmål 3), og at uendret innhold 28.10 er sannsynlig, men ikke påvist? Er det tilstrekkelig til å fastsette den synlige teksten som nytt grunnlag (`kildekontroll-grunnlag.json`, `synlig_tekst`, med kontrollsummene `5a5bd2e2411c…` og `c35339d41f62…`) i en egen PR, uten å endre reglene eller fingeravtrykkene? Må spørsmål 3 avklares først, eller skal det vente på den nye saksmodellen fra tråd A?
 3. **En nyanse som ikke skyldes funnet.** RCPsych sier at små trinn fra start etter lang bruk kan være 5 % eller 10 % *av den opprinnelige dosen*. Faktumet i `RCPSYCH.langvarig` sier «av dosen», og reglene regner prosent av dosen pasienten bruker nå. For det første trinnet er det det samme. Vortioksetinregelen v11 er bare godkjent for én første reduksjon, og sertralin → mirtazapin v9 sammenligner tiden, ikke prosenten. Mener du at faktumet bør presiseres ved neste regelversjon, eller er det dekket av fagkontrollen 29.–30.10?
 4. **Avslutning.** Skal funnene avsluttes med en faglig beslutning som viser til denne rapporten og PR-en for nytt grunnlag, når du har godkjent den? Prøvefunn 3 holdes utenfor og avsluttes som prøve etter planen.
 
@@ -105,3 +105,38 @@ Disse er ikke kliniske og er ikke endret her.
 - Kontrollsummene: hent hver adresse to ganger med `hentDokument` og beregn `kontrollsummer`. PMC gir ny kontrollsum av siden hver gang, men samme synlige tekst. RCPsych gir samme kontrollsum innenfor noen minutter.
 - Henvisningene: `godkjenteRegler()` og `henvisninger(regel)`, filtrert på kildene `keks-2016` og `rcpsych-stopping`.
 - Rettelser: Europe PMC REST, `search?query=PMCID:PMC4919171&resultType=core`, feltet `commentCorrectionList`.
+
+## 8. Kontrollørens vurdering 03.11.2026 og oppfølgingen
+
+Svarene fra ChatGPT (uavhengig kontrollør) på spørsmålene i §6, gjengitt kort:
+
+1. **Nettarkivet** kunne heller ikke kontrolløren åpne. Kontrolløren sammenlignet i stedet med RCPsychs PDF-versjon fra 18.03.2024 og den publiserte artikkelen av Keks og medarbeidere. Rådene som er relevante for reglene, står også der. Det støtter at de faglig relevante rådene ikke er endret, men beviser ikke at teksten var identisk 28.10.2026. Den begrensningen står.
+2. **Klassifiseringen** er godkjent i hovedsak. For Keks er forskjellen forenlig med teknisk variasjon, og engangsverdiene er påvist. For RCPsych er teknisk variasjon den mest sannsynlige forklaringen, men årsaken til hver kontrollsumendring er ikke endelig dokumentert. Ingen ny klinisk anbefaling krever endring av de godkjente regelversjonene. Et nytt sammenligningsgrunnlag er godkjent i en egen PR, uten endring i regler eller fingeravtrykk. Det skal helst bygge på de faglig relevante avsnittene og ikke vente på tråd A.
+3. **`RCPSYCH.langvarig`** bør presiseres. 5–10 % gjelder den opprinnelige dosen, og veiledningen beskriver proporsjonal nedtrapping fra sist brukte dose andre steder. De to må ikke blandes. Presiseringen gjøres i en separat PR, med ny regelversjon og uavhengig kontroll dersom faktumet inngår i fingeravtrykket. Det er ikke grunnlag for å deaktivere de godkjente reglene: vortioksetin v11 gjelder bare første reduksjon, og sertralin → mirtazapin v9 bruker henvisningen til tid og risiko, ikke til prosent. Presiseringen må være gjort før en senere godkjenning av flere nedtrappingstrinn bygger på faktumet.
+4. **Avslutningen** er teknisk kildeoppfølging, ikke en ny faglig beslutning. Den følger saksmodellen (`docs/verktøy-p12-overvaking.md` §5): først et nytt grunnlag, så en kontroll av at overvåkingen godtar det, så en teknisk konklusjon med etterprøvbart bevis. Prøvefunn 3 avsluttes for seg, med testbevis.
+
+**Det nye grunnlaget** står i `src/data/verktoy/kildekontroll-grunnlag.json`. Metoden er `avsnitt`, med kontrollsummene i full lengde. Bare avsnittene reglene viser til, sammenlignes, så endringer i meny, oppsett og engangsverdier gir ingen sak.
+
+| Kilde | Avsnitt | Avtrykk | Hentet (UTC) |
+|---|---|---|---|
+| `keks-2016` | Table 2 (byttemetodene); Table 3 med noten (nedtrapping over om lag fire uker, fluoksetin → MAO-hemmer) | `2e4f6271d5091114a28d2396fda65ba7c7e87824a73df3715716ea3a5b9e604d` | 03.11 04.04.51 |
+| `rcpsych-stopping` | When and how should I stop my antidepressants?; How should I gradually reduce my dose?; If you have been taking antidepressants for longer; Examples of tapering plans; Which plan should I follow?; Appendix 1 | `906dbdaf6ffc0009eec5f22336925e47aaa5dbfecf109ff634e249de9cbd5926` | 03.11 04.04.30 |
+
+Avsnittene er valgt etter stedene i henvisningene i alle regler som bygger på kildene, ikke bare de godkjente. «Examples of tapering plans» er tatt med fordi faktumet fra «Which plan should I follow?» bruker prosentene i eksempel 1 og 2. Hver kilde ble hentet seks ganger 03.11.2026 kl. 04.03–04.29 UTC, og avsnittene var like hver gang, mens PMC-siden hadde ny kontrollsum av siden hver gang. Den synlige teksten er den samme som 31.10 og 02.11 (§3). En lokal kontroll av alle 28 kildedokumentene med det nye grunnlaget fant ingen avvik i de to kildene. Kontrollsummene i `KILDER`, reglene og fingeravtrykkene er uendret.
+
+**Etter sammenslåingen:**
+
+1. Claude sender `teknisk_konklusjon` med `uten_faglig_betydning` for sak 4 og 5 gjennom arbeidsflyten. Beviset har metoden `avsnittsavtrykk`, det som ble sammenlignet, grunnlaget og hvor kontrollen kan etterprøves (denne rapporten og PR-en). Sakene avsluttes da som `teknisk_avklart`.
+2. En kontroll (`oppgave=kontroll`) skal bekrefte at overvåkingen godtar grunnlaget, og at ingen ny sak kommer for de to kildene.
+3. Presiseringen av `RCPSYCH.langvarig` og avslutningen av prøvefunn 3 gjøres for seg.
+
+**Gjennomført 03.11.2026** (main `abe0a967`):
+
+| Steg | Kjøring | Resultat |
+|---|---|---|
+| Teknisk konklusjon, sak 4 (`keks-2016`) | https://github.com/peohol/ousfar/actions/runs/41605290757 | Avsluttet som `teknisk_avklart` kl. 08.42.50 UTC |
+| Teknisk konklusjon, sak 5 (`rcpsych-stopping`) | https://github.com/peohol/ousfar/actions/runs/41605365060 | Avsluttet som `teknisk_avklart` kl. 08.43.19 UTC |
+| Kontroll (`oppgave=kontroll`) | https://github.com/peohol/ousfar/actions/runs/41605399129 | 28 kildedokumenter og FEST kontrollert, ingen feil og ingen ny sak |
+
+Presiseringen av `RCPSYCH.langvarig` er gjort i en egen PR med nye regelversjoner og uavhengig kontroll (`docs/verktøy-rettelse-langvarig.md`).
+
