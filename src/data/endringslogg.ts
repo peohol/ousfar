@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.119.1',
+    dato: '2026-11-03',
+    sammendrag: 'Kildekontrollen sammenligner nå bare de relevante avsnittene i to kilder',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen eller i verktøyreglene. Etter en uavhengig kontroll sammenligner kildekontrollen nå bare de avsnittene i Australian Prescriber og Royal College of Psychiatrists som reglene bygger på. Endringer ellers på nettsidene gir dermed ikke lenger nye kildesaker.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.119.0',
     dato: '2026-11-03',
     sammendrag: 'Kildeovervåkingen: tekniske avvik følges opp uten frister, og redaktøren får bare faglige spørsmål',
