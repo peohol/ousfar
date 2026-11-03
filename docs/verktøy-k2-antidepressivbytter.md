@@ -16,7 +16,7 @@ Når reglene er godkjent, kan klinikeren få en sammenhengende plan **fra dagens
 | Escitalopram → sertralin (K0-06) | Moderat bytte | 10, 20 mg | 50 eller 100 mg | 17 eller 31 dager til oppstart, 100 mg etter ytterligere 14 dager |
 | Citalopram → sertralin | Moderat bytte | 20, 40 mg | 50 eller 100 mg | Som over |
 
-Det godkjente startforløpet (versjon 10) er uendret. Det er en delplan, sertralin til 25 mg og mirtazapin 15 mg uten seponering og uten måldose, og kan ikke nå et komplett sluttmål uten en ny versjon og en ny godkjenning; den komplette erstatningen er `bytte-sertralin-mirtazapin`. Når appen ikke viser delplaner, gir sertralin → mirtazapin derfor «Komplett plan ikke tilgjengelig» til den komplette regelen er godkjent. De andre fire kombinasjonene viser «faglig kontroll gjenstår» til da, i stedet for at verktøyet ikke har noen regel.
+Det godkjente startforløpet (versjon 10) er uendret. Det er en delplan, sertralin til 25 mg og mirtazapin 15 mg uten seponering og uten måldose, og kan ikke nå et komplett sluttmål uten en ny versjon og en ny godkjenning; den komplette erstatningen er `bytte-sertralin-mirtazapin`. Siden appen ikke viser delplaner, gir sertralin → mirtazapin derfor «Komplett plan ikke tilgjengelig» til den komplette regelen er godkjent. De andre fire kombinasjonene viser «faglig kontroll gjenstår» til da, i stedet for at verktøyet ikke har noen regel.
 
 ## 2. Forløpene
 
@@ -26,7 +26,7 @@ Det godkjente startforløpet (versjon 10) er uendret. Det er en delplan, sertral
 
 Alle planer bruker bare hele tabletter (FEST-form 53): sertralin 25/50/100 mg, escitalopram 5/10/20 mg, citalopram 10/20/40 mg og mirtazapin 15/30/45 mg, markedsført og uten godkjenningsfritak i uttrekket 03.11.2026 (`src/data/verktoy/fest-antidepressivbytter.json`). Det kliniske omfanget for det nye legemidlet gjelder bare styrkene planene bruker (mirtazapin 15/30 mg, sertralin 50/100 mg); forsvinner mirtazapin 45 mg fra FEST, eller sertralin 25 mg der sertralin er det nye legemidlet, stopper ikke de planene.
 
-**Bare komplette planer.** Hvert forløp i reglene krever en komplett plan (regelmodell 12): når nedtrappingen ikke når seponering, eller det nye legemidlet ikke når vedlikeholdsdosen, viser verktøyet «Komplett plan ikke tilgjengelig» og grunnen, aldri en delplan med doser.
+**Bare komplette planer.** Verktøyet viser aldri en delplan (den felles motoren): når en plan ikke når sluttmålet, står det «Komplett plan ikke tilgjengelig» og grunnen, uten doser. Alle planene i K2-reglene når sluttmålet, testet for hver kombinasjon av startdose og vedlikeholdsdose.
 
 **Vurderingspunkter.** Planen viser dem på riktig dag og samlet under «Vurderingspunkter»: seponeringssymptomer og forverring av depresjonen før hver reduksjon og før seponeringen av SSRI-et (NICE, RCPsych: hold dosen, eller gå tilbake til forrige dose ved plagsomme symptomer), toleransen før økningen av det nye legemidlet, og respons og bivirkninger fire uker etter oppstarten og etter hver doseendring av det, slutten av preparatomtalenes 2–4 uker. Eksempel sertralin 100 mg → mirtazapin 30 mg: dag 15 og 29 for sertralin, dag 29 før økningen og dag 29 og 57 for responsen på mirtazapin. Forskriveren bekrefter i tillegg at pasienten følges ved disse punktene, og at sedasjon og serotonerg belastning følges under overlappen eller seponeringssymptomer i dagene uten SSRI.
 

@@ -175,8 +175,6 @@ describe('K2: komplette forløp ende til ende med preparatene i FEST', () => {
 
   it('hver plan i omfanget når sluttmålet: det gamle seponert, det nye på valgt vedlikeholdsdose uten slutt', () => {
     for (const r of BYTTESETT.regler) {
-      // Regelen krever en komplett plan for begge legemidlene: når den ikke sluttmålet, vises ingen delplan.
-      expect(r.plan.forlop.every((f) => f.krever_komplett), r.id).toBe(true)
       const start = r.inndata.find((x) => x.navn === 'startdose')!.verdier!
       const mal = r.inndata.find((x) => x.navn === 'maldose')!.verdier!
       for (const d of start) {
