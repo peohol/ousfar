@@ -28,7 +28,7 @@ Hentet og lest 03.11.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Legge lamotrigin til valproat
 
-`tillegg-valproat-lamotrigin`, versjon 2, fingeravtrykk `134c5c2ea636b8ca4b8f60a559a99151173b92ac0b343447b29f3be84f1b509b`. Tillegg til eksisterende legemiddel: valproat → lamotrigin. **Entydig beregnbar**; status **til faglig kontroll**.
+`tillegg-valproat-lamotrigin`, versjon 2, fingeravtrykk `eec8fe358fb8c702a3f8dfd5fd5c884ba0fe272942d5e302a25385e76d677f82`. Tillegg til eksisterende legemiddel: valproat → lamotrigin. **Entydig beregnbar**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code).
 
@@ -149,7 +149,7 @@ Hentet og lest 03.11.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Legge lamotrigin til litium
 
-`tillegg-litium-lamotrigin`, versjon 2, fingeravtrykk `89f8ad9af768a349430af85965fd7a8f8afe270fdb4d2d710d6acb801335b029`. Tillegg til eksisterende legemiddel: litium → lamotrigin. **Entydig beregnbar**; status **til faglig kontroll**.
+`tillegg-litium-lamotrigin`, versjon 2, fingeravtrykk `81c3ac25f0c0a1df5415c2d348c678da328c9b4f525b0103cbb7d3e97f599096`. Tillegg til eksisterende legemiddel: litium → lamotrigin. **Entydig beregnbar**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code).
 

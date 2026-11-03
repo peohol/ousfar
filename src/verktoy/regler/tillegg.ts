@@ -388,7 +388,7 @@ const aktuellDose = (e: Eksisterende): Bekreftelse => ({ id: 'aktuell_dose', tek
  * forskriveren bekrefter at preparatomtalens første stabiliserende måldose er
  * pasientens mål, og ved østrogenholdig behandling at målet er vurdert særskilt.
  */
-const maldosebekreftelser = (plan: Gruppeplan, e: Eksisterende, ostrogen: Sporsmal): Bekreftelse[] => [
+const maldosebekreftelser = (plan: Gruppeplan, ostrogen: Sporsmal): Bekreftelse[] => [
   {
     id: 'maldose_valgt',
     tekst: `Den første stabiliserende måldosen (${plan.maldose} mg/dag) er det kliniske målet for denne opptrappingen hos pasienten, vurdert ut fra indikasjon, forventet respons og interaksjoner. Er et annet mål ønsket, gjelder ikke regelen.`,
@@ -421,7 +421,7 @@ export function lamotrigintillegg(e: Eksisterende): Regel {
   const plan = OPPTRAPPING[e.gruppe]
   const unntak = unntakFor(e)
   const ostrogen = ostrogensporsmal(e)
-  const bekreftelser = [...e.bekreftelser, aktuellDose(e), ...maldosebekreftelser(plan, e, ostrogen), UTSLETTSINFORMASJON]
+  const bekreftelser = [...e.bekreftelser, aktuellDose(e), ...maldosebekreftelser(plan, ostrogen), UTSLETTSINFORMASJON]
   const sporsmal = [...(e.sporsmal ?? []), ostrogen]
   const fra: Forlop = {
     id: 'fra',
@@ -430,7 +430,6 @@ export function lamotrigintillegg(e: Eksisterende): Regel {
     utgangsdose: 'startdose',
     start: { type: 'dag', dag: 1 },
     faser: [{ type: 'uendret', grunnlag: { type: 'kilde', henvisninger: [plan.henvisning] } }],
-    krever_komplett: true,
   }
   const til: Forlop = {
     id: 'til',
@@ -452,8 +451,6 @@ export function lamotrigintillegg(e: Eksisterende): Regel {
       { type: 'vedlikehold', dose: { type: 'inndata', navn: 'maldose' } },
     ],
     vurderinger: lamotriginvurderinger(plan, e.navn),
-    // Planen gis bare når den når måldosen; ellers stopper den i stedet for å vise en delplan.
-    krever_komplett: true,
   }
   const besvart = Object.fromEntries(unntak.map((u) => [u.id, false]))
   const svar = Object.fromEntries(sporsmal.map((x) => [x.id, false]))
