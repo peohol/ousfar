@@ -4,8 +4,8 @@
  *
  * - Globalt fagsøk i toppmenyen, med rullegardinen (`Fagsok`) og søkesiden
  *   (`Sokeside`, `#/sok?q=…`).
- * - Søket på den åpne siden (`Sidesok`), et kompakt felt i toppmenyen og i
- *   dokken på smale flater.
+ * - Søket på den åpne siden (`Sidesok`), et kompakt felt i toppmenyen eller
+ *   i dokken.
  *
  * Selve fagsøkfeltet står i `toppmeny.css`. Grensen for smal flate (47,5em ≈
  * 760 px) står i hver media query; CSS kan ikke lese den fra et token.
@@ -48,6 +48,14 @@
   border: var(--kant) solid var(--linje);
   border-radius: var(--runding-kort);
   box-shadow: var(--skygge-modal);
+}
+
+/* Står sidens handlinger i dokken nederst, slutter rullegardinen over den.
+   (På smale flater står den fast i vinduet, se under.) */
+@media (width > 47.5em) {
+  :root[data-dokk] .fagsok__rullegardin {
+    max-height: calc(100dvh - var(--toppmeny-offset) - var(--dokk-offset));
+  }
 }
 
 .fagsok__rullegardin[hidden] {
@@ -521,45 +529,49 @@
 
 /* --- Trange flater ------------------------------------------------------------------
    Som de sekundære handlingene krymper søket på siden til lupen i en rund
-   knapp før det globale fagsøket presses sammen. Står det et søk i det, er
-   kanten i aksentfargen (treffene er fremhevet på siden). */
-@media (max-width: 64em) {
-  .toppmeny__kontekst .sidesok:not(:focus-within) .sidesok__felt {
-    justify-content: center;
-    gap: 0;
-    width: var(--hoyde-kontroll);
-    padding: 0;
-  }
-
-  .toppmeny__kontekst .sidesok[data-sok='ja']:not(:focus-within) .sidesok__felt {
-    border-color: var(--aksent);
-  }
-
-  .toppmeny__kontekst .sidesok:not(:focus-within) .sidesok__input {
-    flex: none;
-    width: 0;
-    padding: 0;
-  }
-
-  .toppmeny__kontekst .sidesok:not(:focus-within) :is(.hurtigtast, .sidesok__teller) {
-    display: none;
-  }
+   knapp før det globale fagsøket presses sammen (`data-kompakt`, se
+   `Toppmeny`). Står det et søk i det, er kanten i aksentfargen (treffene er
+   fremhevet på siden). */
+.toppmeny[data-kompakt] .toppmeny__kontekst .sidesok:not(:focus-within) .sidesok__felt {
+  justify-content: center;
+  gap: 0;
+  width: var(--hoyde-kontroll);
+  padding: 0;
 }
 
-/* Mens det brukes, tar det plassen fra fagsøket (som da krymper til lupen)
-   og ikke mer enn det er plass til, så resten av menyen blir stående. */
+.toppmeny[data-kompakt] .toppmeny__kontekst .sidesok[data-sok='ja']:not(:focus-within) .sidesok__felt {
+  border-color: var(--aksent);
+}
+
+.toppmeny[data-kompakt] .toppmeny__kontekst .sidesok:not(:focus-within) .sidesok__input {
+  flex: none;
+  width: 0;
+  padding: 0;
+}
+
+.toppmeny[data-kompakt] .toppmeny__kontekst .sidesok:not(:focus-within) :is(.hurtigtast, .sidesok__teller) {
+  display: none;
+}
+
+/* Mens det brukes i toppmenyen, er det like bredt hver gang
+   (`--bredde-sidesok-i-bruk`), så det som skrives, synes, og tar plassen fra
+   fagsøket (som da kan krympe til lupen). `Toppmeny` sørger for at det får
+   plass; ellers presses ingenting i sidens plasser sammen. Snarveien trengs
+   ikke mens feltet alt er i bruk. */
+:root:not([data-dokk]) .toppmeny__kontekst .sidesok:focus-within {
+  width: var(--bredde-sidesok-i-bruk);
+}
+
+:root:not([data-dokk]) .toppmeny__kontekst .sidesok:focus-within .sidesok__input {
+  flex: 1 1 0;
+  width: auto;
+}
+
+.toppmeny__kontekst .sidesok:focus-within .hurtigtast {
+  display: none;
+}
+
 @media (width > 47.5em) {
-  .toppmeny__kontekst {
-    flex-shrink: 1;
-    min-width: 0;
-  }
-
-  .toppmeny__gruppe[data-gruppe='hoved'],
-  .sidesok {
-    flex-shrink: 1;
-    min-width: var(--hoyde-kontroll);
-  }
-
   .sidesok__felt {
     overflow: hidden;
   }
@@ -569,6 +581,28 @@
     flex: 0 1 10rem;
     width: auto;
   }
+}
+
+/* I dokken: mens søket brukes, vokser feltet over det som er ledig av raden
+   (se `toppmeny.css`), og stedene står over dokken, like brede som den. */
+:root[data-dokk] .toppmeny__kontekst .sidesok {
+  position: static;
+}
+
+:root[data-dokk] .toppmeny__kontekst .sidesok:focus-within {
+  min-width: 0;
+}
+
+:root[data-dokk] .toppmeny__kontekst .sidesok:focus-within .sidesok__input {
+  flex: 1 1 10rem;
+  width: auto;
+}
+
+:root[data-dokk] .toppmeny__kontekst .sidesok__treff {
+  top: auto;
+  bottom: calc(100% + var(--rom-3));
+  left: 0;
+  width: auto;
 }
 
 /* --- Smale flater ------------------------------------------------------------------- */
@@ -591,40 +625,18 @@
     justify-content: flex-end;
   }
 
-  /* I dokken: lupen (se over) i trykkstørrelse til det brukes. Mens det
-     brukes, vokser feltet over det som er ledig av raden (se `toppmeny.css`).
-     Stedene står over dokken, like brede som den. */
-  .toppmeny__kontekst .sidesok {
-    position: static;
-  }
-
+  /* I dokken: lupen (se over) i trykkstørrelse til det brukes. */
   .toppmeny__kontekst .sidesok .hurtigtast {
     display: none;
   }
 
-  .toppmeny__kontekst .sidesok:not(:focus-within) .sidesok__felt {
+  .toppmeny[data-kompakt] .toppmeny__kontekst .sidesok:not(:focus-within) .sidesok__felt {
     width: var(--hoyde-trykk);
     height: var(--hoyde-trykk);
   }
 
-  .toppmeny__kontekst .sidesok:focus-within {
-    min-width: 0;
-  }
-
   .toppmeny__kontekst .sidesok:focus-within .sidesok__felt {
     height: var(--hoyde-trykk);
-  }
-
-  .toppmeny__kontekst .sidesok:focus-within .sidesok__input {
-    flex: 1 1 10rem;
-    width: auto;
-  }
-
-  .toppmeny__kontekst .sidesok__treff {
-    top: auto;
-    bottom: calc(100% + var(--rom-3));
-    left: 0;
-    width: auto;
   }
 
   .sokeside {

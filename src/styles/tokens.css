@@ -119,14 +119,22 @@
      Den ene faste toppmenyen svever over innholdet. `--toppmeny-offset` er
      hvor mye av vinduet den tar øverst: innhold, ankere og scrollIntoView
      skal alltid legge seg under den. `--dokk-offset` er det samme nederst
-     på smale flater, der sidens handlinger ligger i en dokk. Dokken er
+     når sidens handlinger ligger i en dokk (`data-dokk` på dokumentet: på
+     smale flater, og når de ikke får plass i menyen). Dokken er
      `--hoyde-dokk` høy på én rad; når den går over to, setter `Toppmeny` den
      målte høyden som `--dokkhoyde` på dokumentet. */
   --toppmeny-luft: var(--rom-5);
   --toppmeny-offset: calc(var(--hoyde-toppmeny) + 1.75rem);
   --dokkhoyde: var(--hoyde-dokk);
   --dokk-offset: calc(var(--dokkhoyde) + 1.75rem);
-  --blur-toppmeny: 16px;
+  --blur-toppmeny: 10px;
+  /* Så smalt fagsøket i toppmenyen kan bli og fortsatt vise «Søk i
+     fagstoff». Trengs mer for sidens handlinger, blir de kompakte og så
+     flytter de ned i dokken (`Toppmeny`). */
+  --bredde-fagsok-minst: 10rem;
+  /* Så bredt søket på siden er i toppmenyen mens det brukes, så det som
+     skrives, synes. Menyen sørger for at det alltid får plass (`Toppmeny`). */
+  --bredde-sidesok-i-bruk: 16rem;
 
   /* --- Lag ----------------------------------------------------------------
      `--lag-innhold` er det som flyter over siden, men under toppmenyen og
@@ -169,7 +177,7 @@
   --flate-bunn: #f5f1e8; /* sidebakgrunn */
   --flate: #fffdf8; /* kort, paneler, felt */
   --flate-hevet: #efe8da; /* ikonsirkler, sekundærknapper, søkefelt */
-  --flate-toppmeny: rgb(255 253 248 / 0.82); /* over backdrop-blur */
+  --flate-toppmeny: rgb(255 253 248 / 0.72); /* over backdrop-blur */
   --linje: #e2d9c7; /* hårlinjer, kortkanter */
   --linje-sterk: #d3c8b2; /* innrykkslinjer */
   /* Kanten som alene viser hvor et felt eller en knapp er (WCAG 1.4.11). */
@@ -273,7 +281,7 @@
   --flate-bunn: #0e1217;
   --flate: #151a21;
   --flate-hevet: #1c232c;
-  --flate-toppmeny: rgb(21 26 33 / 0.8);
+  --flate-toppmeny: rgb(21 26 33 / 0.7);
   --linje: #29313c;
   --linje-sterk: #3a4452;
   --linje-kontroll: #6e7987;

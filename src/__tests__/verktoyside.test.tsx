@@ -19,7 +19,6 @@
  *   nærmeste dosene som kan gis, med faktisk reduksjon; et valg gir en ny
  *   plan med en gang, står i planen og kan fjernes.
  */
-import { readFileSync } from 'node:fs'
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -32,9 +31,10 @@ import { KARTLEGGING } from '../verktoy/register'
 import { FOR_SEN, LES_SPERRENE_HVER_MS, LESEFRIST_MS, NYE_FORSOK_MS, PLAN_TATT_BORT, SPERRENE_GJELDER_MS, UKONTROLLERT, UTEN_NETT, utenForbindelse, type Verktoysperre } from '../verktoy/sperrer'
 import { osloDato } from '../verktoy/doseplan'
 import { STARTFORLOP } from '../verktoy/planvisning'
-import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from '../verktoy/regler/aksepttest'
-import { avregistrert, tidFor } from '../verktoy/regler/pilotmatrise'
+import { FEST_AKSEPTTEST, FEST_PILOT } from '../verktoy/regler/aksepttest'
+import { avregistrert } from '../verktoy/regler/pilotmatrise'
 import { REGELSETT } from '../verktoy/tilgjengelighet'
+import { besvarAlt, pilotklokke, pilotlesing, pilotuttrekk } from './hjelp/pilotside'
 import { godkjennITest, TEST_BEGRUNNELSE, TEST_DEPOT, TEST_JUSTERBAR, TEST_NEDTRAPPING, TEST_TRINNVALG, TESTKLOKKE, testFest, testsett } from './hjelp/verktoyplan'
 
 beforeEach(() => {
@@ -1036,29 +1036,11 @@ describe('nødstoppen (P11.6)', () => {
  * endret regelversjon og med endrede preparater.
  */
 describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
-  // Stien er relativ til repoet; i jsdom skriver Vite om `new URL(…, import.meta.url)` med en mal.
-  const uttrekk = (fil: string) => JSON.parse(readFileSync(fil, 'utf8')) as Festuttrekk
-  const PILOT = uttrekk(FEST_PILOT)
-  const AKSEPT = uttrekk(FEST_AKSEPTTEST)
-  const klokke = (u: Festuttrekk) => () => tidFor({ uttrekk: 'pilot' }, { pilot: u, aksept: u })
-  const fra = (u: Festuttrekk, endre?: (x: Legemiddelutvalg) => void) =>
-    lesing(() => {
-      const x = structuredClone(u.utvalg)
-      endre?.(x)
-      return x
-    })
-
-  /** Krysser av hver bekreftelse og svarer nei på hvert spørsmål og unntak; `ja` er unntakene og spørsmålene som gjelder. */
-  async function besvar(user: ReturnType<typeof userEvent.setup>, ja: RegExp[] = []) {
-    const bekreft = screen.queryByRole('group', { name: 'Bekreft før beregning' })
-    for (const boks of bekreft ? within(bekreft).getAllByRole('checkbox') : []) if (!(boks as HTMLInputElement).checked) await user.click(boks)
-    const pasient = screen.queryByRole('group', { name: 'Om pasienten' })
-    for (const gruppe of pasient ? within(pasient).getAllByRole('group') : []) {
-      const tekst = gruppe.querySelector('legend')!.textContent!
-      const radioer = within(gruppe).getAllByRole('radio')
-      await user.click(radioer[ja.some((j) => j.test(tekst)) ? 0 : 1]!)
-    }
-  }
+  const PILOT = pilotuttrekk(FEST_PILOT)
+  const AKSEPT = pilotuttrekk(FEST_AKSEPTTEST)
+  const klokke = pilotklokke
+  const fra = pilotlesing
+  const besvar = besvarAlt
   const rader = () => [...screen.getByRole('table').querySelectorAll('tbody tr')].map((r) => r.textContent)
   const ingenPlan = async () => (await screen.findByRole('heading', { name: 'Ingen doseplan' })).closest('section')!
 
