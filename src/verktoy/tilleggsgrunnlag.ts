@@ -88,13 +88,24 @@ const kasus = (
   uttrekk: 'pilot',
   dose,
   ...x,
-  skjema: { startdato: STARTDATO, ...x.skjema },
+  skjema: { startdato: STARTDATO, ...(gjelder ? { maldose: String(maldoseFor(gjelder)) } : {}), ...x.skjema },
   forventet,
 })
+
+/** Den første stabiliserende måldosen regelen gjelder for: forskriveren velger den, og kasusene gjør det med mindre de prøver noe annet. */
+const maldoseFor = (r: Regel) => r.inndata.find((k) => k.navn === 'maldose')?.verdier?.[0] ?? ''
+
+/** Kopien med en annen måldose regelen gjelder for. */
+const medMaldose = (x: Regel, mg: number) => {
+  const krav = x.inndata.find((k) => k.navn === 'maldose')
+  if (!krav) throw new Error(`${x.id}: regelen har ikke noe krav til måldosen`)
+  krav.verdier = [mg]
+}
 
 const sperre = (omfang: Verktoysperre['omfang'], mal: string | null): Verktoysperre => ({ id: `sperre-${mal ?? 'alle'}`, omfang, mal, grunn: 'Syntetisk nødstopp i kontrollgrunnlaget.', satt_kl: '2026-11-03T12:00:00Z', satt_av: null })
 
 const UNNTAK = 'Regelen gjelder ikke'
+const LITIUMDOSE = 'er utenfor det regelen gjelder for (42, 84, 126, 168, 210, 252, 294, 336, 378, 420 mg)'
 
 const V = VALPROAT_LAMOTRIGIN
 const L = LITIUM_LAMOTRIGIN
@@ -116,7 +127,7 @@ export const PLAN_VALPROAT: readonly string[] = [
   'Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.',
   'Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.',
   'Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg = uendret dose; planen beregner den ikke; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg',
-  'Dag 36 (14.12.2026): Vurdering (Lamotrigin): Den stabiliserende måldosen (100 mg/dag) er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.',
+  'Dag 36 (14.12.2026): Vurdering (Lamotrigin): Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.',
   'Dag 36 (14.12.2026): Vurdering (Lamotrigin): Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.',
 ]
 
@@ -131,7 +142,7 @@ export const PLAN_LITIUM: readonly string[] = [
   'Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.',
   'Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.',
   'Fra dag 36 (fra 14.12.2026): Litium peroralt: 168 mg = uendret dose; planen beregner den ikke; Lamotrigin peroralt: 200 mg = 1 tablett à 200 mg',
-  'Dag 36 (14.12.2026): Vurdering (Lamotrigin): Den stabiliserende måldosen (200 mg/dag) er nådd. Vurder klinisk respons; videre justering (100–400 mg/dag er brukt i studier) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.',
+  'Dag 36 (14.12.2026): Vurdering (Lamotrigin): Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Vurder klinisk respons; videre justering (100–400 mg/dag er brukt i studier) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.',
   'Dag 36 (14.12.2026): Vurdering (Lamotrigin): Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.',
 ]
 
@@ -153,14 +164,23 @@ export const TILLEGGSKASUS: readonly Tilleggskasus[] = [
   kasus('K4-17', V, 'valproat', 'preparat', 'alle lamotriginpreparatene krever godkjenningsfritak', '1000', { utfall: 'stopp', grunner: ['godkjenningsfritak'] }, { regel: simulert(V), fest: bareFritak('lamotrigin') }),
   kasus('K4-18', V, 'valproat', 'preparat', 'Lamictal 25 mg er midlertidig utgått: 25 mg annenhver dag kan ikke gis, og planen stopper i stedet for å velge en annen dose', '1000', { utfall: 'stopp', grunner: ['den ideelle dosen 25 mg annenhver dag kan ikke gis'] }, { regel: simulert(V), fest: midlertidigUtgatt('lamotrigin', 25, 'Lamictal') }),
   kasus('K4-19', V, 'valproat', 'regelendring', 'regelen er endret etter godkjenningen (måldose 150 mg)', '1000', { utfall: 'stopp', grunner: ['Regelen er endret etter godkjenningen'] }, {
-    regel: simulert(V, { hva: 'måldosen endret til 150 mg', endre: (x) => void (x.plan.forlop[1]!.faser[1] = { type: 'vedlikehold', dose: { type: 'fast', mg: { ...maldose(x), verdi: 150 } } }) }),
+    regel: simulert(V, { hva: 'måldosen endret til 150 mg', endre: (x) => medMaldose(x, 150) }),
+    skjema: { maldose: '150' },
   }),
   kasus('K4-20', V, 'valproat', 'uvanlig_dose', 'høyeste dose sammen med valproat: en plan over 200 mg stopper (godkjenningen simulert for den endrede kopien)', '1000', { utfall: 'stopp', grunner: ['den ideelle dosen 250 mg kan ikke gis med preparatene i FEST nøyaktig og ikke over 200 mg'] }, {
     regel: { id: V.id, endre: { hva: 'måldosen endret til 250 mg, deretter simulert godkjenning av kopien', endre: (x) => {
-      x.plan.forlop[1]!.faser[1] = { type: 'vedlikehold', dose: { type: 'fast', mg: { ...maldose(x), verdi: 250 } } }
+      medMaldose(x, 250)
       simulerGodkjenning(x, kontrollregel(x), DATO)
     } } },
+    skjema: { maldose: '250' },
   }),
+  kasus('K4-22', V, 'valproat', 'uvanlig_dose', 'forskriveren velger 200 mg som mål: regelen trapper bare opp til den første stabiliserende måldosen', '1000', { utfall: 'stopp', grunner: ['Måldosen 200 mg er utenfor det regelen gjelder for (100 mg)'] }, { regel: simulert(V), skjema: { maldose: '200' } }),
+  kasus('K4-23', V, 'valproat', 'interaksjon', 'østrogenholdig prevensjon uten skriftlig vurdering av måldosen', '1000', { utfall: 'stopp', grunner: ['skriftlig begrunnelse'] }, { regel: simulert(V), skjema: { svar: { ostrogen: true } } }),
+  kasus('K4-24', V, 'valproat', 'interaksjon', 'østrogenholdig prevensjon med skriftlig vurdering av måldosen', '1000', { utfall: 'plan', linjer: [...PLAN_VALPROAT] }, {
+    regel: simulert(V),
+    skjema: { svar: { ostrogen: true }, begrunnelse: 'Syntetisk: måldosen vurderes på nytt etter titreringen, med serumkonsentrasjon av lamotrigin.' },
+  }),
+  kasus('K4-25', V, 'valproat', 'pasientforhold', 'spørsmålet om østrogenholdig behandling er ubesvart', '1000', { utfall: 'stopp', grunner: ['østrogenholdig'] }, { regel: simulert(V), ubesvart: ['ostrogen'] }),
   kasus('K4-21', V, 'valproat', 'nodstopp', 'verktøyet er deaktivert med nødstoppen', '1000', { utfall: 'sperret' }, { regel: simulert(V), sperrer: [sperre('verktoy', VERKTOY)] }),
   // Litium → lamotrigin, med simulert godkjenning.
   kasus('K4-30', L, 'litium', 'vanlig_dose', 'hele opptrappingen med litium', '168', { utfall: 'plan', linjer: [...PLAN_LITIUM] }, { regel: simulert(L) }),
@@ -168,23 +188,22 @@ export const TILLEGGSKASUS: readonly Tilleggskasus[] = [
   kasus('K4-32', L, 'litium', 'interaksjon', 'pasienten bruker et legemiddel med ukjent interaksjon med lamotrigin', '168', { utfall: 'stopp', grunner: [UNNTAK] }, { regel: simulert(L), skjema: { pasientforhold: { ukjent_interaksjon: true } } }),
   kasus('K4-33', L, 'litium', 'pasientforhold', 'moderat nedsatt leverfunksjon', '168', { utfall: 'stopp', grunner: [UNNTAK] }, { regel: simulert(L), skjema: { pasientforhold: { nedsatt_leverfunksjon: true } } }),
   kasus('K4-34', L, 'litium', 'pasientforhold', 'bruker lamotrigin allerede (ikke en oppstart)', '168', { utfall: 'stopp', grunner: [UNNTAK] }, { regel: simulert(L), skjema: { pasientforhold: { bruker_lamotrigin: true } } }),
-  kasus('K4-35', L, 'litium', 'pasientforhold', 'det er ikke bekreftet at den innfylte litiumdosen er den pasienten bruker nå', '168', { utfall: 'stopp', grunner: ['Må bekreftes før beregning: Døgndosen som er fylt inn for litium'] }, {
+  kasus('K4-35', L, 'litium', 'pasientforhold', 'det er ikke bekreftet at den innfylte litiumdosen er den pasienten bruker nå', '168', { utfall: 'stopp', grunner: ['Må bekreftes før beregning: Pasienten bruker Lithionit 42 mg depottabletter'] }, {
     regel: simulert(L),
     skjema: { bekreftet: ['fortsetter_litium', 'utslett_informert'] },
   }),
-  // Dosen av det eksisterende legemidlet kontrolleres ikke mot noe område (preparatomtalene gir ingen), bare gjentas.
-  kasus('K4-36', L, 'litium', 'uvanlig_dose', 'en usannsynlig litiumdose (0,5 mg) kontrolleres ikke; planen gjentar den og er bygd på forskriverens bekreftelse', '0,5', { utfall: 'plan', linjer: PLAN_LITIUM.map((l) => l.replace('168 mg = uendret', '0,5 mg = uendret')) }, { regel: simulert(L) }),
+  // Litiumdosen må være hele Lithionit-tabletter (42 mg Li⁺), opp til den høyeste veiledende vedlikeholdsdosen.
+  kasus('K4-36', L, 'litium', 'uvanlig_dose', 'en usannsynlig litiumdose (0,5 mg) stopper', '0,5', { utfall: 'stopp', grunner: [LITIUMDOSE] }, { regel: simulert(L) }),
+  kasus('K4-37', L, 'litium', 'uvanlig_dose', 'en dose som ikke er hele Lithionit-tabletter (170 mg, for eksempel mg litiumsalt), stopper', '170', { utfall: 'stopp', grunner: [LITIUMDOSE] }, { regel: simulert(L) }),
+  kasus('K4-38', L, 'litium', 'uvanlig_dose', 'grensen: 10 tabletter (420 mg Li⁺) er innenfor', '420', { utfall: 'plan', linjer: PLAN_LITIUM.map((l) => l.replace('168 mg = uendret', '420 mg = uendret')) }, { regel: simulert(L) }),
+  kasus('K4-39', L, 'litium', 'uvanlig_dose', 'grensen: 11 tabletter (462 mg Li⁺) er over den høyeste veiledende vedlikeholdsdosen og stopper', '462', { utfall: 'stopp', grunner: [LITIUMDOSE] }, { regel: simulert(L) }),
+  kasus('K4-40', L, 'litium', 'uvanlig_dose', 'forskriveren velger 300 mg som mål: regelen trapper bare opp til den første stabiliserende måldosen', '168', { utfall: 'stopp', grunner: ['Måldosen 300 mg er utenfor det regelen gjelder for (200 mg)'] }, { regel: simulert(L), skjema: { maldose: '300' } }),
   // Kombinasjoner uten regel: verktøyet sier det, og beregner ingenting.
-  kasus('K4-40', null, 'karbamazepin', 'ikke_godkjent', 'karbamazepin → lamotrigin (induserende legemiddel) har ingen regel', '600', { utfall: 'ingen', status: 'ikke_stottet' }),
-  { ...kasus('K4-41', null, 'lamotrigin', 'ikke_godkjent', 'motsatt retning: lamotrigin → valproat har ingen regel', '200', { utfall: 'ingen', status: 'ikke_stottet' }), valg: { fra: peroral('lamotrigin'), til: peroral('valproat') } },
-  kasus('K4-42', null, 'kvetiapin', 'ikke_godkjent', 'kvetiapin → lamotrigin har ingen regel', '300', { utfall: 'ingen', status: 'ikke_stottet' }),
+  kasus('K4-50', null, 'karbamazepin', 'ikke_godkjent', 'karbamazepin → lamotrigin (induserende legemiddel) har ingen regel', '600', { utfall: 'ingen', status: 'ikke_stottet' }),
+  { ...kasus('K4-51', null, 'lamotrigin', 'ikke_godkjent', 'motsatt retning: lamotrigin → valproat har ingen regel', '200', { utfall: 'ingen', status: 'ikke_stottet' }), valg: { fra: peroral('lamotrigin'), til: peroral('valproat') } },
+  kasus('K4-52', null, 'kvetiapin', 'ikke_godkjent', 'kvetiapin → lamotrigin har ingen regel', '300', { utfall: 'ingen', status: 'ikke_stottet' }),
 ]
 
-function maldose(x: Regel) {
-  const f = x.plan.forlop[1]!.faser[1]!
-  if (f.type !== 'vedlikehold' || f.dose.type !== 'fast') throw new Error(`${x.id}: siste fase er ikke en fast vedlikeholdsdose`)
-  return f.dose.mg
-}
 
 /** Uttrekkene kasusene leses fra: tilleggsuttrekket på begge plassene. */
 export const uttrekkeneFor = (u: Festuttrekk): Uttrekkene => ({ pilot: u, aksept: u })
@@ -226,8 +245,8 @@ export const TILLEGGSSPORSMAL: readonly { nr: string; sporsmal: string; anbefalt
   },
   {
     nr: 'K4.2',
-    sporsmal: 'Er det riktig å regne den vanlige stabiliserende måldosen (100 mg med valproat, 200 mg ellers) som planens sluttmål, med videre justering som et vurderingspunkt som ikke beregnes?',
-    anbefalt: 'Ja; preparatomtalen kaller dem vanlige måldoser og sier at måldosen avhenger av klinisk respons.',
+    sporsmal: 'Forskriveren må nå velge måldosen, og regelen gjelder bare preparatomtalens vanlige første stabiliserende måldose (100 mg med valproat, 200 mg ellers); et annet mål stopper (K4-22, K4-40), og videre justering er et vurderingspunkt som ikke beregnes. Er planen da riktig betegnet som komplett til det valgte målet?',
+    anbefalt: 'Ja; preparatomtalen kaller dem vanlige måldoser og sier at måldosen avhenger av klinisk respons. Etter kontrollen 03.11.2026 er målet gjort til et eksplisitt valg i stedet for en skjult forutsetning.',
   },
   {
     nr: 'K4.3',
@@ -251,13 +270,13 @@ export const TILLEGGSSPORSMAL: readonly { nr: string; sporsmal: string; anbefalt
   },
   {
     nr: 'K4.7',
-    sporsmal: 'Litium oppgis i mg (som FEST og Lithionit oppgir styrken), ikke i mmol. Er det akseptabelt når planen bare viser dosen som uendret?',
-    anbefalt: 'Ja for første leveranse; litiumdosen beregnes ikke.',
+    sporsmal: 'Litiumdosen oppgis i mg litium (Li⁺) som på Lithionit 42 mg (6 mmol per tablett), og regelen gjelder bare hele Lithionit 42 mg-tabletter fra 1 til 10 tabletter daglig (den høyeste veiledende vedlikeholdsdosen); andre doser og andre litiumpreparater stopper (K4-36–K4-39). Er avgrensningen og enhetsangivelsen riktig?',
+    anbefalt: 'Ja; den fjerner forvekslingen mellom mg Li⁺ og mg litiumsalt og hindrer en dose som ikke kan gis med Lithionit.',
   },
   {
     nr: 'K4.8',
-    sporsmal: 'Er hormonell prevensjon riktig behandlet som et vurderingspunkt ved måldosen (ikke et unntak), siden preparatomtalen sier at opptrappingen ikke endres?',
-    anbefalt: 'Ja.',
+    sporsmal: 'Opptrappingen er den samme ved østrogenholdig prevensjon eller behandling, men forskriveren må svare på det, og et ja krever en skriftlig vurdering av måldosen fordi vedlikeholdsdosen kan måtte bli opptil dobbelt så høy (K4-23–K4-25). I tillegg står det som vurderingspunkt ved måldosen. Er det tilstrekkelig?',
+    anbefalt: 'Ja; preparatomtalen endrer ikke opptrappingen, men sier at vedlikeholdsdosen kan måtte økes.',
   },
 ]
 
@@ -267,7 +286,9 @@ export const IKKE_DEKKET: readonly string[] = [
   'Aripiprazol, olanzapin, gabapentin og topiramat → lamotrigin: samme opptrapping som med litium etter tabell 6, men hvert par må vurderes for seg før det legges til.',
   'Kvetiapin, risperidon og ziprasidon → lamotrigin: interaksjonen er ikke beskrevet i tabell 6; preparatomtalen sier da at opptrappingen for samtidig valproat skal brukes. Ikke laget.',
   'Lamotrigin → valproat (motsatt retning): lamotrigindosen skal halveres når valproat legges til (tabell 5), men opptrappingen av valproat er ikke vurdert. Ikke laget.',
-  'Dosen av valproat eller litium kontrolleres ikke: preparatomtalene fastsetter den individuelt (etter respons og serumkonsentrasjon) og gir ikke noe område den kan kontrolleres mot. Planen gjentar den innfylte dosen, og forskriveren må bekrefte at det er pasientens aktuelle dose (K4-35, K4-36).',
+  'Valproatdosen kontrolleres ikke: Orfiril-preparatomtalen fastsetter den individuelt etter respons og gir ikke noe område, og valproatpreparatene har mange styrker og flytende former. Planen gjentar den innfylte dosen, og forskriveren bekrefter at det er pasientens aktuelle dose i mg slik styrken står på preparatet. Litiumdosen kontrolleres mot hele Lithionit 42 mg-tabletter (K4-36–K4-39).',
+  'Andre litiumpreparater enn Lithionit 42 mg (Lithionit 83 mg, Carblit og preparater med godkjenningsfritak, der styrken kan være oppgitt som mg litiumsalt): utenfor regelen til enhet og styrke er vurdert for hvert preparat.',
+  'En annen måldose enn preparatomtalens første stabiliserende måldose: videre opptrapping etter klinisk respons beregnes ikke (K4-22, K4-40).',
   'Alle andre par i Combining Moodstabilizers (110 i alt): ingen kildeforankret regel ennå.',
 ]
 

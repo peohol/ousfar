@@ -38,12 +38,39 @@ describe('Tilleggsreglene', () => {
       expect(r.til).toEqual({ type: 'virkestoff', nokkel: 'lamotrigin' })
       // Det eksisterende legemidlet fortsetter uendret; planen beregner det ikke.
       expect(r.plan.forlop[0]!.faser.map((f) => f.type), r.id).toEqual(['uendret'])
-      // Dosen kontrolleres ikke mot noe område; forskriveren må bekrefte at den er pasientens aktuelle dose.
-      expect(r.inndata, r.id).toEqual([])
-      expect(r.bekreftelser.find((b) => b.id === 'aktuell_dose')?.tekst, r.id).toMatch(/Verktøyet kontrollerer ikke denne dosen; planen gjentar den bare\.$/)
+      // Måldosen må velges, og regelen gjelder bare preparatomtalens første stabiliserende måldose.
+      expect(r.inndata.find((k) => k.navn === 'maldose'), r.id).toMatchObject({ verdier: [OPPTRAPPING[r === VALPROAT_LAMOTRIGIN ? 'hemmer' : 'noytral'].maldose], art: 'bindende_krav' })
+      // Østrogenholdig behandling må besvares, og et ja krever en skriftlig vurdering av måldosen.
+      expect(r.sporsmal?.find((x) => x.id === 'ostrogen'), r.id).toMatchObject({ krever_begrunnelse: true, grunnlag: { henvisninger: expect.arrayContaining([LAMICTAL.hormonell]) } })
     }
-    expect(resultat('K4-35').res.utfall).toBe('stopp')
-    expect(resultat('K4-36').res.tekst).toContain('Litium peroralt: 0,5 mg = uendret dose')
+  })
+
+  it('skiller en dose verktøyet kontrollerer fra en dose forskriveren bare bekrefter', () => {
+    // Valproat: dosen kontrolleres ikke, og bekreftelsen sier det.
+    expect(VALPROAT_LAMOTRIGIN.inndata.filter((k) => k.navn === 'startdose')).toEqual([])
+    expect(VALPROAT_LAMOTRIGIN.bekreftelser.find((b) => b.id === 'aktuell_dose')?.tekst).toMatch(/Verktøyet kontrollerer ikke denne dosen mot noe preparat eller område; planen gjentar den bare\.$/)
+    // Litium: hele Lithionit-tabletter à 42 mg Li⁺ (6 mmol), 1–10 tabletter, og enheten står i bekreftelsen.
+    const litium = LITIUM_LAMOTRIGIN.inndata.filter((k) => k.navn === 'startdose')
+    expect(litium).toEqual([expect.objectContaining({ verdier: [42, 84, 126, 168, 210, 252, 294, 336, 378, 420], art: 'bindende_krav' })])
+    expect(LITIUM_LAMOTRIGIN.bekreftelser.find((b) => b.id === 'aktuell_dose')?.tekst).toMatch(/Lithionit 42 mg .*mg litium \(Li⁺\).*6 mmol/)
+    for (const [id, utfall] of [['K4-35', 'stopp'], ['K4-36', 'stopp'], ['K4-37', 'stopp'], ['K4-38', 'plan'], ['K4-39', 'stopp']] as const) expect(resultat(id).res.utfall, id).toBe(utfall)
+    expect(resultat('K4-38').res.tekst).toContain('Litium peroralt: 420 mg = uendret dose')
+  })
+
+  it('går bare til en måldose forskriveren har valgt, og stopper ved et annet mål', () => {
+    for (const id of ['K4-22', 'K4-40']) expect(resultat(id).res.utfall, id).toBe('stopp')
+    expect(resultat('K4-10').res.tekst).toContain('Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd.')
+    // Østrogenholdig behandling: ubesvart eller uten skriftlig vurdering stopper; med vurdering står den i planen.
+    for (const id of ['K4-23', 'K4-25']) expect(resultat(id).res.utfall, id).toBe('stopp')
+    expect(resultat('K4-24').res.tekst).toContain('Syntetisk: måldosen vurderes på nytt')
+  })
+
+  it('stopper ved graviditet sammen med valproat, og sier at det også gjelder valproatbehandlingen', () => {
+    const graviditet = VALPROAT_LAMOTRIGIN.unntak.filter((u) => u.id === 'graviditet')
+    expect(graviditet).toHaveLength(1)
+    expect(graviditet[0]!.tekst).toMatch(/valproat er kontraindisert under graviditet ved bipolar lidelse/)
+    expect(LITIUM_LAMOTRIGIN.unntak.find((u) => u.id === 'graviditet')!.tekst).toBe('Pasienten er gravid, planlegger graviditet eller ammer.')
+    expect(resultat('K4-13').res.utfall).toBe('stopp')
   })
 
   it('er ikke godkjent, og verktøyet gir ingen plan for dem i dag', () => {

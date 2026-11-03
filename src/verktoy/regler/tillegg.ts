@@ -27,7 +27,7 @@
  */
 import { FORUTSETNINGER_FELLES, h, kilde, pn, steg, utsagn } from './bygg'
 import type { Domenesett } from './domenesett'
-import type { Bekreftelse, Forlop, Godkjenning, Kildehenvisning, Regel, Regelsett, Regneeksempel, Unntak, Vurderingspunkt } from './modell'
+import type { Bekreftelse, Forlop, Godkjenning, Inndatakrav, Kildehenvisning, Regel, Regelsett, Regneeksempel, Sporsmal, Unntak, Vurderingspunkt } from './modell'
 import { REGELMODELLVERSJON } from './modell'
 
 /* --- Kildene ---------------------------------------------------------------------- */
@@ -102,6 +102,12 @@ export const LAMICTAL = {
 /** Fakta fra Orfiril-preparatomtalen (valproat), med egne ord. */
 export const ORFIRIL = {
   dose: h('dmp-orfiril', 'pkt. 4.2, Maniske episoder ved bipolar lidelse', 'Døgndosen av valproat tilpasses og følges individuelt etter klinisk respons; gjennomsnittlig døgndose er 1000–2000 mg.'),
+  ostrogen: h('dmp-orfiril', 'pkt. 4.4, Østrogenholdige produkter', 'Østrogenholdige produkter, også hormonprevensjon, kan redusere effekten av valproat; klinisk respons følges ved oppstart og seponering av dem.'),
+  graviditet: h(
+    'dmp-orfiril',
+    'pkt. 4.3 og 4.4, Graviditetsplanlegging og Ved graviditet',
+    'Ved bipolar lidelse er valproat kontraindisert under graviditet. Planlegger kvinnen graviditet, eller blir hun gravid, skal spesialist konsulteres og valproat revurderes, normalt seponeres.',
+  ),
   lamotrigin: h('dmp-orfiril', 'pkt. 4.5, Lamotrigin', 'Valproat hemmer omsetningen av lamotrigin, så lamotrigindosen bør reduseres; risikoen for hudreaksjoner ser ut til å øke ved kombinasjonen.'),
   fertil: h(
     'dmp-orfiril',
@@ -112,8 +118,15 @@ export const ORFIRIL = {
 
 /** Fakta fra Lithionit-preparatomtalen (litium), med egne ord. */
 export const LITHIONIT = {
+  styrke: h('dmp-lithionit', 'pkt. 1, 2 og 4.2', 'Hver depottablett inneholder litiumsulfat tilsvarende 42 mg (6 mmol) litium, og skal svelges hel.'),
+  vedlikehold: h('dmp-lithionit', 'pkt. 4.2', 'Veiledende vedlikeholdsdose er 4–10 tabletter daglig, justert etter serumlitium; hos eldre kan lavere dose være nødvendig.'),
   serum: h('dmp-lithionit', 'pkt. 4.2', 'Litiumdosen fastlegges etter serumlitium, målt 12 timer etter siste kveldsdose ved steady state, og nyre-, hjerte- og stoffskiftefunksjon følges regelmessig.'),
 } satisfies Record<string, Kildehenvisning>
+
+/** Lithionit: litium per tablett, og den høyeste veiledende vedlikeholdsdosen i tabletter (`LITHIONIT.styrke`, `LITHIONIT.vedlikehold`). */
+const LITHIONIT_MG = 42
+const LITHIONIT_MMOL = 6
+const LITHIONIT_MAKS_TABLETTER = 10
 
 /* --- Gruppene -------------------------------------------------------------------- */
 
@@ -225,7 +238,7 @@ const UTSLETTSINFORMASJON: Bekreftelse = {
   grunnlag: { type: 'kilde', henvisninger: [LAMICTAL.utslett, LAMICTAL.overfolsomhet, LAMICTAL.ikkeOverskrid] },
 }
 
-/** Dagen den stabiliserende måldosen nås: dagen etter siste opptrappingstrinn. */
+/** Dagen den første stabiliserende måldosen nås: dagen etter siste opptrappingstrinn. */
 const maldag = (plan: Gruppeplan) => plan.trinn.reduce((n, t) => n + t.dager, 1)
 
 /** Vurderingspunktene i enhver opptrapping av lamotrigin. */
@@ -247,7 +260,7 @@ const lamotriginvurderinger = (plan: Gruppeplan, navn: string): Vurderingspunkt[
   {
     id: 'maldose',
     nar: { type: 'dag', dag: kilde(maldag(plan), 'dag', 'bindende_krav', plan.henvisning) },
-    tekst: `Den stabiliserende måldosen (${plan.maldose} mg/dag) er nådd. Vurder klinisk respons; videre justering ${
+    tekst: `Den første stabiliserende måldosen som er valgt (${plan.maldose} mg/dag), er nådd. Vurder klinisk respons; videre justering ${
       plan.maks ? `(høyst ${plan.maks.mg} mg/dag sammen med ${navn})` : '(100–400 mg/dag er brukt i studier)'
     } beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.`,
     grunnlag: { type: 'kilde', henvisninger: [LAMICTAL.respons, ...(plan.maks ? [plan.maks.henvisning] : [LAMICTAL.noytralOmrade])] },
@@ -275,21 +288,31 @@ interface Eksisterende {
   eksempeldose: number
   /** Det forskriveren må bekrefte om det eksisterende legemidlet. */
   bekreftelser: Bekreftelse[]
-  /** Pasientforhold som gjør at regelen ikke gjelder for dette paret, i tillegg til de felles. */
+  /** Pasientforhold som gjør at regelen ikke gjelder for dette paret, i tillegg til de felles; et med samme id som et felles erstatter det. */
   unntak: Unntak[]
   /** Kildetro utsagn om paret, i tillegg til de felles. */
   kildetro: { tekst: string; henvisninger: Kildehenvisning[] }[]
   /** Forhold som må følges for det eksisterende legemidlet; planen endrer det ikke. */
   forutsetninger: string[]
-  /** Hvor preparatomtalen sier at dosen av det eksisterende legemidlet fastsettes individuelt. */
-  dosegrunnlag: Kildehenvisning
+  /**
+   * Dosen pasienten bruker av det eksisterende legemidlet: hva forskriveren
+   * bekrefter om den (enhet og preparat), og kravene verktøyet kontrollerer
+   * den mot. Uten krav kontrolleres den ikke, og teksten må si det.
+   */
+  dose: { tekst: string; henvisninger: Kildehenvisning[]; krav?: Inndatakrav[] }
+  /** Det preparatomtalen for det eksisterende legemidlet sier om østrogenholdige legemidler, i tillegg til Lamictal. */
+  ostrogen?: Kildehenvisning
 }
+
+/** De felles unntakene og parets, der parets erstatter et felles med samme id. */
+const unntakFor = (e: Eksisterende): Unntak[] => [...LAMOTRIGINUNNTAK.map((u) => e.unntak.find((x) => x.id === u.id) ?? u), ...e.unntak.filter((x) => !LAMOTRIGINUNNTAK.some((u) => u.id === x.id))]
 
 const dagtekst = (fra: number, dager: number) => (dager === 1 ? `dag ${fra}` : `dag ${fra}–${fra + dager - 1}`)
 
 /** Regneeksemplet som beregner hele planen, og stoppene for hvert unntak og hver manglende bekreftelse. */
-function eksempler(e: Eksisterende, plan: Gruppeplan, bekreftet: string[], pasientforhold: Record<string, boolean>): Regneeksempel[] {
+function eksempler(e: Eksisterende, plan: Gruppeplan, bekreftet: string[], pasientforhold: Record<string, boolean>, svar: Record<string, boolean>): Regneeksempel[] {
   const startdose_mg = e.eksempeldose
+  const maldose_mg = plan.maldose
   let dag = 1
   const linjer = plan.trinn.map((t) => {
     const linje = `${dagtekst(dag, t.dager)}: ${t.mg} mg${t.hver === 2 ? ' annenhver dag' : t.hver ? ` hver ${t.hver}. dag` : ''}`
@@ -300,20 +323,20 @@ function eksempler(e: Eksisterende, plan: Gruppeplan, bekreftet: string[], pasie
     {
       id: 'hele-opptrappingen',
       beskrivelse: `Lamotrigin lagt til ${e.navn}: hele opptrappingen til ${plan.maldose} mg/dag fra dag ${dag}; ${e.navn} fortsetter uendret.`,
-      inndata: { startdose_mg, bekreftet, pasientforhold },
+      inndata: { startdose_mg, maldose_mg, bekreftet, pasientforhold, svar },
       forventet: { fra: [], til: [...linjer, `fra dag ${dag}: ${plan.maldose} mg`] },
     },
-    ...[...LAMOTRIGINUNNTAK, ...e.unntak].map((u) => ({
+    ...unntakFor(e).map((u) => ({
       id: `unntak-${u.id}`,
       beskrivelse: `Regelen gjelder ikke når forholdet gjelder: ${u.tekst}`,
-      inndata: { startdose_mg, bekreftet, pasientforhold: { ...pasientforhold, [u.id]: true } },
+      inndata: { startdose_mg, maldose_mg, bekreftet, pasientforhold: { ...pasientforhold, [u.id]: true }, svar },
       forventet: {},
       stopp: /Regelen gjelder ikke/,
     })),
     {
       id: 'uten-bekreftelser',
       beskrivelse: 'Uten bekreftelsene beregnes ingen plan.',
-      inndata: { startdose_mg, pasientforhold },
+      inndata: { startdose_mg, maldose_mg, pasientforhold, svar },
       forventet: {},
       stopp: /bekreft/i,
     },
@@ -322,23 +345,32 @@ function eksempler(e: Eksisterende, plan: Gruppeplan, bekreftet: string[], pasie
 
 /**
  * Dosen av det eksisterende legemidlet fastsettes individuelt (valproat etter
- * respons, litium etter serumkonsentrasjon), og preparatomtalene gir ikke noe
- * doseområde den kan kontrolleres mot. Planen gjentar den bare, og forskriveren
- * må bekrefte at den er pasientens aktuelle dose.
+ * respons, litium etter serumkonsentrasjon). Planen endrer den ikke, men
+ * forskriveren må bekrefte at den er pasientens aktuelle dose, i hvilken enhet
+ * og på hvilket preparat; kontrollerer regelen den ikke, sier teksten det.
  */
-function aktuellDose(e: Eksisterende): Bekreftelse {
-  return {
-    id: 'aktuell_dose',
-    tekst: `Døgndosen som er fylt inn for ${e.navn}, er den pasienten bruker nå. Verktøyet kontrollerer ikke denne dosen; planen gjentar den bare.`,
-    grunnlag: { type: 'kilde', henvisninger: [e.dosegrunnlag] },
-  }
-}
+const aktuellDose = (e: Eksisterende): Bekreftelse => ({ id: 'aktuell_dose', tekst: e.dose.tekst, grunnlag: { type: 'kilde', henvisninger: e.dose.henvisninger } })
+
+/**
+ * Østrogenholdige legemidler kan gjøre den vanlige måldosen for lav (opptil
+ * det dobbelte trengs etter titreringen). Opptrappingen er den samme, men et ja
+ * krever en skriftlig vurdering av måldosen.
+ */
+const ostrogensporsmal = (e: Eksisterende): Sporsmal => ({
+  id: 'ostrogen',
+  tekst: 'Bruker pasienten østrogenholdig prevensjon eller annen østrogenholdig behandling, som hormonsubstitusjon?',
+  ja: 'østrogenholdig prevensjon eller behandling, som kan kreve en høyere vedlikeholdsdose av lamotrigin enn måldosen; måldosen krever en særskilt vurdering',
+  nei: 'ingen østrogenholdig prevensjon eller behandling',
+  krever_begrunnelse: true,
+  grunnlag: { type: 'kilde', henvisninger: [LAMICTAL.hormonell, ...(e.ostrogen ? [e.ostrogen] : [])] },
+})
 
 /** Regelen for å legge lamotrigin til `e`, etter gruppens opptrapping i preparatomtalen. */
 export function lamotrigintillegg(e: Eksisterende): Regel {
   const plan = OPPTRAPPING[e.gruppe]
-  const unntak = [...LAMOTRIGINUNNTAK, ...e.unntak]
+  const unntak = unntakFor(e)
   const bekreftelser = [...e.bekreftelser, aktuellDose(e), UTSLETTSINFORMASJON]
+  const sporsmal = [ostrogensporsmal(e)]
   const fra: Forlop = {
     id: 'fra',
     virkestoff: { type: 'virkestoff', nokkel: e.nokkel },
@@ -364,11 +396,14 @@ export function lamotrigintillegg(e: Eksisterende): Regel {
           ...(t.hver ? { hver: kilde(t.hver, 'dager', 'bindende_krav', plan.henvisning) } : {}),
         })),
       },
-      { type: 'vedlikehold', dose: { type: 'fast', mg: kilde(plan.maldose, 'mg', 'veiledende_preferanse', plan.henvisning, LAMICTAL.respons) } },
+      { type: 'vedlikehold', dose: { type: 'inndata', navn: 'maldose' } },
     ],
     vurderinger: lamotriginvurderinger(plan, e.navn),
   }
   const besvart = Object.fromEntries(unntak.map((u) => [u.id, false]))
+  const svar = Object.fromEntries(sporsmal.map((x) => [x.id, false]))
+  // Målet er preparatomtalens første stabiliserende måldose, og forskriveren må velge det; et annet mål trappes ikke opp hit.
+  const maldose: Inndatakrav = { navn: 'maldose', verdier: [plan.maldose], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [plan.henvisning, LAMICTAL.respons] } }
   return {
     id: `tillegg-${e.nokkel}-lamotrigin`,
     versjon: 1,
@@ -376,13 +411,14 @@ export function lamotrigintillegg(e: Eksisterende): Regel {
     fra: { type: 'virkestoff', nokkel: e.nokkel },
     til: { type: 'virkestoff', nokkel: 'lamotrigin' },
     plan: { form: 'tillegg', forlop: [fra, til] },
-    inndata: [],
+    inndata: [...(e.dose.krav ?? []), maldose],
     bekreftelser,
     unntak,
+    sporsmal,
     beregnbarhet: 'entydig_beregnbar',
     fortolkning: {
       kildetro: [
-        utsagn(`Lamotrigin lagt til ${e.navn} trappes opp etter preparatomtalens plan for denne kombinasjonen, til ${plan.maldose} mg/dag som vanlig stabiliserende måldose fra uke 6.`, plan.henvisning),
+        utsagn(`Lamotrigin lagt til ${e.navn} trappes opp etter preparatomtalens plan for denne kombinasjonen, til ${plan.maldose} mg/dag som vanlig første stabiliserende måldose fra uke 6.`, plan.henvisning),
         utsagn('Startdosen og doseøkningen skal ikke overskrides, fordi risikoen for alvorlig hudutslett øker med høy startdose og rask opptrapping.', LAMICTAL.ikkeOverskrid, LAMICTAL.utslettRisiko),
         ...e.kildetro.map((u) => utsagn(u.tekst, ...u.henvisninger)),
         utsagn('Fra 50 mg/dag kan døgndosen gis en gang daglig eller fordelt på to doser.', LAMICTAL.fordeling),
@@ -396,7 +432,11 @@ export function lamotrigintillegg(e: Eksisterende): Regel {
           `${e.navn[0]!.toUpperCase()}${e.navn.slice(1)} fortsetter uendret; planen endrer det ikke og beregner ingen dose av det. Opptrappingen gjelder bare så lenge pasienten fortsetter med det.`,
           plan.henvisning,
         ),
-        utsagn('Planen stopper ved den vanlige stabiliserende måldosen. Videre justering etter klinisk respons beregnes ikke, men står som et vurderingspunkt.', LAMICTAL.respons),
+        utsagn(
+          `Forskriveren må velge måldosen, og regelen gjelder bare preparatomtalens vanlige første stabiliserende måldose (${plan.maldose} mg/dag). Planen er komplett til den; et annet mål og videre justering etter klinisk respons beregnes ikke, men står som et vurderingspunkt.`,
+          plan.henvisning,
+          LAMICTAL.respons,
+        ),
       ],
       forutsetninger: [
         ...FORUTSETNINGER_FELLES,
@@ -404,12 +444,12 @@ export function lamotrigintillegg(e: Eksisterende): Regel {
         ...e.forutsetninger,
       ],
       usikkerhet: [
-        'Preparatomtalen gir en fast opptrapping, men den stabiliserende dosen avhenger av klinisk respons; planen viser bare den vanlige måldosen.',
+        'Preparatomtalen gir en fast opptrapping, men den stabiliserende dosen avhenger av klinisk respons; planen går bare til den vanlige første måldosen.',
         'Vurderingspunktene erstatter ikke ordinær klinisk oppfølging av pasienten og det eksisterende legemidlet.',
       ],
     },
     referanser: [pn(`CombiningMoodstabilizers:${e.kode}>La`)],
-    eksempler: eksempler(e, plan, bekreftelser.map((b) => b.id), besvart),
+    eksempler: eksempler(e, plan, bekreftelser.map((b) => b.id), besvart, svar),
     godkjenning: tilKontroll(),
   }
 }
@@ -434,13 +474,24 @@ export const VALPROAT_LAMOTRIGIN = lamotrigintillegg({
       grunnlag: { type: 'kilde', henvisninger: [ORFIRIL.fertil] },
     },
   ],
-  unntak: [],
+  unntak: [
+    {
+      id: 'graviditet',
+      tekst: 'Pasienten er gravid, planlegger graviditet eller ammer. Sammen med valproat gjelder det også valproatbehandlingen: valproat er kontraindisert under graviditet ved bipolar lidelse, og spesialist skal konsulteres.',
+      grunnlag: { type: 'kilde', henvisninger: [LAMICTAL.graviditet, ORFIRIL.graviditet] },
+    },
+  ],
   kildetro: [
     { tekst: 'Valproat hemmer glukuronideringen av lamotrigin og omtrent dobler halveringstiden, så lamotrigin trappes opp langsommere og til en lavere dose enn uten valproat.', henvisninger: [LAMICTAL.valproatInteraksjon, ORFIRIL.lamotrigin] },
     { tekst: 'Sammen med valproat gjelder opptrappingen uavhengig av andre legemidler, og høyst 200 mg/dag kan brukes etter klinisk respons.', henvisninger: [LAMICTAL.hemmer, LAMICTAL.hemmerMaks] },
     { tekst: 'Samtidig bruk av valproat er en egen risikofaktor for utslett.', henvisninger: [LAMICTAL.utslettRisiko, ORFIRIL.lamotrigin] },
   ],
-  dosegrunnlag: ORFIRIL.dose,
+  dose: {
+    tekst:
+      'Døgndosen som er fylt inn for valproat, er den pasienten bruker nå, i mg slik styrken står på pasientens valproatpreparat. Verktøyet kontrollerer ikke denne dosen mot noe preparat eller område; planen gjentar den bare.',
+    henvisninger: [ORFIRIL.dose],
+  },
+  ostrogen: ORFIRIL.ostrogen,
   forutsetninger: ['Valproatbehandlingen følges opp som før (blodbilde, lever og pankreas etter preparatomtalen); planen endrer ikke valproatdosen.'],
 })
 
@@ -467,14 +518,26 @@ export const LITIUM_LAMOTRIGIN = lamotrigintillegg({
     {
       id: 'ukjent_interaksjon',
       tekst:
-        'Pasienten bruker et annet legemiddel med ukjent farmakokinetisk interaksjon med lamotrigin. Da skal opptrappingen for samtidig valproat brukes, og planen må lages for det. (Østrogenholdig prevensjon alene er ikke et slikt forhold; se vurderingspunktene.)',
+        'Pasienten bruker et annet legemiddel med ukjent farmakokinetisk interaksjon med lamotrigin. Da skal opptrappingen for samtidig valproat brukes, og planen må lages for det. (Østrogenholdig prevensjon alene er ikke et slikt forhold; se spørsmålet om østrogenholdig behandling.)',
       grunnlag: { type: 'kilde', henvisninger: [LAMICTAL.ukjent, LAMICTAL.hormonell] },
     },
   ],
   kildetro: [
     { tekst: 'Litium har liten eller ingen effekt på konsentrasjonen av lamotrigin, og lamotrigin endret ikke litiums farmakokinetikk; opptrappingen er den samme som uten valproat og uten induserende legemidler.', henvisninger: [LAMICTAL.litiumInteraksjon, LAMICTAL.noytral] },
   ],
-  dosegrunnlag: LITHIONIT.serum,
+  dose: {
+    tekst: `Pasienten bruker Lithionit ${LITHIONIT_MG} mg depottabletter, og døgndosen er fylt inn i mg litium (Li⁺): antall tabletter × ${LITHIONIT_MG} mg (${LITHIONIT_MMOL} mmol litium per tablett). Andre litiumpreparater, også de der styrken oppgis som mg litiumsalt, er utenfor regelen.`,
+    henvisninger: [LITHIONIT.styrke],
+    // Hele tabletter, opp til den høyeste veiledende vedlikeholdsdosen.
+    krav: [
+      {
+        navn: 'startdose',
+        verdier: Array.from({ length: LITHIONIT_MAKS_TABLETTER }, (_, i) => (i + 1) * LITHIONIT_MG),
+        art: 'bindende_krav',
+        grunnlag: { type: 'kilde', henvisninger: [LITHIONIT.styrke, LITHIONIT.vedlikehold] },
+      },
+    ],
+  },
   forutsetninger: ['Litiumbehandlingen følges opp som før med serumlitium og nyre-, hjerte- og stoffskiftefunksjon; planen endrer ikke litiumdosen.'],
 })
 
