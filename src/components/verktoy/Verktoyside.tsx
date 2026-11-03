@@ -19,6 +19,7 @@ import {
   skjemaFor,
   TOMT_SKJEMA,
   spennFor,
+  doseenhet,
   trengerMaldose,
   ubesvart,
   valgidentitet,
@@ -30,7 +31,7 @@ import { planvisning, type Planvisning } from '../../verktoy/planvisning'
 import { finnVirkestoff, KARTLEGGING, VALGTEKSTER, VERKTOY, verktoyFor, virkestoffvalg, type Verktoy } from '../../verktoy/register'
 import { avrund } from '../../verktoy/regler/beregning'
 import { KONTROLLUTFALL, kontrollutfall } from '../../verktoy/regler/godkjenning'
-import type { Regel, Regelsett } from '../../verktoy/regler/modell'
+import { gjeldendeBekreftelser, type Regel, type Regelsett } from '../../verktoy/regler/modell'
 import {
   FOR_SEN,
   gjelder,
@@ -772,6 +773,9 @@ function Beregningsdel({
   const tilNavn = navnPaa(valg.til?.nokkel)
   const fraAdm = regel && fraForlop(regel)?.administrasjon === 'depotinjeksjon' ? ' (depot)' : ''
   const tilAdm = regel && tilForlop(regel)?.administrasjon === 'depotinjeksjon' ? ' (depot)' : ''
+  const startenhet = doseenhet(regel, 'startdose')
+  // Bekreftelser som bare gjelder ved et bestemt svar, vises først når svaret er gitt.
+  const bekreftelser = regel ? gjeldendeBekreftelser(regel, skjema.svar) : []
   const sporsmal = regel?.sporsmal ?? []
   const varsel = regel && <Regelvarsler tilstand={varsler} regel={regel} />
 
@@ -806,8 +810,8 @@ function Beregningsdel({
           <div className="feltrad">
             <label className="skjemafelt">
               <span>
-                Aktuell døgndose av {fraNavn.toLowerCase()}
-                {fraAdm} (mg)
+                {startenhet ? 'Aktuell dose' : 'Aktuell døgndose'} av {fraNavn.toLowerCase()}
+                {fraAdm} ({startenhet ?? 'mg'})
               </span>
               <Tallfelt value={skjema.startdose} onChange={(v) => sett('startdose', v)} />
             </label>
@@ -815,7 +819,7 @@ function Beregningsdel({
               <label className="skjemafelt">
                 <span>
                   Måldose av {tilNavn.toLowerCase()}
-                  {tilAdm} ({tilAdm ? 'mg per injeksjon' : 'mg per døgn'})
+                  {tilAdm} ({doseenhet(regel, 'maldose') ?? 'mg per døgn'})
                 </span>
                 <Tallfelt value={skjema.maldose} onChange={(v) => sett('maldose', v)} />
               </label>
@@ -969,10 +973,10 @@ function Beregningsdel({
           </fieldset>
         )}
 
-        {regel && regel.bekreftelser.length > 0 && (
+        {bekreftelser.length > 0 && (
           <fieldset className="feltgruppe">
             <legend>Bekreft før beregning</legend>
-            {regel.bekreftelser.map((b) => {
+            {bekreftelser.map((b) => {
               const mangler = apne.bekreftelser.includes(b.id)
               return (
                 <label key={b.id} className="avkryssing avkryssing--felt" data-mangler={mangler || undefined}>

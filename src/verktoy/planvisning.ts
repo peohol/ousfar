@@ -128,6 +128,8 @@ function rader(forlop: Praktiskforlop[], startdato: string | undefined, vurderin
     }
     const s = seponeringsdag(f)
     if (s !== null) grenser.add(s)
+    // Et legemiddel som fortsetter uendret, står fra sin første dag, også før de andre forløpene har perioder.
+    if (f.uendret_mg !== undefined) grenser.add(f.start)
   }
   const starter = [...grenser].sort((a, b) => a - b)
   const apen = forlop.some((f) => f.perioder.some((p) => p.til === null) || f.uendret_mg !== undefined)
@@ -141,7 +143,7 @@ function rader(forlop: Praktiskforlop[], startdato: string | undefined, vurderin
         const avvik = [Math.abs(p.avvik_prosent) > 1e-7 && `ideelt ${mg(p.ideell_mg)} (${p.avvik_prosent > 0 ? '+' : ''}${String(avrund(p.avvik_prosent)).replace('.', ',')} %)`, valgtTekst(p)].filter(Boolean).join('; ')
         return { dose: `${mg(p.mg)}${p.hver ? ` ${hverTekst(p.hver)}` : ''}${fordelingSuffiks(p)}`, elementer: p.elementer.map(elementtekst), ...(avvik && { avvik }) }
       }
-      if (f.uendret_mg !== undefined) return { dose: mg(f.uendret_mg), elementer: [UENDRET] }
+      if (f.uendret_mg !== undefined && fra >= f.start) return { dose: mg(f.uendret_mg), elementer: [UENDRET] }
       return fra === seponeringsdag(f) ? seponert(f) : null
     })
     // Etter siste periode står bare dagen legemidlene er seponert.
@@ -225,6 +227,12 @@ function vurderingerFor(regel: Regel, forlop: readonly Praktiskforlop[]): Vurder
         case 'etter_endring': {
           const n = verdien(v.nar.dager)
           return { ...felles, for: false, tidspunkt: `${n} dager etter hver doseendring`, dager: [...new Set(endringer.map((d) => d + n))] }
+        }
+        case 'etter_seponering': {
+          // Bare når planen faktisk seponerer forløpet; ellers står punktet uten dag.
+          const n = verdien(v.nar.dager)
+          const dager = seponeringsdag(f) !== null && f.siste_dosedag !== null ? [f.siste_dosedag + n] : []
+          return { ...felles, for: false, tidspunkt: `${n} dager etter siste dose`, dager }
         }
         case 'dag': {
           const d = f.start + verdien(v.nar.dag) - 1

@@ -64,8 +64,9 @@ function avvikendePart(part: Kildepart, v: Virkestoffvalg, administrasjon: Admin
 /** At P3-oppføringen er samme slags anbefaling, i samme retning, for samme virkestoffer og formuleringer som regelen. */
 function referansefeil(r: Regel, a: Kildeanbefaling): string[] {
   const feil: string[] = []
-  if (a.type === 'tillegg') feil.push('er en anbefaling om tillegg, ikke om bytte eller seponering')
-  else if ((a.type === 'seponering') !== (r.til === null)) feil.push(`er en anbefaling om ${a.type}, men regelen ${r.til ? 'bytter' : 'seponerer'}`)
+  const tillegg = r.plan.form === 'tillegg'
+  if ((a.type === 'tillegg') !== tillegg) feil.push(tillegg ? `er en anbefaling om ${a.type}, men regelen legger til et legemiddel` : 'er en anbefaling om tillegg, ikke om bytte eller seponering')
+  else if (!tillegg && (a.type === 'seponering') !== (r.til === null)) feil.push(`er en anbefaling om ${a.type}, men regelen ${r.til ? 'bytter' : 'seponerer'}`)
   const fraForlop = r.plan.forlop[0]
   const tilForlop = r.til ? r.plan.forlop.slice(1).find((x) => like(x.virkestoff, r.til)) : undefined
   const fra = avvikendePart(a.fra, r.fra, fraForlop?.administrasjon)
@@ -130,6 +131,7 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
     if (!x.omrade && !x.verdier) f(`inndatakravet for ${x.navn} har verken område eller verdier`)
     if (x.gjelder_medlem && !r.medlemmer?.some((m) => m.nokkel === x.gjelder_medlem)) f(`inndatakravet gjelder ${x.gjelder_medlem}, som ikke er medlem`)
     if (x.ved && !r.sporsmal?.some((s) => s.id === x.ved!.sporsmal)) f(`inndatakravet for ${x.navn} gjelder spørsmålet ${x.ved.sporsmal}, som regelen ikke har`)
+    if (x.enhet !== undefined && !x.enhet.trim()) f(`inndatakravet for ${x.navn} har en tom enhet`)
     if (x.krever_begrunnelse && x.art === 'bindende_krav') f(`inndatakravet for ${x.navn} er bindende, men kan begrunnes bort; en forsiktighetsgrense må være veiledende`)
   }
   // Fordelingen av døgndosen: en grense og minst to doser.
@@ -202,6 +204,7 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
     }
   }
 
+  for (const b of r.bekreftelser) if (b.ved && !r.sporsmal?.some((s) => s.id === b.ved!.sporsmal)) f(`bekreftelsen ${b.id} gjelder spørsmålet ${b.ved.sporsmal}, som regelen ikke har`)
   // Spørsmålene har tekst og en id ingen bekreftelse eller unntak bruker.
   const betingelser = [...r.bekreftelser, ...r.unntak, ...(r.sporsmal ?? [])].map((x) => x.id)
   for (const id of new Set(betingelser)) if (betingelser.filter((x) => x === id).length > 1) f(`id-en ${id} brukes av flere bekreftelser, unntak eller spørsmål`)

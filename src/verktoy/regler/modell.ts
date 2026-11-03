@@ -311,6 +311,8 @@ export type Vurderingstidspunkt =
   | { type: 'dag'; dag: Parameter }
   /** Et antall dager etter hver doseendring (også oppstart), f.eks. serumkonsentrasjon. */
   | { type: 'etter_endring'; dager: Parameter }
+  /** Et antall dager etter siste dose, når forløpet seponeres, f.eks. oppfølging av seponeringssymptomer og tilbakefall. */
+  | { type: 'etter_seponering'; dager: Parameter }
 
 /**
  * Et klinisk vurderings- eller kontrollpunkt i planen (regelmodell 12): hva
@@ -385,6 +387,13 @@ export interface Forlop {
   faser: Fase[]
   /** Kliniske vurderings- og kontrollpunkter i forløpet (regelmodell 12). */
   vurderinger?: Vurderingspunkt[]
+  /**
+   * Regelen gir bare en komplett plan for forløpet (regelmodell 12): når
+   * planen ikke når sluttmålet (f.eks. seponering), stopper den med
+   * «Komplett plan ikke tilgjengelig» og grunnen, i stedet for å vise en
+   * delplan med doser. Uten feltet vises delplanen som før.
+   */
+  krever_komplett?: true
 }
 
 /**
@@ -421,6 +430,11 @@ export interface Inndatakrav {
    */
   ved?: { sporsmal: string; svar: boolean }
   /**
+   * Enheten dosen oppgis i, når den ikke er en døgndose, f.eks. «mg per
+   * injeksjon hver 2. uke» for et depot. Står ved feltet og i meldingene.
+   */
+  enhet?: string
+  /**
    * En forsiktighetsgrense: en dose utenfor området stopper ikke, men krever
    * en skriftlig begrunnelse fra forskriveren. Bare for veiledende krav; et
    * bindende krav (en uttrykkelig høyeste dose) kan aldri begrunnes bort.
@@ -434,8 +448,18 @@ export interface Inndatakrav {
 export interface Bekreftelse {
   id: string
   tekst: string
+  /**
+   * Bekreftelsen kreves bare når forskriveren har gitt dette svaret på
+   * spørsmålet (`Sporsmal`), f.eks. krav som bare gjelder kvinner som kan bli
+   * gravide (regelmodell 12). Uten svar stopper beregningen på spørsmålet.
+   */
+  ved?: { sporsmal: string; svar: boolean }
   grunnlag: Grunnlag
 }
+
+/** Bekreftelsene som kreves med svarene i `svar`: de uten `ved`, og de med `ved` når svaret er gitt. */
+export const gjeldendeBekreftelser = (r: Pick<Regel, 'bekreftelser'>, svar: Readonly<Record<string, boolean>> | undefined): Bekreftelse[] =>
+  r.bekreftelser.filter((b) => !b.ved || svar?.[b.ved.sporsmal] === b.ved.svar)
 
 /** Et pasientforhold som gjør at regelen ikke gjelder (en annen regel eller individuell vurdering trengs). */
 export interface Unntak {
@@ -818,6 +842,9 @@ export function tilleggsfeil(r: Pick<Regel, 'plan' | 'til'>): string[] {
   if (nye.length === 0) feil.push('et tillegg må ha et forløp for legemidlet som legges til')
   for (const f of fra) {
     if (f.faser.some((x) => !TILLEGG_FRA.includes(x.type))) feil.push(`forløp ${f.id} er legemidlet pasienten bruker og kan bare fortsette (${TILLEGG_FRA.join(', ')}), ikke trappes ned eller seponeres`)
+    // Holdes eller vedlikeholdes legemidlet, er det på dosen pasienten bruker; en annen dose ville endret det.
+    if (f.faser.some((x) => (x.type === 'hold' || x.type === 'vedlikehold') && !(x.dose.type === 'aktuell' || (x.dose.type === 'inndata' && x.dose.navn === 'startdose'))))
+      feil.push(`forløp ${f.id} er legemidlet pasienten bruker og kan bare holdes eller vedlikeholdes på dosen pasienten bruker (aktuell eller startdose)`)
     const sist = f.faser.at(-1)
     if (!sist || !FORTSETTER.includes(sist.type)) feil.push(`forløp ${f.id} er legemidlet pasienten bruker og må fortsette når planen slutter`)
   }
