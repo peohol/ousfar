@@ -47,14 +47,15 @@ import { akseptsett, AKSEPTSTOFFER, AKSEPTTESTFIL, annenhverDag, beregnAksept, b
 import { AVSLUTNING_FELLES, avrund, beregn, kortform, MINSTE_VISTE_MG, nulldagfeil, SISTE_DOSE, TIDLIGSTE_DATOER, trinnTilHorisont, type Forlopsresultat, type Periode } from '../verktoy/regler/beregning'
 import { erKliniskGodkjent, fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett, lesKontrollgrunnlag } from '../verktoy/regler/kontroll'
-import { apneValg, henvisninger, justerbare, nulltrinnfeil, type Beregningsinndata, type Fase, type Nedtrappingsstrategi, type Regel, type Regelsett } from '../verktoy/regler/modell'
+import { avslutningFor, apneValg, henvisninger, justerbare, nulltrinnfeil, type Beregningsinndata, type Fase, type Nedtrappingsstrategi, type Regel, type Regelsett } from '../verktoy/regler/modell'
 import { NICE, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, RCPSYCH, RCPSYCH_TIDLIGERE } from '../verktoy/regler/bygg'
 import {
   AKUTT_ID,
   JUSTERING,
   LANG_BEHANDLINGSTID,
   LANG_PROSENT,
-  NEDTRAPPINGSSETT,
+  NEDTRAPPINGSSETT as APPSETT,
+  NEDTRAPPINGSSETT_FOR_AVSLUTNING,
   NEDTRAPPINGSSETT_FOR_RETTELSENE,
   ORGANFUNKSJON_ID,
   SAMMENLIGNINGSSETT,
@@ -67,6 +68,7 @@ import {
   USTABIL_ID,
   UTENFOR_DOSERAMME_ID,
 } from '../verktoy/regler/nedtrapping'
+import { K1_AVSLUTNINGER } from '../verktoy/regler/avslutning'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
 import { EN_FORSTE_REDUKSJON, planTekst, planvisning } from '../verktoy/planvisning'
 import { REGELSETT, tilgjengelighet } from '../verktoy/tilgjengelighet'
@@ -74,6 +76,16 @@ import { godkjennITest, testFestFor, TESTKLOKKE } from './hjelp/verktoyplan'
 
 const TRAPPE_NED = VERKTOY.find((v) => v.id === 'trappe-ned-antidepressiv')!
 const KART = lesKartdata()
+/**
+ * P7s regelutkast er versjonene før K1 ga escitalopram, nortriptylin og
+ * amitriptylin en ny versjon med avslutning (`regler/avslutning.ts`, testet i
+ * `verktoyk1.test.ts`). Testene her gjelder dem; der appens sett er annerledes,
+ * bruker testen `APPSETT` og sier det.
+ */
+const NEDTRAPPINGSSETT = NEDTRAPPINGSSETT_FOR_AVSLUTNING
+/** Reglene K1 ga en avslutning med seponering; alle andre er like i appen og i P7. */
+const K1 = K1_AVSLUTNINGER.map((a) => a.regel)
+const seponerer = (r: Regel) => avslutningFor(r.plan.forlop[0]?.faser.at(-1))?.type === 'seponering'
 const P3 = lesKontrollgrunnlag()
 const regel = (nokkel: string) => NEDTRAPPINGSSETT.regler.find((r) => r.id === `seponering-${nokkel}`)!
 const P7SETT = [NEDTRAPPINGSSETT, SAMMENLIGNINGSSETT]
@@ -210,9 +222,10 @@ describe('Dekningen (P7.1)', () => {
     for (const d of NEDTRAPPINGSDEKNING) {
       const t = tilgjengelighet(TRAPPE_NED, { fra: { nokkel: d.nokkel, formulering: 'standard' } })
       if (d.status === 'regel_til_kontroll' || d.status === 'bare_fagtekst') {
-        // Fagteksten for bupropion og agomelatin er klinisk godkjent og vises, og vortioksetin kan beregnes; de andre er kontrollert og ikke godkjent.
+        // Fagteksten for bupropion og agomelatin er klinisk godkjent og vises, og vortioksetin kan beregnes; K1-versjonene er til kontroll; de andre er kontrollert og ikke godkjent.
         const ider = seponeringsregler(d.nokkel).map((r) => r.id)
-        expect(t.status, d.nokkel).toBe(ider.some((id) => GODKJENT_FAGTEKST.includes(id)) ? 'fagtekst' : ider.some((id) => id in GODKJENT) ? 'tilgjengelig' : 'ikke_godkjent')
+        const status = ider.some((id) => GODKJENT_FAGTEKST.includes(id)) ? 'fagtekst' : ider.some((id) => id in GODKJENT) ? 'tilgjengelig' : ider.some((id) => K1.includes(id)) ? 'til_kontroll' : 'ikke_godkjent'
+        expect(t.status, d.nokkel).toBe(status)
       } else {
         expect(t, d.nokkel).toEqual({ status: 'ikke_stottet', regler: [], grunner: [dekningstekst(d)] })
         expect(t.grunner[0], d.nokkel).toMatch(/OUSFAR har derfor ingen regel/)
@@ -758,7 +771,9 @@ describe('Regelutkastene (P7.2)', () => {
   })
 
   it('går aldri til null og foreslår aldri siste dose: hver plan står på siste beregnede dose, og avslutningen vurderes individuelt', () => {
-    for (const r of [...P7REGLER, ...REGELSETT.regler.filter((x) => x.plan.form === 'seponering')]) {
+    // Bare K1-versjonene i appen har en avslutning med seponering (testet i `verktoyk1.test.ts`); de andre går aldri til null.
+    expect(REGELSETT.regler.filter(seponerer).map((r) => r.id).sort()).toEqual([...K1].sort())
+    for (const r of [...P7REGLER, ...REGELSETT.regler.filter((x) => x.plan.form === 'seponering' && !seponerer(x))]) {
       for (const e of r.eksempler.filter((x) => !x.stopp)) {
         const res = beregn(r, e.inndata)
         const linjer = kortform(res).fra!
@@ -1186,7 +1201,7 @@ describe('Klinisk plan i appen', () => {
     expect(r).toMatchObject({ status: 'doseplan', klinisk: true })
     expect(planform(r).fra).toEqual(['dag 1–28: 20 mg = 1 tablett à 20 mg', 'dag 29–56: 10 mg = ½ tablett à 20 mg', 'fra dag 57: 5 mg = ¼ tablett à 20 mg', KAN_IKKE_GIS])
     expect(r.status === 'doseplan' && r.merknader.join(' ')).toMatch(/Planen stopper derfor ved trinnet før: fra dag 57 står pasienten på 5 mg av fluoksetin/)
-    expect(beregnPlan(regel('fluoksetin'), valg, skjema('40'), fest(), NAA).regelsett).toEqual({ id: NEDTRAPPINGSSETT.id, versjon: NEDTRAPPINGSSETT.versjon })
+    expect(beregnPlan(regel('fluoksetin'), valg, skjema('40'), fest(), NAA).regelsett).toEqual({ id: APPSETT.id, versjon: APPSETT.versjon })
     const ufullstendige: Partial<Planskjema>[] = [
       { bekreftet: [] },
       { bekreftet: [STARTFORSLAG.id] },
@@ -1272,8 +1287,9 @@ describe('Aksepttesten med norske preparater (P7.5, del E.2)', () => {
   it('regner hver hovedregel og langsom variant med de faktiske preparatene i FEST, i hver form, for alle scenariene', () => {
     expect(uttrekk.utvalg.kilde).toBe('FEST')
     expect(uttrekk.utvalg.kildedato).toBeTruthy()
-    expect(AKSEPTSTOFFER.map((s) => s.hoved)).toEqual(HOVEDREGLER)
-    expect(AKSEPTSTOFFER.map((s) => s.langsom)).toEqual(LANGSOMME)
+    // Aksepttesten regner reglene appen bruker, med K1-versjonene.
+    expect(AKSEPTSTOFFER.map((s) => s.hoved.id)).toEqual(HOVEDREGLER.map((r) => r.id))
+    expect(AKSEPTSTOFFER.map((s) => s.langsom.id)).toEqual(LANGSOMME.map((r) => r.id))
     expect(new Set(sett.map((t) => t.nokkel))).toEqual(new Set(HOVEDREGLER.map(nokkel)))
     for (const t of sett) expect(t.resultater.map((r) => r.scenario), t.nokkel).toEqual(['a', 'b', 'c', 'd', 'f', 'h'])
     // Escitalopram har både tabletter og dråper, og hver form regnes for seg.
@@ -1289,10 +1305,14 @@ describe('Aksepttesten med norske preparater (P7.5, del E.2)', () => {
       if (p.klinisk) expect(planform(p).fra).toEqual(['fra dag 1: 15 mg = 1 tablett à 15 mg', EN_REDUKSJON])
       if (p.status !== 'doseplan') continue
       const linjer = planform(p).fra!
-      expect(linjer.join('\n')).not.toMatch(/seponert|: 0 mg/)
+      expect(linjer.join('\n')).not.toMatch(/: 0 mg/)
+      // Bare K1-versjonene kan seponere, og da som siste linje.
+      const seponert = linjer.filter((l) => /seponert/.test(l))
+      expect(seponert.length === 0 || (K1.includes(p.regel.id) && seponert[0] === linjer.at(-1)), `${p.regel.id}: ${linjer.at(-1)}`).toBe(true)
       // Én reduksjon står som én mulig reduksjon med revurdering, ikke som en plan.
       if (linjer.at(-1) === EN_REDUKSJON) expect(reduksjoner(p)).toBe(1)
-      else expect(linjer.at(-1)).toMatch(AVSLUTNING)
+      // K1-versjonene sier i stedet at avslutningen bare gjelder fra grensen, når planen stopper over den.
+      else if (seponert.length === 0) expect(linjer.at(-1)).toMatch(K1.includes(p.regel.id) ? /(; avslutning vurderes individuelt|, og regelens avslutning gjelder bare fra [\d,]+ mg eller lavere \(planen står på [\d,]+ mg\))$/ : AVSLUTNING)
     }
   })
 

@@ -7,6 +7,7 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { lesKartdata } from '../verktoy/kartdata'
+import { ETTER_RETTELSENE } from '../verktoy/kontrollsett'
 import { VERKTOY, virkestoffvalg } from '../verktoy/register'
 import { AKSEPTSTOFFER, beregnAksept, besvart, FEST_AKSEPTTEST, formerFor, reduksjoner, vanligDose, type Festuttrekk } from '../verktoy/regler/aksepttest'
 import { erKliniskGodkjent, fingeravtrykk, kanonisk } from '../verktoy/regler/godkjenning'
@@ -178,8 +179,10 @@ describe('prioriteringen i VDK-2', () => {
 
   it('oppgir versjonen og fingeravtrykket regelen faktisk har, så kontrollen gjelder nøyaktig den', () => {
     expect(rader.map((r) => r[1])).toEqual(['seponering-amitriptylin', 'seponering-nortriptylin', 'seponering-escitalopram', 'seponering-escitalopram-langsom'])
+    // Planen gjelder versjonene etter rettelsen av RCPsych-faktumet; K1 har siden gitt tre av dem en ny versjon (`regler/avslutning.ts`).
+    const regler = ETTER_RETTELSENE.flatMap((s) => s.regler)
     for (const [, id, versjon, avtrykk] of rader) {
-      const regel = REGELSETT.regler.find((r) => r.id === id)!
+      const regel = regler.find((r) => r.id === id)!
       expect([regel.versjon, fingeravtrykk(regel)]).toEqual([Number(versjon), avtrykk])
       expect(erKliniskGodkjent(regel)).toBe(false)
     }

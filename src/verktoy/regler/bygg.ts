@@ -88,6 +88,9 @@ export const RCPSYCH = {
   hoyRisiko: h('rcpsych-stopping', 'Appendix 1', 'Høyest potensiell risiko for seponeringssymptomer har blant andre duloksetin, mirtazapin, moklobemid, paroksetin og venlafaksin.'),
   middelsRisiko: h('rcpsych-stopping', 'Appendix 1', 'Middels potensiell risiko har blant andre amitriptylin, bupropion, citalopram, escitalopram, fluoksetin, fluvoksamin, klomipramin, nortriptylin og sertralin; lav har blant andre vortioksetin.'),
   plan: h('rcpsych-stopping', 'Which plan should I follow?', 'Planene er utgangspunkt som tilpasses underveis: om lag 50 % per trinn hver 2.–4. uke ved middels eller lavere risiko, og om lag 10 % ved høyest risiko.'),
+  // K1 (`docs/verktøy-k1-nedtrapping-kontrollgrunnlag.md`): avslutningen av en nedtrapping.
+  heltSlutt: h('rcpsych-stopping', 'If you have been taking antidepressants for longer', 'Uansett hvor lav dosen er blitt, kan seponeringssymptomer komme når legemidlet stoppes helt; da kan det være nødvendig å starte igjen med en lav dose en tid før nedtrappingen fortsetter.'),
+  eksempel1: h('rcpsych-stopping', 'Examples of tapering plans', 'Eksempel 1 viser proporsjonal nedtrapping med om lag 50 % av aktuell dose hver 2.–4. uke; illustrasjonen går ned til svært lave doser i flytende form før legemidlet stoppes. Noen trenger å gå enda langsommere (eksempel 2).'),
 }
 
 /**

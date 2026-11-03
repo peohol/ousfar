@@ -12,6 +12,20 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.125.4',
+    dato: '2026-11-03',
+    sammendrag: 'Nedtrapping av escitalopram, nortriptylin og amitriptylin helt til seponering er sendt til faglig kontroll',
+    typer: ['Fag'],
+    omfang: 'Mindre omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Gjelder bare administratorene, som fortsatt er de eneste som ser verktøyene. Ingen regel er godkjent, og verktøyet gir ingen beregning for disse tre stoffene før den faglige kontrollen er ferdig.',
+      'Reglene for å trappe ned escitalopram, nortriptylin og amitriptylin har fått en ny versjon der planen kan gå helt til seponering når dosen er nådd laveste døgndose i preparatomtalen eller lavere, med en vurdering før hver reduksjon og 28 dager etter siste dose.',
+      'Når planen stopper over den dosen, er den fortsatt en delplan, og planen sier hvorfor.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.125.0',
     dato: '2026-11-03',
     sammendrag: 'De kliniske verktøyene kan vise komplette planer med vurderingspunkter, og har fått verktøyet for å kombinere stemningsstabiliserende',

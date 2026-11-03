@@ -18,8 +18,9 @@ Antall kombinasjoner etter hva verktøyet gir. For seponering er en kombinasjon 
 | Kombinasjoner | 23 | 506 | 1122 | 110 |
 | Beregning med klinisk godkjent regel (i godkjent omfang) | 1 | 1 | 2 | 0 |
 | Klinisk godkjent fagtekst, ingen beregning | 2 | 0 | 0 | 0 |
-| Regel finnes, kontrollert og ikke godkjent | 7 | 1 | 1 | 0 |
+| Regel finnes, kontrollert og ikke godkjent | 4 | 1 | 1 | 0 |
 | Regel finnes som fagtekst, ikke godkjent | 6 | 0 | 0 | 0 |
+| Regel finnes, ikke ferdig kontrollert | 3 | 0 | 0 | 0 |
 | Ingen OUSFAR-regel; kilden har en anbefaling | 0 | 504 | 892 | 110 |
 | Ingen OUSFAR-regel; kilden har ingen anbefaling | 0 | 0 | 161 | 0 |
 | Ingen OUSFAR-regel; begrenset av preparater eller kilde | 7 | 0 | 0 | 0 |
@@ -110,11 +111,11 @@ Regelutkast som er kontrollert og ikke godkjent (eller bare fagtekst), og som de
 
 | Verktøy | Regel | Kombinasjon | Type | Kontrollutfall |
 | --- | --- | --- | --- | --- |
-| Trappe ned antidepressiv | `seponering-amitriptylin` v12 | Amitriptylin | beregnbar | ikke godkjent |
+| Trappe ned antidepressiv | `seponering-amitriptylin` v13 | Amitriptylin | beregnbar | til kontroll |
 | Trappe ned antidepressiv | `seponering-amitriptylin-langsom` v8 | Amitriptylin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-citalopram` v9 | Citalopram | fagtekst | bare fagtekst |
 | Trappe ned antidepressiv | `seponering-duloksetin` v6 | Duloksetin | fagtekst | bare fagtekst |
-| Trappe ned antidepressiv | `seponering-escitalopram` v12 | Escitalopram | beregnbar | ikke godkjent |
+| Trappe ned antidepressiv | `seponering-escitalopram` v13 | Escitalopram | beregnbar | til kontroll |
 | Trappe ned antidepressiv | `seponering-escitalopram-langsom` v8 | Escitalopram | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-fluoksetin` v12 | Fluoksetin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-fluoksetin-annenhver-dag` v5 | Fluoksetin | beregnbar | ikke godkjent |
@@ -125,7 +126,7 @@ Regelutkast som er kontrollert og ikke godkjent (eller bare fagtekst), og som de
 | Trappe ned antidepressiv | `seponering-klomipramin-langsom` v8 | Klomipramin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-mirtazapin` v8 | Mirtazapin | fagtekst | bare fagtekst |
 | Trappe ned antidepressiv | `seponering-moklobemid` v9 | Moklobemid | fagtekst | bare fagtekst |
-| Trappe ned antidepressiv | `seponering-nortriptylin` v12 | Nortriptylin | beregnbar | ikke godkjent |
+| Trappe ned antidepressiv | `seponering-nortriptylin` v13 | Nortriptylin | beregnbar | til kontroll |
 | Trappe ned antidepressiv | `seponering-nortriptylin-langsom` v8 | Nortriptylin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-paroksetin` v8 | Paroksetin | fagtekst | bare fagtekst |
 | Trappe ned antidepressiv | `seponering-sertralin` v12 | Sertralin | beregnbar | ikke godkjent |

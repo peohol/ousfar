@@ -180,10 +180,15 @@ const planlinjer = (tekst: string, undertittel: string | null) => {
 /**
  * Kasuset gjennom den samme veien som verktøysiden, med utfallet brukeren
  * ville sett. `settene` er regelsettene appen bruker, eller andre versjoner av
- * dem når et kontrollgrunnlag sammenligner; planen oppgir settet regelen
- * hører til.
+ * dem når et kontrollgrunnlag sammenligner; planen oppgir settet i
+ * `appsettene` regelen hører til (som standard `settene`).
  */
-export function kjorKasus(k: Pilotkasus, uttrekkene: Uttrekkene, settene: readonly Regelsett[] = REGELSETTENE): Pilotutfall & { resultat?: Doseplanresultat; tekst?: string } {
+export function kjorKasus(
+  k: Pilotkasus,
+  uttrekkene: Uttrekkene,
+  settene: readonly Regelsett[] = REGELSETTENE,
+  appsettene: readonly Regelsett[] = settene,
+): Pilotutfall & { resultat?: Doseplanresultat; tekst?: string } {
   const sett = settene === REGELSETTENE ? REGELSETT : samlet(settene)
   const verktoy = VERKTOY.find((v) => v.id === k.verktoy)
   if (!verktoy) throw new Error(`Verktøyet ${k.verktoy} finnes ikke.`)
@@ -217,7 +222,7 @@ export function kjorKasus(k: Pilotkasus, uttrekkene: Uttrekkene, settene: readon
   )
   if (uvalgt.length > 0) return { utfall: 'formvalg', forlop: uvalgt.map(([f]) => f) }
 
-  const resultat = beregnPlan(regel, k.valg, skjema, utvalg, naa, settene.find((s) => s.regler.includes(regel)) ?? sett)
+  const resultat = beregnPlan(regel, k.valg, skjema, utvalg, naa, settene.find((s) => s.regler.includes(regel)) ?? sett, appsettene)
   const visning = planvisning(resultat, regel, skjema.startdato || undefined)
   if (!visning) return { utfall: 'stopp', grunner: resultat.status === 'stoppet' ? resultat.stoppgrunner : ['Planen er ikke klinisk og vises ikke.'], resultat }
   const tekst = planTekst(visning, verktoy.navn)
@@ -532,11 +537,12 @@ export const PILOTKASUS: readonly Pilotkasus[] = [
   { id: 'F05', kategori: 'ikke_godkjent', hva: 'fagtekstregelen brakt direkte til beregningen', verktoy: SEPONERING, valg: { fra: peroral('bupropion') }, uttrekk: 'aksept', dose: '300', regel: { id: 'seponering-bupropion' }, forventet: stopp('Regelen er bare tekstlig veiledning og har ingen beregnbar plan.') },
 
   // --- Regler som ikke er godkjent, og kombinasjoner uten regel.
-  { id: 'I01', kategori: 'ikke_godkjent', hva: 'escitalopram', verktoy: SEPONERING, valg: { fra: peroral('escitalopram') }, uttrekk: 'aksept', dose: '10', forventet: { utfall: 'ingen', status: 'ikke_godkjent' } },
+  // K1 ga escitalopramregelen en ny versjon med avslutning, sendt til faglig kontroll og ikke godkjent (`regler/avslutning.ts`).
+  { id: 'I01', kategori: 'ikke_godkjent', hva: 'escitalopram (versjonen fra K1, til faglig kontroll)', verktoy: SEPONERING, valg: { fra: peroral('escitalopram') }, uttrekk: 'aksept', dose: '10', forventet: { utfall: 'ingen', status: 'til_kontroll' } },
   { id: 'I02', kategori: 'ikke_godkjent', hva: 'duloksetin', verktoy: SEPONERING, valg: { fra: peroral('duloksetin') }, uttrekk: 'aksept', dose: '60', forventet: { utfall: 'ingen', status: 'ikke_godkjent' } },
   { id: 'I03', kategori: 'ikke_godkjent', hva: 'fenelzin (MAO-hemmer)', verktoy: SEPONERING, valg: { fra: peroral('fenelzin') }, uttrekk: 'aksept', dose: '45', forventet: { utfall: 'ingen', status: 'ikke_stottet' } },
   { id: 'I04', kategori: 'ikke_godkjent', hva: 'olanzapin → kvetiapin', verktoy: BYTTE_AP, valg: { fra: peroral('olanzapin'), til: peroral('kvetiapin') }, uttrekk: 'pilot', dose: '10', forventet: { utfall: 'ingen', status: 'ikke_godkjent' } },
-  { id: 'I05', kategori: 'ikke_godkjent', hva: 'escitalopramregelen brakt direkte til beregningen', verktoy: SEPONERING, valg: { fra: peroral('escitalopram') }, uttrekk: 'aksept', dose: '20', skjema: tablett('fra'), regel: { id: 'seponering-escitalopram' }, forventet: ingenPlan('Regelversjonen er ikke godkjent, ikke klinisk godkjent.') },
+  { id: 'I05', kategori: 'ikke_godkjent', hva: 'escitalopramregelen brakt direkte til beregningen', verktoy: SEPONERING, valg: { fra: peroral('escitalopram') }, uttrekk: 'aksept', dose: '20', skjema: tablett('fra'), regel: { id: 'seponering-escitalopram' }, forventet: ingenPlan('Regelversjonen er til faglig kontroll, ikke klinisk godkjent.') },
   { id: 'I06', kategori: 'ikke_godkjent', hva: 'olanzapin → kvetiapin brakt direkte til beregningen', verktoy: BYTTE_AP, valg: { fra: peroral('olanzapin'), til: peroral('kvetiapin') }, uttrekk: 'pilot', dose: '10', skjema: { maldose: '300', ...tablett('fra', 'til') }, regel: { id: 'antipsykotikabytte-olanzapin-kvetiapin' }, forventet: ingenPlan('Regelversjonen er ikke godkjent, ikke klinisk godkjent.') },
   {
     id: 'I07',

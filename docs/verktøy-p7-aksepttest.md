@@ -1,7 +1,7 @@
 <!-- Laget av `npm run verktoy:regler -- aksepttest` fra src/data/verktoy/fest-aksepttest.json; rediger ikke for hånd. -->
 # P7: aksepttest med norske preparater
 
-Aksepttesten etter kontrollrunden 30.10.2026 (P7.5, del E.2). Hver hovedregel og langsom variant i `ousfar-verktoy-nedtrapping` versjon 15 er regnet med de faktiske preparatene i FEST, ikke syntetiske, for hver legemiddelform forskriveren kan velge. FEST-uttrekket er hentet 30.10.2026 (kildedato 27.10.2026); bare preparater med markedsføringstillatelse som er markedsført, brukes, ikke godkjenningsfritak.
+Aksepttesten etter kontrollrunden 30.10.2026 (P7.5, del E.2). Hver hovedregel og langsom variant i `ousfar-verktoy-nedtrapping` versjon 16 er regnet med de faktiske preparatene i FEST, ikke syntetiske, for hver legemiddelform forskriveren kan velge. FEST-uttrekket er hentet 30.10.2026 (kildedato 27.10.2026); bare preparater med markedsføringstillatelse som er markedsført, brukes, ikke godkjenningsfritak.
 
 **Dette er modellberegninger av kontrollutkast, ikke kliniske planer.** Av de beregnbare P7-reglene er bare `seponering-vortioksetin` klinisk godkjent, og bare for cellene i det kliniske omfanget (**[klinisk omfang]** under); verktøyet viser ingen andre av planene. De andre beregnbare reglene er kontrollert og ikke godkjent i denne leveransen (kontrollørens disposisjon 31.10.2026), så en celle i deres kliniske omfang er teknisk, ikke et godkjenningsvedtak. Pasientopplysninger inngår ikke.
 
@@ -150,7 +150,7 @@ Stopper:
 - dag 29–56: 30 mg = 3 tabletter à 10 mg
 - dag 57–84: 25 mg = 1 tablett à 25 mg, valgt av forskriveren (beregnet 22,5 mg; −16,67 %)
 - fra dag 85: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 18,75 mg; −20 %)
-- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
+- neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 10 mg eller lavere (planen står på 20 mg)
 
 ### escitalopram, Tablett [53]
 
@@ -232,8 +232,8 @@ Stopper:
 - dag 113–140: 6 mg = 6 dråper à 1 mg, valgt av forskriveren (beregnet 5,25 mg; −14,29 %)
 - dag 141–168: 5 mg = 5 dråper à 1 mg, valgt av forskriveren (beregnet 4,5 mg; −16,67 %)
 - dag 169–196: 4 mg = 4 dråper à 1 mg, valgt av forskriveren (beregnet 3,75 mg; −20 %)
-- fra dag 197: 3 mg = 3 dråper à 1 mg
-- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
+- dag 197–224: 3 mg = 3 dråper à 1 mg
+- fra dag 225: seponert
 
 ### fluoksetin, Dispergerbar tablett [5]
 
@@ -428,8 +428,8 @@ Stopper:
 - dag 1–28: 40 mg = 4 tabletter à 10 mg, valgt av forskriveren (beregnet 37,5 mg; −20 %)
 - dag 29–56: 30 mg = 3 tabletter à 10 mg
 - dag 57–84: 25 mg = 1 tablett à 25 mg, valgt av forskriveren (beregnet 22,5 mg; −16,67 %)
-- fra dag 85: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 18,75 mg; −20 %)
-- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
+- dag 85–112: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 18,75 mg; −20 %)
+- fra dag 113: seponert
 
 ### sertralin, eneste form
 

@@ -31,8 +31,9 @@ export const samlet = (settene: readonly Regelsett[]): Regelsett => ({
 /** Alle reglene appen bruker, samlet så verktøyene kan slå opp i dem. */
 export const REGELSETT: Regelsett = samlet(REGELSETTENE)
 
-/** Settet regelen hører til, så planen oppgir det settets id og versjon; ellers `regelsett`. */
-export const settFor = (r: Regel, regelsett: Regelsett = REGELSETT): Regelsett => REGELSETTENE.find((s) => s.regler.includes(r)) ?? regelsett
+/** Settet i `settene` (appens, eller versjonene et kontrollgrunnlag gjelder) regelen hører til, så planen oppgir det settets id og versjon; ellers `regelsett`. */
+export const settFor = (r: Regel, regelsett: Regelsett = REGELSETT, settene: readonly Regelsett[] = REGELSETTENE): Regelsett =>
+  settene.find((s) => s.regler.includes(r)) ?? regelsett
 
 /** Ett valgt virkestoff med formuleringen fra kildetabellen. */
 export interface Valgtvirkestoff {

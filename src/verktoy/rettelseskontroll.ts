@@ -14,12 +14,12 @@ import { norskDato } from './motor/byggesteiner'
 import { FAKTUMRETTELSER } from './regler/bygg'
 import { erKliniskGodkjent, fingeravtrykk, kanonisk, KONTROLLUTFALL, kontrollutfall } from './regler/godkjenning'
 import type { Kildehenvisning, Regel, Regelsett } from './regler/modell'
+import { ETTER_RETTELSENE } from './kontrollsett'
 import { NEDTRAPPINGSSETT_FOR_RETTELSENE } from './regler/nedtrapping'
 import { kildelinje, kildeliste, regellinje, settlinje } from './planvisning'
 import { kjorKasus, PILOTKASUS, type Pilotkasus, type Pilotutfall, type Uttrekkene } from './regler/pilotmatrise'
 import { PILOTSETT_FOR_RETTELSENE } from './regler/pilotsett'
 import { liste, tabell } from './regler/rapport'
-import { REGELSETTENE } from './tilgjengelighet'
 
 export const RETTELSESKONTROLLFIL = 'docs/verktøy-rettelse-langvarig.md'
 
@@ -51,7 +51,7 @@ const innhold = ({ godkjenning: _, versjon: __, ...r }: Regel) => r
 const settMed = (r: Regel, settene: readonly Regelsett[]) => settene.find((s) => s.regler.includes(r))!
 
 /** Hver regel som har fått en ny versjon fra settene før rettelsene til settene appen bruker. */
-export function rettelsesrader(for_: readonly Regelsett[] = FOR_RETTELSENE, na: readonly Regelsett[] = REGELSETTENE): Rettelsesrad[] {
+export function rettelsesrader(for_: readonly Regelsett[] = FOR_RETTELSENE, na: readonly Regelsett[] = ETTER_RETTELSENE): Rettelsesrad[] {
   return for_.flatMap((s) => {
     const etter = na.find((x) => x.id === s.id)!.regler
     return s.regler.flatMap((r, i) => (etter[i] === r ? [] : [{ sett: s.id, for: r, etter: etter[i]!, steder: forskjeller(innhold(r), innhold(etter[i]!)) }]))
@@ -87,7 +87,7 @@ export function forventedeLinjeendringer(rader: readonly Rettelsesrad[]): Map<st
         etter.id,
         [
           { ny: linje(etter), for: linje(f), hvorfor: 'Den nye regelversjonen.' },
-          { ny: settlinje(settMed(etter, REGELSETTENE)), for: settlinje(settMed(f, FOR_RETTELSENE)), hvorfor: 'Ny versjon av regelsettet med de nye regelversjonene.' },
+          { ny: settlinje(settMed(etter, ETTER_RETTELSENE)), for: settlinje(settMed(f, FOR_RETTELSENE)), hvorfor: 'Ny versjon av regelsettet med de nye regelversjonene.' },
           ...kilder,
         ],
       ] as const
@@ -119,8 +119,9 @@ export interface Matrisesammenligning {
 export function matrisesammenligning(rader: readonly Rettelsesrad[], uttrekkene: Uttrekkene): Matrisesammenligning[] {
   const endringer = forventedeLinjeendringer(rader)
   return PILOTKASUS.map((kasus) => {
-    const for_ = kjorKasus(kasus, uttrekkene, FOR_RETTELSENE)
-    const etter = kjorKasus(kasus, uttrekkene)
+    // Settversjonen planen oppgir slås opp blant settene appen brukte etter rettelsene, slik kontrollen ble gjort.
+    const for_ = kjorKasus(kasus, uttrekkene, FOR_RETTELSENE, ETTER_RETTELSENE)
+    const etter = kjorKasus(kasus, uttrekkene, ETTER_RETTELSENE)
     return { kasus, for: for_, etter, lik: synlig(for_) === synlig(etter, endringer) }
   })
 }
@@ -187,7 +188,7 @@ export function lagRettelseskontroll(uttrekkene: Uttrekkene): string {
   )
   const settene = tabell(
     ['Regelsett', 'Før rettelsen', 'Nå'],
-    FOR_RETTELSENE.map((s) => [kode(s.id), String(s.versjon), String(REGELSETTENE.find((x) => x.id === s.id)!.versjon)]),
+    FOR_RETTELSENE.map((s) => [kode(s.id), String(s.versjon), String(ETTER_RETTELSENE.find((x) => x.id === s.id)!.versjon)]),
   )
   const linjetabell = tabell(
     ['Regel', 'Nå', 'Før rettelsen', 'Hvorfor'],

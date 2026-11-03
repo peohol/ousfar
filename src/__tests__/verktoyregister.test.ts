@@ -5,6 +5,7 @@
  * Med pilotreglene og nedtrappingsreglene (P7), som ingen er klinisk godkjent, kan ingenting beregnes. De
  * positive visningene bruker de isolerte testdataene i `hjelp/verktoyplan.ts`.
  */
+import { K1_AVSLUTNINGER } from '../verktoy/regler/avslutning'
 import { describe, expect, it } from 'vitest'
 import { adresse, lesRute, sidesti, verktoyadresse } from '../domain/rute'
 import { beregnPlan, festIderFor, formvalgFor, gjelderFortsatt, inndataFor, lesDose, mangler, medRegel, osloDato, skjemaFor, TOMT_SKJEMA, valgidentitet } from '../verktoy/doseplan'
@@ -104,6 +105,9 @@ describe('Søket etter verktøy', () => {
   })
 })
 
+/** Reglene K1 ga en ny versjon med avslutning, til faglig kontroll (`regler/avslutning.ts`). */
+const K1 = K1_AVSLUTNINGER.map((a) => a.regel)
+
 describe('Regelstatusen', () => {
   it('sier at reglene i pilotsettet og P7 er kontrollert og ikke godkjent, unntatt de klinisk godkjente beregningene og fagteksten', () => {
     // Hovedregelen, den langsomme varianten og for fluoksetin annenhver dag står side om side; klinikeren velger strategi.
@@ -135,6 +139,12 @@ describe('Regelstatusen', () => {
         expect(t, regler[0]).toMatchObject({ status: 'tilgjengelig', grunner: [] })
       } else if (GODKJENT_FAGTEKST.includes(regler[0]!)) {
         expect(t, regler[0]).toMatchObject({ status: 'fagtekst', grunner: [`Regelen «${t.regler[0]!.tittel}» har ingen beregning.`] })
+      } else if (K1.includes(regler[0]!)) {
+        // K1 ga hovedregelen en ny versjon med avslutning, til faglig kontroll; den langsomme varianten er fortsatt kontrollert og ikke godkjent.
+        expect(t, regler[0]).toMatchObject({
+          status: 'til_kontroll',
+          grunner: ['Beregning er ikke tilgjengelig fordi faglig kontroll av regelen gjenstår.', 'Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning.'],
+        })
       } else {
         // Etter kontrollørens disposisjon av leveransen: kontrollert og ikke godkjent, ikke et åpent spørsmål.
         expect(t.status, regler[0]).toBe('ikke_godkjent')
@@ -152,8 +162,8 @@ describe('Regelstatusen', () => {
     expect(new Set(tilfeller.flatMap(([, , r]) => r))).toEqual(new Set(REGELSETT.regler.map((r) => r.id)))
     expect(REGELSETT.regler).toHaveLength(PILOTSETT.regler.length + NEDTRAPPINGSSETT.regler.length)
     expect(VERKTOY.map((x) => regeloversikt(x).tilgjengelige)).toEqual([1, 1, 2, 0])
-    expect(VERKTOY.map((x) => regeloversikt(x).ikkeGodkjent)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length - 1, 1, 1, 0])
-    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([0, 0, 0, 0])
+    expect(VERKTOY.map((x) => regeloversikt(x).ikkeGodkjent)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length - 1 - K1.length, 1, 1, 0])
+    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([K1.length, 0, 0, 0])
   })
 
   it('forklarer hvorfor et antidepressivum uten regel ikke kan trappes ned, med dekningen fra P7', () => {

@@ -58,6 +58,7 @@ import type { Avklaring, Begrunnelseskrav, Bekreftelse, Fase, Forlop, Godkjennin
 import { REGELMODELLVERSJON } from './modell'
 import { gruppeRestApAripiprazol, seponeringCitalopramHyperbolsk, SPC } from './pilotsett'
 import { rett } from './rettelse'
+import { medAvslutninger } from './avslutning'
 
 /* --- Fakta fra preparatomtalene, med egne ord ----------------------------------------- */
 
@@ -2297,12 +2298,24 @@ export const NEDTRAPPINGSSETT_FOR_RETTELSENE: Regelsett = {
   ),
 }
 
-/** Nedtrappingsreglene appen bruker: settet før rettelsene med `FAKTUMRETTELSER` og kontrollørens registrerte vurdering av de nye versjonene. */
-export const NEDTRAPPINGSSETT: Regelsett = {
+/**
+ * Settet etter `FAKTUMRETTELSER` og kontrollørens registrerte vurdering av de
+ * nye versjonene (versjon 15, appversjon 1.123.1), før K1. Appen bruker det
+ * ikke; kontrollgrunnlagene for rettelsen og VDK-3 forslag 1 gjelder det.
+ */
+export const NEDTRAPPINGSSETT_FOR_AVSLUTNING: Regelsett = {
   ...NEDTRAPPINGSSETT_FOR_RETTELSENE,
   versjon: 15,
   beskrivelse: `${NEDTRAPPINGSSETT_FOR_RETTELSENE.beskrivelse} Etter kontrollørens vurdering 03.11.2026 er faktumet fra RCPsych om små reduksjoner fra starten presisert (\`docs/verktøy-kildefunn-1-2.md\` §8): de 17 reglene som viser til det, har fått en ny versjon som bare skiller seg i dette faktumet. Kontrolløren har godkjent den nye versjonen av vortioksetinregelen (versjon 12) med samme kliniske omfang som versjon 11, og de andre er kontrollert og ikke godkjent som før (\`docs/verktøy-rettelse-langvarig.md\`).`,
   regler: rett([...NEDTRAPPINGSSETT_FOR_RETTELSENE.regler], FAKTUMRETTELSER),
+}
+
+/** Nedtrappingsreglene appen bruker: settet etter rettelsene med de nye versjonene fra K1 (`avslutning.ts`). */
+export const NEDTRAPPINGSSETT: Regelsett = {
+  ...NEDTRAPPINGSSETT_FOR_AVSLUTNING,
+  versjon: 16,
+  beskrivelse: `${NEDTRAPPINGSSETT_FOR_AVSLUTNING.beskrivelse} I K1 (03.11.2026) har escitalopram, nortriptylin og amitriptylin fått en ny versjon med avslutning: seponering etter en eksplisitt vurdering når nedtrappingen har nådd laveste døgndose i preparatomtalen eller lavere (\`docs/verktøy-k1-nedtrapping-kontrollgrunnlag.md\`); de er ikke godkjent.`,
+  regler: medAvslutninger([...NEDTRAPPINGSSETT_FOR_AVSLUTNING.regler]),
 }
 
 /**

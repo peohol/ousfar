@@ -20,12 +20,19 @@ import { besvart, FEST_AKSEPTTEST, FEST_PILOT, omgivelseFor, type Festuttrekk } 
 import { type Disposisjon, disponer, disposisjonsfeil, erKliniskGodkjent, fingeravtrykk, harBeregning, kontrollutfall, vurderingsfeil } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett } from '../verktoy/regler/kontroll'
 import type { Forlop, Regel, Regelsett } from '../verktoy/regler/modell'
-import { NEDTRAPPINGSDISPOSISJON, NEDTRAPPINGSSETT, SAMMENLIGNINGSSETT } from '../verktoy/regler/nedtrapping'
+import { NEDTRAPPINGSDISPOSISJON, NEDTRAPPINGSSETT_FOR_AVSLUTNING, SAMMENLIGNINGSSETT } from '../verktoy/regler/nedtrapping'
 import { PILOTDISPOSISJON, PILOTSETT } from '../verktoy/regler/pilotsett'
 import { FAKTUMRETTELSER } from '../verktoy/regler/bygg'
 import { REGELRAPPORTER, statustekst } from '../verktoy/regler/rapport'
 import { REGELSETT, tilgjengelighet } from '../verktoy/tilgjengelighet'
 import { godkjennITest } from './hjelp/verktoyplan'
+
+/**
+ * Disposisjonen gjelder nedtrappingsreglene før K1 ga escitalopram, nortriptylin
+ * og amitriptylin en ny versjon med avslutning (`regler/avslutning.ts`); de nye
+ * versjonene har ingen disposisjon og er testet i `verktoyk1.test.ts`.
+ */
+const NEDTRAPPINGSSETT = NEDTRAPPINGSSETT_FOR_AVSLUTNING
 
 /**
  * De seks regelversjonene kontrolløren har godkjent i oppgitt omfang, med fingeravtrykket godkjenningen gjelder.
