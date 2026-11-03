@@ -430,6 +430,7 @@ export function lamotrigintillegg(e: Eksisterende): Regel {
     utgangsdose: 'startdose',
     start: { type: 'dag', dag: 1 },
     faser: [{ type: 'uendret', grunnlag: { type: 'kilde', henvisninger: [plan.henvisning] } }],
+    krever_komplett: true,
   }
   const til: Forlop = {
     id: 'til',
@@ -451,6 +452,8 @@ export function lamotrigintillegg(e: Eksisterende): Regel {
       { type: 'vedlikehold', dose: { type: 'inndata', navn: 'maldose' } },
     ],
     vurderinger: lamotriginvurderinger(plan, e.navn),
+    // Planen gis bare når den når måldosen; ellers stopper den i stedet for å vise en delplan.
+    krever_komplett: true,
   }
   const besvart = Object.fromEntries(unntak.map((u) => [u.id, false]))
   const svar = Object.fromEntries(sporsmal.map((x) => [x.id, false]))
@@ -614,6 +617,7 @@ export const LITIUM_LAMOTRIGIN = lamotrigintillegg({
         navn: 'startdose',
         verdier: Array.from({ length: LITHIONIT_MAKS_TABLETTER }, (_, i) => (i + 1) * LITHIONIT_MG),
         art: 'bindende_krav',
+        enhet: 'mg litium (Li⁺) per døgn',
         grunnlag: { type: 'kilde', henvisninger: [LITHIONIT.styrke, LITHIONIT.vedlikehold] },
       },
     ],
