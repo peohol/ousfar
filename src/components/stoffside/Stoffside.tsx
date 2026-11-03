@@ -14,6 +14,7 @@ import { ToppmenyInnhold } from '../toppmeny/Toppmenykilde'
 import { Toppmenyknapp } from '../toppmeny/Toppmenyknapp'
 import { Referanseliste } from '../referanser/Referanseliste'
 import { SeksjonsstyringKilde, skuffnokkel, useAdressested } from '../seksjoner/Seksjonsstyring'
+import { Innholdsfortegnelse } from '../seksjoner/Innholdsfortegnelse'
 import { Sidereferanser } from '../referanser/Sidereferanser'
 import { useFaginnholdskilde } from './Faginnholdskilde'
 import { useFavoritter } from '../../favoritter/Favorittkilde'
@@ -341,6 +342,9 @@ function Innhold({ stoff: slug, sted, register, katalog, onApneFortolkning, onLu
           innholdsnokkel={sokeinnhold}
         />
       </ToppmenyInnhold>
+
+      {/* Seksjonene på siden, til venstre for innholdet der det er plass, ellers i toppmenyen. */}
+      <Innholdsfortegnelse />
 
       {utgave ? (
         utgave.banner

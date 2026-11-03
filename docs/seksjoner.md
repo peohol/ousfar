@@ -209,6 +209,29 @@ ruller bare dit, uten å åpne eller lukke noe. Adressene lages med
 `stoffadresse(nøkkel, sted)` i `src/domain/rute.ts`, for alle stoffer, med og
 uten analyttkode. Å åpne og lukke skuffer endrer ikke adressen.
 
+## Innholdsfortegnelsen
+
+En fagside har en innholdsfortegnelse med overskriftene til seksjonene, uten
+detaljkortene (`Innholdsfortegnelse.tsx`). Et trykk på en seksjon åpner den,
+lukker den som sto åpen, og ruller siden rett dit, slik en direktelenke gjør;
+fokus flytter til seksjonens overskrift. Seksjonen som står åpen, er merket.
+Identiteten og viktige data står alltid fram øverst og er ikke med.
+
+- En seksjon står i fortegnelsen når den har `navn` (tittelen i ren tekst);
+  fagsidens paneler gir panelets tittel. Seksjonene melder seg på i
+  styringen (`innhold`), så fortegnelsen viser det siden faktisk har, i
+  sidens rekkefølge, også når en seksjon kommer når dataene er hentet. Den
+  vises når siden har minst to seksjoner.
+- **Brede skjermer** (fra 84em ≈ 1344 px): fortegnelsen flyter til venstre
+  for innholdet, midt i høyden under toppmenyen, som en kompakt liste med
+  en linje langs kanten som viser den åpne seksjonen.
+- **Smalere skjermer**: det er ikke plass ved siden av innholdet, så
+  fortegnelsen er en knapp («Innhold på siden») i toppmenyen, i plassen
+  `innhold` mellom søket i siden og hovedhandlingen. På mobil står knappen
+  i dokken, og menyen åpner seg oppover over den. Menyen viser seksjonene
+  med seksjonsikonene og rulles når de ikke får plass.
+- Det er aldri begge på en gang, og ingen av dem skrives ut.
+
 ## Styringen for siden
 
 `SeksjonsstyringKilde` (`Seksjonsstyring.tsx`) ligger rundt hele fagsiden og

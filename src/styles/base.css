@@ -96,7 +96,7 @@ ul {
 
 .scene {
   width: min(100%, 82rem);
-  padding: var(--rom-8) clamp(1rem, 4vw, 3.5rem);
+  padding: var(--rom-8) var(--rom-scene);
 }
 
 /* Ett steg i fortolkningen: en venstrestilt kolonne med panelene under

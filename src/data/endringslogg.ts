@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.123.2',
+    versjon: '1.124.1',
     dato: '2026-11-03',
     sammendrag: 'Kontroll av hele oppfølgingen når en kilde for de kliniske verktøyene endres',
     typer: ['Funksjonalitet'],
@@ -21,6 +21,18 @@ export const ENDRINGSLOGG: Endring[] = [
       'Ingen endring i det brukerne ser. Hele veien fra en endret kilde til det klinikeren ser i verktøyet er prøvd med syntetiske funn: en endring uten faglig betydning avsluttes uten å nå redaktøren, et faglig spørsmål gir en merknad bare ved den berørte anbefalingen og avsluttes først når tiltaket er kontrollert, og en alvorlig risiko stanser bare den berørte regelen, mens andre godkjente beregninger virker. Produksjonen er kontrollert, og den gamle prøvesaken med frist er avsluttet. Ingen doser, grenser, regler eller godkjenninger er endret.',
     ],
     utenVarsel: true,
+  },
+  {
+    versjon: '1.124.0',
+    dato: '2026-11-03',
+    sammendrag: 'Fagsidene har fått en innholdsfortegnelse',
+    typer: ['Funksjonalitet', 'Design / layout'],
+    omfang: 'Mindre omfang',
+    gjelder: ['stoff'],
+    punkter: [
+      'Til venstre for innholdet står en kort liste med seksjonene på fagsiden. Trykk på en seksjon for å åpne den og gå rett dit. Seksjonen som er åpen, er merket i listen.',
+      'Er skjermen for smal til listen, ligger den bak knappen «Innhold på siden» i toppmenyen, og på mobil i menyen nederst på skjermen.',
+    ],
   },
   {
     versjon: '1.123.1',
