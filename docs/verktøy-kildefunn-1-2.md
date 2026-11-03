@@ -130,3 +130,13 @@ Avsnittene er valgt etter stedene i henvisningene i alle regler som bygger på k
 2. En kontroll (`oppgave=kontroll`) skal bekrefte at overvåkingen godtar grunnlaget, og at ingen ny sak kommer for de to kildene.
 3. Presiseringen av `RCPSYCH.langvarig` og avslutningen av prøvefunn 3 gjøres for seg.
 
+**Gjennomført 03.11.2026** (main `abe0a967`):
+
+| Steg | Kjøring | Resultat |
+|---|---|---|
+| Teknisk konklusjon, sak 4 (`keks-2016`) | https://github.com/peohol/ousfar/actions/runs/41605290757 | Avsluttet som `teknisk_avklart` kl. 08.42.50 UTC |
+| Teknisk konklusjon, sak 5 (`rcpsych-stopping`) | https://github.com/peohol/ousfar/actions/runs/41605365060 | Avsluttet som `teknisk_avklart` kl. 08.43.19 UTC |
+| Kontroll (`oppgave=kontroll`) | https://github.com/peohol/ousfar/actions/runs/41605399129 | 28 kildedokumenter og FEST kontrollert, ingen feil og ingen ny sak |
+
+Presiseringen av `RCPSYCH.langvarig` er gjort i en egen PR med nye regelversjoner og uavhengig kontroll (`docs/verktøy-rettelse-langvarig.md`).
+

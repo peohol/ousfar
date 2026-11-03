@@ -1,5 +1,5 @@
 import { useEffect, useId, useState } from 'react'
-import { fullTid, kortTid } from '../../traad/modell'
+import { fullTid, kortTid, type Skjulehandling } from '../../traad/modell'
 import { Ikon } from '../ikon/Ikon'
 import type { Ikonnavn } from '../ikon/register'
 import '../../styles/traad.css'
@@ -169,5 +169,57 @@ export function Slettknapp({ onSlett, hva }: { onSlett: () => void; hva: string 
       bekreftEtikett={`Bekreft sletting av ${hva}`}
       onBekreft={onSlett}
     />
+  )
+}
+
+/**
+ * Det en administrator kan gjøre med innholdet i et innlegg eller en
+ * kommentar i diskusjonene: «Skjul» (i to trykk), og når det er skjult,
+ * «Vis igjen» eller «Fjern for godt» (i to trykk). Det som ble skjult før
+ * teksten ble tatt vare på, kan ikke vises igjen, og da står ingen knapp.
+ */
+export function Skjulehandlinger({
+  hva,
+  skjulTekst = 'Skjul',
+  skjult,
+  kanVises,
+  onHandling,
+}: {
+  /** «innlegget» eller «kommentaren». */
+  hva: string
+  /** Teksten på «Skjul», når den alene ikke sier hva som skjules. */
+  skjulTekst?: string
+  skjult: boolean
+  kanVises: boolean
+  onHandling: (handling: Skjulehandling) => void
+}) {
+  const innholdet = `innholdet i ${hva}`
+  if (!skjult) {
+    return (
+      <Bekreftknapp
+        ikon="skjul"
+        tekst={skjulTekst}
+        bekreftTekst="Bekreft skjuling"
+        etikett={skjulTekst === 'Skjul' ? `Skjul ${innholdet}` : skjulTekst}
+        bekreftEtikett={`Bekreft at ${innholdet} skjules`}
+        onBekreft={() => onHandling('skjul')}
+      />
+    )
+  }
+  if (!kanVises) return null
+  return (
+    <>
+      <Idehandling ikon="vis" aria-label={`Vis igjen ${innholdet}`} onClick={() => onHandling('vis')}>
+        Vis igjen
+      </Idehandling>
+      <Bekreftknapp
+        ikon="trash"
+        tekst="Fjern for godt"
+        bekreftTekst="Bekreft fjerning"
+        etikett={`Fjern for godt ${innholdet}`}
+        bekreftEtikett={`Bekreft at ${innholdet} fjernes for godt`}
+        onBekreft={() => onHandling('fjern')}
+      />
+    </>
   )
 }

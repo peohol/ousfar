@@ -6,7 +6,7 @@ Oversikten svarer på VDK-1 i `docs/verktøy-omlegging-2026-11.md`: hva de tre v
 
 Kildetabellen fra Psychiatrienet er bare brukt som metadata som allerede ligger i repoet (om tabellen har en anbefaling for kombinasjonen), og bare i sum. Ingen tekst fra kilden er brukt, og at kilden har en anbefaling, gir aldri i seg selv en OUSFAR-regel (`docs/verktøy-p3-rettigheter.md`).
 
-**Regelsettet har 6 klinisk godkjente regelversjoner** (`kryssnedtrapping-sertralin-mirtazapin` v9, `depot-aripiprazol-maintena` v3, `depot-paliperidon-xeplion` v3, `seponering-vortioksetin` v11, `seponering-bupropion` v5, `seponering-agomelatin` v1), 4 av dem med beregning, hver bare i omfanget kontrolløren godkjente.
+**Regelsettet har 6 klinisk godkjente regelversjoner** (`kryssnedtrapping-sertralin-mirtazapin` v10, `depot-aripiprazol-maintena` v3, `depot-paliperidon-xeplion` v3, `seponering-vortioksetin` v12, `seponering-bupropion` v5, `seponering-agomelatin` v1), 4 av dem med beregning, hver bare i omfanget kontrolløren godkjente.
 
 ## 1. Sammendrag
 
@@ -31,8 +31,8 @@ Hver klinisk godkjente regel med beregning, kombinasjonen den gjelder, og omfang
 
 | Verktøy | Regel | Kombinasjon | Godkjent omfang (kontrollørens avgrensning) | Forskriverens valg i testmatrisen |
 | --- | --- | --- | --- | --- |
-| Trappe ned antidepressiv | `seponering-vortioksetin` v11 | Vortioksetin | Kontrollørens gjennomgang av f77e1a9 31.10.2026 (P7.5), faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare én første reduksjon fra vortioksetin 20 til 15 mg én gang daglig, med minst 28 dager på 15 mg før en ny symptomstyrt vurdering, hos voksne under 65 år ved ikke-langvarig behandling og uten tidligere seponeringsplager, etter regelens obligatoriske vurdering av organfunksjon og interaksjoner og de andre stoppene, og bare med markedsførte tabletter (FEST-form 53) og de kontrollerte styrkene 5, 10, 15 og 20 mg. Gjelder ikke dosejusteringer, lavdose, lang behandlingstid (heller ikke med begrunnelse), den langsomme varianten eller neste reduksjon. | 18 kasus, 3 gir plan |
-| Bytte antidepressiv | `kryssnedtrapping-sertralin-mirtazapin` v9 | Sertralin → Mirtazapin | Kontrollørens gjennomgang av f77e1a9 31.10.2026 (P4.8): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: begrenset innledende kryssnedtrapping fra sertralin nøyaktig 50 eller 100 mg ved ikke-langvarig behandlingstid, med tabletter (FEST-form 53) for begge virkestoffene og bare styrkene sertralin 25, 50 og 100 mg og mirtazapin 15, 30 og 45 mg, når toleransen og kontrollen av serotonerg sammedisinering er bekreftet og det ikke har vært tidligere seponeringsplager: sertralin 100 → 50 mg i minst 14 dager → 25 mg eller 50 → 25 mg, parallelt med mirtazapin 15 mg. Gjelder ikke automatisk 25 → 0 mg, opptrapping av mirtazapin, lang behandlingstid (heller ikke med begrunnelse), andre startdoser, former eller styrker. | 14 kasus, 3 gir plan |
+| Trappe ned antidepressiv | `seponering-vortioksetin` v12 | Vortioksetin | Kontrollørens gjennomgang av a38fac14 03.11.2026 (rettelsen av RCPsych-faktumet, PR #309): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare én første reduksjon 20 → 15 mg/døgn, med minst 28 dager før ny symptomstyrt vurdering, hos voksne under 65 år, kort/ikke-langvarig behandling, uten tidligere seponeringsplager, etter alle opprinnelige vurderinger/stopp, med kontrollerte tabletter/styrker. Ingen påfølgende reduksjon, langsom variant eller utvidet pasientgruppe. Identisk klinisk omfang som v11. Godkjenningen gjelder bare dette eksakte fingeravtrykket og disse betingelsene. Den er en korrigering av kildebeskrivelsen, ikke en ny generell godkjenning av algoritmer for nedtrapping. | 18 kasus, 3 gir plan |
+| Bytte antidepressiv | `kryssnedtrapping-sertralin-mirtazapin` v10 | Sertralin → Mirtazapin | Kontrollørens gjennomgang av a38fac14 03.11.2026 (rettelsen av RCPsych-faktumet, PR #309): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare det tidligere godkjente startforløpet fra sertralin 50 eller 100 mg, kort/ikke-langvarig behandling, med kontrollerte tabletter og styrker, obligatoriske bekreftelser og tidligere seponeringsplager fraværende. Dette omfatter ikke videre 25 → 0, opptrapping av mirtazapin, andre doser, langtidsbehandling eller endret trinnlengde. Identisk klinisk omfang som v9. Godkjenningen gjelder bare dette eksakte fingeravtrykket og disse betingelsene. Den er en korrigering av kildebeskrivelsen, ikke en ny generell godkjenning av algoritmer for nedtrapping. | 14 kasus, 3 gir plan |
 | Bytte antipsykotikum | `depot-aripiprazol-maintena` v3 | Aripiprazol (peroral) → Aripiprazol (depotinjeksjon) | Kontrollørens gjennomgang av 62ebb21 30.10.2026 (P4.8): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: oppstart med én injeksjon Abilify Maintena 400 mg, peroral aripiprazol i 14 dager og deretter 400 mg månedlig, hos voksne med schizofreni som er stabilisert på og har tålt peroral aripiprazol. Gjelder ikke andre depottyper eller oppstartsvarianter, kjent langsom CYP2D6-omsetning, sterke CYP2D6- eller CYP3A4-hemmere, CYP3A4-induktorer eller ubekreftet stabilisering eller toleranse. | 13 kasus, 4 gir plan |
 | Bytte antipsykotikum | `depot-paliperidon-xeplion` v3 | Paliperidon (peroral) → Paliperidon (depotinjeksjon (paliperidonpalmitat)) | Kontrollørens gjennomgang av 62ebb21 30.10.2026 (P4.8): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: overgang fra perorale paliperidon-depottabletter til Xeplion med 150 mg paliperidon dag 1 og 100 mg dag 8 i deltoideus, deretter månedlig fra én måned etter dag 8, hos voksne med schizofreni som er stabilisert, med kreatininclearance minst 80 ml/min og med deltoideus framhevet etter 9–12 mg peroralt. Gjelder ikke andre depottyper eller depotregimer, risperidon, nedsatt nyrefunksjon eller ubekreftet stabilisering eller toleranse. | 19 kasus, 9 gir plan |
 
@@ -110,28 +110,28 @@ Regelutkast som er kontrollert og ikke godkjent (eller bare fagtekst), og som de
 
 | Verktøy | Regel | Kombinasjon | Type | Kontrollutfall |
 | --- | --- | --- | --- | --- |
-| Trappe ned antidepressiv | `seponering-amitriptylin` v11 | Amitriptylin | beregnbar | ikke godkjent |
-| Trappe ned antidepressiv | `seponering-amitriptylin-langsom` v7 | Amitriptylin | beregnbar | ikke godkjent |
+| Trappe ned antidepressiv | `seponering-amitriptylin` v12 | Amitriptylin | beregnbar | ikke godkjent |
+| Trappe ned antidepressiv | `seponering-amitriptylin-langsom` v8 | Amitriptylin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-citalopram` v9 | Citalopram | fagtekst | bare fagtekst |
 | Trappe ned antidepressiv | `seponering-duloksetin` v6 | Duloksetin | fagtekst | bare fagtekst |
-| Trappe ned antidepressiv | `seponering-escitalopram` v11 | Escitalopram | beregnbar | ikke godkjent |
-| Trappe ned antidepressiv | `seponering-escitalopram-langsom` v7 | Escitalopram | beregnbar | ikke godkjent |
-| Trappe ned antidepressiv | `seponering-fluoksetin` v11 | Fluoksetin | beregnbar | ikke godkjent |
-| Trappe ned antidepressiv | `seponering-fluoksetin-annenhver-dag` v4 | Fluoksetin | beregnbar | ikke godkjent |
-| Trappe ned antidepressiv | `seponering-fluoksetin-langsom` v7 | Fluoksetin | beregnbar | ikke godkjent |
-| Trappe ned antidepressiv | `seponering-fluvoksamin` v12 | Fluvoksamin | beregnbar | ikke godkjent |
-| Trappe ned antidepressiv | `seponering-fluvoksamin-langsom` v8 | Fluvoksamin | beregnbar | ikke godkjent |
-| Trappe ned antidepressiv | `seponering-klomipramin` v11 | Klomipramin | beregnbar | ikke godkjent |
-| Trappe ned antidepressiv | `seponering-klomipramin-langsom` v7 | Klomipramin | beregnbar | ikke godkjent |
+| Trappe ned antidepressiv | `seponering-escitalopram` v12 | Escitalopram | beregnbar | ikke godkjent |
+| Trappe ned antidepressiv | `seponering-escitalopram-langsom` v8 | Escitalopram | beregnbar | ikke godkjent |
+| Trappe ned antidepressiv | `seponering-fluoksetin` v12 | Fluoksetin | beregnbar | ikke godkjent |
+| Trappe ned antidepressiv | `seponering-fluoksetin-annenhver-dag` v5 | Fluoksetin | beregnbar | ikke godkjent |
+| Trappe ned antidepressiv | `seponering-fluoksetin-langsom` v8 | Fluoksetin | beregnbar | ikke godkjent |
+| Trappe ned antidepressiv | `seponering-fluvoksamin` v13 | Fluvoksamin | beregnbar | ikke godkjent |
+| Trappe ned antidepressiv | `seponering-fluvoksamin-langsom` v9 | Fluvoksamin | beregnbar | ikke godkjent |
+| Trappe ned antidepressiv | `seponering-klomipramin` v12 | Klomipramin | beregnbar | ikke godkjent |
+| Trappe ned antidepressiv | `seponering-klomipramin-langsom` v8 | Klomipramin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-mirtazapin` v8 | Mirtazapin | fagtekst | bare fagtekst |
 | Trappe ned antidepressiv | `seponering-moklobemid` v9 | Moklobemid | fagtekst | bare fagtekst |
-| Trappe ned antidepressiv | `seponering-nortriptylin` v11 | Nortriptylin | beregnbar | ikke godkjent |
-| Trappe ned antidepressiv | `seponering-nortriptylin-langsom` v7 | Nortriptylin | beregnbar | ikke godkjent |
+| Trappe ned antidepressiv | `seponering-nortriptylin` v12 | Nortriptylin | beregnbar | ikke godkjent |
+| Trappe ned antidepressiv | `seponering-nortriptylin-langsom` v8 | Nortriptylin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-paroksetin` v8 | Paroksetin | fagtekst | bare fagtekst |
-| Trappe ned antidepressiv | `seponering-sertralin` v11 | Sertralin | beregnbar | ikke godkjent |
-| Trappe ned antidepressiv | `seponering-sertralin-langsom` v7 | Sertralin | beregnbar | ikke godkjent |
+| Trappe ned antidepressiv | `seponering-sertralin` v12 | Sertralin | beregnbar | ikke godkjent |
+| Trappe ned antidepressiv | `seponering-sertralin-langsom` v8 | Sertralin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-venlafaksin` v6 | Venlafaksin | fagtekst | bare fagtekst |
-| Trappe ned antidepressiv | `seponering-vortioksetin-langsom` v7 | Vortioksetin | beregnbar | ikke godkjent |
+| Trappe ned antidepressiv | `seponering-vortioksetin-langsom` v8 | Vortioksetin | beregnbar | ikke godkjent |
 | Bytte antidepressiv | `mao-fluoksetin-fenelzin` v7 | Fluoksetin → Fenelzin | beregnbar | ikke godkjent |
 | Bytte antipsykotikum | `antipsykotikabytte-olanzapin-kvetiapin` v5 | Olanzapin (peroral) → Kvetiapin | beregnbar | ikke godkjent |
 

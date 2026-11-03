@@ -30,10 +30,19 @@ interface Traad {
   tittel: string
   tekst: unknown
   skjult: boolean
+  kan_vises: boolean
   endret_kl: string | null
   lest_kl: string
   sist_sett: string | null
-  kommentarer: { id: string; forfatter_id: string | null; tekst: unknown; slettet: boolean; skjult: boolean }[]
+  kommentarer: {
+    id: string
+    forfatter_id: string | null
+    tekst: unknown
+    slettet: boolean
+    skjult: boolean
+    kan_vises: boolean
+    endret_kl: string | null
+  }[]
 }
 
 interface Varsel {
@@ -252,7 +261,7 @@ describe('diskusjonene i databasen', () => {
     expect(kommentarer).toEqual([])
   })
 
-  it('lar bare en administrator skjule innholdet, og da er teksten borte', async () => {
+  it('lar bare en administrator skjule innholdet, og da er teksten borte for alle andre', async () => {
     const side = nySide()
     const id = await nyTraad(ada, side, await nyKategori(ada, side, 'K', '🙈'), 'Tråd', DOK('Noe som ikke skulle stått her'))
     const kommentar = await nyKommentar(bo, id, null, 'Heller ikke dette')
@@ -262,16 +271,108 @@ describe('diskusjonene i databasen', () => {
     await sql(admin, 'select public.skjul_i_diskusjon($1, $2)', [id, kommentar])
 
     const etter = await traad(cy, id)
-    expect(etter).toMatchObject({ tekst: null, skjult: true })
-    expect(etter!.kommentarer).toMatchObject([{ id: kommentar, skjult: true, tekst: null, forfatter_id: bo }])
+    expect(etter).toMatchObject({ tekst: null, skjult: true, kan_vises: false })
+    expect(etter!.kommentarer).toMatchObject([{ id: kommentar, skjult: true, kan_vises: false, tekst: null, forfatter_id: bo }])
     const [rad] = await sql<{ tekst: unknown }>(admin, 'select tekst from public.diskusjonskommentarer where id = $1', [kommentar])
     expect(rad!.tekst).toBeNull()
+    // Den lagrede teksten leses bare av administratorene.
+    for (const bruker of [ada, bo, cy]) expect(await sql(bruker, 'select * from public.diskusjon_skjulte_tekster')).toEqual([])
+    expect(await feilFra(() => sql(null, 'select * from public.diskusjon_skjulte_tekster'))).toMatchObject({ code: '42501' })
+    expect(
+      await feilFra(() => sql(admin, 'insert into public.diskusjon_skjulte_tekster (diskusjon_id, tekst) values ($1, $2)', [id, DOK('Juks')])),
+    ).toMatchObject({ code: '42501' })
+    // Søket finner ikke det skjulte.
+    const tekster = await en<{ tekster: unknown[] }[]>(cy, 'select public.diskusjonstekster($1)', [side])
+    expect(JSON.stringify(tekster)).not.toContain('Heller ikke')
 
     // En skjult kommentar kan ikke skrives inn igjen av forfatteren.
     expect(await sql(bo, 'update public.diskusjonskommentarer set tekst = $2 where id = $1 returning id', [kommentar, DOK('Tilbake')])).toEqual([])
-    // Forfatteren kan skrive det første innlegget på nytt.
+    // Forfatteren kan skrive det første innlegget på nytt, og da er den skjulte teksten glemt.
     await sql(ada, 'select public.sett_diskusjonstekst($1, $2)', [id, DOK('Ny tekst')])
     expect(await traad(cy, id)).toMatchObject({ skjult: false })
+    expect(await sql(admin, 'select 1 from public.diskusjon_skjulte_tekster where diskusjon_id = $1 and kommentar_id is null', [id])).toEqual([])
+  })
+
+  it('lar en administrator vise skjult innhold igjen, slik det var', async () => {
+    const side = nySide()
+    const id = await nyTraad(ada, side, await nyKategori(ada, side, 'K', '👀'), 'Tråd', DOK('Innlegget'))
+    const kommentar = await nyKommentar(bo, id, null, 'Kommentaren')
+    await sql(admin, 'select public.skjul_i_diskusjon($1, null)', [id])
+    await sql(admin, 'select public.skjul_i_diskusjon($1, $2)', [id, kommentar])
+
+    const forAdmin = await traad(admin, id)
+    expect(forAdmin).toMatchObject({ skjult: true, kan_vises: true })
+    expect(forAdmin!.kommentarer).toMatchObject([{ id: kommentar, skjult: true, kan_vises: true }])
+
+    expect(await feilFra(() => sql(ada, 'select public.vis_i_diskusjon($1, null)', [id]))).toMatchObject({ code: '42501' })
+    await sql(admin, 'select public.vis_i_diskusjon($1, null)', [id])
+    await sql(admin, 'select public.vis_i_diskusjon($1, $2)', [id, kommentar])
+
+    const etter = await traad(cy, id)
+    expect(etter).toMatchObject({ skjult: false, kan_vises: false, tekst: JSON.parse(DOK('Innlegget')) })
+    // Å vise kommentaren igjen er ingen endring av den.
+    expect(etter!.kommentarer).toMatchObject([{ skjult: false, kan_vises: false, tekst: JSON.parse(DOK('Kommentaren')), endret_kl: null }])
+    expect(await sql(admin, 'select 1 from public.diskusjon_skjulte_tekster where diskusjon_id = $1', [id])).toEqual([])
+    // Forfatteren kan endre den igjen.
+    expect(await sql(bo, 'update public.diskusjonskommentarer set tekst = $2 where id = $1 returning id', [kommentar, DOK('Endret')])).toHaveLength(1)
+
+    // Den kan skjules og vises igjen flere ganger.
+    await sql(admin, 'select public.skjul_i_diskusjon($1, $2)', [id, kommentar])
+    await sql(admin, 'select public.vis_i_diskusjon($1, $2)', [id, kommentar])
+    expect((await traad(cy, id))!.kommentarer).toMatchObject([{ skjult: false, tekst: JSON.parse(DOK('Endret')) }])
+  })
+
+  it('lar en administrator fjerne skjult innhold for godt', async () => {
+    const side = nySide()
+    const id = await nyTraad(ada, side, await nyKategori(ada, side, 'K', '🗑️'), 'Tråd', DOK('Innlegget'))
+    const kommentar = await nyKommentar(bo, id, null, 'Kommentaren')
+    await sql(admin, 'select public.skjul_i_diskusjon($1, null)', [id])
+    await sql(admin, 'select public.skjul_i_diskusjon($1, $2)', [id, kommentar])
+
+    expect(await feilFra(() => sql(bo, 'select public.fjern_skjult_i_diskusjon($1, $2)', [id, kommentar]))).toMatchObject({ code: '42501' })
+    await sql(admin, 'select public.fjern_skjult_i_diskusjon($1, null)', [id])
+    await sql(admin, 'select public.fjern_skjult_i_diskusjon($1, $2)', [id, kommentar])
+
+    const etter = await traad(admin, id)
+    expect(etter).toMatchObject({ skjult: true, kan_vises: false, tekst: null })
+    expect(etter!.kommentarer).toMatchObject([{ skjult: true, kan_vises: false, tekst: null }])
+    expect(await feilFra(() => sql(admin, 'select public.vis_i_diskusjon($1, $2)', [id, kommentar]))).toMatchObject({ code: 'P0002' })
+  })
+
+  it('lar heller ikke en administrator skjule, vise igjen eller fjerne noe i en arkivert tråd', async () => {
+    const side = nySide()
+    const id = await nyTraad(ada, side, await nyKategori(ada, side, 'K', '🧊'), 'Tråd', DOK('Innlegget'))
+    const kommentar = await nyKommentar(bo, id, null, 'Kommentaren')
+    await sql(admin, 'select public.skjul_i_diskusjon($1, null)', [id])
+    await arkiver(ada, id)
+
+    for (const funksjon of ['skjul_i_diskusjon', 'vis_i_diskusjon', 'fjern_skjult_i_diskusjon']) {
+      for (const k of [null, kommentar]) {
+        expect(await feilFra(() => sql(admin, `select public.${funksjon}($1, $2)`, [id, k]))).toMatchObject({ code: '42501' })
+      }
+    }
+    expect(await traad(admin, id)).toMatchObject({ skjult: true, kan_vises: true })
+    expect((await traad(admin, id))!.kommentarer).toMatchObject([{ skjult: false }])
+
+    // Hentet tilbake kan det vises igjen.
+    await arkiver(ada, id, false)
+    await sql(admin, 'select public.vis_i_diskusjon($1, null)', [id])
+    expect(await traad(cy, id)).toMatchObject({ skjult: false, tekst: JSON.parse(DOK('Innlegget')) })
+  })
+
+  it('glemmer den skjulte teksten når kommentaren slettes', async () => {
+    const side = nySide()
+    const id = await nyTraad(ada, side, await nyKategori(ada, side, 'K', '🧽'), 'Tråd')
+    const forelder = await nyKommentar(bo, id, null, 'Med svar')
+    await nyKommentar(cy, id, forelder, 'Svaret')
+    const alene = await nyKommentar(bo, id, null, 'Uten svar')
+    await sql(admin, 'select public.skjul_i_diskusjon($1, $2)', [id, forelder])
+    await sql(admin, 'select public.skjul_i_diskusjon($1, $2)', [id, alene])
+
+    // Den med svar står igjen som «Slettet», den uten svar er borte.
+    await sql(bo, 'delete from public.diskusjonskommentarer where id = any($1)', [[forelder, alene]])
+    expect((await traad(admin, id))!.kommentarer.find((k) => k.id === forelder)).toMatchObject({ slettet: true, skjult: false, kan_vises: false })
+    expect(await sql(admin, 'select 1 from public.diskusjon_skjulte_tekster where diskusjon_id = $1', [id])).toEqual([])
   })
 
   it('lar den som startet tråden slette den før andre har skrevet i den, og en administrator alltid', async () => {

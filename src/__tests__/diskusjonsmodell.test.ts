@@ -145,6 +145,23 @@ describe('lesingen', () => {
     const rad = { id: 't', side: 'stoff:x', tittel: 'T', tekst, skjult: false, opprettet_kl: 'k', lest_kl: 'l', kommentarer: [] }
     expect(lesDiskusjonstraad(rad)?.tekst.content?.[0]?.content?.[0]?.text).toBe('Hei')
     expect(lesDiskusjonstraad({ ...rad, skjult: true })?.tekst.content?.[0]?.content).toBeUndefined()
+    // Om det skjulte kan vises igjen, gjelder bare det som er skjult.
+    expect(lesDiskusjonstraad({ ...rad, skjult: true, kan_vises: true })?.kan_vises).toBe(true)
+    expect(lesDiskusjonstraad({ ...rad, kan_vises: true })?.kan_vises).toBe(false)
+    const kommentar = { id: 'k', tekst, slettet: false, opprettet_kl: 'k' }
+    const kommentarer = lesDiskusjonstraad({
+      ...rad,
+      kommentarer: [
+        { ...kommentar, id: 'a', skjult: true, kan_vises: true },
+        { ...kommentar, id: 'b', skjult: true },
+        { ...kommentar, id: 'c', kan_vises: true },
+      ],
+    })?.kommentarer
+    expect(kommentarer?.map((k) => [k.id, k.skjult, k.kan_vises])).toEqual([
+      ['a', true, true],
+      ['b', true, false],
+      ['c', false, false],
+    ])
     expect(lesDiskusjonstraad({ ...rad, side: 'feil' })).toBeNull()
     expect(lesDiskusjonstraad(null)).toBeNull()
   })

@@ -11,7 +11,7 @@ import {
   settHjerte,
   settTekst,
   settTittel,
-  skjulInnhold,
+  skjuling,
   slettDiskusjon,
   slettKommentar,
   type Kategorivalg,
@@ -34,7 +34,7 @@ import { Forfatterbilde, useForfatternavn, useForfatterkontekst } from '../traad
 import { Kommentartraad, type Fremheving, type Kommentarkanal } from '../traad/Kommentartraad'
 import { Langtekst } from '../traad/Langtekst'
 import { Kopilenkeknapp } from '../direktelenker/Kopilenkeknapp'
-import { Bekreftknapp, Hjerteknapp, Idehandling, Slettknapp, Tidspunkt } from '../traad/Smadeler'
+import { Bekreftknapp, Hjerteknapp, Idehandling, Skjulehandlinger, Slettknapp, Tidspunkt } from '../traad/Smadeler'
 import { Flytteskjema } from './Skjemaer'
 
 const DATO = new Intl.DateTimeFormat('nb-NO', { day: 'numeric', month: 'long', year: 'numeric' })
@@ -50,7 +50,8 @@ const DATO = new Intl.DateTimeFormat('nb-NO', { day: 'numeric', month: 'long', y
  * tråden, kan slette den til noen andre har skrevet i den; en administrator
  * kan slette alle. En administrator kan også skjule innholdet i et innlegg
  * eller en kommentar, for eksempel pasientopplysninger som havnet der ved en
- * feil: teksten fjernes for godt, og en merknad står igjen.
+ * feil: en merknad står i stedet. Det skjulte kan vises igjen, eller fjernes
+ * for godt.
  *
  * En arkivert tråd kan leses, men ikke endres, før den er hentet tilbake.
  *
@@ -141,7 +142,7 @@ export function Diskusjonsside({
       slett: (kommentar) => slettKommentar(kommentar),
       // Ingen kan slette andres kommentarer i diskusjonene, heller ikke en administrator.
       adminSletter: false,
-      skjul: (kommentar) => skjulInnhold(id, kommentar),
+      skjuling: (handling, kommentar) => skjuling[handling](id, kommentar),
     }),
     [id],
   )
@@ -266,14 +267,13 @@ export function Diskusjonsside({
         {kanSletteDiskusjon(traad, meg.id, admin) && (
           <Slettknapp hva="tråden" onSlett={() => void utfor(() => slettDiskusjon(traad.id), onSlettet)} />
         )}
-        {admin && !eier && !traad.skjult && !arkivert && (
-          <Bekreftknapp
-            ikon="skjul"
-            tekst="Skjul"
-            bekreftTekst="Bekreft skjuling"
-            etikett="Skjul innholdet i innlegget"
-            bekreftEtikett="Bekreft at innholdet i innlegget skjules for godt"
-            onBekreft={() => void utfor(() => skjulInnhold(traad.id, null))}
+        {admin && !eier && !arkivert && (
+          <Skjulehandlinger
+            hva="innlegget"
+            skjulTekst="Skjul innlegget"
+            skjult={traad.skjult}
+            kanVises={traad.kan_vises}
+            onHandling={(handling) => void utfor(() => skjuling[handling](traad.id, null))}
           />
         )}
       </div>

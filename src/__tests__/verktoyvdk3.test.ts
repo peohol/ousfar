@@ -22,6 +22,7 @@ import {
 import { VERKTOY } from '../verktoy/register'
 import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from '../verktoy/regler/aksepttest'
 import { erKliniskGodkjent, fingeravtrykk, kontrollutfall } from '../verktoy/regler/godkjenning'
+import { FAKTUMRETTELSER } from '../verktoy/regler/bygg'
 import { NEDTRAPPINGSDISPOSISJON } from '../verktoy/regler/nedtrapping'
 import { REGELSETT, tilgjengelighet } from '../verktoy/tilgjengelighet'
 
@@ -31,13 +32,20 @@ const regel = (id: string) => REGELSETT.regler.find((r) => r.id === id)!
 const PLANER = omfangsplaner(FORSLAG_1, uttrekkene)
 
 describe('Regelversjonene til kontroll', () => {
-  it('er de fire i VDK-2-planen, med versjonen og fingeravtrykket kontrolløren vurderte 31.10.2026', () => {
+  it('er de fire i VDK-2-planen, i versjonen etter rettelsen av RCPsych-faktumet, som kontrolløren vurderte 03.11.2026; versjonen før ble vurdert 31.10.2026', () => {
     const plan = les('docs/verktøy-vdk2-prioritering.md')
+    const rettelsen = FAKTUMRETTELSER[0]!.kontroll!.disposisjon
     expect(FORSLAG_1.regler.map((k) => k.id)).toEqual(['seponering-amitriptylin', 'seponering-nortriptylin', 'seponering-escitalopram', 'seponering-escitalopram-langsom'])
     for (const k of FORSLAG_1.regler) {
-      expect(regel(k.id).versjon, k.id).toBe(k.versjon)
-      expect(fingeravtrykk(regel(k.id)), `${k.id} er endret; kontrollgrunnlaget gjelder ikke lenger`).toBe(k.fingeravtrykk)
-      expect(NEDTRAPPINGSDISPOSISJON.regler[k.id]).toMatchObject({ versjon: k.versjon, fingeravtrykk: k.fingeravtrykk })
+      const r = regel(k.id)
+      expect(r.versjon, k.id).toBe(k.versjon)
+      expect(fingeravtrykk(r), `${k.id} er endret; kontrollgrunnlaget gjelder ikke lenger`).toBe(k.fingeravtrykk)
+      expect(rettelsen.regler[k.id]).toMatchObject({ versjon: k.versjon, fingeravtrykk: k.fingeravtrykk })
+      expect(r.godkjenning.historikk.at(-1), k.id).toMatchObject({ status: 'ikke_godkjent', dato: '2026-11-03', regelversjon: k.versjon, fingeravtrykk: k.fingeravtrykk })
+      // Versjonen før rettelsen, som bare skiller seg i faktumet, ble vurdert 31.10.2026, og den vurderingen står i historikken.
+      const vurdert = NEDTRAPPINGSDISPOSISJON.regler[k.id]!
+      expect(vurdert.versjon, k.id).toBe(k.versjon - 1)
+      expect(r.godkjenning.historikk, k.id).toContainEqual(expect.objectContaining({ status: 'ikke_godkjent', dato: '2026-10-31', regelversjon: vurdert.versjon, fingeravtrykk: vurdert.fingeravtrykk }))
       expect(plan).toContain(`| \`${k.id}\` | ${k.versjon} | \`${k.fingeravtrykk}\` |`)
     }
   })
