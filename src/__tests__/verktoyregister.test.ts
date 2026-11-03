@@ -12,6 +12,7 @@ import { planTekst, planvisning } from '../verktoy/planvisning'
 import { finnVirkestoff, KARTLEGGING, sokVerktoy, VERKTOY, verktoyFor, virkestoffvalg } from '../verktoy/register'
 import { NEDTRAPPINGSSETT } from '../verktoy/regler/nedtrapping'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
+import { snarvalg } from '../verktoy/snarvalg'
 import { REGELSETT, regeloversikt, reglerFor, tilgjengelighet, type Verktoyvalg } from '../verktoy/tilgjengelighet'
 import { godkjennITest, TEST_DEPOT, TEST_KRYSS, TEST_NEDTRAPPING, TESTKLOKKE, testFest, testsett } from './hjelp/verktoyplan'
 
@@ -191,6 +192,31 @@ describe('Regelstatusen', () => {
     expect(tilgjengelighet(TRAPPE_NED!, { fra: v('escitalopram') }, testsett(r))).toMatchObject({ status: 'fagtekst', regler: [r] })
     // Oversikten sier det samme: en godkjent regel uten beregning kan ikke beregnes, og venter ikke på kontroll.
     expect(regeloversikt(TRAPPE_NED!, testsett(r))).toEqual({ tilgjengelige: 0, ikkeGodkjent: 0, tilKontroll: 0 })
+  })
+})
+
+describe('Snarvalgene (VDR-3)', () => {
+  it('er nøyaktig valgene som gir beregning eller godkjent fagtekst, med beregningene først', () => {
+    expect(VERKTOY.map((x) => snarvalg(x).map((s) => [s.status, s.tekst]))).toEqual([
+      [
+        ['tilgjengelig', 'Vortioksetin'],
+        ['fagtekst', 'Agomelatin'],
+        ['fagtekst', 'Bupropion'],
+      ],
+      [['tilgjengelig', 'Sertralin → mirtazapin']],
+      [
+        ['tilgjengelig', 'Aripiprazol: peroral → depotinjeksjon'],
+        ['tilgjengelig', 'Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)'],
+      ],
+    ])
+    expect(snarvalg(BYTTE_AP!)[0]!.valg).toEqual({ fra: v('aripiprazol'), til: v('aripiprazol', 'LA') })
+    // Hvert snarvalg gir samme status når det kontrolleres som et valg; det avgjør ingenting selv.
+    for (const x of VERKTOY) for (const s of snarvalg(x)) expect(tilgjengelighet(x, s.valg).status).toBe(s.status)
+  })
+
+  it('følger regelsettet: en regel godkjent bare i testen gir et snarvalg der, ikke i appen', () => {
+    expect(snarvalg(TRAPPE_NED!, testsett(TEST_NEDTRAPPING)).map((s) => s.tekst)).toContain('Escitalopram')
+    expect(snarvalg(TRAPPE_NED!).map((s) => s.tekst)).not.toContain('Escitalopram')
   })
 })
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef, type MouseEvent, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react'
 import { rullTilKort } from '../hooks/useKortHopp'
 import { Ikon } from './ikon/Ikon'
 import type { Ikonnavn } from './ikon/register'
@@ -8,6 +8,8 @@ export interface DetailsProps {
   summary: string
   /** Ikonet foran overskriften. */
   ikon?: Ikonnavn
+  /** Åpen fra start, f.eks. når den har innhold brukeren selv har fylt inn. Gjelder bare første visning. */
+  startApen?: boolean
   children: ReactNode
 }
 
@@ -27,10 +29,11 @@ export interface DetailsProps {
  * rekker, slik at lesingen kan begynne med en gang. Rullingen venter til
  * glidningen er over: først da vet vi hvor høyt innholdet ble.
  */
-export function Details({ summary, ikon, children }: DetailsProps) {
+export function Details({ summary, ikon, startApen = false, children }: DetailsProps) {
   const detaljer = useRef<HTMLDetailsElement>(null)
   const kropp = useRef<HTMLDivElement>(null)
   const rydder = useRef<() => void>()
+  const [apenFraStart] = useState(startApen)
 
   useEffect(() => () => rydder.current?.(), [])
 
@@ -82,7 +85,8 @@ export function Details({ summary, ikon, children }: DetailsProps) {
   }
 
   return (
-    <details ref={detaljer} className="detalj">
+    // `open` settes bare i første visning; etterpå styres den av `veksle`.
+    <details ref={detaljer} className="detalj" {...(apenFraStart && { open: true })}>
       <summary className="detalj__tittel" data-ih="" onClick={veksle}>
         {ikon && <Ikon navn={ikon} className="detalj__ikon" />}
         <span className="detalj__tekst">{summary}</span>
