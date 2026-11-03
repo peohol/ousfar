@@ -2,11 +2,11 @@
 
 **Opprettet:** 27.10.2026  
 **Status (03.11.2026):** P1–P6 er etablert; P12.1/VDR-1–VDR-5 er gjennomført, mens klinisk dekning fortsatt er svært begrenset. **Ny styrende plan for klinisk funksjon, prioriteringer og ferdigkriterier:** [Klinisk leveranseplan 03.11.2026](verktøy-klinisk-leveranseplan-2026-11.md). Den gjelder foran P7–P10 og VDK-prioriteringer her ved motstrid. De historiske fremdriftslinjene nedenfor beskriver det som faktisk ble gjort, og betyr ikke at de kliniske verktøyene er ferdige.  
-**Omfang:** Tre første verktøy, felles regel- og beregningsmotor, kildedata og videre drift  
+**Omfang:** Historisk P0–P12-plan for de tre først bygde verktøyene. Den gjeldende kliniske leveranseplanen omfatter fire brukerrettede verktøy (inkludert kombinering av stemningsstabiliserende).  
 **Hovedansvar for implementering og oppdatering av denne planen:** Claude Code  
 **Uavhengig faglig kontroll:** ChatGPT, etter eksplisitt forespørsel ved kontrollpunktene nedenfor
 
-Dette er prosjektets **kanoniske fremdriftsplan**. Oppgaver krysses av først når resultatet finnes i repoet eller i en dokumentert kjøring. Hver gjennomførings-PR skal oppdatere relevant sjekkliste, evidens/kontroll og PR-lenke her. Arbeidet skal ikke deklareres ferdig på grunnlag av en plan eller en bestått byggtest alene.
+Dette er prosjektets **historiske fremdriftsplan for P0–P12**. For videre klinisk produktutvikling gjelder den nye [kliniske leveranseplanen](verktøy-klinisk-leveranseplan-2026-11.md) ved motstrid. Oppgaver krysses av først når resultatet finnes i repoet eller i en dokumentert kjøring. Hver gjennomførings-PR skal oppdatere relevant sjekkliste, evidens/kontroll og PR-lenke her. Arbeidet skal ikke deklareres ferdig på grunnlag av en plan eller en bestått byggtest alene.
 
 ## 1. Mål og ufravikelig avgrensning
 
