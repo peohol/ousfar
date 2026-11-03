@@ -12,13 +12,24 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.119.1',
+    versjon: '1.119.2',
     dato: '2026-11-03',
     sammendrag: 'Prøven av kildeovervåkingen avsluttet',
     typer: ['Funksjonalitet'],
     omfang: 'Minimalt omfang',
     punkter: [
       'Ingen endring i appen. Den syntetiske prøvesaken i kildeovervåkingen er avsluttet som prøve, og den gamle prøven av fristene, som ikke lenger finnes, er merket som utgått i fremdriftsplanen.',
+    ],
+    utenVarsel: true,
+  },
+  {
+    versjon: '1.119.1',
+    dato: '2026-11-03',
+    sammendrag: 'Tidligere varsel til teknisk ansvarlig når den nattlige FEST-oppdateringen feiler',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i det brukerne ser. Når den nattlige oppdateringen av legemiddeldataene fra FEST feiler, lagres det nå hvor langt den kom og om en ny fil var oppdaget. En daglig kontroll varsler teknisk ansvarlig allerede etter første natt som feiler, eller når den ikke får lest statusen, lenge før verktøyene stopper etter 48 timer uten oppdaterte data. Grensen på 48 timer er uendret.',
     ],
     utenVarsel: true,
   },

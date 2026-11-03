@@ -161,8 +161,31 @@ kobling blir sjeldnere), justeres terskelen i `strukturvakt.ts`.
   (`FEST_FORELDET_ETTER_TIMER` i `src/legemiddeldata/referanser.ts`), står
   det en melding øverst i «Preparater» om at nyere endringer i FEST kan
   mangle. Da har minst én natt feilet eller ikke gått.
-- En daglig Claude-rutine leser de siste kjøringene og sier fra i prosjektet
-  når siste kjøring feilet, eller når ingen har gått bra det siste døgnet.
+- En kjøring som feiler, lagrer også trinnet den stoppet i (`trinn`: kontakt,
+  nedlasting, lesing eller innbytte) og om FEST ga en annen fil enn forrige
+  vellykkede (`ny_fil`: ja, nei eller ukjent), med ETag og kontrollsum.
+  `legemiddeldata_status` viser `trinn` og `ny_fil`. Dette er driftsdata. Det
+  endrer ikke `kontrollert_kl`, 48-timersgrensen eller hvilken ETag neste
+  kjøring spør med, for de leser bare vellykkede kjøringer. At ingen ny fil er
+  kjent, betyr ikke at ingen finnes (`docs/verktøy-vdr4-tilgjengelighet.md`).
+- **Den tekniske vakten** (`src/legemiddeldata/vakt.ts`,
+  `npm run legemiddeldata:vakt`) leser de siste kjøringene med den hemmelige
+  nøkkelen og sier fra når siste kjøring feilet, en kjøring har stått
+  uavsluttet i over en time, eller ingen har gått bra de siste 26 timene. Den
+  sier også når verktøyene slutter å beregne (48 timer etter siste vellykkede).
+  Avslutningskoden er 0 når alt er i orden, 1 når noe må følges opp, og 2 når
+  statusen ikke kunne leses. `-- --prove` prøver hele varslingen med en
+  syntetisk feilet kjøring i minnet, uten å lese eller skrive noe, og
+  `-- --prove-lesefeil` prøver den med en syntetisk lesefeil (kode 2).
+- **Varslingen.** Den planlagte oppgaven «FEST-vakt: daglig kontroll» i Claude
+  Code kjører vakten hver morgen 06:07 UTC i en ny økt. Teksten står i
+  `scripts/legemiddeldata-vakt-oppgave.md`. Oppgaven sender et push-varsel
+  til eieren av kontoen (teknisk ansvarlig) ved kode 1 og 2, og også når
+  skriptet ikke kan kjøres. Ved kode 0 er den stille. Det er ikke en sak for
+  redaktøren. Ende-til-ende-prøvene og utfallet av dem står i §10 i
+  `docs/verktøy-vdr4-tilgjengelighet.md`. Den gamle daglige
+  Claude-rutinen sto stille fra 29.09.2026, fordi den var bundet til en
+  avsluttet tråd og lesingen den brukte, ble avvist.
 - Administratorene ser FEST i «Datakilder» (adminmenyen): tilstanden, siste
   vellykkede henting, datoen for uttrekket, de siste kjøringene og feilen fra
   siste som feilet (`docs/datakilder.md`).

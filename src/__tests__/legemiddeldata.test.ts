@@ -359,6 +359,69 @@ describe('synkroniseringen', () => {
     expect(status.map((s) => s.status)).toEqual(['feilet', 'feilet', 'feilet', 'fullfort'])
   })
 
+  it('lagrer hvor langt en feilet kjøring kom og om en ny fil var oppdaget, uten å endre hva som regnes som kontrollert (VDR-4 F4)', async () => {
+    await synk(UTDRAG, '"a"')
+    const fore = await lesAmitriptylin()
+    const lager = lagLegemiddellager(tjeneste)
+    const feilet = async (hent: typeof fetch) => {
+      const r = await synkroniserFest({ lager, hent })
+      if (r.status !== 'feilet') throw new Error(JSON.stringify(r))
+      return { trinn: r.trinn, ny_fil: r.ny_fil }
+    }
+    // FEST svarer ikke: ukjent om det finnes en ny fil.
+    expect(await feilet(async () => svar('nede', 503))).toEqual({ trinn: 'kontakt', ny_fil: null })
+    // En annen fil som ikke kan leses: en ny fil er oppdaget.
+    expect(await feilet(async () => svar(Buffer.from('tull'), 200, { etag: '"b"' }))).toEqual({ trinn: 'lesing', ny_fil: true })
+    // Den samme filen som sist, men lest med en ny parser som feiler i innbyttet: ingen ny fil.
+    await db.query('update legemiddeldata.synkroniseringer set parserversjon = $1 where status <> $2', [PARSERVERSJON - 1, 'feilet'])
+    const avvisende = { ...lager, fullfor: async () => { throw new Error('innbyttet feilet i testen') } }
+    const r = await synkroniserFest({ lager: avvisende, hent: async () => svar(lagZip('fest251.xml', UTDRAG), 200, { etag: '"a"' }) })
+    expect(r).toMatchObject({ status: 'feilet', trinn: 'innbytte', ny_fil: false })
+
+    const status = (await leser('legemiddeldata_status', {})) as { status: string; trinn: string | null; ny_fil: boolean | null }[]
+    expect(status.map((s) => [s.status, s.trinn, s.ny_fil])).toEqual([
+      ['feilet', 'innbytte', false],
+      ['feilet', 'lesing', true],
+      ['feilet', 'kontakt', null],
+      ['fullfort', null, null],
+    ])
+    expect(status.every((s) => !('etag' in s))).toBe(true)
+    // Det som er lest og når kopien sist ble kontrollert, er det samme som før feilene.
+    expect(await lesAmitriptylin()).toEqual(fore)
+    // Neste kjøring spør fortsatt med ETag-en fra forrige vellykkede, ikke fra den som feilet.
+    await db.query('update legemiddeldata.synkroniseringer set parserversjon = $1', [PARSERVERSJON])
+    expect(await tjeneste('legemiddeldata_forrige_synk', { kilde: 'FEST' })).toMatchObject({ etag: '"a"' })
+
+    // FEST bekrefter at filen er uendret (304 eller samme kontrollsum), men lagringen feiler: det er innbyttet.
+    const uendretFeiler = { ...lager, uendret: async () => { throw new Error('lagringen feilet i testen') } }
+    expect(await synkroniserFest({ lager: uendretFeiler, hent: async () => svar(null, 304) })).toMatchObject({ status: 'feilet', trinn: 'innbytte', ny_fil: false })
+    expect(await synkroniserFest({ lager: uendretFeiler, hent: async () => svar(lagZip('fest251.xml', UTDRAG), 200, { etag: '"a"' }) })).toMatchObject({ status: 'feilet', trinn: 'innbytte', ny_fil: false })
+    const { rows } = await db.query<{ etag: string | null; sha256: string | null }>('select etag, sha256 from legemiddeldata.synkroniseringer order by id desc limit 2')
+    expect(rows.every((r) => r.etag === '"a"' && /^[0-9a-f]{64}$/.test(r.sha256 ?? ''))).toBe(true)
+  })
+
+  it('avbryter en kjøring også mot en database uten den nye utgaven av avbrytingen', async () => {
+    await synk(UTDRAG)
+    const gammel: Databasekall = async (funksjon, argumenter) => {
+      if (funksjon === 'legemiddeldata_avbryt_synk' && 'fil' in argumenter) throw new Error('legemiddeldata_avbryt_synk: function not found')
+      return tjeneste(funksjon, argumenter)
+    }
+    expect(await synkroniserFest({ lager: lagLegemiddellager(gammel), hent: async () => svar('nede', 503) })).toMatchObject({ status: 'feilet' })
+    const status = (await leser('legemiddeldata_status', {})) as { status: string; trinn: string | null }[]
+    expect(status[0]).toMatchObject({ status: 'feilet', trinn: null })
+  })
+
+  it('lar bare serveren avbryte med opplysningene om filen, og godtar bare kjente verdier', async () => {
+    const synkId = await tjeneste('legemiddeldata_start_synk', { kilde: 'FEST' })
+    expect(await feilFra(() => leser('legemiddeldata_avbryt_synk', { synk: synkId, feil: 'x', fil: {} }))).toMatchObject({ code: '42501' })
+    await tjeneste('legemiddeldata_avbryt_synk', { synk: synkId, feil: 'x', fil: { trinn: 'ukjent', ny_fil: 'ja', sha256: 'ikke en kontrollsum', etag: '"e"' } })
+    const { rows } = await db.query<{ trinn: string | null; ny_fil: boolean | null; sha256: string | null; etag: string | null }>(
+      'select trinn, ny_fil, sha256, etag from legemiddeldata.synkroniseringer where id = $1',
+      [synkId],
+    )
+    expect(rows).toEqual([{ trinn: null, ny_fil: null, sha256: null, etag: '"e"' }])
+  })
+
   it('spør med ETag og gjør ingenting når filen er uendret', async () => {
     await synk(UTDRAG, '"a"')
     let spurt: string | null = null
@@ -823,7 +886,7 @@ describe('endepunktet for synkroniseringen', () => {
     expect(ok.status).toBe(200)
     expect(await ok.json()).toEqual({ status: 'uendret', synk: 7 })
     const feilet = await behandleSynk(kall('Bearer hemmelig'), miljo, {
-      synkroniser: async () => ({ status: 'feilet', synk: 8, feil: 'x' }),
+      synkroniser: async () => ({ status: 'feilet', synk: 8, feil: 'x', trinn: 'kontakt', ny_fil: null }),
     })
     expect(feilet.status).toBe(502)
     // Svaret har ingen hemmeligheter, bare det som også står i loggen.
