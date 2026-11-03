@@ -7,7 +7,7 @@
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { Entitetnavn } from './fest.js'
-import type { Filinfo, ForrigeSynk, Innlastingsrad, Legemiddellager, Opptelling } from './synk.js'
+import type { Feilinfo, Filinfo, ForrigeSynk, Innlastingsrad, Legemiddellager, Opptelling } from './synk.js'
 
 /** Et kall til en databasefunksjon med navngitte argumenter. Kaster ved feil. */
 export type Databasekall = (funksjon: string, argumenter: Record<string, unknown>) => Promise<unknown>
@@ -35,8 +35,15 @@ export function lagLegemiddellager(kall: Databasekall): Legemiddellager {
     uendret: async (synk: number, fil: Filinfo) => {
       await kall('legemiddeldata_uendret_synk', { synk, fil })
     },
-    avbryt: async (synk: number, feil: string) => {
-      await kall('legemiddeldata_avbryt_synk', { synk, feil })
+    // Med det som er kjent om filen; mot en database uten den utgaven av
+    // funksjonen ennå (appen kan bli publisert før migrasjonen) avbrytes
+    // kjøringen likevel, bare med feilteksten.
+    avbryt: async (synk: number, feil: string, info: Feilinfo) => {
+      try {
+        await kall('legemiddeldata_avbryt_synk', { synk, feil, fil: info })
+      } catch {
+        await kall('legemiddeldata_avbryt_synk', { synk, feil })
+      }
     },
   }
 }

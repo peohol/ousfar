@@ -173,4 +173,11 @@ Hver del gjennomføres i en egen PR med egen kontroll, og ingen PR slås sammen 
 1. **S6, N1 og K6** (verktøysiden og testene i §8, og oppdatering av §4 og §7 i `docs/verktøy-p11-publisering.md`).
 2. **F4** (FEST-synkroniseringen, «Datakilder», en teknisk vakt som faktisk kjører, og ende-til-ende-prøven).
 
+**F4, gjennomføring (03.11.2026, til kontroll):**
+
+- *Feilstatus:* en FEST-kjøring som feiler, lagrer trinnet den stoppet i og om en ny fil var oppdaget (`ny_fil`), med ETag og kontrollsum. Dette skjer i migrasjonen `20261103030000_fest_feilinfo.sql`, i en ny utgave av `legemiddeldata_avbryt_synk` med tre argumenter. Den gamle utgaven står, så en server med eldre kode fortsatt kan avbryte, og den nye koden faller tilbake til den gamle hvis migrasjonen ikke er kjørt ennå. `kontrollert_kl`, 48-timersgrensen og ETag-en neste kjøring spør med leser fortsatt bare vellykkede kjøringer, og det er testet.
+- *Vakten:* `src/legemiddeldata/vakt.ts` og `npm run legemiddeldata:vakt` (se `docs/legemiddeldata.md`). Vakten sier fra etter første natt som feilet, når en kjøring henger, eller når ingen kjøring har gått bra på 26 timer, og den sier når verktøyene stopper. Den skriver ingenting og viser ingenting for forskriveren eller redaktøren. Tegnet i Adminmenyen for «Datakilder» er uendret.
+- *Varslingen:* en planlagt oppgave i Claude Code kjører vakten hver morgen i en ny økt og sender et push-varsel til eieren av kontoen (teknisk ansvarlig) bare når noe må følges opp. Den erstatter den gamle oppgaven, som har stått siden 29.09.2026. Oppgaven settes opp etter sammenslåingen, fordi den bruker skriptet fra `main`.
+- *Ende-til-ende-prøven:* etter at oppgaven er satt opp, startes den én gang med beskjed om å bruke `--prove`. Prøven er bestått når push-varselet med «PRØVE» har kommet fram til mottakeren. Resultatet føres i fremdriftsloggen. Til da omtales vakten ikke som virksom.
+
 F2 og S2 gjennomføres ikke. Ingen endring i godkjenninger, regelversjoner, fingeravtrykk, 48-timersgrensen eller nødstoppens database.
