@@ -9,7 +9,7 @@
 - **Fakta med egne ord.** En regel gjengir fakta fra kilden (en dose, en frist, en metode) med egne ord og en henvisning, aldri teksten eller en tabell slik den står. Det gjelder også kilder med åpen lisens, så alle kilder behandles likt.
 - **Registrering.** Tråden som lager regelen, legger kilden inn i `src/verktoy/regler/kilder.ts` i sin egen PR, med id, versjon, `hentet` og `sha256`. Forslagene til id i avsnitt 3 følger mønsteret der. Last ned på nytt den dagen regelen lages; er kontrollsummen endret, er dokumentet revidert og må leses på nytt.
 - **Norsk gjennomførbarhet** kontrolleres i FEST for nøyaktig de preparatene regelen bruker: markedsføring, godkjenningsfritak, styrker, form, delbarhet og flytende former.
-- **Psychiatrienet** er aldri grunnlag for en regel, bare en referanse den kan sammenlignes med (`docs/verktøy-p3-rettigheter.md`).
+- **Egen vurdering.** Regelen bygger på OUSFARs egen farmakologiske og kliniske vurdering av kildene, ikke på kopierte anbefalingstekster. **Psychiatrienet** kan brukes som faglig referanse og kildehenvises da; teksten gjengis aldri. En systematisk masseoverføring av tabellsettet vurderes for seg (`docs/verktøy-p3-rettigheter.md`).
 - **Mangler en kilde, sier verktøyet det.** Der ingen uavhengig kilde gir en verdi, skal regelen stoppe med en konkret grunn, ikke fylle inn en verdi.
 
 ## 1. Kildetyper og bruksrett
@@ -27,8 +27,8 @@
 | **CANMAT/ISBD 2018**, bipolar (Yatham et al., Bipolar Disord 2018;20:97–170, PMC5947163) | Kombinasjoner og tilleggsbehandling ved bipolar lidelse, monitorering | CC BY-NC-ND | Ny; viktig for K4. |
 | **BAP 2016**, bipolar (Goodwin et al., J Psychopharmacol 2016;30:495–553, PMC4922419) | Det samme, britisk | Fri fulltekst, ingen åpen lisens oppgitt | Ny; bare fakta med egne ord. BAP 2015 (depresjon) og BAP 2020 (schizofreni) har ingen fri fulltekst i Europe PMC. |
 | Primær- og oversiktslitteratur (Horowitz og Taylor 2019, Sørensen 2022 m.fl.) | Begrunnelse for hyperbolsk nedtrapping og reseptorbinding | Varierer | Registrert (`horowitz-2019` bare sammendrag, `sorensen-2022` CC BY). Cerovecki et al., CNS Drugs 2013 (seponering og rebound ved bytte av antipsykotika) har ingen fri fulltekst. |
-| **Proprietære samleverk:** Maudsley Prescribing Guidelines og Maudsley Deprescribing Guidelines (Wiley), Felleskatalogen, Norsk legemiddelhåndbok, BNF | Ferdige tabeller for bytte og nedtrapping | Alle rettigheter forbeholdt | **Ikke grunnlag for systematisk regelbygging**, av samme grunn som Psychiatrienet. En kontrollør kan sammenligne med dem, men hver verdi i en regel må finnes i en kilde over. |
-| Psychiatrienet | Switchtabellene | Ingen lisens | Bare referanse (`docs/verktøy-p3-rettigheter.md`). |
+| **Proprietære samleverk:** Maudsley Prescribing Guidelines og Maudsley Deprescribing Guidelines (Wiley), Felleskatalogen, Norsk legemiddelhåndbok, BNF | Ferdige tabeller for bytte og nedtrapping | Alle rettigheter forbeholdt | Kan brukes som faglig referanse med kildehenvisning, men tabellene overføres ikke systematisk, av samme grunn som for Psychiatrienet. Verdiene i en regel kontrolleres mot en primærkilde over. |
+| Psychiatrienet | Switchtabellene | Ingen lisens | Faglig referanse med kildehenvisning. Teksten gjengis aldri, og ingen masseoverføring uten tillatelse eller konkret juridisk avklaring (`docs/verktøy-p3-rettigheter.md`). |
 
 ## 2. Hva hvert verktøy trenger, og hvor det finnes
 
