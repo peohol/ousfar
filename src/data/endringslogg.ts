@@ -34,11 +34,11 @@ export const ENDRINGSLOGG: Endring[] = [
     gjelder: ['verktoy'],
     punkter: [
       'Gjelder bare administratorene, som fortsatt er de eneste som ser verktøyene. Ingen godkjente regler, doser eller godkjenninger er endret.',
-      'Verktøyene viser bare komplette planer, som går helt til sluttmålet: seponert, fast vedlikeholdsdose eller uendret dose. En plan som ikke kommer dit, vises ikke. I stedet står det «Komplett plan ikke tilgjengelig» og hvorfor, og ingen doser vises.',
+      'Verktøyene viser bare komplette planer, som går helt til sluttmålet: seponert, den valgte vedlikeholdsdosen, regelens depotdose eller uendret dose. En plan som ikke kommer nøyaktig dit, for eksempel fordi den ender på en annen dose enn den valgte måldosen, vises ikke. I stedet står det «Komplett plan ikke tilgjengelig» og hvorfor, og ingen doser vises.',
       'Det betyr at to planer som ble vist før, ikke vises lenger: startforløpet for bytte fra sertralin til mirtazapin (regelversjon 10) og den ene reduksjonen av vortioksetin fra 20 til 15 mg (regelversjon 12). Ingen av dem går helt til sluttmålet, så de står heller ikke lenger blant valgene som kan beregnes. Oppstartene av Abilify Maintena og Xeplion vises som før.',
       'En komplett plan sier øverst at den går til sluttmålet, og hva sluttmålet er. Det står også i teksten som kopieres.',
       'Planene kan ha vurderingspunkter, for eksempel en vurdering før hver doseendring eller en kontroll et antall dager etter hver endring eller etter siste dose. De står på riktig dag i tabellen og samlet under «Vurderingspunkter».',
-      'En nedtrapping kan nå gå helt til seponering når regelen har en faglig godkjent avslutning, og bare fra en dose avslutningen gjelder for. Ellers stopper planen som før og sier hvorfor.',
+      'En nedtrapping kan nå gå helt til seponering når regelen har en faglig godkjent avslutning, og bare fra en dose avslutningen gjelder for. Ellers stopper planen som før og sier hvorfor. Mangler en styrke eller et preparat for neste trinn, seponeres legemidlet aldri av den grunn; da er en komplett plan ikke tilgjengelig.',
       'Nytt verktøy «Kombinere stemningsstabiliserende»: det eksisterende legemidlet fortsetter uendret, og planen gjelder oppstart og opptrapping av det som legges til, også med dose annenhver dag. Verktøyet har ingen godkjente regler ennå.',
       'Når et depot byttes til et annet depot, står det i planen at det gamle ikke skal ha flere injeksjoner, og verktøyet ber ikke om legemiddelform for et legemiddel som bare skal stoppes.',
       'Bruker pasienten et depot, spør verktøyet etter dosen per injeksjon i stedet for døgndosen.',
