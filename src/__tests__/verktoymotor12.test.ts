@@ -7,7 +7,7 @@
  */
 import { describe, expect, it } from 'vitest'
 import { beregnDoseplan, formvalgSomTrengs, KOMPLETT_IKKE_TILGJENGELIG, kliniskDelplan, kliniskDoseplan, mellomtrinntekst, sluttmalMangler, type Doseplanresultat, type Praktiskforlop } from '../verktoy/motor/plan'
-import { ALLE_TESTPREPARATER, depotregel, nedtrappingsregel, OMGIVELSE, sp, syntetiskGrunnlag, trinnvalgUtenNull } from '../verktoy/motor/syntetisk'
+import { ALLE_TESTPREPARATER, depotregel, nedtrappingsregel, OMGIVELSE, sp, syntetiskGrunnlag, TESTOKSETIN, trinnvalgUtenNull } from '../verktoy/motor/syntetisk'
 import { doseenhet, mangler, startdosenavn, TOMT_SKJEMA, ubesvart } from '../verktoy/doseplan'
 import { DELPLAN, KOMPLETT, planTekst, planutfall, planvisning, UENDRET } from '../verktoy/planvisning'
 import { VALGTEKSTER, VERKTOY } from '../verktoy/register'
@@ -47,7 +47,7 @@ const delplan = (r: Regel, startdose: number, ekstra: object = {}) => kliniskDel
 const kort = (p: Doseplanresultat) => (p.status === 'doseplan' ? p.forlop.map((f) => [f.perioder.map((x) => `${x.fra}–${x.til ?? '…'}: ${x.mg}${x.hver ? ` hver ${x.hver}.` : ''}`), f.siste_dosedag]) : p.stoppgrunner)
 
 describe('Godkjent avslutning (regelmodell 12)', () => {
-  it('trapper ned til laveste dose og seponerer etter siste trinn, når siste dose ikke er over grensen', () => {
+  it('godkjent regelavslutning: trapper ned til regelens dokumenterte laveste dose og seponerer etter siste trinn, når siste dose ikke er over grensen', () => {
     const r = medAvslutning(5, 5)
     expect(nulltrinnfeil(r)).toEqual([])
     expect(godkjenningsfeil(r)).toEqual([])
@@ -88,6 +88,22 @@ describe('Godkjent avslutning (regelmodell 12)', () => {
     expect(planvisning(p, innenfor)).toBeNull()
     const intern = delplan(innenfor, 20)
     expect(kort(intern)).toEqual([[['1–14: 10', '15–28: 5', '29–42: 2.5', '43–…: 1.25'], null]])
+    expect(intern.status === 'doseplan' && intern.forlop[0]!.siste_dosedag).toBeNull()
+  })
+
+  it('stopper uten seponering når en styrke forsvinner fra FEST, også der planen var komplett med alle styrkene', () => {
+    const r = medAvslutning(5, 5, 'styrke')
+    // Med alle styrkene: 20 → 10 → 5 mg og seponering etter regelens avslutning.
+    expect(kort(plan(r, 20))).toEqual([[['1–14: 10', '15–28: 5'], 28]])
+    // Uten 5 mg (bare 20 mg delt i to): 10 mg kan gis, 5 mg kan ikke. Planen seponerer ikke fra 10 mg og gir ingen kopierbar plan.
+    const bare20 = syntetiskGrunnlag([{ ...TESTOKSETIN.find((x) => x.id === 'OKS-TAB20')!, deling: '2' }], { kontrollert_kl: '2026-11-01T04:20:00Z', kildedato: '2026-10-15' })
+    const g = { ...bare20, utvalg: { ...bare20.utvalg, kilde: 'FEST' } }
+    const p = kliniskDoseplan(r, { startdose_mg: 20, formvalg: TABLETT }, g, OMGIVELSE)
+    expect(p.status).toBe('stoppet')
+    expect(p.status === 'stoppet' && p.stoppgrunner.join(' ')).toMatch(/^Komplett plan ikke tilgjengelig: testoksetin: /)
+    expect('forlop' in p).toBe(false)
+    expect(planvisning(p, r)).toBeNull()
+    const intern = kliniskDelplan(r, { startdose_mg: 20, formvalg: TABLETT }, g, OMGIVELSE)
     expect(intern.status === 'doseplan' && intern.forlop[0]!.siste_dosedag).toBeNull()
     const utenfor = medAvslutning(1, undefined, 'utenfor')
     expect(kort(plan(utenfor, 20)).join(' ')).toMatch(/^Komplett plan ikke tilgjengelig: testoksetin: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 1 mg eller lavere \(planen står på 1,25 mg\)\.$/)
@@ -612,6 +628,11 @@ describe('Komplett betyr det konkrete sluttmålet (ChatGPTs kontroll av 30eadd5)
     // En klinisk vurdering gjenstår (individuell avslutning).
     expect(sluttmalMangler(forlop({ mal: { type: 'seponert' }, avslutning: 'Vurderes individuelt.', avslutning_kort: 'avslutning vurderes individuelt' }))).toBe('avslutning vurderes individuelt')
     expect(sluttmalMangler(forlop({ mal: { type: 'uendret', mg: 20 }, siste_dosedag: null, uendret_mg: 25 }))).toBe('planen holder ikke dosen uendret på 20 mg')
+    // Målet kontrolleres også mot forskriverens måldose slik den er gitt inn.
+    const vedlikehold = forlop({ mal: { type: 'vedlikehold', mg: 30, maldose: true }, siste_dosedag: null, perioder: [periode(1, null, 30)] })
+    expect(sluttmalMangler(vedlikehold, { maldose_mg: 30 })).toBeUndefined()
+    expect(sluttmalMangler(vedlikehold, { maldose_mg: 45 })).toBe('målet 30 mg er ikke forskriverens måldose 45 mg')
+    expect(sluttmalMangler(vedlikehold, {})).toBe('forskriverens måldose mangler')
   })
 
   it('stopper for klinikeren når tillegget ender på en annen dose enn den valgte måldosen', () => {
@@ -626,6 +647,9 @@ describe('Komplett betyr det konkrete sluttmålet (ChatGPTs kontroll av 30eadd5)
     expect(sist.mg).not.toBe(31)
     const p = kliniskDoseplan(g, { startdose_mg: 20, maldose_mg: 31 }, GRUNNLAG, OMGIVELSE)
     expect(p.status === 'stoppet' && p.stoppgrunner).toEqual([`${KOMPLETT_IKKE_TILGJENGELIG}: testazapin: planen står på ${String(sist.mg).replace('.', ',')} mg, ikke måldosen 31 mg.`])
+    // Stopp uten kopierbar plan.
+    expect('forlop' in p).toBe(false)
+    expect(planvisning(p, g)).toBeNull()
     // Med en måldose som kan gis nøyaktig, er planen komplett.
     expect(kliniskDoseplan(g, { startdose_mg: 20, maldose_mg: 30 }, GRUNNLAG, OMGIVELSE).status).toBe('doseplan')
   })
