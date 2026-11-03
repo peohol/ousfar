@@ -340,6 +340,57 @@ describe('plassene i toppmenyen', () => {
     expect(faarPlass([500, 160, 300], 6, 971)).toBe(false)
   })
 
+  it('flytter plassene til dokken når flaten blir smal, også midt i et søk på siden', () => {
+    // jsdom har ingen bredder, så bare den smale flaten kan sende plassene i dokken.
+    const flate = { smal: false }
+    vi.stubGlobal('matchMedia', (sporring: string) => ({
+      get matches() {
+        return sporring.includes('max-width') && flate.smal
+      },
+    }))
+    const rot = document.documentElement
+    render(
+      <Ramme>
+        <ToppmenyKilde>
+          <Toppmeny meny={null} konto={null} />
+          <ToppmenyInnhold spor="sidesok">
+            <div className="sidesok">
+              <input aria-label="Søk i siden" />
+            </div>
+          </ToppmenyInnhold>
+          <ToppmenyInnhold spor="lukk">
+            <button type="button">Lukk</button>
+          </ToppmenyInnhold>
+        </ToppmenyKilde>
+      </Ramme>,
+    )
+    const endreBredde = (smal: boolean) => {
+      flate.smal = smal
+      act(() => void window.dispatchEvent(new Event('resize')))
+    }
+    expect(rot.hasAttribute('data-dokk')).toBe(false)
+
+    const sok = screen.getByRole('textbox', { name: 'Søk i siden' })
+    act(() => sok.focus())
+    endreBredde(true)
+    expect(document.activeElement).toBe(sok)
+    expect(rot.hasAttribute('data-dokk')).toBe(true)
+
+    // Bredere igjen midt i søket: menyen flytter seg ikke under markøren.
+    endreBredde(false)
+    expect(rot.hasAttribute('data-dokk')).toBe(true)
+    act(() => sok.blur())
+    endreBredde(false)
+    expect(rot.hasAttribute('data-dokk')).toBe(false)
+  })
+
+  it('lar fagsøkets rullegardin slutte over dokken også på bredere flater', () => {
+    const css = readFileSync('src/styles/sok.css', 'utf8')
+    expect(css).toMatch(
+      /@media \(width > 47\.5em\) \{\s*:root\[data-dokk\] \.fagsok__rullegardin \{\s*max-height: calc\(100dvh - var\(--toppmeny-offset\) - var\(--dokk-offset\)\);/,
+    )
+  })
+
   it('går over to rader i dokken heller enn å klemme hovedhandlingen', () => {
     const css = readFileSync('src/styles/toppmeny.css', 'utf8')
     expect(css).toMatch(/:root\[data-dokk\] \.toppmeny__kontekst\s*\{[^}]*flex-wrap:\s*wrap/)

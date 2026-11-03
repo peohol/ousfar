@@ -189,7 +189,9 @@ function faarPlassITopp(pille: HTMLElement, dokk: HTMLElement, grupper: readonly
  *   Det kan ikke CSS avgjøre selv: en rad som brytes, gjør boksen rundt like
  *   bred som det er plass til.
  * - Mens det søkes på siden, står valgene slik de var: feltet vokser, og
- *   menyen skal ikke flytte seg under markøren.
+ *   menyen skal ikke flytte seg under markøren. Blir flaten smal midt i et
+ *   søk, flytter plassene likevel til dokken, for der får de ikke plass i
+ *   toppmenyen.
  * - Høyden meldes til resten av appen som `--dokkhoyde`, så siden og det som
  *   står over dokken, gir plass også når den går over to rader. Står plassene
  *   i toppmenyen eller er de tomme, gjelder høyden på én rad fra `tokens.css`.
@@ -208,14 +210,17 @@ function useDokk() {
     const grupper = Array.from(dokk.querySelectorAll<HTMLElement>(':scope > .toppmeny__gruppe'))
     const maal = () => {
       const soker = dokk.querySelector('.sidesok')?.contains(document.activeElement) ?? false
-      if (!soker) {
+      const erSmal = !!smal?.matches
+      // Mens det søkes, står trinnet stille, men på smale flater står plassene
+      // alltid i dokken, også om vinduet blir smalt midt i et søk.
+      if (!soker || (erSmal && !rot.hasAttribute(DOKK))) {
         const naa: Trinn = rot.hasAttribute(DOKK) ? 'dokk' : meny.hasAttribute(KOMPAKT) ? 'kompakt' : 'hel'
         // Knappene er like brede i toppmenyen og i dokken, så hvert trinn kan
         // prøves med bare `data-kompakt`, som bare rører menyen. Mens det
         // måles, står overgangene stille, så bredden som måles, er den
         // knappene får, og ikke en underveis.
         meny.setAttribute(MALER, '')
-        const trinn = velgTrinn(!!smal?.matches, naa, (prov, slingring) => {
+        const trinn = velgTrinn(erSmal, naa, (prov, slingring) => {
           meny.toggleAttribute(KOMPAKT, prov !== 'hel')
           return faarPlassITopp(pille, dokk, grupper, slingring ? SLINGRING : 0)
         })

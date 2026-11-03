@@ -50,6 +50,14 @@
   box-shadow: var(--skygge-modal);
 }
 
+/* Står sidens handlinger i dokken nederst, slutter rullegardinen over den.
+   (På smale flater står den fast i vinduet, se under.) */
+@media (width > 47.5em) {
+  :root[data-dokk] .fagsok__rullegardin {
+    max-height: calc(100dvh - var(--toppmeny-offset) - var(--dokk-offset));
+  }
+}
+
 .fagsok__rullegardin[hidden] {
   display: none;
 }
