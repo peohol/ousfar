@@ -129,7 +129,10 @@ export async function synkroniserFest({
       parserversjon: PARSERVERSJON,
     }
     if (svar.status === 304) {
-      await lager.uendret(synk, { ...grunninfo, etag: forrige?.etag ?? grunninfo.etag, sha256: forrige?.sha256 ?? null, kildedato: null })
+      const uendret = { ...grunninfo, etag: forrige?.etag ?? grunninfo.etag, sha256: forrige?.sha256 ?? null }
+      // FEST har bekreftet at filen er den samme; feiler noe nå, er det innbyttet i databasen.
+      Object.assign(info, uendret, { trinn: 'innbytte', ny_fil: false })
+      await lager.uendret(synk, { ...uendret, kildedato: null })
       return { status: 'uendret', synk }
     }
     if (!svar.ok) throw new Error(`FEST svarte ${svar.status} ${svar.statusText}`.trim())
@@ -145,6 +148,7 @@ export async function synkroniserFest({
     info.ny_fil = forrige?.sha256 ? forrige.sha256 !== sha256 : info.ny_fil
     info.trinn = 'lesing'
     if (sammeParser && forrige?.sha256 === sha256) {
+      info.trinn = 'innbytte'
       await lager.uendret(synk, { ...grunninfo, sha256, kildedato: null })
       return { status: 'uendret', synk }
     }

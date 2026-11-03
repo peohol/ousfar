@@ -391,6 +391,13 @@ describe('synkroniseringen', () => {
     // Neste kjøring spør fortsatt med ETag-en fra forrige vellykkede, ikke fra den som feilet.
     await db.query('update legemiddeldata.synkroniseringer set parserversjon = $1', [PARSERVERSJON])
     expect(await tjeneste('legemiddeldata_forrige_synk', { kilde: 'FEST' })).toMatchObject({ etag: '"a"' })
+
+    // FEST bekrefter at filen er uendret (304 eller samme kontrollsum), men lagringen feiler: det er innbyttet.
+    const uendretFeiler = { ...lager, uendret: async () => { throw new Error('lagringen feilet i testen') } }
+    expect(await synkroniserFest({ lager: uendretFeiler, hent: async () => svar(null, 304) })).toMatchObject({ status: 'feilet', trinn: 'innbytte', ny_fil: false })
+    expect(await synkroniserFest({ lager: uendretFeiler, hent: async () => svar(lagZip('fest251.xml', UTDRAG), 200, { etag: '"a"' }) })).toMatchObject({ status: 'feilet', trinn: 'innbytte', ny_fil: false })
+    const { rows } = await db.query<{ etag: string | null; sha256: string | null }>('select etag, sha256 from legemiddeldata.synkroniseringer order by id desc limit 2')
+    expect(rows.every((r) => r.etag === '"a"' && /^[0-9a-f]{64}$/.test(r.sha256 ?? ''))).toBe(true)
   })
 
   it('avbryter en kjøring også mot en database uten den nye utgaven av avbrytingen', async () => {
