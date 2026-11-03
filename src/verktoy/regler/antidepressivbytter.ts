@@ -158,6 +158,8 @@ function nedtrappingTilSeponering(fra: Fra): Forlop {
     legemiddelformer: [TABLETT],
     utgangsdose: 'startdose',
     start: { type: 'dag', dag: 1 },
+    // Ingen delplan: når ikke nedtrappingen seponering, vises ingen doser.
+    krever_komplett: true,
     faser: [
       {
         type: 'nedtrapping',
@@ -320,6 +322,7 @@ export function ssriTilMirtazapin(fra: Fra): Regel {
           administrasjon: 'peroral',
           legemiddelformer: [TABLETT],
           utgangsdose: null,
+          krever_komplett: true,
           start: { type: 'dag', dag: 1 },
           faser: [
             { type: 'hold', dose: { type: 'fast', mg: kilde(15, 'mg', 'veiledende_preferanse', SPC.remeronDose) }, varighet: { type: 'til_forlop_er_avsluttet', forlop: 'fra' } },
@@ -485,6 +488,7 @@ export function ssriTilSertralin(fra: Fra): Regel {
           administrasjon: 'peroral',
           legemiddelformer: [TABLETT],
           utgangsdose: null,
+          krever_komplett: true,
           start: {
             type: 'etter_utvasking',
             forlop: 'fra',
