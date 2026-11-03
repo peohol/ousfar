@@ -2,7 +2,7 @@ import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { useBevart } from '../../oppdatering/Bevaring'
 import type { Lenkeslag } from '../../direktelenker/mal'
 import { tomtDokument, type Riktekstdokument } from '../../faginnhold/riktekst'
-import { byggTraad, erNyKommentar, tekstTilLagring, type Kommentar, type Kommentarnode } from '../../traad/modell'
+import { byggTraad, erNyKommentar, tekstTilLagring, type Kommentar, type Kommentarnode, type Skjulehandling } from '../../traad/modell'
 import { useSkjuling } from '../../hooks/useSkjuling'
 import { Kopilenkeknapp } from '../direktelenker/Kopilenkeknapp'
 import { UnderOverskrift } from '../Overskriftsniva'
@@ -12,7 +12,7 @@ import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import { Forfatterbilde, useForfatternavn, useForfatterkontekst } from './Forfatterkontekst'
 import { Langtekst } from './Langtekst'
-import { Bekreftknapp, Hjerteknapp, Idehandling, Slettknapp, Tidspunkt } from './Smadeler'
+import { Hjerteknapp, Idehandling, Skjulehandlinger, Slettknapp, Tidspunkt } from './Smadeler'
 import '../../styles/traad.css'
 
 /**
@@ -31,8 +31,8 @@ export interface Kommentarkanal {
   slett: (kommentar: string) => Promise<void>
   /** En administrator kan slette andres kommentarer (idéene). */
   adminSletter: boolean
-  /** En administrator kan skjule innholdet i en kommentar (diskusjonene). */
-  skjul?: (kommentar: string) => Promise<void>
+  /** En administrator kan skjule innholdet i en kommentar, og vise det igjen (diskusjonene). */
+  skjuling?: (handling: Skjulehandling, kommentar: string) => Promise<void>
 }
 
 /** En kommentar som skal vises, fra en direktelenke. `nr` er ny for hver gang, også til samme kommentar. */
@@ -278,14 +278,12 @@ function Kommentarvisning({
               )}
               <Kopilenkeknapp mal={{ slag: kanal.slag, id: kanal.traad, kommentar: kommentar.id }} hva="kommentaren" />
               {!laast && (eier || (admin && kanal.adminSletter)) && <Slettknapp hva="kommentaren" onSlett={() => void utfor(kanal.slett)} />}
-              {admin && kanal.skjul && !laast && !skjult && !eier && (
-                <Bekreftknapp
-                  ikon="skjul"
-                  tekst="Skjul"
-                  bekreftTekst="Bekreft skjuling"
-                  etikett="Skjul innholdet i kommentaren"
-                  bekreftEtikett="Bekreft at innholdet i kommentaren skjules for godt"
-                  onBekreft={() => void utfor(kanal.skjul!)}
+              {admin && kanal.skjuling && !laast && !eier && (
+                <Skjulehandlinger
+                  hva="kommentaren"
+                  skjult={skjult}
+                  kanVises={Boolean(kommentar.kan_vises)}
+                  onHandling={(handling) => void utfor((id) => kanal.skjuling!(handling, id))}
                 />
               )}
             </div>
