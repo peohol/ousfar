@@ -12,10 +12,10 @@ Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel by
 
 | Regel | Form | Fra → til | Beregnbarhet | Åpne valg | Status | Eksempler |
 | --- | --- | --- | --- | --- | --- | --- |
-| `depot-risperidon-xeplion` | oppstart av depot | risperidon → paliperidon | entydig beregnbar | 0 | til faglig kontroll | 8 |
+| `depot-risperidon-xeplion` | oppstart av depot | risperidon → paliperidon | entydig beregnbar | 0 | til faglig kontroll | 10 |
 | `depot-consta-xeplion` | direkte bytte | risperidon → paliperidon | entydig beregnbar | 0 | til faglig kontroll | 7 |
-| `antipsykotikabytte-aripiprazol-olanzapin` | direkte bytte | aripiprazol → olanzapin | entydig beregnbar | 0 | til faglig kontroll | 6 |
-| `antipsykotikabytte-aripiprazol-risperidon` | direkte bytte | aripiprazol → risperidon | entydig beregnbar | 0 | til faglig kontroll | 5 |
+| `antipsykotikabytte-aripiprazol-olanzapin` | direkte bytte | aripiprazol → olanzapin | beregnbar etter faglig avklaring | 1 | til faglig kontroll | 9 |
+| `antipsykotikabytte-aripiprazol-risperidon` | direkte bytte | aripiprazol → risperidon | beregnbar etter faglig avklaring | 1 | til faglig kontroll | 8 |
 | `antipsykotikabytte-kariprazin-kvetiapin` | direkte bytte | kariprazin → kvetiapin | entydig beregnbar | 0 | til faglig kontroll | 6 |
 | `antipsykotikabytte-olanzapin-aripiprazol` | kryssnedtrapping | olanzapin → aripiprazol | beregnbar etter faglig avklaring | 2 | til faglig kontroll | 7 |
 | `antipsykotikabytte-risperidon-aripiprazol` | kryssnedtrapping | risperidon → aripiprazol | beregnbar etter faglig avklaring | 2 | til faglig kontroll | 5 |
@@ -39,9 +39,9 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 
 ## Fra peroral risperidon til Xeplion
 
-`depot-risperidon-xeplion`, versjon 1, fingeravtrykk `fa0ea68b98054eee2b8533e7702b0df447dd604b520f8198565b3280adfe6469`. Oppstart av depot: risperidon → paliperidon. **Entydig beregnbar**; status **til faglig kontroll**.
+`depot-risperidon-xeplion`, versjon 2, fingeravtrykk `6d050a1a4f8d76d9f9029d21aab5e107156f1827ddb643a5b0f6a867807b5751`. Oppstart av depot: risperidon → paliperidon. **Entydig beregnbar**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -66,8 +66,9 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 
 - OUSFAR seponerer peroral risperidon dagen før første injeksjon; gradvis seponering, som preparatomtalen nevner for noen, er ikke modellert.
   - Peroral paliperidon eller risperidon kan seponeres når Xeplion startes; noen kan ha nytte av gradvis seponering. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2 (bytte fra peroral))*
-- Vedlikeholdsdosen regnes ikke ut fra risperidondosen. Forskriveren velger den innenfor 25–150 mg; preparatomtalen anbefaler 75 mg. Planen bruker bare styrker av Xeplion som finnes i FEST.
+- Vedlikeholdsdosen regnes ikke ut fra risperidondosen, fordi preparatomtalen ikke har noen omregning. Forskriveren velger den innenfor 25–150 mg. Preparatomtalen anbefaler 75 mg, så en annen dose krever en skriftlig begrunnelse ut fra toleranse og effekt (for eksempel overvekt), og begrunnelsen står i planen ved siden av risperidondosen. Planen bruker bare styrker av Xeplion som finnes i FEST.
   - Anbefalt månedlig vedlikeholdsdose er 75 mg; noen kan ha nytte av lavere eller høyere dose innenfor 25–150 mg ut fra toleranse og effekt. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2)*
+  - Pasienter med overvekt eller fedme kan trenge doser i den øvre delen av området. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2)*
 - Risperidondosen oppgis som dokumentasjon av stabiliseringen og må være innenfor det preparatomtalen anbefaler (høyst 16 mg daglig); den brukes ikke i beregningen.
   - Doser over 10 mg daglig har ikke vist bedre effekt; doser over 16 mg daglig er ikke vurdert for sikkerhet og anbefales ikke. *([dmp-risperdal](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08037.pdf), pkt. 4.2)*
 
@@ -87,7 +88,9 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 
 - Startdose høyst 16 mg (bindende; dmp-risperdal pkt. 4.2)
 - Måldose (må oppgis) 25–150 mg (bindende; ema-xeplion section 4.2)
-- Må bekreftes (`indikasjon`): Pasienten er voksen, har schizofreni og er stabilisert på, og har tålt, peroral risperidon. (ema-xeplion section 4.1; ema-xeplion section 4.2 (bytte fra peroral))
+- Måldose (må oppgis) 75 mg (forsiktighetsgrense: utenfor krever begrunnelse; ema-xeplion section 4.2; ema-xeplion section 4.2)
+- Må bekreftes (`indikasjon`): Pasienten er voksen, har schizofreni og er stabilisert på peroral risperidon. (ema-xeplion section 4.1; ema-xeplion section 4.2 (bytte fra peroral))
+- Må bekreftes (`tidligere_toleranse`): Det er dokumentert i journalen at pasienten har tålt peroral risperidon over tid, uten tegn til overfølsomhet. Anafylaksi er likevel mulig etter injeksjon. (ema-xeplion section 4.1; ema-xeplion section 4.3 og 4.4)
 - Unntak (`nedsatt_nyrefunksjon`): Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min. (ema-xeplion section 4.2 (nedsatt nyrefunksjon))
 - Unntak (`over_65`): Pasienten er over 65 år; effekt og sikkerhet av Xeplion er ikke fastslått i denne gruppen. (ema-xeplion section 4.2 (eldre))
 
@@ -106,34 +109,42 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 
 **Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
 
-- *Risperidon 4 mg, vedlikehold 75 mg, startdato 1. desember 2026.* Inndata: startdose 4 mg; måldose 75 mg; startdato 01.12.2026; bekreftet: indikasjon; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
+- *Risperidon 4 mg, vedlikehold 75 mg, startdato 1. desember 2026.* Inndata: startdose 4 mg; måldose 75 mg; startdato 01.12.2026; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
   - **fra:** fra dag 1 (01.12.2026): seponert
   - **til:** dag 1 (01.12.2026): 150 mg injeksjon, deltoideus; dag 8 (08.12.2026, ±4 dager): 100 mg injeksjon, deltoideus; hver måned fra 1 måned etter dag 8 (08.01.2027, ±7 dager): 75 mg injeksjon, deltoideus eller setemuskel
   - Kontroll: Avkreftet: Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten er over 65 år; effekt og sikkerhet av Xeplion er ikke fastslått i denne gruppen. – oppfylt. Vurdert og avkreftet av forskriveren.
-  - Kontroll: Bekreftet: Pasienten er voksen, har schizofreni og er stabilisert på, og har tålt, peroral risperidon. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten er voksen, har schizofreni og er stabilisert på peroral risperidon. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Det er dokumentert i journalen at pasienten har tålt peroral risperidon over tid, uten tegn til overfølsomhet. Anafylaksi er likevel mulig etter injeksjon. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er høyst 16 mg (bindende) – oppfylt. 4 mg.
   - Kontroll: Måldosen er 25–150 mg (bindende) – oppfylt. 75 mg.
-- *Risperidon 2 mg, vedlikehold 50 mg.* Inndata: startdose 2 mg; måldose 50 mg; bekreftet: indikasjon; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
+  - Kontroll: Måldosen er 75 mg (forsiktighetsgrense) – oppfylt. 75 mg.
+- *Risperidon 2 mg, vedlikehold 50 mg med skriftlig begrunnelse.* Inndata: startdose 2 mg; måldose 50 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei; begrunnelse: «Syntetisk eksempel: lav peroral dose og bivirkninger ved høyere dose.».
   - **fra:** fra dag 1: seponert
   - **til:** dag 1: 150 mg injeksjon, deltoideus; dag 8 (±4 dager): 100 mg injeksjon, deltoideus; hver måned fra 1 måned etter dag 8 (±7 dager): 50 mg injeksjon, deltoideus eller setemuskel
   - Kontroll: Avkreftet: Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten er over 65 år; effekt og sikkerhet av Xeplion er ikke fastslått i denne gruppen. – oppfylt. Vurdert og avkreftet av forskriveren.
-  - Kontroll: Bekreftet: Pasienten er voksen, har schizofreni og er stabilisert på, og har tålt, peroral risperidon. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten er voksen, har schizofreni og er stabilisert på peroral risperidon. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Det er dokumentert i journalen at pasienten har tålt peroral risperidon over tid, uten tegn til overfølsomhet. Anafylaksi er likevel mulig etter injeksjon. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er høyst 16 mg (bindende) – oppfylt. 2 mg.
   - Kontroll: Måldosen er 25–150 mg (bindende) – oppfylt. 50 mg.
-- *Uten valgt vedlikeholdsdose: beregningen velger ikke selv.* Inndata: startdose 4 mg; bekreftet: indikasjon; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
-  - **Stoppet:** Måldosen må oppgis; regelen har ingen standard måldose.
-- *Vedlikehold 175 mg er over området i preparatomtalen.* Inndata: startdose 6 mg; måldose 175 mg; bekreftet: indikasjon; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
-  - **Stoppet:** Måldosen 175 mg er utenfor det regelen gjelder for (25–150 mg).
-- *Risperidon 20 mg er over det preparatomtalen anbefaler.* Inndata: startdose 20 mg; måldose 150 mg; bekreftet: indikasjon; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
-  - **Stoppet:** Startdosen 20 mg er utenfor det regelen gjelder for (høyst 16 mg).
-- *Kreatininclearance under 80 ml/min: regelen gjelder ikke.* Inndata: startdose 4 mg; måldose 75 mg; bekreftet: indikasjon; pasientforhold: nedsatt_nyrefunksjon ja, over_65 nei.
+  - Kontroll: Måldosen er 75 mg (forsiktighetsgrense) – oppfylt. 50 mg; forskriverens begrunnelse: «Syntetisk eksempel: lav peroral dose og bivirkninger ved høyere dose.».
+- *Risperidon 0,5 mg og vedlikehold 150 mg uten begrunnelse: en annen dose enn den anbefalte stopper.* Inndata: startdose 0,5 mg; måldose 150 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
+  - **Stoppet:** Måldosen 150 mg er over forsiktighetsgrensen (75 mg) og krever en skriftlig begrunnelse fra forskriveren, en særskilt vurdering. Skriv begrunnelsen, eller vurder om regelen passer.
+- *Uten dokumentert tidligere toleranse stopper beregningen.* Inndata: startdose 4 mg; måldose 75 mg; bekreftet: indikasjon; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
+  - **Stoppet:** Må bekreftes før beregning: Det er dokumentert i journalen at pasienten har tålt peroral risperidon over tid, uten tegn til overfølsomhet. Anafylaksi er likevel mulig etter injeksjon.
+- *Uten valgt vedlikeholdsdose: beregningen velger ikke selv.* Inndata: startdose 4 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
+  - **Stoppet:** Måldosen må oppgis; regelen har ingen standard måldose.; Måldosen må oppgis; regelen har ingen standard måldose.
+- *Vedlikehold 175 mg er over området i preparatomtalen.* Inndata: startdose 6 mg; måldose 175 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
+  - **Stoppet:** Måldosen 175 mg er utenfor det regelen gjelder for (25–150 mg).; Måldosen 175 mg er over forsiktighetsgrensen (75 mg) og krever en skriftlig begrunnelse fra forskriveren, en særskilt vurdering. Skriv begrunnelsen, eller vurder om regelen passer.
+- *Risperidon 20 mg er over det preparatomtalen anbefaler.* Inndata: startdose 20 mg; måldose 150 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
+  - **Stoppet:** Startdosen 20 mg er utenfor det regelen gjelder for (høyst 16 mg).; Måldosen 150 mg er over forsiktighetsgrensen (75 mg) og krever en skriftlig begrunnelse fra forskriveren, en særskilt vurdering. Skriv begrunnelsen, eller vurder om regelen passer.
+- *Kreatininclearance under 80 ml/min: regelen gjelder ikke.* Inndata: startdose 4 mg; måldose 75 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon ja, over_65 nei.
   - **Stoppet:** Regelen gjelder ikke: Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min.
-- *Alderen er ikke vurdert: ukjent stopper like mye som over 65 år.* Inndata: startdose 4 mg; måldose 75 mg; bekreftet: indikasjon; pasientforhold: nedsatt_nyrefunksjon nei.
+- *Alderen er ikke vurdert: ukjent stopper like mye som over 65 år.* Inndata: startdose 4 mg; måldose 75 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei.
   - **Stoppet:** Må avklares før beregning (ukjent): Pasienten er over 65 år; effekt og sikkerhet av Xeplion er ikke fastslått i denne gruppen.
-- *Uten bekreftet stabilisering og toleranse stopper beregningen.* Inndata: startdose 4 mg; måldose 75 mg; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
-  - **Stoppet:** Må bekreftes før beregning: Pasienten er voksen, har schizofreni og er stabilisert på, og har tålt, peroral risperidon.
+- *Uten bekreftet stabilisering og toleranse stopper beregningen.* Inndata: startdose 4 mg; måldose 75 mg; bekreftet: tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
+  - **Stoppet:** Må bekreftes før beregning: Pasienten er voksen, har schizofreni og er stabilisert på peroral risperidon.
 
 **Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntipsychotics:Rd>Dp`.
 
@@ -239,9 +250,9 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 
 ## Fra aripiprazol til olanzapin, direkte bytte
 
-`antipsykotikabytte-aripiprazol-olanzapin`, versjon 1, fingeravtrykk `cc4314805648deab66ab40555eecf88e9ff181515e762997ba3b8a56e9d38825`. Direkte bytte: aripiprazol → olanzapin. **Entydig beregnbar**; status **til faglig kontroll**.
+`antipsykotikabytte-aripiprazol-olanzapin`, versjon 2, fingeravtrykk `b7c629b29ef0c22249954bb9d26917e445189f60d97be1cbfa8e08fcc7ba72d7`. Direkte bytte: aripiprazol → olanzapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -265,20 +276,22 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 - Aripiprazol seponeres uten nedtrapping dagen før olanzapin startes (siste dose dagen før dag 1).
   - Direkte bytte: det første antipsykotikumet stoppes og det neste startes dagen etter. Det krever erfaring og gjøres helst der pasienten kan følges tett, gjerne innlagt. *([keks-2019](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6787301/fullTextXML), tabell 4 (direkte bytte))*
   - Når det første antipsykotikumet er aripiprazol eller brekspiprazol, kan byttet gjøres direkte, fordi begge har svært lang halveringstid og ingen antikolinerg effekt. *([keks-2019](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6787301/fullTextXML), avsnittet om direkte bytte)*
-- Planen slutter med olanzapin 10 mg daglig fra dag 1. Videre justering innenfor 5–20 mg er en klinisk vurdering og beregnes ikke.
+- Startdosen (10 mg fra dag 1) og den terapeutiske måldosen er atskilt. Forskriveren velger måldosen innenfor 5–20 mg ut fra klinisk vurdering; planen holder 10 mg til en ny vurdering og slutter på måldosen. Hvor lenge startdosen holdes, er et åpent OUSFAR-valg (forslag: én uke).
   - Schizofreni: anbefalt startdose er 10 mg daglig. Dosen kan senere justeres innenfor 5–20 mg etter ny klinisk vurdering, med minst 24 timer mellom økningene. *([ema-zyprexa](https://www.ema.europa.eu/en/documents/product-information/zyprexa-epar-product-information_en.pdf), section 4.2)*
 
 **Den matematiske regelen – parametre:**
 
 | Hvor | Parameter | Verdi | Art | Grunnlag |
 | --- | --- | --- | --- | --- |
-| til: fase 1 (vedlikehold) | dose.mg | 10 mg | bindende krav | ema-zyprexa section 4.2 |
+| til: fase 1 (opptrapping) | trinn[0].mg | 10 mg | bindende krav | ema-zyprexa section 4.2 |
+| til: fase 1 (opptrapping) | trinn[0].dager | 7 dager (forskriveren kan velge minst 1 dager, av tekniske grunner høyst 365 dager) | veiledende | **OUSFAR-vurdering, åpent forslag:** OUSFARs valg: én uke på startregimet før olanzapin endres til den valgte måldosen, slik at effekt og bivirkninger kan vurderes etter at aripiprazol er stoppet (aripiprazol virker i flere dager etter siste dose). Preparatomtalen gir ingen fast tid, bare en ny klinisk vurdering. (bygger på ema-zyprexa section 4.2; keks-2019 tabell 1) |
 
 **Betingelser:**
 
 - Startdose 10–30 mg (bindende; ema-abilify section 4.2)
+- Måldose (må oppgis) 5–20 mg (bindende; ema-zyprexa section 4.2)
 - Må bekreftes (`indikasjon`): Pasienten er voksen og har schizofreni, og aripiprazol er det eneste antipsykotikumet. (ema-abilify section 4.2; ema-zyprexa section 4.2)
-- Må bekreftes (`peroral_formulering`): Pasienten bruker peroral aripiprazol, ikke depotinjeksjon. (keks-2019 tabell 4 (depot til depot))
+- Må bekreftes (`peroral_formulering`): Pasienten bruker peroral aripiprazol (tabletter, smeltetabletter eller mikstur), ikke depotinjeksjon. (keks-2019 tabell 4 (depot til depot))
 - Må bekreftes (`spesialist_risiko`): Byttet er vurdert i, eller med råd fra, spesialisthelsetjenesten, og pasienten kan følges tett de første ukene: forverring av psykosen, søvn, uro og akatisi, sedasjon og ortostatisk blodtrykksfall. (keks-2019 tabell 4 og avsnittet om bytte; keks-2019 tabell 4 (direkte bytte))
 - Unntak (`alder_65`): Pasienten er 65 år eller eldre; preparatomtalen sier at lavere startdose bør vurderes da. (ema-zyprexa section 4.2)
 - Unntak (`nedsatt_nyre_lever`): Pasienten har nedsatt nyre- eller leverfunksjon; preparatomtalen sier at lavere startdose bør vurderes da. (ema-zyprexa section 4.2)
@@ -290,7 +303,8 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
 - Dosene er den ideelle dosekurven, avrundet til to desimaler; hvilke doser som kan gis med norske preparater (styrker, deling, flytende form), avgjøres i P5.
 - Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet, interaksjoner, graviditet, etterlevelse eller individuell toleranse fra dosen (B7); dette må vurderes av forskriveren.
-- Pasienten bruker peroral aripiprazol 10–30 mg daglig, det doseområdet preparatomtalen oppgir ved schizofreni.
+- Pasienten bruker peroral aripiprazol 10–30 mg daglig (tabletter, smeltetabletter eller mikstur), det doseområdet preparatomtalen oppgir ved schizofreni. Aripiprazol bare stoppes, så dosen tolkes ikke som et antall tabletter.
+- Indikasjonen er schizofreni; ved andre indikasjoner (for eksempel mani) gjelder andre startdoser, og regelen passer ikke.
 - Forskriveren har vurdert hvert unntak og svart nei; et ubesvart unntak stopper beregningen.
 
 **Usikkerhet:**
@@ -301,18 +315,31 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 
 **Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
 
-- *Aripiprazol 15 mg til olanzapin, startdato 7. desember 2026.* Inndata: startdose 15 mg; startdato 07.12.2026; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, langsom_omsetning nei, cyp1a2_hemmer nei.
+- *Aripiprazol 15 mg til olanzapin, startdato 7. desember 2026.* Inndata: startdose 15 mg; måldose 15 mg; startdato 07.12.2026; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, langsom_omsetning nei, cyp1a2_hemmer nei.
   - **fra:** fra dag 1 (07.12.2026): seponert
-  - **til:** fra dag 1 (07.12.2026): 10 mg
+  - **til:** dag 1–7 (07.12.2026–13.12.2026): 10 mg; fra dag 8 (14.12.2026): 15 mg
   - Kontroll: Avkreftet: Pasienten er 65 år eller eldre; preparatomtalen sier at lavere startdose bør vurderes da. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten har nedsatt nyre- eller leverfunksjon; preparatomtalen sier at lavere startdose bør vurderes da. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten har flere faktorer for langsommere omsetning av olanzapin (kvinne, høy alder, ikke-røyker); preparatomtalen sier at lavere startdose bør vurderes da. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten bruker fluvoksamin eller en annen CYP1A2-hemmer, som ciprofloksacin; lavere startdose av olanzapin bør vurderes da. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen og har schizofreni, og aripiprazol er det eneste antipsykotikumet. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Pasienten bruker peroral aripiprazol, ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten bruker peroral aripiprazol (tabletter, smeltetabletter eller mikstur), ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Byttet er vurdert i, eller med råd fra, spesialisthelsetjenesten, og pasienten kan følges tett de første ukene: forverring av psykosen, søvn, uro og akatisi, sedasjon og ortostatisk blodtrykksfall. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 10–30 mg (bindende) – oppfylt. 15 mg.
-- *Aripiprazol 30 mg (høyeste dose) til olanzapin.* Inndata: startdose 30 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, langsom_omsetning nei, cyp1a2_hemmer nei.
+  - Kontroll: Måldosen er 5–20 mg (bindende) – oppfylt. 15 mg.
+- *Aripiprazol 30 mg (høyeste dose) til olanzapin, måldose 20 mg.* Inndata: startdose 30 mg; måldose 20 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, langsom_omsetning nei, cyp1a2_hemmer nei.
+  - **fra:** fra dag 1: seponert
+  - **til:** dag 1–7: 10 mg; fra dag 8: 20 mg
+  - Kontroll: Avkreftet: Pasienten er 65 år eller eldre; preparatomtalen sier at lavere startdose bør vurderes da. – oppfylt. Vurdert og avkreftet av forskriveren.
+  - Kontroll: Avkreftet: Pasienten har nedsatt nyre- eller leverfunksjon; preparatomtalen sier at lavere startdose bør vurderes da. – oppfylt. Vurdert og avkreftet av forskriveren.
+  - Kontroll: Avkreftet: Pasienten har flere faktorer for langsommere omsetning av olanzapin (kvinne, høy alder, ikke-røyker); preparatomtalen sier at lavere startdose bør vurderes da. – oppfylt. Vurdert og avkreftet av forskriveren.
+  - Kontroll: Avkreftet: Pasienten bruker fluvoksamin eller en annen CYP1A2-hemmer, som ciprofloksacin; lavere startdose av olanzapin bør vurderes da. – oppfylt. Vurdert og avkreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten er voksen og har schizofreni, og aripiprazol er det eneste antipsykotikumet. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten bruker peroral aripiprazol (tabletter, smeltetabletter eller mikstur), ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Byttet er vurdert i, eller med råd fra, spesialisthelsetjenesten, og pasienten kan følges tett de første ukene: forverring av psykosen, søvn, uro og akatisi, sedasjon og ortostatisk blodtrykksfall. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Startdosen er 10–30 mg (bindende) – oppfylt. 30 mg.
+  - Kontroll: Måldosen er 5–20 mg (bindende) – oppfylt. 20 mg.
+- *Måldosen er startdosen, 10 mg.* Inndata: startdose 10 mg; måldose 10 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, langsom_omsetning nei, cyp1a2_hemmer nei.
   - **fra:** fra dag 1: seponert
   - **til:** fra dag 1: 10 mg
   - Kontroll: Avkreftet: Pasienten er 65 år eller eldre; preparatomtalen sier at lavere startdose bør vurderes da. – oppfylt. Vurdert og avkreftet av forskriveren.
@@ -320,25 +347,30 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
   - Kontroll: Avkreftet: Pasienten har flere faktorer for langsommere omsetning av olanzapin (kvinne, høy alder, ikke-røyker); preparatomtalen sier at lavere startdose bør vurderes da. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten bruker fluvoksamin eller en annen CYP1A2-hemmer, som ciprofloksacin; lavere startdose av olanzapin bør vurderes da. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen og har schizofreni, og aripiprazol er det eneste antipsykotikumet. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Pasienten bruker peroral aripiprazol, ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten bruker peroral aripiprazol (tabletter, smeltetabletter eller mikstur), ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Byttet er vurdert i, eller med råd fra, spesialisthelsetjenesten, og pasienten kan følges tett de første ukene: forverring av psykosen, søvn, uro og akatisi, sedasjon og ortostatisk blodtrykksfall. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Startdosen er 10–30 mg (bindende) – oppfylt. 30 mg.
-- *Aripiprazol 5 mg er under doseområdet ved schizofreni; regelen gjelder ikke.* Inndata: startdose 5 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, langsom_omsetning nei, cyp1a2_hemmer nei.
+  - Kontroll: Startdosen er 10–30 mg (bindende) – oppfylt. 10 mg.
+  - Kontroll: Måldosen er 5–20 mg (bindende) – oppfylt. 10 mg.
+- *Uten valgt måldose: beregningen velger ikke selv.* Inndata: startdose 15 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, langsom_omsetning nei, cyp1a2_hemmer nei.
+  - **Stoppet:** Måldosen må oppgis; regelen har ingen standard måldose.
+- *Måldose 25 mg er over preparatomtalens område.* Inndata: startdose 15 mg; måldose 25 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, langsom_omsetning nei, cyp1a2_hemmer nei.
+  - **Stoppet:** Måldosen 25 mg er utenfor det regelen gjelder for (5–20 mg).
+- *Aripiprazol 5 mg er under doseområdet ved schizofreni; regelen gjelder ikke.* Inndata: startdose 5 mg; måldose 10 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, langsom_omsetning nei, cyp1a2_hemmer nei.
   - **Stoppet:** Startdosen 5 mg er utenfor det regelen gjelder for (10–30 mg).
-- *Fluvoksamin samtidig: regelen gjelder ikke.* Inndata: startdose 15 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, langsom_omsetning nei, cyp1a2_hemmer ja.
+- *Fluvoksamin samtidig: regelen gjelder ikke.* Inndata: startdose 15 mg; måldose 10 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, langsom_omsetning nei, cyp1a2_hemmer ja.
   - **Stoppet:** Regelen gjelder ikke: Pasienten bruker fluvoksamin eller en annen CYP1A2-hemmer, som ciprofloksacin; lavere startdose av olanzapin bør vurderes da.
-- *Uten bekreftet spesialistvurdering og tett oppfølging stopper beregningen.* Inndata: startdose 15 mg; bekreftet: indikasjon, peroral_formulering; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, langsom_omsetning nei, cyp1a2_hemmer nei.
+- *Uten bekreftet spesialistvurdering og tett oppfølging stopper beregningen.* Inndata: startdose 15 mg; måldose 10 mg; bekreftet: indikasjon, peroral_formulering; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, langsom_omsetning nei, cyp1a2_hemmer nei.
   - **Stoppet:** Må bekreftes før beregning: Byttet er vurdert i, eller med råd fra, spesialisthelsetjenesten, og pasienten kan følges tett de første ukene: forverring av psykosen, søvn, uro og akatisi, sedasjon og ortostatisk blodtrykksfall.
-- *Faktorene for langsom omsetning er ikke vurdert: ukjent stopper.* Inndata: startdose 15 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, cyp1a2_hemmer nei.
+- *Faktorene for langsom omsetning er ikke vurdert: ukjent stopper.* Inndata: startdose 15 mg; måldose 10 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, cyp1a2_hemmer nei.
   - **Stoppet:** Må avklares før beregning (ukjent): Pasienten har flere faktorer for langsommere omsetning av olanzapin (kvinne, høy alder, ikke-røyker); preparatomtalen sier at lavere startdose bør vurderes da.
 
 **Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntipsychotics:Pa>Ol`.
 
 ## Fra aripiprazol til risperidon, direkte bytte
 
-`antipsykotikabytte-aripiprazol-risperidon`, versjon 1, fingeravtrykk `e58d6781ad1de614911ac1fcc2bf8a72fedc7880e59f0d72503efc09eb2e2eed`. Direkte bytte: aripiprazol → risperidon. **Entydig beregnbar**; status **til faglig kontroll**.
+`antipsykotikabytte-aripiprazol-risperidon`, versjon 2, fingeravtrykk `a9c3da419c224d6326e4af5bdfbfc4df76b829358a237f4cd0a947b9d60e6384`. Direkte bytte: aripiprazol → risperidon. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -365,9 +397,10 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 - Aripiprazol seponeres uten nedtrapping dagen før risperidon startes (siste dose dagen før dag 1).
   - Direkte bytte: det første antipsykotikumet stoppes og det neste startes dagen etter. Det krever erfaring og gjøres helst der pasienten kan følges tett, gjerne innlagt. *([keks-2019](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6787301/fullTextXML), tabell 4 (direkte bytte))*
   - Når det første antipsykotikumet er aripiprazol eller brekspiprazol, kan byttet gjøres direkte, fordi begge har svært lang halveringstid og ingen antikolinerg effekt. *([keks-2019](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6787301/fullTextXML), avsnittet om direkte bytte)*
-- Planen følger opptrappingen i preparatomtalen, 2 mg dag 1 og 4 mg fra dag 2, og slutter med 4 mg daglig. En langsommere opptrapping eller en annen dose innenfor 4–6 mg er en klinisk vurdering og beregnes ikke.
+- Planen følger opptrappingen i preparatomtalen, 2 mg dag 1 og 4 mg fra dag 2. Startregimet og den terapeutiske måldosen er atskilt: forskriveren velger måldosen (høyst 16 mg), og en måldose utenfor 4–6 mg krever en skriftlig begrunnelse. Planen holder 4 mg til en ny vurdering og slutter på måldosen. Hvor lenge 4 mg holdes, er et åpent OUSFAR-valg (forslag: én uke). En langsommere opptrapping er en klinisk vurdering og beregnes ikke.
   - Schizofreni hos voksne: start med 2 mg daglig; dosen kan økes til 4 mg dag 2 og deretter holdes eller tilpasses. De fleste har effekt av 4–6 mg daglig. *([dmp-risperdal](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08037.pdf), pkt. 4.2)*
-- Planen bruker bare risperidontabletter; miksturen har ingen dokumentert oppmåling i verktøyet. *(OUSFARs vurdering)*
+  - Doser over 10 mg daglig har ikke vist bedre effekt; doser over 16 mg daglig er ikke vurdert for sikkerhet og anbefales ikke. *([dmp-risperdal](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08037.pdf), pkt. 4.2)*
+- Planen bruker risperidontabletter eller smeltetabletter; miksturen har ingen dokumentert oppmåling i verktøyet. *(OUSFARs vurdering)*
 
 **Den matematiske regelen – parametre:**
 
@@ -375,13 +408,16 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 | --- | --- | --- | --- | --- |
 | til: fase 1 (opptrapping) | trinn[0].mg | 2 mg | bindende krav | dmp-risperdal pkt. 4.2 |
 | til: fase 1 (opptrapping) | trinn[0].dager | 1 dager | veiledende | dmp-risperdal pkt. 4.2 |
-| til: fase 2 (vedlikehold) | dose.mg | 4 mg | veiledende | dmp-risperdal pkt. 4.2 |
+| til: fase 1 (opptrapping) | trinn[1].mg | 4 mg | veiledende | dmp-risperdal pkt. 4.2 |
+| til: fase 1 (opptrapping) | trinn[1].dager | 7 dager (forskriveren kan velge minst 1 dager, av tekniske grunner høyst 365 dager) | veiledende | **OUSFAR-vurdering, åpent forslag:** OUSFARs valg: én uke på startregimet før risperidon endres til den valgte måldosen, slik at effekt og bivirkninger kan vurderes etter at aripiprazol er stoppet (aripiprazol virker i flere dager etter siste dose). Preparatomtalen gir ingen fast tid, bare en ny klinisk vurdering. (bygger på dmp-risperdal pkt. 4.2; keks-2019 tabell 1) |
 
 **Betingelser:**
 
 - Startdose 10–30 mg (bindende; ema-abilify section 4.2)
+- Måldose (må oppgis) høyst 16 mg (bindende; dmp-risperdal pkt. 4.2)
+- Måldose (må oppgis) 4–6 mg (forsiktighetsgrense: utenfor krever begrunnelse; dmp-risperdal pkt. 4.2; dmp-risperdal pkt. 4.2)
 - Må bekreftes (`indikasjon`): Pasienten er voksen og har schizofreni, og aripiprazol er det eneste antipsykotikumet. (ema-abilify section 4.2; dmp-risperdal pkt. 4.2)
-- Må bekreftes (`peroral_formulering`): Pasienten bruker peroral aripiprazol, ikke depotinjeksjon. (keks-2019 tabell 4 (depot til depot))
+- Må bekreftes (`peroral_formulering`): Pasienten bruker peroral aripiprazol (tabletter, smeltetabletter eller mikstur), ikke depotinjeksjon. (keks-2019 tabell 4 (depot til depot))
 - Må bekreftes (`spesialist_risiko`): Byttet er vurdert i, eller med råd fra, spesialisthelsetjenesten, og pasienten kan følges tett de første ukene: forverring av psykosen, søvn, uro og akatisi, sedasjon og ortostatisk blodtrykksfall. (keks-2019 tabell 4 og avsnittet om bytte; keks-2019 tabell 4 (direkte bytte))
 - Unntak (`alder_65`): Pasienten er 65 år eller eldre; preparatomtalen har en lavere startdose og langsommere opptrapping for eldre. (dmp-risperdal pkt. 4.2)
 - Unntak (`nedsatt_nyre_lever`): Pasienten har nedsatt nyre- eller leverfunksjon; preparatomtalen halverer da start- og vedlikeholdsdosen. (dmp-risperdal pkt. 4.2 og 4.4)
@@ -392,7 +428,8 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
 - Dosene er den ideelle dosekurven, avrundet til to desimaler; hvilke doser som kan gis med norske preparater (styrker, deling, flytende form), avgjøres i P5.
 - Beregningen kan ikke utlede komorbiditet, nyre- og leverfunksjon, enzymaktivitet, interaksjoner, graviditet, etterlevelse eller individuell toleranse fra dosen (B7); dette må vurderes av forskriveren.
-- Pasienten bruker peroral aripiprazol 10–30 mg daglig, det doseområdet preparatomtalen oppgir ved schizofreni.
+- Pasienten bruker peroral aripiprazol 10–30 mg daglig (tabletter, smeltetabletter eller mikstur), det doseområdet preparatomtalen oppgir ved schizofreni. Aripiprazol bare stoppes, så dosen tolkes ikke som et antall tabletter.
+- Indikasjonen er schizofreni; ved mani gjelder en annen dosering, og regelen passer ikke.
 - Forskriveren har vurdert hvert unntak og svart nei; et ubesvart unntak stopper beregningen.
 
 **Usikkerhet:**
@@ -404,32 +441,52 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 
 **Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
 
-- *Aripiprazol 15 mg til risperidon, startdato 7. desember 2026.* Inndata: startdose 15 mg; startdato 07.12.2026; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, risperidon_interaksjon nei.
+- *Aripiprazol 15 mg til risperidon, startdato 7. desember 2026.* Inndata: startdose 15 mg; måldose 6 mg; startdato 07.12.2026; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, risperidon_interaksjon nei.
   - **fra:** fra dag 1 (07.12.2026): seponert
-  - **til:** dag 1 (07.12.2026): 2 mg; fra dag 2 (08.12.2026): 4 mg
+  - **til:** dag 1 (07.12.2026): 2 mg; dag 2–8 (08.12.2026–14.12.2026): 4 mg; fra dag 9 (15.12.2026): 6 mg
   - Kontroll: Avkreftet: Pasienten er 65 år eller eldre; preparatomtalen har en lavere startdose og langsommere opptrapping for eldre. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten har nedsatt nyre- eller leverfunksjon; preparatomtalen halverer da start- og vedlikeholdsdosen. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten bruker en sterk CYP2D6-hemmer (f.eks. paroksetin, fluoksetin) eller en sterk CYP3A4-induktor (f.eks. karbamazepin); doseringen av risperidon må da vurderes særskilt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen og har schizofreni, og aripiprazol er det eneste antipsykotikumet. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Pasienten bruker peroral aripiprazol, ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten bruker peroral aripiprazol (tabletter, smeltetabletter eller mikstur), ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Byttet er vurdert i, eller med råd fra, spesialisthelsetjenesten, og pasienten kan følges tett de første ukene: forverring av psykosen, søvn, uro og akatisi, sedasjon og ortostatisk blodtrykksfall. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 10–30 mg (bindende) – oppfylt. 15 mg.
-- *Aripiprazol 10 mg (laveste dose i området) til risperidon.* Inndata: startdose 10 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, risperidon_interaksjon nei.
+  - Kontroll: Måldosen er høyst 16 mg (bindende) – oppfylt. 6 mg.
+  - Kontroll: Måldosen er 4–6 mg (forsiktighetsgrense) – oppfylt. 6 mg.
+- *Aripiprazol 10 mg (laveste dose i området) til risperidon.* Inndata: startdose 10 mg; måldose 4 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, risperidon_interaksjon nei.
   - **fra:** fra dag 1: seponert
   - **til:** dag 1: 2 mg; fra dag 2: 4 mg
   - Kontroll: Avkreftet: Pasienten er 65 år eller eldre; preparatomtalen har en lavere startdose og langsommere opptrapping for eldre. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten har nedsatt nyre- eller leverfunksjon; preparatomtalen halverer da start- og vedlikeholdsdosen. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten bruker en sterk CYP2D6-hemmer (f.eks. paroksetin, fluoksetin) eller en sterk CYP3A4-induktor (f.eks. karbamazepin); doseringen av risperidon må da vurderes særskilt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen og har schizofreni, og aripiprazol er det eneste antipsykotikumet. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Pasienten bruker peroral aripiprazol, ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten bruker peroral aripiprazol (tabletter, smeltetabletter eller mikstur), ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Byttet er vurdert i, eller med råd fra, spesialisthelsetjenesten, og pasienten kan følges tett de første ukene: forverring av psykosen, søvn, uro og akatisi, sedasjon og ortostatisk blodtrykksfall. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 10–30 mg (bindende) – oppfylt. 10 mg.
-- *Aripiprazol 40 mg er over høyeste dose; regelen gjelder ikke.* Inndata: startdose 40 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, risperidon_interaksjon nei.
+  - Kontroll: Måldosen er høyst 16 mg (bindende) – oppfylt. 4 mg.
+  - Kontroll: Måldosen er 4–6 mg (forsiktighetsgrense) – oppfylt. 4 mg.
+- *Måldose 8 mg med skriftlig begrunnelse.* Inndata: startdose 30 mg; måldose 8 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, risperidon_interaksjon nei; begrunnelse: «Syntetisk eksempel: tidligere god effekt av 8 mg uten bivirkninger.».
+  - **fra:** fra dag 1: seponert
+  - **til:** dag 1: 2 mg; dag 2–8: 4 mg; fra dag 9: 8 mg
+  - Kontroll: Avkreftet: Pasienten er 65 år eller eldre; preparatomtalen har en lavere startdose og langsommere opptrapping for eldre. – oppfylt. Vurdert og avkreftet av forskriveren.
+  - Kontroll: Avkreftet: Pasienten har nedsatt nyre- eller leverfunksjon; preparatomtalen halverer da start- og vedlikeholdsdosen. – oppfylt. Vurdert og avkreftet av forskriveren.
+  - Kontroll: Avkreftet: Pasienten bruker en sterk CYP2D6-hemmer (f.eks. paroksetin, fluoksetin) eller en sterk CYP3A4-induktor (f.eks. karbamazepin); doseringen av risperidon må da vurderes særskilt. – oppfylt. Vurdert og avkreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten er voksen og har schizofreni, og aripiprazol er det eneste antipsykotikumet. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten bruker peroral aripiprazol (tabletter, smeltetabletter eller mikstur), ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Byttet er vurdert i, eller med råd fra, spesialisthelsetjenesten, og pasienten kan følges tett de første ukene: forverring av psykosen, søvn, uro og akatisi, sedasjon og ortostatisk blodtrykksfall. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Startdosen er 10–30 mg (bindende) – oppfylt. 30 mg.
+  - Kontroll: Måldosen er høyst 16 mg (bindende) – oppfylt. 8 mg.
+  - Kontroll: Måldosen er 4–6 mg (forsiktighetsgrense) – oppfylt. 8 mg; forskriverens begrunnelse: «Syntetisk eksempel: tidligere god effekt av 8 mg uten bivirkninger.».
+- *Måldose 8 mg uten begrunnelse stopper.* Inndata: startdose 30 mg; måldose 8 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, risperidon_interaksjon nei.
+  - **Stoppet:** Måldosen 8 mg er over forsiktighetsgrensen (4–6 mg) og krever en skriftlig begrunnelse fra forskriveren, en særskilt vurdering. Skriv begrunnelsen, eller vurder om regelen passer.
+- *Måldose 20 mg er over det preparatomtalen anbefaler, også med begrunnelse.* Inndata: startdose 15 mg; måldose 20 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, risperidon_interaksjon nei; begrunnelse: «Syntetisk eksempel.».
+  - **Stoppet:** Måldosen 20 mg er utenfor det regelen gjelder for (høyst 16 mg).
+- *Aripiprazol 40 mg er over høyeste dose; regelen gjelder ikke.* Inndata: startdose 40 mg; måldose 4 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, risperidon_interaksjon nei.
   - **Stoppet:** Startdosen 40 mg er utenfor det regelen gjelder for (10–30 mg).
-- *65 år eller eldre: regelen gjelder ikke.* Inndata: startdose 15 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 ja, nedsatt_nyre_lever nei, risperidon_interaksjon nei.
+- *65 år eller eldre: regelen gjelder ikke.* Inndata: startdose 15 mg; måldose 4 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 ja, nedsatt_nyre_lever nei, risperidon_interaksjon nei.
   - **Stoppet:** Regelen gjelder ikke: Pasienten er 65 år eller eldre; preparatomtalen har en lavere startdose og langsommere opptrapping for eldre.
-- *Uten bekreftelse av at aripiprazol er peroral (ikke Abilify Maintena) stopper beregningen.* Inndata: startdose 15 mg; bekreftet: indikasjon, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, risperidon_interaksjon nei.
-  - **Stoppet:** Må bekreftes før beregning: Pasienten bruker peroral aripiprazol, ikke depotinjeksjon.
+- *Uten bekreftelse av at aripiprazol er peroral (ikke Abilify Maintena) stopper beregningen.* Inndata: startdose 15 mg; måldose 4 mg; bekreftet: indikasjon, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, risperidon_interaksjon nei.
+  - **Stoppet:** Må bekreftes før beregning: Pasienten bruker peroral aripiprazol (tabletter, smeltetabletter eller mikstur), ikke depotinjeksjon.
 
 **Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntipsychotics:Pa>Rd`.
 
@@ -531,7 +588,7 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 
 ## Fra olanzapin til aripiprazol, kryss-titrering
 
-`antipsykotikabytte-olanzapin-aripiprazol`, versjon 1, fingeravtrykk `fd8ad2bc8300063479fb62beabac62b59e9ddaea4c3545be2b71438a9ae1784d`. Kryssnedtrapping: olanzapin → aripiprazol. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`antipsykotikabytte-olanzapin-aripiprazol`, versjon 1, fingeravtrykk `2d15d61bf46554d6d169c2a0430b6e03803990a2e9446297feda4812ba817c3c`. Kryssnedtrapping: olanzapin → aripiprazol. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code).
 
@@ -583,7 +640,7 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 - Startdose 5–20 mg (bindende; ema-zyprexa section 4.2)
 - Måldose (må oppgis) 10, 15 mg (bindende; tarc-2018 avsnittet om bytte hos stabile polikliniske pasienter med schizofreni (figur 1); ema-abilify section 4.2)
 - Må bekreftes (`indikasjon`): Pasienten er voksen, har schizofreni, er stabil og følges poliklinisk, og byttes fra olanzapin på grunn av bivirkninger eller utilstrekkelig effekt. (tarc-2018 avsnittet om bytte hos stabile polikliniske pasienter med schizofreni (figur 1); ema-abilify section 4.2)
-- Må bekreftes (`peroral_formulering`): Pasienten bruker peroral olanzapin, ikke depotinjeksjon. (keks-2019 tabell 4 (depot til depot))
+- Må bekreftes (`peroral_formulering`): Pasienten bruker peroral olanzapin (tabletter, smeltetabletter eller mikstur), ikke depotinjeksjon. (keks-2019 tabell 4 (depot til depot))
 - Må bekreftes (`spesialist_risiko`): Byttet er vurdert i, eller med råd fra, spesialisthelsetjenesten, og pasienten kan følges tett de første ukene: forverring av psykosen, søvn, uro og akatisi, sedasjon og ortostatisk blodtrykksfall. (keks-2019 tabell 4 og avsnittet om bytte; keks-2019 tabell 4 (direkte bytte))
 - Unntak (`tilbakefall_innlagt`): Pasienten har hatt gjentatte psykotiske tilbakefall, er innlagt eller er ikke stabil; kilden anbefaler da en annen opptrapping, som ikke er omfattet. (tarc-2018 avsnittene om gjentatte tilbakefall og om innlagte pasienter (figur 2 og 3))
 - Unntak (`alder_65`): Pasienten er 65 år eller eldre; effekt og sikkerhet av aripiprazol er ikke fastslått i denne gruppen. (ema-abilify section 4.2 (eldre))
@@ -612,7 +669,7 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
   - Kontroll: Avkreftet: Pasienten er 65 år eller eldre; effekt og sikkerhet av aripiprazol er ikke fastslått i denne gruppen. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten bruker en sterk CYP3A4- eller CYP2D6-hemmer eller en sterk CYP3A4-induktor; aripiprazoldosen skal da justeres. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen, har schizofreni, er stabil og følges poliklinisk, og byttes fra olanzapin på grunn av bivirkninger eller utilstrekkelig effekt. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Pasienten bruker peroral olanzapin, ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten bruker peroral olanzapin (tabletter, smeltetabletter eller mikstur), ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Byttet er vurdert i, eller med råd fra, spesialisthelsetjenesten, og pasienten kan følges tett de første ukene: forverring av psykosen, søvn, uro og akatisi, sedasjon og ortostatisk blodtrykksfall. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 5–20 mg (bindende) – oppfylt. 20 mg.
   - Kontroll: Måldosen er 10, 15 mg (bindende) – oppfylt. 15 mg.
@@ -623,7 +680,7 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
   - Kontroll: Avkreftet: Pasienten er 65 år eller eldre; effekt og sikkerhet av aripiprazol er ikke fastslått i denne gruppen. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten bruker en sterk CYP3A4- eller CYP2D6-hemmer eller en sterk CYP3A4-induktor; aripiprazoldosen skal da justeres. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen, har schizofreni, er stabil og følges poliklinisk, og byttes fra olanzapin på grunn av bivirkninger eller utilstrekkelig effekt. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Pasienten bruker peroral olanzapin, ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten bruker peroral olanzapin (tabletter, smeltetabletter eller mikstur), ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Byttet er vurdert i, eller med råd fra, spesialisthelsetjenesten, og pasienten kan følges tett de første ukene: forverring av psykosen, søvn, uro og akatisi, sedasjon og ortostatisk blodtrykksfall. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 5–20 mg (bindende) – oppfylt. 10 mg.
   - Kontroll: Måldosen er 10, 15 mg (bindende) – oppfylt. 10 mg.
@@ -642,7 +699,7 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 
 ## Fra risperidon til aripiprazol, kryss-titrering
 
-`antipsykotikabytte-risperidon-aripiprazol`, versjon 1, fingeravtrykk `c4e765f01c2cc5504ade6e7d03ecf4450a2a5bca1d293ba6349538b6a0e5567a`. Kryssnedtrapping: risperidon → aripiprazol. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`antipsykotikabytte-risperidon-aripiprazol`, versjon 1, fingeravtrykk `49ca4eff9b09a77cc4be108d68eb98f4a07b2cdfa59b3f674330542c3eb2dd94`. Kryssnedtrapping: risperidon → aripiprazol. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code).
 
@@ -694,7 +751,7 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 - Startdose høyst 16 mg (bindende; dmp-risperdal pkt. 4.2)
 - Måldose (må oppgis) 10, 15 mg (bindende; tarc-2018 avsnittet om bytte hos stabile polikliniske pasienter med schizofreni (figur 1); ema-abilify section 4.2)
 - Må bekreftes (`indikasjon`): Pasienten er voksen, har schizofreni, er stabil og følges poliklinisk, og byttes fra risperidon på grunn av bivirkninger eller utilstrekkelig effekt. (tarc-2018 avsnittet om bytte hos stabile polikliniske pasienter med schizofreni (figur 1); ema-abilify section 4.2)
-- Må bekreftes (`peroral_formulering`): Pasienten bruker peroral risperidon, ikke depotinjeksjon. (keks-2019 tabell 4 (depot til depot))
+- Må bekreftes (`peroral_formulering`): Pasienten bruker peroral risperidon (tabletter, smeltetabletter eller mikstur), ikke depotinjeksjon. (keks-2019 tabell 4 (depot til depot))
 - Må bekreftes (`spesialist_risiko`): Byttet er vurdert i, eller med råd fra, spesialisthelsetjenesten, og pasienten kan følges tett de første ukene: forverring av psykosen, søvn, uro og akatisi, sedasjon og ortostatisk blodtrykksfall. (keks-2019 tabell 4 og avsnittet om bytte; keks-2019 tabell 4 (direkte bytte))
 - Unntak (`tilbakefall_innlagt`): Pasienten har hatt gjentatte psykotiske tilbakefall, er innlagt eller er ikke stabil; kilden anbefaler da en annen opptrapping, som ikke er omfattet. (tarc-2018 avsnittene om gjentatte tilbakefall og om innlagte pasienter (figur 2 og 3))
 - Unntak (`alder_65`): Pasienten er 65 år eller eldre; effekt og sikkerhet av aripiprazol er ikke fastslått i denne gruppen. (ema-abilify section 4.2 (eldre))
@@ -723,7 +780,7 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
   - Kontroll: Avkreftet: Pasienten er 65 år eller eldre; effekt og sikkerhet av aripiprazol er ikke fastslått i denne gruppen. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten bruker en sterk CYP3A4- eller CYP2D6-hemmer eller en sterk CYP3A4-induktor; aripiprazoldosen skal da justeres. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen, har schizofreni, er stabil og følges poliklinisk, og byttes fra risperidon på grunn av bivirkninger eller utilstrekkelig effekt. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Pasienten bruker peroral risperidon, ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten bruker peroral risperidon (tabletter, smeltetabletter eller mikstur), ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Byttet er vurdert i, eller med råd fra, spesialisthelsetjenesten, og pasienten kan følges tett de første ukene: forverring av psykosen, søvn, uro og akatisi, sedasjon og ortostatisk blodtrykksfall. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er høyst 16 mg (bindende) – oppfylt. 4 mg.
   - Kontroll: Måldosen er 10, 15 mg (bindende) – oppfylt. 15 mg.
@@ -734,7 +791,7 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
   - Kontroll: Avkreftet: Pasienten er 65 år eller eldre; effekt og sikkerhet av aripiprazol er ikke fastslått i denne gruppen. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten bruker en sterk CYP3A4- eller CYP2D6-hemmer eller en sterk CYP3A4-induktor; aripiprazoldosen skal da justeres. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen, har schizofreni, er stabil og følges poliklinisk, og byttes fra risperidon på grunn av bivirkninger eller utilstrekkelig effekt. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Pasienten bruker peroral risperidon, ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten bruker peroral risperidon (tabletter, smeltetabletter eller mikstur), ikke depotinjeksjon. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Byttet er vurdert i, eller med råd fra, spesialisthelsetjenesten, og pasienten kan følges tett de første ukene: forverring av psykosen, søvn, uro og akatisi, sedasjon og ortostatisk blodtrykksfall. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er høyst 16 mg (bindende) – oppfylt. 6 mg.
   - Kontroll: Måldosen er 10, 15 mg (bindende) – oppfylt. 10 mg.

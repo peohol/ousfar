@@ -1,6 +1,6 @@
 # OUSFAR Verktøy – K3: bytte av antipsykotika
 
-**Status 03.11.2026:** sju regelutkast, alle **til uavhengig faglig kontroll** og ingen klinisk godkjent. Appen viser derfor ingen klinisk plan for dem ennå. En godkjenning gjelder bare nøyaktig regelversjonen og fingeravtrykket i `docs/verktøy-k3-antipsykotikabytter.md`, som er laget av reglene i `src/verktoy/regler/antipsykotikabytter.ts` og viser hver regels kilder, forutsetninger, unntak og regneeksempler. Styrende plan: `docs/verktøy-klinisk-leveranseplan-2026-11.md` (K3).
+**Status 03.11.2026:** sju regelutkast, alle **til uavhengig faglig kontroll** og ingen klinisk godkjent. Etter kontrollørens første gjennomgang av #320 er tre av dem i versjon 2 (se §6). Appen viser derfor ingen klinisk plan for dem ennå. En godkjenning gjelder bare nøyaktig regelversjonen og fingeravtrykket i `docs/verktøy-k3-antipsykotikabytter.md`, som er laget av reglene i `src/verktoy/regler/antipsykotikabytter.ts` og viser hver regels kilder, forutsetninger, unntak og regneeksempler. Styrende plan: `docs/verktøy-klinisk-leveranseplan-2026-11.md` (K3).
 
 ## 1. Hva som blir mulig
 
@@ -8,10 +8,10 @@ Før K3 kunne «Bytte antipsykotikum» bare beregne to snevre depotforløp: opps
 
 | Forløp | Sluttmål | Regel |
 | --- | --- | --- |
-| Peroral risperidon → Xeplion | Risperidon seponert; Xeplion 150 mg dag 1 og 100 mg dag 8 (±4 dager) i deltoideus; deretter valgt vedlikeholdsdose 50–150 mg hver måned (±7 dager) | `depot-risperidon-xeplion` |
+| Peroral risperidon → Xeplion | Risperidon seponert; Xeplion 150 mg dag 1 og 100 mg dag 8 (±4 dager) i deltoideus; deretter valgt vedlikeholdsdose 50–150 mg hver måned (±7 dager), der en annen dose enn anbefalte 75 mg krever en skriftlig begrunnelse | `depot-risperidon-xeplion` (v2) |
 | Risperdal Consta → Xeplion | Consta gis ikke mer; Xeplion i stedet for neste Consta-injeksjon i dosen fra tabellen (25 → 50, 37,5 → 75, 50 → 100 mg), deretter samme dose hver måned | `depot-consta-xeplion` |
-| Aripiprazol → olanzapin (peroralt) | Aripiprazol stoppet; olanzapin 10 mg daglig fra dag 1 | `antipsykotikabytte-aripiprazol-olanzapin` |
-| Aripiprazol → risperidon (peroralt) | Aripiprazol stoppet; risperidon 2 mg dag 1 og 4 mg daglig fra dag 2 | `antipsykotikabytte-aripiprazol-risperidon` |
+| Aripiprazol → olanzapin (peroralt) | Aripiprazol stoppet; olanzapin 10 mg fra dag 1 og, etter en ny vurdering, den valgte måldosen 5–20 mg (forslag: fra dag 8) | `antipsykotikabytte-aripiprazol-olanzapin` (v2) |
+| Aripiprazol → risperidon (peroralt) | Aripiprazol stoppet; risperidon 2 mg dag 1 og 4 mg fra dag 2 og, etter en ny vurdering, den valgte måldosen (høyst 16 mg; utenfor 4–6 mg med begrunnelse; forslag: fra dag 9) | `antipsykotikabytte-aripiprazol-risperidon` (v2) |
 | Kariprazin → kvetiapin (peroralt) | Kariprazin stoppet; kvetiapin 50, 100 og 200 mg dag 1–3 og 300 mg daglig fra dag 4, fordelt på to doser | `antipsykotikabytte-kariprazin-kvetiapin` |
 | Olanzapin → aripiprazol (peroralt, K0-07) | Kryss-titrering: aripiprazol 5 mg første uke, 10 mg andre uke og så valgt dose 10 eller 15 mg; olanzapin uendret i 28 dager, så ned 25 % av startdosen minst hver 14. dag til seponert | `antipsykotikabytte-olanzapin-aripiprazol` |
 | Risperidon → aripiprazol (peroralt, K0-08) | Som over, med risperidon | `antipsykotikabytte-risperidon-aripiprazol` |
@@ -61,21 +61,22 @@ Alle eksemplene er syntetiske. Testene i `src/__tests__/verktoyantipsykotika.tes
 
 **Komplette planer (med simulert godkjenning):**
 
-- Risperidon 4 mg → Xeplion 75 mg, start 01.12.2026: risperidon seponert fra 01.12; 150 mg 01.12 og 100 mg 08.12 (±4 dager) i deltoideus; 75 mg hver måned fra 08.01.2027 (±7 dager), deltoideus eller setemuskel. Også 16 mg → 150 mg.
+- Risperidon 4 mg → Xeplion 75 mg, start 01.12.2026: risperidon seponert fra 01.12; 150 mg 01.12 og 100 mg 08.12 (±4 dager) i deltoideus; 75 mg hver måned fra 08.01.2027 (±7 dager), deltoideus eller setemuskel. Med skriftlig begrunnelse også 0,5 mg → 150 mg og 16 mg → 50 mg; begrunnelsen står i planen.
 - Consta 37,5 mg, neste injeksjon 15.12.2026 → ingen flere Consta-injeksjoner; Xeplion 75 mg 15.12, deretter 75 mg hver måned fra 15.01.2027. Consta 25 → 50 mg og 50 → 100 mg.
-- Aripiprazol 15 mg (og 30 mg) → olanzapin 10 mg daglig fra dag 1.
-- Aripiprazol 15 mg → risperidon 2 mg dag 1, 4 mg fra dag 2.
+- Aripiprazol 15 mg → olanzapin 10 mg dag 1–7, vurdering dag 8 og så den valgte måldosen (5, 15 eller 20 mg) fra dag 8. Med måldose 10 mg: 10 mg fra dag 1. Aripiprazol 10 og 30 mg gir også plan.
+- Aripiprazol 15 mg → risperidon 2 mg dag 1, 4 mg dag 2–8 og den valgte måldosen fra dag 9 (for eksempel 6 mg), med vurdering før hver endring. Med måldose 4 mg: 4 mg fra dag 2.
 - Kariprazin 4,5 mg (og 1,5 og 6 mg) → kvetiapin 50/100/200 mg dag 1–3, 300 mg fra dag 4.
 - Olanzapin 20 mg → aripiprazol 15 mg, start 01.12.2026: aripiprazol 5 mg dag 1–7, 10 mg dag 8–14 og 15 mg fra dag 15; olanzapin 20 mg til dag 28, så 15, 10 og 5 mg i 14 dager hver og seponert fra dag 71 (09.02.2027). Også fra 10 mg (7,5, 5 og 2,5 mg).
 - Risperidon 4 mg → aripiprazol 10 mg: risperidon 4 mg til dag 28, så 3, 2 og 1 mg og seponert fra dag 71. Risperidontablettene kan deles, så også 1–9, 12 og 16 mg gir plan.
 
 **Stopper med forklaring:**
 
-- Xeplion-vedlikehold 25 mg (ikke markedsført), over 150 mg eller uten valgt dose; risperidon over 16 mg; Consta-dose utenfor tabellen (for eksempel 62,5 mg); aripiprazol under 10 eller over 30 mg; kariprazin over 6 mg eller en dose kapslene ikke gir (2, 2,5 og 5 mg); aripiprazol-måldose utenfor 10–15 mg.
+- Xeplion-vedlikehold 25 mg (ikke markedsført), over 150 mg eller uten valgt dose; en annen vedlikeholdsdose enn 75 mg uten skriftlig begrunnelse; manglende bekreftelse av dokumentert tidligere toleranse; risperidon over 16 mg; olanzapin-måldose utenfor 5–20 mg eller ikke valgt; risperidon-måldose over 16 mg, eller utenfor 4–6 mg uten begrunnelse; Consta-dose utenfor tabellen (for eksempel 62,5 mg); aripiprazol under 10 eller over 30 mg; kariprazin over 6 mg eller en dose kapslene ikke gir (2, 2,5 og 5 mg); aripiprazol-måldose utenfor 10–15 mg.
 - Til aripiprazol: et nedtrappingstrinn på 25 % av startdosen som ikke kan gis nøyaktig med tablettene. Olanzapintablettene kan ikke deles, så bare 10 og 20 mg gir plan; 5, 7,5, 12,5, 15 og 17,5 mg stopper (for eksempel 15 mg → 11,25 mg). Risperidon 10, 13, 14 og 15 mg stopper (for eksempel 10 mg → 7,5 mg). Se spørsmål 6.
 - Kreatininclearance under 80 ml/min eller alder over 65 år (Xeplion); 65 år eller eldre, nedsatt nyre- eller leverfunksjon, langsom omsetning eller CYP1A2-hemmer (olanzapin); interagerende CYP2D6-hemmer eller CYP3A4-induktor (risperidon); nedsatt leverfunksjon eller CYP3A4-hemmer (kvetiapin). Et ubesvart unntak stopper like mye som et ja.
 - Manglende bekreftelse av indikasjon, peroral formulering, spesialistvurdering eller (fra Consta) at depotet er Consta og at dag 1 er dagen neste injeksjon skulle vært gitt.
 - Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke), regelen er ikke godkjent, eller FEST-kopien er eldre enn 48 timer.
+- Et preparat planen trenger, mangler i FEST (testet med Xeplion 150 mg fjernet): planen stopper og bytter ikke til et annet preparat.
 
 **Ikke dekket (fortsatt ingen plan):**
 
@@ -86,9 +87,11 @@ Alle eksemplene er syntetiske. Testene i `src/__tests__/verktoyantipsykotika.tes
 
 ## 6. Åpne faglige spørsmål til kontrolløren
 
-1. **Vedlikeholdsdosen etter peroral risperidon (Xeplion):** preparatomtalen har ingen omregning fra risperidondose, så regelen binder ikke vedlikeholdsdosen til den (risperidon 0,5 mg kan gå til 150 mg og 16 mg til 50 mg). Forskriveren velger 50–150 mg (75 mg anbefalt). Er det en forsvarlig avgrensning, eller skal regelen kreve en begrunnelse for kombinasjoner langt fra hverandre? OUSFAR vil ikke finne på en ekvivalens.
-2. **Direkte bytte fra aripiprazol:** Keks beskriver det som *mulig*, ikke som eneste strategi. Er direkte bytte, med spesialistvurdering og tett oppfølging som krav, akseptabelt som det eneste beregnede alternativet? Aripiprazoldosen (10–30 mg) dokumenterer bare stabiliseringen. Aripiprazol bare stoppes, og mikstur gjør enhver dose mulig, så dosen begrenses ikke til tablettstyrker. Måldosen for det nye stoffet er preparatomtalens start- og vedlikeholdsdose og er den samme uansett aripiprazoldose. Bør den avhenge av aripiprazoldosen?
-3. **Sluttmålet for olanzapin og risperidon** er startdosen og vedlikeholdsdosen preparatomtalen oppgir (10 mg og 4 mg). Bør planen heller stoppe ved startdosen og overlate resten til klinikeren?
+Kontrolløren gikk gjennom #320 03.11.2026. Svarene på spørsmål 1–3 er lagt inn som versjon 2 av tre regler; spørsmål 6 (valg c) og etiketten for Consta-dosen krever en endring i den felles motoren (#319) og er sendt dit.
+
+1. **Vedlikeholdsdosen etter peroral risperidon (Xeplion), besvart i v2:** OUSFAR finner ikke på en omregning. Dokumentert tidligere toleranse er en egen bekreftelse, og en annen vedlikeholdsdose enn anbefalte 75 mg krever en skriftlig begrunnelse ut fra toleranse og effekt. Begrunnelsen står i planen sammen med risperidondosen. Gjenstår: er det nok kontroll av avvikende valg, eller trengs mer?
+2. **Direkte bytte fra aripiprazol, besvart i v2:** startregimet og den valgte terapeutiske måldosen er atskilt (olanzapin 5–20 mg; risperidon høyst 16 mg, utenfor 4–6 mg med begrunnelse), med en ny klinisk vurdering før hver doseendring. Tiden på startregimet før måldosen er et åpent OUSFAR-valg (forslag: én uke, fordi aripiprazol virker i flere dager etter siste dose) og må avklares. Aripiprazol bare stoppes, så dosen tolkes ikke som et antall tabletter og kan være tabletter, smeltetabletter eller mikstur. Indikasjonen er schizofreni; andre indikasjoner er ikke omfattet. Gjenstår: er direkte bytte, med spesialistvurdering og tett oppfølging som krav, akseptabelt som den eneste beregnede strategien?
+3. **Sluttmålet for olanzapin og risperidon, besvart i v2:** sluttmålet er forskriverens valgte måldose, ikke en fast dose.
 4. **Kvetiapin:** er fordelingen 200 + 100 mg og 4 × 25 mg på dag 2 akseptabel i en plan?
 5. **Bytte til aripiprazol (TARC 2018):** er en industrifinansiert konsensusrapport godt nok grunnlag for en beregnet kryss-titrering? Er forslagene 5 mg uke 1 og 10 mg uke 2 (øverst i kildens områder, fordi 5 mg er laveste tablett) riktige? De to doseforslagene er OUSFARs valg og må avklares før en godkjenning.
 6. **Avrunding av nedtrappingstrinnene til aripiprazol (QA 03.11.2026):** TARC sier bare «reduser dosen med 25 %» og gir eksemplene 20 → 15 → 10 → 5 og 4 → 3 → 2 → 1 mg. Kilden har ingen regel for doser der 25 % ikke går opp med tablettene. Derfor stopper vanlige olanzapindoser (5, 7,5, 15 og 17,5 mg) i stedet for å få en avrundet plan. En avrunding vil være en ny OUSFAR-regel, og verktøyet trenger støtte for den i beregningen. Mulige valg for kontrolløren:
@@ -96,7 +99,7 @@ Alle eksemplene er syntetiske. Testene i `src/__tests__/verktoyantipsykotika.tes
    - b) Faste trinn i mg i stedet for prosent, for eksempel 2,5 eller 5 mg per trinn for olanzapin.
    - c) Forskriveren velger nærmeste dose under eller over for hvert trinn som ikke går opp, slik nedtrappingsverktøyet allerede gjør (P7.5). Det finnes i dag bare for nedtrapping i prosent av den aktuelle dosen.
    - d) Behold stoppet: planen gjelder bare doser der hvert trinn kan gis nøyaktig.
-   Inntil kontrolløren har valgt, gjelder d.
+   **Kontrolløren valgte c (03.11.2026):** et begrenset sett av doser som kan gis rundt det ideelle trinnet, valgt av forskriveren, med dokumentert faktisk reduksjon, et minstekrav til sikkerhet og ny beregning av resten av forløpet. Ingen automatisk avrunding. OUSFARs forslag til sikkerhetskrav, som følger kilden uten nye tall: aldri raskere enn 25 % av startdosen per 14 dager, så et større trinn får tilsvarende lengre tid (for eksempel 15 → 10 mg i 19 dager). Det krever støtte i den felles motoren (#319), som er bestilt. Inntil den finnes, gjelder d.
 
 ## 7. Visningen
 

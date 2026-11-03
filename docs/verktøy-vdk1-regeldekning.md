@@ -134,14 +134,14 @@ Regelutkast som er kontrollert og ikke godkjent (eller bare fagtekst), og som de
 | Trappe ned antidepressiv | `seponering-venlafaksin` v6 | Venlafaksin | fagtekst | bare fagtekst |
 | Trappe ned antidepressiv | `seponering-vortioksetin-langsom` v8 | Vortioksetin | beregnbar | ikke godkjent |
 | Bytte antidepressiv | `mao-fluoksetin-fenelzin` v7 | Fluoksetin → Fenelzin | beregnbar | ikke godkjent |
-| Bytte antipsykotikum | `antipsykotikabytte-aripiprazol-olanzapin` v1 | Aripiprazol (peroral) → Olanzapin (peroral) | beregnbar | til kontroll |
-| Bytte antipsykotikum | `antipsykotikabytte-aripiprazol-risperidon` v1 | Aripiprazol (peroral) → Risperidon (peroral) | beregnbar | til kontroll |
+| Bytte antipsykotikum | `antipsykotikabytte-aripiprazol-olanzapin` v2 | Aripiprazol (peroral) → Olanzapin (peroral) | beregnbar | til kontroll |
+| Bytte antipsykotikum | `antipsykotikabytte-aripiprazol-risperidon` v2 | Aripiprazol (peroral) → Risperidon (peroral) | beregnbar | til kontroll |
 | Bytte antipsykotikum | `antipsykotikabytte-kariprazin-kvetiapin` v1 | Kariprazin → Kvetiapin | beregnbar | til kontroll |
 | Bytte antipsykotikum | `antipsykotikabytte-olanzapin-aripiprazol` v1 | Olanzapin (peroral) → Aripiprazol (peroral) | beregnbar | til kontroll |
 | Bytte antipsykotikum | `antipsykotikabytte-olanzapin-kvetiapin` v5 | Olanzapin (peroral) → Kvetiapin | beregnbar | ikke godkjent |
 | Bytte antipsykotikum | `antipsykotikabytte-risperidon-aripiprazol` v1 | Risperidon (peroral) → Aripiprazol (peroral) | beregnbar | til kontroll |
 | Bytte antipsykotikum | `depot-consta-xeplion` v1 | Risperidon (depotinjeksjon) → Paliperidon (depotinjeksjon (paliperidonpalmitat)) | beregnbar | til kontroll |
-| Bytte antipsykotikum | `depot-risperidon-xeplion` v1 | Risperidon (peroral) → Paliperidon (depotinjeksjon (paliperidonpalmitat)) | beregnbar | til kontroll |
+| Bytte antipsykotikum | `depot-risperidon-xeplion` v2 | Risperidon (peroral) → Paliperidon (depotinjeksjon (paliperidonpalmitat)) | beregnbar | til kontroll |
 
 ## 6. Hvorfor de andre kombinasjonene stopper
 

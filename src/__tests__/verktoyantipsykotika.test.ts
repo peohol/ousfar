@@ -41,8 +41,20 @@ const VALG = {
   'antipsykotikabytte-olanzapin-aripiprazol': valg(['olanzapin', 'standard'], ['aripiprazol', 'standard']),
   'antipsykotikabytte-risperidon-aripiprazol': valg(['risperidon', 'standard'], ['aripiprazol', 'standard']),
 } as const
-/** Byttene til aripiprazol har to åpne OUSFAR-valg (aripiprazoldosen første og andre uke) som kontrolløren må avklare. */
-const MED_APNE_VALG = ['antipsykotikabytte-olanzapin-aripiprazol', 'antipsykotikabytte-risperidon-aripiprazol']
+/**
+ * Regler med åpne OUSFAR-valg som kontrolløren må avklare: aripiprazoldosen første og andre uke i byttene til
+ * aripiprazol, og tiden på startregimet før den valgte måldosen i byttene fra aripiprazol.
+ */
+const MED_APNE_VALG = [
+  'antipsykotikabytte-olanzapin-aripiprazol',
+  'antipsykotikabytte-risperidon-aripiprazol',
+  'antipsykotikabytte-aripiprazol-olanzapin',
+  'antipsykotikabytte-aripiprazol-risperidon',
+]
+/** Versjon 2 svarer på kontrollørens gjennomgang av #320 (03.11.2026). */
+const VERSJON_2 = ['depot-risperidon-xeplion', 'antipsykotikabytte-aripiprazol-olanzapin', 'antipsykotikabytte-aripiprazol-risperidon']
+/** Krever skriftlig begrunnelse (ordlyden om over eller under grensen er motorens). */
+const BEGRUNNES = /krever en skriftlig begrunnelse/
 type Regelid = keyof typeof VALG
 
 const regel = (id: string) => ANTIPSYKOTIKASETT.regler.find((r) => r.id === id)!
@@ -79,6 +91,13 @@ const kjor = (id: Regelid, dose: string, skjema: Partial<Planskjema> = {}, ekstr
 const linjer = (u: ReturnType<typeof kjor>): string[] => (u.utfall === 'plan' ? u.linjer : [JSON.stringify(u)])
 const grunner = (u: ReturnType<typeof kjor>) => ('grunner' in u ? u.grunner.join(' ') : JSON.stringify(u))
 
+/** FEST-kopien uten pakningene med navn som passer `navn`: et preparat som mangler i FEST. */
+const utenPakninger = (uttrekk: Uttrekkene['pilot'], navn: RegExp): Uttrekkene['pilot'] => {
+  const kopi = structuredClone(uttrekk) as { utvalg: { pakninger: { navn_form_styrke: string }[] } }
+  kopi.utvalg.pakninger = kopi.utvalg.pakninger.filter((p) => !navn.test(p.navn_form_styrke))
+  return kopi as unknown as Uttrekkene['pilot']
+}
+
 describe('K3: regelutkastene for bytte av antipsykotika', () => {
   it('består kontrollene, med kildene, kildeoppføringene og regneeksemplene', () => {
     expect(kontrollerRegelsett(ANTIPSYKOTIKASETT)).toEqual([])
@@ -94,7 +113,8 @@ describe('K3: regelutkastene for bytte av antipsykotika', () => {
   it('er alle til faglig kontroll og ikke klinisk godkjent, så verktøysiden gir ingen klinisk plan', () => {
     for (const r of ANTIPSYKOTIKASETT.regler) {
       expect(r.godkjenning.status, r.id).toBe('til_faglig_kontroll')
-      expect(r.versjon, r.id).toBe(1)
+      expect(r.versjon, r.id).toBe(VERSJON_2.includes(r.id) ? 2 : 1)
+      expect(r.godkjenning.historikk.at(-1)?.regelversjon, r.id).toBe(r.versjon)
       expect(erKliniskGodkjent(r), r.id).toBe(false)
     }
     for (const [id, v] of Object.entries(VALG)) {
@@ -122,11 +142,27 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
       'Dag 8 (08.12.2026): Paliperidon depotinjeksjon 100 mg = 1 injeksjon à 100 mg (±4 dager, deltoideus)',
       'Hver måned fra 1 måned etter dag 8 (første 08.01.2027): Paliperidon depotinjeksjon 75 mg = 1 injeksjon à 75 mg (±7 dager, deltoideus eller setemuskel)',
     ])
-    // Ved grensene i preparatomtalen: 150 mg gir plan, 25 mg finnes ikke som Xeplion i FEST og stopper.
-    expect(linjer(kjor('depot-risperidon-xeplion', '16', { maldose: '150' })).at(-1)).toMatch(/150 mg = 1 injeksjon à 150 mg/)
-    expect(grunner(kjor('depot-risperidon-xeplion', '4', { maldose: '25' }))).toMatch(/vedlikeholdet er 25 mg, men FEST har ingen brukbar injeksjon med den styrken/)
-    expect(kjor('depot-risperidon-xeplion', '4', { maldose: '175' }).utfall).not.toBe('plan')
+    // En annen vedlikeholdsdose enn anbefalte 75 mg krever en skriftlig begrunnelse, også ved svært lav eller høy risperidondose.
+    for (const [risperidon, xeplion] of [['0,5', '150'], ['16', '50'], ['4', '100']] as const) {
+      expect(grunner(kjor('depot-risperidon-xeplion', risperidon, { maldose: xeplion })), `${risperidon} → ${xeplion}`).toMatch(BEGRUNNES)
+    }
+    const begrunnet = kjor('depot-risperidon-xeplion', '0,5', { maldose: '150', begrunnelse: 'Syntetisk eksempel: overvekt og tidligere effekt.' })
+    expect(linjer(begrunnet).at(-1)).toMatch(/150 mg = 1 injeksjon à 150 mg/)
+    expect(begrunnet.utfall === 'plan' && begrunnet.tekst).toMatch(/Syntetisk eksempel: overvekt og tidligere effekt/)
+    expect(linjer(kjor('depot-risperidon-xeplion', '16', { maldose: '50', begrunnelse: 'Syntetisk eksempel.' })).at(-1)).toMatch(/50 mg = 1 injeksjon à 50 mg/)
+    // Ved grensene i preparatomtalen: 25 mg finnes ikke som Xeplion i FEST og stopper; 175 mg og risperidon 17 mg er utenfor.
+    expect(grunner(kjor('depot-risperidon-xeplion', '4', { maldose: '25', begrunnelse: 'Syntetisk eksempel.' }))).toMatch(/vedlikeholdet er 25 mg, men FEST har ingen brukbar injeksjon med den styrken/)
+    expect(kjor('depot-risperidon-xeplion', '4', { maldose: '175', begrunnelse: 'Syntetisk eksempel.' }).utfall).not.toBe('plan')
     expect(kjor('depot-risperidon-xeplion', '17', { maldose: '75' }).utfall).not.toBe('plan')
+    // Dokumentert tidligere toleranse er en egen bekreftelse.
+    expect(grunner(kjor('depot-risperidon-xeplion', '4', { maldose: '75', bekreftet: ['indikasjon'] }))).toMatch(/har tålt peroral risperidon over tid/)
+  })
+
+  it('et preparat som mangler i FEST, stopper planen i stedet for å bytte til et annet', () => {
+    const uten150 = { ...UTTREKKENE, pilot: utenPakninger(UTTREKKENE.pilot, /^Xeplion .*150 mg/) }
+    const u = kjorKasus({ id: 'uten-150', kategori: 'vanlig_dose', hva: 'uten Xeplion 150 mg', verktoy: BYTTE.id, valg: VALG['depot-risperidon-xeplion'], uttrekk: 'pilot', dose: '4', skjema: { maldose: '75' }, regel: godkjent('depot-risperidon-xeplion'), forventet: { utfall: 'stopp', grunner: [] } }, uten150)
+    expect(u.utfall).not.toBe('plan')
+    expect(grunner(u)).toMatch(/injeksjonen dag 1 er 150 mg, men FEST har ingen brukbar injeksjon med den styrken/)
   })
 
   it('Risperdal Consta → Xeplion: Xeplion i stedet for neste Consta-injeksjon, dosen fra tabellen, deretter månedlig', () => {
@@ -142,23 +178,45 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
     expect(grunner(kjor('depot-consta-xeplion', '37,5', {}, { ubesvart: ['over_65'] }))).toMatch(/over 65 år/)
   })
 
-  it('aripiprazol → olanzapin: aripiprazol stoppes og olanzapin 10 mg daglig fra dag 1', () => {
+  it('aripiprazol → olanzapin: aripiprazol stoppes, olanzapin 10 mg fra dag 1 og den valgte måldosen etter en ny vurdering', () => {
     // Olanzapin finnes i flere legemiddelformer i FEST; forskriveren velger tabletter. Aripiprazol bare stoppes, så formen spørres ikke om.
-    expect(kjor('antipsykotikabytte-aripiprazol-olanzapin', '15')).toEqual({ utfall: 'formvalg', forlop: ['til'] })
-    expect(linjer(kjor('antipsykotikabytte-aripiprazol-olanzapin', '15', { formvalg: { til: TABLETTER } }))).toEqual([
-      'Fra dag 1: Aripiprazol peroralt: Seponert; Olanzapin peroralt: 10 mg = 1 tablett à 10 mg',
+    expect(kjor('antipsykotikabytte-aripiprazol-olanzapin', '15', { maldose: '15' })).toEqual({ utfall: 'formvalg', forlop: ['til'] })
+    const T = { formvalg: { til: TABLETTER } }
+    expect(linjer(kjor('antipsykotikabytte-aripiprazol-olanzapin', '15', { ...T, maldose: '15', startdato: '2026-12-07' }))).toEqual([
+      'Dag 1–7 (07.12.2026–13.12.2026): Aripiprazol peroralt: Seponert; Olanzapin peroralt: 10 mg = 1 tablett à 10 mg',
+      'Dag 8 (14.12.2026): Vurdering (Olanzapin): Før endringen: Ny klinisk vurdering av effekt og bivirkninger, og av at aripiprazol er stoppet, før dosen endres.',
+      'Fra dag 8 (fra 14.12.2026): Olanzapin peroralt: 15 mg = 2 tabletter à 7,5 mg',
     ])
-    expect(kjor('antipsykotikabytte-aripiprazol-olanzapin', '30', { formvalg: { til: TABLETTER } }).utfall).toBe('plan')
-    expect(kjor('antipsykotikabytte-aripiprazol-olanzapin', '5', { formvalg: { til: TABLETTER } }).utfall).not.toBe('plan')
-    expect(grunner(kjor('antipsykotikabytte-aripiprazol-olanzapin', '15', { formvalg: { til: TABLETTER }, pasientforhold: { cyp1a2_hemmer: true } }))).toMatch(/CYP1A2/)
+    // Måldosen er startdosen: ingen endring og ingen vurdering.
+    expect(linjer(kjor('antipsykotikabytte-aripiprazol-olanzapin', '15', { ...T, maldose: '10' }))).toEqual(['Fra dag 1: Aripiprazol peroralt: Seponert; Olanzapin peroralt: 10 mg = 1 tablett à 10 mg'])
+    // Grensene 5 og 20 mg gir plan; utenfor stopper; måldosen må velges.
+    for (const maldose of ['5', '20']) expect(linjer(kjor('antipsykotikabytte-aripiprazol-olanzapin', '30', { ...T, maldose })).at(-1), maldose).toMatch(new RegExp(`Fra dag 8: Olanzapin peroralt: ${maldose} mg`))
+    expect(grunner(kjor('antipsykotikabytte-aripiprazol-olanzapin', '15', { ...T, maldose: '25' }))).toMatch(/Måldosen 25 mg er utenfor/)
+    expect(grunner(kjor('antipsykotikabytte-aripiprazol-olanzapin', '15', { ...T, maldose: '2,5' }))).toMatch(/Måldosen 2,5 mg er utenfor/)
+    expect(kjor('antipsykotikabytte-aripiprazol-olanzapin', '15', T).utfall).not.toBe('plan')
+    // Aripiprazoldosen ved grensene: 10 og 30 mg gir plan, 5 og 35 mg stopper.
+    expect(kjor('antipsykotikabytte-aripiprazol-olanzapin', '10', { ...T, maldose: '10' }).utfall).toBe('plan')
+    for (const dose of ['5', '35']) expect(grunner(kjor('antipsykotikabytte-aripiprazol-olanzapin', dose, { ...T, maldose: '10' })), dose).toMatch(new RegExp(`Startdosen ${dose} mg er utenfor`))
+    expect(grunner(kjor('antipsykotikabytte-aripiprazol-olanzapin', '15', { ...T, maldose: '10', pasientforhold: { cyp1a2_hemmer: true } }))).toMatch(/CYP1A2/)
   })
 
-  it('aripiprazol → risperidon: 2 mg dag 1 og 4 mg daglig fra dag 2', () => {
-    expect(linjer(kjor('antipsykotikabytte-aripiprazol-risperidon', '15'))).toEqual([
+  it('aripiprazol → risperidon: 2 mg dag 1, 4 mg fra dag 2 og den valgte måldosen etter en ny vurdering', () => {
+    expect(linjer(kjor('antipsykotikabytte-aripiprazol-risperidon', '15', { maldose: '6' })).filter((l) => !l.includes('Vurdering'))).toEqual([
+      'Dag 1: Aripiprazol peroralt: Seponert; Risperidon peroralt: 2 mg = 1 tablett à 2 mg',
+      'Dag 2–8: Risperidon peroralt: 4 mg = 1 tablett à 4 mg',
+      'Fra dag 9: Risperidon peroralt: 6 mg = 2 tabletter à 3 mg',
+    ])
+    // Vurderingen står før hver doseendring.
+    expect(linjer(kjor('antipsykotikabytte-aripiprazol-risperidon', '15', { maldose: '6' })).filter((l) => l.includes('Vurdering')).map((l) => l.split(':')[0])).toEqual(['Dag 2', 'Dag 9'])
+    expect(linjer(kjor('antipsykotikabytte-aripiprazol-risperidon', '15', { maldose: '4' })).filter((l) => !l.includes('Vurdering'))).toEqual([
       'Dag 1: Aripiprazol peroralt: Seponert; Risperidon peroralt: 2 mg = 1 tablett à 2 mg',
       'Fra dag 2: Risperidon peroralt: 4 mg = 1 tablett à 4 mg',
     ])
-    expect(grunner(kjor('antipsykotikabytte-aripiprazol-risperidon', '15', {}, { ubesvart: ['alder_65'] }))).toMatch(/65 år/)
+    // Utenfor 4–6 mg krever en skriftlig begrunnelse; over 16 mg stopper også med begrunnelse.
+    for (const maldose of ['3', '8']) expect(grunner(kjor('antipsykotikabytte-aripiprazol-risperidon', '15', { maldose })), maldose).toMatch(BEGRUNNES)
+    expect(linjer(kjor('antipsykotikabytte-aripiprazol-risperidon', '15', { maldose: '8', begrunnelse: 'Syntetisk eksempel.' })).at(-1)).toMatch(/Fra dag 9: Risperidon peroralt: 8 mg/)
+    expect(grunner(kjor('antipsykotikabytte-aripiprazol-risperidon', '15', { maldose: '20', begrunnelse: 'Syntetisk eksempel.' }))).toMatch(/Måldosen 20 mg er utenfor/)
+    expect(grunner(kjor('antipsykotikabytte-aripiprazol-risperidon', '15', { maldose: '4' }, { ubesvart: ['alder_65'] }))).toMatch(/65 år/)
   })
 
   it('kariprazin → kvetiapin: kvetiapin 50, 100 og 200 mg de tre første dagene og 300 mg daglig fra dag 4, fordelt på to doser', () => {
@@ -234,8 +292,8 @@ describe('K3: planutfallet', () => {
     const planer = [
       kjor('depot-risperidon-xeplion', '4', { maldose: '75' }),
       kjor('depot-consta-xeplion', '37,5'),
-      kjor('antipsykotikabytte-aripiprazol-olanzapin', '15', { formvalg: { til: TABLETTER } }),
-      kjor('antipsykotikabytte-aripiprazol-risperidon', '15'),
+      kjor('antipsykotikabytte-aripiprazol-olanzapin', '15', { formvalg: { til: TABLETTER }, maldose: '15' }),
+      kjor('antipsykotikabytte-aripiprazol-risperidon', '15', { maldose: '6' }),
       kjor('antipsykotikabytte-kariprazin-kvetiapin', '4,5'),
       kjor('antipsykotikabytte-olanzapin-aripiprazol', '20', { formvalg: { fra: TABLETTER, til: TABLETTER }, maldose: '15' }),
       kjor('antipsykotikabytte-risperidon-aripiprazol', '4', { formvalg: { fra: TABLETTER, til: TABLETTER }, maldose: '10' }),
