@@ -55,13 +55,13 @@ const MED_APNE_VALG = [
 ]
 /** Versjonene etter kontrollørens gjennomganger av #320 (03.11.2026); de andre er versjon 1. */
 const VERSJON: Partial<Record<string, number>> = {
-  'depot-risperidon-xeplion': 6,
+  'depot-risperidon-xeplion': 7,
   'depot-consta-xeplion': 2,
   'antipsykotikabytte-aripiprazol-olanzapin': 2,
   'antipsykotikabytte-aripiprazol-risperidon': 2,
   'antipsykotikabytte-kariprazin-kvetiapin': 2,
-  'antipsykotikabytte-olanzapin-aripiprazol': 5,
-  'antipsykotikabytte-risperidon-aripiprazol': 5,
+  'antipsykotikabytte-olanzapin-aripiprazol': 6,
+  'antipsykotikabytte-risperidon-aripiprazol': 6,
 }
 /** Krever skriftlig begrunnelse (ordlyden om over eller under grensen er motorens). */
 const BEGRUNNES = /krever en skriftlig begrunnelse/
@@ -184,7 +184,8 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
     const plan = kjor('depot-risperidon-xeplion', '3', { maldose: '75' })
     expect(plan.utfall).toBe('plan')
     expect(plan.tekst).toMatch(/Før injeksjonen dag 8 og før hver månedlige vedlikeholdsinjeksjon: psykotiske symptomer/)
-    expect(plan.tekst).toMatch(/Ved funn: Ved forverring, bivirkninger eller overfølsomhet planlegges videre behandling individuelt/)
+    // Når en individuell vurdering overstyrer planens vedlikeholdsdose, står konkret i planen.
+    expect(plan.tekst).toMatch(/Ved funn: Planens 75 mg gjelder ikke lenger, og vedlikeholdsdosen vurderes individuelt, ved forverring eller tilbakefall av psykotiske symptomer, dosebegrensende eller ekstrapyramidale bivirkninger, overfølsomhet, nedsatt nyrefunksjon eller utviklet overvekt eller fedme/)
     // Uten kontrollørens avklaring av avgrensningen gir regelen ingen plan, selv om den ellers var godkjent.
     expect(apneValg(regel('depot-risperidon-xeplion'))).toEqual(['inndata.startdose (åpent forslag)'])
     // Dokumentert tidligere toleranse er en egen bekreftelse.
@@ -292,6 +293,9 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
     // Hva som gjøres ved funn, står i planen.
     expect(kjor('antipsykotikabytte-olanzapin-aripiprazol', '20', { ...TO_TABLETTER, maldose: '15' }).tekst).toMatch(/Ved funn: Ved forverring, uro eller seponeringsplager holdes dosen, og resten av nedtrappingen planlegges individuelt/)
     expect(vurderinger[4]).toMatch(/Olanzapin er seponert: tilstanden vurderes på nytt/)
+    // Stoffspesifikke seponeringsplager (Keks 2019 tabell 2, kolinergt syndrom ved olanzapin) i vurderingene og i vurderingen av siste trinn.
+    for (const l of vurderinger) expect(l).toMatch(/kvalme, oppkast, hodepine, uro, angst, søvnløshet og svetting, og akatisi, dystoni og dyskinesi/)
+    expect(regel('antipsykotikabytte-olanzapin-aripiprazol').bekreftelser.find((b) => b.id === 'siste_trinn')?.tekst).toMatch(/seponeringsplager kan være kvalme, oppkast, hodepine/)
     // Siste trinn til 0 krever en egen vurdering av pasienten, og tidligere seponeringsplager stopper planen.
     expect(grunner(kjor('antipsykotikabytte-olanzapin-aripiprazol', '20', { ...TO_TABLETTER, maldose: '15', bekreftet: ['indikasjon', 'peroral_formulering', 'spesialist_risiko'] }))).toMatch(/Må bekreftes før beregning: Siste trinn er vurdert for denne pasienten/)
     expect(grunner(kjor('antipsykotikabytte-olanzapin-aripiprazol', '20', { ...TO_TABLETTER, maldose: '15', pasientforhold: { seponeringsplager: true } }))).toMatch(/tidligere fått seponeringsplager/)
@@ -311,6 +315,11 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
       'Fra dag 71: Risperidon peroralt: Seponert; Aripiprazol peroralt: 10 mg = 1 tablett à 10 mg',
     ])
     expect(grunner(kjor('antipsykotikabytte-risperidon-aripiprazol', '4', { ...TO_TABLETTER, maldose: '10' }, { ubesvart: ['cyp_aripiprazol'] }))).toMatch(/CYP3A4- eller CYP2D6-hemmer/)
+    // Risperdal-preparatomtalens råd om seponering og plagene den nevner, står i vurderingene.
+    const vurderinger = linjer(kjor('antipsykotikabytte-risperidon-aripiprazol', '4', { ...TO_TABLETTER, maldose: '10' })).filter((l) => l.includes('Vurdering'))
+    expect(vurderinger.map((l) => l.split(':')[0])).toEqual(['Dag 29', 'Dag 43', 'Dag 57', 'Dag 71', 'Dag 84'])
+    for (const l of vurderinger) expect(l).toMatch(/kvalme, oppkast, svette og søvnløshet, og akatisi, dystoni og dyskinesi/)
+    expect(regel('antipsykotikabytte-risperidon-aripiprazol').fortolkning.kildetro.map((u) => u.tekst).join(' ')).toMatch(/Seponering av risperidon: Ved seponering anbefales gradvis nedtrapping/)
     expect(kjor('antipsykotikabytte-risperidon-aripiprazol', '20', { ...TO_TABLETTER, maldose: '10' }).utfall).not.toBe('plan')
   })
 
