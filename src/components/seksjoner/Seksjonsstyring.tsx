@@ -3,6 +3,7 @@ import { useBevart, type Bevaringsform } from '../../oppdatering/Bevaring'
 import { rullefart } from '../../hooks/useKortHopp'
 import { MAKS_GLIDETID, redusertBevegelse } from '../../hooks/useSkjuling'
 import { endeligRamme, lesFart, lesKurve, mellom } from '../../hooks/useFlytting'
+import type { Ikonnavn } from '../ikon/register'
 
 /**
  * Hvilke seksjoner og detaljkort på en side som er åpne, og veien til et sted
@@ -64,6 +65,23 @@ export type Rulleplass = ScrollLogicalPosition | false
 export const TILPASSET = 'tilpasset'
 export type Rullemal = Rulleplass | typeof TILPASSET
 
+/**
+ * Det en seksjon på siden oppgir om seksjonen til innholdsfortegnelsen
+ * (`Innholdsfortegnelse.tsx`): navnet i ren tekst og ikonet. En seksjon uten
+ * navn står ikke i den.
+ */
+export interface Innholdsoppforing {
+  navn: string
+  ikon?: Ikonnavn
+}
+
+/** En seksjon i innholdsfortegnelsen, i den rekkefølgen den står på siden. */
+export interface Innholdspunkt extends Innholdsoppforing {
+  /** Seksjonens ID, som i adressen. */
+  id: string
+  apen: boolean
+}
+
 export interface Seksjonsstyring {
   /** Tilstanden til skuffen stien peker på. */
   tilstand(sti: readonly string[], apenFraStart: boolean): Skufftilstand
@@ -74,8 +92,16 @@ export interface Seksjonsstyring {
    * ellers med toppen øverst.
    */
   sett(sti: readonly string[], apen: boolean): void
-  /** Kalles av skuffen når den tegnes; gir tilbake avregistreringen. */
-  registrer(sti: readonly string[], apenFraStart: boolean): () => void
+  /**
+   * Kalles av skuffen når den tegnes; gir tilbake avregistreringen. En seksjon
+   * med `oppforing` står i innholdsfortegnelsen.
+   */
+  registrer(sti: readonly string[], apenFraStart: boolean, oppforing?: Innholdsoppforing): () => void
+  /**
+   * Seksjonene på siden som står i innholdsfortegnelsen, i den rekkefølgen de
+   * står, også når noen av dem først kommer etter at siden er tegnet.
+   */
+  innhold: readonly Innholdspunkt[]
   /**
    * Åpner seksjonen og eventuelt detaljkortet stien peker på, og ruller dit.
    * Finnes skuffen ikke ennå — innholdet er ikke hentet — åpnes den og rulles
@@ -115,6 +141,7 @@ interface Valg {
 interface Registrering {
   forelder: string
   apenFraStart: boolean
+  oppforing?: Innholdsoppforing
 }
 
 /** Kjeden av nøkler fra seksjonen og innover til skuffen stien peker på. */
@@ -179,10 +206,10 @@ export function SeksjonsstyringKilde({ bevares = false, children }: { bevares?: 
     else venter.current = { nokkel, plass }
   }, [])
 
-  const registrer = useCallback((sti: readonly string[], apenFraStart: boolean) => {
+  const registrer = useCallback((sti: readonly string[], apenFraStart: boolean, oppforing?: Innholdsoppforing) => {
     const nokkel = skuffnokkel(sti)
     const forelder = skuffnokkel(sti.slice(0, -1))
-    setRegistrert((forrige) => new Map(forrige).set(nokkel, { forelder, apenFraStart }))
+    setRegistrert((forrige) => new Map(forrige).set(nokkel, { forelder, apenFraStart, oppforing }))
     if (venter.current?.nokkel === nokkel) {
       const { plass } = venter.current
       venter.current = null
@@ -271,7 +298,12 @@ export function SeksjonsstyringKilde({ bevares = false, children }: { bevares?: 
         setValgt((forrige) => new Map(forrige).set(skuffnokkel(sti.slice(0, -1)), { nokkel: null, animer: true }))
       }
     }
-    return { tilstand, sett, registrer, apne, apneTil, fastSted }
+    const innhold = oppforteSeksjoner(registrert).map(({ nokkel, apenFraStart, oppforing }) => ({
+      ...oppforing,
+      id: nokkel,
+      apen: tilstand([nokkel], apenFraStart).apen,
+    }))
+    return { tilstand, sett, registrer, innhold, apne, apneTil, fastSted }
   }, [valgt, standard, registrert, velg, rullNar, registrer, apne, apneTil, fastSted])
 
   return <Kontekst.Provider value={verdi}>{children}</Kontekst.Provider>
@@ -319,6 +351,27 @@ export function skufferRundt(element: Element): string[] {
     el = el.parentElement?.closest(`[${SKUFFATTRIBUTT}]`) ?? null
   }
   return nokler
+}
+
+/**
+ * Seksjonene på siden med en oppføring i innholdsfortegnelsen, i den
+ * rekkefølgen de står i dokumentet. Rekkefølgen de ble registrert i, holder
+ * ikke: en seksjon som venter på data, kommer til etter de andre.
+ */
+function oppforteSeksjoner(registrert: ReadonlyMap<string, Registrering>) {
+  const plass = new Map<string, number>()
+  if (typeof document !== 'undefined') {
+    document.querySelectorAll(`[${SKUFFATTRIBUTT}]`).forEach((el, i) => {
+      const nokkel = el.getAttribute(SKUFFATTRIBUTT)
+      if (nokkel !== null && !plass.has(nokkel)) plass.set(nokkel, i)
+    })
+  }
+  const sist = Number.MAX_SAFE_INTEGER
+  return [...registrert]
+    .flatMap(([nokkel, { forelder, apenFraStart, oppforing }]) =>
+      forelder === ROT && oppforing ? [{ nokkel, apenFraStart, oppforing }] : [],
+    )
+    .sort((a, b) => (plass.get(a.nokkel) ?? sist) - (plass.get(b.nokkel) ?? sist))
 }
 
 function finnSkuff(nokkel: string): Element | null {

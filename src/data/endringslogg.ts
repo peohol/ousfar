@@ -12,6 +12,18 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.124.0',
+    dato: '2026-11-03',
+    sammendrag: 'Fagsidene har fått en innholdsfortegnelse',
+    typer: ['Funksjonalitet', 'Design / layout'],
+    omfang: 'Mindre omfang',
+    gjelder: ['stoff'],
+    punkter: [
+      'Til venstre for innholdet står en kort liste med seksjonene på fagsiden. Trykk på en seksjon for å åpne den og gå rett dit. Seksjonen som er åpen, er merket i listen.',
+      'Er skjermen for smal til listen, ligger den bak knappen «Innhold på siden» i toppmenyen, og på mobil i menyen nederst på skjermen.',
+    ],
+  },
+  {
     versjon: '1.123.1',
     dato: '2026-11-03',
     sammendrag: 'Presisert kildefaktum fra RCPsych i nye, kontrollerte versjoner av nedtrappingsreglene',
