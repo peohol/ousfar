@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.119.1',
+    dato: '2026-11-03',
+    sammendrag: 'Prøven av kildeovervåkingen avsluttet',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Den syntetiske prøvesaken i kildeovervåkingen er avsluttet som prøve, og den gamle prøven av fristene, som ikke lenger finnes, er merket som utgått i fremdriftsplanen.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.119.0',
     dato: '2026-11-03',
     sammendrag: 'Kildeovervåkingen: tekniske avvik følges opp uten frister, og redaktøren får bare faglige spørsmål',
