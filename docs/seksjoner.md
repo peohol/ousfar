@@ -222,9 +222,10 @@ Identiteten og viktige data står alltid fram øverst og er ikke med.
   styringen (`innhold`), så fortegnelsen viser det siden faktisk har, i
   sidens rekkefølge, også når en seksjon kommer når dataene er hentet. Den
   vises når siden har minst to seksjoner.
-- **Brede skjermer** (fra 84em ≈ 1344 px): fortegnelsen flyter til venstre
-  for innholdet, midt i høyden under toppmenyen, som en kompakt liste med
-  en linje langs kanten som viser den åpne seksjonen.
+- **Brede skjermer** (fra 1440 px): fortegnelsen flyter til venstre
+  for innholdet, med god luft til det, midt i høyden under toppmenyen, som
+  en kompakt liste med seksjonsikonet foran hver tittel og en linje langs
+  kanten som viser den åpne seksjonen.
 - **Smalere skjermer**: det er ikke plass ved siden av innholdet, så
   fortegnelsen er en knapp («Innhold på siden») i toppmenyen, i plassen
   `innhold` mellom søket i siden og hovedhandlingen. På mobil står knappen

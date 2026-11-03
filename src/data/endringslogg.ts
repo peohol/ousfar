@@ -12,6 +12,18 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.124.3',
+    dato: '2026-11-03',
+    sammendrag: 'Innholdsfortegnelsen på fagsidene viser seksjonsikonene og står litt lenger fra innholdet',
+    typer: ['Design / layout'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['stoff'],
+    punkter: [
+      'Hver seksjon i innholdsfortegnelsen til venstre har fått ikonet sitt foran tittelen, og det er mer luft mellom fortegnelsen og innholdet.',
+      'Lange titler deles over flere linjer i stedet for å gå ut over kanten. Fortegnelsen står ved siden av innholdet når vinduet er minst 1440 piksler bredt; ellers ligger den bak «Innhold på siden» i toppmenyen som før.',
+    ],
+  },
+  {
     versjon: '1.124.2',
     dato: '2026-11-03',
     sammendrag: 'Toppmenyen er ryddig på alle skjermbredder',
