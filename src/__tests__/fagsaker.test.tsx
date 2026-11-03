@@ -204,6 +204,36 @@ describe('redaktørvisningen av kildesakene', () => {
     expect(kort.getAllByRole('radio')).toHaveLength(4)
   })
 
+  it('merker en berørt regel som er sperret med nødstoppen', async () => {
+    const s = sak({
+      berorte: [
+        { regel: 'seponering-escitalopram', versjon: 11, hva: 'varigheten av siste trinn', sperret: true },
+        { regel: 'seponering-amitriptylin', versjon: 11, hva: 'varigheten av siste trinn', sperret: false },
+      ],
+    })
+    render(<Fagsaker apen lager={minnelager(oversikt([s]))} />)
+    const kort = within(await screen.findByRole('article'))
+    const rader = kort.getAllByRole('listitem').filter((li) => li.textContent?.includes('varigheten av siste trinn'))
+    expect(rader).toHaveLength(2)
+    expect(within(rader[0]!).getByText('Sperret med nødstoppen')).toBeTruthy()
+    expect(within(rader[1]!).queryByText('Sperret med nødstoppen')).toBeNull()
+  })
+
+  it('viser tidligere beslutning og tiltak når en sak i oppfølging får et nytt spørsmål', async () => {
+    const s = sak({
+      versjon: 9,
+      beslutning: { valg: 'revider', merknad: null, av: 'Ada Admin', kl: '2026-11-08T10:00:00Z' },
+      tiltak: [{ tekst: 'Ny regelversjon med uavhengig klinisk godkjenning', status: 'pagar', endret_kl: '2026-11-08T11:00:00Z', lenke: null }],
+    })
+    render(<Fagsaker apen lager={minnelager(oversikt([s]))} />)
+    const kort = within(await screen.findByRole('article'))
+    expect(kort.getByText('Tidligere i saken')).toBeTruthy()
+    expect(kort.getByText(/Besluttet .* av Ada Admin/)).toBeTruthy()
+    expect(kort.getByText('Under arbeid')).toBeTruthy()
+    // Det nye spørsmålet kan besluttes som vanlig.
+    expect(kort.getAllByRole('radio')).toHaveLength(4)
+  })
+
   it('viser en sikkerhetssak under vurdering straks, uten valg, og peker på nødstoppen', async () => {
     const user = userEvent.setup()
     const nodstopp = vi.fn()

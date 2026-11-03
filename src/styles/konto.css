@@ -916,6 +916,19 @@
   border-radius: var(--runding-underkort);
 }
 
+.fagsak__tidligere {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-3);
+  padding: var(--rom-4) var(--rom-5);
+  border: var(--kant) solid var(--linje);
+  border-radius: var(--runding-underkort);
+}
+
+.fagsak__tidligere p {
+  margin: 0;
+}
+
 .fagsak__beslutning {
   margin: 0;
   font-size: var(--tekst-ui);

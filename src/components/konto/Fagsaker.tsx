@@ -104,7 +104,14 @@ function Grunnlag({ s }: { s: Fagsak }) {
           <ul>
             {s.berorte.map((b) => (
               <li key={`${b.regel}-${b.versjon}`}>
-                <strong>{anbefalingsnavn(b)}</strong>: {b.hva}
+                <strong>{anbefalingsnavn(b)}</strong>
+                {b.sperret && (
+                  <>
+                    {' '}
+                    <Merke tone="alvorlig">Sperret med nødstoppen</Merke>
+                  </>
+                )}
+                : {b.hva}
               </li>
             ))}
           </ul>
@@ -173,6 +180,14 @@ function Beslutningskort({
           Utsatt {tidspunkt(s.beslutning.kl)} av {s.beslutning.av}
           {s.beslutning.merknad ? `: ${s.beslutning.merknad}` : ''}.
         </p>
+      )}
+      {s.tiltak.length > 0 && (
+        // Et nytt spørsmål etter en tidligere beslutning: det som alt er besluttet og gjort, står med.
+        <div className="fagsak__tidligere">
+          <p className="fagsak__virkningstittel">Tidligere i saken</p>
+          {s.beslutning?.valg !== 'utsett' && <Beslutningslinje s={s} />}
+          <Tiltaksliste s={s} />
+        </div>
       )}
       <Grunnlag s={s} />
 
@@ -255,6 +270,30 @@ function Beslutningslinje({ s }: { s: Fagsak }) {
   )
 }
 
+/** Tiltakene etter en beslutning, med hvor langt hvert av dem har kommet. */
+function Tiltaksliste({ s }: { s: Pick<Fagsak, 'tiltak'> }) {
+  return (
+    <ul className="fagsak__tiltak">
+      {s.tiltak.map((t, i) => (
+        <li key={i} className={`fagsak__tiltak--${t.status}`}>
+          <span className="fagsak__tiltakstatus">{TILTAKSTEKST[t.status]}</span>
+          <span>
+            {t.tekst}
+            {t.lenke && (
+              <>
+                {' '}
+                <a href={t.lenke} target="_blank" rel="noreferrer">
+                  Se endringen
+                </a>
+              </>
+            )}
+          </span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 /** En sak der beslutningen er tatt, og tiltakene ennå ikke er utført og kontrollert. */
 function Oppfolgingskort({ s }: { s: Fagsak }) {
   const id = useId()
@@ -263,24 +302,7 @@ function Oppfolgingskort({ s }: { s: Fagsak }) {
       <Hode s={s} tittelId={`${id}-t`} />
       <StatusNa s={s} />
       <Beslutningslinje s={s} />
-      <ul className="fagsak__tiltak">
-        {s.tiltak.map((t) => (
-          <li key={t.tekst} className={`fagsak__tiltak--${t.status}`}>
-            <span className="fagsak__tiltakstatus">{TILTAKSTEKST[t.status]}</span>
-            <span>
-              {t.tekst}
-              {t.lenke && (
-                <>
-                  {' '}
-                  <a href={t.lenke} target="_blank" rel="noreferrer">
-                    Se endringen
-                  </a>
-                </>
-              )}
-            </span>
-          </li>
-        ))}
-      </ul>
+      <Tiltaksliste s={s} />
       <p className="felt__hjelp">
         {gjenstaende(s).length === 0
           ? 'Alle tiltakene er utført og kontrollert; saken avsluttes ved neste kontroll.'
