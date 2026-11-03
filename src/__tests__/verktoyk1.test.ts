@@ -126,7 +126,7 @@ describe('Den nye versjonen av escitalopramregelen', () => {
 describe('Versjon og fingeravtrykk', () => {
   it('escitalopram versjon 13 har fingeravtrykket i kontrollgrunnlaget', () => {
     const r = i(REGELSETT, ESC)
-    expect([r.versjon, fingeravtrykk(r)]).toEqual([13, '90d84e985c8fcbb98e1cd01f03a10b93ce3a3de0168e8c4401a168df2c69aa6d'])
+    expect([r.versjon, fingeravtrykk(r)]).toEqual([13, 'fa2d139b1acede65720866b6224a9fb5c093bb42c9fb16119b6ce3e11a75fa02'])
     expect(FORSLAG_K1.regler).toEqual([{ id: ESC, versjon: 13, fingeravtrykk: fingeravtrykk(r) }])
   })
 
@@ -209,7 +209,7 @@ describe('Ende-til-ende med de norske preparatene i FEST', () => {
       expect(tekst, id).toContain(`Fra dag ${siste}: Escitalopram peroralt: Seponert`)
       for (const dager of [7, 14, 28]) expect(tekst, id).toContain(`Dag ${siste + dager - 1}: Vurdering (Escitalopram): Vurder seponeringssymptomer og tegn på tilbakefall ${dager} dager etter siste dose.`)
       expect(tekst, id).toContain('- Cipralex dråper, oppl 20 mg/ml (Hele dråper)')
-      // Fingeravtrykket er den simulert avklarte kopiens, ikke 90d84e98… for regelen med åpne valg.
+      // Fingeravtrykket er den simulert avklarte kopiens, ikke fa2d139b… for regelen med åpne valg.
       expect(tekst, id).toMatch(new RegExp(`Regel ${ESC}, versjon 13, fingeravtrykk [0-9a-f]{12}\\n`))
       expect(tekst, id).not.toMatch(/^(Dag|Fra dag) .*tablett/im)
     }

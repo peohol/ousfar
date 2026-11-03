@@ -99,7 +99,7 @@ export const K1_ESCITALOPRAM: Avslutningsforslag = {
       tekst: 'Doser under 5 mg krever dråper (1 mg per dråpe) eller deling. Hele dråper gir bare hele milligram, og avrunding til hele dråper er ingen toleranse. Fra 3 mg kan forskriveren velge ett minste trinn på én dråpe (3 → 2 mg er 33 %, 2 → 1 mg er 50 %), større enn de 25 % NICE bruker som eksempel ved lav dose; mindre trinn under 3 mg ville krevd fortynning eller oppmåling, som ikke er dokumentert.',
     },
     {
-      tekst: 'Sluttdosen 1 mg (én dråpe) er ikke en dokumentert terskel: ingen kilde angir en dose som er lav nok før seponering. RCPsych beskriver at noen trenger å gå ned mot 2 % av opprinnelig dose (0,2–0,4 mg fra 10–20 mg), som ikke kan gis med dråpene uten fortynning, og at seponeringssymptomer kan komme uansett hvor lav dosen er. Sluttdosen er OUSFARs forslag og et åpent spørsmål til kontrolløren.',
+      tekst: 'Sluttdosen 1 mg (én dråpe) er ikke en dokumentert terskel: ingen kilde angir en dose som er lav nok før seponering. RCPsych beskriver at noen trenger å gå ned mot 2 % av opprinnelig dose (0,2–0,4 mg fra 10–20 mg), som ikke kan gis med dråpene uten fortynning, og at seponeringssymptomer kan komme uansett hvor lav dosen er. Sluttdosen er OUSFARs forslag og et åpent spørsmål til kontrolløren. Trenger pasienten mindre trinn enn én dråpe, beregner verktøyet dem ikke: dosen holdes på siste tolererte dose, og videre nedtrapping planlegges individuelt uten fortynning eller oppmåling fra verktøyet.',
     },
   ],
   eksempler: {
@@ -189,7 +189,7 @@ export function medAvslutning(r: Regel, a: Avslutningsforslag): Regel {
         id: `etter_seponering_${e.dager}`,
         nar: { type: 'etter_seponering', dager: parameter(e.dager, 'dager', apent(e.begrunnelse, e.henvisninger)) },
         tekst: `Vurder seponeringssymptomer og tegn på tilbakefall ${e.dager} dager etter siste dose.`,
-        ved_funn: 'Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt.',
+        ved_funn: 'Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt.',
         // Hva som vurderes og gjøres, står i kildene; dagen er det åpne valget (`nar.dager`).
         grunnlag: { type: 'kilde', henvisninger: [a.spc.symptomer, K1_KILDER.heltSlutt, NICE.alvorlig] },
       }),
