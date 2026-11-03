@@ -199,12 +199,12 @@ describe('Regelstatusen', () => {
 describe('Snarvalgene (VDR-3)', () => {
   it('er nøyaktig valgene som gir beregning eller godkjent fagtekst, med beregningene først', () => {
     expect(VERKTOY.map((x) => snarvalg(x).map((s) => [s.status, s.tekst]))).toEqual([
+      // Vortioksetin og sertralin → mirtazapin er godkjent, men kan aldri gi en komplett plan, så de tilbys ikke som beregnbare (leveranseplanen §3).
       [
-        ['tilgjengelig', 'Vortioksetin'],
         ['fagtekst', 'Agomelatin'],
         ['fagtekst', 'Bupropion'],
       ],
-      [['tilgjengelig', 'Sertralin → mirtazapin']],
+      [],
       [
         ['tilgjengelig', 'Aripiprazol: peroral → depotinjeksjon'],
         ['tilgjengelig', 'Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)'],
@@ -215,6 +215,19 @@ describe('Snarvalgene (VDR-3)', () => {
     expect(snarvalg(BYTTE_AP!)[0]!.valg).toEqual({ fra: v('aripiprazol'), til: v('aripiprazol', 'LA') })
     // Hvert snarvalg gir samme status når det kontrolleres som et valg; det avgjør ingenting selv.
     for (const x of VERKTOY) for (const s of snarvalg(x)) expect(tilgjengelighet(x, s.valg).status).toBe(s.status)
+  })
+
+  it('tilbyr ikke et valg der hver regel avsluttes individuelt og derfor aldri gir en komplett plan', () => {
+    const bytte = VERKTOY.find((x) => x.id === 'bytte-antidepressiv')!
+    expect(tilgjengelighet(bytte, { fra: v('sertralin'), til: v('mirtazapin') }).status).toBe('tilgjengelig')
+    expect(snarvalg(bytte).map((s) => s.tekst)).not.toContain('Sertralin → mirtazapin')
+    expect(snarvalg(TRAPPE_NED!).map((s) => s.tekst)).not.toContain('Vortioksetin')
+    // Den samme regelen med individuell avslutning gir ikke et snarvalg; med en godkjent avslutning gjør den det.
+    const individuell = structuredClone(TEST_NEDTRAPPING)
+    for (const f of individuell.plan.forlop[0]!.faser) if (f.type === 'nedtrapping') f.avslutning = 'individuell'
+    const r = godkjennITest(individuell, 'test-individuell')
+    expect(snarvalg(TRAPPE_NED!, testsett(r)).map((s) => s.tekst)).not.toContain('Escitalopram')
+    expect(snarvalg(TRAPPE_NED!, testsett(TEST_NEDTRAPPING)).map((s) => s.tekst)).toContain('Escitalopram')
   })
 
   it('følger regelsettet: en regel godkjent bare i testen gir et snarvalg der, ikke i appen', () => {
