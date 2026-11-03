@@ -71,7 +71,7 @@ Hva preparatomtalene for de norske depotpreparatene sier om overgang fra peroral
 | Trevicta (paliperidonpalmitat, hver 3. måned) | Bare fra månedlig paliperidonpalmitat, 3,5 ganger siste dose | |
 | Abilify Maintena 400 mg (månedlig) og 720/960 mg (hver 2. måned) | Oppstart med peroral overlapp eller to injeksjoner (`ema-abilify-maintena`, godkjent regel) | |
 | Risperdal Consta (hver 2. uke) | Peroral dekning i tre uker etter første injeksjon | |
-| Okedi (risperidon, hver 28. dag) | Ingen startdose og ingen peroral tilleggsdose | |
+| Okedi (risperidon, hver 28. dag) | Startdose etter tidligere peroral risperidondose (75 mg ved 3 mg/døgn, 100 mg ved 4 mg/døgn eller mer), om lag 24 timer etter siste perorale dose; verken ladningsdose eller peroral tilleggsdose. Pasienter uten etablert risperidonbehandling titreres først peroralt | |
 | Zypadhera (olanzapinpamoat) | Dosetabell fra peroral olanzapindose; overvåking etter injeksjon | |
 | Haldol Depot (haloperidoldekanoat) | 10–15 ganger den perorale døgndosen | Haldol tabletter er bare markedsført som 1 mg; andre styrker på godkjenningsfritak. |
 | Fluanxol Depot (flupentiksoldekanoat) | 4 ganger peroral døgndose hver 2. uke, eller 8 ganger hver 4. uke | |
