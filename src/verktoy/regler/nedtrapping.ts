@@ -52,11 +52,12 @@
  * gjengir teksten der.
  */
 import { kravtekst, omradetekst } from './beregning'
-import { FORUTSETNINGER_FELLES, forslag, h, kilde, leveransen, NICE, planhorisont, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, pn, RCPSYCH, RCPSYCH_TIDLIGERE, steg, utsagn, vurdert } from './bygg'
+import { FAKTUMRETTELSER, FORUTSETNINGER_FELLES, forslag, h, kilde, leveransen, NICE, planhorisont, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, pn, RCPSYCH, RCPSYCH_TIDLIGERE, steg, utsagn, vurdert } from './bygg'
 import { disponer } from './godkjenning'
 import type { Avklaring, Begrunnelseskrav, Bekreftelse, Fase, Forlop, Godkjenningssteg, Grunnlag, Inndatakrav, Kildehenvisning, Kliniskomfang, Nedtrappingsstrategi, Parameter, Regel, Regelsett, Regneeksempel, Sporsmal, Unntak, Utsagn } from './modell'
 import { REGELMODELLVERSJON } from './modell'
 import { gruppeRestApAripiprazol, seponeringCitalopramHyperbolsk, SPC } from './pilotsett'
+import { rett } from './rettelse'
 
 /* --- Fakta fra preparatomtalene, med egne ord ----------------------------------------- */
 
@@ -2271,7 +2272,12 @@ export const NEDTRAPPINGSDISPOSISJON = leveransen({
   'seponering-paroksetin': vurdert(8, 'afacbd5ff69e87bb36260cb9def2b4d61c573ef5dc38513375778ea679cc4cda'),
 })
 
-export const NEDTRAPPINGSSETT: Regelsett = {
+/**
+ * Settet slik det var før faktumrettelsene (versjon 14, appversjon 1.122.1),
+ * med godkjenningene og disposisjonen 31.10.2026. Appen bruker det ikke;
+ * kontrollgrunnlaget for rettelsene (`rettelseskontroll.ts`) sammenligner med det.
+ */
+export const NEDTRAPPINGSSETT_FOR_RETTELSENE: Regelsett = {
   id: 'ousfar-verktoy-nedtrapping',
   versjon: 14,
   modell: REGELMODELLVERSJON,
@@ -2289,6 +2295,14 @@ export const NEDTRAPPINGSSETT: Regelsett = {
     ],
     NEDTRAPPINGSDISPOSISJON,
   ),
+}
+
+/** Nedtrappingsreglene appen bruker: settet før rettelsene med `FAKTUMRETTELSER` og kontrollørens registrerte vurdering av de nye versjonene. */
+export const NEDTRAPPINGSSETT: Regelsett = {
+  ...NEDTRAPPINGSSETT_FOR_RETTELSENE,
+  versjon: 15,
+  beskrivelse: `${NEDTRAPPINGSSETT_FOR_RETTELSENE.beskrivelse} Etter kontrollørens vurdering 03.11.2026 er faktumet fra RCPsych om små reduksjoner fra starten presisert (\`docs/verktøy-kildefunn-1-2.md\` §8): de 17 reglene som viser til det, har fått en ny versjon som bare skiller seg i dette faktumet. Kontrolløren har godkjent den nye versjonen av vortioksetinregelen (versjon 12) med samme kliniske omfang som versjon 11, og de andre er kontrollert og ikke godkjent som før (\`docs/verktøy-rettelse-langvarig.md\`).`,
+  regler: rett([...NEDTRAPPINGSSETT_FOR_RETTELSENE.regler], FAKTUMRETTELSER),
 }
 
 /**

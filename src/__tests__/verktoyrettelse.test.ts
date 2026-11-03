@@ -1,27 +1,31 @@
 /**
  * Rettelsen av faktumet `RCPSYCH.langvarig` etter kontrollørens vurdering
- * 03.11.2026 (`docs/verktøy-kildefunn-1-2.md` §8): de nye regelversjonene,
- * at bare faktumet er endret, at appen er uendret til kontrollørens vurdering
- * av dem er registrert, og kontrollgrunnlaget (`docs/verktøy-rettelse-langvarig.md`).
+ * 03.11.2026 (`docs/verktøy-kildefunn-1-2.md` §8): de nye regelversjonene, at
+ * bare faktumet er endret, registreringen av kontrollørens vurdering av dem
+ * (R1–R4 i PR #309) og kontrollgrunnlaget (`docs/verktøy-rettelse-langvarig.md`).
  */
 import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from '../verktoy/regler/aksepttest'
 import { FAKTUMRETTELSER, RCPSYCH, RCPSYCH_TIDLIGERE } from '../verktoy/regler/bygg'
-import { erKliniskGodkjent, fingeravtrykk, kanonisk } from '../verktoy/regler/godkjenning'
+import { disposisjonsfeil, erKliniskGodkjent, fingeravtrykk, godkjenn, kanonisk, kontrollutfall, vedtaksfeil } from '../verktoy/regler/godkjenning'
 import { MAKS_FAKTUM } from '../verktoy/regler/kontroll'
 import { henvisninger, type Kildehenvisning, type Regel } from '../verktoy/regler/modell'
+import { NEDTRAPPINGSDISPOSISJON, NEDTRAPPINGSSETT, NEDTRAPPINGSSETT_FOR_RETTELSENE } from '../verktoy/regler/nedtrapping'
+import { PILOTDISPOSISJON, PILOTSETT, PILOTSETT_FOR_RETTELSENE } from '../verktoy/regler/pilotsett'
 import { rett, rettRegel } from '../verktoy/regler/rettelse'
-import { forventedeLinjeendringer, lagRettelseskontroll, matrisesammenligning, RETTELSESKONTROLLFIL, rettelsesrader, synlig, tilGodkjenning } from '../verktoy/rettelseskontroll'
-import { REGELSETT } from '../verktoy/tilgjengelighet'
+import { FOR_RETTELSENE, forventedeLinjeendringer, lagRettelseskontroll, matrisesammenligning, RETTELSESKONTROLLFIL, rettelsesrader, synlig, tilGodkjenning } from '../verktoy/rettelseskontroll'
+import { REGELSETT, REGELSETTENE } from '../verktoy/tilgjengelighet'
 
 const les = (fil: string) => readFileSync(new URL(`../../${fil}`, import.meta.url), 'utf8')
 const uttrekkene = { pilot: JSON.parse(les(FEST_PILOT)) as Festuttrekk, aksept: JSON.parse(les(FEST_AKSEPTTEST)) as Festuttrekk }
-const regel = (id: string) => REGELSETT.regler.find((r) => r.id === id)!
 const lik = (a: Kildehenvisning) => (b: Kildehenvisning) => kanonisk(a) === kanonisk(b)
 const RETTELSE = FAKTUMRETTELSER[0]!
 const RADER = rettelsesrader()
+const KONTROLL = RETTELSE.kontroll!
+const KONTROLLOR = 'ChatGPT (uavhengig fagkontrollør)'
+const GODKJENT = ['kryssnedtrapping-sertralin-mirtazapin', 'seponering-vortioksetin']
 
 /** Kontrollørens formulering 03.11.2026, ordrett; premisset for rettelsen. */
 const KONTROLLORENS_FORMULERING =
@@ -65,20 +69,32 @@ describe('Faktumet', () => {
   })
 })
 
-describe('Appen før kontrollørens vurdering er registrert', () => {
-  it('bruker fortsatt versjonene som er godkjent eller vurdert, med faktumet slik det stod', () => {
-    for (const r of REGELSETT.regler) {
-      expect(henvisninger(r).some(lik(RCPSYCH.langvarig)), r.id).toBe(false)
-      expect(henvisninger(r).some(lik(RCPSYCH.proporsjonal)), r.id).toBe(false)
+describe('Regelsettene før og etter rettelsen', () => {
+  it('er de samme settene; settene før rettelsen er appversjon 1.122.1, og appens sett har ny versjon', () => {
+    expect(FOR_RETTELSENE.map((s) => s.id)).toEqual(REGELSETTENE.map((s) => s.id))
+    expect([PILOTSETT_FOR_RETTELSENE.versjon, PILOTSETT.versjon]).toEqual([16, 17])
+    expect([NEDTRAPPINGSSETT_FOR_RETTELSENE.versjon, NEDTRAPPINGSSETT.versjon]).toEqual([14, 15])
+    for (const [i, s] of FOR_RETTELSENE.entries()) {
+      expect(REGELSETTENE[i]!.beskrivelse.startsWith(s.beskrivelse), s.id).toBe(true)
+      expect(rett([...s.regler], FAKTUMRETTELSER), s.id).toEqual(REGELSETTENE[i]!.regler)
     }
-    expect(REGELSETT.regler.filter((r) => henvisninger(r).some(lik(RETTELSE.fra))).map((r) => r.id).sort()).toEqual([...BERORTE].sort())
-    expect(erKliniskGodkjent(regel('seponering-vortioksetin'))).toBe(true)
-    expect(erKliniskGodkjent(regel('kryssnedtrapping-sertralin-mirtazapin'))).toBe(true)
+  })
+
+  it('før rettelsen viser nøyaktig de 18 reglene til faktumet slik det stod, og to av dem var godkjent', () => {
+    const for_ = FOR_RETTELSENE.flatMap((s) => s.regler)
+    expect(for_.filter((r) => henvisninger(r).some(lik(RETTELSE.fra))).map((r) => r.id).sort()).toEqual([...BERORTE].sort())
+    expect(for_.filter((r) => BERORTE.includes(r.id) && erKliniskGodkjent(r)).map((r) => `${r.id} v${r.versjon}`)).toEqual(['kryssnedtrapping-sertralin-mirtazapin v9', 'seponering-vortioksetin v11'])
+  })
+
+  it('appen viser ikke lenger til faktumet slik det stod, bare til de rettede faktaene', () => {
+    for (const r of REGELSETT.regler) expect(henvisninger(r).some(lik(RETTELSE.fra)), r.id).toBe(false)
+    expect(REGELSETT.regler.filter((r) => henvisninger(r).some(lik(RCPSYCH.langvarig))).map((r) => r.id).sort()).toEqual([...BERORTE].sort())
+    expect(REGELSETT.regler.filter((r) => henvisninger(r).some(lik(RCPSYCH.proporsjonal))).map((r) => r.id).sort()).toEqual([...BERORTE].sort())
   })
 })
 
 describe('De nye versjonene', () => {
-  it('er nøyaktig de 18 reglene som viser til faktumet, hver med versjonen økt med én', () => {
+  it('er nøyaktig de 18 reglene som viste til faktumet, hver med versjonen økt med én', () => {
     expect(RADER.map((x) => x.for.id)).toEqual(BERORTE)
     for (const x of RADER) {
       expect(x.etter.versjon, x.for.id).toBe(x.for.versjon + 1)
@@ -100,81 +116,125 @@ describe('De nye versjonene', () => {
     }
   })
 
-  it('beholder hele historikken og får stegene utkast og til faglig kontroll for den nye versjonen, uten godkjenning', () => {
+  it('beholder hele historikken og får stegene utkast og til faglig kontroll og så kontrollørens vurdering av nøyaktig den nye versjonen', () => {
     for (const x of RADER) {
       const h = x.etter.godkjenning.historikk
-      expect(h.slice(0, -2), x.for.id).toEqual(x.for.godkjenning.historikk)
-      expect(h.slice(-2), x.for.id).toMatchObject([
+      expect(h.slice(0, -3), x.for.id).toEqual(x.for.godkjenning.historikk)
+      const godkjent = GODKJENT.includes(x.for.id)
+      expect(h.slice(-3), x.for.id).toMatchObject([
         { status: 'utkast', regelversjon: x.etter.versjon, dato: '2026-11-03', av: 'Claude Code', rolle: 'utvikler' },
         { status: 'til_faglig_kontroll', regelversjon: x.etter.versjon, dato: '2026-11-03', av: 'Claude Code', rolle: 'utvikler' },
+        { status: godkjent ? 'klinisk_godkjent' : 'ikke_godkjent', regelversjon: x.etter.versjon, fingeravtrykk: fingeravtrykk(x.etter), dato: '2026-11-03', av: KONTROLLOR, rolle: 'uavhengig_kontrollor' },
       ])
-      expect(h.at(-2)!.merknad, x.for.id).toContain(`Ellers uendret fra versjon ${x.for.versjon} (fingeravtrykk ${fingeravtrykk(x.for)}).`)
-      expect(x.etter.godkjenning.status, x.for.id).toBe('til_faglig_kontroll')
-      expect(erKliniskGodkjent(x.etter), x.for.id).toBe(false)
+      expect(h.at(-3)!.merknad, x.for.id).toContain(`Ellers uendret fra versjon ${x.for.versjon} (fingeravtrykk ${fingeravtrykk(x.for)}).`)
+      expect(h.at(-1)!.merknad, x.for.id).toMatch(/^Kontrollørens gjennomgang av a38fac14 03\.11\.2026/)
+      expect(x.etter.godkjenning.status, x.for.id).toBe(godkjent ? 'klinisk_godkjent' : 'ikke_godkjent')
     }
   })
 
   it('lar en regel uten faktumet være nøyaktig som den er, og stopper når faktumet står utenfor en liste over henvisninger', () => {
-    const uten = REGELSETT.regler.filter((r) => !BERORTE.includes(r.id))
+    const uten = FOR_RETTELSENE.flatMap((s) => s.regler).filter((r) => !BERORTE.includes(r.id))
     expect(uten.length).toBeGreaterThan(0)
     for (const r of uten) expect(rettRegel(r, RETTELSE), r.id).toBe(r)
     expect(rett(uten, FAKTUMRETTELSER)).toEqual(uten)
-    const feil = structuredClone(regel('seponering-vortioksetin')) as Regel & { ekstra?: Kildehenvisning }
+    const feil = structuredClone(RADER.find((x) => x.for.id === 'seponering-vortioksetin')!.for) as Regel & { ekstra?: Kildehenvisning }
     feil.ekstra = RETTELSE.fra
     expect(() => rettRegel(feil, RETTELSE)).toThrow(/står ikke i en liste over henvisninger/)
   })
 })
 
-describe('Kontrollgrunnlaget', () => {
-  it('ber om ny godkjenning av nøyaktig de to godkjente reglene', () => {
+describe('Kontrollørens vurdering (R1–R4)', () => {
+  it('R1: nøyaktig de to nye versjonene er klinisk godkjent, med fingeravtrykket og avgrensningen kontrolløren ga', () => {
+    expect(Object.keys(KONTROLL.godkjenning.regler)).toEqual(GODKJENT)
+    expect(KONTROLL.godkjenning.regler).toMatchObject({
+      'kryssnedtrapping-sertralin-mirtazapin': { versjon: 10, fingeravtrykk: '12801aa22a0ca2a576b9ba737d5d5cb52db3a73dc1b437bde7f20a896214c81a' },
+      'seponering-vortioksetin': { versjon: 12, fingeravtrykk: 'b28dec93f5ede06c6565e1ce5d6aa62606c69250f1a9088dae0c57d3121101f3' },
+    })
+    expect(KONTROLL.godkjenning.regler['seponering-vortioksetin']!.avgrensning).toContain('bare én første reduksjon 20 → 15 mg/døgn, med minst 28 dager før ny symptomstyrt vurdering, hos voksne under 65 år')
+    expect(KONTROLL.godkjenning.regler['kryssnedtrapping-sertralin-mirtazapin']!.avgrensning).toContain('Dette omfatter ikke videre 25 → 0, opptrapping av mirtazapin, andre doser, langtidsbehandling eller endret trinnlengde. Identisk klinisk omfang som v9.')
+    expect([KONTROLL.godkjenning.av, KONTROLL.godkjenning.dato]).toEqual([KONTROLLOR, '2026-11-03'])
+    expect(vedtaksfeil(REGELSETT.regler, KONTROLL.godkjenning)).toEqual([])
     expect(tilGodkjenning(RADER).map((x) => `${x.etter.id} v${x.etter.versjon}`)).toEqual(['kryssnedtrapping-sertralin-mirtazapin v10', 'seponering-vortioksetin v12'])
+    for (const x of tilGodkjenning(RADER)) expect(erKliniskGodkjent(x.etter), x.etter.id).toBe(true)
   })
 
-  it('gir det samme utfallet i testmatrisen med de nye versjonene, unntatt kasusene som prøver neste versjonsnummer', () => {
+  it('R2: de 16 andre nye versjonene er kontrollert og ikke godkjent, for nøyaktig hver versjon og hvert fingeravtrykk', () => {
+    const andre = RADER.filter((x) => !GODKJENT.includes(x.for.id))
+    expect(andre).toHaveLength(16)
+    expect(Object.keys(KONTROLL.disposisjon.regler).sort()).toEqual(andre.map((x) => x.etter.id).sort())
+    for (const x of andre) {
+      expect(KONTROLL.disposisjon.regler[x.etter.id], x.etter.id).toEqual({ versjon: x.etter.versjon, fingeravtrykk: fingeravtrykk(x.etter) })
+      expect(kontrollutfall(x.etter), x.etter.id).toBe('ikke_godkjent')
+      expect(erKliniskGodkjent(x.etter), x.etter.id).toBe(false)
+    }
+    expect(KONTROLL.disposisjon.merknad.beregnbar).toContain('den separate substanskontrollen som kreves før en senere aktivering, bortfaller ikke')
+    expect(disposisjonsfeil(REGELSETT.regler, KONTROLL.disposisjon)).toEqual([])
+  })
+
+  it('de tidligere disposisjonene står i historikken og er ingen feil, men en regel endret uten registrert ny versjon er det', () => {
+    expect(disposisjonsfeil(NEDTRAPPINGSSETT.regler, NEDTRAPPINGSDISPOSISJON)).toEqual([])
+    expect(disposisjonsfeil(PILOTSETT.regler, PILOTDISPOSISJON)).toEqual([])
+    const r = RADER.find((x) => x.for.id === 'seponering-amitriptylin')!.for
+    expect(disposisjonsfeil([{ ...r, versjon: r.versjon + 1 }], NEDTRAPPINGSDISPOSISJON)).toContain(`seponering-amitriptylin: vurdert som versjon ${r.versjon}, men regelen er versjon ${r.versjon + 1}`)
+  })
+
+  it('en godkjenning registreres aldri for en annen versjon eller et annet innhold enn kontrolløren godkjente', () => {
+    const ny = RADER.find((x) => x.for.id === 'seponering-vortioksetin')!.etter
+    const tilKontroll: Regel = { ...ny, godkjenning: { status: 'til_faglig_kontroll', historikk: ny.godkjenning.historikk.slice(0, -1) } }
+    expect(godkjenn([tilKontroll], KONTROLL.godkjenning)[0]!.godkjenning.status).toBe('klinisk_godkjent')
+    const endret = { ...tilKontroll, tittel: `${tilKontroll.tittel} (endret)` }
+    expect(godkjenn([endret], KONTROLL.godkjenning)[0]).toBe(endret)
+    const annenVersjon = { ...tilKontroll, versjon: 13 }
+    expect(godkjenn([annenVersjon], KONTROLL.godkjenning)[0]).toBe(annenVersjon)
+    expect(vedtaksfeil([endret], KONTROLL.godkjenning)).toContain('seponering-vortioksetin: innholdet er endret etter godkjenningen (fingeravtrykket stemmer ikke)')
+  })
+})
+
+describe('Kontrollgrunnlaget', () => {
+  it('gir det samme utfallet i testmatrisen før og etter rettelsen, unntatt kasusene som prøver neste versjonsnummer', () => {
     const ulike = matrisesammenligning(RADER, uttrekkene).filter((x) => !x.lik)
     expect(ulike.map((x) => x.kasus.id)).toEqual(['V34', 'S18'])
     for (const x of ulike) {
-      const tekst = (u: typeof x.i_dag) => ('grunner' in u ? u.grunner.join(' ') : '')
-      expect(tekst(x.ny_versjon).replace(/regelversjon (\d+), ikke versjon (\d+)/, (_, a, b) => `regelversjon ${Number(a) - 1}, ikke versjon ${Number(b) - 1}`), x.kasus.id).toBe(tekst(x.i_dag))
+      const tekst = (u: typeof x.for) => ('grunner' in u ? u.grunner.join(' ') : '')
+      expect(tekst(x.etter).replace(/regelversjon (\d+), ikke versjon (\d+)/, (_: string, a: string, b: string) => `regelversjon ${Number(a) - 1}, ikke versjon ${Number(b) - 1}`), x.kasus.id).toBe(tekst(x.for))
     }
   })
 
   it('sammenligner hele teksten brukeren ser, og fører bare de forventede linjene tilbake', () => {
     const endringer = forventedeLinjeendringer(RADER)
-    const planer = matrisesammenligning(RADER, uttrekkene).filter((x) => x.i_dag.utfall === 'plan')
+    const planer = matrisesammenligning(RADER, uttrekkene).filter((x) => x.for.utfall === 'plan')
     expect(planer.length).toBeGreaterThan(0)
     const brukt = new Set<string>()
     for (const x of planer) {
       expect(x.lik, x.kasus.id).toBe(true)
-      const i_dag = x.i_dag.tekst!.split('\n')
-      const ny = x.ny_versjon.tekst!.split('\n')
-      expect(ny.length, x.kasus.id).toBe(i_dag.length)
-      const forventet = endringer.get(x.ny_versjon.resultat!.regel.id) ?? []
-      // Hver linje som er ulik, er en av de forventede, og står med samme linje i dag på samme plass.
-      ny.forEach((l, i) => {
-        if (l === i_dag[i]) return
+      const for_ = x.for.tekst!.split('\n')
+      const etter = x.etter.tekst!.split('\n')
+      expect(etter.length, x.kasus.id).toBe(for_.length)
+      const forventet = endringer.get(x.etter.resultat!.regel.id) ?? []
+      // Hver linje som er ulik, er en av de forventede, og står med samme linje før rettelsen på samme plass.
+      etter.forEach((l: string, i: number) => {
+        if (l === for_[i]) return
         const e = forventet.find((f) => l === `- ${f.ny}`)
         expect(e, `${x.kasus.id}: ${l}`).toBeDefined()
-        expect(i_dag[i], x.kasus.id).toBe(`- ${e!.i_dag}`)
+        expect(for_[i], x.kasus.id).toBe(`- ${e!.for}`)
         brukt.add(e!.ny)
       })
     }
     // Hver forventet linjeendring forekommer faktisk, så ingen av dem skjuler noe den ikke trenger.
     expect([...endringer.values()].flat().map((e) => e.ny).filter((l) => !brukt.has(l))).toEqual([])
     // En endring utenfor de forventede linjene blir oppdaget, også i advarslene, kildene og versjonene.
-    const x = planer.find((p) => endringer.has(p.ny_versjon.resultat!.regel.id))!
+    const x = planer.find((p) => endringer.has(p.etter.resultat!.regel.id))!
     for (const del of ['Advarsler:', 'Kilder:', 'Versjoner:']) {
-      const endret = { ...x.ny_versjon, tekst: x.ny_versjon.tekst!.replace(`${del}\n- `, `${del}\n- endret `) }
-      expect(endret.tekst, del).not.toBe(x.ny_versjon.tekst)
-      expect(synlig(endret, endringer), del).not.toBe(synlig(x.i_dag))
+      const endret = { ...x.etter, tekst: x.etter.tekst!.replace(`${del}\n- `, `${del}\n- endret `) }
+      expect(endret.tekst, del).not.toBe(x.etter.tekst)
+      expect(synlig(endret, endringer), del).not.toBe(synlig(x.for))
     }
   })
 
-  it('er oppdatert, og sier at appen er uendret og at ingen godkjenning er registrert', () => {
+  it('er oppdatert, og sier at kontrollørens vurdering er registrert', () => {
     const tekst = les(RETTELSESKONTROLLFIL)
     expect(tekst, 'Kjør `npm run verktoy:regler -- rettelse`').toBe(lagRettelseskontroll(uttrekkene))
-    expect(tekst).toContain('**Appen er uendret.**')
-    expect(tekst).toContain('Ingen godkjenning er registrert.')
+    expect(tekst).toContain('**Kontrollørens vurdering 03.11.2026 er registrert**')
     expect(tekst).not.toMatch(/psychiatrienet\.(nl|org|com)/i)
   })
 

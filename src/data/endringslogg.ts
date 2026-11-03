@@ -14,12 +14,12 @@ export const ENDRINGSLOGG: Endring[] = [
   {
     versjon: '1.122.2',
     dato: '2026-11-03',
-    sammendrag: 'Presisert kildefaktum fra RCPsych lagt fram til faglig kontroll i nye regelversjoner',
+    sammendrag: 'Presisert kildefaktum fra RCPsych i nye, kontrollerte versjoner av nedtrappingsreglene',
     typer: ['Fag'],
     omfang: 'Minimalt omfang',
     punkter: [
-      'Ingen endring i appen ennå. Etter kontrollørens vurdering er faktumet fra RCPsych om små reduksjoner fra starten presisert: kilden regner 5–10 % av den opprinnelige dosen, og andre deler av veiledningen beskriver reduksjoner beregnet fra sist brukte dose.',
-      'De 18 nedtrappingsreglene som viser til faktumet, har fått en ny versjon der bare dette faktumet er endret. Den nye versjonen av vortioksetin og av byttet fra sertralin til mirtazapin legges fram til ny godkjenning; til den er gitt, bruker verktøyet versjonene som er godkjent i dag.',
+      'Etter kontrollørens vurdering er faktumet fra RCPsych om små reduksjoner fra starten presisert: kilden regner 5–10 % av den opprinnelige dosen, og andre deler av veiledningen beskriver reduksjoner beregnet fra sist brukte dose.',
+      'De 18 nedtrappingsreglene som viser til faktumet, har fått en ny versjon der bare dette er endret. Kontrolløren har godkjent de nye versjonene av vortioksetin og byttet fra sertralin til mirtazapin med nøyaktig samme kliniske omfang som før, så planene er de samme bortsett fra regelversjonen. De andre reglene er fortsatt ikke godkjent og gir ingen doseplan.',
     ],
     utenVarsel: true,
   },

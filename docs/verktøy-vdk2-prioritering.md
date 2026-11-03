@@ -66,10 +66,12 @@ Forslag 1 og 2 kan kontrolleres straks. Forslag 3–8 kan lages som regler med d
 
 | Regel | Versjon | Fingeravtrykk | Klinisk omfang i dag |
 | --- | --- | --- | --- |
-| `seponering-amitriptylin` | 11 | `dcc526c4db9db4e5a77994b49d7e18890e1799a19c9f4fbc2bf63e31151c4eb7` | kort: tablett 25, 50, 75, 100 og 150 mg; lang: 50 og 75 mg; styrker 10, 25 og 50 mg |
-| `seponering-nortriptylin` | 11 | `c2594aabadd1c4ecb41776ab1bac5f2c7cc1b781027fa544726f96c210c25fcd` | kort: tablett 25, 50 og 150 mg; lang: 50 mg; styrker 10, 25 og 50 mg |
-| `seponering-escitalopram` | 11 | `a2d959cae2780053d15188ae0e160292e06af5155dfacafcfa41b1d850b127db` | kort: tablett 20 mg, dråper 10 og 20 mg; lang: dråper 10 og 20 mg; tablett 5, 10 og 20 mg, dråper 1 mg |
-| `seponering-escitalopram-langsom` | 7 | `8dcd4f992fe4f9fb55aebf1dc4eda04bc0399d2ef91ca90a14d699979cd53e3d` | dråper 20 mg |
+| `seponering-amitriptylin` | 12 | `a43c1164e4061a1757fefea381da027b8cefe92c077d742855fd4e2f5486b6e3` | kort: tablett 25, 50, 75, 100 og 150 mg; lang: 50 og 75 mg; styrker 10, 25 og 50 mg |
+| `seponering-nortriptylin` | 12 | `300a71b147bf87eb61dbeaeccd27aa07add900435b579c14291061f38f63616c` | kort: tablett 25, 50 og 150 mg; lang: 50 mg; styrker 10, 25 og 50 mg |
+| `seponering-escitalopram` | 12 | `7710be648e96682c1c8a35a8e4d9c4428109b294f29b63ae9401ef29b41bd3c1` | kort: tablett 20 mg, dråper 10 og 20 mg; lang: dråper 10 og 20 mg; tablett 5, 10 og 20 mg, dråper 1 mg |
+| `seponering-escitalopram-langsom` | 8 | `4e49c175ac6aa49cba89d7db711f710c14b654681cc3138994dbaaaebb69c095` | dråper 20 mg |
+
+*Oppdatert 03.11.2026:* etter kontrollørens vurdering samme dag er faktumet fra RCPsych om små reduksjoner fra starten presisert (`RCPSYCH.langvarig`, `docs/verktøy-kildefunn-1-2.md` §8, `docs/verktøy-rettelse-langvarig.md`). Reglene har derfor fått en ny versjon som bare skiller seg i dette faktumet, og tabellen gjelder de nye versjonene. Kontrolløren har vurdert dem som kontrollert, ikke klinisk godkjent, som før; den separate substanskontrollen gjelder fortsatt. Versjonene som ble vurdert 31.10.2026, var amitriptylin 11 (`dcc526c4…`), nortriptylin 11 (`c2594aab…`), escitalopram 11 (`a2d959ca…`) og den langsomme varianten 7 (`8dcd4f99…`).
 
 **Kildegrunnlag:** det samme som for den godkjente vortioksetinregelen: preparatomtalene (Sarotex, Noritren, Cipralex tabletter og dråper), RCPsych «Stopping antidepressants» (tempo og risikogrupper), NICE NG222 1.4.15–1.4.21 og kontrollørens beslutninger P7-A til P7-C.
 

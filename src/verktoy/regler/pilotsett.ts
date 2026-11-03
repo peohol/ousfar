@@ -22,7 +22,8 @@
  * som forslag til de er avklart; eksemplene er regnet ut for hånd og
  * kontrolleres av testene mot beregningen.
  */
-import { fluoksetinTrinn28, FORUTSETNINGER_FELLES, forslag, h, halvering, kilde, leveransen, minst14, NICE, planhorisont, pn, RCPSYCH, RCPSYCH_TIDLIGERE, steg, trinn14, utsagn, vurdert } from './bygg'
+import { FAKTUMRETTELSER, fluoksetinTrinn28, FORUTSETNINGER_FELLES, forslag, h, halvering, kilde, leveransen, minst14, NICE, planhorisont, pn, RCPSYCH, RCPSYCH_TIDLIGERE, steg, trinn14, utsagn, vurdert } from './bygg'
+import { rett } from './rettelse'
 import { disponer } from './godkjenning'
 import type { Avklaring, Bekreftelse, Godkjenning, Godkjenningssteg, Regel, Regelsett, Sporsmal, Unntak } from './modell'
 import { REGELMODELLVERSJON } from './modell'
@@ -1231,7 +1232,12 @@ export const PILOTDISPOSISJON = leveransen({
   ),
 })
 
-export const PILOTSETT: Regelsett = {
+/**
+ * Settet slik det var før faktumrettelsene (versjon 16, appversjon 1.122.1),
+ * med godkjenningene og disposisjonen 31.10.2026. Appen bruker det ikke;
+ * kontrollgrunnlaget for rettelsene (`rettelseskontroll.ts`) sammenligner med det.
+ */
+export const PILOTSETT_FOR_RETTELSENE: Regelsett = {
   id: 'ousfar-verktoy-pilot',
   versjon: 16,
   modell: REGELMODELLVERSJON,
@@ -1241,5 +1247,13 @@ export const PILOTSETT: Regelsett = {
     [kryssSertralinMirtazapin, maoFluoksetinFenelzin, antipsykotikabytteOlanzapinKvetiapin, depotAripiprazol, depotPaliperidon],
     PILOTDISPOSISJON,
   ),
+}
+
+/** Pilotreglene appen bruker: settet før rettelsene med `FAKTUMRETTELSER` og kontrollørens registrerte vurdering av de nye versjonene. */
+export const PILOTSETT: Regelsett = {
+  ...PILOTSETT_FOR_RETTELSENE,
+  versjon: 17,
+  beskrivelse: `${PILOTSETT_FOR_RETTELSENE.beskrivelse} Etter kontrollørens vurdering 03.11.2026 er faktumet fra RCPsych om små reduksjoner fra starten presisert (\`docs/verktøy-kildefunn-1-2.md\` §8). Byttet fra sertralin til mirtazapin viser til det og har fått versjon 10, som bare skiller seg fra versjon 9 i dette faktumet; kontrolløren har godkjent versjon 10 med samme kliniske omfang som versjon 9 (\`docs/verktøy-rettelse-langvarig.md\`).`,
+  regler: rett([...PILOTSETT_FOR_RETTELSENE.regler], FAKTUMRETTELSER),
 }
 

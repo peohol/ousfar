@@ -11,10 +11,13 @@
  * økes med én, og historikken får stegene utkast og til faglig kontroll for
  * den nye versjonen. Ingenting annet i regelen endres, og de tidligere stegene
  * står urørt. Den nye versjonen er ikke godkjent før den er kontrollert på
- * nytt (`docs/verktøy-p12-regelforvaltning.md` §2–3).
+ * nytt (`docs/verktøy-p12-regelforvaltning.md` §2–3). Kontrollørens vurdering
+ * av de nye versjonene registreres på rettelsen (`kontroll`): godkjenningen og
+ * disposisjonen gjelder nøyaktig versjonene og fingeravtrykkene kontrolløren
+ * så, som `godkjenn` og `disponer` ellers.
  */
 import { steg } from './bygg'
-import { fingeravtrykk, kanonisk } from './godkjenning'
+import { disponer, type Disposisjon, fingeravtrykk, godkjenn, type Godkjenningsvedtak, kanonisk } from './godkjenning'
 import { henvisninger, type Kildehenvisning, type Regel } from './modell'
 
 export interface Faktumrettelse {
@@ -25,6 +28,8 @@ export interface Faktumrettelse {
   dato: string
   /** Hvorfor faktumet er rettet, og hvem som har vurdert rettelsen; står i utkaststeget for den nye versjonen. */
   grunn: string
+  /** Kontrollørens vurdering av de nye versjonene, når den er gitt: de som er godkjent, og disposisjonen av de andre. */
+  kontroll?: { godkjenning: Godkjenningsvedtak; disposisjon: Disposisjon }
 }
 
 const TIL_KONTROLL = 'Sendt til uavhengig faglig kontroll av den nye versjonen. Ikke klinisk godkjent.'
@@ -56,5 +61,13 @@ export function rettRegel(regel: Regel, r: Faktumrettelse): Regel {
   }
 }
 
-/** Reglene med alle rettelsene, i rekkefølge. Brukes etter at godkjenninger og disposisjoner er registrert for versjonene som ble vurdert. */
-export const rett = (regler: Regel[], rettelser: readonly Faktumrettelse[]): Regel[] => regler.map((x) => rettelser.reduce(rettRegel, x))
+/**
+ * Reglene med alle rettelsene, i rekkefølge, og med kontrollørens registrerte
+ * vurdering av de nye versjonene. Brukes etter at godkjenninger og
+ * disposisjoner er registrert for versjonene som ble vurdert før rettelsen.
+ */
+export const rett = (regler: Regel[], rettelser: readonly Faktumrettelse[]): Regel[] =>
+  rettelser.reduce((rs, x) => {
+    const rettet = rs.map((r) => rettRegel(r, x))
+    return x.kontroll ? disponer(godkjenn(rettet, x.kontroll.godkjenning), x.kontroll.disposisjon) : rettet
+  }, regler)

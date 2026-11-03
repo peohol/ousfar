@@ -22,16 +22,21 @@ import { kontrollerRegelsett } from '../verktoy/regler/kontroll'
 import type { Forlop, Regel, Regelsett } from '../verktoy/regler/modell'
 import { NEDTRAPPINGSDISPOSISJON, NEDTRAPPINGSSETT, SAMMENLIGNINGSSETT } from '../verktoy/regler/nedtrapping'
 import { PILOTDISPOSISJON, PILOTSETT } from '../verktoy/regler/pilotsett'
+import { FAKTUMRETTELSER } from '../verktoy/regler/bygg'
 import { REGELRAPPORTER, statustekst } from '../verktoy/regler/rapport'
 import { REGELSETT, tilgjengelighet } from '../verktoy/tilgjengelighet'
 import { godkjennITest } from './hjelp/verktoyplan'
 
-/** De seks regelversjonene kontrolløren har godkjent i oppgitt omfang, med fingeravtrykket godkjenningen gjelder. */
+/**
+ * De seks regelversjonene kontrolløren har godkjent i oppgitt omfang, med fingeravtrykket godkjenningen gjelder.
+ * Sertralin → mirtazapin og vortioksetin er godkjent på nytt i versjonen etter faktumrettelsen 03.11.2026
+ * (`docs/verktøy-rettelse-langvarig.md`), med samme kliniske omfang som versjon 9 og 11.
+ */
 const GODKJENTE: Record<string, { sett: string; versjon: number; fingeravtrykk: string; beregning: boolean }> = {
-  'kryssnedtrapping-sertralin-mirtazapin': { sett: PILOTSETT.id, versjon: 9, fingeravtrykk: 'dc878aa9065c8330f3850567b226ab8d392bcad4cb1dd5cf5cebacda54277881', beregning: true },
+  'kryssnedtrapping-sertralin-mirtazapin': { sett: PILOTSETT.id, versjon: 10, fingeravtrykk: '12801aa22a0ca2a576b9ba737d5d5cb52db3a73dc1b437bde7f20a896214c81a', beregning: true },
   'depot-aripiprazol-maintena': { sett: PILOTSETT.id, versjon: 3, fingeravtrykk: '04d1debe48f02ea03a31aab3d7cd5cdeb15c56d4b43797bda353f3d857297f20', beregning: true },
   'depot-paliperidon-xeplion': { sett: PILOTSETT.id, versjon: 3, fingeravtrykk: '21a335eec8c3816ee21627ceec3197e52957ccdf99cdbfaa00a3ca3cb5987bdf', beregning: true },
-  'seponering-vortioksetin': { sett: NEDTRAPPINGSSETT.id, versjon: 11, fingeravtrykk: 'a6e488637de88c9bb109d42153a56a8e616935638c0536d1335076210dd1351e', beregning: true },
+  'seponering-vortioksetin': { sett: NEDTRAPPINGSSETT.id, versjon: 12, fingeravtrykk: 'b28dec93f5ede06c6565e1ce5d6aa62606c69250f1a9088dae0c57d3121101f3', beregning: true },
   'seponering-bupropion': { sett: NEDTRAPPINGSSETT.id, versjon: 5, fingeravtrykk: 'e7536668ac7f2d4dfd9959f24cfdfc4874182a4fc295355f0d10a05f438b5f5f', beregning: false },
   'seponering-agomelatin': { sett: NEDTRAPPINGSSETT.id, versjon: 1, fingeravtrykk: '6d42863f3573fb2e0d6dbffd27ff78a7f1c2b539c8dce2cfcd36ad417b61a2d1', beregning: false },
 }
@@ -41,6 +46,15 @@ const ALLE = SETTENE.flatMap((s) => s.regler.map((r) => ({ sett: s, r })))
 const ANDRE = ALLE.filter(({ r }) => !(r.id in GODKJENTE))
 /** Reglene i leveransen som ikke er godkjent; sammenligningssettet er ikke i verktøyet og står som utkast. */
 const IKKE_GODKJENTE = ANDRE.filter(({ sett }) => sett !== SAMMENLIGNINGSSETT)
+
+/** Disposisjonene av leveransen 31.10.2026 og av de nye versjonene etter faktumrettelsen 03.11.2026. */
+const ALLE_DISPOSISJONER: readonly Disposisjon[] = [PILOTDISPOSISJON, NEDTRAPPINGSDISPOSISJON, ...FAKTUMRETTELSER.flatMap((x) => (x.kontroll ? [x.kontroll.disposisjon] : []))]
+/** Disposisjonen som gjelder regelversjonen appen bruker (og settet den står i), eller ingen. */
+const disposisjonFor = (id: string): [Regelsett, Disposisjon] | undefined => {
+  const x = ALLE.find(({ r }) => r.id === id)
+  const d = x && ALLE_DISPOSISJONER.find((d) => d.regler[id]?.versjon === x.r.versjon)
+  return x && d ? [x.sett, d] : undefined
+}
 
 const les = (fil: string) => JSON.parse(readFileSync(new URL(`../../${fil}`, import.meta.url), 'utf8')) as Festuttrekk
 const UTTREKK = [les(FEST_AKSEPTTEST), les(FEST_PILOT)]
@@ -104,8 +118,9 @@ describe('Klinisk tilgjengelige regler i den første avgrensede leveransen (P4.8
     for (const { r } of IKKE_GODKJENTE) {
       expect(r.godkjenning.status, r.id).toBe('ikke_godkjent')
       expect(kontrollutfall(r), r.id).toBe(harBeregning(r) ? 'ikke_godkjent' : 'bare_fagtekst')
-      expect(r.godkjenning.historikk.at(-1), r.id).toMatchObject({ status: 'ikke_godkjent', rolle: 'uavhengig_kontrollor', regelversjon: r.versjon, dato: '2026-10-31' })
-      expect(r.godkjenning.historikk.at(-1)!.merknad, r.id).toMatch(harBeregning(r) ? /ikke godkjent for klinisk doseberegning/ : /bare fagtekst, sperret for beregning/)
+      const [, d] = disposisjonFor(r.id)!
+      expect(r.godkjenning.historikk.at(-1), r.id).toMatchObject({ status: 'ikke_godkjent', rolle: 'uavhengig_kontrollor', regelversjon: r.versjon, dato: d.dato, av: d.av })
+      expect(r.godkjenning.historikk.at(-1)!.merknad, r.id).toMatch(harBeregning(r) ? /ikke (klinisk )?godkjent/ : /bare fagtekst, sperret for beregning/)
     }
     // Kontrollørens egne vurderinger av byttene står på regelen.
     const sist = (id: string) => ALLE.find(({ r }) => r.id === id)!.r.godkjenning.historikk.at(-1)!.merknad
@@ -168,11 +183,12 @@ describe('Klinisk tilgjengelige regler i den første avgrensede leveransen (P4.8
   })
 
   describe('Vurderingen «kontrollert, ikke godkjent» gjelder bare nøyaktig de vurderte regelversjonene', () => {
+    /** Disposisjonene, med disposisjonen av de nye versjonene etter faktumrettelsen 03.11.2026. */
     const DISPOSISJONER: readonly [Regelsett, Disposisjon][] = [
       [PILOTSETT, PILOTDISPOSISJON],
       [NEDTRAPPINGSSETT, NEDTRAPPINGSDISPOSISJON],
+      ...FAKTUMRETTELSER.flatMap((x): [Regelsett, Disposisjon][] => (x.kontroll ? [[NEDTRAPPINGSSETT, x.kontroll.disposisjon]] : [])),
     ]
-    const disposisjonFor = (id: string) => DISPOSISJONER.find(([, d]) => id in d.regler)!
     /** Regelen slik den var før disposisjonen: uten kontrollørens siste steg. */
     const foer = (r: Regel): Regel => {
       const historikk = structuredClone(r.godkjenning.historikk.slice(0, -1))
@@ -194,9 +210,15 @@ describe('Klinisk tilgjengelige regler i den første avgrensede leveransen (P4.8
     })
 
     it('er registrert for en fast liste med nøyaktig de 24 reglene, versjonene og fingeravtrykkene', () => {
-      const vurderte = DISPOSISJONER.flatMap(([, d]) => Object.entries(d.regler).map(([id, v]) => [id, v.versjon, v.fingeravtrykk]))
-      expect(vurderte.map(([id]) => id).sort()).toEqual(IKKE_GODKJENTE.map(({ r }) => r.id).sort())
-      for (const { r } of IKKE_GODKJENTE) expect(vurderte.find(([id]) => id === r.id), r.id).toEqual([r.id, r.versjon, fingeravtrykk(r)])
+      // Hver av de 24 har nøyaktig én disposisjon for versjonen appen bruker; for de 16 som er rettet, er det disposisjonen 03.11.2026.
+      for (const { r } of IKKE_GODKJENTE) {
+        const gjeldende = ALLE_DISPOSISJONER.filter((d) => d.regler[r.id]?.versjon === r.versjon)
+        expect(gjeldende, r.id).toHaveLength(1)
+        expect(gjeldende[0]!.regler[r.id], r.id).toMatchObject({ versjon: r.versjon, fingeravtrykk: fingeravtrykk(r) })
+      }
+      const vurderte = ALLE_DISPOSISJONER.flatMap((d) => Object.keys(d.regler))
+      expect([...new Set(vurderte)].sort()).toEqual(IKKE_GODKJENTE.map(({ r }) => r.id).sort())
+      expect(IKKE_GODKJENTE.filter(({ r }) => disposisjonFor(r.id)![1].dato === '2026-11-03')).toHaveLength(16)
       // Ingen av de seks godkjente og ingen regel i sammenligningssettet står i listen.
       for (const id of [...Object.keys(GODKJENTE), ...SAMMENLIGNINGSSETT.regler.map((r) => r.id)]) expect(disposisjonFor(id), id).toBeUndefined()
       // Listen er frosset og stemmer med regelsettet, slik kontrollen i CI krever.
@@ -213,7 +235,7 @@ describe('Klinisk tilgjengelige regler i den første avgrensede leveransen (P4.8
 
     it('gir en uendret regel nøyaktig kontrollørens steg, med fingeravtrykket som ble vurdert', () => {
       for (const { r } of IKKE_GODKJENTE) {
-        const [, d] = disposisjonFor(r.id)
+        const [, d] = disposisjonFor(r.id)!
         const f = foer(r)
         expect(kontrollutfall(f), r.id).toBe('til_kontroll')
         expect(disponer([f], d)[0], r.id).toEqual(r)
@@ -223,14 +245,14 @@ describe('Klinisk tilgjengelige regler i den første avgrensede leveransen (P4.8
     it('gir aldri en endret regel, en ny versjon eller en ny regel kontrollørens steg, og viser den ikke som vurdert', { timeout: 60_000 }, () => {
       const iVerktoyene = new Set<string>()
       for (const { sett, r } of IKKE_GODKJENTE) {
-        const [, d] = disposisjonFor(r.id)
+        const [, d] = disposisjonFor(r.id)!
         for (const [hva, endre] of VARIANTER) {
           const x = endre(foer(r))
           const navn = `${r.id}, ${hva}`
           // Ingen automatisk steg: regelen kommer uendret tilbake og står som før vurderingen.
           const etter = disponer([x], d)[0]!
           expect(etter, navn).toBe(x)
-          expect(etter.godkjenning.historikk.some((s) => s.status === 'ikke_godkjent' || (s.rolle === 'uavhengig_kontrollor' && s.dato === d.dato)), navn).toBe(false)
+          expect(etter.godkjenning.historikk.filter((s) => s.regelversjon === etter.versjon).some((s) => s.status === 'ikke_godkjent' || (s.rolle === 'uavhengig_kontrollor' && s.dato === d.dato)), navn).toBe(false)
           expect(kontrollutfall(etter), navn).toBe('til_kontroll')
           expect(statustekst(etter), navn).not.toMatch(/kontrollert, ikke godkjent/)
           expect(erKliniskGodkjent(etter), navn).toBe(false)

@@ -52,10 +52,10 @@ describe('hva de godkjente reglene bygger på', () => {
     expect(REGLER.map((g) => `${g.regel.id} v${g.regel.versjon}`).sort()).toEqual([
       'depot-aripiprazol-maintena v3',
       'depot-paliperidon-xeplion v3',
-      'kryssnedtrapping-sertralin-mirtazapin v9',
+      'kryssnedtrapping-sertralin-mirtazapin v10',
       'seponering-agomelatin v1',
       'seponering-bupropion v5',
-      'seponering-vortioksetin v11',
+      'seponering-vortioksetin v12',
     ])
   })
 
@@ -159,7 +159,7 @@ describe('kildedokumentene', () => {
     expect(r.funn).toHaveLength(1)
     const f = r.funn[0]!
     expect(f).toMatchObject({ id: 'dokument:keks-2016', kilde: 'dokument', art: 'endret', niva: 'krever_vurdering', objekt: 'keks-2016' })
-    expect(f.berorte.map((b) => `${b.regel} v${b.versjon}`)).toEqual(['kryssnedtrapping-sertralin-mirtazapin v9'])
+    expect(f.berorte.map((b) => `${b.regel} v${b.versjon}`)).toEqual(['kryssnedtrapping-sertralin-mirtazapin v10'])
     expect(f.berorte[0]!.fingeravtrykk).toBe(fingeravtrykk(REGLER.find((g) => g.regel.id === 'kryssnedtrapping-sertralin-mirtazapin')!.regel))
     expect(f.detaljer.join(' ')).toContain(sha(new TextEncoder().encode(ny)))
     expect(f.detaljer.join(' ')).toContain(sha(synligTekst(ny)))
@@ -287,7 +287,7 @@ describe('preparatene i FEST', () => {
     etter.utvalg.merkevarer = etter.utvalg.merkevarer.filter((m) => m.id !== id)
     const funn = festfunn(AKSEPT, etter, SERTRALIN, REGLER, K)
     expect(funn).toMatchObject([{ id: `fest:sertralin:${id}`, art: 'fjernet', niva: 'krever_vurdering' }])
-    expect(funn[0]!.berorte.map((b) => `${b.regel} v${b.versjon}`)).toEqual(['kryssnedtrapping-sertralin-mirtazapin v9'])
+    expect(funn[0]!.berorte.map((b) => `${b.regel} v${b.versjon}`)).toEqual(['kryssnedtrapping-sertralin-mirtazapin v10'])
     expect(funn[0]!.berorte[0]!.hvorfor).toMatch(/forløpet «fra»/)
   })
 
@@ -363,7 +363,7 @@ describe('kildeoppføringene i Psychiatrienet', () => {
     const endret = psychiatrienetfunn(ARKIV, innhenting(endreSide(SEMZ, (s) => (s.innhold = { ...s.innhold!, sha256_anbefaling: 'f'.repeat(64) }))), K, REGLER)
     const f = endret.funn.find((x) => x.objekt === SEMZ)!
     expect(f).toMatchObject({ id: `psychiatrienet:${SEMZ}`, art: 'endret', niva: 'krever_vurdering' })
-    expect(f.berorte.map((b) => `${b.regel} v${b.versjon}`)).toEqual(['kryssnedtrapping-sertralin-mirtazapin v9'])
+    expect(f.berorte.map((b) => `${b.regel} v${b.versjon}`)).toEqual(['kryssnedtrapping-sertralin-mirtazapin v10'])
     expect(f.detaljer.some((d) => d.startsWith('sha256_anbefaling: ') && d.endsWith(' → ffffffffffff'))).toBe(true)
 
     const borte = psychiatrienetfunn(ARKIV, innhenting(endreSide(SEMZ, (s) => Object.assign(s, { status: 404, innhold: null }))), K, REGLER)
