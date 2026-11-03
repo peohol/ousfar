@@ -19,8 +19,8 @@
 import type { Legemiddelutvalg } from '../../legemiddeldata/lesing'
 import { beregnPlan, formvalgFor, mangler, omregningsrader, osloDato, TOMT_SKJEMA, type Planskjema } from '../doseplan'
 import { byggesteiner } from '../motor/byggesteiner'
-import { UTENFOR_OMFANG, type Doseplanresultat } from '../motor/plan'
-import { EN_FORSTE_REDUKSJON, planTekst, planvisning, STARTFORLOP } from '../planvisning'
+import { kliniskDoseplan, UTENFOR_OMFANG, type Doseplanresultat } from '../motor/plan'
+import { planTekst, planvisning } from '../planvisning'
 import { festkoblinger, KARTLEGGING, VERKTOY } from '../register'
 import { usperrede, verktoysperrer, type Verktoysperre } from '../sperrer'
 import { REGELSETT, REGELSETTENE, samlet, tilgjengelighet, type Regelstatus, type Verktoyvalg } from '../tilgjengelighet'
@@ -181,9 +181,10 @@ const planlinjer = (tekst: string, undertittel: string | null) => {
  * Kasuset gjennom den samme veien som verktøysiden, med utfallet brukeren
  * ville sett. `settene` er regelsettene appen bruker, eller andre versjoner av
  * dem når et kontrollgrunnlag sammenligner; planen oppgir settet regelen
- * hører til.
+ * hører til. `motor` er `kliniskDelplan` bare når et kontrollgrunnlag skal se
+ * en delplan klinikeren aldri får.
  */
-export function kjorKasus(k: Pilotkasus, uttrekkene: Uttrekkene, settene: readonly Regelsett[] = REGELSETTENE): Pilotutfall & { resultat?: Doseplanresultat; tekst?: string } {
+export function kjorKasus(k: Pilotkasus, uttrekkene: Uttrekkene, settene: readonly Regelsett[] = REGELSETTENE, motor = kliniskDoseplan): Pilotutfall & { resultat?: Doseplanresultat; tekst?: string } {
   const sett = settene === REGELSETTENE ? REGELSETT : samlet(settene)
   const verktoy = VERKTOY.find((v) => v.id === k.verktoy)
   if (!verktoy) throw new Error(`Verktøyet ${k.verktoy} finnes ikke.`)
@@ -217,7 +218,7 @@ export function kjorKasus(k: Pilotkasus, uttrekkene: Uttrekkene, settene: readon
   )
   if (uvalgt.length > 0) return { utfall: 'formvalg', forlop: uvalgt.map(([f]) => f) }
 
-  const resultat = beregnPlan(regel, k.valg, skjema, utvalg, naa, sett, settene)
+  const resultat = beregnPlan(regel, k.valg, skjema, utvalg, naa, sett, settene, motor)
   const visning = planvisning(resultat, regel, skjema.startdato || undefined)
   if (!visning) return { utfall: 'stopp', grunner: resultat.status === 'stoppet' ? resultat.stoppgrunner : ['Planen er ikke klinisk og vises ikke.'], resultat }
   const tekst = planTekst(visning, verktoy.navn)
@@ -403,14 +404,21 @@ const plan = (undertittel: string | null, ...linjer: string[]): Forventning => (
 /** Beregningen stopper og nevner hver av grunnene. */
 const stopp = (...grunner: string[]): Forventning => ({ utfall: 'stopp', grunner })
 
+/**
+ * Klinikere får aldri en delplan, heller ikke etter en tidligere godkjent regelversjon (Peders beslutning 03.11.2026). Vortioksetin v12
+ * gir bare én første reduksjon og sertralin → mirtazapin v10 bare et startforløp, så begge stopper med grunnen.
+ */
+const VORT_DELPLAN = stopp('Komplett plan ikke tilgjengelig: vortioksetin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.')
+const SERT_DELPLAN = stopp('Komplett plan ikke tilgjengelig: sertralin: siste trinn før null; avslutning vurderes individuelt; mirtazapin: holdes til sertralin er avsluttet; videre dosering planlegges individuelt.')
+
 const endretRegel = (id: string, hva: string, endre: (r: Regel) => void) => ({ id, endre: { hva, endre } })
 const nyVersjon = (id: string) => endretRegel(id, 'samme regel med neste versjonsnummer, uten ny godkjenning', (r) => void (r.versjon += 1))
 
 export const PILOTKASUS: readonly Pilotkasus[] = [
   // --- Vortioksetin v12: bare 20 → 15 mg én gang, kort behandlingstid, under 65 år, tabletter.
-  vort('V01', 'vanlig_dose', '20 mg, kort behandlingstid, voksen under 65 år', '20', plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Vortioksetin peroralt: 15 mg = 1 tablett à 15 mg')),
-  vort('V02', 'injeksjonsdato', '20 mg med startdato', '20', plan(EN_FORSTE_REDUKSJON, 'Fra dag 1 (fra 02.11.2026): Vortioksetin peroralt: 15 mg = 1 tablett à 15 mg'), { skjema: { startdato: '2026-11-02' } }),
-  vort('V03', 'vanlig_dose', '20 mg med tablett valgt', '20', plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Vortioksetin peroralt: 15 mg = 1 tablett à 15 mg'), { skjema: tablett('fra') }),
+  vort('V01', 'vanlig_dose', '20 mg, kort behandlingstid, voksen under 65 år', '20', VORT_DELPLAN),
+  vort('V02', 'injeksjonsdato', '20 mg med startdato', '20', VORT_DELPLAN, { skjema: { startdato: '2026-11-02' } }),
+  vort('V03', 'vanlig_dose', '20 mg med tablett valgt', '20', VORT_DELPLAN, { skjema: tablett('fra') }),
   vort('V04', 'uvanlig_dose', '15 mg, neste reduksjon', '15', stopp('vortioksetin dag 1–28: den ideelle dosen 11,25 mg kan ikke gis med preparatene i FEST nøyaktig.', UTENFOR_OMFANG)),
   vort('V05', 'uvanlig_dose', '10 mg', '10', stopp('vortioksetin dag 1–28: den ideelle dosen 7,5 mg kan ikke gis med preparatene i FEST nøyaktig.', UTENFOR_OMFANG)),
   vort('V06', 'uvanlig_dose', '12,5 mg, skrevet med komma', '12,5', stopp('vortioksetin dag 1–28: den ideelle dosen 9,38 mg kan ikke gis med preparatene i FEST nøyaktig.', UTENFOR_OMFANG)),
@@ -428,11 +436,11 @@ export const PILOTKASUS: readonly Pilotkasus[] = [
   vort('V18', 'preparat', 'dråper i stedet for tabletter', '20', stopp('Ingen av de perorale preparatene av vortioksetin i FEST kan brukes med valgene som er gjort: ingen passer valgene.', UTENFOR_OMFANG), { skjema: { formvalg: { fra: { legemiddelform: '748' } } } }),
   vort('V19', 'preparat', '15 mg avregistrert', '20', stopp('vortioksetin (fra): styrken 15 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST, så planen ville blitt satt sammen annerledes enn den', UTENFOR_OMFANG), { fest: avregistrert('vortioksetin', 15) }),
   vort('V20', 'preparat', '15 mg midlertidig utgått', '20', stopp('vortioksetin (fra): styrken 15 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST, så planen ville blitt satt sammen annerledes enn den', UTENFOR_OMFANG), { fest: midlertidigUtgatt('vortioksetin', 15) }),
-  vort('V21', 'preparat', 'ny styrke 12,5 mg i FEST', '20', plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Vortioksetin peroralt: 15 mg = 1 tablett à 15 mg'), { fest: nyStyrke('vortioksetin', 15, 12.5, 'nytt') }),
+  vort('V21', 'preparat', 'ny styrke 12,5 mg i FEST', '20', VORT_DELPLAN, { fest: nyStyrke('vortioksetin', 15, 12.5, 'nytt') }),
   vort('V22', 'preparat', 'styrken 15 mg endret til 12,5 mg', '20', stopp('vortioksetin (fra): styrken 15 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST, så planen ville blitt satt sammen annerledes enn den', UTENFOR_OMFANG), { fest: nyStyrke('vortioksetin', 15, 12.5, 'endret') }),
   vort('V23', 'preparat', 'alle preparatene krever godkjenningsfritak', '20', stopp('Ingen av de perorale preparatene av vortioksetin i FEST kan brukes: Brintellix tab 5 mg: krever godkjenningsfritak, som ikke er valgt · Brintellix tab 10 mg:'), { fest: bareFritak('vortioksetin') }),
-  vort('V24', 'preparat', 'alle preparatene krever godkjenningsfritak, og fritaket er krysset av', '20', plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Vortioksetin peroralt: 15 mg = 1 tablett à 15 mg'), { fest: bareFritak('vortioksetin'), skjema: { godkjenningsfritak: true } }),
-  vort('V25', 'foreldet_fest', 'FEST kontrollert for 47 timer siden', '20', plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Vortioksetin peroralt: 15 mg = 1 tablett à 15 mg'), { timer: 47 }),
+  vort('V24', 'preparat', 'alle preparatene krever godkjenningsfritak, og fritaket er krysset av', '20', VORT_DELPLAN, { fest: bareFritak('vortioksetin'), skjema: { godkjenningsfritak: true } }),
+  vort('V25', 'foreldet_fest', 'FEST kontrollert for 47 timer siden', '20', VORT_DELPLAN, { timer: 47 }),
   vort('V26', 'foreldet_fest', 'FEST kontrollert for 49 timer siden', '20', ingenPlan('Den nattlige oppdateringen har ikke gått siden'), { timer: 49 }),
   vort('V27', 'datakilde', 'FEST-kontrollen oppgir et tidspunkt fram i tid', '20', ingenPlan('FEST-kopien oppgir å være kontrollert 2026-10-30T04:15:57.810377+00:00, fram i tid; tidsstemplet kan ikke stoles på.'), { timer: -1 }),
   vort('V28', 'datakilde', 'ingen vellykket henting av FEST', '20', stopp('Det finnes ingen vellykket henting av FEST å regne med; preparatene kan ikke bekreftes.'), { fest: tidsstempel('ingen vellykket henting', { kontrollert_kl: null }) }),
@@ -449,13 +457,13 @@ export const PILOTKASUS: readonly Pilotkasus[] = [
   vort('V34', 'regelendring', 'ny regelversjon uten ny godkjenning', '20', ingenPlan('Godkjenningen gjelder regelversjon 12, ikke versjon 13.'), { regel: nyVersjon('seponering-vortioksetin') }),
   vort('V35', 'ikke_godkjent', 'den langsomme varianten, som ikke er godkjent', '20', stopp('vortioksetin dag 1–28: den ideelle dosen 19 mg kan ikke gis med preparatene i FEST nøyaktig.', UTENFOR_OMFANG), { regel: { id: 'seponering-vortioksetin-langsom' } }),
   vort('V36', 'nodstopp', 'regelen er deaktivert', '20', { utfall: 'sperret' }, { sperrer: [sperre('regel', 'seponering-vortioksetin')] }),
-  vort('V37', 'nodstopp', 'en annen regel er deaktivert', '20', plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Vortioksetin peroralt: 15 mg = 1 tablett à 15 mg'), { sperrer: [sperre('regel', 'depot-paliperidon-xeplion')] }),
+  vort('V37', 'nodstopp', 'en annen regel er deaktivert', '20', VORT_DELPLAN, { sperrer: [sperre('regel', 'depot-paliperidon-xeplion')] }),
 
   // --- Sertralin → mirtazapin v10: startforløp fra 50 eller 100 mg, kort behandlingstid, tabletter.
   sert('S00', 'preparat', 'sertralin 100 mg uten valgt legemiddelform: siden ber om valget', '100', { utfall: 'formvalg', forlop: ['til'] }, { skjema: { formvalg: { fra: { legemiddelform: '53' } } } }),
-  sert('S01', 'vanlig_dose', 'sertralin 100 mg', '100', plan(STARTFORLOP, 'Dag 1–14: Sertralin peroralt: 50 mg = 1 tablett à 50 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg', 'Fra dag 15: Sertralin peroralt: 25 mg = 1 tablett à 25 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg')),
-  sert('S02', 'vanlig_dose', 'sertralin 50 mg', '50', plan(STARTFORLOP, 'Fra dag 1: Sertralin peroralt: 25 mg = 1 tablett à 25 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg')),
-  sert('S03', 'injeksjonsdato', 'sertralin 100 mg med startdato', '100', plan(STARTFORLOP, 'Dag 1–14 (28.12.2026–10.01.2027): Sertralin peroralt: 50 mg = 1 tablett à 50 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg', 'Fra dag 15 (fra 11.01.2027): Sertralin peroralt: 25 mg = 1 tablett à 25 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg'), { skjema: { startdato: '2026-12-28' } }),
+  sert('S01', 'vanlig_dose', 'sertralin 100 mg', '100', SERT_DELPLAN),
+  sert('S02', 'vanlig_dose', 'sertralin 50 mg', '50', SERT_DELPLAN),
+  sert('S03', 'injeksjonsdato', 'sertralin 100 mg med startdato', '100', SERT_DELPLAN, { skjema: { startdato: '2026-12-28' } }),
   sert('S04', 'uvanlig_dose', 'sertralin 75 mg', '75', stopp('Startdosen 75 mg er utenfor det regelen gjelder for (50, 100 mg).', UTENFOR_OMFANG)),
   sert('S05', 'uvanlig_dose', 'sertralin 150 mg', '150', stopp('Startdosen 150 mg er utenfor det regelen gjelder for (50, 100 mg).', UTENFOR_OMFANG)),
   sert('S06', 'uvanlig_dose', 'sertralin 200 mg', '200', stopp('Startdosen 200 mg er utenfor det regelen gjelder for (50, 100 mg).', UTENFOR_OMFANG)),
@@ -468,7 +476,7 @@ export const PILOTKASUS: readonly Pilotkasus[] = [
   sert('S13', 'preparat', 'mirtazapin som smeltetablett', '100', ingenPlan('Startdosen 100 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 50 og 100 mg, FEST-legemiddelform', UTENFOR_OMFANG), { skjema: { formvalg: { fra: { legemiddelform: '53' }, til: { legemiddelform: '48' } } } }),
   sert('S14', 'preparat', 'mirtazapin 15 mg avregistrert', '100', stopp('mirtazapin (til): styrken 15 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST, så planen ville blitt satt sammen annerledes enn den', UTENFOR_OMFANG), { fest: avregistrert('mirtazapin', 15) }),
   sert('S15', 'preparat', 'sertralin 25 mg avregistrert', '50', stopp('sertralin (fra): styrken 25 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST, så planen ville blitt satt sammen annerledes enn den', UTENFOR_OMFANG), { fest: avregistrert('sertralin', 25) }),
-  sert('S16', 'preparat', 'sertralin 50 mg meldt avregistrert om 7 dager', '100', plan(STARTFORLOP, 'Dag 1–14: Sertralin peroralt: 50 mg = 2 tabletter à 25 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg', 'Fra dag 15: Sertralin peroralt: 25 mg = 1 tablett à 25 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg'), { fest: avregistrert('sertralin', 50, undefined, 7) }),
+  sert('S16', 'preparat', 'sertralin 50 mg meldt avregistrert om 7 dager', '100', SERT_DELPLAN, { fest: avregistrert('sertralin', 50, undefined, 7) }),
   sert('S17', 'foreldet_fest', 'FEST kontrollert for 49 timer siden', '100', ingenPlan('Den nattlige oppdateringen har ikke gått siden'), { timer: 49 }),
   sert('S18', 'regelendring', 'ny regelversjon uten ny godkjenning', '100', ingenPlan('Godkjenningen gjelder regelversjon 10, ikke versjon 11.'), { regel: nyVersjon('kryssnedtrapping-sertralin-mirtazapin') }),
   sert('S19', 'nodstopp', 'verktøyet er deaktivert', '100', { utfall: 'sperret' }, { sperrer: [sperre('verktoy', BYTTE_AD)] }),
@@ -492,6 +500,8 @@ export const PILOTKASUS: readonly Pilotkasus[] = [
   ari('M16', 'preparat', 'aripiprazol 15 mg tabletter avregistrert', '15', plan(null, 'Dag 1–14: Aripiprazol peroralt: 15 mg = 1 tablett à 10 mg + 1 tablett à 5 mg', 'Dag 1: Aripiprazol depotinjeksjon 400 mg = 1 injeksjon à 400 mg', 'Fra dag 15: Aripiprazol peroralt: Seponert', 'Hver måned fra 1 måned etter dag 1: Aripiprazol depotinjeksjon 400 mg = 1 injeksjon à 400 mg (tidligst 26 dager etter forrige)'), { fest: avregistrert('aripiprazol', 15) }),
   ari('M17', 'foreldet_fest', 'FEST kontrollert for 49 timer siden', '15', ingenPlan('Den nattlige oppdateringen har ikke gått siden'), { timer: 49 }),
   ari('M18', 'nodstopp', 'Maintena-regelen er deaktivert', '15', { utfall: 'sperret' }, { sperrer: [sperre('regel', 'depot-aripiprazol-maintena')] }),
+  // Grensen for en fersk FEST-kopi prøves med en komplett plan, siden vortioksetinregelen (V25) bare gir en delplan, som ikke vises.
+  ari('M19', 'foreldet_fest', 'FEST kontrollert for 47 timer siden', '15', plan(null, 'Dag 1–14: Aripiprazol peroralt: 15 mg = 1 tablett à 15 mg', 'Dag 1: Aripiprazol depotinjeksjon 400 mg = 1 injeksjon à 400 mg', 'Fra dag 15: Aripiprazol peroralt: Seponert', 'Hver måned fra 1 måned etter dag 1: Aripiprazol depotinjeksjon 400 mg = 1 injeksjon à 400 mg (tidligst 26 dager etter forrige)'), { timer: 47 }),
 
   // --- Xeplion v3: peroral paliperidon 3, 6, 9 eller 12 mg til depotinjeksjon.
   pali('X01', 'vanlig_dose', 'paliperidon 6 mg', '6', plan(null, 'Fra dag 1: Paliperidon peroralt: Seponert', 'Dag 1: Paliperidon depotinjeksjon 150 mg = 1 injeksjon à 150 mg (deltoideus)', 'Dag 8: Paliperidon depotinjeksjon 100 mg = 1 injeksjon à 100 mg (±4 dager, deltoideus)', 'Hver måned fra 1 måned etter dag 8: Paliperidon depotinjeksjon 75 mg = 1 injeksjon à 75 mg (±7 dager, deltoideus eller setemuskel)')),

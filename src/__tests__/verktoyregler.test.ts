@@ -737,6 +737,25 @@ describe('Kontrollene av et regelsett', () => {
     expect(feil(u)).toMatch(/Es>Ci passer ikke regelen: den er en anbefaling om bytte, men regelen legger til et legemiddel/)
     u.referanser = [{ kilde: 'psychiatrienet', kildeoppforing: 'CombiningMoodstabilizers:Va>La' }]
     expect(feil(u)).not.toMatch(/Va>La passer ikke regelen: den er en anbefaling/)
+    // Valg av dose per trinn i prosent av startdosen gjelder bare en nedtrapping til 0 (regelmodell 12).
+    const ps = regel('seponering-escitalopram')
+    const tf = ps.plan.forlop[0]!.faser.find((x) => x.type === 'nedtrapping')!
+    Object.assign(tf, { strategi: { type: 'prosent_av_startdose', prosent: { verdi: 25, enhet: 'prosent', art: 'veiledende_preferanse', grunnlag: ps.unntak[0]!.grunnlag } }, trinnvalg: ps.unntak[0]!.grunnlag })
+    expect(feil(ps)).toMatch(/velge dose per trinn i prosent av startdosen med individuell eller godkjent avslutning; det gjelder bare en nedtrapping til 0/)
+    // Et minste trinn ved lav dose er større enn valgområdet, går aldri til 0 og krever valg av dose per trinn (regelmodell 12).
+    const mt = (maks: number, uten_valg = false) => {
+      const x = regel('seponering-escitalopram')
+      const fase = x.plan.forlop[0]!.faser.find((y) => y.type === 'nedtrapping')!
+      if (fase.type !== 'nedtrapping' || fase.strategi.type !== 'prosent_av_aktuell') throw new Error()
+      const g = fase.strategi.prosent.grunnlag
+      fase.strategi.minste_trinn = { fra_mg: { verdi: 3, enhet: 'mg', art: 'bindende_krav', grunnlag: g }, maks_prosent: { verdi: maks, enhet: 'prosent', art: 'bindende_krav', grunnlag: g } }
+      if (uten_valg) delete fase.trinnvalg
+      return feil(x)
+    }
+    expect(mt(50)).not.toMatch(/minste trinn/)
+    expect(mt(25)).toMatch(/minste trinn på høyst 25 %, som ikke er større enn valgområdet \(5–25 %\)/)
+    expect(mt(100)).toMatch(/minste trinn på 100 %; et minste trinn går aldri til 0/)
+    expect(mt(50, true)).toMatch(/har et minste trinn uten valg av dose per trinn innenfor et område/)
     // En bekreftelse som gjelder ved et svar, må vise til et spørsmål regelen har (regelmodell 12).
     const v = regel('seponering-escitalopram')
     v.bekreftelser = [...v.bekreftelser, { id: 'ppp', tekst: 'Syntetisk.', ved: { sporsmal: 'finnes_ikke', svar: true }, grunnlag: v.bekreftelser[0]?.grunnlag ?? v.unntak[0]!.grunnlag }]

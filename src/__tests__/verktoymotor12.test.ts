@@ -6,14 +6,15 @@
  * stoppes. Alle regler og preparater er syntetiske og godkjennes bare i testen.
  */
 import { describe, expect, it } from 'vitest'
-import { beregnDoseplan, formvalgSomTrengs, KOMPLETT_IKKE_TILGJENGELIG, kliniskDoseplan, type Doseplanresultat } from '../verktoy/motor/plan'
+import { beregnDoseplan, formvalgSomTrengs, KOMPLETT_IKKE_TILGJENGELIG, kliniskDelplan, kliniskDoseplan, mellomtrinntekst, type Doseplanresultat } from '../verktoy/motor/plan'
 import { ALLE_TESTPREPARATER, depotregel, nedtrappingsregel, OMGIVELSE, sp, syntetiskGrunnlag, trinnvalgUtenNull } from '../verktoy/motor/syntetisk'
 import { doseenhet, mangler, startdosenavn, TOMT_SKJEMA, ubesvart } from '../verktoy/doseplan'
-import { DELPLAN, KOMPLETT, planTekst, planvisning, UENDRET } from '../verktoy/planvisning'
+import { DELPLAN, KOMPLETT, planTekst, planutfall, planvisning, UENDRET } from '../verktoy/planvisning'
 import { VALGTEKSTER, VERKTOY } from '../verktoy/register'
 import { beregn } from '../verktoy/regler/beregning'
 import { DOMENESETT } from '../verktoy/regler/domenesett'
 import { godkjenningsfeil } from '../verktoy/regler/godkjenning'
+import { kontrollerRegelsett } from '../verktoy/regler/kontroll'
 import { apneValg, gjeldendeBekreftelser, nulltrinnfeil, tilleggsfeil, type Avslutning, type Fase, type Grunnlag, type Regel } from '../verktoy/regler/modell'
 import { avSlaget, eierAv, REGELSETT, REGELSETTENE, settFor } from '../verktoy/tilgjengelighet'
 import { godkjennITest } from './hjelp/verktoyplan'
@@ -41,6 +42,8 @@ function medAvslutning(fra_hoyst: number, min?: number, id = 'avslutning'): Rege
 }
 
 const plan = (r: Regel, startdose: number, ekstra: object = {}) => kliniskDoseplan(r, { startdose_mg: startdose, formvalg: TABLETT, ...ekstra }, GRUNNLAG, OMGIVELSE)
+/** Det motoren beregner når planen ikke når sluttmålet; klinikere får det aldri ({@link kliniskDelplan}). */
+const delplan = (r: Regel, startdose: number, ekstra: object = {}) => kliniskDelplan(r, { startdose_mg: startdose, formvalg: TABLETT, ...ekstra }, GRUNNLAG, OMGIVELSE)
 const kort = (p: Doseplanresultat) => (p.status === 'doseplan' ? p.forlop.map((f) => [f.perioder.map((x) => `${x.fra}–${x.til ?? '…'}: ${x.mg}${x.hver ? ` hver ${x.hver}.` : ''}`), f.siste_dosedag]) : p.stoppgrunner)
 
 describe('Godkjent avslutning (regelmodell 12)', () => {
@@ -60,7 +63,9 @@ describe('Godkjent avslutning (regelmodell 12)', () => {
   it('gjelder ved grensen: nøyaktig grensen avslutter, like under gir en delplan som sier hvorfor', () => {
     expect(kort(plan(medAvslutning(5, 5), 20))).toEqual([[['1–14: 10', '15–28: 5'], 28]])
     const over = medAvslutning(4.99, 5, 'over')
-    const p = plan(over, 20)
+    // Klinikeren får ingen delplan, bare grunnen.
+    expect(kort(plan(over, 20))).toEqual(['Komplett plan ikke tilgjengelig: testoksetin: regelens avslutning gjelder bare fra 4,99 mg eller lavere (planen står på 5 mg); praktisk grense: ingen trinn under 5 mg; avslutning vurderes individuelt.'])
+    const p = delplan(over, 20)
     expect(kort(p)).toEqual([[['1–14: 10', '15–…: 5'], null]])
     const v = planvisning(p, over)!
     expect(v.utfall.komplett).toBe(false)
@@ -82,7 +87,8 @@ describe('Godkjent avslutning (regelmodell 12)', () => {
     expect(p.merknader.join(' ')).toMatch(/avslutning gjelder fra 1,25 mg \(høyst 2,5 mg\)/)
     expect(planvisning(p, innenfor)!.utfall.komplett).toBe(true)
     const utenfor = medAvslutning(1, undefined, 'utenfor')
-    const q = plan(utenfor, 20)
+    expect(kort(plan(utenfor, 20)).join(' ')).toMatch(/^Komplett plan ikke tilgjengelig: testoksetin: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 1 mg eller lavere \(planen står på 1,25 mg\)\.$/)
+    const q = delplan(utenfor, 20)
     expect(kort(q)).toEqual([[['1–14: 10', '15–28: 5', '29–42: 2.5', '43–…: 1.25'], null]])
     expect(planvisning(q, utenfor)!.utfall).toMatchObject({ komplett: false })
   })
@@ -175,12 +181,73 @@ describe('Vurderingspunktene', () => {
     // Siste dose er dag 28, så punktet står på dag 42, og bare der.
     expect(v.rader.filter((x) => x.type === 'vurdering').map((x) => x.dager)).toEqual(['Dag 42'])
     expect(v.vurderinger).toEqual(['testoksetin, 14 dager etter siste dose (dag 42): Følg opp seponeringssymptomer og tilbakefall.'])
+    // Flere punkter etter seponering i samme forløp, for eksempel 7, 14 og 28 dager, står hver på sin dag.
+    const flere = medAvslutning(5, 5, 'etter-seponering-flere')
+    flere.plan.forlop[0]!.vurderinger = [7, 14, 28].map((dager) => ({ id: `etter-${dager}`, nar: { type: 'etter_seponering' as const, dager: sp(dager, 'dager') }, tekst: `Oppfølging etter ${dager} dager.`, grunnlag: vurdert }))
+    const fg = godkjennITest(flere, 'test-etter-seponering-flere')
+    const fv = planvisning(plan(fg, 20), fg)!
+    expect(fv.rader.filter((x) => x.type === 'vurdering').map((x) => x.dager)).toEqual(['Dag 35', 'Dag 42', 'Dag 56'])
+    expect(fv.vurderinger).toHaveLength(3)
     // En plan som stopper over grensen (laveste dose 10 mg), seponerer ikke; punktet står da uten dag.
     const h = regel(10)
-    const over = planvisning(plan(h, 80), h)!
+    expect(kort(plan(h, 80)).join(' ')).toMatch(/^Komplett plan ikke tilgjengelig: /)
+    const over = planvisning(delplan(h, 80), h)!
     expect(over.utfall.komplett).toBe(false)
     expect(over.rader.some((x) => x.type === 'vurdering')).toBe(false)
     expect(over.vurderinger).toEqual(['testoksetin, 14 dager etter siste dose: Følg opp seponeringssymptomer og tilbakefall.'])
+  })
+})
+
+describe('Minste trinn ved lav dose (regelmodell 12)', () => {
+  const DRAPER = { fra: { klasse: 'peroral' as const, legemiddelformer: ['SYN-DRAP'] } }
+  /** 25 % per trinn (valgområde 5–50 %, over 25 % krever begrunnelse), dråper på 1 mg, minste trinn fra `fra` mg på høyst 50 % og avslutning fra 1 mg. */
+  const regel = (fra = 3) => {
+    const r = trinnvalgUtenNull()
+    const fase = r.plan.forlop[0]!.faser[0] as Extract<Fase, { type: 'nedtrapping' }>
+    if (fase.strategi.type !== 'prosent_av_aktuell') throw new Error()
+    fase.strategi.minste_trinn = { fra_mg: sp(fra, 'mg'), maks_prosent: sp(50, 'prosent') }
+    fase.avslutning = avslutning(1)
+    delete fase.horisont
+    r.plan.forlop[0]!.dosevalg = { min_mg: sp(1, 'mg') }
+    return godkjennITest(r, `test-minste-trinn-${fra}`)
+  }
+  const med = (r: Regel, valg: [number, number, number][] = []) =>
+    kliniskDoseplan(r, { startdose_mg: 4, formvalg: DRAPER, trinnvalg: valg.map(([trinn, fra_mg, mg]) => ({ forlop: 'fra', trinn, fra_mg, mg })) }, GRUNNLAG, OMGIVELSE)
+  const tilbudt = (p: Doseplanresultat) => p.trinnvalg?.map((t) => [t.trinn, t.fra_mg, t.doser.map((d) => d.mg), t.minste_trinn?.maks_prosent ?? null])
+
+  it('tilbyr ved og under grensen bare den nærmeste lavere dosen, når ingen dose innenfor valgområdet kan gis, og når så avslutningen', () => {
+    const r = regel()
+    // 4 → 3 mg kan gis; 2,25 mg kan ikke, og ingen dose fra 2,25 til 2,85 mg kan gis med dråper, så bare 2 mg (−33,33 %) tilbys.
+    const a = med(r)
+    expect(a.status === 'stoppet' && a.stoppgrunner.join(' ')).toMatch(/^Komplett plan ikke tilgjengelig: /)
+    expect(tilbudt(a)).toEqual([[2, 3, [2], 50]])
+    const b = med(r, [[2, 3, 2]])
+    expect(tilbudt(b)).toEqual([[3, 2, [1], 50]])
+    // Også med valgte doser kreves en komplett plan: 2 mg er over avslutningen, så klinikeren får ingen doser, bare grunnen og neste valg.
+    expect(b.status).toBe('stoppet')
+    expect(b.status === 'stoppet' && b.stoppgrunner).toEqual([expect.stringMatching(/^Komplett plan ikke tilgjengelig: testoksetin: .*planen står på 2 mg/)])
+    expect('forlop' in b).toBe(false)
+    expect(planvisning(b, r)).toBeNull()
+    const intern = kliniskDelplan(r, { startdose_mg: 4, formvalg: DRAPER, trinnvalg: [{ forlop: 'fra', trinn: 2, fra_mg: 3, mg: 2 }] }, GRUNNLAG, OMGIVELSE)
+    expect(kort(intern)).toEqual([[['1–14: 3', '15–…: 2'], null]])
+    // Fra 1 mg kan ingen lavere dose over 0 gis, så avslutningen seponerer: planen er komplett.
+    const c = med(r, [[2, 3, 2], [3, 2, 1]])
+    expect(kort(c)).toEqual([[['1–14: 3', '15–28: 2', '29–42: 1'], 42]])
+    if (c.status !== 'doseplan') throw new Error(c.stoppgrunner.join(' '))
+    expect(planvisning(c, r)!.utfall.komplett).toBe(true)
+    expect(c.kontroller.map((k) => k.krav).join(' ')).toMatch(/er et minste trinn valgt av forskriveren .* høyst 50 %/)
+  })
+
+  it('gjelder ikke over grensen, og godtar ikke et annet eller større trinn', () => {
+    // Med grensen 2 mg tilbys ingenting fra 3 mg, så planen stopper over avslutningen og er ikke komplett.
+    const over = med(regel(2))
+    expect(over.trinnvalg).toBeUndefined()
+    expect(over.status === 'stoppet' && over.stoppgrunner.join(' ')).toMatch(/^Komplett plan ikke tilgjengelig: .*avslutning gjelder bare fra 1 mg eller lavere \(planen står på 3 mg\)/)
+    const valgtOver = med(regel(2), [[2, 3, 2]])
+    expect(valgtOver.status === 'stoppet' && valgtOver.stoppgrunner.join(' ')).toMatch(/utenfor valgområdet 5–25 %/)
+    // 1 mg fra 3 mg er en reduksjon på 66,67 %, over det minste trinnet.
+    const stort = med(regel(), [[2, 3, 1]])
+    expect(stort.status === 'stoppet' && stort.stoppgrunner.join(' ')).toMatch(/66,67 % fra 3 mg, utenfor valgområdet/)
   })
 })
 
@@ -229,7 +296,7 @@ describe('Tillegg (K4)', () => {
       ['Dag 15–28', ['20 mg', '15 mg']],
       ['Fra dag 29', ['20 mg', '30 mg']],
     ])
-    expect(perioder[0]!.type === 'periode' && perioder[0]!.celler[0]!.elementer).toEqual([UENDRET])
+    expect(perioder[0]!.type === 'periode' && perioder[0]!.celler[0]!.elementer).toEqual([UENDRET.bekreftet])
     expect(v.rader.find((x) => x.type === 'vurdering')).toMatchObject({ dager: 'Dag 10', kolonne: 1 })
   })
 
@@ -244,6 +311,35 @@ describe('Tillegg (K4)', () => {
       ['Dag 22–35', ['20 mg', '15 mg']],
       ['Fra dag 36', ['20 mg', '30 mg']],
     ])
+  })
+
+  it('viser den uendrede dosen med enhet, mmol og tabletter, og sier om den er kontrollert mot regelens doser eller bare bekreftet', () => {
+    const med = (verdier?: number[]) => {
+      const r = tillegg()
+      const fase = r.plan.forlop[0]!.faser[0]!
+      if (fase.type !== 'uendret') throw new Error()
+      fase.visning = { enhet: 'mg Li⁺', tablett: { navn: 'Syntetisk 42 mg depottablett', mg: 42, mmol: 6 } }
+      if (verdier) r.inndata = [...r.inndata, { navn: 'startdose', verdier, art: 'bindende_krav', grunnlag: kilde }]
+      const g = godkjennITest(r, `test-tillegg-visning-${verdier ? 'krav' : 'uten'}`)
+      return { g, v: planvisning(kliniskDoseplan(g, { startdose_mg: 168, maldose_mg: 30 }, GRUNNLAG, OMGIVELSE), g)! }
+    }
+    const kontrollert = med([126, 168, 210])
+    const celle = (x: typeof kontrollert) => {
+      const rad = x.v.rader.find((y) => y.type === 'periode')!
+      return rad.type === 'periode' ? rad.celler[0] : null
+    }
+    expect(celle(kontrollert)).toEqual({ dose: '168 mg Li⁺ (24 mmol)', elementer: [`4 tabletter Syntetisk 42 mg depottablett; ${UENDRET.kontrollert}`] })
+    expect(kontrollert.v.utfall.sluttmal[0]).toBe('testoksetin fortsetter uendret på 168 mg Li⁺ (24 mmol)')
+    expect(planTekst(kontrollert.v, 'Kombinere')).toContain('168 mg Li⁺ (24 mmol) = 4 tabletter Syntetisk 42 mg depottablett; uendret dose, kontrollert mot regelens doser; planen beregner den ikke')
+    // Uten et krav til startdosen er dosen bare bekreftet av forskriveren, og planen sier det.
+    expect(celle(med())).toEqual({ dose: '168 mg Li⁺ (24 mmol)', elementer: [`4 tabletter Syntetisk 42 mg depottablett; ${UENDRET.bekreftet}`] })
+    // Kontrollen krever en tablett med navn og positive verdier.
+    const feil = tillegg()
+    const fase = feil.plan.forlop[0]!.faser[0]!
+    if (fase.type !== 'uendret') throw new Error()
+    fase.visning = { enhet: ' ', tablett: { navn: '', mg: 0, mmol: -1 } }
+    const sett = DOMENESETT[0]!.sett
+    expect(kontrollerRegelsett({ ...sett, regler: [godkjennITest(feil, 'test-tillegg-visning-feil')] }).join(' ')).toMatch(/tom enhet.*tablett uten navn.*0 per tablett.*-1 mmol per tablett/)
   })
 
   it('holder retningen: det eksisterende legemidlet kan ikke trappes ned eller seponeres, og tillegget må ende på en dose som fortsetter', () => {
@@ -331,6 +427,106 @@ describe('Startdosen for et depot (K3)', () => {
   })
 })
 
+describe('Valg av dose per trinn i prosent av startdosen (K3)', () => {
+  const nedtrapping = (prosent: number): Fase => ({ type: 'nedtrapping', strategi: { type: 'prosent_av_startdose', prosent: sp(prosent, 'prosent') }, trinnlengde: sp(14, 'dager', 'veiledende_preferanse'), trinnvalg: vurdert })
+  /** Kryssnedtrapping fra testoksetin til testazapin: testoksetin trappes ned til 0 med `prosent` % av startdosen per 14 dager, og forskriveren kan velge dosen når et trinn ikke kan gis. */
+  function tempo(prosent = 30, endre?: (f: Extract<Fase, { type: 'nedtrapping' }>) => void): Regel {
+    const t = tillegg()
+    const fase = nedtrapping(prosent) as Extract<Fase, { type: 'nedtrapping' }>
+    endre?.(fase)
+    const r: Regel = { ...t, plan: { form: 'kryssnedtrapping', forlop: [{ ...t.plan.forlop[0]!, faser: [fase] }, t.plan.forlop[1]!] } }
+    return godkjennITest(r, `test-tempo-${prosent}`)
+  }
+  const grunner = (p: Doseplanresultat) => (p.status === 'stoppet' ? p.stoppgrunner.join(' ') : '')
+  const valg = (...trinn: [number, number, number][]) => ({ trinnvalg: trinn.map(([t, fra_mg, mg]) => ({ forlop: 'fra', trinn: t, fra_mg, mg })) })
+  const kryss = (r: Regel, startdose: number, ekstra: object = {}) => kliniskDoseplan(r, { startdose_mg: startdose, maldose_mg: 30, formvalg: TABLETT, ...ekstra }, GRUNNLAG, OMGIVELSE)
+  const fra = (p: Doseplanresultat) => (p.status === 'doseplan' ? kort(p)[0] : p.stoppgrunner)
+
+  it('tilbyr de nærmeste dosene, med et lengre trinn for en større reduksjon, og regner neste trinn fra den valgte dosen', () => {
+    const r = tempo()
+    expect(godkjenningsfeil(r)).toEqual([])
+    // 15 mg − 4,5 mg = 10,5 mg kan ikke gis; 10 mg er 5 mg reduksjon og varer 14 × 5 / 4,5 → 16 dager, 11,25 mg varer 14 dager.
+    const forste = kryss(r, 15)
+    expect(forste.status).toBe('stoppet')
+    expect(forste.trinnvalg).toMatchObject([{ trinn: 1, fra_mg: 15, beregnet_mg: 10.5, tempo: { steg_mg: 4.5, prosent: 30, dager: 14 }, doser: [{ mg: 10, dager: 16 }, { mg: 11.25, dager: 14 }] }])
+    expect(forste.status === 'stoppet' && forste.stoppgrunner.join(' ')).toMatch(/nærmeste dosene som kan gis: 10 mg \(−33,33 %, 16 dager\) eller 11,25 mg \(−25 %, 14 dager\)\. Trinnet varer da minst 14 dager/)
+    // Etter 10 mg er neste beregnede 5,5 mg; etter 5 mg er det 0,5 mg, der bare 1,25 mg over kan velges; etter 1,25 mg seponeres legemidlet.
+    expect(kryss(r, 15, valg([1, 15, 10])).trinnvalg).toMatchObject([{ trinn: 2, fra_mg: 10, doser: [{ mg: 5, dager: 16 }, { mg: 6.25, dager: 14 }] }])
+    expect(kryss(r, 15, valg([1, 15, 10], [2, 10, 5])).trinnvalg).toMatchObject([{ trinn: 3, fra_mg: 5, doser: [{ mg: 1.25, dager: 14 }] }])
+    const ferdig = kryss(r, 15, valg([1, 15, 10], [2, 10, 5], [3, 5, 1.25]))
+    expect(fra(ferdig)).toEqual([['1–16: 10', '17–32: 5', '33–46: 1.25'], 46])
+    expect(planvisning(ferdig, r)!.utfall.komplett).toBe(true)
+  })
+
+  it('krever en komplett plan også med valgte doser', () => {
+    const r = tempo()
+    // Etter 10 mg kan 5,5 mg ikke gis: klinikeren får ingen doser for trinn 1, bare grunnen og valget for trinn 2.
+    const p = kryss(r, 15, valg([1, 15, 10]))
+    expect(p.status).toBe('stoppet')
+    expect('forlop' in p).toBe(false)
+    expect(planvisning(p, r)).toBeNull()
+    expect(p.trinnvalg?.map((t) => [t.trinn, t.fra_mg])).toEqual([[2, 10]])
+    // Det samme når regelen ikke er klinisk godkjent: da tilbys heller ikke et valg.
+    const utkast = { ...r, godkjenning: { ...r.godkjenning, status: 'utkast' as const } }
+    const q = kryss(utkast, 15, valg([1, 15, 10]))
+    expect(q.status).toBe('stoppet')
+    expect(q.trinnvalg).toBeUndefined()
+  })
+
+  describe('Et mindre siste trinn før seponeringen', () => {
+    const medMellomtrinn = () =>
+      tempo(25, (f) => {
+        if (f.strategi.type === 'prosent_av_startdose') f.strategi.mellomtrinn = vurdert
+      })
+    const tilbudt = (p: Doseplanresultat) => p.trinnvalg?.map((t) => [t.trinn, t.fra_mg, t.beregnet_mg, t.mellomtrinn ?? false, t.doser.map((d) => [d.mg, d.dager])])
+
+    it('tilbyr den laveste og den nærmeste lavere dosen i en komplett plan, og seponerer etter mellomtrinnet', () => {
+      const r = medMellomtrinn()
+      expect(godkjenningsfeil(r)).toEqual([])
+      expect(kontrollerRegelsett({ ...DOMENESETT[0]!.sett, regler: [r] }).filter((x) => x.includes('mellomtrinn'))).toEqual([])
+      // 20 → 15 → 10 → 5 → 0: planen er komplett uten valg, og trinn 4 kan i stedet være 1,25 mg eller 3,75 mg fra 5 mg, hver i 14 dager.
+      const uten = kryss(r, 20)
+      expect(uten.status).toBe('doseplan')
+      expect(fra(uten)).toEqual([['1–14: 15', '15–28: 10', '29–42: 5'], 42])
+      expect(tilbudt(uten)).toEqual([[4, 5, 0, true, [[1.25, 14], [3.75, 14]]]])
+      expect(mellomtrinntekst(uten.trinnvalg![0]!)).toBe('Siste trinn går fra 5 mg til 0 (−100 %), og så seponeres legemidlet. Regelen lar forskriveren velge et mindre siste trinn før seponeringen; uten valg gjelder trinnet til 0.')
+      const med = kryss(r, 20, valg([4, 5, 1.25]))
+      if (med.status !== 'doseplan') throw new Error(med.stoppgrunner.join(' '))
+      expect(fra(med)).toEqual([['1–14: 15', '15–28: 10', '29–42: 5', '43–56: 1.25'], 56])
+      // Bare ett mellomtrinn per forløp.
+      expect(med.trinnvalg).toBeUndefined()
+      expect(planvisning(med, r)!.utfall.komplett).toBe(true)
+      expect(med.kontroller.map((k) => k.krav).join(' ')).toMatch(/Trinn 4 av testoksetin er et mindre siste trinn før seponeringen, valgt av forskriveren i stedet for trinnet fra 5 mg til 0/)
+      expect(planTekst(planvisning(med, r)!, r.tittel)).toMatch(/1,25 mg.*mindre siste trinn valgt av forskriveren \(−75 %\)/)
+    })
+
+    it('godtar bare de tilbudte dosene, ett mellomtrinn og bare når regelen har det', () => {
+      const r = medMellomtrinn()
+      expect(grunner(kryss(r, 20, valg([4, 5, 2.5])))).toMatch(/den valgte dosen 2,5 mg for trinn 4 er ikke en av dosene som kan velges som et mindre siste trinn \(1,25 mg eller 3,75 mg\)/)
+      expect(grunner(kryss(r, 20, valg([4, 5, 3.75], [5, 3.75, 1.25])))).toMatch(/Valget 1,25 mg for trinn 5 .* gjelder ikke lenger/)
+      // Uten `mellomtrinn` i regelen er trinnet til 0 seponeringen, og et valg der gjelder ikke.
+      const uten = tempo(25)
+      expect(kryss(uten, 20).trinnvalg).toBeUndefined()
+      expect(grunner(kryss(uten, 20, valg([4, 5, 1.25])))).toMatch(/Valget 1,25 mg for trinn 4 .* gjelder ikke lenger/)
+      // Et mellomtrinn uten valg av dose per trinn er en feil i regelen.
+      const feil = tempo(25, (f) => {
+        if (f.strategi.type === 'prosent_av_startdose') f.strategi.mellomtrinn = vurdert
+        delete f.trinnvalg
+      })
+      expect(kontrollerRegelsett({ ...DOMENESETT[0]!.sett, regler: [feil] })).toContainEqual(expect.stringMatching(/har et mellomtrinn før seponeringen uten valg av dose per trinn/))
+    })
+  })
+
+  it('godtar bare en av de nærmeste dosene, og bare når den beregnede ikke kan gis', () => {
+    const r = tempo()
+    expect(grunner(kryss(r, 15, valg([1, 15, 5])))).toMatch(/den valgte dosen 5 mg for trinn 1 er ikke en av de nærmeste dosene som kan gis \(10 mg eller 11,25 mg\)/)
+    // 25 % av 20 mg = 5 mg kan gis, så ingen dose tilbys, og et valg avvises.
+    const g = tempo(25)
+    expect(kryss(g, 20).trinnvalg).toBeUndefined()
+    expect(grunner(kryss(g, 20, valg([1, 20, 10])))).toMatch(/den beregnede dosen 15 mg for trinn 1 kan gis med preparatene i FEST, så valget 10 mg gjelder ikke/)
+  })
+})
+
 describe('Forsiktighetsgrensen (K3)', () => {
   it('sier om dosen er over, under eller utenfor grensen', () => {
     const r = nedtrappingsregel({ type: 'prosent_av_aktuell', prosent: sp(50, 'prosent') }, undefined, 'forsiktig')
@@ -349,25 +545,28 @@ describe('Forsiktighetsgrensen (K3)', () => {
   })
 })
 
-describe('Krav om komplett plan (K1)', () => {
-  const kreverKomplett = (r: Regel, id: string) => {
-    r.plan.forlop[0]!.krever_komplett = true
-    return godkjennITest(r, `test-${id}`)
-  }
-
-  it('viser ingen delplan med doser når planen ikke når seponering, og sier hvorfor', () => {
-    const r = kreverKomplett(medAvslutning(4.99, 5, 'krever-over'), 'krever-over')
+describe('Aldri en delplan for klinikere (Peders beslutning 03.11.2026)', () => {
+  it('viser ingen doser når planen ikke når sluttmålet, bare grunnen, også sammen med sperren', () => {
+    const r = medAvslutning(4.99, 5, 'krever-over')
     const p = plan(r, 20)
     if (p.status !== 'stoppet') throw new Error('planen skulle stoppet')
-    expect(p.stoppgrunner).toEqual([`${KOMPLETT_IKKE_TILGJENGELIG} for testoksetin: regelens avslutning gjelder bare fra 4,99 mg eller lavere (planen står på 5 mg); praktisk grense: ingen trinn under 5 mg; avslutning vurderes individuelt.`])
+    expect(p.stoppgrunner).toEqual([`${KOMPLETT_IKKE_TILGJENGELIG}: testoksetin: regelens avslutning gjelder bare fra 4,99 mg eller lavere (planen står på 5 mg); praktisk grense: ingen trinn under 5 mg; avslutning vurderes individuelt.`])
+    expect(p.merknader).toEqual([])
     expect(planvisning(p, r)).toBeNull()
+    // Internt (kontrollgrunnlag) gir den ufiltrerte beregningen fortsatt delplanen.
+    const intern = beregnDoseplan(r, { startdose_mg: 20, formvalg: TABLETT }, GRUNNLAG, OMGIVELSE)
+    expect(intern.status === 'doseplan' && planutfall(intern.forlop, () => 'testoksetin').komplett).toBe(false)
+    // En regel som ikke er godkjent, sier begge grunnene.
+    const ikkeGodkjent = { ...r, godkjenning: { ...r.godkjenning, status: 'utkast' as const } }
+    const q = plan(ikkeGodkjent, 20)
+    // Sperren står først, så det viktigste ikke drukner, og grunnen til at planen ikke er komplett står sist.
+    expect(q.status === 'stoppet' && q.stoppgrunner[0]).toBe('Ingen klinisk doseplan kan vises.')
+    expect(q.status === 'stoppet' && q.stoppgrunner.join(' ')).toMatch(/ikke klinisk godkjent/)
+    expect(q.status === 'stoppet' && q.stoppgrunner.at(-1)!.startsWith(KOMPLETT_IKKE_TILGJENGELIG)).toBe(true)
   })
 
-  it('viser planen når den er komplett, og en delplan som før for en regel uten kravet', () => {
-    const komplett = plan(kreverKomplett(medAvslutning(5, 5, 'krever-inne'), 'krever-inne'), 20)
-    expect(kort(komplett)).toEqual([[['1–14: 10', '15–28: 5'], 28]])
-    const uten = medAvslutning(4.99, 5, 'uten-krav')
-    expect(planvisning(plan(uten, 20), uten)!.utfall.komplett).toBe(false)
+  it('viser planen når den er komplett', () => {
+    expect(kort(plan(medAvslutning(5, 5, 'krever-inne'), 20))).toEqual([[['1–14: 10', '15–28: 5'], 28]])
   })
 })
 

@@ -195,7 +195,8 @@ export const begrunnelseshjelp = (r: Regel): string =>
   [
     ...parametre(r.plan).flatMap(([sti, p]) => (p.begrunnelseskrav ?? []).map((k) => `${p.justerbar ?? sti} ${kravtekst(k, p, r.sporsmal)}`)),
     ...sporsmalMedBegrunnelse(r).map((s) => s.ja),
-    ...doserMedBegrunnelse(r).map((k) => `${k.navn === 'startdose' ? startdosenavn(r) : 'Måldose'} over ${inndatagrenser(k)}${inndatavilkar(k, r.sporsmal)}`),
+    // «over» bare når kravet er en øvre grense; et område med nedre grense eller faste verdier gjelder også dosene under.
+    ...doserMedBegrunnelse(r).map((k) => `${k.navn === 'startdose' ? startdosenavn(r) : 'Måldose'} ${k.omrade?.[0] === 0 ? 'over' : 'utenfor'} ${inndatagrenser(k)}${inndatavilkar(k, r.sporsmal)}`),
   ].join('; ')
 
 /**
@@ -271,9 +272,9 @@ export function formvalgFor(r: Regel, valg: Verktoyvalg, skjema: Planskjema, utv
   return formvalgSomTrengs(r, inndataFor(r, valg, skjema), grunnlagFor(r, valg, utvalg), osloDato(naa))
 }
 
-/** Doseplanen, bare når den er klinisk; ellers en stopp med grunnene. */
-export function beregnPlan(r: Regel, valg: Verktoyvalg, skjema: Planskjema, utvalg: Legemiddelutvalg, naa: Date, regelsett: Regelsett = REGELSETT, settene?: readonly Regelsett[]): Doseplanresultat {
-  return kliniskDoseplan(r, inndataFor(r, valg, skjema), grunnlagFor(r, valg, utvalg), { idag: osloDato(naa), naa: naa.toISOString(), fagtekst: [] }, settFor(r, regelsett, settene))
+/** Doseplanen, bare når den er klinisk og komplett; ellers en stopp med grunnene. `motor` er en annen bare i kontrollgrunnlag og tester. */
+export function beregnPlan(r: Regel, valg: Verktoyvalg, skjema: Planskjema, utvalg: Legemiddelutvalg, naa: Date, regelsett: Regelsett = REGELSETT, settene?: readonly Regelsett[], motor = kliniskDoseplan): Doseplanresultat {
+  return motor(r, inndataFor(r, valg, skjema), grunnlagFor(r, valg, utvalg), { idag: osloDato(naa), naa: naa.toISOString(), fagtekst: [] }, settFor(r, regelsett, settene))
 }
 
 /**

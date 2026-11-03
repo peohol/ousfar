@@ -199,11 +199,16 @@ export type Nedtrappingsstrategi =
    * Hvert trinn er `prosent` lavere enn forrige dose (gjentatt prosentvis);
    * `lav_prosent` når dosen er nådd `lav_grense_mg`. Under `sluttdose_mg`
    * seponeres. Uten sluttdose når dosen aldri 0; da må fasen ha individuell
-   * avslutning og en teknisk planhorisont.
+   * avslutning og en teknisk planhorisont. Med `minste_trinn` kan
+   * forskriveren ved lave doser velge et minste trinn ({@link Minstetrinn}).
    */
-  | { type: 'prosent_av_aktuell'; prosent: Parameter; lav_prosent?: Parameter; lav_grense_mg?: Parameter; sluttdose_mg?: Parameter }
-  /** Hvert trinn er `prosent` av startdosen lavere (lineært). */
-  | { type: 'prosent_av_startdose'; prosent: Parameter }
+  | { type: 'prosent_av_aktuell'; prosent: Parameter; lav_prosent?: Parameter; lav_grense_mg?: Parameter; sluttdose_mg?: Parameter; minste_trinn?: Minstetrinn }
+  /**
+   * Hvert trinn er `prosent` av startdosen lavere (lineært). Med `trinnvalg`
+   * og `mellomtrinn` kan forskriveren velge et mindre siste trinn før
+   * seponeringen ({@link Fase}).
+   */
+  | { type: 'prosent_av_startdose'; prosent: Parameter; mellomtrinn?: Grunnlag }
   /** Hvert trinn er `mg` lavere (lineært, absolutt). */
   | { type: 'absolutt'; mg: Parameter }
   /**
@@ -241,6 +246,15 @@ export type Fase =
    * begrunnelse, tilbys ikke. Valget er forskriverens (`Beregningsinndata.trinnvalg`);
    * beregningen velger aldri selv. Bare med `prosent_av_aktuell`, individuell
    * avslutning og uten toleranse ({@link trinnvalgOmrade} i `beregning.ts`).
+   * Med `prosent_av_startdose` og nedtrapping til 0 (regelmodell 12) tilbys
+   * den nærmeste dosen under og over den beregnede, et valgt trinn varer så
+   * lenge at nedtrappingen aldri går raskere enn regelen (`tempolengde`), og
+   * neste trinn regnes fra den valgte dosen. Med `strategi.mellomtrinn` tilbys
+   * også et mindre siste trinn der planen ellers går fra siste dose til 0 (en
+   * reduksjon på 100 %): den nærmeste lavere dosen og den laveste dosen som
+   * kan gis, med samme regel for trinnlengden. Seponeringen kommer etter
+   * mellomtrinnet; uten valg gjelder trinnet til 0, og bare ett mellomtrinn
+   * kan velges per forløp.
    */
   | {
       type: 'nedtrapping'
@@ -279,8 +293,9 @@ export type Fase =
   /**
    * Legemidlet pasienten bruker, fortsetter med uendret dose; planen beregner
    * ingen dose og bruker ingen preparater for det (et tillegg, regelmodell 12).
+   * `visning` sier hvordan dosen skal stå i planen ({@link Uendretvisning}).
    */
-  | { type: 'uendret'; grunnlag: Grunnlag }
+  | { type: 'uendret'; grunnlag: Grunnlag; visning?: Uendretvisning }
   /** Doseringen beregnes ikke (bare når forløpet kan starte), f.eks. fordi preparatomtale mangler. */
   | { type: 'uten_beregning'; grunn: string }
   /** Depotinjeksjoner: startinjeksjoner på faste dager, deretter månedlig vedlikehold. */
@@ -289,6 +304,32 @@ export type Fase =
       start: { dag: Parameter; dose: Dosekilde; sted?: string; vindu_dager?: Parameter }[]
       vedlikehold: { dose: Dosekilde; maaneder: Parameter; tidligst_dager?: Parameter; vindu_dager?: Parameter; sted?: string }
     }
+
+/**
+ * Hvordan en uendret dose står i planen og kopien, så den ikke kan misforstås
+ * (regelmodell 12): `enhet` dosen er i, for eksempel «mg Li⁺» (ellers «mg»),
+ * og tabletten den gis med: navnet, dosen per tablett i samme enhet og
+ * eventuelt mmol per tablett. Planen sier også om dosen er kontrollert mot
+ * regelens doser eller bare bekreftet av forskriveren.
+ */
+export interface Uendretvisning {
+  enhet?: string
+  tablett?: { navn: string; mg: number; mmol?: number }
+}
+
+/**
+ * Et minste trinn ved lave doser (regelmodell 12), for en nedtrapping i
+ * prosent av aktuell dose der forskriveren kan velge dosen for et trinn
+ * (`Fase.trinnvalg`, `prosent.omrade`): fra en dose på høyst `fra_mg`, når
+ * ingen dose med faktisk reduksjon innenfor valgområdet kan gis, kan
+ * forskriveren velge den nærmeste lavere dosen som kan gis, med faktisk
+ * reduksjon høyst `maks_prosent`. Bare den ene dosen tilbys, og beregningen
+ * velger aldri selv. For eksempel dråper på 1 mg: 3 → 2 → 1 mg.
+ */
+export interface Minstetrinn {
+  fra_mg: Parameter
+  maks_prosent: Parameter
+}
 
 /**
  * En faglig godkjent avslutning (seponering) av en nedtrapping, med eget
@@ -387,13 +428,6 @@ export interface Forlop {
   faser: Fase[]
   /** Kliniske vurderings- og kontrollpunkter i forløpet (regelmodell 12). */
   vurderinger?: Vurderingspunkt[]
-  /**
-   * Regelen gir bare en komplett plan for forløpet (regelmodell 12): når
-   * planen ikke når sluttmålet (f.eks. seponering), stopper den med
-   * «Komplett plan ikke tilgjengelig» og grunnen, i stedet for å vise en
-   * delplan med doser. Uten feltet vises delplanen som før.
-   */
-  krever_komplett?: true
 }
 
 /**
@@ -675,6 +709,8 @@ export const FELTENHET: Record<string, Enhet> = {
   minstetid: 'dager',
   prosent: 'prosent',
   lav_prosent: 'prosent',
+  maks_prosent: 'prosent',
+  fra_mg: 'mg',
   mg: 'mg',
   lav_grense_mg: 'mg',
   sluttdose_mg: 'mg',
@@ -867,7 +903,7 @@ export function grunnlagITabeller(r: Pick<Regel, 'plan'>): [string, Grunnlag][] 
   )
 }
 
-/** Alle grunnlag i regelen med stien dit: parametre med begrunnelseskravene og forslagene ved svar, inndata, bekreftelser, unntak, spørsmål, tabeller, valg av dose per trinn, fordeling og det kliniske omfanget. */
+/** Alle grunnlag i regelen med stien dit: parametre med begrunnelseskravene og forslagene ved svar, inndata, bekreftelser, unntak, spørsmål, tabeller, valg av dose per trinn og mellomtrinn, fordeling og det kliniske omfanget. */
 export function alleGrunnlag(r: Regel): [string, Grunnlag][] {
   return [
     ...parametre(r).flatMap(([sti, p]) => [
@@ -879,6 +915,9 @@ export function alleGrunnlag(r: Regel): [string, Grunnlag][] {
     ...[...r.bekreftelser, ...r.unntak, ...(r.sporsmal ?? [])].map((x) => [x.id, x.grunnlag] as [string, Grunnlag]),
     ...grunnlagITabeller(r),
     ...r.plan.forlop.flatMap((f) => f.faser.flatMap((x, i) => (x.type === 'nedtrapping' && x.trinnvalg ? [[`${f.id}.faser[${i}].trinnvalg`, x.trinnvalg] as [string, Grunnlag]] : []))),
+    ...r.plan.forlop.flatMap((f) =>
+      f.faser.flatMap((x, i) => (x.type === 'nedtrapping' && x.strategi.type === 'prosent_av_startdose' && x.strategi.mellomtrinn ? [[`${f.id}.faser[${i}].strategi.mellomtrinn`, x.strategi.mellomtrinn] as [string, Grunnlag]] : [])),
+    ),
     ...r.plan.forlop.flatMap((f) => (f.fordeling ? [[`${f.id}.fordeling`, f.fordeling.grunnlag] as [string, Grunnlag]] : [])),
     ...r.plan.forlop.flatMap((f) => (f.vurderinger ?? []).map((v) => [`${f.id}.vurderinger.${v.id}`, v.grunnlag] as [string, Grunnlag])),
     ...r.plan.forlop.flatMap((f) =>

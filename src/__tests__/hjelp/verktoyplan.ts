@@ -45,14 +45,25 @@ export function godkjennITest(r: Regel, id: string): Regel {
 }
 
 /**
- * Den syntetiske nedtrappingen: 50 % av aktuell dose per trinn, ingen trinn
- * under 5 mg (en syntetisk praktisk grense) og høyst 12 reduksjoner. Den går
- * ikke til null, som ingen seponeringsregel kan (P7.5): siste dose fortsetter
- * til avslutningen er vurdert individuelt.
+ * Med en syntetisk godkjent avslutning fra høyst `fra_hoyst` mg, så planen når
+ * sluttmålet: klinikere får aldri en delplan (Peders beslutning 03.11.2026).
  */
-const nedtrapping = (id?: string): Regel => nedtrappingUtenNull({ type: 'prosent_av_aktuell', prosent: sp(50, 'prosent') }, { avvik_prosent: sp(10, 'prosent'), min_mg: sp(5, 'mg') }, id)
+function medAvslutning(r: Regel, fra_hoyst: number): Regel {
+  for (const fase of r.plan.forlop[0]!.faser) {
+    if (fase.type === 'nedtrapping') fase.avslutning = { type: 'seponering', fra_hoyst_mg: sp(fra_hoyst, 'mg'), grunnlag: { type: 'ousfar_vurdering', begrunnelse: 'Syntetisk.', avklaring: null } }
+  }
+  return r
+}
 
-/** Nedtrapping av «escitalopram» med syntetiske verdier: 50 % av aktuell dose per trinn, uten nulltrinn. */
+/**
+ * Den syntetiske nedtrappingen: 50 % av aktuell dose per trinn, ingen trinn
+ * under 5 mg (en syntetisk praktisk grense) og høyst 12 reduksjoner. Fra 10 mg
+ * seponeres legemidlet etter en syntetisk godkjent avslutning, så planen er
+ * komplett.
+ */
+const nedtrapping = (id?: string): Regel => medAvslutning(nedtrappingUtenNull({ type: 'prosent_av_aktuell', prosent: sp(50, 'prosent') }, { avvik_prosent: sp(10, 'prosent'), min_mg: sp(5, 'mg') }, id), 10)
+
+/** Nedtrapping av «escitalopram» med syntetiske verdier: 50 % av aktuell dose per trinn og avslutning fra 10 mg. */
 export const TEST_NEDTRAPPING: Regel = godkjennITest(omkoble(nedtrapping()), 'test-nedtrapping')
 
 /** Som {@link TEST_NEDTRAPPING}, men forskriveren kan velge dager per trinn (14–28). */
@@ -78,8 +89,13 @@ export const TEST_BEGRUNNELSE: Regel = (() => {
   return godkjennITest(omkoble(r), 'test-begrunnelse')
 })()
 
-/** Nedtrapping av «escitalopram» der forskriveren kan velge blant dosene som kan gis når et trinn ikke kan gis nøyaktig (P7.5), med syntetiske verdier. */
-export const TEST_TRINNVALG: Regel = godkjennITest(omkoble(trinnvalgUtenNull()), 'test-trinnvalg')
+/** Nedtrapping av «escitalopram» der forskriveren kan velge blant dosene som kan gis når et trinn ikke kan gis nøyaktig (P7.5), med syntetiske verdier, ingen trinn under 8 mg og avslutning fra 10 mg. */
+export const TEST_TRINNVALG: Regel = (() => {
+  // Ingen trinn under 8 mg, så planen når avslutningen etter to valg.
+  const r = medAvslutning(trinnvalgUtenNull(), 10)
+  r.plan.forlop[0]!.dosevalg = { ...r.plan.forlop[0]!.dosevalg, min_mg: sp(8, 'mg') }
+  return godkjennITest(omkoble(r), 'test-trinnvalg')
+})()
 
 /** Kryssnedtrapping «escitalopram» → «mirtazapin» med syntetiske verdier og måldose fra inndata. */
 export const TEST_KRYSS: Regel = godkjennITest(omkoble({ ...KRYSSREGEL, inndata: [{ navn: 'maldose', art: 'bindende_krav', grunnlag: { type: 'ousfar_vurdering', begrunnelse: 'Syntetisk.', avklaring: null } }] } as Regel), 'test-kryss')
