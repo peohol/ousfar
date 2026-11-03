@@ -263,6 +263,24 @@ describe('redaktørvisningen av kildesakene', () => {
     expect(nodstopp).toHaveBeenCalled()
   })
 
+  it('viser tidligere beslutning og tiltak når en sak i oppfølging blir et sikkerhetsproblem under vurdering', async () => {
+    const s = sak({
+      alvor: 'sikkerhet',
+      anbefaling: null,
+      valg: [],
+      beslutning: null,
+      tidligere: [{ valg: 'behold', merknad: null, av: 'Ada Admin', kl: '2026-11-08T10:00:00Z' }],
+      tiltak: [{ tekst: 'Nytt kontrollert sammenligningsgrunnlag for kilden', status: 'kontrollert', endret_kl: '2026-11-09T11:00:00Z', lenke: null }],
+    })
+    render(<Fagsaker apen lager={minnelager(oversikt([s]))} />)
+    const kort = within(await screen.findByRole('article'))
+    expect(kort.getByText('Sikkerhetsproblem under vurdering')).toBeTruthy()
+    const tidligere = within(kort.getByText('Tidligere i saken').parentElement!)
+    expect(tidligere.getByText(/Besluttet .* av Ada Admin/)).toBeTruthy()
+    expect(tidligere.getByText('Utført og kontrollert')).toBeTruthy()
+    expect(kort.queryAllByRole('radio')).toHaveLength(0)
+  })
+
   it('samler avsluttede saker, med prøven merket, og sier hvorfor de er avsluttet', async () => {
     const avsluttet = sak({
       id: '3',
