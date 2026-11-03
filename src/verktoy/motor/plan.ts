@@ -25,7 +25,7 @@
  */
 import { FEST_FORELDET_ETTER_TIMER, festForeldet } from '../../legemiddeldata/referanser'
 import { FORMULERINGSKLASSER, type Formuleringsklasse } from '../festformuleringer'
-import { AVSLUTNING_FELLES, AVVIK_IKKE_BEREGNET, avrund, beregn, datoFor, overAvslutning, overAvslutningKort, erIsoDato, tempolengde, fordelingstekst, hverTekst, injeksjonstidspunkt, medEnhet, medSvarforslag, utenBeregningLinje, valgtSuffiks, trinnvalgOmrade, minstetrinnFra, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
+import { AVSLUTNING_FELLES, AVVIK_IKKE_BEREGNET, avrund, beregn, overAvslutning, overAvslutningKort, erIsoDato, tempolengde, fordelingstekst, hverTekst, injeksjonstidspunkt, medEnhet, medSvarforslag, utenBeregningLinje, valgtSuffiks, trinnvalgOmrade, minstetrinnFra, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
 import { fingeravtrykk, godkjenningsfeil, kanonisk, sha256 } from '../regler/godkjenning'
 import { avslutningFor, justerbare, parameterfeil, type Beregningsinndata, type Fase, type Forlop, type Klinisktilfelle, type Parameter, type Regel, type Regelsett } from '../regler/modell'
 import { byggesteiner, DOSEENHETER, norskDato, type Byggestein, type Preparatgrunnlag } from './byggesteiner'
@@ -146,8 +146,6 @@ export interface Praktiskforlop extends Omit<Forlopsresultat, 'perioder' | 'inje
   toleranse_prosent: number
   /** Preparater i FEST for virkestoffet som ikke kan brukes i dette forløpet, med grunnen (P5.4). */
   begrensninger: string[]
-  /** Når en godkjent avslutning gjelder fra et tidligere trinn enn den ideelle kurven, fordi neste trinn ikke kan gis: hvorfor. */
-  avslutningsmerknad?: string
 }
 
 interface Planversjoner {
@@ -184,8 +182,6 @@ export const FORBEHOLD_IKKE_KLINISK = 'Modellberegning, ikke en klinisk doseplan
 export const FORBEHOLD_KLINISK = 'Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.'
 
 const tall = (x: number) => String(avrund(x)).replace('.', ',')
-/** Dagen etter `iso`. */
-const nesteDato = (iso: string) => datoFor(iso, 2)
 const dager = (p: { fra: number; til: number | null }) => (p.til === null ? `fra dag ${p.fra}` : p.til === p.fra ? `dag ${p.fra}` : `dag ${p.fra}–${p.til}`)
 /** «, annenhver dag» når dosen ikke gis daglig. */
 const hverSuffiks = (p: { hver?: number }) => (p.hver ? ` ${hverTekst(p.hver)}` : '')
@@ -779,15 +775,9 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
       elementer: serie![i]!.elementer,
       ...(p.fordeles && { doser: fordelt(p, serie![i]!)! }),
     }))
-    const egneValg = trinnvalg.some((t) => t.forlop === f.id)
-    if (serie.length < f.perioder.length && f.avsluttes && !egneValg && ut.perioder.at(-1)!.mg <= f.avsluttes.fra_hoyst_mg + EPS) {
-      // En godkjent avslutning gjelder fra den siste dosen som faktisk gis, når ingen dose kan velges for neste trinn: siste trinn gis, og så seponeres legemidlet.
-      const sist = ut.perioder.at(-1)!
-      ut.siste_dosedag = sist.til
-      ut.seponert_dato = sist.til_dato ? nesteDato(sist.til_dato) : undefined
-      if (ut.seponert_dato === undefined) delete ut.seponert_dato
-      ut.avslutningsmerknad = `${stans} Regelens avslutning gjelder fra ${tall(sist.mg)} mg (høyst ${tall(f.avsluttes.fra_hoyst_mg)} mg), så ${f.virkestoff} seponeres etter dette trinnet.`
-    } else if (serie.length < f.perioder.length) {
+    // Et trinn som ikke kan gis med preparatene, gir aldri en seponering fra trinnet før, heller ikke under en godkjent avslutningsgrense:
+    // et manglende preparat eller en manglende styrke er ikke et faglig grunnlag for siste dose (ChatGPTs kontroll av 30eadd5). Planen stopper.
+    if (serie.length < f.perioder.length) {
       // Siste trinn som kan gis, fortsetter til planen revurderes.
       const sist = ut.perioder.at(-1)!
       sist.til = null
@@ -899,15 +889,38 @@ export const seponeringsdag = (f: Praktiskforlop): number | null =>
   f.siste_dosedag !== null && (f.perioder.length > 0 || f.administrasjon === 'peroral' || f.injeksjoner.length === 0) ? f.siste_dosedag + 1 : null
 
 /**
- * Hvorfor forløpet ikke når et sluttmål (seponert, uendret, vedlikehold eller
- * en dose som fortsetter), kort; `undefined` når det når det. Den ene
- * definisjonen av en komplett plan, for planutfallet og sperren mot delplaner.
+ * Hvorfor forløpet ikke når sitt konkrete sluttmål ({@link Sluttmal}), kort;
+ * `undefined` når det når det. Den praktiske planen må faktisk ende der:
+ * seponert, på nøyaktig vedlikeholdsdosen (forskriverens måldose når regelen
+ * bruker den), på depotvedlikeholdet med regelens dose, eller på den uendrede
+ * dosen. En dose som bare fortsetter, en individuell avslutning eller et
+ * forløp uten beregning er ikke et sluttmål. Den ene definisjonen av en
+ * komplett plan, for planutfallet og sperren mot delplaner.
  */
 export function sluttmalMangler(f: Praktiskforlop): string | undefined {
   if (f.uten_beregning) return `ikke beregnet (${f.uten_beregning.replace(/\.$/, '')})`
   if (f.avslutning) return f.avslutning_kort ?? 'avslutningen vurderes individuelt'
-  if (f.uendret_mg !== undefined || seponeringsdag(f) !== null || f.injeksjoner.some((i) => i.vedlikehold) || f.perioder.at(-1)?.til === null) return undefined
-  return 'planen har ikke et definert sluttmål'
+  const mal = f.mal
+  const lik = (a: number, b: number) => Math.abs(a - b) <= EPS * Math.max(1, b)
+  switch (mal?.type) {
+    case 'seponert':
+      return seponeringsdag(f) !== null ? undefined : 'planen seponerer ikke legemidlet'
+    case 'vedlikehold': {
+      const sist = f.perioder.at(-1)
+      const hva = mal.maldose ? `måldosen ${tall(mal.mg)} mg` : `vedlikeholdsdosen ${tall(mal.mg)} mg`
+      if (!sist || sist.til !== null) return `planen når ikke ${hva}`
+      return lik(sist.mg, mal.mg) ? undefined : `planen står på ${tall(sist.mg)} mg, ikke ${hva}`
+    }
+    case 'depot': {
+      const v = f.injeksjoner.find((i) => i.vedlikehold)
+      if (!v) return `planen når ikke depotvedlikeholdet på ${tall(mal.mg)} mg`
+      return lik(v.mg, mal.mg) ? undefined : `depotvedlikeholdet er ${tall(v.mg)} mg, ikke regelens ${tall(mal.mg)} mg`
+    }
+    case 'uendret':
+      return f.uendret_mg !== undefined && lik(f.uendret_mg, mal.mg) ? undefined : `planen holder ikke dosen uendret på ${tall(mal.mg)} mg`
+    default:
+      return 'planen har ikke et definert sluttmål'
+  }
 }
 
 function beregnPlan(regel: Regel, inndata: Doseplaninndata, grunnlag: Preparatgrunnlag, omgivelse: Omgivelse, regelsett?: Regelsett, kontrollerte?: Klinisktilfelle[]): Doseplanresultat {
@@ -971,7 +984,6 @@ function beregnPlan(regel: Regel, inndata: Doseplaninndata, grunnlag: Preparatgr
     kontroller.push({ krav: `Utvasking i doseplanen: minst ${krav} dager uten ${forrige.virkestoff} før ${denne.virkestoff}`, oppfylt: fri >= krav, detalj: `${fri} dager uten legemiddel.` })
     if (fri < krav) return stopp([`Doseplanen har bare ${fri} dager uten ${forrige.virkestoff} før ${denne.virkestoff}, mindre enn ${krav}.`])
   }
-  for (const f of forlop) if (f.avslutningsmerknad) merknader.push(f.avslutningsmerknad)
   // Stopper planen tidligere enn den ideelle kurven fordi et trinn ikke kan gis, gjelder den nye forklaringen.
   for (const f of forlop) {
     const ideal = ideell.forlop.find((x) => x.id === f.id)?.avslutning

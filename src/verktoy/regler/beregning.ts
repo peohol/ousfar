@@ -114,6 +114,12 @@ export interface Forlopsresultat {
    * den siste dosen som faktisk gis, ikke er høyere.
    */
   avsluttes?: { fra_hoyst_mg: number; trinnlengde: number }
+  /**
+   * Det konkrete sluttmålet regelen beregner forløpet til ({@link Sluttmal});
+   * mangler når forløpet ikke har et definert sluttmål. Doseplanmotoren
+   * kontrollerer at den praktiske planen faktisk når det.
+   */
+  mal?: Sluttmal
   /** Legemidlet fortsetter med uendret dose, som planen ikke beregner (`uendret`, regelmodell 12). */
   uendret_mg?: number
   /** Hvordan den uendrede dosen står i planen ({@link Uendretvisning}). */
@@ -125,6 +131,21 @@ export interface Forlopsresultat {
    */
   uendret_kontrollert?: boolean
 }
+
+/**
+ * Sluttmålet for et forløp (ChatGPTs kontroll av 30eadd5): seponert etter
+ * regelens nedtrapping, avslutning eller seponering; en vedlikeholdsdose
+ * (`maldose` når det er forskriverens valgte måldose); et depotvedlikehold;
+ * eller en uendret dose. En dose som bare fortsetter, er ikke et sluttmål.
+ */
+export type Sluttmal =
+  | { type: 'seponert' }
+  | { type: 'vedlikehold'; mg: number; maldose: boolean }
+  | { type: 'depot'; mg: number }
+  | { type: 'uendret'; mg: number }
+
+/** Faser som avslutter et forløp med seponering når de er siste fase og forløpet ikke fortsetter. */
+const SEPONERER: readonly Fase['type'][] = ['nedtrapping', 'seponer', 'hold']
 
 /** Et bindende krav beregningen er kontrollert mot. */
 export interface Kontroll {
@@ -565,8 +586,11 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
   let uendret: number | undefined
   let uendret_visning: Uendretvisning | undefined
   let uendret_kontrollert = false
+  let mal: Sluttmal | undefined
+  let sisteFase: Fase['type'] | undefined
 
   for (const fase of faserFor(regel, f, ctx.medlem)) {
+    sisteFase = fase.type
     switch (fase.type) {
       case 'hold': {
         const mg = dose(fase.dose, aktuell, ctx)
@@ -710,6 +734,7 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
       case 'vedlikehold':
         aktuell = dose(fase.dose, aktuell, ctx)
         legg(dag, null, aktuell)
+        mal = { type: 'vedlikehold', mg: aktuell, maldose: fase.dose.type === 'inndata' && fase.dose.navn === 'maldose' }
         fortsetter = true
         break
       case 'intervalldosering': {
@@ -734,6 +759,7 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
         uendret = aktuell
         if (fase.visning) uendret_visning = fase.visning
         uendret_kontrollert = f.utgangsdose === 'startdose' && kontrollertStartdose(regel, aktuell, inndata.svar, ctx.medlem ?? undefined)
+        mal = { type: 'uendret', mg: aktuell }
         fortsetter = true
         break
       case 'uten_beregning':
@@ -762,6 +788,7 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
           ...(v.vindu_dager ? { vindu_dager: verdi(v.vindu_dager) } : {}),
           vedlikehold: { maaneder: verdi(v.maaneder), etter_dag: sist, ...(v.tidligst_dager ? { tidligst_dager: verdi(v.tidligst_dager) } : {}) },
         })
+        mal = { type: 'depot', mg: injeksjoner.at(-1)!.mg }
         fortsetter = true
         break
       }
@@ -785,6 +812,10 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
     ...(avsluttes && !fortsetter ? { avsluttes } : {}),
     ...(uendret !== undefined ? { uendret_mg: uendret, uendret_kontrollert, ...(uendret_visning && { uendret_visning }) } : {}),
   }
+  // Et forløp som avsluttes uten individuell avslutning eller uten beregning etter en nedtrapping, seponering eller et hold, er seponert.
+  const seponert = !fortsetter && !avslutning && !uten && sisteFase !== undefined && SEPONERER.includes(sisteFase)
+  const sluttmal = seponert ? ({ type: 'seponert' } as const) : avslutning || uten ? undefined : mal
+  if (sluttmal) resultat.mal = sluttmal
   if (inndata.startdato) dater(resultat, inndata.startdato)
   return resultat
 }
