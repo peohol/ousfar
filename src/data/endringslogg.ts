@@ -12,6 +12,21 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.122.0',
+    dato: '2026-11-03',
+    sammendrag: 'Verktøyene tåler korte brudd bedre, og sier fra når en plan ble tatt bort',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Svarer ikke kontrollen av om verktøyet er midlertidig deaktivert, prøver verktøyet selv på nytt etter 5 og etter 15 sekunder, og med en gang forbindelsen er tilbake. Til en kontroll lykkes, vises fortsatt ingen doseplan eller fagtekst.',
+      'Er det ingen forbindelse, står det nå «Ingen forbindelse» i stedet for den generelle meldingen.',
+      'Ble en plan tatt bort fordi kontrollen ikke svarte, står det «Planen ble tatt bort fordi sikkerhetskontrollen ikke svarte. Beregn på nytt.» ved knappen når kontrollen svarer igjen. Planen beregnes ikke på nytt av seg selv; du trykker selv «Beregn doseplan». Var det en sperre som tok planen, vises sperren som før.',
+      'Feiler hentingen av preparatene fra FEST når du beregner, prøver verktøyet én gang til før det sier fra. Kravene til planen er de samme som før.',
+      'Ingen doser, grenser, regler eller godkjenninger er endret, og FEST-dataene må fortsatt være kontrollert de siste 48 timene.',
+    ],
+  },
+  {
     versjon: '1.121.1',
     dato: '2026-11-03',
     sammendrag: 'Grunnlag for faglig kontroll av nedtrappingsreglene for amitriptylin, nortriptylin og escitalopram',
