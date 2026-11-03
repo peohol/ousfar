@@ -1,4 +1,55 @@
 {
  "om": "Kontrollsummer for kildedokumentene i src/verktoy/regler/kilder.ts som er fastsatt på nytt etter en faglig vurdering av en endring funnet av kildeovervåkingen (docs/verktøy-p12-overvaking.md). En føring gjelder i stedet for kontrollsummen i KILDER. Føringer legges bare til i en PR med vurderingen, og endres eller slettes aldri.",
- "dokumenter": []
+ "dokumenter": [
+  {
+   "kilde": "keks-2016",
+   "metode": "avsnitt",
+   "sha256": "2e4f6271d5091114a28d2396fda65ba7c7e87824a73df3715716ea3a5b9e604d",
+   "avsnitt": [
+    {
+     "overskrift": "Table 2. Techniques for switching from one antidepressant to another 6.",
+     "sha256": "33a0069aab8fd4ab3e6dac330f15dc3f278a30385d9cbfdb472c0ceb3b08d6f5"
+    },
+    {
+     "overskrift": "Table 3. Guidelines for switching between specific antidepressants 2 , 8 - 10 .",
+     "sha256": "5fdd64b95cc7408bb4cb6bfb73344363c10822f77420f935facdab69b40e4d27"
+    }
+   ],
+   "fastsatt": "2026-11-03T04:04:51Z",
+   "vurdering": "Kildefunn 1/4 (docs/verktøy-kildefunn-1-2.md, PR #297). Avtrykket skiftet fordi PMC legger engangsverdier i siden; tabell 2 og tabell 3 med note støtter faktaene reglene bruker, og ingen rettelse er registrert. Uavhengig kontroll (ChatGPT) 03.11.2026 godkjente nytt sammenligningsgrunnlag uten endring i regler eller fingeravtrykk. Avsnittene var like ved seks hentinger 03.11.2026 kl. 04.03–04.29 UTC; den synlige teksten har vært lik siden 31.10.2026. Den eksakte teksten fra 28.10.2026 kunne ikke gjenfinnes; det er ikke påvist at den var identisk, bare at de faglig relevante avsnittene nå støtter faktaene."
+  },
+  {
+   "kilde": "rcpsych-stopping",
+   "metode": "avsnitt",
+   "sha256": "906dbdaf6ffc0009eec5f22336925e47aaa5dbfecf109ff634e249de9cbd5926",
+   "avsnitt": [
+    {
+     "overskrift": "When and how should I stop my antidepressants?",
+     "sha256": "6fa24d072a8ff57d45baba964ceb14d6a82084095b8b05780e399b234346dc4d"
+    },
+    {
+     "overskrift": "How should I gradually reduce my dose?",
+     "sha256": "cf6054c63439f3668a8ac35540c484223230c379307d5c40a565f2e7213c0aab"
+    },
+    {
+     "overskrift": "If you have been taking antidepressants for longer",
+     "sha256": "0461d924553a1fa004d8aa510b910bdaa479d455e92905b0e18cf895bb614e25"
+    },
+    {
+     "overskrift": "Examples of tapering plans",
+     "sha256": "c82928d8b512da7c50f148e4d4264a6d64b4dd2d0e152b3e90ef6bcc3fc2040e"
+    },
+    {
+     "overskrift": "Which plan should I follow?",
+     "sha256": "706e85bd46cdc0cc8e7e912e4a128e8cba1ce11f13d244c33a797f624c4e79ab"
+    },
+    {
+     "overskrift": "Appendix 1: Potential risk of withdrawal symptoms with individual antidepressants",
+     "sha256": "677d54932c1ff6062dfc15b2c7421c99b02dbb8619adf2518620cad79fb59ecb"
+    }
+   ],
+   "fastsatt": "2026-11-03T04:04:30Z",
+   "vurdering": "Kildefunn 2/5 (docs/verktøy-kildefunn-1-2.md, PR #297). Teknisk variasjon i siden er den mest sannsynlige forklaringen på de skiftende kontrollsummene, men årsaken er ikke endelig dokumentert. Avsnittene støtter faktaene reglene bruker, med unntak av at RCPSYCH.langvarig må presiseres (prosent av opprinnelig dose), som følges opp separat. Uavhengig kontroll (ChatGPT) 03.11.2026 godkjente nytt sammenligningsgrunnlag uten endring i regler eller fingeravtrykk, også med RCPsychs PDF-versjon 18.03.2024 som støtte. Avsnittene var like ved seks hentinger 03.11.2026 kl. 04.03–04.29 UTC; den synlige teksten har vært lik siden 31.10.2026. Den eksakte teksten fra 28.10.2026 kunne ikke gjenfinnes; det er ikke påvist at den var identisk, bare at de faglig relevante avsnittene nå støtter faktaene."
+  }
+ ]
 }

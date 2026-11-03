@@ -110,9 +110,33 @@ describe('kildedokumentene', () => {
     expect(dokumentgrunnlag().map((g) => g.kilde.id)).toEqual(KILDER.filter((k) => k.sha256).map((k) => k.id))
     expect(uovervaketeKilder().every((k) => !k.sha256)).toBe(true)
     expect(dokumentgrunnlag().length + uovervaketeKilder().length).toBe(KILDER.length)
-    // Grunnlaget i repoet er ikke fastsatt på nytt ennå; da gjelder kontrollsummene i KILDER.
-    expect(JSON.parse(les('src/data/verktoy/kildekontroll-grunnlag.json')).dokumenter).toEqual([])
-    expect(dokumentgrunnlag().every((g) => g.metode === null)).toBe(true)
+    // Bare kildene fra kildefunn 1/4 og 2/5 har fått et nytt grunnlag (docs/verktøy-kildefunn-1-2.md); de andre bruker kontrollsummen i KILDER.
+    const fastsatt = JSON.parse(les('src/data/verktoy/kildekontroll-grunnlag.json')).dokumenter as Fastsattgrunnlag[]
+    expect(fastsatt.map((f) => f.kilde)).toEqual(['keks-2016', 'rcpsych-stopping'])
+    expect(dokumentgrunnlag().filter((g) => g.metode !== null).map((g) => [g.kilde.id, g.metode])).toEqual([['rcpsych-stopping', 'avsnitt'], ['keks-2016', 'avsnitt']])
+  })
+
+  it('fastsetter det nye grunnlaget for kildefunn 1 og 2 avsnitt for avsnitt, i full lengde og med kontrollørens vurdering', () => {
+    const fastsatt = JSON.parse(les('src/data/verktoy/kildekontroll-grunnlag.json')).dokumenter as Fastsattgrunnlag[]
+    const fulle = /^[0-9a-f]{64}$/
+    for (const f of fastsatt) {
+      expect(f.metode).toBe('avsnitt')
+      expect(f.sha256).toMatch(fulle)
+      expect(f.avsnitt!.length).toBeGreaterThan(0)
+      expect(f.avsnitt!.every((a) => fulle.test(a.sha256) && a.overskrift.trim().length > 0)).toBe(true)
+      // Avtrykket er avtrykket av nøyaktig disse avsnittene, så grunnlaget kan etterprøves.
+      expect(f.sha256).toBe(avsnittsavtrykk(f.avsnitt!.map((a) => a.sha256)))
+      expect(new Date(f.fastsatt).toISOString().slice(0, 19)).toBe(f.fastsatt.slice(0, 19))
+      // Sporbarheten: rapporten, den uavhengige kontrollen og at teksten fra 28.10 ikke kunne gjenfinnes.
+      expect(f.vurdering).toMatch(/PR #297/)
+      expect(f.vurdering).toMatch(/ChatGPT\) 03\.11\.2026/)
+      expect(f.vurdering).toMatch(/28\.10\.2026 kunne ikke gjenfinnes/)
+    }
+    // Det nye grunnlaget legges ved siden av; kontrollsummen i KILDER, og dermed fingeravtrykkene, står urørt.
+    expect(KILDER.filter((k) => fastsatt.some((f) => f.kilde === k.id)).map((k) => [k.id, k.sha256])).toEqual([
+      ['rcpsych-stopping', 'f465fb1dbece0c76c7985138c8b59aa0a1e8a2f9f9dffd60e8d07c3d64ef3b4d'],
+      ['keks-2016', '55c5b956f46b02f9cc30153a5d76b0dda2764caa9e90c58ef0189d7a88cb7fe7'],
+    ])
   })
 
   it('godtar et uendret dokument, og en nettside med samme synlige tekst når bare skript og kommentarer skifter', async () => {
