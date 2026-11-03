@@ -22,7 +22,8 @@
  * som forslag til de er avklart; eksemplene er regnet ut for hånd og
  * kontrolleres av testene mot beregningen.
  */
-import { fluoksetinTrinn28, FORUTSETNINGER_FELLES, forslag, h, halvering, kilde, leveransen, minst14, NICE, planhorisont, pn, RCPSYCH, steg, trinn14, utsagn, vurdert } from './bygg'
+import { FAKTUMRETTELSER, fluoksetinTrinn28, FORUTSETNINGER_FELLES, forslag, h, halvering, kilde, leveransen, minst14, NICE, planhorisont, pn, RCPSYCH, RCPSYCH_TIDLIGERE, steg, trinn14, utsagn, vurdert } from './bygg'
+import { rett } from './rettelse'
 import { disponer } from './godkjenning'
 import type { Avklaring, Bekreftelse, Godkjenning, Godkjenningssteg, Regel, Regelsett, Sporsmal, Unntak } from './modell'
 import { REGELMODELLVERSJON } from './modell'
@@ -370,7 +371,7 @@ const kryssSertralinMirtazapin: Regel = {
     {
       id: 'tidligere_seponeringssymptomer',
       tekst: 'Et tidligere forsøk på å trappe ned eller seponere sertralin har gitt seponeringssymptomer eller mislyktes. Da passer ikke den faste kryssnedtrappingen, og byttet planlegges individuelt med mindre trinn.',
-      grunnlag: { type: 'kilde', henvisninger: [NICE.tidligere, RCPSYCH.langvarig] },
+      grunnlag: { type: 'kilde', henvisninger: [NICE.tidligere, RCPSYCH_TIDLIGERE.langvarig] },
     },
   ] satisfies Unntak[],
   sporsmal: [
@@ -379,7 +380,7 @@ const kryssSertralinMirtazapin: Regel = {
       tekst: 'Har pasienten brukt sertralin i mange måneder eller lenger?',
       ja: 'lang behandlingstid',
       krever_begrunnelse: true,
-      grunnlag: { type: 'kilde', henvisninger: [RCPSYCH.langvarig, NICE.bytte] },
+      grunnlag: { type: 'kilde', henvisninger: [RCPSYCH_TIDLIGERE.langvarig, NICE.bytte] },
     },
   ] satisfies Sporsmal[],
   beregnbarhet: 'beregnbar_etter_avklaring',
@@ -401,12 +402,12 @@ const kryssSertralinMirtazapin: Regel = {
         'At dette er et bytte, kan begrunne raskere nedtrapping enn ved seponering, men ikke samme tempo for alle (kontrollrunden 30.10.2026). Etter tidligere seponeringssymptomer stopper regelen; ved lang behandlingstid krever halvering hver 14. dag en skriftlig begrunnelse, ellers planlegges byttet individuelt.',
         NICE.bytte,
         NICE.tidligere,
-        RCPSYCH.langvarig,
+        RCPSYCH_TIDLIGERE.langvarig,
       ),
       utsagn(
         'Lang behandlingstid er utenfor det kliniske omfanget (kontrollørens gjennomgang av d6cc3dd 31.10.2026): også med en begrunnelse gir regelen da ingen klinisk plan, og byttet planlegges individuelt med langsommere, symptomstyrt nedtrapping. Det kliniske omfanget er bare sertralin 50 eller 100 mg ved kort behandlingstid, med tablettene og styrkene i FEST som er kontrollert.',
         NICE.tempo,
-        RCPSYCH.langvarig,
+        RCPSYCH_TIDLIGERE.langvarig,
       ),
     ],
     forutsetninger: [...FORUTSETNINGER_FELLES],
@@ -451,7 +452,7 @@ const kryssSertralinMirtazapin: Regel = {
       type: 'ousfar_vurdering',
       begrunnelse:
         'En klinisk godkjenning kan bare gjelde startforløpet fra sertralin 50 eller 100 mg ved kort behandlingstid, med tabletter (FEST-form 53) for begge virkestoffene og styrkene i FEST som er verifisert ende til ende. Lang behandlingstid er utenfor, også med begrunnelse, og det samme er en annen trinnlengde enn 14 dager.',
-      henvisninger: [NICE.tempo, RCPSYCH.langvarig],
+      henvisninger: [NICE.tempo, RCPSYCH_TIDLIGERE.langvarig],
       avklaring: {
         dato: RUNDE_9.dato,
         av: KONTROLLOR,
@@ -1231,7 +1232,12 @@ export const PILOTDISPOSISJON = leveransen({
   ),
 })
 
-export const PILOTSETT: Regelsett = {
+/**
+ * Settet slik det var før faktumrettelsene (versjon 16, appversjon 1.122.1),
+ * med godkjenningene og disposisjonen 31.10.2026. Appen bruker det ikke;
+ * kontrollgrunnlaget for rettelsene (`rettelseskontroll.ts`) sammenligner med det.
+ */
+export const PILOTSETT_FOR_RETTELSENE: Regelsett = {
   id: 'ousfar-verktoy-pilot',
   versjon: 16,
   modell: REGELMODELLVERSJON,
@@ -1241,5 +1247,13 @@ export const PILOTSETT: Regelsett = {
     [kryssSertralinMirtazapin, maoFluoksetinFenelzin, antipsykotikabytteOlanzapinKvetiapin, depotAripiprazol, depotPaliperidon],
     PILOTDISPOSISJON,
   ),
+}
+
+/** Pilotreglene appen bruker: settet før rettelsene med `FAKTUMRETTELSER` og kontrollørens registrerte vurdering av de nye versjonene. */
+export const PILOTSETT: Regelsett = {
+  ...PILOTSETT_FOR_RETTELSENE,
+  versjon: 17,
+  beskrivelse: `${PILOTSETT_FOR_RETTELSENE.beskrivelse} Etter kontrollørens vurdering 03.11.2026 er faktumet fra RCPsych om små reduksjoner fra starten presisert (\`docs/verktøy-kildefunn-1-2.md\` §8). Byttet fra sertralin til mirtazapin viser til det og har fått versjon 10, som bare skiller seg fra versjon 9 i dette faktumet; kontrolløren har godkjent versjon 10 med samme kliniske omfang som versjon 9 (\`docs/verktøy-rettelse-langvarig.md\`).`,
+  regler: rett([...PILOTSETT_FOR_RETTELSENE.regler], FAKTUMRETTELSER),
 }
 
