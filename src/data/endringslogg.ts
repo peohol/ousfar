@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.122.2',
+    versjon: '1.122.6',
     dato: '2026-11-03',
     sammendrag: 'Presisert kildefaktum fra RCPsych i nye, kontrollerte versjoner av nedtrappingsreglene',
     typer: ['Fag'],
@@ -22,6 +22,20 @@ export const ENDRINGSLOGG: Endring[] = [
       'De 18 nedtrappingsreglene som viser til faktumet, har fått en ny versjon der bare dette er endret. Kontrolløren har godkjent de nye versjonene av vortioksetin og byttet fra sertralin til mirtazapin med nøyaktig samme kliniske omfang som før, så planene er de samme bortsett fra regelversjonen. De andre reglene er fortsatt ikke godkjent og gir ingen doseplan.',
     ],
     utenVarsel: true,
+  },
+  {
+    versjon: '1.122.5',
+    dato: '2026-11-03',
+    sammendrag: 'Serumkonsentrasjonstabellene ruller ikke lenger sidelengs',
+    typer: ['Design / layout'],
+    omfang: 'Mindre omfang',
+    gjelder: ['stoff'],
+    punkter: [
+      'Tabellene over serumkonsentrasjoner på fagsidene får alltid plass i bredden, uten rullefelt. Kolonnene står litt tettere, og mål og enhet kan stå på to linjer.',
+      'Er det ikke plass til dosene som kolonner, snus tabellen så dosene står som rader og «Alle» nederst. På de smaleste skjermene vises én dose om gangen, med målene under.',
+      'Tabeller med doseringsregime og merknader vises rad for rad når de ikke får plass.',
+      'Ingen tall eller tekster er endret.',
+    ],
   },
   {
     versjon: '1.122.1',
