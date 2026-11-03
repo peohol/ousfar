@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.123.3',
+    versjon: '1.124.2',
     dato: '2026-11-03',
     sammendrag: 'Prøven av kildeovervåkingen avsluttet',
     typer: ['Funksjonalitet'],
@@ -21,6 +21,18 @@ export const ENDRINGSLOGG: Endring[] = [
       'Ingen endring i appen. Den syntetiske prøvesaken i kildeovervåkingen er avsluttet som prøve, og den gamle prøven av fristene, som ikke lenger finnes, er merket som utgått i fremdriftsplanen.',
     ],
     utenVarsel: true,
+  },
+  {
+    versjon: '1.124.0',
+    dato: '2026-11-03',
+    sammendrag: 'Fagsidene har fått en innholdsfortegnelse',
+    typer: ['Funksjonalitet', 'Design / layout'],
+    omfang: 'Mindre omfang',
+    gjelder: ['stoff'],
+    punkter: [
+      'Til venstre for innholdet står en kort liste med seksjonene på fagsiden. Trykk på en seksjon for å åpne den og gå rett dit. Seksjonen som er åpen, er merket i listen.',
+      'Er skjermen for smal til listen, ligger den bak knappen «Innhold på siden» i toppmenyen, og på mobil i menyen nederst på skjermen.',
+    ],
   },
   {
     versjon: '1.123.1',

@@ -114,7 +114,14 @@ interface Felles {
   children: ReactNode
 }
 
-export type SeksjonProps = Felles
+export interface SeksjonProps extends Felles {
+  /**
+   * Seksjonens navn i ren tekst, i innholdsfortegnelsen for siden
+   * (`Innholdsfortegnelse.tsx`), med `ikon` ved siden av. En seksjon uten navn
+   * står ikke i den.
+   */
+  navn?: string
+}
 export interface DetaljkortProps extends Felles {
   /**
    * Om kortet kan åpnes. Et kort åpnes bare når det har mer å vise enn det
@@ -186,15 +193,20 @@ function Skuff({
   sti,
   anker,
   apenFraStart = false,
+  navn,
   ...resten
-}: Felles & { slag: 'seksjon' | 'detalj'; sti: readonly string[]; anker: string }) {
+}: Felles & { slag: 'seksjon' | 'detalj'; sti: readonly string[]; anker: string; navn?: string }) {
   const nokkel = skuffnokkel(sti)
   const styring = useStyring()
   const { registrer, apneTil } = styring
   // Stien er en ny liste ved hver tegning; nøkkelen sier når den er en annen.
   const stien = useRef(sti)
   stien.current = sti
-  useEffect(() => registrer(stien.current, apenFraStart), [registrer, nokkel, apenFraStart])
+  const { ikon } = resten
+  useEffect(
+    () => registrer(stien.current, apenFraStart, navn ? { navn, ikon } : undefined),
+    [registrer, nokkel, apenFraStart, navn, ikon],
+  )
   const { apen, animer } = styring.tilstand(sti, apenFraStart)
   // Et detaljkort i et rutenett vokser og flytter seg med naboene i stedet for å gli opp (se `Skuffrutenett`).
   const rutenett = useRutenettflytting()

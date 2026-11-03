@@ -16,7 +16,7 @@
 }
 
 .scene--infoside {
-  width: min(100%, 64rem);
+  width: min(100%, var(--bredde-infoside));
 }
 
 .stoffside {

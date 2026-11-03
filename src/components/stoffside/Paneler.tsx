@@ -95,6 +95,7 @@ export function Panel({
       className="infopanel"
       ikon={seksjonsikon(definisjon.nokkel)}
       tittel={<Uthev tekst={definisjon.tittel} />}
+      navn={definisjon.tittel}
       oppsummering={tomt ? 'Ikke noe innhold ennå' : oppsummering}
       handlinger={
         redigerer && (

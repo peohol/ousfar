@@ -1,0 +1,124 @@
+/**
+ * Innholdsfortegnelsen på en fagside (`src/components/seksjoner/Innholdsfortegnelse.tsx`,
+ * `docs/seksjoner.md`).
+ *
+ * Er det plass til venstre for innholdet, flyter den der, midt i det synlige
+ * feltet under toppmenyen. Ellers står den som en knapp i toppmenyen (i
+ * dokken på smale flater) med seksjonene i en nedtrekksmeny. Det er aldri
+ * begge på en gang.
+ *
+ * Grensen (84em ≈ 1344 px) er der fortegnelsen får minst 9rem mellom
+ * sidemargen og luften foran innholdet. Den følger av `--bredde-infoside`,
+ * `--rom-scene`, `--rom-side` og luften under, og må regnes om om de endres;
+ * CSS kan ikke lese et token i en media query.
+ */
+
+.innholdsfortegnelse {
+  display: none;
+}
+
+@media (min-width: 84em) {
+  .innholdsfortegnelse {
+    /* Luften mellom fortegnelsen og innholdet. */
+    --innhold-luft: var(--rom-8);
+    /* Venstre kant av innholdet i scenen, som står midt i vinduet. */
+    --innhold-kant: calc(50% - var(--bredde-infoside) / 2 + var(--rom-scene));
+    --innhold-bredde: min(12rem, var(--innhold-kant) - var(--innhold-luft) - var(--rom-side));
+
+    position: fixed;
+    z-index: var(--lag-innhold);
+    /* Midt i feltet mellom toppmenyen og bunnen av vinduet. */
+    top: calc(50% + var(--toppmeny-offset) / 2);
+    left: calc(var(--innhold-kant) - var(--innhold-luft) - var(--innhold-bredde));
+    display: flex;
+    flex-direction: column;
+    gap: var(--rom-3);
+    width: var(--innhold-bredde);
+    max-height: calc(100dvh - var(--toppmeny-offset) - 2 * var(--rom-6));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    transform: translateY(-50%);
+  }
+
+  /* Knappen i toppmenyen trengs ikke når fortegnelsen står ved siden av. */
+  .innholdsmeny {
+    display: none;
+  }
+}
+
+.innholdsfortegnelse__tittel {
+  padding-inline: calc(var(--rom-3) + var(--kant-tykk));
+  font-size: var(--tekst-meta);
+  font-weight: var(--vekt-halvfet);
+  letter-spacing: var(--sperring-meta);
+  text-transform: uppercase;
+  color: var(--blekk-dempet);
+}
+
+.innholdsfortegnelse__liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Én seksjon: en linje langs venstre kant viser hvilken som står åpen. */
+.innholdsfortegnelse__punkt {
+  display: block;
+  width: 100%;
+  padding: var(--rom-1) var(--rom-3);
+  font-size: var(--tekst-etikett);
+  line-height: var(--linjehoyde-ui);
+  color: var(--blekk-dempet);
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-left: var(--kant-tykk) solid var(--linje);
+  border-radius: 0;
+  cursor: pointer;
+  transition:
+    color var(--fart-rask) var(--kurve),
+    border-color var(--fart-rask) var(--kurve);
+}
+
+.innholdsfortegnelse__punkt:hover {
+  color: var(--blekk);
+  border-left-color: var(--linje-kontroll);
+}
+
+.innholdsfortegnelse__punkt[aria-current='true'] {
+  font-weight: var(--vekt-medium);
+  color: var(--aksent);
+  border-left-color: var(--aksent);
+}
+
+/* Nedtrekksmenyen: alle seksjonene, og den rulles når de ikke får plass. */
+.innholdsmeny .nedtrekk__panel {
+  max-height: calc(100dvh - var(--toppmeny-offset) - var(--rom-6));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.innholdsmeny .nedtrekk__valgknapp {
+  min-height: var(--hoyde-trykk);
+}
+
+.innholdsmeny .nedtrekk__valgknapp[aria-current='true'] {
+  color: var(--aksent);
+  background: var(--aksent-flate);
+}
+
+@media (max-width: 47.5em) {
+  /* Fra dokken åpner menyen seg oppover, mellom toppmenyen og dokken. */
+  .toppmeny__kontekst .innholdsmeny .nedtrekk__panel {
+    max-height: calc(100dvh - var(--toppmeny-offset) - var(--dokk-offset));
+  }
+}
+
+@media print {
+  .innholdsfortegnelse,
+  .innholdsmeny {
+    display: none !important;
+  }
+}
