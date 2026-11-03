@@ -2,6 +2,8 @@
 
 **Status: til uavhengig kontroll (ChatGPT). Ingenting her er aktivert eller klinisk godkjent.** Dokumentet svarer på VDK-2 i `docs/verktøy-omlegging-2026-11.md`. Det bygger på kartleggingen i VDK-1 (`docs/verktøy-vdk1-regeldekning.md`), som er generert fra regelsettet og viser hva verktøyene faktisk gjør i dag.
 
+**Kontrollørens avgrensning 03.11.2026 (ChatGPT):** PR-en gjør ingen regelutkast til godkjente eller aktive regler, og dekningsberegningen bruker samme tilgjengelighetsfunksjon som verktøysiden. RCPsych og NICE NG222 1.4.16 nevner 25–50 % av aktuell eller forrige dose som eksempler i egnede situasjoner. Det er ingen generell godkjenning av nye regelversjoner, verken for alle antidepressiver eller for hele nedtrappingskjeder. **At dette plan- og analysearbeidet slås sammen, betyr ikke at forslag 1–10 eller kontrollspørsmålene 1.1–8.2 er godkjent.** Hvert forslag må fortsatt gjennom en egen, uavhengig klinisk kontroll mot preparatomtalene og de norske preparatene før det kan aktiveres.
+
 Planen endrer ingen regel, ingen regelversjon og ingen godkjenning. Regelutkastene og testkasusene nedenfor er **spesifikasjoner til kontroll**, ikke kode, og ingen av dem ligger i regelsettet (`REGELSETTENE` i `src/verktoy/tilgjengelighet.ts`). Hvert forslag som blir godtatt, lages senere som en egen, avgrenset PR (VDK-3) med regel, norske preparater, positive og negative tester og uavhengig kontroll av nøyaktig den regelversjonen.
 
 Rammer for alt i dokumentet:
@@ -510,8 +512,8 @@ Forslaget er tatt med for å vise neste steg mot P9, ikke for å lages nå.
 
 | Avhenger av | Gjelder forslag | Hva som trengs |
 | --- | --- | --- |
-| Tråd F, `rcpsych-stopping` | 1, 2, 5 | Om endringen gjelder tempo, risikogrupper eller lang behandlingstid. Til det er avklart, registreres ingen godkjenning som bygger på RCPsych. |
-| Tråd F, `keks-2016` | 5 | Om endringen gjelder tabellene om bytte. |
+| Tråd F, `rcpsych-stopping` | 1, 2, 5 | Undersøkelsen (`docs/verktøy-kildefunn-1-2.md`) viser at det de godkjente reglene bygger på, står i kilden nå, men funnet er åpent til kontrolløren har vurdert det. Hva prosenten ved lang behandlingstid regnes av (opprinnelig eller aktuell dose), er uavklart der. Til funnet er avsluttet, registreres ingen godkjenning som bygger på RCPsych. |
+| Tråd F, `keks-2016` | 5 | Tabell 2 støtter fortsatt kryssnedtrapping som metode (samme undersøkelse). Funnet er åpent til kontrolløren har vurdert det. |
 | Tråd C, brukerflaten | 4, 6, 7, 9 | Flere regler for samme kombinasjon som alternativer, og preparatvalg (P10.2–P10.3). |
 | Kilderegisteret | 7, 8, 9 | Trevicta, Okedi og Zypadhera registreres med versjon, tidspunkt og SHA-256. |
 | FEST-uttrekket for pilotsettet | 6, 7 | Risperidon, Risperdal Consta og Okedi legges til. |
