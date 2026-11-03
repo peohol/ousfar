@@ -65,6 +65,21 @@ describe('Tilleggsreglene', () => {
     expect(resultat('K4-24').res.tekst).toContain('Syntetisk: måldosen vurderes på nytt')
   })
 
+  it('krever hvert vilkår i det graviditetsforebyggende programmet for valproat bekreftet for seg, bare når pasienten kan bli gravid', () => {
+    const ppp = VALPROAT_LAMOTRIGIN.bekreftelser.filter((b) => b.ved)
+    expect(ppp.map((b) => b.id)).toEqual(['ppp_indikasjon', 'ppp_informasjon', 'ppp_prevensjon', 'ppp_graviditet'])
+    for (const b of ppp) expect(b.ved, b.id).toEqual({ sporsmal: 'kan_bli_gravid', svar: true })
+    expect(VALPROAT_LAMOTRIGIN.sporsmal?.map((x) => x.id)).toContain('kan_bli_gravid')
+    expect(LITIUM_LAMOTRIGIN.bekreftelser.some((b) => b.ved)).toBe(false)
+    // Ja og alt bekreftet gir plan med vilkårene i kontrollene; ett som mangler, eller et ubesvart spørsmål, stopper.
+    const ja = resultat('K4-14').res.tekst!
+    for (const b of ppp) expect(ja, b.id).toContain(`Bekreftet: ${b.tekst.replace(/\.$/, '')}: oppfylt`)
+    for (const id of ['K4-26', 'K4-27', 'K4-28']) expect(resultat(id).res.utfall, id).toBe('stopp')
+    // Nei: vilkårene spørres ikke etter og står ikke i planen.
+    const nei = resultat('K4-29').res.tekst!
+    for (const b of ppp) expect(nei, b.id).not.toContain(b.tekst)
+  })
+
   it('stopper ved graviditet sammen med valproat, og sier at det også gjelder valproatbehandlingen', () => {
     const graviditet = VALPROAT_LAMOTRIGIN.unntak.filter((u) => u.id === 'graviditet')
     expect(graviditet).toHaveLength(1)

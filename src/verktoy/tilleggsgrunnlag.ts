@@ -155,9 +155,20 @@ export const TILLEGGSKASUS: readonly Tilleggskasus[] = [
   kasus('K4-11', V, 'valproat', 'pasientforhold', 'pasienten er under 18 år', '1000', { utfall: 'stopp', grunner: [UNNTAK] }, { regel: simulert(V), skjema: { pasientforhold: { under_18: true } } }),
   kasus('K4-12', V, 'valproat', 'pasientforhold', 'tidligere utslett på lamotrigin', '1000', { utfall: 'stopp', grunner: [UNNTAK] }, { regel: simulert(V), skjema: { pasientforhold: { tidligere_reaksjon: true } } }),
   kasus('K4-13', V, 'valproat', 'pasientforhold', 'graviditet er ikke vurdert (ubesvart)', '1000', { utfall: 'stopp', grunner: ['Må avklares før beregning (ukjent): Pasienten er gravid'] }, { regel: simulert(V), ubesvart: ['graviditet'] }),
-  kasus('K4-14', V, 'valproat', 'pasientforhold', 'valproat er ikke bekreftet vurdert etter det graviditetsforebyggende programmet', '1000', { utfall: 'stopp', grunner: ['Må bekreftes før beregning: Valproatbehandlingen er vurdert'] }, {
+  // Jenter og kvinner som kan bli gravide: hvert vilkår i det graviditetsforebyggende programmet for valproat bekreftes for seg.
+  kasus('K4-14', V, 'valproat', 'pasientforhold', 'kan bli gravid, og alle vilkårene i det graviditetsforebyggende programmet er bekreftet hver for seg', '1000', { utfall: 'plan', linjer: [...PLAN_VALPROAT] }, { regel: simulert(V), skjema: { svar: { kan_bli_gravid: true } } }),
+  kasus('K4-26', V, 'valproat', 'pasientforhold', 'kan bli gravid, men sikker prevensjon er ikke bekreftet', '1000', { utfall: 'stopp', grunner: ['Må bekreftes før beregning: Pasienten bruker sikker prevensjon uten avbrudd'] }, {
     regel: simulert(V),
-    skjema: { bekreftet: ['fortsetter_valproat', 'aktuell_dose', 'utslett_informert'] },
+    skjema: { svar: { kan_bli_gravid: true }, bekreftet: V.bekreftelser.map((b) => b.id).filter((id) => id !== 'ppp_prevensjon') },
+  }),
+  kasus('K4-27', V, 'valproat', 'pasientforhold', 'det er ikke besvart om pasienten kan bli gravid', '1000', { utfall: 'stopp', grunner: ['Må besvares før beregning: Er pasienten jente eller kvinne som kan bli gravid?'] }, { regel: simulert(V), ubesvart: ['kan_bli_gravid'] }),
+  kasus('K4-28', V, 'valproat', 'pasientforhold', 'kan bli gravid og alle vilkårene er bekreftet, men pasienten planlegger graviditet: stopper, vilkårene løser ikke det', '1000', { utfall: 'stopp', grunner: [UNNTAK] }, {
+    regel: simulert(V),
+    skjema: { svar: { kan_bli_gravid: true }, pasientforhold: { graviditet: true } },
+  }),
+  kasus('K4-29', V, 'valproat', 'pasientforhold', 'kan ikke bli gravid: vilkårene i programmet spørres ikke etter', '1000', { utfall: 'plan', linjer: [...PLAN_VALPROAT] }, {
+    regel: simulert(V),
+    skjema: { bekreftet: V.bekreftelser.filter((b) => !b.ved).map((b) => b.id) },
   }),
   kasus('K4-15', V, 'valproat', 'uvanlig_dose', 'ingen dose av valproat er fylt inn', '', { utfall: 'mangler', grunner: ['Aktuell døgndose må fylles inn'] }, { regel: simulert(V) }),
   kasus('K4-16', V, 'valproat', 'foreldet_fest', 'FEST-kopien er 49 timer gammel', '1000', { utfall: 'stopp', grunner: ['Den nattlige oppdateringen har ikke gått'] }, { regel: simulert(V), timer: 49 }),
@@ -265,8 +276,8 @@ export const TILLEGGSSPORSMAL: readonly { nr: string; sporsmal: string; anbefalt
   },
   {
     nr: 'K4.6',
-    sporsmal: 'Er en obligatorisk bekreftelse av at valproat er vurdert etter det graviditetsforebyggende programmet nok som stoppunkt, eller skal kvinner i fertil alder alltid stoppe?',
-    anbefalt: 'Bekreftelsen er nok: uten den beregnes ingen plan, og graviditet stopper uansett.',
+    sporsmal: 'Etter kontrollen 03.11.2026 må forskriveren svare på om pasienten kan bli gravid. Ved ja må fire vilkår i det graviditetsforebyggende programmet bekreftes hver for seg (indikasjon og årlig spesialistvurdering, informasjon og risikoskjema, sikker prevensjon, graviditetstest og kontakt ved graviditet); hvert som mangler, stopper (K4-14, K4-26–K4-29). Graviditet, planlagt graviditet og amming stopper uansett, også når vilkårene er bekreftet. Er vilkårene og formuleringene riktige og tilstrekkelige?',
+    anbefalt: 'Ja; de følger vilkårene i pkt. 4.4 i Orfiril-preparatomtalen, gjelder ikke menn, og et ja løser aldri en graviditet.',
   },
   {
     nr: 'K4.7',

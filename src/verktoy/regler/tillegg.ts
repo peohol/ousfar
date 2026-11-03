@@ -102,6 +102,23 @@ export const LAMICTAL = {
 /** Fakta fra Orfiril-preparatomtalen (valproat), med egne ord. */
 export const ORFIRIL = {
   dose: h('dmp-orfiril', 'pkt. 4.2, Maniske episoder ved bipolar lidelse', 'Døgndosen av valproat tilpasses og følges individuelt etter klinisk respons; gjennomsnittlig døgndose er 1000–2000 mg.'),
+  fertilAlder: h(
+    'dmp-orfiril',
+    'pkt. 4.4, Vilkår i det graviditetsforebyggende programmet',
+    'Potensialet for graviditet vurderes hos alle kvinnelige pasienter. Vilkårene gjelder også kvinner som ikke er seksuelt aktive, med mindre det er sterke grunner til at det ikke er risiko for graviditet.',
+  ),
+  ppp: h(
+    'dmp-orfiril',
+    'pkt. 4.4, Vilkår i det graviditetsforebyggende programmet',
+    'Pasienten skal ha forstått og anerkjent risikoen for misdannelser og nevrologiske utviklingsforstyrrelser, ha fått pasientinformasjonsheftet og vite at hun straks skal kontakte lege ved planlagt eller mistenkt graviditet.',
+  ),
+  prevensjon: h(
+    'dmp-orfiril',
+    'pkt. 4.4, Prevensjon',
+    'Kvinner i fertil alder må bruke sikker prevensjon uten avbrudd i hele behandlingen: minst én sikker, helst brukeruavhengig metode, eller to komplementære metoder med en barrieremetode.',
+  ),
+  graviditetstest: h('dmp-orfiril', 'pkt. 4.4, Graviditetstest', 'Graviditet må utelukkes med negativ graviditetstest før behandlingsstart, og pasienten skal forstå behovet for graviditetstest under behandlingen ved behov.'),
+  arlig: h('dmp-orfiril', 'pkt. 4.4, Årlige behandlingsevalueringer av spesialist', 'Spesialist skal minst årlig vurdere om valproat er den mest egnede behandlingen og gå gjennom risikoskjemaet med pasienten.'),
   ostrogen: h('dmp-orfiril', 'pkt. 4.4, Østrogenholdige produkter', 'Østrogenholdige produkter, også hormonprevensjon, kan redusere effekten av valproat; klinisk respons følges ved oppstart og seponering av dem.'),
   graviditet: h(
     'dmp-orfiril',
@@ -300,6 +317,8 @@ interface Eksisterende {
    * den mot. Uten krav kontrolleres den ikke, og teksten må si det.
    */
   dose: { tekst: string; henvisninger: Kildehenvisning[]; krav?: Inndatakrav[] }
+  /** Spørsmål om pasienten som avgjør hvilke bekreftelser som gjelder (`Bekreftelse.ved`). */
+  sporsmal?: Sporsmal[]
   /** Det preparatomtalen for det eksisterende legemidlet sier om østrogenholdige legemidler, i tillegg til Lamictal. */
   ostrogen?: Kildehenvisning
 }
@@ -370,7 +389,7 @@ export function lamotrigintillegg(e: Eksisterende): Regel {
   const plan = OPPTRAPPING[e.gruppe]
   const unntak = unntakFor(e)
   const bekreftelser = [...e.bekreftelser, aktuellDose(e), UTSLETTSINFORMASJON]
-  const sporsmal = [ostrogensporsmal(e)]
+  const sporsmal = [...(e.sporsmal ?? []), ostrogensporsmal(e)]
   const fra: Forlop = {
     id: 'fra',
     virkestoff: { type: 'virkestoff', nokkel: e.nokkel },
@@ -456,6 +475,15 @@ export function lamotrigintillegg(e: Eksisterende): Regel {
 
 /* --- Parene ------------------------------------------------------------------------ */
 
+/** Om pasienten kan bli gravid: avgjør om vilkårene i det graviditetsforebyggende programmet for valproat skal bekreftes. */
+const KAN_BLI_GRAVID: Sporsmal = {
+  id: 'kan_bli_gravid',
+  tekst: 'Er pasienten jente eller kvinne som kan bli gravid? Det gjelder også den som ikke er seksuelt aktiv, med mindre det er sterke grunner til at det ikke er risiko for graviditet.',
+  ja: 'kan bli gravid; vilkårene i det graviditetsforebyggende programmet for valproat må bekreftes hver for seg',
+  nei: 'kan ikke bli gravid',
+  grunnlag: { type: 'kilde', henvisninger: [ORFIRIL.fertilAlder, ORFIRIL.fertil] },
+}
+
 export const VALPROAT_LAMOTRIGIN = lamotrigintillegg({
   nokkel: 'valproat',
   navn: 'valproat',
@@ -468,11 +496,29 @@ export const VALPROAT_LAMOTRIGIN = lamotrigintillegg({
       tekst: 'Pasienten bruker valproat fast og skal fortsette med det uendret gjennom hele opptrappingen.',
       grunnlag: { type: 'kilde', henvisninger: [LAMICTAL.hemmer] },
     },
-    {
-      id: 'valproat_vurdert',
-      tekst: 'Valproatbehandlingen er vurdert som fortsatt riktig, også etter kravene for jenter og kvinner i fertil alder (det graviditetsforebyggende programmet).',
-      grunnlag: { type: 'kilde', henvisninger: [ORFIRIL.fertil] },
-    },
+    // Jenter og kvinner som kan bli gravide: hvert vilkår i det graviditetsforebyggende programmet bekreftes for seg.
+    ...[
+      {
+        id: 'ppp_indikasjon',
+        tekst: 'Annen behandling har ikke effekt eller tolereres ikke, og spesialist i bipolar lidelse har ved siste årlige gjennomgang vurdert valproat som den mest egnede behandlingen.',
+        henvisninger: [ORFIRIL.fertil, ORFIRIL.arlig],
+      },
+      {
+        id: 'ppp_informasjon',
+        tekst: 'Pasienten har fått pasientinformasjonsheftet, har forstått og anerkjent risikoen for misdannelser og nevrologiske utviklingsforstyrrelser hos barnet, og risikoskjemaet er gjennomgått ved siste årlige gjennomgang.',
+        henvisninger: [ORFIRIL.ppp, ORFIRIL.arlig],
+      },
+      {
+        id: 'ppp_prevensjon',
+        tekst: 'Pasienten bruker sikker prevensjon uten avbrudd: minst én sikker, helst brukeruavhengig metode (som spiral eller implantat), eller to komplementære metoder med en barrieremetode.',
+        henvisninger: [ORFIRIL.prevensjon],
+      },
+      {
+        id: 'ppp_graviditet',
+        tekst: 'Graviditet er utelukket med graviditetstest når det er behov for det, og pasienten vet at hun straks skal kontakte lege ved planlagt eller mistenkt graviditet.',
+        henvisninger: [ORFIRIL.graviditetstest, ORFIRIL.ppp],
+      },
+    ].map((x) => ({ id: x.id, tekst: x.tekst, ved: { sporsmal: KAN_BLI_GRAVID.id, svar: true }, grunnlag: { type: 'kilde' as const, henvisninger: x.henvisninger } })),
   ],
   unntak: [
     {
@@ -492,6 +538,7 @@ export const VALPROAT_LAMOTRIGIN = lamotrigintillegg({
     henvisninger: [ORFIRIL.dose],
   },
   ostrogen: ORFIRIL.ostrogen,
+  sporsmal: [KAN_BLI_GRAVID],
   forutsetninger: ['Valproatbehandlingen følges opp som før (blodbilde, lever og pankreas etter preparatomtalen); planen endrer ikke valproatdosen.'],
 })
 
