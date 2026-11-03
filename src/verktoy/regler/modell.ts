@@ -820,6 +820,9 @@ export function tilleggsfeil(r: Pick<Regel, 'plan' | 'til'>): string[] {
   if (nye.length === 0) feil.push('et tillegg må ha et forløp for legemidlet som legges til')
   for (const f of fra) {
     if (f.faser.some((x) => !TILLEGG_FRA.includes(x.type))) feil.push(`forløp ${f.id} er legemidlet pasienten bruker og kan bare fortsette (${TILLEGG_FRA.join(', ')}), ikke trappes ned eller seponeres`)
+    // Holdes eller vedlikeholdes legemidlet, er det på dosen pasienten bruker; en annen dose ville endret det.
+    if (f.faser.some((x) => (x.type === 'hold' || x.type === 'vedlikehold') && !(x.dose.type === 'aktuell' || (x.dose.type === 'inndata' && x.dose.navn === 'startdose'))))
+      feil.push(`forløp ${f.id} er legemidlet pasienten bruker og kan bare holdes eller vedlikeholdes på dosen pasienten bruker (aktuell eller startdose)`)
     const sist = f.faser.at(-1)
     if (!sist || !FORTSETTER.includes(sist.type)) feil.push(`forløp ${f.id} er legemidlet pasienten bruker og må fortsette når planen slutter`)
   }

@@ -216,6 +216,19 @@ describe('Tillegg (K4)', () => {
     expect(v.rader.find((x) => x.type === 'vurdering')).toMatchObject({ dager: 'Dag 10', kolonne: 1 })
   })
 
+  it('viser legemidlet som fortsetter uendret fra første dag, også når tillegget starter senere', () => {
+    const r = tillegg()
+    r.plan.forlop[1]!.start = { type: 'dag', dag: 8 }
+    const g = godkjennITest(r, 'test-tillegg-senere')
+    const v = planvisning(kliniskDoseplan(g, { startdose_mg: 20, maldose_mg: 30 }, GRUNNLAG, OMGIVELSE), g)!
+    expect(v.rader.filter((x) => x.type === 'periode').map((x) => x.type === 'periode' && [x.dager, x.celler.map((c) => c?.dose ?? null)])).toEqual([
+      ['Dag 1–7', ['20 mg', null]],
+      ['Dag 8–21', ['20 mg', '15 mg annenhver dag']],
+      ['Dag 22–35', ['20 mg', '15 mg']],
+      ['Fra dag 36', ['20 mg', '30 mg']],
+    ])
+  })
+
   it('holder retningen: det eksisterende legemidlet kan ikke trappes ned eller seponeres, og tillegget må ende på en dose som fortsetter', () => {
     const r = tillegg()
     const seponerer = structuredClone(r)
@@ -227,6 +240,15 @@ describe('Tillegg (K4)', () => {
     const slutter = structuredClone(r)
     slutter.plan.forlop[1]!.faser = [{ type: 'opptrapping', trinn: [{ mg: sp(15, 'mg'), dager: sp(14, 'dager') }] }]
     expect(tilleggsfeil(slutter).join(' ')).toMatch(/må slutte med en dose som fortsetter/)
+    // Holdes eller vedlikeholdes legemidlet, er det bare på dosen pasienten bruker.
+    for (const fase of [{ type: 'vedlikehold', dose: { type: 'inndata', navn: 'maldose' } }, { type: 'hold', dose: { type: 'fast', mg: sp(10, 'mg') }, varighet: { type: 'dager', dager: sp(7, 'dager') } }] as Fase[]) {
+      const endrer = structuredClone(r)
+      endrer.plan.forlop[0]!.faser = [fase, { type: 'uendret', grunnlag: kilde }]
+      expect(tilleggsfeil(endrer).join(' '), fase.type).toMatch(/kan bare holdes eller vedlikeholdes på dosen pasienten bruker/)
+    }
+    const holder = structuredClone(r)
+    holder.plan.forlop[0]!.faser = [{ type: 'vedlikehold', dose: { type: 'aktuell' } }]
+    expect(tilleggsfeil(holder)).toEqual([])
     // Et bytte er ikke et tillegg.
     expect(tilleggsfeil({ ...r, plan: { ...r.plan, form: 'kryssnedtrapping' } })).toEqual([])
   })
