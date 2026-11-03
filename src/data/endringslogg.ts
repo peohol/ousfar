@@ -29,6 +29,17 @@ export const ENDRINGSLOGG: Endring[] = [
     ],
   },
   {
+    versjon: '1.124.5',
+    dato: '2026-11-03',
+    sammendrag: 'Utgangspunkt for videre utvikling av de kliniske verktøyene',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Fremdriftsplanen for verktøyene har fått et dokumentert utgangspunkt: hvor mange forløp hvert av de fire verktøyene faktisk kan planlegge i dag, og tolv vanlige kliniske situasjoner som de første leveransene skal dekke. Ingen doser, regler, godkjenninger eller sperrer er endret.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.124.4',
     dato: '2026-11-03',
     sammendrag: 'Prøven av kildeovervåkingen avsluttet',
