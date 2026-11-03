@@ -387,6 +387,13 @@ export interface Forlop {
   faser: Fase[]
   /** Kliniske vurderings- og kontrollpunkter i forløpet (regelmodell 12). */
   vurderinger?: Vurderingspunkt[]
+  /**
+   * Regelen gir bare en komplett plan for forløpet (regelmodell 12): når
+   * planen ikke når sluttmålet (f.eks. seponering), stopper den med
+   * «Komplett plan ikke tilgjengelig» og grunnen, i stedet for å vise en
+   * delplan med doser. Uten feltet vises delplanen som før.
+   */
+  krever_komplett?: true
 }
 
 /**
@@ -423,6 +430,11 @@ export interface Inndatakrav {
    */
   ved?: { sporsmal: string; svar: boolean }
   /**
+   * Enheten dosen oppgis i, når den ikke er en døgndose, f.eks. «mg per
+   * injeksjon hver 2. uke» for et depot. Står ved feltet og i meldingene.
+   */
+  enhet?: string
+  /**
    * En forsiktighetsgrense: en dose utenfor området stopper ikke, men krever
    * en skriftlig begrunnelse fra forskriveren. Bare for veiledende krav; et
    * bindende krav (en uttrykkelig høyeste dose) kan aldri begrunnes bort.
@@ -436,8 +448,18 @@ export interface Inndatakrav {
 export interface Bekreftelse {
   id: string
   tekst: string
+  /**
+   * Bekreftelsen kreves bare når forskriveren har gitt dette svaret på
+   * spørsmålet (`Sporsmal`), f.eks. krav som bare gjelder kvinner som kan bli
+   * gravide (regelmodell 12). Uten svar stopper beregningen på spørsmålet.
+   */
+  ved?: { sporsmal: string; svar: boolean }
   grunnlag: Grunnlag
 }
+
+/** Bekreftelsene som kreves med svarene i `svar`: de uten `ved`, og de med `ved` når svaret er gitt. */
+export const gjeldendeBekreftelser = (r: Pick<Regel, 'bekreftelser'>, svar: Readonly<Record<string, boolean>> | undefined): Bekreftelse[] =>
+  r.bekreftelser.filter((b) => !b.ved || svar?.[b.ved.sporsmal] === b.ved.svar)
 
 /** Et pasientforhold som gjør at regelen ikke gjelder (en annen regel eller individuell vurdering trengs). */
 export interface Unntak {

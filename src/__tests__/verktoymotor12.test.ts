@@ -6,15 +6,15 @@
  * stoppes. Alle regler og preparater er syntetiske og godkjennes bare i testen.
  */
 import { describe, expect, it } from 'vitest'
-import { beregnDoseplan, formvalgSomTrengs, kliniskDoseplan, type Doseplanresultat } from '../verktoy/motor/plan'
+import { beregnDoseplan, formvalgSomTrengs, KOMPLETT_IKKE_TILGJENGELIG, kliniskDoseplan, type Doseplanresultat } from '../verktoy/motor/plan'
 import { ALLE_TESTPREPARATER, depotregel, nedtrappingsregel, OMGIVELSE, sp, syntetiskGrunnlag, trinnvalgUtenNull } from '../verktoy/motor/syntetisk'
-import { mangler, startdosenavn, TOMT_SKJEMA } from '../verktoy/doseplan'
+import { doseenhet, mangler, startdosenavn, TOMT_SKJEMA, ubesvart } from '../verktoy/doseplan'
 import { DELPLAN, KOMPLETT, planTekst, planvisning, UENDRET } from '../verktoy/planvisning'
 import { VALGTEKSTER, VERKTOY } from '../verktoy/register'
 import { beregn } from '../verktoy/regler/beregning'
 import { DOMENESETT } from '../verktoy/regler/domenesett'
 import { godkjenningsfeil } from '../verktoy/regler/godkjenning'
-import { apneValg, nulltrinnfeil, tilleggsfeil, type Avslutning, type Fase, type Grunnlag, type Regel } from '../verktoy/regler/modell'
+import { apneValg, gjeldendeBekreftelser, nulltrinnfeil, tilleggsfeil, type Avslutning, type Fase, type Grunnlag, type Regel } from '../verktoy/regler/modell'
 import { avSlaget, eierAv, REGELSETT, REGELSETTENE, settFor } from '../verktoy/tilgjengelighet'
 import { godkjennITest } from './hjelp/verktoyplan'
 
@@ -316,8 +316,89 @@ describe('Startdosen for et depot (K3)', () => {
     expect(startdosenavn(undefined)).toBe('Aktuell døgndose')
     const depot = structuredClone(peroral)
     depot.plan.forlop[0]!.administrasjon = 'depotinjeksjon'
-    expect(startdosenavn(depot)).toBe('Aktuell dose per injeksjon')
-    expect(mangler(depot, TOMT_SKJEMA)).toContain('Aktuell dose per injeksjon må fylles inn som et tall større enn 0.')
+    expect(startdosenavn(depot)).toBe('Aktuell dose (mg per injeksjon)')
+    expect(mangler(depot, TOMT_SKJEMA)).toContain('Aktuell dose (mg per injeksjon) må fylles inn som et tall større enn 0.')
     expect(mangler(peroral, TOMT_SKJEMA)).toContain('Aktuell døgndose må fylles inn som et tall større enn 0.')
+  })
+
+  it('bruker regelens egen enhet for dosen når den har en', () => {
+    const depot = nedtrappingsregel({ type: 'prosent_av_aktuell', prosent: sp(50, 'prosent') })
+    depot.plan.forlop[0]!.administrasjon = 'depotinjeksjon'
+    depot.inndata = [{ navn: 'startdose', omrade: [25, 50], enhet: 'mg per injeksjon hver 2. uke', art: 'bindende_krav', grunnlag: kilde }]
+    expect(doseenhet(depot, 'startdose')).toBe('mg per injeksjon hver 2. uke')
+    expect(startdosenavn(depot)).toBe('Aktuell dose (mg per injeksjon hver 2. uke)')
+    expect(doseenhet(depot, 'maldose')).toBeUndefined()
+  })
+})
+
+describe('Forsiktighetsgrensen (K3)', () => {
+  it('sier om dosen er over, under eller utenfor grensen', () => {
+    const r = nedtrappingsregel({ type: 'prosent_av_aktuell', prosent: sp(50, 'prosent') }, undefined, 'forsiktig')
+    const grense = (krav: object) => {
+      r.inndata = [{ navn: 'startdose', art: 'veiledende_preferanse', krever_begrunnelse: true, grunnlag: kilde, ...krav }]
+      return (mg: number) => {
+        const p = beregn(r, { startdose_mg: mg })
+        return p.status === 'stoppet' ? p.stoppgrunner.join(' ') : ''
+      }
+    }
+    const omrade = grense({ omrade: [4, 6] })
+    expect(omrade(8)).toMatch(/^Startdosen 8 mg er over forsiktighetsgrensen/)
+    expect(omrade(2)).toMatch(/^Startdosen 2 mg er under forsiktighetsgrensen/)
+    expect(omrade(4)).toBe('')
+    expect(grense({ verdier: [75] })(50)).toMatch(/^Startdosen 50 mg er utenfor forsiktighetsgrensen/)
+  })
+})
+
+describe('Krav om komplett plan (K1)', () => {
+  const kreverKomplett = (r: Regel, id: string) => {
+    r.plan.forlop[0]!.krever_komplett = true
+    return godkjennITest(r, `test-${id}`)
+  }
+
+  it('viser ingen delplan med doser når planen ikke når seponering, og sier hvorfor', () => {
+    const r = kreverKomplett(medAvslutning(4.99, 5, 'krever-over'), 'krever-over')
+    const p = plan(r, 20)
+    if (p.status !== 'stoppet') throw new Error('planen skulle stoppet')
+    expect(p.stoppgrunner).toEqual([`${KOMPLETT_IKKE_TILGJENGELIG} for testoksetin: regelens avslutning gjelder bare fra 4,99 mg eller lavere (planen står på 5 mg); praktisk grense: ingen trinn under 5 mg; avslutning vurderes individuelt.`])
+    expect(planvisning(p, r)).toBeNull()
+  })
+
+  it('viser planen når den er komplett, og en delplan som før for en regel uten kravet', () => {
+    const komplett = plan(kreverKomplett(medAvslutning(5, 5, 'krever-inne'), 'krever-inne'), 20)
+    expect(kort(komplett)).toEqual([[['1–14: 10', '15–28: 5'], 28]])
+    const uten = medAvslutning(4.99, 5, 'uten-krav')
+    expect(planvisning(plan(uten, 20), uten)!.utfall.komplett).toBe(false)
+  })
+})
+
+describe('Bekreftelser ved et svar (K4)', () => {
+  /** En syntetisk regel der to bekreftelser bare gjelder når pasienten kan bli gravid. */
+  function medPpp(): Regel {
+    const r = nedtrappingsregel({ type: 'prosent_av_aktuell', prosent: sp(50, 'prosent') }, undefined, 'ppp')
+    r.sporsmal = [{ id: 'kan_bli_gravid', tekst: 'Kan pasienten bli gravid?', ja: 'kan bli gravid', grunnlag: kilde }]
+    r.bekreftelser = [
+      { id: 'alltid', tekst: 'Syntetisk forutsetning.', grunnlag: kilde },
+      { id: 'ppp_test', tekst: 'Syntetisk graviditetstest.', ved: { sporsmal: 'kan_bli_gravid', svar: true }, grunnlag: kilde },
+      { id: 'ppp_prevensjon', tekst: 'Syntetisk prevensjon.', ved: { sporsmal: 'kan_bli_gravid', svar: true }, grunnlag: kilde },
+    ]
+    return r
+  }
+
+  it('kreves bare ved svaret, og stopper på spørsmålet uten svar', () => {
+    const r = medPpp()
+    expect(gjeldendeBekreftelser(r, undefined).map((b) => b.id)).toEqual(['alltid'])
+    expect(gjeldendeBekreftelser(r, { kan_bli_gravid: false }).map((b) => b.id)).toEqual(['alltid'])
+    expect(gjeldendeBekreftelser(r, { kan_bli_gravid: true }).map((b) => b.id)).toEqual(['alltid', 'ppp_test', 'ppp_prevensjon'])
+    const stopp = (svar: Record<string, boolean>, bekreftet: string[]) => {
+      const p = beregn(r, { startdose_mg: 20, svar, bekreftet })
+      return p.status === 'stoppet' ? p.stoppgrunner : []
+    }
+    expect(stopp({}, ['alltid'])).toEqual(['Må besvares før beregning: Kan pasienten bli gravid?'])
+    expect(stopp({ kan_bli_gravid: false }, ['alltid'])).toEqual([])
+    expect(stopp({ kan_bli_gravid: true }, ['alltid', 'ppp_test'])).toEqual(['Må bekreftes før beregning: Syntetisk prevensjon.'])
+    expect(stopp({ kan_bli_gravid: true }, ['alltid', 'ppp_test', 'ppp_prevensjon'])).toEqual([])
+    // Skjemaet merker bare bekreftelsene som gjelder med svaret.
+    expect(ubesvart(r, { ...TOMT_SKJEMA, svar: { kan_bli_gravid: false }, bekreftet: ['alltid'] }).bekreftelser).toEqual([])
+    expect(ubesvart(r, { ...TOMT_SKJEMA, svar: { kan_bli_gravid: true }, bekreftet: ['alltid'] }).bekreftelser).toEqual(['ppp_test', 'ppp_prevensjon'])
   })
 })

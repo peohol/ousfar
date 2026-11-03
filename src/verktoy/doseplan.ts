@@ -13,9 +13,9 @@ import type { Preparatgrunnlag } from './motor/byggesteiner'
 import { festFerskhet, formvalgSomTrengs, kliniskDoseplan, type Doseplaninndata, type Doseplanresultat, type Formalternativer, type Formvalg, type Trinnvalg } from './motor/plan'
 import { festkoblinger, KARTLEGGING } from './register'
 import { inndatagrenser, inndatavilkar, kravtekst, medEnhet, omradetekst } from './regler/beregning'
-import { forslagsverdi, justerbare, parametre, type Regel, type Regelsett, type Trinnvalgsvar } from './regler/modell'
+import { forslagsverdi, gjeldendeBekreftelser, justerbare, parametre, type Inndatakrav, type Regel, type Regelsett, type Trinnvalgsvar } from './regler/modell'
 import type { Formuleringsklasse } from './festformuleringer'
-import { fraForlop, medlemFor, REGELSETT, settFor, type Verktoyvalg } from './tilgjengelighet'
+import { fraForlop, medlemFor, tilForlop, REGELSETT, settFor, type Verktoyvalg } from './tilgjengelighet'
 
 /** Det forskriveren har fylt inn, slik feltene står. Tas vare på når appen oppdateres; planen gjør aldri det. */
 export interface Planskjema {
@@ -138,11 +138,21 @@ export const trengerMaldose = (r: Regel, skjema: Pick<Planskjema, 'startdose'> =
   r.inndata.some((k) => k.navn === 'maldose') || spennFor(r, skjema) !== undefined
 
 /**
- * Hva startdosen er: døgndosen pasienten bruker, eller dosen per injeksjon når
- * legemidlet pasienten bruker, er et depot (f.eks. Risperdal Consta 25 mg hver
- * andre uke), så en døgndose ikke skrives inn i stedet.
+ * Enheten en dose oppgis i, når den ikke er en døgndose: regelens enhet for
+ * dosen (`Inndatakrav.enhet`, f.eks. «mg per injeksjon hver 2. uke»), ellers
+ * «mg per injeksjon» for et depot, så en døgndose ikke skrives inn i stedet.
  */
-export const startdosenavn = (r: Regel | undefined) => (r && fraForlop(r)?.administrasjon === 'depotinjeksjon' ? 'Aktuell dose per injeksjon' : 'Aktuell døgndose')
+export function doseenhet(r: Regel | undefined, navn: Inndatakrav['navn']): string | undefined {
+  const egen = r?.inndata.find((k) => k.navn === navn && k.enhet)?.enhet
+  const forlop = r && (navn === 'startdose' ? fraForlop(r) : tilForlop(r))
+  return egen ?? (forlop?.administrasjon === 'depotinjeksjon' ? 'mg per injeksjon' : undefined)
+}
+
+/** Hva startdosen heter i feltet og meldingene: «Aktuell døgndose», eller «Aktuell dose (mg per injeksjon …)». */
+export const startdosenavn = (r: Regel | undefined) => {
+  const enhet = doseenhet(r, 'startdose')
+  return enhet ? `Aktuell dose (${enhet})` : 'Aktuell døgndose'
+}
 
 /** Det som mangler før planen kan beregnes, i klartekst; tom når alt er fylt inn. */
 export function mangler(r: Regel, skjema: Planskjema): string[] {
@@ -166,7 +176,7 @@ export function ubesvart(r: Regel, skjema: Planskjema): { sporsmal: string[]; un
   return {
     sporsmal: (r.sporsmal ?? []).filter((x) => !(x.id in skjema.svar)).map((x) => x.id),
     unntak: r.unntak.filter((u) => !(u.id in skjema.pasientforhold)).map((u) => u.id),
-    bekreftelser: r.bekreftelser.filter((b) => !skjema.bekreftet.includes(b.id)).map((b) => b.id),
+    bekreftelser: gjeldendeBekreftelser(r, skjema.svar).filter((b) => !skjema.bekreftet.includes(b.id)).map((b) => b.id),
   }
 }
 

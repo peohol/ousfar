@@ -25,7 +25,7 @@
  */
 import { FEST_FORELDET_ETTER_TIMER, festForeldet } from '../../legemiddeldata/referanser'
 import { FORMULERINGSKLASSER, type Formuleringsklasse } from '../festformuleringer'
-import { AVSLUTNING_FELLES, AVVIK_IKKE_BEREGNET, avrund, beregn, datoFor, overAvslutning, erIsoDato, fordelingstekst, hverTekst, injeksjonstidspunkt, medEnhet, medSvarforslag, utenBeregningLinje, valgtSuffiks, trinnvalgOmrade, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
+import { AVSLUTNING_FELLES, AVVIK_IKKE_BEREGNET, avrund, beregn, datoFor, overAvslutning, overAvslutningKort, erIsoDato, fordelingstekst, hverTekst, injeksjonstidspunkt, medEnhet, medSvarforslag, utenBeregningLinje, valgtSuffiks, trinnvalgOmrade, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
 import { fingeravtrykk, godkjenningsfeil, kanonisk, sha256 } from '../regler/godkjenning'
 import { avslutningFor, justerbare, parameterfeil, type Beregningsinndata, type Fase, type Forlop, type Klinisktilfelle, type Parameter, type Regel, type Regelsett } from '../regler/modell'
 import { byggesteiner, DOSEENHETER, norskDato, type Byggestein, type Preparatgrunnlag } from './byggesteiner'
@@ -657,7 +657,7 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
       ut.avslutning_kort = en
         ? EN_REDUKSJON_KORT
         : overGrensen
-          ? `neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra ${tall(grense!)} mg eller lavere (planen står på ${tall(sist.mg)} mg)`
+          ? `neste trinn kan ikke gis med preparatene, og ${overAvslutningKort(sist.mg, grense!)}`
           : 'neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt'
     }
     if (ut.perioder.some((p) => p.doser)) {
@@ -720,6 +720,17 @@ export function beregnDoseplan(regel: Regel, inndata: Doseplaninndata, grunnlag:
 }
 
 /** Doseplanen, med preparatene avgrenset til de kontrollerte styrkene når tilfellene er gitt. */
+/** Starten på stoppet når regelen krever en komplett plan og planen ikke når sluttmålet. */
+export const KOMPLETT_IKKE_TILGJENGELIG = 'Komplett plan ikke tilgjengelig'
+
+/** Hvorfor forløpet ikke når sluttmålet: ikke beregnet, eller avsluttet uten seponering; tom når det når det. */
+function ikkeKomplett(f: Praktiskforlop): string[] {
+  if (f.uten_beregning) return [`${KOMPLETT_IKKE_TILGJENGELIG} for ${f.virkestoff}: forløpet er ikke beregnet. ${f.uten_beregning}`]
+  // Bare grunnen: dosene i delplanen gjentas ikke i stoppet.
+  if (f.avslutning) return [`${KOMPLETT_IKKE_TILGJENGELIG} for ${f.virkestoff}: ${f.avslutning_kort ?? 'avslutningen vurderes individuelt'}.`]
+  return []
+}
+
 function beregnPlan(regel: Regel, inndata: Doseplaninndata, grunnlag: Preparatgrunnlag, omgivelse: Omgivelse, regelsett?: Regelsett, kontrollerte?: Klinisktilfelle[]): Doseplanresultat {
   const { utvalg } = grunnlag
   const merknader: string[] = []
@@ -781,6 +792,9 @@ function beregnPlan(regel: Regel, inndata: Doseplaninndata, grunnlag: Preparatgr
     kontroller.push({ krav: `Utvasking i doseplanen: minst ${krav} dager uten ${forrige.virkestoff} før ${denne.virkestoff}`, oppfylt: fri >= krav, detalj: `${fri} dager uten legemiddel.` })
     if (fri < krav) return stopp([`Doseplanen har bare ${fri} dager uten ${forrige.virkestoff} før ${denne.virkestoff}, mindre enn ${krav}.`])
   }
+  // Krever regelen en komplett plan for et forløp, vises ingen delplan med doser (regelmodell 12); et valg av dose for neste trinn tilbys fortsatt.
+  const ufullstendige = forlop.flatMap((f) => (regel.plan.forlop.find((x) => x.id === f.id)?.krever_komplett ? ikkeKomplett(f) : []))
+  if (ufullstendige.length > 0) return medValg(stopp(ufullstendige))
   for (const f of forlop) if (f.avslutningsmerknad) merknader.push(f.avslutningsmerknad)
   // Stopper planen tidligere enn den ideelle kurven fordi et trinn ikke kan gis, gjelder den nye forklaringen.
   for (const f of forlop) {
