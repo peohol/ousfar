@@ -199,9 +199,10 @@ export type Nedtrappingsstrategi =
    * Hvert trinn er `prosent` lavere enn forrige dose (gjentatt prosentvis);
    * `lav_prosent` når dosen er nådd `lav_grense_mg`. Under `sluttdose_mg`
    * seponeres. Uten sluttdose når dosen aldri 0; da må fasen ha individuell
-   * avslutning og en teknisk planhorisont.
+   * avslutning og en teknisk planhorisont. Med `minste_trinn` kan
+   * forskriveren ved lave doser velge et minste trinn ({@link Minstetrinn}).
    */
-  | { type: 'prosent_av_aktuell'; prosent: Parameter; lav_prosent?: Parameter; lav_grense_mg?: Parameter; sluttdose_mg?: Parameter }
+  | { type: 'prosent_av_aktuell'; prosent: Parameter; lav_prosent?: Parameter; lav_grense_mg?: Parameter; sluttdose_mg?: Parameter; minste_trinn?: Minstetrinn }
   /** Hvert trinn er `prosent` av startdosen lavere (lineært). */
   | { type: 'prosent_av_startdose'; prosent: Parameter }
   /** Hvert trinn er `mg` lavere (lineært, absolutt). */
@@ -293,6 +294,20 @@ export type Fase =
       start: { dag: Parameter; dose: Dosekilde; sted?: string; vindu_dager?: Parameter }[]
       vedlikehold: { dose: Dosekilde; maaneder: Parameter; tidligst_dager?: Parameter; vindu_dager?: Parameter; sted?: string }
     }
+
+/**
+ * Et minste trinn ved lave doser (regelmodell 12), for en nedtrapping i
+ * prosent av aktuell dose der forskriveren kan velge dosen for et trinn
+ * (`Fase.trinnvalg`, `prosent.omrade`): fra en dose på høyst `fra_mg`, når
+ * ingen dose med faktisk reduksjon innenfor valgområdet kan gis, kan
+ * forskriveren velge den nærmeste lavere dosen som kan gis, med faktisk
+ * reduksjon høyst `maks_prosent`. Bare den ene dosen tilbys, og beregningen
+ * velger aldri selv. For eksempel dråper på 1 mg: 3 → 2 → 1 mg.
+ */
+export interface Minstetrinn {
+  fra_mg: Parameter
+  maks_prosent: Parameter
+}
 
 /**
  * En faglig godkjent avslutning (seponering) av en nedtrapping, med eget
@@ -391,13 +406,6 @@ export interface Forlop {
   faser: Fase[]
   /** Kliniske vurderings- og kontrollpunkter i forløpet (regelmodell 12). */
   vurderinger?: Vurderingspunkt[]
-  /**
-   * Regelen gir bare en komplett plan for forløpet (regelmodell 12): når
-   * planen ikke når sluttmålet (f.eks. seponering), stopper den med
-   * «Komplett plan ikke tilgjengelig» og grunnen, i stedet for å vise en
-   * delplan med doser. Uten feltet vises delplanen som før.
-   */
-  krever_komplett?: true
 }
 
 /**
@@ -679,6 +687,8 @@ export const FELTENHET: Record<string, Enhet> = {
   minstetid: 'dager',
   prosent: 'prosent',
   lav_prosent: 'prosent',
+  maks_prosent: 'prosent',
+  fra_mg: 'mg',
   mg: 'mg',
   lav_grense_mg: 'mg',
   sluttdose_mg: 'mg',

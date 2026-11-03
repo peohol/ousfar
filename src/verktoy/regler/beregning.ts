@@ -287,6 +287,17 @@ export function trinnvalgOmrade(s: Nedtrappingsstrategi, aktuell: number, svar: 
 }
 
 /**
+ * Den høyeste faktiske reduksjonen i prosent et minste trinn ({@link Minstetrinn})
+ * kan ha fra `aktuell` mg, når regelen har et og dosen er høyst `fra_mg`;
+ * ellers `null`.
+ */
+export function minstetrinnFra(s: Nedtrappingsstrategi, aktuell: number): number | null {
+  if (s.type !== 'prosent_av_aktuell' || !s.minste_trinn) return null
+  const { fra_mg, maks_prosent } = s.minste_trinn
+  return fra_mg.verdi !== null && maks_prosent.verdi !== null && aktuell <= fra_mg.verdi + EPS ? maks_prosent.verdi : null
+}
+
+/**
  * Trinnlengden når forskriveren har valgt en annen reduksjon enn den beregnede
  * for en nedtrapping med fast reduksjon i prosent av startdosen (`steg_mg` per
  * `lengde` dager): aldri kortere enn regelens trinnlengde, og lenger når
@@ -450,6 +461,17 @@ function trinnvelger(s: Nedtrappingsstrategi, virkestoff: string, valg: Trinnval
     if (v.mg >= aktuell - EPS) throw new Stopp(`${hva} er ikke lavere enn dosen før (${tall(aktuell)} mg).`)
     if (Math.abs(avrund(v.mg) - v.mg) > EPS) throw new Stopp(`${hva} kan ikke vises nøyaktig med to desimaler.`)
     if (min !== undefined && v.mg < min - EPS) throw new Stopp(`${hva} er under ${tall(min)} mg, den laveste dosen som kan gis med formuleringen regelen gjelder.`)
+    // Et minste trinn ved lav dose kan være større enn valgområdet; at ingen dose innenfor området kan gis og at dosen er den nærmeste lavere,
+    // kontrollerer doseplanmotoren (P5).
+    const minste = minstetrinnFra(s, aktuell)
+    if (minste !== null && prosent > omrade[1] + EPS && prosent <= minste + EPS) {
+      ctx.kontroller.push({
+        krav: `Trinn ${k} av ${virkestoff} er et minste trinn valgt av forskriveren fordi den beregnede dosen (${tall(beregnet)} mg) ikke kan gis og ingen dose innenfor valgområdet kan det; den faktiske reduksjonen er høyst ${tall(minste)} %`,
+        oppfylt: true,
+        detalj: `${tall(v.mg)} mg, ${tall(prosent)} % fra ${tall(aktuell)} mg.`,
+      })
+      return v.mg
+    }
     if (prosent < omrade[0] - EPS || prosent > omrade[1] + EPS) {
       throw new Stopp(
         `${hva} er en reduksjon på ${tall(prosent)} % fra ${tall(aktuell)} mg, utenfor valgområdet ${tall(omrade[0])}–${tall(omrade[1])} % regelen tillater for dette trinnet.${prosent > omrade[1] ? ` ${AVVIK_IKKE_BEREGNET}` : ''}`,

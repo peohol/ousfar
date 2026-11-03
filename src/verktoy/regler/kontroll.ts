@@ -238,6 +238,18 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
         if (!individuell) f(`forløp ${x.id} lar forskriveren velge dose per trinn uten individuell eller godkjent avslutning`)
         if (x.dosevalg?.avvik_prosent?.verdi) f(`forløp ${x.id} lar forskriveren velge dose per trinn og har samtidig en toleranse`)
       }
+      // Et minste trinn ved lav dose er et valg av dose per trinn, større enn valgområdet, men aldri en seponering (regelmodell 12).
+      const minste = fase.strategi.type === 'prosent_av_aktuell' ? fase.strategi.minste_trinn : undefined
+      if (minste) {
+        const omrade = fase.strategi.type === 'prosent_av_aktuell' ? fase.strategi.prosent.omrade : undefined
+        if (!fase.trinnvalg || !omrade) f(`forløp ${x.id} har et minste trinn uten valg av dose per trinn innenfor et område`)
+        const maks = minste.maks_prosent.verdi
+        // Valgområdet uten begrunnelse er høyst det laveste begrunnelseskravet som alltid gjelder (`trinnvalgOmrade` i `beregning.ts`).
+        const krav = fase.strategi.type === 'prosent_av_aktuell' ? (fase.strategi.prosent.begrunnelseskrav ?? []).flatMap((k) => (k.over !== undefined && !k.ved ? [k.over] : [])) : []
+        const ovre = omrade ? Math.min(omrade[1], ...krav) : undefined
+        if (maks !== null && maks >= 100) f(`forløp ${x.id} har et minste trinn på ${maks} %; et minste trinn går aldri til 0`)
+        if (maks !== null && ovre !== undefined && maks <= ovre) f(`forløp ${x.id} har et minste trinn på høyst ${maks} %, som ikke er større enn valgområdet (${omrade![0]}–${ovre} %)`)
+      }
     }
   }
   // Et tillegg beholder retningen eksisterende legemiddel → tillegg (regelmodell 12).

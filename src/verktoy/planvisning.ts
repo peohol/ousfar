@@ -11,7 +11,7 @@
  * kildeoppføringen, aldri med innhold.
  */
 import { norskDato } from './motor/byggesteiner'
-import { elementtekst, EN_REDUKSJON_KORT, fordelingSuffiks, preparatliste, type Doseplanresultat, type Praktiskforlop } from './motor/plan'
+import { elementtekst, EN_REDUKSJON_KORT, fordelingSuffiks, preparatliste, seponeringsdag, sluttmalMangler, type Doseplanresultat, type Praktiskforlop } from './motor/plan'
 import { KARTLEGGING } from './register'
 import { avrund, hverTekst, injeksjonstidspunkt, valgtTekst } from './regler/beregning'
 import { erKliniskGodkjent, fingeravtrykk } from './regler/godkjenning'
@@ -103,16 +103,6 @@ function datotekst(startdato: string | undefined, fra: number, til: number | nul
   if (til === null) return `fra ${dato(startdato, fra)}`
   return til === fra ? dato(startdato, fra) : `${dato(startdato, fra)}–${dato(startdato, til)}`
 }
-
-/**
- * Dagen et peroralt legemiddel er seponert fra, også når det seponeres før
- * første dag i planen (bytte til depot, P11.4): da står seponeringen i
- * tabellen, så planen aldri kan leses som om det perorale skal fortsette.
- * Det samme gjelder et depot som bare stoppes (depot til depot, regelmodell
- * 12). Et forløp med injeksjoner har ingen seponeringsdag.
- */
-const seponeringsdag = (f: Praktiskforlop): number | null =>
-  f.siste_dosedag !== null && (f.perioder.length > 0 || f.administrasjon === 'peroral' || f.injeksjoner.length === 0) ? f.siste_dosedag + 1 : null
 
 /** Hva cellen sier dagen legemidlet er seponert: et depot som stoppes, får ingen flere injeksjoner. */
 const seponert = (f: Praktiskforlop): Dosecelle =>
@@ -249,16 +239,15 @@ const vurderingslinje = (v: Vurdering, navn: string) =>
 
 /** Sluttmålet for ett forløp, eller hva planen ikke dekker for det. */
 function sluttFor(f: Praktiskforlop, navn: string): { sluttmal?: string; mangler?: string } {
-  if (f.uten_beregning) return { mangler: `${navn}: ikke beregnet (${f.uten_beregning.replace(/\.$/, '')})` }
-  if (f.avslutning) return { mangler: `${navn}: ${f.avslutning_kort ?? 'avslutningen vurderes individuelt'}` }
+  const ikke = sluttmalMangler(f)
+  if (ikke) return { mangler: `${navn}: ${ikke}` }
   if (f.uendret_mg !== undefined) return { sluttmal: `${navn} fortsetter uendret på ${mg(f.uendret_mg)}` }
   const s = seponeringsdag(f)
   if (s !== null) return { sluttmal: `${navn} seponert fra dag ${s}` }
   const vedlikehold = f.injeksjoner.find((i) => i.vedlikehold)
   if (vedlikehold) return { sluttmal: `${navn} vedlikehold ${mg(vedlikehold.mg)} ${injeksjonstidspunkt(vedlikehold)}` }
   const sist = f.perioder.at(-1)
-  if (sist && sist.til === null) return { sluttmal: `${navn} fortsetter på ${mg(sist.mg)}${sist.hver ? ` ${hverTekst(sist.hver)}` : ''} fra dag ${sist.fra}` }
-  return { mangler: `${navn}: planen har ikke et definert sluttmål` }
+  return { sluttmal: `${navn} fortsetter på ${mg(sist!.mg)}${sist!.hver ? ` ${hverTekst(sist!.hver)}` : ''} fra dag ${sist!.fra}` }
 }
 
 /** Om planen er komplett eller en delplan ({@link Planutfall}). */

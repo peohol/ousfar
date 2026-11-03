@@ -28,7 +28,7 @@ import { avregistrert, avvikFra, kjorKasus, type Kontrollregel, nyStyrke, type P
 import { grunnlag, liste, tabell, tall, utsagn } from './regler/rapport'
 import { inndatavilkar } from './regler/beregning'
 import { DELPLAN, EN_FORSTE_REDUKSJON, KOMPLETT, STARTFORLOP } from './planvisning'
-import { KOMPLETT_IKKE_TILGJENGELIG, tilfelletekst, UTENFOR_OMFANG } from './motor/plan'
+import { KOMPLETT_IKKE_TILGJENGELIG, kliniskDelplan, type kliniskDoseplan, tilfelletekst, UTENFOR_OMFANG } from './motor/plan'
 import { REGELSETT, REGELSETTENE, samlet, type Verktoyvalg } from './tilgjengelighet'
 
 export { type Kontrollregel, SIMULERT_KONTROLLOR }
@@ -49,6 +49,8 @@ export interface Kontrollkasus extends Pilotkasus {
   velger?: number[]
   /** Regelsettene kasuset kjøres med, når de ikke er settene appen bruker nå (et grunnlag for eldre versjoner). */
   settene?: readonly Regelsett[]
+  /** Veien kasuset kjøres gjennom; standard {@link kliniskDelplan}, som viser en delplan for kontrollens skyld. */
+  motor?: typeof kliniskDoseplan
   tilbyr: number[]
   /** Planutfallet planen skal vise ({@link planutfallstekst}), når kasuset sier det. */
   planutfall?: string
@@ -69,6 +71,8 @@ export interface Kontrollforslag {
    * etterprøves mot nøyaktig versjonene det gjaldt.
    */
   settene?: readonly Regelsett[]
+  /** Veien planene regnes gjennom; standard {@link kliniskDelplan}. Med `kliniskDoseplan` viser grunnlaget nøyaktig det verktøysiden viser. */
+  motor?: typeof kliniskDoseplan
   regler: Kontrollregel[]
   /** Overskriften; standard «VDK-3, forslag N: kontrollgrunnlag». */
   overskrift?: string
@@ -158,7 +162,7 @@ const lik = (a: number, b: number) => Math.abs(a - b) < 1e-9
 /** Kasuset med forskriverens valg gjort ett og ett, slik på verktøysiden; `feil` når et valg ikke tilbys. */
 export function kjorKontrollkasus(k: Kontrollkasus, uttrekkene: Uttrekkene): ReturnType<typeof kjorKasus> & { feil: string[] } {
   let trinnvalg = k.skjema?.trinnvalg ?? []
-  const kjor = () => kjorKasus({ ...k, skjema: { ...k.skjema, trinnvalg } }, uttrekkene, k.settene)
+  const kjor = () => kjorKasus({ ...k, skjema: { ...k.skjema, trinnvalg } }, uttrekkene, k.settene, k.motor ?? kliniskDelplan)
   let u = kjor()
   for (const mg of k.velger ?? []) {
     const t = u.resultat?.trinnvalg?.[0]
@@ -231,12 +235,13 @@ export function planerFor(f: Kontrollforslag, k: Kontrollregel, tilfelle: Klinis
     regel: somGodkjent(k, f.dato, f.simulerAvklaring),
     forventet: { utfall: 'sperret' },
   }
-  const forsok = kjorKasus(grunn, uttrekkene, f.settene)
+  const motor = f.motor ?? kliniskDelplan
+  const forsok = kjorKasus(grunn, uttrekkene, f.settene, motor)
   const formvalg = forsok.utfall === 'formvalg' && form ? Object.fromEntries(forsok.forlop.map((id) => [id, { legemiddelform: form }])) : {}
   const veier: Planvei[] = []
   const folg = (valg: Planvalg[]) => {
     const trinnvalg = valg.map((v) => ({ forlop: v.trinn.forlop, trinn: v.trinn.trinn, fra_mg: v.trinn.fra_mg, mg: v.valgt }))
-    const u = kjorKasus({ ...grunn, skjema: { ...grunn.skjema, formvalg, trinnvalg } }, uttrekkene, f.settene)
+    const u = kjorKasus({ ...grunn, skjema: { ...grunn.skjema, formvalg, trinnvalg } }, uttrekkene, f.settene, motor)
     const t = u.resultat?.trinnvalg?.[0]
     if (!t || valg.length >= MAKS_VALG) return void veier.push({ valg, utfall: u })
     for (const d of t.doser) folg([...valg, { trinn: t, valgt: d.mg }])
@@ -742,7 +747,7 @@ ${liste(omfang)}`
   )
   const innledning = f.innledning?.(norskDato(u.hentet.slice(0, 10))) ?? [
     `**${f.tittel}.** Grunnlag for uavhengig faglig kontroll av forslag ${f.nr} i \`docs/verktøy-vdk2-prioritering.md\`, laget ${norskDato(f.dato)}.`,
-    `**Ingen regel er godkjent eller aktivert, og denne PR-en endrer ingen regel.** Verktøyet tilbyr i dag ingen beregning for disse reglene (kasus ${f.kasus.filter((k) => !k.regel).map((k) => k.id).join(', ')}). For å vise hva verktøyet ville vist om nøyaktig disse versjonene ble godkjent, er planene under regnet på en kopi av hver regel med en simulert godkjenning («${SIMULERT_KONTROLLOR}»), gjennom den samme veien som verktøysiden og med de norske preparatene i FEST-uttrekket hentet ${norskDato(u.hentet.slice(0, 10))}. Kopien lagres ikke og brukes ikke av appen. Kasusene er syntetiske; pasientopplysninger inngår ikke, og ingen tekst fra Psychiatrienet vises.`,
+    `**Ingen regel er godkjent eller aktivert, og denne PR-en endrer ingen regel.** Verktøyet tilbyr i dag ingen beregning for disse reglene (kasus ${f.kasus.filter((k) => !k.regel).map((k) => k.id).join(', ')}). For å vise hva verktøyet ville vist om nøyaktig disse versjonene ble godkjent, er planene under regnet på en kopi av hver regel med en simulert godkjenning («${SIMULERT_KONTROLLOR}»), gjennom den samme veien som verktøysiden og med de norske preparatene i FEST-uttrekket hentet ${norskDato(u.hentet.slice(0, 10))}. Kopien lagres ikke og brukes ikke av appen. En plan som ikke når sluttmålet (en delplan), står her slik motoren beregner den, for kontrollens skyld: verktøysiden viser aldri en delplan, men «${KOMPLETT_IKKE_TILGJENGELIG}» med grunnen (Peders beslutning 03.11.2026). Kasusene er syntetiske; pasientopplysninger inngår ikke, og ingen tekst fra Psychiatrienet vises.`,
   ]
   // Avsnittene nummereres fortløpende, med forslagets egne avsnitt etter spørsmålene.
   const egne = [...(f.avsnitt ?? []), ...(f.utgangspunkt ? [utgangspunktavsnitt(f, f.utgangspunkt, uttrekkene)] : [])]
@@ -775,7 +780,7 @@ ${regelavsnitt}
 
 ## ${nr.planer}. Alle planer i det kliniske omfanget
 
-Hver startdose i hvert tilfelle i reglenes kliniske omfang, med hver plan forskriverens valg kan gi: ved hvert trinn som ikke kan gis nøyaktig, er hver dose som tilbys, fulgt. ${enDose ? `I alle ${alleValg.length} valgene tilbys nøyaktig én dose, så hver startdose gir én plan.` : 'Noen valg tilbyr flere doser, og hver gir sin egen plan.'} Radene er slik verktøysiden og kopien av planen ville vist dem; dagene er minstetider, og hvert trinn forutsetter en ny vurdering.
+Hver startdose i hvert tilfelle i reglenes kliniske omfang, med hver plan forskriverens valg kan gi: ved hvert trinn som ikke kan gis nøyaktig, er hver dose som tilbys, fulgt. ${enDose ? `I alle ${alleValg.length} valgene tilbys nøyaktig én dose, så hver startdose gir én plan.` : 'Noen valg tilbyr flere doser, og hver gir sin egen plan.'} Radene er slik planen og kopien av den ville stått om delplaner ble vist; dagene er minstetider, og hvert trinn forutsetter en ny vurdering.
 
 ${oversikt}
 

@@ -14,7 +14,7 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { byggesteiner, type Preparatgrunnlag } from '../verktoy/motor/byggesteiner'
-import { kliniskDoseplan, type Doseplaninndata, type Doseplanresultat } from '../verktoy/motor/plan'
+import { kliniskDelplan, kliniskDoseplan, type Doseplaninndata, type Doseplanresultat } from '../verktoy/motor/plan'
 import { festkoblinger, KARTLEGGING, VERKTOY, virkestoffvalg } from '../verktoy/register'
 import { besvart, FEST_AKSEPTTEST, FEST_PILOT, omgivelseFor, type Festuttrekk } from '../verktoy/regler/aksepttest'
 import { type Disposisjon, disponer, disposisjonsfeil, erKliniskGodkjent, fingeravtrykk, harBeregning, kontrollutfall, vurderingsfeil } from '../verktoy/regler/godkjenning'
@@ -139,7 +139,7 @@ describe('Klinisk tilgjengelige regler i den første avgrensede leveransen (P4.8
 
   it('gir aldri en klinisk plan etter en annen regel, uansett legemiddelform, startdose eller ny styrke i FEST', { timeout: 120_000 }, () => {
     let beregnet = 0
-    // Prøven er ikke tom: godkjent bare i testen gir de samme inndataene klinisk plan for disse reglene.
+    // Prøven er ikke tom: godkjent bare i testen gir de samme inndataene en klinisk beregning for disse reglene (også en delplan, som klinikeren ikke får).
     const kunneGitt = new Set<string>()
     for (const { sett, r } of ANDRE.filter(({ r }) => harBeregning(r))) {
       const iTest = godkjennITest(r, r.id)
@@ -158,7 +158,7 @@ describe('Klinisk tilgjengelige regler i den første avgrensede leveransen (P4.8
               const p = kliniskDoseplan(r, { ...x, godkjenningsfritak: false, ...(formvalg && { formvalg }) }, grunnlagFor(u, r), omgivelse, sett)
               ikkeKlinisk(p, `${r.id}, ${navn}, ${x.startdose_mg} mg, ${JSON.stringify(formvalg)}`)
               beregnet++
-              if (u === grunn && !kunneGitt.has(r.id) && kliniskDoseplan(iTest, { ...x, godkjenningsfritak: false, ...(formvalg && { formvalg }) }, grunnlagFor(u, r), omgivelse, sett).klinisk) kunneGitt.add(r.id)
+              if (u === grunn && !kunneGitt.has(r.id) && kliniskDelplan(iTest, { ...x, godkjenningsfritak: false, ...(formvalg && { formvalg }) }, grunnlagFor(u, r), omgivelse, sett).klinisk) kunneGitt.add(r.id)
             }
           }
         }
