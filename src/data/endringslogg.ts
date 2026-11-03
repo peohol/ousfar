@@ -43,6 +43,17 @@ export const ENDRINGSLOGG: Endring[] = [
     ],
   },
   {
+    versjon: '1.117.5',
+    dato: '2026-11-02',
+    sammendrag: 'Undersøkelse av de to kildefunnene i kildeovervåkingen',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. De to funnene fra kildeovervåkingen (Australian Prescriber og Royal College of Psychiatrists) er undersøkt: det rådene i de godkjente verktøyreglene bygger på, står fortsatt slik i kildene, men det kan ikke bevises at ingenting var endret da kildene først ble lest. Funnene står åpne til en uavhengig kontroll.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.117.4',
     dato: '2026-11-02',
     sammendrag: 'Verktøyene er skjult for andre enn administratorene inntil videre, og har fått nytt ikon',

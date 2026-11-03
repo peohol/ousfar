@@ -669,10 +669,14 @@ begin
     raise exception 'Begrunnelsen for en mulig alvorlig risiko vises for redaktøren: 10–2000 tegn uten kontrollsummer.' using errcode = '22023';
   end if;
 
+  -- Et mulig sikkerhetsproblem under oppfølging gjør saken til et sikkerhetsproblem
+  -- under faglig vurdering igjen: beslutningen som følges opp, gjaldt ikke det,
+  -- og saken skal verken avsluttes eller bli liggende uten prikk.
   til := case
     when k = 'uten_faglig_betydning' then 'avsluttet'
     when k = 'uavklart' then 'uavklart'
     when rad.tilstand in ('teknisk_utredning', 'uavklart') then 'faglig_gjennomgang'
+    when k = 'mulig_alvorlig_risiko' and rad.tilstand = 'oppfolging' then 'faglig_gjennomgang'
     else rad.tilstand
   end;
 
@@ -680,12 +684,22 @@ begin
   set konklusjon = k, konklusjon_kl = now(), konklusjon_tekst = btrim(begrunnelse),
       alvor = case when k = 'mulig_alvorlig_risiko' then 'sikkerhet' else x.alvor end,
       tilstand = case when til = 'avsluttet' then x.tilstand else til end,
+      -- Tilbake fra oppfølging: spørsmålet og beslutningen står i hendelsene, tiltakene står.
+      sporsmal = case when x.tilstand = 'oppfolging' and til = 'faglig_gjennomgang' then null else x.sporsmal end,
+      valg = case when x.tilstand = 'oppfolging' and til = 'faglig_gjennomgang' then null else x.valg end,
+      valg_merknad = case when x.tilstand = 'oppfolging' and til = 'faglig_gjennomgang' then null else x.valg_merknad end,
+      valg_av = case when x.tilstand = 'oppfolging' and til = 'faglig_gjennomgang' then null else x.valg_av end,
+      valg_kl = case when x.tilstand = 'oppfolging' and til = 'faglig_gjennomgang' then null else x.valg_kl end,
       -- Under oppfølging er nytt innhold bare vurdert med en eksplisitt avgjørelse om dekning (eller et nytt spørsmål).
       nytt_innhold_kl = case when x.tilstand = 'oppfolging' and k <> 'dekket_av_beslutning' then x.nytt_innhold_kl end,
       versjon = x.versjon + 1, endret_kl = now()
   where x.id = rad.id;
   perform intern.kildesak_hendelse(rad.id, 'teknisk_konklusjon', rad.tilstand, til, null, btrim(agent),
-    jsonb_build_object('konklusjon', k, 'begrunnelse', btrim(begrunnelse), 'bevis', b, 'avtrykk', rad.avtrykk));
+    jsonb_build_object('konklusjon', k, 'begrunnelse', btrim(begrunnelse), 'bevis', b, 'avtrykk', rad.avtrykk)
+    || case when rad.tilstand = 'oppfolging' and til = 'faglig_gjennomgang' then jsonb_build_object(
+         'sporsmal_tilbaketrukket', rad.sporsmal,
+         'valg_for', jsonb_build_object('valg', rad.valg, 'merknad', rad.valg_merknad, 'av', rad.valg_av, 'kl', rad.valg_kl))
+       else '{}'::jsonb end);
   if til = 'avsluttet' then
     perform intern.kildesak_avslutt(rad.id, 'teknisk_avklart', null, btrim(agent), jsonb_build_object('bevis', b));
   elsif k = 'dekket_av_beslutning' then
