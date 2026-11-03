@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.121.3',
+    versjon: '1.122.2',
     dato: '2026-11-03',
     sammendrag: 'Presisert kildefaktum fra RCPsych lagt fram til faglig kontroll i nye regelversjoner',
     typer: ['Fag'],
@@ -22,6 +22,21 @@ export const ENDRINGSLOGG: Endring[] = [
       'De 18 nedtrappingsreglene som viser til faktumet, har fått en ny versjon der bare dette faktumet er endret. Den nye versjonen av vortioksetin og av byttet fra sertralin til mirtazapin legges fram til ny godkjenning; til den er gitt, bruker verktøyet versjonene som er godkjent i dag.',
     ],
     utenVarsel: true,
+  },
+  {
+    versjon: '1.122.0',
+    dato: '2026-11-03',
+    sammendrag: 'Verktøyene tåler korte brudd bedre, og sier fra når en plan ble tatt bort',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Svarer ikke kontrollen av om verktøyet er midlertidig deaktivert, prøver verktøyet selv på nytt etter 5 og etter 15 sekunder, og med en gang forbindelsen er tilbake. Til en kontroll lykkes, vises fortsatt ingen doseplan eller fagtekst.',
+      'Er det ingen forbindelse, står det nå «Ingen forbindelse» i stedet for den generelle meldingen.',
+      'Ble en plan tatt bort fordi kontrollen ikke svarte, står det «Planen ble tatt bort fordi sikkerhetskontrollen ikke svarte. Beregn på nytt.» ved knappen når kontrollen svarer igjen. Planen beregnes ikke på nytt av seg selv; du trykker selv «Beregn doseplan». Var det en sperre som tok planen, vises sperren som før.',
+      'Feiler hentingen av preparatene fra FEST når du beregner, prøver verktøyet én gang til før det sier fra. Kravene til planen er de samme som før.',
+      'Ingen doser, grenser, regler eller godkjenninger er endret, og FEST-dataene må fortsatt være kontrollert de siste 48 timene.',
+    ],
   },
   {
     versjon: '1.121.1',
