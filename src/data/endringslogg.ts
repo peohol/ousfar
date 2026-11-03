@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.124.6',
+    dato: '2026-11-03',
+    sammendrag: 'Komplette bytter mellom antidepressiva, til faglig kontroll',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen ennå. Fem regler for hele bytter er skrevet: fra sertralin, escitalopram eller citalopram til mirtazapin, og fra escitalopram eller citalopram til sertralin. Hver plan går fra dagens dose til det gamle legemidlet er seponert og det nye står på en vedlikeholdsdose klinikeren velger, med norske tabletter.',
+      'Reglene bygger på de norske preparatomtalene og publiserte råd om bytte av antidepressiva, ikke på Psychiatrienet. De er sendt til uavhengig faglig kontroll og er ikke godkjent; verktøyet beregner dem ikke før de er det.',
+      'Det godkjente startforløpet fra sertralin til mirtazapin er uendret og er fortsatt det verktøyet viser.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.124.4',
     dato: '2026-11-03',
     sammendrag: 'Prøven av kildeovervåkingen avsluttet',
