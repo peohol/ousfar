@@ -174,3 +174,16 @@ Syntetiske, vanlige situasjoner for voksne 18–64 år uten tidligere seponering
 | H – uavhengig test | Egen tråd | Egne testfiler; tester K0-01–K0-12 i appen |
 
 **Versjon og rekkefølge:** hver PR får versjonsnummeret sitt fra koordinatoren når den er klar til kontroll, og koordinatoren nummererer om når merge-rekkefølgen endres. Rekkefølgen er avhengighetsstyrt: G sine motorendringer før reglene som bruker dem (K4 etter tillegg i motoren), ellers den PR-en ChatGPT godkjenner først. Hver PR skriver sin egen føring i endringsloggen med det tildelte nummeret. Bare koordinatoren redigerer denne planen og utviklingsplanen, og fører faktiske leveranser her etter godkjent merge.
+
+**Leveranse-PR-er og planlagt rekkefølge** (oppdateres av koordinatoren; alle merket «Til ChatGPT-kontroll – ikke merge»):
+
+| Rekkefølge | PR | Spor | Versjon | Avhenger av | Status |
+| --- | --- | --- | --- | --- | --- |
+| 1 | #316 | A – K0-nullpunkt | 1.124.5 | – | Til kontroll |
+| 2 | QA-PR (kommer) | H – testkasus K0-01–K0-12 | 1.124.8 | – | Under arbeid |
+| 3 | #319 | G – felles motor | 1.125.0 | – | Til kontroll |
+| 4 | #318 | D – K2, fem bytteregler til kontroll | 1.125.1 | #319 | Til kontroll; QA uten blokkerende funn |
+| 5 | K3-PR (kommer) | E – K3, fem bytteregler til kontroll | 1.125.2 | #319 | Under arbeid |
+| – | K1- og K4-PR | C og F | tildeles | #319 | Under arbeid |
+
+Godkjenner ChatGPT i en annen rekkefølge, nummererer koordinatoren om de uavhengige PR-ene; PR-er som avhenger av #319, merges etter den.
