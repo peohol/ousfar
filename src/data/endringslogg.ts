@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.125.1',
+    versjon: '1.125.3',
     dato: '2026-11-03',
     sammendrag: 'Første regler for å legge lamotrigin til valproat eller litium, til faglig kontroll',
     typer: ['Fag'],
@@ -24,6 +24,7 @@ export const ENDRINGSLOGG: Endring[] = [
       'Planene bruker bare dispergerbare tabletter, deler ingen tablett, og har vurdering av hud, overfølsomhet og stemningsleie før hver doseøkning og en vurdering ved måldosen.',
       'Planen stopper i stedet for å gi en dose når pasienten er under 18 år, har reagert på lamotrigin før, bruker lamotrigin nå, er gravid eller ammer, har nedsatt lever- eller nyrefunksjon, når valproatbehandlingen ikke er bekreftet vurdert, og ved litium når pasienten også bruker valproat, et enzyminduserende legemiddel eller et legemiddel med ukjent virkning på lamotrigin.',
     ],
+    utenVarsel: true,
   },
   {
     versjon: '1.125.0',
