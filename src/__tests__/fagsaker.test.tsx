@@ -58,6 +58,7 @@ const sak = (over: Partial<Fagsak> = {}): Fagsak => ({
   status_na: 'Planen beregnes som normalt.',
   opprettet_kl: '2026-11-09T06:21:00Z',
   beslutning: null,
+  tidligere: [],
   tiltak: [],
   avsluttet: null,
   ...over,
@@ -75,6 +76,7 @@ function minnelager(data: Redaktoroversikt): Fagsaklager & { beslutt: ReturnType
       const v = s.valg.find((x) => x.valg === valg)!
       Object.assign(s, {
         versjon: s.versjon + 1,
+        tidligere: s.beslutning ? [...s.tidligere, s.beslutning] : s.tidligere,
         beslutning: { valg, merknad, av: 'Ada Admin', kl: '2026-11-10T08:00:00Z' },
         fase: valg === 'utsett' ? 'beslutning' : 'oppfolging',
         tiltak: [...v.na.map((tekst) => ({ tekst, status: 'kontrollert', endret_kl: '2026-11-10T08:00:00Z', lenke: null })), ...v.deretter.map((tekst) => ({ tekst, status: 'bestilt', endret_kl: '2026-11-10T08:00:00Z', lenke: null }))],
@@ -219,19 +221,32 @@ describe('redaktørvisningen av kildesakene', () => {
     expect(within(rader[1]!).queryByText('Sperret med nødstoppen')).toBeNull()
   })
 
-  it('viser tidligere beslutning og tiltak når en sak i oppfølging får et nytt spørsmål', async () => {
+  it('viser tidligere beslutninger og tiltak når en sak i oppfølging får et nytt spørsmål', async () => {
+    // Slik databasen gir den: den gjeldende beslutningen er nullstilt, de tidligere står i `tidligere`.
     const s = sak({
       versjon: 9,
-      beslutning: { valg: 'revider', merknad: null, av: 'Ada Admin', kl: '2026-11-08T10:00:00Z' },
+      beslutning: null,
+      tidligere: [
+        { valg: 'utsett', merknad: 'Venter på ny utgave.', av: 'Ada Admin', kl: '2026-11-05T10:00:00Z' },
+        { valg: 'revider', merknad: null, av: 'Ada Admin', kl: '2026-11-08T10:00:00Z' },
+      ],
       tiltak: [{ tekst: 'Ny regelversjon med uavhengig klinisk godkjenning', status: 'pagar', endret_kl: '2026-11-08T11:00:00Z', lenke: null }],
     })
-    render(<Fagsaker apen lager={minnelager(oversikt([s]))} />)
+    const user = userEvent.setup()
+    const lager = minnelager(oversikt([s]))
+    render(<Fagsaker apen lager={lager} />)
     const kort = within(await screen.findByRole('article'))
-    expect(kort.getByText('Tidligere i saken')).toBeTruthy()
-    expect(kort.getByText(/Besluttet .* av Ada Admin/)).toBeTruthy()
-    expect(kort.getByText('Under arbeid')).toBeTruthy()
-    // Det nye spørsmålet kan besluttes som vanlig.
-    expect(kort.getAllByRole('radio')).toHaveLength(4)
+    const tidligere = within(kort.getByText('Tidligere i saken').parentElement!)
+    expect(tidligere.getAllByText(/av Ada Admin/).map((p) => p.textContent)).toEqual([
+      expect.stringMatching(/^Utsatt .*: Utsett beslutningen\. Venter på ny utgave\.$/),
+      expect.stringMatching(/^Besluttet .*: Be om revidert anbefaling$/),
+    ])
+    expect(tidligere.getByText('Under arbeid')).toBeTruthy()
+    // Det nye spørsmålet besluttes som vanlig, og da står alle tre beslutningene i oppfølgingen.
+    await user.click(kort.getByRole('radio', { name: /Behold godkjent regel/ }))
+    await user.click(kort.getByRole('button', { name: 'Registrer beslutningen' }))
+    const oppfolging = within(await screen.findByRole('region', { name: 'Oppfølging pågår' }))
+    expect(oppfolging.getAllByText(/av Ada Admin/)).toHaveLength(3)
   })
 
   it('viser en sikkerhetssak under vurdering straks, uten valg, og peker på nødstoppen', async () => {

@@ -9,6 +9,7 @@ import {
   UTFALLTEKST,
   VALGTITTEL,
   type Beslutningsvalg,
+  type Beslutning,
   type Berortanbefaling,
   type Fagsak,
   type Fagsaklager,
@@ -181,14 +182,7 @@ function Beslutningskort({
           {s.beslutning.merknad ? `: ${s.beslutning.merknad}` : ''}.
         </p>
       )}
-      {s.tiltak.length > 0 && (
-        // Et nytt spørsmål etter en tidligere beslutning: det som alt er besluttet og gjort, står med.
-        <div className="fagsak__tidligere">
-          <p className="fagsak__virkningstittel">Tidligere i saken</p>
-          {s.beslutning?.valg !== 'utsett' && <Beslutningslinje s={s} />}
-          <Tiltaksliste s={s} />
-        </div>
-      )}
+      <TidligereISaken s={s} />
       <Grunnlag s={s} />
 
       <div className="fagsak__anbefaling">
@@ -241,6 +235,7 @@ function Vurderingskort({ s, onNodstopp }: { s: Fagsak; onNodstopp?: () => void 
     <article className="fagsak" aria-labelledby={`${id}-t`}>
       <Hode s={s} tittelId={`${id}-t`} />
       <StatusNa s={s} />
+      <TidligereISaken s={s} />
       <Grunnlag s={s} />
       <div className="fagsak__anbefaling fagsak__anbefaling--vurderes">
         <p className="fagsak__virkningstittel">Sikkerhetsproblem under vurdering</p>
@@ -260,13 +255,36 @@ function Vurderingskort({ s, onNodstopp }: { s: Fagsak; onNodstopp?: () => void 
   )
 }
 
-function Beslutningslinje({ s }: { s: Fagsak }) {
-  if (!s.beslutning) return null
+function Beslutningslinje({ b }: { b: Beslutning | null }) {
+  if (!b) return null
   return (
     <p className="fagsak__beslutning">
-      Besluttet {tidspunkt(s.beslutning.kl)} av {s.beslutning.av}: <strong>{VALGTITTEL[s.beslutning.valg]}</strong>
-      {s.beslutning.merknad ? `. ${s.beslutning.merknad}` : ''}
+      {b.valg === 'utsett' ? 'Utsatt' : 'Besluttet'} {tidspunkt(b.kl)} av {b.av}: <strong>{VALGTITTEL[b.valg]}</strong>
+      {b.merknad ? `. ${b.merknad}` : ''}
     </p>
+  )
+}
+
+/** Et nytt spørsmål etter tidligere beslutninger: det som alt er besluttet og gjort, står med. */
+function TidligereISaken({ s }: { s: Pick<Fagsak, 'tidligere' | 'tiltak'> }) {
+  if (s.tidligere.length === 0 && s.tiltak.length === 0) return null
+  return (
+    <div className="fagsak__tidligere">
+      <p className="fagsak__virkningstittel">Tidligere i saken</p>
+      <Tidligere s={s} />
+      {s.tiltak.length > 0 && <Tiltaksliste s={s} />}
+    </div>
+  )
+}
+
+/** De tidligere beslutningene i saken, eldste først; den gjeldende står for seg. */
+function Tidligere({ s }: { s: Pick<Fagsak, 'tidligere'> }) {
+  return (
+    <>
+      {s.tidligere.map((b, i) => (
+        <Beslutningslinje key={i} b={b} />
+      ))}
+    </>
   )
 }
 
@@ -301,7 +319,8 @@ function Oppfolgingskort({ s }: { s: Fagsak }) {
     <article className="fagsak" aria-labelledby={`${id}-t`}>
       <Hode s={s} tittelId={`${id}-t`} />
       <StatusNa s={s} />
-      <Beslutningslinje s={s} />
+      <Tidligere s={s} />
+      <Beslutningslinje b={s.beslutning} />
       <Tiltaksliste s={s} />
       <p className="felt__hjelp">
         {gjenstaende(s).length === 0
@@ -319,7 +338,8 @@ function Avsluttet({ s }: { s: Fagsak }) {
         {s.tittel}
         {s.prove && ' (prøve)'}
       </p>
-      <Beslutningslinje s={s} />
+      <Tidligere s={s} />
+      <Beslutningslinje b={s.beslutning} />
       <p className="felt__hjelp">
         Avsluttet {tidspunkt(s.avsluttet!.kl)}: {UTFALLTEKST[s.avsluttet!.utfall]}.
       </p>
