@@ -24,7 +24,7 @@ import { act, cleanup, fireEvent, render, screen, within } from '@testing-librar
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { VARSLER_HENTES, VARSLER_ULEST } from '../components/verktoy/Regelvarsler'
-import { DEKNING_UKONTROLLERT, Verktoyside, type VerktoysideProps } from '../components/verktoy/Verktoyside'
+import { DEKNING_UKONTROLLERT, TILGJENGELIGHET_UKONTROLLERT, Verktoyside, type VerktoysideProps } from '../components/verktoy/Verktoyside'
 import { lagRegelvarsellager, UGYLDIGE_REGELVARSLER } from '../verktoy/overvaking/regelvarsler'
 import type { Legemiddelutvalg } from '../legemiddeldata/lesing'
 import { glemBildet, oppdaterOgTaVare, taBilde } from '../oppdatering/bevaring'
@@ -112,6 +112,20 @@ describe('oversikten', () => {
     await act(async () => {})
     expect(kortlinjer()).toEqual(Array(3).fill([DEKNING_UKONTROLLERT.feil]))
     expect(screen.queryByText(/Kan beregnes/)).toBeNull()
+  })
+
+  it('forklarer en nødstopp for alle som midlertidig deaktivering, ikke som manglende godkjenning, og manglende godkjenning bare når det er grunnen', async () => {
+    const alle: Verktoysperre = { id: 's', omfang: 'alle', mal: null, grunn: 'Syntetisk sperre for alle.', satt_kl: '2026-11-01T08:00:00Z', satt_av: 'Ada Admin' }
+    vis({ sperrer: { les: async () => [alle] } })
+    await act(async () => {})
+    expect(kortlinjer()).toEqual(Array(3).fill(['Midlertidig deaktivert']))
+    expect(screen.getByRole('alert', { name: 'Midlertidig deaktivert' }).textContent).toMatch(/Syntetisk sperre for alle\./)
+    expect(screen.queryByText(/venter på faglig kontroll og klinisk godkjenning/)).toBeNull()
+    cleanup()
+    // Uten noen godkjent regel er det grunnen, og da sies det.
+    vis({ regelsett: { ...REGELSETT, regler: [] } })
+    await act(async () => {})
+    expect(screen.getByText(/Ingen beregninger er tilgjengelige ennå: reglene venter på faglig kontroll og klinisk godkjenning\./)).toBeTruthy()
   })
 
   it('sier fra om en adresse uten verktøy, og lukkes med Esc', async () => {
@@ -943,7 +957,7 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
       const sperrer = { les: vi.fn(async () => []) }
       const varsler = { les: vi.fn(async (): Promise<never> => Promise.reject(new Error('nettverksfeil'))) }
       vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT), sperrer, regelvarsler: varsler })
-      await user.click(screen.getByRole('button', { name: 'Sertralin → mirtazapin' }))
+      await user.click(await screen.findByRole('button', { name: 'Sertralin → mirtazapin' }))
       expect(varsler.les).toHaveBeenCalled()
       expect(screen.getByRole('note').textContent).toBe(VARSLER_ULEST)
       await user.type(screen.getByRole('textbox', { name: /Aktuell døgndose av sertralin/ }), '100')
@@ -974,8 +988,40 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
       // Uten lager sies det samme, ikke ingenting.
       cleanup()
       vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT), regelvarsler: undefined })
-      await user.click(screen.getByRole('button', { name: 'Sertralin → mirtazapin' }))
+      await user.click(await screen.findByRole('button', { name: 'Sertralin → mirtazapin' }))
       expect(screen.getByRole('note').textContent).toBe(VARSLER_ULEST)
+    })
+
+    it('tilbyr ingen snarvalg og lover ingenting om hva som kan beregnes før nødstoppen er lest, og holder sperrede valg utenfor', async () => {
+      const sperre = (omfang: Verktoysperre['omfang'], mal: string): Verktoysperre => ({ id: `s-${omfang}`, omfang, mal, grunn: 'Syntetisk sperre.', satt_kl: '2026-11-01T08:00:00Z', satt_av: 'Ada Admin' })
+      const side = (sperrer: VerktoysideProps['sperrer']) => vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT), sperrer })
+      const ingenSnarvalg = () => {
+        expect(screen.queryByRole('group', { name: 'Kan beregnes nå:' })).toBeNull()
+        expect(screen.queryByRole('button', { name: 'Sertralin → mirtazapin' })).toBeNull()
+      }
+
+      side({ les: () => new Promise<Verktoysperre[]>(() => {}) })
+      await act(async () => {})
+      ingenSnarvalg()
+      expect(screen.getByText(TILGJENGELIGHET_UKONTROLLERT.henter)).toBeTruthy()
+      cleanup()
+
+      side({ les: async () => Promise.reject(new Error('nettverksfeil')) })
+      await act(async () => {})
+      ingenSnarvalg()
+      expect(screen.getByText(TILGJENGELIGHET_UKONTROLLERT.feil)).toBeTruthy()
+      cleanup()
+
+      // En kjent sperre på regelen eller verktøyet holder valget utenfor; uten sperre står det.
+      for (const sperrer of [[sperre('regel', SERTRALIN)], [sperre('verktoy', 'bytte-antidepressiv')]]) {
+        side({ les: async () => sperrer })
+        await act(async () => {})
+        ingenSnarvalg()
+        expect(screen.queryByText(/Kontrollerer tilgjengeligheten|Kan ikke kontrollere tilgjengeligheten/)).toBeNull()
+        cleanup()
+      }
+      side({ les: async () => [] })
+      expect(await screen.findByRole('button', { name: 'Sertralin → mirtazapin' })).toBeTruthy()
     })
 
     describe('når varslene ikke svarer eller svaret har ukjent form', () => {
@@ -987,7 +1033,7 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
         const sperrer = { les: vi.fn(async (): Promise<Verktoysperre[]> => []) }
         const varsler = { les: vi.fn(() => new Promise<never>(() => {})) }
         vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT), sperrer, regelvarsler: varsler })
-        await user.click(screen.getByRole('button', { name: 'Sertralin → mirtazapin' }))
+        await user.click(await screen.findByRole('button', { name: 'Sertralin → mirtazapin' }))
         // Ikke «ingen merknad» før det er kjent.
         expect(screen.getByRole('note').textContent).toBe(VARSLER_HENTES)
         await act(() => vi.advanceTimersByTimeAsync(LESEFRIST_MS - 1_000))
@@ -1025,7 +1071,7 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
         for (const svar of [null, {}, { varsler: [gyldig] }, [gyldig, { ...gyldig, tekst: null }], [{ ...gyldig, versjon: String(versjon) }]]) {
           const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
           vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT), regelvarsler: lagRegelvarsellager(async () => svar) })
-          await user.click(screen.getByRole('button', { name: 'Sertralin → mirtazapin' }))
+          await user.click(await screen.findByRole('button', { name: 'Sertralin → mirtazapin' }))
           await act(async () => {})
           expect(screen.getByRole('note').textContent).toBe(VARSLER_ULEST)
           expect(screen.getByRole('button', { name: 'Beregn doseplan' })).toBeTruthy()
@@ -1040,7 +1086,7 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
       const user = userEvent.setup()
       const legemidler = fra(PILOT)
       vis({ verktoy: 'bytte-antipsykotikum', legemidler, klokke: klokke(PILOT) })
-      await user.click(screen.getByRole('button', { name: 'Aripiprazol: peroral → depotinjeksjon' }))
+      await user.click(await screen.findByRole('button', { name: 'Aripiprazol: peroral → depotinjeksjon' }))
       await user.type(await screen.findByRole('textbox', { name: /Aktuell døgndose av aripiprazol/ }), '10')
       await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
       expect(screen.getByRole('alert').textContent).toMatch(/^Før beregning: svar på \d+ spørsmål om pasienten og bekreft én forutsetning\. Det som mangler, er merket over\.$/)

@@ -19,7 +19,7 @@ export const ENDRINGSLOGG: Endring[] = [
     omfang: 'Moderat omfang',
     gjelder: ['verktoy'],
     punkter: [
-      'Oversikten og hvert verktøy viser hvilke legemidler og bytter som kan beregnes nå, og hvilke som bare har fagtekst. Et klikk på et av dem fyller ut feltene. Før nødstoppen er kontrollert, sier oversikten bare at tilgjengeligheten kontrolleres, eller at den ikke kunne kontrolleres.',
+      'Oversikten og hvert verktøy viser hvilke legemidler og bytter som kan beregnes nå, og hvilke som bare har fagtekst. Et klikk på et av dem fyller ut feltene. Før nødstoppen er kontrollert, vises ingen slike valg; det står bare at tilgjengeligheten kontrolleres, eller at den ikke kunne kontrolleres. Er alt midlertidig deaktivert, sies det, ikke at reglene venter på godkjenning.',
       'Skjemaet er delt i «Doser og start», «Om pasienten» og «Bekreft før beregning». Tilpasning av trinn og tid ligger i en egen del som bare åpnes ved behov.',
       'Mangler et svar eller en bekreftelse, sier verktøyet kort hva som mangler og merker feltene, før noe beregnes. Svarer du at et forhold gjelder, står det med en gang at verktøyet da ikke gir en plan.',
       'Under planen står de generelle forbeholdene og «Viktig for denne planen». Forutsetninger, usikkerhet, det som ble kontrollert, preparatene, kildene og versjonene er samlet i «Faglig grunnlag», som åpnes ved behov og alltid kommer med i utskriften. Teksten som kopieres, er den samme som før.',

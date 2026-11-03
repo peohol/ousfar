@@ -212,7 +212,8 @@ function Oversikt({ overskrift, ukjent, regelsett, sperrer }: { overskrift: stri
   // Hva som kan beregnes, sies bare når sperrene er lest; ellers at det kontrolleres, eller at det ikke kunne kontrolleres.
   const ukontrollert = sperrer.status === 'klar' ? null : sperrer.status
   const status = VERKTOY.map((v) => ({ verktoy: v, sperret: verktoysperrer(aktive, v).length > 0, valg: utenSperrede(snarvalg(v, regelsett), aktive, v) }))
-  const ingen = status.every((s) => s.valg.every((x) => x.status !== 'tilgjengelig'))
+  // At reglene venter på godkjenning, sies bare når det er grunnen, ikke når en nødstopp er det.
+  const ingen = VERKTOY.every((v) => snarvalg(v, regelsett).every((x) => x.status !== 'tilgjengelig'))
   const alle = aktive.filter((s) => s.omfang === 'alle')
   return (
     <>
@@ -256,10 +257,16 @@ function Oversikt({ overskrift, ukjent, regelsett, sperrer }: { overskrift: stri
   )
 }
 
-/** Oversiktens kort før sperrene er lest, og når de ikke kunne leses: da loves ingenting om hva som kan beregnes. */
-export const DEKNING_UKONTROLLERT = {
+/** Før sperrene er lest, og når de ikke kunne leses, loves ingenting om hva som kan beregnes: ikke i oversikten og ikke som snarvalg. */
+export const TILGJENGELIGHET_UKONTROLLERT = {
   henter: 'Kontrollerer tilgjengeligheten …',
-  feil: 'Kan ikke kontrollere tilgjengeligheten nå. Åpne verktøyet for å prøve igjen.',
+  feil: 'Kan ikke kontrollere tilgjengeligheten nå.',
+} as const
+
+/** Det samme i oversiktens kort, der en ny lesing skjer når verktøyet åpnes. */
+export const DEKNING_UKONTROLLERT = {
+  henter: TILGJENGELIGHET_UKONTROLLERT.henter,
+  feil: `${TILGJENGELIGHET_UKONTROLLERT.feil} Åpne verktøyet for å prøve igjen.`,
 } as const
 
 /** Det verktøyet kan gi nå, i oversiktens kort: hva som kan beregnes, og hva som bare har fagtekst. */
@@ -401,7 +408,7 @@ function Verktoyskjema({
   const aktive = sperrer.tilstand.status === 'klar' ? sperrer.tilstand.sperrer : []
   const regler = klinisk && status ? usperrede(aktive, verktoy, status.regler) : []
   const hele = verktoysperrer(aktive, verktoy)
-  // Det som er stanset av en nødstopp, tilbys ikke som tilgjengelig.
+  // Det som er stanset av en nødstopp, tilbys ikke som tilgjengelig, og ingenting tilbys før sperrene er lest.
   const snarvalgene = utenSperrede(alleSnarvalg, aktive, verktoy)
 
   return (
@@ -433,7 +440,14 @@ function Verktoyskjema({
             )}
           </div>
         </fieldset>
-        <Snarvalgliste valg={snarvalgene} valgt={valg} onVelg={velg} />
+        {sperrer.tilstand.status === 'klar' ? (
+          <Snarvalgliste valg={snarvalgene} valgt={valg} onVelg={velg} />
+        ) : (
+          <p className="verktoyside__hint" data-ukontrollert={sperrer.tilstand.status}>
+            {sperrer.tilstand.status === 'henter' && <Lastesirkel />}
+            {TILGJENGELIGHET_UKONTROLLERT[sperrer.tilstand.status]}
+          </p>
+        )}
       </form>
 
       {hele.length > 0 && <Sperremelding sperrer={hele} regelsett={regelsett} />}
