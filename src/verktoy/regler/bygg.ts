@@ -5,6 +5,7 @@
  * ord, med sted i kilden (`kilder.ts`).
  */
 import type { Disposisjon, Vurdertregel } from './godkjenning'
+import type { Faktumrettelse } from './rettelse'
 import type { Avklaring, Begrunnelseskrav, Godkjenningssteg, Kildehenvisning, Parameter, Parameterart, Utsagn } from './modell'
 
 export const h = (kilde: string, sted: string, faktum: string): Kildehenvisning => ({ kilde, sted, faktum })
@@ -79,7 +80,8 @@ export const NICE = {
 export const RCPSYCH = {
   tid: h('rcpsych-stopping', 'How should I gradually reduce my dose?', 'Et første trinn kan være en firedel eller halvdel av dosen, med to til fire uker før neste; tiden mellom trinnene bør være så lang som seponeringssymptomene krever.'),
   smaa: h('rcpsych-stopping', 'How should I gradually reduce my dose?', 'Gir et trinn ubehagelige symptomer, går man tilbake til siste gode dose og fortsetter senere med mindre trinn, for eksempel 10 % eller 5 %.'),
-  langvarig: h('rcpsych-stopping', 'If you have been taking antidepressants for longer', 'Etter mange måneders bruk, etter plagsomme seponeringssymptomer tidligere eller med et høyrisikostoff er små trinn fra start best, for eksempel 5–10 % av dosen.'),
+  langvarig: h('rcpsych-stopping', 'If you have been taking antidepressants for longer', 'Etter mange måneders behandling, tidligere plagsomme seponeringssymptomer eller bruk av et legemiddel med høy risiko for seponeringssymptomer anbefaler RCPsych små reduksjoner fra starten. Som eksempel nevnes 5–10 % av den opprinnelige dosen.'),
+  proporsjonal: h('rcpsych-stopping', 'Examples of tapering plans', 'Andre deler av veiledningen beskriver også proporsjonale reduksjoner beregnet fra sist brukte dose.'),
   fluoksetin: h('rcpsych-stopping', 'If you have been taking antidepressants for longer', 'Langtidsvirkende stoffer som fluoksetin kan gi seponeringssymptomer dager til uker etter en reduksjon; det er best å vente minst fire uker før neste.'),
   fireUker: h('rcpsych-stopping', 'When and how should I stop my antidepressants?', 'Selv etter kort bruk og uten seponeringssymptomer er det best å trappe ned over minst fire uker; etter lang bruk vanligvis over måneder eller lenger.'),
   lavDose: h('rcpsych-stopping', 'When and how should I stop my antidepressants?', 'Trinnene blir mindre etter hvert som dosen synker, og noen trenger svært lave doser før de slutter, helt ned mot 2 % av opprinnelig dose.'),
@@ -87,6 +89,28 @@ export const RCPSYCH = {
   middelsRisiko: h('rcpsych-stopping', 'Appendix 1', 'Middels potensiell risiko har blant andre amitriptylin, bupropion, citalopram, escitalopram, fluoksetin, fluvoksamin, klomipramin, nortriptylin og sertralin; lav har blant andre vortioksetin.'),
   plan: h('rcpsych-stopping', 'Which plan should I follow?', 'Planene er utgangspunkt som tilpasses underveis: om lag 50 % per trinn hver 2.–4. uke ved middels eller lavere risiko, og om lag 10 % ved høyest risiko.'),
 }
+
+/**
+ * Fakta slik de stod da reglene som viser til dem, ble vurdert. Reglene bygges
+ * fortsatt med dem, slik at de tidligere godkjenningene og disposisjonene kan
+ * etterprøves mot nøyaktig innholdet de gjaldt; `FAKTUMRETTELSER` gir reglene
+ * deretter en ny versjon med det rettede faktumet (`rettelse.ts`). En ny regel
+ * bruker de gjeldende faktaene over.
+ */
+export const RCPSYCH_TIDLIGERE = {
+  langvarig: h('rcpsych-stopping', 'If you have been taking antidepressants for longer', 'Etter mange måneders bruk, etter plagsomme seponeringssymptomer tidligere eller med et høyrisikostoff er små trinn fra start best, for eksempel 5–10 % av dosen.'),
+}
+
+/** Rettelsene av fakta i regler som allerede er vurdert, i rekkefølge. Bare tillegg: en registrert rettelse endres eller fjernes ikke. */
+export const FAKTUMRETTELSER: readonly Faktumrettelse[] = [
+  {
+    fra: RCPSYCH_TIDLIGERE.langvarig,
+    til: [RCPSYCH.langvarig, RCPSYCH.proporsjonal],
+    dato: '2026-11-03',
+    grunn:
+      'Faktumet fra RCPsych om små reduksjoner fra starten er presisert etter kontrollørens vurdering 03.11.2026 (ChatGPT, `docs/verktøy-kildefunn-1-2.md` §8): kilden regner 5–10 % av den opprinnelige dosen, og andre deler av veiledningen beskriver proporsjonale reduksjoner fra sist brukte dose. Kontrollørens formulering er delt i to fakta med hvert sitt sted i kilden. Ingen verdi, betingelse, beregning eller annen tekst i regelen er endret; den nye versjonen må kontrolleres på nytt.',
+  },
+]
 
 /* --- Felles forslag ----------------------------------------------------------------------- */
 

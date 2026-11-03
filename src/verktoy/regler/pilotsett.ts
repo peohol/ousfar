@@ -22,7 +22,7 @@
  * som forslag til de er avklart; eksemplene er regnet ut for hånd og
  * kontrolleres av testene mot beregningen.
  */
-import { fluoksetinTrinn28, FORUTSETNINGER_FELLES, forslag, h, halvering, kilde, leveransen, minst14, NICE, planhorisont, pn, RCPSYCH, steg, trinn14, utsagn, vurdert } from './bygg'
+import { fluoksetinTrinn28, FORUTSETNINGER_FELLES, forslag, h, halvering, kilde, leveransen, minst14, NICE, planhorisont, pn, RCPSYCH, RCPSYCH_TIDLIGERE, steg, trinn14, utsagn, vurdert } from './bygg'
 import { disponer } from './godkjenning'
 import type { Avklaring, Bekreftelse, Godkjenning, Godkjenningssteg, Regel, Regelsett, Sporsmal, Unntak } from './modell'
 import { REGELMODELLVERSJON } from './modell'
@@ -370,7 +370,7 @@ const kryssSertralinMirtazapin: Regel = {
     {
       id: 'tidligere_seponeringssymptomer',
       tekst: 'Et tidligere forsøk på å trappe ned eller seponere sertralin har gitt seponeringssymptomer eller mislyktes. Da passer ikke den faste kryssnedtrappingen, og byttet planlegges individuelt med mindre trinn.',
-      grunnlag: { type: 'kilde', henvisninger: [NICE.tidligere, RCPSYCH.langvarig] },
+      grunnlag: { type: 'kilde', henvisninger: [NICE.tidligere, RCPSYCH_TIDLIGERE.langvarig] },
     },
   ] satisfies Unntak[],
   sporsmal: [
@@ -379,7 +379,7 @@ const kryssSertralinMirtazapin: Regel = {
       tekst: 'Har pasienten brukt sertralin i mange måneder eller lenger?',
       ja: 'lang behandlingstid',
       krever_begrunnelse: true,
-      grunnlag: { type: 'kilde', henvisninger: [RCPSYCH.langvarig, NICE.bytte] },
+      grunnlag: { type: 'kilde', henvisninger: [RCPSYCH_TIDLIGERE.langvarig, NICE.bytte] },
     },
   ] satisfies Sporsmal[],
   beregnbarhet: 'beregnbar_etter_avklaring',
@@ -401,12 +401,12 @@ const kryssSertralinMirtazapin: Regel = {
         'At dette er et bytte, kan begrunne raskere nedtrapping enn ved seponering, men ikke samme tempo for alle (kontrollrunden 30.10.2026). Etter tidligere seponeringssymptomer stopper regelen; ved lang behandlingstid krever halvering hver 14. dag en skriftlig begrunnelse, ellers planlegges byttet individuelt.',
         NICE.bytte,
         NICE.tidligere,
-        RCPSYCH.langvarig,
+        RCPSYCH_TIDLIGERE.langvarig,
       ),
       utsagn(
         'Lang behandlingstid er utenfor det kliniske omfanget (kontrollørens gjennomgang av d6cc3dd 31.10.2026): også med en begrunnelse gir regelen da ingen klinisk plan, og byttet planlegges individuelt med langsommere, symptomstyrt nedtrapping. Det kliniske omfanget er bare sertralin 50 eller 100 mg ved kort behandlingstid, med tablettene og styrkene i FEST som er kontrollert.',
         NICE.tempo,
-        RCPSYCH.langvarig,
+        RCPSYCH_TIDLIGERE.langvarig,
       ),
     ],
     forutsetninger: [...FORUTSETNINGER_FELLES],
@@ -451,7 +451,7 @@ const kryssSertralinMirtazapin: Regel = {
       type: 'ousfar_vurdering',
       begrunnelse:
         'En klinisk godkjenning kan bare gjelde startforløpet fra sertralin 50 eller 100 mg ved kort behandlingstid, med tabletter (FEST-form 53) for begge virkestoffene og styrkene i FEST som er verifisert ende til ende. Lang behandlingstid er utenfor, også med begrunnelse, og det samme er en annen trinnlengde enn 14 dager.',
-      henvisninger: [NICE.tempo, RCPSYCH.langvarig],
+      henvisninger: [NICE.tempo, RCPSYCH_TIDLIGERE.langvarig],
       avklaring: {
         dato: RUNDE_9.dato,
         av: KONTROLLOR,

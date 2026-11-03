@@ -25,7 +25,7 @@ import { festkoblinger, KARTLEGGING, VERKTOY } from '../register'
 import { usperrede, verktoysperrer, type Verktoysperre } from '../sperrer'
 import { REGELSETT, tilgjengelighet, type Regelstatus, type Verktoyvalg } from '../tilgjengelighet'
 import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from './aksepttest'
-import type { Regel } from './modell'
+import type { Godkjenningssteg, Regel, Regelsett } from './modell'
 import { STI } from './nedtrapping'
 
 export const PILOTMATRISEFIL = 'docs/verktøy-p11-testmatrise.md'
@@ -113,8 +113,36 @@ export type Uttrekkene = Record<Uttrekksnavn, Festuttrekk>
 /** Kasusene beregnes noen timer etter at FEST-kopien ble kontrollert, godt innenfor grensen på 48 timer. */
 export const STANDARD_TIMER = 6
 
-const regelMedId = (id: string) => {
-  const r = REGELSETT.regler.find((x) => x.id === id)
+/** Én regelversjon kontrolløren bes vurdere: nøyaktig versjonen og innholdet (fingeravtrykket). */
+export interface Kontrollregel {
+  id: string
+  versjon: number
+  fingeravtrykk: string
+}
+
+export const SIMULERT_KONTROLLOR = 'Simulert kontrollør (bare i kontrollgrunnlaget, ingen godkjenning)'
+
+/**
+ * Gir regelen en simulert klinisk godkjenning av nøyaktig versjonen og
+ * fingeravtrykket under kontroll, for å vise kontrolløren hva verktøyet ville
+ * vist om den ble godkjent. Bare på en kopi i et kontrollgrunnlag; er regelen
+ * endret, stemmer ikke fingeravtrykket, og ingen plan vises.
+ */
+export function simulerGodkjenning(r: Regel, k: Kontrollregel, dato: string): void {
+  const steg: Godkjenningssteg = {
+    status: 'klinisk_godkjent',
+    dato,
+    av: SIMULERT_KONTROLLOR,
+    rolle: 'uavhengig_kontrollor',
+    regelversjon: k.versjon,
+    fingeravtrykk: k.fingeravtrykk,
+    merknad: 'Simulert for å vise hva verktøyet ville vist; ingen klinisk godkjenning.',
+  }
+  r.godkjenning = { status: 'klinisk_godkjent', historikk: [...r.godkjenning.historikk, steg] }
+}
+
+const regelMedId = (id: string, sett: Regelsett = REGELSETT) => {
+  const r = sett.regler.find((x) => x.id === id)
   if (!r) throw new Error(`Regelen ${id} finnes ikke.`)
   return r
 }
@@ -149,17 +177,21 @@ const planlinjer = (tekst: string, undertittel: string | null) => {
   return slutt < 0 ? linjer : linjer.slice(0, slutt)
 }
 
-/** Kasuset gjennom den samme veien som verktøysiden, med utfallet brukeren ville sett. */
-export function kjorKasus(k: Pilotkasus, uttrekkene: Uttrekkene): Pilotutfall & { resultat?: Doseplanresultat; tekst?: string } {
+/**
+ * Kasuset gjennom den samme veien som verktøysiden, med utfallet brukeren
+ * ville sett. `sett` er regelsettet appen bruker, eller en kopi med andre
+ * regelversjoner når et kontrollgrunnlag sammenligner dem.
+ */
+export function kjorKasus(k: Pilotkasus, uttrekkene: Uttrekkene, sett: Regelsett = REGELSETT): Pilotutfall & { resultat?: Doseplanresultat; tekst?: string } {
   const verktoy = VERKTOY.find((v) => v.id === k.verktoy)
   if (!verktoy) throw new Error(`Verktøyet ${k.verktoy} finnes ikke.`)
   const sperrer = k.sperrer ?? []
   let regel: Regel | undefined
   if (k.regel) {
-    regel = structuredClone(regelMedId(k.regel.id))
+    regel = structuredClone(regelMedId(k.regel.id, sett))
     k.regel.endre?.endre(regel)
   } else {
-    const t = tilgjengelighet(verktoy, k.valg)
+    const t = tilgjengelighet(verktoy, k.valg, sett)
     if (t.status !== 'tilgjengelig' && t.status !== 'fagtekst') return { utfall: 'ingen', status: t.status, grunner: t.grunner }
     const regler = usperrede(sperrer, verktoy, t.regler)
     if (verktoysperrer(sperrer, verktoy).length > 0 || regler.length === 0) return { utfall: 'sperret' }

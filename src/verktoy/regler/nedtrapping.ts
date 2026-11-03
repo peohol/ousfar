@@ -52,7 +52,7 @@
  * gjengir teksten der.
  */
 import { kravtekst, omradetekst } from './beregning'
-import { FORUTSETNINGER_FELLES, forslag, h, kilde, leveransen, NICE, planhorisont, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, pn, RCPSYCH, steg, utsagn, vurdert } from './bygg'
+import { FORUTSETNINGER_FELLES, forslag, h, kilde, leveransen, NICE, planhorisont, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, pn, RCPSYCH, RCPSYCH_TIDLIGERE, steg, utsagn, vurdert } from './bygg'
 import { disponer } from './godkjenning'
 import type { Avklaring, Begrunnelseskrav, Bekreftelse, Fase, Forlop, Godkjenningssteg, Grunnlag, Inndatakrav, Kildehenvisning, Kliniskomfang, Nedtrappingsstrategi, Parameter, Regel, Regelsett, Regneeksempel, Sporsmal, Unntak, Utsagn } from './modell'
 import { REGELMODELLVERSJON } from './modell'
@@ -335,7 +335,7 @@ const tidligereVurdert = (versjon: number): Bekreftelse => ({
   id: TIDLIGERE_VURDERT_ID,
   tekst:
     'Et tidligere forsøk på å trappe ned eller seponere dette legemidlet har gitt symptomer som forskriveren har vurdert som seponeringssymptomer, ikke tilbakefall, bivirkninger eller andre årsaker.',
-  grunnlag: vurdering('Den langsomme varianten gjelder bare når de tidligere symptomene virkelig var seponeringssymptomer; det kan ikke utledes av dosen.', [NICE.tidligere, RCPSYCH.langvarig], runde2(versjon, 'langsom')),
+  grunnlag: vurdering('Den langsomme varianten gjelder bare når de tidligere symptomene virkelig var seponeringssymptomer; det kan ikke utledes av dosen.', [NICE.tidligere, RCPSYCH_TIDLIGERE.langvarig], runde2(versjon, 'langsom')),
 })
 
 /** Unntaket i hovedregelen: etter seponeringssymptomer ved et tidligere forsøk gjelder den langsomme varianten. */
@@ -345,7 +345,7 @@ const tidligereSymptomer = (versjon: number): Unntak => ({
   tekst: 'Et tidligere forsøk på å trappe ned eller seponere dette legemidlet har gitt seponeringssymptomer eller mislyktes; da gjelder den langsomme varianten av regelen.',
   grunnlag: vurdering(
     'NICE og RCPsych anbefaler mer støtte og langsommere nedtrapping med mindre trinn for disse pasientene; den langsomme varianten har 1–5 % per trinn og minst 28 dager.',
-    [NICE.tidligere, NICE.alvorlig, RCPSYCH.langvarig],
+    [NICE.tidligere, NICE.alvorlig, RCPSYCH_TIDLIGERE.langvarig],
     runde2(versjon, 'langsom'),
   ),
 })
@@ -388,7 +388,7 @@ export const LANG_BEHANDLINGSTID: Sporsmal = {
   id: 'lang_behandlingstid',
   tekst: 'Har pasienten brukt legemidlet i mange måneder eller lenger?',
   ja: 'lang behandlingstid',
-  grunnlag: { type: 'kilde', henvisninger: [RCPSYCH.langvarig, RCPSYCH.fireUker, NICE.halveringstid] },
+  grunnlag: { type: 'kilde', henvisninger: [RCPSYCH_TIDLIGERE.langvarig, RCPSYCH.fireUker, NICE.halveringstid] },
 }
 
 /** Spørsmålet om dosen er utenfor rammen for indikasjonen eller pasientgruppen; et ja krever begrunnelse (beslutning 5.5). */
@@ -465,7 +465,7 @@ const HOY: Risikogruppe = {
     omrade: [5, 10],
     begrunnelse:
       'Høyest potensiell risiko for seponeringssymptomer (RCPsych): 10 % av aktuell dose per trinn, og forskriveren kan velge 5–10 %. Større reduksjoner er utenfor regelen og krever en individuelt utarbeidet plan.',
-    henvisninger: [RCPSYCH.hoyRisiko, RCPSYCH.plan, RCPSYCH.langvarig],
+    henvisninger: [RCPSYCH.hoyRisiko, RCPSYCH.plan, RCPSYCH_TIDLIGERE.langvarig],
   },
   dager: {
     standard: 28,
@@ -492,7 +492,7 @@ const MIDDELS: Risikogruppe = {
     minst: 14,
     begrunnelseUnderVedLang: 28,
     begrunnelse: 'Minst 14 dager per trinn, uten klinisk fastsatt øvre grense; standard 28. Kortere trinn enn 28 dager etter lang behandlingstid krever begrunnelse.',
-    henvisninger: [RCPSYCH.tid, RCPSYCH.langvarig, NICE.tempo],
+    henvisninger: [RCPSYCH.tid, RCPSYCH_TIDLIGERE.langvarig, NICE.tempo],
   },
   lavtTrinn: true,
 }
@@ -522,7 +522,7 @@ const LAV: Risikogruppe = {
     ...MIDDELS.prosent,
     begrunnelse:
       'Lav potensiell risiko (RCPsych) og lang halveringstid: 25 % av aktuell dose per trinn som standard ved kort behandlingstid; forskriveren kan velge 5–50 %, og over 25 % krever begrunnelse. Etter lang behandlingstid er forslaget 10 %, og mer enn 10 % krever begrunnelse (kontrollørens gjennomgang av d6cc3dd).',
-    henvisninger: [RCPSYCH.middelsRisiko, RCPSYCH.plan, RCPSYCH.tid, RCPSYCH.langvarig],
+    henvisninger: [RCPSYCH.middelsRisiko, RCPSYCH.plan, RCPSYCH.tid, RCPSYCH_TIDLIGERE.langvarig],
   },
   langOver: 10,
   dager: MIDDELS.dager,
@@ -537,13 +537,13 @@ const LANGSOM: Risikogruppe = {
     omrade: [1, 5],
     begrunnelse:
       'Etter seponeringssymptomer ved et tidligere forsøk: 5 % av aktuell dose per trinn, og forskriveren kan velge 1–5 %. Større reduksjoner er utenfor varianten. Dosene må kunne gis; et trinn som ikke kan gis, stopper planen, med mindre forskriveren velger en dose som kan gis, med faktisk reduksjon på 1–5 %.',
-    henvisninger: [RCPSYCH.langvarig, RCPSYCH.smaa, NICE.tidligere, NICE.alvorlig],
+    henvisninger: [RCPSYCH_TIDLIGERE.langvarig, RCPSYCH.smaa, NICE.tidligere, NICE.alvorlig],
   },
   dager: {
     standard: 28,
     minst: 28,
     begrunnelse: 'Minst 28 dager per trinn etter tidligere seponeringssymptomer, uten klinisk fastsatt øvre grense; lengre intervaller kan velges.',
-    henvisninger: [RCPSYCH.tid, RCPSYCH.langvarig, NICE.tempo],
+    henvisninger: [RCPSYCH.tid, RCPSYCH_TIDLIGERE.langvarig, NICE.tempo],
   },
   lavtTrinn: false,
 }
@@ -557,7 +557,7 @@ function reduksjon(g: Risikogruppe, avklaring: Avklaring, versjon: number): Para
             over: g.prosent.begrunnelseOver,
             grunnlag: vurdering(
               `Større reduksjoner enn ${g.prosent.begrunnelseOver} % krever dokumentert begrunnelse, særlig om behandlingstid og tidligere toleranse, fordi regelen ikke vet hvor lenge pasienten har brukt legemidlet.`,
-              [RCPSYCH.plan, RCPSYCH.langvarig],
+              [RCPSYCH.plan, RCPSYCH_TIDLIGERE.langvarig],
               avklaring,
             ),
           },
@@ -570,7 +570,7 @@ function reduksjon(g: Risikogruppe, avklaring: Avklaring, versjon: number): Para
             ved: LANG_BEHANDLINGSTID.id,
             grunnlag: vurdering(
               'Etter lang behandlingstid bør reduksjonen vanligvis være 5–10 % (RCPsych, fagvurderingen 29.10.2026); mer krever begrunnelse, så et raskere valg aldri står som likeverdig standard.',
-              [RCPSYCH.langvarig],
+              [RCPSYCH_TIDLIGERE.langvarig],
               g === FLUOKSETIN ? runde3(versjon, 'fluoksetinLang') : g === LAV ? runde9(versjon, 'vortioksetinLang') : runde2(versjon, 'langOver'),
             ),
           },
@@ -593,7 +593,7 @@ function reduksjon(g: Risikogruppe, avklaring: Avklaring, versjon: number): Para
       verdi: g.langOver,
       grunnlag: vurdering(
         `Etter lang behandlingstid er 5–10 % per trinn det foretrukne utgangspunktet (RCPsych), så forslaget er ${g.langOver} % i stedet for ${g.prosent.standard} %. Et større trinn er et synlig, begrunnet avvik fra det, aldri et likeverdig standardforslag. Et konservativt OUSFAR-valg, ikke en empirisk validert terskel.`,
-        [RCPSYCH.langvarig],
+        [RCPSYCH_TIDLIGERE.langvarig],
         g === LAV ? runde9(versjon, 'vortioksetinLang') : runde5(versjon, 'langStandard'),
       ),
     },
@@ -613,7 +613,7 @@ function dagerPerTrinn(g: Risikogruppe, avklaring: Avklaring): Parameter {
         {
           under: krav,
           ved: LANG_BEHANDLINGSTID.id,
-          grunnlag: vurdering(`Kortere trinn enn ${krav} dager etter lang behandlingstid krever begrunnelse; etter lang bruk anbefaler RCPsych langsommere nedtrapping.`, [RCPSYCH.langvarig, RCPSYCH.tid], avklaring),
+          grunnlag: vurdering(`Kortere trinn enn ${krav} dager etter lang behandlingstid krever begrunnelse; etter lang bruk anbefaler RCPsych langsommere nedtrapping.`, [RCPSYCH_TIDLIGERE.langvarig, RCPSYCH.tid], avklaring),
         },
       ],
     }),
@@ -1019,13 +1019,13 @@ function seponeringsregel(s: Stoffregel, langsom = false): Regel {
           ? utsagn(
               'Varianten gjelder når et tidligere forsøk har gitt seponeringssymptomer: 1–5 % per trinn (standard 5 %) og minst 28 dager, og dosene må kunne gis. Forskriveren må vurdere og bekrefte at de tidligere symptomene virkelig var seponeringssymptomer.',
               NICE.tidligere,
-              RCPSYCH.langvarig,
+              RCPSYCH_TIDLIGERE.langvarig,
             )
           : utsagn(
               'Planen er et startforslag som forskriveren må bekrefte, og forskriveren må oppgi om behandlingstiden er lang. Forskriveren kan velge mindre trinn eller lengre tid innenfor områdene over; et raskere valg krever begrunnelse, og valget og begrunnelsen vises i planen. Har et tidligere forsøk gitt seponeringssymptomer, gjelder den langsomme varianten.',
               NICE.tempo,
               NICE.tidligere,
-              RCPSYCH.langvarig,
+              RCPSYCH_TIDLIGERE.langvarig,
             ),
         ...fellesTilpasninger(langsom ? PLANHORISONT_LANGSOM : PLANHORISONT_TRINN),
         ...(s.tilpasninger ?? []),

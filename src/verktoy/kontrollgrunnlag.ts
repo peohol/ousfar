@@ -20,20 +20,15 @@ import type { Trinnvalg } from './motor/plan'
 import { norskDato } from './motor/byggesteiner'
 import { valgtekst } from './regler/aksepttest'
 import { fingeravtrykk, godkjenningsfeil, KONTROLLUTFALL, kontrollutfall } from './regler/godkjenning'
-import type { Godkjenningssteg, Klinisktilfelle, Regel } from './regler/modell'
+import type { Klinisktilfelle, Regel } from './regler/modell'
 import { NEDTRAPPINGSDISPOSISJON, STI } from './regler/nedtrapping'
-import { avregistrert, avvikFra, kjorKasus, nyStyrke, type Pilotkasus, type Pilotutfall, type Uttrekkene } from './regler/pilotmatrise'
+import { avregistrert, avvikFra, kjorKasus, type Kontrollregel, nyStyrke, type Pilotkasus, type Pilotutfall, SIMULERT_KONTROLLOR, simulerGodkjenning, type Uttrekkene } from './regler/pilotmatrise'
 import { grunnlag, liste, tabell, tall, utsagn } from './regler/rapport'
 import { EN_FORSTE_REDUKSJON, STARTFORLOP } from './planvisning'
 import { tilfelletekst, UTENFOR_OMFANG } from './motor/plan'
 import { REGELSETT, type Verktoyvalg } from './tilgjengelighet'
 
-/** Én regelversjon kontrolløren bes vurdere: nøyaktig versjonen og innholdet (fingeravtrykket). */
-export interface Kontrollregel {
-  id: string
-  versjon: number
-  fingeravtrykk: string
-}
+export { type Kontrollregel, SIMULERT_KONTROLLOR }
 
 export interface Kontrollsporsmal {
   nr: string
@@ -72,32 +67,13 @@ export interface Kontrollforslag {
 
 /* --- Den simulerte godkjenningen ------------------------------------------------ */
 
-export const SIMULERT_KONTROLLOR = 'Simulert kontrollør (bare i kontrollgrunnlaget, ingen godkjenning)'
-
 /**
  * Regelen på en kopi med en simulert klinisk godkjenning av nøyaktig
  * versjonen og fingeravtrykket under kontroll, til `regel` i et kasus. Er
  * regelen endret, stemmer ikke fingeravtrykket, og ingen plan vises.
  */
 export function somGodkjent(k: Kontrollregel, dato: string): NonNullable<Pilotkasus['regel']> {
-  return {
-    id: k.id,
-    endre: {
-      hva: `simulert klinisk godkjenning av versjon ${k.versjon}, bare på en kopi`,
-      endre: (r: Regel) => {
-        const steg: Godkjenningssteg = {
-          status: 'klinisk_godkjent',
-          dato,
-          av: SIMULERT_KONTROLLOR,
-          rolle: 'uavhengig_kontrollor',
-          regelversjon: k.versjon,
-          fingeravtrykk: k.fingeravtrykk,
-          merknad: 'Simulert for å vise hva verktøyet ville vist; ingen klinisk godkjenning.',
-        }
-        r.godkjenning = { status: 'klinisk_godkjent', historikk: [...r.godkjenning.historikk, steg] }
-      },
-    },
-  }
+  return { id: k.id, endre: { hva: `simulert klinisk godkjenning av versjon ${k.versjon}, bare på en kopi`, endre: (r: Regel) => simulerGodkjenning(r, k, dato) } }
 }
 
 const regelMedId = (id: string) => {

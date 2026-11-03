@@ -48,7 +48,7 @@ import { AVSLUTNING_FELLES, avrund, beregn, kortform, MINSTE_VISTE_MG, nulldagfe
 import { erKliniskGodkjent, fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett, lesKontrollgrunnlag } from '../verktoy/regler/kontroll'
 import { apneValg, henvisninger, justerbare, nulltrinnfeil, type Beregningsinndata, type Fase, type Nedtrappingsstrategi, type Regel, type Regelsett } from '../verktoy/regler/modell'
-import { NICE, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, RCPSYCH } from '../verktoy/regler/bygg'
+import { NICE, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, RCPSYCH, RCPSYCH_TIDLIGERE } from '../verktoy/regler/bygg'
 import {
   AKUTT_ID,
   JUSTERING,
@@ -396,7 +396,7 @@ describe('Regelutkastene (P7.2)', () => {
     expect(STARTFORSLAG.tekst).toMatch(/dagene per trinn er minstetider\. Neste reduksjon gjøres først når eventuelle seponeringssymptomer er borte eller tålelige; til da forlenges trinnet/)
     expect(STARTFORSLAG.tekst).toMatch(/^Planen er et startforslag, ikke en forhåndsgodkjenning av alle reduksjonene: hvert trinn forutsetter en ny vurdering av toleransen/)
     expect(STARTFORSLAG.tekst).toMatch(/beregnes en ny plan fra dosen pasienten faktisk bruker\.$/)
-    expect(LANG_BEHANDLINGSTID.grunnlag).toEqual({ type: 'kilde', henvisninger: [RCPSYCH.langvarig, RCPSYCH.fireUker, NICE.halveringstid] })
+    expect(LANG_BEHANDLINGSTID.grunnlag).toEqual({ type: 'kilde', henvisninger: [RCPSYCH_TIDLIGERE.langvarig, RCPSYCH.fireUker, NICE.halveringstid] })
     // Unntaket, den langsomme varianten og organfunksjonen er avklart i fagkontrollen 30.10.2026.
     const c = regel('escitalopram')
     expect(c.unntak.find((u) => u.id === TIDLIGERE_SYMPTOMER_ID)!.grunnlag).toMatchObject({ type: 'ousfar_vurdering', avklaring: { dato: '2026-10-30', merknad: expect.stringMatching(/Beslutning 5\.6: en egen langsom variant/) } })
