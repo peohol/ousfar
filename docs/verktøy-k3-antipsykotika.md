@@ -1,6 +1,6 @@
 # OUSFAR Verktøy – K3: bytte av antipsykotika
 
-**Status 03.11.2026:** sju regelutkast, alle **til uavhengig faglig kontroll** og ingen klinisk godkjent. Etter kontrollørens første gjennomgang av #320 er tre av dem i versjon 2 (se §6). Appen viser derfor ingen klinisk plan for dem ennå. En godkjenning gjelder bare nøyaktig regelversjonen og fingeravtrykket i `docs/verktøy-k3-antipsykotikabytter.md`, som er laget av reglene i `src/verktoy/regler/antipsykotikabytter.ts` og viser hver regels kilder, forutsetninger, unntak og regneeksempler. Styrende plan: `docs/verktøy-klinisk-leveranseplan-2026-11.md` (K3).
+**Status 03.11.2026:** sju regelutkast, alle **til uavhengig faglig kontroll** og ingen klinisk godkjent. Appen viser derfor ingen klinisk plan for dem ennå. En godkjenning gjelder bare nøyaktig regelversjonen og fingeravtrykket i `docs/verktøy-k3-antipsykotikabytter.md`, som er laget av reglene i `src/verktoy/regler/antipsykotikabytter.ts` og viser hver regels kilder, forutsetninger, unntak og regneeksempler. Styrende plan: `docs/verktøy-klinisk-leveranseplan-2026-11.md` (K3). Etter kontrollørens første gjennomgang av #320 er tre av reglene i versjon 2 (se §6).
 
 ## 1. Hva som blir mulig
 
