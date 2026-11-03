@@ -324,6 +324,7 @@ rad i dokken og på to:
 | Gruppe | Plass | Brukes til |
 | --- | --- | --- |
 | `hoved` | `sidesok` | søket i den åpne siden |
+| | `innhold` | innholdsfortegnelsen på fagsiden, der den ikke får plass ved siden av innholdet (`docs/seksjoner.md`) |
 | | `hovedhandling` | sidens hovedhandling: «Åpne fortolkning», «Åpne fagside», «Publiser», «Ferdig» |
 | `handlinger` | `favoritt` | stjernen på fagsiden |
 | | `diskusjoner` | «Diskusjoner» (bare i dokken) |

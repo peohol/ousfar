@@ -70,6 +70,10 @@
   --rom-10: 3.5rem; /* 56 */
   /* Sidemarg. */
   --rom-side: clamp(1rem, 0.4rem + 2.6vw, 2.5rem);
+  /* Luften på sidene av scenen innholdet står i, innenfor sidemargen. */
+  --rom-scene: clamp(1rem, 4vw, 3.5rem);
+  /* Scenen for oppslagssidene: fagsidene og stoffregisteret. */
+  --bredde-infoside: 64rem;
   /* Kolonnen fortolkningsstegene står i (Atlas: 820–900 px). */
   --bredde-fortolkning: 56.25rem;
   /* Søkene i toppmenyen i bruk: rullegardinen og treffpanelet under dem, og

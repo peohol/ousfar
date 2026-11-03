@@ -318,6 +318,17 @@ function prikker(n: number): Ikondel[] {
 const REGISTER = {
   menu: { vb: 24, parts: [P('M4 7h16M4 12h16M4 17h9', 'l', 'i-ink'), C(18, 17, 2, 'f2', 'accent', 'pop')] },
   search: { vb: 24, ga: 'pulse', parts: [C(10.5, 10.5, 6.5, 'f1', 'accent'), P('M15.5 15.5 20.5 20.5', 'l', 'i-ink')] },
+  /** Innholdsfortegnelsen på en fagside: en side med punktene i den, det første valgt. */
+  innhold: {
+    vb: 24,
+    parts: [
+      R(3.5, 3, 17, 18, 2.5, 'f1', 'glass'),
+      C(7.5, 8, 1.6, 'h', 'accent', 'pop'),
+      C(7.5, 12, 1.2, 'l', 'i-line'),
+      C(7.5, 16, 1.2, 'l', 'i-line'),
+      P('M11 8h6M11 12h6M11 16h4', 'l'),
+    ],
+  },
   pagesearch: {
     vb: 24,
     parts: [

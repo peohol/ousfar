@@ -12,6 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+<<<<<<< HEAD
     versjon: '1.124.1',
     dato: '2026-11-03',
     sammendrag: 'Toppmenyen er ryddig på alle skjermbredder',
@@ -22,6 +23,17 @@ export const ENDRINGSLOGG: Endring[] = [
       'Knappene i toppmenyen legger seg ikke lenger over hverandre når vinduet er litt smalt.',
       'Når det blir trangt, blir sidens knapper først til runde ikonknapper. Er det fortsatt ikke plass, flytter de ned i menyen nederst på skjermen, slik de gjør på mobil. Søket i fagstoffet beholder alltid et brukbart felt.',
       'Menyene er litt mer gjennomskinnelige, med mindre uskarphet bak.',
+=======
+    versjon: '1.124.0',
+    dato: '2026-11-03',
+    sammendrag: 'Fagsidene har fått en innholdsfortegnelse',
+    typer: ['Funksjonalitet', 'Design / layout'],
+    omfang: 'Mindre omfang',
+    gjelder: ['stoff'],
+    punkter: [
+      'Til venstre for innholdet står en kort liste med seksjonene på fagsiden. Trykk på en seksjon for å åpne den og gå rett dit. Seksjonen som er åpen, er merket i listen.',
+      'Er skjermen for smal til listen, ligger den bak knappen «Innhold på siden» i toppmenyen, og på mobil i menyen nederst på skjermen.',
+>>>>>>> origin/main
     ],
   },
   {

@@ -6,7 +6,7 @@
  */
 
 .scene--stoffregister {
-  width: min(100%, 64rem);
+  width: min(100%, var(--bredde-infoside));
 }
 
 .stoffregisterside {
