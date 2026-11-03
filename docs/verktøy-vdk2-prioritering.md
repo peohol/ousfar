@@ -90,6 +90,8 @@ Forslag 1 og 2 kan kontrolleres straks. Forslag 3–8 kan lages som regler med d
 | 1.2 | Er en delplan som stopper ved 20 mg (amitriptylin og nortriptylin) eller 3 mg (escitalopram dråper) akseptabel når planen sier at videre nedtrapping vurderes individuelt? | Ja. Det er samme utfall som for vortioksetin, og planen går aldri til null. |
 | 1.3 | Skal amitriptylin og nortriptylin godkjennes for alle startdosene i omfanget, eller bare der første reduksjon kan gis nøyaktig eller med et valg? | Alle startdosene i omfanget. Der første reduksjon ikke kan gis, stopper planen allerede med forklaring. |
 
+**Kontrollgrunnlag (VDK-3):** `docs/verktøy-vdk3-forslag1-kontrollgrunnlag.md` viser alle planene i omfanget og gjør testkasusene under til tester (F1-01–F1-40, med K1-numrene i en egen kolonne). Ingen regel er godkjent av det.
+
 **Syntetiske testkasus** (forventet utfall fra aksepttesten, `docs/verktøy-p7-aksepttest.md`; alle med svaret nei på pasientgruppe og indikasjon, bekreftet organfunksjon og interaksjoner, og ingen tidligere seponeringsplager der ikke annet står):
 
 | ID | Inndata | Forventet |

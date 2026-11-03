@@ -12,6 +12,18 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.117.9',
+    dato: '2026-11-03',
+    sammendrag: 'Grunnlag for faglig kontroll av nedtrappingsreglene for amitriptylin, nortriptylin og escitalopram',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen eller i noen klinisk regel. Det er laget et grunnlag for uavhengig faglig kontroll av fire eksisterende nedtrappingsregler: amitriptylin, nortriptylin, escitalopram og den langsomme varianten for escitalopram.',
+      'Grunnlaget viser kildene, hvilke tilfeller en godkjenning kan gjelde, alle planene verktøyet ville vist om reglene ble godkjent, og spørsmål til kontrolløren. 40 syntetiske testeksempler kontrolleres automatisk. Ingen regel tas i bruk før den er uavhengig kontrollert og godkjent.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.117.7',
     dato: '2026-11-03',
     sammendrag: 'Oversikt over hva de kliniske verktøyene kan beregne, og plan for hvilke regler som bør gjøres ferdig først',
