@@ -534,7 +534,10 @@ Hvordan innholdet tegnes, endrer aldri hva som står der:
   `src/faginnhold/serumtabell.ts` leser de lagrede radene tilbake til den
   formen, og godtar en rad bare når teksten den ville skrevet, er nøyaktig den
   som er lagret. En rad som er redigert til noe annet, vises som en vanlig rad
-  med tekstene sine.
+  med tekstene sine. Tabellene ruller aldri sidelengs: får persentiltabellen
+  ikke plass i bredden, snus den (dosene som rader), og får heller ikke den
+  plass, vises én dose om gangen. Vanlige rader vises hver for seg når
+  tabellen ikke får plass (`useFaarPlass`).
 
 **Rikteksten** er et ProseMirror-dokument, redigert med TipTap som i Slaids.
 Tillatt er avsnitt, overskrifter i to nivåer (vist ett og to nivåer under

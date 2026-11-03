@@ -7,6 +7,7 @@ import {
   type Serumblokk,
 } from '../../faginnhold/serumtabell'
 import { fold } from '../../faginnhold/sok'
+import { useFaarPlass } from '../../hooks/useFaarPlass'
 import { Uthev } from '../Uthev'
 
 /**
@@ -18,8 +19,12 @@ import { Uthev } from '../Uthev'
  *
  * Tallene og tekstene er de lagrede, lest tilbake uten tap (`lesSerumtabell`).
  * Rader som ikke har den formen, vises som vanlige rader med kolonnene som er
- * i bruk. Tabellene er ekte HTML-tabeller med rad- og kolonneoverskrifter, og
- * på smale skjermer ruller de sidelengs med den første kolonnen stående.
+ * i bruk. Tabellene er ekte HTML-tabeller med rad- og kolonneoverskrifter.
+ *
+ * Tabellene ruller aldri sidelengs (`useFaarPlass`). Får persentiltabellen
+ * ikke plass i bredden, snus den: dosene blir rader og målene kolonner. Får
+ * heller ikke den plass, eller får de vanlige radene ikke plass, vises hver
+ * dose eller rad for seg, med navnet på målet eller kolonnen foran hver verdi.
  */
 export function Serumtabell({ rader, tittel }: { rader: readonly Doserad[]; tittel: string }) {
   return (
@@ -55,15 +60,6 @@ function Celle({ verdi }: { verdi: number | null }) {
   return <Uthev tekst={formaterTall(verdi)} />
 }
 
-/** Rullefeltet rundt en tabell. Det kan nås med tastaturet, så det kan rulles uten mus. */
-function Rull({ etikett, children }: { etikett: string; children: ReactNode }) {
-  return (
-    <div className="serumtabell__rull" role="region" aria-labelledby={etikett} tabIndex={0}>
-      {children}
-    </div>
-  )
-}
-
 const PERSENTILRADER: readonly { felt: keyof Omit<Persentilkolonne, 'dose'>; tittel: (enhet: string) => string }[] = [
   { felt: 'antall', tittel: () => 'Antall prøver' },
   { felt: 'p10', tittel: (enhet) => `10-persentil (${enhet})` },
@@ -76,10 +72,15 @@ function erSamlet(dose: string): boolean {
   return fold(dose) === 'alle'
 }
 
+/** Persentiltabellens utforminger, fra den bredeste til den smaleste. */
+const PERSENTILOPPSETT = [DoserSomKolonner, DoserSomRader, DoserHverForSeg] as const
+
 function Persentiltabell({ blokk }: { blokk: Extract<Serumblokk, { slag: 'persentiler' }> }) {
   const overskrift = useId()
+  const [boks, valgt] = useFaarPlass(PERSENTILOPPSETT.length)
+  const Oppsett = PERSENTILOPPSETT[valgt]!
   // En rad der kilden ikke har et eneste tall, tas ikke med.
-  const radene = PERSENTILRADER.filter(({ felt }) => blokk.kolonner.some((k) => k[felt] !== null))
+  const maalene = PERSENTILRADER.filter(({ felt }) => blokk.kolonner.some((k) => k[felt] !== null))
   return (
     <section className="serumtabell__del" aria-labelledby={overskrift}>
       <header className="serumtabell__hode">
@@ -87,33 +88,126 @@ function Persentiltabell({ blokk }: { blokk: Extract<Serumblokk, { slag: 'persen
           <Uthev tekst={blokk.stoff} />
         </h3>
       </header>
-      <Rull etikett={overskrift}>
-        <table className="serumtabell__tabell serumtabell__tabell--persentiler" aria-labelledby={overskrift}>
-          <thead>
-            <tr>
-              <th scope="col">Dose</th>
-              {blokk.kolonner.map((k, i) => (
-                <th key={i} scope="col" className="serumtabell__dose" data-samlet={erSamlet(k.dose) || undefined}>
-                  <Uthev tekst={k.dose} />
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {radene.map(({ felt, tittel }) => (
-              <tr key={felt} data-felt={felt}>
-                <th scope="row">{tittel(blokk.enhet)}</th>
-                {blokk.kolonner.map((k, i) => (
-                  <td key={i} data-samlet={erSamlet(k.dose) || undefined}>
-                    <Celle verdi={k[felt]} />
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </Rull>
+      <div ref={boks} className="serumtabell__ramme">
+        <Oppsett blokk={blokk} maalene={maalene} overskrift={overskrift} />
+      </div>
     </section>
+  )
+}
+
+interface Persentiloppsett {
+  blokk: Extract<Serumblokk, { slag: 'persentiler' }>
+  maalene: typeof PERSENTILRADER
+  overskrift: string
+}
+
+/** Som i kilden: én kolonne per dose og én rad per mål. */
+function DoserSomKolonner({ blokk, maalene, overskrift }: Persentiloppsett) {
+  return (
+    <table className="serumtabell__tabell serumtabell__tabell--persentiler" aria-labelledby={overskrift}>
+      <thead>
+        <tr>
+          <th scope="col">Dose</th>
+          {blokk.kolonner.map((k, i) => (
+            <th key={i} scope="col" className="serumtabell__dose" data-samlet={erSamlet(k.dose) || undefined}>
+              <Uthev tekst={k.dose} />
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {maalene.map(({ felt, tittel }) => (
+          <tr key={felt}>
+            <th scope="row">{tittel(blokk.enhet)}</th>
+            {blokk.kolonner.map((k, i) => (
+              <td key={i} data-felt={felt} data-samlet={erSamlet(k.dose) || undefined}>
+                <Celle verdi={k[felt]} />
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
+
+/** Den samme tabellen snudd, for smale flater: én rad per dose og én kolonne per mål. */
+function DoserSomRader({ blokk, maalene, overskrift }: Persentiloppsett) {
+  return (
+    <table
+      className="serumtabell__tabell serumtabell__tabell--persentiler serumtabell__tabell--snudd"
+      aria-labelledby={overskrift}
+    >
+      <thead>
+        <tr>
+          <th scope="col">Dose</th>
+          {maalene.map(({ felt, tittel }) => (
+            <th key={felt} scope="col" data-felt={felt}>
+              {tittel(blokk.enhet)}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {blokk.kolonner.map((k, i) => (
+          <tr key={i} data-samlet={erSamlet(k.dose) || undefined}>
+            <th scope="row" className="serumtabell__dose">
+              <Uthev tekst={k.dose} />
+            </th>
+            {maalene.map(({ felt }) => (
+              <td key={felt} data-felt={felt}>
+                <Celle verdi={k[felt]} />
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
+
+/** Smalest: hver dose for seg, med målene under. */
+function DoserHverForSeg({ blokk, maalene, overskrift }: Persentiloppsett) {
+  return (
+    <Stabel
+      etikett={overskrift}
+      elementer={blokk.kolonner.map((k) => ({
+        tittel: <Uthev tekst={k.dose} />,
+        samlet: erSamlet(k.dose),
+        verdier: maalene.map(({ felt, tittel }) => ({
+          felt,
+          navn: tittel(blokk.enhet),
+          verdi: <Celle verdi={k[felt]} />,
+        })),
+      }))}
+    />
+  )
+}
+
+interface Stabelelement {
+  tittel?: ReactNode
+  samlet?: boolean
+  verdier: readonly { felt: string; navn: string; verdi: ReactNode }[]
+}
+
+/** En tabell vist som en liste, ett element per rad, med navnet foran hver verdi. */
+function Stabel({ etikett, elementer }: { etikett: string; elementer: readonly Stabelelement[] }) {
+  return (
+    <ul className="serumtabell__stabel" aria-labelledby={etikett}>
+      {elementer.map(({ tittel, samlet, verdier }, i) => (
+        <li key={i} data-samlet={samlet || undefined}>
+          {tittel && <p className="serumtabell__dose">{tittel}</p>}
+          <dl>
+            {verdier.map(({ felt, navn, verdi }) => (
+              <div key={felt} data-felt={felt}>
+                <dt>{navn}</dt>
+                <dd>{verdi}</dd>
+              </div>
+            ))}
+          </dl>
+        </li>
+      ))}
+    </ul>
   )
 }
 
@@ -146,37 +240,52 @@ function Prosjekttabell({ blokk }: { blokk: Extract<Serumblokk, { slag: 'prosjek
   )
 }
 
-/** Rader som ikke er en persentiltabell, med kolonnene som faktisk er i bruk. */
+/**
+ * Rader som ikke er en persentiltabell, med kolonnene som faktisk er i bruk.
+ * Får tabellen ikke plass, vises hver rad for seg med kolonnenavnene foran.
+ */
 function Radtabell({ rader, tittel }: { rader: readonly Doserad[]; tittel: string }) {
   const overskrift = useId()
+  const [boks, valgt] = useFaarPlass(2)
   const kolonner = DOSEKOLONNER.filter(({ felt }) => rader.some((rad) => rad[felt] !== ''))
   return (
-    <Rull etikett={overskrift}>
-      <table className="serumtabell__tabell serumtabell__tabell--rader" aria-labelledby={overskrift}>
-        <caption id={overskrift} className="kun-skjermleser">
-          {tittel}
-        </caption>
-        <thead>
-          <tr>
-            {kolonner.map(({ felt, tittel: kolonne }) => (
-              <th key={felt} scope="col">
-                {kolonne}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rader.map((rad, i) => (
-            <tr key={i}>
-              {kolonner.map(({ felt }) => (
-                <td key={felt}>
-                  <Uthev tekst={rad[felt]} />
-                </td>
+    <div ref={boks} className="serumtabell__ramme">
+      <span id={overskrift} className="kun-skjermleser">
+        {tittel}
+      </span>
+      {valgt === 0 ? (
+        <table className="serumtabell__tabell serumtabell__tabell--rader" aria-labelledby={overskrift}>
+          <thead>
+            <tr>
+              {kolonner.map(({ felt, tittel: kolonne }) => (
+                <th key={felt} scope="col">
+                  {kolonne}
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </Rull>
+          </thead>
+          <tbody>
+            {rader.map((rad, i) => (
+              <tr key={i}>
+                {kolonner.map(({ felt }) => (
+                  <td key={felt}>
+                    <Uthev tekst={rad[felt]} />
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <Stabel
+          etikett={overskrift}
+          elementer={rader.map((rad) => ({
+            verdier: kolonner
+              .filter(({ felt }) => rad[felt] !== '')
+              .map(({ felt, tittel: navn }) => ({ felt, navn, verdi: <Uthev tekst={rad[felt]} /> })),
+          }))}
+        />
+      )}
+    </div>
   )
 }
