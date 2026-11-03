@@ -309,6 +309,11 @@ const fortsetterMedDose = (f: Doseplanresultat & { status: 'doseplan' }, id: str
   const siste = x.perioder.at(-1)
   return (siste !== undefined && siste.til === null && siste.mg > 0) || x.injeksjoner.some((i) => i.vedlikehold && i.mg > 0)
 }
+/** Det eksisterende legemidlet i et tillegg: uendret (ingen beregnede perioder) eller fortsetter med dose. */
+const fortsetterUendret = (f: Doseplanresultat & { status: 'doseplan' }, id: string | undefined) => {
+  const x = f.forlop.find((y) => y.id === id)
+  return (x !== undefined && x.siste_dosedag === null && x.perioder.length === 0 && x.injeksjoner.length === 0) || fortsetterMedDose(f, id)
+}
 const seponeres = (f: Doseplanresultat & { status: 'doseplan' }, id: string | undefined) => {
   const x = f.forlop.find((y) => y.id === id)
   return x !== undefined && x.siste_dosedag !== null && !x.avslutning
@@ -317,13 +322,14 @@ const seponeres = (f: Doseplanresultat & { status: 'doseplan' }, id: string | un
 /**
  * Om planen når sluttmålet, avgjort av planens forløp alene:
  * nedtrapping → seponert; bytte → det gamle seponert og det nye fortsetter
- * med dose; tillegg → begge fortsetter med dose.
+ * med dose; tillegg → det eksisterende fortsetter (uendret) og det nye
+ * fortsetter med dose.
  */
 export function komplett(regel: Regel, r: Doseplanresultat): boolean {
   if (r.status !== 'doseplan') return false
   const fra = fraForlop(regel)?.id
   if (!regel.til) return r.forlop.every((x) => seponeres(r, x.id))
-  if (regel.plan.form === ('tillegg' as string)) return r.forlop.every((x) => fortsetterMedDose(r, x.id))
+  if (regel.plan.form === ('tillegg' as string)) return fortsetterUendret(r, fra) && fortsetterMedDose(r, tilForlop(regel)?.id)
   return seponeres(r, fra) && fortsetterMedDose(r, tilForlop(regel)?.id)
 }
 
