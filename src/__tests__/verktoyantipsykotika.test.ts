@@ -1,7 +1,7 @@
 /**
  * K3: bytte av antipsykotika (`docs/verktøy-k3-antipsykotika.md`).
  *
- * - De fem regelutkastene består kontrollene (kilder, kildeoppføringer og
+ * - De sju regelutkastene består kontrollene (kilder, kildeoppføringer og
  *   regneeksempler), står til uavhengig faglig kontroll og er ikke klinisk
  *   godkjent; verktøysiden gir derfor ingen klinisk plan for dem.
  * - Med en simulert godkjenning av nøyaktig versjonen og fingeravtrykket gir
@@ -210,6 +210,16 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
     ])
     expect(grunner(kjor('antipsykotikabytte-risperidon-aripiprazol', '4', { ...TO_TABLETTER, maldose: '10' }, { ubesvart: ['cyp_aripiprazol'] }))).toMatch(/CYP3A4- eller CYP2D6-hemmer/)
     expect(kjor('antipsykotikabytte-risperidon-aripiprazol', '20', { ...TO_TABLETTER, maldose: '10' }).utfall).not.toBe('plan')
+  })
+
+  it('til aripiprazol: 25 % av startdosen per trinn gir bare plan når hvert trinn kan gis nøyaktig (ingen avrunding)', () => {
+    // TARC 2018 gir ingen avrundingsregel; et trinn som ikke kan gis, stopper (åpent spørsmål i fagnotatet §6).
+    const TO_TABLETTER = { formvalg: { fra: TABLETTER, til: TABLETTER } }
+    const utfall = (id: Regelid, dose: number, maldose: string) => kjor(id, String(dose), { ...TO_TABLETTER, maldose }).utfall
+    expect([5, 7.5, 10, 12.5, 15, 17.5, 20].filter((d) => utfall('antipsykotikabytte-olanzapin-aripiprazol', d, '15') === 'plan')).toEqual([10, 20])
+    expect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16].filter((d) => utfall('antipsykotikabytte-risperidon-aripiprazol', d, '10') === 'plan')).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 16])
+    expect(grunner(kjor('antipsykotikabytte-olanzapin-aripiprazol', '5', { ...TO_TABLETTER, maldose: '15' }))).toMatch(/den ideelle dosen 3,75 mg kan ikke gis/)
+    expect(grunner(kjor('antipsykotikabytte-risperidon-aripiprazol', '10', { ...TO_TABLETTER, maldose: '10' }))).toMatch(/den ideelle dosen 7,5 mg kan ikke gis/)
   })
 
   it('byttene til aripiprazol gir ingen plan før de åpne valgene er avklart, selv med godkjenning', () => {
