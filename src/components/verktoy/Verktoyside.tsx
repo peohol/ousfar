@@ -37,11 +37,15 @@ import {
   LES_SPERRENE_HVER_MS,
   LESEFRIST_MS,
   medFrist,
+  NYE_FORSOK_MS,
   OMFANGSTEKST,
+  PLAN_TATT_BORT,
   SPERRENE_GJELDER_MS,
   SPERRET,
   UKONTROLLERT,
+  UTEN_NETT,
   usperrede,
+  utenForbindelse,
   verktoysperrer,
   type Verktoysperre,
   type Verktoysperreleser,
@@ -73,6 +77,11 @@ import '../../styles/verktoy.css'
 /** Hvor ofte en plan som står, kontrolleres mot klokken: FEST-kopiens alder og dagen. */
 const KONTROLLER_PLANEN_MS = 60_000
 
+/** Feiler hentingen fra FEST når forskriveren beregner, prøves den én gang til etter så lenge før feilen vises (K6). */
+export const FEST_NYTT_FORSOK_MS = 2_000
+
+const vent = (ms: number) => new Promise<void>((ok) => window.setTimeout(ok, ms))
+
 export interface VerktoysideProps {
   /** Verktøyets ID fra adressen; uten den vises oversikten. */
   verktoy?: string
@@ -96,8 +105,12 @@ export interface VerktoysideProps {
 
 const naa = () => new Date()
 
-/** `lest` er når sperrene sist ble lest (`Date.now()`); lesingen gjelder i `SPERRENE_GJELDER_MS`. */
-type Sperretilstand = { status: 'henter' } | { status: 'feil'; melding: string } | { status: 'klar'; sperrer: Verktoysperre[]; lest: number }
+/**
+ * `lest` er når sperrene sist ble lest (`Date.now()`); lesingen gjelder i
+ * `SPERRENE_GJELDER_MS`. `utenNett` er at lesingen feilet fordi det ikke er
+ * forbindelse.
+ */
+type Sperretilstand = { status: 'henter' } | { status: 'feil'; melding: string; utenNett: boolean } | { status: 'klar'; sperrer: Verktoysperre[]; lest: number }
 
 const utlopt = (t: Sperretilstand) => t.status === 'klar' && Date.now() - t.lest >= SPERRENE_GJELDER_MS
 
@@ -110,33 +123,68 @@ class Sperrefeil extends Error {}
  * kaster når de ikke kan leses eller ikke svarer innen `LESEFRIST_MS`, og da
  * vises ingenting klinisk. En lesing gjelder i `SPERRENE_GJELDER_MS`: er den
  * eldre, vises ingenting klinisk før sperrene er lest på nytt.
+ *
+ * Kortvarig svikt (N1 i `docs/verktøy-vdr4-tilgjengelighet.md`): feiler en
+ * lesing, leses sperrene på nytt etter `NYE_FORSOK_MS`, og med en gang når
+ * nettleseren får forbindelse igjen. Ingenting klinisk vises før en lesing
+ * har lyktes, og en sperre gjelder alltid så snart en lesing finner den.
  */
 function useSperrer(leser: Verktoysperreleser | undefined) {
   const [tilstand, setTilstand] = useState<Sperretilstand>({ status: 'henter' })
   // Lesingene nummereres; svaret fra en lesing brukes når ingen lesing som ble startet senere, har svart før den.
   const startet = useRef(0)
   const brukt = useRef(0)
-  const hent = useCallback(async () => {
-    const denne = ++startet.current
-    const bruk = (ny: Sperretilstand) => {
-      if (denne <= brukt.current) return
-      brukt.current = denne
-      setTilstand(ny)
-    }
-    // En lesing som er for gammel, gjelder ikke mens den nye pågår.
-    setTilstand((t) => (utlopt(t) ? { status: 'henter' } : t))
-    try {
-      if (!leser) throw new Error('Sperrene kan ikke leses her.')
-      const sperrer = await medFrist(leser.les(), LESEFRIST_MS, FOR_SEN)
-      bruk({ status: 'klar', sperrer, lest: Date.now() })
-      return sperrer
-    } catch (e) {
-      const melding = e instanceof Error ? e.message : String(e)
-      bruk({ status: 'feil', melding })
-      throw new Sperrefeil(melding)
-    }
-  }, [leser])
+  // De nye forsøkene etter en feil: hvor mange som er brukt, og tidtakeren til det neste.
+  const forsok = useRef(0)
+  const nyttForsok = useRef<number | undefined>(undefined)
+  const les = useCallback(
+    async (etterFeil: boolean): Promise<Verktoysperre[]> => {
+      const denne = ++startet.current
+      const bruk = (ny: Sperretilstand) => {
+        if (denne <= brukt.current) return false
+        brukt.current = denne
+        setTilstand(ny)
+        return true
+      }
+      // En lesing som er for gammel, gjelder ikke mens den nye pågår.
+      setTilstand((t) => (utlopt(t) ? { status: 'henter' } : t))
+      try {
+        if (!leser) throw new Error('Sperrene kan ikke leses her.')
+        const sperrer = await medFrist(leser.les(), LESEFRIST_MS, FOR_SEN)
+        if (bruk({ status: 'klar', sperrer, lest: Date.now() })) {
+          forsok.current = 0
+          window.clearTimeout(nyttForsok.current)
+          nyttForsok.current = undefined
+        }
+        return sperrer
+      } catch (e) {
+        const melding = e instanceof Error ? e.message : String(e)
+        // Et nytt forsøk planlegges bare for et svar som brukes, og bare ett om gangen; en ny feil utenom forsøkene begynner rekken på nytt.
+        if (bruk({ status: 'feil', melding, utenNett: utenForbindelse(melding) }) && nyttForsok.current === undefined) {
+          if (!etterFeil) forsok.current = 0
+          const ventetid = NYE_FORSOK_MS[forsok.current]
+          if (ventetid !== undefined) {
+            forsok.current += 1
+            nyttForsok.current = window.setTimeout(() => {
+              nyttForsok.current = undefined
+              void les(true).catch(() => undefined)
+            }, ventetid)
+          }
+        }
+        throw new Sperrefeil(melding)
+      }
+    },
+    [leser],
+  )
+  const hent = useCallback(() => les(false), [les])
+  useEffect(() => () => window.clearTimeout(nyttForsok.current), [])
   useJevnligSjekk(useCallback(() => void hent().catch(() => undefined), [hent]), LES_SPERRENE_HVER_MS)
+  // Når forbindelsen kommer tilbake, leses sperrene med en gang.
+  useEffect(() => {
+    const igjen = () => void hent().catch(() => undefined)
+    window.addEventListener('online', igjen)
+    return () => window.removeEventListener('online', igjen)
+  }, [hent])
   // Kommer det ingen ny lesing før den siste går ut (for eksempel når fanen ikke er synlig), tas det kliniske bort og sperrene leses på nytt.
   useEffect(() => {
     if (tilstand.status !== 'klar') return
@@ -345,6 +393,12 @@ const SKJEMAFORM: Bevaringsform<Planskjema> = {
   },
 }
 
+/** En plan som vises: valgene (`JSON.stringify(valg)`) og regelen den er beregnet etter. */
+interface Planmerke {
+  valg: string
+  regel: string
+}
+
 type Beregning =
   | { nokkel: string; status: 'henter' }
   | { nokkel: string; status: 'feil'; melding: string; sperre?: boolean }
@@ -384,7 +438,12 @@ function Verktoyskjema({
   // Skjemaet gjelder bare valgene det ble fylt ut for; andre valg begynner med et tomt skjema.
   const identitet = valg ? valgidentitet(valg) : ''
   const skjema = skjemaFor(lagretSkjema, identitet)
-  const settSkjema = (endre: (s: Planskjema) => Planskjema) => setSkjema((s) => endre(skjemaFor(s, identitet)))
+  // En plan som ble tatt bort fordi sperrene ikke kunne leses eller lesingen var for gammel (S6). Det står bare til forskriveren beregner eller endrer noe, og tas ikke vare på.
+  const [tattBort, setTattBort] = useState<Planmerke | null>(null)
+  const settSkjema = (endre: (s: Planskjema) => Planskjema) => {
+    setTattBort(null)
+    setSkjema((s) => endre(skjemaFor(s, identitet)))
+  }
   // Det gamle skjemaet glemmes med en gang valgene skifter, også når de skifter tilbake senere.
   useEffect(() => setSkjema((s) => skjemaFor(s, identitet)), [identitet, setSkjema])
 
@@ -410,6 +469,27 @@ function Verktoyskjema({
   const hele = verktoysperrer(aktive, verktoy)
   // Det som er stanset av en nødstopp, tilbys ikke som tilgjengelig, og ingenting tilbys før sperrene er lest.
   const snarvalgene = utenSperrede(alleSnarvalg, aktive, verktoy)
+
+  // Planen som vises nå, slik beregningsdelen sist meldte den; den står igjen når delen tas bort fordi sperrene ikke er lest.
+  const vistPlan = useRef<Planmerke | null>(null)
+  const meldPlan = useCallback((m: Planmerke | null) => {
+    vistPlan.current = m
+  }, [])
+  const glemTattBort = useCallback(() => setTattBort(null), [])
+  const valgnokkel = valg ? JSON.stringify(valg) : ''
+  const usperret = regler.map((r) => r.id).join()
+  useEffect(() => {
+    if (sperrer.tilstand.status !== 'klar') {
+      // Sperrene kunne ikke leses eller er for gamle: en plan som sto, er tatt bort av det.
+      if (vistPlan.current) setTattBort(vistPlan.current)
+      vistPlan.current = null
+      return
+    }
+    // Etter en vellykket lesing gjelder meldingen, og planen som sist ble vist, bare de samme valgene og en regel som ikke er sperret.
+    const gjelderNa = (m: Planmerke | null) => (m && m.valg === valgnokkel && usperret.split(',').includes(m.regel) ? m : null)
+    vistPlan.current = gjelderNa(vistPlan.current)
+    setTattBort(gjelderNa)
+  }, [sperrer.tilstand, valgnokkel, usperret])
 
   return (
     <>
@@ -464,7 +544,7 @@ function Verktoyskjema({
       ) : sperrer.tilstand.status === 'feil' ? (
         <section className="verktoystatus" data-status="sperret" role="alert">
           <h2>Ingen doseplan eller fagtekst</h2>
-          <p>{UKONTROLLERT}</p>
+          <p>{sperrer.tilstand.utenNett ? UTEN_NETT : UKONTROLLERT}</p>
           <div className="verktoyskjema__handlinger">
             <Button variant="kant" onClick={() => void sperrer.hent().catch(() => undefined)}>
               Prøv igjen
@@ -486,6 +566,9 @@ function Verktoyskjema({
           regelsett={regelsett}
           klokke={klokke}
           varsler={varsler}
+          tattBort={tattBort}
+          onPlan={meldPlan}
+          onBeregn={glemTattBort}
         />
       ) : (
         <Statusvisning status={{ ...status, regler }} varsler={varsler} />
@@ -577,6 +660,9 @@ function Beregningsdel({
   regelsett,
   klokke,
   varsler,
+  tattBort,
+  onPlan,
+  onBeregn,
 }: {
   verktoy: Verktoy
   valg: Verktoyvalg
@@ -589,6 +675,12 @@ function Beregningsdel({
   regelsett: Regelsett
   klokke: () => Date
   varsler: Varseltilstand
+  /** En plan som ble tatt bort fordi sperrene ikke kunne leses (S6); meldingen vises når den gjelder disse valgene og regelen. */
+  tattBort: Planmerke | null
+  /** Melder planen som vises nå, eller `null`. */
+  onPlan: (plan: Planmerke | null) => void
+  /** Forskriveren beregner: meldingen om en plan som ble tatt bort, gjelder ikke lenger. */
+  onBeregn: () => void
 }) {
   const id = useId()
   const regel = regler.length === 1 ? regler[0] : regler.find((r) => r.id === skjema.regel)
@@ -618,12 +710,17 @@ function Beregningsdel({
     harPlan && regel && gjeldende.resultat.status === 'doseplan' && gjelderFortsatt(gjeldende.resultat, klokke())
       ? planvisning(gjeldende.resultat, regel, skjema.startdato || undefined)
       : null
+  const valgnokkel = JSON.stringify(valg)
+  const planregel = plan && regel ? regel.id : null
+  useEffect(() => onPlan(planregel ? { valg: valgnokkel, regel: planregel } : null), [planregel, valgnokkel, onPlan])
+  const visTattBort = !!regel && tattBort?.valg === valgnokkel && tattBort.regel === regel.id
 
   const sett = <K extends keyof Planskjema>(felt: K, verdi: Planskjema[K]) => setSkjema((s) => ({ ...s, [felt]: verdi }))
 
   // `sk` er skjemaet slik det blir når beregningen startes av et valg i resultatet, før det er vist.
   async function beregn(sk: Planskjema = skjema) {
     if (!regel) return setFeil(['Velg strategien planen skal beregnes etter.'])
+    onBeregn()
     setForsokt(true)
     const mangel = [...mangler(regel, sk), ...ubesvarttekst(ubesvart(regel, sk))]
     setFeil(mangel)
@@ -633,8 +730,14 @@ function Beregningsdel({
     setBeregning({ nokkel: n, status: 'henter' })
     try {
       if (!legemidler) throw new Error('Legemiddeldataene kan ikke leses her.')
-      const utvalg = await legemidler.les(festIderFor(regel, valg))
-      if (denne !== siste.current) return
+      const hentFest = () => legemidler.les(festIderFor(regel, valg))
+      // Ett nytt forsøk mot FEST før feilen vises (K6); planen kontrolleres etterpå som alle andre.
+      const utvalg = await hentFest().catch(async () => {
+        await vent(FEST_NYTT_FORSOK_MS)
+        if (denne !== siste.current) return null
+        return hentFest()
+      })
+      if (denne !== siste.current || !utvalg) return
       // Sperrene leses på nytt etter FEST, rett før resultatet vises: en sperre som kom mens preparatene ble hentet, gir ingen plan.
       const sperrer = await hentSperrer()
       if (denne !== siste.current) return
@@ -901,6 +1004,11 @@ function Beregningsdel({
           </ul>
         )}
 
+        {visTattBort && (
+          <p className="verktoyside__hint" role="status" data-tatt-bort>
+            {PLAN_TATT_BORT}
+          </p>
+        )}
         <div className="verktoyskjema__handlinger">
           <Button type="submit" disabled={gjeldende?.status === 'henter'}>
             Beregn doseplan
