@@ -28,9 +28,9 @@ import { REGELSETT, tilgjengelighet } from '../verktoy/tilgjengelighet'
 import { godkjennITest } from './hjelp/verktoyplan'
 
 /**
- * Disposisjonen gjelder nedtrappingsreglene før K1 ga escitalopram, nortriptylin,
- * amitriptylin og sertralin en ny versjon med krav om komplett plan (`regler/komplettplan.ts`); de nye
- * versjonene har ingen disposisjon og er testet i `verktoyk1.test.ts`.
+ * Disposisjonen gjelder nedtrappingsreglene før K1 ga escitalopram en ny versjon
+ * med avslutning fra dråper på 1 mg (`regler/k1.ts`); den nye versjonen har ingen
+ * disposisjon og er testet i `verktoyk1.test.ts`.
  */
 const NEDTRAPPINGSSETT = NEDTRAPPINGSSETT_FOR_K1
 

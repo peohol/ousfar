@@ -28,7 +28,7 @@ import { tilgjengelighet } from '../verktoy/tilgjengelighet'
 
 const les = (fil: string) => readFileSync(new URL(`../../${fil}`, import.meta.url), 'utf8')
 const uttrekkene = { pilot: JSON.parse(les(FEST_PILOT)) as Festuttrekk, aksept: JSON.parse(les(FEST_AKSEPTTEST)) as Festuttrekk }
-/** Forslag 1 gjelder versjonene etter rettelsen; K1 har siden gitt tre av dem en ny versjon i appen (`regler/komplettplan.ts`). */
+/** Forslag 1 gjelder versjonene etter rettelsen; K1 har siden gitt escitalopram en ny versjon i appen (`regler/k1.ts`). */
 const regel = (id: string) => FORSLAG_1.settene!.flatMap((s) => s.regler).find((r) => r.id === id)!
 const PLANER = omfangsplaner(FORSLAG_1, uttrekkene)
 
@@ -59,8 +59,8 @@ describe('Regelversjonene til kontroll', () => {
       expect(kontrollutfall(r), k.id).toBe('ikke_godkjent')
       expect(r.godkjenning.historikk.some((s) => s.av === SIMULERT_KONTROLLOR), k.id).toBe(false)
       const t = tilgjengelighet(verktoy, { fra: { nokkel: r.fra!.type === 'virkestoff' ? r.fra!.nokkel : '', formulering: 'standard' } })
-      // Appen bruker K1-versjonene, til faglig kontroll; heller ikke de gir en beregning.
-      expect(t.status, k.id).toBe('til_kontroll')
+      // Appen bruker K1-versjonen av escitalopram, til faglig kontroll; heller ikke den gir en beregning.
+      expect(t.status, k.id).toBe(r.fra!.type === 'virkestoff' && r.fra!.nokkel === 'escitalopram' ? 'til_kontroll' : 'ikke_godkjent')
     }
   })
 

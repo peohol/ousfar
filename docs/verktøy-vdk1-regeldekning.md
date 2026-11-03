@@ -18,9 +18,9 @@ Antall kombinasjoner etter hva verktøyet gir. For seponering er en kombinasjon 
 | Kombinasjoner | 23 | 506 | 1122 | 110 |
 | Beregning med klinisk godkjent regel (i godkjent omfang) | 1 | 1 | 2 | 0 |
 | Klinisk godkjent fagtekst, ingen beregning | 2 | 0 | 0 | 0 |
-| Regel finnes, kontrollert og ikke godkjent | 3 | 1 | 1 | 0 |
+| Regel finnes, kontrollert og ikke godkjent | 6 | 1 | 1 | 0 |
 | Regel finnes som fagtekst, ikke godkjent | 6 | 0 | 0 | 0 |
-| Regel finnes, ikke ferdig kontrollert | 4 | 0 | 0 | 0 |
+| Regel finnes, ikke ferdig kontrollert | 1 | 0 | 0 | 0 |
 | Ingen OUSFAR-regel; kilden har en anbefaling | 0 | 504 | 892 | 110 |
 | Ingen OUSFAR-regel; kilden har ingen anbefaling | 0 | 0 | 161 | 0 |
 | Ingen OUSFAR-regel; begrenset av preparater eller kilde | 7 | 0 | 0 | 0 |
@@ -117,7 +117,7 @@ Regelutkast som er kontrollert og ikke godkjent (eller bare fagtekst), og som de
 
 | Verktøy | Regel | Kombinasjon | Type | Kontrollutfall |
 | --- | --- | --- | --- | --- |
-| Trappe ned antidepressiv | `seponering-amitriptylin` v13 | Amitriptylin | beregnbar | til kontroll |
+| Trappe ned antidepressiv | `seponering-amitriptylin` v12 | Amitriptylin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-amitriptylin-langsom` v8 | Amitriptylin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-citalopram` v9 | Citalopram | fagtekst | bare fagtekst |
 | Trappe ned antidepressiv | `seponering-duloksetin` v6 | Duloksetin | fagtekst | bare fagtekst |
@@ -132,10 +132,10 @@ Regelutkast som er kontrollert og ikke godkjent (eller bare fagtekst), og som de
 | Trappe ned antidepressiv | `seponering-klomipramin-langsom` v8 | Klomipramin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-mirtazapin` v8 | Mirtazapin | fagtekst | bare fagtekst |
 | Trappe ned antidepressiv | `seponering-moklobemid` v9 | Moklobemid | fagtekst | bare fagtekst |
-| Trappe ned antidepressiv | `seponering-nortriptylin` v13 | Nortriptylin | beregnbar | til kontroll |
+| Trappe ned antidepressiv | `seponering-nortriptylin` v12 | Nortriptylin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-nortriptylin-langsom` v8 | Nortriptylin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-paroksetin` v8 | Paroksetin | fagtekst | bare fagtekst |
-| Trappe ned antidepressiv | `seponering-sertralin` v13 | Sertralin | beregnbar | til kontroll |
+| Trappe ned antidepressiv | `seponering-sertralin` v12 | Sertralin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-sertralin-langsom` v8 | Sertralin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-venlafaksin` v6 | Venlafaksin | fagtekst | bare fagtekst |
 | Trappe ned antidepressiv | `seponering-vortioksetin-langsom` v8 | Vortioksetin | beregnbar | ikke godkjent |
@@ -239,7 +239,7 @@ Tabellene viser derfor hvor mye av begrensningen som skyldes trinngrensen, og hv
 | --- | --- | --- | --- | --- | --- |
 | amitriptylin | eneste form | 50 mg | 50 → 40 → 30 → 25 → 20 mg (4 reduksjoner) | 50 → 40 → 30 → 25 → 20 mg (4 reduksjoner) | 50 → 40 → 30 → 25 → 20 → 10 mg (5 reduksjoner) |
 | escitalopram | Tablett | 20 mg | 20 → 15 mg (1 reduksjon) | 20 → 15 → 10 mg (2 reduksjoner) | 20 → 15 → 10 → 5 mg (3 reduksjoner) |
-| escitalopram | Dråper, oppløsning | 20 mg | 20 → 15 → 12 → 9 → 7 → 6 → 5 → 4 → 3 mg (8 reduksjoner) | 20 → 15 → 11 → 8 → 6 → 5 → 4 → 3 mg (7 reduksjoner) | 20 → 15 → 11 → 8 → 6 → 5 → 4 → 3 mg (7 reduksjoner) |
+| escitalopram | Dråper, oppløsning | 20 mg | 20 → 15 → 12 → 9 → 7 → 6 → 5 → 4 → 3 → 2 → 1 mg (10 reduksjoner) | 20 → 15 → 11 → 8 → 6 → 5 → 4 → 3 → 2 → 1 mg (9 reduksjoner) | 20 → 15 → 11 → 8 → 6 → 5 → 4 → 3 → 2 → 1 mg (9 reduksjoner) |
 | fluoksetin | Dispergerbar tablett | 40 mg | 40 → 30 mg (1 reduksjon, med delte tabletter) | 40 → 30 → 20 mg (2 reduksjoner, med delte tabletter) | 40 → 30 → 20 → 10 mg (3 reduksjoner, med delte tabletter) |
 | fluoksetin | Tablett | 40 mg | 40 → 30 mg (1 reduksjon, med delte tabletter) | 40 → 30 → 20 mg (2 reduksjoner, med delte tabletter) | 40 → 30 → 20 → 10 mg (3 reduksjoner, med delte tabletter) |
 | fluvoksamin | eneste form | 100 mg | 100 → 75 mg (1 reduksjon, med delte tabletter) | 100 → 75 → 50 mg (2 reduksjoner, med delte tabletter) | 100 → 75 → 50 mg (2 reduksjoner, med delte tabletter) |

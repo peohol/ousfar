@@ -1,23 +1,25 @@
 /**
- * K1 i `docs/verktøy-klinisk-leveranseplan-2026-11.md`: escitalopram,
- * nortriptylin, amitriptylin og sertralin krever en komplett plan helt til
- * seponering (`src/verktoy/regler/komplettplan.ts`), og kontrollgrunnlaget
- * (`docs/verktøy-k1-nedtrapping-kontrollgrunnlag.md`). Kontrollen av PR #323
- * avviste seponering fra laveste døgndose i preparatomtalen og delplaner som
- * klinisk produkt. Testene viser at de nye versjonene er til faglig kontroll,
- * at ingen grense eller avslutning med seponering finnes, at ingen plan i
- * omfanget viser doser uten å være komplett, og at de andre reglene er uendret.
+ * K1 i `docs/verktøy-klinisk-leveranseplan-2026-11.md`: escitalopram med
+ * dråper helt til seponering (`src/verktoy/regler/k1.ts`), og
+ * «komplett plan ikke tilgjengelig» ellers, med kontrollgrunnlaget
+ * (`docs/verktøy-k1-nedtrapping-kontrollgrunnlag.md`). Testene viser at den
+ * nye versjonen er et forslag til faglig kontroll med sluttdosen og det minste
+ * trinnet som åpne valg, at planene i omfanget enten er komplette til
+ * seponering fra 1 mg eller stopper uten doser, med de norske preparatene i
+ * FEST, og at alle andre regler er uendret.
  *
  * Alle doser er syntetiske; ingen pasientopplysninger.
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { FORSLAG_K1, KONTROLLFORSLAG, kontrollavvik, lagKontrollgrunnlag, omfangsplaner } from '../verktoy/kontrollgrunnlag'
+import { FORSLAG_K1, kjorKontrollkasus, KONTROLLFORSLAG, kontrollavvik, lagKontrollgrunnlag, omfangsplaner, planutfallstekst, type Kontrollkasus } from '../verktoy/kontrollgrunnlag'
 import { KOMPLETT_IKKE_TILGJENGELIG } from '../verktoy/motor/plan'
+import { KOMPLETT } from '../verktoy/planvisning'
 import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from '../verktoy/regler/aksepttest'
-import { K1_REGLER, medKravOmKomplett, medKravOmKomplettPlan } from '../verktoy/regler/komplettplan'
 import { erKliniskGodkjent, fingeravtrykk } from '../verktoy/regler/godkjenning'
-import { apneValg, avslutningFor, type Regel } from '../verktoy/regler/modell'
+import { K1_AVSLUTNINGER, K1_ESCITALOPRAM, medAvslutning, medAvslutninger } from '../verktoy/regler/k1'
+import { KILDER } from '../verktoy/regler/kilder'
+import { apneValg, avslutningFor, type Fase, type Regel } from '../verktoy/regler/modell'
 import { kontrollerRegelsett } from '../verktoy/regler/kontroll'
 import { NEDTRAPPINGSSETT, NEDTRAPPINGSSETT_FOR_K1 } from '../verktoy/regler/nedtrapping'
 import { REGELSETT } from '../verktoy/tilgjengelighet'
@@ -25,86 +27,135 @@ import { REGELSETT } from '../verktoy/tilgjengelighet'
 const les = (fil: string) => readFileSync(new URL(`../../${fil}`, import.meta.url), 'utf8')
 const uttrekkene = { pilot: JSON.parse(les(FEST_PILOT)) as Festuttrekk, aksept: JSON.parse(les(FEST_AKSEPTTEST)) as Festuttrekk }
 const i = (sett: { regler: Regel[] }, id: string) => sett.regler.find((r) => r.id === id)!
-const K1 = K1_REGLER.map((k) => k.regel)
-const uten = <T extends object, K extends keyof T>(x: T, ...nokler: K[]) => Object.fromEntries(Object.entries(x).filter(([n]) => !nokler.includes(n as K)))
+const ESC = 'seponering-escitalopram'
+const nedtrapping = (r: Regel) => r.plan.forlop[0]!.faser[0] as Extract<Fase, { type: 'nedtrapping' }>
+const kasus = (id: string) => FORSLAG_K1.kasus.find((k) => k.id === id)!
 
-describe('De nye regelversjonene', () => {
-  it('er escitalopram, nortriptylin, amitriptylin og sertralin, én versjon over versjonen før, til faglig kontroll og ikke godkjent', () => {
-    expect(K1).toEqual(['seponering-escitalopram', 'seponering-nortriptylin', 'seponering-amitriptylin', 'seponering-sertralin'])
+describe('Den nye versjonen av escitalopramregelen', () => {
+  const for_ = i(NEDTRAPPINGSSETT_FOR_K1, ESC)
+  const ny = i(NEDTRAPPINGSSETT, ESC)
+
+  it('er bare escitalopram, én versjon over versjon 12, til faglig kontroll og ikke godkjent', () => {
+    expect(K1_AVSLUTNINGER.map((a) => a.regel)).toEqual([ESC])
     expect(NEDTRAPPINGSSETT.versjon).toBe(NEDTRAPPINGSSETT_FOR_K1.versjon + 1)
-    for (const k of K1_REGLER) {
-      const for_ = i(NEDTRAPPINGSSETT_FOR_K1, k.regel)
-      const ny = i(NEDTRAPPINGSSETT, k.regel)
-      expect(for_.versjon, k.regel).toBe(k.fra_versjon)
-      expect(ny.versjon, k.regel).toBe(k.fra_versjon + 1)
-      expect(ny.godkjenning.status, k.regel).toBe('til_faglig_kontroll')
-      expect(ny.godkjenning.historikk.slice(-2).map((s) => [s.status, s.regelversjon, s.rolle]), k.regel).toEqual([
-        ['utkast', ny.versjon, 'utvikler'],
-        ['til_faglig_kontroll', ny.versjon, 'utvikler'],
-      ])
-      expect(erKliniskGodkjent(ny), k.regel).toBe(false)
-      expect(apneValg(ny), k.regel).toEqual([])
-    }
+    expect([for_.versjon, ny.versjon]).toEqual([12, 13])
+    expect(ny.godkjenning.status).toBe('til_faglig_kontroll')
+    expect(ny.godkjenning.historikk.slice(-2).map((s) => [s.status, s.regelversjon, s.rolle])).toEqual([
+      ['utkast', 13, 'utvikler'],
+      ['til_faglig_kontroll', 13, 'utvikler'],
+    ])
+    expect(erKliniskGodkjent(ny)).toBe(false)
   })
 
-  it('krever en komplett plan, uten avslutning med seponering, grense eller vurderingspunkter; ellers som versjonen før', () => {
-    for (const id of K1) {
-      const for_ = i(NEDTRAPPINGSSETT_FOR_K1, id)
-      const ny = i(NEDTRAPPINGSSETT, id)
-      const [forste, ...resten] = ny.plan.forlop
-      expect(forste!.krever_komplett, id).toBe(true)
-      expect(uten(forste!, 'krever_komplett'), id).toEqual(for_.plan.forlop[0])
-      expect(resten, id).toEqual(for_.plan.forlop.slice(1))
-      expect(forste!.vurderinger, id).toBeUndefined()
-      expect(forste!.faser.map((f) => avslutningFor(f)?.type), id).not.toContain('seponering')
-      expect(uten(ny, 'versjon', 'plan', 'fortolkning', 'godkjenning'), id).toEqual(uten(for_, 'versjon', 'plan', 'fortolkning', 'godkjenning'))
-      expect(ny.eksempler, id).toEqual(for_.eksempler)
-      expect(ny.fortolkning.kildetro, id).toEqual(for_.fortolkning.kildetro)
-      expect(ny.fortolkning.tilpasninger.slice(0, -1), id).toEqual(for_.fortolkning.tilpasninger)
-      expect(ny.fortolkning.usikkerhet.at(-1), id).toMatch(/^Lave doser med norske preparater: .+ Ingen kilde eller faglig beslutning gir i dag en sluttdose, så regelen gir ingen komplett plan\.$/)
-      // Grensen fra preparatomtalen, som kontrollen avviste og Peder trakk tilbake, finnes ikke.
-      expect(JSON.stringify(ny), id).not.toMatch(/fra_hoyst_mg|faglig_beslutningstaker/)
+  it('har sluttdosen, det minste trinnet og oppfølgingsdagene som åpne forslag, avklart av ingen', () => {
+    expect(apneValg(ny)).toEqual([
+      'plan.forlop[0].faser[0].strategi.minste_trinn.fra_mg (åpent forslag)',
+      'plan.forlop[0].faser[0].strategi.minste_trinn.maks_prosent (åpent forslag)',
+      'plan.forlop[0].faser[0].avslutning.fra_hoyst_mg (åpent forslag)',
+      'plan.forlop[0].vurderinger[1].nar.dager (åpent forslag)',
+      'plan.forlop[0].vurderinger[2].nar.dager (åpent forslag)',
+      'plan.forlop[0].vurderinger[3].nar.dager (åpent forslag)',
+      'fra.faser[0].avslutning (åpent forslag)',
+    ])
+    // Ingen forhåndsgodkjenning: verken Peder eller kontrolløren har avklart noe nytt i versjon 13.
+    expect(JSON.stringify(ny.plan)).not.toMatch(/faglig_beslutningstaker/)
+    expect(JSON.stringify(ny.godkjenning.historikk.filter((s) => s.regelversjon === 13))).not.toMatch(/uavhengig_kontrollor|faglig_beslutningstaker/)
+  })
+
+  it('går 3 → 2 → 1 mg med dråper og seponerer fra 1 mg, med vurdering før hver endring og 7, 14 og 28 dager etter siste dose', () => {
+    const f = nedtrapping(ny)
+    if (f.strategi.type !== 'prosent_av_aktuell') throw new Error('ventet prosent av aktuell dose')
+    expect([f.strategi.minste_trinn?.fra_mg.verdi, f.strategi.minste_trinn?.maks_prosent.verdi]).toEqual([3, 50])
+    expect(avslutningFor(f)?.fra_hoyst_mg.verdi).toBe(1)
+    const min = ny.plan.forlop[0]!.dosevalg?.min_mg
+    expect(min?.verdi).toBe(1)
+    expect(min?.grunnlag).toEqual({ type: 'kilde', henvisninger: [{ kilde: 'dmp-cipralex-draper', sted: 'pkt. 2', faktum: 'Hver dråpe inneholder 1 mg escitalopram (20 mg/ml).' }] })
+    const v = ny.plan.forlop[0]!.vurderinger!
+    expect(v.map((x) => [x.id, x.nar.type, x.nar.type === 'etter_seponering' ? x.nar.dager.verdi : null])).toEqual([
+      ['for_hver_reduksjon', 'for_hvert_trinn', null],
+      ['etter_seponering_7', 'etter_seponering', 7],
+      ['etter_seponering_14', 'etter_seponering', 14],
+      ['etter_seponering_28', 'etter_seponering', 28],
+    ])
+    // Teksten om at planen aldri går til null, er erstattet; overgangen fra tablett til dråper står i fortolkningen.
+    expect(ny.fortolkning.tilpasninger.map((u) => u.tekst).join(' ')).not.toMatch(/går ikke til null/)
+    expect(ny.fortolkning.tilpasninger.some((u) => /samme døgndose i mg/.test(u.tekst) && u.henvisninger.some((h) => h.kilde === 'dmp-cipralex-draper' && h.sted === 'pkt. 5.2'))).toBe(true)
+    expect(ny.fortolkning.usikkerhet.join(' ')).toMatch(/Sluttdosen 1 mg \(én dråpe\) er ikke en dokumentert terskel/)
+  })
+
+  it('er ellers som versjon 12: omfang, trinnstørrelser, trinnlengder, spørsmål og unntak er uendret', () => {
+    const uten = (r: Regel) => {
+      const k = structuredClone(r)
+      const f = nedtrapping(k)
+      if (f.strategi.type === 'prosent_av_aktuell') delete f.strategi.minste_trinn
+      f.avslutning = 'individuell'
+      delete k.plan.forlop[0]!.dosevalg
+      delete k.plan.forlop[0]!.vurderinger
+      const { versjon: _v, fortolkning: _f, godkjenning: _g, eksempler: _e, ...resten } = k
+      return resten
     }
+    expect(uten(ny)).toEqual(uten(for_))
+    expect(ny.eksempler.map((e) => e.id)).toEqual(for_.eksempler.map((e) => e.id))
+    expect(ny.eksempler.filter((e) => e.stopp)).toEqual(for_.eksempler.filter((e) => e.stopp))
+  })
+
+  it('registrerer preparatomtalen for dråpene som kilde', () => {
+    expect(KILDER.find((k) => k.id === 'dmp-cipralex-draper')).toMatchObject({
+      type: 'preparatomtale',
+      url: 'https://produktinformasjon.legemiddelsok.no/preparatomtaler/07-4892.pdf',
+      versjon: 'Oppdatert 02.05.2024',
+      sha256: '8cdc32851beab96c1032d10e444ab372186525790f32dd284dec5ec7a78e68ee',
+    })
   })
 
   it('består kontrollene i regelsettet appen bruker', () => {
     expect(kontrollerRegelsett(NEDTRAPPINGSSETT)).toEqual([])
   })
 
-  it('er nøyaktig versjonene og fingeravtrykkene i kontrollgrunnlaget', () => {
-    expect(FORSLAG_K1.regler.map((k) => k.id).sort()).toEqual([...K1].sort())
-    for (const k of FORSLAG_K1.regler) {
-      const r = i(REGELSETT, k.id)
-      expect([r.versjon, fingeravtrykk(r)], `${k.id} er endret; kontrollgrunnlaget gjelder ikke lenger`).toEqual([k.versjon, k.fingeravtrykk])
-    }
+  it('bygger bare på nøyaktig versjonen forslaget gjelder, og bare på en nedtrapping med valg av dose per trinn', () => {
+    expect(() => medAvslutning({ ...for_, versjon: 13 }, K1_ESCITALOPRAM)).toThrow(/bygger på versjon 12/)
+    expect(() => medAvslutning(for_, { ...K1_ESCITALOPRAM, regel: 'seponering-sertralin' })).toThrow(/gjelder seponering-sertralin, ikke seponering-escitalopram/)
+    const utenValg = structuredClone(for_)
+    delete nedtrapping(utenValg).trinnvalg
+    expect(() => medAvslutning(utenValg, K1_ESCITALOPRAM)).toThrow(/valg av dose per trinn og individuell avslutning/)
+    expect(() => medAvslutning(for_, { ...K1_ESCITALOPRAM, eksempler: {} })).toThrow(/mangler forventet plan med avslutning/)
+    expect(() => medAvslutninger([for_], [{ ...K1_ESCITALOPRAM, regel: 'seponering-finnes-ikke' }])).toThrow(/ukjente regler: seponering-finnes-ikke/)
+  })
+})
+
+describe('Versjon og fingeravtrykk', () => {
+  it('escitalopram versjon 13 har fingeravtrykket i kontrollgrunnlaget', () => {
+    const r = i(REGELSETT, ESC)
+    expect([r.versjon, fingeravtrykk(r)]).toEqual([13, '90d84e985c8fcbb98e1cd01f03a10b93ce3a3de0168e8c4401a168df2c69aa6d'])
+    expect(FORSLAG_K1.regler).toEqual([{ id: ESC, versjon: 13, fingeravtrykk: fingeravtrykk(r) }])
   })
 
-  it('endrer ingen andre regler: de har samme versjon og fingeravtrykk, også de godkjente og de langsomme variantene', () => {
-    for (const r of NEDTRAPPINGSSETT.regler.filter((x) => !K1.includes(x.id))) {
+  it('endrer ingen andre regler: samme versjon og fingeravtrykk, også nortriptylin, amitriptylin, sertralin og de godkjente', () => {
+    for (const r of NEDTRAPPINGSSETT.regler.filter((x) => x.id !== ESC)) {
       const for_ = i(NEDTRAPPINGSSETT_FOR_K1, r.id)
       expect([r.versjon, fingeravtrykk(r)], r.id).toEqual([for_.versjon, fingeravtrykk(for_)])
-      expect(r.plan.forlop.some((f) => f.krever_komplett), r.id).toBe(false)
     }
-    // De godkjente reglene, med fingeravtrykkene kontrolløren godkjente.
+    for (const id of ['seponering-nortriptylin', 'seponering-amitriptylin', 'seponering-sertralin']) expect(i(NEDTRAPPINGSSETT, id).versjon, id).toBe(12)
     expect(fingeravtrykk(i(NEDTRAPPINGSSETT, 'seponering-vortioksetin'))).toBe('b28dec93f5ede06c6565e1ce5d6aa62606c69250f1a9088dae0c57d3121101f3')
     expect(fingeravtrykk(i(NEDTRAPPINGSSETT, 'seponering-bupropion'))).toBe('e7536668ac7f2d4dfd9959f24cfdfc4874182a4fc295355f0d10a05f438b5f5f')
     expect(fingeravtrykk(i(NEDTRAPPINGSSETT, 'seponering-agomelatin'))).toBe('6d42863f3573fb2e0d6dbffd27ff78a7f1c2b539c8dce2cfcd36ad417b61a2d1')
   })
 
-  it('bygger bare på nøyaktig versjonen kravet gjelder, og bare på en nedtrapping', () => {
-    const esc = i(NEDTRAPPINGSSETT_FOR_K1, 'seponering-escitalopram')
-    const k = K1_REGLER[0]!
-    expect(() => medKravOmKomplett({ ...esc, versjon: esc.versjon + 1 }, k)).toThrow(/bygger på versjon 12/)
-    expect(() => medKravOmKomplett(esc, { ...k, regel: 'seponering-sertralin' })).toThrow(/gjelder seponering-sertralin, ikke seponering-escitalopram/)
-    const utenNedtrapping = structuredClone(esc)
-    utenNedtrapping.plan.forlop[0]!.faser = []
-    expect(() => medKravOmKomplett(utenNedtrapping, k)).toThrow(/nedtrapping som siste fase/)
-    expect(() => medKravOmKomplettPlan([esc], [{ ...k, regel: 'seponering-finnes-ikke' }])).toThrow(/ukjente regler: seponering-finnes-ikke/)
+  it('godkjenner ingen regel i appen: den simulerte godkjenningen finnes bare på kopier', () => {
+    for (const id of [ESC, 'seponering-nortriptylin', 'seponering-amitriptylin', 'seponering-sertralin']) expect(erKliniskGodkjent(i(REGELSETT, id)), id).toBe(false)
   })
 })
 
-describe('Kontrollgrunnlaget', () => {
-  it('er oppdatert og er et av kontrollforslagene', () => {
+/** Dosene i planens første forløp, i rekkefølge, med 0 for seponert. */
+const doser = (k: Kontrollkasus) => {
+  const u = kjorKontrollkasus(k, uttrekkene)
+  if (u.resultat?.status !== 'doseplan') return null
+  const f = u.resultat.forlop[0]!
+  return [...f.perioder.map((p) => p.mg), ...(f.siste_dosedag != null ? [0] : [])]
+}
+
+describe('Ende-til-ende med de norske preparatene i FEST', () => {
+  it('kontrollgrunnlaget er oppdatert og er et av kontrollforslagene', () => {
     expect(KONTROLLFORSLAG).toContain(FORSLAG_K1)
     expect(les(FORSLAG_K1.fil), 'Kjør `npm run verktoy:regler -- kontrollgrunnlag`').toBe(lagKontrollgrunnlag(FORSLAG_K1, uttrekkene))
   })
@@ -113,42 +164,73 @@ describe('Kontrollgrunnlaget', () => {
     expect(kontrollavvik(k, uttrekkene)).toEqual([])
   })
 
-  it('har unike id-er, svarer på K0-01–K0-03 og prøver hver regel med «komplett plan ikke tilgjengelig», stopp og uten godkjenning', () => {
-    const ider = FORSLAG_K1.kasus.map((k) => k.id)
-    expect(new Set(ider).size).toBe(ider.length)
-    expect([...new Set(FORSLAG_K1.kasus.flatMap((k) => (k.ref ? [k.ref] : [])))].sort()).toEqual(['K0-01', 'K0-02', 'K0-03'])
-    for (const k of FORSLAG_K1.regler) {
-      const kasus = FORSLAG_K1.kasus.filter((x) => x.valg.fra?.nokkel === k.id.replace('seponering-', ''))
-      expect(kasus.some((x) => x.forventet.utfall === 'stopp' && x.forventet.grunner[0]!.startsWith(KOMPLETT_IKKE_TILGJENGELIG)), k.id).toBe(true)
-      expect(kasus.map((x) => x.forventet.utfall), k.id).toContain('ingen')
-      expect(kasus.map((x) => x.forventet.utfall), k.id).not.toContain('plan')
+  it('gir komplette planer fra 10 og 20 mg dråper: hele dråper, høyst 25 % over 3 mg, minste trinn bare fra 3 mg og seponering bare fra 1 mg', () => {
+    expect(doser(kasus('K1-01'))).toEqual([8, 6, 5, 4, 3, 2, 1, 0])
+    expect(doser(kasus('K1-02'))).toEqual([15, 12, 9, 7, 6, 5, 4, 3, 2, 1, 0])
+    for (const [id, start] of [['K1-01', 10], ['K1-02', 20]] as const) {
+      const d = doser(kasus(id))!
+      expect(planutfallstekst(kjorKontrollkasus(kasus(id), uttrekkene)), id).toMatch(new RegExp(`^${KOMPLETT}: Escitalopram seponert fra dag \\d+\\.$`))
+      expect(d.every((mg) => Number.isInteger(mg)), id).toBe(true)
+      ;[start, ...d.slice(0, -1)].forEach((fra, n) => {
+        const til = d[n]!
+        if (til === 0) return void expect(fra, `${id}: seponering bare fra 1 mg`).toBe(1)
+        expect(((fra - til) / fra) * 100, `${id}: ${fra} → ${til} mg`).toBeLessThanOrEqual(fra > 3 ? 25 + 1e-9 : 50 + 1e-9)
+      })
     }
   })
 
-  it('viser ingen doser i noen plan i det kliniske omfanget: hver plan stopper med «komplett plan ikke tilgjengelig» og grunnen', () => {
+  it('hver plan i omfanget er enten komplett til seponering fra 1 mg eller «komplett plan ikke tilgjengelig» uten doser', () => {
     const planer = omfangsplaner(FORSLAG_K1, uttrekkene).flatMap((o) => o.veier.map((v) => ({ o, v })))
-    expect(planer).toHaveLength(18)
-    for (const { o, v } of planer) {
-      const hva = `${o.regel.id} ${o.form} ${o.startdose_mg} mg`
-      expect(v.utfall.utfall, hva).toBe('stopp')
+    const komplette = planer.filter(({ v }) => v.utfall.utfall === 'plan')
+    expect(komplette.map(({ o }) => [o.form, o.startdose_mg, o.tilfelle.svar])).toEqual([
+      ['748', 10, {}],
+      ['748', 20, {}],
+    ])
+    for (const { o, v } of komplette) expect(planutfallstekst(v.utfall), `${o.form} ${o.startdose_mg} mg`).toMatch(new RegExp(`^${KOMPLETT}: `))
+    const stopp = planer.filter(({ v }) => v.utfall.utfall !== 'plan')
+    expect(stopp).toHaveLength(3)
+    for (const { o, v } of stopp) {
+      const hva = `${o.form} ${o.startdose_mg} mg ${JSON.stringify(o.tilfelle.svar)}`
       const grunner = 'grunner' in v.utfall ? v.utfall.grunner : []
       expect(grunner, hva).toHaveLength(1)
-      expect(grunner[0], hva).toMatch(new RegExp(`^${KOMPLETT_IKKE_TILGJENGELIG} for \\w+: .+\\.$`))
-      // Bare grunnen: ingen dose fra delplanen gjentas i stoppet, og ingen seponering begrunnes med at neste dose mangler.
-      expect(grunner[0], hva).not.toMatch(/\d+ mg|[Ss]eponer/)
+      expect(grunner[0], hva).toMatch(new RegExp(`^${KOMPLETT_IKKE_TILGJENGELIG}: escitalopram: .+\\.$`))
+      // Ingen kopierbar delplan: ingen rader med dager og doser.
+      expect(grunner[0], hva).not.toMatch(/Dag \d|dråper à/)
+    }
+    // Ved hvert valg tilbys nøyaktig én dose, så planene er bestemt av startdosen.
+    expect(planer.flatMap(({ v }) => v.valg).every((x) => x.trinn.doser.length === 1)).toBe(true)
+  })
+
+  it('godtar ikke et større siste trinn: 3 → 1 mg (66,67 %) stopper', () => {
+    const k1 = kasus('K1-01')
+    const trinnvalg = [[1, 10, 8], [3, 6, 5], [4, 5, 4], [6, 3, 1]].map(([trinn, fra_mg, mg]) => ({ forlop: 'fra', trinn: trinn!, fra_mg: fra_mg!, mg: mg! }))
+    const u = kjorKontrollkasus({ ...k1, velger: [], skjema: { ...k1.skjema, trinnvalg } }, uttrekkene)
+    expect(u.utfall).toBe('stopp')
+    expect('grunner' in u && u.grunner.join(' ')).toMatch(/66,67 % fra 3 mg, utenfor valgområdet/)
+  })
+
+  it('svarer på K0-01–K0-03: escitalopram komplett med dråper, amitriptylin og sertralin «komplett plan ikke tilgjengelig»', () => {
+    const ider = FORSLAG_K1.kasus.map((k) => k.id)
+    expect(new Set(ider).size).toBe(ider.length)
+    const ref = (r: string) => FORSLAG_K1.kasus.filter((k) => k.ref === r)
+    expect(ref('K0-01').map((k) => k.forventet.utfall)).toContain('plan')
+    for (const r of ['K0-02', 'K0-03']) {
+      const k = ref(r)
+      expect(k.some((x) => x.forventet.utfall === 'stopp' && x.forventet.grunner[0]!.startsWith(KOMPLETT_IKKE_TILGJENGELIG)), r).toBe(true)
+      expect(k.map((x) => x.forventet.utfall), r).not.toContain('plan')
+      expect(k.map((x) => x.forventet.utfall), r).toContain('ingen')
     }
   })
 
-  it('viser ingen tekst eller lenker fra Psychiatrienet, har ingen avvik, sier at ingen regel er godkjent og har kontrollørens svar og de nye spørsmålene', () => {
+  it('kontrollgrunnlaget viser ingen tekst fra Psychiatrienet, har ingen avvik, sier at ingen regel er godkjent og stiller sluttdosen som spørsmål uten forhåndsgodkjenning', () => {
     const tekst = les(FORSLAG_K1.fil)
     expect(tekst).toContain('**Ingen regel er godkjent eller aktivert.**')
     expect(tekst).not.toMatch(/psychiatrienet\.(nl|org|com)/i)
     expect(tekst).not.toContain('**avvik:**')
+    expect(tekst).not.toMatch(/Peder har (godkjent|valgt) (1 mg|sluttdose|en sluttdose|det minste)|(godkjent|avklart) av Peder|forhåndsgodkjent av/)
+    expect(tekst).toContain('Ingen har godkjent 1 mg eller noen annen sluttdose på forhånd')
     for (let n = 1; n <= 15; n++) expect(tekst).toContain(`| K1.${n} |`)
     expect(FORSLAG_K1.sporsmal.map((x) => x.nr)).toEqual(['K1.9', 'K1.10', 'K1.11', 'K1.12', 'K1.13', 'K1.14', 'K1.15'])
-  })
-
-  it('endrer ikke reglene i regelsettet: den simulerte godkjenningen finnes bare på kopier', () => {
-    for (const id of K1) expect(erKliniskGodkjent(i(REGELSETT, id)), id).toBe(false)
+    expect(FORSLAG_K1.sporsmal[0]!.sporsmal).toMatch(/^Sluttdose for escitalopram: er 1 mg/)
   })
 })

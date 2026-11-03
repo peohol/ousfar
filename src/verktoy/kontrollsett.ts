@@ -11,7 +11,7 @@ import { REGELSETTENE } from './tilgjengelighet'
 /**
  * Regelsettene rett etter rettelsene (PR #309), i samme rekkefølge som
  * `REGELSETTENE`: settene appen bruker, men med nedtrappingsreglene før K1 ga
- * noen av dem en ny versjon (`regler/komplettplan.ts`). Rettelseskontrollen og
+ * escitalopram en ny versjon (`regler/k1.ts`). Rettelseskontrollen og
  * VDK-3 forslag 1 gjelder dem.
  */
 export const ETTER_RETTELSENE: readonly Regelsett[] = REGELSETTENE.map((s) => (s.id === NEDTRAPPINGSSETT_FOR_K1.id ? NEDTRAPPINGSSETT_FOR_K1 : s))

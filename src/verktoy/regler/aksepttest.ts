@@ -20,7 +20,7 @@
  */
 import type { Legemiddelutvalg } from '../../legemiddeldata/lesing'
 import { byggesteiner, norskDato, type Preparatgrunnlag } from '../motor/byggesteiner'
-import { beregnDoseplan, formvalgSomTrengs, KOMPLETT_IKKE_TILGJENGELIG, omfangsfeil, planform, trinndosetekst, type Doseplaninndata, type Doseplanresultat, type Omgivelse, type Trinnvalg } from '../motor/plan'
+import { beregnDoseplan, formvalgSomTrengs, omfangsfeil, planform, trinndosetekst, type Doseplaninndata, type Doseplanresultat, type Omgivelse, type Trinnvalg } from '../motor/plan'
 import { festkoblinger, KARTLEGGING } from '../register'
 import { avrund } from './beregning'
 import { PLANHORISONT_TRINN } from './bygg'
@@ -157,6 +157,8 @@ export function medValg(u: Festuttrekk, r: Regel, form: Formalternativ, inndata:
  * ({@link simulertValg}); `null` når ingen av dem finnes.
  */
 export function videreforingsdose(r: Regel, p: Doseplanresultat): number | null {
+  // En plan som seponerer (en godkjent avslutning, regelmodell 12), har ingen videreføring.
+  if (p.status === 'doseplan' && p.forlop[0]?.siste_dosedag != null) return null
   const tv = p.trinnvalg?.find((t) => t.trinn === 1)
   return sisteDose(p) ?? (tv ? simulertValg(r, tv).mg : null)
 }
@@ -242,12 +244,18 @@ export function omfang(p: Doseplanresultat): Omfang {
 
 const OMFANGSORD: Record<Omfang, string> = { delplan: 'delplan', valg: 'valgt dose', stopp: 'stopp' }
 
+const TIL_SEPONERING = 'trinn til seponering'
+const TIL_SEPONERING_FORKLARING =
+  'en plan helt til seponering, fordi regelen har en avslutning (regelmodell 12) som gjelder fra dosen planen når; tallet er antall dosetrinn før seponeringen'
+
 /** Omfanget i en tabellcelle, med antall reduksjoner; én reduksjon står som det den er. */
 function omfangscelle(p: Doseplanresultat | null | undefined): string {
   if (!p) return '–'
   const o = omfang(p)
   if (o !== 'delplan') return OMFANGSORD[o]
   const n = reduksjoner(p)
+  // En plan som seponerer (en avslutning til faglig kontroll eller godkjent, regelmodell 12), er ikke en delplan.
+  if (p.status === 'doseplan' && p.forlop[0]?.siste_dosedag != null) return `${n} ${TIL_SEPONERING}`
   return n === 1 ? 'én reduksjon med revurdering' : `delplan (${n})`
 }
 
@@ -354,7 +362,6 @@ export function lagAksepttestrapport(u: Festuttrekk): string {
   })
   const annenhver = annenhverDag(u)
   const godkjente = NEDTRAPPINGSSETT.regler.filter((r) => r.beregnbarhet !== 'bare_tekstlig' && erKliniskGodkjent(r)).map((r) => `\`${r.id}\``)
-  const komplette = NEDTRAPPINGSSETT.regler.filter((r) => r.plan.forlop.some((f) => f.krever_komplett)).map((r) => `\`${r.id}\``)
   return `<!-- Laget av \`npm run verktoy:regler -- aksepttest\` fra ${FEST_AKSEPTTEST}; rediger ikke for hånd. -->
 # P7: aksepttest med norske preparater
 
@@ -362,7 +369,7 @@ Aksepttesten etter kontrollrunden 30.10.2026 (P7.5, del E.2). Hver hovedregel og
 
 **Dette er modellberegninger av kontrollutkast, ikke kliniske planer.** ${godkjente.length === 0 ? 'Ingen beregnbar P7-regel er klinisk godkjent, og verktøyet viser ingen av planene.' : `Av de beregnbare P7-reglene er bare ${godkjente.join(', ')} klinisk godkjent, og bare for cellene i det kliniske omfanget (**[klinisk omfang]** under); verktøyet viser ingen andre av planene.`} De andre beregnbare reglene er kontrollert og ikke godkjent i denne leveransen (kontrollørens disposisjon 31.10.2026), så en celle i deres kliniske omfang er teknisk, ikke et godkjenningsvedtak. Pasientopplysninger inngår ikke.
 
-${komplette.length > 0 ? `${komplette.join(', ')} krever en komplett plan helt til seponering (K1, \`docs/verktøy-k1-nedtrapping-kontrollgrunnlag.md\`). En plan som ikke når dit, stopper med «${KOMPLETT_IKKE_TILGJENGELIG}» og grunnen, uten doser, så cellene deres viser stopp der de ellers ville vist en delplan.\n\n` : ''}Scenariene er:
+Scenariene er:
 
 ${liste(Object.entries(SCENARIOER).map(([k, v]) => `(${k}) ${v}.`))}
 - (e) Alle scenariene bruker de norske preparatene i FEST.
@@ -384,7 +391,7 @@ ${oversikt}
 
 Til kontrollørens regel- og formspesifikke kontroll (gjennomgangen av 62ebb21 og 9cb420b): for hver kombinasjon og hvert klinisk scenario, om en oppnåelig delplan kan brukes, eller om bare et forklarende stopp er riktig. Tabellen er en teknisk matrise regnet ut av planene, ikke en klinisk godkjenning. Ingen delplan er en fullstendig seponering. Et avvik som krever begrunnelse, tilbys ikke: der det er det eneste som kan gis, er planen et forklarende stopp, og en annen plan vurderes individuelt utenfor verktøyet. Scenario (h) er en simulering og er ikke med.
 
-${liste(Object.entries(OMFANG).map(([k, v]) => `**${OMFANGSORD[k as Omfang]}:** ${v}.`))}
+${liste([...Object.entries(OMFANG).map(([k, v]) => `**${OMFANGSORD[k as Omfang]}:** ${v}.`), `**${TIL_SEPONERING}:** ${TIL_SEPONERING_FORKLARING}.`])}
 
 ${omfangstabell}
 

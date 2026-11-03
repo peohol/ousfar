@@ -58,7 +58,7 @@ import type { Avklaring, Begrunnelseskrav, Bekreftelse, Fase, Forlop, Godkjennin
 import { REGELMODELLVERSJON } from './modell'
 import { gruppeRestApAripiprazol, seponeringCitalopramHyperbolsk, SPC } from './pilotsett'
 import { rett } from './rettelse'
-import { medKravOmKomplettPlan } from './komplettplan'
+import { medAvslutninger } from './k1'
 
 /* --- Fakta fra preparatomtalene, med egne ord ----------------------------------------- */
 
@@ -2310,12 +2310,12 @@ export const NEDTRAPPINGSSETT_FOR_K1: Regelsett = {
   regler: rett([...NEDTRAPPINGSSETT_FOR_RETTELSENE.regler], FAKTUMRETTELSER),
 }
 
-/** Nedtrappingsreglene appen bruker: settet etter rettelsene med de nye versjonene fra K1 (`komplettplan.ts`). */
+/** Nedtrappingsreglene appen bruker: settet etter rettelsene med den nye versjonen fra K1 (`k1.ts`). */
 export const NEDTRAPPINGSSETT: Regelsett = {
   ...NEDTRAPPINGSSETT_FOR_K1,
   versjon: 16,
-  beskrivelse: `${NEDTRAPPINGSSETT_FOR_K1.beskrivelse} I K1 (03.11.2026) har escitalopram, nortriptylin, amitriptylin og sertralin fått en ny versjon som bare gir en komplett plan til seponering; når planen ikke når dit, sier verktøyet «Komplett plan ikke tilgjengelig» og hvorfor, uten doser (\`docs/verktøy-k1-nedtrapping-kontrollgrunnlag.md\`). De er ikke godkjent.`,
-  regler: medKravOmKomplettPlan([...NEDTRAPPINGSSETT_FOR_K1.regler]),
+  beskrivelse: `${NEDTRAPPINGSSETT_FOR_K1.beskrivelse} I K1 (03.11.2026) har escitalopram fått en ny versjon som forslag: med dråper på 1 mg kan forskriveren fra 3 mg velge et minste trinn på én dråpe (3 → 2 → 1 mg), og fra 1 mg holdes dosen et helt trinn før seponering, med oppfølging etter siste dose. Sluttdosen og det minste trinnet er åpne spørsmål til kontrolløren, og regelen er ikke godkjent (\`docs/verktøy-k1-nedtrapping-kontrollgrunnlag.md\`). En plan som ikke når sluttmålet, vises aldri; verktøyet sier «Komplett plan ikke tilgjengelig» og hvorfor.`,
+  regler: medAvslutninger([...NEDTRAPPINGSSETT_FOR_K1.regler]),
 }
 
 /**

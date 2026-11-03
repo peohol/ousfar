@@ -14,14 +14,14 @@ export const ENDRINGSLOGG: Endring[] = [
   {
     versjon: '1.125.4',
     dato: '2026-11-03',
-    sammendrag: 'Nedtrapping av escitalopram, nortriptylin, amitriptylin og sertralin gir bare en komplett plan til seponering, og ellers beskjed om at den ikke er tilgjengelig',
+    sammendrag: 'Forslag til nedtrapping av escitalopram med dråper helt til seponering, sendt til faglig kontroll',
     typer: ['Fag'],
     omfang: 'Mindre omfang',
     gjelder: ['verktoy'],
     punkter: [
-      'Gjelder bare administratorene, som fortsatt er de eneste som ser verktøyene. Ingen regel er godkjent, og verktøyet gir ingen beregning for disse fire stoffene før den faglige kontrollen er ferdig.',
-      'Reglene for å trappe ned escitalopram, nortriptylin, amitriptylin og sertralin har fått en ny versjon som bare viser en komplett plan helt til seponering. Når det ikke går, står det «Komplett plan ikke tilgjengelig» og hvorfor, i stedet for en delplan med doser.',
-      'Med de norske preparatene og de dokumenterte metodene går det i dag ikke for noen av de fire, fordi ingen sluttdose er fastsatt og trinnene blir for store ved lave doser. Spørsmålene om dette er sendt til faglig kontroll.',
+      'Gjelder bare administratorene, som fortsatt er de eneste som ser verktøyene. Ingen regel er godkjent, og verktøyet gir ingen beregning før den faglige kontrollen er ferdig.',
+      'Escitalopram har fått en ny versjon som forslag: med dråper (1 mg per dråpe) går planen ned til 3 mg, så 2 og 1 mg, og 1 mg holdes et helt trinn før seponering. Planen har vurdering før hver endring og 7, 14 og 28 dager etter siste dose. Pasienter som bruker tabletter, kan gå over til dråper med samme dose.',
+      'Sluttdosen og de siste trinnene er åpne spørsmål til den faglige kontrollen. For nortriptylin, amitriptylin, sertralin og escitalopram etter lang behandlingstid finnes ingen dokumentert metode helt ned, så verktøyet sier «Komplett plan ikke tilgjengelig» i stedet for å vise doser.',
     ],
     utenVarsel: true,
   },

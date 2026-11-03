@@ -113,14 +113,11 @@ describe('Modellberegningen av trinngrensen', () => {
     expect(erKliniskGodkjent(kopi)).toBe(false)
   })
 
-  it('endrer ingenting ved dagens grenser, bortsett fra at et krav om komplett plan (K1) tas bort', () => {
+  it('endrer ingenting ved dagens grenser', () => {
     for (const x of AKSEPTSTOFFER) {
-      const utenKrav = structuredClone(x.hoved)
-      for (const f of utenKrav.plan.forlop) delete f.krever_komplett
-      expect(kanonisk(medTrinngrense(x.hoved, TRINNGRENSER.kort[0], false))).toBe(kanonisk(utenKrav))
-      expect(kanonisk(medTrinngrense(x.hoved, TRINNGRENSER.lang[0], true))).toBe(kanonisk(utenKrav))
+      expect(kanonisk(medTrinngrense(x.hoved, TRINNGRENSER.kort[0], false))).toBe(kanonisk(x.hoved))
+      expect(kanonisk(medTrinngrense(x.hoved, TRINNGRENSER.lang[0], true))).toBe(kanonisk(x.hoved))
     }
-    expect(AKSEPTSTOFFER.filter((x) => x.hoved.plan.forlop.some((f) => f.krever_komplett)).map((x) => x.nokkel)).toEqual(['amitriptylin', 'escitalopram', 'nortriptylin', 'sertralin'])
   })
 
   it('løfter bare begrunnelsesgrensen som gjelder behandlingstiden', () => {
@@ -182,7 +179,7 @@ describe('prioriteringen i VDK-2', () => {
 
   it('oppgir versjonen og fingeravtrykket regelen faktisk har, så kontrollen gjelder nøyaktig den', () => {
     expect(rader.map((r) => r[1])).toEqual(['seponering-amitriptylin', 'seponering-nortriptylin', 'seponering-escitalopram', 'seponering-escitalopram-langsom'])
-    // Planen gjelder versjonene etter rettelsen av RCPsych-faktumet; K1 har siden gitt tre av dem en ny versjon (`regler/komplettplan.ts`).
+    // Planen gjelder versjonene etter rettelsen av RCPsych-faktumet; K1 har siden gitt escitalopram en ny versjon (`regler/k1.ts`).
     const regler = ETTER_RETTELSENE.flatMap((s) => s.regler)
     for (const [, id, versjon, avtrykk] of rader) {
       const regel = regler.find((r) => r.id === id)!

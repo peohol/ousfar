@@ -19,7 +19,7 @@ import { ETTER_RETTELSENE } from '../verktoy/kontrollsett'
 import { FOR_RETTELSENE, forventedeLinjeendringer, forventetFor, lagRettelseskontroll, matrisesammenligning, RETTELSESKONTROLLFIL, rettelsesrader, synlig, tilGodkjenning } from '../verktoy/rettelseskontroll'
 import { samlet } from '../verktoy/tilgjengelighet'
 
-// Kontrollgrunnlaget gjelder settene rett etter rettelsen; K1 har siden gitt fire nedtrappingsregler en ny versjon (`komplettplan.ts`, egne tester).
+// Kontrollgrunnlaget gjelder settene rett etter rettelsen; K1 har siden gitt escitalopram en ny versjon (`regler/k1.ts`, egne tester).
 const REGELSETTENE = ETTER_RETTELSENE
 const REGELSETT = samlet(REGELSETTENE)
 

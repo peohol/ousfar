@@ -148,14 +148,11 @@ const grensetekst = (g: number) => (Math.abs(g - 100 / 3) < 1e-9 ? '33⅓' : tal
  * En kopi av regelen der faktisk reduksjon opp til `grense` % ikke krever
  * begrunnelse og derfor kan tilbys som valg: begrunnelseskravet uten vilkår
  * (kort) eller med vilkåret lang behandlingstid (lang) løftes til grensen.
- * Grensen fra laveste døgndose (25 %) og alt annet er uendret. Et krav om
- * komplett plan (K1) tas bort i kopien, så tabellen viser hvor langt trinnene
- * rekker, ikke bare at planen ikke er komplett. Bare til modellberegningen;
- * kopien har ingen gyldig godkjenning.
+ * Grensen fra laveste døgndose (25 %) og alt annet er uendret. Bare til
+ * modellberegningen; kopien har ingen gyldig godkjenning.
  */
 export function medTrinngrense(r: Regel, grense: number, lang: boolean): Regel {
   const kopi = structuredClone(r)
-  for (const f of kopi.plan.forlop) delete f.krever_komplett
   const fase = kopi.plan.forlop[0]?.faser[0]
   if (fase?.type !== 'nedtrapping' || fase.strategi.type !== 'prosent_av_aktuell') return kopi
   const p = fase.strategi.prosent

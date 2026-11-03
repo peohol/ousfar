@@ -5,7 +5,7 @@
  * Med pilotreglene og nedtrappingsreglene (P7), som ingen er klinisk godkjent, kan ingenting beregnes. De
  * positive visningene bruker de isolerte testdataene i `hjelp/verktoyplan.ts`.
  */
-import { K1_REGLER } from '../verktoy/regler/komplettplan'
+import { K1_AVSLUTNINGER } from '../verktoy/regler/k1'
 import { describe, expect, it } from 'vitest'
 import { adresse, lesRute, sidesti, verktoyadresse } from '../domain/rute'
 import { beregnPlan, festIderFor, formvalgFor, gjelderFortsatt, inndataFor, lesDose, mangler, medRegel, osloDato, skjemaFor, TOMT_SKJEMA, valgidentitet } from '../verktoy/doseplan'
@@ -105,8 +105,8 @@ describe('Søket etter verktøy', () => {
   })
 })
 
-/** Reglene K1 ga en ny versjon med krav om komplett plan, til faglig kontroll (`regler/komplettplan.ts`). */
-const K1 = K1_REGLER.map((k) => k.regel)
+/** Reglene K1 ga en ny versjon med avslutning, til faglig kontroll (`regler/k1.ts`). */
+const K1 = K1_AVSLUTNINGER.map((k) => k.regel)
 
 describe('Regelstatusen', () => {
   it('sier at reglene i pilotsettet og P7 er kontrollert og ikke godkjent, unntatt de klinisk godkjente beregningene og fagteksten', () => {
@@ -140,7 +140,7 @@ describe('Regelstatusen', () => {
       } else if (GODKJENT_FAGTEKST.includes(regler[0]!)) {
         expect(t, regler[0]).toMatchObject({ status: 'fagtekst', grunner: [`Regelen «${t.regler[0]!.tittel}» har ingen beregning.`] })
       } else if (K1.includes(regler[0]!)) {
-        // K1 ga hovedregelen en ny versjon med krav om komplett plan, til faglig kontroll; den langsomme varianten er fortsatt kontrollert og ikke godkjent.
+        // K1 ga hovedregelen en ny versjon med avslutning, til faglig kontroll; den langsomme varianten er fortsatt kontrollert og ikke godkjent.
         expect(t, regler[0]).toMatchObject({
           status: 'til_kontroll',
           grunner: ['Beregning er ikke tilgjengelig fordi faglig kontroll av regelen gjenstår.', 'Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning.'],

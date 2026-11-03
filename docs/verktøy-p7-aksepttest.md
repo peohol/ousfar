@@ -5,8 +5,6 @@ Aksepttesten etter kontrollrunden 30.10.2026 (P7.5, del E.2). Hver hovedregel og
 
 **Dette er modellberegninger av kontrollutkast, ikke kliniske planer.** Av de beregnbare P7-reglene er bare `seponering-vortioksetin` klinisk godkjent, og bare for cellene i det kliniske omfanget (**[klinisk omfang]** under); verktøyet viser ingen andre av planene. De andre beregnbare reglene er kontrollert og ikke godkjent i denne leveransen (kontrollørens disposisjon 31.10.2026), så en celle i deres kliniske omfang er teknisk, ikke et godkjenningsvedtak. Pasientopplysninger inngår ikke.
 
-`seponering-amitriptylin`, `seponering-escitalopram`, `seponering-nortriptylin`, `seponering-sertralin` krever en komplett plan helt til seponering (K1, `docs/verktøy-k1-nedtrapping-kontrollgrunnlag.md`). En plan som ikke når dit, stopper med «Komplett plan ikke tilgjengelig» og grunnen, uten doser, så cellene deres viser stopp der de ellers ville vist en delplan.
-
 Scenariene er:
 
 - (a) Vanlig dose, kort behandlingstid, standardvalgene.
@@ -24,21 +22,21 @@ Svarene er de samme i alle scenariene: startforslaget og organfunksjon er bekref
 
 ## Oversikt (g)
 
-I (a) stopper 5 av 10 kombinasjoner av virkestoff og form allerede ved første trinn: amitriptylin (eneste form), escitalopram (Tablett [53]), escitalopram (Dråper, oppløsning [748]), nortriptylin (eneste form), sertralin (eneste form).
+I (a) stopper 2 av 10 kombinasjoner av virkestoff og form allerede ved første trinn: amitriptylin (eneste form), nortriptylin (eneste form).
 
-Der et trinn ikke kan gis nøyaktig, kan forskriveren velge blant de nærmeste dosene som kan gis, med faktisk reduksjon innenfor valgområdet for risikogruppen (bidragsyterens valg 30.10.2026, akseptert som prinsipp i kontrollørens beslutning P7-A). I (a) tilbyr 4 av 10 kombinasjoner et slikt valg. Med et valg ved hvert slikt trinn (h) stopper 5 av 10 ved første trinn.
+Der et trinn ikke kan gis nøyaktig, kan forskriveren velge blant de nærmeste dosene som kan gis, med faktisk reduksjon innenfor valgområdet for risikogruppen (bidragsyterens valg 30.10.2026, akseptert som prinsipp i kontrollørens beslutning P7-A). I (a) tilbyr 4 av 10 kombinasjoner et slikt valg. Med et valg ved hvert slikt trinn (h) stopper 0 av 10 ved første trinn.
 
 | Virkestoff | Form | (a) | (b) | (c) | (d) | (f) | (h) |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| amitriptylin | eneste form | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn |
-| escitalopram | Tablett [53] | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | – | stopper ved første trinn |
-| escitalopram | Dråper, oppløsning [748] | stopper ved første trinn | stopper ved første trinn | 1 reduksjon | stopper ved første trinn | – | stopper ved første trinn |
+| amitriptylin | eneste form | stopper ved første trinn | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | 1 reduksjon | 4 reduksjoner |
+| escitalopram | Tablett [53] | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | 1 reduksjon |
+| escitalopram | Dråper, oppløsning [748] | 1 reduksjon | 1 reduksjon | 1 reduksjon | 1 reduksjon | stopper ved første trinn | 10 reduksjoner |
 | fluoksetin | Dispergerbar tablett [5] | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | 1 reduksjon |
 | fluoksetin | Tablett [53] | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | 1 reduksjon |
 | fluvoksamin | eneste form | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | 1 reduksjon |
 | klomipramin | eneste form | 1 reduksjon | 1 reduksjon | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | 7 reduksjoner |
-| nortriptylin | eneste form | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn |
-| sertralin | eneste form | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | – | stopper ved første trinn |
+| nortriptylin | eneste form | stopper ved første trinn | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | 1 reduksjon | 4 reduksjoner |
+| sertralin | eneste form | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | 1 reduksjon |
 | vortioksetin | eneste form | 1 reduksjon | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | stopper ved første trinn | 1 reduksjon |
 
 ## Klinisk omfang per virkestoff og form (P7.5)
@@ -48,21 +46,22 @@ Til kontrollørens regel- og formspesifikke kontroll (gjennomgangen av 62ebb21 o
 - **delplan:** delplan med den foretrukne reduksjonen, som stopper ved trinnet før det første som ikke kan gis; med én reduksjon er den én mulig reduksjon med revurdering, ikke en fullstendig nedtrappingsplan.
 - **valgt dose:** første trinn bare med en dose forskriveren velger, innenfor det foretrukne området uten krav om begrunnelse.
 - **stopp:** bare forklarende stopp; ingen dose med reduksjon innenfor det foretrukne området kan gis, og et avvik tilbys ikke.
+- **trinn til seponering:** en plan helt til seponering, fordi regelen har en avslutning (regelmodell 12) som gjelder fra dosen planen når; tallet er antall dosetrinn før seponeringen.
 
 | Virkestoff | Form | (a) | (b) | (c) | (d) | (f) |
 | --- | --- | --- | --- | --- | --- | --- |
-| amitriptylin | eneste form | valgt dose | stopp | stopp | stopp | stopp |
-| escitalopram | Tablett [53] | stopp | stopp | stopp | stopp | – |
-| escitalopram | Dråper, oppløsning [748] | stopp | stopp | én reduksjon med revurdering | stopp | – |
+| amitriptylin | eneste form | valgt dose | én reduksjon med revurdering | stopp | stopp | én reduksjon med revurdering |
+| escitalopram | Tablett [53] | én reduksjon med revurdering | stopp | stopp | stopp | stopp |
+| escitalopram | Dråper, oppløsning [748] | én reduksjon med revurdering | én reduksjon med revurdering | én reduksjon med revurdering | 1 trinn til seponering | valgt dose |
 | fluoksetin | Dispergerbar tablett [5] | én reduksjon med revurdering | stopp | stopp | stopp | stopp |
 | fluoksetin | Tablett [53] | én reduksjon med revurdering | stopp | stopp | stopp | stopp |
 | fluvoksamin | eneste form | én reduksjon med revurdering | stopp | stopp | stopp | stopp |
 | klomipramin | eneste form | én reduksjon med revurdering | én reduksjon med revurdering | én reduksjon med revurdering | stopp | valgt dose |
-| nortriptylin | eneste form | valgt dose | stopp | stopp | stopp | stopp |
-| sertralin | eneste form | stopp | stopp | stopp | stopp | – |
+| nortriptylin | eneste form | valgt dose | én reduksjon med revurdering | stopp | stopp | én reduksjon med revurdering |
+| sertralin | eneste form | én reduksjon med revurdering | stopp | stopp | stopp | stopp |
 | vortioksetin | eneste form | én reduksjon med revurdering | stopp | stopp | stopp | stopp |
 
-Ingen av lavdoseeksemplene (d) gir et ordinært første trinn: fra laveste styrke i formen er planen et forklarende stopp i alle kombinasjonene.
+Lavdoseeksemplene (d) gir et første trinn bare for escitalopram (Dråper, oppløsning [748]).
 
 ### Per startdose
 
@@ -73,17 +72,17 @@ Omfanget for hver markedsført styrke i formen, regelens vanlige dose og grensen
 | Virkestoff | Form | Startdose | (a) | (b) | (c) | (f) |
 | --- | --- | --- | --- | --- | --- | --- |
 | amitriptylin | eneste form | 10 mg | stopp | stopp | stopp | – |
-| amitriptylin | eneste form | 25 mg | valgt dose | stopp | stopp | fra 20 mg: stopp |
-| amitriptylin | eneste form | 50 mg | valgt dose | stopp | stopp | fra 40 mg: stopp |
-| amitriptylin | eneste form | 75 mg | valgt dose | valgt dose | stopp | fra 60 mg: stopp |
-| amitriptylin | eneste form | 100 mg | stopp | stopp | stopp | – |
-| amitriptylin | eneste form | 150 mg | valgt dose | stopp | stopp | fra 120 mg: valgt dose |
+| amitriptylin | eneste form | 25 mg | valgt dose **[klinisk omfang]** | stopp | stopp | fra 20 mg: stopp |
+| amitriptylin | eneste form | 50 mg | valgt dose **[klinisk omfang]** | én reduksjon med revurdering **[klinisk omfang]** | stopp | fra 40 mg: én reduksjon med revurdering |
+| amitriptylin | eneste form | 75 mg | valgt dose **[klinisk omfang]** | valgt dose **[klinisk omfang]** | stopp | fra 60 mg: én reduksjon med revurdering |
+| amitriptylin | eneste form | 100 mg | én reduksjon med revurdering **[klinisk omfang]** | stopp | stopp | fra 75 mg: valgt dose **[klinisk omfang]** |
+| amitriptylin | eneste form | 150 mg | valgt dose **[klinisk omfang]** | stopp | stopp | fra 120 mg: valgt dose |
 | escitalopram | Tablett [53] | 5 mg | stopp | stopp | stopp | – |
 | escitalopram | Tablett [53] | 10 mg | stopp | stopp | stopp | – |
-| escitalopram | Tablett [53] | 20 mg | stopp | stopp | stopp | – |
-| escitalopram | Dråper, oppløsning [748] | 1 mg | stopp | stopp | stopp | – |
-| escitalopram | Dråper, oppløsning [748] | 10 mg | valgt dose | stopp | stopp | fra 8 mg: stopp |
-| escitalopram | Dråper, oppløsning [748] | 20 mg | stopp | stopp | én reduksjon med revurdering **[klinisk omfang]** | – |
+| escitalopram | Tablett [53] | 20 mg | én reduksjon med revurdering **[klinisk omfang]** | stopp | stopp | fra 15 mg: stopp |
+| escitalopram | Dråper, oppløsning [748] | 1 mg | 1 trinn til seponering | 1 trinn til seponering | stopp | – |
+| escitalopram | Dråper, oppløsning [748] | 10 mg | valgt dose **[klinisk omfang]** | én reduksjon med revurdering **[klinisk omfang]** | stopp | fra 8 mg: én reduksjon med revurdering |
+| escitalopram | Dråper, oppløsning [748] | 20 mg | én reduksjon med revurdering **[klinisk omfang]** | én reduksjon med revurdering **[klinisk omfang]** | én reduksjon med revurdering **[klinisk omfang]** | fra 15 mg: valgt dose |
 | fluoksetin | Dispergerbar tablett [5] | 20 mg | stopp | stopp | stopp | – |
 | fluoksetin | Dispergerbar tablett [5] | 40 mg | én reduksjon med revurdering **[klinisk omfang]** | stopp | stopp | fra 30 mg: stopp |
 | fluoksetin | Dispergerbar tablett [5] | 60 mg | valgt dose **[klinisk omfang]** | stopp | stopp | fra 50 mg: valgt dose |
@@ -98,13 +97,13 @@ Omfanget for hver markedsført styrke i formen, regelens vanlige dose og grensen
 | klomipramin | eneste form | 50 mg | én reduksjon med revurdering | én reduksjon med revurdering **[klinisk omfang]** | én reduksjon med revurdering | fra 37,5 mg: valgt dose |
 | klomipramin | eneste form | 150 mg | stopp | stopp | stopp | – |
 | nortriptylin | eneste form | 10 mg | stopp | stopp | stopp | – |
-| nortriptylin | eneste form | 25 mg | valgt dose | stopp | stopp | fra 20 mg: stopp |
-| nortriptylin | eneste form | 50 mg | valgt dose | stopp | stopp | fra 40 mg: stopp |
-| nortriptylin | eneste form | 150 mg | valgt dose | stopp | stopp | fra 120 mg: valgt dose |
+| nortriptylin | eneste form | 25 mg | valgt dose **[klinisk omfang]** | stopp | stopp | fra 20 mg: stopp |
+| nortriptylin | eneste form | 50 mg | valgt dose **[klinisk omfang]** | én reduksjon med revurdering **[klinisk omfang]** | stopp | fra 40 mg: én reduksjon med revurdering |
+| nortriptylin | eneste form | 150 mg | valgt dose **[klinisk omfang]** | stopp | stopp | fra 120 mg: valgt dose |
 | sertralin | eneste form | 25 mg | stopp | stopp | stopp | – |
 | sertralin | eneste form | 50 mg | stopp | stopp | stopp | – |
-| sertralin | eneste form | 100 mg | stopp | stopp | stopp | – |
-| sertralin | eneste form | 200 mg | stopp | stopp | stopp | – |
+| sertralin | eneste form | 100 mg | én reduksjon med revurdering **[klinisk omfang]** | stopp | stopp | fra 75 mg: stopp |
+| sertralin | eneste form | 200 mg | én reduksjon med revurdering **[klinisk omfang]** | stopp | stopp | fra 150 mg: valgt dose |
 | vortioksetin | eneste form | 5 mg | stopp | stopp | stopp | – |
 | vortioksetin | eneste form | 10 mg | stopp | stopp | stopp | – |
 | vortioksetin | eneste form | 15 mg | stopp | stopp | stopp | – |
@@ -124,9 +123,8 @@ Stopper:
 
 **(b) Lang behandlingstid, 10 % per trinn, fra 50 mg.**
 
-Stopper:
-
-- Komplett plan ikke tilgjengelig for amitriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.
+- fra dag 1: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg
+- én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene
 
 **(c) Tidligere seponeringssymptomer (langsom variant), fra 50 mg.**
 
@@ -142,31 +140,31 @@ Stopper:
 
 **(f) Videreføring: ny plan fra siste dose i (a), eller fra dosen forskriveren velger ved første trinn når (a) bare gir et valg, fra 40 mg.**
 
-Stopper:
-
-- Komplett plan ikke tilgjengelig for amitriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.
+- fra dag 1: 30 mg = 3 tabletter à 10 mg
+- én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene
 
 - Kan velges for trinn 2 (dag 29, beregnet 22,5 mg, fra 30 mg): 25 mg (−16,67 %).
 
 **(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 50 mg.**
 
-Stopper:
-
-- Komplett plan ikke tilgjengelig for amitriptylin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt.
+- dag 1–28: 40 mg = 4 tabletter à 10 mg, valgt av forskriveren (beregnet 37,5 mg; −20 %)
+- dag 29–56: 30 mg = 3 tabletter à 10 mg
+- dag 57–84: 25 mg = 1 tablett à 25 mg, valgt av forskriveren (beregnet 22,5 mg; −16,67 %)
+- fra dag 85: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 18,75 mg; −20 %)
+- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
 ### escitalopram, Tablett [53]
 
 **(a) Vanlig dose, kort behandlingstid, standardvalgene, fra 20 mg.**
 
-Stopper:
-
-- Komplett plan ikke tilgjengelig for escitalopram: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.
+- fra dag 1: 15 mg = 1 tablett à 10 mg + 1 tablett à 5 mg
+- én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 1 mg eller lavere (planen står på 15 mg)
 
 **(b) Lang behandlingstid, 10 % per trinn, fra 20 mg.**
 
 Stopper:
 
-- escitalopram dag 1–28: den ideelle dosen 18 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (-16,67 %, faktisk reduksjon 25 % fra 20 mg) og 20 mg (+11,11 %). Den foretrukne reduksjonen til 18 mg (−10 % fra 20 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 5–10 %. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet.
+- escitalopram dag 1–28: den ideelle dosen 18 mg kan ikke gis med preparatene i FEST nøyaktig og ikke under 1 mg. Nærmeste doser som kan settes sammen: 15 mg (-16,67 %, faktisk reduksjon 25 % fra 20 mg) og 20 mg (+11,11 %). Den foretrukne reduksjonen til 18 mg (−10 % fra 20 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 5–10 %. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet.
 
 **(c) Tidligere seponeringssymptomer (langsom variant), fra 20 mg.**
 
@@ -178,33 +176,32 @@ Stopper:
 
 Stopper:
 
-- escitalopram dag 1–28: den ideelle dosen 3,75 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 5 mg (+33,33 %). Den foretrukne reduksjonen til 3,75 mg (−25 % fra 5 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 5–25 %. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet.
+- escitalopram dag 1–28: den ideelle dosen 3,75 mg kan ikke gis med preparatene i FEST nøyaktig og ikke under 1 mg. Nærmeste doser som kan settes sammen: 5 mg (+33,33 %). Den foretrukne reduksjonen til 3,75 mg (−25 % fra 5 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 5–25 %. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet.
 
-**(f) Videreføring: ny plan fra siste dose i (a), eller fra dosen forskriveren velger ved første trinn når (a) bare gir et valg.**
-
-(a) gir ingen dose å videreføre fra, heller ikke en dose forskriveren kan velge.
-
-**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 20 mg.**
+**(f) Videreføring: ny plan fra siste dose i (a), eller fra dosen forskriveren velger ved første trinn når (a) bare gir et valg, fra 15 mg.**
 
 Stopper:
 
-- Komplett plan ikke tilgjengelig for escitalopram: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.
+- escitalopram dag 1–28: den ideelle dosen 11,25 mg kan ikke gis med preparatene i FEST nøyaktig og ikke under 1 mg. Nærmeste doser som kan settes sammen: 10 mg (-11,11 %, faktisk reduksjon 33,33 % fra 15 mg) og 15 mg (+33,33 %). Den foretrukne reduksjonen til 11,25 mg (−25 % fra 15 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 5–25 %. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet.
+
+**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 20 mg.**
+
+- fra dag 1: 15 mg = 1 tablett à 10 mg + 1 tablett à 5 mg
+- én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 1 mg eller lavere (planen står på 15 mg)
 
 ### escitalopram, Dråper, oppløsning [748]
 
 **(a) Vanlig dose, kort behandlingstid, standardvalgene, fra 20 mg.**
 
-Stopper:
-
-- Komplett plan ikke tilgjengelig for escitalopram: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.
+- fra dag 1: 15 mg = 15 dråper à 1 mg
+- én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 1 mg eller lavere (planen står på 15 mg)
 
 - Kan velges for trinn 2 (dag 29, beregnet 11,25 mg, fra 15 mg): 12 mg (−20 %).
 
 **(b) Lang behandlingstid, 10 % per trinn, fra 20 mg.**
 
-Stopper:
-
-- Komplett plan ikke tilgjengelig for escitalopram: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.
+- fra dag 1: 18 mg = 18 dråper à 1 mg
+- én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 1 mg eller lavere (planen står på 18 mg)
 
 - Kan velges for trinn 2 (dag 29, beregnet 16,2 mg, fra 18 mg): 17 mg (−5,56 %).
 
@@ -215,19 +212,30 @@ Stopper:
 
 **(d) Lav dose: laveste styrke i formen, fra 1 mg.**
 
+- dag 1–28: 1 mg = 1 dråpe à 1 mg
+- fra dag 29: seponert
+
+**(f) Videreføring: ny plan fra siste dose i (a), eller fra dosen forskriveren velger ved første trinn når (a) bare gir et valg, fra 15 mg.**
+
 Stopper:
 
-- escitalopram dag 1–28: den ideelle dosen 0,75 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 1 mg (+33,33 %). Den foretrukne reduksjonen til 0,75 mg (−25 % fra 1 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 5–25 %. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet.
+- escitalopram dag 1–28: den ideelle dosen 11,25 mg kan ikke gis med preparatene i FEST nøyaktig og ikke under 1 mg. Nærmeste doser som kan settes sammen: 11 mg (-2,22 %, faktisk reduksjon 26,67 % fra 15 mg) og 12 mg (+6,67 %, faktisk reduksjon 20 % fra 15 mg). Den foretrukne reduksjonen til 11,25 mg (−25 % fra 15 mg) kan ikke gis med preparatene. Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 15 mg innenfor det foretrukne området 5–25 %: 12 mg (−20 %). Beregningen velger ikke selv.
 
-**(f) Videreføring: ny plan fra siste dose i (a), eller fra dosen forskriveren velger ved første trinn når (a) bare gir et valg.**
-
-(a) gir ingen dose å videreføre fra, heller ikke en dose forskriveren kan velge.
+- Kan velges for trinn 1 (dag 1, beregnet 11,25 mg, fra 15 mg): 12 mg (−20 %).
 
 **(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 20 mg.**
 
-Stopper:
-
-- Komplett plan ikke tilgjengelig for escitalopram: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt.
+- dag 1–28: 15 mg = 15 dråper à 1 mg
+- dag 29–56: 12 mg = 12 dråper à 1 mg, valgt av forskriveren (beregnet 11,25 mg; −20 %)
+- dag 57–84: 9 mg = 9 dråper à 1 mg
+- dag 85–112: 7 mg = 7 dråper à 1 mg, valgt av forskriveren (beregnet 6,75 mg; −22,22 %)
+- dag 113–140: 6 mg = 6 dråper à 1 mg, valgt av forskriveren (beregnet 5,25 mg; −14,29 %)
+- dag 141–168: 5 mg = 5 dråper à 1 mg, valgt av forskriveren (beregnet 4,5 mg; −16,67 %)
+- dag 169–196: 4 mg = 4 dråper à 1 mg, valgt av forskriveren (beregnet 3,75 mg; −20 %)
+- dag 197–224: 3 mg = 3 dråper à 1 mg
+- dag 225–252: 2 mg = 2 dråper à 1 mg, valgt av forskriveren (beregnet 2,25 mg; −33,33 %)
+- dag 253–280: 1 mg = 1 dråpe à 1 mg, valgt av forskriveren (beregnet 1,5 mg; −50 %)
+- fra dag 281: seponert
 
 ### fluoksetin, Dispergerbar tablett [5]
 
@@ -395,9 +403,8 @@ Stopper:
 
 **(b) Lang behandlingstid, 10 % per trinn, fra 50 mg.**
 
-Stopper:
-
-- Komplett plan ikke tilgjengelig for nortriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.
+- fra dag 1: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg
+- én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene
 
 **(c) Tidligere seponeringssymptomer (langsom variant), fra 50 mg.**
 
@@ -413,25 +420,25 @@ Stopper:
 
 **(f) Videreføring: ny plan fra siste dose i (a), eller fra dosen forskriveren velger ved første trinn når (a) bare gir et valg, fra 40 mg.**
 
-Stopper:
-
-- Komplett plan ikke tilgjengelig for nortriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.
+- fra dag 1: 30 mg = 3 tabletter à 10 mg
+- én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene
 
 - Kan velges for trinn 2 (dag 29, beregnet 22,5 mg, fra 30 mg): 25 mg (−16,67 %).
 
 **(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 50 mg.**
 
-Stopper:
-
-- Komplett plan ikke tilgjengelig for nortriptylin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt.
+- dag 1–28: 40 mg = 4 tabletter à 10 mg, valgt av forskriveren (beregnet 37,5 mg; −20 %)
+- dag 29–56: 30 mg = 3 tabletter à 10 mg
+- dag 57–84: 25 mg = 1 tablett à 25 mg, valgt av forskriveren (beregnet 22,5 mg; −16,67 %)
+- fra dag 85: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 18,75 mg; −20 %)
+- neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt
 
 ### sertralin, eneste form
 
 **(a) Vanlig dose, kort behandlingstid, standardvalgene, fra 100 mg.**
 
-Stopper:
-
-- Komplett plan ikke tilgjengelig for sertralin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.
+- fra dag 1: 75 mg = 1 tablett à 25 mg + 1 tablett à 50 mg
+- én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene
 
 **(b) Lang behandlingstid, 10 % per trinn, fra 100 mg.**
 
@@ -451,15 +458,16 @@ Stopper:
 
 - sertralin dag 1–28: den ideelle dosen 18,75 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 25 mg (+33,33 %). Den foretrukne reduksjonen til 18,75 mg (−25 % fra 25 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 5–25 %. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet.
 
-**(f) Videreføring: ny plan fra siste dose i (a), eller fra dosen forskriveren velger ved første trinn når (a) bare gir et valg.**
-
-(a) gir ingen dose å videreføre fra, heller ikke en dose forskriveren kan velge.
-
-**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 100 mg.**
+**(f) Videreføring: ny plan fra siste dose i (a), eller fra dosen forskriveren velger ved første trinn når (a) bare gir et valg, fra 75 mg.**
 
 Stopper:
 
-- Komplett plan ikke tilgjengelig for sertralin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.
+- sertralin dag 1–28: den ideelle dosen 56,25 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 50 mg (-11,11 %, faktisk reduksjon 33,33 % fra 75 mg) og 75 mg (+33,33 %). Den foretrukne reduksjonen til 56,25 mg (−25 % fra 75 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 5–25 %. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet.
+
+**(h) Som (a), men ved hvert trinn som ikke kan gis, velges den tilbudte dosen med reduksjon nærmest standardvalget (en simulering av forskriverens valg, ikke et forslag), fra 100 mg.**
+
+- fra dag 1: 75 mg = 1 tablett à 25 mg + 1 tablett à 50 mg
+- én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene
 
 ### vortioksetin, eneste form
 
