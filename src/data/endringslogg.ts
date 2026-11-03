@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.124.2',
+    versjon: '1.124.3',
     dato: '2026-11-03',
     sammendrag: 'Prøven av kildeovervåkingen avsluttet',
     typer: ['Funksjonalitet'],
@@ -21,6 +21,19 @@ export const ENDRINGSLOGG: Endring[] = [
       'Ingen endring i appen. Den syntetiske prøvesaken i kildeovervåkingen er avsluttet som prøve, og den gamle prøven av fristene, som ikke lenger finnes, er merket som utgått i fremdriftsplanen.',
     ],
     utenVarsel: true,
+  },
+  {
+    versjon: '1.124.2',
+    dato: '2026-11-03',
+    sammendrag: 'Toppmenyen er ryddig på alle skjermbredder',
+    typer: ['Design / layout'],
+    omfang: 'Moderat omfang',
+    gjelder: ['hele appen'],
+    punkter: [
+      'Knappene i toppmenyen legger seg ikke lenger over hverandre når vinduet er litt smalt.',
+      'Når det blir trangt, blir sidens knapper først til runde ikonknapper. Er det fortsatt ikke plass, flytter de ned i menyen nederst på skjermen, slik de gjør på mobil. Søket i fagstoffet beholder alltid et brukbart felt.',
+      'Menyene er litt mer gjennomskinnelige, med mindre uskarphet bak.',
+    ],
   },
   {
     versjon: '1.124.1',
