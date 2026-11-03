@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.117.6',
+    dato: '2026-11-03',
+    sammendrag: 'Vurdering av når verktøyene stopper av tekniske grunner',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Det er vurdert om kravet til ferske FEST-data og den jevnlige kontrollen av nødstoppen stopper verktøyene oftere enn nødvendig. Etter uavhengig kontroll beholdes begge kravene. Senere skal verktøyet si tydelig fra når en plan er tatt bort fordi kontrollen ikke svarte, prøve igjen av seg selv ved korte avbrudd, og varsle teknisk ansvarlig tidligere når FEST-oppdateringen feiler.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.117.5',
     dato: '2026-11-02',
     sammendrag: 'Undersøkelse av de to kildefunnene i kildeovervåkingen',
