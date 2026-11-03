@@ -141,8 +141,8 @@ Regelutkast som er kontrollert og ikke godkjent (eller bare fagtekst), og som de
 | Trappe ned antidepressiv | `seponering-vortioksetin-langsom` v8 | Vortioksetin | beregnbar | ikke godkjent |
 | Bytte antidepressiv | `mao-fluoksetin-fenelzin` v7 | Fluoksetin → Fenelzin | beregnbar | ikke godkjent |
 | Bytte antipsykotikum | `antipsykotikabytte-olanzapin-kvetiapin` v5 | Olanzapin (peroral) → Kvetiapin | beregnbar | ikke godkjent |
-| Kombinere stemningsstabiliserende | `tillegg-litium-lamotrigin` v1 | Litium → Lamotrigin | beregnbar | til kontroll |
-| Kombinere stemningsstabiliserende | `tillegg-valproat-lamotrigin` v1 | Valproat → Lamotrigin | beregnbar | til kontroll |
+| Kombinere stemningsstabiliserende | `tillegg-litium-lamotrigin` v2 | Litium → Lamotrigin | beregnbar | til kontroll |
+| Kombinere stemningsstabiliserende | `tillegg-valproat-lamotrigin` v2 | Valproat → Lamotrigin | beregnbar | til kontroll |
 
 ## 6. Hvorfor de andre kombinasjonene stopper
 

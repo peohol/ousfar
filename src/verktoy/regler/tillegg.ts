@@ -199,9 +199,22 @@ export const OPPTRAPPING: Record<Lamotrigingruppe, Gruppeplan> = {
 const TIL_KONTROLL = 'Sendt til uavhengig faglig kontroll av kilder, klinisk innhold, avgrensning og regneeksempler (K4). Ikke klinisk godkjent.'
 const UTKAST_DATO = '2026-11-03'
 
+/** Versjon 2 er revidert etter den uavhengige kontrollen av versjon 1 03.11.2026, som ikke godkjente den. */
+const VERSJON = 2
+
 const tilKontroll = (): Godkjenning => ({
   status: 'til_faglig_kontroll',
-  historikk: [steg('utkast', 1, 'Utkast til tilleggsregel (K4).', UTKAST_DATO), steg('til_faglig_kontroll', 1, TIL_KONTROLL, UTKAST_DATO)],
+  historikk: [
+    steg('utkast', 1, 'Utkast til tilleggsregel (K4).', UTKAST_DATO),
+    steg('til_faglig_kontroll', 1, TIL_KONTROLL, UTKAST_DATO),
+    steg(
+      'utkast',
+      VERSJON,
+      'Revidert etter den uavhengige kontrollen av versjon 1: måldosen må velges, østrogenholdig behandling må vurderes, dosen av det eksisterende legemidlet er enten kontrollert eller uttrykkelig bare bekreftet, og for valproat bekreftes vilkårene i det graviditetsforebyggende programmet hver for seg.',
+      UTKAST_DATO,
+    ),
+    steg('til_faglig_kontroll', VERSJON, TIL_KONTROLL, UTKAST_DATO),
+  ],
 })
 
 /** Legemiddelformen i FEST for Lamictal tyggetabletter/dispergerbare tabletter, de markedsførte formene av lamotrigin i Norge. */
@@ -425,7 +438,7 @@ export function lamotrigintillegg(e: Eksisterende): Regel {
   const maldose: Inndatakrav = { navn: 'maldose', verdier: [plan.maldose], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [plan.henvisning, LAMICTAL.respons] } }
   return {
     id: `tillegg-${e.nokkel}-lamotrigin`,
-    versjon: 1,
+    versjon: VERSJON,
     tittel: `Legge lamotrigin til ${e.navn}`,
     fra: { type: 'virkestoff', nokkel: e.nokkel },
     til: { type: 'virkestoff', nokkel: 'lamotrigin' },

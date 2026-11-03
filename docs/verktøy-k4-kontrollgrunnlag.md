@@ -10,8 +10,8 @@ FEST-uttrekket: `src/data/verktoy/fest-tillegg.json` (hentet 2026-11-03T16:53:31
 
 | Regel | Versjon | Fingeravtrykk |
 | --- | --- | --- |
-| `tillegg-valproat-lamotrigin` | 1 | `cb71e2d6d160db48911541a2af3d7a82f86895d0734bf345809adc47627a6417` |
-| `tillegg-litium-lamotrigin` | 1 | `24374dbf6c90994ad7d6fd8686a848fcbd089633a78be20ac32da3fbf6b9badf` |
+| `tillegg-valproat-lamotrigin` | 2 | `ca32dfe6497ef150ea5ce0a09ea1f504274e7daa63fc3860ffe9f103de124467` |
+| `tillegg-litium-lamotrigin` | 2 | `0957451ee2d5edf0954541712cb5ef272a3966c096828810643a72ebf6cf9922` |
 
 ## Kontrollspørsmål
 
@@ -152,7 +152,7 @@ Kilder:
 - Orfiril (natriumvalproat) enterotabletter, preparatomtale (Direktoratet for medisinske produkter (DMP), Oppdatert 03.09.2026): https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06565.pdf – pkt. 4.5, Lamotrigin
 
 Versjoner:
-- Regel tillegg-valproat-lamotrigin, versjon 1, fingeravtrykk cb71e2d6d160
+- Regel tillegg-valproat-lamotrigin, versjon 2, fingeravtrykk ca32dfe6497e
 - Regelsett ousfar-verktoy-tillegg, versjon 1
 - Regelmodell 12, beregningsmotor 10, doseplanmotor 10
 - FEST-uttrekk 2026-10-27T12:25:20, kontrollert 2026-11-03T04:15:06.046601+00:00, preparatstatus per 03.11.2026
@@ -235,7 +235,7 @@ Kilder:
 - Orfiril (natriumvalproat) enterotabletter, preparatomtale (Direktoratet for medisinske produkter (DMP), Oppdatert 03.09.2026): https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06565.pdf – pkt. 4.5, Lamotrigin
 
 Versjoner:
-- Regel tillegg-valproat-lamotrigin, versjon 1, fingeravtrykk cb71e2d6d160
+- Regel tillegg-valproat-lamotrigin, versjon 2, fingeravtrykk ca32dfe6497e
 - Regelsett ousfar-verktoy-tillegg, versjon 1
 - Regelmodell 12, beregningsmotor 10, doseplanmotor 10
 - FEST-uttrekk 2026-10-27T12:25:20, kontrollert 2026-11-03T04:15:06.046601+00:00, preparatstatus per 03.11.2026
@@ -314,7 +314,7 @@ Kilder:
 - Orfiril (natriumvalproat) enterotabletter, preparatomtale (Direktoratet for medisinske produkter (DMP), Oppdatert 03.09.2026): https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06565.pdf – pkt. 4.5, Lamotrigin
 
 Versjoner:
-- Regel tillegg-valproat-lamotrigin, versjon 1, fingeravtrykk cb71e2d6d160
+- Regel tillegg-valproat-lamotrigin, versjon 2, fingeravtrykk ca32dfe6497e
 - Regelsett ousfar-verktoy-tillegg, versjon 1
 - Regelmodell 12, beregningsmotor 10, doseplanmotor 10
 - FEST-uttrekk 2026-10-27T12:25:20, kontrollert 2026-11-03T04:15:06.046601+00:00, preparatstatus per 03.11.2026
@@ -394,7 +394,7 @@ Kilder:
 - Orfiril (natriumvalproat) enterotabletter, preparatomtale (Direktoratet for medisinske produkter (DMP), Oppdatert 03.09.2026): https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06565.pdf – pkt. 4.5, Lamotrigin
 
 Versjoner:
-- Regel tillegg-valproat-lamotrigin, versjon 1, fingeravtrykk cb71e2d6d160
+- Regel tillegg-valproat-lamotrigin, versjon 2, fingeravtrykk ca32dfe6497e
 - Regelsett ousfar-verktoy-tillegg, versjon 1
 - Regelmodell 12, beregningsmotor 10, doseplanmotor 10
 - FEST-uttrekk 2026-10-27T12:25:20, kontrollert 2026-11-03T04:15:06.046601+00:00, preparatstatus per 03.11.2026
@@ -475,7 +475,7 @@ Kilder:
 - Lamictal (lamotrigin) tyggetabletter/dispergerbare tabletter 2–200 mg, preparatomtale (Direktoratet for medisinske produkter (DMP), Oppdatert 30.06.2025): https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08198.pdf – pkt. 4.2, Bipolar lidelse; pkt. 4.2, Bipolar lidelse, tabell 3; pkt. 4.2, Dosering; pkt. 4.4, Hudutslett; pkt. 4.5, tabell 6
 
 Versjoner:
-- Regel tillegg-litium-lamotrigin, versjon 1, fingeravtrykk 24374dbf6c90
+- Regel tillegg-litium-lamotrigin, versjon 2, fingeravtrykk 0957451ee2d5
 - Regelsett ousfar-verktoy-tillegg, versjon 1
 - Regelmodell 12, beregningsmotor 10, doseplanmotor 10
 - FEST-uttrekk 2026-10-27T12:25:20, kontrollert 2026-11-03T04:15:06.046601+00:00, preparatstatus per 03.11.2026
@@ -556,7 +556,7 @@ Kilder:
 - Lamictal (lamotrigin) tyggetabletter/dispergerbare tabletter 2–200 mg, preparatomtale (Direktoratet for medisinske produkter (DMP), Oppdatert 30.06.2025): https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08198.pdf – pkt. 4.2, Bipolar lidelse; pkt. 4.2, Bipolar lidelse, tabell 3; pkt. 4.2, Dosering; pkt. 4.4, Hudutslett; pkt. 4.5, tabell 6
 
 Versjoner:
-- Regel tillegg-litium-lamotrigin, versjon 1, fingeravtrykk 24374dbf6c90
+- Regel tillegg-litium-lamotrigin, versjon 2, fingeravtrykk 0957451ee2d5
 - Regelsett ousfar-verktoy-tillegg, versjon 1
 - Regelmodell 12, beregningsmotor 10, doseplanmotor 10
 - FEST-uttrekk 2026-10-27T12:25:20, kontrollert 2026-11-03T04:15:06.046601+00:00, preparatstatus per 03.11.2026

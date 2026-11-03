@@ -28,9 +28,9 @@ Hentet og lest 03.11.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Legge lamotrigin til valproat
 
-`tillegg-valproat-lamotrigin`, versjon 1, fingeravtrykk `cb71e2d6d160db48911541a2af3d7a82f86895d0734bf345809adc47627a6417`. Tillegg til eksisterende legemiddel: valproat → lamotrigin. **Entydig beregnbar**; status **til faglig kontroll**.
+`tillegg-valproat-lamotrigin`, versjon 2, fingeravtrykk `ca32dfe6497ef150ea5ce0a09ea1f504274e7daa63fc3860ffe9f103de124467`. Tillegg til eksisterende legemiddel: valproat → lamotrigin. **Entydig beregnbar**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -146,9 +146,9 @@ Hentet og lest 03.11.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Legge lamotrigin til litium
 
-`tillegg-litium-lamotrigin`, versjon 1, fingeravtrykk `24374dbf6c90994ad7d6fd8686a848fcbd089633a78be20ac32da3fbf6b9badf`. Tillegg til eksisterende legemiddel: litium → lamotrigin. **Entydig beregnbar**; status **til faglig kontroll**.
+`tillegg-litium-lamotrigin`, versjon 2, fingeravtrykk `0957451ee2d5edf0954541712cb5ef272a3966c096828810643a72ebf6cf9922`. Tillegg til eksisterende legemiddel: litium → lamotrigin. **Entydig beregnbar**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
