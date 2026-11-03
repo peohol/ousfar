@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import { Ikon } from '../ikon/Ikon'
 import { Menyvalg, Nedtrekksmeny } from '../toppmeny/Nedtrekksmeny'
 import { ToppmenyInnhold } from '../toppmeny/Toppmenykilde'
 import { seksjonsanker } from './Seksjon'
@@ -20,7 +21,8 @@ import '../../styles/innholdsfortegnelse.css'
  * Fortegnelsen står to steder, og CSS viser det ene som passer bredden
  * (`innholdsfortegnelse.css`):
  *
- * - Er det plass til venstre for innholdet, flyter den der, midt i høyden.
+ * - Er det plass til venstre for innholdet, flyter den der, midt i høyden,
+ *   med seksjonsikonet foran hver tittel.
  * - Ellers er den en knapp i toppmenyen (`innhold`, i dokken på smale flater)
  *   som åpner seksjonene i en nedtrekksmeny, med seksjonsikonene.
  */
@@ -55,8 +57,10 @@ export function Innholdsfortegnelse() {
                 className="innholdsfortegnelse__punkt"
                 {...gjeldende(punkt)}
                 onClick={() => gaaTil(punkt.id)}
+                data-ih=""
               >
-                {punkt.navn}
+                <Ikon navn={punkt.ikon ?? 'fallback'} storrelse="ui" />
+                <span>{punkt.navn}</span>
               </button>
             </li>
           ))}
