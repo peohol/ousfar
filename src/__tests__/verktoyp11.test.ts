@@ -61,14 +61,14 @@ describe('testmatrisen for de godkjente reglene (P11.1–P11.4)', () => {
   })
 
   it('tar bort en plan som står når FEST-kopien blir foreldet eller dagen skifter', () => {
-    const u = kjorKasus(kasus('V25'), uttrekkene)
+    const u = kjorKasus(kasus('M19'), uttrekkene)
     expect(u.utfall).toBe('plan')
-    const naa = tidFor(kasus('V25'), uttrekkene)
+    const naa = tidFor(kasus('M19'), uttrekkene)
     expect(gjelderFortsatt(u.resultat!, naa)).toBe(true)
     // To timer senere er kopien eldre enn 48 timer.
     expect(gjelderFortsatt(u.resultat!, new Date(naa.getTime() + 2 * 3_600_000))).toBe(false)
     // En plan beregnet kl. 22.30 norsk tid gjelder ikke etter midnatt, fordi preparatstatusen gjelder én dag.
-    const kveld = { ...kasus('V01'), timer: 17.25 }
+    const kveld = { ...kasus('M01'), timer: 17.25 }
     const plan = kjorKasus(kveld, uttrekkene).resultat!
     const tid = tidFor(kveld, uttrekkene)
     expect(gjelderFortsatt(plan, new Date(tid.getTime() + 3_600_000))).toBe(true)

@@ -16,6 +16,7 @@ import { erKliniskGodkjent, fingeravtrykk, kanonisk, KONTROLLUTFALL, kontrollutf
 import type { Kildehenvisning, Regel, Regelsett } from './regler/modell'
 import { NEDTRAPPINGSSETT_FOR_RETTELSENE } from './regler/nedtrapping'
 import { kildelinje, kildeliste, regellinje, settlinje } from './planvisning'
+import { kliniskDelplan } from './motor/plan'
 import { kjorKasus, PILOTKASUS, type Pilotkasus, type Pilotutfall, type Uttrekkene } from './regler/pilotmatrise'
 import { PILOTSETT_FOR_RETTELSENE } from './regler/pilotsett'
 import { liste, tabell } from './regler/rapport'
@@ -47,8 +48,6 @@ export function forskjeller(a: unknown, b: unknown, sti = ''): string[] {
 /** Regelen uten det som ikke er faglig innhold: godkjenningen og versjonsnummeret. */
 const innhold = ({ godkjenning: _, versjon: __, ...r }: Regel) => r
 
-/** Settet regelen hører til blant `settene`. */
-const settMed = (r: Regel, settene: readonly Regelsett[]) => settene.find((s) => s.regler.includes(r))!
 
 /** Hver regel som har fått en ny versjon fra settene før rettelsene til settene appen bruker. */
 export function rettelsesrader(for_: readonly Regelsett[] = FOR_RETTELSENE, na: readonly Regelsett[] = REGELSETTENE): Rettelsesrad[] {
@@ -76,7 +75,7 @@ export interface Linjeendring {
  */
 export function forventedeLinjeendringer(rader: readonly Rettelsesrad[]): Map<string, Linjeendring[]> {
   const linje = (r: Regel) => regellinje({ ...r, fingeravtrykk: fingeravtrykk(r) })
-  return new Map(
+  const endringer = new Map<string, Linjeendring[]>(
     tilGodkjenning(rader).map(({ for: f, etter }) => {
       const for_ = new Map(kildeliste(f).map((k) => [k.url, kildelinje(k)]))
       const kilder = kildeliste(etter).flatMap((k): Linjeendring[] => {
@@ -87,13 +86,22 @@ export function forventedeLinjeendringer(rader: readonly Rettelsesrad[]): Map<st
         etter.id,
         [
           { ny: linje(etter), for: linje(f), hvorfor: 'Den nye regelversjonen.' },
-          { ny: settlinje(settMed(etter, REGELSETTENE)), for: settlinje(settMed(f, FOR_RETTELSENE)), hvorfor: 'Ny versjon av regelsettet med de nye regelversjonene.' },
           ...kilder,
         ],
       ] as const
     }),
   )
+  // Regelsettets versjon gjelder hver plan fra et sett som har fått ny versjon, også planene etter regler som ikke er endret; den står under settets id.
+  for (const f of FOR_RETTELSENE) {
+    const na = REGELSETTENE.find((s) => s.id === f.id)!
+    if (na.versjon !== f.versjon) endringer.set(na.id, [{ ny: settlinje(na), for: settlinje(f), hvorfor: 'Ny versjon av regelsettet med de nye regelversjonene.' }])
+  }
+  return endringer
 }
+
+/** De forventede linjeendringene for en plan: for regelen den er beregnet etter, og for regelsettet den oppgir. */
+export const forventetFor = (endringer: ReadonlyMap<string, readonly Linjeendring[]>, resultat: Kjoring['resultat']): readonly Linjeendring[] =>
+  resultat ? [...(endringer.get(resultat.regel.id) ?? []), ...(resultat.regelsett ? (endringer.get(resultat.regelsett.id) ?? []) : [])] : []
 
 type Kjoring = ReturnType<typeof kjorKasus>
 
@@ -104,7 +112,7 @@ type Kjoring = ReturnType<typeof kjorKasus>
  * har godkjent hvilken versjon; den sammenlignes for seg (avsnitt 3 i rapporten).
  */
 export function synlig({ resultat, tekst, ...u }: Kjoring, endringer: ReadonlyMap<string, readonly Linjeendring[]> = new Map()): string {
-  const tilbake = (endringer.get(resultat?.regel.id ?? '') ?? []).reduce((t, x) => t.split(`\n- ${x.ny}\n`).join(`\n- ${x.for}\n`), `${tekst ?? ''}\n`)
+  const tilbake = forventetFor(endringer, resultat).reduce((t, x) => t.split(`\n- ${x.ny}\n`).join(`\n- ${x.for}\n`), `${tekst ?? ''}\n`)
   return JSON.stringify({ ...u, tekst: tilbake })
 }
 
@@ -119,8 +127,8 @@ export interface Matrisesammenligning {
 export function matrisesammenligning(rader: readonly Rettelsesrad[], uttrekkene: Uttrekkene): Matrisesammenligning[] {
   const endringer = forventedeLinjeendringer(rader)
   return PILOTKASUS.map((kasus) => {
-    const for_ = kjorKasus(kasus, uttrekkene, FOR_RETTELSENE)
-    const etter = kjorKasus(kasus, uttrekkene)
+    const for_ = kjorKasus(kasus, uttrekkene, FOR_RETTELSENE, kliniskDelplan)
+    const etter = kjorKasus(kasus, uttrekkene, REGELSETTENE, kliniskDelplan)
     return { kasus, for: for_, etter, lik: synlig(for_) === synlig(etter, endringer) }
   })
 }
@@ -190,7 +198,7 @@ export function lagRettelseskontroll(uttrekkene: Uttrekkene): string {
     FOR_RETTELSENE.map((s) => [kode(s.id), String(s.versjon), String(REGELSETTENE.find((x) => x.id === s.id)!.versjon)]),
   )
   const linjetabell = tabell(
-    ['Regel', 'Nå', 'Før rettelsen', 'Hvorfor'],
+    ['Regel eller regelsett', 'Nå', 'Før rettelsen', 'Hvorfor'],
     [...forventedeLinjeendringer(rader)].flatMap(([id, linjer]) => linjer.map((x) => [kode(id), x.ny, x.for, x.hvorfor])),
   )
   const avvikstabell = tabell(
@@ -239,7 +247,7 @@ ${endringer}
 
 ## 5. Testmatrisen før og etter
 
-Alle ${sammenligning.length} kasusene i testmatrisen fra P11 (\`docs/verktøy-p11-testmatrise.md\`) er kjørt to ganger: med regelsettene slik de var før rettelsene (appversjon 1.122.1), og med regelsettene appen bruker nå. Sammenligningen gjelder hele det brukeren ser: radene i planen og hele teksten som kopieres, med advarsler, avvik, antakelser, usikkerhet, preparater, kontroller, kilder og versjoner, og grunnene når planen stopper. Før sammenligningen er bare linjene i tabellen under ført tilbake: regelversjonen og regelsettets versjon under «Versjoner» og stedene i RCPsych under «Kilder». Hver av dem må stå nøyaktig som i tabellen for å bli ført tilbake. Godkjenningslinjen på skjermen står i avsnitt 3. ${sammenligning.length - ulike.length} kasus gir nøyaktig det samme for brukeren. ${ulike.length === 0 ? 'Ingen gir noe annet.' : `${ulike.length} gir noe annet, og bare fordi kasuset prøver neste versjonsnummer, som nå er ett høyere:`}
+Alle ${sammenligning.length} kasusene i testmatrisen fra P11 (\`docs/verktøy-p11-testmatrise.md\`) er kjørt to ganger: med regelsettene slik de var før rettelsene (appversjon 1.122.1), og med regelsettene appen bruker nå. Sammenligningen gjelder hele det brukeren ser: radene i planen og hele teksten som kopieres, med advarsler, avvik, antakelser, usikkerhet, preparater, kontroller, kilder og versjoner, og grunnene når planen stopper. En plan som ikke når sluttmålet (en delplan), sammenlignes slik motoren beregner den, selv om verktøysiden ikke viser den (Peders beslutning 03.11.2026). Før sammenligningen er bare linjene i tabellen under ført tilbake: regelversjonen og regelsettets versjon under «Versjoner» og stedene i RCPsych under «Kilder». Hver av dem må stå nøyaktig som i tabellen for å bli ført tilbake. Godkjenningslinjen på skjermen står i avsnitt 3. ${sammenligning.length - ulike.length} kasus gir nøyaktig det samme for brukeren. ${ulike.length === 0 ? 'Ingen gir noe annet.' : `${ulike.length} gir noe annet, og bare fordi kasuset prøver neste versjonsnummer, som nå er ett høyere:`}
 
 ${ulike.length > 0 ? avvikstabell : ''}
 

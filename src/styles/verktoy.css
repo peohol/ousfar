@@ -411,6 +411,26 @@
   font-weight: var(--vekt-halvfet);
 }
 
+/* Om planen er komplett til sluttmålet eller en delplan (leveranseplanen §3): alltid synlig, med ikon og tekst. */
+.doseplan__utfall {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--rom-2);
+  margin: var(--rom-2) 0 0;
+  padding: var(--rom-2) var(--rom-3);
+  border: 1px solid var(--toksisk-blekk);
+  border-radius: var(--runding-underkort);
+  color: var(--toksisk-blekk);
+  font-weight: var(--vekt-halvfet);
+  line-height: var(--linjehoyde-lesing);
+}
+
+.doseplan__utfall[data-komplett] {
+  color: var(--blekk);
+  background: var(--aksent-flate);
+  border-color: var(--aksent);
+}
+
 .doseplan__handlinger {
   display: flex;
   flex-wrap: wrap;
@@ -493,9 +513,15 @@
   font-style: italic;
 }
 
-.doseplan__injeksjon {
+.doseplan__injeksjon,
+.doseplan__vurdering {
   display: flex;
   gap: var(--rom-2);
+}
+
+.doseplan__vurdering {
+  font-size: var(--tekst-etikett);
+  line-height: var(--linjehoyde-lesing);
 }
 
 .doseplan__injeksjon > span {
