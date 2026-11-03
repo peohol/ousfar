@@ -23,9 +23,9 @@ import { readFileSync } from 'node:fs'
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { VARSLER_ULEST } from '../components/verktoy/Regelvarsler'
-import { Verktoyside, type VerktoysideProps } from '../components/verktoy/Verktoyside'
-import { lagRegelvarsellager } from '../verktoy/overvaking/regelvarsler'
+import { VARSLER_HENTES, VARSLER_ULEST } from '../components/verktoy/Regelvarsler'
+import { DEKNING_UKONTROLLERT, Verktoyside, type VerktoysideProps } from '../components/verktoy/Verktoyside'
+import { lagRegelvarsellager, UGYLDIGE_REGELVARSLER } from '../verktoy/overvaking/regelvarsler'
 import type { Legemiddelutvalg } from '../legemiddeldata/lesing'
 import { glemBildet, oppdaterOgTaVare, taBilde } from '../oppdatering/bevaring'
 import { KARTLEGGING } from '../verktoy/register'
@@ -77,21 +77,41 @@ async function fyllInn(user: ReturnType<typeof userEvent.setup>) {
 }
 
 describe('oversikten', () => {
-  it('viser de tre verktøyene, og at bare de godkjente reglene kan beregnes: vortioksetin, sertralin → mirtazapin og de to depotreglene', () => {
+  const kortlinjer = () =>
+    screen
+      .getAllByRole('link')
+      .filter((a) => a.classList.contains('verktoykort__lenke'))
+      .map((a) => [...a.querySelectorAll('.verktoykort__linje')].map((l) => l.textContent))
+
+  it('viser de tre verktøyene, og at bare de godkjente reglene kan beregnes: vortioksetin, sertralin → mirtazapin og de to depotreglene', async () => {
     vis()
     expect(screen.getByRole('heading', { level: 1, name: 'Verktøy' })).toBeTruthy()
     expect(document.activeElement).toBe(screen.getByRole('heading', { level: 1 }))
     expect(document.title).toBe('Verktøy – OUSFAR')
     const kort = screen.getAllByRole('link').filter((a) => a.classList.contains('verktoykort__lenke'))
     expect(kort.map((a) => a.getAttribute('href'))).toEqual(['#/verktoy/trappe-ned-antidepressiv', '#/verktoy/bytte-antidepressiv', '#/verktoy/bytte-antipsykotikum'])
+    // Før nødstoppen er lest, loves ingenting om hva som kan beregnes.
+    expect(kortlinjer()).toEqual(Array(3).fill([DEKNING_UKONTROLLERT.henter]))
+    await act(async () => {})
     // Kortene sier hva som faktisk kan brukes, ikke hvor mange regler som venter.
-    expect(kort.map((a) => [...a.querySelectorAll('.verktoykort__linje')].map((l) => l.textContent))).toEqual([
+    expect(kortlinjer()).toEqual([
       ['Kan beregnes: Vortioksetin', 'Fagtekst: Agomelatin, Bupropion'],
       ['Kan beregnes: Sertralin → mirtazapin'],
       ['Kan beregnes: Aripiprazol: peroral → depotinjeksjon, Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)'],
     ])
     expect(screen.queryByText(/Ingen beregninger er tilgjengelige ennå/)).toBeNull()
     expect(screen.queryByRole('alert')).toBeNull()
+  })
+
+  it('sier at tilgjengeligheten ikke kan kontrolleres, ikke «Kan beregnes», mens nødstoppen ikke svarer eller ikke kan leses', async () => {
+    vis({ sperrer: { les: () => new Promise<Verktoysperre[]>(() => {}) } })
+    await act(async () => {})
+    expect(kortlinjer()).toEqual(Array(3).fill([DEKNING_UKONTROLLERT.henter]))
+    cleanup()
+    vis({ sperrer: { les: async () => Promise.reject(new Error('nettverksfeil')) } })
+    await act(async () => {})
+    expect(kortlinjer()).toEqual(Array(3).fill([DEKNING_UKONTROLLERT.feil]))
+    expect(screen.queryByText(/Kan beregnes/)).toBeNull()
   })
 
   it('sier fra om en adresse uten verktøy, og lukkes med Esc', async () => {
@@ -956,6 +976,64 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
       vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT), regelvarsler: undefined })
       await user.click(screen.getByRole('button', { name: 'Sertralin → mirtazapin' }))
       expect(screen.getByRole('note').textContent).toBe(VARSLER_ULEST)
+    })
+
+    describe('når varslene ikke svarer eller svaret har ukjent form', () => {
+      beforeEach(() => vi.useFakeTimers({ shouldAdvanceTime: true }))
+      afterEach(() => vi.useRealTimers())
+
+      it('sier at merknadene hentes, og etter fristen at de ikke kunne hentes, mens beregningen og nødstoppen virker som før', async () => {
+        const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+        const sperrer = { les: vi.fn(async (): Promise<Verktoysperre[]> => []) }
+        const varsler = { les: vi.fn(() => new Promise<never>(() => {})) }
+        vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT), sperrer, regelvarsler: varsler })
+        await user.click(screen.getByRole('button', { name: 'Sertralin → mirtazapin' }))
+        // Ikke «ingen merknad» før det er kjent.
+        expect(screen.getByRole('note').textContent).toBe(VARSLER_HENTES)
+        await act(() => vi.advanceTimersByTimeAsync(LESEFRIST_MS - 1_000))
+        expect(screen.getByRole('note').textContent).toBe(VARSLER_HENTES)
+        await act(() => vi.advanceTimersByTimeAsync(1_000))
+        expect(screen.getByRole('note').textContent).toBe(VARSLER_ULEST)
+
+        await user.type(screen.getByRole('textbox', { name: /Aktuell døgndose av sertralin/ }), '100')
+        await besvar(user)
+        await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+        await user.selectOptions(await screen.findByRole('combobox', { name: 'Legemiddelform av mirtazapin' }), '53')
+        const lest = sperrer.les.mock.calls.length
+        await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+        const plan = (await screen.findByRole('table')).closest('section')!
+        expect(sperrer.les.mock.calls.length).toBeGreaterThan(lest)
+        expect(within(plan).getByRole('note').textContent).toBe(VARSLER_ULEST)
+
+        // En aktiv nødstopp sperrer fortsatt mens varslene henger.
+        cleanup()
+        vis({
+          verktoy: 'bytte-antidepressiv',
+          legemidler: fra(PILOT),
+          klokke: klokke(PILOT),
+          regelvarsler: varsler,
+          sperrer: { les: async () => [{ id: 's', omfang: 'regel' as const, mal: SERTRALIN, grunn: 'Syntetisk sperre.', satt_kl: '2026-11-01T08:00:00Z', satt_av: 'Ada Admin' }] },
+        })
+        await user.type(screen.getByRole('combobox', { name: 'Bytte fra' }), 'Sertralin')
+        await user.type(screen.getByRole('combobox', { name: 'Bytte til' }), 'Mirtazapin')
+        expect((await screen.findByRole('alert', { name: 'Midlertidig deaktivert' })).textContent).toMatch(/Syntetisk sperre\./)
+        expect(screen.queryByRole('button', { name: 'Beregn doseplan' })).toBeNull()
+      })
+
+      it('regner et svar som ikke er en liste av varsler, som ulest, ikke som ingen varsler', async () => {
+        const gyldig = { regel: SERTRALIN, versjon, tekst: 'Under faglig gjennomgang: syntetisk varsel.', siden: '2026-11-01T08:00:00Z' }
+        for (const svar of [null, {}, { varsler: [gyldig] }, [gyldig, { ...gyldig, tekst: null }], [{ ...gyldig, versjon: String(versjon) }]]) {
+          const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+          vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT), regelvarsler: lagRegelvarsellager(async () => svar) })
+          await user.click(screen.getByRole('button', { name: 'Sertralin → mirtazapin' }))
+          await act(async () => {})
+          expect(screen.getByRole('note').textContent).toBe(VARSLER_ULEST)
+          expect(screen.getByRole('button', { name: 'Beregn doseplan' })).toBeTruthy()
+          cleanup()
+        }
+        await expect(lagRegelvarsellager(async () => ({})).les()).rejects.toThrow(UGYLDIGE_REGELVARSLER)
+        expect(await lagRegelvarsellager(async () => [gyldig]).les()).toEqual([gyldig])
+      })
     })
 
     it('merker det som mangler før noe hentes, og sier med en gang hva et pasientforhold som gjelder betyr', async () => {

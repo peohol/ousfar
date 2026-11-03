@@ -138,7 +138,7 @@ En registrert beslutning er ikke et utført tiltak: saken står som «Oppfølgin
 
 ### 5.5 Klinikervarsler
 
-`les_regelvarsler()` gir varslene for alle innloggede (`src/verktoy/overvaking/regelvarsler.ts`): regel, versjon, tekst og når. Verktøyet viser et varsel bare når regel og versjon er lik regelversjonen det bruker. Et varsel sperrer ingenting, og en lesing som feiler, stopper ikke beregningen; sperrene leses for seg som før.
+`les_regelvarsler()` gir varslene for alle innloggede (`src/verktoy/overvaking/regelvarsler.ts`): regel, versjon, tekst og når. Verktøyet viser et varsel bare når regel og versjon er lik regelversjonen det bruker. Et varsel sperrer ingenting, og en lesing som feiler, stopper ikke beregningen; sperrene leses for seg som før. Mens den første lesingen pågår, og når en lesing feiler, ikke svarer innen fristen for sperrene eller gir et svar med ukjent form, står det kort ved anbefalingen at merknadene hentes eller ikke kunne hentes (`Regelvarsler.tsx`), så «ingen merknad» aldri vises når det er ukjent.
 
 ### 5.6 Fremgangsmåten for agenten
 

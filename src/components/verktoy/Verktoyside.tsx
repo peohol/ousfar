@@ -209,6 +209,8 @@ export function Verktoyside({ verktoy: id, legemidler, sperrer: sperreleser, onL
 
 function Oversikt({ overskrift, ukjent, regelsett, sperrer }: { overskrift: string; ukjent: boolean; regelsett: Regelsett; sperrer: Sperretilstand }) {
   const aktive = sperrer.status === 'klar' ? sperrer.sperrer : []
+  // Hva som kan beregnes, sies bare når sperrene er lest; ellers at det kontrolleres, eller at det ikke kunne kontrolleres.
+  const ukontrollert = sperrer.status === 'klar' ? null : sperrer.status
   const status = VERKTOY.map((v) => ({ verktoy: v, sperret: verktoysperrer(aktive, v).length > 0, valg: utenSperrede(snarvalg(v, regelsett), aktive, v) }))
   const ingen = status.every((s) => s.valg.every((x) => x.status !== 'tilgjengelig'))
   const alle = aktive.filter((s) => s.omfang === 'alle')
@@ -243,7 +245,7 @@ function Oversikt({ overskrift, ukjent, regelsett, sperrer }: { overskrift: stri
               <span className="verktoykort__tekst">
                 <span className="verktoykort__navn">{verktoy.navn}</span>
                 <span className="verktoykort__beskrivelse">{verktoy.beskrivelse}</span>
-                <Dekning valg={valg} sperret={sperret} />
+                <Dekning valg={valg} sperret={sperret} ukontrollert={ukontrollert} />
               </span>
               <Ikon navn="chev" className="verktoykort__pil" />
             </a>
@@ -254,8 +256,20 @@ function Oversikt({ overskrift, ukjent, regelsett, sperrer }: { overskrift: stri
   )
 }
 
+/** Oversiktens kort før sperrene er lest, og når de ikke kunne leses: da loves ingenting om hva som kan beregnes. */
+export const DEKNING_UKONTROLLERT = {
+  henter: 'Kontrollerer tilgjengeligheten …',
+  feil: 'Kan ikke kontrollere tilgjengeligheten nå. Åpne verktøyet for å prøve igjen.',
+} as const
+
 /** Det verktøyet kan gi nå, i oversiktens kort: hva som kan beregnes, og hva som bare har fagtekst. */
-function Dekning({ valg, sperret }: { valg: readonly Snarvalg[]; sperret: boolean }) {
+function Dekning({ valg, sperret, ukontrollert }: { valg: readonly Snarvalg[]; sperret: boolean; ukontrollert: keyof typeof DEKNING_UKONTROLLERT | null }) {
+  if (ukontrollert)
+    return (
+      <span className="verktoykort__status" data-ukontrollert={ukontrollert}>
+        <span className="verktoykort__linje">{DEKNING_UKONTROLLERT[ukontrollert]}</span>
+      </span>
+    )
   const liste = (status: Snarvalg['status']) =>
     valg
       .filter((x) => x.status === status)
