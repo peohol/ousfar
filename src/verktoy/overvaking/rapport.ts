@@ -37,7 +37,8 @@ export const kreverVurdering = (r: Pick<Overvakingsrapport, 'funn'>) => r.funn.f
 export function funnavtrykk(f: Overvakingsfunn): string {
   // Med et tilstandsavtrykk avgjør det målte innholdet, ikke detaljteksten, som kan ha kontrollsummer som skifter ved hver henting.
   const innhold = f.tilstandsavtrykk ? { tilstand: f.tilstandsavtrykk } : { detaljer: f.detaljer.map((d) => d.replace(/hentet \d{4}-\d{2}-\d{2}T[\d:.]+Z/g, 'hentet')) }
-  const x = { id: f.id, art: f.art, prioritet: f.prioritet ?? null, ...innhold, berorte: f.berorte }
+  // Verktøyene en regel hører til, er avledet av regelen og endrer ikke funnet.
+  const x = { id: f.id, art: f.art, prioritet: f.prioritet ?? null, ...innhold, berorte: f.berorte.map(({ verktoy: _verktoy, ...b }) => b) }
   return createHash('sha256').update(JSON.stringify(x)).digest('hex')
 }
 
