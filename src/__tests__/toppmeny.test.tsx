@@ -11,6 +11,7 @@ import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import type { Datakildestatus, Kjoring } from '../datakilder/status'
 import type { Fagsak, Redaktoroversikt } from '../verktoy/overvaking/fagsak'
 import type { Bevegelse, Tema, Valg } from '../domain/systemvalg'
+import type { Trinn } from '../components/toppmeny/Toppmeny'
 
 const loggUt = vi.fn(async () => {})
 const rolle = vi.hoisted(() => ({ verdi: 'admin' }))
@@ -86,7 +87,7 @@ vi.mock('../components/ideer/Oppgaver', () => ({
 
 const { Ikon } = await import('../components/ikon/Ikon')
 const { IKONER, IKONFARGER, IKONNAVN } = await import('../components/ikon/register')
-const { Toppmeny, trengerToRader } = await import('../components/toppmeny/Toppmeny')
+const { Toppmeny, faarPlass, trengerToRader, velgTrinn } = await import('../components/toppmeny/Toppmeny')
 const { ToppmenyKilde, ToppmenyInnhold } = await import('../components/toppmeny/Toppmenykilde')
 const { Fagsokfelt, erFagsokSnarvei } = await import('../components/toppmeny/Fagsokfelt')
 const { Kontomeny } = await import('../components/konto/Kontomeny')
@@ -314,10 +315,95 @@ describe('plassene i toppmenyen', () => {
     expect(trengerToRader([], 6, 300)).toBe(false)
   })
 
+  it('velger det romsligste trinnet som får plass: tekst, så kompakt, så dokken', () => {
+    const plass = (faar: Trinn[]) => (trinn: Trinn) => faar.includes(trinn)
+    expect(velgTrinn(false, 'hel', plass(['hel', 'kompakt']))).toBe('hel')
+    expect(velgTrinn(false, 'hel', plass(['kompakt']))).toBe('kompakt')
+    expect(velgTrinn(false, 'hel', plass([]))).toBe('dokk')
+    // På smale flater står sidens handlinger alltid i dokken.
+    expect(velgTrinn(true, 'hel', plass(['hel', 'kompakt']))).toBe('dokk')
+  })
+
+  it('går bare tilbake til et romsligere trinn når det er plass til overs, så menyen ikke vipper ved grensen', () => {
+    const slingringer: [Trinn, boolean][] = []
+    const trinn = velgTrinn(false, 'kompakt', (prov, slingring) => {
+      slingringer.push([prov, slingring])
+      return prov === 'kompakt'
+    })
+    expect(trinn).toBe('kompakt')
+    expect(slingringer).toEqual([
+      ['hel', true],
+      ['kompakt', false],
+    ])
+    // Fagsøket i minst 160 px ved siden av resten (500 px) og plassene (300 px).
+    expect(faarPlass([500, 160, 300], 6, 972)).toBe(true)
+    expect(faarPlass([500, 160, 300], 6, 971)).toBe(false)
+  })
+
+  it('flytter plassene til dokken når flaten blir smal, også midt i et søk på siden', () => {
+    // jsdom har ingen bredder, så bare den smale flaten kan sende plassene i dokken.
+    const flate = { smal: false }
+    vi.stubGlobal('matchMedia', (sporring: string) => ({
+      get matches() {
+        return sporring.includes('max-width') && flate.smal
+      },
+    }))
+    const rot = document.documentElement
+    render(
+      <Ramme>
+        <ToppmenyKilde>
+          <Toppmeny meny={null} konto={null} />
+          <ToppmenyInnhold spor="sidesok">
+            <div className="sidesok">
+              <input aria-label="Søk i siden" />
+            </div>
+          </ToppmenyInnhold>
+          <ToppmenyInnhold spor="lukk">
+            <button type="button">Lukk</button>
+          </ToppmenyInnhold>
+        </ToppmenyKilde>
+      </Ramme>,
+    )
+    const endreBredde = (smal: boolean) => {
+      flate.smal = smal
+      act(() => void window.dispatchEvent(new Event('resize')))
+    }
+    expect(rot.hasAttribute('data-dokk')).toBe(false)
+
+    const sok = screen.getByRole('textbox', { name: 'Søk i siden' })
+    act(() => sok.focus())
+    endreBredde(true)
+    expect(document.activeElement).toBe(sok)
+    expect(rot.hasAttribute('data-dokk')).toBe(true)
+
+    // Bredere igjen midt i søket: menyen flytter seg ikke under markøren.
+    endreBredde(false)
+    expect(rot.hasAttribute('data-dokk')).toBe(true)
+    act(() => sok.blur())
+    endreBredde(false)
+    expect(rot.hasAttribute('data-dokk')).toBe(false)
+  })
+
+  it('gir søket på siden en fast, lesbar bredde mens det brukes i toppmenyen, uten å presse noe sammen', () => {
+    const css = readFileSync('src/styles/sok.css', 'utf8')
+    expect(css).toMatch(
+      /:root:not\(\[data-dokk\]\) \.toppmeny__kontekst \.sidesok:focus-within \{\s*width: var\(--bredde-sidesok-i-bruk\);/,
+    )
+    // Ingenting i sidens plasser krymper (det la knappene over hverandre).
+    expect(css).not.toMatch(/\.toppmeny__(kontekst|gruppe)[^{]*\{[^}]*flex-shrink:\s*1/)
+    expect(readFileSync('src/styles/tokens.css', 'utf8')).toMatch(/--bredde-sidesok-i-bruk:\s*16rem/)
+  })
+
+  it('lar fagsøkets rullegardin slutte over dokken også på bredere flater', () => {
+    const css = readFileSync('src/styles/sok.css', 'utf8')
+    expect(css).toMatch(
+      /@media \(width > 47\.5em\) \{\s*:root\[data-dokk\] \.fagsok__rullegardin \{\s*max-height: calc\(100dvh - var\(--toppmeny-offset\) - var\(--dokk-offset\)\);/,
+    )
+  })
+
   it('går over to rader i dokken heller enn å klemme hovedhandlingen', () => {
     const css = readFileSync('src/styles/toppmeny.css', 'utf8')
-    const smal = css.slice(css.indexOf('@media (max-width: 47.5em)'))
-    expect(smal).toMatch(/\.toppmeny__kontekst\s*\{[^}]*flex-wrap:\s*wrap/)
+    expect(css).toMatch(/:root\[data-dokk\] \.toppmeny__kontekst\s*\{[^}]*flex-wrap:\s*wrap/)
     // Siden og det som står over dokken, regner med den målte høyden.
     expect(readFileSync('src/styles/tokens.css', 'utf8')).toMatch(/--dokk-offset:\s*calc\(var\(--dokkhoyde\)/)
   })

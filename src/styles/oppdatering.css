@@ -71,8 +71,7 @@
   opacity: 0.7;
 }
 
-/* På smale flater står knappen under teksten, og meldingen legger seg over
-   dokken når sidene har en. */
+/* På smale flater står knappen under teksten. */
 @media (max-width: 47.5em) {
   .oppdateringsmelding {
     flex-wrap: wrap;
@@ -81,10 +80,11 @@
   .oppdateringsmelding__knapp {
     width: 100%;
   }
+}
 
-  body:has(.app:not([data-side='fortolkning']) .toppmeny__spor > *) > .oppdateringsmelding {
-    bottom: calc(var(--rom-4) + var(--dokkhoyde) + var(--rom-3));
-  }
+/* Meldingen legger seg over dokken når siden har en. */
+:root[data-dokk] body:has(.app:not([data-side='fortolkning']) .toppmeny__spor > *) > .oppdateringsmelding {
+  bottom: calc(var(--rom-4) + var(--dokkhoyde) + var(--rom-3));
 }
 
 @media (prefers-reduced-motion: reduce) {

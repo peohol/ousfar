@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.124.2',
+    dato: '2026-11-03',
+    sammendrag: 'Toppmenyen er ryddig på alle skjermbredder',
+    typer: ['Design / layout'],
+    omfang: 'Moderat omfang',
+    gjelder: ['hele appen'],
+    punkter: [
+      'Knappene i toppmenyen legger seg ikke lenger over hverandre når vinduet er litt smalt.',
+      'Når det blir trangt, blir sidens knapper først til runde ikonknapper. Er det fortsatt ikke plass, flytter de ned i menyen nederst på skjermen, slik de gjør på mobil. Søket i fagstoffet beholder alltid et brukbart felt.',
+      'Menyene er litt mer gjennomskinnelige, med mindre uskarphet bak.',
+    ],
+  },
+  {
     versjon: '1.124.1',
     dato: '2026-11-03',
     sammendrag: 'Kontroll av hele oppfølgingen når en kilde for de kliniske verktøyene endres',

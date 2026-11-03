@@ -34,11 +34,17 @@
     clamp(var(--diskusjonspanel-minst), var(--diskusjonsbredde, 0px), var(--diskusjonspanel-mest)),
     100vw - 2 * var(--rom-side)
   );
-  /* Avstanden fra kanten av vinduet, og plassen versjonspilla trenger under. */
+  /* Avstanden fra kanten av vinduet, og plassen versjonspilla trenger under
+     (og dokken, når den står nederst). */
   --diskusjonskant: var(--rom-5);
-  --diskusjonsbunn: calc(var(--rom-5) * 2 + 1.875rem);
+  --diskusjonsdokk: 0px;
+  --diskusjonsbunn: calc(var(--rom-5) * 2 + 1.875rem + var(--diskusjonsdokk));
   /* Lesebredden for innholdet når menyen står som helside. */
   --diskusjonshelside: 60rem;
+}
+
+:root[data-dokk] {
+  --diskusjonsdokk: calc(var(--dokkhoyde) + var(--rom-3));
 }
 
 /* --- Plassen resten av appen gir ------------------------------------------ */
