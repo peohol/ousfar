@@ -97,6 +97,22 @@ describe('Godkjent avslutning (regelmodell 12)', () => {
     expect(p.status === 'doseplan' && p.forlop[0]!.siste_dosedag).toBeNull()
   })
 
+  it('sier hvorfor avslutningen ikke gjelder, også når en dose kan velges for neste trinn', () => {
+    const r = trinnvalgUtenNull()
+    const fase = r.plan.forlop[0]!.faser[0] as Extract<Fase, { type: 'nedtrapping' }>
+    fase.avslutning = avslutning(1)
+    delete fase.horisont
+    const g = godkjennITest(r, 'test-valg-over-avslutning')
+    const p = beregnDoseplan(g, { startdose_mg: 20, formvalg: TABLETT }, GRUNNLAG, OMGIVELSE)
+    expect(p.trinnvalg?.length).toBeGreaterThan(0)
+    if (p.status !== 'doseplan') throw new Error(p.stoppgrunner.join(' '))
+    const f = p.forlop[0]!
+    const sist = f.perioder.at(-1)!.mg
+    expect(sist).toBeGreaterThan(1)
+    expect(f.avslutning).toMatch(new RegExp(`avslutning av testoksetin gjelder bare fra 1 mg eller lavere, og planen står på ${String(sist).replace('.', ',')} mg`))
+    expect(planvisning(p, g)!.utfall.mangler.join(' ')).toMatch(/regelens avslutning gjelder bare fra 1 mg eller lavere/)
+  })
+
   it('godtar en ren seponering bare med en uttrykkelig avslutning, også som siste seponeringsfase', () => {
     const r = medAvslutning(5, 5)
     const uten = structuredClone(r)

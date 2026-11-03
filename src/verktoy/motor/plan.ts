@@ -27,7 +27,7 @@ import { FEST_FORELDET_ETTER_TIMER, festForeldet } from '../../legemiddeldata/re
 import { FORMULERINGSKLASSER, type Formuleringsklasse } from '../festformuleringer'
 import { AVSLUTNING_FELLES, AVVIK_IKKE_BEREGNET, avrund, beregn, datoFor, overAvslutning, erIsoDato, fordelingstekst, hverTekst, injeksjonstidspunkt, medEnhet, medSvarforslag, utenBeregningLinje, valgtSuffiks, trinnvalgOmrade, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
 import { fingeravtrykk, godkjenningsfeil, kanonisk, sha256 } from '../regler/godkjenning'
-import { justerbare, parameterfeil, type Beregningsinndata, type Fase, type Forlop, type Klinisktilfelle, type Parameter, type Regel, type Regelsett } from '../regler/modell'
+import { avslutningFor, justerbare, parameterfeil, type Beregningsinndata, type Fase, type Forlop, type Klinisktilfelle, type Parameter, type Regel, type Regelsett } from '../regler/modell'
 import { byggesteiner, DOSEENHETER, norskDato, type Byggestein, type Preparatgrunnlag } from './byggesteiner'
 import { doser, fordel, styrkevalg, velgSerie, type Dosekandidat, type Doseelement, type Periodevalg, type Styrkevalg } from './dosevalg'
 
@@ -645,13 +645,20 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
       if (sist.til_dato !== undefined) sist.til_dato = null
       // Én reduksjon er én mulig reduksjon med revurdering, ikke en nedtrappingsplan (kontrollørens gjennomgang av 9cb420b, P7.5).
       const en = ut.perioder.length === 1
-      // En godkjent avslutning som ikke gjelder fra denne dosen, eller som venter på et valg av dose, sier hvorfor planen likevel stopper her.
-      const over = f.avsluttes && !egneValg ? ` ${overAvslutning(f.virkestoff, sist.mg, f.avsluttes.fra_hoyst_mg)}` : ''
+      // En godkjent avslutning som ikke gjelder fra denne dosen, sier hvorfor planen likevel stopper her, også når en dose kan velges for neste trinn.
+      // Grensen står i forløpet når den ideelle planen avsluttes, ellers bare i regelen (f.eks. når den ideelle planen stopper ved laveste dose over grensen).
+      const grense = f.avsluttes?.fra_hoyst_mg ?? def.faser.map(avslutningFor).find((a) => a)?.fra_hoyst_mg.verdi ?? undefined
+      const overGrensen = grense !== undefined && sist.mg > grense + EPS
+      const over = overGrensen ? ` ${overAvslutning(f.virkestoff, sist.mg, grense)}` : ''
       ut.siste_dosedag = null
       delete ut.seponert_dato
       delete ut.avsluttes
       ut.avslutning = `${stans}${over} Planen stopper derfor ved trinnet før: fra dag ${sist.fra} står pasienten på ${tall(sist.mg)} mg${hverSuffiks(sist)}${fordelingSuffiks(sist)} av ${f.virkestoff} til planen revurderes.${en ? ` ${EN_REDUKSJON}` : ''} ${AVSLUTNING_FELLES}`
-      ut.avslutning_kort = en ? EN_REDUKSJON_KORT : 'neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt'
+      ut.avslutning_kort = en
+        ? EN_REDUKSJON_KORT
+        : overGrensen
+          ? `neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra ${tall(grense!)} mg eller lavere (planen står på ${tall(sist.mg)} mg)`
+          : 'neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt'
     }
     if (ut.perioder.some((p) => p.doser)) {
       kontroller.push({
@@ -828,11 +835,10 @@ function utenDelteValg(regel: Regel, r: Doseplanresultat): Doseplanresultat {
   const tomme = hele.filter((t) => t.doser.length === 0)
   const { trinnvalg: _t, ...uten } = r
   const med = hele.length > tomme.length ? { ...uten, trinnvalg: hele.filter((t) => t.doser.length > 0) } : uten
-  if (tomme.length === 0 || med.status !== 'stoppet') return med
-  return {
-    ...med,
-    stoppgrunner: [...med.stoppgrunner, ...tomme.map((t) => `${t.virkestoff} trinn ${t.trinn}: dosene som kunne velges, deler tabletter, og delingen er ikke dokumentert for klinisk bruk. ${UTENFOR_OMFANG}`)],
-  }
+  if (tomme.length === 0) return med
+  const grunner = tomme.map((t) => `${t.virkestoff} trinn ${t.trinn}: dosene som kunne velges, deler tabletter, og delingen er ikke dokumentert for klinisk bruk. ${UTENFOR_OMFANG}`)
+  // En plan som stopper ved trinnet før, sier det også, så valget i planteksten ikke ser ut til å kunne gjøres.
+  return med.status === 'stoppet' ? { ...med, stoppgrunner: [...med.stoppgrunner, ...grunner] } : { ...med, merknader: [...med.merknader, ...grunner] }
 }
 
 /* --- Kort form, til testene og rapporten --------------------------------------- */
