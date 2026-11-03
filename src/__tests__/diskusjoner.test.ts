@@ -339,6 +339,27 @@ describe('diskusjonene i databasen', () => {
     expect(await feilFra(() => sql(admin, 'select public.vis_i_diskusjon($1, $2)', [id, kommentar]))).toMatchObject({ code: 'P0002' })
   })
 
+  it('lar heller ikke en administrator skjule, vise igjen eller fjerne noe i en arkivert tråd', async () => {
+    const side = nySide()
+    const id = await nyTraad(ada, side, await nyKategori(ada, side, 'K', '🧊'), 'Tråd', DOK('Innlegget'))
+    const kommentar = await nyKommentar(bo, id, null, 'Kommentaren')
+    await sql(admin, 'select public.skjul_i_diskusjon($1, null)', [id])
+    await arkiver(ada, id)
+
+    for (const funksjon of ['skjul_i_diskusjon', 'vis_i_diskusjon', 'fjern_skjult_i_diskusjon']) {
+      for (const k of [null, kommentar]) {
+        expect(await feilFra(() => sql(admin, `select public.${funksjon}($1, $2)`, [id, k]))).toMatchObject({ code: '42501' })
+      }
+    }
+    expect(await traad(admin, id)).toMatchObject({ skjult: true, kan_vises: true })
+    expect((await traad(admin, id))!.kommentarer).toMatchObject([{ skjult: false }])
+
+    // Hentet tilbake kan det vises igjen.
+    await arkiver(ada, id, false)
+    await sql(admin, 'select public.vis_i_diskusjon($1, null)', [id])
+    expect(await traad(cy, id)).toMatchObject({ skjult: false, tekst: JSON.parse(DOK('Innlegget')) })
+  })
+
   it('glemmer den skjulte teksten når kommentaren slettes', async () => {
     const side = nySide()
     const id = await nyTraad(ada, side, await nyKategori(ada, side, 'K', '🧽'), 'Tråd')

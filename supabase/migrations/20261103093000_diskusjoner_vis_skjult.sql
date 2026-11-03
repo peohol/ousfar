@@ -83,7 +83,8 @@ $$;
 -- --- Skjule, vise igjen og fjerne for godt ---------------------------------------------
 
 -- En administrator skjuler innholdet i det første innlegget (uten kommentar)
--- eller i en kommentar. Teksten tas vare på, så den kan vises igjen.
+-- eller i en kommentar. Teksten tas vare på, så den kan vises igjen. Som
+-- resten av tråden kan ingenting av dette endres mens den er arkivert.
 create or replace function public.skjul_i_diskusjon(diskusjon uuid, kommentar uuid)
 returns void
 language plpgsql
@@ -95,6 +96,10 @@ declare
 begin
   if not public.er_admin() then
     raise exception 'Bare en administrator kan skjule innhold.' using errcode = '42501';
+  end if;
+  -- En arkivert tråd er frosset til den er hentet tilbake.
+  if not public.diskusjon_er_apen(skjul_i_diskusjon.diskusjon) then
+    raise exception 'Tråden er arkivert eller finnes ikke.' using errcode = '42501';
   end if;
   if skjul_i_diskusjon.kommentar is null then
     select d.tekst into lagret
@@ -148,6 +153,10 @@ begin
   if not public.er_admin() then
     raise exception 'Bare en administrator kan vise skjult innhold igjen.' using errcode = '42501';
   end if;
+  -- En arkivert tråd er frosset til den er hentet tilbake.
+  if not public.diskusjon_er_apen(vis_i_diskusjon.diskusjon) then
+    raise exception 'Tråden er arkivert eller finnes ikke.' using errcode = '42501';
+  end if;
   select s.tekst into lagret
   from public.diskusjon_skjulte_tekster s
   where s.diskusjon_id = vis_i_diskusjon.diskusjon
@@ -184,6 +193,10 @@ as $$
 begin
   if not public.er_admin() then
     raise exception 'Bare en administrator kan fjerne skjult innhold.' using errcode = '42501';
+  end if;
+  -- En arkivert tråd er frosset til den er hentet tilbake.
+  if not public.diskusjon_er_apen(fjern_skjult_i_diskusjon.diskusjon) then
+    raise exception 'Tråden er arkivert eller finnes ikke.' using errcode = '42501';
   end if;
   delete from public.diskusjon_skjulte_tekster s
   where s.diskusjon_id = fjern_skjult_i_diskusjon.diskusjon
