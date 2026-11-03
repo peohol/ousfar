@@ -22,8 +22,8 @@ import { FEST_AKSEPTTEST } from '../verktoy/regler/aksepttest'
 import { ANTIPSYKOTIKASETT, FEST_ANTIPSYKOTIKA } from '../verktoy/regler/antipsykotikabytter'
 import { erKliniskGodkjent, fingeravtrykk } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett } from '../verktoy/regler/kontroll'
-import type { Regel } from '../verktoy/regler/modell'
-import { kjorKasus, simulerGodkjenning, type Pilotkasus, type Uttrekkene } from '../verktoy/regler/pilotmatrise'
+import { apneValg, type Regel } from '../verktoy/regler/modell'
+import { kjorKasus, SIMULERT_KONTROLLOR, simulerGodkjenning, type Pilotkasus, type Uttrekkene } from '../verktoy/regler/pilotmatrise'
 import { REGELSETT, REGELSETTENE, tilgjengelighet, type Verktoyvalg } from '../verktoy/tilgjengelighet'
 
 const les = (f: string) => JSON.parse(readFileSync(f, 'utf8'))
@@ -38,11 +38,25 @@ const VALG = {
   'antipsykotikabytte-aripiprazol-olanzapin': valg(['aripiprazol', 'standard'], ['olanzapin', 'standard']),
   'antipsykotikabytte-aripiprazol-risperidon': valg(['aripiprazol', 'standard'], ['risperidon', 'standard']),
   'antipsykotikabytte-kariprazin-kvetiapin': valg(['kariprazin', 'standard'], ['kvetiapin', 'standard']),
+  'antipsykotikabytte-olanzapin-aripiprazol': valg(['olanzapin', 'standard'], ['aripiprazol', 'standard']),
+  'antipsykotikabytte-risperidon-aripiprazol': valg(['risperidon', 'standard'], ['aripiprazol', 'standard']),
 } as const
+/** Byttene til aripiprazol har to åpne OUSFAR-valg (aripiprazoldosen første og andre uke) som kontrolløren må avklare. */
+const MED_APNE_VALG = ['antipsykotikabytte-olanzapin-aripiprazol', 'antipsykotikabytte-risperidon-aripiprazol']
 type Regelid = keyof typeof VALG
 
 const regel = (id: string) => ANTIPSYKOTIKASETT.regler.find((r) => r.id === id)!
 const TABLETTER = { legemiddelform: '53' }
+
+/** De åpne OUSFAR-valgene avklart på kopien (simulert), slik kontrolløren ville gjort før en godkjenning. */
+const avklar = (x: unknown): void => {
+  if (Array.isArray(x)) x.forEach(avklar)
+  else if (x && typeof x === 'object') {
+    const g = x as { type?: string; avklaring?: unknown }
+    if (g.type === 'ousfar_vurdering') g.avklaring = { dato: '2026-11-03', av: SIMULERT_KONTROLLOR, rolle: 'uavhengig_kontrollor', regelversjon: 1, merknad: 'Simulert; ingen avklaring.' }
+    Object.values(x).forEach(avklar)
+  }
+}
 
 /** Kopien av regelen godkjent (simulert) med nøyaktig versjonen og fingeravtrykket; `etterpa` endrer den etter godkjenningen. */
 const godkjent = (id: string, etterpa?: (r: Regel) => void) => ({
@@ -50,6 +64,7 @@ const godkjent = (id: string, etterpa?: (r: Regel) => void) => ({
   endre: {
     hva: 'simulert godkjenning',
     endre: (r: Regel) => {
+      avklar(r.plan)
       simulerGodkjenning(r, { id, versjon: r.versjon, fingeravtrykk: fingeravtrykk(r) }, '2026-11-03')
       etterpa?.(r)
     },
@@ -69,7 +84,8 @@ describe('K3: regelutkastene for bytte av antipsykotika', () => {
     expect(kontrollerRegelsett(ANTIPSYKOTIKASETT)).toEqual([])
     expect(ANTIPSYKOTIKASETT.regler.map((r) => r.id)).toEqual(Object.keys(VALG))
     for (const r of ANTIPSYKOTIKASETT.regler) {
-      expect(r.beregnbarhet, r.id).toBe('entydig_beregnbar')
+      expect(r.beregnbarhet, r.id).toBe(MED_APNE_VALG.includes(r.id) ? 'beregnbar_etter_avklaring' : 'entydig_beregnbar')
+      expect(apneValg(r).length > 0, r.id).toBe(MED_APNE_VALG.includes(r.id))
       expect(r.eksempler.some((e) => !e.stopp), `${r.id}: minst ett komplett forløp`).toBe(true)
       expect(r.eksempler.some((e) => e.stopp), `${r.id}: minst ett stopp`).toBe(true)
     }
@@ -155,7 +171,51 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
     expect(kjor('antipsykotikabytte-kariprazin-kvetiapin', '1,5').utfall).toBe('plan')
     expect(kjor('antipsykotikabytte-kariprazin-kvetiapin', '6').utfall).toBe('plan')
     expect(kjor('antipsykotikabytte-kariprazin-kvetiapin', '7,5').utfall).not.toBe('plan')
+    // Bare doser kapslene gir (1,5, 3, 4,5 og 6 mg).
+    for (const dose of ['2', '2,5', '5']) expect(grunner(kjor('antipsykotikabytte-kariprazin-kvetiapin', dose)), dose).toMatch(/er utenfor det regelen gjelder for \(1,5, 3, 4,5, 6 mg\)/)
+    expect(kjor('antipsykotikabytte-kariprazin-kvetiapin', '3').utfall).toBe('plan')
     expect(grunner(kjor('antipsykotikabytte-kariprazin-kvetiapin', '4,5', { pasientforhold: { cyp3a4_hemmer: true } }))).toMatch(/CYP3A4/)
+  })
+
+  it('olanzapin → aripiprazol: aripiprazol 5, 10 og måldosen; olanzapin uendret i 28 dager og så ned 25 % av dosen hver 14. dag til seponert', () => {
+    expect(kjor('antipsykotikabytte-olanzapin-aripiprazol', '20', { maldose: '15' })).toEqual({ utfall: 'formvalg', forlop: ['fra', 'til'] })
+    const TO_TABLETTER = { formvalg: { fra: TABLETTER, til: TABLETTER } }
+    expect(linjer(kjor('antipsykotikabytte-olanzapin-aripiprazol', '20', { ...TO_TABLETTER, maldose: '15', startdato: '2026-12-01' })).filter((l) => !l.includes('Vurdering'))).toEqual([
+      'Dag 1–7 (01.12.2026–07.12.2026): Olanzapin peroralt: 20 mg = 2 tabletter à 10 mg; Aripiprazol peroralt: 5 mg = 1 tablett à 5 mg',
+      'Dag 8–14 (08.12.2026–14.12.2026): Olanzapin peroralt: 20 mg = 2 tabletter à 10 mg; Aripiprazol peroralt: 10 mg = 1 tablett à 10 mg',
+      'Dag 15–28 (15.12.2026–28.12.2026): Olanzapin peroralt: 20 mg = 2 tabletter à 10 mg; Aripiprazol peroralt: 15 mg = 1 tablett à 15 mg',
+      'Dag 29–42 (29.12.2026–11.01.2027): Olanzapin peroralt: 15 mg = 2 tabletter à 7,5 mg; Aripiprazol peroralt: 15 mg = 1 tablett à 15 mg',
+      'Dag 43–56 (12.01.2027–25.01.2027): Olanzapin peroralt: 10 mg = 1 tablett à 10 mg; Aripiprazol peroralt: 15 mg = 1 tablett à 15 mg',
+      'Dag 57–70 (26.01.2027–08.02.2027): Olanzapin peroralt: 5 mg = 1 tablett à 5 mg; Aripiprazol peroralt: 15 mg = 1 tablett à 15 mg',
+      'Fra dag 71 (fra 09.02.2027): Olanzapin peroralt: Seponert; Aripiprazol peroralt: 15 mg = 1 tablett à 15 mg',
+    ])
+    // Vurderingspunktet står før hver reduksjon og før seponeringen.
+    const vurderinger = linjer(kjor('antipsykotikabytte-olanzapin-aripiprazol', '20', { ...TO_TABLETTER, maldose: '15' })).filter((l) => l.includes('Vurdering'))
+    expect(vurderinger.map((l) => l.split(':')[0])).toEqual(['Dag 29', 'Dag 43', 'Dag 57', 'Dag 71'])
+    // 15 mg gir 11,25 mg, som ikke kan gis med tablettene: planen stopper i stedet for å runde av.
+    expect(grunner(kjor('antipsykotikabytte-olanzapin-aripiprazol', '15', { ...TO_TABLETTER, maldose: '15' }))).toMatch(/den ideelle dosen 11,25 mg kan ikke gis/)
+    expect(grunner(kjor('antipsykotikabytte-olanzapin-aripiprazol', '20', { ...TO_TABLETTER, maldose: '20' }))).toMatch(/Måldosen 20 mg er utenfor/)
+    expect(grunner(kjor('antipsykotikabytte-olanzapin-aripiprazol', '20', { ...TO_TABLETTER, maldose: '15', pasientforhold: { tilbakefall_innlagt: true } }))).toMatch(/gjentatte psykotiske tilbakefall/)
+  })
+
+  it('risperidon → aripiprazol: 4 mg ned til 3, 2 og 1 mg og så stopp, med aripiprazol 10 mg fra dag 8', () => {
+    const TO_TABLETTER = { formvalg: { fra: TABLETTER, til: TABLETTER } }
+    expect(linjer(kjor('antipsykotikabytte-risperidon-aripiprazol', '4', { ...TO_TABLETTER, maldose: '10' })).filter((l) => !l.includes('Vurdering'))).toEqual([
+      'Dag 1–7: Risperidon peroralt: 4 mg = 1 tablett à 4 mg; Aripiprazol peroralt: 5 mg = 1 tablett à 5 mg',
+      'Dag 8–28: Risperidon peroralt: 4 mg = 1 tablett à 4 mg; Aripiprazol peroralt: 10 mg = 1 tablett à 10 mg',
+      'Dag 29–42: Risperidon peroralt: 3 mg = 1 tablett à 3 mg; Aripiprazol peroralt: 10 mg = 1 tablett à 10 mg',
+      'Dag 43–56: Risperidon peroralt: 2 mg = 1 tablett à 2 mg; Aripiprazol peroralt: 10 mg = 1 tablett à 10 mg',
+      'Dag 57–70: Risperidon peroralt: 1 mg = 1 tablett à 1 mg; Aripiprazol peroralt: 10 mg = 1 tablett à 10 mg',
+      'Fra dag 71: Risperidon peroralt: Seponert; Aripiprazol peroralt: 10 mg = 1 tablett à 10 mg',
+    ])
+    expect(grunner(kjor('antipsykotikabytte-risperidon-aripiprazol', '4', { ...TO_TABLETTER, maldose: '10' }, { ubesvart: ['cyp_aripiprazol'] }))).toMatch(/CYP3A4- eller CYP2D6-hemmer/)
+    expect(kjor('antipsykotikabytte-risperidon-aripiprazol', '20', { ...TO_TABLETTER, maldose: '10' }).utfall).not.toBe('plan')
+  })
+
+  it('byttene til aripiprazol gir ingen plan før de åpne valgene er avklart, selv med godkjenning', () => {
+    const uavklart = { id: 'antipsykotikabytte-risperidon-aripiprazol', endre: { hva: 'bare godkjenning', endre: (r: Regel) => simulerGodkjenning(r, { id: r.id, versjon: r.versjon, fingeravtrykk: fingeravtrykk(r) }, '2026-11-03') } }
+    const u = kjor('antipsykotikabytte-risperidon-aripiprazol', '4', { formvalg: { fra: TABLETTER, til: TABLETTER }, maldose: '10' }, { regel: uavklart })
+    expect(grunner(u)).toMatch(/åpne valg som må avklares faglig/)
   })
 })
 
@@ -167,6 +227,8 @@ describe('K3: planutfallet', () => {
       kjor('antipsykotikabytte-aripiprazol-olanzapin', '15', { formvalg: { til: TABLETTER } }),
       kjor('antipsykotikabytte-aripiprazol-risperidon', '15'),
       kjor('antipsykotikabytte-kariprazin-kvetiapin', '4,5'),
+      kjor('antipsykotikabytte-olanzapin-aripiprazol', '20', { formvalg: { fra: TABLETTER, til: TABLETTER }, maldose: '15' }),
+      kjor('antipsykotikabytte-risperidon-aripiprazol', '4', { formvalg: { fra: TABLETTER, til: TABLETTER }, maldose: '10' }),
     ]
     for (const u of planer) {
       expect(u.utfall).toBe('plan')

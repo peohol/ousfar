@@ -147,6 +147,18 @@ export const KILDER: readonly Kilde[] = [
     bruk: OFFENTLIG,
   },
   {
+    id: 'tarc-2018',
+    type: 'oversiktsartikkel',
+    tittel:
+      'Veznedaroglu B, Dilbaz N, Uzun O, Isik E. TARC: Turkish aripiprazole consensus report – aripiprazole use and switching from other antipsychotics to aripiprazole. Ther Adv Psychopharmacol 2018;8(10):271–285',
+    utgiver: 'Therapeutic Advances in Psychopharmacology (CC BY-NC 3.0)',
+    url: 'https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6130089/fullTextXML',
+    versjon: 'doi:10.1177/2045125318772712, PMC6130089',
+    hentet: '2026-11-03T17:37:30Z',
+    sha256: '092efa4908d0d0366e39427d7babd44b896d0551cf59675a4f558570b8f226eb',
+    bruk: OFFENTLIG,
+  },
+  {
     id: 'psychiatrienet',
     type: 'kildeoppføring',
     tittel: 'Psychiatrienet, switchtabellene (kildearkivet fra P3)',

@@ -72,17 +72,18 @@ Alle eksemplene er syntetiske. Testene i `src/__tests__/verktoyantipsykotika.tes
 
 **Ikke dekket (fortsatt ingen plan):**
 
-- Bytte **til** aripiprazol (K0-07, K0-08): kildene beskriver ingen bestemt nedtrapping av det gamle stoffet, og en slik nedtrapping vil OUSFAR ikke finne på.
+- Bytte til aripiprazol ved gjentatte tilbakefall eller hos innlagte: TARC har egne, raskere opptrappinger som ikke er modellert.
+- Bytte til aripiprazol fra andre stoffer enn olanzapin og risperidon.
 - Okedi (hver 28. dag) og Xeplion → Trevicta: krever støtte i beregningsmotoren for andre intervaller og preparatvalg.
 - Kryss-titrering som alternativ til direkte bytte, og alle andre kombinasjoner.
 
 ## 6. Åpne faglige spørsmål til kontrolløren
 
-1. **Vedlikeholdsdosen etter peroral risperidon:** Xeplion-preparatomtalen har ingen omregning fra risperidondose. Regelen lar forskriveren velge 50–150 mg (75 mg anbefalt) og regner ikke ut dosen. Er det en forsvarlig avgrensning?
-2. **Direkte bytte fra aripiprazol:** Keks beskriver det som *mulig*, ikke som eneste strategi. Er direkte bytte, med spesialistvurdering og tett oppfølging som krav, akseptabelt som det eneste beregnede alternativet?
+1. **Vedlikeholdsdosen etter peroral risperidon (Xeplion):** preparatomtalen har ingen omregning fra risperidondose, så regelen binder ikke vedlikeholdsdosen til den (risperidon 0,5 mg kan gå til 150 mg og 16 mg til 50 mg). Forskriveren velger 50–150 mg (75 mg anbefalt). Er det en forsvarlig avgrensning, eller skal regelen kreve en begrunnelse for kombinasjoner langt fra hverandre? OUSFAR vil ikke finne på en ekvivalens.
+2. **Direkte bytte fra aripiprazol:** Keks beskriver det som *mulig*, ikke som eneste strategi. Er direkte bytte, med spesialistvurdering og tett oppfølging som krav, akseptabelt som det eneste beregnede alternativet? Aripiprazoldosen (10–30 mg) dokumenterer bare stabiliseringen. Aripiprazol bare stoppes, og mikstur gjør enhver dose mulig, så dosen begrenses ikke til tablettstyrker. Måldosen for det nye stoffet er preparatomtalens start- og vedlikeholdsdose og er den samme uansett aripiprazoldose. Bør den avhenge av aripiprazoldosen?
 3. **Sluttmålet for olanzapin og risperidon** er startdosen og vedlikeholdsdosen preparatomtalen oppgir (10 mg og 4 mg). Bør planen heller stoppe ved startdosen og overlate resten til klinikeren?
 4. **Kvetiapin:** er fordelingen 200 + 100 mg og 4 × 25 mg på dag 2 akseptabel i en plan?
-5. **Bytte til aripiprazol:** skal det utvikles en egen regel med en faglig fastsatt nedtrapping av det gamle stoffet (prinsipielt valg som eventuelt må løftes til Peder), eller skal det fortsatt stå uten plan?
+5. **Bytte til aripiprazol (TARC 2018):** er en industrifinansiert konsensusrapport godt nok grunnlag for en beregnet kryss-titrering? Er forslagene 5 mg uke 1 og 10 mg uke 2 (øverst i kildens områder, fordi 5 mg er laveste tablett) riktige? Er det riktig å stoppe når et trinn på 25 % ikke kan gis (for eksempel olanzapin 15 mg), i stedet for å runde av? De to doseforslagene er OUSFARs valg og må avklares før en godkjenning.
 
 ## 7. Visningen
 

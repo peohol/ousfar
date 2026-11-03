@@ -1,10 +1,10 @@
 /**
  * Byttereglene for antipsykotika i K3 (`docs/verktøy-klinisk-leveranseplan-2026-11.md`):
  * komplette forløp fra dagens behandling til et definert sluttmål, to
- * depotrelaterte og tre perorale. Bakgrunnen, kildene og hva som fortsatt
+ * depotrelaterte og fem perorale. Bakgrunnen, kildene og hva som fortsatt
  * ikke er dekket, står i `docs/verktøy-k3-antipsykotika.md` (rapporten over reglene: `docs/verktøy-k3-antipsykotikabytter.md`). Filen eies av K3; registreringen står i `domenesett.ts`.
  *
- * Hver regel bygger bare på preparatomtaler (DMP og EMA) og Keks 2019; ingen
+ * Hver regel bygger bare på preparatomtaler (DMP og EMA), Keks 2019 og TARC 2018; ingen
  * bygger på Psychiatrienet, som bare står som referanse til kildeoppføringen
  * (`docs/verktøy-p3-rettigheter.md`). Reglene er valgt fordi kildene selv
  * beskriver hele forløpet, så ingen dose, frist eller nedtrapping er OUSFARs
@@ -18,15 +18,19 @@
  *   kvetiapin (Reagila pkt. 4.2: ingen kryss-titrering, det nye startes i
  *   laveste dose). Sluttmålet er den nye behandlingen i startdosen eller
  *   vedlikeholdsdosen preparatomtalen oppgir; videre justering er klinisk.
+ * - Kryss-titrering fra olanzapin og fra risperidon til aripiprazol hos stabile
+ *   polikliniske pasienter (TARC 2018, figur 1): det forrige stoffet trappes
+ *   ned til seponering, og aripiprazol står på måldosen 10 eller 15 mg.
  *
  * **Ingen av reglene er klinisk godkjent.** De står til uavhengig faglig
  * kontroll og gir ingen klinisk plan i appen før en kontrollør har godkjent
  * nøyaktig versjonen og fingeravtrykket.
  */
-import { FORUTSETNINGER_FELLES, h, kilde, pn, steg, utsagn } from './bygg'
+import { FORUTSETNINGER_FELLES, forslag, h, kilde, pn, steg, utsagn } from './bygg'
 import type { Domenesett } from './domenesett'
-import type { Bekreftelse, Fase, Forlop, Godkjenning, Kildehenvisning, Regel, Regelsett, Unntak } from './modell'
+import type { Bekreftelse, Fase, Forlop, Godkjenning, Inndatakrav, Kildehenvisning, Regel, Regelsett, Unntak } from './modell'
 import { REGELMODELLVERSJON } from './modell'
+import { TEKNISK_MAKS_DAGER } from './nedtrapping'
 import { SPC } from './pilotsett'
 
 /* --- Godkjenning ------------------------------------------------------------------ */
@@ -46,6 +50,7 @@ const KEKS = {
   fraAripiprazol: h('keks-2019', 'avsnittet om direkte bytte', 'Når det første antipsykotikumet er aripiprazol eller brekspiprazol, kan byttet gjøres direkte, fordi begge har svært lang halveringstid og ingen antikolinerg effekt.'),
   aripiprazolHalveringstid: h('keks-2019', 'tabell 1', 'Halveringstiden til aripiprazol er om lag 75 timer, og 95 timer for den aktive metabolitten.'),
   depotTilDepot: h('keks-2019', 'tabell 4 (depot til depot)', 'Ved bytte fra et depot til et annet følges instruksjonen for det nye depotet; byttet gjøres oftest direkte og blir på grunn av de lange halveringstidene i praksis en kryss-titrering.'),
+  kryss: h('keks-2019', 'avsnittet om kryss-titrering', 'De fleste psykiatere bruker kryss-titrering: det første antipsykotikumet trappes ned mens det neste innføres.'),
   ingenOpphold: h('keks-2019', 'avsnittet om byttestrategier', 'I motsetning til ved bytte av antidepressiver anbefales ikke et opphold uten antipsykotikum mellom det første og det neste.'),
 }
 
@@ -681,7 +686,7 @@ const kariprazinKvetiapin: Regel = {
       ),
     ],
   },
-  inndata: [{ navn: 'startdose', omrade: [1.5, 6], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [REAGILA.dose] } }],
+  inndata: [{ navn: 'startdose', verdier: [1.5, 3, 4.5, 6], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [REAGILA.dose] } }],
   bekreftelser: [
     {
       id: 'indikasjon',
@@ -706,10 +711,11 @@ const kariprazinKvetiapin: Regel = {
     ],
     tilpasninger: [
       utsagn('Kariprazin seponeres uten nedtrapping dagen før kvetiapin startes (siste dose dagen før dag 1).', REAGILA.fra, REAGILA.halvering),
+      utsagn('Dagens dose må være en dose kapslene gir og opptrappingen i trinn på 1,5 mg når: 1,5, 3, 4,5 eller 6 mg. Andre doser stopper.', REAGILA.dose),
       utsagn('Planen følger opptrappingen ved schizofreni og slutter med 300 mg daglig fra dag 4, laveste anbefalte vedlikeholdsdose. Økning mot 450 mg eller en annen dose er en klinisk vurdering og beregnes ikke.', SPC.seroquel),
       utsagn('Planen bruker bare tabletter med vanlig frisetting i FEST, aldri depottabletter. Hver døgndose gis fordelt på to doser; kan den ikke fordeles med tablettene, stopper planen.', SPC.seroquelToGanger),
     ],
-    forutsetninger: forutsetninger('Pasienten bruker kariprazin 1,5–6 mg daglig.', 'Forskriveren har vurdert hvert unntak og svart nei; et ubesvart unntak stopper beregningen.'),
+    forutsetninger: forutsetninger('Pasienten bruker kariprazin 1,5, 3, 4,5 eller 6 mg daglig.', 'Forskriveren har vurdert hvert unntak og svart nei; et ubesvart unntak stopper beregningen.'),
     usikkerhet: [
       'Virkningen av kariprazin avtar over uker, så bivirkninger og effekt av kvetiapin kan først vurderes etter noen uker.',
       'Sedasjon og ortostatisk blodtrykksfall kan komme i opptrappingen av kvetiapin og må følges.',
@@ -741,6 +747,13 @@ const kariprazinKvetiapin: Regel = {
       },
     },
     {
+      id: 'kariprazin-2-mg',
+      beskrivelse: 'Kariprazin 2 mg er ingen dose kapslene gir (1,5, 3, 4,5 eller 6 mg).',
+      inndata: { startdose_mg: 2, bekreftet: ['indikasjon', 'spesialist_risiko'], pasientforhold: KVETIAPIN_AVKREFTET },
+      forventet: {},
+      stopp: /Startdosen 2 mg er utenfor/,
+    },
+    {
       id: 'kariprazin-over-6',
       beskrivelse: 'Kariprazin 9 mg er over høyeste dose; regelen gjelder ikke.',
       inndata: { startdose_mg: 9, bekreftet: ['indikasjon', 'spesialist_risiko'], pasientforhold: KVETIAPIN_AVKREFTET },
@@ -765,6 +778,253 @@ const kariprazinKvetiapin: Regel = {
   godkjenning: tilKontroll('Ny regel (K3): bytte fra kariprazin uten kryss-titrering (Reagila pkt. 4.2) til kvetiapin med opptrappingen ved schizofreni (Seroquel pkt. 4.2).'),
 }
 
+/* --- Peroralt: olanzapin og risperidon → aripiprazol, kryss-titrering (TARC 2018) ---------- */
+
+const TARC_STED = 'avsnittet om bytte hos stabile polikliniske pasienter med schizofreni (figur 1)'
+const TARC = {
+  opptrapping: h('tarc-2018', TARC_STED, 'Aripiprazol legges til den eksisterende behandlingen: 2,5–5 mg daglig den første uken, 5–10 mg daglig fra slutten av første uke og 10–15 mg daglig fra slutten av andre uke.'),
+  overlapp: h('tarc-2018', TARC_STED, 'Når måldosen 10–15 mg er nådd, brukes aripiprazol og det forrige antipsykotikumet sammen i minst 2 uker.'),
+  nedtrapping: h('tarc-2018', TARC_STED, 'Deretter trappes det forrige antipsykotikumet ned med 25 % av dosen, minst 2 uker mellom hver reduksjon, til det er stoppet; for eksempel 20 → 15 → 10 → 5 mg eller 4 → 3 → 2 → 1 mg og så stopp.'),
+  hoyereDose: h('tarc-2018', TARC_STED, 'Trengs høyere dose, økes aripiprazol først til 15–20 mg i minst 2 uker og deretter eventuelt til 30 mg; vedlikehold er 10–30 mg daglig.'),
+  pasienter: h('tarc-2018', TARC_STED, 'Opptrappingen gjelder stabile polikliniske pasienter som byttes på grunn av bivirkninger eller utilstrekkelig effekt av dagens behandling.'),
+  andreGrupper: h('tarc-2018', 'avsnittene om gjentatte tilbakefall og om innlagte pasienter (figur 2 og 3)', 'Ved tidligere gjentatte psykotiske tilbakefall og hos innlagte anbefales en annen opptrapping, med høyere startdose og måldose.'),
+  oppfolging: h('tarc-2018', 'avsnittet om vurdering før bytte', 'Før byttet vurderes pasienten grundig; under byttet følges pasienten tett med hyppige kontroller, og pasienten informeres om seponeringssymptomer, interaksjoner og mulig tilbakefall.'),
+  sponsor: h('tarc-2018', 'erklæringen om interessekonflikter', 'Konsensusmøtet ble organisert og finansiert av et legemiddelfirma; forfatterne oppgir at anbefalingene er deres egne.'),
+}
+
+const ABILIFY = {
+  interaksjoner: h('ema-abilify', 'section 4.2 og 4.5', 'Ved samtidig bruk av sterke CYP3A4- eller CYP2D6-hemmere skal aripiprazoldosen reduseres, og ved sterke CYP3A4-induktorer økes; dosen justeres igjen når legemidlet tas bort.'),
+  eldre: h('ema-abilify', 'section 4.2 (eldre)', 'Effekt og sikkerhet ved schizofreni er ikke fastslått fra 65 år; lavere startdose bør vurderes når kliniske forhold tilsier det.'),
+}
+
+const TIL_ARIPIPRAZOL_BEKREFTET = ['indikasjon', 'peroral_formulering', 'spesialist_risiko']
+const TIL_ARIPIPRAZOL_NEI = { tilbakefall_innlagt: false, alder_65: false, cyp_aripiprazol: false }
+
+/** Det felles for bytte til aripiprazol: fra-stoffet holdes i 4 uker og trappes så ned med 25 % av startdosen minst hver 2. uke. */
+function tilAripiprazol(a: {
+  id: string
+  fra: string
+  fraNavn: string
+  startdose: Inndatakrav
+  fraKilder: Kildehenvisning[]
+  referanse: string
+  eksempler: Regel['eksempler']
+  merknad: string
+}): Regel {
+  const ukedose = (verdi: number, omrade: [number, number], uke: string) =>
+    forslag(verdi, 'mg', `Valgt innenfor TARC-området ${omrade.join('–').replace('.', ',')} mg ${uke}; forskriveren kan velge en annen dose i området.`, {
+      omrade,
+      justerbar: `Aripiprazol ${uke} (mg)`,
+      henvisninger: [TARC.opptrapping],
+    })
+  return {
+    id: a.id,
+    versjon: 1,
+    tittel: `Fra ${a.fraNavn} til aripiprazol, kryss-titrering`,
+    fra: { type: 'virkestoff', nokkel: a.fra },
+    til: { type: 'virkestoff', nokkel: 'aripiprazol' },
+    plan: {
+      form: 'kryssnedtrapping',
+      forlop: [
+        {
+          id: 'fra',
+          virkestoff: { type: 'virkestoff', nokkel: a.fra },
+          administrasjon: 'peroral',
+          utgangsdose: 'startdose',
+          start: { type: 'dag', dag: 1 },
+          faser: [
+            { type: 'hold', dose: { type: 'aktuell' }, varighet: { type: 'dager', dager: kilde(28, 'dager', 'bindende_krav', TARC.opptrapping, TARC.overlapp) } },
+            {
+              type: 'nedtrapping',
+              strategi: { type: 'prosent_av_startdose', prosent: kilde(25, 'prosent', 'bindende_krav', TARC.nedtrapping) },
+              trinnlengde: { ...kilde(14, 'dager', 'bindende_krav', TARC.nedtrapping), omrade: [14, TEKNISK_MAKS_DAGER], justerbar: 'Minste antall dager per reduksjon', teknisk_maks: true },
+            },
+          ],
+          vurderinger: [
+            {
+              id: 'for_reduksjon',
+              nar: { type: 'for_hvert_trinn' },
+              tekst: `Før hver reduksjon av ${a.fraNavn}: tilstanden vurderes, og pasienten følges tett gjennom hele byttet.`,
+              grunnlag: { type: 'kilde', henvisninger: [TARC.oppfolging, KEKS.spesialist] },
+            },
+          ],
+        },
+        startes('aripiprazol', [
+          { type: 'opptrapping', trinn: [
+            { mg: ukedose(5, [2.5, 5], 'første uke'), dager: kilde(7, 'dager', 'bindende_krav', TARC.opptrapping) },
+            { mg: ukedose(10, [5, 10], 'andre uke'), dager: kilde(7, 'dager', 'bindende_krav', TARC.opptrapping) },
+          ] },
+          { type: 'vedlikehold', dose: { type: 'inndata', navn: 'maldose' } },
+        ]),
+      ],
+    },
+    inndata: [a.startdose, { navn: 'maldose', verdier: [10, 15], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [TARC.opptrapping, SPC.abilifyDose] } }],
+    bekreftelser: [
+      {
+        id: 'indikasjon',
+        tekst: `Pasienten er voksen, har schizofreni, er stabil og følges poliklinisk, og byttes fra ${a.fraNavn} på grunn av bivirkninger eller utilstrekkelig effekt.`,
+        grunnlag: { type: 'kilde', henvisninger: [TARC.pasienter, SPC.abilifyDose] },
+      },
+      peroral(a.fraNavn),
+      spesialist(),
+    ],
+    unntak: [
+      {
+        id: 'tilbakefall_innlagt',
+        tekst: 'Pasienten har hatt gjentatte psykotiske tilbakefall, er innlagt eller er ikke stabil; kilden anbefaler da en annen opptrapping, som ikke er omfattet.',
+        grunnlag: { type: 'kilde', henvisninger: [TARC.andreGrupper] },
+      },
+      ALDER_65('Pasienten er 65 år eller eldre; effekt og sikkerhet av aripiprazol er ikke fastslått i denne gruppen.', ABILIFY.eldre),
+      {
+        id: 'cyp_aripiprazol',
+        tekst: 'Pasienten bruker en sterk CYP3A4- eller CYP2D6-hemmer eller en sterk CYP3A4-induktor; aripiprazoldosen skal da justeres.',
+        grunnlag: { type: 'kilde', henvisninger: [ABILIFY.interaksjoner] },
+      },
+    ],
+    beregnbarhet: 'beregnbar_etter_avklaring',
+    fortolkning: {
+      kildetro: [
+        utsagn('Aripiprazol legges til dagens behandling med 2,5–5 mg daglig første uke, 5–10 mg andre uke og 10–15 mg fra slutten av andre uke.', TARC.opptrapping),
+        utsagn(`Når måldosen er nådd, brukes begge i minst 2 uker; deretter trappes ${a.fraNavn} ned med 25 % av dosen minst hver 2. uke til det er stoppet.`, TARC.overlapp, TARC.nedtrapping),
+        utsagn('Opptrappingen gjelder stabile polikliniske pasienter som byttes på grunn av bivirkninger eller utilstrekkelig effekt; ved gjentatte tilbakefall og hos innlagte anbefales en annen.', TARC.pasienter, TARC.andreGrupper),
+        utsagn('Under kryss-titrering trappes det første antipsykotikumet ned mens det neste innføres; de fleste psykiatere bruker denne strategien.', KEKS.kryss),
+        utsagn('Pasienten følges tett under byttet, som bør vurderes av psykiater.', TARC.oppfolging, KEKS.spesialist),
+        ...a.fraKilder.map((k) => utsagn(k.faktum ?? '', k)),
+      ],
+      tilpasninger: [
+        utsagn('Aripiprazol foreslås som 5 mg den første uken og 10 mg den andre, øverst i kildens områder, fordi den laveste tablettstyrken i FEST er 5 mg og ikke er delbar; forskriveren kan velge 2,5 mg (mikstur) og 5–10 mg. Måldosen 10 eller 15 mg velges av forskriveren.', TARC.opptrapping),
+        utsagn(`${a.fraNavn[0]!.toUpperCase()}${a.fraNavn.slice(1)} holdes uendret i 28 dager: 14 dagers opptrapping og 14 dager sammen med aripiprazol på måldosen. Første reduksjon er dag 29, og hver reduksjon står i minst 14 dager.`, TARC.opptrapping, TARC.overlapp, TARC.nedtrapping),
+        utsagn('Hver reduksjon er 25 % av startdosen, så den siste dosen er en fjerdedel av den, og planen stopper når en dose ikke kan gis med tablettene i FEST.', TARC.nedtrapping),
+      ],
+      forutsetninger: forutsetninger(
+        `Pasienten bruker peroral ${a.fraNavn} som eneste antipsykotikum, i en stabil dose.`,
+        'Forskriveren har vurdert hvert unntak og svart nei; et ubesvart unntak stopper beregningen.',
+      ),
+      usikkerhet: [
+        'Opptrappingen bygger på en konsensusrapport fra et ekspertpanel (lavt evidensnivå), og konsensusmøtet var finansiert av et legemiddelfirma. Rapporten nevner selv at raske bytter også er brukt i studier.',
+        'Hvor lenge hvert trinn skal vare ut over minstetiden, og om nedtrappingen skal stoppes eller reverseres ved forverring, er en klinisk vurdering som ikke beregnes.',
+        'Aripiprazol kan gi uro og akatisi tidlig; når dopaminblokkeringen fra det forrige stoffet avtar, kan symptomer komme tilbake, og det må følges.',
+      ],
+    },
+    referanser: [pn(a.referanse)],
+    eksempler: a.eksempler,
+    godkjenning: tilKontroll(a.merknad),
+  }
+}
+
+const olanzapinAripiprazol = tilAripiprazol({
+  id: 'antipsykotikabytte-olanzapin-aripiprazol',
+  fra: 'olanzapin',
+  fraNavn: 'olanzapin',
+  startdose: { navn: 'startdose', omrade: [5, 20], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [SPC.zyprexaDose] } },
+  fraKilder: [SPC.zyprexaDose, SPC.zyprexaSeponering],
+  referanse: 'SwitchAntipsychotics:Ol>Pa',
+  eksempler: [
+    {
+      id: 'fra-20-mg-15',
+      beskrivelse: 'Olanzapin 20 mg, aripiprazol til 15 mg, startdato 1. desember 2026.',
+      inndata: { startdose_mg: 20, maldose_mg: 15, startdato: '2026-12-01', bekreftet: TIL_ARIPIPRAZOL_BEKREFTET, pasientforhold: TIL_ARIPIPRAZOL_NEI },
+      forventet: {
+        fra: [
+          'dag 1–28 (01.12.2026–28.12.2026): 20 mg',
+          'dag 29–42 (29.12.2026–11.01.2027): 15 mg',
+          'dag 43–56 (12.01.2027–25.01.2027): 10 mg',
+          'dag 57–70 (26.01.2027–08.02.2027): 5 mg',
+          'fra dag 71 (09.02.2027): seponert',
+        ],
+        til: ['dag 1–7 (01.12.2026–07.12.2026): 5 mg', 'dag 8–14 (08.12.2026–14.12.2026): 10 mg', 'fra dag 15 (15.12.2026): 15 mg'],
+      },
+    },
+    {
+      id: 'fra-10-mg-10',
+      beskrivelse: 'Olanzapin 10 mg, aripiprazol til 10 mg.',
+      inndata: { startdose_mg: 10, maldose_mg: 10, bekreftet: TIL_ARIPIPRAZOL_BEKREFTET, pasientforhold: TIL_ARIPIPRAZOL_NEI },
+      forventet: { fra: ['dag 1–28: 10 mg', 'dag 29–42: 7,5 mg', 'dag 43–56: 5 mg', 'dag 57–70: 2,5 mg', 'fra dag 71: seponert'], til: ['dag 1–7: 5 mg', 'fra dag 8: 10 mg'] },
+    },
+    {
+      id: 'maldose-20',
+      beskrivelse: 'Måldose 20 mg er over kildens område for dette bytte (10–15 mg).',
+      inndata: { startdose_mg: 20, maldose_mg: 20, bekreftet: TIL_ARIPIPRAZOL_BEKREFTET, pasientforhold: TIL_ARIPIPRAZOL_NEI },
+      forventet: {},
+      stopp: /Måldosen 20 mg er utenfor/,
+    },
+    {
+      id: 'olanzapin-over-20',
+      beskrivelse: 'Olanzapin 25 mg er over preparatomtalens doseområde.',
+      inndata: { startdose_mg: 25, maldose_mg: 15, bekreftet: TIL_ARIPIPRAZOL_BEKREFTET, pasientforhold: TIL_ARIPIPRAZOL_NEI },
+      forventet: {},
+      stopp: /Startdosen 25 mg er utenfor/,
+    },
+    {
+      id: 'tilbakefall-innlagt',
+      beskrivelse: 'Gjentatte tilbakefall eller innlagt: en annen opptrapping, ikke omfattet.',
+      inndata: { startdose_mg: 20, maldose_mg: 15, bekreftet: TIL_ARIPIPRAZOL_BEKREFTET, pasientforhold: { ...TIL_ARIPIPRAZOL_NEI, tilbakefall_innlagt: true } },
+      forventet: {},
+      stopp: /Regelen gjelder ikke: Pasienten har hatt gjentatte psykotiske tilbakefall/,
+    },
+    {
+      id: 'interaksjon-ukjent',
+      beskrivelse: 'CYP-hemmere og -induktorer er ikke vurdert: ukjent stopper.',
+      inndata: { startdose_mg: 20, maldose_mg: 15, bekreftet: TIL_ARIPIPRAZOL_BEKREFTET, pasientforhold: { tilbakefall_innlagt: false, alder_65: false } },
+      forventet: {},
+      stopp: /Må avklares før beregning \(ukjent\): Pasienten bruker en sterk CYP3A4- eller CYP2D6-hemmer/,
+    },
+    {
+      id: 'uten-spesialist',
+      beskrivelse: 'Uten bekreftet spesialistvurdering stopper beregningen.',
+      inndata: { startdose_mg: 20, maldose_mg: 15, bekreftet: ['indikasjon', 'peroral_formulering'], pasientforhold: TIL_ARIPIPRAZOL_NEI },
+      forventet: {},
+      stopp: /Må bekreftes før beregning: Byttet er vurdert i, eller med råd fra, spesialisthelsetjenesten/,
+    },
+  ],
+  merknad: 'Ny regel (K3, K0-07): kryss-titrering til aripiprazol etter TARC 2018 (stabile polikliniske pasienter), med nedtrapping av olanzapin til seponering.',
+})
+
+const risperidonAripiprazol = tilAripiprazol({
+  id: 'antipsykotikabytte-risperidon-aripiprazol',
+  fra: 'risperidon',
+  fraNavn: 'risperidon',
+  startdose: { navn: 'startdose', omrade: [0, 16], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [RISPERDAL.maks] } },
+  fraKilder: [RISPERDAL.dose, RISPERDAL.maks],
+  referanse: 'SwitchAntipsychotics:Rd>Pa',
+  eksempler: [
+    {
+      id: 'fra-4-mg-15',
+      beskrivelse: 'Risperidon 4 mg, aripiprazol til 15 mg.',
+      inndata: { startdose_mg: 4, maldose_mg: 15, bekreftet: TIL_ARIPIPRAZOL_BEKREFTET, pasientforhold: TIL_ARIPIPRAZOL_NEI },
+      forventet: { fra: ['dag 1–28: 4 mg', 'dag 29–42: 3 mg', 'dag 43–56: 2 mg', 'dag 57–70: 1 mg', 'fra dag 71: seponert'], til: ['dag 1–7: 5 mg', 'dag 8–14: 10 mg', 'fra dag 15: 15 mg'] },
+    },
+    {
+      id: 'fra-6-mg-10',
+      beskrivelse: 'Risperidon 6 mg, aripiprazol til 10 mg.',
+      inndata: { startdose_mg: 6, maldose_mg: 10, bekreftet: TIL_ARIPIPRAZOL_BEKREFTET, pasientforhold: TIL_ARIPIPRAZOL_NEI },
+      forventet: { fra: ['dag 1–28: 6 mg', 'dag 29–42: 4,5 mg', 'dag 43–56: 3 mg', 'dag 57–70: 1,5 mg', 'fra dag 71: seponert'], til: ['dag 1–7: 5 mg', 'fra dag 8: 10 mg'] },
+    },
+    {
+      id: 'risperidon-over-16',
+      beskrivelse: 'Risperidon 20 mg er over det preparatomtalen anbefaler.',
+      inndata: { startdose_mg: 20, maldose_mg: 15, bekreftet: TIL_ARIPIPRAZOL_BEKREFTET, pasientforhold: TIL_ARIPIPRAZOL_NEI },
+      forventet: {},
+      stopp: /Startdosen 20 mg er utenfor/,
+    },
+    {
+      id: 'over-65',
+      beskrivelse: '65 år eller eldre: regelen gjelder ikke.',
+      inndata: { startdose_mg: 4, maldose_mg: 15, bekreftet: TIL_ARIPIPRAZOL_BEKREFTET, pasientforhold: { ...TIL_ARIPIPRAZOL_NEI, alder_65: true } },
+      forventet: {},
+      stopp: /Regelen gjelder ikke: Pasienten er 65 år eller eldre/,
+    },
+    {
+      id: 'uten-maldose',
+      beskrivelse: 'Uten valgt måldose (10 eller 15 mg) velger beregningen ikke selv.',
+      inndata: { startdose_mg: 4, bekreftet: TIL_ARIPIPRAZOL_BEKREFTET, pasientforhold: TIL_ARIPIPRAZOL_NEI },
+      forventet: {},
+      stopp: /Måldosen må oppgis/,
+    },
+  ],
+  merknad: 'Ny regel (K3, K0-08): kryss-titrering til aripiprazol etter TARC 2018 (stabile polikliniske pasienter), med nedtrapping av risperidon til seponering.',
+})
+
 /** FEST-uttrekket reglene testes ende til ende med (`npm run verktoy:regler -- hent-fest`). */
 export const FEST_ANTIPSYKOTIKA = 'src/data/verktoy/fest-antipsykotika.json'
 
@@ -775,8 +1035,8 @@ export const ANTIPSYKOTIKASETT: Regelsett = {
   versjon: 1,
   modell: REGELMODELLVERSJON,
   beskrivelse:
-    'Byttereglene for antipsykotika i K3: komplette forløp til et definert sluttmål, bygget på preparatomtaler og Keks 2019. To depotrelaterte (Xeplion fra peroral risperidon og fra Risperdal Consta) og tre perorale direkte bytter (aripiprazol til olanzapin og til risperidon, kariprazin til kvetiapin). Alle står til uavhengig faglig kontroll; ingen er klinisk godkjent.',
-  regler: [risperidonXeplion, constaXeplion, aripiprazolOlanzapin, aripiprazolRisperidon, kariprazinKvetiapin],
+    'Byttereglene for antipsykotika i K3: komplette forløp til et definert sluttmål, bygget på preparatomtaler, Keks 2019 og TARC 2018. To depotrelaterte (Xeplion fra peroral risperidon og fra Risperdal Consta), tre perorale direkte bytter (aripiprazol til olanzapin og til risperidon, kariprazin til kvetiapin) og to kryss-titreringer til aripiprazol (fra olanzapin og fra risperidon, TARC 2018). Alle står til uavhengig faglig kontroll; ingen er klinisk godkjent.',
+  regler: [risperidonXeplion, constaXeplion, aripiprazolOlanzapin, aripiprazolRisperidon, kariprazinKvetiapin, olanzapinAripiprazol, risperidonAripiprazol],
 }
 
 export const ANTIPSYKOTIKABYTTER: Domenesett = {
