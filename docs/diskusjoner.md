@@ -48,9 +48,15 @@ flytter trådene og kategoriene med.
   innlegget.
 - Kommentarene er som under idéene (svar i svar, hjerter, «Slettet» der det er
   svar), men bare forfatteren endrer og sletter sin egen, også for
-  administratorer. En administrator kan i stedet **skjule** en kommentar eller
-  det første innlegget: teksten fjernes for godt, og plassen står med en merknad. Appen
-  tilbyr ikke det i en arkivert tråd; den hentes tilbake først.
+  administratorer. En administrator kan i stedet **skjule** andres kommentarer
+  eller det første innlegget i en tråd («Skjul innlegget»; tråden og
+  kommentarene står). Plassen står med en merknad, og teksten tas vare på i
+  `diskusjon_skjulte_tekster`, som bare administratorene leser. Da kan en
+  administrator **vise den igjen** («Vis igjen») eller **fjerne den for godt**
+  («Fjern for godt»; merknaden står). Det som ble skjult før teksten ble tatt
+  vare på (november 2026), kan ikke vises igjen. Eget innhold skjules ikke; det
+  endres eller slettes. Appen tilbyr ingen av delene i en arkivert tråd; den
+  hentes tilbake først.
 
 Trådene og kategoriene skrives gjennom funksjonene i migrasjonen, som holder
 rekkefølgen tett (0, 1, 2 …). Kommentarene og hjertene skrives rett mot
