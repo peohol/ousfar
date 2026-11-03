@@ -19,6 +19,7 @@ import {
   skjemaFor,
   TOMT_SKJEMA,
   spennFor,
+  startdosenavn,
   trengerMaldose,
   ubesvart,
   valgidentitet,
@@ -806,7 +807,7 @@ function Beregningsdel({
           <div className="feltrad">
             <label className="skjemafelt">
               <span>
-                Aktuell døgndose av {fraNavn.toLowerCase()}
+                {startdosenavn(regel)} av {fraNavn.toLowerCase()}
                 {fraAdm} (mg)
               </span>
               <Tallfelt value={skjema.startdose} onChange={(v) => sett('startdose', v)} />

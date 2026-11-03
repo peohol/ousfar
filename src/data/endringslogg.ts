@@ -25,6 +25,7 @@ export const ENDRINGSLOGG: Endring[] = [
       'En nedtrapping kan nå gå helt til seponering når regelen har en faglig godkjent avslutning, og bare fra en dose avslutningen gjelder for. Ellers stopper planen som før og sier hvorfor.',
       'Nytt verktøy «Kombinere stemningsstabiliserende»: det eksisterende legemidlet fortsetter uendret, og planen gjelder oppstart og opptrapping av det som legges til, også med dose annenhver dag. Verktøyet har ingen godkjente regler ennå.',
       'Når et depot byttes til et annet depot, står det i planen at det gamle ikke skal ha flere injeksjoner, og verktøyet ber ikke om legemiddelform for et legemiddel som bare skal stoppes.',
+      'Bruker pasienten et depot, spør verktøyet etter dosen per injeksjon i stedet for døgndosen.',
     ],
   },
   {

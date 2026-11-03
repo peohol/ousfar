@@ -15,7 +15,7 @@ import { festkoblinger, KARTLEGGING } from './register'
 import { inndatagrenser, inndatavilkar, kravtekst, medEnhet, omradetekst } from './regler/beregning'
 import { forslagsverdi, justerbare, parametre, type Regel, type Regelsett, type Trinnvalgsvar } from './regler/modell'
 import type { Formuleringsklasse } from './festformuleringer'
-import { medlemFor, REGELSETT, settFor, type Verktoyvalg } from './tilgjengelighet'
+import { fraForlop, medlemFor, REGELSETT, settFor, type Verktoyvalg } from './tilgjengelighet'
 
 /** Det forskriveren har fylt inn, slik feltene står. Tas vare på når appen oppdateres; planen gjør aldri det. */
 export interface Planskjema {
@@ -137,10 +137,17 @@ export const spennFor = (r: Regel, skjema: Pick<Planskjema, 'startdose'>) => {
 export const trengerMaldose = (r: Regel, skjema: Pick<Planskjema, 'startdose'> = { startdose: '' }) =>
   r.inndata.some((k) => k.navn === 'maldose') || spennFor(r, skjema) !== undefined
 
+/**
+ * Hva startdosen er: døgndosen pasienten bruker, eller dosen per injeksjon når
+ * legemidlet pasienten bruker, er et depot (f.eks. Risperdal Consta 25 mg hver
+ * andre uke), så en døgndose ikke skrives inn i stedet.
+ */
+export const startdosenavn = (r: Regel | undefined) => (r && fraForlop(r)?.administrasjon === 'depotinjeksjon' ? 'Aktuell dose per injeksjon' : 'Aktuell døgndose')
+
 /** Det som mangler før planen kan beregnes, i klartekst; tom når alt er fylt inn. */
 export function mangler(r: Regel, skjema: Planskjema): string[] {
   const ut: string[] = []
-  if (lesDose(skjema.startdose) === undefined) ut.push('Aktuell døgndose må fylles inn som et tall større enn 0.')
+  if (lesDose(skjema.startdose) === undefined) ut.push(`${startdosenavn(r)} må fylles inn som et tall større enn 0.`)
   if (trengerMaldose(r, skjema) && lesDose(skjema.maldose) === undefined) ut.push('Måldosen må fylles inn som et tall større enn 0.')
   if (skjema.startdato && !/^\d{4}-\d{2}-\d{2}$/.test(skjema.startdato)) ut.push('Startdatoen er ikke en gyldig dato.')
   for (const [sti, p] of justerbare(r)) {
@@ -178,7 +185,7 @@ export const begrunnelseshjelp = (r: Regel): string =>
   [
     ...parametre(r.plan).flatMap(([sti, p]) => (p.begrunnelseskrav ?? []).map((k) => `${p.justerbar ?? sti} ${kravtekst(k, p, r.sporsmal)}`)),
     ...sporsmalMedBegrunnelse(r).map((s) => s.ja),
-    ...doserMedBegrunnelse(r).map((k) => `${k.navn === 'startdose' ? 'Aktuell døgndose' : 'Måldose'} over ${inndatagrenser(k)}${inndatavilkar(k, r.sporsmal)}`),
+    ...doserMedBegrunnelse(r).map((k) => `${k.navn === 'startdose' ? startdosenavn(r) : 'Måldose'} over ${inndatagrenser(k)}${inndatavilkar(k, r.sporsmal)}`),
   ].join('; ')
 
 /**
