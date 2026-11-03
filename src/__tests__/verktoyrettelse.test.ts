@@ -15,7 +15,7 @@ import { henvisninger, type Kildehenvisning, type Regel } from '../verktoy/regle
 import { NEDTRAPPINGSDISPOSISJON, NEDTRAPPINGSSETT, NEDTRAPPINGSSETT_FOR_RETTELSENE } from '../verktoy/regler/nedtrapping'
 import { PILOTDISPOSISJON, PILOTSETT, PILOTSETT_FOR_RETTELSENE } from '../verktoy/regler/pilotsett'
 import { rett, rettRegel } from '../verktoy/regler/rettelse'
-import { FOR_RETTELSENE, forventedeLinjeendringer, lagRettelseskontroll, matrisesammenligning, RETTELSESKONTROLLFIL, rettelsesrader, synlig, tilGodkjenning } from '../verktoy/rettelseskontroll'
+import { FOR_RETTELSENE, forventedeLinjeendringer, forventetFor, lagRettelseskontroll, matrisesammenligning, RETTELSESKONTROLLFIL, rettelsesrader, synlig, tilGodkjenning } from '../verktoy/rettelseskontroll'
 import { REGELSETT, REGELSETTENE } from '../verktoy/tilgjengelighet'
 
 const les = (fil: string) => readFileSync(new URL(`../../${fil}`, import.meta.url), 'utf8')
@@ -211,7 +211,7 @@ describe('Kontrollgrunnlaget', () => {
       const for_ = x.for.tekst!.split('\n')
       const etter = x.etter.tekst!.split('\n')
       expect(etter.length, x.kasus.id).toBe(for_.length)
-      const forventet = endringer.get(x.etter.resultat!.regel.id) ?? []
+      const forventet = forventetFor(endringer, x.etter.resultat)
       // Hver linje som er ulik, er en av de forventede, og står med samme linje før rettelsen på samme plass.
       etter.forEach((l: string, i: number) => {
         if (l === for_[i]) return

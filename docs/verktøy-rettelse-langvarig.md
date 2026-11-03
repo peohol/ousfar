@@ -95,14 +95,14 @@ Alle 112 kasusene i testmatrisen fra P11 (`docs/verktøy-p11-testmatrise.md`) er
 
 Linjene som er ført tilbake:
 
-| Regel | Nå | Før rettelsen | Hvorfor |
+| Regel eller regelsett | Nå | Før rettelsen | Hvorfor |
 | --- | --- | --- | --- |
 | `kryssnedtrapping-sertralin-mirtazapin` | Regel kryssnedtrapping-sertralin-mirtazapin, versjon 10, fingeravtrykk 12801aa22a0c | Regel kryssnedtrapping-sertralin-mirtazapin, versjon 9, fingeravtrykk dc878aa9065c | Den nye regelversjonen. |
-| `kryssnedtrapping-sertralin-mirtazapin` | Regelsett ousfar-verktoy-pilot, versjon 17 | Regelsett ousfar-verktoy-pilot, versjon 16 | Ny versjon av regelsettet med de nye regelversjonene. |
 | `kryssnedtrapping-sertralin-mirtazapin` | Stopping antidepressants (Royal College of Psychiatrists (RCPsych), Publisert mars 2024): https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants – Examples of tapering plans; If you have been taking antidepressants for longer | Stopping antidepressants (Royal College of Psychiatrists (RCPsych), Publisert mars 2024): https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants – If you have been taking antidepressants for longer | Stedene i kilden der de nye faktaene står. |
 | `seponering-vortioksetin` | Regel seponering-vortioksetin, versjon 12, fingeravtrykk b28dec93f5ed | Regel seponering-vortioksetin, versjon 11, fingeravtrykk a6e488637de8 | Den nye regelversjonen. |
-| `seponering-vortioksetin` | Regelsett ousfar-verktoy-nedtrapping, versjon 15 | Regelsett ousfar-verktoy-nedtrapping, versjon 14 | Ny versjon av regelsettet med de nye regelversjonene. |
 | `seponering-vortioksetin` | Stopping antidepressants (Royal College of Psychiatrists (RCPsych), Publisert mars 2024): https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants – Examples of tapering plans; How should I gradually reduce my dose?; If you have been taking antidepressants for longer; When and how should I stop my antidepressants?; Which plan should I follow? | Stopping antidepressants (Royal College of Psychiatrists (RCPsych), Publisert mars 2024): https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants – How should I gradually reduce my dose?; If you have been taking antidepressants for longer; When and how should I stop my antidepressants?; Which plan should I follow? | Stedene i kilden der de nye faktaene står. |
+| `ousfar-verktoy-pilot` | Regelsett ousfar-verktoy-pilot, versjon 17 | Regelsett ousfar-verktoy-pilot, versjon 16 | Ny versjon av regelsettet med de nye regelversjonene. |
+| `ousfar-verktoy-nedtrapping` | Regelsett ousfar-verktoy-nedtrapping, versjon 15 | Regelsett ousfar-verktoy-nedtrapping, versjon 14 | Ny versjon av regelsettet med de nye regelversjonene. |
 
 ## 6. Kontrollørens vurdering 03.11.2026
 

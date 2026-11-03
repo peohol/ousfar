@@ -217,7 +217,7 @@ export function kjorKasus(k: Pilotkasus, uttrekkene: Uttrekkene, settene: readon
   )
   if (uvalgt.length > 0) return { utfall: 'formvalg', forlop: uvalgt.map(([f]) => f) }
 
-  const resultat = beregnPlan(regel, k.valg, skjema, utvalg, naa, settene.find((s) => s.regler.includes(regel)) ?? sett)
+  const resultat = beregnPlan(regel, k.valg, skjema, utvalg, naa, sett, settene)
   const visning = planvisning(resultat, regel, skjema.startdato || undefined)
   if (!visning) return { utfall: 'stopp', grunner: resultat.status === 'stoppet' ? resultat.stoppgrunner : ['Planen er ikke klinisk og vises ikke.'], resultat }
   const tekst = planTekst(visning, verktoy.navn)

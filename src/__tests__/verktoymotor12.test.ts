@@ -15,7 +15,7 @@ import { beregn } from '../verktoy/regler/beregning'
 import { DOMENESETT } from '../verktoy/regler/domenesett'
 import { godkjenningsfeil } from '../verktoy/regler/godkjenning'
 import { apneValg, nulltrinnfeil, tilleggsfeil, type Avslutning, type Fase, type Grunnlag, type Regel } from '../verktoy/regler/modell'
-import { avSlaget, REGELSETTENE } from '../verktoy/tilgjengelighet'
+import { avSlaget, eierAv, REGELSETT, REGELSETTENE, settFor } from '../verktoy/tilgjengelighet'
 import { godkjennITest } from './hjelp/verktoyplan'
 
 const kilde: Grunnlag = { type: 'kilde', henvisninger: [] }
@@ -278,6 +278,17 @@ describe('Tillegg (K4)', () => {
     const bytte = { ...r, plan: { ...r.plan, form: 'kryssnedtrapping' as const } }
     expect([seponering, bytteAd, kombinere].map((v) => avSlaget(v!, bytte))).toEqual([false, true, false])
     expect(VALGTEKSTER.tillegg).toMatchObject({ gruppe: 'Kombinasjonen', fra: 'Eksisterende legemiddel', til: 'Legemiddel som legges til' })
+  })
+
+  it('finner settet som eier regelen, også for en kopi av regelen', () => {
+    for (const sett of REGELSETTENE)
+      for (const r of sett.regler) {
+        expect(eierAv(r)).toBe(sett)
+        expect(eierAv(structuredClone(r))).toBe(sett)
+        expect(settFor(structuredClone(r))).toBe(sett)
+      }
+    expect(eierAv({ id: 'finnes-ikke' })).toBeUndefined()
+    expect(settFor({ ...REGELSETTENE[0]!.regler[0]!, id: 'finnes-ikke' })).toBe(REGELSETT)
   })
 
   it('har faste plasser for leveransenes regelsett, som verktøyene leser', () => {
