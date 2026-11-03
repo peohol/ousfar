@@ -1108,7 +1108,13 @@ function Trinnvalgdel({ resultat, navn, onVelg }: { resultat: Doseplanresultat |
             Trinn {t.trinn} av {navn(t.forlop)} kan ikke gis nøyaktig
           </legend>
           <p className="feltgruppe__hjelp">
-            {t.omrade ? (
+            {t.omrade && t.minste_trinn ? (
+              <>
+                Den foretrukne reduksjonen til {foretrukketTekst(t)} kan ikke gis med preparatene, og ingen dose med faktisk reduksjon innenfor det foretrukne området{' '}
+                {tall(t.omrade[0])}–{tall(t.omrade[1])} % kan det. Ved denne lave dosen kan du velge det minste trinnet som kan gis, med faktisk reduksjon høyst{' '}
+                {tall(t.minste_trinn.maks_prosent)} %.
+              </>
+            ) : t.omrade ? (
               <>
                 Den foretrukne reduksjonen til {foretrukketTekst(t)} kan ikke gis med preparatene. Velg en dose som kan gis; den faktiske reduksjonen må være innenfor det
                 foretrukne området {tall(t.omrade[0])}–{tall(t.omrade[1])} %.

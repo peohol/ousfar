@@ -180,6 +180,13 @@ describe('Vurderingspunktene', () => {
     // Siste dose er dag 28, så punktet står på dag 42, og bare der.
     expect(v.rader.filter((x) => x.type === 'vurdering').map((x) => x.dager)).toEqual(['Dag 42'])
     expect(v.vurderinger).toEqual(['testoksetin, 14 dager etter siste dose (dag 42): Følg opp seponeringssymptomer og tilbakefall.'])
+    // Flere punkter etter seponering i samme forløp, for eksempel 7, 14 og 28 dager, står hver på sin dag.
+    const flere = medAvslutning(5, 5, 'etter-seponering-flere')
+    flere.plan.forlop[0]!.vurderinger = [7, 14, 28].map((dager) => ({ id: `etter-${dager}`, nar: { type: 'etter_seponering' as const, dager: sp(dager, 'dager') }, tekst: `Oppfølging etter ${dager} dager.`, grunnlag: vurdert }))
+    const fg = godkjennITest(flere, 'test-etter-seponering-flere')
+    const fv = planvisning(plan(fg, 20), fg)!
+    expect(fv.rader.filter((x) => x.type === 'vurdering').map((x) => x.dager)).toEqual(['Dag 35', 'Dag 42', 'Dag 56'])
+    expect(fv.vurderinger).toHaveLength(3)
     // En plan som stopper over grensen (laveste dose 10 mg), seponerer ikke; punktet står da uten dag.
     const h = regel(10)
     expect(kort(plan(h, 80)).join(' ')).toMatch(/^Komplett plan ikke tilgjengelig: /)
@@ -187,6 +194,52 @@ describe('Vurderingspunktene', () => {
     expect(over.utfall.komplett).toBe(false)
     expect(over.rader.some((x) => x.type === 'vurdering')).toBe(false)
     expect(over.vurderinger).toEqual(['testoksetin, 14 dager etter siste dose: Følg opp seponeringssymptomer og tilbakefall.'])
+  })
+})
+
+describe('Minste trinn ved lav dose (regelmodell 12)', () => {
+  const DRAPER = { fra: { klasse: 'peroral' as const, legemiddelformer: ['SYN-DRAP'] } }
+  /** 25 % per trinn (valgområde 5–50 %, over 25 % krever begrunnelse), dråper på 1 mg, minste trinn fra `fra` mg på høyst 50 % og avslutning fra 1 mg. */
+  const regel = (fra = 3) => {
+    const r = trinnvalgUtenNull()
+    const fase = r.plan.forlop[0]!.faser[0] as Extract<Fase, { type: 'nedtrapping' }>
+    if (fase.strategi.type !== 'prosent_av_aktuell') throw new Error()
+    fase.strategi.minste_trinn = { fra_mg: sp(fra, 'mg'), maks_prosent: sp(50, 'prosent') }
+    fase.avslutning = avslutning(1)
+    delete fase.horisont
+    r.plan.forlop[0]!.dosevalg = { min_mg: sp(1, 'mg') }
+    return godkjennITest(r, `test-minste-trinn-${fra}`)
+  }
+  const med = (r: Regel, valg: [number, number, number][] = []) =>
+    kliniskDoseplan(r, { startdose_mg: 4, formvalg: DRAPER, trinnvalg: valg.map(([trinn, fra_mg, mg]) => ({ forlop: 'fra', trinn, fra_mg, mg })) }, GRUNNLAG, OMGIVELSE)
+  const tilbudt = (p: Doseplanresultat) => p.trinnvalg?.map((t) => [t.trinn, t.fra_mg, t.doser.map((d) => d.mg), t.minste_trinn?.maks_prosent ?? null])
+
+  it('tilbyr ved og under grensen bare den nærmeste lavere dosen, når ingen dose innenfor valgområdet kan gis, og når så avslutningen', () => {
+    const r = regel()
+    // 4 → 3 mg kan gis; 2,25 mg kan ikke, og ingen dose fra 2,25 til 2,85 mg kan gis med dråper, så bare 2 mg (−33,33 %) tilbys.
+    const a = med(r)
+    expect(a.status === 'stoppet' && a.stoppgrunner.join(' ')).toMatch(/^Komplett plan ikke tilgjengelig: /)
+    expect(tilbudt(a)).toEqual([[2, 3, [2], 50]])
+    const b = med(r, [[2, 3, 2]])
+    expect(tilbudt(b)).toEqual([[3, 2, [1], 50]])
+    // Fra 1 mg kan ingen lavere dose over 0 gis, så avslutningen seponerer: planen er komplett.
+    const c = med(r, [[2, 3, 2], [3, 2, 1]])
+    expect(kort(c)).toEqual([[['1–14: 3', '15–28: 2', '29–42: 1'], 42]])
+    if (c.status !== 'doseplan') throw new Error(c.stoppgrunner.join(' '))
+    expect(planvisning(c, r)!.utfall.komplett).toBe(true)
+    expect(c.kontroller.map((k) => k.krav).join(' ')).toMatch(/er et minste trinn valgt av forskriveren .* høyst 50 %/)
+  })
+
+  it('gjelder ikke over grensen, og godtar ikke et annet eller større trinn', () => {
+    // Med grensen 2 mg tilbys ingenting fra 3 mg, så planen stopper over avslutningen og er ikke komplett.
+    const over = med(regel(2))
+    expect(over.trinnvalg).toBeUndefined()
+    expect(over.status === 'stoppet' && over.stoppgrunner.join(' ')).toMatch(/^Komplett plan ikke tilgjengelig: .*avslutning gjelder bare fra 1 mg eller lavere \(planen står på 3 mg\)/)
+    const valgtOver = med(regel(2), [[2, 3, 2]])
+    expect(valgtOver.status === 'stoppet' && valgtOver.stoppgrunner.join(' ')).toMatch(/utenfor valgområdet 5–25 %/)
+    // 1 mg fra 3 mg er en reduksjon på 66,67 %, over det minste trinnet.
+    const stort = med(regel(), [[2, 3, 1]])
+    expect(stort.status === 'stoppet' && stort.stoppgrunner.join(' ')).toMatch(/66,67 % fra 3 mg, utenfor valgområdet/)
   })
 })
 

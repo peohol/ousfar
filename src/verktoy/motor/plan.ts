@@ -25,7 +25,7 @@
  */
 import { FEST_FORELDET_ETTER_TIMER, festForeldet } from '../../legemiddeldata/referanser'
 import { FORMULERINGSKLASSER, type Formuleringsklasse } from '../festformuleringer'
-import { AVSLUTNING_FELLES, AVVIK_IKKE_BEREGNET, avrund, beregn, datoFor, overAvslutning, overAvslutningKort, erIsoDato, tempolengde, fordelingstekst, hverTekst, injeksjonstidspunkt, medEnhet, medSvarforslag, utenBeregningLinje, valgtSuffiks, trinnvalgOmrade, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
+import { AVSLUTNING_FELLES, AVVIK_IKKE_BEREGNET, avrund, beregn, datoFor, overAvslutning, overAvslutningKort, erIsoDato, tempolengde, fordelingstekst, hverTekst, injeksjonstidspunkt, medEnhet, medSvarforslag, utenBeregningLinje, valgtSuffiks, trinnvalgOmrade, minstetrinnFra, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
 import { fingeravtrykk, godkjenningsfeil, kanonisk, sha256 } from '../regler/godkjenning'
 import { avslutningFor, justerbare, parameterfeil, type Beregningsinndata, type Fase, type Forlop, type Klinisktilfelle, type Parameter, type Regel, type Regelsett } from '../regler/modell'
 import { byggesteiner, DOSEENHETER, norskDato, type Byggestein, type Preparatgrunnlag } from './byggesteiner'
@@ -107,6 +107,8 @@ export interface Trinnvalg {
    * trinn (`Trinndose.dager`).
    */
   tempo?: Tempo
+  /** Når ingen dose innenfor `omrade` kan gis ved lav dose: den høyeste faktiske reduksjonen det minste trinnet kan ha ({@link Minstetrinn}). */
+  minste_trinn?: { maks_prosent: number }
   doser: Trinndose[]
 }
 
@@ -514,6 +516,9 @@ function trinnvalgtekst(tv: Trinnvalg | null, trinn: Pick<Trinnvalg, 'fra_mg' | 
   const omrade = `det foretrukne området ${tall(trinn.omrade[0])}–${tall(trinn.omrade[1])} %`
   const foretrukket = `Den foretrukne reduksjonen til ${foretrukketTekst(trinn)} kan ikke gis med preparatene`
   if (!tv) return `${foretrukket}, og ingen dose som kan gis, har en faktisk reduksjon innenfor ${omrade}. ${AVVIK_IKKE_BEREGNET}`
+  if (tv.minste_trinn) {
+    return `${foretrukket}, og ingen dose som kan gis, har en faktisk reduksjon innenfor ${omrade}. Ved denne lave dosen lar regelen forskriveren velge det minste trinnet som kan gis, med faktisk reduksjon høyst ${tall(tv.minste_trinn.maks_prosent)} %: ${tv.doser.map(trinndosetekst).join(' eller ')}. Beregningen velger ikke selv.`
+  }
   return `${foretrukket}. Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra ${tall(tv.fra_mg)} mg innenfor ${omrade}: ${tv.doser.map(trinndosetekst).join(' eller ')}. Beregningen velger ikke selv.`
 }
 
@@ -579,6 +584,31 @@ function trinnvalgFor(f: Forlopsresultat, p: Periode, v: Styrkevalg[], fra: numb
     beregnet_mg: p.mg,
     omrade,
     doser: naermeste.map((k) => ({ mg: k.mg, prosent: prosent(k.mg), elementer: k.elementer, ...(p.fordeles && { doser: fordelt(k)! }) })),
+  }
+}
+
+/**
+ * Det minste trinnet forskriveren kan velge for periode `p` fra `fra` mg ved
+ * lav dose ({@link Minstetrinn}): bare den nærmeste lavere dosen som kan gis
+ * og fordeles, over 0, ikke under laveste dose og vist nøyaktig, med faktisk
+ * reduksjon høyst `maks` %. `null` når ingen er det.
+ */
+function minstetrinnFor(f: Forlopsresultat, p: Periode, beregnet: number, v: Styrkevalg[], fra: number, omrade: [number, number], maks: number, min: number | null, fordelt: (k: Dosekandidat) => number[] | null | undefined): Trinnvalg | null {
+  const prosent = (mg: number) => (1 - mg / fra) * 100
+  const k = doser(v, Math.max(fra * (1 - maks / 100), min ?? 0, EPS) - EPS * fra, fra, (x) => fordelt(x) !== null)
+    .filter((x) => x.mg < fra - EPS && Math.abs(avrund(x.mg) - x.mg) < EPS && prosent(x.mg) <= maks + EPS)
+    .at(-1)
+  if (!k) return null
+  return {
+    forlop: f.id,
+    virkestoff: f.virkestoff,
+    trinn: p.trinn!,
+    fra_dag: p.fra,
+    fra_mg: fra,
+    beregnet_mg: beregnet,
+    omrade,
+    minste_trinn: { maks_prosent: maks },
+    doser: [{ mg: k.mg, prosent: prosent(k.mg), elementer: k.elementer, ...(p.fordeles && { doser: fordelt(k)! }) }],
   }
 }
 
@@ -648,6 +678,18 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
           throw new Stopp(`${f.virkestoff} ${dager(p)}: den valgte dosen ${tall(p.mg)} mg for trinn ${p.trinn} er ikke en av de nærmeste dosene som kan gis${t ? ` (${t.doser.map((d) => `${tall(d.mg)} mg`).join(' eller ')})` : ''}. Fjern valget, og velg på nytt.`)
         }
       }
+      // Et minste trinn gjelder bare når ingen dose innenfor valgområdet kan gis, og er den nærmeste lavere dosen som kan gis.
+      const valgfase = p.valgt && !tempo ? trinnvalgFase(def) : undefined
+      const minsteValgt = valgfase ? minstetrinnFra(valgfase.strategi, forrige) : null
+      const valgomrade = valgfase && minsteValgt !== null ? trinnvalgOmrade(valgfase.strategi, forrige, inndata.svar) : null
+      if (valgomrade && (1 - p.mg / forrige) * 100 > valgomrade[1] + EPS) {
+        const beregnet = { ...p, mg: p.valgt!.beregnet_mg }
+        const vanlig = trinnvalgFor(f, beregnet, v, forrige, valgomrade, min, (k) => fordelt(p, k))
+        const minst = minstetrinnFor(f, beregnet, p.valgt!.beregnet_mg, v, forrige, valgomrade, minsteValgt!, min, (k) => fordelt(p, k))
+        if (vanlig || !minst || Math.abs(minst.doser[0]!.mg - p.mg) > EPS) {
+          throw new Stopp(`${f.virkestoff} ${dager(p)}: den valgte dosen ${tall(p.mg)} mg for trinn ${p.trinn} er ikke det minste trinnet regelen tilbyr${vanlig ? ', fordi en dose innenfor valgområdet kan gis' : minst ? ` (${tall(minst.doser[0]!.mg)} mg)` : ''}. Fjern valget, og velg på nytt.`)
+        }
+      }
       const naer = (k: Dosekandidat) => Math.abs(k.mg - p.mg) <= p.mg * tol + EPS * Math.max(1, p.mg)
       const innenfor = kanGis(v, p.mg).filter(naer)
       const kandidater = p.fordeles ? kanGis(v, p.mg, p).filter(naer) : innenfor
@@ -659,7 +701,10 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
         // Lar regelen forskriveren velge en dose som kan gis, regnes de nærmeste ut; et valgt trinn tilbys ikke på nytt.
         const fase = valgbar && p.trinn !== undefined && !p.valgt ? trinnvalgFase(def) : undefined
         const omrade = fase && !tempo && avkortbar ? trinnvalgOmrade(fase.strategi, forrige, inndata.svar)! : undefined
-        const tv = omrade ? trinnvalgFor(f, p, v, forrige, omrade, min, (k) => fordelt(p, k)) : fase && tempo ? tempovalgFor(f, p, p.mg, v, forrige, tempo, min, (k) => fordelt(p, k)) : undefined
+        const minste = omrade ? minstetrinnFra(fase!.strategi, forrige) : null
+        const tv = omrade
+          ? (trinnvalgFor(f, p, v, forrige, omrade, min, (k) => fordelt(p, k)) ?? (minste !== null ? minstetrinnFor(f, p, p.mg, v, forrige, omrade, minste, min, (k) => fordelt(p, k)) : null))
+          : fase && tempo ? tempovalgFor(f, p, p.mg, v, forrige, tempo, min, (k) => fordelt(p, k)) : undefined
         const valgtekst = omrade
           ? trinnvalgtekst(tv!, { fra_mg: forrige, beregnet_mg: p.mg, omrade })
           : fase && tempo
