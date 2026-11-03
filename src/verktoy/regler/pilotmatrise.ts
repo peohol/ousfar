@@ -180,15 +180,10 @@ const planlinjer = (tekst: string, undertittel: string | null) => {
 /**
  * Kasuset gjennom den samme veien som verktøysiden, med utfallet brukeren
  * ville sett. `settene` er regelsettene appen bruker, eller andre versjoner av
- * dem når et kontrollgrunnlag sammenligner; planen oppgir settet i
- * `appsettene` regelen hører til (som standard `settene`).
+ * dem når et kontrollgrunnlag sammenligner; planen oppgir settet regelen
+ * hører til.
  */
-export function kjorKasus(
-  k: Pilotkasus,
-  uttrekkene: Uttrekkene,
-  settene: readonly Regelsett[] = REGELSETTENE,
-  appsettene: readonly Regelsett[] = settene,
-): Pilotutfall & { resultat?: Doseplanresultat; tekst?: string } {
+export function kjorKasus(k: Pilotkasus, uttrekkene: Uttrekkene, settene: readonly Regelsett[] = REGELSETTENE): Pilotutfall & { resultat?: Doseplanresultat; tekst?: string } {
   const sett = settene === REGELSETTENE ? REGELSETT : samlet(settene)
   const verktoy = VERKTOY.find((v) => v.id === k.verktoy)
   if (!verktoy) throw new Error(`Verktøyet ${k.verktoy} finnes ikke.`)
@@ -222,7 +217,7 @@ export function kjorKasus(
   )
   if (uvalgt.length > 0) return { utfall: 'formvalg', forlop: uvalgt.map(([f]) => f) }
 
-  const resultat = beregnPlan(regel, k.valg, skjema, utvalg, naa, settene.find((s) => s.regler.includes(regel)) ?? sett, appsettene)
+  const resultat = beregnPlan(regel, k.valg, skjema, utvalg, naa, sett, settene)
   const visning = planvisning(resultat, regel, skjema.startdato || undefined)
   if (!visning) return { utfall: 'stopp', grunner: resultat.status === 'stoppet' ? resultat.stoppgrunner : ['Planen er ikke klinisk og vises ikke.'], resultat }
   const tekst = planTekst(visning, verktoy.navn)

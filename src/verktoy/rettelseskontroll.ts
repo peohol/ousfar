@@ -47,8 +47,6 @@ export function forskjeller(a: unknown, b: unknown, sti = ''): string[] {
 /** Regelen uten det som ikke er faglig innhold: godkjenningen og versjonsnummeret. */
 const innhold = ({ godkjenning: _, versjon: __, ...r }: Regel) => r
 
-/** Settet regelen hører til blant `settene`. */
-const settMed = (r: Regel, settene: readonly Regelsett[]) => settene.find((s) => s.regler.includes(r))!
 
 /** Hver regel som har fått en ny versjon fra settene før rettelsene til settene appen bruker. */
 export function rettelsesrader(for_: readonly Regelsett[] = FOR_RETTELSENE, na: readonly Regelsett[] = ETTER_RETTELSENE): Rettelsesrad[] {
@@ -76,7 +74,7 @@ export interface Linjeendring {
  */
 export function forventedeLinjeendringer(rader: readonly Rettelsesrad[]): Map<string, Linjeendring[]> {
   const linje = (r: Regel) => regellinje({ ...r, fingeravtrykk: fingeravtrykk(r) })
-  return new Map(
+  const endringer = new Map<string, Linjeendring[]>(
     tilGodkjenning(rader).map(({ for: f, etter }) => {
       const for_ = new Map(kildeliste(f).map((k) => [k.url, kildelinje(k)]))
       const kilder = kildeliste(etter).flatMap((k): Linjeendring[] => {
@@ -87,13 +85,22 @@ export function forventedeLinjeendringer(rader: readonly Rettelsesrad[]): Map<st
         etter.id,
         [
           { ny: linje(etter), for: linje(f), hvorfor: 'Den nye regelversjonen.' },
-          { ny: settlinje(settMed(etter, ETTER_RETTELSENE)), for: settlinje(settMed(f, FOR_RETTELSENE)), hvorfor: 'Ny versjon av regelsettet med de nye regelversjonene.' },
           ...kilder,
         ],
       ] as const
     }),
   )
+  // Regelsettets versjon gjelder hver plan fra et sett som har fått ny versjon, også planene etter regler som ikke er endret; den står under settets id.
+  for (const f of FOR_RETTELSENE) {
+    const na = ETTER_RETTELSENE.find((s) => s.id === f.id)!
+    if (na.versjon !== f.versjon) endringer.set(na.id, [{ ny: settlinje(na), for: settlinje(f), hvorfor: 'Ny versjon av regelsettet med de nye regelversjonene.' }])
+  }
+  return endringer
 }
+
+/** De forventede linjeendringene for en plan: for regelen den er beregnet etter, og for regelsettet den oppgir. */
+export const forventetFor = (endringer: ReadonlyMap<string, readonly Linjeendring[]>, resultat: Kjoring['resultat']): readonly Linjeendring[] =>
+  resultat ? [...(endringer.get(resultat.regel.id) ?? []), ...(resultat.regelsett ? (endringer.get(resultat.regelsett.id) ?? []) : [])] : []
 
 type Kjoring = ReturnType<typeof kjorKasus>
 
@@ -104,7 +111,7 @@ type Kjoring = ReturnType<typeof kjorKasus>
  * har godkjent hvilken versjon; den sammenlignes for seg (avsnitt 3 i rapporten).
  */
 export function synlig({ resultat, tekst, ...u }: Kjoring, endringer: ReadonlyMap<string, readonly Linjeendring[]> = new Map()): string {
-  const tilbake = (endringer.get(resultat?.regel.id ?? '') ?? []).reduce((t, x) => t.split(`\n- ${x.ny}\n`).join(`\n- ${x.for}\n`), `${tekst ?? ''}\n`)
+  const tilbake = forventetFor(endringer, resultat).reduce((t, x) => t.split(`\n- ${x.ny}\n`).join(`\n- ${x.for}\n`), `${tekst ?? ''}\n`)
   return JSON.stringify({ ...u, tekst: tilbake })
 }
 
@@ -119,8 +126,7 @@ export interface Matrisesammenligning {
 export function matrisesammenligning(rader: readonly Rettelsesrad[], uttrekkene: Uttrekkene): Matrisesammenligning[] {
   const endringer = forventedeLinjeendringer(rader)
   return PILOTKASUS.map((kasus) => {
-    // Settversjonen planen oppgir slås opp blant settene appen brukte etter rettelsene, slik kontrollen ble gjort.
-    const for_ = kjorKasus(kasus, uttrekkene, FOR_RETTELSENE, ETTER_RETTELSENE)
+    const for_ = kjorKasus(kasus, uttrekkene, FOR_RETTELSENE)
     const etter = kjorKasus(kasus, uttrekkene, ETTER_RETTELSENE)
     return { kasus, for: for_, etter, lik: synlig(for_) === synlig(etter, endringer) }
   })
@@ -191,7 +197,7 @@ export function lagRettelseskontroll(uttrekkene: Uttrekkene): string {
     FOR_RETTELSENE.map((s) => [kode(s.id), String(s.versjon), String(ETTER_RETTELSENE.find((x) => x.id === s.id)!.versjon)]),
   )
   const linjetabell = tabell(
-    ['Regel', 'Nå', 'Før rettelsen', 'Hvorfor'],
+    ['Regel eller regelsett', 'Nå', 'Før rettelsen', 'Hvorfor'],
     [...forventedeLinjeendringer(rader)].flatMap(([id, linjer]) => linjer.map((x) => [kode(id), x.ny, x.for, x.hvorfor])),
   )
   const avvikstabell = tabell(

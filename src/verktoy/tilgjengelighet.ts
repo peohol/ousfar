@@ -31,9 +31,16 @@ export const samlet = (settene: readonly Regelsett[]): Regelsett => ({
 /** Alle reglene appen bruker, samlet så verktøyene kan slå opp i dem. */
 export const REGELSETT: Regelsett = samlet(REGELSETTENE)
 
-/** Settet i `settene` (appens, eller versjonene et kontrollgrunnlag gjelder) regelen hører til, så planen oppgir det settets id og versjon; ellers `regelsett`. */
-export const settFor = (r: Regel, regelsett: Regelsett = REGELSETT, settene: readonly Regelsett[] = REGELSETTENE): Regelsett =>
-  settene.find((s) => s.regler.includes(r)) ?? regelsett
+/**
+ * Settet blant `settene` som eier regelen: settet som har nøyaktig regelen,
+ * ellers settet som har en regel med samme id (en kopi av regelen, f.eks. i et
+ * kontrollgrunnlag). Regel-id-ene er unike på tvers av settene.
+ */
+export const eierAv = (r: Pick<Regel, 'id'>, settene: readonly Regelsett[] = REGELSETTENE): Regelsett | undefined =>
+  settene.find((s) => s.regler.includes(r as Regel)) ?? settene.find((s) => s.regler.some((x) => x.id === r.id))
+
+/** Settet regelen hører til blant `settene`, så planen oppgir det settets id og versjon; ellers `regelsett`. */
+export const settFor = (r: Regel, regelsett: Regelsett = REGELSETT, settene: readonly Regelsett[] = REGELSETTENE): Regelsett => eierAv(r, settene) ?? regelsett
 
 /** Ett valgt virkestoff med formuleringen fra kildetabellen. */
 export interface Valgtvirkestoff {
