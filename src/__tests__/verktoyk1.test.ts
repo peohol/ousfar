@@ -201,6 +201,24 @@ describe('Ende-til-ende med de norske preparatene i FEST', () => {
     expect(planer.flatMap(({ v }) => v.valg).every((x) => x.trinn.doser.length === 1)).toBe(true)
   })
 
+  it('gir en kopierbar sluttplan med dråper, seponering, oppfølging og regelversjon, og ingen kopierbar tekst når komplett plan ikke er tilgjengelig', () => {
+    for (const [id, siste] of [['K1-01', 197], ['K1-02', 281]] as const) {
+      const tekst = kjorKontrollkasus(kasus(id), uttrekkene).tekst!
+      expect(tekst, id).toContain(`${KOMPLETT}: Escitalopram seponert fra dag ${siste}.`)
+      expect(tekst, id).toMatch(/: 3 mg = 3 dråper à 1 mg\n[^]*: 2 mg = 2 dråper à 1 mg [^]*: 1 mg = 1 dråpe à 1 mg /)
+      expect(tekst, id).toContain(`Fra dag ${siste}: Escitalopram peroralt: Seponert`)
+      for (const dager of [7, 14, 28]) expect(tekst, id).toContain(`Dag ${siste + dager - 1}: Vurdering (Escitalopram): Vurder seponeringssymptomer og tegn på tilbakefall ${dager} dager etter siste dose.`)
+      expect(tekst, id).toContain('- Cipralex dråper, oppl 20 mg/ml (Hele dråper)')
+      // Fingeravtrykket er den simulert avklarte kopiens, ikke 90d84e98… for regelen med åpne valg.
+      expect(tekst, id).toMatch(new RegExp(`Regel ${ESC}, versjon 13, fingeravtrykk [0-9a-f]{12}\\n`))
+      expect(tekst, id).not.toMatch(/^(Dag|Fra dag) .*tablett/im)
+    }
+    for (const id of ['K1-06', 'K1-07', 'K1-08', 'K1-14', 'K1-15', 'K1-17', 'K1-18']) {
+      const u = kjorKontrollkasus(kasus(id), uttrekkene)
+      expect([u.utfall, u.tekst], id).toEqual(['stopp', undefined])
+    }
+  })
+
   it('godtar ikke et større siste trinn: 3 → 1 mg (66,67 %) stopper', () => {
     const k1 = kasus('K1-01')
     const trinnvalg = [[1, 10, 8], [3, 6, 5], [4, 5, 4], [6, 3, 1]].map(([trinn, fra_mg, mg]) => ({ forlop: 'fra', trinn: trinn!, fra_mg: fra_mg!, mg: mg! }))
