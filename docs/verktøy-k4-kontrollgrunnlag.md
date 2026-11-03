@@ -417,16 +417,16 @@ Kombinere stemningsstabiliserende
 Legge lamotrigin til litium
 Komplett plan til sluttmålet: Litium fortsetter uendret på 168 mg Li⁺ (24 mmol); Lamotrigin fortsetter på 200 mg fra dag 36.
 
-Dag 1–14 (09.11.2026–22.11.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, kontrollert mot regelens doser; planen beregner den ikke; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg
+Dag 1–14 (09.11.2026–22.11.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg
 Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
 Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Dag 15–28 (23.11.2026–06.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, kontrollert mot regelens doser; planen beregner den ikke; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg
+Dag 15–28 (23.11.2026–06.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg
 Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
 Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Dag 29–35 (07.12.2026–13.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, kontrollert mot regelens doser; planen beregner den ikke; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
+Dag 29–35 (07.12.2026–13.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
 Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
 Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Fra dag 36 (fra 14.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, kontrollert mot regelens doser; planen beregner den ikke; Lamotrigin peroralt: 200 mg = 1 tablett à 200 mg
+Fra dag 36 (fra 14.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke; Lamotrigin peroralt: 200 mg = 1 tablett à 200 mg
 Dag 36 (14.12.2026): Vurdering (Lamotrigin): Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Vurder klinisk respons; videre justering (100–400 mg/dag er brukt i studier) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
 Dag 36 (14.12.2026): Vurdering (Lamotrigin): Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
 
@@ -499,16 +499,16 @@ Kombinere stemningsstabiliserende
 Legge lamotrigin til litium
 Komplett plan til sluttmålet: Litium fortsetter uendret på 420 mg Li⁺ (60 mmol); Lamotrigin fortsetter på 200 mg fra dag 36.
 
-Dag 1–14 (09.11.2026–22.11.2026): Litium peroralt: 420 mg Li⁺ (60 mmol) = 10 tabletter Lithionit 42 mg depottablett; uendret dose, kontrollert mot regelens doser; planen beregner den ikke; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg
+Dag 1–14 (09.11.2026–22.11.2026): Litium peroralt: 420 mg Li⁺ (60 mmol) = 10 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg
 Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
 Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Dag 15–28 (23.11.2026–06.12.2026): Litium peroralt: 420 mg Li⁺ (60 mmol) = 10 tabletter Lithionit 42 mg depottablett; uendret dose, kontrollert mot regelens doser; planen beregner den ikke; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg
+Dag 15–28 (23.11.2026–06.12.2026): Litium peroralt: 420 mg Li⁺ (60 mmol) = 10 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg
 Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
 Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Dag 29–35 (07.12.2026–13.12.2026): Litium peroralt: 420 mg Li⁺ (60 mmol) = 10 tabletter Lithionit 42 mg depottablett; uendret dose, kontrollert mot regelens doser; planen beregner den ikke; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
+Dag 29–35 (07.12.2026–13.12.2026): Litium peroralt: 420 mg Li⁺ (60 mmol) = 10 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
 Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.
 Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
-Fra dag 36 (fra 14.12.2026): Litium peroralt: 420 mg Li⁺ (60 mmol) = 10 tabletter Lithionit 42 mg depottablett; uendret dose, kontrollert mot regelens doser; planen beregner den ikke; Lamotrigin peroralt: 200 mg = 1 tablett à 200 mg
+Fra dag 36 (fra 14.12.2026): Litium peroralt: 420 mg Li⁺ (60 mmol) = 10 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke; Lamotrigin peroralt: 200 mg = 1 tablett à 200 mg
 Dag 36 (14.12.2026): Vurdering (Lamotrigin): Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Vurder klinisk respons; videre justering (100–400 mg/dag er brukt i studier) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.
 Dag 36 (14.12.2026): Vurdering (Lamotrigin): Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.
 
