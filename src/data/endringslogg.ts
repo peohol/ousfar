@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.117.6',
+    versjon: '1.117.7',
     dato: '2026-11-03',
     sammendrag: 'Oversikt over hva de kliniske verktøyene kan beregne, og plan for hvilke regler som bør gjøres ferdig først',
     typer: ['Funksjonalitet'],
@@ -20,6 +20,17 @@ export const ENDRINGSLOGG: Endring[] = [
     punkter: [
       'Ingen endring i appen eller i noen klinisk regel. Det er laget en oversikt over hva de tre kliniske verktøyene faktisk kan beregne i dag, hva som bare gir fagtekst, og hvorfor de andre valgene stopper.',
       'Det er også laget en prioritert plan for hvilke nedtrappings- og bytteregler som bør gjøres ferdig først, med kilder, norske preparater, spørsmål til faglig kontroll og syntetiske testeksempler. Ingen regel tas i bruk før den er uavhengig kontrollert og godkjent.',
+    ],
+    utenVarsel: true,
+  },
+  {
+    versjon: '1.117.6',
+    dato: '2026-11-03',
+    sammendrag: 'Vurdering av når verktøyene stopper av tekniske grunner',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Det er vurdert om kravet til ferske FEST-data og den jevnlige kontrollen av nødstoppen stopper verktøyene oftere enn nødvendig. Etter uavhengig kontroll beholdes begge kravene. Senere skal verktøyet si tydelig fra når en plan er tatt bort fordi kontrollen ikke svarte, prøve igjen av seg selv ved korte avbrudd, og varsle teknisk ansvarlig tidligere når FEST-oppdateringen feiler.',
     ],
     utenVarsel: true,
   },
