@@ -12,6 +12,21 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.120.0',
+    dato: '2026-11-03',
+    sammendrag: 'Kildeovervåkingen viser faglige saker med grunnlag, valg og hva valget vil gjøre',
+    typer: ['Funksjonalitet', 'Design / layout'],
+    omfang: 'Moderat omfang',
+    gjelder: ['vinduer'],
+    punkter: [
+      'Vinduet «Kildeovervåking» i adminmenyen viser nå bare saker som trenger en faglig beslutning, hver med hvordan verktøyet virker nå, hva som er endret, hvilke anbefalinger som berøres, hvorfor det er relevant og hvilken beslutning som anbefales.',
+      'Beslutningen tas ved å velge mellom faste valg. Hvert valg sier hva det betyr for klinikerne, og det valgte sier hva som skjer straks og hva som må gjøres og kontrolleres etterpå, før beslutningen registreres.',
+      'Et mulig sikkerhetsproblem som ennå vurderes, vises straks med en knapp til nødstoppen.',
+      'Saker i oppfølging viser tiltakene og hvor langt de har kommet. Kontrollsummer, interne nøkler og tekniske detaljer ligger lukket nederst, for kontrollører.',
+      'Ingen klinisk regel, beregning eller godkjenning er endret.',
+    ],
+  },
+  {
     versjon: '1.119.1',
     dato: '2026-11-03',
     sammendrag: 'Tidligere varsel til teknisk ansvarlig når den nattlige FEST-oppdateringen feiler',

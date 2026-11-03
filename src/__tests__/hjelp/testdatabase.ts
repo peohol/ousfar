@@ -10,6 +10,7 @@
 import { PGlite, type Transaction } from '@electric-sql/pglite'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { readdirSync, readFileSync } from 'node:fs'
+import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect } from 'vitest'
 import { INTERN_AUTH_DOMENE } from '@delt/brukernavn'
@@ -17,7 +18,8 @@ import type { Rolle } from '@delt/profil'
 import type { Innhold, Objektstatus, Objekttype } from '../../faginnhold/modell'
 import { utenKommentarer } from '../../faginnhold/sqlsetninger'
 
-const MIGRASJONER = fileURLToPath(new URL('../../../supabase/migrations', import.meta.url))
+// Stien bygges uten den globale `URL`, så hjelperen også virker i prøver som kjøres med jsdom.
+const MIGRASJONER = resolve(dirname(fileURLToPath(import.meta.url)), '../../../supabase/migrations')
 
 const SUPABASE_GRUNNLAG = /* sql */ `
   -- Supabase-prosjektet skriver flyttall med 15 gjeldende sifre
