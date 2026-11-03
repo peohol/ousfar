@@ -78,6 +78,7 @@ const TRAAD: Diskusjonstraad = {
   tittel: 'Nyresvikt',
   tekst: DOK('Hvordan doserer vi ved nyresvikt?'),
   skjult: false,
+  kan_vises: false,
   opprettet_kl: KL,
   endret_kl: null,
   arkivert_kl: null,
@@ -121,7 +122,7 @@ const api = vi.hoisted(() => ({
   arkiverDiskusjon: vi.fn(async () => {}),
   flyttDiskusjonTilSide: vi.fn(async () => {}),
   slettDiskusjon: vi.fn(async () => {}),
-  skjulInnhold: vi.fn(async () => {}),
+  skjuling: { skjul: vi.fn(async () => {}), vis: vi.fn(async () => {}), fjern: vi.fn(async () => {}) },
   opprettKommentar: vi.fn(async () => {}),
   endreKommentar: vi.fn(async () => {}),
   slettKommentar: vi.fn(async () => {}),
@@ -515,13 +516,55 @@ describe('én tråd', () => {
     await bruker.click(within(panel()).getByRole('button', { name: /Nyresvikt/ }))
     await within(panel()).findByText('Hvordan doserer vi ved nyresvikt?')
     expect(within(panel()).queryByRole('button', { name: 'Slett kommentaren' })).toBeNull()
-    await bruker.click(within(panel()).getByRole('button', { name: 'Skjul innholdet i innlegget' }))
-    await bruker.click(within(panel()).getByRole('button', { name: 'Bekreft at innholdet i innlegget skjules for godt' }))
-    expect(api.skjulInnhold).toHaveBeenCalledWith('t1', null)
+    // Knappen på tråden sier at det er innlegget som skjules, ikke hele tråden.
+    await bruker.click(within(panel()).getByRole('button', { name: 'Skjul innlegget' }))
+    await bruker.click(within(panel()).getByRole('button', { name: 'Bekreft at innholdet i innlegget skjules' }))
+    expect(api.skjuling.skjul).toHaveBeenCalledWith('t1', null)
     const kommentar = panel().querySelectorAll<HTMLElement>('.kommentar')[0]!
     await bruker.click(within(kommentar).getByRole('button', { name: 'Skjul innholdet i kommentaren' }))
-    await bruker.click(within(kommentar).getByRole('button', { name: 'Bekreft at innholdet i kommentaren skjules for godt' }))
-    expect(api.skjulInnhold).toHaveBeenCalledWith('t1', 'k1')
+    await bruker.click(within(kommentar).getByRole('button', { name: 'Bekreft at innholdet i kommentaren skjules' }))
+    expect(api.skjuling.skjul).toHaveBeenCalledWith('t1', 'k1')
+  })
+
+  it('lar en administrator vise skjult innhold igjen, eller fjerne det for godt', async () => {
+    tilstand.meg = ADMIN
+    const [forste, andre] = TRAAD.kommentarer
+    api.hentDiskusjonstraad.mockResolvedValue({
+      ...TRAAD,
+      tekst: DOK(''),
+      skjult: true,
+      kan_vises: true,
+      kommentarer: [
+        { ...forste!, tekst: DOK(''), skjult: true, kan_vises: true },
+        // Skjult før teksten ble tatt vare på: kan ikke vises igjen.
+        { ...andre!, forfatter_id: 'kari', tekst: DOK(''), skjult: true, kan_vises: false },
+      ],
+    })
+    const bruker = await apne()
+    await bruker.click(within(panel()).getByRole('button', { name: /Nyresvikt/ }))
+    expect(await within(panel()).findAllByText('Innholdet er skjult av en administrator.')).toHaveLength(3)
+    expect(within(panel()).queryByRole('button', { name: /^Skjul (innlegget|innholdet)/ })).toBeNull()
+
+    await bruker.click(within(panel()).getByRole('button', { name: 'Vis igjen innholdet i innlegget' }))
+    expect(api.skjuling.vis).toHaveBeenCalledWith('t1', null)
+    const [kommentar, gammel] = panel().querySelectorAll<HTMLElement>('.kommentar')
+    await bruker.click(within(kommentar!).getByRole('button', { name: 'Fjern for godt innholdet i kommentaren' }))
+    expect(api.skjuling.fjern).not.toHaveBeenCalled()
+    await bruker.click(within(kommentar!).getByRole('button', { name: 'Bekreft at innholdet i kommentaren fjernes for godt' }))
+    expect(api.skjuling.fjern).toHaveBeenCalledWith('t1', 'k1')
+    expect(within(gammel!).queryByRole('button', { name: /^Vis igjen|^Fjern for godt/ })).toBeNull()
+  })
+
+  it('lar ikke en vanlig bruker skjule eller vise igjen', async () => {
+    tilstand.meg = OLA
+    api.hentDiskusjonstraad.mockResolvedValue({
+      ...TRAAD,
+      kommentarer: [{ ...TRAAD.kommentarer[0]!, tekst: DOK(''), skjult: true, kan_vises: true }],
+    })
+    const bruker = await apne()
+    await bruker.click(within(panel()).getByRole('button', { name: /Nyresvikt/ }))
+    await within(panel()).findByText('Innholdet er skjult av en administrator.')
+    expect(within(panel()).queryByRole('button', { name: /^Skjul (innlegget|innholdet)|^Vis igjen|^Fjern for godt/ })).toBeNull()
   })
 
   it('er frosset i arkivet til den hentes tilbake', async () => {
@@ -541,7 +584,7 @@ describe('én tråd', () => {
     const bruker = await apne()
     await bruker.click(within(panel()).getByRole('button', { name: /Nyresvikt/ }))
     await within(panel()).findByText(/Tråden kan leses, men ikke endres/)
-    expect(within(panel()).queryByRole('button', { name: /^Skjul innholdet/ })).toBeNull()
+    expect(within(panel()).queryByRole('button', { name: /^Skjul (innlegget|innholdet)/ })).toBeNull()
   })
 
   it('kan slettes av den som startet den bare til andre har skrevet i den', async () => {

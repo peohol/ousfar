@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.123.0',
+    dato: '2026-11-03',
+    sammendrag: 'Skjult innhold i diskusjonene kan vises igjen',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['hele appen'],
+    punkter: [
+      'Når en administrator skjuler et innlegg eller en kommentar i diskusjonene, tas teksten nå vare på. Administratorene kan da trykke «Vis igjen» for å hente den tilbake, eller «Fjern for godt» hvis den ikke skal kunne hentes, for eksempel når det var pasientopplysninger.',
+      'Knappen på tråden heter nå «Skjul innlegget», siden det er innlegget som skjules, ikke hele tråden.',
+      'Innhold som ble skjult før denne endringen, er alt borte og kan ikke vises igjen.',
+    ],
+  },
+  {
     versjon: '1.122.5',
     dato: '2026-11-03',
     sammendrag: 'Serumkonsentrasjonstabellene ruller ikke lenger sidelengs',
