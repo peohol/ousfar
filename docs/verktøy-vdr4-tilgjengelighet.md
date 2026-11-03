@@ -1,6 +1,6 @@
 # VDR-4: Stoppmekanismene i de kliniske verktøyene – vurdering av tilgjengelighet og sikkerhet
 
-**Status:** utredning 02.11.2026, **til uavhengig kontroll (ChatGPT)**. Ingen sikkerhetsmekanisme er endret. Ingenting i dette notatet skal implementeres før kontrolløren har tatt stilling til spørsmålene i §9, og hver implementasjon kommer i en egen PR med egen kontroll.
+**Status:** utredning 02.11.2026. Den uavhengige kontrolløren (ChatGPT) har tatt stilling 03.11.2026, og beslutningene står i §9. Notatet er oppdatert etter dem: 48 timer beholdes, F4, N1 og K6 er godtatt, mens F2 og den automatiske nyberegningen (S2) er avvist. Ingen sikkerhetsmekanisme er endret i denne PR-en. Hver implementasjon kommer i en egen PR med egen kontroll. Godkjenningen gjelder bare det avgrensede designgrunnlaget.
 
 **Knyttet til:** VDR-4 i `docs/verktøy-omlegging-2026-11.md` §6, P5.1 og §9 i `docs/verktøy-p5-beregningsmotor.md` (FEST-ferskhet), P11.6 og §4/§6/§7 i `docs/verktøy-p11-publisering.md` (nødstoppen), testmatrisen i `docs/verktøy-p11-testmatrise.md`.
 
@@ -8,11 +8,11 @@
 
 | Mekanisme | Er den uforholdsmessig streng? | Anbefaling |
 | --- | --- | --- |
-| FEST-kopien må være kontrollert de siste 48 timene | **Nei, ikke påvist.** Den stopper først etter to mislykkede netter på rad; alle de 20 siste nattlige kjøringene har gått bra. Men appen kan i dag ikke skille «vi vet at det finnes en nyere FEST-fil vi ikke fikk lest» fra «vi fikk ikke kontakt med FEST». Den daglige tekniske vakten for FEST ser i tillegg ikke ut til å ha kjørt siden 29.09.2026 (§3 pkt. 6). | **Behold 48 timer.** Gjør først feilsituasjonen etterprøvbar og vakten virksom (F4, §4.3). Et gradert vindu med synlig forbehold (F2) legges klart som et mulig senere steg, men anbefales ikke før det finnes data som viser behovet. |
-| Sperrene leses hvert minutt, en lesing gjelder i to minutter, og en lesing som feiler, viser ingenting klinisk | **Regelen er riktig, men følgen er unødvendig hard.** Én enkelt mislykket lesing, eller at fanen står skjult i over to minutter (f.eks. mens planen skrives inn i journalen), sletter den beregnede planen for godt. Den kommer ikke tilbake når neste lesing går bra; forskriveren må beregne på nytt. | **Behold regelen** (ingenting klinisk uten en gyldig, fersk lesing). **Endre følgen:** etter et avbrudd uten faktisk sperre beregnes planen automatisk på nytt gjennom den vanlige veien straks en ny lesing er vellykket (S2, §5.3). |
+| FEST-kopien må være kontrollert de siste 48 timene | **Nei, ikke påvist.** Den stopper først etter to mislykkede netter på rad; alle de 20 siste nattlige kjøringene har gått bra. Men appen kan i dag ikke skille «vi vet at det finnes en nyere FEST-fil vi ikke fikk lest» fra «vi fikk ikke kontakt med FEST». Den daglige tekniske vakten for FEST ser i tillegg ikke ut til å ha kjørt siden 29.09.2026 (§3 pkt. 6). | **Behold 48 timer som hard grense.** Gjør feilsituasjonen etterprøvbar og vakten virksom, med ende-til-ende-test av at varselet når fram (F4, §4.3). Et gradert vindu (F2) er avvist av kontrolløren. |
+| Sperrene leses hvert minutt, en lesing gjelder i to minutter, og en lesing som feiler, viser ingenting klinisk | **Regelen er riktig, men følgen er unødvendig hard.** Én enkelt mislykket lesing, eller at fanen står skjult i over to minutter (f.eks. mens planen skrives inn i journalen), sletter den beregnede planen for godt. Den kommer ikke tilbake når neste lesing går bra; forskriveren må beregne på nytt. | **Behold regelen** (ingenting klinisk uten en gyldig, fersk lesing). **Gjør følgen forståelig:** når en ny lesing er vellykket etter et avbrudd uten faktisk sperre, sier siden at planen ble tatt bort fordi sikkerhetskontrollen ikke svarte, og knappen for å beregne på nytt er aktiv (S6, §5.2). Ingen automatisk ny plan. |
 | Kortvarig svikt i nettverk eller datakilder | **Delvis.** Teksten skiller allerede «midlertidig deaktivert» fra «fikk ikke kontrollert», men siden prøver ikke igjen når forbindelsen kommer tilbake, og den sier ikke at årsaken er manglende forbindelse. | Kort automatisk nytt forsøk, ny lesing når nettleseren melder at forbindelsen er tilbake, og en egen tekst for manglende forbindelse (N1, §6). Ingen hurtiglagring av sperrer. |
 
-Samlet: ingen av endringene som anbefales, lar noe klinisk vises uten den samme positive kontrollen som i dag. De gjør bare at en kontroll som lykkes igjen, faktisk gir forskriveren tilbake det hen hadde.
+Samlet: ingen av endringene som er godtatt, lar noe klinisk vises uten den samme positive kontrollen som i dag. De gjør avbrudd forståelige og kortere, og en ny plan kommer bare når forskriveren selv ber om den.
 
 ## 2. Hva som stopper verktøyene i dag
 
@@ -58,19 +58,19 @@ Den alvorligste feiltypen (feil mg eller deling) forutsetter både en ny FEST-pu
 
 | | Alternativ | Gevinst | Risiko | Vurdering |
 | --- | --- | --- | --- | --- |
-| **F0** | Behold 48 timer (i dag) | Ingen ny risiko | Verktøyene stopper etter to mislykkede netter, også i helger | **Anbefales nå** sammen med F4 |
+| **F0** | Behold 48 timer (i dag) | Ingen ny risiko | Verktøyene stopper etter to mislykkede netter, også i helger | **Godtatt av kontrolløren** sammen med F4 |
 | F1 | Hev grensen flatt (f.eks. 96 eller 120 timer) | Tåler en helg uten retting | Bruker en kopi vi kan *vite* er utdatert (ny fil oppdaget, men avvist), uten å si det | Frarådes |
-| F2 | Gradert vindu: ≤ 48 t som i dag; 48–96 t bare når ingen nyere FEST-fil er kjent, med et synlig forbehold i planen og i kopien («FEST sist kontrollert …; nyere endringer kan mangle»); > 96 t, eller kjent nyere fil, stopper | Tåler en helg der FEST ikke svarer, uten å skjule usikkerheten | Restrisikoen i 4.1 for en periode på opptil fire døgn; avhenger av F4 for å vite om en nyere fil finnes | **Mulig senere steg**, se 4.4 |
+| F2 | Gradert vindu: ≤ 48 t som i dag; 48–96 t bare når ingen nyere FEST-fil er kjent, med et synlig forbehold i planen og i kopien; > 96 t, eller kjent nyere fil, stopper | Tåler en helg der FEST ikke svarer | At ingen nyere fil er *kjent*, dokumenterer ikke at ingen nyere fil *finnes*; restrisikoen i 4.1 i opptil fire døgn | **Avvist av kontrolløren** (§9 pkt. 2) |
 | F3 | Administrator kan forlenge grensen manuelt | Fleksibelt | Gir redaktøren en teknisk beslutning, i strid med VDR-prinsippene | Frarådes |
-| **F4** | Gjør feilen etterprøvbar og synlig for teknisk ansvarlig: lagre ETag/kontrollsum og hvor langt kjøringen kom også når den feiler, og få en teknisk vakt som faktisk kjører (§3 pkt. 6) til å si fra etter **første** mislykkede natt, uten å lage en sak for redaktøren | Feil rettes normalt før 48 t på hverdager; grunnlag for å vurdere F2 med data | Ingen klinisk; ingen ny tjeneste (GitHub Actions eller eksisterende planlagt oppgave) | **Anbefales** |
+| **F4** | Gjør feilen etterprøvbar og synlig for teknisk ansvarlig: lagre ETag/kontrollsum og hvor langt kjøringen kom også når den feiler, og få en teknisk vakt som faktisk kjører (§3 pkt. 6) til å si fra etter **første** mislykkede natt, uten å lage en sak for redaktøren | Feil rettes normalt før 48 t på hverdager; driftsdata om feilene | Ingen klinisk; ingen ny tjeneste (GitHub Actions eller eksisterende planlagt oppgave) | **Godtatt**, med ende-til-ende-test av at varselet når mottakeren |
 
 ### 4.3 Anbefaling for FEST
 
-Behold 48 timer (F0) og innfør F4. Begrunnelse: ingen avbrudd er observert, verktøyene er ikke akuttverktøy (å stå uten beregning er en trygg feil), og uten F4 kan vi ikke skille en kopi som trolig er gyldig fra en vi vet er utdatert. VDR-planen sier at dagens stoppbetingelser beholdes når en trygg forbedring ikke kan begrunnes.
+Behold 48 timer som hard grense (F0) og innfør F4. Begrunnelse: ingen avbrudd er observert, verktøyene er ikke akuttverktøy (å stå uten beregning er en trygg feil), og VDR-planen sier at dagens stoppbetingelser beholdes når en trygg forbedring ikke kan begrunnes. Kontrolløren har godtatt dette (§9 pkt. 1).
 
-### 4.4 Når F2 bør vurderes på nytt
+### 4.4 F2 er avvist
 
-Når F4 har gått i minst tre måneder, eller ved første reelle avbrudd der K1 har stoppet en klinisk bruker. F2 forutsetter da at kontrolløren godtar grensen (96 t er foreslått: dekker fredag–mandag), at forbeholdet står i planen, i kopien og i utskriften, og at kjent nyere fil alltid stopper ved 48 t.
+Kontrolløren avviste F2 både for innføring og som forhåndsgodkjent unntak: at ingen nyere FEST-fil er *kjent*, er ikke dokumentasjon for at ingen nyere fil finnes. Vurderingen kan bare gjenåpnes dersom driftsdata og kildekontroll viser en sikker metode, og da som en ny sak til kontroll. Inntil da gjelder 48 timer. F4 lagrer om en nyere fil er kjent som driftsdata, ikke som grunnlag for å la en eldre kopi gi en plan.
 
 ## 5. Sperrelesingen (K4 og K5)
 
@@ -84,30 +84,35 @@ En administrator som setter en sperre, skal kunne regne med at ingen ny plan vis
 | --- | --- | --- | --- | --- |
 | S0 | Som i dag | – | Planen slettes ved hvert avbrudd (§3 pkt. 5) | – |
 | S1 | La en mislykket lesing stå uten følger så lenge forrige vellykkede er under 2 min gammel | Kortvarige feil merkes ikke | En plan kan stå opptil 2 min uten bekreftelse; strider mot akseptkriterium 5 i P11 | Frarådes |
-| **S2** | Når planen tas bort på grunn av en feilet eller utløpt lesing, husk at forskriveren hadde beregnet (ikke planen selv). Når en ny lesing er vellykket og ingen sperre for regelen, verktøyet eller alle er sett i mellomtiden, kjøres den vanlige beregningen automatisk på nytt med det samme skjemaet: ny henting fra FEST, ny lesing av sperrene rett før visning, ny kontroll av godkjenning og ferskhet | Forskriveren får planen tilbake uten å gjøre noe; ingen ny sikkerhetslogikk, bare den vanlige veien | Planen kan ha endret seg (f.eks. ny FEST-kopi i mellomtiden), akkurat som ved et nytt trykk på knappen | **Anbefales** |
+| S2 | Beregn planen automatisk på nytt, gjennom den vanlige veien, når en ny lesing er vellykket etter et avbrudd uten sperre | Forskriveren får en plan uten å gjøre noe | En ny plan kan avvike fra den forskriveren så før avbruddet (f.eks. ny FEST-kopi), og den kommer uten et nytt brukerinitiativ; mindre forutsigbart i en klinisk arbeidsflyt | **Avvist av kontrolløren** (§9 pkt. 3–4) |
+| **S6** | Når planen er tatt bort fordi sperrene ikke kunne leses eller lesingen var for gammel, og en ny lesing så er vellykket uten sperre for regelen eller verktøyet: vis «Planen ble tatt bort fordi sikkerhetskontrollen ikke svarte. Beregn på nytt.» ved den aktive knappen «Beregn doseplan». Feltene står som før | Forskriveren forstår hva som skjedde og kan beregne med ett trykk | Ingen ny; ingen plan vises uten nytt trykk og full ny kontroll | **Godtatt av kontrolløren** (§9 pkt. 4) |
 | S3 | Lengre gyldighet eller sjeldnere lesing (f.eks. 5–10 min) | Litt færre kall | Lengre tid før en sperre virker på en åpen side | Frarådes; lesingen er billig |
 | S4 | Lagre siste kjente sperrer i nettleseren og bruk dem uten forbindelse | Virker uten nett | Kan ikke bevise at ingen ny sperre er satt; vil gjenåpne uten positivt grunnlag | **Frarådes klart** |
 | S5 | Sanntidsabonnement på sperrene i tillegg til lesingen | Sperrer virker på sekunder | Mer kompleksitet; må uansett falle tilbake til lesing | Ikke nødvendig nå |
 
-Avgrensninger for S2:
+Avgrensninger for S6:
 
-- Gjelder bare avbrudd fordi sperrene ikke kunne leses eller lesingen var for gammel. Har en sperre som gjelder regelen eller verktøyet vært aktiv, også om den er opphevet senere, kreves et nytt trykk på knappen, som i dag.
-- Gjelder bare så lenge siden står åpen. Etter en oppdatering av appen eller en ny innlasting må planen beregnes på nytt, som i dag; planen og «hadde beregnet» lagres aldri.
-- Gjelder bare når skjemaet er uendret siden beregningen.
-- Mens avbruddet varer, er det ingen plan på skjermen og ingen beregning i gang.
+- Meldingen gjelder bare avbrudd fordi sperrene ikke kunne leses eller lesingen var for gammel. Finner en lesing en sperre for regelen eller verktøyet, vises sperremeldingen som i dag, ikke denne.
+- Meldingen vises først når en ny lesing er vellykket. Mens avbruddet varer, vises dagens tekst (eller teksten for manglende forbindelse, §6), uten plan og uten knapp.
+- Meldingen forsvinner når forskriveren beregner på nytt eller endrer et felt. Den lagres ikke og står ikke etter en ny innlasting av appen.
+- Ingen beregning starter av seg selv.
+
+Skal en automatisk løsning utredes senere, må den etter kontrollørens krav skille en uendret plan fra en endret plan og aldri gjenbruke gamle sperredata. Det er ikke en del av denne planen.
 
 ## 6. Kortvarig svikt i nettverk og datakilder (N1)
 
 1. **Kort automatisk nytt forsøk.** Når en lesing av sperrene feiler, prøv igjen etter ca. 5 og 15 sekunder før det neste vanlige minuttet. Til en av dem lykkes, vises ingenting klinisk, som i dag.
 2. **Les med en gang når forbindelsen kommer tilbake** (nettleserens `online`-hendelse), i tillegg til fokus og synlighet.
 3. **Egen tekst for manglende forbindelse.** Når nettleseren melder at den er uten nett, eller kallet ikke nådde serveren: «Ingen forbindelse. Verktøyet viser ingen doseplan eller fagtekst før forbindelsen er tilbake.» Ellers står dagens tekst. Teksten om en faktisk sperre («Midlertidig deaktivert …», med hvem, når og hvorfor) brukes bare når en vellykket lesing har funnet en sperre, som i dag.
-4. **FEST-hentingen ved beregning (K6)** får ett automatisk nytt forsøk etter et par sekunder før feilen vises. Ingenting annet endres.
+4. **FEST-hentingen ved beregning (K6)** får ett automatisk nytt forsøk etter et par sekunder før feilen vises. Forsøket er en del av beregningen forskriveren selv startet, og en plan vises aldri på data som ikke er verifisert (ferskhet, godkjenning og ny sperrelesing kontrolleres som før). Ingenting annet endres.
 
-Ingen av punktene viser noe klinisk uten en vellykket lesing, og ingen av dem gjenåpner en sperret regel.
+Ingen av punktene viser noe klinisk før en fersk sperrelesing er vellykket, og ingen av dem gjenåpner en sperret regel. Kontrolløren har godtatt N1 og K6 (§9 pkt. 5 og 7).
 
 ## 7. Det som ikke foreslås endret
 
 - 15 s frist per lesing, 60 s lesefrekvens og 2 min gyldighet.
+- 48 timer som hard grense for FEST (F1 og F2 er avvist).
+- Akseptkriterium 5 i P11: en plan står aldri uten fersk sperrelesing (§9 pkt. 8).
 - At fagtekst også skjules når sperrene ikke kan leses (en sperre kan settes nettopp fordi fagteksten er feil, se F03/F04 i testmatrisen).
 - At en plan forsvinner når dagen skifter i Norge (K3), og kravene til gyldige tidsstempler (K2).
 - At en faktisk sperre tar bort planen med en gang, og at planen må beregnes på nytt etter at en sperre er opphevet.
@@ -117,7 +122,7 @@ Ingen av punktene viser noe klinisk uten en vellykket lesing, og ingen av dem gj
 
 Alle med syntetiske data og kontrollert klokke, i `verktoyside.test.tsx`, `verktoyregister.test.ts` og testmatrisen. Eksisterende tester for nødstoppen (V36, V37, S19, M18, X20, F03, F04 og «nødstoppen (P11.6)») skal stå uendret og fortsatt bestå.
 
-**K1 / F0 (uendret atferd, låses fast før F4/F2):**
+**K1 / F0 (uendret atferd, låses fast før F4):**
 
 | ID | Tilstand | Forventet |
 | --- | --- | --- |
@@ -129,40 +134,43 @@ Alle med syntetiske data og kontrollert klokke, i `verktoyside.test.tsx`, `verkt
 | T-F6 | Kontrollert 2026-11-02T00:00:00Z, kildedato 2026-11-03 | Plan (innenfor dagens slingring) |
 | T-F7 | Kontrollert 2026-11-02T00:00:00Z, kildedato 2026-11-04 | Ingen plan, kildedatoen ligger etter kontrollen |
 
-**F4:** en kjøring som feiler etter at ny ETag er sett, lagrer ETag og «ny fil kjent»; en som feiler før svar, lagrer «ukjent»; den tekniske vakten melder etter første mislykkede natt, og en ende-til-ende-prøve viser at den faktisk kjører og når fram; ingenting av dette vises for forskriveren eller redaktøren.
+**F4:** en kjøring som feiler etter at ny ETag er sett, lagrer ETag og «ny fil kjent»; en som feiler før svar, lagrer «ukjent»; ingen av dem endrer `kontrollert_kl` eller 48-timersgrensen; den tekniske vakten melder etter første mislykkede natt; ingenting av dette vises for forskriveren eller redaktøren. **Ende-til-ende (krav fra kontrolløren):** en kontrollert, syntetisk mislykket kjøring utenom klinisk bruk skal gi et varsel som dokumentert når mottakeren, og resultatet føres i fremdriftsloggen. Uten bestått ende-til-ende-prøve omtales vakten ikke som virksom.
 
-**F2 (bare om kontrolløren godtar det senere):** 48 t + 1 s med «ny fil kjent» → ingen plan; 48 t + 1 s med «ukjent» → plan med forbehold i skjerm, kopi og utskrift; 96 t + 1 s → ingen plan; forbeholdet forsvinner når en ny kjøring er vellykket.
-
-**S2:**
+**S6:**
 
 | ID | Hendelsesforløp | Forventet |
 | --- | --- | --- |
-| T-S1 | Plan → én lesing feiler → neste lesing vellykket uten sperrer | Ingen plan mens lesingen er feilet; deretter ny henting fra FEST, ny sperrelesing og planen vises igjen |
+| T-S1 | Plan → én lesing feiler → neste lesing vellykket uten sperrer | Mens lesingen er feilet: dagens tekst, ingen plan, ingen knapp. Deretter «Planen ble tatt bort fordi sikkerhetskontrollen ikke svarte. Beregn på nytt.», aktiv knapp, **ingen plan** og ingen henting fra FEST før knappen trykkes |
 | T-S2 | Plan → fanen skjult > 2 min → synlig, lesing vellykket | Som T-S1 |
-| T-S3 | Plan → lesing feiler → neste lesing finner en sperre for regelen | Ingen plan; «Midlertidig deaktivert» |
-| T-S4 | Plan → sperre satt → sperre opphevet | Ingen automatisk ny plan; knappen må trykkes (som i dag) |
-| T-S5 | Plan → lesing feiler → en sperre for regelen settes og oppheves før neste vellykkede lesing | Den automatiske beregningen leser sperrene på nytt rett før visning og ser sperren hvis den fortsatt er aktiv; er den opphevet, er dette det samme som et trykk på knappen etter opphevingen (kan ikke skilles, se spørsmål 3) |
-| T-S6 | Plan → lesing feiler → forskriveren endrer et felt → lesing vellykket | Ingen automatisk beregning |
-| T-S7 | Plan → lesing feiler → ny innlasting av appen | Ingen plan og ingen automatisk beregning; feltene står |
-| T-S8 | Plan → lesing feiler → FEST er blitt eldre enn 48 t før lesingen lykkes | Ny beregning gir «Ingen doseplan» med grunnen om FEST |
-| T-S9 | Plan → lesing feiler → dagen skifter → lesing vellykket | Ny beregning med dagens dato |
-| T-S10 | Plan → lesing feiler → lesing henger i 15 s → vellykket | Ingen plan før den vellykkede; så som T-S1 |
+| T-S3 | Plan → lesing feiler → neste lesing finner en sperre for regelen | «Midlertidig deaktivert», ingen plan og ikke meldingen fra T-S1 |
+| T-S4 | Plan → sperre satt → sperre opphevet | Som i dag: ingen plan, knappen må trykkes; ikke meldingen fra T-S1 |
+| T-S5 | T-S1, så trykk på «Beregn doseplan» | Full ny beregning (FEST, sperrelesing rett før visning, ferskhet, godkjenning); meldingen forsvinner |
+| T-S6 | T-S1, så endrer forskriveren et felt | Meldingen forsvinner; ingen beregning |
+| T-S7 | T-S1, så ny innlasting av appen | Feltene står; ingen plan og ingen melding |
+| T-S8 | Ingen plan beregnet → lesing feiler → vellykket | Ingen melding (det var ingen plan å ta bort) |
+| T-S9 | Plan → lesing henger i 15 s → vellykket | Ingen plan etter fristen; så som T-S1 |
 
-**N1:** `online`-hendelse gir en lesing med en gang; nye forsøk etter 5 og 15 s, og ingen plan før ett av dem lykkes; uten nett vises teksten om manglende forbindelse og aldri «Midlertidig deaktivert»; en vellykket lesing med en sperre viser alltid sperreteksten, også rett etter et avbrudd; FEST-hentingen prøves én gang til før feilen vises.
+**N1 og K6:** `online`-hendelse gir en lesing med en gang; nye forsøk etter 5 og 15 s, og ingenting klinisk før ett av dem lykkes; uten nett vises teksten om manglende forbindelse og aldri «Midlertidig deaktivert»; en vellykket lesing med en sperre viser alltid sperreteksten, også rett etter et avbrudd; FEST-hentingen prøves én gang til før feilen vises, og en plan etter det nye forsøket kontrolleres for ferskhet, godkjenning og sperrer som alle andre (med FEST eldre enn 48 t gir det nye forsøket «Ingen doseplan»).
 
-## 9. Spørsmål til kontrolløren
+## 9. Kontrollørens beslutninger (ChatGPT, 03.11.2026)
 
-Svar gjerne per punkt: *godtatt*, *godtatt med endring* eller *ikke godtatt*.
+Beslutningene ble gitt på spørsmålene i den første versjonen av dette notatet og er ført inn i §1–8 over.
 
-1. **K1/F0/F4.** Er det riktig å beholde 48 timer som hard grense nå, og å innføre F4 (lagre om en nyere FEST-fil er kjent ved feil, og teknisk melding etter første mislykkede natt) før en eventuell gradering?
-2. **F2.** Er et gradert vindu på høyst 96 timer, bare når ingen nyere fil er kjent og med synlig forbehold, prinsipielt akseptabelt å vurdere senere, gitt risikoene i §4.1? Eller skal 48 timer være endelig?
-3. **S2.** Er det akseptabelt at planen beregnes automatisk på nytt, gjennom den vanlige veien, etter et avbrudd i sperrelesingen, med avgrensningene i §5.2? Er T-S5 akseptabel som beskrevet: appen kan ikke se en sperre som ble satt og opphevet mens den var uten forbindelse, akkurat som i dag?
-4. **S2, alternativ.** Foretrekker du i stedet at planen ikke kommer tilbake av seg selv, men at siden bare sier «Planen ble tatt bort fordi kontrollen ikke svarte. Beregn på nytt.»?
-5. **N1.** Er nye forsøk etter 5 og 15 s, lesing ved `online` og en egen tekst for manglende forbindelse akseptabelt?
-6. **S1, S3, S4.** Er du enig i at disse ikke skal innføres?
-7. **K6.** Er ett automatisk nytt forsøk på FEST-hentingen akseptabelt?
-8. **Akseptkriterium 5 i P11.** Bør kriteriet få et tillegg om at en plan kan beregnes automatisk på nytt etter et avbrudd uten sperre (S2), eller skal S2 behandles som en egen akseptert endring?
+| # | Spørsmål | Beslutning |
+| --- | --- | --- |
+| 1 | K1/F0/F4: behold 48 t og innfør F4 | **Godtatt.** 48 t er hard grense. F4 må ha en ende-til-ende-test av at varselet når mottakeren. |
+| 2 | F2: gradert vindu på høyst 96 t | **Ikke godtatt**, verken for innføring eller som forhåndsgodkjent sikkerhetsunntak. At ingen nyere fil er kjent, er ikke dokumentasjon for at ingen nyere fil finnes. Kan gjenåpnes bare dersom driftsdata og kildekontroll viser en sikker metode. |
+| 3–4 | S2: automatisk ny beregning etter avbrudd, eller bare en melding | **S2 ikke godtatt.** Valgt: tydelig «Planen ble tatt bort fordi sikkerhetskontrollen ikke svarte. Beregn på nytt» med aktiv knapp (S6). En automatisk løsning må, om den utredes senere, skille uendret fra endret plan og aldri gjenbruke gamle sperredata. |
+| 5 | N1: nye forsøk etter 5/15 s, lesing ved gjenopprettet forbindelse, egen feilmelding | **Godtatt.** Ingen klinisk informasjon før en vellykket fersk sperrelesing. |
+| 6 | S1, S3, S4 (bufrede sperrer) | **Avvist**, som anbefalt. |
+| 7 | K6: ett automatisk nytt forsøk på FEST-hentingen | **Godtatt**, men aldri visning av plan på uverifiserte data. |
+| 8 | Akseptkriterium 5 i P11 | **Uendret.** En plan står aldri uten fersk sperrelesing. |
 
 ## 10. Videre gang
 
-Etter kontrollørens svar: én PR for S2 og N1 (verktøysiden, testene over og oppdatering av §4 og §7 i `docs/verktøy-p11-publisering.md`), og én PR for F4 (FEST-synkroniseringen, «Datakilder» og den tekniske vakten). F2 bare etter et nytt, særskilt ja. Ingen endring i godkjenninger, regelversjoner, fingeravtrykk eller nødstoppens database.
+Hver del gjennomføres i en egen PR med egen kontroll, og ingen PR slås sammen uten kontrollørens godkjenning:
+
+1. **S6, N1 og K6** (verktøysiden og testene i §8, og oppdatering av §4 og §7 i `docs/verktøy-p11-publisering.md`).
+2. **F4** (FEST-synkroniseringen, «Datakilder», en teknisk vakt som faktisk kjører, og ende-til-ende-prøven).
+
+F2 og S2 gjennomføres ikke. Ingen endring i godkjenninger, regelversjoner, fingeravtrykk, 48-timersgrensen eller nødstoppens database.
