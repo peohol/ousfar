@@ -24,7 +24,7 @@ import { VERKTOY, virkestoffvalg } from '../../verktoy/register'
 import { erKliniskGodkjent, fingeravtrykk, harBeregning } from '../../verktoy/regler/godkjenning'
 import { SAMMENLIGNINGSSETT } from '../../verktoy/regler/nedtrapping'
 import { REGELSETTENE, tilForlop, tilgjengelighet } from '../../verktoy/tilgjengelighet'
-import { BRUKERFORLOP, kjorForlop, komplett, lagQaRapport, lesUttrekkene, omfangssveip, planfeil, QA_RAPPORT, sveiplinjer, type Leveranse } from './brukerforlop'
+import { BRUKERFORLOP, KLASSENAVN, kjorForlop, komplett, lagQaRapport, lesUttrekkene, omfangssveip, planfeil, QA_RAPPORT, sveiplinjer, type Leveranse } from './brukerforlop'
 
 const UTTREKK = lesUttrekkene()
 const RESULTATER = BRUKERFORLOP.map((f) => kjorForlop(f, UTTREKK))
@@ -133,15 +133,15 @@ describe('QA: vanlige brukerforløp', () => {
 describe('QA-kontrollen selv', () => {
   const plan = (id: string) => RESULTATER.find((r) => r.forlop.id === id)!
   it('oppdager en delplan som ikke sier fra, en komplett plan som kaller seg delplan, og en dose enhetene ikke gir', () => {
-    const delplan = plan('K0-04')
+    // Ingen delplan vises lenger, så kontrollen prøves på en komplett plan som behandles som delplan.
     const komplettPlan = plan('K0-09')
-    expect([delplan.klasse, komplettPlan.klasse]).toEqual(['delplan', 'komplett'])
-    expect(planfeil(delplan.regel, { ...delplan.utfall!, undertittel: null } as never, 'delplan').join()).toMatch(/sier ikke at den er en delplan/)
+    expect(komplettPlan.klasse).toBe('komplett')
+    expect(planfeil(komplettPlan.regel, { ...komplettPlan.utfall!, undertittel: null } as never, 'delplan').join()).toMatch(/sier ikke at den er en delplan/)
     expect(planfeil(komplettPlan.regel, { ...komplettPlan.utfall!, undertittel: 'Delplan: bare starten' } as never, 'komplett').join()).toMatch(/kaller seg delplan/)
-    const endret = structuredClone(delplan.utfall!)
+    const endret = structuredClone(komplettPlan.utfall!)
     if (endret.resultat?.status !== 'doseplan') throw new Error('ikke plan')
-    endret.resultat.forlop[0]!.perioder[0]!.mg += 5
-    expect(planfeil(delplan.regel, endret, 'delplan').join()).toMatch(/enhetene gir/)
+    endret.resultat.forlop.find((f) => f.perioder.length > 0)!.perioder[0]!.mg += 5
+    expect(planfeil(komplettPlan.regel, endret, 'komplett').join()).toMatch(/enhetene gir/)
   })
 
   it('regner ikke et bytte som komplett når det nye legemidlet ikke ender på den kliniske måldosen', () => {
@@ -165,31 +165,26 @@ describe('QA-kontrollen selv', () => {
 
 describe('QA: omfanget til beregningene som er tilgjengelige', () => {
   const sveipFor = (id: string) => SVEIP.find((s) => s.regel.id === id)
+  const plan = (id: string) => RESULTATER.find((r) => r.forlop.id === id)!
 
   it('gir planer uten QA-avvik ved hver dose og legemiddelform, og ingen delplan som klinisk doseplan', () => {
     for (const s of SVEIP) for (const t of s.treff) expect(t.resultat.feil, `${s.regel.id} ${t.dose} mg`).toEqual([])
   })
 
-  it('gir vortioksetin bare ved 20 mg (bare én første reduksjon 20 → 15 mg), som delplan', () => {
-    const s = sveipFor('seponering-vortioksetin')
-    if (s?.regel.versjon !== 12) return
-    expect([...new Set(s.treff.map((t) => t.dose))]).toEqual([20])
-    for (const t of s.treff)
-      expect([t.resultat.klasse, t.resultat.utfall?.resultat?.status === 'doseplan' && t.resultat.utfall.resultat.forlop[0]!.perioder.map((p) => p.mg)]).toEqual(['delplan', [15]])
-  })
-
-  it('gir sertralin → mirtazapin bare fra 50 eller 100 mg, som delplan uten 25 → 0 og uten opptrapping av mirtazapin', () => {
-    const s = sveipFor('kryssnedtrapping-sertralin-mirtazapin')
-    if (s?.regel.versjon !== 10) return
-    expect([...new Set(s.treff.map((t) => t.dose))]).toEqual([50, 100])
-    for (const t of s.treff) {
-      const r = t.resultat.utfall!.resultat!
-      if (r.status !== 'doseplan') throw new Error('ikke plan')
-      expect(t.resultat.klasse).toBe('delplan')
-      expect(r.forlop.find((f) => f.virkestoff === 'sertralin')!.perioder.at(-1)!.mg).toBe(25)
-      expect(r.forlop.find((f) => f.virkestoff === 'mirtazapin')!.perioder.map((p) => p.mg)).toEqual([15])
+  /** En godkjent regel som bare gir en delplan, viser ingen plan ved noen dose, og sier hvorfor ved de vanlige dosene. */
+  const ingenDelplan = (id: string, versjon: number, forlop: string[]) => {
+    const s = sveipFor(id)
+    if (s?.regel.versjon !== versjon) return
+    expect(s.treff.map((t) => `${t.dose} mg: ${KLASSENAVN[t.resultat.klasse]}`)).toEqual([])
+    for (const f of forlop) {
+      const r = plan(f)
+      expect([r.klasse, r.vist.join(' ')], f).toEqual(['stoppet', expect.stringMatching(/Komplett plan ikke tilgjengelig/)])
     }
-  })
+  }
+
+  it('viser ikke vortioksetin v12 (bare én første reduksjon 20 → 15 mg) som klinisk doseplan', () => ingenDelplan('seponering-vortioksetin', 12, ['H-01']))
+
+  it('viser ikke sertralin → mirtazapin v10 (startforløp uten 25 → 0) som klinisk doseplan', () => ingenDelplan('kryssnedtrapping-sertralin-mirtazapin', 10, ['K0-04', 'H-14']))
 
   it('gir Maintena som komplett oppstart: 400 mg dag 1 og månedlig, peroral aripiprazol i 14 dager', () => {
     const s = sveipFor('depot-aripiprazol-maintena')
@@ -230,7 +225,8 @@ describe('QA: omfanget til beregningene som er tilgjengelige', () => {
   })
 
   it('stopper hver godkjent beregning når et unntak gjelder, et spørsmål besvares ja eller en bekreftelse mangler', () => {
-    for (const s of SVEIP.filter((x) => GODKJENT.some((g) => g.endsWith(`/${x.regel.id}`)))) {
+    // Gjelder de godkjente reglene som gir en komplett plan; de andre viser ingen plan i det hele tatt (testene over).
+    for (const s of SVEIP.filter((x) => x.treff.length > 0 && GODKJENT.some((g) => g.endsWith(`/${x.regel.id}`)))) {
       expect(s.endringer.length, s.regel.id).toBeGreaterThan(0)
       for (const e of s.endringer) expect(['komplett', 'delplan'], `${s.regel.id}: ${e.hva}`).not.toContain(e.klasse)
     }
