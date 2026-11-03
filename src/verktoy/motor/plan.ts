@@ -25,14 +25,14 @@
  */
 import { FEST_FORELDET_ETTER_TIMER, festForeldet } from '../../legemiddeldata/referanser'
 import { FORMULERINGSKLASSER, type Formuleringsklasse } from '../festformuleringer'
-import { AVSLUTNING_FELLES, AVVIK_IKKE_BEREGNET, avrund, beregn, erIsoDato, fordelingstekst, hverTekst, injeksjonstidspunkt, medEnhet, medSvarforslag, utenBeregningLinje, valgtSuffiks, trinnvalgOmrade, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
+import { AVSLUTNING_FELLES, AVVIK_IKKE_BEREGNET, avrund, beregn, datoFor, overAvslutning, erIsoDato, fordelingstekst, hverTekst, injeksjonstidspunkt, medEnhet, medSvarforslag, utenBeregningLinje, valgtSuffiks, trinnvalgOmrade, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
 import { fingeravtrykk, godkjenningsfeil, kanonisk, sha256 } from '../regler/godkjenning'
 import { justerbare, parameterfeil, type Beregningsinndata, type Fase, type Forlop, type Klinisktilfelle, type Parameter, type Regel, type Regelsett } from '../regler/modell'
 import { byggesteiner, DOSEENHETER, norskDato, type Byggestein, type Preparatgrunnlag } from './byggesteiner'
 import { doser, fordel, styrkevalg, velgSerie, type Dosekandidat, type Doseelement, type Periodevalg, type Styrkevalg } from './dosevalg'
 
 /** Økes når doseplanen endres slik at like inndata kan gi et annet resultat. */
-export const PLANMOTORVERSJON = 9
+export const PLANMOTORVERSJON = 10
 
 /** Id-ene til syntetiske testregler begynner slik; de kan aldri gi en klinisk plan. */
 export const SYNTETISK_REGEL = 'syntetisk-'
@@ -123,6 +123,8 @@ export interface Praktiskforlop extends Omit<Forlopsresultat, 'perioder' | 'inje
   toleranse_prosent: number
   /** Preparater i FEST for virkestoffet som ikke kan brukes i dette forløpet, med grunnen (P5.4). */
   begrensninger: string[]
+  /** Når en godkjent avslutning gjelder fra et tidligere trinn enn den ideelle kurven, fordi neste trinn ikke kan gis: hvorfor. */
+  avslutningsmerknad?: string
 }
 
 interface Planversjoner {
@@ -159,6 +161,8 @@ export const FORBEHOLD_IKKE_KLINISK = 'Modellberegning, ikke en klinisk doseplan
 export const FORBEHOLD_KLINISK = 'Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.'
 
 const tall = (x: number) => String(avrund(x)).replace('.', ',')
+/** Dagen etter `iso`. */
+const nesteDato = (iso: string) => datoFor(iso, 2)
 const dager = (p: { fra: number; til: number | null }) => (p.til === null ? `fra dag ${p.fra}` : p.til === p.fra ? `dag ${p.fra}` : `dag ${p.fra}–${p.til}`)
 /** «, annenhver dag» når dosen ikke gis daglig. */
 const hverSuffiks = (p: { hver?: number }) => (p.hver ? ` ${hverTekst(p.hver)}` : '')
@@ -414,7 +418,8 @@ export function formvalgSomTrengs(regel: Regel, inndata: Doseplaninndata, grunnl
   const ut: Record<string, Formalternativer> = {}
   for (const def of regel.plan.forlop) {
     const virkestoff = def.virkestoff.type === 'virkestoff' ? def.virkestoff.nokkel : inndata.medlem
-    if (!virkestoff) continue
+    // Et forløp uten doser (bare seponering, uendret dose eller uten beregning) bruker ingen preparater, så formen må ikke velges.
+    if (!virkestoff || utenDoser(def)) continue
     const valg = inndata.formvalg?.[def.id] ?? {}
     const { brukbare } = utvalgFor(def, byggesteiner(grunnlag, virkestoff, idag), {}, inndata.godkjenningsfritak === true)
     const klasser = [...new Set(brukbare.map((b) => b.klasse))].sort().map((kode) => ({ kode, navn: FORMULERINGSKLASSER[kode] }))
@@ -425,6 +430,11 @@ export function formvalgSomTrengs(regel: Regel, inndata: Doseplaninndata, grunnl
   }
   return ut
 }
+
+/** Fasene som ikke gir noen dose å sette sammen av preparater. */
+const UTEN_DOSE: readonly Fase['type'][] = ['seponer', 'uendret', 'uten_beregning']
+/** Om forløpet aldri har en dose planen setter sammen av preparater (regelmodell 12). */
+export const utenDoser = (def: Pick<Forlop, 'faser'>) => def.faser.every((x) => UTEN_DOSE.includes(x.type))
 
 /**
  * Styrkevalgene med bare preparater FEST viser som markedsført hele perioden:
@@ -558,7 +568,8 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
     const fordelt = (p: Periode, k: Dosekandidat) => (p.fordeles ? fordel(k, p.fordeles, over ?? Infinity) : undefined)
     ut.toleranse_prosent = tol * 100
     // En plan uten nulltrinn stopper ved første trinn som ikke kan gis (P7.5, beslutning 3); en annen plan stopper helt.
-    const avkortbar = !!f.avslutning
+    // Det gjelder også en godkjent avslutning (regelmodell 12): den avsluttes da fra trinnet før, når regelen tillater det.
+    const avkortbar = !!f.avslutning || !!f.avsluttes
     const start = def.utgangsdose === 'startdose' ? inndata.startdose_mg : 0
     const perioder: Periodevalg[] = []
     let stans: string | undefined
@@ -619,14 +630,27 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
       elementer: serie![i]!.elementer,
       ...(p.fordeles && { doser: fordelt(p, serie![i]!)! }),
     }))
-    if (serie.length < f.perioder.length) {
+    const egneValg = trinnvalg.some((t) => t.forlop === f.id)
+    if (serie.length < f.perioder.length && f.avsluttes && !egneValg && ut.perioder.at(-1)!.mg <= f.avsluttes.fra_hoyst_mg + EPS) {
+      // En godkjent avslutning gjelder fra den siste dosen som faktisk gis, når ingen dose kan velges for neste trinn: siste trinn gis, og så seponeres legemidlet.
+      const sist = ut.perioder.at(-1)!
+      ut.siste_dosedag = sist.til
+      ut.seponert_dato = sist.til_dato ? nesteDato(sist.til_dato) : undefined
+      if (ut.seponert_dato === undefined) delete ut.seponert_dato
+      ut.avslutningsmerknad = `${stans} Regelens avslutning gjelder fra ${tall(sist.mg)} mg (høyst ${tall(f.avsluttes.fra_hoyst_mg)} mg), så ${f.virkestoff} seponeres etter dette trinnet.`
+    } else if (serie.length < f.perioder.length) {
       // Siste trinn som kan gis, fortsetter til planen revurderes.
       const sist = ut.perioder.at(-1)!
       sist.til = null
       if (sist.til_dato !== undefined) sist.til_dato = null
       // Én reduksjon er én mulig reduksjon med revurdering, ikke en nedtrappingsplan (kontrollørens gjennomgang av 9cb420b, P7.5).
       const en = ut.perioder.length === 1
-      ut.avslutning = `${stans} Planen stopper derfor ved trinnet før: fra dag ${sist.fra} står pasienten på ${tall(sist.mg)} mg${hverSuffiks(sist)}${fordelingSuffiks(sist)} av ${f.virkestoff} til planen revurderes.${en ? ` ${EN_REDUKSJON}` : ''} ${AVSLUTNING_FELLES}`
+      // En godkjent avslutning som ikke gjelder fra denne dosen, eller som venter på et valg av dose, sier hvorfor planen likevel stopper her.
+      const over = f.avsluttes && !egneValg ? ` ${overAvslutning(f.virkestoff, sist.mg, f.avsluttes.fra_hoyst_mg)}` : ''
+      ut.siste_dosedag = null
+      delete ut.seponert_dato
+      delete ut.avsluttes
+      ut.avslutning = `${stans}${over} Planen stopper derfor ved trinnet før: fra dag ${sist.fra} står pasienten på ${tall(sist.mg)} mg${hverSuffiks(sist)}${fordelingSuffiks(sist)} av ${f.virkestoff} til planen revurderes.${en ? ` ${EN_REDUKSJON}` : ''} ${AVSLUTNING_FELLES}`
       ut.avslutning_kort = en ? EN_REDUKSJON_KORT : 'neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt'
     }
     if (ut.perioder.some((p) => p.doser)) {
@@ -750,6 +774,7 @@ function beregnPlan(regel: Regel, inndata: Doseplaninndata, grunnlag: Preparatgr
     kontroller.push({ krav: `Utvasking i doseplanen: minst ${krav} dager uten ${forrige.virkestoff} før ${denne.virkestoff}`, oppfylt: fri >= krav, detalj: `${fri} dager uten legemiddel.` })
     if (fri < krav) return stopp([`Doseplanen har bare ${fri} dager uten ${forrige.virkestoff} før ${denne.virkestoff}, mindre enn ${krav}.`])
   }
+  for (const f of forlop) if (f.avslutningsmerknad) merknader.push(f.avslutningsmerknad)
   // Stopper planen tidligere enn den ideelle kurven fordi et trinn ikke kan gis, gjelder den nye forklaringen.
   for (const f of forlop) {
     const ideal = ideell.forlop.find((x) => x.id === f.id)?.avslutning

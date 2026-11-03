@@ -16,25 +16,18 @@
  * skriver rapporten, og testene sier fra når den ikke er oppdatert.
  */
 import type { Festuttrekk } from './regler/aksepttest'
-import { BYTTESETT } from './regler/antidepressivbytter'
+import { ANTIDEPRESSIVBYTTER, BYTTESETT, NYTT_LEGEMIDDEL_I_FEST } from './regler/antidepressivbytter'
 import { fingeravtrykk } from './regler/godkjenning'
 import { alleGrunnlag, type Regel } from './regler/modell'
 import { avregistrert, avvikFra, kjorKasus, type Pilotkasus, SIMULERT_KONTROLLOR, simulerGodkjenning, type Uttrekkene } from './regler/pilotmatrise'
 import type { Regelrapport } from './regler/rapport'
 import { liste, tabell, tall } from './regler/rapport'
-import { REGELSETTENE, type Verktoyvalg } from './tilgjengelighet'
+import type { Verktoyvalg } from './tilgjengelighet'
 
 export const FEST_K2 = 'src/data/verktoy/fest-antidepressivbytter.json'
 export const K2_KONTROLLFIL = 'docs/verktøy-k2-kontrollgrunnlag.md'
-export const K2_REGELRAPPORT: Regelrapport = {
-  fil: 'docs/verktøy-k2-antidepressivbytter-regler.md',
-  tittel: 'K2: komplette bytter mellom antidepressiva (til faglig kontroll)',
-  sett: BYTTESETT,
-  notater: ['docs/verktøy-k2-antidepressivbytter.md', 'docs/verktøy-p4-regelmodell.md'],
-}
-
-/** Settene appen bruker, med K2-settet i tillegg, så kasusene også viser at det godkjente startforløpet ikke faller bort. */
-export const K2_SETTENE = [...REGELSETTENE.filter((s) => s.id !== BYTTESETT.id), BYTTESETT]
+/** Regelrapporten om K2-settet, slik `npm run verktoy:regler -- rapport` skriver den. */
+export const K2_REGELRAPPORT: Regelrapport = { ...ANTIDEPRESSIVBYTTER.rapport, sett: BYTTESETT }
 
 /** Dagen kontrollgrunnlaget ble laget; den simulerte godkjenningen dateres hit. */
 const DATO = '2026-11-03'
@@ -73,6 +66,11 @@ export interface K2kasus extends Pilotkasus {
 
 const startdoser = (r: Regel) => r.inndata.find((x) => x.navn === 'startdose')?.verdier ?? []
 const maldoser = (r: Regel) => r.inndata.find((x) => x.navn === 'maldose')?.verdier ?? []
+/** Styrkene av det nye legemidlet i FEST som det kliniske omfanget ikke er kontrollert med, og som planene derfor ikke bruker. */
+const ubrukteStyrker = (r: Regel, til: string) => {
+  const kontrollert = r.klinisk_omfang?.tilfeller.flatMap((t) => t.styrker?.til ?? []) ?? []
+  return (NYTT_LEGEMIDDEL_I_FEST[til] ?? []).filter((mg) => !kontrollert.includes(mg))
+}
 
 /**
  * Kasusene for én regel: hver kombinasjon av startdose og vedlikeholdsdose i
@@ -125,6 +123,19 @@ export function kasusFor(r: Regel): K2kasus[] {
       stopp(`uten-${b.id}`, `ikke bekreftet: ${b.tekst.split(':')[0]!.split('.')[0]}`, { skjema: { maldose: mal, bekreftet: r.bekreftelser.filter((x) => x !== b).map((x) => x.id) } }, [`Må bekreftes før beregning: ${b.tekst}`]),
     ),
     stopp('styrke-avregistrert', `${til} ${mal} mg avregistrert i FEST`, { dose: hoy, fest: avregistrert(til, Number(mal)) }, ['finnes ikke lenger i FEST'], 'preparat'),
+    // En styrke planene ikke bruker, kan forsvinne uten at planen stopper.
+    ...ubrukteStyrker(r, til).map(
+      (mg): K2kasus => ({
+        ...felles,
+        id: `${r.id}:ubrukt-${til}-${tall(mg)}-avregistrert`,
+        kategori: 'preparat',
+        hva: `${til} ${tall(mg)} mg, som planene ikke bruker, avregistrert i FEST`,
+        dose: hoy,
+        skjema: { maldose: mal, startdato: '2026-11-09' },
+        fest: avregistrert(til, mg),
+        forventet: { utfall: 'plan', linjer: [] },
+      }),
+    ),
     stopp('foreldet-fest', 'FEST eldre enn 48 timer', { timer: 49 }, ['Den nattlige oppdateringen har ikke gått siden'], 'foreldet_fest'),
     stopp('endret-regel', 'regelen endret etter kontrollen (annet fingeravtrykk)', { regel: { id: r.id, endre: { hva: 'endret trinnlengde etter den simulerte godkjenningen', endre: (x: Regel) => {
       g.endre!.endre(x)
@@ -149,7 +160,7 @@ export type K2utfall = ReturnType<typeof kjorKasus>
 
 export const uttrekkeneFor = (u: Festuttrekk): Uttrekkene => ({ pilot: u, aksept: u })
 
-export const kjorK2 = (k: K2kasus, u: Festuttrekk): K2utfall => kjorKasus(k, uttrekkeneFor(u), K2_SETTENE)
+export const kjorK2 = (k: K2kasus, u: Festuttrekk): K2utfall => kjorKasus(k, uttrekkeneFor(u))
 
 /**
  * Hvorfor kasuset ikke gir det det forventer; tom når det gjør det. En plan
@@ -207,6 +218,11 @@ export const SPORSMAL: readonly { nr: string; sporsmal: string; anbefalt: string
     nr: 'K2-6',
     sporsmal: 'Er avgrensningen dekkende: depresjon hos voksne 18–65 år, kort behandlingstid, ingen tidligere seponeringsplager, normal lever- og (for mirtazapin) nyrefunksjon, tabletter, bekreftet kontroll av serotonerg sammedisinering?',
     anbefalt: 'Ja for første leveranse; eldre, lang behandlingstid og andre former krever egne regler.',
+  },
+  {
+    nr: 'K2-7',
+    sporsmal: 'Er vurderingspunktene i planen riktige og nok: seponeringssymptomer og forverring før hver reduksjon og før seponeringen, toleransen før økningen av det nye legemidlet, og respons og bivirkninger fire uker etter oppstarten og etter hver doseendring av det?',
+    anbefalt: 'Ja; fire uker er slutten av de 2–4 ukene preparatomtalene oppgir før respons kan ventes, og en tidligere kontroll kan legges til av forskriveren.',
   },
 ]
 

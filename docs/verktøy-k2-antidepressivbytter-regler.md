@@ -2,9 +2,9 @@
 
 <!-- Laget av `npm run verktoy:regler -- rapport` fra reglene i src/verktoy/regler/. Ikke rediger for hånd; endre reglene og lag rapporten på nytt. -->
 
-Regelsett `ousfar-verktoy-antidepressivbytter` versjon 1, regelmodell 11, beregningsmotor 9. Komplette bytter mellom antidepressiva (K2): fra pasientens nåværende dose til seponering av det gamle legemidlet og en valgt vedlikeholdsdose av det nye. Fem regler i to familier, til uavhengig faglig kontroll; ingen er klinisk godkjent.
+Regelsett `ousfar-verktoy-antidepressivbytter` versjon 1, regelmodell 12, beregningsmotor 10. Komplette bytter mellom antidepressiva (K2): fra pasientens nåværende dose til seponering av det gamle legemidlet og en valgt vedlikeholdsdose av det nye. Fem regler i to familier, til uavhengig faglig kontroll; ingen er klinisk godkjent.
 
-**5 regler, 0 klinisk godkjent.** Utfallet av kontrollen: 5 ikke ferdig kontrollert. Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. De er ikke empirisk validerte kliniske anbefalinger, og ingen av reglene er klinisk godkjent. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-k2-antidepressivbytter.md` og `docs/verktøy-p4-regelmodell.md`.
+**5 regler, 0 klinisk godkjent.** Utfallet av kontrollen: 5 ikke ferdig kontrollert. Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. De er ikke empirisk validerte kliniske anbefalinger, og ingen av reglene er klinisk godkjent. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-k2-antidepressivbytter.md` og `docs/verktøy-k2-kontrollgrunnlag.md` og `docs/verktøy-p4-regelmodell.md`.
 
 Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel bygger på teksten der, og den vises ikke (`docs/verktøy-p3-rettigheter.md`).
 
@@ -12,11 +12,11 @@ Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel by
 
 | Regel | Form | Fra → til | Beregnbarhet | Åpne valg | Status | Eksempler |
 | --- | --- | --- | --- | --- | --- | --- |
-| `bytte-sertralin-mirtazapin` | kryssnedtrapping | sertralin → mirtazapin | beregnbar etter faglig avklaring | 6 | til faglig kontroll | 7 |
-| `bytte-escitalopram-mirtazapin` | kryssnedtrapping | escitalopram → mirtazapin | beregnbar etter faglig avklaring | 6 | til faglig kontroll | 7 |
-| `bytte-citalopram-mirtazapin` | kryssnedtrapping | citalopram → mirtazapin | beregnbar etter faglig avklaring | 6 | til faglig kontroll | 7 |
-| `bytte-escitalopram-sertralin` | sekvensielt bytte | escitalopram → sertralin | beregnbar etter faglig avklaring | 8 | til faglig kontroll | 6 |
-| `bytte-citalopram-sertralin` | sekvensielt bytte | citalopram → sertralin | beregnbar etter faglig avklaring | 8 | til faglig kontroll | 6 |
+| `bytte-sertralin-mirtazapin` | kryssnedtrapping | sertralin → mirtazapin | beregnbar etter faglig avklaring | 7 | til faglig kontroll | 7 |
+| `bytte-escitalopram-mirtazapin` | kryssnedtrapping | escitalopram → mirtazapin | beregnbar etter faglig avklaring | 7 | til faglig kontroll | 7 |
+| `bytte-citalopram-mirtazapin` | kryssnedtrapping | citalopram → mirtazapin | beregnbar etter faglig avklaring | 7 | til faglig kontroll | 7 |
+| `bytte-escitalopram-sertralin` | sekvensielt bytte | escitalopram → sertralin | beregnbar etter faglig avklaring | 9 | til faglig kontroll | 6 |
+| `bytte-citalopram-sertralin` | sekvensielt bytte | citalopram → sertralin | beregnbar etter faglig avklaring | 9 | til faglig kontroll | 6 |
 
 ## Kilder
 
@@ -35,7 +35,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra sertralin til mirtazapin, kryssnedtrapping til seponering
 
-`bytte-sertralin-mirtazapin`, versjon 1, fingeravtrykk `f830cb4505d15bbefe34476fb57b037caf6851a52ca3d959fecf057223803b7f`. Kryssnedtrapping: sertralin → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`bytte-sertralin-mirtazapin`, versjon 1, fingeravtrykk `fee50cbc5110c6421bc9ef7899d5eceeb15a218139d91cd9ae0bbf2e9495e50d`. Kryssnedtrapping: sertralin → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code).
 
@@ -66,6 +66,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Virkningen kommer vanligvis etter 1–2 uker; en adekvat dose bør gi respons innen 2–4 uker. Ved utilstrekkelig respons kan dosen økes til maksimal dose; uten respons etter ytterligere 2–4 uker bør behandlingen stoppes. *([dmp-remeron](https://produktinformasjon.legemiddelsok.no/preparatomtaler/1997-03657.pdf), pkt. 4.2)*
 - Planen gjelder bare kort behandlingstid uten tidligere seponeringsplager, voksne til og med 65 år og normal lever- og nyrefunksjon, med tabletter for begge legemidlene. Alt annet stopper, og byttet planlegges individuelt.
   - Etter mange måneders behandling, tidligere plagsomme seponeringssymptomer eller bruk av et legemiddel med høy risiko for seponeringssymptomer anbefaler RCPsych små reduksjoner fra starten. Som eksempel nevnes 5–10 % av den opprinnelige dosen. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), If you have been taking antidepressants for longer)*
+  - Andre deler av veiledningen beskriver også proporsjonale reduksjoner beregnet fra sist brukte dose. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), Examples of tapering plans)*
   - Mange trenger mer støtte for å lykkes med seponering, særlig når tidligere forsøk har gitt seponeringssymptomer eller ikke har lyktes. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.15)*
 
 **Den matematiske regelen – parametre:**
@@ -82,17 +83,17 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 - Startdose 50, 100, 200 mg (bindende; **OUSFAR-vurdering, åpent forslag:** Regelen gjelder bare sertralin 50, 100, 200 mg: dosene som kan halveres ned til 25 mg med hele tabletter av styrkene i FEST. Andre doser planlegges individuelt. (bygger på dmp-zoloft pkt. 4.2))
 - Måldose (må oppgis) 15, 30 mg (bindende; **OUSFAR-vurdering, åpent forslag:** Forskriveren velger vedlikeholdsdosen 15 eller 30 mg, startdosene i preparatomtalen. Den gis fra dagen etter siste dose av SSRI-et. 45 mg er en senere, responsstyrt økning etter preparatomtalen og ingen del av planen. (bygger på dmp-remeron pkt. 4.2; keks-2016 tabell 2 (cross-taper switch); dmp-remeron pkt. 4.2))
 - Må bekreftes (`indikasjon`): Pasienten er voksen (18–65 år), og byttet gjelder behandling av depresjon. (dmp-remeron pkt. 4.2; dmp-zoloft pkt. 4.2)
-- Må bekreftes (`toleranse_overlapp`): Toleransen vurderes før hver reduksjon og før seponeringen av sertralin: dagene er minstetider, og neste trinn tas først når eventuelle seponeringssymptomer er borte eller tålelige. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. Responsen på mirtazapin vurderes 2–4 uker etter at vedlikeholdsdosen er nådd. (nice-ng222 anbefaling 1.4.16; rcpsych-stopping How should I gradually reduce my dose?; nice-ng222 anbefaling 1.9.9; dmp-remeron pkt. 4.2)
+- Må bekreftes (`toleranse_overlapp`): Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av sertralin, før økningen av mirtazapin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. (nice-ng222 anbefaling 1.4.16; rcpsych-stopping How should I gradually reduce my dose?; nice-ng222 anbefaling 1.9.9; dmp-remeron pkt. 4.2)
 - Må bekreftes (`serotonerg_sammedisinering`): Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra sertralin til mirtazapin mer risikofylt. (nice-ng222 anbefaling 1.9.9; keks-2016 note til tabell 3)
-- Unntak (`tidligere_seponeringssymptomer`): Et tidligere forsøk på å trappe ned eller seponere sertralin eller et annet antidepressiv har gitt seponeringssymptomer eller mislyktes. Da passer ikke den faste planen, og byttet planlegges individuelt med mindre trinn. (nice-ng222 anbefaling 1.4.15; rcpsych-stopping If you have been taking antidepressants for longer)
-- Unntak (`lang_behandlingstid`): Pasienten har brukt sertralin i mange måneder eller lenger. Da anbefales mindre reduksjoner fra starten, og byttet planlegges individuelt med langsommere, symptomstyrt nedtrapping. (rcpsych-stopping If you have been taking antidepressants for longer; rcpsych-stopping When and how should I stop my antidepressants?)
+- Unntak (`tidligere_seponeringssymptomer`): Et tidligere forsøk på å trappe ned eller seponere sertralin eller et annet antidepressiv har gitt seponeringssymptomer eller mislyktes. Da passer ikke den faste planen, og byttet planlegges individuelt med mindre trinn. (nice-ng222 anbefaling 1.4.15; rcpsych-stopping If you have been taking antidepressants for longer; rcpsych-stopping Examples of tapering plans)
+- Unntak (`lang_behandlingstid`): Pasienten har brukt sertralin i mange måneder eller lenger. Da anbefales mindre reduksjoner fra starten, og byttet planlegges individuelt med langsommere, symptomstyrt nedtrapping. (rcpsych-stopping If you have been taking antidepressants for longer; rcpsych-stopping Examples of tapering plans; rcpsych-stopping When and how should I stop my antidepressants?)
 - Unntak (`over_65`): Pasienten er over 65 år. Preparatomtalene har egne doser eller krav om nøye oppfølging for eldre, så byttet planlegges individuelt. (dmp-zoloft pkt. 4.2; dmp-remeron pkt. 4.2)
 - Unntak (`nedsatt_leverfunksjon`): Pasienten har nedsatt leverfunksjon. Preparatomtalene for sertralin og mirtazapin krever da lavere doser eller særskilt hensyn, så byttet planlegges individuelt. (dmp-zoloft pkt. 4.2; dmp-remeron pkt. 4.2)
 - Unntak (`nedsatt_nyrefunksjon`): Pasienten har kreatininclearance under 40 ml/min. Clearance av mirtazapin kan da være nedsatt, så byttet planlegges individuelt. (dmp-remeron pkt. 4.2)
 
 **Klinisk omfang** (en klinisk godkjenning kan bare gjelde disse tilfellene; alt annet stopper med forklaring, også et annet valg av trinnstørrelse eller trinnlengde, med eller uten begrunnelse; **OUSFAR-vurdering, åpent forslag:** En klinisk godkjenning kan bare gjelde sertralin 50, 100, 200 mg med tabletter (FEST-form 53) for begge virkestoffene og styrkene i FEST som er verifisert ende til ende. (bygger på dmp-zoloft pkt. 4.2; dmp-remeron pkt. 4.2)):
 
-- 50, 100 og 200 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 25, 50 og 100 mg, styrker (til) 15, 30 og 45 mg
+- 50, 100 og 200 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 25, 50 og 100 mg, styrker (til) 15 og 30 mg
 
 **Kliniske forutsetninger:**
 
@@ -119,7 +120,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Kontroll: Avkreftet: Pasienten har nedsatt leverfunksjon. Preparatomtalene for sertralin og mirtazapin krever da lavere doser eller særskilt hensyn, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten har kreatininclearance under 40 ml/min. Clearance av mirtazapin kan da være nedsatt, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen (18–65 år), og byttet gjelder behandling av depresjon. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Toleransen vurderes før hver reduksjon og før seponeringen av sertralin: dagene er minstetider, og neste trinn tas først når eventuelle seponeringssymptomer er borte eller tålelige. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. Responsen på mirtazapin vurderes 2–4 uker etter at vedlikeholdsdosen er nådd. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av sertralin, før økningen av mirtazapin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra sertralin til mirtazapin mer risikofylt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 50, 100, 200 mg (bindende) – oppfylt. 200 mg.
   - Kontroll: Måldosen er 15, 30 mg (bindende) – oppfylt. 30 mg.
@@ -132,7 +133,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Kontroll: Avkreftet: Pasienten har nedsatt leverfunksjon. Preparatomtalene for sertralin og mirtazapin krever da lavere doser eller særskilt hensyn, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten har kreatininclearance under 40 ml/min. Clearance av mirtazapin kan da være nedsatt, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen (18–65 år), og byttet gjelder behandling av depresjon. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Toleransen vurderes før hver reduksjon og før seponeringen av sertralin: dagene er minstetider, og neste trinn tas først når eventuelle seponeringssymptomer er borte eller tålelige. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. Responsen på mirtazapin vurderes 2–4 uker etter at vedlikeholdsdosen er nådd. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av sertralin, før økningen av mirtazapin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra sertralin til mirtazapin mer risikofylt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 50, 100, 200 mg (bindende) – oppfylt. 50 mg.
   - Kontroll: Måldosen er 15, 30 mg (bindende) – oppfylt. 15 mg.
@@ -145,7 +146,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Kontroll: Avkreftet: Pasienten har nedsatt leverfunksjon. Preparatomtalene for sertralin og mirtazapin krever da lavere doser eller særskilt hensyn, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten har kreatininclearance under 40 ml/min. Clearance av mirtazapin kan da være nedsatt, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen (18–65 år), og byttet gjelder behandling av depresjon. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Toleransen vurderes før hver reduksjon og før seponeringen av sertralin: dagene er minstetider, og neste trinn tas først når eventuelle seponeringssymptomer er borte eller tålelige. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. Responsen på mirtazapin vurderes 2–4 uker etter at vedlikeholdsdosen er nådd. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av sertralin, før økningen av mirtazapin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra sertralin til mirtazapin mer risikofylt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 50, 100, 200 mg (bindende) – oppfylt. 50 mg.
   - Kontroll: Måldosen er 15, 30 mg (bindende) – oppfylt. 30 mg.
@@ -162,7 +163,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra escitalopram til mirtazapin, kryssnedtrapping til seponering
 
-`bytte-escitalopram-mirtazapin`, versjon 1, fingeravtrykk `52fa1d24bb22ce947e4bbc991d8cc29a15a97d6abc92022b5140b856f29fc6e0`. Kryssnedtrapping: escitalopram → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`bytte-escitalopram-mirtazapin`, versjon 1, fingeravtrykk `ab2179e82b9bd4c613f82707795b69a46a31eed6782c9ae6fbea81a7994015a5`. Kryssnedtrapping: escitalopram → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code).
 
@@ -193,6 +194,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Virkningen kommer vanligvis etter 1–2 uker; en adekvat dose bør gi respons innen 2–4 uker. Ved utilstrekkelig respons kan dosen økes til maksimal dose; uten respons etter ytterligere 2–4 uker bør behandlingen stoppes. *([dmp-remeron](https://produktinformasjon.legemiddelsok.no/preparatomtaler/1997-03657.pdf), pkt. 4.2)*
 - Planen gjelder bare kort behandlingstid uten tidligere seponeringsplager, voksne til og med 65 år og normal lever- og nyrefunksjon, med tabletter for begge legemidlene. Alt annet stopper, og byttet planlegges individuelt.
   - Etter mange måneders behandling, tidligere plagsomme seponeringssymptomer eller bruk av et legemiddel med høy risiko for seponeringssymptomer anbefaler RCPsych små reduksjoner fra starten. Som eksempel nevnes 5–10 % av den opprinnelige dosen. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), If you have been taking antidepressants for longer)*
+  - Andre deler av veiledningen beskriver også proporsjonale reduksjoner beregnet fra sist brukte dose. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), Examples of tapering plans)*
   - Mange trenger mer støtte for å lykkes med seponering, særlig når tidligere forsøk har gitt seponeringssymptomer eller ikke har lyktes. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.15)*
 
 **Den matematiske regelen – parametre:**
@@ -209,17 +211,17 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 - Startdose 10, 20 mg (bindende; **OUSFAR-vurdering, åpent forslag:** Regelen gjelder bare escitalopram 10, 20 mg: dosene som kan halveres ned til 5 mg med hele tabletter av styrkene i FEST. Andre doser planlegges individuelt. (bygger på dmp-cipralex pkt. 4.2))
 - Måldose (må oppgis) 15, 30 mg (bindende; **OUSFAR-vurdering, åpent forslag:** Forskriveren velger vedlikeholdsdosen 15 eller 30 mg, startdosene i preparatomtalen. Den gis fra dagen etter siste dose av SSRI-et. 45 mg er en senere, responsstyrt økning etter preparatomtalen og ingen del av planen. (bygger på dmp-remeron pkt. 4.2; keks-2016 tabell 2 (cross-taper switch); dmp-remeron pkt. 4.2))
 - Må bekreftes (`indikasjon`): Pasienten er voksen (18–65 år), og byttet gjelder behandling av depresjon. (dmp-remeron pkt. 4.2; dmp-cipralex pkt. 4.2)
-- Må bekreftes (`toleranse_overlapp`): Toleransen vurderes før hver reduksjon og før seponeringen av escitalopram: dagene er minstetider, og neste trinn tas først når eventuelle seponeringssymptomer er borte eller tålelige. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. Responsen på mirtazapin vurderes 2–4 uker etter at vedlikeholdsdosen er nådd. (nice-ng222 anbefaling 1.4.16; rcpsych-stopping How should I gradually reduce my dose?; nice-ng222 anbefaling 1.9.9; dmp-remeron pkt. 4.2)
+- Må bekreftes (`toleranse_overlapp`): Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av escitalopram, før økningen av mirtazapin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. (nice-ng222 anbefaling 1.4.16; rcpsych-stopping How should I gradually reduce my dose?; nice-ng222 anbefaling 1.9.9; dmp-remeron pkt. 4.2)
 - Må bekreftes (`serotonerg_sammedisinering`): Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra escitalopram til mirtazapin mer risikofylt. (nice-ng222 anbefaling 1.9.9; keks-2016 note til tabell 3)
-- Unntak (`tidligere_seponeringssymptomer`): Et tidligere forsøk på å trappe ned eller seponere escitalopram eller et annet antidepressiv har gitt seponeringssymptomer eller mislyktes. Da passer ikke den faste planen, og byttet planlegges individuelt med mindre trinn. (nice-ng222 anbefaling 1.4.15; rcpsych-stopping If you have been taking antidepressants for longer)
-- Unntak (`lang_behandlingstid`): Pasienten har brukt escitalopram i mange måneder eller lenger. Da anbefales mindre reduksjoner fra starten, og byttet planlegges individuelt med langsommere, symptomstyrt nedtrapping. (rcpsych-stopping If you have been taking antidepressants for longer; rcpsych-stopping When and how should I stop my antidepressants?)
+- Unntak (`tidligere_seponeringssymptomer`): Et tidligere forsøk på å trappe ned eller seponere escitalopram eller et annet antidepressiv har gitt seponeringssymptomer eller mislyktes. Da passer ikke den faste planen, og byttet planlegges individuelt med mindre trinn. (nice-ng222 anbefaling 1.4.15; rcpsych-stopping If you have been taking antidepressants for longer; rcpsych-stopping Examples of tapering plans)
+- Unntak (`lang_behandlingstid`): Pasienten har brukt escitalopram i mange måneder eller lenger. Da anbefales mindre reduksjoner fra starten, og byttet planlegges individuelt med langsommere, symptomstyrt nedtrapping. (rcpsych-stopping If you have been taking antidepressants for longer; rcpsych-stopping Examples of tapering plans; rcpsych-stopping When and how should I stop my antidepressants?)
 - Unntak (`over_65`): Pasienten er over 65 år. Preparatomtalene har egne doser eller krav om nøye oppfølging for eldre, så byttet planlegges individuelt. (dmp-cipralex pkt. 4.2; dmp-remeron pkt. 4.2)
 - Unntak (`nedsatt_leverfunksjon`): Pasienten har nedsatt leverfunksjon. Preparatomtalene for escitalopram og mirtazapin krever da lavere doser eller særskilt hensyn, så byttet planlegges individuelt. (dmp-cipralex pkt. 4.2; dmp-remeron pkt. 4.2)
 - Unntak (`nedsatt_nyrefunksjon`): Pasienten har kreatininclearance under 40 ml/min. Clearance av mirtazapin kan da være nedsatt, så byttet planlegges individuelt. (dmp-remeron pkt. 4.2)
 
 **Klinisk omfang** (en klinisk godkjenning kan bare gjelde disse tilfellene; alt annet stopper med forklaring, også et annet valg av trinnstørrelse eller trinnlengde, med eller uten begrunnelse; **OUSFAR-vurdering, åpent forslag:** En klinisk godkjenning kan bare gjelde escitalopram 10, 20 mg med tabletter (FEST-form 53) for begge virkestoffene og styrkene i FEST som er verifisert ende til ende. (bygger på dmp-cipralex pkt. 4.2; dmp-remeron pkt. 4.2)):
 
-- 10 og 20 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 5, 10 og 20 mg, styrker (til) 15, 30 og 45 mg
+- 10 og 20 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 5, 10 og 20 mg, styrker (til) 15 og 30 mg
 
 **Kliniske forutsetninger:**
 
@@ -246,7 +248,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Kontroll: Avkreftet: Pasienten har nedsatt leverfunksjon. Preparatomtalene for escitalopram og mirtazapin krever da lavere doser eller særskilt hensyn, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten har kreatininclearance under 40 ml/min. Clearance av mirtazapin kan da være nedsatt, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen (18–65 år), og byttet gjelder behandling av depresjon. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Toleransen vurderes før hver reduksjon og før seponeringen av escitalopram: dagene er minstetider, og neste trinn tas først når eventuelle seponeringssymptomer er borte eller tålelige. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. Responsen på mirtazapin vurderes 2–4 uker etter at vedlikeholdsdosen er nådd. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av escitalopram, før økningen av mirtazapin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra escitalopram til mirtazapin mer risikofylt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 10, 20 mg (bindende) – oppfylt. 20 mg.
   - Kontroll: Måldosen er 15, 30 mg (bindende) – oppfylt. 30 mg.
@@ -259,7 +261,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Kontroll: Avkreftet: Pasienten har nedsatt leverfunksjon. Preparatomtalene for escitalopram og mirtazapin krever da lavere doser eller særskilt hensyn, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten har kreatininclearance under 40 ml/min. Clearance av mirtazapin kan da være nedsatt, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen (18–65 år), og byttet gjelder behandling av depresjon. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Toleransen vurderes før hver reduksjon og før seponeringen av escitalopram: dagene er minstetider, og neste trinn tas først når eventuelle seponeringssymptomer er borte eller tålelige. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. Responsen på mirtazapin vurderes 2–4 uker etter at vedlikeholdsdosen er nådd. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av escitalopram, før økningen av mirtazapin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra escitalopram til mirtazapin mer risikofylt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 10, 20 mg (bindende) – oppfylt. 10 mg.
   - Kontroll: Måldosen er 15, 30 mg (bindende) – oppfylt. 15 mg.
@@ -272,7 +274,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Kontroll: Avkreftet: Pasienten har nedsatt leverfunksjon. Preparatomtalene for escitalopram og mirtazapin krever da lavere doser eller særskilt hensyn, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten har kreatininclearance under 40 ml/min. Clearance av mirtazapin kan da være nedsatt, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen (18–65 år), og byttet gjelder behandling av depresjon. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Toleransen vurderes før hver reduksjon og før seponeringen av escitalopram: dagene er minstetider, og neste trinn tas først når eventuelle seponeringssymptomer er borte eller tålelige. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. Responsen på mirtazapin vurderes 2–4 uker etter at vedlikeholdsdosen er nådd. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av escitalopram, før økningen av mirtazapin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra escitalopram til mirtazapin mer risikofylt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 10, 20 mg (bindende) – oppfylt. 10 mg.
   - Kontroll: Måldosen er 15, 30 mg (bindende) – oppfylt. 30 mg.
@@ -289,7 +291,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra citalopram til mirtazapin, kryssnedtrapping til seponering
 
-`bytte-citalopram-mirtazapin`, versjon 1, fingeravtrykk `9c71ed2ad402c577f845bb988888e1c0b48c984005a536f88314e3ca7d07b832`. Kryssnedtrapping: citalopram → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`bytte-citalopram-mirtazapin`, versjon 1, fingeravtrykk `e19788705acd64a3aae2605f1cd51b000717f6c92ab4f4d07b49a7f2162f2fdb`. Kryssnedtrapping: citalopram → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code).
 
@@ -320,6 +322,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Virkningen kommer vanligvis etter 1–2 uker; en adekvat dose bør gi respons innen 2–4 uker. Ved utilstrekkelig respons kan dosen økes til maksimal dose; uten respons etter ytterligere 2–4 uker bør behandlingen stoppes. *([dmp-remeron](https://produktinformasjon.legemiddelsok.no/preparatomtaler/1997-03657.pdf), pkt. 4.2)*
 - Planen gjelder bare kort behandlingstid uten tidligere seponeringsplager, voksne til og med 65 år og normal lever- og nyrefunksjon, med tabletter for begge legemidlene. Alt annet stopper, og byttet planlegges individuelt.
   - Etter mange måneders behandling, tidligere plagsomme seponeringssymptomer eller bruk av et legemiddel med høy risiko for seponeringssymptomer anbefaler RCPsych små reduksjoner fra starten. Som eksempel nevnes 5–10 % av den opprinnelige dosen. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), If you have been taking antidepressants for longer)*
+  - Andre deler av veiledningen beskriver også proporsjonale reduksjoner beregnet fra sist brukte dose. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), Examples of tapering plans)*
   - Mange trenger mer støtte for å lykkes med seponering, særlig når tidligere forsøk har gitt seponeringssymptomer eller ikke har lyktes. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.15)*
 
 **Den matematiske regelen – parametre:**
@@ -336,17 +339,17 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 - Startdose 20, 40 mg (bindende; **OUSFAR-vurdering, åpent forslag:** Regelen gjelder bare citalopram 20, 40 mg: dosene som kan halveres ned til 10 mg med hele tabletter av styrkene i FEST. Andre doser planlegges individuelt. (bygger på dmp-cipramil pkt. 4.2))
 - Måldose (må oppgis) 15, 30 mg (bindende; **OUSFAR-vurdering, åpent forslag:** Forskriveren velger vedlikeholdsdosen 15 eller 30 mg, startdosene i preparatomtalen. Den gis fra dagen etter siste dose av SSRI-et. 45 mg er en senere, responsstyrt økning etter preparatomtalen og ingen del av planen. (bygger på dmp-remeron pkt. 4.2; keks-2016 tabell 2 (cross-taper switch); dmp-remeron pkt. 4.2))
 - Må bekreftes (`indikasjon`): Pasienten er voksen (18–65 år), og byttet gjelder behandling av depresjon. (dmp-remeron pkt. 4.2; dmp-cipramil pkt. 4.2)
-- Må bekreftes (`toleranse_overlapp`): Toleransen vurderes før hver reduksjon og før seponeringen av citalopram: dagene er minstetider, og neste trinn tas først når eventuelle seponeringssymptomer er borte eller tålelige. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. Responsen på mirtazapin vurderes 2–4 uker etter at vedlikeholdsdosen er nådd. (nice-ng222 anbefaling 1.4.16; rcpsych-stopping How should I gradually reduce my dose?; nice-ng222 anbefaling 1.9.9; dmp-remeron pkt. 4.2)
+- Må bekreftes (`toleranse_overlapp`): Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av citalopram, før økningen av mirtazapin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. (nice-ng222 anbefaling 1.4.16; rcpsych-stopping How should I gradually reduce my dose?; nice-ng222 anbefaling 1.9.9; dmp-remeron pkt. 4.2)
 - Må bekreftes (`serotonerg_sammedisinering`): Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra citalopram til mirtazapin mer risikofylt. (nice-ng222 anbefaling 1.9.9; keks-2016 note til tabell 3)
-- Unntak (`tidligere_seponeringssymptomer`): Et tidligere forsøk på å trappe ned eller seponere citalopram eller et annet antidepressiv har gitt seponeringssymptomer eller mislyktes. Da passer ikke den faste planen, og byttet planlegges individuelt med mindre trinn. (nice-ng222 anbefaling 1.4.15; rcpsych-stopping If you have been taking antidepressants for longer)
-- Unntak (`lang_behandlingstid`): Pasienten har brukt citalopram i mange måneder eller lenger. Da anbefales mindre reduksjoner fra starten, og byttet planlegges individuelt med langsommere, symptomstyrt nedtrapping. (rcpsych-stopping If you have been taking antidepressants for longer; rcpsych-stopping When and how should I stop my antidepressants?)
+- Unntak (`tidligere_seponeringssymptomer`): Et tidligere forsøk på å trappe ned eller seponere citalopram eller et annet antidepressiv har gitt seponeringssymptomer eller mislyktes. Da passer ikke den faste planen, og byttet planlegges individuelt med mindre trinn. (nice-ng222 anbefaling 1.4.15; rcpsych-stopping If you have been taking antidepressants for longer; rcpsych-stopping Examples of tapering plans)
+- Unntak (`lang_behandlingstid`): Pasienten har brukt citalopram i mange måneder eller lenger. Da anbefales mindre reduksjoner fra starten, og byttet planlegges individuelt med langsommere, symptomstyrt nedtrapping. (rcpsych-stopping If you have been taking antidepressants for longer; rcpsych-stopping Examples of tapering plans; rcpsych-stopping When and how should I stop my antidepressants?)
 - Unntak (`over_65`): Pasienten er over 65 år. Preparatomtalene har egne doser eller krav om nøye oppfølging for eldre, så byttet planlegges individuelt. (dmp-cipramil pkt. 4.2; dmp-remeron pkt. 4.2)
 - Unntak (`nedsatt_leverfunksjon`): Pasienten har nedsatt leverfunksjon. Preparatomtalene for citalopram og mirtazapin krever da lavere doser eller særskilt hensyn, så byttet planlegges individuelt. (dmp-cipramil pkt. 5.2; dmp-remeron pkt. 4.2)
 - Unntak (`nedsatt_nyrefunksjon`): Pasienten har kreatininclearance under 40 ml/min. Clearance av mirtazapin kan da være nedsatt, så byttet planlegges individuelt. (dmp-remeron pkt. 4.2)
 
 **Klinisk omfang** (en klinisk godkjenning kan bare gjelde disse tilfellene; alt annet stopper med forklaring, også et annet valg av trinnstørrelse eller trinnlengde, med eller uten begrunnelse; **OUSFAR-vurdering, åpent forslag:** En klinisk godkjenning kan bare gjelde citalopram 20, 40 mg med tabletter (FEST-form 53) for begge virkestoffene og styrkene i FEST som er verifisert ende til ende. (bygger på dmp-cipramil pkt. 4.2; dmp-remeron pkt. 4.2)):
 
-- 20 og 40 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 10, 20 og 40 mg, styrker (til) 15, 30 og 45 mg
+- 20 og 40 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 10, 20 og 40 mg, styrker (til) 15 og 30 mg
 
 **Kliniske forutsetninger:**
 
@@ -373,7 +376,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Kontroll: Avkreftet: Pasienten har nedsatt leverfunksjon. Preparatomtalene for citalopram og mirtazapin krever da lavere doser eller særskilt hensyn, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten har kreatininclearance under 40 ml/min. Clearance av mirtazapin kan da være nedsatt, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen (18–65 år), og byttet gjelder behandling av depresjon. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Toleransen vurderes før hver reduksjon og før seponeringen av citalopram: dagene er minstetider, og neste trinn tas først når eventuelle seponeringssymptomer er borte eller tålelige. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. Responsen på mirtazapin vurderes 2–4 uker etter at vedlikeholdsdosen er nådd. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av citalopram, før økningen av mirtazapin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra citalopram til mirtazapin mer risikofylt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 20, 40 mg (bindende) – oppfylt. 40 mg.
   - Kontroll: Måldosen er 15, 30 mg (bindende) – oppfylt. 30 mg.
@@ -386,7 +389,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Kontroll: Avkreftet: Pasienten har nedsatt leverfunksjon. Preparatomtalene for citalopram og mirtazapin krever da lavere doser eller særskilt hensyn, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten har kreatininclearance under 40 ml/min. Clearance av mirtazapin kan da være nedsatt, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen (18–65 år), og byttet gjelder behandling av depresjon. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Toleransen vurderes før hver reduksjon og før seponeringen av citalopram: dagene er minstetider, og neste trinn tas først når eventuelle seponeringssymptomer er borte eller tålelige. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. Responsen på mirtazapin vurderes 2–4 uker etter at vedlikeholdsdosen er nådd. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av citalopram, før økningen av mirtazapin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra citalopram til mirtazapin mer risikofylt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 20, 40 mg (bindende) – oppfylt. 20 mg.
   - Kontroll: Måldosen er 15, 30 mg (bindende) – oppfylt. 15 mg.
@@ -399,7 +402,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Kontroll: Avkreftet: Pasienten har nedsatt leverfunksjon. Preparatomtalene for citalopram og mirtazapin krever da lavere doser eller særskilt hensyn, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten har kreatininclearance under 40 ml/min. Clearance av mirtazapin kan da være nedsatt, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen (18–65 år), og byttet gjelder behandling av depresjon. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Toleransen vurderes før hver reduksjon og før seponeringen av citalopram: dagene er minstetider, og neste trinn tas først når eventuelle seponeringssymptomer er borte eller tålelige. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. Responsen på mirtazapin vurderes 2–4 uker etter at vedlikeholdsdosen er nådd. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av citalopram, før økningen av mirtazapin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra citalopram til mirtazapin mer risikofylt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 20, 40 mg (bindende) – oppfylt. 20 mg.
   - Kontroll: Måldosen er 15, 30 mg (bindende) – oppfylt. 30 mg.
@@ -416,7 +419,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra escitalopram til sertralin, nedtrapping og kort utvasking
 
-`bytte-escitalopram-sertralin`, versjon 1, fingeravtrykk `70545d3515dc32ff7e7ef225cf36c5e6326af11653d6bb676551cbc60975379c`. Sekvensielt bytte: escitalopram → sertralin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`bytte-escitalopram-sertralin`, versjon 1, fingeravtrykk `6073789cc64a16ecfbae052ba6ed8dd9f94e64587c5ab043588b04b01b77a59a`. Sekvensielt bytte: escitalopram → sertralin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code).
 
@@ -450,6 +453,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Moderat bytte: det første trappes gradvis ned og seponeres, så 2–4 dager uten legemiddel, så startes det nye i lav dose. Anbefalt også i allmennpraksis; interaksjonsrisikoen er lav. *([keks-2016](https://pmc.ncbi.nlm.nih.gov/articles/PMC4919171/), tabell 2 (moderate switch))*
 - Planen gjelder bare kort behandlingstid uten tidligere seponeringsplager, voksne til og med 65 år og normal leverfunksjon, med tabletter for begge legemidlene. Alt annet stopper, og byttet planlegges individuelt.
   - Etter mange måneders behandling, tidligere plagsomme seponeringssymptomer eller bruk av et legemiddel med høy risiko for seponeringssymptomer anbefaler RCPsych små reduksjoner fra starten. Som eksempel nevnes 5–10 % av den opprinnelige dosen. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), If you have been taking antidepressants for longer)*
+  - Andre deler av veiledningen beskriver også proporsjonale reduksjoner beregnet fra sist brukte dose. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), Examples of tapering plans)*
   - Mange trenger mer støtte for å lykkes med seponering, særlig når tidligere forsøk har gitt seponeringssymptomer eller ikke har lyktes. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.15)*
 
 **Den matematiske regelen – parametre:**
@@ -468,16 +472,16 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 - Startdose 10, 20 mg (bindende; **OUSFAR-vurdering, åpent forslag:** Regelen gjelder bare escitalopram 10 og 20 mg: dosene som kan halveres ned til 5 mg med hele tabletter av styrkene i FEST. Andre doser planlegges individuelt. (bygger på dmp-cipralex pkt. 4.2))
 - Måldose (må oppgis) 50, 100 mg (bindende; **OUSFAR-vurdering, åpent forslag:** Forskriveren velger vedlikeholdsdosen 50 eller 100 mg. Sertralin startes med 50 mg, preparatomtalens startdose ved depresjon, og 100 mg er én økning på 50 mg. Høyere doser er senere, responsstyrte økninger og ingen del av planen. (bygger på dmp-zoloft pkt. 4.2; dmp-zoloft pkt. 4.2))
 - Må bekreftes (`indikasjon`): Pasienten er voksen (18–65 år), og byttet gjelder behandling av depresjon. (dmp-zoloft pkt. 4.2; dmp-cipralex pkt. 4.2)
-- Må bekreftes (`toleranse_bytte`): Toleransen vurderes før hver reduksjon og før seponeringen av escitalopram: dagene er minstetider, og neste trinn tas først når eventuelle seponeringssymptomer er borte eller tålelige. I dagene uten SSRI og etter oppstart av sertralin følges seponeringssymptomer, forverring av depresjonen og bivirkninger. Responsen vurderes før økning og 2–4 uker etter at vedlikeholdsdosen er nådd. (nice-ng222 anbefaling 1.4.16; rcpsych-stopping How should I gradually reduce my dose?; keks-2016 tabell 2 (moderate switch); dmp-cipralex pkt. 4.2)
+- Må bekreftes (`toleranse_bytte`): Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av escitalopram, før økningen av sertralin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. I dagene uten SSRI følges seponeringssymptomer og forverring av depresjonen. (nice-ng222 anbefaling 1.4.16; rcpsych-stopping How should I gradually reduce my dose?; keks-2016 tabell 2 (moderate switch); dmp-cipralex pkt. 4.2)
 - Må bekreftes (`serotonerg_sammedisinering`): Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra escitalopram til sertralin mer risikofylt. (nice-ng222 anbefaling 1.9.9; keks-2016 note til tabell 3)
-- Unntak (`tidligere_seponeringssymptomer`): Et tidligere forsøk på å trappe ned eller seponere escitalopram eller et annet antidepressiv har gitt seponeringssymptomer eller mislyktes. Da passer ikke den faste planen, og byttet planlegges individuelt med mindre trinn. (nice-ng222 anbefaling 1.4.15; rcpsych-stopping If you have been taking antidepressants for longer)
-- Unntak (`lang_behandlingstid`): Pasienten har brukt escitalopram i mange måneder eller lenger. Da anbefales mindre reduksjoner fra starten, og byttet planlegges individuelt med langsommere, symptomstyrt nedtrapping. (rcpsych-stopping If you have been taking antidepressants for longer; rcpsych-stopping When and how should I stop my antidepressants?)
+- Unntak (`tidligere_seponeringssymptomer`): Et tidligere forsøk på å trappe ned eller seponere escitalopram eller et annet antidepressiv har gitt seponeringssymptomer eller mislyktes. Da passer ikke den faste planen, og byttet planlegges individuelt med mindre trinn. (nice-ng222 anbefaling 1.4.15; rcpsych-stopping If you have been taking antidepressants for longer; rcpsych-stopping Examples of tapering plans)
+- Unntak (`lang_behandlingstid`): Pasienten har brukt escitalopram i mange måneder eller lenger. Da anbefales mindre reduksjoner fra starten, og byttet planlegges individuelt med langsommere, symptomstyrt nedtrapping. (rcpsych-stopping If you have been taking antidepressants for longer; rcpsych-stopping Examples of tapering plans; rcpsych-stopping When and how should I stop my antidepressants?)
 - Unntak (`over_65`): Pasienten er over 65 år. Preparatomtalene har egne doser eller krav om nøye oppfølging for eldre, så byttet planlegges individuelt. (dmp-cipralex pkt. 4.2; dmp-zoloft pkt. 4.2)
 - Unntak (`nedsatt_leverfunksjon`): Pasienten har nedsatt leverfunksjon. Preparatomtalene for escitalopram og sertralin krever da lavere doser eller særskilt hensyn, så byttet planlegges individuelt. (dmp-cipralex pkt. 4.2; dmp-zoloft pkt. 4.2)
 
 **Klinisk omfang** (en klinisk godkjenning kan bare gjelde disse tilfellene; alt annet stopper med forklaring, også et annet valg av trinnstørrelse eller trinnlengde, med eller uten begrunnelse; **OUSFAR-vurdering, åpent forslag:** En klinisk godkjenning kan bare gjelde escitalopram 10 og 20 mg med tabletter (FEST-form 53) for begge virkestoffene og styrkene i FEST som er verifisert ende til ende. (bygger på dmp-cipralex pkt. 4.2; dmp-zoloft pkt. 4.2)):
 
-- 10 og 20 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 5, 10 og 20 mg, styrker (til) 25, 50 og 100 mg
+- 10 og 20 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 5, 10 og 20 mg, styrker (til) 50 og 100 mg
 
 **Kliniske forutsetninger:**
 
@@ -503,7 +507,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Kontroll: Avkreftet: Pasienten er over 65 år. Preparatomtalene har egne doser eller krav om nøye oppfølging for eldre, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten har nedsatt leverfunksjon. Preparatomtalene for escitalopram og sertralin krever da lavere doser eller særskilt hensyn, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen (18–65 år), og byttet gjelder behandling av depresjon. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Toleransen vurderes før hver reduksjon og før seponeringen av escitalopram: dagene er minstetider, og neste trinn tas først når eventuelle seponeringssymptomer er borte eller tålelige. I dagene uten SSRI og etter oppstart av sertralin følges seponeringssymptomer, forverring av depresjonen og bivirkninger. Responsen vurderes før økning og 2–4 uker etter at vedlikeholdsdosen er nådd. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av escitalopram, før økningen av sertralin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. I dagene uten SSRI følges seponeringssymptomer og forverring av depresjonen. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra escitalopram til sertralin mer risikofylt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 10, 20 mg (bindende) – oppfylt. 20 mg.
   - Kontroll: Måldosen er 50, 100 mg (bindende) – oppfylt. 100 mg.
@@ -516,7 +520,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Kontroll: Avkreftet: Pasienten er over 65 år. Preparatomtalene har egne doser eller krav om nøye oppfølging for eldre, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten har nedsatt leverfunksjon. Preparatomtalene for escitalopram og sertralin krever da lavere doser eller særskilt hensyn, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen (18–65 år), og byttet gjelder behandling av depresjon. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Toleransen vurderes før hver reduksjon og før seponeringen av escitalopram: dagene er minstetider, og neste trinn tas først når eventuelle seponeringssymptomer er borte eller tålelige. I dagene uten SSRI og etter oppstart av sertralin følges seponeringssymptomer, forverring av depresjonen og bivirkninger. Responsen vurderes før økning og 2–4 uker etter at vedlikeholdsdosen er nådd. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av escitalopram, før økningen av sertralin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. I dagene uten SSRI følges seponeringssymptomer og forverring av depresjonen. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra escitalopram til sertralin mer risikofylt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 10, 20 mg (bindende) – oppfylt. 10 mg.
   - Kontroll: Måldosen er 50, 100 mg (bindende) – oppfylt. 50 mg.
@@ -529,7 +533,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Kontroll: Avkreftet: Pasienten er over 65 år. Preparatomtalene har egne doser eller krav om nøye oppfølging for eldre, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten har nedsatt leverfunksjon. Preparatomtalene for escitalopram og sertralin krever da lavere doser eller særskilt hensyn, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen (18–65 år), og byttet gjelder behandling av depresjon. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Toleransen vurderes før hver reduksjon og før seponeringen av escitalopram: dagene er minstetider, og neste trinn tas først når eventuelle seponeringssymptomer er borte eller tålelige. I dagene uten SSRI og etter oppstart av sertralin følges seponeringssymptomer, forverring av depresjonen og bivirkninger. Responsen vurderes før økning og 2–4 uker etter at vedlikeholdsdosen er nådd. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av escitalopram, før økningen av sertralin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. I dagene uten SSRI følges seponeringssymptomer og forverring av depresjonen. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra escitalopram til sertralin mer risikofylt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 10, 20 mg (bindende) – oppfylt. 10 mg.
   - Kontroll: Måldosen er 50, 100 mg (bindende) – oppfylt. 100 mg.
@@ -545,7 +549,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra citalopram til sertralin, nedtrapping og kort utvasking
 
-`bytte-citalopram-sertralin`, versjon 1, fingeravtrykk `dfaa681b4a25de97ba9a110650756e657008b8f2750d5487377e9eb3804b3471`. Sekvensielt bytte: citalopram → sertralin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`bytte-citalopram-sertralin`, versjon 1, fingeravtrykk `aed5fe1af4aca194ad9adba5fb74fdeefc3ecc56a6b9d1cfe2b70a8bdfaf0697`. Sekvensielt bytte: citalopram → sertralin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code).
 
@@ -579,6 +583,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Moderat bytte: det første trappes gradvis ned og seponeres, så 2–4 dager uten legemiddel, så startes det nye i lav dose. Anbefalt også i allmennpraksis; interaksjonsrisikoen er lav. *([keks-2016](https://pmc.ncbi.nlm.nih.gov/articles/PMC4919171/), tabell 2 (moderate switch))*
 - Planen gjelder bare kort behandlingstid uten tidligere seponeringsplager, voksne til og med 65 år og normal leverfunksjon, med tabletter for begge legemidlene. Alt annet stopper, og byttet planlegges individuelt.
   - Etter mange måneders behandling, tidligere plagsomme seponeringssymptomer eller bruk av et legemiddel med høy risiko for seponeringssymptomer anbefaler RCPsych små reduksjoner fra starten. Som eksempel nevnes 5–10 % av den opprinnelige dosen. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), If you have been taking antidepressants for longer)*
+  - Andre deler av veiledningen beskriver også proporsjonale reduksjoner beregnet fra sist brukte dose. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), Examples of tapering plans)*
   - Mange trenger mer støtte for å lykkes med seponering, særlig når tidligere forsøk har gitt seponeringssymptomer eller ikke har lyktes. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.15)*
 
 **Den matematiske regelen – parametre:**
@@ -597,16 +602,16 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 - Startdose 20, 40 mg (bindende; **OUSFAR-vurdering, åpent forslag:** Regelen gjelder bare citalopram 20 og 40 mg: dosene som kan halveres ned til 10 mg med hele tabletter av styrkene i FEST. Andre doser planlegges individuelt. (bygger på dmp-cipramil pkt. 4.2))
 - Måldose (må oppgis) 50, 100 mg (bindende; **OUSFAR-vurdering, åpent forslag:** Forskriveren velger vedlikeholdsdosen 50 eller 100 mg. Sertralin startes med 50 mg, preparatomtalens startdose ved depresjon, og 100 mg er én økning på 50 mg. Høyere doser er senere, responsstyrte økninger og ingen del av planen. (bygger på dmp-zoloft pkt. 4.2; dmp-zoloft pkt. 4.2))
 - Må bekreftes (`indikasjon`): Pasienten er voksen (18–65 år), og byttet gjelder behandling av depresjon. (dmp-zoloft pkt. 4.2; dmp-cipramil pkt. 4.2)
-- Må bekreftes (`toleranse_bytte`): Toleransen vurderes før hver reduksjon og før seponeringen av citalopram: dagene er minstetider, og neste trinn tas først når eventuelle seponeringssymptomer er borte eller tålelige. I dagene uten SSRI og etter oppstart av sertralin følges seponeringssymptomer, forverring av depresjonen og bivirkninger. Responsen vurderes før økning og 2–4 uker etter at vedlikeholdsdosen er nådd. (nice-ng222 anbefaling 1.4.16; rcpsych-stopping How should I gradually reduce my dose?; keks-2016 tabell 2 (moderate switch); dmp-cipralex pkt. 4.2)
+- Må bekreftes (`toleranse_bytte`): Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av citalopram, før økningen av sertralin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. I dagene uten SSRI følges seponeringssymptomer og forverring av depresjonen. (nice-ng222 anbefaling 1.4.16; rcpsych-stopping How should I gradually reduce my dose?; keks-2016 tabell 2 (moderate switch); dmp-cipralex pkt. 4.2)
 - Må bekreftes (`serotonerg_sammedisinering`): Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra citalopram til sertralin mer risikofylt. (nice-ng222 anbefaling 1.9.9; keks-2016 note til tabell 3)
-- Unntak (`tidligere_seponeringssymptomer`): Et tidligere forsøk på å trappe ned eller seponere citalopram eller et annet antidepressiv har gitt seponeringssymptomer eller mislyktes. Da passer ikke den faste planen, og byttet planlegges individuelt med mindre trinn. (nice-ng222 anbefaling 1.4.15; rcpsych-stopping If you have been taking antidepressants for longer)
-- Unntak (`lang_behandlingstid`): Pasienten har brukt citalopram i mange måneder eller lenger. Da anbefales mindre reduksjoner fra starten, og byttet planlegges individuelt med langsommere, symptomstyrt nedtrapping. (rcpsych-stopping If you have been taking antidepressants for longer; rcpsych-stopping When and how should I stop my antidepressants?)
+- Unntak (`tidligere_seponeringssymptomer`): Et tidligere forsøk på å trappe ned eller seponere citalopram eller et annet antidepressiv har gitt seponeringssymptomer eller mislyktes. Da passer ikke den faste planen, og byttet planlegges individuelt med mindre trinn. (nice-ng222 anbefaling 1.4.15; rcpsych-stopping If you have been taking antidepressants for longer; rcpsych-stopping Examples of tapering plans)
+- Unntak (`lang_behandlingstid`): Pasienten har brukt citalopram i mange måneder eller lenger. Da anbefales mindre reduksjoner fra starten, og byttet planlegges individuelt med langsommere, symptomstyrt nedtrapping. (rcpsych-stopping If you have been taking antidepressants for longer; rcpsych-stopping Examples of tapering plans; rcpsych-stopping When and how should I stop my antidepressants?)
 - Unntak (`over_65`): Pasienten er over 65 år. Preparatomtalene har egne doser eller krav om nøye oppfølging for eldre, så byttet planlegges individuelt. (dmp-cipramil pkt. 4.2; dmp-zoloft pkt. 4.2)
 - Unntak (`nedsatt_leverfunksjon`): Pasienten har nedsatt leverfunksjon. Preparatomtalene for citalopram og sertralin krever da lavere doser eller særskilt hensyn, så byttet planlegges individuelt. (dmp-cipramil pkt. 5.2; dmp-zoloft pkt. 4.2)
 
 **Klinisk omfang** (en klinisk godkjenning kan bare gjelde disse tilfellene; alt annet stopper med forklaring, også et annet valg av trinnstørrelse eller trinnlengde, med eller uten begrunnelse; **OUSFAR-vurdering, åpent forslag:** En klinisk godkjenning kan bare gjelde citalopram 20 og 40 mg med tabletter (FEST-form 53) for begge virkestoffene og styrkene i FEST som er verifisert ende til ende. (bygger på dmp-cipramil pkt. 4.2; dmp-zoloft pkt. 4.2)):
 
-- 20 og 40 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 10, 20 og 40 mg, styrker (til) 25, 50 og 100 mg
+- 20 og 40 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 10, 20 og 40 mg, styrker (til) 50 og 100 mg
 
 **Kliniske forutsetninger:**
 
@@ -632,7 +637,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Kontroll: Avkreftet: Pasienten er over 65 år. Preparatomtalene har egne doser eller krav om nøye oppfølging for eldre, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten har nedsatt leverfunksjon. Preparatomtalene for citalopram og sertralin krever da lavere doser eller særskilt hensyn, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen (18–65 år), og byttet gjelder behandling av depresjon. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Toleransen vurderes før hver reduksjon og før seponeringen av citalopram: dagene er minstetider, og neste trinn tas først når eventuelle seponeringssymptomer er borte eller tålelige. I dagene uten SSRI og etter oppstart av sertralin følges seponeringssymptomer, forverring av depresjonen og bivirkninger. Responsen vurderes før økning og 2–4 uker etter at vedlikeholdsdosen er nådd. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av citalopram, før økningen av sertralin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. I dagene uten SSRI følges seponeringssymptomer og forverring av depresjonen. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra citalopram til sertralin mer risikofylt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 20, 40 mg (bindende) – oppfylt. 40 mg.
   - Kontroll: Måldosen er 50, 100 mg (bindende) – oppfylt. 100 mg.
@@ -645,7 +650,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Kontroll: Avkreftet: Pasienten er over 65 år. Preparatomtalene har egne doser eller krav om nøye oppfølging for eldre, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten har nedsatt leverfunksjon. Preparatomtalene for citalopram og sertralin krever da lavere doser eller særskilt hensyn, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen (18–65 år), og byttet gjelder behandling av depresjon. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Toleransen vurderes før hver reduksjon og før seponeringen av citalopram: dagene er minstetider, og neste trinn tas først når eventuelle seponeringssymptomer er borte eller tålelige. I dagene uten SSRI og etter oppstart av sertralin følges seponeringssymptomer, forverring av depresjonen og bivirkninger. Responsen vurderes før økning og 2–4 uker etter at vedlikeholdsdosen er nådd. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av citalopram, før økningen av sertralin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. I dagene uten SSRI følges seponeringssymptomer og forverring av depresjonen. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra citalopram til sertralin mer risikofylt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 20, 40 mg (bindende) – oppfylt. 20 mg.
   - Kontroll: Måldosen er 50, 100 mg (bindende) – oppfylt. 50 mg.
@@ -658,7 +663,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Kontroll: Avkreftet: Pasienten er over 65 år. Preparatomtalene har egne doser eller krav om nøye oppfølging for eldre, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten har nedsatt leverfunksjon. Preparatomtalene for citalopram og sertralin krever da lavere doser eller særskilt hensyn, så byttet planlegges individuelt. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Bekreftet: Pasienten er voksen (18–65 år), og byttet gjelder behandling av depresjon. – oppfylt. Bekreftet av forskriveren.
-  - Kontroll: Bekreftet: Toleransen vurderes før hver reduksjon og før seponeringen av citalopram: dagene er minstetider, og neste trinn tas først når eventuelle seponeringssymptomer er borte eller tålelige. I dagene uten SSRI og etter oppstart av sertralin følges seponeringssymptomer, forverring av depresjonen og bivirkninger. Responsen vurderes før økning og 2–4 uker etter at vedlikeholdsdosen er nådd. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av citalopram, før økningen av sertralin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. I dagene uten SSRI følges seponeringssymptomer og forverring av depresjonen. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra citalopram til sertralin mer risikofylt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 20, 40 mg (bindende) – oppfylt. 20 mg.
   - Kontroll: Måldosen er 50, 100 mg (bindende) – oppfylt. 100 mg.

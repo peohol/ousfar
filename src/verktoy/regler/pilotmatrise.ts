@@ -170,9 +170,9 @@ const kontrolltid = (u: Festuttrekk) => Date.parse(u.utvalg.kontrollert_kl ?? u.
 /** Tidspunktet kasuset beregnes ved. */
 export const tidFor = (k: Pick<Pilotkasus, 'uttrekk' | 'timer'>, uttrekkene: Uttrekkene) => new Date(kontrolltid(uttrekkene[k.uttrekk]) + (k.timer ?? STANDARD_TIMER) * 3_600_000)
 
-/** Radene i planen, uten overskrift, tittel og listene under. */
+/** Radene i planen, uten overskrift, tittel, undertittel, planutfall og listene under. */
 const planlinjer = (tekst: string, undertittel: string | null) => {
-  const linjer = tekst.split('\n').slice(undertittel ? 4 : 3)
+  const linjer = tekst.split('\n').slice(undertittel ? 5 : 4)
   const slutt = linjer.indexOf('')
   return slutt < 0 ? linjer : linjer.slice(0, slutt)
 }

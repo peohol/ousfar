@@ -71,7 +71,8 @@ describe('Faktumet', () => {
 
 describe('Regelsettene før og etter rettelsen', () => {
   it('er de samme settene; settene før rettelsen er appversjon 1.122.1, og appens sett har ny versjon', () => {
-    expect(FOR_RETTELSENE.map((s) => s.id)).toEqual(REGELSETTENE.map((s) => s.id))
+    // Leveransenes sett (K2–K4, regelmodell 12) kom etter rettelsen og står etter de to rettede settene.
+    expect(FOR_RETTELSENE.map((s) => s.id)).toEqual(REGELSETTENE.slice(0, FOR_RETTELSENE.length).map((s) => s.id))
     expect([PILOTSETT_FOR_RETTELSENE.versjon, PILOTSETT.versjon]).toEqual([16, 17])
     expect([NEDTRAPPINGSSETT_FOR_RETTELSENE.versjon, NEDTRAPPINGSSETT.versjon]).toEqual([14, 15])
     for (const [i, s] of FOR_RETTELSENE.entries()) {
@@ -88,8 +89,12 @@ describe('Regelsettene før og etter rettelsen', () => {
 
   it('appen viser ikke lenger til faktumet slik det stod, bare til de rettede faktaene', () => {
     for (const r of REGELSETT.regler) expect(henvisninger(r).some(lik(RETTELSE.fra)), r.id).toBe(false)
-    expect(REGELSETT.regler.filter((r) => henvisninger(r).some(lik(RCPSYCH.langvarig))).map((r) => r.id).sort()).toEqual([...BERORTE].sort())
-    expect(REGELSETT.regler.filter((r) => henvisninger(r).some(lik(RCPSYCH.proporsjonal))).map((r) => r.id).sort()).toEqual([...BERORTE].sort())
+    // De rettede settene viser til de nye faktaene nøyaktig der det gamle stod; senere sett (K2–K4) kan også vise til dem.
+    const rettede = [...PILOTSETT.regler, ...NEDTRAPPINGSSETT.regler]
+    expect(rettede.filter((r) => henvisninger(r).some(lik(RCPSYCH.langvarig))).map((r) => r.id).sort()).toEqual([...BERORTE].sort())
+    expect(rettede.filter((r) => henvisninger(r).some(lik(RCPSYCH.proporsjonal))).map((r) => r.id).sort()).toEqual([...BERORTE].sort())
+    // Kontrollørens to fakta står alltid sammen, så ingen regel gjengir bare den ene delen av kilden.
+    for (const r of REGELSETT.regler) expect(henvisninger(r).some(lik(RCPSYCH.langvarig)), r.id).toBe(henvisninger(r).some(lik(RCPSYCH.proporsjonal)))
   })
 })
 

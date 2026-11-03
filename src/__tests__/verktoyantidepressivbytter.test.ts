@@ -6,7 +6,7 @@
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { FEST_K2, K2_KONTROLLFIL, K2_REGELRAPPORT, K2_SETTENE, K2KASUS, k2avvik, kjorK2, lagK2Kontrollgrunnlag, somAvklartOgGodkjent, type K2kasus } from '../verktoy/k2kontroll'
+import { FEST_K2, K2_KONTROLLFIL, K2_REGELRAPPORT, K2KASUS, k2avvik, kjorK2, lagK2Kontrollgrunnlag, somAvklartOgGodkjent, type K2kasus } from '../verktoy/k2kontroll'
 import { VERKTOY } from '../verktoy/register'
 import { BYTTESETT } from '../verktoy/regler/antidepressivbytter'
 import type { Festuttrekk } from '../verktoy/regler/aksepttest'
@@ -15,8 +15,8 @@ import { fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett, lesKontrollgrunnlag } from '../verktoy/regler/kontroll'
 import { apneValg, type Beregningsinndata, type Regel } from '../verktoy/regler/modell'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
-import { lagRegelrapport } from '../verktoy/regler/rapport'
-import { samlet, tilgjengelighet } from '../verktoy/tilgjengelighet'
+import { REGELRAPPORTER } from '../verktoy/regler/rapport'
+import { REGELSETTENE, samlet, tilgjengelighet } from '../verktoy/tilgjengelighet'
 
 const les = (fil: string) => readFileSync(new URL(`../../${fil}`, import.meta.url), 'utf8')
 const UTTREKK = JSON.parse(les(FEST_K2)) as Festuttrekk
@@ -25,10 +25,18 @@ const kasus = (id: string) => {
   if (!k) throw new Error(id)
   return k
 }
-const linjer = (k: K2kasus) => {
+const planlinjer = (k: K2kasus) => {
   const u = kjorK2(k, UTTREKK)
   return u.utfall === 'plan' ? u.linjer : [u.utfall, JSON.stringify(u)]
 }
+const erVurdering = (l: string) => /^Dag \d+ \([^)]*\): Vurdering /.test(l)
+/** Doselinjene i planen, uten vurderingspunktene. */
+const linjer = (k: K2kasus) => planlinjer(k).filter((l) => !erVurdering(l))
+/** Vurderingspunktene i planen: dagen, legemidlet og om det er før endringen. */
+const vurderinger = (k: K2kasus) =>
+  planlinjer(k)
+    .filter(erVurdering)
+    .map((l) => l.replace(/^Dag (\d+) \([^)]*\): Vurdering \((\w+)\): (Før endringen: )?.*$/, (_, d: string, navn: string, for_?: string) => `dag ${d} ${navn}${for_ ? ' før' : ''}`))
 
 /** Inndata med alle bekreftelser og nei på alle unntak, på en kopi med simulert avklaring og godkjenning. */
 function beregnSomGodkjent(r: Regel, x: Partial<Beregningsinndata>) {
@@ -70,9 +78,25 @@ describe('K2: regelsettet', () => {
     expect(v10.versjon).toBe(10)
     expect(fingeravtrykk(v10)).toBe('12801aa22a0ca2a576b9ba737d5d5cb52db3a73dc1b437bde7f20a896214c81a')
     const verktoy = VERKTOY.find((v) => v.id === 'bytte-antidepressiv')!
-    const t = tilgjengelighet(verktoy, { fra: { nokkel: 'sertralin', formulering: 'standard' }, til: { nokkel: 'mirtazapin', formulering: 'standard' } }, samlet(K2_SETTENE))
+    const t = tilgjengelighet(verktoy, { fra: { nokkel: 'sertralin', formulering: 'standard' }, til: { nokkel: 'mirtazapin', formulering: 'standard' } })
     expect(t.status).toBe('tilgjengelig')
     expect(t.regler.map((r) => `${r.id} v${r.versjon}`)).toEqual(['kryssnedtrapping-sertralin-mirtazapin v10'])
+  })
+
+  it('ved aktivering må den komplette regelen erstatte startforløpet: med versjon 10 trukket tilbyr verktøyet bare den komplette planen', () => {
+    const verktoy = VERKTOY.find((v) => v.id === 'bytte-antidepressiv')!
+    const valg = { fra: { nokkel: 'sertralin', formulering: 'standard' }, til: { nokkel: 'mirtazapin', formulering: 'standard' } } as const
+    const aktivert = (trekkV10: boolean) => {
+      const settene = structuredClone([...REGELSETTENE])
+      const komplett = settene.flatMap((x) => x.regler).find((r) => r.id === 'bytte-sertralin-mirtazapin')!
+      somAvklartOgGodkjent(komplett)
+      const v10 = settene.flatMap((x) => x.regler).find((r) => r.id === 'kryssnedtrapping-sertralin-mirtazapin')!
+      if (trekkV10) v10.godkjenning = { status: 'trukket', historikk: [...v10.godkjenning.historikk, { ...v10.godkjenning.historikk.at(-1)!, status: 'trukket', dato: '2026-11-03', merknad: 'Erstattet av den komplette regelen (simulert).' }] }
+      return tilgjengelighet(verktoy, valg, samlet(settene)).regler.map((r) => r.id)
+    }
+    // Uten at versjon 10 trekkes, får forskriveren to godkjente planer å velge mellom; godkjenningen av den komplette regelen må derfor trekke versjon 10 i samme endring.
+    expect(aktivert(false).sort()).toEqual(['bytte-sertralin-mirtazapin', 'kryssnedtrapping-sertralin-mirtazapin'])
+    expect(aktivert(true)).toEqual(['bytte-sertralin-mirtazapin'])
   })
 
   it('sier at faglig kontroll gjenstår for de nye kombinasjonene', () => {
@@ -83,7 +107,7 @@ describe('K2: regelsettet', () => {
       ['escitalopram', 'sertralin'],
       ['citalopram', 'sertralin'],
     ] as const) {
-      const t = tilgjengelighet(verktoy, { fra: { nokkel: fra, formulering: 'standard' }, til: { nokkel: til, formulering: 'standard' } }, samlet(K2_SETTENE))
+      const t = tilgjengelighet(verktoy, { fra: { nokkel: fra, formulering: 'standard' }, til: { nokkel: til, formulering: 'standard' } })
       expect(t.status, `${fra} → ${til}`).toBe('til_kontroll')
     }
   })
@@ -127,6 +151,26 @@ describe('K2: komplette forløp ende til ende med preparatene i FEST', () => {
       'Dag 15–17 (23.11.2026–25.11.2026): Citalopram peroralt: Seponert',
       'Fra dag 18 (fra 26.11.2026): Sertralin peroralt: 50 mg = 1 tablett à 50 mg',
     ])
+  })
+
+  it('har vurderingspunktene på riktige dager: før hver reduksjon og seponering, før økningen og respons fire uker etter hver endring', () => {
+    expect(vurderinger(kasus('bytte-sertralin-mirtazapin:100-30'))).toEqual([
+      'dag 15 Sertralin før',
+      'dag 29 Sertralin før',
+      'dag 29 Mirtazapin før',
+      'dag 29 Mirtazapin',
+      'dag 57 Mirtazapin',
+    ])
+    expect(vurderinger(kasus('bytte-escitalopram-sertralin:20-100'))).toEqual([
+      'dag 15 Escitalopram før',
+      'dag 29 Escitalopram før',
+      'dag 46 Sertralin før',
+      'dag 60 Sertralin',
+      'dag 74 Sertralin',
+    ])
+    // Uten økning er det ingen vurdering før økning, bare responsen etter oppstarten.
+    expect(vurderinger(kasus('bytte-citalopram-mirtazapin:40-15'))).toEqual(['dag 15 Citalopram før', 'dag 29 Citalopram før', 'dag 29 Mirtazapin'])
+    expect(vurderinger(kasus('bytte-citalopram-sertralin:20-50'))).toEqual(['dag 15 Citalopram før', 'dag 46 Sertralin'])
   })
 
   it('hver plan i omfanget når sluttmålet: det gamle seponert, det nye på valgt vedlikeholdsdose uten slutt', () => {
@@ -183,8 +227,8 @@ describe('K2: komplette forløp ende til ende med preparatene i FEST', () => {
 })
 
 describe('K2: rapportene', () => {
-  it('regelrapporten er oppdatert', () => {
-    expect(les(K2_REGELRAPPORT.fil)).toBe(lagRegelrapport(BYTTESETT, K2_REGELRAPPORT))
+  it('regelrapporten skrives og kontrolleres sammen med de andre regelrapportene', () => {
+    expect(REGELRAPPORTER.find((r) => r.fil === K2_REGELRAPPORT.fil)?.sett).toBe(BYTTESETT)
   })
   it('kontrollgrunnlaget er oppdatert', () => {
     expect(les(K2_KONTROLLFIL)).toBe(lagK2Kontrollgrunnlag(UTTREKK))

@@ -13,7 +13,7 @@ import { finnVirkestoff, KARTLEGGING, sokVerktoy, VERKTOY, verktoyFor, virkestof
 import { NEDTRAPPINGSSETT } from '../verktoy/regler/nedtrapping'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
 import { snarvalg } from '../verktoy/snarvalg'
-import { REGELSETT, regeloversikt, reglerFor, tilgjengelighet, type Verktoyvalg } from '../verktoy/tilgjengelighet'
+import { REGELSETT, REGELSETTENE, regeloversikt, reglerFor, tilgjengelighet, type Verktoyvalg } from '../verktoy/tilgjengelighet'
 import { godkjennITest, TEST_DEPOT, TEST_KRYSS, TEST_NEDTRAPPING, TESTKLOKKE, testFest, testsett } from './hjelp/verktoyplan'
 
 const [TRAPPE_NED, BYTTE_AD, BYTTE_AP] = VERKTOY.map((v) => v)
@@ -21,11 +21,12 @@ const v = (nokkel: string, formulering: 'standard' | 'LA' | 'ER' | 'MA' = 'stand
 const NAA = TESTKLOKKE()
 
 describe('Verktøyregisteret', () => {
-  it('har de tre verktøyene med stabile ID-er, norske navn, aliaser og adresser', () => {
+  it('har de fire verktøyene med stabile ID-er, norske navn, aliaser og adresser', () => {
     expect(VERKTOY.map((x) => [x.id, x.navn, x.type, x.tabell])).toEqual([
       ['trappe-ned-antidepressiv', 'Trappe ned antidepressiv', 'seponering', 'SwitchAntidepressants'],
       ['bytte-antidepressiv', 'Bytte antidepressiv', 'bytte', 'SwitchAntidepressants'],
       ['bytte-antipsykotikum', 'Bytte antipsykotikum', 'bytte', 'SwitchAntipsychotics'],
+      ['kombinere-stemningsstabiliserende', 'Kombinere stemningsstabiliserende', 'tillegg', 'CombiningMoodstabilizers'],
     ])
     expect(new Set(VERKTOY.map((x) => x.id)).size).toBe(VERKTOY.length)
     for (const x of VERKTOY) {
@@ -148,11 +149,13 @@ describe('Regelstatusen', () => {
     }
     // Gruppebyttet til aripiprazol er ikke godkjent som modell (beslutning P4-A) og står bare i sammenligningssettet.
     expect(tilgjengelighet(BYTTE_AP!, { fra: v('zuklopentiksol'), til: v('aripiprazol') })).toMatchObject({ status: 'ikke_stottet', regler: [] })
-    expect(new Set(tilfeller.flatMap(([, , r]) => r))).toEqual(new Set(REGELSETT.regler.map((r) => r.id)))
-    expect(REGELSETT.regler).toHaveLength(PILOTSETT.regler.length + NEDTRAPPINGSSETT.regler.length)
-    expect(VERKTOY.map((x) => regeloversikt(x).tilgjengelige)).toEqual([1, 1, 2])
-    expect(VERKTOY.map((x) => regeloversikt(x).ikkeGodkjent)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length - 1, 1, 1])
-    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([0, 0, 0])
+    expect(new Set(tilfeller.flatMap(([, , r]) => r))).toEqual(new Set([...PILOTSETT.regler, ...NEDTRAPPINGSSETT.regler].map((r) => r.id)))
+    // Leveransenes sett (K2–K4) har egne tester for sine regler.
+    expect(REGELSETT.regler).toHaveLength(REGELSETTENE.reduce((n, x) => n + x.regler.length, 0))
+    expect(VERKTOY.map((x) => regeloversikt(x).tilgjengelige)).toEqual([1, 1, 2, 0])
+    expect(VERKTOY.map((x) => regeloversikt(x).ikkeGodkjent)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length - 1, 1, 1, 0])
+    // K2s fem komplette antidepressivbytter står til faglig kontroll.
+    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([0, 5, 0, 0])
   })
 
   it('forklarer hvorfor et antidepressivum uten regel ikke kan trappes ned, med dekningen fra P7', () => {
@@ -170,7 +173,7 @@ describe('Regelstatusen', () => {
     expect(tilgjengelighet(BYTTE_AP!, { fra: v('aripiprazol', 'LA'), til: v('aripiprazol', 'LA') }).status).toBe('ikke_stottet')
     expect(tilgjengelighet(BYTTE_AP!, { fra: v('zuklopentiksol', 'MA'), til: v('aripiprazol') })).toMatchObject({ status: 'ikke_stottet', grunner: [expect.stringMatching(/middels langtidsvirkende/)] })
     // Seponeringsregelen er ikke et bytte, og byttet er ikke en seponering.
-    expect(reglerFor(BYTTE_AD!, { fra: v('escitalopram'), til: v('sertralin') })).toEqual([])
+    expect(reglerFor(BYTTE_AD!, { fra: v('escitalopram'), til: v('vortioksetin') })).toEqual([])
     expect(reglerFor(TRAPPE_NED!, { fra: v('sertralin') }).map((r) => r.id)).toEqual(['seponering-sertralin', 'seponering-sertralin-langsom'])
     expect(reglerFor(BYTTE_AD!, { fra: v('sertralin'), til: v('escitalopram') })).toEqual([])
     expect(tilgjengelighet(TRAPPE_NED!, { fra: v('maprotilin') })).toMatchObject({ status: 'ikke_stottet', grunner: [expect.stringMatching(/ingen regel/)] })
@@ -208,6 +211,8 @@ describe('Snarvalgene (VDR-3)', () => {
         ['tilgjengelig', 'Aripiprazol: peroral → depotinjeksjon'],
         ['tilgjengelig', 'Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)'],
       ],
+      // Kombinere stemningsstabiliserende har ingen godkjente regler ennå (K4).
+      [],
     ])
     expect(snarvalg(BYTTE_AP!)[0]!.valg).toEqual({ fra: v('aripiprazol'), til: v('aripiprazol', 'LA') })
     // Hvert snarvalg gir samme status når det kontrolleres som et valg; det avgjør ingenting selv.

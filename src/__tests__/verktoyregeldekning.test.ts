@@ -80,7 +80,7 @@ describe('Kombinasjonene', () => {
 
   it('skiller kombinasjoner uten regel etter om kildetabellen har en anbefaling', () => {
     const ad = verktoy('bytte-antidepressiv')
-    const k = ALLE.get(ad.id)!.find((x) => x.valg.fra.nokkel === 'escitalopram' && x.valg.til?.nokkel === 'sertralin')!
+    const k = ALLE.get(ad.id)!.find((x) => x.valg.fra.nokkel === 'escitalopram' && x.valg.til?.nokkel === 'vortioksetin')!
     expect(k.utfall).toBe(kildeHarAnbefaling(KART, ad, k.valg) ? 'kilde_har_anbefaling' : 'kilde_uten_anbefaling')
     const ap = ALLE.get('bytte-antipsykotikum')!
     expect(ap.some((x) => x.utfall === 'kilde_uten_anbefaling')).toBe(true)

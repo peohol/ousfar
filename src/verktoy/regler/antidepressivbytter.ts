@@ -25,10 +25,14 @@
  * kontroll; alle OUSFAR-valg står som åpne forslag til de er avklart. Det
  * godkjente startforløpet fra sertralin til mirtazapin (versjon 10 i
  * `pilotsett.ts`) er uendret og brukes fortsatt i appen.
+ *
+ * Settet er med i verktøyene gjennom `domenesett.ts` (`ANTIDEPRESSIVBYTTER`),
+ * og `npm run verktoy:regler -- rapport` skriver regelrapporten om det.
  */
+import type { Domenesett } from './domenesett'
 import { FORUTSETNINGER_FELLES, forslag, h, halvering, kilde, NICE, pn, RCPSYCH, steg, trinn14, utsagn } from './bygg'
 import { SPC } from './pilotsett'
-import type { Bekreftelse, Beregningsinndata, Forlop, Godkjenning, Kildehenvisning, Regel, Regelsett, Regneeksempel, Unntak } from './modell'
+import type { Bekreftelse, Beregningsinndata, Forlop, Godkjenning, Kildehenvisning, Regel, Regelsett, Regneeksempel, Unntak, Vurderingspunkt } from './modell'
 import { REGELMODELLVERSJON } from './modell'
 
 /* --- Fakta fra kildene, med egne ord ------------------------------------------------ */
@@ -170,7 +174,46 @@ function nedtrappingTilSeponering(fra: Fra): Forlop {
         }),
       },
     ],
+    vurderinger: [
+      {
+        id: 'toleranse',
+        nar: { type: 'for_hvert_trinn' },
+        tekst: `Vurder seponeringssymptomer og forverring av depresjonen før ${fra.nokkel} reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.`,
+        ved_funn: 'Hold dosen til symptomene er tålelige. Ved plagsomme symptomer går pasienten tilbake til forrige dose, og byttet planlegges på nytt med mindre trinn.',
+        grunnlag: { type: 'kilde', henvisninger: [NICE.tempo, NICE.alvorlig, RCPSYCH.smaa] },
+      },
+    ],
   }
+}
+
+/**
+ * Oppfølgingen av det nye legemidlet: toleransen før hver økning i planen, og
+ * respons og bivirkninger når preparatomtalens 2–4 uker etter oppstarten og
+ * etter hver doseendring er gått.
+ */
+function oppfolgingAvNyttLegemiddel(navn: string, respons: Kildehenvisning, okning: Kildehenvisning): Vurderingspunkt[] {
+  return [
+    {
+      id: 'toleranse_for_okning',
+      nar: { type: 'for_hvert_trinn' },
+      tekst: `Vurder at dosen av ${navn} så langt tåles.`,
+      ved_funn: 'Tåles den dårlig, økes den ikke, og byttet vurderes på nytt.',
+      grunnlag: { type: 'kilde', henvisninger: [okning] },
+    },
+    {
+      id: 'respons',
+      nar: {
+        type: 'etter_endring',
+        dager: forslag(28, 'dager', `Respons og bivirkninger av ${navn} vurderes fire uker etter oppstarten og etter hver doseendring: ved slutten av de 2–4 ukene preparatomtalen oppgir før respons kan ventes.`, {
+          omrade: [14, 28],
+          henvisninger: [respons],
+        }),
+      },
+      tekst: `Vurder respons og bivirkninger av ${navn}.`,
+      ved_funn: 'Uten tilstrekkelig respons vurderes videre behandling etter preparatomtalen; det er utenfor denne planen.',
+      grunnlag: { type: 'kilde', henvisninger: [respons] },
+    },
+  ]
 }
 
 const bekreftelseIndikasjon = (henvisninger: Kildehenvisning[]): Bekreftelse => ({
@@ -191,12 +234,12 @@ function felleUnntak(fra: Fra, til: { navn: string; eldre: Kildehenvisning; leve
     {
       id: 'tidligere_seponeringssymptomer',
       tekst: `Et tidligere forsøk på å trappe ned eller seponere ${fra.nokkel} eller et annet antidepressiv har gitt seponeringssymptomer eller mislyktes. Da passer ikke den faste planen, og byttet planlegges individuelt med mindre trinn.`,
-      grunnlag: { type: 'kilde', henvisninger: [NICE.tidligere, RCPSYCH.langvarig] },
+      grunnlag: { type: 'kilde', henvisninger: [NICE.tidligere, RCPSYCH.langvarig, RCPSYCH.proporsjonal] },
     },
     {
       id: 'lang_behandlingstid',
       tekst: `Pasienten har brukt ${fra.nokkel} i mange måneder eller lenger. Da anbefales mindre reduksjoner fra starten, og byttet planlegges individuelt med langsommere, symptomstyrt nedtrapping.`,
-      grunnlag: { type: 'kilde', henvisninger: [RCPSYCH.langvarig, RCPSYCH.fireUker] },
+      grunnlag: { type: 'kilde', henvisninger: [RCPSYCH.langvarig, RCPSYCH.proporsjonal, RCPSYCH.fireUker] },
     },
     {
       id: 'over_65',
@@ -237,6 +280,8 @@ const forsteDose = (fra: Fra) => fra.startdoser.at(-1)!
 
 const MIRTAZAPIN = { navn: 'mirtazapin', eldre: PREPARATOMTALE.remeronEldre, lever: PREPARATOMTALE.remeronNyreLever }
 const MIRTAZAPIN_MALDOSER = [15, 30]
+/** Tablettstyrkene av mirtazapin i FEST (mg) da reglene ble laget; 45 mg brukes ikke i planene. */
+const MIRTAZAPIN_STYRKER = [15, 30, 45]
 const BEKREFTET_MIRTAZAPIN = ['indikasjon', 'toleranse_overlapp', 'serotonerg_sammedisinering']
 
 export function ssriTilMirtazapin(fra: Fra): Regel {
@@ -280,6 +325,7 @@ export function ssriTilMirtazapin(fra: Fra): Regel {
             { type: 'hold', dose: { type: 'fast', mg: kilde(15, 'mg', 'veiledende_preferanse', SPC.remeronDose) }, varighet: { type: 'til_forlop_er_avsluttet', forlop: 'fra' } },
             { type: 'vedlikehold', dose: { type: 'inndata', navn: 'maldose' } },
           ],
+          vurderinger: oppfolgingAvNyttLegemiddel('mirtazapin', PREPARATOMTALE.remeronRespons, KEKS.kryss),
         },
       ],
     },
@@ -312,7 +358,7 @@ export function ssriTilMirtazapin(fra: Fra): Regel {
       bekreftelseIndikasjon([SPC.remeronDose, fra.dose]),
       {
         id: 'toleranse_overlapp',
-        tekst: `Toleransen vurderes før hver reduksjon og før seponeringen av ${fra.nokkel}: dagene er minstetider, og neste trinn tas først når eventuelle seponeringssymptomer er borte eller tålelige. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning. Responsen på mirtazapin vurderes 2–4 uker etter at vedlikeholdsdosen er nådd.`,
+        tekst: `Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av ${fra.nokkel}, før økningen av mirtazapin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. Mens begge brukes, følges økt sedasjon og tegn på serotonerg belastning.`,
         grunnlag: { type: 'kilde', henvisninger: [NICE.tempo, RCPSYCH.tid, NICE.kombinasjon, PREPARATOMTALE.remeronRespons] },
       },
       bekreftelseSammedisinering(fra, 'mirtazapin'),
@@ -338,7 +384,7 @@ export function ssriTilMirtazapin(fra: Fra): Regel {
         utsagn('Dagen etter siste dose av SSRI-et går mirtazapin til vedlikeholdsdosen forskriveren har valgt, 15 eller 30 mg. Planen er da fullført; en eventuell økning til 45 mg er en senere, responsstyrt vurdering.', KEKS.kryss, PREPARATOMTALE.remeronRespons),
         utsagn(
           'Planen gjelder bare kort behandlingstid uten tidligere seponeringsplager, voksne til og med 65 år og normal lever- og nyrefunksjon, med tabletter for begge legemidlene. Alt annet stopper, og byttet planlegges individuelt.',
-          RCPSYCH.langvarig,
+          RCPSYCH.langvarig, RCPSYCH.proporsjonal,
           NICE.tidligere,
         ),
       ],
@@ -388,7 +434,7 @@ export function ssriTilMirtazapin(fra: Fra): Regel {
       },
     ],
     klinisk_omfang: {
-      tilfeller: [{ legemiddelform: TABLETT, startdoser: fra.startdoser, svar: {}, styrker: { fra: fra.styrker, til: [15, 30, 45] } }],
+      tilfeller: [{ legemiddelform: TABLETT, startdoser: fra.startdoser, svar: {}, styrker: { fra: fra.styrker, til: MIRTAZAPIN_MALDOSER } }],
       grunnlag: {
         type: 'ousfar_vurdering',
         begrunnelse: `En klinisk godkjenning kan bare gjelde ${fra.nokkel} ${fra.startdoser.join(', ')} mg med tabletter (FEST-form 53) for begge virkestoffene og styrkene i FEST som er verifisert ende til ende.`,
@@ -463,6 +509,7 @@ export function ssriTilSertralin(fra: Fra): Regel {
             },
             { type: 'vedlikehold', dose: { type: 'inndata', navn: 'maldose' } },
           ],
+          vurderinger: oppfolgingAvNyttLegemiddel('sertralin', PREPARATOMTALE.cipralexRespons, PREPARATOMTALE.zoloftOkning),
         },
       ],
     },
@@ -495,7 +542,7 @@ export function ssriTilSertralin(fra: Fra): Regel {
       bekreftelseIndikasjon([PREPARATOMTALE.zoloftStart, fra.dose]),
       {
         id: 'toleranse_bytte',
-        tekst: `Toleransen vurderes før hver reduksjon og før seponeringen av ${fra.nokkel}: dagene er minstetider, og neste trinn tas først når eventuelle seponeringssymptomer er borte eller tålelige. I dagene uten SSRI og etter oppstart av sertralin følges seponeringssymptomer, forverring av depresjonen og bivirkninger. Responsen vurderes før økning og 2–4 uker etter at vedlikeholdsdosen er nådd.`,
+        tekst: `Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av ${fra.nokkel}, før økningen av sertralin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. I dagene uten SSRI følges seponeringssymptomer og forverring av depresjonen.`,
         grunnlag: { type: 'kilde', henvisninger: [NICE.tempo, RCPSYCH.tid, KEKS.moderat, PREPARATOMTALE.cipralexRespons] },
       },
       bekreftelseSammedisinering(fra, 'sertralin'),
@@ -526,7 +573,7 @@ export function ssriTilSertralin(fra: Fra): Regel {
         utsagn('OUSFAR har valgt et moderat bytte med utvasking, ikke direkte bytte eller kryssnedtrapping, fordi to SSRI-er samtidig gir høyere risiko for serotonerge bivirkninger.', KEKS.utvasking, KEKS.moderat),
         utsagn(
           'Planen gjelder bare kort behandlingstid uten tidligere seponeringsplager, voksne til og med 65 år og normal leverfunksjon, med tabletter for begge legemidlene. Alt annet stopper, og byttet planlegges individuelt.',
-          RCPSYCH.langvarig,
+          RCPSYCH.langvarig, RCPSYCH.proporsjonal,
           NICE.tidligere,
         ),
       ],
@@ -569,7 +616,7 @@ export function ssriTilSertralin(fra: Fra): Regel {
       },
     ],
     klinisk_omfang: {
-      tilfeller: [{ legemiddelform: TABLETT, startdoser: fra.startdoser, svar: {}, styrker: { fra: fra.styrker, til: SERTRALIN.styrker } }],
+      tilfeller: [{ legemiddelform: TABLETT, startdoser: fra.startdoser, svar: {}, styrker: { fra: fra.styrker, til: SERTRALIN_MALDOSER } }],
       grunnlag: {
         type: 'ousfar_vurdering',
         begrunnelse: `En klinisk godkjenning kan bare gjelde ${fra.nokkel} ${fra.startdoser.join(' og ')} mg med tabletter (FEST-form 53) for begge virkestoffene og styrkene i FEST som er verifisert ende til ende.`,
@@ -583,6 +630,14 @@ export function ssriTilSertralin(fra: Fra): Regel {
 
 /* --- Regelsettet ------------------------------------------------------------------------------ */
 
+/**
+ * Tablettstyrkene av det nye legemidlet i FEST da reglene ble laget. Planene
+ * bruker bare styrkene som er lik startdosen og vedlikeholdsdosene (én hel
+ * tablett), og det kliniske omfanget er kontrollert med bare dem; de andre
+ * skal kunne forsvinne fra FEST uten at planene stopper.
+ */
+export const NYTT_LEGEMIDDEL_I_FEST: Record<string, readonly number[]> = { mirtazapin: MIRTAZAPIN_STYRKER, sertralin: SERTRALIN.styrker }
+
 export const BYTTESETT: Regelsett = {
   id: 'ousfar-verktoy-antidepressivbytter',
   versjon: 1,
@@ -590,4 +645,13 @@ export const BYTTESETT: Regelsett = {
   beskrivelse:
     'Komplette bytter mellom antidepressiva (K2): fra pasientens nåværende dose til seponering av det gamle legemidlet og en valgt vedlikeholdsdose av det nye. Fem regler i to familier, til uavhengig faglig kontroll; ingen er klinisk godkjent.',
   regler: [ssriTilMirtazapin(SERTRALIN), ssriTilMirtazapin(ESCITALOPRAM), ssriTilMirtazapin(CITALOPRAM), ssriTilSertralin(ESCITALOPRAM), ssriTilSertralin(CITALOPRAM)],
+}
+
+export const ANTIDEPRESSIVBYTTER: Domenesett = {
+  sett: BYTTESETT,
+  rapport: {
+    fil: 'docs/verktøy-k2-antidepressivbytter-regler.md',
+    tittel: 'K2: komplette bytter mellom antidepressiva (til faglig kontroll)',
+    notater: ['docs/verktøy-k2-antidepressivbytter.md', 'docs/verktøy-k2-kontrollgrunnlag.md', 'docs/verktøy-p4-regelmodell.md'],
+  },
 }

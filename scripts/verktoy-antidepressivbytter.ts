@@ -1,7 +1,7 @@
 /**
  * K2 i `docs/verktøy-klinisk-leveranseplan-2026-11.md`: komplette bytter mellom antidepressiva.
  *
- *   npx vite-node scripts/verktoy-antidepressivbytter.ts -- rapport    docs/verktøy-k2-antidepressivbytter-regler.md og docs/verktøy-k2-kontrollgrunnlag.md
+ *   npx vite-node scripts/verktoy-antidepressivbytter.ts -- rapport    docs/verktøy-k2-kontrollgrunnlag.md (regelrapporten skrives av `npm run verktoy:regler -- rapport`)
  *   npx vite-node scripts/verktoy-antidepressivbytter.ts -- hent-fest  Henter FEST-uttrekket for K2 på nytt (krever VITE_SUPABASE_URL og SUPABASE_SECRET_KEY)
  *
  * Bare `hent-fest` henter noe, og bare ved å lese med `les_legemidler`. Skriptet
@@ -11,8 +11,7 @@ import { readFileSync, writeFileSync } from 'node:fs'
 import type { Festuttrekk } from '../src/verktoy/regler/aksepttest'
 import { festkoblinger } from '../src/verktoy/register'
 import { BYTTESETT } from '../src/verktoy/regler/antidepressivbytter'
-import { FEST_K2, K2_KONTROLLFIL, K2_REGELRAPPORT, lagK2Kontrollgrunnlag } from '../src/verktoy/k2kontroll'
-import { lagRegelrapport } from '../src/verktoy/regler/rapport'
+import { FEST_K2, K2_KONTROLLFIL, lagK2Kontrollgrunnlag } from '../src/verktoy/k2kontroll'
 
 const skriv = (fil: string, innhold: string) => {
   writeFileSync(new URL(`../${fil}`, import.meta.url), innhold)
@@ -20,7 +19,6 @@ const skriv = (fil: string, innhold: string) => {
 }
 
 async function rapport() {
-  skriv(K2_REGELRAPPORT.fil, lagRegelrapport(BYTTESETT, K2_REGELRAPPORT))
   const uttrekk = JSON.parse(readFileSync(new URL(`../${FEST_K2}`, import.meta.url), 'utf8')) as Festuttrekk
   skriv(K2_KONTROLLFIL, lagK2Kontrollgrunnlag(uttrekk))
 }

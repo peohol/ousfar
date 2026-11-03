@@ -34,6 +34,10 @@ export function Doseplanvisning({ plan, overskrift, varsel }: { plan: Planvisnin
           {plan.tittel}
         </h2>
         {plan.undertittel && <p className="doseplan__undertittel">{plan.undertittel}</p>}
+        <p className="doseplan__utfall" data-komplett={plan.utfall.komplett ? '' : undefined}>
+          <Ikon navn={plan.utfall.komplett ? 'done' : 'sev'} storrelse="ui" />
+          <span>{plan.utfall.tekst}</span>
+        </p>
         {varsel}
         <div className="doseplan__handlinger">
           <Button
@@ -76,7 +80,20 @@ export function Doseplanvisning({ plan, overskrift, varsel }: { plan: Planvisnin
                   <span className="doseplan__dager">{r.dager}</span>
                   {r.datoer && <span className="doseplan__datoer">{r.datoer}</span>}
                 </th>
-                {r.type === 'periode'
+                {r.type === 'vurdering' ? (
+                  plan.kolonner.map((_, j) => (
+                    <td key={j} role="cell" data-kolonne={kolonnenavn[j]} data-tom={j === r.kolonne ? undefined : ''}>
+                      {j === r.kolonne && (
+                        <span className="doseplan__vurdering">
+                          <Ikon navn="history" storrelse="ui" />
+                          <span>
+                            <strong>Vurdering</strong> {r.tekst}
+                          </span>
+                        </span>
+                      )}
+                    </td>
+                  ))
+                ) : r.type === 'periode'
                   ? r.celler.map((c, j) => (
                       <td key={j} role="cell" data-kolonne={kolonnenavn[j]} data-tom={c ? undefined : ''}>
                         {c ? <Celle celle={c} /> : <span aria-label="Ingen dose">–</span>}
@@ -109,6 +126,7 @@ export function Doseplanvisning({ plan, overskrift, varsel }: { plan: Planvisnin
           ))}
         </ul>
       )}
+      <Liste tittel="Vurderingspunkter" linjer={plan.vurderinger} />
       <Liste tittel="Viktig for denne planen" linjer={advarsler} tone="advarsel" />
       <Liste tittel="Avvik fra regelens kurve" linjer={plan.avvik} />
 

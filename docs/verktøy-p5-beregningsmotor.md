@@ -151,7 +151,17 @@ Motoren ble kjørt på pilotreglenes regneeksempler med FEST-filen lastet ned 28
 - *Godkjenningsfritak, avregistrering og 48 timer:* kan beholdes som beskrevet; ferskheten er nå et positivt krav (§9).
 - *Pilotreglene:* depotpreparat og toleranser krever nye, sporbare regelversjoner og egen P4.8-kontroll. At P5 stopper for dagens regler, er riktig.
 
-## 12. Hva som ikke er gjort
+## 12. Komplette forløp (doseplanmotor 10, 03.11.2026)
+
+Felles grunnlag for leveransene K1–K4 i `docs/verktøy-klinisk-leveranseplan-2026-11.md`. Ingen eksisterende regel, godkjenning eller fingeravtrykk er endret; testtilfellene for de godkjente reglene gir de samme dosene som før.
+
+- **Planutfall.** Hver klinisk plan sier øverst om den er en *komplett plan til sluttmålet* (hvert forløp er seponert, står på fast vedlikehold eller fortsetter uendret) eller en *delplan*, og i så fall hva den ikke dekker per legemiddel. Det står også i kopien. De godkjente planene i dag er delplaner (vortioksetin, sertralin → mirtazapin), unntatt de to depotoppstartene.
+- **Godkjent avslutning.** Motoren kontrollerer grensen for avslutningen mot den siste dosen som faktisk kan gis. Kan neste trinn ikke gis, og ingen dose kan velges for det, gjelder avslutningen fra trinnet før når det er innenfor grensen; da står det i planen. Kan forskriveren velge en dose for neste trinn, avsluttes planen ikke før valget er gjort.
+- **Vurderingspunkter** står som egne rader i tabellen (før endringen eller etter den) og samlet under «Vurderingspunkter», med hva som gjøres ved funn.
+- **Uendret dose og depot som stoppes.** Et forløp uten doser å sette sammen (bare seponering, uendret dose eller uten beregning) bruker ingen preparater, og verktøysiden ber ikke om legemiddelform for det. Et depot som stoppes, står som «Seponert – ingen flere injeksjoner».
+- **Opptrapping annenhver dag** settes sammen som en vanlig dose per gang og vises med «annenhver dag».
+
+## 13. Hva som ikke er gjort
 
 - Brukerflaten kom i P6: appen bruker motoren bare gjennom `kliniskDoseplan` i `src/verktoy/doseplan.ts`, og `src/__tests__/verktoyapp.test.ts` håndhever at modellberegningene og de syntetiske testdataene ikke når appen. De enkelte verktøyene (P7–P10) gjenstår.
 - Ingen regel var klinisk godkjent i P5; godkjenningene som er gitt senere, står i `docs/verktøy-p7-nedtrapping.md` §11.

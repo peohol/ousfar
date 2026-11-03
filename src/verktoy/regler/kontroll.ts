@@ -21,6 +21,7 @@ import {
   alleGrunnlag,
   henvisninger,
   nulltrinnfeil,
+  tilleggsfeil,
   parameterfeil,
   parametre,
   REGELMODELLVERSJON,
@@ -211,13 +212,15 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
   for (const x of r.plan.forlop) {
     for (const fase of x.faser) {
       if (fase.type !== 'nedtrapping') continue
-      const individuell = fase.avslutning === 'individuell'
+      // En godkjent avslutning (regelmodell 12) regner trinnene som en individuell avslutning, men seponerer fra en dose den gjelder for.
+      const godkjent = typeof fase.avslutning === 'object'
+      const individuell = fase.avslutning === 'individuell' || godkjent
       const slutt = fase.strategi.type === 'prosent_av_aktuell' ? fase.strategi.sluttdose_mg : undefined
       const sluttdose = !!slutt
       if (individuell && fase.minste_varighet) f(`forløp ${x.id} har både minste varighet og individuell avslutning; uten seponering har nedtrappingen ingen slutt å måle til`)
       // Uten seponering trengs en teknisk planhorisont. Ved seponering ville en sluttdose vært en nedre grense ingen har godkjent (P7.5);
       // ved bytte er den der beregningen stopper og resten vurderes individuelt, og den må ha en kilde.
-      if (individuell && !fase.horisont) f(`forløp ${x.id} har individuell avslutning uten teknisk planhorisont; planen ville ikke hatt noen grense`)
+      if (individuell && !godkjent && !fase.horisont) f(`forløp ${x.id} har individuell avslutning uten teknisk planhorisont; planen ville ikke hatt noen grense`)
       if (!individuell && fase.horisont) f(`forløp ${x.id} har en planhorisont uten individuell avslutning; en nedtrapping til 0 har ingen horisont`)
       if (individuell && sluttdose && r.plan.form === 'seponering') f(`forløp ${x.id} har både sluttdose og individuell avslutning; ingen nedre grense for beregnede trinn ved seponering er godkjent`)
       if (individuell && slutt && r.plan.form !== 'seponering' && !slutt.grunnlag.henvisninger?.length) f(`forløp ${x.id} stopper beregningen ved en sluttdose uten kilde`)
@@ -225,9 +228,19 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
       // Valg av dose per trinn (P7.5) gjelder bare innenfor regelens område for reduksjonen, når planen stopper ved et trinn som ikke kan gis, og uten toleranse.
       if (fase.trinnvalg) {
         if (fase.strategi.type !== 'prosent_av_aktuell' || !fase.strategi.prosent.omrade) f(`forløp ${x.id} lar forskriveren velge dose per trinn uten et område for reduksjonen i prosent av aktuell dose`)
-        if (!individuell) f(`forløp ${x.id} lar forskriveren velge dose per trinn uten individuell avslutning`)
+        if (!individuell) f(`forløp ${x.id} lar forskriveren velge dose per trinn uten individuell eller godkjent avslutning`)
         if (x.dosevalg?.avvik_prosent?.verdi) f(`forløp ${x.id} lar forskriveren velge dose per trinn og har samtidig en toleranse`)
       }
+    }
+  }
+  // Et tillegg beholder retningen eksisterende legemiddel → tillegg (regelmodell 12).
+  for (const x of tilleggsfeil(r)) f(x)
+  for (const x of r.plan.forlop) {
+    const ids = (x.vurderinger ?? []).map((v) => v.id)
+    if (new Set(ids).size !== ids.length) f(`forløp ${x.id} har to vurderingspunkter med samme id`)
+    for (const v of x.vurderinger ?? []) if (!v.tekst.trim()) f(`vurderingspunktet ${x.id}.${v.id} mangler tekst`)
+    for (const [i, fase] of x.faser.entries()) {
+      if (fase.type === 'seponer' && fase.avslutning && i !== x.faser.length - 1) f(`forløp ${x.id} har en godkjent avslutning før siste fase`)
     }
   }
   for (const x of tallfeil(r)) f(x)

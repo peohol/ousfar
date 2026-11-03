@@ -34,9 +34,10 @@ Et regelsett (`Regelsett`) har id, versjon og regelmodellversjon, og kan innehol
 
 - *hold* – en dose i et antall dager eller til et annet forløp er avsluttet;
 - *nedtrapping* – fra aktuell dose til null, med en strategi og en trinnlengde; første trinn er allerede redusert. Et minimum for varigheten kan være et bindende krav: blir nedtrappingen kortere, **stopper beregningen** i stedet for å forlenge den;
-- *opptrapping* – faste doser i faste dager (f.eks. kvetiapin dag 1–4);
+- *opptrapping* – faste doser i faste dager (f.eks. kvetiapin dag 1–4); et trinn kan gis hver *n*. dag i stedet for daglig (regelmodell 12, f.eks. annenhver dag);
 - *vedlikehold* – dosen planen ender med;
-- *seponer* – legemidlet stoppes når fasen starter;
+- *seponer* – legemidlet stoppes når fasen starter; i en ren seponering bare med en godkjent avslutning (se under);
+- *uendret* – legemidlet pasienten bruker, fortsetter med samme dose; planen beregner den ikke og bruker ingen preparater for den (regelmodell 12, tillegg);
 - *injeksjoner* – startinjeksjoner på bestemte dager (med tidsvindu og injeksjonssted) og månedlig vedlikehold (med tidsvindu, tidligste intervall og dose fra en omregningstabell). Depot har sin egen tidsmodell, ikke daglige doser (P5.7). Gir tabellen et **spenn** (Xeplion 25–50 mg ved 3 mg peroralt), er dosen i spennet et klinisk valg: forskriveren må oppgi den som måldose, ellers stopper beregningen. En oppgitt måldose ved en entydig rad må være lik tabellens;
 - *uten beregning* – forløpet kan starte, men doseringen beregnes ikke (f.eks. fenelzin, som mangler norsk preparatomtale).
 
@@ -98,6 +99,12 @@ Kontrollene krever at grensene i et krav er innenfor området, at `ved` er et sp
 **Gyldige verdier.** Doser og varigheter er endelige tall over 0, prosenter over 0 og høyst 100, og dager, måneder og trinn hele tall (`parameterfeil`). En startdato må være en gyldig kalenderdato som `ÅÅÅÅ-MM-DD`; `2027-02-31` normaliseres ikke. Ugyldige verdier i regelen eller inndata gir en stopp med grunnen, og beregningen kaster aldri: også en feil i regelen selv blir en kontrollert stopp.
 
 **Måneder.** Månedlige injeksjoner regnes fra forrige injeksjon. Med startdato er én måned senere samme dato, eller siste dag i måneden når den er kortere (31. januar → 28. februar); tidsvinduet i preparatomtalen gjelder rundt den datoen.
+
+**Komplette forløp (regelmodell 12, leveranseplanen 03.11.2026).**
+
+- *Godkjent avslutning:* en nedtrapping kan ha en avslutning med eget grunnlag og en høyeste dose den gjelder fra (`fra_hoyst_mg`). Trinnene beregnes som ved individuell avslutning (også valg av dose per trinn og laveste dose som kan gis). Siste dose gis ett trinn, og så seponeres legemidlet, men bare når den siste dosen som faktisk gis, ikke er over grensen. Ellers stopper planen der som før og sier hvorfor. Uten en slik avslutning går en ren seponering fortsatt aldri til null.
+- *Vurderingspunkter:* hvert forløp kan ha kliniske vurderings- og kontrollpunkter med grunnlag: før hver doseendring, et antall dager etter hver doseendring (også oppstart og seponering), eller på en bestemt dag. De står i planen og i kopien; beregningen tolker dem ikke.
+- *Tillegg:* et legemiddel legges til et pasienten bruker. Retningen er fast: legemidlet pasienten bruker, fortsetter (uendret, holdt eller som vedlikehold) og blir aldri trappet ned eller seponert i planen, og tillegget ender på en dose som fortsetter. En regel som bryter dette, kan ikke godkjennes.
 
 ## 4. Bindende krav, preferanser og beregnbarhet
 

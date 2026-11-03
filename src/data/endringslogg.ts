@@ -12,17 +12,34 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.124.6',
+    versjon: '1.125.1',
     dato: '2026-11-03',
     sammendrag: 'Komplette bytter mellom antidepressiva, til faglig kontroll',
     typer: ['Funksjonalitet'],
     omfang: 'Minimalt omfang',
+    gjelder: ['verktoy/bytte-antidepressiv'],
     punkter: [
-      'Ingen endring i appen ennå. Fem regler for hele bytter er skrevet: fra sertralin, escitalopram eller citalopram til mirtazapin, og fra escitalopram eller citalopram til sertralin. Hver plan går fra dagens dose til det gamle legemidlet er seponert og det nye står på en vedlikeholdsdose klinikeren velger, med norske tabletter.',
-      'Reglene bygger på de norske preparatomtalene og publiserte råd om bytte av antidepressiva, ikke på Psychiatrienet. De er sendt til uavhengig faglig kontroll og er ikke godkjent; verktøyet beregner dem ikke før de er det.',
+      'Gjelder bare administratorene. Fem regler for hele bytter er lagt inn: fra sertralin, escitalopram eller citalopram til mirtazapin, og fra escitalopram eller citalopram til sertralin. Hver plan går fra dagens dose til det gamle legemidlet er seponert og det nye står på en vedlikeholdsdose klinikeren velger, med norske tabletter.',
+      'Reglene bygger på de norske preparatomtalene og publiserte råd om bytte av antidepressiva, ikke på Psychiatrienet. De er sendt til uavhengig faglig kontroll og er ikke godkjent; til da sier verktøyet at faglig kontroll gjenstår i stedet for at det ikke har noen regel, og det beregner ingen plan.',
       'Det godkjente startforløpet fra sertralin til mirtazapin er uendret og er fortsatt det verktøyet viser.',
     ],
     utenVarsel: true,
+  },
+  {
+    versjon: '1.125.0',
+    dato: '2026-11-03',
+    sammendrag: 'De kliniske verktøyene kan vise komplette planer med vurderingspunkter, og har fått verktøyet for å kombinere stemningsstabiliserende',
+    typer: ['Funksjonalitet'],
+    omfang: 'Moderat omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Gjelder bare administratorene, som fortsatt er de eneste som ser verktøyene. Ingen godkjente regler, doser eller godkjenninger er endret.',
+      'Hver plan sier øverst om den er en komplett plan til sluttmålet (seponert, fast vedlikeholdsdose eller uendret dose) eller en delplan, og i så fall hva den ikke dekker. Det står også i teksten som kopieres.',
+      'Planene kan ha vurderingspunkter, for eksempel en vurdering før hver doseendring eller en kontroll et antall dager etter hver endring. De står på riktig dag i tabellen og samlet under «Vurderingspunkter».',
+      'En nedtrapping kan nå gå helt til seponering når regelen har en faglig godkjent avslutning, og bare fra en dose avslutningen gjelder for. Ellers stopper planen som før og sier hvorfor.',
+      'Nytt verktøy «Kombinere stemningsstabiliserende»: det eksisterende legemidlet fortsetter uendret, og planen gjelder oppstart og opptrapping av det som legges til, også med dose annenhver dag. Verktøyet har ingen godkjente regler ennå.',
+      'Når et depot byttes til et annet depot, står det i planen at det gamle ikke skal ha flere injeksjoner, og verktøyet ber ikke om legemiddelform for et legemiddel som bare skal stoppes.',
+    ],
   },
   {
     versjon: '1.124.4',

@@ -1114,7 +1114,7 @@ describe('Doseplanene (P7.3–P7.4)', () => {
     }
     expect(endre(() => {})).toEqual([])
     expect(endre((fase) => { if (fase.strategi.type === 'prosent_av_aktuell') delete fase.strategi.prosent.omrade })).toEqual(expect.arrayContaining([expect.stringMatching(/velge dose per trinn uten et område for reduksjonen/)]))
-    expect(endre((fase) => { delete fase.avslutning })).toEqual(expect.arrayContaining([expect.stringMatching(/velge dose per trinn uten individuell avslutning/)]))
+    expect(endre((fase) => { delete fase.avslutning })).toEqual(expect.arrayContaining([expect.stringMatching(/velge dose per trinn uten individuell eller godkjent avslutning/)]))
     const toleranse = (fase: Extract<Fase, { type: 'nedtrapping' }>, r: Regel) => {
       if (fase.strategi.type === 'prosent_av_aktuell') r.plan.forlop[0]!.dosevalg = { avvik_prosent: { ...fase.strategi.prosent, verdi: 5 } }
     }

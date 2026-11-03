@@ -12,18 +12,19 @@ Kildetabellen fra Psychiatrienet er bare brukt som metadata som allerede ligger 
 
 Antall kombinasjoner etter hva verktøyet gir. For seponering er en kombinasjon ett virkestoff i én formulering; for bytte et ordnet par av ulike valg (fra → til), også mellom formuleringer av samme virkestoff. En kombinasjon med «beregning» gir en plan bare for de startdosene, svarene og preparatene regelen er godkjent for (avsnitt 2); alt annet stopper med forklaring.
 
-| Utfall | Trappe ned antidepressiv | Bytte antidepressiv | Bytte antipsykotikum |
-| --- | --- | --- | --- |
-| Valgbart | 23 virkestoffer, 23 valg med formulering | 23 virkestoffer, 23 valg med formulering | 25 virkestoffer, 34 valg med formulering |
-| Kombinasjoner | 23 | 506 | 1122 |
-| Beregning med klinisk godkjent regel (i godkjent omfang) | 1 | 1 | 2 |
-| Klinisk godkjent fagtekst, ingen beregning | 2 | 0 | 0 |
-| Regel finnes, kontrollert og ikke godkjent | 7 | 1 | 1 |
-| Regel finnes som fagtekst, ikke godkjent | 6 | 0 | 0 |
-| Ingen OUSFAR-regel; kilden har en anbefaling | 0 | 504 | 892 |
-| Ingen OUSFAR-regel; kilden har ingen anbefaling | 0 | 0 | 161 |
-| Ingen OUSFAR-regel; begrenset av preparater eller kilde | 7 | 0 | 0 |
-| Ikke støttet: middels langtidsvirkende injeksjon | 0 | 0 | 66 |
+| Utfall | Trappe ned antidepressiv | Bytte antidepressiv | Bytte antipsykotikum | Kombinere stemningsstabiliserende |
+| --- | --- | --- | --- | --- |
+| Valgbart | 23 virkestoffer, 23 valg med formulering | 23 virkestoffer, 23 valg med formulering | 25 virkestoffer, 34 valg med formulering | 11 virkestoffer, 11 valg med formulering |
+| Kombinasjoner | 23 | 506 | 1122 | 110 |
+| Beregning med klinisk godkjent regel (i godkjent omfang) | 1 | 1 | 2 | 0 |
+| Klinisk godkjent fagtekst, ingen beregning | 2 | 0 | 0 | 0 |
+| Regel finnes, kontrollert og ikke godkjent | 7 | 1 | 1 | 0 |
+| Regel finnes som fagtekst, ikke godkjent | 6 | 0 | 0 | 0 |
+| Regel finnes, ikke ferdig kontrollert | 0 | 4 | 0 | 0 |
+| Ingen OUSFAR-regel; kilden har en anbefaling | 0 | 500 | 892 | 110 |
+| Ingen OUSFAR-regel; kilden har ingen anbefaling | 0 | 0 | 161 | 0 |
+| Ingen OUSFAR-regel; begrenset av preparater eller kilde | 7 | 0 | 0 | 0 |
+| Ikke støttet: middels langtidsvirkende injeksjon | 0 | 0 | 66 | 0 |
 
 ## 2. Hva kan beregnes i dag
 
@@ -132,6 +133,11 @@ Regelutkast som er kontrollert og ikke godkjent (eller bare fagtekst), og som de
 | Trappe ned antidepressiv | `seponering-sertralin-langsom` v8 | Sertralin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-venlafaksin` v6 | Venlafaksin | fagtekst | bare fagtekst |
 | Trappe ned antidepressiv | `seponering-vortioksetin-langsom` v8 | Vortioksetin | beregnbar | ikke godkjent |
+| Bytte antidepressiv | `bytte-citalopram-mirtazapin` v1 | Citalopram → Mirtazapin | beregnbar | til kontroll |
+| Bytte antidepressiv | `bytte-citalopram-sertralin` v1 | Citalopram → Sertralin | beregnbar | til kontroll |
+| Bytte antidepressiv | `bytte-escitalopram-mirtazapin` v1 | Escitalopram → Mirtazapin | beregnbar | til kontroll |
+| Bytte antidepressiv | `bytte-escitalopram-sertralin` v1 | Escitalopram → Sertralin | beregnbar | til kontroll |
+| Bytte antidepressiv | `bytte-sertralin-mirtazapin` v1 | Sertralin → Mirtazapin | beregnbar | til kontroll |
 | Bytte antidepressiv | `mao-fluoksetin-fenelzin` v7 | Fluoksetin → Fenelzin | beregnbar | ikke godkjent |
 | Bytte antipsykotikum | `antipsykotikabytte-olanzapin-kvetiapin` v5 | Olanzapin (peroral) → Kvetiapin | beregnbar | ikke godkjent |
 
@@ -158,11 +164,11 @@ Per fra-valg: hvor mange til-valg som gir plan eller godkjent fagtekst, hvor man
 | Agomelatin | 22 | 0 | 0 | 22 | 0 | 0 |
 | Amitriptylin | 22 | 0 | 0 | 22 | 0 | 0 |
 | Bupropion | 22 | 0 | 0 | 22 | 0 | 0 |
-| Citalopram | 22 | 0 | 0 | 22 | 0 | 0 |
+| Citalopram | 22 | 0 | 2 | 20 | 0 | 0 |
 | Doksepin | 22 | 0 | 0 | 22 | 0 | 0 |
 | Dosulepin | 22 | 0 | 0 | 22 | 0 | 0 |
 | Duloksetin | 22 | 0 | 0 | 22 | 0 | 0 |
-| Escitalopram | 22 | 0 | 0 | 22 | 0 | 0 |
+| Escitalopram | 22 | 0 | 2 | 20 | 0 | 0 |
 | Fenelzin | 22 | 0 | 0 | 22 | 0 | 0 |
 | Fluoksetin | 22 | 0 | 1 | 21 | 0 | 0 |
 | Fluvoksamin | 22 | 0 | 0 | 22 | 0 | 0 |
