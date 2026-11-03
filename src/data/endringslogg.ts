@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.121.2',
+    versjon: '1.122.3',
     dato: '2026-11-03',
     sammendrag: 'Kontroll av hele oppfølgingen når en kilde for de kliniske verktøyene endres',
     typer: ['Funksjonalitet'],
@@ -21,6 +21,21 @@ export const ENDRINGSLOGG: Endring[] = [
       'Ingen endring i det brukerne ser. Hele veien fra en endret kilde til det klinikeren ser i verktøyet er prøvd med syntetiske funn: en endring uten faglig betydning avsluttes uten å nå redaktøren, et faglig spørsmål gir en merknad bare ved den berørte anbefalingen og avsluttes først når tiltaket er kontrollert, og en alvorlig risiko stanser bare den berørte regelen, mens andre godkjente beregninger virker. Produksjonen er kontrollert, og den gamle prøvesaken med frist er avsluttet. Ingen doser, grenser, regler eller godkjenninger er endret.',
     ],
     utenVarsel: true,
+  },
+  {
+    versjon: '1.122.0',
+    dato: '2026-11-03',
+    sammendrag: 'Verktøyene tåler korte brudd bedre, og sier fra når en plan ble tatt bort',
+    typer: ['Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Svarer ikke kontrollen av om verktøyet er midlertidig deaktivert, prøver verktøyet selv på nytt etter 5 og etter 15 sekunder, og med en gang forbindelsen er tilbake. Til en kontroll lykkes, vises fortsatt ingen doseplan eller fagtekst.',
+      'Er det ingen forbindelse, står det nå «Ingen forbindelse» i stedet for den generelle meldingen.',
+      'Ble en plan tatt bort fordi kontrollen ikke svarte, står det «Planen ble tatt bort fordi sikkerhetskontrollen ikke svarte. Beregn på nytt.» ved knappen når kontrollen svarer igjen. Planen beregnes ikke på nytt av seg selv; du trykker selv «Beregn doseplan». Var det en sperre som tok planen, vises sperren som før.',
+      'Feiler hentingen av preparatene fra FEST når du beregner, prøver verktøyet én gang til før det sier fra. Kravene til planen er de samme som før.',
+      'Ingen doser, grenser, regler eller godkjenninger er endret, og FEST-dataene må fortsatt være kontrollert de siste 48 timene.',
+    ],
   },
   {
     versjon: '1.121.1',

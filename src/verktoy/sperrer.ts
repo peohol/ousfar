@@ -67,6 +67,31 @@ export const SPERRENE_GJELDER_MS = 2 * LES_SPERRENE_HVER_MS
 /** Teksten når en lesing av sperrene ikke svarte innen fristen. */
 export const FOR_SEN = 'Kontrollen av sperrene svarte ikke i tide.'
 
+/**
+ * Etter en lesing som feilet, leses sperrene på nytt etter så lenge (N1 i
+ * `docs/verktøy-vdr4-tilgjengelighet.md`): først etter 5 sekunder, og feiler
+ * også den, etter 15 til. Deretter gjelder de vanlige lesingene. Ingenting
+ * klinisk vises før en av dem lykkes.
+ */
+export const NYE_FORSOK_MS = [5_000, 15_000] as const
+
+/** I stedet for `UKONTROLLERT` når nettleseren er uten nett, eller kallet ikke nådde serveren. */
+export const UTEN_NETT = 'Ingen forbindelse. Verktøyet viser ingen doseplan eller fagtekst før forbindelsen er tilbake.'
+
+/**
+ * Ved «Beregn doseplan» når en plan som sto, ble tatt bort fordi sperrene
+ * ikke kunne leses eller lesingen var for gammel, og en ny lesing så har
+ * lyktes uten sperre (S6). Planen beregnes aldri på nytt av seg selv.
+ */
+export const PLAN_TATT_BORT = 'Planen ble tatt bort fordi sikkerhetskontrollen ikke svarte. Beregn på nytt.'
+
+/** Feilmeldingene nettleserne gir når et kall ikke nådde serveren (Chrome, Firefox, Safari og React Native). */
+const NETTVERKSFEIL = /failed to fetch|networkerror|load failed|network request failed/i
+
+/** Om en lesing som feilet med `melding`, feilet fordi det ikke er forbindelse. */
+export const utenForbindelse = (melding: string, paNett: boolean = typeof navigator === 'undefined' || navigator.onLine !== false): boolean =>
+  !paNett || NETTVERKSFEIL.test(melding)
+
 /** `p`, eller en feil med `melding` når den ikke er ferdig innen `ms`. */
 export function medFrist<T>(p: Promise<T>, ms: number, melding: string): Promise<T> {
   let tidtaker: ReturnType<typeof setTimeout> | undefined

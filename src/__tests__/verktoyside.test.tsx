@@ -23,12 +23,12 @@ import { act, cleanup, fireEvent, render, screen, within } from '@testing-librar
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { VARSLER_HENTES, VARSLER_ULEST } from '../components/verktoy/Regelvarsler'
-import { DEKNING_UKONTROLLERT, TILGJENGELIGHET_UKONTROLLERT, Verktoyside, type VerktoysideProps } from '../components/verktoy/Verktoyside'
+import { DEKNING_UKONTROLLERT, FEST_NYTT_FORSOK_MS, TILGJENGELIGHET_UKONTROLLERT, Verktoyside, type VerktoysideProps } from '../components/verktoy/Verktoyside'
 import { lagRegelvarsellager, UGYLDIGE_REGELVARSLER } from '../verktoy/overvaking/regelvarsler'
 import type { Legemiddelutvalg } from '../legemiddeldata/lesing'
 import { glemBildet, oppdaterOgTaVare, taBilde } from '../oppdatering/bevaring'
 import { KARTLEGGING } from '../verktoy/register'
-import { LESEFRIST_MS, SPERRENE_GJELDER_MS, type Verktoysperre } from '../verktoy/sperrer'
+import { FOR_SEN, LES_SPERRENE_HVER_MS, LESEFRIST_MS, NYE_FORSOK_MS, PLAN_TATT_BORT, SPERRENE_GJELDER_MS, UKONTROLLERT, UTEN_NETT, utenForbindelse, type Verktoysperre } from '../verktoy/sperrer'
 import { osloDato } from '../verktoy/doseplan'
 import { STARTFORLOP } from '../verktoy/planvisning'
 import { FEST_AKSEPTTEST, FEST_PILOT } from '../verktoy/regler/aksepttest'
@@ -321,7 +321,9 @@ describe('med en regel godkjent bare i testen', () => {
     await user.type(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' }), 'Escitalopram')
     await user.type(screen.getByRole('textbox', { name: /Aktuell døgndose/ }), '25')
     await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
-    expect((await screen.findByRole('alert')).textContent).toMatch(/Fikk ikke hentet preparatene fra FEST\. Nettverket svarte ikke\./)
+    // K6: ett nytt forsøk etter to sekunder, så feilen.
+    expect((await screen.findByRole('alert', {}, { timeout: 4000 })).textContent).toMatch(/Fikk ikke hentet preparatene fra FEST\. Nettverket svarte ikke\./)
+    expect(legemidler.les).toHaveBeenCalledTimes(2)
     unmount()
 
     vis({ verktoy: 'trappe-ned-antidepressiv', legemidler: lesing(() => ({ ...testFest(), kilde: 'Syntetiske testdata' })), regelsett, klokke: TESTKLOKKE })
@@ -679,9 +681,9 @@ describe('nødstoppen (P11.6)', () => {
     const fokus = () => act(async () => window.dispatchEvent(new Event('focus')))
 
     /** Viser nedtrappingen med `lager` som nødstopp og beregner en plan. */
-    async function medPlan(lager: ReturnType<typeof nodstopp>) {
+    async function medPlan(lager: ReturnType<typeof nodstopp>, props: Partial<VerktoysideProps> = {}) {
       const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
-      vis({ verktoy: 'trappe-ned-antidepressiv', legemidler: lesing(), sperrer: lager, regelsett, klokke: TESTKLOKKE })
+      vis({ verktoy: 'trappe-ned-antidepressiv', legemidler: lesing(), sperrer: lager, regelsett, klokke: TESTKLOKKE, ...props })
       await fyllInn(user)
       await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
       expect(await screen.findByRole('table')).toBeTruthy()
@@ -703,8 +705,12 @@ describe('nødstoppen (P11.6)', () => {
       expect(screen.queryByRole('button', { name: 'Beregn doseplan' })).toBeNull()
       henger = false
       await user.click(screen.getByRole('button', { name: 'Prøv igjen' }))
-      await user.click(await screen.findByRole('button', { name: 'Beregn doseplan' }))
+      // Planen kommer ikke tilbake av seg selv; siden sier hvorfor den ble borte (S6).
+      expect(await screen.findByText(PLAN_TATT_BORT)).toBeTruthy()
+      expect(screen.queryByRole('table')).toBeNull()
+      await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
       expect(await screen.findByRole('table')).toBeTruthy()
+      expect(screen.queryByText(PLAN_TATT_BORT)).toBeNull()
     })
 
     it('tar bort en plan som står når ingen ny lesing kommer før den forrige går ut, og leser sperrene på nytt', async () => {
@@ -723,6 +729,14 @@ describe('nødstoppen (P11.6)', () => {
         expect(screen.queryByRole('table')).toBeNull()
         expect(screen.getByText(/Kontrollerer om verktøyet er tilgjengelig/)).toBeTruthy()
         expect(lager.les.mock.calls.length).toBe(lest + 1)
+        // Lesingen svarer ikke innen fristen; det nye forsøket etter fem sekunder lykkes, og siden sier at planen ble tatt bort.
+        await vent(LESEFRIST_MS)
+        expect(screen.getByRole('alert').textContent).toContain(UKONTROLLERT)
+        henger = false
+        await vent(NYE_FORSOK_MS[0])
+        expect(lager.les.mock.calls.length).toBe(lest + 2)
+        expect(await screen.findByText(PLAN_TATT_BORT)).toBeTruthy()
+        expect(screen.queryByRole('table')).toBeNull()
       } finally {
         delete (document as { visibilityState?: unknown }).visibilityState
       }
@@ -753,6 +767,264 @@ describe('nødstoppen (P11.6)', () => {
       await act(async () => svar[2]!([]))
       expect(screen.getByRole('alert', { name: 'Midlertidig deaktivert' })).toBeTruthy()
       expect(screen.queryByRole('button', { name: 'Beregn doseplan' })).toBeNull()
+    })
+
+    /**
+     * Kortvarig svikt (S6, N1 og K6 i `docs/verktøy-vdr4-tilgjengelighet.md`):
+     * nye forsøk på å lese sperrene, en melding når en plan ble tatt bort fordi
+     * kontrollen ikke svarte, og ett nytt forsøk mot FEST. Ingenting beregnes
+     * av seg selv, og en sperre gjelder så snart den er lest.
+     */
+    describe('kortvarig svikt (VDR-4)', () => {
+      /** Nødstoppen som feiler med `svikt.feil` så lenge `svikt.na` er sann, og ellers gir `svikt.aktive`. */
+      const ustabil = () => {
+        const svikt = { na: false, feil: 'Tjenesten svarte med en feil.', aktive: [] as Verktoysperre[] }
+        const lager = nodstopp(() => {
+          if (svikt.na) throw new Error(svikt.feil)
+          return svikt.aktive
+        })
+        return { svikt, lager }
+      }
+      const tattBort = () => screen.queryByText(PLAN_TATT_BORT)
+      const beregnknapp = () => screen.getByRole('button', { name: 'Beregn doseplan' }) as HTMLButtonElement
+      /** Én lesing som feiler, og en vellykket rett etter. */
+      async function kortBrudd(svikt: ReturnType<typeof ustabil>['svikt']) {
+        svikt.na = true
+        await fokus()
+        expect((await screen.findByRole('alert')).textContent).toContain(UKONTROLLERT)
+        svikt.na = false
+        await fokus()
+        await screen.findByRole('button', { name: 'Beregn doseplan' })
+      }
+
+      it('leser sperrene på nytt etter 5 og 15 sekunder, viser ingenting klinisk imens, og ber om en ny beregning uten å beregne selv', async () => {
+        const { svikt, lager } = ustabil()
+        const legemidler = lesing()
+        const user = await medPlan(lager, { legemidler })
+        const hentet = legemidler.les.mock.calls.length
+        svikt.na = true
+        await fokus()
+        expect((await screen.findByRole('alert')).textContent).toContain(UKONTROLLERT)
+        expect(screen.queryByRole('table')).toBeNull()
+        expect(tattBort()).toBeNull()
+
+        const lest = lager.les.mock.calls.length
+        await vent(NYE_FORSOK_MS[0] - 100)
+        expect(lager.les.mock.calls.length).toBe(lest)
+        await vent(100)
+        expect(lager.les.mock.calls.length).toBe(lest + 1)
+        expect(screen.getByRole('alert').textContent).toContain(UKONTROLLERT)
+        expect(screen.queryByRole('table')).toBeNull()
+
+        svikt.na = false
+        await vent(NYE_FORSOK_MS[1])
+        expect(lager.les.mock.calls.length).toBe(lest + 2)
+        const melding = await screen.findByText(PLAN_TATT_BORT)
+        expect(melding.getAttribute('role')).toBe('status')
+        expect(beregnknapp().disabled).toBe(false)
+        expect(screen.queryByRole('table')).toBeNull()
+        // Heller ikke senere kontroller beregner planen av seg selv.
+        await vent(LES_SPERRENE_HVER_MS)
+        expect(screen.queryByRole('table')).toBeNull()
+        expect(legemidler.les.mock.calls.length).toBe(hentet)
+
+        await user.click(beregnknapp())
+        expect(await screen.findByRole('table')).toBeTruthy()
+        expect(tattBort()).toBeNull()
+        expect(legemidler.les.mock.calls.length).toBe(hentet + 1)
+      })
+
+      it('viser ikke meldingen når vellykkede lesinger bare bekrefter planen som står, heller ikke etter en ny beregning etter et brudd', async () => {
+        const { svikt, lager } = ustabil()
+        const user = await medPlan(lager)
+        /** Vellykkede lesinger, både ved fokus og hvert minutt: planen står, og meldingen vises ikke. */
+        const bekreftet = async () => {
+          const lest = lager.les.mock.calls.length
+          await fokus()
+          await vent(LES_SPERRENE_HVER_MS)
+          await fokus()
+          expect(lager.les.mock.calls.length).toBeGreaterThanOrEqual(lest + 3)
+          expect(screen.getByRole('table')).toBeTruthy()
+          expect(tattBort()).toBeNull()
+        }
+        await bekreftet()
+
+        // Et reelt tap gir meldingen; etter en ny beregning kommer den ikke tilbake ved nye vellykkede lesinger.
+        await kortBrudd(svikt)
+        expect(tattBort()).toBeTruthy()
+        await user.click(beregnknapp())
+        expect(await screen.findByRole('table')).toBeTruthy()
+        expect(tattBort()).toBeNull()
+        await bekreftet()
+      })
+
+      it('ber om en ny beregning når planen ble tatt bort fordi lesingen ble for gammel mens fanen var skjult', async () => {
+        // Lesingen tar et øyeblikk, som over nettet.
+        let treg = false
+        const lager = nodstopp(() => (treg ? new Promise<Verktoysperre[]>((ok) => setTimeout(() => ok([]), 200)) : []))
+        const legemidler = lesing()
+        await medPlan(lager, { legemidler })
+        const hentet = legemidler.les.mock.calls.length
+        treg = true
+        Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => 'hidden' })
+        try {
+          await vent(SPERRENE_GJELDER_MS)
+          expect(screen.queryByRole('table')).toBeNull()
+          await vent(200)
+        } finally {
+          delete (document as { visibilityState?: unknown }).visibilityState
+        }
+        expect(await screen.findByText(PLAN_TATT_BORT)).toBeTruthy()
+        expect(screen.queryByRole('table')).toBeNull()
+        expect(legemidler.les.mock.calls.length).toBe(hentet)
+      })
+
+      it('prøver bare to ganger på nytt, og begynner rekken på nytt ved en ny feil', async () => {
+        const { svikt, lager } = ustabil()
+        await medPlan(lager)
+        // Fanen er ikke synlig, så bare de nye forsøkene leser sperrene.
+        Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => 'hidden' })
+        try {
+          svikt.na = true
+          const lest = lager.les.mock.calls.length
+          await act(async () => window.dispatchEvent(new Event('online')))
+          expect(lager.les.mock.calls.length).toBe(lest + 1)
+          await vent(NYE_FORSOK_MS[0] + NYE_FORSOK_MS[1])
+          expect(lager.les.mock.calls.length).toBe(lest + 3)
+          await vent(SPERRENE_GJELDER_MS)
+          expect(lager.les.mock.calls.length).toBe(lest + 3)
+          expect(screen.getByRole('alert').textContent).toContain(UKONTROLLERT)
+          // «Prøv igjen» er en ny feil, ikke et forsøk i rekken: den gir et nytt forsøk etter 5 sekunder.
+          fireEvent.click(screen.getByRole('button', { name: 'Prøv igjen' }))
+          await act(async () => {})
+          expect(lager.les.mock.calls.length).toBe(lest + 4)
+          await vent(NYE_FORSOK_MS[0])
+          expect(lager.les.mock.calls.length).toBe(lest + 5)
+        } finally {
+          delete (document as { visibilityState?: unknown }).visibilityState
+        }
+      })
+
+      it('sier fra om at forbindelsen mangler, og leser sperrene med en gang den er tilbake', async () => {
+        const { svikt, lager } = ustabil()
+        await medPlan(lager)
+        svikt.feil = 'TypeError: Failed to fetch'
+        svikt.na = true
+        await fokus()
+        const varsel = await screen.findByRole('alert')
+        expect(varsel.textContent).toContain(UTEN_NETT)
+        expect(varsel.textContent).not.toContain(UKONTROLLERT)
+        expect(screen.queryByRole('alert', { name: 'Midlertidig deaktivert' })).toBeNull()
+        expect(screen.queryByRole('table')).toBeNull()
+
+        svikt.na = false
+        const lest = lager.les.mock.calls.length
+        await act(async () => window.dispatchEvent(new Event('online')))
+        expect(lager.les.mock.calls.length).toBe(lest + 1)
+        expect(await screen.findByText(PLAN_TATT_BORT)).toBeTruthy()
+        expect(screen.queryByRole('table')).toBeNull()
+
+        // Sier nettleseren selv at den er uten nett, gjelder det samme uansett feilmelding.
+        vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false)
+        svikt.feil = 'Tjenesten svarte med en feil.'
+        svikt.na = true
+        await fokus()
+        expect((await screen.findByRole('alert')).textContent).toContain(UTEN_NETT)
+      })
+
+      it('viser sperren, ikke meldingen, når lesingen etter bruddet finner en sperre, og heller ikke meldingen for en plan som sperren tok bort', async () => {
+        const { svikt, lager } = ustabil()
+        const user = await medPlan(lager)
+        svikt.na = true
+        await fokus()
+        expect(await screen.findByRole('alert')).toBeTruthy()
+        svikt.aktive = [sperre('regel', TEST_NEDTRAPPING.id)]
+        svikt.na = false
+        await vent(NYE_FORSOK_MS[0])
+        expect(await screen.findByRole('alert', { name: 'Midlertidig deaktivert' })).toBeTruthy()
+        expect(tattBort()).toBeNull()
+        expect(screen.queryByRole('button', { name: 'Beregn doseplan' })).toBeNull()
+        svikt.aktive = []
+        await fokus()
+        await user.click(await screen.findByRole('button', { name: 'Beregn doseplan' }))
+        expect(await screen.findByRole('table')).toBeTruthy()
+
+        // Sperren tar bort planen; et brudd mens sperren står, gir ikke meldingen når sperren er opphevet, for det var sperren som tok planen.
+        svikt.aktive = [sperre('regel', TEST_NEDTRAPPING.id)]
+        await fokus()
+        expect(await screen.findByRole('alert', { name: 'Midlertidig deaktivert' })).toBeTruthy()
+        svikt.na = true
+        await fokus()
+        expect((await screen.findByRole('alert')).textContent).toContain(UKONTROLLERT)
+        svikt.aktive = []
+        svikt.na = false
+        await fokus()
+        await screen.findByRole('button', { name: 'Beregn doseplan' })
+        expect(tattBort()).toBeNull()
+        expect(screen.queryByRole('table')).toBeNull()
+      })
+
+      it('tar bort meldingen når noe endres, viser den ikke uten en plan, og tar den ikke med gjennom en oppdatering av appen', async () => {
+        const { svikt, lager } = ustabil()
+        const user = await medPlan(lager)
+        await kortBrudd(svikt)
+        expect(tattBort()).toBeTruthy()
+        const dose = screen.getByRole('textbox', { name: /Aktuell døgndose/ })
+        await user.clear(dose)
+        await user.type(dose, '20')
+        expect(tattBort()).toBeNull()
+
+        // Uten en plan som står, er det ingen plan å ta bort.
+        await kortBrudd(svikt)
+        expect(tattBort()).toBeNull()
+
+        await user.click(beregnknapp())
+        expect(await screen.findByRole('table')).toBeTruthy()
+        await kortBrudd(svikt)
+        expect(tattBort()).toBeTruthy()
+        oppdaterOgTaVare(vi.fn())
+        cleanup()
+        glemBildet()
+        vis({ verktoy: 'trappe-ned-antidepressiv', legemidler: lesing(), sperrer: lager, regelsett, klokke: TESTKLOKKE })
+        expect(((await screen.findByRole('textbox', { name: /Aktuell døgndose/ })) as HTMLInputElement).value).toBe('20')
+        expect(tattBort()).toBeNull()
+        expect(screen.queryByRole('table')).toBeNull()
+      })
+
+      it('prøver FEST én gang til før feilen vises, og kontrollerer svaret som ellers', async () => {
+        let tid = TESTKLOKKE()
+        const legemidler = lesing()
+        const user = await medPlan(nodstopp(), { legemidler, klokke: () => tid })
+        const hentet = legemidler.les.mock.calls.length
+
+        // Første henting feiler, den andre lykkes: planen vises uten feil.
+        legemidler.les.mockRejectedValueOnce(new Error('Nettverket svarte ikke.'))
+        await user.click(beregnknapp())
+        await vent(FEST_NYTT_FORSOK_MS - 100)
+        expect(legemidler.les.mock.calls.length).toBe(hentet + 1)
+        expect(screen.queryByRole('alert')).toBeNull()
+        await vent(100)
+        expect(await screen.findByRole('table')).toBeTruthy()
+        expect(legemidler.les.mock.calls.length).toBe(hentet + 2)
+        expect(screen.queryByRole('alert')).toBeNull()
+
+        // Er FEST-kopien fra det nye forsøket for gammel, gir den ingen plan.
+        tid = new Date('2026-11-03T12:00:00Z')
+        legemidler.les.mockRejectedValueOnce(new Error('Nettverket svarte ikke.'))
+        await user.click(beregnknapp())
+        await vent(FEST_NYTT_FORSOK_MS)
+        const stopp = await screen.findByRole('heading', { name: 'Ingen doseplan' })
+        expect(stopp.parentElement!.textContent).toMatch(/sist kontrollert mot FEST/)
+        expect(screen.queryByRole('table')).toBeNull()
+        expect(legemidler.les.mock.calls.length).toBe(hentet + 4)
+      })
+
+      it('kjenner igjen et kall som ikke nådde serveren', () => {
+        for (const m of ['TypeError: Failed to fetch', 'NetworkError when attempting to fetch resource.', 'Load failed', 'Network request failed']) expect(utenForbindelse(m, true)).toBe(true)
+        expect(utenForbindelse('permission denied for function les_verktoysperrer', true)).toBe(false)
+        expect(utenForbindelse(FOR_SEN, true)).toBe(false)
+        expect(utenForbindelse('Tjenesten svarte med en feil.', false)).toBe(true)
+      })
     })
   })
 })
