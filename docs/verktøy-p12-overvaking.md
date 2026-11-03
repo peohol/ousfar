@@ -93,6 +93,8 @@ Hver sak har én tilstand (`public.kildefunn.tilstand`, migrasjonen `20261102210
 
 Et nytt funn starter alltid i `teknisk_utredning`. En endret kontrollsum alene når aldri redaktøren, gir ingen varsel i verktøyene og sperrer ingenting. Ukjent eller uavklart er ikke det samme som «ingen endring».
 
+**Nytt kildeinnhold i en åpen sak.** I det tekniske sporet gjelder en tidligere konklusjon ikke lenger, og saken undersøkes på nytt. Venter et spørsmål på beslutning, trekkes det tilbake til `faglig_gjennomgang`; spørsmålet og en eventuell utsettelse står i hendelsen, og redaktøren får ikke velge ut fra et spørsmål om eldre innhold før agenten har vurdert det siste innholdet og lagt frem spørsmålet på nytt. Under `oppfolging` står beslutningen, tiltakene og en eventuell nødstopp, men saken avsluttes ikke før det nye innholdet er vurdert: enten med en dokumentert konklusjon om at det er dekket av beslutningen (`teknisk_konklusjon`), med et nytt spørsmål til redaktøren (`faglig_sporsmal`, de tidligere tiltakene står), eller ved at en kontroll finner kilden i samsvar med det kontrollerte grunnlaget igjen.
+
 ### 5.2 Hva som avslutter en sak
 
 | Utfall | Når | Bevis |
@@ -112,9 +114,9 @@ Claude (eller noen andre med tilgang til repoet) gjør arbeidet med oppgaven `ag
 | Oppgave | Hva | Fra tilstand |
 |---|---|---|
 | `teknisk_konklusjon` | `uten_faglig_betydning` (med bevis, avslutter), `uavklart`, `faglig_relevant` (til faglig gjennomgang) eller `mulig_alvorlig_risiko` (til faglig gjennomgang, og redaktøren ser saken straks som sikkerhetsproblem med begrunnelsen) | teknisk; i det faglige sporet bare `faglig_relevant` (bekrefter nytt innhold) og `mulig_alvorlig_risiko` |
-| `faglig_sporsmal` | Spørsmålet til redaktøren: tittel, hva som er endret, kilden, de berørte regelversjonene med hva som treffes, hvorfor det er relevant, anbefalt valg med begrunnelse og hvem som anbefaler, to til fire valg med hvordan verktøyet virker imens, og hvordan verktøyet virker nå. Ingen kontrollsummer | `faglig_gjennomgang`, eller `beslutning` for å erstatte spørsmålet |
+| `faglig_sporsmal` | Spørsmålet til redaktøren: tittel, hva som er endret, kilden, de berørte regelversjonene med hva som treffes, hvorfor det er relevant, anbefalt valg med begrunnelse og hvem som anbefaler, to til fire valg med hvordan verktøyet virker imens, og hvordan verktøyet virker nå. Ingen kontrollsummer | `faglig_gjennomgang`, `beslutning` for å erstatte spørsmålet, eller `oppfolging` når kilden har fått nytt innhold |
 | `brukervarsel` | Et kort varsel (10–300 tegn) på akkurat de berørte regelversjonene i verktøyene, eller `null` for å fjerne det. Bare for en reell sak i det faglige sporet; forsvinner når saken avsluttes | faglig spor |
-| `tiltak` | Et tiltak er påbegynt, utført, kontrollert eller stoppet, med bevis og eventuelt lenke. Kontrollert kan bare følge utført | `oppfolging` |
+| `tiltak` | Et tiltak er påbegynt, utført, kontrollert eller stoppet, med bevis og eventuelt lenke. Tar tiltakets nummer og sakens versjon. Kontrollert kan bare følge utført | `oppfolging` |
 | `avslutt_prove` | Avslutter en prøve med testbeviset | alle |
 
 Eksempel: `{"oppgave":"teknisk_konklusjon","funn":12,"versjon":3,"konklusjon":"uavklart","begrunnelse":"Den opprinnelige siden kan ikke gjenskapes."}`. Hvem som gjorde arbeidet, settes av arbeidsflyten fra feltet `av` og den som startet den.
@@ -132,7 +134,7 @@ Redaktøren ser bare saker i `beslutning` og `oppfolging`, mulige sikkerhetsprob
 | Deaktiver berørt regel | Nødstoppen for hver berørt regel, med den eksisterende nødstoppen, i samme transaksjon; tiltaket står som kontrollert, og saken avsluttes | Sperren oppheves i Adminmeny → Kliniske verktøy når regelen er vurdert på nytt |
 | Utsett beslutningen | – | Saken venter fortsatt |
 
-En registrert beslutning er ikke et utført tiltak: saken står som «Oppfølging pågår» til hvert tiltak er utført og kontrollert.
+En registrert beslutning er ikke et utført tiltak: saken står som «Oppfølging pågår» til hvert tiltak er utført og kontrollert. Hvordan verktøyet virker nå, sier nøyaktig hvilke av de berørte reglene nødstoppen gjelder; hver berørt regel har også `sperret`, så en delvis nødstopp aldri ser ut som at alle er sperret.
 
 **Vinduet (VDR-2).** Adminmeny → «Kildeovervåking» (`src/components/konto/Kildeovervaking.tsx`) viser de faglige sakene først (`Fagsaker.tsx`): hvordan verktøyet virker nå, hva som er endret med kildelenke, hvilke anbefalinger som berøres (med regelnavn og godkjent versjon, aldri regel-ID), hvorfor det er relevant, anbefalt beslutning, valgene med hva hvert betyr for klinikerne, og for valget som er tatt hva som skjer straks og hva som må gjøres og kontrolleres etterpå, før «Registrer beslutningen». En sikkerhetssak uten spørsmål ennå viser «Sikkerhetsproblem under vurdering» og en knapp til nødstoppen, uten valg. Saker i oppfølging viser beslutningen og tiltakene med status; avsluttede saker ligger samlet og lukket. Det tekniske sporet (alle åpne saker med teknisk logg, og siste kontroll) står lukket nederst, merket for kontrollører. Valget og merknaden overlever en oppdatering av appen (`useBevart`).
 
@@ -141,6 +143,8 @@ En registrert beslutning er ikke et utført tiltak: saken står som «Oppfølgin
 `les_regelvarsler()` gir varslene for alle innloggede (`src/verktoy/overvaking/regelvarsler.ts`): regel, versjon, tekst og når. Verktøyet viser et varsel bare når regel og versjon er lik regelversjonen det bruker. Et varsel sperrer ingenting, og en lesing som feiler, stopper ikke beregningen; sperrene leses for seg som før.
 
 ### 5.6 Fremgangsmåten for agenten
+
+**Rekkefølge ved innføringen.** Redaktørens vindu med valgene (VDR-2) og varslene i verktøyene (VDR-3) kommer i egne PR-er som bygger på denne. Til begge er i produksjon, sender agenten verken `faglig_sporsmal` eller `brukervarsel`, så ingen sak venter på en beslutning redaktøren ikke kan ta, og ingen varsel lagres uten å vises. Et mulig alvorlig problem løftes likevel straks (`mulig_alvorlig_risiko`): redaktøren ser det i Adminmeny → Kildeovervåking, og nødstoppen i Adminmeny → Kliniske verktøy er tilgjengelig.
 
 1. **Teknisk utredning.** Kan endringen gjenskapes, hvilken del av kilden gjelder den, og hvilke godkjente regler bygger på akkurat den delen? Et uendret klinisk innhold kan ikke erklæres på grunnlag av en kontrollsum alene eller en eldre kilde som ikke kan sammenlignes.
 2. **Mulig alvorlig risiko** løftes straks (`mulig_alvorlig_risiko`), og redaktøren kan sette nødstoppen (`docs/verktøy-p11-publisering.md` §5.2).
