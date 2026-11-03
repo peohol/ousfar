@@ -54,11 +54,11 @@ Ikke tilby tomme valg som om de er støttet. Presiser «ikke-markedsført», «g
 
 | ID | Leveranse og prioritet | Målbar akseptanse | Status ved opprettelse |
 | --- | --- | --- | --- |
-| **K0** | **Nullpunkt og kliniske demonstrasjoner** | Gjenkjør faktisk dekningsrapport; identifiser hvilke eksisterende godkjente planer som er komplette kontra delplaner. Lag 8–12 konkrete, syntetiske *vanlige* eksempler fordelt på alle fire verktøy, knyttet til dokumenterte norske formuleringer og reelle kilder. Velg først de situasjonene som er gjennomførbare, dokumenter resten som åpne. | Ikke startet |
-| **K1** | **Nedtrapping av antidepressiv – første nyttige leveranse** | Minst **to vanlige, klinisk godkjente og komplette** end-to-end-eksempler fra reelle norske preparater, med dokumenterte siste trinn, symptomstyrt oppfølging og negative tester. Undersøk eksisterende amitriptylin-, nortriptylin- og escitalopramutkast (VDK-3) først; legg ikke til ulovlige eller faglig uakseptable nulltrinn for å oppnå målet. | Ikke startet |
-| **K2** | **Bytte antidepressiv – første nyttige leveranse** | Minst **tre vanlige, forskjellige, komplette** byttescenarier med norsk tilgjengelige formuleringer. Begynn med sertralin → mirtazapin og klinisk relevante SSRI-bytter som kildene kan støtte. Hele forløpet, inklusive videre avslutning og relevant opptrapping, må være vurdert. | Ikke startet |
-| **K3** | **Bytte antipsykotikum – første nyttige leveranse** | Minst **to komplette peroral-til-peroral** og **to komplette depotrelaterte** scenarier fra dokumenterte kilder. Gjenbruk godkjente Maintena-/Xeplion-grunnlag der mulig; undersøk også risperidon → Xeplion, preparatforskjeller og depotintervaller. Ustøttede varianter stopper. | Ikke startet |
-| **K4** | **Kombinere stemningsstabiliserende – gjeninnfør opprinnelig kildeområde** | Verktøyet finnes i meny/søk for admin. Minst **to klinisk kontrollerte, gjennomførbare** tilleggsscenarier med start/oppfølging/monitorering; ikke gi doseplan for en kombinasjon uten tilstrekkelig kildegrunnlag. Bevar retning og dobbelkontroller interaksjoner. | Ikke startet |
+| **K0** | **Nullpunkt og kliniske demonstrasjoner** | Gjenkjør faktisk dekningsrapport; identifiser hvilke eksisterende godkjente planer som er komplette kontra delplaner. Lag 8–12 konkrete, syntetiske *vanlige* eksempler fordelt på alle fire verktøy, knyttet til dokumenterte norske formuleringer og reelle kilder. Velg først de situasjonene som er gjennomførbare, dokumenter resten som åpne. | **Nullpunkt levert 03.11.2026, til ChatGPT-kontroll** (§10) |
+| **K1** | **Nedtrapping av antidepressiv – første nyttige leveranse** | Minst **to vanlige, klinisk godkjente og komplette** end-to-end-eksempler fra reelle norske preparater, med dokumenterte siste trinn, symptomstyrt oppfølging og negative tester. Undersøk eksisterende amitriptylin-, nortriptylin- og escitalopramutkast (VDK-3) først; legg ikke til ulovlige eller faglig uakseptable nulltrinn for å oppnå målet. | Pågår i egen tråd fra 03.11.2026 |
+| **K2** | **Bytte antidepressiv – første nyttige leveranse** | Minst **tre vanlige, forskjellige, komplette** byttescenarier med norsk tilgjengelige formuleringer. Begynn med sertralin → mirtazapin og klinisk relevante SSRI-bytter som kildene kan støtte. Hele forløpet, inklusive videre avslutning og relevant opptrapping, må være vurdert. | Pågår i egen tråd fra 03.11.2026 |
+| **K3** | **Bytte antipsykotikum – første nyttige leveranse** | Minst **to komplette peroral-til-peroral** og **to komplette depotrelaterte** scenarier fra dokumenterte kilder. Gjenbruk godkjente Maintena-/Xeplion-grunnlag der mulig; undersøk også risperidon → Xeplion, preparatforskjeller og depotintervaller. Ustøttede varianter stopper. | Pågår i egen tråd fra 03.11.2026 |
+| **K4** | **Kombinere stemningsstabiliserende – gjeninnfør opprinnelig kildeområde** | Verktøyet finnes i meny/søk for admin. Minst **to klinisk kontrollerte, gjennomførbare** tilleggsscenarier med start/oppfølging/monitorering; ikke gi doseplan for en kombinasjon uten tilstrekkelig kildegrunnlag. Bevar retning og dobbelkontroller interaksjoner. | Pågår i egen tråd fra 03.11.2026 |
 | **K5** | **Bredde, kvalitet og utrulling** | Utvid godkjent dekning systematisk per evidensbasert strategi og relevante virkestoff/formuleringer – **ikke tusen PR-er for tusen celler**. Klinisk prøvebruk, eksempler fra produksjon med syntetiske data og Peders godkjenning før åpning for andre. | Ikke startet |
 
 **Tallene i K1–K4 er minstekrav til den første reelt nyttige leveransen, ikke et påskudd for å erklære hele tabellgrunnlaget ferdig.** Det langsiktige målet er høy og etterprøvbar dekning av relevante norske kliniske situasjoner. Kildemangel, manglende norsk preparat og uforsvarlige kombinasjoner skal være eksplisitte unntak, aldri stilltiende «ferdig».
@@ -119,3 +119,72 @@ Bruk både full dekningsnevner (inkludert dagens 23/506/1 122) **og** en separat
 2. Start samtidig rettighets-/kildespor, K1, K2, K3, K4 og felles motor/visning/QA som uavhengige arbeidstråder, med eksplisitt fileierskap.
 3. Velg den **første brukbare vertikale leveransen** for hvert verktøy og produser en klinisk sammenhengende PR så snart kilder og norske styrker er kontrollert. **Ikke vent** på at hele kildetabellen er behandlet.
 4. Be om ChatGPT-kontroll på hver PR før merge. Når én leveranse er godkjent, fortsett med neste avgrensede kliniske område og oppdater dekningsmålingen.
+
+## 10. K0-nullpunkt 03.11.2026
+
+Dekningsrapporten er kjørt på nytt fra main (`npm run verktoy:regler -- regeldekning`, 1.124.4) og er uendret: `docs/verktøy-vdk1-regeldekning.md` gjelder. Preparatene under er fra FEST-uttrekkene i repoet (formuleringene 08.10.2026, pilotsettet 30.10.2026), bare markedsførte preparater uten godkjenningsfritak. Hver tråd kontrollerer mot ferskt FEST før en regel sendes til kontroll. Ingen regel, godkjenning, sperre eller synlighet er endret i K0.
+
+### 10.1 Måltall per verktøy (§8)
+
+| Måltall | Trappe ned antidepressiv | Bytte antidepressiv | Bytte antipsykotikum | Kombinere stemningsstabiliserende |
+| --- | --- | --- | --- | --- |
+| Full nevner | 23 | 506 | 1 122 | 110 ordnede par (11 virkestoffer); verktøyet finnes ikke |
+| **Komplette forløp** | **0** | **0** | **2, begge i snevert omfang:** aripiprazol tablett → Abilify Maintena 400 mg (v3) og peroral paliperidon → Xeplion (v3) går fra start til fast månedlig vedlikehold | **0** |
+| Delplan/fagtekst | 3: vortioksetin bare 20 → 15 mg (v12); bupropion (v5) og agomelatin (v1) bare fagtekst | 1: sertralin → mirtazapin bare startforløpet (v10), uten 25 → 0 og opptrapping av mirtazapin | 0 | 0 |
+| Godkjent, men begrenset i praksis | 0 | 0 | 1: Xeplion v3 forutsetter peroral paliperidon, som i Norge bare finnes på godkjenningsfritak (Invega) | 0 |
+| Ikke støttet: regel finnes, ikke godkjent | 7 beregnbare, 6 fagtekst | 1 (fluoksetin → fenelzin) | 1 (olanzapin → kvetiapin) | 0 |
+| Ikke støttet: ingen regel, rettighet uavklart (kilden har anbefaling) | 0 | 504 | 892 | 110 |
+| Ikke støttet: ingen regel, kilden har ingen | 0 | 0 | 161 | 0 |
+| Ikke støttet: preparat eller kilde mangler | 7 | 0 | 66 (middels langtidsvirkende injeksjon) | 0 |
+| Klinisk prøveverifisert (§8) | 0 | 0 | 0 | 0 |
+
+Om de to depotforløpene skal telle som K3-scenarier, avgjøres i K3-kontrollen mot §3; anbefalingen er at Maintena teller, mens Xeplion først blir praktisk nyttig med risperidon som start (K0-10).
+
+### 10.2 Vanlige brukerforløp – første leveranser
+
+Syntetiske, vanlige situasjoner for voksne 18–64 år uten tidligere seponeringsplager, kjente interaksjoner eller nedsatt organfunksjon, med mindre annet står. Sluttmålet er det planen skal nå for å telle som komplett (§3). Kildene er id-er i `src/verktoy/regler/kilder.ts`; «ny kilde» betyr at preparatomtalen må legges til registeret med kontrollsum før regelen skrives. Doser i kolonnen «Situasjon» er utgangspunktet klinikeren oppgir, ikke anbefalinger.
+
+| ID | Verktøy | Situasjon | Norske formuleringer (FEST) | Sluttmål | Grunnlag i repoet | I dag | Kjent hindring |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| K0-01 | Trappe ned | Escitalopram 10 mg tablett, kort behandlingstid | Tablett 5, 10, 20 mg; dråper 20 mg/ml (1 mg per dråpe dokumentert) | Seponert, med symptomstyrt vurdering mellom trinn | `seponering-escitalopram` v12 (VDK-3 forslag 1); `rcpsych-stopping`, `nice-ng222`, `dmp-cipralex` | Ingen plan | Tablett 10 mg er utenfor omfanget regelen er kontrollert for (kasus F1-21 i VDK-3); den kontrollerte kjeden fra 10 mg gjelder dråper (F1-24) og slutter på 3 mg. Utvidet tablettomfang eller overgang fra tablett til dråper krever ny klinisk kontroll, i tillegg til trinnstørrelse (VDK-2 forslag 2) og et dokumentert siste trinn til 0 |
+| K0-02 | Trappe ned | Sertralin 100 mg tablett, kort behandlingstid | Tablett 25, 50, 100 mg; konsentrat 20 mg/ml er sperret uten dokumentert oppmåling | Seponert | `seponering-sertralin` v12; `rcpsych-stopping`, `dmp-zoloft` | Ingen plan | Høyst 25 % gir bare 100 → 75 mg; siste trinn 25 → 0 |
+| K0-03 | Trappe ned | Amitriptylin 25 mg tablett, lav dose, kort behandlingstid | Tablett 10, 25, 50 mg (mikstur bare på fritak) | Seponert | `seponering-amitriptylin` v12 (VDK-3 forslag 1); `dmp-sarotex` | Ingen plan | 25 mg er innenfor det kontrollerte omfanget, men kjeden stopper etter 25 → 20 mg (F1-03); siste trinn til 0 er ikke vurdert |
+| K0-04 | Bytte AD | Sertralin 100 mg → mirtazapin | Sertralin tablett 25, 50, 100 mg; mirtazapin tablett og smeltetablett 15, 30, 45 mg | Sertralin seponert og mirtazapin på måldose | `kryssnedtrapping-sertralin-mirtazapin` v10 (startforløpet godkjent); `keks-2016`, `dmp-zoloft`, `dmp-remeron` | Delplan | Videre 25 → 0 og opptrapping av mirtazapin er ikke vurdert |
+| K0-05 | Bytte AD | Escitalopram 20 mg → mirtazapin | Som K0-01 og K0-04 | Som K0-04 | VDK-2 forslag 5; `keks-2016`, `dmp-cipralex`, `dmp-remeron` | Ingen regel | Ny regel etter sertralinmønsteret |
+| K0-06 | Bytte AD | Escitalopram 20 mg → sertralin (SSRI til SSRI) | Som K0-01 og K0-02 | Escitalopram seponert og sertralin på måldose | `keks-2016`, `nice-ng222`, `dmp-cipralex`, `dmp-zoloft` | Ingen regel | Strategi (direkte bytte eller kryssnedtrapping) må vurderes for kombinasjonen |
+| K0-07 | Bytte AP, peroralt | Olanzapin 10 mg tablett → aripiprazol tablett | Olanzapin tablett 2,5–10 mg og smeltetablett 5–20 mg; aripiprazol tablett 5, 10, 15, 30 mg | Olanzapin seponert og aripiprazol på måldose | `keks-2019`, `ema-abilify`; ny kilde: preparatomtale for olanzapin | Ingen regel | Ny regel og kilde |
+| K0-08 | Bytte AP, peroralt | Risperidon 4 mg tablett → aripiprazol tablett | Risperidon tablett 0,5–4 mg og mikstur 1 mg/ml; aripiprazol som K0-07 | Risperidon seponert og aripiprazol på måldose | `keks-2019`, `ema-abilify`; ny kilde: preparatomtale for risperidon | Ingen regel | Ny regel og kilde. Alternativ med lavere kostnad: det kontrollerte utkastet olanzapin → kvetiapin (v5) |
+| K0-09 | Bytte AP, depot | Aripiprazol 15 mg tablett → Abilify Maintena | Tablett som K0-07; Maintena 400 mg (månedlig), 720 og 960 mg (annenhver måned) | Fast månedlig injeksjon, tabletter seponert | `depot-aripiprazol-maintena` v3; `ema-abilify-maintena` | **Komplett i snevert omfang** | To-injeksjonsstart og 720/960 mg er ikke støttet (VDK-2 forslag 4 og 9) |
+| K0-10 | Bytte AP, depot | Risperidon 4 mg tablett → paliperidonpalmitat månedlig (Xeplion eller generisk) | Risperidon som K0-08; paliperidonpalmitat 50–150 mg (Xeplion, Palmeux og Paliperidon Zentiva; 25 mg bare på fritak) | Fast månedlig injeksjon, tabletter seponert | `depot-paliperidon-xeplion` v3 (starter fra paliperidon); VDK-2 forslag 3; `ema-xeplion` | Ingen regel | Måldosen fra risperidon (ingen tabell i preparatomtalen) |
+| K0-11 | Kombinere | Står på litium, lamotrigin legges til | Litium depottablett (42 og 83 mg); lamotrigin tyggetablett/dispergerbar tablett 2–200 mg (vanlige tabletter bare på fritak) | Lamotrigin på vedlikeholdsdose etter opptrapping, litium uendret, oppfølgingspunkter beskrevet | Ny kilde: preparatomtalene for lamotrigin og litium | Verktøyet finnes ikke | Verktøy, tilleggsstrategi i motoren og kilder |
+| K0-12 | Kombinere | Står på valproat, lamotrigin legges til | Valproat enterotablett, depottablett, depotkapsel, depotgranulat og mikstur; lamotrigin som K0-11 | Som K0-11, med valproat uendret | Ny kilde: preparatomtalene for lamotrigin og valproat | Verktøyet finnes ikke | Preparatomtalen for lamotrigin har egen opptrapping ved samtidig valproat; valproat hos kvinner som kan bli gravide må være et eget stoppunkt. Viser hvorfor retningen eksisterende → tillegg må bevares |
+
+**Neste konkrete leveranser:** K1 tar K0-01 og K0-03 først (kontrollerte, ikke godkjente regelutkast finnes, men omfanget må utvides og vurderes på nytt for å nå 0), deretter K0-02. K2 fullfører K0-04 og tar K0-05 og K0-06. K3 tar K0-09 (vurder om det allerede teller), K0-10 og K0-07, og velger K0-08 eller olanzapin → kvetiapin. K4 tar K0-11 og K0-12 etter at motoren støtter tillegg.
+
+**Kjente vanlige situasjoner som ikke er første leveranse:** full nedtrapping av vortioksetin (bare 20 → 15 mg godkjent), venlafaksin og paroksetin (bare fagtekst; depotkapsler kan ikke deles), lang behandlingstid (10 %-trinn krever flytende form), bytter fra fluoksetin og til eller fra MAO-hemmere (egne utvaskingsregler), Risperdal Consta, Okedi og Zypadhera (VDK-2 forslag 6–8) og depot til depot (forslag 9).
+
+### 10.3 Arbeidsdeling og integrasjon
+
+| Spor | Eier | Skriver i |
+| --- | --- | --- |
+| A – koordinering (K0) | Koordinatortråden | Denne planen, `docs/verktøy-utviklingsplan.md`, `package.json`-versjon og endringslogg, merge-rekkefølge |
+| B – kilder og rettigheter | Egen tråd | Egne kilde- og avklaringsnotater; nye kilder i `src/verktoy/regler/kilder.ts` etter avtale med G |
+| C–F – K1–K4 | Én tråd per verktøy | Egne regelfiler og tester |
+| G – motor og brukerflate | Egen tråd | Felles motor, register (`register.ts`, `regeldekning.ts`) og delte verktøykomponenter, inkludert tilleggsstrategien K4 trenger |
+| H – uavhengig test | Egen tråd | Egne testfiler; tester K0-01–K0-12 i appen |
+
+**Versjon og rekkefølge:** hver PR får versjonsnummeret sitt fra koordinatoren når den er klar til kontroll, og koordinatoren nummererer om når merge-rekkefølgen endres. Rekkefølgen er avhengighetsstyrt: G sine motorendringer før reglene som bruker dem (K4 etter tillegg i motoren), ellers den PR-en ChatGPT godkjenner først. Hver PR skriver sin egen føring i endringsloggen med det tildelte nummeret. Bare koordinatoren redigerer denne planen og utviklingsplanen, og fører faktiske leveranser her etter godkjent merge.
+
+**Leveranse-PR-er og planlagt rekkefølge** (oppdateres av koordinatoren; alle merket «Til ChatGPT-kontroll – ikke merge»):
+
+| Rekkefølge | PR | Spor | Versjon | Avhenger av | Status |
+| --- | --- | --- | --- | --- | --- |
+| 1 | #316 | A – K0-nullpunkt | 1.124.5 | – | Til kontroll |
+| 2 | #319 | G – felles motor | 1.125.0 | – | Til kontroll |
+| 3 | #318 | D – K2, fem bytteregler til kontroll | 1.125.1 | #319 | Til kontroll; QA uten blokkerende funn |
+| 4 | #320 | E – K3, sju bytteregler til kontroll (dekker K0-07, K0-08 og K0-10) | 1.125.2 | #319 | Til kontroll |
+| 5 | #322 | F – K4, lamotrigin lagt til valproat eller litium, til kontroll (K0-11 og K0-12) | 1.125.3 | #319 | Til kontroll |
+| 6 | #323 | C – K1, escitalopram, nortriptylin og amitriptylin til seponering, til kontroll (K0-01 og K0-03) | 1.125.4 | #319 | Til kontroll |
+| 7 | #321 | H – testkasus K0-01–K0-12 og kontroll i den publiserte appen (K0-09 prøveverifisert) | 1.125.5 | #323 (rapporten lages på nytt etter den) | Til kontroll |
+
+Godkjenner ChatGPT i en annen rekkefølge, nummererer koordinatoren om de uavhengige PR-ene; PR-er som avhenger av #319, merges etter den.

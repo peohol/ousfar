@@ -19,6 +19,7 @@
 import { godkjenningsfeil } from './godkjenning'
 import {
   erRenSeponering,
+  gjeldendeBekreftelser,
   parameterfeil,
   parametre,
   REGELMODELLVERSJON,
@@ -313,6 +314,9 @@ export const AVSLUTNING_FELLES = `${SISTE_DOSE} Planen går ikke til null og for
 export const overAvslutning = (virkestoff: string, mg: number, fraHoyst: number) =>
   `Regelens avslutning av ${virkestoff} gjelder bare fra ${tall(fraHoyst)} mg eller lavere, og planen står på ${tall(mg)} mg.`
 
+/** Det samme, kort, til det planen ikke dekker (`avslutning_kort`). */
+export const overAvslutningKort = (mg: number, fraHoyst: number) => `regelens avslutning gjelder bare fra ${tall(fraHoyst)} mg eller lavere (planen står på ${tall(mg)} mg)`
+
 /* --- Beregningen ------------------------------------------------------------------ */
 
 interface Kontekst {
@@ -533,6 +537,8 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
             avslutning = `Regelens siste trinn før null er nådd. ${star}. ${AVSLUTNING_FELLES}`
             avslutning_kort = 'siste trinn før null; avslutning vurderes individuelt'
           }
+          // En godkjent avslutning som ikke gjelder fra siste dose, står også i det planen ikke dekker.
+          if (fraHoyst !== undefined) avslutning_kort = `${overAvslutningKort(aktuell, fraHoyst)}; ${avslutning_kort}`
           fortsetter = true
           break
         }
@@ -711,9 +717,13 @@ function kontrollerInndata(regel: Regel, krav: Inndatakrav, x: number | undefine
   if (!utenfor || begrunnet) return
   const tekst = `${navn} ${tall(x)} mg er utenfor det regelen gjelder for (${gyldig}).`
   if (krav.art === 'bindende_krav') stopp.push(tekst)
-  else if (krav.krever_begrunnelse) stopp.push(`${navn} ${tall(x)} mg er over forsiktighetsgrensen (${gyldig}) og krever en skriftlig begrunnelse fra forskriveren, en særskilt vurdering. Skriv begrunnelsen, eller vurder om regelen passer.`)
+  else if (krav.krever_begrunnelse) stopp.push(`${navn} ${tall(x)} mg er ${retning(krav, x)} forsiktighetsgrensen (${gyldig}) og krever en skriftlig begrunnelse fra forskriveren, en særskilt vurdering. Skriv begrunnelsen, eller vurder om regelen passer.`)
   else merknader.push(`${tekst} Det er en veiledende grense; vurder om regelen passer.`)
 }
+
+/** Om dosen er over eller under området, eller utenfor verdiene, i meldingen om en forsiktighetsgrense. */
+const retning = (krav: Inndatakrav, x: number) =>
+  krav.omrade && x > krav.omrade[1] + EPS ? 'over' : krav.omrade && x < krav.omrade[0] - EPS ? 'under' : 'utenfor'
 
 const brukerMaldose = (x: unknown) => JSON.stringify(x).includes('"navn":"maldose"')
 const positivt = (x: unknown): x is number => typeof x === 'number' && Number.isFinite(x) && x > 0
@@ -936,7 +946,7 @@ export function beregn(regel: Regel, inndata: Beregningsinndata, regelsett?: Reg
   for (const [id, svar] of Object.entries(forhold)) {
     if (svar && !regel.unntak.some((u) => u.id === id)) stopp.push(`Pasientforholdet «${id}» er ukjent for regelen; det må vurderes individuelt.`)
   }
-  for (const b of regel.bekreftelser) {
+  for (const b of gjeldendeBekreftelser(regel, inndata.svar)) {
     const ja = inndata.bekreftet?.includes(b.id) ?? false
     kontroller.push({ krav: `Bekreftet: ${b.tekst}`, oppfylt: ja, detalj: ja ? 'Bekreftet av forskriveren.' : 'Ikke bekreftet.' })
     if (!ja) stopp.push(`Må bekreftes før beregning: ${b.tekst}`)

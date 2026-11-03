@@ -41,7 +41,20 @@ export const ENDRINGSLOGG: Endring[] = [
       'Nytt verktøy «Kombinere stemningsstabiliserende»: det eksisterende legemidlet fortsetter uendret, og planen gjelder oppstart og opptrapping av det som legges til, også med dose annenhver dag. Verktøyet har ingen godkjente regler ennå.',
       'Når et depot byttes til et annet depot, står det i planen at det gamle ikke skal ha flere injeksjoner, og verktøyet ber ikke om legemiddelform for et legemiddel som bare skal stoppes.',
       'Bruker pasienten et depot, spør verktøyet etter dosen per injeksjon i stedet for døgndosen.',
+      'En regel kan kreve en komplett plan. Når planen da ikke når sluttmålet, står det «Komplett plan ikke tilgjengelig» og hvorfor, og ingen doser vises.',
+      'Forutsetninger som bare gjelder ved et bestemt svar, for eksempel for kvinner som kan bli gravide, må bekreftes hver for seg bare når svaret er gitt.',
     ],
+  },
+  {
+    versjon: '1.124.5',
+    dato: '2026-11-03',
+    sammendrag: 'Utgangspunkt for videre utvikling av de kliniske verktøyene',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Fremdriftsplanen for verktøyene har fått et dokumentert utgangspunkt: hvor mange forløp hvert av de fire verktøyene faktisk kan planlegge i dag, og tolv vanlige kliniske situasjoner som de første leveransene skal dekke. Ingen doser, regler, godkjenninger eller sperrer er endret.',
+    ],
+    utenVarsel: true,
   },
   {
     versjon: '1.124.4',

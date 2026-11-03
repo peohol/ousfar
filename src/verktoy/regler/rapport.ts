@@ -169,7 +169,7 @@ function regelavsnitt(r: Regel, sett: Regelsett): string {
       const art = x.art === 'bindende_krav' ? 'bindende' : x.krever_begrunnelse ? 'forsiktighetsgrense: utenfor krever begrunnelse' : 'veiledende'
       return `${x.navn === 'startdose' ? 'Startdose' : 'Måldose (må oppgis)'} ${gyldig}${inndatavilkar(x, r.sporsmal)}${x.gjelder_medlem ? ` for ${x.gjelder_medlem}` : ''} (${art}; ${grunnlag(x.grunnlag)})`
     }),
-    ...r.bekreftelser.map((b) => `Må bekreftes (\`${b.id}\`): ${b.tekst} (${grunnlag(b.grunnlag)})`),
+    ...r.bekreftelser.map((b) => `Må bekreftes (\`${b.id}\`)${inndatavilkar(b, r.sporsmal)}: ${b.tekst} (${grunnlag(b.grunnlag)})`),
     ...r.unntak.map((u) => `Unntak (\`${u.id}\`): ${u.tekst} (${grunnlag(u.grunnlag)})`),
     ...(r.sporsmal ?? []).map((x) => `Må besvares (\`${x.id}\`): ${x.tekst}${x.krever_begrunnelse ? ' Et ja krever en skriftlig begrunnelse.' : ''} (${grunnlag(x.grunnlag)})`),
   ]
