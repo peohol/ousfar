@@ -464,8 +464,8 @@ export const FORSLAG_K1: Kontrollforslag = {
     },
     {
       nr: 'K1.11',
-      sporsmal: 'Overgang fra escitalopram tablett til dråper (K0-01, svaret på K1.5): hvilken dokumentasjon av eksakt ekvivalens kreves? Preparatomtalen for dråpene er ikke registrert som kilde i OUSFAR.',
-      anbefalt: 'Preparatomtalen for dråpene registreres som kilde, og ekvivalensen hentes derfra. Står den ikke der, tilbys ingen overgang.',
+      sporsmal: 'Overgang fra escitalopram tablett til dråper (K0-01, svaret på K1.5): er ekvivalensen dokumentert godt nok? Den norske preparatomtalen for Cipralex 20 mg/ml dråper (DMP 07-4892, oppdatert 02.05.2024) sier i pkt. 2 «Hver dråpe inneholder 1 mg escitalopram» og i pkt. 5.2 «Dråper, oppløsning er bioekvivalent med Cipralex tabletter». Samme døgndose i mg gir dermed samme eksponering som Cipralex tabletter. Generiske tabletter er godkjent mot Cipralex, men er ikke sammenlignet direkte med dråpene.',
+      anbefalt: 'Ja, mg for mg: preparatomtalen for dråpene registreres som kilde, og overgangen gis med samme døgndose. Om overgangen skal tilbys, avhenger av en sluttdose for dråpene (K1.9).',
     },
     {
       nr: 'K1.12',
@@ -535,7 +535,7 @@ ${tabell(
       tekst: `${tabell(
         ['Stoff', 'Hva som finnes', 'Hva som mangler for små trinn', 'Kilde'],
         [
-          ['Escitalopram', 'Tabletter 5, 10 og 20 mg (10 og 20 mg kan deles i to). Dråper 20 mg/ml, én dråpe er 1 mg.', 'Under 1 mg krever fortynning, som ikke er dokumentert. Trinnene under 3 mg er over 25 % (K1.10).', 'FEST-uttrekket; dmp-cipralex'],
+          ['Escitalopram', 'Tabletter 5, 10 og 20 mg (10 og 20 mg kan deles i to). Dråper 20 mg/ml, én dråpe er 1 mg.', 'Under 1 mg krever fortynning, som ikke er dokumentert. Trinnene under 3 mg er over 25 % (K1.10).', 'FEST-uttrekket; dmp-cipralex; preparatomtalen for Cipralex 20 mg/ml dråper (DMP 07-4892, oppdatert 02.05.2024, pkt. 2 og 5.2: én dråpe er 1 mg, og dråpene er bioekvivalente med Cipralex tabletter)'],
           ['Nortriptylin', 'Tabletter 10, 25 og 50 mg.', 'Deling er ikke oppgitt i FEST. Ingen flytende form (K1.12).', 'FEST-uttrekket; dmp-noritren'],
           ['Amitriptylin', 'Tabletter 10, 25 og 50 mg. Mikstur 10 mg/5 ml og 50 mg/5 ml bare med godkjenningsfritak.', 'Deling er ikke oppgitt i FEST. Måleskjeen til miksturen på 10 mg/5 ml gir 2,5 og 5 ml, det vil si 5 og 10 mg (K1.13).', 'FEST-uttrekket; dmp-sarotex; preparatomtalen for Amitriptyline 10 mg/5 ml oral solution (Syri Limited, revidert 09.12.2025, pkt. 6.5)'],
           ['Sertralin', 'Tabletter 25, 50 og 100 mg (noen 50 og 100 mg kan deles i to). Konsentrat til mikstur 20 mg/ml.', 'Pipetten i lokket er gradert, men graderingen er ikke oppgitt, og konsentratet skal fortynnes (K1.14).', 'FEST-uttrekket; dmp-zoloft; svensk preparatomtale for Zoloft konsentrat pkt. 6.5 og 6.6'],
