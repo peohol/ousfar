@@ -130,7 +130,9 @@ function utenMotstykke(a: readonly string[], b: readonly string[]): string[] {
  * første grunn.
  */
 function sammenlign(r: Forlopsresultat, a: Appresultat): string[] {
-  const lokalPlan = r.klasse === 'komplett' || r.klasse === 'delplan'
+  // En klinisk doseplan skal bare vises når den når sluttmålet; en delplan i appen er et avvik i seg selv.
+  if (a.tabell && r.klasse !== 'komplett') return [`appen viser en klinisk doseplan, men den når ikke sluttmålet (lokalt ${KLASSENAVN[r.klasse]})`]
+  const lokalPlan = r.klasse === 'komplett'
   if (lokalPlan !== a.tabell) return [`lokalt ${KLASSENAVN[r.klasse]}, i appen ${a.tabell ? 'en plan' : 'ingen plan'}`]
   if (lokalPlan && r.utfall?.utfall === 'plan') {
     const linjer = (t: string) => t.split('\n').filter((l) => !FESTLINJE.test(l))

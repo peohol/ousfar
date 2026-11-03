@@ -121,7 +121,7 @@ describe('QA: vanlige brukerforløp', () => {
     }
   })
 
-  it('gir hvert forløp et utfall uten QA-avvik: delplan og komplett plan blandes ikke, og ingen plan uten godkjenning', () => {
+  it('gir hvert forløp et utfall uten QA-avvik: ingen delplan vises som klinisk doseplan, og ingen plan uten godkjenning', () => {
     for (const r of RESULTATER) expect(r.feil, r.forlop.id).toEqual([])
   })
 
@@ -166,7 +166,7 @@ describe('QA-kontrollen selv', () => {
 describe('QA: omfanget til beregningene som er tilgjengelige', () => {
   const sveipFor = (id: string) => SVEIP.find((s) => s.regel.id === id)
 
-  it('gir planer uten QA-avvik ved hver dose og legemiddelform', () => {
+  it('gir planer uten QA-avvik ved hver dose og legemiddelform, og ingen delplan som klinisk doseplan', () => {
     for (const s of SVEIP) for (const t of s.treff) expect(t.resultat.feil, `${s.regel.id} ${t.dose} mg`).toEqual([])
   })
 

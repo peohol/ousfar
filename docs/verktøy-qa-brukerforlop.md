@@ -68,7 +68,7 @@ Spor H i `docs/verktøy-klinisk-leveranseplan-2026-11.md`. Hvert forløp er en s
 
 ## Delplan vises som klinisk doseplan
 
-Etter ChatGPT-kontrollen av #321 skal klinikerflaten ikke tilby en delplan som klinisk doseplan. Disse forløpene gjør det i dag; de står som avvist over, og testen gjøres streng når det er avgjort om også de godkjente delplanene skal skjules: K0-04, H-01, H-14.
+Klinikerflaten skal aldri tilby en delplan som klinisk doseplan, heller ikke for tidligere godkjente regelversjoner (Peders beslutning). Hvert forløp som gjør det, er et QA-avvik som får testen til å feile: K0-04, H-01, H-14.
 
 ## Minstekrav for første nyttige leveranse (målt på katalogen)
 
@@ -98,7 +98,7 @@ Startdosene 0,5–400 mg (halve mg opp til 40 mg, så trinn på 5 mg), hver lege
 
 - Startdoser med plan: 20
 - Klasse: Delplan
-- QA-avvik i planene: 0
+- QA-avvik i planene: 1
 - Delplan vises som klinisk doseplan: 1 av 1 planer
 - unntak tidligere_seponeringssymptomer = ja: Regel finnes, men beregningen stopper
 - unntak under_18 = ja: Regel finnes, men beregningen stopper
@@ -114,7 +114,7 @@ Startdosene 0,5–400 mg (halve mg opp til 40 mg, så trinn på 5 mg), hver lege
 
 - Startdoser med plan: 50, 100
 - Klasse: Delplan
-- QA-avvik i planene: 0
+- QA-avvik i planene: 2
 - Delplan vises som klinisk doseplan: 2 av 2 planer
 - unntak tidligere_seponeringssymptomer = ja: Regel finnes, men beregningen stopper
 - spørsmål lang_behandlingstid = ja: Regel finnes, men beregningen stopper

@@ -245,15 +245,13 @@ export interface Forlopsresultat {
   vist: string[]
   /** Brudd på QA-invariantene; tom når alt er i orden. */
   feil: string[]
-  /** Det QA avviser i det klinikeren får se, men som ennå ikke stopper testen (se {@link DELPLAN_VIST}). */
-  avvist: string[]
 }
 
 /**
- * ChatGPT-kontrollen av #321 (2026-11-03): klinikerflaten skal ikke tilby en
- * delplan som klinisk doseplan. Hver delplan som vises, føres derfor som
- * avvist i rapporten. Testen gjøres streng når det er avgjort om også de
- * godkjente delplanene skal skjules.
+ * Peders beslutning (formidlet i ChatGPT-kontrollen av #321, 2026-11-03):
+ * klinikerflaten skal aldri tilby en delplan som klinisk doseplan, heller
+ * ikke for tidligere godkjente regelversjoner. En plan som vises uten å nå
+ * sluttmålet, er derfor et QA-avvik, ikke bare en merknad.
  */
 export const DELPLAN_VIST = 'Delplan vises som klinisk doseplan'
 
@@ -274,7 +272,6 @@ export function kjorForlop(f: Brukerforlop, u: Uttrekkene, ekstra: Partial<Pilot
       klasse: 'verktoy_mangler',
       formvalg: [],
       trinnvalg: [],
-      avvist: [],
       vist: [`Ingen verktøy av typen «${LEVERANSER[f.leveranse].verktoytype}» i registeret.`],
       feil: [],
     }
@@ -331,7 +328,7 @@ export function kjorForlop(f: Brukerforlop, u: Uttrekkene, ekstra: Partial<Pilot
   // En regel som er endret på en kopi (simulert godkjenning i et kontrollgrunnlag), vurderes som kopien.
   const regel = ekstra.regel && regelFor(utfall) ? endretKopi(regelFor(utfall)!, ekstra.regel) : regelFor(utfall)
   const grunner = 'grunner' in utfall ? utfall.grunner : []
-  const base = { forlop: f, verktoy, uttrekk, utfall, formvalg, trinnvalg, regel, avvist: [] as string[] }
+  const base = { forlop: f, verktoy, uttrekk, utfall, formvalg, trinnvalg, regel }
   switch (utfall.utfall) {
     case 'plan': {
       const klasse = komplett(regel!, utfall.resultat!, planinndata(f.dose, skjema.maldose)) ? 'komplett' : 'delplan'
@@ -339,8 +336,7 @@ export function kjorForlop(f: Brukerforlop, u: Uttrekkene, ekstra: Partial<Pilot
         ...base,
         klasse,
         vist: [...(utfall.undertittel ? [utfall.undertittel] : []), ...utfall.linjer],
-        feil: planfeil(regel, utfall, klasse),
-        avvist: klasse === 'delplan' ? [DELPLAN_VIST] : [],
+        feil: [...(klasse === 'delplan' ? [DELPLAN_VIST] : []), ...planfeil(regel, utfall, klasse)],
       }
     }
     case 'fagtekst':
@@ -648,7 +644,7 @@ export function sveiplinjer(sveip: readonly Sveip[]): string[] {
         : []),
       `- Klasse: ${[...new Set(s.treff.map((t) => KLASSENAVN[t.resultat.klasse]))].join(', ') || '–'}`,
       `- QA-avvik i planene: ${s.treff.flatMap((t) => t.resultat.feil).length}`,
-      `- ${DELPLAN_VIST}: ${s.treff.filter((t) => t.resultat.avvist.length > 0).length} av ${s.treff.length} planer`,
+      `- ${DELPLAN_VIST}: ${s.treff.filter((t) => t.resultat.feil.includes(DELPLAN_VIST)).length} av ${s.treff.length} planer`,
       ...s.endringer.map((e) => `- ${e.hva}: ${KLASSENAVN[e.klasse]}`),
       '',
     ]),
@@ -687,16 +683,16 @@ export function lagQaRapport(resultater: readonly Forlopsresultat[], tillegg: re
           celle(r.forlop.hva),
           `${KLASSENAVN[r.klasse]}${r.regel ? ` (${r.regel.id} v${r.regel.versjon})` : ''}`,
           celle([...r.formvalg.map((f) => `[formvalg ${f}]`), ...r.trinnvalg.map((t) => `[valgt dose ${t}]`), ...r.vist].join(' / ')),
-          celle([...r.feil, ...r.avvist].join(' / ') || '–'),
+          celle(r.feil.join(' / ') || '–'),
         ].join(' | '),
       )
       .map((l) => `| ${l} |`),
     '',
     `## ${DELPLAN_VIST}`,
     '',
-    `Etter ChatGPT-kontrollen av #321 skal klinikerflaten ikke tilby en delplan som klinisk doseplan. Disse forløpene gjør det i dag; de står som avvist over, og testen gjøres streng når det er avgjort om også de godkjente delplanene skal skjules: ${
+    `Klinikerflaten skal aldri tilby en delplan som klinisk doseplan, heller ikke for tidligere godkjente regelversjoner (Peders beslutning). Hvert forløp som gjør det, er et QA-avvik som får testen til å feile: ${
       resultater
-        .filter((r) => r.avvist.includes(DELPLAN_VIST))
+        .filter((r) => r.feil.includes(DELPLAN_VIST))
         .map((r) => r.forlop.id)
         .join(', ') || 'ingen'
     }.`,
