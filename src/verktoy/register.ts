@@ -17,7 +17,8 @@ import type { Tabell_id } from './kildetabeller'
 
 export const KARTLEGGING = kartleggingsfil as unknown as Virkestoffkartlegging
 
-export type Verktoytype = 'seponering' | 'bytte'
+/** `seponering`: ett legemiddel trappes ned. `bytte`: fra ett legemiddel til et annet. `tillegg`: et legemiddel legges til et pasienten bruker. */
+export type Verktoytype = 'seponering' | 'bytte' | 'tillegg'
 
 export interface Verktoy {
   /** Stabil ID, også i adressen (`#/verktoy/<id>`). Endres aldri. */
@@ -61,7 +62,32 @@ export const VERKTOY: readonly Verktoy[] = [
     ikon: 'depot',
     aliaser: ['bytte antipsykotika', 'nevroleptika', 'depot', 'depotinjeksjon', 'kryssnedtrapping', 'switch'],
   },
+  {
+    id: 'kombinere-stemningsstabiliserende',
+    navn: 'Kombinere stemningsstabiliserende',
+    beskrivelse: 'Forslag til oppstart og opptrapping når et stemningsstabiliserende legemiddel legges til et pasienten allerede bruker.',
+    type: 'tillegg',
+    tabell: 'CombiningMoodstabilizers',
+    ikon: 'plus',
+    aliaser: ['stemningsstabilisator', 'stemningsstabiliserende', 'tillegg', 'kombinasjon', 'kombinere', 'lamotrigin', 'litium', 'valproat', 'bipolar', 'mood stabilizer'],
+  },
 ]
+
+/**
+ * Hva valgene heter i hvert slags verktøy: feltgruppen, virkestoffene og
+ * hva som må velges. Verktøysiden leser herfra, så et nytt slags verktøy
+ * får tekstene sine på ett sted.
+ */
+export const VALGTEKSTER: Record<Verktoytype, { gruppe: string; fra: string; til: string | null; velg: string }> = {
+  seponering: { gruppe: 'Legemidlet', fra: 'Virkestoff pasienten bruker', til: null, velg: 'Velg virkestoffet' },
+  bytte: { gruppe: 'Byttet', fra: 'Bytte fra', til: 'Bytte til', velg: 'Velg begge virkestoffene' },
+  tillegg: {
+    gruppe: 'Kombinasjonen',
+    fra: 'Eksisterende legemiddel',
+    til: 'Legemiddel som legges til',
+    velg: 'Velg begge legemidlene',
+  },
+}
 
 export const verktoyFor = (id: string | undefined): Verktoy | undefined => VERKTOY.find((v) => v.id === id)
 

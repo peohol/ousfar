@@ -23,6 +23,7 @@ import {
   type Utsagn,
   type Virkestoffvalg,
 } from './modell'
+import { DOMENESETT } from './domenesett'
 import { NEDTRAPPINGSDISPOSISJON, NEDTRAPPINGSSETT, SAMMENLIGNINGSSETT } from './nedtrapping'
 import { PILOTDISPOSISJON, PILOTSETT } from './pilotsett'
 
@@ -50,7 +51,9 @@ export const P7SAMMENLIGNING: Regelrapport = {
   sett: SAMMENLIGNINGSSETT,
   notater: ['docs/verktøy-p7-nedtrapping.md', 'docs/verktøy-p4-regelmodell.md'],
 }
-export const REGELRAPPORTER: readonly Regelrapport[] = [P4RAPPORT, P7RAPPORT, P7SAMMENLIGNING]
+/** Rapportene om leveransenes sett (`domenesett.ts`), når settet har regler. */
+const DOMENERAPPORTER: Regelrapport[] = DOMENESETT.filter((d) => d.sett.regler.length > 0).map((d) => ({ ...d.rapport, sett: d.sett }))
+export const REGELRAPPORTER: readonly Regelrapport[] = [P4RAPPORT, P7RAPPORT, P7SAMMENLIGNING, ...DOMENERAPPORTER]
 
 const celle = (t: string) => t.replace(/\|/g, '\\|').replace(/\n/g, ' ')
 export const tabell = (hode: string[], rader: string[][]) =>
@@ -79,6 +82,7 @@ const FORM: Record<Regel['plan']['form'], string> = {
   sekvensielt: 'sekvensielt bytte',
   direkte: 'direkte bytte',
   oppstart_depot: 'oppstart av depot',
+  tillegg: 'tillegg til eksisterende legemiddel',
 }
 const ENHET: Record<Parameter['enhet'], string> = { mg: 'mg', dager: 'dager', dag: '(dag)', maaneder: 'måned(er)', prosent: '%', trinn: 'trinn' }
 

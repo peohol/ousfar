@@ -21,11 +21,12 @@ const v = (nokkel: string, formulering: 'standard' | 'LA' | 'ER' | 'MA' = 'stand
 const NAA = TESTKLOKKE()
 
 describe('Verktøyregisteret', () => {
-  it('har de tre verktøyene med stabile ID-er, norske navn, aliaser og adresser', () => {
+  it('har de fire verktøyene med stabile ID-er, norske navn, aliaser og adresser', () => {
     expect(VERKTOY.map((x) => [x.id, x.navn, x.type, x.tabell])).toEqual([
       ['trappe-ned-antidepressiv', 'Trappe ned antidepressiv', 'seponering', 'SwitchAntidepressants'],
       ['bytte-antidepressiv', 'Bytte antidepressiv', 'bytte', 'SwitchAntidepressants'],
       ['bytte-antipsykotikum', 'Bytte antipsykotikum', 'bytte', 'SwitchAntipsychotics'],
+      ['kombinere-stemningsstabiliserende', 'Kombinere stemningsstabiliserende', 'tillegg', 'CombiningMoodstabilizers'],
     ])
     expect(new Set(VERKTOY.map((x) => x.id)).size).toBe(VERKTOY.length)
     for (const x of VERKTOY) {
@@ -150,9 +151,9 @@ describe('Regelstatusen', () => {
     expect(tilgjengelighet(BYTTE_AP!, { fra: v('zuklopentiksol'), til: v('aripiprazol') })).toMatchObject({ status: 'ikke_stottet', regler: [] })
     expect(new Set(tilfeller.flatMap(([, , r]) => r))).toEqual(new Set(REGELSETT.regler.map((r) => r.id)))
     expect(REGELSETT.regler).toHaveLength(PILOTSETT.regler.length + NEDTRAPPINGSSETT.regler.length)
-    expect(VERKTOY.map((x) => regeloversikt(x).tilgjengelige)).toEqual([1, 1, 2])
-    expect(VERKTOY.map((x) => regeloversikt(x).ikkeGodkjent)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length - 1, 1, 1])
-    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([0, 0, 0])
+    expect(VERKTOY.map((x) => regeloversikt(x).tilgjengelige)).toEqual([1, 1, 2, 0])
+    expect(VERKTOY.map((x) => regeloversikt(x).ikkeGodkjent)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length - 1, 1, 1, 0])
+    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([0, 0, 0, 0])
   })
 
   it('forklarer hvorfor et antidepressivum uten regel ikke kan trappes ned, med dekningen fra P7', () => {
@@ -208,6 +209,8 @@ describe('Snarvalgene (VDR-3)', () => {
         ['tilgjengelig', 'Aripiprazol: peroral → depotinjeksjon'],
         ['tilgjengelig', 'Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)'],
       ],
+      // Kombinere stemningsstabiliserende har ingen godkjente regler ennå (K4).
+      [],
     ])
     expect(snarvalg(BYTTE_AP!)[0]!.valg).toEqual({ fra: v('aripiprazol'), til: v('aripiprazol', 'LA') })
     // Hvert snarvalg gir samme status når det kontrolleres som et valg; det avgjør ingenting selv.

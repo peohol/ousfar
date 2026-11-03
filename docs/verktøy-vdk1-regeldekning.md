@@ -12,18 +12,18 @@ Kildetabellen fra Psychiatrienet er bare brukt som metadata som allerede ligger 
 
 Antall kombinasjoner etter hva verktøyet gir. For seponering er en kombinasjon ett virkestoff i én formulering; for bytte et ordnet par av ulike valg (fra → til), også mellom formuleringer av samme virkestoff. En kombinasjon med «beregning» gir en plan bare for de startdosene, svarene og preparatene regelen er godkjent for (avsnitt 2); alt annet stopper med forklaring.
 
-| Utfall | Trappe ned antidepressiv | Bytte antidepressiv | Bytte antipsykotikum |
-| --- | --- | --- | --- |
-| Valgbart | 23 virkestoffer, 23 valg med formulering | 23 virkestoffer, 23 valg med formulering | 25 virkestoffer, 34 valg med formulering |
-| Kombinasjoner | 23 | 506 | 1122 |
-| Beregning med klinisk godkjent regel (i godkjent omfang) | 1 | 1 | 2 |
-| Klinisk godkjent fagtekst, ingen beregning | 2 | 0 | 0 |
-| Regel finnes, kontrollert og ikke godkjent | 7 | 1 | 1 |
-| Regel finnes som fagtekst, ikke godkjent | 6 | 0 | 0 |
-| Ingen OUSFAR-regel; kilden har en anbefaling | 0 | 504 | 892 |
-| Ingen OUSFAR-regel; kilden har ingen anbefaling | 0 | 0 | 161 |
-| Ingen OUSFAR-regel; begrenset av preparater eller kilde | 7 | 0 | 0 |
-| Ikke støttet: middels langtidsvirkende injeksjon | 0 | 0 | 66 |
+| Utfall | Trappe ned antidepressiv | Bytte antidepressiv | Bytte antipsykotikum | Kombinere stemningsstabiliserende |
+| --- | --- | --- | --- | --- |
+| Valgbart | 23 virkestoffer, 23 valg med formulering | 23 virkestoffer, 23 valg med formulering | 25 virkestoffer, 34 valg med formulering | 11 virkestoffer, 11 valg med formulering |
+| Kombinasjoner | 23 | 506 | 1122 | 110 |
+| Beregning med klinisk godkjent regel (i godkjent omfang) | 1 | 1 | 2 | 0 |
+| Klinisk godkjent fagtekst, ingen beregning | 2 | 0 | 0 | 0 |
+| Regel finnes, kontrollert og ikke godkjent | 7 | 1 | 1 | 0 |
+| Regel finnes som fagtekst, ikke godkjent | 6 | 0 | 0 | 0 |
+| Ingen OUSFAR-regel; kilden har en anbefaling | 0 | 504 | 892 | 110 |
+| Ingen OUSFAR-regel; kilden har ingen anbefaling | 0 | 0 | 161 | 0 |
+| Ingen OUSFAR-regel; begrenset av preparater eller kilde | 7 | 0 | 0 | 0 |
+| Ikke støttet: middels langtidsvirkende injeksjon | 0 | 0 | 66 | 0 |
 
 ## 2. Hva kan beregnes i dag
 

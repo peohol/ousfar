@@ -27,7 +27,7 @@ import {
 import type { Kildeformulering } from '../../verktoy/kartlegging'
 import { foretrukketTekst, trinndosetekst, type Doseplanresultat, type Formalternativer, type Trinnvalg } from '../../verktoy/motor/plan'
 import { planvisning, type Planvisning } from '../../verktoy/planvisning'
-import { finnVirkestoff, KARTLEGGING, VERKTOY, verktoyFor, virkestoffvalg, type Verktoy } from '../../verktoy/register'
+import { finnVirkestoff, KARTLEGGING, VALGTEKSTER, VERKTOY, verktoyFor, virkestoffvalg, type Verktoy } from '../../verktoy/register'
 import { avrund } from '../../verktoy/regler/beregning'
 import { KONTROLLUTFALL, kontrollutfall } from '../../verktoy/regler/godkjenning'
 import type { Regel, Regelsett } from '../../verktoy/regler/modell'
@@ -433,8 +433,9 @@ function Verktoyskjema({
   const [lagretSkjema, setSkjema] = useBevart<Planskjema>('skjema', TOMT_SKJEMA, SKJEMAFORM)
 
   const fra = lesVirkestoffvalg(valgene, fraTekst, fraForm)
-  const til = verktoy.type === 'bytte' ? lesVirkestoffvalg(valgene, tilTekst, tilForm) : undefined
-  const valg: Verktoyvalg | undefined = fra && (verktoy.type === 'seponering' || til) ? { fra, ...(til && { til }) } : undefined
+  const tekster = VALGTEKSTER[verktoy.type]
+  const til = tekster.til ? lesVirkestoffvalg(valgene, tilTekst, tilForm) : undefined
+  const valg: Verktoyvalg | undefined = fra && (!tekster.til || til) ? { fra, ...(til && { til }) } : undefined
   // Skjemaet gjelder bare valgene det ble fylt ut for; andre valg begynner med et tomt skjema.
   const identitet = valg ? valgidentitet(valg) : ''
   const skjema = skjemaFor(lagretSkjema, identitet)
@@ -505,18 +506,18 @@ function Verktoyskjema({
 
       <form className="verktoyskjema" onSubmit={(e) => e.preventDefault()} aria-label="Valg">
         <fieldset className="feltgruppe">
-          <legend>{verktoy.type === 'seponering' ? 'Legemidlet' : 'Byttet'}</legend>
+          <legend>{tekster.gruppe}</legend>
           <div className="feltrad verktoyskjema__virkestoffer">
             <Virkestoffelt
-              etikett={verktoy.type === 'seponering' ? 'Virkestoff pasienten bruker' : 'Bytte fra'}
+              etikett={tekster.fra}
               valg={valgene}
               tekst={fraTekst}
               formulering={fraForm}
               onTekst={nyttVirkestoff(fraTekst, setFraTekst, setFraForm)}
               onFormulering={setFraForm}
             />
-            {verktoy.type === 'bytte' && (
-              <Virkestoffelt etikett="Bytte til" valg={valgene} tekst={tilTekst} formulering={tilForm} onTekst={nyttVirkestoff(tilTekst, setTilTekst, setTilForm)} onFormulering={setTilForm} />
+            {tekster.til && (
+              <Virkestoffelt etikett={tekster.til} valg={valgene} tekst={tilTekst} formulering={tilForm} onTekst={nyttVirkestoff(tilTekst, setTilTekst, setTilForm)} onFormulering={setTilForm} />
             )}
           </div>
         </fieldset>
@@ -533,7 +534,7 @@ function Verktoyskjema({
       {hele.length > 0 && <Sperremelding sperrer={hele} regelsett={regelsett} />}
       {!valg || !status ? (
         <p className="verktoyside__hint">
-          {verktoy.type === 'seponering' ? 'Velg virkestoffet' : 'Velg begge virkestoffene'} for å se hva verktøyet kan beregne.
+          {tekster.velg} for å se hva verktøyet kan beregne.
         </p>
       ) : !klinisk ? (
         <Statusvisning status={status} varsler={varsler} />

@@ -71,7 +71,8 @@ describe('Faktumet', () => {
 
 describe('Regelsettene før og etter rettelsen', () => {
   it('er de samme settene; settene før rettelsen er appversjon 1.122.1, og appens sett har ny versjon', () => {
-    expect(FOR_RETTELSENE.map((s) => s.id)).toEqual(REGELSETTENE.map((s) => s.id))
+    // Leveransenes sett (K2–K4, regelmodell 12) kom etter rettelsen og står etter de to rettede settene.
+    expect(FOR_RETTELSENE.map((s) => s.id)).toEqual(REGELSETTENE.slice(0, FOR_RETTELSENE.length).map((s) => s.id))
     expect([PILOTSETT_FOR_RETTELSENE.versjon, PILOTSETT.versjon]).toEqual([16, 17])
     expect([NEDTRAPPINGSSETT_FOR_RETTELSENE.versjon, NEDTRAPPINGSSETT.versjon]).toEqual([14, 15])
     for (const [i, s] of FOR_RETTELSENE.entries()) {

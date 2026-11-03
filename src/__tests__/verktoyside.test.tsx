@@ -2,7 +2,7 @@
 /**
  * Verktøysidene (`#/verktoy`, P6 i `docs/verktøy-utviklingsplan.md`):
  *
- * - Oversikten viser de tre verktøyene og at ingen beregning er tilgjengelig
+ * - Oversikten viser de fire verktøyene og at ingen beregning er tilgjengelig
  *   så lenge ingen regel er klinisk godkjent; en ukjent adresse sier fra.
  * - Med pilotreglene står det at faglig kontroll gjenstår, uten skjema,
  *   uten henting fra FEST og uten tabell.
@@ -83,21 +83,23 @@ describe('oversikten', () => {
       .filter((a) => a.classList.contains('verktoykort__lenke'))
       .map((a) => [...a.querySelectorAll('.verktoykort__linje')].map((l) => l.textContent))
 
-  it('viser de tre verktøyene, og at bare de godkjente reglene kan beregnes: vortioksetin, sertralin → mirtazapin og de to depotreglene', async () => {
+  it('viser de fire verktøyene, og at bare de godkjente reglene kan beregnes: vortioksetin, sertralin → mirtazapin og de to depotreglene', async () => {
     vis()
     expect(screen.getByRole('heading', { level: 1, name: 'Verktøy' })).toBeTruthy()
     expect(document.activeElement).toBe(screen.getByRole('heading', { level: 1 }))
     expect(document.title).toBe('Verktøy – OUSFAR')
     const kort = screen.getAllByRole('link').filter((a) => a.classList.contains('verktoykort__lenke'))
-    expect(kort.map((a) => a.getAttribute('href'))).toEqual(['#/verktoy/trappe-ned-antidepressiv', '#/verktoy/bytte-antidepressiv', '#/verktoy/bytte-antipsykotikum'])
+    expect(kort.map((a) => a.getAttribute('href'))).toEqual(['#/verktoy/trappe-ned-antidepressiv', '#/verktoy/bytte-antidepressiv', '#/verktoy/bytte-antipsykotikum', '#/verktoy/kombinere-stemningsstabiliserende'])
     // Før nødstoppen er lest, loves ingenting om hva som kan beregnes.
-    expect(kortlinjer()).toEqual(Array(3).fill([DEKNING_UKONTROLLERT.henter]))
+    expect(kortlinjer()).toEqual(Array(4).fill([DEKNING_UKONTROLLERT.henter]))
     await act(async () => {})
     // Kortene sier hva som faktisk kan brukes, ikke hvor mange regler som venter.
     expect(kortlinjer()).toEqual([
       ['Kan beregnes: Vortioksetin', 'Fagtekst: Agomelatin, Bupropion'],
       ['Kan beregnes: Sertralin → mirtazapin'],
       ['Kan beregnes: Aripiprazol: peroral → depotinjeksjon, Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)'],
+      // Kombinere stemningsstabiliserende (K4) har ingen godkjente regler ennå, og kortet sier det.
+      ['Ingen beregning tilgjengelig ennå'],
     ])
     expect(screen.queryByText(/Ingen beregninger er tilgjengelige ennå/)).toBeNull()
     expect(screen.queryByRole('alert')).toBeNull()
@@ -106,11 +108,11 @@ describe('oversikten', () => {
   it('sier at tilgjengeligheten ikke kan kontrolleres, ikke «Kan beregnes», mens nødstoppen ikke svarer eller ikke kan leses', async () => {
     vis({ sperrer: { les: () => new Promise<Verktoysperre[]>(() => {}) } })
     await act(async () => {})
-    expect(kortlinjer()).toEqual(Array(3).fill([DEKNING_UKONTROLLERT.henter]))
+    expect(kortlinjer()).toEqual(Array(4).fill([DEKNING_UKONTROLLERT.henter]))
     cleanup()
     vis({ sperrer: { les: async () => Promise.reject(new Error('nettverksfeil')) } })
     await act(async () => {})
-    expect(kortlinjer()).toEqual(Array(3).fill([DEKNING_UKONTROLLERT.feil]))
+    expect(kortlinjer()).toEqual(Array(4).fill([DEKNING_UKONTROLLERT.feil]))
     expect(screen.queryByText(/Kan beregnes/)).toBeNull()
   })
 
@@ -118,7 +120,7 @@ describe('oversikten', () => {
     const alle: Verktoysperre = { id: 's', omfang: 'alle', mal: null, grunn: 'Syntetisk sperre for alle.', satt_kl: '2026-11-01T08:00:00Z', satt_av: 'Ada Admin' }
     vis({ sperrer: { les: async () => [alle] } })
     await act(async () => {})
-    expect(kortlinjer()).toEqual(Array(3).fill(['Midlertidig deaktivert']))
+    expect(kortlinjer()).toEqual(Array(4).fill(['Midlertidig deaktivert']))
     expect(screen.getByRole('alert', { name: 'Midlertidig deaktivert' }).textContent).toMatch(/Syntetisk sperre for alle\./)
     expect(screen.queryByText(/venter på faglig kontroll og klinisk godkjenning/)).toBeNull()
     cleanup()
@@ -591,12 +593,12 @@ describe('nødstoppen (P11.6)', () => {
     const melding = await screen.findByRole('alert', { name: 'Midlertidig deaktivert' })
     expect(melding.textContent).toMatch(/Alle verktøyene: Kritisk feil i doseplanmotoren\.Ada Admin, 01\.11\.2026/)
     const deaktivert = () => [...document.querySelectorAll('.verktoykort__status')].map((x) => x.firstElementChild?.textContent === 'Midlertidig deaktivert')
-    expect(deaktivert()).toEqual([true, true, true])
+    expect(deaktivert()).toEqual([true, true, true, true])
     cleanup()
 
     vis({ sperrer: nodstopp(() => [sperre('verktoy', 'bytte-antipsykotikum')]) })
     await screen.findByText('Midlertidig deaktivert')
-    expect(deaktivert()).toEqual([false, false, true])
+    expect(deaktivert()).toEqual([false, false, true, false])
     // Et deaktivert verktøy lover ingen beregning i oversikten.
     expect(document.querySelectorAll('.verktoykort__status')[2]!.textContent).toBe('Midlertidig deaktivert')
     cleanup()

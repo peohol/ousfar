@@ -41,7 +41,7 @@ import {
 } from './modell'
 
 /** Økes når beregningen endres slik at like inndata kan gi et annet resultat. */
-export const MOTORVERSJON = 9
+export const MOTORVERSJON = 10
 
 /** En sammenhengende periode med samme dose. `til` er `null` når dosen fortsetter. */
 export interface Periode {
@@ -80,6 +80,8 @@ export interface Forlopsresultat {
   formulering?: string
   /** Første dag forløpet kan starte. */
   start: number
+  /** Dosen forløpet starter fra: pasientens aktuelle dose, eller 0 for et nytt legemiddel (regelmodell 12). */
+  utgangsdose_mg?: number
   perioder: Periode[]
   injeksjoner: Injeksjon[]
   /** Siste dag med dose; 0 når legemidlet seponeres før dag 1; `null` når forløpet fortsetter. */
@@ -99,6 +101,15 @@ export interface Forlopsresultat {
   avslutning?: string
   /** Det samme kort, til kortformen og rapporten. */
   avslutning_kort?: string
+  /**
+   * Når forløpet avsluttes etter en godkjent avslutning (`Avslutning`,
+   * regelmodell 12): den høyeste dosen avslutningen gjelder fra, og hvor
+   * mange dager hvert trinn varer. Doseplanmotoren kontrollerer på nytt at
+   * den siste dosen som faktisk gis, ikke er høyere.
+   */
+  avsluttes?: { fra_hoyst_mg: number; trinnlengde: number }
+  /** Legemidlet fortsetter med uendret dose, som planen ikke beregner (`uendret`, regelmodell 12). */
+  uendret_mg?: number
 }
 
 /** Et bindende krav beregningen er kontrollert mot. */
@@ -298,6 +309,10 @@ export const TIDLIGSTE_DATOER =
 /** Det hver plan uten nulltrinn sier om slutten (beslutning 3, 4 og 6): ingen nulltrinn, ingen dato for siste dose, og en ny plan regnes fra dosen som faktisk brukes. */
 export const AVSLUTNING_FELLES = `${SISTE_DOSE} Planen går ikke til null og foreslår ingen dato for siste dose. En ny plan beregnes fra dosen pasienten faktisk bruker når forskriveren revurderer, ikke nødvendigvis siste dose her, og tidligere symptomer, toleranse og utsettelser må vurderes.`
 
+/** Hvorfor en godkjent avslutning ikke gjelder fra dosen planen står på (regelmodell 12). */
+export const overAvslutning = (virkestoff: string, mg: number, fraHoyst: number) =>
+  `Regelens avslutning av ${virkestoff} gjelder bare fra ${tall(fraHoyst)} mg eller lavere, og planen står på ${tall(mg)} mg.`
+
 /* --- Beregningen ------------------------------------------------------------------ */
 
 interface Kontekst {
@@ -420,6 +435,8 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
   let uten: string | undefined
   let avslutning: string | undefined
   let avslutning_kort: string | undefined
+  let avsluttes: Forlopsresultat['avsluttes']
+  let uendret: number | undefined
 
   for (const fase of faserFor(regel, f, ctx.medlem)) {
     switch (fase.type) {
@@ -450,13 +467,33 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
       case 'nedtrapping': {
         const fasestart = dag
         const lengde = verdi(fase.trinnlengde)
+        const godkjent = typeof fase.avslutning === 'object' ? fase.avslutning : undefined
         const individuell = fase.avslutning === 'individuell'
-        if (individuell) {
+        if (individuell || godkjent) {
           // Uten godkjent avslutning tas aldri trinnet til 0: planen viser trinnene frem til horisonten eller laveste dose som kan gis, og siste dose fortsetter.
           const min = f.dosevalg?.min_mg?.verdi ?? undefined
           const valg = (inndata.trinnvalg ?? []).filter((v) => v.forlop === f.id)
           const velg = fase.trinnvalg ? trinnvelger(fase.strategi, virkestoff, valg, min, ctx) : undefined
-          const { serie, beregnet, slutt, neste } = trinnTilHorisont(fase.strategi, aktuell, verdi(fase.horisont!), min, velg)
+          const { serie, beregnet, slutt, neste } = trinnTilHorisont(fase.strategi, aktuell, fase.horisont ? verdi(fase.horisont) : MAKS_TRINN, min, velg)
+          // En godkjent avslutning gjelder fra siste dose når den ikke er over grensen; første dose er da den pasienten bruker, når ingen reduksjon kan beregnes.
+          const fraHoyst = godkjent ? verdi(godkjent.fra_hoyst_mg) : undefined
+          const sisteDose = serie.at(-1) ?? aktuell
+          if (fraHoyst !== undefined && sisteDose <= fraHoyst + EPS) {
+            const trinn = (i: number) =>
+              (fase.trinnvalg && {
+                trinn: i + 1,
+                ...(Math.abs(serie[i]! - beregnet[i]!) > EPS && { valgt: { beregnet_mg: beregnet[i]!, prosent: (1 - serie[i]! / (i === 0 ? aktuell : serie[i - 1]!)) * 100 } }),
+              }) ||
+              undefined
+            // Siste dose gis ett trinn som de andre, så seponeres legemidlet; uten beregnede trinn gis dosen pasienten bruker ett trinn.
+            for (const [i, mg] of (serie.length > 0 ? serie : [aktuell]).entries()) {
+              legg(dag, dag + lengde - 1, mg, undefined, serie.length > 0 ? trinn(i) : undefined)
+              dag += lengde
+            }
+            aktuell = 0
+            avsluttes = { fra_hoyst_mg: fraHoyst, trinnlengde: lengde }
+            break
+          }
           if (serie.length === 0) {
             throw new Stopp(
               slutt === 'praktisk_grense'
@@ -479,7 +516,7 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
           const sisteTrinn = trinn(serie.length - 1) || undefined
           aktuell = serie.at(-1)!
           legg(dag, null, aktuell, undefined, sisteTrinn)
-          const star = `Fra dag ${dag} står pasienten på ${tall(aktuell)} mg av ${virkestoff} til planen revurderes`
+          const star = `${fraHoyst !== undefined ? `${overAvslutning(virkestoff, aktuell, fraHoyst)} ` : ''}Fra dag ${dag} står pasienten på ${tall(aktuell)} mg av ${virkestoff} til planen revurderes`
           if (slutt === 'horisont') {
             avslutning = `Planen viser ${serie.length} reduksjoner, regelens tekniske planhorisont, ikke en klinisk grense. ${star}. ${AVSLUTNING_FELLES}`
             avslutning_kort = `teknisk planhorisont: ${serie.length} reduksjoner; avslutning vurderes individuelt`
@@ -530,7 +567,7 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
       case 'opptrapping':
         for (const t of fase.trinn) {
           const n = verdi(t.dager)
-          legg(dag, dag + n - 1, verdi(t.mg))
+          legg(dag, dag + n - 1, verdi(t.mg), t.hver ? verdi(t.hver) : undefined)
           dag += n
           aktuell = verdi(t.mg)
         }
@@ -552,7 +589,15 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
         break
       }
       case 'seponer':
+        if (fase.avslutning && aktuell > verdi(fase.avslutning.fra_hoyst_mg) + EPS) {
+          throw new Stopp(`${overAvslutning(virkestoff, aktuell, verdi(fase.avslutning.fra_hoyst_mg))} Planen kan ikke seponere herfra; videre nedtrapping eller avslutning må vurderes individuelt.`)
+        }
+        if (fase.avslutning) avsluttes = { fra_hoyst_mg: verdi(fase.avslutning.fra_hoyst_mg), trinnlengde: 0 }
         aktuell = 0
+        break
+      case 'uendret':
+        uendret = aktuell
+        fortsetter = true
         break
       case 'uten_beregning':
         uten = fase.grunn
@@ -593,12 +638,15 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
     administrasjon: f.administrasjon,
     ...(f.formulering ? { formulering: f.formulering } : {}),
     start,
+    utgangsdose_mg: f.utgangsdose === 'startdose' ? inndata.startdose_mg : 0,
     perioder,
     injeksjoner,
     siste_dosedag: fortsetter ? null : dag - 1,
     ...(uten ? { uten_beregning: uten } : {}),
     ...(utvaskingDager !== undefined ? { utvasking_dager: utvaskingDager } : {}),
     ...(avslutning ? { avslutning, avslutning_kort } : {}),
+    ...(avsluttes && !fortsetter ? { avsluttes } : {}),
+    ...(uendret !== undefined ? { uendret_mg: uendret } : {}),
   }
   if (inndata.startdato) dater(resultat, inndata.startdato)
   return resultat
@@ -730,7 +778,7 @@ export function nulldagfeil(forlop: Forlopsresultat[]): string[] {
     const hull = p.findIndex((x, i) => x.fra !== (i === 0 ? f.start : (p[i - 1]!.til ?? Number.NaN) + 1))
     return [
       ...(hull >= 0 ? [`${f.id} er uten dose før dag ${p[hull]!.fra}, men regelen har ingen godkjent avslutning`] : []),
-      ...(p.length === 0 || p.at(-1)!.til !== null || f.siste_dosedag !== null ? [`${f.id} går til 0 mg, men regelen har ingen godkjent avslutning`] : []),
+      ...(p.length === 0 || ((p.at(-1)!.til !== null || f.siste_dosedag !== null) && !f.avsluttes) ? [`${f.id} går til 0 mg, men regelen har ingen godkjent avslutning`] : []),
     ]
   })
 }

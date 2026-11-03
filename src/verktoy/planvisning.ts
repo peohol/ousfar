@@ -29,6 +29,8 @@ export interface Dosecelle {
 
 export type Planrad =
   | { type: 'periode'; dager: string; datoer?: string; celler: (Dosecelle | null)[] }
+  /** Et vurderingspunkt i forløpet i kolonnen (regelmodell 12). */
+  | { type: 'vurdering'; dager: string; datoer?: string; kolonne: number; tekst: string }
   | { type: 'injeksjon'; dager: string; datoer?: string; kolonne: number; dose: string; element: string; detalj?: string }
 
 export interface Plankilde {
@@ -40,8 +42,28 @@ export interface Plankilde {
   steder: string[]
 }
 
+/**
+ * Hva planen dekker (leveranseplanen §3): en komplett plan har hvert forløp
+ * beregnet til et definert sluttmål (seponert, fast vedlikehold eller uendret
+ * dose); en delplan sier hva den ikke dekker. Planer uten et klinisk
+ * resultat vises ikke i det hele tatt ({@link planvisning} gir `null`).
+ */
+export interface Planutfall {
+  komplett: boolean
+  /** «Komplett plan til sluttmålet» eller «Delplan», med sluttmålet eller hva som mangler. */
+  tekst: string
+  /** Sluttmålet for hvert forløp som er beregnet til ende. */
+  sluttmal: string[]
+  /** Hva planen ikke dekker, per forløp; tom for en komplett plan. */
+  mangler: string[]
+}
+
 export interface Planvisning {
   tittel: string
+  /** Om planen er komplett eller en delplan, øverst i planen og i kopien. */
+  utfall: Planutfall
+  /** Vurderings- og kontrollpunktene i klartekst, med tidspunkt og hva som gjøres ved funn. */
+  vurderinger: string[]
   /** Hva planen er når den ikke er en fullstendig nedtrapping, rett under tittelen; ellers `null`. */
   undertittel: string | null
   kolonner: { navn: string; administrasjon: string }[]
@@ -86,13 +108,18 @@ function datotekst(startdato: string | undefined, fra: number, til: number | nul
  * Dagen et peroralt legemiddel er seponert fra, også når det seponeres før
  * første dag i planen (bytte til depot, P11.4): da står seponeringen i
  * tabellen, så planen aldri kan leses som om det perorale skal fortsette.
- * Et forløp med bare injeksjoner har ingen seponeringsdag.
+ * Det samme gjelder et depot som bare stoppes (depot til depot, regelmodell
+ * 12). Et forløp med injeksjoner har ingen seponeringsdag.
  */
 const seponeringsdag = (f: Praktiskforlop): number | null =>
-  f.siste_dosedag !== null && (f.perioder.length > 0 || f.administrasjon === 'peroral') ? f.siste_dosedag + 1 : null
+  f.siste_dosedag !== null && (f.perioder.length > 0 || f.administrasjon === 'peroral' || f.injeksjoner.length === 0) ? f.siste_dosedag + 1 : null
+
+/** Hva cellen sier dagen legemidlet er seponert: et depot som stoppes, får ingen flere injeksjoner. */
+const seponert = (f: Praktiskforlop): Dosecelle =>
+  f.administrasjon === 'depotinjeksjon' && f.perioder.length === 0 ? { dose: 'Seponert', elementer: ['ingen flere injeksjoner'] } : { dose: 'Seponert', elementer: [] }
 
 /** Periodene i alle forløpene slått sammen til felles dager, og injeksjonene som egne rader, i dagenes rekkefølge. */
-function rader(forlop: Praktiskforlop[], startdato: string | undefined): Planrad[] {
+function rader(forlop: Praktiskforlop[], startdato: string | undefined, vurderinger: readonly Vurdering[] = []): Planrad[] {
   const grenser = new Set<number>()
   for (const f of forlop) {
     for (const p of f.perioder) {
@@ -103,7 +130,7 @@ function rader(forlop: Praktiskforlop[], startdato: string | undefined): Planrad
     if (s !== null) grenser.add(s)
   }
   const starter = [...grenser].sort((a, b) => a - b)
-  const apen = forlop.some((f) => f.perioder.some((p) => p.til === null))
+  const apen = forlop.some((f) => f.perioder.some((p) => p.til === null) || f.uendret_mg !== undefined)
   const ut: { dag: number; rad: Planrad }[] = []
   for (const [i, fra] of starter.entries()) {
     const neste = starter[i + 1]
@@ -114,7 +141,8 @@ function rader(forlop: Praktiskforlop[], startdato: string | undefined): Planrad
         const avvik = [Math.abs(p.avvik_prosent) > 1e-7 && `ideelt ${mg(p.ideell_mg)} (${p.avvik_prosent > 0 ? '+' : ''}${String(avrund(p.avvik_prosent)).replace('.', ',')} %)`, valgtTekst(p)].filter(Boolean).join('; ')
         return { dose: `${mg(p.mg)}${p.hver ? ` ${hverTekst(p.hver)}` : ''}${fordelingSuffiks(p)}`, elementer: p.elementer.map(elementtekst), ...(avvik && { avvik }) }
       }
-      return fra === seponeringsdag(f) ? { dose: 'Seponert', elementer: [] } : null
+      if (f.uendret_mg !== undefined) return { dose: mg(f.uendret_mg), elementer: [UENDRET] }
+      return fra === seponeringsdag(f) ? seponert(f) : null
     })
     // Etter siste periode står bare dagen legemidlene er seponert.
     const sisteDag = neste === undefined && !apen
@@ -139,9 +167,110 @@ function rader(forlop: Praktiskforlop[], startdato: string | undefined): Planrad
       })
     }
   }
+  for (const v of vurderinger) {
+    for (const d of v.dager) {
+      // En vurdering før en endring står foran perioden som starter den dagen, en vurdering etter en endring etter den.
+      ut.push({ dag: v.for ? d - 0.5 : d + 0.25, rad: { type: 'vurdering', dager: `Dag ${d}`, ...(startdato && { datoer: dato(startdato, d) }), kolonne: v.kolonne, tekst: v.for ? `Før endringen: ${v.tekst}` : v.tekst } })
+    }
+  }
   // Stabil sortering: en injeksjon står etter perioden som starter samme dag.
   return ut.sort((a, b) => a.dag - b.dag).map((x) => x.rad)
 }
+
+/** Det som står i cellen for et legemiddel som fortsetter med uendret dose. */
+export const UENDRET = 'uendret dose; planen beregner den ikke'
+
+/** Ett vurderingspunkt i en plan, med dagene det gjelder. */
+interface Vurdering {
+  kolonne: number
+  tekst: string
+  tidspunkt: string
+  ved_funn?: string
+  /** Står foran en endring (før hver doseendring). */
+  for: boolean
+  dager: number[]
+}
+
+/**
+ * Dagene doseringen av forløpet endres: første dag med en annen dose enn
+ * forløpet starter fra (oppstart eller første reduksjon), hver senere
+ * doseendring, dagen legemidlet er seponert, og startinjeksjonene.
+ */
+export function endringsdager(f: Praktiskforlop): number[] {
+  const dager = new Set<number>()
+  for (const [i, p] of f.perioder.entries()) {
+    const forrige = f.perioder[i - 1]
+    const endret = forrige ? Math.abs(forrige.mg - p.mg) > 1e-9 || forrige.hver !== p.hver : Math.abs((f.utgangsdose_mg ?? 0) - p.mg) > 1e-9 || p.hver !== undefined
+    if (endret) dager.add(p.fra)
+  }
+  const s = seponeringsdag(f)
+  if (s !== null && f.perioder.length > 0) dager.add(s)
+  for (const inj of f.injeksjoner) if (inj.dag !== null) dager.add(inj.dag)
+  return [...dager].sort((a, b) => a - b)
+}
+
+const verdien = (p: { verdi: number | null }) => p.verdi ?? 0
+
+/** Vurderingspunktene i regelens forløp, med dagene de gjelder i den praktiske planen. */
+function vurderingerFor(regel: Regel, forlop: readonly Praktiskforlop[]): Vurdering[] {
+  return forlop.flatMap((f, kolonne) => {
+    const def = regel.plan.forlop.find((x) => x.id === f.id)
+    const endringer = endringsdager(f)
+    return (def?.vurderinger ?? []).map((v): Vurdering => {
+      const felles = { kolonne, tekst: v.tekst, ...(v.ved_funn && { ved_funn: v.ved_funn }) }
+      switch (v.nar.type) {
+        case 'for_hvert_trinn':
+          // Før hver endring etter den første dagen i forløpet; selve oppstarten er beslutningen om planen.
+          return { ...felles, for: true, tidspunkt: 'før hver doseendring', dager: endringer.filter((d) => d > f.start) }
+        case 'etter_endring': {
+          const n = verdien(v.nar.dager)
+          return { ...felles, for: false, tidspunkt: `${n} dager etter hver doseendring`, dager: [...new Set(endringer.map((d) => d + n))] }
+        }
+        case 'dag': {
+          const d = f.start + verdien(v.nar.dag) - 1
+          return { ...felles, for: false, tidspunkt: `dag ${d}`, dager: [d] }
+        }
+      }
+    })
+  })
+}
+
+/** Linjen for et vurderingspunkt under «Vurderingspunkter». */
+const vurderingslinje = (v: Vurdering, navn: string) =>
+  `${navn}, ${v.tidspunkt}${v.dager.length > 0 && v.tidspunkt.startsWith('dag') === false ? ` (dag ${v.dager.join(', ')})` : ''}: ${v.tekst}${v.ved_funn ? ` Ved funn: ${v.ved_funn}` : ''}`
+
+/** Sluttmålet for ett forløp, eller hva planen ikke dekker for det. */
+function sluttFor(f: Praktiskforlop, navn: string): { sluttmal?: string; mangler?: string } {
+  if (f.uten_beregning) return { mangler: `${navn}: ikke beregnet (${f.uten_beregning.replace(/\.$/, '')})` }
+  if (f.avslutning) return { mangler: `${navn}: ${f.avslutning_kort ?? 'avslutningen vurderes individuelt'}` }
+  if (f.uendret_mg !== undefined) return { sluttmal: `${navn} fortsetter uendret på ${mg(f.uendret_mg)}` }
+  const s = seponeringsdag(f)
+  if (s !== null) return { sluttmal: `${navn} seponert fra dag ${s}` }
+  const vedlikehold = f.injeksjoner.find((i) => i.vedlikehold)
+  if (vedlikehold) return { sluttmal: `${navn} vedlikehold ${mg(vedlikehold.mg)} ${injeksjonstidspunkt(vedlikehold)}` }
+  const sist = f.perioder.at(-1)
+  if (sist && sist.til === null) return { sluttmal: `${navn} fortsetter på ${mg(sist.mg)}${sist.hver ? ` ${hverTekst(sist.hver)}` : ''} fra dag ${sist.fra}` }
+  return { mangler: `${navn}: planen har ikke et definert sluttmål` }
+}
+
+/** Om planen er komplett eller en delplan ({@link Planutfall}). */
+export function planutfall(forlop: readonly Praktiskforlop[], navn: (i: number) => string): Planutfall {
+  const deler = forlop.map((f, i) => sluttFor(f, navn(i)))
+  const sluttmal = deler.flatMap((d) => (d.sluttmal ? [d.sluttmal] : []))
+  const mangler = deler.flatMap((d) => (d.mangler ? [d.mangler] : []))
+  const komplett = mangler.length === 0
+  return {
+    komplett,
+    tekst: komplett ? `${KOMPLETT}: ${sluttmal.join('; ')}.` : `${DELPLAN}: ${mangler.join('; ')}.`,
+    sluttmal,
+    mangler,
+  }
+}
+
+/** Overskriften for en plan der hvert forløp er beregnet til et sluttmål. */
+export const KOMPLETT = 'Komplett plan til sluttmålet'
+/** Overskriften for en plan som ikke dekker hele forløpet. */
+export const DELPLAN = 'Delplan, ikke en komplett plan. Ikke dekket'
 
 /**
  * Hvem som har godkjent regelen klinisk, når, for hvilken versjon og med
@@ -198,11 +327,14 @@ export const kildelinje = (k: Plankilde) => `${k.tittel} (${k.utgiver}, ${k.vers
 export function planvisning(r: Doseplanresultat, regel: Regel, startdato?: string): Planvisning | null {
   if (r.status !== 'doseplan' || !r.klinisk || r.sperre.length > 0 || r.regel.id !== regel.id || r.regel.fingeravtrykk !== fingeravtrykk(regel)) return null
   const kolonner = r.forlop.map((f) => ({ navn: virkestoffnavn(f.virkestoff), administrasjon: ADMINISTRASJON[f.administrasjon] }))
+  const vurderinger = vurderingerFor(regel, r.forlop)
   return {
     tittel: regel.tittel,
     undertittel: undertittelFor(r.forlop),
+    utfall: planutfall(r.forlop, (i) => kolonner[i]!.navn),
+    vurderinger: vurderinger.map((v) => vurderingslinje(v, kolonner[v.kolonne]!.navn)),
     kolonner,
-    rader: rader(r.forlop, startdato),
+    rader: rader(r.forlop, startdato, vurderinger),
     advarsler: [...r.forbehold, ...r.merknader, ...r.forlop.flatMap((f, i) => f.begrensninger.map((b) => `${kolonner[i]!.navn}: ${b}`))],
     forbehold: r.forbehold,
     godkjenning: godkjenningstekst(regel),
@@ -234,6 +366,7 @@ export const egneAdvarsler = (v: Pick<Planvisning, 'advarsler' | 'forbehold'>): 
  * regelversjonen står i kopien under «Versjoner».
  */
 export const PLANDELER = [
+  { tittel: 'Vurderingspunkter', felt: 'vurderinger' },
   { tittel: 'Advarsler', felt: 'advarsler' },
   { tittel: 'Avvik fra regelens kurve', felt: 'avvik' },
   { tittel: 'Antakelser', felt: 'antakelser' },
@@ -253,12 +386,14 @@ export function planTekst(v: Planvisning, overskrift: string): string {
   const linjer = v.rader.map((r) => {
     const naar = `${r.dager}${r.datoer ? ` (${r.datoer})` : ''}`
     if (r.type === 'injeksjon') return `${naar}: ${kolonne(r.kolonne)} ${r.dose} = ${r.element}${r.detalj ? ` (${r.detalj})` : ''}`
+    if (r.type === 'vurdering') return `${naar}: Vurdering (${v.kolonner[r.kolonne]!.navn}): ${r.tekst}`
     return `${naar}: ${r.celler.map(celle).filter(Boolean).join('; ') || 'ingen dose'}`
   })
   return [
     overskrift,
     v.tittel,
     ...(v.undertittel ? [v.undertittel] : []),
+    v.utfall.tekst,
     '',
     ...linjer,
     ...PLANDELER.flatMap((d) => punkter(d.tittel, v[d.felt])),
