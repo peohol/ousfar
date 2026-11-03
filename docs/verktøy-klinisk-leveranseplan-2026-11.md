@@ -85,7 +85,7 @@ Start én **koordinatortråd** som oppretter/delegerer **reelle parallelle prosj
 ## 7. Kontrollporter for hver kliniske PR
 
 - [ ] PR-en viser **hvilket konkret brukerforløp som nå fungerer** og hva som fremdeles er delvis/ikke støttet – før og etter.
-- [ ] Kilde, versjon/dato, avsnitt, norsk preparat/fomulering og hver klinisk parameter er eksplisitt dokumentert. Ingen proprietær kildetekst.
+- [ ] Kilde, versjon/dato, avsnitt, norsk preparat/formulering og hver klinisk parameter er eksplisitt dokumentert. Ingen proprietær kildetekst.
 - [ ] Minst ett positivt syntetisk ende-til-ende-eksempel fra start til sluttmål, og relevante negative/grenseeksempler (feil dose, form, manglende bekreftelse, interaksjon, tilgjengelighet, utgått FEST og nødstopper).
 - [ ] Uavhengig **faglig kontroll fra ChatGPT** er innhentet for nøyaktig regelinnhold, avgrensning og klinisk resultat; eventuelle prinsipielle medisinske beslutninger løftes til Peder med én tydelig anbefaling og konsekvens.
 - [ ] CI, bygg og relevante automatiske tester er grønne, og det er utført en reell gjennomgang av skjermbildet/planen for en vanlig norsk situasjon.
