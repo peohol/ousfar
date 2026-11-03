@@ -26,7 +26,7 @@ import {
   type Planskjema,
 } from '../../verktoy/doseplan'
 import type { Kildeformulering } from '../../verktoy/kartlegging'
-import { foretrukketTekst, tempotekst, trinndosetekst, type Doseplanresultat, type Formalternativer, type Trinnvalg } from '../../verktoy/motor/plan'
+import { foretrukketTekst, mellomtrinntekst, tempotekst, trinndosetekst, type Doseplanresultat, type Formalternativer, type Trinnvalg } from '../../verktoy/motor/plan'
 import { planvisning, type Planvisning } from '../../verktoy/planvisning'
 import { finnVirkestoff, KARTLEGGING, VALGTEKSTER, VERKTOY, verktoyFor, virkestoffvalg, type Verktoy } from '../../verktoy/register'
 import { avrund } from '../../verktoy/regler/beregning'
@@ -1105,10 +1105,14 @@ function Trinnvalgdel({ resultat, navn, onVelg }: { resultat: Doseplanresultat |
       {valg.map((t) => (
         <fieldset key={`${t.forlop}-${t.trinn}`} className="feltgruppe">
           <legend>
-            Trinn {t.trinn} av {navn(t.forlop)} kan ikke gis nøyaktig
+            {t.mellomtrinn ? `Trinn ${t.trinn} av ${navn(t.forlop)}: et mindre siste trinn kan velges` : `Trinn ${t.trinn} av ${navn(t.forlop)} kan ikke gis nøyaktig`}
           </legend>
           <p className="feltgruppe__hjelp">
-            {t.omrade && t.minste_trinn ? (
+            {t.mellomtrinn ? (
+              <>
+                {mellomtrinntekst(t)} {t.tempo && tempotekst(t.tempo)}
+              </>
+            ) : t.omrade && t.minste_trinn ? (
               <>
                 Den foretrukne reduksjonen til {foretrukketTekst(t)} kan ikke gis med preparatene, og ingen dose med faktisk reduksjon innenfor det foretrukne området{' '}
                 {tall(t.omrade[0])}–{tall(t.omrade[1])} % kan det. Ved denne lave dosen kan du velge det minste trinnet som kan gis, med faktisk reduksjon høyst{' '}

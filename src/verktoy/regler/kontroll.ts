@@ -233,6 +233,8 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
       if (fase.trinnvalg && fase.strategi.type === 'prosent_av_startdose') {
         if (individuell) f(`forløp ${x.id} lar forskriveren velge dose per trinn i prosent av startdosen med individuell eller godkjent avslutning; det gjelder bare en nedtrapping til 0`)
         if (x.dosevalg?.avvik_prosent?.verdi) f(`forløp ${x.id} lar forskriveren velge dose per trinn og har samtidig en toleranse`)
+      } else if (fase.strategi.type === 'prosent_av_startdose' && fase.strategi.mellomtrinn) {
+        f(`forløp ${x.id} har et mellomtrinn før seponeringen uten valg av dose per trinn`)
       } else if (fase.trinnvalg) {
         if (fase.strategi.type !== 'prosent_av_aktuell' || !fase.strategi.prosent.omrade) f(`forløp ${x.id} lar forskriveren velge dose per trinn uten et område for reduksjonen i prosent av aktuell dose`)
         if (!individuell) f(`forløp ${x.id} lar forskriveren velge dose per trinn uten individuell eller godkjent avslutning`)
@@ -260,6 +262,13 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
     for (const v of x.vurderinger ?? []) if (!v.tekst.trim()) f(`vurderingspunktet ${x.id}.${v.id} mangler tekst`)
     for (const [i, fase] of x.faser.entries()) {
       if (fase.type === 'seponer' && fase.avslutning && i !== x.faser.length - 1) f(`forløp ${x.id} har en godkjent avslutning før siste fase`)
+      // Visningen av en uendret dose må kunne leses entydig (regelmodell 12).
+      const vis = fase.type === 'uendret' ? fase.visning : undefined
+      const positiv = (v: number) => Number.isFinite(v) && v > 0
+      if (vis?.enhet !== undefined && !vis.enhet.trim()) f(`forløp ${x.id} viser den uendrede dosen med en tom enhet`)
+      if (vis?.tablett && !vis.tablett.navn.trim()) f(`forløp ${x.id} viser den uendrede dosen med en tablett uten navn`)
+      if (vis?.tablett && !positiv(vis.tablett.mg)) f(`forløp ${x.id} viser den uendrede dosen med ${String(vis.tablett.mg)} per tablett; det må være over 0`)
+      if (vis?.tablett?.mmol !== undefined && !positiv(vis.tablett.mmol)) f(`forløp ${x.id} viser den uendrede dosen med ${String(vis.tablett.mmol)} mmol per tablett; det må være over 0`)
     }
   }
   for (const x of tallfeil(r)) f(x)

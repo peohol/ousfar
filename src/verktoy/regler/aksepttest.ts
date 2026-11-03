@@ -144,8 +144,10 @@ export function medValg(u: Festuttrekk, r: Regel, form: Formalternativ, inndata:
   let x = inndata
   let plan = beregnAksept(u, r, form, x)
   // Hvert valg gir minst ett trinn til, så horisonten begrenser antallet.
-  for (let i = 0; i < 2 * PLANHORISONT_TRINN && plan.trinnvalg?.length; i++) {
-    x = { ...x, trinnvalg: [...(x.trinnvalg ?? []), simulertValg(r, plan.trinnvalg[0]!)] }
+  // Et mindre siste trinn (`Trinnvalg.mellomtrinn`) er valgfritt i en komplett plan og simuleres ikke.
+  const valgene = (p: Doseplanresultat) => (p.trinnvalg ?? []).filter((t) => !t.mellomtrinn)
+  for (let i = 0; i < 2 * PLANHORISONT_TRINN && valgene(plan).length; i++) {
+    x = { ...x, trinnvalg: [...(x.trinnvalg ?? []), simulertValg(r, valgene(plan)[0]!)] }
     plan = beregnAksept(u, r, form, x)
   }
   return plan
@@ -157,9 +159,9 @@ export function medValg(u: Festuttrekk, r: Regel, form: Formalternativ, inndata:
  * ({@link simulertValg}); `null` når ingen av dem finnes.
  */
 export function videreforingsdose(r: Regel, p: Doseplanresultat): number | null {
-  // En plan som seponerer (en godkjent avslutning, regelmodell 12), har ingen videreføring.
+  // En plan som seponerer (en avslutning, regelmodell 12), har ingen videreføring.
   if (p.status === 'doseplan' && p.forlop[0]?.siste_dosedag != null) return null
-  const tv = p.trinnvalg?.find((t) => t.trinn === 1)
+  const tv = p.trinnvalg?.find((t) => t.trinn === 1 && !t.mellomtrinn)
   return sisteDose(p) ?? (tv ? simulertValg(r, tv).mg : null)
 }
 
@@ -239,7 +241,7 @@ export const OMFANG: Record<Omfang, string> = {
 /** Omfanget av planen: en delplan når første trinn kan gis med den foretrukne reduksjonen; ellers om forskriveren kan velge en dose for første trinn. */
 export function omfang(p: Doseplanresultat): Omfang {
   if (reduksjoner(p) > 0) return 'delplan'
-  return p.trinnvalg?.some((t) => t.trinn === 1) ? 'valg' : 'stopp'
+  return p.trinnvalg?.some((t) => t.trinn === 1 && !t.mellomtrinn) ? 'valg' : 'stopp'
 }
 
 const OMFANGSORD: Record<Omfang, string> = { delplan: 'delplan', valg: 'valgt dose', stopp: 'stopp' }
@@ -289,7 +291,7 @@ export interface Doseomfang {
  * ved et valg for første trinn planen med dosen {@link simulertValg} gir.
  */
 export function iOmfang(u: Festuttrekk, r: Regel, form: Formalternativ, inndata: Beregningsinndata, p: Doseplanresultat): boolean {
-  const tv = p.trinnvalg?.find((t) => t.trinn === 1)
+  const tv = p.trinnvalg?.find((t) => t.trinn === 1 && !t.mellomtrinn)
   const plan = reduksjoner(p) > 0 ? p : tv ? beregnAksept(u, r, form, { ...inndata, trinnvalg: [simulertValg(r, tv)] }) : null
   return plan?.status === 'doseplan' && reduksjoner(plan) > 0 && omfangsfeil(r, inndata, plan.forlop).length === 0
 }
