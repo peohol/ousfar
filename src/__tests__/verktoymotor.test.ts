@@ -507,7 +507,16 @@ describe('Sperren mot klinisk bruk', () => {
     expect(r.status === 'doseplan' && r.sperre).toEqual(['Regelen er en syntetisk testregel.', expect.stringMatching(/^Regelen er ugyldig: forløp fra slutter ikke med en nedtrapping med individuell avslutning/), expect.stringMatching(/åpne valg/)])
     expect(kliniskSperre(regel, g.utvalg, NAA)).toContain('Preparatene er fra «Syntetiske testdata», ikke fra FEST.')
     const k = kliniskDoseplan(regel, AZA, g, OMGIVELSE)
-    expect(k).toMatchObject({ status: 'stoppet', klinisk: false, stoppgrunner: ['Ingen klinisk doseplan kan vises.', 'Regelen er en syntetisk testregel.', expect.anything(), expect.anything(), expect.anything()] })
+    expect(k).toMatchObject({ status: 'stoppet', klinisk: false, stoppgrunner: [
+        'Ingen klinisk doseplan kan vises.',
+        'Regelen er en syntetisk testregel.',
+        expect.anything(),
+        expect.anything(),
+        expect.anything(),
+        // Faste doser som bare slutter, er ikke et definert sluttmål.
+        'Komplett plan ikke tilgjengelig: testazapin: planen har ikke et definert sluttmål.',
+      ],
+    })
     for (const t of TESTTILFELLER) expect(kliniskDoseplan(t.regel, t.inndata, syntetiskGrunnlag(t.preparater, t.fest), OMGIVELSE).status, t.id).toBe('stoppet')
   })
 

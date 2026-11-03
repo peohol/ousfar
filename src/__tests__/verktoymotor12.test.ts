@@ -6,7 +6,7 @@
  * stoppes. Alle regler og preparater er syntetiske og godkjennes bare i testen.
  */
 import { describe, expect, it } from 'vitest'
-import { beregnDoseplan, formvalgSomTrengs, KOMPLETT_IKKE_TILGJENGELIG, kliniskDelplan, kliniskDoseplan, mellomtrinntekst, type Doseplanresultat } from '../verktoy/motor/plan'
+import { beregnDoseplan, formvalgSomTrengs, KOMPLETT_IKKE_TILGJENGELIG, kliniskDelplan, kliniskDoseplan, mellomtrinntekst, sluttmalMangler, type Doseplanresultat, type Praktiskforlop } from '../verktoy/motor/plan'
 import { ALLE_TESTPREPARATER, depotregel, nedtrappingsregel, OMGIVELSE, sp, syntetiskGrunnlag, trinnvalgUtenNull } from '../verktoy/motor/syntetisk'
 import { doseenhet, mangler, startdosenavn, TOMT_SKJEMA, ubesvart } from '../verktoy/doseplan'
 import { DELPLAN, KOMPLETT, planTekst, planutfall, planvisning, UENDRET } from '../verktoy/planvisning'
@@ -77,15 +77,18 @@ describe('Godkjent avslutning (regelmodell 12)', () => {
     expect(kort(plan(medAvslutning(5, 5), 5))).toEqual([[['1–14: 5'], 14]])
   })
 
-  it('kontrollerer den siste dosen som faktisk kan gis: neste trinn som ikke kan gis, avslutter fra trinnet før bare innenfor grensen', () => {
+  it('seponerer aldri fra trinnet før når neste trinn ikke kan gis med preparatene, heller ikke innenfor grensen (FEST-hull)', () => {
     // Uten laveste dose: 20 → 10 → 5 → 2,5 → 1,25, og 0,63 mg kan ikke gis nøyaktig med preparatene.
     const innenfor = medAvslutning(2.5, undefined, 'innenfor')
     const ideell = beregn(innenfor, { startdose_mg: 20 })
     expect(ideell.status === 'modellberegning' && ideell.forlop[0]!.perioder.length).toBeGreaterThan(4)
+    // 1,25 mg er under avslutningsgrensen, men en manglende styrke er ikke et faglig grunnlag for siste dose: planen stopper uten seponering.
     const p = plan(innenfor, 20)
-    expect(kort(p)).toEqual([[['1–14: 10', '15–28: 5', '29–42: 2.5', '43–56: 1.25'], 56]])
-    expect(p.merknader.join(' ')).toMatch(/avslutning gjelder fra 1,25 mg \(høyst 2,5 mg\)/)
-    expect(planvisning(p, innenfor)!.utfall.komplett).toBe(true)
+    expect(kort(p)).toEqual(['Komplett plan ikke tilgjengelig: testoksetin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt.'])
+    expect(planvisning(p, innenfor)).toBeNull()
+    const intern = delplan(innenfor, 20)
+    expect(kort(intern)).toEqual([[['1–14: 10', '15–28: 5', '29–42: 2.5', '43–…: 1.25'], null]])
+    expect(intern.status === 'doseplan' && intern.forlop[0]!.siste_dosedag).toBeNull()
     const utenfor = medAvslutning(1, undefined, 'utenfor')
     expect(kort(plan(utenfor, 20)).join(' ')).toMatch(/^Komplett plan ikke tilgjengelig: testoksetin: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 1 mg eller lavere \(planen står på 1,25 mg\)\.$/)
     const q = delplan(utenfor, 20)
@@ -330,7 +333,7 @@ describe('Tillegg (K4)', () => {
     }
     expect(celle(kontrollert)).toEqual({ dose: '168 mg Li⁺ (24 mmol)', elementer: [`4 tabletter Syntetisk 42 mg depottablett; ${UENDRET.kontrollert}`] })
     expect(kontrollert.v.utfall.sluttmal[0]).toBe('testoksetin fortsetter uendret på 168 mg Li⁺ (24 mmol)')
-    expect(planTekst(kontrollert.v, 'Kombinere')).toContain('168 mg Li⁺ (24 mmol) = 4 tabletter Syntetisk 42 mg depottablett; uendret dose, kontrollert mot regelens doser; planen beregner den ikke')
+    expect(planTekst(kontrollert.v, 'Kombinere')).toContain('168 mg Li⁺ (24 mmol) = 4 tabletter Syntetisk 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke')
     // Uten et krav til startdosen er dosen bare bekreftet av forskriveren, og planen sier det.
     expect(celle(med())).toEqual({ dose: '168 mg Li⁺ (24 mmol)', elementer: [`4 tabletter Syntetisk 42 mg depottablett; ${UENDRET.bekreftet}`] })
     // Kontrollen krever en tablett med navn og positive verdier.
@@ -567,6 +570,64 @@ describe('Aldri en delplan for klinikere (Peders beslutning 03.11.2026)', () => 
 
   it('viser planen når den er komplett', () => {
     expect(kort(plan(medAvslutning(5, 5, 'krever-inne'), 20))).toEqual([[['1–14: 10', '15–28: 5'], 28]])
+  })
+})
+
+describe('Komplett betyr det konkrete sluttmålet (ChatGPTs kontroll av 30eadd5)', () => {
+  /** Et praktisk forløp som slutter slik `endre` sier; ellers seponert dag 15. */
+  const forlop = (endre: Partial<Praktiskforlop>): Praktiskforlop => ({
+    id: 'fra',
+    virkestoff: 'testazapin',
+    administrasjon: 'peroral',
+    start: 1,
+    perioder: [],
+    injeksjoner: [],
+    siste_dosedag: 14,
+    toleranse_prosent: 0,
+    begrensninger: [],
+    ...endre,
+  })
+  const periode = (fra: number, til: number | null, mg: number) => ({ fra, til, mg, ideell_mg: mg, avvik_prosent: 0, elementer: [] })
+
+  it('godtar bare planer som faktisk ender på målet', () => {
+    expect(sluttmalMangler(forlop({ mal: { type: 'seponert' }, perioder: [periode(1, 14, 10)] }))).toBeUndefined()
+    expect(sluttmalMangler(forlop({ mal: { type: 'vedlikehold', mg: 30, maldose: true }, siste_dosedag: null, perioder: [periode(1, 14, 15), periode(15, null, 30)] }))).toBeUndefined()
+    expect(sluttmalMangler(forlop({ mal: { type: 'uendret', mg: 20 }, siste_dosedag: null, uendret_mg: 20 }))).toBeUndefined()
+  })
+
+  it('avviser feil vedlikeholdsdose, en oppstartsdose som fortsetter, feil depotmål, manglende seponering og en vurdering som gjenstår', () => {
+    // Feil vedlikeholdsdose: planen står på 28 mg, men forskriverens måldose er 30 mg.
+    expect(sluttmalMangler(forlop({ mal: { type: 'vedlikehold', mg: 30, maldose: true }, siste_dosedag: null, perioder: [periode(1, 14, 15), periode(15, null, 28)] }))).toBe('planen står på 28 mg, ikke måldosen 30 mg')
+    // Oppstartsdosen fortsetter og når aldri vedlikeholdet.
+    expect(sluttmalMangler(forlop({ mal: { type: 'vedlikehold', mg: 30, maldose: true }, siste_dosedag: null, perioder: [periode(1, null, 15)] }))).toBe('planen står på 15 mg, ikke måldosen 30 mg')
+    expect(sluttmalMangler(forlop({ mal: { type: 'vedlikehold', mg: 30, maldose: false }, perioder: [periode(1, 14, 15)] }))).toBe('planen når ikke vedlikeholdsdosen 30 mg')
+    // En dose som bare fortsetter, uten et sluttmål fra regelen.
+    expect(sluttmalMangler(forlop({ siste_dosedag: null, perioder: [periode(1, null, 15)] }))).toBe('planen har ikke et definert sluttmål')
+    // Feil depotmål.
+    const injeksjon = (mg: number) => ({ dag: null, mg, vedlikehold: { maaneder: 1, etter_dag: 8 }, element: { preparater: [], antall: 1 } }) as unknown as Praktiskforlop['injeksjoner'][number]
+    expect(sluttmalMangler(forlop({ administrasjon: 'depotinjeksjon', mal: { type: 'depot', mg: 100 }, siste_dosedag: null, injeksjoner: [injeksjon(75)] }))).toBe('depotvedlikeholdet er 75 mg, ikke regelens 100 mg')
+    expect(sluttmalMangler(forlop({ administrasjon: 'depotinjeksjon', mal: { type: 'depot', mg: 100 }, siste_dosedag: null }))).toBe('planen når ikke depotvedlikeholdet på 100 mg')
+    // Seponert som mål, men planen seponerer ikke.
+    expect(sluttmalMangler(forlop({ mal: { type: 'seponert' }, siste_dosedag: null, perioder: [periode(1, null, 5)] }))).toBe('planen seponerer ikke legemidlet')
+    // En klinisk vurdering gjenstår (individuell avslutning).
+    expect(sluttmalMangler(forlop({ mal: { type: 'seponert' }, avslutning: 'Vurderes individuelt.', avslutning_kort: 'avslutning vurderes individuelt' }))).toBe('avslutning vurderes individuelt')
+    expect(sluttmalMangler(forlop({ mal: { type: 'uendret', mg: 20 }, siste_dosedag: null, uendret_mg: 25 }))).toBe('planen holder ikke dosen uendret på 20 mg')
+  })
+
+  it('stopper for klinikeren når tillegget ender på en annen dose enn den valgte måldosen', () => {
+    // Måldosen 31 mg kan ikke gis; med 10 % toleranse ville planen stått på en annen dose, og det er ikke målet.
+    const r = tillegg()
+    r.plan.forlop[1]!.dosevalg = { avvik_prosent: sp(10, 'prosent', 'veiledende_preferanse') }
+    const g = godkjennITest(r, 'test-tillegg-maldose')
+    const intern = kliniskDelplan(g, { startdose_mg: 20, maldose_mg: 31 }, GRUNNLAG, OMGIVELSE)
+    if (intern.status !== 'doseplan') throw new Error(intern.stoppgrunner.join(' '))
+    const sist = intern.forlop[1]!.perioder.at(-1)!
+    expect(sist.til).toBeNull()
+    expect(sist.mg).not.toBe(31)
+    const p = kliniskDoseplan(g, { startdose_mg: 20, maldose_mg: 31 }, GRUNNLAG, OMGIVELSE)
+    expect(p.status === 'stoppet' && p.stoppgrunner).toEqual([`${KOMPLETT_IKKE_TILGJENGELIG}: testazapin: planen står på ${String(sist.mg).replace('.', ',')} mg, ikke måldosen 31 mg.`])
+    // Med en måldose som kan gis nøyaktig, er planen komplett.
+    expect(kliniskDoseplan(g, { startdose_mg: 20, maldose_mg: 30 }, GRUNNLAG, OMGIVELSE).status).toBe('doseplan')
   })
 })
 
