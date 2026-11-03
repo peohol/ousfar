@@ -131,6 +131,8 @@ Alle punkter er **ikke påbegynt** per 01.11.2026. Claude gjennomfører tekniske
 
 **Kontrollport:** Dokumenterte kjøringer, sikkerhetstester, UI-test og kontrollørtillatelse. P12.1 skal ikke krysses av kun fordi den gamle prøvesaken har passert 72 timer.
 
+**Status 03.11.2026 (til kontroll):** Flyt 1–3 er prøvd fra kjøringen til verktøysiden (`src/__tests__/kildesakflyt.test.tsx`). Produksjonen er kontrollert ved lesing, funn 3 er avsluttet som prøve, og den gamle påminnelsen er avklart (`docs/verktøy-vdr5-produksjonskontroll.md`). Sak 4 og 5 (som avløste funn 1 og 2) avsluttes teknisk etter PR #306. Punktene krysses av når kontrolløren har godtatt dem.
+
 ## 7. Parallelt arbeid: øk klinisk nytte og regeldekning
 
 Dette er **et eget klinisk spor**, ikke en underoppgave som må vente på VDR-1–VDR-5. Kildeovervåkingen hindrer ikke eksisterende godkjente beregninger.

@@ -1,6 +1,6 @@
 # OUSFAR Verktøy – P12.1 og P12.5: overvåking av kildegrunnlaget og FEST
 
-> **Kildesaker (VDR-1, `docs/verktøy-omlegging-2026-11.md`):** Fra versjon 1.119.0 er hvert funn en sak som først undersøkes teknisk. Fristene på 24/72 timer, den tekniske vurderingen i fritekst og avslutningen med en fritekst er fjernet. Redaktørvisningen for faglige spørsmål (VDR-2) og varslene i verktøyene (VDR-3) bygger på datagrensesnittet i §5.
+> **Kildesaker (VDR-1, `docs/verktøy-omlegging-2026-11.md`):** Fra versjon 1.119.0 er hvert funn en sak som først undersøkes teknisk. Fristene på 24/72 timer, den tekniske vurderingen i fritekst og avslutningen med en fritekst er fjernet. Redaktørvisningen for faglige spørsmål (VDR-2, 1.120.0) og varslene i verktøyene (VDR-3, 1.121.0) bygger på datagrensesnittet i §5 og er i produksjon. Produksjonskontrollen og testen av hele saksgangen (VDR-5) står i `docs/verktøy-vdr5-produksjonskontroll.md`.
 
 ## 1. Avgrensning
 
@@ -144,7 +144,7 @@ En registrert beslutning er ikke et utført tiltak: saken står som «Oppfølgin
 
 ### 5.6 Fremgangsmåten for agenten
 
-**Rekkefølge ved innføringen.** Redaktørens vindu med valgene (VDR-2) og varslene i verktøyene (VDR-3) kommer i egne PR-er som bygger på denne. Til begge er i produksjon, sender agenten verken `faglig_sporsmal` eller `brukervarsel`, så ingen sak venter på en beslutning redaktøren ikke kan ta, og ingen varsel lagres uten å vises. Et mulig alvorlig problem løftes likevel straks (`mulig_alvorlig_risiko`): redaktøren ser det i Adminmeny → Kildeovervåking, og nødstoppen i Adminmeny → Kliniske verktøy er tilgjengelig.
+**Etter innføringen.** Redaktørens vindu med valgene (VDR-2) og varslene i verktøyene (VDR-3) er i produksjon fra 1.121.0 (03.11.2026). Agenten kan derfor sende `faglig_sporsmal` og `brukervarsel`: spørsmålet vises med valg og virkning, og varselet vises ved den berørte anbefalingen. Et mulig alvorlig problem løftes straks (`mulig_alvorlig_risiko`): redaktøren ser det i Adminmeny → Kildeovervåking, og nødstoppen i Adminmeny → Kliniske verktøy er tilgjengelig.
 
 1. **Teknisk utredning.** Kan endringen gjenskapes, hvilken del av kilden gjelder den, og hvilke godkjente regler bygger på akkurat den delen? Et uendret klinisk innhold kan ikke erklæres på grunnlag av en kontrollsum alene eller en eldre kilde som ikke kan sammenlignes.
 2. **Mulig alvorlig risiko** løftes straks (`mulig_alvorlig_risiko`), og redaktøren kan sette nødstoppen (`docs/verktøy-p11-publisering.md` §5.2).
@@ -191,4 +191,4 @@ Det kan være en reell revisjon, eller bare at siden rundt teksten er endret. De
 6. Et nytt funn er en teknisk sak og når ikke redaktøren alene. Samme innhold gir ingen ny sak; nytt innhold oppdaterer den åpne saken uten å viske ut en beslutning; en del som ikke er kontrollert, rører ingen sak; ingen rad slettes (`kildeovervaking.test.ts`).
 7. En teknisk sak avsluttes bare med bevis som ikke er en kontrollsum alene, eller når en kontroll av delen fant kilden i samsvar med grunnlaget; en kilde som ikke svarte, avslutter ingenting. Et mulig sikkerhetsproblem avsluttes aldri teknisk.
 8. Redaktøren får en prikk bare for en faglig sak som venter på beslutning eller et mulig sikkerhetsproblem, med valg og virkning; en beslutning bestiller tiltak, og saken avsluttes først når de er kontrollert. Det finnes ingen frister.
-9. Etter sammenslåing: overgangen er kontrollert i produksjonen, og hele saksgangen er prøvd med en prøvesak (VDR-5).
+9. Hele saksgangen er prøvd fra kjøringen til verktøysiden med kontrollert klokke og syntetiske funn: teknisk lukking, faglig spørsmål med kontrollert tiltak, og målrettet nødstopp som kan oppheves mens en annen godkjent regel virker (`kildesakflyt.test.tsx`). Overgangen er kontrollert i produksjonen ved lesing, og prøvefunn 3 er avsluttet som prøve (`docs/verktøy-vdr5-produksjonskontroll.md`).

@@ -98,6 +98,12 @@ function lesSperre(x: unknown): Verktoysperre {
   return { id: s.id, omfang: s.omfang!, mal: s.omfang === 'alle' ? null : s.mal!, grunn: s.grunn, satt_kl: String(s.satt_kl ?? ''), satt_av: s.satt_av ?? null }
 }
 
+/** De aktive sperrene slik `les_verktoysperrer` gir dem; et svar med en annen form avvises. */
+export function lesVerktoysperrer(x: unknown): Verktoysperre[] {
+  if (!Array.isArray(x)) throw new Error('Sperrene har en form appen ikke kjenner.')
+  return x.map(lesSperre)
+}
+
 export function lagVerktoysperrelager(klient: SupabaseClient): Verktoysperrelager {
   async function kall<T>(funksjon: string, argumenter?: Record<string, unknown>): Promise<T> {
     const { data, error } = await klient.rpc(funksjon, argumenter)
@@ -105,11 +111,7 @@ export function lagVerktoysperrelager(klient: SupabaseClient): Verktoysperrelage
     return data as T
   }
   return {
-    les: async () => {
-      const rader = await kall<unknown>('les_verktoysperrer')
-      if (!Array.isArray(rader)) throw new Error('Sperrene har en form appen ikke kjenner.')
-      return rader.map(lesSperre)
-    },
+    les: async () => lesVerktoysperrer(await kall<unknown>('les_verktoysperrer')),
     historikk: async () => {
       const rader = await kall<unknown>('verktoysperrehistorikk')
       if (!Array.isArray(rader)) throw new Error('Sperrene har en form appen ikke kjenner.')
