@@ -373,8 +373,7 @@ as $$
         from jsonb_array_elements(coalesce(k.innhold -> 'berorte', '[]'::jsonb)) g))) with ordinality as x(b, o)
     ),
     sperring as (
-      select count(*) as alle, count(*) filter (where sperret) as sperrede, count(*) filter (where sperret is null) as ukjente,
-        string_agg(b ->> 'regel', ', ' order by o) filter (where sperret) as hvilke
+      select count(*) as alle, count(*) filter (where sperret) as sperrede, count(*) filter (where sperret is null) as ukjente
       from berorte
     )
   select jsonb_build_object(
@@ -402,8 +401,9 @@ as $$
         when k.tilstand = 'avsluttet' or p.sperrede = 0 then coalesce(k.sporsmal ->> 'status_na', 'Verktøyet virker som før til en eventuell nødstopp settes.')
         when p.sperrede = p.alle and p.alle = 1 then 'Den berørte regelen er sperret med nødstoppen og gir ingen plan.'
         when p.sperrede = p.alle then format('Alle de %s berørte reglene er sperret med nødstoppen og gir ingen plan.', p.alle)
-        else format('Nødstoppen er satt for %s av %s berørte regler (%s), som ikke gir noen plan. De andre berørte reglene gir fortsatt planer som før.',
-          p.sperrede, p.alle, p.hvilke)
+        -- Hvilke det er, står på hver berørt regel (`sperret`); teksten har ingen interne nøkler.
+        else format('Nødstoppen er satt for %s av %s berørte regler, som ikke gir noen plan. De andre berørte reglene gir fortsatt planer som før.',
+          p.sperrede, p.alle)
       end
       from sperring p),
     'opprettet_kl', k.opprettet_kl,

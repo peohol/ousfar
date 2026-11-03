@@ -459,7 +459,7 @@ describe('kildesakene i databasen', () => {
 
     await db.query(`insert into public.verktoysperrer (omfang, mal, grunn, satt_av) values ('regel', $1, 'Syntetisk sperre', $2)`, [a.regel, admin])
     const delvis = await fagsak()
-    expect(delvis.status_na).toBe('Nødstoppen er satt for 1 av 2 berørte regler (syntetisk-regel-a), som ikke gir noen plan. De andre berørte reglene gir fortsatt planer som før.')
+    expect(delvis.status_na).toBe('Nødstoppen er satt for 1 av 2 berørte regler, som ikke gir noen plan. De andre berørte reglene gir fortsatt planer som før.')
     expect(delvis.berorte).toEqual([expect.objectContaining({ regel: a.regel, sperret: true }), expect.objectContaining({ regel: b.regel, sperret: false })])
 
     // En sperre for verktøyet regelen hører til, gjelder også regelen.
