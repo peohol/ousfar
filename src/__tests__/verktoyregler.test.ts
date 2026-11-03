@@ -727,6 +727,16 @@ describe('Kontrollene av et regelsett', () => {
     const d = regel('seponering-escitalopram')
     d.referanser = [{ kilde: 'psychiatrienet', kildeoppforing: 'SwitchAntidepressants:Es>Ci' }]
     expect(feil(d)).toMatch(/er en anbefaling om bytte, men regelen seponerer/)
+    // Tillegg passer bare regler som legger til et legemiddel, og omvendt (regelmodell 12).
+    const t = regel('seponering-escitalopram')
+    t.referanser = [{ kilde: 'psychiatrienet', kildeoppforing: 'CombiningMoodstabilizers:Va>La' }]
+    expect(feil(t)).toMatch(/Va>La passer ikke regelen: den er en anbefaling om tillegg, ikke om bytte eller seponering/)
+    const u = regel('seponering-escitalopram')
+    u.plan = { ...u.plan, form: 'tillegg' }
+    u.referanser = [{ kilde: 'psychiatrienet', kildeoppforing: 'SwitchAntidepressants:Es>Ci' }]
+    expect(feil(u)).toMatch(/Es>Ci passer ikke regelen: den er en anbefaling om bytte, men regelen legger til et legemiddel/)
+    u.referanser = [{ kilde: 'psychiatrienet', kildeoppforing: 'CombiningMoodstabilizers:Va>La' }]
+    expect(feil(u)).not.toMatch(/Va>La passer ikke regelen: den er en anbefaling/)
     const e = regel('gruppe-rest-ap-aripiprazol')
     e.fra = { type: 'gruppe', gruppe: 'partiell-agonist' }
     expect(feil(e)).toMatch(/fra-siden gjelder gruppen rest-ap, ikke gruppen partiell-agonist/)

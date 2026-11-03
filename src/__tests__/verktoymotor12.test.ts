@@ -146,6 +146,25 @@ describe('Vurderingspunktene', () => {
     expect(tekst).toMatch(/\nVurderingspunkter:\n- testoksetin, før hver doseendring/)
     expect(tekst).toMatch(/Dag 15 \(16\.11\.2026\): Vurdering \(testoksetin\): Før endringen: Vurder seponeringssymptomer\./)
   })
+
+  it('kan stå bare et antall dager etter siste dose, når planen faktisk seponerer', () => {
+    const regel = (min: number) => {
+      const r = medAvslutning(5, min, `etter-seponering-${min}`)
+      r.plan.forlop[0]!.vurderinger = [{ id: 'etter', nar: { type: 'etter_seponering', dager: sp(14, 'dager') }, tekst: 'Følg opp seponeringssymptomer og tilbakefall.', grunnlag: vurdert }]
+      return godkjennITest(r, `test-etter-seponering-${min}`)
+    }
+    const g = regel(5)
+    const v = planvisning(plan(g, 20, { startdato: '2026-11-02' }), g, '2026-11-02')!
+    // Siste dose er dag 28, så punktet står på dag 42, og bare der.
+    expect(v.rader.filter((x) => x.type === 'vurdering').map((x) => x.dager)).toEqual(['Dag 42'])
+    expect(v.vurderinger).toEqual(['testoksetin, 14 dager etter siste dose (dag 42): Følg opp seponeringssymptomer og tilbakefall.'])
+    // En plan som stopper over grensen (laveste dose 10 mg), seponerer ikke; punktet står da uten dag.
+    const h = regel(10)
+    const over = planvisning(plan(h, 80), h)!
+    expect(over.utfall.komplett).toBe(false)
+    expect(over.rader.some((x) => x.type === 'vurdering')).toBe(false)
+    expect(over.vurderinger).toEqual(['testoksetin, 14 dager etter siste dose: Følg opp seponeringssymptomer og tilbakefall.'])
+  })
 })
 
 /** Tillegg av testazapin til testoksetin, som fortsetter uendret: 15 mg annenhver dag i 14 dager, 15 mg daglig i 14 dager og så måldosen. */

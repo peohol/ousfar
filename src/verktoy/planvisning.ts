@@ -226,6 +226,12 @@ function vurderingerFor(regel: Regel, forlop: readonly Praktiskforlop[]): Vurder
           const n = verdien(v.nar.dager)
           return { ...felles, for: false, tidspunkt: `${n} dager etter hver doseendring`, dager: [...new Set(endringer.map((d) => d + n))] }
         }
+        case 'etter_seponering': {
+          // Bare når planen faktisk seponerer forløpet; ellers står punktet uten dag.
+          const n = verdien(v.nar.dager)
+          const dager = seponeringsdag(f) !== null && f.siste_dosedag !== null ? [f.siste_dosedag + n] : []
+          return { ...felles, for: false, tidspunkt: `${n} dager etter siste dose`, dager }
+        }
         case 'dag': {
           const d = f.start + verdien(v.nar.dag) - 1
           return { ...felles, for: false, tidspunkt: `dag ${d}`, dager: [d] }

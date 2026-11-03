@@ -311,6 +311,8 @@ export type Vurderingstidspunkt =
   | { type: 'dag'; dag: Parameter }
   /** Et antall dager etter hver doseendring (også oppstart), f.eks. serumkonsentrasjon. */
   | { type: 'etter_endring'; dager: Parameter }
+  /** Et antall dager etter siste dose, når forløpet seponeres, f.eks. oppfølging av seponeringssymptomer og tilbakefall. */
+  | { type: 'etter_seponering'; dager: Parameter }
 
 /**
  * Et klinisk vurderings- eller kontrollpunkt i planen (regelmodell 12): hva

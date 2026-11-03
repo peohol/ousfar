@@ -21,7 +21,7 @@ export const ENDRINGSLOGG: Endring[] = [
     punkter: [
       'Gjelder bare administratorene, som fortsatt er de eneste som ser verktøyene. Ingen godkjente regler, doser eller godkjenninger er endret.',
       'Hver plan sier øverst om den er en komplett plan til sluttmålet (seponert, fast vedlikeholdsdose eller uendret dose) eller en delplan, og i så fall hva den ikke dekker. Det står også i teksten som kopieres.',
-      'Planene kan ha vurderingspunkter, for eksempel en vurdering før hver doseendring eller en kontroll et antall dager etter hver endring. De står på riktig dag i tabellen og samlet under «Vurderingspunkter».',
+      'Planene kan ha vurderingspunkter, for eksempel en vurdering før hver doseendring eller en kontroll et antall dager etter hver endring eller etter siste dose. De står på riktig dag i tabellen og samlet under «Vurderingspunkter».',
       'En nedtrapping kan nå gå helt til seponering når regelen har en faglig godkjent avslutning, og bare fra en dose avslutningen gjelder for. Ellers stopper planen som før og sier hvorfor.',
       'Nytt verktøy «Kombinere stemningsstabiliserende»: det eksisterende legemidlet fortsetter uendret, og planen gjelder oppstart og opptrapping av det som legges til, også med dose annenhver dag. Verktøyet har ingen godkjente regler ennå.',
       'Når et depot byttes til et annet depot, står det i planen at det gamle ikke skal ha flere injeksjoner, og verktøyet ber ikke om legemiddelform for et legemiddel som bare skal stoppes.',

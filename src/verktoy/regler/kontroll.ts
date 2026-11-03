@@ -64,8 +64,9 @@ function avvikendePart(part: Kildepart, v: Virkestoffvalg, administrasjon: Admin
 /** At P3-oppføringen er samme slags anbefaling, i samme retning, for samme virkestoffer og formuleringer som regelen. */
 function referansefeil(r: Regel, a: Kildeanbefaling): string[] {
   const feil: string[] = []
-  if (a.type === 'tillegg') feil.push('er en anbefaling om tillegg, ikke om bytte eller seponering')
-  else if ((a.type === 'seponering') !== (r.til === null)) feil.push(`er en anbefaling om ${a.type}, men regelen ${r.til ? 'bytter' : 'seponerer'}`)
+  const tillegg = r.plan.form === 'tillegg'
+  if ((a.type === 'tillegg') !== tillegg) feil.push(tillegg ? `er en anbefaling om ${a.type}, men regelen legger til et legemiddel` : 'er en anbefaling om tillegg, ikke om bytte eller seponering')
+  else if (!tillegg && (a.type === 'seponering') !== (r.til === null)) feil.push(`er en anbefaling om ${a.type}, men regelen ${r.til ? 'bytter' : 'seponerer'}`)
   const fraForlop = r.plan.forlop[0]
   const tilForlop = r.til ? r.plan.forlop.slice(1).find((x) => like(x.virkestoff, r.til)) : undefined
   const fra = avvikendePart(a.fra, r.fra, fraForlop?.administrasjon)
