@@ -54,7 +54,22 @@ describe('Tilleggsreglene', () => {
     expect(litium).toEqual([expect.objectContaining({ verdier: [42, 84, 126, 168, 210, 252, 294, 336, 378, 420], art: 'bindende_krav' })])
     expect(LITIUM_LAMOTRIGIN.bekreftelser.find((b) => b.id === 'aktuell_dose')?.tekst).toMatch(/Lithionit 42 mg .*mg litium \(Li⁺\).*6 mmol/)
     for (const [id, utfall] of [['K4-35', 'stopp'], ['K4-36', 'stopp'], ['K4-37', 'stopp'], ['K4-38', 'plan'], ['K4-39', 'stopp']] as const) expect(resultat(id).res.utfall, id).toBe(utfall)
-    expect(resultat('K4-38').res.tekst).toContain('Litium peroralt: 420 mg = uendret dose')
+    expect(resultat('K4-38').res.tekst).toContain('Litium peroralt: 420 mg Li⁺ (60 mmol) = 10 tabletter Lithionit 42 mg depottablett; uendret dose, kontrollert mot regelens doser')
+  })
+
+  it('skriver litiumdosen i den kopierte planen med preparat, Li⁺, mmol og antall tabletter, og sier om dosen er kontrollert', () => {
+    // Den faktiske teksten som kopieres, fra den samme veien som verktøysiden.
+    const litium = resultat('K4-30').res.tekst!
+    const rader = litium.split('\n').filter((l) => l.includes('Litium peroralt:'))
+    expect(rader).toHaveLength(4)
+    for (const l of rader) expect(l).toContain('Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, kontrollert mot regelens doser; planen beregner den ikke')
+    // Den gamle, tvetydige teksten står ingen steder.
+    expect(litium).not.toMatch(/Litium peroralt: 168 mg =/)
+    expect(litium).not.toMatch(/Litium fortsetter uendret på 168 mg[;.]/)
+    // Valproat: dosen er bare bekreftet av forskriveren, og planen sier det.
+    const valproat = resultat('K4-10').res.tekst!
+    expect(valproat).toContain('Valproat peroralt: 1000 mg = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke')
+    expect(valproat).not.toContain('kontrollert mot regelens doser')
   })
 
   it('går bare til en måldose forskriveren har valgt, og stopper ved et annet mål', () => {
@@ -149,7 +164,7 @@ describe('Kontrollgrunnlaget (ende til ende som verktøysiden)', () => {
   it('viser to komplette planer til sluttmålet, med det eksisterende legemidlet uendret og vurderingspunkter', () => {
     for (const [id, eksisterende, mal] of [
       ['K4-10', 'Valproat fortsetter uendret på 1000 mg', 'Lamotrigin fortsetter på 100 mg fra dag 36'],
-      ['K4-30', 'Litium fortsetter uendret på 168 mg', 'Lamotrigin fortsetter på 200 mg fra dag 36'],
+      ['K4-30', 'Litium fortsetter uendret på 168 mg Li⁺ (24 mmol)', 'Lamotrigin fortsetter på 200 mg fra dag 36'],
     ] as const) {
       const tekst = resultat(id).res.tekst!
       expect(tekst).toContain(`Komplett plan til sluttmålet: ${eksisterende}; ${mal}.`)

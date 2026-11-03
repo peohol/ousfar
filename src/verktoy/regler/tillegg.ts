@@ -27,7 +27,7 @@
  */
 import { FORUTSETNINGER_FELLES, h, kilde, pn, steg, utsagn } from './bygg'
 import type { Domenesett } from './domenesett'
-import type { Bekreftelse, Forlop, Godkjenning, Inndatakrav, Kildehenvisning, Regel, Regelsett, Regneeksempel, Sporsmal, Unntak, Vurderingspunkt } from './modell'
+import type { Bekreftelse, Forlop, Godkjenning, Inndatakrav, Kildehenvisning, Regel, Regelsett, Regneeksempel, Sporsmal, Uendretvisning, Unntak, Vurderingspunkt } from './modell'
 import { REGELMODELLVERSJON } from './modell'
 
 /* --- Kildene ---------------------------------------------------------------------- */
@@ -329,7 +329,7 @@ interface Eksisterende {
    * bekrefter om den (enhet og preparat), og kravene verktøyet kontrollerer
    * den mot. Uten krav kontrolleres den ikke, og teksten må si det.
    */
-  dose: { tekst: string; henvisninger: Kildehenvisning[]; krav?: Inndatakrav[] }
+  dose: { tekst: string; henvisninger: Kildehenvisning[]; krav?: Inndatakrav[]; visning?: Uendretvisning }
   /** Spørsmål om pasienten som avgjør hvilke bekreftelser som gjelder (`Bekreftelse.ved`). */
   sporsmal?: Sporsmal[]
   /** Det preparatomtalen for det eksisterende legemidlet sier om østrogenholdige legemidler, i tillegg til Lamictal. */
@@ -429,7 +429,7 @@ export function lamotrigintillegg(e: Eksisterende): Regel {
     administrasjon: 'peroral',
     utgangsdose: 'startdose',
     start: { type: 'dag', dag: 1 },
-    faser: [{ type: 'uendret', grunnlag: { type: 'kilde', henvisninger: [plan.henvisning] } }],
+    faser: [{ type: 'uendret', grunnlag: { type: 'kilde', henvisninger: [plan.henvisning] }, ...(e.dose.visning ? { visning: e.dose.visning } : {}) }],
   }
   const til: Forlop = {
     id: 'til',
@@ -608,6 +608,8 @@ export const LITIUM_LAMOTRIGIN = lamotrigintillegg({
   dose: {
     tekst: `Pasienten bruker Lithionit ${LITHIONIT_MG} mg depottabletter, og døgndosen er fylt inn i mg litium (Li⁺): antall tabletter × ${LITHIONIT_MG} mg (${LITHIONIT_MMOL} mmol litium per tablett). Andre litiumpreparater, også de der styrken oppgis som mg litiumsalt, er utenfor regelen.`,
     henvisninger: [LITHIONIT.styrke],
+    // I planen og kopien: mg Li⁺, mmol og antall tabletter, så dosen ikke kan forveksles med mg litiumsalt.
+    visning: { enhet: 'mg Li⁺', tablett: { navn: `Lithionit ${LITHIONIT_MG} mg depottablett`, mg: LITHIONIT_MG, mmol: LITHIONIT_MMOL } },
     // Hele tabletter, opp til den høyeste veiledende vedlikeholdsdosen.
     krav: [
       {

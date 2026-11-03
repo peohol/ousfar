@@ -149,7 +149,7 @@ Hentet og lest 03.11.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Legge lamotrigin til litium
 
-`tillegg-litium-lamotrigin`, versjon 2, fingeravtrykk `81c3ac25f0c0a1df5415c2d348c678da328c9b4f525b0103cbb7d3e97f599096`. Tillegg til eksisterende legemiddel: litium → lamotrigin. **Entydig beregnbar**; status **til faglig kontroll**.
+`tillegg-litium-lamotrigin`, versjon 2, fingeravtrykk `786436a0ea8d115b7927a9a20ffabc736b59bc06c59117769551e5f75e89e44b`. Tillegg til eksisterende legemiddel: litium → lamotrigin. **Entydig beregnbar**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code).
 

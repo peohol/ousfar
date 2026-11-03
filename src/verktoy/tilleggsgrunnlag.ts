@@ -117,31 +117,31 @@ const L = LITIUM_LAMOTRIGIN
  * beregningen gir noe annet.
  */
 export const PLAN_VALPROAT: readonly string[] = [
-  'Dag 1–14 (09.11.2026–22.11.2026): Valproat peroralt: 1000 mg = uendret dose; planen beregner den ikke; Lamotrigin peroralt: 25 mg annenhver dag = 1 tablett à 25 mg',
+  'Dag 1–14 (09.11.2026–22.11.2026): Valproat peroralt: 1000 mg = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 25 mg annenhver dag = 1 tablett à 25 mg',
   'Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.',
   'Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.',
-  'Dag 15–28 (23.11.2026–06.12.2026): Valproat peroralt: 1000 mg = uendret dose; planen beregner den ikke; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg',
+  'Dag 15–28 (23.11.2026–06.12.2026): Valproat peroralt: 1000 mg = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg',
   'Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.',
   'Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.',
-  'Dag 29–35 (07.12.2026–13.12.2026): Valproat peroralt: 1000 mg = uendret dose; planen beregner den ikke; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg',
+  'Dag 29–35 (07.12.2026–13.12.2026): Valproat peroralt: 1000 mg = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg',
   'Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.',
   'Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.',
-  'Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg = uendret dose; planen beregner den ikke; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg',
+  'Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg',
   'Dag 36 (14.12.2026): Vurdering (Lamotrigin): Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.',
   'Dag 36 (14.12.2026): Vurdering (Lamotrigin): Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.',
 ]
 
 export const PLAN_LITIUM: readonly string[] = [
-  'Dag 1–14 (09.11.2026–22.11.2026): Litium peroralt: 168 mg = uendret dose; planen beregner den ikke; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg',
+  'Dag 1–14 (09.11.2026–22.11.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, kontrollert mot regelens doser; planen beregner den ikke; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg',
   'Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.',
   'Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.',
-  'Dag 15–28 (23.11.2026–06.12.2026): Litium peroralt: 168 mg = uendret dose; planen beregner den ikke; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg',
+  'Dag 15–28 (23.11.2026–06.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, kontrollert mot regelens doser; planen beregner den ikke; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg',
   'Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.',
   'Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.',
-  'Dag 29–35 (07.12.2026–13.12.2026): Litium peroralt: 168 mg = uendret dose; planen beregner den ikke; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg',
+  'Dag 29–35 (07.12.2026–13.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, kontrollert mot regelens doser; planen beregner den ikke; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg',
   'Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.',
   'Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.',
-  'Fra dag 36 (fra 14.12.2026): Litium peroralt: 168 mg = uendret dose; planen beregner den ikke; Lamotrigin peroralt: 200 mg = 1 tablett à 200 mg',
+  'Fra dag 36 (fra 14.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, kontrollert mot regelens doser; planen beregner den ikke; Lamotrigin peroralt: 200 mg = 1 tablett à 200 mg',
   'Dag 36 (14.12.2026): Vurdering (Lamotrigin): Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Vurder klinisk respons; videre justering (100–400 mg/dag er brukt i studier) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.',
   'Dag 36 (14.12.2026): Vurdering (Lamotrigin): Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.',
 ]
@@ -206,7 +206,7 @@ export const TILLEGGSKASUS: readonly Tilleggskasus[] = [
   // Litiumdosen må være hele Lithionit-tabletter (42 mg Li⁺), opp til den høyeste veiledende vedlikeholdsdosen.
   kasus('K4-36', L, 'litium', 'uvanlig_dose', 'en usannsynlig litiumdose (0,5 mg) stopper', '0,5', { utfall: 'stopp', grunner: [LITIUMDOSE] }, { regel: simulert(L) }),
   kasus('K4-37', L, 'litium', 'uvanlig_dose', 'en dose som ikke er hele Lithionit-tabletter (170 mg, for eksempel mg litiumsalt), stopper', '170', { utfall: 'stopp', grunner: [LITIUMDOSE] }, { regel: simulert(L) }),
-  kasus('K4-38', L, 'litium', 'uvanlig_dose', 'grensen: 10 tabletter (420 mg Li⁺) er innenfor', '420', { utfall: 'plan', linjer: PLAN_LITIUM.map((l) => l.replace('168 mg = uendret', '420 mg = uendret')) }, { regel: simulert(L) }),
+  kasus('K4-38', L, 'litium', 'uvanlig_dose', 'grensen: 10 tabletter (420 mg Li⁺) er innenfor', '420', { utfall: 'plan', linjer: PLAN_LITIUM.map((l) => l.replace('168 mg Li⁺ (24 mmol) = 4 tabletter', '420 mg Li⁺ (60 mmol) = 10 tabletter')) }, { regel: simulert(L) }),
   kasus('K4-39', L, 'litium', 'uvanlig_dose', 'grensen: 11 tabletter (462 mg Li⁺) er over den høyeste veiledende vedlikeholdsdosen og stopper', '462', { utfall: 'stopp', grunner: [LITIUMDOSE] }, { regel: simulert(L) }),
   kasus('K4-40', L, 'litium', 'uvanlig_dose', 'forskriveren velger 300 mg som mål: regelen trapper bare opp til den første stabiliserende måldosen', '168', { utfall: 'stopp', grunner: ['Måldosen 300 mg er utenfor det regelen gjelder for (200 mg)'] }, { regel: simulert(L), skjema: { maldose: '300' } }),
   kasus('K4-41', L, 'litium', 'pasientforhold', 'måldosen er ikke bekreftet som pasientens kliniske mål', '168', { utfall: 'stopp', grunner: ['Må bekreftes før beregning: Den første stabiliserende måldosen (200 mg/dag) er det kliniske målet'] }, {
