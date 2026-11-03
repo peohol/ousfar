@@ -13,7 +13,7 @@ import type { Endring } from '../domain/versjon'
 export const ENDRINGSLOGG: Endring[] = [
   {
     versjon: '1.120.0',
-    dato: '2026-11-02',
+    dato: '2026-11-03',
     sammendrag: 'Kildeovervåkingen viser faglige saker med grunnlag, valg og hva valget vil gjøre',
     typer: ['Funksjonalitet', 'Design / layout'],
     omfang: 'Moderat omfang',
