@@ -723,7 +723,7 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
       delete ut.avsluttes
       ut.avslutning = `${stans}${over} Planen stopper derfor ved trinnet før: fra dag ${sist.fra} står pasienten på ${tall(sist.mg)} mg${hverSuffiks(sist)}${fordelingSuffiks(sist)} av ${f.virkestoff} til planen revurderes.${en ? ` ${EN_REDUKSJON}` : ''} ${AVSLUTNING_FELLES}`
       ut.avslutning_kort = en
-        ? EN_REDUKSJON_KORT
+        ? `${EN_REDUKSJON_KORT}${overGrensen ? `, og ${overAvslutningKort(sist.mg, grense!)}` : ''}`
         : overGrensen
           ? `neste trinn kan ikke gis med preparatene, og ${overAvslutningKort(sist.mg, grense!)}`
           : 'neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt'
@@ -788,15 +788,29 @@ export function beregnDoseplan(regel: Regel, inndata: Doseplaninndata, grunnlag:
 }
 
 /** Doseplanen, med preparatene avgrenset til de kontrollerte styrkene når tilfellene er gitt. */
-/** Starten på stoppet når regelen krever en komplett plan og planen ikke når sluttmålet. */
+/** Starten på stoppet når planen ikke når sluttmålet: klinikere får aldri en delplan (Peders beslutning 03.11.2026). */
 export const KOMPLETT_IKKE_TILGJENGELIG = 'Komplett plan ikke tilgjengelig'
 
-/** Hvorfor forløpet ikke når sluttmålet: ikke beregnet, eller avsluttet uten seponering; tom når det når det. */
-function ikkeKomplett(f: Praktiskforlop): string[] {
-  if (f.uten_beregning) return [`${KOMPLETT_IKKE_TILGJENGELIG} for ${f.virkestoff}: forløpet er ikke beregnet. ${f.uten_beregning}`]
-  // Bare grunnen: dosene i delplanen gjentas ikke i stoppet.
-  if (f.avslutning) return [`${KOMPLETT_IKKE_TILGJENGELIG} for ${f.virkestoff}: ${f.avslutning_kort ?? 'avslutningen vurderes individuelt'}.`]
-  return []
+/**
+ * Dagen et peroralt legemiddel er seponert fra, også når det seponeres før
+ * første dag i planen (bytte til depot, P11.4): da står seponeringen i
+ * tabellen, så planen aldri kan leses som om det perorale skal fortsette.
+ * Det samme gjelder et depot som bare stoppes (depot til depot, regelmodell
+ * 12). Et forløp med injeksjoner har ingen seponeringsdag.
+ */
+export const seponeringsdag = (f: Praktiskforlop): number | null =>
+  f.siste_dosedag !== null && (f.perioder.length > 0 || f.administrasjon === 'peroral' || f.injeksjoner.length === 0) ? f.siste_dosedag + 1 : null
+
+/**
+ * Hvorfor forløpet ikke når et sluttmål (seponert, uendret, vedlikehold eller
+ * en dose som fortsetter), kort; `undefined` når det når det. Den ene
+ * definisjonen av en komplett plan, for planutfallet og sperren mot delplaner.
+ */
+export function sluttmalMangler(f: Praktiskforlop): string | undefined {
+  if (f.uten_beregning) return `ikke beregnet (${f.uten_beregning.replace(/\.$/, '')})`
+  if (f.avslutning) return f.avslutning_kort ?? 'avslutningen vurderes individuelt'
+  if (f.uendret_mg !== undefined || seponeringsdag(f) !== null || f.injeksjoner.some((i) => i.vedlikehold) || f.perioder.at(-1)?.til === null) return undefined
+  return 'planen har ikke et definert sluttmål'
 }
 
 function beregnPlan(regel: Regel, inndata: Doseplaninndata, grunnlag: Preparatgrunnlag, omgivelse: Omgivelse, regelsett?: Regelsett, kontrollerte?: Klinisktilfelle[]): Doseplanresultat {
@@ -860,9 +874,6 @@ function beregnPlan(regel: Regel, inndata: Doseplaninndata, grunnlag: Preparatgr
     kontroller.push({ krav: `Utvasking i doseplanen: minst ${krav} dager uten ${forrige.virkestoff} før ${denne.virkestoff}`, oppfylt: fri >= krav, detalj: `${fri} dager uten legemiddel.` })
     if (fri < krav) return stopp([`Doseplanen har bare ${fri} dager uten ${forrige.virkestoff} før ${denne.virkestoff}, mindre enn ${krav}.`])
   }
-  // Krever regelen en komplett plan for et forløp, vises ingen delplan med doser (regelmodell 12); et valg av dose for neste trinn tilbys fortsatt.
-  const ufullstendige = forlop.flatMap((f) => (regel.plan.forlop.find((x) => x.id === f.id)?.krever_komplett ? ikkeKomplett(f) : []))
-  if (ufullstendige.length > 0) return medValg(stopp(ufullstendige))
   for (const f of forlop) if (f.avslutningsmerknad) merknader.push(f.avslutningsmerknad)
   // Stopper planen tidligere enn den ideelle kurven fordi et trinn ikke kan gis, gjelder den nye forklaringen.
   for (const f of forlop) {
@@ -893,6 +904,20 @@ function beregnPlan(regel: Regel, inndata: Doseplaninndata, grunnlag: Preparatgr
  * testregel eller preparatdata som ikke er en fersk FEST-kopi gir aldri en plan.
  */
 export function kliniskDoseplan(...args: Parameters<typeof beregnDoseplan>): Doseplanresultat {
+  return klinisk(args, true)
+}
+
+/**
+ * Som {@link kliniskDoseplan}, men uten kravet om at planen når sluttmålet:
+ * en klinisk plan som ikke gjør det (en delplan), kommer med doser. Bare for
+ * kontrollgrunnlag og tester som skal se hva motoren beregner; klinikere får
+ * aldri en delplan, så appen bruker bare {@link kliniskDoseplan}.
+ */
+export function kliniskDelplan(...args: Parameters<typeof beregnDoseplan>): Doseplanresultat {
+  return klinisk(args, false)
+}
+
+function klinisk(args: Parameters<typeof beregnDoseplan>, komplett: boolean): Doseplanresultat {
   const [regel, inndata, grunnlag, omgivelse, regelsett] = args
   // Med et klinisk omfang regnes planen, også dosene som tilbys som valg, bare med styrkene tilfellet er kontrollert med.
   const kontrollerte = tilfellerFor(regel, inndata)
@@ -905,9 +930,30 @@ export function kliniskDoseplan(...args: Parameters<typeof beregnDoseplan>): Dos
     const { trinnvalg: _t, ...uten } = med
     return uten
   }
-  if (r.klinisk) return r
-  const { status: _s, klinisk: _k, sperre, forbehold: _f, forlop: _fl, kontroller: _ko, avvik: _a, trinnvalg: _t, ...versjoner } = r
-  return { ...versjoner, status: 'stoppet', klinisk: false, stoppgrunner: ['Ingen klinisk doseplan kan vises.', ...sperre], fagtekst: (args[3].fagtekst ?? []).filter((t) => t.publisert === true) }
+  // Klinikere får aldri en delplan (Peders beslutning 03.11.2026): når et forløp ikke når sluttmålet, vises ingen doser, bare grunnen, og
+  // et valg av dose for neste trinn som kan gjøre planen komplett. Er planen heller ikke klinisk, står sperren også.
+  const mangler = komplett
+    ? r.forlop.flatMap((f) => {
+        const m = sluttmalMangler(f)
+        return m ? [`${f.virkestoff}: ${m}`] : []
+      })
+    : []
+  if (r.klinisk && mangler.length === 0) return r
+  const { status: _s, klinisk: _k, sperre, forbehold: _f, forlop: _fl, kontroller: _ko, avvik: _a, trinnvalg, ...versjoner } = r
+  const fagtekst = (omgivelse.fagtekst ?? []).filter((t) => t.publisert === true)
+  if (mangler.length === 0) return { ...versjoner, status: 'stoppet', klinisk: false, stoppgrunner: ['Ingen klinisk doseplan kan vises.', ...sperre], fagtekst }
+  const komplettGrunn = `${KOMPLETT_IKKE_TILGJENGELIG}: ${mangler.join('; ')}.`
+  // Merknadene kan gjenta dosene i delplanen, så de vises ikke med stoppet.
+  return {
+    ...versjoner,
+    merknader: [],
+    status: 'stoppet',
+    klinisk: false,
+    // Er planen heller ikke klinisk, står sperren først, så det viktigste ikke drukner.
+    stoppgrunner: r.klinisk ? [komplettGrunn] : ['Ingen klinisk doseplan kan vises.', ...sperre, komplettGrunn],
+    fagtekst,
+    ...(r.klinisk && trinnvalg && { trinnvalg }),
+  }
 }
 
 /** Uten dokumentert deling (`uten_deling`) tilbys ingen dose som deler en tablett; står ingen dose igjen for et trinn, sier stoppet det. */

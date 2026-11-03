@@ -391,13 +391,6 @@ export interface Forlop {
   faser: Fase[]
   /** Kliniske vurderings- og kontrollpunkter i forløpet (regelmodell 12). */
   vurderinger?: Vurderingspunkt[]
-  /**
-   * Regelen gir bare en komplett plan for forløpet (regelmodell 12): når
-   * planen ikke når sluttmålet (f.eks. seponering), stopper den med
-   * «Komplett plan ikke tilgjengelig» og grunnen, i stedet for å vise en
-   * delplan med doser. Uten feltet vises delplanen som før.
-   */
-  krever_komplett?: true
 }
 
 /**

@@ -24,6 +24,7 @@ import {
   beregnDoseplan,
   FORBEHOLD_IKKE_KLINISK,
   FORBEHOLD_LAGER,
+  kliniskDelplan,
   kliniskDoseplan,
   kliniskSperre,
   PLANMOTORVERSJON,
@@ -517,13 +518,14 @@ describe('Sperren mot klinisk bruk', () => {
    * klinisk. Ingen virkelig regel eller godkjenning endres.
    */
   const positivKontroll = (): Regel => {
-    // 30 mg i en uke og så 15 mg til avslutningen er vurdert: som enhver seponeringsregel går den ikke til null (P7.5).
+    // 30 mg i en uke, 15 mg i en uke og så seponering etter en avslutning godkjent bare i testen, så planen er komplett:
+    // klinikere får aldri en delplan (Peders beslutning 03.11.2026).
     const regel: Regel = structuredClone({ ...fastDose([30]), id: 'positivkontroll-bare-i-test' })
     regel.plan.forlop[0]!.faser.push({
       type: 'nedtrapping',
       strategi: { type: 'prosent_av_aktuell', prosent: sp(50, 'prosent') },
       trinnlengde: sp(7, 'dager'),
-      avslutning: 'individuell',
+      avslutning: { type: 'seponering', fra_hoyst_mg: sp(15, 'mg'), grunnlag: { type: 'ousfar_vurdering', begrunnelse: 'Bare i testen.', avklaring: null } },
       horisont: sp(1, 'trinn'),
     })
     const av = { dato: '2026-11-01', av: 'Testkontrollør', rolle: 'uavhengig_kontrollor' as const, regelversjon: 1 }
@@ -891,7 +893,14 @@ describe('Sertralin til mirtazapin med preparatene i FEST (P4.8, gjennomgangene 
   })
 
   it('gir med den godkjente regelen og fersk FEST en klinisk plan bare for 50 og 100 mg, kort behandlingstid og tabletter med de kontrollerte styrkene (gjennomgangen av f77e1a9)', () => {
-    const klinisk = (startdose_mg: number, x?: Partial<Doseplaninndata>, o = PILOTOMGIVELSE) => kliniskDoseplan(REGEL, inndata(startdose_mg, x), grunnlag, o)
+    // Startforløpet når ikke sluttmålet, så klinikeren får det aldri (Peders beslutning 03.11.2026), bare grunnen. Omfanget prøves
+    // derfor på det motoren beregner internt ({@link kliniskDelplan}).
+    for (const sd of [50, 100]) {
+      const p = kliniskDoseplan(REGEL, inndata(sd), grunnlag, PILOTOMGIVELSE)
+      expect(p.status === 'stoppet' && p.stoppgrunner, `${sd} mg`).toEqual(['Komplett plan ikke tilgjengelig: sertralin: siste trinn før null; avslutning vurderes individuelt; mirtazapin: holdes til sertralin er avsluttet; videre dosering planlegges individuelt.'])
+      expect(p, `${sd} mg`).toMatchObject({ klinisk: false, merknader: [] })
+    }
+    const klinisk = (startdose_mg: number, x?: Partial<Doseplaninndata>, o = PILOTOMGIVELSE) => kliniskDelplan(REGEL, inndata(startdose_mg, x), grunnlag, o)
     const ikke = (p: ReturnType<typeof klinisk>, hva: string) => {
       expect(p, hva).toMatchObject({ status: 'stoppet', klinisk: false })
       expect(p, hva).not.toHaveProperty('trinnvalg')
@@ -951,7 +960,7 @@ describe('Sertralin til mirtazapin med preparatene i FEST (P4.8, gjennomgangene 
 
   it('har et klinisk omfang med bare kort behandlingstid, tabletter og styrkene i FEST: lang behandlingstid stopper også med begrunnelse (gjennomgangen av d6cc3dd)', () => {
     expect(REGEL.klinisk_omfang!.tilfeller).toEqual([{ legemiddelform: '53', startdoser: [50, 100], svar: {}, styrker: { fra: [25, 50, 100], til: [15, 30, 45] } }])
-    const klinisk = (startdose_mg: number, x?: Partial<Doseplaninndata>) => kliniskDoseplan(REGEL, inndata(startdose_mg, x), grunnlag, PILOTOMGIVELSE)
+    const klinisk = (startdose_mg: number, x?: Partial<Doseplaninndata>) => kliniskDelplan(REGEL, inndata(startdose_mg, x), grunnlag, PILOTOMGIVELSE)
     for (const sd of [50, 100]) {
       expect(klinisk(sd), `${sd} mg`).toMatchObject({ status: 'doseplan', klinisk: true })
       // Lang behandlingstid er utenfor omfanget, også med en vilkårlig begrunnelse.

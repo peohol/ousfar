@@ -31,8 +31,8 @@ Hver klinisk godkjente regel med beregning, kombinasjonen den gjelder, og omfang
 
 | Verktøy | Regel | Kombinasjon | Godkjent omfang (kontrollørens avgrensning) | Forskriverens valg i testmatrisen |
 | --- | --- | --- | --- | --- |
-| Trappe ned antidepressiv | `seponering-vortioksetin` v12 | Vortioksetin | Kontrollørens gjennomgang av a38fac14 03.11.2026 (rettelsen av RCPsych-faktumet, PR #309): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare én første reduksjon 20 → 15 mg/døgn, med minst 28 dager før ny symptomstyrt vurdering, hos voksne under 65 år, kort/ikke-langvarig behandling, uten tidligere seponeringsplager, etter alle opprinnelige vurderinger/stopp, med kontrollerte tabletter/styrker. Ingen påfølgende reduksjon, langsom variant eller utvidet pasientgruppe. Identisk klinisk omfang som v11. Godkjenningen gjelder bare dette eksakte fingeravtrykket og disse betingelsene. Den er en korrigering av kildebeskrivelsen, ikke en ny generell godkjenning av algoritmer for nedtrapping. | 18 kasus, 3 gir plan |
-| Bytte antidepressiv | `kryssnedtrapping-sertralin-mirtazapin` v10 | Sertralin → Mirtazapin | Kontrollørens gjennomgang av a38fac14 03.11.2026 (rettelsen av RCPsych-faktumet, PR #309): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare det tidligere godkjente startforløpet fra sertralin 50 eller 100 mg, kort/ikke-langvarig behandling, med kontrollerte tabletter og styrker, obligatoriske bekreftelser og tidligere seponeringsplager fraværende. Dette omfatter ikke videre 25 → 0, opptrapping av mirtazapin, andre doser, langtidsbehandling eller endret trinnlengde. Identisk klinisk omfang som v9. Godkjenningen gjelder bare dette eksakte fingeravtrykket og disse betingelsene. Den er en korrigering av kildebeskrivelsen, ikke en ny generell godkjenning av algoritmer for nedtrapping. | 14 kasus, 3 gir plan |
+| Trappe ned antidepressiv | `seponering-vortioksetin` v12 | Vortioksetin | Kontrollørens gjennomgang av a38fac14 03.11.2026 (rettelsen av RCPsych-faktumet, PR #309): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare én første reduksjon 20 → 15 mg/døgn, med minst 28 dager før ny symptomstyrt vurdering, hos voksne under 65 år, kort/ikke-langvarig behandling, uten tidligere seponeringsplager, etter alle opprinnelige vurderinger/stopp, med kontrollerte tabletter/styrker. Ingen påfølgende reduksjon, langsom variant eller utvidet pasientgruppe. Identisk klinisk omfang som v11. Godkjenningen gjelder bare dette eksakte fingeravtrykket og disse betingelsene. Den er en korrigering av kildebeskrivelsen, ikke en ny generell godkjenning av algoritmer for nedtrapping. | 18 kasus, 0 gir plan |
+| Bytte antidepressiv | `kryssnedtrapping-sertralin-mirtazapin` v10 | Sertralin → Mirtazapin | Kontrollørens gjennomgang av a38fac14 03.11.2026 (rettelsen av RCPsych-faktumet, PR #309): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare det tidligere godkjente startforløpet fra sertralin 50 eller 100 mg, kort/ikke-langvarig behandling, med kontrollerte tabletter og styrker, obligatoriske bekreftelser og tidligere seponeringsplager fraværende. Dette omfatter ikke videre 25 → 0, opptrapping av mirtazapin, andre doser, langtidsbehandling eller endret trinnlengde. Identisk klinisk omfang som v9. Godkjenningen gjelder bare dette eksakte fingeravtrykket og disse betingelsene. Den er en korrigering av kildebeskrivelsen, ikke en ny generell godkjenning av algoritmer for nedtrapping. | 14 kasus, 0 gir plan |
 | Bytte antipsykotikum | `depot-aripiprazol-maintena` v3 | Aripiprazol (peroral) → Aripiprazol (depotinjeksjon) | Kontrollørens gjennomgang av 62ebb21 30.10.2026 (P4.8): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: oppstart med én injeksjon Abilify Maintena 400 mg, peroral aripiprazol i 14 dager og deretter 400 mg månedlig, hos voksne med schizofreni som er stabilisert på og har tålt peroral aripiprazol. Gjelder ikke andre depottyper eller oppstartsvarianter, kjent langsom CYP2D6-omsetning, sterke CYP2D6- eller CYP3A4-hemmere, CYP3A4-induktorer eller ubekreftet stabilisering eller toleranse. | 13 kasus, 4 gir plan |
 | Bytte antipsykotikum | `depot-paliperidon-xeplion` v3 | Paliperidon (peroral) → Paliperidon (depotinjeksjon (paliperidonpalmitat)) | Kontrollørens gjennomgang av 62ebb21 30.10.2026 (P4.8): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: overgang fra perorale paliperidon-depottabletter til Xeplion med 150 mg paliperidon dag 1 og 100 mg dag 8 i deltoideus, deretter månedlig fra én måned etter dag 8, hos voksne med schizofreni som er stabilisert, med kreatininclearance minst 80 ml/min og med deltoideus framhevet etter 9–12 mg peroralt. Gjelder ikke andre depottyper eller depotregimer, risperidon, nedsatt nyrefunksjon eller ubekreftet stabilisering eller toleranse. | 19 kasus, 9 gir plan |
 
@@ -45,10 +45,13 @@ Hver klinisk godkjente regel med beregning, kombinasjonen den gjelder, og omfang
 
 ## 4. Vanlige valg som stopper innenfor de godkjente reglene
 
-Valgene i testmatrisen som ikke gir en plan, selv om regelen er godkjent: dosen, svarene eller formen ligger utenfor det godkjente omfanget, eller et trinn kan ikke gis med preparatene.
+Valgene i testmatrisen som ikke gir en plan, selv om regelen er godkjent: dosen, svarene eller formen ligger utenfor det godkjente omfanget, et trinn kan ikke gis med preparatene, eller planen når ikke sluttmålet: en delplan vises aldri, heller ikke etter en tidligere godkjent regelversjon (Peders beslutning 03.11.2026).
 
-**`seponering-vortioksetin`** – 15 av 18 valg gir ingen plan:
+**`seponering-vortioksetin`** – 18 av 18 valg gir ingen plan:
 
+- V01 (vanlig dose innenfor det godkjente omfanget): 20 mg, kort behandlingstid, voksen under 65 år, dose «20» → ingen plan
+- V02 (injeksjons- og startdatoer): 20 mg med startdato, dose «20» → ingen plan
+- V03 (vanlig dose innenfor det godkjente omfanget): 20 mg med tablett valgt, dose «20» → ingen plan
 - V04 (uvanlige doser og grenseverdier): 15 mg, neste reduksjon, dose «15» → ingen plan
 - V05 (uvanlige doser og grenseverdier): 10 mg, dose «10» → ingen plan
 - V06 (uvanlige doser og grenseverdier): 12,5 mg, skrevet med komma, dose «12,5» → ingen plan
@@ -65,9 +68,12 @@ Valgene i testmatrisen som ikke gir en plan, selv om regelen er godkjent: dosen,
 - V17 (uvanlige doser og grenseverdier): mindre trinn enn regelens forslag, dose «20» → ingen plan
 - V18 (utilgjengelige eller endrede preparater): dråper i stedet for tabletter, dose «20» → ingen plan
 
-**`kryssnedtrapping-sertralin-mirtazapin`** – 11 av 14 valg gir ingen plan:
+**`kryssnedtrapping-sertralin-mirtazapin`** – 14 av 14 valg gir ingen plan:
 
 - S00 (utilgjengelige eller endrede preparater): sertralin 100 mg uten valgt legemiddelform: siden ber om valget, dose «100» → ber om legemiddelform
+- S01 (vanlig dose innenfor det godkjente omfanget): sertralin 100 mg, dose «100» → ingen plan
+- S02 (vanlig dose innenfor det godkjente omfanget): sertralin 50 mg, dose «50» → ingen plan
+- S03 (injeksjons- og startdatoer): sertralin 100 mg med startdato, dose «100» → ingen plan
 - S04 (uvanlige doser og grenseverdier): sertralin 75 mg, dose «75» → ingen plan
 - S05 (uvanlige doser og grenseverdier): sertralin 150 mg, dose «150» → ingen plan
 - S06 (uvanlige doser og grenseverdier): sertralin 200 mg, dose «200» → ingen plan

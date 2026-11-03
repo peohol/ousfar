@@ -6,10 +6,10 @@
  * stoppes. Alle regler og preparater er syntetiske og godkjennes bare i testen.
  */
 import { describe, expect, it } from 'vitest'
-import { beregnDoseplan, formvalgSomTrengs, KOMPLETT_IKKE_TILGJENGELIG, kliniskDoseplan, type Doseplanresultat } from '../verktoy/motor/plan'
+import { beregnDoseplan, formvalgSomTrengs, KOMPLETT_IKKE_TILGJENGELIG, kliniskDelplan, kliniskDoseplan, type Doseplanresultat } from '../verktoy/motor/plan'
 import { ALLE_TESTPREPARATER, depotregel, nedtrappingsregel, OMGIVELSE, sp, syntetiskGrunnlag, trinnvalgUtenNull } from '../verktoy/motor/syntetisk'
 import { doseenhet, mangler, startdosenavn, TOMT_SKJEMA, ubesvart } from '../verktoy/doseplan'
-import { DELPLAN, KOMPLETT, planTekst, planvisning, UENDRET } from '../verktoy/planvisning'
+import { DELPLAN, KOMPLETT, planTekst, planutfall, planvisning, UENDRET } from '../verktoy/planvisning'
 import { VALGTEKSTER, VERKTOY } from '../verktoy/register'
 import { beregn } from '../verktoy/regler/beregning'
 import { DOMENESETT } from '../verktoy/regler/domenesett'
@@ -41,6 +41,8 @@ function medAvslutning(fra_hoyst: number, min?: number, id = 'avslutning'): Rege
 }
 
 const plan = (r: Regel, startdose: number, ekstra: object = {}) => kliniskDoseplan(r, { startdose_mg: startdose, formvalg: TABLETT, ...ekstra }, GRUNNLAG, OMGIVELSE)
+/** Det motoren beregner når planen ikke når sluttmålet; klinikere får det aldri ({@link kliniskDelplan}). */
+const delplan = (r: Regel, startdose: number, ekstra: object = {}) => kliniskDelplan(r, { startdose_mg: startdose, formvalg: TABLETT, ...ekstra }, GRUNNLAG, OMGIVELSE)
 const kort = (p: Doseplanresultat) => (p.status === 'doseplan' ? p.forlop.map((f) => [f.perioder.map((x) => `${x.fra}–${x.til ?? '…'}: ${x.mg}${x.hver ? ` hver ${x.hver}.` : ''}`), f.siste_dosedag]) : p.stoppgrunner)
 
 describe('Godkjent avslutning (regelmodell 12)', () => {
@@ -60,7 +62,9 @@ describe('Godkjent avslutning (regelmodell 12)', () => {
   it('gjelder ved grensen: nøyaktig grensen avslutter, like under gir en delplan som sier hvorfor', () => {
     expect(kort(plan(medAvslutning(5, 5), 20))).toEqual([[['1–14: 10', '15–28: 5'], 28]])
     const over = medAvslutning(4.99, 5, 'over')
-    const p = plan(over, 20)
+    // Klinikeren får ingen delplan, bare grunnen.
+    expect(kort(plan(over, 20))).toEqual(['Komplett plan ikke tilgjengelig: testoksetin: regelens avslutning gjelder bare fra 4,99 mg eller lavere (planen står på 5 mg); praktisk grense: ingen trinn under 5 mg; avslutning vurderes individuelt.'])
+    const p = delplan(over, 20)
     expect(kort(p)).toEqual([[['1–14: 10', '15–…: 5'], null]])
     const v = planvisning(p, over)!
     expect(v.utfall.komplett).toBe(false)
@@ -82,7 +86,8 @@ describe('Godkjent avslutning (regelmodell 12)', () => {
     expect(p.merknader.join(' ')).toMatch(/avslutning gjelder fra 1,25 mg \(høyst 2,5 mg\)/)
     expect(planvisning(p, innenfor)!.utfall.komplett).toBe(true)
     const utenfor = medAvslutning(1, undefined, 'utenfor')
-    const q = plan(utenfor, 20)
+    expect(kort(plan(utenfor, 20)).join(' ')).toMatch(/^Komplett plan ikke tilgjengelig: testoksetin: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 1 mg eller lavere \(planen står på 1,25 mg\)\.$/)
+    const q = delplan(utenfor, 20)
     expect(kort(q)).toEqual([[['1–14: 10', '15–28: 5', '29–42: 2.5', '43–…: 1.25'], null]])
     expect(planvisning(q, utenfor)!.utfall).toMatchObject({ komplett: false })
   })
@@ -177,7 +182,8 @@ describe('Vurderingspunktene', () => {
     expect(v.vurderinger).toEqual(['testoksetin, 14 dager etter siste dose (dag 42): Følg opp seponeringssymptomer og tilbakefall.'])
     // En plan som stopper over grensen (laveste dose 10 mg), seponerer ikke; punktet står da uten dag.
     const h = regel(10)
-    const over = planvisning(plan(h, 80), h)!
+    expect(kort(plan(h, 80)).join(' ')).toMatch(/^Komplett plan ikke tilgjengelig: /)
+    const over = planvisning(delplan(h, 80), h)!
     expect(over.utfall.komplett).toBe(false)
     expect(over.rader.some((x) => x.type === 'vurdering')).toBe(false)
     expect(over.vurderinger).toEqual(['testoksetin, 14 dager etter siste dose: Følg opp seponeringssymptomer og tilbakefall.'])
@@ -390,25 +396,28 @@ describe('Forsiktighetsgrensen (K3)', () => {
   })
 })
 
-describe('Krav om komplett plan (K1)', () => {
-  const kreverKomplett = (r: Regel, id: string) => {
-    r.plan.forlop[0]!.krever_komplett = true
-    return godkjennITest(r, `test-${id}`)
-  }
-
-  it('viser ingen delplan med doser når planen ikke når seponering, og sier hvorfor', () => {
-    const r = kreverKomplett(medAvslutning(4.99, 5, 'krever-over'), 'krever-over')
+describe('Aldri en delplan for klinikere (Peders beslutning 03.11.2026)', () => {
+  it('viser ingen doser når planen ikke når sluttmålet, bare grunnen, også sammen med sperren', () => {
+    const r = medAvslutning(4.99, 5, 'krever-over')
     const p = plan(r, 20)
     if (p.status !== 'stoppet') throw new Error('planen skulle stoppet')
-    expect(p.stoppgrunner).toEqual([`${KOMPLETT_IKKE_TILGJENGELIG} for testoksetin: regelens avslutning gjelder bare fra 4,99 mg eller lavere (planen står på 5 mg); praktisk grense: ingen trinn under 5 mg; avslutning vurderes individuelt.`])
+    expect(p.stoppgrunner).toEqual([`${KOMPLETT_IKKE_TILGJENGELIG}: testoksetin: regelens avslutning gjelder bare fra 4,99 mg eller lavere (planen står på 5 mg); praktisk grense: ingen trinn under 5 mg; avslutning vurderes individuelt.`])
+    expect(p.merknader).toEqual([])
     expect(planvisning(p, r)).toBeNull()
+    // Internt (kontrollgrunnlag) gir den ufiltrerte beregningen fortsatt delplanen.
+    const intern = beregnDoseplan(r, { startdose_mg: 20, formvalg: TABLETT }, GRUNNLAG, OMGIVELSE)
+    expect(intern.status === 'doseplan' && planutfall(intern.forlop, () => 'testoksetin').komplett).toBe(false)
+    // En regel som ikke er godkjent, sier begge grunnene.
+    const ikkeGodkjent = { ...r, godkjenning: { ...r.godkjenning, status: 'utkast' as const } }
+    const q = plan(ikkeGodkjent, 20)
+    // Sperren står først, så det viktigste ikke drukner, og grunnen til at planen ikke er komplett står sist.
+    expect(q.status === 'stoppet' && q.stoppgrunner[0]).toBe('Ingen klinisk doseplan kan vises.')
+    expect(q.status === 'stoppet' && q.stoppgrunner.join(' ')).toMatch(/ikke klinisk godkjent/)
+    expect(q.status === 'stoppet' && q.stoppgrunner.at(-1)!.startsWith(KOMPLETT_IKKE_TILGJENGELIG)).toBe(true)
   })
 
-  it('viser planen når den er komplett, og en delplan som før for en regel uten kravet', () => {
-    const komplett = plan(kreverKomplett(medAvslutning(5, 5, 'krever-inne'), 'krever-inne'), 20)
-    expect(kort(komplett)).toEqual([[['1–14: 10', '15–28: 5'], 28]])
-    const uten = medAvslutning(4.99, 5, 'uten-krav')
-    expect(planvisning(plan(uten, 20), uten)!.utfall.komplett).toBe(false)
+  it('viser planen når den er komplett', () => {
+    expect(kort(plan(medAvslutning(5, 5, 'krever-inne'), 20))).toEqual([[['1–14: 10', '15–28: 5'], 28]])
   })
 })
 

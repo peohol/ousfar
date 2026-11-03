@@ -358,7 +358,7 @@ ${godkjente(d, alle, 'fagtekst')}
 
 ## 4. Vanlige valg som stopper innenfor de godkjente reglene
 
-Valgene i testmatrisen som ikke gir en plan, selv om regelen er godkjent: dosen, svarene eller formen ligger utenfor det godkjente omfanget, eller et trinn kan ikke gis med preparatene.
+Valgene i testmatrisen som ikke gir en plan, selv om regelen er godkjent: dosen, svarene eller formen ligger utenfor det godkjente omfanget, et trinn kan ikke gis med preparatene, eller planen når ikke sluttmålet: en delplan vises aldri, heller ikke etter en tidligere godkjent regelversjon (Peders beslutning 03.11.2026).
 
 ${stoppendeValg(alle)}
 
