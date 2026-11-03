@@ -284,8 +284,9 @@ export type Fase =
   /**
    * Legemidlet pasienten bruker, fortsetter med uendret dose; planen beregner
    * ingen dose og bruker ingen preparater for det (et tillegg, regelmodell 12).
+   * `visning` sier hvordan dosen skal stå i planen ({@link Uendretvisning}).
    */
-  | { type: 'uendret'; grunnlag: Grunnlag }
+  | { type: 'uendret'; grunnlag: Grunnlag; visning?: Uendretvisning }
   /** Doseringen beregnes ikke (bare når forløpet kan starte), f.eks. fordi preparatomtale mangler. */
   | { type: 'uten_beregning'; grunn: string }
   /** Depotinjeksjoner: startinjeksjoner på faste dager, deretter månedlig vedlikehold. */
@@ -294,6 +295,18 @@ export type Fase =
       start: { dag: Parameter; dose: Dosekilde; sted?: string; vindu_dager?: Parameter }[]
       vedlikehold: { dose: Dosekilde; maaneder: Parameter; tidligst_dager?: Parameter; vindu_dager?: Parameter; sted?: string }
     }
+
+/**
+ * Hvordan en uendret dose står i planen og kopien, så den ikke kan misforstås
+ * (regelmodell 12): `enhet` dosen er i, for eksempel «mg Li⁺» (ellers «mg»),
+ * og tabletten den gis med: navnet, dosen per tablett i samme enhet og
+ * eventuelt mmol per tablett. Planen sier også om dosen er kontrollert mot
+ * regelens doser eller bare bekreftet av forskriveren.
+ */
+export interface Uendretvisning {
+  enhet?: string
+  tablett?: { navn: string; mg: number; mmol?: number }
+}
 
 /**
  * Et minste trinn ved lave doser (regelmodell 12), for en nedtrapping i

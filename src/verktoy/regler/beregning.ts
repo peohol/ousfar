@@ -39,6 +39,7 @@ import {
   type Trinnvalgsvar,
   forslagsverdi,
   justerbare,
+  type Uendretvisning,
 } from './modell'
 
 /** Økes når beregningen endres slik at like inndata kan gi et annet resultat. */
@@ -111,6 +112,14 @@ export interface Forlopsresultat {
   avsluttes?: { fra_hoyst_mg: number; trinnlengde: number }
   /** Legemidlet fortsetter med uendret dose, som planen ikke beregner (`uendret`, regelmodell 12). */
   uendret_mg?: number
+  /** Hvordan den uendrede dosen står i planen ({@link Uendretvisning}). */
+  uendret_visning?: Uendretvisning
+  /**
+   * Om den uendrede dosen er kontrollert mot regelens doser (et krav til
+   * startdosen med verdier eller område, som er oppfylt); ellers er den bare
+   * bekreftet av forskriveren.
+   */
+  uendret_kontrollert?: boolean
 }
 
 /** Et bindende krav beregningen er kontrollert mot. */
@@ -284,6 +293,24 @@ export function trinnvalgOmrade(s: Nedtrappingsstrategi, aktuell: number, svar: 
   const lav = s.lav_prosent?.verdi != null && s.lav_grense_mg?.verdi != null && aktuell <= s.lav_grense_mg.verdi + EPS
   const begrunnes = (s.prosent.begrunnelseskrav ?? []).filter((k) => k.over !== undefined && (!k.ved || svar?.[k.ved] === true)).map((k) => k.over!)
   return [fra, Math.min(til, ...(lav ? [s.lav_prosent!.verdi!] : []), ...begrunnes)]
+}
+
+/**
+ * Om startdosen `mg` er kontrollert mot regelens doser: et krav til startdosen
+ * som gjelder (for medlemmet og svarene), har verdier eller et område, og dosen
+ * er blant verdiene eller innenfor området. Et krav med nedre grense 0 er bare
+ * en øvre grense.
+ */
+export function kontrollertStartdose(regel: Pick<Regel, 'inndata'>, mg: number, svar: Beregningsinndata['svar'], medlem?: string): boolean {
+  return regel.inndata.some(
+    (k) =>
+      k.navn === 'startdose' &&
+      (!k.gjelder_medlem || k.gjelder_medlem === medlem) &&
+      (!k.ved || svar?.[k.ved.sporsmal] === k.ved.svar) &&
+      ((k.verdier?.length ?? 0) > 0 || !!k.omrade) &&
+      (!k.verdier?.length || k.verdier.some((v) => Math.abs(v - mg) < EPS)) &&
+      (!k.omrade || (mg > (k.omrade[0] === 0 ? EPS : k.omrade[0] - EPS) && mg <= k.omrade[1] + EPS)),
+  )
 }
 
 /**
@@ -525,6 +552,8 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
   let avslutning_kort: string | undefined
   let avsluttes: Forlopsresultat['avsluttes']
   let uendret: number | undefined
+  let uendret_visning: Uendretvisning | undefined
+  let uendret_kontrollert = false
 
   for (const fase of faserFor(regel, f, ctx.medlem)) {
     switch (fase.type) {
@@ -692,6 +721,8 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
         break
       case 'uendret':
         uendret = aktuell
+        if (fase.visning) uendret_visning = fase.visning
+        uendret_kontrollert = f.utgangsdose === 'startdose' && kontrollertStartdose(regel, aktuell, inndata.svar, ctx.medlem ?? undefined)
         fortsetter = true
         break
       case 'uten_beregning':
@@ -741,7 +772,7 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
     ...(utvaskingDager !== undefined ? { utvasking_dager: utvaskingDager } : {}),
     ...(avslutning ? { avslutning, avslutning_kort } : {}),
     ...(avsluttes && !fortsetter ? { avsluttes } : {}),
-    ...(uendret !== undefined ? { uendret_mg: uendret } : {}),
+    ...(uendret !== undefined ? { uendret_mg: uendret, uendret_kontrollert, ...(uendret_visning && { uendret_visning }) } : {}),
   }
   if (inndata.startdato) dater(resultat, inndata.startdato)
   return resultat

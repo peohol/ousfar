@@ -30,6 +30,7 @@ export const ENDRINGSLOGG: Endring[] = [
       'Bruker pasienten et depot, spør verktøyet etter dosen per injeksjon i stedet for døgndosen.',
       'Forutsetninger som bare gjelder ved et bestemt svar, for eksempel for kvinner som kan bli gravide, må bekreftes hver for seg bare når svaret er gitt.',
       'Når et trinn i en nedtrapping med fast reduksjon av startdosen ikke kan gis, kan forskriveren velge en av de nærmeste dosene. Trinnet varer da så lenge at nedtrappingen ikke går raskere enn regelen.',
+      'Et legemiddel som fortsetter uendret, står med enhet, tabletter og eventuelt mmol, og planen sier om dosen er kontrollert mot regelens doser eller bare bekreftet av forskriveren.',
       'Ved lave doser kan en regel la forskriveren velge et minste trinn, for eksempel fra 3 til 2 mg dråper, når ingen dose innenfor det vanlige området kan gis. Verktøyet velger aldri selv.',
     ],
   },

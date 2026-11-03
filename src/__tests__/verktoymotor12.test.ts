@@ -14,6 +14,7 @@ import { VALGTEKSTER, VERKTOY } from '../verktoy/register'
 import { beregn } from '../verktoy/regler/beregning'
 import { DOMENESETT } from '../verktoy/regler/domenesett'
 import { godkjenningsfeil } from '../verktoy/regler/godkjenning'
+import { kontrollerRegelsett } from '../verktoy/regler/kontroll'
 import { apneValg, gjeldendeBekreftelser, nulltrinnfeil, tilleggsfeil, type Avslutning, type Fase, type Grunnlag, type Regel } from '../verktoy/regler/modell'
 import { avSlaget, eierAv, REGELSETT, REGELSETTENE, settFor } from '../verktoy/tilgjengelighet'
 import { godkjennITest } from './hjelp/verktoyplan'
@@ -288,7 +289,7 @@ describe('Tillegg (K4)', () => {
       ['Dag 15–28', ['20 mg', '15 mg']],
       ['Fra dag 29', ['20 mg', '30 mg']],
     ])
-    expect(perioder[0]!.type === 'periode' && perioder[0]!.celler[0]!.elementer).toEqual([UENDRET])
+    expect(perioder[0]!.type === 'periode' && perioder[0]!.celler[0]!.elementer).toEqual([UENDRET.bekreftet])
     expect(v.rader.find((x) => x.type === 'vurdering')).toMatchObject({ dager: 'Dag 10', kolonne: 1 })
   })
 
@@ -303,6 +304,35 @@ describe('Tillegg (K4)', () => {
       ['Dag 22–35', ['20 mg', '15 mg']],
       ['Fra dag 36', ['20 mg', '30 mg']],
     ])
+  })
+
+  it('viser den uendrede dosen med enhet, mmol og tabletter, og sier om den er kontrollert mot regelens doser eller bare bekreftet', () => {
+    const med = (verdier?: number[]) => {
+      const r = tillegg()
+      const fase = r.plan.forlop[0]!.faser[0]!
+      if (fase.type !== 'uendret') throw new Error()
+      fase.visning = { enhet: 'mg Li⁺', tablett: { navn: 'Syntetisk 42 mg depottablett', mg: 42, mmol: 6 } }
+      if (verdier) r.inndata = [...r.inndata, { navn: 'startdose', verdier, art: 'bindende_krav', grunnlag: kilde }]
+      const g = godkjennITest(r, `test-tillegg-visning-${verdier ? 'krav' : 'uten'}`)
+      return { g, v: planvisning(kliniskDoseplan(g, { startdose_mg: 168, maldose_mg: 30 }, GRUNNLAG, OMGIVELSE), g)! }
+    }
+    const kontrollert = med([126, 168, 210])
+    const celle = (x: typeof kontrollert) => {
+      const rad = x.v.rader.find((y) => y.type === 'periode')!
+      return rad.type === 'periode' ? rad.celler[0] : null
+    }
+    expect(celle(kontrollert)).toEqual({ dose: '168 mg Li⁺ (24 mmol)', elementer: [`4 tabletter Syntetisk 42 mg depottablett; ${UENDRET.kontrollert}`] })
+    expect(kontrollert.v.utfall.sluttmal[0]).toBe('testoksetin fortsetter uendret på 168 mg Li⁺ (24 mmol)')
+    expect(planTekst(kontrollert.v, 'Kombinere')).toContain('168 mg Li⁺ (24 mmol) = 4 tabletter Syntetisk 42 mg depottablett; uendret dose, kontrollert mot regelens doser; planen beregner den ikke')
+    // Uten et krav til startdosen er dosen bare bekreftet av forskriveren, og planen sier det.
+    expect(celle(med())).toEqual({ dose: '168 mg Li⁺ (24 mmol)', elementer: [`4 tabletter Syntetisk 42 mg depottablett; ${UENDRET.bekreftet}`] })
+    // Kontrollen krever en tablett med navn og positive verdier.
+    const feil = tillegg()
+    const fase = feil.plan.forlop[0]!.faser[0]!
+    if (fase.type !== 'uendret') throw new Error()
+    fase.visning = { enhet: ' ', tablett: { navn: '', mg: 0, mmol: -1 } }
+    const sett = DOMENESETT[0]!.sett
+    expect(kontrollerRegelsett({ ...sett, regler: [godkjennITest(feil, 'test-tillegg-visning-feil')] }).join(' ')).toMatch(/tom enhet.*tablett uten navn.*0 per tablett.*-1 mmol per tablett/)
   })
 
   it('holder retningen: det eksisterende legemidlet kan ikke trappes ned eller seponeres, og tillegget må ende på en dose som fortsetter', () => {

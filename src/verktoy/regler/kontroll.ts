@@ -260,6 +260,13 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
     for (const v of x.vurderinger ?? []) if (!v.tekst.trim()) f(`vurderingspunktet ${x.id}.${v.id} mangler tekst`)
     for (const [i, fase] of x.faser.entries()) {
       if (fase.type === 'seponer' && fase.avslutning && i !== x.faser.length - 1) f(`forløp ${x.id} har en godkjent avslutning før siste fase`)
+      // Visningen av en uendret dose må kunne leses entydig (regelmodell 12).
+      const vis = fase.type === 'uendret' ? fase.visning : undefined
+      const positiv = (v: number) => Number.isFinite(v) && v > 0
+      if (vis?.enhet !== undefined && !vis.enhet.trim()) f(`forløp ${x.id} viser den uendrede dosen med en tom enhet`)
+      if (vis?.tablett && !vis.tablett.navn.trim()) f(`forløp ${x.id} viser den uendrede dosen med en tablett uten navn`)
+      if (vis?.tablett && !positiv(vis.tablett.mg)) f(`forløp ${x.id} viser den uendrede dosen med ${String(vis.tablett.mg)} per tablett; det må være over 0`)
+      if (vis?.tablett?.mmol !== undefined && !positiv(vis.tablett.mmol)) f(`forløp ${x.id} viser den uendrede dosen med ${String(vis.tablett.mmol)} mmol per tablett; det må være over 0`)
     }
   }
   for (const x of tallfeil(r)) f(x)
