@@ -350,7 +350,7 @@ const CONSTA_TABELL = {
 
 const constaXeplion: Regel = {
   id: 'depot-consta-xeplion',
-  versjon: 1,
+  versjon: 2,
   tittel: 'Fra Risperdal Consta til Xeplion',
   fra: { type: 'virkestoff', nokkel: 'risperidon' },
   til: { type: 'virkestoff', nokkel: 'paliperidon' },
@@ -381,7 +381,7 @@ const constaXeplion: Regel = {
       },
     ],
   },
-  inndata: [{ navn: 'startdose', verdier: [25, 37.5, 50], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [XEPLION.constaTabell, CONSTA.dose] } }],
+  inndata: [{ navn: 'startdose', verdier: [25, 37.5, 50], enhet: 'mg per injeksjon hver 2. uke', art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [XEPLION.constaTabell, CONSTA.dose] } }],
   bekreftelser: [
     {
       id: 'indikasjon',
@@ -480,7 +480,10 @@ const constaXeplion: Regel = {
       stopp: /Regelen gjelder ikke: Pasienten er over 65 år/,
     },
   ],
-  godkjenning: tilKontroll('Ny regel (K3, VDK-2 forslag 6): Xeplion i stedet for neste Consta-injeksjon, med dosen fra tabellen i preparatomtalen og uten oppstartsdoser.'),
+  godkjenning: tilKontroll(
+    'Ny regel (K3, VDK-2 forslag 6): Xeplion i stedet for neste Consta-injeksjon, med dosen fra tabellen i preparatomtalen og uten oppstartsdoser.',
+    `${GJENNOMGANG} Consta-dosen oppgis uttrykkelig som mg per injeksjon hver 2. uke, ikke som døgndose.`,
+  ),
 }
 
 /* --- Peroralt: aripiprazol → olanzapin og risperidon, kariprazin → kvetiapin ---------------- */

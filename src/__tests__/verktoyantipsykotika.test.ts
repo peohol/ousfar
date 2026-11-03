@@ -15,7 +15,7 @@
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import type { Planskjema } from '../verktoy/doseplan'
+import { startdosenavn, type Planskjema } from '../verktoy/doseplan'
 import { KOMPLETT } from '../verktoy/planvisning'
 import { VERKTOY } from '../verktoy/register'
 import { FEST_AKSEPTTEST } from '../verktoy/regler/aksepttest'
@@ -52,7 +52,7 @@ const MED_APNE_VALG = [
   'antipsykotikabytte-aripiprazol-risperidon',
 ]
 /** Versjon 2 svarer på kontrollørens gjennomgang av #320 (03.11.2026). */
-const VERSJON_2 = ['depot-risperidon-xeplion', 'antipsykotikabytte-aripiprazol-olanzapin', 'antipsykotikabytte-aripiprazol-risperidon']
+const VERSJON_2 = ['depot-risperidon-xeplion', 'depot-consta-xeplion', 'antipsykotikabytte-aripiprazol-olanzapin', 'antipsykotikabytte-aripiprazol-risperidon']
 /** Krever skriftlig begrunnelse (ordlyden om over eller under grensen er motorens). */
 const BEGRUNNES = /krever en skriftlig begrunnelse/
 type Regelid = keyof typeof VALG
@@ -175,6 +175,9 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
       expect(linjer(kjor('depot-consta-xeplion', consta)).at(-1)).toMatch(new RegExp(`${xeplion} mg = 1 injeksjon à ${xeplion} mg \\(±7 dager`))
     }
     expect(kjor('depot-consta-xeplion', '62,5').utfall).not.toBe('plan')
+    // Feltet og meldingene sier uttrykkelig at Consta-dosen er per injeksjon hver 2. uke, ikke en døgndose.
+    expect(startdosenavn(regel('depot-consta-xeplion'))).toBe('Aktuell dose (mg per injeksjon hver 2. uke)')
+    expect(grunner(kjor('depot-consta-xeplion', ''))).toMatch(/Aktuell dose \(mg per injeksjon hver 2\. uke\) må fylles inn/)
     expect(grunner(kjor('depot-consta-xeplion', '37,5', {}, { ubesvart: ['over_65'] }))).toMatch(/over 65 år/)
   })
 

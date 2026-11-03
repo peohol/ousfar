@@ -130,15 +130,15 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
   - Kontroll: Måldosen er 25–150 mg (bindende) – oppfylt. 50 mg.
   - Kontroll: Måldosen er 75 mg (forsiktighetsgrense) – oppfylt. 50 mg; forskriverens begrunnelse: «Syntetisk eksempel: lav peroral dose og bivirkninger ved høyere dose.».
 - *Risperidon 0,5 mg og vedlikehold 150 mg uten begrunnelse: en annen dose enn den anbefalte stopper.* Inndata: startdose 0,5 mg; måldose 150 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
-  - **Stoppet:** Måldosen 150 mg er over forsiktighetsgrensen (75 mg) og krever en skriftlig begrunnelse fra forskriveren, en særskilt vurdering. Skriv begrunnelsen, eller vurder om regelen passer.
+  - **Stoppet:** Måldosen 150 mg er utenfor forsiktighetsgrensen (75 mg) og krever en skriftlig begrunnelse fra forskriveren, en særskilt vurdering. Skriv begrunnelsen, eller vurder om regelen passer.
 - *Uten dokumentert tidligere toleranse stopper beregningen.* Inndata: startdose 4 mg; måldose 75 mg; bekreftet: indikasjon; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
   - **Stoppet:** Må bekreftes før beregning: Det er dokumentert i journalen at pasienten har tålt peroral risperidon over tid, uten tegn til overfølsomhet. Anafylaksi er likevel mulig etter injeksjon.
 - *Uten valgt vedlikeholdsdose: beregningen velger ikke selv.* Inndata: startdose 4 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
   - **Stoppet:** Måldosen må oppgis; regelen har ingen standard måldose.; Måldosen må oppgis; regelen har ingen standard måldose.
 - *Vedlikehold 175 mg er over området i preparatomtalen.* Inndata: startdose 6 mg; måldose 175 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
-  - **Stoppet:** Måldosen 175 mg er utenfor det regelen gjelder for (25–150 mg).; Måldosen 175 mg er over forsiktighetsgrensen (75 mg) og krever en skriftlig begrunnelse fra forskriveren, en særskilt vurdering. Skriv begrunnelsen, eller vurder om regelen passer.
+  - **Stoppet:** Måldosen 175 mg er utenfor det regelen gjelder for (25–150 mg).; Måldosen 175 mg er utenfor forsiktighetsgrensen (75 mg) og krever en skriftlig begrunnelse fra forskriveren, en særskilt vurdering. Skriv begrunnelsen, eller vurder om regelen passer.
 - *Risperidon 20 mg er over det preparatomtalen anbefaler.* Inndata: startdose 20 mg; måldose 150 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
-  - **Stoppet:** Startdosen 20 mg er utenfor det regelen gjelder for (høyst 16 mg).; Måldosen 150 mg er over forsiktighetsgrensen (75 mg) og krever en skriftlig begrunnelse fra forskriveren, en særskilt vurdering. Skriv begrunnelsen, eller vurder om regelen passer.
+  - **Stoppet:** Startdosen 20 mg er utenfor det regelen gjelder for (høyst 16 mg).; Måldosen 150 mg er utenfor forsiktighetsgrensen (75 mg) og krever en skriftlig begrunnelse fra forskriveren, en særskilt vurdering. Skriv begrunnelsen, eller vurder om regelen passer.
 - *Kreatininclearance under 80 ml/min: regelen gjelder ikke.* Inndata: startdose 4 mg; måldose 75 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon ja, over_65 nei.
   - **Stoppet:** Regelen gjelder ikke: Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min.
 - *Alderen er ikke vurdert: ukjent stopper like mye som over 65 år.* Inndata: startdose 4 mg; måldose 75 mg; bekreftet: indikasjon, tidligere_toleranse; pasientforhold: nedsatt_nyrefunksjon nei.
@@ -150,9 +150,9 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 
 ## Fra Risperdal Consta til Xeplion
 
-`depot-consta-xeplion`, versjon 1, fingeravtrykk `e6d28c4aa7eca635f2cb20e8de16862470ab8010e967b252d953743b999daafc`. Direkte bytte: risperidon → paliperidon. **Entydig beregnbar**; status **til faglig kontroll**.
+`depot-consta-xeplion`, versjon 2, fingeravtrykk `50331d718d099015b067807385c0ca26b34922f6cfafda4223f986f663a9670d`. Direkte bytte: risperidon → paliperidon. **Entydig beregnbar**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
