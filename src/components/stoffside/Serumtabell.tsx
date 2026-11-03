@@ -1,4 +1,4 @@
-import { useId, type ReactNode } from 'react'
+import { useId, useMemo, type ReactNode } from 'react'
 import { DOSEKOLONNER, formaterTall, type Doserad } from '../../faginnhold/paneler'
 import {
   REFERANSEOMRADEPROSJEKTET,
@@ -27,9 +27,10 @@ import { Uthev } from '../Uthev'
  * dose eller rad for seg, med navnet på målet eller kolonnen foran hver verdi.
  */
 export function Serumtabell({ rader, tittel }: { rader: readonly Doserad[]; tittel: string }) {
+  const blokker = useMemo(() => lesSerumtabell(rader), [rader])
   return (
     <div className="serumtabell">
-      {lesSerumtabell(rader).map((blokk, i) => (
+      {blokker.map((blokk, i) => (
         <Blokk key={i} blokk={blokk} tittel={tittel} />
       ))}
     </div>
@@ -77,7 +78,7 @@ const PERSENTILOPPSETT = [DoserSomKolonner, DoserSomRader, DoserHverForSeg] as c
 
 function Persentiltabell({ blokk }: { blokk: Extract<Serumblokk, { slag: 'persentiler' }> }) {
   const overskrift = useId()
-  const [boks, valgt] = useFaarPlass(PERSENTILOPPSETT.length)
+  const [boks, valgt] = useFaarPlass(PERSENTILOPPSETT.length, blokk)
   const Oppsett = PERSENTILOPPSETT[valgt]!
   // En rad der kilden ikke har et eneste tall, tas ikke med.
   const maalene = PERSENTILRADER.filter(({ felt }) => blokk.kolonner.some((k) => k[felt] !== null))
@@ -246,7 +247,7 @@ function Prosjekttabell({ blokk }: { blokk: Extract<Serumblokk, { slag: 'prosjek
  */
 function Radtabell({ rader, tittel }: { rader: readonly Doserad[]; tittel: string }) {
   const overskrift = useId()
-  const [boks, valgt] = useFaarPlass(2)
+  const [boks, valgt] = useFaarPlass(2, rader)
   const kolonner = DOSEKOLONNER.filter(({ felt }) => rader.some((rad) => rad[felt] !== ''))
   return (
     <div ref={boks} className="serumtabell__ramme">

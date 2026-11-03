@@ -252,6 +252,17 @@ describe('serumtabellen ruller aldri sidelengs', () => {
     expect(kolonner()[1]).toBe('50 mg')
   })
 
+  it('prøver dosene som kolonner på nytt når radene endres', () => {
+    Object.assign(bredder, { ramme: 500, kolonner: 800, snudd: 400 })
+    const alle = kvetiapinrader()
+    const { rerender } = render(<Serumtabell rader={alle} tittel="Serumkonsentrasjoner" />)
+    expect(kolonner()[1]).toBe('Antall prøver')
+    // Færre doser: tabellen blir smal nok til at dosene får plass som kolonner.
+    bredder.kolonner = 450
+    rerender(<Serumtabell rader={[...alle]} tittel="Serumkonsentrasjoner" />)
+    expect(kolonner()[1]).toBe('50 mg')
+  })
+
   it('viser vanlige rader hver for seg når tabellen ikke får plass', () => {
     const rader = PSYKOFARMAKA_FILER.find((f) => f.kode === 'HBUP')!.serumkonsentrasjoner!.rader!
     Object.assign(bredder, { ramme: 300, rader: 500 })

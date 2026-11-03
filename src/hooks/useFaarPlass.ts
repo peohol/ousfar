@@ -12,12 +12,24 @@ import { useLayoutEffect, useRef, useState } from 'react'
  * boksen blir minst så bred som den trengte. Alt skjer før skjermen tegnes,
  * så leseren ser aldri en utforming som ikke får plass. Uten mål (i tester)
  * brukes den bredeste.
+ *
+ * Endres innholdet (`innhold`, for eksempel radene som vises), glemmes
+ * breddene som er målt, og den bredeste utformingen prøves på nytt. Innholdet
+ * i boksen følges også, så en tabell som blir bredere, måles med en gang.
  */
-export function useFaarPlass<T extends HTMLElement = HTMLDivElement>(utforminger: number) {
+export function useFaarPlass<T extends HTMLElement = HTMLDivElement>(utforminger: number, innhold?: unknown) {
   const boks = useRef<T>(null)
   const [valgt, setValgt] = useState(0)
   /** Bredden hver utforming trengte sist den ikke fikk plass. */
   const behov = useRef<number[]>([])
+  const forrigeInnhold = useRef(innhold)
+
+  useLayoutEffect(() => {
+    if (Object.is(forrigeInnhold.current, innhold)) return
+    forrigeInnhold.current = innhold
+    behov.current = []
+    setValgt(0)
+  }, [innhold])
 
   useLayoutEffect(() => {
     const element = boks.current
@@ -41,6 +53,7 @@ export function useFaarPlass<T extends HTMLElement = HTMLDivElement>(utforminger
     if (typeof ResizeObserver !== 'function') return
     const vakt = new ResizeObserver(maal)
     vakt.observe(element)
+    for (const barn of element.children) vakt.observe(barn)
     // Skriftene kan lastes etter første oppsett og gjøre innholdet bredere.
     let aktiv = true
     document.fonts?.ready.then(() => aktiv && maal())
