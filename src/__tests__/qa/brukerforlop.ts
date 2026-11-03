@@ -1,0 +1,574 @@
+/**
+ * Uavhengig kvalitetskontroll av verktøyene (spor H i
+ * `docs/verktøy-klinisk-leveranseplan-2026-11.md`): vanlige, syntetiske
+ * brukerforløp kjørt gjennom den samme veien som verktøysiden
+ * (`kjorKasus`), og en egen vurdering av hva brukeren faktisk får.
+ *
+ * Kontrollen er bevisst skrevet uten domenetrådenes forventninger:
+ * - Den finner ikke på doser. Katalogen sier bare hvilken situasjon som
+ *   prøves (verktøy, virkestoffer, formulering og en vanlig aktuell dose);
+ *   resultatet er det appen gir.
+ * - Om en plan er **komplett** avgjøres av planens egne forløp, ikke av
+ *   regelens tekst: en nedtrapping er komplett når legemidlet faktisk når
+ *   seponering, et bytte når det gamle legemidlet er seponert og det nye
+ *   fortsetter med en dose, et tillegg når begge legemidlene fortsetter.
+ * - En plan som ikke er komplett, må si det selv (delplan), og en komplett
+ *   plan må ikke kalle seg delplan (plan §3: «tre forskjellige utfall skal
+ *   aldri blandes»).
+ *
+ * Ingen regel endres eller godkjennes her, og ingenting her er pasientdata.
+ */
+import { readFileSync } from 'node:fs'
+import { formvalgFor, spennFor, type Planskjema } from '../../verktoy/doseplan'
+import type { Doseplanresultat } from '../../verktoy/motor/plan'
+import { kombinasjoner } from '../../verktoy/regeldekning'
+import { festkoblinger, VERKTOY, type Verktoy } from '../../verktoy/register'
+import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from '../../verktoy/regler/aksepttest'
+import { erKliniskGodkjent, fingeravtrykk, harBeregning } from '../../verktoy/regler/godkjenning'
+import type { Regel } from '../../verktoy/regler/modell'
+import { besvartSkjema, kjorKasus, tidFor, type Pilotkasus, type Pilotutfall, type Uttrekkene, type Uttrekksnavn } from '../../verktoy/regler/pilotmatrise'
+import { fraForlop, REGELSETT, tilForlop, tilgjengelighet, type Verktoyvalg } from '../../verktoy/tilgjengelighet'
+
+export const QA_RAPPORT = 'docs/verktøy-qa-brukerforlop.md'
+
+/* --- Katalogen ------------------------------------------------------------------ */
+
+/** Leveransen i planen forløpet hører til, og hva sluttmålet er. */
+export const LEVERANSER = {
+  K1: {
+    verktoytype: 'seponering',
+    navn: 'Trappe ned antidepressiv',
+    sluttmal: 'seponering',
+  },
+  K2: {
+    verktoytype: 'bytte',
+    navn: 'Bytte antidepressiv',
+    sluttmal: 'fullført bytte',
+  },
+  K3: {
+    verktoytype: 'bytte',
+    navn: 'Bytte antipsykotikum',
+    sluttmal: 'fullført bytte',
+  },
+  K4: {
+    verktoytype: 'tillegg',
+    navn: 'Kombinere stemningsstabiliserende',
+    sluttmal: 'stabilt tilleggsregime',
+  },
+} as const
+export type Leveranse = keyof typeof LEVERANSER
+
+/** Verktøyet hver leveranse prøves i. K4 finnes ikke ennå; det finnes på typen når det kommer. */
+const VERKTOY_FOR: Record<Leveranse, (v: Verktoy) => boolean> = {
+  K1: (v) => v.id === 'trappe-ned-antidepressiv',
+  K2: (v) => v.id === 'bytte-antidepressiv',
+  K3: (v) => v.id === 'bytte-antipsykotikum',
+  K4: (v) => (v.type as string) === 'tillegg',
+}
+
+export interface Brukerforlop {
+  id: string
+  leveranse: Leveranse
+  /** Situasjonen i vanlig språk. */
+  hva: string
+  valg: Verktoyvalg
+  /** Aktuell døgndose (for K4: dosen av legemidlet pasienten allerede bruker), slik den skrives i feltet. */
+  dose: string
+  skjema?: Partial<Planskjema>
+}
+
+const p = (nokkel: string) => ({ nokkel, formulering: 'standard' as const })
+const ned = (id: string, hva: string, nokkel: string, dose: string): Brukerforlop => ({
+  id,
+  leveranse: 'K1',
+  hva,
+  valg: { fra: p(nokkel) },
+  dose,
+})
+const ad = (id: string, hva: string, fra: string, til: string, dose: string): Brukerforlop => ({
+  id,
+  leveranse: 'K2',
+  hva,
+  valg: { fra: p(fra), til: p(til) },
+  dose,
+})
+const ap = (id: string, hva: string, fra: Verktoyvalg['fra'], til: NonNullable<Verktoyvalg['til']>, dose: string): Brukerforlop => ({ id, leveranse: 'K3', hva, valg: { fra, til }, dose })
+const tillegg = (id: string, hva: string, fra: string, til: string, dose: string): Brukerforlop => ({
+  id,
+  leveranse: 'K4',
+  hva,
+  valg: { fra: p(fra), til: p(til) },
+  dose,
+})
+
+/**
+ * Vanlige situasjoner, syntetiske. K0-01–K0-12 er koordinatorens kasus i
+ * leveranseplanen §10.2 (samme id-er, så resultatene kan føres direkte); H-
+ * forløpene er QA-sporets egne tillegg. Utvalget sier hva som prøves, aldri
+ * hva svaret skal være.
+ */
+export const BRUKERFORLOP: readonly Brukerforlop[] = [
+  ned('K0-01', 'Escitalopram 10 mg tablett, kort behandlingstid, skal seponeres', 'escitalopram', '10'),
+  ned('K0-02', 'Sertralin 100 mg tablett, kort behandlingstid, skal seponeres', 'sertralin', '100'),
+  ned('K0-03', 'Amitriptylin 25 mg tablett, kort behandlingstid, skal seponeres', 'amitriptylin', '25'),
+  ad('K0-04', 'Sertralin 100 mg byttes til mirtazapin', 'sertralin', 'mirtazapin', '100'),
+  ad('K0-05', 'Escitalopram 20 mg byttes til mirtazapin', 'escitalopram', 'mirtazapin', '20'),
+  ad('K0-06', 'Escitalopram 20 mg byttes til sertralin', 'escitalopram', 'sertralin', '20'),
+  ap('K0-07', 'Olanzapin 10 mg tablett byttes til aripiprazol tablett', p('olanzapin'), p('aripiprazol'), '10'),
+  ap('K0-08', 'Risperidon 4 mg tablett byttes til aripiprazol tablett', p('risperidon'), p('aripiprazol'), '4'),
+  ap('K0-09', 'Aripiprazol 15 mg tablett til Abilify Maintena', p('aripiprazol'), { nokkel: 'aripiprazol', formulering: 'LA' }, '15'),
+  ap('K0-10', 'Risperidon 4 mg tablett til paliperidonpalmitat månedlig', p('risperidon'), { nokkel: 'paliperidon', formulering: 'ER' }, '4'),
+  tillegg('K0-11', 'Står på litium; lamotrigin legges til', 'litium', 'lamotrigin', '1000'),
+  tillegg('K0-12', 'Står på valproat; lamotrigin legges til', 'valproat', 'lamotrigin', '1000'),
+
+  ned('H-01', 'Vortioksetin 20 mg skal seponeres', 'vortioksetin', '20'),
+  ned('H-02', 'Vortioksetin 10 mg skal seponeres', 'vortioksetin', '10'),
+  ned('H-03', 'Escitalopram 20 mg skal seponeres', 'escitalopram', '20'),
+  ned('H-04', 'Sertralin 50 mg skal seponeres', 'sertralin', '50'),
+  ned('H-05', 'Citalopram 20 mg skal seponeres', 'citalopram', '20'),
+  ned('H-06', 'Nortriptylin 50 mg skal seponeres', 'nortriptylin', '50'),
+  ned('H-07', 'Mirtazapin 30 mg skal seponeres', 'mirtazapin', '30'),
+  ned('H-08', 'Venlafaksin 75 mg skal seponeres', 'venlafaksin', '75'),
+  ned('H-09', 'Paroksetin 20 mg skal seponeres', 'paroksetin', '20'),
+  ned('H-10', 'Fluoksetin 20 mg skal seponeres', 'fluoksetin', '20'),
+  ned('H-11', 'Duloksetin 60 mg skal seponeres', 'duloksetin', '60'),
+  ned('H-12', 'Bupropion 300 mg skal seponeres', 'bupropion', '300'),
+  ned('H-13', 'Agomelatin 25 mg skal seponeres', 'agomelatin', '25'),
+  ad('H-14', 'Sertralin 50 mg byttes til mirtazapin', 'sertralin', 'mirtazapin', '50'),
+  ad('H-15', 'Citalopram 20 mg byttes til sertralin', 'citalopram', 'sertralin', '20'),
+  ad('H-16', 'Sertralin 100 mg byttes til escitalopram', 'sertralin', 'escitalopram', '100'),
+  ad('H-17', 'Escitalopram 20 mg byttes til vortioksetin', 'escitalopram', 'vortioksetin', '20'),
+  ad('H-18', 'Fluoksetin 20 mg byttes til sertralin', 'fluoksetin', 'sertralin', '20'),
+  ad('H-19', 'Paroksetin 20 mg byttes til sertralin', 'paroksetin', 'sertralin', '20'),
+  ad('H-20', 'Venlafaksin 150 mg byttes til duloksetin', 'venlafaksin', 'duloksetin', '150'),
+  ad('H-21', 'Sertralin 100 mg byttes til bupropion', 'sertralin', 'bupropion', '100'),
+  ap('H-22', 'Kvetiapin 400 mg byttes til aripiprazol (peroralt)', p('kvetiapin'), p('aripiprazol'), '400'),
+  ap('H-23', 'Olanzapin 15 mg byttes til kvetiapin (peroralt)', p('olanzapin'), p('kvetiapin'), '15'),
+  ap('H-24', 'Paliperidon 6 mg peroralt til Xeplion', p('paliperidon'), { nokkel: 'paliperidon', formulering: 'ER' }, '6'),
+  ap('H-25', 'Olanzapin 10 mg peroralt til olanzapin depot', p('olanzapin'), { nokkel: 'olanzapin', formulering: 'LA' }, '10'),
+  ap('H-26', 'Risperidon depot (37,5 mg) til Xeplion', { nokkel: 'risperidon', formulering: 'LA' }, { nokkel: 'paliperidon', formulering: 'ER' }, '37,5'),
+  ap('H-27', 'Haloperidol 5 mg peroralt til haloperidol depot', p('haloperidol'), { nokkel: 'haloperidol', formulering: 'LA' }, '5'),
+  tillegg('H-28', 'Står på lamotrigin; litium legges til', 'lamotrigin', 'litium', '200'),
+  tillegg('H-29', 'Står på litium; valproat legges til', 'litium', 'valproat', '1000'),
+]
+
+/* --- Kjøringen ------------------------------------------------------------------- */
+
+const les = (fil: string) => JSON.parse(readFileSync(fil, 'utf8')) as Festuttrekk
+export const lesUttrekkene = (): Uttrekkene => ({
+  pilot: les(FEST_PILOT),
+  aksept: les(FEST_AKSEPTTEST),
+})
+
+const virkestoffene = (valg: Verktoyvalg) => [valg.fra.nokkel, ...(valg.til ? [valg.til.nokkel] : [])]
+
+/** Uttrekket som har flest av valgets virkestoffer (helst alle), så forløpet prøves mot preparater som finnes. */
+export function uttrekkFor(valg: Verktoyvalg, u: Uttrekkene): Uttrekksnavn {
+  const ider = Object.values(festkoblinger(virkestoffene(valg))).flat()
+  const dekning = (n: Uttrekksnavn) => ider.filter((id) => u[n].utvalg.virkestoff.some((v) => v.id === id)).length
+  return (['pilot', 'aksept'] as const).reduce((a, b) => (dekning(b) > dekning(a) ? b : a))
+}
+
+/** Tabletter (FEST-kode 53) når de finnes; ellers det første alternativet. Vises i rapporten. */
+const FORETRUKKET_FORM = '53'
+
+export type Utfallsklasse = 'komplett' | 'delplan' | 'fagtekst' | 'stoppet' | 'ikke_godkjent' | 'til_kontroll' | 'ikke_stottet' | 'sperret' | 'skjema' | 'verktoy_mangler'
+
+export const KLASSENAVN: Record<Utfallsklasse, string> = {
+  komplett: 'Komplett plan til sluttmål',
+  delplan: 'Delplan',
+  fagtekst: 'Godkjent fagtekst',
+  stoppet: 'Regel finnes, men beregningen stopper',
+  ikke_godkjent: 'Ikke godkjent regel',
+  til_kontroll: 'Regel til kontroll',
+  ikke_stottet: 'Ikke støttet',
+  sperret: 'Sperret',
+  skjema: 'Skjemaet krever mer',
+  verktoy_mangler: 'Verktøyet finnes ikke',
+}
+
+export interface Forlopsresultat {
+  forlop: Brukerforlop
+  klasse: Utfallsklasse
+  verktoy?: Verktoy
+  uttrekk?: Uttrekksnavn
+  utfall?: Pilotutfall & { resultat?: Doseplanresultat; tekst?: string }
+  /** Formvalg gjort automatisk, i klartekst. */
+  formvalg: string[]
+  regel?: Regel
+  /** Hva brukeren ser som grunn eller plan, kort. */
+  vist: string[]
+  /** Brudd på QA-invariantene; tom når alt er i orden. */
+  feil: string[]
+}
+
+const regelFor = (u: Pilotutfall & { resultat?: Doseplanresultat }) => u.resultat && REGELSETT.regler.find((r) => r.id === u.resultat!.regel.id && r.versjon === u.resultat!.regel.versjon)
+
+/** Kjører forløpet som verktøysiden ville gjort, med automatiske formvalg der siden ber om det. */
+export function kjorForlop(f: Brukerforlop, u: Uttrekkene, ekstra: Partial<Pilotkasus> = {}): Forlopsresultat {
+  const verktoy = VERKTOY.find(VERKTOY_FOR[f.leveranse])
+  if (!verktoy)
+    return {
+      forlop: f,
+      klasse: 'verktoy_mangler',
+      formvalg: [],
+      vist: [`Ingen verktøy av typen «${LEVERANSER[f.leveranse].verktoytype}» i registeret.`],
+      feil: [],
+    }
+  const uttrekk = uttrekkFor(f.valg, u)
+  const kasus: Pilotkasus = {
+    id: f.id,
+    kategori: 'vanlig_dose',
+    hva: f.hva,
+    verktoy: verktoy.id,
+    valg: f.valg,
+    uttrekk,
+    dose: f.dose,
+    skjema: f.skjema,
+    forventet: { utfall: 'sperret' },
+    ...ekstra,
+  }
+  let utfall = kjorKasus(kasus, u)
+  const formvalg: string[] = []
+  if (utfall.utfall === 'formvalg') {
+    const t = tilgjengelighet(verktoy, f.valg)
+    const regel = t.regler.length === 1 ? t.regler[0]! : t.regler.find((r) => r.id === kasus.skjema?.regel)
+    if (regel) {
+      const naa = tidFor(kasus, u)
+      const skjema = besvartSkjema(regel, f.dose, kasus.skjema)
+      const alternativer = formvalgFor(regel, f.valg, skjema, structuredClone(u[uttrekk].utvalg), naa)
+      const valgt: Planskjema['formvalg'] = { ...skjema.formvalg }
+      for (const forlop of utfall.forlop) {
+        const a = alternativer[forlop]!
+        const form = a.legemiddelformer.find((x) => x.kode === FORETRUKKET_FORM) ?? a.legemiddelformer[0]
+        const klasse = a.klasser[0]
+        valgt[forlop] = {
+          ...(a.klasser.length > 1 && klasse ? { klasse: klasse.kode } : {}),
+          ...(form ? { legemiddelform: form.kode } : {}),
+        }
+        formvalg.push(`${forlop}: ${[a.klasser.length > 1 ? klasse?.navn : null, form?.navn].filter(Boolean).join(', ')}`)
+      }
+      utfall = kjorKasus({ ...kasus, skjema: { ...kasus.skjema, formvalg: valgt } }, u)
+    }
+  }
+  const regel = regelFor(utfall)
+  const grunner = 'grunner' in utfall ? utfall.grunner : []
+  const base = { forlop: f, verktoy, uttrekk, utfall, formvalg, regel }
+  switch (utfall.utfall) {
+    case 'plan': {
+      const klasse = komplett(regel!, utfall.resultat!) ? 'komplett' : 'delplan'
+      return {
+        ...base,
+        klasse,
+        vist: [...(utfall.undertittel ? [utfall.undertittel] : []), ...utfall.linjer],
+        feil: planfeil(regel, utfall, klasse),
+      }
+    }
+    case 'fagtekst':
+      return { ...base, klasse: 'fagtekst', vist: utfall.regler, feil: [] }
+    case 'ingen':
+      return {
+        ...base,
+        klasse: utfall.status,
+        vist: grunner,
+        feil: grunner.length === 0 ? ['Ingen grunn vises når verktøyet ikke gir noen plan.'] : [],
+      }
+    case 'stopp':
+      return {
+        ...base,
+        klasse: 'stoppet',
+        vist: grunner,
+        feil: grunner.length === 0 ? ['Beregningen stopper uten grunn.'] : [],
+      }
+    case 'mangler':
+      return { ...base, klasse: 'skjema', vist: grunner, feil: [] }
+    case 'formvalg':
+      return {
+        ...base,
+        klasse: 'skjema',
+        vist: [`Formvalg trengs for ${utfall.forlop.join(', ')}`],
+        feil: [],
+      }
+    case 'sperret':
+      return { ...base, klasse: 'sperret', vist: [], feil: [] }
+  }
+}
+
+/* --- Den uavhengige vurderingen ---------------------------------------------------- */
+
+const fortsetterMedDose = (f: Doseplanresultat & { status: 'doseplan' }, id: string | undefined) => {
+  const x = f.forlop.find((y) => y.id === id)
+  if (!x || x.siste_dosedag !== null) return false
+  const siste = x.perioder.at(-1)
+  return (siste !== undefined && siste.til === null && siste.mg > 0) || x.injeksjoner.some((i) => i.vedlikehold && i.mg > 0)
+}
+const seponeres = (f: Doseplanresultat & { status: 'doseplan' }, id: string | undefined) => {
+  const x = f.forlop.find((y) => y.id === id)
+  return x !== undefined && x.siste_dosedag !== null && !x.avslutning
+}
+
+/**
+ * Om planen når sluttmålet, avgjort av planens forløp alene:
+ * nedtrapping → seponert; bytte → det gamle seponert og det nye fortsetter
+ * med dose; tillegg → begge fortsetter med dose.
+ */
+export function komplett(regel: Regel, r: Doseplanresultat): boolean {
+  if (r.status !== 'doseplan') return false
+  const fra = fraForlop(regel)?.id
+  if (!regel.til) return r.forlop.every((x) => seponeres(r, x.id))
+  if (regel.plan.form === ('tillegg' as string)) return r.forlop.every((x) => fortsetterMedDose(r, x.id))
+  return seponeres(r, fra) && fortsetterMedDose(r, tilForlop(regel)?.id)
+}
+
+/** Tekst som sier at planen ikke er fullstendig. */
+export const DELPLANMERKE = /delplan|ikke (en )?(validert )?(fullstendig|komplett)/i
+
+const nesten = (a: number, b: number) => Math.abs(a - b) < 1e-6
+
+/**
+ * QA-invariantene for en plan brukeren får se:
+ * 1. Regelen er klinisk godkjent for nøyaktig versjonen og innholdet planen bygger på.
+ * 2. Delplan og komplett plan blandes aldri: en delplan sier det, en komplett plan gjør ikke.
+ * 3. Hver dose kan gis: enhetene summerer til døgndosen, delinger er dokumentert i FEST, og ingen preparater har begrensninger.
+ * 4. Perioder og dager går framover, og dosene er positive tall.
+ * 5. Kopien har det samme som skjermen: undertittelen, hver rad og regelversjonen.
+ */
+export function planfeil(regel: Regel | undefined, u: Pilotutfall & { resultat?: Doseplanresultat; tekst?: string }, klasse: 'komplett' | 'delplan'): string[] {
+  const feil: string[] = []
+  const r = u.resultat
+  if (!r || r.status !== 'doseplan' || u.utfall !== 'plan') return ['Planen mangler beregningsresultat.']
+  if (!regel) return [`Regelen ${r.regel.id} v${r.regel.versjon} finnes ikke i registeret.`]
+  if (!r.klinisk) feil.push('Planen vises uten å være klinisk.')
+  if (!erKliniskGodkjent(regel) || !harBeregning(regel)) feil.push(`Regelen ${regel.id} v${regel.versjon} er ikke klinisk godkjent som beregning.`)
+  if (r.regel.fingeravtrykk !== fingeravtrykk(regel)) feil.push('Planens fingeravtrykk er ikke regelens.')
+
+  const merket = u.undertittel !== null && DELPLANMERKE.test(u.undertittel)
+  if (klasse === 'delplan' && !merket) feil.push(`Planen når ikke sluttmålet, men sier ikke at den er en delplan (undertittel ${JSON.stringify(u.undertittel)}).`)
+  if (klasse === 'komplett' && merket) feil.push(`Planen når sluttmålet, men kaller seg delplan (${JSON.stringify(u.undertittel)}).`)
+
+  for (const f of r.forlop) {
+    let forrige = -Infinity
+    for (const per of f.perioder) {
+      if (!Number.isFinite(per.mg) || per.mg < 0) feil.push(`${f.virkestoff}: ugyldig dose ${per.mg}.`)
+      if (per.fra < forrige || (per.til !== null && per.til < per.fra)) feil.push(`${f.virkestoff}: periodene går ikke framover (dag ${per.fra}–${per.til}).`)
+      forrige = per.fra
+      if (per.mg > 0 && per.elementer.length > 0) {
+        const sum = per.elementer.reduce((s, e) => s + e.mg * e.antall, 0)
+        if (
+          !nesten(sum, per.mg) &&
+          !(
+            per.doser &&
+            nesten(
+              per.doser.reduce((a, b) => a + b, 0),
+              per.mg,
+            )
+          )
+        )
+          feil.push(`${f.virkestoff} dag ${per.fra}: enhetene gir ${sum} mg, ikke ${per.mg} mg.`)
+      }
+      for (const e of per.elementer) {
+        for (const b of e.preparater) {
+          if (!Number.isInteger(e.antall * b.deling) || e.antall <= 0) feil.push(`${b.navn_form_styrke}: ${e.antall} enheter kan ikke gis (deling ${b.deling}).`)
+          if (b.begrensninger.length > 0) feil.push(`${b.navn_form_styrke} brukes trass i begrensninger: ${b.begrensninger.join('; ')}`)
+        }
+      }
+    }
+    for (const i of f.injeksjoner) if (!(i.mg > 0) || i.element.preparater.length === 0) feil.push(`${f.virkestoff}: injeksjon uten dose eller preparat.`)
+  }
+
+  const tekst = u.tekst ?? ''
+  if (u.undertittel && !tekst.includes(u.undertittel)) feil.push('Kopien mangler undertittelen.')
+  for (const l of u.linjer) if (!tekst.includes(l)) feil.push(`Kopien mangler raden «${l}».`)
+  if (!tekst.includes(`Regel ${regel.id}, versjon ${regel.versjon}`)) feil.push('Kopien mangler regelversjonen.')
+  return feil
+}
+
+/* --- Omfangssveipet ---------------------------------------------------------------- */
+
+/** Dosene sveipet prøver: 0,5–40 mg i halve mg og 5–400 mg i trinn på 5. */
+export const SVEIPDOSER: readonly number[] = [...new Set([...Array.from({ length: 80 }, (_, i) => (i + 1) / 2), ...Array.from({ length: 80 }, (_, i) => (i + 1) * 5)])].sort((a, b) => a - b)
+
+const tall = (x: number) => String(x).replace('.', ',')
+
+/** Hver kombinasjon av legemiddelformer siden kan be om for valget, ved dosen. */
+function formkombinasjoner(regel: Regel, valg: Verktoyvalg, dose: string, u: Uttrekkene): Planskjema['formvalg'][] {
+  const uttrekk = uttrekkFor(valg, u)
+  const naa = tidFor({ uttrekk }, u)
+  const alternativer = formvalgFor(regel, valg, besvartSkjema(regel, dose), structuredClone(u[uttrekk].utvalg), naa)
+  let kombinasjoner: Planskjema['formvalg'][] = [{}]
+  for (const [forlop, a] of Object.entries(alternativer)) {
+    if (a.legemiddelformer.length <= 1 && a.klasser.length <= 1) continue
+    const former = a.legemiddelformer.length > 0 ? a.legemiddelformer : [undefined]
+    const klasser = a.klasser.length > 1 ? a.klasser : [undefined]
+    kombinasjoner = kombinasjoner.flatMap((k) =>
+      klasser.flatMap((kl) =>
+        former.map((fo) => ({
+          ...k,
+          [forlop]: {
+            ...(kl ? { klasse: kl.kode } : {}),
+            ...(fo ? { legemiddelform: fo.kode } : {}),
+          },
+        })),
+      ),
+    )
+  }
+  return kombinasjoner
+}
+
+export interface Sveiptreff {
+  dose: number
+  maldose?: number
+  formvalg: Planskjema['formvalg']
+  resultat: Forlopsresultat
+}
+
+export interface Sveip {
+  verktoy: Verktoy
+  valg: Verktoyvalg
+  regel: Regel
+  /** Hver dose, måldose og legemiddelform som gir en plan. */
+  treff: Sveiptreff[]
+  /** Unntak, spørsmål og bekreftelser: utfallet ved første treff når ett av dem endres. */
+  endringer: { hva: string; klasse: Utfallsklasse }[]
+}
+
+/**
+ * Prøver hvert valg som gir en beregning i dag, ved hver dose i
+ * {@link SVEIPDOSER}, hver legemiddelform og, der regelen spør etter
+ * måldose, hver hele måldose rundt tabellens spenn.
+ */
+export function omfangssveip(u: Uttrekkene): Sveip[] {
+  const ut: Sveip[] = []
+  for (const verktoy of VERKTOY) {
+    const leveranse = (Object.keys(VERKTOY_FOR) as Leveranse[]).find((l) => VERKTOY_FOR[l](verktoy))!
+    for (const valg of kombinasjoner(verktoy)) {
+      const t = tilgjengelighet(verktoy, valg)
+      if (t.status !== 'tilgjengelig') continue
+      for (const regel of t.regler) {
+        const treff: Sveiptreff[] = []
+        const forlop = (dose: number, skjema: Partial<Planskjema>): Brukerforlop => ({
+          id: 'sveip',
+          leveranse,
+          hva: '',
+          valg,
+          dose: tall(dose),
+          skjema: { regel: regel.id, ...skjema },
+        })
+        for (const dose of SVEIPDOSER) {
+          const spenn = spennFor(regel, { startdose: tall(dose) })
+          const maldoser = spenn ? Array.from({ length: spenn.til_mg[1] - spenn.til_mg[0] + 3 }, (_, i) => spenn.til_mg[0] - 1 + i) : [undefined]
+          for (const formvalg of formkombinasjoner(regel, valg, tall(dose), u)) {
+            for (const maldose of maldoser) {
+              const r = kjorForlop(
+                forlop(dose, {
+                  formvalg,
+                  ...(maldose !== undefined ? { maldose: tall(maldose) } : {}),
+                }),
+                u,
+              )
+              if (r.klasse === 'komplett' || r.klasse === 'delplan')
+                treff.push({
+                  dose,
+                  ...(maldose !== undefined ? { maldose } : {}),
+                  formvalg,
+                  resultat: r,
+                })
+            }
+          }
+        }
+        const endringer: Sveip['endringer'] = []
+        const forste = treff[0]
+        if (forste) {
+          const skjema = {
+            formvalg: forste.formvalg,
+            ...(forste.maldose !== undefined ? { maldose: tall(forste.maldose) } : {}),
+          }
+          const prov = (hva: string, x: Partial<Planskjema>) =>
+            endringer.push({
+              hva,
+              klasse: kjorForlop(forlop(forste.dose, { ...skjema, ...x }), u).klasse,
+            })
+          for (const x of regel.unntak) prov(`unntak ${x.id} = ja`, { pasientforhold: { [x.id]: true } })
+          for (const x of regel.sporsmal ?? []) prov(`spørsmål ${x.id} = ja`, { svar: { [x.id]: true } })
+          for (const x of regel.bekreftelser)
+            prov(`bekreftelse ${x.id} mangler`, {
+              bekreftet: regel.bekreftelser.map((b) => b.id).filter((b) => b !== x.id),
+            })
+        }
+        ut.push({ verktoy, valg, regel, treff, endringer })
+      }
+    }
+  }
+  return ut
+}
+
+const intervaller = (doser: readonly number[]) =>
+  [...new Set(doser)]
+    .sort((a, b) => a - b)
+    .map(tall)
+    .join(', ') || 'ingen'
+
+/** Sveipet i rapporten: hvilke doser som gir plan, og hva hver endring gir. */
+export function sveiplinjer(sveip: readonly Sveip[]): string[] {
+  return [
+    '## Omfangssveip for regler som gir beregning',
+    '',
+    `Startdosene ${tall(SVEIPDOSER[0]!)}–${tall(SVEIPDOSER.at(-1)!)} mg (halve mg opp til 40 mg, så trinn på 5 mg), hver legemiddelform siden kan be om og hver hele måldose rundt tabellens spenn, med alle bekreftelser og nei på hvert unntak og spørsmål. Deretter, ved første dose med plan: ja på ett unntak eller spørsmål om gangen, og én bekreftelse om gangen tatt bort.`,
+    '',
+    ...sveip.flatMap((s) => [
+      `### ${s.verktoy.navn}: ${s.regel.id} v${s.regel.versjon}`,
+      '',
+      `- Startdoser med plan: ${intervaller(s.treff.map((t) => t.dose))}`,
+      ...(s.treff.some((t) => t.maldose !== undefined)
+        ? [`- Måldoser med plan: ${[...new Set(s.treff.map((t) => `${tall(t.dose)} → ${t.maldose !== undefined ? tall(t.maldose) : '–'}`))].join('; ')}`]
+        : []),
+      `- Klasse: ${[...new Set(s.treff.map((t) => KLASSENAVN[t.resultat.klasse]))].join(', ') || '–'}`,
+      `- QA-avvik i planene: ${s.treff.flatMap((t) => t.resultat.feil).length}`,
+      ...s.endringer.map((e) => `- ${e.hva}: ${KLASSENAVN[e.klasse]}`),
+      '',
+    ]),
+  ]
+}
+
+/* --- Rapporten ----------------------------------------------------------------------- */
+
+const celle = (x: string) => x.replace(/\|/g, '\\|').replace(/\n/g, ' ')
+
+/** Rapporten med måltallene per leveranse (plan §8), hvert forløp og avsnittene i `tillegg`. */
+export function lagQaRapport(resultater: readonly Forlopsresultat[], tillegg: readonly string[]): string {
+  const klasser = Object.keys(KLASSENAVN) as Utfallsklasse[]
+  const ut: string[] = [
+    `<!-- Laget av \`QA_SKRIV=1 npx vitest run src/__tests__/qa\`; rediger ikke for hånd. -->`,
+    '# OUSFAR Verktøy – uavhengig QA av brukerforløp',
+    '',
+    'Spor H i `docs/verktøy-klinisk-leveranseplan-2026-11.md`. Hvert forløp er en syntetisk, vanlig situasjon kjørt gjennom den samme veien som verktøysiden, mot de lagrede FEST-uttrekkene. Klassen er QA-testens egen vurdering av planens forløp (komplett = når sluttmålet), ikke regelens selvbeskrivelse. Dette er en måling, ikke en klinisk godkjenning.',
+    '',
+    '## Måltall per leveranse',
+    '',
+    `| Leveranse | ${klasser.map((k) => KLASSENAVN[k]).join(' | ')} |`,
+    `| --- | ${klasser.map(() => '---:').join(' | ')} |`,
+    ...(Object.keys(LEVERANSER) as Leveranse[]).map(
+      (l) => `| ${l} ${LEVERANSER[l].navn} | ${klasser.map((k) => resultater.filter((r) => r.forlop.leveranse === l && r.klasse === k).length || '').join(' | ')} |`,
+    ),
+    '',
+    '## Forløpene',
+    '',
+    '| Id | Situasjon | Utfall | Det brukeren ser | Avvik |',
+    '| --- | --- | --- | --- | --- |',
+    ...resultater
+      .map((r) =>
+        [
+          r.forlop.id,
+          celle(r.forlop.hva),
+          `${KLASSENAVN[r.klasse]}${r.regel ? ` (${r.regel.id} v${r.regel.versjon})` : ''}`,
+          celle([...r.formvalg.map((f) => `[formvalg ${f}]`), ...r.vist].join(' / ')),
+          celle(r.feil.join(' / ') || '–'),
+        ].join(' | '),
+      )
+      .map((l) => `| ${l} |`),
+    '',
+    ...tillegg,
+    '',
+  ]
+  return ut.join('\n')
+}
