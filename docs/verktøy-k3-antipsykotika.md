@@ -1,6 +1,6 @@
 # OUSFAR Verktøy – K3: bytte av antipsykotika
 
-**Status 03.11.2026:** sju regelutkast, alle **til uavhengig faglig kontroll** og ingen klinisk godkjent. Appen viser derfor ingen klinisk plan for dem ennå. En godkjenning gjelder bare nøyaktig regelversjonen og fingeravtrykket i `docs/verktøy-k3-antipsykotikabytter.md`, som er laget av reglene i `src/verktoy/regler/antipsykotikabytter.ts` og viser hver regels kilder, forutsetninger, unntak og regneeksempler. Styrende plan: `docs/verktøy-klinisk-leveranseplan-2026-11.md` (K3). Etter kontrollørens første gjennomgang av #320 er tre av reglene i versjon 2 (se §6).
+**Status 03.11.2026:** sju regelutkast, alle **til uavhengig faglig kontroll** og ingen klinisk godkjent. Appen viser derfor ingen klinisk plan for dem ennå. En godkjenning gjelder bare nøyaktig regelversjonen og fingeravtrykket i `docs/verktøy-k3-antipsykotikabytter.md`, som er laget av reglene i `src/verktoy/regler/antipsykotikabytter.ts` og viser hver regels kilder, forutsetninger, unntak og regneeksempler. Styrende plan: `docs/verktøy-klinisk-leveranseplan-2026-11.md` (K3). Etter kontrollørens første gjennomgang av #320 er fire av reglene i versjon 2 (se §6).
 
 ## 1. Hva som blir mulig
 
@@ -87,7 +87,7 @@ Alle eksemplene er syntetiske. Testene i `src/__tests__/verktoyantipsykotika.tes
 
 ## 6. Åpne faglige spørsmål til kontrolløren
 
-Kontrolløren gikk gjennom #320 03.11.2026. Svarene på spørsmål 1–3 er lagt inn som versjon 2 av tre regler; spørsmål 6 (valg c) og etiketten for Consta-dosen krever en endring i den felles motoren (#319) og er sendt dit.
+Kontrolløren gikk gjennom #320 03.11.2026. Svarene på spørsmål 1–3 er lagt inn som versjon 2 av tre regler. Consta → Xeplion er også i versjon 2: dosen oppgis uttrykkelig som «mg per injeksjon hver 2. uke», ikke som døgndose. Spørsmål 6 (valg c) krever en endring i den felles motoren (#319), som er bestilt.
 
 1. **Vedlikeholdsdosen etter peroral risperidon (Xeplion), besvart i v2:** OUSFAR finner ikke på en omregning. Dokumentert tidligere toleranse er en egen bekreftelse, og en annen vedlikeholdsdose enn anbefalte 75 mg krever en skriftlig begrunnelse ut fra toleranse og effekt. Begrunnelsen står i planen sammen med risperidondosen. Gjenstår: er det nok kontroll av avvikende valg, eller trengs mer?
 2. **Direkte bytte fra aripiprazol, besvart i v2:** startregimet og den valgte terapeutiske måldosen er atskilt (olanzapin 5–20 mg; risperidon høyst 16 mg, utenfor 4–6 mg med begrunnelse), med en ny klinisk vurdering før hver doseendring. Tiden på startregimet før måldosen er et åpent OUSFAR-valg (forslag: én uke, fordi aripiprazol virker i flere dager etter siste dose) og må avklares. Aripiprazol bare stoppes, så dosen tolkes ikke som et antall tabletter og kan være tabletter, smeltetabletter eller mikstur. Indikasjonen er schizofreni; andre indikasjoner er ikke omfattet. Gjenstår: er direkte bytte, med spesialistvurdering og tett oppfølging som krav, akseptabelt som den eneste beregnede strategien?
