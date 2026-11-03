@@ -1,6 +1,6 @@
 /**
  * K1 i `docs/verktøy-klinisk-leveranseplan-2026-11.md`: nedtrapping av
- * escitalopram, nortriptylin og amitriptylin til seponering
+ * escitalopram, nortriptylin, amitriptylin og sertralin til seponering
  * (`src/verktoy/regler/avslutning.ts`) og kontrollgrunnlaget
  * (`docs/verktøy-k1-nedtrapping-kontrollgrunnlag.md`). De nye versjonene er
  * til faglig kontroll, ikke godkjent; de andre reglene er uendret; avslutningen
@@ -17,6 +17,7 @@ import { avslutningstekst, K1_AVSLUTNINGER, medAvslutning, medAvslutninger } fro
 import { beregn, kortform, overAvslutning } from '../verktoy/regler/beregning'
 import { erKliniskGodkjent, fingeravtrykk } from '../verktoy/regler/godkjenning'
 import { apneValg, avslutningFor, type Regel } from '../verktoy/regler/modell'
+import { kontrollerRegelsett } from '../verktoy/regler/kontroll'
 import { NEDTRAPPINGSSETT, NEDTRAPPINGSSETT_FOR_AVSLUTNING } from '../verktoy/regler/nedtrapping'
 import { DELPLAN, KOMPLETT } from '../verktoy/planvisning'
 import { REGELSETT } from '../verktoy/tilgjengelighet'
@@ -34,8 +35,8 @@ const lavGrense = (r: Regel) => {
 }
 
 describe('De nye regelversjonene', () => {
-  it('er escitalopram, nortriptylin og amitriptylin, én versjon over versjonen før, til faglig kontroll og ikke godkjent', () => {
-    expect(K1).toEqual(['seponering-escitalopram', 'seponering-nortriptylin', 'seponering-amitriptylin'])
+  it('er escitalopram, nortriptylin, amitriptylin og sertralin, én versjon over versjonen før, til faglig kontroll og ikke godkjent', () => {
+    expect(K1).toEqual(['seponering-escitalopram', 'seponering-nortriptylin', 'seponering-amitriptylin', 'seponering-sertralin'])
     expect(NEDTRAPPINGSSETT.versjon).toBe(NEDTRAPPINGSSETT_FOR_AVSLUTNING.versjon + 1)
     for (const a of K1_AVSLUTNINGER) {
       const for_ = i(NEDTRAPPINGSSETT_FOR_AVSLUTNING, a.regel)
@@ -51,6 +52,13 @@ describe('De nye regelversjonene', () => {
     }
   })
 
+  it('består kontrollene i regelsettet appen bruker, også regneeksemplene med avslutning og over grensen', () => {
+    expect(kontrollerRegelsett(NEDTRAPPINGSSETT)).toEqual([])
+    const nye = K1_AVSLUTNINGER.flatMap((a) => (a.nye_eksempler ?? []).map((n) => [a.regel, n.id]))
+    expect(nye).toEqual([['seponering-escitalopram', 'fra-20-mg-lang-delplan'], ['seponering-sertralin', 'fra-100-mg-lang-delplan']])
+    for (const [id, eks] of nye) expect(i(NEDTRAPPINGSSETT, id!).eksempler.find((e) => e.id === eks)!.forventet.fra!.join('\n'), eks).not.toMatch(/seponert/)
+  })
+
   it('er nøyaktig versjonene og fingeravtrykkene i kontrollgrunnlaget', () => {
     expect(FORSLAG_K1.regler.map((k) => k.id).sort()).toEqual([...K1].sort())
     for (const k of FORSLAG_K1.regler) {
@@ -59,8 +67,8 @@ describe('De nye regelversjonene', () => {
     }
   })
 
-  it('seponerer bare fra laveste døgndose i preparatomtalen eller lavere (5, 25 og 10 mg), med Peders valg som avklaring av grensen', () => {
-    expect(K1.map((id) => lavGrense(i(REGELSETT, id)))).toEqual([5, 25, 10])
+  it('seponerer bare fra laveste døgndose i preparatomtalen eller lavere (5, 25, 10 og 25 mg), med Peders valg som avklaring av grensen', () => {
+    expect(K1.map((id) => lavGrense(i(REGELSETT, id)))).toEqual([5, 25, 10, 25])
     for (const id of K1) {
       const r = i(REGELSETT, id)
       const a = avslutningFor(sisteFase(r))!
@@ -166,13 +174,13 @@ describe('Kontrollgrunnlaget', () => {
 
   it('har minst to komplette forløp til seponering med norske preparater, for to virkestoffer', () => {
     const komplette = FORSLAG_K1.kasus.filter((k) => k.planutfall?.startsWith(KOMPLETT))
-    expect(komplette.map((k) => k.id)).toEqual(['K1-01', 'K1-02', 'K1-03', 'K1-04', 'K1-05'])
+    expect(komplette.map((k) => k.id)).toEqual(['K1-01', 'K1-02', 'K1-03', 'K1-04', 'K1-05', 'K1-23', 'K1-24', 'K1-25'])
     expect(new Set(komplette.map((k) => k.valg.fra?.nokkel))).toEqual(new Set(['escitalopram', 'nortriptylin']))
   })
 
   it('seponerer bare fra grensen eller lavere, og bare som siste dose; hver delplan sier hva den ikke dekker og seponerer aldri', () => {
     const planer = omfangsplaner(FORSLAG_K1, uttrekkene).flatMap((o) => o.veier.map((v) => ({ o, v })))
-    expect(planer).toHaveLength(16)
+    expect(planer).toHaveLength(21)
     for (const { o, v } of planer) {
       const hva = `${o.regel.id} ${o.form} ${o.startdose_mg} mg`
       expect(v.utfall.utfall, hva).toBe('plan')
@@ -196,7 +204,7 @@ describe('Kontrollgrunnlaget', () => {
     expect(tekst).toContain('**Ingen regel er godkjent eller aktivert.**')
     expect(tekst).not.toMatch(/psychiatrienet\.(nl|org|com)/i)
     expect(tekst).not.toContain('**avvik:**')
-    for (const nr of ['K1.1', 'K1.2', 'K1.3', 'K1.4', 'K1.5', 'K1.6', 'K1.7']) expect(tekst).toContain(`| ${nr} |`)
+    for (const nr of ['K1.1', 'K1.2', 'K1.3', 'K1.4', 'K1.5', 'K1.6', 'K1.7', 'K1.8']) expect(tekst).toContain(`| ${nr} |`)
   })
 
   it('endrer ikke reglene i regelsettet: den simulerte avklaringen og godkjenningen finnes bare på kopier', () => {

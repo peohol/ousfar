@@ -81,7 +81,7 @@ Omfanget for hver markedsført styrke i formen, regelens vanlige dose og grensen
 | escitalopram | Tablett [53] | 20 mg | én reduksjon med revurdering **[klinisk omfang]** | stopp | stopp | fra 15 mg: stopp |
 | escitalopram | Dråper, oppløsning [748] | 1 mg | stopp | stopp | stopp | – |
 | escitalopram | Dråper, oppløsning [748] | 10 mg | valgt dose **[klinisk omfang]** | én reduksjon med revurdering **[klinisk omfang]** | stopp | fra 8 mg: én reduksjon med revurdering |
-| escitalopram | Dråper, oppløsning [748] | 20 mg | én reduksjon med revurdering **[klinisk omfang]** | én reduksjon med revurdering **[klinisk omfang]** | én reduksjon med revurdering **[klinisk omfang]** | fra 15 mg: valgt dose |
+| escitalopram | Dråper, oppløsning [748] | 20 mg | én reduksjon med revurdering **[klinisk omfang]** | én reduksjon med revurdering **[klinisk omfang]** | én reduksjon med revurdering **[klinisk omfang]** | fra 15 mg: valgt dose **[klinisk omfang]** |
 | fluoksetin | Dispergerbar tablett [5] | 20 mg | stopp | stopp | stopp | – |
 | fluoksetin | Dispergerbar tablett [5] | 40 mg | én reduksjon med revurdering **[klinisk omfang]** | stopp | stopp | fra 30 mg: stopp |
 | fluoksetin | Dispergerbar tablett [5] | 60 mg | valgt dose **[klinisk omfang]** | stopp | stopp | fra 50 mg: valgt dose |

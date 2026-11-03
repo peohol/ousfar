@@ -18,7 +18,7 @@
  * er ikke klinisk godkjent og må kontrolleres for nøyaktig versjonen og
  * fingeravtrykket (`docs/verktøy-k1-nedtrapping-kontrollgrunnlag.md`).
  */
-import { NICE, RCPSYCH, steg, utsagn } from './bygg'
+import { FEST_FORM, NICE, RCPSYCH, steg, utsagn } from './bygg'
 import type { Avklaring, Fase, Forlop, Grunnlag, Kildehenvisning, Parameter, Regel, Utsagn, Vurderingspunkt } from './modell'
 
 export const K1_DATO = '2026-11-03'
@@ -48,6 +48,8 @@ export const K1_AVSLUTNINGER: readonly Avslutningsforslag[] = [
   {
     regel: 'seponering-escitalopram',
     fra_versjon: 12,
+    // 15 mg dråper, innenfor 5–20 mg i preparatomtalen (dmp-cipralex pkt. 4.2); dråpene gir hele milligram som ved 10 og 20 mg.
+    nye_startdoser: { [FEST_FORM.draper]: [15] },
     eksempler: {
       // 25 % per trinn fra 20 mg: tolv reduksjoner til 0,64 mg, under 5 mg, så 0,64 mg holdes ett trinn og seponeres.
       'fra-20-mg': ['dag 1–28: 15 mg', 'dag 29–56: 11,25 mg', 'dag 57–84: 8,44 mg', 'dag 85–112: 6,33 mg', 'dag 113–140: 4,75 mg', 'dag 141–168: 3,56 mg', 'dag 169–196: 2,67 mg', 'dag 197–224: 2 mg', 'dag 225–252: 1,5 mg', 'dag 253–280: 1,13 mg', 'dag 281–308: 0,85 mg', 'dag 309–336: 0,64 mg', 'fra dag 337: seponert'],
@@ -68,6 +70,8 @@ export const K1_AVSLUTNINGER: readonly Avslutningsforslag[] = [
   {
     regel: 'seponering-nortriptylin',
     fra_versjon: 12,
+    // 75 og 100 mg, innenfor «50–75 mg i starten, opptil 150 mg» i preparatomtalen (dmp-noritren pkt. 4.2), med tablettene på 10, 25 og 50 mg.
+    nye_startdoser: { [FEST_FORM.tablett]: [75, 100] },
     eksempler: {
       'fra-50-mg': FRA_50_MG,
       // 25 % per trinn fra 15 mg: 15 · 0,75^12 = 0,48 mg.
@@ -75,6 +79,30 @@ export const K1_AVSLUTNINGER: readonly Avslutningsforslag[] = [
     },
   },
   { regel: 'seponering-amitriptylin', fra_versjon: 12, eksempler: { 'fra-50-mg': FRA_50_MG } },
+  {
+    // Sertralin (K0-02): med tablettene på 25, 50 og 100 mg stopper planene i omfanget over 25 mg, så de er delplaner; regneeksemplene viser avslutningen.
+    regel: 'seponering-sertralin',
+    fra_versjon: 12,
+    eksempler: {
+      // 25 % per trinn fra 100 mg: tolv reduksjoner til 3,17 mg, under 25 mg.
+      'fra-100-mg': ['dag 1–28: 75 mg', 'dag 29–56: 56,25 mg', 'dag 57–84: 42,19 mg', 'dag 85–112: 31,64 mg', 'dag 113–140: 23,73 mg', 'dag 141–168: 17,8 mg', 'dag 169–196: 13,35 mg', 'dag 197–224: 10,01 mg', 'dag 225–252: 7,51 mg', 'dag 253–280: 5,63 mg', 'dag 281–308: 4,22 mg', 'dag 309–336: 3,17 mg', 'fra dag 337: seponert'],
+      // 10 % per trinn fra 50 mg: tolv reduksjoner til 14,13 mg, under 25 mg.
+      'fra-50-mg-lang': ['dag 1–28: 45 mg', 'dag 29–56: 40,5 mg', 'dag 57–84: 36,45 mg', 'dag 85–112: 32,81 mg', 'dag 113–140: 29,53 mg', 'dag 141–168: 26,58 mg', 'dag 169–196: 23,92 mg', 'dag 197–224: 21,53 mg', 'dag 225–252: 19,38 mg', 'dag 253–280: 17,44 mg', 'dag 281–308: 15,7 mg', 'dag 309–336: 14,13 mg', 'fra dag 337: seponert'],
+      // 14 dager per trinn: siste dose holdes også 14 dager (et helt trinn).
+      'fra-50-mg-kort-14-dager': ['dag 1–14: 37,5 mg', 'dag 15–28: 28,13 mg', 'dag 29–42: 21,1 mg', 'dag 43–56: 15,83 mg', 'dag 57–70: 11,87 mg', 'dag 71–84: 8,9 mg', 'dag 85–98: 6,68 mg', 'dag 99–112: 5,01 mg', 'dag 113–126: 3,76 mg', 'dag 127–140: 2,82 mg', 'dag 141–154: 2,12 mg', 'dag 155–168: 1,59 mg', 'fra dag 169: seponert'],
+      'fra-12-5-mg': ['dag 1–28: 9,38 mg', 'dag 29–56: 7,04 mg', 'dag 57–84: 5,28 mg', 'dag 85–112: 3,96 mg', 'dag 113–140: 2,97 mg', 'dag 141–168: 2,23 mg', 'dag 169–196: 1,67 mg', 'dag 197–224: 1,25 mg', 'dag 225–252: 0,94 mg', 'dag 253–280: 0,71 mg', 'dag 281–308: 0,53 mg', 'dag 309–336: 0,4 mg', 'fra dag 337: seponert'],
+    },
+    nye_eksempler: [
+      {
+        // 10 % per trinn fra 100 mg: tolv reduksjoner, regnet fra forrige avrundede dose som i de andre eksemplene; over 25 mg ved horisonten.
+        id: 'fra-100-mg-lang-delplan',
+        beskrivelse: 'Fra 100 mg etter lang behandlingstid med 10 % per trinn: etter tolv reduksjoner er dosen over 25 mg, så planen seponerer ikke og stopper ved horisonten.',
+        som: 'fra-50-mg-lang',
+        startdose_mg: 100,
+        forventet: ['dag 1–28: 90 mg', 'dag 29–56: 81 mg', 'dag 57–84: 72,9 mg', 'dag 85–112: 65,61 mg', 'dag 113–140: 59,05 mg', 'dag 141–168: 53,15 mg', 'dag 169–196: 47,84 mg', 'dag 197–224: 43,06 mg', 'dag 225–252: 38,75 mg', 'dag 253–280: 34,88 mg', 'dag 281–308: 31,39 mg', 'fra dag 309: 28,25 mg', 'teknisk planhorisont: 12 reduksjoner; avslutning vurderes individuelt'],
+      },
+    ],
+  },
 ]
 
 const tall = (x: number) => String(x).replace('.', ',')

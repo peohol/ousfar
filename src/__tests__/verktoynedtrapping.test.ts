@@ -1419,9 +1419,9 @@ describe('Klinisk omfang med de faktiske preparatene i FEST (gjennomgangene av 0
   const uttrekk = JSON.parse(readFileSync(new URL(`../../${FEST_AKSEPTTEST}`, import.meta.url), 'utf8')) as Festuttrekk
   const ENESTE = { kode: null, navn: 'eneste form' }
   const form = (kode: string) => ({ kode, navn: kode })
-  /** Planen appen ville vist om regelen var godkjent: godkjent bare i testen, med fersk FEST. */
-  const klinisk = (id: string, f: { kode: string | null; navn: string }, startdose_mg: number, x: Partial<Beregningsinndata> = {}) => {
-    const r = NEDTRAPPINGSSETT.regler.find((y) => y.id === id)!
+  /** Planen appen ville vist om regelen var godkjent: godkjent bare i testen, med fersk FEST. `sett` er som standard versjonene før K1 (se toppen av filen). */
+  const klinisk = (id: string, f: { kode: string | null; navn: string }, startdose_mg: number, x: Partial<Beregningsinndata> = {}, sett = NEDTRAPPINGSSETT) => {
+    const r = sett.regler.find((y) => y.id === id)!
     const g = godkjennITest(r, `test-${id}`)
     return beregnAksept(uttrekk, g, f, besvart(g, startdose_mg, x), kliniskDoseplan)
   }
@@ -1770,6 +1770,8 @@ describe('Klinisk omfang med de faktiske preparatene i FEST (gjennomgangene av 0
       'escitalopram 748 20 a',
       'escitalopram 748 20 b',
       'escitalopram 748 20 c',
+      // K1 utvidet omfanget med 15 mg dråper, så videreføringen fra 20 mg ender på et kontrollert tilfelle.
+      'escitalopram 748 20 f',
       'fluoksetin 5 40 a',
       'fluoksetin 5 60 a',
       'fluoksetin 53 40 a',
@@ -1787,15 +1789,16 @@ describe('Klinisk omfang med de faktiske preparatene i FEST (gjennomgangene av 0
     ])
     expect(readFileSync(new URL(`../../${AKSEPTTESTFIL}`, import.meta.url), 'utf8').match(/ \*\*\[klinisk omfang\]\*\*/g)).toHaveLength(celler.length)
     // Hver celle gir en klinisk plan med regelen godkjent i testen, direkte eller med en av dosene som tilbys for første trinn.
+    // Cellene er regnet fra versjonene appen bruker, så planene er det også.
     for (const t of omfangssett(uttrekk)) {
       for (const d of t.doser) {
         for (const x of (['a', 'b', 'c', 'f'] as const).filter((y) => d.innenfor[y])) {
           const id = `seponering-${t.nokkel}${x === 'c' ? '-langsom' : ''}`
           const mg = x === 'f' ? d.videre_mg! : d.startdose_mg
           const inn = x === 'b' ? LANG_SVAR : {}
-          const p = klinisk(id, t.form, mg, inn)
+          const p = klinisk(id, t.form, mg, inn, APPSETT)
           const valg = p.status === 'stoppet' ? (p.trinnvalg?.find((v) => v.trinn === 1)?.doser ?? []) : []
-          const planer = p.status === 'doseplan' ? [p] : valg.map((v) => klinisk(id, t.form, mg, { ...inn, trinnvalg: [{ forlop: 'fra', trinn: 1, fra_mg: mg, mg: v.mg }] }))
+          const planer = p.status === 'doseplan' ? [p] : valg.map((v) => klinisk(id, t.form, mg, { ...inn, trinnvalg: [{ forlop: 'fra', trinn: 1, fra_mg: mg, mg: v.mg }] }, APPSETT))
           expect(planer.some((q) => q.status === 'doseplan' && q.klinisk), `${id} ${t.form.kode} ${mg} mg (${x})`).toBe(true)
         }
       }

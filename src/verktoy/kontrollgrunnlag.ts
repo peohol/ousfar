@@ -252,7 +252,7 @@ const ESCITALOPRAM: Kontrollregel = { id: 'seponering-escitalopram', versjon: 12
 const ESCITALOPRAM_LANGSOM: Kontrollregel = { id: 'seponering-escitalopram-langsom', versjon: 8, fingeravtrykk: '4e49c175ac6aa49cba89d7db711f710c14b654681cc3138994dbaaaebb69c095' }
 
 const DATO_1 = '2026-11-03'
-/** Regelsettene forslag 1 ble kontrollert med: nedtrappingsreglene før K1 ga escitalopram, nortriptylin og amitriptylin en ny versjon. */
+/** Regelsettene forslag 1 ble kontrollert med: nedtrappingsreglene før K1 ga escitalopram, nortriptylin, amitriptylin og sertralin en ny versjon. */
 const SETTENE_1 = ETTER_RETTELSENE
 const TABLETT = '53'
 const DRAPER = '748'
@@ -406,8 +406,9 @@ export const FORSLAG_1: Kontrollforslag = {
 /* --- K1: nedtrapping til seponering --------------------------------------------- */
 
 const K1_AMITRIPTYLIN: Kontrollregel = { id: 'seponering-amitriptylin', versjon: 13, fingeravtrykk: 'b2af54866d179898436bcd1a1cdbcfb680b40cdf863ca4b2733d9c191c8dd330' }
-const K1_NORTRIPTYLIN: Kontrollregel = { id: 'seponering-nortriptylin', versjon: 13, fingeravtrykk: 'fde153d79fb2b69744facfb93a21b9e8621b554ec66b56206047f6acc07eebc2' }
-const K1_ESCITALOPRAM: Kontrollregel = { id: 'seponering-escitalopram', versjon: 13, fingeravtrykk: 'b43485f1c2501760125daaae82aa6b5ba256d00d0caa99785b65a6f1b7a8b264' }
+const K1_NORTRIPTYLIN: Kontrollregel = { id: 'seponering-nortriptylin', versjon: 13, fingeravtrykk: '924e9ca1f319b03a412edcf769ee37e9f48ac24ee98388e7a5807a316aa58728' }
+const K1_ESCITALOPRAM: Kontrollregel = { id: 'seponering-escitalopram', versjon: 13, fingeravtrykk: '4c5529f5bc5432b55ad18f89536cc8378c908460ed67b1a8c73bdd5d9f1b65e0' }
+const K1_SERTRALIN: Kontrollregel = { id: 'seponering-sertralin', versjon: 13, fingeravtrykk: '15981a63e41e5be569b7c05300a4bb75aed90b080e5c660db0b1af63b9b950fc' }
 
 const DATO_K1 = K1_DATO
 /** Kasus for K1: reglene appen bruker, med simulert avklaring av de åpne valgene og simulert godkjenning. */
@@ -473,6 +474,39 @@ const ESC_DRAPER_20 = [
   'Dag 169–196: Escitalopram peroralt: 4 mg = 4 dråper à 1 mg (valgt av forskriveren (beregnet 3,75 mg; −20 %))',
   'Dag 197–224: Escitalopram peroralt: 3 mg = 3 dråper à 1 mg',
 ]
+const SERT_75 = (dager: string) => `${dager}: Sertralin peroralt: 75 mg = 1 tablett à 25 mg + 1 tablett à 50 mg`
+const SERT_200 = [
+  'Dag 1–28: Sertralin peroralt: 150 mg = 1 tablett à 100 mg + 1 tablett à 50 mg',
+  'Dag 29–56: Sertralin peroralt: 125 mg = 1 tablett à 100 mg + 1 tablett à 25 mg (valgt av forskriveren (beregnet 112,5 mg; −16,67 %))',
+  'Dag 57–84: Sertralin peroralt: 100 mg = 1 tablett à 100 mg (valgt av forskriveren (beregnet 93,75 mg; −20 %))',
+  SERT_75('Fra dag 85'),
+]
+const NOR_75 = [
+  'Dag 1–28: Nortriptylin peroralt: 60 mg = 1 tablett à 10 mg + 1 tablett à 50 mg (valgt av forskriveren (beregnet 56,25 mg; −20 %))',
+  'Dag 29–56: Nortriptylin peroralt: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg',
+  'Dag 57–84: Nortriptylin peroralt: 35 mg = 1 tablett à 10 mg + 1 tablett à 25 mg (valgt av forskriveren (beregnet 33,75 mg; −22,22 %))',
+  'Dag 85–112: Nortriptylin peroralt: 30 mg = 3 tabletter à 10 mg (valgt av forskriveren (beregnet 26,25 mg; −14,29 %))',
+  'Dag 113–140: Nortriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))',
+  NOR_20('Dag 141–168'),
+]
+const NOR_100 = [
+  'Dag 1–28: Nortriptylin peroralt: 75 mg = 1 tablett à 25 mg + 1 tablett à 50 mg',
+  'Dag 29–56: Nortriptylin peroralt: 60 mg = 1 tablett à 10 mg + 1 tablett à 50 mg (valgt av forskriveren (beregnet 56,25 mg; −20 %))',
+  'Dag 57–84: Nortriptylin peroralt: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg',
+  'Dag 85–112: Nortriptylin peroralt: 35 mg = 1 tablett à 10 mg + 1 tablett à 25 mg (valgt av forskriveren (beregnet 33,75 mg; −22,22 %))',
+  'Dag 113–140: Nortriptylin peroralt: 30 mg = 3 tabletter à 10 mg (valgt av forskriveren (beregnet 26,25 mg; −14,29 %))',
+  'Dag 141–168: Nortriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))',
+  NOR_20('Dag 169–196'),
+]
+const ESC_DRAPER_15 = [
+  'Dag 1–28: Escitalopram peroralt: 12 mg = 12 dråper à 1 mg (valgt av forskriveren (beregnet 11,25 mg; −20 %))',
+  'Dag 29–56: Escitalopram peroralt: 9 mg = 9 dråper à 1 mg',
+  'Dag 57–84: Escitalopram peroralt: 7 mg = 7 dråper à 1 mg (valgt av forskriveren (beregnet 6,75 mg; −22,22 %))',
+  'Dag 85–112: Escitalopram peroralt: 6 mg = 6 dråper à 1 mg (valgt av forskriveren (beregnet 5,25 mg; −14,29 %))',
+  'Dag 113–140: Escitalopram peroralt: 5 mg = 5 dråper à 1 mg (valgt av forskriveren (beregnet 4,5 mg; −16,67 %))',
+  'Dag 141–168: Escitalopram peroralt: 4 mg = 4 dråper à 1 mg (valgt av forskriveren (beregnet 3,75 mg; −20 %))',
+  'Dag 169–196: Escitalopram peroralt: 3 mg = 3 dråper à 1 mg',
+]
 const ESC_DRAPER_20_LANG = [
   'Dag 1–28: Escitalopram peroralt: 18 mg = 18 dråper à 1 mg',
   'Dag 29–56: Escitalopram peroralt: 17 mg = 17 dråper à 1 mg (valgt av forskriveren (beregnet 16,2 mg; −5,56 %))',
@@ -489,16 +523,16 @@ const ESC_DRAPER_20_LANG = [
 export const FORSLAG_K1: Kontrollforslag = {
   nr: 2,
   overskrift: 'K1: nedtrapping av antidepressiv til seponering – kontrollgrunnlag',
-  tittel: 'Ny versjon med avslutning for escitalopram, nortriptylin og amitriptylin',
+  tittel: 'Ny versjon med avslutning for escitalopram, nortriptylin, amitriptylin og sertralin',
   fil: 'docs/verktøy-k1-nedtrapping-kontrollgrunnlag.md',
   dato: DATO_K1,
   verktoy: SEPONERING,
   simulerAvklaring: true,
   visPlanutfall: true,
-  regler: [K1_AMITRIPTYLIN, K1_NORTRIPTYLIN, K1_ESCITALOPRAM],
+  regler: [K1_AMITRIPTYLIN, K1_NORTRIPTYLIN, K1_ESCITALOPRAM, K1_SERTRALIN],
   innledning: (fest) => [
-    `**Ny versjon med avslutning for escitalopram, nortriptylin og amitriptylin.** Grunnlag for uavhengig faglig kontroll av K1 i \`docs/verktøy-klinisk-leveranseplan-2026-11.md\`, laget ${norskDato(DATO_K1)}.`,
-    `**Ingen regel er godkjent eller aktivert.** De tre reglene har fått versjon 13 med en avslutning: når nedtrappingen stopper på laveste døgndose i preparatomtalen eller lavere, gis siste dose et helt trinn, og legemidlet seponeres etter en eksplisitt vurdering, med en ny vurdering 28 dager etter siste dose. Stopper den over grensen, er planen fortsatt en delplan som sier hva den ikke dekker. Versjonene er til faglig kontroll; verktøyet tilbyr ingen beregning for dem (kasus K1-15–K1-17), og sperrene og synligheten bare for administratorer er uendret. For å vise hva verktøyet ville vist om nøyaktig disse versjonene ble godkjent, er planene under regnet på en kopi av hver regel der de åpne valgene er avklart som foreslått og regelen er godkjent, begge simulert («${SIMULERT_KONTROLLOR}»), gjennom den samme veien som verktøysiden og med de norske preparatene i FEST-uttrekket hentet ${fest}. Kopien lagres ikke og brukes ikke av appen. Kasusene er syntetiske; pasientopplysninger inngår ikke, og ingen tekst fra Psychiatrienet vises.`,
+    `**Ny versjon med avslutning for escitalopram, nortriptylin, amitriptylin og sertralin.** Grunnlag for uavhengig faglig kontroll av K1 i \`docs/verktøy-klinisk-leveranseplan-2026-11.md\`, laget ${norskDato(DATO_K1)}.`,
+    `**Ingen regel er godkjent eller aktivert.** De fire reglene har fått versjon 13 med en avslutning: når nedtrappingen stopper på laveste døgndose i preparatomtalen eller lavere, gis siste dose et helt trinn, og legemidlet seponeres etter en eksplisitt vurdering, med en ny vurdering 28 dager etter siste dose. Stopper den over grensen, er planen fortsatt en delplan som sier hva den ikke dekker. Versjonene er til faglig kontroll; verktøyet tilbyr ingen beregning for dem (kasus K1-15–K1-18), og sperrene og synligheten bare for administratorer er uendret. For å vise hva verktøyet ville vist om nøyaktig disse versjonene ble godkjent, er planene under regnet på en kopi av hver regel der de åpne valgene er avklart som foreslått og regelen er godkjent, begge simulert («${SIMULERT_KONTROLLOR}»), gjennom den samme veien som verktøysiden og med de norske preparatene i FEST-uttrekket hentet ${fest}. Kopien lagres ikke og brukes ikke av appen. Kasusene er syntetiske; pasientopplysninger inngår ikke, og ingen tekst fra Psychiatrienet vises.`,
   ],
   forutsetninger: [
     'Kontrollen gjelder nøyaktig versjonen og fingeravtrykket i tabellen over. De tre åpne valgene i hver regel (avslutningens grunnlag, oppfølgingstiden etter siste dose og grunnlaget for vurderingen etter seponering) må avklares av kontrolløren. Grensen for når seponering kan planlegges, er valgt av Peder som faglig beslutningstaker (beslutningskortet i K1-tråden 03.11.2026) og står som avklaring av den; den er ikke uavhengig kontrollert.',
@@ -510,8 +544,8 @@ export const FORSLAG_K1: Kontrollforslag = {
   sporsmal: [
     {
       nr: 'K1.1',
-      sporsmal: 'Kan seponering planlegges når nedtrappingen stopper på laveste døgndose preparatomtalen oppgir for voksne, eller lavere (escitalopram 5 mg, nortriptylin 25 mg, amitriptylin 10 mg)? Ingen kilde angir en dose som er lav nok, og RCPsych viser eksempler som går mye lavere med flytende form før seponering.',
-      anbefalt: 'Ja, som en avgrenset første avslutning: grensen er en dose preparatomtalen selv bruker, seponeringen skjer først etter en eksplisitt vurdering av symptomer, og planen følger opp etter siste dose. Peder har valgt grensen; den erstatter beslutning 2–4 fra 29. og 30.10.2026 bare for disse tre reglene.',
+      sporsmal: 'Kan seponering planlegges når nedtrappingen stopper på laveste døgndose preparatomtalen oppgir for voksne, eller lavere (escitalopram 5 mg, nortriptylin 25 mg, amitriptylin 10 mg, sertralin 25 mg)? Ingen kilde angir en dose som er lav nok, og RCPsych viser eksempler som går mye lavere med flytende form før seponering.',
+      anbefalt: 'Ja, som en avgrenset første avslutning: grensen er en dose preparatomtalen selv bruker, seponeringen skjer først etter en eksplisitt vurdering av symptomer, og planen følger opp etter siste dose. Peder har valgt grensen; den erstatter beslutning 2–4 fra 29. og 30.10.2026 bare for disse fire reglene. Peder valgte grensen som prinsipp for escitalopram, nortriptylin og amitriptylin; sertralin er lagt til etter samme prinsipp (spørsmål K1.8).',
     },
     {
       nr: 'K1.2',
@@ -535,13 +569,18 @@ export const FORSLAG_K1: Kontrollforslag = {
     },
     {
       nr: 'K1.6',
-      sporsmal: 'K0-02 (sertralin 100 mg) og K0-03 (amitriptylin 25 mg) kan ikke fullføres: med de norske styrkene og høyst 25 % per trinn stopper planene over grensen (sertralin etter 100 → 75 mg, amitriptylin på 20 mg). RCPsychs eksempel 1 bruker om lag 50 % per trinn. Skal et større siste trinn tillates under en grense?',
+      sporsmal: 'K0-02 (sertralin 100 mg) og K0-03 (amitriptylin 25 mg) kan ikke fullføres: med de norske styrkene og høyst 25 % per trinn stopper planene over grensen (sertralin på 75 mg etter én reduksjon, amitriptylin på 20 mg). RCPsychs eksempel 1 bruker om lag 50 % per trinn. Skal et større siste trinn tillates under en grense?',
       anbefalt: 'Ikke i K1. Planene er delplaner som sier hva de ikke dekker. Et større siste trinn er en ny faglig beslutning som bør vurderes samlet for alle stoffene, med kildegrunnlaget.',
     },
     {
       nr: 'K1.7',
       sporsmal: 'Ved lang behandlingstid (10 % per trinn) når ingen plan grensen innenfor planhorisonten eller med preparatene, så de forblir delplaner. Er det akseptabelt?',
       anbefalt: 'Ja. Planen sier at den ikke er komplett og hvorfor, og en ny plan beregnes fra dosen pasienten bruker.',
+    },
+    {
+      nr: 'K1.8',
+      sporsmal: 'Skal sertralin ha den samme avslutningen, med grensen 25 mg? 25 mg er laveste startdose i preparatomtalen (ved enkelte angstlidelser; ved depresjon er startdosen 50 mg). Med tablettene på 25, 50 og 100 mg (FEST oppgir bare deling i to, til 25 mg) når ingen plan i omfanget grensen: 100 mg stopper på 75 mg (K1-21), 200 mg på 75 mg (K1-22). Konsentratet til mikstur (Zoloft 20 mg/ml) er markedsført, men brukes ikke før doseringen per ml og måleoppløsningen er dokumentert (P5). I den godkjente kryssnedtrappingen sertralin → mirtazapin (v10) er 25 → 0 mg uttrykkelig utenfor og planlegges individuelt.',
+      anbefalt: 'Ja, som regel: planene forblir delplaner som sier hvorfor, og avslutningen tas i bruk først når et større siste trinn (K1.6) eller konsentratet er avklart. Avgrensningen i kryssnedtrappingen sertralin → mirtazapin gjelder fortsatt den regelen og endres ikke.',
     },
   ],
   avsnitt: [
@@ -550,8 +589,8 @@ export const FORSLAG_K1: Kontrollforslag = {
       tekst: `Med godkjenning ville verktøyet planlegge en nedtrapping helt til seponering, med vurdering før hver reduksjon og 28 dager etter siste dose, i disse tilfellene i det kliniske omfanget:
 
 ${liste([
-        'Nortriptylin tablett 25, 50 og 150 mg ved kort behandlingstid: seponert fra dag 29, 113 og 253 (kasus K1-03–K1-05). Siste dose er 20 mg.',
-        'Escitalopram dråper 10 og 20 mg ved kort behandlingstid: seponert fra dag 141 og 225 (kasus K1-01 og K1-02). Siste dose er 3 mg.',
+        'Nortriptylin tablett 25, 50, 75, 100 og 150 mg ved kort behandlingstid: seponert fra dag 29, 113, 169, 197 og 253 (kasus K1-03–K1-05, K1-23 og K1-24). Siste dose er 20 mg.',
+        'Escitalopram dråper 10, 15 og 20 mg ved kort behandlingstid: seponert fra dag 141, 197 og 225 (kasus K1-01, K1-25 og K1-02). Siste dose er 3 mg.',
       ])}
 
 Disse forløpene er fortsatt delplaner, og planen sier hva den ikke dekker:
@@ -559,7 +598,8 @@ Disse forløpene er fortsatt delplaner, og planen sier hva den ikke dekker:
 ${liste([
         'Amitriptylin ved kort behandlingstid stopper på 20 mg, over grensen på 10 mg, fordi 15 mg ikke kan gis med hele tabletter (K1-06 og K1-07).',
         'Escitalopram tablett 20 mg gir én reduksjon til 15 mg (K1-08).',
-        'Lang behandlingstid stopper over grensen for alle tre (K1-09 og K1-10).',
+        'Lang behandlingstid stopper over grensen for escitalopram, nortriptylin og amitriptylin (K1-09 og K1-10); for sertralin er lang behandlingstid utenfor omfanget.',
+        'Sertralin tablett 100 og 200 mg stopper på 75 mg, over grensen på 25 mg, fordi 56,25 mg ikke kan gis og 50 mg er en reduksjon på 33 % (K1-21 og K1-22). Konsentratet til mikstur brukes ikke (spørsmål K1.8).',
       ])}
 
 Tabellen i avsnitt 8 viser hvert tilfelle i omfanget med planutfallet.
@@ -570,7 +610,7 @@ ${tabell(
         ['K0', 'Situasjon', 'Resultat i K1'],
         [
           ['K0-01', 'Escitalopram 10 mg tablett, kort', 'Ikke komplett. Tablett 10 mg er utenfor omfanget (K1-11). Fra 10 mg dråper er forløpet komplett til seponering (K1-01); overgang fra tablett er spørsmål K1.5.'],
-          ['K0-02', 'Sertralin 100 mg tablett, kort', 'Ikke en del av K1; regelen er uendret og ikke godkjent (K1-18). Spørsmål K1.6.'],
+          ['K0-02', 'Sertralin 100 mg tablett, kort', 'Delplan: én reduksjon til 75 mg, over grensen på 25 mg (K1-21). Spørsmål K1.6 og K1.8.'],
           ['K0-03', 'Amitriptylin 25 mg tablett, kort', 'Delplan: én reduksjon til 20 mg, over grensen på 10 mg (K1-06). Spørsmål K1.6.'],
         ],
       )}`,
@@ -581,8 +621,9 @@ ${tabell(
         'Nedtrappingsfasen har fått en avslutning med seponering fra høyst laveste døgndose i preparatomtalen (`fra_hoyst_mg`), lest fra regelens egen grense for lav dose, så ingen ny dose er skrevet inn. Peders valg står som avklaring av grensen.',
         'Forløpet har to vurderingspunkter: før hver reduksjon og før seponering (kildegrunnlag NICE og RCPsych), og 28 dager etter siste dose (åpent valg).',
         'Teksten om at planen ikke går til null er erstattet av teksten om avslutningen, og et nytt kildetro utsagn sier at nedtrappingen går helt til null, og at seponeringssymptomer kan komme uansett hvor lav dosen er.',
-        'Regneeksemplene viser planene til seponering; escitalopram har et nytt eksempel der planen stopper over grensen (fra 20 mg ved lang behandlingstid).',
-        'Klinisk omfang, trinnstørrelser, trinnlengder, spørsmål, unntak og bekreftelser er uendret. Den langsomme varianten for hvert stoff er uendret og har ingen avslutning.',
+        'Regneeksemplene viser planene til seponering; escitalopram og sertralin har hvert sitt nye eksempel der planen stopper over grensen (fra 20 og 100 mg ved lang behandlingstid).',
+        'Det kliniske omfanget ved kort behandlingstid er utvidet med vanlige startdoser innenfor preparatomtalens doseområde: nortriptylin tablett 75 og 100 mg (dmp-noritren pkt. 4.2: 50–75 mg i starten, opptil 150 mg) og escitalopram dråper 15 mg (dmp-cipralex pkt. 4.2: 5–20 mg). Begge gir komplette forløp (K1-23–K1-25).',
+        'Resten av omfanget, trinnstørrelser, trinnlengder, spørsmål, unntak og bekreftelser er uendret. Den langsomme varianten for hvert stoff er uendret og har ingen avslutning.',
         'Planene for de andre nedtrappingsreglene er uendret; de godkjente reglene (vortioksetin v12, bupropion v5, agomelatin v1) har samme fingeravtrykk som før.',
       ]),
     },
@@ -590,6 +631,7 @@ ${tabell(
       tittel: 'Kjente mangler',
       tekst: liste([
         'Vurderingspunktet 28 dager etter siste dose står også i delplaner, uten dag, fordi planen ikke seponerer.',
+        'En delplan med bare én reduksjon sier at neste trinn ikke kan gis, men ikke at avslutningen bare gjelder fra grensen (K1-06, K1-08 og K1-21).',
       ]),
     },
   ],
@@ -611,19 +653,26 @@ ${tabell(
     kk('K1-10', 'pasientforhold', 'nortriptylin 50 mg, lang behandlingstid', K1_NORTRIPTYLIN, '50', delplan('Nortriptylin', EN_FORSTE_REDUKSJON, EN_REDUKSJON_IKKE_DEKKET, ['Fra dag 1: Nortriptylin peroralt: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg']), [], { skjema: { svar: LANG } }),
     // --- Utenfor omfanget og stopp
     kk('K1-11', 'uvanlig_dose', 'escitalopram tablett 10 mg, kort behandlingstid (utenfor omfanget)', K1_ESCITALOPRAM, '10', stopp(utenforOmfang(10), UTENFOR_OMFANG), [], { skjema: form(TABLETT), ref: 'K0-01' }),
-    kk('K1-12', 'uvanlig_dose', 'nortriptylin 75 mg, kort behandlingstid (utenfor omfanget)', K1_NORTRIPTYLIN, '75', stopp(utenforOmfang(75), UTENFOR_OMFANG)),
+    kk('K1-12', 'uvanlig_dose', 'nortriptylin 125 mg, kort behandlingstid (utenfor omfanget)', K1_NORTRIPTYLIN, '125', stopp(utenforOmfang(125), UTENFOR_OMFANG)),
     kk('K1-13', 'pasientforhold', 'escitalopram dråper 20 mg, tidligere seponeringssymptomer', K1_ESCITALOPRAM, '20', stopp('Regelen gjelder ikke: Et tidligere forsøk på å trappe ned eller seponere dette legemidlet har gitt seponeringssymptomer eller mislyktes; da gjelder den langsomme varianten av regelen.'), [], { skjema: { ...form(DRAPER), pasientforhold: { tidligere_seponeringssymptomer: true } } }),
     kk('K1-14', 'preparat', 'nortriptylin 50 mg, kort, 10 mg avregistrert', K1_NORTRIPTYLIN, '50', stopp('nortriptylin (fra): styrken 10 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST, så planen ville blitt satt sammen annerledes enn den som er kontrollert.', UTENFOR_OMFANG), [], { fest: avregistrert('nortriptylin', 10) }),
     // --- Uten godkjenning, uten avklaring og med endret regel
     kk('K1-15', 'ikke_godkjent', 'escitalopram slik verktøyet er i dag', K1_ESCITALOPRAM, '10', { utfall: 'ingen', status: 'til_kontroll' }, [], { regel: undefined }),
     kk('K1-16', 'ikke_godkjent', 'nortriptylin slik verktøyet er i dag', K1_NORTRIPTYLIN, '50', { utfall: 'ingen', status: 'til_kontroll' }, [], { regel: undefined }),
     kk('K1-17', 'ikke_godkjent', 'amitriptylin slik verktøyet er i dag', K1_AMITRIPTYLIN, '25', { utfall: 'ingen', status: 'til_kontroll' }, [], { regel: undefined, ref: 'K0-03' }),
-    kk('K1-18', 'ikke_godkjent', 'sertralin 100 mg slik verktøyet er i dag (ikke en del av K1)', { id: 'seponering-sertralin', versjon: 12, fingeravtrykk: '' }, '100', { utfall: 'ingen', status: 'ikke_godkjent' }, [], { regel: undefined, ref: 'K0-02' }),
+    kk('K1-18', 'ikke_godkjent', 'sertralin slik verktøyet er i dag', K1_SERTRALIN, '100', { utfall: 'ingen', status: 'til_kontroll' }, [], { regel: undefined }),
     kkUtenAvklaring('K1-19', 'regelendring', 'escitalopram dråper 20 mg, godkjent uten at de åpne valgene er avklart', K1_ESCITALOPRAM, '20', ingenPlan('Regelen har åpne valg som må avklares faglig'), [], { skjema: form(DRAPER) }),
     kk('K1-20', 'regelendring', 'escitalopram dråper 20 mg med grensen for seponering endret etter godkjenningen', K1_ESCITALOPRAM, '20', ingenPlan('Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke)'), [], {
       skjema: form(DRAPER),
       regel: endretEtter(K1_ESCITALOPRAM, 'grensen for seponering 5 → 6 mg', (r) => { const f = r.plan.forlop[0]!.faser.at(-1)!; if (f.type === 'nedtrapping' && typeof f.avslutning === 'object') f.avslutning.fra_hoyst_mg.verdi = 6 }, DATO_K1, true),
     }),
+    // --- Sertralin (K0-02): tablettene når ikke grensen, så planene er delplaner
+    kk('K1-21', 'vanlig_dose', 'sertralin tablett 100 mg, kort behandlingstid', K1_SERTRALIN, '100', delplan('Sertralin', EN_FORSTE_REDUKSJON, EN_REDUKSJON_IKKE_DEKKET, [SERT_75('Fra dag 1')]), [], { ref: 'K0-02' }),
+    kk('K1-22', 'vanlig_dose', 'sertralin tablett 200 mg, kort behandlingstid', K1_SERTRALIN, '200', delplan('Sertralin', STARTFORLOP, overGrensen(25, 75), SERT_200), [], { velger: [125, 100] }),
+    // --- Utvidet omfang: vanlige startdoser innenfor preparatomtalens doseområde
+    kk('K1-23', 'vanlig_dose', 'nortriptylin 75 mg, kort behandlingstid', K1_NORTRIPTYLIN, '75', komplett('Nortriptylin', 169, NOR_75), [], { velger: [60, 35, 30, 25, 20] }),
+    kk('K1-24', 'vanlig_dose', 'nortriptylin 100 mg, kort behandlingstid', K1_NORTRIPTYLIN, '100', komplett('Nortriptylin', 197, NOR_100), [], { velger: [60, 35, 30, 25, 20] }),
+    kk('K1-25', 'vanlig_dose', 'escitalopram dråper 15 mg, kort behandlingstid', K1_ESCITALOPRAM, '15', komplett('Escitalopram', 197, ESC_DRAPER_15), [], { skjema: form(DRAPER), velger: [12, 7, 6, 5, 4] }),
   ],
 }
 

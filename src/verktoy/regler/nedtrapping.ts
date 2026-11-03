@@ -52,7 +52,7 @@
  * gjengir teksten der.
  */
 import { kravtekst, omradetekst } from './beregning'
-import { FAKTUMRETTELSER, FORUTSETNINGER_FELLES, forslag, h, kilde, leveransen, NICE, planhorisont, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, pn, RCPSYCH, RCPSYCH_TIDLIGERE, steg, utsagn, vurdert } from './bygg'
+import { FAKTUMRETTELSER, FEST_FORM, FORUTSETNINGER_FELLES, forslag, h, kilde, leveransen, NICE, planhorisont, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, pn, RCPSYCH, RCPSYCH_TIDLIGERE, steg, utsagn, vurdert } from './bygg'
 import { disponer } from './godkjenning'
 import type { Avklaring, Begrunnelseskrav, Bekreftelse, Fase, Forlop, Godkjenningssteg, Grunnlag, Inndatakrav, Kildehenvisning, Kliniskomfang, Nedtrappingsstrategi, Parameter, Regel, Regelsett, Regneeksempel, Sporsmal, Unntak, Utsagn } from './modell'
 import { REGELMODELLVERSJON } from './modell'
@@ -693,9 +693,6 @@ const stopp = (id: string, beskrivelse: string, startdose_mg: number, grunn: Reg
   forventet: {},
   stopp: grunn,
 })
-
-/** Legemiddelformene i FEST (kodeverket for legemiddelform) reglene her avgrenser til. */
-const FEST_FORM = { dispergerbarTablett: '5', tablett: '53', draper: '748' } as const
 
 /** Stien til de justerbare parametrene i en regel bygd her. */
 export const STI = { prosent: 'plan.forlop[0].faser[0].strategi.prosent', dager: 'plan.forlop[0].faser[0].trinnlengde' } as const
@@ -2314,7 +2311,7 @@ export const NEDTRAPPINGSSETT_FOR_AVSLUTNING: Regelsett = {
 export const NEDTRAPPINGSSETT: Regelsett = {
   ...NEDTRAPPINGSSETT_FOR_AVSLUTNING,
   versjon: 16,
-  beskrivelse: `${NEDTRAPPINGSSETT_FOR_AVSLUTNING.beskrivelse} I K1 (03.11.2026) har escitalopram, nortriptylin og amitriptylin fått en ny versjon med avslutning: seponering etter en eksplisitt vurdering når nedtrappingen har nådd laveste døgndose i preparatomtalen eller lavere (\`docs/verktøy-k1-nedtrapping-kontrollgrunnlag.md\`); de er ikke godkjent.`,
+  beskrivelse: `${NEDTRAPPINGSSETT_FOR_AVSLUTNING.beskrivelse} I K1 (03.11.2026) har escitalopram, nortriptylin, amitriptylin og sertralin fått en ny versjon med avslutning: seponering etter en eksplisitt vurdering når nedtrappingen har nådd laveste døgndose i preparatomtalen eller lavere (\`docs/verktøy-k1-nedtrapping-kontrollgrunnlag.md\`); de er ikke godkjent.`,
   regler: medAvslutninger([...NEDTRAPPINGSSETT_FOR_AVSLUTNING.regler]),
 }
 

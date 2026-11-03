@@ -18,9 +18,9 @@ Antall kombinasjoner etter hva verktøyet gir. For seponering er en kombinasjon 
 | Kombinasjoner | 23 | 506 | 1122 | 110 |
 | Beregning med klinisk godkjent regel (i godkjent omfang) | 1 | 1 | 2 | 0 |
 | Klinisk godkjent fagtekst, ingen beregning | 2 | 0 | 0 | 0 |
-| Regel finnes, kontrollert og ikke godkjent | 4 | 1 | 1 | 0 |
+| Regel finnes, kontrollert og ikke godkjent | 3 | 1 | 1 | 0 |
 | Regel finnes som fagtekst, ikke godkjent | 6 | 0 | 0 | 0 |
-| Regel finnes, ikke ferdig kontrollert | 3 | 0 | 0 | 0 |
+| Regel finnes, ikke ferdig kontrollert | 4 | 0 | 0 | 0 |
 | Ingen OUSFAR-regel; kilden har en anbefaling | 0 | 504 | 892 | 110 |
 | Ingen OUSFAR-regel; kilden har ingen anbefaling | 0 | 0 | 161 | 0 |
 | Ingen OUSFAR-regel; begrenset av preparater eller kilde | 7 | 0 | 0 | 0 |
@@ -129,7 +129,7 @@ Regelutkast som er kontrollert og ikke godkjent (eller bare fagtekst), og som de
 | Trappe ned antidepressiv | `seponering-nortriptylin` v13 | Nortriptylin | beregnbar | til kontroll |
 | Trappe ned antidepressiv | `seponering-nortriptylin-langsom` v8 | Nortriptylin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-paroksetin` v8 | Paroksetin | fagtekst | bare fagtekst |
-| Trappe ned antidepressiv | `seponering-sertralin` v12 | Sertralin | beregnbar | ikke godkjent |
+| Trappe ned antidepressiv | `seponering-sertralin` v13 | Sertralin | beregnbar | til kontroll |
 | Trappe ned antidepressiv | `seponering-sertralin-langsom` v8 | Sertralin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-venlafaksin` v6 | Venlafaksin | fagtekst | bare fagtekst |
 | Trappe ned antidepressiv | `seponering-vortioksetin-langsom` v8 | Vortioksetin | beregnbar | ikke godkjent |

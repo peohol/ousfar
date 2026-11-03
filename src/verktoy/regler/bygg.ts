@@ -60,6 +60,9 @@ export const steg = (status: Godkjenningssteg['status'], regelversjon: number, m
 
 /* --- Fakta fra NICE, med egne ord ------------------------------------------------- */
 
+/** Legemiddelformene i FEST (kodeverket for legemiddelform) nedtrappingsreglene avgrenser til. */
+export const FEST_FORM = { dispergerbarTablett: '5', tablett: '53', draper: '748' } as const
+
 export const NICE = {
   andel: h('nice-ng222', 'anbefaling 1.4.16', 'Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav.'),
   tempo: h('nice-ng222', 'anbefaling 1.4.16', 'Tempoet avtales med pasienten; neste reduksjon først når seponeringssymptomene er borte eller tålelige. Nedtrapping kan ta uker til måneder.'),
