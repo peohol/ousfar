@@ -239,10 +239,11 @@ function Vurderingskort({ s, onNodstopp }: { s: Fagsak; onNodstopp?: () => void 
       <Grunnlag s={s} />
       <div className="fagsak__anbefaling fagsak__anbefaling--vurderes">
         <p className="fagsak__virkningstittel">Sikkerhetsproblem under vurdering</p>
-        <p>
-          Problemet vurderes faglig nå, og du får et konkret spørsmål med en anbefaling her når vurderingen er ferdig. Mener du at en plan kan være uforsvarlig før det, kan du
-          deaktivere den berørte regelen med nødstoppen. Andre anbefalinger virker som før.
-        </p>
+        <p>Problemet vurderes faglig nå, og du får et konkret spørsmål med en anbefaling her når vurderingen er ferdig.</p>
+        {/* Om noe er sperret, og hva verktøyet gjør nå, sier «Nå:» over: den teksten lager databasen ut fra de faktiske sperrene. */}
+        {s.berorte.some((b) => !b.sperret) && (
+          <p>Mener du at en plan kan være uforsvarlig før det, kan du deaktivere den berørte regelen med nødstoppen.</p>
+        )}
       </div>
       {onNodstopp && (
         <div className="autoerstatt__knapper">

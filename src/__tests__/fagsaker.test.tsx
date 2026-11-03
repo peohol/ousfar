@@ -263,6 +263,37 @@ describe('redaktørvisningen av kildesakene', () => {
     expect(nodstopp).toHaveBeenCalled()
   })
 
+  it.each([
+    ['en global nødstopp', 1, 'Den berørte regelen er sperret med nødstoppen og gir ingen plan.'],
+    ['en nødstopp for hele verktøyet', 2, 'Alle de 2 berørte reglene er sperret med nødstoppen og gir ingen plan.'],
+  ])('lover ikke at andre anbefalinger virker under %s, men viser sperrestatusen fra databasen', async (_omfang, antall, statusNa) => {
+    const s = sak({
+      alvor: 'sikkerhet',
+      anbefaling: null,
+      valg: [],
+      berorte: [
+        { regel: 'seponering-escitalopram', versjon: 11, hva: 'varigheten av siste trinn', sperret: true },
+        { regel: 'seponering-duloksetin', versjon: 1, hva: 'varigheten av siste trinn', sperret: true },
+      ].slice(0, antall),
+      status_na: statusNa,
+    })
+    render(<Fagsaker apen lager={minnelager(oversikt([s]))} onNodstopp={() => {}} />)
+    const kort = within(await screen.findByRole('article'))
+    expect(kort.getByText(statusNa)).toBeTruthy()
+    expect(kort.getAllByText('Sperret med nødstoppen')).toHaveLength(antall)
+    expect(kort.queryByText(/virker som før/)).toBeNull()
+    expect(kort.queryByText(/kan du deaktivere/)).toBeNull()
+    expect(kort.getByRole('button', { name: 'Åpne nødstoppen' })).toBeTruthy()
+  })
+
+  it('foreslår nødstoppen bare når en berørt regel ennå ikke er sperret, uten å love noe om andre anbefalinger', async () => {
+    const s = sak({ alvor: 'sikkerhet', anbefaling: null, valg: [], status_na: 'Verktøyet virker som før til en eventuell nødstopp settes.' })
+    render(<Fagsaker apen lager={minnelager(oversikt([s]))} onNodstopp={() => {}} />)
+    const kort = within(await screen.findByRole('article'))
+    expect(kort.getByText(/kan du deaktivere den berørte regelen med nødstoppen/)).toBeTruthy()
+    expect(kort.queryByText('Andre anbefalinger virker som før.')).toBeNull()
+  })
+
   it('viser tidligere beslutning og tiltak når en sak i oppfølging blir et sikkerhetsproblem under vurdering', async () => {
     const s = sak({
       alvor: 'sikkerhet',
