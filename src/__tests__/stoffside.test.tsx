@@ -869,7 +869,8 @@ describe('lesemodus', () => {
     expect(screen.getByRole('button', { name: 'Referanse 1' })).toBeTruthy()
 
     // Teksten står i en lukket seksjon til den åpnes.
-    await user.click(screen.getByRole('button', { name: 'Farmakodynamikk' }))
+    // Knappen i seksjonens hode; innholdsfortegnelsen har også en med samme navn.
+    await user.click(within(screen.getByRole('region', { name: 'Farmakodynamikk' })).getByRole('button', { name: 'Farmakodynamikk' }))
     expect(screen.getByRole('button', { name: 'Referanse 2' })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'Referanser 1, 2' })).toBeTruthy()
     const liste = screen.getByRole('region', { name: 'Referanser' })
@@ -978,13 +979,28 @@ describe('lesemodus', () => {
     expect(within(kinetikk).getByText(erVerdi('2–4 måneder'))).toBeTruthy()
   })
 
+  it('har en innholdsfortegnelse med seksjonene siden viser, i sidens rekkefølge', async () => {
+    vis('amitriptylin', kilde())
+    await finnVerdi('10–20 nmol/L')
+    const fortegnelse = await screen.findByRole('navigation', { name: 'Innhold på siden' })
+    const seksjoner = screen.getAllByRole('region').filter((r) => r.matches('section.skuff--seksjon'))
+    expect(seksjoner.length).toBeGreaterThan(1)
+    // Identiteten og viktige data står alltid fram og er ikke seksjoner.
+    expect(within(fortegnelse).getAllByRole('button').map((b) => b.textContent)).toEqual(
+      seksjoner.map((r) => r.querySelector('.skuff__tittelTekst')?.textContent),
+    )
+    expect(within(fortegnelse).queryByRole('button', { name: 'Viktige data' })).toBeNull()
+  })
+
   it('går til viktige data fra en lenke uten å åpne eller lukke seksjoner', async () => {
     const rull = vi.spyOn(Element.prototype, 'scrollIntoView')
     vis('amitriptylin', kilde(), { sted: ['viktige_data'] })
     await finnVerdi('10–20 nmol/L')
     const viktige = screen.getByRole('region', { name: 'Viktige data' })
     await waitFor(() => expect(rull.mock.contexts).toContain(viktige))
-    expect(screen.getByRole('button', { name: 'Farmakodynamikk' }).getAttribute('aria-expanded')).toBe('false')
+    expect(
+      within(screen.getByRole('region', { name: 'Farmakodynamikk' })).getByRole('button', { name: 'Farmakodynamikk' }).getAttribute('aria-expanded'),
+    ).toBe('false')
     rull.mockRestore()
   })
 

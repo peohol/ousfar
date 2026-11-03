@@ -8,6 +8,8 @@ import { createPortal } from 'react-dom'
  *
  * - `hoved` (første rad i dokken når den går over to):
  *   - `sidesok`: søket i den åpne siden (monografiens lokale søk)
+ *   - `innhold`: innholdsfortegnelsen for siden, der den ikke får plass ved
+ *     siden av innholdet
  *   - `hovedhandling`: sidens hovedhandling, som «Åpne fortolkning» eller
  *     «Publiser»
  * - `handlinger` (andre rad):
@@ -22,7 +24,7 @@ import { createPortal } from 'react-dom'
  * appen og ikke til siden som står åpen.
  */
 export const TOPPMENYSPOR = {
-  hoved: ['sidesok', 'hovedhandling'],
+  hoved: ['sidesok', 'innhold', 'hovedhandling'],
   handlinger: ['favoritt', 'diskusjoner', 'endringslogg', 'redigering', 'lukk'],
 } as const
 

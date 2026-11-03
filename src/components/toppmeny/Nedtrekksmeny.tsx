@@ -122,10 +122,12 @@ export interface MenyvalgProps {
   /** Valget folder ut en skuff under seg (se `Menyskuff`). */
   utvidet?: boolean
   kontrollerer?: string
+  /** Valget er det som gjelder nå, som seksjonen som står åpen (`aria-current`). */
+  aktiv?: boolean
 }
 
 /** Ett valg i en nedtrekksmeny: ikon, tekst og eventuelt et hint eller en pil. */
-export function Menyvalg({ ikon, tekst, hint, nytt, onClick, utvidet, kontrollerer }: MenyvalgProps) {
+export function Menyvalg({ ikon, tekst, hint, nytt, onClick, utvidet, kontrollerer, aktiv }: MenyvalgProps) {
   const skuff = utvidet !== undefined
   return (
     <button
@@ -133,6 +135,7 @@ export function Menyvalg({ ikon, tekst, hint, nytt, onClick, utvidet, kontroller
       className="nedtrekk__valgknapp"
       data-ih=""
       onClick={onClick}
+      {...(aktiv && { 'aria-current': 'true' })}
       {...(skuff && { 'aria-expanded': utvidet, 'aria-controls': kontrollerer })}
     >
       <Ikon navn={ikon} storrelse="ui" />
