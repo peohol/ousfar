@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.119.2',
+    versjon: '1.121.1',
     dato: '2026-11-03',
     sammendrag: 'Grunnlag for faglig kontroll av nedtrappingsreglene for amitriptylin, nortriptylin og escitalopram',
     typer: ['Funksjonalitet'],
@@ -22,6 +22,38 @@ export const ENDRINGSLOGG: Endring[] = [
       'Grunnlaget viser kildene, hvilke tilfeller en godkjenning kan gjelde, alle planene verktøyet ville vist om reglene ble godkjent, og spørsmål til kontrolløren. 40 syntetiske testeksempler kontrolleres automatisk. Ingen regel tas i bruk før den er uavhengig kontrollert og godkjent.',
     ],
     utenVarsel: true,
+  },
+  {
+    versjon: '1.121.0',
+    dato: '2026-11-03',
+    sammendrag: 'Enklere kliniske verktøy: det som kan beregnes står øverst, og det faglige grunnlaget er samlet',
+    typer: ['Funksjonalitet', 'Design / layout'],
+    omfang: 'Moderat omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Oversikten og hvert verktøy viser hvilke legemidler og bytter som kan beregnes nå, og hvilke som bare har fagtekst. Et klikk på et av dem fyller ut feltene. Før nødstoppen er kontrollert, vises ingen slike valg; det står bare at tilgjengeligheten kontrolleres, eller at den ikke kunne kontrolleres. Er alt midlertidig deaktivert, sies det, ikke at reglene venter på godkjenning.',
+      'Skjemaet er delt i «Doser og start», «Om pasienten» og «Bekreft før beregning». Tilpasning av trinn og tid ligger i en egen del som bare åpnes ved behov.',
+      'Mangler et svar eller en bekreftelse, sier verktøyet kort hva som mangler og merker feltene, før noe beregnes. Svarer du at et forhold gjelder, står det med en gang at verktøyet da ikke gir en plan.',
+      'Under planen står de generelle forbeholdene og «Viktig for denne planen». Forutsetninger, usikkerhet, det som ble kontrollert, preparatene, kildene og versjonene er samlet i «Faglig grunnlag», som åpnes ved behov og alltid kommer med i utskriften. Teksten som kopieres, er den samme som før.',
+      'Faglige merknader fra kildeoppfølgingen vises ved akkurat den regelversjonen de gjelder, og stanser ingenting. Mens de hentes, og når de ikke kan hentes eller svaret er uleselig, står det kort ved anbefalingen; beregningen og nødstoppen virker som før.',
+      'En deaktivert regel nevnes ved navn i stedet for med den interne betegnelsen.',
+      'Ingen doser, grenser, regler eller godkjenninger er endret.',
+    ],
+  },
+  {
+    versjon: '1.120.0',
+    dato: '2026-11-03',
+    sammendrag: 'Kildeovervåkingen viser faglige saker med grunnlag, valg og hva valget vil gjøre',
+    typer: ['Funksjonalitet', 'Design / layout'],
+    omfang: 'Moderat omfang',
+    gjelder: ['vinduer'],
+    punkter: [
+      'Vinduet «Kildeovervåking» i adminmenyen viser nå bare saker som trenger en faglig beslutning, hver med hvordan verktøyet virker nå, hva som er endret, hvilke anbefalinger som berøres, hvorfor det er relevant og hvilken beslutning som anbefales.',
+      'Beslutningen tas ved å velge mellom faste valg. Hvert valg sier hva det betyr for klinikerne, og det valgte sier hva som skjer straks og hva som må gjøres og kontrolleres etterpå, før beslutningen registreres.',
+      'Et mulig sikkerhetsproblem som ennå vurderes, vises straks med en knapp til nødstoppen.',
+      'Saker i oppfølging viser tiltakene og hvor langt de har kommet. Kontrollsummer, interne nøkler og tekniske detaljer ligger lukket nederst, for kontrollører.',
+      'Ingen klinisk regel, beregning eller godkjenning er endret.',
+    ],
   },
   {
     versjon: '1.119.1',

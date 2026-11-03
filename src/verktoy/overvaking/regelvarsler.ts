@@ -22,8 +22,18 @@ const erVarsel = (x: unknown): x is Regelvarsel => {
   return !!v && typeof v.regel === 'string' && Number.isInteger(v.versjon) && typeof v.tekst === 'string' && v.tekst.trim().length > 0 && typeof v.siden === 'string'
 }
 
-/** Svaret fra databasen; et varsel med en annen form tas ikke med. */
-export const lesRegelvarsler = (x: unknown): Regelvarsel[] => (Array.isArray(x) ? x.filter(erVarsel) : [])
+/** Feilen når svaret ikke har formen varslene skal ha. */
+export const UGYLDIGE_REGELVARSLER = 'Svaret med faglige varsler har en ukjent form.'
+
+/**
+ * Svaret fra databasen. Har svaret eller ett av varslene en annen form, kastes
+ * det: da er det ukjent om det finnes varsler, og det skal sies fra, ikke
+ * vises som om det ikke fantes noen.
+ */
+export function lesRegelvarsler(x: unknown): Regelvarsel[] {
+  if (!Array.isArray(x) || !x.every(erVarsel)) throw new Error(UGYLDIGE_REGELVARSLER)
+  return x
+}
 
 /** Varslene for nøyaktig den regelversjonen verktøyet bruker; et varsel for en annen versjon gjelder ikke. */
 export const varslerFor = (varsler: readonly Regelvarsel[], regel: string, versjon: number): Regelvarsel[] =>

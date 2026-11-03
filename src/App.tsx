@@ -73,6 +73,7 @@ import { lagRegisterlager } from './stoffregister/api'
 import { StoffregisterkildeProvider, useLagStoffregisterkilde } from './stoffregister/Stoffregisterkilde'
 import { Stoffregisterside } from './components/stoffregister/Stoffregisterside'
 import { Verktoyside } from './components/verktoy/Verktoyside'
+import { kallMot } from './legemiddeldata/lager'
 import { lagLegemiddelleser, lagLegemiddelsok } from './legemiddeldata/lesing'
 import { lagFarmakogenetikkleser, lagFarmakogenetikksok } from './clinpgx/lesing'
 import { lagCpicleser } from './cpic/lesing'
@@ -102,6 +103,7 @@ import { meldSide, roligOyeblikk } from './oppdatering/sider'
 import { fortolkningsform, initialState, isIdle, reducer, stageOf, type Action, type Stage } from './state'
 import type { Analyte } from './types'
 import { lagVerktoysperrelager } from './verktoy/sperrer'
+import { lagRegelvarsellager } from './verktoy/overvaking/regelvarsler'
 import { VerktoytilgangProvider, verktoyeneVisesFor } from './verktoy/synlighet'
 
 const KOPIFEIL = 'Fikk ikke tilgang til utklippstavlen. Kopier teksten manuelt.'
@@ -179,6 +181,7 @@ export default function App() {
 
   // Nødstoppen for de kliniske verktøyene, lest av verktøysidene.
   const verktoysperrer = useMemo(() => lagVerktoysperrelager(klient()), [])
+  const regelvarsler = useMemo(() => lagRegelvarsellager(kallMot(klient())), [])
   const faginnhold = useMemo<Faginnholdskilde>(
     () => ({
       leser: lagFaginnholdsleser(klient()),
@@ -788,7 +791,7 @@ export default function App() {
 
                   {rute.side === 'verktoy' && visVerktoy && (
                     <main className="scene scene--verktoy">
-                      <Verktoyside verktoy={rute.verktoy} legemidler={faginnhold.legemidler} sperrer={verktoysperrer} onLukk={lukkInfoside} />
+                      <Verktoyside verktoy={rute.verktoy} legemidler={faginnhold.legemidler} sperrer={verktoysperrer} regelvarsler={regelvarsler} onLukk={lukkInfoside} />
                     </main>
                   )}
 

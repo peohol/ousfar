@@ -1,10 +1,11 @@
 // @vitest-environment jsdom
 /**
- * Vinduet «Kildeovervåking» i administrasjonsmenyen (VDR-1): en administrator
- * ser de åpne sakene med tilstand og de godkjente reglene de kan berøre, uten
- * frister og uten skjema for tekniske vurderinger eller fritekstavslutning, og
- * hva siste kontroll sammenlignet. Det tekniske står i en lukket «Teknisk
- * logg». Tilgangen og reglene for sakene avgjøres i databasen
+ * Vinduet «Kildeovervåking» i administrasjonsmenyen (VDR-1 og VDR-2): de
+ * faglige sakene først (`fagsaker.test.tsx`), og under dem, lukket, det
+ * tekniske sporet for kontrollører: de åpne sakene med tilstand og de
+ * godkjente reglene de kan berøre, uten frister og uten skjema for tekniske
+ * vurderinger eller fritekstavslutning, og hva siste kontroll sammenlignet.
+ * Tilgangen og reglene for sakene avgjøres i databasen
  * (`kildeovervaking.test.ts`). Syntetiske data.
  */
 import { cleanup, render, screen, within } from '@testing-library/react'
@@ -12,6 +13,7 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Kildeovervaking } from '../components/konto/Kildeovervaking'
 import { glemBildet } from '../oppdatering/bevaring'
+import type { Fagsaklager } from '../verktoy/overvaking/fagsak'
 import type { Kildefunn, Kildeovervaking as Overvaking, Kildeovervakingslager } from '../verktoy/overvaking/varsling'
 
 beforeEach(() => {
@@ -61,6 +63,9 @@ const funn = (over: Partial<Kildefunn>): Kildefunn => ({
   ...over,
 })
 
+/** Ingen faglige saker: vinduet viser da bare at ingenting venter, og det tekniske sporet under. */
+const INGEN_SAKER: Fagsaklager = { les: async () => ({ saker: [], teknisk: 'oppfolging', sist_kontrollert_kl: null }), beslutt: async () => 'registrert' }
+
 const minnelager = (data: Overvaking): Kildeovervakingslager => ({ les: async () => structuredClone(data) })
 
 const SISTE = {
@@ -78,9 +83,21 @@ const SISTE = {
 }
 
 describe('kildeovervåkingen i administrasjonsmenyen', () => {
+  it('viser de faglige sakene først og det tekniske sporet lukket under', async () => {
+    render(<Kildeovervaking apen onLukk={() => {}} fagsaker={INGEN_SAKER} lager={minnelager({ funn: [funn({})], kjoringer: [SISTE], siste: SISTE })} na={() => NA} />)
+    expect(await screen.findByText('Ingenting venter på deg.')).toBeTruthy()
+    expect(screen.getByText(/Noen kilder følges opp teknisk\. Det krever ingenting av deg/)).toBeTruthy()
+    const spor = screen.getByRole('region', { name: 'Teknisk spor' }).querySelector('details')!
+    expect(spor.open).toBe(false)
+    expect(within(spor).getByText('Teknisk spor for kontrollører')).toBeTruthy()
+    // Overskriftene for redaktøren står før det tekniske sporet.
+    const overskrifter = screen.getAllByRole('heading').map((h) => h.textContent)
+    expect(overskrifter.indexOf('Trenger din beslutning')).toBeLessThan(overskrifter.indexOf('Alle åpne saker, også tekniske'))
+  })
+
   it('viser en åpen sak med tilstand og regelen den kan berøre, uten frister eller skjema, og det tekniske bare i den lukkede loggen', async () => {
     const lager = minnelager({ funn: [funn({})], kjoringer: [SISTE], siste: SISTE })
-    render(<Kildeovervaking apen onLukk={() => {}} lager={lager} na={() => NA} />)
+    render(<Kildeovervaking apen onLukk={() => {}} fagsaker={INGEN_SAKER} lager={lager} na={() => NA} />)
 
     const rad = (await screen.findByText('Syntetin 50 mg tablett')).closest('li')!
     expect(within(rad).getByText('Teknisk utredning')).toBeTruthy()
@@ -105,7 +122,7 @@ describe('kildeovervåkingen i administrasjonsmenyen', () => {
       kjoringer: [],
       siste: { ...SISTE, feil: [] },
     })
-    render(<Kildeovervaking apen onLukk={() => {}} lager={lager} na={() => NA} />)
+    render(<Kildeovervaking apen onLukk={() => {}} fagsaker={INGEN_SAKER} lager={lager} na={() => NA} />)
     const sikker = (await screen.findByText('Syntetisk kilde')).closest('li')!
     expect(within(sikker).getByText('Mulig sikkerhetsproblem')).toBeTruthy()
     expect(sikker.textContent).not.toContain('ingen handling fra deg')
@@ -115,7 +132,7 @@ describe('kildeovervåkingen i administrasjonsmenyen', () => {
   })
 
   it('viser hva siste kontroll sammenlignet, det som stoppet og de informative endringene, og sier fra når den har uteblitt', async () => {
-    render(<Kildeovervaking apen onLukk={() => {}} lager={minnelager({ funn: [], kjoringer: [SISTE], siste: SISTE })} na={() => NA} />)
+    render(<Kildeovervaking apen onLukk={() => {}} fagsaker={INGEN_SAKER} lager={minnelager({ funn: [], kjoringer: [SISTE], siste: SISTE })} na={() => NA} />)
     const siste = within(await screen.findByRole('region', { name: 'Siste kontroll' }))
     expect(await siste.findByText('Siste kildekontroll stoppet.')).toBeTruthy()
     expect(siste.getByText('Ikke kontrollert: FEST: innlogging avvist')).toBeTruthy()
@@ -125,7 +142,7 @@ describe('kildeovervåkingen i administrasjonsmenyen', () => {
     expect(screen.getByText('Ingen åpne saker.')).toBeTruthy()
     cleanup()
 
-    render(<Kildeovervaking apen onLukk={() => {}} lager={minnelager({ funn: [], kjoringer: [], siste: { ...SISTE, feil: [], kjort_kl: timerFor(9 * 24) } })} na={() => NA} />)
+    render(<Kildeovervaking apen onLukk={() => {}} fagsaker={INGEN_SAKER} lager={minnelager({ funn: [], kjoringer: [], siste: { ...SISTE, feil: [], kjort_kl: timerFor(9 * 24) } })} na={() => NA} />)
     expect(await screen.findByText('Kildeovervåkingen har ikke kjørt på over en uke.')).toBeTruthy()
   })
 
@@ -135,7 +152,7 @@ describe('kildeovervåkingen i administrasjonsmenyen', () => {
     const les = vi.fn(async (): Promise<Overvaking> => {
       throw new Error('Nettverket svarte ikke.')
     })
-    render(<Kildeovervaking apen onLukk={() => {}} lager={{ les }} na={() => NA} />)
+    render(<Kildeovervaking apen onLukk={() => {}} fagsaker={INGEN_SAKER} lager={{ les }} na={() => NA} />)
     expect(await screen.findByText('Kildeovervåkingen kunne ikke leses, så det er ukjent om saker venter.')).toBeTruthy()
     expect(screen.getByRole('alert').textContent).toBe('Nettverket svarte ikke.')
     expect(screen.queryByText('Ingen åpne saker.')).toBeNull()

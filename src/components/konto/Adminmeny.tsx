@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { klient } from '../../auth/klient'
 import { useBevart } from '../../oppdatering/Bevaring'
 import { useProfil } from '../../auth/okt'
@@ -18,7 +18,8 @@ import { Verktoysperrer } from './Verktoysperrer'
 /** Teksten ved prikken når kildeovervåkingen ikke kunne leses. */
 const KILDEOVERVAKING_ULEST = 'kildeovervåkingen kunne ikke leses'
 
-type Panel = 'brukere' | 'datakilder' | 'autoerstatt' | 'kurateringer' | 'verktoysperrer' | 'kildeovervaking' | null
+const PANELENE = ['brukere', 'datakilder', 'autoerstatt', 'kurateringer', 'verktoysperrer', 'kildeovervaking'] as const
+type Panel = (typeof PANELENE)[number] | null
 
 /**
  * Det som bør ses over, sjekket som idémenyen ser etter nye kommentarer: når
@@ -72,11 +73,22 @@ export function Adminmeny({
   )
   const { sjekk: sjekkDatakilder } = datakilder
   const { sjekk: sjekkKilder } = kilder
-  const lukkPanel = useCallback(() => {
-    setPanel(null)
-    sjekkDatakilder()
-    sjekkKilder()
-  }, [sjekkDatakilder, sjekkKilder])
+  // Hvert vindu lukker bare seg selv: når ett vindu åpner et annet (kildeovervåkingen
+  // åpner nødstoppen), lukkes det første etterpå, og det skal ikke lukke det nye.
+  const lukk = useMemo(
+    () =>
+      Object.fromEntries(
+        PANELENE.map((navn) => [
+          navn,
+          () => {
+            setPanel((naa) => (naa === navn ? null : naa))
+            sjekkDatakilder()
+            sjekkKilder()
+          },
+        ]),
+      ) as Record<Exclude<Panel, null>, () => void>,
+    [setPanel, sjekkDatakilder, sjekkKilder],
+  )
   const sesOver = datakilder.meldinger.length ? `${datakilder.meldinger.join(', ')} bør ses over` : undefined
   const kildevarsel = kilder.meldinger.length ? kilder.meldinger.join('; ') : undefined
   const varsel = [sesOver, kildevarsel].filter(Boolean).join('; ') || undefined
@@ -127,12 +139,12 @@ export function Adminmeny({
           )
         }}
       </Nedtrekksmeny>
-      <Brukerliste apen={panel === 'brukere'} onLukk={lukkPanel} />
-      <Datakilder apen={panel === 'datakilder'} onLukk={lukkPanel} />
-      <Autoerstattregler apen={panel === 'autoerstatt'} onLukk={lukkPanel} />
-      <Kurateringsoversikt apen={panel === 'kurateringer'} klient={kuratering} onLukk={lukkPanel} />
-      <Kildeovervaking apen={panel === 'kildeovervaking'} lager={kildelager} onLukk={lukkPanel} />
-      <Verktoysperrer apen={panel === 'verktoysperrer'} onLukk={lukkPanel} />
+      <Brukerliste apen={panel === 'brukere'} onLukk={lukk.brukere} />
+      <Datakilder apen={panel === 'datakilder'} onLukk={lukk.datakilder} />
+      <Autoerstattregler apen={panel === 'autoerstatt'} onLukk={lukk.autoerstatt} />
+      <Kurateringsoversikt apen={panel === 'kurateringer'} klient={kuratering} onLukk={lukk.kurateringer} />
+      <Kildeovervaking apen={panel === 'kildeovervaking'} lager={kildelager} fagsaker={fagsaker} onNodstopp={() => setPanel('verktoysperrer')} onLukk={lukk.kildeovervaking} />
+      <Verktoysperrer apen={panel === 'verktoysperrer'} onLukk={lukk.verktoysperrer} />
     </>
   )
 }
