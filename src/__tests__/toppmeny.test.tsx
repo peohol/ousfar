@@ -628,7 +628,7 @@ describe('adminmenyen', () => {
       kilde: { navn: 'Syntetisk kilde', lenke: null, sammenlignet_kl: naa }, berorte: [{ regel: 'r', versjon: 1, hva: 'takten' }],
       relevans: 'Planen kan bli for rask.', anbefaling: { valg: 'behold', begrunnelse: 'Syntetisk.', av: 'Claude' },
       valg: [{ valg: 'behold', na: [], deretter: ['Nytt grunnlag.'], verktoyet: 'Som før.' }, { valg: 'utsett', na: [], deretter: ['Venter.'], verktoyet: 'Som før.' }],
-      status_na: 'Som før.', opprettet_kl: naa, beslutning: null, tidligere: [], tiltak: [], avsluttet: null,
+      status_na: 'Som før.', opprettet_kl: naa, nytt_innhold_kl: null, beslutning: null, tidligere: [], tiltak: [], avsluttet: null,
     }
     // Tekniske avvik alene (teknisk: oppfolging) gir ingen prikk.
     const les = vi.fn(async (): Promise<Redaktoroversikt> => ({ saker: [], teknisk: 'oppfolging', sist_kontrollert_kl: naa }))
