@@ -9,7 +9,7 @@ import { utenforForlop } from '../motor/plan'
 import { KARTLEGGING } from '../register'
 import { erKliniskGodkjent, fingeravtrykk, harBeregning } from '../regler/godkjenning'
 import { henvisninger, type Forlop, type Regel, type Regelsett } from '../regler/modell'
-import { REGELSETTENE } from '../tilgjengelighet'
+import { REGELSETTENE, verktoyeneFor } from '../tilgjengelighet'
 import type { Virkestoffkartlegging } from '../kartlegging'
 import type { Berort } from './modell'
 
@@ -48,6 +48,7 @@ export const berort = (g: Godkjentregel, hvorfor: string): Berort => ({
   versjon: g.regel.versjon,
   fingeravtrykk: g.fingeravtrykk,
   hvorfor,
+  verktoy: verktoyeneFor(g.regel),
 })
 
 /** De godkjente reglene som henviser til kilden. */

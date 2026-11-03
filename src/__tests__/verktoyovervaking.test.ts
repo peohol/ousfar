@@ -18,14 +18,15 @@ import { utsnitt, type Innhenting, type Kildearkiv } from '../verktoy/kildearkiv
 import { kildegrunnlag } from '../verktoy/kildeanbefalinger'
 import { ForbigaendeFeil, type Dokumentsvar } from '../verktoy/kildehenting'
 import { byggesteiner } from '../verktoy/motor/byggesteiner'
-import { festkoblinger, KARTLEGGING } from '../verktoy/register'
+import { festkoblinger, KARTLEGGING, VERKTOY } from '../verktoy/register'
 import { FEST_AKSEPTTEST, FEST_PILOT, omgivelseFor, type Festuttrekk } from '../verktoy/regler/aksepttest'
 import { erKliniskGodkjent, fingeravtrykk } from '../verktoy/regler/godkjenning'
 import { KILDER } from '../verktoy/regler/kilder'
 import type { Kilde } from '../verktoy/regler/modell'
-import { REGELSETTENE } from '../verktoy/tilgjengelighet'
-import { godkjenteRegler, virkestofferForFest } from '../verktoy/overvaking/berorte'
-import { dokumentgrunnlag, kontrollerDokumenter, kontrollsummer, synligTekst, uovervaketeKilder, type Fastsattgrunnlag } from '../verktoy/overvaking/dokumenter'
+import { iVerktoyet, REGELSETTENE } from '../verktoy/tilgjengelighet'
+import { berort, godkjenteRegler, virkestofferForFest } from '../verktoy/overvaking/berorte'
+import { AGENTOPPGAVER } from '../verktoy/overvaking/agentoppgaver'
+import { avsnittI, avsnittsavtrykk, avsnittssummer, dokumentgrunnlag, kontrollerDokumenter, kontrollsummer, synligTekst, uovervaketeKilder, type Fastsattgrunnlag } from '../verktoy/overvaking/dokumenter'
 import { festfunn, kontrollerFest } from '../verktoy/overvaking/fest'
 import { kjorOvervaking, PROVEFUNN } from '../verktoy/overvaking/kjoring'
 import { nivaFor, prioritetFor, type Overvakingsfunn } from '../verktoy/overvaking/modell'
@@ -176,6 +177,65 @@ describe('kildedokumentene', () => {
     const somDokument = fastsatt(sha(new TextEncoder().encode(side)), 'dokument', '2026-11-03T00:00:00Z')
     expect((await kontroller([k], { [k.url]: svar(side) }, [somDokument])).funn).toEqual([])
     expect((await kontroller([k], { [k.url]: svar(SIDE('c')) }, [somDokument])).funn).toMatchObject([{ art: 'endret', niva: 'krever_vurdering' }])
+  })
+
+  it('gir en nettside med engangsverdier samme avtrykk fra uke til uke, så samme innhold ikke blir en ny sak', async () => {
+    const k = kilde('keks-2016', 'a'.repeat(64))
+    const [forste] = (await kontroller([k], { [k.url]: svar(SIDE('mandag')) })).funn
+    const [andre] = (await kontroller([k], { [k.url]: svar(SIDE('neste mandag')) })).funn
+    expect(forste!.detaljer).not.toEqual(andre!.detaljer)
+    expect(forste!.tilstandsavtrykk).toBe(sha(synligTekst(SIDE('x'))))
+    expect(funnavtrykk(forste!)).toBe(funnavtrykk(andre!))
+    // Endres den synlige teksten, er det nytt innhold.
+    const [tredje] = (await kontroller([k], { [k.url]: svar(SIDE('x', `${KILDETEKST} Revidert`)) })).funn
+    expect(funnavtrykk(tredje!)).not.toBe(funnavtrykk(forste!))
+  })
+
+  describe('med de relevante avsnittene som grunnlag', () => {
+    const MENY = (meny: string) => `<nav><h2>Meny</h2><p>${meny}</p></nav>`
+    const ARTIKKEL = (takt: string, symptomer = 'Svimmelhet og uro.') =>
+      `<html><body>${'{{MENY}}'}<main><h1>Stopping antidepressants</h1><p>Innledning.</p><h2>How to stop</h2><p>${takt}</p><h3>Detaljer</h3><p>Mer om takten.</p><h2>Symptoms</h2><p>${symptomer}</p><h2>Further help</h2><p>Lenker.</p></main></body></html>`
+    const side = (meny: string, takt: string, symptomer?: string) => ARTIKKEL(takt, symptomer).replace('{{MENY}}', MENY(meny))
+    const k = kilde('rcpsych-stopping', 'a'.repeat(64))
+    const grunnlag = (html: string, overskrifter: string[]): Fastsattgrunnlag => {
+      const summer = avsnittssummer(html, overskrifter) as string[]
+      return { kilde: k.id, metode: 'avsnitt', sha256: avsnittsavtrykk(summer), avsnitt: overskrifter.map((overskrift, i) => ({ overskrift, sha256: summer[i]! })), fastsatt: '2026-11-03T00:00:00Z', vurdering: 'Syntetisk vurdering' }
+    }
+    const opprinnelig = side('Hjem · Om oss', 'Trapp ned over fire uker.')
+    const fastsatt = grunnlag(opprinnelig, ['How to stop', 'Symptoms'])
+
+    it('deler siden i avsnitt under hver overskrift, med underavsnittene, uten skript og meny-tagger', () => {
+      expect(avsnittI(opprinnelig).map((a) => [a.niva, a.overskrift, a.tekst])).toEqual([
+        [2, 'Meny', 'Hjem · Om oss'],
+        [1, 'Stopping antidepressants', 'Innledning. How to stop Trapp ned over fire uker. Detaljer Mer om takten. Symptoms Svimmelhet og uro. Further help Lenker.'],
+        [2, 'How to stop', 'Trapp ned over fire uker. Detaljer Mer om takten.'],
+        [3, 'Detaljer', 'Mer om takten.'],
+        [2, 'Symptoms', 'Svimmelhet og uro.'],
+        [2, 'Further help', 'Lenker.'],
+      ])
+      expect(avsnittssummer(opprinnelig, ['  how TO stop ', 'Finnes ikke'])).toEqual([sha('Trapp ned over fire uker. Detaljer Mer om takten.'), null])
+      expect(avsnittI('<h2>Dean&#39;s &amp; co&#x2019;s</h2><p>x</p>')[0]!.overskrift).toBe('Dean\'s & co\u2019s')
+      expect(kontrollsummer(svar(PDF), fastsatt.avsnitt).avsnitt).toBeNull()
+    })
+
+    it('gir ingen sak når bare menyen eller et avsnitt reglene ikke bygger på er endret', async () => {
+      const nyMeny = side('Hjem · Nyheter · Om oss', 'Trapp ned over fire uker.').replace('Lenker.', 'Nye lenker.')
+      expect((await kontroller([k], { [k.url]: svar(nyMeny) }, [fastsatt])).funn).toEqual([])
+    })
+
+    it('melder hvilket relevant avsnitt som er endret eller borte, med et avtrykk av avsnittene alene', async () => {
+      const [endret] = (await kontroller([k], { [k.url]: svar(side('Hjem', 'Trapp ned over åtte uker.')) }, [fastsatt])).funn
+      expect(endret).toMatchObject({ art: 'endret', niva: 'krever_vurdering' })
+      expect(endret!.detaljer[0]).toBe('Avsnittet «How to stop» er endret.')
+      expect(endret!.detaljer.join(' ')).not.toContain('Symptoms')
+      // Samme endrede avsnitt med ny meny: samme avtrykk, ingen ny sak.
+      const [igjen] = (await kontroller([k], { [k.url]: svar(side('Annen meny', 'Trapp ned over åtte uker.')) }, [fastsatt])).funn
+      expect(funnavtrykk(igjen!)).toBe(funnavtrykk(endret!))
+      const borte = opprinnelig.replace('<h2>Symptoms</h2>', '<h2>Withdrawal</h2>')
+      expect((await kontroller([k], { [k.url]: svar(borte) }, [fastsatt])).funn[0]!.detaljer[0]).toBe('Avsnittet «Symptoms» finnes ikke lenger under den overskriften.')
+      // Et dokument som ikke er en nettside, kan ikke sammenlignes avsnitt for avsnitt.
+      expect((await kontroller([k], { [k.url]: svar(PDF) }, [fastsatt])).funn[0]!.detaljer[0]).toMatch(/ikke en nettside/)
+    })
   })
 })
 
@@ -374,7 +434,8 @@ describe('en kjøring og rapporten', () => {
     expect(md.indexOf('## Krever ny faglig vurdering')).toBeLessThan(md.indexOf('## Informative endringer'))
     expect(md).toContain('r v1 (ffffffffffff): henviser til kilden')
     expect(md).toContain('**1 endring krever ny faglig vurdering.**')
-    expect(md).toContain('Adminmeny → Kildeovervåking')
+    expect(md).toContain('først undersøkes teknisk')
+    expect(md).not.toMatch(/frist/i)
   })
 
   it('gir hvert funn et avtrykk som bare endres når innholdet endres, ikke når kilden bare er hentet på nytt', () => {
@@ -383,6 +444,20 @@ describe('en kjøring og rapporten', () => {
     expect(funnavtrykk(a)).toMatch(/^[0-9a-f]{64}$/)
     for (const endret of [funn({ detaljer: ['Nå: dokumentet def'] }), funn({ berorte: [] }), funn({ art: 'fjernet' }), funn({ prioritet: 'hoy' }), funn({ id: 'dokument:y' })]) {
       expect(funnavtrykk(endret)).not.toBe(funnavtrykk(a))
+    }
+    // Verktøyene en regel hører til, er avledet og endrer ikke funnet.
+    expect(funnavtrykk({ ...a, berorte: a.berorte.map((b) => ({ ...b, verktoy: ['bytte-antidepressiv'] })) })).toBe(funnavtrykk(a))
+  })
+
+  it('oppgir verktøyene hver berørt regel hører til, så en nødstopp for verktøyet kan knyttes til regelen', () => {
+    const regler = godkjenteRegler()
+    expect(regler.length).toBeGreaterThan(0)
+    for (const g of regler) {
+      const b = berort(g, 'syntetisk')
+      expect(b.verktoy, g.regel.id).toEqual(VERKTOY.filter((v) => iVerktoyet(v)(g.regel)).map((v) => v.id))
+      expect(b.verktoy!.length, g.regel.id).toBeGreaterThan(0)
+      // Seponering og bytte hører til hvert sitt verktøy.
+      for (const id of b.verktoy!) expect(VERKTOY.find((v) => v.id === id)!.type).toBe(g.regel.til === null ? 'seponering' : 'bytte')
     }
   })
 
@@ -394,14 +469,15 @@ describe('en kjøring og rapporten', () => {
     expect(godkjenteRegler().map((g) => g.fingeravtrykk)).toEqual(avtrykkene)
     const kode = readdirSync(`${ROT}src/verktoy/overvaking`).map((f) => les(`src/verktoy/overvaking/${f}`)).join('\n')
     expect(kode).not.toMatch(/writeFile|appendFile|\.from\(|\.rpc\(|godkjenning\s*[:=]/)
-    // Det eneste den skriver i databasen, er kjøringene, funnene og vurderingene av dem.
+    // Det eneste den skriver i databasen, er kjøringene, sakene og arbeidet med dem; agentoppgavene går til kildesak-funksjonene.
     expect([...new Set([...kode.matchAll(/kall\('([a-z_]+)'/g)].map((m) => m[1]))].sort()).toEqual([
-      'beslutt_kildefunn',
-      'kildefunn_teknisk_fra_agent',
+      'beslutt_fagsak',
+      'les_fagsaker',
       'les_kildeovervaking',
+      'les_regelvarsler',
       'registrer_kildeovervaking',
-      'vurder_kildefunn',
     ])
+    expect(Object.values(AGENTOPPGAVER).map((o) => o.funksjon).every((f) => f.startsWith('kildesak_'))).toBe(true)
     // Skriptet skriver bare rapporten og funnene i mappen det får.
     expect([...les('scripts/verktoy-overvaking.ts').matchAll(/writeFileSync\(([^,(]+(?:\([^)]*\))?),/g)].map((m) => m[1])).toEqual(["join(ut, 'rapport.md')", "join(ut, 'funn.json')"])
   })
@@ -445,9 +521,11 @@ describe('arbeidsflyten', () => {
     for (const linje of flyt.split('\n').filter((l) => /^\s*- uses: /.test(l))) expect(linje, linje).toMatch(/@[0-9a-f]{40} # v/)
     // Uttrykk står bare som verdien til en nøkkel (som `env`), aldri inne i et skript.
     for (const linje of flyt.split('\n').filter((l) => l.includes('${{'))) expect(linje, linje).toMatch(/^\s*(?!run:)[A-Za-z_-]+:\s/)
-    // Bare den planlagte kjøringen, en kontroll og en prøve kjører overvåkingen; den tekniske vurderingen er en egen jobb uten hemmeligheter.
-    const teknisk = flyt.slice(flyt.indexOf('\n  teknisk-vurdering:'))
-    expect(teknisk).not.toMatch(/secrets\.|environment:/)
+    // Bare den planlagte kjøringen, en kontroll og en prøve kjører overvåkingen; agentens arbeid er en egen jobb uten hemmeligheter.
+    const agent = flyt.slice(flyt.indexOf('\n  agent:'))
+    expect(agent).not.toMatch(/secrets\.|environment:/)
+    // Ingen frister er igjen.
+    expect(flyt).not.toMatch(/frist/i)
   })
 
   /** Skriptet til steget med navnet, slik Actions kjører det. */
@@ -511,10 +589,15 @@ describe('arbeidsflyten', () => {
     expect(kjorSteg('Meld funnene til appen', { kode: '409' }).lyktes).toBe(false)
   })
 
-  it('skriver en teknisk vurdering nøyaktig slik den ble gitt, uten at teksten kan kjøres som kode', () => {
-    const vurdering = 'Bare en ny "skrifttype" i dokumentet; $(touch hacket) `id` endrer ingenting.'
-    const r = kjorSteg('Skriv vurderingen i appen', { env: { FUNN: '12', VURDERING: vurdering, AV: 'Claude', AKTOR: 'syntetisk-bruker' } })
+  it('sender agentens arbeid nøyaktig slik det ble gitt, med hvem, uten at teksten kan kjøres som kode', () => {
+    const begrunnelse = 'Bare en ny "skrifttype" i dokumentet; $(touch hacket) `id` endrer ingenting.'
+    const melding = JSON.stringify({ oppgave: 'teknisk_konklusjon', funn: 12, versjon: 3, konklusjon: 'uavklart', begrunnelse })
+    const r = kjorSteg('Send arbeidet til appen', { env: { MELDING: melding, AV: 'Claude', AKTOR: 'syntetisk-bruker' } })
     expect(r.lyktes).toBe(true)
-    expect(r.melding).toEqual({ oppgave: 'teknisk_vurdering', funn: '12', vurdering, av: 'Claude (startet av syntetisk-bruker)' })
+    expect(r.melding).toEqual({ oppgave: 'teknisk_konklusjon', funn: 12, versjon: 3, konklusjon: 'uavklart', begrunnelse, av: 'Claude (startet av syntetisk-bruker)' })
+    // Ikke JSON, eller en registrering: stoppes før noe sendes.
+    for (const feil of ['ikke json', JSON.stringify({ oppgave: 'registrer', rapport: {} }), '[]']) {
+      expect(() => kjorSteg('Send arbeidet til appen', { env: { MELDING: feil, AV: 'Claude', AKTOR: 'x' } })).toThrow()
+    }
   })
 })

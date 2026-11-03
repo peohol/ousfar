@@ -4,12 +4,12 @@
  * sidene fyller, fagsøkfeltets snarvei, idéknappen, adminmenyen og kontomenyen.
  */
 import { readFileSync } from 'node:fs'
-import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import type { Datakildestatus, Kjoring } from '../datakilder/status'
-import type { Kildeovervaking } from '../verktoy/overvaking/varsling'
+import type { Fagsak, Redaktoroversikt } from '../verktoy/overvaking/fagsak'
 import type { Bevegelse, Tema, Valg } from '../domain/systemvalg'
 
 const loggUt = vi.fn(async () => {})
@@ -40,10 +40,8 @@ vi.mock('../components/kuratering/Utgavelister', () => ({
 }))
 vi.mock('../components/konto/Kildeovervaking', () => ({
   Kildeovervaking: ({ apen }: { apen: boolean }) => (apen ? <p>Kildeovervåkingen</p> : null),
-  // En kontroll i orden, uten funn, så prikken ikke står i de andre testene.
-  kildeovervakingslager: () => ({
-    les: async () => ({ funn: [], kjoringer: [], siste: { id: 1, kjort_kl: new Date().toISOString(), utlost: 'cron', prove: false, grunnlag: [], feil: [], informative: [], lenke: null } }),
-  }),
+  // Ingen faglige saker, så prikken ikke står i de andre testene.
+  fagsaklager: () => ({ les: async () => ({ saker: [], teknisk: 'normal', sist_kontrollert_kl: null }), beslutt: async () => 'registrert' }),
 }))
 vi.mock('../components/konto/Verktoysperrer', () => ({
   Verktoysperrer: ({ apen }: { apen: boolean }) => (apen ? <p>Nødstoppen</p> : null),
@@ -602,14 +600,13 @@ describe('adminmenyen', () => {
     expect(document.querySelector('.adminmeny .toppmeny__prikk')).toBeNull()
   })
 
-  it('viser en prikk når kildeovervåkingen ikke kan leses, så det aldri ser ut som at ingen funn venter, og prøver igjen', async () => {
-    const naa = new Date().toISOString()
-    const les = vi.fn(async (): Promise<Kildeovervaking> => {
+  it('viser en prikk når kildesakene ikke kan leses, så det aldri ser ut som at ingenting venter, og prøver igjen', async () => {
+    const les = vi.fn(async (): Promise<Redaktoroversikt> => {
       throw new Error('Nettverket svarte ikke.')
     })
     render(
       <Ramme>
-        <Adminmeny kildelager={{ les, vurder: vi.fn(), beslutt: vi.fn() }} />
+        <Adminmeny fagsaker={{ les, beslutt: vi.fn() }} />
       </Ramme>,
     )
     const knapp = await screen.findByRole('button', { name: 'Administrasjon (kildeovervåkingen kunne ikke leses)' })
@@ -618,35 +615,47 @@ describe('adminmenyen', () => {
     expect(within(panel(knapp)).getByRole('img', { name: 'kildeovervåkingen kunne ikke leses' })).toBeTruthy()
 
     // Neste sjekk lykkes: prikken forsvinner.
-    les.mockResolvedValue({ funn: [], kjoringer: [], siste: { id: 1, kjort_kl: naa, utlost: 'cron', prove: false, grunnlag: [], feil: [], informative: [], lenke: null } })
+    les.mockResolvedValue({ saker: [], teknisk: 'normal', sist_kontrollert_kl: null })
     await userEvent.click(within(panel(knapp)).getByRole('button', { name: /^Datakilder/ }))
     act(() => datakildepanel.lukk?.())
     expect(await screen.findByRole('button', { name: 'Administrasjon' })).toBeTruthy()
   })
 
-  it('har en prikk når et funn fra kildeovervåkingen venter, også sammen med en datakilde, og ser etter på nytt når et panel lukkes', async () => {
+  it('har en prikk bare når en faglig sak venter på beslutning, ikke for tekniske avvik, og ser etter på nytt når et panel lukkes', async () => {
     const naa = new Date().toISOString()
-    const apent = {
-      id: 1, funn: 'dokument:a', kilde: 'dokument' as const, art: 'endret' as const, prioritet: 'vanlig' as const, prove: false, etikett: 'Syntetisk kilde',
-      detaljer: [], berorte: [], opprettet_kl: naa, sist_sett_kl: naa, borte_kl: null, erstatter: null, erstattet_kl: null,
-      teknisk_vurdering: null, teknisk_av: null, teknisk_kl: null, beslutning: null, beslutning_av: null, beslutning_kl: null,
+    const sak: Fagsak = {
+      id: '5', versjon: 3, fase: 'beslutning', alvor: 'faglig', prove: false, tittel: 'Kilden er revidert', endring: 'Ny takt.',
+      kilde: { navn: 'Syntetisk kilde', lenke: null, sammenlignet_kl: naa }, berorte: [{ regel: 'r', versjon: 1, hva: 'takten' }],
+      relevans: 'Planen kan bli for rask.', anbefaling: { valg: 'behold', begrunnelse: 'Syntetisk.', av: 'Claude' },
+      valg: [{ valg: 'behold', na: [], deretter: ['Nytt grunnlag.'], verktoyet: 'Som før.' }, { valg: 'utsett', na: [], deretter: ['Venter.'], verktoyet: 'Som før.' }],
+      status_na: 'Som før.', opprettet_kl: naa, nytt_innhold_kl: null, beslutning: null, tidligere: [], tiltak: [], avsluttet: null,
     }
-    const siste = { id: 1, kjort_kl: naa, utlost: 'cron' as const, prove: false, grunnlag: [], feil: [], informative: [], lenke: null }
-    const les = vi.fn(async () => ({ funn: [apent], kjoringer: [], siste }))
-    const kildelager = { les, vurder: vi.fn(), beslutt: vi.fn() }
-    render(
+    // Tekniske avvik alene (teknisk: oppfolging) gir ingen prikk.
+    const les = vi.fn(async (): Promise<Redaktoroversikt> => ({ saker: [], teknisk: 'oppfolging', sist_kontrollert_kl: naa }))
+    const fagsaker = { les, beslutt: vi.fn() }
+    const { unmount } = render(
       <Ramme>
-        <Adminmeny kildelager={kildelager} />
+        <Adminmeny fagsaker={fagsaker} />
       </Ramme>,
     )
-    const knapp = await screen.findByRole('button', { name: 'Administrasjon (1 funn venter på faglig beslutning)' })
-    expect(les).toHaveBeenCalledWith(0)
+    expect(await screen.findByRole('button', { name: 'Administrasjon' })).toBeTruthy()
+    await waitFor(() => expect(les).toHaveBeenCalled())
+    expect(document.querySelector('.adminmeny .toppmeny__prikk')).toBeNull()
+    unmount()
+
+    les.mockResolvedValue({ saker: [sak], teknisk: 'normal', sist_kontrollert_kl: naa })
+    render(
+      <Ramme>
+        <Adminmeny fagsaker={fagsaker} />
+      </Ramme>,
+    )
+    const knapp = await screen.findByRole('button', { name: 'Administrasjon (Én faglig sak venter på beslutning)' })
     expect(knapp.parentElement!.querySelector('.toppmeny__prikk')).toBeTruthy()
     await userEvent.click(knapp)
-    expect(within(panel(knapp)).getByRole('img', { name: '1 funn venter på faglig beslutning' })).toBeTruthy()
+    expect(within(panel(knapp)).getByRole('img', { name: 'Én faglig sak venter på beslutning' })).toBeTruthy()
 
-    // Avsluttet: prikken forsvinner når et panel lukkes og det sjekkes på nytt.
-    les.mockResolvedValue({ funn: [], kjoringer: [], siste })
+    // Besluttet: prikken forsvinner når et panel lukkes og det sjekkes på nytt.
+    les.mockResolvedValue({ saker: [{ ...sak, fase: 'oppfolging' }], teknisk: 'normal', sist_kontrollert_kl: naa })
     await userEvent.click(within(panel(knapp)).getByRole('button', { name: /^Datakilder/ }))
     act(() => datakildepanel.lukk?.())
     expect(await screen.findByRole('button', { name: 'Administrasjon' })).toBeTruthy()

@@ -7,16 +7,17 @@
  *
  * - `{ "oppgave": "registrer", "rapport": <funn.json>, "lenke": <kjøringen> }`
  *   melder en kjøring og funnene som krever vurdering.
- * - `{ "oppgave": "teknisk_vurdering", "funn": <nummer>, "vurdering": <tekst>, "av": <hvem> }`
- *   skriver den tekniske vurderingen av nøyaktig det funnet, når Claude (eller
- *   noen andre med tilgang til repoet) har vurdert det. Nummeret står i
- *   vinduet; er funnet avløst av et nyere med endret innhold, avvises den.
+ * - `{ "oppgave": <agentoppgave>, …, "av": <hvem> }` er agentens arbeid med en
+ *   sak: `teknisk_konklusjon`, `faglig_sporsmal`, `brukervarsel`, `tiltak` og
+ *   `avslutt_prove` (`agentoppgaver.ts`). Hver tar sakens nummer og versjonen
+ *   agenten leste, og avvises når saken er endret siden.
  *
- * Endepunktet endrer, godkjenner eller sperrer ingen regel.
+ * Endepunktet endrer eller godkjenner ingen regel og setter ingen sperre.
  */
 import { kallMot, type Databasekall } from '../../legemiddeldata/lager.js'
 import { hvem, serverklient, svar, type Githubsjekk, type Miljo } from '../../server/tilgang.js'
-import { KJORINGSLENKE, lesRapport, registrer, tekniskFraAgent } from './registrering.js'
+import { AGENTOPPGAVER, agentargumenter, erAgentoppgave, utforAgentoppgave } from './agentoppgaver.js'
+import { KJORINGSLENKE, lesRapport, registrer } from './registrering.js'
 
 /** Arbeidsflyten som kan melde seg. */
 export const OVERVAKING_ARBEIDSFLYT = '.github/workflows/verktoy-overvaking.yml'
@@ -26,8 +27,6 @@ export const MAKS_BYTE = 4_000_000
 
 /** Ingen administrator kaller dette endepunktet; de bruker databasen fra appen. */
 const ingenAdmin = async () => false
-
-const tekst = (x: unknown, min: number, maks: number): x is string => typeof x === 'string' && x.trim().length >= min && x.trim().length <= maks
 
 export async function behandleKildeovervaking(
   foresporsel: Request,
@@ -62,17 +61,14 @@ export async function behandleKildeovervaking(
       }
       return svar(200, await registrer(databasen, rapport, utlost, lenke))
     }
-    if (innhold?.oppgave === 'teknisk_vurdering') {
-      const { funn, vurdering, av } = innhold
-      const nummer = typeof funn === 'number' ? funn : typeof funn === 'string' && /^\s*\d{1,15}\s*$/.test(funn) ? Number(funn) : NaN
-      if (!Number.isSafeInteger(nummer) || nummer < 1 || !tekst(vurdering, 5, 5000) || !tekst(av, 2, 200)) {
-        return svar(400, { feil: 'Oppgi funnets nummer, vurderingen (5–5000 tegn) og hvem som har vurdert.' })
-      }
-      return svar(200, { funn: await tekniskFraAgent(databasen, nummer, vurdering, av) })
+    if (erAgentoppgave(innhold?.oppgave)) {
+      const argumenter = agentargumenter(innhold.oppgave, innhold)
+      if (!argumenter) return svar(400, { feil: `Oppgaven ${innhold.oppgave} trenger ${Object.keys(AGENTOPPGAVER[innhold.oppgave].felt).join(', ')} og av, i riktig form.` })
+      return svar(200, { oppgave: innhold.oppgave, svar: await utforAgentoppgave(databasen, innhold.oppgave, argumenter) })
     }
   } catch (e) {
-    // Et funn som ikke finnes eller allerede er vurdert, eller en databasefeil; ingenting er endret.
+    // En sak som ikke finnes, er endret siden eller ikke tillater oppgaven, eller en databasefeil; ingenting er endret.
     return svar(409, { feil: e instanceof Error ? e.message : String(e) })
   }
-  return svar(400, { feil: 'Ukjent oppgave; bruk «registrer» eller «teknisk_vurdering».' })
+  return svar(400, { feil: `Ukjent oppgave; bruk registrer eller ${Object.keys(AGENTOPPGAVER).join(', ')}.` })
 }
