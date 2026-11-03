@@ -20,7 +20,7 @@ export const ENDRINGSLOGG: Endring[] = [
     gjelder: ['verktoy/kombinere-stemningsstabiliserende'],
     punkter: [
       'Gjelder bare administratorene. Reglene er ikke godkjent, så verktøyet gir fortsatt ingen plan og sier at regelen er til faglig kontroll.',
-      'Verktøyet «Kombinere stemningsstabiliserende» har fått to regler fra preparatomtalen for Lamictal: lamotrigin lagt til valproat (25 mg annenhver dag, opp til 100 mg fra dag 36, aldri over 200 mg) og lagt til litium (25 mg, opp til 200 mg fra dag 36). Det eksisterende legemidlet står uendret.',
+      'Verktøyet «Kombinere stemningsstabiliserende» har fått to regler fra preparatomtalen for Lamictal: lamotrigin lagt til valproat (25 mg annenhver dag, opp til 100 mg fra dag 36, aldri over 200 mg) og lagt til litium (25 mg, opp til 200 mg fra dag 36). Det eksisterende legemidlet står uendret på dosen som er fylt inn; verktøyet kontrollerer ikke den dosen, og forskriveren må bekrefte at det er den pasienten bruker nå.',
       'Planene bruker bare dispergerbare tabletter, deler ingen tablett, og har vurdering av hud, overfølsomhet og stemningsleie før hver doseøkning og en vurdering ved måldosen.',
       'Planen stopper i stedet for å gi en dose når pasienten er under 18 år, har reagert på lamotrigin før, bruker lamotrigin nå, er gravid eller ammer, har nedsatt lever- eller nyrefunksjon, når valproatbehandlingen ikke er bekreftet vurdert, og ved litium når pasienten også bruker valproat, et enzyminduserende legemiddel eller et legemiddel med ukjent virkning på lamotrigin.',
     ],

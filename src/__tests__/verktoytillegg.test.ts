@@ -38,7 +38,12 @@ describe('Tilleggsreglene', () => {
       expect(r.til).toEqual({ type: 'virkestoff', nokkel: 'lamotrigin' })
       // Det eksisterende legemidlet fortsetter uendret; planen beregner det ikke.
       expect(r.plan.forlop[0]!.faser.map((f) => f.type), r.id).toEqual(['uendret'])
+      // Dosen kontrolleres ikke mot noe område; forskriveren må bekrefte at den er pasientens aktuelle dose.
+      expect(r.inndata, r.id).toEqual([])
+      expect(r.bekreftelser.find((b) => b.id === 'aktuell_dose')?.tekst, r.id).toMatch(/Verktøyet kontrollerer ikke denne dosen; planen gjentar den bare\.$/)
     }
+    expect(resultat('K4-35').res.utfall).toBe('stopp')
+    expect(resultat('K4-36').res.tekst).toContain('Litium peroralt: 0,5 mg = uendret dose')
   })
 
   it('er ikke godkjent, og verktøyet gir ingen plan for dem i dag', () => {

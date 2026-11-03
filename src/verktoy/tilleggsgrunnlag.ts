@@ -146,7 +146,7 @@ export const TILLEGGSKASUS: readonly Tilleggskasus[] = [
   kasus('K4-13', V, 'valproat', 'pasientforhold', 'graviditet er ikke vurdert (ubesvart)', '1000', { utfall: 'stopp', grunner: ['Må avklares før beregning (ukjent): Pasienten er gravid'] }, { regel: simulert(V), ubesvart: ['graviditet'] }),
   kasus('K4-14', V, 'valproat', 'pasientforhold', 'valproat er ikke bekreftet vurdert etter det graviditetsforebyggende programmet', '1000', { utfall: 'stopp', grunner: ['Må bekreftes før beregning: Valproatbehandlingen er vurdert'] }, {
     regel: simulert(V),
-    skjema: { bekreftet: ['fortsetter_valproat', 'utslett_informert'] },
+    skjema: { bekreftet: ['fortsetter_valproat', 'aktuell_dose', 'utslett_informert'] },
   }),
   kasus('K4-15', V, 'valproat', 'uvanlig_dose', 'ingen dose av valproat er fylt inn', '', { utfall: 'mangler', grunner: ['Aktuell døgndose må fylles inn'] }, { regel: simulert(V) }),
   kasus('K4-16', V, 'valproat', 'foreldet_fest', 'FEST-kopien er 49 timer gammel', '1000', { utfall: 'stopp', grunner: ['Den nattlige oppdateringen har ikke gått'] }, { regel: simulert(V), timer: 49 }),
@@ -168,6 +168,12 @@ export const TILLEGGSKASUS: readonly Tilleggskasus[] = [
   kasus('K4-32', L, 'litium', 'interaksjon', 'pasienten bruker et legemiddel med ukjent interaksjon med lamotrigin', '168', { utfall: 'stopp', grunner: [UNNTAK] }, { regel: simulert(L), skjema: { pasientforhold: { ukjent_interaksjon: true } } }),
   kasus('K4-33', L, 'litium', 'pasientforhold', 'moderat nedsatt leverfunksjon', '168', { utfall: 'stopp', grunner: [UNNTAK] }, { regel: simulert(L), skjema: { pasientforhold: { nedsatt_leverfunksjon: true } } }),
   kasus('K4-34', L, 'litium', 'pasientforhold', 'bruker lamotrigin allerede (ikke en oppstart)', '168', { utfall: 'stopp', grunner: [UNNTAK] }, { regel: simulert(L), skjema: { pasientforhold: { bruker_lamotrigin: true } } }),
+  kasus('K4-35', L, 'litium', 'pasientforhold', 'det er ikke bekreftet at den innfylte litiumdosen er den pasienten bruker nå', '168', { utfall: 'stopp', grunner: ['Må bekreftes før beregning: Døgndosen som er fylt inn for litium'] }, {
+    regel: simulert(L),
+    skjema: { bekreftet: ['fortsetter_litium', 'utslett_informert'] },
+  }),
+  // Dosen av det eksisterende legemidlet kontrolleres ikke mot noe område (preparatomtalene gir ingen), bare gjentas.
+  kasus('K4-36', L, 'litium', 'uvanlig_dose', 'en usannsynlig litiumdose (0,5 mg) kontrolleres ikke; planen gjentar den og er bygd på forskriverens bekreftelse', '0,5', { utfall: 'plan', linjer: PLAN_LITIUM.map((l) => l.replace('168 mg = uendret', '0,5 mg = uendret')) }, { regel: simulert(L) }),
   // Kombinasjoner uten regel: verktøyet sier det, og beregner ingenting.
   kasus('K4-40', null, 'karbamazepin', 'ikke_godkjent', 'karbamazepin → lamotrigin (induserende legemiddel) har ingen regel', '600', { utfall: 'ingen', status: 'ikke_stottet' }),
   { ...kasus('K4-41', null, 'lamotrigin', 'ikke_godkjent', 'motsatt retning: lamotrigin → valproat har ingen regel', '200', { utfall: 'ingen', status: 'ikke_stottet' }), valg: { fra: peroral('lamotrigin'), til: peroral('valproat') } },
@@ -261,6 +267,7 @@ export const IKKE_DEKKET: readonly string[] = [
   'Aripiprazol, olanzapin, gabapentin og topiramat → lamotrigin: samme opptrapping som med litium etter tabell 6, men hvert par må vurderes for seg før det legges til.',
   'Kvetiapin, risperidon og ziprasidon → lamotrigin: interaksjonen er ikke beskrevet i tabell 6; preparatomtalen sier da at opptrappingen for samtidig valproat skal brukes. Ikke laget.',
   'Lamotrigin → valproat (motsatt retning): lamotrigindosen skal halveres når valproat legges til (tabell 5), men opptrappingen av valproat er ikke vurdert. Ikke laget.',
+  'Dosen av valproat eller litium kontrolleres ikke: preparatomtalene fastsetter den individuelt (etter respons og serumkonsentrasjon) og gir ikke noe område den kan kontrolleres mot. Planen gjentar den innfylte dosen, og forskriveren må bekrefte at det er pasientens aktuelle dose (K4-35, K4-36).',
   'Alle andre par i Combining Moodstabilizers (110 i alt): ingen kildeforankret regel ennå.',
 ]
 

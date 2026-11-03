@@ -101,6 +101,7 @@ export const LAMICTAL = {
 
 /** Fakta fra Orfiril-preparatomtalen (valproat), med egne ord. */
 export const ORFIRIL = {
+  dose: h('dmp-orfiril', 'pkt. 4.2, Maniske episoder ved bipolar lidelse', 'Døgndosen av valproat tilpasses og følges individuelt etter klinisk respons; gjennomsnittlig døgndose er 1000–2000 mg.'),
   lamotrigin: h('dmp-orfiril', 'pkt. 4.5, Lamotrigin', 'Valproat hemmer omsetningen av lamotrigin, så lamotrigindosen bør reduseres; risikoen for hudreaksjoner ser ut til å øke ved kombinasjonen.'),
   fertil: h(
     'dmp-orfiril',
@@ -280,6 +281,8 @@ interface Eksisterende {
   kildetro: { tekst: string; henvisninger: Kildehenvisning[] }[]
   /** Forhold som må følges for det eksisterende legemidlet; planen endrer det ikke. */
   forutsetninger: string[]
+  /** Hvor preparatomtalen sier at dosen av det eksisterende legemidlet fastsettes individuelt. */
+  dosegrunnlag: Kildehenvisning
 }
 
 const dagtekst = (fra: number, dager: number) => (dager === 1 ? `dag ${fra}` : `dag ${fra}–${fra + dager - 1}`)
@@ -317,11 +320,25 @@ function eksempler(e: Eksisterende, plan: Gruppeplan, bekreftet: string[], pasie
   ]
 }
 
+/**
+ * Dosen av det eksisterende legemidlet fastsettes individuelt (valproat etter
+ * respons, litium etter serumkonsentrasjon), og preparatomtalene gir ikke noe
+ * doseområde den kan kontrolleres mot. Planen gjentar den bare, og forskriveren
+ * må bekrefte at den er pasientens aktuelle dose.
+ */
+function aktuellDose(e: Eksisterende): Bekreftelse {
+  return {
+    id: 'aktuell_dose',
+    tekst: `Døgndosen som er fylt inn for ${e.navn}, er den pasienten bruker nå. Verktøyet kontrollerer ikke denne dosen; planen gjentar den bare.`,
+    grunnlag: { type: 'kilde', henvisninger: [e.dosegrunnlag] },
+  }
+}
+
 /** Regelen for å legge lamotrigin til `e`, etter gruppens opptrapping i preparatomtalen. */
 export function lamotrigintillegg(e: Eksisterende): Regel {
   const plan = OPPTRAPPING[e.gruppe]
   const unntak = [...LAMOTRIGINUNNTAK, ...e.unntak]
-  const bekreftelser = [...e.bekreftelser, UTSLETTSINFORMASJON]
+  const bekreftelser = [...e.bekreftelser, aktuellDose(e), UTSLETTSINFORMASJON]
   const fra: Forlop = {
     id: 'fra',
     virkestoff: { type: 'virkestoff', nokkel: e.nokkel },
@@ -423,6 +440,7 @@ export const VALPROAT_LAMOTRIGIN = lamotrigintillegg({
     { tekst: 'Sammen med valproat gjelder opptrappingen uavhengig av andre legemidler, og høyst 200 mg/dag kan brukes etter klinisk respons.', henvisninger: [LAMICTAL.hemmer, LAMICTAL.hemmerMaks] },
     { tekst: 'Samtidig bruk av valproat er en egen risikofaktor for utslett.', henvisninger: [LAMICTAL.utslettRisiko, ORFIRIL.lamotrigin] },
   ],
+  dosegrunnlag: ORFIRIL.dose,
   forutsetninger: ['Valproatbehandlingen følges opp som før (blodbilde, lever og pankreas etter preparatomtalen); planen endrer ikke valproatdosen.'],
 })
 
@@ -456,6 +474,7 @@ export const LITIUM_LAMOTRIGIN = lamotrigintillegg({
   kildetro: [
     { tekst: 'Litium har liten eller ingen effekt på konsentrasjonen av lamotrigin, og lamotrigin endret ikke litiums farmakokinetikk; opptrappingen er den samme som uten valproat og uten induserende legemidler.', henvisninger: [LAMICTAL.litiumInteraksjon, LAMICTAL.noytral] },
   ],
+  dosegrunnlag: LITHIONIT.serum,
   forutsetninger: ['Litiumbehandlingen følges opp som før med serumlitium og nyre-, hjerte- og stoffskiftefunksjon; planen endrer ikke litiumdosen.'],
 })
 
