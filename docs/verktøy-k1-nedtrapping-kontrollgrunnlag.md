@@ -1,82 +1,121 @@
 <!-- Laget av `npm run verktoy:regler -- kontrollgrunnlag`; rediger ikke for hånd. -->
 # K1: nedtrapping av antidepressiv til seponering – kontrollgrunnlag
 
-**Ny versjon med avslutning for escitalopram, nortriptylin, amitriptylin og sertralin.** Grunnlag for uavhengig faglig kontroll av K1 i `docs/verktøy-klinisk-leveranseplan-2026-11.md`, laget 03.11.2026.
+**Krav om komplett plan for escitalopram, nortriptylin, amitriptylin og sertralin.** Grunnlag for uavhengig faglig kontroll av K1 i `docs/verktøy-klinisk-leveranseplan-2026-11.md`, ny runde etter kontrollen av PR #323 03.11.2026.
 
-**Ingen regel er godkjent eller aktivert.** De fire reglene har fått versjon 13 med en avslutning: når nedtrappingen stopper på laveste døgndose i preparatomtalen eller lavere, gis siste dose et helt trinn, og legemidlet seponeres etter en eksplisitt vurdering, med en ny vurdering 28 dager etter siste dose. Stopper den over grensen, er planen fortsatt en delplan som sier hva den ikke dekker. Versjonene er til faglig kontroll; verktøyet tilbyr ingen beregning for dem (kasus K1-15–K1-18), og sperrene og synligheten bare for administratorer er uendret. For å vise hva verktøyet ville vist om nøyaktig disse versjonene ble godkjent, er planene under regnet på en kopi av hver regel der de åpne valgene er avklart som foreslått og regelen er godkjent, begge simulert («Simulert kontrollør (bare i kontrollgrunnlaget, ingen godkjenning)»), gjennom den samme veien som verktøysiden og med de norske preparatene i FEST-uttrekket hentet 30.10.2026. Kopien lagres ikke og brukes ikke av appen. Kasusene er syntetiske; pasientopplysninger inngår ikke, og ingen tekst fra Psychiatrienet vises.
+**Ingen regel er godkjent eller aktivert.** Kontrollen avviste den forrige versjonen: seponering fra laveste døgndose i preparatomtalen og delplaner med doser som klinisk produkt. Peder trakk samtidig tilbake valget av den grensen, og den brukes ikke. De fire reglene har nå versjon 13, som krever en komplett plan helt til seponering. Med de dokumenterte metodene for norske preparater når ingen av dem en sluttdose, og ingen kilde eller faglig beslutning gir i dag en sluttdose. Verktøyet viser derfor «Komplett plan ikke tilgjengelig» og hvorfor, ikke doser. Versjonene er til faglig kontroll; verktøyet tilbyr ingen beregning for dem (kasus K1-19–K1-22), og sperrene og synligheten bare for administratorer er uendret. For å vise hva verktøyet ville vist om nøyaktig disse versjonene ble godkjent, er planene under regnet på en kopi av hver regel med en simulert godkjenning («Simulert kontrollør (bare i kontrollgrunnlaget, ingen godkjenning)»), gjennom den samme veien som verktøysiden og med de norske preparatene i FEST-uttrekket hentet 30.10.2026. Kopien lagres ikke og brukes ikke av appen. Kasusene er syntetiske; pasientopplysninger inngår ikke, og ingen tekst fra Psychiatrienet vises.
+
+**Kontrollørens avgrensning 03.11.2026 (ChatGPT):** Kontrollen av PR #323 avviste seponering fra laveste døgndose i preparatomtalen og delplaner som klinisk produkt. Der en klinisk forsvarlig komplett plan ikke finnes, skal verktøyet si «komplett plan ikke tilgjengelig». Nedtrappingen skal bruke dokumenterte små relative trinn og praktiske metoder (mikstur eller dråper, dokumentert deling, validert apotektilberedning, formbytte med kjent ekvivalens), ikke uvaliderte oppmålinger. Fysisk minste dose skal skilles fra individuell sluttdose, og tempoet skal styres av symptomer. Ingen av de fire reglene er godkjent.
 
 ## 1. Regelversjonene til kontroll
 
-Kontrolløren bes vurdere hver regel for nøyaktig versjonen og fingeravtrykket i tabellen, i det kliniske omfanget i avsnitt 7. «Tekniske hindringer» er det som ville stoppet en registrert godkjenning utenom selve kontrollen, som åpne valg uten avklaring.
+Kontrolløren bes vurdere hver regel for nøyaktig versjonen og fingeravtrykket i tabellen, i det kliniske omfanget i avsnitt 9. «Tekniske hindringer» er det som ville stoppet en registrert godkjenning utenom selve kontrollen, som åpne valg uten avklaring.
 
 | Regel | Versjon | Fingeravtrykk | Status i dag | Vurdert av kontrolløren | Tekniske hindringer for en godkjenning |
 | --- | --- | --- | --- | --- | --- |
-| `seponering-amitriptylin` | 13 | `b2af54866d179898436bcd1a1cdbcfb680b40cdf863ca4b2733d9c191c8dd330` | ikke ferdig kontrollert | **nei** | Regelen har åpne valg som må avklares faglig: plan.forlop[0].vurderinger[1].nar.dager (åpent forslag), fra.vurderinger.etter_seponering (åpent forslag), fra.faser[0].avslutning (åpent forslag). |
-| `seponering-nortriptylin` | 13 | `924e9ca1f319b03a412edcf769ee37e9f48ac24ee98388e7a5807a316aa58728` | ikke ferdig kontrollert | **nei** | Regelen har åpne valg som må avklares faglig: plan.forlop[0].vurderinger[1].nar.dager (åpent forslag), fra.vurderinger.etter_seponering (åpent forslag), fra.faser[0].avslutning (åpent forslag). |
-| `seponering-escitalopram` | 13 | `4c5529f5bc5432b55ad18f89536cc8378c908460ed67b1a8c73bdd5d9f1b65e0` | ikke ferdig kontrollert | **nei** | Regelen har åpne valg som må avklares faglig: plan.forlop[0].vurderinger[1].nar.dager (åpent forslag), fra.vurderinger.etter_seponering (åpent forslag), fra.faser[0].avslutning (åpent forslag). |
-| `seponering-sertralin` | 13 | `15981a63e41e5be569b7c05300a4bb75aed90b080e5c660db0b1af63b9b950fc` | ikke ferdig kontrollert | **nei** | Regelen har åpne valg som må avklares faglig: plan.forlop[0].vurderinger[1].nar.dager (åpent forslag), fra.vurderinger.etter_seponering (åpent forslag), fra.faser[0].avslutning (åpent forslag). |
+| `seponering-amitriptylin` | 13 | `95d2593c91f0275ce07615f37fee78fa5320e04f052f95452da93304bf58c71d` | ikke ferdig kontrollert | **nei** | ingen |
+| `seponering-nortriptylin` | 13 | `7a1fa2239530052f075d43562c55625e1fb59664c491e1a2b5352f0bce3ebbe3` | ikke ferdig kontrollert | **nei** | ingen |
+| `seponering-escitalopram` | 13 | `5ff620a04bcfd389b755c8ea97dee44d0ca0964b0d40ee276f5116865d663d28` | ikke ferdig kontrollert | **nei** | ingen |
+| `seponering-sertralin` | 13 | `c77c7f3688ac1464f33f992eb1e0b46249ae981d867c4cb955c9776683c9688f` | ikke ferdig kontrollert | **nei** | ingen |
 
 ## 2. Før en godkjenning kan registreres
 
-- Kontrollen gjelder nøyaktig versjonen og fingeravtrykket i tabellen over. De tre åpne valgene i hver regel (avslutningens grunnlag, oppfølgingstiden etter siste dose og grunnlaget for vurderingen etter seponering) må avklares av kontrolløren. Grensen for når seponering kan planlegges, er valgt av Peder som faglig beslutningstaker (beslutningskortet i K1-tråden 03.11.2026) og står som avklaring av den; den er ikke uavhengig kontrollert.
-- Fagkontrollene 29. og 30.10.2026 godkjente ingen avslutning og ingen fast nedre grense (beslutning 2–4). K1 endrer dette med Peders valg; kontrolløren må ta stilling til konflikten (spørsmål K1.1), ikke bare til beregningene.
-- Godkjenningen registreres i en egen PR, med avklaringene som en ny regelversjon og kontrollørens avgrensning. Endres en regel før det, stemmer ikke fingeravtrykket, og kontrollen må gjøres på nytt.
-- Tråd F har avsluttet kildefunnene i RCPsych «Stopping antidepressants» (`rcpsych-stopping`, sak 4 og 5, 03.11.2026); faktumet om små reduksjoner fra starten er rettet (`docs/verktøy-rettelse-langvarig.md`). Avslutningen bygger i tillegg på to nye utdrag fra samme kilde (`RCPSYCH.heltSlutt` og `RCPSYCH.eksempel1`).
+- Kontrollen gjelder nøyaktig versjonen og fingeravtrykket i tabellen over. Reglene har ingen åpne valg.
+- Grensen «laveste døgndose i preparatomtalen» fra forrige runde er trukket tilbake av Peder og avvist i kontrollen; den finnes ikke i reglene.
+- En komplett plan krever en sluttdose med kildegrunnlag eller en dokumentert faglig beslutning, og en metode som kan gi små nok trinn ned til den (spørsmål K1.9–K1.15). Før det er på plass, gir reglene ingen plan.
+- Godkjenningen registreres i en egen PR, med kontrollørens avgrensning. Endres en regel før det, stemmer ikke fingeravtrykket, og kontrollen må gjøres på nytt.
 - Sperrene for de kliniske verktøyene og synligheten bare for administratorer beholdes til verktøyene er klare for klinisk prøvebruk og Peder har godkjent åpning for vanlige brukere.
 
 ## 3. Spørsmål til kontrolløren
 
 | # | Spørsmål | Anbefalt svar |
 | --- | --- | --- |
-| K1.1 | Kan seponering planlegges når nedtrappingen stopper på laveste døgndose preparatomtalen oppgir for voksne, eller lavere (escitalopram 5 mg, nortriptylin 25 mg, amitriptylin 10 mg, sertralin 25 mg)? Ingen kilde angir en dose som er lav nok, og RCPsych viser eksempler som går mye lavere med flytende form før seponering. | Ja, som en avgrenset første avslutning: grensen er en dose preparatomtalen selv bruker, seponeringen skjer først etter en eksplisitt vurdering av symptomer, og planen følger opp etter siste dose. Peder har valgt grensen; den erstatter beslutning 2–4 fra 29. og 30.10.2026 bare for disse fire reglene. Peder valgte grensen som prinsipp for escitalopram, nortriptylin og amitriptylin; sertralin er lagt til etter samme prinsipp (spørsmål K1.8). |
-| K1.2 | Siste trinn er seponering fra den siste dosen som kan gis: escitalopram dråper fra 3 mg, nortriptylin fra 20 mg (15 mg kan ikke gis med hele tabletter, og 10 mg er 50 % reduksjon). For nortriptylin er det siste trinnet dermed større enn de andre. Er det akseptabelt? | Ja for escitalopram dråper. For nortriptylin anbefales en særskilt vurdering: alternativet er et mellomtrinn på 10 mg, som krever en reduksjon på 50 %, som verktøyet i dag ikke tilbyr. Uten et slikt valg er seponering fra 20 mg etter en vurdering det som kan gis. |
-| K1.3 | Siste dose gis et helt trinn (minst 28 dager) før seponering, og seponeringen forutsetter at forskriveren har funnet dosen tolerert. Er det akseptabelt som avslutningens grunnlag (åpent valg)? | Ja. Det er samme minstetid og samme symptomstyrte vurdering som ved hver reduksjon (NICE, RCPsych). |
-| K1.4 | Vurderingen etter siste dose er satt til 28 dager etter siste dose, samme minstetid som et trinn (åpent valg). Kildene angir ingen bestemt oppfølgingstid. Er det akseptabelt? | Ja, som en minstetid for en planlagt vurdering; seponeringssymptomer kan komme senere, og teksten sier hva som gjøres ved funn. |
-| K1.5 | K0-01 (escitalopram 10 mg tablett) kan ikke fullføres med tabletter. Fra 10 mg dråper er forløpet komplett (K1-01). Skal verktøyet tilby overgang fra tablett til dråper med samme døgndose? | Ikke i K1. Overgangen krever at preparatomtalen for dråpene registreres som kilde og at mg-ekvivalensen er dokumentert; det bør være en egen, avgrenset kontroll. |
-| K1.6 | K0-02 (sertralin 100 mg) og K0-03 (amitriptylin 25 mg) kan ikke fullføres: med de norske styrkene og høyst 25 % per trinn stopper planene over grensen (sertralin på 75 mg etter én reduksjon, amitriptylin på 20 mg). RCPsychs eksempel 1 bruker om lag 50 % per trinn. Skal et større siste trinn tillates under en grense? | Ikke i K1. Planene er delplaner som sier hva de ikke dekker. Et større siste trinn er en ny faglig beslutning som bør vurderes samlet for alle stoffene, med kildegrunnlaget. |
-| K1.7 | Ved lang behandlingstid (10 % per trinn) når ingen plan grensen innenfor planhorisonten eller med preparatene, så de forblir delplaner. Er det akseptabelt? | Ja. Planen sier at den ikke er komplett og hvorfor, og en ny plan beregnes fra dosen pasienten bruker. |
-| K1.8 | Skal sertralin ha den samme avslutningen, med grensen 25 mg? 25 mg er laveste startdose i preparatomtalen (ved enkelte angstlidelser; ved depresjon er startdosen 50 mg). Med tablettene på 25, 50 og 100 mg (FEST oppgir bare deling i to, til 25 mg) når ingen plan i omfanget grensen: 100 mg stopper på 75 mg (K1-21), 200 mg på 75 mg (K1-22). Konsentratet til mikstur (Zoloft 20 mg/ml) er markedsført, men brukes ikke før doseringen per ml og måleoppløsningen er dokumentert (P5). I den godkjente kryssnedtrappingen sertralin → mirtazapin (v10) er 25 → 0 mg uttrykkelig utenfor og planlegges individuelt. | Ja, som regel: planene forblir delplaner som sier hvorfor, og avslutningen tas i bruk først når et større siste trinn (K1.6) eller konsentratet er avklart. Avgrensningen i kryssnedtrappingen sertralin → mirtazapin gjelder fortsatt den regelen og endres ikke. |
+| K1.9 | Hvilken sluttdose (siste dose før seponering) er klinisk forsvarlig for hvert av de fire stoffene, og med hvilket kildegrunnlag? Ingen av kildene som er registrert (NICE NG222, RCPsych, preparatomtalene) angir en. Uten en sluttdose gir reglene ingen komplett plan. | Avgjøres faglig, stoff for stoff, med kilde eller dokumentert begrunnelse. Sluttdosen skal skilles fra den fysisk minste dosen (avsnittet om lave doser). OUSFAR foreslår ingen dose. |
+| K1.10 | Escitalopram dråper (20 mg/ml, én dråpe er 1 mg) kommer ned til 3 mg med trinn på høyst 25 %. Videre er 3 → 2 mg en reduksjon på 33 % og 2 → 1 mg 50 %. Er hele dråper under 3 mg akseptable som trinn når tempoet styres av symptomer og dosen holdes lenger ved behov? | Avgjøres faglig. Ja ville gjøre escitalopram dråper til det første stoffet med en mulig komplett plan, med sluttdosen fra K1.9. |
+| K1.11 | Overgang fra escitalopram tablett til dråper (K0-01, svaret på K1.5): hvilken dokumentasjon av eksakt ekvivalens kreves? Preparatomtalen for dråpene er ikke registrert som kilde i OUSFAR. | Preparatomtalen for dråpene registreres som kilde, og ekvivalensen hentes derfra. Står den ikke der, tilbys ingen overgang. |
+| K1.12 | Nortriptylin finnes bare som tabletter på 10, 25 og 50 mg, og FEST oppgir ikke at de kan deles. Planene stopper på 20 mg, fordi 15 mg ikke kan gis og 10 mg er en reduksjon på 50 %. Finnes dokumentert deling av 10 mg-tabletten, eller en annen dokumentert metode? | Bare med dokumentasjon i preparatomtalen eller FEST. Uten den forblir nortriptylin «komplett plan ikke tilgjengelig». |
+| K1.13 | Amitriptylin mikstur 10 mg/5 ml finnes bare med godkjenningsfritak. Ifølge preparatomtalen følger det med en dobbel måleskje på 2,5 og 5 ml, det vil si 5 og 10 mg. Fra 20 mg gir det 15 (25 %), 10 (33 %) og 5 mg (50 %). Skal preparater med godkjenningsfritak kunne inngå i en plan? | Ikke nå. Godkjenningsfritak krever en søknad for hver pasient, og måleskjeen gir ikke mindre trinn enn tablettene under 20 mg. |
+| K1.14 | Sertralin konsentrat til mikstur (Zoloft 20 mg/ml) er markedsført og har en gradert pipette i lokket, men preparatomtalen oppgir ikke graderingen, og konsentratet skal fortynnes før bruk. Kan konsentratet brukes til små trinn når graderingen er dokumentert? | Ja, når graderingen og den minste dosen som kan måles, er dokumentert fra produsenten eller pakningsvedlegget. Til da brukes konsentratet ikke. |
+| K1.15 | Skal verktøyet kunne bruke en validert apotektilberedning (for eksempel en mikstur med lav styrke), og hva kreves som dokumentasjon? | Bare en navngitt tilberedning med dokumentert styrke, holdbarhet og måleutstyr. Ingen er dokumentert i dag. |
 
-## 4. Hva klinikeren kan gjøre, og hvilke forløp som er komplette
+## 4. Kontrollørens svar på K1.1–K1.8 (03.11.2026)
 
-Med godkjenning ville verktøyet planlegge en nedtrapping helt til seponering, med vurdering før hver reduksjon og 28 dager etter siste dose, i disse tilfellene i det kliniske omfanget:
+| # | Spørsmålet i forrige runde | Svar | Hva det betyr nå |
+| --- | --- | --- | --- |
+| K1.1 | Seponering fra laveste døgndose i preparatomtalen | Nei | Ingen fast nedre grense fra preparatomtalen. Grensen er fjernet. |
+| K1.2 | Seponering fra den siste dosen som kan gis (nortriptylin 20 mg) | Nei | At neste dose ikke finnes, er ingen grunn til å seponere. |
+| K1.3 | Siste dose et helt trinn før seponering | Ja, som standard, med varighet styrt av symptomer | Krav til en senere avslutning. |
+| K1.4 | Vurdering 28 dager etter siste dose | Ett oppfølgingspunkt, ikke det eneste | Krav til en senere avslutning. |
+| K1.5 | Overgang fra escitalopram tablett til dråper | Dokumenter eksakt ekvivalens | Spørsmål K1.11. |
+| K1.6 | Større siste trinn (om lag 50 %) | Nei, ikke generelt | Ingen generelt større siste trinn. |
+| K1.7 | Delplaner ved lang behandlingstid | Nei, delplaner er ikke et klinisk produkt | Reglene viser «komplett plan ikke tilgjengelig». |
+| K1.8 | Sertralin med grensen 25 mg | Nei | Ingen automatisk grense for sertralin. |
 
-- Nortriptylin tablett 25, 50, 75, 100 og 150 mg ved kort behandlingstid: seponert fra dag 29, 113, 169, 197 og 253 (kasus K1-03–K1-05, K1-23 og K1-24). Siste dose er 20 mg.
-- Escitalopram dråper 10, 15 og 20 mg ved kort behandlingstid: seponert fra dag 141, 197 og 225 (kasus K1-01, K1-25 og K1-02). Siste dose er 3 mg.
+## 5. Hva verktøyet viser, og hvorfor ingen plan er komplett
 
-Disse forløpene er fortsatt delplaner, og planen sier hva den ikke dekker:
+Med en godkjenning av versjon 13 viser verktøyet ingen doser for de fire stoffene. Det står «Komplett plan ikke tilgjengelig» og grunnen, og forskriveren kan fortsatt velge dose der et trinn ikke kan gis nøyaktig. Det gjelder hvert tilfelle i det kliniske omfanget (alle planer i omfanget og kasus K1-01–K1-13).
 
-- Amitriptylin ved kort behandlingstid stopper på 20 mg, over grensen på 10 mg, fordi 15 mg ikke kan gis med hele tabletter (K1-06 og K1-07).
-- Escitalopram tablett 20 mg gir én reduksjon til 15 mg (K1-08).
-- Lang behandlingstid stopper over grensen for escitalopram, nortriptylin og amitriptylin (K1-09 og K1-10); for sertralin er lang behandlingstid utenfor omfanget.
-- Sertralin tablett 100 og 200 mg stopper på 75 mg, over grensen på 25 mg, fordi 56,25 mg ikke kan gis og 50 mg er en reduksjon på 33 % (K1-21 og K1-22). Konsentratet til mikstur brukes ikke (spørsmål K1.8).
+Ingen plan er komplett fordi ingen regel har en sluttdose (K1.9), og fordi de dokumenterte metodene stopper nedtrappingen med trinn på høyst 25 % (10 % ved lang behandlingstid) ved disse dosene:
 
-Tabellen i avsnitt 8 viser hvert tilfelle i omfanget med planutfallet.
+- Escitalopram dråper: 3 mg ved kort og 9 mg ved lang behandlingstid. Escitalopram tablett 20 mg: 15 mg etter én reduksjon.
+- Nortriptylin og amitriptylin: 20 mg ved kort behandlingstid; ved lang behandlingstid én reduksjon (50 → 45 mg, amitriptylin 75 → 70 mg).
+- Sertralin: 75 mg (tablettene er 25, 50 og 100 mg; FEST oppgir bare deling i to).
+
+Avsnittet «Hvor nedtrappingen stopper med dagens metoder» viser dette for hvert tilfelle, regnet med versjon 12 (som ga en delplan) under en simulert godkjenning. Den er bare et grunnlag for spørsmålene og vises ikke i appen.
 
 **K0-kasusene:**
 
 | K0 | Situasjon | Resultat i K1 |
 | --- | --- | --- |
-| K0-01 | Escitalopram 10 mg tablett, kort | Ikke komplett. Tablett 10 mg er utenfor omfanget (K1-11). Fra 10 mg dråper er forløpet komplett til seponering (K1-01); overgang fra tablett er spørsmål K1.5. |
-| K0-02 | Sertralin 100 mg tablett, kort | Delplan: én reduksjon til 75 mg, over grensen på 25 mg (K1-21). Spørsmål K1.6 og K1.8. |
-| K0-03 | Amitriptylin 25 mg tablett, kort | Delplan: én reduksjon til 20 mg, over grensen på 10 mg (K1-06). Spørsmål K1.6. |
+| K0-01 | Escitalopram 10 mg tablett, kort | Ingen plan: tablett 10 mg er utenfor omfanget (K1-14). Fra 10 mg dråper: «komplett plan ikke tilgjengelig» (K1-01). Overgang til dråper: spørsmål K1.11. |
+| K0-02 | Sertralin 100 mg tablett, kort | «Komplett plan ikke tilgjengelig» (K1-10). Spørsmål K1.9 og K1.14. |
+| K0-03 | Amitriptylin 25 mg tablett, kort | «Komplett plan ikke tilgjengelig» (K1-08). Spørsmål K1.9 og K1.13. |
 
-## 5. Hva som er endret fra versjon 12
+## 6. Lave doser med norske preparater, og kildene
 
-- Nedtrappingsfasen har fått en avslutning med seponering fra høyst laveste døgndose i preparatomtalen (`fra_hoyst_mg`), lest fra regelens egen grense for lav dose, så ingen ny dose er skrevet inn. Peders valg står som avklaring av grensen.
-- Forløpet har to vurderingspunkter: før hver reduksjon og før seponering (kildegrunnlag NICE og RCPsych), og 28 dager etter siste dose (åpent valg).
-- Teksten om at planen ikke går til null er erstattet av teksten om avslutningen, og et nytt kildetro utsagn sier at nedtrappingen går helt til null, og at seponeringssymptomer kan komme uansett hvor lav dosen er.
-- Regneeksemplene viser planene til seponering; escitalopram og sertralin har hvert sitt nye eksempel der planen stopper over grensen (fra 20 og 100 mg ved lang behandlingstid).
-- Det kliniske omfanget ved kort behandlingstid er utvidet med vanlige startdoser innenfor preparatomtalens doseområde: nortriptylin tablett 75 og 100 mg (dmp-noritren pkt. 4.2: 50–75 mg i starten, opptil 150 mg) og escitalopram dråper 15 mg (dmp-cipralex pkt. 4.2: 5–20 mg). Begge gir komplette forløp (K1-23–K1-25).
-- Resten av omfanget, trinnstørrelser, trinnlengder, spørsmål, unntak og bekreftelser er uendret. Den langsomme varianten for hvert stoff er uendret og har ingen avslutning.
-- Planene for de andre nedtrappingsreglene er uendret; de godkjente reglene (vortioksetin v12, bupropion v5, agomelatin v1) har samme fingeravtrykk som før.
+| Stoff | Hva som finnes | Hva som mangler for små trinn | Kilde |
+| --- | --- | --- | --- |
+| Escitalopram | Tabletter 5, 10 og 20 mg (10 og 20 mg kan deles i to). Dråper 20 mg/ml, én dråpe er 1 mg. | Under 1 mg krever fortynning, som ikke er dokumentert. Trinnene under 3 mg er over 25 % (K1.10). | FEST-uttrekket; dmp-cipralex |
+| Nortriptylin | Tabletter 10, 25 og 50 mg. | Deling er ikke oppgitt i FEST. Ingen flytende form (K1.12). | FEST-uttrekket; dmp-noritren |
+| Amitriptylin | Tabletter 10, 25 og 50 mg. Mikstur 10 mg/5 ml og 50 mg/5 ml bare med godkjenningsfritak. | Deling er ikke oppgitt i FEST. Måleskjeen til miksturen på 10 mg/5 ml gir 2,5 og 5 ml, det vil si 5 og 10 mg (K1.13). | FEST-uttrekket; dmp-sarotex; preparatomtalen for Amitriptyline 10 mg/5 ml oral solution (Syri Limited, revidert 09.12.2025, pkt. 6.5) |
+| Sertralin | Tabletter 25, 50 og 100 mg (noen 50 og 100 mg kan deles i to). Konsentrat til mikstur 20 mg/ml. | Pipetten i lokket er gradert, men graderingen er ikke oppgitt, og konsentratet skal fortynnes (K1.14). | FEST-uttrekket; dmp-zoloft; svensk preparatomtale for Zoloft konsentrat pkt. 6.5 og 6.6 |
 
-## 6. Kjente mangler
+Ingen tabeller fra Psychiatrienet er brukt eller konvertert. Ingen validert apotektilberedning er dokumentert (K1.15).
 
-- Vurderingspunktet 28 dager etter siste dose står også i delplaner, uten dag, fordi planen ikke seponerer.
-- En delplan med bare én reduksjon sier at neste trinn ikke kan gis, men ikke at avslutningen bare gjelder fra grensen (K1-06, K1-08 og K1-21).
+## 7. Hva som er endret fra versjon 12
 
-## 7. Reglene
+- Forløpet krever en komplett plan (`krever_komplett`): når planen ikke når seponering, viser verktøyet «komplett plan ikke tilgjengelig» og grunnen i stedet for en delplan med doser.
+- Et nytt utsagn om kravet, med NICE og RCPsych som grunnlag, og en usikkerhet om lave doser med norske preparater.
+- Ingen avslutning med seponering, ingen grense og ingen vurderingspunkter er lagt til. Omfang, trinnstørrelser, trinnlengder, spørsmål, unntak, bekreftelser og regneeksempler er uendret.
+- Det kliniske omfanget er ikke utvidet: nortriptylin 75 og 100 mg og escitalopram dråper 15 mg fra forrige runde er tatt ut igjen.
+- Den langsomme varianten for hvert stoff og alle andre regler er uendret; de godkjente reglene har samme fingeravtrykk som før.
+
+## 8. Hvor nedtrappingen stopper med dagens metoder
+
+Hver startdose i det kliniske omfanget, regnet med versjonene forslaget bygger på og den samme simulerte godkjenningen, med forskriverens valg der et trinn ikke kan gis nøyaktig. Planene vises ikke i appen; tabellen viser bare hvor langt de dokumenterte metodene rekker.
+
+| Regel | Tilfelle | Valg forskriveren gjør | Siste dose | Planutfall |
+| --- | --- | --- | --- | --- |
+| `seponering-amitriptylin` v12 | tablett, 25 mg, kort behandlingstid | 20 mg | 20 mg | Delplan, ikke en komplett plan. Ikke dekket: Amitriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. |
+| `seponering-amitriptylin` v12 | tablett, 50 mg, kort behandlingstid | 40 mg, 25 mg, 20 mg | 20 mg | Delplan, ikke en komplett plan. Ikke dekket: Amitriptylin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt. |
+| `seponering-amitriptylin` v12 | tablett, 75 mg, kort behandlingstid | 60 mg, 35 mg, 30 mg, 25 mg, 20 mg | 20 mg | Delplan, ikke en komplett plan. Ikke dekket: Amitriptylin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt. |
+| `seponering-amitriptylin` v12 | tablett, 100 mg, kort behandlingstid | 60 mg, 35 mg, 30 mg, 25 mg, 20 mg | 20 mg | Delplan, ikke en komplett plan. Ikke dekket: Amitriptylin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt. |
+| `seponering-amitriptylin` v12 | tablett, 150 mg, kort behandlingstid | 120 mg, 100 mg, 60 mg, 35 mg, 30 mg, 25 mg, 20 mg | 20 mg | Delplan, ikke en komplett plan. Ikke dekket: Amitriptylin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt. |
+| `seponering-amitriptylin` v12 | tablett, 50 mg, lang behandlingstid | – | 45 mg | Delplan, ikke en komplett plan. Ikke dekket: Amitriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. |
+| `seponering-amitriptylin` v12 | tablett, 75 mg, lang behandlingstid | 70 mg | 70 mg | Delplan, ikke en komplett plan. Ikke dekket: Amitriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. |
+| `seponering-nortriptylin` v12 | tablett, 25 mg, kort behandlingstid | 20 mg | 20 mg | Delplan, ikke en komplett plan. Ikke dekket: Nortriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. |
+| `seponering-nortriptylin` v12 | tablett, 50 mg, kort behandlingstid | 40 mg, 25 mg, 20 mg | 20 mg | Delplan, ikke en komplett plan. Ikke dekket: Nortriptylin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt. |
+| `seponering-nortriptylin` v12 | tablett, 150 mg, kort behandlingstid | 120 mg, 100 mg, 60 mg, 35 mg, 30 mg, 25 mg, 20 mg | 20 mg | Delplan, ikke en komplett plan. Ikke dekket: Nortriptylin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt. |
+| `seponering-nortriptylin` v12 | tablett, 50 mg, lang behandlingstid | – | 45 mg | Delplan, ikke en komplett plan. Ikke dekket: Nortriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. |
+| `seponering-escitalopram` v12 | tablett, 20 mg, kort behandlingstid | – | 15 mg | Delplan, ikke en komplett plan. Ikke dekket: Escitalopram: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. |
+| `seponering-escitalopram` v12 | dråper, oppløsning, 10 mg, kort behandlingstid | 8 mg, 5 mg, 4 mg | 3 mg | Delplan, ikke en komplett plan. Ikke dekket: Escitalopram: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt. |
+| `seponering-escitalopram` v12 | dråper, oppløsning, 20 mg, kort behandlingstid | 12 mg, 7 mg, 6 mg, 5 mg, 4 mg | 3 mg | Delplan, ikke en komplett plan. Ikke dekket: Escitalopram: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt. |
+| `seponering-escitalopram` v12 | dråper, oppløsning, 10 mg, lang behandlingstid | – | 9 mg | Delplan, ikke en komplett plan. Ikke dekket: Escitalopram: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. |
+| `seponering-escitalopram` v12 | dråper, oppløsning, 20 mg, lang behandlingstid | 17 mg, 16 mg, 15 mg, 14 mg, 13 mg, 12 mg, 11 mg, 10 mg | 9 mg | Delplan, ikke en komplett plan. Ikke dekket: Escitalopram: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt. |
+| `seponering-sertralin` v12 | tablett, 100 mg, kort behandlingstid | – | 75 mg | Delplan, ikke en komplett plan. Ikke dekket: Sertralin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. |
+| `seponering-sertralin` v12 | tablett, 200 mg, kort behandlingstid | 125 mg, 100 mg | 75 mg | Delplan, ikke en komplett plan. Ikke dekket: Sertralin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt. |
+
+## 9. Reglene
 
 ### Seponering av amitriptylin, gjentatt prosentvis nedtrapping
 
@@ -99,14 +138,10 @@ Tabellen i avsnitt 8 viser hvert tilfelle i omfanget med planutfallet.
 - Neste reduksjon gjøres først når seponeringssymptomene er borte eller tålelige; ved mer alvorlige symptomer kan forrige dose gjenopptas og nedtrappingen gå langsommere.
   - Tempoet avtales med pasienten; neste reduksjon først når seponeringssymptomene er borte eller tålelige. Nedtrapping kan ta uker til måneder. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
   - Ved mer alvorlige seponeringssymptomer kan forrige dose gjenopptas, og nedtrappingen forsøkes igjen langsommere og med mindre trinn når symptomene er borte. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.21)*
-- Nedtrappingen går trinnvis helt til null; noen trenger svært lave doser før de slutter, og seponeringssymptomer kan komme når legemidlet stoppes, uansett hvor lav dosen er.
-  - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
-  - Trinnene blir mindre etter hvert som dosen synker, og noen trenger svært lave doser før de slutter, helt ned mot 2 % av opprinnelig dose. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), When and how should I stop my antidepressants?)*
-  - Uansett hvor lav dosen er blitt, kan seponeringssymptomer komme når legemidlet stoppes helt; da kan det være nødvendig å starte igjen med en lav dose en tid før nedtrappingen fortsetter. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), If you have been taking antidepressants for longer)*
 
 **OUSFARs selvstendige tilpasninger (må kontrolleres):**
 
-- OUSFAR trapper ned med 25 % av aktuell dose (10 % etter lang behandlingstid) (forskriveren kan velge 5–50 %; begrunnelse kreves over 25 % og over 10 % ved lang behandlingstid), høyst 25 % fra 10 mg, med minst 28 dager per trinn (forskriveren kan velge minst 14 dager, av tekniske grunner høyst 365 dager; begrunnelse kreves under 28 dager ved lang behandlingstid). Stopper nedtrappingen på 10 mg eller lavere (laveste døgndose preparatomtalen oppgir for voksne), fordi neste trinn ikke kan gis med norske preparater innenfor valgområdet eller planhorisonten er nådd, gis siste dose et helt trinn, og amitriptylin seponeres deretter, først når forskriveren ved vurderingen har funnet at dosen er tolerert uten plagsomme seponeringssymptomer. Stopper den over 10 mg, er planen en delplan: pasienten fortsetter med dosen til forskriveren har vurdert videre nedtrapping. Dagene er tidligste tidspunkt; utsettes et trinn, forskyves resten.
+- OUSFAR trapper ned med 25 % av aktuell dose (10 % etter lang behandlingstid) (forskriveren kan velge 5–50 %; begrunnelse kreves over 25 % og over 10 % ved lang behandlingstid), høyst 25 % fra 10 mg, med minst 28 dager per trinn (forskriveren kan velge minst 14 dager, av tekniske grunner høyst 365 dager; begrunnelse kreves under 28 dager ved lang behandlingstid). Planen viser høyst 12 reduksjoner (en teknisk planhorisont) og går ikke til null: siste dose fortsetter til forskriveren har vurdert videre nedtrapping, og avslutningen vurderes individuelt.
   - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
   - Et første trinn kan være en firedel eller halvdel av dosen, med to til fire uker før neste; tiden mellom trinnene bør være så lang som seponeringssymptomene krever. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), How should I gradually reduce my dose?)*
 - Planen er et startforslag som forskriveren må bekrefte, og forskriveren må oppgi om behandlingstiden er lang. Forskriveren kan velge mindre trinn eller lengre tid innenfor områdene over; et raskere valg krever begrunnelse, og valget og begrunnelsen vises i planen. Har et tidligere forsøk gitt seponeringssymptomer, gjelder den langsomme varianten.
@@ -114,10 +149,13 @@ Tabellen i avsnitt 8 viser hvert tilfelle i omfanget med planutfallet.
   - Mange trenger mer støtte for å lykkes med seponering, særlig når tidligere forsøk har gitt seponeringssymptomer eller ikke har lyktes. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.15)*
   - Etter mange måneders behandling, tidligere plagsomme seponeringssymptomer eller bruk av et legemiddel med høy risiko for seponeringssymptomer anbefaler RCPsych små reduksjoner fra starten. Som eksempel nevnes 5–10 % av den opprinnelige dosen. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), If you have been taking antidepressants for longer)*
   - Andre deler av veiledningen beskriver også proporsjonale reduksjoner beregnet fra sist brukte dose. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), Examples of tapering plans)*
-- Stopper nedtrappingen på 10 mg eller lavere (laveste døgndose preparatomtalen oppgir for voksne), fordi neste trinn ikke kan gis med norske preparater innenfor valgområdet eller planhorisonten er nådd, gis siste dose et helt trinn, og amitriptylin seponeres deretter, først når forskriveren ved vurderingen har funnet at dosen er tolerert uten plagsomme seponeringssymptomer. Stopper den over 10 mg, er planen en delplan: pasienten fortsetter med dosen til forskriveren har vurdert videre nedtrapping. Dagene er tidligste tidspunkt; utsettes et trinn, forskyves resten.
+- Planen går ikke til null og foreslår ingen dato for siste dose. Ingen avslutning (nulltrinn) og ingen fast nedre grense er godkjent (fagkontrollene 29. og 30.10.2026). Planen viser høyst 12 reduksjoner, aldri et trinn under laveste dose formuleringen kan gi, og stopper ved første trinn som ikke kan gis, med mindre forskriveren velger en av de nærmeste dosene som kan gis, med faktisk reduksjon innenfor valgområdet. Der stopper planen av tekniske grunner: pasienten fortsetter med dosen til forskriveren har vurdert videre nedtrapping, og dosen er ikke nødvendigvis en sluttdose. Dagene er tidligste tidspunkt; utsettes et trinn, forskyves resten.
   - Trinnene blir mindre etter hvert som dosen synker, og noen trenger svært lave doser før de slutter, helt ned mot 2 % av opprinnelig dose. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), When and how should I stop my antidepressants?)*
 - Regelen gjelder fra dosen pasienten faktisk bruker, opp til høyeste døgndose for voksne i preparatomtalen; over den stopper beregningen, og en begrunnelse kan ikke overstyre det. Innenfor den gjelder preparatomtalens grenser for eldre, indikasjoner og nedsatt organfunksjon: en uttrykkelig høyeste dose stopper, en forsiktighetsgrense krever begrunnelse. En dose ellers utenfor rammen krever et ja og en begrunnelse, og organfunksjon og interaksjoner må være vurdert for alle stoffer. *(OUSFARs vurdering)*
 - Under 18 år, ved akutt alvorlig bivirkning, forgiftning, alvorlig interaksjon eller behov for rask seponering, ved ustabil dose, uregelmessig inntak eller bytte, og ved kontraindikasjoner stopper den ordinære planleggingen; nedtrappingen må da planlegges individuelt. *(OUSFARs vurdering)*
+- Verktøyet viser bare en komplett plan helt til seponering. Når planen ikke kan nå seponering med trinn som kan gis, står det «Komplett plan ikke tilgjengelig» og hvorfor, ikke en delplan med doser. Trinnene skal bli mindre etter hvert som dosen synker, og noen trenger svært lave doser før de slutter.
+  - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
+  - Trinnene blir mindre etter hvert som dosen synker, og noen trenger svært lave doser før de slutter, helt ned mot 2 % av opprinnelig dose. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), When and how should I stop my antidepressants?)*
 
 **Betingelser:**
 
@@ -156,14 +194,10 @@ Tabellen i avsnitt 8 viser hvert tilfelle i omfanget med planutfallet.
 - Neste reduksjon gjøres først når seponeringssymptomene er borte eller tålelige; ved mer alvorlige symptomer kan forrige dose gjenopptas og nedtrappingen gå langsommere.
   - Tempoet avtales med pasienten; neste reduksjon først når seponeringssymptomene er borte eller tålelige. Nedtrapping kan ta uker til måneder. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
   - Ved mer alvorlige seponeringssymptomer kan forrige dose gjenopptas, og nedtrappingen forsøkes igjen langsommere og med mindre trinn når symptomene er borte. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.21)*
-- Nedtrappingen går trinnvis helt til null; noen trenger svært lave doser før de slutter, og seponeringssymptomer kan komme når legemidlet stoppes, uansett hvor lav dosen er.
-  - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
-  - Trinnene blir mindre etter hvert som dosen synker, og noen trenger svært lave doser før de slutter, helt ned mot 2 % av opprinnelig dose. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), When and how should I stop my antidepressants?)*
-  - Uansett hvor lav dosen er blitt, kan seponeringssymptomer komme når legemidlet stoppes helt; da kan det være nødvendig å starte igjen med en lav dose en tid før nedtrappingen fortsetter. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), If you have been taking antidepressants for longer)*
 
 **OUSFARs selvstendige tilpasninger (må kontrolleres):**
 
-- OUSFAR trapper ned med 25 % av aktuell dose (10 % etter lang behandlingstid) (forskriveren kan velge 5–50 %; begrunnelse kreves over 25 % og over 10 % ved lang behandlingstid), høyst 25 % fra 25 mg, med minst 28 dager per trinn (forskriveren kan velge minst 14 dager, av tekniske grunner høyst 365 dager; begrunnelse kreves under 28 dager ved lang behandlingstid). Stopper nedtrappingen på 25 mg eller lavere (laveste døgndose preparatomtalen oppgir for voksne), fordi neste trinn ikke kan gis med norske preparater innenfor valgområdet eller planhorisonten er nådd, gis siste dose et helt trinn, og nortriptylin seponeres deretter, først når forskriveren ved vurderingen har funnet at dosen er tolerert uten plagsomme seponeringssymptomer. Stopper den over 25 mg, er planen en delplan: pasienten fortsetter med dosen til forskriveren har vurdert videre nedtrapping. Dagene er tidligste tidspunkt; utsettes et trinn, forskyves resten.
+- OUSFAR trapper ned med 25 % av aktuell dose (10 % etter lang behandlingstid) (forskriveren kan velge 5–50 %; begrunnelse kreves over 25 % og over 10 % ved lang behandlingstid), høyst 25 % fra 25 mg, med minst 28 dager per trinn (forskriveren kan velge minst 14 dager, av tekniske grunner høyst 365 dager; begrunnelse kreves under 28 dager ved lang behandlingstid). Planen viser høyst 12 reduksjoner (en teknisk planhorisont) og går ikke til null: siste dose fortsetter til forskriveren har vurdert videre nedtrapping, og avslutningen vurderes individuelt.
   - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
   - Et første trinn kan være en firedel eller halvdel av dosen, med to til fire uker før neste; tiden mellom trinnene bør være så lang som seponeringssymptomene krever. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), How should I gradually reduce my dose?)*
 - Planen er et startforslag som forskriveren må bekrefte, og forskriveren må oppgi om behandlingstiden er lang. Forskriveren kan velge mindre trinn eller lengre tid innenfor områdene over; et raskere valg krever begrunnelse, og valget og begrunnelsen vises i planen. Har et tidligere forsøk gitt seponeringssymptomer, gjelder den langsomme varianten.
@@ -171,7 +205,7 @@ Tabellen i avsnitt 8 viser hvert tilfelle i omfanget med planutfallet.
   - Mange trenger mer støtte for å lykkes med seponering, særlig når tidligere forsøk har gitt seponeringssymptomer eller ikke har lyktes. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.15)*
   - Etter mange måneders behandling, tidligere plagsomme seponeringssymptomer eller bruk av et legemiddel med høy risiko for seponeringssymptomer anbefaler RCPsych små reduksjoner fra starten. Som eksempel nevnes 5–10 % av den opprinnelige dosen. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), If you have been taking antidepressants for longer)*
   - Andre deler av veiledningen beskriver også proporsjonale reduksjoner beregnet fra sist brukte dose. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), Examples of tapering plans)*
-- Stopper nedtrappingen på 25 mg eller lavere (laveste døgndose preparatomtalen oppgir for voksne), fordi neste trinn ikke kan gis med norske preparater innenfor valgområdet eller planhorisonten er nådd, gis siste dose et helt trinn, og nortriptylin seponeres deretter, først når forskriveren ved vurderingen har funnet at dosen er tolerert uten plagsomme seponeringssymptomer. Stopper den over 25 mg, er planen en delplan: pasienten fortsetter med dosen til forskriveren har vurdert videre nedtrapping. Dagene er tidligste tidspunkt; utsettes et trinn, forskyves resten.
+- Planen går ikke til null og foreslår ingen dato for siste dose. Ingen avslutning (nulltrinn) og ingen fast nedre grense er godkjent (fagkontrollene 29. og 30.10.2026). Planen viser høyst 12 reduksjoner, aldri et trinn under laveste dose formuleringen kan gi, og stopper ved første trinn som ikke kan gis, med mindre forskriveren velger en av de nærmeste dosene som kan gis, med faktisk reduksjon innenfor valgområdet. Der stopper planen av tekniske grunner: pasienten fortsetter med dosen til forskriveren har vurdert videre nedtrapping, og dosen er ikke nødvendigvis en sluttdose. Dagene er tidligste tidspunkt; utsettes et trinn, forskyves resten.
   - Trinnene blir mindre etter hvert som dosen synker, og noen trenger svært lave doser før de slutter, helt ned mot 2 % av opprinnelig dose. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), When and how should I stop my antidepressants?)*
 - Regelen gjelder fra dosen pasienten faktisk bruker, opp til høyeste døgndose for voksne i preparatomtalen; over den stopper beregningen, og en begrunnelse kan ikke overstyre det. Innenfor den gjelder preparatomtalens grenser for eldre, indikasjoner og nedsatt organfunksjon: en uttrykkelig høyeste dose stopper, en forsiktighetsgrense krever begrunnelse. En dose ellers utenfor rammen krever et ja og en begrunnelse, og organfunksjon og interaksjoner må være vurdert for alle stoffer. *(OUSFARs vurdering)*
 - Under 18 år, ved akutt alvorlig bivirkning, forgiftning, alvorlig interaksjon eller behov for rask seponering, ved ustabil dose, uregelmessig inntak eller bytte, og ved kontraindikasjoner stopper den ordinære planleggingen; nedtrappingen må da planlegges individuelt. *(OUSFARs vurdering)*
@@ -181,6 +215,9 @@ Tabellen i avsnitt 8 viser hvert tilfelle i omfanget med planutfallet.
   - Voksne: vanligvis 50–75 mg daglig i starten (25–30 mg ved lettere tilfeller), opptil 150 mg og sjelden 200 mg. Eldre: start 25–30 mg, vedlikehold 25–50 mg. *([dmp-noritren](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-04958.pdf), pkt. 4.2)*
 - Hos eldre krever over 50 mg en begrunnelse. Grensen er OUSFARs valg ut fra vedlikeholdsdosen i preparatomtalen, ikke en grense preparatomtalen setter, og «eldre» har ingen bestemt alder der. Den er til uavhengig kontroll.
   - Voksne: vanligvis 50–75 mg daglig i starten (25–30 mg ved lettere tilfeller), opptil 150 mg og sjelden 200 mg. Eldre: start 25–30 mg, vedlikehold 25–50 mg. *([dmp-noritren](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-04958.pdf), pkt. 4.2)*
+- Verktøyet viser bare en komplett plan helt til seponering. Når planen ikke kan nå seponering med trinn som kan gis, står det «Komplett plan ikke tilgjengelig» og hvorfor, ikke en delplan med doser. Trinnene skal bli mindre etter hvert som dosen synker, og noen trenger svært lave doser før de slutter.
+  - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
+  - Trinnene blir mindre etter hvert som dosen synker, og noen trenger svært lave doser før de slutter, helt ned mot 2 % av opprinnelig dose. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), When and how should I stop my antidepressants?)*
 
 **Betingelser:**
 
@@ -196,7 +233,7 @@ Tabellen i avsnitt 8 viser hvert tilfelle i omfanget med planutfallet.
 
 **Klinisk omfang** (en godkjenning kan bare gjelde disse tilfellene; alt annet stopper med forklaring):
 
-- 25, 50, 75, 100 og 150 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 10, 25 og 50 mg
+- 25, 50 og 150 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 10, 25 og 50 mg
 - 50 mg, FEST-legemiddelform 53, ved lang behandlingstid og nei på de andre spørsmålene, reduksjon per trinn (% av aktuell dose) 10 %, styrker (fra) 10, 25 og 50 mg
 
 ### Seponering av escitalopram, gjentatt prosentvis nedtrapping
@@ -220,14 +257,10 @@ Tabellen i avsnitt 8 viser hvert tilfelle i omfanget med planutfallet.
 - Neste reduksjon gjøres først når seponeringssymptomene er borte eller tålelige; ved mer alvorlige symptomer kan forrige dose gjenopptas og nedtrappingen gå langsommere.
   - Tempoet avtales med pasienten; neste reduksjon først når seponeringssymptomene er borte eller tålelige. Nedtrapping kan ta uker til måneder. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
   - Ved mer alvorlige seponeringssymptomer kan forrige dose gjenopptas, og nedtrappingen forsøkes igjen langsommere og med mindre trinn når symptomene er borte. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.21)*
-- Nedtrappingen går trinnvis helt til null; noen trenger svært lave doser før de slutter, og seponeringssymptomer kan komme når legemidlet stoppes, uansett hvor lav dosen er.
-  - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
-  - Trinnene blir mindre etter hvert som dosen synker, og noen trenger svært lave doser før de slutter, helt ned mot 2 % av opprinnelig dose. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), When and how should I stop my antidepressants?)*
-  - Uansett hvor lav dosen er blitt, kan seponeringssymptomer komme når legemidlet stoppes helt; da kan det være nødvendig å starte igjen med en lav dose en tid før nedtrappingen fortsetter. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), If you have been taking antidepressants for longer)*
 
 **OUSFARs selvstendige tilpasninger (må kontrolleres):**
 
-- OUSFAR trapper ned med 25 % av aktuell dose (10 % etter lang behandlingstid) (forskriveren kan velge 5–50 %; begrunnelse kreves over 25 % og over 10 % ved lang behandlingstid), høyst 25 % fra 5 mg, med minst 28 dager per trinn (forskriveren kan velge minst 14 dager, av tekniske grunner høyst 365 dager; begrunnelse kreves under 28 dager ved lang behandlingstid). Stopper nedtrappingen på 5 mg eller lavere (laveste døgndose preparatomtalen oppgir for voksne), fordi neste trinn ikke kan gis med norske preparater innenfor valgområdet eller planhorisonten er nådd, gis siste dose et helt trinn, og escitalopram seponeres deretter, først når forskriveren ved vurderingen har funnet at dosen er tolerert uten plagsomme seponeringssymptomer. Stopper den over 5 mg, er planen en delplan: pasienten fortsetter med dosen til forskriveren har vurdert videre nedtrapping. Dagene er tidligste tidspunkt; utsettes et trinn, forskyves resten.
+- OUSFAR trapper ned med 25 % av aktuell dose (10 % etter lang behandlingstid) (forskriveren kan velge 5–50 %; begrunnelse kreves over 25 % og over 10 % ved lang behandlingstid), høyst 25 % fra 5 mg, med minst 28 dager per trinn (forskriveren kan velge minst 14 dager, av tekniske grunner høyst 365 dager; begrunnelse kreves under 28 dager ved lang behandlingstid). Planen viser høyst 12 reduksjoner (en teknisk planhorisont) og går ikke til null: siste dose fortsetter til forskriveren har vurdert videre nedtrapping, og avslutningen vurderes individuelt.
   - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
   - Et første trinn kan være en firedel eller halvdel av dosen, med to til fire uker før neste; tiden mellom trinnene bør være så lang som seponeringssymptomene krever. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), How should I gradually reduce my dose?)*
 - Planen er et startforslag som forskriveren må bekrefte, og forskriveren må oppgi om behandlingstiden er lang. Forskriveren kan velge mindre trinn eller lengre tid innenfor områdene over; et raskere valg krever begrunnelse, og valget og begrunnelsen vises i planen. Har et tidligere forsøk gitt seponeringssymptomer, gjelder den langsomme varianten.
@@ -235,12 +268,15 @@ Tabellen i avsnitt 8 viser hvert tilfelle i omfanget med planutfallet.
   - Mange trenger mer støtte for å lykkes med seponering, særlig når tidligere forsøk har gitt seponeringssymptomer eller ikke har lyktes. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.15)*
   - Etter mange måneders behandling, tidligere plagsomme seponeringssymptomer eller bruk av et legemiddel med høy risiko for seponeringssymptomer anbefaler RCPsych små reduksjoner fra starten. Som eksempel nevnes 5–10 % av den opprinnelige dosen. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), If you have been taking antidepressants for longer)*
   - Andre deler av veiledningen beskriver også proporsjonale reduksjoner beregnet fra sist brukte dose. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), Examples of tapering plans)*
-- Stopper nedtrappingen på 5 mg eller lavere (laveste døgndose preparatomtalen oppgir for voksne), fordi neste trinn ikke kan gis med norske preparater innenfor valgområdet eller planhorisonten er nådd, gis siste dose et helt trinn, og escitalopram seponeres deretter, først når forskriveren ved vurderingen har funnet at dosen er tolerert uten plagsomme seponeringssymptomer. Stopper den over 5 mg, er planen en delplan: pasienten fortsetter med dosen til forskriveren har vurdert videre nedtrapping. Dagene er tidligste tidspunkt; utsettes et trinn, forskyves resten.
+- Planen går ikke til null og foreslår ingen dato for siste dose. Ingen avslutning (nulltrinn) og ingen fast nedre grense er godkjent (fagkontrollene 29. og 30.10.2026). Planen viser høyst 12 reduksjoner, aldri et trinn under laveste dose formuleringen kan gi, og stopper ved første trinn som ikke kan gis, med mindre forskriveren velger en av de nærmeste dosene som kan gis, med faktisk reduksjon innenfor valgområdet. Der stopper planen av tekniske grunner: pasienten fortsetter med dosen til forskriveren har vurdert videre nedtrapping, og dosen er ikke nødvendigvis en sluttdose. Dagene er tidligste tidspunkt; utsettes et trinn, forskyves resten.
   - Trinnene blir mindre etter hvert som dosen synker, og noen trenger svært lave doser før de slutter, helt ned mot 2 % av opprinnelig dose. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), When and how should I stop my antidepressants?)*
 - Regelen gjelder fra dosen pasienten faktisk bruker, opp til høyeste døgndose for voksne i preparatomtalen; over den stopper beregningen, og en begrunnelse kan ikke overstyre det. Innenfor den gjelder preparatomtalens grenser for eldre, indikasjoner og nedsatt organfunksjon: en uttrykkelig høyeste dose stopper, en forsiktighetsgrense krever begrunnelse. En dose ellers utenfor rammen krever et ja og en begrunnelse, og organfunksjon og interaksjoner må være vurdert for alle stoffer. *(OUSFARs vurdering)*
 - Under 18 år, ved akutt alvorlig bivirkning, forgiftning, alvorlig interaksjon eller behov for rask seponering, ved ustabil dose, uregelmessig inntak eller bytte, og ved kontraindikasjoner stopper den ordinære planleggingen; nedtrappingen må da planlegges individuelt. *(OUSFARs vurdering)*
 - Pilotregelens sluttdose på 2,5 mg er fjernet; fagkontrollene 29. og 30.10.2026 avviste både den og en fast nedre grense.
   - Dosene som oppgis er 5–20 mg daglig; sikkerheten over 20 mg daglig er ikke vist. *([dmp-cipralex](https://produktinformasjon.legemiddelsok.no/preparatomtaler/2002-00713.pdf), pkt. 4.2)*
+- Verktøyet viser bare en komplett plan helt til seponering. Når planen ikke kan nå seponering med trinn som kan gis, står det «Komplett plan ikke tilgjengelig» og hvorfor, ikke en delplan med doser. Trinnene skal bli mindre etter hvert som dosen synker, og noen trenger svært lave doser før de slutter.
+  - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
+  - Trinnene blir mindre etter hvert som dosen synker, og noen trenger svært lave doser før de slutter, helt ned mot 2 % av opprinnelig dose. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), When and how should I stop my antidepressants?)*
 
 **Betingelser:**
 
@@ -260,7 +296,7 @@ Tabellen i avsnitt 8 viser hvert tilfelle i omfanget med planutfallet.
 **Klinisk omfang** (en godkjenning kan bare gjelde disse tilfellene; alt annet stopper med forklaring):
 
 - 20 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 5, 10 og 20 mg
-- 10, 15 og 20 mg, FEST-legemiddelform 748, med nei på alle spørsmålene, styrker (fra) 1 mg
+- 10 og 20 mg, FEST-legemiddelform 748, med nei på alle spørsmålene, styrker (fra) 1 mg
 - 10 og 20 mg, FEST-legemiddelform 748, ved lang behandlingstid og nei på de andre spørsmålene, reduksjon per trinn (% av aktuell dose) 10 %, styrker (fra) 1 mg
 
 ### Seponering av sertralin, gjentatt prosentvis nedtrapping
@@ -280,14 +316,10 @@ Tabellen i avsnitt 8 viser hvert tilfelle i omfanget med planutfallet.
 - Neste reduksjon gjøres først når seponeringssymptomene er borte eller tålelige; ved mer alvorlige symptomer kan forrige dose gjenopptas og nedtrappingen gå langsommere.
   - Tempoet avtales med pasienten; neste reduksjon først når seponeringssymptomene er borte eller tålelige. Nedtrapping kan ta uker til måneder. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
   - Ved mer alvorlige seponeringssymptomer kan forrige dose gjenopptas, og nedtrappingen forsøkes igjen langsommere og med mindre trinn når symptomene er borte. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.21)*
-- Nedtrappingen går trinnvis helt til null; noen trenger svært lave doser før de slutter, og seponeringssymptomer kan komme når legemidlet stoppes, uansett hvor lav dosen er.
-  - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
-  - Trinnene blir mindre etter hvert som dosen synker, og noen trenger svært lave doser før de slutter, helt ned mot 2 % av opprinnelig dose. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), When and how should I stop my antidepressants?)*
-  - Uansett hvor lav dosen er blitt, kan seponeringssymptomer komme når legemidlet stoppes helt; da kan det være nødvendig å starte igjen med en lav dose en tid før nedtrappingen fortsetter. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), If you have been taking antidepressants for longer)*
 
 **OUSFARs selvstendige tilpasninger (må kontrolleres):**
 
-- OUSFAR trapper ned med 25 % av aktuell dose (10 % etter lang behandlingstid) (forskriveren kan velge 5–50 %; begrunnelse kreves over 25 % og over 10 % ved lang behandlingstid), høyst 25 % fra 25 mg, med minst 28 dager per trinn (forskriveren kan velge minst 14 dager, av tekniske grunner høyst 365 dager; begrunnelse kreves under 28 dager ved lang behandlingstid). Stopper nedtrappingen på 25 mg eller lavere (laveste døgndose preparatomtalen oppgir for voksne), fordi neste trinn ikke kan gis med norske preparater innenfor valgområdet eller planhorisonten er nådd, gis siste dose et helt trinn, og sertralin seponeres deretter, først når forskriveren ved vurderingen har funnet at dosen er tolerert uten plagsomme seponeringssymptomer. Stopper den over 25 mg, er planen en delplan: pasienten fortsetter med dosen til forskriveren har vurdert videre nedtrapping. Dagene er tidligste tidspunkt; utsettes et trinn, forskyves resten.
+- OUSFAR trapper ned med 25 % av aktuell dose (10 % etter lang behandlingstid) (forskriveren kan velge 5–50 %; begrunnelse kreves over 25 % og over 10 % ved lang behandlingstid), høyst 25 % fra 25 mg, med minst 28 dager per trinn (forskriveren kan velge minst 14 dager, av tekniske grunner høyst 365 dager; begrunnelse kreves under 28 dager ved lang behandlingstid). Planen viser høyst 12 reduksjoner (en teknisk planhorisont) og går ikke til null: siste dose fortsetter til forskriveren har vurdert videre nedtrapping, og avslutningen vurderes individuelt.
   - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
   - Et første trinn kan være en firedel eller halvdel av dosen, med to til fire uker før neste; tiden mellom trinnene bør være så lang som seponeringssymptomene krever. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), How should I gradually reduce my dose?)*
 - Planen er et startforslag som forskriveren må bekrefte, og forskriveren må oppgi om behandlingstiden er lang. Forskriveren kan velge mindre trinn eller lengre tid innenfor områdene over; et raskere valg krever begrunnelse, og valget og begrunnelsen vises i planen. Har et tidligere forsøk gitt seponeringssymptomer, gjelder den langsomme varianten.
@@ -295,10 +327,13 @@ Tabellen i avsnitt 8 viser hvert tilfelle i omfanget med planutfallet.
   - Mange trenger mer støtte for å lykkes med seponering, særlig når tidligere forsøk har gitt seponeringssymptomer eller ikke har lyktes. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.15)*
   - Etter mange måneders behandling, tidligere plagsomme seponeringssymptomer eller bruk av et legemiddel med høy risiko for seponeringssymptomer anbefaler RCPsych små reduksjoner fra starten. Som eksempel nevnes 5–10 % av den opprinnelige dosen. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), If you have been taking antidepressants for longer)*
   - Andre deler av veiledningen beskriver også proporsjonale reduksjoner beregnet fra sist brukte dose. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), Examples of tapering plans)*
-- Stopper nedtrappingen på 25 mg eller lavere (laveste døgndose preparatomtalen oppgir for voksne), fordi neste trinn ikke kan gis med norske preparater innenfor valgområdet eller planhorisonten er nådd, gis siste dose et helt trinn, og sertralin seponeres deretter, først når forskriveren ved vurderingen har funnet at dosen er tolerert uten plagsomme seponeringssymptomer. Stopper den over 25 mg, er planen en delplan: pasienten fortsetter med dosen til forskriveren har vurdert videre nedtrapping. Dagene er tidligste tidspunkt; utsettes et trinn, forskyves resten.
+- Planen går ikke til null og foreslår ingen dato for siste dose. Ingen avslutning (nulltrinn) og ingen fast nedre grense er godkjent (fagkontrollene 29. og 30.10.2026). Planen viser høyst 12 reduksjoner, aldri et trinn under laveste dose formuleringen kan gi, og stopper ved første trinn som ikke kan gis, med mindre forskriveren velger en av de nærmeste dosene som kan gis, med faktisk reduksjon innenfor valgområdet. Der stopper planen av tekniske grunner: pasienten fortsetter med dosen til forskriveren har vurdert videre nedtrapping, og dosen er ikke nødvendigvis en sluttdose. Dagene er tidligste tidspunkt; utsettes et trinn, forskyves resten.
   - Trinnene blir mindre etter hvert som dosen synker, og noen trenger svært lave doser før de slutter, helt ned mot 2 % av opprinnelig dose. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), When and how should I stop my antidepressants?)*
 - Regelen gjelder fra dosen pasienten faktisk bruker, opp til høyeste døgndose for voksne i preparatomtalen; over den stopper beregningen, og en begrunnelse kan ikke overstyre det. Innenfor den gjelder preparatomtalens grenser for eldre, indikasjoner og nedsatt organfunksjon: en uttrykkelig høyeste dose stopper, en forsiktighetsgrense krever begrunnelse. En dose ellers utenfor rammen krever et ja og en begrunnelse, og organfunksjon og interaksjoner må være vurdert for alle stoffer. *(OUSFARs vurdering)*
 - Under 18 år, ved akutt alvorlig bivirkning, forgiftning, alvorlig interaksjon eller behov for rask seponering, ved ustabil dose, uregelmessig inntak eller bytte, og ved kontraindikasjoner stopper den ordinære planleggingen; nedtrappingen må da planlegges individuelt. *(OUSFARs vurdering)*
+- Verktøyet viser bare en komplett plan helt til seponering. Når planen ikke kan nå seponering med trinn som kan gis, står det «Komplett plan ikke tilgjengelig» og hvorfor, ikke en delplan med doser. Trinnene skal bli mindre etter hvert som dosen synker, og noen trenger svært lave doser før de slutter.
+  - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
+  - Trinnene blir mindre etter hvert som dosen synker, og noen trenger svært lave doser før de slutter, helt ned mot 2 % av opprinnelig dose. *([rcpsych-stopping](https://www.rcpsych.ac.uk/mental-health/treatments-and-wellbeing/stopping-antidepressants), When and how should I stop my antidepressants?)*
 
 **Betingelser:**
 
@@ -315,43 +350,38 @@ Tabellen i avsnitt 8 viser hvert tilfelle i omfanget med planutfallet.
 
 - 100 og 200 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 25, 50 og 100 mg
 
-## 8. Alle planer i det kliniske omfanget
+## 10. Alle planer i det kliniske omfanget
 
-Hver startdose i hvert tilfelle i reglenes kliniske omfang, med hver plan forskriverens valg kan gi: ved hvert trinn som ikke kan gis nøyaktig, er hver dose som tilbys, fulgt. I alle 66 valgene tilbys nøyaktig én dose, så hver startdose gir én plan. Radene er slik verktøysiden og kopien av planen ville vist dem; dagene er minstetider, og hvert trinn forutsetter en ny vurdering.
+Hver startdose i hvert tilfelle i reglenes kliniske omfang, med hver plan forskriverens valg kan gi: ved hvert trinn som ikke kan gis nøyaktig, er hver dose som tilbys, fulgt. I alle 51 valgene tilbys nøyaktig én dose, så hver startdose gir én plan. Radene er slik verktøysiden og kopien av planen ville vist dem; dagene er minstetider, og hvert trinn forutsetter en ny vurdering.
 
-| Regel | Tilfelle | Planer | Reduksjoner | Valg forskriveren gjør | Siste dose | Planutfall |
+| Regel | Tilfelle | Planer | Reduksjoner | Valg forskriveren gjør | Siste dose | Undertittel |
 | --- | --- | --- | --- | --- | --- | --- |
-| `seponering-amitriptylin` | tablett, 25 mg, kort behandlingstid | 1 | 1 | 1 | 20 mg | Delplan, ikke en komplett plan. Ikke dekket: Amitriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. |
-| `seponering-amitriptylin` | tablett, 50 mg, kort behandlingstid | 1 | 4 | 3 | 20 mg | Delplan, ikke en komplett plan. Ikke dekket: Amitriptylin: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 10 mg eller lavere (planen står på 20 mg). |
-| `seponering-amitriptylin` | tablett, 75 mg, kort behandlingstid | 1 | 6 | 5 | 20 mg | Delplan, ikke en komplett plan. Ikke dekket: Amitriptylin: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 10 mg eller lavere (planen står på 20 mg). |
-| `seponering-amitriptylin` | tablett, 100 mg, kort behandlingstid | 1 | 7 | 5 | 20 mg | Delplan, ikke en komplett plan. Ikke dekket: Amitriptylin: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 10 mg eller lavere (planen står på 20 mg). |
-| `seponering-amitriptylin` | tablett, 150 mg, kort behandlingstid | 1 | 9 | 7 | 20 mg | Delplan, ikke en komplett plan. Ikke dekket: Amitriptylin: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 10 mg eller lavere (planen står på 20 mg). |
-| `seponering-amitriptylin` | tablett, 50 mg, lang behandlingstid | 1 | 1 | 0 | 45 mg | Delplan, ikke en komplett plan. Ikke dekket: Amitriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. |
-| `seponering-amitriptylin` | tablett, 75 mg, lang behandlingstid | 1 | 1 | 1 | 70 mg | Delplan, ikke en komplett plan. Ikke dekket: Amitriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. |
-| `seponering-nortriptylin` | tablett, 25 mg, kort behandlingstid | 1 | 1 | 1 | 20 mg | Komplett plan til sluttmålet: Nortriptylin seponert fra dag 29. |
-| `seponering-nortriptylin` | tablett, 50 mg, kort behandlingstid | 1 | 4 | 3 | 20 mg | Komplett plan til sluttmålet: Nortriptylin seponert fra dag 113. |
-| `seponering-nortriptylin` | tablett, 75 mg, kort behandlingstid | 1 | 6 | 5 | 20 mg | Komplett plan til sluttmålet: Nortriptylin seponert fra dag 169. |
-| `seponering-nortriptylin` | tablett, 100 mg, kort behandlingstid | 1 | 7 | 5 | 20 mg | Komplett plan til sluttmålet: Nortriptylin seponert fra dag 197. |
-| `seponering-nortriptylin` | tablett, 150 mg, kort behandlingstid | 1 | 9 | 7 | 20 mg | Komplett plan til sluttmålet: Nortriptylin seponert fra dag 253. |
-| `seponering-nortriptylin` | tablett, 50 mg, lang behandlingstid | 1 | 1 | 0 | 45 mg | Delplan, ikke en komplett plan. Ikke dekket: Nortriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. |
-| `seponering-escitalopram` | tablett, 20 mg, kort behandlingstid | 1 | 1 | 0 | 15 mg | Delplan, ikke en komplett plan. Ikke dekket: Escitalopram: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. |
-| `seponering-escitalopram` | dråper, oppløsning, 10 mg, kort behandlingstid | 1 | 5 | 3 | 3 mg | Komplett plan til sluttmålet: Escitalopram seponert fra dag 141. |
-| `seponering-escitalopram` | dråper, oppløsning, 15 mg, kort behandlingstid | 1 | 7 | 5 | 3 mg | Komplett plan til sluttmålet: Escitalopram seponert fra dag 197. |
-| `seponering-escitalopram` | dråper, oppløsning, 20 mg, kort behandlingstid | 1 | 8 | 5 | 3 mg | Komplett plan til sluttmålet: Escitalopram seponert fra dag 225. |
-| `seponering-escitalopram` | dråper, oppløsning, 10 mg, lang behandlingstid | 1 | 1 | 0 | 9 mg | Delplan, ikke en komplett plan. Ikke dekket: Escitalopram: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. |
-| `seponering-escitalopram` | dråper, oppløsning, 20 mg, lang behandlingstid | 1 | 10 | 8 | 9 mg | Delplan, ikke en komplett plan. Ikke dekket: Escitalopram: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 5 mg eller lavere (planen står på 9 mg). |
-| `seponering-sertralin` | tablett, 100 mg, kort behandlingstid | 1 | 1 | 0 | 75 mg | Delplan, ikke en komplett plan. Ikke dekket: Sertralin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. |
-| `seponering-sertralin` | tablett, 200 mg, kort behandlingstid | 1 | 4 | 2 | 75 mg | Delplan, ikke en komplett plan. Ikke dekket: Sertralin: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 25 mg eller lavere (planen står på 75 mg). |
+| `seponering-amitriptylin` | tablett, 25 mg, kort behandlingstid | 1 | 0 | 1 | – | ingen plan |
+| `seponering-amitriptylin` | tablett, 50 mg, kort behandlingstid | 1 | 0 | 3 | – | ingen plan |
+| `seponering-amitriptylin` | tablett, 75 mg, kort behandlingstid | 1 | 0 | 5 | – | ingen plan |
+| `seponering-amitriptylin` | tablett, 100 mg, kort behandlingstid | 1 | 0 | 5 | – | ingen plan |
+| `seponering-amitriptylin` | tablett, 150 mg, kort behandlingstid | 1 | 0 | 7 | – | ingen plan |
+| `seponering-amitriptylin` | tablett, 50 mg, lang behandlingstid | 1 | 0 | 0 | – | ingen plan |
+| `seponering-amitriptylin` | tablett, 75 mg, lang behandlingstid | 1 | 0 | 1 | – | ingen plan |
+| `seponering-nortriptylin` | tablett, 25 mg, kort behandlingstid | 1 | 0 | 1 | – | ingen plan |
+| `seponering-nortriptylin` | tablett, 50 mg, kort behandlingstid | 1 | 0 | 3 | – | ingen plan |
+| `seponering-nortriptylin` | tablett, 150 mg, kort behandlingstid | 1 | 0 | 7 | – | ingen plan |
+| `seponering-nortriptylin` | tablett, 50 mg, lang behandlingstid | 1 | 0 | 0 | – | ingen plan |
+| `seponering-escitalopram` | tablett, 20 mg, kort behandlingstid | 1 | 0 | 0 | – | ingen plan |
+| `seponering-escitalopram` | dråper, oppløsning, 10 mg, kort behandlingstid | 1 | 0 | 3 | – | ingen plan |
+| `seponering-escitalopram` | dråper, oppløsning, 20 mg, kort behandlingstid | 1 | 0 | 5 | – | ingen plan |
+| `seponering-escitalopram` | dråper, oppløsning, 10 mg, lang behandlingstid | 1 | 0 | 0 | – | ingen plan |
+| `seponering-escitalopram` | dråper, oppløsning, 20 mg, lang behandlingstid | 1 | 0 | 8 | – | ingen plan |
+| `seponering-sertralin` | tablett, 100 mg, kort behandlingstid | 1 | 0 | 0 | – | ingen plan |
+| `seponering-sertralin` | tablett, 200 mg, kort behandlingstid | 1 | 0 | 2 | – | ingen plan |
 
 #### Seponering av amitriptylin, gjentatt prosentvis nedtrapping: tablett, 25 mg, kort behandlingstid
 
 - Kan velges for trinn 1 (dag 1, beregnet 18,75 mg, fra 25 mg): 20 mg (−20 %). Valgt: 20 mg.
 
-*Én mulig første reduksjon med revurdering, ikke en validert fullstendig nedtrappingsplan.*
+**Ingen plan vises** (stopp):
 
-**Delplan, ikke en komplett plan. Ikke dekket: Amitriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.**
-
-- Fra dag 1: Amitriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))
+- Komplett plan ikke tilgjengelig for amitriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.
 
 #### Seponering av amitriptylin, gjentatt prosentvis nedtrapping: tablett, 50 mg, kort behandlingstid
 
@@ -359,17 +389,9 @@ Hver startdose i hvert tilfelle i reglenes kliniske omfang, med hver plan forskr
 - Kan velges for trinn 3 (dag 57, beregnet 22,5 mg, fra 30 mg): 25 mg (−16,67 %). Valgt: 25 mg.
 - Kan velges for trinn 4 (dag 85, beregnet 18,75 mg, fra 25 mg): 20 mg (−20 %). Valgt: 20 mg.
 
-*Et startforløp med revurdering, ikke en fullstendig plan: avslutningen vurderes individuelt.*
+**Ingen plan vises** (stopp):
 
-**Delplan, ikke en komplett plan. Ikke dekket: Amitriptylin: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 10 mg eller lavere (planen står på 20 mg).**
-
-- Dag 1–28: Amitriptylin peroralt: 40 mg = 4 tabletter à 10 mg (valgt av forskriveren (beregnet 37,5 mg; −20 %))
-- Dag 29: Vurdering (Amitriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 29–56: Amitriptylin peroralt: 30 mg = 3 tabletter à 10 mg
-- Dag 57: Vurdering (Amitriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 57–84: Amitriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))
-- Dag 85: Vurdering (Amitriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Fra dag 85: Amitriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))
+- Komplett plan ikke tilgjengelig for amitriptylin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt.
 
 #### Seponering av amitriptylin, gjentatt prosentvis nedtrapping: tablett, 75 mg, kort behandlingstid
 
@@ -379,21 +401,9 @@ Hver startdose i hvert tilfelle i reglenes kliniske omfang, med hver plan forskr
 - Kan velges for trinn 5 (dag 113, beregnet 22,5 mg, fra 30 mg): 25 mg (−16,67 %). Valgt: 25 mg.
 - Kan velges for trinn 6 (dag 141, beregnet 18,75 mg, fra 25 mg): 20 mg (−20 %). Valgt: 20 mg.
 
-*Et startforløp med revurdering, ikke en fullstendig plan: avslutningen vurderes individuelt.*
+**Ingen plan vises** (stopp):
 
-**Delplan, ikke en komplett plan. Ikke dekket: Amitriptylin: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 10 mg eller lavere (planen står på 20 mg).**
-
-- Dag 1–28: Amitriptylin peroralt: 60 mg = 1 tablett à 10 mg + 1 tablett à 50 mg (valgt av forskriveren (beregnet 56,25 mg; −20 %))
-- Dag 29: Vurdering (Amitriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 29–56: Amitriptylin peroralt: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg
-- Dag 57: Vurdering (Amitriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 57–84: Amitriptylin peroralt: 35 mg = 1 tablett à 10 mg + 1 tablett à 25 mg (valgt av forskriveren (beregnet 33,75 mg; −22,22 %))
-- Dag 85: Vurdering (Amitriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 85–112: Amitriptylin peroralt: 30 mg = 3 tabletter à 10 mg (valgt av forskriveren (beregnet 26,25 mg; −14,29 %))
-- Dag 113: Vurdering (Amitriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 113–140: Amitriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))
-- Dag 141: Vurdering (Amitriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Fra dag 141: Amitriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))
+- Komplett plan ikke tilgjengelig for amitriptylin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt.
 
 #### Seponering av amitriptylin, gjentatt prosentvis nedtrapping: tablett, 100 mg, kort behandlingstid
 
@@ -403,23 +413,9 @@ Hver startdose i hvert tilfelle i reglenes kliniske omfang, med hver plan forskr
 - Kan velges for trinn 6 (dag 141, beregnet 22,5 mg, fra 30 mg): 25 mg (−16,67 %). Valgt: 25 mg.
 - Kan velges for trinn 7 (dag 169, beregnet 18,75 mg, fra 25 mg): 20 mg (−20 %). Valgt: 20 mg.
 
-*Et startforløp med revurdering, ikke en fullstendig plan: avslutningen vurderes individuelt.*
+**Ingen plan vises** (stopp):
 
-**Delplan, ikke en komplett plan. Ikke dekket: Amitriptylin: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 10 mg eller lavere (planen står på 20 mg).**
-
-- Dag 1–28: Amitriptylin peroralt: 75 mg = 1 tablett à 25 mg + 1 tablett à 50 mg
-- Dag 29: Vurdering (Amitriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 29–56: Amitriptylin peroralt: 60 mg = 1 tablett à 10 mg + 1 tablett à 50 mg (valgt av forskriveren (beregnet 56,25 mg; −20 %))
-- Dag 57: Vurdering (Amitriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 57–84: Amitriptylin peroralt: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg
-- Dag 85: Vurdering (Amitriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 85–112: Amitriptylin peroralt: 35 mg = 1 tablett à 10 mg + 1 tablett à 25 mg (valgt av forskriveren (beregnet 33,75 mg; −22,22 %))
-- Dag 113: Vurdering (Amitriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 113–140: Amitriptylin peroralt: 30 mg = 3 tabletter à 10 mg (valgt av forskriveren (beregnet 26,25 mg; −14,29 %))
-- Dag 141: Vurdering (Amitriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 141–168: Amitriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))
-- Dag 169: Vurdering (Amitriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Fra dag 169: Amitriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))
+- Komplett plan ikke tilgjengelig for amitriptylin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt.
 
 #### Seponering av amitriptylin, gjentatt prosentvis nedtrapping: tablett, 150 mg, kort behandlingstid
 
@@ -431,58 +427,33 @@ Hver startdose i hvert tilfelle i reglenes kliniske omfang, med hver plan forskr
 - Kan velges for trinn 8 (dag 197, beregnet 22,5 mg, fra 30 mg): 25 mg (−16,67 %). Valgt: 25 mg.
 - Kan velges for trinn 9 (dag 225, beregnet 18,75 mg, fra 25 mg): 20 mg (−20 %). Valgt: 20 mg.
 
-*Et startforløp med revurdering, ikke en fullstendig plan: avslutningen vurderes individuelt.*
+**Ingen plan vises** (stopp):
 
-**Delplan, ikke en komplett plan. Ikke dekket: Amitriptylin: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 10 mg eller lavere (planen står på 20 mg).**
-
-- Dag 1–28: Amitriptylin peroralt: 120 mg = 2 tabletter à 10 mg + 2 tabletter à 50 mg (valgt av forskriveren (beregnet 112,5 mg; −20 %))
-- Dag 29: Vurdering (Amitriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 29–56: Amitriptylin peroralt: 100 mg = 2 tabletter à 50 mg (valgt av forskriveren (beregnet 90 mg; −16,67 %))
-- Dag 57: Vurdering (Amitriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 57–84: Amitriptylin peroralt: 75 mg = 1 tablett à 25 mg + 1 tablett à 50 mg
-- Dag 85: Vurdering (Amitriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 85–112: Amitriptylin peroralt: 60 mg = 1 tablett à 10 mg + 1 tablett à 50 mg (valgt av forskriveren (beregnet 56,25 mg; −20 %))
-- Dag 113: Vurdering (Amitriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 113–140: Amitriptylin peroralt: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg
-- Dag 141: Vurdering (Amitriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 141–168: Amitriptylin peroralt: 35 mg = 1 tablett à 10 mg + 1 tablett à 25 mg (valgt av forskriveren (beregnet 33,75 mg; −22,22 %))
-- Dag 169: Vurdering (Amitriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 169–196: Amitriptylin peroralt: 30 mg = 3 tabletter à 10 mg (valgt av forskriveren (beregnet 26,25 mg; −14,29 %))
-- Dag 197: Vurdering (Amitriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 197–224: Amitriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))
-- Dag 225: Vurdering (Amitriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Fra dag 225: Amitriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))
+- Komplett plan ikke tilgjengelig for amitriptylin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt.
 
 #### Seponering av amitriptylin, gjentatt prosentvis nedtrapping: tablett, 50 mg, lang behandlingstid
 
 Ingen trinn krever forskriverens valg.
 
-*Én mulig første reduksjon med revurdering, ikke en validert fullstendig nedtrappingsplan.*
+**Ingen plan vises** (stopp):
 
-**Delplan, ikke en komplett plan. Ikke dekket: Amitriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.**
-
-- Fra dag 1: Amitriptylin peroralt: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg
+- Komplett plan ikke tilgjengelig for amitriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.
 
 #### Seponering av amitriptylin, gjentatt prosentvis nedtrapping: tablett, 75 mg, lang behandlingstid
 
 - Kan velges for trinn 1 (dag 1, beregnet 67,5 mg, fra 75 mg): 70 mg (−6,67 %). Valgt: 70 mg.
 
-*Én mulig første reduksjon med revurdering, ikke en validert fullstendig nedtrappingsplan.*
+**Ingen plan vises** (stopp):
 
-**Delplan, ikke en komplett plan. Ikke dekket: Amitriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.**
-
-- Fra dag 1: Amitriptylin peroralt: 70 mg = 2 tabletter à 10 mg + 1 tablett à 50 mg (valgt av forskriveren (beregnet 67,5 mg; −6,67 %))
+- Komplett plan ikke tilgjengelig for amitriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.
 
 #### Seponering av nortriptylin, gjentatt prosentvis nedtrapping: tablett, 25 mg, kort behandlingstid
 
 - Kan velges for trinn 1 (dag 1, beregnet 18,75 mg, fra 25 mg): 20 mg (−20 %). Valgt: 20 mg.
 
-**Komplett plan til sluttmålet: Nortriptylin seponert fra dag 29.**
+**Ingen plan vises** (stopp):
 
-- Dag 1–28: Nortriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))
-- Dag 29: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Fra dag 29: Nortriptylin peroralt: Seponert
-- Dag 56: Vurdering (Nortriptylin): Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.
+- Komplett plan ikke tilgjengelig for nortriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.
 
 #### Seponering av nortriptylin, gjentatt prosentvis nedtrapping: tablett, 50 mg, kort behandlingstid
 
@@ -490,70 +461,9 @@ Ingen trinn krever forskriverens valg.
 - Kan velges for trinn 3 (dag 57, beregnet 22,5 mg, fra 30 mg): 25 mg (−16,67 %). Valgt: 25 mg.
 - Kan velges for trinn 4 (dag 85, beregnet 18,75 mg, fra 25 mg): 20 mg (−20 %). Valgt: 20 mg.
 
-**Komplett plan til sluttmålet: Nortriptylin seponert fra dag 113.**
+**Ingen plan vises** (stopp):
 
-- Dag 1–28: Nortriptylin peroralt: 40 mg = 4 tabletter à 10 mg (valgt av forskriveren (beregnet 37,5 mg; −20 %))
-- Dag 29: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 29–56: Nortriptylin peroralt: 30 mg = 3 tabletter à 10 mg
-- Dag 57: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 57–84: Nortriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))
-- Dag 85: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 85–112: Nortriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))
-- Dag 113: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Fra dag 113: Nortriptylin peroralt: Seponert
-- Dag 140: Vurdering (Nortriptylin): Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.
-
-#### Seponering av nortriptylin, gjentatt prosentvis nedtrapping: tablett, 75 mg, kort behandlingstid
-
-- Kan velges for trinn 1 (dag 1, beregnet 56,25 mg, fra 75 mg): 60 mg (−20 %). Valgt: 60 mg.
-- Kan velges for trinn 3 (dag 57, beregnet 33,75 mg, fra 45 mg): 35 mg (−22,22 %). Valgt: 35 mg.
-- Kan velges for trinn 4 (dag 85, beregnet 26,25 mg, fra 35 mg): 30 mg (−14,29 %). Valgt: 30 mg.
-- Kan velges for trinn 5 (dag 113, beregnet 22,5 mg, fra 30 mg): 25 mg (−16,67 %). Valgt: 25 mg.
-- Kan velges for trinn 6 (dag 141, beregnet 18,75 mg, fra 25 mg): 20 mg (−20 %). Valgt: 20 mg.
-
-**Komplett plan til sluttmålet: Nortriptylin seponert fra dag 169.**
-
-- Dag 1–28: Nortriptylin peroralt: 60 mg = 1 tablett à 10 mg + 1 tablett à 50 mg (valgt av forskriveren (beregnet 56,25 mg; −20 %))
-- Dag 29: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 29–56: Nortriptylin peroralt: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg
-- Dag 57: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 57–84: Nortriptylin peroralt: 35 mg = 1 tablett à 10 mg + 1 tablett à 25 mg (valgt av forskriveren (beregnet 33,75 mg; −22,22 %))
-- Dag 85: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 85–112: Nortriptylin peroralt: 30 mg = 3 tabletter à 10 mg (valgt av forskriveren (beregnet 26,25 mg; −14,29 %))
-- Dag 113: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 113–140: Nortriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))
-- Dag 141: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 141–168: Nortriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))
-- Dag 169: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Fra dag 169: Nortriptylin peroralt: Seponert
-- Dag 196: Vurdering (Nortriptylin): Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.
-
-#### Seponering av nortriptylin, gjentatt prosentvis nedtrapping: tablett, 100 mg, kort behandlingstid
-
-- Kan velges for trinn 2 (dag 29, beregnet 56,25 mg, fra 75 mg): 60 mg (−20 %). Valgt: 60 mg.
-- Kan velges for trinn 4 (dag 85, beregnet 33,75 mg, fra 45 mg): 35 mg (−22,22 %). Valgt: 35 mg.
-- Kan velges for trinn 5 (dag 113, beregnet 26,25 mg, fra 35 mg): 30 mg (−14,29 %). Valgt: 30 mg.
-- Kan velges for trinn 6 (dag 141, beregnet 22,5 mg, fra 30 mg): 25 mg (−16,67 %). Valgt: 25 mg.
-- Kan velges for trinn 7 (dag 169, beregnet 18,75 mg, fra 25 mg): 20 mg (−20 %). Valgt: 20 mg.
-
-**Komplett plan til sluttmålet: Nortriptylin seponert fra dag 197.**
-
-- Dag 1–28: Nortriptylin peroralt: 75 mg = 1 tablett à 25 mg + 1 tablett à 50 mg
-- Dag 29: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 29–56: Nortriptylin peroralt: 60 mg = 1 tablett à 10 mg + 1 tablett à 50 mg (valgt av forskriveren (beregnet 56,25 mg; −20 %))
-- Dag 57: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 57–84: Nortriptylin peroralt: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg
-- Dag 85: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 85–112: Nortriptylin peroralt: 35 mg = 1 tablett à 10 mg + 1 tablett à 25 mg (valgt av forskriveren (beregnet 33,75 mg; −22,22 %))
-- Dag 113: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 113–140: Nortriptylin peroralt: 30 mg = 3 tabletter à 10 mg (valgt av forskriveren (beregnet 26,25 mg; −14,29 %))
-- Dag 141: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 141–168: Nortriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))
-- Dag 169: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 169–196: Nortriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))
-- Dag 197: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Fra dag 197: Nortriptylin peroralt: Seponert
-- Dag 224: Vurdering (Nortriptylin): Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.
+- Komplett plan ikke tilgjengelig for nortriptylin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt.
 
 #### Seponering av nortriptylin, gjentatt prosentvis nedtrapping: tablett, 150 mg, kort behandlingstid
 
@@ -565,48 +475,25 @@ Ingen trinn krever forskriverens valg.
 - Kan velges for trinn 8 (dag 197, beregnet 22,5 mg, fra 30 mg): 25 mg (−16,67 %). Valgt: 25 mg.
 - Kan velges for trinn 9 (dag 225, beregnet 18,75 mg, fra 25 mg): 20 mg (−20 %). Valgt: 20 mg.
 
-**Komplett plan til sluttmålet: Nortriptylin seponert fra dag 253.**
+**Ingen plan vises** (stopp):
 
-- Dag 1–28: Nortriptylin peroralt: 120 mg = 2 tabletter à 10 mg + 2 tabletter à 50 mg (valgt av forskriveren (beregnet 112,5 mg; −20 %))
-- Dag 29: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 29–56: Nortriptylin peroralt: 100 mg = 2 tabletter à 50 mg (valgt av forskriveren (beregnet 90 mg; −16,67 %))
-- Dag 57: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 57–84: Nortriptylin peroralt: 75 mg = 1 tablett à 25 mg + 1 tablett à 50 mg
-- Dag 85: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 85–112: Nortriptylin peroralt: 60 mg = 1 tablett à 10 mg + 1 tablett à 50 mg (valgt av forskriveren (beregnet 56,25 mg; −20 %))
-- Dag 113: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 113–140: Nortriptylin peroralt: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg
-- Dag 141: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 141–168: Nortriptylin peroralt: 35 mg = 1 tablett à 10 mg + 1 tablett à 25 mg (valgt av forskriveren (beregnet 33,75 mg; −22,22 %))
-- Dag 169: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 169–196: Nortriptylin peroralt: 30 mg = 3 tabletter à 10 mg (valgt av forskriveren (beregnet 26,25 mg; −14,29 %))
-- Dag 197: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 197–224: Nortriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))
-- Dag 225: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 225–252: Nortriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))
-- Dag 253: Vurdering (Nortriptylin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Fra dag 253: Nortriptylin peroralt: Seponert
-- Dag 280: Vurdering (Nortriptylin): Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.
+- Komplett plan ikke tilgjengelig for nortriptylin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt.
 
 #### Seponering av nortriptylin, gjentatt prosentvis nedtrapping: tablett, 50 mg, lang behandlingstid
 
 Ingen trinn krever forskriverens valg.
 
-*Én mulig første reduksjon med revurdering, ikke en validert fullstendig nedtrappingsplan.*
+**Ingen plan vises** (stopp):
 
-**Delplan, ikke en komplett plan. Ikke dekket: Nortriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.**
-
-- Fra dag 1: Nortriptylin peroralt: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg
+- Komplett plan ikke tilgjengelig for nortriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.
 
 #### Seponering av escitalopram, gjentatt prosentvis nedtrapping: tablett, 20 mg, kort behandlingstid
 
 Ingen trinn krever forskriverens valg.
 
-*Én mulig første reduksjon med revurdering, ikke en validert fullstendig nedtrappingsplan.*
+**Ingen plan vises** (stopp):
 
-**Delplan, ikke en komplett plan. Ikke dekket: Escitalopram: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.**
-
-- Fra dag 1: Escitalopram peroralt: 15 mg = 1 tablett à 10 mg + 1 tablett à 5 mg
+- Komplett plan ikke tilgjengelig for escitalopram: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.
 
 #### Seponering av escitalopram, gjentatt prosentvis nedtrapping: dråper, oppløsning, 10 mg, kort behandlingstid
 
@@ -614,47 +501,9 @@ Ingen trinn krever forskriverens valg.
 - Kan velges for trinn 3 (dag 57, beregnet 4,5 mg, fra 6 mg): 5 mg (−16,67 %). Valgt: 5 mg.
 - Kan velges for trinn 4 (dag 85, beregnet 3,75 mg, fra 5 mg): 4 mg (−20 %). Valgt: 4 mg.
 
-**Komplett plan til sluttmålet: Escitalopram seponert fra dag 141.**
+**Ingen plan vises** (stopp):
 
-- Dag 1–28: Escitalopram peroralt: 8 mg = 8 dråper à 1 mg (valgt av forskriveren (beregnet 7,5 mg; −20 %))
-- Dag 29: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 29–56: Escitalopram peroralt: 6 mg = 6 dråper à 1 mg
-- Dag 57: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 57–84: Escitalopram peroralt: 5 mg = 5 dråper à 1 mg (valgt av forskriveren (beregnet 4,5 mg; −16,67 %))
-- Dag 85: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 85–112: Escitalopram peroralt: 4 mg = 4 dråper à 1 mg (valgt av forskriveren (beregnet 3,75 mg; −20 %))
-- Dag 113: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 113–140: Escitalopram peroralt: 3 mg = 3 dråper à 1 mg
-- Dag 141: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Fra dag 141: Escitalopram peroralt: Seponert
-- Dag 168: Vurdering (Escitalopram): Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.
-
-#### Seponering av escitalopram, gjentatt prosentvis nedtrapping: dråper, oppløsning, 15 mg, kort behandlingstid
-
-- Kan velges for trinn 1 (dag 1, beregnet 11,25 mg, fra 15 mg): 12 mg (−20 %). Valgt: 12 mg.
-- Kan velges for trinn 3 (dag 57, beregnet 6,75 mg, fra 9 mg): 7 mg (−22,22 %). Valgt: 7 mg.
-- Kan velges for trinn 4 (dag 85, beregnet 5,25 mg, fra 7 mg): 6 mg (−14,29 %). Valgt: 6 mg.
-- Kan velges for trinn 5 (dag 113, beregnet 4,5 mg, fra 6 mg): 5 mg (−16,67 %). Valgt: 5 mg.
-- Kan velges for trinn 6 (dag 141, beregnet 3,75 mg, fra 5 mg): 4 mg (−20 %). Valgt: 4 mg.
-
-**Komplett plan til sluttmålet: Escitalopram seponert fra dag 197.**
-
-- Dag 1–28: Escitalopram peroralt: 12 mg = 12 dråper à 1 mg (valgt av forskriveren (beregnet 11,25 mg; −20 %))
-- Dag 29: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 29–56: Escitalopram peroralt: 9 mg = 9 dråper à 1 mg
-- Dag 57: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 57–84: Escitalopram peroralt: 7 mg = 7 dråper à 1 mg (valgt av forskriveren (beregnet 6,75 mg; −22,22 %))
-- Dag 85: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 85–112: Escitalopram peroralt: 6 mg = 6 dråper à 1 mg (valgt av forskriveren (beregnet 5,25 mg; −14,29 %))
-- Dag 113: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 113–140: Escitalopram peroralt: 5 mg = 5 dråper à 1 mg (valgt av forskriveren (beregnet 4,5 mg; −16,67 %))
-- Dag 141: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 141–168: Escitalopram peroralt: 4 mg = 4 dråper à 1 mg (valgt av forskriveren (beregnet 3,75 mg; −20 %))
-- Dag 169: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 169–196: Escitalopram peroralt: 3 mg = 3 dråper à 1 mg
-- Dag 197: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Fra dag 197: Escitalopram peroralt: Seponert
-- Dag 224: Vurdering (Escitalopram): Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.
+- Komplett plan ikke tilgjengelig for escitalopram: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt.
 
 #### Seponering av escitalopram, gjentatt prosentvis nedtrapping: dråper, oppløsning, 20 mg, kort behandlingstid
 
@@ -664,36 +513,17 @@ Ingen trinn krever forskriverens valg.
 - Kan velges for trinn 6 (dag 141, beregnet 4,5 mg, fra 6 mg): 5 mg (−16,67 %). Valgt: 5 mg.
 - Kan velges for trinn 7 (dag 169, beregnet 3,75 mg, fra 5 mg): 4 mg (−20 %). Valgt: 4 mg.
 
-**Komplett plan til sluttmålet: Escitalopram seponert fra dag 225.**
+**Ingen plan vises** (stopp):
 
-- Dag 1–28: Escitalopram peroralt: 15 mg = 15 dråper à 1 mg
-- Dag 29: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 29–56: Escitalopram peroralt: 12 mg = 12 dråper à 1 mg (valgt av forskriveren (beregnet 11,25 mg; −20 %))
-- Dag 57: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 57–84: Escitalopram peroralt: 9 mg = 9 dråper à 1 mg
-- Dag 85: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 85–112: Escitalopram peroralt: 7 mg = 7 dråper à 1 mg (valgt av forskriveren (beregnet 6,75 mg; −22,22 %))
-- Dag 113: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 113–140: Escitalopram peroralt: 6 mg = 6 dråper à 1 mg (valgt av forskriveren (beregnet 5,25 mg; −14,29 %))
-- Dag 141: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 141–168: Escitalopram peroralt: 5 mg = 5 dråper à 1 mg (valgt av forskriveren (beregnet 4,5 mg; −16,67 %))
-- Dag 169: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 169–196: Escitalopram peroralt: 4 mg = 4 dråper à 1 mg (valgt av forskriveren (beregnet 3,75 mg; −20 %))
-- Dag 197: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 197–224: Escitalopram peroralt: 3 mg = 3 dråper à 1 mg
-- Dag 225: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Fra dag 225: Escitalopram peroralt: Seponert
-- Dag 252: Vurdering (Escitalopram): Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.
+- Komplett plan ikke tilgjengelig for escitalopram: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt.
 
 #### Seponering av escitalopram, gjentatt prosentvis nedtrapping: dråper, oppløsning, 10 mg, lang behandlingstid
 
 Ingen trinn krever forskriverens valg.
 
-*Én mulig første reduksjon med revurdering, ikke en validert fullstendig nedtrappingsplan.*
+**Ingen plan vises** (stopp):
 
-**Delplan, ikke en komplett plan. Ikke dekket: Escitalopram: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.**
-
-- Fra dag 1: Escitalopram peroralt: 9 mg = 9 dråper à 1 mg
+- Komplett plan ikke tilgjengelig for escitalopram: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.
 
 #### Seponering av escitalopram, gjentatt prosentvis nedtrapping: dråper, oppløsning, 20 mg, lang behandlingstid
 
@@ -706,85 +536,54 @@ Ingen trinn krever forskriverens valg.
 - Kan velges for trinn 8 (dag 197, beregnet 10,8 mg, fra 12 mg): 11 mg (−8,33 %). Valgt: 11 mg.
 - Kan velges for trinn 9 (dag 225, beregnet 9,9 mg, fra 11 mg): 10 mg (−9,09 %). Valgt: 10 mg.
 
-*Et startforløp med revurdering, ikke en fullstendig plan: avslutningen vurderes individuelt.*
+**Ingen plan vises** (stopp):
 
-**Delplan, ikke en komplett plan. Ikke dekket: Escitalopram: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 5 mg eller lavere (planen står på 9 mg).**
-
-- Dag 1–28: Escitalopram peroralt: 18 mg = 18 dråper à 1 mg
-- Dag 29: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 29–56: Escitalopram peroralt: 17 mg = 17 dråper à 1 mg (valgt av forskriveren (beregnet 16,2 mg; −5,56 %))
-- Dag 57: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 57–84: Escitalopram peroralt: 16 mg = 16 dråper à 1 mg (valgt av forskriveren (beregnet 15,3 mg; −5,88 %))
-- Dag 85: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 85–112: Escitalopram peroralt: 15 mg = 15 dråper à 1 mg (valgt av forskriveren (beregnet 14,4 mg; −6,25 %))
-- Dag 113: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 113–140: Escitalopram peroralt: 14 mg = 14 dråper à 1 mg (valgt av forskriveren (beregnet 13,5 mg; −6,67 %))
-- Dag 141: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 141–168: Escitalopram peroralt: 13 mg = 13 dråper à 1 mg (valgt av forskriveren (beregnet 12,6 mg; −7,14 %))
-- Dag 169: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 169–196: Escitalopram peroralt: 12 mg = 12 dråper à 1 mg (valgt av forskriveren (beregnet 11,7 mg; −7,69 %))
-- Dag 197: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 197–224: Escitalopram peroralt: 11 mg = 11 dråper à 1 mg (valgt av forskriveren (beregnet 10,8 mg; −8,33 %))
-- Dag 225: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 225–252: Escitalopram peroralt: 10 mg = 10 dråper à 1 mg (valgt av forskriveren (beregnet 9,9 mg; −9,09 %))
-- Dag 253: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Fra dag 253: Escitalopram peroralt: 9 mg = 9 dråper à 1 mg
+- Komplett plan ikke tilgjengelig for escitalopram: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt.
 
 #### Seponering av sertralin, gjentatt prosentvis nedtrapping: tablett, 100 mg, kort behandlingstid
 
 Ingen trinn krever forskriverens valg.
 
-*Én mulig første reduksjon med revurdering, ikke en validert fullstendig nedtrappingsplan.*
+**Ingen plan vises** (stopp):
 
-**Delplan, ikke en komplett plan. Ikke dekket: Sertralin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.**
-
-- Fra dag 1: Sertralin peroralt: 75 mg = 1 tablett à 25 mg + 1 tablett à 50 mg
+- Komplett plan ikke tilgjengelig for sertralin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.
 
 #### Seponering av sertralin, gjentatt prosentvis nedtrapping: tablett, 200 mg, kort behandlingstid
 
 - Kan velges for trinn 2 (dag 29, beregnet 112,5 mg, fra 150 mg): 125 mg (−16,67 %). Valgt: 125 mg.
 - Kan velges for trinn 3 (dag 57, beregnet 93,75 mg, fra 125 mg): 100 mg (−20 %). Valgt: 100 mg.
 
-*Et startforløp med revurdering, ikke en fullstendig plan: avslutningen vurderes individuelt.*
+**Ingen plan vises** (stopp):
 
-**Delplan, ikke en komplett plan. Ikke dekket: Sertralin: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 25 mg eller lavere (planen står på 75 mg).**
+- Komplett plan ikke tilgjengelig for sertralin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt.
 
-- Dag 1–28: Sertralin peroralt: 150 mg = 1 tablett à 100 mg + 1 tablett à 50 mg
-- Dag 29: Vurdering (Sertralin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 29–56: Sertralin peroralt: 125 mg = 1 tablett à 100 mg + 1 tablett à 25 mg (valgt av forskriveren (beregnet 112,5 mg; −16,67 %))
-- Dag 57: Vurdering (Sertralin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Dag 57–84: Sertralin peroralt: 100 mg = 1 tablett à 100 mg (valgt av forskriveren (beregnet 93,75 mg; −20 %))
-- Dag 85: Vurdering (Sertralin): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet.
-- Fra dag 85: Sertralin peroralt: 75 mg = 1 tablett à 25 mg + 1 tablett à 50 mg
+## 11. Syntetiske testkasus
 
-## 9. Syntetiske testkasus
-
-Kasusene går gjennom den samme veien som verktøysiden og kjøres i testene (`src/__tests__/verktoyk1.test.ts`). De viser de komplette forløpene, delplanene, grensene for omfanget, at verktøyet i dag ikke tilbyr beregning, at en godkjenning uten avklaring av de åpne valgene ikke gir plan, og at en endret grense etter godkjenningen stopper planen. Kolonnen K0 viser kasuset i leveranseplanen hvert kasus svarer på. Uten annen merknad er regelen den simulert avklarte og godkjente kopien, organfunksjon og interaksjoner er bekreftet, og svaret er nei på alle unntak og spørsmål.
+Kasusene går gjennom den samme veien som verktøysiden og kjøres i testene (`src/__tests__/verktoyk1.test.ts`). De viser at ingen plan i omfanget gir doser uten å være komplett, grensene for omfanget, at verktøyet i dag ikke tilbyr beregning, og at en endret regel etter godkjenningen stopper planen. Kolonnen K0 viser kasuset i leveranseplanen hvert kasus svarer på. Uten annen merknad er regelen den simulert godkjente kopien, organfunksjon og interaksjoner er bekreftet, og svaret er nei på alle unntak og spørsmål.
 
 | ID | K0 | Hva | Regel | Forventet | Resultat |
 | --- | --- | --- | --- | --- | --- |
-| K1-01 | K0-01 | escitalopram dråper 10 mg, kort behandlingstid; forskriveren velger 8 mg, 5 mg, 4 mg | seponering-escitalopram (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Plan: 8 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 6 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 5 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 4 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 3 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → Seponert → Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.. | som forventet |
-| K1-02 | – | escitalopram dråper 20 mg, kort behandlingstid; forskriveren velger 12 mg, 7 mg, 6 mg, 5 mg, 4 mg | seponering-escitalopram (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Plan: 15 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 12 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 9 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 7 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 6 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 5 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 4 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 3 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → Seponert → Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.. | som forventet |
-| K1-03 | – | nortriptylin 25 mg, kort behandlingstid; forskriveren velger 20 mg | seponering-nortriptylin (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Plan: 20 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → Seponert → Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.. | som forventet |
-| K1-04 | – | nortriptylin 50 mg, kort behandlingstid; forskriveren velger 40 mg, 25 mg, 20 mg | seponering-nortriptylin (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Plan: 40 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 30 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 25 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 20 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → Seponert → Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.. | som forventet |
-| K1-05 | – | nortriptylin 150 mg, kort behandlingstid; forskriveren velger 120 mg, 100 mg, 60 mg, 35 mg, 30 mg, 25 mg, 20 mg | seponering-nortriptylin (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Plan: 120 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 100 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 75 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 60 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 45 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 35 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 30 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 25 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 20 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → Seponert → Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.. | som forventet |
-| K1-06 | K0-03 | amitriptylin 25 mg, kort behandlingstid; forskriveren velger 20 mg | seponering-amitriptylin (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Plan: 20 mg. | som forventet |
-| K1-07 | – | amitriptylin 50 mg, kort behandlingstid; forskriveren velger 40 mg, 25 mg, 20 mg | seponering-amitriptylin (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Plan: 40 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 30 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 25 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 20 mg. | som forventet |
-| K1-08 | – | escitalopram tablett 20 mg, kort behandlingstid | seponering-escitalopram (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Plan: 15 mg. | som forventet |
-| K1-09 | – | escitalopram dråper 20 mg, lang behandlingstid; forskriveren velger 17 mg, 16 mg, 15 mg, 14 mg, 13 mg, 12 mg, 11 mg, 10 mg | seponering-escitalopram (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Plan: 18 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 17 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 16 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 15 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 14 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 13 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 12 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 11 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 10 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 9 mg. | som forventet |
-| K1-10 | – | nortriptylin 50 mg, lang behandlingstid | seponering-nortriptylin (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Plan: 45 mg. | som forventet |
-| K1-11 | K0-01 | escitalopram tablett 10 mg, kort behandlingstid (utenfor omfanget) | seponering-escitalopram (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Startdosen 10 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (utenfor omfanget). | som forventet |
-| K1-12 | – | nortriptylin 125 mg, kort behandlingstid (utenfor omfanget) | seponering-nortriptylin (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Startdosen 125 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (utenfor omfanget). | som forventet |
-| K1-13 | – | escitalopram dråper 20 mg, tidligere seponeringssymptomer | seponering-escitalopram (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Regelen gjelder ikke: Et tidligere forsøk på å trappe ned eller seponere dette legemidlet har gitt seponeringssymptomer eller mislyktes; da gjelder den langsomme varianten av regelen. | som forventet |
-| K1-14 | – | nortriptylin 50 mg, kort, 10 mg avregistrert | seponering-nortriptylin (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: nortriptylin (fra): styrken 10 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST, så planen ville blitt satt sammen annerledes enn den som er kontrollert (utenfor omfanget). | som forventet |
-| K1-15 | – | escitalopram slik verktøyet er i dag | den verktøyet tilbyr i dag | Verktøyet tilbyr ingen beregning (til kontroll). | som forventet |
-| K1-16 | – | nortriptylin slik verktøyet er i dag | den verktøyet tilbyr i dag | Verktøyet tilbyr ingen beregning (til kontroll). | som forventet |
-| K1-17 | K0-03 | amitriptylin slik verktøyet er i dag | den verktøyet tilbyr i dag | Verktøyet tilbyr ingen beregning (til kontroll). | som forventet |
-| K1-18 | – | sertralin slik verktøyet er i dag | den verktøyet tilbyr i dag | Verktøyet tilbyr ingen beregning (til kontroll). | som forventet |
-| K1-19 | – | escitalopram dråper 20 mg, godkjent uten at de åpne valgene er avklart | seponering-escitalopram (simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Regelen har åpne valg som må avklares faglig. | som forventet |
-| K1-20 | – | escitalopram dråper 20 mg med grensen for seponering endret etter godkjenningen | seponering-escitalopram (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi; deretter grensen for seponering 5 → 6 mg) | Ingen plan: Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke). | som forventet |
-| K1-21 | K0-02 | sertralin tablett 100 mg, kort behandlingstid | seponering-sertralin (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Plan: 75 mg. | som forventet |
-| K1-22 | – | sertralin tablett 200 mg, kort behandlingstid; forskriveren velger 125 mg, 100 mg | seponering-sertralin (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Plan: 150 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 125 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 100 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 75 mg. | som forventet |
-| K1-23 | – | nortriptylin 75 mg, kort behandlingstid; forskriveren velger 60 mg, 35 mg, 30 mg, 25 mg, 20 mg | seponering-nortriptylin (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Plan: 60 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 45 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 35 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 30 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 25 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 20 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → Seponert → Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.. | som forventet |
-| K1-24 | – | nortriptylin 100 mg, kort behandlingstid; forskriveren velger 60 mg, 35 mg, 30 mg, 25 mg, 20 mg | seponering-nortriptylin (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Plan: 75 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 60 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 45 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 35 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 30 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 25 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 20 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → Seponert → Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.. | som forventet |
-| K1-25 | – | escitalopram dråper 15 mg, kort behandlingstid; forskriveren velger 12 mg, 7 mg, 6 mg, 5 mg, 4 mg | seponering-escitalopram (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Plan: 12 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 9 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 7 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 6 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 5 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 4 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → 3 mg → Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. → Seponert → Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose.. | som forventet |
+| K1-01 | K0-01 | escitalopram dråper 10 mg, kort behandlingstid; forskriveren velger 8 mg, 5 mg, 4 mg | seponering-escitalopram (simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Komplett plan ikke tilgjengelig for escitalopram: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt. | som forventet |
+| K1-02 | – | escitalopram dråper 20 mg, kort behandlingstid; forskriveren velger 12 mg, 7 mg, 6 mg, 5 mg, 4 mg | seponering-escitalopram (simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Komplett plan ikke tilgjengelig for escitalopram: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt. | som forventet |
+| K1-03 | – | escitalopram tablett 20 mg, kort behandlingstid | seponering-escitalopram (simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Komplett plan ikke tilgjengelig for escitalopram: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. | som forventet |
+| K1-04 | – | nortriptylin 25 mg, kort behandlingstid; forskriveren velger 20 mg | seponering-nortriptylin (simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Komplett plan ikke tilgjengelig for nortriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. | som forventet |
+| K1-05 | – | nortriptylin 50 mg, kort behandlingstid; forskriveren velger 40 mg, 25 mg, 20 mg | seponering-nortriptylin (simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Komplett plan ikke tilgjengelig for nortriptylin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt. | som forventet |
+| K1-06 | – | nortriptylin 150 mg, kort behandlingstid; forskriveren velger 120 mg, 100 mg, 60 mg, 35 mg, 30 mg, 25 mg, 20 mg | seponering-nortriptylin (simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Komplett plan ikke tilgjengelig for nortriptylin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt. | som forventet |
+| K1-07 | – | amitriptylin 50 mg, kort, før forskriveren har valgt | seponering-amitriptylin (simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: amitriptylin dag 1–28: den ideelle dosen 37,5 mg kan ikke gis med preparatene i FEST nøyaktig. Tilbyr 40 mg for neste trinn. | som forventet |
+| K1-08 | K0-03 | amitriptylin 25 mg, kort behandlingstid; forskriveren velger 20 mg | seponering-amitriptylin (simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Komplett plan ikke tilgjengelig for amitriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. | som forventet |
+| K1-09 | – | amitriptylin 50 mg, kort behandlingstid; forskriveren velger 40 mg, 25 mg, 20 mg | seponering-amitriptylin (simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Komplett plan ikke tilgjengelig for amitriptylin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt. | som forventet |
+| K1-10 | K0-02 | sertralin tablett 100 mg, kort behandlingstid | seponering-sertralin (simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Komplett plan ikke tilgjengelig for sertralin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. | som forventet |
+| K1-11 | – | sertralin tablett 200 mg, kort behandlingstid; forskriveren velger 125 mg, 100 mg | seponering-sertralin (simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Komplett plan ikke tilgjengelig for sertralin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt. | som forventet |
+| K1-12 | – | escitalopram dråper 20 mg, lang behandlingstid; forskriveren velger 17 mg, 16 mg, 15 mg, 14 mg, 13 mg, 12 mg, 11 mg, 10 mg | seponering-escitalopram (simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Komplett plan ikke tilgjengelig for escitalopram: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt. | som forventet |
+| K1-13 | – | nortriptylin 50 mg, lang behandlingstid | seponering-nortriptylin (simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Komplett plan ikke tilgjengelig for nortriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. | som forventet |
+| K1-14 | K0-01 | escitalopram tablett 10 mg, kort behandlingstid (utenfor omfanget) | seponering-escitalopram (simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Startdosen 10 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (utenfor omfanget). | som forventet |
+| K1-15 | – | nortriptylin 75 mg, kort behandlingstid (omfanget er ikke utvidet) | seponering-nortriptylin (simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Startdosen 75 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (utenfor omfanget). | som forventet |
+| K1-16 | – | escitalopram dråper 15 mg, kort behandlingstid (omfanget er ikke utvidet) | seponering-escitalopram (simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Startdosen 15 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (utenfor omfanget). | som forventet |
+| K1-17 | – | sertralin tablett 25 mg, kort behandlingstid (ingen grense ved 25 mg) | seponering-sertralin (simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Startdosen 25 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (utenfor omfanget). | som forventet |
+| K1-18 | – | escitalopram dråper 20 mg, tidligere seponeringssymptomer | seponering-escitalopram (simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Regelen gjelder ikke: Et tidligere forsøk på å trappe ned eller seponere dette legemidlet har gitt seponeringssymptomer eller mislyktes; da gjelder den langsomme varianten av regelen. | som forventet |
+| K1-19 | – | escitalopram slik verktøyet er i dag | den verktøyet tilbyr i dag | Verktøyet tilbyr ingen beregning (til kontroll). | som forventet |
+| K1-20 | – | nortriptylin slik verktøyet er i dag | den verktøyet tilbyr i dag | Verktøyet tilbyr ingen beregning (til kontroll). | som forventet |
+| K1-21 | K0-03 | amitriptylin slik verktøyet er i dag | den verktøyet tilbyr i dag | Verktøyet tilbyr ingen beregning (til kontroll). | som forventet |
+| K1-22 | K0-02 | sertralin slik verktøyet er i dag | den verktøyet tilbyr i dag | Verktøyet tilbyr ingen beregning (til kontroll). | som forventet |
+| K1-23 | – | nortriptylin 50 mg, lang behandlingstid, med kravet om komplett plan fjernet etter godkjenningen | seponering-nortriptylin (simulert klinisk godkjenning av versjon 13, bare på en kopi; deretter kravet om komplett plan fjernet) | Ingen plan: Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke). | som forventet |
+| K1-24 | – | nortriptylin 50 mg, kort, 10 mg avregistrert | seponering-nortriptylin (simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: nortriptylin (fra): styrken 10 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST, så planen ville blitt satt sammen annerledes enn den som er kontrollert (utenfor omfanget). | som forventet |

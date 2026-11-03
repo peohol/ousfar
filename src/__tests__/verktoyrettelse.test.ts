@@ -12,14 +12,14 @@ import { FAKTUMRETTELSER, RCPSYCH, RCPSYCH_TIDLIGERE } from '../verktoy/regler/b
 import { disposisjonsfeil, erKliniskGodkjent, fingeravtrykk, godkjenn, kanonisk, kontrollutfall, vedtaksfeil } from '../verktoy/regler/godkjenning'
 import { MAKS_FAKTUM } from '../verktoy/regler/kontroll'
 import { henvisninger, type Kildehenvisning, type Regel } from '../verktoy/regler/modell'
-import { NEDTRAPPINGSDISPOSISJON, NEDTRAPPINGSSETT_FOR_AVSLUTNING as NEDTRAPPINGSSETT, NEDTRAPPINGSSETT_FOR_RETTELSENE } from '../verktoy/regler/nedtrapping'
+import { NEDTRAPPINGSDISPOSISJON, NEDTRAPPINGSSETT_FOR_K1 as NEDTRAPPINGSSETT, NEDTRAPPINGSSETT_FOR_RETTELSENE } from '../verktoy/regler/nedtrapping'
 import { PILOTDISPOSISJON, PILOTSETT, PILOTSETT_FOR_RETTELSENE } from '../verktoy/regler/pilotsett'
 import { rett, rettRegel } from '../verktoy/regler/rettelse'
 import { ETTER_RETTELSENE } from '../verktoy/kontrollsett'
 import { FOR_RETTELSENE, forventedeLinjeendringer, forventetFor, lagRettelseskontroll, matrisesammenligning, RETTELSESKONTROLLFIL, rettelsesrader, synlig, tilGodkjenning } from '../verktoy/rettelseskontroll'
 import { samlet } from '../verktoy/tilgjengelighet'
 
-// Kontrollgrunnlaget gjelder settene rett etter rettelsen; K1 har siden gitt tre nedtrappingsregler en ny versjon (`avslutning.ts`, egne tester).
+// Kontrollgrunnlaget gjelder settene rett etter rettelsen; K1 har siden gitt fire nedtrappingsregler en ny versjon (`komplettplan.ts`, egne tester).
 const REGELSETTENE = ETTER_RETTELSENE
 const REGELSETT = samlet(REGELSETTENE)
 

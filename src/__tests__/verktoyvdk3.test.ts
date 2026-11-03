@@ -28,7 +28,7 @@ import { tilgjengelighet } from '../verktoy/tilgjengelighet'
 
 const les = (fil: string) => readFileSync(new URL(`../../${fil}`, import.meta.url), 'utf8')
 const uttrekkene = { pilot: JSON.parse(les(FEST_PILOT)) as Festuttrekk, aksept: JSON.parse(les(FEST_AKSEPTTEST)) as Festuttrekk }
-/** Forslag 1 gjelder versjonene etter rettelsen; K1 har siden gitt tre av dem en ny versjon i appen (`regler/avslutning.ts`). */
+/** Forslag 1 gjelder versjonene etter rettelsen; K1 har siden gitt tre av dem en ny versjon i appen (`regler/komplettplan.ts`). */
 const regel = (id: string) => FORSLAG_1.settene!.flatMap((s) => s.regler).find((r) => r.id === id)!
 const PLANER = omfangsplaner(FORSLAG_1, uttrekkene)
 

@@ -20,7 +20,7 @@
  */
 import type { Legemiddelutvalg } from '../../legemiddeldata/lesing'
 import { byggesteiner, norskDato, type Preparatgrunnlag } from '../motor/byggesteiner'
-import { beregnDoseplan, formvalgSomTrengs, omfangsfeil, planform, trinndosetekst, type Doseplaninndata, type Doseplanresultat, type Omgivelse, type Trinnvalg } from '../motor/plan'
+import { beregnDoseplan, formvalgSomTrengs, KOMPLETT_IKKE_TILGJENGELIG, omfangsfeil, planform, trinndosetekst, type Doseplaninndata, type Doseplanresultat, type Omgivelse, type Trinnvalg } from '../motor/plan'
 import { festkoblinger, KARTLEGGING } from '../register'
 import { avrund } from './beregning'
 import { PLANHORISONT_TRINN } from './bygg'
@@ -354,6 +354,7 @@ export function lagAksepttestrapport(u: Festuttrekk): string {
   })
   const annenhver = annenhverDag(u)
   const godkjente = NEDTRAPPINGSSETT.regler.filter((r) => r.beregnbarhet !== 'bare_tekstlig' && erKliniskGodkjent(r)).map((r) => `\`${r.id}\``)
+  const komplette = NEDTRAPPINGSSETT.regler.filter((r) => r.plan.forlop.some((f) => f.krever_komplett)).map((r) => `\`${r.id}\``)
   return `<!-- Laget av \`npm run verktoy:regler -- aksepttest\` fra ${FEST_AKSEPTTEST}; rediger ikke for hånd. -->
 # P7: aksepttest med norske preparater
 
@@ -361,7 +362,7 @@ Aksepttesten etter kontrollrunden 30.10.2026 (P7.5, del E.2). Hver hovedregel og
 
 **Dette er modellberegninger av kontrollutkast, ikke kliniske planer.** ${godkjente.length === 0 ? 'Ingen beregnbar P7-regel er klinisk godkjent, og verktøyet viser ingen av planene.' : `Av de beregnbare P7-reglene er bare ${godkjente.join(', ')} klinisk godkjent, og bare for cellene i det kliniske omfanget (**[klinisk omfang]** under); verktøyet viser ingen andre av planene.`} De andre beregnbare reglene er kontrollert og ikke godkjent i denne leveransen (kontrollørens disposisjon 31.10.2026), så en celle i deres kliniske omfang er teknisk, ikke et godkjenningsvedtak. Pasientopplysninger inngår ikke.
 
-Scenariene er:
+${komplette.length > 0 ? `${komplette.join(', ')} krever en komplett plan helt til seponering (K1, \`docs/verktøy-k1-nedtrapping-kontrollgrunnlag.md\`). En plan som ikke når dit, stopper med «${KOMPLETT_IKKE_TILGJENGELIG}» og grunnen, uten doser, så cellene deres viser stopp der de ellers ville vist en delplan.\n\n` : ''}Scenariene er:
 
 ${liste(Object.entries(SCENARIOER).map(([k, v]) => `(${k}) ${v}.`))}
 - (e) Alle scenariene bruker de norske preparatene i FEST.

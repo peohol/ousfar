@@ -52,13 +52,13 @@
  * gjengir teksten der.
  */
 import { kravtekst, omradetekst } from './beregning'
-import { FAKTUMRETTELSER, FEST_FORM, FORUTSETNINGER_FELLES, forslag, h, kilde, leveransen, NICE, planhorisont, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, pn, RCPSYCH, RCPSYCH_TIDLIGERE, steg, utsagn, vurdert } from './bygg'
+import { FAKTUMRETTELSER, FORUTSETNINGER_FELLES, forslag, h, kilde, leveransen, NICE, planhorisont, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, pn, RCPSYCH, RCPSYCH_TIDLIGERE, steg, utsagn, vurdert } from './bygg'
 import { disponer } from './godkjenning'
 import type { Avklaring, Begrunnelseskrav, Bekreftelse, Fase, Forlop, Godkjenningssteg, Grunnlag, Inndatakrav, Kildehenvisning, Kliniskomfang, Nedtrappingsstrategi, Parameter, Regel, Regelsett, Regneeksempel, Sporsmal, Unntak, Utsagn } from './modell'
 import { REGELMODELLVERSJON } from './modell'
 import { gruppeRestApAripiprazol, seponeringCitalopramHyperbolsk, SPC } from './pilotsett'
 import { rett } from './rettelse'
-import { medAvslutninger } from './avslutning'
+import { medKravOmKomplettPlan } from './komplettplan'
 
 /* --- Fakta fra preparatomtalene, med egne ord ----------------------------------------- */
 
@@ -693,6 +693,9 @@ const stopp = (id: string, beskrivelse: string, startdose_mg: number, grunn: Reg
   forventet: {},
   stopp: grunn,
 })
+
+/** Legemiddelformene i FEST (kodeverket for legemiddelform) reglene her avgrenser til. */
+const FEST_FORM = { dispergerbarTablett: '5', tablett: '53', draper: '748' } as const
 
 /** Stien til de justerbare parametrene i en regel bygd her. */
 export const STI = { prosent: 'plan.forlop[0].faser[0].strategi.prosent', dager: 'plan.forlop[0].faser[0].trinnlengde' } as const
@@ -2300,19 +2303,19 @@ export const NEDTRAPPINGSSETT_FOR_RETTELSENE: Regelsett = {
  * nye versjonene (versjon 15, appversjon 1.123.1), før K1. Appen bruker det
  * ikke; kontrollgrunnlagene for rettelsen og VDK-3 forslag 1 gjelder det.
  */
-export const NEDTRAPPINGSSETT_FOR_AVSLUTNING: Regelsett = {
+export const NEDTRAPPINGSSETT_FOR_K1: Regelsett = {
   ...NEDTRAPPINGSSETT_FOR_RETTELSENE,
   versjon: 15,
   beskrivelse: `${NEDTRAPPINGSSETT_FOR_RETTELSENE.beskrivelse} Etter kontrollørens vurdering 03.11.2026 er faktumet fra RCPsych om små reduksjoner fra starten presisert (\`docs/verktøy-kildefunn-1-2.md\` §8): de 17 reglene som viser til det, har fått en ny versjon som bare skiller seg i dette faktumet. Kontrolløren har godkjent den nye versjonen av vortioksetinregelen (versjon 12) med samme kliniske omfang som versjon 11, og de andre er kontrollert og ikke godkjent som før (\`docs/verktøy-rettelse-langvarig.md\`).`,
   regler: rett([...NEDTRAPPINGSSETT_FOR_RETTELSENE.regler], FAKTUMRETTELSER),
 }
 
-/** Nedtrappingsreglene appen bruker: settet etter rettelsene med de nye versjonene fra K1 (`avslutning.ts`). */
+/** Nedtrappingsreglene appen bruker: settet etter rettelsene med de nye versjonene fra K1 (`komplettplan.ts`). */
 export const NEDTRAPPINGSSETT: Regelsett = {
-  ...NEDTRAPPINGSSETT_FOR_AVSLUTNING,
+  ...NEDTRAPPINGSSETT_FOR_K1,
   versjon: 16,
-  beskrivelse: `${NEDTRAPPINGSSETT_FOR_AVSLUTNING.beskrivelse} I K1 (03.11.2026) har escitalopram, nortriptylin, amitriptylin og sertralin fått en ny versjon med avslutning: seponering etter en eksplisitt vurdering når nedtrappingen har nådd laveste døgndose i preparatomtalen eller lavere (\`docs/verktøy-k1-nedtrapping-kontrollgrunnlag.md\`); de er ikke godkjent.`,
-  regler: medAvslutninger([...NEDTRAPPINGSSETT_FOR_AVSLUTNING.regler]),
+  beskrivelse: `${NEDTRAPPINGSSETT_FOR_K1.beskrivelse} I K1 (03.11.2026) har escitalopram, nortriptylin, amitriptylin og sertralin fått en ny versjon som bare gir en komplett plan til seponering; når planen ikke når dit, sier verktøyet «Komplett plan ikke tilgjengelig» og hvorfor, uten doser (\`docs/verktøy-k1-nedtrapping-kontrollgrunnlag.md\`). De er ikke godkjent.`,
+  regler: medKravOmKomplettPlan([...NEDTRAPPINGSSETT_FOR_K1.regler]),
 }
 
 /**
