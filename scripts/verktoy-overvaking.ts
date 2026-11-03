@@ -5,6 +5,11 @@
  * den kan også kjøres for hånd.
  *
  *   npm run verktoy:overvaking -- kontroll [--psychiatrienet] [--uten-dokumenter] [--uten-fest] [--provesak] [--ut <mappe>]
+ *   npm run verktoy:overvaking -- avsnitt <kilde-id>
+ *
+ * `avsnitt` henter kildedokumentet og skriver overskriftene med
+ * kontrollsummen av avsnittet under hver, til et grunnlag med metoden
+ * `avsnitt` (`docs/verktøy-p12-overvaking.md` §5.6). Ingen kildetekst skrives.
  *
  * `--provesak` lager bare et syntetisk funn som prøver varslingen i appen.
  *
@@ -36,6 +41,9 @@ import { PILOTSETT } from '../src/verktoy/regler/pilotsett'
 import { godkjenteRegler, virkestofferForFest } from '../src/verktoy/overvaking/berorte'
 import { kjorOvervaking } from '../src/verktoy/overvaking/kjoring'
 import { kreverVurdering, lagOvervakingsrapport } from '../src/verktoy/overvaking/rapport'
+import { avsnittI } from '../src/verktoy/overvaking/dokumenter'
+import { KILDER } from '../src/verktoy/regler/kilder'
+import { createHash } from 'node:crypto'
 
 const lesJson = <T>(fil: string) => JSON.parse(readFileSync(new URL(`../${fil}`, import.meta.url), 'utf8')) as T
 
@@ -114,9 +122,22 @@ async function kontroll(argumenter: string[]) {
   for (const f of rapport.feil) console.error(`✗ ${f}`)
 }
 
-const BRUK = 'Bruk: npm run verktoy:overvaking -- kontroll [--psychiatrienet] [--uten-dokumenter] [--uten-fest] [--provesak] [--ut <mappe>]'
+/** Overskriftene i kildedokumentet med kontrollsummen av hvert avsnitt, uten tekst. */
+async function avsnitt(id: string | undefined) {
+  const kilde = KILDER.find((k) => k.id === id)
+  if (!kilde) throw new Error(`Ukjent kilde ${id ?? '(ingen)'}; bruk en id fra regelkildene.`)
+  const svar = await hentDokument(kilde.url)
+  if (svar.status !== 200 || !/html/.test(svar.type)) throw new Error(`${kilde.url} svarte ${svar.status} (${svar.type || 'ukjent type'}); bare en nettside kan deles i avsnitt.`)
+  console.log(`${kilde.tittel}, hentet ${svar.hentet}`)
+  for (const a of avsnittI(new TextDecoder().decode(svar.bytes))) {
+    console.log(`${'  '.repeat(a.niva - 1)}h${a.niva} «${a.overskrift}» ${createHash('sha256').update(a.tekst).digest('hex')} (${a.tekst.length} tegn)`)
+  }
+}
+
+const BRUK = 'Bruk: npm run verktoy:overvaking -- kontroll [--psychiatrienet] [--uten-dokumenter] [--uten-fest] [--provesak] [--ut <mappe>] | avsnitt <kilde-id>'
 const [kommando, ...resten] = process.argv.slice(2).filter((a) => a !== '--')
 if (kommando === 'kontroll') await kontroll(resten)
+else if (kommando === 'avsnitt') await avsnitt(resten[0])
 else {
   console.error(BRUK)
   process.exit(1)

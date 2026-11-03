@@ -2,14 +2,18 @@
  * Den tekniske vakten for FEST-synkroniseringen (`src/legemiddeldata/vakt.ts`,
  * F4 i `docs/verktøy-vdr4-tilgjengelighet.md`):
  *
- *   npm run legemiddeldata:vakt [-- --prove]
+ *   npm run legemiddeldata:vakt [-- --prove | --prove-lesefeil]
  *
  * Leser de siste kjøringene i produksjonen med `VITE_SUPABASE_URL` og
  * `SUPABASE_SECRET_KEY` og skriver hva som må følges opp. Avslutter med 0 når
  * alt er i orden, 1 når noe må følges opp, og 2 når statusen ikke kunne leses
  * (det er også noe som må følges opp). `--prove` bruker en syntetisk feilet
  * kjøring i minnet i stedet for produksjonen, for å prøve hele varslingen;
- * den leser og skriver ingenting.
+ * den leser og skriver ingenting. `--prove-lesefeil` prøver varslingen når
+ * statusen ikke kan leses (avslutningskode 2), uten å kontakte produksjonen.
+ *
+ * Den planlagte oppgaven som kjører skriptet hver morgen og varsler teknisk
+ * ansvarlig, har teksten sin i `scripts/legemiddeldata-vakt-oppgave.md`.
  *
  * Skriptet bare leser, og skriver aldri til databasen.
  */
@@ -30,8 +34,10 @@ async function lesStatus(): Promise<Vaktkjoring[]> {
 }
 
 const prove = process.argv.includes('--prove')
+const proveLesefeil = process.argv.includes('--prove-lesefeil')
 const naa = new Date()
 try {
+  if (proveLesefeil) throw new Error('PRØVE: syntetisk lesefeil, produksjonen er ikke kontaktet.')
   const r = festvakt(prove ? provestatus(naa) : await lesStatus(), naa)
   if (prove) console.log('PRØVE: statusen under er syntetisk og gjelder ikke produksjonen.')
   console.log(r.iOrden ? 'FEST-vakten: alt i orden.' : 'FEST-vakten: noe må følges opp.')

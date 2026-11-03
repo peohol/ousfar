@@ -9,9 +9,10 @@ import { Autoerstattregler } from './Autoerstattregler'
 import { Brukerliste } from './Brukerliste'
 import { Datakilder } from './Datakilder'
 import type { Kurateringsklient } from '../../kuratering/klient'
-import { oppmerksomhet, type Kildeovervakingslager } from '../../verktoy/overvaking/varsling'
+import { redaktorvarsel, type Fagsaklager } from '../../verktoy/overvaking/fagsak'
+import type { Kildeovervakingslager } from '../../verktoy/overvaking/varsling'
 import { Kurateringsoversikt } from '../kuratering/Utgavelister'
-import { Kildeovervaking, kildeovervakingslager } from './Kildeovervaking'
+import { fagsaklager, Kildeovervaking } from './Kildeovervaking'
 import { Verktoysperrer } from './Verktoysperrer'
 
 /** Teksten ved prikken når kildeovervåkingen ikke kunne leses. */
@@ -45,10 +46,16 @@ function useTilsyn(admin: boolean, hent: () => Promise<string[]>, vedFeil?: stri
  * kliniske verktøyene, og autoerstatt-reglene i teksteditorene. Andre ser den
  * ikke. Den er et grensesnitt, ikke en tilgangskontroll: databasen og
  * Edge-funksjonene slår opp rollen selv. Bør en datakilde ses over, eller
- * venter et funn fra kildeovervåkingen, står det en prikk på knappen og på
- * valget.
+ * venter en faglig kildesak på beslutning (eller et mulig sikkerhetsproblem
+ * vurderes), står det en prikk på knappen og på valget. Tekniske avvik i
+ * kildeovervåkingen gir ingen prikk; de følges opp i det tekniske sporet.
  */
-export function Adminmeny({ leser, kuratering, kildelager }: { leser?: Datakildeleser; kuratering?: Kurateringsklient; kildelager?: Kildeovervakingslager } = {}) {
+export function Adminmeny({
+  leser,
+  kuratering,
+  kildelager,
+  fagsaker,
+}: { leser?: Datakildeleser; kuratering?: Kurateringsklient; kildelager?: Kildeovervakingslager; fagsaker?: Fagsaklager } = {}) {
   const admin = useProfil().role === 'admin'
   const [panel, setPanel] = useBevart<Panel>('adminmeny', null)
   // Bare én endring per datakilde hentes; vurderingen er den samme som i panelet.
@@ -56,11 +63,11 @@ export function Adminmeny({ leser, kuratering, kildelager }: { leser?: Datakilde
     admin,
     useCallback(async () => kilderSomBorSesOver(await (leser ?? lagDatakildeleser(klient())).status(1)), [leser]),
   )
-  // Bare de åpne funnene og den siste kjøringen; fristene regnes som i vinduet.
+  // Bare de faglige sakene som venter på redaktøren; ingen frister.
   // Kildeovervåkingen er en sikkerhetskontroll, så en lesing som feiler, vises.
   const kilder = useTilsyn(
     admin,
-    useCallback(async () => oppmerksomhet(await (kildelager ?? kildeovervakingslager()).les(0), Date.now()), [kildelager]),
+    useCallback(async () => redaktorvarsel(await (fagsaker ?? fagsaklager()).les()), [fagsaker]),
     KILDEOVERVAKING_ULEST,
   )
   const { sjekk: sjekkDatakilder } = datakilder

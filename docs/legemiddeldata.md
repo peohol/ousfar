@@ -175,9 +175,15 @@ kobling blir sjeldnere), justeres terskelen i `strukturvakt.ts`.
   sier også når verktøyene slutter å beregne (48 timer etter siste vellykkede).
   Avslutningskoden er 0 når alt er i orden, 1 når noe må følges opp, og 2 når
   statusen ikke kunne leses. `-- --prove` prøver hele varslingen med en
-  syntetisk feilet kjøring i minnet, uten å lese eller skrive noe. En planlagt
-  oppgave kjører vakten hver morgen og varsler teknisk ansvarlig bare når noe
-  må følges opp. Det er ikke en sak for redaktøren. Den gamle daglige
+  syntetisk feilet kjøring i minnet, uten å lese eller skrive noe, og
+  `-- --prove-lesefeil` prøver den med en syntetisk lesefeil (kode 2).
+- **Varslingen.** Den planlagte oppgaven «FEST-vakt: daglig kontroll» i Claude
+  Code kjører vakten hver morgen 06:07 UTC i en ny økt. Teksten står i
+  `scripts/legemiddeldata-vakt-oppgave.md`. Oppgaven sender et push-varsel
+  til eieren av kontoen (teknisk ansvarlig) ved kode 1 og 2, og også når
+  skriptet ikke kan kjøres. Ved kode 0 er den stille. Det er ikke en sak for
+  redaktøren. Ende-til-ende-prøvene og utfallet av dem står i §10 i
+  `docs/verktøy-vdr4-tilgjengelighet.md`. Den gamle daglige
   Claude-rutinen sto stille fra 29.09.2026, fordi den var bundet til en
   avsluttet tråd og lesingen den brukte, ble avvist.
 - Administratorene ser FEST i «Datakilder» (adminmenyen): tilstanden, siste

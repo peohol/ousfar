@@ -12,13 +12,41 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.117.8',
+    versjon: '1.119.1',
     dato: '2026-11-03',
     sammendrag: 'Tidligere varsel til teknisk ansvarlig når den nattlige FEST-oppdateringen feiler',
     typer: ['Funksjonalitet'],
     omfang: 'Minimalt omfang',
     punkter: [
-      'Ingen endring i det brukerne ser. Når den nattlige oppdateringen av legemiddeldataene fra FEST feiler, lagres det nå hvor langt den kom og om en ny fil var oppdaget. En daglig kontroll varsler teknisk ansvarlig allerede etter første natt som feiler, lenge før verktøyene stopper etter 48 timer uten oppdaterte data. Grensen på 48 timer er uendret.',
+      'Ingen endring i det brukerne ser. Når den nattlige oppdateringen av legemiddeldataene fra FEST feiler, lagres det nå hvor langt den kom og om en ny fil var oppdaget. En daglig kontroll varsler teknisk ansvarlig allerede etter første natt som feiler, eller når den ikke får lest statusen, lenge før verktøyene stopper etter 48 timer uten oppdaterte data. Grensen på 48 timer er uendret.',
+    ],
+    utenVarsel: true,
+  },
+  {
+    versjon: '1.119.0',
+    dato: '2026-11-03',
+    sammendrag: 'Kildeovervåkingen: tekniske avvik følges opp uten frister, og redaktøren får bare faglige spørsmål',
+    typer: ['Funksjonalitet'],
+    omfang: 'Moderat omfang',
+    gjelder: ['hele appen'],
+    punkter: [
+      'Et funn fra kildeovervåkingen undersøkes nå først teknisk. En endret kontrollsum alene gir ingen oppgave for administratoren, ingen prikk i adminmenyen og ingen sperre.',
+      'Fristene på ett og tre døgn er fjernet, sammen med skjemaene for teknisk vurdering og for å avslutte et funn med fritekst.',
+      'Adminmenyen har en prikk bare når et konkret faglig spørsmål venter på beslutning, eller når en eksisterende plan kan være uforsvarlig.',
+      'En beslutning avslutter ikke saken av seg selv: saken står som «Oppfølging pågår» til tiltakene er utført og kontrollert. Velger administratoren å deaktivere en regel, settes nødstoppen for den straks.',
+      'Samme kilde med samme innhold gir ikke lenger en ny sak hver uke.',
+      'Ingen klinisk regel, beregning eller godkjenning er endret.',
+    ],
+  },
+  {
+    versjon: '1.117.7',
+    dato: '2026-11-03',
+    sammendrag: 'Oversikt over hva de kliniske verktøyene kan beregne, og plan for hvilke regler som bør gjøres ferdig først',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen eller i noen klinisk regel. Det er laget en oversikt over hva de tre kliniske verktøyene faktisk kan beregne i dag, hva som bare gir fagtekst, og hvorfor de andre valgene stopper.',
+      'Det er også laget en prioritert plan for hvilke nedtrappings- og bytteregler som bør gjøres ferdig først, med kilder, norske preparater, spørsmål til faglig kontroll og syntetiske testeksempler. Ingen regel tas i bruk før den er uavhengig kontrollert og godkjent.',
     ],
     utenVarsel: true,
   },
