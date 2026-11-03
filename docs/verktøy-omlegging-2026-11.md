@@ -1,6 +1,6 @@
 # OUSFAR Verktøy – ny kildeoppfølging, redaktørflyt og klinisk tilgjengelighet
 
-**Beslutning:** 01.11.2026. **Status:** vedtatt utviklingsretning, ikke implementert. Denne filen er en gjennomføringsplan; produksjonen følger fortsatt den gamle løsningen til endrings-PR-ene er kontrollert og publisert.
+**Beslutning:** 01.11.2026. **Status:** vedtatt utviklingsretning. VDR-1, VDR-2 og VDR-3 er publisert 03.11.2026 (1.119.0, 1.120.0, 1.121.0), og VDR-4-tiltakene F4, S6, N1 og K6 er publisert (1.119.1, 1.122.0). VDR-5 er publisert 03.11.2026 (1.124.1). Denne filen er gjennomføringsplanen; et punkt krysses av først når det er kontrollert og publisert.
 
 **Knyttet til:** P12.1/P12.5 (kilde- og FEST-overvåking), P12.2–P12.4 (regelversjoner), P11.6 (målrettet nødstopp), P4/P7–P10 (klinisk regeldekning), og den kanoniske fremdriftsplanen i docs/verktøy-utviklingsplan.md. De tekniske beskrivelsene i docs/verktøy-p12-overvaking.md og docs/verktøy-p12-regelforvaltning.md beskriver dagens løsning der de avviker fra denne planen.
 
@@ -123,15 +123,15 @@ Alle punkter er **ikke påbegynt** per 01.11.2026. Claude gjennomfører tekniske
 
 ### VDR-5. Produksjonskontroll og utfasing av gammel prøvesak
 
-- [ ] Test hele flyten med **kontrollert klokke/testdata**, uten å vente 24 eller 72 virkelige timer: ingen klinisk konsekvens → teknisk avslutning; klinisk spørsmål → tydelig redaktørvalg → kontrollert tiltak → lukking; reell alvorlig risiko → målrettet sperre.
-- [ ] Kontroller mot produksjonen at tekniske funn ikke vises som kliniske oppgaver, at målrettet sperre virker og kan oppheves, og at historikk og tilgangskontroll er intakt.
-- [ ] Håndter eksisterende funn 1 (Australian Prescriber/KEKS) og 2 (RCPsych) med reell kildevurdering og dokumentert konklusjon; ikke anta at et endret avtrykk betyr endret faglig råd.
-- [ ] Behold sporbarheten for syntetisk funn 3, avslutt det som **prøve** etter dokumentert resultat. Den gamle testen på en kunstig 72-timersfrist er ikke en ny ferdigport. Avklar den eksisterende påminnelsen 03.11.2026 når ny løsning er utrullet; ikke la gammel fristtest definere faglige krav.
-- [ ] Oppdater docs/verktøy-p12-overvaking.md, docs/verktøy-p12-regelforvaltning.md, testene og fremdriftsloggen til det som faktisk er publisert. Kryss først da av de aktuelle P12-punktene.
+- [x] Test hele flyten med **kontrollert klokke/testdata**, uten å vente 24 eller 72 virkelige timer: ingen klinisk konsekvens → teknisk avslutning; klinisk spørsmål → tydelig redaktørvalg → kontrollert tiltak → lukking; reell alvorlig risiko → målrettet sperre.
+- [x] Kontroller mot produksjonen at tekniske funn ikke vises som kliniske oppgaver, at målrettet sperre virker og kan oppheves, og at historikk og tilgangskontroll er intakt.
+- [x] Håndter eksisterende funn 1 (Australian Prescriber/KEKS) og 2 (RCPsych) med reell kildevurdering og dokumentert konklusjon; ikke anta at et endret avtrykk betyr endret faglig råd.
+- [x] Behold sporbarheten for syntetisk funn 3, avslutt det som **prøve** etter dokumentert resultat. Den gamle testen på en kunstig 72-timersfrist er ikke en ny ferdigport. Avklar den eksisterende påminnelsen 03.11.2026 når ny løsning er utrullet; ikke la gammel fristtest definere faglige krav. *Gjort 03.11.2026: avsluttet med utfallet `prove` og testbevis, historikken står; fristtesten er utgått, og påminnelsen (ChatGPT-oppgaven «Kontroller prøvefunn 3») er deaktivert, ikke slettet (fremdriftsloggen i `docs/verktøy-utviklingsplan.md`).*
+- [x] Oppdater docs/verktøy-p12-overvaking.md, docs/verktøy-p12-regelforvaltning.md, testene og fremdriftsloggen til det som faktisk er publisert. Kryss først da av de aktuelle P12-punktene.
 
 **Kontrollport:** Dokumenterte kjøringer, sikkerhetstester, UI-test og kontrollørtillatelse. P12.1 skal ikke krysses av kun fordi den gamle prøvesaken har passert 72 timer.
 
-**Status 03.11.2026 (til kontroll):** Flyt 1–3 er prøvd fra kjøringen til verktøysiden (`src/__tests__/kildesakflyt.test.tsx`). Produksjonen er kontrollert ved lesing, funn 3 er avsluttet som prøve, og den gamle påminnelsen er avklart (`docs/verktøy-vdr5-produksjonskontroll.md`). Kontrolløren godtok testbevisene og at en ny sperre i produksjonen ikke trengs. Sak 4 og 5, som avløste funn 1 og 2, ble teknisk avsluttet etter PR #306, med etterprøvbart kildebevis ([sak 4](https://github.com/peohol/ousfar/actions/runs/41605290757), [sak 5](https://github.com/peohol/ousfar/actions/runs/41605365060)). En [ordinær kontroll](https://github.com/peohol/ousfar/actions/runs/41605399129) fant ingen nye saker. P12.1 står åpen frem til VDR-5 er publisert og fremdriftsplanen er oppdatert.
+**Status 03.11.2026 (gjennomført):** Flyt 1–3 er prøvd fra kjøringen til verktøysiden (`src/__tests__/kildesakflyt.test.tsx`). Produksjonen er kontrollert ved lesing, funn 3 er avsluttet som prøve, og den gamle påminnelsen er avklart (`docs/verktøy-vdr5-produksjonskontroll.md`). Kontrolløren godtok testbevisene og at en ny sperre i produksjonen ikke trengs. Sak 4 og 5, som avløste funn 1 og 2, ble teknisk avsluttet etter PR #306, med etterprøvbart kildebevis ([sak 4](https://github.com/peohol/ousfar/actions/runs/41605290757), [sak 5](https://github.com/peohol/ousfar/actions/runs/41605365060)). En [ordinær kontroll](https://github.com/peohol/ousfar/actions/runs/41605399129) fant ingen nye saker. P12.1 er fullført etter at VDR-5 ble publisert, sak 4 og 5 var teknisk avsluttet med kildebevis, og en ordinær kontroll fant ingen nye saker.
 
 ## 7. Parallelt arbeid: øk klinisk nytte og regeldekning
 
