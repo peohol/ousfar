@@ -8,6 +8,7 @@
 import { describe, expect, it } from 'vitest'
 import { beregnDoseplan, formvalgSomTrengs, kliniskDoseplan, type Doseplanresultat } from '../verktoy/motor/plan'
 import { ALLE_TESTPREPARATER, depotregel, nedtrappingsregel, OMGIVELSE, sp, syntetiskGrunnlag, trinnvalgUtenNull } from '../verktoy/motor/syntetisk'
+import { mangler, startdosenavn, TOMT_SKJEMA } from '../verktoy/doseplan'
 import { DELPLAN, KOMPLETT, planTekst, planvisning, UENDRET } from '../verktoy/planvisning'
 import { VALGTEKSTER, VERKTOY } from '../verktoy/register'
 import { beregn } from '../verktoy/regler/beregning'
@@ -294,5 +295,18 @@ describe('Depot som stoppes (K3)', () => {
     const v = planvisning(kliniskDoseplan(g, { startdose_mg: 6 }, GRUNNLAG, OMGIVELSE), g)!
     expect(v.rader[0]).toMatchObject({ type: 'periode', dager: 'Fra dag 1', celler: [{ dose: 'Seponert', elementer: ['ingen flere injeksjoner'] }, null] })
     expect(v.utfall).toMatchObject({ komplett: true, sluttmal: ['testperidon seponert fra dag 1', 'testperidon vedlikehold 100 mg hver måned fra 1 måned etter dag 8'] })
+  })
+})
+
+describe('Startdosen for et depot (K3)', () => {
+  it('spør etter dosen per injeksjon når legemidlet pasienten bruker, er et depot, ellers etter døgndosen', () => {
+    const peroral = nedtrappingsregel({ type: 'prosent_av_aktuell', prosent: sp(50, 'prosent') })
+    expect(startdosenavn(peroral)).toBe('Aktuell døgndose')
+    expect(startdosenavn(undefined)).toBe('Aktuell døgndose')
+    const depot = structuredClone(peroral)
+    depot.plan.forlop[0]!.administrasjon = 'depotinjeksjon'
+    expect(startdosenavn(depot)).toBe('Aktuell dose per injeksjon')
+    expect(mangler(depot, TOMT_SKJEMA)).toContain('Aktuell dose per injeksjon må fylles inn som et tall større enn 0.')
+    expect(mangler(peroral, TOMT_SKJEMA)).toContain('Aktuell døgndose må fylles inn som et tall større enn 0.')
   })
 })
