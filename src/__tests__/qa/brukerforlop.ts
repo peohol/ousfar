@@ -26,8 +26,8 @@ import { kombinasjoner } from '../../verktoy/regeldekning'
 import { festkoblinger, VERKTOY, type Verktoy } from '../../verktoy/register'
 import { FEST_PILOT, type Festuttrekk } from '../../verktoy/regler/aksepttest'
 import { erKliniskGodkjent, fingeravtrykk, harBeregning } from '../../verktoy/regler/godkjenning'
-import type { Regel } from '../../verktoy/regler/modell'
-import { besvartSkjema, kjorKasus, tidFor, type Pilotkasus, type Pilotutfall, type Uttrekkene as Kasusuttrekk } from '../../verktoy/regler/pilotmatrise'
+import type { Forlop, Regel } from '../../verktoy/regler/modell'
+import { avregistrert, besvartSkjema, kjorKasus, tidFor, type Pilotkasus, type Pilotutfall, type Uttrekkene as Kasusuttrekk } from '../../verktoy/regler/pilotmatrise'
 import { fraForlop, REGELSETT, tilForlop, tilgjengelighet, type Verktoyvalg } from '../../verktoy/tilgjengelighet'
 
 export const QA_RAPPORT = 'docs/verktøy-qa-brukerforlop.md'
@@ -81,7 +81,14 @@ export interface Brukerforlop {
    * (`Fase.trinnvalg`): den første siden tilbyr (standard) eller den siste.
    */
   trinn?: 'forste' | 'siste'
+  /** En endring i FEST (for eksempel en avregistrert styrke), gjort på en kopi av uttrekket. */
+  fest?: Pilotkasus['fest']
 }
+
+/** FEST-legemiddelformen dråper (mikstur, dråper), som escitalopram finnes som. */
+const DRAPER = '748'
+const form = (legemiddelform: string): Partial<Planskjema> => ({ formvalg: { fra: { legemiddelform } } })
+const lang: Partial<Planskjema> = { svar: { lang_behandlingstid: true } }
 
 const p = (nokkel: string) => ({ nokkel, formulering: 'standard' as const })
 const ned = (id: string, hva: string, nokkel: string, dose: string): Brukerforlop => ({
@@ -156,6 +163,14 @@ export const BRUKERFORLOP: readonly Brukerforlop[] = [
   ap('H-27', 'Haloperidol 5 mg peroralt til haloperidol depot', p('haloperidol'), { nokkel: 'haloperidol', formulering: 'LA' }, '5'),
   tillegg('H-28', 'Står på lamotrigin; litium legges til', 'lamotrigin', 'litium', '200'),
   tillegg('H-29', 'Står på litium; valproat legges til', 'litium', 'valproat', '1000'),
+  { ...ned('H-30', 'Escitalopram dråper 10 mg skal seponeres', 'escitalopram', '10'), skjema: form(DRAPER) },
+  { ...ned('H-31', 'Escitalopram dråper 20 mg skal seponeres', 'escitalopram', '20'), skjema: form(DRAPER) },
+  { ...ned('H-32', 'Escitalopram dråper 20 mg, lang behandlingstid', 'escitalopram', '20'), skjema: { ...form(DRAPER), ...lang } },
+  { ...ned('H-33', 'Nortriptylin 50 mg, lang behandlingstid', 'nortriptylin', '50'), skjema: lang },
+  { ...ned('H-34', 'Nortriptylin 50 mg når 10 mg-tablettene er avregistrert', 'nortriptylin', '50'), fest: avregistrert('nortriptylin', 10) },
+  ned('H-35', 'Sertralin 200 mg skal seponeres', 'sertralin', '200'),
+  { ...ned('H-36', 'Vortioksetin 20 mg når 15 mg-tablettene er avregistrert', 'vortioksetin', '20'), fest: avregistrert('vortioksetin', 15) },
+  { ...ad('H-37', 'Sertralin 100 mg byttes til mirtazapin når mirtazapin 15 mg er avregistrert', 'sertralin', 'mirtazapin', '100'), fest: avregistrert('mirtazapin', 15) },
 ]
 
 /* --- Kjøringen ------------------------------------------------------------------- */
@@ -188,6 +203,10 @@ export function uttrekkFor(valg: Verktoyvalg, u: Uttrekkene): string {
 
 /** Det valgte uttrekket i formen kontrollmatrisen tar imot. */
 const kasusuttrekk = (u: Uttrekkene, navn: string): Kasusuttrekk => ({ pilot: u[navn]!, aksept: u[navn]! })
+
+/** Dosen slik den står i et skjemafelt («37,5»), som tall. */
+const somTall = (x: string) => Number(x.replace(',', '.'))
+const planinndata = (dose: string, maldose?: string): Planinndata => ({ startdose_mg: somTall(dose), ...(maldose ? { maldose_mg: somTall(maldose) } : {}) })
 
 /** Flere trinnvalg enn dette i ett forløp regnes som en løkke. */
 const MAKS_TRINNVALG = 60
@@ -226,7 +245,17 @@ export interface Forlopsresultat {
   vist: string[]
   /** Brudd på QA-invariantene; tom når alt er i orden. */
   feil: string[]
+  /** Det QA avviser i det klinikeren får se, men som ennå ikke stopper testen (se {@link DELPLAN_VIST}). */
+  avvist: string[]
 }
+
+/**
+ * ChatGPT-kontrollen av #321 (2026-11-03): klinikerflaten skal ikke tilby en
+ * delplan som klinisk doseplan. Hver delplan som vises, føres derfor som
+ * avvist i rapporten. Testen gjøres streng når det er avgjort om også de
+ * godkjente delplanene skal skjules.
+ */
+export const DELPLAN_VIST = 'Delplan vises som klinisk doseplan'
 
 const regelFor = (u: Pilotutfall & { resultat?: Doseplanresultat }) => u.resultat && REGELSETT.regler.find((r) => r.id === u.resultat!.regel.id && r.versjon === u.resultat!.regel.versjon)
 
@@ -245,6 +274,7 @@ export function kjorForlop(f: Brukerforlop, u: Uttrekkene, ekstra: Partial<Pilot
       klasse: 'verktoy_mangler',
       formvalg: [],
       trinnvalg: [],
+      avvist: [],
       vist: [`Ingen verktøy av typen «${LEVERANSER[f.leveranse].verktoytype}» i registeret.`],
       feil: [],
     }
@@ -258,6 +288,7 @@ export function kjorForlop(f: Brukerforlop, u: Uttrekkene, ekstra: Partial<Pilot
     uttrekk: 'pilot',
     dose: f.dose,
     skjema: f.skjema,
+    ...(f.fest ? { fest: f.fest } : {}),
     forventet: { utfall: 'sperret' },
     ...ekstra,
   }
@@ -300,15 +331,16 @@ export function kjorForlop(f: Brukerforlop, u: Uttrekkene, ekstra: Partial<Pilot
   // En regel som er endret på en kopi (simulert godkjenning i et kontrollgrunnlag), vurderes som kopien.
   const regel = ekstra.regel && regelFor(utfall) ? endretKopi(regelFor(utfall)!, ekstra.regel) : regelFor(utfall)
   const grunner = 'grunner' in utfall ? utfall.grunner : []
-  const base = { forlop: f, verktoy, uttrekk, utfall, formvalg, trinnvalg, regel }
+  const base = { forlop: f, verktoy, uttrekk, utfall, formvalg, trinnvalg, regel, avvist: [] as string[] }
   switch (utfall.utfall) {
     case 'plan': {
-      const klasse = komplett(regel!, utfall.resultat!) ? 'komplett' : 'delplan'
+      const klasse = komplett(regel!, utfall.resultat!, planinndata(f.dose, skjema.maldose)) ? 'komplett' : 'delplan'
       return {
         ...base,
         klasse,
         vist: [...(utfall.undertittel ? [utfall.undertittel] : []), ...utfall.linjer],
         feil: planfeil(regel, utfall, klasse),
+        avvist: klasse === 'delplan' ? [DELPLAN_VIST] : [],
       }
     }
     case 'fagtekst':
@@ -359,18 +391,69 @@ const seponeres = (f: Doseplanresultat & { status: 'doseplan' }, id: string | un
   return x !== undefined && x.siste_dosedag !== null && !x.avslutning
 }
 
+/** Det planen er beregnet fra: aktuell dose og eventuell måldose forskriveren har valgt. */
+export interface Planinndata {
+  startdose_mg: number
+  maldose_mg?: number
+}
+
 /**
- * Om planen når sluttmålet, avgjort av planens forløp alene:
- * nedtrapping → seponert; bytte → det gamle seponert og det nye fortsetter
- * med dose; tillegg → det eksisterende fortsetter (uendret) og det nye
- * fortsetter med dose.
+ * Den kliniske måldosen regelen sier det nye legemidlet skal ende på: dosen i
+ * forløpets avsluttende vedlikehold (peroralt eller som depot), slått opp fra
+ * det forskriveren har oppgitt. `null` når forløpet ikke ender i et
+ * vedlikehold (for eksempel en opptrapping eller en introduksjonsdose), eller
+ * når måldosen ikke kan bestemmes; da er sluttmålet ikke nådd.
  */
-export function komplett(regel: Regel, r: Doseplanresultat): boolean {
+export function maldoseFor(forlop: Forlop | undefined, inn: Planinndata): number | null {
+  const sist = forlop?.faser.at(-1)
+  const dose = sist?.type === 'vedlikehold' ? sist.dose : sist?.type === 'injeksjoner' ? sist.vedlikehold.dose : null
+  if (!dose) return null
+  switch (dose.type) {
+    case 'fast':
+      return dose.mg.verdi
+    case 'aktuell':
+      return inn.startdose_mg
+    case 'inndata':
+      return dose.navn === 'maldose' ? (inn.maldose_mg ?? null) : inn.startdose_mg
+    case 'tabell': {
+      const rad = dose.rader.find((x) => nesten(x.fra_mg, inn.startdose_mg))
+      if (!rad) return null
+      if (typeof rad.til_mg === 'number') return rad.til_mg
+      const m = inn.maldose_mg
+      return m !== undefined && m >= rad.til_mg[0] && m <= rad.til_mg[1] ? m : null
+    }
+  }
+}
+
+/** Dosen forløpet fortsetter på når planen slutter: siste periode uten slutt, eller depotvedlikeholdet. */
+const sluttdose = (f: Doseplanresultat & { status: 'doseplan' }, id: string | undefined): number | null => {
+  const x = f.forlop.find((y) => y.id === id)
+  const siste = x?.perioder.at(-1)
+  if (siste && siste.til === null) return siste.mg
+  return x?.injeksjoner.filter((i) => i.vedlikehold).at(-1)?.mg ?? null
+}
+
+/** Det nye legemidlet fortsetter på nøyaktig den kliniske måldosen regelen og forskriveren har satt. */
+const naarMaldosen = (regel: Regel, r: Doseplanresultat & { status: 'doseplan' }, inn: Planinndata) => {
+  const til = tilForlop(regel)
+  const mal = maldoseFor(til, inn)
+  const slutt = sluttdose(r, til?.id)
+  return fortsetterMedDose(r, til?.id) && mal !== null && slutt !== null && nesten(slutt, mal)
+}
+
+/**
+ * Om planen når sluttmålet, avgjort av planens forløp og regelens sluttmål:
+ * nedtrapping → seponert; bytte → det gamle seponert og det nye fortsetter
+ * på den valgte kliniske måldosen; tillegg → det eksisterende fortsetter
+ * (uendret) og det nye fortsetter på måldosen. Et nytt legemiddel som blir
+ * stående på en introduksjonsdose, når ikke sluttmålet.
+ */
+export function komplett(regel: Regel, r: Doseplanresultat, inn: Planinndata): boolean {
   if (r.status !== 'doseplan') return false
   const fra = fraForlop(regel)?.id
   if (!regel.til) return r.forlop.every((x) => seponeres(r, x.id))
-  if (regel.plan.form === ('tillegg' as string)) return fortsetterUendret(r, fra) && fortsetterMedDose(r, tilForlop(regel)?.id)
-  return seponeres(r, fra) && fortsetterMedDose(r, tilForlop(regel)?.id)
+  if (regel.plan.form === ('tillegg' as string)) return fortsetterUendret(r, fra) && naarMaldosen(regel, r, inn)
+  return seponeres(r, fra) && naarMaldosen(regel, r, inn)
 }
 
 /** Tekst som sier at planen ikke er fullstendig. */
@@ -565,6 +648,7 @@ export function sveiplinjer(sveip: readonly Sveip[]): string[] {
         : []),
       `- Klasse: ${[...new Set(s.treff.map((t) => KLASSENAVN[t.resultat.klasse]))].join(', ') || '–'}`,
       `- QA-avvik i planene: ${s.treff.flatMap((t) => t.resultat.feil).length}`,
+      `- ${DELPLAN_VIST}: ${s.treff.filter((t) => t.resultat.avvist.length > 0).length} av ${s.treff.length} planer`,
       ...s.endringer.map((e) => `- ${e.hva}: ${KLASSENAVN[e.klasse]}`),
       '',
     ]),
@@ -603,10 +687,19 @@ export function lagQaRapport(resultater: readonly Forlopsresultat[], tillegg: re
           celle(r.forlop.hva),
           `${KLASSENAVN[r.klasse]}${r.regel ? ` (${r.regel.id} v${r.regel.versjon})` : ''}`,
           celle([...r.formvalg.map((f) => `[formvalg ${f}]`), ...r.trinnvalg.map((t) => `[valgt dose ${t}]`), ...r.vist].join(' / ')),
-          celle(r.feil.join(' / ') || '–'),
+          celle([...r.feil, ...r.avvist].join(' / ') || '–'),
         ].join(' | '),
       )
       .map((l) => `| ${l} |`),
+    '',
+    `## ${DELPLAN_VIST}`,
+    '',
+    `Etter ChatGPT-kontrollen av #321 skal klinikerflaten ikke tilby en delplan som klinisk doseplan. Disse forløpene gjør det i dag; de står som avvist over, og testen gjøres streng når det er avgjort om også de godkjente delplanene skal skjules: ${
+      resultater
+        .filter((r) => r.avvist.includes(DELPLAN_VIST))
+        .map((r) => r.forlop.id)
+        .join(', ') || 'ingen'
+    }.`,
     '',
     ...tillegg,
     '',

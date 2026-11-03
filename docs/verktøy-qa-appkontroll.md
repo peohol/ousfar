@@ -3,7 +3,7 @@
 
 Kjørt 2026-11-03 18:14 UTC mot https://ousfar.vercel.app (v1.124.4) som administrator, med dagens FEST. Hvert forløp er det samme som i `docs/verktøy-qa-brukerforlop.md`: syntetiske doser, alle bekreftelser og nei på hvert unntak og spørsmål, tablett når siden ber om legemiddelform. Bare lesing; ingenting er lagret. «Avvik» sammenligner med den lokale kjøringen mot de lagrede FEST-uttrekkene.
 
-Planer prøvd i appen uten avvik (hele kopien lik linje for linje, bortsett fra FEST-tidspunktet; «klinisk prøveverifisert» i plan §8): **5**.
+Planer teknisk ende-til-ende-verifisert i appen (hele kopien lik den lokale kjøringen linje for linje, bortsett fra FEST-tidspunktet): **5**. Dette er en teknisk verifikasjon med syntetiske data, ikke «klinisk prøveverifisert» (plan §8); det krever i tillegg en faglig gjennomgang av hele doseringsforløpet, kildene og de relevante risikoene.
 
 | Id | Situasjon | Lokalt | I appen | Avvik |
 | --- | --- | --- | --- | --- |

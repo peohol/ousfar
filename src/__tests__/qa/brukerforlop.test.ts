@@ -23,8 +23,8 @@ import { kombinasjoner } from '../../verktoy/regeldekning'
 import { VERKTOY, virkestoffvalg } from '../../verktoy/register'
 import { erKliniskGodkjent, fingeravtrykk, harBeregning } from '../../verktoy/regler/godkjenning'
 import { SAMMENLIGNINGSSETT } from '../../verktoy/regler/nedtrapping'
-import { REGELSETTENE, tilgjengelighet } from '../../verktoy/tilgjengelighet'
-import { BRUKERFORLOP, kjorForlop, lagQaRapport, lesUttrekkene, omfangssveip, planfeil, QA_RAPPORT, sveiplinjer, type Leveranse } from './brukerforlop'
+import { REGELSETTENE, tilForlop, tilgjengelighet } from '../../verktoy/tilgjengelighet'
+import { BRUKERFORLOP, kjorForlop, komplett, lagQaRapport, lesUttrekkene, omfangssveip, planfeil, QA_RAPPORT, sveiplinjer, type Leveranse } from './brukerforlop'
 
 const UTTREKK = lesUttrekkene()
 const RESULTATER = BRUKERFORLOP.map((f) => kjorForlop(f, UTTREKK))
@@ -142,6 +142,24 @@ describe('QA-kontrollen selv', () => {
     if (endret.resultat?.status !== 'doseplan') throw new Error('ikke plan')
     endret.resultat.forlop[0]!.perioder[0]!.mg += 5
     expect(planfeil(delplan.regel, endret, 'delplan').join()).toMatch(/enhetene gir/)
+  })
+
+  it('regner ikke et bytte som komplett når det nye legemidlet ikke ender på den kliniske måldosen', () => {
+    const x = plan('H-24')
+    const res = x.utfall!.resultat!
+    if (res.status !== 'doseplan') throw new Error('ikke plan')
+    const inn = { startdose_mg: 6 }
+    expect(komplett(x.regel!, res, inn)).toBe(true)
+    // Vedlikeholdet blir stående på introduksjonsdosen (150 mg) i stedet for måldosen.
+    const intro = structuredClone(res)
+    for (const f of intro.forlop) for (const i of f.injeksjoner) if (i.vedlikehold) i.mg = 150
+    expect(komplett(x.regel!, intro, inn)).toBe(false)
+    // En annen startdose i regelens tabell gir en annen måldose enn planen ender på.
+    expect(komplett(x.regel!, res, { startdose_mg: 12 })).toBe(false)
+    // Et nytt legemiddel som ender i en opptrapping, har ikke noe sluttmål.
+    const regel = structuredClone(x.regel!)
+    tilForlop(regel)!.faser.push({ type: 'opptrapping', trinn: [] })
+    expect(komplett(regel, res, inn)).toBe(false)
   })
 })
 
