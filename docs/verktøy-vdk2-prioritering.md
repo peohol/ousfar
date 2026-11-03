@@ -181,6 +181,8 @@ Ved lang behandlingstid endres ingenting: sertralin, escitalopram (tabletter), f
 
 ### Forslag 3 – Peroral risperidon → Xeplion, og generisk paliperidonpalmitat
 
+**Status 03.11.2026:** `depot-risperidon-xeplion` er skrevet som regelutkast i K3, uten generika, og står til faglig kontroll (`docs/verktøy-k3-antipsykotika.md`).
+
 **Hva:** En ny regel, `depot-risperidon-xeplion`, for overgang fra peroral risperidon til månedlig paliperidonpalmitat. Den bruker samme oppstart som den godkjente regelen `depot-paliperidon-xeplion` v3. I tillegg tas de generiske preparatene med paliperidonpalmitat inn i preparatlisten, i en ny versjon av den godkjente regelen eller i en ny regel, etter kontrollørens valg.
 
 **Hvorfor dette først blant antipsykotika:** I FEST finnes peroral paliperidon (Invega depottabletter 3 og 6 mg) bare med godkjenningsfritak. Den godkjente regelen starter derfor fra et preparat som sjelden brukes i Norge. Risperidon er markedsført i mange styrker, og preparatomtalen for Xeplion behandler overgang fra peroral paliperidon og fra peroral risperidon likt.
@@ -361,6 +363,8 @@ Ved lang behandlingstid endres ingenting: sertralin, escitalopram (tabletter), f
 | K5-10 | Mirtazapin smeltetablett | Stopper. |
 
 ### Forslag 6 – Risperdal Consta → Xeplion
+
+**Status 03.11.2026:** `depot-consta-xeplion` er skrevet som regelutkast i K3 og står til faglig kontroll (`docs/verktøy-k3-antipsykotika.md`).
 
 **Hva:** En ny regel for overgang fra risperidon langtidsvirkende injeksjon hver 2. uke til Xeplion.
 

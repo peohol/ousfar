@@ -76,6 +76,9 @@ export const KILDER: readonly Kilde[] = [
     sha256: 'ace676d3533deee6b8d244b63ca125920ae103196912fbbe8b827a8ac294abe4',
     bruk: OFFENTLIG,
   },
+  preparatomtale('dmp-risperdal', 'Risperdal (risperidon) tabletter, preparatomtale', '0000-08037', 'Oppdatert 19.08.2022', '2026-11-03T16:52:00Z', 'dd2ce96c875c8f820a1c394533ca20fea2f9f7140f6640db9ff11e1af3a0bba2'),
+  preparatomtale('dmp-risperdal-consta', 'Risperdal Consta (risperidon depotinjeksjon), preparatomtale', '2001-09858', 'Oppdatert 11.05.2021', '2026-11-03T16:52:00Z', 'f8083addc64cc2958b21d59f512bab97afa33d6b5c9283c80c6f27fe8a4f32a8'),
+  epar('ema-reagila', 'Reagila (kariprazin), produktinformasjon', 'reagila', 'PDF datert 11.12.2025', '2026-11-03T16:45:00Z', '9d13d908e239f6368505bfcde6e4381ffb6295f6bc6de049f006e4abed967ec2'),
   epar('ema-zyprexa', 'Zyprexa (olanzapin), produktinformasjon', 'zyprexa', 'Sist endret 08.10.2026', '2026-10-28T03:32:59Z', 'd7a60e6f4908c9e7d3e4f8ff39c56bf74a1014719fb7cace04436a065b4d3357'),
   {
     id: 'nice-ng222',

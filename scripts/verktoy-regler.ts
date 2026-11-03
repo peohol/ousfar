@@ -3,14 +3,14 @@
  * Verktøy (`docs/verktøy-utviklingsplan.md`).
  *
  *   npm run verktoy:regler -- kontroll   Kontrollerer regelsettene (kilder, grunnlag, godkjenning, regneeksempler) og testmatrisen fra P11
- *   npm run verktoy:regler -- rapport    docs/verktøy-p4-pilotsett.md, docs/verktøy-p7-regelutkast.md og docs/verktøy-p7-dekning.md
+ *   npm run verktoy:regler -- rapport    docs/verktøy-p4-pilotsett.md, docs/verktøy-p7-regelutkast.md, leveransenes rapporter (domenesett.ts) og docs/verktøy-p7-dekning.md
  *   npm run verktoy:regler -- motorrapport   docs/verktøy-p5-testtilfeller.md (doseplanmotoren, syntetiske data)
  *   npm run verktoy:regler -- aksepttest     docs/verktøy-p7-aksepttest.md (P7-reglene med de norske preparatene i FEST-uttrekket)
  *   npm run verktoy:regler -- pilotmatrise   docs/verktøy-p11-testmatrise.md (de godkjente reglene ende til ende med syntetiske kasus, P11)
  *   npm run verktoy:regler -- regeldekning   docs/verktøy-vdk1-regeldekning.md (hva de tre verktøyene kan beregne, og hvorfor resten stopper, VDK-1)
  *   npm run verktoy:regler -- kontrollgrunnlag   docs/verktøy-vdk3-forslag*-kontrollgrunnlag.md (faglig kontrollgrunnlag for et forslag fra VDK-2, VDK-3)
  *   npm run verktoy:regler -- rettelse       docs/verktøy-rettelse-langvarig.md (kontrollgrunnlag for de nye regelversjonene etter en faktumrettelse)
- *   npm run verktoy:regler -- hent-fest      Henter FEST-uttrekkene til aksepttesten og pilotreglenes ende-til-ende-tester på nytt (krever VITE_SUPABASE_URL og SUPABASE_SECRET_KEY)
+ *   npm run verktoy:regler -- hent-fest      Henter FEST-uttrekkene til aksepttesten, pilotreglenes og antipsykotikabyttenes ende-til-ende-tester på nytt (krever VITE_SUPABASE_URL og SUPABASE_SECRET_KEY)
  *
  * Bare `hent-fest` henter noe, og bare ved å lese med `les_legemidler`. Skriptet
  * skriver ikke til databasen og godkjenner ingen regel.
@@ -18,6 +18,7 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { AKSEPTSTOFFER, AKSEPTTESTFIL, FEST_AKSEPTTEST, FEST_PILOT, lagAksepttestrapport, type Festuttrekk } from '../src/verktoy/regler/aksepttest'
 import { PILOTSETT } from '../src/verktoy/regler/pilotsett'
+import { ANTIPSYKOTIKASETT, FEST_ANTIPSYKOTIKA } from '../src/verktoy/regler/antipsykotikabytter'
 import { festkoblinger } from '../src/verktoy/register'
 import { DEKNINGSRAPPORTFIL, lagDekningsrapport } from '../src/verktoy/dekningsrapport'
 import { disposisjonsfeil } from '../src/verktoy/regler/godkjenning'
@@ -84,7 +85,9 @@ async function rettelse() {
 }
 
 /** Virkestoffene i pilotreglene; reglene testes ende til ende med preparatene i FEST. */
-const pilotstoffer = () => PILOTSETT.regler.flatMap((r) => r.plan.forlop.flatMap((f) => (f.virkestoff.type === 'virkestoff' ? [f.virkestoff.nokkel] : [])))
+const stofferI = (regler: readonly { plan: { forlop: { virkestoff: { type: string; nokkel?: string } }[] } }[]) =>
+  regler.flatMap((r) => r.plan.forlop.flatMap((f) => (f.virkestoff.type === 'virkestoff' && f.virkestoff.nokkel ? [f.virkestoff.nokkel] : [])))
+const pilotstoffer = () => stofferI(PILOTSETT.regler)
 
 async function hentFest() {
   const url = process.env.VITE_SUPABASE_URL
@@ -93,6 +96,7 @@ async function hentFest() {
   for (const [fil, nokler] of [
     [FEST_AKSEPTTEST, AKSEPTSTOFFER.map((s) => s.nokkel)],
     [FEST_PILOT, [...new Set(pilotstoffer())]],
+    [FEST_ANTIPSYKOTIKA, [...new Set(stofferI(ANTIPSYKOTIKASETT.regler))]],
   ] as const) {
     const ider = [...new Set(Object.values(festkoblinger(nokler)).flat())].sort()
     const svar = await fetch(`${url}/rest/v1/rpc/les_legemidler`, {

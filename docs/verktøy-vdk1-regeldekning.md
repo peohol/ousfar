@@ -20,7 +20,8 @@ Antall kombinasjoner etter hva verktøyet gir. For seponering er en kombinasjon 
 | Klinisk godkjent fagtekst, ingen beregning | 2 | 0 | 0 | 0 |
 | Regel finnes, kontrollert og ikke godkjent | 7 | 1 | 1 | 0 |
 | Regel finnes som fagtekst, ikke godkjent | 6 | 0 | 0 | 0 |
-| Ingen OUSFAR-regel; kilden har en anbefaling | 0 | 504 | 892 | 110 |
+| Regel finnes, ikke ferdig kontrollert | 0 | 0 | 5 | 0 |
+| Ingen OUSFAR-regel; kilden har en anbefaling | 0 | 504 | 887 | 110 |
 | Ingen OUSFAR-regel; kilden har ingen anbefaling | 0 | 0 | 161 | 0 |
 | Ingen OUSFAR-regel; begrenset av preparater eller kilde | 7 | 0 | 0 | 0 |
 | Ikke støttet: middels langtidsvirkende injeksjon | 0 | 0 | 66 | 0 |
@@ -133,7 +134,12 @@ Regelutkast som er kontrollert og ikke godkjent (eller bare fagtekst), og som de
 | Trappe ned antidepressiv | `seponering-venlafaksin` v6 | Venlafaksin | fagtekst | bare fagtekst |
 | Trappe ned antidepressiv | `seponering-vortioksetin-langsom` v8 | Vortioksetin | beregnbar | ikke godkjent |
 | Bytte antidepressiv | `mao-fluoksetin-fenelzin` v7 | Fluoksetin → Fenelzin | beregnbar | ikke godkjent |
+| Bytte antipsykotikum | `antipsykotikabytte-aripiprazol-olanzapin` v1 | Aripiprazol (peroral) → Olanzapin (peroral) | beregnbar | til kontroll |
+| Bytte antipsykotikum | `antipsykotikabytte-aripiprazol-risperidon` v1 | Aripiprazol (peroral) → Risperidon (peroral) | beregnbar | til kontroll |
+| Bytte antipsykotikum | `antipsykotikabytte-kariprazin-kvetiapin` v1 | Kariprazin → Kvetiapin | beregnbar | til kontroll |
 | Bytte antipsykotikum | `antipsykotikabytte-olanzapin-kvetiapin` v5 | Olanzapin (peroral) → Kvetiapin | beregnbar | ikke godkjent |
+| Bytte antipsykotikum | `depot-consta-xeplion` v1 | Risperidon (depotinjeksjon) → Paliperidon (depotinjeksjon (paliperidonpalmitat)) | beregnbar | til kontroll |
+| Bytte antipsykotikum | `depot-risperidon-xeplion` v1 | Risperidon (peroral) → Paliperidon (depotinjeksjon (paliperidonpalmitat)) | beregnbar | til kontroll |
 
 ## 6. Hvorfor de andre kombinasjonene stopper
 
@@ -186,7 +192,7 @@ Per fra-valg: hvor mange til-valg som gir plan eller godkjent fagtekst, hvor man
 | Fra | Til-valg | Plan eller godkjent fagtekst | Regel uten godkjenning | Ingen regel, kilden har anbefaling | Ingen regel, kilden har ingen | Middels langtidsvirkende |
 | --- | --- | --- | --- | --- | --- | --- |
 | Amisulprid | 33 | 0 | 0 | 24 | 8 | 1 |
-| Aripiprazol (peroral) | 33 | 1 | 0 | 24 | 7 | 1 |
+| Aripiprazol (peroral) | 33 | 1 | 2 | 22 | 7 | 1 |
 | Aripiprazol (depotinjeksjon) | 33 | 0 | 0 | 32 | 0 | 1 |
 | Brekspiprazol | 33 | 0 | 0 | 25 | 7 | 1 |
 | Flufenazin (peroral) | 33 | 0 | 0 | 27 | 5 | 1 |
@@ -195,7 +201,7 @@ Per fra-valg: hvor mange til-valg som gir plan eller godkjent fagtekst, hvor man
 | Flupentiksol (depotinjeksjon) | 33 | 0 | 0 | 32 | 0 | 1 |
 | Haloperidol (peroral) | 33 | 0 | 0 | 25 | 7 | 1 |
 | Haloperidol (depotinjeksjon) | 33 | 0 | 0 | 32 | 0 | 1 |
-| Kariprazin | 33 | 0 | 0 | 25 | 7 | 1 |
+| Kariprazin | 33 | 0 | 1 | 24 | 7 | 1 |
 | Klorprotiksen | 33 | 0 | 0 | 27 | 5 | 1 |
 | Klozapin | 33 | 0 | 0 | 24 | 8 | 1 |
 | Kvetiapin | 33 | 0 | 0 | 24 | 8 | 1 |
@@ -210,8 +216,8 @@ Per fra-valg: hvor mange til-valg som gir plan eller godkjent fagtekst, hvor man
 | Perisiazin | 33 | 0 | 0 | 27 | 5 | 1 |
 | Pimozid | 33 | 0 | 0 | 24 | 8 | 1 |
 | Promazin | 33 | 0 | 0 | 27 | 5 | 1 |
-| Risperidon (peroral) | 33 | 0 | 0 | 26 | 6 | 1 |
-| Risperidon (depotinjeksjon) | 33 | 0 | 0 | 32 | 0 | 1 |
+| Risperidon (peroral) | 33 | 0 | 1 | 25 | 6 | 1 |
+| Risperidon (depotinjeksjon) | 33 | 0 | 1 | 31 | 0 | 1 |
 | Sertindol | 33 | 0 | 0 | 24 | 8 | 1 |
 | Sulpirid | 33 | 0 | 0 | 24 | 8 | 1 |
 | Trifluoperazin | 33 | 0 | 0 | 27 | 5 | 1 |

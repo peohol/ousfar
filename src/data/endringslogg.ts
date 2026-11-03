@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.125.2',
+    dato: '2026-11-03',
+    sammendrag: 'Fem regler for bytte av antipsykotika, til faglig kontroll',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Ingen ny beregning ennå. «Bytte antipsykotikum» har fått regler for fem komplette bytter: til Xeplion fra peroral risperidon og fra Risperdal Consta, og direkte bytte fra aripiprazol til olanzapin, fra aripiprazol til risperidon og fra kariprazin til kvetiapin.',
+      'Reglene bygger på preparatomtalene og en oversiktsartikkel, ikke på Psychiatrienet, og de bruker bare norske preparater fra FEST. De står til uavhengig faglig kontroll. Til de er godkjent, sier verktøyet at faglig kontroll gjenstår for disse kombinasjonene.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.125.0',
     dato: '2026-11-03',
     sammendrag: 'De kliniske verktøyene kan vise komplette planer med vurderingspunkter, og har fått verktøyet for å kombinere stemningsstabiliserende',

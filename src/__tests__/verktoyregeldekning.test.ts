@@ -185,9 +185,14 @@ describe('prioriteringen i VDK-2', () => {
     }
   })
 
-  it('aktiverer ingenting: regelutkastene står ikke i regelsettet', () => {
+  it('aktiverer ingenting: regelutkastene som er skrevet siden (K3), står til faglig kontroll og er ikke godkjent', () => {
     expect(plan).toContain('Ingenting her er aktivert eller klinisk godkjent')
-    for (const id of ['depot-risperidon-xeplion']) expect(REGELSETT.regler.some((r) => r.id === id)).toBe(false)
+    for (const id of ['depot-risperidon-xeplion', 'depot-consta-xeplion']) {
+      const regel = REGELSETT.regler.find((r) => r.id === id)!
+      expect(regel.godkjenning.status, id).toBe('til_faglig_kontroll')
+      expect(erKliniskGodkjent(regel), id).toBe(false)
+      expect(plan, id).toContain(`\`${id}\` er skrevet som regelutkast i K3`)
+    }
   })
 
   it('viser ingen lenker eller tekst fra Psychiatrienet', () => {

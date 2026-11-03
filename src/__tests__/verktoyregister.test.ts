@@ -11,6 +11,7 @@ import { beregnPlan, festIderFor, formvalgFor, gjelderFortsatt, inndataFor, lesD
 import { planTekst, planvisning } from '../verktoy/planvisning'
 import { finnVirkestoff, KARTLEGGING, sokVerktoy, VERKTOY, verktoyFor, virkestoffvalg } from '../verktoy/register'
 import { NEDTRAPPINGSSETT } from '../verktoy/regler/nedtrapping'
+import { ANTIPSYKOTIKASETT } from '../verktoy/regler/antipsykotikabytter'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
 import { snarvalg } from '../verktoy/snarvalg'
 import { REGELSETT, regeloversikt, reglerFor, tilgjengelighet, type Verktoyvalg } from '../verktoy/tilgjengelighet'
@@ -149,11 +150,12 @@ describe('Regelstatusen', () => {
     }
     // Gruppebyttet til aripiprazol er ikke godkjent som modell (beslutning P4-A) og står bare i sammenligningssettet.
     expect(tilgjengelighet(BYTTE_AP!, { fra: v('zuklopentiksol'), til: v('aripiprazol') })).toMatchObject({ status: 'ikke_stottet', regler: [] })
-    expect(new Set(tilfeller.flatMap(([, , r]) => r))).toEqual(new Set(REGELSETT.regler.map((r) => r.id)))
-    expect(REGELSETT.regler).toHaveLength(PILOTSETT.regler.length + NEDTRAPPINGSSETT.regler.length)
+    expect(new Set(tilfeller.flatMap(([, , r]) => r))).toEqual(new Set([...PILOTSETT.regler, ...NEDTRAPPINGSSETT.regler].map((r) => r.id)))
+    // Antipsykotikabyttene fra K3 står til faglig kontroll (`verktoyantipsykotika.test.ts`).
+    expect(REGELSETT.regler).toHaveLength(PILOTSETT.regler.length + NEDTRAPPINGSSETT.regler.length + ANTIPSYKOTIKASETT.regler.length)
     expect(VERKTOY.map((x) => regeloversikt(x).tilgjengelige)).toEqual([1, 1, 2, 0])
     expect(VERKTOY.map((x) => regeloversikt(x).ikkeGodkjent)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length - 1, 1, 1, 0])
-    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([0, 0, 0, 0])
+    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([0, 0, ANTIPSYKOTIKASETT.regler.length, 0])
   })
 
   it('forklarer hvorfor et antidepressivum uten regel ikke kan trappes ned, med dekningen fra P7', () => {
