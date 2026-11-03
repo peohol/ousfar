@@ -182,9 +182,9 @@ Syntetiske, vanlige situasjoner for voksne 18–64 år uten tidligere seponering
 | 1 | #316 | A – K0-nullpunkt | 1.124.5 | – | Til kontroll |
 | 2 | #319 | G – felles motor | 1.125.0 | – | Til kontroll |
 | 3 | #318 | D – K2, fem bytteregler til kontroll | 1.125.1 | #319 | Til kontroll; QA uten blokkerende funn |
-| 4 | #320 | E – K3, fem bytteregler til kontroll (dekker K0-10; K0-07 og K0-08 åpne) | 1.125.2 | #319 | Til kontroll |
+| 4 | #320 | E – K3, sju bytteregler til kontroll (dekker K0-07, K0-08 og K0-10) | 1.125.2 | #319 | Til kontroll |
 | 5 | #322 | F – K4, lamotrigin lagt til valproat eller litium, til kontroll (K0-11 og K0-12) | 1.125.3 | #319 | Til kontroll |
-| 6 | #321 | H – testkasus K0-01–K0-12 og kontroll i den publiserte appen (K0-09 prøveverifisert) | 1.125.4 | #322 (rapporten lages på nytt etter den) | Til kontroll |
-| – | K1-PR | C | tildeles | #319 | Under arbeid |
+| 6 | K1-PR (kommer) | C – K1, escitalopram, nortriptylin og amitriptylin til seponering, til kontroll (K0-01 og K0-03) | 1.125.4 | #319 | Under arbeid |
+| 7 | #321 | H – testkasus K0-01–K0-12 og kontroll i den publiserte appen (K0-09 prøveverifisert) | 1.125.5 | K1-PR (rapporten lages på nytt etter den) | Til kontroll |
 
 Godkjenner ChatGPT i en annen rekkefølge, nummererer koordinatoren om de uavhengige PR-ene; PR-er som avhenger av #319, merges etter den.
