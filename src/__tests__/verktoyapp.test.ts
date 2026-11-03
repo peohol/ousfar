@@ -74,11 +74,11 @@ describe('Verktøyene i appen', () => {
     expect(NAADD).toEqual(expect.arrayContaining(['App.tsx', 'components/verktoy/Verktoyside.tsx', 'verktoy/doseplan.ts', 'verktoy/planvisning.ts', 'verktoy/motor/plan.ts']))
   })
 
-  it('tar ikke med modellberegninger, syntetiske testdata, rapporter, kildearkivet eller testene', () => {
+  it('tar ikke med modellberegninger, syntetiske testdata, rapporter (også regeldekningen fra VDK-1), kildearkivet eller testene', () => {
     const forbudt = NAADD.filter(
       (f) =>
         f.startsWith('__tests__/') ||
-        /^verktoy\/(?:motor\/(?:syntetisk|rapport)|regler\/(?:rapport|kontroll)|kartdata|rapport|kilde[^/]*)\.ts$/.test(f) ||
+        /^verktoy\/(?:motor\/(?:syntetisk|rapport)|regler\/(?:rapport|kontroll)|kartdata|rapport|regeldekning|kilde[^/]*)\.ts$/.test(f) ||
         /\.test\.tsx?$/.test(f),
     )
     expect(forbudt).toEqual([])
