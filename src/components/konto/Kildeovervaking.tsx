@@ -16,8 +16,10 @@ import {
 } from '../../verktoy/overvaking/varsling'
 import { REGELSETTENE } from '../../verktoy/tilgjengelighet'
 import { Button } from '../Button'
+import { Details } from '../Details'
 import { Merke } from '../Merke'
 import { Modallag } from '../Modallag'
+import { Fagsaker } from './Fagsaker'
 
 /** Lageret appen bruker, mot databasen som den innloggede. */
 export const kildeovervakingslager = (): Kildeovervakingslager => lagKildeovervakingslager(kallMot(klient()))
@@ -82,15 +84,13 @@ function TekniskLogg({ f }: { f: Kildefunn }) {
 }
 
 /**
- * Kildeovervåkingen for de kliniske verktøyene, for administratorer
- * (`docs/verktøy-p12-overvaking.md` §5). Et funn er en sak som først
- * undersøkes teknisk av en agent; redaktøren har ingen frister og skriver
- * ingen tekniske vurderinger. Faglige spørsmål med valg og konsekvenser vises
- * i redaktørvisningen (`fagsak.ts`, VDR-2). Ingenting her endrer, godkjenner
- * eller sperrer en regel. Tilgangen avgjøres i databasen; dette er bare
- * visningen.
+ * Det tekniske sporet i kildeovervåkingen, for kontrollører: alle åpne saker,
+ * også de agenten undersøker, med den lukkede tekniske loggen, og hva siste
+ * kontroll sammenlignet. Redaktøren skal ikke gjøre noe her; det står lukket
+ * under de faglige sakene. Ingenting her endrer, godkjenner eller sperrer en
+ * regel.
  */
-export function Kildeovervaking({ apen, onLukk, lager: egetLager, na = Date.now }: { apen: boolean; onLukk: () => void; lager?: Kildeovervakingslager; na?: () => number }) {
+function TekniskSpor({ apen, lager: egetLager, na }: { apen: boolean; lager?: Kildeovervakingslager; na: () => number }) {
   const lager = useMemo(() => egetLager ?? (apen ? kildeovervakingslager() : null), [apen, egetLager])
   const [data, setData] = useState<Overvaking | null>(null)
   const [feil, setFeil] = useState<string | null>(null)
@@ -122,11 +122,10 @@ export function Kildeovervaking({ apen, onLukk, lager: egetLager, na = Date.now 
   const id = useId()
 
   return (
-    <Modallag apen={apen} tittel="Kildeovervåking" ikon="refs" bred onLukk={onLukk}>
-      <p className="autoerstatt__ingress">
-        Hver mandag kontrolleres kildene og preparatene i FEST som de klinisk godkjente reglene i verktøyene bygger på. Et funn undersøkes først teknisk; en endret
-        kontrollsum alene gir ingen oppgave for deg. Du får en sak bare når det finnes et konkret faglig spørsmål eller et mulig sikkerhetsproblem. Overvåkingen endrer,
-        godkjenner eller sperrer ingen regel. Kan en endring gjøre en plan uforsvarlig, sett en sperre under Kliniske verktøy.
+    <>
+      <p className="felt__hjelp">
+        For kontrollører. Hver mandag kontrolleres kildene og preparatene i FEST som de klinisk godkjente reglene bygger på. Et funn undersøkes først teknisk; en endret
+        kontrollsum alene blir aldri en faglig sak.
       </p>
 
       {feil && (
@@ -153,7 +152,7 @@ export function Kildeovervaking({ apen, onLukk, lager: egetLager, na = Date.now 
       )}
 
       <section aria-labelledby={`${id}-apne`} className="verktoysperrer__del">
-        <h3 id={`${id}-apne`}>Åpne saker</h3>
+        <h4 id={`${id}-apne`}>Alle åpne saker, også tekniske</h4>
         {data === null ? (
           ulest ? null : <p className="autoerstatt__tomt">Henter kildeovervåkingen …</p>
         ) : apne.length === 0 ? (
@@ -177,7 +176,7 @@ export function Kildeovervaking({ apen, onLukk, lager: egetLager, na = Date.now 
       </section>
 
       <section aria-labelledby={`${id}-siste`} className="verktoysperrer__del">
-        <h3 id={`${id}-siste`}>Siste kontroll</h3>
+        <h4 id={`${id}-siste`}>Siste kontroll</h4>
         {status && <p className="kildeovervaking__over">{status[0]!.toUpperCase() + status.slice(1)}.</p>}
         {siste && (
           <>
@@ -221,7 +220,7 @@ export function Kildeovervaking({ apen, onLukk, lager: egetLager, na = Date.now 
 
       {avsluttede.length > 0 && (
         <section aria-labelledby={`${id}-avsluttede`} className="verktoysperrer__del">
-          <h3 id={`${id}-avsluttede`}>Avsluttede saker</h3>
+          <h4 id={`${id}-avsluttede`}>Avsluttede saker</h4>
           <ul className="autoerstatt__liste">
             {avsluttede.map((f) => (
               <li key={f.id} className="autoerstatt__rad autoerstatt__rad--skjema">
@@ -235,6 +234,40 @@ export function Kildeovervaking({ apen, onLukk, lager: egetLager, na = Date.now 
           </ul>
         </section>
       )}
+    </>
+  )
+}
+
+/**
+ * Vinduet «Kildeovervåking» i administrasjonsmenyen
+ * (`docs/verktøy-omlegging-2026-11.md` §4, VDR-2): de faglige sakene først,
+ * slik redaktøren skal se dem, og det tekniske sporet lukket under. Tilgangen
+ * avgjøres i databasen; dette er bare visningen.
+ */
+export function Kildeovervaking({
+  apen,
+  onLukk,
+  lager,
+  fagsaker,
+  onNodstopp,
+  na = Date.now,
+}: {
+  apen: boolean
+  onLukk: () => void
+  lager?: Kildeovervakingslager
+  fagsaker?: Fagsaklager
+  onNodstopp?: () => void
+  na?: () => number
+}) {
+  const saklager = useMemo(() => fagsaker ?? (apen ? fagsaklager() : null), [apen, fagsaker])
+  return (
+    <Modallag apen={apen} tittel="Kildeovervåking" ikon="refs" bred onLukk={onLukk}>
+      <Fagsaker apen={apen} lager={saklager} onNodstopp={onNodstopp} />
+      <section aria-label="Teknisk spor" className="verktoysperrer__del">
+        <Details summary="Teknisk spor for kontrollører">
+          <TekniskSpor apen={apen} lager={lager} na={na} />
+        </Details>
+      </section>
     </Modallag>
   )
 }

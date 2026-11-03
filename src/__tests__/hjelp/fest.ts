@@ -6,12 +6,15 @@
 import type { PGlite } from '@electric-sql/pglite'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { readFileSync } from 'node:fs'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { crc32, deflateRawSync } from 'node:zlib'
 import { lagLegemiddellager, type Databasekall } from '../../legemiddeldata/lager'
 import { lagLegemiddelleser, type Legemiddelleser } from '../../legemiddeldata/lesing'
 import { synkroniserFest } from '../../legemiddeldata/synk'
 
-export const UTDRAG = readFileSync(new URL('../data/fest-utdrag.xml', import.meta.url), 'utf8')
+// Stien bygges uten den globale `URL`, så hjelperen også virker i prøver som kjøres med jsdom.
+export const UTDRAG = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '../data/fest-utdrag.xml'), 'utf8')
 
 export const AMITRIPTYLIN = 'ID_0A1B24EF-A7F8-488B-97B8-8023193E976D'
 export const AMITRIPTYLINHYDROKLORID = 'ID_070A7B5D-46F1-44DC-AAB8-B51BE5A49270'
