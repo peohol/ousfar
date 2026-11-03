@@ -83,7 +83,7 @@ describe('oversikten', () => {
       .filter((a) => a.classList.contains('verktoykort__lenke'))
       .map((a) => [...a.querySelectorAll('.verktoykort__linje')].map((l) => l.textContent))
 
-  it('viser de fire verktøyene, og at bare de godkjente reglene kan beregnes: vortioksetin, sertralin → mirtazapin og de to depotreglene', async () => {
+  it('viser de fire verktøyene, og at bare de godkjente reglene som kan gi en komplett plan, kan beregnes: de to depotreglene', async () => {
     vis()
     expect(screen.getByRole('heading', { level: 1, name: 'Verktøy' })).toBeTruthy()
     expect(document.activeElement).toBe(screen.getByRole('heading', { level: 1 }))
@@ -94,9 +94,10 @@ describe('oversikten', () => {
     expect(kortlinjer()).toEqual(Array(4).fill([DEKNING_UKONTROLLERT.henter]))
     await act(async () => {})
     // Kortene sier hva som faktisk kan brukes, ikke hvor mange regler som venter.
+    // Vortioksetin og sertralin → mirtazapin er godkjent, men gir aldri en komplett plan, så de loves ikke (leveranseplanen §3).
     expect(kortlinjer()).toEqual([
-      ['Kan beregnes: Vortioksetin', 'Fagtekst: Agomelatin, Bupropion'],
-      ['Kan beregnes: Sertralin → mirtazapin'],
+      ['Ingen beregning tilgjengelig ennå', 'Fagtekst: Agomelatin, Bupropion'],
+      ['Ingen beregning tilgjengelig ennå'],
       ['Kan beregnes: Aripiprazol: peroral → depotinjeksjon, Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)'],
       // Kombinere stemningsstabiliserende (K4) har ingen godkjente regler ennå, og kortet sier det.
       ['Ingen beregning tilgjengelig ennå'],
@@ -1188,7 +1189,6 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
   })
 
   describe('forenklingen (VDR-3)', () => {
-    const SERTRALIN = 'kryssnedtrapping-sertralin-mirtazapin'
     // En godkjent regel som gir en komplett plan; klinikere får aldri en delplan (Peders beslutning 03.11.2026).
     const XEPLION = 'depot-paliperidon-xeplion'
     const XEPLION_SNARVALG = 'Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)'
@@ -1279,10 +1279,11 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
 
     it('tilbyr ingen snarvalg og lover ingenting om hva som kan beregnes før nødstoppen er lest, og holder sperrede valg utenfor', async () => {
       const sperre = (omfang: Verktoysperre['omfang'], mal: string): Verktoysperre => ({ id: `s-${omfang}`, omfang, mal, grunn: 'Syntetisk sperre.', satt_kl: '2026-11-01T08:00:00Z', satt_av: 'Ada Admin' })
-      const side = (sperrer: VerktoysideProps['sperrer']) => vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT), sperrer })
-      const ingenSnarvalg = () => {
-        expect(screen.queryByRole('group', { name: 'Kan beregnes nå:' })).toBeNull()
-        expect(screen.queryByRole('button', { name: 'Sertralin → mirtazapin' })).toBeNull()
+      const side = (sperrer: VerktoysideProps['sperrer']) => vis({ verktoy: 'bytte-antipsykotikum', legemidler: fra(PILOT), klokke: klokke(PILOT), sperrer })
+      // En sperre på Xeplion holder bare det valget utenfor; aripiprazol står fortsatt.
+      const ingenSnarvalg = (ingenGruppe = true) => {
+        if (ingenGruppe) expect(screen.queryByRole('group', { name: 'Kan beregnes nå:' })).toBeNull()
+        expect(screen.queryByRole('button', { name: XEPLION_SNARVALG })).toBeNull()
       }
 
       side({ les: () => new Promise<Verktoysperre[]>(() => {}) })
@@ -1298,15 +1299,18 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
       cleanup()
 
       // En kjent sperre på regelen eller verktøyet holder valget utenfor; uten sperre står det.
-      for (const sperrer of [[sperre('regel', SERTRALIN)], [sperre('verktoy', 'bytte-antidepressiv')]]) {
-        side({ les: async () => sperrer })
+      for (const [sperrer, ingenGruppe] of [
+        [[sperre('regel', XEPLION)], false],
+        [[sperre('verktoy', 'bytte-antipsykotikum')], true],
+      ] as const) {
+        side({ les: async () => [...sperrer] })
         await act(async () => {})
-        ingenSnarvalg()
+        ingenSnarvalg(ingenGruppe)
         expect(screen.queryByText(/Kontrollerer tilgjengeligheten|Kan ikke kontrollere tilgjengeligheten/)).toBeNull()
         cleanup()
       }
       side({ les: async () => [] })
-      expect(await screen.findByRole('button', { name: 'Sertralin → mirtazapin' })).toBeTruthy()
+      expect(await screen.findByRole('button', { name: XEPLION_SNARVALG })).toBeTruthy()
     })
 
     describe('når varslene ikke svarer eller svaret har ukjent form', () => {
@@ -1350,8 +1354,8 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
         const gyldig = { regel: XEPLION, versjon, tekst: 'Under faglig gjennomgang: syntetisk varsel.', siden: '2026-11-01T08:00:00Z' }
         for (const svar of [null, {}, { varsler: [gyldig] }, [gyldig, { ...gyldig, tekst: null }], [{ ...gyldig, versjon: String(versjon) }]]) {
           const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
-          vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT), regelvarsler: lagRegelvarsellager(async () => svar) })
-          await user.click(await screen.findByRole('button', { name: 'Sertralin → mirtazapin' }))
+          vis({ verktoy: 'bytte-antipsykotikum', legemidler: fra(PILOT), klokke: klokke(PILOT), regelvarsler: lagRegelvarsellager(async () => svar) })
+          await user.click(await screen.findByRole('button', { name: XEPLION_SNARVALG }))
           await act(async () => {})
           expect(screen.getByRole('note').textContent).toBe(VARSLER_ULEST)
           expect(screen.getByRole('button', { name: 'Beregn doseplan' })).toBeTruthy()

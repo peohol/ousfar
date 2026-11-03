@@ -171,7 +171,7 @@ function rader(forlop: Praktiskforlop[], startdato: string | undefined, vurderin
 
 /** Hva planen sier om en uendret dose, etter om den er kontrollert mot regelens doser eller bare bekreftet av forskriveren. */
 export const UENDRET = {
-  kontrollert: 'uendret dose, kontrollert mot regelens doser; planen beregner den ikke',
+  kontrollert: 'uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke',
   bekreftet: 'uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke',
 } as const
 
