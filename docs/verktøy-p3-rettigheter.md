@@ -1,36 +1,51 @@
-# OUSFAR Verktøy – P3: rettigheter til Psychiatrienets anbefalinger
+# OUSFAR Verktøy – rettigheter til Psychiatrienets anbefalinger
 
-**Undersøkt:** 27.10.2026 (P3.1 i `docs/verktøy-utviklingsplan.md`), revidert samme dag etter kontroll av PR #281  
-**Konklusjon:** Psychiatrienet gir ingen lisens til å kopiere, lagre eller videreformidle anbefalingene. OUSFAR lagrer derfor ingen tekst fra kilden, bare et minimum av metadata som trengs for å vise til og følge med på hver anbefaling (koordinater, lenke, revisjon, tidspunkt, kontrollsum og hvilke legemidler og hvilken retning siden gjelder). **OUSFAR viser aldri Psychiatrienets anbefalinger ordrett, heller ikke korte sitater, og heller ikke oversatt eller omskrevet.** Det som vises, er OUSFARs egne, faglig vurderte og matematisk formulerte regler med kildehenvisning.
+**Undersøkt:** 27.10.2026 (P3.1 i `docs/verktøy-utviklingsplan.md`), revidert samme dag etter kontroll av PR #281. **Undersøkt på nytt 03.11.2026** for den kliniske leveranseplanen (`docs/verktøy-klinisk-leveranseplan-2026-11.md` §4, spor B).
 
-Dette er en faglig og praktisk vurdering, ikke en juridisk betenkning. Den bør vurderes av noen med juridisk kompetanse før OUSFAR bygger regler systematisk på hele kilden uten tillatelse.
+**Konklusjon:** Psychiatrienet gir ingen lisens til å kopiere, lagre eller videreformidle anbefalingene, og utgiveren er nå en del av Koninklijke Boom uitgevers, som generelt forbeholder seg både opphavsrett og databaserett. OUSFAR lagrer derfor ingen tekst fra kilden, bare et minimum av metadata som trengs for å vise til og følge med på hver anbefaling (koordinater, lenke, revisjon, tidspunkt, kontrollsum og hvilke legemidler og hvilken retning siden gjelder). **OUSFAR viser aldri Psychiatrienets anbefalinger ordrett, heller ikke korte sitater, og heller ikke oversatt eller omskrevet.** Det som vises, er OUSFARs egne, faglig vurderte og matematisk formulerte regler med kildehenvisning.
+
+**Selvstendige regler er ikke avhengige av tillatelse.** Faglige metoder, doseprinsipper og medisinske fakta er ikke i seg selv opphavsrettslig vernet. OUSFAR kan derfor lage og publisere selvstendige, kildekritisk vurderte regler fra preparatomtaler, primærlitteratur og andre lovlig tilgjengelige kilder, også når en regel ligner en anbefaling hos Psychiatrienet. Der Psychiatrienet er brukt som faglig referanse, kildehenvises det. Hvordan regelmotoren bygger på kildene, står i «Regelgrunnlaget» nederst.
+
+**Systematisk masseoverføring er en annen sak.** Et systematisk, omfattende uttrekk og en ombygging av Psychiatrienets tabellsett kan reise databaserettslige spørsmål, også når alt er omskrevet. Det er ikke fastslått at samlingen oppfyller vernevilkårene, eller at en konkret bruk fra OUSFAR ville krenke et slikt vern, og det skal ikke fremstilles som ulovlig. Planlegges en slik masseoverføring, bør enten en tillatelse fra utgiveren eller en konkret juridisk avklaring foreligge før den gjennomføres. Ingen slik overføring er planlagt.
+
+**Henvendelsen til utgiveren er et frivillig utkast.** Den er ikke sendt, Peder ønsker ikke å sende den nå (03.11.2026), og den er **ikke et blokkeringstrinn**: ingen regel, godkjenning eller leveranse venter på den eller på et svar, og det er ingen oppgave eller frist knyttet til den.
+
+Dette er en faglig og praktisk vurdering, ikke en juridisk betenkning (se «Trengs en juridisk vurdering?»).
 
 ## Hva som er funnet
 
-- **Eier:** Psychiatrienet «is een website van De Tijdstroom», og kontaktsiden sier at nettstedet er «eigendom van De Tijdstroom Uitgeverij» (De Tijdstroom uitgeverij BV, Utrecht, info@tijdstroom.nl). Switchtabellene redigeres av navngitte redaktører (colofon: W.J. Broekema og J. van Raaij, «Switchtabellen»).
-- **Ingen lisens:** Verken sidene, colofonen, kontaktsiden eller disclaimeren nevner en lisens eller vilkår for gjenbruk, og det finnes ingen side for opphavsrett eller bruksvilkår (`/pagina/copyright` og `/pagina/voorwaarden` svarer 404). Disclaimeren handler bare om ansvar for innholdet. Wikien bak sidene (`wiki.psychiatrienet.nl`) svarer 500, så eventuelle lisensopplysninger der kan ikke leses.
-- **Teknisk tilgang:** `robots.txt` sperrer ingenting, og sidene er åpne uten innlogging. Det sier noe om tilgang, ikke om retten til å kopiere.
-- **Repoet er offentlig** (`peohol/ousfar` på GitHub). Det som legges der, er videreformidlet til alle.
+Kontrollert 27.10.2026 og på nytt 03.11.2026 (sidene lest, ingen tekst lagret):
+
+- **Eier:** Psychiatrienet «is een website van De Tijdstroom», og kontaktsiden sier at nettstedet er «eigendom van De Tijdstroom Uitgeverij» (De Tijdstroom uitgeverij BV, Utrecht, KvK 71653430). **Nytt 03.11.2026:** `tijdstroom.nl` sender nå videre til `boom.nl/medisch`, der forlaget heter «Boom Medisch | de Tijdstroom» og er en del av Koninklijke Boom uitgevers B.V. (Meppel). Forlagsredaktør er Hannah Klein Haneveld, som også er sluttredaktør for Psychiatrienet ifølge colofonen (`/colofon`). Switchtabellene redigeres av Walter J. Broekema og Joost van Raaij.
+- **Kontaktadresse for switchtabellene:** hver tabellside ber nå om forslag til `medisch@boom.nl`.
+- **Ingen lisens på Psychiatrienet:** verken tabellsidene, anbefalingssidene, colofonen, kontaktsiden eller disclaimeren nevner lisens eller vilkår for gjenbruk. Disclaimeren handler bare om ansvar. `robots.txt` sperrer ingenting, og det finnes ingen maskinlesbar reservasjon mot tekst- og datautvinning (`/.well-known/tdmrep.json` og `/ai.txt` svarer 404).
+- **Boom uitgevers' generelle vilkår (nytt 03.11.2026):**
+  - Disclaimeren på `boom.nl` sier at all informasjon på «deze site» tilhører Koninklijke Boom uitgevers, bare kan brukes privat og ikke kan mangfoldiggjøres, lagres i en automatisert database eller offentliggjøres uten skriftlig samtykke. Den nevner forlagets egne nettsteder og nettsteder til lærebøker. Det er **ikke avklart** at den gjelder `psychiatrienet.nl`, men den viser forlagets holdning.
+  - De alminnelige vilkårene (art. 9) forbeholder forlaget blant annet opphavsrett og databankrett til innholdet og forbyr bruk av innholdet i eller for kunstig intelligens og språkmodeller uten skriftlig samtykke. Vilkårene gjelder avtaler med kunder (kjøp og abonnement), ikke uten videre en gratis besøkende, men forbeholdet om KI er relevant fordi OUSFAR utvikles med et KI-verktøy (se «Vurdering per bruk»).
+- **Repoet er offentlig** (`peohol/ousfar` på GitHub). Det som legges der, er videreformidlet til alle. Selve appen er lukket: bare brukere en administrator har opprettet, kan logge inn (`docs/brukere.md`).
 
 ## Det rettslige utgangspunktet
 
 To ulike vern kan være aktuelle, og de må holdes fra hverandre:
 
-- **Opphavsrett** (i Nederland Auteurswet 1912, i Norge åndsverkloven § 2) verner **uttrykksformen**: formuleringene, valget av ord og oppbyggingen av den enkelte teksten. Den verner ikke medisinske fakta, ideer eller metoder. At en anbefaling sier «stopp A dag 1, start B dag 2», er en faglig metode; måten den er skrevet på, er vernet. Uten lisens er hovedregelen at alle rettigheter er forbeholdt teksten. Sitatretten (åndsverkloven § 29) gir ikke rett til å gjengi anbefalingene, og OUSFAR skal uansett ikke sitere dem (se under).
-- **Databasevern** (EUs databasedirektiv 96/9/EF art. 7, i Norge åndsverkloven § 24) kan verne en samling mot at hele eller en **vesentlig del** av innholdet hentes ut eller brukes på nytt, også når enkeltdelene er fakta, og mot gjentatt, systematisk uttrekk av uvesentlige deler. Vernet gjelder bare når produsenten har gjort en **vesentlig investering i å skaffe, kontrollere eller presentere** innholdet; investering i å *skape* selve innholdet teller ikke (EU-domstolen, C-203/02 *British Horseracing Board* og C-46/02 *Fixtures Marketing*). **Det er ikke fastslått at Psychiatrienets samling har slikt vern.** Anbefalingene er skrevet av redaktørene (å skape innhold), men den systematiske kontrollen og presentasjonen i tabellene kan være en kvalifiserende investering. OUSFAR må derfor regne med at samlingen *kan* være vernet, uten å anta at den er det.
+- **Opphavsrett** (i Nederland Auteurswet 1912, i Norge åndsverkloven § 2) verner **uttrykksformen**: formuleringene, valget av ord og oppbyggingen av den enkelte teksten. Den verner ikke medisinske fakta, ideer eller metoder. At en anbefaling sier «stopp A dag 1, start B dag 2», er en faglig metode; måten den er skrevet på, er vernet. Sitatretten (åndsverkloven § 29) gir ikke rett til å gjengi anbefalingene, og OUSFAR skal uansett ikke sitere dem.
+- **Databasevern** (EUs databasedirektiv 96/9/EF art. 7, i Nederland Databankenwet, i Norge åndsverkloven § 24) kan verne en samling mot at hele eller en **vesentlig del** av innholdet hentes ut eller brukes på nytt, også når enkeltdelene er fakta, og mot gjentatt, systematisk uttrekk av uvesentlige deler. Vernet gjelder bare når produsenten har gjort en **vesentlig investering i å skaffe, kontrollere eller presentere** innholdet; investering i å *skape* selve innholdet teller ikke (EU-domstolen, C-203/02 *British Horseracing Board* og C-46/02 *Fixtures Marketing*). EU-domstolen har senere presisert at et uttrekk bare er forbudt når det kan skade produsentens mulighet til å få igjen investeringen, typisk når den nye tjenesten kan erstatte databasen (C-762/19 *CV-Online Latvia*, 2021). **Det er ikke fastslått at Psychiatrienets samling har slikt vern**, men forlaget hevder generelt databankrett, og tabellene er revidert 2024–2026, så et eventuelt vern løper fortsatt.
 
-At koordinater og legemiddelnavn hver for seg er fakta, betyr altså ikke automatisk at et systematisk uttrekk av hele samlingen er fritt.
+Det betyr i praksis: enkeltstående, selvstendig vurderte regler med kildehenvisning har lav risiko. Et komplett OUSFAR-regelsett bygget ut fra alle 1 044 kildeoppføringene celle for celle kunne for norske klinikere bli en **erstatning** for switchtabellene, også om ingen tekst er gjengitt. Det er den bruken som bør ha en tillatelse eller en konkret juridisk avklaring før den eventuelt gjennomføres. Det betyr ikke at den er fastslått å være ulovlig.
+
+At OUSFAR ikke lagrer tekst, og at koordinater og legemiddelnavn hver for seg er fakta, betyr altså ikke automatisk at et systematisk uttrekk av hele samlingen er fritt. Et unntak for tekst- og datautvinning (DSM-direktivet (EU) 2019/790) legges heller ikke til grunn: forlaget har reservert seg i vilkårene sine, og det er ikke vurdert om eller hvordan unntaket gjelder i Norge.
 
 ## Vurdering per bruk
 
 | Bruk | Vurdering | Hva OUSFAR gjør |
 | --- | --- | --- |
 | Lese sidene og lenke til dem | Tillatt. | Hver kildeoppføring har adressen til siden. |
-| Lagre metadata om sidene: tabellkoordinater og lenker, revisjon, tidspunkt, kontrollsum, legemiddelnavnene siden oppgir og hvilken retning den gjelder, og hva slags avsnitt den har | Ingen tekst fra kilden, så opphavsretten til tekstene berøres ikke. Men det er et systematisk uttrekk av samlingens oppbygning (hvilke kombinasjoner som har en anbefaling, og hvor). Hvis samlingen har databasevern, er det **ikke avklart** at dette er tillatt. Vurdert som akseptabelt fordi det er et minimum for å kunne vise til og følge med på kilden, ikke gjengir noen anbefaling og ikke kan erstatte kilden, men det hevdes ikke å være ubetinget tillatt. | Lagres i `src/data/verktoy/psychiatrienet-kildearkiv.json`, med en fast liste over tillatte felt i testene. Spørsmålet er tatt med i henvendelsen til utgiveren. |
-| **Intern lagring** av anbefalingstekstene (kopi av sidene, også i en lukket database eller midlertidig på disk) | Krever tillatelse. Det er eksemplarfremstilling av tekstene og uttrekk av hele samlingen. Unntaket for privat bruk gjelder bare enkeltpersoner, ikke en virksomhets systematiske lagring. | Ikke gjort. Sidene leses i minnet for å regne ut kontrollsummen og skrives aldri til disk. |
-| **Egne regler** – en fagperson leser en anbefaling, vurderer den faglig sammen med andre kilder og formulerer en egen, matematisk regel med kildehenvisning | Opphavsretten er ikke til hinder: den verner ikke de medisinske metodene, og OUSFARs regel har ikke kildens uttrykksform. Mulig lovlig bruk. | Ingen regler er laget (P4). |
-| **Fullstendig systematisk overføring** – hele tabellsettet gjøres celle for celle om til OUSFAR-regler | Kan være uttrekk eller gjenbruk av en vesentlig del av databasen, hvis samlingen har databasevern, også når reglene er formulert med egne ord. **Må avklares** (med utgiveren eller juridisk) før det gjøres. | Ikke gjort. Satt opp som spørsmål til P4. |
-| **Offentlig visning** av anbefalingene (i repoet, i appen eller i en utskrift) | Krever tillatelse, og er uansett utelukket av produktbeslutningen under. | Aldri. Testene stopper tekst i arkivet. |
+| Lagre metadata om sidene: tabellkoordinater og lenker, revisjon, tidspunkt, kontrollsum, legemiddelnavnene siden oppgir og hvilken retning den gjelder, og hva slags avsnitt den har | Ingen tekst fra kilden, så opphavsretten til tekstene berøres ikke. Men det er et systematisk uttrekk av samlingens oppbygning (hvilke kombinasjoner som har en anbefaling, og hvor). Hvis samlingen har databasevern, er det **ikke avklart** at dette er tillatt. Vurdert som akseptabelt fordi det er et minimum for å kunne vise til og følge med på kilden, ikke gjengir noen anbefaling og ikke kan erstatte kilden, men det hevdes ikke å være ubetinget tillatt. | Lagres i `src/data/verktoy/psychiatrienet-kildearkiv.json`, med en fast liste over tillatte felt i testene. Spørsmål 1 i utkastet. |
+| Automatisk lesing for å oppdage endringer (P12): et skript leser alle sidene i minnet, regner ut kontrollsummen og sammenligner, første mandag i hver måned (`.github/workflows/verktoy-overvaking.yml`) | Gjentatt, systematisk henting av hele samlingen, men ingen lagring av tekst og ingen gjengivelse. Den månedlige kjøringen er et vanlig skript på GitHub Actions, uten KI. Skriptene er skrevet og vedlikeholdes med et KI-verktøy (Claude Code), det første fullstendige uttrekket (27.10.2026) ble kjørt fra det utviklingsmiljøet, og enkeltsider er kontrollert derfra (sist 03.11.2026). Forlagets vilkår forbeholder bruk «ten behoeve van» KI. Lav risiko, men **ikke avklart**. Dette er en annen bruksform enn å lage enkeltregler, og vurderes for seg. | Fortsetter uendret inntil videre; stanses straks hvis utgiveren ber om det. Spørsmål 2 i utkastet. |
+| **Intern lagring** av anbefalingstekstene (kopi av sidene, også i en lukket database eller midlertidig på disk) | Eksemplarfremstilling av hele tekster. Krever tillatelse med mindre et lovbestemt unntak gjelder, og ingen unntak som passer, er funnet. Unntaket for privat bruk gjelder bare enkeltpersoner, ikke en virksomhets systematiske lagring. | Ikke gjort. Sidene leses i minnet for å regne ut kontrollsummen og skrives aldri til disk. Spørsmål 3 i utkastet. |
+| **Egne regler** – en fagperson vurderer en kombinasjon ut fra preparatomtaler, retningslinjer og primærkilder og formulerer en egen, matematisk regel med kildehenvisning; Psychiatrienet er bare en referanse regelen kan sammenlignes med | Opphavsretten er ikke til hinder: den verner ikke faglige metoder, doseprinsipper eller medisinske fakta, og OUSFARs regel har ikke kildens uttrykksform. Kan lages og publiseres uten tillatelse, også når regelen ligner en anbefaling hos Psychiatrienet. | Slik lages alle regler i dag (`docs/verktøy-p4-regelmodell.md`). Psychiatrienet kildehenvises der det er brukt som faglig referanse. |
+| **Fullstendig systematisk overføring** – hele tabellsettet, eller en vesentlig del, gjøres celle for celle om til OUSFAR-regler med Psychiatrienet som grunnlag | Kan reise databaserettslige spørsmål, også når reglene er formulert med egne ord: det kan være uttrekk eller gjenbruk av en vesentlig del av samlingen, og resultatet kan erstatte kilden. Det er ikke fastslått at samlingen er vernet, eller at bruken ville krenke et vern. Betinget risiko, ikke fastslått ulovlig. | Ikke gjort og ikke planlagt. Planlegges det, bør en tillatelse (spørsmål 4 i utkastet) eller en konkret juridisk avklaring foreligge først. |
+| **Offentlig visning** av anbefalingene (i repoet, i appen eller i en utskrift) | Eksemplarfremstilling og tilgjengeliggjøring av tekstene. Er uansett utelukket av produktbeslutningen under. | Aldri. Testene stopper tekst i arkivet. |
 
 ## Produktbeslutning: aldri vise kildeteksten
 
@@ -50,36 +65,68 @@ Tabellstrukturen lagres fordi den er selve kildehenvisningen: uten koordinatene 
 
 Det som **kan gå tapt** med denne løsningen, er selve teksten hvis Psychiatrienet endrer eller fjerner en side. Vi vil da vite at den er endret og hvilken versjon vi hadde, men ikke kunne lese den gamle teksten. To ting kan lukke det hullet:
 
-1. **Tillatelse fra De Tijdstroom** til å lagre sidene i et lukket, ikke-offentlig arkiv (utkast til henvendelse under). Kontrollsummene viser da at den lagrede teksten er den som ble registrert.
+1. **Tillatelse fra utgiveren** til å lagre sidene i et lukket, ikke-offentlig arkiv (spørsmål 3 i utkastet). Kontrollsummene viser da at den lagrede teksten er den som ble registrert.
 2. **En offentlig nettarkivkopi** (Internet Archive). Den ble ikke prøvd: tjenesten var ikke tilgjengelig fra miljøet OUSFAR utvikles i (27.10.2026), og å be et nettarkiv kopiere hele samlingen bør vurderes sammen med tillatelsen.
 
-**Kjent forhold:** den første versjonen av arkivet i PR #281 hadde avsnittsoverskrifter (f.eks. «More information»), lenketitler og én fotnote fra kilden, og P1-bildet (slått sammen i PR #279) hadde lenketitlene (f.eks. «Combining-Aripiprazole-Lithium»), lenketekstene (kodene, f.eks. «ArLi») og den samme fotnoten. Alt er fjernet i PR #281. Det som ble slått sammen med P1, finnes fortsatt i historikken til hovedgrenen; det som bare var i PR #281, finnes bare i PR-ens historikk. Historikken skrives ikke om.
+**Kjent forhold:** den første versjonen av arkivet i PR #281 hadde avsnittsoverskrifter (f.eks. «More information»), lenketitler og én fotnote fra kilden, og P1-bildet (slått sammen i PR #279) hadde lenketitlene (f.eks. «Combining-Aripiprazole-Lithium»), lenketekstene (kodene, f.eks. «ArLi») og den samme fotnoten. Alt er fjernet i PR #281. Det som ble slått sammen med P1, finnes fortsatt i historikken til hovedgrenen; det som bare var i PR #281, finnes bare i PR-ens historikk. Historikken skrives ikke om. Utkastet til henvendelse opplyser om dette.
 
-## Utkast til henvendelse til utgiveren
+## Utkast til henvendelse – frivillig, ikke sendt
 
-Til: info@tijdstroom.nl. Bør sendes av den faglig ansvarlige for OUSFAR, med navn, stilling og arbeidssted fylt inn.
+**Status: frivillig utkast til eventuell senere bruk. Ikke sendt, og ikke et blokkeringstrinn.** Peder ønsker ikke å sende den nå (03.11.2026). Ingen regel, godkjenning eller leveranse er avhengig av den eller av et svar, og det er ingen oppgave eller frist knyttet til den.
 
-> Subject: Permission request – use of the Psychiatrienet switch tables in a clinical pharmacology tool
+Det er ikke registrert at den forrige versjonen av utkastet (27.10.2026) ble sendt; denne erstatter den. Den spør om systematisk bruk av tabellene, opplyser om den automatiske lesingen og KI-verktøyet, og tilbyr utgiveren noe konkret tilbake: feilene OUSFAR har funnet i tabellene (`docs/verktøy-p3-kildegrunnlag.md`, «Kjente kildeproblemer»).
+
+Hvis den senere skal brukes: navn, stilling og arbeidssted fylles inn nederst, og setningen i hakeparentes om at OUSFAR er gratis og ikke-kommersielt bekreftes eller strykes (den er ikke kontrollert). Mottakere er `medisch@boom.nl` (adressen switchtabellene selv oppgir), med kopi til `h.kleinhaneveld@boom.nl` (forlagsredaktør og sluttredaktør for Psychiatrienet).
+
+> **Subject:** Permission request – use of the Psychiatrienet switch tables in OUSFAR (Norway), with a list of broken links we found
 >
-> Dear editors of Psychiatrienet and De Tijdstroom,
+> Dear Ms Klein Haneveld, dear editors of the Psychiatrienet switch tables,
 >
-> We are developing OUSFAR, a tool for the interpretation of pharmacological analyses used by clinicians in Norway. We would like to build planning tools for tapering and switching antidepressants and antipsychotics, and we regard the Psychiatrienet switch tables (Combining Moodstabilizers, Switching Antidepressants and Switching Antipsychotics) as a valuable professional source.
+> I am responsible for the clinical content of OUSFAR, a web tool for clinicians in Norway that supports the interpretation of pharmacological analyses. The tool is closed: only clinicians who have been given an account can log in. [It is free of charge and not commercially distributed.] We are now building four planning aids: tapering an antidepressant, switching between antidepressants, switching between antipsychotics (including long-acting injectables), and adding a mood stabiliser to an existing treatment. We regard the Psychiatrienet switch tables (Combining Moodstabilizers, Switching Antidepressants and Switching Antipsychotics) as an important professional reference, and we would like to use them in a way you are comfortable with.
 >
-> At present we store no text from your pages. We only keep references to them: the table cell and link, the page revision and retrieval date, a checksum, and which drugs and which direction each page concerns. OUSFAR will never display your recommendations, neither verbatim, in short quotations, nor translated or paraphrased. What clinicians see are our own independently reviewed rules, with a reference and a link to your page.
+> **What we do today**
 >
-> We would like to ask:
+> - We do not store your recommendation texts. We do not display, translate or paraphrase them, and we never will, whatever your answer to the questions below. Clinicians see only our own, independently reviewed rules, based on the summaries of product characteristics, guidelines and the literature, with a reference and a link to your page where relevant.
+> - For each cell we keep references only: the table coordinates and link, the page revision and retrieval date, a SHA-256 checksum, and which drugs and which direction the page concerns. This metadata is published in our public source code repository (github.com/peohol/ousfar). An earlier version also briefly included link titles, link texts and one footnote; these were removed, but remain in the repository's history.
+> - Once a month, an automated script on GitHub Actions reads the pages (in memory only, nothing is saved) to detect changes by comparing checksums; no AI is involved in that run. The scripts themselves are written and maintained with the help of an AI coding assistant, the first full retrieval (27 October 2026) was run from that development environment, and individual pages have occasionally been checked from it.
 >
-> 1. whether you accept that we keep the references described above, in a repository that is publicly visible;
-> 2. for permission to store copies of the switch-table pages in a closed, non-public archive, solely to document which version of each recommendation our clinical reviewers have assessed; and
-> 3. for permission to use the switch tables systematically as one basis for our own clinically reviewed rules, always with a reference and a link to the original page.
+> **Our questions** (each can be answered separately, and we will respect a no to any of them):
 >
-> To be transparent: the table structure (which combinations have a recommendation, with the cell coordinates and links to your pages, and the drug names and codes used in the tables) is already published as metadata in our public repository. The full clinical recommendation texts are not published and will not be. We do not consider this question legally settled, and we will move or remove the metadata if you ask us to. We are happy to describe the tool in more detail, to follow any conditions you set, and to report errors we find in the tables (for instance links that no longer work).
+> 1. Do you accept that we keep the references described above in a publicly visible repository, or would you prefer us to move them to a non-public location?
+> 2. Do you accept the monthly automated reading of the pages to detect changes, and occasional retrievals from our AI-assisted development environment for the same purpose? No text is stored or shown.
+> 3. May we store copies of the switch-table pages in a closed, non-public archive, solely to document which version of each recommendation our clinical reviewers have assessed?
+> 4. This is our main question: may we use the switch tables **systematically, across all cells**, as one basis for our own clinically reviewed rules – in our own wording, never showing your text, and always with a reference and a link to the original page?
+>
+> If you agree to any of these, it would help us greatly if you could state the scope in writing: which tables and pages, whether it covers future revisions, how you would like Psychiatrienet to be credited, any conditions or fees, and how long the permission applies and how it can be withdrawn. We will move or delete the metadata at once if you ask us to. We do not consider these questions legally settled, which is why we are asking.
+>
+> **Something in return.** While building the references, we noted some issues in the tables that may interest you, for example: the Stop links for phenelzine, doxepine and vortioxetine point to addresses that do not respond (`/switchdetail/stop-fenelzine`, `/switchdetail/stop-doxepine`, `/switchdetail/stop`); in Combining Moodstabilizers, six pages state the opposite direction of the table cell that links to them (aripiprazole with lamotrigine, risperidone and ziprasidone); and the members of «Rest anti-psychotics» on some pages differ from the «Rest AP» group in the table. We are happy to send the complete list.
 >
 > Kind regards,
-> [name, position, institution]
+> [name], [position]
+> [institution], Norway
+> [e-mail, telephone]
 
-## Hva som må avklares i P4
+Kort på norsk: brevet sier at OUSFAR aldri viser eller lagrer teksten deres, forklarer hvilke henvisninger som ligger i det offentlige repoet og den månedlige automatiske kontrollen (også at et KI-verktøy brukes i utviklingen), og stiller fire spørsmål: (1) om henvisningene kan ligge offentlig, (2) om den automatiske kontrollen er i orden, (3) om vi kan lagre kopier i et lukket arkiv, og (4) hovedspørsmålet, om vi kan bruke tabellene systematisk som grunnlag for egne regler. Det ber om omfanget skriftlig og tilbyr listen over feil vi har funnet i tabellene.
 
-- Om tillatelsen kommer, og i så fall hva den dekker (punkt 1–3 over).
-- Uten tillatelse: at OUSFARs regler lages som selvstendige faglige vurderinger per kombinasjon, med Psychiatrienet som én av flere kilder, og ikke som en fullstendig systematisk overføring av tabellsettet. Om en slik overføring likevel er ønsket, må databasespørsmålet avklares først.
-- At ingen regel, forklaring eller utskrift gjengir kildeteksten, heller ikke oversatt eller omskrevet (produktbeslutningen over).
+## Hvis utkastet senere sendes og besvares
+
+Svaret registreres her, i en egen PR til kontroll:
+
+- dato, avsender og om svaret gjelder på vegne av utgiveren;
+- utfallet per spørsmål 1–4 (ja, ja med vilkår, nei, ikke besvart), med nøyaktig omfang: tabeller, revisjoner, kreditering, varighet, vilkår og eventuelle kostnader;
+- hva som endres: ved nei på 1 eller 2 flyttes arkivet ut av repoet eller overvåkingen stanses; ved ja på 3 lages det lukkede arkivet; ved ja på 4 får koordinatoren grunnlaget for å endre §4 i leveranseplanen for nøyaktig det omfanget tillatelsen dekker.
+
+Et uteblitt svar er ikke en tillatelse, men heller ikke et hinder: selvstendige regler trenger ingen av delene.
+
+## Trengs en juridisk vurdering?
+
+**Anbefaling: ikke nå.** Så lenge OUSFAR lager selvstendige regler og ikke planlegger en systematisk masseoverføring av tabellsettet, er det lite en juridisk vurdering vil endre. Planlegges en slik overføring, er en konkret juridisk avklaring av databasevernet og erstatningsvirkningen (C-762/19) det ene alternativet; en skriftlig tillatelse fra utgiveren er det andre. Ett av dem bør foreligge før overføringen gjennomføres.
+
+## Regelgrunnlaget
+
+- **Egen vurdering, ikke kopiert tekst.** Regelmotoren bygger på OUSFARs egen farmakologiske og kliniske vurdering av hver kombinasjon, ut fra preparatomtaler, retningslinjer, primærlitteratur og andre lovlig tilgjengelige kilder. Den bygger ikke på kopierte anbefalingstekster, og ingen regel, forklaring eller utskrift gjengir Psychiatrienets tekst, heller ikke oversatt eller omskrevet (produktbeslutningen over).
+- **Sporbarhet.** Hver regel viser til kildene sine med id, versjon, hentetidspunkt og kontrollsum (`src/verktoy/regler/kilder.ts`), og hver godkjenning gjelder et bestemt fingeravtrykk av regelinnholdet (`docs/verktøy-p4-regelmodell.md`). Er Psychiatrienet brukt som faglig referanse, vises kildeoppføringen fra P3.
+- **Kildekritikk.** Verdiene kontrolleres mot primærkilden og mot norske preparater i FEST, og kontrolleres uavhengig før godkjenning. Der kildene ikke gir en verdi, stopper regelen med en grunn i stedet for å fylle inn en verdi.
+- **Automatisk innhenting og overvåking** er en annen bruksform enn å lage enkeltregler og er vurdert for seg i tabellen over.
+- **Ingen masseoverføring.** Reglene lages per kombinasjon, ikke som en systematisk overføring av hele tabellsettet; se konklusjonen øverst.
+- Uavhengige kilder og deres bruksrett for K1–K4 står i `docs/verktøy-kildematrise.md`.

@@ -897,7 +897,7 @@ export const seponeringsdag = (f: Praktiskforlop): number | null =>
  * forløp uten beregning er ikke et sluttmål. Den ene definisjonen av en
  * komplett plan, for planutfallet og sperren mot delplaner.
  */
-export function sluttmalMangler(f: Praktiskforlop): string | undefined {
+export function sluttmalMangler(f: Praktiskforlop, inndata?: Pick<Doseplaninndata, 'maldose_mg'>): string | undefined {
   if (f.uten_beregning) return `ikke beregnet (${f.uten_beregning.replace(/\.$/, '')})`
   if (f.avslutning) return f.avslutning_kort ?? 'avslutningen vurderes individuelt'
   const mal = f.mal
@@ -908,6 +908,11 @@ export function sluttmalMangler(f: Praktiskforlop): string | undefined {
     case 'vedlikehold': {
       const sist = f.perioder.at(-1)
       const hva = mal.maldose ? `måldosen ${tall(mal.mg)} mg` : `vedlikeholdsdosen ${tall(mal.mg)} mg`
+      // Målet kontrolleres også mot forskriverens måldose slik den er gitt inn, ikke bare mot beregningen.
+      if (mal.maldose && inndata) {
+        if (inndata.maldose_mg === undefined) return 'forskriverens måldose mangler'
+        if (!lik(mal.mg, inndata.maldose_mg)) return `målet ${tall(mal.mg)} mg er ikke forskriverens måldose ${tall(inndata.maldose_mg)} mg`
+      }
       if (!sist || sist.til !== null) return `planen når ikke ${hva}`
       return lik(sist.mg, mal.mg) ? undefined : `planen står på ${tall(sist.mg)} mg, ikke ${hva}`
     }
@@ -1045,7 +1050,7 @@ function klinisk(args: Parameters<typeof beregnDoseplan>, komplett: boolean): Do
   // et valg av dose for neste trinn som kan gjøre planen komplett. Er planen heller ikke klinisk, står sperren også.
   const mangler = komplett
     ? r.forlop.flatMap((f) => {
-        const m = sluttmalMangler(f)
+        const m = sluttmalMangler(f, args[1])
         return m ? [`${f.virkestoff}: ${m}`] : []
       })
     : []
