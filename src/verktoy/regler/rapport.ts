@@ -98,10 +98,10 @@ function henvisning(h: Kildehenvisning): string {
   return `${h.faktum} *([${h.kilde}](${k?.url ?? ''}), ${'sted' in h ? h.sted : ''})*`
 }
 
-const utsagn = (u: Utsagn) =>
+export const utsagn = (u: Utsagn) =>
   u.henvisninger.length === 0 ? `${u.tekst} *(OUSFARs vurdering)*` : `${u.tekst}\n${u.henvisninger.map((h) => `  - ${henvisning(h)}`).join('\n')}`
 
-function grunnlag(g: Grunnlag): string {
+export function grunnlag(g: Grunnlag): string {
   if (g.type === 'kilde') return g.henvisninger.map((h) => (h.kilde === 'psychiatrienet' ? 'psychiatrienet' : `${h.kilde} ${'sted' in h ? h.sted : ''}`)).join('; ')
   const bygger = g.henvisninger?.length ? ` (bygger på ${g.henvisninger.map((h) => `${h.kilde} ${'sted' in h ? h.sted : ''}`).join('; ')})` : ''
   const a = g.avklaring
