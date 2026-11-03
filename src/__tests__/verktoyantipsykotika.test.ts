@@ -51,8 +51,14 @@ const MED_APNE_VALG = [
   'antipsykotikabytte-aripiprazol-olanzapin',
   'antipsykotikabytte-aripiprazol-risperidon',
 ]
-/** Versjon 2 svarer på kontrollørens gjennomgang av #320 (03.11.2026). */
-const VERSJON_2 = ['depot-risperidon-xeplion', 'depot-consta-xeplion', 'antipsykotikabytte-aripiprazol-olanzapin', 'antipsykotikabytte-aripiprazol-risperidon']
+/** Versjonene etter kontrollørens to gjennomganger av #320 (03.11.2026); de andre er versjon 1. */
+const VERSJON: Partial<Record<string, number>> = {
+  'depot-risperidon-xeplion': 3,
+  'depot-consta-xeplion': 2,
+  'antipsykotikabytte-aripiprazol-olanzapin': 2,
+  'antipsykotikabytte-aripiprazol-risperidon': 2,
+  'antipsykotikabytte-kariprazin-kvetiapin': 2,
+}
 /** Krever skriftlig begrunnelse (ordlyden om over eller under grensen er motorens). */
 const BEGRUNNES = /krever en skriftlig begrunnelse/
 type Regelid = keyof typeof VALG
@@ -113,7 +119,7 @@ describe('K3: regelutkastene for bytte av antipsykotika', () => {
   it('er alle til faglig kontroll og ikke klinisk godkjent, så verktøysiden gir ingen klinisk plan', () => {
     for (const r of ANTIPSYKOTIKASETT.regler) {
       expect(r.godkjenning.status, r.id).toBe('til_faglig_kontroll')
-      expect(r.versjon, r.id).toBe(VERSJON_2.includes(r.id) ? 2 : 1)
+      expect(r.versjon, r.id).toBe(VERSJON[r.id] ?? 1)
       expect(r.godkjenning.historikk.at(-1)?.regelversjon, r.id).toBe(r.versjon)
       expect(erKliniskGodkjent(r), r.id).toBe(false)
     }
@@ -142,16 +148,29 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
       'Dag 8 (08.12.2026): Paliperidon depotinjeksjon 100 mg = 1 injeksjon à 100 mg (±4 dager, deltoideus)',
       'Hver måned fra 1 måned etter dag 8 (første 08.01.2027): Paliperidon depotinjeksjon 75 mg = 1 injeksjon à 75 mg (±7 dager, deltoideus eller setemuskel)',
     ])
-    // En annen vedlikeholdsdose enn anbefalte 75 mg krever en skriftlig begrunnelse, også ved svært lav eller høy risperidondose.
-    for (const [risperidon, xeplion] of [['0,5', '150'], ['16', '50'], ['4', '100']] as const) {
-      expect(grunner(kjor('depot-risperidon-xeplion', risperidon, { maldose: xeplion })), `${risperidon} → ${xeplion}`).toMatch(BEGRUNNES)
+    // En annen vedlikeholdsdose enn anbefalte 75 mg: fritekst alene er ikke nok, heller ikke ved svært lav eller høy risperidondose.
+    const FRITEKST = { begrunnelse: 'Syntetisk eksempel.' }
+    for (const [risperidon, xeplion, ikke] of [['0,5', '150', 'høyere'], ['16', '50', 'lavere'], ['4', '100', 'høyere']] as const) {
+      expect(grunner(kjor('depot-risperidon-xeplion', risperidon, { maldose: xeplion, ...FRITEKST })), `${risperidon} → ${xeplion}`).toMatch(new RegExp(`er utenfor det regelen gjelder for \\(.* ved ikke ${ikke} vedlikeholdsdose enn 75 mg\\)`))
     }
-    const begrunnet = kjor('depot-risperidon-xeplion', '0,5', { maldose: '150', begrunnelse: 'Syntetisk eksempel: overvekt og tidligere effekt.' })
-    expect(linjer(begrunnet).at(-1)).toMatch(/150 mg = 1 injeksjon à 150 mg/)
-    expect(begrunnet.utfall === 'plan' && begrunnet.tekst).toMatch(/Syntetisk eksempel: overvekt og tidligere effekt/)
-    expect(linjer(kjor('depot-risperidon-xeplion', '16', { maldose: '50', begrunnelse: 'Syntetisk eksempel.' })).at(-1)).toMatch(/50 mg = 1 injeksjon à 50 mg/)
+    // Et ja i én retning krever den bekreftede vurdering for akkurat den retningen og en begrunnelse.
+    const HOYERE = { svar: { vedlikehold_over_75: true, vedlikehold_under_75: false } }
+    const LAVERE = { svar: { vedlikehold_over_75: false, vedlikehold_under_75: true } }
+    const bekreftetUten = (id: string) => regel('depot-risperidon-xeplion').bekreftelser.map((b) => b.id).filter((b) => b !== id)
+    expect(grunner(kjor('depot-risperidon-xeplion', '0,5', { maldose: '150', ...FRITEKST, ...HOYERE, bekreftet: bekreftetUten('hoyere_dose_vurdert') }))).toMatch(/Må bekreftes før beregning: Den høyere dosen bygger på en dokumentert legevurdering av konkret behandling og eksponering/)
+    expect(grunner(kjor('depot-risperidon-xeplion', '16', { maldose: '50', ...FRITEKST, ...LAVERE, bekreftet: bekreftetUten('lavere_dose_vurdert') }))).toMatch(/Må bekreftes før beregning: Den lavere dosen bygger på en dokumentert legevurdering/)
+    expect(grunner(kjor('depot-risperidon-xeplion', '16', { maldose: '50', ...LAVERE }))).toMatch(/Svaret ja \(lavere vedlikeholdsdose enn 75 mg\) krever en skriftlig begrunnelse/)
+    // Svaret og dosen må stemme: ja på høyere med 75 eller 50 mg stopper, og ja i begge retninger stopper.
+    expect(grunner(kjor('depot-risperidon-xeplion', '4', { maldose: '75', ...FRITEKST, ...HOYERE }))).toMatch(/Måldosen 75 mg er utenfor det regelen gjelder for \(100–150 mg ved høyere vedlikeholdsdose enn 75 mg\)/)
+    expect(grunner(kjor('depot-risperidon-xeplion', '4', { maldose: '50', ...FRITEKST, ...HOYERE }))).toMatch(/Måldosen 50 mg er utenfor/)
+    expect(kjor('depot-risperidon-xeplion', '4', { maldose: '100', ...FRITEKST, svar: { vedlikehold_over_75: true, vedlikehold_under_75: true } }).utfall).not.toBe('plan')
+    const vurdert = kjor('depot-risperidon-xeplion', '0,5', { maldose: '150', begrunnelse: 'Syntetisk eksempel: fedme og tidligere effekt.', ...HOYERE })
+    expect(linjer(vurdert).at(-1)).toMatch(/150 mg = 1 injeksjon à 150 mg/)
+    expect(vurdert.utfall === 'plan' && vurdert.tekst).toMatch(/Syntetisk eksempel: fedme og tidligere effekt/)
+    expect(vurdert.utfall === 'plan' && vurdert.tekst).toMatch(/Den høyere dosen bygger på en dokumentert legevurdering/)
+    expect(linjer(kjor('depot-risperidon-xeplion', '16', { maldose: '50', ...FRITEKST, ...LAVERE })).at(-1)).toMatch(/50 mg = 1 injeksjon à 50 mg/)
     // Ved grensene i preparatomtalen: 25 mg finnes ikke som Xeplion i FEST og stopper; 175 mg og risperidon 17 mg er utenfor.
-    expect(grunner(kjor('depot-risperidon-xeplion', '4', { maldose: '25', begrunnelse: 'Syntetisk eksempel.' }))).toMatch(/vedlikeholdet er 25 mg, men FEST har ingen brukbar injeksjon med den styrken/)
+    expect(grunner(kjor('depot-risperidon-xeplion', '4', { maldose: '25', ...FRITEKST, ...LAVERE }))).toMatch(/vedlikeholdet er 25 mg, men FEST har ingen brukbar injeksjon med den styrken/)
     expect(kjor('depot-risperidon-xeplion', '4', { maldose: '175', begrunnelse: 'Syntetisk eksempel.' }).utfall).not.toBe('plan')
     expect(kjor('depot-risperidon-xeplion', '17', { maldose: '75' }).utfall).not.toBe('plan')
     // Dokumentert tidligere toleranse er en egen bekreftelse.
@@ -236,6 +255,8 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
     for (const dose of ['2', '2,5', '5']) expect(grunner(kjor('antipsykotikabytte-kariprazin-kvetiapin', dose)), dose).toMatch(/er utenfor det regelen gjelder for \(1,5, 3, 4,5, 6 mg\)/)
     expect(kjor('antipsykotikabytte-kariprazin-kvetiapin', '3').utfall).toBe('plan')
     expect(grunner(kjor('antipsykotikabytte-kariprazin-kvetiapin', '4,5', { pasientforhold: { cyp3a4_hemmer: true } }))).toMatch(/CYP3A4/)
+    // 300 mg fra dag 4 er et definert sluttmål som forskriveren bekrefter er forsvarlig; uten bekreftelsen stopper planen.
+    expect(grunner(kjor('antipsykotikabytte-kariprazin-kvetiapin', '4,5', { bekreftet: ['indikasjon', 'spesialist_risiko'] }))).toMatch(/Må bekreftes før beregning: Sluttmålet er 300 mg kvetiapin daglig fra dag 4/)
   })
 
   it('olanzapin → aripiprazol: aripiprazol 5, 10 og måldosen; olanzapin uendret i 28 dager og så ned 25 % av dosen hver 14. dag til seponert', () => {

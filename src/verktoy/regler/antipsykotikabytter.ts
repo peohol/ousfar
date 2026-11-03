@@ -12,14 +12,16 @@
  *
  * - Depot: Xeplion fra peroral risperidon og fra Risperdal Consta
  *   (Xeplion pkt. 4.2). Sluttmålet er fast månedlig vedlikehold; etter
- *   peroral risperidon krever en annen dose enn anbefalte 75 mg en begrunnelse.
+ *   peroral risperidon krever en annen dose enn anbefalte 75 mg et ja i én
+ *   retning, en bekreftet vurdering for den retningen og en begrunnelse.
  * - Peroralt: direkte bytte fra aripiprazol til olanzapin eller risperidon
  *   (Keks 2019: direkte bytte er mulig fra aripiprazol, som har svært lang
  *   halveringstid og ingen antikolinerg effekt), og fra kariprazin til
  *   kvetiapin (Reagila pkt. 4.2: ingen kryss-titrering, det nye startes i
  *   laveste dose). Fra aripiprazol er startregimet og forskriverens valgte
  *   måldose atskilt, med en ny klinisk vurdering før dosen endres; fra
- *   kariprazin er sluttmålet kvetiapindosen preparatomtalen oppgir.
+ *   kariprazin er sluttmålet kvetiapindosen preparatomtalen oppgir, bekreftet
+ *   som forsvarlig for pasienten.
  * - Kryss-titrering fra olanzapin og fra risperidon til aripiprazol hos stabile
  *   polikliniske pasienter (TARC 2018, figur 1): det forrige stoffet trappes
  *   ned til seponering, og aripiprazol står på måldosen 10 eller 15 mg.
@@ -30,7 +32,7 @@
  */
 import { FORUTSETNINGER_FELLES, forslag, h, kilde, pn, steg, utsagn } from './bygg'
 import type { Domenesett } from './domenesett'
-import type { Bekreftelse, Fase, Forlop, Godkjenning, Inndatakrav, Kildehenvisning, Regel, Regelsett, Unntak } from './modell'
+import type { Bekreftelse, Fase, Forlop, Godkjenning, Inndatakrav, Kildehenvisning, Regel, Regelsett, Sporsmal, Unntak } from './modell'
 import { REGELMODELLVERSJON } from './modell'
 import { TEKNISK_MAKS_DAGER } from './nedtrapping'
 import { SPC } from './pilotsett'
@@ -49,6 +51,8 @@ const tilKontroll = (merknad: string, ...endringer: string[]): Godkjenning => ({
 })
 /** Kontrollørens gjennomgang av #320 (03.11.2026), som versjon 2 svarer på. */
 const GJENNOMGANG = 'Etter kontrollørens gjennomgang av #320 03.11.2026:'
+/** Kontrollørens andre gjennomgang av #320 (03.11.2026, head 9563380). */
+const GJENNOMGANG_2 = 'Etter kontrollørens andre gjennomgang av #320 03.11.2026:'
 
 /* --- Fakta fra kildene, med egne ord ------------------------------------------------- */
 
@@ -164,9 +168,49 @@ const XEPLION_STED = 'deltoideus eller setemuskel'
 const NYRE_AVKREFTET = { nedsatt_nyrefunksjon: false, over_65: false }
 const XEPLION_BEKREFTET = ['indikasjon', 'tidligere_toleranse']
 
+/**
+ * En annen vedlikeholdsdose enn anbefalte 75 mg er et valg i én retning, med
+ * en strukturert vurdering for akkurat den retningen og en skriftlig
+ * begrunnelse. Preparatomtalen har ingen omregning fra risperidondosen, så
+ * OUSFAR knytter ikke dosene sammen med tall; vurderingen er forskriverens.
+ * Dosene i hver retning er Xeplion-styrkene over og under 75 mg.
+ */
+const XEPLION_AVVIK = [
+  {
+    retning: 'over' as const,
+    doser: [100, 150] as [number, number],
+    tekst: 'høyere',
+    vurdert: 'hoyere_dose_vurdert',
+    vurdering:
+      'Den høyere dosen bygger på en dokumentert legevurdering av konkret behandling og eksponering: pasienten har overvekt eller fedme, eller har hatt for svak effekt av risperidon i vanlig dose (4–6 mg daglig), og bivirkningene pasienten har hatt av risperidon er vurdert mot den høyere eksponeringen.',
+    henvisninger: [XEPLION.vedlikehold, XEPLION.overvekt, RISPERDAL.dose],
+  },
+  {
+    retning: 'under' as const,
+    doser: [25, 50] as [number, number],
+    tekst: 'lavere',
+    vurdert: 'lavere_dose_vurdert',
+    vurdering:
+      'Den lavere dosen bygger på en dokumentert legevurdering av konkret behandling og eksponering: pasienten har hatt dosebegrensende bivirkninger av risperidon, eller har vært stabil på en lav risperidondose (under 4 mg daglig), og risikoen for tilbakefall ved lavere eksponering er vurdert; pasienten følges tett, fordi full effekt av en dose først kan sees etter flere måneder.',
+    henvisninger: [XEPLION.vedlikehold, RISPERDAL.dose, XEPLION.justering],
+  },
+].map((a) => ({ ...a, id: `vedlikehold_${a.retning}_75` }))
+
+const XEPLION_SPORSMAL: Sporsmal[] = XEPLION_AVVIK.map((a) => ({
+  id: a.id,
+  tekst: `Er en ${a.tekst} månedlig vedlikeholdsdose enn anbefalte 75 mg valgt (${a.doser.join(' eller ')} mg)?`,
+  ja: `${a.tekst} vedlikeholdsdose enn 75 mg`,
+  nei: `ikke ${a.tekst} vedlikeholdsdose enn 75 mg`,
+  krever_begrunnelse: true,
+  grunnlag: { type: 'kilde', henvisninger: a.henvisninger },
+}))
+
+/** Svarene uten avvik fra 75 mg. */
+const VEDLIKEHOLD_75 = Object.fromEntries(XEPLION_AVVIK.map((a) => [a.id, false]))
+
 const risperidonXeplion: Regel = {
   id: 'depot-risperidon-xeplion',
-  versjon: 2,
+  versjon: 3,
   tittel: 'Fra peroral risperidon til Xeplion',
   fra: { type: 'virkestoff', nokkel: 'risperidon' },
   til: { type: 'virkestoff', nokkel: 'paliperidon' },
@@ -209,9 +253,13 @@ const risperidonXeplion: Regel = {
   inndata: [
     { navn: 'startdose', omrade: [0, 16], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [RISPERDAL.maks] } },
     { navn: 'maldose', omrade: [25, 150], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [XEPLION.vedlikehold] } },
-    // Preparatomtalen anbefaler 75 mg; en annen dose er et individuelt valg ut fra toleranse og effekt og må begrunnes.
-    { navn: 'maldose', verdier: [75], art: 'veiledende_preferanse', krever_begrunnelse: true, grunnlag: { type: 'kilde', henvisninger: [XEPLION.vedlikehold, XEPLION.overvekt] } },
+    // Preparatomtalen anbefaler 75 mg. Uten et ja i en retning er dosen ikke over (eller under) 75 mg; med et ja er den en styrke i den retningen.
+    ...XEPLION_AVVIK.flatMap((a): Inndatakrav[] => [
+      { navn: 'maldose', omrade: a.retning === 'over' ? [25, 75] : [75, 150], ved: { sporsmal: a.id, svar: false }, art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [XEPLION.vedlikehold] } },
+      { navn: 'maldose', omrade: a.doser, ved: { sporsmal: a.id, svar: true }, art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: a.henvisninger } },
+    ]),
   ],
+  sporsmal: XEPLION_SPORSMAL,
   bekreftelser: [
     {
       id: 'indikasjon',
@@ -223,6 +271,7 @@ const risperidonXeplion: Regel = {
       tekst: 'Det er dokumentert i journalen at pasienten har tålt peroral risperidon over tid, uten tegn til overfølsomhet. Anafylaksi er likevel mulig etter injeksjon.',
       grunnlag: { type: 'kilde', henvisninger: [SPC.xeplionIndikasjon, XEPLION.overfolsomhet] },
     },
+    ...XEPLION_AVVIK.map((a): Bekreftelse => ({ id: a.vurdert, tekst: a.vurdering, ved: { sporsmal: a.id, svar: true }, grunnlag: { type: 'kilde', henvisninger: a.henvisninger } })),
   ],
   unntak: [NYRE, XEPLION_ELDRE],
   beregnbarhet: 'entydig_beregnbar',
@@ -237,7 +286,7 @@ const risperidonXeplion: Regel = {
     ],
     tilpasninger: [
       utsagn('OUSFAR seponerer peroral risperidon dagen før første injeksjon; gradvis seponering, som preparatomtalen nevner for noen, er ikke modellert.', SPC.xeplionSeponering),
-      utsagn('Vedlikeholdsdosen regnes ikke ut fra risperidondosen, fordi preparatomtalen ikke har noen omregning. Forskriveren velger den innenfor 25–150 mg. Preparatomtalen anbefaler 75 mg, så en annen dose krever en skriftlig begrunnelse ut fra toleranse og effekt (for eksempel overvekt), og begrunnelsen står i planen ved siden av risperidondosen. Planen bruker bare styrker av Xeplion som finnes i FEST.', XEPLION.vedlikehold, XEPLION.overvekt),
+      utsagn('Vedlikeholdsdosen regnes ikke ut fra risperidondosen, fordi preparatomtalen ikke har noen omregning, og OUSFAR knytter ikke dosene sammen med egne tall. Preparatomtalen anbefaler 75 mg. En høyere (100 eller 150 mg) eller lavere dose (50 mg; 25 mg finnes ikke i FEST og stopper) er et valg i én retning: forskriveren svarer ja på spørsmålet for den retningen, bekrefter en dokumentert legevurdering av behandling og eksponering for akkurat den retningen (høyere: overvekt eller for svak effekt av vanlig risperidondose; lavere: dosebegrensende bivirkninger eller stabil på lav risperidondose), og skriver en begrunnelse. Uten alle tre stopper planen, også for en usannsynlig kombinasjon som 0,5 mg risperidon og 150 mg Xeplion. Svarene, vurderingen og begrunnelsen står i planen ved siden av risperidondosen. Planen bruker bare styrker av Xeplion som finnes i FEST.', XEPLION.vedlikehold, XEPLION.overvekt, RISPERDAL.dose),
       utsagn('Risperidondosen oppgis som dokumentasjon av stabiliseringen og må være innenfor det preparatomtalen anbefaler (høyst 16 mg daglig); den brukes ikke i beregningen.', RISPERDAL.maks),
     ],
     forutsetninger: forutsetninger(
@@ -254,7 +303,7 @@ const risperidonXeplion: Regel = {
     {
       id: 'fra-4-mg-75',
       beskrivelse: 'Risperidon 4 mg, vedlikehold 75 mg, startdato 1. desember 2026.',
-      inndata: { startdose_mg: 4, maldose_mg: 75, startdato: '2026-12-01', bekreftet: XEPLION_BEKREFTET, pasientforhold: NYRE_AVKREFTET },
+      inndata: { startdose_mg: 4, maldose_mg: 75, startdato: '2026-12-01', bekreftet: XEPLION_BEKREFTET, pasientforhold: NYRE_AVKREFTET, svar: VEDLIKEHOLD_75 },
       forventet: {
         fra: ['fra dag 1 (01.12.2026): seponert'],
         til: [
@@ -266,66 +315,137 @@ const risperidonXeplion: Regel = {
     },
     {
       id: 'fra-2-mg-50',
-      beskrivelse: 'Risperidon 2 mg, vedlikehold 50 mg med skriftlig begrunnelse.',
-      inndata: { startdose_mg: 2, maldose_mg: 50, begrunnelse: 'Syntetisk eksempel: lav peroral dose og bivirkninger ved høyere dose.', bekreftet: XEPLION_BEKREFTET, pasientforhold: NYRE_AVKREFTET },
+      beskrivelse: 'Risperidon 2 mg, vedlikehold 50 mg: ja på lavere dose, bekreftet vurdering og skriftlig begrunnelse.',
+      inndata: {
+        startdose_mg: 2,
+        maldose_mg: 50,
+        begrunnelse: 'Syntetisk eksempel: dosebegrensende bivirkninger ved høyere risperidondose.',
+        bekreftet: [...XEPLION_BEKREFTET, 'lavere_dose_vurdert'],
+        pasientforhold: NYRE_AVKREFTET,
+        svar: { ...VEDLIKEHOLD_75, vedlikehold_under_75: true },
+      },
       forventet: {
         fra: ['fra dag 1: seponert'],
         til: ['dag 1: 150 mg injeksjon, deltoideus', 'dag 8 (±4 dager): 100 mg injeksjon, deltoideus', 'hver måned fra 1 måned etter dag 8 (±7 dager): 50 mg injeksjon, deltoideus eller setemuskel'],
       },
     },
     {
-      id: 'lav-dose-150-uten-begrunnelse',
-      beskrivelse: 'Risperidon 0,5 mg og vedlikehold 150 mg uten begrunnelse: en annen dose enn den anbefalte stopper.',
-      inndata: { startdose_mg: 0.5, maldose_mg: 150, bekreftet: XEPLION_BEKREFTET, pasientforhold: NYRE_AVKREFTET },
+      id: 'fra-6-mg-100',
+      beskrivelse: 'Risperidon 6 mg, vedlikehold 100 mg: ja på høyere dose, bekreftet vurdering og skriftlig begrunnelse.',
+      inndata: {
+        startdose_mg: 6,
+        maldose_mg: 100,
+        begrunnelse: 'Syntetisk eksempel: fedme og for svak effekt av 4 mg risperidon.',
+        bekreftet: [...XEPLION_BEKREFTET, 'hoyere_dose_vurdert'],
+        pasientforhold: NYRE_AVKREFTET,
+        svar: { ...VEDLIKEHOLD_75, vedlikehold_over_75: true },
+      },
+      forventet: {
+        fra: ['fra dag 1: seponert'],
+        til: ['dag 1: 150 mg injeksjon, deltoideus', 'dag 8 (±4 dager): 100 mg injeksjon, deltoideus', 'hver måned fra 1 måned etter dag 8 (±7 dager): 100 mg injeksjon, deltoideus eller setemuskel'],
+      },
+    },
+    {
+      id: 'lav-dose-150-bare-fritekst',
+      beskrivelse: 'Risperidon 0,5 mg og vedlikehold 150 mg med bare en fritekst: uten ja på høyere dose stopper planen.',
+      inndata: { startdose_mg: 0.5, maldose_mg: 150, begrunnelse: 'Syntetisk eksempel.', bekreftet: XEPLION_BEKREFTET, pasientforhold: NYRE_AVKREFTET, svar: VEDLIKEHOLD_75 },
       forventet: {},
-      stopp: /Måldosen 150 mg .*krever en skriftlig begrunnelse/,
+      stopp: /Måldosen 150 mg er utenfor det regelen gjelder for \(25–75 mg ved ikke høyere vedlikeholdsdose enn 75 mg\)/,
+    },
+    {
+      id: 'lav-dose-150-uten-vurdering',
+      beskrivelse: 'Risperidon 0,5 mg og vedlikehold 150 mg med ja og begrunnelse, men uten bekreftet vurdering: planen stopper.',
+      inndata: {
+        startdose_mg: 0.5,
+        maldose_mg: 150,
+        begrunnelse: 'Syntetisk eksempel.',
+        bekreftet: XEPLION_BEKREFTET,
+        pasientforhold: NYRE_AVKREFTET,
+        svar: { ...VEDLIKEHOLD_75, vedlikehold_over_75: true },
+      },
+      forventet: {},
+      stopp: /Må bekreftes før beregning: Den høyere dosen bygger på en dokumentert legevurdering/,
+    },
+    {
+      id: 'hoy-dose-50-uten-begrunnelse',
+      beskrivelse: 'Risperidon 16 mg og vedlikehold 50 mg med ja og bekreftet vurdering, men uten begrunnelse: planen stopper.',
+      inndata: {
+        startdose_mg: 16,
+        maldose_mg: 50,
+        bekreftet: [...XEPLION_BEKREFTET, 'lavere_dose_vurdert'],
+        pasientforhold: NYRE_AVKREFTET,
+        svar: { ...VEDLIKEHOLD_75, vedlikehold_under_75: true },
+      },
+      forventet: {},
+      stopp: /Svaret ja \(lavere vedlikeholdsdose enn 75 mg\) krever en skriftlig begrunnelse/,
+    },
+    {
+      id: 'ja-men-75',
+      beskrivelse: 'Ja på høyere dose, men 75 mg valgt: svaret og dosen stemmer ikke, og planen stopper.',
+      inndata: {
+        startdose_mg: 4,
+        maldose_mg: 75,
+        begrunnelse: 'Syntetisk eksempel.',
+        bekreftet: [...XEPLION_BEKREFTET, 'hoyere_dose_vurdert'],
+        pasientforhold: NYRE_AVKREFTET,
+        svar: { ...VEDLIKEHOLD_75, vedlikehold_over_75: true },
+      },
+      forventet: {},
+      stopp: /Måldosen 75 mg er utenfor det regelen gjelder for \(100–150 mg ved høyere vedlikeholdsdose enn 75 mg\)/,
+    },
+    {
+      id: 'uten-svar-om-vedlikehold',
+      beskrivelse: 'Spørsmålene om en annen vedlikeholdsdose er ikke besvart: planen stopper.',
+      inndata: { startdose_mg: 4, maldose_mg: 75, bekreftet: XEPLION_BEKREFTET, pasientforhold: NYRE_AVKREFTET },
+      forventet: {},
+      stopp: /Må besvares før beregning: Er en høyere månedlig vedlikeholdsdose enn anbefalte 75 mg valgt/,
     },
     {
       id: 'uten-toleranse',
       beskrivelse: 'Uten dokumentert tidligere toleranse stopper beregningen.',
-      inndata: { startdose_mg: 4, maldose_mg: 75, bekreftet: ['indikasjon'], pasientforhold: NYRE_AVKREFTET },
+      inndata: { startdose_mg: 4, maldose_mg: 75, bekreftet: ['indikasjon'], pasientforhold: NYRE_AVKREFTET, svar: VEDLIKEHOLD_75 },
       forventet: {},
       stopp: /Må bekreftes før beregning: Det er dokumentert i journalen at pasienten har tålt peroral risperidon/,
     },
     {
       id: 'uten-maldose',
       beskrivelse: 'Uten valgt vedlikeholdsdose: beregningen velger ikke selv.',
-      inndata: { startdose_mg: 4, bekreftet: XEPLION_BEKREFTET, pasientforhold: NYRE_AVKREFTET },
+      inndata: { startdose_mg: 4, bekreftet: XEPLION_BEKREFTET, pasientforhold: NYRE_AVKREFTET, svar: VEDLIKEHOLD_75 },
       forventet: {},
       stopp: /Måldosen må oppgis/,
     },
     {
       id: 'maldose-over-150',
       beskrivelse: 'Vedlikehold 175 mg er over området i preparatomtalen.',
-      inndata: { startdose_mg: 6, maldose_mg: 175, bekreftet: XEPLION_BEKREFTET, pasientforhold: NYRE_AVKREFTET },
+      inndata: { startdose_mg: 6, maldose_mg: 175, bekreftet: XEPLION_BEKREFTET, pasientforhold: NYRE_AVKREFTET, svar: VEDLIKEHOLD_75 },
       forventet: {},
       stopp: /Måldosen 175 mg er utenfor/,
     },
     {
       id: 'risperidon-over-16',
       beskrivelse: 'Risperidon 20 mg er over det preparatomtalen anbefaler.',
-      inndata: { startdose_mg: 20, maldose_mg: 150, bekreftet: XEPLION_BEKREFTET, pasientforhold: NYRE_AVKREFTET },
+      inndata: { startdose_mg: 20, maldose_mg: 150, bekreftet: XEPLION_BEKREFTET, pasientforhold: NYRE_AVKREFTET, svar: VEDLIKEHOLD_75 },
       forventet: {},
       stopp: /Startdosen 20 mg er utenfor/,
     },
     {
       id: 'nedsatt-nyrefunksjon',
       beskrivelse: 'Kreatininclearance under 80 ml/min: regelen gjelder ikke.',
-      inndata: { startdose_mg: 4, maldose_mg: 75, bekreftet: XEPLION_BEKREFTET, pasientforhold: { ...NYRE_AVKREFTET, nedsatt_nyrefunksjon: true } },
+      inndata: { startdose_mg: 4, maldose_mg: 75, bekreftet: XEPLION_BEKREFTET, pasientforhold: { ...NYRE_AVKREFTET, nedsatt_nyrefunksjon: true }, svar: VEDLIKEHOLD_75 },
       forventet: {},
       stopp: /Regelen gjelder ikke: Pasienten har kreatininclearance under 80 ml\/min/,
     },
     {
       id: 'alder-ukjent',
       beskrivelse: 'Alderen er ikke vurdert: ukjent stopper like mye som over 65 år.',
-      inndata: { startdose_mg: 4, maldose_mg: 75, bekreftet: XEPLION_BEKREFTET, pasientforhold: { nedsatt_nyrefunksjon: false } },
+      inndata: { startdose_mg: 4, maldose_mg: 75, bekreftet: XEPLION_BEKREFTET, pasientforhold: { nedsatt_nyrefunksjon: false }, svar: VEDLIKEHOLD_75 },
       forventet: {},
       stopp: /Må avklares før beregning \(ukjent\): Pasienten er over 65 år/,
     },
     {
       id: 'uten-indikasjon',
       beskrivelse: 'Uten bekreftet stabilisering og toleranse stopper beregningen.',
-      inndata: { startdose_mg: 4, maldose_mg: 75, bekreftet: ['tidligere_toleranse'], pasientforhold: NYRE_AVKREFTET },
+      inndata: { startdose_mg: 4, maldose_mg: 75, bekreftet: ['tidligere_toleranse'], pasientforhold: NYRE_AVKREFTET, svar: VEDLIKEHOLD_75 },
       forventet: {},
       stopp: /Må bekreftes før beregning: Pasienten er voksen, har schizofreni og er stabilisert på/,
     },
@@ -333,6 +453,7 @@ const risperidonXeplion: Regel = {
   godkjenning: tilKontroll(
     'Ny regel (K3, VDK-2 forslag 3): samme oppstart som den godkjente regelen fra paliperidon depottablett, med vedlikeholdsdosen valgt av forskriveren innenfor preparatomtalens område.',
     `${GJENNOMGANG} dokumentert tidligere toleranse er en egen bekreftelse, og en annen vedlikeholdsdose enn anbefalte 75 mg krever en skriftlig begrunnelse.`,
+    `${GJENNOMGANG_2} en annen vedlikeholdsdose enn 75 mg er et ja i én retning (høyere: 100 eller 150 mg; lavere: 50 mg) med en bekreftet, dokumentert vurdering av behandling og eksponering for den retningen og en skriftlig begrunnelse; fritekst alene stopper.`,
   ),
 }
 
@@ -792,10 +913,11 @@ const aripiprazolRisperidon: Regel = {
 }
 
 const KVETIAPIN_AVKREFTET = { alder_65: false, nedsatt_leverfunksjon: false, cyp3a4_hemmer: false }
+const KVETIAPIN_BEKREFTET = ['indikasjon', 'spesialist_risiko', 'sluttmal_300']
 
 const kariprazinKvetiapin: Regel = {
   id: 'antipsykotikabytte-kariprazin-kvetiapin',
-  versjon: 1,
+  versjon: 2,
   tittel: 'Fra kariprazin til kvetiapin, direkte bytte',
   fra: { type: 'virkestoff', nokkel: 'kariprazin' },
   til: { type: 'virkestoff', nokkel: 'kvetiapin' },
@@ -826,6 +948,13 @@ const kariprazinKvetiapin: Regel = {
       grunnlag: { type: 'kilde', henvisninger: [REAGILA.indikasjon, SPC.seroquel] },
     },
     spesialist(),
+    {
+      // Kontrollørens andre gjennomgang: et oppstartsregime er ikke automatisk en stabil, pasienttilpasset behandling.
+      id: 'sluttmal_300',
+      tekst:
+        'Sluttmålet er 300 mg kvetiapin daglig fra dag 4, den laveste dosen i det vanlige effektive området ved schizofreni (300–450 mg), og det er vurdert som forsvarlig for denne pasienten. En annen vedlikeholdsdose (150–750 mg) etter effekt og toleranse er en ny klinisk vurdering som planen ikke beregner, og pasienten følges tett mens virkningen av kariprazin avtar over uker.',
+      grunnlag: { type: 'kilde', henvisninger: [SPC.seroquel, REAGILA.halvering] },
+    },
   ],
   unntak: [
     ALDER_65('Pasienten er 65 år eller eldre; preparatomtalen sier at eldre kan trenge langsommere opptrapping og lavere dose av kvetiapin.', SEROQUEL.eldre),
@@ -844,7 +973,7 @@ const kariprazinKvetiapin: Regel = {
     tilpasninger: [
       utsagn('Kariprazin seponeres uten nedtrapping dagen før kvetiapin startes (siste dose dagen før dag 1).', REAGILA.fra, REAGILA.halvering),
       utsagn('Dagens dose må være en dose kapslene gir og opptrappingen i trinn på 1,5 mg når: 1,5, 3, 4,5 eller 6 mg. Andre doser stopper.', REAGILA.dose),
-      utsagn('Planen følger opptrappingen ved schizofreni og slutter med 300 mg daglig fra dag 4, laveste anbefalte vedlikeholdsdose. Økning mot 450 mg eller en annen dose er en klinisk vurdering og beregnes ikke.', SPC.seroquel),
+      utsagn('Planen følger opptrappingen ved schizofreni og slutter med 300 mg daglig fra dag 4, den laveste dosen i det vanlige effektive området. Sluttmålet er et definert mål som forskriveren bekrefter er forsvarlig for pasienten; økning mot 450 mg eller en annen dose innenfor 150–750 mg er en ny klinisk vurdering og beregnes ikke, fordi preparatomtalen ikke gir trinn eller tid for den.', SPC.seroquel),
       utsagn('Planen bruker bare tabletter med vanlig frisetting i FEST, aldri depottabletter. Hver døgndose gis fordelt på to doser; kan den ikke fordeles med tablettene, stopper planen.', SPC.seroquelToGanger),
     ],
     forutsetninger: forutsetninger('Pasienten bruker kariprazin 1,5, 3, 4,5 eller 6 mg daglig.', 'Forskriveren har vurdert hvert unntak og svart nei; et ubesvart unntak stopper beregningen.'),
@@ -858,7 +987,7 @@ const kariprazinKvetiapin: Regel = {
     {
       id: 'fra-4-5-mg',
       beskrivelse: 'Kariprazin 4,5 mg til kvetiapin, startdato 7. desember 2026.',
-      inndata: { startdose_mg: 4.5, startdato: '2026-12-07', bekreftet: ['indikasjon', 'spesialist_risiko'], pasientforhold: KVETIAPIN_AVKREFTET },
+      inndata: { startdose_mg: 4.5, startdato: '2026-12-07', bekreftet: KVETIAPIN_BEKREFTET, pasientforhold: KVETIAPIN_AVKREFTET },
       forventet: {
         fra: ['fra dag 1 (07.12.2026): seponert'],
         til: [
@@ -872,7 +1001,7 @@ const kariprazinKvetiapin: Regel = {
     {
       id: 'fra-1-5-mg',
       beskrivelse: 'Kariprazin 1,5 mg (laveste dose) til kvetiapin.',
-      inndata: { startdose_mg: 1.5, bekreftet: ['indikasjon', 'spesialist_risiko'], pasientforhold: KVETIAPIN_AVKREFTET },
+      inndata: { startdose_mg: 1.5, bekreftet: KVETIAPIN_BEKREFTET, pasientforhold: KVETIAPIN_AVKREFTET },
       forventet: {
         fra: ['fra dag 1: seponert'],
         til: ['dag 1: 50 mg, fordelt på 2 doser', 'dag 2: 100 mg, fordelt på 2 doser', 'dag 3: 200 mg, fordelt på 2 doser', 'fra dag 4: 300 mg, fordelt på 2 doser'],
@@ -881,33 +1010,43 @@ const kariprazinKvetiapin: Regel = {
     {
       id: 'kariprazin-2-mg',
       beskrivelse: 'Kariprazin 2 mg er ingen dose kapslene gir (1,5, 3, 4,5 eller 6 mg).',
-      inndata: { startdose_mg: 2, bekreftet: ['indikasjon', 'spesialist_risiko'], pasientforhold: KVETIAPIN_AVKREFTET },
+      inndata: { startdose_mg: 2, bekreftet: KVETIAPIN_BEKREFTET, pasientforhold: KVETIAPIN_AVKREFTET },
       forventet: {},
       stopp: /Startdosen 2 mg er utenfor/,
     },
     {
       id: 'kariprazin-over-6',
       beskrivelse: 'Kariprazin 9 mg er over høyeste dose; regelen gjelder ikke.',
-      inndata: { startdose_mg: 9, bekreftet: ['indikasjon', 'spesialist_risiko'], pasientforhold: KVETIAPIN_AVKREFTET },
+      inndata: { startdose_mg: 9, bekreftet: KVETIAPIN_BEKREFTET, pasientforhold: KVETIAPIN_AVKREFTET },
       forventet: {},
       stopp: /Startdosen 9 mg er utenfor/,
     },
     {
+      id: 'uten-sluttmal',
+      beskrivelse: 'Uten bekreftelse av at 300 mg er et forsvarlig sluttmål for pasienten stopper beregningen.',
+      inndata: { startdose_mg: 3, bekreftet: ['indikasjon', 'spesialist_risiko'], pasientforhold: KVETIAPIN_AVKREFTET },
+      forventet: {},
+      stopp: /Må bekreftes før beregning: Sluttmålet er 300 mg kvetiapin daglig fra dag 4/,
+    },
+    {
       id: 'cyp3a4-hemmer',
       beskrivelse: 'Klaritromycin samtidig: kvetiapin er kontraindisert, og regelen gjelder ikke.',
-      inndata: { startdose_mg: 3, bekreftet: ['indikasjon', 'spesialist_risiko'], pasientforhold: { ...KVETIAPIN_AVKREFTET, cyp3a4_hemmer: true } },
+      inndata: { startdose_mg: 3, bekreftet: KVETIAPIN_BEKREFTET, pasientforhold: { ...KVETIAPIN_AVKREFTET, cyp3a4_hemmer: true } },
       forventet: {},
       stopp: /Regelen gjelder ikke: Pasienten bruker en CYP3A4-hemmer/,
     },
     {
       id: 'lever-ukjent',
       beskrivelse: 'Leverfunksjonen er ikke vurdert: ukjent stopper.',
-      inndata: { startdose_mg: 3, bekreftet: ['indikasjon', 'spesialist_risiko'], pasientforhold: { alder_65: false, cyp3a4_hemmer: false } },
+      inndata: { startdose_mg: 3, bekreftet: KVETIAPIN_BEKREFTET, pasientforhold: { alder_65: false, cyp3a4_hemmer: false } },
       forventet: {},
       stopp: /Må avklares før beregning \(ukjent\): Pasienten har nedsatt leverfunksjon/,
     },
   ],
-  godkjenning: tilKontroll('Ny regel (K3): bytte fra kariprazin uten kryss-titrering (Reagila pkt. 4.2) til kvetiapin med opptrappingen ved schizofreni (Seroquel pkt. 4.2).'),
+  godkjenning: tilKontroll(
+    'Ny regel (K3): bytte fra kariprazin uten kryss-titrering (Reagila pkt. 4.2) til kvetiapin med opptrappingen ved schizofreni (Seroquel pkt. 4.2).',
+    `${GJENNOMGANG_2} 300 mg fra dag 4 er et definert sluttmål som forskriveren bekrefter er forsvarlig for pasienten; en annen vedlikeholdsdose er en ny klinisk vurdering som ikke beregnes.`,
+  ),
 }
 
 /* --- Peroralt: olanzapin og risperidon → aripiprazol, kryss-titrering (TARC 2018) ---------- */
