@@ -21,7 +21,7 @@ import { norskDato } from './motor/byggesteiner'
 import { valgtekst } from './regler/aksepttest'
 import { fingeravtrykk, godkjenningsfeil, KONTROLLUTFALL, kontrollutfall } from './regler/godkjenning'
 import { alleGrunnlag, type Klinisktilfelle, type Regel, type Regelsett } from './regler/modell'
-import { K1_9_AVGJORELSE, K1_DATO } from './regler/k1'
+import { K1_9_AVGJORELSE, K1_DATO, K1_KONTROLL_0411 } from './regler/k1'
 import { STI } from './regler/nedtrapping'
 import { ETTER_RETTELSENE } from './kontrollsett'
 import { avregistrert, avvikFra, kjorKasus, type Kontrollregel, nyStyrke, type Pilotkasus, type Pilotutfall, SIMULERT_KONTROLLOR, simulerGodkjenning, type Uttrekkene } from './regler/pilotmatrise'
@@ -284,6 +284,22 @@ const endretEtter = (k: Kontrollregel, hva: string, endre: (r: Regel) => void, d
 }
 
 /**
+ * En kopi der avklaringene av valgene `sti` treffer er fjernet, og deretter
+ * en simulert godkjenning av akkurat den kopien: viser at en godkjenning ikke
+ * kan gjøre et åpent valg beregnbart.
+ */
+const godkjentUtenAvklaring = (k: Kontrollregel, sti: RegExp, hva: string, dato: string): NonNullable<Pilotkasus['regel']> => ({
+  id: k.id,
+  endre: {
+    hva: `${hva} uten avklaring, deretter simulert klinisk godkjenning av kopien`,
+    endre: (r) => {
+      for (const [s, g] of alleGrunnlag(r)) if (sti.test(s) && g.type === 'ousfar_vurdering') g.avklaring = null
+      simulerGodkjenning(r, { ...k, fingeravtrykk: fingeravtrykk(r) }, dato)
+    },
+  },
+})
+
+/**
  * Kasus for et forslag i nedtrappingsverktøyet: `regel` er den simulerte
  * godkjenningen av regelen (med simulert avklaring når `avklar`), med mindre
  * kasuset sier noe annet.
@@ -418,7 +434,7 @@ export const FORSLAG_1: Kontrollforslag = {
 /* --- K1: nedtrapping til seponering --------------------------------------------- */
 
 /** Versjon 13 av escitalopramregelen: minste trinn fra 3 mg og avslutning fra 1 mg med dråper, som forslag (`regler/k1.ts`). */
-const K1_ESCITALOPRAM: Kontrollregel = { id: 'seponering-escitalopram', versjon: 13, fingeravtrykk: '871e2c72a2b4ca6a57a6025de1918ef3c9074306f20c09aa481db9361c1ce039' }
+const K1_ESCITALOPRAM: Kontrollregel = { id: 'seponering-escitalopram', versjon: 13, fingeravtrykk: 'e8a3c17edda10da43b1df4171a733a23133da50ebcda31cd71a771022a8a78d7' }
 /** Versjon 12 av sertralinregelen, uendret i K1 (de tre andre versjon 12-reglene står i forslag 1). */
 const SERTRALIN: Kontrollregel = { id: 'seponering-sertralin', versjon: 12, fingeravtrykk: '5be29652a2afc47a60cbd394a45bf5cdbad92dfe259e1fa263751e5476a8198e' }
 
@@ -479,15 +495,15 @@ export const FORSLAG_K1: Kontrollforslag = {
   visPlanutfall: true,
   innledning: (fest) => [
     `**Escitalopram med dråper helt til seponering (3 → 2 → 1 mg), og ellers «${KOMPLETT_IKKE_TILGJENGELIG}».** Grunnlag for uavhengig faglig kontroll av K1 i \`docs/verktøy-klinisk-leveranseplan-2026-11.md\`, ny runde etter kontrollen av PR #323 ${norskDato(DATO_K1)}.`,
-    `**Ingen regel er godkjent eller aktivert.** Escitalopramregelen har fått versjon 13 som forslag: med dråper (1 mg per dråpe) kan forskriveren fra 3 mg velge et minste trinn på én dråpe, 3 → 2 → 1 mg, og fra 1 mg holdes dosen et helt trinn før seponering, med vurdering før hver endring og 7, 14 og 28 dager etter siste dose. Sluttdosen 1 mg er avgjort faglig av Peder ${norskDato(K1_9_AVGJORELSE.dato)} for et avgrenset omfang (K1.9, avsnittet «Peders avgjørelse på K1.9»); det minste trinnet og oppfølgingsdagene er OUSFARs forslag og åpne spørsmål til kontrolløren (K1.10 og K1.12). Peder har ikke godkjent noe annet enn K1.9, og regelen er ikke godkjent. Alle andre regler, også nortriptylin, amitriptylin og sertralin, er uendret. Motoren (#319) viser aldri en delplan: når en plan ikke når sluttmålet, står det «${KOMPLETT_IKKE_TILGJENGELIG}» og grunnen, uten doser. Sperrene og synligheten bare for administratorer er uendret, og verktøyet tilbyr i dag ingen beregning for reglene (kasus K1-19–K1-21).`,
-    `For å vise hva verktøyet ville vist om nøyaktig disse versjonene ble godkjent, er planene under regnet på en kopi av hver regel med en simulert avklaring av de åpne valgene som foreslått og en simulert godkjenning («${SIMULERT_KONTROLLOR}»), gjennom den samme veien som verktøysiden, som aldri viser en delplan, og med de norske preparatene i FEST-uttrekket hentet ${fest}. Kopien lagres ikke og brukes ikke av appen. Kasusene er syntetiske; pasientopplysninger inngår ikke, og ingen tekst fra Psychiatrienet vises.`,
+    `**Ingen regel er godkjent eller aktivert.** Escitalopramregelen har fått versjon 13 som forslag: med dråper (1 mg per dråpe) kan forskriveren fra 3 mg velge et minste trinn på én dråpe, 3 → 2 → 1 mg, og fra 1 mg holdes dosen et helt trinn før seponering, med vurdering før hver endring og 7, 14 og 28 dager etter siste dose. Sluttdosen 1 mg er avgjort faglig av Peder ${norskDato(K1_9_AVGJORELSE.dato)} for et avgrenset omfang (K1.9, avsnittet «Peders avgjørelse på K1.9»); det minste trinnet og oppfølgingsdagene er avklart av kontrolløren ${norskDato(K1_KONTROLL_0411.minste_trinn.dato)} (K1.10 og K1.12, avsnittet «Kontrollørens avklaring av K1.10 og K1.12»). Regelen har ingen åpne valg, men er ikke godkjent: den samlede kontrollen av regelen gjenstår. Peder har ikke godkjent noe annet enn K1.9. Alle andre regler, også nortriptylin, amitriptylin og sertralin, er uendret. Motoren (#319) viser aldri en delplan: når en plan ikke når sluttmålet, står det «${KOMPLETT_IKKE_TILGJENGELIG}» og grunnen, uten doser. Sperrene og synligheten bare for administratorer er uendret, og verktøyet tilbyr i dag ingen beregning for reglene (kasus K1-19–K1-21).`,
+    `For å vise hva verktøyet ville vist om nøyaktig disse versjonene ble godkjent, er planene under regnet på en kopi av hver regel med en simulert godkjenning («${SIMULERT_KONTROLLOR}»; escitalopramregelen har ingen åpne valg igjen å simulere), gjennom den samme veien som verktøysiden, som aldri viser en delplan, og med de norske preparatene i FEST-uttrekket hentet ${fest}. Kopien lagres ikke og brukes ikke av appen. Kasusene er syntetiske; pasientopplysninger inngår ikke, og ingen tekst fra Psychiatrienet vises.`,
   ],
   avgrensning: {
     dato: DATO_K1,
     tekst: 'Den sikre stoppen godtas, men K1 er ikke godtatt som produkt. Lag minst ett avgrenset, kildeforankret positivt klinisk forløp der det faktisk kan forsvares: definert startdose og behandlingshistorikk, små relative lavdosetrinn, dokumentert presisjon og administrasjon (også tablett ↔ dråper når aktuelt), symptomstyrt lengde og en særskilt vurdert siste dose → null. Laveste dose i preparatomtalen er ikke sluttgrensen, og algoritmen skal aldri finne opp oppmåling eller seponeringsgrense. Uten faglig og praktisk forsvarlig komplett plan: full stopp uten kopierbar delplan. Den globale sperren mot delplaner hører hjemme i motoren (#319). Lag positive og negative ende-til-ende-tester med faktiske norske preparater, og verifiser regelversjon og fingeravtrykk separat. Ingen av de fire K1-reglene er godkjent.',
   },
   forutsetninger: [
-    'Kontrollen gjelder nøyaktig versjonen og fingeravtrykket i tabellen over. Sluttdosen og seponeringen fra 1 mg er avklart av Peder (K1.9). Regelen har fortsatt åpne valg: det minste trinnet (fra 3 mg, høyst 50 %) og dagene for oppfølging etter siste dose. De må avklares av kontrolløren før en godkjenning kan registreres; planene her er regnet som om de ble godtatt som foreslått.',
+    'Kontrollen gjelder nøyaktig versjonen og fingeravtrykket i tabellen over. Sluttdosen og seponeringen fra 1 mg er avklart av Peder (K1.9); det minste trinnet og oppfølgingsdagene er avklart av kontrolløren (K1.10 og K1.12). Regelen har ingen åpne valg. Det som gjenstår, er kontrollørens samlede kontroll av nøyaktig denne versjonen.',
     `Kontrolløren ville ikke avgjøre sluttdosen alene og ba om en uavhengig, eksplisitt avklaring. Peder avgjorde K1.9 ${norskDato(K1_9_AVGJORELSE.dato)} for et avgrenset omfang; avgjørelsen gjelder ikke det minste trinnet, oppfølgingsdagene eller regelen som helhet. Grensen «laveste døgndose i preparatomtalen» fra en tidligere runde brukes ikke.`,
     'Avklaringene og godkjenningen registreres i en egen PR, med kontrollørens avgrensning. Endres regelen før det, stemmer ikke fingeravtrykket, og kontrollen må gjøres på nytt.',
     'Motoren (#319) har en global sperre: verktøysiden viser aldri en delplan, for noen regel. Nortriptylin, amitriptylin og sertralin trenger derfor ingen ny versjon for å gi «komplett plan ikke tilgjengelig».',
@@ -502,7 +518,7 @@ export const FORSLAG_K1: Kontrollforslag = {
     {
       nr: 'K1.10',
       sporsmal: 'Minste trinn: fra 3 mg er 3 → 2 mg en reduksjon på 33 % og 2 → 1 mg 50 %. Trinnene er større enn NICE-eksempelet på 25 % ved lav dose, og svaret på K1.6 var nei til et generelt større siste trinn på om lag 50 % som snarvei. Er ett minste trinn på én dråpe akseptabelt her, når det bare gjelder escitalopram dråper fra 3 mg eller lavere (der ingen mindre dose kan gis), forskriveren velger det aktivt, og tempoet styres av symptomer?',
-      anbefalt: 'Ja, avgrenset slik. Det er ikke en snarvei: alle trinn over 3 mg er høyst 25 %, hvert minste trinn holdes minst like lenge som de andre og forlenges ved symptomer, og RCPsych bruker om lag 50 % per trinn som utgangspunkt ved middels risiko. Svarer kontrolløren nei, stopper planen på 3 mg med «komplett plan ikke tilgjengelig».',
+      anbefalt: `Avklart av kontrolløren ${norskDato(K1_KONTROLL_0411.minste_trinn.dato)}: ja, avgrenset til dette escitalopramforløpet (avsnittet «Kontrollørens avklaring av K1.10 og K1.12»).`,
     },
     {
       nr: 'K1.11',
@@ -512,7 +528,7 @@ export const FORSLAG_K1: Kontrollforslag = {
     {
       nr: 'K1.12',
       sporsmal: 'Oppfølging etter siste dose: vurdering 7, 14 og 28 dager etter siste dose, i tillegg til vurderingen før hver endring. 7 og 14 dager bygger på preparatomtalen (symptomene kommer vanligvis de første dagene og går vanligvis over innen to uker); 28 dager er OUSFARs valg, fordi symptomene kan vare lenger og tilbakefall må vurderes. Er punktene riktige?',
-      anbefalt: 'Ja, som minimum. Svaret på K1.4 var at 28 dager kan være ett oppfølgingspunkt, men ikke det eneste.',
+      anbefalt: `Avklart av kontrolløren ${norskDato(K1_KONTROLL_0411.oppfolging.dato)}: ja, som kontrollpunkter, ikke som obligatoriske eller optimale dager for alle (avsnittet «Kontrollørens avklaring av K1.10 og K1.12»).`,
     },
     {
       nr: 'K1.13',
@@ -536,7 +552,7 @@ export const FORSLAG_K1: Kontrollforslag = {
       tekst: tabell(
         ['Krav', 'Hva er gjort'],
         [
-          ['Minst ett avgrenset, kildeforankret positivt forløp med små relative lavdosetrinn, dokumentert presisjon og administrasjon, symptomstyrt lengde og en særskilt vurdert siste dose → 0', 'Escitalopram dråper fra 10 og 20 mg ved kort behandlingstid (kasus K1-01 og K1-02, avsnittet «Hvilke forløp som er komplette»): trinn på høyst 25 % til 3 mg, så 3 → 2 → 1 mg med dråper på 1 mg, 1 mg et helt trinn og seponering. Vurdering før hver endring og 7, 14 og 28 dager etter siste dose. Sluttdosen og det minste trinnet er spørsmål K1.9 og K1.10.'],
+          ['Minst ett avgrenset, kildeforankret positivt forløp med små relative lavdosetrinn, dokumentert presisjon og administrasjon, symptomstyrt lengde og en særskilt vurdert siste dose → 0', 'Escitalopram dråper fra 10 og 20 mg ved kort behandlingstid (kasus K1-01 og K1-02, avsnittet «Hvilke forløp som er komplette»): trinn på høyst 25 % til 3 mg, så 3 → 2 → 1 mg med dråper på 1 mg, 1 mg et helt trinn og seponering. Vurdering før hver endring og 7, 14 og 28 dager etter siste dose. Sluttdosen er avgjort av Peder (K1.9), og det minste trinnet og oppfølgingen er avklart av kontrolløren (K1.10 og K1.12).'],
           ['Tablett ↔ dråper med eksakt ekvivalens og administrasjon', 'Preparatomtalen for dråpene er registrert som kilde (`dmp-cipralex-draper`); overgangen er mg for mg (K1.11, kasus K1-01).'],
           ['Ingen oppfunnet oppmåling eller seponeringsgrense', 'Bare hele dråper; ingen fortynning, oppmåling eller apotektilberedning. Sluttdosen er ingen grense fra en kilde, men en dokumentert faglig avgjørelse for et avgrenset omfang (K1.9).'],
           ['Ellers full stopp uten kopierbar delplan', 'Motorens globale sperre (#319). Lang behandlingstid, escitalopram tablett, nortriptylin, amitriptylin og sertralin gir «komplett plan ikke tilgjengelig» (kasus K1-06–K1-08 og K1-14–K1-18).'],
@@ -551,7 +567,7 @@ export const FORSLAG_K1: Kontrollforslag = {
         `Beslutningskortet: «${K1_9_AVGJORELSE.kort}». Valgt alternativ: «${K1_9_AVGJORELSE.valg}».`,
         `Avgrensning, ordrett: «${K1_9_AVGJORELSE.avgrensning}»`,
         `Beslutningsregel, ordrett: «${K1_9_AVGJORELSE.beslutningsregel}»`,
-        'Avgjørelsen gjelder bare K1.9: sluttdosen 1 mg og seponeringen fra 1 mg. Det minste trinnet (K1.10), oppfølgingsdagene (K1.12) og regelen som helhet er ikke godkjent.',
+        'Avgjørelsen gjelder bare K1.9: sluttdosen 1 mg og seponeringen fra 1 mg. Den gjelder ikke det minste trinnet (K1.10), oppfølgingsdagene (K1.12) eller regelen som helhet. Seponeringen fra 1 mg er en individuell klinisk vurdering i det avgrensede forløpet, ikke en påstand om at den minste hele dråpen i seg selv er en trygg terskel.',
       ])}
 
 ${tabell(
@@ -564,6 +580,14 @@ ${tabell(
     ['Fra 10 eller 20 mg', 'Dråper fra 10 eller 20 mg; tablettpasienter går over til dråper med samme dose (K1.11)', 'K1-08, K1-10, K1-11'],
   ],
 )}`,
+    },
+    {
+      tittel: 'Kontrollørens avklaring av K1.10 og K1.12',
+      tekst: `Kontrollen av 80e557b ${norskDato(K1_KONTROLL_0411.minste_trinn.dato)} besvarte de to siste åpne valgene uavhengig. Avklaringene er registrert på valgene i regelen (rollen uavhengig kontrollør, regelversjon 13) og gjelder nøyaktig dette forløpet og omfanget. De er ingen samlet godkjenning av regelen.
+
+${liste([K1_KONTROLL_0411.minste_trinn.merknad, K1_KONTROLL_0411.oppfolging.merknad])}
+
+Kontrolløren skrev også at et siste trinn til null er nødvendig ved seponering, og at det å være 100 % av gjenværende døgndose ikke alene er et faglig motargument. Begrunnelsen for 1 mg → 0 er en individuell klinisk vurdering i det avgrensede forløpet, ikke at den minste hele dråpen i seg selv er en trygg terskel.`,
     },
     {
       tittel: 'Etterkontrollen av 0c25831 (03.11.2026), og hva som gjenstår',
@@ -583,7 +607,7 @@ ${liste([
   'Sertralin: ingen komplett plan; planen stopper på 75 mg til en målemetode eller tilberedning er dokumentert (K1.15).',
   'Escitalopram etter lang behandlingstid: ingen komplett plan; planen stopper på 9 mg (K1.13).',
   'Escitalopram tablett uten overgang til dråper: ingen komplett plan; planen stopper på 15 mg fra 20 mg.',
-  'Escitalopram dråper ved kort behandlingstid: komplett beregnet plan; sluttdosen er avgjort av Peder (K1.9), men det minste trinnet og oppfølgingsdagene venter på kontrolløren (K1.10 og K1.12).',
+  'Escitalopram dråper ved kort behandlingstid: komplett beregnet plan uten åpne valg; den samlede kontrollen av regelen gjenstår.',
 ])}`,
     },
     {
@@ -635,10 +659,10 @@ Ingen tabeller fra Psychiatrienet er brukt eller konvertert. Ingen validert apot
     {
       tittel: 'Hva som er endret fra versjon 12 av escitalopramregelen',
       tekst: liste([
-        'Minste trinn (`strategi.minste_trinn`): fra 3 mg, når ingen dose innenfor valgområdet kan gis, kan forskriveren velge den nærmeste lavere dosen, med faktisk reduksjon høyst 50 %. Åpent forslag (K1.10).',
+        'Minste trinn (`strategi.minste_trinn`): fra 3 mg, når ingen dose innenfor valgområdet kan gis, kan forskriveren velge den nærmeste lavere dosen, med faktisk reduksjon høyst 50 %. Avklart av kontrolløren 04.11.2026 (K1.10).',
         `Avslutning (\`avslutning\`): fra 1 mg eller lavere holdes siste dose et helt trinn, og escitalopram seponeres etter en vurdering. Avgjort faglig av Peder ${norskDato(K1_9_AVGJORELSE.dato)} (K1.9).`,
         'Laveste dose (`dosevalg.min_mg`): 1 mg, én dråpe (preparatomtalen pkt. 2).',
-        'Vurderingspunkter: før hver doseendring, med preparatomtalen pkt. 4.2 som grunnlag, og 7, 14 og 28 dager etter siste dose (åpne forslag, K1.12).',
+        'Vurderingspunkter: før hver doseendring, med preparatomtalen pkt. 4.2 som grunnlag, og 7, 14 og 28 dager etter siste dose; dagene er avklart av kontrolløren 04.11.2026 (K1.12).',
         'Fortolkningen: overgangen fra tablett til dråper mg for mg (K1.11), at nedtrappingen går til null og at symptomer kan komme uansett hvor lav dosen er, og usikkerheten om sluttdosen. Teksten om at planen ikke går til null er erstattet.',
         'Regneeksemplene er regnet på nytt: uten preparater stopper planen fra 20 mg på 1,13 mg, over sluttdosen, så den seponerer ikke; fra 10 mg ved lang behandlingstid på 2,82 mg.',
         'Det kliniske omfanget, trinnstørrelsene, trinnlengdene, spørsmålene og unntakene er uendret. Den langsomme varianten og alle andre regler er uendret; de godkjente reglene har samme fingeravtrykk som før.',
@@ -681,7 +705,7 @@ Ingen tabeller fra Psychiatrienet er brukt eller konvertert. Ingen validert apot
     ke('K1-19', 'ikke_godkjent', 'escitalopram slik verktøyet er i dag', K1_ESCITALOPRAM, '10', { utfall: 'ingen', status: 'til_kontroll' }, [], { regel: undefined, ref: 'K0-01' }),
     kk('K1-20', 'ikke_godkjent', 'amitriptylin slik verktøyet er i dag', AMITRIPTYLIN, '25', { utfall: 'ingen', status: 'ikke_godkjent' }, [], { regel: undefined, ref: 'K0-03' }),
     kk('K1-21', 'ikke_godkjent', 'sertralin slik verktøyet er i dag', SERTRALIN, '100', { utfall: 'ingen', status: 'ikke_godkjent' }, [], { regel: undefined, ref: 'K0-02' }),
-    ke('K1-22', 'ikke_godkjent', 'escitalopram dråper 10 mg, godkjent uten at de åpne valgene er avklart, med valgene fra K1-01', K1_ESCITALOPRAM, '10', ingenPlan('Regelen har åpne valg som må avklares faglig'), [], { skjema: { ...form(DRAPER), trinnvalg: VALG_FRA_10_MG }, regel: somGodkjent(K1_ESCITALOPRAM, DATO_K1) }),
+    ke('K1-22', 'ikke_godkjent', 'escitalopram dråper 10 mg, godkjent med det minste trinnet uten avklaring (K1.10), med valgene fra K1-01', K1_ESCITALOPRAM, '10', ingenPlan('Regelen har åpne valg som må avklares faglig'), [], { skjema: { ...form(DRAPER), trinnvalg: VALG_FRA_10_MG }, regel: godkjentUtenAvklaring(K1_ESCITALOPRAM, /minste_trinn/, 'det minste trinnet', DATO_K1) }),
     ke('K1-23', 'regelendring', 'escitalopram dråper 10 mg med sluttdosen endret til 2 mg etter godkjenningen, med valgene fra K1-01', K1_ESCITALOPRAM, '10', ingenPlan('Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke)'), [], {
       skjema: { ...form(DRAPER), trinnvalg: VALG_FRA_10_MG },
       regel: endretEtter(K1_ESCITALOPRAM, 'sluttdosen 1 → 2 mg', (r) => {
@@ -695,6 +719,7 @@ Ingen tabeller fra Psychiatrienet er brukt eller konvertert. Ingen validert apot
     ke('K1-26', 'pasientforhold', 'escitalopram dråper 10 mg, kort, nedsatt leverfunksjon', K1_ESCITALOPRAM, '10', stopp(utenforOmfang(10), UTENFOR_OMFANG), [], { skjema: { ...form(DRAPER), svar: { nedsatt_leverfunksjon: true } } }),
     ke('K1-27', 'pasientforhold', 'escitalopram dråper 10 mg, kort, kjent langsom CYP2C19-metaboliserer', K1_ESCITALOPRAM, '10', stopp(utenforOmfang(10), UTENFOR_OMFANG), [], { skjema: { ...form(DRAPER), svar: { langsom_cyp2c19: true } } }),
     ke('K1-28', 'pasientforhold', 'escitalopram dråper 10 mg, kort, under 18 år', K1_ESCITALOPRAM, '10', stopp('Regelen gjelder ikke: Pasienten er under 18 år.'), [], { skjema: { ...form(DRAPER), pasientforhold: { under_18: true } } }),
+    ke('K1-29', 'pasientforhold', 'escitalopram dråper 10 mg, kort, kjent QT-forlengelse (kontraindikasjon)', K1_ESCITALOPRAM, '10', stopp('Regelen gjelder ikke: Pasienten har kjent QT-forlengelse', 'Det er en kontraindikasjon i preparatomtalen'), [], { skjema: { ...form(DRAPER), pasientforhold: { qt_forlengelse: true } } }),
   ],
 }
 

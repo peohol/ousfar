@@ -52,7 +52,7 @@
  * gjengir teksten der.
  */
 import { kravtekst, omradetekst } from './beregning'
-import { FAKTUMRETTELSER, FORUTSETNINGER_FELLES, forslag, h, kilde, leveransen, NICE, planhorisont, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, pn, RCPSYCH, RCPSYCH_TIDLIGERE, steg, utsagn, vurdert } from './bygg'
+import { FAKTUMRETTELSER, FORUTSETNINGER_FELLES, forslag, h, kilde, KONTROLLOREN, leveransen, NICE, planhorisont, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, pn, RCPSYCH, RCPSYCH_TIDLIGERE, steg, utsagn, vurdert } from './bygg'
 import { disponer } from './godkjenning'
 import type { Avklaring, Begrunnelseskrav, Bekreftelse, Fase, Forlop, Godkjenningssteg, Grunnlag, Inndatakrav, Kildehenvisning, Kliniskomfang, Nedtrappingsstrategi, Parameter, Regel, Regelsett, Regneeksempel, Sporsmal, Unntak, Utsagn } from './modell'
 import { REGELMODELLVERSJON } from './modell'
@@ -219,7 +219,7 @@ const historikk = (versjoner: Versjon[]) => versjoner.flatMap((v, i) => [steg('u
 
 const tall = (x: number) => String(x).replace('.', ',')
 
-const kontrollor = { av: 'ChatGPT (uavhengig kontrollør)', rolle: 'uavhengig_kontrollor' } as const
+const kontrollor = KONTROLLOREN
 
 /**
  * Avklaringen fra fagvurderingen 29.10.2026 (beslutning 1): valgområdene per

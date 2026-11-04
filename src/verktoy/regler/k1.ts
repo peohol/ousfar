@@ -17,10 +17,11 @@
  * Sluttdosen (K1.9 i `docs/verktøy-k1-nedtrapping-kontrollgrunnlag.md`) er
  * avgjort faglig av Peder 04.11.2026 for et avgrenset omfang
  * ({@link K1_SLUTTDOSE_PEDER}). Det minste trinnet og oppfølgingen etter
- * seponering er fortsatt OUSFARs forslag og åpne spørsmål til den uavhengige
- * kontrolløren (K1.10 og K1.12). Regelen er ikke klinisk godkjent.
+ * seponering (K1.10 og K1.12) er avklart av den uavhengige kontrolløren
+ * samme dag ({@link K1_KONTROLL_0411}). Regelen har ingen åpne valg, men er
+ * ikke klinisk godkjent før den samlede kontrollen.
  */
-import { h, NICE, RCPSYCH, steg, utsagn } from './bygg'
+import { h, KONTROLLOREN, NICE, RCPSYCH, steg, utsagn } from './bygg'
 import type { Avklaring, Fase, Forlop, Grunnlag, Kildehenvisning, Parameter, Regel, Utsagn, Vurderingspunkt } from './modell'
 
 export const K1_DATO = '2026-11-03'
@@ -47,8 +48,13 @@ export interface Avslutningsforslag {
   minste_trinn: { fra_mg: number; maks_prosent: number }
   /** Dosen seponeringen planlegges fra (`avslutning.fra_hoyst_mg`). */
   sluttdose_mg: number
-  /** En dokumentert faglig avgjørelse om sluttdosen og seponeringen; uten den er begge åpne forslag. */
-  sluttdoseavgjorelse?: Avklaring
+  /**
+   * Dokumenterte avklaringer av OUSFARs valg: sluttdosen og seponeringen
+   * (`sluttdose`), det minste trinnet (`minste_trinn`) og dagene for
+   * oppfølging etter siste dose (`oppfolging`). Et valg uten avklaring er et
+   * åpent forslag til kontrolløren.
+   */
+  avklaringer?: { sluttdose?: Avklaring; minste_trinn?: Avklaring; oppfolging?: Avklaring }
   /** Dager etter siste dose med oppfølging, hvert med grunnlaget for dagen. */
   etter_seponering: { dager: number; begrunnelse: string; henvisninger: Kildehenvisning[] }[]
   /** Kildene for seponeringen og oppfølgingen i preparatomtalen. */
@@ -96,6 +102,25 @@ export const K1_SLUTTDOSE_PEDER: Avklaring = {
     'Gjelder bare sluttdosen og seponeringen fra 1 mg (K1.9), ikke det minste trinnet (K1.10), oppfølgingsdagene (K1.12) eller regelen som helhet.',
 }
 
+/**
+ * Kontrollørens uavhengige avklaring av K1.10 og K1.12 i kontrollen av
+ * 80e557b 04.11.2026, for nøyaktig dette escitalopramforløpet og omfanget.
+ * Ingen samlet godkjenning av regelen.
+ */
+const KONTROLLEN_0411 = { ...KONTROLLOREN, dato: '2026-11-04', regelversjon: 13 } as const
+export const K1_KONTROLL_0411: { minste_trinn: Avklaring; oppfolging: Avklaring } = {
+  minste_trinn: {
+    ...KONTROLLEN_0411,
+    merknad:
+      'Kontrollørens gjennomgang av 80e557b 04.11.2026 (K1.10): ja, avgrenset til dette escitalopramforløpet. 3 → 2 mg (33 %) og 2 → 1 mg (50 %) med hele Cipralex-dråper kan være forsvarlige for den dokumenterte korttids- og lavrisikogruppen når hvert trinn holdes tilstrekkelig lenge, forskriveren velger dosene og symptomer avgjør videre tempo. Prosentene er ingen generell sikkerhetsterskel og skal ikke generaliseres til langvarig behandling, plagsomme seponeringssymptomer eller andre antidepressiver.',
+  },
+  oppfolging: {
+    ...KONTROLLEN_0411,
+    merknad:
+      'Kontrollørens gjennomgang av 80e557b 04.11.2026 (K1.12): ja, som kontrollpunkter 7, 14 og 28 dager etter siste dose, i tillegg til vurdering før hvert trinn. Ikke dokumentasjon for at akkurat disse dagene er obligatoriske eller optimale for alle; oppfølgingen må kunne fremskyndes eller forlenges etter symptomer og tilbakefallsrisiko.',
+  },
+}
+
 /** Escitalopram med dråper: 3 → 2 → 1 mg og seponering fra 1 mg; sluttdosen avgjort av Peder (K1.9), resten forslag til kontrolløren. */
 export const K1_ESCITALOPRAM: Avslutningsforslag = {
   regel: 'seponering-escitalopram',
@@ -104,7 +129,7 @@ export const K1_ESCITALOPRAM: Avslutningsforslag = {
   min_mg: { verdi: 1, kilde: K1_KILDER.draape },
   minste_trinn: { fra_mg: 3, maks_prosent: 50 },
   sluttdose_mg: 1,
-  sluttdoseavgjorelse: K1_SLUTTDOSE_PEDER,
+  avklaringer: { sluttdose: K1_SLUTTDOSE_PEDER, ...K1_KONTROLL_0411 },
   etter_seponering: [
     { dager: 7, begrunnelse: 'Seponeringssymptomer kommer vanligvis de første dagene etter seponering (preparatomtalen pkt. 4.4).', henvisninger: [K1_KILDER.symptomer] },
     { dager: 14, begrunnelse: 'Seponeringssymptomer går vanligvis over innen to uker (preparatomtalen pkt. 4.4).', henvisninger: [K1_KILDER.symptomer] },
@@ -125,10 +150,10 @@ export const K1_ESCITALOPRAM: Avslutningsforslag = {
   usikkerhet: [
     {
       erstatter: /^Doser under 5 mg krever dråper/,
-      tekst: 'Doser under 5 mg krever dråper (1 mg per dråpe) eller deling. Hele dråper gir bare hele milligram, og avrunding til hele dråper er ingen toleranse. Fra 3 mg kan forskriveren velge ett minste trinn på én dråpe (3 → 2 mg er 33 %, 2 → 1 mg er 50 %), større enn de 25 % NICE bruker som eksempel ved lav dose; mindre trinn under 3 mg ville krevd fortynning eller oppmåling, som ikke er dokumentert.',
+      tekst: 'Doser under 5 mg krever dråper (1 mg per dråpe) eller deling. Hele dråper gir bare hele milligram, og avrunding til hele dråper er ingen toleranse. Fra 3 mg kan forskriveren velge ett minste trinn på én dråpe (3 → 2 mg er 33 %, 2 → 1 mg er 50 %), større enn de 25 % NICE bruker som eksempel ved lav dose. Kontrolløren har godtatt trinnene bare for dette forløpet (K1.10), ikke som en generell terskel; mindre trinn under 3 mg ville krevd fortynning eller oppmåling, som ikke er dokumentert.',
     },
     {
-      tekst: 'Sluttdosen 1 mg (én dråpe) er ikke en dokumentert terskel: ingen kilde angir en dose som er lav nok før seponering. RCPsych beskriver at noen trenger å gå ned mot 2 % av opprinnelig dose (0,2–0,4 mg fra 10–20 mg), som ikke kan gis med dråpene uten fortynning, og at seponeringssymptomer kan komme uansett hvor lav dosen er. Sluttdosen er avgjort faglig av Peder 04.11.2026 (K1.9) bare for voksne under 65 år med kort behandlingstid, uten tidligere seponeringsplager, med dråper fra 10 eller 20 mg; den er ikke en terskel fra en kilde. Trenger pasienten mindre trinn enn én dråpe, beregner verktøyet dem ikke: dosen holdes på siste tolererte dose, og videre nedtrapping planlegges individuelt uten fortynning eller oppmåling fra verktøyet.',
+      tekst: 'Sluttdosen 1 mg (én dråpe) er ikke en dokumentert terskel: ingen kilde angir en dose som er lav nok før seponering. RCPsych beskriver at noen trenger å gå ned mot 2 % av opprinnelig dose (0,2–0,4 mg fra 10–20 mg), som ikke kan gis med dråpene uten fortynning, og at seponeringssymptomer kan komme uansett hvor lav dosen er. Sluttdosen er avgjort faglig av Peder 04.11.2026 (K1.9) bare for voksne under 65 år med kort behandlingstid, uten tidligere seponeringsplager, med dråper fra 10 eller 20 mg; seponeringen er en individuell klinisk vurdering i dette forløpet, og 1 mg er ikke en terskel fra en kilde. Trenger pasienten mindre trinn enn én dråpe, beregner verktøyet dem ikke: dosen holdes på siste tolererte dose, og videre nedtrapping planlegges individuelt uten fortynning eller oppmåling fra verktøyet.',
     },
   ],
   eksempler: {
@@ -169,9 +194,14 @@ export function medAvslutning(r: Regel, a: Avslutningsforslag): Regel {
   const ned = (fra: number, til: number) => `${tall(fra)} → ${tall(til)} mg er ${tall(Math.round(((fra - til) / fra) * 10000) / 100)} %`
   const trinnene = Array.from({ length: Math.round(fra_mg - a.sluttdose_mg) }, (_, i) => ned(fra_mg - i, fra_mg - i - 1))
 
-  // Sluttdosen og seponeringen (K1.9): avklart når forslaget har en dokumentert faglig avgjørelse, ellers åpne.
-  const sluttdose = (begrunnelse: string, henvisninger: Kildehenvisning[]): Grunnlag =>
-    a.sluttdoseavgjorelse ? { type: 'ousfar_vurdering', begrunnelse, henvisninger, avklaring: a.sluttdoseavgjorelse } : apent(begrunnelse, henvisninger)
+  // OUSFARs valg: avklart der forslaget har en dokumentert avklaring, ellers åpne forslag.
+  const valg =
+    (avklaring: Avklaring | undefined) =>
+    (begrunnelse: string, henvisninger: Kildehenvisning[]): Grunnlag =>
+      avklaring ? { type: 'ousfar_vurdering', begrunnelse, henvisninger, avklaring } : apent(begrunnelse, henvisninger)
+  const sluttdose = valg(a.avklaringer?.sluttdose)
+  const minsteTrinn = valg(a.avklaringer?.minste_trinn)
+  const oppfolging = valg(a.avklaringer?.oppfolging)
 
   const nyFase: Fase = {
     ...fase,
@@ -181,7 +211,7 @@ export function medAvslutning(r: Regel, a: Avslutningsforslag): Regel {
         fra_mg: parameter(
           fra_mg,
           'mg',
-          apent(
+          minsteTrinn(
             `Fra ${tall(fra_mg)} mg kan ikke neste trinn gis innenfor valgområdet med ${a.form} (${trinnene.join(', ')}), så forskriveren kan velge den nærmeste lavere dosen som kan gis. Mindre trinn ville krevd fortynning eller oppmåling, som ikke er dokumentert.`,
             [a.min_mg.kilde, NICE.andel, RCPSYCH.lavDose],
           ),
@@ -189,7 +219,7 @@ export function medAvslutning(r: Regel, a: Avslutningsforslag): Regel {
         maks_prosent: parameter(
           maks_prosent,
           'prosent',
-          apent(
+          minsteTrinn(
             `Høyst ${tall(maks_prosent)} % i ett minste trinn, så det siste trinnet ned til ${tall(a.sluttdose_mg)} mg kan gis. RCPsych bruker om lag 50 % per trinn som utgangspunkt ved middels risiko; NICE bruker 25 % som eksempel når dosen blir lav. Trinnene er derfor større enn NICE-eksempelet, og tempoet styres av symptomene: neste trinn først når eventuelle seponeringssymptomer er borte eller tålelige.`,
             [RCPSYCH.plan, RCPSYCH.middelsRisiko, NICE.andel, NICE.tempo, RCPSYCH.tid],
           ),
@@ -202,7 +232,7 @@ export function medAvslutning(r: Regel, a: Avslutningsforslag): Regel {
         a.sluttdose_mg,
         'mg',
         sluttdose(
-          `Seponering planlegges bare fra ${tall(a.sluttdose_mg)} mg eller lavere, den laveste dosen ${a.form} gir uten fortynning. Ingen kilde angir en dose som er lav nok før seponering: RCPsych beskriver at noen trenger svært lave doser, og at seponeringssymptomer kan komme uansett hvor lav dosen er. ${a.sluttdoseavgjorelse ? 'Sluttdosen er avgjort faglig av en navngitt faglig beslutningstaker for et avgrenset omfang (avklaringen), ikke dokumentert i en kilde.' : 'Sluttdosen er OUSFARs forslag og et åpent spørsmål til kontrolløren.'}`,
+          `Seponering planlegges bare fra ${tall(a.sluttdose_mg)} mg eller lavere, etter en individuell klinisk vurdering i det avgrensede forløpet: siste dose er holdt et helt trinn og tolerert. ${tall(a.sluttdose_mg)} mg er den laveste dosen ${a.form} gir uten fortynning, men den minste hele dosen er ikke i seg selv en trygg terskel. Ingen kilde angir en dose som er lav nok før seponering: RCPsych beskriver at noen trenger svært lave doser, og at seponeringssymptomer kan komme uansett hvor lav dosen er. ${a.avklaringer?.sluttdose ? 'Sluttdosen er avgjort faglig av en navngitt faglig beslutningstaker for et avgrenset omfang (avklaringen), ikke dokumentert i en kilde.' : 'Sluttdosen er OUSFARs forslag og et åpent spørsmål til kontrolløren.'}`,
           [a.min_mg.kilde, RCPSYCH.lavDose, K1_KILDER.heltSlutt, NICE.andel],
         ),
       ),
@@ -220,9 +250,9 @@ export function medAvslutning(r: Regel, a: Avslutningsforslag): Regel {
     ...a.etter_seponering.map(
       (e): Vurderingspunkt => ({
         id: `etter_seponering_${e.dager}`,
-        nar: { type: 'etter_seponering', dager: parameter(e.dager, 'dager', apent(e.begrunnelse, e.henvisninger)) },
+        nar: { type: 'etter_seponering', dager: parameter(e.dager, 'dager', oppfolging(e.begrunnelse, e.henvisninger)) },
         tekst: `Vurder seponeringssymptomer og tegn på tilbakefall ${e.dager} dager etter siste dose.`,
-        ved_funn: 'Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt.',
+        ved_funn: 'Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt. Oppfølgingen kan fremskyndes eller forlenges etter symptomer og risiko for tilbakefall.',
         // Hva som vurderes og gjøres, står i kildene; dagen er det åpne valget (`nar.dager`).
         grunnlag: { type: 'kilde', henvisninger: [a.spc.symptomer, K1_KILDER.heltSlutt, NICE.alvorlig] },
       }),
@@ -256,6 +286,9 @@ export function medAvslutning(r: Regel, a: Avslutningsforslag): Regel {
   const erstattes = a.usikkerhet.flatMap((u) => (u.erstatter ? [u.erstatter] : []))
   for (const x of erstattes) if (!r.fortolkning.usikkerhet.some((u) => x.test(u))) throw new Error(`${r.id}: fant ingen usikkerhet som ${x} kan erstatte.`)
 
+  const avklart = [a.avklaringer?.sluttdose && 'sluttdosen (K1.9)', a.avklaringer?.minste_trinn && 'det minste trinnet (K1.10)', a.avklaringer?.oppfolging && 'oppfølgingsdagene (K1.12)'].filter(Boolean)
+  const sisteAvklaring = Object.values(a.avklaringer ?? {}).map((x) => x.dato).sort().at(-1)
+  const tilKontroll = `Sendt til uavhengig faglig kontroll (K1, ny runde etter kontrollen av PR #323). ${avklart.length > 0 ? `Avklart: ${avklart.join(', ')}. ` : ''}${avklart.length === 3 ? 'Ingen åpne valg; til samlet faglig kontroll av regelen.' : 'Andre valg er åpne spørsmål til kontrolløren.'} Ikke klinisk godkjent.`
   const merknad = `Ny versjon i K1 (${K1_DATO}): minste trinn fra ${tall(fra_mg)} mg (høyst ${tall(maks_prosent)} %), avslutning med seponering fra ${tall(a.sluttdose_mg)} mg etter en eksplisitt vurdering, laveste dose ${tall(a.min_mg.verdi)} mg og vurderingspunkter før hver reduksjon og ${a.etter_seponering.map((e) => e.dager).join(', ')} dager etter siste dose; alle som åpne forslag til kontrolløren. Ellers uendret fra versjon ${r.versjon}.`
   return {
     ...r,
@@ -277,7 +310,7 @@ export function medAvslutning(r: Regel, a: Avslutningsforslag): Regel {
       historikk: [
         ...r.godkjenning.historikk,
         steg('utkast', versjon, merknad, K1_DATO),
-        steg('til_faglig_kontroll', versjon, `Sendt til uavhengig faglig kontroll (K1, ny runde etter kontrollen av PR #323). ${a.sluttdoseavgjorelse ? 'Sluttdosen er avgjort faglig (K1.9); det minste trinnet og oppfølgingsdagene er åpne spørsmål til kontrolløren.' : 'Sluttdosen og det minste trinnet er åpne spørsmål til kontrolløren.'} Ikke klinisk godkjent.`, a.sluttdoseavgjorelse?.dato ?? K1_DATO),
+        steg('til_faglig_kontroll', versjon, tilKontroll, sisteAvklaring ?? K1_DATO),
       ],
     },
   }

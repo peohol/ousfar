@@ -17,7 +17,7 @@ import { KOMPLETT_IKKE_TILGJENGELIG } from '../verktoy/motor/plan'
 import { KOMPLETT } from '../verktoy/planvisning'
 import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from '../verktoy/regler/aksepttest'
 import { erKliniskGodkjent, fingeravtrykk } from '../verktoy/regler/godkjenning'
-import { K1_AVSLUTNINGER, K1_ESCITALOPRAM, K1_SLUTTDOSE_PEDER, medAvslutning, medAvslutninger } from '../verktoy/regler/k1'
+import { K1_AVSLUTNINGER, K1_ESCITALOPRAM, K1_KONTROLL_0411, K1_SLUTTDOSE_PEDER, medAvslutning, medAvslutninger } from '../verktoy/regler/k1'
 import { KILDER } from '../verktoy/regler/kilder'
 import { apneValg, avslutningFor, type Fase, type Regel } from '../verktoy/regler/modell'
 import { kontrollerRegelsett } from '../verktoy/regler/kontroll'
@@ -47,14 +47,18 @@ describe('Den nye versjonen av escitalopramregelen', () => {
     expect(erKliniskGodkjent(ny)).toBe(false)
   })
 
-  it('har sluttdosen avklart av Peder (K1.9) og det minste trinnet og oppfølgingsdagene som åpne forslag', () => {
-    expect(apneValg(ny)).toEqual([
-      'plan.forlop[0].faser[0].strategi.minste_trinn.fra_mg (åpent forslag)',
-      'plan.forlop[0].faser[0].strategi.minste_trinn.maks_prosent (åpent forslag)',
-      'plan.forlop[0].vurderinger[1].nar.dager (åpent forslag)',
-      'plan.forlop[0].vurderinger[2].nar.dager (åpent forslag)',
-      'plan.forlop[0].vurderinger[3].nar.dager (åpent forslag)',
-    ])
+  it('har sluttdosen avklart av Peder (K1.9) og det minste trinnet og oppfølgingsdagene avklart av kontrolløren (K1.10, K1.12), uten åpne valg', () => {
+    expect(apneValg(ny)).toEqual([])
+    // Kontrollørens avklaringer gjelder akkurat det minste trinnet og dagene etter siste dose.
+    const f = nedtrapping(ny)
+    if (f.strategi.type !== 'prosent_av_aktuell' || !f.strategi.minste_trinn) throw new Error('ventet et minste trinn')
+    for (const p of [f.strategi.minste_trinn.fra_mg, f.strategi.minste_trinn.maks_prosent]) expect(p.grunnlag.type === 'ousfar_vurdering' && p.grunnlag.avklaring).toEqual(K1_KONTROLL_0411.minste_trinn)
+    const etter = ny.plan.forlop[0]!.vurderinger!.filter((v) => v.nar.type === 'etter_seponering')
+    expect(etter.map((v) => v.nar.type === 'etter_seponering' && v.nar.dager.verdi)).toEqual([7, 14, 28])
+    for (const v of etter) expect(v.nar.type === 'etter_seponering' && v.nar.dager.grunnlag.type === 'ousfar_vurdering' && v.nar.dager.grunnlag.avklaring).toEqual(K1_KONTROLL_0411.oppfolging)
+    for (const a of Object.values(K1_KONTROLL_0411)) expect(a).toMatchObject({ dato: '2026-11-04', av: 'ChatGPT (uavhengig kontrollør)', rolle: 'uavhengig_kontrollor', regelversjon: 13 })
+    expect(K1_KONTROLL_0411.minste_trinn.merknad).toMatch(/^Kontrollørens gjennomgang av 80e557b 04\.11\.2026 \(K1\.10\): ja, avgrenset til dette escitalopramforløpet\..*ingen generell sikkerhetsterskel/)
+    expect(K1_KONTROLL_0411.oppfolging.merknad).toMatch(/^Kontrollørens gjennomgang av 80e557b 04\.11\.2026 \(K1\.12\): ja, som kontrollpunkter 7, 14 og 28 dager.*fremskyndes eller forlenges/)
     // Peders avgjørelse gjelder bare sluttdosen og seponeringen (K1.9), med ordlyden fra beslutningskortet.
     const avslutning = avslutningFor(nedtrapping(ny))!
     for (const g of [avslutning.fra_hoyst_mg.grunnlag, avslutning.grunnlag]) {
@@ -68,6 +72,11 @@ describe('Den nye versjonen av escitalopramregelen', () => {
     // Ingen godkjenning av regelen: historikken har bare utviklerens steg i versjon 13.
     expect(JSON.stringify(ny.godkjenning.historikk.filter((s) => s.regelversjon === 13))).not.toMatch(/uavhengig_kontrollor|faglig_beslutningstaker/)
     expect(ny.godkjenning.status).toBe('til_faglig_kontroll')
+    expect(ny.godkjenning.historikk.at(-1)).toMatchObject({ status: 'til_faglig_kontroll', dato: '2026-11-04' })
+    expect(ny.godkjenning.historikk.at(-1)!.merknad).toMatch(/Avklart: sluttdosen \(K1\.9\), det minste trinnet \(K1\.10\), oppfølgingsdagene \(K1\.12\)\. Ingen åpne valg; til samlet faglig kontroll av regelen\. Ikke klinisk godkjent\./)
+    // Begrunnelsen for 1 mg → 0 er en individuell klinisk vurdering, ikke at den minste hele dråpen er en trygg terskel.
+    const slutt = avslutningFor(nedtrapping(ny))!.fra_hoyst_mg.grunnlag
+    expect(slutt.type === 'ousfar_vurdering' && slutt.begrunnelse).toMatch(/individuell klinisk vurdering i det avgrensede forløpet.*ikke i seg selv en trygg terskel/)
   })
 
   it('går 3 → 2 → 1 mg med dråper og seponerer fra 1 mg, med vurdering før hver endring og 7, 14 og 28 dager etter siste dose', () => {
@@ -134,7 +143,7 @@ describe('Den nye versjonen av escitalopramregelen', () => {
 describe('Versjon og fingeravtrykk', () => {
   it('escitalopram versjon 13 har fingeravtrykket i kontrollgrunnlaget', () => {
     const r = i(REGELSETT, ESC)
-    expect([r.versjon, fingeravtrykk(r)]).toEqual([13, '871e2c72a2b4ca6a57a6025de1918ef3c9074306f20c09aa481db9361c1ce039'])
+    expect([r.versjon, fingeravtrykk(r)]).toEqual([13, 'e8a3c17edda10da43b1df4171a733a23133da50ebcda31cd71a771022a8a78d7'])
     expect(FORSLAG_K1.regler).toEqual([{ id: ESC, versjon: 13, fingeravtrykk: fingeravtrykk(r) }])
   })
 
@@ -217,7 +226,12 @@ describe('Ende-til-ende med de norske preparatene i FEST', () => {
       expect(tekst, id).toContain(`Fra dag ${siste}: Escitalopram peroralt: Seponert`)
       for (const dager of [7, 14, 28]) expect(tekst, id).toContain(`Dag ${siste + dager - 1}: Vurdering (Escitalopram): Vurder seponeringssymptomer og tegn på tilbakefall ${dager} dager etter siste dose.`)
       expect(tekst, id).toContain('- Cipralex dråper, oppl 20 mg/ml (Hele dråper)')
-      // Fingeravtrykket er den simulert avklarte kopiens, ikke 871e2c72… for regelen med åpne valg.
+      // Preparatet planen bygger på, er markedsført i FEST.
+      const r = kjorKontrollkasus(kasus(id), uttrekkene).resultat!
+      const preparater = r.status === 'doseplan' ? r.forlop[0]!.perioder.flatMap((p) => p.elementer.flatMap((e) => e.preparater)) : []
+      expect(preparater.length, id).toBeGreaterThan(0)
+      expect(preparater.every((p) => p.marked === 'markedsfort' && p.registrering === 'registrert' && p.legemiddelform?.kode === '748'), id).toBe(true)
+      // Fingeravtrykket er den simulert avklarte kopiens, ikke e8a3c17e… for regelen med åpne valg.
       expect(tekst, id).toMatch(new RegExp(`Regel ${ESC}, versjon 13, fingeravtrykk [0-9a-f]{12}\\n`))
       expect(tekst, id).not.toMatch(/^(Dag|Fra dag) .*tablett/im)
     }

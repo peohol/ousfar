@@ -103,6 +103,9 @@ export const RCPSYCH_TIDLIGERE = {
 
 const KONTROLLOR = 'ChatGPT (uavhengig fagkontrollør)'
 
+/** Den uavhengige kontrolløren i avklaringene av nedtrappingsreglene (P7 og K1). */
+export const KONTROLLOREN = { av: 'ChatGPT (uavhengig kontrollør)', rolle: 'uavhengig_kontrollor' } as const
+
 /** En disposisjon med listen over regler frosset, så den ikke kan endres etter at den er registrert. */
 const frosset = (d: Disposisjon): Disposisjon =>
   Object.freeze({ ...d, regler: Object.freeze(Object.fromEntries(Object.entries(d.regler).map(([id, v]) => [id, Object.freeze({ ...v })]))) })
