@@ -22,7 +22,7 @@
 | **Helsedirektoratet**, «Psykoselidelser – behandling» (sist faglig oppdatert 13.08.2026) | Bare overordnede anbefalinger: antipsykotika tilbys, fortsatt behandling, depot kan tilbys dem som har tålt antipsykotika. **Ingen doser, bytter eller seponering.** | Åpne data (API under NLOD) med krav om kildeangivelse | Norsk ramme for K3, ikke grunnlag for doser. Depresjons- og bipolarretningslinjene er **arkivert** og er ikke gjeldende. |
 | **NICE** NG222 (depresjon), NG215 (avhengighets- og seponeringslegemidler), CG178 (psykose), CG185 (bipolar) | Anbefalinger om nedtrapping, bytte, depot og monitorering | Bruk **utenfor Storbritannia** av NICEs innhold krever lisens og betaling, unntatt personlig studie («Reusing our content», lest 03.11.2026) | Bare fakta med egne ord og lenke, aldri tekst eller tabeller. NG222 er alt registrert (`nice-ng222`). |
 | **RCPsych**, «Stopping antidepressants» | Trinnstørrelse og tempo etter risiko | Offentlig nettside | Registrert (`rcpsych-stopping`). |
-| **Australian Prescriber** (Keks 2016 og 2019) | Strategier for bytte og seponering av antidepressiva og antipsykotika | Fri fulltekst; 2019 under CC BY-NC-ND 4.0 | Registrert (`keks-2016`, `keks-2019`). |
+| **Australian Prescriber** (Keks 2016 og 2019, og byteverktøyet fra 2019) | Strategier for bytte og seponering av antidepressiva og antipsykotika | Fri fulltekst; 2019 under CC BY-NC-ND 4.0; verktøyet er et fritt nettverktøy som ikke lenger oppdateres | Registrert (`keks-2016`, `keks-2019`, `keks-2019-verktoy`). |
 | **CANMAT 2023**, depresjon (Lam et al., Can J Psychiatry 2024;69:641–687, PMC11351064) | Behandlingsvalg, utilstrekkelig respons og bytte | CC BY | Ny. |
 | **CANMAT/ISBD 2018**, bipolar (Yatham et al., Bipolar Disord 2018;20:97–170, PMC5947163) | Kombinasjoner og tilleggsbehandling ved bipolar lidelse, monitorering | CC BY-NC-ND | Ny; viktig for K4. |
 | **BAP 2016**, bipolar (Goodwin et al., J Psychopharmacol 2016;30:495–553, PMC4922419) | Det samme, britisk | Fri fulltekst, ingen åpen lisens oppgitt | Ny; bare fakta med egne ord. BAP 2015 (depresjon) og BAP 2020 (schizofreni) har ingen fri fulltekst i Europe PMC. |
@@ -60,6 +60,8 @@
 | --- | --- | --- |
 | Strategier for peroralt bytte, seponering og rebound | `keks-2019`; preparatomtalene pkt. 4.2 og 4.4 | Ingen fri, autoritativ kilde gir ferdige byttetabeller. Hver kombinasjon må bygges fra preparatomtalene til begge stoffene. |
 | Peroral → depot, dose og overlapp | Preparatomtalene pkt. 4.2 (tabell under) | Hvert depotpreparat har sin egen regel. |
+| Peroralt olanzapin og risperidon → aripiprazol, siste trinn | `keks-2019-verktoy` (Antipsychotic switching tool, Aust Prescr 2019, sist oppdatert 2022) | Klinisk veiledning, ikke prospektiv validering, og oppdateres ikke lenger. K3 bruker den som stoffspesifikk støtte for siste trinn, ikke for verktøyets raskere nedtrapping. |
+| Peroral risperidon → Xeplion, vedlikeholdsdose | `russu-2018` (farmakokinetiske simuleringer, CC BY-NC-ND 4.0) | Sponset av Janssen; bare eksponering, ikke klinisk utprøvd. K3 bruker den bare til å avgrense regelen, ikke som omregning. |
 | Depot → depot | Trevicta: 3,5 ganger siste Xeplion-dose (EPAR); Abilify Maintena 400 → 960 mg (`ema-abilify-maintena`) | Krever preparatvalg i verktøyet (VDK-2, «depot til depot»). |
 | Norsk ramme | Helsedirektoratet, «Psykoselidelser – behandling» (depot kan tilbys); NICE CG178 1.5.6 | Ingen doser. |
 

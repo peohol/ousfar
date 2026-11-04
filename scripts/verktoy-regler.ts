@@ -3,7 +3,7 @@
  * Verktøy (`docs/verktøy-utviklingsplan.md`).
  *
  *   npm run verktoy:regler -- kontroll   Kontrollerer regelsettene (kilder, grunnlag, godkjenning, regneeksempler) og testmatrisen fra P11
- *   npm run verktoy:regler -- rapport    docs/verktøy-p4-pilotsett.md, docs/verktøy-p7-regelutkast.md og docs/verktøy-p7-dekning.md
+ *   npm run verktoy:regler -- rapport    docs/verktøy-p4-pilotsett.md, docs/verktøy-p7-regelutkast.md, leveransenes rapporter (domenesett.ts) og docs/verktøy-p7-dekning.md
  *   npm run verktoy:regler -- motorrapport   docs/verktøy-p5-testtilfeller.md (doseplanmotoren, syntetiske data)
  *   npm run verktoy:regler -- aksepttest     docs/verktøy-p7-aksepttest.md (P7-reglene med de norske preparatene i FEST-uttrekket)
  *   npm run verktoy:regler -- pilotmatrise   docs/verktøy-p11-testmatrise.md (de godkjente reglene ende til ende med syntetiske kasus, P11)
@@ -11,7 +11,7 @@
  *   npm run verktoy:regler -- kontrollgrunnlag   docs/verktøy-vdk3-forslag*-kontrollgrunnlag.md (faglig kontrollgrunnlag for et forslag fra VDK-2, VDK-3)
  *   npm run verktoy:regler -- rettelse       docs/verktøy-rettelse-langvarig.md (kontrollgrunnlag for de nye regelversjonene etter en faktumrettelse)
  *   npm run verktoy:regler -- tilleggsgrunnlag   docs/verktøy-k4-kontrollgrunnlag.md (faglig kontrollgrunnlag for tilleggsreglene i K4)
- *   npm run verktoy:regler -- hent-fest      Henter FEST-uttrekkene til aksepttesten, pilotreglenes og tilleggsreglenes ende-til-ende-tester på nytt (krever VITE_SUPABASE_URL og SUPABASE_SECRET_KEY)
+ *   npm run verktoy:regler -- hent-fest      Henter FEST-uttrekkene til aksepttesten, pilotreglenes, tilleggsreglenes og antipsykotikabyttenes ende-til-ende-tester på nytt (krever VITE_SUPABASE_URL og SUPABASE_SECRET_KEY)
  *
  * Bare `hent-fest` henter noe, og bare ved å lese med `les_legemidler`. Skriptet
  * skriver ikke til databasen og godkjenner ingen regel.
@@ -19,16 +19,19 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { AKSEPTSTOFFER, AKSEPTTESTFIL, FEST_AKSEPTTEST, FEST_PILOT, lagAksepttestrapport, type Festuttrekk } from '../src/verktoy/regler/aksepttest'
 import { PILOTSETT } from '../src/verktoy/regler/pilotsett'
+import { ANTIPSYKOTIKASETT, FEST_ANTIPSYKOTIKA } from '../src/verktoy/regler/antipsykotikabytter'
 import { festkoblinger } from '../src/verktoy/register'
 import { DEKNINGSRAPPORTFIL, lagDekningsrapport } from '../src/verktoy/dekningsrapport'
 import { disposisjonsfeil } from '../src/verktoy/regler/godkjenning'
 import { kontrollerRegelsett } from '../src/verktoy/regler/kontroll'
+import { REGELSETT } from '../src/verktoy/tilgjengelighet'
 import { lagRegelrapport, REGELRAPPORTER } from '../src/verktoy/regler/rapport'
 import { lagMotorrapport, MOTORRAPPORTFIL } from '../src/verktoy/motor/rapport'
 import { lagRegeldekningsrapport, REGELDEKNINGSFIL } from '../src/verktoy/regeldekning'
 import { KONTROLLFORSLAG, lagKontrollgrunnlag } from '../src/verktoy/kontrollgrunnlag'
 import { lagRettelseskontroll, RETTELSESKONTROLLFIL } from '../src/verktoy/rettelseskontroll'
 import { avvikFra, kjorKasus, lagPilotmatriserapport, PILOTKASUS, PILOTMATRISEFIL } from '../src/verktoy/regler/pilotmatrise'
+import { ANTIPSYKOTIKAKASUS, kjorAntipsykotikakasus } from '../src/verktoy/regler/antipsykotikakasus'
 import { FEST_TILLEGG, kjorTilleggskasus, lagTilleggsgrunnlag, TILLEGGSGRUNNLAGFIL, TILLEGGSKASUS, TILLEGGSSTOFFER } from '../src/verktoy/tilleggsgrunnlag'
 
 const skriv = (fil: string, innhold: string) => {
@@ -41,7 +44,7 @@ const lesUttrekk = (fil: string) => JSON.parse(readFileSync(new URL(`../${fil}`,
 async function kontroll() {
   let antall = 0
   for (const { sett, disposisjoner = [] } of REGELRAPPORTER) {
-    const feil = [...kontrollerRegelsett(sett), ...disposisjoner.flatMap((d) => disposisjonsfeil(sett.regler, d))]
+    const feil = [...kontrollerRegelsett(sett, undefined, REGELSETT.regler), ...disposisjoner.flatMap((d) => disposisjonsfeil(sett.regler, d))]
     for (const f of feil) console.error(`✗ ${sett.id}: ${f}`)
     console.log(feil.length === 0 ? `✓ ${sett.id}: ${sett.regler.length} regler uten feil` : `${sett.id}: ${feil.length} feil`)
     antall += feil.length
@@ -55,7 +58,11 @@ async function kontroll() {
   const tillegg = kjorTilleggskasus(lesUttrekk(FEST_TILLEGG)).flatMap(({ k, avvik }) => avvik.map((f) => `${k.id}: ${f}`))
   for (const f of tillegg) console.error(`✗ kontrollgrunnlaget for tillegg: ${f}`)
   console.log(tillegg.length === 0 ? `✓ kontrollgrunnlaget for tillegg: ${TILLEGGSKASUS.length} kasus som forventet` : `kontrollgrunnlaget for tillegg: ${tillegg.length} avvik`)
-  antall += avvik.length + tillegg.length
+  // De godkjente antipsykotikabyttene (K3) ende til ende, med FEST-uttrekket for K3 og uten simulert godkjenning.
+  const antipsykotika = kjorAntipsykotikakasus(lesUttrekk(FEST_ANTIPSYKOTIKA), uttrekkene.aksept).flatMap(({ k, avvik }) => avvik.map((f) => `${k.id}: ${f}`))
+  for (const f of antipsykotika) console.error(`✗ kasusene for antipsykotikabytter: ${f}`)
+  console.log(antipsykotika.length === 0 ? `✓ kasusene for antipsykotikabytter: ${ANTIPSYKOTIKAKASUS.length} kasus som forventet` : `kasusene for antipsykotikabytter: ${antipsykotika.length} avvik`)
+  antall += avvik.length + tillegg.length + antipsykotika.length
   if (antall > 0) process.exit(1)
 }
 
@@ -94,7 +101,9 @@ async function rettelse() {
 }
 
 /** Virkestoffene i pilotreglene; reglene testes ende til ende med preparatene i FEST. */
-const pilotstoffer = () => PILOTSETT.regler.flatMap((r) => r.plan.forlop.flatMap((f) => (f.virkestoff.type === 'virkestoff' ? [f.virkestoff.nokkel] : [])))
+const stofferI = (regler: readonly { plan: { forlop: { virkestoff: { type: string; nokkel?: string } }[] } }[]) =>
+  regler.flatMap((r) => r.plan.forlop.flatMap((f) => (f.virkestoff.type === 'virkestoff' && f.virkestoff.nokkel ? [f.virkestoff.nokkel] : [])))
+const pilotstoffer = () => stofferI(PILOTSETT.regler)
 
 async function hentFest() {
   const url = process.env.VITE_SUPABASE_URL
@@ -103,6 +112,7 @@ async function hentFest() {
   for (const [fil, nokler] of [
     [FEST_AKSEPTTEST, AKSEPTSTOFFER.map((s) => s.nokkel)],
     [FEST_PILOT, [...new Set(pilotstoffer())]],
+    [FEST_ANTIPSYKOTIKA, [...new Set(stofferI(ANTIPSYKOTIKASETT.regler))]],
     [FEST_TILLEGG, TILLEGGSSTOFFER],
   ] as const) {
     const ider = [...new Set(Object.values(festkoblinger(nokler)).flat())].sort()

@@ -12,9 +12,12 @@ import { beregnPlan, festIderFor, formvalgFor, gjelderFortsatt, inndataFor, lesD
 import { planTekst, planvisning } from '../verktoy/planvisning'
 import { finnVirkestoff, KARTLEGGING, sokVerktoy, VERKTOY, verktoyFor, virkestoffvalg } from '../verktoy/register'
 import { NEDTRAPPINGSSETT } from '../verktoy/regler/nedtrapping'
+import { ANTIPSYKOTIKASETT, ANTIPSYKOTIKAVEDTAK } from '../verktoy/regler/antipsykotikabytter'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
 import { TILLEGGSSETT } from '../verktoy/regler/tillegg'
 import { snarvalg } from '../verktoy/snarvalg'
+import { erstatningsfeil } from '../verktoy/regler/godkjenning'
+import type { Regel, Regelsett } from '../verktoy/regler/modell'
 import { REGELSETT, regeloversikt, reglerFor, tilgjengelighet, type Verktoyvalg } from '../verktoy/tilgjengelighet'
 import { godkjennITest, TEST_DEPOT, TEST_KRYSS, TEST_NEDTRAPPING, TESTKLOKKE, testFest, testsett } from './hjelp/verktoyplan'
 
@@ -161,13 +164,16 @@ describe('Regelstatusen', () => {
       const t = tilgjengelighet(KOMBINERE!, { fra: v(r.fra.type === 'virkestoff' ? r.fra.nokkel : ''), til: v('lamotrigin') })
       expect(t, r.id).toMatchObject({ status: 'tilgjengelig', regler: [r] })
     }
-    expect(new Set([...tilfeller.flatMap(([, , r]) => r), ...tillegg])).toEqual(new Set(REGELSETT.regler.map((r) => r.id)))
-    expect(REGELSETT.regler).toHaveLength(PILOTSETT.regler.length + NEDTRAPPINGSSETT.regler.length + TILLEGGSSETT.regler.length)
-    // Escitalopram versjon 13 fra K1 er godkjent (04.11.2026) og kan beregnes, i tillegg til vortioksetin.
-    expect(VERKTOY.map((x) => regeloversikt(x).tilgjengelige)).toEqual([2, 1, 2, 2])
+    // Tre antipsykotikabytter fra K3 er godkjent (ANTIPSYKOTIKAVEDTAK, 04.11.2026) og gir beregning; de fire andre står til faglig kontroll (`verktoyantipsykotika.test.ts`).
+    const K3_GODKJENT = Object.keys(ANTIPSYKOTIKAVEDTAK.regler)
+    for (const id of K3_GODKJENT) expect(ANTIPSYKOTIKASETT.regler.find((r) => r.id === id)?.godkjenning.status, id).toBe('klinisk_godkjent')
+    expect(new Set([...tilfeller.flatMap(([, , r]) => r), ...tillegg, ...ANTIPSYKOTIKASETT.regler.map((r) => r.id)])).toEqual(new Set(REGELSETT.regler.map((r) => r.id)))
+    expect(REGELSETT.regler).toHaveLength(PILOTSETT.regler.length + NEDTRAPPINGSSETT.regler.length + TILLEGGSSETT.regler.length + ANTIPSYKOTIKASETT.regler.length)
+    // Escitalopram versjon 13 fra K1 er godkjent (04.11.2026) og kan beregnes, i tillegg til vortioksetin, og tre antipsykotikabytter fra K3.
+    expect(VERKTOY.map((x) => regeloversikt(x).tilgjengelige)).toEqual([2, 1, 2 + K3_GODKJENT.length, 2])
     expect(VERKTOY.map((x) => regeloversikt(x).ikkeGodkjent)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length - 1 - K1.length, 1, 1, 0])
-    // K1-versjonen av escitalopram er godkjent (04.11.2026), så ingen regel i appen venter på kontroll.
-    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([0, 0, 0, 0])
+    // K1-versjonen av escitalopram er godkjent (04.11.2026); bare fire av K3s antipsykotikabytter venter på kontroll.
+    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([0, 0, ANTIPSYKOTIKASETT.regler.length - K3_GODKJENT.length, 0])
   })
 
   it('forklarer hvorfor et antidepressivum uten regel ikke kan trappes ned, med dekningen fra P7', () => {
@@ -221,9 +227,13 @@ describe('Snarvalgene (VDR-3)', () => {
         ['fagtekst', 'Bupropion'],
       ],
       [],
+      // Bytte antipsykotikum: pilotens depotregler og de tre godkjente byttene fra K3 (04.11.2026).
       [
         ['tilgjengelig', 'Aripiprazol: peroral → depotinjeksjon'],
+        ['tilgjengelig', 'Olanzapin (peroral) → aripiprazol (peroral)'],
         ['tilgjengelig', 'Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)'],
+        ['tilgjengelig', 'Risperidon (peroral) → aripiprazol (peroral)'],
+        ['tilgjengelig', 'Risperidon (peroral) → paliperidon (depotinjeksjon (paliperidonpalmitat))'],
       ],
       // Kombinere stemningsstabiliserende: de to godkjente tilleggsreglene (K4).
       [
@@ -286,6 +296,43 @@ describe('Doseplanen i verktøyene', () => {
     expect(inndataFor(TEST_NEDTRAPPING, valg, { ...skjema, maldose: '30' })).not.toHaveProperty('maldose_mg')
     // Ingen skjult måldose: uten noe skrevet inn er det ingen måldose.
     expect(inndataFor(TEST_KRYSS, { fra: v('escitalopram'), til: v('mirtazapin') }, skjema)).not.toHaveProperty('maldose_mg')
+  })
+
+  it('trekker en regel i samme øyeblikk som regelen som erstatter den, er gyldig godkjent: verktøyet tilbyr den ikke, og appen gir ingen plan etter den', () => {
+    const ny = godkjennITest({ ...structuredClone(TEST_NEDTRAPPING), tittel: 'Ny nedtrapping bare i testen', erstatter: ['test-nedtrapping'] }, 'test-nedtrapping-ny')
+    const ikkeGodkjent: Regel = { ...ny, godkjenning: { status: 'utkast', historikk: [] } }
+    const med = (r: Regel): Regelsett => ({ ...REGELSETT, regler: [...REGELSETT.regler, TEST_NEDTRAPPING, r] })
+    const plan = (sett: Regelsett) => beregnPlan(TEST_NEDTRAPPING, valg, { ...skjema, startdose: '25', startdato: '2026-11-02' }, testFest(), NAA, sett)
+    const ider = (sett: Regelsett) => reglerFor(TRAPPE_NED!, valg, sett).map((r) => r.id)
+    // Før den nye regelen er gyldig godkjent, gjelder den gamle som før.
+    expect(ider(med(ikkeGodkjent))).toEqual(expect.arrayContaining(['test-nedtrapping', 'test-nedtrapping-ny']))
+    // Andre godkjente regler for escitalopram (K1) står ved siden av; bare den gamle og den nye prøves her.
+    expect(tilgjengelighet(TRAPPE_NED!, valg, med(ikkeGodkjent)).regler.map((r) => r.id)).toContain('test-nedtrapping')
+    expect(tilgjengelighet(TRAPPE_NED!, valg, med(ikkeGodkjent)).regler.map((r) => r.id)).not.toContain('test-nedtrapping-ny')
+    expect(plan(med(ikkeGodkjent))).toMatchObject({ status: 'doseplan', klinisk: true, sperre: [] })
+    // Godkjent: den gamle er borte fra verktøyet og oversikten, og appen stopper en plan etter den.
+    expect(ider(med(ny))).toContain('test-nedtrapping-ny')
+    expect(ider(med(ny))).not.toContain('test-nedtrapping')
+    expect(tilgjengelighet(TRAPPE_NED!, valg, med(ny)).regler.map((r) => r.id)).toContain('test-nedtrapping-ny')
+    expect(tilgjengelighet(TRAPPE_NED!, valg, med(ny)).regler.map((r) => r.id)).not.toContain('test-nedtrapping')
+    expect(regeloversikt(TRAPPE_NED!, med(ny)).tilgjengelige).toBe(regeloversikt(TRAPPE_NED!, med(ikkeGodkjent)).tilgjengelige)
+    const trukket = plan(med(ny))
+    expect(trukket).toMatchObject({ status: 'stoppet', klinisk: false })
+    expect(trukket.status === 'stoppet' && trukket.stoppgrunner).toContain('Regelen er trukket: den er erstattet av «Ny nedtrapping bare i testen» (regelversjon 1), som er klinisk godkjent.')
+    expect(planvisning(trukket, TEST_NEDTRAPPING)).toBeNull()
+    // Det samme for en virkelig godkjent regel: sertralin → mirtazapin forsvinner fra verktøyet når en godkjent regel erstatter den.
+    const SERT = 'kryssnedtrapping-sertralin-mirtazapin'
+    const sert = REGELSETT.regler.find((r) => r.id === SERT)!
+    const nySert = godkjennITest({ ...structuredClone(sert), tittel: 'Ny sertralin → mirtazapin bare i testen', erstatter: [SERT] }, 'test-erstatter-sertralin-mirtazapin')
+    const sertvalg = { fra: v('sertralin'), til: v('mirtazapin') }
+    expect(reglerFor(BYTTE_AD!, sertvalg).map((r) => r.id)).toContain(SERT)
+    const etter = reglerFor(BYTTE_AD!, sertvalg, { ...REGELSETT, regler: [...REGELSETT.regler, nySert] }).map((r) => r.id)
+    expect(etter).toContain('test-erstatter-sertralin-mirtazapin')
+    expect(etter).not.toContain(SERT)
+  })
+
+  it('ingen av appens regler har en ugyldig erstatning', () => {
+    expect(erstatningsfeil(REGELSETT.regler)).toEqual([])
   })
 
   it('gir aldri en plan etter pilotreglene, selv med fersk FEST', () => {
