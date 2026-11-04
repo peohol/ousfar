@@ -17,7 +17,7 @@ import { KOMPLETT_IKKE_TILGJENGELIG } from '../verktoy/motor/plan'
 import { KOMPLETT } from '../verktoy/planvisning'
 import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from '../verktoy/regler/aksepttest'
 import { erKliniskGodkjent, fingeravtrykk } from '../verktoy/regler/godkjenning'
-import { K1_AVSLUTNINGER, K1_ESCITALOPRAM, medAvslutning, medAvslutninger } from '../verktoy/regler/k1'
+import { K1_AVSLUTNINGER, K1_ESCITALOPRAM, K1_SLUTTDOSE_PEDER, medAvslutning, medAvslutninger } from '../verktoy/regler/k1'
 import { KILDER } from '../verktoy/regler/kilder'
 import { apneValg, avslutningFor, type Fase, type Regel } from '../verktoy/regler/modell'
 import { kontrollerRegelsett } from '../verktoy/regler/kontroll'
@@ -47,19 +47,27 @@ describe('Den nye versjonen av escitalopramregelen', () => {
     expect(erKliniskGodkjent(ny)).toBe(false)
   })
 
-  it('har sluttdosen, det minste trinnet og oppfølgingsdagene som åpne forslag, avklart av ingen', () => {
+  it('har sluttdosen avklart av Peder (K1.9) og det minste trinnet og oppfølgingsdagene som åpne forslag', () => {
     expect(apneValg(ny)).toEqual([
       'plan.forlop[0].faser[0].strategi.minste_trinn.fra_mg (åpent forslag)',
       'plan.forlop[0].faser[0].strategi.minste_trinn.maks_prosent (åpent forslag)',
-      'plan.forlop[0].faser[0].avslutning.fra_hoyst_mg (åpent forslag)',
       'plan.forlop[0].vurderinger[1].nar.dager (åpent forslag)',
       'plan.forlop[0].vurderinger[2].nar.dager (åpent forslag)',
       'plan.forlop[0].vurderinger[3].nar.dager (åpent forslag)',
-      'fra.faser[0].avslutning (åpent forslag)',
     ])
-    // Ingen forhåndsgodkjenning: verken Peder eller kontrolløren har avklart noe nytt i versjon 13.
-    expect(JSON.stringify(ny.plan)).not.toMatch(/faglig_beslutningstaker/)
+    // Peders avgjørelse gjelder bare sluttdosen og seponeringen (K1.9), med ordlyden fra beslutningskortet.
+    const avslutning = avslutningFor(nedtrapping(ny))!
+    for (const g of [avslutning.fra_hoyst_mg.grunnlag, avslutning.grunnlag]) {
+      expect(g.type === 'ousfar_vurdering' && g.avklaring).toEqual(K1_SLUTTDOSE_PEDER)
+    }
+    expect(K1_SLUTTDOSE_PEDER).toMatchObject({ dato: '2026-11-04', rolle: 'faglig_beslutningstaker', regelversjon: 13 })
+    expect(K1_SLUTTDOSE_PEDER.merknad).toContain('«Ja, stopp fra 1 mg»')
+    expect(K1_SLUTTDOSE_PEDER.merknad).toContain('«Gjelder voksne under 65 år med kort behandlingstid, uten tidligere seponeringsplager. Gir første komplette nedtrapping (fra 10 eller 20 mg), etter ChatGPTs kontroll av resten.»')
+    expect(K1_SLUTTDOSE_PEDER.merknad).toContain('«1 mg er 5–10 % av startdosen. Hvert trinn styres av symptomer, og det følges opp etter 7, 14 og 28 dager. Ved plager vurderes resten individuelt.»')
+    expect(JSON.stringify(ny.plan).match(/faglig_beslutningstaker/g)).toHaveLength(2)
+    // Ingen godkjenning av regelen: historikken har bare utviklerens steg i versjon 13.
     expect(JSON.stringify(ny.godkjenning.historikk.filter((s) => s.regelversjon === 13))).not.toMatch(/uavhengig_kontrollor|faglig_beslutningstaker/)
+    expect(ny.godkjenning.status).toBe('til_faglig_kontroll')
   })
 
   it('går 3 → 2 → 1 mg med dråper og seponerer fra 1 mg, med vurdering før hver endring og 7, 14 og 28 dager etter siste dose', () => {
@@ -126,7 +134,7 @@ describe('Den nye versjonen av escitalopramregelen', () => {
 describe('Versjon og fingeravtrykk', () => {
   it('escitalopram versjon 13 har fingeravtrykket i kontrollgrunnlaget', () => {
     const r = i(REGELSETT, ESC)
-    expect([r.versjon, fingeravtrykk(r)]).toEqual([13, 'fa2d139b1acede65720866b6224a9fb5c093bb42c9fb16119b6ce3e11a75fa02'])
+    expect([r.versjon, fingeravtrykk(r)]).toEqual([13, '871e2c72a2b4ca6a57a6025de1918ef3c9074306f20c09aa481db9361c1ce039'])
     expect(FORSLAG_K1.regler).toEqual([{ id: ESC, versjon: 13, fingeravtrykk: fingeravtrykk(r) }])
   })
 
@@ -209,7 +217,7 @@ describe('Ende-til-ende med de norske preparatene i FEST', () => {
       expect(tekst, id).toContain(`Fra dag ${siste}: Escitalopram peroralt: Seponert`)
       for (const dager of [7, 14, 28]) expect(tekst, id).toContain(`Dag ${siste + dager - 1}: Vurdering (Escitalopram): Vurder seponeringssymptomer og tegn på tilbakefall ${dager} dager etter siste dose.`)
       expect(tekst, id).toContain('- Cipralex dråper, oppl 20 mg/ml (Hele dråper)')
-      // Fingeravtrykket er den simulert avklarte kopiens, ikke fa2d139b… for regelen med åpne valg.
+      // Fingeravtrykket er den simulert avklarte kopiens, ikke 871e2c72… for regelen med åpne valg.
       expect(tekst, id).toMatch(new RegExp(`Regel ${ESC}, versjon 13, fingeravtrykk [0-9a-f]{12}\\n`))
       expect(tekst, id).not.toMatch(/^(Dag|Fra dag) .*tablett/im)
     }
@@ -245,8 +253,13 @@ describe('Ende-til-ende med de norske preparatene i FEST', () => {
     expect(tekst).toContain('**Ingen regel er godkjent eller aktivert.**')
     expect(tekst).not.toMatch(/psychiatrienet\.(nl|org|com)/i)
     expect(tekst).not.toContain('**avvik:**')
-    expect(tekst).not.toMatch(/Peder har (godkjent|valgt) (1 mg|sluttdose|en sluttdose|det minste)|(godkjent|avklart) av Peder|forhåndsgodkjent av/)
-    expect(tekst).toContain('Ingen har godkjent 1 mg eller noen annen sluttdose på forhånd')
+    // Peders avgjørelse står ordrett og gjelder bare K1.9; ingen påstand om at han har godkjent noe annet.
+    expect(tekst).not.toMatch(/Peder har godkjent (?!åpning)|godkjent av Peder|forhåndsgodkjent av/)
+    expect(tekst).toContain('Peder har ikke godkjent noe annet enn K1.9')
+    expect(tekst).toContain('## 5. Peders avgjørelse på K1.9')
+    expect(tekst).toContain('Valgt alternativ: «Ja, stopp fra 1 mg».')
+    expect(tekst).toContain('Avgrensning, ordrett: «Gjelder voksne under 65 år med kort behandlingstid, uten tidligere seponeringsplager. Gir første komplette nedtrapping (fra 10 eller 20 mg), etter ChatGPTs kontroll av resten.»')
+    expect(tekst).toContain('Beslutningsregel, ordrett: «1 mg er 5–10 % av startdosen. Hvert trinn styres av symptomer, og det følges opp etter 7, 14 og 28 dager. Ved plager vurderes resten individuelt.»')
     for (let n = 1; n <= 15; n++) expect(tekst).toContain(`| K1.${n} |`)
     expect(FORSLAG_K1.sporsmal.map((x) => x.nr)).toEqual(['K1.9', 'K1.10', 'K1.11', 'K1.12', 'K1.13', 'K1.14', 'K1.15'])
     expect(FORSLAG_K1.sporsmal[0]!.sporsmal).toMatch(/^Sluttdose for escitalopram: er 1 mg/)

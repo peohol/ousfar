@@ -3,7 +3,7 @@
 
 **Escitalopram med dråper helt til seponering (3 → 2 → 1 mg), og ellers «Komplett plan ikke tilgjengelig».** Grunnlag for uavhengig faglig kontroll av K1 i `docs/verktøy-klinisk-leveranseplan-2026-11.md`, ny runde etter kontrollen av PR #323 03.11.2026.
 
-**Ingen regel er godkjent eller aktivert.** Escitalopramregelen har fått versjon 13 som forslag: med dråper (1 mg per dråpe) kan forskriveren fra 3 mg velge et minste trinn på én dråpe, 3 → 2 → 1 mg, og fra 1 mg holdes dosen et helt trinn før seponering, med vurdering før hver endring og 7, 14 og 28 dager etter siste dose. Sluttdosen 1 mg, det minste trinnet og oppfølgingsdagene er OUSFARs forslag og åpne spørsmål til kontrolløren (K1.9, K1.10 og K1.12); de er ikke avklart eller godkjent av noen. Alle andre regler, også nortriptylin, amitriptylin og sertralin, er uendret. Motoren (#319) viser aldri en delplan: når en plan ikke når sluttmålet, står det «Komplett plan ikke tilgjengelig» og grunnen, uten doser. Sperrene og synligheten bare for administratorer er uendret, og verktøyet tilbyr i dag ingen beregning for reglene (kasus K1-19–K1-21).
+**Ingen regel er godkjent eller aktivert.** Escitalopramregelen har fått versjon 13 som forslag: med dråper (1 mg per dråpe) kan forskriveren fra 3 mg velge et minste trinn på én dråpe, 3 → 2 → 1 mg, og fra 1 mg holdes dosen et helt trinn før seponering, med vurdering før hver endring og 7, 14 og 28 dager etter siste dose. Sluttdosen 1 mg er avgjort faglig av Peder 04.11.2026 for et avgrenset omfang (K1.9, avsnittet «Peders avgjørelse på K1.9»); det minste trinnet og oppfølgingsdagene er OUSFARs forslag og åpne spørsmål til kontrolløren (K1.10 og K1.12). Peder har ikke godkjent noe annet enn K1.9, og regelen er ikke godkjent. Alle andre regler, også nortriptylin, amitriptylin og sertralin, er uendret. Motoren (#319) viser aldri en delplan: når en plan ikke når sluttmålet, står det «Komplett plan ikke tilgjengelig» og grunnen, uten doser. Sperrene og synligheten bare for administratorer er uendret, og verktøyet tilbyr i dag ingen beregning for reglene (kasus K1-19–K1-21).
 
 For å vise hva verktøyet ville vist om nøyaktig disse versjonene ble godkjent, er planene under regnet på en kopi av hver regel med en simulert avklaring av de åpne valgene som foreslått og en simulert godkjenning («Simulert kontrollør (bare i kontrollgrunnlaget, ingen godkjenning)»), gjennom den samme veien som verktøysiden, som aldri viser en delplan, og med de norske preparatene i FEST-uttrekket hentet 30.10.2026. Kopien lagres ikke og brukes ikke av appen. Kasusene er syntetiske; pasientopplysninger inngår ikke, og ingen tekst fra Psychiatrienet vises.
 
@@ -11,16 +11,16 @@ For å vise hva verktøyet ville vist om nøyaktig disse versjonene ble godkjent
 
 ## 1. Regelversjonene til kontroll
 
-Kontrolløren bes vurdere hver regel for nøyaktig versjonen og fingeravtrykket i tabellen, i det kliniske omfanget i avsnitt 11. «Tekniske hindringer» er det som ville stoppet en registrert godkjenning utenom selve kontrollen, som åpne valg uten avklaring.
+Kontrolløren bes vurdere hver regel for nøyaktig versjonen og fingeravtrykket i tabellen, i det kliniske omfanget i avsnitt 12. «Tekniske hindringer» er det som ville stoppet en registrert godkjenning utenom selve kontrollen, som åpne valg uten avklaring.
 
 | Regel | Versjon | Fingeravtrykk | Status i dag | Vurdert av kontrolløren | Tekniske hindringer for en godkjenning |
 | --- | --- | --- | --- | --- | --- |
-| `seponering-escitalopram` | 13 | `fa2d139b1acede65720866b6224a9fb5c093bb42c9fb16119b6ce3e11a75fa02` | ikke ferdig kontrollert | **nei** | Regelen har åpne valg som må avklares faglig: plan.forlop[0].faser[0].strategi.minste_trinn.fra_mg (åpent forslag), plan.forlop[0].faser[0].strategi.minste_trinn.maks_prosent (åpent forslag), plan.forlop[0].faser[0].avslutning.fra_hoyst_mg (åpent forslag), plan.forlop[0].vurderinger[1].nar.dager (åpent forslag), plan.forlop[0].vurderinger[2].nar.dager (åpent forslag), plan.forlop[0].vurderinger[3].nar.dager (åpent forslag), fra.faser[0].avslutning (åpent forslag). |
+| `seponering-escitalopram` | 13 | `871e2c72a2b4ca6a57a6025de1918ef3c9074306f20c09aa481db9361c1ce039` | ikke ferdig kontrollert | **nei** | Regelen har åpne valg som må avklares faglig: plan.forlop[0].faser[0].strategi.minste_trinn.fra_mg (åpent forslag), plan.forlop[0].faser[0].strategi.minste_trinn.maks_prosent (åpent forslag), plan.forlop[0].vurderinger[1].nar.dager (åpent forslag), plan.forlop[0].vurderinger[2].nar.dager (åpent forslag), plan.forlop[0].vurderinger[3].nar.dager (åpent forslag). |
 
 ## 2. Før en godkjenning kan registreres
 
-- Kontrollen gjelder nøyaktig versjonen og fingeravtrykket i tabellen over. Regelen har åpne valg: sluttdosen, det minste trinnet (fra 3 mg, høyst 50 %) og dagene for oppfølging etter siste dose. De må avklares av kontrolløren før en godkjenning kan registreres; planene her er regnet som om de ble godtatt som foreslått.
-- Peder har bedt om at kontrolløren avgjør sluttdosen. Ingen har godkjent 1 mg eller noen annen sluttdose på forhånd, og grensen «laveste døgndose i preparatomtalen» fra en tidligere runde brukes ikke.
+- Kontrollen gjelder nøyaktig versjonen og fingeravtrykket i tabellen over. Sluttdosen og seponeringen fra 1 mg er avklart av Peder (K1.9). Regelen har fortsatt åpne valg: det minste trinnet (fra 3 mg, høyst 50 %) og dagene for oppfølging etter siste dose. De må avklares av kontrolløren før en godkjenning kan registreres; planene her er regnet som om de ble godtatt som foreslått.
+- Kontrolløren ville ikke avgjøre sluttdosen alene og ba om en uavhengig, eksplisitt avklaring. Peder avgjorde K1.9 04.11.2026 for et avgrenset omfang; avgjørelsen gjelder ikke det minste trinnet, oppfølgingsdagene eller regelen som helhet. Grensen «laveste døgndose i preparatomtalen» fra en tidligere runde brukes ikke.
 - Avklaringene og godkjenningen registreres i en egen PR, med kontrollørens avgrensning. Endres regelen før det, stemmer ikke fingeravtrykket, og kontrollen må gjøres på nytt.
 - Motoren (#319) har en global sperre: verktøysiden viser aldri en delplan, for noen regel. Nortriptylin, amitriptylin og sertralin trenger derfor ingen ny versjon for å gi «komplett plan ikke tilgjengelig».
 - Sperrene for de kliniske verktøyene og synligheten bare for administratorer beholdes til verktøyene er klare for klinisk prøvebruk og Peder har godkjent åpning for vanlige brukere.
@@ -29,7 +29,7 @@ Kontrolløren bes vurdere hver regel for nøyaktig versjonen og fingeravtrykket 
 
 | # | Spørsmål | Anbefalt svar |
 | --- | --- | --- |
-| K1.9 | Sluttdose for escitalopram: er 1 mg (én dråpe), holdt et helt trinn (minst 28 dager som standard, lenger ved symptomer), en forsvarlig siste dose før seponering? Ingen registrert kilde angir en sluttdose. 1 mg er 5 % av 20 mg og 10 % av 10 mg; RCPsych beskriver at noen trenger å gå ned mot 2 % av opprinnelig dose, og at seponeringssymptomer kan komme uansett hvor lav dosen er. Doser under 1 mg krever fortynning, som ikke er dokumentert. Etterkontrollen av 0c25831 ba om en uavhengig og eksplisitt avklaring av hvilke pasienter 1 mg → 0 etter symptomstyrt hold er faglig forsvarlig for. Forslaget gjelder bare regelens kliniske omfang: voksne under 65 år, kort behandlingstid, ingen tidligere seponeringssymptomer eller mislykket nedtrapping, ikke nedsatt leverfunksjon og ikke kjent langsom CYP2C19-metaboliserer, med dråper. Trengs mindre trinn enn én dråpe, beregner verktøyet dem ikke: dosen holdes på siste tolererte dose, og videre nedtrapping planlegges individuelt, uten fortynning eller oppmåling fra verktøyet. Er 1 mg → 0 forsvarlig for denne gruppen? | Kontrolløren avgjør, eksplisitt og uavhengig. Uten faglig aksept godkjennes ikke avslutningen. OUSFAR foreslår 1 mg fordi det er den laveste dosen dråpene gir uten fortynning, ikke fordi den er vist å være lav nok. Svarer kontrolløren nei, endres sluttdosen eller fjernes avslutningen, og escitalopram gir også «komplett plan ikke tilgjengelig». |
+| K1.9 | Sluttdose for escitalopram: er 1 mg (én dråpe), holdt et helt trinn (minst 28 dager som standard, lenger ved symptomer), en forsvarlig siste dose før seponering? Ingen registrert kilde angir en sluttdose. 1 mg er 5 % av 20 mg og 10 % av 10 mg; RCPsych beskriver at noen trenger å gå ned mot 2 % av opprinnelig dose, og at seponeringssymptomer kan komme uansett hvor lav dosen er. Doser under 1 mg krever fortynning, som ikke er dokumentert. Etterkontrollen av 0c25831 ba om en uavhengig og eksplisitt avklaring av hvilke pasienter 1 mg → 0 etter symptomstyrt hold er faglig forsvarlig for. Forslaget gjelder bare regelens kliniske omfang: voksne under 65 år, kort behandlingstid, ingen tidligere seponeringssymptomer eller mislykket nedtrapping, ikke nedsatt leverfunksjon og ikke kjent langsom CYP2C19-metaboliserer, med dråper. Trengs mindre trinn enn én dråpe, beregner verktøyet dem ikke: dosen holdes på siste tolererte dose, og videre nedtrapping planlegges individuelt, uten fortynning eller oppmåling fra verktøyet. Er 1 mg → 0 forsvarlig for denne gruppen? | Avgjort av Peder 04.11.2026: «Ja, stopp fra 1 mg», avgrenset slik avsnittet «Peders avgjørelse på K1.9» siterer. Regelens kliniske omfang er det samme eller snevrere, og alle utenfor får et sikkert stopp (kasus K1-06, K1-07, K1-12, K1-13 og K1-25–K1-28). Kontrolløren kontrollerer at regelen følger avgjørelsen. |
 | K1.10 | Minste trinn: fra 3 mg er 3 → 2 mg en reduksjon på 33 % og 2 → 1 mg 50 %. Trinnene er større enn NICE-eksempelet på 25 % ved lav dose, og svaret på K1.6 var nei til et generelt større siste trinn på om lag 50 % som snarvei. Er ett minste trinn på én dråpe akseptabelt her, når det bare gjelder escitalopram dråper fra 3 mg eller lavere (der ingen mindre dose kan gis), forskriveren velger det aktivt, og tempoet styres av symptomer? | Ja, avgrenset slik. Det er ikke en snarvei: alle trinn over 3 mg er høyst 25 %, hvert minste trinn holdes minst like lenge som de andre og forlenges ved symptomer, og RCPsych bruker om lag 50 % per trinn som utgangspunkt ved middels risiko. Svarer kontrolløren nei, stopper planen på 3 mg med «komplett plan ikke tilgjengelig». |
 | K1.11 | Overgang fra escitalopram tablett til dråper (K0-01): regelen sier nå at en pasient som bruker tabletter, kan gå over til dråper med samme døgndose i mg når planen starter. Grunnlaget er preparatomtalen for Cipralex 20 mg/ml dråper (DMP 07-4892, oppdatert 02.05.2024), registrert som kilden `dmp-cipralex-draper`: pkt. 2 (én dråpe er 1 mg) og pkt. 5.2 (dråpene er bioekvivalente med Cipralex tabletter). Generiske tabletter er godkjent mot Cipralex tabletter, men ikke sammenlignet direkte med dråpene. Er dette tilstrekkelig? | Ja, mg for mg, slik regelen sier det. Planen starter da med dråper fra døgndosen pasienten bruker (kasus K1-01). |
 | K1.12 | Oppfølging etter siste dose: vurdering 7, 14 og 28 dager etter siste dose, i tillegg til vurderingen før hver endring. 7 og 14 dager bygger på preparatomtalen (symptomene kommer vanligvis de første dagene og går vanligvis over innen to uker); 28 dager er OUSFARs valg, fordi symptomene kan vare lenger og tilbakefall må vurderes. Er punktene riktige? | Ja, som minimum. Svaret på K1.4 var at 28 dager kan være ett oppfølgingspunkt, men ikke det eneste. |
@@ -41,17 +41,33 @@ Kontrolløren bes vurdere hver regel for nøyaktig versjonen og fingeravtrykket 
 
 | Krav | Hva er gjort |
 | --- | --- |
-| Minst ett avgrenset, kildeforankret positivt forløp med små relative lavdosetrinn, dokumentert presisjon og administrasjon, symptomstyrt lengde og en særskilt vurdert siste dose → 0 | Escitalopram dråper fra 10 og 20 mg ved kort behandlingstid (kasus K1-01 og K1-02, avsnitt 5): trinn på høyst 25 % til 3 mg, så 3 → 2 → 1 mg med dråper på 1 mg, 1 mg et helt trinn og seponering. Vurdering før hver endring og 7, 14 og 28 dager etter siste dose. Sluttdosen og det minste trinnet er spørsmål K1.9 og K1.10. |
+| Minst ett avgrenset, kildeforankret positivt forløp med små relative lavdosetrinn, dokumentert presisjon og administrasjon, symptomstyrt lengde og en særskilt vurdert siste dose → 0 | Escitalopram dråper fra 10 og 20 mg ved kort behandlingstid (kasus K1-01 og K1-02, avsnittet «Hvilke forløp som er komplette»): trinn på høyst 25 % til 3 mg, så 3 → 2 → 1 mg med dråper på 1 mg, 1 mg et helt trinn og seponering. Vurdering før hver endring og 7, 14 og 28 dager etter siste dose. Sluttdosen og det minste trinnet er spørsmål K1.9 og K1.10. |
 | Tablett ↔ dråper med eksakt ekvivalens og administrasjon | Preparatomtalen for dråpene er registrert som kilde (`dmp-cipralex-draper`); overgangen er mg for mg (K1.11, kasus K1-01). |
-| Ingen oppfunnet oppmåling eller seponeringsgrense | Bare hele dråper; ingen fortynning, oppmåling eller apotektilberedning. Sluttdosen er et åpent forslag uten avklaring, ikke en grense noen har godkjent. |
+| Ingen oppfunnet oppmåling eller seponeringsgrense | Bare hele dråper; ingen fortynning, oppmåling eller apotektilberedning. Sluttdosen er ingen grense fra en kilde, men en dokumentert faglig avgjørelse for et avgrenset omfang (K1.9). |
 | Ellers full stopp uten kopierbar delplan | Motorens globale sperre (#319). Lang behandlingstid, escitalopram tablett, nortriptylin, amitriptylin og sertralin gir «komplett plan ikke tilgjengelig» (kasus K1-06–K1-08 og K1-14–K1-18). |
 | Positive og negative ende-til-ende-tester med norske preparater; versjon og fingeravtrykk separat | `src/__tests__/verktoyk1.test.ts`: kasusene her, alle planer i omfanget, og egne tester av versjon og fingeravtrykk. |
 
-## 5. Etterkontrollen av 0c25831 (03.11.2026), og hva som gjenstår
+## 5. Peders avgjørelse på K1.9
+
+- Dato: 04.11.2026, etter at kontrolløren ved kontrollene 03.11.2026 ikke ville avgjøre sluttdosen alene og ba om en uavhengig, eksplisitt avklaring eller at seponeringen ble sperret.
+- Beslutningskortet: «ChatGPT vil ikke avgjøre alene: kan escitalopram-dråper stoppes fra 1 mg?». Valgt alternativ: «Ja, stopp fra 1 mg».
+- Avgrensning, ordrett: «Gjelder voksne under 65 år med kort behandlingstid, uten tidligere seponeringsplager. Gir første komplette nedtrapping (fra 10 eller 20 mg), etter ChatGPTs kontroll av resten.»
+- Beslutningsregel, ordrett: «1 mg er 5–10 % av startdosen. Hvert trinn styres av symptomer, og det følges opp etter 7, 14 og 28 dager. Ved plager vurderes resten individuelt.»
+- Avgjørelsen gjelder bare K1.9: sluttdosen 1 mg og seponeringen fra 1 mg. Det minste trinnet (K1.10), oppfølgingsdagene (K1.12) og regelen som helhet er ikke godkjent.
+
+| Avgrensningen | Regelens kliniske omfang | Utenfor: sikkert stopp |
+| --- | --- | --- |
+| Voksne | Under 18 år stopper ordinær planlegging | K1-28 |
+| Under 65 år | Bare nei på spørsmålet om alder over 65 år; også nei om nedsatt leverfunksjon og kjent langsom CYP2C19-metaboliserer, som er snevrere enn avgrensningen | K1-12, K1-25, K1-26, K1-27 |
+| Kort behandlingstid | Komplett plan bare ved kort behandlingstid; lang behandlingstid gir «komplett plan ikke tilgjengelig» | K1-06, K1-07 |
+| Uten tidligere seponeringsplager | Tidligere seponeringssymptomer eller mislykket nedtrapping: regelen gjelder ikke | K1-13 |
+| Fra 10 eller 20 mg | Dråper fra 10 eller 20 mg; tablettpasienter går over til dråper med samme dose (K1.11) | K1-08, K1-10, K1-11 |
+
+## 6. Etterkontrollen av 0c25831 (03.11.2026), og hva som gjenstår
 
 | Funn | Status |
 | --- | --- |
-| 1 mg → 0 er ikke klinisk validert; avklar uavhengig og eksplisitt hvilke pasienter det er forsvarlig for, og oppgi trygg håndtering når mindre trinn trengs | Åpent spørsmål K1.9, avgrenset til regelens kliniske omfang. Regelen sier nå at verktøyet ikke beregner trinn under én dråpe: dosen holdes på siste tolererte dose, og videre nedtrapping planlegges individuelt. Ingen fortynning eller oppmåling er lagt til. Uten faglig aksept godkjennes ikke avslutningen. |
+| 1 mg → 0 er ikke klinisk validert; avklar uavhengig og eksplisitt hvilke pasienter det er forsvarlig for, og oppgi trygg håndtering når mindre trinn trengs | Avgjort av Peder (K1.9, avsnittet under). Regelen sier at verktøyet ikke beregner trinn under én dråpe: dosen holdes på siste tolererte dose, og videre nedtrapping planlegges individuelt. Ingen fortynning eller oppmåling er lagt til. |
 | De positive eksemplene er ett virkestoff med samme sluttrinn; de andre stoffene har ingen komplett plan | Riktig, og et reelt gjenstående leveransegap (under). K1 er ikke ferdig. |
 | Global sikring i #319 og kontroll etter integrasjonen; simulert godkjenning er ikke klinisk godkjenning | Motoren (#319) har den globale sperren. Integrert kontroll av klinikerplan, kopierbar tekst, kort og lang behandlingstid, form utenfor omfanget og avregistrerte preparater gjøres i QA (#321) etter at PR-ene er flettet. Godkjenningen er bare simulert her; en klinisk godkjenning registreres i en egen PR. |
 
@@ -61,9 +77,9 @@ Kontrolløren bes vurdere hver regel for nøyaktig versjonen og fingeravtrykket 
 - Sertralin: ingen komplett plan; planen stopper på 75 mg til en målemetode eller tilberedning er dokumentert (K1.15).
 - Escitalopram etter lang behandlingstid: ingen komplett plan; planen stopper på 9 mg (K1.13).
 - Escitalopram tablett uten overgang til dråper: ingen komplett plan; planen stopper på 15 mg fra 20 mg.
-- Escitalopram dråper ved kort behandlingstid: komplett beregnet plan, men avslutningen 1 mg → 0 og det minste trinnet venter på faglig avklaring (K1.9 og K1.10).
+- Escitalopram dråper ved kort behandlingstid: komplett beregnet plan; sluttdosen er avgjort av Peder (K1.9), men det minste trinnet og oppfølgingsdagene venter på kontrolløren (K1.10 og K1.12).
 
-## 6. Kontrollørens svar på K1.1–K1.8 (03.11.2026)
+## 7. Kontrollørens svar på K1.1–K1.8 (03.11.2026)
 
 | # | Spørsmålet | Svar | Hva det betyr nå |
 | --- | --- | --- | --- |
@@ -76,7 +92,7 @@ Kontrolløren bes vurdere hver regel for nøyaktig versjonen og fingeravtrykket 
 | K1.7 | Delplaner ved lang behandlingstid | Nei, delplaner er ikke et klinisk produkt | «Komplett plan ikke tilgjengelig» (K1.13). |
 | K1.8 | Sertralin med grensen 25 mg | Nei | Ingen grense; sertralin gir «komplett plan ikke tilgjengelig» (K1.15). |
 
-## 7. Hvilke forløp som er komplette
+## 8. Hvilke forløp som er komplette
 
 | Tilfelle | Resultat med versjon 13 | Kasus |
 | --- | --- | --- |
@@ -89,7 +105,7 @@ Kontrolløren bes vurdere hver regel for nøyaktig versjonen og fingeravtrykket 
 
 Ved hvert trinn som ikke kan gis nøyaktig, tilbyr verktøyet nøyaktig én dose, så de to komplette planene er bestemt av startdosen. Den siste dosen over 0 er alltid 1 mg, og planen viser seponeringen og oppfølgingen etter siste dose.
 
-## 8. Lave doser med norske preparater, og kildene
+## 9. Lave doser med norske preparater, og kildene
 
 | Stoff | Hva som finnes | Hva som mangler for små trinn | Kilde |
 | --- | --- | --- | --- |
@@ -100,17 +116,17 @@ Ved hvert trinn som ikke kan gis nøyaktig, tilbyr verktøyet nøyaktig én dose
 
 Ingen tabeller fra Psychiatrienet er brukt eller konvertert. Ingen validert apotektilberedning er dokumentert.
 
-## 9. Hva som er endret fra versjon 12 av escitalopramregelen
+## 10. Hva som er endret fra versjon 12 av escitalopramregelen
 
 - Minste trinn (`strategi.minste_trinn`): fra 3 mg, når ingen dose innenfor valgområdet kan gis, kan forskriveren velge den nærmeste lavere dosen, med faktisk reduksjon høyst 50 %. Åpent forslag (K1.10).
-- Avslutning (`avslutning`): fra 1 mg eller lavere holdes siste dose et helt trinn, og escitalopram seponeres etter en vurdering. Åpent forslag (K1.9).
+- Avslutning (`avslutning`): fra 1 mg eller lavere holdes siste dose et helt trinn, og escitalopram seponeres etter en vurdering. Avgjort faglig av Peder 04.11.2026 (K1.9).
 - Laveste dose (`dosevalg.min_mg`): 1 mg, én dråpe (preparatomtalen pkt. 2).
 - Vurderingspunkter: før hver doseendring, med preparatomtalen pkt. 4.2 som grunnlag, og 7, 14 og 28 dager etter siste dose (åpne forslag, K1.12).
 - Fortolkningen: overgangen fra tablett til dråper mg for mg (K1.11), at nedtrappingen går til null og at symptomer kan komme uansett hvor lav dosen er, og usikkerheten om sluttdosen. Teksten om at planen ikke går til null er erstattet.
 - Regneeksemplene er regnet på nytt: uten preparater stopper planen fra 20 mg på 1,13 mg, over sluttdosen, så den seponerer ikke; fra 10 mg ved lang behandlingstid på 2,82 mg.
 - Det kliniske omfanget, trinnstørrelsene, trinnlengdene, spørsmålene og unntakene er uendret. Den langsomme varianten og alle andre regler er uendret; de godkjente reglene har samme fingeravtrykk som før.
 
-## 10. Hvor nedtrappingen stopper med versjon 12
+## 11. Hvor nedtrappingen stopper med versjon 12
 
 Hver startdose i det kliniske omfanget, regnet med versjonene forslaget bygger på og den samme simulerte godkjenningen, med forskriverens valg der et trinn ikke kan gis nøyaktig. Planene vises ikke i appen; tabellen viser bare hvor langt de dokumenterte metodene rekker.
 
@@ -135,7 +151,7 @@ Hver startdose i det kliniske omfanget, regnet med versjonene forslaget bygger p
 | `seponering-sertralin` v12 | tablett, 100 mg, kort behandlingstid | – | 75 mg | Delplan, ikke en komplett plan. Ikke dekket: Sertralin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. |
 | `seponering-sertralin` v12 | tablett, 200 mg, kort behandlingstid | 125 mg, 100 mg | 75 mg | Delplan, ikke en komplett plan. Ikke dekket: Sertralin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt. |
 
-## 11. Reglene
+## 12. Reglene
 
 ### Seponering av escitalopram, gjentatt prosentvis nedtrapping
 
@@ -206,7 +222,7 @@ Hver startdose i det kliniske omfanget, regnet med versjonene forslaget bygger p
 - 10 og 20 mg, FEST-legemiddelform 748, med nei på alle spørsmålene, styrker (fra) 1 mg
 - 10 og 20 mg, FEST-legemiddelform 748, ved lang behandlingstid og nei på de andre spørsmålene, reduksjon per trinn (% av aktuell dose) 10 %, styrker (fra) 1 mg
 
-## 12. Alle planer i det kliniske omfanget
+## 13. Alle planer i det kliniske omfanget
 
 Hver startdose i hvert tilfelle i reglenes kliniske omfang, med hver plan forskriverens valg kan gi: ved hvert trinn som ikke kan gis nøyaktig, er hver dose som tilbys, fulgt. I alle 20 valgene tilbys nøyaktig én dose, så hver startdose gir én plan. Radene er slik planen og kopien av den ville stått om delplaner ble vist; dagene er minstetider, og hvert trinn forutsetter en ny vurdering.
 
@@ -315,7 +331,7 @@ Ingen trinn krever forskriverens valg.
 
 - Komplett plan ikke tilgjengelig: escitalopram: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 1 mg eller lavere (planen står på 9 mg).
 
-## 13. Syntetiske testkasus
+## 14. Syntetiske testkasus
 
 Kasusene går gjennom den samme veien som verktøysiden, som aldri viser en delplan, og kjøres i testene (`src/__tests__/verktoyk1.test.ts`). De viser de komplette planene, at hver plan som ikke når seponering, stopper uten doser, grensene for omfanget, at verktøyet i dag ikke tilbyr beregning, og at en endret regel eller et endret preparat stopper planen. Kolonnen K0 viser kasuset i leveranseplanen hvert kasus svarer på. Uten annen merknad er regelen den simulert godkjente kopien (for escitalopram versjon 13 med de åpne valgene simulert avklart som foreslått), organfunksjon og interaksjoner er bekreftet, og svaret er nei på alle unntak og spørsmål.
 
@@ -345,3 +361,7 @@ Kasusene går gjennom den samme veien som verktøysiden, som aldri viser en delp
 | K1-22 | – | escitalopram dråper 10 mg, godkjent uten at de åpne valgene er avklart, med valgene fra K1-01 | seponering-escitalopram (simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Regelen har åpne valg som må avklares faglig. | som forventet |
 | K1-23 | – | escitalopram dråper 10 mg med sluttdosen endret til 2 mg etter godkjenningen, med valgene fra K1-01 | seponering-escitalopram (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi; deretter sluttdosen 1 → 2 mg) | Ingen plan: Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke). | som forventet |
 | K1-24 | – | escitalopram dråper 10 mg, dråpene avregistrert | seponering-escitalopram (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Ingen av de perorale preparatene av escitalopram i FEST kan brukes med valgene som er gjort er avregistrert i FEST. | som forventet |
+| K1-25 | – | escitalopram dråper 10 mg, kort, 65 år eller eldre | seponering-escitalopram (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Startdosen 10 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (utenfor omfanget). | som forventet |
+| K1-26 | – | escitalopram dråper 10 mg, kort, nedsatt leverfunksjon | seponering-escitalopram (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Startdosen 10 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (utenfor omfanget). | som forventet |
+| K1-27 | – | escitalopram dråper 10 mg, kort, kjent langsom CYP2C19-metaboliserer | seponering-escitalopram (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Startdosen 10 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (utenfor omfanget). | som forventet |
+| K1-28 | – | escitalopram dråper 10 mg, kort, under 18 år | seponering-escitalopram (simulert avklaring av de åpne valgene og simulert klinisk godkjenning av versjon 13, bare på en kopi) | Ingen plan: Regelen gjelder ikke: Pasienten er under 18 år. | som forventet |
