@@ -73,6 +73,8 @@ export interface Stoppforklaring {
   losning?: 'i_verktoyet' | 'individuelt'
   /** Spørsmålet i flyten forklaringen gjelder, så visningen kan vise den ved spørsmålet. */
   sporsmal?: string
+  /** Motorens egen tekst, for «Vis detaljer»; aldri det første klinikeren ser. */
+  detalj?: string
 }
 
 /** Utfallet av forhåndskontrollen (§5). Den lover aldri en plan (S9). */
@@ -81,8 +83,10 @@ export type Kontrollutfall = 'ukjent' | 'kan_lages_hvis' | 'kan_ikke'
 export interface Forhandskontroll {
   utfall: Kontrollutfall
   grunner: Stoppforklaring[]
-  /** Antall synlige spørsmål og valg som ennå ikke er besvart. */
+  /** Antall synlige spørsmål og valg som ennå ikke er besvart (også «Ukjent» og «Ikke ennå»). */
   gjenstar: number
+  /** Antall dosevalg i planen prøveberegningen trengte (trinnvalg); de gjøres i planen, ikke i skjemaet. */
+  dosevalg?: number
 }
 
 export interface Flyttilstand {
@@ -92,6 +96,10 @@ export interface Flyttilstand {
   /** Avledede svar og forbehold, til planen og kopien. */
   forutsatt: string[]
   kontroll: Forhandskontroll
+  /** Når et svar krever skriftlig begrunnelse: hva den gjelder. */
+  begrunnelse?: { hjelp: string }
+  /** Stoppforholdene «Ingen av disse» kan besvare (beslutning B5); tom til beslutningen er akseptert. */
+  ingenAvDisse: string[]
 }
 
 /**
@@ -119,10 +127,11 @@ export interface Stoppkode {
  * - `trinnvalg_trengs`: en dose for et trinn må velges (valg trengs).
  * - `valg_ugyldig`: et valg som er gjort, gjelder ikke lenger.
  * - `ingen_preparater`: FEST har ingen brukbare preparater for forløpet.
+ * - `ingen_dose`: en dose kan ikke gis med preparatene i FEST (ikke nøyaktig, ikke fordelt slik preparatomtalen krever, eller ikke i kurvens retning; `ref`: forløpet).
  * - `godkjenningsfritak_trengs`: bare preparater som krever godkjenningsfritak kan brukes.
  * - `ikke_komplett`: planen når ikke sluttmålet.
  * - `ikke_klinisk`: regelen er ikke gyldig godkjent, FEST er ikke fersk, eller en annen sperre.
- * - `sperret`: en nødstopp gjelder.
+ * - `sperret`: en nødstopp gjelder (settes av appen, aldri av motoren).
  * - `regelfeil`: regelen er ugyldig eller mangler en verdi.
  * - `annet`: alt annet.
  */
@@ -138,6 +147,7 @@ export type Stoppkodenavn =
   | 'trinnvalg_trengs'
   | 'valg_ugyldig'
   | 'ingen_preparater'
+  | 'ingen_dose'
   | 'godkjenningsfritak_trengs'
   | 'ikke_komplett'
   | 'ikke_klinisk'
