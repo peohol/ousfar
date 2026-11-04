@@ -186,27 +186,45 @@ describe('QA-kontrollen selv', () => {
 })
 
 describe('QA: tidslinjen i appen mot kopien', () => {
+  // Syntetisk, i samme form som appen viser og kopierer et tillegg og en depotoppstart.
   const kopi = [
-    'Trappe ned antidepressiv',
+    'Kombinere stemningsstabiliserende',
     '',
-    'Dag 1–28: Escitalopram peroralt: 8 mg = 8 dråper à 1 mg',
-    'Dag 29: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer.',
-    'Fra dag 29: Escitalopram peroralt: Seponert',
+    'Dag 1–14: Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose; Lamotrigin peroralt: 2,5 mg = 1 tablett à 2,5 mg',
+    'Dag 15: Vurdering (Lamotrigin): Før endringen: Spør etter utslett.',
+    'Dag 15–28: Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose; Lamotrigin peroralt: 5 mg = 1 tablett à 5 mg',
+    'Dag 1: Lamotrigin depotinjeksjon 400 mg = 1 injeksjon à 400 mg (tidligst 26 dager etter forrige)',
   ].join('\n')
+  const litium = '168 mg Li⁺ (24 mmol)\n4 tabletter Lithionit 42 mg depottablett; uendret dose'
   const tabell: Tidslinje = {
-    koloner: ['Når', 'Escitalopram peroralt'],
+    koloner: ['Når', 'Litium peroralt', 'Lamotrigin peroralt', 'Lamotrigin depotinjeksjon'],
     rader: [
-      ['Dag 1–28', '8 mg\n8 dråper à 1 mg'],
-      ['Dag 29', 'Vurdering\nFør endringen: Vurder seponeringssymptomer.'],
-      ['Fra dag 29', 'Seponert'],
+      ['Dag 1–14', litium, '2,5 mg\n1 tablett à 2,5 mg', '–'],
+      ['Dag 15', '', 'Vurdering Før endringen: Spør etter utslett.', ''],
+      ['Dag 15–28', litium, '5 mg\n1 tablett à 5 mg', '–'],
+      ['Dag 1', '', '', 'Injeksjon 400 mg\n1 injeksjon à 400 mg\ntidligst 26 dager etter forrige'],
     ],
   }
-  it('godtar en tabell som står slik i kopien, og finner en annen dose, en manglende rad og en linje uten rad', () => {
+  const endret = (naar: string, kolonne: number, celle: string): Tidslinje => ({ ...tabell, rader: tabell.rader.map((r) => (r[0] === naar ? r.map((c, i) => (i === kolonne ? celle : c)) : r)) })
+
+  it('godtar en tabell som står slik i kopien, også med to legemidler, vurderinger og injeksjoner', () => {
     expect(tidslinjeavvik(tabell, kopi)).toEqual([])
-    const feilDose = { ...tabell, rader: tabell.rader.map((r) => (r[0] === 'Dag 1–28' ? ['Dag 1–28', '9 mg\n9 dråper à 1 mg'] : r)) }
-    expect(tidslinjeavvik(feilDose, kopi).join()).toMatch(/cellen «9 mg/)
-    expect(tidslinjeavvik({ ...tabell, rader: [...tabell.rader, ['Dag 57', '4 mg']] }, kopi).join()).toMatch(/tabellraden «Dag 57» finnes ikke/)
-    expect(tidslinjeavvik({ ...tabell, rader: tabell.rader.slice(1) }, kopi).join()).toMatch(/kopiens linje «Dag 1–28/)
+  })
+
+  it('finner et flyttet desimaltegn (2,5 mot 25 mg) både i tabellen og i kopien', () => {
+    expect(tidslinjeavvik(endret('Dag 1–14', 2, '25 mg\n1 tablett à 25 mg'), kopi).join()).toMatch(/cellen «25 mg/)
+    expect(tidslinjeavvik(tabell, kopi.replace('2,5 mg = 1 tablett à 2,5 mg', '25 mg = 1 tablett à 25 mg')).join()).toMatch(/cellen «2,5 mg/)
+  })
+
+  it('finner doser under feil legemiddel samme dag', () => {
+    const byttet: Tidslinje = { ...tabell, rader: tabell.rader.map((r) => (r[0] === 'Dag 1–14' ? [r[0]!, r[2]!, r[1]!, r[3]!] : r)) }
+    expect(tidslinjeavvik(byttet, kopi).join()).toMatch(/\(Dag 1–14, Litium peroralt\) står ikke slik i kopien/)
+  })
+
+  it('finner en annen dose, en rad som mangler i kopien og en kopilinje uten rad i tabellen', () => {
+    expect(tidslinjeavvik(endret('Dag 15–28', 2, '6 mg\n1 tablett à 6 mg'), kopi).join()).toMatch(/cellen «6 mg/)
+    expect(tidslinjeavvik({ ...tabell, rader: [...tabell.rader, ['Dag 57', '', '4 mg', '']] }, kopi).join()).toMatch(/cellen «4 mg» \(Dag 57/)
+    expect(tidslinjeavvik({ ...tabell, rader: tabell.rader.slice(1) }, kopi).join()).toMatch(/kopiens «Dag 1–14: 168 mg/)
   })
 })
 

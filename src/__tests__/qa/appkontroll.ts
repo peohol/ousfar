@@ -224,6 +224,8 @@ async function main() {
     }
     const avvik = sammenlign(r, a)
     if (avvik.length > 0 && process.env.QA_BILDER) await side.screenshot({ path: `${process.env.QA_BILDER}/${f.id}.png`, fullPage: true })
+    // Tidslinjen og kopien slik appen ga dem, for å kunne lese sammenligningen etterpå.
+    if (a.tabell && process.env.QA_BILDER) writeFileSync(`${process.env.QA_BILDER}/${f.id}.json`, JSON.stringify({ tidslinje: a.tidslinje, kopi: a.tekst }, null, 2))
     if (a.tabell && avvik.length === 0) verifisert++
     const app = a.tabell
       ? 'Plan'

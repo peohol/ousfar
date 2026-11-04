@@ -414,31 +414,72 @@ export interface Tidslinje {
   rader: string[][]
 }
 
-/** Bokstaver og tall, uten mellomrom og tegn, så celletekst og kopiert linje kan sammenlignes. */
-const kjerne = (x: string) => x.replace(/[^\p{L}\p{N}]/gu, '').toLowerCase()
+/**
+ * Teksten redusert til bokstaver og tall, så celletekst og kopiert tekst kan
+ * sammenlignes uten å bry seg om linjeskift og tegnsetting. Tallenes betydning
+ * beholdes: et desimaltegn mellom sifre blir stående («2,5» og «25» er ulike),
+ * og sifre som bare skilles av mellomrom eller tegn, holdes atskilt.
+ */
+export const kjerne = (x: string) =>
+  x
+    .replace(/(\p{N})[,.](?=\p{N})/gu, '$1‡')
+    .replace(/(\p{N})[^\p{L}\p{N}‡]+(?=\p{N})/gu, '$1|')
+    .replace(/[^\p{L}\p{N}‡|]/gu, '')
+    .toLowerCase()
+
+interface Tidslinjecelle {
+  naar: string
+  /** Kolonnene (legemiddel og administrasjon) cellen kan høre til. */
+  kolonner: string[]
+  tekst: string
+}
+
+/** Cellene i tabellen, med sin kolonne; tomme celler og «–» (ikke i bruk) er ikke med. */
+const tabellceller = (t: Tidslinje): Tidslinjecelle[] =>
+  t.rader.flatMap(([naar, ...celler]) => celler.flatMap((c, i) => (c && c !== '–' ? [{ naar: naar!, kolonner: [t.koloner[i + 1]!], tekst: c.replace(/^(Vurdering|Injeksjon)\s+/, '') }] : [])))
 
 /**
- * Den synlige tidslinjen mot den kopierte teksten: hver rad i tabellen har
- * linjer med samme tidspunkt i kopien, og hver celle står i dem (bortsett fra
- * ordet «Vurdering», som kopien skriver med virkestoffet i parentes); hver
- * tidslinjelinje i kopien har en rad i tabellen.
+ * Tidslinjelinjene i kopien, delt i ett ledd per legemiddel: «Dag 1–14: Litium
+ * peroralt: …; Lamotrigin peroralt: …» gir to ledd, ett per kolonne. En
+ * vurdering («Dag 15: Vurdering (Lamotrigin): …») hører til legemidlets
+ * kolonner. Linjer som ikke begynner med en kolonne eller en vurdering, er ikke
+ * en del av tidslinjen.
+ */
+function kopiledd(t: Tidslinje, kopi: string): Tidslinjecelle[] {
+  const koloner = t.koloner.slice(1)
+  return kopi.split('\n').flatMap((linje) => {
+    const m = /^(.+?): (.+)$/.exec(linje)
+    if (!m) return []
+    const [, naar, rest] = m as unknown as [string, string, string]
+    const vurdering = /^Vurdering \(([^)]+)\): (.+)$/.exec(rest)
+    if (vurdering) {
+      const kolonner = koloner.filter((k) => k.startsWith(vurdering[1]!))
+      return kolonner.length ? [{ naar, kolonner, tekst: vurdering[2]! }] : []
+    }
+    const starter = koloner
+      .flatMap((k) => [...rest.matchAll(new RegExp(`(?:^|; )(${k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})(?::? )`, 'g'))].map((x) => ({ k, fra: x.index! + x[0].length, ved: x.index! })))
+      .sort((a, b) => a.ved - b.ved)
+    if (starter[0]?.ved !== 0) return []
+    return starter.map((x, i) => ({ naar, kolonner: [x.k], tekst: rest.slice(x.fra, starter[i + 1]?.ved ?? rest.length) }))
+  })
+}
+
+/**
+ * Den synlige tidslinjen mot den kopierte teksten, celle for celle: hver
+ * celle i tabellen skal stå i kopien på samme tidspunkt, under samme
+ * legemiddel og med samme tall og ord, og hvert ledd i kopiens tidslinje skal
+ * ha en slik celle. En dose under feil legemiddel, et flyttet desimaltegn
+ * eller en rad som bare finnes på den ene siden, er avvik.
  */
 export function tidslinjeavvik(t: Tidslinje, kopi: string): string[] {
+  const igjen = kopiledd(t, kopi)
   const avvik: string[] = []
-  const linjer = kopi.split('\n')
-  const tidspunkt = new Set(t.rader.map((r) => r[0]!))
-  for (const [naar, ...celler] of t.rader) {
-    const her = kjerne(linjer.filter((l) => l.startsWith(`${naar}: `) || l.startsWith(`${naar} (`)).join(' '))
-    if (!her) {
-      avvik.push(`tabellraden «${naar}» finnes ikke i kopien`)
-      continue
-    }
-    for (const c of celler.filter(Boolean)) if (!her.includes(kjerne(c.replace(/^Vurdering\s*/, '')))) avvik.push(`cellen «${c.slice(0, 50)}» (${naar}) står ikke slik i kopien`)
+  for (const c of tabellceller(t)) {
+    const i = igjen.findIndex((x) => x.naar === c.naar && x.kolonner.includes(c.kolonner[0]!) && kjerne(x.tekst) === kjerne(c.tekst))
+    if (i >= 0) igjen.splice(i, 1)
+    else avvik.push(`cellen «${c.tekst.slice(0, 50)}» (${c.naar}, ${c.kolonner[0]}) står ikke slik i kopien`)
   }
-  for (const l of linjer) {
-    const m = /^((?:Fra )?[Dd]ag \d+(?:–\d+)?)(?: \([^)]*\))?: /.exec(l)
-    if (m && !tidspunkt.has(m[1]!)) avvik.push(`kopiens linje «${l.slice(0, 50)}» har ingen rad i tabellen`)
-  }
+  for (const x of igjen) avvik.push(`kopiens «${x.naar}: ${x.tekst.slice(0, 50)}» (${x.kolonner.join(' / ')}) har ingen slik celle i tabellen`)
   return avvik
 }
 
