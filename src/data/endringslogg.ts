@@ -27,7 +27,7 @@ export const ENDRINGSLOGG: Endring[] = [
     utenVarsel: true,
   },
   {
-    versjon: '1.125.3',
+    versjon: '1.125.4',
     dato: '2026-11-04',
     sammendrag: 'En ny regel i de kliniske verktøyene kan erstatte en eldre, som da trekkes i samme øyeblikk som den nye godkjennes',
     typer: ['Funksjonalitet'],
