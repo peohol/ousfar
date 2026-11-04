@@ -12,6 +12,7 @@ import { beregnPlan, festIderFor, formvalgFor, gjelderFortsatt, inndataFor, lesD
 import { planTekst, planvisning } from '../verktoy/planvisning'
 import { finnVirkestoff, KARTLEGGING, sokVerktoy, VERKTOY, verktoyFor, virkestoffvalg } from '../verktoy/register'
 import { NEDTRAPPINGSSETT } from '../verktoy/regler/nedtrapping'
+import { ANTIPSYKOTIKASETT, ANTIPSYKOTIKAVEDTAK } from '../verktoy/regler/antipsykotikabytter'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
 import { TILLEGGSSETT } from '../verktoy/regler/tillegg'
 import { snarvalg } from '../verktoy/snarvalg'
@@ -163,13 +164,16 @@ describe('Regelstatusen', () => {
       const t = tilgjengelighet(KOMBINERE!, { fra: v(r.fra.type === 'virkestoff' ? r.fra.nokkel : ''), til: v('lamotrigin') })
       expect(t, r.id).toMatchObject({ status: 'tilgjengelig', regler: [r] })
     }
-    expect(new Set([...tilfeller.flatMap(([, , r]) => r), ...tillegg])).toEqual(new Set(REGELSETT.regler.map((r) => r.id)))
-    expect(REGELSETT.regler).toHaveLength(PILOTSETT.regler.length + NEDTRAPPINGSSETT.regler.length + TILLEGGSSETT.regler.length)
-    // Escitalopram versjon 13 fra K1 er godkjent (04.11.2026) og kan beregnes, i tillegg til vortioksetin.
-    expect(VERKTOY.map((x) => regeloversikt(x).tilgjengelige)).toEqual([2, 1, 2, 2])
+    // Tre antipsykotikabytter fra K3 er godkjent (ANTIPSYKOTIKAVEDTAK, 04.11.2026) og gir beregning; de fire andre står til faglig kontroll (`verktoyantipsykotika.test.ts`).
+    const K3_GODKJENT = Object.keys(ANTIPSYKOTIKAVEDTAK.regler)
+    for (const id of K3_GODKJENT) expect(ANTIPSYKOTIKASETT.regler.find((r) => r.id === id)?.godkjenning.status, id).toBe('klinisk_godkjent')
+    expect(new Set([...tilfeller.flatMap(([, , r]) => r), ...tillegg, ...ANTIPSYKOTIKASETT.regler.map((r) => r.id)])).toEqual(new Set(REGELSETT.regler.map((r) => r.id)))
+    expect(REGELSETT.regler).toHaveLength(PILOTSETT.regler.length + NEDTRAPPINGSSETT.regler.length + TILLEGGSSETT.regler.length + ANTIPSYKOTIKASETT.regler.length)
+    // Escitalopram versjon 13 fra K1 er godkjent (04.11.2026) og kan beregnes, i tillegg til vortioksetin, og tre antipsykotikabytter fra K3.
+    expect(VERKTOY.map((x) => regeloversikt(x).tilgjengelige)).toEqual([2, 1, 2 + K3_GODKJENT.length, 2])
     expect(VERKTOY.map((x) => regeloversikt(x).ikkeGodkjent)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length - 1 - K1.length, 1, 1, 0])
-    // K1-versjonen av escitalopram er godkjent (04.11.2026), så ingen regel i appen venter på kontroll.
-    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([0, 0, 0, 0])
+    // K1-versjonen av escitalopram er godkjent (04.11.2026); bare fire av K3s antipsykotikabytter venter på kontroll.
+    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([0, 0, ANTIPSYKOTIKASETT.regler.length - K3_GODKJENT.length, 0])
   })
 
   it('forklarer hvorfor et antidepressivum uten regel ikke kan trappes ned, med dekningen fra P7', () => {
@@ -223,9 +227,13 @@ describe('Snarvalgene (VDR-3)', () => {
         ['fagtekst', 'Bupropion'],
       ],
       [],
+      // Bytte antipsykotikum: pilotens depotregler og de tre godkjente byttene fra K3 (04.11.2026).
       [
         ['tilgjengelig', 'Aripiprazol: peroral → depotinjeksjon'],
+        ['tilgjengelig', 'Olanzapin (peroral) → aripiprazol (peroral)'],
         ['tilgjengelig', 'Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)'],
+        ['tilgjengelig', 'Risperidon (peroral) → aripiprazol (peroral)'],
+        ['tilgjengelig', 'Risperidon (peroral) → paliperidon (depotinjeksjon (paliperidonpalmitat))'],
       ],
       // Kombinere stemningsstabiliserende: de to godkjente tilleggsreglene (K4).
       [
