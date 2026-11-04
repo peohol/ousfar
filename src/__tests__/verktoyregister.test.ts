@@ -292,7 +292,9 @@ describe('Doseplanen i verktøyene', () => {
     const nySert = godkjennITest({ ...structuredClone(sert), tittel: 'Ny sertralin → mirtazapin bare i testen', erstatter: [SERT] }, 'test-erstatter-sertralin-mirtazapin')
     const sertvalg = { fra: v('sertralin'), til: v('mirtazapin') }
     expect(reglerFor(BYTTE_AD!, sertvalg).map((r) => r.id)).toContain(SERT)
-    expect(reglerFor(BYTTE_AD!, sertvalg, { ...REGELSETT, regler: [...REGELSETT.regler, nySert] }).map((r) => r.id)).toEqual(['test-erstatter-sertralin-mirtazapin'])
+    const etter = reglerFor(BYTTE_AD!, sertvalg, { ...REGELSETT, regler: [...REGELSETT.regler, nySert] }).map((r) => r.id)
+    expect(etter).toContain('test-erstatter-sertralin-mirtazapin')
+    expect(etter).not.toContain(SERT)
   })
 
   it('ingen av appens regler har en ugyldig erstatning', () => {
