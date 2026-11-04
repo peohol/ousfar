@@ -2,8 +2,8 @@
  * Kildene reglene bygger på: pilotreglene i P4 (`docs/verktøy-p4-regelmodell.md`)
  * og nedtrappingsreglene i P7 (`docs/verktøy-p7-nedtrapping.md`). Norske
  * preparatomtaler fra DMP, sentralt godkjente preparatomtaler fra EMA,
- * NICE-retningslinjen for depresjon og primær- og oversiktslitteratur. Alle
- * ble hentet og lest 28.10.2026; kontrollsummen er av dokumentet slik det ble
+ * NICE-retningslinjen for depresjon og primær- og oversiktslitteratur. De fleste
+ * ble hentet og lest 28.10.2026 (kildene for K4 03.11.2026); kontrollsummen er av dokumentet slik det ble
  * hentet, så en ny revisjon kan oppdages før en regel kontrolleres på nytt.
  *
  * Reglene gjengir fakta fra kildene med egne ord (en dose, en frist, en
@@ -79,6 +79,10 @@ export const KILDER: readonly Kilde[] = [
   preparatomtale('dmp-risperdal', 'Risperdal (risperidon) tabletter, preparatomtale', '0000-08037', 'Oppdatert 19.08.2022', '2026-11-03T16:52:00Z', 'dd2ce96c875c8f820a1c394533ca20fea2f9f7140f6640db9ff11e1af3a0bba2'),
   preparatomtale('dmp-risperdal-consta', 'Risperdal Consta (risperidon depotinjeksjon), preparatomtale', '2001-09858', 'Oppdatert 11.05.2021', '2026-11-03T16:52:00Z', 'f8083addc64cc2958b21d59f512bab97afa33d6b5c9283c80c6f27fe8a4f32a8'),
   epar('ema-reagila', 'Reagila (kariprazin), produktinformasjon', 'reagila', 'PDF datert 11.12.2025', '2026-11-03T16:45:00Z', '9d13d908e239f6368505bfcde6e4381ffb6295f6bc6de049f006e4abed967ec2'),
+  // Kombinering av stemningsstabiliserende (K4 i `docs/verktøy-klinisk-leveranseplan-2026-11.md`), hentet og lest 03.11.2026.
+  preparatomtale('dmp-lamictal', 'Lamictal (lamotrigin) tyggetabletter/dispergerbare tabletter 2–200 mg, preparatomtale', '0000-08198', 'Oppdatert 30.06.2025', '2026-11-03T16:45:30Z', '85fd47d3d8ac3e1310238c34f080f58b6276402b8333871e6cb0b31bdbd4529d'),
+  preparatomtale('dmp-orfiril', 'Orfiril (natriumvalproat) enterotabletter, preparatomtale', '0000-06565', 'Oppdatert 03.09.2026', '2026-11-03T16:52:10Z', '694efe92738bbffb3fb6a0b94ada793803361b3c561b613437c860cfc41243e4'),
+  preparatomtale('dmp-lithionit', 'Lithionit (litiumsulfat) depottabletter, preparatomtale', '0000-05559', 'Oppdatert 08.07.2026', '2026-11-03T16:52:12Z', 'f553e4364b09ac0342386d768aa5e3b3bbebb72697eb57379a062ce5bad4f77f'),
   epar('ema-zyprexa', 'Zyprexa (olanzapin), produktinformasjon', 'zyprexa', 'Sist endret 08.10.2026', '2026-10-28T03:32:59Z', 'd7a60e6f4908c9e7d3e4f8ff39c56bf74a1014719fb7cace04436a065b4d3357'),
   {
     id: 'nice-ng222',

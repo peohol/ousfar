@@ -83,7 +83,7 @@ describe('oversikten', () => {
       .filter((a) => a.classList.contains('verktoykort__lenke'))
       .map((a) => [...a.querySelectorAll('.verktoykort__linje')].map((l) => l.textContent))
 
-  it('viser de fire verktøyene, og at bare de godkjente reglene som kan gi en komplett plan, kan beregnes: de to depotreglene', async () => {
+  it('viser de fire verktøyene, og at bare de godkjente reglene som kan gi en komplett plan, kan beregnes: de to depotreglene og de to tilleggsreglene', async () => {
     vis()
     expect(screen.getByRole('heading', { level: 1, name: 'Verktøy' })).toBeTruthy()
     expect(document.activeElement).toBe(screen.getByRole('heading', { level: 1 }))
@@ -99,8 +99,8 @@ describe('oversikten', () => {
       ['Ingen beregning tilgjengelig ennå', 'Fagtekst: Agomelatin, Bupropion'],
       ['Ingen beregning tilgjengelig ennå'],
       ['Kan beregnes: Aripiprazol: peroral → depotinjeksjon, Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)'],
-      // Kombinere stemningsstabiliserende (K4) har ingen godkjente regler ennå, og kortet sier det.
-      ['Ingen beregning tilgjengelig ennå'],
+      // Kombinere stemningsstabiliserende (K4): begge tilleggsreglene er godkjent av den uavhengige kontrolløren og gir en komplett plan.
+      ['Kan beregnes: Litium → lamotrigin, Valproat → lamotrigin'],
     ])
     expect(screen.queryByText(/Ingen beregninger er tilgjengelige ennå/)).toBeNull()
     expect(screen.queryByRole('alert')).toBeNull()
