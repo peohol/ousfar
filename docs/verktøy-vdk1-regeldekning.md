@@ -6,7 +6,7 @@ Oversikten svarer på VDK-1 i `docs/verktøy-omlegging-2026-11.md`: hva de tre v
 
 Kildetabellen fra Psychiatrienet er bare brukt som metadata som allerede ligger i repoet (om tabellen har en anbefaling for kombinasjonen), og bare i sum. Ingen tekst fra kilden er brukt, og at kilden har en anbefaling, gir aldri i seg selv en OUSFAR-regel (`docs/verktøy-p3-rettigheter.md`).
 
-**Regelsettet har 8 klinisk godkjente regelversjoner** (`kryssnedtrapping-sertralin-mirtazapin` v10, `depot-aripiprazol-maintena` v3, `depot-paliperidon-xeplion` v3, `seponering-vortioksetin` v12, `seponering-bupropion` v5, `seponering-agomelatin` v1, `tillegg-valproat-lamotrigin` v2, `tillegg-litium-lamotrigin` v2), 6 av dem med beregning, hver bare i omfanget kontrolløren godkjente.
+**Regelsettet har 9 klinisk godkjente regelversjoner** (`kryssnedtrapping-sertralin-mirtazapin` v10, `depot-aripiprazol-maintena` v3, `depot-paliperidon-xeplion` v3, `seponering-escitalopram` v13, `seponering-vortioksetin` v12, `seponering-bupropion` v5, `seponering-agomelatin` v1, `tillegg-valproat-lamotrigin` v2, `tillegg-litium-lamotrigin` v2), 7 av dem med beregning, hver bare i omfanget kontrolløren godkjente.
 
 ## 1. Sammendrag
 
@@ -16,9 +16,9 @@ Antall kombinasjoner etter hva verktøyet gir. For seponering er en kombinasjon 
 | --- | --- | --- | --- | --- |
 | Valgbart | 23 virkestoffer, 23 valg med formulering | 23 virkestoffer, 23 valg med formulering | 25 virkestoffer, 34 valg med formulering | 11 virkestoffer, 11 valg med formulering |
 | Kombinasjoner | 23 | 506 | 1122 | 110 |
-| Beregning med klinisk godkjent regel (i godkjent omfang) | 1 | 1 | 2 | 2 |
+| Beregning med klinisk godkjent regel (i godkjent omfang) | 2 | 1 | 2 | 2 |
 | Klinisk godkjent fagtekst, ingen beregning | 2 | 0 | 0 | 0 |
-| Regel finnes, kontrollert og ikke godkjent | 7 | 1 | 1 | 0 |
+| Regel finnes, kontrollert og ikke godkjent | 6 | 1 | 1 | 0 |
 | Regel finnes som fagtekst, ikke godkjent | 6 | 0 | 0 | 0 |
 | Regel finnes, ikke ferdig kontrollert | 0 | 0 | 7 | 0 |
 | Ingen OUSFAR-regel; kilden har en anbefaling | 0 | 504 | 885 | 108 |
@@ -32,6 +32,7 @@ Hver klinisk godkjente regel med beregning, kombinasjonen den gjelder, og omfang
 
 | Verktøy | Regel | Kombinasjon | Godkjent omfang (kontrollørens avgrensning) | Forskriverens valg i testmatrisen |
 | --- | --- | --- | --- | --- |
+| Trappe ned antidepressiv | `seponering-escitalopram` v13 | Escitalopram | Kontrollørens samlede kontroll av 255dd94 04.11.2026 (PR #323, kommentar 6622813839): faglig akseptert og klinisk godkjent bare for nøyaktig denne regelversjonen og dette fingeravtrykket, avgrenset til et symptomstyrt, pragmatisk komplett forløp fra 10 eller 20 mg hos voksne under 65 år med kort behandlingstid, ingen tidligere seponeringsplager og avklarte interaksjoner og kontraindikasjoner, med hele Cipralex-dråper (1 mg per dråpe), valgt gradvis reduksjon til 3 → 2 → 1 mg, siste dose holdt og vurdert individuelt før 1 → 0, og fleksible kontrollpunkter 7, 14 og 28 dager etter siste dose. Godkjenningen er ingen generell garanti mot seponeringsplager, ingen automatisk terskel for andre preparater eller pasientgrupper, og ingen fullført K1-dekning. 1 mg er en praktisk formuleringsterskel, ikke en dokumentert universell trygg seponeringsgrense. | 2 kasus, 0 gir plan |
 | Trappe ned antidepressiv | `seponering-vortioksetin` v12 | Vortioksetin | Kontrollørens gjennomgang av a38fac14 03.11.2026 (rettelsen av RCPsych-faktumet, PR #309): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare én første reduksjon 20 → 15 mg/døgn, med minst 28 dager før ny symptomstyrt vurdering, hos voksne under 65 år, kort/ikke-langvarig behandling, uten tidligere seponeringsplager, etter alle opprinnelige vurderinger/stopp, med kontrollerte tabletter/styrker. Ingen påfølgende reduksjon, langsom variant eller utvidet pasientgruppe. Identisk klinisk omfang som v11. Godkjenningen gjelder bare dette eksakte fingeravtrykket og disse betingelsene. Den er en korrigering av kildebeskrivelsen, ikke en ny generell godkjenning av algoritmer for nedtrapping. | 18 kasus, 0 gir plan |
 | Bytte antidepressiv | `kryssnedtrapping-sertralin-mirtazapin` v10 | Sertralin → Mirtazapin | Kontrollørens gjennomgang av a38fac14 03.11.2026 (rettelsen av RCPsych-faktumet, PR #309): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare det tidligere godkjente startforløpet fra sertralin 50 eller 100 mg, kort/ikke-langvarig behandling, med kontrollerte tabletter og styrker, obligatoriske bekreftelser og tidligere seponeringsplager fraværende. Dette omfatter ikke videre 25 → 0, opptrapping av mirtazapin, andre doser, langtidsbehandling eller endret trinnlengde. Identisk klinisk omfang som v9. Godkjenningen gjelder bare dette eksakte fingeravtrykket og disse betingelsene. Den er en korrigering av kildebeskrivelsen, ikke en ny generell godkjenning av algoritmer for nedtrapping. | 14 kasus, 0 gir plan |
 | Bytte antipsykotikum | `depot-aripiprazol-maintena` v3 | Aripiprazol (peroral) → Aripiprazol (depotinjeksjon) | Kontrollørens gjennomgang av 62ebb21 30.10.2026 (P4.8): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: oppstart med én injeksjon Abilify Maintena 400 mg, peroral aripiprazol i 14 dager og deretter 400 mg månedlig, hos voksne med schizofreni som er stabilisert på og har tålt peroral aripiprazol. Gjelder ikke andre depottyper eller oppstartsvarianter, kjent langsom CYP2D6-omsetning, sterke CYP2D6- eller CYP3A4-hemmere, CYP3A4-induktorer eller ubekreftet stabilisering eller toleranse. | 13 kasus, 4 gir plan |
@@ -49,6 +50,11 @@ Hver klinisk godkjente regel med beregning, kombinasjonen den gjelder, og omfang
 ## 4. Vanlige valg som stopper innenfor de godkjente reglene
 
 Valgene i testmatrisen som ikke gir en plan, selv om regelen er godkjent: dosen, svarene eller formen ligger utenfor det godkjente omfanget, et trinn kan ikke gis med preparatene, eller planen når ikke sluttmålet: en delplan vises aldri, heller ikke etter en tidligere godkjent regelversjon (Peders beslutning 03.11.2026).
+
+**`seponering-escitalopram`** – 2 av 2 valg gir ingen plan:
+
+- E01 (vanlig dose innenfor det godkjente omfanget): escitalopram dråper 10 mg: forskriveren må velge dosen ved første trinn, og ingen doser vises før planen er komplett, dose «10» → ingen plan
+- E02 (utilgjengelige eller endrede preparater): escitalopram tablett 20 mg: når ikke sluttmålet uten dråper, dose «20» → ingen plan
 
 **`seponering-vortioksetin`** – 18 av 18 valg gir ingen plan:
 
@@ -131,7 +137,6 @@ Regelutkast som er kontrollert og ikke godkjent (eller bare fagtekst), og som de
 | Trappe ned antidepressiv | `seponering-amitriptylin-langsom` v8 | Amitriptylin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-citalopram` v9 | Citalopram | fagtekst | bare fagtekst |
 | Trappe ned antidepressiv | `seponering-duloksetin` v6 | Duloksetin | fagtekst | bare fagtekst |
-| Trappe ned antidepressiv | `seponering-escitalopram` v12 | Escitalopram | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-escitalopram-langsom` v8 | Escitalopram | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-fluoksetin` v12 | Fluoksetin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-fluoksetin-annenhver-dag` v5 | Fluoksetin | beregnbar | ikke godkjent |
@@ -256,7 +261,7 @@ Tabellene viser derfor hvor mye av begrensningen som skyldes trinngrensen, og hv
 | --- | --- | --- | --- | --- | --- |
 | amitriptylin | eneste form | 50 mg | 50 → 40 → 30 → 25 → 20 mg (4 reduksjoner) | 50 → 40 → 30 → 25 → 20 mg (4 reduksjoner) | 50 → 40 → 30 → 25 → 20 → 10 mg (5 reduksjoner) |
 | escitalopram | Tablett | 20 mg | 20 → 15 mg (1 reduksjon) | 20 → 15 → 10 mg (2 reduksjoner) | 20 → 15 → 10 → 5 mg (3 reduksjoner) |
-| escitalopram | Dråper, oppløsning | 20 mg | 20 → 15 → 12 → 9 → 7 → 6 → 5 → 4 → 3 mg (8 reduksjoner) | 20 → 15 → 11 → 8 → 6 → 5 → 4 → 3 mg (7 reduksjoner) | 20 → 15 → 11 → 8 → 6 → 5 → 4 → 3 mg (7 reduksjoner) |
+| escitalopram | Dråper, oppløsning | 20 mg | 20 → 15 → 12 → 9 → 7 → 6 → 5 → 4 → 3 → 2 → 1 mg (10 reduksjoner) | 20 → 15 → 11 → 8 → 6 → 5 → 4 → 3 → 2 → 1 mg (9 reduksjoner) | 20 → 15 → 11 → 8 → 6 → 5 → 4 → 3 → 2 → 1 mg (9 reduksjoner) |
 | fluoksetin | Dispergerbar tablett | 40 mg | 40 → 30 mg (1 reduksjon, med delte tabletter) | 40 → 30 → 20 mg (2 reduksjoner, med delte tabletter) | 40 → 30 → 20 → 10 mg (3 reduksjoner, med delte tabletter) |
 | fluoksetin | Tablett | 40 mg | 40 → 30 mg (1 reduksjon, med delte tabletter) | 40 → 30 → 20 mg (2 reduksjoner, med delte tabletter) | 40 → 30 → 20 → 10 mg (3 reduksjoner, med delte tabletter) |
 | fluvoksamin | eneste form | 100 mg | 100 → 75 mg (1 reduksjon, med delte tabletter) | 100 → 75 → 50 mg (2 reduksjoner, med delte tabletter) | 100 → 75 → 50 mg (2 reduksjoner, med delte tabletter) |

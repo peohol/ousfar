@@ -44,6 +44,7 @@ const epar = (id: string, tittel: string, navn: string, versjon: string, hentet:
 
 export const KILDER: readonly Kilde[] = [
   preparatomtale('dmp-cipralex', 'Cipralex (escitalopram) tabletter, preparatomtale', '2002-00713', 'Oppdatert 22.11.2024', '2026-10-28T03:32:50Z', 'a04d22200055055d2cf48436c3a83f0c9bf6d87044f5d218cd39d0d9984d018a'),
+  preparatomtale('dmp-cipralex-draper', 'Cipralex (escitalopram) dråper, preparatomtale', '07-4892', 'Oppdatert 02.05.2024', '2026-11-03T20:15:31Z', '8cdc32851beab96c1032d10e444ab372186525790f32dd284dec5ec7a78e68ee'),
   preparatomtale('dmp-cipramil', 'Cipramil (citalopram) tabletter, preparatomtale', '0000-08151', 'Oppdatert 16.05.2024', '2026-10-28T03:32:58Z', '4bc8dfd2e647d273f044bc3019d3fe116a4ca59b1ff47951866230484e2fd8de'),
   preparatomtale('dmp-zoloft', 'Zoloft (sertralin) tabletter, preparatomtale', '0000-08203', 'Oppdatert 07.01.2026', '2026-10-28T03:32:56Z', '4ac8f7305379de98aa2dc9ed576b06890624c9035c9b90633ec32262d9c3d64e'),
   preparatomtale('dmp-fluoxetin', 'Fluoxetine Vitabalans (fluoksetin) tabletter, preparatomtale', '10-7362', 'Oppdatert 12.11.2021', '2026-10-28T03:32:52Z', '221a73511f81243af0c8744ac901e90377fc4c46e1c5f03bbb2bdde564582c17'),
