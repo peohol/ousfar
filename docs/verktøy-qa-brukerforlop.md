@@ -79,7 +79,7 @@ Klinikerflaten skal aldri tilby en delplan som klinisk doseplan, heller ikke for
 | K1 komplette nedtrappinger | 1 | 3 | 2 | nei |
 | K2 komplette antidepressivbytter | 0 | 0 | 3 | nei |
 | K3 komplette perorale antipsykotikabytter | 0 | 0 | 2 | nei |
-| K3 komplette depotrelaterte antipsykotikabytter | 2 | 2 | 2 | ja |
+| K3 komplette depotrelaterte antipsykotikabytter | 2 | 2 | 2 | godkjent i snevert omfang; om de teller mot minstekravet, avgjøres i K3-kontrollen (#320) |
 | K4 komplette tilleggsscenarier | 2 | 2 | 2 | ja |
 
 Kravet telles i ulike klinisk godkjente forløp (regler), ikke i positive kasus: to startdoser eller to legemiddelformer i samme regel er ett forløp. Oppfylt her betyr bare at QA-testen finner så mange; klinisk godkjenning og prøve i appen kreves i tillegg (plan §8).

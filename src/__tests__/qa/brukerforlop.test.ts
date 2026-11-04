@@ -351,11 +351,12 @@ function minstekrav(): string[] {
   const komplette = (l: Leveranse, filter: (id: string) => boolean = () => true) => RESULTATER.filter((r) => r.forlop.leveranse === l && r.klasse === 'komplett' && filter(r.forlop.id))
   const ulike = (x: readonly { regel?: { id: string } }[]) => new Set(x.map((r) => r.regel!.id)).size
   const depot = (id: string) => BRUKERFORLOP.find((f) => f.id === id)!.valg.til?.formulering !== 'standard' || BRUKERFORLOP.find((f) => f.id === id)!.valg.fra.formulering !== 'standard'
-  const rader: [string, ReturnType<typeof komplette>, number][] = [
+  // Fjerde ledd: et forbehold fra leveranseplanen (§10.1, §10.4) som gjør at tallet ikke alene avgjør om kravet er oppfylt.
+  const rader: [string, ReturnType<typeof komplette>, number, string?][] = [
     ['K1 komplette nedtrappinger', komplette('K1'), 2],
     ['K2 komplette antidepressivbytter', komplette('K2'), 3],
     ['K3 komplette perorale antipsykotikabytter', komplette('K3', (id) => !depot(id)), 2],
-    ['K3 komplette depotrelaterte antipsykotikabytter', komplette('K3', depot), 2],
+    ['K3 komplette depotrelaterte antipsykotikabytter', komplette('K3', depot), 2, 'godkjent i snevert omfang; om de teller mot minstekravet, avgjøres i K3-kontrollen (#320)'],
     ['K4 komplette tilleggsscenarier', komplette('K4'), 2],
   ]
   return [
@@ -363,7 +364,7 @@ function minstekrav(): string[] {
     '',
     '| Krav | Ulike godkjente forløp med komplett plan | Positive kasus | Minst | Oppfylt |',
     '| --- | ---: | ---: | ---: | --- |',
-    ...rader.map(([k, x, m]) => `| ${k} | ${ulike(x)} | ${x.length} | ${m} | ${ulike(x) >= m ? 'ja' : 'nei'} |`),
+    ...rader.map(([k, x, m, forbehold]) => `| ${k} | ${ulike(x)} | ${x.length} | ${m} | ${ulike(x) < m ? 'nei' : (forbehold ?? 'ja')} |`),
     '',
     'Kravet telles i ulike klinisk godkjente forløp (regler), ikke i positive kasus: to startdoser eller to legemiddelformer i samme regel er ett forløp. Oppfylt her betyr bare at QA-testen finner så mange; klinisk godkjenning og prøve i appen kreves i tillegg (plan §8).',
     '',
