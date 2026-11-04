@@ -33,6 +33,7 @@ export const ENDRINGSLOGG: Endring[] = [
     typer: ['Funksjonalitet'],
     omfang: 'Mindre omfang',
     gjelder: ['verktoy'],
+    utenVarsel: true,
     punkter: [
       'Gjelder bare administratorene, som fortsatt er de eneste som ser verktøyene. Ingen regler, doser eller godkjenninger er endret, og ingen regel bruker dette ennå.',
       'En ny regel kan oppgi hvilke eldre regler for samme bytte den erstatter. Når den nye regelen er klinisk godkjent, tilbyr verktøyet ikke lenger de gamle, og en plan etter dem stopper med beskjed om at regelen er trukket og hvilken regel som har erstattet den. Før godkjenningen gjelder de gamle som før.',

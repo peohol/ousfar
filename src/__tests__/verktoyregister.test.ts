@@ -294,10 +294,9 @@ describe('Doseplanen i verktøyene', () => {
     const nySert = godkjennITest({ ...structuredClone(sert), tittel: 'Ny sertralin → mirtazapin bare i testen', erstatter: [SERT] }, 'test-erstatter-sertralin-mirtazapin')
     const sertvalg = { fra: v('sertralin'), til: v('mirtazapin') }
     expect(reglerFor(BYTTE_AD!, sertvalg).map((r) => r.id)).toContain(SERT)
-    // Den komplette K2-regelen (ikke godkjent) står også i settet; den gamle er borte, den nye er der.
-    const sertider = reglerFor(BYTTE_AD!, sertvalg, { ...REGELSETT, regler: [...REGELSETT.regler, nySert] }).map((r) => r.id)
-    expect(sertider).toContain('test-erstatter-sertralin-mirtazapin')
-    expect(sertider).not.toContain(SERT)
+    const etter = reglerFor(BYTTE_AD!, sertvalg, { ...REGELSETT, regler: [...REGELSETT.regler, nySert] }).map((r) => r.id)
+    expect(etter).toContain('test-erstatter-sertralin-mirtazapin')
+    expect(etter).not.toContain(SERT)
   })
 
   it('ingen av appens regler har en ugyldig erstatning', () => {

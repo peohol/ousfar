@@ -132,8 +132,8 @@ const sammeValg = (a: Pick<Regel, 'fra' | 'til' | 'plan'>, b: Pick<Regel, 'fra' 
 /**
  * Hva som er galt med erstatningene (`Regel.erstatter`) til reglene i
  * `egne`, slått opp blant `alle`: hver id må finnes, være en annen regel med
- * samme fra, til og planform, stå bare én gang, og den erstattede regelen kan
- * ikke selv erstatte regelen som erstatter den.
+ * samme fra, til og planform og stå bare én gang, og erstatningene kan ikke
+ * danne en sirkel av noen lengde (da ville alle reglene i den være trukket).
  */
 export function erstatningsfeil(egne: readonly Regel[], alle: readonly Regel[] = egne): string[] {
   const feil: string[] = []
@@ -149,10 +149,28 @@ export function erstatningsfeil(egne: readonly Regel[], alle: readonly Regel[] =
       const gammel = alle.find((x) => x.id === id)
       if (!gammel) feil.push(`${r.id}: erstatter ${id}, som ikke finnes`)
       else if (!sammeValg(r, gammel)) feil.push(`${r.id}: erstatter ${id}, som ikke gjelder samme fra, til og planform`)
-      else if (gammel.erstatter?.includes(r.id)) feil.push(`${r.id}: erstatter ${id}, som selv erstatter ${r.id}`)
     }
+    const sirkel = erstatningssirkel(r.id, alle)
+    if (sirkel) feil.push(`${r.id}: inngår i en sirkel av erstatninger (${sirkel.join(' → ')})`)
   }
   return feil
+}
+
+/** En sirkel av erstatninger som går fra regelen og tilbake til den (id-ene i rekkefølge), uansett lengde; ellers `undefined`. */
+function erstatningssirkel(start: string, alle: readonly Regel[]): string[] | undefined {
+  const erstatter = new Map(alle.map((x) => [x.id, x.erstatter ?? []]))
+  const besokt = new Set<string>()
+  const finn = (sti: string[]): string[] | undefined => {
+    for (const neste of erstatter.get(sti.at(-1)!) ?? []) {
+      if (neste === start && sti.length > 1) return [...sti, neste]
+      if (neste === start || besokt.has(neste)) continue
+      besokt.add(neste)
+      const funnet = finn([...sti, neste])
+      if (funnet) return funnet
+    }
+    return undefined
+  }
+  return finn([start])
 }
 
 /**

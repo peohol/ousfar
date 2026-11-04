@@ -6,7 +6,7 @@
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { FEST_K2, K2_KONTROLLFIL, K2_REGELRAPPORT, K2KASUS, k2avvik, kjorK2, lagK2Kontrollgrunnlag, somAvklartOgGodkjent, type K2kasus, type Sluttrinn } from '../verktoy/k2kontroll'
+import { FEST_K2, K2_KONTROLLFIL, K2_REGELRAPPORT, K2KASUS, k2avvik, kjorK2, lagK2Kontrollgrunnlag, medSluttrinnVedLavesteTablett, somAvklartOgGodkjent, type K2kasus, type Sluttrinn } from '../verktoy/k2kontroll'
 import { VERKTOY } from '../verktoy/register'
 import { BYTTESETT, STARTFORLOP_SERTRALIN_MIRTAZAPIN } from '../verktoy/regler/antidepressivbytter'
 import type { Festuttrekk } from '../verktoy/regler/aksepttest'
@@ -157,6 +157,18 @@ describe('K2: sluttrinnet ved bytte (K2-2)', () => {
         expect(res.status, `${r.id} ${d}`).toBe('stoppet')
         expect(res.status === 'stoppet' && res.stoppgrunner.join(' '), `${r.id} ${d}`).toMatch(/avslutning\.fra_hoyst_mg mangler og må avklares faglig/)
       }
+    }
+  })
+
+  it('regler med bare stopp-eksempler godtas bare så lenge sluttrinnet venter; når verdien settes, kreves et beregnet regneeksempel igjen', () => {
+    const alle = REGELSETTENE.flatMap((x) => x.regler)
+    const vakt = (r: Regel) => kontrollerRegelsett({ ...BYTTESETT, regler: [r] }, lesKontrollgrunnlag(), alle).filter((f) => f.includes('har ingen regneeksempler med beregnet plan'))
+    for (const r of BYTTESETT.regler) {
+      expect(r.eksempler.every((e) => e.stopp), r.id).toBe(true)
+      expect(vakt(r), r.id).toEqual([])
+      const satt = structuredClone(r)
+      medSluttrinnVedLavesteTablett(satt)
+      expect(vakt(satt), r.id).toEqual([`${r.id}: har ingen regneeksempler med beregnet plan`])
     }
   })
 
