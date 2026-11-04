@@ -112,6 +112,7 @@ En plan er **klinisk** bare når alt dette gjelder (`kliniskSperre`):
 
 - regelversjonen er gyldig klinisk godkjent (`godkjenningsfeil` fra P4: riktig versjon og fingeravtrykk, uavhengig kontrollør, ingen åpne valg);
 - regelen er ikke en syntetisk testregel;
+- regelen er ikke trukket: ingen gyldig godkjent regel blant appens regler erstatter den (`Regel.erstatter`, P4 §5). Appen gir motoren alle reglene (`Omgivelse.regler`); uten dem ser motoren i regelsettet planen beregnes med;
 - preparatene er fra FEST;
 - FEST-kopien er bekreftet fersk. Kravet er positivt: kontrolltidspunktet må være et gyldig tidspunkt med tidssone, høyst 48 timer gammelt og høyst 5 minutter fram i tid (klokkeavvik), og kildedatoen en gyldig dato, med eller uten klokkeslett slik FEST-synken lagrer den, som ikke ligger etter kontrollen (ett døgns slingring for tidssonen). Kalenderdatoen kontrolleres før tidspunktet tolkes, så en dag som ikke finnes (30. februar) avvises i stedet for å flyttes til neste måned. Kildedatoen beholdes uendret i sporet. 48 timer og 5 minutter er tekniske driftsregler for datagrunnlaget, ikke medisinske terskler. Mangler et tidsstempel eller kan det ikke tolkes, stopper beregningen helt (P5.1).
 
