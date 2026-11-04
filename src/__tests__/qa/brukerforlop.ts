@@ -500,18 +500,24 @@ const fortsetterMedDose = (f: Doseplanresultat & { status: 'doseplan' }, id: str
 }
 /**
  * Det eksisterende legemidlet i et tillegg holdes på nøyaktig forskriverens
- * aktuelle dose gjennom hele forløpet: planen oppgir den som uendret dose,
- * og/eller som sammenhengende perioder som alle har den dosen og ikke slutter.
- * En plan som ikke sier noe om dosen, eller som endrer den i ett trinn eller
- * til slutt, holder den ikke uendret.
+ * aktuelle dose gjennom hele forløpet, fra planens første dag:
+ * - som uendret dose (`uendret_mg`, motoren viser den fra forløpets start),
+ *   der forløpet starter på planens første dag; eventuelle perioder i tillegg
+ *   er overflødige, men må ha samme dose, henge sammen og ikke slutte;
+ * - ellers som perioder alene, der den første begynner på planens første dag
+ *   og resten henger sammen, har den dosen og ikke slutter.
+ * En plan som ikke sier noe om dosen, som endrer den i ett trinn eller til
+ * slutt, eller som først fører legemidlet opp etter planens første dag, holder
+ * den ikke uendret.
  */
 const fortsetterUendret = (f: Doseplanresultat & { status: 'doseplan' }, id: string | undefined, startdose_mg: number) => {
   const x = f.forlop.find((y) => y.id === id)
   if (!x || x.siste_dosedag !== null || x.injeksjoner.length > 0) return false
-  if (x.uendret_mg === undefined && x.perioder.length === 0) return false
-  if (x.uendret_mg !== undefined && !nesten(x.uendret_mg, startdose_mg)) return false
+  const planstart = Math.min(...f.forlop.map((y) => y.start))
   const sammenhengende = x.perioder.every((p, i) => i === 0 || (x.perioder[i - 1]!.til !== null && p.fra === x.perioder[i - 1]!.til! + 1))
-  return sammenhengende && x.perioder.every((p) => nesten(p.mg, startdose_mg)) && (x.perioder.at(-1)?.til ?? null) === null
+  const perioderUendret = sammenhengende && x.perioder.every((p) => nesten(p.mg, startdose_mg)) && (x.perioder.at(-1)?.til ?? null) === null
+  if (x.uendret_mg !== undefined) return nesten(x.uendret_mg, startdose_mg) && x.start === planstart && perioderUendret
+  return x.perioder.length > 0 && x.perioder[0]!.fra === planstart && perioderUendret
 }
 const seponeres = (f: Doseplanresultat & { status: 'doseplan' }, id: string | undefined) => {
   const x = f.forlop.find((y) => y.id === id)

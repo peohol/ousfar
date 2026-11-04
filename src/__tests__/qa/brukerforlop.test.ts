@@ -304,6 +304,28 @@ describe('QA: det eksisterende legemidlet i et tillegg holdes på den faktiske d
         'perioder med uendret dose hele veien',
       ).toBe(true)
       expect(
+        endret((f) => {
+          delete f.uendret_mg
+          f.perioder = perioder([dose, dose])
+        }),
+        'bare perioder, fra dag 1',
+      ).toBe(true)
+      expect(
+        endret((f) => {
+          delete f.uendret_mg
+          f.perioder = perioder([dose, dose]).map((p) => ({ ...p, fra: p.fra + 14, til: p.til === null ? null : p.til + 14 }))
+        }),
+        'bare perioder, først fra dag 15',
+      ).toBe(false)
+      expect(
+        endret((f) => (f.perioder = perioder([dose, dose]).map((p) => ({ ...p, fra: p.fra + 14, til: p.til === null ? null : p.til + 14 })))),
+        'uendret dose fra start, med overflødige perioder fra dag 15',
+      ).toBe(true)
+      expect(
+        endret((f) => (f.start = 15)),
+        'uendret dose, men forløpet starter dag 15',
+      ).toBe(false)
+      expect(
         endret((f) => (f.perioder = perioder([dose, dose / 2, dose]))),
         'dosen endret i ett trinn',
       ).toBe(false)
