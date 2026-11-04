@@ -111,6 +111,69 @@ export function godkjenningsfeil(r: Regel): string[] {
 export const erKliniskGodkjent = (r: Regel) => godkjenningsfeil(r).length === 0
 
 /**
+ * Reglene i `regler` som erstatter `r` (`Regel.erstatter`) og selv er gyldig
+ * klinisk godkjent. Finnes det en, er `r` trukket: verktøyet tilbyr den ikke,
+ * og motoren gir aldri en klinisk plan etter den. Godkjenningen av den nye
+ * regelen og tilbaketrekkingen av den gamle skjer dermed i samme øyeblikk.
+ */
+export const erstattereFor = (r: Pick<Regel, 'id'>, regler: readonly Regel[]): Regel[] =>
+  regler.filter((x) => x.id !== r.id && x.erstatter?.includes(r.id) && erKliniskGodkjent(x))
+
+/** Om regelen er trukket fordi en gyldig godkjent regel i `regler` erstatter den. */
+export const erErstattet = (r: Pick<Regel, 'id'>, regler: readonly Regel[]): boolean => erstattereFor(r, regler).length > 0
+
+/** Det motoren sier når en regel er trukket. */
+export const erstattettekst = (x: Pick<Regel, 'tittel' | 'versjon'>): string =>
+  `Regelen er trukket: den er erstattet av «${x.tittel}» (regelversjon ${x.versjon}), som er klinisk godkjent.`
+
+const sammeValg = (a: Pick<Regel, 'fra' | 'til' | 'plan'>, b: Pick<Regel, 'fra' | 'til' | 'plan'>) =>
+  kanonisk(a.fra) === kanonisk(b.fra) && kanonisk(a.til) === kanonisk(b.til) && a.plan.form === b.plan.form
+
+/**
+ * Hva som er galt med erstatningene (`Regel.erstatter`) til reglene i
+ * `egne`, slått opp blant `alle`: hver id må finnes, være en annen regel med
+ * samme fra, til og planform og stå bare én gang, og erstatningene kan ikke
+ * danne en sirkel av noen lengde (da ville alle reglene i den være trukket).
+ */
+export function erstatningsfeil(egne: readonly Regel[], alle: readonly Regel[] = egne): string[] {
+  const feil: string[] = []
+  for (const r of egne) {
+    const ids = r.erstatter ?? []
+    if (r.erstatter && ids.length === 0) feil.push(`${r.id}: erstatter ingen regler; utelat feltet`)
+    for (const id of new Set(ids)) {
+      if (ids.filter((x) => x === id).length > 1) feil.push(`${r.id}: erstatter ${id} flere ganger`)
+      if (id === r.id) {
+        feil.push(`${r.id}: kan ikke erstatte seg selv`)
+        continue
+      }
+      const gammel = alle.find((x) => x.id === id)
+      if (!gammel) feil.push(`${r.id}: erstatter ${id}, som ikke finnes`)
+      else if (!sammeValg(r, gammel)) feil.push(`${r.id}: erstatter ${id}, som ikke gjelder samme fra, til og planform`)
+    }
+    const sirkel = erstatningssirkel(r.id, alle)
+    if (sirkel) feil.push(`${r.id}: inngår i en sirkel av erstatninger (${sirkel.join(' → ')})`)
+  }
+  return feil
+}
+
+/** En sirkel av erstatninger som går fra regelen og tilbake til den (id-ene i rekkefølge), uansett lengde; ellers `undefined`. */
+function erstatningssirkel(start: string, alle: readonly Regel[]): string[] | undefined {
+  const erstatter = new Map(alle.map((x) => [x.id, x.erstatter ?? []]))
+  const besokt = new Set<string>()
+  const finn = (sti: string[]): string[] | undefined => {
+    for (const neste of erstatter.get(sti.at(-1)!) ?? []) {
+      if (neste === start && sti.length > 1) return [...sti, neste]
+      if (neste === start || besokt.has(neste)) continue
+      besokt.add(neste)
+      const funnet = finn([...sti, neste])
+      if (funnet) return funnet
+    }
+    return undefined
+  }
+  return finn([start])
+}
+
+/**
  * Utfallet av den faglige kontrollen for en regel, slik verktøyet og
  * rapportene sier det: godkjent i det oppgitte omfanget, kontrollert og ikke
  * godkjent, bare fagtekst (kontrollert, men uten beregning), eller fortsatt

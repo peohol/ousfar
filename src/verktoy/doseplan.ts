@@ -274,7 +274,7 @@ export function formvalgFor(r: Regel, valg: Verktoyvalg, skjema: Planskjema, utv
 
 /** Doseplanen, bare når den er klinisk og komplett; ellers en stopp med grunnene. `motor` er en annen bare i kontrollgrunnlag og tester. */
 export function beregnPlan(r: Regel, valg: Verktoyvalg, skjema: Planskjema, utvalg: Legemiddelutvalg, naa: Date, regelsett: Regelsett = REGELSETT, settene?: readonly Regelsett[], motor = kliniskDoseplan): Doseplanresultat {
-  return motor(r, inndataFor(r, valg, skjema), grunnlagFor(r, valg, utvalg), { idag: osloDato(naa), naa: naa.toISOString(), fagtekst: [] }, settFor(r, regelsett, settene))
+  return motor(r, inndataFor(r, valg, skjema), grunnlagFor(r, valg, utvalg), { idag: osloDato(naa), naa: naa.toISOString(), fagtekst: [], regler: regelsett.regler }, settFor(r, regelsett, settene))
 }
 
 /**

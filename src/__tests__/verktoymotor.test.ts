@@ -14,8 +14,9 @@ import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import type { Legemiddelutvalg } from '../legemiddeldata/lesing'
 import { beregn, MOTORVERSJON } from '../verktoy/regler/beregning'
-import { erKliniskGodkjent, fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
-import { apneValg, REGELMODELLVERSJON, type Nedtrappingsstrategi, type Regel } from '../verktoy/regler/modell'
+import { erKliniskGodkjent, erstatningsfeil, fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
+import { kontrollerRegelsett } from '../verktoy/regler/kontroll'
+import { apneValg, REGELMODELLVERSJON, type Nedtrappingsstrategi, type Regel, type Regelsett } from '../verktoy/regler/modell'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
 import { byggesteiner, type Byggestein } from '../verktoy/motor/byggesteiner'
 import { doser, fordel, MAKS_DRAPER, MAKS_ENHETER, styrkevalg, velgSerie, type Dosekandidat } from '../verktoy/motor/dosevalg'
@@ -587,6 +588,83 @@ describe('Sperren mot klinisk bruk', () => {
     expect(kliniskSperre(positivKontroll(), somFest(g.utvalg), NAA)).toEqual([])
     expect(klinisk({})).toMatchObject({ status: 'doseplan', klinisk: true, sperre: [] })
     expect(kliniskSperre(positivKontroll(), g.utvalg, NAA)).toEqual(['Preparatene er fra «Syntetiske testdata», ikke fra FEST.'])
+  })
+
+  describe('En erstattet regel er trukket i samme øyeblikk som den nye godkjennes (Regel.erstatter)', () => {
+    /** En ny versjon av den positive kontrollen som erstatter den, godkjent bare i testen når `godkjent`. */
+    const erstatter = (godkjent: boolean): Regel => {
+      const ny: Regel = { ...structuredClone(positivKontroll()), id: 'positivkontroll-ny-bare-i-test', tittel: 'Ny positiv kontroll', erstatter: ['positivkontroll-bare-i-test'] }
+      if (!godkjent) ny.godkjenning = { status: 'utkast', historikk: [] }
+      else ny.godkjenning.historikk[0]!.fingeravtrykk = fingeravtrykk(ny)
+      return ny
+    }
+    const TRUKKET = 'Regelen er trukket: den er erstattet av «Ny positiv kontroll» (regelversjon 1), som er klinisk godkjent.'
+    const plan = (omgivelse: Partial<typeof OMGIVELSE> & { regler?: readonly Regel[] }, regelsett?: Regelsett) =>
+      kliniskDoseplan(positivKontroll(), AZA, { ...g, utvalg: somFest(g.utvalg) }, { ...OMGIVELSE, ...omgivelse }, regelsett)
+
+    it('den nye regelen er gyldig godkjent bare når godkjenningen også dekker erstatningen', () => {
+      expect(godkjenningsfeil(erstatter(true))).toEqual([])
+      // Erstatningen er en del av fingeravtrykket: legges den til etter godkjenningen, er godkjenningen ugyldig, og den gamle regelen gjelder.
+      const etterpa: Regel = { ...erstatter(true), erstatter: ['positivkontroll-bare-i-test', 'en-annen'] }
+      expect(godkjenningsfeil(etterpa)).toContainEqual(expect.stringMatching(/fingeravtrykket stemmer ikke/))
+      expect(kliniskSperre(positivKontroll(), somFest(g.utvalg), NAA, [positivKontroll(), etterpa])).toEqual([])
+    })
+
+    it('motoren gir aldri en klinisk plan etter den gamle regelen når den nye er godkjent', () => {
+      expect(kliniskSperre(positivKontroll(), somFest(g.utvalg), NAA, [positivKontroll(), erstatter(true)])).toEqual([TRUKKET])
+      const trukket = plan({ regler: [positivKontroll(), erstatter(true)] })
+      expect(trukket).toMatchObject({ status: 'stoppet', klinisk: false })
+      expect(trukket.status === 'stoppet' && trukket.stoppgrunner).toEqual(['Ingen klinisk doseplan kan vises.', TRUKKET])
+      // Uten appens regler ser motoren etter erstatninger i regelsettet planen beregnes med.
+      const sett: Regelsett = { id: 'test', versjon: 1, modell: REGELMODELLVERSJON, beskrivelse: 'Bare i testen.', regler: [positivKontroll(), erstatter(true)] }
+      expect(plan({}, sett)).toMatchObject({ status: 'stoppet', stoppgrunner: ['Ingen klinisk doseplan kan vises.', TRUKKET] })
+      // Delplanen for kontrollgrunnlaget er heller ikke klinisk.
+      expect(kliniskDelplan(positivKontroll(), AZA, { ...g, utvalg: somFest(g.utvalg) }, { ...OMGIVELSE, regler: [erstatter(true)] })).toMatchObject({ status: 'stoppet', klinisk: false })
+    })
+
+    it('før den nye regelen er gyldig godkjent, gjelder den gamle som før', () => {
+      expect(kliniskSperre(positivKontroll(), somFest(g.utvalg), NAA, [positivKontroll(), erstatter(false)])).toEqual([])
+      expect(plan({ regler: [positivKontroll(), erstatter(false)] })).toMatchObject({ status: 'doseplan', klinisk: true, sperre: [] })
+      // En godkjent regel som ikke nevner den gamle, trekker den ikke.
+      const annen: Regel = { ...erstatter(true), erstatter: undefined }
+      annen.godkjenning.historikk[0]!.fingeravtrykk = fingeravtrykk(annen)
+      expect(plan({ regler: [positivKontroll(), annen] })).toMatchObject({ status: 'doseplan', klinisk: true })
+    })
+
+    it('kontrollen krever at hver erstattet regel finnes, er en annen regel og gjelder samme fra, til og planform', () => {
+      const gammel = positivKontroll()
+      const med = (ids: string[] | undefined, endre: (r: Regel) => void = () => undefined): string[] => {
+        const r: Regel = { ...erstatter(false), erstatter: ids }
+        endre(r)
+        return erstatningsfeil([r], [gammel, r])
+      }
+      expect(med(['positivkontroll-bare-i-test'])).toEqual([])
+      expect(med(undefined)).toEqual([])
+      expect(med([])).toEqual(['positivkontroll-ny-bare-i-test: erstatter ingen regler; utelat feltet'])
+      expect(med(['finnes-ikke'])).toEqual(['positivkontroll-ny-bare-i-test: erstatter finnes-ikke, som ikke finnes'])
+      expect(med(['positivkontroll-ny-bare-i-test'])).toEqual(['positivkontroll-ny-bare-i-test: kan ikke erstatte seg selv'])
+      expect(med(['positivkontroll-bare-i-test', 'positivkontroll-bare-i-test'])).toEqual(['positivkontroll-ny-bare-i-test: erstatter positivkontroll-bare-i-test flere ganger'])
+      const annet = 'positivkontroll-ny-bare-i-test: erstatter positivkontroll-bare-i-test, som ikke gjelder samme fra, til og planform'
+      expect(med(['positivkontroll-bare-i-test'], (r) => (r.fra = { type: 'virkestoff', nokkel: 'testoksetin' }))).toEqual([annet])
+      expect(med(['positivkontroll-bare-i-test'], (r) => (r.til = { type: 'virkestoff', nokkel: 'testoksetin' }))).toEqual([annet])
+      expect(med(['positivkontroll-bare-i-test'], (r) => (r.plan.form = r.plan.form === 'seponering' ? 'kryssnedtrapping' : 'seponering'))).toEqual([annet])
+      // Erstatningene kan ikke danne en sirkel av noen lengde, for da ville alle reglene i den være trukket.
+      const ny = erstatter(false)
+      expect(erstatningsfeil([ny], [{ ...gammel, erstatter: [ny.id] }, ny])).toEqual(['positivkontroll-ny-bare-i-test: inngår i en sirkel av erstatninger (positivkontroll-ny-bare-i-test → positivkontroll-bare-i-test → positivkontroll-ny-bare-i-test)'])
+      const a: Regel = { ...gammel, id: 'a', erstatter: ['b'] }
+      const b: Regel = { ...gammel, id: 'b', erstatter: ['c'] }
+      const c: Regel = { ...gammel, id: 'c', erstatter: ['a'] }
+      expect(erstatningsfeil([a, b, c])).toEqual([
+        'a: inngår i en sirkel av erstatninger (a → b → c → a)',
+        'b: inngår i en sirkel av erstatninger (b → c → a → b)',
+        'c: inngår i en sirkel av erstatninger (c → a → b → c)',
+      ])
+      // En kjede uten sirkel er i orden, også når en regel erstatter flere.
+      expect(erstatningsfeil([{ ...a, erstatter: ['b', 'c'] }, b, { ...c, erstatter: undefined }])).toEqual([])
+      // Kontrollen av et regelsett slår opp erstatningene i alle appens regler, så de kan stå i et annet sett.
+      const sett: Regelsett = { id: 'test', versjon: 1, modell: REGELMODELLVERSJON, beskrivelse: 'Bare i testen.', regler: [{ ...ny, erstatter: ['finnes-ikke'] }] }
+      expect(kontrollerRegelsett(sett)).toContainEqual('positivkontroll-ny-bare-i-test: erstatter finnes-ikke, som ikke finnes')
+    })
   })
 
   it('krever et gyldig FEST-tidspunkt innenfor 48 timer tilbake og høyst 5 minutter fram', () => {

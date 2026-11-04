@@ -644,6 +644,14 @@ export interface Regel {
    * godkjenningen hele regelen.
    */
   klinisk_omfang?: Kliniskomfang
+  /**
+   * Id-ene til reglene denne regelen erstatter: samme fra, til og planform.
+   * Fra det øyeblikket denne regelen er gyldig klinisk godkjent, er de
+   * erstattede trukket: verktøyet tilbyr dem ikke, og motoren gir aldri en
+   * klinisk plan etter dem. Før det gjelder de som før. Se
+   * `erstattereFor` og `erstatningsfeil` i `godkjenning.ts`.
+   */
+  erstatter?: string[]
   godkjenning: Godkjenning
 }
 
