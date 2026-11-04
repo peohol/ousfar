@@ -201,7 +201,7 @@ export const SPC = {
   ),
 }
 
-const LITTERATUR = {
+export const LITTERATUR = {
   ed50: h('sorensen-2022', 'Results (dose og SERT-binding)', 'Dosen som gir halvparten av maksimal SERT-binding (ED50) er 3,4 mg for citalopram.'),
   hyperbolsk: h('sorensen-2022', 'Results og Discussion', 'SERT-bindingen øker hyperbolsk med dosen og flater ut ved omtrent 80 % rundt minste vanlige dose; studiene er små og metodene ulike.'),
   horowitz: h('horowitz-2019', 'sammendrag', 'Nedtrapping i like store trinn i SERT-binding gir stadig mindre dosetrinn og kan gå til doser godt under minste terapeutiske dose.'),

@@ -6,7 +6,7 @@
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { FEST_K2, K2_KONTROLLFIL, K2_REGELRAPPORT, K2KASUS, k2avvik, kjorK2, lagK2Kontrollgrunnlag, medSluttrinnVedLavesteTablett, somAvklartOgGodkjent, type K2kasus, type Sluttrinn } from '../verktoy/k2kontroll'
+import { FEST_K2, K2_KONTROLLFIL, K2_REGELRAPPORT, K2KASUS, k2avvik, kjorK2, lagK2Kontrollgrunnlag, medSluttrinnVedLavesteTablett, sluttrinnApent, somAvklartOgGodkjent, type K2kasus, type Sluttrinn } from '../verktoy/k2kontroll'
 import { VERKTOY } from '../verktoy/register'
 import { BYTTESETT, STARTFORLOP_SERTRALIN_MIRTAZAPIN } from '../verktoy/regler/antidepressivbytter'
 import type { Festuttrekk } from '../verktoy/regler/aksepttest'
@@ -147,8 +147,32 @@ describe('K2: regelsettet', () => {
 })
 
 describe('K2: sluttrinnet ved bytte (K2-2)', () => {
-  it('seponerer aldri det gamle SSRI-et uten et avgjort sluttrinn: hver kombinasjon stopper, også simulert godkjent', () => {
-    for (const r of BYTTESETT.regler) {
+  it('har et konkret sluttrinn bare der sertralin tar over dagen etter (direkte overgang), som åpent forslag til kontrolløren', () => {
+    expect(BYTTESETT.regler.filter((r) => !sluttrinnApent(r)).map((r) => r.id)).toEqual(['bytte-escitalopram-sertralin', 'bytte-citalopram-sertralin'])
+    for (const r of BYTTESETT.regler.filter((x) => !sluttrinnApent(x))) {
+      const fase = r.plan.forlop[0]!.faser[0]!
+      if (fase.type !== 'nedtrapping' || typeof fase.avslutning !== 'object' || fase.strategi.type !== 'prosent_av_aktuell') throw new Error(r.id)
+      // Seponeringen gjelder bare fra laveste tablettdose, og bare fordi sertralin startes dagen etter siste dose.
+      expect(fase.avslutning.fra_hoyst_mg.verdi, r.id).toBe(fase.strategi.sluttdose_mg!.verdi)
+      expect(fase.avslutning.fra_hoyst_mg.grunnlag.type === 'ousfar_vurdering' && fase.avslutning.fra_hoyst_mg.grunnlag.avklaring, r.id).toBeNull()
+      expect(fase.avslutning.grunnlag.type === 'ousfar_vurdering' && fase.avslutning.grunnlag.begrunnelse, r.id).toMatch(/bare fordi sertralin tar over dagen etter; uten det nye legemidlet er \d+ mg ingen seponeringsgrense/)
+      const start = r.plan.forlop[1]!.start
+      expect(start.type === 'etter_utvasking' && start.forlop === 'fra' && start.utvasking.verdi, r.id).toBe(0)
+      expect(apneValg(r)).toContain('fra.faser[0].avslutning (åpent forslag)')
+      expect(r.plan.forlop[0]!.vurderinger!.map((v) => v.nar.type)).toEqual(['for_hvert_trinn', 'etter_seponering'])
+    }
+  })
+
+  it('begrunner direkte overgang mot moderat bytte og kryssnedtrapping, som alternativene som ikke er valgt', () => {
+    for (const r of BYTTESETT.regler.filter((x) => !sluttrinnApent(x))) {
+      const start = r.plan.forlop[1]!.start
+      if (start.type !== 'etter_utvasking') throw new Error(r.id)
+      expect(start.utvasking.grunnlag.type === 'ousfar_vurdering' ? start.utvasking.grunnlag.begrunnelse : start.utvasking.grunnlag.henvisninger.map((h) => h.faktum).join(' '), r.id).toMatch(/Moderat bytte med 2–4 dager uten legemiddel er vurdert og ikke valgt/)
+    }
+  })
+
+  it('seponerer aldri det gamle SSRI-et til mirtazapin uten et avgjort sluttrinn: hver kombinasjon stopper, også simulert godkjent', () => {
+    for (const r of BYTTESETT.regler.filter(sluttrinnApent)) {
       const fase = r.plan.forlop[0]!.faser[0]!
       expect(fase.type === 'nedtrapping' && typeof fase.avslutning === 'object' && fase.avslutning.fra_hoyst_mg.verdi, r.id).toBeNull()
       expect(apneValg(r)).toContain('fra.faser[0].avslutning (åpent forslag)')
@@ -164,6 +188,11 @@ describe('K2: sluttrinnet ved bytte (K2-2)', () => {
     const alle = REGELSETTENE.flatMap((x) => x.regler)
     const vakt = (r: Regel) => kontrollerRegelsett({ ...BYTTESETT, regler: [r] }, lesKontrollgrunnlag(), alle).filter((f) => f.includes('har ingen regneeksempler med beregnet plan'))
     for (const r of BYTTESETT.regler) {
+      if (!sluttrinnApent(r)) {
+        expect(r.eksempler.some((e) => !e.stopp), r.id).toBe(true)
+        expect(vakt(r), r.id).toEqual([])
+        continue
+      }
       expect(r.eksempler.every((e) => e.stopp), r.id).toBe(true)
       expect(vakt(r), r.id).toEqual([])
       const satt = structuredClone(r)
@@ -182,7 +211,7 @@ describe('K2: sluttrinnet ved bytte (K2-2)', () => {
   })
 })
 
-describe('K2: planene hvis sluttrinnet avgjøres som laveste tablettdose (K2-2, ikke avgjort), ende til ende med preparatene i FEST', () => {
+describe('K2: planene ende til ende med preparatene i FEST (til sertralin med OUSFARs sluttrinn; til mirtazapin med sluttrinnet simulert som laveste tablettdose, K2-2)', () => {
   it('K0-04: sertralin 100 mg → mirtazapin 30 mg, til sertralin er seponert og mirtazapin står på 30 mg', () => {
     expect(linjer(kasus('bytte-sertralin-mirtazapin:100-30'))).toEqual([
       'Dag 1–14 (09.11.2026–22.11.2026): Sertralin peroralt: 50 mg = 1 tablett à 50 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg',
@@ -199,13 +228,19 @@ describe('K2: planene hvis sluttrinnet avgjøres som laveste tablettdose (K2-2, 
     ])
   })
 
-  it('K0-06: escitalopram 20 mg → sertralin 100 mg, med tre hele dager uten SSRI', () => {
+  it('K0-06: escitalopram 20 mg → sertralin 100 mg, med direkte overgang: sertralin dagen etter siste dose escitalopram', () => {
     expect(linjer(kasus('bytte-escitalopram-sertralin:20-100'))).toEqual([
       'Dag 1–14 (09.11.2026–22.11.2026): Escitalopram peroralt: 10 mg = 1 tablett à 10 mg',
       'Dag 15–28 (23.11.2026–06.12.2026): Escitalopram peroralt: 5 mg = 1 tablett à 5 mg',
-      'Dag 29–31 (07.12.2026–09.12.2026): Escitalopram peroralt: Seponert',
-      'Dag 32–45 (10.12.2026–23.12.2026): Sertralin peroralt: 50 mg = 1 tablett à 50 mg',
-      'Fra dag 46 (fra 24.12.2026): Sertralin peroralt: 100 mg = 1 tablett à 100 mg',
+      'Dag 29–42 (07.12.2026–20.12.2026): Escitalopram peroralt: Seponert; Sertralin peroralt: 50 mg = 1 tablett à 50 mg',
+      'Fra dag 43 (fra 21.12.2026): Sertralin peroralt: 100 mg = 1 tablett à 100 mg',
+    ])
+  })
+
+  it('escitalopram 10 mg → sertralin 50 mg: ett trinn på 5 mg og så sertralin, ingen dag uten SSRI', () => {
+    expect(linjer(kasus('bytte-escitalopram-sertralin:10-50'))).toEqual([
+      'Dag 1–14 (09.11.2026–22.11.2026): Escitalopram peroralt: 5 mg = 1 tablett à 5 mg',
+      'Fra dag 15 (fra 23.11.2026): Escitalopram peroralt: Seponert; Sertralin peroralt: 50 mg = 1 tablett à 50 mg',
     ])
   })
 
@@ -217,8 +252,7 @@ describe('K2: planene hvis sluttrinnet avgjøres som laveste tablettdose (K2-2, 
     ])
     expect(linjer(kasus('bytte-citalopram-sertralin:20-50'))).toEqual([
       'Dag 1–14 (09.11.2026–22.11.2026): Citalopram peroralt: 10 mg = 1 tablett à 10 mg',
-      'Dag 15–17 (23.11.2026–25.11.2026): Citalopram peroralt: Seponert',
-      'Fra dag 18 (fra 26.11.2026): Sertralin peroralt: 50 mg = 1 tablett à 50 mg',
+      'Fra dag 15 (fra 23.11.2026): Citalopram peroralt: Seponert; Sertralin peroralt: 50 mg = 1 tablett à 50 mg',
     ])
   })
 
@@ -230,16 +264,18 @@ describe('K2: planene hvis sluttrinnet avgjøres som laveste tablettdose (K2-2, 
       'dag 29 Mirtazapin',
       'dag 57 Mirtazapin',
     ])
+    // En uke etter siste dose escitalopram (dag 28) vurderes overgangen.
     expect(vurderinger(kasus('bytte-escitalopram-sertralin:20-100'))).toEqual([
       'dag 15 Escitalopram før',
       'dag 29 Escitalopram før',
-      'dag 46 Sertralin før',
-      'dag 60 Sertralin',
-      'dag 74 Sertralin',
+      'dag 35 Escitalopram',
+      'dag 43 Sertralin før',
+      'dag 57 Sertralin',
+      'dag 71 Sertralin',
     ])
     // Uten økning er det ingen vurdering før økning, bare responsen etter oppstarten.
     expect(vurderinger(kasus('bytte-citalopram-mirtazapin:40-15'))).toEqual(['dag 15 Citalopram før', 'dag 29 Citalopram før', 'dag 29 Mirtazapin'])
-    expect(vurderinger(kasus('bytte-citalopram-sertralin:20-50'))).toEqual(['dag 15 Citalopram før', 'dag 46 Sertralin'])
+    expect(vurderinger(kasus('bytte-citalopram-sertralin:20-50'))).toEqual(['dag 15 Citalopram før', 'dag 21 Citalopram', 'dag 43 Sertralin'])
   })
 
   it('hver plan i omfanget når sluttmålet: det gamle seponert, det nye på valgt vedlikeholdsdose uten slutt', () => {
@@ -256,9 +292,9 @@ describe('K2: planene hvis sluttrinnet avgjøres som laveste tablettdose (K2-2, 
           expect(fra!.siste_dosedag, `${r.id} ${d}: seponert`).not.toBeNull()
           expect(til!.siste_dosedag).toBeNull()
           expect(til!.perioder.at(-1)).toMatchObject({ til: null, mg: m })
-          // Ingen dag med det nye legemidlet etter at det gamle er seponert uten at det nye er startet, utenom utvaskingen.
-          const utvasking = r.plan.forlop[1]!.start.type === 'etter_utvasking' ? 3 : 0
-          expect(til!.perioder[0]!.fra).toBe(utvasking === 0 ? 1 : fra!.siste_dosedag! + utvasking + 1)
+          // Det nye startes dag 1 (kryssnedtrapping) eller dagen etter siste dose av det gamle (direkte overgang): ingen dag uten et antidepressiv.
+          const s = r.plan.forlop[1]!.start
+          expect(til!.perioder[0]!.fra).toBe(s.type === 'etter_utvasking' ? fra!.siste_dosedag! + 1 : 1)
         }
       }
     }
