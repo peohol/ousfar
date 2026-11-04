@@ -1276,7 +1276,8 @@ const kb = somVerktoysiden(kasusFor(B2_DATO, undefined, true))
 /** Valgene i K1-01 og K1-02 (dråper fra 10 og 20 mg), som forskriveren gjør i B2 også. */
 const VELGER_10 = [8, 5, 4, 2, 1]
 const VELGER_20 = [12, 7, 6, 5, 4, 2, 1]
-const FRA_10 = draperTilSeponering([[8, 7.5, 20], [6], [5, 4.5, 16.67], [4, 3.75, 20], [3], [2, 2.25, 33.33], [1, 1.5, 50]])
+const TRINN_10: ([number] | [number, number, number])[] = [[8, 7.5, 20], [6], [5, 4.5, 16.67], [4, 3.75, 20], [3], [2, 2.25, 33.33], [1, 1.5, 50]]
+const FRA_10 = draperTilSeponering(TRINN_10)
 const TRINN_20: ([number] | [number, number, number])[] = [[15], [12, 11.25, 20], [9], [7, 6.75, 22.22], [6, 5.25, 14.29], [5, 4.5, 16.67], [4, 3.75, 20], [3], [2, 2.25, 33.33], [1, 1.5, 50]]
 const FRA_20 = draperTilSeponering(TRINN_20)
 /** Planen fra 20 mg tabletter: første trinn (15 mg) med hele tabletter, så de samme dråpene som fra 20 mg dråper. */
@@ -1284,26 +1285,90 @@ const FRA_20_TABLETTER = ['Dag 1–28: Escitalopram peroralt: 15 mg = 1 tablett 
 const SEPONERT_10 = `${KOMPLETT}: Escitalopram seponert fra dag 197.`
 const SEPONERT_20 = `${KOMPLETT}: Escitalopram seponert fra dag 281.`
 /**
- * Pakningene regnestykket i B2.3 bygger på, fra FEST-uttrekket for
+ * Pakningene regnestykket i B2.3 bygger på. Fra FEST-uttrekket for
  * aksepttesten (30.10.2026): Cipralex dråper finnes bare som flaske à 15 ml,
  * og de minste pakningene med 5 og 10 mg tabletter har 28 stk. 20 dråper per
  * ml følger av 20 mg/ml og 1 mg per dråpe (preparatomtalen for dråpene pkt. 2).
- * Testene kontrollerer tallene mot uttrekket.
+ * Holdbarheten etter anbrudd, 8 uker (preparatomtalen for dråpene pkt. 6.3),
+ * står ikke i FEST; den er oppgitt av kontrolløren 04.11.2026 med henvisning
+ * til Felleskatalogen og må stå i kildegrunnlaget før en godkjenning.
+ * Testene kontrollerer pakningene mot uttrekket.
  */
-export const B2_PAKNINGER = { flaske_ml: 15, draper_per_ml: 20, minste_tablettpakning: { 5: 28, 10: 28 } } as const
+export const B2_PAKNINGER = { flaske_ml: 15, draper_per_ml: 20, holdbarhet_etter_anbrudd_dager: 56, minste_tablettpakning: { 5: 28, 10: 28 } } as const
 const TRINNDAGER = 28
-const flasker = (draper: number) => Math.ceil(draper / (B2_PAKNINGER.flaske_ml * B2_PAKNINGER.draper_per_ml))
+const FLASKE = B2_PAKNINGER.flaske_ml * B2_PAKNINGER.draper_per_ml
 const ml = (draper: number) => tall(Math.round((draper / B2_PAKNINGER.draper_per_ml) * 10) / 10)
-/** Dråpene i et forløp med dråper på 1 mg i trinnene, ett trinn per {@link TRINNDAGER} dager. */
-const draperI = (trinn: readonly (readonly number[])[]) => trinn.reduce((sum, [mg]) => sum + mg! * TRINNDAGER, 0)
+
+/**
+ * Flaskene et forløp med dråper trenger, dag for dag: en åpnet flaske brukes
+ * til den er tom eller holdbarheten etter anbrudd er ute, og resten kastes. En
+ * dose som ikke er dekket av resten i den åpne flasken, tas fra en ny flaske.
+ */
+export function flaskerOverTid(draperPerDag: readonly number[], flaske: number = FLASKE, holdbarhet: number = B2_PAKNINGER.holdbarhet_etter_anbrudd_dager): number {
+  let antall = 0
+  let igjen = 0
+  let apnet = -Infinity
+  draperPerDag.forEach((dose, dag) => {
+    if (dag - apnet >= holdbarhet) igjen = 0
+    if (dose <= igjen) {
+      igjen -= dose
+      return
+    }
+    const rest = dose - igjen
+    if (rest > flaske) throw new Error(`En dose på ${dose} dråper får ikke plass i én flaske.`)
+    antall += 1
+    apnet = dag
+    igjen = flaske - rest
+  })
+  return antall
+}
+/** Dråpene per dag i trinnene, ett trinn per {@link TRINNDAGER} dager, med 1 mg per dråpe. */
+const dagligeDraper = (trinn: readonly (readonly number[])[]) => trinn.flatMap(([mg]) => Array<number>(TRINNDAGER).fill(mg!))
 /** Første trinn fra 20 mg (15 mg) med tabletter: én tablett à 10 mg og én à 5 mg daglig. */
 const TABLETTER_15: Record<5 | 10, number> = { 10: 1, 5: 1 }
 const B2_3 = (() => {
-  const forste = draperI(TRINN_20.slice(0, 1))
-  const etter = draperI(TRINN_20.slice(1))
+  const forste = dagligeDraper(TRINN_20.slice(0, 1))
+  const etter = dagligeDraper(TRINN_20.slice(1))
   const tablettpakninger = (Object.entries(TABLETTER_15) as [`${5 | 10}`, number][]).reduce((sum, [mg, n]) => sum + Math.ceil((n * TRINNDAGER) / B2_PAKNINGER.minste_tablettpakning[mg]), 0)
-  return { forste, etter, hele: forste + etter, tablettpakninger }
+  const sum = (d: number[]) => d.reduce((a, b) => a + b, 0)
+  const tablettForst = { flasker: flaskerOverTid(etter), uten_holdbarhet: flaskerOverTid(etter, FLASKE, Infinity), draper: sum(etter) }
+  const draperFraStart = { flasker: flaskerOverTid([...forste, ...etter]), uten_holdbarhet: flaskerOverTid([...forste, ...etter], FLASKE, Infinity), draper: sum(forste) + sum(etter) }
+  return { forste: { draper: sum(forste), flasker: flaskerOverTid(forste) }, tablettForst, draperFraStart, tablettpakninger }
 })()
+/**
+ * B2.6: dosene med tabletter og dråper i samme dose (`samtidig` på
+ * overgangen), som motoren gir dem på en kopi med simulert godkjenning (kasus
+ * B2-20 og B2-21; ikke i forslaget). Dosene som ikke står her, gis med dråper
+ * alene som i versjon 14. Tablettene står med antall per styrke i mg.
+ */
+type Sammensetning = { tabletter: Partial<Record<5 | 10, number>>; draper: number }
+const SAMTIDIG: Record<number, Sammensetning> = {
+  15: { tabletter: { 10: 1, 5: 1 }, draper: 0 },
+  12: { tabletter: { 10: 1 }, draper: 2 },
+  9: { tabletter: { 5: 1 }, draper: 4 },
+  8: { tabletter: { 5: 1 }, draper: 3 },
+  7: { tabletter: { 5: 1 }, draper: 2 },
+  6: { tabletter: { 5: 1 }, draper: 1 },
+}
+const flertall = (n: number, en: string, flere: string) => `${n} ${n === 1 ? en : flere}`
+const sammensetning = ({ tabletter, draper }: Sammensetning) =>
+  [
+    ...([10, 5] as const).flatMap((mg) => (tabletter[mg] ? [`${flertall(tabletter[mg]!, 'tablett', 'tabletter')} à ${mg} mg`] : [])),
+    ...(draper > 0 ? [`${flertall(draper, 'dråpe', 'dråper')} à 1 mg`] : []),
+  ].join(' + ')
+/** Planlinjene med dråper alene, med tabletter og dråper i samme dose der {@link SAMTIDIG} har dosen. */
+const medSamtidig = (linjer: string[]) =>
+  linjer.map((l) => l.replace(/: (\d+) mg = \d+ dråper? à 1 mg/, (hel, mg: string) => (SAMTIDIG[Number(mg)] ? `: ${mg} mg = ${sammensetning(SAMTIDIG[Number(mg)]!)}` : hel)))
+/** Tablettene og flaskene et forløp trenger, med dosene i trinnene og {@link SAMTIDIG} der den brukes. */
+const forbruk = (trinn: readonly (readonly number[])[], samtidig: boolean, tablettForst = false) => {
+  const dose = (mg: number, i: number): Sammensetning => (samtidig && SAMTIDIG[mg]) || (tablettForst && i === 0 ? { tabletter: TABLETTER_15, draper: 0 } : { tabletter: {}, draper: mg })
+  const doser = trinn.map(([mg], i) => dose(mg!, i))
+  const tabletter = ([10, 5] as const).map((mg) => doser.reduce((sum, d) => sum + (d.tabletter[mg] ?? 0) * TRINNDAGER, 0))
+  const flasker = flaskerOverTid(doser.flatMap((d) => Array<number>(TRINNDAGER).fill(d.draper)).filter((_, dag, alle) => alle.findIndex((x) => x > 0) <= dag))
+  const pakninger = tabletter.reduce((sum, n, i) => sum + Math.ceil(n / B2_PAKNINGER.minste_tablettpakning[([10, 5] as const)[i]!]), 0) + flasker
+  return { tabletter: { 10: tabletter[0]!, 5: tabletter[1]! }, flasker, pakninger, mest: Math.max(...doser.map((d) => d.draper)) }
+}
+const B2_6 = { v14: forbruk(TRINN_20, false, true), samtidig: forbruk(TRINN_20, true), v14_10: forbruk(TRINN_10, false), samtidig_10: forbruk(TRINN_10, true) }
 /** Det rettede aldersspørsmålet i versjon 14 (B2.4). */
 const ELDRE = B2_ESCITALOPRAM.sporsmal!.find((x) => x.id === 'eldre')!
 const OVER_ALDERSGRENSEN = (mg: number) => `Startdosen ${tall(mg)} mg er utenfor det regelen gjelder for (høyst 10 mg ved ${ELDRE.ja}).`
@@ -1330,6 +1395,7 @@ export const FORSLAG_B2: Kontrollforslag = {
     'Peders avgjørelse på K1.9 (seponering fra 1 mg) gjelder bare når omfanget er uendret eller snevrere. Vurderingen står i B2.4; mener kontrolløren at omfanget er utvidet, må Peder spørres på nytt før en godkjenning.',
     'Versjon 13 trekkes i det øyeblikket versjon 14 er gyldig klinisk godkjent (`Regel.erstatter`); til da gjelder den uendret. Godkjennes versjon 14 ikke, er ingenting endret for klinikeren.',
     'Sperrene for de kliniske verktøyene og synligheten bare for administratorer er uendret.',
+    `Holdbarheten etter anbrudd for dråpene (${B2_PAKNINGER.holdbarhet_etter_anbrudd_dager / 7} uker, preparatomtalen pkt. 6.3) er oppgitt av kontrolløren 04.11.2026 og brukes bare i regnestykket for pakninger (B2.3 og B2.6); den er ikke en del av regelen.`,
   ],
   sporsmal: [
     {
@@ -1344,8 +1410,8 @@ export const FORSLAG_B2: Kontrollforslag = {
     },
     {
       nr: 'B2.3',
-      sporsmal: `Første trinn fra 20 mg er 15 mg i ${TRINNDAGER} dager. Med tabletter er det én tablett à 10 mg og én à 5 mg daglig (to styrker, ingen deling): én pakning à ${B2_PAKNINGER.minste_tablettpakning[10]} stk av hver styrke, i alt ${B2_3.tablettpakninger}. Med dråper er det 15 dråper daglig, ${B2_3.forste} dråper eller ${ml(B2_3.forste)} ml, altså ${flasker(B2_3.forste)} flasker à ${B2_PAKNINGER.flaske_ml} ml (${B2_PAKNINGER.draper_per_ml} dråper per ml). Hele forløpet fra 20 mg trenger med tabletter først ${B2_3.tablettpakninger} tablettpakninger og så ${flasker(B2_3.etter)} flasker (${B2_3.etter} dråper), og med dråper fra start ${flasker(B2_3.hele)} flasker (${B2_3.hele} dråper). Tablettene sparer altså ikke pakninger; de sparer pasienten for å telle 15 dråper daglig i ${TRINNDAGER} dager. Regnestykket forutsetter at en åpnet flaske kan brukes til den er tom: holdbarheten etter anbrudd (preparatomtalen pkt. 6.3) er ikke i kildegrunnlaget og må kontrolleres, og er den kortere, trengs flere flasker ved de laveste dosene. Er tablettene det mest praktiske for pasienten i første trinn?`,
-      anbefalt: `Ja, som en praktisk preferanse uten klinisk kilde (B6). Det avgjørende er to hele tabletter mot 15 dråper per administrasjon, ikke antall pakninger: de er like mange i første trinn (${B2_3.tablettpakninger} mot ${flasker(B2_3.forste)}), og i hele forløpet trenger tablettene ${B2_3.tablettpakninger + flasker(B2_3.etter) - flasker(B2_3.hele)} pakning mer. Velger kontrolløren dråper fra start, kan dråpepreferansen tas ut, og regelen gir da planen i versjon 13 for alle (kasus B2-16).`,
+      sporsmal: `Første trinn fra 20 mg er 15 mg i ${TRINNDAGER} dager. Med tabletter er det én tablett à 10 mg og én à 5 mg daglig (to styrker, ingen deling): én pakning à ${B2_PAKNINGER.minste_tablettpakning[10]} stk av hver styrke, i alt ${B2_3.tablettpakninger}. Med dråper er det 15 dråper daglig, ${B2_3.forste.draper} dråper eller ${ml(B2_3.forste.draper)} ml, altså ${B2_3.forste.flasker} flasker à ${B2_PAKNINGER.flaske_ml} ml (${FLASKE} dråper). Flaskene er regnet dag for dag: en åpnet flaske brukes til den er tom eller ${B2_PAKNINGER.holdbarhet_etter_anbrudd_dager / 7} uker etter åpning (holdbarheten etter anbrudd, preparatomtalen pkt. 6.3), og resten kastes. Hele forløpet fra 20 mg trenger da med tabletter først ${B2_3.tablettpakninger} tablettpakninger og ${B2_3.tablettForst.flasker} flasker (${B2_3.tablettForst.draper} dråper fra dag ${TRINNDAGER + 1}), i alt ${B2_3.tablettpakninger + B2_3.tablettForst.flasker} pakninger, og med dråper fra start ${B2_3.draperFraStart.flasker} flasker (${B2_3.draperFraStart.draper} dråper). Uten holdbarheten ville det vært ${B2_3.tablettForst.uten_holdbarhet} og ${B2_3.draperFraStart.uten_holdbarhet} flasker: ved de laveste dosene kastes det meste av hver flaske. Antallet pakninger avgjør altså ikke valget; tablettene sparer pasienten for å telle 15 dråper daglig i ${TRINNDAGER} dager. Er tablettene det mest praktiske for pasienten i første trinn?`,
+      anbefalt: `Ja, som en praktisk preferanse uten klinisk kilde (B6). Det avgjørende er to hele tabletter mot 15 dråper per administrasjon: pakningene er like mange i første trinn (${B2_3.tablettpakninger} mot ${B2_3.forste.flasker}) og i hele forløpet (${B2_3.tablettpakninger + B2_3.tablettForst.flasker} mot ${B2_3.draperFraStart.flasker}). Velger kontrolløren dråper fra start, kan dråpepreferansen tas ut, og regelen gir da planen i versjon 13 for alle (kasus B2-16).`,
     },
     {
       nr: 'B2.4',
@@ -1357,6 +1423,11 @@ export const FORSLAG_B2: Kontrollforslag = {
       nr: 'B2.5',
       sporsmal: `Erstatningen: versjon 14 er en egen regel som erstatter versjon 13 (\`seponering-escitalopram\`) når den er godkjent, så det aldri finnes to godkjente regler for samme nedtrapping. Den gir dråpepasienter nøyaktig den samme planen som versjon 13 (kasus B2-03 og B2-04). Er det riktig at versjon 13 trekkes når versjon 14 godkjennes?`,
       anbefalt: 'Ja. Versjon 14 gir det samme som versjon 13 for alle tilfellene versjon 13 er godkjent for, og i tillegg en komplett plan fra tabletter.',
+    },
+    {
+      nr: 'B2.6',
+      sporsmal: `Tabletter og dråper i samme dose: versjon 14 gir hver dose med én form, så fra 20 mg tabletter gis ${B2_6.v14.mest} dråper daglig i andre trinn og 9, 7 og 6 dråper i de neste. Med begge formene i samme dose i overgangen (\`samtidig\`, som motoren alt støtter) blir 12 mg ${sammensetning(SAMTIDIG[12]!)}, 9 mg ${sammensetning(SAMTIDIG[9]!)}, 7 mg ${sammensetning(SAMTIDIG[7]!)} og 6 mg ${sammensetning(SAMTIDIG[6]!)}, så over til dråper alene fra 5 mg; planen går fortsatt aldri tilbake. Det gir høyst ${B2_6.samtidig.mest} dråper per administrasjon gjennom hele forløpet, mot ${B2_6.v14.mest}, men to preparater i samme dose i fire trinn og flere pakninger: ${B2_6.samtidig.tabletter[10]} tabletter à 10 mg, ${B2_6.samtidig.tabletter[5]} à 5 mg og ${B2_6.samtidig.flasker} flasker (i alt ${B2_6.samtidig.pakninger} pakninger: tablettpakninger à ${B2_PAKNINGER.minste_tablettpakning[5]} stk og flasker), mot ${B2_6.v14.pakninger} i versjon 14. Fra 10 mg blir 8 mg ${sammensetning(SAMTIDIG[8]!)} og 6 mg ${sammensetning(SAMTIDIG[6]!)}: høyst ${B2_6.samtidig_10.mest} dråper mot ${B2_6.v14_10.mest}, ${B2_6.samtidig_10.pakninger} pakninger mot ${B2_6.v14_10.pakninger}. Kasus B2-20 og B2-21 viser planene på en kopi; de er ikke i forslaget. Skal versjon 14 gi tabletter og dråper i samme dose?`,
+      anbefalt: `Kontrollørens avveining. OUSFARs forslag er ja, dersom kontrolløren godtar to preparater i samme dose: det følger dråpepreferansen (B6) i hele forløpet uten deling og uten oppmåling, og bioekvivalensen mg for mg (pkt. 5.2) er den samme som for overgangen i B2.1. Prisen er flere pakninger og to preparater å holde orden på i fire trinn. Ja endrer regelen (\`samtidig\` på overgangen), så versjon 14 får et nytt fingeravtrykk og et nytt kontrollgrunnlag; nei lar versjon 14 stå som den er.`,
     },
   ],
   avsnitt: [
@@ -1526,6 +1597,28 @@ export const FORSLAG_B2: Kontrollforslag = {
     kb('B2-19', 'pasientforhold', 'escitalopram tablett 20 mg, nøyaktig 65 år (ja på «65 år eller eldre»): stopp', B2_REGEL, '20', stopp(OVER_ALDERSGRENSEN(20), UTENFOR_OMFANG), [], {
       skjema: { ...form(TABLETT), svar: { eldre: true } },
     }),
+    // --- B2.6: tabletter og dråper i samme dose (ikke i forslaget), på en kopi med simulert godkjenning
+    ...(
+      [
+        ['B2-20', '20', medSamtidig(FRA_20_TABLETTER), SEPONERT_20, VELGER_20],
+        ['B2-21', '10', medSamtidig(FRA_10), SEPONERT_10, VELGER_10],
+      ] as const
+    ).map(([id, dose, linjer, planutfall, velger]) =>
+      kb(id, 'regelendring', `escitalopram tablett ${dose} mg med tabletter og dråper i samme dose (B2.6, ikke i forslaget)`, B2_REGEL, dose, { ...plan(null, ...linjer), planutfall }, [], {
+        skjema: form(TABLETT),
+        velger: [...velger],
+        regel: endretEtter(
+          B2_REGEL,
+          'tabletter og dråper i samme dose i overgangen, deretter simulert godkjenning av kopien',
+          (r) => {
+            r.plan.forlop[0]!.formoverganger![0]!.samtidig = true
+            simulerGodkjenning(r, { ...B2_REGEL, fingeravtrykk: fingeravtrykk(r) }, B2_DATO)
+          },
+          B2_DATO,
+          true,
+        ),
+      }),
+    ),
   ],
 }
 

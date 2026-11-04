@@ -10,7 +10,7 @@
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { B2_PAKNINGER, FORSLAG_B2, FORSLAG_K1, KONTROLLFORSLAG, kontrollavvik, omfangsplaner, type Omfangsplan } from '../verktoy/kontrollgrunnlag'
+import { B2_PAKNINGER, flaskerOverTid, FORSLAG_B2, FORSLAG_K1, KONTROLLFORSLAG, kontrollavvik, omfangsplaner, type Omfangsplan } from '../verktoy/kontrollgrunnlag'
 import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from '../verktoy/regler/aksepttest'
 import { erErstattet, erKliniskGodkjent, erstatningsfeil, fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
 import { B2_ESCITALOPRAM, K1_9_AVGJORELSE, K1_OVERGANGER, medFormovergang } from '../verktoy/regler/k1'
@@ -160,8 +160,39 @@ describe('Pakningene i B2.3', () => {
     const b23 = FORSLAG_B2.sporsmal.find((q) => q.nr === 'B2.3')!
     expect(b23.sporsmal).toMatch(/420 dråper eller 21 ml, altså 2 flasker à 15 ml/)
     expect(b23.sporsmal).not.toMatch(/én pakning\)/)
-    expect(b23.sporsmal).toMatch(/med dråper fra start 6 flasker \(1792 dråper\)/)
-    expect(b23.sporsmal).toMatch(/så 5 flasker \(1372 dråper\)/)
+  })
+
+  it('regner flaskene dag for dag med holdbarheten etter anbrudd: 6 flasker etter tablettene, 8 med dråper fra start', () => {
+    const b23 = FORSLAG_B2.sporsmal.find((q) => q.nr === 'B2.3')!
+    expect(B2_PAKNINGER.holdbarhet_etter_anbrudd_dager).toBe(8 * 7)
+    expect(b23.sporsmal).toMatch(/2 tablettpakninger og 6 flasker \(1372 dråper fra dag 29\), i alt 8 pakninger, og med dråper fra start 8 flasker \(1792 dråper\)/)
+    expect(b23.sporsmal).toMatch(/Uten holdbarheten ville det vært 5 og 6 flasker/)
+    expect(b23.anbefalt).toMatch(/\(2 mot 2\) og i hele forløpet \(8 mot 8\)/)
+  })
+
+  it('kan ikke dekke 300 dråper over mer enn 8 uker med én åpnet flaske', () => {
+    const dager = (n: number, draper: number) => Array<number>(n).fill(draper)
+    // 300 dråper på 56 dager får plass i én flaske; den samme mengden over 60 dager gjør ikke det.
+    expect(flaskerOverTid([...dager(55, 5), 25])).toBe(1)
+    expect(flaskerOverTid(dager(60, 5))).toBe(2)
+    // Selv 1 dråpe daglig krever en ny flaske etter 56 dager, lenge før den er tom.
+    expect(flaskerOverTid(dager(56, 1))).toBe(1)
+    expect(flaskerOverTid(dager(57, 1))).toBe(2)
+    expect(flaskerOverTid(dager(57, 1), 300, Infinity)).toBe(1)
+    // En dose som ikke dekkes av resten, tas fra en ny flaske.
+    expect(flaskerOverTid([299, 2])).toBe(2)
+    expect(() => flaskerOverTid([301])).toThrow(/får ikke plass/)
+  })
+})
+
+describe('Tabletter og dråper i samme dose (B2.6, ikke i forslaget)', () => {
+  it('gir høyst 5 dråper per administrasjon, men flere pakninger, og står bare som spørsmål', () => {
+    const b26 = FORSLAG_B2.sporsmal.find((q) => q.nr === 'B2.6')!
+    expect(b26.sporsmal).toMatch(/høyst 5 dråper per administrasjon gjennom hele forløpet, mot 12/)
+    expect(b26.sporsmal).toMatch(/i alt 11 pakninger: .*mot 8 i versjon 14/)
+    // Regelen har ikke samtidig: spørsmålet endrer ingenting før kontrolløren har svart.
+    expect(i(V14).plan.forlop[0]!.formoverganger![0]!.samtidig).toBeUndefined()
+    expect(FORSLAG_B2.kasus.filter((k) => /B2\.6/.test(k.hva)).map((k) => k.id)).toEqual(['B2-20', 'B2-21'])
   })
 })
 
