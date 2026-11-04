@@ -3449,25 +3449,17 @@ exports[`S3: de samme planene for de samme kasusene > omfangskasusene 1`] = `
     "regel": "depot-aripiprazol-maintena v3",
     "vurderinger": [],
   },
+  "bytte-antipsykotikum · Aripiprazol: peroral → depotinjeksjon · 15 mg · gjelder: cyp2d6_langsom": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten er kjent langsom CYP2D6-omsetter; preparatomtalen har egne doser.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
   "bytte-antipsykotikum · Olanzapin (peroral) → aripiprazol (peroral) · 10 mg · mål 10 mg": {
     "grunner": [
       "Startdosen 10 mg er utenfor det regelen gjelder for (20 mg).",
-    ],
-    "resultat": undefined,
-    "tekst": undefined,
-    "utfall": "stopp",
-  },
-  "bytte-antipsykotikum · Olanzapin (peroral) → aripiprazol (peroral) · 10 mg · mål 15 mg": {
-    "grunner": [
-      "Startdosen 10 mg er utenfor det regelen gjelder for (20 mg).",
-    ],
-    "resultat": undefined,
-    "tekst": undefined,
-    "utfall": "stopp",
-  },
-  "bytte-antipsykotikum · Olanzapin (peroral) → aripiprazol (peroral) · 15 mg · mål 10 mg": {
-    "grunner": [
-      "Startdosen 15 mg er utenfor det regelen gjelder for (20 mg).",
     ],
     "resultat": undefined,
     "tekst": undefined,
@@ -3599,9 +3591,104 @@ exports[`S3: de samme planene for de samme kasusene > omfangskasusene 1`] = `
       "Aripiprazol, før hver doseendring (dag 8, 15): Før hver økning av aripiprazol: toleransen vurderes (akatisi, uro, aktivering og søvnvansker). Ved funn: Ved dårlig toleranse holdes dosen, og resten av byttet planlegges individuelt.",
     ],
   },
-  "bytte-antipsykotikum · Olanzapin (peroral) → aripiprazol (peroral) · 25 mg · mål 10 mg": {
+  "bytte-antipsykotikum · Olanzapin (peroral) → aripiprazol (peroral) · 20 mg · mål 15 mg · gjelder: seponeringsplager": {
     "grunner": [
-      "Startdosen 25 mg er utenfor det regelen gjelder for (20 mg).",
+      "Regelen gjelder ikke: Pasienten har tidligere fått seponeringsplager, uro, søvnvansker eller forverring av psykosen ved dosereduksjon eller seponering av olanzapin; regelen kan da ikke stå for siste trinn til 0, og nedtrappingen planlegges individuelt.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "bytte-antipsykotikum · Olanzapin (peroral) → aripiprazol (peroral) · 20 mg · mål 15 mg · gjelder: tilbakefall_innlagt": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten har hatt gjentatte psykotiske tilbakefall, er innlagt eller er ikke stabil; kilden anbefaler da en annen opptrapping, som ikke er omfattet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "bytte-antipsykotikum · Olanzapin (peroral) → aripiprazol (peroral) · 20 mg · mål 15 mg · ikke bekreftet: siste_trinn": {
+    "grunner": [
+      "Må bekreftes før beregning: Siste trinn er vurdert for denne pasienten: olanzapin seponeres helt fra den siste lave dosen (hele dosen som gjenstår) mens aripiprazol har stått på måldosen i flere uker. Pasienten vet at seponeringsplager kan være kvalme, oppkast, hodepine, uro, angst, søvnløshet og svetting, og akatisi, dystoni og dyskinesi. Pasienten vet hvilke seponeringsplager og tegn på tilbakefall som skal meldes, og vurderes før siste trinn og etter seponeringen. Ved forverring, uro eller seponeringsplager holdes siste dose, og resten planlegges individuelt.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "bytte-antipsykotikum · Olanzapin (peroral) → aripiprazol (peroral) · 20 mg · mål 15 mg · ikke bekreftet: spesialist_risiko, siste_trinn": {
+    "grunner": [
+      "Må bekreftes før beregning: Byttet er vurdert i, eller med råd fra, spesialisthelsetjenesten, og pasienten kan følges tett de første ukene: forverring av psykosen, søvn, uro og akatisi, sedasjon og ortostatisk blodtrykksfall.",
+      "Må bekreftes før beregning: Siste trinn er vurdert for denne pasienten: olanzapin seponeres helt fra den siste lave dosen (hele dosen som gjenstår) mens aripiprazol har stått på måldosen i flere uker. Pasienten vet at seponeringsplager kan være kvalme, oppkast, hodepine, uro, angst, søvnløshet og svetting, og akatisi, dystoni og dyskinesi. Pasienten vet hvilke seponeringsplager og tegn på tilbakefall som skal meldes, og vurderes før siste trinn og etter seponeringen. Ved forverring, uro eller seponeringsplager holdes siste dose, og resten planlegges individuelt.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "bytte-antipsykotikum · Olanzapin (peroral) → aripiprazol (peroral) · 20 mg · mål 15 mg · start 2026-12-01": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "dag 1–28 [01.12.2026–28.12.2026]: 20 mg = 2 tabletter à 10 mg",
+        "dag 29–42 [29.12.2026–11.01.2027]: 15 mg = 2 tabletter à 7,5 mg",
+        "dag 43–56 [12.01.2027–25.01.2027]: 10 mg = 1 tablett à 10 mg",
+        "dag 57–70 [26.01.2027–08.02.2027]: 5 mg = 1 tablett à 5 mg",
+        "fra dag 71 [09.02.2027]: seponert",
+      ],
+      "til": [
+        "dag 1–7 [01.12.2026–07.12.2026]: 5 mg = 1 tablett à 5 mg",
+        "dag 8–14 [08.12.2026–14.12.2026]: 10 mg = 1 tablett à 10 mg",
+        "fra dag 15 [15.12.2026]: 15 mg = 1 tablett à 15 mg",
+      ],
+    },
+    "preparater": [
+      "Abilify tab 10 mg, varenr. 011008 (FEST: «Ikke delbar»)",
+      "Abilify tab 10 mg, varenr. 077742 (FEST: «Ikke delbar»)",
+      "Abilify tab 10 mg, varenr. 449700 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Abilify tab 15 mg, varenr. 010953 og 011019 (FEST: «Ikke delbar»)",
+      "Abilify tab 15 mg, varenr. 077724 (FEST: «Ikke delbar»)",
+      "Abilify tab 15 mg, varenr. 575089 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Abilify tab 5 mg, varenr. 016596 og 016635 (FEST: «Ikke delbar»)",
+      "Abilify tab 5 mg, varenr. 107308 (FEST: «Ikke delbar»)",
+      "Abilify tab 5 mg, varenr. 471072 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Aripiprazole Accord tab 10 mg (FEST: «Ikke delbar»)",
+      "Aripiprazole Accord tab 15 mg (FEST: «Ikke delbar»)",
+      "Aripiprazole Accord tab 5 mg (FEST: «Ikke delbar»)",
+      "Aripiprazole Medical Valley tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Aripiprazole Medical Valley tab 15 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Aripiprazole Medical Valley tab 5 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Olanzapine Accord tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Olanzapine Accord tab 5 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Olanzapine Accord tab 7,5 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Olanzapine Teva tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Olanzapine Teva tab 5 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Olanzapine Teva tab 7,5 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Olanzapine Viatris tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Olanzapine Viatris tab 5 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Olanzapine Viatris tab 7,5 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Zyprexa tab 10 mg, varenr. 014671 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Zyprexa tab 10 mg, varenr. 044862 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Zyprexa tab 10 mg, varenr. 129106 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Zyprexa tab 10 mg, varenr. 476281 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Zyprexa tab 5 mg, varenr. 128058 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Zyprexa tab 5 mg, varenr. 182718 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Zyprexa tab 7,5 mg, varenr. 129098 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Zyprexa tab 7,5 mg, varenr. 484184 (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "antipsykotikabytte-olanzapin-aripiprazol v8",
+    "vurderinger": [
+      "Olanzapin, før hver doseendring (dag 29, 43, 57, 71): Før hver reduksjon av olanzapin, også det siste trinnet til 0: tilstanden vurderes (forverring av psykosen og seponeringsplager: kvalme, oppkast, hodepine, uro, angst, søvnløshet og svetting, og akatisi, dystoni og dyskinesi), og pasienten følges tett gjennom hele byttet. Ved funn: Ved forverring, uro eller seponeringsplager holdes dosen, og resten av nedtrappingen planlegges individuelt.",
+      "Olanzapin, 14 dager etter siste dose (dag 84): Olanzapin er seponert: tilstanden vurderes på nytt (forverring av psykosen og seponeringsplager: kvalme, oppkast, hodepine, uro, angst, søvnløshet og svetting, og akatisi, dystoni og dyskinesi). Ved funn: Ved forverring eller seponeringsplager vurderes behandlingen individuelt; planen gir ingen ny dose. Pasienten følges tettere ved behov, også før dette kontrollpunktet.",
+      "Aripiprazol, før hver doseendring (dag 8, 15): Før hver økning av aripiprazol: toleransen vurderes (akatisi, uro, aktivering og søvnvansker). Ved funn: Ved dårlig toleranse holdes dosen, og resten av byttet planlegges individuelt.",
+    ],
+  },
+  "bytte-antipsykotikum · Olanzapin (peroral) → aripiprazol (peroral) · 20 mg · mål 20 mg": {
+    "grunner": [
+      "Måldosen 20 mg er utenfor det regelen gjelder for (10, 15 mg).",
     ],
     "resultat": undefined,
     "tekst": undefined,
@@ -3631,6 +3718,32 @@ exports[`S3: de samme planene for de samme kasusene > omfangskasusene 1`] = `
     "tekst": undefined,
     "utfall": "mangler",
   },
+  "bytte-antipsykotikum · Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat) · 3 mg · mål 50 mg · start 2027-01-24": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "fra dag 1 [24.01.2027]: seponert",
+      ],
+      "til": [
+        "dag 1 [24.01.2027]: 150 mg = 1 injeksjon à 150 mg, deltoideus",
+        "dag 8 [31.01.2027]: 100 mg = 1 injeksjon à 100 mg, deltoideus",
+        "hver måned fra 1 måned etter dag 8 [28.02.2027]: 50 mg = 1 injeksjon à 50 mg, deltoideus eller setemuskel",
+      ],
+    },
+    "preparater": [
+      "Xeplion depotinj væske, susp 100 mg/sprøyte, varenr. 409745 (Én hel injeksjon; deler av en sprøyte brukes ikke)",
+      "Xeplion depotinj væske, susp 150 mg (Én hel injeksjon; deler av en sprøyte brukes ikke)",
+      "Xeplion depotinj væske, susp 150 mg/sprøyte, varenr. 536460 (Én hel injeksjon; deler av en sprøyte brukes ikke)",
+      "Xeplion depotinj væske, susp 50 mg/sprøyte (Én hel injeksjon; deler av en sprøyte brukes ikke)",
+    ],
+    "regel": "depot-paliperidon-xeplion v3",
+    "vurderinger": [],
+  },
   "bytte-antipsykotikum · Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat) · 6 mg": {
     "avvik": [],
     "forbehold": [
@@ -3657,25 +3770,17 @@ exports[`S3: de samme planene for de samme kasusene > omfangskasusene 1`] = `
     "regel": "depot-paliperidon-xeplion v3",
     "vurderinger": [],
   },
+  "bytte-antipsykotikum · Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat) · 6 mg · gjelder: nedsatt_nyrefunksjon": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
   "bytte-antipsykotikum · Risperidon (peroral) → aripiprazol (peroral) · 2 mg · mål 10 mg": {
     "grunner": [
       "Startdosen 2 mg er utenfor det regelen gjelder for (4 mg).",
-    ],
-    "resultat": undefined,
-    "tekst": undefined,
-    "utfall": "stopp",
-  },
-  "bytte-antipsykotikum · Risperidon (peroral) → aripiprazol (peroral) · 2 mg · mål 15 mg": {
-    "grunner": [
-      "Startdosen 2 mg er utenfor det regelen gjelder for (4 mg).",
-    ],
-    "resultat": undefined,
-    "tekst": undefined,
-    "utfall": "stopp",
-  },
-  "bytte-antipsykotikum · Risperidon (peroral) → aripiprazol (peroral) · 20 mg · mål 10 mg": {
-    "grunner": [
-      "Startdosen 20 mg er utenfor det regelen gjelder for (4 mg).",
     ],
     "resultat": undefined,
     "tekst": undefined,
@@ -3793,15 +3898,15 @@ exports[`S3: de samme planene for de samme kasusene > omfangskasusene 1`] = `
       "Aripiprazol, før hver doseendring (dag 8, 15): Før hver økning av aripiprazol: toleransen vurderes (akatisi, uro, aktivering og søvnvansker). Ved funn: Ved dårlig toleranse holdes dosen, og resten av byttet planlegges individuelt.",
     ],
   },
-  "bytte-antipsykotikum · Risperidon (peroral) → aripiprazol (peroral) · 6 mg · mål 10 mg": {
+  "bytte-antipsykotikum · Risperidon (peroral) → aripiprazol (peroral) · 4 mg · mål 15 mg · gjelder: alder_65": {
     "grunner": [
-      "Startdosen 6 mg er utenfor det regelen gjelder for (4 mg).",
+      "Regelen gjelder ikke: Pasienten er 65 år eller eldre; effekt og sikkerhet av aripiprazol er ikke fastslått i denne gruppen.",
     ],
     "resultat": undefined,
     "tekst": undefined,
     "utfall": "stopp",
   },
-  "bytte-antipsykotikum · Risperidon (peroral) → aripiprazol (peroral) · 6 mg · mål 15 mg": {
+  "bytte-antipsykotikum · Risperidon (peroral) → aripiprazol (peroral) · 6 mg · mål 10 mg": {
     "grunner": [
       "Startdosen 6 mg er utenfor det regelen gjelder for (4 mg).",
     ],
@@ -3833,9 +3938,26 @@ exports[`S3: de samme planene for de samme kasusene > omfangskasusene 1`] = `
     "tekst": undefined,
     "utfall": "stopp",
   },
-  "bytte-antipsykotikum · Risperidon (peroral) → paliperidon (depotinjeksjon (paliperidonpalmitat)) · 20 mg · mål 75 mg": {
+  "bytte-antipsykotikum · Risperidon (peroral) → paliperidon (depotinjeksjon (paliperidonpalmitat)) · 20 mg · mål 150 mg": {
     "grunner": [
       "Startdosen 20 mg er utenfor det regelen gjelder for (3 mg).",
+      "Måldosen 150 mg er utenfor det regelen gjelder for (75 mg).",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "bytte-antipsykotikum · Risperidon (peroral) → paliperidon (depotinjeksjon (paliperidonpalmitat)) · 3 mg · mål 175 mg": {
+    "grunner": [
+      "Måldosen 175 mg er utenfor det regelen gjelder for (75 mg).",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "bytte-antipsykotikum · Risperidon (peroral) → paliperidon (depotinjeksjon (paliperidonpalmitat)) · 3 mg · mål 50 mg": {
+    "grunner": [
+      "Måldosen 50 mg er utenfor det regelen gjelder for (75 mg).",
     ],
     "resultat": undefined,
     "tekst": undefined,
@@ -3869,6 +3991,82 @@ exports[`S3: de samme planene for de samme kasusene > omfangskasusene 1`] = `
       "Paliperidon, før hver doseendring (dag 8): Før injeksjonen dag 8 og før hver månedlige vedlikeholdsinjeksjon: psykotiske symptomer, ekstrapyramidale og andre bivirkninger og reaksjoner etter forrige injeksjon vurderes, og pasienten følges tett gjennom byttet. Ved funn: Planens 75 mg gjelder ikke lenger, og vedlikeholdsdosen vurderes individuelt, ved forverring eller tilbakefall av psykotiske symptomer, dosebegrensende eller ekstrapyramidale bivirkninger, overfølsomhet, nedsatt nyrefunksjon eller utviklet overvekt eller fedme. Dosen kan justeres månedlig, men full effekt av en endret dose kan først sees etter flere måneder.",
     ],
   },
+  "bytte-antipsykotikum · Risperidon (peroral) → paliperidon (depotinjeksjon (paliperidonpalmitat)) · 3 mg · mål 75 mg · gjelder: nedsatt_nyrefunksjon": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "bytte-antipsykotikum · Risperidon (peroral) → paliperidon (depotinjeksjon (paliperidonpalmitat)) · 3 mg · mål 75 mg · gjelder: overvekt": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten har overvekt eller fedme; preparatomtalen sier at doser i den øvre delen av området kan trengs, så anbefalte 75 mg er ikke nødvendigvis riktig.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "bytte-antipsykotikum · Risperidon (peroral) → paliperidon (depotinjeksjon (paliperidonpalmitat)) · 3 mg · mål 75 mg · gjelder: risperidon_interaksjon": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten bruker en CYP2D6-hemmer (f.eks. paroksetin, sertralin, fluoksetin) eller en CYP3A4-induktor (f.eks. karbamazepin); da sier risperidondosen ikke hvilken eksponering Xeplion må gi.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "bytte-antipsykotikum · Risperidon (peroral) → paliperidon (depotinjeksjon (paliperidonpalmitat)) · 3 mg · mål 75 mg · ikke bekreftet: effekt_toleranse": {
+    "grunner": [
+      "Må bekreftes før beregning: Forskriveren har vurdert det konkrete forløpet: dagens risperidondose har gitt god og stabil effekt, uten bivirkninger som har begrenset dosen og uten planer om å endre den, og pasienten har tatt den regelmessig. Er effekten utilstrekkelig, eller har bivirkninger holdt dosen nede, planlegges vedlikeholdsdosen individuelt.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "bytte-antipsykotikum · Risperidon (peroral) → paliperidon (depotinjeksjon (paliperidonpalmitat)) · 3 mg · mål 75 mg · ikke bekreftet: indikasjon": {
+    "grunner": [
+      "Må bekreftes før beregning: Pasienten er voksen, har schizofreni og er stabilisert på peroral risperidon.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "bytte-antipsykotikum · Risperidon (peroral) → paliperidon (depotinjeksjon (paliperidonpalmitat)) · 3 mg · mål 75 mg · ikke bekreftet: tidligere_toleranse": {
+    "grunner": [
+      "Må bekreftes før beregning: Det er dokumentert i journalen at pasienten har tålt peroral risperidon over tid, uten tegn til overfølsomhet. Anafylaksi er likevel mulig etter injeksjon.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "bytte-antipsykotikum · Risperidon (peroral) → paliperidon (depotinjeksjon (paliperidonpalmitat)) · 3 mg · mål 75 mg · start 2026-12-01": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "fra dag 1 [01.12.2026]: seponert",
+      ],
+      "til": [
+        "dag 1 [01.12.2026]: 150 mg = 1 injeksjon à 150 mg, deltoideus",
+        "dag 8 [08.12.2026]: 100 mg = 1 injeksjon à 100 mg, deltoideus",
+        "hver måned fra 1 måned etter dag 8 [08.01.2027]: 75 mg = 1 injeksjon à 75 mg, deltoideus eller setemuskel",
+      ],
+    },
+    "preparater": [
+      "Xeplion depotinj væske, susp 100 mg/sprøyte, varenr. 409745 (Én hel injeksjon; deler av en sprøyte brukes ikke)",
+      "Xeplion depotinj væske, susp 150 mg (Én hel injeksjon; deler av en sprøyte brukes ikke)",
+      "Xeplion depotinj væske, susp 150 mg/sprøyte, varenr. 536460 (Én hel injeksjon; deler av en sprøyte brukes ikke)",
+      "Xeplion depotinj væske, susp 75 mg/sprøyte, varenr. 412581 (Én hel injeksjon; deler av en sprøyte brukes ikke)",
+    ],
+    "regel": "depot-risperidon-xeplion v8",
+    "vurderinger": [
+      "Paliperidon, før hver doseendring (dag 8): Før injeksjonen dag 8 og før hver månedlige vedlikeholdsinjeksjon: psykotiske symptomer, ekstrapyramidale og andre bivirkninger og reaksjoner etter forrige injeksjon vurderes, og pasienten følges tett gjennom byttet. Ved funn: Planens 75 mg gjelder ikke lenger, og vedlikeholdsdosen vurderes individuelt, ved forverring eller tilbakefall av psykotiske symptomer, dosebegrensende eller ekstrapyramidale bivirkninger, overfølsomhet, nedsatt nyrefunksjon eller utviklet overvekt eller fedme. Dosen kan justeres månedlig, men full effekt av en endret dose kan først sees etter flere måneder.",
+    ],
+  },
   "bytte-antipsykotikum · Risperidon (peroral) → paliperidon (depotinjeksjon (paliperidonpalmitat)) · 3,5 mg · mål 75 mg": {
     "grunner": [
       "Startdosen 3,5 mg er utenfor det regelen gjelder for (3 mg).",
@@ -3880,6 +4078,15 @@ exports[`S3: de samme planene for de samme kasusene > omfangskasusene 1`] = `
   "bytte-antipsykotikum · Risperidon (peroral) → paliperidon (depotinjeksjon (paliperidonpalmitat)) · 4 mg · mål 75 mg": {
     "grunner": [
       "Startdosen 4 mg er utenfor det regelen gjelder for (3 mg).",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "bytte-antipsykotikum · Risperidon (peroral) → paliperidon (depotinjeksjon (paliperidonpalmitat)) · 6 mg · mål 150 mg": {
+    "grunner": [
+      "Startdosen 6 mg er utenfor det regelen gjelder for (3 mg).",
+      "Måldosen 150 mg er utenfor det regelen gjelder for (75 mg).",
     ],
     "resultat": undefined,
     "tekst": undefined,
@@ -3923,6 +4130,78 @@ exports[`S3: de samme planene for de samme kasusene > omfangskasusene 1`] = `
       "Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.",
     ],
   },
+  "kombinere-stemningsstabiliserende · Litium → lamotrigin · 168 mg · mål 200 mg · gjelder: bruker_lamotrigin": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten bruker lamotrigin nå, eller har sluttet så nylig at det er under fem halveringstider siden siste dose (ca. 7 døgn alene og ca. 15 døgn sammen med valproat, ut fra gjennomsnittlig halveringstid). Da er dette ikke en oppstart.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kombinere-stemningsstabiliserende · Litium → lamotrigin · 168 mg · mål 200 mg · gjelder: graviditet": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten er gravid, planlegger graviditet eller ammer.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kombinere-stemningsstabiliserende · Litium → lamotrigin · 168 mg · mål 200 mg · gjelder: hla_b1502": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten er kjent positiv for HLA-B*1502.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kombinere-stemningsstabiliserende · Litium → lamotrigin · 168 mg · mål 200 mg · gjelder: nedsatt_leverfunksjon": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten har moderat eller alvorlig nedsatt leverfunksjon (Child-Pugh B eller C).",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kombinere-stemningsstabiliserende · Litium → lamotrigin · 168 mg · mål 200 mg · gjelder: nedsatt_nyrefunksjon": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten har betydelig nedsatt nyrefunksjon eller nyresvikt i siste fase.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kombinere-stemningsstabiliserende · Litium → lamotrigin · 168 mg · mål 200 mg · gjelder: tidligere_reaksjon": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten har tidligere fått utslett, Stevens-Johnsons syndrom, toksisk epidermal nekrolyse, DRESS eller aseptisk meningitt ved bruk av lamotrigin.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kombinere-stemningsstabiliserende · Litium → lamotrigin · 168 mg · mål 200 mg · gjelder: ukjent_interaksjon": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten bruker et annet legemiddel med ukjent farmakokinetisk interaksjon med lamotrigin. Da skal opptrappingen for samtidig valproat brukes, og planen må lages for det. (Østrogenholdig prevensjon alene er ikke et slikt forhold; se spørsmålet om østrogenholdig behandling.)",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kombinere-stemningsstabiliserende · Litium → lamotrigin · 168 mg · mål 200 mg · gjelder: under_18": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten er under 18 år.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kombinere-stemningsstabiliserende · Litium → lamotrigin · 168 mg · mål 200 mg · gjelder: valproat_eller_induserende": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten bruker i tillegg valproat, eller et legemiddel som induserer lamotrigin-glukuronidering (fenytoin, karbamazepin, fenobarbital, primidon, rifampicin eller lopinavir/ritonavir). Da gjelder en annen opptrapping.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
   "kombinere-stemningsstabiliserende · Valproat → lamotrigin · 1000 mg · mål 100 mg": {
     "avvik": [],
     "forbehold": [
@@ -3951,6 +4230,62 @@ exports[`S3: de samme planene for de samme kasusene > omfangskasusene 1`] = `
       "Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.",
       "Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.",
     ],
+  },
+  "kombinere-stemningsstabiliserende · Valproat → lamotrigin · 1000 mg · mål 100 mg · gjelder: bruker_lamotrigin": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten bruker lamotrigin nå, eller har sluttet så nylig at det er under fem halveringstider siden siste dose (ca. 7 døgn alene og ca. 15 døgn sammen med valproat, ut fra gjennomsnittlig halveringstid). Da er dette ikke en oppstart.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kombinere-stemningsstabiliserende · Valproat → lamotrigin · 1000 mg · mål 100 mg · gjelder: graviditet": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten er gravid, planlegger graviditet eller ammer. Sammen med valproat gjelder det også valproatbehandlingen: valproat er kontraindisert under graviditet ved bipolar lidelse, og spesialist skal konsulteres.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kombinere-stemningsstabiliserende · Valproat → lamotrigin · 1000 mg · mål 100 mg · gjelder: hla_b1502": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten er kjent positiv for HLA-B*1502.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kombinere-stemningsstabiliserende · Valproat → lamotrigin · 1000 mg · mål 100 mg · gjelder: nedsatt_leverfunksjon": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten har moderat eller alvorlig nedsatt leverfunksjon (Child-Pugh B eller C).",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kombinere-stemningsstabiliserende · Valproat → lamotrigin · 1000 mg · mål 100 mg · gjelder: nedsatt_nyrefunksjon": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten har betydelig nedsatt nyrefunksjon eller nyresvikt i siste fase.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kombinere-stemningsstabiliserende · Valproat → lamotrigin · 1000 mg · mål 100 mg · gjelder: tidligere_reaksjon": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten har tidligere fått utslett, Stevens-Johnsons syndrom, toksisk epidermal nekrolyse, DRESS eller aseptisk meningitt ved bruk av lamotrigin.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kombinere-stemningsstabiliserende · Valproat → lamotrigin · 1000 mg · mål 100 mg · gjelder: under_18": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten er under 18 år.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
   },
   "trappe-ned-antidepressiv · Escitalopram · 10 mg · form 748": {
     "avvik": [

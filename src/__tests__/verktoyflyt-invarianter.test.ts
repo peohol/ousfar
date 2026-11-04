@@ -8,7 +8,8 @@
  * Kasusene er syntetiske og finner ikke på doser: for hver godkjent regel som
  * verktøyene tilbyr, prøves hver startdose, legemiddelform og svarkombinasjon
  * regelens kliniske omfang er kontrollert med (`klinisk_omfang.tilfeller`;
- * uten omfang regelens egne regneeksempler), og hver måldose regelen tilbyr.
+ * uten omfang hvert av regelens egne regneeksempler slik det står), og hver
+ * måldose regelen tilbyr (eller eksemplets egen).
  * Der siden lar forskriveren velge dose for et trinn, velges den første
  * dosen som tilbys, slik QA-forløpene gjør. Kasusene i P11-matrisen
  * (`PILOTKASUS`) prøves i tillegg for S3. Når QA-katalogen (K0-01–K0-12,
@@ -77,14 +78,53 @@ interface Omfangskasus {
   regel: Regel
 }
 
-/** Startdosene, svarene og formene regelen er kontrollert med; uten klinisk omfang regneeksemplenes startdoser. */
-function tilfellene(r: Regel): { dose: number; svar: Record<string, boolean>; form?: string; justert?: Record<string, number> }[] {
-  const t = r.klinisk_omfang?.tilfeller
-  if (t) return t.flatMap((x) => x.startdoser.map((dose) => ({ dose, svar: x.svar, form: x.legemiddelform, justert: x.justert })))
-  return [...new Set(r.eksempler.map((e) => e.inndata.startdose_mg))].map((dose) => ({ dose, svar: {} }))
+/** Ett tilfelle regelen er kontrollert eller regnet med: startdosen og det forskriveren har oppgitt. */
+interface Tilfelle {
+  dose: number
+  svar: Record<string, boolean>
+  form?: string
+  justert?: Record<string, number>
+  maldose?: number
+  pasientforhold?: Record<string, boolean>
+  bekreftet?: string[]
+  startdato?: string
 }
 
-/** Hver godkjent regel × hvert valg verktøyene tilbyr den for × hvert kontrollert tilfelle × hver måldose regelen tilbyr. */
+/**
+ * Startdosene, svarene og formene regelen er kontrollert med; uten klinisk
+ * omfang hvert av regelens regneeksempler slik det står, med svar, måldose,
+ * pasientforhold, bekreftelser og justeringer.
+ */
+function tilfellene(r: Regel): Tilfelle[] {
+  const t = r.klinisk_omfang?.tilfeller
+  if (t) return t.flatMap((x) => x.startdoser.map((dose) => ({ dose, svar: x.svar, form: x.legemiddelform, justert: x.justert })))
+  const alle = r.eksempler.map(
+    ({ inndata: e }): Tilfelle => ({
+      dose: e.startdose_mg,
+      svar: e.svar ?? {},
+      justert: e.justert,
+      maldose: e.maldose_mg,
+      pasientforhold: e.pasientforhold,
+      bekreftet: e.bekreftet,
+      startdato: e.startdato,
+    }),
+  )
+  return [...new Map(alle.map((x) => [JSON.stringify(x), x])).values()]
+}
+
+/** Det som skiller tilfellet fra regelens vanlige svar, til kasusets navn. */
+function avvikende(r: Regel, t: Tilfelle): string[] {
+  const ja = (x: Record<string, boolean> = {}) => Object.keys(x).filter((k) => x[k])
+  const ubekreftet = t.bekreftet && r.bekreftelser.map((b) => b.id).filter((b) => !t.bekreftet!.includes(b))
+  return [
+    ja(t.svar).length > 0 && `ja: ${ja(t.svar).join(', ')}`,
+    ja(t.pasientforhold).length > 0 && `gjelder: ${ja(t.pasientforhold).join(', ')}`,
+    ubekreftet && ubekreftet.length > 0 && `ikke bekreftet: ${ubekreftet.join(', ')}`,
+    t.startdato && `start ${t.startdato}`,
+  ].filter((x): x is string => Boolean(x))
+}
+
+/** Hver godkjent regel × hvert valg verktøyene tilbyr den for × hvert kontrollert tilfelle × hver måldose regelen tilbyr (eller tilfellets egen). */
 const OMFANGSKASUS: Omfangskasus[] = VERKTOY.flatMap((verktoy) =>
   snarvalg(verktoy)
     .filter((s) => s.status === 'tilgjengelig')
@@ -92,9 +132,9 @@ const OMFANGSKASUS: Omfangskasus[] = VERKTOY.flatMap((verktoy) =>
       tilgjengelighet(verktoy, s.valg)
         .regler.filter((r) => GODKJENTE.includes(r))
         .flatMap((regel) => {
-          const maldoser = regel.inndata.find((k) => k.navn === 'maldose')?.verdier ?? [undefined]
+          const verdier = regel.inndata.find((k) => k.navn === 'maldose')?.verdier ?? [undefined]
           return tilfellene(regel).flatMap((t) =>
-            maldoser.map((mal): Omfangskasus => {
+            (t.maldose !== undefined ? [t.maldose] : verdier).map((mal): Omfangskasus => {
               const fra = fraForlop(regel)!.id
               const skjema: Partial<Planskjema> = {
                 svar: t.svar,
@@ -102,11 +142,11 @@ const OMFANGSKASUS: Omfangskasus[] = VERKTOY.flatMap((verktoy) =>
                 ...(mal !== undefined && { maldose: tall(mal) }),
                 ...(t.form && { formvalg: { [fra]: { legemiddelform: t.form } } }),
                 ...(t.justert && { justert: Object.fromEntries(Object.entries(t.justert).map(([k, v]) => [k, tall(v)])) }),
+                ...(t.pasientforhold && { pasientforhold: t.pasientforhold }),
+                ...(t.bekreftet && { bekreftet: t.bekreftet }),
+                ...(t.startdato && { startdato: t.startdato }),
               }
-              const ja = Object.keys(t.svar).filter((k) => t.svar[k])
-              const id = [verktoy.id, s.tekst, `${tall(t.dose)} mg`, t.form && `form ${t.form}`, mal !== undefined && `mål ${tall(mal)} mg`, ja.length > 0 && `ja: ${ja.join(', ')}`]
-                .filter(Boolean)
-                .join(' · ')
+              const id = [verktoy.id, s.tekst, `${tall(t.dose)} mg`, t.form && `form ${t.form}`, mal !== undefined && `mål ${tall(mal)} mg`, ...avvikende(regel, t)].filter(Boolean).join(' · ')
               return {
                 verktoy,
                 regel,
