@@ -41,7 +41,7 @@ FEST-uttrekket: `src/data/verktoy/fest-tillegg.json` (hentet 2026-11-04T01:47:27
 
 ## Kasusene
 
-**42 kasus.** Alle utfallene er som forventet.
+**43 kasus.** Alle utfallene er som forventet.
 
 | Kasus | Regel | Kategori | Hva | Dose | Utfall |
 | --- | --- | --- | --- | --- | --- |
@@ -62,8 +62,9 @@ FEST-uttrekket: `src/data/verktoy/fest-tillegg.json` (hentet 2026-11-04T01:47:27
 | K4-46 | `tillegg-valproat-lamotrigin` | Pasientforhold, også ubesvarte | det er ikke besvart om pasienten kan bli far | «1000» | stopp: Må besvares før beregning: Er pasienten gutt eller mann som kan gjøre en partner gravid? |
 | K4-15 | `tillegg-valproat-lamotrigin` | Uvanlige doser og grenseverdier | ingen dose av valproat er fylt inn | «» | mangler: Aktuell døgndose må fylles inn som et tall større enn 0. |
 | K4-16 | `tillegg-valproat-lamotrigin` | Foreldet FEST | FEST-kopien er 49 timer gammel | «1000» | stopp: Ingen klinisk doseplan kan vises. Legemiddeldataene ble sist kontrollert mot FEST 3. november 2026. Den nattlige oppdateringen har ikke gått siden, så nyere endringer i FEST kan mangle. |
-| K4-17 | `tillegg-valproat-lamotrigin` | Utilgjengelige eller endrede preparater | alle lamotriginpreparatene krever godkjenningsfritak | «1000» | stopp: Ingen av de perorale preparatene av lamotrigin i FEST kan brukes: Lamictal tyggetab/disperg tab 5 mg: krever godkjenningsfritak, som ikke er valgt · Lamictal tyggetab/disperg tab 25 mg: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt · Lamictal tyggetab/disperg tab 200 mg: krever godkjenningsfritak, som ikke er valgt · Lamictal tyggetab/disperg tab 100 mg: krever godkjenningsfritak, som ikke er valgt · Lamictal tyggetab/disperg tab 25 mg: krever godkjenningsfritak, som ikke er valgt · Lamictal tyggetab/disperg tab 2 mg: krever godkjenningsfritak, som ikke er valgt · Lamictal tyggetab/disperg tab 50 mg: krever godkjenningsfritak, som ikke er valgt. |
-| K4-18 | `tillegg-valproat-lamotrigin` | Utilgjengelige eller endrede preparater | Lamictal 25 mg er midlertidig utgått: 25 mg annenhver dag kan ikke gis, og planen stopper i stedet for å velge en annen dose | «1000» | stopp: lamotrigin dag 1–14: den ideelle dosen 25 mg annenhver dag kan ikke gis med preparatene i FEST nøyaktig og ikke over 200 mg. Nærmeste doser som kan settes sammen: 20 mg (-20 %) og 50 mg (+100 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv. |
+| K4-17 | `tillegg-valproat-lamotrigin` | Utilgjengelige eller endrede preparater | alle lamotriginpreparatene krever godkjenningsfritak | «1000» | stopp: Ingen av de perorale preparatene av lamotrigin i FEST kan brukes: Lamictal tyggetab/disperg tab 5 mg: krever godkjenningsfritak, som ikke er valgt · Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt · Lamictal tyggetab/disperg tab 200 mg: krever godkjenningsfritak, som ikke er valgt · Lamictal tyggetab/disperg tab 100 mg: krever godkjenningsfritak, som ikke er valgt · Lamictal tyggetab/disperg tab 25 mg, varenr. 196808: krever godkjenningsfritak, som ikke er valgt · Lamictal tyggetab/disperg tab 2 mg: krever godkjenningsfritak, som ikke er valgt · Lamictal tyggetab/disperg tab 50 mg: krever godkjenningsfritak, som ikke er valgt. |
+| K4-18 | `tillegg-valproat-lamotrigin` | Utilgjengelige eller endrede preparater | alle pakningene av Lamictal 25 mg (varenr. 196808 og 279054) er midlertidig utgått: 25 mg annenhver dag kan ikke gis, og planen stopper i stedet for å velge en annen dose | «1000» | stopp: lamotrigin dag 1–14: den ideelle dosen 25 mg annenhver dag kan ikke gis med preparatene i FEST nøyaktig og ikke over 200 mg. Nærmeste doser som kan settes sammen: 20 mg (-20 %) og 50 mg (+100 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv. |
+| K4-47 | `tillegg-valproat-lamotrigin` | Utilgjengelige eller endrede preparater | den ordinære pakningen Lamictal 25 mg (varenr. 196808) er midlertidig utgått, og den eneste andre 25 mg-pakningen (varenr. 279054) er en fritakspakning som allerede er utgått: planen stopper | «1000» | stopp: lamotrigin dag 1–14: den ideelle dosen 25 mg annenhver dag kan ikke gis med preparatene i FEST nøyaktig og ikke over 200 mg. Nærmeste doser som kan settes sammen: 20 mg (-20 %) og 50 mg (+100 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv. |
 | K4-19 | `tillegg-valproat-lamotrigin` | Endret regel eller regelversjon | regelen er endret etter godkjenningen (måldose 150 mg) | «1000» | stopp: Ingen klinisk doseplan kan vises. Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke); den må kontrolleres på nytt. |
 | K4-20 | `tillegg-valproat-lamotrigin` | Uvanlige doser og grenseverdier | høyeste dose sammen med valproat: en plan over 200 mg stopper (godkjenningen simulert for den endrede kopien) | «1000» | stopp: lamotrigin fra dag 36: den ideelle dosen 250 mg kan ikke gis med preparatene i FEST nøyaktig og ikke over 200 mg. Nærmeste doser som kan settes sammen: 225 mg (-10 %) og 275 mg (+10 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv. |
 | K4-22 | `tillegg-valproat-lamotrigin` | Uvanlige doser og grenseverdier | forskriveren velger 200 mg som mål: regelen trapper bare opp til den første stabiliserende måldosen | «1000» | stopp: Måldosen 200 mg er utenfor det regelen gjelder for (100 mg). |
@@ -120,7 +121,7 @@ Advarsler:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; planen bruker i stedet varenr. 196808 med samme navn
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -135,7 +136,7 @@ Usikkerhet:
 
 Preparater planen bygger på:
 - Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)
-- Lamictal tyggetab/disperg tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)
+- Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)
 
 Kontroller:
@@ -201,7 +202,7 @@ Advarsler:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; planen bruker i stedet varenr. 196808 med samme navn
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -217,7 +218,7 @@ Usikkerhet:
 Preparater planen bygger på:
 - Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 200 mg (FEST oppgir ikke deling; regnes som ikke delbar)
-- Lamictal tyggetab/disperg tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)
+- Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)
 
 Kontroller:
@@ -283,7 +284,7 @@ Advarsler:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; planen bruker i stedet varenr. 196808 med samme navn
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -298,7 +299,7 @@ Usikkerhet:
 
 Preparater planen bygger på:
 - Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)
-- Lamictal tyggetab/disperg tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)
+- Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)
 
 Kontroller:
@@ -364,7 +365,7 @@ Advarsler:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; planen bruker i stedet varenr. 196808 med samme navn
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -379,7 +380,7 @@ Usikkerhet:
 
 Preparater planen bygger på:
 - Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)
-- Lamictal tyggetab/disperg tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)
+- Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)
 
 Kontroller:
@@ -449,7 +450,7 @@ Advarsler:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; planen bruker i stedet varenr. 196808 med samme navn
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -464,7 +465,7 @@ Usikkerhet:
 
 Preparater planen bygger på:
 - Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)
-- Lamictal tyggetab/disperg tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)
+- Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)
 
 Kontroller:
@@ -530,7 +531,7 @@ Advarsler:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; planen bruker i stedet varenr. 196808 med samme navn
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -545,7 +546,7 @@ Usikkerhet:
 
 Preparater planen bygger på:
 - Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)
-- Lamictal tyggetab/disperg tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)
+- Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)
 
 Kontroller:
@@ -613,7 +614,7 @@ Advarsler:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; planen bruker i stedet varenr. 196808 med samme navn
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -628,7 +629,7 @@ Usikkerhet:
 
 Preparater planen bygger på:
 - Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)
-- Lamictal tyggetab/disperg tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)
+- Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)
 
 Kontroller:
@@ -696,7 +697,7 @@ Advarsler:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; planen bruker i stedet varenr. 196808 med samme navn
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -712,7 +713,7 @@ Usikkerhet:
 Preparater planen bygger på:
 - Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 200 mg (FEST oppgir ikke deling; regnes som ikke delbar)
-- Lamictal tyggetab/disperg tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)
+- Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)
 
 Kontroller:
@@ -778,7 +779,7 @@ Advarsler:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; planen bruker i stedet varenr. 196808 med samme navn
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -794,7 +795,7 @@ Usikkerhet:
 Preparater planen bygger på:
 - Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 200 mg (FEST oppgir ikke deling; regnes som ikke delbar)
-- Lamictal tyggetab/disperg tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)
+- Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)
 - Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)
 
 Kontroller:

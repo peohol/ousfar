@@ -29,6 +29,7 @@ import {
   type Pilotkasus,
   type Pilotutfall,
   simulerGodkjenning,
+  type Festendring,
   type Uttrekkene,
 } from './regler/pilotmatrise'
 import { liste, tabell } from './regler/rapport'
@@ -96,6 +97,23 @@ const sperre = (omfang: Verktoysperre['omfang'], mal: string | null): Verktoyspe
 
 const UNNTAK = 'Regelen gjelder ikke'
 const LITIUMDOSE = 'er utenfor det regelen gjelder for (42, 84, 126, 168, 210, 252, 294, 336, 378, 420 mg)'
+
+/**
+ * De to pakningene i FEST med navnet «Lamictal tyggetab/disperg tab 25 mg»:
+ * den ordinære, markedsførte som planen bruker, og en fritakspakning som er
+ * midlertidig utgått (kontrollørens gjennomgang av 4e0e650).
+ */
+export const LAMICTAL_25 = { ordinaer: '196808', fritak: '279054' } as const
+
+/** Pakningen med varenummeret er midlertidig utgått fra i dag. */
+const pakningUtgatt = (varenr: string): Festendring => ({
+  hva: `pakningen med varenr. ${varenr} midlertidig utgått`,
+  endre: (u, idag) => {
+    const p = u.pakninger.find((x) => x.varenr === varenr)
+    if (!p) throw new Error(`FEST-uttrekket har ingen pakning med varenr. ${varenr}`)
+    p.midlertidig_utgatt_dato = idag
+  },
+})
 
 const V = VALPROAT_LAMOTRIGIN
 const L = LITIUM_LAMOTRIGIN
@@ -178,7 +196,8 @@ export const TILLEGGSKASUS: readonly Tilleggskasus[] = [
   kasus('K4-15', V, 'valproat', 'uvanlig_dose', 'ingen dose av valproat er fylt inn', '', { utfall: 'mangler', grunner: ['Aktuell døgndose må fylles inn'] }, { regel: regelen(V) }),
   kasus('K4-16', V, 'valproat', 'foreldet_fest', 'FEST-kopien er 49 timer gammel', '1000', { utfall: 'stopp', grunner: ['Den nattlige oppdateringen har ikke gått'] }, { regel: regelen(V), timer: 49 }),
   kasus('K4-17', V, 'valproat', 'preparat', 'alle lamotriginpreparatene krever godkjenningsfritak', '1000', { utfall: 'stopp', grunner: ['godkjenningsfritak'] }, { regel: regelen(V), fest: bareFritak('lamotrigin') }),
-  kasus('K4-18', V, 'valproat', 'preparat', 'Lamictal 25 mg er midlertidig utgått: 25 mg annenhver dag kan ikke gis, og planen stopper i stedet for å velge en annen dose', '1000', { utfall: 'stopp', grunner: ['den ideelle dosen 25 mg annenhver dag kan ikke gis'] }, { regel: regelen(V), fest: midlertidigUtgatt('lamotrigin', 25, 'Lamictal') }),
+  kasus('K4-18', V, 'valproat', 'preparat', `alle pakningene av Lamictal 25 mg (varenr. ${LAMICTAL_25.ordinaer} og ${LAMICTAL_25.fritak}) er midlertidig utgått: 25 mg annenhver dag kan ikke gis, og planen stopper i stedet for å velge en annen dose`, '1000', { utfall: 'stopp', grunner: ['den ideelle dosen 25 mg annenhver dag kan ikke gis'] }, { regel: regelen(V), fest: midlertidigUtgatt('lamotrigin', 25, 'Lamictal') }),
+  kasus('K4-47', V, 'valproat', 'preparat', `den ordinære pakningen Lamictal 25 mg (varenr. ${LAMICTAL_25.ordinaer}) er midlertidig utgått, og den eneste andre 25 mg-pakningen (varenr. ${LAMICTAL_25.fritak}) er en fritakspakning som allerede er utgått: planen stopper`, '1000', { utfall: 'stopp', grunner: ['den ideelle dosen 25 mg annenhver dag kan ikke gis'] }, { regel: regelen(V), fest: pakningUtgatt(LAMICTAL_25.ordinaer) }),
   kasus('K4-19', V, 'valproat', 'regelendring', 'regelen er endret etter godkjenningen (måldose 150 mg)', '1000', { utfall: 'stopp', grunner: ['Regelen er endret etter godkjenningen'] }, {
     regel: regelen(V, { hva: 'måldosen endret til 150 mg', endre: (x) => medMaldose(x, 150) }),
     skjema: { maldose: '150' },

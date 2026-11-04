@@ -85,6 +85,18 @@ describe('Byggesteinene fra FEST', () => {
     expect(en({ form: 'depottablett', mg: 15 })).toMatchObject({ klasse: 'peroral_modifisert', deling: 1 })
   })
 
+  it('viser varenumrene bare når flere preparater av virkestoffet har samme navn, form og styrke', () => {
+    // Uten navnekollisjon er etiketten nøyaktig FESTs navn, så tekstene er uendret.
+    for (const b of stein(TESTOKSETIN)) expect(b.etikett).toBe(b.navn_form_styrke)
+    // En ordinær pakning og en fritakspakning med samme navn (som Lamictal 25 mg i FEST): begge får varenummeret.
+    const like = stein([
+      { id: 'A', virkestoff: 'testoksetin', varenavn: 'Testoksetin', form: 'tablett', mg: 25 },
+      { id: 'B', virkestoff: 'testoksetin', varenavn: 'Testoksetin', form: 'tablett', mg: 25, type: 'fritak', pakninger: [{ utgatt: '2026-08-12' }] },
+      { id: 'C', virkestoff: 'testoksetin', varenavn: 'Testoksetin', form: 'tablett', mg: 50 },
+    ])
+    expect(like.map((b) => b.etikett)).toEqual(['Testoksetin tablett 25 mg, varenr. SYNA1', 'Testoksetin tablett 25 mg, varenr. SYNB1', 'Testoksetin tablett 50 mg'])
+  })
+
   it('regner med styrken i mg moderstoff per enhet, per sprøyte eller per dråpe, og ellers ikke', () => {
     expect(en({ form: 'tablett', mg: 2.5 })).toMatchObject({ mg: 2.5, doseenhet: 'tablett', begrensninger: [] })
     expect(en({ virkestoff: 'testperidon', form: 'depotinjeksjon', mg: 150, nevner: { verdi: 1, enhet: 'sprøyte' } })).toMatchObject({ mg: 150, doseenhet: 'injeksjon', klasse: 'depotinjeksjon' })

@@ -18,7 +18,7 @@ import { kontrollerRegelsett } from '../verktoy/regler/kontroll'
 import { tilleggsfeil } from '../verktoy/regler/modell'
 import { SIMULERT_KONTROLLOR } from '../verktoy/regler/pilotmatrise'
 import { LAMICTAL, LITIUM_LAMOTRIGIN, OPPTRAPPING, TILLEGGSSETT, TILLEGGSVEDTAK, VALPROAT_LAMOTRIGIN } from '../verktoy/regler/tillegg'
-import { FEST_TILLEGG, kjorTilleggskasus, lagTilleggsgrunnlag, TILLEGGSGRUNNLAGFIL, TILLEGGSKASUS } from '../verktoy/tilleggsgrunnlag'
+import { FEST_TILLEGG, kjorTilleggskasus, LAMICTAL_25, lagTilleggsgrunnlag, TILLEGGSGRUNNLAGFIL, TILLEGGSKASUS } from '../verktoy/tilleggsgrunnlag'
 import { REGELSETT, reglerFor, tilgjengelighet } from '../verktoy/tilgjengelighet'
 
 const les = (fil: string) => readFileSync(new URL(`../../${fil}`, import.meta.url), 'utf8')
@@ -186,7 +186,7 @@ describe('Tilleggsreglene', () => {
       const tekst = u.tekst!
       const preparater = tekst.slice(tekst.indexOf('Preparater planen bygger på:'), tekst.indexOf('Kontroller:')).split('\n').filter((l) => l.startsWith('- '))
       expect(preparater.length, id).toBeGreaterThan(0)
-      for (const linje of preparater) expect(linje, id).toMatch(/^- Lamictal tyggetab\/disperg tab \d+ mg /)
+      for (const linje of preparater) expect(linje, id).toMatch(/^- Lamictal tyggetab\/disperg tab \d+ mg(, varenr\. \d+)? \(/)
     }
   })
 
@@ -224,10 +224,35 @@ describe('Kontrollgrunnlaget (ende til ende som verktøysiden)', () => {
     expect(resultat('K4-10').res.tekst).not.toContain('12,5 mg =')
   })
 
-  it('stopper heller enn å velge en annen dose når 25 mg ikke finnes', () => {
-    const u = resultat('K4-18').res
-    expect(u.utfall).toBe('stopp')
-    expect('grunner' in u && u.grunner.join(' ')).toMatch(/beregningen gjør det ikke selv/)
+  it('stopper heller enn å velge en annen dose når ingen 25 mg-pakning kan brukes', () => {
+    // K4-18: alle pakningene med 25 mg er utgått. K4-47: bare den ordinære (196808) går ut; den andre er en fritakspakning som allerede er utgått.
+    for (const id of ['K4-18', 'K4-47']) {
+      const u = resultat(id).res
+      expect(u.utfall, id).toBe('stopp')
+      expect('grunner' in u && u.grunner.join(' '), id).toMatch(/den ideelle dosen 25 mg annenhver dag kan ikke gis .*beregningen gjør det ikke selv/)
+      expect(u.tekst ?? '', id).not.toMatch(/Lamotrigin peroralt: 25 mg/)
+    }
+  })
+
+  it('skiller de to pakningene med samme navn: planen bygger på den ordinære 25 mg-pakningen, og advarselen gjelder bare fritakspakningen som er utgått', () => {
+    // Uttrekket har to merkevarer med samme navn og 25 mg: den ordinære, markedsførte og en fritakspakning som er midlertidig utgått.
+    const pakninger = uttrekk.utvalg.pakninger.filter((p) => p.navn_form_styrke === 'Lamictal tyggetab/disperg tab 25 mg')
+    expect(pakninger.map((p) => [p.varenr, p.midlertidig_utgatt_dato]).sort()).toEqual([
+      [LAMICTAL_25.ordinaer, null],
+      [LAMICTAL_25.fritak, '2026-08-12'],
+    ])
+    for (const id of ['K4-01', 'K4-02', 'K4-10', 'K4-30']) {
+      // Den faktiske teksten som kopieres, fra den samme veien som verktøysiden.
+      const tekst = resultat(id).res.tekst!
+      const preparater = tekst.split('Preparater planen bygger på:\n')[1]!.split('\n\n')[0]!
+      expect(preparater, id).toContain(`- Lamictal tyggetab/disperg tab 25 mg, varenr. ${LAMICTAL_25.ordinaer} (FEST oppgir ikke deling; regnes som ikke delbar)`)
+      expect(preparater, id).not.toContain(LAMICTAL_25.fritak)
+      expect(tekst, id).toContain(
+        `- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. ${LAMICTAL_25.fritak}: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; planen bruker i stedet varenr. ${LAMICTAL_25.ordinaer} med samme navn`,
+      )
+      // Ingen advarsel om 25 mg uten varenummer, som kunne leses som at dosen planen bruker, er utilgjengelig.
+      expect(tekst, id).not.toMatch(/Lamictal tyggetab\/disperg tab 25 mg: /)
+    }
   })
 
   it('er oppdatert', () => {
