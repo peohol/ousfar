@@ -59,7 +59,7 @@ const VERSJON: Partial<Record<string, number>> = {
   'depot-risperidon-xeplion': 8,
   'depot-consta-xeplion': 2,
   'antipsykotikabytte-aripiprazol-olanzapin': 2,
-  'antipsykotikabytte-aripiprazol-risperidon': 3,
+  'antipsykotikabytte-aripiprazol-risperidon': 4,
   'antipsykotikabytte-kariprazin-kvetiapin': 2,
   'antipsykotikabytte-olanzapin-aripiprazol': 8,
   'antipsykotikabytte-risperidon-aripiprazol': 8,
@@ -251,21 +251,34 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
     expect(grunner(kjor('antipsykotikabytte-aripiprazol-olanzapin', '15', { ...T, maldose: '10', pasientforhold: { cyp1a2_hemmer: true } }))).toMatch(/CYP1A2/)
   })
 
-  it('aripiprazol → risperidon: 2 mg dag 1, 4 mg fra dag 2 og den valgte måldosen etter en ny vurdering', () => {
-    expect(linjer(kjor('antipsykotikabytte-aripiprazol-risperidon', '15', { maldose: '6' })).filter((l) => !l.includes('Vurdering'))).toEqual([
-      'Dag 1: Aripiprazol peroralt: Seponert; Risperidon peroralt: 2 mg = 1 tablett à 2 mg',
-      'Dag 2–8: Risperidon peroralt: 4 mg = 1 tablett à 4 mg',
-      'Fra dag 9: Risperidon peroralt: 6 mg = 2 tabletter à 3 mg',
+  it('aripiprazol → risperidon: 2 mg dag 1–4, første økning dag 5 og den valgte måldosen 4–6 mg etter en ny vurdering', () => {
+    const plan = (maldose: string) => linjer(kjor('antipsykotikabytte-aripiprazol-risperidon', '15', { maldose }))
+    const doser = (maldose: string) => plan(maldose).filter((l) => !l.includes('Vurdering'))
+    const vurderinger = (maldose: string) => plan(maldose).filter((l) => l.includes('Vurdering')).map((l) => l.split(':')[0])
+    // Kontrollørens tiende gjennomgang: byteverktøyets forsiktigere start ved bytte fra aripiprazol (høyst 50 % av måldosen dag 1–4,
+    // første økning dag 5), ikke preparatomtalens 4 mg dag 2. Begge ytterpunktene av måldosen, og 5 mg, gir en komplett plan.
+    expect(doser('4')).toEqual([
+      'Dag 1–4: Aripiprazol peroralt: Seponert; Risperidon peroralt: 2 mg = 1 tablett à 2 mg',
+      'Fra dag 5: Risperidon peroralt: 4 mg = 1 tablett à 4 mg',
     ])
-    // Vurderingen står før hver doseendring.
-    expect(linjer(kjor('antipsykotikabytte-aripiprazol-risperidon', '15', { maldose: '6' })).filter((l) => l.includes('Vurdering')).map((l) => l.split(':')[0])).toEqual(['Dag 2', 'Dag 9'])
-    expect(linjer(kjor('antipsykotikabytte-aripiprazol-risperidon', '15', { maldose: '4' })).filter((l) => !l.includes('Vurdering'))).toEqual([
-      'Dag 1: Aripiprazol peroralt: Seponert; Risperidon peroralt: 2 mg = 1 tablett à 2 mg',
-      'Fra dag 2: Risperidon peroralt: 4 mg = 1 tablett à 4 mg',
+    expect(vurderinger('4')).toEqual(['Dag 5'])
+    expect(doser('6')).toEqual([
+      'Dag 1–4: Aripiprazol peroralt: Seponert; Risperidon peroralt: 2 mg = 1 tablett à 2 mg',
+      'Dag 5–11: Risperidon peroralt: 4 mg = 1 tablett à 4 mg',
+      'Fra dag 12: Risperidon peroralt: 6 mg = 2 tabletter à 3 mg',
     ])
+    expect(vurderinger('6')).toEqual(['Dag 5', 'Dag 12'])
+    expect(doser('5').at(-1)).toMatch(/^Fra dag 12: Risperidon peroralt: 5 mg/)
+    expect(vurderinger('5')).toEqual(['Dag 5', 'Dag 12'])
+    for (const maldose of ['4', '5', '6']) {
+      // Ingen dose over 2 mg før dag 5, og 2 mg er høyst halvparten av måldosen.
+      expect(doser(maldose)[0], maldose).toMatch(/^Dag 1–4: .*Risperidon peroralt: 2 mg = /)
+      expect(2, maldose).toBeLessThanOrEqual(Number(maldose) / 2)
+      // Vurderingen før økningen gjelder blodtrykket og toleransen.
+      expect(plan(maldose).find((l) => l.startsWith('Dag 5') && l.includes('Vurdering')), maldose).toMatch(/blodtrykk/)
+    }
     // Kontrollørens niende gjennomgang: planen går fra 4 mg rett til måldosen, så bare 4–6 mg gir plan. Høyere mål (4 → 16 mg er et stort
     // sprang uten opptrapping) og lavere mål stopper uten delplan, også med skriftlig begrunnelse.
-    expect(linjer(kjor('antipsykotikabytte-aripiprazol-risperidon', '15', { maldose: '5' })).at(-1)).toMatch(/Fra dag 9: Risperidon peroralt: 5 mg/)
     for (const maldose of ['3', '3,5', '6,5', '8', '10', '12', '16', '20']) {
       for (const begrunnelse of [undefined, 'Syntetisk eksempel.']) {
         const u = kjor('antipsykotikabytte-aripiprazol-risperidon', '15', { maldose, ...(begrunnelse && { begrunnelse }) })

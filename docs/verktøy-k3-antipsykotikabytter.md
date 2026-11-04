@@ -405,9 +405,9 @@ Hentet og lest 28.10.2026 og 03.11.2026 og 04.11.2026. Kontrollsummen (SHA-256) 
 
 ## Fra aripiprazol til risperidon, direkte bytte
 
-`antipsykotikabytte-aripiprazol-risperidon`, versjon 3, fingeravtrykk `b829b4db06b1754feab456539f4e57cfc7cb9043d8508b515362bfdbdf117002`. Direkte bytte: aripiprazol → risperidon. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`antipsykotikabytte-aripiprazol-risperidon`, versjon 4, fingeravtrykk `ea8d1e266c8a56278c9cc5d678d5a1aea04e133a88e4605eea806f43b0746476`. Direkte bytte: aripiprazol → risperidon. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code) → utkast (versjon 3, 03.11.2026, Claude Code) → til faglig kontroll (versjon 3, 03.11.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code) → utkast (versjon 3, 03.11.2026, Claude Code) → til faglig kontroll (versjon 3, 03.11.2026, Claude Code) → utkast (versjon 4, 03.11.2026, Claude Code) → til faglig kontroll (versjon 4, 03.11.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -422,6 +422,10 @@ Hentet og lest 28.10.2026 og 03.11.2026 og 04.11.2026. Kontrollsummen (SHA-256) 
   - Bytte mellom antipsykotika bør vurderes av psykiater. Under byttet kan sykdommen forverres og nye bivirkninger komme, så pasienten må følges tett. *([keks-2019](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6787301/fullTextXML), tabell 4 og avsnittet om bytte)*
 - Ved schizofreni startes risperidon med 2 mg daglig og kan økes til 4 mg dag 2; deretter holdes dosen eller tilpasses. De fleste har effekt av 4–6 mg daglig.
   - Schizofreni hos voksne: start med 2 mg daglig; dosen kan økes til 4 mg dag 2 og deretter holdes eller tilpasses. De fleste har effekt av 4–6 mg daglig. *([dmp-risperdal](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08037.pdf), pkt. 4.2)*
+- Ved bytte fra aripiprazol kan risperidon startes med 50 % av måldosen dag 1 og økes ved behov dag 5. Noen trenger langsommere opptrapping. Ortostatisk blodtrykksfall kan komme etter første dose.
+  - Fra aripiprazol til risperidon: risperidon kan startes med 50 % av måldosen dag 1 og økes ved behov dag 5. Noen trenger langsommere opptrapping og lavere start- og vedlikeholdsdose. *([keks-2019-verktoy](https://australianprescriber.tg.org.au/articles/antipsychotic-switching-tool.html), oral to oral, aripiprazole to risperidone)*
+  - Ortostatisk blodtrykksfall kan komme etter første dose av risperidon, og risperidon gir oftere prolaktinøkning enn aripiprazol. *([keks-2019-verktoy](https://australianprescriber.tg.org.au/articles/antipsychotic-switching-tool.html), oral to oral, aripiprazole to risperidone)*
+  - Verktøyet skal hjelpe forskrivere ved bytte av antipsykotika. Det oppdateres ikke lenger, ble sist oppdatert 1. februar 2022, og informasjonen er kanskje ikke oppdatert. *([keks-2019-verktoy](https://australianprescriber.tg.org.au/articles/antipsychotic-switching-tool.html), Using the tool)*
 - Risperidon kan gis én eller to ganger daglig.
   - Risperidon kan gis én eller to ganger daglig. *([dmp-risperdal](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08037.pdf), pkt. 4.2)*
 - Eldre, nedsatt nyre- eller leverfunksjon og sterke CYP2D6-hemmere eller CYP3A4-induktorer krever andre doser eller en ny vurdering av doseringen.
@@ -434,19 +438,25 @@ Hentet og lest 28.10.2026 og 03.11.2026 og 04.11.2026. Kontrollsummen (SHA-256) 
 - Aripiprazol seponeres uten nedtrapping dagen før risperidon startes (siste dose dagen før dag 1).
   - Direkte bytte: det første antipsykotikumet stoppes og det neste startes dagen etter. Det krever erfaring og gjøres helst der pasienten kan følges tett, gjerne innlagt. *([keks-2019](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6787301/fullTextXML), tabell 4 (direkte bytte))*
   - Når det første antipsykotikumet er aripiprazol eller brekspiprazol, kan byttet gjøres direkte, fordi begge har svært lang halveringstid og ingen antikolinerg effekt. *([keks-2019](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6787301/fullTextXML), avsnittet om direkte bytte)*
-- Planen følger opptrappingen i preparatomtalen, 2 mg dag 1 og 4 mg fra dag 2. Startregimet og den terapeutiske måldosen er atskilt: forskriveren velger måldosen innenfor 4–6 mg, dosen de fleste har effekt av. Planen holder 4 mg til en ny vurdering og slutter på måldosen. Et høyere mål, også 8–16 mg med begrunnelse, stopper uten delplan og planlegges individuelt, fordi planen ville gått rett fra 4 mg dit uten en kildebegrunnet opptrapping, og doser over 10 mg har ikke vist bedre effekt. Et lavere mål stopper også. Hvor lenge 4 mg holdes, er et åpent OUSFAR-valg (forslag: én uke). En langsommere opptrapping er en klinisk vurdering og beregnes ikke.
+- Planen følger det forsiktigste av byteverktøyet og preparatomtalen: 2 mg dag 1–4 og første økning tidligst dag 5. 2 mg er preparatomtalens startdose og høyst 50 % av måldosen 4–6 mg, slik byteverktøyet anbefaler ved bytte fra aripiprazol. Preparatomtalens raskere økning til 4 mg dag 2 er ikke brukt, fordi aripiprazol fortsatt virker de første dagene etter siste dose og ortostatisk blodtrykksfall kan komme tidlig.
+  - Fra aripiprazol til risperidon: risperidon kan startes med 50 % av måldosen dag 1 og økes ved behov dag 5. Noen trenger langsommere opptrapping og lavere start- og vedlikeholdsdose. *([keks-2019-verktoy](https://australianprescriber.tg.org.au/articles/antipsychotic-switching-tool.html), oral to oral, aripiprazole to risperidone)*
+  - Ortostatisk blodtrykksfall kan komme etter første dose av risperidon, og risperidon gir oftere prolaktinøkning enn aripiprazol. *([keks-2019-verktoy](https://australianprescriber.tg.org.au/articles/antipsychotic-switching-tool.html), oral to oral, aripiprazole to risperidone)*
+  - Schizofreni hos voksne: start med 2 mg daglig; dosen kan økes til 4 mg dag 2 og deretter holdes eller tilpasses. De fleste har effekt av 4–6 mg daglig. *([dmp-risperdal](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08037.pdf), pkt. 4.2)*
+  - Halveringstiden til aripiprazol er om lag 75 timer, og 95 timer for den aktive metabolitten. *([keks-2019](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6787301/fullTextXML), tabell 1)*
+- Forskriveren velger måldosen innenfor 4–6 mg, dosen de fleste har effekt av. Ved 4 mg er dosen fra dag 5 måldosen. Ved 5 eller 6 mg økes det dag 5 til 4 mg og ikke rett til måldosen, fordi ingen av kildene beskriver et sprang fra 2 mg til 5–6 mg; hvor lenge 4 mg holdes før måldosen, er et åpent OUSFAR-valg (forslag: én uke). Et høyere mål, også 8–16 mg med begrunnelse, og et lavere mål stopper uten delplan og planlegges individuelt. Doser over 10 mg har ikke vist bedre effekt. En enda langsommere opptrapping er en klinisk vurdering og beregnes ikke.
   - Schizofreni hos voksne: start med 2 mg daglig; dosen kan økes til 4 mg dag 2 og deretter holdes eller tilpasses. De fleste har effekt av 4–6 mg daglig. *([dmp-risperdal](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08037.pdf), pkt. 4.2)*
   - Doser over 10 mg daglig har ikke vist bedre effekt; doser over 16 mg daglig er ikke vurdert for sikkerhet og anbefales ikke. *([dmp-risperdal](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08037.pdf), pkt. 4.2)*
+  - Fra aripiprazol til risperidon: risperidon kan startes med 50 % av måldosen dag 1 og økes ved behov dag 5. Noen trenger langsommere opptrapping og lavere start- og vedlikeholdsdose. *([keks-2019-verktoy](https://australianprescriber.tg.org.au/articles/antipsychotic-switching-tool.html), oral to oral, aripiprazole to risperidone)*
 - Planen bruker risperidontabletter eller smeltetabletter; miksturen har ingen dokumentert oppmåling i verktøyet. *(OUSFARs vurdering)*
 
 **Den matematiske regelen – parametre:**
 
 | Hvor | Parameter | Verdi | Art | Grunnlag |
 | --- | --- | --- | --- | --- |
-| til: fase 1 (opptrapping) | trinn[0].mg | 2 mg | bindende krav | dmp-risperdal pkt. 4.2 |
-| til: fase 1 (opptrapping) | trinn[0].dager | 1 dager | veiledende | dmp-risperdal pkt. 4.2 |
-| til: fase 1 (opptrapping) | trinn[1].mg | 4 mg | veiledende | dmp-risperdal pkt. 4.2 |
-| til: fase 1 (opptrapping) | trinn[1].dager | 7 dager (forskriveren kan velge minst 1 dager, av tekniske grunner høyst 365 dager) | veiledende | **OUSFAR-vurdering, åpent forslag:** OUSFARs valg: én uke på startregimet før risperidon endres til den valgte måldosen, slik at effekt og bivirkninger kan vurderes etter at aripiprazol er stoppet (aripiprazol virker i flere dager etter siste dose). Preparatomtalen gir ingen fast tid, bare en ny klinisk vurdering. (bygger på dmp-risperdal pkt. 4.2; keks-2019 tabell 1) |
+| til: fase 1 (opptrapping) | trinn[0].mg | 2 mg | bindende krav | dmp-risperdal pkt. 4.2; keks-2019-verktoy oral to oral, aripiprazole to risperidone |
+| til: fase 1 (opptrapping) | trinn[0].dager | 4 dager | veiledende | keks-2019-verktoy oral to oral, aripiprazole to risperidone |
+| til: fase 1 (opptrapping) | trinn[1].mg | 4 mg | veiledende | dmp-risperdal pkt. 4.2; keks-2019-verktoy oral to oral, aripiprazole to risperidone |
+| til: fase 1 (opptrapping) | trinn[1].dager | 7 dager (forskriveren kan velge minst 1 dager, av tekniske grunner høyst 365 dager) | veiledende | **OUSFAR-vurdering, åpent forslag:** OUSFARs valg: én uke på 4 mg før risperidon økes til måldosen 5 eller 6 mg, så toleransen kan vurderes. Verken preparatomtalen eller byteverktøyet gir noen fast tid for økningen over 4 mg, bare en ny klinisk vurdering. (bygger på dmp-risperdal pkt. 4.2; keks-2019-verktoy oral to oral, aripiprazole to risperidone; keks-2019 tabell 1) |
 
 **Betingelser:**
 
@@ -479,7 +489,7 @@ Hentet og lest 28.10.2026 og 03.11.2026 og 04.11.2026. Kontrollsummen (SHA-256) 
 
 - *Aripiprazol 15 mg til risperidon, startdato 7. desember 2026.* Inndata: startdose 15 mg; måldose 6 mg; startdato 07.12.2026; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, risperidon_interaksjon nei.
   - **fra:** fra dag 1 (07.12.2026): seponert
-  - **til:** dag 1 (07.12.2026): 2 mg; dag 2–8 (08.12.2026–14.12.2026): 4 mg; fra dag 9 (15.12.2026): 6 mg
+  - **til:** dag 1–4 (07.12.2026–10.12.2026): 2 mg; dag 5–11 (11.12.2026–17.12.2026): 4 mg; fra dag 12 (18.12.2026): 6 mg
   - Kontroll: Avkreftet: Pasienten er 65 år eller eldre; preparatomtalen har en lavere startdose og langsommere opptrapping for eldre. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten har nedsatt nyre- eller leverfunksjon; preparatomtalen halverer da start- og vedlikeholdsdosen. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten bruker en sterk CYP2D6-hemmer (f.eks. paroksetin, fluoksetin) eller en sterk CYP3A4-induktor (f.eks. karbamazepin); doseringen av risperidon må da vurderes særskilt. – oppfylt. Vurdert og avkreftet av forskriveren.
@@ -490,7 +500,7 @@ Hentet og lest 28.10.2026 og 03.11.2026 og 04.11.2026. Kontrollsummen (SHA-256) 
   - Kontroll: Måldosen er 4–6 mg (bindende) – oppfylt. 6 mg.
 - *Aripiprazol 10 mg (laveste dose i området) til risperidon.* Inndata: startdose 10 mg; måldose 4 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, risperidon_interaksjon nei.
   - **fra:** fra dag 1: seponert
-  - **til:** dag 1: 2 mg; fra dag 2: 4 mg
+  - **til:** dag 1–4: 2 mg; fra dag 5: 4 mg
   - Kontroll: Avkreftet: Pasienten er 65 år eller eldre; preparatomtalen har en lavere startdose og langsommere opptrapping for eldre. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten har nedsatt nyre- eller leverfunksjon; preparatomtalen halverer da start- og vedlikeholdsdosen. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten bruker en sterk CYP2D6-hemmer (f.eks. paroksetin, fluoksetin) eller en sterk CYP3A4-induktor (f.eks. karbamazepin); doseringen av risperidon må da vurderes særskilt. – oppfylt. Vurdert og avkreftet av forskriveren.
@@ -501,7 +511,7 @@ Hentet og lest 28.10.2026 og 03.11.2026 og 04.11.2026. Kontrollsummen (SHA-256) 
   - Kontroll: Måldosen er 4–6 mg (bindende) – oppfylt. 4 mg.
 - *Måldose 5 mg, innenfor det vanlige området.* Inndata: startdose 20 mg; måldose 5 mg; bekreftet: indikasjon, peroral_formulering, spesialist_risiko; pasientforhold: alder_65 nei, nedsatt_nyre_lever nei, risperidon_interaksjon nei.
   - **fra:** fra dag 1: seponert
-  - **til:** dag 1: 2 mg; dag 2–8: 4 mg; fra dag 9: 5 mg
+  - **til:** dag 1–4: 2 mg; dag 5–11: 4 mg; fra dag 12: 5 mg
   - Kontroll: Avkreftet: Pasienten er 65 år eller eldre; preparatomtalen har en lavere startdose og langsommere opptrapping for eldre. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten har nedsatt nyre- eller leverfunksjon; preparatomtalen halverer da start- og vedlikeholdsdosen. – oppfylt. Vurdert og avkreftet av forskriveren.
   - Kontroll: Avkreftet: Pasienten bruker en sterk CYP2D6-hemmer (f.eks. paroksetin, fluoksetin) eller en sterk CYP3A4-induktor (f.eks. karbamazepin); doseringen av risperidon må da vurderes særskilt. – oppfylt. Vurdert og avkreftet av forskriveren.
