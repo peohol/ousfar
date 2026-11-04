@@ -64,7 +64,7 @@ describe('Kombinasjonene', () => {
     }
   })
 
-  it('gir beregning bare for kombinasjonene de sju godkjente reglene med beregning gjelder', () => {
+  it('gir beregning bare for kombinasjonene de ti godkjente reglene med beregning gjelder', () => {
     const beregning = [...ALLE].flatMap(([id, ks]) => ks.filter((k) => k.utfall === 'beregning').map((k) => `${id}: ${k.valg.fra.nokkel}/${k.valg.fra.formulering}${k.valg.til ? ` → ${k.valg.til.nokkel}/${k.valg.til.formulering}` : ''}`))
     expect(beregning.sort()).toEqual(
       [
@@ -74,6 +74,10 @@ describe('Kombinasjonene', () => {
         'bytte-antidepressiv: sertralin/standard → mirtazapin/standard',
         'bytte-antipsykotikum: aripiprazol/standard → aripiprazol/LA',
         'bytte-antipsykotikum: paliperidon/standard → paliperidon/ER',
+        // De tre antipsykotikabyttene fra K3, godkjent 04.11.2026 (`ANTIPSYKOTIKAVEDTAK`).
+        'bytte-antipsykotikum: olanzapin/standard → aripiprazol/standard',
+        'bytte-antipsykotikum: risperidon/standard → aripiprazol/standard',
+        'bytte-antipsykotikum: risperidon/standard → paliperidon/ER',
         'kombinere-stemningsstabiliserende: litium/standard → lamotrigin/standard',
         'kombinere-stemningsstabiliserende: valproat/standard → lamotrigin/standard',
       ].sort(),
@@ -192,9 +196,15 @@ describe('prioriteringen i VDK-2', () => {
     }
   })
 
-  it('aktiverer ingenting: regelutkastene står ikke i regelsettet', () => {
+  it('aktiverer ingenting selv: regelutkastene som er skrevet siden (K3), godkjennes bare av kontrolløren i K3', () => {
     expect(plan).toContain('Ingenting her er aktivert eller klinisk godkjent')
-    for (const id of ['depot-risperidon-xeplion']) expect(REGELSETT.regler.some((r) => r.id === id)).toBe(false)
+    // Xeplion fra peroral risperidon er godkjent av kontrolløren 04.11.2026 (`ANTIPSYKOTIKAVEDTAK`); Consta → Xeplion står til faglig kontroll.
+    for (const [id, godkjent] of [['depot-risperidon-xeplion', true], ['depot-consta-xeplion', false]] as const) {
+      const regel = REGELSETT.regler.find((r) => r.id === id)!
+      expect(regel.godkjenning.status, id).toBe(godkjent ? 'klinisk_godkjent' : 'til_faglig_kontroll')
+      expect(erKliniskGodkjent(regel), id).toBe(godkjent)
+      expect(plan, id).toContain(`\`${id}\` er skrevet som regelutkast i K3`)
+    }
   })
 
   it('viser ingen lenker eller tekst fra Psychiatrienet', () => {
