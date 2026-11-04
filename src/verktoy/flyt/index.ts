@@ -12,7 +12,7 @@ import { lesDose, type Planskjema } from '../doseplan'
 import { komplettfeil, type Regel } from '../regler/modell'
 import { medlemFor, REGELSETT, tilgjengelighet } from '../tilgjengelighet'
 import { medFlytfelt, vurderFlyt, type Flytgrunnlag, type Flytresultat } from './flyt'
-import { forhandskontroll, type Forhandsgrunnlag, type Forhandsresultat } from './forhandskontroll'
+import { forhandskontroll, maldoseMangler, type Forhandsgrunnlag, type Forhandsresultat } from './forhandskontroll'
 import type { Flyttilstand } from './typer'
 
 export interface Flytutfall {
@@ -47,7 +47,7 @@ export function flyttilstand(g: Forhandsgrunnlag & { flytgrunnlag?: Flytgrunnlag
   const skjema = g.skjema && flyt ? medFlytfelt({ ...g.skjema, formvalg: { ...g.skjema.formvalg, ...formvalg } }, flyt.felt) : g.skjema
   const steg: Flyttilstand['steg'] = !g.valg
     ? 'hva'
-    : !g.skjema || lesDose(g.skjema.startdose) === undefined
+    : !g.skjema || lesDose(g.skjema.startdose) === undefined || (regel && maldoseMangler(regel, g.skjema))
       ? 'behandling'
       : kontroll.utfall === 'kan_lages_hvis' && kontroll.gjenstar === 0
         ? 'plan'

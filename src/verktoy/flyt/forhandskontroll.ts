@@ -114,17 +114,30 @@ function svarkandidater(r: Regel, gitt: Readonly<Record<string, boolean>>): Reco
   return [...new Map(sett.map((s) => [kanonisk(s), s])).values()]
 }
 
+/** Om regelen trenger en måldose som ikke er valgt ennå. */
+export const maldoseMangler = (r: Regel, s: Planskjema) => trengerMaldose(r, s) && lesDose(s.maldose) === undefined
+
+/**
+ * Måldosene prøveberegningen prøver: den som er valgt, ellers hver verdi
+ * regelen tillater. `undefined` når måldosen mangler og regelen ikke har
+ * faste verdier å prøve; da kan ikke prøveberegningen si noe ennå.
+ */
+function maldosekandidater(r: Regel, s: Planskjema): (string | undefined)[] | undefined {
+  if (!maldoseMangler(r, s)) return [undefined]
+  const verdier = r.inndata.find((k) => k.navn === 'maldose')?.verdier ?? []
+  return verdier.length > 0 ? verdier.map(String) : undefined
+}
+
 /** Skjemaet til prøveberegningen: svarene som er gitt, og ellers de svarene som tillater en plan. */
-function proveskjema(r: Regel, s: Planskjema, svar: Record<string, boolean>): Planskjema {
+function proveskjema(r: Regel, s: Planskjema, svar: Record<string, boolean>, maldose?: string): Planskjema {
   const pasientforhold = { ...Object.fromEntries(r.unntak.map((u) => [u.id, false])), ...s.pasientforhold }
   const bekreftet = gjeldendeBekreftelser(r, svar).map((b) => b.id)
-  const maldose = trengerMaldose(r, s) && lesDose(s.maldose) === undefined ? (r.inndata.find((k) => k.navn === 'maldose')?.verdier ?? []) : []
   return {
     ...s,
     svar,
     pasientforhold,
     bekreftet,
-    ...(maldose.length === 1 && { maldose: String(maldose[0]) }),
+    ...(maldose !== undefined && { maldose }),
     ...(kanKreveBegrunnelse(r) && !s.begrunnelse.trim() && { begrunnelse: PROVEBEGRUNNELSE }),
   }
 }
@@ -174,15 +187,17 @@ function prove(r: Regel, g: Forhandsgrunnlag & { skjema: Planskjema; utvalg: Leg
   const fritak = grunnskjema.godkjenningsfritak ? [true] : [false, true]
   const lykkes: { formvalg: (typeof formsett)[number]; fritak: boolean; dosevalg: number }[] = []
   let forste: Doseplanresultat | undefined
-  for (const svar of svarkandidater(r, grunnskjema.svar)) {
-    for (const formvalg of formsett) {
-      for (const f of fritak) {
-        if (budsjett.igjen <= 0) break
-        if (lykkes.some((x) => kanonisk(x.formvalg) === kanonisk(formvalg) && (x.fritak || !f))) continue
-        const s = proveskjema(r, { ...grunnskjema, formvalg: { ...grunnskjema.formvalg, ...formvalg }, godkjenningsfritak: f }, svar)
-        const forsok = proveMedDosevalg(beregn, s, budsjett)
-        forste ??= forsok.resultat
-        if (forsok.resultat.status === 'doseplan') lykkes.push({ formvalg, fritak: f, dosevalg: forsok.dosevalg })
+  for (const maldose of maldosekandidater(r, grunnskjema) ?? []) {
+    for (const svar of svarkandidater(r, grunnskjema.svar)) {
+      for (const formvalg of formsett) {
+        for (const f of fritak) {
+          if (budsjett.igjen <= 0) break
+          if (lykkes.some((x) => kanonisk(x.formvalg) === kanonisk(formvalg) && (x.fritak || !f))) continue
+          const s = proveskjema(r, { ...grunnskjema, formvalg: { ...grunnskjema.formvalg, ...formvalg }, godkjenningsfritak: f }, svar, maldose)
+          const forsok = proveMedDosevalg(beregn, s, budsjett)
+          forste ??= forsok.resultat
+          if (forsok.resultat.status === 'doseplan') lykkes.push({ formvalg, fritak: f, dosevalg: forsok.dosevalg })
+        }
       }
     }
   }
@@ -239,6 +254,8 @@ export function forhandskontroll(g: Forhandsgrunnlag): Forhandsresultat {
   const feil = regler.map((r) => dosefeil(r, start, formnavn))
   if (feil.every((f) => f !== undefined)) return kanIkke([forklaring('utenfor_omfang', `${feil[0]} ${INDIVIDUELT}`)], [])
   regler = regler.filter((_, i) => feil[i] === undefined)
+  // En måldose regelen ikke har faste verdier for, må velges før prøveberegningen kan si noe.
+  if (regler.some((r) => maldosekandidater(r, g.skjema!) === undefined)) return ukjent(regler, gjenstarFlyt + 1)
   if (!g.utvalg) return ukjent(regler, gjenstarFlyt)
 
   const nokkel = kanonisk({
@@ -306,6 +323,8 @@ export function forhandskontroll(g: Forhandsgrunnlag): Forhandsresultat {
         }),
       )
     }
+    // Måldosen velges av forskriveren; prøveberegningen har bare vist at minst én av verdiene gir en plan.
+    if (maldoseMangler(r, p.grunnskjema)) ekstra++
     if (kanKreveBegrunnelse(r) && g.flyt?.begrunnelse && !p.grunnskjema.begrunnelse.trim()) {
       ekstra++
       grunner.push(forklaring('begrunnelse_trengs', g.flyt.begrunnelse.hjelp, { handling: 'Skriv begrunnelsen.', losning: 'i_verktoyet' }))

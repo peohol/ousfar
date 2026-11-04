@@ -20,6 +20,7 @@ import { FORKLARINGER, klassifiser, stoppforklaringer } from '../verktoy/flyt/st
 import { KOMPLETT_IKKE_TILGJENGELIG, UTENFOR_OMFANG, type Doseplanresultat } from '../verktoy/motor/plan'
 import { VERKTOY } from '../verktoy/register'
 import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from '../verktoy/regler/aksepttest'
+import { FEST_ANTIPSYKOTIKA } from '../verktoy/regler/antipsykotikabytter'
 import { fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
 import { gjeldendeBekreftelser, type Regel } from '../verktoy/regler/modell'
 import { verktoystatus } from '../verktoy/snarvalg'
@@ -421,6 +422,23 @@ describe('forhåndskontrollen (§5, S9)', () => {
     expect(forhandskontroll({ verktoy: NED, valg: esc, sperrer: [], skjema: skjema({ startdose: '20' }), naa: klokke(AKSEPT) }).utfall).toBe('ukjent')
     const sperre: Verktoysperre = { id: 's1', omfang: 'verktoy', mal: NED.id, grunn: 'Test', satt_kl: '2026-11-04T10:00:00Z', satt_av: null }
     expect(forhandskontroll({ verktoy: NED, valg: esc, sperrer: [sperre], naa: klokke(AKSEPT) })).toMatchObject({ utfall: 'kan_ikke', grunner: [{ kode: 'sperret' }] })
+  })
+
+  it('regner en måldose som ikke er valgt ennå som gjenstående, ikke som et stopp (olanzapin → aripiprazol, måldose 10 eller 15 mg)', () => {
+    const ap = uttrekk(FEST_ANTIPSYKOTIKA)
+    const valg: Verktoyvalg = { fra: { nokkel: 'olanzapin', formulering: 'standard' }, til: { nokkel: 'aripiprazol', formulering: 'standard' } }
+    const g = (x: Partial<Planskjema>) => ({ verktoy: BYTTE_AP, valg, sperrer: [], skjema: skjema({ startdose: '20', ...x }), utvalg: ap.utvalg, naa: klokke(ap) })
+    const uten = forhandskontroll(g({}))
+    expect(uten.utfall).toBe('kan_lages_hvis')
+    expect(uten.grunner.map((x) => x.kode)).not.toContain('dose_utenfor')
+    const med = forhandskontroll(g({ maldose: '15' }))
+    expect(med.utfall).toBe('kan_lages_hvis')
+    // Måldosen er ett av valgene som gjenstår, og flyten blir stående ved behandlingen til den er valgt.
+    expect(uten.gjenstar).toBe(med.gjenstar + 1)
+    expect(flyttilstand(g({})).tilstand.steg).toBe('behandling')
+    expect(flyttilstand(g({ maldose: '15' })).tilstand.steg).not.toBe('behandling')
+    // En måldose utenfor regelen er fortsatt et stopp.
+    expect(forhandskontroll(g({ maldose: '25' })).utfall).toBe('kan_ikke')
   })
 
   it('sier fra før skjemaet når verktøyet ikke har noen godkjent plan for valget (P11)', () => {
