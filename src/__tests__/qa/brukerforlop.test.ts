@@ -5,7 +5,7 @@
  * godkjenningstekster og planens akseptkriterier, ikke på reglenes
  * selvbeskrivelse:
  *
- * 1. Ingen regelversjon endrer innhold uten ny versjon, og de seks klinisk
+ * 1. Ingen regelversjon endrer innhold uten ny versjon, og de klinisk
  *    godkjente versjonene står uendret.
  * 2. Hvert vanlig brukerforløp i katalogen gir et utfall uten QA-avvik, og
  *    rapporten viser det brukeren faktisk får.
@@ -72,9 +72,12 @@ const REGELVERSJONER: Record<string, [number, string]> = {
   // ousfar-verktoy-nedtrapping-sammenligning v5
   'ousfar-verktoy-nedtrapping-sammenligning/seponering-citalopram-hyperbolsk': [4, '386fedfa94406ae98941d9cd82e81bfd420877d5693a20a0617af303ca8471f7'],
   'ousfar-verktoy-nedtrapping-sammenligning/gruppe-rest-ap-aripiprazol': [5, '256d49b824af879d9b813b8a65c30e0b7f4e318615b7b60d5df17b3802a26e1c'],
+  // ousfar-verktoy-tillegg (K4, #322)
+  'ousfar-verktoy-tillegg/tillegg-valproat-lamotrigin': [2, '0a9213f31b5f428935fceeef41498a2999682631b1692749bb7ebe19c82639b8'],
+  'ousfar-verktoy-tillegg/tillegg-litium-lamotrigin': [2, '786436a0ea8d115b7927a9a20ffabc736b59bc06c59117769551e5f75e89e44b'],
 }
 
-/** De seks versjonene kontrolløren har godkjent (docs/verktøy-utviklingsplan.md, verktøy-rettelse-langvarig.md). */
+/** Versjonene kontrolløren har godkjent (docs/verktøy-utviklingsplan.md, verktøy-rettelse-langvarig.md; K4: src/verktoy/regler/tillegg.ts). */
 const GODKJENT = [
   'ousfar-verktoy-pilot/kryssnedtrapping-sertralin-mirtazapin',
   'ousfar-verktoy-pilot/depot-aripiprazol-maintena',
@@ -82,6 +85,8 @@ const GODKJENT = [
   'ousfar-verktoy-nedtrapping/seponering-vortioksetin',
   'ousfar-verktoy-nedtrapping/seponering-bupropion',
   'ousfar-verktoy-nedtrapping/seponering-agomelatin',
+  'ousfar-verktoy-tillegg/tillegg-valproat-lamotrigin',
+  'ousfar-verktoy-tillegg/tillegg-litium-lamotrigin',
 ]
 
 const SETTENE = [...REGELSETTENE, SAMMENLIGNINGSSETT]
@@ -102,7 +107,7 @@ describe('QA: regelversjonene (regresjon)', () => {
       expect(REGELVERSJONER[nokkel], `${nokkel} v${r.versjon} er godkjent, men står ikke slik i REGELVERSJONER`).toEqual([r.versjon, fingeravtrykk(r)])
   })
 
-  it('har de seks godkjente versjonene uendret og fortsatt klinisk godkjent', () => {
+  it('har de godkjente versjonene uendret og fortsatt klinisk godkjent', () => {
     for (const nokkel of GODKJENT) {
       const x = ALLE.find((y) => y.nokkel === nokkel)!
       const [versjon, fa] = REGELVERSJONER[nokkel]!
@@ -233,11 +238,17 @@ describe('QA: omfanget til beregningene som er tilgjengelige', () => {
     }
   })
 
-  it('stopper hver godkjent beregning når et unntak gjelder, et spørsmål besvares ja eller en bekreftelse mangler', () => {
+  it('stopper hver godkjent beregning når et unntak gjelder, et spørsmål besvares ja eller en bekreftelse mangler, også en som bare gjelder ved et bestemt svar', () => {
     // Gjelder de godkjente reglene som gir en komplett plan; de andre viser ingen plan i det hele tatt (testene over).
     for (const s of SVEIP.filter((x) => x.treff.length > 0 && GODKJENT.some((g) => g.endsWith(`/${x.regel.id}`)))) {
       expect(s.endringer.length, s.regel.id).toBeGreaterThan(0)
-      for (const e of s.endringer) expect(['komplett', 'delplan'], `${s.regel.id}: ${e.hva}`).not.toContain(e.klasse)
+      // Et ja som bare utløser bekreftelser (`ved`) og ikke krever begrunnelse, gir planen når alt er bekreftet; at hver av bekreftelsene stopper, prøves for seg.
+      const betinget = new Set((s.regel.sporsmal ?? []).filter((q) => !q.krever_begrunnelse && s.regel.bekreftelser.some((b) => b.ved?.sporsmal === q.id)).map((q) => `spørsmål ${q.id} = ja`))
+      for (const e of s.endringer) {
+        // Kontrollprøven for en betinget bekreftelse skal gi planen; alle andre endringer skal stoppe den.
+        if (e.hva.endsWith('med begrunnelse og alle bekreftelser') || betinget.has(e.hva)) expect(e.klasse, `${s.regel.id}: ${e.hva}`).toBe('komplett')
+        else expect(['komplett', 'delplan'], `${s.regel.id}: ${e.hva}`).not.toContain(e.klasse)
+      }
     }
   })
 })

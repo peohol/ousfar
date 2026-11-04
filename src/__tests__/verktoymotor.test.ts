@@ -29,6 +29,7 @@ import {
   kliniskSperre,
   PLANMOTORVERSJON,
   planform,
+  preparatliste,
   UTENFOR_OMFANG,
   type Doseplaninndata,
   type Doseplanresultat,
@@ -83,6 +84,34 @@ describe('Byggesteinene fra FEST', () => {
   it('deler modifisert frisetting bare når FEST sier det for akkurat det preparatet, og sier det', () => {
     expect(en({ form: 'depottablett', mg: 15, deling: '2' })).toMatchObject({ klasse: 'peroral_modifisert', deling: 2, deling_grunnlag: expect.stringMatching(/modifisert frisetting/) })
     expect(en({ form: 'depottablett', mg: 15 })).toMatchObject({ klasse: 'peroral_modifisert', deling: 1 })
+  })
+
+  it('viser varenumrene bare når flere preparater av virkestoffet har samme navn, form og styrke', () => {
+    // Uten navnekollisjon er etiketten nøyaktig FESTs navn, så tekstene er uendret.
+    for (const b of stein(TESTOKSETIN)) expect(b.etikett).toBe(b.navn_form_styrke)
+    // En ordinær pakning og en fritakspakning med samme navn (som Lamictal 25 mg i FEST): begge får varenummeret.
+    const like = stein([
+      { id: 'A', virkestoff: 'testoksetin', varenavn: 'Testoksetin', form: 'tablett', mg: 25 },
+      { id: 'B', virkestoff: 'testoksetin', varenavn: 'Testoksetin', form: 'tablett', mg: 25, type: 'fritak', pakninger: [{ utgatt: '2026-08-12' }] },
+      { id: 'C', virkestoff: 'testoksetin', varenavn: 'Testoksetin', form: 'tablett', mg: 50 },
+    ])
+    expect(like.map((b) => b.etikett)).toEqual(['Testoksetin tablett 25 mg, varenr. SYNA1', 'Testoksetin tablett 25 mg, varenr. SYNB1', 'Testoksetin tablett 50 mg'])
+  })
+
+  it('sier at en pakning med samme navn kan brukes, men ikke at planen bruker den, når dosene ikke trenger den', () => {
+    // 25 mg finnes som en brukbar ordinær pakning (A) og en utgått fritakspakning (B); dosen 50 mg gis med 50 mg-tabletten (C) alene.
+    const r = plan(fastDose([50]), AZA, [
+      { id: 'A', virkestoff: 'testazapin', varenavn: 'Testazapin', form: 'tablett', mg: 25 },
+      { id: 'B', virkestoff: 'testazapin', varenavn: 'Testazapin', form: 'tablett', mg: 25, type: 'fritak', pakninger: [{ utgatt: '2026-08-12' }] },
+      { id: 'C', virkestoff: 'testazapin', varenavn: 'Testazapin', form: 'tablett', mg: 50 },
+    ])
+    expect(planform(r)).toEqual({ fra: ['dag 1–7: 50 mg = 1 tablett à 50 mg', 'fra dag 8: seponert'] })
+    expect(preparatliste(r).join('\n')).not.toContain('SYNA1')
+    const advarsler = r.status === 'stoppet' ? [] : r.forlop.flatMap((f) => f.begrensninger)
+    expect(advarsler).toEqual([
+      'Testazapin tablett 25 mg, varenr. SYNB1: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. SYNA1',
+    ])
+    expect(advarsler.join(' ')).not.toMatch(/planen bruker/)
   })
 
   it('regner med styrken i mg moderstoff per enhet, per sprøyte eller per dråpe, og ellers ikke', () => {

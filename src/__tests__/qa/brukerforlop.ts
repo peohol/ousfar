@@ -629,7 +629,15 @@ export function sveipRegel(verktoy: Verktoy, valg: Verktoyvalg, regel: Regel, u:
     const prov = (hva: string, x: Partial<Planskjema>) => endringer.push({ hva, klasse: kjorForlop(forlop(forste.dose, { ...skjema, ...x }), u, ekstra).klasse })
     for (const x of regel.unntak) prov(`unntak ${x.id} = ja`, { pasientforhold: { [x.id]: true } })
     for (const x of regel.sporsmal ?? []) prov(`spørsmål ${x.id} = ja`, { svar: { [x.id]: true } })
-    for (const x of regel.bekreftelser) prov(`bekreftelse ${x.id} mangler`, { bekreftet: regel.bekreftelser.map((b) => b.id).filter((b) => b !== x.id) })
+    // En bekreftelse som bare kreves ved et bestemt svar (`ved`), prøves med det svaret og en skriftlig begrunnelse, så bare bekreftelsen mangler.
+    for (const x of regel.bekreftelser)
+      prov(`bekreftelse ${x.id} mangler${x.ved ? ` (ved ${x.ved.sporsmal} = ${x.ved.svar ? 'ja' : 'nei'})` : ''}`, {
+        bekreftet: regel.bekreftelser.map((b) => b.id).filter((b) => b !== x.id),
+        ...(x.ved ? { svar: { [x.ved.sporsmal]: x.ved.svar }, begrunnelse: 'Syntetisk QA-begrunnelse.' } : {}),
+      })
+    // Og kontrollprøven: med svaret, begrunnelsen og alle bekreftelser gis planen igjen, så stoppet over skyldes bekreftelsen.
+    for (const ved of [...new Map(regel.bekreftelser.flatMap((b) => (b.ved ? [[b.ved.sporsmal, b.ved] as const] : []))).values()])
+      prov(`spørsmål ${ved.sporsmal} = ${ved.svar ? 'ja' : 'nei'} med begrunnelse og alle bekreftelser`, { svar: { [ved.sporsmal]: ved.svar }, begrunnelse: 'Syntetisk QA-begrunnelse.' })
   }
   return { verktoy, valg, regel, treff, endringer }
 }
@@ -645,7 +653,7 @@ export function sveiplinjer(sveip: readonly Sveip[]): string[] {
   return [
     '## Omfangssveip for regler som gir beregning',
     '',
-    `Startdosene ${tall(SVEIPDOSER[0]!)}–${tall(SVEIPDOSER.at(-1)!)} mg (halve mg opp til 40 mg, så trinn på 5 mg), hver legemiddelform siden kan be om og hver hele måldose rundt tabellens spenn, med alle bekreftelser og nei på hvert unntak og spørsmål. Deretter, ved første dose med plan: ja på ett unntak eller spørsmål om gangen, og én bekreftelse om gangen tatt bort.`,
+    `Startdosene ${tall(SVEIPDOSER[0]!)}–${tall(SVEIPDOSER.at(-1)!)} mg (halve mg opp til 40 mg, så trinn på 5 mg), hver legemiddelform siden kan be om og hver hele måldose rundt tabellens spenn, med alle bekreftelser og nei på hvert unntak og spørsmål. Deretter, ved første dose med plan: ja på ett unntak eller spørsmål om gangen, og én bekreftelse om gangen tatt bort (en bekreftelse som bare gjelder ved et bestemt svar, med det svaret og en begrunnelse). Til slutt kontrollprøven: det svaret med begrunnelse og alle bekreftelser.`,
     '',
     ...sveip.flatMap((s) => [
       `### ${s.verktoy.navn}: ${s.regel.id} v${s.regel.versjon}`,
