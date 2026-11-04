@@ -1,6 +1,6 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-04T13:26:23.113Z. Stoffene sist lest fra databasen 2026-11-03T19:26:48.792Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-04T14:26:22.308Z. Stoffene sist lest fra databasen 2026-11-03T19:26:48.792Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
 Klar: 99 · Publisert: 16 · Blokkert: 3 · Utenfor køen: 1
 
@@ -15,7 +15,7 @@ Ingen kurateringer venter.
 ## Blokkert
 
 - **metamfetamin**: Stoffet har ingen publisert fagside å kuratere.
-- **metylfenidat**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.
+- **metylfenidat**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, retting); den må avsluttes først.
 - **okskarbazepin**: Skrivefasen stoppet av et automatisk sikkerhetsfilter; venter på avgjørelse fra fagansvarlig.
 
 ## Køen
