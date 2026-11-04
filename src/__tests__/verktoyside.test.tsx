@@ -28,17 +28,15 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { VARSLER_HENTES, VARSLER_ULEST } from '../components/verktoy/Regelvarsler'
 import { AUTOBEREGNING_MS } from '../components/verktoy/Arbeidsflyt'
-import { FORHOLD_JA, UKJENT } from '../components/verktoy/regelflyt'
+import { UNNTAK_STANDARD as FORHOLD_JA } from '../verktoy/flyt/flyt'
 import { DEKNING_UKONTROLLERT, FEST_NYTT_FORSOK_MS, TILGJENGELIGHET_UKONTROLLERT, Verktoyside, type VerktoysideProps } from '../components/verktoy/Verktoyside'
 import { lagRegelvarsellager, UGYLDIGE_REGELVARSLER } from '../verktoy/overvaking/regelvarsler'
 import type { Legemiddelutvalg } from '../legemiddeldata/lesing'
 import { glemBildet, oppdaterOgTaVare, taBilde } from '../oppdatering/bevaring'
 import { KARTLEGGING } from '../verktoy/register'
 import { FOR_SEN, LES_SPERRENE_HVER_MS, LESEFRIST_MS, NYE_FORSOK_MS, PLAN_TATT_BORT, SPERRENE_GJELDER_MS, UKONTROLLERT, UTEN_NETT, utenForbindelse, type Verktoysperre } from '../verktoy/sperrer'
-import { osloDato } from '../verktoy/doseplan'
 import { STARTFORLOP } from '../verktoy/planvisning'
 import { FEST_AKSEPTTEST, FEST_PILOT } from '../verktoy/regler/aksepttest'
-import { avregistrert } from '../verktoy/regler/pilotmatrise'
 import { REGELSETT } from '../verktoy/tilgjengelighet'
 import { pilotklokke, pilotlesing, pilotuttrekk } from './hjelp/pilotside'
 import { besvarAlt, kopier, planen, planpanel, punkter, sporsmal, stoppet, tidslinje, velgForm, type Bruker } from './hjelp/verktoyflyt'
@@ -482,7 +480,7 @@ describe('med en regel forskriveren kan justere', () => {
       within(sp)
         .getAllByRole('radio')
         .map((r) => r.closest('label')!.textContent),
-    ).toEqual(['Ja', 'Nei', 'Ukjent'])
+    ).toEqual(['Ja', 'Nei'])
     // Uten svar: ingen plan, bare preparatene for steg 2 er hentet, og panelet sier hva som gjenstår.
     expect(within(planpanel()).getByText('Ett spørsmål igjen')).toBeTruthy()
     expect(legemidler.les).toHaveBeenCalledOnce()
@@ -510,10 +508,6 @@ describe('med en regel forskriveren kan justere', () => {
     await user.click(within(sp).getByRole('radio', { name: 'Nei' }))
     expect(await planen(TEST_BEGRUNNELSE.tittel)).toBeTruthy()
     expect(screen.queryByText(/Forskriverens begrunnelse/)).toBeNull()
-    // Ukjent: ingen plan, og siden sier hva det betyr ved spørsmålet.
-    await user.click(within(sp).getByRole('radio', { name: 'Ukjent' }))
-    await stoppet(/Ingen plan med disse svarene/)
-    expect(sp.closest('li')!.textContent).toContain(UKJENT)
   })
 
   it('har ikke feltet for en regel uten valg', async () => {
@@ -631,7 +625,7 @@ describe('valgene som hører sammen', () => {
     await user.click(within(fremgang).getByRole('radio', { name: TEST_DEPOT.tittel }))
     await user.type(screen.getByRole('textbox', { name: /Aktuell døgndose/ }), '6')
     const unntak = (vent = false) => (vent ? screen.findByRole('radiogroup', { name: 'Et syntetisk unntak som må besvares.' }, { timeout: 3000 }) : sporsmal('Et syntetisk unntak som må besvares.'))
-    await user.click(within(await unntak(true)).getByRole('radio', { name: 'Nei' }))
+    await user.click(within(await unntak(true)).getByRole('radio', { name: 'Gjelder ikke' }))
     await user.click(screen.getByRole('checkbox', { name: /godkjenningsfritak/ }))
 
     await user.click(within(fremgang).getByRole('radio', { name: annen.tittel }))
@@ -639,12 +633,12 @@ describe('valgene som hører sammen', () => {
       within(await unntak(true))
         .getAllByRole('radio')
         .map((r) => (r as HTMLInputElement).checked)
-    expect(await avkrysset()).toEqual([false, false, false])
+    expect(await avkrysset()).toEqual([false, false])
     expect((screen.getByRole('checkbox', { name: /godkjenningsfritak/ }) as HTMLInputElement).checked).toBe(false)
     expect((screen.getByRole('textbox', { name: /Aktuell døgndose/ }) as HTMLInputElement).value).toBe('6')
     // Og tilbake: svaret for den første fremgangsmåten er heller ikke tatt vare på.
     await user.click(within(fremgang).getByRole('radio', { name: TEST_DEPOT.tittel }))
-    expect(await avkrysset()).toEqual([false, false, false])
+    expect(await avkrysset()).toEqual([false, false])
   })
 })
 
@@ -1183,54 +1177,67 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
     await waitFor(() => expect(rader().at(-1)).toMatch(/Hver måned fra 1 måned etter dag 8.*75 mg/))
   })
 
-  it('sertralin → mirtazapin: startforløpet er en delplan og vises ikke; siden sier at en komplett plan ikke er tilgjengelig, og hvorfor', async () => {
+  it('sertralin → mirtazapin og vortioksetin 20 → 15 mg: en delplan vises ikke, og siden sier det med en gang, før dosen og spørsmålene', async () => {
     const user = userEvent.setup()
-    vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT) })
+    // Klinikere får aldri en delplan (Peders beslutning 03.11.2026), heller ikke etter en tidligere godkjent regelversjon.
+    const legemidler = fra(PILOT)
+    vis({ verktoy: 'bytte-antidepressiv', legemidler, klokke: klokke(PILOT) })
     await user.type(screen.getByRole('combobox', { name: 'Bytte fra' }), 'Sertralin')
     await user.type(screen.getByRole('combobox', { name: 'Bytte til' }), 'Mirtazapin')
-    await user.type(await screen.findByRole('textbox', { name: /Aktuell døgndose av sertralin/ }), '100')
-    await velgForm(user, 'Legemiddelform av mirtazapin', '53')
-    await besvar(user)
-    // Klinikere får aldri en delplan (Peders beslutning 03.11.2026), heller ikke etter en tidligere godkjent regelversjon.
-    await stoppet(/Ingen plan.*Komplett plan ikke tilgjengelig: sertralin: /)
+    await stoppet(/^4Steg 4: PlanenIngen plan for dette valgetIngen godkjent regel gir en komplett plan for dette valget ennå\. Verktøyet lager ingen plan/)
+    expect(screen.queryByRole('heading', { name: /^Steg [23]/ })).toBeNull()
     expect(screen.queryByText(STARTFORLOP)).toBeNull()
+    expect(legemidler.les).not.toHaveBeenCalled()
+    cleanup()
+
+    // Vortioksetin: én mulig reduksjon med revurdering er en delplan.
+    vis({ verktoy: 'trappe-ned-antidepressiv', legemidler: fra(AKSEPT), klokke: klokke(AKSEPT) })
+    await user.type(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' }), 'Vortioksetin')
+    await stoppet(/Ingen godkjent regel gir en komplett plan for dette valget ennå\./)
+    expect(screen.queryByRole('textbox', { name: /Aktuell døgndose av vortioksetin/ })).toBeNull()
+    expect(screen.queryByText(/15 mg =/)).toBeNull()
   })
 
-  it('gir ingen plan etter en regel som ikke er godkjent, heller ikke etter en oppdatering av appen eller navigering', async () => {
+  it('stopper med en gang et forhold som gjelder er besvart, før noe beregnes, også etter en oppdatering av appen og navigering', async () => {
     const user = userEvent.setup()
-    const legemidler = fra(AKSEPT)
-    vis({ verktoy: 'trappe-ned-antidepressiv', legemidler, klokke: klokke(AKSEPT) })
-    await user.type(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' }), 'Vortioksetin')
-    await user.type(await screen.findByRole('textbox', { name: /Aktuell døgndose av vortioksetin/ }), '20')
-    // Tidligere seponeringssymptomer: da gjelder den langsomme varianten, som ikke er godkjent. Forholdet stopper med en gang
-    // det er besvart, før noe beregnes, og siden sier hva det betyr.
-    await besvar(user, [/tidligere forsøk/])
+    const legemidler = lesing()
+    const regelsett = testsett(TEST_DEPOT)
+    const fyll = async () => {
+      await user.type(screen.getByRole('combobox', { name: 'Bytte fra' }), 'Paliperidon')
+      await user.click(within(screen.getByRole('group', { name: 'Formulering av paliperidon (bytte fra)' })).getByRole('radio', { name: 'Peroral' }))
+      await user.type(screen.getByRole('combobox', { name: 'Bytte til' }), 'Paliperidon')
+      await user.click(within(screen.getByRole('group', { name: 'Formulering av paliperidon (bytte til)' })).getByRole('radio', { name: /^Depotinjeksjon/ }))
+      await user.type(screen.getByRole('textbox', { name: /Aktuell døgndose av paliperidon/ }), '6')
+      await besvar(user, [/syntetisk unntak/])
+    }
+    vis({ verktoy: 'bytte-antipsykotikum', legemidler, regelsett, klokke: TESTKLOKKE })
+    await fyll()
+    // Forholdet gjelder: regelen gjelder ikke, og siden sier det ved forholdet og i panelet, uten å beregne.
     await stoppet(new RegExp(`Ingen plan med disse svarene${FORHOLD_JA}`))
+    expect(sporsmal('Et syntetisk unntak som må besvares.').closest('li')!.textContent).toContain(FORHOLD_JA)
+    expect(legemidler.les).toHaveBeenCalledOnce()
 
-    // Etter en oppdatering står svarene, og den nye beregningen stopper på samme måte.
+    // Etter en oppdatering står svarene, og flyten stopper på samme måte.
     oppdaterOgTaVare(vi.fn())
     cleanup()
     glemBildet()
-    const { rerender, onLukk } = vis({ verktoy: 'trappe-ned-antidepressiv', legemidler, klokke: klokke(AKSEPT) })
-    await screen.findByRole('textbox', { name: /Aktuell døgndose av vortioksetin/ })
+    const { rerender, onLukk } = vis({ verktoy: 'bytte-antipsykotikum', legemidler, regelsett, klokke: TESTKLOKKE })
     await stoppet(new RegExp(FORHOLD_JA))
 
-    // Til et annet verktøy og tilbake: ingen plan før en ny beregning, og den stopper fortsatt.
-    const side = (verktoy: string) => <Verktoyside verktoy={verktoy} legemidler={legemidler} sperrer={INGEN_SPERRER} regelvarsler={INGEN_VARSLER} onLukk={onLukk} klokke={klokke(AKSEPT)} />
+    // Til et annet verktøy og tilbake: skjemaet begynner på nytt, og fylt inn igjen stopper flyten på samme måte.
+    const side = (verktoy: string) => (
+      <Verktoyside verktoy={verktoy} legemidler={legemidler} sperrer={INGEN_SPERRER} regelvarsler={INGEN_VARSLER} onLukk={onLukk} regelsett={regelsett} klokke={TESTKLOKKE} />
+    )
     rerender(side('bytte-antidepressiv'))
-    expect(within(planpanel()).queryByText('Ingen plan')).toBeNull()
-    rerender(side('trappe-ned-antidepressiv'))
-    expect(within(planpanel()).queryByText('Ingen plan')).toBeNull()
+    rerender(side('bytte-antipsykotikum'))
+    expect(within(planpanel()).queryByText('Ingen plan med disse svarene')).toBeNull()
     expect(tidslinje()).toBeNull()
-    // Skjemaet begynner på nytt for det andre verktøyet; fylt inn igjen stopper beregningen på samme måte.
-    expect((screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' }) as HTMLInputElement).value).toBe('')
-    await user.type(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' }), 'Vortioksetin')
-    await user.type(await screen.findByRole('textbox', { name: /Aktuell døgndose av vortioksetin/ }), '20')
-    await besvar(user, [/tidligere forsøk/])
+    expect((screen.getByRole('combobox', { name: 'Bytte fra' }) as HTMLInputElement).value).toBe('')
+    await fyll()
     await stoppet(new RegExp(FORHOLD_JA))
   })
 
-  it('tar bort planen når regelversjonen endres, og gir ingen ny plan når preparatene i FEST er endret', async () => {
+  it('tar bort planen når regelversjonen endres', async () => {
     const user = userEvent.setup()
     // En godkjent regel med komplett plan (Xeplion); klinikere får aldri en delplan.
     const XEPLION = 'depot-paliperidon-xeplion'
@@ -1247,29 +1254,6 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
     rerender(<Verktoyside verktoy="bytte-antipsykotikum" legemidler={fra(PILOT)} sperrer={INGEN_SPERRER} regelvarsler={INGEN_VARSLER} onLukk={onLukk} regelsett={regelsett} klokke={klokke(PILOT)} />)
     expect(tidslinje()).toBeNull()
     expect(screen.queryByRole('heading', { name: /^Steg 2/ })).toBeNull()
-    cleanup()
-
-    // Vortioksetin 20 mg, men 15 mg er avregistrert i FEST: ingen plan, og grunnen står ved siden av at en komplett plan ikke er tilgjengelig.
-    const legemidler = lesing(() => {
-      const x = structuredClone(AKSEPT.utvalg)
-      avregistrert('vortioksetin', 15).endre(x, osloDato(klokke(AKSEPT)()))
-      return x
-    })
-    vis({ verktoy: 'trappe-ned-antidepressiv', legemidler, klokke: klokke(AKSEPT) })
-    await user.type(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' }), 'Vortioksetin')
-    await user.type(await screen.findByRole('textbox', { name: /Aktuell døgndose av vortioksetin/ }), '20')
-    await besvar(user)
-    await stoppet(/styrken 15 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST/)
-  })
-
-  it('vortioksetin 20 → 15 mg: én reduksjon er en delplan og vises ikke', async () => {
-    const user = userEvent.setup()
-    vis({ verktoy: 'trappe-ned-antidepressiv', legemidler: fra(AKSEPT), klokke: klokke(AKSEPT) })
-    await user.type(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' }), 'Vortioksetin')
-    await user.type(await screen.findByRole('textbox', { name: /Aktuell døgndose av vortioksetin/ }), '20')
-    await besvar(user)
-    await stoppet(/Komplett plan ikke tilgjengelig: vortioksetin: én mulig reduksjon med revurdering/)
-    expect(screen.queryByText(/15 mg =/)).toBeNull()
   })
 
   it('escitalopram dråper 10 mg (K1, godkjent 04.11.2026): komplett plan til seponering med forskriverens valg, kopieres, og stopper uten doser utenfor omfanget', async () => {
@@ -1311,11 +1295,12 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
     expect(tekst).toMatch(/Regel seponering-escitalopram, versjon 13, fingeravtrykk e8a3c17edda1/)
     cleanup()
 
-    // Utenfor omfanget: ingen plan og ingen doser, bare grunnen.
+    // Utenfor omfanget: ingen plan og ingen doser, bare grunnen, i klartekst; motorens egen tekst står bak «Vis detaljer».
     for (const [dose, ja, form, grunn] of [
-      ['10', [/65 år/], '748', /er ikke et tilfelle godkjenningen kan gjelde for/],
-      ['20', [/mange måneder/], '748', /Komplett plan ikke tilgjengelig: escitalopram: /],
-      ['20', [], '53', /Komplett plan ikke tilgjengelig: escitalopram: /],
+      ['10', [/65 år/], '748', /^4Steg 4: PlanenIngen plan med disse svareneVerktøyet har ingen godkjent plan ved eldre over 65 år\. Verktøyet lager ingen plan/],
+      ['20', [/mange måneder/], '748', /^4Steg 4: PlanenIngen plan med disse svareneMed dette svaret kan verktøyet ikke lage en komplett plan helt til sluttmålet\./],
+      // Med tabletter: ingen plan, men siden sier hvilken form som kan gi en, før noe beregnes.
+      ['20', [], '53', /^4Steg 4: PlanenEtt spørsmål igjenMed tablett kan verktøyet ikke lage en komplett plan, men med dråper, oppløsning kan det\. Velg dråper, oppløsning\./],
     ] as const) {
       await beregn(dose, [...ja], form)
       await stoppet(grunn)
@@ -1531,10 +1516,10 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
       const forhold = within(screen.getByRole('group', { name: 'Forhold som stopper en automatisk plan' })).getAllByRole('radiogroup')[0]!
       const ved = forhold.closest('li')!
       expect(ved.textContent).not.toContain(FORHOLD_JA)
-      await user.click(within(forhold).getByRole('radio', { name: 'Ja' }))
+      await user.click(within(forhold).getByRole('radio', { name: 'Gjelder' }))
       expect(ved.textContent).toContain(FORHOLD_JA)
       expect(within(planpanel()).getByText('Ingen plan med disse svarene')).toBeTruthy()
-      await user.click(within(forhold).getByRole('radio', { name: 'Nei' }))
+      await user.click(within(forhold).getByRole('radio', { name: 'Gjelder ikke' }))
       expect(ved.textContent).not.toContain(FORHOLD_JA)
       expect(legemidler.les).toHaveBeenCalledOnce()
     })

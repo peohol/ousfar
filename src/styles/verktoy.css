@@ -375,7 +375,6 @@
   margin: 0;
 }
 
-
 /* --- Doseplanen -------------------------------------------------------------- */
 .doseplan {
   display: flex;
@@ -1255,6 +1254,24 @@
 .sporsmal--form {
   padding: 0;
   border: 0;
+}
+
+/* En form verktøyet har valgt selv (B4): teksten under sier det, og står tydelig. */
+.sporsmal--form[data-valgt-av-verktoyet] .sporsmal__hjelp {
+  font-weight: var(--vekt-medium);
+  color: var(--blekk);
+}
+
+/* Reservevisningen bruker regelens egne, ofte lange tekster: vanlig vekt leses lettere i avsnitt. */
+.flytsteg[data-reservevisning] .sporsmal__tekst {
+  font-weight: var(--vekt-normal);
+}
+
+/* «Ingen av disse» (B5) står under stoppforholdene den gjelder. */
+.sporsmalsgruppe__handling {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--rom-2);
 }
 
 .sporsmal--avkrysning {

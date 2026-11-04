@@ -12,6 +12,24 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.125.13',
+    dato: '2026-11-04',
+    sammendrag: 'De fire kliniske verktøyene har fått én enkel arbeidsflyt i fire steg, og planen vises som en tidslinje',
+    typer: ['Funksjonalitet', 'Design / layout'],
+    omfang: 'Større omfang',
+    gjelder: ['verktoy'],
+    utenVarsel: true,
+    punkter: [
+      'Gjelder bare administratorene, som fortsatt er de eneste som ser verktøyene. Ingen regler, doser eller godkjenninger er endret, og planen beregnes som før.',
+      'Alle fire verktøyene følger de samme fire stegene: hva som skal gjøres, nåværende behandling, om pasienten og planen. Hvert steg vises når det forrige er fylt ut, og det er ingen «Beregn»-knapp: planen kommer av seg selv når alt er besvart.',
+      'Verktøyet sier så tidlig som mulig om en komplett plan kan lages. Kan valget ikke gi en plan, står det med en gang, før dosen og spørsmålene. Et svar eller en dose som gjør at ingen plan kan lages, sier det straks, ved spørsmålet og i panelet, med beregningens egen tekst bak «Vis detaljer».',
+      'Spørsmålene står gruppert: forholdene som stopper en plan først, så det som påvirker planen, og bekreftelsene til slutt. Til spørsmålstekstene er faglig kontrollert, står regelens egne tekster og svar som før. Knappen «N spørsmål igjen» hopper til det første spørsmålet som mangler svar.',
+      'Når bare én legemiddelform kan gi en komplett plan, velger verktøyet den og sier det ved valget; den kan endres.',
+      'Planen vises som en tidslinje dag for dag, og «Kopier planen» kopierer hele planen. Datoen, justeringene og valgte doser per trinn står under «Tilpass planen», og kildene og versjonen under «Kilder og grunnlag».',
+      'Svarene velges med tastene 1, 2 og 3 og piltastene, og skjemaet tas vare på gjennom en oppdatering av appen.',
+    ],
+  },
+  {
     versjon: '1.125.11',
     dato: '2026-11-04',
     sammendrag: 'Grunnlaget for en enklere arbeidsflyt i de kliniske verktøyene, med spørsmål i vanlig språk og tidlig beskjed om en komplett plan kan lages',

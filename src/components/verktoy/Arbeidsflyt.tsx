@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState, type MutableRefObject, type ReactNode } from 'react'
+import { useCallback, useDeferredValue, useEffect, useId, useMemo, useRef, useState, type MutableRefObject, type ReactNode } from 'react'
 import type { Legemiddelleser, Legemiddelutvalg } from '../../legemiddeldata/lesing'
 import {
   begrunnelseshjelp,
@@ -18,7 +18,8 @@ import {
   ubesvart,
   type Planskjema,
 } from '../../verktoy/doseplan'
-import type { Flyttilstand } from '../../verktoy/flyt/typer'
+import { flyttilstand, forhandskontroll, KAN_LAGES_HVIS, medFlytsvar, medIngenAvDisse, type Flyttilstand, type Stoppforklaring } from '../../verktoy/flyt'
+import { UKJENT_FORKLARING } from '../../verktoy/flyt/flyt'
 import { foretrukketTekst, mellomtrinntekst, tempotekst, trinndosetekst, type Doseplanresultat, type Formalternativer, type Trinnvalg } from '../../verktoy/motor/plan'
 import { planvisning, type Planvisning } from '../../verktoy/planvisning'
 import { KARTLEGGING, type Verktoy, type Verktoytype } from '../../verktoy/register'
@@ -33,7 +34,6 @@ import { Tallfelt } from '../Tallfelt'
 import { Ikon } from '../ikon/Ikon'
 import { Doseplanvisning } from './Doseplanvisning'
 import { FagligGrunnlag, regelgrunnlag } from './FagligGrunnlag'
-import { flyttilstand, tilSkjema, type Flytsvar } from './regelflyt'
 import { Regelvarsler, type Varseltilstand } from './Regelvarsler'
 import { Sporsmalsliste } from './Sporsmalsliste'
 import { Svarvalg } from './Svarvalg'
@@ -43,6 +43,9 @@ export const FEST_NYTT_FORSOK_MS = 2_000
 
 /** Så lenge etter siste endring beregnes planen av seg selv, så den ikke beregnes for hvert tastetrykk. */
 export const AUTOBEREGNING_MS = 250
+
+/** Så lenge brukes preparatene som er lest etter steg 2, i forhåndskontrollen før de leses på nytt. */
+export const FORHANDSDATA_GYLDIG_MS = 10 * 60_000
 
 /** Hvor ofte en plan som står, kontrolleres mot klokken: FEST-kopiens alder og dagen. */
 const KONTROLLER_PLANEN_MS = 60_000
@@ -62,11 +65,15 @@ export const STEGTITLER: Record<Verktoytype, readonly [string, string, string, s
 
 /* --- Oppsettet ------------------------------------------------------------------ */
 
-/** Ett steg i flyten: tallet, overskriften og innholdet. `ferdig` fyller tallet. */
-export function Flytsteg({ nr, tittel, ferdig = false, children }: { nr: number; tittel: string; ferdig?: boolean; children?: ReactNode }) {
+/**
+ * Ett steg i flyten: tallet, overskriften og innholdet. `ferdig` fyller tallet.
+ * `reservevisning` merker steget som viser regelens betingelser med regelens
+ * egne tekster og svar, fordi katalogen ikke er kontrollert for regelversjonen (S5).
+ */
+export function Flytsteg({ nr, tittel, ferdig = false, reservevisning = false, children }: { nr: number; tittel: string; ferdig?: boolean; reservevisning?: boolean; children?: ReactNode }) {
   const id = useId()
   return (
-    <section className="flytsteg" aria-labelledby={id} data-ferdig={ferdig || undefined}>
+    <section className="flytsteg" aria-labelledby={id} data-ferdig={ferdig || undefined} data-reservevisning={reservevisning || undefined}>
       <span className="flytsteg__tall" aria-hidden="true">
         {nr}
       </span>
@@ -161,18 +168,28 @@ function useForhandsdata(
     [buffer],
   )
   const siste = useRef('')
+  // Preparatene leses på nytt når de er lest for lenge siden, så forhåndskontrollen ikke bygger på en FEST-kopi som er byttet ut.
+  // Det som står, vises imens, så spørsmålene ikke forsvinner; feiler lesingen, står det som var.
+  const fersk = data?.status !== 'klar' || klokke().getTime() - data.tid.getTime() < FORHANDSDATA_GYLDIG_MS
   useEffect(() => {
-    if (!regel || !valg || !aktiv || data?.nokkel === nokkel) return
-    siste.current = nokkel
-    setData({ nokkel, status: 'henter' })
-    lesFest(legemidler, festIderFor(regel, valg), () => siste.current === nokkel)
+    if (!regel || !valg || !aktiv || (data?.nokkel === nokkel && fersk)) return
+    const forny = data?.nokkel === nokkel && data.status === 'klar'
+    // En fornyelse som alt pågår for de samme valgene, startes ikke på nytt.
+    if (forny && siste.current.startsWith(`${nokkel}|`)) return
+    const denne = `${nokkel}|${Date.now()}`
+    siste.current = denne
+    if (!forny) setData({ nokkel, status: 'henter' })
+    lesFest(legemidler, festIderFor(regel, valg), () => siste.current === denne)
       .then((utvalg) => {
-        if (utvalg && siste.current === nokkel) setData({ nokkel, status: 'klar', utvalg, tid: klokke() })
+        if (utvalg && siste.current === denne) setData({ nokkel, status: 'klar', utvalg, tid: klokke() })
       })
       .catch((e: unknown) => {
-        if (siste.current === nokkel) setData({ nokkel, status: 'feil', melding: e instanceof Error ? e.message : String(e) })
+        if (siste.current === denne && !forny) setData({ nokkel, status: 'feil', melding: e instanceof Error ? e.message : String(e) })
       })
-  }, [regel, valg, aktiv, nokkel, data?.nokkel, legemidler, klokke]) // eslint-disable-line react-hooks/exhaustive-deps
+      .finally(() => {
+        if (siste.current === denne) siste.current = ''
+      })
+  }, [aktiv, nokkel, data?.nokkel, fersk, legemidler, klokke]) // eslint-disable-line react-hooks/exhaustive-deps
   const gjeldende = data?.nokkel === nokkel ? data : null
   const prov = useCallback(() => setData(null), [setData])
   return { data: gjeldende, prov }
@@ -211,8 +228,8 @@ export interface ArbeidsflytProps {
   melding?: ReactNode
   skjema: Planskjema
   setSkjema: (endre: (s: Planskjema) => Planskjema) => void
-  svar: Flytsvar
-  setSvar: (endre: (s: Flytsvar) => Flytsvar) => void
+  /** De aktive nødstoppene; `undefined` når de ikke er lest, og da loves ingenting. */
+  sperrer: readonly Verktoysperre[] | undefined
   legemidler: Pick<Legemiddelleser, 'les'> | undefined
   /** Leser sperrene på nytt rett før en beregnet plan vises; kaster når de ikke kan leses. */
   hentSperrer: () => Promise<Verktoysperre[]>
@@ -245,30 +262,59 @@ export interface ArbeidsflytProps {
  * vises, og den kontrolleres mot klokken mens den står (S7).
  */
 export function Arbeidsflyt(p: ArbeidsflytProps) {
-  const { verktoy, valg, regler, melding, skjema, setSkjema, svar, setSvar, legemidler, hentSperrer, regelsett, klokke, varsler, tattBort, onPlan, onBeregn, autoberegnet, forhandsbuffer } = p
+  const { verktoy, valg, regler, melding, skjema, setSkjema, sperrer, legemidler, hentSperrer, regelsett, klokke, varsler, tattBort, onPlan, onBeregn, autoberegnet, forhandsbuffer } = p
   const id = useId()
   const titler = STEGTITLER[verktoy.type]
+  const aktiv = melding === undefined
   const regel = regler.length === 1 ? regler[0] : regler.find((r) => r.id === skjema.regel)
-  const fullt = useMemo(() => (regel ? tilSkjema(regel, skjema, svar) : skjema), [regel, skjema, svar])
-  const tilstand: Flyttilstand | null = useMemo(() => (regel ? flyttilstand(regel, svar) : null), [regel, svar])
   const panel = useRef<HTMLElement | null>(null)
   const [visMangler, setVisMangler] = useState(false)
   const valgnokkel = JSON.stringify(valg ?? null)
   useEffect(() => setVisMangler(false), [valgnokkel])
+  // Forhåndskontrollen regnes per minutt, som FEST-kopiens alder og dagen planen gjelder for.
+  const minutt = klokke().toISOString().slice(0, 16)
+
+  // Før noe er fylt inn: kan valgene i det hele tatt gi en komplett plan? Kan de ikke, spørres det ikke om mer (§5).
+  const forValget = useMemo(
+    () => (aktiv && valg ? forhandskontroll({ verktoy, valg, regelsett, sperrer, ...(regel && { regel }), naa: klokke() }) : null),
+    [aktiv, verktoy, valgnokkel, regelsett, sperrer, regel, minutt], // eslint-disable-line react-hooks/exhaustive-deps
+  )
+  const utelukket = forValget?.utfall === 'kan_ikke' ? forValget.grunner : null
 
   // Steg 2: dosen er fylt inn, så preparatene kan leses og legemiddelformen velges.
-  const doseOk = !!regel && lesDose(skjema.startdose) !== undefined
+  const doseOk = !!regel && !utelukket && lesDose(skjema.startdose) !== undefined
   const forhand = useForhandsdata(regel, valg, doseOk, legemidler, klokke, forhandsbuffer)
+  // Flyten: de synlige spørsmålene, forhåndskontrollen og skjemaet med svarene avbildet til motorfeltene og formvalget verktøyet gjør selv (B4).
+  const utvalg = forhand.data?.status === 'klar' ? forhand.data.utvalg : undefined
+  // Prøveberegningene i forhåndskontrollen kan ta en kvart sekund; de regnes på skjemaet etter at det som er skrevet eller klikket, er vist.
+  // Mens de regnes, vises ingen plan (`venter`), så en plan aldri står ved siden av inndata den ikke er beregnet for.
+  const utsatt = useDeferredValue(skjema)
+  const venter = utsatt !== skjema
+  const utfall = useMemo(
+    () => (aktiv && regel && valg && !utelukket ? flyttilstand({ verktoy, valg, regelsett, sperrer, regel, skjema: utsatt, utvalg, naa: klokke() }) : null),
+    [aktiv, verktoy, valgnokkel, regelsett, sperrer, regel, utelukket, utsatt, utvalg, minutt], // eslint-disable-line react-hooks/exhaustive-deps
+  )
+  const fullt = utfall?.skjema ?? utsatt
+  const tilstand: Flyttilstand | null = utfall?.tilstand ?? null
+  const apneSporsmal = utfall?.flyt?.gjenstar ?? []
+  // Svaret som er klikket, vises med en gang, også før flyten er regnet på nytt.
+  const synligeSporsmal = useMemo(
+    () => (tilstand?.sporsmal ?? []).map((sp) => ({ ...sp, valgt: skjema.flytsvar?.[sp.id] })).map(({ valgt, ...sp }) => (valgt === undefined ? sp : { ...sp, valgt })),
+    [tilstand, skjema.flytsvar],
+  )
   const alternativer: Record<string, Formalternativer> = useMemo(
     () => (regel && valg && forhand.data?.status === 'klar' ? formvalgFor(regel, valg, fullt, forhand.data.utvalg, forhand.data.tid) : {}),
     [regel, valg, fullt, forhand.data],
   )
   const uvalgt = (a: Formalternativer, f: string) => (a.klasser.length > 1 && !fullt.formvalg[f]?.klasse) || (a.legemiddelformer.length > 1 && !fullt.formvalg[f]?.legemiddelform)
   const feltfeil = regel ? mangler(regel, fullt) : []
-  const steg2 = doseOk && feltfeil.length === 0 && forhand.data?.status === 'klar' && !Object.entries(alternativer).some(([f, a]) => uvalgt(a, f))
+  // Når forhåndskontrollen alt har sagt at ingen plan kan lages (et svar, dosen), trengs ikke formvalget: svarene står, og kan endres.
+  const kanIkke = utfall?.tilstand.kontroll.utfall === 'kan_ikke'
+  const steg2 = doseOk && feltfeil.length === 0 && forhand.data?.status === 'klar' && (kanIkke || !Object.entries(alternativer).some(([f, a]) => uvalgt(a, f)))
   const apne = regel ? ubesvart(regel, fullt) : { sporsmal: [], unntak: [], bekreftelser: [] }
-  const stopperSvar = (tilstand?.kontroll.utfall ?? 'ukjent') === 'kan_ikke'
-  const steg3 = !!tilstand && tilstand.kontroll.gjenstar === 0 && !stopperSvar && apne.sporsmal.length + apne.unntak.length + apne.bekreftelser.length === 0
+  const stopperSvar = tilstand?.kontroll.utfall === 'kan_ikke'
+  // Planen beregnes bare når forhåndskontrollen sier at en komplett plan kan lages og ingenting gjenstår; den lover likevel aldri en plan (S9).
+  const steg3 = !!tilstand && tilstand.kontroll.utfall === 'kan_lages_hvis' && tilstand.kontroll.gjenstar === 0 && apne.sporsmal.length + apne.unntak.length + apne.bekreftelser.length === 0
 
   // Beregningen.
   const [beregning, setBeregning] = useState<Beregning | null>(null)
@@ -276,7 +322,6 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
   const siste = useRef(0)
   // Når flyten viker for en melding (en sperre, eller sperrene kan ikke leses), glemmes beregningen og en beregning som pågår:
   // en plan kommer aldri tilbake av seg selv, bare med en ny beregning med FEST og sperrene lest på nytt (S6, VDR-4).
-  const aktiv = melding === undefined
   useEffect(() => {
     if (aktiv) return
     siste.current++
@@ -333,11 +378,7 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
   }, [klar, nokkel]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const sett = <K extends keyof Planskjema>(felt: K, verdi: Planskjema[K]) => setSkjema((s) => ({ ...s, [felt]: verdi }))
-  const svarPa = (sid: string, verdi: string | undefined) =>
-    setSvar((s) => {
-      const { [sid]: _, ...resten } = s
-      return verdi === undefined ? resten : { ...resten, [sid]: verdi }
-    })
+  const svarPa = (sid: string, verdi: string | undefined) => setSkjema((s) => medFlytsvar(s, sid, verdi))
   const velgTrinn = (t: Trinnvalg, mg: number) => setSkjema((s) => medTrinnvalg(s, t, mg))
 
   const forlopsnavn = (forlop: string) => {
@@ -358,18 +399,19 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
     !!regel &&
     kanKreveBegrunnelse(regel) &&
     (skjema.begrunnelse.trim() !== '' ||
+      !!tilstand?.begrunnelse ||
       (regel.sporsmal ?? []).some((s) => s.krever_begrunnelse && fullt.svar[s.id] === true) ||
       Object.values(skjema.justert).some((v) => v.trim() !== '') ||
       (stoppet?.stoppgrunner.some((g) => /begrunnelse/i.test(g)) ?? false))
-  const manglerSett = new Set(visMangler ? (tilstand?.sporsmal ?? []).filter((s) => s.valgt === undefined).map((s) => s.id) : [])
+  const manglerSett = new Set(visMangler ? apneSporsmal.map((s) => s.id) : [])
+  const status = useRef<HTMLDivElement | null>(null)
 
-  /** Hopper til det første ubesvarte spørsmålet, og merker det som mangler svar. */
+  /** Hopper til det første spørsmålet som gjenstår, og merker det; gjenstår bare valg uten spørsmål, til forhåndskontrollen i steg 2. */
   const tilForsteUbesvarte = () => {
     setVisMangler(true)
-    const forste = (tilstand?.sporsmal ?? []).find((s) => s.valgt === undefined)
-    if (!forste) return
+    const forste = apneSporsmal[0]
     window.requestAnimationFrame(() => {
-      const felt = [...document.querySelectorAll<HTMLElement>('[data-flytsporsmal]')].find((x) => x.dataset.flytsporsmal === forste.id)?.querySelector('input')
+      const felt = forste ? [...document.querySelectorAll<HTMLElement>('[data-flytsporsmal]')].find((x) => x.dataset.flytsporsmal === forste.id)?.querySelector('input') : status.current
       felt?.focus()
       felt?.scrollIntoView({ block: 'center', behavior: 'smooth' })
     })
@@ -379,9 +421,9 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
     panel.current?.scrollIntoView({ block: 'start', behavior: 'smooth' })
   }
 
-  // «Tilpass planen» står på samme sted i panelet så lenge planen kan beregnes, så et felt beholder fokus mens planen beregnes på nytt,
-  // og en feil i startdatoen eller en justert verdi kan rettes der den står.
-  const visTilpass = !!regel && doseOk && forhand.data?.status === 'klar' && (feltfeil.length > 0 || (steg2 && steg3))
+  // «Tilpass planen» står på samme sted i panelet fra steg 2 er fylt ut, så et felt beholder fokus mens planen beregnes på nytt
+  // eller forhåndskontrollen stopper på verdien, og en feil i startdatoen eller en justert verdi kan rettes der den står.
+  const visTilpass = !!regel && doseOk && forhand.data?.status === 'klar' && (feltfeil.length > 0 || steg2)
   const tilpass = regel && (
     <Details summary="Tilpass planen" startApen={!!skjema.startdato || Object.values(skjema.justert).some((v) => v.trim() !== '')}>
       <div className="planpanel__tilpass">
@@ -397,7 +439,7 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
               <Tallfelt value={skjema.justert[j.sti] ?? ''} placeholder={j.forslag} aria-describedby={`${id}-${j.sti}`} onChange={(v) => sett('justert', { ...skjema.justert, [j.sti]: v })} />
             </label>
             <p id={`${id}-${j.sti}`} className="flytsteg__hjelp">
-              {j.hjelp} Dagene er minstetider.
+              {/dager/i.test(j.navn) ? `${j.hjelp} Dagene er minstetider.` : j.hjelp}
             </p>
           </div>
         ))}
@@ -420,6 +462,21 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
     </Details>
   )
 
+  // Med flere godkjente fremgangsmåter velges én; et annet valg begynner med et tomt skjema og ingen svar (`medRegel`).
+  const fremgangsmate = (
+    <fieldset className="sporsmalsgruppe">
+      <legend className="flytsteg__etikett">Fremgangsmåte</legend>
+      <div className="avkryssinger avkryssinger--loddrett">
+        {regler.map((r) => (
+          <label key={r.id} className="avkryssing">
+            <input type="radio" name={`${id}-regel`} checked={skjema.regel === r.id} onChange={() => setSkjema((s) => medRegel(s, r.id))} />
+            {r.tittel}
+          </label>
+        ))}
+      </div>
+    </fieldset>
+  )
+
   const beregnPaNytt = (
     <div className="verktoyskjema__handlinger">
       <Button variant="kant" onClick={() => void beregn()}>
@@ -430,6 +487,12 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
 
   /** Hva planpanelet viser nå: aldri en delplan, og ingenting før alt er besvart. */
   const innhold = (() => {
+    if (utelukket)
+      return (
+        <Panelmelding tone="stopp" tittel="Ingen plan for dette valget">
+          <Grunnliste grunner={utelukket} />
+        </Panelmelding>
+      )
     if (!regel)
       return (
         <Panelmelding tittel="Velg fremgangsmåte">
@@ -476,20 +539,24 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
     if (!steg2) return <Panelmelding tittel="Velg legemiddelform">{<p>Velg i steg 2 hva pasienten bruker, så går flyten videre.</p>}</Panelmelding>
     if (stopperSvar && tilstand)
       return (
-        <Panelmelding tone="stopp" tittel="Ingen plan med disse svarene">
-          <ul>
-            {tilstand.kontroll.grunner.map((g) => (
-              <li key={g.kode + (g.sporsmal ?? '') + g.tekst}>{g.handling ? `${g.tekst} ${g.handling}` : g.tekst}</li>
-            ))}
-          </ul>
+        <Panelmelding tone="stopp" tittel={tilstand.kontroll.grunner.some((g) => g.sporsmal) ? 'Ingen plan med disse svarene' : 'Ingen plan for dette tilfellet'}>
+          <Grunnliste grunner={tilstand.kontroll.grunner} />
         </Panelmelding>
       )
     if (!steg3 && tilstand) {
       const n = Math.max(tilstand.kontroll.gjenstar, 1)
-      return <Panelmelding tittel={n === 1 ? 'Ett spørsmål igjen' : `${n} spørsmål igjen`}>{<p>Planen beregnes så snart spørsmålene om pasienten er besvart.</p>}</Panelmelding>
+      const valg = tilstand.kontroll.grunner.filter((g) => !g.sporsmal && g.handling)
+      const ukjente = apneSporsmal.filter((s) => s.valgt === 'ukjent').length
+      return (
+        <Panelmelding tittel={gjenstartekst(n)}>
+          {valg.length > 0 && <Grunnliste grunner={valg} />}
+          {ukjente > 0 && <p>{`${ukjente === 1 ? 'Ett svar er' : `${ukjente} svar er`} «Ukjent». ${UKJENT_FORKLARING}`}</p>}
+          <p>Planen beregnes så snart alt er besvart.</p>
+        </Panelmelding>
+      )
     }
-    if (!gjeldende)
-      return beregning ? (
+    if (!gjeldende || venter)
+      return beregning || venter ? (
         <Panelmelding>
           <p className="planpanel__henter">
             <Lastesirkel /> Beregner planen …
@@ -558,14 +625,8 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
   })()
 
   const hopp =
-    plan || (steg2 && tilstand && tilstand.kontroll.gjenstar > 0) ? (
-      <div className="planhopp">
-        {plan ? (
-          <Button onClick={tilPlanen}>Se planen</Button>
-        ) : (
-          <Button onClick={tilForsteUbesvarte}>{tilstand!.kontroll.gjenstar === 1 ? 'Ett spørsmål igjen' : `${tilstand!.kontroll.gjenstar} spørsmål igjen`}</Button>
-        )}
-      </div>
+    plan || (steg2 && tilstand && !stopperSvar && tilstand.kontroll.gjenstar > 0) ? (
+      <div className="planhopp">{plan ? <Button onClick={tilPlanen}>Se planen</Button> : <Button onClick={tilForsteUbesvarte}>{gjenstartekst(tilstand!.kontroll.gjenstar)}</Button>}</div>
     ) : null
 
   return (
@@ -573,30 +634,16 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
       steg={
         <>
           {p.steg1}
-          {melding === undefined && (
+          {melding === undefined && utelukket && regler.length > 1 && (
+            <Flytsteg nr={2} tittel={titler[1]}>
+              {fremgangsmate}
+            </Flytsteg>
+          )}
+          {melding === undefined && utelukket && varsel}
+          {melding === undefined && !utelukket && (
             <>
               <Flytsteg nr={2} tittel={titler[1]} ferdig={steg2}>
-                {regler.length > 1 && (
-                  <fieldset className="sporsmalsgruppe">
-                    <legend className="flytsteg__etikett">Fremgangsmåte</legend>
-                    <div className="avkryssinger avkryssinger--loddrett">
-                      {regler.map((r) => (
-                        <label key={r.id} className="avkryssing">
-                          <input
-                            type="radio"
-                            name={`${id}-regel`}
-                            checked={skjema.regel === r.id}
-                            onChange={() => {
-                              setSkjema((s) => medRegel(s, r.id))
-                              setSvar(() => ({}))
-                            }}
-                          />
-                          {r.tittel}
-                        </label>
-                      ))}
-                    </div>
-                  </fieldset>
-                )}
+                {regler.length > 1 && fremgangsmate}
                 <div className="feltrad">
                   <label className="skjemafelt">
                     <span>
@@ -636,7 +683,8 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
                       key={`${f}-form`}
                       tekst={`Legemiddelform av ${forlopsnavn(f).toLowerCase()}`}
                       alternativer={a.legemiddelformer.map((k) => ({ verdi: k.kode, tekst: k.navn }))}
-                      valgt={skjema.formvalg[f]?.legemiddelform}
+                      valgt={fullt.formvalg[f]?.legemiddelform}
+                      valgtAvVerktoyet={!skjema.formvalg[f]?.legemiddelform && !!utfall?.kontroll.formvalg?.[f]}
                       onVelg={(v) => sett('formvalg', { ...skjema.formvalg, [f]: { ...skjema.formvalg[f], legemiddelform: v } })}
                     />
                   ),
@@ -645,9 +693,9 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
                   <input type="checkbox" checked={skjema.godkjenningsfritak} onChange={(e) => sett('godkjenningsfritak', e.target.checked)} />
                   Bruk også preparater som krever godkjenningsfritak
                 </label>
-                {steg2 && tilstand && <Kontrollstatus tilstand={tilstand} />}
+                {steg2 && tilstand && <Kontrollstatus tilstand={tilstand} boks={status} />}
               </Flytsteg>
-              <Flytsteg nr={3} tittel={titler[2]} ferdig={steg2 && steg3}>
+              <Flytsteg nr={3} tittel={titler[2]} ferdig={steg2 && steg3} reservevisning={!!utfall?.flyt && !utfall.flyt.oppsett.katalog}>
                 {!steg2 ? (
                   <p className="flytsteg__hjelp">Spørsmålene kommer når steg 2 er fylt ut.</p>
                 ) : tilstand && tilstand.sporsmal.length === 0 ? (
@@ -655,7 +703,14 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
                 ) : (
                   tilstand && (
                     <div className="sporsmalsflate" data-flytsporsmal-liste>
-                      <Sporsmalsliste sporsmal={tilstand.sporsmal} grunner={tilstand.kontroll.grunner} mangler={manglerSett} onSvar={svarPa} />
+                      <Sporsmalsliste
+                        sporsmal={synligeSporsmal}
+                        grunner={tilstand.kontroll.grunner}
+                        mangler={manglerSett}
+                        ingenAvDisse={tilstand.ingenAvDisse}
+                        onSvar={svarPa}
+                        onIngenAvDisse={(ider) => setSkjema((s) => ({ ...s, flytsvar: medIngenAvDisse(s.flytsvar ?? {}, ider) }))}
+                      />
                     </div>
                   )
                 )}
@@ -698,44 +753,85 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
   )
 }
 
-/** Utfallet av forhåndskontrollen etter steg 2: den eneste fremhevede meldingen i skjemaet. Den lover aldri en plan (S9). */
-function Kontrollstatus({ tilstand }: { tilstand: Flyttilstand }) {
+/** «Ett spørsmål igjen» eller «N spørsmål igjen»: det som gjenstår før planen beregnes. */
+const gjenstartekst = (n: number) => (n === 1 ? 'Ett spørsmål igjen' : `${n} spørsmål igjen`)
+
+/** Forklaringene fra forhåndskontrollen som en liste, hver med det klinikeren kan gjøre. */
+function Grunnliste({ grunner }: { grunner: readonly Stoppforklaring[] }) {
+  // Motorens egen tekst står bak «Vis detaljer», aldri først (§5).
+  const detaljer = [...new Set(grunner.flatMap((g) => (g.detalj && g.detalj !== g.tekst ? [g.detalj] : [])))]
+  return (
+    <>
+      <ul>
+        {grunner.map((g) => (
+          <li key={g.kode + (g.sporsmal ?? '') + g.tekst}>{g.handling ? `${g.tekst} ${g.handling}` : g.tekst}</li>
+        ))}
+      </ul>
+      {detaljer.length > 0 && (
+        <Details summary="Vis detaljer">
+          {detaljer.map((d) => (
+            <p key={d}>{d}</p>
+          ))}
+        </Details>
+      )}
+    </>
+  )
+}
+
+/**
+ * Utfallet av forhåndskontrollen etter steg 2: den eneste fremhevede
+ * meldingen i skjemaet. Den lover aldri en plan (S9), og sier hva verktøyet
+ * har valgt selv (en legemiddelform, B4) og hva som må velges.
+ */
+function Kontrollstatus({ tilstand, boks }: { tilstand: Flyttilstand; boks: MutableRefObject<HTMLDivElement | null> }) {
   const { utfall, grunner, gjenstar } = tilstand.kontroll
   const egne = grunner.filter((g) => !g.sporsmal)
   if (utfall === 'kan_ikke' && egne.length > 0)
     return (
-      <div className="flytstatus" data-utfall="kan_ikke" role="status">
+      <div ref={boks} tabIndex={-1} className="flytstatus" data-utfall="kan_ikke" role="status">
         <Ikon navn="sev" className="flytstatus__ikon" />
         <div className="flytstatus__tekst">
           <p className="flytstatus__tittel">Verktøyet kan ikke lage en plan for dette.</p>
-          <ul>
-            {egne.map((g) => (
-              <li key={g.kode + g.tekst}>{g.handling ? `${g.tekst} ${g.handling}` : g.tekst}</li>
-            ))}
-          </ul>
+          <Grunnliste grunner={egne} />
         </div>
       </div>
     )
   if (utfall !== 'kan_lages_hvis') return null
   return (
-    <div className="flytstatus" data-utfall="kan_lages_hvis" role="status">
+    <div ref={boks} tabIndex={-1} className="flytstatus" data-utfall="kan_lages_hvis" role="status">
       <Ikon navn="done" className="flytstatus__ikon" />
       <div className="flytstatus__tekst">
-        <p className="flytstatus__tittel">En komplett plan kan lages hvis svarene under tillater det.</p>
-        {gjenstar > 0 && <p>{gjenstar === 1 ? 'Ett spørsmål igjen.' : `${gjenstar} spørsmål igjen.`}</p>}
+        <p className="flytstatus__tittel">{KAN_LAGES_HVIS}</p>
+        {egne.length > 0 && <Grunnliste grunner={egne} />}
+        {gjenstar > 0 && <p>{`${gjenstartekst(gjenstar)}.`}</p>}
       </div>
     </div>
   )
 }
 
 /** Et valg av formulering eller legemiddelform som FEST har flere av; verktøyet velger ikke selv. */
-function Formvalg({ tekst, alternativer, valgt, onVelg }: { tekst: string; alternativer: { verdi: string; tekst: string }[]; valgt: string | undefined; onVelg: (v: string) => void }) {
+function Formvalg({
+  tekst,
+  alternativer,
+  valgt,
+  valgtAvVerktoyet = false,
+  onVelg,
+}: {
+  tekst: string
+  alternativer: { verdi: string; tekst: string }[]
+  valgt: string | undefined
+  /** Verktøyet har valgt formen selv fordi bare den gir en komplett plan (B4); det står ved valget, og kan endres. */
+  valgtAvVerktoyet?: boolean
+  onVelg: (v: string) => void
+}) {
   const id = useId()
   return (
-    <div className="sporsmal sporsmal--form">
+    <div className="sporsmal sporsmal--form" data-valgt-av-verktoyet={valgtAvVerktoyet || undefined}>
       <p className="sporsmal__tekst">
         <span id={`${id}-tekst`}>{tekst}</span>
-        <span className="sporsmal__hjelp">FEST har flere. Velg det pasienten bruker.</span>
+        <span className="sporsmal__hjelp">
+          {valgtAvVerktoyet ? 'Valgt av verktøyet, fordi bare denne gir en komplett plan. Endre hvis pasienten bruker noe annet.' : 'FEST har flere. Velg det pasienten bruker.'}
+        </span>
       </p>
       <Svarvalg navn={id} etikett={`${id}-tekst`} alternativer={alternativer} valgt={valgt} onVelg={onVelg} />
     </div>

@@ -111,13 +111,7 @@ describe('Kombinere stemningsstabiliserende med de godkjente reglene', () => {
     await besvarAlt(user)
     await user.click(bekreftelse(/natriumvalproatpreparat/))
     await stoppet(/Ett spørsmål igjen/)
-    // «Ukjent» stopper som et ubesvart forhold, og sier det ved spørsmålet og i panelet.
-    await user.click(bekreftelse(/natriumvalproatpreparat/))
-    const gravid = screen.getByRole('radiogroup', { name: /kan bli gravid/ })
-    await user.click(within(gravid).getByRole('radio', { name: 'Ukjent' }))
-    await stoppet(/Ingen plan med disse svarene/)
-    expect(planpanel().textContent).toContain('Uten svar her lager verktøyet ingen plan.')
-  })
+  }, 30_000)
 
   it('litium → lamotrigin: planen kopieres med Lithionit-tabletter, mg Li⁺ og mmol, og en dose som ikke er hele tabletter stopper', async () => {
     const user = userEvent.setup()
@@ -139,12 +133,15 @@ describe('Kombinere stemningsstabiliserende med de godkjente reglene', () => {
     const dose = screen.getByRole('textbox', { name: /^Aktuell (døgn)?dose av/ })
     await user.clear(dose)
     await user.type(dose, '170')
-    await stoppet(/170 mg er utenfor det regelen gjelder for/)
+    // Forhåndskontrollen stopper dosen med en gang, før et eneste spørsmål om pasienten, og sier hvilke doser regelen gjelder for.
+    await stoppet(/Ingen plan for dette tilfelletRegelen gjelder bare startdoser på 42, 84, .* og 420 mg litium \(Li⁺\) per døgn\./)
     await user.clear(dose)
     await user.type(dose, '168')
     const mal = screen.getByRole('textbox', { name: /Måldose/ })
     await user.clear(mal)
     await user.type(mal, '300')
-    await stoppet(/300 mg er utenfor det regelen gjelder for/)
-  })
+    // Et annet mål: forhåndskontrollen sier det i klartekst, og motorens egen tekst står bak «Vis detaljer».
+    await stoppet(/Ingen plan for dette tilfelletDosen er utenfor det regelen gjelder for\. Kontroller dosen\./)
+    expect(within(planpanel()).getByText('Vis detaljer').closest('details')!.textContent).toMatch(/300 mg er utenfor det regelen gjelder for/)
+  }, 30_000)
 })

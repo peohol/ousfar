@@ -60,6 +60,10 @@ const sporsmalstekst = (gruppe: HTMLElement) => document.getElementById(gruppe.g
 /** Spørsmålet med teksten `tekst` (Ja/Nei/Ukjent). */
 export const sporsmal = (tekst: string | RegExp) => screen.getByRole('radiogroup', { name: tekst })
 
+/** Svaret som sier ja (`Ja`, eller «Gjelder» for et unntak i reservevisningen), og svaret som sier nei. */
+const JA = /^(Ja|Gjelder)$/
+const NEI = /^(Nei|Gjelder ikke)$/
+
 /**
  * Svarer nei på hvert spørsmål og forhold, og krysser av hver bekreftelse; `ja`
  * er forholdene og spørsmålene som gjelder. Et svar kan vise nye bekreftelser,
@@ -79,7 +83,7 @@ export async function besvarAlt(user: Bruker, ja: RegExp[] = []) {
     for (const navn of VALGGRUPPER) {
       const gruppe = screen.queryByRole('group', { name: navn })
       for (const valg of gruppe ? within(gruppe).getAllByRole('radiogroup') : []) {
-        const onsket = within(valg).getByRole('radio', { name: ja.some((j) => j.test(sporsmalstekst(valg))) ? 'Ja' : 'Nei' }) as HTMLInputElement
+        const onsket = within(valg).getByRole('radio', { name: ja.some((j) => j.test(sporsmalstekst(valg))) ? JA : NEI }) as HTMLInputElement
         if (onsket.checked) continue
         await user.click(onsket)
         endret = true

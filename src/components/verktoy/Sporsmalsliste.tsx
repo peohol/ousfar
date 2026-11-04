@@ -1,5 +1,6 @@
 import { useId } from 'react'
 import type { Flytsporsmal, Sporsmalsgruppe, Stoppforklaring } from '../../verktoy/flyt/typer'
+import { Button } from '../Button'
 import { Ikon } from '../ikon/Ikon'
 import { Svarvalg } from './Svarvalg'
 
@@ -21,6 +22,10 @@ export interface SporsmalslisteProps {
   mangler: ReadonlySet<string>
   /** Et svar, eller `undefined` når en avkrysning tas bort. */
   onSvar: (id: string, verdi: string | undefined) => void
+  /** Stoppforholdene «Ingen av disse» kan besvare (beslutning B5); tom når den ikke gjelder. */
+  ingenAvDisse?: readonly string[]
+  /** «Ingen av disse»: et aktivt valg som setter bare de ubesvarte forholdene til «Nei», aldri «Ukjent» eller «Ja». */
+  onIngenAvDisse?: (ider: readonly string[]) => void
 }
 
 /**
@@ -28,7 +33,7 @@ export interface SporsmalslisteProps {
  * kliniske vurderinger sist. Et svar som stopper planen eller er ukjent, sier
  * det straks ved spørsmålet, med hva klinikeren kan gjøre i stedet.
  */
-export function Sporsmalsliste({ sporsmal, grunner, mangler, onSvar }: SporsmalslisteProps) {
+export function Sporsmalsliste({ sporsmal, grunner, mangler, onSvar, ingenAvDisse = [], onIngenAvDisse }: SporsmalslisteProps) {
   const merke = useId()
   return (
     <>
@@ -44,6 +49,13 @@ export function Sporsmalsliste({ sporsmal, grunner, mangler, onSvar }: Sporsmals
                 <Sporsmal key={s.id} sporsmal={s} grunn={grunner.find((x) => x.sporsmal === s.id)} mangler={mangler.has(s.id)} onSvar={onSvar} />
               ))}
             </ul>
+            {g === 'stopp' && onIngenAvDisse && ingenAvDisse.length > 0 && (
+              <div className="sporsmalsgruppe__handling">
+                <Button variant="kant" onClick={() => onIngenAvDisse(ingenAvDisse)}>
+                  Ingen av disse
+                </Button>
+              </div>
+            )}
           </div>
         )
       })}
@@ -54,7 +66,8 @@ export function Sporsmalsliste({ sporsmal, grunner, mangler, onSvar }: Sporsmals
 function Sporsmal({ sporsmal: s, grunn, mangler, onSvar }: { sporsmal: Flytsporsmal; grunn: Stoppforklaring | undefined; mangler: boolean; onSvar: SporsmalslisteProps['onSvar'] }) {
   const id = useId()
   const stopper = s.valgt !== undefined && (s.stopperVed?.includes(s.valgt) ?? false)
-  const merknad = stopper ? (grunn ?? (s.forklaring ? { tekst: s.forklaring } : undefined)) : undefined
+  // Et svar som stopper planen, sier det ved spørsmålet; «Ukjent» stopper ikke, men må avklares før planen kan lages (S4).
+  const merknad = stopper ? (grunn ?? (s.forklaring ? { tekst: s.forklaring } : undefined)) : s.valgt === 'ukjent' && s.forklaring ? { tekst: s.forklaring } : undefined
   const beskrivelse = [s.hjelp && `${id}-hjelp`, merknad && `${id}-merknad`].filter(Boolean).join(' ') || undefined
 
   if (s.art === 'avkrysning') {
@@ -95,8 +108,8 @@ function Sporsmal({ sporsmal: s, grunn, mangler, onSvar }: { sporsmal: Flytspors
       </p>
       <Svarvalg navn={id} etikett={`${id}-tekst`} beskrivelse={beskrivelse} alternativer={s.alternativer} valgt={s.valgt} mangler={mangler} onVelg={(v) => onSvar(s.id, v)} />
       {merknad && (
-        <p id={`${id}-merknad`} className="sporsmal__merknad" data-tone={s.valgt === 'ukjent' ? 'ukjent' : undefined}>
-          <Ikon navn={s.valgt === 'ukjent' ? 'na' : 'sev'} />
+        <p id={`${id}-merknad`} className="sporsmal__merknad" data-tone={stopper ? undefined : 'ukjent'}>
+          <Ikon navn={stopper ? 'sev' : 'na'} />
           <span>
             {merknad.tekst}
             {'handling' in merknad && merknad.handling && ` ${merknad.handling}`}

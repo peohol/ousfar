@@ -37,7 +37,6 @@ import { ToppmenyInnhold } from '../toppmeny/Toppmenykilde'
 import { Arbeidsflyt, Flytsteg, Panelmelding, Sperrefeil, STEGTITLER, type Forhandsdata, type Planmerke } from './Arbeidsflyt'
 import { FagligGrunnlag, regelgrunnlag } from './FagligGrunnlag'
 import type { Regelvarsellager } from '../../verktoy/overvaking/regelvarsler'
-import type { Flytsvar } from './regelflyt'
 import { Regelvarsler, useRegelvarsler, type Varseltilstand } from './Regelvarsler'
 import { lesVirkestoffvalg, Virkestoffelt } from './Virkestoffelt'
 import '../../styles/verktoy.css'
@@ -342,25 +341,9 @@ const SKJEMAFORM: Bevaringsform<Planskjema> = {
   les: (x) => {
     if (!x || typeof x !== 'object' || Array.isArray(x)) return undefined
     const s = { ...TOMT_SKJEMA, ...(x as Partial<Planskjema>) }
-    return Array.isArray(s.trinnvalg) ? s : { ...s, trinnvalg: [] }
-  },
-}
-
-/** Svarene i flyten, med valgene og regelen de ble gitt for; andre valg begynner uten svar. */
-interface Lagretsvar {
-  gjelder: string
-  svar: Flytsvar
-}
-
-const INGEN_SVAR: Lagretsvar = { gjelder: '', svar: {} }
-
-const SVARFORM: Bevaringsform<Lagretsvar> = {
-  lagre: (s) => s,
-  les: (x) => {
-    if (!x || typeof x !== 'object' || Array.isArray(x)) return undefined
-    const { gjelder, svar } = x as Partial<Lagretsvar>
-    if (typeof gjelder !== 'string' || !svar || typeof svar !== 'object') return undefined
-    return { gjelder, svar: Object.fromEntries(Object.entries(svar).filter(([, v]) => typeof v === 'string')) }
+    // Svarene i flyten er tekst; noe annet fra en tidligere versjon glemmes.
+    const flytsvar = s.flytsvar && typeof s.flytsvar === 'object' && !Array.isArray(s.flytsvar) ? Object.fromEntries(Object.entries(s.flytsvar).filter(([, v]) => typeof v === 'string')) : {}
+    return { ...s, flytsvar, trinnvalg: Array.isArray(s.trinnvalg) ? s.trinnvalg : [] }
   },
 }
 
@@ -390,7 +373,6 @@ function Verktoyskjema({
   const [tilTekst, setTilTekst] = useBevart('til', '')
   const [tilForm, setTilForm] = useBevart<Kildeformulering | ''>('til/formulering', '')
   const [lagretSkjema, setSkjema] = useBevart<Planskjema>('skjema', TOMT_SKJEMA, SKJEMAFORM)
-  const [lagretSvar, setLagretSvar] = useBevart<Lagretsvar>('svar', INGEN_SVAR, SVARFORM)
   const titler = STEGTITLER[verktoy.type]
 
   const fra = lesVirkestoffvalg(valgene, fraTekst, fraForm)
@@ -400,22 +382,14 @@ function Verktoyskjema({
   // Skjemaet gjelder bare valgene det ble fylt ut for; andre valg begynner med et tomt skjema.
   const identitet = valg ? valgidentitet(valg) : ''
   const skjema = skjemaFor(lagretSkjema, identitet)
-  // Svarene gjelder bare valgene og regelen de ble gitt for.
-  const svarIdentitet = `${identitet}|${skjema.regel}`
-  const svar = lagretSvar.gjelder === svarIdentitet ? lagretSvar.svar : {}
   // En plan som ble tatt bort fordi sperrene ikke kunne leses eller lesingen var for gammel (S6). Det står bare til forskriveren beregner eller endrer noe, og tas ikke vare på.
   const [tattBort, setTattBort] = useState<Planmerke | null>(null)
   const settSkjema = (endre: (s: Planskjema) => Planskjema) => {
     setTattBort(null)
     setSkjema((s) => endre(skjemaFor(s, identitet)))
   }
-  const settSvar = (endre: (s: Flytsvar) => Flytsvar) => {
-    setTattBort(null)
-    setLagretSvar((s) => ({ gjelder: svarIdentitet, svar: endre(s.gjelder === svarIdentitet ? s.svar : {}) }))
-  }
   // Det gamle skjemaet glemmes med en gang valgene skifter, også når de skifter tilbake senere.
   useEffect(() => setSkjema((s) => skjemaFor(s, identitet)), [identitet, setSkjema])
-  useEffect(() => setLagretSvar((s) => (s.gjelder === svarIdentitet ? s : { gjelder: svarIdentitet, svar: {} })), [svarIdentitet, setLagretSvar])
 
   /** Et annet virkestoff i feltet: formuleringen som var valgt for det forrige, gjelder ikke det nye. */
   const nyttVirkestoff = (forrige: string, settTekst: (t: string) => void, settForm: (f: Kildeformulering | '') => void) => (tekst: string) => {
@@ -540,8 +514,7 @@ function Verktoyskjema({
         steg1={steg1}
         skjema={skjema}
         setSkjema={settSkjema}
-        svar={svar}
-        setSvar={settSvar}
+        sperrer={sperrer.tilstand.status === 'klar' ? sperrer.tilstand.sperrer : undefined}
         legemidler={legemidler}
         hentSperrer={sperrer.hent}
         regelsett={regelsett}

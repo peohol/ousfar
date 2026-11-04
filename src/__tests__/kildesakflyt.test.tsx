@@ -34,7 +34,7 @@ import { FEST_PILOT } from '../verktoy/regler/aksepttest'
 import { lesVerktoysperrer } from '../verktoy/sperrer'
 import { kallSom } from './hjelp/fest'
 import { pilotklokke, pilotlesing, pilotuttrekk } from './hjelp/pilotside'
-import { besvarAlt, planen, planpanel, stoppet, tidslinje, velgForm } from './hjelp/verktoyflyt'
+import { besvarAlt, planen, planpanel, stoppet, tidslinje } from './hjelp/verktoyflyt'
 import { nyDatabase, opprettBruker, som } from './hjelp/testdatabase'
 
 // PGlite leser sine egne pakker som `Blob`; jsdom sin `Blob` mangler `arrayBuffer`.
@@ -159,9 +159,9 @@ describe('produksjonsflyten fra kildesak til verktøysiden (VDR-5)', () => {
   }
 
   /**
-   * Bytte fra 100 mg sertralin til mirtazapin; gir siden når beregningen er gjort. Startforløpet når ikke sluttmålet, så
-   * klinikeren får ingen delplan, bare at en komplett plan ikke er tilgjengelig (Peders beslutning 03.11.2026). Byttet står derfor
-   * ikke blant snarvalgene og skrives inn.
+   * Bytte fra sertralin til mirtazapin; gir siden når valget er gjort. Startforløpet når ikke sluttmålet, så klinikeren får
+   * ingen delplan, bare at en komplett plan ikke er tilgjengelig (Peders beslutning 03.11.2026), og det med en gang, før
+   * dosen og spørsmålene om pasienten. Byttet står derfor ikke blant snarvalgene og skrives inn.
    */
   async function sertralinTilMirtazapin() {
     const user = verktoyside('bytte-antidepressiv')
@@ -169,10 +169,8 @@ describe('produksjonsflyten fra kildesak til verktøysiden (VDR-5)', () => {
     expect(screen.queryByRole('button', { name: 'Sertralin → mirtazapin' })).toBeNull()
     await user.type(screen.getByRole('combobox', { name: 'Bytte fra' }), 'Sertralin')
     await user.type(screen.getByRole('combobox', { name: 'Bytte til' }), 'Mirtazapin')
-    await user.type(await screen.findByRole('textbox', { name: /Aktuell døgndose av sertralin/ }), '100')
-    await velgForm(user, 'Legemiddelform av mirtazapin', '53')
-    await besvarAlt(user)
-    await stoppet(/Komplett plan ikke tilgjengelig: sertralin: /)
+    await stoppet(/Ingen plan for dette valgetIngen godkjent regel gir en komplett plan for dette valget ennå\./)
+    expect(screen.queryByRole('textbox', { name: /Aktuell døgndose av sertralin/ })).toBeNull()
     return planpanel().closest('.verktoyside') as HTMLElement
   }
 
@@ -218,7 +216,7 @@ describe('produksjonsflyten fra kildesak til verktøysiden (VDR-5)', () => {
     const user = verktoyside('trappe-ned-antidepressiv')
     await waitFor(() => expect(screen.queryByText(TILGJENGELIGHET_UKONTROLLERT.henter)).toBeNull())
     await user.type(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' }), 'Vortioksetin')
-    expect(await screen.findByRole('textbox', { name: /Aktuell døgndose av vortioksetin/ })).toBeTruthy()
+    await stoppet(/Ingen plan for dette valget/)
     expect(screen.queryByRole('note')).toBeNull()
 
     // Redaktøren får spørsmålet med valg og virkning, og en prikk.
