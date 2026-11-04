@@ -10,7 +10,7 @@
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { FORSLAG_B2, FORSLAG_K1, KONTROLLFORSLAG, kontrollavvik, omfangsplaner, type Omfangsplan } from '../verktoy/kontrollgrunnlag'
+import { B2_PAKNINGER, FORSLAG_B2, FORSLAG_K1, KONTROLLFORSLAG, kontrollavvik, omfangsplaner, type Omfangsplan } from '../verktoy/kontrollgrunnlag'
 import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from '../verktoy/regler/aksepttest'
 import { erErstattet, erKliniskGodkjent, erstatningsfeil, fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
 import { B2_ESCITALOPRAM, K1_9_AVGJORELSE, K1_OVERGANGER, medFormovergang } from '../verktoy/regler/k1'
@@ -139,6 +139,29 @@ describe('Planene', () => {
         for (const l of doser) expect(/tablett/.test(l) && /dråpe/.test(l), l).toBe(false)
       }
     }
+  })
+})
+
+describe('Pakningene i B2.3', () => {
+  type Pakning = { navn_form_styrke: string; avregistrert_dato: string | null; innhold: { mengde: number; enhet: { kode: string } }[] }
+  const escitalopram = (uttrekkene.aksept.utvalg as unknown as { pakninger: Pakning[] }).pakninger.filter((p) => /cipralex|escitalopram/i.test(p.navn_form_styrke) && !p.avregistrert_dato)
+  const minste = (re: RegExp) => Math.min(...escitalopram.filter((p) => re.test(p.navn_form_styrke)).map((p) => p.innhold[0]!.mengde))
+
+  it('stemmer med FEST-uttrekket: dråpene bare à 15 ml, minste tablettpakning 28 stk for 5 og 10 mg', () => {
+    const draper = escitalopram.filter((p) => /dråper/.test(p.navn_form_styrke))
+    expect(draper.length).toBeGreaterThan(0)
+    expect(new Set(draper.map((p) => `${p.innhold[0]!.mengde} ${p.innhold[0]!.enhet.kode}`))).toEqual(new Set([`${B2_PAKNINGER.flaske_ml} ml`]))
+    expect([minste(/tab 5 mg/), minste(/tab 10 mg/)]).toEqual([B2_PAKNINGER.minste_tablettpakning[5], B2_PAKNINGER.minste_tablettpakning[10]])
+    // 20 mg/ml og 1 mg per dråpe (preparatomtalen pkt. 2) gir 20 dråper per ml.
+    expect(B2_PAKNINGER.draper_per_ml).toBe(20 / 1)
+  })
+
+  it('regner riktig: 15 dråper i 28 dager er 420 dråper (21 ml) og krever to flasker, ikke én', () => {
+    const b23 = FORSLAG_B2.sporsmal.find((q) => q.nr === 'B2.3')!
+    expect(b23.sporsmal).toMatch(/420 dråper eller 21 ml, altså 2 flasker à 15 ml/)
+    expect(b23.sporsmal).not.toMatch(/én pakning\)/)
+    expect(b23.sporsmal).toMatch(/med dråper fra start 6 flasker \(1792 dråper\)/)
+    expect(b23.sporsmal).toMatch(/så 5 flasker \(1372 dråper\)/)
   })
 })
 
