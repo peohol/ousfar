@@ -466,8 +466,14 @@ function katalogGjelder(r: Regel): boolean {
   if (!KATALOGKONTROLL) throw new Error('Katalogkontrollen (C1, src/verktoy/flyt/katalogkontroll.ts) finnes ikke ennå')
   return KATALOGKONTROLL.katalogGjelder!(r)
 }
-/** Om ingen katalogavtrykk er ført ennå (eller C1 mangler): da venter kriteriets siste vilkår på ChatGPTs kontroll av katalogtabellen. */
-const VENTER_PA_KATALOGKONTROLL = (KATALOGKONTROLL?.KONTROLLERTE_KATALOGER?.length ?? 0) === 0
+/**
+ * De godkjente reglene som med vilje står i reservevisningen til katalogen
+ * deres er kontrollert (C1, fd9d3a9: ChatGPT har godkjent avtrykkene for de
+ * sju andre). Den som fører et nytt katalogavtrykk, eller får en ny regel
+ * godkjent uten avtrykk, endrer listen i samme PR. Kriterium 2 er helt nådd
+ * først når listen er tom (plan §11).
+ */
+const VENTER_PA_KATALOGKONTROLL: readonly string[] = ['kryssnedtrapping-sertralin-mirtazapin v10', 'seponering-escitalopram v13', 'seponering-vortioksetin v12']
 
 /**
  * Merket på reservevisningen (plan S5): regelens egne tekster og svar,
@@ -576,17 +582,19 @@ describe('Det klinikeren ser før planen', () => {
   )
 
   /**
-   * Kriteriet er nådd først når hver godkjent regel har kontrollert katalog.
-   * Så lenge ingen avtrykk er ført, er testen merket `fails` og heter «venter
-   * på katalogkontroll»: den viser at vilkåret ikke er oppfylt, og slår feil
-   * hvis det likevel skulle bli oppfylt. Den snur av seg selv til en vanlig
-   * test når `KONTROLLERTE_KATALOGER` får sin første oppføring, og krever da
-   * hver godkjent regel.
+   * Hvilke godkjente regler som står i reservevisningen, er en uttrykkelig
+   * liste: settet av godkjente regler uten kontrollert katalog skal være
+   * nøyaktig {@link VENTER_PA_KATALOGKONTROLL}. Testen blir rød både når en
+   * ny godkjent regel mangler katalog, og når en regel får avtrykk uten at
+   * listen krympes. Før C1 er slått sammen, finnes ikke katalogkontrollen, og
+   * testen er merket `fails`; den blir en vanlig test av seg selv når modulen
+   * finnes.
    */
-  ;(VENTER_PA_KATALOGKONTROLL ? it.fails : it)(`hver godkjent regel har kontrollert katalog${VENTER_PA_KATALOGKONTROLL ? ' (venter på katalogkontroll)' : ''} (akseptansekriterium 2)`, () => {
-    expect(
-      GODKJENTE.filter((r) => !katalogGjelder(r)).map((r) => `${r.id} v${r.versjon}`),
-      'godkjente regler uten kontrollert katalog',
-    ).toEqual([])
-  })
+  ;(KATALOGKONTROLL ? it : it.fails)(
+    `de godkjente reglene uten kontrollert katalog er nøyaktig de som venter på katalogkontroll${KATALOGKONTROLL ? '' : ' (venter på C1)'} (akseptansekriterium 2)`,
+    () => {
+      const uten = GODKJENTE.filter((r) => !katalogGjelder(r)).map((r) => `${r.id} v${r.versjon}`)
+      expect(uten.sort(), 'godkjente regler uten kontrollert katalog').toEqual([...VENTER_PA_KATALOGKONTROLL].sort())
+    },
+  )
 })
