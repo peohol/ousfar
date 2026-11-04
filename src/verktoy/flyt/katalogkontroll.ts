@@ -79,3 +79,6 @@ export function katalogGjelder(r: Regel, kontrollerte: readonly Katalogkontroll[
   const avtrykk = katalogavtrykk(r, katalog, sporsmal)
   return k.some((x) => x.fingeravtrykk === fa && x.katalogavtrykk === avtrykk)
 }
+
+/** Om regelen har en kontrollert katalog i appen (avtrykket i {@link KONTROLLERTE_KATALOGER}); ellers gjelder reservevisningen (S5, plan §11 kriterium 2). */
+export const harKontrollertKatalog = (r: Regel): boolean => katalogGjelder(r)

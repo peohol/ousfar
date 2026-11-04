@@ -13,7 +13,7 @@ import { BESLUTNINGER, type Beslutninger } from '../verktoy/flyt/beslutninger'
 import { flytoppsett, medFlytfelt, medIngenAvDisse, SAMLET, standardId, vurderFlyt, type Flytgrunnlag } from '../verktoy/flyt/flyt'
 import { forhandskontroll, KAN_LAGES_HVIS } from '../verktoy/flyt/forhandskontroll'
 import { flyttilstand, medFlytsvar, reglerMedPlan } from '../verktoy/flyt'
-import { katalogavtrykk, katalogGjelder, KONTROLLERTE_KATALOGER, type Katalogkontroll } from '../verktoy/flyt/katalogkontroll'
+import { harKontrollertKatalog, katalogavtrykk, katalogGjelder, KONTROLLERTE_KATALOGER, type Katalogkontroll } from '../verktoy/flyt/katalogkontroll'
 import { KATALOGTABELLFIL, lagKatalogtabell } from '../verktoy/flyt/katalogtabell'
 import { KATALOGBETINGELSER, KATALOGSPORSMAL, SVARSETT, type Betingelsestype, type Katalogbetingelse } from '../verktoy/flyt/sporsmal'
 import { FORKLARINGER, klassifiser, stoppforklaringer } from '../verktoy/flyt/stopp'
@@ -127,6 +127,7 @@ describe('katalogavtrykket (S5b)', () => {
     expect(KONTROLLERTE_KATALOGER).toEqual([])
     for (const r of GODKJENTE) {
       expect(katalogGjelder(r)).toBe(false)
+      expect(harKontrollertKatalog(r)).toBe(false)
       const o = flytoppsett(r)
       expect(o.katalog).toBe(false)
       expect(o.sporsmal.every((s) => s.kategori === 'uklassifisert')).toBe(true)
