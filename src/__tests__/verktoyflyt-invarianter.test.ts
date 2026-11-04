@@ -448,13 +448,27 @@ function synligTekst(): string {
 }
 
 /**
- * Om regelens spørsmålskatalog er kontrollert for nøyaktig denne
- * regelversjonen (katalogavtrykket, plan S5b og §4.4). Modulen kommer med C1
- * (`src/verktoy/flyt/katalogkontroll.ts`, `harKontrollertKatalog`); til da
- * har ingen regel kontrollert katalog, og alle vises i reservevisningen.
+ * Katalogkontrollen fra C1 (`src/verktoy/flyt/katalogkontroll.ts`, plan S5b og
+ * §4.4): `katalogGjelder(regel)` sier om katalogavtrykket er kontrollert for
+ * nøyaktig regelens versjon og fingeravtrykk, og `KONTROLLERTE_KATALOGER` er
+ * avtrykkene som er ført. Før C1 er slått sammen finnes ikke modulen; da
+ * feiler kriterium 2 med den grunnen. Finnes modulen uten eksportene, feiler
+ * hele fila: ingen stille reserve til «ikke kontrollert».
  */
-const KATALOGKONTROLL = Object.values(import.meta.glob<{ harKontrollertKatalog?: (r: Regel) => boolean }>('../verktoy/flyt/katalogkontroll.ts', { eager: true }))[0]
-const harKontrollertKatalog = (r: Regel) => KATALOGKONTROLL?.harKontrollertKatalog?.(r) ?? false
+interface Katalogkontrollmodul {
+  katalogGjelder: (r: Regel) => boolean
+  KONTROLLERTE_KATALOGER: readonly unknown[]
+}
+const KATALOGKONTROLL = Object.values(import.meta.glob<Partial<Katalogkontrollmodul>>('../verktoy/flyt/katalogkontroll.ts', { eager: true }))[0]
+if (KATALOGKONTROLL && (typeof KATALOGKONTROLL.katalogGjelder !== 'function' || !Array.isArray(KATALOGKONTROLL.KONTROLLERTE_KATALOGER)))
+  throw new Error('src/verktoy/flyt/katalogkontroll.ts mangler eksporten katalogGjelder eller KONTROLLERTE_KATALOGER')
+function katalogGjelder(r: Regel): boolean {
+  if (!KATALOGKONTROLL) throw new Error('Katalogkontrollen (C1, src/verktoy/flyt/katalogkontroll.ts) finnes ikke ennå')
+  return KATALOGKONTROLL.katalogGjelder!(r)
+}
+/** Om ingen katalogavtrykk er ført ennå (eller C1 mangler): da venter kriteriets siste vilkår på ChatGPTs kontroll av katalogtabellen. */
+const VENTER_PA_KATALOGKONTROLL = (KATALOGKONTROLL?.KONTROLLERTE_KATALOGER?.length ?? 0) === 0
+
 /**
  * Merket på reservevisningen (plan S5): regelens egne tekster og svar,
  * også «Gjelder»/«Gjelder ikke» for unntak, slik dagens skjema viser dem.
@@ -500,7 +514,7 @@ describe('Det klinikeren ser før planen', () => {
       const forste = OMFANGSKASUS.find((o) => o.verktoy === v && JSON.stringify(o.kasus.valg) === JSON.stringify(s.valg))
       fireEvent.change(dose, { target: { value: forste?.kasus.dose ?? '10' } })
       // Valget bruker katalogen bare når hver godkjent regel det kan beregnes med, har kontrollert katalog.
-      const kontrollert = GODKJENTE.filter((r) => s.regler.some((x) => x.id === r.id)).every(harKontrollertKatalog)
+      const kontrollert = GODKJENTE.filter((r) => s.regler.some((x) => x.id === r.id)).every(katalogGjelder)
       const reserve = document.querySelector(RESERVEVISNING) !== null
       if (!kontrollert) {
         if (!reserve) ut.push(`${navn}: regelen har ikke kontrollert katalog, men vises ikke i reservevisningen`)
@@ -547,23 +561,32 @@ describe('Det klinikeren ser før planen', () => {
    * ser. Regler uten kontrollert katalog vises i reservevisningen, som med
    * vilje beholder regelens egne tekster og svar; der kontrolleres bare at
    * reservevisningen brukes, og at den ikke brukes noe annet sted. Valg uten
-   * beregning skal heller ikke vise interne begreper. Kriteriet er nådd først
-   * når hver godkjent regel har kontrollert katalog.
+   * beregning skal heller ikke vise interne begreper.
    *
    * I dag finnes verken katalogen (C1) eller reservevisningen (A1), og
    * skjemaet viser «Gjelder», regel-ID og fingeravtrykk. Testen er derfor
-   * merket `fails`; den endres til `it` når A1 og C1 er på plass og hver
-   * godkjent regel har kontrollert katalog.
+   * merket `fails`; A1 endrer den til `it`.
    */
   it.fails(
     'har ingen regel-ID, interne begreper eller svaret «Gjelder» der katalogen er kontrollert, og reservevisningen bare der den ikke er det (akseptansekriterium 2)',
     async () => {
       expect(await funn()).toEqual([])
-      expect(
-        GODKJENTE.filter((r) => !harKontrollertKatalog(r)).map((r) => `${r.id} v${r.versjon}`),
-        'godkjente regler uten kontrollert katalog',
-      ).toEqual([])
     },
     60_000,
   )
+
+  /**
+   * Kriteriet er nådd først når hver godkjent regel har kontrollert katalog.
+   * Så lenge ingen avtrykk er ført, er testen merket `fails` og heter «venter
+   * på katalogkontroll»: den viser at vilkåret ikke er oppfylt, og slår feil
+   * hvis det likevel skulle bli oppfylt. Den snur av seg selv til en vanlig
+   * test når `KONTROLLERTE_KATALOGER` får sin første oppføring, og krever da
+   * hver godkjent regel.
+   */
+  ;(VENTER_PA_KATALOGKONTROLL ? it.fails : it)(`hver godkjent regel har kontrollert katalog${VENTER_PA_KATALOGKONTROLL ? ' (venter på katalogkontroll)' : ''} (akseptansekriterium 2)`, () => {
+    expect(
+      GODKJENTE.filter((r) => !katalogGjelder(r)).map((r) => `${r.id} v${r.versjon}`),
+      'godkjente regler uten kontrollert katalog',
+    ).toEqual([])
+  })
 })
