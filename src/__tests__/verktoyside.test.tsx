@@ -83,7 +83,7 @@ describe('oversikten', () => {
       .filter((a) => a.classList.contains('verktoykort__lenke'))
       .map((a) => [...a.querySelectorAll('.verktoykort__linje')].map((l) => l.textContent))
 
-  it('viser de fire verktøyene, og at bare de godkjente reglene som kan gi en komplett plan, kan beregnes: escitalopram, de to depotreglene og de to tilleggsreglene', async () => {
+  it('viser de fire verktøyene, og at bare de godkjente reglene som kan gi en komplett plan, kan beregnes: escitalopram, depotreglene, de tre antipsykotikabyttene fra K3 og de to tilleggsreglene', async () => {
     vis()
     expect(screen.getByRole('heading', { level: 1, name: 'Verktøy' })).toBeTruthy()
     expect(document.activeElement).toBe(screen.getByRole('heading', { level: 1 }))
@@ -99,7 +99,10 @@ describe('oversikten', () => {
       // Escitalopram (K1, godkjent 04.11.2026) gir en komplett plan til seponering med dråper.
       ['Kan beregnes: Escitalopram', 'Fagtekst: Agomelatin, Bupropion'],
       ['Ingen beregning tilgjengelig ennå'],
-      ['Kan beregnes: Aripiprazol: peroral → depotinjeksjon, Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)'],
+      // Bytte antipsykotikum: pilotens depotregler og de tre byttene fra K3 som kontrolløren godkjente 04.11.2026.
+      [
+        'Kan beregnes: Aripiprazol: peroral → depotinjeksjon, Olanzapin (peroral) → aripiprazol (peroral), Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat), Risperidon (peroral) → aripiprazol (peroral), Risperidon (peroral) → paliperidon (depotinjeksjon (paliperidonpalmitat))',
+      ],
       // Kombinere stemningsstabiliserende (K4): begge tilleggsreglene er godkjent av den uavhengige kontrolløren og gir en komplett plan.
       ['Kan beregnes: Litium → lamotrigin, Valproat → lamotrigin'],
     ])

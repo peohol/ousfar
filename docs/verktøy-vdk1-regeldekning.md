@@ -6,7 +6,7 @@ Oversikten svarer på VDK-1 i `docs/verktøy-omlegging-2026-11.md`: hva de tre v
 
 Kildetabellen fra Psychiatrienet er bare brukt som metadata som allerede ligger i repoet (om tabellen har en anbefaling for kombinasjonen), og bare i sum. Ingen tekst fra kilden er brukt, og at kilden har en anbefaling, gir aldri i seg selv en OUSFAR-regel (`docs/verktøy-p3-rettigheter.md`).
 
-**Regelsettet har 9 klinisk godkjente regelversjoner** (`kryssnedtrapping-sertralin-mirtazapin` v10, `depot-aripiprazol-maintena` v3, `depot-paliperidon-xeplion` v3, `seponering-escitalopram` v13, `seponering-vortioksetin` v12, `seponering-bupropion` v5, `seponering-agomelatin` v1, `tillegg-valproat-lamotrigin` v2, `tillegg-litium-lamotrigin` v2), 7 av dem med beregning, hver bare i omfanget kontrolløren godkjente.
+**Regelsettet har 12 klinisk godkjente regelversjoner** (`kryssnedtrapping-sertralin-mirtazapin` v10, `depot-aripiprazol-maintena` v3, `depot-paliperidon-xeplion` v3, `seponering-escitalopram` v13, `seponering-vortioksetin` v12, `seponering-bupropion` v5, `seponering-agomelatin` v1, `depot-risperidon-xeplion` v8, `antipsykotikabytte-olanzapin-aripiprazol` v8, `antipsykotikabytte-risperidon-aripiprazol` v8, `tillegg-valproat-lamotrigin` v2, `tillegg-litium-lamotrigin` v2), 10 av dem med beregning, hver bare i omfanget kontrolløren godkjente.
 
 ## 1. Sammendrag
 
@@ -16,12 +16,12 @@ Antall kombinasjoner etter hva verktøyet gir. For seponering er en kombinasjon 
 | --- | --- | --- | --- | --- |
 | Valgbart | 23 virkestoffer, 23 valg med formulering | 23 virkestoffer, 23 valg med formulering | 25 virkestoffer, 34 valg med formulering | 11 virkestoffer, 11 valg med formulering |
 | Kombinasjoner | 23 | 506 | 1122 | 110 |
-| Beregning med klinisk godkjent regel (i godkjent omfang) | 2 | 1 | 2 | 2 |
+| Beregning med klinisk godkjent regel (i godkjent omfang) | 2 | 1 | 5 | 2 |
 | Klinisk godkjent fagtekst, ingen beregning | 2 | 0 | 0 | 0 |
 | Regel finnes, kontrollert og ikke godkjent | 6 | 1 | 1 | 0 |
 | Regel finnes som fagtekst, ikke godkjent | 6 | 0 | 0 | 0 |
-| Regel finnes, ikke ferdig kontrollert | 0 | 4 | 0 | 0 |
-| Ingen OUSFAR-regel; kilden har en anbefaling | 0 | 500 | 892 | 108 |
+| Regel finnes, ikke ferdig kontrollert | 0 | 4 | 4 | 0 |
+| Ingen OUSFAR-regel; kilden har en anbefaling | 0 | 500 | 885 | 108 |
 | Ingen OUSFAR-regel; kilden har ingen anbefaling | 0 | 0 | 161 | 0 |
 | Ingen OUSFAR-regel; begrenset av preparater eller kilde | 7 | 0 | 0 | 0 |
 | Ikke støttet: middels langtidsvirkende injeksjon | 0 | 0 | 66 | 0 |
@@ -36,7 +36,10 @@ Hver klinisk godkjente regel med beregning, kombinasjonen den gjelder, og omfang
 | Trappe ned antidepressiv | `seponering-vortioksetin` v12 | Vortioksetin | Kontrollørens gjennomgang av a38fac14 03.11.2026 (rettelsen av RCPsych-faktumet, PR #309): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare én første reduksjon 20 → 15 mg/døgn, med minst 28 dager før ny symptomstyrt vurdering, hos voksne under 65 år, kort/ikke-langvarig behandling, uten tidligere seponeringsplager, etter alle opprinnelige vurderinger/stopp, med kontrollerte tabletter/styrker. Ingen påfølgende reduksjon, langsom variant eller utvidet pasientgruppe. Identisk klinisk omfang som v11. Godkjenningen gjelder bare dette eksakte fingeravtrykket og disse betingelsene. Den er en korrigering av kildebeskrivelsen, ikke en ny generell godkjenning av algoritmer for nedtrapping. | 18 kasus, 0 gir plan |
 | Bytte antidepressiv | `kryssnedtrapping-sertralin-mirtazapin` v10 | Sertralin → Mirtazapin | Kontrollørens gjennomgang av a38fac14 03.11.2026 (rettelsen av RCPsych-faktumet, PR #309): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare det tidligere godkjente startforløpet fra sertralin 50 eller 100 mg, kort/ikke-langvarig behandling, med kontrollerte tabletter og styrker, obligatoriske bekreftelser og tidligere seponeringsplager fraværende. Dette omfatter ikke videre 25 → 0, opptrapping av mirtazapin, andre doser, langtidsbehandling eller endret trinnlengde. Identisk klinisk omfang som v9. Godkjenningen gjelder bare dette eksakte fingeravtrykket og disse betingelsene. Den er en korrigering av kildebeskrivelsen, ikke en ny generell godkjenning av algoritmer for nedtrapping. | 14 kasus, 0 gir plan |
 | Bytte antipsykotikum | `depot-aripiprazol-maintena` v3 | Aripiprazol (peroral) → Aripiprazol (depotinjeksjon) | Kontrollørens gjennomgang av 62ebb21 30.10.2026 (P4.8): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: oppstart med én injeksjon Abilify Maintena 400 mg, peroral aripiprazol i 14 dager og deretter 400 mg månedlig, hos voksne med schizofreni som er stabilisert på og har tålt peroral aripiprazol. Gjelder ikke andre depottyper eller oppstartsvarianter, kjent langsom CYP2D6-omsetning, sterke CYP2D6- eller CYP3A4-hemmere, CYP3A4-induktorer eller ubekreftet stabilisering eller toleranse. | 13 kasus, 4 gir plan |
+| Bytte antipsykotikum | `antipsykotikabytte-olanzapin-aripiprazol` v8 | Olanzapin (peroral) → Aripiprazol (peroral) | Kontrollørens ellevte gjennomgang av 63464bd 04.11.2026 (PR #320, kommentar 6626569802): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare stabil voksen poliklinisk pasient med schizofreni: olanzapin 20 → 15 → 10 → 5 → 0 mg, med aripiprazol etablert på forskriverens valgte og tolererte 10 eller 15 mg, minst to ukers overlapp før nedtrappingen, minst 14 dager per reduksjon, tett vurdering av symptomer og bivirkninger, stopp eller individuell omlegging ved plager, og uten tidligere seponeringsproblemer. Dette er en bevisst langsommere strategi etter TARC 2018, ikke en generell regel for seponering av olanzapin. | 0 kasus, 0 gir plan |
 | Bytte antipsykotikum | `depot-paliperidon-xeplion` v3 | Paliperidon (peroral) → Paliperidon (depotinjeksjon (paliperidonpalmitat)) | Kontrollørens gjennomgang av 62ebb21 30.10.2026 (P4.8): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: overgang fra perorale paliperidon-depottabletter til Xeplion med 150 mg paliperidon dag 1 og 100 mg dag 8 i deltoideus, deretter månedlig fra én måned etter dag 8, hos voksne med schizofreni som er stabilisert, med kreatininclearance minst 80 ml/min og med deltoideus framhevet etter 9–12 mg peroralt. Gjelder ikke andre depottyper eller depotregimer, risperidon, nedsatt nyrefunksjon eller ubekreftet stabilisering eller toleranse. | 19 kasus, 9 gir plan |
+| Bytte antipsykotikum | `antipsykotikabytte-risperidon-aripiprazol` v8 | Risperidon (peroral) → Aripiprazol (peroral) | Kontrollørens ellevte gjennomgang av 63464bd 04.11.2026 (PR #320, kommentar 6626569802): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare tilsvarende stabil voksen poliklinisk pasient med schizofreni: risperidon 4 → 3 → 2 → 1 → 0 mg, med aripiprazol på valgt og tolerert terapeutisk måldose før nedtrappingen, samme overlapp, intervaller, tette oppfølging og stoppkriterier. Ikke en generell regel om seponering av risperidon eller om at alle pasienter tåler 1 → 0 mg. | 0 kasus, 0 gir plan |
+| Bytte antipsykotikum | `depot-risperidon-xeplion` v8 | Risperidon (peroral) → Paliperidon (depotinjeksjon (paliperidonpalmitat)) | Kontrollørens ellevte gjennomgang av 63464bd 04.11.2026 (PR #320, kommentar 6626569802): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare stabil voksen med schizofreni på 3 mg peroral risperidon daglig, med Xeplion 75 mg månedlig som faktisk valgt mål etter oppstart med 150 mg dag 1 og 100 mg dag 8, normal nyrefunksjon, dokumentert god effekt og toleranse og uten overvekt eller relevante interaksjoner, med vurdering før injeksjonene og vilkårene for individuell doseendring. Russu 2018 gir populasjonsfarmakokinetikk, ikke individuell doseekvivalens; 4–6 mg risperidon til 75 mg er fortsatt avvist. Godkjenningen gjelder en klinisk plausibel, begrenset oppstart, ikke garantert virkning hos alle. | 0 kasus, 0 gir plan |
 | Kombinere stemningsstabiliserende | `tillegg-litium-lamotrigin` v2 | Litium → Lamotrigin | Uavhengig kilde- og regelkontroll av 3c76293 04.11.2026 (PR #322, kommentar 6620240499): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: lamotrigin lagt til eksisterende, uendret Lithionit 42 mg etter tabell 3 i Lamictal-preparatomtalen (25, 50 og 100 mg), til det pasientvalgte første stabiliserende målet 200 mg/dag fra uke 6, med Lamictal dispergerbare tabletter. Ingen generell godkjenning av litiumbehandling, andre litiumpreparater eller andre kombinasjoner. | 0 kasus, 0 gir plan |
 | Kombinere stemningsstabiliserende | `tillegg-valproat-lamotrigin` v2 | Valproat → Lamotrigin | Uavhengig kilde- og regelkontroll av 3c76293 04.11.2026 (PR #322, kommentar 6620240499): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: lamotrigin lagt til eksisterende, uendret natriumvalproat etter tabell 3 i Lamictal-preparatomtalen (25 mg annenhver dag i to uker, 25 mg daglig i to uker, 50 mg daglig i uke 5), til det pasientvalgte første stabiliserende målet 100 mg/dag, med Lamictal dispergerbare tabletter. Ingen generell godkjenning av valproatbehandling, indikasjon, andre styrker eller formuleringer eller andre kombinasjoner. | 0 kasus, 0 gir plan |
 
@@ -106,6 +109,10 @@ Valgene i testmatrisen som ikke gir en plan, selv om regelen er godkjent: dosen,
 - M12 (pasientforhold, også ubesvarte): indikasjonen ikke bekreftet, dose «15» → ingen plan
 - M13 (utilgjengelige eller endrede preparater): presentasjonen til injeksjon annenhver måned, dose «15» → ingen plan
 
+**`antipsykotikabytte-olanzapin-aripiprazol`** – 0 av 0 valg gir ingen plan:
+
+- Ingen.
+
 **`depot-paliperidon-xeplion`** – 10 av 19 valg gir ingen plan:
 
 - X05 (injeksjons- og startdatoer): startdato som ikke finnes, dose «6» → ingen plan
@@ -118,6 +125,14 @@ Valgene i testmatrisen som ikke gir en plan, selv om regelen er godkjent: dosen,
 - X21 (uvanlige doser og grenseverdier): paliperidon 3 mg med måldose 25 mg, nedre grense i spennet, dose «3» → ingen plan
 - X22 (uvanlige doser og grenseverdier): paliperidon 3 mg med måldose 24,99 mg, dose «3» → ingen plan
 - X23 (uvanlige doser og grenseverdier): paliperidon 3 mg med måldose 50,01 mg, dose «3» → ingen plan
+
+**`antipsykotikabytte-risperidon-aripiprazol`** – 0 av 0 valg gir ingen plan:
+
+- Ingen.
+
+**`depot-risperidon-xeplion`** – 0 av 0 valg gir ingen plan:
+
+- Ingen.
 
 **`tillegg-litium-lamotrigin`** – 0 av 0 valg gir ingen plan:
 
@@ -160,7 +175,11 @@ Regelutkast som er kontrollert og ikke godkjent (eller bare fagtekst), og som de
 | Bytte antidepressiv | `bytte-escitalopram-sertralin` v1 | Escitalopram → Sertralin | beregnbar | til kontroll |
 | Bytte antidepressiv | `bytte-sertralin-mirtazapin` v1 | Sertralin → Mirtazapin | beregnbar | til kontroll |
 | Bytte antidepressiv | `mao-fluoksetin-fenelzin` v7 | Fluoksetin → Fenelzin | beregnbar | ikke godkjent |
+| Bytte antipsykotikum | `antipsykotikabytte-aripiprazol-olanzapin` v2 | Aripiprazol (peroral) → Olanzapin (peroral) | beregnbar | til kontroll |
+| Bytte antipsykotikum | `antipsykotikabytte-aripiprazol-risperidon` v5 | Aripiprazol (peroral) → Risperidon (peroral) | beregnbar | til kontroll |
+| Bytte antipsykotikum | `antipsykotikabytte-kariprazin-kvetiapin` v2 | Kariprazin → Kvetiapin | beregnbar | til kontroll |
 | Bytte antipsykotikum | `antipsykotikabytte-olanzapin-kvetiapin` v5 | Olanzapin (peroral) → Kvetiapin | beregnbar | ikke godkjent |
+| Bytte antipsykotikum | `depot-consta-xeplion` v3 | Risperidon (depotinjeksjon) → Paliperidon (depotinjeksjon (paliperidonpalmitat)) | beregnbar | til kontroll |
 
 ## 6. Hvorfor de andre kombinasjonene stopper
 
@@ -213,7 +232,7 @@ Per fra-valg: hvor mange til-valg som gir plan eller godkjent fagtekst, hvor man
 | Fra | Til-valg | Plan eller godkjent fagtekst | Regel uten godkjenning | Ingen regel, kilden har anbefaling | Ingen regel, kilden har ingen | Middels langtidsvirkende |
 | --- | --- | --- | --- | --- | --- | --- |
 | Amisulprid | 33 | 0 | 0 | 24 | 8 | 1 |
-| Aripiprazol (peroral) | 33 | 1 | 0 | 24 | 7 | 1 |
+| Aripiprazol (peroral) | 33 | 1 | 2 | 22 | 7 | 1 |
 | Aripiprazol (depotinjeksjon) | 33 | 0 | 0 | 32 | 0 | 1 |
 | Brekspiprazol | 33 | 0 | 0 | 25 | 7 | 1 |
 | Flufenazin (peroral) | 33 | 0 | 0 | 27 | 5 | 1 |
@@ -222,13 +241,13 @@ Per fra-valg: hvor mange til-valg som gir plan eller godkjent fagtekst, hvor man
 | Flupentiksol (depotinjeksjon) | 33 | 0 | 0 | 32 | 0 | 1 |
 | Haloperidol (peroral) | 33 | 0 | 0 | 25 | 7 | 1 |
 | Haloperidol (depotinjeksjon) | 33 | 0 | 0 | 32 | 0 | 1 |
-| Kariprazin | 33 | 0 | 0 | 25 | 7 | 1 |
+| Kariprazin | 33 | 0 | 1 | 24 | 7 | 1 |
 | Klorprotiksen | 33 | 0 | 0 | 27 | 5 | 1 |
 | Klozapin | 33 | 0 | 0 | 24 | 8 | 1 |
 | Kvetiapin | 33 | 0 | 0 | 24 | 8 | 1 |
 | Loksapin | 33 | 0 | 0 | 27 | 5 | 1 |
 | Lurasidon | 33 | 0 | 0 | 24 | 8 | 1 |
-| Olanzapin (peroral) | 33 | 0 | 1 | 24 | 7 | 1 |
+| Olanzapin (peroral) | 33 | 1 | 1 | 23 | 7 | 1 |
 | Olanzapin (depotinjeksjon) | 33 | 0 | 0 | 32 | 0 | 1 |
 | Paliperidon (peroral) | 33 | 1 | 0 | 25 | 6 | 1 |
 | Paliperidon (depotinjeksjon (paliperidonpalmitat)) | 33 | 0 | 0 | 32 | 0 | 1 |
@@ -237,8 +256,8 @@ Per fra-valg: hvor mange til-valg som gir plan eller godkjent fagtekst, hvor man
 | Perisiazin | 33 | 0 | 0 | 27 | 5 | 1 |
 | Pimozid | 33 | 0 | 0 | 24 | 8 | 1 |
 | Promazin | 33 | 0 | 0 | 27 | 5 | 1 |
-| Risperidon (peroral) | 33 | 0 | 0 | 26 | 6 | 1 |
-| Risperidon (depotinjeksjon) | 33 | 0 | 0 | 32 | 0 | 1 |
+| Risperidon (peroral) | 33 | 2 | 0 | 24 | 6 | 1 |
+| Risperidon (depotinjeksjon) | 33 | 0 | 1 | 31 | 0 | 1 |
 | Sertindol | 33 | 0 | 0 | 24 | 8 | 1 |
 | Sulpirid | 33 | 0 | 0 | 24 | 8 | 1 |
 | Trifluoperazin | 33 | 0 | 0 | 27 | 5 | 1 |

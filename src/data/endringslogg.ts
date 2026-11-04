@@ -28,6 +28,20 @@ export const ENDRINGSLOGG: Endring[] = [
     utenVarsel: true,
   },
   {
+    versjon: '1.125.5',
+    dato: '2026-11-04',
+    sammendrag: 'Tre bytter av antipsykotika faglig godkjent for avgrensede pasientgrupper, fire til faglig kontroll',
+    typer: ['Fag'],
+    omfang: 'Mindre omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Gjelder bare administratorene, som fortsatt er de eneste som ser verktøyene. Sperrene for verktøyene er uendret.',
+      '«Bytte antipsykotikum» har fått regler for sju komplette bytter. Tre gir nå en plan etter uavhengig faglig godkjenning, hver for en avgrenset gruppe stabile voksne med schizofreni: fra 3 mg peroral risperidon til Xeplion 75 mg i måneden, og gradvis bytte fra olanzapin 20 mg og fra risperidon 4 mg til aripiprazol. Andre doser og pasienter utenfor gruppene får ingen plan.',
+      'De fire andre står til faglig kontroll, og verktøyet sier at faglig kontroll gjenstår: Xeplion fra Risperdal Consta, direkte bytte fra aripiprazol til olanzapin og til risperidon, og fra kariprazin til kvetiapin. Reglene bygger på preparatomtalene, en oversiktsartikkel med et tilhørende byteverktøy, en farmakokinetisk simuleringsstudie og en konsensusrapport, ikke på Psychiatrienet, og bruker bare norske preparater fra FEST.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.125.4',
     dato: '2026-11-04',
     sammendrag: 'En ny regel i de kliniske verktøyene kan erstatte en eldre, som da trekkes i samme øyeblikk som den nye godkjennes',
