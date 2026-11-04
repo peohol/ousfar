@@ -45,6 +45,13 @@ export interface Byggestein {
   id: string
   varenavn: string
   navn_form_styrke: string
+  /**
+   * Navnet planen og advarslene viser: FESTs navn med form og styrke, med
+   * varenumrene når flere preparater av virkestoffet har samme navn (for
+   * eksempel en ordinær pakning og en fritakspakning), så det er entydig
+   * hvilket preparat en advarsel eller planen gjelder.
+   */
+  etikett: string
   legemiddelform: Kode | null
   klasse: Formuleringsklasse
   /** Grunnen når formuleringen er overstyrt i P1. */
@@ -185,6 +192,7 @@ export function byggesteiner(g: Preparatgrunnlag, nokkel: string, statusdato: st
       id: m.id,
       varenavn: m.varenavn,
       navn_form_styrke: m.navn_form_styrke,
+      etikett: m.navn_form_styrke,
       legemiddelform: m.legemiddelform,
       klasse,
       overstyrt: o?.grunn ?? null,
@@ -201,5 +209,12 @@ export function byggesteiner(g: Preparatgrunnlag, nokkel: string, statusdato: st
       begrensninger,
     })
   }
+  const navn = new Map<string, number>()
+  for (const b of ut) navn.set(b.navn_form_styrke, (navn.get(b.navn_form_styrke) ?? 0) + 1)
+  for (const b of ut) if (navn.get(b.navn_form_styrke)! > 1) b.etikett = `${b.navn_form_styrke}, ${varenrTekst(b.varenr)}`
   return ut.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
 }
+
+/** Varenumrene som tekst: «varenr. 196808» eller «varenr. 196808 og 279054»; «uten varenr.» uten pakninger. */
+export const varenrTekst = (varenr: string[]) =>
+  varenr.length === 0 ? 'uten varenr.' : `varenr. ${varenr.length === 1 ? varenr[0] : `${varenr.slice(0, -1).join(', ')} og ${varenr.at(-1)}`}`

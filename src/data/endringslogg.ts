@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.125.3',
+    versjon: '1.125.4',
     dato: '2026-11-04',
     sammendrag: 'En ny regel i de kliniske verktøyene kan erstatte en eldre, som da trekkes i samme øyeblikk som den nye godkjennes',
     typer: ['Funksjonalitet'],
@@ -23,6 +23,24 @@ export const ENDRINGSLOGG: Endring[] = [
       'Gjelder bare administratorene, som fortsatt er de eneste som ser verktøyene. Ingen regler, doser eller godkjenninger er endret, og ingen regel bruker dette ennå.',
       'En ny regel kan oppgi hvilke eldre regler for samme bytte den erstatter. Når den nye regelen er klinisk godkjent, tilbyr verktøyet ikke lenger de gamle, og en plan etter dem stopper med beskjed om at regelen er trukket og hvilken regel som har erstattet den. Før godkjenningen gjelder de gamle som før.',
     ],
+  },
+  {
+    versjon: '1.125.1',
+    dato: '2026-11-04',
+    sammendrag: 'Første regler for å legge lamotrigin til valproat eller litium, faglig godkjent og bare for administratorene',
+    typer: ['Fag'],
+    omfang: 'Mindre omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Gjelder bare administratorene. Begge reglene er faglig godkjent av en uavhengig kontrollør for nøyaktig denne versjonen, så verktøyet gir nå en komplett plan for dem. Endres en regel, gir verktøyet ingen plan før den er kontrollert på nytt.',
+      'Verktøyet «Kombinere stemningsstabiliserende» har fått to regler fra preparatomtalen for Lamictal: lamotrigin lagt til valproat (25 mg annenhver dag, opp til 100 mg fra dag 36, aldri over 200 mg) og lagt til litium (25 mg, opp til 200 mg fra dag 36). Det eksisterende legemidlet står uendret.',
+      'Forskriveren må velge måldosen, og planen går bare til preparatomtalens første stabiliserende måldose; et annet mål beregnes ikke. Bruker pasienten østrogenholdig prevensjon eller behandling, må måldosen vurderes skriftlig.',
+      'Litiumdosen oppgis i mg litium som på Lithionit 42 mg (6 mmol per tablett) og må være hele tabletter, fra 1 til 10 daglig. Valproatdosen oppgis i mg natriumvalproat og kontrolleres ikke. Forskriveren må bekrefte at pasienten bruker et natriumvalproatpreparat i den dosen, og planen viser til preparatet og fordelingen over døgnet i legemiddellisten.',
+      'Planene bruker bare dispergerbare tabletter, deler ingen tablett, og har vurdering av hud, overfølsomhet og stemningsleie før hver doseøkning og en vurdering ved måldosen.',
+      'Har flere preparater samme navn, form og styrke i FEST, for eksempel en ordinær pakning og en fritakspakning, viser planen og advarslene i alle verktøyene varenummeret, så det er tydelig hvilket preparat planen bruker og hvilket advarselen gjelder. Det endrer ikke hvilke preparater planen bruker.',
+      'Planen stopper i stedet for å gi en dose når pasienten er under 18 år, har reagert på lamotrigin før, bruker lamotrigin nå, er gravid eller ammer, har nedsatt lever- eller nyrefunksjon, når kravene for valproat ikke er bekreftet (egne vilkår for jenter og kvinner som kan bli gravide, og egne forholdsregler for gutter og menn som kan bli fedre), og ved litium når pasienten også bruker valproat, et enzyminduserende legemiddel eller et legemiddel med ukjent virkning på lamotrigin.',
+    ],
+    utenVarsel: true,
   },
   {
     versjon: '1.125.0',

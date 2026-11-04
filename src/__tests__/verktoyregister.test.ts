@@ -12,13 +12,14 @@ import { planTekst, planvisning } from '../verktoy/planvisning'
 import { finnVirkestoff, KARTLEGGING, sokVerktoy, VERKTOY, verktoyFor, virkestoffvalg } from '../verktoy/register'
 import { NEDTRAPPINGSSETT } from '../verktoy/regler/nedtrapping'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
+import { TILLEGGSSETT } from '../verktoy/regler/tillegg'
 import { snarvalg } from '../verktoy/snarvalg'
 import { erstatningsfeil } from '../verktoy/regler/godkjenning'
 import type { Regel, Regelsett } from '../verktoy/regler/modell'
 import { REGELSETT, regeloversikt, reglerFor, tilgjengelighet, type Verktoyvalg } from '../verktoy/tilgjengelighet'
 import { godkjennITest, TEST_DEPOT, TEST_KRYSS, TEST_NEDTRAPPING, TESTKLOKKE, testFest, testsett } from './hjelp/verktoyplan'
 
-const [TRAPPE_NED, BYTTE_AD, BYTTE_AP] = VERKTOY.map((v) => v)
+const [TRAPPE_NED, BYTTE_AD, BYTTE_AP, KOMBINERE] = VERKTOY.map((v) => v)
 const v = (nokkel: string, formulering: 'standard' | 'LA' | 'ER' | 'MA' = 'standard') => ({ nokkel, formulering })
 const NAA = TESTKLOKKE()
 
@@ -151,9 +152,15 @@ describe('Regelstatusen', () => {
     }
     // Gruppebyttet til aripiprazol er ikke godkjent som modell (beslutning P4-A) og står bare i sammenligningssettet.
     expect(tilgjengelighet(BYTTE_AP!, { fra: v('zuklopentiksol'), til: v('aripiprazol') })).toMatchObject({ status: 'ikke_stottet', regler: [] })
-    expect(new Set(tilfeller.flatMap(([, , r]) => r))).toEqual(new Set(REGELSETT.regler.map((r) => r.id)))
-    expect(REGELSETT.regler).toHaveLength(PILOTSETT.regler.length + NEDTRAPPINGSSETT.regler.length)
-    expect(VERKTOY.map((x) => regeloversikt(x).tilgjengelige)).toEqual([1, 1, 2, 0])
+    // Tilleggsreglene (K4) er godkjent av den uavhengige kontrolløren (TILLEGGSVEDTAK) og gir beregning.
+    const tillegg = TILLEGGSSETT.regler.map((r) => r.id)
+    for (const r of TILLEGGSSETT.regler) {
+      const t = tilgjengelighet(KOMBINERE!, { fra: v(r.fra.type === 'virkestoff' ? r.fra.nokkel : ''), til: v('lamotrigin') })
+      expect(t, r.id).toMatchObject({ status: 'tilgjengelig', regler: [r] })
+    }
+    expect(new Set([...tilfeller.flatMap(([, , r]) => r), ...tillegg])).toEqual(new Set(REGELSETT.regler.map((r) => r.id)))
+    expect(REGELSETT.regler).toHaveLength(PILOTSETT.regler.length + NEDTRAPPINGSSETT.regler.length + TILLEGGSSETT.regler.length)
+    expect(VERKTOY.map((x) => regeloversikt(x).tilgjengelige)).toEqual([1, 1, 2, 2])
     expect(VERKTOY.map((x) => regeloversikt(x).ikkeGodkjent)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length - 1, 1, 1, 0])
     expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([0, 0, 0, 0])
   })
@@ -211,8 +218,11 @@ describe('Snarvalgene (VDR-3)', () => {
         ['tilgjengelig', 'Aripiprazol: peroral → depotinjeksjon'],
         ['tilgjengelig', 'Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)'],
       ],
-      // Kombinere stemningsstabiliserende har ingen godkjente regler ennå (K4).
-      [],
+      // Kombinere stemningsstabiliserende: de to godkjente tilleggsreglene (K4).
+      [
+        ['tilgjengelig', 'Litium → lamotrigin'],
+        ['tilgjengelig', 'Valproat → lamotrigin'],
+      ],
     ])
     expect(snarvalg(BYTTE_AP!)[0]!.valg).toEqual({ fra: v('aripiprazol'), til: v('aripiprazol', 'LA') })
     // Hvert snarvalg gir samme status når det kontrolleres som et valg; det avgjør ingenting selv.
