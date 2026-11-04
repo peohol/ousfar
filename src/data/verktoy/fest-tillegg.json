@@ -1,0 +1,4439 @@
+{
+ "hentet": "2026-11-04T01:47:27.989Z",
+ "utvalg": {
+  "kilde": "FEST",
+  "styrker": [
+   {
+    "id": "ID_00F537AB-93EE-48AA-9836-12E2786AB601",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 300
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_36AEA22F-E6BC-4CF0-9A3F-2E9341A7B5F6",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_046C95E1-EA51-457D-8C2B-734DDEFC5416",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 1000
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_A61E2EDC-D6B4-4E52-89F4-3D10F0E03E38",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_17188A23-D539-4881-8413-840F03C4AF8B",
+    "ovre": null,
+    "nevner": {
+     "enhet": "ml",
+     "verdi": 1
+    },
+    "styrke": {
+     "enhet": "mmol",
+     "verdi": 0.15
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_36AEA22F-E6BC-4CF0-9A3F-2E9341A7B5F6",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_264A27C5-3661-4853-BF6D-C87F0F65643F",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 125
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_A61E2EDC-D6B4-4E52-89F4-3D10F0E03E38",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_46B2EDE3-D6A7-48C9-9DB9-E54297B9CE46",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 300
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_A61E2EDC-D6B4-4E52-89F4-3D10F0E03E38",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_48508BD3-B891-4223-92D9-1CF80304AD2D",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 200
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_F456CD11-3821-4C60-B36F-DE0C9D51ED22",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_4AAAEA85-E3B9-4B93-A767-68A8E1F89E94",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 100
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_F456CD11-3821-4C60-B36F-DE0C9D51ED22",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_4AB8C75C-BFF0-4FC7-8052-52546CF69634",
+    "ovre": null,
+    "nevner": {
+     "enhet": "ml",
+     "verdi": 1
+    },
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 60
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_A61E2EDC-D6B4-4E52-89F4-3D10F0E03E38",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_4EE529C9-5293-4985-8D3B-45A5427BCC7D",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 2
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_F456CD11-3821-4C60-B36F-DE0C9D51ED22",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_525E196C-B808-420D-9C3D-BC8503F165AE",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 400
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_36AEA22F-E6BC-4CF0-9A3F-2E9341A7B5F6",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_561594B2-FA9A-45C6-84AC-1E00B3A1980F",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 5
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_F456CD11-3821-4C60-B36F-DE0C9D51ED22",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_58122866-C3DF-4AB2-86AE-0AED8AF3FC8F",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 42
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_36AEA22F-E6BC-4CF0-9A3F-2E9341A7B5F6",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_713E24A8-6356-4830-BD7A-FC94F56A6927",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 25
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_F456CD11-3821-4C60-B36F-DE0C9D51ED22",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_78E97BE8-B6E3-4B10-9573-2A4AB7B99EC8",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 300
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_36AEA22F-E6BC-4CF0-9A3F-2E9341A7B5F6",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_7CD9717F-1DB7-4FC4-9050-6E918CF78161",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 50
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_F456CD11-3821-4C60-B36F-DE0C9D51ED22",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_82A30391-AF45-4C6E-88BB-8FE6047BD901",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 120
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_36AEA22F-E6BC-4CF0-9A3F-2E9341A7B5F6",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_89857973-4984-423B-B17B-4033A4B51941",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 200
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_F456CD11-3821-4C60-B36F-DE0C9D51ED22",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_8B445D04-E8A8-4382-AEAD-0DB690CCE123",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 150
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_A61E2EDC-D6B4-4E52-89F4-3D10F0E03E38",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_93741AAE-7D09-47B9-9E68-09A83581A173",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 150
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_A61E2EDC-D6B4-4E52-89F4-3D10F0E03E38",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_994E0E8D-12A6-4700-8317-439E593D67A4",
+    "ovre": null,
+    "nevner": {
+     "enhet": "ml",
+     "verdi": 1
+    },
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 100
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_A61E2EDC-D6B4-4E52-89F4-3D10F0E03E38",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_9D92871D-3FD6-4130-9C5B-540E379578D0",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 75
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_A61E2EDC-D6B4-4E52-89F4-3D10F0E03E38",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_A099FC28-A409-4381-A2C2-D774F1489BB7",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 50
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_F456CD11-3821-4C60-B36F-DE0C9D51ED22",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_A7546EEF-3DED-4E3C-820C-3F08140C330F",
+    "ovre": null,
+    "nevner": {
+     "enhet": "ml",
+     "verdi": 1
+    },
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 100
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_A61E2EDC-D6B4-4E52-89F4-3D10F0E03E38",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_AF027AA5-AEBC-49BA-9ED4-40903CB429C7",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 500
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_A61E2EDC-D6B4-4E52-89F4-3D10F0E03E38",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_B0D0AF4D-6DDA-4D84-A4B4-BA88B1D3797A",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 600
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_A61E2EDC-D6B4-4E52-89F4-3D10F0E03E38",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_B35876FE-2273-4C77-A5D3-61BE7B40F06B",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 125
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_A61E2EDC-D6B4-4E52-89F4-3D10F0E03E38",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_B6632FA6-851D-441F-B5D2-6D00034E363D",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 300
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_A61E2EDC-D6B4-4E52-89F4-3D10F0E03E38",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_C552F41C-3389-4D8D-85D0-368B655A89E9",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 200
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_36AEA22F-E6BC-4CF0-9A3F-2E9341A7B5F6",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_D28AEB53-9D49-4973-9AF1-95891327409C",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 300
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_A61E2EDC-D6B4-4E52-89F4-3D10F0E03E38",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_D9EE2EB8-E382-4C00-B69A-D01C5F4F4B96",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 500
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_A61E2EDC-D6B4-4E52-89F4-3D10F0E03E38",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_E3F735A4-2053-4B9E-A3D1-5FCE4A1A56C9",
+    "ovre": null,
+    "nevner": {
+     "enhet": "ml",
+     "verdi": 5
+    },
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 1018
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_36AEA22F-E6BC-4CF0-9A3F-2E9341A7B5F6",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_E6F4CAA6-0B00-42C9-9B22-87D2D34FDC43",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 100
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_F456CD11-3821-4C60-B36F-DE0C9D51ED22",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_EC35F984-C9F0-402F-8AC0-75599C987274",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 25
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_F456CD11-3821-4C60-B36F-DE0C9D51ED22",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   },
+   {
+    "id": "ID_ECF27369-0812-496E-B615-88090F224D14",
+    "ovre": null,
+    "nevner": null,
+    "styrke": {
+     "enhet": "mg",
+     "verdi": 83
+    },
+    "operator": {
+     "kode": "L",
+     "tekst": "Lik"
+    },
+    "virkestoff_id": "ID_36AEA22F-E6BC-4CF0-9A3F-2E9341A7B5F6",
+    "alternativ_nevner": null,
+    "alternativ_styrke": null
+   }
+  ],
+  "kildedato": "2026-10-27T12:25:20",
+  "pakninger": [
+   {
+    "id": "ID_01CBDCF4-DC95-407A-B6EF-8ECC3CB717CB",
+    "ean": [
+     "4150077126892"
+    ],
+    "varenr": "303803",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_CC0193CC-424A-480B-BAD5-93AA77A9DCDE",
+      "pakningstype": {
+       "kode": "169",
+       "tekst": "Blisterpakning"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_CC0193CC-424A-480B-BAD5-93AA77A9DCDE"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Lamotrigin aurobindo tab 25 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2023-09-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_04A30389-8B38-44AA-847E-A28F15219D42",
+    "ean": [
+     "5054626000956",
+     "7046264113226"
+    ],
+    "varenr": "267695",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 56,
+      "merkevare_id": "ID_C1AB9EDB-54A0-4519-A2E9-45825DFF5046",
+      "pakningstype": {
+       "kode": "169",
+       "tekst": "Blisterpakning"
+      },
+      "pakningsstorrelse": 56,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_C1AB9EDB-54A0-4519-A2E9-45825DFF5046"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Lamictal tab 25 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2005-09-15",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_053054EC-B7A3-47B9-A9D1-E52193E11F86",
+    "ean": [
+     "4031649002731"
+    ],
+    "varenr": "128454",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": 100,
+      "mengde": 1,
+      "merkevare_id": "ID_565ED8CB-B89C-498D-9DB9-4028EE977C83",
+      "pakningstype": {
+       "kode": "14",
+       "tekst": "Endosebeholder i aluminiumsfolie"
+      },
+      "pakningsstorrelse": null,
+      "pakningsstorrelse_tekst": "100 x 1"
+     }
+    ],
+    "merkevarer": [
+     "ID_565ED8CB-B89C-498D-9DB9-4028EE977C83"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Orfiril long depotgranulat 500 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2001-01-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_060872C4-89F1-47A6-94F2-566E3B2BB6A4",
+    "ean": [
+     "605164341930"
+    ],
+    "varenr": "327803",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 200,
+      "merkevare_id": "ID_6450043F-3800-47FB-BE48-A66780839961",
+      "pakningstype": {
+       "kode": "52",
+       "tekst": "Beholder av plast"
+      },
+      "pakningsstorrelse": 200,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_6450043F-3800-47FB-BE48-A66780839961"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Lithium orotate advanced research tab 120 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2015-08-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_068D2F17-C1B0-49B7-9E4E-4DCFCF518721",
+    "ean": [
+     "4031649002939"
+    ],
+    "varenr": "046987",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "ml",
+       "tekst": "milliliter"
+      },
+      "antall": 5,
+      "mengde": 3,
+      "merkevare_id": "ID_290AE8BB-3EE5-4A7B-8DEF-81238DDFFB49",
+      "pakningstype": {
+       "kode": "6",
+       "tekst": "Ampulle av glass"
+      },
+      "pakningsstorrelse": null,
+      "pakningsstorrelse_tekst": "5 x 3"
+     }
+    ],
+    "merkevarer": [
+     "ID_290AE8BB-3EE5-4A7B-8DEF-81238DDFFB49"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Orfiril inj, oppl 100 mg/ml",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2001-01-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_07CA85C9-A2B1-403B-B620-A719B0D7802C",
+    "ean": [
+     "4150010301096"
+    ],
+    "varenr": "216501",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_05C30888-7B13-4FA3-88AF-91060D081367",
+      "pakningstype": {
+       "kode": "169",
+       "tekst": "Blisterpakning"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_05C30888-7B13-4FA3-88AF-91060D081367"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Lamotrigin 1a pharma tab uten smak 200 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2016-08-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_0D9830AE-B3B3-4F91-8E25-7F21D4C69E3F",
+    "ean": [
+     "5054626000963",
+     "7046264114704"
+    ],
+    "varenr": "289204",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 56,
+      "merkevare_id": "ID_FF73AFAE-2921-451E-9173-1FCB4BB45135",
+      "pakningstype": {
+       "kode": "169",
+       "tekst": "Blisterpakning"
+      },
+      "pakningsstorrelse": 56,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_FF73AFAE-2921-451E-9173-1FCB4BB45135"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Lamictal tab 50 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2016-09-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_0D9F220C-2F8F-46E1-ADBF-181D2F533157",
+    "ean": [
+     "300746114130"
+    ],
+    "varenr": "360687",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_3F241167-A37B-4548-A067-D160AEC17B30",
+      "pakningstype": {
+       "kode": "8",
+       "tekst": "Boks"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_3F241167-A37B-4548-A067-D160AEC17B30"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Depakote Sprinkle enterokaps 125 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2005-05-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_0F8F6280-E81A-475C-97ED-303B58D725CF",
+    "ean": [
+     "5016119059896"
+    ],
+    "varenr": "261818",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "ml",
+       "tekst": "milliliter"
+      },
+      "antall": null,
+      "mengde": 150,
+      "merkevare_id": "ID_A35358A9-1454-4E9A-B808-D8C08EF01D37",
+      "pakningstype": {
+       "kode": "106",
+       "tekst": "Flaske"
+      },
+      "pakningsstorrelse": 150,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_A35358A9-1454-4E9A-B808-D8C08EF01D37"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Li-liquid sirup 1018 mg/5 ml",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2002-05-15",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_193C1AA2-8D72-4A73-8785-3045012F12C1",
+    "ean": [
+     "7350094060248"
+    ],
+    "varenr": "005923",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_8B9D2FD2-36DE-49B9-AA16-9BF12A06E153",
+      "pakningstype": {
+       "kode": "169",
+       "tekst": "Blisterpakning"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_8B9D2FD2-36DE-49B9-AA16-9BF12A06E153"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Lithionit depottab 42 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2007-05-15",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_19EF2FC1-2D07-4554-9F2A-6D0594256E08",
+    "ean": [
+     "7046265836117"
+    ],
+    "varenr": "583611",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_BE26B120-FB83-4F3F-B8A1-4D0146A87E8F",
+      "pakningstype": {
+       "kode": "55",
+       "tekst": "Boks av plast"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_BE26B120-FB83-4F3F-B8A1-4D0146A87E8F"
+    ],
+    "byttegrupper": [
+     "ID_79DBD82F-1E96-45E5-88E6-F422DBD8FDC1"
+    ],
+    "byttegrupper_fra": {
+     "ID_79DBD82F-1E96-45E5-88E6-F422DBD8FDC1": "2013-09-16"
+    },
+    "navn_form_styrke": "Orfiril enterotab 600 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2017-09-01",
+    "midlertidig_utgatt_dato": "2026-09-10"
+   },
+   {
+    "id": "ID_1E76135D-9AFA-46C7-80E0-60DD8F03D2CF",
+    "ean": [
+     "4031649002687"
+    ],
+    "varenr": "046797",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_1182789F-8159-4BC3-B12B-67070BFCBFE0",
+      "pakningstype": {
+       "kode": "55",
+       "tekst": "Boks av plast"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_1182789F-8159-4BC3-B12B-67070BFCBFE0"
+    ],
+    "byttegrupper": [
+     "ID_C4B006BF-3873-4EC6-A153-1E08E4D6D8FE"
+    ],
+    "byttegrupper_fra": {
+     "ID_C4B006BF-3873-4EC6-A153-1E08E4D6D8FE": "2013-09-30"
+    },
+    "navn_form_styrke": "Orfiril long depotkaps, hard 300 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2001-01-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_2393E068-B64D-4269-8E09-654BDE0356AD",
+    "ean": [
+     "3582910083672"
+    ],
+    "varenr": "341447",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_5C919C94-31D9-44D6-9733-462E513D8442",
+      "pakningstype": {
+       "kode": "169",
+       "tekst": "Blisterpakning"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_5C919C94-31D9-44D6-9733-462E513D8442"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Deprakine Retard depottab 500 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2013-10-15",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_244AA359-0430-42BD-B794-654A4F97873B",
+    "ean": [
+     "4150010299225"
+    ],
+    "varenr": "274722",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_3114F225-AF11-48D9-A79A-068B1A331D57",
+      "pakningstype": {
+       "kode": "169",
+       "tekst": "Blisterpakning"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_3114F225-AF11-48D9-A79A-068B1A331D57"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Lamotrigin 1a pharma tab uten smak 100 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2016-08-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_35FD309E-08BB-497C-BF37-15E34C0BAD56",
+    "ean": [
+     "5054626150408"
+    ],
+    "varenr": "028598",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 98,
+      "merkevare_id": "ID_38E32F9A-A698-47B3-BB1E-96ECFEC692AF",
+      "pakningstype": {
+       "kode": "169",
+       "tekst": "Blisterpakning"
+      },
+      "pakningsstorrelse": 98,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_38E32F9A-A698-47B3-BB1E-96ECFEC692AF"
+    ],
+    "byttegrupper": [
+     "ID_3025B1A8-7F4A-4D00-9C2E-E50EF9142D34"
+    ],
+    "byttegrupper_fra": {
+     "ID_3025B1A8-7F4A-4D00-9C2E-E50EF9142D34": "2009-04-01"
+    },
+    "navn_form_styrke": "Lamictal tyggetab/disperg tab 200 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2009-05-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_3776AE48-C062-41E0-8F24-3A678C9C31C8",
+    "ean": [
+     "7046260516915"
+    ],
+    "varenr": "051691",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "ml",
+       "tekst": "milliliter"
+      },
+      "antall": null,
+      "mengde": 250,
+      "merkevare_id": "ID_0BF4C095-71F5-4B2F-BBE2-1C942638110D",
+      "pakningstype": {
+       "kode": "31",
+       "tekst": "Flaske av glass"
+      },
+      "pakningsstorrelse": 250,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_0BF4C095-71F5-4B2F-BBE2-1C942638110D"
+    ],
+    "byttegrupper": [
+     "ID_7581DD2D-6571-4303-A2C6-8E7EB7CA4441"
+    ],
+    "byttegrupper_fra": {
+     "ID_7581DD2D-6571-4303-A2C6-8E7EB7CA4441": "2014-11-21"
+    },
+    "navn_form_styrke": "Orfiril mikst oppl 60 mg/ml",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2015-03-15",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_44280E99-73FD-4AA4-95C8-2468992FE2D7",
+    "ean": [
+     "5054626150392"
+    ],
+    "varenr": "028586",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 98,
+      "merkevare_id": "ID_7B4BC0DF-D251-447C-8AD0-0D34FDB83829",
+      "pakningstype": {
+       "kode": "169",
+       "tekst": "Blisterpakning"
+      },
+      "pakningsstorrelse": 98,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_7B4BC0DF-D251-447C-8AD0-0D34FDB83829"
+    ],
+    "byttegrupper": [
+     "ID_0A4A38AE-7A07-47CB-8997-22B1FD57BBA3"
+    ],
+    "byttegrupper_fra": {
+     "ID_0A4A38AE-7A07-47CB-8997-22B1FD57BBA3": "2009-04-01"
+    },
+    "navn_form_styrke": "Lamictal tyggetab/disperg tab 100 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2009-05-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_491966B2-F8F7-434C-803E-11B929485F92",
+    "ean": [],
+    "varenr": "267371",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_60D37BE7-FEB0-4771-AB56-01B2F4F26F59",
+      "pakningstype": {
+       "kode": "55",
+       "tekst": "Boks av plast"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_60D37BE7-FEB0-4771-AB56-01B2F4F26F59"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Apo-divalproex enterotab 125 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2023-01-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_548C954C-2566-4BE1-9205-10E897E8C00B",
+    "ean": [
+     "5054626151252"
+    ],
+    "varenr": "489349",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 60,
+      "merkevare_id": "ID_15282C9C-6518-4690-8FB3-4D6DDEDF5B9C",
+      "pakningstype": {
+       "kode": "55",
+       "tekst": "Boks av plast"
+      },
+      "pakningsstorrelse": 60,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_15282C9C-6518-4690-8FB3-4D6DDEDF5B9C"
+    ],
+    "byttegrupper": [
+     "ID_42CDBB3B-6080-46A2-87A8-26AC255C6473"
+    ],
+    "byttegrupper_fra": {
+     "ID_42CDBB3B-6080-46A2-87A8-26AC255C6473": "2019-12-01"
+    },
+    "navn_form_styrke": "Lamictal tyggetab/disperg tab 5 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2019-09-15",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_58EB5CC5-75D0-4A86-88F8-24F845A92A00",
+    "ean": [
+     "4150039616973"
+    ],
+    "varenr": "302788",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_9B4C973E-7AF7-4731-9317-CC9EB0B037C8",
+      "pakningstype": {
+       "kode": "169",
+       "tekst": "Blisterpakning"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_9B4C973E-7AF7-4731-9317-CC9EB0B037C8"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Hypnorex retard depottab 400 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2021-02-15",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_5DD717CC-6683-4D8C-B546-F6809E7AE73B",
+    "ean": [
+     "5745000627134"
+    ],
+    "varenr": "438988",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_E778C574-42B2-44CD-BA62-C149E6ABEF2C",
+      "pakningstype": {
+       "kode": "31",
+       "tekst": "Flaske av glass"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_E778C574-42B2-44CD-BA62-C149E6ABEF2C"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Carblit tab 300 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2025-12-15",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_6E9E9489-1E83-46FD-908C-532779198362",
+    "ean": [
+     "4031649002632"
+    ],
+    "varenr": "188631",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "ml",
+       "tekst": "milliliter"
+      },
+      "antall": null,
+      "mengde": 250,
+      "merkevare_id": "ID_23E75D74-4C9C-49C3-91CC-B8EDD1FC11F2",
+      "pakningstype": {
+       "kode": "31",
+       "tekst": "Flaske av glass"
+      },
+      "pakningsstorrelse": 250,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_23E75D74-4C9C-49C3-91CC-B8EDD1FC11F2"
+    ],
+    "byttegrupper": [
+     "ID_7581DD2D-6571-4303-A2C6-8E7EB7CA4441"
+    ],
+    "byttegrupper_fra": {
+     "ID_7581DD2D-6571-4303-A2C6-8E7EB7CA4441": "2008-01-17"
+    },
+    "navn_form_styrke": "Orfiril mikst oppl 60 mg/ml",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2001-01-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_7669B41F-B083-4039-AF6C-C6FE271F0F12",
+    "ean": [],
+    "varenr": "023120",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "ml",
+       "tekst": "milliliter"
+      },
+      "antall": 5,
+      "mengde": 10,
+      "merkevare_id": "ID_13233C6A-B3B3-4E08-A0C1-B01D67AEE845",
+      "pakningstype": {
+       "kode": "161",
+       "tekst": "Ampulle"
+      },
+      "pakningsstorrelse": null,
+      "pakningsstorrelse_tekst": "5 x 10"
+     }
+    ],
+    "merkevarer": [
+     "ID_13233C6A-B3B3-4E08-A0C1-B01D67AEE845"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Lithium Chloride Lidco inj, oppl 0,15 mmol/ml",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2005-02-09",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_791C1B06-30B8-4B6A-98F4-DC48BEAE282F",
+    "ean": [
+     "5054626151245"
+    ],
+    "varenr": "001905",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 30,
+      "merkevare_id": "ID_839B6B05-3D59-42FC-B051-111324056972",
+      "pakningstype": {
+       "kode": "169",
+       "tekst": "Blisterpakning"
+      },
+      "pakningsstorrelse": 30,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_839B6B05-3D59-42FC-B051-111324056972"
+    ],
+    "byttegrupper": [
+     "ID_C1EC2A8D-31EF-423E-8345-743FDB42815A"
+    ],
+    "byttegrupper_fra": {
+     "ID_C1EC2A8D-31EF-423E-8345-743FDB42815A": "2008-01-17"
+    },
+    "navn_form_styrke": "Lamictal tyggetab/disperg tab 2 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2003-09-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_7B3FFA3C-F455-4DD1-85B6-8376DC680D4E",
+    "ean": [
+     "4150063057988"
+    ],
+    "varenr": "298196",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_3FA7BD05-522B-428A-9CE1-751835B21544",
+      "pakningstype": {
+       "kode": "169",
+       "tekst": "Blisterpakning"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_3FA7BD05-522B-428A-9CE1-751835B21544"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Ergenyl chrono depottab 300 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2012-03-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_7B7D62CE-6459-44DF-B183-458FD04FC778",
+    "ean": [
+     "5060642020076"
+    ],
+    "varenr": "321808",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_94A94B1E-7C6B-436A-947E-71AF8C582B2A",
+      "pakningstype": {
+       "kode": "169",
+       "tekst": "Blisterpakning"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_94A94B1E-7C6B-436A-947E-71AF8C582B2A"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Priadel depottab 400 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2022-02-15",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_80729112-57DC-48EA-8310-805791F962AC",
+    "ean": [],
+    "varenr": "269604",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_A610792B-D198-4197-B596-E1AF313604B2",
+      "pakningstype": {
+       "kode": "8",
+       "tekst": "Boks"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_A610792B-D198-4197-B596-E1AF313604B2"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Apo-Lithium carbonate kaps 300 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2021-01-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_852369FE-0E6E-4F82-98A6-FEBEB33089F6",
+    "ean": [
+     "4150061083422"
+    ],
+    "varenr": "279054",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 42,
+      "merkevare_id": "ID_29BFE27E-EE19-492F-8680-7F79C8D3F1AB",
+      "pakningstype": {
+       "kode": "169",
+       "tekst": "Blisterpakning"
+      },
+      "pakningsstorrelse": 42,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_29BFE27E-EE19-492F-8680-7F79C8D3F1AB"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Lamictal tyggetab/disperg tab 25 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2023-03-01",
+    "midlertidig_utgatt_dato": "2026-08-12"
+   },
+   {
+    "id": "ID_85A3A254-BD46-45CE-81A3-478A8EFF3658",
+    "ean": [
+     "5010706004115",
+     "7046264117514"
+    ],
+    "varenr": "364618",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 56,
+      "merkevare_id": "ID_58807DBE-F683-422A-9D5A-20A9737421B4",
+      "pakningstype": {
+       "kode": "169",
+       "tekst": "Blisterpakning"
+      },
+      "pakningsstorrelse": 56,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_58807DBE-F683-422A-9D5A-20A9737421B4"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Lamictal tab 100 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2005-09-15",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_881D3774-2955-4434-9287-9A2954014C6E",
+    "ean": [],
+    "varenr": "358709",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "ml",
+       "tekst": "milliliter"
+      },
+      "antall": null,
+      "mengde": 250,
+      "merkevare_id": "ID_5D5298FB-6644-4AE7-AB26-F02E60E632E1",
+      "pakningstype": {
+       "kode": "31",
+       "tekst": "Flaske av glass"
+      },
+      "pakningsstorrelse": 250,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_5D5298FB-6644-4AE7-AB26-F02E60E632E1"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Orfiril mikst oppl 60 mg/ml",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2019-10-15",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_906AA833-EA07-4A92-83E0-35AC86EA66B0",
+    "ean": [
+     "4031649002670"
+    ],
+    "varenr": "045583",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_94103B49-19EF-4F17-A2FF-48F61DDC046F",
+      "pakningstype": {
+       "kode": "55",
+       "tekst": "Boks av plast"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_94103B49-19EF-4F17-A2FF-48F61DDC046F"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Orfiril long depotkaps, hard 150 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2001-01-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_93089E12-B7D9-4961-A696-B4BCDDB68C1D",
+    "ean": [
+     "7046265321019"
+    ],
+    "varenr": "357087",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_E4FDD7A2-4804-4A04-9B5A-125DC43A80F2",
+      "pakningstype": {
+       "kode": "99",
+       "tekst": "Beholder av glass"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_E4FDD7A2-4804-4A04-9B5A-125DC43A80F2"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Litiumkarbonat oba tab 300 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2001-01-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_9A44B8ED-B8DC-4073-B395-B42FB9E8B764",
+    "ean": [
+     "5702181438003"
+    ],
+    "varenr": "244327",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_56227268-5C00-467C-BD8D-44C9AE00C495",
+      "pakningstype": {
+       "kode": "207",
+       "tekst": "Tablettbeholder"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_56227268-5C00-467C-BD8D-44C9AE00C495"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Litarex depottab 42 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2001-01-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_9A6D97CE-BD1B-40EC-9267-A21BBFB9456F",
+    "ean": [
+     "7072279002774"
+    ],
+    "varenr": "206662",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_AFE45A8F-8CBE-46A7-9EF1-3F4E2E8CBF85",
+      "pakningstype": {
+       "kode": "8",
+       "tekst": "Boks"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_AFE45A8F-8CBE-46A7-9EF1-3F4E2E8CBF85"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Natriumvalproat SA depotkaps, hard 75 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2012-11-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_A8684BF1-EAC4-4768-9476-A8111CFB633B",
+    "ean": [
+     "5000283642206"
+    ],
+    "varenr": "267514",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_14EF2B61-E365-4877-B3A9-99BC76B1776E",
+      "pakningstype": {
+       "kode": "8",
+       "tekst": "Boks"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_14EF2B61-E365-4877-B3A9-99BC76B1776E"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Priadel depottab 200 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2002-05-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_A8E4484C-3883-4290-A10E-609B698CF89B",
+    "ean": [
+     "5711092000087",
+     "5711092000063"
+    ],
+    "varenr": "393290",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "ml",
+       "tekst": "milliliter"
+      },
+      "antall": 5,
+      "mengde": 10,
+      "merkevare_id": "ID_7859876E-4C32-4FCF-918A-E13755D05783",
+      "pakningstype": {
+       "kode": "161",
+       "tekst": "Ampulle"
+      },
+      "pakningsstorrelse": null,
+      "pakningsstorrelse_tekst": "5 x 10"
+     }
+    ],
+    "merkevarer": [
+     "ID_7859876E-4C32-4FCF-918A-E13755D05783"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Valproat Life Medical inj/inf, oppl 100 mg/ml",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2018-12-15",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_B0BAC3F8-2535-44FF-AAE9-D38BA0A8D18B",
+    "ean": [
+     "4031649002694"
+    ],
+    "varenr": "437767",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_AE45B8E6-1973-4CB2-A800-44DA9DE225BD",
+      "pakningstype": {
+       "kode": "55",
+       "tekst": "Boks av plast"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_AE45B8E6-1973-4CB2-A800-44DA9DE225BD"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Orfiril enterotab 150 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2001-01-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_B27380BE-16C9-4D2B-898B-1D4EEBDF183D",
+    "ean": [
+     "4031649002625"
+    ],
+    "varenr": "526376",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_113559C7-B2CE-4D3C-A719-7DC4BBC68586",
+      "pakningstype": {
+       "kode": "8",
+       "tekst": "Boks"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_113559C7-B2CE-4D3C-A719-7DC4BBC68586"
+    ],
+    "byttegrupper": [
+     "ID_5B6C2413-7C99-4729-9509-1F50DBF13914"
+    ],
+    "byttegrupper_fra": {
+     "ID_5B6C2413-7C99-4729-9509-1F50DBF13914": "2012-01-27"
+    },
+    "navn_form_styrke": "Orfiril retard depottab 300 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2001-01-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_C0899E63-BA30-4076-842F-CD7986976582",
+    "ean": [
+     "4031649002717"
+    ],
+    "varenr": "526798",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_19EA0112-AD8E-4E03-9420-0605D5456991",
+      "pakningstype": {
+       "kode": "55",
+       "tekst": "Boks av plast"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_19EA0112-AD8E-4E03-9420-0605D5456991"
+    ],
+    "byttegrupper": [
+     "ID_79DBD82F-1E96-45E5-88E6-F422DBD8FDC1"
+    ],
+    "byttegrupper_fra": {
+     "ID_79DBD82F-1E96-45E5-88E6-F422DBD8FDC1": "2013-09-16"
+    },
+    "navn_form_styrke": "Orfiril enterotab 600 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2001-01-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_C436BCEA-423E-470E-A3F2-87BD305EC2C5",
+    "ean": [
+     "5711092000070",
+     "5711092000056"
+    ],
+    "varenr": "494838",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "ml",
+       "tekst": "milliliter"
+      },
+      "antall": 5,
+      "mengde": 3,
+      "merkevare_id": "ID_7859876E-4C32-4FCF-918A-E13755D05783",
+      "pakningstype": {
+       "kode": "161",
+       "tekst": "Ampulle"
+      },
+      "pakningsstorrelse": null,
+      "pakningsstorrelse_tekst": "5 x 3"
+     }
+    ],
+    "merkevarer": [
+     "ID_7859876E-4C32-4FCF-918A-E13755D05783"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Valproat Life Medical inj/inf, oppl 100 mg/ml",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2018-12-15",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_CBC642F5-65EF-449C-A398-44957D591940",
+    "ean": [
+     "5099211001963",
+     "7046260313514"
+    ],
+    "varenr": "229764",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 56,
+      "merkevare_id": "ID_C6B0206B-041C-4A42-9A9D-3D1C8F46DA06",
+      "pakningstype": {
+       "kode": "169",
+       "tekst": "Blisterpakning"
+      },
+      "pakningsstorrelse": 56,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_C6B0206B-041C-4A42-9A9D-3D1C8F46DA06"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Lamictal tab 200 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2005-09-15",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_CC925471-5BCE-4EBA-BF94-A8E4DFA470EA",
+    "ean": [
+     "7072279014890"
+    ],
+    "varenr": "224408",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 50,
+      "merkevare_id": "ID_AFE45A8F-8CBE-46A7-9EF1-3F4E2E8CBF85",
+      "pakningstype": {
+       "kode": "8",
+       "tekst": "Boks"
+      },
+      "pakningsstorrelse": 50,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_AFE45A8F-8CBE-46A7-9EF1-3F4E2E8CBF85"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Natriumvalproat SA depotkaps, hard 75 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2017-07-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_CCEFA73C-C936-4A21-B868-844AED37B5D6",
+    "ean": [
+     "5060642020014",
+     "5060642020069"
+    ],
+    "varenr": "203946",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_21D9048B-00B9-46C7-9C26-06E151D94D54",
+      "pakningstype": {
+       "kode": "169",
+       "tekst": "Blisterpakning"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_21D9048B-00B9-46C7-9C26-06E151D94D54"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Priadel depottab 200 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2021-07-15",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_D6EC5515-88C8-4177-8C30-D5B81069A65D",
+    "ean": [
+     "5054290003437",
+     "5054626150156"
+    ],
+    "varenr": "196808",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 56,
+      "merkevare_id": "ID_7EE2D7E5-558E-4E98-9891-2D82D2F7E5ED",
+      "pakningstype": {
+       "kode": "169",
+       "tekst": "Blisterpakning"
+      },
+      "pakningsstorrelse": 56,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_7EE2D7E5-558E-4E98-9891-2D82D2F7E5ED"
+    ],
+    "byttegrupper": [
+     "ID_EC92ACB5-3916-4DBA-B9E6-52525F0E6879"
+    ],
+    "byttegrupper_fra": {
+     "ID_EC92ACB5-3916-4DBA-B9E6-52525F0E6879": "2009-04-01"
+    },
+    "navn_form_styrke": "Lamictal tyggetab/disperg tab 25 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "1996-07-10",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_DE4CCEBA-FCEE-4DC1-8EDD-3384CCE46D3B",
+    "ean": [
+     "4031649002748"
+    ],
+    "varenr": "128983",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": 100,
+      "mengde": 1,
+      "merkevare_id": "ID_43D61DBC-E21A-481A-9A74-3855F35FF85A",
+      "pakningstype": {
+       "kode": "14",
+       "tekst": "Endosebeholder i aluminiumsfolie"
+      },
+      "pakningsstorrelse": null,
+      "pakningsstorrelse_tekst": "100 x 1"
+     }
+    ],
+    "merkevarer": [
+     "ID_43D61DBC-E21A-481A-9A74-3855F35FF85A"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Orfiril long depotgranulat 1000 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2001-01-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_E077427F-5925-4906-B0BD-2E81B59D65AE",
+    "ean": [],
+    "varenr": "336249",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 98,
+      "merkevare_id": "ID_1828F07E-4847-4AC2-8C38-897B42DE9A61",
+      "pakningstype": {
+       "kode": "169",
+       "tekst": "Blisterpakning"
+      },
+      "pakningsstorrelse": 98,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_1828F07E-4847-4AC2-8C38-897B42DE9A61"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Lamictal tab 100 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2025-06-15",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_E091BD27-4EDB-4A2C-93B4-D2A66ECDFDA4",
+    "ean": [
+     "4150048972282"
+    ],
+    "varenr": "210277",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "ml",
+       "tekst": "milliliter"
+      },
+      "antall": null,
+      "mengde": 250,
+      "merkevare_id": "ID_74EE6774-2395-4814-BE28-8407EAA3EF22",
+      "pakningstype": {
+       "kode": "99",
+       "tekst": "Beholder av glass"
+      },
+      "pakningsstorrelse": 250,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_74EE6774-2395-4814-BE28-8407EAA3EF22"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Orfiril Saft mikst oppl 60 mg/ml",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2019-10-18",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_E489A9D4-754E-4A7F-B959-76D35FE50C5A",
+    "ean": [
+     "5054626150385"
+    ],
+    "varenr": "399519",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 56,
+      "merkevare_id": "ID_A4254CCC-E90C-4CA3-BF6A-C8C8043AB4FC",
+      "pakningstype": {
+       "kode": "169",
+       "tekst": "Blisterpakning"
+      },
+      "pakningsstorrelse": 56,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_A4254CCC-E90C-4CA3-BF6A-C8C8043AB4FC"
+    ],
+    "byttegrupper": [
+     "ID_9CF74EB4-8B11-49D1-8B1D-2011F8F427E0"
+    ],
+    "byttegrupper_fra": {
+     "ID_9CF74EB4-8B11-49D1-8B1D-2011F8F427E0": "2009-04-01"
+    },
+    "navn_form_styrke": "Lamictal tyggetab/disperg tab 50 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "1997-01-29",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_EA5F74A7-EF78-409A-8965-20A0E153B601",
+    "ean": [
+     "4031649002700"
+    ],
+    "varenr": "051110",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_BB920F1E-1A8C-4E62-8D07-E2C539FA55C5",
+      "pakningstype": {
+       "kode": "8",
+       "tekst": "Boks"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_BB920F1E-1A8C-4E62-8D07-E2C539FA55C5"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Orfiril enterotab 300 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2001-01-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_EDAE1E8F-54D1-4C09-9C61-1E46426D927E",
+    "ean": [
+     "300746212133"
+    ],
+    "varenr": "330728",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_043BD9D8-C343-4A49-B194-CB97C45AB2DA",
+      "pakningstype": {
+       "kode": "55",
+       "tekst": "Boks av plast"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_043BD9D8-C343-4A49-B194-CB97C45AB2DA"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Depakote enterotab 125 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2005-04-01",
+    "midlertidig_utgatt_dato": null
+   },
+   {
+    "id": "ID_F81D078F-7E82-4AB8-951F-25C4A2BDF624",
+    "ean": [
+     "7350094060255"
+    ],
+    "varenr": "005973",
+    "innhold": [
+     {
+      "enhet": {
+       "kode": "stk",
+       "tekst": "stykk"
+      },
+      "antall": null,
+      "mengde": 100,
+      "merkevare_id": "ID_12893886-4456-4CC4-9A31-6EA709655332",
+      "pakningstype": {
+       "kode": "169",
+       "tekst": "Blisterpakning"
+      },
+      "pakningsstorrelse": 100,
+      "pakningsstorrelse_tekst": null
+     }
+    ],
+    "merkevarer": [
+     "ID_12893886-4456-4CC4-9A31-6EA709655332"
+    ],
+    "byttegrupper": [],
+    "byttegrupper_fra": {},
+    "navn_form_styrke": "Lithionit depottab 83 mg",
+    "avregistrert_dato": null,
+    "markedsforingsdato": "2001-12-12",
+    "midlertidig_utgatt_dato": null
+   }
+  ],
+  "merkevarer": [
+   {
+    "id": "ID_043BD9D8-C343-4A49-B194-CB97C45AB2DA",
+    "atc": {
+     "kode": "N03AG01",
+     "tekst": "Valproinsyre"
+    },
+    "deling": null,
+    "varenavn": "Depakote",
+    "kan_apnes": null,
+    "produsent": "Abbott",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "28",
+     "tekst": "Enterotablett"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Depakote enterotab 125 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Enterotablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_B35876FE-2273-4C77-A5D3-61BE7B40F06B"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_05C30888-7B13-4FA3-88AF-91060D081367",
+    "atc": {
+     "kode": "N03AX09",
+     "tekst": "Lamotrigin"
+    },
+    "deling": null,
+    "varenavn": "Lamotrigin 1a pharma",
+    "kan_apnes": null,
+    "produsent": "1 A Pharma",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "53",
+     "tekst": "Tablett"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Lamotrigin 1a pharma tab uten smak 200 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Tablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_89857973-4984-423B-B17B-4033A4B51941"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_0BF4C095-71F5-4B2F-BBE2-1C942638110D",
+    "atc": {
+     "kode": "N03AG01",
+     "tekst": "Valproinsyre"
+    },
+    "deling": null,
+    "varenavn": "Orfiril",
+    "kan_apnes": null,
+    "produsent": "Orifarm AS",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": true,
+    "legemiddelform": {
+     "kode": "842",
+     "tekst": "Mikstur, oppløsning"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06563.pdf",
+    "navn_form_styrke": "Orfiril mikst oppl 60 mg/ml",
+    "referanseprodukt": "Orfiril",
+    "legemiddelform_lang": "Mikstur, oppløsning",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_4AB8C75C-BFF0-4FC7-8052-52546CF69634"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_113559C7-B2CE-4D3C-A719-7DC4BBC68586",
+    "atc": {
+     "kode": "N03AG01",
+     "tekst": "Valproinsyre"
+    },
+    "deling": {
+     "kode": "1",
+     "tekst": "Ikke delbar"
+    },
+    "varenavn": "Orfiril retard",
+    "kan_apnes": null,
+    "produsent": "Desitin Arzneimittel GmbH",
+    "kan_knuses": {
+     "kode": "2",
+     "tekst": "Nei"
+    },
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "25",
+     "tekst": "Depottablett"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07866.pdf",
+    "navn_form_styrke": "Orfiril retard depottab 300 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Depottablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_46B2EDE3-D6A7-48C9-9DB9-E54297B9CE46"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_1182789F-8159-4BC3-B12B-67070BFCBFE0",
+    "atc": {
+     "kode": "N03AG01",
+     "tekst": "Valproinsyre"
+    },
+    "deling": null,
+    "varenavn": "Orfiril long",
+    "kan_apnes": {
+     "kode": "1",
+     "tekst": "Ja"
+    },
+    "produsent": "Desitin Arzneimittel GmbH",
+    "kan_knuses": {
+     "kode": "2",
+     "tekst": "Nei"
+    },
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "743",
+     "tekst": "Depotkapsel, hard"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1996-01966.pdf",
+    "navn_form_styrke": "Orfiril long depotkaps, hard 300 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Depotkapsel, hard",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_D28AEB53-9D49-4973-9AF1-95891327409C"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_12893886-4456-4CC4-9A31-6EA709655332",
+    "atc": {
+     "kode": "N05AN01",
+     "tekst": "Litium"
+    },
+    "deling": {
+     "kode": "2",
+     "tekst": "Delbar i 2"
+    },
+    "varenavn": "Lithionit",
+    "kan_apnes": null,
+    "produsent": "Karo Pharma AB (1)",
+    "kan_knuses": {
+     "kode": "2",
+     "tekst": "Nei"
+    },
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "25",
+     "tekst": "Depottablett"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-07373.pdf",
+    "navn_form_styrke": "Lithionit depottab 83 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Depottablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_ECF27369-0812-496E-B615-88090F224D14"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_13233C6A-B3B3-4E08-A0C1-B01D67AEE845",
+    "atc": {
+     "kode": "V04CX",
+     "tekst": "Andre diagnostika"
+    },
+    "deling": null,
+    "varenavn": "Lithium Chloride Lidco",
+    "kan_apnes": null,
+    "produsent": "LiDCO Netherlands BV",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "816",
+     "tekst": "Injeksjonsvæske, oppløsning"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/04-2790.pdf",
+    "navn_form_styrke": "Lithium Chloride Lidco inj, oppl 0,15 mmol/ml",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Injeksjonsvæske, oppløsning",
+    "administrasjonsveier": [
+     {
+      "kode": "43",
+      "tekst": "Intravenøs bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_17188A23-D539-4881-8413-840F03C4AF8B"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_14EF2B61-E365-4877-B3A9-99BC76B1776E",
+    "atc": {
+     "kode": "N05AN01",
+     "tekst": "Litium"
+    },
+    "deling": null,
+    "varenavn": "Priadel",
+    "kan_apnes": null,
+    "produsent": "Essential Pharma",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "25",
+     "tekst": "Depottablett"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Priadel depottab 200 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Depottablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_C552F41C-3389-4D8D-85D0-368B655A89E9"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_15282C9C-6518-4690-8FB3-4D6DDEDF5B9C",
+    "atc": {
+     "kode": "N03AX09",
+     "tekst": "Lamotrigin"
+    },
+    "deling": {
+     "kode": "0",
+     "tekst": "Ikke spesifisert"
+    },
+    "varenavn": "Lamictal",
+    "kan_apnes": null,
+    "produsent": "GlaxoSmithKline AS",
+    "kan_knuses": {
+     "kode": "1",
+     "tekst": "Ja"
+    },
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "524",
+     "tekst": "Tyggetablett/dispergerbar tablett"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08198.pdf",
+    "navn_form_styrke": "Lamictal tyggetab/disperg tab 5 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Tyggetablett/dispergerbar tablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_561594B2-FA9A-45C6-84AC-1E00B3A1980F"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_1828F07E-4847-4AC2-8C38-897B42DE9A61",
+    "atc": {
+     "kode": "N03AX09",
+     "tekst": "Lamotrigin"
+    },
+    "deling": null,
+    "varenavn": "Lamictal",
+    "kan_apnes": null,
+    "produsent": "GlaxoSmithKline",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "53",
+     "tekst": "Tablett"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Lamictal tab 100 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Tablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_E6F4CAA6-0B00-42C9-9B22-87D2D34FDC43"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_19EA0112-AD8E-4E03-9420-0605D5456991",
+    "atc": {
+     "kode": "N03AG01",
+     "tekst": "Valproinsyre"
+    },
+    "deling": {
+     "kode": "0",
+     "tekst": "Ikke spesifisert"
+    },
+    "varenavn": "Orfiril",
+    "kan_apnes": null,
+    "produsent": "Desitin Arzneimittel GmbH",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": true,
+    "legemiddelform": {
+     "kode": "28",
+     "tekst": "Enterotablett"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06635.pdf",
+    "navn_form_styrke": "Orfiril enterotab 600 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Enterotablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_B0D0AF4D-6DDA-4D84-A4B4-BA88B1D3797A"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_21D9048B-00B9-46C7-9C26-06E151D94D54",
+    "atc": {
+     "kode": "N05AN01",
+     "tekst": "Litium"
+    },
+    "deling": null,
+    "varenavn": "Priadel",
+    "kan_apnes": null,
+    "produsent": "Essential Pharma",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "25",
+     "tekst": "Depottablett"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Priadel depottab 200 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Depottablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_C552F41C-3389-4D8D-85D0-368B655A89E9"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_23E75D74-4C9C-49C3-91CC-B8EDD1FC11F2",
+    "atc": {
+     "kode": "N03AG01",
+     "tekst": "Valproinsyre"
+    },
+    "deling": null,
+    "varenavn": "Orfiril",
+    "kan_apnes": null,
+    "produsent": "Desitin Arzneimittel GmbH",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": true,
+    "legemiddelform": {
+     "kode": "842",
+     "tekst": "Mikstur, oppløsning"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06563.pdf",
+    "navn_form_styrke": "Orfiril mikst oppl 60 mg/ml",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Mikstur, oppløsning",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_4AB8C75C-BFF0-4FC7-8052-52546CF69634"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_290AE8BB-3EE5-4A7B-8DEF-81238DDFFB49",
+    "atc": {
+     "kode": "N03AG01",
+     "tekst": "Valproinsyre"
+    },
+    "deling": null,
+    "varenavn": "Orfiril",
+    "kan_apnes": null,
+    "produsent": "Desitin Arzneimittel GmbH",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": true,
+    "legemiddelform": {
+     "kode": "816",
+     "tekst": "Injeksjonsvæske, oppløsning"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1996-02608.pdf",
+    "navn_form_styrke": "Orfiril inj, oppl 100 mg/ml",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Injeksjonsvæske, oppløsning",
+    "administrasjonsveier": [
+     {
+      "kode": "43",
+      "tekst": "Intravenøs bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_A7546EEF-3DED-4E3C-820C-3F08140C330F"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_29BFE27E-EE19-492F-8680-7F79C8D3F1AB",
+    "atc": {
+     "kode": "N03AX09",
+     "tekst": "Lamotrigin"
+    },
+    "deling": null,
+    "varenavn": "Lamictal",
+    "kan_apnes": null,
+    "produsent": "GlaxoSmithKline",
+    "kan_knuses": {
+     "kode": "1",
+     "tekst": "Ja"
+    },
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "524",
+     "tekst": "Tyggetablett/dispergerbar tablett"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Lamictal tyggetab/disperg tab 25 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Tyggetablett/dispergerbar tablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_EC35F984-C9F0-402F-8AC0-75599C987274"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_3114F225-AF11-48D9-A79A-068B1A331D57",
+    "atc": {
+     "kode": "N03AX09",
+     "tekst": "Lamotrigin"
+    },
+    "deling": null,
+    "varenavn": "Lamotrigin 1a pharma",
+    "kan_apnes": null,
+    "produsent": "1 A Pharma",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "53",
+     "tekst": "Tablett"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Lamotrigin 1a pharma tab uten smak 100 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Tablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_E6F4CAA6-0B00-42C9-9B22-87D2D34FDC43"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_38E32F9A-A698-47B3-BB1E-96ECFEC692AF",
+    "atc": {
+     "kode": "N03AX09",
+     "tekst": "Lamotrigin"
+    },
+    "deling": {
+     "kode": "0",
+     "tekst": "Ikke spesifisert"
+    },
+    "varenavn": "Lamictal",
+    "kan_apnes": null,
+    "produsent": "GlaxoSmithKline AS",
+    "kan_knuses": {
+     "kode": "1",
+     "tekst": "Ja"
+    },
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "524",
+     "tekst": "Tyggetablett/dispergerbar tablett"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1996-01877.pdf",
+    "navn_form_styrke": "Lamictal tyggetab/disperg tab 200 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Tyggetablett/dispergerbar tablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_48508BD3-B891-4223-92D9-1CF80304AD2D"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_3F241167-A37B-4548-A067-D160AEC17B30",
+    "atc": {
+     "kode": "N03AG01",
+     "tekst": "Valproinsyre"
+    },
+    "deling": null,
+    "varenavn": "Depakote Sprinkle",
+    "kan_apnes": null,
+    "produsent": "Abbott",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "769",
+     "tekst": "Enterokapsel, hard"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Depakote Sprinkle enterokaps 125 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Enterokapsel, hard",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_264A27C5-3661-4853-BF6D-C87F0F65643F"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_3FA7BD05-522B-428A-9CE1-751835B21544",
+    "atc": {
+     "kode": "N03AG01",
+     "tekst": "Valproinsyre"
+    },
+    "deling": null,
+    "varenavn": "Ergenyl chrono",
+    "kan_apnes": null,
+    "produsent": "sanofi-aventis (2)",
+    "kan_knuses": {
+     "kode": "2",
+     "tekst": "Nei"
+    },
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "25",
+     "tekst": "Depottablett"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Ergenyl chrono depottab 300 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Depottablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_46B2EDE3-D6A7-48C9-9DB9-E54297B9CE46"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_43D61DBC-E21A-481A-9A74-3855F35FF85A",
+    "atc": {
+     "kode": "N03AG01",
+     "tekst": "Valproinsyre"
+    },
+    "deling": null,
+    "varenavn": "Orfiril long",
+    "kan_apnes": null,
+    "produsent": "Desitin Arzneimittel GmbH",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "23",
+     "tekst": "Depotgranulat"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1998-02477.pdf",
+    "navn_form_styrke": "Orfiril long depotgranulat 1000 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Depotgranulat",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_046C95E1-EA51-457D-8C2B-734DDEFC5416"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_56227268-5C00-467C-BD8D-44C9AE00C495",
+    "atc": {
+     "kode": "N05AN01",
+     "tekst": "Litium"
+    },
+    "deling": null,
+    "varenavn": "Litarex",
+    "kan_apnes": null,
+    "produsent": "Actavis",
+    "kan_knuses": {
+     "kode": "2",
+     "tekst": "Nei"
+    },
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "25",
+     "tekst": "Depottablett"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Litarex depottab 42 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Depottablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_58122866-C3DF-4AB2-86AE-0AED8AF3FC8F"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_565ED8CB-B89C-498D-9DB9-4028EE977C83",
+    "atc": {
+     "kode": "N03AG01",
+     "tekst": "Valproinsyre"
+    },
+    "deling": null,
+    "varenavn": "Orfiril long",
+    "kan_apnes": null,
+    "produsent": "Desitin Arzneimittel GmbH",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "23",
+     "tekst": "Depotgranulat"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1998-02476.pdf",
+    "navn_form_styrke": "Orfiril long depotgranulat 500 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Depotgranulat",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_D9EE2EB8-E382-4C00-B69A-D01C5F4F4B96"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_58807DBE-F683-422A-9D5A-20A9737421B4",
+    "atc": {
+     "kode": "N03AX09",
+     "tekst": "Lamotrigin"
+    },
+    "deling": null,
+    "varenavn": "Lamictal",
+    "kan_apnes": null,
+    "produsent": "GlaxoSmithKline (Ireland) Limited",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "53",
+     "tekst": "Tablett"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Lamictal tab 100 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Tablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_E6F4CAA6-0B00-42C9-9B22-87D2D34FDC43"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_5C919C94-31D9-44D6-9733-462E513D8442",
+    "atc": {
+     "kode": "N03AG01",
+     "tekst": "Valproinsyre"
+    },
+    "deling": {
+     "kode": "1",
+     "tekst": "Ikke delbar"
+    },
+    "varenavn": "Deprakine Retard",
+    "kan_apnes": null,
+    "produsent": "Sanofi-aventis",
+    "kan_knuses": {
+     "kode": "2",
+     "tekst": "Nei"
+    },
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "25",
+     "tekst": "Depottablett"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Deprakine Retard depottab 500 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Depottablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_AF027AA5-AEBC-49BA-9ED4-40903CB429C7"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_5D5298FB-6644-4AE7-AB26-F02E60E632E1",
+    "atc": {
+     "kode": "N03AG01",
+     "tekst": "Valproinsyre"
+    },
+    "deling": null,
+    "varenavn": "Orfiril",
+    "kan_apnes": null,
+    "produsent": "Desitin",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "842",
+     "tekst": "Mikstur, oppløsning"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Orfiril mikst oppl 60 mg/ml",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Mikstur, oppløsning",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_4AB8C75C-BFF0-4FC7-8052-52546CF69634"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_60D37BE7-FEB0-4771-AB56-01B2F4F26F59",
+    "atc": {
+     "kode": "N03AG01",
+     "tekst": "Valproinsyre"
+    },
+    "deling": null,
+    "varenavn": "Apo-divalproex",
+    "kan_apnes": null,
+    "produsent": "Apotex Inc.",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "28",
+     "tekst": "Enterotablett"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Apo-divalproex enterotab 125 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Enterotablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_B35876FE-2273-4C77-A5D3-61BE7B40F06B"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_6450043F-3800-47FB-BE48-A66780839961",
+    "atc": {
+     "kode": "A12CX",
+     "tekst": "Diverse mineralmidler"
+    },
+    "deling": null,
+    "varenavn": "Lithium orotate advanced research",
+    "kan_apnes": null,
+    "produsent": null,
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "53",
+     "tekst": "Tablett"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Lithium orotate advanced research tab 120 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Tablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_82A30391-AF45-4C6E-88BB-8FE6047BD901"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_74EE6774-2395-4814-BE28-8407EAA3EF22",
+    "atc": {
+     "kode": "N03AG01",
+     "tekst": "Valproinsyre"
+    },
+    "deling": null,
+    "varenavn": "Orfiril Saft",
+    "kan_apnes": null,
+    "produsent": "Desitin",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "842",
+     "tekst": "Mikstur, oppløsning"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Orfiril Saft mikst oppl 60 mg/ml",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Mikstur, oppløsning",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_4AB8C75C-BFF0-4FC7-8052-52546CF69634"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_7859876E-4C32-4FCF-918A-E13755D05783",
+    "atc": {
+     "kode": "N03AG01",
+     "tekst": "Valproinsyre"
+    },
+    "deling": null,
+    "varenavn": "Valproat Life Medical",
+    "kan_apnes": null,
+    "produsent": "Life Medical ApS (1)",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "880",
+     "tekst": "Injeksjons-/infusjonsvæske, oppløsning"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/16-11494.pdf",
+    "navn_form_styrke": "Valproat Life Medical inj/inf, oppl 100 mg/ml",
+    "referanseprodukt": "Deprakine",
+    "legemiddelform_lang": "Injeksjons-/infusjonsvæske, oppløsning",
+    "administrasjonsveier": [
+     {
+      "kode": "43",
+      "tekst": "Intravenøs bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_994E0E8D-12A6-4700-8317-439E593D67A4"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_7B4BC0DF-D251-447C-8AD0-0D34FDB83829",
+    "atc": {
+     "kode": "N03AX09",
+     "tekst": "Lamotrigin"
+    },
+    "deling": {
+     "kode": "0",
+     "tekst": "Ikke spesifisert"
+    },
+    "varenavn": "Lamictal",
+    "kan_apnes": null,
+    "produsent": "GlaxoSmithKline AS",
+    "kan_knuses": {
+     "kode": "1",
+     "tekst": "Ja"
+    },
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "524",
+     "tekst": "Tyggetablett/dispergerbar tablett"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08200.pdf",
+    "navn_form_styrke": "Lamictal tyggetab/disperg tab 100 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Tyggetablett/dispergerbar tablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_4AAAEA85-E3B9-4B93-A767-68A8E1F89E94"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_7EE2D7E5-558E-4E98-9891-2D82D2F7E5ED",
+    "atc": {
+     "kode": "N03AX09",
+     "tekst": "Lamotrigin"
+    },
+    "deling": {
+     "kode": "0",
+     "tekst": "Ikke spesifisert"
+    },
+    "varenavn": "Lamictal",
+    "kan_apnes": null,
+    "produsent": "GlaxoSmithKline AS",
+    "kan_knuses": {
+     "kode": "1",
+     "tekst": "Ja"
+    },
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "524",
+     "tekst": "Tyggetablett/dispergerbar tablett"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08199.pdf",
+    "navn_form_styrke": "Lamictal tyggetab/disperg tab 25 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Tyggetablett/dispergerbar tablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_EC35F984-C9F0-402F-8AC0-75599C987274"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_839B6B05-3D59-42FC-B051-111324056972",
+    "atc": {
+     "kode": "N03AX09",
+     "tekst": "Lamotrigin"
+    },
+    "deling": {
+     "kode": "0",
+     "tekst": "Ikke spesifisert"
+    },
+    "varenavn": "Lamictal",
+    "kan_apnes": null,
+    "produsent": "GlaxoSmithKline AS",
+    "kan_knuses": {
+     "kode": "1",
+     "tekst": "Ja"
+    },
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "524",
+     "tekst": "Tyggetablett/dispergerbar tablett"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2000-02581.pdf",
+    "navn_form_styrke": "Lamictal tyggetab/disperg tab 2 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Tyggetablett/dispergerbar tablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_4EE529C9-5293-4985-8D3B-45A5427BCC7D"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_8B9D2FD2-36DE-49B9-AA16-9BF12A06E153",
+    "atc": {
+     "kode": "N05AN01",
+     "tekst": "Litium"
+    },
+    "deling": {
+     "kode": "2",
+     "tekst": "Delbar i 2"
+    },
+    "varenavn": "Lithionit",
+    "kan_apnes": null,
+    "produsent": "Karo Pharma AB (1)",
+    "kan_knuses": {
+     "kode": "2",
+     "tekst": "Nei"
+    },
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "25",
+     "tekst": "Depottablett"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-05559.pdf",
+    "navn_form_styrke": "Lithionit depottab 42 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Depottablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_58122866-C3DF-4AB2-86AE-0AED8AF3FC8F"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_94103B49-19EF-4F17-A2FF-48F61DDC046F",
+    "atc": {
+     "kode": "N03AG01",
+     "tekst": "Valproinsyre"
+    },
+    "deling": null,
+    "varenavn": "Orfiril long",
+    "kan_apnes": {
+     "kode": "1",
+     "tekst": "Ja"
+    },
+    "produsent": "Desitin Arzneimittel GmbH",
+    "kan_knuses": {
+     "kode": "2",
+     "tekst": "Nei"
+    },
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "743",
+     "tekst": "Depotkapsel, hard"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1996-01965.pdf",
+    "navn_form_styrke": "Orfiril long depotkaps, hard 150 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Depotkapsel, hard",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_8B445D04-E8A8-4382-AEAD-0DB690CCE123"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_94A94B1E-7C6B-436A-947E-71AF8C582B2A",
+    "atc": {
+     "kode": "N05AN01",
+     "tekst": "Litium"
+    },
+    "deling": null,
+    "varenavn": "Priadel",
+    "kan_apnes": null,
+    "produsent": "Essential Pharma",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "25",
+     "tekst": "Depottablett"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Priadel depottab 400 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Depottablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_525E196C-B808-420D-9C3D-BC8503F165AE"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_9B4C973E-7AF7-4731-9317-CC9EB0B037C8",
+    "atc": {
+     "kode": "N05AN01",
+     "tekst": "Litium"
+    },
+    "deling": null,
+    "varenavn": "Hypnorex retard",
+    "kan_apnes": null,
+    "produsent": "Essential Pharma",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "25",
+     "tekst": "Depottablett"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Hypnorex retard depottab 400 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Depottablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_525E196C-B808-420D-9C3D-BC8503F165AE"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_A35358A9-1454-4E9A-B808-D8C08EF01D37",
+    "atc": {
+     "kode": "N05AN01",
+     "tekst": "Litium"
+    },
+    "deling": null,
+    "varenavn": "Li-liquid",
+    "kan_apnes": null,
+    "produsent": "Rosemont",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "14",
+     "tekst": "Sirup"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Li-liquid sirup 1018 mg/5 ml",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Sirup",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_E3F735A4-2053-4B9E-A3D1-5FCE4A1A56C9"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_A4254CCC-E90C-4CA3-BF6A-C8C8043AB4FC",
+    "atc": {
+     "kode": "N03AX09",
+     "tekst": "Lamotrigin"
+    },
+    "deling": {
+     "kode": "0",
+     "tekst": "Ikke spesifisert"
+    },
+    "varenavn": "Lamictal",
+    "kan_apnes": null,
+    "produsent": "GlaxoSmithKline AS",
+    "kan_knuses": {
+     "kode": "1",
+     "tekst": "Ja"
+    },
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "524",
+     "tekst": "Tyggetablett/dispergerbar tablett"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/1996-01876.pdf",
+    "navn_form_styrke": "Lamictal tyggetab/disperg tab 50 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Tyggetablett/dispergerbar tablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_7CD9717F-1DB7-4FC4-9050-6E918CF78161"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_A610792B-D198-4197-B596-E1AF313604B2",
+    "atc": {
+     "kode": "N05AN01",
+     "tekst": "Litium"
+    },
+    "deling": null,
+    "varenavn": "Apo-Lithium carbonate",
+    "kan_apnes": null,
+    "produsent": "Apotex",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "891",
+     "tekst": "Kapsel, hard"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Apo-Lithium carbonate kaps 300 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Kapsel, hard",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_78E97BE8-B6E3-4B10-9573-2A4AB7B99EC8"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_AE45B8E6-1973-4CB2-A800-44DA9DE225BD",
+    "atc": {
+     "kode": "N03AG01",
+     "tekst": "Valproinsyre"
+    },
+    "deling": {
+     "kode": "0",
+     "tekst": "Ikke spesifisert"
+    },
+    "varenavn": "Orfiril",
+    "kan_apnes": null,
+    "produsent": "Desitin Arzneimittel GmbH",
+    "kan_knuses": {
+     "kode": "2",
+     "tekst": "Nei"
+    },
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": true,
+    "legemiddelform": {
+     "kode": "28",
+     "tekst": "Enterotablett"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06564.pdf",
+    "navn_form_styrke": "Orfiril enterotab 150 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Enterotablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_93741AAE-7D09-47B9-9E68-09A83581A173"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_AFE45A8F-8CBE-46A7-9EF1-3F4E2E8CBF85",
+    "atc": {
+     "kode": "N03AG01",
+     "tekst": "Valproinsyre"
+    },
+    "deling": null,
+    "varenavn": "Natriumvalproat SA",
+    "kan_apnes": null,
+    "produsent": "Sykehusapotekene HF",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "15",
+     "tekst": "Sykehuspreparat"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "743",
+     "tekst": "Depotkapsel, hard"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Natriumvalproat SA depotkaps, hard 75 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Depotkapsel, hard",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_9D92871D-3FD6-4130-9C5B-540E379578D0"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_BB920F1E-1A8C-4E62-8D07-E2C539FA55C5",
+    "atc": {
+     "kode": "N03AG01",
+     "tekst": "Valproinsyre"
+    },
+    "deling": {
+     "kode": "0",
+     "tekst": "Ikke spesifisert"
+    },
+    "varenavn": "Orfiril",
+    "kan_apnes": null,
+    "produsent": "Desitin Arzneimittel GmbH",
+    "kan_knuses": {
+     "kode": "2",
+     "tekst": "Nei"
+    },
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": true,
+    "legemiddelform": {
+     "kode": "28",
+     "tekst": "Enterotablett"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06565.pdf",
+    "navn_form_styrke": "Orfiril enterotab 300 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Enterotablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_B6632FA6-851D-441F-B5D2-6D00034E363D"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_BE26B120-FB83-4F3F-B8A1-4D0146A87E8F",
+    "atc": {
+     "kode": "N03AG01",
+     "tekst": "Valproinsyre"
+    },
+    "deling": null,
+    "varenavn": "Orfiril",
+    "kan_apnes": null,
+    "produsent": "Orifarm AS",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": true,
+    "legemiddelform": {
+     "kode": "28",
+     "tekst": "Enterotablett"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06635.pdf",
+    "navn_form_styrke": "Orfiril enterotab 600 mg",
+    "referanseprodukt": "Orfiril",
+    "legemiddelform_lang": "Enterotablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_B0D0AF4D-6DDA-4D84-A4B4-BA88B1D3797A"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_C1AB9EDB-54A0-4519-A2E9-45825DFF5046",
+    "atc": {
+     "kode": "N03AX09",
+     "tekst": "Lamotrigin"
+    },
+    "deling": null,
+    "varenavn": "Lamictal",
+    "kan_apnes": null,
+    "produsent": "GlaxoSmithKline (Ireland) Limited",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "53",
+     "tekst": "Tablett"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Lamictal tab 25 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Tablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_713E24A8-6356-4830-BD7A-FC94F56A6927"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_C6B0206B-041C-4A42-9A9D-3D1C8F46DA06",
+    "atc": {
+     "kode": "N03AX09",
+     "tekst": "Lamotrigin"
+    },
+    "deling": null,
+    "varenavn": "Lamictal",
+    "kan_apnes": null,
+    "produsent": "GlaxoSmithKline (Ireland) Limited",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "53",
+     "tekst": "Tablett"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Lamictal tab 200 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Tablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_89857973-4984-423B-B17B-4033A4B51941"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_CC0193CC-424A-480B-BAD5-93AA77A9DCDE",
+    "atc": {
+     "kode": "N03AX09",
+     "tekst": "Lamotrigin"
+    },
+    "deling": null,
+    "varenavn": "Lamotrigin aurobindo",
+    "kan_apnes": null,
+    "produsent": "Puren",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "53",
+     "tekst": "Tablett"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Lamotrigin aurobindo tab 25 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Tablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_713E24A8-6356-4830-BD7A-FC94F56A6927"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_E4FDD7A2-4804-4A04-9B5A-125DC43A80F2",
+    "atc": {
+     "kode": "N05AN01",
+     "tekst": "Litium"
+    },
+    "deling": null,
+    "varenavn": "Litiumkarbonat oba",
+    "kan_apnes": null,
+    "produsent": "Oba-Pharma ApS",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "53",
+     "tekst": "Tablett"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Litiumkarbonat oba tab 300 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Tablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_00F537AB-93EE-48AA-9836-12E2786AB601"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_E778C574-42B2-44CD-BA62-C149E6ABEF2C",
+    "atc": {
+     "kode": "N05AN01",
+     "tekst": "Litium"
+    },
+    "deling": {
+     "kode": "1",
+     "tekst": "Ikke delbar"
+    },
+    "varenavn": "Carblit",
+    "kan_apnes": null,
+    "produsent": "XGX Pharma ApS",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "7",
+     "tekst": "Legemiddel"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "53",
+     "tekst": "Tablett"
+    },
+    "preparatomtale": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/23-15504.pdf",
+    "navn_form_styrke": "Carblit tab 300 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Tablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_00F537AB-93EE-48AA-9836-12E2786AB601"
+    ],
+    "virkestoff_uten_styrke": []
+   },
+   {
+    "id": "ID_FF73AFAE-2921-451E-9173-1FCB4BB45135",
+    "atc": {
+     "kode": "N03AX09",
+     "tekst": "Lamotrigin"
+    },
+    "deling": null,
+    "varenavn": "Lamictal",
+    "kan_apnes": null,
+    "produsent": "GlaxoSmithKline (Ireland) Limited",
+    "kan_knuses": null,
+    "preparattype": {
+     "kode": "11",
+     "tekst": "Krever godkj. Fritak"
+    },
+    "reseptgruppe": {
+     "kode": "C",
+     "tekst": "Reseptgruppe C"
+    },
+    "svart_trekant": false,
+    "legemiddelform": {
+     "kode": "53",
+     "tekst": "Tablett"
+    },
+    "preparatomtale": null,
+    "navn_form_styrke": "Lamictal tab 50 mg",
+    "referanseprodukt": null,
+    "legemiddelform_lang": "Tablett",
+    "administrasjonsveier": [
+     {
+      "kode": "53",
+      "tekst": "Oral bruk"
+     }
+    ],
+    "virkestoff_med_styrke": [
+     "ID_A099FC28-A409-4381-A2C2-D774F1489BB7"
+    ],
+    "virkestoff_uten_styrke": []
+   }
+  ],
+  "virkestoff": [
+   {
+    "id": "ID_36AEA22F-E6BC-4CF0-9A3F-2E9341A7B5F6",
+    "navn": "Litiumion",
+    "salter": [
+     "ID_09FAFA1F-F9A6-4CE7-AC63-7A348EA11B1C",
+     "ID_0F438BE4-C388-450A-B611-A5B9888C812A",
+     "ID_35CFA60C-2658-496C-8736-2F9F46968CE0",
+     "ID_3E022C35-E846-42EA-92E4-D7910F4D8579",
+     "ID_50DD4897-1000-418F-9AA2-93084D3C808A",
+     "ID_685B24AB-4988-4CC1-A841-A26CE92346AC",
+     "ID_6AB011AD-4735-489E-8D6C-83BF703056DC",
+     "ID_702AF947-C5B1-4CB3-B38A-776FDFAB0253"
+    ],
+    "utgatt": false,
+    "navn_engelsk": "Lithium ion"
+   },
+   {
+    "id": "ID_A61E2EDC-D6B4-4E52-89F4-3D10F0E03E38",
+    "navn": "Valproinsyre",
+    "salter": [
+     "ID_3587777F-FD83-4F48-98C7-1D7AB1C14596",
+     "ID_3B91EEAB-2982-4D3E-AEB1-39800F8C6672"
+    ],
+    "utgatt": false,
+    "navn_engelsk": "Valproic acid"
+   },
+   {
+    "id": "ID_F456CD11-3821-4C60-B36F-DE0C9D51ED22",
+    "navn": "Lamotrigin",
+    "salter": [],
+    "utgatt": false,
+    "navn_engelsk": "Lamotrigine"
+   }
+  ],
+  "byttegrupper": [
+   {
+    "id": "ID_0A4A38AE-7A07-47CB-8997-22B1FD57BBA3",
+    "kode": "000563",
+    "tekst": "LAMOTRIGIN DISPERGERBARE TABLETTER 100MG",
+    "gyldig_fra": "2008-01-17",
+    "gyldig_til": null,
+    "beskrivelse": "Begrenset bytte ved epilepsi",
+    "merknad_til_byttbarhet": true
+   },
+   {
+    "id": "ID_3025B1A8-7F4A-4D00-9C2E-E50EF9142D34",
+    "kode": "000932",
+    "tekst": "LAMOTRIGIN DISPERGERBARE TABLETTER 200MG",
+    "gyldig_fra": "2008-01-17",
+    "gyldig_til": null,
+    "beskrivelse": "Begrenset bytte ved epilepsi",
+    "merknad_til_byttbarhet": true
+   },
+   {
+    "id": "ID_42CDBB3B-6080-46A2-87A8-26AC255C6473",
+    "kode": "000929",
+    "tekst": "LAMOTRIGIN DISPERGERBARE TABLETTER 5MG",
+    "gyldig_fra": "2008-01-17",
+    "gyldig_til": null,
+    "beskrivelse": "Begrenset bytte ved epilepsi",
+    "merknad_til_byttbarhet": true
+   },
+   {
+    "id": "ID_5B6C2413-7C99-4729-9509-1F50DBF13914",
+    "kode": "001778",
+    "tekst": "VALPROINSYRE DEPOTTABLETTER 300MG",
+    "gyldig_fra": "2012-01-27",
+    "gyldig_til": null,
+    "beskrivelse": "Begrenset bytte ved epilepsi",
+    "merknad_til_byttbarhet": true
+   },
+   {
+    "id": "ID_7581DD2D-6571-4303-A2C6-8E7EB7CA4441",
+    "kode": "000557",
+    "tekst": "VALPROINSYRE MIKSTUR 60MG/ML",
+    "gyldig_fra": "2008-01-17",
+    "gyldig_til": null,
+    "beskrivelse": "Begrenset bytte ved epilepsi",
+    "merknad_til_byttbarhet": true
+   },
+   {
+    "id": "ID_79DBD82F-1E96-45E5-88E6-F422DBD8FDC1",
+    "kode": "001912",
+    "tekst": "VALPROINSYRE ENTEROTABLETTER 600 MG",
+    "gyldig_fra": "2013-09-16",
+    "gyldig_til": null,
+    "beskrivelse": "Begrenset bytte ved epilepsi",
+    "merknad_til_byttbarhet": true
+   },
+   {
+    "id": "ID_9CF74EB4-8B11-49D1-8B1D-2011F8F427E0",
+    "kode": "000931",
+    "tekst": "LAMOTRIGIN DISPERGERBARE TABLETTER 50MG",
+    "gyldig_fra": "2008-01-17",
+    "gyldig_til": null,
+    "beskrivelse": "Begrenset bytte ved epilepsi",
+    "merknad_til_byttbarhet": true
+   },
+   {
+    "id": "ID_C1EC2A8D-31EF-423E-8345-743FDB42815A",
+    "kode": "001106",
+    "tekst": "LAMOTRIGIN DISPERGERBARE TABLETTER 2MG",
+    "gyldig_fra": "2008-01-17",
+    "gyldig_til": null,
+    "beskrivelse": "Begrenset bytte ved epilepsi",
+    "merknad_til_byttbarhet": true
+   },
+   {
+    "id": "ID_C4B006BF-3873-4EC6-A153-1E08E4D6D8FE",
+    "kode": "001915",
+    "tekst": "VALPROINSYRE DEPOTKAPSLER 300 MG",
+    "gyldig_fra": "2013-09-30",
+    "gyldig_til": null,
+    "beskrivelse": "Begrenset bytte ved epilepsi",
+    "merknad_til_byttbarhet": true
+   },
+   {
+    "id": "ID_EC92ACB5-3916-4DBA-B9E6-52525F0E6879",
+    "kode": "000930",
+    "tekst": "LAMOTRIGIN DISPERGERBARE TABLETTER 25MG",
+    "gyldig_fra": "2008-01-17",
+    "gyldig_til": null,
+    "beskrivelse": "Begrenset bytte ved epilepsi",
+    "merknad_til_byttbarhet": true
+   }
+  ],
+  "kontrollert_kl": "2026-11-03T04:15:06.046601+00:00"
+ }
+}

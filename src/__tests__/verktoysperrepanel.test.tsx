@@ -92,7 +92,7 @@ describe('nødstoppen i administrasjonsmenyen', () => {
     await screen.findByText('Ingen sperrer. Verktøyene er tilgjengelige.')
     await user.click(screen.getByRole('radio', { name: 'Én klinisk godkjent regel' }))
     const regler = within(screen.getByRole('combobox', { name: 'Regelen' })).getAllByRole('option').slice(1).map((o) => o.getAttribute('value'))
-    expect(regler.sort()).toEqual(['depot-aripiprazol-maintena', 'depot-paliperidon-xeplion', 'kryssnedtrapping-sertralin-mirtazapin', 'seponering-agomelatin', 'seponering-bupropion', 'seponering-vortioksetin'])
+    expect(regler.sort()).toEqual(['depot-aripiprazol-maintena', 'depot-paliperidon-xeplion', 'kryssnedtrapping-sertralin-mirtazapin', 'seponering-agomelatin', 'seponering-bupropion', 'seponering-vortioksetin', 'tillegg-litium-lamotrigin', 'tillegg-valproat-lamotrigin'])
     await user.click(screen.getByRole('radio', { name: 'Alle verktøyene' }))
     expect(screen.queryByRole('combobox')).toBeNull()
     await user.type(screen.getByRole('textbox', { name: 'Grunn' }), 'Kritisk feil i motoren.')
