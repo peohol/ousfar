@@ -34,7 +34,7 @@
 import type { Formuleringsklasse } from '../festformuleringer'
 
 /** Økes når formen på regler eller regelsett endres. */
-export const REGELMODELLVERSJON = 11
+export const REGELMODELLVERSJON = 12
 
 /* --- Kilder ----------------------------------------------------------------- */
 
@@ -199,11 +199,16 @@ export type Nedtrappingsstrategi =
    * Hvert trinn er `prosent` lavere enn forrige dose (gjentatt prosentvis);
    * `lav_prosent` når dosen er nådd `lav_grense_mg`. Under `sluttdose_mg`
    * seponeres. Uten sluttdose når dosen aldri 0; da må fasen ha individuell
-   * avslutning og en teknisk planhorisont.
+   * avslutning og en teknisk planhorisont. Med `minste_trinn` kan
+   * forskriveren ved lave doser velge et minste trinn ({@link Minstetrinn}).
    */
-  | { type: 'prosent_av_aktuell'; prosent: Parameter; lav_prosent?: Parameter; lav_grense_mg?: Parameter; sluttdose_mg?: Parameter }
-  /** Hvert trinn er `prosent` av startdosen lavere (lineært). */
-  | { type: 'prosent_av_startdose'; prosent: Parameter }
+  | { type: 'prosent_av_aktuell'; prosent: Parameter; lav_prosent?: Parameter; lav_grense_mg?: Parameter; sluttdose_mg?: Parameter; minste_trinn?: Minstetrinn }
+  /**
+   * Hvert trinn er `prosent` av startdosen lavere (lineært). Med `trinnvalg`
+   * og `mellomtrinn` kan forskriveren velge et mindre siste trinn før
+   * seponeringen ({@link Fase}).
+   */
+  | { type: 'prosent_av_startdose'; prosent: Parameter; mellomtrinn?: Grunnlag }
   /** Hvert trinn er `mg` lavere (lineært, absolutt). */
   | { type: 'absolutt'; mg: Parameter }
   /**
@@ -241,13 +246,28 @@ export type Fase =
    * begrunnelse, tilbys ikke. Valget er forskriverens (`Beregningsinndata.trinnvalg`);
    * beregningen velger aldri selv. Bare med `prosent_av_aktuell`, individuell
    * avslutning og uten toleranse ({@link trinnvalgOmrade} i `beregning.ts`).
+   * Med `prosent_av_startdose` og nedtrapping til 0 (regelmodell 12) tilbys
+   * den nærmeste dosen under og over den beregnede, et valgt trinn varer så
+   * lenge at nedtrappingen aldri går raskere enn regelen (`tempolengde`), og
+   * neste trinn regnes fra den valgte dosen. Med `strategi.mellomtrinn` tilbys
+   * også et mindre siste trinn der planen ellers går fra siste dose til 0 (en
+   * reduksjon på 100 %): den nærmeste lavere dosen og den laveste dosen som
+   * kan gis, med samme regel for trinnlengden. Seponeringen kommer etter
+   * mellomtrinnet; uten valg gjelder trinnet til 0, og bare ett mellomtrinn
+   * kan velges per forløp.
    */
   | {
       type: 'nedtrapping'
       strategi: Nedtrappingsstrategi
       trinnlengde: Parameter
       minste_varighet?: Parameter
-      avslutning?: 'individuell'
+      /**
+       * `'individuell'`: planen går ikke til 0 (se over). En godkjent
+       * avslutning ({@link Avslutning}): trinnene beregnes som ved individuell
+       * avslutning, siste dose holdes ett trinn, og så seponeres legemidlet,
+       * men bare fra en dose regelen har avslutningen for (regelmodell 12).
+       */
+      avslutning?: 'individuell' | Avslutning
       horisont?: Parameter
       trinnvalg?: Grunnlag
     }
@@ -257,12 +277,25 @@ export type Fase =
    * videre nedtrapping eller seponering er forskriverens beslutning.
    */
   | { type: 'intervalldosering'; dose: Dosekilde | { type: 'aktuell' }; hver: Parameter; minstetid: Parameter }
-  /** Fast opptrapping: hver dose i sitt antall dager. */
-  | { type: 'opptrapping'; trinn: { mg: Parameter; dager: Parameter }[] }
+  /**
+   * Fast opptrapping: hver dose i sitt antall dager. Med `hver` gis trinnets
+   * dose hver `hver`. dag i stedet for daglig (f.eks. annenhver dag ved
+   * oppstart av lamotrigin sammen med valproat; regelmodell 12).
+   */
+  | { type: 'opptrapping'; trinn: { mg: Parameter; dager: Parameter; hver?: Parameter }[] }
   /** Dosen planen ender med (ingen sluttdato). */
   | { type: 'vedlikehold'; dose: Dosekilde | { type: 'aktuell' } }
-  /** Seponering når fasen starter: siste dose er dagen før. */
-  | { type: 'seponer' }
+  /**
+   * Seponering når fasen starter: siste dose er dagen før. I en ren
+   * seponering bare med en godkjent avslutning ({@link Avslutning}).
+   */
+  | { type: 'seponer'; avslutning?: Avslutning }
+  /**
+   * Legemidlet pasienten bruker, fortsetter med uendret dose; planen beregner
+   * ingen dose og bruker ingen preparater for det (et tillegg, regelmodell 12).
+   * `visning` sier hvordan dosen skal stå i planen ({@link Uendretvisning}).
+   */
+  | { type: 'uendret'; grunnlag: Grunnlag; visning?: Uendretvisning }
   /** Doseringen beregnes ikke (bare når forløpet kan starte), f.eks. fordi preparatomtale mangler. */
   | { type: 'uten_beregning'; grunn: string }
   /** Depotinjeksjoner: startinjeksjoner på faste dager, deretter månedlig vedlikehold. */
@@ -271,6 +304,70 @@ export type Fase =
       start: { dag: Parameter; dose: Dosekilde; sted?: string; vindu_dager?: Parameter }[]
       vedlikehold: { dose: Dosekilde; maaneder: Parameter; tidligst_dager?: Parameter; vindu_dager?: Parameter; sted?: string }
     }
+
+/**
+ * Hvordan en uendret dose står i planen og kopien, så den ikke kan misforstås
+ * (regelmodell 12): `enhet` dosen er i, for eksempel «mg Li⁺» (ellers «mg»),
+ * og tabletten den gis med: navnet, dosen per tablett i samme enhet og
+ * eventuelt mmol per tablett. Planen sier også om dosen er kontrollert mot
+ * regelens doser eller bare bekreftet av forskriveren.
+ */
+export interface Uendretvisning {
+  enhet?: string
+  tablett?: { navn: string; mg: number; mmol?: number }
+}
+
+/**
+ * Et minste trinn ved lave doser (regelmodell 12), for en nedtrapping i
+ * prosent av aktuell dose der forskriveren kan velge dosen for et trinn
+ * (`Fase.trinnvalg`, `prosent.omrade`): fra en dose på høyst `fra_mg`, når
+ * ingen dose med faktisk reduksjon innenfor valgområdet kan gis, kan
+ * forskriveren velge den nærmeste lavere dosen som kan gis, med faktisk
+ * reduksjon høyst `maks_prosent`. Bare den ene dosen tilbys, og beregningen
+ * velger aldri selv. For eksempel dråper på 1 mg: 3 → 2 → 1 mg.
+ */
+export interface Minstetrinn {
+  fra_mg: Parameter
+  maks_prosent: Parameter
+}
+
+/**
+ * En faglig godkjent avslutning (seponering) av en nedtrapping, med eget
+ * grunnlag (regelmodell 12). Uten den går en ren seponering aldri til 0
+ * ({@link nulltrinnfeil}). `fra_hoyst_mg` er den høyeste dosen
+ * avslutningen gjelder fra; er siste dose høyere, stopper planen der som ved
+ * individuell avslutning.
+ */
+export interface Avslutning {
+  type: 'seponering'
+  fra_hoyst_mg: Parameter
+  grunnlag: Grunnlag
+}
+
+/** Når et vurderingspunkt gjelder i et forløp. */
+export type Vurderingstidspunkt =
+  /** Før hver doseendring i forløpet, når forrige dose er gitt hele perioden. */
+  | { type: 'for_hvert_trinn' }
+  /** På en bestemt dag regnet fra forløpets første dag (dag 1). */
+  | { type: 'dag'; dag: Parameter }
+  /** Et antall dager etter hver doseendring (også oppstart), f.eks. serumkonsentrasjon. */
+  | { type: 'etter_endring'; dager: Parameter }
+  /** Et antall dager etter siste dose, når forløpet seponeres, f.eks. oppfølging av seponeringssymptomer og tilbakefall. */
+  | { type: 'etter_seponering'; dager: Parameter }
+
+/**
+ * Et klinisk vurderings- eller kontrollpunkt i planen (regelmodell 12): hva
+ * som vurderes, når, og hva som gjøres ved funn, med OUSFARs egne ord og
+ * grunnlaget. Punktet står i planen og i kopien; beregningen tolker det ikke.
+ */
+export interface Vurderingspunkt {
+  id: string
+  nar: Vurderingstidspunkt
+  tekst: string
+  /** Hva som gjøres ved funn, f.eks. at dosen holdes eller trinnet reverseres. */
+  ved_funn?: string
+  grunnlag: Grunnlag
+}
 
 /** Når et forløp starter. */
 export type Forlopsstart =
@@ -329,9 +426,16 @@ export interface Forlop {
   utgangsdose: 'startdose' | null
   start: Forlopsstart
   faser: Fase[]
+  /** Kliniske vurderings- og kontrollpunkter i forløpet (regelmodell 12). */
+  vurderinger?: Vurderingspunkt[]
 }
 
-export type Bytteform = 'seponering' | 'kryssnedtrapping' | 'sekvensielt' | 'direkte' | 'oppstart_depot'
+/**
+ * `tillegg`: et legemiddel legges til et pasienten allerede bruker
+ * (regelmodell 12). Forløpet `fra` er det eksisterende legemidlet, som ikke
+ * seponeres i planen ({@link tilleggsfeil}); `til` er tillegget.
+ */
+export type Bytteform = 'seponering' | 'kryssnedtrapping' | 'sekvensielt' | 'direkte' | 'oppstart_depot' | 'tillegg'
 
 export interface Plan {
   form: Bytteform
@@ -360,6 +464,11 @@ export interface Inndatakrav {
    */
   ved?: { sporsmal: string; svar: boolean }
   /**
+   * Enheten dosen oppgis i, når den ikke er en døgndose, f.eks. «mg per
+   * injeksjon hver 2. uke» for et depot. Står ved feltet og i meldingene.
+   */
+  enhet?: string
+  /**
    * En forsiktighetsgrense: en dose utenfor området stopper ikke, men krever
    * en skriftlig begrunnelse fra forskriveren. Bare for veiledende krav; et
    * bindende krav (en uttrykkelig høyeste dose) kan aldri begrunnes bort.
@@ -373,8 +482,18 @@ export interface Inndatakrav {
 export interface Bekreftelse {
   id: string
   tekst: string
+  /**
+   * Bekreftelsen kreves bare når forskriveren har gitt dette svaret på
+   * spørsmålet (`Sporsmal`), f.eks. krav som bare gjelder kvinner som kan bli
+   * gravide (regelmodell 12). Uten svar stopper beregningen på spørsmålet.
+   */
+  ved?: { sporsmal: string; svar: boolean }
   grunnlag: Grunnlag
 }
+
+/** Bekreftelsene som kreves med svarene i `svar`: de uten `ved`, og de med `ved` når svaret er gitt. */
+export const gjeldendeBekreftelser = (r: Pick<Regel, 'bekreftelser'>, svar: Readonly<Record<string, boolean>> | undefined): Bekreftelse[] =>
+  r.bekreftelser.filter((b) => !b.ved || svar?.[b.ved.sporsmal] === b.ved.svar)
 
 /** Et pasientforhold som gjør at regelen ikke gjelder (en annen regel eller individuell vurdering trengs). */
 export interface Unntak {
@@ -590,6 +709,8 @@ export const FELTENHET: Record<string, Enhet> = {
   minstetid: 'dager',
   prosent: 'prosent',
   lav_prosent: 'prosent',
+  maks_prosent: 'prosent',
+  fra_mg: 'mg',
   mg: 'mg',
   lav_grense_mg: 'mg',
   sluttdose_mg: 'mg',
@@ -598,6 +719,7 @@ export const FELTENHET: Record<string, Enhet> = {
   maks_mg: 'mg',
   min_mg: 'mg',
   over_mg: 'mg',
+  fra_hoyst_mg: 'mg',
 }
 
 const feltnavn = (sti: string) => sti.replace(/\[\d+\]/g, '').split('.').at(-1) ?? ''
@@ -686,16 +808,19 @@ export function apneValg(r: Regel): string[] {
 }
 
 /**
- * Brudd på kravet om at en ren seponering aldri går til 0 av seg selv: ingen
- * avslutning (nulltrinn) er godkjent faglig (P7.5). Hvert forløp i en
- * beregnbar seponeringsregel, også et gruppemedlems egne faser, må slutte med
- * en nedtrapping med individuell avslutning eller en intervalldosering
- * ({@link fortsetterUtenNull}), kan ikke trappe ned før den og
- * kan ikke seponere. Bytter (seponering før et annet legemiddel) og regler som
- * bare er tekstlige, er unntatt. Kontrollen og godkjenningen bruker begge
- * denne, så en regel som bryter kravet, er aldri klinisk godkjent, uansett
- * status. Beregningen kontrollerer i tillegg selve planen: den stopper hvis
- * forløpet likevel har en dag uten dose (`nulldagfeil` i `beregning.ts`).
+ * Brudd på kravet om at en ren seponering aldri går til 0 av seg selv uten en
+ * godkjent avslutning (P7.5). Hvert forløp i en beregnbar seponeringsregel,
+ * også et gruppemedlems egne faser, må slutte med en nedtrapping med
+ * individuell avslutning eller en intervalldosering
+ * ({@link fortsetterUtenNull}), eller med en uttrykkelig avslutning med eget
+ * grunnlag ({@link Avslutning}, regelmodell 12): en nedtrapping med
+ * avslutning eller en seponering med avslutning. Det kan ikke trappe ned før
+ * siste fase og kan ikke seponere uten en slik avslutning. Bytter
+ * (seponering før et annet legemiddel) og regler som bare er tekstlige, er
+ * unntatt. Kontrollen og godkjenningen bruker begge denne, så en regel som
+ * bryter kravet, er aldri klinisk godkjent, uansett status. Beregningen
+ * kontrollerer i tillegg selve planen: den stopper hvis forløpet likevel har
+ * en dag uten dose før avslutningen (`nulldagfeil` i `beregning.ts`).
  */
 export function nulltrinnfeil(r: Pick<Regel, 'plan' | 'beregnbarhet' | 'medlemmer'>): string[] {
   if (!erRenSeponering(r)) return []
@@ -706,13 +831,16 @@ export function nulltrinnfeil(r: Pick<Regel, 'plan' | 'beregnbarhet' | 'medlemme
     ]
     return varianter.flatMap(([hvor, faser]) => {
       const sist = faser.at(-1)
+      const godkjent = !!avslutningFor(sist)
       return [
-        ...(faser.some((x) => x.type === 'seponer') ? [`${hvor} seponerer; ingen avslutning er godkjent, så en seponeringsregel kan ikke seponere`] : []),
+        ...(faser.some((x) => x.type === 'seponer' && !(x === sist && x.avslutning))
+          ? [`${hvor} seponerer; ingen avslutning er godkjent, så en seponeringsregel kan ikke seponere`]
+          : []),
         // En nedtrapping uten individuell avslutning går til 0, så bare den siste fasen kan trappe ned.
         ...(faser.slice(0, -1).some((x) => x.type === 'nedtrapping')
           ? [`${hvor} trapper ned før siste fase; bare siste fase kan trappe ned, så forløpet aldri er på 0 mg underveis`]
           : []),
-        ...(!fortsetterUtenNull(sist)
+        ...(!fortsetterUtenNull(sist) && !godkjent
           ? [`${hvor} slutter ikke med en nedtrapping med individuell avslutning eller en intervalldosering; ingen avslutning er godkjent, så en seponeringsregel kan ikke gå til null`]
           : []),
       ]
@@ -720,8 +848,62 @@ export function nulltrinnfeil(r: Pick<Regel, 'plan' | 'beregnbarhet' | 'medlemme
   })
 }
 
+/** Den godkjente avslutningen i en fase (en nedtrapping eller seponering med {@link Avslutning}); ellers `undefined`. */
+export const avslutningFor = (f: Fase | undefined): Avslutning | undefined =>
+  f?.type === 'nedtrapping' && typeof f.avslutning === 'object' ? f.avslutning : f?.type === 'seponer' ? f.avslutning : undefined
+
+/**
+ * Hvorfor regelen aldri kan gi en komplett plan til sluttmålet for
+ * gruppemedlemmet `medlem` (Peders beslutning 03.11.2026): et forløp uten
+ * beregning, en nedtrapping med individuell avslutning eller en
+ * intervalldosering avsluttes alltid individuelt. Tom når planen kan bli
+ * komplett; om den blir det, avgjør beregningen med dosene og FEST.
+ */
+export function komplettfeil(r: Pick<Regel, 'plan' | 'medlemmer'>, medlem?: string): string[] {
+  return r.plan.forlop.flatMap((f) => {
+    const faser = (f.virkestoff.type === 'gruppe' && r.medlemmer?.find((m) => m.nokkel === medlem)?.faser) || f.faser
+    return faser.some((x) => x.type === 'uten_beregning' || fortsetterUtenNull(x)) ? [`forløp ${f.id} avsluttes alltid individuelt eller uten beregning`] : []
+  })
+}
+
 /** Om en fase avslutter et forløp uten å gå til 0: en nedtrapping med individuell avslutning eller en intervalldosering. */
 export const fortsetterUtenNull = (f: Fase | undefined) => (f?.type === 'nedtrapping' && f.avslutning === 'individuell') || f?.type === 'intervalldosering'
+
+/** Fasene legemidlet pasienten bruker kan ha i et tillegg: det fortsetter, og planen seponerer det aldri. */
+const TILLEGG_FRA: readonly Fase['type'][] = ['uendret', 'hold', 'vedlikehold', 'uten_beregning']
+/** Fasene som lar et forløp fortsette når planen slutter. */
+const FORTSETTER: readonly Fase['type'][] = ['uendret', 'vedlikehold', 'uten_beregning']
+
+/**
+ * Brudd på retningen i et tillegg (regelmodell 12): regelen har et legemiddel
+ * som legges til (`til`), legemidlet pasienten bruker (forløpet som starter
+ * fra aktuell dose) fortsetter og blir aldri trappet ned eller seponert i
+ * planen, og tillegget slutter på en dose som fortsetter. Gjelder bare
+ * tillegg; kontrollen og godkjenningen bruker begge denne.
+ */
+export function tilleggsfeil(r: Pick<Regel, 'plan' | 'til'>): string[] {
+  const tillegg = r.plan.form === 'tillegg'
+  const feil: string[] = []
+  if (!tillegg) return feil
+  if (!r.til) feil.push('et tillegg må ha et legemiddel som legges til')
+  const fra = r.plan.forlop.filter((f) => f.utgangsdose === 'startdose')
+  const nye = r.plan.forlop.filter((f) => f.utgangsdose !== 'startdose')
+  if (fra.length !== 1) feil.push('et tillegg må ha nøyaktig ett forløp for legemidlet pasienten bruker (utgangsdose startdose)')
+  if (nye.length === 0) feil.push('et tillegg må ha et forløp for legemidlet som legges til')
+  for (const f of fra) {
+    if (f.faser.some((x) => !TILLEGG_FRA.includes(x.type))) feil.push(`forløp ${f.id} er legemidlet pasienten bruker og kan bare fortsette (${TILLEGG_FRA.join(', ')}), ikke trappes ned eller seponeres`)
+    // Holdes eller vedlikeholdes legemidlet, er det på dosen pasienten bruker; en annen dose ville endret det.
+    if (f.faser.some((x) => (x.type === 'hold' || x.type === 'vedlikehold') && !(x.dose.type === 'aktuell' || (x.dose.type === 'inndata' && x.dose.navn === 'startdose'))))
+      feil.push(`forløp ${f.id} er legemidlet pasienten bruker og kan bare holdes eller vedlikeholdes på dosen pasienten bruker (aktuell eller startdose)`)
+    const sist = f.faser.at(-1)
+    if (!sist || !FORTSETTER.includes(sist.type)) feil.push(`forløp ${f.id} er legemidlet pasienten bruker og må fortsette når planen slutter`)
+  }
+  for (const f of nye) {
+    const sist = f.faser.at(-1)
+    if (!sist || !['vedlikehold', 'uten_beregning', 'injeksjoner'].includes(sist.type)) feil.push(`forløp ${f.id} er tillegget og må slutte med en dose som fortsetter (vedlikehold)`)
+  }
+  return feil
+}
 
 /** En beregnbar ren seponering: ingen avslutning er godkjent, så den kan aldri gå til 0 ({@link nulltrinnfeil}). */
 export const erRenSeponering = (r: Pick<Regel, 'plan' | 'beregnbarhet'>) => r.plan.form === 'seponering' && r.beregnbarhet !== 'bare_tekstlig'
@@ -735,7 +917,7 @@ export function grunnlagITabeller(r: Pick<Regel, 'plan'>): [string, Grunnlag][] 
   )
 }
 
-/** Alle grunnlag i regelen med stien dit: parametre med begrunnelseskravene og forslagene ved svar, inndata, bekreftelser, unntak, spørsmål, tabeller, valg av dose per trinn, fordeling og det kliniske omfanget. */
+/** Alle grunnlag i regelen med stien dit: parametre med begrunnelseskravene og forslagene ved svar, inndata, bekreftelser, unntak, spørsmål, tabeller, valg av dose per trinn og mellomtrinn, fordeling og det kliniske omfanget. */
 export function alleGrunnlag(r: Regel): [string, Grunnlag][] {
   return [
     ...parametre(r).flatMap(([sti, p]) => [
@@ -747,7 +929,17 @@ export function alleGrunnlag(r: Regel): [string, Grunnlag][] {
     ...[...r.bekreftelser, ...r.unntak, ...(r.sporsmal ?? [])].map((x) => [x.id, x.grunnlag] as [string, Grunnlag]),
     ...grunnlagITabeller(r),
     ...r.plan.forlop.flatMap((f) => f.faser.flatMap((x, i) => (x.type === 'nedtrapping' && x.trinnvalg ? [[`${f.id}.faser[${i}].trinnvalg`, x.trinnvalg] as [string, Grunnlag]] : []))),
+    ...r.plan.forlop.flatMap((f) =>
+      f.faser.flatMap((x, i) => (x.type === 'nedtrapping' && x.strategi.type === 'prosent_av_startdose' && x.strategi.mellomtrinn ? [[`${f.id}.faser[${i}].strategi.mellomtrinn`, x.strategi.mellomtrinn] as [string, Grunnlag]] : [])),
+    ),
     ...r.plan.forlop.flatMap((f) => (f.fordeling ? [[`${f.id}.fordeling`, f.fordeling.grunnlag] as [string, Grunnlag]] : [])),
+    ...r.plan.forlop.flatMap((f) => (f.vurderinger ?? []).map((v) => [`${f.id}.vurderinger.${v.id}`, v.grunnlag] as [string, Grunnlag])),
+    ...r.plan.forlop.flatMap((f) =>
+      f.faser.flatMap((x, i): [string, Grunnlag][] => {
+        const a = avslutningFor(x)
+        return [...(a ? [[`${f.id}.faser[${i}].avslutning`, a.grunnlag] as [string, Grunnlag]] : []), ...(x.type === 'uendret' ? [[`${f.id}.faser[${i}].uendret`, x.grunnlag] as [string, Grunnlag]] : [])]
+      }),
+    ),
     ...(r.klinisk_omfang ? [['klinisk_omfang', r.klinisk_omfang.grunnlag] as [string, Grunnlag]] : []),
     ...(r.klinisk_omfang?.uten_deling ? [['klinisk_omfang.uten_deling', r.klinisk_omfang.uten_deling.grunnlag] as [string, Grunnlag]] : []),
   ]

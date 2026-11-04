@@ -19,18 +19,19 @@ import {
   skjemaFor,
   TOMT_SKJEMA,
   spennFor,
+  doseenhet,
   trengerMaldose,
   ubesvart,
   valgidentitet,
   type Planskjema,
 } from '../../verktoy/doseplan'
 import type { Kildeformulering } from '../../verktoy/kartlegging'
-import { foretrukketTekst, trinndosetekst, type Doseplanresultat, type Formalternativer, type Trinnvalg } from '../../verktoy/motor/plan'
+import { foretrukketTekst, mellomtrinntekst, tempotekst, trinndosetekst, type Doseplanresultat, type Formalternativer, type Trinnvalg } from '../../verktoy/motor/plan'
 import { planvisning, type Planvisning } from '../../verktoy/planvisning'
-import { finnVirkestoff, KARTLEGGING, VERKTOY, verktoyFor, virkestoffvalg, type Verktoy } from '../../verktoy/register'
+import { finnVirkestoff, KARTLEGGING, VALGTEKSTER, VERKTOY, verktoyFor, virkestoffvalg, type Verktoy } from '../../verktoy/register'
 import { avrund } from '../../verktoy/regler/beregning'
 import { KONTROLLUTFALL, kontrollutfall } from '../../verktoy/regler/godkjenning'
-import type { Regel, Regelsett } from '../../verktoy/regler/modell'
+import { gjeldendeBekreftelser, type Regel, type Regelsett } from '../../verktoy/regler/modell'
 import {
   FOR_SEN,
   gjelder,
@@ -433,8 +434,9 @@ function Verktoyskjema({
   const [lagretSkjema, setSkjema] = useBevart<Planskjema>('skjema', TOMT_SKJEMA, SKJEMAFORM)
 
   const fra = lesVirkestoffvalg(valgene, fraTekst, fraForm)
-  const til = verktoy.type === 'bytte' ? lesVirkestoffvalg(valgene, tilTekst, tilForm) : undefined
-  const valg: Verktoyvalg | undefined = fra && (verktoy.type === 'seponering' || til) ? { fra, ...(til && { til }) } : undefined
+  const tekster = VALGTEKSTER[verktoy.type]
+  const til = tekster.til ? lesVirkestoffvalg(valgene, tilTekst, tilForm) : undefined
+  const valg: Verktoyvalg | undefined = fra && (!tekster.til || til) ? { fra, ...(til && { til }) } : undefined
   // Skjemaet gjelder bare valgene det ble fylt ut for; andre valg begynner med et tomt skjema.
   const identitet = valg ? valgidentitet(valg) : ''
   const skjema = skjemaFor(lagretSkjema, identitet)
@@ -505,18 +507,18 @@ function Verktoyskjema({
 
       <form className="verktoyskjema" onSubmit={(e) => e.preventDefault()} aria-label="Valg">
         <fieldset className="feltgruppe">
-          <legend>{verktoy.type === 'seponering' ? 'Legemidlet' : 'Byttet'}</legend>
+          <legend>{tekster.gruppe}</legend>
           <div className="feltrad verktoyskjema__virkestoffer">
             <Virkestoffelt
-              etikett={verktoy.type === 'seponering' ? 'Virkestoff pasienten bruker' : 'Bytte fra'}
+              etikett={tekster.fra}
               valg={valgene}
               tekst={fraTekst}
               formulering={fraForm}
               onTekst={nyttVirkestoff(fraTekst, setFraTekst, setFraForm)}
               onFormulering={setFraForm}
             />
-            {verktoy.type === 'bytte' && (
-              <Virkestoffelt etikett="Bytte til" valg={valgene} tekst={tilTekst} formulering={tilForm} onTekst={nyttVirkestoff(tilTekst, setTilTekst, setTilForm)} onFormulering={setTilForm} />
+            {tekster.til && (
+              <Virkestoffelt etikett={tekster.til} valg={valgene} tekst={tilTekst} formulering={tilForm} onTekst={nyttVirkestoff(tilTekst, setTilTekst, setTilForm)} onFormulering={setTilForm} />
             )}
           </div>
         </fieldset>
@@ -533,7 +535,7 @@ function Verktoyskjema({
       {hele.length > 0 && <Sperremelding sperrer={hele} regelsett={regelsett} />}
       {!valg || !status ? (
         <p className="verktoyside__hint">
-          {verktoy.type === 'seponering' ? 'Velg virkestoffet' : 'Velg begge virkestoffene'} for å se hva verktøyet kan beregne.
+          {tekster.velg} for å se hva verktøyet kan beregne.
         </p>
       ) : !klinisk ? (
         <Statusvisning status={status} varsler={varsler} />
@@ -771,6 +773,9 @@ function Beregningsdel({
   const tilNavn = navnPaa(valg.til?.nokkel)
   const fraAdm = regel && fraForlop(regel)?.administrasjon === 'depotinjeksjon' ? ' (depot)' : ''
   const tilAdm = regel && tilForlop(regel)?.administrasjon === 'depotinjeksjon' ? ' (depot)' : ''
+  const startenhet = doseenhet(regel, 'startdose')
+  // Bekreftelser som bare gjelder ved et bestemt svar, vises først når svaret er gitt.
+  const bekreftelser = regel ? gjeldendeBekreftelser(regel, skjema.svar) : []
   const sporsmal = regel?.sporsmal ?? []
   const varsel = regel && <Regelvarsler tilstand={varsler} regel={regel} />
 
@@ -805,8 +810,8 @@ function Beregningsdel({
           <div className="feltrad">
             <label className="skjemafelt">
               <span>
-                Aktuell døgndose av {fraNavn.toLowerCase()}
-                {fraAdm} (mg)
+                {startenhet ? 'Aktuell dose' : 'Aktuell døgndose'} av {fraNavn.toLowerCase()}
+                {fraAdm} ({startenhet ?? 'mg'})
               </span>
               <Tallfelt value={skjema.startdose} onChange={(v) => sett('startdose', v)} />
             </label>
@@ -814,7 +819,7 @@ function Beregningsdel({
               <label className="skjemafelt">
                 <span>
                   Måldose av {tilNavn.toLowerCase()}
-                  {tilAdm} ({tilAdm ? 'mg per injeksjon' : 'mg per døgn'})
+                  {tilAdm} ({doseenhet(regel, 'maldose') ?? 'mg per døgn'})
                 </span>
                 <Tallfelt value={skjema.maldose} onChange={(v) => sett('maldose', v)} />
               </label>
@@ -968,10 +973,10 @@ function Beregningsdel({
           </fieldset>
         )}
 
-        {regel && regel.bekreftelser.length > 0 && (
+        {bekreftelser.length > 0 && (
           <fieldset className="feltgruppe">
             <legend>Bekreft før beregning</legend>
-            {regel.bekreftelser.map((b) => {
+            {bekreftelser.map((b) => {
               const mangler = apne.bekreftelser.includes(b.id)
               return (
                 <label key={b.id} className="avkryssing avkryssing--felt" data-mangler={mangler || undefined}>
@@ -1100,11 +1105,30 @@ function Trinnvalgdel({ resultat, navn, onVelg }: { resultat: Doseplanresultat |
       {valg.map((t) => (
         <fieldset key={`${t.forlop}-${t.trinn}`} className="feltgruppe">
           <legend>
-            Trinn {t.trinn} av {navn(t.forlop)} kan ikke gis nøyaktig
+            {t.mellomtrinn ? `Trinn ${t.trinn} av ${navn(t.forlop)}: et mindre siste trinn kan velges` : `Trinn ${t.trinn} av ${navn(t.forlop)} kan ikke gis nøyaktig`}
           </legend>
           <p className="feltgruppe__hjelp">
-            Den foretrukne reduksjonen til {foretrukketTekst(t)} kan ikke gis med preparatene. Velg en dose som kan gis; den faktiske reduksjonen må være innenfor det foretrukne
-            området {tall(t.omrade[0])}–{tall(t.omrade[1])} %. Verktøyet velger ikke selv, og planen beregnes på nytt fra dosen du velger.
+            {t.mellomtrinn ? (
+              <>
+                {mellomtrinntekst(t)} {t.tempo && tempotekst(t.tempo)}
+              </>
+            ) : t.omrade && t.minste_trinn ? (
+              <>
+                Den foretrukne reduksjonen til {foretrukketTekst(t)} kan ikke gis med preparatene, og ingen dose med faktisk reduksjon innenfor det foretrukne området{' '}
+                {tall(t.omrade[0])}–{tall(t.omrade[1])} % kan det. Ved denne lave dosen kan du velge det minste trinnet som kan gis, med faktisk reduksjon høyst{' '}
+                {tall(t.minste_trinn.maks_prosent)} %.
+              </>
+            ) : t.omrade ? (
+              <>
+                Den foretrukne reduksjonen til {foretrukketTekst(t)} kan ikke gis med preparatene. Velg en dose som kan gis; den faktiske reduksjonen må være innenfor det
+                foretrukne området {tall(t.omrade[0])}–{tall(t.omrade[1])} %.
+              </>
+            ) : (
+              <>
+                Den beregnede reduksjonen til {foretrukketTekst(t)} kan ikke gis med preparatene. Velg en av de nærmeste dosene som kan gis. {t.tempo && tempotekst(t.tempo)}
+              </>
+            )}{' '}
+            Verktøyet velger ikke selv, og planen beregnes på nytt fra dosen du velger.
           </p>
           <div className="verktoyskjema__handlinger">
             {t.doser.map((d) => (

@@ -30,7 +30,7 @@ import type { Berort, Overvakingsfunn, Overvakingsrapport } from '../verktoy/ove
 import { lagRegelvarsellager } from '../verktoy/overvaking/regelvarsler'
 import { registrer } from '../verktoy/overvaking/registrering'
 import { lagKildeovervakingslager } from '../verktoy/overvaking/varsling'
-import { FEST_AKSEPTTEST, FEST_PILOT } from '../verktoy/regler/aksepttest'
+import { FEST_PILOT } from '../verktoy/regler/aksepttest'
 import { lesVerktoysperrer } from '../verktoy/sperrer'
 import { kallSom } from './hjelp/fest'
 import { besvarAlt, pilotklokke, pilotlesing, pilotuttrekk } from './hjelp/pilotside'
@@ -46,9 +46,8 @@ Blob.prototype.arrayBuffer ??= function (this: Blob) {
   })
 }
 
-// Pilotuttrekket har sertralin og mirtazapin, aksepttestuttrekket vortioksetin.
+// Pilotuttrekket har sertralin, mirtazapin og paliperidon.
 const PILOT = pilotuttrekk(FEST_PILOT)
-const AKSEPT = pilotuttrekk(FEST_AKSEPTTEST)
 
 /** En godkjent regel slik overvåkingen melder den berørt. */
 function berort(id: string, verktoy: string): Berort {
@@ -147,16 +146,26 @@ describe('produksjonsflyten fra kildesak til verktøysiden (VDR-5)', () => {
     return userEvent.setup()
   }
 
-  /** Bytte fra 100 mg sertralin til mirtazapin; gir planens del når en plan beregnes. */
+  /**
+   * Bytte fra 100 mg sertralin til mirtazapin; gir siden når beregningen er gjort. Startforløpet når ikke sluttmålet, så
+   * klinikeren får ingen delplan, bare at en komplett plan ikke er tilgjengelig (Peders beslutning 03.11.2026). Byttet står derfor
+   * ikke blant snarvalgene og skrives inn.
+   */
   async function sertralinTilMirtazapin() {
     const user = verktoyside('bytte-antidepressiv')
-    await user.click(await screen.findByRole('button', { name: 'Sertralin → mirtazapin' }))
-    await user.type(screen.getByRole('textbox', { name: /Aktuell døgndose av sertralin/ }), '100')
+    await waitFor(() => expect(screen.queryByText(TILGJENGELIGHET_UKONTROLLERT.henter)).toBeNull())
+    expect(screen.queryByRole('button', { name: 'Sertralin → mirtazapin' })).toBeNull()
+    await user.type(screen.getByRole('combobox', { name: 'Bytte fra' }), 'Sertralin')
+    await user.type(screen.getByRole('combobox', { name: 'Bytte til' }), 'Mirtazapin')
+    await user.type(await screen.findByRole('textbox', { name: /Aktuell døgndose av sertralin/ }), '100')
     await besvarAlt(user)
     await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
     await user.selectOptions(await screen.findByRole('combobox', { name: 'Legemiddelform av mirtazapin' }), '53')
     await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
-    return (await screen.findByRole('table')).closest('section')!
+    const stopp = (await screen.findByRole('heading', { name: 'Ingen doseplan' })).closest('section')!
+    expect(stopp.textContent).toMatch(/Komplett plan ikke tilgjengelig: sertralin: /)
+    expect(screen.queryByRole('table')).toBeNull()
+    return stopp.closest('.verktoyside') as HTMLElement
   }
 
   beforeAll(async () => {
@@ -192,12 +201,14 @@ describe('produksjonsflyten fra kildesak til verktøysiden (VDR-5)', () => {
     v = await agent('brukervarsel', { funn: s.id, versjon: v, tekst: 'Under faglig gjennomgang: kilden for takten er revidert.', regler: [{ regel: SERTRALIN.regel, versjon: SERTRALIN.versjon }] })
     v = await agent('faglig_sporsmal', { funn: s.id, versjon: v, sporsmal: sporsmal('revider') })
 
-    // Legen ser varselet ved sertralin → mirtazapin, og planen beregnes som før.
+    // Legen ser varselet ved sertralin → mirtazapin, og beregningen gjøres som før.
     const plan = await sertralinTilMirtazapin()
     expect(within(plan).getByRole('note').textContent).toMatch(/^Under faglig gjennomgang: kilden for takten er revidert\./)
     // Ved vortioksetin, som ikke er berørt, står det ingenting.
     const user = verktoyside('trappe-ned-antidepressiv')
-    await user.click(await screen.findByRole('button', { name: 'Vortioksetin' }))
+    await waitFor(() => expect(screen.queryByText(TILGJENGELIGHET_UKONTROLLERT.henter)).toBeNull())
+    await user.type(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' }), 'Vortioksetin')
+    expect(await screen.findByRole('textbox', { name: /Aktuell døgndose av vortioksetin/ })).toBeTruthy()
     expect(screen.queryByRole('note')).toBeNull()
 
     // Redaktøren får spørsmålet med valg og virkning, og en prikk.
@@ -236,7 +247,7 @@ describe('produksjonsflyten fra kildesak til verktøysiden (VDR-5)', () => {
     const sperrer = lesVerktoysperrer(await kallFor(lege)('les_verktoysperrer', {}))
     expect(sperrer).toEqual([expect.objectContaining({ omfang: 'regel', mal: SERTRALIN.regel })])
 
-    // Sertralin → mirtazapin gir ingen plan og sier hvorfor; vortioksetin beregnes som før.
+    // Sertralin → mirtazapin gir ingen beregning og sier hvorfor; Xeplion, en annen godkjent regel, gir en plan som før.
     let user = verktoyside('bytte-antidepressiv')
     await waitFor(() => expect(screen.queryByText(TILGJENGELIGHET_UKONTROLLERT.henter)).toBeNull())
     expect(screen.queryByRole('button', { name: 'Sertralin → mirtazapin' })).toBeNull()
@@ -245,9 +256,9 @@ describe('produksjonsflyten fra kildesak til verktøysiden (VDR-5)', () => {
     expect((await screen.findByRole('alert', { name: 'Midlertidig deaktivert' })).textContent).toMatch(/Kildesak nr\. \d+: Kilden for byttet er revidert/)
     expect(screen.queryByRole('button', { name: 'Beregn doseplan' })).toBeNull()
 
-    user = verktoyside('trappe-ned-antidepressiv', AKSEPT)
-    await user.click(await screen.findByRole('button', { name: 'Vortioksetin' }))
-    await user.type(await screen.findByRole('textbox', { name: /Aktuell døgndose av vortioksetin/ }), '20')
+    user = verktoyside('bytte-antipsykotikum')
+    await user.click(await screen.findByRole('button', { name: 'Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)' }))
+    await user.type(await screen.findByRole('textbox', { name: /Aktuell døgndose av paliperidon/ }), '6')
     await besvarAlt(user)
     await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
     expect(await screen.findByRole('table')).toBeTruthy()
@@ -257,7 +268,7 @@ describe('produksjonsflyten fra kildesak til verktøysiden (VDR-5)', () => {
     expect(lukket).toMatchObject({ tilstand: 'avsluttet', utfall: 'tiltak_kontrollert', tiltak: [{ status: 'kontrollert', regel: SERTRALIN.regel }] })
     expect(lukket.hendelser.map((h) => h.art)).toEqual(expect.arrayContaining(['teknisk_konklusjon', 'faglig_sporsmal', 'beslutning']))
 
-    // Administratoren opphever nødstoppen med en grunn: regelen gir plan igjen, og sperren står i historikken.
+    // Administratoren opphever nødstoppen med en grunn: regelen beregnes igjen, og sperren står i historikken.
     await kallFor(admin)('opphev_verktoysperre', { sperre: sperrer[0]!.id, grunn: 'Ny versjon vurdert; syntetisk.' })
     expect(lesVerktoysperrer(await kallFor(lege)('les_verktoysperrer', {}))).toEqual([])
     expect(await sertralinTilMirtazapin()).toBeTruthy()

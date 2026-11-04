@@ -151,7 +151,17 @@ Motoren ble kjørt på pilotreglenes regneeksempler med FEST-filen lastet ned 28
 - *Godkjenningsfritak, avregistrering og 48 timer:* kan beholdes som beskrevet; ferskheten er nå et positivt krav (§9).
 - *Pilotreglene:* depotpreparat og toleranser krever nye, sporbare regelversjoner og egen P4.8-kontroll. At P5 stopper for dagens regler, er riktig.
 
-## 12. Hva som ikke er gjort
+## 12. Komplette forløp (doseplanmotor 10, 03.11.2026)
+
+Felles grunnlag for leveransene K1–K4 i `docs/verktøy-klinisk-leveranseplan-2026-11.md`. Ingen eksisterende regel, godkjenning eller fingeravtrykk er endret; testtilfellene for de godkjente reglene gir de samme dosene som før.
+
+- **Planutfall.** Hvert forløp har et konkret sluttmål fra beregningen (`Forlopsresultat.mal`): seponert etter regelens nedtrapping, seponering eller hold; vedlikehold på en bestemt dose (forskriverens måldose når regelen bruker den); depotvedlikehold med regelens dose; eller uendret dose. En plan er *komplett til sluttmålet* bare når den praktiske planen faktisk ender der i hvert forløp: en annen vedlikeholdsdose (også innenfor toleransen), en oppstartsdose som fortsetter, et annet depotmål, faste doser som bare slutter, en individuell avslutning eller et forløp uten beregning gir en *delplan* (`sluttmalMangler` i `motor/plan.ts`, ChatGPTs kontroll av 30eadd5). Klinikere får bare komplette planer: en delplan stopper i `kliniskDoseplan` med «Komplett plan ikke tilgjengelig» og hva den ikke dekker per legemiddel, og ingen doser vises (Peders beslutning 03.11.2026). Planen sier øverst at den er komplett og hva sluttmålet er, også i kopien. Av de godkjente reglene gir i dag bare de to depotoppstartene en plan; vortioksetin v12 og sertralin → mirtazapin v10 gir delplaner og vises derfor ikke. Kontrollgrunnlagene (VDK-3 og rettelsen) bruker `kliniskDelplan`, som viser hva motoren beregner uten kravet.
+- **Godkjent avslutning.** Avslutningen gjelder bare der regelens egen nedtrapping ender innenfor grensen (regelens trinn, laveste dose og forskriverens valg). Kan neste trinn ikke gis med preparatene, seponeres legemidlet aldri fra trinnet før, heller ikke innenfor grensen: en manglende styrke eller et utgått preparat er ikke et faglig grunnlag for siste dose, så planen stopper og er en delplan (ChatGPTs kontroll av 30eadd5). Kan forskriveren velge en dose for neste trinn, avsluttes planen ikke før valget er gjort. Stopper planen på en dose over grensen, sier den det, også når en dose kan velges for neste trinn. Det gjelder både i teksten og i det planen ikke dekker. Fjernes valgene fordi de ville delt tabletter uten dokumentert deling, sier planen det også.
+- **Vurderingspunkter** står som egne rader i tabellen (før endringen eller etter den) og samlet under «Vurderingspunkter», med hva som gjøres ved funn.
+- **Uendret dose og depot som stoppes.** Et forløp uten doser å sette sammen (bare seponering, uendret dose eller uten beregning) bruker ingen preparater, og verktøysiden ber ikke om legemiddelform for det. Et depot som stoppes, står som «Seponert – ingen flere injeksjoner».
+- **Opptrapping annenhver dag** settes sammen som en vanlig dose per gang og vises med «annenhver dag».
+
+## 13. Hva som ikke er gjort
 
 - Brukerflaten kom i P6: appen bruker motoren bare gjennom `kliniskDoseplan` i `src/verktoy/doseplan.ts`, og `src/__tests__/verktoyapp.test.ts` håndhever at modellberegningene og de syntetiske testdataene ikke når appen. De enkelte verktøyene (P7–P10) gjenstår.
 - Ingen regel var klinisk godkjent i P5; godkjenningene som er gitt senere, står i `docs/verktøy-p7-nedtrapping.md` §11.

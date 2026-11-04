@@ -24,9 +24,10 @@ import type { Klinisktilfelle, Regel } from './regler/modell'
 import { STI } from './regler/nedtrapping'
 import { avregistrert, avvikFra, kjorKasus, type Kontrollregel, nyStyrke, type Pilotkasus, type Pilotutfall, SIMULERT_KONTROLLOR, simulerGodkjenning, type Uttrekkene } from './regler/pilotmatrise'
 import { grunnlag, liste, tabell, tall, utsagn } from './regler/rapport'
+import { inndatavilkar } from './regler/beregning'
 import { EN_FORSTE_REDUKSJON, STARTFORLOP } from './planvisning'
-import { tilfelletekst, UTENFOR_OMFANG } from './motor/plan'
-import { REGELSETT, type Verktoyvalg } from './tilgjengelighet'
+import { kliniskDelplan, tilfelletekst, UTENFOR_OMFANG } from './motor/plan'
+import { REGELSETT, REGELSETTENE, type Verktoyvalg } from './tilgjengelighet'
 
 export { type Kontrollregel, SIMULERT_KONTROLLOR }
 
@@ -102,7 +103,7 @@ const lik = (a: number, b: number) => Math.abs(a - b) < 1e-9
 /** Kasuset med forskriverens valg gjort ett og ett, slik på verktøysiden; `feil` når et valg ikke tilbys. */
 export function kjorKontrollkasus(k: Kontrollkasus, uttrekkene: Uttrekkene): ReturnType<typeof kjorKasus> & { feil: string[] } {
   let trinnvalg = k.skjema?.trinnvalg ?? []
-  const kjor = () => kjorKasus({ ...k, skjema: { ...k.skjema, trinnvalg } }, uttrekkene)
+  const kjor = () => kjorKasus({ ...k, skjema: { ...k.skjema, trinnvalg } }, uttrekkene, REGELSETTENE, kliniskDelplan)
   let u = kjor()
   for (const mg of k.velger ?? []) {
     const t = u.resultat?.trinnvalg?.[0]
@@ -174,12 +175,12 @@ export function planerFor(f: Kontrollforslag, k: Kontrollregel, tilfelle: Klinis
     regel: somGodkjent(k, f.dato),
     forventet: { utfall: 'sperret' },
   }
-  const forsok = kjorKasus(grunn, uttrekkene)
+  const forsok = kjorKasus(grunn, uttrekkene, REGELSETTENE, kliniskDelplan)
   const formvalg = forsok.utfall === 'formvalg' && form ? Object.fromEntries(forsok.forlop.map((id) => [id, { legemiddelform: form }])) : {}
   const veier: Planvei[] = []
   const folg = (valg: Planvalg[]) => {
     const trinnvalg = valg.map((v) => ({ forlop: v.trinn.forlop, trinn: v.trinn.trinn, fra_mg: v.trinn.fra_mg, mg: v.valgt }))
-    const u = kjorKasus({ ...grunn, skjema: { ...grunn.skjema, formvalg, trinnvalg } }, uttrekkene)
+    const u = kjorKasus({ ...grunn, skjema: { ...grunn.skjema, formvalg, trinnvalg } }, uttrekkene, REGELSETTENE, kliniskDelplan)
     const t = u.resultat?.trinnvalg?.[0]
     if (!t || valg.length >= MAKS_VALG) return void veier.push({ valg, utfall: u })
     for (const d of t.doser) folg([...valg, { trinn: t, valgt: d.mg }])
@@ -427,7 +428,7 @@ export function lagKontrollgrunnlag(f: Kontrollforslag, uttrekkene: Uttrekkene):
   const regelavsnitt = regler
     .map(({ k, r }) => {
       const betingelser = [
-        ...r.bekreftelser.map((b) => `Må bekreftes (\`${b.id}\`): ${b.tekst} (${grunnlag(b.grunnlag)})`),
+        ...r.bekreftelser.map((b) => `Må bekreftes (\`${b.id}\`)${inndatavilkar(b, r.sporsmal)}: ${b.tekst} (${grunnlag(b.grunnlag)})`),
         ...r.unntak.map((x) => `Unntak (\`${x.id}\`): ${x.tekst} (${grunnlag(x.grunnlag)})`),
         ...(r.sporsmal ?? []).map((x) => `Må besvares (\`${x.id}\`): ${x.tekst}${x.krever_begrunnelse ? ' Et ja krever en skriftlig begrunnelse.' : ''} (${grunnlag(x.grunnlag)})`),
       ]
@@ -466,7 +467,7 @@ ${liste(omfang)}`
 
 **${f.tittel}.** Grunnlag for uavhengig faglig kontroll av forslag ${f.nr} i \`docs/verktøy-vdk2-prioritering.md\`, laget ${norskDato(f.dato)}.
 
-**Ingen regel er godkjent eller aktivert, og denne PR-en endrer ingen regel.** Verktøyet tilbyr i dag ingen beregning for disse reglene (kasus ${f.kasus.filter((k) => !k.regel).map((k) => k.id).join(', ')}). For å vise hva verktøyet ville vist om nøyaktig disse versjonene ble godkjent, er planene under regnet på en kopi av hver regel med en simulert godkjenning («${SIMULERT_KONTROLLOR}»), gjennom den samme veien som verktøysiden og med de norske preparatene i FEST-uttrekket hentet ${norskDato(u.hentet.slice(0, 10))}. Kopien lagres ikke og brukes ikke av appen. Kasusene er syntetiske; pasientopplysninger inngår ikke, og ingen tekst fra Psychiatrienet vises.
+**Ingen regel er godkjent eller aktivert, og denne PR-en endrer ingen regel.** Verktøyet tilbyr i dag ingen beregning for disse reglene (kasus ${f.kasus.filter((k) => !k.regel).map((k) => k.id).join(', ')}). For å vise hva verktøyet ville vist om nøyaktig disse versjonene ble godkjent, er planene under regnet på en kopi av hver regel med en simulert godkjenning («${SIMULERT_KONTROLLOR}»), gjennom den samme veien som verktøysiden og med de norske preparatene i FEST-uttrekket hentet ${norskDato(u.hentet.slice(0, 10))}. Kopien lagres ikke og brukes ikke av appen. En plan som ikke når sluttmålet (en delplan), står her slik motoren beregner den, for kontrollens skyld: verktøysiden viser aldri en delplan, men «Komplett plan ikke tilgjengelig» med grunnen (Peders beslutning 03.11.2026). Kasusene er syntetiske; pasientopplysninger inngår ikke, og ingen tekst fra Psychiatrienet vises.
 
 ${f.avgrensning ? `**Kontrollørens avgrensning ${norskDato(f.avgrensning.dato)} (ChatGPT):** ${f.avgrensning.tekst}\n\n` : ''}## 1. Regelversjonene til kontroll
 
@@ -488,7 +489,7 @@ ${regelavsnitt}
 
 ## 5. Alle planer i det kliniske omfanget
 
-Hver startdose i hvert tilfelle i reglenes kliniske omfang, med hver plan forskriverens valg kan gi: ved hvert trinn som ikke kan gis nøyaktig, er hver dose som tilbys, fulgt. ${enDose ? `I alle ${alleValg.length} valgene tilbys nøyaktig én dose, så hver startdose gir én plan.` : 'Noen valg tilbyr flere doser, og hver gir sin egen plan.'} Radene er slik verktøysiden og kopien av planen ville vist dem; dagene er minstetider, og hvert trinn forutsetter en ny vurdering.
+Hver startdose i hvert tilfelle i reglenes kliniske omfang, med hver plan forskriverens valg kan gi: ved hvert trinn som ikke kan gis nøyaktig, er hver dose som tilbys, fulgt. ${enDose ? `I alle ${alleValg.length} valgene tilbys nøyaktig én dose, så hver startdose gir én plan.` : 'Noen valg tilbyr flere doser, og hver gir sin egen plan.'} Radene er slik planen og kopien av den ville stått om delplaner ble vist; dagene er minstetider, og hvert trinn forutsetter en ny vurdering.
 
 ${oversikt}
 

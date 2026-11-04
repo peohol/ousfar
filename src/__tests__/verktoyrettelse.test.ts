@@ -15,7 +15,7 @@ import { henvisninger, type Kildehenvisning, type Regel } from '../verktoy/regle
 import { NEDTRAPPINGSDISPOSISJON, NEDTRAPPINGSSETT, NEDTRAPPINGSSETT_FOR_RETTELSENE } from '../verktoy/regler/nedtrapping'
 import { PILOTDISPOSISJON, PILOTSETT, PILOTSETT_FOR_RETTELSENE } from '../verktoy/regler/pilotsett'
 import { rett, rettRegel } from '../verktoy/regler/rettelse'
-import { FOR_RETTELSENE, forventedeLinjeendringer, lagRettelseskontroll, matrisesammenligning, RETTELSESKONTROLLFIL, rettelsesrader, synlig, tilGodkjenning } from '../verktoy/rettelseskontroll'
+import { FOR_RETTELSENE, forventedeLinjeendringer, forventetFor, lagRettelseskontroll, matrisesammenligning, RETTELSESKONTROLLFIL, rettelsesrader, synlig, tilGodkjenning } from '../verktoy/rettelseskontroll'
 import { REGELSETT, REGELSETTENE } from '../verktoy/tilgjengelighet'
 
 const les = (fil: string) => readFileSync(new URL(`../../${fil}`, import.meta.url), 'utf8')
@@ -71,7 +71,8 @@ describe('Faktumet', () => {
 
 describe('Regelsettene før og etter rettelsen', () => {
   it('er de samme settene; settene før rettelsen er appversjon 1.122.1, og appens sett har ny versjon', () => {
-    expect(FOR_RETTELSENE.map((s) => s.id)).toEqual(REGELSETTENE.map((s) => s.id))
+    // Leveransenes sett (K2–K4, regelmodell 12) kom etter rettelsen og står etter de to rettede settene.
+    expect(FOR_RETTELSENE.map((s) => s.id)).toEqual(REGELSETTENE.slice(0, FOR_RETTELSENE.length).map((s) => s.id))
     expect([PILOTSETT_FOR_RETTELSENE.versjon, PILOTSETT.versjon]).toEqual([16, 17])
     expect([NEDTRAPPINGSSETT_FOR_RETTELSENE.versjon, NEDTRAPPINGSSETT.versjon]).toEqual([14, 15])
     for (const [i, s] of FOR_RETTELSENE.entries()) {
@@ -210,7 +211,7 @@ describe('Kontrollgrunnlaget', () => {
       const for_ = x.for.tekst!.split('\n')
       const etter = x.etter.tekst!.split('\n')
       expect(etter.length, x.kasus.id).toBe(for_.length)
-      const forventet = endringer.get(x.etter.resultat!.regel.id) ?? []
+      const forventet = forventetFor(endringer, x.etter.resultat)
       // Hver linje som er ulik, er en av de forventede, og står med samme linje før rettelsen på samme plass.
       etter.forEach((l: string, i: number) => {
         if (l === for_[i]) return

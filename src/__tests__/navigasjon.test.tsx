@@ -231,6 +231,7 @@ describe('sidemenyen', { timeout: 20_000 }, () => {
       '#/verktoy/trappe-ned-antidepressiv',
       '#/verktoy/bytte-antidepressiv',
       '#/verktoy/bytte-antipsykotikum',
+      '#/verktoy/kombinere-stemningsstabiliserende',
       '#/verktoy',
     ])
     // Tabulator går rundt i de synlige feltene, ikke inn i den skjulte fanen.

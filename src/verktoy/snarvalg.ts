@@ -9,13 +9,16 @@
  * {@link tilgjengelighet}, den samme kontrollen siden bruker når noe er valgt.
  * Her avgjøres altså ingenting klinisk: et snarvalg er bare et utfylt valg,
  * og beregningen kontrollerer regel, godkjenning, omfang, FEST og sperrer
- * på nytt som ellers.
+ * på nytt som ellers. Et valg tilbys bare som beregnbart når en av reglene
+ * kan gi en komplett plan til sluttmålet ({@link komplettfeil}); klinikere
+ * får aldri en delplan, så et valg som alltid stopper, ville vært et tomt
+ * valg (leveranseplanen §3).
  */
 import type { Kildeformulering } from './kartlegging'
 import { FORMULERINGSNAVN, virkestoffvalg, type Verktoy, type Verktoyvirkestoff } from './register'
-import type { Regel, Regelsett } from './regler/modell'
+import { komplettfeil, type Regel, type Regelsett } from './regler/modell'
 import { usperrede, type Verktoysperre } from './sperrer'
-import { REGELSETT, tilgjengelighet, type Valgtvirkestoff, type Verktoyvalg } from './tilgjengelighet'
+import { medlemFor, REGELSETT, tilgjengelighet, type Valgtvirkestoff, type Verktoyvalg } from './tilgjengelighet'
 
 export interface Snarvalg {
   valg: Verktoyvalg
@@ -61,8 +64,9 @@ export function snarvalg(verktoy: Verktoy, regelsett: Regelsett = REGELSETT): Sn
   const rang = { tilgjengelig: 0, fagtekst: 1 } as const
   const ut = par
     .flatMap(({ valg, tekst }): Snarvalg[] => {
-      const { status, regler } = tilgjengelighet(verktoy, valg, regelsett)
-      return status === 'tilgjengelig' || status === 'fagtekst' ? [{ valg, status, tekst, regler: regler.map((r) => ({ id: r.id })) }] : []
+      const t = tilgjengelighet(verktoy, valg, regelsett)
+      const regler = t.status === 'tilgjengelig' ? t.regler.filter((r) => komplettfeil(r, medlemFor(r, valg)).length === 0) : t.regler
+      return (t.status === 'tilgjengelig' && regler.length > 0) || t.status === 'fagtekst' ? [{ valg, status: t.status, tekst, regler: regler.map((r) => ({ id: r.id })) }] : []
     })
     .sort((a, b) => rang[a.status] - rang[b.status] || a.tekst.localeCompare(b.tekst, 'nb'))
   perVerktoy.set(verktoy.id, ut)

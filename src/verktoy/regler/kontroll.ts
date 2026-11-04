@@ -21,6 +21,7 @@ import {
   alleGrunnlag,
   henvisninger,
   nulltrinnfeil,
+  tilleggsfeil,
   parameterfeil,
   parametre,
   REGELMODELLVERSJON,
@@ -63,8 +64,9 @@ function avvikendePart(part: Kildepart, v: Virkestoffvalg, administrasjon: Admin
 /** At P3-oppføringen er samme slags anbefaling, i samme retning, for samme virkestoffer og formuleringer som regelen. */
 function referansefeil(r: Regel, a: Kildeanbefaling): string[] {
   const feil: string[] = []
-  if (a.type === 'tillegg') feil.push('er en anbefaling om tillegg, ikke om bytte eller seponering')
-  else if ((a.type === 'seponering') !== (r.til === null)) feil.push(`er en anbefaling om ${a.type}, men regelen ${r.til ? 'bytter' : 'seponerer'}`)
+  const tillegg = r.plan.form === 'tillegg'
+  if ((a.type === 'tillegg') !== tillegg) feil.push(tillegg ? `er en anbefaling om ${a.type}, men regelen legger til et legemiddel` : 'er en anbefaling om tillegg, ikke om bytte eller seponering')
+  else if (!tillegg && (a.type === 'seponering') !== (r.til === null)) feil.push(`er en anbefaling om ${a.type}, men regelen ${r.til ? 'bytter' : 'seponerer'}`)
   const fraForlop = r.plan.forlop[0]
   const tilForlop = r.til ? r.plan.forlop.slice(1).find((x) => like(x.virkestoff, r.til)) : undefined
   const fra = avvikendePart(a.fra, r.fra, fraForlop?.administrasjon)
@@ -129,6 +131,7 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
     if (!x.omrade && !x.verdier) f(`inndatakravet for ${x.navn} har verken område eller verdier`)
     if (x.gjelder_medlem && !r.medlemmer?.some((m) => m.nokkel === x.gjelder_medlem)) f(`inndatakravet gjelder ${x.gjelder_medlem}, som ikke er medlem`)
     if (x.ved && !r.sporsmal?.some((s) => s.id === x.ved!.sporsmal)) f(`inndatakravet for ${x.navn} gjelder spørsmålet ${x.ved.sporsmal}, som regelen ikke har`)
+    if (x.enhet !== undefined && !x.enhet.trim()) f(`inndatakravet for ${x.navn} har en tom enhet`)
     if (x.krever_begrunnelse && x.art === 'bindende_krav') f(`inndatakravet for ${x.navn} er bindende, men kan begrunnes bort; en forsiktighetsgrense må være veiledende`)
   }
   // Fordelingen av døgndosen: en grense og minst to doser.
@@ -201,6 +204,7 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
     }
   }
 
+  for (const b of r.bekreftelser) if (b.ved && !r.sporsmal?.some((s) => s.id === b.ved!.sporsmal)) f(`bekreftelsen ${b.id} gjelder spørsmålet ${b.ved.sporsmal}, som regelen ikke har`)
   // Spørsmålene har tekst og en id ingen bekreftelse eller unntak bruker.
   const betingelser = [...r.bekreftelser, ...r.unntak, ...(r.sporsmal ?? [])].map((x) => x.id)
   for (const id of new Set(betingelser)) if (betingelser.filter((x) => x === id).length > 1) f(`id-en ${id} brukes av flere bekreftelser, unntak eller spørsmål`)
@@ -211,23 +215,60 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
   for (const x of r.plan.forlop) {
     for (const fase of x.faser) {
       if (fase.type !== 'nedtrapping') continue
-      const individuell = fase.avslutning === 'individuell'
+      // En godkjent avslutning (regelmodell 12) regner trinnene som en individuell avslutning, men seponerer fra en dose den gjelder for.
+      const godkjent = typeof fase.avslutning === 'object'
+      const individuell = fase.avslutning === 'individuell' || godkjent
       const slutt = fase.strategi.type === 'prosent_av_aktuell' ? fase.strategi.sluttdose_mg : undefined
       const sluttdose = !!slutt
       if (individuell && fase.minste_varighet) f(`forløp ${x.id} har både minste varighet og individuell avslutning; uten seponering har nedtrappingen ingen slutt å måle til`)
       // Uten seponering trengs en teknisk planhorisont. Ved seponering ville en sluttdose vært en nedre grense ingen har godkjent (P7.5);
       // ved bytte er den der beregningen stopper og resten vurderes individuelt, og den må ha en kilde.
-      if (individuell && !fase.horisont) f(`forløp ${x.id} har individuell avslutning uten teknisk planhorisont; planen ville ikke hatt noen grense`)
+      if (individuell && !godkjent && !fase.horisont) f(`forløp ${x.id} har individuell avslutning uten teknisk planhorisont; planen ville ikke hatt noen grense`)
       if (!individuell && fase.horisont) f(`forløp ${x.id} har en planhorisont uten individuell avslutning; en nedtrapping til 0 har ingen horisont`)
       if (individuell && sluttdose && r.plan.form === 'seponering') f(`forløp ${x.id} har både sluttdose og individuell avslutning; ingen nedre grense for beregnede trinn ved seponering er godkjent`)
       if (individuell && slutt && r.plan.form !== 'seponering' && !slutt.grunnlag.henvisninger?.length) f(`forløp ${x.id} stopper beregningen ved en sluttdose uten kilde`)
       if (!individuell && fase.strategi.type === 'prosent_av_aktuell' && !sluttdose) f(`forløp ${x.id} trapper ned prosentvis uten sluttdose og uten individuell avslutning; dosen når aldri 0`)
       // Valg av dose per trinn (P7.5) gjelder bare innenfor regelens område for reduksjonen, når planen stopper ved et trinn som ikke kan gis, og uten toleranse.
-      if (fase.trinnvalg) {
+      // Med fast reduksjon i prosent av startdosen gjelder valget en nedtrapping til 0, der en større reduksjon gir et lengre trinn (regelmodell 12).
+      if (fase.trinnvalg && fase.strategi.type === 'prosent_av_startdose') {
+        if (individuell) f(`forløp ${x.id} lar forskriveren velge dose per trinn i prosent av startdosen med individuell eller godkjent avslutning; det gjelder bare en nedtrapping til 0`)
+        if (x.dosevalg?.avvik_prosent?.verdi) f(`forløp ${x.id} lar forskriveren velge dose per trinn og har samtidig en toleranse`)
+      } else if (fase.strategi.type === 'prosent_av_startdose' && fase.strategi.mellomtrinn) {
+        f(`forløp ${x.id} har et mellomtrinn før seponeringen uten valg av dose per trinn`)
+      } else if (fase.trinnvalg) {
         if (fase.strategi.type !== 'prosent_av_aktuell' || !fase.strategi.prosent.omrade) f(`forløp ${x.id} lar forskriveren velge dose per trinn uten et område for reduksjonen i prosent av aktuell dose`)
-        if (!individuell) f(`forløp ${x.id} lar forskriveren velge dose per trinn uten individuell avslutning`)
+        if (!individuell) f(`forløp ${x.id} lar forskriveren velge dose per trinn uten individuell eller godkjent avslutning`)
         if (x.dosevalg?.avvik_prosent?.verdi) f(`forløp ${x.id} lar forskriveren velge dose per trinn og har samtidig en toleranse`)
       }
+      // Et minste trinn ved lav dose er et valg av dose per trinn, større enn valgområdet, men aldri en seponering (regelmodell 12).
+      const minste = fase.strategi.type === 'prosent_av_aktuell' ? fase.strategi.minste_trinn : undefined
+      if (minste) {
+        const omrade = fase.strategi.type === 'prosent_av_aktuell' ? fase.strategi.prosent.omrade : undefined
+        if (!fase.trinnvalg || !omrade) f(`forløp ${x.id} har et minste trinn uten valg av dose per trinn innenfor et område`)
+        const maks = minste.maks_prosent.verdi
+        // Valgområdet uten begrunnelse er høyst det laveste begrunnelseskravet som alltid gjelder (`trinnvalgOmrade` i `beregning.ts`).
+        const krav = fase.strategi.type === 'prosent_av_aktuell' ? (fase.strategi.prosent.begrunnelseskrav ?? []).flatMap((k) => (k.over !== undefined && !k.ved ? [k.over] : [])) : []
+        const ovre = omrade ? Math.min(omrade[1], ...krav) : undefined
+        if (maks !== null && maks >= 100) f(`forløp ${x.id} har et minste trinn på ${maks} %; et minste trinn går aldri til 0`)
+        if (maks !== null && ovre !== undefined && maks <= ovre) f(`forløp ${x.id} har et minste trinn på høyst ${maks} %, som ikke er større enn valgområdet (${omrade![0]}–${ovre} %)`)
+      }
+    }
+  }
+  // Et tillegg beholder retningen eksisterende legemiddel → tillegg (regelmodell 12).
+  for (const x of tilleggsfeil(r)) f(x)
+  for (const x of r.plan.forlop) {
+    const ids = (x.vurderinger ?? []).map((v) => v.id)
+    if (new Set(ids).size !== ids.length) f(`forløp ${x.id} har to vurderingspunkter med samme id`)
+    for (const v of x.vurderinger ?? []) if (!v.tekst.trim()) f(`vurderingspunktet ${x.id}.${v.id} mangler tekst`)
+    for (const [i, fase] of x.faser.entries()) {
+      if (fase.type === 'seponer' && fase.avslutning && i !== x.faser.length - 1) f(`forløp ${x.id} har en godkjent avslutning før siste fase`)
+      // Visningen av en uendret dose må kunne leses entydig (regelmodell 12).
+      const vis = fase.type === 'uendret' ? fase.visning : undefined
+      const positiv = (v: number) => Number.isFinite(v) && v > 0
+      if (vis?.enhet !== undefined && !vis.enhet.trim()) f(`forløp ${x.id} viser den uendrede dosen med en tom enhet`)
+      if (vis?.tablett && !vis.tablett.navn.trim()) f(`forløp ${x.id} viser den uendrede dosen med en tablett uten navn`)
+      if (vis?.tablett && !positiv(vis.tablett.mg)) f(`forløp ${x.id} viser den uendrede dosen med ${String(vis.tablett.mg)} per tablett; det må være over 0`)
+      if (vis?.tablett?.mmol !== undefined && !positiv(vis.tablett.mmol)) f(`forløp ${x.id} viser den uendrede dosen med ${String(vis.tablett.mmol)} mmol per tablett; det må være over 0`)
     }
   }
   for (const x of tallfeil(r)) f(x)

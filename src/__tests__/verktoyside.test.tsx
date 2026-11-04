@@ -2,7 +2,7 @@
 /**
  * Verktøysidene (`#/verktoy`, P6 i `docs/verktøy-utviklingsplan.md`):
  *
- * - Oversikten viser de tre verktøyene og at ingen beregning er tilgjengelig
+ * - Oversikten viser de fire verktøyene og at ingen beregning er tilgjengelig
  *   så lenge ingen regel er klinisk godkjent; en ukjent adresse sier fra.
  * - Med pilotreglene står det at faglig kontroll gjenstår, uten skjema,
  *   uten henting fra FEST og uten tabell.
@@ -83,21 +83,24 @@ describe('oversikten', () => {
       .filter((a) => a.classList.contains('verktoykort__lenke'))
       .map((a) => [...a.querySelectorAll('.verktoykort__linje')].map((l) => l.textContent))
 
-  it('viser de tre verktøyene, og at bare de godkjente reglene kan beregnes: vortioksetin, sertralin → mirtazapin og de to depotreglene', async () => {
+  it('viser de fire verktøyene, og at bare de godkjente reglene som kan gi en komplett plan, kan beregnes: de to depotreglene', async () => {
     vis()
     expect(screen.getByRole('heading', { level: 1, name: 'Verktøy' })).toBeTruthy()
     expect(document.activeElement).toBe(screen.getByRole('heading', { level: 1 }))
     expect(document.title).toBe('Verktøy – OUSFAR')
     const kort = screen.getAllByRole('link').filter((a) => a.classList.contains('verktoykort__lenke'))
-    expect(kort.map((a) => a.getAttribute('href'))).toEqual(['#/verktoy/trappe-ned-antidepressiv', '#/verktoy/bytte-antidepressiv', '#/verktoy/bytte-antipsykotikum'])
+    expect(kort.map((a) => a.getAttribute('href'))).toEqual(['#/verktoy/trappe-ned-antidepressiv', '#/verktoy/bytte-antidepressiv', '#/verktoy/bytte-antipsykotikum', '#/verktoy/kombinere-stemningsstabiliserende'])
     // Før nødstoppen er lest, loves ingenting om hva som kan beregnes.
-    expect(kortlinjer()).toEqual(Array(3).fill([DEKNING_UKONTROLLERT.henter]))
+    expect(kortlinjer()).toEqual(Array(4).fill([DEKNING_UKONTROLLERT.henter]))
     await act(async () => {})
     // Kortene sier hva som faktisk kan brukes, ikke hvor mange regler som venter.
+    // Vortioksetin og sertralin → mirtazapin er godkjent, men gir aldri en komplett plan, så de loves ikke (leveranseplanen §3).
     expect(kortlinjer()).toEqual([
-      ['Kan beregnes: Vortioksetin', 'Fagtekst: Agomelatin, Bupropion'],
-      ['Kan beregnes: Sertralin → mirtazapin'],
+      ['Ingen beregning tilgjengelig ennå', 'Fagtekst: Agomelatin, Bupropion'],
+      ['Ingen beregning tilgjengelig ennå'],
       ['Kan beregnes: Aripiprazol: peroral → depotinjeksjon, Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)'],
+      // Kombinere stemningsstabiliserende (K4) har ingen godkjente regler ennå, og kortet sier det.
+      ['Ingen beregning tilgjengelig ennå'],
     ])
     expect(screen.queryByText(/Ingen beregninger er tilgjengelige ennå/)).toBeNull()
     expect(screen.queryByRole('alert')).toBeNull()
@@ -106,11 +109,11 @@ describe('oversikten', () => {
   it('sier at tilgjengeligheten ikke kan kontrolleres, ikke «Kan beregnes», mens nødstoppen ikke svarer eller ikke kan leses', async () => {
     vis({ sperrer: { les: () => new Promise<Verktoysperre[]>(() => {}) } })
     await act(async () => {})
-    expect(kortlinjer()).toEqual(Array(3).fill([DEKNING_UKONTROLLERT.henter]))
+    expect(kortlinjer()).toEqual(Array(4).fill([DEKNING_UKONTROLLERT.henter]))
     cleanup()
     vis({ sperrer: { les: async () => Promise.reject(new Error('nettverksfeil')) } })
     await act(async () => {})
-    expect(kortlinjer()).toEqual(Array(3).fill([DEKNING_UKONTROLLERT.feil]))
+    expect(kortlinjer()).toEqual(Array(4).fill([DEKNING_UKONTROLLERT.feil]))
     expect(screen.queryByText(/Kan beregnes/)).toBeNull()
   })
 
@@ -118,7 +121,7 @@ describe('oversikten', () => {
     const alle: Verktoysperre = { id: 's', omfang: 'alle', mal: null, grunn: 'Syntetisk sperre for alle.', satt_kl: '2026-11-01T08:00:00Z', satt_av: 'Ada Admin' }
     vis({ sperrer: { les: async () => [alle] } })
     await act(async () => {})
-    expect(kortlinjer()).toEqual(Array(3).fill(['Midlertidig deaktivert']))
+    expect(kortlinjer()).toEqual(Array(4).fill(['Midlertidig deaktivert']))
     expect(screen.getByRole('alert', { name: 'Midlertidig deaktivert' }).textContent).toMatch(/Syntetisk sperre for alle\./)
     expect(screen.queryByText(/venter på faglig kontroll og klinisk godkjenning/)).toBeNull()
     cleanup()
@@ -235,9 +238,9 @@ describe('med en regel godkjent bare i testen', () => {
     expect(rader[0]).toEqual(['Når', 'Escitalopram peroralt'])
     expect(rader[1]![0]).toBe('Dag 1–14')
     expect(rader[1]![1]).toMatch(/^12,5 mg.*1 tablett à 10 mg.*½ tablett à 5 mg/)
-    // Planen går ikke til null: siste dose fortsetter til avslutningen er vurdert, og den er ikke «siste dose før seponering».
-    expect(rader.at(-1)!).toEqual(['Fra dag 15', expect.stringMatching(/^6,25 mg.*1¼ tabletter à 5 mg/)])
-    expect(within(plan).getByText(/Fra dag 15 står pasienten på 6,25 mg av escitalopram til planen revurderes.*Planen stopper her av tekniske grunner\. Fortsett med denne dosen inntil forskriveren har vurdert videre nedtrapping\. Dosen er ikke nødvendigvis en sluttdose\./)).toBeTruthy()
+    // Planen når sluttmålet: siste dose holdes ett trinn, og så seponeres legemidlet etter regelens avslutning.
+    expect(rader.slice(-2)).toEqual([['Dag 15–28', expect.stringMatching(/^6,25 mg.*1¼ tabletter à 5 mg/)], ['Fra dag 29', 'Seponert']])
+    expect(within(plan).getByText(/^Komplett plan til sluttmålet: Escitalopram seponert fra dag 29\./)).toBeTruthy()
     // Det som gjelder akkurat denne planen, står ved tabellen; resten av grunnlaget i «Faglig grunnlag», lukket.
     expect(within(plan).getByRole('heading', { name: 'Viktig for denne planen' })).toBeTruthy()
     const grunnlag = within(plan).getByText('Faglig grunnlag').closest('details')!
@@ -448,24 +451,31 @@ describe('med en regel der forskriveren kan velge dosen for et trinn som ikke ka
     vis({ verktoy: 'trappe-ned-antidepressiv', legemidler: lesing(), regelsett: testsett(TEST_TRINNVALG), klokke: TESTKLOKKE })
     await fyllInn(user)
     await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
-    // 25 mg → 18,75 mg kan gis; neste trinn (14,06 mg) kan ikke, så planen står på 18,75 mg og tilbyr de nærmeste dosene.
-    const tabell = await screen.findByRole('region', { name: TEST_TRINNVALG.tittel })
-    expect(within(tabell).getAllByRole('row').at(-1)!.textContent).toMatch(/18,75 mg/)
+    // 25 mg → 18,75 mg kan gis; neste trinn (14,06 mg) kan ikke, og avslutningen gjelder bare fra 10 mg. Klinikeren får ingen delplan,
+    // bare grunnen og de nærmeste dosene som kan gjøre planen komplett.
+    const stopp = await screen.findByRole('status')
+    expect(stopp.textContent).toMatch(/Komplett plan ikke tilgjengelig: escitalopram: .*regelens avslutning gjelder bare fra 10 mg eller lavere \(planen står på 18,75 mg\)/i)
+    expect(screen.queryByRole('region', { name: TEST_TRINNVALG.tittel })).toBeNull()
+    expect(screen.queryByText(/18,75 mg =/)).toBeNull()
     const valg = screen.getByRole('group', { name: 'Trinn 2 av Escitalopram kan ikke gis nøyaktig' })
     expect(within(valg).getByText(/Den foretrukne reduksjonen til 14,06 mg \(−25,01 % fra 18,75 mg\) kan ikke gis med preparatene\. Velg en dose som kan gis; den faktiske reduksjonen må være innenfor det foretrukne området 5–25 %\. Verktøyet velger ikke selv/)).toBeTruthy()
     // 13,75 mg (−26,67 %) ville kreve begrunnelse; et avvik tilbys ikke.
     expect(within(valg).getAllByRole('button').map((b) => b.textContent)).toEqual(['15 mg (−20 %)'])
-    // Valget gir en ny plan med en gang, fra den valgte dosen, og står i planen og i skjemaet.
+    // Valget gir en ny beregning med en gang, fra den valgte dosen, og står i skjemaet.
     await user.click(within(valg).getByRole('button', { name: '15 mg (−20 %)' }))
-    expect(await screen.findByText(/valgt av forskriveren \(beregnet 14,06 mg; −20 %\)/)).toBeTruthy()
-    expect(screen.getByText(/escitalopram (fra )?dag [\d–]+: 15 mg, valgt av forskriveren fordi den beregnede dosen 14,06 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før\./i)).toBeTruthy()
     const valgte = screen.getByRole('group', { name: 'Valgte doser per trinn' })
     expect(within(valgte).getByRole('listitem').textContent).toBe('Trinn 2 av Escitalopram: 15 mg (fra 18,75 mg)')
-    // 15 mg → 11,25 mg kan gis; 8,44 mg kan ikke, og bare 8,75 mg (−22,22 %) er innenfor området; 7,5 mg (−33,33 %) tilbys ikke.
+    // 15 mg → 11,25 mg kan gis; 8,44 mg kan ikke, og 11,25 mg er over avslutningen. Bare 8,75 mg (−22,22 %) er innenfor området; 7,5 mg (−33,33 %) tilbys ikke.
     const neste = await screen.findByRole('group', { name: 'Trinn 4 av Escitalopram kan ikke gis nøyaktig' })
+    expect(screen.queryByRole('region', { name: TEST_TRINNVALG.tittel })).toBeNull()
     expect(within(neste).getAllByRole('button').map((b) => b.textContent)).toEqual(['8,75 mg (−22,22 %)'])
     await user.click(within(neste).getByRole('button', { name: '8,75 mg (−22,22 %)' }))
-    expect(await screen.findByText(/escitalopram (fra )?dag [\d–]+: 8,75 mg, valgt av forskriveren/i)).toBeTruthy()
+    // Fra 8,75 mg gjelder avslutningen: planen er komplett og vises, med valgene.
+    const tabell = await screen.findByRole('region', { name: TEST_TRINNVALG.tittel })
+    expect(within(tabell).getAllByRole('row').at(-1)!.textContent).toMatch(/Seponert/)
+    expect(within(tabell).getByText(/valgt av forskriveren \(beregnet 14,06 mg; −20 %\)/)).toBeTruthy()
+    expect(screen.getByText(/escitalopram (fra )?dag [\d–]+: 15 mg, valgt av forskriveren fordi den beregnede dosen 14,06 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før\./i)).toBeTruthy()
+    expect(screen.getByText(/escitalopram (fra )?dag [\d–]+: 8,75 mg, valgt av forskriveren/i)).toBeTruthy()
     expect(within(screen.getByRole('group', { name: 'Valgte doser per trinn' })).getAllByRole('listitem').map((x) => x.textContent)).toEqual([
       'Trinn 2 av Escitalopram: 15 mg (fra 18,75 mg)',
       'Trinn 4 av Escitalopram: 8,75 mg (fra 11,25 mg)',
@@ -591,12 +601,12 @@ describe('nødstoppen (P11.6)', () => {
     const melding = await screen.findByRole('alert', { name: 'Midlertidig deaktivert' })
     expect(melding.textContent).toMatch(/Alle verktøyene: Kritisk feil i doseplanmotoren\.Ada Admin, 01\.11\.2026/)
     const deaktivert = () => [...document.querySelectorAll('.verktoykort__status')].map((x) => x.firstElementChild?.textContent === 'Midlertidig deaktivert')
-    expect(deaktivert()).toEqual([true, true, true])
+    expect(deaktivert()).toEqual([true, true, true, true])
     cleanup()
 
     vis({ sperrer: nodstopp(() => [sperre('verktoy', 'bytte-antipsykotikum')]) })
     await screen.findByText('Midlertidig deaktivert')
-    expect(deaktivert()).toEqual([false, false, true])
+    expect(deaktivert()).toEqual([false, false, true, false])
     // Et deaktivert verktøy lover ingen beregning i oversikten.
     expect(document.querySelectorAll('.verktoykort__status')[2]!.textContent).toBe('Midlertidig deaktivert')
     cleanup()
@@ -1076,7 +1086,7 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
     expect(rader().at(-1)).toMatch(/Hver måned fra 1 måned etter dag 8.*75 mg/)
   })
 
-  it('sertralin → mirtazapin: planen sier rett under tittelen at den er et startforløp, ikke en fullstendig plan', async () => {
+  it('sertralin → mirtazapin: startforløpet er en delplan og vises ikke; siden sier at en komplett plan ikke er tilgjengelig, og hvorfor', async () => {
     const user = userEvent.setup()
     vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT) })
     await user.type(screen.getByRole('combobox', { name: 'Bytte fra' }), 'Sertralin')
@@ -1086,9 +1096,10 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
     await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
     await user.selectOptions(await screen.findByRole('combobox', { name: 'Legemiddelform av mirtazapin' }), '53')
     await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
-    await screen.findByRole('table')
-    expect(screen.getByText(STARTFORLOP)).toBeTruthy()
-    expect(rader()).toHaveLength(2)
+    // Klinikere får aldri en delplan (Peders beslutning 03.11.2026), heller ikke etter en tidligere godkjent regelversjon.
+    expect((await ingenPlan()).textContent).toMatch(/Komplett plan ikke tilgjengelig: sertralin: /)
+    expect(screen.queryByRole('table')).toBeNull()
+    expect(screen.queryByText(STARTFORLOP)).toBeNull()
   })
 
   it('gir ingen plan etter en regel som ikke er godkjent, heller ikke etter en oppdatering av appen eller navigering', async () => {
@@ -1132,38 +1143,67 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
 
   it('tar bort planen når regelversjonen endres, og gir ingen ny plan når preparatene i FEST er endret', async () => {
     const user = userEvent.setup()
-    let endre: ((x: Legemiddelutvalg) => void) | undefined
+    // En godkjent regel med komplett plan (Xeplion); klinikere får aldri en delplan.
+    const XEPLION = 'depot-paliperidon-xeplion'
+    const { rerender, onLukk } = vis({ verktoy: 'bytte-antipsykotikum', legemidler: fra(PILOT), klokke: klokke(PILOT) })
+    await user.click(await screen.findByRole('button', { name: 'Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)' }))
+    await user.type(screen.getByRole('textbox', { name: /Aktuell døgndose av paliperidon/ }), '6')
+    await besvar(user)
+    await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+    await screen.findByRole('table')
+    expect(rader().at(-1)).toMatch(/Hver måned fra 1 måned etter dag 8.*75 mg/)
+
+    // En ny regelversjon uten ny godkjenning: verken planen eller beregningen står igjen.
+    const regelsett = structuredClone(REGELSETT)
+    regelsett.regler.find((r) => r.id === XEPLION)!.versjon += 1
+    rerender(<Verktoyside verktoy="bytte-antipsykotikum" legemidler={fra(PILOT)} sperrer={INGEN_SPERRER} regelvarsler={INGEN_VARSLER} onLukk={onLukk} regelsett={regelsett} klokke={klokke(PILOT)} />)
+    expect(screen.queryByRole('table')).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Beregn doseplan' })).toBeNull()
+    cleanup()
+
+    // Vortioksetin 20 mg, men 15 mg er avregistrert i FEST: ingen plan, og grunnen står ved siden av at en komplett plan ikke er tilgjengelig.
     const legemidler = lesing(() => {
       const x = structuredClone(AKSEPT.utvalg)
-      endre?.(x)
+      avregistrert('vortioksetin', 15).endre(x, osloDato(klokke(AKSEPT)()))
       return x
     })
-    const { rerender, onLukk } = vis({ verktoy: 'trappe-ned-antidepressiv', legemidler, klokke: klokke(AKSEPT) })
+    vis({ verktoy: 'trappe-ned-antidepressiv', legemidler, klokke: klokke(AKSEPT) })
     await user.type(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' }), 'Vortioksetin')
     await user.type(await screen.findByRole('textbox', { name: /Aktuell døgndose av vortioksetin/ }), '20')
     await besvar(user)
     await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
-    await screen.findByRole('table')
-    expect(rader()).toEqual([expect.stringMatching(/^Fra dag 1.*15 mg.*1 tablett à 15 mg$/)])
-
-    // En ny regelversjon uten ny godkjenning: verken planen eller beregningen står igjen.
-    const regelsett = structuredClone(REGELSETT)
-    regelsett.regler.find((r) => r.id === 'seponering-vortioksetin')!.versjon += 1
-    rerender(<Verktoyside verktoy="trappe-ned-antidepressiv" legemidler={legemidler} sperrer={INGEN_SPERRER} regelvarsler={INGEN_VARSLER} onLukk={onLukk} regelsett={regelsett} klokke={klokke(AKSEPT)} />)
-    expect(screen.queryByRole('table')).toBeNull()
-    expect(screen.queryByRole('button', { name: 'Beregn doseplan' })).toBeNull()
-
-    // Tilbake til den godkjente versjonen, men 15 mg er avregistrert i FEST: ingen plan.
-    rerender(<Verktoyside verktoy="trappe-ned-antidepressiv" legemidler={legemidler} sperrer={INGEN_SPERRER} regelvarsler={INGEN_VARSLER} onLukk={onLukk} klokke={klokke(AKSEPT)} />)
-    endre = (x) => avregistrert('vortioksetin', 15).endre(x, osloDato(klokke(AKSEPT)()))
-    await user.click(await screen.findByRole('button', { name: 'Beregn doseplan' }))
     expect((await ingenPlan()).textContent).toMatch(/styrken 15 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST/)
     expect(screen.queryByRole('table')).toBeNull()
   })
 
+  it('vortioksetin 20 → 15 mg: én reduksjon er en delplan og vises ikke', async () => {
+    const user = userEvent.setup()
+    vis({ verktoy: 'trappe-ned-antidepressiv', legemidler: fra(AKSEPT), klokke: klokke(AKSEPT) })
+    await user.type(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' }), 'Vortioksetin')
+    await user.type(await screen.findByRole('textbox', { name: /Aktuell døgndose av vortioksetin/ }), '20')
+    await besvar(user)
+    await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+    expect((await ingenPlan()).textContent).toMatch(/Komplett plan ikke tilgjengelig: vortioksetin: én mulig reduksjon med revurdering/)
+    expect(screen.queryByRole('table')).toBeNull()
+    expect(screen.queryByText(/15 mg =/)).toBeNull()
+  })
+
   describe('forenklingen (VDR-3)', () => {
-    const SERTRALIN = 'kryssnedtrapping-sertralin-mirtazapin'
-    const versjon = REGELSETT.regler.find((r) => r.id === SERTRALIN)!.versjon
+    // En godkjent regel som gir en komplett plan; klinikere får aldri en delplan (Peders beslutning 03.11.2026).
+    const XEPLION = 'depot-paliperidon-xeplion'
+    const XEPLION_SNARVALG = 'Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)'
+    const versjon = REGELSETT.regler.find((r) => r.id === XEPLION)!.versjon
+    const beregnXeplion = async (user: ReturnType<typeof userEvent.setup>) => {
+      await user.type(screen.getByRole('textbox', { name: /Aktuell døgndose av paliperidon/ }), '6')
+      await besvar(user)
+      await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+    }
+    const velgXeplion = async (user: ReturnType<typeof userEvent.setup>) => {
+      await user.type(screen.getByRole('combobox', { name: 'Bytte fra' }), 'Paliperidon')
+      await user.click(within(screen.getByRole('group', { name: 'Formulering av paliperidon (bytte fra)' })).getByRole('radio', { name: 'Peroral' }))
+      await user.type(screen.getByRole('combobox', { name: 'Bytte til' }), 'Paliperidon')
+      await user.click(within(screen.getByRole('group', { name: 'Formulering av paliperidon (bytte til)' })).getByRole('radio', { name: /^Depotinjeksjon/ }))
+    }
 
     it('fyller ut feltene med et snarvalg, viser et faglig varsel bare ved regelversjonen det gjelder uten å sperre, og skriver ut det faglige grunnlaget', async () => {
       const user = userEvent.setup()
@@ -1171,30 +1211,26 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
       const kall = vi.fn(async (funksjon: string) => {
         expect(funksjon).toBe('les_regelvarsler')
         return [
-          { regel: SERTRALIN, versjon, tekst: 'Under faglig gjennomgang: syntetisk varsel.', siden: '2026-11-01T08:00:00Z' },
-          { regel: SERTRALIN, versjon: versjon - 1, tekst: 'Syntetisk varsel for en eldre versjon.', siden: '2026-11-01T08:00:00Z' },
+          { regel: XEPLION, versjon, tekst: 'Under faglig gjennomgang: syntetisk varsel.', siden: '2026-11-01T08:00:00Z' },
+          { regel: XEPLION, versjon: versjon - 1, tekst: 'Syntetisk varsel for en eldre versjon.', siden: '2026-11-01T08:00:00Z' },
           { regel: 'depot-aripiprazol-maintena', versjon: 3, tekst: 'Syntetisk varsel for en annen regel.', siden: '2026-11-01T08:00:00Z' },
         ]
       })
-      vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT), regelvarsler: lagRegelvarsellager(kall) })
+      vis({ verktoy: 'bytte-antipsykotikum', legemidler: fra(PILOT), klokke: klokke(PILOT), regelvarsler: lagRegelvarsellager(kall) })
       await act(async () => {})
       expect(kall).toHaveBeenCalled()
       expect(screen.queryByRole('note')).toBeNull()
-      await user.click(within(screen.getByRole('group', { name: 'Kan beregnes nå:' })).getByRole('button', { name: 'Sertralin → mirtazapin', pressed: false }))
-      expect((screen.getByRole('combobox', { name: 'Bytte fra' }) as HTMLInputElement).value).toBe('Sertralin')
-      expect((screen.getByRole('combobox', { name: 'Bytte til' }) as HTMLInputElement).value).toBe('Mirtazapin')
-      expect(screen.getByRole('button', { name: 'Sertralin → mirtazapin', pressed: true })).toBeTruthy()
+      await user.click(within(screen.getByRole('group', { name: 'Kan beregnes nå:' })).getByRole('button', { name: XEPLION_SNARVALG, pressed: false }))
+      expect((screen.getByRole('combobox', { name: 'Bytte fra' }) as HTMLInputElement).value).toBe('Paliperidon')
+      expect((screen.getByRole('combobox', { name: 'Bytte til' }) as HTMLInputElement).value).toBe('Paliperidon')
+      expect(screen.getByRole('button', { name: XEPLION_SNARVALG, pressed: true })).toBeTruthy()
       expect(screen.getByRole('note').textContent).toBe('Under faglig gjennomgang: syntetisk varsel. Fra 01.11.2026 kl. 09:00.')
       expect(screen.queryByText(/eldre versjon|annen regel/)).toBeNull()
 
-      await user.type(screen.getByRole('textbox', { name: /Aktuell døgndose av sertralin/ }), '100')
-      await besvar(user)
-      await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
-      await user.selectOptions(await screen.findByRole('combobox', { name: 'Legemiddelform av mirtazapin' }), '53')
-      await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+      await beregnXeplion(user)
       await screen.findByRole('table')
       // Varselet sperrer ikke, og står én gang: i planen den gjelder.
-      const plan = screen.getByRole('region', { name: REGELSETT.regler.find((r) => r.id === SERTRALIN)!.tittel })
+      const plan = screen.getByRole('region', { name: REGELSETT.regler.find((r) => r.id === XEPLION)!.tittel })
       expect(screen.getAllByRole('note')).toHaveLength(1)
       expect(within(plan).getByRole('note')).toBeTruthy()
 
@@ -1210,16 +1246,12 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
       const user = userEvent.setup()
       const sperrer = { les: vi.fn(async () => []) }
       const varsler = { les: vi.fn(async (): Promise<never> => Promise.reject(new Error('nettverksfeil'))) }
-      vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT), sperrer, regelvarsler: varsler })
-      await user.click(await screen.findByRole('button', { name: 'Sertralin → mirtazapin' }))
+      vis({ verktoy: 'bytte-antipsykotikum', legemidler: fra(PILOT), klokke: klokke(PILOT), sperrer, regelvarsler: varsler })
+      await user.click(await screen.findByRole('button', { name: XEPLION_SNARVALG }))
       expect(varsler.les).toHaveBeenCalled()
       expect(screen.getByRole('note').textContent).toBe(VARSLER_ULEST)
-      await user.type(screen.getByRole('textbox', { name: /Aktuell døgndose av sertralin/ }), '100')
-      await besvar(user)
-      await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
-      await user.selectOptions(await screen.findByRole('combobox', { name: 'Legemiddelform av mirtazapin' }), '53')
       const lest = sperrer.les.mock.calls.length
-      await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+      await beregnXeplion(user)
       const plan = (await screen.findByRole('table')).closest('section')!
       // Sperrene leses på nytt rett før planen vises, som før; merknaden står i planen.
       expect(sperrer.les.mock.calls.length).toBeGreaterThan(lest)
@@ -1228,30 +1260,30 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
 
       // En aktiv nødstopp gjelder fortsatt når varslene ikke kan leses.
       vis({
-        verktoy: 'bytte-antidepressiv',
+        verktoy: 'bytte-antipsykotikum',
         legemidler: fra(PILOT),
         klokke: klokke(PILOT),
         regelvarsler: varsler,
-        sperrer: { les: async () => [{ id: 's', omfang: 'regel' as const, mal: SERTRALIN, grunn: 'Syntetisk sperre.', satt_kl: '2026-11-01T08:00:00Z', satt_av: 'Ada Admin' }] },
+        sperrer: { les: async () => [{ id: 's', omfang: 'regel' as const, mal: XEPLION, grunn: 'Syntetisk sperre.', satt_kl: '2026-11-01T08:00:00Z', satt_av: 'Ada Admin' }] },
       })
-      await user.type(screen.getByRole('combobox', { name: 'Bytte fra' }), 'Sertralin')
-      await user.type(screen.getByRole('combobox', { name: 'Bytte til' }), 'Mirtazapin')
+      await velgXeplion(user)
       expect((await screen.findByRole('alert', { name: 'Midlertidig deaktivert' })).textContent).toMatch(/Syntetisk sperre\./)
       expect(screen.queryByRole('button', { name: 'Beregn doseplan' })).toBeNull()
 
       // Uten lager sies det samme, ikke ingenting.
       cleanup()
-      vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT), regelvarsler: undefined })
-      await user.click(await screen.findByRole('button', { name: 'Sertralin → mirtazapin' }))
+      vis({ verktoy: 'bytte-antipsykotikum', legemidler: fra(PILOT), klokke: klokke(PILOT), regelvarsler: undefined })
+      await user.click(await screen.findByRole('button', { name: XEPLION_SNARVALG }))
       expect(screen.getByRole('note').textContent).toBe(VARSLER_ULEST)
     })
 
     it('tilbyr ingen snarvalg og lover ingenting om hva som kan beregnes før nødstoppen er lest, og holder sperrede valg utenfor', async () => {
       const sperre = (omfang: Verktoysperre['omfang'], mal: string): Verktoysperre => ({ id: `s-${omfang}`, omfang, mal, grunn: 'Syntetisk sperre.', satt_kl: '2026-11-01T08:00:00Z', satt_av: 'Ada Admin' })
-      const side = (sperrer: VerktoysideProps['sperrer']) => vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT), sperrer })
-      const ingenSnarvalg = () => {
-        expect(screen.queryByRole('group', { name: 'Kan beregnes nå:' })).toBeNull()
-        expect(screen.queryByRole('button', { name: 'Sertralin → mirtazapin' })).toBeNull()
+      const side = (sperrer: VerktoysideProps['sperrer']) => vis({ verktoy: 'bytte-antipsykotikum', legemidler: fra(PILOT), klokke: klokke(PILOT), sperrer })
+      // En sperre på Xeplion holder bare det valget utenfor; aripiprazol står fortsatt.
+      const ingenSnarvalg = (ingenGruppe = true) => {
+        if (ingenGruppe) expect(screen.queryByRole('group', { name: 'Kan beregnes nå:' })).toBeNull()
+        expect(screen.queryByRole('button', { name: XEPLION_SNARVALG })).toBeNull()
       }
 
       side({ les: () => new Promise<Verktoysperre[]>(() => {}) })
@@ -1267,15 +1299,18 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
       cleanup()
 
       // En kjent sperre på regelen eller verktøyet holder valget utenfor; uten sperre står det.
-      for (const sperrer of [[sperre('regel', SERTRALIN)], [sperre('verktoy', 'bytte-antidepressiv')]]) {
-        side({ les: async () => sperrer })
+      for (const [sperrer, ingenGruppe] of [
+        [[sperre('regel', XEPLION)], false],
+        [[sperre('verktoy', 'bytte-antipsykotikum')], true],
+      ] as const) {
+        side({ les: async () => [...sperrer] })
         await act(async () => {})
-        ingenSnarvalg()
+        ingenSnarvalg(ingenGruppe)
         expect(screen.queryByText(/Kontrollerer tilgjengeligheten|Kan ikke kontrollere tilgjengeligheten/)).toBeNull()
         cleanup()
       }
       side({ les: async () => [] })
-      expect(await screen.findByRole('button', { name: 'Sertralin → mirtazapin' })).toBeTruthy()
+      expect(await screen.findByRole('button', { name: XEPLION_SNARVALG })).toBeTruthy()
     })
 
     describe('når varslene ikke svarer eller svaret har ukjent form', () => {
@@ -1286,8 +1321,8 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
         const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
         const sperrer = { les: vi.fn(async (): Promise<Verktoysperre[]> => []) }
         const varsler = { les: vi.fn(() => new Promise<never>(() => {})) }
-        vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT), sperrer, regelvarsler: varsler })
-        await user.click(await screen.findByRole('button', { name: 'Sertralin → mirtazapin' }))
+        vis({ verktoy: 'bytte-antipsykotikum', legemidler: fra(PILOT), klokke: klokke(PILOT), sperrer, regelvarsler: varsler })
+        await user.click(await screen.findByRole('button', { name: XEPLION_SNARVALG }))
         // Ikke «ingen merknad» før det er kjent.
         expect(screen.getByRole('note').textContent).toBe(VARSLER_HENTES)
         await act(() => vi.advanceTimersByTimeAsync(LESEFRIST_MS - 1_000))
@@ -1295,12 +1330,8 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
         await act(() => vi.advanceTimersByTimeAsync(1_000))
         expect(screen.getByRole('note').textContent).toBe(VARSLER_ULEST)
 
-        await user.type(screen.getByRole('textbox', { name: /Aktuell døgndose av sertralin/ }), '100')
-        await besvar(user)
-        await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
-        await user.selectOptions(await screen.findByRole('combobox', { name: 'Legemiddelform av mirtazapin' }), '53')
         const lest = sperrer.les.mock.calls.length
-        await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+        await beregnXeplion(user)
         const plan = (await screen.findByRole('table')).closest('section')!
         expect(sperrer.les.mock.calls.length).toBeGreaterThan(lest)
         expect(within(plan).getByRole('note').textContent).toBe(VARSLER_ULEST)
@@ -1308,24 +1339,23 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
         // En aktiv nødstopp sperrer fortsatt mens varslene henger.
         cleanup()
         vis({
-          verktoy: 'bytte-antidepressiv',
+          verktoy: 'bytte-antipsykotikum',
           legemidler: fra(PILOT),
           klokke: klokke(PILOT),
           regelvarsler: varsler,
-          sperrer: { les: async () => [{ id: 's', omfang: 'regel' as const, mal: SERTRALIN, grunn: 'Syntetisk sperre.', satt_kl: '2026-11-01T08:00:00Z', satt_av: 'Ada Admin' }] },
+          sperrer: { les: async () => [{ id: 's', omfang: 'regel' as const, mal: XEPLION, grunn: 'Syntetisk sperre.', satt_kl: '2026-11-01T08:00:00Z', satt_av: 'Ada Admin' }] },
         })
-        await user.type(screen.getByRole('combobox', { name: 'Bytte fra' }), 'Sertralin')
-        await user.type(screen.getByRole('combobox', { name: 'Bytte til' }), 'Mirtazapin')
+        await velgXeplion(user)
         expect((await screen.findByRole('alert', { name: 'Midlertidig deaktivert' })).textContent).toMatch(/Syntetisk sperre\./)
         expect(screen.queryByRole('button', { name: 'Beregn doseplan' })).toBeNull()
       })
 
       it('regner et svar som ikke er en liste av varsler, som ulest, ikke som ingen varsler', async () => {
-        const gyldig = { regel: SERTRALIN, versjon, tekst: 'Under faglig gjennomgang: syntetisk varsel.', siden: '2026-11-01T08:00:00Z' }
+        const gyldig = { regel: XEPLION, versjon, tekst: 'Under faglig gjennomgang: syntetisk varsel.', siden: '2026-11-01T08:00:00Z' }
         for (const svar of [null, {}, { varsler: [gyldig] }, [gyldig, { ...gyldig, tekst: null }], [{ ...gyldig, versjon: String(versjon) }]]) {
           const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
-          vis({ verktoy: 'bytte-antidepressiv', legemidler: fra(PILOT), klokke: klokke(PILOT), regelvarsler: lagRegelvarsellager(async () => svar) })
-          await user.click(await screen.findByRole('button', { name: 'Sertralin → mirtazapin' }))
+          vis({ verktoy: 'bytte-antipsykotikum', legemidler: fra(PILOT), klokke: klokke(PILOT), regelvarsler: lagRegelvarsellager(async () => svar) })
+          await user.click(await screen.findByRole('button', { name: XEPLION_SNARVALG }))
           await act(async () => {})
           expect(screen.getByRole('note').textContent).toBe(VARSLER_ULEST)
           expect(screen.getByRole('button', { name: 'Beregn doseplan' })).toBeTruthy()

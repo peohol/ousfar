@@ -13,9 +13,9 @@ import type { Preparatgrunnlag } from './motor/byggesteiner'
 import { festFerskhet, formvalgSomTrengs, kliniskDoseplan, type Doseplaninndata, type Doseplanresultat, type Formalternativer, type Formvalg, type Trinnvalg } from './motor/plan'
 import { festkoblinger, KARTLEGGING } from './register'
 import { inndatagrenser, inndatavilkar, kravtekst, medEnhet, omradetekst } from './regler/beregning'
-import { forslagsverdi, justerbare, parametre, type Regel, type Regelsett, type Trinnvalgsvar } from './regler/modell'
+import { forslagsverdi, gjeldendeBekreftelser, justerbare, parametre, type Inndatakrav, type Regel, type Regelsett, type Trinnvalgsvar } from './regler/modell'
 import type { Formuleringsklasse } from './festformuleringer'
-import { medlemFor, REGELSETT, settFor, type Verktoyvalg } from './tilgjengelighet'
+import { fraForlop, medlemFor, tilForlop, REGELSETT, settFor, type Verktoyvalg } from './tilgjengelighet'
 
 /** Det forskriveren har fylt inn, slik feltene står. Tas vare på når appen oppdateres; planen gjør aldri det. */
 export interface Planskjema {
@@ -137,10 +137,27 @@ export const spennFor = (r: Regel, skjema: Pick<Planskjema, 'startdose'>) => {
 export const trengerMaldose = (r: Regel, skjema: Pick<Planskjema, 'startdose'> = { startdose: '' }) =>
   r.inndata.some((k) => k.navn === 'maldose') || spennFor(r, skjema) !== undefined
 
+/**
+ * Enheten en dose oppgis i, når den ikke er en døgndose: regelens enhet for
+ * dosen (`Inndatakrav.enhet`, f.eks. «mg per injeksjon hver 2. uke»), ellers
+ * «mg per injeksjon» for et depot, så en døgndose ikke skrives inn i stedet.
+ */
+export function doseenhet(r: Regel | undefined, navn: Inndatakrav['navn']): string | undefined {
+  const egen = r?.inndata.find((k) => k.navn === navn && k.enhet)?.enhet
+  const forlop = r && (navn === 'startdose' ? fraForlop(r) : tilForlop(r))
+  return egen ?? (forlop?.administrasjon === 'depotinjeksjon' ? 'mg per injeksjon' : undefined)
+}
+
+/** Hva startdosen heter i feltet og meldingene: «Aktuell døgndose», eller «Aktuell dose (mg per injeksjon …)». */
+export const startdosenavn = (r: Regel | undefined) => {
+  const enhet = doseenhet(r, 'startdose')
+  return enhet ? `Aktuell dose (${enhet})` : 'Aktuell døgndose'
+}
+
 /** Det som mangler før planen kan beregnes, i klartekst; tom når alt er fylt inn. */
 export function mangler(r: Regel, skjema: Planskjema): string[] {
   const ut: string[] = []
-  if (lesDose(skjema.startdose) === undefined) ut.push('Aktuell døgndose må fylles inn som et tall større enn 0.')
+  if (lesDose(skjema.startdose) === undefined) ut.push(`${startdosenavn(r)} må fylles inn som et tall større enn 0.`)
   if (trengerMaldose(r, skjema) && lesDose(skjema.maldose) === undefined) ut.push('Måldosen må fylles inn som et tall større enn 0.')
   if (skjema.startdato && !/^\d{4}-\d{2}-\d{2}$/.test(skjema.startdato)) ut.push('Startdatoen er ikke en gyldig dato.')
   for (const [sti, p] of justerbare(r)) {
@@ -159,7 +176,7 @@ export function ubesvart(r: Regel, skjema: Planskjema): { sporsmal: string[]; un
   return {
     sporsmal: (r.sporsmal ?? []).filter((x) => !(x.id in skjema.svar)).map((x) => x.id),
     unntak: r.unntak.filter((u) => !(u.id in skjema.pasientforhold)).map((u) => u.id),
-    bekreftelser: r.bekreftelser.filter((b) => !skjema.bekreftet.includes(b.id)).map((b) => b.id),
+    bekreftelser: gjeldendeBekreftelser(r, skjema.svar).filter((b) => !skjema.bekreftet.includes(b.id)).map((b) => b.id),
   }
 }
 
@@ -178,7 +195,8 @@ export const begrunnelseshjelp = (r: Regel): string =>
   [
     ...parametre(r.plan).flatMap(([sti, p]) => (p.begrunnelseskrav ?? []).map((k) => `${p.justerbar ?? sti} ${kravtekst(k, p, r.sporsmal)}`)),
     ...sporsmalMedBegrunnelse(r).map((s) => s.ja),
-    ...doserMedBegrunnelse(r).map((k) => `${k.navn === 'startdose' ? 'Aktuell døgndose' : 'Måldose'} over ${inndatagrenser(k)}${inndatavilkar(k, r.sporsmal)}`),
+    // «over» bare når kravet er en øvre grense; et område med nedre grense eller faste verdier gjelder også dosene under.
+    ...doserMedBegrunnelse(r).map((k) => `${k.navn === 'startdose' ? startdosenavn(r) : 'Måldose'} ${k.omrade?.[0] === 0 ? 'over' : 'utenfor'} ${inndatagrenser(k)}${inndatavilkar(k, r.sporsmal)}`),
   ].join('; ')
 
 /**
@@ -254,9 +272,9 @@ export function formvalgFor(r: Regel, valg: Verktoyvalg, skjema: Planskjema, utv
   return formvalgSomTrengs(r, inndataFor(r, valg, skjema), grunnlagFor(r, valg, utvalg), osloDato(naa))
 }
 
-/** Doseplanen, bare når den er klinisk; ellers en stopp med grunnene. */
-export function beregnPlan(r: Regel, valg: Verktoyvalg, skjema: Planskjema, utvalg: Legemiddelutvalg, naa: Date, regelsett: Regelsett = REGELSETT): Doseplanresultat {
-  return kliniskDoseplan(r, inndataFor(r, valg, skjema), grunnlagFor(r, valg, utvalg), { idag: osloDato(naa), naa: naa.toISOString(), fagtekst: [] }, settFor(r, regelsett))
+/** Doseplanen, bare når den er klinisk og komplett; ellers en stopp med grunnene. `motor` er en annen bare i kontrollgrunnlag og tester. */
+export function beregnPlan(r: Regel, valg: Verktoyvalg, skjema: Planskjema, utvalg: Legemiddelutvalg, naa: Date, regelsett: Regelsett = REGELSETT, settene?: readonly Regelsett[], motor = kliniskDoseplan): Doseplanresultat {
+  return motor(r, inndataFor(r, valg, skjema), grunnlagFor(r, valg, utvalg), { idag: osloDato(naa), naa: naa.toISOString(), fagtekst: [] }, settFor(r, regelsett, settene))
 }
 
 /**

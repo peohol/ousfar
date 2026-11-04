@@ -40,7 +40,7 @@ import { begrunnelseshjelp, beregnPlan, inndataFor, kanKreveBegrunnelse, mangler
 import { lesKartdata } from '../verktoy/kartdata'
 import { markedsgrunnlag, preparaterFor } from '../verktoy/kartlegging'
 import type { Preparatgrunnlag } from '../verktoy/motor/byggesteiner'
-import { beregnDoseplan, kliniskDoseplan, planform, UTENFOR_OMFANG, type Doseplaninndata, type Omgivelse } from '../verktoy/motor/plan'
+import { beregnDoseplan, kliniskDelplan, kliniskDoseplan, planform, UTENFOR_OMFANG, type Doseplaninndata, type Omgivelse } from '../verktoy/motor/plan'
 import { syntetiskUtvalg, type Testpreparat } from '../verktoy/motor/syntetisk'
 import { VERKTOY, virkestoffvalg } from '../verktoy/register'
 import { akseptsett, AKSEPTSTOFFER, AKSEPTTESTFIL, annenhverDag, beregnAksept, besvart, FEST_AKSEPTTEST, KORT, LANG, lagAksepttestrapport, omfang, omfangssett, PROSENTSTI, reduksjoner, sisteDose, styrker, valgtekst, vanligDose, type Festuttrekk } from '../verktoy/regler/aksepttest'
@@ -1114,7 +1114,7 @@ describe('Doseplanene (P7.3–P7.4)', () => {
     }
     expect(endre(() => {})).toEqual([])
     expect(endre((fase) => { if (fase.strategi.type === 'prosent_av_aktuell') delete fase.strategi.prosent.omrade })).toEqual(expect.arrayContaining([expect.stringMatching(/velge dose per trinn uten et område for reduksjonen/)]))
-    expect(endre((fase) => { delete fase.avslutning })).toEqual(expect.arrayContaining([expect.stringMatching(/velge dose per trinn uten individuell avslutning/)]))
+    expect(endre((fase) => { delete fase.avslutning })).toEqual(expect.arrayContaining([expect.stringMatching(/velge dose per trinn uten individuell eller godkjent avslutning/)]))
     const toleranse = (fase: Extract<Fase, { type: 'nedtrapping' }>, r: Regel) => {
       if (fase.strategi.type === 'prosent_av_aktuell') r.plan.forlop[0]!.dosevalg = { avvik_prosent: { ...fase.strategi.prosent, verdi: 5 } }
     }
@@ -1181,8 +1181,11 @@ describe('Klinisk plan i appen', () => {
     expect(r.status === 'stoppet' && r.stoppgrunner.join(' ')).toMatch(/Ingen klinisk doseplan.*ikke klinisk godkjent/)
   })
 
-  it('gir en klinisk plan bare etter en regel godkjent i testen, med fersk FEST, bekreftelser, svar og begrunnelse, og oppgir regelsettet', () => {
-    const r = beregnPlan(GODKJENT, valg, skjema('40'), fest(), NAA)
+  it('beregner klinisk bare etter en regel godkjent i testen, med fersk FEST, bekreftelser, svar og begrunnelse, oppgir regelsettet, og viser ikke en delplan', () => {
+    // Planen når ikke sluttmålet, så klinikeren får bare grunnen, ingen doser (Peders beslutning 03.11.2026).
+    const vist = beregnPlan(GODKJENT, valg, skjema('40'), fest(), NAA)
+    expect(vist).toMatchObject({ status: 'stoppet', klinisk: false, merknader: [], stoppgrunner: ['Komplett plan ikke tilgjengelig: fluoksetin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt.'] })
+    const r = beregnPlan(GODKJENT, valg, skjema('40'), fest(), NAA, undefined, undefined, kliniskDelplan)
     expect(r).toMatchObject({ status: 'doseplan', klinisk: true })
     expect(planform(r).fra).toEqual(['dag 1–28: 20 mg = 1 tablett à 20 mg', 'dag 29–56: 10 mg = ½ tablett à 20 mg', 'fra dag 57: 5 mg = ¼ tablett à 20 mg', KAN_IKKE_GIS])
     expect(r.status === 'doseplan' && r.merknader.join(' ')).toMatch(/Planen stopper derfor ved trinnet før: fra dag 57 står pasienten på 5 mg av fluoksetin/)
@@ -1223,7 +1226,8 @@ describe('Klinisk plan i appen', () => {
     expect(inndataFor(GODKJENT, valg, skjema('40', { justert: { 'plan.forlop[0].faser[0].horisont': '20', [PROSENT]: '' }, begrunnelse: ' ' }))).not.toHaveProperty('justert')
     expect(inndataFor(GODKJENT, valg, skjema('40', { begrunnelse: ' ' }))).not.toHaveProperty('begrunnelse')
     // Godkjenningen gjelder området, så valget gir en klinisk beregning; med 25 % kan 22,5 mg ikke gis, og planen står på 30 mg.
-    const r = beregnPlan(GODKJENT, valg, skjema('40', { justert: { [PROSENT]: '25' } }), fest(), NAA)
+    expect(beregnPlan(GODKJENT, valg, skjema('40', { justert: { [PROSENT]: '25' } }), fest(), NAA)).toMatchObject({ status: 'stoppet', stoppgrunner: [expect.stringMatching(/^Komplett plan ikke tilgjengelig: fluoksetin: én mulig reduksjon med revurdering/)] })
+    const r = beregnPlan(GODKJENT, valg, skjema('40', { justert: { [PROSENT]: '25' } }), fest(), NAA, undefined, undefined, kliniskDelplan)
     expect(r).toMatchObject({ status: 'doseplan', klinisk: true })
     expect(planform(r).fra).toEqual(['fra dag 1: 30 mg = 1½ tabletter à 20 mg', EN_REDUKSJON])
     expect(r.status === 'doseplan' && r.merknader.join(' ')).toMatch(/dag 29–56: den ideelle dosen 22,5 mg kan ikke gis/)
@@ -1374,8 +1378,8 @@ describe('Aksepttesten med norske preparater (P7.5, del E.2)', () => {
       expect(rapport).toContain(valgtekst(t))
       // Hver dose som tilbys, er innenfor valgområdet, lavere enn dosen før og vises nøyaktig.
       for (const d of t.doser) {
-        expect(d.prosent).toBeGreaterThanOrEqual(t.omrade[0] - 1e-9)
-        expect(d.prosent).toBeLessThanOrEqual(t.omrade[1] + 1e-9)
+        expect(d.prosent).toBeGreaterThanOrEqual(t.omrade![0] - 1e-9)
+        expect(d.prosent).toBeLessThanOrEqual(t.omrade![1] + 1e-9)
         expect(d.mg).toBeLessThan(t.fra_mg)
         expect(avrund(d.mg)).toBe(d.mg)
       }
@@ -1399,11 +1403,11 @@ describe('Klinisk omfang med de faktiske preparatene i FEST (gjennomgangene av 0
   const uttrekk = JSON.parse(readFileSync(new URL(`../../${FEST_AKSEPTTEST}`, import.meta.url), 'utf8')) as Festuttrekk
   const ENESTE = { kode: null, navn: 'eneste form' }
   const form = (kode: string) => ({ kode, navn: kode })
-  /** Planen appen ville vist om regelen var godkjent: godkjent bare i testen, med fersk FEST. */
+  /** Den kliniske beregningen om regelen var godkjent: godkjent bare i testen, med fersk FEST; en delplan vises aldri i appen. */
   const klinisk = (id: string, f: { kode: string | null; navn: string }, startdose_mg: number, x: Partial<Beregningsinndata> = {}) => {
     const r = NEDTRAPPINGSSETT.regler.find((y) => y.id === id)!
     const g = godkjennITest(r, `test-${id}`)
-    return beregnAksept(uttrekk, g, f, besvart(g, startdose_mg, x), kliniskDoseplan)
+    return beregnAksept(uttrekk, g, f, besvart(g, startdose_mg, x), kliniskDelplan)
   }
   const grunner = (p: ReturnType<typeof klinisk>) => (p.status === 'stoppet' ? p.stoppgrunner.join(' | ') : '')
   const LANG_SVAR = { svar: LANG, justert: { [PROSENTSTI]: LANG_PROSENT } }
@@ -1457,6 +1461,15 @@ describe('Klinisk omfang med de faktiske preparatene i FEST (gjennomgangene av 0
     expect(a.status === 'stoppet' && a.trinnvalg?.[0]?.doser.map((d) => d.mg)).toEqual([40])
     const valgt = klinisk('seponering-amitriptylin', ENESTE, 50, { trinnvalg: [{ forlop: 'fra', trinn: 1, fra_mg: 50, mg: 40 }] })
     expect(valgt).toMatchObject({ status: 'doseplan', klinisk: true })
+    // Ingen av planene når sluttmålet, så klinikeren får ingen av dem, bare grunnen, og et valg for neste trinn står (Peders beslutning 03.11.2026).
+    for (const [id, f, mg, x] of innenfor) {
+      const g = godkjennITest(NEDTRAPPINGSSETT.regler.find((y) => y.id === id)!, `test-${id}`)
+      const vist = beregnAksept(uttrekk, g, f, besvart(g, mg, x), kliniskDoseplan)
+      expect(vist.status === 'stoppet' && vist.stoppgrunner, `${id} ${f.kode} ${mg} mg`).toEqual([expect.stringMatching(/^Komplett plan ikke tilgjengelig: /)])
+    }
+    const a50 = godkjennITest(regel('amitriptylin'), 'test-seponering-amitriptylin')
+    const vist50 = beregnAksept(uttrekk, a50, ENESTE, besvart(a50, 50), kliniskDoseplan)
+    expect(vist50.status === 'stoppet' && vist50.trinnvalg?.[0]?.doser.map((d) => d.mg)).toEqual([40])
   })
 
   it('stopper med forklaring utenfor omfanget: annen startdose, laveste styrke, videreføring, annen form, andre svar og lang behandlingstid der den ikke er kontrollert', () => {
@@ -1567,7 +1580,7 @@ describe('Klinisk omfang med de faktiske preparatene i FEST (gjennomgangene av 0
     return u
   }
   const godkjent = (id: string) => godkjennITest(NEDTRAPPINGSSETT.regler.find((y) => y.id === id)!, `test-${id}`)
-  const iFest = (u: Festuttrekk, id: string, startdose_mg: number, x: Partial<Beregningsinndata> = {}, motor = kliniskDoseplan) => {
+  const iFest = (u: Festuttrekk, id: string, startdose_mg: number, x: Partial<Beregningsinndata> = {}, motor = kliniskDelplan) => {
     const g = godkjent(id)
     return beregnAksept(u, g, ENESTE, besvart(g, startdose_mg, x), motor)
   }
@@ -1634,7 +1647,7 @@ describe('Klinisk omfang med de faktiske preparatene i FEST (gjennomgangene av 0
     // Uten ny styrke gjelder det samme som før.
     expect(klinisk(A, ENESTE, 50, VALG(40))).toMatchObject({ status: 'doseplan', klinisk: true })
     // Med et foreldet FEST-uttrekk (mer enn 48 timer) tilbys ingen valg og vises ingen klinisk plan.
-    const senere = (timer: number) => (r: Regel, x: Doseplaninndata, g: Preparatgrunnlag, o: Omgivelse, s?: Regelsett) => kliniskDoseplan(r, x, g, { ...o, naa: new Date(Date.parse(o.naa) + timer * 3600e3).toISOString() }, s)
+    const senere = (timer: number) => (r: Regel, x: Doseplaninndata, g: Preparatgrunnlag, o: Omgivelse, s?: Regelsett) => kliniskDelplan(r, x, g, { ...o, naa: new Date(Date.parse(o.naa) + timer * 3600e3).toISOString() }, s)
     for (const u of [uttrekk, nytt]) {
       const foreldet = iFest(u, A, 50, {}, senere(49))
       expect(foreldet).toMatchObject({ status: 'stoppet', klinisk: false })
@@ -1649,7 +1662,7 @@ describe('Klinisk omfang med de faktiske preparatene i FEST (gjennomgangene av 0
     // Den langsomme varianten er ikke godkjent.
     expect(erKliniskGodkjent(regel('vortioksetin-langsom'))).toBe(false)
     const TABLETT = form('53')
-    const plan = (startdose_mg: number, x: Partial<Beregningsinndata> = {}, u = uttrekk, f: { kode: string | null; navn: string } = ENESTE, motor = kliniskDoseplan) => beregnAksept(u, V, f, besvart(V, startdose_mg, x), motor)
+    const plan = (startdose_mg: number, x: Partial<Beregningsinndata> = {}, u = uttrekk, f: { kode: string | null; navn: string } = ENESTE, motor = kliniskDelplan) => beregnAksept(u, V, f, besvart(V, startdose_mg, x), motor)
     const ikke = (p: ReturnType<typeof plan>, hva: string) => {
       expect(p, hva).toMatchObject({ status: 'stoppet', klinisk: false })
       expect(p, hva).not.toHaveProperty('trinnvalg')
@@ -1704,14 +1717,14 @@ describe('Klinisk omfang med de faktiske preparatene i FEST (gjennomgangene av 0
     ikke(endret, 'endret styrke')
     expect(grunner(endret)).toContain('vortioksetin (fra): styrken 15 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST')
     // Et foreldet FEST-uttrekk (mer enn 48 timer) sperrer.
-    const senere = (r: Regel, x: Doseplaninndata, g: Preparatgrunnlag, o: Omgivelse, s?: Regelsett) => kliniskDoseplan(r, x, g, { ...o, naa: new Date(Date.parse(o.naa) + 49 * 3600e3).toISOString() }, s)
+    const senere = (r: Regel, x: Doseplaninndata, g: Preparatgrunnlag, o: Omgivelse, s?: Regelsett) => kliniskDelplan(r, x, g, { ...o, naa: new Date(Date.parse(o.naa) + 49 * 3600e3).toISOString() }, s)
     ikke(plan(20, {}, uttrekk, ENESTE, senere), 'foreldet FEST')
     // Endres regelen, faller godkjenningen bort.
     const annen = structuredClone(V)
     const f2 = annen.plan.forlop[0]!.faser[0]!
     if (f2.type === 'nedtrapping') f2.trinnlengde.verdi = 21
     expect(erKliniskGodkjent(annen)).toBe(false)
-    ikke(beregnAksept(uttrekk, annen, ENESTE, besvart(annen, 20), kliniskDoseplan), 'endret regel')
+    ikke(beregnAksept(uttrekk, annen, ENESTE, besvart(annen, 20), kliniskDelplan), 'endret regel')
   })
 
   it('sperrer klomipraminplaner som deler tabletter, så bare 50 mg ved lang behandlingstid gir en plan', () => {

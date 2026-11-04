@@ -12,11 +12,12 @@ import { KILDEFORMULERINGER, type Kildeformulering, type Virkestoffkartlegging }
 import { KARTLEGGING, VERKTOY, virkestoffvalg, type Verktoy } from './register'
 import { godkjenningsfeil, harBeregning, kontrollutfall } from './regler/godkjenning'
 import { REGELMODELLVERSJON, type Administrasjon, type Forlop, type Regel, type Regelsett, type Virkestoffvalg } from './regler/modell'
+import { DOMENESETT } from './regler/domenesett'
 import { NEDTRAPPINGSSETT } from './regler/nedtrapping'
 import { PILOTSETT } from './regler/pilotsett'
 
-/** Regelsettene appen bruker: pilotsettet (P4) og nedtrappingsreglene (P7). Hver regel hører til ett av dem. */
-export const REGELSETTENE: readonly Regelsett[] = [PILOTSETT, NEDTRAPPINGSSETT]
+/** Regelsettene appen bruker: pilotsettet (P4), nedtrappingsreglene (P7, K1) og leveransenes sett (K2–K4, `domenesett.ts`). Hver regel hører til ett av dem. */
+export const REGELSETTENE: readonly Regelsett[] = [PILOTSETT, NEDTRAPPINGSSETT, ...DOMENESETT.map((d) => d.sett)]
 
 /** Reglene i settene, samlet så verktøyene kan slå opp i dem. */
 export const samlet = (settene: readonly Regelsett[]): Regelsett => ({
@@ -30,8 +31,16 @@ export const samlet = (settene: readonly Regelsett[]): Regelsett => ({
 /** Alle reglene appen bruker, samlet så verktøyene kan slå opp i dem. */
 export const REGELSETT: Regelsett = samlet(REGELSETTENE)
 
-/** Settet regelen hører til, så planen oppgir det settets id og versjon; ellers `regelsett`. */
-export const settFor = (r: Regel, regelsett: Regelsett = REGELSETT): Regelsett => REGELSETTENE.find((s) => s.regler.includes(r)) ?? regelsett
+/**
+ * Settet blant `settene` som eier regelen: settet som har nøyaktig regelen,
+ * ellers settet som har en regel med samme id (en kopi av regelen, f.eks. i et
+ * kontrollgrunnlag). Regel-id-ene er unike på tvers av settene.
+ */
+export const eierAv = (r: Pick<Regel, 'id'>, settene: readonly Regelsett[] = REGELSETTENE): Regelsett | undefined =>
+  settene.find((s) => s.regler.includes(r as Regel)) ?? settene.find((s) => s.regler.some((x) => x.id === r.id))
+
+/** Settet regelen hører til blant `settene`, så planen oppgir det settets id og versjon; ellers `regelsett`. */
+export const settFor = (r: Regel, regelsett: Regelsett = REGELSETT, settene: readonly Regelsett[] = REGELSETTENE): Regelsett => eierAv(r, settene) ?? regelsett
 
 /** Ett valgt virkestoff med formuleringen fra kildetabellen. */
 export interface Valgtvirkestoff {
@@ -74,10 +83,19 @@ export function tilForlop(r: Regel): Forlop | undefined {
   return r.til ? r.plan.forlop.find((f) => f !== fra && f.virkestoff.type === r.til!.type && JSON.stringify(f.virkestoff) === JSON.stringify(r.til)) : undefined
 }
 
-/** Reglene i settet som gjelder valgene i verktøyet: samme retning, virkestoffer og administrasjonsform. */
+/**
+ * Om regelen er av verktøyets slag: en ren seponering, et bytte eller et
+ * tillegg (regelmodell 12). Et bytteverktøy får aldri et tillegg, og omvendt.
+ */
+export function avSlaget(verktoy: Pick<Verktoy, 'type'>, r: Pick<Regel, 'til'> & { plan: Pick<Regel['plan'], 'form'> }): boolean {
+  if (verktoy.type === 'seponering') return r.til === null && r.plan.form === 'seponering'
+  return r.til !== null && (r.plan.form === 'tillegg') === (verktoy.type === 'tillegg')
+}
+
+/** Reglene i settet som gjelder valgene i verktøyet: samme slag, retning, virkestoffer og administrasjonsform. */
 export function reglerFor(verktoy: Verktoy, valg: Verktoyvalg, regelsett: Regelsett = REGELSETT, k: Virkestoffkartlegging = KARTLEGGING): Regel[] {
   return regelsett.regler.filter((r) => {
-    if (verktoy.type === 'seponering' ? r.til !== null || r.plan.form !== 'seponering' : r.til === null || !valg.til) return false
+    if (!avSlaget(verktoy, r) || (verktoy.type !== 'seponering' && !valg.til)) return false
     if (!passerVirkestoff(r.fra, valg.fra.nokkel, k) || fraForlop(r)?.administrasjon !== administrasjonFor(valg.fra.formulering)) return false
     if (!valg.til || !r.til) return true
     return passerVirkestoff(r.til, valg.til.nokkel, k) && tilForlop(r)?.administrasjon === administrasjonFor(valg.til.formulering)
@@ -140,16 +158,16 @@ export function tilgjengelighet(verktoy: Verktoy, valg: Verktoyvalg, regelsett: 
   return { status: 'ikke_stottet', regler: [], grunner: [dekning ? dekningstekst(dekning) : 'OUSFAR har ingen regel for denne kombinasjonen.'] }
 }
 
-/** Om regelen hører til verktøyet: samme type (seponering eller bytte) og bare virkestoffer verktøyet tilbyr. */
-export function iVerktoyet(verktoy: Verktoy, k: Virkestoffkartlegging = KARTLEGGING): (r: Pick<Regel, 'fra' | 'til'>) => boolean {
+/** Om regelen hører til verktøyet: samme slag (seponering, bytte eller tillegg) og bare virkestoffer verktøyet tilbyr. */
+export function iVerktoyet(verktoy: Verktoy, k: Virkestoffkartlegging = KARTLEGGING): (r: Pick<Regel, 'fra' | 'til' | 'plan'>) => boolean {
   const nokler = new Set(virkestoffvalg(verktoy, k).map((v) => v.nokkel))
   const tilbys = (v: Virkestoffvalg) =>
     v.type === 'virkestoff' ? nokler.has(v.nokkel) : (k.grupper.find((g) => g.id === v.gruppe)?.medlemmer.some((m) => nokler.has(m.virkestoff)) ?? false)
-  return (r) => (verktoy.type === 'seponering') === (r.til === null) && tilbys(r.fra) && (!r.til || tilbys(r.til))
+  return (r) => avSlaget(verktoy, r) && tilbys(r.fra) && (!r.til || tilbys(r.til))
 }
 
 /** Verktøyene regelen hører til (en sperre for et av dem sperrer også regelen). */
-export const verktoyeneFor = (r: Pick<Regel, 'fra' | 'til'>, verktoyene: readonly Verktoy[] = VERKTOY, k: Virkestoffkartlegging = KARTLEGGING): string[] =>
+export const verktoyeneFor = (r: Pick<Regel, 'fra' | 'til' | 'plan'>, verktoyene: readonly Verktoy[] = VERKTOY, k: Virkestoffkartlegging = KARTLEGGING): string[] =>
   verktoyene.filter((v) => iVerktoyet(v, k)(r)).map((v) => v.id)
 
 /**
