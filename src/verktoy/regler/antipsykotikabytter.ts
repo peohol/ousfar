@@ -67,19 +67,29 @@ const GJENNOMGANG_6 = 'Etter kontrollørens sjette gjennomgang av #320 03.11.202
 const GJENNOMGANG_7 = 'Etter kontrollørens sjuende gjennomgang av #320 03.11.2026:'
 /** Kontrollørens åttende gjennomgang av #320 (04.11.2026, head 65c3fb8, kommentar 6620232533). */
 const GJENNOMGANG_8 = 'Etter kontrollørens åttende gjennomgang av #320 04.11.2026:'
+/** Kontrollørens niende gjennomgang av #320 (04.11.2026, head aadcf57, kommentar 6623643706). */
+const GJENNOMGANG_9 = 'Etter kontrollørens niende gjennomgang av #320 04.11.2026:'
 /** Samme navn som kontrolløren har i pilotsettet. */
 const KONTROLLOR = 'ChatGPT (uavhengig fagkontrollør)'
+/** En gjennomgang der kontrolløren avklarte åpne valg: versjonen som ble vurdert, og kommentaren med vurderingen. */
+interface Kontrollorgjennomgang {
+  commit: string
+  kommentar: string
+  dato: string
+}
+const AVKLARING_8: Kontrollorgjennomgang = { commit: '65c3fb8', kommentar: '6620232533', dato: '2026-11-04' }
+const AVKLARING_9: Kontrollorgjennomgang = { commit: 'aadcf57', kommentar: '6623643706', dato: '2026-11-04' }
 /**
- * Kontrollørens avklaring av ett åpent OUSFAR-valg i den åttende
- * gjennomgangen. `regelversjon` er versjonen kontrolløren vurderte; valget er
- * uendret i versjonen etter. Avklaringen er ingen godkjenning av regelen.
+ * Kontrollørens avklaring av ett åpent OUSFAR-valg. `regelversjon` er
+ * versjonen kontrolløren vurderte; valget er uendret i versjonen etter.
+ * Avklaringen er ingen godkjenning av regelen.
  */
-const avklartAvKontrollor = (regelversjon: number, hva: string): Avklaring => ({
-  dato: '2026-11-04',
+const avklartAvKontrollor = (g: Kontrollorgjennomgang, regelversjon: number, hva: string): Avklaring => ({
+  dato: g.dato,
   av: KONTROLLOR,
   rolle: 'uavhengig_kontrollor',
   regelversjon,
-  merknad: `Kontrollørens gjennomgang av 65c3fb8 04.11.2026 (#320, kommentar 6620232533): ${hva} Avklaringen gjelder bare dette valget og er ingen klinisk godkjenning av regelen.`,
+  merknad: `Kontrollørens gjennomgang av ${g.commit} ${g.dato.split('-').reverse().join('.')} (#320, kommentar ${g.kommentar}): ${hva} Avklaringen gjelder bare dette valget og er ingen klinisk godkjenning av regelen.`,
 })
 
 /* --- Fakta fra kildene, med egne ord ------------------------------------------------- */
@@ -298,6 +308,7 @@ const risperidonXeplion: Regel = {
         henvisninger: [RUSSU.tabell, RUSSU.sponsor, XEPLION.vedlikehold, RISPERDAL.dose, SPC.xeplionOmregning],
         // Kontrollørens åttende gjennomgang: avgrensningen er vurdert og avklart, men regelen er ikke godkjent.
         avklaring: avklartAvKontrollor(
+          AVKLARING_8,
           7,
           'Peroral risperidon 3 mg daglig til Xeplion 150 mg dag 1 og 100 mg dag 8, så 75 mg månedlig, er en faglig plausibel, begrenset startstrategi etter preparatomtalen og Russu 2018, ikke individuell doseekvivalens. Vilkårene om stabil effekt, dokumentert toleranse, normal nyrefunksjon, fravær av overvekt og relevante interaksjoner og vurderingen før injeksjonene er gode sikkerhetsavgrensninger; 75 mg skal være forskriverens faktiske vedlikeholdsmål og revurderes ved kliniske funn, og 4–6 mg til 75 mg skal fortsatt stoppe.',
         ),
@@ -827,7 +838,7 @@ const RISPERIDON_AVKREFTET = { alder_65: false, nedsatt_nyre_lever: false, rispe
 
 const aripiprazolRisperidon: Regel = {
   id: 'antipsykotikabytte-aripiprazol-risperidon',
-  versjon: 2,
+  versjon: 3,
   tittel: 'Fra aripiprazol til risperidon, direkte bytte',
   fra: { type: 'virkestoff', nokkel: 'aripiprazol' },
   til: { type: 'virkestoff', nokkel: 'risperidon' },
@@ -854,9 +865,8 @@ const aripiprazolRisperidon: Regel = {
   },
   inndata: [
     ARIPIPRAZOL_INNDATA,
-    { navn: 'maldose', omrade: [0, 16], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [RISPERDAL.maks] } },
-    // De fleste har effekt av 4–6 mg; over 10 mg er ikke bedre og gir mer ekstrapyramidale bivirkninger. Utenfor 4–6 mg må forskriveren begrunne valget.
-    { navn: 'maldose', omrade: [4, 6], art: 'veiledende_preferanse', krever_begrunnelse: true, grunnlag: { type: 'kilde', henvisninger: [RISPERDAL.dose, RISPERDAL.maks] } },
+    // Kontrollørens niende gjennomgang: planen går fra 4 mg rett til måldosen, så bare det vanlige området 4–6 mg gir plan. Et høyere mål (for eksempel 4 → 16 mg) er et stort sprang uten kildebegrunnet opptrapping og stopper uten delplan, også med begrunnelse.
+    { navn: 'maldose', omrade: [4, 6], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [RISPERDAL.dose, RISPERDAL.maks] } },
   ],
   bekreftelser: [
     {
@@ -886,7 +896,7 @@ const aripiprazolRisperidon: Regel = {
     ],
     tilpasninger: [
       utsagn('Aripiprazol seponeres uten nedtrapping dagen før risperidon startes (siste dose dagen før dag 1).', KEKS.direkte, KEKS.fraAripiprazol),
-      utsagn('Planen følger opptrappingen i preparatomtalen, 2 mg dag 1 og 4 mg fra dag 2. Startregimet og den terapeutiske måldosen er atskilt: forskriveren velger måldosen (høyst 16 mg), og en måldose utenfor 4–6 mg krever en skriftlig begrunnelse. Planen holder 4 mg til en ny vurdering og slutter på måldosen. Hvor lenge 4 mg holdes, er et åpent OUSFAR-valg (forslag: én uke). En langsommere opptrapping er en klinisk vurdering og beregnes ikke.', RISPERDAL.dose, RISPERDAL.maks),
+      utsagn('Planen følger opptrappingen i preparatomtalen, 2 mg dag 1 og 4 mg fra dag 2. Startregimet og den terapeutiske måldosen er atskilt: forskriveren velger måldosen innenfor 4–6 mg, dosen de fleste har effekt av. Planen holder 4 mg til en ny vurdering og slutter på måldosen. Et høyere mål, også 8–16 mg med begrunnelse, stopper uten delplan og planlegges individuelt, fordi planen ville gått rett fra 4 mg dit uten en kildebegrunnet opptrapping, og doser over 10 mg har ikke vist bedre effekt. Et lavere mål stopper også. Hvor lenge 4 mg holdes, er et åpent OUSFAR-valg (forslag: én uke). En langsommere opptrapping er en klinisk vurdering og beregnes ikke.', RISPERDAL.dose, RISPERDAL.maks),
       utsagn('Planen bruker risperidontabletter eller smeltetabletter; miksturen har ingen dokumentert oppmåling i verktøyet.'),
     ],
     forutsetninger: forutsetninger(
@@ -915,17 +925,38 @@ const aripiprazolRisperidon: Regel = {
       forventet: { fra: ['fra dag 1: seponert'], til: ['dag 1: 2 mg', 'fra dag 2: 4 mg'] },
     },
     {
-      id: 'maldose-8-begrunnet',
-      beskrivelse: 'Måldose 8 mg med skriftlig begrunnelse.',
-      inndata: { startdose_mg: 30, maldose_mg: 8, begrunnelse: 'Syntetisk eksempel: tidligere god effekt av 8 mg uten bivirkninger.', bekreftet: ARIPIPRAZOL_BEKREFTET, pasientforhold: RISPERIDON_AVKREFTET },
-      forventet: { fra: ['fra dag 1: seponert'], til: ['dag 1: 2 mg', 'dag 2–8: 4 mg', 'fra dag 9: 8 mg'] },
+      id: 'maldose-5',
+      beskrivelse: 'Måldose 5 mg, innenfor det vanlige området.',
+      inndata: { startdose_mg: 20, maldose_mg: 5, bekreftet: ARIPIPRAZOL_BEKREFTET, pasientforhold: RISPERIDON_AVKREFTET },
+      forventet: { fra: ['fra dag 1: seponert'], til: ['dag 1: 2 mg', 'dag 2–8: 4 mg', 'fra dag 9: 5 mg'] },
     },
     {
-      id: 'maldose-8-uten-begrunnelse',
-      beskrivelse: 'Måldose 8 mg uten begrunnelse stopper.',
-      inndata: { startdose_mg: 30, maldose_mg: 8, bekreftet: ARIPIPRAZOL_BEKREFTET, pasientforhold: RISPERIDON_AVKREFTET },
+      id: 'maldose-16-begrunnet',
+      beskrivelse: 'Måldose 16 mg med skriftlig begrunnelse: et sprang fra 4 mg uten kildebegrunnet opptrapping, så ingen komplett plan.',
+      inndata: { startdose_mg: 30, maldose_mg: 16, begrunnelse: 'Syntetisk eksempel: tidligere effekt først ved høy dose.', bekreftet: ARIPIPRAZOL_BEKREFTET, pasientforhold: RISPERIDON_AVKREFTET },
       forventet: {},
-      stopp: /Måldosen 8 mg .*krever en skriftlig begrunnelse/,
+      stopp: /Måldosen 16 mg er utenfor/,
+    },
+    {
+      id: 'maldose-8-begrunnet',
+      beskrivelse: 'Måldose 8 mg, også med skriftlig begrunnelse, er over det vanlige området og stopper.',
+      inndata: { startdose_mg: 30, maldose_mg: 8, begrunnelse: 'Syntetisk eksempel: tidligere god effekt av 8 mg uten bivirkninger.', bekreftet: ARIPIPRAZOL_BEKREFTET, pasientforhold: RISPERIDON_AVKREFTET },
+      forventet: {},
+      stopp: /Måldosen 8 mg er utenfor/,
+    },
+    {
+      id: 'maldose-6-5',
+      beskrivelse: 'Måldose 6,5 mg, rett over det vanlige området, stopper.',
+      inndata: { startdose_mg: 15, maldose_mg: 6.5, bekreftet: ARIPIPRAZOL_BEKREFTET, pasientforhold: RISPERIDON_AVKREFTET },
+      forventet: {},
+      stopp: /Måldosen 6,5 mg er utenfor/,
+    },
+    {
+      id: 'maldose-3',
+      beskrivelse: 'Måldose 3 mg, under det vanlige området, stopper.',
+      inndata: { startdose_mg: 15, maldose_mg: 3, bekreftet: ARIPIPRAZOL_BEKREFTET, pasientforhold: RISPERIDON_AVKREFTET },
+      forventet: {},
+      stopp: /Måldosen 3 mg er utenfor/,
     },
     {
       id: 'maldose-over-16',
@@ -959,6 +990,7 @@ const aripiprazolRisperidon: Regel = {
   godkjenning: tilKontroll(
     'Ny regel (K3): direkte bytte fra aripiprazol (Keks 2019) til risperidon med opptrappingen i preparatomtalen ved schizofreni (Risperdal pkt. 4.2).',
     `${GJENNOMGANG} startregimet og forskriverens valgte måldose (høyst 16 mg, utenfor 4–6 mg med begrunnelse) er atskilt, med en ny klinisk vurdering før endringen; tiden på 4 mg er et åpent OUSFAR-valg; også smeltetabletter.`,
+    `${GJENNOMGANG_9} planen går fra 4 mg rett til måldosen, så bare 4–6 mg gir en komplett plan. Et høyere mål (8–16 mg) er et stort sprang uten kildebegrunnet opptrapping og stopper uten delplan, også med begrunnelse; et lavere mål stopper også.`,
   ),
 }
 
@@ -1141,11 +1173,13 @@ function tilAripiprazol(a: {
   eksempler: Regel['eksempler']
   merknad: string
 }): Regel {
+  // Kontrollørens niende gjennomgang: 5 og 10 mg er innenfor TARCs områder og kan godtas i det snevre stabile forløpet når toleransen vurderes før økningen.
   const ukedose = (verdi: number, omrade: [number, number], uke: string) =>
-    forslag(verdi, 'mg', `Valgt innenfor TARC-området ${omrade.join('–').replace('.', ',')} mg ${uke}; forskriveren kan velge en annen dose i området.`, {
+    forslag(verdi, 'mg', `Valgt innenfor TARC-området ${omrade.join('–').replace('.', ',')} mg ${uke}; forskriveren kan velge en annen dose i området. Toleransen vurderes før hver økning.`, {
       omrade,
       justerbar: `Aripiprazol ${uke} (mg)`,
       henvisninger: [TARC.opptrapping],
+      avklaring: avklartAvKontrollor(AVKLARING_9, 7, `Aripiprazol ${verdi} mg ${uke} er innenfor TARCs opptrappingsområde og kan godtas i det snevre stabile forløpet når toleransen vurderes før økningen.`),
     })
   // Kildens eget eksempel: ned 25 % av startdosen per trinn, 20 → 15 → 10 → 5 mg eller 4 → 3 → 2 → 1 mg og så stopp.
   const kildeforlop = `${[4, 3, 2, 1].map((n) => (a.kildeeksempel * n) / 4).join(' → ')} mg`
@@ -1154,7 +1188,7 @@ function tilAripiprazol(a: {
   const FraNavn = `${a.fraNavn[0]!.toUpperCase()}${a.fraNavn.slice(1)}`
   return {
     id: a.id,
-    versjon: 7,
+    versjon: 8,
     tittel: `Fra ${a.fraNavn} til aripiprazol, kryss-titrering`,
     fra: { type: 'virkestoff', nokkel: a.fra },
     til: { type: 'virkestoff', nokkel: 'aripiprazol' },
@@ -1191,21 +1225,39 @@ function tilAripiprazol(a: {
               id: 'etter_seponering',
               nar: {
                 type: 'etter_seponering',
-                dager: forslag(14, 'dager', 'Samme minstetid som mellom reduksjonene i kilden (minst 2 uker); kilden oppgir ikke når pasienten skal vurderes etter seponeringen.', { henvisninger: [TARC.nedtrapping, TARC.oppfolging] }),
+                dager: forslag(14, 'dager', 'Samme minstetid som mellom reduksjonene i kilden (minst 2 uker); kilden oppgir ikke når pasienten skal vurderes etter seponeringen. Et foreslått kontrollpunkt, ikke et fast intervall: pasienten følges tettere ved behov.', {
+                  henvisninger: [TARC.nedtrapping, TARC.oppfolging],
+                  avklaring: avklartAvKontrollor(AVKLARING_9, 7, '14 dager etter seponeringen er et rimelig foreslått kontrollpunkt, ikke et universelt obligatorisk intervall, med fleksibel tettere oppfølging etter behov.'),
+                }),
               },
               tekst: `${FraNavn} er seponert: tilstanden vurderes på nytt (forverring av psykosen og seponeringsplager: ${a.seponeringsplager}).`,
-              ved_funn: 'Ved forverring eller seponeringsplager vurderes behandlingen individuelt; planen gir ingen ny dose.',
+              ved_funn: 'Ved forverring eller seponeringsplager vurderes behandlingen individuelt; planen gir ingen ny dose. Pasienten følges tettere ved behov, også før dette kontrollpunktet.',
               grunnlag: { type: 'kilde', henvisninger: [TARC.oppfolging, KEKS.spesialist, ...a.seponering] },
             },
           ],
         },
-        startes('aripiprazol', [
-          { type: 'opptrapping', trinn: [
-            { mg: ukedose(5, [2.5, 5], 'første uke'), dager: kilde(7, 'dager', 'bindende_krav', TARC.opptrapping) },
-            { mg: ukedose(10, [5, 10], 'andre uke'), dager: kilde(7, 'dager', 'bindende_krav', TARC.opptrapping) },
-          ] },
-          { type: 'vedlikehold', dose: { type: 'inndata', navn: 'maldose' } },
-        ]),
+        startes(
+          'aripiprazol',
+          [
+            { type: 'opptrapping', trinn: [
+              { mg: ukedose(5, [2.5, 5], 'første uke'), dager: kilde(7, 'dager', 'bindende_krav', TARC.opptrapping) },
+              { mg: ukedose(10, [5, 10], 'andre uke'), dager: kilde(7, 'dager', 'bindende_krav', TARC.opptrapping) },
+            ] },
+            { type: 'vedlikehold', dose: { type: 'inndata', navn: 'maldose' } },
+          ],
+          {
+            // Kontrollørens niende gjennomgang: ukedosene godtas når toleransen vurderes før hver økning.
+            vurderinger: [
+              {
+                id: 'for_okning',
+                nar: { type: 'for_hvert_trinn' },
+                tekst: 'Før hver økning av aripiprazol: toleransen vurderes (akatisi, uro, aktivering og søvnvansker).',
+                ved_funn: 'Ved dårlig toleranse holdes dosen, og resten av byttet planlegges individuelt.',
+                grunnlag: { type: 'kilde', henvisninger: [TARC.opptrapping, TARC.bivirkninger, a.byteverktoy.risiko, BYTEVERKTOY.aripiprazolStart] },
+              },
+            ],
+          },
+        ),
       ],
     },
     inndata: [
@@ -1219,6 +1271,7 @@ function tilAripiprazol(a: {
           begrunnelse: `Planen gjelder bare ${a.kildeeksempel} mg ${a.fraNavn} daglig, startdosen i kildens eget eksempel (${kildeforlop} og så stopp), slik at hvert trinn og siste dose før seponering står i kilden. TARC knytter ikke eksemplene til et bestemt stoff; at dosen gjelder ${a.fraNavn}, er OUSFARs bevisste stoffspesifikke avgrensning innenfor preparatomtalens doseområde. Keks-verktøyet gir virkestoffspesifikk støtte for at siste dose av ${a.fraNavn} kan avsluttes mens aripiprazol etableres; OUSFAR beholder likevel TARCs langsommere forløp. Andre startdoser og egne lavdosetrinn er ikke validert og stopper.`,
           henvisninger: [TARC.nedtrapping, ...a.doseomrade, a.byteverktoy.forlop],
           avklaring: avklartAvKontrollor(
+            AVKLARING_8,
             6,
             `${FraNavn} ${kildeforlop} og så stopp er et faglig forsvarlig, konservativt bytteforslag for en stabil voksen med schizofreni uten tidligere seponeringsplager eller andre unntak, med valgt og tolerert aripiprazoldose, lang overlapp, tett oppfølging og dosehold ved symptomer. Keks, Schwartz og Hope 2019 (Antipsychotic switching tool) gir stoffspesifikk støtte for at siste dose kan avsluttes mens aripiprazol etableres, og at siste trinn er hele dosen som gjenstår, diskvalifiserer ikke byttet. Gjelder ikke ren seponering, tidligere seponeringsplager, ustabil psykose eller andre startdoser.`,
           ),
@@ -1273,10 +1326,10 @@ function tilAripiprazol(a: {
         utsagn(`Keks-verktøyet (2019, sist oppdatert 2022): ${a.byteverktoy.forlop.faktum ?? ''} ${a.byteverktoy.risiko.faktum ?? ''}`, a.byteverktoy.forlop, a.byteverktoy.risiko),
       ],
       tilpasninger: [
-        utsagn('Aripiprazol foreslås som 5 mg den første uken og 10 mg den andre, øverst i kildens områder, fordi den laveste tablettstyrken i FEST er 5 mg og ikke er delbar; forskriveren kan velge 2,5 mg (mikstur) og 5–10 mg. Måldosen 10 eller 15 mg velges av forskriveren.', TARC.opptrapping),
+        utsagn('Aripiprazol foreslås som 5 mg den første uken og 10 mg den andre, øverst i kildens områder, fordi den laveste tablettstyrken i FEST er 5 mg og ikke er delbar; forskriveren kan velge 2,5 mg (mikstur) og 5–10 mg. Toleransen vurderes før hver økning (avklart av kontrolløren 04.11.2026). Måldosen 10 eller 15 mg velges av forskriveren.', TARC.opptrapping),
         utsagn(`${FraNavn} holdes uendret i 28 dager: 14 dagers opptrapping og 14 dager sammen med aripiprazol på måldosen. Første reduksjon er dag 29, og hver reduksjon står i minst 14 dager.`, TARC.opptrapping, TARC.overlapp, TARC.nedtrapping),
         utsagn(`Planen gjelder bare startdosen i kildens eget eksempel, ${a.kildeeksempel} mg (OUSFARs bevisste stoffspesifikke avgrensning, avklart av kontrolløren 04.11.2026), så hvert trinn, også siste dose før seponering, er kildens: ${kildeforlop} og så stopp, hvert trinn i minst 14 dager. Andre startdoser stopper, fordi kilden ikke viser hvordan de skal trappes ned når trinnene ikke kan gis med tablettene, og OUSFAR legger ikke inn egne lavdosetrinn som ikke er validert.`, TARC.nedtrapping, ...a.doseomrade),
-        utsagn('Siste trinn til 0 er hele dosen som gjenstår. Det krever en egen vurdering av pasienten, stopper ved tidligere seponeringsplager, og pasienten vurderes før hver reduksjon, før siste trinn og etter seponeringen (forslag: 14 dager etter).', TARC.nedtrapping, TARC.oppfolging),
+        utsagn('Siste trinn til 0 er hele dosen som gjenstår. Det krever en egen vurdering av pasienten, stopper ved tidligere seponeringsplager, og pasienten vurderes før hver reduksjon, før siste trinn og etter seponeringen (forslag: 14 dager etter, tettere ved behov).', TARC.nedtrapping, TARC.oppfolging),
         utsagn(`Keks-verktøyet gir virkestoffspesifikk støtte for at siste dose av ${a.fraNavn} kan avsluttes mens aripiprazol etableres, men foreslår et raskere bytte. OUSFAR beholder med vilje TARCs langsommere forløp med lang overlapp; verktøyets raskere nedtrapping og start med 10 mg aripiprazol er ikke tatt inn.`, ...stoffspesifikt, BYTEVERKTOY.aripiprazolStart, TARC.overlapp),
         utsagn('Avgrensningen gjelder bare bytte til aripiprazol hos stabile pasienter fra startdosen over, og kan ikke overføres til ren seponering av antipsykotika, tidligere seponeringsplager, ustabil psykose eller andre startdoser.', TARC.pasienter, TARC.andreGrupper),
       ],
@@ -1301,6 +1354,7 @@ function tilAripiprazol(a: {
       `${GJENNOMGANG_6} regelen gjelder bare startdosen i kildens eget eksempel (åpent OUSFAR-valg), så hvert trinn og siste dose før seponering står i kilden; valget av nærmeste dose (valg c) og det valgfrie mindre siste trinnet er fjernet, fordi de ga trinn kilden ikke har validert. Vurderingen av siste trinn bygger nå på kildens forløp.`,
       `${GJENNOMGANG_7} stoffspesifikt grunnlag for siste trinn og overlapp: preparatomtalens råd om seponering og seponeringsplagene Keks 2019 nevner for stoffet står i vurderingspunktene og i vurderingen av siste trinn, og overlappet er knyttet til den mest forsiktige strategien i Keks 2019. Koblingen av kildens eksempel til stoffet er fortsatt et åpent valg.`,
       `${GJENNOMGANG_8} kontrolløren har vurdert kildens forløp fra denne startdosen som et faglig forsvarlig, konservativt bytteforslag, og valget er registrert som avklart. Keks, Schwartz og Hope 2019 (Antipsychotic switching tool) er tatt inn som virkestoffspesifikk støtte for siste trinn, og at OUSFAR med vilje beholder det langsommere forløpet, er dokumentert. Regelen er ikke godkjent.`,
+      `${GJENNOMGANG_9} kontrolløren har godtatt aripiprazol 5 mg første uke og 10 mg andre uke når toleransen vurderes før økningen, og 14 dager etter seponeringen som et foreslått kontrollpunkt med tettere oppfølging ved behov; begge er registrert som avklart. Planen har et nytt vurderingspunkt for toleransen før hver økning av aripiprazol. Regelen er ikke godkjent.`,
     ),
   }
 }

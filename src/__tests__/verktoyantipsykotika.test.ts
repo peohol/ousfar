@@ -41,19 +41,13 @@ const VALG = {
   'antipsykotikabytte-olanzapin-aripiprazol': valg(['olanzapin', 'standard'], ['aripiprazol', 'standard']),
   'antipsykotikabytte-risperidon-aripiprazol': valg(['risperidon', 'standard'], ['aripiprazol', 'standard']),
 } as const
-/**
- * Regler med åpne OUSFAR-valg som kontrolløren må avklare: aripiprazoldosen første og andre uke og tiden til
- * vurderingen etter seponeringen i byttene til aripiprazol, og tiden på startregimet før den valgte måldosen i
- * byttene fra aripiprazol.
- */
+/** Regler med åpne OUSFAR-valg som kontrolløren må avklare: tiden på startregimet før den valgte måldosen i byttene fra aripiprazol. */
 const MED_APNE_VALG = [
-  'antipsykotikabytte-olanzapin-aripiprazol',
-  'antipsykotikabytte-risperidon-aripiprazol',
   'antipsykotikabytte-aripiprazol-olanzapin',
   'antipsykotikabytte-aripiprazol-risperidon',
 ]
 /** Regler med OUSFAR-vurderinger, også de kontrolløren har avklart (avgrensningen til 3 mg risperidon før Xeplion, 04.11.2026). */
-const MED_OUSFAR_VURDERING = [...MED_APNE_VALG, 'depot-risperidon-xeplion']
+const MED_OUSFAR_VURDERING = [...MED_APNE_VALG, 'depot-risperidon-xeplion', 'antipsykotikabytte-olanzapin-aripiprazol', 'antipsykotikabytte-risperidon-aripiprazol']
 /** Kontrollørens avklaringer i den åttende gjennomgangen (04.11.2026): regelen og versjonen kontrolløren vurderte. */
 const AVKLART_STARTDOSE: Partial<Record<string, number>> = {
   'depot-risperidon-xeplion': 7,
@@ -65,13 +59,11 @@ const VERSJON: Partial<Record<string, number>> = {
   'depot-risperidon-xeplion': 8,
   'depot-consta-xeplion': 2,
   'antipsykotikabytte-aripiprazol-olanzapin': 2,
-  'antipsykotikabytte-aripiprazol-risperidon': 2,
+  'antipsykotikabytte-aripiprazol-risperidon': 3,
   'antipsykotikabytte-kariprazin-kvetiapin': 2,
-  'antipsykotikabytte-olanzapin-aripiprazol': 7,
-  'antipsykotikabytte-risperidon-aripiprazol': 7,
+  'antipsykotikabytte-olanzapin-aripiprazol': 8,
+  'antipsykotikabytte-risperidon-aripiprazol': 8,
 }
-/** Krever skriftlig begrunnelse (ordlyden om over eller under grensen er motorens). */
-const BEGRUNNES = /krever en skriftlig begrunnelse/
 type Regelid = keyof typeof VALG
 
 const regel = (id: string) => ANTIPSYKOTIKASETT.regler.find((r) => r.id === id)!
@@ -271,10 +263,17 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
       'Dag 1: Aripiprazol peroralt: Seponert; Risperidon peroralt: 2 mg = 1 tablett à 2 mg',
       'Fra dag 2: Risperidon peroralt: 4 mg = 1 tablett à 4 mg',
     ])
-    // Utenfor 4–6 mg krever en skriftlig begrunnelse; over 16 mg stopper også med begrunnelse.
-    for (const maldose of ['3', '8']) expect(grunner(kjor('antipsykotikabytte-aripiprazol-risperidon', '15', { maldose })), maldose).toMatch(BEGRUNNES)
-    expect(linjer(kjor('antipsykotikabytte-aripiprazol-risperidon', '15', { maldose: '8', begrunnelse: 'Syntetisk eksempel.' })).at(-1)).toMatch(/Fra dag 9: Risperidon peroralt: 8 mg/)
-    expect(grunner(kjor('antipsykotikabytte-aripiprazol-risperidon', '15', { maldose: '20', begrunnelse: 'Syntetisk eksempel.' }))).toMatch(/Måldosen 20 mg er utenfor/)
+    // Kontrollørens niende gjennomgang: planen går fra 4 mg rett til måldosen, så bare 4–6 mg gir plan. Høyere mål (4 → 16 mg er et stort
+    // sprang uten opptrapping) og lavere mål stopper uten delplan, også med skriftlig begrunnelse.
+    expect(linjer(kjor('antipsykotikabytte-aripiprazol-risperidon', '15', { maldose: '5' })).at(-1)).toMatch(/Fra dag 9: Risperidon peroralt: 5 mg/)
+    for (const maldose of ['3', '3,5', '6,5', '8', '10', '12', '16', '20']) {
+      for (const begrunnelse of [undefined, 'Syntetisk eksempel.']) {
+        const u = kjor('antipsykotikabytte-aripiprazol-risperidon', '15', { maldose, ...(begrunnelse && { begrunnelse }) })
+        expect(u.utfall, maldose).not.toBe('plan')
+        expect(grunner(u), maldose).toMatch(new RegExp(`Måldosen ${maldose} mg er utenfor`))
+        expect('linjer' in u ? u.linjer : [], maldose).toEqual([])
+      }
+    }
     expect(grunner(kjor('antipsykotikabytte-aripiprazol-risperidon', '15', { maldose: '4' }, { ubesvart: ['alder_65'] }))).toMatch(/65 år/)
   })
 
@@ -309,8 +308,13 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
       'Fra dag 71 (fra 09.02.2027): Olanzapin peroralt: Seponert; Aripiprazol peroralt: 15 mg = 1 tablett à 15 mg',
     ])
     // Vurderingspunktet står før hver reduksjon og før siste trinn til 0, og pasienten vurderes igjen 14 dager etter seponeringen (forslag).
-    const vurderinger = linjer(kjor('antipsykotikabytte-olanzapin-aripiprazol', '20', { ...TO_TABLETTER, maldose: '15' })).filter((l) => l.includes('Vurdering'))
+    const olanzapinplan = linjer(kjor('antipsykotikabytte-olanzapin-aripiprazol', '20', { ...TO_TABLETTER, maldose: '15' }))
+    const vurderinger = olanzapinplan.filter((l) => l.includes('Vurdering (Olanzapin)'))
     expect(vurderinger.map((l) => l.split(':')[0])).toEqual(['Dag 29', 'Dag 43', 'Dag 57', 'Dag 71', 'Dag 84'])
+    // Kontrollørens niende gjennomgang: toleransen vurderes før hver økning av aripiprazol (5 → 10 → 15 mg).
+    const okninger = olanzapinplan.filter((l) => l.includes('Vurdering (Aripiprazol)'))
+    expect(okninger.map((l) => l.split(':')[0])).toEqual(['Dag 8', 'Dag 15'])
+    for (const l of okninger) expect(l).toMatch(/Før hver økning av aripiprazol: toleransen vurderes \(akatisi, uro, aktivering og søvnvansker\)/)
     expect(vurderinger[3]).toMatch(/også det siste trinnet til 0: tilstanden vurderes/)
     // Hva som gjøres ved funn, står i planen.
     expect(kjor('antipsykotikabytte-olanzapin-aripiprazol', '20', { ...TO_TABLETTER, maldose: '15' }).tekst).toMatch(/Ved funn: Ved forverring, uro eller seponeringsplager holdes dosen, og resten av nedtrappingen planlegges individuelt/)
@@ -338,8 +342,10 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
     ])
     expect(grunner(kjor('antipsykotikabytte-risperidon-aripiprazol', '4', { ...TO_TABLETTER, maldose: '10' }, { ubesvart: ['cyp_aripiprazol'] }))).toMatch(/CYP3A4- eller CYP2D6-hemmer/)
     // Risperdal-preparatomtalens råd om seponering og plagene den nevner, står i vurderingene.
-    const vurderinger = linjer(kjor('antipsykotikabytte-risperidon-aripiprazol', '4', { ...TO_TABLETTER, maldose: '10' })).filter((l) => l.includes('Vurdering'))
+    const risperidonplan = linjer(kjor('antipsykotikabytte-risperidon-aripiprazol', '4', { ...TO_TABLETTER, maldose: '10' }))
+    const vurderinger = risperidonplan.filter((l) => l.includes('Vurdering (Risperidon)'))
     expect(vurderinger.map((l) => l.split(':')[0])).toEqual(['Dag 29', 'Dag 43', 'Dag 57', 'Dag 71', 'Dag 84'])
+    expect(risperidonplan.filter((l) => l.includes('Vurdering (Aripiprazol)')).map((l) => l.split(':')[0])).toEqual(['Dag 8'])
     for (const l of vurderinger) expect(l).toMatch(/kvalme, oppkast, svette og søvnløshet, og akatisi, dystoni og dyskinesi/)
     expect(regel('antipsykotikabytte-risperidon-aripiprazol').fortolkning.kildetro.map((u) => u.tekst).join(' ')).toMatch(/Seponering av risperidon: Ved seponering anbefales gradvis nedtrapping/)
     expect(kjor('antipsykotikabytte-risperidon-aripiprazol', '20', { ...TO_TABLETTER, maldose: '10' }).utfall).not.toBe('plan')
@@ -394,11 +400,16 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
     // Avgrensningen til kildens eksempel er avklart av kontrolløren (04.11.2026); vurderingen av siste trinn bygger på kildens
     // forløp og Keks-verktøyets stoffspesifikke råd. Aripiprazoldosene og tiden til vurderingen etter seponeringen er fortsatt åpne.
     for (const id of ['antipsykotikabytte-olanzapin-aripiprazol', 'antipsykotikabytte-risperidon-aripiprazol'] as const) {
-      expect(apneValg(regel(id)), id).toEqual([
-        'plan.forlop[0].vurderinger[1].nar.dager (åpent forslag)',
-        'plan.forlop[1].faser[0].trinn[0].mg (åpent forslag)',
-        'plan.forlop[1].faser[0].trinn[1].mg (åpent forslag)',
-      ])
+      // Ukedosene og tiden til vurderingen etter seponeringen er avklart i den niende gjennomgangen (aadcf57, regelversjon 7).
+      expect(apneValg(regel(id)), id).toEqual([])
+      const fase = regel(id).plan.forlop[1]!.faser[0]!
+      const etter = regel(id).plan.forlop[0]!.vurderinger?.find((v) => v.id === 'etter_seponering')?.nar
+      const avklart = [...(fase.type === 'opptrapping' ? fase.trinn.map((t) => t.mg.grunnlag) : []), etter?.type === 'etter_seponering' ? etter.dager.grunnlag : null]
+      expect(avklart.length, id).toBe(3)
+      for (const g of avklart) {
+        expect(g?.type === 'ousfar_vurdering' && g.avklaring, id).toMatchObject({ av: 'ChatGPT (uavhengig fagkontrollør)', rolle: 'uavhengig_kontrollor', regelversjon: 7 })
+        expect(g?.type === 'ousfar_vurdering' && g.avklaring && g.avklaring.merknad, id).toMatch(/gjennomgang av aadcf57 .*kommentar 6623643706.*ingen klinisk godkjenning av regelen/)
+      }
       const siste = regel(id).bekreftelser.find((b) => b.id === 'siste_trinn')?.grunnlag
       expect(siste?.type, id).toBe('kilde')
       expect(siste?.type === 'kilde' && siste.henvisninger.filter((k) => k.kilde === 'keks-2019-verktoy').length, id).toBe(3)
@@ -410,7 +421,16 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
   })
 
   it('byttene til aripiprazol gir ingen plan før de åpne valgene er avklart, selv med godkjenning', () => {
-    const uavklart = { id: 'antipsykotikabytte-risperidon-aripiprazol', endre: { hva: 'bare godkjenning', endre: (r: Regel) => simulerGodkjenning(r, { id: r.id, versjon: r.versjon, fingeravtrykk: fingeravtrykk(r) }, '2026-11-03') } }
+    // Alle valgene er avklart nå; sperren prøves på en kopi der avklaringen av ukedosen første uke er tatt bort.
+    const utenAvklaring = (r: Regel) => {
+      const fase = r.plan.forlop[1]!.faser[0]!
+      if (fase.type !== 'opptrapping' || fase.trinn[0]!.mg.grunnlag.type !== 'ousfar_vurdering') throw new Error('Uventet plan')
+      fase.trinn[0]!.mg.grunnlag.avklaring = null
+    }
+    const uavklart = {
+      id: 'antipsykotikabytte-risperidon-aripiprazol',
+      endre: { hva: 'uten avklaring, med godkjenning', endre: (r: Regel) => { utenAvklaring(r); simulerGodkjenning(r, { id: r.id, versjon: r.versjon, fingeravtrykk: fingeravtrykk(r) }, '2026-11-03') } },
+    }
     const u = kjor('antipsykotikabytte-risperidon-aripiprazol', '4', { formvalg: { fra: TABLETTER, til: TABLETTER }, maldose: '10' }, { regel: uavklart })
     expect(grunner(u)).toMatch(/åpne valg som må avklares faglig/)
   })
