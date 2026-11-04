@@ -19,6 +19,7 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { omregningsrader } from '../../verktoy/doseplan'
+import type { Doseplanresultat } from '../../verktoy/motor/plan'
 import { FORMULERINGSKLASSER, type Formuleringsklasse } from '../../verktoy/festformuleringer'
 import { lesKartdata } from '../../verktoy/kartdata'
 import { markedsgrunnlag, preparaterFor } from '../../verktoy/kartlegging'
@@ -39,6 +40,7 @@ import {
   lesUttrekkene,
   omfangssveip,
   planfeil,
+  planinndata,
   QA_RAPPORT,
   sveiplinjer,
   type Leveranse,
@@ -267,6 +269,58 @@ describe('QA: måldosen må velges', () => {
     expect([uten!.klasse, uten!.vist.join(' ')]).toEqual(['skjema', expect.stringMatching(/Måldosen/)])
     expect(med!.klasse).toBe('komplett')
   })
+})
+
+describe('QA: det eksisterende legemidlet i et tillegg holdes på den faktiske dosen', () => {
+  // Kopier av reelle positive K4-resultater, endret ett sted om gangen.
+  for (const id of ['K0-11', 'K0-12']) {
+    it(`${id}: komplett bare når det eksisterende legemidlet står på forskriverens aktuelle dose hele forløpet`, () => {
+      const x = RESULTATER.find((r) => r.forlop.id === id)!
+      if (x.klasse !== 'komplett') return
+      const regel = x.regel!
+      const res = x.utfall!.resultat! as Extract<Doseplanresultat, { status: 'doseplan' }>
+      expect(res.status).toBe('doseplan')
+      const inn = planinndata(x.forlop.dose, x.skjema?.maldose)
+      const fraId = res.forlop.find((f) => f.uendret_mg !== undefined)!.id
+      const endret = (endre: (f: (typeof res.forlop)[number]) => void) => {
+        const kopi = structuredClone(res)
+        endre(kopi.forlop.find((f) => f.id === fraId)!)
+        return komplett(regel, kopi, inn)
+      }
+      const dose = inn.startdose_mg
+      expect(komplett(regel, res, inn)).toBe(true)
+      expect(komplett(regel, res, { ...inn, startdose_mg: dose * 2 }), 'annen startdose enn planen holder').toBe(false)
+      expect(
+        endret((f) => (f.uendret_mg = dose / 2)),
+        'uendret_mg endret',
+      ).toBe(false)
+      expect(
+        endret((f) => delete f.uendret_mg),
+        'planen sier ingenting om det eksisterende legemidlet',
+      ).toBe(false)
+      const perioder = (mg: number[]) => mg.map((m, i) => ({ ...res.forlop.find((f) => f.id !== fraId)!.perioder[0]!, fra: 1 + 14 * i, til: i === mg.length - 1 ? null : 14 * (i + 1), mg: m }))
+      expect(
+        endret((f) => (f.perioder = perioder([dose, dose, dose]))),
+        'perioder med uendret dose hele veien',
+      ).toBe(true)
+      expect(
+        endret((f) => (f.perioder = perioder([dose, dose / 2, dose]))),
+        'dosen endret i ett trinn',
+      ).toBe(false)
+      expect(
+        endret((f) => (f.perioder = perioder([dose, dose, dose * 2]))),
+        'dosen endret ved slutten',
+      ).toBe(false)
+      expect(
+        endret((f) => (f.perioder = perioder([dose, dose]).map((p, i) => (i === 1 ? { ...p, til: 40 } : p)))),
+        'det eksisterende legemidlet slutter',
+      ).toBe(false)
+      expect(
+        endret((f) => (f.siste_dosedag = 40)),
+        'det eksisterende legemidlet seponeres',
+      ).toBe(false)
+    })
+  }
 })
 
 describe('QA: K3 telles for seg (peroral → peroral og depot)', () => {

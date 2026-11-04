@@ -224,7 +224,7 @@ const kasusuttrekk = (u: Uttrekkene, navn: string): Kasusuttrekk => ({ pilot: u[
 
 /** Dosen slik den står i et skjemafelt («37,5»), som tall. */
 const somTall = (x: string) => Number(x.replace(',', '.'))
-const planinndata = (dose: string, maldose?: string): Planinndata => ({ startdose_mg: somTall(dose), ...(maldose ? { maldose_mg: somTall(maldose) } : {}) })
+export const planinndata = (dose: string, maldose?: string): Planinndata => ({ startdose_mg: somTall(dose), ...(maldose ? { maldose_mg: somTall(maldose) } : {}) })
 
 /** Flere trinnvalg enn dette i ett forløp regnes som en løkke. */
 const MAKS_TRINNVALG = 60
@@ -498,10 +498,20 @@ const fortsetterMedDose = (f: Doseplanresultat & { status: 'doseplan' }, id: str
   const siste = x.perioder.at(-1)
   return (siste !== undefined && siste.til === null && siste.mg > 0) || x.injeksjoner.some((i) => i.vedlikehold && i.mg > 0)
 }
-/** Det eksisterende legemidlet i et tillegg: uendret (ingen beregnede perioder) eller fortsetter med dose. */
-const fortsetterUendret = (f: Doseplanresultat & { status: 'doseplan' }, id: string | undefined) => {
+/**
+ * Det eksisterende legemidlet i et tillegg holdes på nøyaktig forskriverens
+ * aktuelle dose gjennom hele forløpet: planen oppgir den som uendret dose,
+ * og/eller som sammenhengende perioder som alle har den dosen og ikke slutter.
+ * En plan som ikke sier noe om dosen, eller som endrer den i ett trinn eller
+ * til slutt, holder den ikke uendret.
+ */
+const fortsetterUendret = (f: Doseplanresultat & { status: 'doseplan' }, id: string | undefined, startdose_mg: number) => {
   const x = f.forlop.find((y) => y.id === id)
-  return (x !== undefined && x.siste_dosedag === null && x.perioder.length === 0 && x.injeksjoner.length === 0) || fortsetterMedDose(f, id)
+  if (!x || x.siste_dosedag !== null || x.injeksjoner.length > 0) return false
+  if (x.uendret_mg === undefined && x.perioder.length === 0) return false
+  if (x.uendret_mg !== undefined && !nesten(x.uendret_mg, startdose_mg)) return false
+  const sammenhengende = x.perioder.every((p, i) => i === 0 || (x.perioder[i - 1]!.til !== null && p.fra === x.perioder[i - 1]!.til! + 1))
+  return sammenhengende && x.perioder.every((p) => nesten(p.mg, startdose_mg)) && (x.perioder.at(-1)?.til ?? null) === null
 }
 const seponeres = (f: Doseplanresultat & { status: 'doseplan' }, id: string | undefined) => {
   const x = f.forlop.find((y) => y.id === id)
@@ -562,14 +572,14 @@ const naarMaldosen = (regel: Regel, r: Doseplanresultat & { status: 'doseplan' }
  * Om planen når sluttmålet, avgjort av planens forløp og regelens sluttmål:
  * nedtrapping → seponert; bytte → det gamle seponert og det nye fortsetter
  * på den valgte kliniske måldosen; tillegg → det eksisterende fortsetter
- * (uendret) og det nye fortsetter på måldosen. Et nytt legemiddel som blir
+ * på nøyaktig forskriverens aktuelle dose og det nye fortsetter på måldosen. Et nytt legemiddel som blir
  * stående på en introduksjonsdose, når ikke sluttmålet.
  */
 export function komplett(regel: Regel, r: Doseplanresultat, inn: Planinndata): boolean {
   if (r.status !== 'doseplan') return false
   const fra = fraForlop(regel)?.id
   if (!regel.til) return r.forlop.every((x) => seponeres(r, x.id))
-  if (regel.plan.form === ('tillegg' as string)) return fortsetterUendret(r, fra) && naarMaldosen(regel, r, inn)
+  if (regel.plan.form === ('tillegg' as string)) return fortsetterUendret(r, fra, inn.startdose_mg) && naarMaldosen(regel, r, inn)
   return seponeres(r, fra) && naarMaldosen(regel, r, inn)
 }
 
