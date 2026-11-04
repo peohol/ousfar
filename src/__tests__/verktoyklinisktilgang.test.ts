@@ -54,9 +54,10 @@ const GODKJENTE: Record<string, { sett: string; versjon: number; fingeravtrykk: 
 
 /**
  * Regler kontrolløren har godkjent etter leveransen, i appens regelsett: escitalopram versjon 13 fra K1
- * (04.11.2026, `regler/k1.ts`), testet i `verktoyk1.test.ts`. Verktøyene kan gi en beregning etter dem.
+ * (04.11.2026, `regler/k1.ts`), testet i `verktoyk1.test.ts`, og tre antipsykotikabytter fra K3
+ * (04.11.2026, `ANTIPSYKOTIKAVEDTAK`), testet i `verktoyantipsykotika.test.ts`. Verktøyene kan gi en beregning etter dem.
  */
-const GODKJENT_ETTER_LEVERANSEN = ['seponering-escitalopram']
+const GODKJENT_ETTER_LEVERANSEN = ['seponering-escitalopram', 'depot-risperidon-xeplion', 'antipsykotikabytte-olanzapin-aripiprazol', 'antipsykotikabytte-risperidon-aripiprazol']
 
 const SETTENE = [PILOTSETT, NEDTRAPPINGSSETT, TILLEGGSSETT, SAMMENLIGNINGSSETT]
 const ALLE = SETTENE.flatMap((s) => s.regler.map((r) => ({ sett: s, r })))

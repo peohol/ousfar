@@ -181,7 +181,7 @@ Ved lang behandlingstid endres ingenting: sertralin, escitalopram (tabletter), f
 
 ### Forslag 3 – Peroral risperidon → Xeplion, og generisk paliperidonpalmitat
 
-**Status 03.11.2026:** `depot-risperidon-xeplion` er skrevet som regelutkast i K3, uten generika, og står til faglig kontroll (`docs/verktøy-k3-antipsykotika.md`).
+**Status 04.11.2026:** `depot-risperidon-xeplion` er skrevet som regelutkast i K3, uten generika, og er siden klinisk godkjent av den uavhengige kontrolløren (versjon 8) i en snever avgrensning: bare fra 3 mg peroral risperidon til Xeplion 75 mg i måneden (`docs/verktøy-k3-antipsykotika.md`).
 
 **Hva:** En ny regel, `depot-risperidon-xeplion`, for overgang fra peroral risperidon til månedlig paliperidonpalmitat. Den bruker samme oppstart som den godkjente regelen `depot-paliperidon-xeplion` v3. I tillegg tas de generiske preparatene med paliperidonpalmitat inn i preparatlisten, i en ny versjon av den godkjente regelen eller i en ny regel, etter kontrollørens valg.
 

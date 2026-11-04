@@ -2,9 +2,9 @@
 
 <!-- Laget av `npm run verktoy:regler -- rapport` fra reglene i src/verktoy/regler/. Ikke rediger for hånd; endre reglene og lag rapporten på nytt. -->
 
-Regelsett `ousfar-verktoy-antipsykotikabytter` versjon 1, regelmodell 12, beregningsmotor 10. Byttereglene for antipsykotika i K3: komplette forløp til et definert sluttmål, bygget på preparatomtaler, Keks 2019 (oversikten og byteverktøyet), Russu 2018 og TARC 2018. To depotrelaterte (Xeplion fra peroral risperidon og fra Risperdal Consta), tre perorale direkte bytter (aripiprazol til olanzapin og til risperidon, kariprazin til kvetiapin) og to kryss-titreringer til aripiprazol (fra olanzapin og fra risperidon, TARC 2018). Alle står til uavhengig faglig kontroll; ingen er klinisk godkjent.
+Regelsett `ousfar-verktoy-antipsykotikabytter` versjon 1, regelmodell 12, beregningsmotor 10. Byttereglene for antipsykotika i K3: komplette forløp til et definert sluttmål, bygget på preparatomtaler, Keks 2019 (oversikten og byteverktøyet), Russu 2018 og TARC 2018. To depotrelaterte (Xeplion fra peroral risperidon og fra Risperdal Consta), tre perorale direkte bytter (aripiprazol til olanzapin og til risperidon, kariprazin til kvetiapin) og to kryss-titreringer til aripiprazol (fra olanzapin og fra risperidon, TARC 2018). Tre er klinisk godkjent av en uavhengig kontrollør for nøyaktig sin versjon, sitt fingeravtrykk og en snever avgrensning (ANTIPSYKOTIKAVEDTAK): Xeplion fra peroral risperidon og de to kryss-titreringene til aripiprazol. De fire andre står til faglig kontroll. Verktøyene vises bare for administratorer.
 
-**7 regler, 0 klinisk godkjent.** Utfallet av kontrollen: 7 ikke ferdig kontrollert. Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. De er ikke empirisk validerte kliniske anbefalinger, og ingen av reglene er klinisk godkjent. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-k3-antipsykotika.md` og `docs/verktøy-klinisk-leveranseplan-2026-11.md` og `docs/verktøy-p4-regelmodell.md`.
+**7 regler, 3 klinisk godkjent.** Utfallet av kontrollen: 3 kontrollert og godkjent i oppgitt omfang, 4 ikke ferdig kontrollert. Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. 3 av reglene er klinisk godkjent etter uavhengig faglig kontroll i nøyaktig denne versjonen; de andre er ikke, og beregningene etter dem er ikke kliniske anbefalinger. Ingen av beregningene er empirisk validerte. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-k3-antipsykotika.md` og `docs/verktøy-klinisk-leveranseplan-2026-11.md` og `docs/verktøy-p4-regelmodell.md`.
 
 Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel bygger på teksten der, og den vises ikke (`docs/verktøy-p3-rettigheter.md`).
 
@@ -12,13 +12,13 @@ Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel by
 
 | Regel | Form | Fra → til | Beregnbarhet | Åpne valg | Status | Eksempler |
 | --- | --- | --- | --- | --- | --- | --- |
-| `depot-risperidon-xeplion` | oppstart av depot | risperidon → paliperidon | beregnbar etter faglig avklaring | 0 | til faglig kontroll | 19 |
-| `depot-consta-xeplion` | direkte bytte | risperidon → paliperidon | entydig beregnbar | 0 | til faglig kontroll | 7 |
+| `depot-risperidon-xeplion` | oppstart av depot | risperidon → paliperidon | beregnbar etter faglig avklaring | 0 | klinisk godkjent | 19 |
+| `depot-consta-xeplion` | direkte bytte | risperidon → paliperidon | entydig beregnbar | 0 | til faglig kontroll | 8 |
 | `antipsykotikabytte-aripiprazol-olanzapin` | direkte bytte | aripiprazol → olanzapin | beregnbar etter faglig avklaring | 1 | til faglig kontroll | 9 |
-| `antipsykotikabytte-aripiprazol-risperidon` | direkte bytte | aripiprazol → risperidon | beregnbar etter faglig avklaring | 1 | til faglig kontroll | 11 |
+| `antipsykotikabytte-aripiprazol-risperidon` | direkte bytte | aripiprazol → risperidon | beregnbar etter faglig avklaring | 0 | til faglig kontroll | 11 |
 | `antipsykotikabytte-kariprazin-kvetiapin` | direkte bytte | kariprazin → kvetiapin | entydig beregnbar | 0 | til faglig kontroll | 7 |
-| `antipsykotikabytte-olanzapin-aripiprazol` | kryssnedtrapping | olanzapin → aripiprazol | beregnbar etter faglig avklaring | 0 | til faglig kontroll | 11 |
-| `antipsykotikabytte-risperidon-aripiprazol` | kryssnedtrapping | risperidon → aripiprazol | beregnbar etter faglig avklaring | 0 | til faglig kontroll | 7 |
+| `antipsykotikabytte-olanzapin-aripiprazol` | kryssnedtrapping | olanzapin → aripiprazol | beregnbar etter faglig avklaring | 0 | klinisk godkjent | 11 |
+| `antipsykotikabytte-risperidon-aripiprazol` | kryssnedtrapping | risperidon → aripiprazol | beregnbar etter faglig avklaring | 0 | klinisk godkjent | 7 |
 
 ## Kilder
 
@@ -41,9 +41,9 @@ Hentet og lest 28.10.2026 og 03.11.2026 og 04.11.2026. Kontrollsummen (SHA-256) 
 
 ## Fra peroral risperidon til Xeplion
 
-`depot-risperidon-xeplion`, versjon 8, fingeravtrykk `1672334c468f28cf181aa4d786370e60f3f232f76f63d374e0c505d847ab184e`. Oppstart av depot: risperidon → paliperidon. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`depot-risperidon-xeplion`, versjon 8, fingeravtrykk `1672334c468f28cf181aa4d786370e60f3f232f76f63d374e0c505d847ab184e`. Oppstart av depot: risperidon → paliperidon. **Beregnbar etter faglig avklaring**; status **klinisk godkjent**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code) → utkast (versjon 3, 03.11.2026, Claude Code) → til faglig kontroll (versjon 3, 03.11.2026, Claude Code) → utkast (versjon 4, 03.11.2026, Claude Code) → til faglig kontroll (versjon 4, 03.11.2026, Claude Code) → utkast (versjon 5, 03.11.2026, Claude Code) → til faglig kontroll (versjon 5, 03.11.2026, Claude Code) → utkast (versjon 6, 03.11.2026, Claude Code) → til faglig kontroll (versjon 6, 03.11.2026, Claude Code) → utkast (versjon 7, 03.11.2026, Claude Code) → til faglig kontroll (versjon 7, 03.11.2026, Claude Code) → utkast (versjon 8, 03.11.2026, Claude Code) → til faglig kontroll (versjon 8, 03.11.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code) → utkast (versjon 3, 03.11.2026, Claude Code) → til faglig kontroll (versjon 3, 03.11.2026, Claude Code) → utkast (versjon 4, 03.11.2026, Claude Code) → til faglig kontroll (versjon 4, 03.11.2026, Claude Code) → utkast (versjon 5, 03.11.2026, Claude Code) → til faglig kontroll (versjon 5, 03.11.2026, Claude Code) → utkast (versjon 6, 03.11.2026, Claude Code) → til faglig kontroll (versjon 6, 03.11.2026, Claude Code) → utkast (versjon 7, 03.11.2026, Claude Code) → til faglig kontroll (versjon 7, 03.11.2026, Claude Code) → utkast (versjon 8, 03.11.2026, Claude Code) → til faglig kontroll (versjon 8, 03.11.2026, Claude Code) → klinisk godkjent (versjon 8, 04.11.2026, ChatGPT (uavhengig fagkontrollør)).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -187,9 +187,9 @@ Hentet og lest 28.10.2026 og 03.11.2026 og 04.11.2026. Kontrollsummen (SHA-256) 
 
 ## Fra Risperdal Consta til Xeplion
 
-`depot-consta-xeplion`, versjon 2, fingeravtrykk `50331d718d099015b067807385c0ca26b34922f6cfafda4223f986f663a9670d`. Direkte bytte: risperidon → paliperidon. **Entydig beregnbar**; status **til faglig kontroll**.
+`depot-consta-xeplion`, versjon 3, fingeravtrykk `7ef1e73a6d88efdfad368d7f4d1ac871633817e9261c3077c689265bc477b205`. Direkte bytte: risperidon → paliperidon. **Entydig beregnbar**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code) → utkast (versjon 3, 03.11.2026, Claude Code) → til faglig kontroll (versjon 3, 03.11.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -213,6 +213,15 @@ Hentet og lest 28.10.2026 og 03.11.2026 og 04.11.2026. Kontrollsummen (SHA-256) 
   - Risperidon depotinjeksjon 25, 37,5 og 50 mg hver 2. uke tilsvarer ved vedlikehold Xeplion 50, 75 og 100 mg månedlig. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2 (bytte fra risperidon depotinjeksjon))*
 - I verktøyet er Consta og Okedi samme valg («risperidon, depotinjeksjon»); forskriveren må derfor bekrefte at depotet er Consta hver 2. uke.
   - Risperdal Consta gis intramuskulært annenhver uke, vanligvis 25 mg; noen trenger 37,5 eller 50 mg. Høyere doser enn 50 mg anbefales ikke. *([dmp-risperdal-consta](https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-09858.pdf), pkt. 4.2)*
+- Tabellen gjelder bare når dagens Consta-dose gir god og stabil effekt uten dosebegrensende bivirkninger; forskriveren bekrefter det, og effekt, bivirkninger og toleranse vurderes ved byttet og før hver månedlige injeksjon.
+  - Risperidon depotinjeksjon 25, 37,5 og 50 mg hver 2. uke tilsvarer ved vedlikehold Xeplion 50, 75 og 100 mg månedlig. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2 (bytte fra risperidon depotinjeksjon))*
+  - Vedlikeholdsdosen kan justeres månedlig; full effekt av en endret dose kan først sees etter flere måneder. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2)*
+  - Bytte mellom antipsykotika bør vurderes av psykiater. Under byttet kan sykdommen forverres og nye bivirkninger komme, så pasienten må følges tett. *([keks-2019](https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6787301/fullTextXML), tabell 4 og avsnittet om bytte)*
+- Når en individuell vurdering overstyrer planen: Planens dose gjelder ikke lenger, og vedlikeholdsdosen vurderes individuelt, ved utilstrekkelig effekt, forverring eller tilbakefall av psykotiske symptomer, dosebegrensende eller ekstrapyramidale bivirkninger, overfølsomhet eller nedsatt nyrefunksjon. Dosen kan justeres månedlig, men full effekt av en endret dose kan først sees etter flere måneder.
+  - Anbefalt månedlig vedlikeholdsdose er 75 mg; noen kan ha nytte av lavere eller høyere dose innenfor 25–150 mg ut fra toleranse og effekt. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2)*
+  - Vedlikeholdsdosen kan justeres månedlig; full effekt av en endret dose kan først sees etter flere måneder. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2)*
+  - Overfølsomhet for paliperidon eller risperidon er en kontraindikasjon. Anafylaktiske reaksjoner er sett etter injeksjon også hos pasienter som tidligere har tålt peroral risperidon eller paliperidon. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.3 og 4.4)*
+  - Ved kreatininclearance fra 50 til under 80 ml/min er oppstarten 100 mg dag 1 og 75 mg én uke senere, og vedlikehold 50 mg (25–100 mg); under 50 ml/min anbefales ikke Xeplion. *([ema-xeplion](https://www.ema.europa.eu/en/documents/product-information/xeplion-epar-product-information_en.pdf), section 4.2 (nedsatt nyrefunksjon))*
 
 **Den matematiske regelen – parametre:**
 
@@ -229,6 +238,7 @@ Hentet og lest 28.10.2026 og 03.11.2026 og 04.11.2026. Kontrollsummen (SHA-256) 
 - Må bekreftes (`indikasjon`): Pasienten er voksen, har schizofreni og er stabilisert på Risperdal Consta i den oppgitte dosen hver 2. uke. (ema-xeplion section 4.1; ema-xeplion section 4.2 (bytte fra risperidon depotinjeksjon))
 - Må bekreftes (`preparat_consta`): Depotet er Risperdal Consta hver 2. uke, ikke Okedi eller et annet risperidondepot, som har andre intervaller og ikke er omfattet. (ema-xeplion section 4.2 (bytte fra risperidon depotinjeksjon); dmp-risperdal-consta pkt. 4.2)
 - Må bekreftes (`neste_injeksjon`): Startdatoen (dag 1) er dagen neste Consta-injeksjon skulle vært gitt; Consta gis ikke mer. (ema-xeplion section 4.2 (bytte fra risperidon depotinjeksjon))
+- Må bekreftes (`effekt_toleranse`): Forskriveren har vurdert det konkrete forløpet: dagens Consta-dose har gitt god og stabil effekt, uten bivirkninger som har begrenset dosen og uten planer om å endre den. Er effekten utilstrekkelig, eller har bivirkninger holdt dosen nede, planlegges Xeplion-dosen individuelt. (ema-xeplion section 4.2 (bytte fra risperidon depotinjeksjon); ema-xeplion section 4.2; ema-xeplion section 4.2)
 - Unntak (`nedsatt_nyrefunksjon`): Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min. (ema-xeplion section 4.2 (nedsatt nyrefunksjon))
 - Unntak (`over_65`): Pasienten er over 65 år; effekt og sikkerhet av Xeplion er ikke fastslått i denne gruppen. (ema-xeplion section 4.2 (eldre))
 
@@ -247,7 +257,7 @@ Hentet og lest 28.10.2026 og 03.11.2026 og 04.11.2026. Kontrollsummen (SHA-256) 
 
 **Regneeksempler** (regnet ut for hånd, kontrollert mot beregningen; modellberegninger, ikke kliniske anbefalinger):
 
-- *Consta 37,5 mg; neste injeksjon skulle vært gitt 15. desember 2026.* Inndata: startdose 37,5 mg; startdato 15.12.2026; bekreftet: indikasjon, preparat_consta, neste_injeksjon; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
+- *Consta 37,5 mg; neste injeksjon skulle vært gitt 15. desember 2026.* Inndata: startdose 37,5 mg; startdato 15.12.2026; bekreftet: indikasjon, preparat_consta, neste_injeksjon, effekt_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
   - **fra:** fra dag 1 (15.12.2026): seponert
   - **til:** dag 1 (15.12.2026): 75 mg injeksjon, deltoideus eller setemuskel; hver måned fra 1 måned etter dag 1 (15.01.2027, ±7 dager): 75 mg injeksjon, deltoideus eller setemuskel
   - Kontroll: Avkreftet: Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min. – oppfylt. Vurdert og avkreftet av forskriveren.
@@ -255,8 +265,9 @@ Hentet og lest 28.10.2026 og 03.11.2026 og 04.11.2026. Kontrollsummen (SHA-256) 
   - Kontroll: Bekreftet: Pasienten er voksen, har schizofreni og er stabilisert på Risperdal Consta i den oppgitte dosen hver 2. uke. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Depotet er Risperdal Consta hver 2. uke, ikke Okedi eller et annet risperidondepot, som har andre intervaller og ikke er omfattet. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Startdatoen (dag 1) er dagen neste Consta-injeksjon skulle vært gitt; Consta gis ikke mer. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Forskriveren har vurdert det konkrete forløpet: dagens Consta-dose har gitt god og stabil effekt, uten bivirkninger som har begrenset dosen og uten planer om å endre den. Er effekten utilstrekkelig, eller har bivirkninger holdt dosen nede, planlegges Xeplion-dosen individuelt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 25, 37,5, 50 mg (bindende) – oppfylt. 37,5 mg.
-- *Consta 25 mg gir Xeplion 50 mg.* Inndata: startdose 25 mg; bekreftet: indikasjon, preparat_consta, neste_injeksjon; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
+- *Consta 25 mg gir Xeplion 50 mg.* Inndata: startdose 25 mg; bekreftet: indikasjon, preparat_consta, neste_injeksjon, effekt_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
   - **fra:** fra dag 1: seponert
   - **til:** dag 1: 50 mg injeksjon, deltoideus eller setemuskel; hver måned fra 1 måned etter dag 1 (±7 dager): 50 mg injeksjon, deltoideus eller setemuskel
   - Kontroll: Avkreftet: Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min. – oppfylt. Vurdert og avkreftet av forskriveren.
@@ -264,8 +275,9 @@ Hentet og lest 28.10.2026 og 03.11.2026 og 04.11.2026. Kontrollsummen (SHA-256) 
   - Kontroll: Bekreftet: Pasienten er voksen, har schizofreni og er stabilisert på Risperdal Consta i den oppgitte dosen hver 2. uke. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Depotet er Risperdal Consta hver 2. uke, ikke Okedi eller et annet risperidondepot, som har andre intervaller og ikke er omfattet. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Startdatoen (dag 1) er dagen neste Consta-injeksjon skulle vært gitt; Consta gis ikke mer. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Forskriveren har vurdert det konkrete forløpet: dagens Consta-dose har gitt god og stabil effekt, uten bivirkninger som har begrenset dosen og uten planer om å endre den. Er effekten utilstrekkelig, eller har bivirkninger holdt dosen nede, planlegges Xeplion-dosen individuelt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 25, 37,5, 50 mg (bindende) – oppfylt. 25 mg.
-- *Consta 50 mg gir Xeplion 100 mg.* Inndata: startdose 50 mg; bekreftet: indikasjon, preparat_consta, neste_injeksjon; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
+- *Consta 50 mg gir Xeplion 100 mg.* Inndata: startdose 50 mg; bekreftet: indikasjon, preparat_consta, neste_injeksjon, effekt_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
   - **fra:** fra dag 1: seponert
   - **til:** dag 1: 100 mg injeksjon, deltoideus eller setemuskel; hver måned fra 1 måned etter dag 1 (±7 dager): 100 mg injeksjon, deltoideus eller setemuskel
   - Kontroll: Avkreftet: Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min. – oppfylt. Vurdert og avkreftet av forskriveren.
@@ -273,15 +285,18 @@ Hentet og lest 28.10.2026 og 03.11.2026 og 04.11.2026. Kontrollsummen (SHA-256) 
   - Kontroll: Bekreftet: Pasienten er voksen, har schizofreni og er stabilisert på Risperdal Consta i den oppgitte dosen hver 2. uke. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Depotet er Risperdal Consta hver 2. uke, ikke Okedi eller et annet risperidondepot, som har andre intervaller og ikke er omfattet. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Bekreftet: Startdatoen (dag 1) er dagen neste Consta-injeksjon skulle vært gitt; Consta gis ikke mer. – oppfylt. Bekreftet av forskriveren.
+  - Kontroll: Bekreftet: Forskriveren har vurdert det konkrete forløpet: dagens Consta-dose har gitt god og stabil effekt, uten bivirkninger som har begrenset dosen og uten planer om å endre den. Er effekten utilstrekkelig, eller har bivirkninger holdt dosen nede, planlegges Xeplion-dosen individuelt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 25, 37,5, 50 mg (bindende) – oppfylt. 50 mg.
-- *Consta 62,5 mg står ikke i tabellen.* Inndata: startdose 62,5 mg; bekreftet: indikasjon, preparat_consta, neste_injeksjon; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
+- *Consta 62,5 mg står ikke i tabellen.* Inndata: startdose 62,5 mg; bekreftet: indikasjon, preparat_consta, neste_injeksjon, effekt_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
   - **Stoppet:** Startdosen 62,5 mg er utenfor det regelen gjelder for (25, 37,5, 50 mg).
-- *Uten bekreftelse av at depotet er Consta (for eksempel Okedi) stopper beregningen.* Inndata: startdose 50 mg; bekreftet: indikasjon, neste_injeksjon; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
+- *Uten bekreftelse av at depotet er Consta (for eksempel Okedi) stopper beregningen.* Inndata: startdose 50 mg; bekreftet: indikasjon, neste_injeksjon, effekt_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
   - **Stoppet:** Må bekreftes før beregning: Depotet er Risperdal Consta hver 2. uke, ikke Okedi eller et annet risperidondepot, som har andre intervaller og ikke er omfattet.
-- *Kreatininclearance under 80 ml/min: regelen gjelder ikke.* Inndata: startdose 37,5 mg; bekreftet: indikasjon, preparat_consta, neste_injeksjon; pasientforhold: nedsatt_nyrefunksjon ja, over_65 nei.
+- *Kreatininclearance under 80 ml/min: regelen gjelder ikke.* Inndata: startdose 37,5 mg; bekreftet: indikasjon, preparat_consta, neste_injeksjon, effekt_toleranse; pasientforhold: nedsatt_nyrefunksjon ja, over_65 nei.
   - **Stoppet:** Regelen gjelder ikke: Pasienten har kreatininclearance under 80 ml/min; preparatomtalen har andre start- og vedlikeholdsdoser fra 50 til under 80 ml/min og fraråder Xeplion under 50 ml/min.
-- *Over 65 år: regelen gjelder ikke.* Inndata: startdose 37,5 mg; bekreftet: indikasjon, preparat_consta, neste_injeksjon; pasientforhold: nedsatt_nyrefunksjon nei, over_65 ja.
+- *Over 65 år: regelen gjelder ikke.* Inndata: startdose 37,5 mg; bekreftet: indikasjon, preparat_consta, neste_injeksjon, effekt_toleranse; pasientforhold: nedsatt_nyrefunksjon nei, over_65 ja.
   - **Stoppet:** Regelen gjelder ikke: Pasienten er over 65 år; effekt og sikkerhet av Xeplion er ikke fastslått i denne gruppen.
+- *Uten bekreftet god og stabil effekt av dagens Consta-dose (for eksempel utilstrekkelig effekt) stopper beregningen.* Inndata: startdose 37,5 mg; bekreftet: indikasjon, preparat_consta, neste_injeksjon; pasientforhold: nedsatt_nyrefunksjon nei, over_65 nei.
+  - **Stoppet:** Må bekreftes før beregning: Forskriveren har vurdert det konkrete forløpet: dagens Consta-dose har gitt god og stabil effekt, uten bivirkninger som har begrenset dosen og uten planer om å endre den. Er effekten utilstrekkelig, eller har bivirkninger holdt dosen nede, planlegges Xeplion-dosen individuelt.
 
 **Referanse til sammenligning** (ikke grunnlag, innholdet vises ikke): Psychiatrienet, kildeoppføring `SwitchAntipsychotics:Dr>Dp`.
 
@@ -405,9 +420,9 @@ Hentet og lest 28.10.2026 og 03.11.2026 og 04.11.2026. Kontrollsummen (SHA-256) 
 
 ## Fra aripiprazol til risperidon, direkte bytte
 
-`antipsykotikabytte-aripiprazol-risperidon`, versjon 4, fingeravtrykk `ea8d1e266c8a56278c9cc5d678d5a1aea04e133a88e4605eea806f43b0746476`. Direkte bytte: aripiprazol → risperidon. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`antipsykotikabytte-aripiprazol-risperidon`, versjon 5, fingeravtrykk `b090b5c0ed3e253db22b527a8557c9aa7d1d1beb1e63821315aaf43bc1a0deb9`. Direkte bytte: aripiprazol → risperidon. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code) → utkast (versjon 3, 03.11.2026, Claude Code) → til faglig kontroll (versjon 3, 03.11.2026, Claude Code) → utkast (versjon 4, 03.11.2026, Claude Code) → til faglig kontroll (versjon 4, 03.11.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code) → utkast (versjon 3, 03.11.2026, Claude Code) → til faglig kontroll (versjon 3, 03.11.2026, Claude Code) → utkast (versjon 4, 03.11.2026, Claude Code) → til faglig kontroll (versjon 4, 03.11.2026, Claude Code) → utkast (versjon 5, 03.11.2026, Claude Code) → til faglig kontroll (versjon 5, 03.11.2026, Claude Code).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -456,7 +471,7 @@ Hentet og lest 28.10.2026 og 03.11.2026 og 04.11.2026. Kontrollsummen (SHA-256) 
 | til: fase 1 (opptrapping) | trinn[0].mg | 2 mg | bindende krav | dmp-risperdal pkt. 4.2; keks-2019-verktoy oral to oral, aripiprazole to risperidone |
 | til: fase 1 (opptrapping) | trinn[0].dager | 4 dager | veiledende | keks-2019-verktoy oral to oral, aripiprazole to risperidone |
 | til: fase 1 (opptrapping) | trinn[1].mg | 4 mg | veiledende | dmp-risperdal pkt. 4.2; keks-2019-verktoy oral to oral, aripiprazole to risperidone |
-| til: fase 1 (opptrapping) | trinn[1].dager | 7 dager (forskriveren kan velge minst 1 dager, av tekniske grunner høyst 365 dager) | veiledende | **OUSFAR-vurdering, åpent forslag:** OUSFARs valg: én uke på 4 mg før risperidon økes til måldosen 5 eller 6 mg, så toleransen kan vurderes. Verken preparatomtalen eller byteverktøyet gir noen fast tid for økningen over 4 mg, bare en ny klinisk vurdering. (bygger på dmp-risperdal pkt. 4.2; keks-2019-verktoy oral to oral, aripiprazole to risperidone; keks-2019 tabell 1) |
+| til: fase 1 (opptrapping) | trinn[1].dager | 7 dager (forskriveren kan velge minst 1 dager, av tekniske grunner høyst 365 dager) | veiledende | **OUSFAR-vurdering, avklart 04.11.2026 av ChatGPT (uavhengig fagkontrollør) (versjon 4): Kontrollørens gjennomgang av 63464bd 04.11.2026 (#320, kommentar 6626569802): Én uke på 4 mg før en eventuell økning til 5–6 mg er faglig akseptabelt som en forsiktig, symptomstyrt tilpasning i det beskrevne snevre omfanget; verken Keks-verktøyet eller preparatomtalen foreskriver nøyaktig sju dager, så det er OUSFARs selvstendige kliniske vurdering. Avklaringen gjelder bare dette valget og er ingen klinisk godkjenning av regelen.:** OUSFARs selvstendige kliniske vurdering, ikke fra kildene: én uke på 4 mg før risperidon økes til måldosen 5 eller 6 mg, så toleransen kan vurderes. Verken preparatomtalen eller byteverktøyet gir noen fast tid for økningen over 4 mg, bare en ny klinisk vurdering. (bygger på dmp-risperdal pkt. 4.2; keks-2019-verktoy oral to oral, aripiprazole to risperidone; keks-2019 tabell 1) |
 
 **Betingelser:**
 
@@ -642,9 +657,9 @@ Hentet og lest 28.10.2026 og 03.11.2026 og 04.11.2026. Kontrollsummen (SHA-256) 
 
 ## Fra olanzapin til aripiprazol, kryss-titrering
 
-`antipsykotikabytte-olanzapin-aripiprazol`, versjon 8, fingeravtrykk `f141a13a9e9368542d7719cfb0abea7cfb77a41d7d89248e5f9e1d70e0aa5f5e`. Kryssnedtrapping: olanzapin → aripiprazol. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`antipsykotikabytte-olanzapin-aripiprazol`, versjon 8, fingeravtrykk `f141a13a9e9368542d7719cfb0abea7cfb77a41d7d89248e5f9e1d70e0aa5f5e`. Kryssnedtrapping: olanzapin → aripiprazol. **Beregnbar etter faglig avklaring**; status **klinisk godkjent**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code) → utkast (versjon 3, 03.11.2026, Claude Code) → til faglig kontroll (versjon 3, 03.11.2026, Claude Code) → utkast (versjon 4, 03.11.2026, Claude Code) → til faglig kontroll (versjon 4, 03.11.2026, Claude Code) → utkast (versjon 5, 03.11.2026, Claude Code) → til faglig kontroll (versjon 5, 03.11.2026, Claude Code) → utkast (versjon 6, 03.11.2026, Claude Code) → til faglig kontroll (versjon 6, 03.11.2026, Claude Code) → utkast (versjon 7, 03.11.2026, Claude Code) → til faglig kontroll (versjon 7, 03.11.2026, Claude Code) → utkast (versjon 8, 03.11.2026, Claude Code) → til faglig kontroll (versjon 8, 03.11.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code) → utkast (versjon 3, 03.11.2026, Claude Code) → til faglig kontroll (versjon 3, 03.11.2026, Claude Code) → utkast (versjon 4, 03.11.2026, Claude Code) → til faglig kontroll (versjon 4, 03.11.2026, Claude Code) → utkast (versjon 5, 03.11.2026, Claude Code) → til faglig kontroll (versjon 5, 03.11.2026, Claude Code) → utkast (versjon 6, 03.11.2026, Claude Code) → til faglig kontroll (versjon 6, 03.11.2026, Claude Code) → utkast (versjon 7, 03.11.2026, Claude Code) → til faglig kontroll (versjon 7, 03.11.2026, Claude Code) → utkast (versjon 8, 03.11.2026, Claude Code) → til faglig kontroll (versjon 8, 03.11.2026, Claude Code) → klinisk godkjent (versjon 8, 04.11.2026, ChatGPT (uavhengig fagkontrollør)).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -792,9 +807,9 @@ Hentet og lest 28.10.2026 og 03.11.2026 og 04.11.2026. Kontrollsummen (SHA-256) 
 
 ## Fra risperidon til aripiprazol, kryss-titrering
 
-`antipsykotikabytte-risperidon-aripiprazol`, versjon 8, fingeravtrykk `866ac93c58fb921c78cd71518ec91637cb31a175b7a9a480552fcebe54cca870`. Kryssnedtrapping: risperidon → aripiprazol. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`antipsykotikabytte-risperidon-aripiprazol`, versjon 8, fingeravtrykk `866ac93c58fb921c78cd71518ec91637cb31a175b7a9a480552fcebe54cca870`. Kryssnedtrapping: risperidon → aripiprazol. **Beregnbar etter faglig avklaring**; status **klinisk godkjent**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code) → utkast (versjon 3, 03.11.2026, Claude Code) → til faglig kontroll (versjon 3, 03.11.2026, Claude Code) → utkast (versjon 4, 03.11.2026, Claude Code) → til faglig kontroll (versjon 4, 03.11.2026, Claude Code) → utkast (versjon 5, 03.11.2026, Claude Code) → til faglig kontroll (versjon 5, 03.11.2026, Claude Code) → utkast (versjon 6, 03.11.2026, Claude Code) → til faglig kontroll (versjon 6, 03.11.2026, Claude Code) → utkast (versjon 7, 03.11.2026, Claude Code) → til faglig kontroll (versjon 7, 03.11.2026, Claude Code) → utkast (versjon 8, 03.11.2026, Claude Code) → til faglig kontroll (versjon 8, 03.11.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code) → utkast (versjon 3, 03.11.2026, Claude Code) → til faglig kontroll (versjon 3, 03.11.2026, Claude Code) → utkast (versjon 4, 03.11.2026, Claude Code) → til faglig kontroll (versjon 4, 03.11.2026, Claude Code) → utkast (versjon 5, 03.11.2026, Claude Code) → til faglig kontroll (versjon 5, 03.11.2026, Claude Code) → utkast (versjon 6, 03.11.2026, Claude Code) → til faglig kontroll (versjon 6, 03.11.2026, Claude Code) → utkast (versjon 7, 03.11.2026, Claude Code) → til faglig kontroll (versjon 7, 03.11.2026, Claude Code) → utkast (versjon 8, 03.11.2026, Claude Code) → til faglig kontroll (versjon 8, 03.11.2026, Claude Code) → klinisk godkjent (versjon 8, 04.11.2026, ChatGPT (uavhengig fagkontrollør)).
 
 **Kildetro – det som følger direkte av kildene:**
 

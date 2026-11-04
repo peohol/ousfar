@@ -34,6 +34,7 @@
  */
 import { FORUTSETNINGER_FELLES, forslag, h, kilde, pn, steg, utsagn } from './bygg'
 import type { Domenesett } from './domenesett'
+import { godkjenn, type Godkjenningsvedtak } from './godkjenning'
 import type { Avklaring, Bekreftelse, Fase, Forlop, Godkjenning, Kildehenvisning, Regel, Regelsett, Unntak } from './modell'
 import { REGELMODELLVERSJON } from './modell'
 import { TEKNISK_MAKS_DAGER } from './nedtrapping'
@@ -71,6 +72,8 @@ const GJENNOMGANG_8 = 'Etter kontrollørens åttende gjennomgang av #320 04.11.2
 const GJENNOMGANG_9 = 'Etter kontrollørens niende gjennomgang av #320 04.11.2026:'
 /** Kontrollørens tiende gjennomgang av #320 (04.11.2026, head fd31b88, kommentar 6625183969). */
 const GJENNOMGANG_10 = 'Etter kontrollørens tiende gjennomgang av #320 04.11.2026:'
+/** Kontrollørens ellevte gjennomgang av #320 (04.11.2026, head 63464bd, kommentar 6626569802). */
+const GJENNOMGANG_11 = 'Etter kontrollørens ellevte gjennomgang av #320 04.11.2026:'
 /** Samme navn som kontrolløren har i pilotsettet. */
 const KONTROLLOR = 'ChatGPT (uavhengig fagkontrollør)'
 /** En gjennomgang der kontrolløren avklarte åpne valg: versjonen som ble vurdert, og kommentaren med vurderingen. */
@@ -81,6 +84,7 @@ interface Kontrollorgjennomgang {
 }
 const AVKLARING_8: Kontrollorgjennomgang = { commit: '65c3fb8', kommentar: '6620232533', dato: '2026-11-04' }
 const AVKLARING_9: Kontrollorgjennomgang = { commit: 'aadcf57', kommentar: '6623643706', dato: '2026-11-04' }
+const AVKLARING_11: Kontrollorgjennomgang = { commit: '63464bd', kommentar: '6626569802', dato: '2026-11-04' }
 /**
  * Kontrollørens avklaring av ett åpent OUSFAR-valg. `regelversjon` er
  * versjonen kontrolløren vurderte; valget er uendret i versjonen etter.
@@ -534,9 +538,15 @@ const CONSTA_TABELL = {
   grunnlag: { type: 'kilde' as const, henvisninger: [XEPLION.constaTabell] },
 }
 
+/** Når planens Xeplion-dose etter Consta ikke lenger gjelder (kontrollørens ellevte gjennomgang). */
+const CONSTA_OVERSTYRING =
+  'Planens dose gjelder ikke lenger, og vedlikeholdsdosen vurderes individuelt, ved utilstrekkelig effekt, forverring eller tilbakefall av psykotiske symptomer, dosebegrensende eller ekstrapyramidale bivirkninger, overfølsomhet eller nedsatt nyrefunksjon. Dosen kan justeres månedlig, men full effekt av en endret dose kan først sees etter flere måneder.'
+
+const CONSTA_BEKREFTET = ['indikasjon', 'preparat_consta', 'neste_injeksjon', 'effekt_toleranse']
+
 const constaXeplion: Regel = {
   id: 'depot-consta-xeplion',
-  versjon: 2,
+  versjon: 3,
   tittel: 'Fra Risperdal Consta til Xeplion',
   fra: { type: 'virkestoff', nokkel: 'risperidon' },
   til: { type: 'virkestoff', nokkel: 'paliperidon' },
@@ -564,6 +574,17 @@ const constaXeplion: Regel = {
             },
           },
         ],
+        // Kontrollørens ellevte gjennomgang: oppfølgingen rundt oppstarten og før de månedlige injeksjonene står i planen.
+        vurderinger: [
+          {
+            id: 'for_injeksjon',
+            // Dag 1 er dagen for første Xeplion-injeksjon; vurderingen før de månedlige injeksjonene står i teksten, fordi dosen ikke endres.
+            nar: { type: 'dag', dag: kilde(1, 'dag', 'bindende_krav', XEPLION.fraConsta) },
+            tekst: 'Ved byttet (dag 1) og før hver månedlige injeksjon: effekt og psykotiske symptomer, ekstrapyramidale og andre bivirkninger, toleranse og reaksjoner etter forrige injeksjon vurderes, og pasienten følges tett gjennom byttet.',
+            ved_funn: CONSTA_OVERSTYRING,
+            grunnlag: { type: 'kilde', henvisninger: [KEKS.spesialist, KEKS.depotTilDepot, XEPLION.justering, XEPLION.vedlikehold, XEPLION.overfolsomhet, SPC.xeplionNyre] },
+          },
+        ],
       },
     ],
   },
@@ -584,6 +605,11 @@ const constaXeplion: Regel = {
       tekst: 'Startdatoen (dag 1) er dagen neste Consta-injeksjon skulle vært gitt; Consta gis ikke mer.',
       grunnlag: { type: 'kilde', henvisninger: [XEPLION.fraConsta] },
     },
+    {
+      id: 'effekt_toleranse',
+      tekst: 'Forskriveren har vurdert det konkrete forløpet: dagens Consta-dose har gitt god og stabil effekt, uten bivirkninger som har begrenset dosen og uten planer om å endre den. Er effekten utilstrekkelig, eller har bivirkninger holdt dosen nede, planlegges Xeplion-dosen individuelt.',
+      grunnlag: { type: 'kilde', henvisninger: [XEPLION.constaTabell, XEPLION.vedlikehold, XEPLION.justering] },
+    },
   ],
   unntak: [NYRE, XEPLION_ELDRE],
   beregnbarhet: 'entydig_beregnbar',
@@ -598,6 +624,8 @@ const constaXeplion: Regel = {
     tilpasninger: [
       utsagn('Første Xeplion-dose regnes som injeksjonen dag 1, med samme dose som vedlikeholdet etter tabellen; den neste kommer én måned senere.', XEPLION.fraConsta, XEPLION.constaTabell),
       utsagn('I verktøyet er Consta og Okedi samme valg («risperidon, depotinjeksjon»); forskriveren må derfor bekrefte at depotet er Consta hver 2. uke.', CONSTA.dose),
+      utsagn('Tabellen gjelder bare når dagens Consta-dose gir god og stabil effekt uten dosebegrensende bivirkninger; forskriveren bekrefter det, og effekt, bivirkninger og toleranse vurderes ved byttet og før hver månedlige injeksjon.', XEPLION.constaTabell, XEPLION.justering, KEKS.spesialist),
+      utsagn(`Når en individuell vurdering overstyrer planen: ${CONSTA_OVERSTYRING}`, XEPLION.vedlikehold, XEPLION.justering, XEPLION.overfolsomhet, SPC.xeplionNyre),
     ],
     forutsetninger: forutsetninger(
       'Pasienten har fått Risperdal Consta hver 2. uke i den oppgitte dosen lenge nok til at dosen er stabil.',
@@ -613,7 +641,7 @@ const constaXeplion: Regel = {
     {
       id: 'consta-37-5',
       beskrivelse: 'Consta 37,5 mg; neste injeksjon skulle vært gitt 15. desember 2026.',
-      inndata: { startdose_mg: 37.5, startdato: '2026-12-15', bekreftet: ['indikasjon', 'preparat_consta', 'neste_injeksjon'], pasientforhold: NYRE_AVKREFTET },
+      inndata: { startdose_mg: 37.5, startdato: '2026-12-15', bekreftet: CONSTA_BEKREFTET, pasientforhold: NYRE_AVKREFTET },
       forventet: {
         fra: ['fra dag 1 (15.12.2026): seponert'],
         til: ['dag 1 (15.12.2026): 75 mg injeksjon, deltoideus eller setemuskel', 'hver måned fra 1 måned etter dag 1 (15.01.2027, ±7 dager): 75 mg injeksjon, deltoideus eller setemuskel'],
@@ -622,7 +650,7 @@ const constaXeplion: Regel = {
     {
       id: 'consta-25',
       beskrivelse: 'Consta 25 mg gir Xeplion 50 mg.',
-      inndata: { startdose_mg: 25, bekreftet: ['indikasjon', 'preparat_consta', 'neste_injeksjon'], pasientforhold: NYRE_AVKREFTET },
+      inndata: { startdose_mg: 25, bekreftet: CONSTA_BEKREFTET, pasientforhold: NYRE_AVKREFTET },
       forventet: {
         fra: ['fra dag 1: seponert'],
         til: ['dag 1: 50 mg injeksjon, deltoideus eller setemuskel', 'hver måned fra 1 måned etter dag 1 (±7 dager): 50 mg injeksjon, deltoideus eller setemuskel'],
@@ -631,7 +659,7 @@ const constaXeplion: Regel = {
     {
       id: 'consta-50',
       beskrivelse: 'Consta 50 mg gir Xeplion 100 mg.',
-      inndata: { startdose_mg: 50, bekreftet: ['indikasjon', 'preparat_consta', 'neste_injeksjon'], pasientforhold: NYRE_AVKREFTET },
+      inndata: { startdose_mg: 50, bekreftet: CONSTA_BEKREFTET, pasientforhold: NYRE_AVKREFTET },
       forventet: {
         fra: ['fra dag 1: seponert'],
         til: ['dag 1: 100 mg injeksjon, deltoideus eller setemuskel', 'hver måned fra 1 måned etter dag 1 (±7 dager): 100 mg injeksjon, deltoideus eller setemuskel'],
@@ -640,35 +668,43 @@ const constaXeplion: Regel = {
     {
       id: 'consta-uten-tabellverdi',
       beskrivelse: 'Consta 62,5 mg står ikke i tabellen.',
-      inndata: { startdose_mg: 62.5, bekreftet: ['indikasjon', 'preparat_consta', 'neste_injeksjon'], pasientforhold: NYRE_AVKREFTET },
+      inndata: { startdose_mg: 62.5, bekreftet: CONSTA_BEKREFTET, pasientforhold: NYRE_AVKREFTET },
       forventet: {},
       stopp: /Startdosen 62,5 mg er utenfor/,
     },
     {
       id: 'annet-depot',
       beskrivelse: 'Uten bekreftelse av at depotet er Consta (for eksempel Okedi) stopper beregningen.',
-      inndata: { startdose_mg: 50, bekreftet: ['indikasjon', 'neste_injeksjon'], pasientforhold: NYRE_AVKREFTET },
+      inndata: { startdose_mg: 50, bekreftet: ['indikasjon', 'neste_injeksjon', 'effekt_toleranse'], pasientforhold: NYRE_AVKREFTET },
       forventet: {},
       stopp: /Må bekreftes før beregning: Depotet er Risperdal Consta/,
     },
     {
       id: 'nedsatt-nyrefunksjon',
       beskrivelse: 'Kreatininclearance under 80 ml/min: regelen gjelder ikke.',
-      inndata: { startdose_mg: 37.5, bekreftet: ['indikasjon', 'preparat_consta', 'neste_injeksjon'], pasientforhold: { ...NYRE_AVKREFTET, nedsatt_nyrefunksjon: true } },
+      inndata: { startdose_mg: 37.5, bekreftet: CONSTA_BEKREFTET, pasientforhold: { ...NYRE_AVKREFTET, nedsatt_nyrefunksjon: true } },
       forventet: {},
       stopp: /Regelen gjelder ikke: Pasienten har kreatininclearance under 80 ml\/min/,
     },
     {
       id: 'over-65',
       beskrivelse: 'Over 65 år: regelen gjelder ikke.',
-      inndata: { startdose_mg: 37.5, bekreftet: ['indikasjon', 'preparat_consta', 'neste_injeksjon'], pasientforhold: { ...NYRE_AVKREFTET, over_65: true } },
+      inndata: { startdose_mg: 37.5, bekreftet: CONSTA_BEKREFTET, pasientforhold: { ...NYRE_AVKREFTET, over_65: true } },
       forventet: {},
       stopp: /Regelen gjelder ikke: Pasienten er over 65 år/,
+    },
+    {
+      id: 'utilstrekkelig-effekt',
+      beskrivelse: 'Uten bekreftet god og stabil effekt av dagens Consta-dose (for eksempel utilstrekkelig effekt) stopper beregningen.',
+      inndata: { startdose_mg: 37.5, bekreftet: ['indikasjon', 'preparat_consta', 'neste_injeksjon'], pasientforhold: NYRE_AVKREFTET },
+      forventet: {},
+      stopp: /Må bekreftes før beregning: Forskriveren har vurdert det konkrete forløpet: dagens Consta-dose/,
     },
   ],
   godkjenning: tilKontroll(
     'Ny regel (K3, VDK-2 forslag 6): Xeplion i stedet for neste Consta-injeksjon, med dosen fra tabellen i preparatomtalen og uten oppstartsdoser.',
     `${GJENNOMGANG} Consta-dosen oppgis uttrykkelig som mg per injeksjon hver 2. uke, ikke som døgndose.`,
+    `${GJENNOMGANG_11} planen har vurderingen ved byttet og før hver månedlige injeksjon (effekt, psykotiske symptomer, ekstrapyramidale og andre bivirkninger, toleranse), sier når dosen må vurderes individuelt (også at en endret dose virker langsomt), og krever bekreftet god og stabil effekt av dagens Consta-dose. Utilstrekkelig effekt, nedsatt nyrefunksjon og et annet depot stopper.`,
   ),
 }
 
@@ -845,15 +881,26 @@ const aripiprazolOlanzapin: Regel = {
 const dagerPaa4mg = forslag(
   7,
   'dager',
-  'OUSFARs valg: én uke på 4 mg før risperidon økes til måldosen 5 eller 6 mg, så toleransen kan vurderes. Verken preparatomtalen eller byteverktøyet gir noen fast tid for økningen over 4 mg, bare en ny klinisk vurdering.',
-  { omrade: [1, TEKNISK_MAKS_DAGER], justerbar: 'Dager på 4 mg før måldosen', teknisk_maks: true, henvisninger: [RISPERDAL.dose, BYTEVERKTOY.tilRisperidon, KEKS.aripiprazolHalveringstid] },
+  'OUSFARs selvstendige kliniske vurdering, ikke fra kildene: én uke på 4 mg før risperidon økes til måldosen 5 eller 6 mg, så toleransen kan vurderes. Verken preparatomtalen eller byteverktøyet gir noen fast tid for økningen over 4 mg, bare en ny klinisk vurdering.',
+  {
+    omrade: [1, TEKNISK_MAKS_DAGER],
+    justerbar: 'Dager på 4 mg før måldosen',
+    teknisk_maks: true,
+    henvisninger: [RISPERDAL.dose, BYTEVERKTOY.tilRisperidon, KEKS.aripiprazolHalveringstid],
+    // Kontrollørens ellevte gjennomgang: én uke er en akseptabel, forsiktig og symptomstyrt tilpasning i det snevre omfanget.
+    avklaring: avklartAvKontrollor(
+      AVKLARING_11,
+      4,
+      'Én uke på 4 mg før en eventuell økning til 5–6 mg er faglig akseptabelt som en forsiktig, symptomstyrt tilpasning i det beskrevne snevre omfanget; verken Keks-verktøyet eller preparatomtalen foreskriver nøyaktig sju dager, så det er OUSFARs selvstendige kliniske vurdering.',
+    ),
+  },
 )
 
 const RISPERIDON_AVKREFTET = { alder_65: false, nedsatt_nyre_lever: false, risperidon_interaksjon: false }
 
 const aripiprazolRisperidon: Regel = {
   id: 'antipsykotikabytte-aripiprazol-risperidon',
-  versjon: 4,
+  versjon: 5,
   tittel: 'Fra aripiprazol til risperidon, direkte bytte',
   fra: { type: 'virkestoff', nokkel: 'aripiprazol' },
   til: { type: 'virkestoff', nokkel: 'risperidon' },
@@ -1020,6 +1067,7 @@ const aripiprazolRisperidon: Regel = {
     `${GJENNOMGANG} startregimet og forskriverens valgte måldose (høyst 16 mg, utenfor 4–6 mg med begrunnelse) er atskilt, med en ny klinisk vurdering før endringen; tiden på 4 mg er et åpent OUSFAR-valg; også smeltetabletter.`,
     `${GJENNOMGANG_9} planen går fra 4 mg rett til måldosen, så bare 4–6 mg gir en komplett plan. Et høyere mål (8–16 mg) er et stort sprang uten kildebegrunnet opptrapping og stopper uten delplan, også med begrunnelse; et lavere mål stopper også.`,
     `${GJENNOMGANG_10} risperidon startes ikke lenger etter preparatomtalens raskere opptrapping (4 mg dag 2), men etter byteverktøyets råd ved bytte fra aripiprazol: 2 mg dag 1–4 (høyst 50 % av måldosen) og første økning dag 5, til 4 mg. Ved måldose 5 eller 6 mg holdes 4 mg en tid før måldosen (åpent OUSFAR-valg, forslag én uke). Toleransen og blodtrykket vurderes før hver økning.`,
+    `${GJENNOMGANG_11} kontrolløren har godtatt én uke på 4 mg før en eventuell økning til 5 eller 6 mg som en forsiktig, symptomstyrt tilpasning; valget er registrert som avklart og merket som OUSFARs selvstendige kliniske vurdering. Regelen er ikke godkjent.`,
   ),
 }
 
@@ -1556,13 +1604,48 @@ export const FEST_ANTIPSYKOTIKA = 'src/data/verktoy/fest-antipsykotika.json'
 
 /* --- Settet ----------------------------------------------------------------------------- */
 
+/**
+ * Den uavhengige kliniske godkjenningen av tre av reglene: ChatGPT, som
+ * uavhengig fagkontrollør, i kontrollen av HEAD 63464bd 04.11.2026 (PR #320,
+ * kommentar 6626569802, formidlet av Peder). Den gjelder bare nøyaktig
+ * versjonen og fingeravtrykket under og den snevre avgrensningen; endres en
+ * regel, gjelder godkjenningen ikke lenger, og regelen står til faglig
+ * kontroll igjen. De fire andre reglene er ikke godkjent. Utviklerne av
+ * reglene er ikke kontrollører.
+ */
+export const ANTIPSYKOTIKAVEDTAK: Godkjenningsvedtak = {
+  av: KONTROLLOR,
+  dato: '2026-11-04',
+  gjennomgang: 'Kontrollørens ellevte gjennomgang av 63464bd 04.11.2026 (PR #320, kommentar 6626569802)',
+  regler: {
+    'depot-risperidon-xeplion': {
+      versjon: 8,
+      fingeravtrykk: '1672334c468f28cf181aa4d786370e60f3f232f76f63d374e0c505d847ab184e',
+      avgrensning:
+        'bare stabil voksen med schizofreni på 3 mg peroral risperidon daglig, med Xeplion 75 mg månedlig som faktisk valgt mål etter oppstart med 150 mg dag 1 og 100 mg dag 8, normal nyrefunksjon, dokumentert god effekt og toleranse og uten overvekt eller relevante interaksjoner, med vurdering før injeksjonene og vilkårene for individuell doseendring. Russu 2018 gir populasjonsfarmakokinetikk, ikke individuell doseekvivalens; 4–6 mg risperidon til 75 mg er fortsatt avvist. Godkjenningen gjelder en klinisk plausibel, begrenset oppstart, ikke garantert virkning hos alle.',
+    },
+    'antipsykotikabytte-olanzapin-aripiprazol': {
+      versjon: 8,
+      fingeravtrykk: 'f141a13a9e9368542d7719cfb0abea7cfb77a41d7d89248e5f9e1d70e0aa5f5e',
+      avgrensning:
+        'bare stabil voksen poliklinisk pasient med schizofreni: olanzapin 20 → 15 → 10 → 5 → 0 mg, med aripiprazol etablert på forskriverens valgte og tolererte 10 eller 15 mg, minst to ukers overlapp før nedtrappingen, minst 14 dager per reduksjon, tett vurdering av symptomer og bivirkninger, stopp eller individuell omlegging ved plager, og uten tidligere seponeringsproblemer. Dette er en bevisst langsommere strategi etter TARC 2018, ikke en generell regel for seponering av olanzapin.',
+    },
+    'antipsykotikabytte-risperidon-aripiprazol': {
+      versjon: 8,
+      fingeravtrykk: '866ac93c58fb921c78cd71518ec91637cb31a175b7a9a480552fcebe54cca870',
+      avgrensning:
+        'bare tilsvarende stabil voksen poliklinisk pasient med schizofreni: risperidon 4 → 3 → 2 → 1 → 0 mg, med aripiprazol på valgt og tolerert terapeutisk måldose før nedtrappingen, samme overlapp, intervaller, tette oppfølging og stoppkriterier. Ikke en generell regel om seponering av risperidon eller om at alle pasienter tåler 1 → 0 mg.',
+    },
+  },
+}
+
 export const ANTIPSYKOTIKASETT: Regelsett = {
   id: 'ousfar-verktoy-antipsykotikabytter',
   versjon: 1,
   modell: REGELMODELLVERSJON,
   beskrivelse:
-    'Byttereglene for antipsykotika i K3: komplette forløp til et definert sluttmål, bygget på preparatomtaler, Keks 2019 (oversikten og byteverktøyet), Russu 2018 og TARC 2018. To depotrelaterte (Xeplion fra peroral risperidon og fra Risperdal Consta), tre perorale direkte bytter (aripiprazol til olanzapin og til risperidon, kariprazin til kvetiapin) og to kryss-titreringer til aripiprazol (fra olanzapin og fra risperidon, TARC 2018). Alle står til uavhengig faglig kontroll; ingen er klinisk godkjent.',
-  regler: [risperidonXeplion, constaXeplion, aripiprazolOlanzapin, aripiprazolRisperidon, kariprazinKvetiapin, olanzapinAripiprazol, risperidonAripiprazol],
+    'Byttereglene for antipsykotika i K3: komplette forløp til et definert sluttmål, bygget på preparatomtaler, Keks 2019 (oversikten og byteverktøyet), Russu 2018 og TARC 2018. To depotrelaterte (Xeplion fra peroral risperidon og fra Risperdal Consta), tre perorale direkte bytter (aripiprazol til olanzapin og til risperidon, kariprazin til kvetiapin) og to kryss-titreringer til aripiprazol (fra olanzapin og fra risperidon, TARC 2018). Tre er klinisk godkjent av en uavhengig kontrollør for nøyaktig sin versjon, sitt fingeravtrykk og en snever avgrensning (ANTIPSYKOTIKAVEDTAK): Xeplion fra peroral risperidon og de to kryss-titreringene til aripiprazol. De fire andre står til faglig kontroll. Verktøyene vises bare for administratorer.',
+  regler: godkjenn([risperidonXeplion, constaXeplion, aripiprazolOlanzapin, aripiprazolRisperidon, kariprazinKvetiapin, olanzapinAripiprazol, risperidonAripiprazol], ANTIPSYKOTIKAVEDTAK),
 }
 
 export const ANTIPSYKOTIKABYTTER: Domenesett = {

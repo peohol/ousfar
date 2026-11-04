@@ -30,6 +30,7 @@ import { lagRegeldekningsrapport, REGELDEKNINGSFIL } from '../src/verktoy/regeld
 import { KONTROLLFORSLAG, lagKontrollgrunnlag } from '../src/verktoy/kontrollgrunnlag'
 import { lagRettelseskontroll, RETTELSESKONTROLLFIL } from '../src/verktoy/rettelseskontroll'
 import { avvikFra, kjorKasus, lagPilotmatriserapport, PILOTKASUS, PILOTMATRISEFIL } from '../src/verktoy/regler/pilotmatrise'
+import { ANTIPSYKOTIKAKASUS, kjorAntipsykotikakasus } from '../src/verktoy/regler/antipsykotikakasus'
 import { FEST_TILLEGG, kjorTilleggskasus, lagTilleggsgrunnlag, TILLEGGSGRUNNLAGFIL, TILLEGGSKASUS, TILLEGGSSTOFFER } from '../src/verktoy/tilleggsgrunnlag'
 
 const skriv = (fil: string, innhold: string) => {
@@ -56,7 +57,11 @@ async function kontroll() {
   const tillegg = kjorTilleggskasus(lesUttrekk(FEST_TILLEGG)).flatMap(({ k, avvik }) => avvik.map((f) => `${k.id}: ${f}`))
   for (const f of tillegg) console.error(`✗ kontrollgrunnlaget for tillegg: ${f}`)
   console.log(tillegg.length === 0 ? `✓ kontrollgrunnlaget for tillegg: ${TILLEGGSKASUS.length} kasus som forventet` : `kontrollgrunnlaget for tillegg: ${tillegg.length} avvik`)
-  antall += avvik.length + tillegg.length
+  // De godkjente antipsykotikabyttene (K3) ende til ende, med FEST-uttrekket for K3 og uten simulert godkjenning.
+  const antipsykotika = kjorAntipsykotikakasus(lesUttrekk(FEST_ANTIPSYKOTIKA), uttrekkene.aksept).flatMap(({ k, avvik }) => avvik.map((f) => `${k.id}: ${f}`))
+  for (const f of antipsykotika) console.error(`✗ kasusene for antipsykotikabytter: ${f}`)
+  console.log(antipsykotika.length === 0 ? `✓ kasusene for antipsykotikabytter: ${ANTIPSYKOTIKAKASUS.length} kasus som forventet` : `kasusene for antipsykotikabytter: ${antipsykotika.length} avvik`)
+  antall += avvik.length + tillegg.length + antipsykotika.length
   if (antall > 0) process.exit(1)
 }
 

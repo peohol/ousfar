@@ -50,8 +50,12 @@ describe('hva de godkjente reglene bygger på', () => {
     const godkjente = REGELSETTENE.flatMap((s) => s.regler.filter(erKliniskGodkjent).map((r) => `${s.id}/${r.id} v${r.versjon} ${fingeravtrykk(r)}`)).sort()
     expect(REGLER.map((g) => `${g.regelsett}/${g.regel.id} v${g.regel.versjon} ${g.fingeravtrykk}`).sort()).toEqual(godkjente)
     expect(REGLER.map((g) => `${g.regel.id} v${g.regel.versjon}`).sort()).toEqual([
+      // Godkjent av kontrolløren 04.11.2026 i K3 (`ANTIPSYKOTIKAVEDTAK`).
+      'antipsykotikabytte-olanzapin-aripiprazol v8',
+      'antipsykotikabytte-risperidon-aripiprazol v8',
       'depot-aripiprazol-maintena v3',
       'depot-paliperidon-xeplion v3',
+      'depot-risperidon-xeplion v8',
       'kryssnedtrapping-sertralin-mirtazapin v10',
       'seponering-agomelatin v1',
       'seponering-bupropion v5',
@@ -72,7 +76,8 @@ describe('hva de godkjente reglene bygger på', () => {
     expect(regel('seponering-agomelatin').beregning).toBe(false)
     // Tekstreglene bygger ingen plan av preparatene, så FEST kontrolleres bare for de beregnbare.
     // Tilleggsreglene (K4) tar med det eksisterende legemidlet, også når planen bare gjentar dosen.
-    expect(virkestofferForFest(REGLER)).toEqual(['aripiprazol', 'escitalopram', 'lamotrigin', 'litium', 'mirtazapin', 'paliperidon', 'sertralin', 'valproat', 'vortioksetin'])
+    // Antipsykotikabyttene (K3) bruker også olanzapin og risperidon fra FEST.
+    expect(virkestofferForFest(REGLER)).toEqual(['aripiprazol', 'escitalopram', 'lamotrigin', 'litium', 'mirtazapin', 'olanzapin', 'paliperidon', 'risperidon', 'sertralin', 'valproat', 'vortioksetin'])
     // Escitalopram (K1) bygger også på preparatomtalen for dråpene, så endringer i den fanges opp.
     expect([...regel('seponering-escitalopram').kilder]).toContain('dmp-cipralex-draper')
   })

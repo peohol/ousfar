@@ -1,9 +1,11 @@
 /**
  * K3: bytte av antipsykotika (`docs/verktøy-k3-antipsykotika.md`).
  *
- * - De sju regelutkastene består kontrollene (kilder, kildeoppføringer og
- *   regneeksempler), står til uavhengig faglig kontroll og er ikke klinisk
- *   godkjent; verktøysiden gir derfor ingen klinisk plan for dem.
+ * - De sju reglene består kontrollene (kilder, kildeoppføringer og
+ *   regneeksempler). Tre er klinisk godkjent av den uavhengige kontrolløren
+ *   for nøyaktig sin versjon og sitt fingeravtrykk (`ANTIPSYKOTIKAVEDTAK`,
+ *   04.11.2026) og gir en ekte plan på verktøysiden uten simulert
+ *   godkjenning; de fire andre står til faglig kontroll og gir ingen plan.
  * - Med en simulert godkjenning av nøyaktig versjonen og fingeravtrykket gir
  *   hvert forløp en komplett plan med norske preparater fra FEST: det gamle
  *   stoppes, og det nye står på et fast eller definert regime.
@@ -19,8 +21,8 @@ import { startdosenavn, type Planskjema } from '../verktoy/doseplan'
 import { KOMPLETT } from '../verktoy/planvisning'
 import { VERKTOY } from '../verktoy/register'
 import { FEST_AKSEPTTEST } from '../verktoy/regler/aksepttest'
-import { ANTIPSYKOTIKASETT, FEST_ANTIPSYKOTIKA } from '../verktoy/regler/antipsykotikabytter'
-import { erKliniskGodkjent, fingeravtrykk } from '../verktoy/regler/godkjenning'
+import { ANTIPSYKOTIKASETT, ANTIPSYKOTIKAVEDTAK, FEST_ANTIPSYKOTIKA } from '../verktoy/regler/antipsykotikabytter'
+import { erKliniskGodkjent, fingeravtrykk, godkjenn } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett } from '../verktoy/regler/kontroll'
 import { apneValg, type Regel } from '../verktoy/regler/modell'
 import { kjorKasus, SIMULERT_KONTROLLOR, simulerGodkjenning, type Pilotkasus, type Uttrekkene } from '../verktoy/regler/pilotmatrise'
@@ -41,13 +43,16 @@ const VALG = {
   'antipsykotikabytte-olanzapin-aripiprazol': valg(['olanzapin', 'standard'], ['aripiprazol', 'standard']),
   'antipsykotikabytte-risperidon-aripiprazol': valg(['risperidon', 'standard'], ['aripiprazol', 'standard']),
 } as const
-/** Regler med åpne OUSFAR-valg som kontrolløren må avklare: tiden på startregimet før den valgte måldosen i byttene fra aripiprazol. */
-const MED_APNE_VALG = [
-  'antipsykotikabytte-aripiprazol-olanzapin',
-  'antipsykotikabytte-aripiprazol-risperidon',
-]
+/** Regler med åpne OUSFAR-valg som kontrolløren må avklare: tiden på 10 mg olanzapin før den valgte måldosen. */
+const MED_APNE_VALG = ['antipsykotikabytte-aripiprazol-olanzapin']
 /** Regler med OUSFAR-vurderinger, også de kontrolløren har avklart (avgrensningen til 3 mg risperidon før Xeplion, 04.11.2026). */
-const MED_OUSFAR_VURDERING = [...MED_APNE_VALG, 'depot-risperidon-xeplion', 'antipsykotikabytte-olanzapin-aripiprazol', 'antipsykotikabytte-risperidon-aripiprazol']
+const MED_OUSFAR_VURDERING = [...MED_APNE_VALG, 'antipsykotikabytte-aripiprazol-risperidon', 'depot-risperidon-xeplion', 'antipsykotikabytte-olanzapin-aripiprazol', 'antipsykotikabytte-risperidon-aripiprazol']
+/** Reglene kontrolløren har godkjent klinisk (ellevte gjennomgang, 04.11.2026), med fingeravtrykket godkjenningen gjelder. */
+const GODKJENT: Partial<Record<string, string>> = {
+  'depot-risperidon-xeplion': '1672334c468f28cf181aa4d786370e60f3f232f76f63d374e0c505d847ab184e',
+  'antipsykotikabytte-olanzapin-aripiprazol': 'f141a13a9e9368542d7719cfb0abea7cfb77a41d7d89248e5f9e1d70e0aa5f5e',
+  'antipsykotikabytte-risperidon-aripiprazol': '866ac93c58fb921c78cd71518ec91637cb31a175b7a9a480552fcebe54cca870',
+}
 /** Kontrollørens avklaringer i den åttende gjennomgangen (04.11.2026): regelen og versjonen kontrolløren vurderte. */
 const AVKLART_STARTDOSE: Partial<Record<string, number>> = {
   'depot-risperidon-xeplion': 7,
@@ -57,9 +62,9 @@ const AVKLART_STARTDOSE: Partial<Record<string, number>> = {
 /** Versjonene etter kontrollørens gjennomganger av #320 (03.–04.11.2026); de andre er versjon 1. */
 const VERSJON: Partial<Record<string, number>> = {
   'depot-risperidon-xeplion': 8,
-  'depot-consta-xeplion': 2,
+  'depot-consta-xeplion': 3,
   'antipsykotikabytte-aripiprazol-olanzapin': 2,
-  'antipsykotikabytte-aripiprazol-risperidon': 4,
+  'antipsykotikabytte-aripiprazol-risperidon': 5,
   'antipsykotikabytte-kariprazin-kvetiapin': 2,
   'antipsykotikabytte-olanzapin-aripiprazol': 8,
   'antipsykotikabytte-risperidon-aripiprazol': 8,
@@ -119,13 +124,32 @@ describe('K3: regelutkastene for bytte av antipsykotika', () => {
     }
   })
 
-  it('er alle til faglig kontroll og ikke klinisk godkjent, så verktøysiden gir ingen klinisk plan', () => {
+  it('tre er klinisk godkjent for nøyaktig sin versjon og sitt fingeravtrykk; de fire andre står til faglig kontroll og gir ingen klinisk plan', () => {
+    expect(Object.keys(ANTIPSYKOTIKAVEDTAK.regler).sort()).toEqual(Object.keys(GODKJENT).sort())
     for (const r of ANTIPSYKOTIKASETT.regler) {
-      expect(r.godkjenning.status, r.id).toBe('til_faglig_kontroll')
       expect(r.versjon, r.id).toBe(VERSJON[r.id] ?? 1)
-      expect(r.godkjenning.historikk.at(-1)?.regelversjon, r.id).toBe(r.versjon)
-      expect(erKliniskGodkjent(r), r.id).toBe(false)
+      const sist = r.godkjenning.historikk.at(-1)!
+      expect(sist.regelversjon, r.id).toBe(r.versjon)
+      const avtrykk = GODKJENT[r.id]
+      if (avtrykk) {
+        // Godkjenningen er kontrollørens, ikke utviklernes, og gjelder nøyaktig fingeravtrykket kontrolløren godkjente.
+        expect(fingeravtrykk(r), r.id).toBe(avtrykk)
+        expect(r.godkjenning.status, r.id).toBe('klinisk_godkjent')
+        expect(sist, r.id).toMatchObject({ status: 'klinisk_godkjent', av: 'ChatGPT (uavhengig fagkontrollør)', rolle: 'uavhengig_kontrollor', dato: '2026-11-04', fingeravtrykk: avtrykk })
+        expect(sist.merknad, r.id).toMatch(/ellevte gjennomgang av 63464bd .*kommentar 6626569802.*bare for nøyaktig denne avgrensede situasjonen: bare /)
+        expect(r.godkjenning.historikk.slice(0, -1).every((s) => s.rolle === 'utvikler' && s.status !== 'klinisk_godkjent'), r.id).toBe(true)
+        expect(erKliniskGodkjent(r), r.id).toBe(true)
+      } else {
+        expect(r.godkjenning.status, r.id).toBe('til_faglig_kontroll')
+        expect(r.godkjenning.historikk.every((s) => s.rolle === 'utvikler' && s.status !== 'klinisk_godkjent'), r.id).toBe(true)
+        expect(erKliniskGodkjent(r), r.id).toBe(false)
+      }
     }
+    // Endres en godkjent regel, gjelder godkjenningen ikke: vedtaket registreres bare for nøyaktig fingeravtrykket.
+    const endret = structuredClone(regel('depot-risperidon-xeplion'))
+    endret.fortolkning.forutsetninger.push('Syntetisk testendring etter godkjenningen.')
+    endret.godkjenning = { status: 'til_faglig_kontroll', historikk: endret.godkjenning.historikk.slice(0, -1) }
+    expect(godkjenn([endret], ANTIPSYKOTIKAVEDTAK)[0]!.godkjenning.status).toBe('til_faglig_kontroll')
     // Kontrollørens avklaringer gjelder bare startdoseavgrensningen, for versjonen kontrolløren vurderte, og er ingen godkjenning.
     for (const r of ANTIPSYKOTIKASETT.regler) {
       const g = r.inndata.find((i) => i.navn === 'startdose')?.grunnlag
@@ -136,12 +160,15 @@ describe('K3: regelutkastene for bytte av antipsykotika', () => {
       }
       expect(avklaring, r.id).toMatchObject({ dato: '2026-11-04', av: 'ChatGPT (uavhengig fagkontrollør)', rolle: 'uavhengig_kontrollor', regelversjon: AVKLART_STARTDOSE[r.id] })
       expect(avklaring?.merknad, r.id).toMatch(/gjennomgang av 65c3fb8 .*kommentar 6620232533.*ingen klinisk godkjenning av regelen/)
-      expect(r.godkjenning.historikk.every((s) => s.rolle === 'utvikler' && s.status !== 'klinisk_godkjent'), r.id).toBe(true)
     }
     for (const [id, v] of Object.entries(VALG)) {
       const t = tilgjengelighet(BYTTE, v)
-      expect(t.status, id).toBe('til_kontroll')
       expect(t.regler.map((r) => r.id), id).toContain(id)
+      if (GODKJENT[id]) {
+        expect(t.status, id).toBe('tilgjengelig')
+        continue
+      }
+      expect(t.status, id).toBe('til_kontroll')
       const u = kjorKasus({ id, kategori: 'vanlig_dose', hva: id, verktoy: BYTTE.id, valg: v, uttrekk: 'pilot', dose: '4', forventet: { utfall: 'ingen', status: 'til_kontroll' } }, UTTREKKENE)
       expect(u, id).toMatchObject({ utfall: 'ingen', status: 'til_kontroll' })
     }
@@ -217,6 +244,7 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
     expect(linjer(kjor('depot-consta-xeplion', '37,5', { startdato: '2026-12-15' }))).toEqual([
       'Fra dag 1 (fra 15.12.2026): Risperidon depotinjeksjon: Seponert = ingen flere injeksjoner',
       'Dag 1 (15.12.2026): Paliperidon depotinjeksjon 75 mg = 1 injeksjon à 75 mg (deltoideus eller setemuskel)',
+      'Dag 1 (15.12.2026): Vurdering (Paliperidon): Ved byttet (dag 1) og før hver månedlige injeksjon: effekt og psykotiske symptomer, ekstrapyramidale og andre bivirkninger, toleranse og reaksjoner etter forrige injeksjon vurderes, og pasienten følges tett gjennom byttet.',
       'Hver måned fra 1 måned etter dag 1 (første 15.01.2027): Paliperidon depotinjeksjon 75 mg = 1 injeksjon à 75 mg (±7 dager, deltoideus eller setemuskel)',
     ])
     for (const [consta, xeplion] of [['25', 50], ['50', 100]] as const) {
@@ -227,6 +255,22 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
     expect(startdosenavn(regel('depot-consta-xeplion'))).toBe('Aktuell dose (mg per injeksjon hver 2. uke)')
     expect(grunner(kjor('depot-consta-xeplion', ''))).toMatch(/Aktuell dose \(mg per injeksjon hver 2\. uke\) må fylles inn/)
     expect(grunner(kjor('depot-consta-xeplion', '37,5', {}, { ubesvart: ['over_65'] }))).toMatch(/over 65 år/)
+    // Kontrollørens ellevte gjennomgang: oppfølgingen står i den kopierbare planen, med når dosen må vurderes individuelt.
+    const tekst = kjor('depot-consta-xeplion', '37,5').tekst ?? ''
+    expect(tekst).toMatch(/Paliperidon, dag 1: Ved byttet \(dag 1\) og før hver månedlige injeksjon: .* Ved funn: Planens dose gjelder ikke lenger, og vedlikeholdsdosen vurderes individuelt, ved utilstrekkelig effekt.*full effekt av en endret dose kan først sees etter flere måneder/)
+    // Utilstrekkelig effekt (ikke bekreftet god og stabil effekt), nedsatt nyrefunksjon og et annet depot stopper uten planrader.
+    const stopp = [
+      kjor('depot-consta-xeplion', '37,5', { bekreftet: ['indikasjon', 'preparat_consta', 'neste_injeksjon'] }),
+      kjor('depot-consta-xeplion', '37,5', {}, { ubesvart: ['nedsatt_nyrefunksjon'] }),
+      kjor('depot-consta-xeplion', '37,5', { bekreftet: ['indikasjon', 'neste_injeksjon', 'effekt_toleranse'] }),
+    ]
+    expect(grunner(stopp[0]!)).toMatch(/dagens Consta-dose har gitt god og stabil effekt/)
+    expect(grunner(stopp[1]!)).toMatch(/kreatininclearance under 80 ml\/min/)
+    expect(grunner(stopp[2]!)).toMatch(/Depotet er Risperdal Consta hver 2\. uke, ikke Okedi/)
+    for (const u of stopp) {
+      expect(u.utfall).not.toBe('plan')
+      expect('linjer' in u ? u.linjer : []).toEqual([])
+    }
   })
 
   it('aripiprazol → olanzapin: aripiprazol stoppes, olanzapin 10 mg fra dag 1 og den valgte måldosen etter en ny vurdering', () => {
@@ -252,6 +296,16 @@ describe('K3: komplette forløp med simulert godkjenning og norske preparater fr
   })
 
   it('aripiprazol → risperidon: 2 mg dag 1–4, første økning dag 5 og den valgte måldosen 4–6 mg etter en ny vurdering', () => {
+    // Kontrollørens ellevte gjennomgang: én uke på 4 mg før 5–6 mg er avklart som OUSFARs selvstendige kliniske vurdering, men regelen er ikke godkjent.
+    const fase = regel('antipsykotikabytte-aripiprazol-risperidon').plan.forlop[1]!.faser[0]!
+    if (fase.type !== 'opptrapping') throw new Error('Uventet plan')
+    const uke = fase.trinn[1]!.dager
+    expect(uke.verdi).toBe(7)
+    expect(uke.grunnlag.type === 'ousfar_vurdering' && uke.grunnlag.begrunnelse).toMatch(/^OUSFARs selvstendige kliniske vurdering, ikke fra kildene/)
+    expect(uke.grunnlag.type === 'ousfar_vurdering' && uke.grunnlag.avklaring).toMatchObject({ av: 'ChatGPT (uavhengig fagkontrollør)', rolle: 'uavhengig_kontrollor', regelversjon: 4 })
+    expect(uke.grunnlag.type === 'ousfar_vurdering' && uke.grunnlag.avklaring && uke.grunnlag.avklaring.merknad).toMatch(/gjennomgang av 63464bd .*kommentar 6626569802.*ingen klinisk godkjenning av regelen/)
+    expect(apneValg(regel('antipsykotikabytte-aripiprazol-risperidon'))).toEqual([])
+    expect(regel('antipsykotikabytte-aripiprazol-risperidon').godkjenning.status).toBe('til_faglig_kontroll')
     const plan = (maldose: string) => linjer(kjor('antipsykotikabytte-aripiprazol-risperidon', '15', { maldose }))
     const doser = (maldose: string) => plan(maldose).filter((l) => !l.includes('Vurdering'))
     const vurderinger = (maldose: string) => plan(maldose).filter((l) => l.includes('Vurdering')).map((l) => l.split(':')[0])
@@ -468,6 +522,74 @@ describe('K3: planutfallet', () => {
   })
 })
 
+describe('K3: de tre godkjente reglene gir en ekte plan på verktøysiden, uten simulert godkjenning', () => {
+  /** Kasuset med regelen slik den står i appen: ingen simulert godkjenning og ingen endring. */
+  const ekte = (id: Regelid, dose: string, skjema: Partial<Planskjema> = {}, ekstra: Partial<Pilotkasus> = {}) => kjor(id, dose, skjema, { regel: { id }, ...ekstra })
+
+  it('gir hele den kopierbare planen med norske preparater fra FEST, merket som godkjent og komplett', () => {
+    const planer = {
+      'depot-risperidon-xeplion': ekte('depot-risperidon-xeplion', '3', { maldose: '75', startdato: '2026-12-01' }),
+      'antipsykotikabytte-olanzapin-aripiprazol': ekte('antipsykotikabytte-olanzapin-aripiprazol', '20', { formvalg: { fra: TABLETTER, til: TABLETTER }, maldose: '15', startdato: '2026-12-01' }),
+      'antipsykotikabytte-risperidon-aripiprazol': ekte('antipsykotikabytte-risperidon-aripiprazol', '4', { formvalg: { fra: TABLETTER, til: TABLETTER }, maldose: '10' }),
+    }
+    for (const [id, u] of Object.entries(planer)) {
+      expect(u.utfall, id).toBe('plan')
+      expect(u.tekst, id).toContain(KOMPLETT)
+      expect(u.tekst, id).toMatch(/Beregnet etter en klinisk godkjent regelversjon/)
+      expect(u.tekst, id).toContain(`Regel ${id}, versjon 8, fingeravtrykk ${GODKJENT[id]!.slice(0, 12)}`)
+      expect(u.tekst, id).not.toMatch(/Simulert|Delplan/)
+    }
+    expect(linjer(planer['depot-risperidon-xeplion'])).toEqual([
+      'Fra dag 1 (fra 01.12.2026): Risperidon peroralt: Seponert',
+      'Dag 1 (01.12.2026): Paliperidon depotinjeksjon 150 mg = 1 injeksjon à 150 mg (deltoideus)',
+      'Dag 8 (08.12.2026): Vurdering (Paliperidon): Før endringen: Før injeksjonen dag 8 og før hver månedlige vedlikeholdsinjeksjon: psykotiske symptomer, ekstrapyramidale og andre bivirkninger og reaksjoner etter forrige injeksjon vurderes, og pasienten følges tett gjennom byttet.',
+      'Dag 8 (08.12.2026): Paliperidon depotinjeksjon 100 mg = 1 injeksjon à 100 mg (±4 dager, deltoideus)',
+      'Hver måned fra 1 måned etter dag 8 (første 08.01.2027): Paliperidon depotinjeksjon 75 mg = 1 injeksjon à 75 mg (±7 dager, deltoideus eller setemuskel)',
+    ])
+    expect(linjer(planer['antipsykotikabytte-olanzapin-aripiprazol']).filter((l) => !l.includes('Vurdering'))).toEqual([
+      'Dag 1–7 (01.12.2026–07.12.2026): Olanzapin peroralt: 20 mg = 2 tabletter à 10 mg; Aripiprazol peroralt: 5 mg = 1 tablett à 5 mg',
+      'Dag 8–14 (08.12.2026–14.12.2026): Olanzapin peroralt: 20 mg = 2 tabletter à 10 mg; Aripiprazol peroralt: 10 mg = 1 tablett à 10 mg',
+      'Dag 15–28 (15.12.2026–28.12.2026): Olanzapin peroralt: 20 mg = 2 tabletter à 10 mg; Aripiprazol peroralt: 15 mg = 1 tablett à 15 mg',
+      'Dag 29–42 (29.12.2026–11.01.2027): Olanzapin peroralt: 15 mg = 2 tabletter à 7,5 mg; Aripiprazol peroralt: 15 mg = 1 tablett à 15 mg',
+      'Dag 43–56 (12.01.2027–25.01.2027): Olanzapin peroralt: 10 mg = 1 tablett à 10 mg; Aripiprazol peroralt: 15 mg = 1 tablett à 15 mg',
+      'Dag 57–70 (26.01.2027–08.02.2027): Olanzapin peroralt: 5 mg = 1 tablett à 5 mg; Aripiprazol peroralt: 15 mg = 1 tablett à 15 mg',
+      'Fra dag 71 (fra 09.02.2027): Olanzapin peroralt: Seponert; Aripiprazol peroralt: 15 mg = 1 tablett à 15 mg',
+    ])
+    expect(linjer(planer['antipsykotikabytte-risperidon-aripiprazol']).filter((l) => !l.includes('Vurdering'))).toEqual([
+      'Dag 1–7: Risperidon peroralt: 4 mg = 1 tablett à 4 mg; Aripiprazol peroralt: 5 mg = 1 tablett à 5 mg',
+      'Dag 8–28: Risperidon peroralt: 4 mg = 1 tablett à 4 mg; Aripiprazol peroralt: 10 mg = 1 tablett à 10 mg',
+      'Dag 29–42: Risperidon peroralt: 3 mg = 1 tablett à 3 mg; Aripiprazol peroralt: 10 mg = 1 tablett à 10 mg',
+      'Dag 43–56: Risperidon peroralt: 2 mg = 1 tablett à 2 mg; Aripiprazol peroralt: 10 mg = 1 tablett à 10 mg',
+      'Dag 57–70: Risperidon peroralt: 1 mg = 1 tablett à 1 mg; Aripiprazol peroralt: 10 mg = 1 tablett à 10 mg',
+      'Fra dag 71: Risperidon peroralt: Seponert; Aripiprazol peroralt: 10 mg = 1 tablett à 10 mg',
+    ])
+    // Vurderingspunktene står i den kopierbare planen: før hver reduksjon, også siste, og 14 dager etter seponeringen.
+    expect(linjer(planer['antipsykotikabytte-risperidon-aripiprazol']).filter((l) => l.includes('Vurdering')).map((l) => l.split(':')[0])).toEqual(['Dag 8', 'Dag 29', 'Dag 43', 'Dag 57', 'Dag 71', 'Dag 84'])
+  })
+
+  it('stopper fortsatt utenfor den godkjente avgrensningen', () => {
+    // Xeplion: bare fra 3 mg risperidon og bare 75 mg; 4–6 mg → 75 mg er fortsatt avvist.
+    for (const dose of ['2', '4', '5', '6']) expect(grunner(ekte('depot-risperidon-xeplion', dose, { maldose: '75' })), dose).toMatch(new RegExp(`Startdosen ${dose} mg er utenfor`))
+    expect(ekte('depot-risperidon-xeplion', '3', { maldose: '100' }).utfall).not.toBe('plan')
+    expect(grunner(ekte('depot-risperidon-xeplion', '3', { maldose: '75', pasientforhold: { overvekt: true } }))).toMatch(/Pasienten har overvekt eller fedme/)
+    // Kryss-titreringene: bare kildens startdoser, og tidligere seponeringsplager eller manglende vurdering av siste trinn stopper.
+    expect(grunner(ekte('antipsykotikabytte-olanzapin-aripiprazol', '15', { formvalg: { fra: TABLETTER, til: TABLETTER }, maldose: '15' }))).toMatch(/Startdosen 15 mg er utenfor/)
+    expect(grunner(ekte('antipsykotikabytte-risperidon-aripiprazol', '6', { formvalg: { fra: TABLETTER, til: TABLETTER }, maldose: '10' }))).toMatch(/Startdosen 6 mg er utenfor/)
+    expect(ekte('antipsykotikabytte-risperidon-aripiprazol', '4', { formvalg: { fra: TABLETTER, til: TABLETTER }, maldose: '20' }).utfall).not.toBe('plan')
+    for (const id of ['antipsykotikabytte-olanzapin-aripiprazol', 'antipsykotikabytte-risperidon-aripiprazol'] as const) {
+      const dose = id === 'antipsykotikabytte-olanzapin-aripiprazol' ? '20' : '4'
+      const u = ekte(id, dose, { formvalg: { fra: TABLETTER, til: TABLETTER }, maldose: '10', pasientforhold: { seponeringsplager: true } })
+      expect(u.utfall, id).not.toBe('plan')
+      expect(grunner(u), id).toMatch(/Pasienten har tidligere fått seponeringsplager/)
+    }
+  })
+
+  it('FEST-kopien må være fersk også for de godkjente: 47 timer gir plan, 49 timer gir ingen', () => {
+    expect(ekte('depot-risperidon-xeplion', '3', { maldose: '75' }, { timer: 47 }).utfall).toBe('plan')
+    expect(grunner(ekte('depot-risperidon-xeplion', '3', { maldose: '75' }, { timer: 49 }))).toMatch(/sist kontrollert mot FEST/)
+  })
+})
+
 describe('K3: sikkerhetslåsene gjelder også de nye reglene', () => {
   it('en regel endret etter godkjenningen gir ingen plan, fordi fingeravtrykket ikke stemmer', () => {
     const endret = godkjent('antipsykotikabytte-kariprazin-kvetiapin', (r) => {
@@ -485,10 +607,12 @@ describe('K3: sikkerhetslåsene gjelder også de nye reglene', () => {
     expect(grunner(u)).toMatch(/sist kontrollert mot FEST/)
   })
 
-  it('uten simulert godkjenning gir den samme regelen ingen plan', () => {
-    const u = kjor('depot-risperidon-xeplion', '3', { maldose: '75' }, { regel: { id: 'depot-risperidon-xeplion' } })
-    expect(u.utfall).toBe('stopp')
-    expect(grunner(u)).toMatch(/til faglig kontroll, ikke klinisk godkjent/)
-    expect(regel('depot-risperidon-xeplion').godkjenning.status).toBe('til_faglig_kontroll')
+  it('uten simulert godkjenning gir en regel som står til kontroll, ingen plan', () => {
+    for (const [id, dose] of [['antipsykotikabytte-kariprazin-kvetiapin', '4,5'], ['depot-consta-xeplion', '37,5'], ['antipsykotikabytte-aripiprazol-risperidon', '15']] as const) {
+      const u = kjor(id, dose, { maldose: '6' }, { regel: { id } })
+      expect(u.utfall, id).toBe('stopp')
+      expect(grunner(u), id).toMatch(/til faglig kontroll, ikke klinisk godkjent/)
+      expect(regel(id).godkjenning.status, id).toBe('til_faglig_kontroll')
+    }
   })
 })
