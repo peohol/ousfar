@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.125.9',
+    versjon: '1.125.10',
     dato: '2026-11-04',
     sammendrag: 'De kliniske verktøyene kan nå beskrive overgang fra tabletter til dråper og foretrekke doser som er enkle å gi, men ingen regel bruker det ennå',
     typer: ['Funksjonalitet'],
