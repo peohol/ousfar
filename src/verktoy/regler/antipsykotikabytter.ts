@@ -34,7 +34,7 @@
  */
 import { FORUTSETNINGER_FELLES, forslag, h, kilde, pn, steg, utsagn } from './bygg'
 import type { Domenesett } from './domenesett'
-import type { Bekreftelse, Fase, Forlop, Godkjenning, Kildehenvisning, Regel, Regelsett, Unntak } from './modell'
+import type { Avklaring, Bekreftelse, Fase, Forlop, Godkjenning, Kildehenvisning, Regel, Regelsett, Unntak } from './modell'
 import { REGELMODELLVERSJON } from './modell'
 import { TEKNISK_MAKS_DAGER } from './nedtrapping'
 import { SPC } from './pilotsett'
@@ -65,6 +65,22 @@ const GJENNOMGANG_5 = 'Etter kontrollørens femte gjennomgang av #320 03.11.2026
 const GJENNOMGANG_6 = 'Etter kontrollørens sjette gjennomgang av #320 03.11.2026:'
 /** Kontrollørens sjuende gjennomgang av #320 (03.11.2026, head 07d6736). */
 const GJENNOMGANG_7 = 'Etter kontrollørens sjuende gjennomgang av #320 03.11.2026:'
+/** Kontrollørens åttende gjennomgang av #320 (04.11.2026, head 65c3fb8, kommentar 6620232533). */
+const GJENNOMGANG_8 = 'Etter kontrollørens åttende gjennomgang av #320 04.11.2026:'
+/** Samme navn som kontrolløren har i pilotsettet. */
+const KONTROLLOR = 'ChatGPT (uavhengig fagkontrollør)'
+/**
+ * Kontrollørens avklaring av ett åpent OUSFAR-valg i den åttende
+ * gjennomgangen. `regelversjon` er versjonen kontrolløren vurderte; valget er
+ * uendret i versjonen etter. Avklaringen er ingen godkjenning av regelen.
+ */
+const avklartAvKontrollor = (regelversjon: number, hva: string): Avklaring => ({
+  dato: '2026-11-04',
+  av: KONTROLLOR,
+  rolle: 'uavhengig_kontrollor',
+  regelversjon,
+  merknad: `Kontrollørens gjennomgang av 65c3fb8 04.11.2026 (#320, kommentar 6620232533): ${hva} Avklaringen gjelder bare dette valget og er ingen klinisk godkjenning av regelen.`,
+})
 
 /* --- Fakta fra kildene, med egne ord ------------------------------------------------- */
 
@@ -79,6 +95,16 @@ const KEKS = {
   kolinerg: h('keks-2019', 'tabell 2', 'Kolinergt seponeringssyndrom (blant annet ved olanzapin): kvalme, oppkast, hodepine, uro, angst, søvnløshet, tretthet, muskelsmerter, svetting og løs avføring.'),
   dopaminerg: h('keks-2019', 'tabell 2', 'Dopaminergt seponeringssyndrom (alle antipsykotika): seponeringsdyskinesi, akatisi, dystoni og tardive dyskinesier.'),
   ingenOpphold: h('keks-2019', 'avsnittet om byttestrategier', 'I motsetning til ved bytte av antidepressiver anbefales ikke et opphold uten antipsykotikum mellom det første og det neste.'),
+}
+
+/** Nettverktøyet til samme forfattere: virkestoffspesifikke råd for perorale bytter. Klinisk veiledning, ikke prospektiv validering, og ikke oppdatert siden 2022. */
+const BYTEVERKTOY = {
+  status: h('keks-2019-verktoy', 'Using the tool', 'Verktøyet skal hjelpe forskrivere ved bytte av antipsykotika. Det oppdateres ikke lenger, ble sist oppdatert 1. februar 2022, og informasjonen er kanskje ikke oppdatert.'),
+  olanzapin: h('keks-2019-verktoy', 'oral to oral, olanzapine to aripiprazole', 'Fra olanzapin til aripiprazol: lave doser olanzapin kan stoppes dag 1; doser over 10 mg halveres dag 1 og stoppes etter 7 dager, mens aripiprazol startes dag 1.'),
+  olanzapinRisiko: h('keks-2019-verktoy', 'oral to oral, olanzapine to aripiprazole', 'Aripiprazol er mer aktiverende enn olanzapin, med risiko for akatisi, agitasjon og irritabilitet; uten antikolinerg effekt gir det noe risiko for kolinerg rebound når olanzapin stoppes.'),
+  risperidon: h('keks-2019-verktoy', 'oral to oral, risperidone to aripiprazole', 'Fra risperidon til aripiprazol: doser over 3 mg daglig halveres dag 1 og stoppes dag 5, mens aripiprazol startes dag 1.'),
+  risperidonRisiko: h('keks-2019-verktoy', 'oral to oral, risperidone to aripiprazole', 'Aripiprazol er mer aktiverende eller mindre sederende enn risperidon, med risiko for akatisi og en viss risiko for agitasjon og irritabilitet.'),
+  aripiprazolStart: h('keks-2019-verktoy', 'oral to oral, til aripiprazol', 'Aripiprazol startes med 10 mg dag 1, eller med kjent måldose, men høyere doser gir risiko for akatisi, agitasjon og søvnløshet; doseøkning vurderes etter 14 dager.'),
 }
 
 const XEPLION = {
@@ -209,7 +235,7 @@ const XEPLION_INTERAKSJON: Unntak = {
 
 const risperidonXeplion: Regel = {
   id: 'depot-risperidon-xeplion',
-  versjon: 7,
+  versjon: 8,
   tittel: 'Fra peroral risperidon til Xeplion',
   fra: { type: 'virkestoff', nokkel: 'risperidon' },
   til: { type: 'virkestoff', nokkel: 'paliperidon' },
@@ -268,9 +294,13 @@ const risperidonXeplion: Regel = {
       grunnlag: {
         type: 'ousfar_vurdering',
         begrunnelse:
-          'Planen gjelder bare pasienter på 3 mg risperidon daglig, den eneste dosen der preparatomtalens anbefalte vedlikeholdsdose 75 mg og Russu 2018 er enige (3 mg risperidon gir omtrent samme eksponering som 75 mg Xeplion). Ved 4–6 mg tilsvarer 75 mg etter simuleringen en lavere eksponering enn dagens (4 mg ≈ 100 mg, 6 mg ≈ 150 mg), så 75 mg kan gi for lav vedlikeholdseksponering. OUSFAR tar ikke i bruk de høyere dosene fra simuleringen, fordi den er farmakokinetisk, sponset av produsenten og ikke prøvd ut på pasienter; de planlegges individuelt. Avgrensningen er OUSFARs og må avklares av kontrolløren.',
+          'Planen gjelder bare pasienter på 3 mg risperidon daglig, den eneste dosen der preparatomtalens anbefalte vedlikeholdsdose 75 mg og Russu 2018 er enige (3 mg risperidon gir omtrent samme eksponering som 75 mg Xeplion). Ved 4–6 mg tilsvarer 75 mg etter simuleringen en lavere eksponering enn dagens (4 mg ≈ 100 mg, 6 mg ≈ 150 mg), så 75 mg kan gi for lav vedlikeholdseksponering. OUSFAR tar ikke i bruk de høyere dosene fra simuleringen, fordi den er farmakokinetisk, sponset av produsenten og ikke prøvd ut på pasienter; de planlegges individuelt. Avgrensningen er OUSFARs bevisste kliniske beslutning om et snevert bruksområde: en begrenset startstrategi, ikke en individuell doseekvivalens, og simuleringen er ingen garanti for den enkelte.',
         henvisninger: [RUSSU.tabell, RUSSU.sponsor, XEPLION.vedlikehold, RISPERDAL.dose, SPC.xeplionOmregning],
-        avklaring: null,
+        // Kontrollørens åttende gjennomgang: avgrensningen er vurdert og avklart, men regelen er ikke godkjent.
+        avklaring: avklartAvKontrollor(
+          7,
+          'Peroral risperidon 3 mg daglig til Xeplion 150 mg dag 1 og 100 mg dag 8, så 75 mg månedlig, er en faglig plausibel, begrenset startstrategi etter preparatomtalen og Russu 2018, ikke individuell doseekvivalens. Vilkårene om stabil effekt, dokumentert toleranse, normal nyrefunksjon, fravær av overvekt og relevante interaksjoner og vurderingen før injeksjonene er gode sikkerhetsavgrensninger; 75 mg skal være forskriverens faktiske vedlikeholdsmål og revurderes ved kliniske funn, og 4–6 mg til 75 mg skal fortsatt stoppe.',
+        ),
       },
     },
     // Kontrollørens tredje gjennomgang: regelen erklærer bare en komplett plan for den anbefalte vedlikeholdsdosen. En annen dose planlegges individuelt.
@@ -309,9 +339,9 @@ const risperidonXeplion: Regel = {
     tilpasninger: [
       utsagn('OUSFAR seponerer peroral risperidon dagen før første injeksjon; gradvis seponering, som preparatomtalen nevner for noen, er ikke modellert.', SPC.xeplionSeponering),
       utsagn('Regelen gir bare en komplett plan med den anbefalte vedlikeholdsdosen 75 mg. Preparatomtalen har ingen omregning fra risperidondosen, og OUSFAR finner ikke på en, så regelen kan ikke stå for at en annen dose passer til pasientens risperidondose. En annen vedlikeholdsdose (25–150 mg etter toleranse og effekt, for eksempel høyere ved overvekt) stopper med beskjed om individuell planlegging, også med begrunnelse. Planen bruker bare styrker av Xeplion som finnes i FEST.', XEPLION.vedlikehold, XEPLION.overvekt),
-      utsagn('Planen gjelder bare 3 mg risperidon daglig, der anbefalte 75 mg og simuleringene er enige (åpent OUSFAR-valg til kontrolløren). Ved 4–6 mg kan 75 mg gi for lav vedlikeholdseksponering, og de høyere dosene fra simuleringene (100 og 150 mg) tas ikke i bruk uten klinisk grunnlag; de stopper med beskjed om individuell planlegging. Lavere risperidondose, utilstrekkelig effekt, bivirkninger som har begrenset dosen, overvekt eller fedme og legemidler som endrer omsetningen av risperidon stopper også. Risperidondosen brukes ikke i beregningen.', RUSSU.tabell, RISPERDAL.dose, XEPLION.overvekt, RUSSU.interaksjoner, RUSSU.sponsor),
+      utsagn('Planen gjelder bare 3 mg risperidon daglig, der anbefalte 75 mg og simuleringene er enige (OUSFARs bevisste avgrensning, avklart av kontrolløren 04.11.2026 som en begrenset startstrategi, ikke en doseekvivalens). Ved 4–6 mg kan 75 mg gi for lav vedlikeholdseksponering, og de høyere dosene fra simuleringene (100 og 150 mg) tas ikke i bruk uten klinisk grunnlag; de stopper med beskjed om individuell planlegging. Lavere risperidondose, utilstrekkelig effekt, bivirkninger som har begrenset dosen, overvekt eller fedme og legemidler som endrer omsetningen av risperidon stopper også. Risperidondosen brukes ikke i beregningen.', RUSSU.tabell, RISPERDAL.dose, XEPLION.overvekt, RUSSU.interaksjoner, RUSSU.sponsor),
       utsagn('Før injeksjonen dag 8 og før hver vedlikeholdsinjeksjon står et vurderingspunkt for symptomer, bivirkninger og reaksjoner etter injeksjonen.', RUSSU.oppfolging, KEKS.spesialist, XEPLION.justering),
-      utsagn('Positivt tilfelle, alle vilkår samtidig (åpent OUSFAR-valg til kontrolløren): voksen med schizofreni, stabil på 3 mg peroral risperidon daglig, tatt regelmessig, med god effekt og uten dosebegrensende bivirkninger, dokumentert tidligere toleranse, kreatininclearance minst 80 ml/min, ikke over 65 år, uten overvekt eller fedme og uten legemidler som endrer omsetningen av risperidon. Samme eksponering i gjennomsnitt er ikke en klinisk validering for den enkelte; derfor er vurderingen før hver injeksjon en del av planen.', RUSSU.tabell, RUSSU.klinikk, XEPLION.vedlikehold),
+      utsagn('Positivt tilfelle, alle vilkår samtidig (avklart av kontrolløren 04.11.2026): voksen med schizofreni, stabil på 3 mg peroral risperidon daglig, tatt regelmessig, med god effekt og uten dosebegrensende bivirkninger, dokumentert tidligere toleranse, kreatininclearance minst 80 ml/min, ikke over 65 år, uten overvekt eller fedme og uten legemidler som endrer omsetningen av risperidon. Samme eksponering i gjennomsnitt er ikke en klinisk validering for den enkelte; derfor er vurderingen før hver injeksjon en del av planen.', RUSSU.tabell, RUSSU.klinikk, XEPLION.vedlikehold),
       utsagn(`Når en individuell vurdering overstyrer planen: ${XEPLION_OVERSTYRING}`, XEPLION.vedlikehold, XEPLION.justering, XEPLION.overvekt, SPC.xeplionNyre, RUSSU.klinikk),
     ],
     forutsetninger: forutsetninger(
@@ -319,7 +349,7 @@ const risperidonXeplion: Regel = {
       'Forskriveren har vurdert nyrefunksjonen, alderen, vekten og de andre legemidlene og svart at kreatininclearance ikke er under 80 ml/min, at pasienten ikke er over 65 år, ikke har overvekt eller fedme og ikke bruker legemidler som endrer omsetningen av risperidon; ubesvart stopper beregningen.',
     ),
     usikkerhet: [
-      'Hvilken vedlikeholdsdose som gir samme effekt som pasientens risperidondose, sier preparatomtalen ikke. Russu 2018 sammenligner bare eksponering i simuleringer, er sponset av produsenten og er ikke prøvd ut på pasienter. At 75 mg passer ved 3 mg risperidon med god effekt og toleranse, er en avgrensning der kildene er enige, ikke en validert omregning; full effekt av en dose kan først sees etter flere måneder.',
+      'Hvilken vedlikeholdsdose som gir samme effekt som pasientens risperidondose, sier preparatomtalen ikke. Russu 2018 sammenligner bare eksponering i simuleringer, er sponset av produsenten og er ikke prøvd ut på pasienter. At 75 mg passer ved 3 mg risperidon med god effekt og toleranse, er en avgrensning der kildene er enige, ikke en validert omregning; full effekt av en dose kan først sees etter flere måneder. Avgrensningen er en klinisk beslutning om et snevert bruksområde, og simuleringen er ingen garanti for den enkelte pasienten.',
       'Generiske paliperidonpalmitat (Niapelf, Palmeux, Paliperidon Zentiva) og tremånedersdepotene er ikke kontrollert mot regelen og er ikke omfattet.',
     ],
   },
@@ -473,6 +503,7 @@ const risperidonXeplion: Regel = {
     `${GJENNOMGANG_4} planen gjelder bare 4–6 mg risperidon daglig (åpent OUSFAR-valg til kontrolløren), med en bekreftet vurdering av effekt og toleranse av dagens dose og overvekt eller fedme som unntak; 0,5 og 16 mg og andre doser utenfor området stopper.`,
     `${GJENNOMGANG_6} etter Russu 2018 kan 75 mg gi for lav vedlikeholdseksponering ved 4–6 mg risperidon, så planen gjelder bare 3 mg risperidon daglig, der preparatomtalens anbefalte 75 mg og simuleringene er enige (åpent OUSFAR-valg til kontrolløren). Legemidler som endrer omsetningen av risperidon er et nytt unntak, og planen har et vurderingspunkt før hver injeksjon.`,
     `${GJENNOMGANG_7} det positive tilfellet er skrevet ut som samlede vilkår, og planen sier konkret når en individuell vurdering overstyrer vedlikeholdsdosen (forverring eller tilbakefall, dosebegrensende eller ekstrapyramidale bivirkninger, overfølsomhet, nedsatt nyrefunksjon, utviklet overvekt). Avgrensningen er fortsatt et åpent valg, fordi simuleringene ikke er en klinisk validering.`,
+    `${GJENNOMGANG_8} kontrolløren har vurdert avgrensningen til 3 mg risperidon som en faglig plausibel, begrenset startstrategi, ikke individuell doseekvivalens, og valget er registrert som avklart. Teksten sier nå at avgrensningen er OUSFARs kliniske beslutning om et snevert bruksområde, og at simuleringen ikke er en garanti. Regelen er ikke godkjent.`,
   ),
 }
 
@@ -1104,6 +1135,8 @@ function tilAripiprazol(a: {
   seponering: Kildehenvisning[]
   /** Seponeringsplagene kildene nevner for fra-stoffet, med egne ord. */
   seponeringsplager: string
+  /** Keks-verktøyets virkestoffspesifikke råd for dette bytte: forløpet og risikoen ved byttet. */
+  byteverktoy: { forlop: Kildehenvisning; risiko: Kildehenvisning }
   referanse: string
   eksempler: Regel['eksempler']
   merknad: string
@@ -1116,9 +1149,12 @@ function tilAripiprazol(a: {
     })
   // Kildens eget eksempel: ned 25 % av startdosen per trinn, 20 → 15 → 10 → 5 mg eller 4 → 3 → 2 → 1 mg og så stopp.
   const kildeforlop = `${[4, 3, 2, 1].map((n) => (a.kildeeksempel * n) / 4).join(' → ')} mg`
+  // Kontrollørens åttende gjennomgang: virkestoffspesifikk støtte for at siste dose kan avsluttes mens aripiprazol etableres.
+  const stoffspesifikt = [a.byteverktoy.forlop, a.byteverktoy.risiko, BYTEVERKTOY.status]
+  const FraNavn = `${a.fraNavn[0]!.toUpperCase()}${a.fraNavn.slice(1)}`
   return {
     id: a.id,
-    versjon: 6,
+    versjon: 7,
     tittel: `Fra ${a.fraNavn} til aripiprazol, kryss-titrering`,
     fra: { type: 'virkestoff', nokkel: a.fra },
     til: { type: 'virkestoff', nokkel: 'aripiprazol' },
@@ -1148,7 +1184,7 @@ function tilAripiprazol(a: {
               nar: { type: 'for_hvert_trinn' },
               tekst: `Før hver reduksjon av ${a.fraNavn}, også det siste trinnet til 0: tilstanden vurderes (forverring av psykosen og seponeringsplager: ${a.seponeringsplager}), og pasienten følges tett gjennom hele byttet.`,
               ved_funn: 'Ved forverring, uro eller seponeringsplager holdes dosen, og resten av nedtrappingen planlegges individuelt.',
-              grunnlag: { type: 'kilde', henvisninger: [TARC.oppfolging, TARC.bivirkninger, KEKS.spesialist, KEKS.dopaminerg, ...a.seponering] },
+              grunnlag: { type: 'kilde', henvisninger: [TARC.oppfolging, TARC.bivirkninger, KEKS.spesialist, KEKS.dopaminerg, ...a.seponering, a.byteverktoy.risiko] },
             },
             // Kontrollørens femte gjennomgang: oppfølging etter siste trinn til 0.
             {
@@ -1157,7 +1193,7 @@ function tilAripiprazol(a: {
                 type: 'etter_seponering',
                 dager: forslag(14, 'dager', 'Samme minstetid som mellom reduksjonene i kilden (minst 2 uker); kilden oppgir ikke når pasienten skal vurderes etter seponeringen.', { henvisninger: [TARC.nedtrapping, TARC.oppfolging] }),
               },
-              tekst: `${a.fraNavn[0]!.toUpperCase()}${a.fraNavn.slice(1)} er seponert: tilstanden vurderes på nytt (forverring av psykosen og seponeringsplager: ${a.seponeringsplager}).`,
+              tekst: `${FraNavn} er seponert: tilstanden vurderes på nytt (forverring av psykosen og seponeringsplager: ${a.seponeringsplager}).`,
               ved_funn: 'Ved forverring eller seponeringsplager vurderes behandlingen individuelt; planen gir ingen ny dose.',
               grunnlag: { type: 'kilde', henvisninger: [TARC.oppfolging, KEKS.spesialist, ...a.seponering] },
             },
@@ -1173,16 +1209,19 @@ function tilAripiprazol(a: {
       ],
     },
     inndata: [
-      // Kontrollørens sjette gjennomgang: bare kildens eget forløp, der hvert trinn og siste dose før seponering står i kilden.
+      // Kontrollørens sjette gjennomgang: bare kildens eget forløp, der hvert trinn og siste dose før seponering står i kilden. Avklart i den åttende.
       {
         navn: 'startdose',
         verdier: [a.kildeeksempel],
         art: 'bindende_krav',
         grunnlag: {
           type: 'ousfar_vurdering',
-          begrunnelse: `Planen gjelder bare ${a.kildeeksempel} mg ${a.fraNavn} daglig, startdosen i kildens eget eksempel (${kildeforlop} og så stopp), slik at hvert trinn og siste dose før seponering står i kilden. Kilden knytter ikke eksemplene til et bestemt stoff; at dosen gjelder ${a.fraNavn}, er OUSFARs avgrensning innenfor preparatomtalens doseområde og må avklares av kontrolløren. Andre startdoser og egne lavdosetrinn er ikke validert og stopper.`,
-          henvisninger: [TARC.nedtrapping, ...a.doseomrade],
-          avklaring: null,
+          begrunnelse: `Planen gjelder bare ${a.kildeeksempel} mg ${a.fraNavn} daglig, startdosen i kildens eget eksempel (${kildeforlop} og så stopp), slik at hvert trinn og siste dose før seponering står i kilden. TARC knytter ikke eksemplene til et bestemt stoff; at dosen gjelder ${a.fraNavn}, er OUSFARs bevisste stoffspesifikke avgrensning innenfor preparatomtalens doseområde. Keks-verktøyet gir virkestoffspesifikk støtte for at siste dose av ${a.fraNavn} kan avsluttes mens aripiprazol etableres; OUSFAR beholder likevel TARCs langsommere forløp. Andre startdoser og egne lavdosetrinn er ikke validert og stopper.`,
+          henvisninger: [TARC.nedtrapping, ...a.doseomrade, a.byteverktoy.forlop],
+          avklaring: avklartAvKontrollor(
+            6,
+            `${FraNavn} ${kildeforlop} og så stopp er et faglig forsvarlig, konservativt bytteforslag for en stabil voksen med schizofreni uten tidligere seponeringsplager eller andre unntak, med valgt og tolerert aripiprazoldose, lang overlapp, tett oppfølging og dosehold ved symptomer. Keks, Schwartz og Hope 2019 (Antipsychotic switching tool) gir stoffspesifikk støtte for at siste dose kan avsluttes mens aripiprazol etableres, og at siste trinn er hele dosen som gjenstår, diskvalifiserer ikke byttet. Gjelder ikke ren seponering, tidligere seponeringsplager, ustabil psykose eller andre startdoser.`,
+          ),
         },
       },
       { navn: 'maldose', verdier: [10, 15], art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [TARC.opptrapping, SPC.abilifyDose] } }],
@@ -1198,7 +1237,7 @@ function tilAripiprazol(a: {
       {
         id: 'siste_trinn',
         tekst: `Siste trinn er vurdert for denne pasienten: ${a.fraNavn} seponeres helt fra den siste lave dosen (hele dosen som gjenstår) mens aripiprazol har stått på måldosen i flere uker. Pasienten vet at seponeringsplager kan være ${a.seponeringsplager}. Pasienten vet hvilke seponeringsplager og tegn på tilbakefall som skal meldes, og vurderes før siste trinn og etter seponeringen. Ved forverring, uro eller seponeringsplager holdes siste dose, og resten planlegges individuelt.`,
-        grunnlag: { type: 'kilde', henvisninger: [TARC.nedtrapping, TARC.overlapp, TARC.oppfolging, KEKS.spesialist, KEKS.dopaminerg, ...a.seponering] },
+        grunnlag: { type: 'kilde', henvisninger: [TARC.nedtrapping, TARC.overlapp, TARC.oppfolging, KEKS.spesialist, KEKS.dopaminerg, ...a.seponering, ...stoffspesifikt] },
       },
     ],
     unntak: [
@@ -1231,12 +1270,15 @@ function tilAripiprazol(a: {
         utsagn('Får pasienten plager under byttet, kan nedtrappingen av det forrige antipsykotikumet gå langsommere.', TARC.bivirkninger),
         utsagn('Pasienten følges tett under byttet, som bør vurderes av psykiater.', TARC.oppfolging, KEKS.spesialist),
         ...a.fraKilder.map((k) => utsagn(k.faktum ?? '', k)),
+        utsagn(`Keks-verktøyet (2019, sist oppdatert 2022): ${a.byteverktoy.forlop.faktum ?? ''} ${a.byteverktoy.risiko.faktum ?? ''}`, a.byteverktoy.forlop, a.byteverktoy.risiko),
       ],
       tilpasninger: [
         utsagn('Aripiprazol foreslås som 5 mg den første uken og 10 mg den andre, øverst i kildens områder, fordi den laveste tablettstyrken i FEST er 5 mg og ikke er delbar; forskriveren kan velge 2,5 mg (mikstur) og 5–10 mg. Måldosen 10 eller 15 mg velges av forskriveren.', TARC.opptrapping),
-        utsagn(`${a.fraNavn[0]!.toUpperCase()}${a.fraNavn.slice(1)} holdes uendret i 28 dager: 14 dagers opptrapping og 14 dager sammen med aripiprazol på måldosen. Første reduksjon er dag 29, og hver reduksjon står i minst 14 dager.`, TARC.opptrapping, TARC.overlapp, TARC.nedtrapping),
-        utsagn(`Planen gjelder bare startdosen i kildens eget eksempel, ${a.kildeeksempel} mg (åpent OUSFAR-valg til kontrolløren), så hvert trinn, også siste dose før seponering, er kildens: ${kildeforlop} og så stopp, hvert trinn i minst 14 dager. Andre startdoser stopper, fordi kilden ikke viser hvordan de skal trappes ned når trinnene ikke kan gis med tablettene, og OUSFAR legger ikke inn egne lavdosetrinn som ikke er validert.`, TARC.nedtrapping, ...a.doseomrade),
+        utsagn(`${FraNavn} holdes uendret i 28 dager: 14 dagers opptrapping og 14 dager sammen med aripiprazol på måldosen. Første reduksjon er dag 29, og hver reduksjon står i minst 14 dager.`, TARC.opptrapping, TARC.overlapp, TARC.nedtrapping),
+        utsagn(`Planen gjelder bare startdosen i kildens eget eksempel, ${a.kildeeksempel} mg (OUSFARs bevisste stoffspesifikke avgrensning, avklart av kontrolløren 04.11.2026), så hvert trinn, også siste dose før seponering, er kildens: ${kildeforlop} og så stopp, hvert trinn i minst 14 dager. Andre startdoser stopper, fordi kilden ikke viser hvordan de skal trappes ned når trinnene ikke kan gis med tablettene, og OUSFAR legger ikke inn egne lavdosetrinn som ikke er validert.`, TARC.nedtrapping, ...a.doseomrade),
         utsagn('Siste trinn til 0 er hele dosen som gjenstår. Det krever en egen vurdering av pasienten, stopper ved tidligere seponeringsplager, og pasienten vurderes før hver reduksjon, før siste trinn og etter seponeringen (forslag: 14 dager etter).', TARC.nedtrapping, TARC.oppfolging),
+        utsagn(`Keks-verktøyet gir virkestoffspesifikk støtte for at siste dose av ${a.fraNavn} kan avsluttes mens aripiprazol etableres, men foreslår et raskere bytte. OUSFAR beholder med vilje TARCs langsommere forløp med lang overlapp; verktøyets raskere nedtrapping og start med 10 mg aripiprazol er ikke tatt inn.`, ...stoffspesifikt, BYTEVERKTOY.aripiprazolStart, TARC.overlapp),
+        utsagn('Avgrensningen gjelder bare bytte til aripiprazol hos stabile pasienter fra startdosen over, og kan ikke overføres til ren seponering av antipsykotika, tidligere seponeringsplager, ustabil psykose eller andre startdoser.', TARC.pasienter, TARC.andreGrupper),
       ],
       forutsetninger: forutsetninger(
         `Pasienten bruker peroral ${a.fraNavn} som eneste antipsykotikum, i en stabil dose.`,
@@ -1246,6 +1288,7 @@ function tilAripiprazol(a: {
         'Opptrappingen bygger på en konsensusrapport fra et ekspertpanel (lavt evidensnivå), og konsensusmøtet var finansiert av et legemiddelfirma. Rapporten nevner selv at raske bytter også er brukt i studier.',
         'Hvor lenge hvert trinn skal vare ut over minstetiden, og om nedtrappingen skal stoppes eller reverseres ved forverring, er en klinisk vurdering som ikke beregnes.',
         'Aripiprazol kan gi uro og akatisi tidlig; når dopaminblokkeringen fra det forrige stoffet avtar, kan symptomer komme tilbake, og det må følges.',
+        'Keks-verktøyet er klinisk veiledning fra forfatterne, ikke en prospektiv validering, og det oppdateres ikke lenger (sist oppdatert 2022).',
       ],
     },
     referanser: [pn(a.referanse)],
@@ -1257,6 +1300,7 @@ function tilAripiprazol(a: {
       `${GJENNOMGANG_5} siste trinn til 0 krever en bekreftet vurdering av pasienten (åpent OUSFAR-valg), tidligere seponeringsplager er et unntak, og pasienten vurderes før siste trinn og etter seponeringen (forslag 14 dager).`,
       `${GJENNOMGANG_6} regelen gjelder bare startdosen i kildens eget eksempel (åpent OUSFAR-valg), så hvert trinn og siste dose før seponering står i kilden; valget av nærmeste dose (valg c) og det valgfrie mindre siste trinnet er fjernet, fordi de ga trinn kilden ikke har validert. Vurderingen av siste trinn bygger nå på kildens forløp.`,
       `${GJENNOMGANG_7} stoffspesifikt grunnlag for siste trinn og overlapp: preparatomtalens råd om seponering og seponeringsplagene Keks 2019 nevner for stoffet står i vurderingspunktene og i vurderingen av siste trinn, og overlappet er knyttet til den mest forsiktige strategien i Keks 2019. Koblingen av kildens eksempel til stoffet er fortsatt et åpent valg.`,
+      `${GJENNOMGANG_8} kontrolløren har vurdert kildens forløp fra denne startdosen som et faglig forsvarlig, konservativt bytteforslag, og valget er registrert som avklart. Keks, Schwartz og Hope 2019 (Antipsychotic switching tool) er tatt inn som virkestoffspesifikk støtte for siste trinn, og at OUSFAR med vilje beholder det langsommere forløpet, er dokumentert. Regelen er ikke godkjent.`,
     ),
   }
 }
@@ -1270,6 +1314,7 @@ const olanzapinAripiprazol = tilAripiprazol({
   fraKilder: [SPC.zyprexaDose, SPC.zyprexaSeponering],
   seponering: [SPC.zyprexaSeponering, KEKS.kolinerg],
   seponeringsplager: 'kvalme, oppkast, hodepine, uro, angst, søvnløshet og svetting, og akatisi, dystoni og dyskinesi',
+  byteverktoy: { forlop: BYTEVERKTOY.olanzapin, risiko: BYTEVERKTOY.olanzapinRisiko },
   referanse: 'SwitchAntipsychotics:Ol>Pa',
   eksempler: [
     {
@@ -1369,6 +1414,7 @@ const risperidonAripiprazol = tilAripiprazol({
   fraKilder: [RISPERDAL.dose, RISPERDAL.maks],
   seponering: [RISPERDAL.seponering],
   seponeringsplager: 'kvalme, oppkast, svette og søvnløshet, og akatisi, dystoni og dyskinesi',
+  byteverktoy: { forlop: BYTEVERKTOY.risperidon, risiko: BYTEVERKTOY.risperidonRisiko },
   referanse: 'SwitchAntipsychotics:Rd>Pa',
   eksempler: [
     {
@@ -1432,7 +1478,7 @@ export const ANTIPSYKOTIKASETT: Regelsett = {
   versjon: 1,
   modell: REGELMODELLVERSJON,
   beskrivelse:
-    'Byttereglene for antipsykotika i K3: komplette forløp til et definert sluttmål, bygget på preparatomtaler, Keks 2019 og TARC 2018. To depotrelaterte (Xeplion fra peroral risperidon og fra Risperdal Consta), tre perorale direkte bytter (aripiprazol til olanzapin og til risperidon, kariprazin til kvetiapin) og to kryss-titreringer til aripiprazol (fra olanzapin og fra risperidon, TARC 2018). Alle står til uavhengig faglig kontroll; ingen er klinisk godkjent.',
+    'Byttereglene for antipsykotika i K3: komplette forløp til et definert sluttmål, bygget på preparatomtaler, Keks 2019 (oversikten og byteverktøyet), Russu 2018 og TARC 2018. To depotrelaterte (Xeplion fra peroral risperidon og fra Risperdal Consta), tre perorale direkte bytter (aripiprazol til olanzapin og til risperidon, kariprazin til kvetiapin) og to kryss-titreringer til aripiprazol (fra olanzapin og fra risperidon, TARC 2018). Alle står til uavhengig faglig kontroll; ingen er klinisk godkjent.',
   regler: [risperidonXeplion, constaXeplion, aripiprazolOlanzapin, aripiprazolRisperidon, kariprazinKvetiapin, olanzapinAripiprazol, risperidonAripiprazol],
 }
 

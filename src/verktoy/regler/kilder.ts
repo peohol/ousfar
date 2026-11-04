@@ -147,6 +147,17 @@ export const KILDER: readonly Kilde[] = [
     bruk: OFFENTLIG,
   },
   {
+    id: 'keks-2019-verktoy',
+    type: 'oversiktsartikkel',
+    tittel: 'Keks N, Schwartz D, Hope J. Antipsychotic switching tool. Aust Prescr 2019;42:156 (nettverktøy, sist oppdatert 1. februar 2022)',
+    utgiver: 'Australian Prescriber (Therapeutic Guidelines Limited). Klinisk veiledningsverktøy, ikke prospektiv validering; verktøyet oppdateres ikke lenger.',
+    url: 'https://australianprescriber.tg.org.au/articles/antipsychotic-switching-tool.html',
+    versjon: 'doi:10.18773/austprescr.2019.056, oppdatert 01.02.2022',
+    hentet: '2026-11-04T05:00:58Z',
+    sha256: '8f6cd156cc084299fd259548bb28e30892d115b5c80ba3dc4efe38671e77f1b7',
+    bruk: OFFENTLIG,
+  },
+  {
     id: 'tarc-2018',
     type: 'oversiktsartikkel',
     tittel:

@@ -12,15 +12,15 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.125.2',
-    dato: '2026-11-03',
+    versjon: '1.125.4',
+    dato: '2026-11-04',
     sammendrag: 'Sju regler for bytte av antipsykotika, til faglig kontroll',
     typer: ['Funksjonalitet'],
     omfang: 'Minimalt omfang',
     gjelder: ['verktoy'],
     punkter: [
       'Ingen ny beregning ennå. «Bytte antipsykotikum» har fått regler for sju komplette bytter: til Xeplion fra peroral risperidon og fra Risperdal Consta, direkte bytte fra aripiprazol til olanzapin, fra aripiprazol til risperidon og fra kariprazin til kvetiapin, og gradvis bytte fra olanzapin og fra risperidon til aripiprazol.',
-      'Reglene bygger på preparatomtalene, en oversiktsartikkel og en konsensusrapport, ikke på Psychiatrienet, og de bruker bare norske preparater fra FEST. De står til uavhengig faglig kontroll. Til de er godkjent, sier verktøyet at faglig kontroll gjenstår for disse kombinasjonene.',
+      'Reglene bygger på preparatomtalene, en oversiktsartikkel med et tilhørende byteverktøy, en farmakokinetisk simuleringsstudie og en konsensusrapport, ikke på Psychiatrienet, og de bruker bare norske preparater fra FEST. De står til uavhengig faglig kontroll. Til de er godkjent, sier verktøyet at faglig kontroll gjenstår for disse kombinasjonene.',
     ],
     utenVarsel: true,
   },
