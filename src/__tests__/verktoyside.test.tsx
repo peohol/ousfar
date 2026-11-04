@@ -83,7 +83,7 @@ describe('oversikten', () => {
       .filter((a) => a.classList.contains('verktoykort__lenke'))
       .map((a) => [...a.querySelectorAll('.verktoykort__linje')].map((l) => l.textContent))
 
-  it('viser de fire verktøyene, og at bare de godkjente reglene som kan gi en komplett plan, kan beregnes: escitalopram og de to depotreglene', async () => {
+  it('viser de fire verktøyene, og at bare de godkjente reglene som kan gi en komplett plan, kan beregnes: escitalopram, de to depotreglene og de to tilleggsreglene', async () => {
     vis()
     expect(screen.getByRole('heading', { level: 1, name: 'Verktøy' })).toBeTruthy()
     expect(document.activeElement).toBe(screen.getByRole('heading', { level: 1 }))
@@ -100,8 +100,8 @@ describe('oversikten', () => {
       ['Kan beregnes: Escitalopram', 'Fagtekst: Agomelatin, Bupropion'],
       ['Ingen beregning tilgjengelig ennå'],
       ['Kan beregnes: Aripiprazol: peroral → depotinjeksjon, Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)'],
-      // Kombinere stemningsstabiliserende (K4) har ingen godkjente regler ennå, og kortet sier det.
-      ['Ingen beregning tilgjengelig ennå'],
+      // Kombinere stemningsstabiliserende (K4): begge tilleggsreglene er godkjent av den uavhengige kontrolløren og gir en komplett plan.
+      ['Kan beregnes: Litium → lamotrigin, Valproat → lamotrigin'],
     ])
     expect(screen.queryByText(/Ingen beregninger er tilgjengelige ennå/)).toBeNull()
     expect(screen.queryByRole('alert')).toBeNull()
@@ -1225,7 +1225,7 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
     expect(tekst).toMatch(/: 3 mg = 3 dråper à 1 mg\n[^]*: 2 mg = 2 dråper à 1 mg [^]*: 1 mg = 1 dråpe à 1 mg /)
     expect(tekst).toContain('Fra dag 197: Escitalopram peroralt: Seponert')
     for (const d of [7, 14, 28]) expect(tekst).toContain(`Dag ${196 + d}: Vurdering (Escitalopram): Vurder seponeringssymptomer og tegn på tilbakefall ${d} dager etter siste dose.`)
-    expect(tekst).toContain('- Cipralex dråper, oppl 20 mg/ml (Hele dråper)')
+    expect(tekst).toMatch(/\n- Cipralex dråper, oppl 20 mg\/ml(, varenr\. \d{6})? \(Hele dråper\)\n/)
     expect(tekst).toMatch(/Regel seponering-escitalopram, versjon 13, fingeravtrykk e8a3c17edda1/)
     cleanup()
 

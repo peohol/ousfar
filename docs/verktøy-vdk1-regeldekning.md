@@ -6,7 +6,7 @@ Oversikten svarer på VDK-1 i `docs/verktøy-omlegging-2026-11.md`: hva de tre v
 
 Kildetabellen fra Psychiatrienet er bare brukt som metadata som allerede ligger i repoet (om tabellen har en anbefaling for kombinasjonen), og bare i sum. Ingen tekst fra kilden er brukt, og at kilden har en anbefaling, gir aldri i seg selv en OUSFAR-regel (`docs/verktøy-p3-rettigheter.md`).
 
-**Regelsettet har 7 klinisk godkjente regelversjoner** (`kryssnedtrapping-sertralin-mirtazapin` v10, `depot-aripiprazol-maintena` v3, `depot-paliperidon-xeplion` v3, `seponering-escitalopram` v13, `seponering-vortioksetin` v12, `seponering-bupropion` v5, `seponering-agomelatin` v1), 5 av dem med beregning, hver bare i omfanget kontrolløren godkjente.
+**Regelsettet har 9 klinisk godkjente regelversjoner** (`kryssnedtrapping-sertralin-mirtazapin` v10, `depot-aripiprazol-maintena` v3, `depot-paliperidon-xeplion` v3, `seponering-escitalopram` v13, `seponering-vortioksetin` v12, `seponering-bupropion` v5, `seponering-agomelatin` v1, `tillegg-valproat-lamotrigin` v2, `tillegg-litium-lamotrigin` v2), 7 av dem med beregning, hver bare i omfanget kontrolløren godkjente.
 
 ## 1. Sammendrag
 
@@ -16,11 +16,11 @@ Antall kombinasjoner etter hva verktøyet gir. For seponering er en kombinasjon 
 | --- | --- | --- | --- | --- |
 | Valgbart | 23 virkestoffer, 23 valg med formulering | 23 virkestoffer, 23 valg med formulering | 25 virkestoffer, 34 valg med formulering | 11 virkestoffer, 11 valg med formulering |
 | Kombinasjoner | 23 | 506 | 1122 | 110 |
-| Beregning med klinisk godkjent regel (i godkjent omfang) | 2 | 1 | 2 | 0 |
+| Beregning med klinisk godkjent regel (i godkjent omfang) | 2 | 1 | 2 | 2 |
 | Klinisk godkjent fagtekst, ingen beregning | 2 | 0 | 0 | 0 |
 | Regel finnes, kontrollert og ikke godkjent | 6 | 1 | 1 | 0 |
 | Regel finnes som fagtekst, ikke godkjent | 6 | 0 | 0 | 0 |
-| Ingen OUSFAR-regel; kilden har en anbefaling | 0 | 504 | 892 | 110 |
+| Ingen OUSFAR-regel; kilden har en anbefaling | 0 | 504 | 892 | 108 |
 | Ingen OUSFAR-regel; kilden har ingen anbefaling | 0 | 0 | 161 | 0 |
 | Ingen OUSFAR-regel; begrenset av preparater eller kilde | 7 | 0 | 0 | 0 |
 | Ikke støttet: middels langtidsvirkende injeksjon | 0 | 0 | 66 | 0 |
@@ -36,6 +36,8 @@ Hver klinisk godkjente regel med beregning, kombinasjonen den gjelder, og omfang
 | Bytte antidepressiv | `kryssnedtrapping-sertralin-mirtazapin` v10 | Sertralin → Mirtazapin | Kontrollørens gjennomgang av a38fac14 03.11.2026 (rettelsen av RCPsych-faktumet, PR #309): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare det tidligere godkjente startforløpet fra sertralin 50 eller 100 mg, kort/ikke-langvarig behandling, med kontrollerte tabletter og styrker, obligatoriske bekreftelser og tidligere seponeringsplager fraværende. Dette omfatter ikke videre 25 → 0, opptrapping av mirtazapin, andre doser, langtidsbehandling eller endret trinnlengde. Identisk klinisk omfang som v9. Godkjenningen gjelder bare dette eksakte fingeravtrykket og disse betingelsene. Den er en korrigering av kildebeskrivelsen, ikke en ny generell godkjenning av algoritmer for nedtrapping. | 14 kasus, 0 gir plan |
 | Bytte antipsykotikum | `depot-aripiprazol-maintena` v3 | Aripiprazol (peroral) → Aripiprazol (depotinjeksjon) | Kontrollørens gjennomgang av 62ebb21 30.10.2026 (P4.8): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: oppstart med én injeksjon Abilify Maintena 400 mg, peroral aripiprazol i 14 dager og deretter 400 mg månedlig, hos voksne med schizofreni som er stabilisert på og har tålt peroral aripiprazol. Gjelder ikke andre depottyper eller oppstartsvarianter, kjent langsom CYP2D6-omsetning, sterke CYP2D6- eller CYP3A4-hemmere, CYP3A4-induktorer eller ubekreftet stabilisering eller toleranse. | 13 kasus, 4 gir plan |
 | Bytte antipsykotikum | `depot-paliperidon-xeplion` v3 | Paliperidon (peroral) → Paliperidon (depotinjeksjon (paliperidonpalmitat)) | Kontrollørens gjennomgang av 62ebb21 30.10.2026 (P4.8): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: overgang fra perorale paliperidon-depottabletter til Xeplion med 150 mg paliperidon dag 1 og 100 mg dag 8 i deltoideus, deretter månedlig fra én måned etter dag 8, hos voksne med schizofreni som er stabilisert, med kreatininclearance minst 80 ml/min og med deltoideus framhevet etter 9–12 mg peroralt. Gjelder ikke andre depottyper eller depotregimer, risperidon, nedsatt nyrefunksjon eller ubekreftet stabilisering eller toleranse. | 19 kasus, 9 gir plan |
+| Kombinere stemningsstabiliserende | `tillegg-litium-lamotrigin` v2 | Litium → Lamotrigin | Uavhengig kilde- og regelkontroll av 3c76293 04.11.2026 (PR #322, kommentar 6620240499): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: lamotrigin lagt til eksisterende, uendret Lithionit 42 mg etter tabell 3 i Lamictal-preparatomtalen (25, 50 og 100 mg), til det pasientvalgte første stabiliserende målet 200 mg/dag fra uke 6, med Lamictal dispergerbare tabletter. Ingen generell godkjenning av litiumbehandling, andre litiumpreparater eller andre kombinasjoner. | 0 kasus, 0 gir plan |
+| Kombinere stemningsstabiliserende | `tillegg-valproat-lamotrigin` v2 | Valproat → Lamotrigin | Uavhengig kilde- og regelkontroll av 3c76293 04.11.2026 (PR #322, kommentar 6620240499): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: lamotrigin lagt til eksisterende, uendret natriumvalproat etter tabell 3 i Lamictal-preparatomtalen (25 mg annenhver dag i to uker, 25 mg daglig i to uker, 50 mg daglig i uke 5), til det pasientvalgte første stabiliserende målet 100 mg/dag, med Lamictal dispergerbare tabletter. Ingen generell godkjenning av valproatbehandling, indikasjon, andre styrker eller formuleringer eller andre kombinasjoner. | 0 kasus, 0 gir plan |
 
 ## 3. Klinisk godkjent fagtekst uten beregning
 
@@ -115,6 +117,14 @@ Valgene i testmatrisen som ikke gir en plan, selv om regelen er godkjent: dosen,
 - X21 (uvanlige doser og grenseverdier): paliperidon 3 mg med måldose 25 mg, nedre grense i spennet, dose «3» → ingen plan
 - X22 (uvanlige doser og grenseverdier): paliperidon 3 mg med måldose 24,99 mg, dose «3» → ingen plan
 - X23 (uvanlige doser og grenseverdier): paliperidon 3 mg med måldose 50,01 mg, dose «3» → ingen plan
+
+**`tillegg-litium-lamotrigin`** – 0 av 0 valg gir ingen plan:
+
+- Ingen.
+
+**`tillegg-valproat-lamotrigin`** – 0 av 0 valg gir ingen plan:
+
+- Ingen.
 
 ## 5. Regler som finnes, men ikke gir plan
 

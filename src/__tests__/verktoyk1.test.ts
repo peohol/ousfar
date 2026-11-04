@@ -259,7 +259,8 @@ describe('Ende-til-ende med de norske preparatene i FEST', () => {
       expect(tekst, id).toMatch(/: 3 mg = 3 dråper à 1 mg\n[^]*: 2 mg = 2 dråper à 1 mg [^]*: 1 mg = 1 dråpe à 1 mg /)
       expect(tekst, id).toContain(`Fra dag ${siste}: Escitalopram peroralt: Seponert`)
       for (const dager of [7, 14, 28]) expect(tekst, id).toContain(`Dag ${siste + dager - 1}: Vurdering (Escitalopram): Vurder seponeringssymptomer og tegn på tilbakefall ${dager} dager etter siste dose.`)
-      expect(tekst, id).toContain('- Cipralex dråper, oppl 20 mg/ml (Hele dråper)')
+      // Med flere pakninger med samme navn, form og styrke viser planen varenummeret (K4, #322).
+      expect(tekst, id).toMatch(/\n- Cipralex dråper, oppl 20 mg\/ml(, varenr\. \d{6})? \(Hele dråper\)\n/)
       // Preparatet planen bygger på, er markedsført i FEST.
       const r = kjorKontrollkasus(kasus(id), uttrekkene).resultat!
       const preparater = r.status === 'doseplan' ? r.forlop[0]!.perioder.flatMap((p) => p.elementer.flatMap((e) => e.preparater)) : []
