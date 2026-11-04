@@ -47,8 +47,8 @@ Gjelder hver PR i denne planen. Hver invariant håndheves av en test som D eier 
 | S2 | Ingen godkjent regel får nytt fingeravtrykk av UI- eller motorarbeid. Ny klinisk atferd krever ny regelversjon og ny godkjenning. |
 | S3 | For hver godkjent regel og hvert kasus i QA-katalogen (K0-01–K0-12, H-01–H-39) er planen (perioder, doser, preparater, vurderingspunkter) uendret, med mindre en ny, godkjent regelversjon uttrykkelig tar i bruk ny motoratferd. |
 | S4 | «Ukjent» er aldri det trygge svaret. Ukjent og ubesvart gir ingen plan, men en konkret forklaring på hva som må avklares. |
-| S5 | Hver betingelse i hver godkjent regel (spørsmål, unntak, bekreftelse) er enten spurt om, avledet fra et eksplisitt svar med testet avbildning, eller vist i planen og kopien. En ny betingelse uten klassifisering spørres om med regelens egen tekst (trygg standard). |
-| S5b | Avbildningen fra katalogen til motorens felt er bundet til kontrollen: hver regelversjon har et kontrollert katalogavtrykk (§4.4). Stemmer ikke avtrykket for katalogoppføringene regelen bruker, brukes den trygge standarden fra S5 for hele regelen: alle betingelser spørres med regelens tekst, og alle bekreftelser krysses av. Ingen godkjent regel får dermed andre inndata uten ny kontroll. |
+| S5 | Hver betingelse i hver godkjent regel (spørsmål, unntak, bekreftelse) er enten spurt om, avledet fra et eksplisitt svar med testet avbildning, eller vist i planen og kopien. En betingelse uten kontrollert klassifisering vises i **reservevisningen**: regelens egen, fullstendige tekst med sin opprinnelige type og svarlogikk, slik dagens skjema viser den (spørsmål med «Ja»/«Nei», unntak med regelens to svar, bekreftelse som avkrysning). Den gjøres aldri om til et generisk spørsmål. |
+| S5b | Avbildningen fra katalogen til motorens felt er bundet til kontrollen: hver regelversjon har et kontrollert katalogavtrykk (§4.4). Stemmer ikke avtrykket for katalogoppføringene regelen bruker, brukes reservevisningen fra S5 for hele regelen. Ingen godkjent regel får dermed andre inndata uten ny kontroll. |
 | S6 | Avledninger testes ved grenseverdier (alder 17/18, 64/65/66; dosegrenser). |
 | S7 | Nødstopper, sperrelesing, FEST-ferskhet, godkjenningsfritak og klokkekontroll virker som i dag; eksisterende tester endres ikke for å bli grønne. |
 | S8 | Kopien inneholder hele planen: alle trinn med dager/datoer, doser, preparater, styrker og antall enheter, administrasjon, vurderingspunkter, forbehold, kilder, regelversjon og fingeravtrykk. |
@@ -94,7 +94,7 @@ Hver betingelse i en regel (`Sporsmal`, `Unntak`, `Bekreftelse`) får én katego
 | **Forbehold** | En forutsetning for hvordan planen skal brukes, ikke et forhold ved pasienten | Kort tekst øverst i planen og i kopien, ikke avkrysning | «Planen er et startforslag … dagene er minstetider»; «toleransen vurderes før hver reduksjon» |
 | **Klinisk vurdering** | Noe klinikeren må ha vurdert og som ikke kan avledes | Ett spørsmål med «Ja»/«Ikke ennå» | «Lever- og nyrefunksjon og interaksjoner er vurdert»; «spesialist i bipolar lidelse har vurdert …» |
 
-Uten klassifisering vises betingelsen med regelens egen tekst som «Gjelder dette pasienten?» med «Ja»/«Nei»/«Ukjent» (S5). Kategoriene **avledet** og **forbehold** endrer hvordan en bekreftelse oppfylles og krever derfor ChatGPTs uttrykkelige aksept (beslutning B1–B2, §10) før de tas i bruk; til da vises de som én samlet avkrysning til slutt.
+Uten kontrollert klassifisering (S5b) vises betingelsen i reservevisningen (S5): regelens egen, fullstendige tekst, med opprinnelig type og svarlogikk. Den gjøres ikke om til «Gjelder dette pasienten?» eller et annet generisk spørsmål, fordi det ville gjeninnføre tvetydigheten og for en bekreftelse kunne snu betydningen av ja og nei. Reservevisningen gir nøyaktig de samme motorinndataene som dagens skjema (testet). Kategoriene **avledet** og **forbehold** er akseptert avgrenset av ChatGPT (B1–B2, §10): bare rent informative forbehold og opplysninger som følger logisk av et eksakt, eksplisitt valg. En reell klinisk vurdering eller sikkerhetskritisk bekreftelse krever fortsatt et eksplisitt, forståelig svar, og fravær av kontraindikasjoner eller vurdert toleranse avledes aldri.
 
 ### 4.2 Språk
 
@@ -110,7 +110,11 @@ Uten klassifisering vises betingelsen med regelens egen tekst som «Gjelder dett
 2. **Forhold som endrer planen** (lang behandlingstid, alder, organfunksjon, interaksjoner, prevensjon).
 3. **Kliniske vurderinger** til slutt.
 
-Felles spørsmål på tvers av regler (alder, organfunksjon, interaksjoner, graviditet) har én ID i katalogen og stilles én gang. Alder spørres som «Under 18 / 18–64 / 65 eller eldre»; en regel med grensen «over 65 år» spør bare ved «65 eller eldre» om pasienten er eldre enn 65 (S6). Sjeldne stoppforhold i samme gruppe kan besvares med «Ingen av disse» som setter de ubesvarte til «Nei», mens hvert punkt står synlig og kan endres (beslutning B5).
+Felles spørsmål på tvers av regler (alder, organfunksjon, interaksjoner, graviditet) har én ID i katalogen og stilles én gang. Alder spørres som «Under 18 / 18–64 / 65 eller eldre». Et svar avleder bare det som følger logisk av det: «18–64» besvarer både «over 65 år» og «65 år eller eldre» med nei, og «Under 18» besvarer under 18 år med ja. «65 eller eldre» besvarer «65 år eller eldre» med ja, men avleder **ikke** «over 65 år». Der spørres regelens eget spørsmål (S6, tester ved 17/18 og 64/65/66).
+
+**Alder 65 og escitalopram (ChatGPT 04.11).** Escitalopram v13 er klinisk godkjent bare for voksne **under 65 år** (K1.9), men regelen spør «Er pasienten over 65 år?». En pasient på nøyaktig 65 år kan da svare nei og få en plan utenfor det godkjente omfanget. Det rettes ikke i flyten, for en avledning i grensesnittet skal aldri endre eller utvide en godkjenning. Rettelsen er klinisk og versjonsstyrt: den nye escitalopramregelen (B2, v14) spør «Er pasienten 65 år eller eldre?» og har tester ved 64/65/66. Den erstatter v13 først når ChatGPT har godkjent nøyaktig den versjonen. Til da viser C1 og A1 regelens eget spørsmål uendret for v13. Grensen er ført som kjent avvik i C1 (#329).
+
+Sjeldne stoppforhold i samme gruppe kan besvares med «Ingen av disse» (B5). Det er et aktivt valg klinikeren gjør, alle forholdene står synlige, valget er aldri forhåndsutfylt, og det endrer aldri et forhold som er besvart «Ja» eller «Ukjent».
 
 ### 4.4 Kontrollgrunnlag for språket
 
@@ -202,16 +206,16 @@ Alle fem slås sammen **etter** #320, #318 og #321 (dagens K0-rekkefølge), slik
 
 ## 10. Beslutninger som trengs fra ChatGPT (og Peder ved prinsipielle valg)
 
-Hver har en anbefaling; trådene arbeider etter anbefalingen, men tar den ikke i bruk klinisk før den er akseptert.
+ChatGPT svarte på alle seks 04.11.2026 (kontroll av c90c838). Svarene under er bindende for trådene. Et avgrenset ja gjelder bare det som står.
 
 | ID | Spørsmål | Anbefaling |
 | --- | --- | --- |
-| B1 | Kan bekreftelser som er **forbehold** vises i planen og kopien i stedet for å krysses av? | Ja. De beskriver hvordan planen skal brukes, ikke pasienten. |
-| B2 | Kan bekreftelser som er **avledet** av et eksplisitt valg (preparat, antall tabletter, dose) oppfylles av valget? | Ja, når valget spørres uttrykkelig og avbildningen er testet. |
-| B3 | Kan verktøyet selv velge det foretrukne dosealternativet for et trinn som i dag krever klinikerens valg (endrer P7-A)? | Ja, med alternativet synlig som «Endre» og valget vist i planen. Prinsipiell klinisk beslutning: Peder får den hvis ChatGPT ønsker det. |
-| B4 | Kan systemet velge legemiddelform selv når bare én form gir en komplett plan innenfor godkjent omfang? | Ja; planen sier hvilken form og hvorfor. |
-| B5 | Kan en gruppe sjeldne stoppforhold besvares med «Ingen av disse» (setter ubesvarte til «Nei», alle synlige)? | Ja for stoppgruppen; ikke for forhold som endrer planen. |
-| B6 | Preferansegrense for dråper per administrasjon | 5 som justerbar standard i escitalopram v14, med begrunnelse; endelig verdi i B2-kontrollen. |
+| B1 | Kan bekreftelser som er **forbehold** vises i planen og kopien i stedet for å krysses av? | **Avgjort 04.11: ja, avgrenset** til rent informative forbehold. En reell klinisk vurdering eller sikkerhetskritisk bekreftelse krever fortsatt et eksplisitt, forståelig svar. |
+| B2 | Kan bekreftelser som er **avledet** av et eksplisitt valg (preparat, antall tabletter, dose) oppfylles av valget? | **Avgjort 04.11: ja, avgrenset.** Preparat, enhetsmengde og formulering kan avledes fra eksakt og eksplisitt valgte opplysninger, med testet avbildning. Fravær av kontraindikasjoner, vurdert toleranse og annet som ikke følger logisk av valget, avledes ikke. |
+| B3 | Kan verktøyet selv velge det foretrukne dosealternativet for et trinn som i dag krever klinikerens valg (endrer P7-A)? | **Avgjort 04.11: betinget ja, bare i et nytt, særskilt kontrollert regime.** Systemet velger praktiske formuleringer og dosekombinasjoner. Et klinisk meningsfullt trinnvalg i en allerede godkjent regel tas ikke over uten ny regelversjon med nytt fingeravtrykk, deterministisk og faglig godkjent grunnlag, kontroll av konsekvensene og mulighet for forskriveren til å endre eller avstå. Ikke en generell godkjenning av automatiske dosevalg. |
+| B4 | Kan systemet velge legemiddelform selv når bare én form gir en komplett plan innenfor godkjent omfang? | **Avgjort 04.11: ja**, når formen er dokumentert tilgjengelig og innenfor godkjent omfang. Valgt eller endret form vises tydelig. Blanding av tabletter og dråper krever egen kontrollert regelversjon (v14). |
+| B5 | Kan en gruppe sjeldne stoppforhold besvares med «Ingen av disse»? | **Avgjort 04.11: ja, betinget.** Alle konkrete stoppforhold vises, og klinikeren velger «Ingen av disse» aktivt. Valget er aldri forhåndsutfylt og setter aldri et ukjent forhold til nei. Gjelder ikke forhold som endrer planen. |
+| B6 | Preferansegrense for dråper per administrasjon | **Avgjort 04.11: ja til 5** som justerbar praktisk preferanse, ikke en medisinsk sikkerhetsgrense eller hard stopp. Avveiningen mot antall tabletter, delinger, formbytter og risiko for tellefeil dokumenteres. Endelige dosevalg kontrolleres i B2. |
 
 ## 11. Akseptansekriterier og hvordan de vises
 
@@ -221,7 +225,7 @@ Arbeidet er ferdig når D har dokumentert alle punktene i `docs/verktøy-brukerv
 | --- | --- | --- |
 | 1 | Vesentlig raskere | Antall nødvendige handlinger fra første valg til plan for K0-01, K0-09, K0-11 og K0-12: minst halvert. |
 | 2 | Forståelige spørsmål | ChatGPT har kontrollert katalogtabellen (§4.4); ingen regel-ID, «Gjelder», «omfang» eller kode i det klinikeren ser (test over all synlig tekst). |
-| 3 | Bare relevante spørsmål | Test: ingen betinget spørsmål eller bekreftelse vises før svaret som utløser det; avledede og forbehold vises ikke som spørsmål. |
+| 3 | Bare relevante spørsmål | Test: ingen betinget spørsmål eller bekreftelse vises før svaret som utløser det; avledede og forbehold vises ikke som spørsmål. Test for reservevisningen (S5): for en regel uten kontrollert katalogavtrykk vises hver betingelse med regelens fullstendige tekst, opprinnelige type og svar, ingen generisk «Gjelder dette pasienten?», og motorinndataene er de samme som i dagens skjema. |
 | 4 | Tidlig beskjed | Negative forløp (escitalopram 15 mg, sertralin, et bytte uten regel, Lithionit 83 mg, sperre): stoppforklaring vises etter steg 2, før pasientspørsmål. |
 | 5 | Praktiske formuleringer velges automatisk | K0-01 fra tablett gir plan uten formvalg (etter B2); forløp med bare én mulig form spør ikke om form. |
 | 6 | Tabletter og dråper i samme forløp | Escitalopram v14: tablett til lav dose, så dråper, i én plan (etter godkjenning). |
