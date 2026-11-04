@@ -17,7 +17,8 @@
  *   hver 14. dag ned til laveste tablettdose og seponering derfra, sertralin
  *   50 mg dagen etter og, etter tidligst 14 dager og en vurdering av effekt,
  *   toleranse og seponeringssymptomer, den valgte vedlikeholdsdosen 50 eller
- *   100 mg. Planen gjelder bare kort behandlingstid ({@link KORT_BEHANDLINGSTID_UKER}).
+ *   100 mg. Planen gjelder bare de første ukene av behandlingen
+ *   ({@link KORT_BEHANDLINGSTID_UKER}).
  *
  * Hver regel er OUSFARs egen vurdering, bygget på norske preparatomtaler,
  * Keks mfl. 2016 (tabell 2 og 3), NICE NG222 og RCPsych, med fakta gjengitt
@@ -34,6 +35,7 @@
  */
 import type { Domenesett } from './domenesett'
 import { FORUTSETNINGER_FELLES, forslag, h, halvering, kilde, NICE, pn, RCPSYCH, steg, trinn14, utsagn } from './bygg'
+import { LANG_BEHANDLINGSTID } from './nedtrapping'
 import { LITTERATUR, SPC } from './pilotsett'
 import type { Avslutning, Bekreftelse, Beregningsinndata, Forlop, Godkjenning, Kildehenvisning, Regel, Regelsett, Regneeksempel, Unntak, Vurderingspunkt } from './modell'
 import { REGELMODELLVERSJON } from './modell'
@@ -353,8 +355,10 @@ const bekreftelseSammedisinering = (fra: Fra, til: string): Bekreftelse => ({
 })
 
 /**
- * Lengste sammenhengende bruk av det gamle SSRI-et (uker) som regnes som kort
- * behandlingstid: OUSFARs forslag, åpent til det er avklart ({@link felleUnntak}).
+ * Lengste sammenhengende bruk av det gamle SSRI-et (uker) som byttereglene er
+ * vurdert for: en avgrensning av K2-omfanget, OUSFARs forslag uten kilde og åpent
+ * til det er avklart ({@link felleUnntak}). Det er ingen ny felles definisjon av
+ * kort behandlingstid; de andre verktøyene spør fortsatt {@link LANG_BEHANDLINGSTID}.
  */
 export const KORT_BEHANDLINGSTID_UKER = 8
 
@@ -368,12 +372,13 @@ function felleUnntak(fra: Fra, til: { navn: string; eldre: Kildehenvisning; leve
     },
     {
       id: 'lang_behandlingstid',
-      tekst: `Pasienten har brukt ${fra.nokkel} sammenhengende i mer enn ${KORT_BEHANDLINGSTID_UKER} uker. Planen gjelder bare kort behandlingstid; etter lengre bruk anbefales mindre reduksjoner og langsommere, symptomstyrt nedtrapping, og byttet planlegges individuelt.`,
+      tekst: `Pasienten har brukt ${fra.nokkel} sammenhengende i mer enn ${KORT_BEHANDLINGSTID_UKER} uker. Byttet er bare vurdert for de første ${KORT_BEHANDLINGSTID_UKER} ukene av behandlingen; etter lengre bruk planlegges det individuelt, og etter mange måneder anbefales mindre reduksjoner og langsommere, symptomstyrt nedtrapping.`,
       grunnlag: {
         type: 'ousfar_vurdering',
         begrunnelse:
           `RCPsych skiller mellom bruk i bare noen uker, der nedtrapping og seponering ofte kan skje over omtrent en måned, og bruk i mange måneder eller år, der nedtrappingen går langsommere, men gir ingen eksakt grense. ` +
-          `OUSFAR foreslår ${KORT_BEHANDLINGSTID_UKER} uker som kontrollerbar grense for «kort behandlingstid»: den øvre delen av «noen uker», før «mange måneder». Grensen er OUSFARs valg, ikke en verdi fra kildene.`,
+          `OUSFAR foreslår ${KORT_BEHANDLINGSTID_UKER} uker som kontrollerbar grense for byttereglene: den øvre delen av «noen uker», før «mange måneder». Grensen er OUSFARs valg, ikke en verdi fra kildene. ` +
+          `Den avgrenser bare disse reglene og er ingen ny felles definisjon av kort behandlingstid: «Trappe ned» spør fortsatt «${LANG_BEHANDLINGSTID.tekst}». En pasient som har brukt legemidlet lenger enn ${KORT_BEHANDLINGSTID_UKER} uker, men ikke i mange måneder, kan derfor få en plan der og ikke her. En eventuell felles grense må avgjøres for alle verktøyene samtidig (K2-8).`,
         henvisninger: [RCPSYCH_K2.kort, RCPSYCH.langvarig, RCPSYCH.fireUker],
         avklaring: null,
       },
@@ -531,7 +536,7 @@ export function ssriTilMirtazapin(fra: Fra, erstatter?: string[]): Regel {
         ),
         utsagn('Dagen etter siste dose av SSRI-et går mirtazapin til vedlikeholdsdosen forskriveren har valgt, 15 eller 30 mg. Planen er da fullført; en eventuell økning til 45 mg er en senere, responsstyrt vurdering.', KEKS.kryss, PREPARATOMTALE.remeronRespons),
         utsagn(
-          `Planen gjelder bare kort behandlingstid (høyst ${KORT_BEHANDLINGSTID_UKER} uker sammenhengende) uten tidligere seponeringsplager, voksne til og med 65 år og normal lever- og nyrefunksjon, med tabletter for begge legemidlene. Alt annet stopper, og byttet planlegges individuelt.`,
+          `Planen gjelder bare de første ${KORT_BEHANDLINGSTID_UKER} ukene av sammenhengende bruk, uten tidligere seponeringsplager, voksne til og med 65 år og normal lever- og nyrefunksjon, med tabletter for begge legemidlene. Alt annet stopper, og byttet planlegges individuelt.`,
           RCPSYCH_K2.kort,
           RCPSYCH.langvarig,
           NICE.tidligere,
@@ -800,7 +805,7 @@ export function ssriTilSertralin(fra: Fra): Regel {
           KEKS.moderat,
         ),
         utsagn(
-          `Planen gjelder bare kort behandlingstid (høyst ${KORT_BEHANDLINGSTID_UKER} uker sammenhengende) uten tidligere seponeringsplager, voksne til og med 65 år og normal leverfunksjon, med tabletter for begge legemidlene. Alt annet stopper, og byttet planlegges individuelt.`,
+          `Planen gjelder bare de første ${KORT_BEHANDLINGSTID_UKER} ukene av sammenhengende bruk, uten tidligere seponeringsplager, voksne til og med 65 år og normal leverfunksjon, med tabletter for begge legemidlene. Alt annet stopper, og byttet planlegges individuelt.`,
           RCPSYCH_K2.kort,
           RCPSYCH.langvarig,
           NICE.tidligere,
@@ -814,7 +819,7 @@ export function ssriTilSertralin(fra: Fra): Regel {
       usikkerhet: [
         'De første dagene etter overgangen bruker pasienten sertralin mens det gamle SSRI-et fortsatt elimineres; Keks mfl. regner interaksjonsrisikoen ved direkte bytte som betydelig, avhengig av det nye legemidlet. Nedtrappingen til laveste tablettdose først gjør overlappen liten, men ingen kilde tallfester den.',
         'At sertralin 50 mg kan dempe seponeringssymptomene etter det gamle SSRI-et, bygger på at begge hemmer SERT og at bindingen flater ut rundt minste vanlige dose; ingen kilde har målt seponeringssymptomer ved akkurat denne overgangen, og symptomene kan komme likevel.',
-        `Grensen for kort behandlingstid (${KORT_BEHANDLINGSTID_UKER} uker) er OUSFARs valg: RCPsych skiller bare mellom «noen uker» og «mange måneder eller år».`,
+        `Grensen på ${KORT_BEHANDLINGSTID_UKER} uker er OUSFARs valg uten kilde: RCPsych skiller bare mellom «noen uker» og «mange måneder eller år». Den avgrenser bare byttereglene; «Trappe ned» spør om «mange måneder eller lenger», så de to verktøyene kan avgrense samme pasient ulikt (K2-8).`,
         'RCPsych og Keks mfl. beskriver nedtrapping over omtrent fire uker; fra laveste startdose tar planen to uker. Om det er forsvarlig ved bytte, er et spørsmål til faglig kontroll.',
       ],
     },

@@ -19,6 +19,7 @@ import type { Festuttrekk } from './regler/aksepttest'
 import { ANTIDEPRESSIVBYTTER, BYTTESETT, KORT_BEHANDLINGSTID_UKER, NYTT_LEGEMIDDEL_I_FEST } from './regler/antidepressivbytter'
 import { fingeravtrykk } from './regler/godkjenning'
 import { alleGrunnlag, type Regel } from './regler/modell'
+import { LANG_BEHANDLINGSTID } from './regler/nedtrapping'
 import { avregistrert, avvikFra, kjorKasus, type Pilotkasus, SIMULERT_KONTROLLOR, simulerGodkjenning, type Uttrekkene } from './regler/pilotmatrise'
 import type { Regelrapport } from './regler/rapport'
 import { liste, tabell, tall } from './regler/rapport'
@@ -267,9 +268,9 @@ export const SPORSMAL: readonly { nr: string; sporsmal: string; anbefalt: string
   {
     nr: 'K2-6',
     sporsmal:
-      `Er avgrensningen dekkende: depresjon hos voksne 18–65 år, kort behandlingstid, ingen tidligere seponeringsplager, normal lever- og (for mirtazapin) nyrefunksjon, tabletter, bekreftet kontroll av serotonerg sammedisinering? Er ${KORT_BEHANDLINGSTID_UKER} ukers sammenhengende bruk riktig som kontrollerbar grense for kort behandlingstid? RCPsych skiller bare mellom «noen uker» (nedtrapping over omtrent en måned) og «mange måneder eller år» (langsommere), uten eksakt grense.`,
+      `Er avgrensningen dekkende: depresjon hos voksne 18–65 år, høyst ${KORT_BEHANDLINGSTID_UKER} ukers sammenhengende bruk, ingen tidligere seponeringsplager, normal lever- og (for mirtazapin) nyrefunksjon, tabletter, bekreftet kontroll av serotonerg sammedisinering? Er ${KORT_BEHANDLINGSTID_UKER} uker riktig som kontrollerbar grense for byttereglene? RCPsych skiller bare mellom «noen uker» (nedtrapping over omtrent en måned) og «mange måneder eller år» (langsommere), uten eksakt grense, så ${KORT_BEHANDLINGSTID_UKER} uker er OUSFARs forslag uten kilde.`,
     anbefalt:
-      `Ja for første leveranse, med ${KORT_BEHANDLINGSTID_UKER} uker som OUSFARs forslag til grense (øvre del av «noen uker»); lengre bruk, eldre og andre former stopper og krever egne regler.`,
+      `Ja for første leveranse, med ${KORT_BEHANDLINGSTID_UKER} uker som OUSFARs forslag (øvre del av «noen uker»); lengre bruk, eldre og andre former stopper og krever egne regler.`,
   },
   {
     nr: 'K2-7',
@@ -277,6 +278,11 @@ export const SPORSMAL: readonly { nr: string; sporsmal: string; anbefalt: string
       'Er vurderingspunktene i planen riktige og nok: seponeringssymptomer og forverring før hver reduksjon og før seponeringen, effekt, toleranse og seponeringssymptomer før økningen av det nye legemidlet, og respons og bivirkninger fire uker etter oppstarten og etter hver doseendring av det?',
     anbefalt:
       'Ja; for mirtazapin er fire uker slutten av de 2–4 ukene preparatomtalen oppgir før respons kan ventes, og for sertralin er det OUSFARs valg innenfor preparatomtalens «lengre observasjonstid» enn én uke. En tidligere kontroll kan legges til av forskriveren.',
+  },
+  {
+    nr: 'K2-8',
+    sporsmal: `Motsigelse mellom verktøyene: «Trappe ned» (blant dem den godkjente escitalopramregelen i K1) spør «${LANG_BEHANDLINGSTID.tekst}», uten tall, mens byttereglene stopper etter ${KORT_BEHANDLINGSTID_UKER} uker sammenhengende. En pasient som har brukt legemidlet i for eksempel tre måneder, kan da få en nedtrappingsplan, men ingen bytteplan. Skal byttereglene ha en egen, strengere grense, eller skal alle verktøyene få én felles grense?`,
+    anbefalt: `En egen, strengere grense for byttereglene er det trygge valget nå: de stopper heller enn å gi en plan. K1 og «Trappe ned» endres ikke. Velger kontrolløren en felles grense, må den avgjøres og godkjennes for alle verktøyene samtidig.`,
   },
 ]
 

@@ -6,13 +6,14 @@
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { FEST_K2, K2_KONTROLLFIL, K2_REGELRAPPORT, K2KASUS, k2avvik, kjorK2, lagK2Kontrollgrunnlag, medSluttrinnVedLavesteTablett, sluttrinnApent, somAvklartOgGodkjent, type K2kasus, type Sluttrinn } from '../verktoy/k2kontroll'
+import { FEST_K2, K2_KONTROLLFIL, K2_REGELRAPPORT, K2KASUS, k2avvik, kjorK2, lagK2Kontrollgrunnlag, medSluttrinnVedLavesteTablett, sluttrinnApent, somAvklartOgGodkjent, SPORSMAL, type K2kasus, type Sluttrinn } from '../verktoy/k2kontroll'
 import { VERKTOY } from '../verktoy/register'
 import { BYTTESETT, KORT_BEHANDLINGSTID_UKER, STARTFORLOP_SERTRALIN_MIRTAZAPIN } from '../verktoy/regler/antidepressivbytter'
 import type { Festuttrekk } from '../verktoy/regler/aksepttest'
 import { beregn } from '../verktoy/regler/beregning'
 import { erstatningsfeil, fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett, lesKontrollgrunnlag } from '../verktoy/regler/kontroll'
+import { LANG_BEHANDLINGSTID } from '../verktoy/regler/nedtrapping'
 import { apneValg, type Beregningsinndata, type Regel, type Regelsett } from '../verktoy/regler/modell'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
 import { REGELRAPPORTER } from '../verktoy/regler/rapport'
@@ -179,14 +180,18 @@ describe('K2: sluttrinnet ved bytte (K2-2)', () => {
     }
   })
 
-  it('gjelder bare kort behandlingstid med en kontrollerbar grense, som er et åpent OUSFAR-forslag og stopper over grensen', () => {
+  it('gjelder bare de første ukene av behandlingen, med en kontrollerbar grense som er et åpent OUSFAR-forslag, stopper over grensen og ikke endrer «Trappe ned» (K2-8)', () => {
     for (const r of BYTTESETT.regler) {
       const u = r.unntak.find((x) => x.id === 'lang_behandlingstid')!
       expect(u.tekst, r.id).toContain(`sammenhengende i mer enn ${KORT_BEHANDLINGSTID_UKER} uker`)
       expect(u.grunnlag.type === 'ousfar_vurdering' && u.grunnlag.avklaring, r.id).toBeNull()
       expect(u.grunnlag.type === 'ousfar_vurdering' && u.grunnlag.begrunnelse, r.id).toMatch(/Grensen er OUSFARs valg, ikke en verdi fra kildene/)
       expect(apneValg(r), r.id).toContain('lang_behandlingstid (åpent forslag)')
+      // Motsigelsen mot det felles spørsmålet i «Trappe ned» står uttrykkelig, og det spørsmålet er uendret.
+      expect(u.grunnlag.type === 'ousfar_vurdering' && u.grunnlag.begrunnelse, r.id).toContain(`ingen ny felles definisjon av kort behandlingstid: «Trappe ned» spør fortsatt «${LANG_BEHANDLINGSTID.tekst}»`)
     }
+    expect(LANG_BEHANDLINGSTID.tekst).toBe('Har pasienten brukt legemidlet i mange måneder eller lenger?')
+    expect(SPORSMAL.find((x) => x.nr === 'K2-8')!.sporsmal).toContain(LANG_BEHANDLINGSTID.tekst)
     for (const r of BYTTESETT.regler.filter((x) => !sluttrinnApent(x))) {
       const d = r.inndata.find((x) => x.navn === 'startdose')!.verdier![0]!
       const pasientforhold = Object.fromEntries(r.unntak.map((x) => [x.id, false]))
