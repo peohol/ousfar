@@ -61,8 +61,9 @@ function vilkarstekster(regel: Regel, svar: Record<string, boolean> | undefined)
 /** Innledningene regelmotoren bruker for de andre stoppene, med koden. Rekkefølgen avgjør ved overlapp. */
 const INNLEDNINGER: readonly [RegExp, Stoppkode][] = [
   [/krever en skriftlig begrunnelse/, 'begrunnelse_trengs'],
-  [/^(Startdosen|Måldosen) [\d,]+ mg er utenfor det regelen gjelder for/, 'dose_utenfor'],
-  [/^Valget |^Regelen lar ikke forskriveren velge dosen/, 'valg_ugyldig'],
+  [/^(Startdosen|Måldosen) [\d,]+ mg er utenfor (det regelen gjelder for|spennet)/, 'dose_utenfor'],
+  [/^Valget |^Regelen lar ikke forskriveren velge dosen|^Trinn \d+ av .+: den valgte dosen /, 'valg_ugyldig'],
+  [/^Måldosen [\d,]+ mg stemmer ikke med omregningstabellen|^Startdosen [\d,]+ mg finnes ikke i omregningstabellen/, 'dose_utenfor'],
   [/^Regelversjonen er /, 'ikke_klinisk'],
   [/^(Regelen er ugyldig:|Verdien |Beregningen ga en ugyldig plan:|Beregningen kunne ikke fullføres:|Regelen er bare tekstlig|Det finnes ingen anbefaling)/, 'regelfeil'],
 ]

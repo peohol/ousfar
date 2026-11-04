@@ -67,9 +67,7 @@ export interface Kilde {
  * henvisning til Psychiatrienet har i stedet `kildeoppforing` (P3-oppføringens
  * id) og aldri noe `faktum`.
  */
-export type Kildehenvisning =
-  | { kilde: string; sted: string; faktum: string }
-  | { kilde: 'psychiatrienet'; kildeoppforing: string; faktum?: never }
+export type Kildehenvisning = { kilde: string; sted: string; faktum: string } | { kilde: 'psychiatrienet'; kildeoppforing: string; faktum?: never }
 
 /* --- Faglig fortolkning ----------------------------------------------------- */
 
@@ -270,6 +268,14 @@ export type Fase =
       avslutning?: 'individuell' | Avslutning
       horisont?: Parameter
       trinnvalg?: Grunnlag
+      /**
+       * B3 i `docs/verktøy-brukervennlighet-2026-11.md` (ikke akseptert ennå):
+       * når feltet finnes, velger verktøyet selv den foretrukne dosen for et
+       * trinn som ellers krever forskriverens valg (`trinnvalg`), og viser
+       * valget og alternativene i planen. Grunnlaget er den faglige
+       * beslutningen; uten feltet velger forskriveren som før (P7-A).
+       */
+      automatisk_trinnvalg?: Grunnlag
     }
   /**
    * Dosen gis hver `hver`. dag i stedet for daglig, fra fasen starter og uten
@@ -387,6 +393,44 @@ export interface Dosevalg {
   maks_mg?: Parameter
   /** Laveste døgndose som kan gis i en periode med dose. */
   min_mg?: Parameter
+  /**
+   * Praktisk dosering (B1): når feltet finnes, velger doseplanmotoren blant
+   * dosene med minst avvik den som er enklest å gi ({@link Praktiskdosering}).
+   * Uten feltet gjelder dagens rekkefølge, så ingen godkjent plan endres.
+   */
+  praktisk?: Praktiskdosering
+}
+
+/**
+ * Hvor enkel en dose er å gi i praksis, som doseplanmotoren tar hensyn til
+ * etter de harde kravene og minst avvik (B1 i
+ * `docs/verktøy-brukervennlighet-2026-11.md`, `docs/verktøy-praktisk-dosering.md`):
+ * dråper over `draper` per administrasjon, delte tabletter, antall tabletter
+ * og målinger, antall styrker og formskifter, i den rekkefølgen. `draper` er
+ * en preferanse, ikke en grense: flere dråper kan gis når ingenting enklere
+ * gir dosen, og verdien begrunnes i `grunnlag`.
+ */
+export interface Praktiskdosering {
+  draper: number
+  grunnlag: Grunnlag
+}
+
+/**
+ * En dokumentert overgang mellom to legemiddelformer i samme forløp (B1), for
+ * eksempel tabletter til dråper ved lave doser: forløpet kan starte i `fra`
+ * og gå over til `til` med samme døgndose i mg, aldri tilbake. Grunnlaget
+ * må dokumentere at formene kan erstatte hverandre mg for mg (preparatomtale,
+ * bioekvivalens). Med `samtidig` kan én dose i overgangen settes sammen av
+ * begge formene (for eksempel én tablett og noen dråper); uten feltet gis
+ * hver dose med én form. Uten overgang blander motoren ikke former.
+ */
+export interface Formovergang {
+  /** FEST-legemiddelformen (kode) forløpet går fra. */
+  fra: string
+  /** FEST-legemiddelformen (kode) forløpet går over til. */
+  til: string
+  samtidig?: true
+  grunnlag: Grunnlag
 }
 
 export interface Forlop {
@@ -412,6 +456,11 @@ export interface Forlop {
   legemiddelformer?: string[]
   /** Hvor langt de praktiske dosene kan avvike fra den ideelle kurven (P5). */
   dosevalg?: Dosevalg
+  /**
+   * Overgangene mellom legemiddelformer forløpet tillater (B1), som en kjede
+   * fra formen pasienten bruker ({@link Formovergang}, {@link formkjede}).
+   */
+  formoverganger?: Formovergang[]
   /**
    * Døgndosen gis fordelt på flere doser slik preparatomtalen krever: med
    * `over_mg` bare døgndoser over den, hver dose høyst `over_mg` (f.eks.
@@ -671,6 +720,14 @@ export interface Kliniskomfang {
 export interface Klinisktilfelle {
   /** Legemiddelformen i FEST (kode) alle preparatene i planen må ha; uten den gjelder regelens former. */
   legemiddelform?: string
+  /**
+   * Formene (FEST-koder) planen kan bruke når forløpet har en formovergang
+   * (B1), i rekkefølgen overgangen går, fra formen pasienten bruker. Planen
+   * må starte i den første; uten feltet gjelder `legemiddelform`.
+   */
+  legemiddelformer?: string[]
+  /** Styrkene (mg per enhet) kontrollert per legemiddelform (FEST-kode), i tillegg til `styrker`, når tilfellet har flere former. */
+  formstyrker?: Record<string, number[]>
   /** Startdosene som er kontrollert, nøyaktig. */
   startdoser: number[]
   /** Svarene tilfellet er kontrollert med; et spørsmål som ikke står her, må være besvart nei. */
@@ -730,7 +787,11 @@ export const FELTENHET: Record<string, Enhet> = {
   fra_hoyst_mg: 'mg',
 }
 
-const feltnavn = (sti: string) => sti.replace(/\[\d+\]/g, '').split('.').at(-1) ?? ''
+const feltnavn = (sti: string) =>
+  sti
+    .replace(/\[\d+\]/g, '')
+    .split('.')
+    .at(-1) ?? ''
 
 /**
  * Hva som er galt med en parameter på stien `sti`, eller `null` når den er
@@ -841,13 +902,9 @@ export function nulltrinnfeil(r: Pick<Regel, 'plan' | 'beregnbarhet' | 'medlemme
       const sist = faser.at(-1)
       const godkjent = !!avslutningFor(sist)
       return [
-        ...(faser.some((x) => x.type === 'seponer' && !(x === sist && x.avslutning))
-          ? [`${hvor} seponerer; ingen avslutning er godkjent, så en seponeringsregel kan ikke seponere`]
-          : []),
+        ...(faser.some((x) => x.type === 'seponer' && !(x === sist && x.avslutning)) ? [`${hvor} seponerer; ingen avslutning er godkjent, så en seponeringsregel kan ikke seponere`] : []),
         // En nedtrapping uten individuell avslutning går til 0, så bare den siste fasen kan trappe ned.
-        ...(faser.slice(0, -1).some((x) => x.type === 'nedtrapping')
-          ? [`${hvor} trapper ned før siste fase; bare siste fase kan trappe ned, så forløpet aldri er på 0 mg underveis`]
-          : []),
+        ...(faser.slice(0, -1).some((x) => x.type === 'nedtrapping') ? [`${hvor} trapper ned før siste fase; bare siste fase kan trappe ned, så forløpet aldri er på 0 mg underveis`] : []),
         ...(!fortsetterUtenNull(sist) && !godkjent
           ? [`${hvor} slutter ikke med en nedtrapping med individuell avslutning eller en intervalldosering; ingen avslutning er godkjent, så en seponeringsregel kan ikke gå til null`]
           : []),
@@ -899,7 +956,8 @@ export function tilleggsfeil(r: Pick<Regel, 'plan' | 'til'>): string[] {
   if (fra.length !== 1) feil.push('et tillegg må ha nøyaktig ett forløp for legemidlet pasienten bruker (utgangsdose startdose)')
   if (nye.length === 0) feil.push('et tillegg må ha et forløp for legemidlet som legges til')
   for (const f of fra) {
-    if (f.faser.some((x) => !TILLEGG_FRA.includes(x.type))) feil.push(`forløp ${f.id} er legemidlet pasienten bruker og kan bare fortsette (${TILLEGG_FRA.join(', ')}), ikke trappes ned eller seponeres`)
+    if (f.faser.some((x) => !TILLEGG_FRA.includes(x.type)))
+      feil.push(`forløp ${f.id} er legemidlet pasienten bruker og kan bare fortsette (${TILLEGG_FRA.join(', ')}), ikke trappes ned eller seponeres`)
     // Holdes eller vedlikeholdes legemidlet, er det på dosen pasienten bruker; en annen dose ville endret det.
     if (f.faser.some((x) => (x.type === 'hold' || x.type === 'vedlikehold') && !(x.dose.type === 'aktuell' || (x.dose.type === 'inndata' && x.dose.navn === 'startdose'))))
       feil.push(`forløp ${f.id} er legemidlet pasienten bruker og kan bare holdes eller vedlikeholdes på dosen pasienten bruker (aktuell eller startdose)`)
@@ -919,9 +977,7 @@ export const erRenSeponering = (r: Pick<Regel, 'plan' | 'beregnbarhet'>) => r.pl
 /** Grunnlaget for hver omregningstabell i planen. */
 export function grunnlagITabeller(r: Pick<Regel, 'plan'>): [string, Grunnlag][] {
   return r.plan.forlop.flatMap((f) =>
-    f.faser.flatMap((fase) =>
-      fase.type === 'injeksjoner' && fase.vedlikehold.dose.type === 'tabell' ? [[`${f.id}.vedlikehold.tabell`, fase.vedlikehold.dose.grunnlag] as [string, Grunnlag]] : [],
-    ),
+    f.faser.flatMap((fase) => (fase.type === 'injeksjoner' && fase.vedlikehold.dose.type === 'tabell' ? [[`${f.id}.vedlikehold.tabell`, fase.vedlikehold.dose.grunnlag] as [string, Grunnlag]] : [])),
   )
 }
 
@@ -938,26 +994,75 @@ export function alleGrunnlag(r: Regel): [string, Grunnlag][] {
     ...grunnlagITabeller(r),
     ...r.plan.forlop.flatMap((f) => f.faser.flatMap((x, i) => (x.type === 'nedtrapping' && x.trinnvalg ? [[`${f.id}.faser[${i}].trinnvalg`, x.trinnvalg] as [string, Grunnlag]] : []))),
     ...r.plan.forlop.flatMap((f) =>
-      f.faser.flatMap((x, i) => (x.type === 'nedtrapping' && x.strategi.type === 'prosent_av_startdose' && x.strategi.mellomtrinn ? [[`${f.id}.faser[${i}].strategi.mellomtrinn`, x.strategi.mellomtrinn] as [string, Grunnlag]] : [])),
+      f.faser.flatMap((x, i) =>
+        x.type === 'nedtrapping' && x.strategi.type === 'prosent_av_startdose' && x.strategi.mellomtrinn
+          ? [[`${f.id}.faser[${i}].strategi.mellomtrinn`, x.strategi.mellomtrinn] as [string, Grunnlag]]
+          : [],
+      ),
     ),
     ...r.plan.forlop.flatMap((f) => (f.fordeling ? [[`${f.id}.fordeling`, f.fordeling.grunnlag] as [string, Grunnlag]] : [])),
     ...r.plan.forlop.flatMap((f) => (f.vurderinger ?? []).map((v) => [`${f.id}.vurderinger.${v.id}`, v.grunnlag] as [string, Grunnlag])),
     ...r.plan.forlop.flatMap((f) =>
       f.faser.flatMap((x, i): [string, Grunnlag][] => {
         const a = avslutningFor(x)
-        return [...(a ? [[`${f.id}.faser[${i}].avslutning`, a.grunnlag] as [string, Grunnlag]] : []), ...(x.type === 'uendret' ? [[`${f.id}.faser[${i}].uendret`, x.grunnlag] as [string, Grunnlag]] : [])]
+        return [
+          ...(a ? [[`${f.id}.faser[${i}].avslutning`, a.grunnlag] as [string, Grunnlag]] : []),
+          ...(x.type === 'uendret' ? [[`${f.id}.faser[${i}].uendret`, x.grunnlag] as [string, Grunnlag]] : []),
+        ]
       }),
     ),
     ...(r.klinisk_omfang ? [['klinisk_omfang', r.klinisk_omfang.grunnlag] as [string, Grunnlag]] : []),
     ...(r.klinisk_omfang?.uten_deling ? [['klinisk_omfang.uten_deling', r.klinisk_omfang.uten_deling.grunnlag] as [string, Grunnlag]] : []),
+    ...r.plan.forlop.flatMap((f) => (f.formoverganger ?? []).map((o, i) => [`${f.id}.formoverganger[${i}]`, o.grunnlag] as [string, Grunnlag])),
+    ...r.plan.forlop.flatMap((f) => (f.dosevalg?.praktisk ? [[`${f.id}.dosevalg.praktisk`, f.dosevalg.praktisk.grunnlag] as [string, Grunnlag]] : [])),
+    ...r.plan.forlop.flatMap((f) =>
+      f.faser.flatMap((x, i) => (x.type === 'nedtrapping' && x.automatisk_trinnvalg ? [[`${f.id}.faser[${i}].automatisk_trinnvalg`, x.automatisk_trinnvalg] as [string, Grunnlag]] : [])),
+    ),
   ]
+}
+
+/**
+ * Formene et forløp kan bruke fra formen `start` (FEST-kode), i rekkefølge:
+ * `start`, så hver overgang videre ({@link Formovergang}). Bare `start` når
+ * forløpet ikke har en overgang fra den.
+ */
+export function formkjede(f: Pick<Forlop, 'formoverganger'>, start: string): string[] {
+  const kjede = [start]
+  for (let neste = f.formoverganger?.find((o) => o.fra === start); neste && !kjede.includes(neste.til); neste = f.formoverganger?.find((o) => o.fra === neste!.til)) kjede.push(neste.til)
+  return kjede
+}
+
+/**
+ * Hvorfor formovergangene, den praktiske doseringen eller tilfellene med
+ * flere former i regelen er ugyldige; tom når de er gyldige. Overgangene må
+ * være en kjede uten forgreninger eller sløyfer, bare i perorale forløp, og
+ * et tilfelle med flere former må følge kjeden fra sin første form.
+ */
+export function formovergangsfeil(r: Pick<Regel, 'plan' | 'klinisk_omfang'>): string[] {
+  const feil: string[] = []
+  for (const f of r.plan.forlop) {
+    const o = f.formoverganger ?? []
+    if (o.length > 0 && f.administrasjon !== 'peroral') feil.push(`${f.id}: formoverganger gjelder bare perorale forløp`)
+    for (const x of o) if (x.fra === x.til || !x.fra || !x.til) feil.push(`${f.id}: en formovergang må gå mellom to ulike former`)
+    if (new Set(o.map((x) => x.fra)).size < o.length || new Set(o.map((x) => x.til)).size < o.length) feil.push(`${f.id}: formovergangene forgrener seg`)
+    for (const x of o) if (formkjede(f, x.fra).length !== new Set(formkjede(f, x.fra)).size || formkjede(f, x.til).includes(x.fra)) feil.push(`${f.id}: formovergangene går i sløyfe`)
+    const d = f.dosevalg?.praktisk?.draper
+    if (d !== undefined && !(Number.isInteger(d) && d > 0)) feil.push(`${f.id}: dråpepreferansen må være et helt tall over 0`)
+  }
+  for (const [i, t] of (r.klinisk_omfang?.tilfeller ?? []).entries()) {
+    if (!t.legemiddelformer) continue
+    if (t.legemiddelform) feil.push(`klinisk_omfang.tilfeller[${i}]: bruk enten legemiddelform eller legemiddelformer`)
+    const [start, ...resten] = t.legemiddelformer
+    const kjeder = r.plan.forlop.filter((f) => f.formoverganger?.length).map((f) => formkjede(f, start ?? ''))
+    if (!start || kjeder.length === 0 || !kjeder.some((k) => resten.every((x, j) => k[j + 1] === x))) feil.push(`klinisk_omfang.tilfeller[${i}]: formene følger ingen formovergang i regelen`)
+  }
+  return feil
 }
 
 /** Stien til et inndatakrav: `inndata.startdose`, eller med vilkåret for et krav som bare gjelder ved et svar. */
 export const inndatasti = (x: Pick<Inndatakrav, 'navn' | 'ved'>) => `inndata.${x.navn}${x.ved ? `[${x.ved.sporsmal}=${x.ved.svar ? 'ja' : 'nei'}]` : ''}`
 
-const erParameter = (x: unknown): x is Parameter =>
-  !!x && typeof x === 'object' && 'verdi' in x && 'enhet' in x && 'art' in x && 'grunnlag' in x
+const erParameter = (x: unknown): x is Parameter => !!x && typeof x === 'object' && 'verdi' in x && 'enhet' in x && 'art' in x && 'grunnlag' in x
 
 /** Alle parametre i `x` (en plan, en fase, en strategi …), med stien dit. */
 export function parametre(x: unknown, sti = ''): [string, Parameter][] {
