@@ -186,7 +186,7 @@ Kolonnene «I dag» og «Kjent hindring» viser status ved nullpunktet og, der e
 | 1 | #316 | A – K0-nullpunkt | 1.124.5 | – | Slått sammen 03.11 |
 | 2 | #319 | G – felles motor, delplaner sperret | 1.125.0 | – | Slått sammen 03.11 |
 | 3 | #322 | F – K4, lamotrigin lagt til valproat eller litium (K0-11 og K0-12) | 1.125.1 | #319 | Slått sammen 04.11 |
-| 4 | #323 | C – K1, escitalopram-dråper fra 10 eller 20 mg til seponering (K0-01 med overgang til dråper; ren tablettplan og K0-03 amitriptylin stopper fortsatt) | 1.125.2 | #322 | Slått sammen 04.11 |
+| 4 | #323 | C – K1, escitalopram-dråper fra 10 eller 20 mg til seponering (K0-01 når dråper velges; med tablett valgt og for K0-03 amitriptylin stopper planen fortsatt) | 1.125.2 | #322 | Slått sammen 04.11 |
 | 5 | #325 | A – K0, fremdrift ført etter merge (denne planen) | 1.125.3 | #323 | Til kontroll |
 | 6 | #324 | G – motor: gammel regel trekkes atomisk når ny godkjennes | 1.125.4 | – | Til kontroll |
 | 7 | #318 | D – K2, fem bytteregler (K0-04–K0-06) | 1.125.5 | #324 | Til kontroll; ingen regel godkjent |
@@ -203,7 +203,7 @@ Føres av koordinatoren bare når en PR er slått sammen etter ChatGPTs kontroll
 | --- | --- | --- | --- |
 | 03.11.2026 | #319 | Delplaner vises aldri (Peders beslutning 03.11). Startforløpet for sertralin → mirtazapin (v10) og vortioksetin 20 → 15 mg (v12) er trukket fra appen; verktøyene viser i stedet «Komplett plan ikke tilgjengelig» med grunnen. «Kan beregnes nå» viser bare valg som kan gi komplett plan. | – |
 | 04.11.2026 | #322 | Verktøyet «Kombinere stemningsstabiliserende» gir komplett plan for lamotrigin lagt til uendret Lithionit 42 mg (til 200 mg/dag fra dag 36) og lagt til uendret natriumvalproat (til 100 mg/dag fra dag 36), begge med Lamictal dispergerbare tabletter etter tabell 3 i preparatomtalen. Måldosen må velges. For valproat bekreftes vilkårene i det graviditetsforebyggende programmet hver for seg. Andre preparater, styrker og kombinasjoner stopper. | K4: 2 av 2 |
-| 04.11.2026 | #323 | «Trappe ned antidepressiv» gir komplett plan for Cipralex dråper 20 mg/ml (1 mg per dråpe) fra 10 eller 20 mg til seponering, ett virkestoff med to startdoser: høyst 25 % per trinn ned til 3 mg, så 2 og 1 mg, der 1 mg holdes et helt trinn før seponering, med vurdering før hver endring og 7, 14 og 28 dager etter siste dose. Tablettpasienter går over til dråper med samme dose. Bare voksne under 65 år med kort behandlingstid og uten tidligere seponeringsplager (Peders avgjørelse om 1 mg → 0, 04.11), uten nedsatt leverfunksjon, kjent langsom CYP2C19 eller QT-kontraindikasjon. Alle andre, nortriptylin, amitriptylin og sertralin får «Komplett plan ikke tilgjengelig». | K1: 1 av 2 |
+| 04.11.2026 | #323 | «Trappe ned antidepressiv» gir komplett plan for Cipralex dråper 20 mg/ml (1 mg per dråpe) fra 10 eller 20 mg til seponering, ett virkestoff med to startdoser: høyst 25 % per trinn ned til 3 mg, så 2 og 1 mg, der 1 mg holdes et helt trinn før seponering, med vurdering før hver endring og 7, 14 og 28 dager etter siste dose. Overgang fra tablett til dråper mg for mg er faglig akseptert, men forskriveren må selv velge dråper; med tablett valgt stopper planen. Bare voksne under 65 år med kort behandlingstid og uten tidligere seponeringsplager (Peders avgjørelse om 1 mg → 0, 04.11), uten nedsatt leverfunksjon, kjent langsom CYP2C19 eller QT-kontraindikasjon. Alle andre, nortriptylin, amitriptylin og sertralin får «Komplett plan ikke tilgjengelig». | K1: 1 av 2 |
 
 **Komplette forløp i appen nå:**
 
