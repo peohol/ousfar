@@ -11,7 +11,7 @@ import { describe, expect, it } from 'vitest'
 import { beregnPlan, medTrinnvalg, TOMT_SKJEMA, type Planskjema } from '../verktoy/doseplan'
 import { BESLUTNINGER, type Beslutninger } from '../verktoy/flyt/beslutninger'
 import { flytoppsett, medFlytfelt, medIngenAvDisse, SAMLET, standardId, vurderFlyt, type Flytgrunnlag } from '../verktoy/flyt/flyt'
-import { forhandskontroll, KAN_LAGES_HVIS } from '../verktoy/flyt/forhandskontroll'
+import { forhandskontroll, IKKE_AVKLART, KAN_LAGES_HVIS } from '../verktoy/flyt/forhandskontroll'
 import { flyttilstand, medFlytsvar, reglerMedPlan } from '../verktoy/flyt'
 import { harKontrollertKatalog, katalogavtrykk, katalogGjelder, KONTROLLERTE_KATALOGER, type Katalogkontroll } from '../verktoy/flyt/katalogkontroll'
 import { KATALOGTABELLFIL, lagKatalogtabell } from '../verktoy/flyt/katalogtabell'
@@ -47,6 +47,8 @@ const [NED, BYTTE_AD, BYTTE_AP, TILLEGGSVERKTOY] = VERKTOY as [(typeof VERKTOY)[
 const kontrollertITest = (...regler: Regel[]): Katalogkontroll[] =>
   regler.map((r) => ({ regel: r.id, regelversjon: r.versjon, fingeravtrykk: fingeravtrykk(r), katalogavtrykk: katalogavtrykk(r), dato: '2026-11-04', av: 'Test', merknad: 'Bare i testen.' }))
 const katalog = (r: Regel, b: Partial<Beslutninger> = {}): Flytgrunnlag => ({ kontrollerte: kontrollertITest(r), beslutninger: { ...BESLUTNINGER, ...b } })
+/** Reservevisningen for hver regel, også de med kontrollert katalog i appen. */
+const RESERVE: Flytgrunnlag = { kontrollerte: [] }
 
 /** Svarene som tillater en plan for hvert synlig spørsmål, til flyten er ferdig. */
 function besvarTillatende(r: Regel, g: Flytgrunnlag, start: Record<string, string> = {}): Record<string, string> {
@@ -112,7 +114,7 @@ describe('katalogen dekker hver betingelse i hver godkjent regel (S5)', () => {
     const for_ = GODKJENTE.map((r) => [structuredClone(r), fingeravtrykk(r)] as const)
     for (const r of GODKJENTE) {
       vurderFlyt(r, besvarTillatende(r, katalog(r)), katalog(r))
-      vurderFlyt(r, besvarTillatende(r, {}), {})
+      vurderFlyt(r, besvarTillatende(r, RESERVE), RESERVE)
     }
     GODKJENTE.forEach((r, i) => {
       expect(r).toEqual(for_[i]![0])
@@ -123,14 +125,36 @@ describe('katalogen dekker hver betingelse i hver godkjent regel (S5)', () => {
 })
 
 describe('katalogavtrykket (S5b)', () => {
-  it('er ikke kontrollert for noen regel ennå, så appen bruker regelens egne tekster', () => {
-    expect(KONTROLLERTE_KATALOGER).toEqual([])
+  it('er kontrollert for nøyaktig de sju regelversjonene ChatGPT godkjente 04.11, og ikke for escitalopram v13, vortioksetin eller sertralin → mirtazapin', () => {
+    const godkjent = {
+      'depot-aripiprazol-maintena': 3,
+      'depot-paliperidon-xeplion': 3,
+      'depot-risperidon-xeplion': 8,
+      'antipsykotikabytte-olanzapin-aripiprazol': 8,
+      'antipsykotikabytte-risperidon-aripiprazol': 8,
+      'tillegg-valproat-lamotrigin': 2,
+      'tillegg-litium-lamotrigin': 2,
+    }
+    expect(Object.fromEntries(KONTROLLERTE_KATALOGER.map((k) => [k.regel, k.regelversjon]))).toEqual(godkjent)
+    expect(KONTROLLERTE_KATALOGER.map((k) => k.regel)).not.toContain(ESC.id)
+    for (const k of KONTROLLERTE_KATALOGER) expect(k.merknad).toMatch(/ikke en ny godkjenning av doseringsregelen/)
     for (const r of GODKJENTE) {
-      expect(katalogGjelder(r)).toBe(false)
-      expect(harKontrollertKatalog(r)).toBe(false)
+      const med = r.id in godkjent
+      expect(katalogGjelder(r), r.id).toBe(med)
+      expect(harKontrollertKatalog(r), r.id).toBe(med)
       const o = flytoppsett(r)
-      expect(o.katalog).toBe(false)
-      expect(o.sporsmal.every((s) => s.kategori === 'uklassifisert')).toBe(true)
+      expect(o.katalog, r.id).toBe(med)
+      // Uten kontrollert katalog: reservevisningen med regelens egne tekster.
+      if (!med)
+        expect(
+          o.sporsmal.every((s) => s.kategori === 'uklassifisert'),
+          r.id,
+        ).toBe(true)
+      else
+        expect(
+          o.sporsmal.some((s) => s.kategori === 'uklassifisert'),
+          r.id,
+        ).toBe(false)
     }
   })
 
@@ -153,7 +177,7 @@ describe('katalogavtrykket (S5b)', () => {
 
   it('viser i reservevisningen regelens fullstendige tekst med opprinnelig type og svarlogikk, aldri et generisk spørsmål (S5)', () => {
     for (const r of GODKJENTE) {
-      const o = flytoppsett(r, {})
+      const o = flytoppsett(r, RESERVE)
       const def = (type: Betingelsestype, id: string) => o.sporsmal.find((s) => s.id === standardId(type, id))!
       for (const u of r.unntak) expect(def('unntak', u.id), `${r.id} ${u.id}`).toMatchObject({ tekst: u.tekst, art: 'valg', alternativer: SVARSETT.gjelder })
       for (const s of r.sporsmal ?? []) expect(def('sporsmal', s.id), `${r.id} ${s.id}`).toMatchObject({ tekst: s.tekst, art: 'valg', alternativer: SVARSETT.ja_nei })
@@ -187,18 +211,18 @@ describe('katalogavtrykket (S5b)', () => {
         ...r.unntak.map((u): [Record<string, boolean>, Record<string, boolean>, string[]] => [alle.svar, { ...alle.pasientforhold, [u.id]: true }, []]),
         ...r.bekreftelser.map((b): [Record<string, boolean>, Record<string, boolean>, string[]] => [alle.svar, alle.pasientforhold, [b.id]]),
       ]
-      for (const [svar, pf, ikke] of tilfeller) expect(vurderFlyt(r, flytsvar(svar, pf, ikke), {}).felt, `${r.id} ${JSON.stringify([svar, pf, ikke])}`).toEqual(dagens(svar, pf, ikke))
+      for (const [svar, pf, ikke] of tilfeller) expect(vurderFlyt(r, flytsvar(svar, pf, ikke), RESERVE).felt, `${r.id} ${JSON.stringify([svar, pf, ikke])}`).toEqual(dagens(svar, pf, ikke))
     }
   })
 
   it('gir i standarden de samme motorinndataene som dagens skjema: hvert svar avbildes direkte, og ukjent sendes ikke', () => {
     for (const r of GODKJENTE) {
-      const o = flytoppsett(r, {})
+      const o = flytoppsett(r, RESERVE)
       const svar: Record<string, string> = {}
       for (const u of r.unntak) svar[standardId('unntak', u.id)] = 'nei'
       for (const s of r.sporsmal ?? []) svar[standardId('sporsmal', s.id)] = 'nei'
       for (const b of r.bekreftelser) svar[standardId('bekreftelse', b.id)] = 'ja'
-      const f = vurderFlyt(r, svar, {})
+      const f = vurderFlyt(r, svar, RESERVE)
       expect(f.felt, r.id).toEqual({
         svar: Object.fromEntries((r.sporsmal ?? []).map((s) => [s.id, false])),
         pasientforhold: Object.fromEntries(r.unntak.map((u) => [u.id, false])),
@@ -208,8 +232,8 @@ describe('katalogavtrykket (S5b)', () => {
       // Ja på et spørsmål gir ja; ukjent gir ingen verdi.
       const s0 = r.sporsmal?.[0]
       if (s0) {
-        expect(vurderFlyt(r, { ...svar, [standardId('sporsmal', s0.id)]: 'ja' }, {}).felt.svar[s0.id]).toBe(true)
-        expect(s0.id in vurderFlyt(r, { ...svar, [standardId('sporsmal', s0.id)]: 'ukjent' }, {}).felt.svar).toBe(false)
+        expect(vurderFlyt(r, { ...svar, [standardId('sporsmal', s0.id)]: 'ja' }, RESERVE).felt.svar[s0.id]).toBe(true)
+        expect(s0.id in vurderFlyt(r, { ...svar, [standardId('sporsmal', s0.id)]: 'ukjent' }, RESERVE).felt.svar).toBe(false)
       }
     }
   })
@@ -218,7 +242,7 @@ describe('katalogavtrykket (S5b)', () => {
 describe('«Ukjent» er aldri et trygt svar (S4)', () => {
   it('gir ingen verdi for betingelsene spørsmålet avgjør, i katalogen og i standarden, for hver godkjent regel', () => {
     for (const r of GODKJENTE) {
-      for (const g of [katalog(r), katalog(r, { B1: true, B2: true }), {}]) {
+      for (const g of [katalog(r), katalog(r, { B1: true, B2: true }), RESERVE, {}]) {
         const svar = besvarTillatende(r, g)
         const ok = vurderFlyt(r, svar, g)
         for (const s of ok.sporsmal.filter((x) => x.svar.includes('ukjent'))) {
@@ -458,6 +482,26 @@ describe('forhåndskontrollen (§5, S9)', () => {
     expect(fk('10', { formvalg: { fra: { legemiddelform: '53' } } }, { B4: true }).formvalg).toBeUndefined()
   })
 
+  it('sier aldri «kan ikke» når taket stoppet prøveberegningen før en mulig plan ble funnet (ChatGPT 04.11)', () => {
+    // Escitalopram 20 mg dråper gir en komplett plan først etter sju dosevalg; et lavere tak når den ikke.
+    const med = (provetak?: { beregninger?: number; dosevalg?: number }) =>
+      forhandskontroll({
+        verktoy: NED,
+        valg: esc,
+        sperrer: [],
+        skjema: skjema({ startdose: '20', formvalg: { fra: { legemiddelform: '748' } } }),
+        utvalg: AKSEPT.utvalg,
+        naa: klokke(AKSEPT),
+        ...(provetak && { provetak }),
+      })
+    expect(med()).toMatchObject({ utfall: 'kan_lages_hvis', dosevalg: 7 })
+    for (const tak of [{ beregninger: 3 }, { dosevalg: 2 }]) {
+      const k = med(tak)
+      expect(k.utfall, JSON.stringify(tak)).toBe('ukjent')
+      expect(k.grunner).toEqual([expect.objectContaining({ kode: 'ikke_avklart', tekst: IKKE_AVKLART })])
+    }
+  })
+
   it('følger dosevalgene for trinn i prøveberegningen og regner dem som gjenstående, ikke som stopp', () => {
     const k = fk('20', { formvalg: { fra: { legemiddelform: '748' } } })
     expect(k.utfall).toBe('kan_lages_hvis')
@@ -596,7 +640,7 @@ describe('hele flyten til planen (S1, S9)', () => {
   it('gir samme motorinndata i katalogen som regelens egne svar ville gitt for de godkjente reglene', () => {
     for (const r of GODKJENTE) {
       const kat = vurderFlyt(r, besvarTillatende(r, katalog(r, { B1: true, B2: true })), katalog(r, { B1: true, B2: true })).felt
-      const std = vurderFlyt(r, besvarTillatende(r, {}), {}).felt
+      const std = vurderFlyt(r, besvarTillatende(r, RESERVE), RESERVE).felt
       expect(kat, r.id).toEqual({ ...std, svar: std.svar })
     }
   })
@@ -606,6 +650,114 @@ describe('hele flyten til planen (S1, S9)', () => {
     expect(reglerMedPlan({ verktoy: NED, valg: { fra: { nokkel: 'vortioksetin', formulering: 'standard' } } })).toEqual([])
     expect(medFlytsvar(medFlytsvar(TOMT_SKJEMA, 'a', 'ja'), 'a', undefined).flytsvar).toEqual({})
     expect(medFlytfelt(TOMT_SKJEMA, { svar: { x: true }, pasientforhold: {}, bekreftet: ['y'] })).toMatchObject({ svar: { x: true }, bekreftet: ['y'] })
+  })
+})
+
+describe('ekte brukerforløp med de godkjente katalogene i appen (ChatGPT 04.11)', () => {
+  type Forlop = { verktoy: (typeof VERKTOY)[number]; valg: Verktoyvalg; fest: Festuttrekk; regel: string; skjema: Partial<Planskjema> }
+  const AP = uttrekk(FEST_ANTIPSYKOTIKA)
+  const FORLOP: Forlop[] = [
+    {
+      verktoy: BYTTE_AP,
+      valg: { fra: { nokkel: 'olanzapin', formulering: 'standard' }, til: { nokkel: 'aripiprazol', formulering: 'standard' } },
+      fest: AP,
+      regel: 'antipsykotikabytte-olanzapin-aripiprazol',
+      skjema: { startdose: '20', maldose: '15' },
+    },
+    {
+      verktoy: BYTTE_AP,
+      valg: { fra: { nokkel: 'risperidon', formulering: 'standard' }, til: { nokkel: 'paliperidon', formulering: 'ER' } },
+      fest: AP,
+      regel: 'depot-risperidon-xeplion',
+      skjema: { startdose: '3', maldose: '75' },
+    },
+    {
+      verktoy: TILLEGGSVERKTOY,
+      valg: { fra: { nokkel: 'valproat', formulering: 'standard' }, til: { nokkel: 'lamotrigin', formulering: 'standard' } },
+      fest: TILLEGG,
+      regel: 'tillegg-valproat-lamotrigin',
+      skjema: { startdose: '1000', maldose: '100' },
+    },
+  ]
+
+  /**
+   * Klinikerens forløp i appen, uten testkontroller: svarene i `svar` først,
+   * så det vanlige svaret på hvert spørsmål som vises (18–64 år, «Ja» der svaret
+   * bekrefter, ellers «Nei»), formen fra forhåndskontrollen når den må velges,
+   * og planen fra motoren med dosevalgene for trinnene.
+   */
+  function forlop(f: Forlop, svar: Record<string, string> = {}) {
+    const naa = klokke(f.fest)
+    let s: Planskjema = { ...TOMT_SKJEMA, ...f.skjema }
+    for (const [id, v] of Object.entries(svar)) s = medFlytsvar(s, id, v)
+    const tilstand = () => flyttilstand({ verktoy: f.verktoy, valg: f.valg, sperrer: [], skjema: s, utvalg: f.fest.utvalg, naa })
+    let ut = tilstand()
+    for (let i = 0; i < 60; i++) {
+      const neste = ut.tilstand.sporsmal.find((q) => q.valgt === undefined)
+      const former = Object.entries(ut.kontroll.former ?? {}).filter(([forlop, k]) => k.length > 0 && !s.formvalg[forlop]?.legemiddelform && !ut.kontroll.formvalg?.[forlop])
+      if (!neste && former.length === 0) break
+      if (neste) {
+        const bekrefter = ut.flyt!.oppsett.avbildninger.some((a) => a.type === 'bekreftelse' && a.fra.some((k) => k.sporsmal === neste.id))
+        s = medFlytsvar(s, neste.id, neste.id === 'alder' ? '18_64' : neste.art === 'avkrysning' || bekrefter ? 'ja' : 'nei')
+      } else s = { ...s, formvalg: { ...s.formvalg, ...Object.fromEntries(former.map(([forlop, k]) => [forlop, { ...s.formvalg[forlop], legemiddelform: k[0]! }])) } }
+      ut = tilstand()
+    }
+    let skjema = ut.skjema!
+    const regel = ut.regel!
+    let plan = beregnPlan(regel, f.valg, skjema, f.fest.utvalg, naa)
+    for (let i = 0; plan.status === 'stoppet' && plan.trinnvalg?.length && i < 30; i++) {
+      skjema = medTrinnvalg(skjema, plan.trinnvalg[0]!, plan.trinnvalg[0]!.doser[0]!.mg)
+      plan = beregnPlan(regel, f.valg, skjema, f.fest.utvalg, naa)
+    }
+    return { ut, plan, skjema }
+  }
+
+  it('gir en klinisk, komplett plan med de nye spørsmålene, uten å røre måldosen eller noen klinisk vurdering', () => {
+    for (const f of FORLOP) {
+      const { ut, plan, skjema } = forlop(f)
+      expect(ut.regel?.id, f.regel).toBe(f.regel)
+      expect(ut.flyt!.oppsett.katalog, f.regel).toBe(true)
+      expect(
+        ut.tilstand.sporsmal.every((q) => q.kategori !== 'uklassifisert' && !q.alternativer.some((a) => /Gjelder/.test(a.tekst))),
+        f.regel,
+      ).toBe(true)
+      expect(ut.tilstand, f.regel).toMatchObject({ steg: 'plan', kontroll: { utfall: 'kan_lages_hvis', gjenstar: 0 } })
+      expect(skjema.maldose, f.regel).toBe(f.skjema.maldose)
+      // Hver klinisk vurdering er besvart uttrykkelig med «Ja» av klinikeren.
+      for (const q of ut.tilstand.sporsmal.filter((x) => x.kategori === 'klinisk_vurdering')) expect(q.valgt, `${f.regel} ${q.id}`).toBe('ja')
+      expect(plan.status, f.regel).toBe('doseplan')
+      expect(plan.status === 'doseplan' && plan.klinisk, f.regel).toBe(true)
+    }
+  })
+
+  it('gir ingen plan når en klinisk vurdering er «Ikke ennå», et stoppforhold er «Ja» eller «Ukjent», eller måldosen ikke er valgt', () => {
+    for (const f of FORLOP) {
+      const vanlig = forlop(f).ut
+      const sporsmal = vanlig.tilstand.sporsmal
+      expect(sporsmal.filter((x) => x.kategori === 'klinisk_vurdering').length, f.regel).toBeGreaterThan(0)
+      expect(sporsmal.filter((x) => x.gruppe === 'stopp' && x.stopperVed?.length).length, f.regel).toBeGreaterThan(0)
+      for (const q of sporsmal.filter((x) => x.kategori === 'klinisk_vurdering')) {
+        const { ut, plan } = forlop(f, { [q.id]: 'nei' })
+        expect(plan.status, `${f.regel} ${q.id} ikke ennå`).toBe('stoppet')
+        expect(ut.tilstand.steg).not.toBe('plan')
+        expect(ut.tilstand.kontroll.gjenstar).toBeGreaterThan(0)
+      }
+      for (const q of sporsmal.filter((x) => x.gruppe === 'stopp' && x.alternativer === SVARSETT.ja_nei_ukjent)) {
+        for (const v of ['ja', 'nei', 'ukjent']) {
+          const stopper = v === 'ukjent' || q.stopperVed?.includes(v)
+          if (!stopper) continue
+          const { ut, plan } = forlop(f, { [q.id]: v })
+          expect(plan.status, `${f.regel} ${q.id} ${v}`).toBe('stoppet')
+          expect(ut.tilstand.steg, `${f.regel} ${q.id} ${v}`).not.toBe('plan')
+          if (v !== 'ukjent') expect(ut.tilstand.kontroll.utfall, `${f.regel} ${q.id} ${v}`).toBe('kan_ikke')
+        }
+      }
+      const { maldose: _m, ...uten } = f.skjema
+      const umal = forlop({ ...f, skjema: uten })
+      expect(umal.ut.tilstand.steg, f.regel).toBe('behandling')
+      expect(umal.skjema.maldose, f.regel).toBe('')
+      expect(umal.plan.status, f.regel).toBe('stoppet')
+    }
   })
 })
 
