@@ -184,7 +184,7 @@ Syntetiske, vanlige situasjoner for voksne 18–64 år uten tidligere seponering
 | 1 | #316 | A – K0-nullpunkt | 1.124.5 | – | Slått sammen 03.11 |
 | 2 | #319 | G – felles motor, delplaner sperret | 1.125.0 | – | Slått sammen 03.11 |
 | 3 | #322 | F – K4, lamotrigin lagt til valproat eller litium (K0-11 og K0-12) | 1.125.1 | #319 | Slått sammen 04.11 |
-| 4 | #323 | C – K1, escitalopram-dråper til seponering (K0-01 og K0-03) | 1.125.2 | #322 | Escitalopram v13 klinisk godkjent i PR-en; venter på sluttkontroll |
+| 4 | #323 | C – K1, escitalopram-dråper fra 10 eller 20 mg til seponering (dråpevariant av K0-01; K0-01 med tablett og K0-03 amitriptylin stopper fortsatt) | 1.125.2 | #322 | Escitalopram v13 klinisk godkjent i PR-en; venter på sluttkontroll |
 | 5 | #325 | A – K0, fremdrift ført etter merge (denne planen) | 1.125.3 | #323 | Til kontroll |
 | 6 | #324 | G – motor: gammel regel trekkes atomisk når ny godkjennes | 1.125.4 | – | Til kontroll |
 | 7 | #318 | D – K2, fem bytteregler (K0-04–K0-06) | 1.125.5 | #324 | Til kontroll; ingen regel godkjent |
