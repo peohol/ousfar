@@ -471,6 +471,38 @@ export interface Formovergangsforslag {
 
 /** B2: escitalopram fra tabletter til dråper, med versjon 13 som grunnlag. */
 export const B2_DATO = '2026-11-04'
+
+/**
+ * Kontrollørens avklaring av B2.1–B2.6 i gjennomgangen av 55d97d0 04.11.2026
+ * (PR #330, kommentar 6632221212), for versjon 14. B2.1 og B2.2 er
+ * registrert på valgene i regelen; ingen klinisk godkjenning av regelen.
+ */
+export const B2_KONTROLL_0411 = {
+  kontroll: 'Kontrollørens gjennomgang av 55d97d0 04.11.2026 (PR #330, kommentar 6632221212)',
+  overgang: {
+    ...KONTROLLOREN,
+    dato: '2026-11-04',
+    regelversjon: 14,
+    merknad:
+      'Kontrollørens gjennomgang av 55d97d0 04.11.2026 (B2.1): ja. Fra 20 mg tabletter er 15 mg som hele tabletter à 10 og 5 mg og så dråper fra neste trinn en rasjonell administrasjonsstrategi; fra 10 mg tabletter går første reduksjon til dråper. Overgangen mg for mg mellom Cipralex tabletter og dråper har farmakokinetisk grunnlag, uten utvaskingsperiode.',
+  },
+  praktisk: {
+    ...KONTROLLOREN,
+    dato: '2026-11-04',
+    regelversjon: 14,
+    merknad:
+      'Kontrollørens gjennomgang av 55d97d0 04.11.2026 (B2.2 og B2.3): ja, som praktisk preferanse og ikke som klinisk terskel. 5 dråper er en myk prioritering mellom ellers lovlige doser og ikke et tak på antall dråper; verdien er OUSFARs valg uten kildepåstand. To hele tabletter i første trinn på 15 mg er et praktisk valg for å slippe å telle 15 dråper, ikke en dokumentert klinisk fordel.',
+  },
+  /** Svarene på spørsmålene i kontrollgrunnlaget, ordnet etter nummer. */
+  svar: {
+    'B2.1': 'ja',
+    'B2.2': 'ja, som praktisk preferanse',
+    'B2.3': 'ja, som praktisk valg',
+    'B2.4': 'ja',
+    'B2.5': 'ja',
+    'B2.6': 'nei, ikke som standard i versjon 14',
+  },
+} as const
 export const B2_ESCITALOPRAM: Formovergangsforslag = {
   regel: 'seponering-escitalopram',
   fra_versjon: 13,
@@ -505,6 +537,7 @@ export const B2_ESCITALOPRAM: Formovergangsforslag = {
       'En pasient som bruker escitalopram tabletter, fortsetter med hele tabletter så lenge de gir dosen i trinnet, og går så over til dråper med samme døgndose i mg: én dråpe er 1 mg, og dråpene er bioekvivalente med Cipralex tabletter. Planen går ikke tilbake til tabletter, og hver dose gis med én form. Generiske tabletter er godkjent mot Cipralex tabletter, men ikke sammenlignet direkte med dråpene.',
     henvisninger: [K1_KILDER.draape, K1_KILDER.bioekvivalens],
   },
+  avklaringer: { overgang: B2_KONTROLL_0411.overgang, praktisk: B2_KONTROLL_0411.praktisk },
 }
 
 /** Reglene med formovergang (B2). */

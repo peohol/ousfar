@@ -21,7 +21,7 @@ import { norskDato } from './motor/byggesteiner'
 import { valgtekst } from './regler/aksepttest'
 import { erKliniskGodkjent, fingeravtrykk, godkjenningsfeil, KONTROLLUTFALL, kontrollutfall } from './regler/godkjenning'
 import { alleGrunnlag, type Klinisktilfelle, type Regel, type Regelsett } from './regler/modell'
-import { B2_DATO, B2_ESCITALOPRAM, K1_9_AVGJORELSE, K1_DATO, K1_GODKJENNING_0411, K1_KONTROLL_0411 } from './regler/k1'
+import { B2_DATO, B2_ESCITALOPRAM, B2_KONTROLL_0411, K1_9_AVGJORELSE, K1_DATO, K1_GODKJENNING_0411, K1_KONTROLL_0411 } from './regler/k1'
 import { STI } from './regler/nedtrapping'
 import { ETTER_RETTELSENE } from './kontrollsett'
 import { avregistrert, avvikFra, kjorKasus, type Kontrollregel, nyStyrke, type Pilotkasus, type Pilotutfall, SIMULERT_KONTROLLOR, simulerGodkjenning, type Uttrekkene } from './regler/pilotmatrise'
@@ -1270,7 +1270,7 @@ Ingen tabeller fra Psychiatrienet er brukt eller konvertert. Ingen validert apot
 /* --- B2: escitalopram med tabletter så lenge de gir dosen, så dråper ------------------ */
 
 /** Escitalopram med tabletter og dråper (B2), versjon 14: egen regel som erstatter versjon 13 når den er godkjent (`regler/k1.ts`). */
-const B2_REGEL: Kontrollregel = { id: B2_ESCITALOPRAM.id, versjon: 14, fingeravtrykk: '3e6c859a46e23cceeedb2708f85e64a937939c99a0eaafe80920a931b587dbb0' }
+const B2_REGEL: Kontrollregel = { id: B2_ESCITALOPRAM.id, versjon: 14, fingeravtrykk: '01b2fb560a8defe0114f9552d619bc6bf15e27b07fa6352d6331d9beb500721f' }
 /** Kasus for B2 med simulert avklaring av de åpne valgene og simulert godkjenning, gjennom den samme veien som verktøysiden. */
 const kb = somVerktoysiden(kasusFor(B2_DATO, undefined, true))
 /** Valgene i K1-01 og K1-02 (dråper fra 10 og 20 mg), som forskriveren gjør i B2 også. */
@@ -1386,51 +1386,57 @@ export const FORSLAG_B2: Kontrollforslag = {
   visPlanutfall: true,
   innledning: (fest) => [
     `**Escitalopram fra tabletter (10 eller 20 mg): tabletter så lenge hele tabletter gir dosen i trinnet, så dråper mg for mg til seponering.** Grunnlag for uavhengig faglig kontroll av B2 i \`docs/verktøy-brukervennlighet-2026-11.md\` (§6) og \`docs/verktøy-praktisk-dosering.md\`. Versjon 14 er en egen regel (\`${B2_REGEL.id}\`) som bygger på den godkjente versjon 13 og erstatter den i det øyeblikket den selv er klinisk godkjent; til da gjelder versjon 13 uendret.`,
-    `**Versjon 14 er ikke godkjent, og godkjenningen av versjon 13 gjelder ikke den.** Overgangen fra tabletter til dråper og dråpepreferansen er nye valg (åpne forslag til kontrolløren, B2.1–B2.3). Startdosene, trinnene, sluttdosen, seponeringen og oppfølgingen er de samme som i versjon 13. Aldersspørsmålet er rettet til «${ELDRE.tekst}», så pasientgruppen er nøyaktig Peders avgrensning (under 65 år); det retter et avvik i versjon 13, som spør «Er pasienten over 65 år?» (B2.4).`,
+    `**Versjon 14 er ikke godkjent, og godkjenningen av versjon 13 gjelder ikke den.** Overgangen fra tabletter til dråper og dråpepreferansen var nye valg; kontrolløren har avklart dem (B2.1–B2.3) og svart nei på tabletter og dråper i samme dose (B2.6), men regelen er ikke godkjent. Startdosene, trinnene, sluttdosen, seponeringen og oppfølgingen er de samme som i versjon 13. Aldersspørsmålet er rettet til «${ELDRE.tekst}», så pasientgruppen er nøyaktig Peders avgrensning (under 65 år); det retter et avvik i versjon 13, som spør «Er pasienten over 65 år?» (B2.4).`,
     `Hva som er nytt for klinikeren: med versjon 13 må en pasient på 20 mg tabletter gå over til 15 dråper første dag, og verktøyet stopper hvis tablett er valgt (kasus K1-08 og K1-09). Med versjon 14 gis første trinn (15 mg) med hele tabletter, og planen går over til dråper fra andre trinn. Fra 10 mg tabletter kan ingen hel tablett gi 8 mg, så planen går over til dråper fra første trinn, som i versjon 13. Pasienter som allerede bruker dråper, får nøyaktig den samme planen som i versjon 13.`,
     `Kasusene går gjennom den samme veien som verktøysiden, som aldri viser en delplan, med de norske preparatene i FEST-uttrekket hentet ${fest}, på en kopi med simulert avklaring av de åpne valgene og simulert godkjenning («${SIMULERT_KONTROLLOR}»). Kopien lagres ikke og brukes ikke av appen. Kasusene er syntetiske; pasientopplysninger inngår ikke, og ingen tekst fra Psychiatrienet vises.`,
   ],
   forutsetninger: [
-    'Godkjenningen gjelder nøyaktig versjonen og fingeravtrykket i tabellen over, og bare det kliniske omfanget i avsnittet «Reglene». Overgangen (B2.1) og dråpepreferansen (B2.2) må avklares av kontrolløren og registreres på valgene i regelen før en godkjenning kan registreres.',
+    `Godkjenningen gjelder nøyaktig versjonen og fingeravtrykket i tabellen over, og bare det kliniske omfanget i avsnittet «Reglene». Avklaringene av overgangen (B2.1) og dråpepreferansen (B2.2) er registrert på valgene i regelen (${B2_KONTROLL_0411.kontroll}); det endret fingeravtrykket, så den samlede kontrollen gjelder det nye. Før en godkjenning kontrolleres alle positive og negative forløp, FEST-formene og -styrkene, den komplette seponeringen og visningen og kopien i den virkelige brukerflyten uten simulering etter #327.`,
     'Peders avgjørelse på K1.9 (seponering fra 1 mg) gjelder bare når omfanget er uendret eller snevrere. Vurderingen står i B2.4; mener kontrolløren at omfanget er utvidet, må Peder spørres på nytt før en godkjenning.',
     'Versjon 13 trekkes i det øyeblikket versjon 14 er gyldig klinisk godkjent (`Regel.erstatter`); til da gjelder den uendret. Godkjennes versjon 14 ikke, er ingenting endret for klinikeren.',
     'Sperrene for de kliniske verktøyene og synligheten bare for administratorer er uendret.',
     `Holdbarheten etter anbrudd for dråpene (${B2_PAKNINGER.holdbarhet_etter_anbrudd_dager / 7} uker, preparatomtalen pkt. 6.3) er oppgitt av kontrolløren 04.11.2026 og brukes bare i regnestykket for pakninger (B2.3 og B2.6); den er ikke en del av regelen.`,
   ],
-  sporsmal: [
-    {
-      nr: 'B2.1',
-      sporsmal: `Overgangen: ${B2_ESCITALOPRAM.overgang.begrunnelse} Grunnlaget for mg for mg er det samme som i K1.11 (preparatomtalen for Cipralex dråper pkt. 2 og 5.2). Er det riktig at overgangen skjer når hele tabletter ikke lenger gir dosen, og ikke allerede ved start?`,
-      anbefalt: 'Ja. Det sparer pasienten for mange dråper ved høye doser, krever ingen deling og blander ikke to preparater i samme dose (kasus B2-01 og B2-02).',
-    },
-    {
-      nr: 'B2.2',
-      sporsmal: `Dråpepreferansen (B6): ${B2_ESCITALOPRAM.praktisk.begrunnelse} Er ${B2_ESCITALOPRAM.praktisk.draper} riktig verdi?`,
-      anbefalt: 'Ja, som preferanse. Den avgjør bare om 15 mg gis som tabletter eller 15 dråper (kasus B2-01 og B2-16); 12 dråper og færre gis med dråper fordi ingen hel tablett gir dosen.',
-    },
-    {
-      nr: 'B2.3',
-      sporsmal: `Første trinn fra 20 mg er 15 mg i ${TRINNDAGER} dager. Med tabletter er det én tablett à 10 mg og én à 5 mg daglig (to styrker, ingen deling): én pakning à ${B2_PAKNINGER.minste_tablettpakning[10]} stk av hver styrke, i alt ${B2_3.tablettpakninger}. Med dråper er det 15 dråper daglig, ${B2_3.forste.draper} dråper eller ${ml(B2_3.forste.draper)} ml, altså ${B2_3.forste.flasker} flasker à ${B2_PAKNINGER.flaske_ml} ml (${FLASKE} dråper). Flaskene er regnet dag for dag: en åpnet flaske brukes til den er tom eller ${B2_PAKNINGER.holdbarhet_etter_anbrudd_dager / 7} uker etter åpning (holdbarheten etter anbrudd, preparatomtalen pkt. 6.3), og resten kastes. Hele forløpet fra 20 mg trenger da med tabletter først ${B2_3.tablettpakninger} tablettpakninger og ${B2_3.tablettForst.flasker} flasker (${B2_3.tablettForst.draper} dråper fra dag ${TRINNDAGER + 1}), i alt ${B2_3.tablettpakninger + B2_3.tablettForst.flasker} pakninger, og med dråper fra start ${B2_3.draperFraStart.flasker} flasker (${B2_3.draperFraStart.draper} dråper). Uten holdbarheten ville det vært ${B2_3.tablettForst.uten_holdbarhet} og ${B2_3.draperFraStart.uten_holdbarhet} flasker: ved de laveste dosene kastes det meste av hver flaske. Antallet pakninger avgjør altså ikke valget; tablettene sparer pasienten for å telle 15 dråper daglig i ${TRINNDAGER} dager. Er tablettene det mest praktiske for pasienten i første trinn?`,
-      anbefalt: `Ja, som en praktisk preferanse uten klinisk kilde (B6). Det avgjørende er to hele tabletter mot 15 dråper per administrasjon: pakningene er like mange i første trinn (${B2_3.tablettpakninger} mot ${B2_3.forste.flasker}) og i hele forløpet (${B2_3.tablettpakninger + B2_3.tablettForst.flasker} mot ${B2_3.draperFraStart.flasker}). Velger kontrolløren dråper fra start, kan dråpepreferansen tas ut, og regelen gir da planen i versjon 13 for alle (kasus B2-16).`,
-    },
-    {
-      nr: 'B2.4',
-      sporsmal: `Omfanget for Peders avgjørelse på K1.9 («${K1_9_AVGJORELSE.avgrensning}»): versjon 14 har de samme startdosene (10 og 20 mg), de samme trinnene fra 12 mg og den samme sluttdosen med dråper (1 mg → 0), og pasientgruppen er voksne under 65 år med kort behandlingstid, uten tidligere seponeringsplager, og nei på nedsatt leverfunksjon og langsom CYP2C19-metabolisme. Versjon 13 spør «Er pasienten over 65 år?», så en pasient på nøyaktig 65 år kan svare nei og få planen, selv om avgjørelsen gjelder under 65 år. Versjon 14 spør «${ELDRE.tekst}», så 65 år regnes med og stopper (kasus B2-17–B2-19 ved 64, 65 og 66 år); det retter avviket i versjon 13 og gjør omfanget snevrere, aldri bredere. Tablettpasienter var allerede med i versjon 13 gjennom overgangen mg for mg ved start (K1.11), og ellers er bare tidspunktet for overgangen endret. Er omfanget uendret eller snevrere, slik at avgjørelsen kan brukes uten å spørre Peder på nytt?`,
-      anbefalt:
-        'Ja, snevrere på ett punkt og ellers uendret. Ingen ny pasientgruppe, startdose eller sluttdose; 65 år er nå utenfor, som avgjørelsen sier, og alle utenfor får et sikkert stopp (kasus B2-05–B2-09 og B2-17–B2-19).',
-    },
-    {
-      nr: 'B2.5',
-      sporsmal: `Erstatningen: versjon 14 er en egen regel som erstatter versjon 13 (\`seponering-escitalopram\`) når den er godkjent, så det aldri finnes to godkjente regler for samme nedtrapping. Den gir dråpepasienter nøyaktig den samme planen som versjon 13 (kasus B2-03 og B2-04). Er det riktig at versjon 13 trekkes når versjon 14 godkjennes?`,
-      anbefalt: 'Ja. Versjon 14 gir det samme som versjon 13 for alle tilfellene versjon 13 er godkjent for, og i tillegg en komplett plan fra tabletter.',
-    },
-    {
-      nr: 'B2.6',
-      sporsmal: `Tabletter og dråper i samme dose: versjon 14 gir hver dose med én form, så fra 20 mg tabletter gis ${B2_6.v14.mest} dråper daglig i andre trinn og 9, 7 og 6 dråper i de neste. Med begge formene i samme dose i overgangen (\`samtidig\`, som motoren alt støtter) blir 12 mg ${sammensetning(SAMTIDIG[12]!)}, 9 mg ${sammensetning(SAMTIDIG[9]!)}, 7 mg ${sammensetning(SAMTIDIG[7]!)} og 6 mg ${sammensetning(SAMTIDIG[6]!)}, så over til dråper alene fra 5 mg; planen går fortsatt aldri tilbake. Det gir høyst ${B2_6.samtidig.mest} dråper per administrasjon gjennom hele forløpet, mot ${B2_6.v14.mest}, men to preparater i samme dose i fire trinn og flere pakninger: ${B2_6.samtidig.tabletter[10]} tabletter à 10 mg, ${B2_6.samtidig.tabletter[5]} à 5 mg og ${B2_6.samtidig.flasker} flasker (i alt ${B2_6.samtidig.pakninger} pakninger: tablettpakninger à ${B2_PAKNINGER.minste_tablettpakning[5]} stk og flasker), mot ${B2_6.v14.pakninger} i versjon 14. Fra 10 mg blir 8 mg ${sammensetning(SAMTIDIG[8]!)} og 6 mg ${sammensetning(SAMTIDIG[6]!)}: høyst ${B2_6.samtidig_10.mest} dråper mot ${B2_6.v14_10.mest}, ${B2_6.samtidig_10.pakninger} pakninger mot ${B2_6.v14_10.pakninger}. Kasus B2-20 og B2-21 viser planene på en kopi; de er ikke i forslaget. Skal versjon 14 gi tabletter og dråper i samme dose?`,
-      anbefalt: `Kontrollørens avveining. OUSFARs forslag er ja, dersom kontrolløren godtar to preparater i samme dose: det følger dråpepreferansen (B6) i hele forløpet uten deling og uten oppmåling, og bioekvivalensen mg for mg (pkt. 5.2) er den samme som for overgangen i B2.1. Prisen er flere pakninger og to preparater å holde orden på i fire trinn. Ja endrer regelen (\`samtidig\` på overgangen), så versjon 14 får et nytt fingeravtrykk og et nytt kontrollgrunnlag; nei lar versjon 14 stå som den er.`,
-    },
-  ],
+  sporsmal: (
+    [
+      {
+        nr: 'B2.1',
+        sporsmal: `Overgangen: ${B2_ESCITALOPRAM.overgang.begrunnelse} Grunnlaget for mg for mg er det samme som i K1.11 (preparatomtalen for Cipralex dråper pkt. 2 og 5.2). Er det riktig at overgangen skjer når hele tabletter ikke lenger gir dosen, og ikke allerede ved start?`,
+        anbefalt: 'Ja. Det sparer pasienten for mange dråper ved høye doser, krever ingen deling og blander ikke to preparater i samme dose (kasus B2-01 og B2-02).',
+      },
+      {
+        nr: 'B2.2',
+        sporsmal: `Dråpepreferansen (B6): ${B2_ESCITALOPRAM.praktisk.begrunnelse} Er ${B2_ESCITALOPRAM.praktisk.draper} riktig verdi?`,
+        anbefalt: 'Ja, som preferanse. Den avgjør bare om 15 mg gis som tabletter eller 15 dråper (kasus B2-01 og B2-16); 12 dråper og færre gis med dråper fordi ingen hel tablett gir dosen.',
+      },
+      {
+        nr: 'B2.3',
+        sporsmal: `Første trinn fra 20 mg er 15 mg i ${TRINNDAGER} dager. Med tabletter er det én tablett à 10 mg og én à 5 mg daglig (to styrker, ingen deling): én pakning à ${B2_PAKNINGER.minste_tablettpakning[10]} stk av hver styrke, i alt ${B2_3.tablettpakninger}. Med dråper er det 15 dråper daglig, ${B2_3.forste.draper} dråper eller ${ml(B2_3.forste.draper)} ml, altså ${B2_3.forste.flasker} flasker à ${B2_PAKNINGER.flaske_ml} ml (${FLASKE} dråper). Flaskene er regnet dag for dag: en åpnet flaske brukes til den er tom eller ${B2_PAKNINGER.holdbarhet_etter_anbrudd_dager / 7} uker etter åpning (holdbarheten etter anbrudd, preparatomtalen pkt. 6.3), og resten kastes. Hele forløpet fra 20 mg trenger da med tabletter først ${B2_3.tablettpakninger} tablettpakninger og ${B2_3.tablettForst.flasker} flasker (${B2_3.tablettForst.draper} dråper fra dag ${TRINNDAGER + 1}), i alt ${B2_3.tablettpakninger + B2_3.tablettForst.flasker} pakninger, og med dråper fra start ${B2_3.draperFraStart.flasker} flasker (${B2_3.draperFraStart.draper} dråper). Uten holdbarheten ville det vært ${B2_3.tablettForst.uten_holdbarhet} og ${B2_3.draperFraStart.uten_holdbarhet} flasker: ved de laveste dosene kastes det meste av hver flaske. Antallet pakninger avgjør altså ikke valget; tablettene sparer pasienten for å telle 15 dråper daglig i ${TRINNDAGER} dager. Er tablettene det mest praktiske for pasienten i første trinn?`,
+        anbefalt: `Ja, som en praktisk preferanse uten klinisk kilde (B6). Det avgjørende er to hele tabletter mot 15 dråper per administrasjon: pakningene er like mange i første trinn (${B2_3.tablettpakninger} mot ${B2_3.forste.flasker}) og i hele forløpet (${B2_3.tablettpakninger + B2_3.tablettForst.flasker} mot ${B2_3.draperFraStart.flasker}). Velger kontrolløren dråper fra start, kan dråpepreferansen tas ut, og regelen gir da planen i versjon 13 for alle (kasus B2-16).`,
+      },
+      {
+        nr: 'B2.4',
+        sporsmal: `Omfanget for Peders avgjørelse på K1.9 («${K1_9_AVGJORELSE.avgrensning}»): versjon 14 har de samme startdosene (10 og 20 mg), de samme trinnene fra 12 mg og den samme sluttdosen med dråper (1 mg → 0), og pasientgruppen er voksne under 65 år med kort behandlingstid, uten tidligere seponeringsplager, og nei på nedsatt leverfunksjon og langsom CYP2C19-metabolisme. Versjon 13 spør «Er pasienten over 65 år?», så en pasient på nøyaktig 65 år kan svare nei og få planen, selv om avgjørelsen gjelder under 65 år. Versjon 14 spør «${ELDRE.tekst}», så 65 år regnes med og stopper (kasus B2-17–B2-19 ved 64, 65 og 66 år); det retter avviket i versjon 13 og gjør omfanget snevrere, aldri bredere. Tablettpasienter var allerede med i versjon 13 gjennom overgangen mg for mg ved start (K1.11), og ellers er bare tidspunktet for overgangen endret. Er omfanget uendret eller snevrere, slik at avgjørelsen kan brukes uten å spørre Peder på nytt?`,
+        anbefalt:
+          'Ja, snevrere på ett punkt og ellers uendret. Ingen ny pasientgruppe, startdose eller sluttdose; 65 år er nå utenfor, som avgjørelsen sier, og alle utenfor får et sikkert stopp (kasus B2-05–B2-09 og B2-17–B2-19).',
+      },
+      {
+        nr: 'B2.5',
+        sporsmal: `Erstatningen: versjon 14 er en egen regel som erstatter versjon 13 (\`seponering-escitalopram\`) når den er godkjent, så det aldri finnes to godkjente regler for samme nedtrapping. Den gir dråpepasienter nøyaktig den samme planen som versjon 13 (kasus B2-03 og B2-04). Er det riktig at versjon 13 trekkes når versjon 14 godkjennes?`,
+        anbefalt: 'Ja. Versjon 14 gir det samme som versjon 13 for alle tilfellene versjon 13 er godkjent for, og i tillegg en komplett plan fra tabletter.',
+      },
+      {
+        nr: 'B2.6',
+        sporsmal: `Tabletter og dråper i samme dose: versjon 14 gir hver dose med én form, så fra 20 mg tabletter gis ${B2_6.v14.mest} dråper daglig i andre trinn og 9, 7 og 6 dråper i de neste. Med begge formene i samme dose i overgangen (\`samtidig\`, som motoren alt støtter) blir 12 mg ${sammensetning(SAMTIDIG[12]!)}, 9 mg ${sammensetning(SAMTIDIG[9]!)}, 7 mg ${sammensetning(SAMTIDIG[7]!)} og 6 mg ${sammensetning(SAMTIDIG[6]!)}, så over til dråper alene fra 5 mg; planen går fortsatt aldri tilbake. Det gir høyst ${B2_6.samtidig.mest} dråper per administrasjon gjennom hele forløpet, mot ${B2_6.v14.mest}, men to preparater i samme dose i fire trinn og flere pakninger: ${B2_6.samtidig.tabletter[10]} tabletter à 10 mg, ${B2_6.samtidig.tabletter[5]} à 5 mg og ${B2_6.samtidig.flasker} flasker (i alt ${B2_6.samtidig.pakninger} pakninger: tablettpakninger à ${B2_PAKNINGER.minste_tablettpakning[5]} stk og flasker), mot ${B2_6.v14.pakninger} i versjon 14. Fra 10 mg blir 8 mg ${sammensetning(SAMTIDIG[8]!)} og 6 mg ${sammensetning(SAMTIDIG[6]!)}: høyst ${B2_6.samtidig_10.mest} dråper mot ${B2_6.v14_10.mest}, ${B2_6.samtidig_10.pakninger} pakninger mot ${B2_6.v14_10.pakninger}. Kasus B2-20 og B2-21 viser planene på en kopi; de er ikke i forslaget. Skal versjon 14 gi tabletter og dråper i samme dose?`,
+        anbefalt: `Kontrollørens avveining. OUSFARs forslag er ja, dersom kontrolløren godtar to preparater i samme dose: det følger dråpepreferansen (B6) i hele forløpet uten deling og uten oppmåling, og bioekvivalensen mg for mg (pkt. 5.2) er den samme som for overgangen i B2.1. Prisen er flere pakninger og to preparater å holde orden på i fire trinn. Ja endrer regelen (\`samtidig\` på overgangen), så versjon 14 får et nytt fingeravtrykk og et nytt kontrollgrunnlag; nei lar versjon 14 stå som den er.`,
+      },
+    ] as Kontrollsporsmal[]
+  ).map((q) => ({ ...q, anbefalt: `**Kontrolløren ${norskDato(B2_DATO)}: ${B2_KONTROLL_0411.svar[q.nr as keyof typeof B2_KONTROLL_0411.svar]}.** ${q.anbefalt}` })),
   avsnitt: [
+    {
+      tittel: 'Kontrollørens avklaring av B2.1–B2.6',
+      tekst: `${B2_KONTROLL_0411.kontroll} svarte på spørsmålene i avsnitt 3. Avklaringene av B2.1 og B2.2 er registrert på valgene i regelen (rollen uavhengig kontrollør, regelversjon 14). De er ingen klinisk godkjenning av regelen: den kommer først etter den samlede kontrollen av nøyaktig versjonen og fingeravtrykket i tabellen. Svaret nei på B2.6 betyr at versjon 14 gir hver dose med én form; tabletter og dråper i samme dose kan eventuelt vurderes senere som et valgfritt alternativ med egen versjon og kontroll. Den detaljerte kurven med 28 dager per trinn er et startforslag med minstetider, ikke en universelt optimal plan.\n\n${liste([B2_KONTROLL_0411.overgang.merknad, B2_KONTROLL_0411.praktisk.merknad])}`,
+    },
     {
       tittel: 'Hva som er endret fra versjon 13',
       tekst: liste([

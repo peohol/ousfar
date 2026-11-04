@@ -2223,7 +2223,7 @@
   "utfall": "stopp",
   "grunner": [
    "Ingen klinisk doseplan kan vises.",
-   "Regelen har åpne valg som må avklares faglig: fra.formoverganger[0] (åpent forslag), fra.dosevalg.praktisk (åpent forslag).",
+   "Regelen har åpne valg som må avklares faglig: fra.formoverganger[0] (åpent forslag).",
    "Komplett plan ikke tilgjengelig: escitalopram: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 1 mg eller lavere (planen står på 15 mg)."
   ],
   "feil": []

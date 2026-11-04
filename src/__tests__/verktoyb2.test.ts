@@ -13,8 +13,8 @@ import { describe, expect, it } from 'vitest'
 import { B2_PAKNINGER, flaskerOverTid, FORSLAG_B2, FORSLAG_K1, KONTROLLFORSLAG, kontrollavvik, omfangsplaner, type Omfangsplan } from '../verktoy/kontrollgrunnlag'
 import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from '../verktoy/regler/aksepttest'
 import { erErstattet, erKliniskGodkjent, erstatningsfeil, fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
-import { B2_ESCITALOPRAM, K1_9_AVGJORELSE, K1_OVERGANGER, medFormovergang } from '../verktoy/regler/k1'
-import { alleGrunnlag, formovergangsfeil, type Regel } from '../verktoy/regler/modell'
+import { B2_ESCITALOPRAM, B2_KONTROLL_0411, K1_9_AVGJORELSE, K1_OVERGANGER, medFormovergang } from '../verktoy/regler/k1'
+import { alleGrunnlag, formovergangsfeil, type Avklaring, type Regel } from '../verktoy/regler/modell'
 import { simulerGodkjenning } from '../verktoy/regler/pilotmatrise'
 import { REGELSETT } from '../verktoy/tilgjengelighet'
 
@@ -35,16 +35,21 @@ describe('Versjon 14 (B2)', () => {
     expect(formovergangsfeil(r)).toEqual([])
   })
 
-  it('arver ikke godkjenningen: står til faglig kontroll med overgangen og dråpepreferansen som åpne forslag', () => {
+  it('arver ikke godkjenningen: står til faglig kontroll med overgangen og dråpepreferansen avklart av kontrolløren, uten klinisk godkjenning', () => {
     const r = i(V14)
     expect(r.godkjenning.status).toBe('til_faglig_kontroll')
     expect(erKliniskGodkjent(r)).toBe(false)
-    const apne = alleGrunnlag(r).filter(([, g]) => g.type === 'ousfar_vurdering' && !g.avklaring)
-    expect(apne.map(([sti]) => sti)).toEqual(['fra.formoverganger[0]', 'fra.dosevalg.praktisk'])
-    // Selv en registrert godkjenning gir ingen plan før valgene er avklart.
-    const kopi = structuredClone(r)
-    simulerGodkjenning(kopi, { id: kopi.id, versjon: kopi.versjon, fingeravtrykk: fingeravtrykk(kopi) }, '2026-11-04')
-    expect(godkjenningsfeil(kopi).join(' ')).toMatch(/åpne valg/)
+    expect(r.godkjenning.historikk.some((h) => h.status === 'klinisk_godkjent' && h.regelversjon === 14)).toBe(false)
+    expect(alleGrunnlag(r).filter(([, g]) => g.type === 'ousfar_vurdering' && !g.avklaring)).toEqual([])
+    // Avklaringene er kontrollørens (B2.1 og B2.2), for nøyaktig versjon 14.
+    const avklart = (sti: string) => alleGrunnlag(r).find(([s]) => s === sti)![1] as { avklaring: Avklaring }
+    expect(avklart('fra.formoverganger[0]').avklaring).toEqual(B2_KONTROLL_0411.overgang)
+    expect(avklart('fra.dosevalg.praktisk').avklaring).toEqual(B2_KONTROLL_0411.praktisk)
+    for (const a of [B2_KONTROLL_0411.overgang, B2_KONTROLL_0411.praktisk]) expect([a.rolle, a.regelversjon]).toEqual(['uavhengig_kontrollor', 14])
+    // B2.6 nei: én form per dose.
+    expect(r.plan.forlop[0]!.formoverganger![0]!.samtidig).toBeUndefined()
+    // Uten en registrert godkjenning gir regelen ingen plan.
+    expect(godkjenningsfeil(r).length).toBeGreaterThan(0)
   })
 
   it('endrer ikke versjon 13: samme fingeravtrykk, fortsatt godkjent og ikke trukket', () => {

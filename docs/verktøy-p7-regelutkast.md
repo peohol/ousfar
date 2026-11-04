@@ -37,7 +37,7 @@ Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel by
 | `seponering-mirtazapin` | seponering | mirtazapin → – | bare tekstlig veiledning | 0 | kontrollert, ikke godkjent | 0 |
 | `seponering-moklobemid` | seponering | moklobemid → – | bare tekstlig veiledning | 0 | kontrollert, ikke godkjent | 0 |
 | `seponering-paroksetin` | seponering | paroksetin → – | bare tekstlig veiledning | 0 | kontrollert, ikke godkjent | 0 |
-| `seponering-escitalopram-tabletter-og-draper` | seponering | escitalopram → – | beregnbar etter faglig avklaring | 2 | til faglig kontroll | 15 |
+| `seponering-escitalopram-tabletter-og-draper` | seponering | escitalopram → – | beregnbar etter faglig avklaring | 0 | til faglig kontroll | 15 |
 
 ## Kilder
 
@@ -2730,7 +2730,7 @@ Hentet og lest 28.10.2026 og 03.11.2026. Kontrollsummen (SHA-256) er av dokument
 
 ## Seponering av escitalopram med tabletter og dråper, gjentatt prosentvis nedtrapping
 
-`seponering-escitalopram-tabletter-og-draper`, versjon 14, fingeravtrykk `3e6c859a46e23cceeedb2708f85e64a937939c99a0eaafe80920a931b587dbb0`. Seponering: escitalopram → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`seponering-escitalopram-tabletter-og-draper`, versjon 14, fingeravtrykk `01b2fb560a8defe0114f9552d619bc6bf15e27b07fa6352d6331d9beb500721f`. Seponering: escitalopram → –. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 28.10.2026, Claude Code) → til faglig kontroll (versjon 1, 28.10.2026, Claude Code) → utkast (versjon 2, 28.10.2026, Claude Code) → til faglig kontroll (versjon 2, 28.10.2026, Claude Code) → utkast (versjon 3, 29.10.2026, Claude Code) → til faglig kontroll (versjon 3, 29.10.2026, Claude Code) → utkast (versjon 4, 29.10.2026, Claude Code) → til faglig kontroll (versjon 4, 29.10.2026, Claude Code) → utkast (versjon 5, 30.10.2026, Claude Code) → til faglig kontroll (versjon 5, 30.10.2026, Claude Code) → utkast (versjon 6, 30.10.2026, Claude Code) → til faglig kontroll (versjon 6, 30.10.2026, Claude Code) → utkast (versjon 7, 30.10.2026, Claude Code) → til faglig kontroll (versjon 7, 30.10.2026, Claude Code) → utkast (versjon 8, 30.10.2026, Claude Code) → til faglig kontroll (versjon 8, 30.10.2026, Claude Code) → utkast (versjon 9, 31.10.2026, Claude Code) → til faglig kontroll (versjon 9, 31.10.2026, Claude Code) → utkast (versjon 10, 31.10.2026, Claude Code) → til faglig kontroll (versjon 10, 31.10.2026, Claude Code) → utkast (versjon 11, 31.10.2026, Claude Code) → til faglig kontroll (versjon 11, 31.10.2026, Claude Code) → kontrollert, ikke godkjent (versjon 11, 31.10.2026, ChatGPT (uavhengig fagkontrollør)) → utkast (versjon 12, 03.11.2026, Claude Code) → til faglig kontroll (versjon 12, 03.11.2026, Claude Code) → kontrollert, ikke godkjent (versjon 12, 03.11.2026, ChatGPT (uavhengig fagkontrollør)) → utkast (versjon 13, 03.11.2026, Claude Code) → til faglig kontroll (versjon 13, 04.11.2026, Claude Code) → klinisk godkjent (versjon 13, 04.11.2026, ChatGPT (uavhengig kontrollør)) → utkast (versjon 14, 04.11.2026, Claude Code) → til faglig kontroll (versjon 14, 04.11.2026, Claude Code).
 
