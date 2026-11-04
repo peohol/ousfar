@@ -1,6 +1,6 @@
 # Kurateringskøen
 
-Oppdatert 2026-11-04T10:27:15.563Z. Stoffene sist lest fra databasen 2026-11-03T19:26:48.792Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
+Oppdatert 2026-11-04T11:26:23.860Z. Stoffene sist lest fra databasen 2026-11-03T19:26:48.792Z. Lages av arbeidsflyten «Kurateringskø»; se `docs/kurateringsko.md` på main.
 
 Klar: 96 · Publisert: 16 · Blokkert: 6 · Utenfor køen: 1
 
@@ -14,11 +14,11 @@ Ingen kurateringer venter.
 
 ## Blokkert
 
-- **amfetamin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.
-- **buprenorfin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.
-- **fentanyl**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.
+- **amfetamin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, godkjent); den må avsluttes først.
+- **buprenorfin**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, godkjent); den må avsluttes først.
+- **fentanyl**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, godkjent); den må avsluttes først.
 - **metamfetamin**: Stoffet har ingen publisert fagside å kuratere.
-- **metylfenidat**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.
+- **metylfenidat**: Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.
 - **okskarbazepin**: Skrivefasen stoppet av et automatisk sikkerhetsfilter; venter på avgjørelse fra fagansvarlig.
 
 ## Køen
