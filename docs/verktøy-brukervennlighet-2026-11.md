@@ -224,7 +224,7 @@ Arbeidet er ferdig når D har dokumentert alle punktene i `docs/verktøy-brukerv
 | # | Kriterium (bestillingen) | Hvordan det måles |
 | --- | --- | --- |
 | 1 | Vesentlig raskere | Antall nødvendige handlinger fra første valg til plan for K0-01, K0-09, K0-11 og K0-12: minst halvert. |
-| 2 | Forståelige spørsmål | ChatGPT har kontrollert katalogtabellen (§4.4); ingen regel-ID, «Gjelder», «omfang» eller kode i det klinikeren ser (test over all synlig tekst). |
+| 2 | Forståelige spørsmål | ChatGPT har kontrollert katalogtabellen (§4.4) og avtrykkene er ført; da er det ingen regel-ID, «Gjelder», «omfang» eller kode i det klinikeren ser (test over all synlig tekst for regler med kontrollert katalog). Reservevisningen (S5) er unntatt fordi den med vilje viser regelens egne tekster og svar; testen sjekker i stedet at den bare brukes for regler uten kontrollert avtrykk. Kriteriet er nådd først når hver godkjent regel har kontrollert avtrykk. |
 | 3 | Bare relevante spørsmål | Test: ingen betinget spørsmål eller bekreftelse vises før svaret som utløser det; avledede og forbehold vises ikke som spørsmål. Test for reservevisningen (S5): for en regel uten kontrollert katalogavtrykk vises hver betingelse med regelens fullstendige tekst, opprinnelige type og svar, ingen generisk «Gjelder dette pasienten?», og motorinndataene er de samme som i dagens skjema. |
 | 4 | Tidlig beskjed | Negative forløp (escitalopram 15 mg, sertralin, et bytte uten regel, Lithionit 83 mg, sperre): stoppforklaring vises etter steg 2, før pasientspørsmål. |
 | 5 | Praktiske formuleringer velges automatisk | K0-01 fra tablett gir plan uten formvalg (etter B2); forløp med bare én mulig form spør ikke om form. |
