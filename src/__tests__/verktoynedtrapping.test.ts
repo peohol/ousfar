@@ -223,9 +223,9 @@ describe('Dekningen (P7.1)', () => {
     for (const d of NEDTRAPPINGSDEKNING) {
       const t = tilgjengelighet(TRAPPE_NED, { fra: { nokkel: d.nokkel, formulering: 'standard' } })
       if (d.status === 'regel_til_kontroll' || d.status === 'bare_fagtekst') {
-        // Fagteksten for bupropion og agomelatin er klinisk godkjent og vises, og vortioksetin kan beregnes; K1-versjonen er til kontroll; de andre er kontrollert og ikke godkjent.
+        // Fagteksten for bupropion og agomelatin er klinisk godkjent og vises, og vortioksetin og K1-versjonen av escitalopram (godkjent 04.11.2026) kan beregnes; de andre er kontrollert og ikke godkjent.
         const ider = seponeringsregler(d.nokkel).map((r) => r.id)
-        const status = ider.some((id) => GODKJENT_FAGTEKST.includes(id)) ? 'fagtekst' : ider.some((id) => id in GODKJENT) ? 'tilgjengelig' : ider.some((id) => K1.includes(id)) ? 'til_kontroll' : 'ikke_godkjent'
+        const status = ider.some((id) => GODKJENT_FAGTEKST.includes(id)) ? 'fagtekst' : ider.some((id) => id in GODKJENT || K1.includes(id)) ? 'tilgjengelig' : 'ikke_godkjent'
         expect(t.status, d.nokkel).toBe(status)
       } else {
         expect(t, d.nokkel).toEqual({ status: 'ikke_stottet', regler: [], grunner: [dekningstekst(d)] })
@@ -1299,13 +1299,15 @@ describe('Aksepttesten med norske preparater (P7.5, del E.2)', () => {
     expect(sett.filter((t) => t.nokkel === 'escitalopram').map((t) => t.form.navn)).toEqual(expect.arrayContaining(['Tablett', 'Dråper, oppløsning']))
   })
 
-  it('gir en klinisk plan bare i den godkjente cellen for vortioksetin, aldri en plan til null, og hver plan ender med individuell avslutning', () => {
-    // Den eneste godkjente beregnbare P7-regelen er vortioksetin, bare 20 → 15 mg ved kort behandlingstid med tabletter (gjennomgangen av f77e1a9).
+  it('gir en klinisk plan bare i de godkjente cellene for vortioksetin og escitalopram (K1), aldri en plan til null uten godkjent avslutning, og hver annen plan ender med individuell avslutning', () => {
+    // De godkjente beregnbare P7-reglene er vortioksetin, bare 20 → 15 mg ved kort behandlingstid med tabletter (gjennomgangen av f77e1a9),
+    // og escitalopram versjon 13 fra K1 (godkjent 04.11.2026). Aksepttesten regner med motoren som viser delplaner; i verktøyet er
+    // escitalopram enten komplett til seponering fra dråper eller «komplett plan ikke tilgjengelig» (`verktoyk1.test.ts`).
     const kliniske = sett.flatMap((t) => t.resultater.filter((r) => r.plan?.klinisk).map((r) => `${t.nokkel} ${t.form.kode} ${r.startdose_mg} ${r.scenario}`))
     // (h) er (a) med forskriverens valg der et trinn ikke kan gis; med vortioksetin trengs ingen valg, så planen er den samme. Videreføringen (f) fra 15 mg er ikke klinisk.
-    expect(kliniske).toEqual(['vortioksetin null 20 a', 'vortioksetin null 20 h'])
+    expect(kliniske).toEqual(['escitalopram 53 20 a', 'escitalopram 53 20 h', 'escitalopram 748 20 a', 'escitalopram 748 20 b', 'escitalopram 748 20 h', 'vortioksetin null 20 a', 'vortioksetin null 20 h'])
     for (const p of planer) {
-      if (p.klinisk) expect(planform(p).fra).toEqual(['fra dag 1: 15 mg = 1 tablett à 15 mg', EN_REDUKSJON])
+      if (p.klinisk && !K1.includes(p.regel.id)) expect(planform(p).fra).toEqual(['fra dag 1: 15 mg = 1 tablett à 15 mg', EN_REDUKSJON])
       if (p.status !== 'doseplan') continue
       const linjer = planform(p).fra!
       const sist = linjer.at(-1)!

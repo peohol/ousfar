@@ -12,16 +12,16 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.125.4',
+    versjon: '1.125.2',
     dato: '2026-11-03',
-    sammendrag: 'Forslag til nedtrapping av escitalopram med dråper helt til seponering, sendt til faglig kontroll',
+    sammendrag: 'Nedtrapping av escitalopram med dråper helt til seponering, godkjent for en avgrenset pasientgruppe',
     typer: ['Fag'],
     omfang: 'Mindre omfang',
     gjelder: ['verktoy'],
     punkter: [
-      'Gjelder bare administratorene, som fortsatt er de eneste som ser verktøyene. Ingen regel er godkjent, og verktøyet gir ingen beregning før den faglige kontrollen er ferdig.',
-      'Escitalopram har fått en ny versjon som forslag: med dråper (1 mg per dråpe) går planen ned til 3 mg, så 2 og 1 mg, og 1 mg holdes et helt trinn før seponering. Planen har vurdering før hver endring og 7, 14 og 28 dager etter siste dose. Pasienter som bruker tabletter, kan gå over til dråper med samme dose.',
-      'Peder har avgjort at escitalopram kan stoppes fra 1 mg hos voksne under 65 år med kort behandlingstid, uten tidligere seponeringsplager. Den faglige kontrollen har godtatt de siste trinnene og oppfølgingen for dette forløpet, men regelen er ennå ikke godkjent som helhet. Pasienter utenfor gruppen får ingen plan. For nortriptylin, amitriptylin, sertralin og escitalopram etter lang behandlingstid finnes ingen dokumentert metode helt ned, så verktøyet sier «Komplett plan ikke tilgjengelig» i stedet for å vise doser.',
+      'Gjelder bare administratorene, som fortsatt er de eneste som ser verktøyene. Sperrene for verktøyene er uendret.',
+      'Escitalopram har fått en ny versjon: med dråper (1 mg per dråpe) går planen ned til 3 mg, så 2 og 1 mg, og 1 mg holdes et helt trinn før seponering. Planen har vurdering før hver endring og 7, 14 og 28 dager etter siste dose. Pasienter som bruker tabletter, kan gå over til dråper med samme dose.',
+      'Peder har avgjort at escitalopram kan stoppes fra 1 mg hos voksne under 65 år med kort behandlingstid, uten tidligere seponeringsplager. Den faglige kontrollen har godkjent planen fra 10 eller 20 mg for denne gruppen, når interaksjoner og kontraindikasjoner er avklart. Siste dose holdes og vurderes for hver pasient før seponering. Pasienter utenfor gruppen får ingen plan. For nortriptylin, amitriptylin, sertralin og escitalopram etter lang behandlingstid finnes ingen dokumentert metode helt ned, så verktøyet sier «Komplett plan ikke tilgjengelig» i stedet for å vise doser.',
     ],
     utenVarsel: true,
   },

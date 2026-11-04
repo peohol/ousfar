@@ -18,8 +18,10 @@
  * avgjort faglig av Peder 04.11.2026 for et avgrenset omfang
  * ({@link K1_SLUTTDOSE_PEDER}). Det minste trinnet og oppfølgingen etter
  * seponering (K1.10 og K1.12) er avklart av den uavhengige kontrolløren
- * samme dag ({@link K1_KONTROLL_0411}). Regelen har ingen åpne valg, men er
- * ikke klinisk godkjent før den samlede kontrollen.
+ * samme dag ({@link K1_KONTROLL_0411}). Kontrolløren godkjente deretter
+ * nøyaktig versjon 13 klinisk i et snevert omfang ({@link K1_GODKJENNING_0411});
+ * alle andre tilfeller og stoffer gir fortsatt «Komplett plan ikke
+ * tilgjengelig».
  */
 import { h, KONTROLLOREN, NICE, RCPSYCH, steg, utsagn } from './bygg'
 import type { Avklaring, Fase, Forlop, Grunnlag, Kildehenvisning, Parameter, Regel, Utsagn, Vurderingspunkt } from './modell'
@@ -55,6 +57,14 @@ export interface Avslutningsforslag {
    * åpent forslag til kontrolløren.
    */
   avklaringer?: { sluttdose?: Avklaring; minste_trinn?: Avklaring; oppfolging?: Avklaring }
+  /**
+   * Kontrollørens kliniske godkjenning av den nye versjonen, når den er gitt:
+   * bundet til fingeravtrykket kontrolløren oppga og med kontrollørens
+   * avgrensning. Uten den står versjonen til faglig kontroll. Stemmer ikke
+   * fingeravtrykket med regelen, er godkjenningen ugyldig, og motoren gir
+   * ingen plan (`godkjenningsfeil`).
+   */
+  godkjent?: { dato: string; kontroll: string; fingeravtrykk: string; avgrensning: string }
   /** Dager etter siste dose med oppfølging, hvert med grunnlaget for dagen. */
   etter_seponering: { dager: number; begrunnelse: string; henvisninger: Kildehenvisning[] }[]
   /** Kildene for seponeringen og oppfølgingen i preparatomtalen. */
@@ -81,7 +91,7 @@ const parameter = (verdi: number, enhet: Parameter['enhet'], grunnlag: Grunnlag)
  * Peders faglige avgjørelse på K1.9 (sluttdosen for escitalopram med dråper),
  * med ordlyden fra beslutningskortet i K0-tråden 04.11.2026 kl. 03:07 UTC.
  * Den gjelder bare K1.9; det minste trinnet (K1.10) og oppfølgingsdagene
- * (K1.12) er fortsatt åpne, og regelen er ikke godkjent.
+ * (K1.12) er avklart av kontrolløren, og regelen er godkjent av kontrolløren.
  */
 export const K1_9_AVGJORELSE = {
   dato: '2026-11-04',
@@ -105,7 +115,7 @@ export const K1_SLUTTDOSE_PEDER: Avklaring = {
 /**
  * Kontrollørens uavhengige avklaring av K1.10 og K1.12 i kontrollen av
  * 80e557b 04.11.2026, for nøyaktig dette escitalopramforløpet og omfanget.
- * Ingen samlet godkjenning av regelen.
+ * Ingen samlet godkjenning av regelen; den er {@link K1_GODKJENNING_0411}.
  */
 const KONTROLLEN_0411 = { ...KONTROLLOREN, dato: '2026-11-04', regelversjon: 13 } as const
 export const K1_KONTROLL_0411: { minste_trinn: Avklaring; oppfolging: Avklaring } = {
@@ -121,7 +131,22 @@ export const K1_KONTROLL_0411: { minste_trinn: Avklaring; oppfolging: Avklaring 
   },
 }
 
-/** Escitalopram med dråper: 3 → 2 → 1 mg og seponering fra 1 mg; sluttdosen avgjort av Peder (K1.9), resten forslag til kontrolløren. */
+/**
+ * Kontrollørens samlede kontroll av 255dd94 04.11.2026 (PR #323, kommentar
+ * 6622813839): positiv faglig konklusjon og klinisk godkjenning av nøyaktig
+ * escitalopram versjon 13 med dette fingeravtrykket, i kontrollørens snevre
+ * omfang. Ingen godkjenning av andre stoffer, pasientgrupper eller K1 som helhet.
+ */
+export const K1_GODKJENNING_0411 = {
+  dato: '2026-11-04',
+  kontroll: 'Kontrollørens samlede kontroll av 255dd94 04.11.2026 (PR #323, kommentar 6622813839)',
+  fingeravtrykk: 'e8a3c17edda10da43b1df4171a733a23133da50ebcda31cd71a771022a8a78d7',
+  avgrensning:
+    'et symptomstyrt, pragmatisk komplett forløp fra 10 eller 20 mg hos voksne under 65 år med kort behandlingstid, ingen tidligere seponeringsplager og avklarte interaksjoner og kontraindikasjoner, med hele Cipralex-dråper (1 mg per dråpe), valgt gradvis reduksjon til 3 → 2 → 1 mg, siste dose holdt og vurdert individuelt før 1 → 0, og fleksible kontrollpunkter 7, 14 og 28 dager etter siste dose. ' +
+    'Godkjenningen er ingen generell garanti mot seponeringsplager, ingen automatisk terskel for andre preparater eller pasientgrupper, og ingen fullført K1-dekning. 1 mg er en praktisk formuleringsterskel, ikke en dokumentert universell trygg seponeringsgrense.',
+} as const
+
+/** Escitalopram med dråper: 3 → 2 → 1 mg og seponering fra 1 mg; sluttdosen avgjort av Peder (K1.9), K1.10 og K1.12 avklart og regelen godkjent av kontrolløren. */
 export const K1_ESCITALOPRAM: Avslutningsforslag = {
   regel: 'seponering-escitalopram',
   fra_versjon: 12,
@@ -130,6 +155,7 @@ export const K1_ESCITALOPRAM: Avslutningsforslag = {
   minste_trinn: { fra_mg: 3, maks_prosent: 50 },
   sluttdose_mg: 1,
   avklaringer: { sluttdose: K1_SLUTTDOSE_PEDER, ...K1_KONTROLL_0411 },
+  godkjent: K1_GODKJENNING_0411,
   etter_seponering: [
     { dager: 7, begrunnelse: 'Seponeringssymptomer kommer vanligvis de første dagene etter seponering (preparatomtalen pkt. 4.4).', henvisninger: [K1_KILDER.symptomer] },
     { dager: 14, begrunnelse: 'Seponeringssymptomer går vanligvis over innen to uker (preparatomtalen pkt. 4.4).', henvisninger: [K1_KILDER.symptomer] },
@@ -306,11 +332,23 @@ export function medAvslutning(r: Regel, a: Avslutningsforslag): Regel {
       usikkerhet: [...r.fortolkning.usikkerhet.filter((u) => !erstattes.some((x) => x.test(u))), ...a.usikkerhet.map((u) => u.tekst)],
     },
     godkjenning: {
-      status: 'til_faglig_kontroll',
+      status: a.godkjent ? 'klinisk_godkjent' : 'til_faglig_kontroll',
       historikk: [
         ...r.godkjenning.historikk,
         steg('utkast', versjon, merknad, K1_DATO),
         steg('til_faglig_kontroll', versjon, tilKontroll, sisteAvklaring ?? K1_DATO),
+        ...(a.godkjent
+          ? [
+              {
+                ...KONTROLLOREN,
+                status: 'klinisk_godkjent' as const,
+                dato: a.godkjent.dato,
+                regelversjon: versjon,
+                fingeravtrykk: a.godkjent.fingeravtrykk,
+                merknad: `${a.godkjent.kontroll}: faglig akseptert og klinisk godkjent bare for nøyaktig denne regelversjonen og dette fingeravtrykket, avgrenset til ${a.godkjent.avgrensning}`,
+              },
+            ]
+          : []),
       ],
     },
   }

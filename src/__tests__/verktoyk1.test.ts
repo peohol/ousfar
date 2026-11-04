@@ -3,10 +3,10 @@
  * dråper helt til seponering (`src/verktoy/regler/k1.ts`), og
  * «komplett plan ikke tilgjengelig» ellers, med kontrollgrunnlaget
  * (`docs/verktøy-k1-nedtrapping-kontrollgrunnlag.md`). Testene viser at den
- * nye versjonen er et forslag til faglig kontroll med sluttdosen og det minste
- * trinnet som åpne valg, at planene i omfanget enten er komplette til
- * seponering fra 1 mg eller stopper uten doser, med de norske preparatene i
- * FEST, og at alle andre regler er uendret.
+ * nye versjonen er klinisk godkjent av kontrolløren, bundet til
+ * fingeravtrykket, at planene i omfanget uten simulert godkjenning enten er
+ * komplette til seponering fra 1 mg eller stopper uten doser, med de norske
+ * preparatene i FEST, og at alle andre regler er uendret.
  *
  * Alle doser er syntetiske; ingen pasientopplysninger.
  */
@@ -16,8 +16,8 @@ import { FORSLAG_K1, kjorKontrollkasus, KONTROLLFORSLAG, kontrollavvik, lagKontr
 import { KOMPLETT_IKKE_TILGJENGELIG } from '../verktoy/motor/plan'
 import { KOMPLETT } from '../verktoy/planvisning'
 import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from '../verktoy/regler/aksepttest'
-import { erKliniskGodkjent, fingeravtrykk } from '../verktoy/regler/godkjenning'
-import { K1_AVSLUTNINGER, K1_ESCITALOPRAM, K1_KONTROLL_0411, K1_SLUTTDOSE_PEDER, medAvslutning, medAvslutninger } from '../verktoy/regler/k1'
+import { erKliniskGodkjent, fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
+import { K1_AVSLUTNINGER, K1_ESCITALOPRAM, K1_GODKJENNING_0411, K1_KONTROLL_0411, K1_SLUTTDOSE_PEDER, medAvslutning, medAvslutninger } from '../verktoy/regler/k1'
 import { KILDER } from '../verktoy/regler/kilder'
 import { apneValg, avslutningFor, type Fase, type Regel } from '../verktoy/regler/modell'
 import { kontrollerRegelsett } from '../verktoy/regler/kontroll'
@@ -35,16 +35,39 @@ describe('Den nye versjonen av escitalopramregelen', () => {
   const for_ = i(NEDTRAPPINGSSETT_FOR_K1, ESC)
   const ny = i(NEDTRAPPINGSSETT, ESC)
 
-  it('er bare escitalopram, én versjon over versjon 12, til faglig kontroll og ikke godkjent', () => {
+  it('er bare escitalopram, én versjon over versjon 12, klinisk godkjent av kontrolløren for nøyaktig dette fingeravtrykket', () => {
     expect(K1_AVSLUTNINGER.map((a) => a.regel)).toEqual([ESC])
     expect(NEDTRAPPINGSSETT.versjon).toBe(NEDTRAPPINGSSETT_FOR_K1.versjon + 1)
     expect([for_.versjon, ny.versjon]).toEqual([12, 13])
-    expect(ny.godkjenning.status).toBe('til_faglig_kontroll')
-    expect(ny.godkjenning.historikk.slice(-2).map((s) => [s.status, s.regelversjon, s.rolle])).toEqual([
-      ['utkast', 13, 'utvikler'],
-      ['til_faglig_kontroll', 13, 'utvikler'],
+    expect(ny.godkjenning.status).toBe('klinisk_godkjent')
+    expect(ny.godkjenning.historikk.slice(-3).map((s) => [s.status, s.regelversjon, s.rolle, s.av])).toEqual([
+      ['utkast', 13, 'utvikler', 'Claude Code'],
+      ['til_faglig_kontroll', 13, 'utvikler', 'Claude Code'],
+      ['klinisk_godkjent', 13, 'uavhengig_kontrollor', 'ChatGPT (uavhengig kontrollør)'],
     ])
-    expect(erKliniskGodkjent(ny)).toBe(false)
+    expect(godkjenningsfeil(ny)).toEqual([])
+    expect(erKliniskGodkjent(ny)).toBe(true)
+    // Godkjenningen er kontrollørens, med kontrollørens fingeravtrykk, dato, kommentar og avgrensning.
+    const sist = ny.godkjenning.historikk.at(-1)!
+    expect(sist).toMatchObject({ dato: '2026-11-04', fingeravtrykk: 'e8a3c17edda10da43b1df4171a733a23133da50ebcda31cd71a771022a8a78d7' })
+    expect(K1_GODKJENNING_0411.fingeravtrykk).toBe(fingeravtrykk(ny))
+    expect(sist.merknad).toMatch(/^Kontrollørens samlede kontroll av 255dd94 04\.11\.2026 \(PR #323, kommentar 6622813839\): faglig akseptert og klinisk godkjent bare for nøyaktig denne regelversjonen og dette fingeravtrykket, avgrenset til /)
+    for (const del of ['fra 10 eller 20 mg hos voksne under 65 år med kort behandlingstid, ingen tidligere seponeringsplager', 'hele Cipralex-dråper (1 mg per dråpe)', '3 → 2 → 1 mg', 'vurdert individuelt før 1 → 0', '7, 14 og 28 dager', 'ingen automatisk terskel for andre preparater eller pasientgrupper', 'ingen fullført K1-dekning', 'ikke en dokumentert universell trygg seponeringsgrense'])
+      expect(sist.merknad).toContain(del)
+    // Utvikleren har ikke rollen som kontrollør, og ingen andre steg i versjon 13 er fra kontrolløren eller Peder.
+    expect(ny.godkjenning.historikk.filter((s) => s.rolle !== 'utvikler').map((s) => s.av)).not.toContain('Claude Code')
+  })
+
+  it('mister godkjenningen når regelen endres etter den, eller godkjenningen gjelder et annet fingeravtrykk', () => {
+    const endret = structuredClone(ny)
+    const a = avslutningFor(nedtrapping(endret))!
+    a.fra_hoyst_mg.verdi = 2
+    expect(erKliniskGodkjent(endret)).toBe(false)
+    expect(godkjenningsfeil(endret)).toContain('Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke); den må kontrolleres på nytt.')
+    const annet = medAvslutning(for_, { ...K1_ESCITALOPRAM, godkjent: { ...K1_GODKJENNING_0411, fingeravtrykk: '0'.repeat(64) } })
+    expect(erKliniskGodkjent(annet)).toBe(false)
+    const uten = medAvslutning(for_, { ...K1_ESCITALOPRAM, godkjent: undefined })
+    expect([uten.godkjenning.status, erKliniskGodkjent(uten), fingeravtrykk(uten)]).toEqual(['til_faglig_kontroll', false, fingeravtrykk(ny)])
   })
 
   it('har sluttdosen avklart av Peder (K1.9) og det minste trinnet og oppfølgingsdagene avklart av kontrolløren (K1.10, K1.12), uten åpne valg', () => {
@@ -69,11 +92,11 @@ describe('Den nye versjonen av escitalopramregelen', () => {
     expect(K1_SLUTTDOSE_PEDER.merknad).toContain('«Gjelder voksne under 65 år med kort behandlingstid, uten tidligere seponeringsplager. Gir første komplette nedtrapping (fra 10 eller 20 mg), etter ChatGPTs kontroll av resten.»')
     expect(K1_SLUTTDOSE_PEDER.merknad).toContain('«1 mg er 5–10 % av startdosen. Hvert trinn styres av symptomer, og det følges opp etter 7, 14 og 28 dager. Ved plager vurderes resten individuelt.»')
     expect(JSON.stringify(ny.plan).match(/faglig_beslutningstaker/g)).toHaveLength(2)
-    // Ingen godkjenning av regelen: historikken har bare utviklerens steg i versjon 13.
-    expect(JSON.stringify(ny.godkjenning.historikk.filter((s) => s.regelversjon === 13))).not.toMatch(/uavhengig_kontrollor|faglig_beslutningstaker/)
-    expect(ny.godkjenning.status).toBe('til_faglig_kontroll')
-    expect(ny.godkjenning.historikk.at(-1)).toMatchObject({ status: 'til_faglig_kontroll', dato: '2026-11-04' })
-    expect(ny.godkjenning.historikk.at(-1)!.merknad).toMatch(/Avklart: sluttdosen \(K1\.9\), det minste trinnet \(K1\.10\), oppfølgingsdagene \(K1\.12\)\. Ingen åpne valg; til samlet faglig kontroll av regelen\. Ikke klinisk godkjent\./)
+    // Før godkjenningen var regelen avklart uten åpne valg; Peder står ikke som godkjenner i historikken.
+    expect(JSON.stringify(ny.godkjenning.historikk.filter((s) => s.regelversjon === 13).slice(0, -1))).not.toMatch(/uavhengig_kontrollor|faglig_beslutningstaker/)
+    expect(JSON.stringify(ny.godkjenning)).not.toMatch(/faglig_beslutningstaker|Peder/)
+    expect(ny.godkjenning.historikk.at(-2)).toMatchObject({ status: 'til_faglig_kontroll', dato: '2026-11-04' })
+    expect(ny.godkjenning.historikk.at(-2)!.merknad).toMatch(/Avklart: sluttdosen \(K1\.9\), det minste trinnet \(K1\.10\), oppfølgingsdagene \(K1\.12\)\. Ingen åpne valg; til samlet faglig kontroll av regelen\. Ikke klinisk godkjent\./)
     // Begrunnelsen for 1 mg → 0 er en individuell klinisk vurdering, ikke at den minste hele dråpen er en trygg terskel.
     const slutt = avslutningFor(nedtrapping(ny))!.fra_hoyst_mg.grunnlag
     expect(slutt.type === 'ousfar_vurdering' && slutt.begrunnelse).toMatch(/individuell klinisk vurdering i det avgrensede forløpet.*ikke i seg selv en trygg terskel/)
@@ -158,8 +181,19 @@ describe('Versjon og fingeravtrykk', () => {
     expect(fingeravtrykk(i(NEDTRAPPINGSSETT, 'seponering-agomelatin'))).toBe('6d42863f3573fb2e0d6dbffd27ff78a7f1c2b539c8dce2cfcd36ad417b61a2d1')
   })
 
-  it('godkjenner ingen regel i appen: den simulerte godkjenningen finnes bare på kopier', () => {
-    for (const id of [ESC, 'seponering-nortriptylin', 'seponering-amitriptylin', 'seponering-sertralin']) expect(erKliniskGodkjent(i(REGELSETT, id)), id).toBe(false)
+  it('godkjenner bare escitalopram versjon 13 i appen; nortriptylin, amitriptylin, sertralin og den langsomme varianten er ikke godkjent', () => {
+    expect(erKliniskGodkjent(i(REGELSETT, ESC))).toBe(true)
+    for (const id of ['seponering-escitalopram-langsom', 'seponering-nortriptylin', 'seponering-amitriptylin', 'seponering-sertralin']) expect(erKliniskGodkjent(i(REGELSETT, id)), id).toBe(false)
+  })
+
+  it('kjører kasusene for escitalopram uten simulert godkjenning, gjennom verktøyets egen tilgjengelighet; bare kasusene med endret regel bruker en kopi', () => {
+    const esc = FORSLAG_K1.kasus.filter((k) => k.valg.fra?.nokkel === 'escitalopram')
+    expect(esc.filter((k) => k.regel).map((k) => k.id)).toEqual(['K1-22', 'K1-23'])
+    expect(JSON.stringify(esc.filter((k) => !k.regel).map((k) => k.id))).toContain('K1-01')
+    // Kasusene for de andre stoffene viser at de stopper også om de ble godkjent.
+    for (const k of FORSLAG_K1.kasus.filter((x) => x.valg.fra?.nokkel !== 'escitalopram' && x.regel)) expect(k.regel!.endre!.hva, k.id).toMatch(/^simulert klinisk godkjenning/)
+    // K1-23: den registrerte godkjenningen gjelder ikke en endret kopi.
+    expect(kasus('K1-23').regel!.endre!.hva).toMatch(/^den registrerte godkjenningen av versjon 13; deretter sluttdosen 1 → 2 mg på en kopi$/)
   })
 })
 
@@ -231,8 +265,9 @@ describe('Ende-til-ende med de norske preparatene i FEST', () => {
       const preparater = r.status === 'doseplan' ? r.forlop[0]!.perioder.flatMap((p) => p.elementer.flatMap((e) => e.preparater)) : []
       expect(preparater.length, id).toBeGreaterThan(0)
       expect(preparater.every((p) => p.marked === 'markedsfort' && p.registrering === 'registrert' && p.legemiddelform?.kode === '748'), id).toBe(true)
-      // Fingeravtrykket er den simulert avklarte kopiens, ikke e8a3c17e… for regelen med åpne valg.
-      expect(tekst, id).toMatch(new RegExp(`Regel ${ESC}, versjon 13, fingeravtrykk [0-9a-f]{12}\\n`))
+      // Planen er beregnet etter den registrert godkjente regelen, med fingeravtrykket kontrolløren godkjente.
+      expect(tekst, id).toMatch(new RegExp(`Regel ${ESC}, versjon 13, fingeravtrykk ${K1_GODKJENNING_0411.fingeravtrykk.slice(0, 12)}`))
+      expect(kasus(id).regel, id).toBeUndefined()
       expect(tekst, id).not.toMatch(/^(Dag|Fra dag) .*tablett/im)
     }
     for (const id of ['K1-06', 'K1-07', 'K1-08', 'K1-14', 'K1-15', 'K1-17', 'K1-18']) {
@@ -262,9 +297,12 @@ describe('Ende-til-ende med de norske preparatene i FEST', () => {
     }
   })
 
-  it('kontrollgrunnlaget viser ingen tekst fra Psychiatrienet, har ingen avvik, sier at ingen regel er godkjent og stiller sluttdosen som spørsmål uten forhåndsgodkjenning', () => {
+  it('kontrollgrunnlaget viser ingen tekst fra Psychiatrienet, har ingen avvik, sier hva som er godkjent og at K1-milepælen ikke er nådd, uten forhåndsgodkjenning fra Peder', () => {
     const tekst = les(FORSLAG_K1.fil)
-    expect(tekst).toContain('**Ingen regel er godkjent eller aktivert.**')
+    expect(tekst).toContain('**Escitalopram versjon 13 er klinisk godkjent av kontrolløren 04.11.2026, bare i et snevert omfang.**')
+    expect(tekst).toContain('**K1-milepælen er ikke nådd.** Ett virkestoff med to startdoser oppfyller ikke målet om to ulike vanlige nedtrappingsscenarier i relevant bredde.')
+    expect(tekst).toContain('Kontrollørens samlede kontroll av 255dd94 04.11.2026 (PR #323, kommentar 6622813839)')
+    expect(tekst).toContain(`| \`${ESC}\` | 13 | \`${K1_GODKJENNING_0411.fingeravtrykk}\` | kontrollert og godkjent i oppgitt omfang | ja, godkjent 04.11.2026 | ingen |`)
     expect(tekst).not.toMatch(/psychiatrienet\.(nl|org|com)/i)
     expect(tekst).not.toContain('**avvik:**')
     // Peders avgjørelse står ordrett og gjelder bare K1.9; ingen påstand om at han har godkjent noe annet.

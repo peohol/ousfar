@@ -55,6 +55,8 @@ describe('hva de godkjente reglene bygger på', () => {
       'kryssnedtrapping-sertralin-mirtazapin v10',
       'seponering-agomelatin v1',
       'seponering-bupropion v5',
+      // Godkjent av kontrolløren 04.11.2026 i K1 (`regler/k1.ts`).
+      'seponering-escitalopram v13',
       'seponering-vortioksetin v12',
     ])
   })
@@ -67,7 +69,9 @@ describe('hva de godkjente reglene bygger på', () => {
     expect(regel('seponering-bupropion').beregning).toBe(false)
     expect(regel('seponering-agomelatin').beregning).toBe(false)
     // Tekstreglene bygger ingen plan av preparatene, så FEST kontrolleres bare for de beregnbare.
-    expect(virkestofferForFest(REGLER)).toEqual(['aripiprazol', 'mirtazapin', 'paliperidon', 'sertralin', 'vortioksetin'])
+    expect(virkestofferForFest(REGLER)).toEqual(['aripiprazol', 'escitalopram', 'mirtazapin', 'paliperidon', 'sertralin', 'vortioksetin'])
+    // Escitalopram (K1) bygger også på preparatomtalen for dråpene, så endringer i den fanges opp.
+    expect([...regel('seponering-escitalopram').kilder]).toContain('dmp-cipralex-draper')
   })
 
   it('gir krever vurdering bare når endringen treffer en godkjent regel og sier noe om innholdet', () => {

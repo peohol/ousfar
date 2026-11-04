@@ -59,8 +59,10 @@ describe('Regelversjonene til kontroll', () => {
       expect(kontrollutfall(r), k.id).toBe('ikke_godkjent')
       expect(r.godkjenning.historikk.some((s) => s.av === SIMULERT_KONTROLLOR), k.id).toBe(false)
       const t = tilgjengelighet(verktoy, { fra: { nokkel: r.fra!.type === 'virkestoff' ? r.fra!.nokkel : '', formulering: 'standard' } })
-      // Appen bruker K1-versjonen av escitalopram, til faglig kontroll; heller ikke den gir en beregning.
-      expect(t.status, k.id).toBe(r.fra!.type === 'virkestoff' && r.fra!.nokkel === 'escitalopram' ? 'til_kontroll' : 'ikke_godkjent')
+      // Appen bruker K1-versjonen av escitalopram (versjon 13, godkjent 04.11.2026), aldri versjonen her.
+      const esc = r.fra!.type === 'virkestoff' && r.fra!.nokkel === 'escitalopram'
+      expect(t.status, k.id).toBe(esc ? 'tilgjengelig' : 'ikke_godkjent')
+      if (esc) expect(t.regler.map((x) => `${x.id} v${x.versjon}`), k.id).toEqual(['seponering-escitalopram v13'])
     }
   })
 

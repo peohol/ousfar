@@ -64,11 +64,13 @@ describe('Kombinasjonene', () => {
     }
   })
 
-  it('gir beregning bare for kombinasjonene de fire godkjente reglene med beregning gjelder', () => {
+  it('gir beregning bare for kombinasjonene de fem godkjente reglene med beregning gjelder', () => {
     const beregning = [...ALLE].flatMap(([id, ks]) => ks.filter((k) => k.utfall === 'beregning').map((k) => `${id}: ${k.valg.fra.nokkel}/${k.valg.fra.formulering}${k.valg.til ? ` → ${k.valg.til.nokkel}/${k.valg.til.formulering}` : ''}`))
     expect(beregning.sort()).toEqual(
       [
         'trappe-ned-antidepressiv: vortioksetin/standard',
+        // Escitalopram versjon 13 fra K1, godkjent 04.11.2026.
+        'trappe-ned-antidepressiv: escitalopram/standard',
         'bytte-antidepressiv: sertralin/standard → mirtazapin/standard',
         'bytte-antipsykotikum: aripiprazol/standard → aripiprazol/LA',
         'bytte-antipsykotikum: paliperidon/standard → paliperidon/ER',

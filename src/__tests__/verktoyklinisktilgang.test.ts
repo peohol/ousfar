@@ -48,6 +48,12 @@ const GODKJENTE: Record<string, { sett: string; versjon: number; fingeravtrykk: 
   'seponering-agomelatin': { sett: NEDTRAPPINGSSETT.id, versjon: 1, fingeravtrykk: '6d42863f3573fb2e0d6dbffd27ff78a7f1c2b539c8dce2cfcd36ad417b61a2d1', beregning: false },
 }
 
+/**
+ * Regler kontrolløren har godkjent etter leveransen, i appens regelsett: escitalopram versjon 13 fra K1
+ * (04.11.2026, `regler/k1.ts`), testet i `verktoyk1.test.ts`. Verktøyene kan gi en beregning etter dem.
+ */
+const GODKJENT_ETTER_LEVERANSEN = ['seponering-escitalopram']
+
 const SETTENE = [PILOTSETT, NEDTRAPPINGSSETT, SAMMENLIGNINGSSETT]
 const ALLE = SETTENE.flatMap((s) => s.regler.map((r) => ({ sett: s, r })))
 const ANDRE = ALLE.filter(({ r }) => !(r.id in GODKJENTE))
@@ -171,7 +177,8 @@ describe('Klinisk tilgjengelige regler i den første avgrensede leveransen (P4.8
   })
 
   it('gir i verktøyene en beregning bare etter de godkjente reglene, for hvert virkestoff, hver formulering og hvert bytte', () => {
-    const godkjente = new Set(Object.keys(GODKJENTE))
+    const godkjente = new Set([...Object.keys(GODKJENTE), ...GODKJENT_ETTER_LEVERANSEN])
+    for (const id of GODKJENT_ETTER_LEVERANSEN) expect(erKliniskGodkjent(REGELSETT.regler.find((r) => r.id === id)!), id).toBe(true)
     const sett = new Set<string>()
     for (const v of VERKTOY) {
       const valgene = virkestoffvalg(v).flatMap((x) => x.formuleringer.map((formulering) => ({ nokkel: x.nokkel, formulering })))
@@ -279,8 +286,8 @@ describe('Klinisk tilgjengelige regler i den første avgrensede leveransen (P4.8
           }
         }
       }
-      // Prøven er ikke tom: hver av de 24 vises i et verktøy, unntatt den langsomme vortioksetinregelen, der verktøyet viser den godkjente hovedregelen.
-      expect([...iVerktoyene].sort()).toEqual(IKKE_GODKJENTE.map(({ r }) => r.id).filter((id) => id !== 'seponering-vortioksetin-langsom').sort())
+      // Prøven er ikke tom: hver av de 24 vises i et verktøy, unntatt de langsomme variantene av vortioksetin og escitalopram, der verktøyet viser den godkjente hovedregelen.
+      expect([...iVerktoyene].sort()).toEqual(IKKE_GODKJENTE.map(({ r }) => r.id).filter((id) => !['seponering-vortioksetin-langsom', 'seponering-escitalopram-langsom'].includes(id)).sort())
     })
 
     it('godtar ikke en vurdering som ikke lenger stemmer med regelen, eller som mangler fingeravtrykk', () => {
