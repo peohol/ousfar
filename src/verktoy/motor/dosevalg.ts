@@ -145,8 +145,14 @@ function innenforRammene(elementer: readonly Doseelement[]): boolean {
   return [...sum].every(([d, n]) => n <= RAMME[d])
 }
 
-/** Dråpene over preferansen i dosen, til sammen. */
-const draperOver = (elementer: readonly Doseelement[], p: Praktisk) => elementer.reduce((s, e) => s + (e.doseenhet === 'drape' ? Math.max(0, e.antall - p.draper) : 0), 0)
+/**
+ * Dråpene over preferansen i én administrasjon: alle dråpene i dosen til
+ * sammen, over alle styrkene. Dosen er én administrasjon, for regelen
+ * bestemmer ikke en fordeling over døgnet (`FORBEHOLD_DOGNDOSE`); en regel
+ * med fordeling kan ikke bruke praktisk dosering (`formovergangsfeil`), så
+ * motoren påstår aldri en gunstigere fordeling enn den som er dokumentert.
+ */
+const draperOver = (elementer: readonly Doseelement[], p: Praktisk) => Math.max(0, elementer.reduce((s, e) => s + (e.doseenhet === 'drape' ? e.antall : 0), 0) - p.draper)
 
 /** Stadiet dosen har i formovergangen, eller `null` når formene ikke kan gis sammen slik (eller en form er utenfor overgangen). */
 export function stadiumFor(elementer: readonly Doseelement[], st: Formstadier, form: (e: Doseelement) => string): number | null {

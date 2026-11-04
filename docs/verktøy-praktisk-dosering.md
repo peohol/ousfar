@@ -9,7 +9,7 @@ Alle feltene er valgfrie. En regel uten dem har samme fingeravtrykk og gir samme
 | Felt | Hva det gjør |
 | --- | --- |
 | `Forlop.formoverganger` | Dokumenterte overganger mellom to FEST-legemiddelformer i samme forløp, for eksempel tablett (53) → dråper (748). Forløpet starter i formen pasienten bruker og går videre langs kjeden, aldri tilbake. `samtidig` tillater at én dose i overgangen settes sammen av begge formene. `grunnlag` må dokumentere at formene kan byttes mg for mg. |
-| `Dosevalg.praktisk` | Praktisk dosering: `draper` er preferansegrensen for dråper per administrasjon (B6), med `grunnlag`. Det er en preferanse, ikke en grense. |
+| `Dosevalg.praktisk` | Praktisk dosering: `draper` er preferansegrensen for dråper per administrasjon (B6), med `grunnlag`. Det er en preferanse, ikke en grense. Alle dråpene i dosen telles sammen, over alle styrkene, og dosen regnes som én administrasjon, fordi regelen ikke bestemmer noen fordeling over døgnet. En regel med `fordeling` kan derfor ikke bruke feltet ennå: da ville motoren påstått en fordeling som ikke er dokumentert. |
 | `Klinisktilfelle.legemiddelformer`, `formstyrker` | Klinisk omfang for et tilfelle med formovergang: formene i rekkefølge (planen må starte i den første) og styrkene som er kontrollert per form. |
 | Nedtrappingsfase `automatisk_trinnvalg` | B3, se §4. |
 

@@ -14,6 +14,7 @@ import { describe, expect, it } from 'vitest'
 import { beregnPlan, type Planskjema } from '../verktoy/doseplan'
 import { kjorKontrollkasus, KONTROLLFORSLAG, omfangsplaner } from '../verktoy/kontrollgrunnlag'
 import { BESLUTNINGER, foretrukket, formForslag, kanBliKomplett, medAutomatiskeTrinnvalg } from '../verktoy/motor/automatikk'
+import { doser as dosekandidater, type Styrkevalg } from '../verktoy/motor/dosevalg'
 import { beregnDoseplan, kliniskDoseplan, type Doseplanresultat, type Trinnvalg } from '../verktoy/motor/plan'
 import { STOPPKODER, regelmotorkoder } from '../verktoy/motor/stoppkoder'
 import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from '../verktoy/regler/aksepttest'
@@ -210,6 +211,45 @@ describe('Stoppkodene', () => {
 })
 
 /* --- Formovergang og praktisk dosering --------------------------------------------- */
+
+describe('Dråpene per administrasjon (praktisk dosering)', () => {
+  /** En syntetisk dråpestyrke med ett syntetisk preparat, bare for dosevalget. */
+  const draape = (mg: number): Styrkevalg =>
+    ({
+      nokkel: `D${mg}`,
+      klasse: 'standard',
+      legemiddelform: { kode: DRAPER, tekst: 'Dråper' },
+      doseenhet: 'drape',
+      mg,
+      registrering: 'markedsfort',
+      deling: 1,
+      preparater: [{ deling: 1 }],
+    }) as unknown as Styrkevalg
+  const v = [draape(1), draape(2)]
+  const P = { praktisk: { draper: 5 } }
+  const sammensetning = (k: { elementer: readonly { antall: number; mg: number }[] }) => k.elementer.map((e) => `${e.antall}×${e.mg}`).join('+')
+
+  it('teller alle dråpene i dosen til sammen, over styrkene: 4 + 4 dråper er 3 over preferansen 5', () => {
+    const [k] = dosekandidater(v, 12, 12, (x) => sammensetning(x) === '4×1+4×2', P)
+    expect(k!.kompleksitet[1]).toBe(3)
+    const [enkel] = dosekandidater(v, 8, 8, (x) => sammensetning(x) === '4×2', P)
+    expect(enkel!.kompleksitet[1]).toBe(0)
+  })
+
+  it('velger da færrest dråper i alt, ikke færrest per styrke', () => {
+    // 12 mg: 6 dråper à 2 mg (1 over) foran 4 + 4 dråper av to styrker (3 over) og 12 dråper à 1 mg (7 over).
+    expect(sammensetning(dosekandidater(v, 12, 12, () => true, P)[0]!)).toBe('6×2')
+  })
+
+  it('kan ikke kombineres med fordeling over døgnet, for dråpene i hver administrasjon er ikke bestemt', () => {
+    const r = structuredClone(REGELSETT.regler.find((x) => x.id === ESC)!)
+    endret({ praktisk: 5 })(r)
+    const f = r.plan.forlop[0]!
+    expect(formovergangsfeil(r)).toEqual([])
+    f.fordeling = { antall: [2], grunnlag: G }
+    expect(formovergangsfeil(r)).toEqual(['fra: praktisk dosering kan ikke kombineres med fordeling, for dråpene i hver administrasjon er ikke bestemt'])
+  })
+})
 
 describe('Formovergang tablett → dråper (B1)', () => {
   it('er en kjede fra formen pasienten bruker, og ugyldige overganger stopper beregningen', () => {

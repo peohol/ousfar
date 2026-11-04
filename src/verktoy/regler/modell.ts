@@ -405,7 +405,8 @@ export interface Dosevalg {
  * Hvor enkel en dose er å gi i praksis, som doseplanmotoren tar hensyn til
  * etter de harde kravene og minst avvik (B1 i
  * `docs/verktøy-brukervennlighet-2026-11.md`, `docs/verktøy-praktisk-dosering.md`):
- * dråper over `draper` per administrasjon, delte tabletter, antall tabletter
+ * dråper over `draper` per administrasjon (alle dråpene i dosen til sammen,
+ * over styrkene; en regel med `fordeling` kan ikke bruke feltet), delte tabletter, antall tabletter
  * og målinger, antall styrker og formskifter, i den rekkefølgen. `draper` er
  * en preferanse, ikke en grense: flere dråper kan gis når ingenting enklere
  * gir dosen, og verdien begrunnes i `grunnlag`.
@@ -1048,6 +1049,7 @@ export function formovergangsfeil(r: Pick<Regel, 'plan' | 'klinisk_omfang'>): st
     for (const x of o) if (formkjede(f, x.fra).length !== new Set(formkjede(f, x.fra)).size || formkjede(f, x.til).includes(x.fra)) feil.push(`${f.id}: formovergangene går i sløyfe`)
     const d = f.dosevalg?.praktisk?.draper
     if (d !== undefined && !(Number.isInteger(d) && d > 0)) feil.push(`${f.id}: dråpepreferansen må være et helt tall over 0`)
+    if (d !== undefined && f.fordeling) feil.push(`${f.id}: praktisk dosering kan ikke kombineres med fordeling, for dråpene i hver administrasjon er ikke bestemt`)
   }
   for (const [i, t] of (r.klinisk_omfang?.tilfeller ?? []).entries()) {
     if (!t.legemiddelformer) continue
