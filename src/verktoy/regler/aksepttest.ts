@@ -159,6 +159,8 @@ export function medValg(u: Festuttrekk, r: Regel, form: Formalternativ, inndata:
  * ({@link simulertValg}); `null` når ingen av dem finnes.
  */
 export function videreforingsdose(r: Regel, p: Doseplanresultat): number | null {
+  // En plan som seponerer (en avslutning, regelmodell 12), har ingen videreføring.
+  if (p.status === 'doseplan' && p.forlop[0]?.siste_dosedag != null) return null
   const tv = p.trinnvalg?.find((t) => t.trinn === 1 && !t.mellomtrinn)
   return sisteDose(p) ?? (tv ? simulertValg(r, tv).mg : null)
 }
@@ -244,12 +246,18 @@ export function omfang(p: Doseplanresultat): Omfang {
 
 const OMFANGSORD: Record<Omfang, string> = { delplan: 'delplan', valg: 'valgt dose', stopp: 'stopp' }
 
+const TIL_SEPONERING = 'trinn til seponering'
+const TIL_SEPONERING_FORKLARING =
+  'en plan helt til seponering, fordi regelen har en avslutning (regelmodell 12) som gjelder fra dosen planen når; tallet er antall dosetrinn før seponeringen'
+
 /** Omfanget i en tabellcelle, med antall reduksjoner; én reduksjon står som det den er. */
 function omfangscelle(p: Doseplanresultat | null | undefined): string {
   if (!p) return '–'
   const o = omfang(p)
   if (o !== 'delplan') return OMFANGSORD[o]
   const n = reduksjoner(p)
+  // En plan som seponerer (en avslutning til faglig kontroll eller godkjent, regelmodell 12), er ikke en delplan.
+  if (p.status === 'doseplan' && p.forlop[0]?.siste_dosedag != null) return `${n} ${TIL_SEPONERING}`
   return n === 1 ? 'én reduksjon med revurdering' : `delplan (${n})`
 }
 
@@ -385,7 +393,7 @@ ${oversikt}
 
 Til kontrollørens regel- og formspesifikke kontroll (gjennomgangen av 62ebb21 og 9cb420b): for hver kombinasjon og hvert klinisk scenario, om en oppnåelig delplan kan brukes, eller om bare et forklarende stopp er riktig. Tabellen er en teknisk matrise regnet ut av planene, ikke en klinisk godkjenning. Ingen delplan er en fullstendig seponering. Et avvik som krever begrunnelse, tilbys ikke: der det er det eneste som kan gis, er planen et forklarende stopp, og en annen plan vurderes individuelt utenfor verktøyet. Scenario (h) er en simulering og er ikke med.
 
-${liste(Object.entries(OMFANG).map(([k, v]) => `**${OMFANGSORD[k as Omfang]}:** ${v}.`))}
+${liste([...Object.entries(OMFANG).map(([k, v]) => `**${OMFANGSORD[k as Omfang]}:** ${v}.`), `**${TIL_SEPONERING}:** ${TIL_SEPONERING_FORKLARING}.`])}
 
 ${omfangstabell}
 

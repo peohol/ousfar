@@ -7,6 +7,7 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { lesKartdata } from '../verktoy/kartdata'
+import { ETTER_RETTELSENE } from '../verktoy/kontrollsett'
 import { VERKTOY, virkestoffvalg } from '../verktoy/register'
 import { AKSEPTSTOFFER, beregnAksept, besvart, FEST_AKSEPTTEST, formerFor, reduksjoner, vanligDose, type Festuttrekk } from '../verktoy/regler/aksepttest'
 import { erKliniskGodkjent, fingeravtrykk, kanonisk } from '../verktoy/regler/godkjenning'
@@ -63,11 +64,13 @@ describe('Kombinasjonene', () => {
     }
   })
 
-  it('gir beregning bare for kombinasjonene de seks godkjente reglene med beregning gjelder', () => {
+  it('gir beregning bare for kombinasjonene de sju godkjente reglene med beregning gjelder', () => {
     const beregning = [...ALLE].flatMap(([id, ks]) => ks.filter((k) => k.utfall === 'beregning').map((k) => `${id}: ${k.valg.fra.nokkel}/${k.valg.fra.formulering}${k.valg.til ? ` → ${k.valg.til.nokkel}/${k.valg.til.formulering}` : ''}`))
     expect(beregning.sort()).toEqual(
       [
         'trappe-ned-antidepressiv: vortioksetin/standard',
+        // Escitalopram versjon 13 fra K1, godkjent 04.11.2026.
+        'trappe-ned-antidepressiv: escitalopram/standard',
         'bytte-antidepressiv: sertralin/standard → mirtazapin/standard',
         'bytte-antipsykotikum: aripiprazol/standard → aripiprazol/LA',
         'bytte-antipsykotikum: paliperidon/standard → paliperidon/ER',
@@ -180,8 +183,10 @@ describe('prioriteringen i VDK-2', () => {
 
   it('oppgir versjonen og fingeravtrykket regelen faktisk har, så kontrollen gjelder nøyaktig den', () => {
     expect(rader.map((r) => r[1])).toEqual(['seponering-amitriptylin', 'seponering-nortriptylin', 'seponering-escitalopram', 'seponering-escitalopram-langsom'])
+    // Planen gjelder versjonene etter rettelsen av RCPsych-faktumet; K1 har siden gitt escitalopram en ny versjon (`regler/k1.ts`).
+    const regler = ETTER_RETTELSENE.flatMap((s) => s.regler)
     for (const [, id, versjon, avtrykk] of rader) {
-      const regel = REGELSETT.regler.find((r) => r.id === id)!
+      const regel = regler.find((r) => r.id === id)!
       expect([regel.versjon, fingeravtrykk(regel)]).toEqual([Number(versjon), avtrykk])
       expect(erKliniskGodkjent(regel)).toBe(false)
     }
