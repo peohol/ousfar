@@ -12,6 +12,8 @@ import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from '../verktoy/regler
 import { erKliniskGodkjent } from '../verktoy/regler/godkjenning'
 import { avvikFra, KATEGORIER, kjorKasus, lagPilotmatriserapport, PILOTKASUS, PILOTMATRISEFIL, tidFor, type Kasuskategori } from '../verktoy/regler/pilotmatrise'
 import { FEST_TILLEGG, kjorTilleggskasus } from '../verktoy/tilleggsgrunnlag'
+import { FEST_ANTIPSYKOTIKA } from '../verktoy/regler/antipsykotikabytter'
+import { kjorAntipsykotikakasus } from '../verktoy/regler/antipsykotikakasus'
 import { REGELSETT } from '../verktoy/tilgjengelighet'
 
 const les = (fil: string) => readFileSync(new URL(`../../${fil}`, import.meta.url), 'utf8')
@@ -39,6 +41,10 @@ describe('testmatrisen for de godkjente reglene (P11.1–P11.4)', () => {
     const tillegg = kjorTilleggskasus(JSON.parse(les(FEST_TILLEGG)) as Festuttrekk)
     expect(tillegg.flatMap(({ k, avvik }) => avvik.map((a) => `${k.id}: ${a}`))).toEqual([])
     for (const { k, res } of tillegg) if (!k.regel?.endre && 'resultat' in res && res.resultat) prøvd.add(res.resultat.regel.id)
+    // De tre godkjente antipsykotikabyttene (K3) prøves med FEST-uttrekket for K3, uten simulert godkjenning.
+    const antipsykotika = kjorAntipsykotikakasus(JSON.parse(les(FEST_ANTIPSYKOTIKA)) as Festuttrekk, uttrekkene.aksept)
+    expect(antipsykotika.flatMap(({ k, avvik }) => avvik.map((a) => `${k.id}: ${a}`))).toEqual([])
+    for (const { k, res } of antipsykotika) if (!k.regel && 'resultat' in res && res.resultat) prøvd.add(res.resultat.regel.id)
     expect([...prøvd].sort()).toEqual(godkjente.map((r) => r.id).sort())
     const kategorier: Record<string, Kasuskategori[]> = {
       V: ['vanlig_dose', 'uvanlig_dose', 'pasientforhold', 'interaksjon', 'preparat', 'foreldet_fest', 'datakilde', 'injeksjonsdato', 'regelendring', 'ikke_godkjent', 'nodstopp'],
