@@ -114,6 +114,8 @@ const ad = (id: string, hva: string, fra: string, til: string, dose: string): Br
   dose,
 })
 const ap = (id: string, hva: string, fra: Verktoyvalg['fra'], til: NonNullable<Verktoyvalg['til']>, dose: string): Brukerforlop => ({ id, leveranse: 'K3', hva, valg: { fra, til }, dose })
+/** Måldosen forskriveren velger i skjemaet (mg), når regelen tilbyr flere. */
+const mal = (maldose: string): Pick<Brukerforlop, 'skjema'> => ({ skjema: { maldose } })
 const tillegg = (id: string, hva: string, fra: string, til: string, dose: string): Brukerforlop => ({
   id,
   leveranse: 'K4',
@@ -136,10 +138,10 @@ export const BRUKERFORLOP: readonly Brukerforlop[] = [
   ad('K0-04', 'Sertralin 100 mg byttes til mirtazapin', 'sertralin', 'mirtazapin', '100'),
   ad('K0-05', 'Escitalopram 20 mg byttes til mirtazapin', 'escitalopram', 'mirtazapin', '20'),
   ad('K0-06', 'Escitalopram 20 mg byttes til sertralin', 'escitalopram', 'sertralin', '20'),
-  ap('K0-07', 'Olanzapin 10 mg tablett byttes til aripiprazol tablett', p('olanzapin'), p('aripiprazol'), '10'),
-  ap('K0-08', 'Risperidon 4 mg tablett byttes til aripiprazol tablett', p('risperidon'), p('aripiprazol'), '4'),
+  { ...ap('K0-07', 'Olanzapin 10 mg tablett byttes til aripiprazol tablett', p('olanzapin'), p('aripiprazol'), '10'), ...mal('10') },
+  { ...ap('K0-08', 'Risperidon 4 mg tablett byttes til aripiprazol tablett', p('risperidon'), p('aripiprazol'), '4'), ...mal('10') },
   ap('K0-09', 'Aripiprazol 15 mg tablett til Abilify Maintena', p('aripiprazol'), { nokkel: 'aripiprazol', formulering: 'LA' }, '15'),
-  ap('K0-10', 'Risperidon 4 mg tablett til paliperidonpalmitat månedlig', p('risperidon'), { nokkel: 'paliperidon', formulering: 'ER' }, '4'),
+  { ...ap('K0-10', 'Risperidon 4 mg tablett til paliperidonpalmitat månedlig', p('risperidon'), { nokkel: 'paliperidon', formulering: 'ER' }, '4'), maldose: 'regelens' },
   tillegg('K0-11', 'Står på litium (4 depottabletter à 42 mg); lamotrigin legges til', 'litium', 'lamotrigin', '168'),
   tillegg('K0-12', 'Står på valproat; lamotrigin legges til', 'valproat', 'lamotrigin', '1000'),
 
@@ -182,6 +184,11 @@ export const BRUKERFORLOP: readonly Brukerforlop[] = [
   { ...ad('H-37', 'Sertralin 100 mg byttes til mirtazapin når mirtazapin 15 mg er avregistrert', 'sertralin', 'mirtazapin', '100'), fest: avregistrert('mirtazapin', 15) },
   { ...tillegg('H-38', 'Står på valproat; lamotrigin legges til uten at måldosen er valgt', 'valproat', 'lamotrigin', '1000'), maldose: undefined },
   { ...ned('H-39', 'Escitalopram 10 mg tablett, kort behandlingstid; forskriveren bytter til dråper etter at tablettvalget ikke ga plan', 'escitalopram', '10'), formbytte: DRAPER },
+  { ...ap('H-40', 'Olanzapin 20 mg tablett byttes til aripiprazol 15 mg', p('olanzapin'), p('aripiprazol'), '20'), ...mal('15') },
+  { ...ap('H-41', 'Risperidon 4 mg tablett byttes til aripiprazol 15 mg', p('risperidon'), p('aripiprazol'), '4'), ...mal('15') },
+  { ...ap('H-42', 'Risperidon 3 mg tablett til Xeplion månedlig', p('risperidon'), { nokkel: 'paliperidon', formulering: 'ER' }, '3'), maldose: 'regelens' },
+  { ...ap('H-43', 'Olanzapin 20 mg tablett byttes til aripiprazol med måldose 20 mg', p('olanzapin'), p('aripiprazol'), '20'), ...mal('20') },
+  { ...ap('H-44', 'Risperidon 2 mg tablett til Xeplion månedlig', p('risperidon'), { nokkel: 'paliperidon', formulering: 'ER' }, '2'), maldose: 'regelens' },
 ]
 
 /* --- Kjøringen ------------------------------------------------------------------- */
@@ -804,7 +811,9 @@ export function lagQaRapport(resultater: readonly Forlopsresultat[], tillegg: re
           r.forlop.id,
           celle(r.forlop.hva),
           `${KLASSENAVN[r.klasse]}${r.regel ? ` (${r.regel.id} v${r.regel.versjon})` : ''}`,
-          celle([...r.formvalg.map((f) => `[formvalg ${f}]`), ...r.trinnvalg.map((t) => `[valgt dose ${t}]`), ...r.vist].join(' / ')),
+          celle(
+            [...(r.skjema?.maldose ? [`[måldose ${r.skjema.maldose} mg]`] : []), ...r.formvalg.map((f) => `[formvalg ${f}]`), ...r.trinnvalg.map((t) => `[valgt dose ${t}]`), ...r.vist].join(' / '),
+          ),
           celle(r.feil.join(' / ') || '–'),
         ].join(' | '),
       )

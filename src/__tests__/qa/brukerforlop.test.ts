@@ -19,9 +19,13 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { omregningsrader } from '../../verktoy/doseplan'
+import { FORMULERINGSKLASSER, type Formuleringsklasse } from '../../verktoy/festformuleringer'
+import { lesKartdata } from '../../verktoy/kartdata'
+import { markedsgrunnlag, preparaterFor } from '../../verktoy/kartlegging'
 import { kombinasjoner } from '../../verktoy/regeldekning'
 import { VERKTOY, virkestoffvalg } from '../../verktoy/register'
 import { erKliniskGodkjent, fingeravtrykk, harBeregning } from '../../verktoy/regler/godkjenning'
+import type { Regel } from '../../verktoy/regler/modell'
 import { SAMMENLIGNINGSSETT } from '../../verktoy/regler/nedtrapping'
 import { REGELSETTENE, tilForlop, tilgjengelighet } from '../../verktoy/tilgjengelighet'
 import {
@@ -88,12 +92,16 @@ const REGELVERSJONER: Record<string, [number, string]> = {
   // ousfar-verktoy-nedtrapping-sammenligning v5
   'ousfar-verktoy-nedtrapping-sammenligning/seponering-citalopram-hyperbolsk': [4, '386fedfa94406ae98941d9cd82e81bfd420877d5693a20a0617af303ca8471f7'],
   'ousfar-verktoy-nedtrapping-sammenligning/gruppe-rest-ap-aripiprazol': [5, '256d49b824af879d9b813b8a65c30e0b7f4e318615b7b60d5df17b3802a26e1c'],
+  // ousfar-verktoy-antipsykotikabytter (K3, #320): bare de tre klinisk godkjente
+  'ousfar-verktoy-antipsykotikabytter/depot-risperidon-xeplion': [8, '1672334c468f28cf181aa4d786370e60f3f232f76f63d374e0c505d847ab184e'],
+  'ousfar-verktoy-antipsykotikabytter/antipsykotikabytte-olanzapin-aripiprazol': [8, 'f141a13a9e9368542d7719cfb0abea7cfb77a41d7d89248e5f9e1d70e0aa5f5e'],
+  'ousfar-verktoy-antipsykotikabytter/antipsykotikabytte-risperidon-aripiprazol': [8, '866ac93c58fb921c78cd71518ec91637cb31a175b7a9a480552fcebe54cca870'],
   // ousfar-verktoy-tillegg (K4, #322)
   'ousfar-verktoy-tillegg/tillegg-valproat-lamotrigin': [2, '0a9213f31b5f428935fceeef41498a2999682631b1692749bb7ebe19c82639b8'],
   'ousfar-verktoy-tillegg/tillegg-litium-lamotrigin': [2, '786436a0ea8d115b7927a9a20ffabc736b59bc06c59117769551e5f75e89e44b'],
 }
 
-/** Versjonene kontrolløren har godkjent (docs/verktøy-utviklingsplan.md, verktøy-rettelse-langvarig.md; K4: src/verktoy/regler/tillegg.ts). */
+/** Versjonene kontrolløren har godkjent (docs/verktøy-utviklingsplan.md, verktøy-rettelse-langvarig.md; K3: docs/verktøy-k3-antipsykotikabytter.md; K4: src/verktoy/regler/tillegg.ts). */
 const GODKJENT = [
   'ousfar-verktoy-pilot/kryssnedtrapping-sertralin-mirtazapin',
   'ousfar-verktoy-pilot/depot-aripiprazol-maintena',
@@ -102,6 +110,9 @@ const GODKJENT = [
   'ousfar-verktoy-nedtrapping/seponering-bupropion',
   'ousfar-verktoy-nedtrapping/seponering-agomelatin',
   'ousfar-verktoy-nedtrapping/seponering-escitalopram',
+  'ousfar-verktoy-antipsykotikabytter/depot-risperidon-xeplion',
+  'ousfar-verktoy-antipsykotikabytter/antipsykotikabytte-olanzapin-aripiprazol',
+  'ousfar-verktoy-antipsykotikabytter/antipsykotikabytte-risperidon-aripiprazol',
   'ousfar-verktoy-tillegg/tillegg-valproat-lamotrigin',
   'ousfar-verktoy-tillegg/tillegg-litium-lamotrigin',
 ]
@@ -258,6 +269,30 @@ describe('QA: måldosen må velges', () => {
   })
 })
 
+describe('QA: K3 telles for seg (peroral → peroral og depot)', () => {
+  const ut = (id: string) => RESULTATER.find((r) => r.forlop.id === id)!
+  const godkjent = (id: string) => ALLE.some((x) => x.nokkel.endsWith(`/${id}`) && erKliniskGodkjent(x.r))
+  const regelen = (id: string) => ALLE.find((x) => x.nokkel.endsWith(`/${id}`) && erKliniskGodkjent(x.r))!.r
+
+  it('finner godkjenningsfritaket fra FEST: peroral paliperidon bare med fritak, peroral risperidon og aripiprazol markedsført', () => {
+    if (!godkjent('depot-paliperidon-xeplion') || !godkjent('depot-risperidon-xeplion')) return
+    expect(['depot-paliperidon-xeplion', 'depot-risperidon-xeplion', 'depot-aripiprazol-maintena'].map((id) => startKreverFritak(regelen(id)))).toEqual([true, false, false])
+  })
+
+  it('gir komplett plan bare ved regelens start- og måldoser', () => {
+    if (!godkjent('antipsykotikabytte-olanzapin-aripiprazol') || !godkjent('antipsykotikabytte-risperidon-aripiprazol') || !godkjent('depot-risperidon-xeplion')) return
+    for (const id of ['K0-08', 'H-40', 'H-41', 'H-42']) expect([id, ut(id).klasse, ut(id).feil]).toEqual([id, 'komplett', []])
+    // Startdose utenfor (olanzapin 10, risperidon 4 og 2 til Xeplion) og måldose utenfor (aripiprazol 20).
+    for (const [id, grunn] of [
+      ['K0-07', /Startdosen 10 mg/],
+      ['K0-10', /Startdosen 4 mg/],
+      ['H-44', /Startdosen 2 mg/],
+      ['H-43', /Måldosen 20 mg/],
+    ] as const)
+      expect([id, ut(id).klasse, ut(id).vist.join(' ')]).toEqual([id, 'stoppet', expect.stringMatching(grunn)])
+  })
+})
+
 describe('QA: omfanget til beregningene som er tilgjengelige', () => {
   const sveipFor = (id: string) => SVEIP.find((s) => s.regel.id === id)
   const plan = (id: string) => RESULTATER.find((r) => r.forlop.id === id)!
@@ -364,27 +399,43 @@ function nevnere(): string[] {
   ]
 }
 
+const KART = lesKartdata()
+
+/**
+ * Om pasientens startlegemiddel i regelens fra-forløp i Norge bare finnes med
+ * godkjenningsfritak (FEST), i formuleringsklassene forløpet gjelder. Slik er
+ * Xeplion v3, som starter fra peroral paliperidon (Invega); leveranseplanen
+ * §10.4 teller den for seg.
+ */
+function startKreverFritak(regel: Regel): boolean {
+  const fra = regel.plan?.forlop.find((f) => f.id === 'fra')
+  if (fra?.virkestoff.type !== 'virkestoff') return false
+  const klasser = fra.klasser ?? (Object.keys(FORMULERINGSKLASSER) as Formuleringsklasse[]).filter((k) => k.startsWith(fra.administrasjon))
+  return markedsgrunnlag(preparaterFor(KART, fra.virkestoff.nokkel).filter((p) => klasser.includes(p.klasse))) === 'kun_godkjenningsfritak'
+}
+
 /** Minstekravene for første nyttige leveranse (plan §5): ulike klinisk godkjente forløp (regler) med komplett plan, ikke antall positive kasus. */
 function minstekrav(): string[] {
-  const komplette = (l: Leveranse, filter: (id: string) => boolean = () => true) => RESULTATER.filter((r) => r.forlop.leveranse === l && r.klasse === 'komplett' && filter(r.forlop.id))
-  const ulike = (x: readonly { regel?: { id: string } }[]) => new Set(x.map((r) => r.regel!.id)).size
-  const depot = (id: string) => BRUKERFORLOP.find((f) => f.id === id)!.valg.til?.formulering !== 'standard' || BRUKERFORLOP.find((f) => f.id === id)!.valg.fra.formulering !== 'standard'
-  // Fjerde ledd: et forbehold fra leveranseplanen (§10.1, §10.4) som gjør at tallet ikke alene avgjør om kravet er oppfylt.
-  const rader: [string, ReturnType<typeof komplette>, number, string?][] = [
+  const komplette = (l: Leveranse, filter: (r: (typeof RESULTATER)[number]) => boolean = () => true) => RESULTATER.filter((r) => r.forlop.leveranse === l && r.klasse === 'komplett' && filter(r))
+  const regler = (x: readonly { regel?: { id: string; versjon: number } }[]) => [...new Map(x.map((r) => [r.regel!.id, `${r.regel!.id} v${r.regel!.versjon}`])).values()].sort()
+  const depot = (r: (typeof RESULTATER)[number]) => r.forlop.valg.til?.formulering !== 'standard' || r.forlop.valg.fra.formulering !== 'standard'
+  // Minst null: raden vises, men teller ikke mot noe krav.
+  const rader: [string, ReturnType<typeof komplette>, number][] = [
     ['K1 komplette nedtrappinger', komplette('K1'), 2],
     ['K2 komplette antidepressivbytter', komplette('K2'), 3],
-    ['K3 komplette perorale antipsykotikabytter', komplette('K3', (id) => !depot(id)), 2],
-    ['K3 komplette depotrelaterte antipsykotikabytter', komplette('K3', depot), 2, 'godkjent i snevert omfang; om de teller mot minstekravet, avgjøres i K3-kontrollen (#320)'],
+    ['K3 komplette perorale antipsykotikabytter (peroral → peroral)', komplette('K3', (r) => !depot(r)), 2],
+    ['K3 komplette depotrelaterte antipsykotikabytter fra et markedsført startlegemiddel', komplette('K3', (r) => depot(r) && !startKreverFritak(r.regel!)), 2],
+    ['K3 depotrelaterte der startlegemidlet bare finnes med godkjenningsfritak (telles for seg)', komplette('K3', (r) => depot(r) && startKreverFritak(r.regel!)), 0],
     ['K4 komplette tilleggsscenarier', komplette('K4'), 2],
   ]
   return [
     '## Minstekrav for første nyttige leveranse (målt på katalogen)',
     '',
-    '| Krav | Ulike godkjente forløp med komplett plan | Positive kasus | Minst | Oppfylt |',
-    '| --- | ---: | ---: | ---: | --- |',
-    ...rader.map(([k, x, m, forbehold]) => `| ${k} | ${ulike(x)} | ${x.length} | ${m} | ${ulike(x) < m ? 'nei' : (forbehold ?? 'ja')} |`),
+    '| Krav | Ulike godkjente forløp med komplett plan | Positive kasus | Minst | Oppfylt | Regler |',
+    '| --- | ---: | ---: | ---: | --- | --- |',
+    ...rader.map(([k, x, m]) => `| ${k} | ${regler(x).length} | ${x.length} | ${m || '–'} | ${m === 0 ? 'telles ikke' : regler(x).length < m ? 'nei' : 'ja'} | ${regler(x).join(', ') || '–'} |`),
     '',
-    'Kravet telles i ulike klinisk godkjente forløp (regler), ikke i positive kasus: to startdoser eller to legemiddelformer i samme regel er ett forløp. Oppfylt her betyr bare at QA-testen finner så mange; klinisk godkjenning og prøve i appen kreves i tillegg (plan §8).',
+    'Kravet telles i ulike klinisk godkjente forløp (regler), ikke i positive kasus: to startdoser eller to legemiddelformer i samme regel er ett forløp. Oppfylt her betyr bare at QA-testen finner så mange; klinisk godkjenning og prøve i appen kreves i tillegg (plan §8). K3 telles for seg som peroral → peroral og depotrelatert (leveranseplanen §10.4). Et depotforløp der pasientens startlegemiddel i FEST bare finnes med godkjenningsfritak (Xeplion v3 fra peroral paliperidon), vises på egen rad og teller ikke mot kravet. Alle de godkjente K3-forløpene gjelder bare avgrensede grupper og doser (se forløpene og omfanget nedenfor).',
     '',
   ]
 }
