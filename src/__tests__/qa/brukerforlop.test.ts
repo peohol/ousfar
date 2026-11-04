@@ -163,6 +163,15 @@ describe('QA-kontrollen selv', () => {
   })
 })
 
+describe('QA: måldosen må velges', () => {
+  it('gir ingen plan for lamotrigin lagt til valproat før måldosen er valgt, og en komplett plan når den er valgt', () => {
+    const [uten, med] = ['H-38', 'K0-12'].map((id) => RESULTATER.find((r) => r.forlop.id === id)!)
+    if (med!.klasse === 'ikke_stottet') return
+    expect([uten!.klasse, uten!.vist.join(' ')]).toEqual(['skjema', expect.stringMatching(/Måldosen/)])
+    expect(med!.klasse).toBe('komplett')
+  })
+})
+
 describe('QA: omfanget til beregningene som er tilgjengelige', () => {
   const sveipFor = (id: string) => SVEIP.find((s) => s.regel.id === id)
   const plan = (id: string) => RESULTATER.find((r) => r.forlop.id === id)!

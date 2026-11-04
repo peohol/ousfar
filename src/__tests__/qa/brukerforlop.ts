@@ -83,6 +83,8 @@ export interface Brukerforlop {
   trinn?: 'forste' | 'siste'
   /** En endring i FEST (for eksempel en avregistrert styrke), gjort på en kopi av uttrekket. */
   fest?: Pilotkasus['fest']
+  /** «regelens»: forskriveren velger måldosen regelen tilbyr, når den tilbyr nøyaktig én (som K4-reglene gjør). */
+  maldose?: 'regelens'
 }
 
 /** FEST-legemiddelformen dråper (mikstur, dråper), som escitalopram finnes som. */
@@ -112,6 +114,7 @@ const tillegg = (id: string, hva: string, fra: string, til: string, dose: string
   hva,
   valg: { fra: p(fra), til: p(til) },
   dose,
+  maldose: 'regelens',
 })
 
 /**
@@ -131,7 +134,7 @@ export const BRUKERFORLOP: readonly Brukerforlop[] = [
   ap('K0-08', 'Risperidon 4 mg tablett byttes til aripiprazol tablett', p('risperidon'), p('aripiprazol'), '4'),
   ap('K0-09', 'Aripiprazol 15 mg tablett til Abilify Maintena', p('aripiprazol'), { nokkel: 'aripiprazol', formulering: 'LA' }, '15'),
   ap('K0-10', 'Risperidon 4 mg tablett til paliperidonpalmitat månedlig', p('risperidon'), { nokkel: 'paliperidon', formulering: 'ER' }, '4'),
-  tillegg('K0-11', 'Står på litium; lamotrigin legges til', 'litium', 'lamotrigin', '1000'),
+  tillegg('K0-11', 'Står på litium (4 depottabletter à 42 mg); lamotrigin legges til', 'litium', 'lamotrigin', '168'),
   tillegg('K0-12', 'Står på valproat; lamotrigin legges til', 'valproat', 'lamotrigin', '1000'),
 
   ned('H-01', 'Vortioksetin 20 mg skal seponeres', 'vortioksetin', '20'),
@@ -162,7 +165,7 @@ export const BRUKERFORLOP: readonly Brukerforlop[] = [
   ap('H-26', 'Risperidon depot (37,5 mg) til Xeplion', { nokkel: 'risperidon', formulering: 'LA' }, { nokkel: 'paliperidon', formulering: 'ER' }, '37,5'),
   ap('H-27', 'Haloperidol 5 mg peroralt til haloperidol depot', p('haloperidol'), { nokkel: 'haloperidol', formulering: 'LA' }, '5'),
   tillegg('H-28', 'Står på lamotrigin; litium legges til', 'lamotrigin', 'litium', '200'),
-  tillegg('H-29', 'Står på litium; valproat legges til', 'litium', 'valproat', '1000'),
+  tillegg('H-29', 'Står på litium; valproat legges til', 'litium', 'valproat', '168'),
   { ...ned('H-30', 'Escitalopram dråper 10 mg skal seponeres', 'escitalopram', '10'), skjema: form(DRAPER) },
   { ...ned('H-31', 'Escitalopram dråper 20 mg skal seponeres', 'escitalopram', '20'), skjema: form(DRAPER) },
   { ...ned('H-32', 'Escitalopram dråper 20 mg, lang behandlingstid', 'escitalopram', '20'), skjema: { ...form(DRAPER), ...lang } },
@@ -171,6 +174,7 @@ export const BRUKERFORLOP: readonly Brukerforlop[] = [
   ned('H-35', 'Sertralin 200 mg skal seponeres', 'sertralin', '200'),
   { ...ned('H-36', 'Vortioksetin 20 mg når 15 mg-tablettene er avregistrert', 'vortioksetin', '20'), fest: avregistrert('vortioksetin', 15) },
   { ...ad('H-37', 'Sertralin 100 mg byttes til mirtazapin når mirtazapin 15 mg er avregistrert', 'sertralin', 'mirtazapin', '100'), fest: avregistrert('mirtazapin', 15) },
+  { ...tillegg('H-38', 'Står på valproat; lamotrigin legges til uten at måldosen er valgt', 'valproat', 'lamotrigin', '1000'), maldose: undefined },
 ]
 
 /* --- Kjøringen ------------------------------------------------------------------- */
@@ -263,6 +267,14 @@ const endretKopi = (r: Regel, endring: NonNullable<Pilotkasus['regel']>) => {
   return kopi
 }
 
+/** Skjemaet med måldosen regelen tilbyr, når forløpet velger den og verktøyet har nøyaktig én regel med én måldose. */
+function medRegelensMaldose(verktoy: Verktoy, f: Brukerforlop): Partial<Planskjema> | undefined {
+  if (f.maldose !== 'regelens') return f.skjema
+  const regler = tilgjengelighet(verktoy, f.valg).regler
+  const verdier = regler.length === 1 ? regler[0]!.inndata.find((k) => k.navn === 'maldose')?.verdier : undefined
+  return verdier?.length === 1 ? { ...f.skjema, maldose: tall(verdier[0]!) } : f.skjema
+}
+
 /** Kjører forløpet som verktøysiden ville gjort, med automatiske formvalg der siden ber om det. */
 export function kjorForlop(f: Brukerforlop, u: Uttrekkene, ekstra: Partial<Pilotkasus> = {}): Forlopsresultat {
   const verktoy = VERKTOY.find(VERKTOY_FOR[f.leveranse])
@@ -284,7 +296,7 @@ export function kjorForlop(f: Brukerforlop, u: Uttrekkene, ekstra: Partial<Pilot
     valg: f.valg,
     uttrekk: 'pilot',
     dose: f.dose,
-    skjema: f.skjema,
+    skjema: medRegelensMaldose(verktoy, f),
     ...(f.fest ? { fest: f.fest } : {}),
     forventet: { utfall: 'sperret' },
     ...ekstra,

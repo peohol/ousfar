@@ -7,10 +7,10 @@ Spor H i `docs/verktøy-klinisk-leveranseplan-2026-11.md`. Hvert forløp er en s
 
 | Leveranse | Komplett plan til sluttmål | Delplan | Godkjent fagtekst | Regel finnes, men beregningen stopper | Ikke godkjent regel | Regel til kontroll | Ikke støttet | Sperret | Skjemaet krever mer | Verktøyet finnes ikke |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| K1 Trappe ned antidepressiv |  | 1 | 2 | 2 | 18 |  |  |  |  |  |
-| K2 Bytte antidepressiv |  | 2 |  | 1 |  |  | 9 |  |  |  |
+| K1 Trappe ned antidepressiv |  |  | 2 | 3 | 18 |  |  |  |  |  |
+| K2 Bytte antidepressiv |  |  |  | 3 |  |  | 9 |  |  |  |
 | K3 Bytte antipsykotikum | 2 |  |  |  | 1 |  | 7 |  |  |  |
-| K4 Kombinere stemningsstabiliserende |  |  |  |  |  |  |  |  |  | 4 |
+| K4 Kombinere stemningsstabiliserende |  |  |  |  |  |  | 5 |  |  |  |
 
 ## Forløpene
 
@@ -19,16 +19,16 @@ Spor H i `docs/verktøy-klinisk-leveranseplan-2026-11.md`. Hvert forløp er en s
 | K0-01 | Escitalopram 10 mg tablett, kort behandlingstid, skal seponeres | Ikke godkjent regel | Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning. | – |
 | K0-02 | Sertralin 100 mg tablett, kort behandlingstid, skal seponeres | Ikke godkjent regel | Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning. | – |
 | K0-03 | Amitriptylin 25 mg tablett, kort behandlingstid, skal seponeres | Ikke godkjent regel | Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning. | – |
-| K0-04 | Sertralin 100 mg byttes til mirtazapin | Delplan (kryssnedtrapping-sertralin-mirtazapin v10) | [formvalg til: Tablett] / Et startforløp med revurdering, ikke en fullstendig plan: avslutningen vurderes individuelt. / Dag 1–14: Sertralin peroralt: 50 mg = 1 tablett à 50 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg / Fra dag 15: Sertralin peroralt: 25 mg = 1 tablett à 25 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg | Delplan vises som klinisk doseplan |
+| K0-04 | Sertralin 100 mg byttes til mirtazapin | Regel finnes, men beregningen stopper (kryssnedtrapping-sertralin-mirtazapin v10) | [formvalg til: Tablett] / Komplett plan ikke tilgjengelig: sertralin: siste trinn før null; avslutning vurderes individuelt; mirtazapin: holdes til sertralin er avsluttet; videre dosering planlegges individuelt. | – |
 | K0-05 | Escitalopram 20 mg byttes til mirtazapin | Ikke støttet | OUSFAR har ingen regel for denne kombinasjonen. | – |
 | K0-06 | Escitalopram 20 mg byttes til sertralin | Ikke støttet | OUSFAR har ingen regel for denne kombinasjonen. | – |
 | K0-07 | Olanzapin 10 mg tablett byttes til aripiprazol tablett | Ikke støttet | OUSFAR har ingen regel for denne kombinasjonen. | – |
 | K0-08 | Risperidon 4 mg tablett byttes til aripiprazol tablett | Ikke støttet | OUSFAR har ingen regel for denne kombinasjonen. | – |
 | K0-09 | Aripiprazol 15 mg tablett til Abilify Maintena | Komplett plan til sluttmål (depot-aripiprazol-maintena v3) | [formvalg fra: Tablett] / Dag 1–14: Aripiprazol peroralt: 15 mg = 1 tablett à 15 mg / Dag 1: Aripiprazol depotinjeksjon 400 mg = 1 injeksjon à 400 mg / Fra dag 15: Aripiprazol peroralt: Seponert / Hver måned fra 1 måned etter dag 1: Aripiprazol depotinjeksjon 400 mg = 1 injeksjon à 400 mg (tidligst 26 dager etter forrige) | – |
 | K0-10 | Risperidon 4 mg tablett til paliperidonpalmitat månedlig | Ikke støttet | OUSFAR har ingen regel for denne kombinasjonen. | – |
-| K0-11 | Står på litium; lamotrigin legges til | Verktøyet finnes ikke | Ingen verktøy av typen «tillegg» i registeret. | – |
-| K0-12 | Står på valproat; lamotrigin legges til | Verktøyet finnes ikke | Ingen verktøy av typen «tillegg» i registeret. | – |
-| H-01 | Vortioksetin 20 mg skal seponeres | Delplan (seponering-vortioksetin v12) | Én mulig første reduksjon med revurdering, ikke en validert fullstendig nedtrappingsplan. / Fra dag 1: Vortioksetin peroralt: 15 mg = 1 tablett à 15 mg | Delplan vises som klinisk doseplan |
+| K0-11 | Står på litium (4 depottabletter à 42 mg); lamotrigin legges til | Ikke støttet | OUSFAR har ingen regel for denne kombinasjonen. | – |
+| K0-12 | Står på valproat; lamotrigin legges til | Ikke støttet | OUSFAR har ingen regel for denne kombinasjonen. | – |
+| H-01 | Vortioksetin 20 mg skal seponeres | Regel finnes, men beregningen stopper (seponering-vortioksetin v12) | Komplett plan ikke tilgjengelig: vortioksetin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. | – |
 | H-02 | Vortioksetin 10 mg skal seponeres | Regel finnes, men beregningen stopper (seponering-vortioksetin v12) | vortioksetin dag 1–28: den ideelle dosen 7,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 5 mg (-33,33 %, faktisk reduksjon 50 % fra 10 mg) og 10 mg (+33,33 %). Den foretrukne reduksjonen til 7,5 mg (−25 % fra 10 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 5–25 %. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet. / Startdosen 10 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 20 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 5, 10, 15 og 20 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet. | – |
 | H-03 | Escitalopram 20 mg skal seponeres | Ikke godkjent regel | Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning. | – |
 | H-04 | Sertralin 50 mg skal seponeres | Ikke godkjent regel | Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning. | – |
@@ -41,7 +41,7 @@ Spor H i `docs/verktøy-klinisk-leveranseplan-2026-11.md`. Hvert forløp er en s
 | H-11 | Duloksetin 60 mg skal seponeres | Ikke godkjent regel | Beregning er ikke tilgjengelig: regelen er bare fagtekst, fordi det ikke finnes en dokumentert måte å gi trinnene med dagens norske preparater. Fagteksten er ikke klinisk godkjent. | – |
 | H-12 | Bupropion 300 mg skal seponeres | Godkjent fagtekst | seponering-bupropion v5 | – |
 | H-13 | Agomelatin 25 mg skal seponeres | Godkjent fagtekst | seponering-agomelatin v1 | – |
-| H-14 | Sertralin 50 mg byttes til mirtazapin | Delplan (kryssnedtrapping-sertralin-mirtazapin v10) | [formvalg til: Tablett] / Et startforløp med revurdering, ikke en fullstendig plan: avslutningen vurderes individuelt. / Fra dag 1: Sertralin peroralt: 25 mg = 1 tablett à 25 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg | Delplan vises som klinisk doseplan |
+| H-14 | Sertralin 50 mg byttes til mirtazapin | Regel finnes, men beregningen stopper (kryssnedtrapping-sertralin-mirtazapin v10) | [formvalg til: Tablett] / Komplett plan ikke tilgjengelig: sertralin: siste trinn før null; avslutning vurderes individuelt; mirtazapin: holdes til sertralin er avsluttet; videre dosering planlegges individuelt. | – |
 | H-15 | Citalopram 20 mg byttes til sertralin | Ikke støttet | OUSFAR har ingen regel for denne kombinasjonen. | – |
 | H-16 | Sertralin 100 mg byttes til escitalopram | Ikke støttet | OUSFAR har ingen regel for denne kombinasjonen. | – |
 | H-17 | Escitalopram 20 mg byttes til vortioksetin | Ikke støttet | OUSFAR har ingen regel for denne kombinasjonen. | – |
@@ -55,8 +55,8 @@ Spor H i `docs/verktøy-klinisk-leveranseplan-2026-11.md`. Hvert forløp er en s
 | H-25 | Olanzapin 10 mg peroralt til olanzapin depot | Ikke støttet | OUSFAR har ingen regel for denne kombinasjonen. | – |
 | H-26 | Risperidon depot (37,5 mg) til Xeplion | Ikke støttet | OUSFAR har ingen regel for denne kombinasjonen. | – |
 | H-27 | Haloperidol 5 mg peroralt til haloperidol depot | Ikke støttet | OUSFAR har ingen regel for denne kombinasjonen. | – |
-| H-28 | Står på lamotrigin; litium legges til | Verktøyet finnes ikke | Ingen verktøy av typen «tillegg» i registeret. | – |
-| H-29 | Står på litium; valproat legges til | Verktøyet finnes ikke | Ingen verktøy av typen «tillegg» i registeret. | – |
+| H-28 | Står på lamotrigin; litium legges til | Ikke støttet | OUSFAR har ingen regel for denne kombinasjonen. | – |
+| H-29 | Står på litium; valproat legges til | Ikke støttet | OUSFAR har ingen regel for denne kombinasjonen. | – |
 | H-30 | Escitalopram dråper 10 mg skal seponeres | Ikke godkjent regel | Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning. | – |
 | H-31 | Escitalopram dråper 20 mg skal seponeres | Ikke godkjent regel | Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning. | – |
 | H-32 | Escitalopram dråper 20 mg, lang behandlingstid | Ikke godkjent regel | Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning. | – |
@@ -65,10 +65,11 @@ Spor H i `docs/verktøy-klinisk-leveranseplan-2026-11.md`. Hvert forløp er en s
 | H-35 | Sertralin 200 mg skal seponeres | Ikke godkjent regel | Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning. | – |
 | H-36 | Vortioksetin 20 mg når 15 mg-tablettene er avregistrert | Regel finnes, men beregningen stopper (seponering-vortioksetin v12) | vortioksetin (fra): styrken 15 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST, så planen ville blitt satt sammen annerledes enn den som er kontrollert. Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet. | – |
 | H-37 | Sertralin 100 mg byttes til mirtazapin når mirtazapin 15 mg er avregistrert | Regel finnes, men beregningen stopper (kryssnedtrapping-sertralin-mirtazapin v10) | [formvalg til: Tablett] / mirtazapin (til): styrken 15 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST, så planen ville blitt satt sammen annerledes enn den som er kontrollert. Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet. | – |
+| H-38 | Står på valproat; lamotrigin legges til uten at måldosen er valgt | Ikke støttet | OUSFAR har ingen regel for denne kombinasjonen. | – |
 
 ## Delplan vises som klinisk doseplan
 
-Klinikerflaten skal aldri tilby en delplan som klinisk doseplan, heller ikke for tidligere godkjente regelversjoner (Peders beslutning). Hvert forløp som gjør det, er et QA-avvik som får testen til å feile: K0-04, H-01, H-14.
+Klinikerflaten skal aldri tilby en delplan som klinisk doseplan, heller ikke for tidligere godkjente regelversjoner (Peders beslutning). Hvert forløp som gjør det, er et QA-avvik som får testen til å feile: ingen.
 
 ## Minstekrav for første nyttige leveranse (målt på katalogen)
 
@@ -89,6 +90,7 @@ Oppfylt her betyr bare at QA-testen finner så mange komplette planer i kataloge
 | Trappe ned antidepressiv | 23 | 1 | 2 | 13 | 0 | 7 |
 | Bytte antidepressiv | 506 | 1 | 0 | 1 | 0 | 504 |
 | Bytte antipsykotikum | 1122 | 2 | 0 | 1 | 0 | 1119 |
+| Kombinere stemningsstabiliserende | 110 | 0 | 0 | 0 | 0 | 110 |
 
 ## Omfangssveip for regler som gir beregning
 
@@ -96,30 +98,17 @@ Startdosene 0,5–400 mg (halve mg opp til 40 mg, så trinn på 5 mg), hver lege
 
 ### Trappe ned antidepressiv: seponering-vortioksetin v12
 
-- Startdoser med plan: 20
-- Klasse: Delplan
-- QA-avvik i planene: 1
-- Delplan vises som klinisk doseplan: 1 av 1 planer
-- unntak tidligere_seponeringssymptomer = ja: Regel finnes, men beregningen stopper
-- unntak under_18 = ja: Regel finnes, men beregningen stopper
-- unntak akutt_situasjon = ja: Regel finnes, men beregningen stopper
-- unntak ustabil_dose_eller_bytte = ja: Regel finnes, men beregningen stopper
-- spørsmål lang_behandlingstid = ja: Regel finnes, men beregningen stopper
-- spørsmål eldre = ja: Regel finnes, men beregningen stopper
-- spørsmål utenfor_doseramme = ja: Regel finnes, men beregningen stopper
-- bekreftelse startforslag mangler: Regel finnes, men beregningen stopper
-- bekreftelse organfunksjon_interaksjoner mangler: Regel finnes, men beregningen stopper
+- Startdoser med plan: ingen
+- Klasse: –
+- QA-avvik i planene: 0
+- Delplan vises som klinisk doseplan: 0 av 0 planer
 
 ### Bytte antidepressiv: kryssnedtrapping-sertralin-mirtazapin v10
 
-- Startdoser med plan: 50, 100
-- Klasse: Delplan
-- QA-avvik i planene: 2
-- Delplan vises som klinisk doseplan: 2 av 2 planer
-- unntak tidligere_seponeringssymptomer = ja: Regel finnes, men beregningen stopper
-- spørsmål lang_behandlingstid = ja: Regel finnes, men beregningen stopper
-- bekreftelse toleranse_overlapp mangler: Regel finnes, men beregningen stopper
-- bekreftelse serotonerg_sammedisinering mangler: Regel finnes, men beregningen stopper
+- Startdoser med plan: ingen
+- Klasse: –
+- QA-avvik i planene: 0
+- Delplan vises som klinisk doseplan: 0 av 0 planer
 
 ### Bytte antipsykotikum: depot-aripiprazol-maintena v3
 
