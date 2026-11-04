@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.125.3',
+    versjon: '1.125.1',
     dato: '2026-11-04',
     sammendrag: 'Første regler for å legge lamotrigin til valproat eller litium, faglig godkjent og bare for administratorene',
     typer: ['Fag'],
