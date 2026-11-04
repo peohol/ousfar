@@ -13,7 +13,7 @@ import { describe, expect, it } from 'vitest'
 import { FORSLAG_B2, FORSLAG_K1, KONTROLLFORSLAG, kontrollavvik, omfangsplaner, type Omfangsplan } from '../verktoy/kontrollgrunnlag'
 import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from '../verktoy/regler/aksepttest'
 import { erErstattet, erKliniskGodkjent, erstatningsfeil, fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
-import { B2_ESCITALOPRAM, K1_OVERGANGER, medFormovergang } from '../verktoy/regler/k1'
+import { B2_ESCITALOPRAM, K1_9_AVGJORELSE, K1_OVERGANGER, medFormovergang } from '../verktoy/regler/k1'
 import { alleGrunnlag, formovergangsfeil, type Regel } from '../verktoy/regler/modell'
 import { simulerGodkjenning } from '../verktoy/regler/pilotmatrise'
 import { REGELSETT } from '../verktoy/tilgjengelighet'
@@ -63,7 +63,7 @@ describe('Versjon 14 (B2)', () => {
     expect(erErstattet(i(V13), regler)).toBe(true)
   })
 
-  it('endrer bare overgangen, den praktiske doseringen, tablettilfellet og teksten om overgangen', () => {
+  it('endrer bare overgangen, den praktiske doseringen, tablettilfellet, teksten om overgangen og aldersspørsmålet', () => {
     const [gammel, ny] = [i(V13), i(V14)]
     const uten = (r: Regel) => {
       const x = structuredClone(r) as Partial<Regel> & Regel
@@ -78,11 +78,33 @@ describe('Versjon 14 (B2)', () => {
         erstatter: undefined,
         godkjenning: undefined,
         klinisk_omfang: { ...x.klinisk_omfang!, tilfeller: x.klinisk_omfang!.tilfeller.filter((t) => t.legemiddelform === '748') },
+        sporsmal: x.sporsmal?.filter((q) => q.id !== 'eldre'),
         fortolkning: { ...x.fortolkning, tilpasninger: x.fortolkning.tilpasninger.filter((u) => !/^En pasient som bruker escitalopram tabletter/.test(u.tekst)) },
       }
     }
     expect(uten(ny)).toEqual(uten(gammel))
     expect(ny.godkjenning.historikk.slice(0, gammel.godkjenning.historikk.length)).toEqual(gammel.godkjenning.historikk)
+  })
+
+  it('spør om 65 år eller eldre, så 65 år er utenfor Peders avgrensning (K1.9: under 65 år), mens versjon 13 er uendret', () => {
+    const sporsmal = (r: Regel) => r.sporsmal!.find((q) => q.id === 'eldre')!
+    expect(K1_9_AVGJORELSE.avgrensning).toMatch(/under 65 år/)
+    expect([sporsmal(i(V14)).tekst, sporsmal(i(V14)).ja]).toEqual(['Er pasienten 65 år eller eldre?', '65 år eller eldre'])
+    expect(sporsmal(i(V13)).tekst).toBe('Er pasienten over 65 år?')
+    expect({ ...sporsmal(i(V14)), tekst: '', ja: '' }).toEqual({ ...sporsmal(i(V13)), tekst: '', ja: '' })
+    // Alderen 64, 65 og 66 år gir svaret forskriveren skal gi på spørsmålet; bare 64 år gir en plan (kasus B2-17, B2-18/B2-19 og B2-08).
+    const svar = (alder: number) => alder >= 65
+    const kasus = (id: string) => FORSLAG_B2.kasus.find((k) => k.id === id)!
+    for (const [alder, ider] of [
+      [64, ['B2-17']],
+      [65, ['B2-18', 'B2-19']],
+      [66, ['B2-08']],
+    ] as const)
+      for (const id of ider) {
+        expect(kasus(id).skjema?.svar?.eldre, `${alder} år, ${id}`).toBe(svar(alder))
+        expect(kasus(id).forventet.utfall === 'plan', `${alder} år, ${id}`).toBe(alder < 65)
+      }
+    expect(() => medFormovergang(i(V13), { ...B2_ESCITALOPRAM, sporsmal: [{ id: 'finnes_ikke', tekst: '', ja: '', begrunnelse: '' }] })).toThrow(/finnes ikke i regelen/)
   })
 
   it('bygges bare på nøyaktig versjonen forslaget gjelder', () => {

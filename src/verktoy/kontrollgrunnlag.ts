@@ -1270,7 +1270,7 @@ Ingen tabeller fra Psychiatrienet er brukt eller konvertert. Ingen validert apot
 /* --- B2: escitalopram med tabletter så lenge de gir dosen, så dråper ------------------ */
 
 /** Escitalopram med tabletter og dråper (B2), versjon 14: egen regel som erstatter versjon 13 når den er godkjent (`regler/k1.ts`). */
-const B2_REGEL: Kontrollregel = { id: B2_ESCITALOPRAM.id, versjon: 14, fingeravtrykk: '6cd2ab5472495cc3d856e2b07e4d645b3a3e531318f445ddbf830854509fb129' }
+const B2_REGEL: Kontrollregel = { id: B2_ESCITALOPRAM.id, versjon: 14, fingeravtrykk: '3e6c859a46e23cceeedb2708f85e64a937939c99a0eaafe80920a931b587dbb0' }
 /** Kasus for B2 med simulert avklaring av de åpne valgene og simulert godkjenning, gjennom den samme veien som verktøysiden. */
 const kb = somVerktoysiden(kasusFor(B2_DATO, undefined, true))
 /** Valgene i K1-01 og K1-02 (dråper fra 10 og 20 mg), som forskriveren gjør i B2 også. */
@@ -1282,6 +1282,9 @@ const FRA_20 = draperTilSeponering([[15], [12, 11.25, 20], [9], [7, 6.75, 22.22]
 const FRA_20_TABLETTER = ['Dag 1–28: Escitalopram peroralt: 15 mg = 1 tablett à 10 mg + 1 tablett à 5 mg', ...FRA_20.slice(1)]
 const SEPONERT_10 = `${KOMPLETT}: Escitalopram seponert fra dag 197.`
 const SEPONERT_20 = `${KOMPLETT}: Escitalopram seponert fra dag 281.`
+/** Det rettede aldersspørsmålet i versjon 14 (B2.4). */
+const ELDRE = B2_ESCITALOPRAM.sporsmal!.find((x) => x.id === 'eldre')!
+const OVER_ALDERSGRENSEN = (mg: number) => `Startdosen ${tall(mg)} mg er utenfor det regelen gjelder for (høyst 10 mg ved ${ELDRE.ja}).`
 
 export const FORSLAG_B2: Kontrollforslag = {
   nr: 3,
@@ -1296,7 +1299,7 @@ export const FORSLAG_B2: Kontrollforslag = {
   visPlanutfall: true,
   innledning: (fest) => [
     `**Escitalopram fra tabletter (10 eller 20 mg): tabletter så lenge hele tabletter gir dosen i trinnet, så dråper mg for mg til seponering.** Grunnlag for uavhengig faglig kontroll av B2 i \`docs/verktøy-brukervennlighet-2026-11.md\` (§6) og \`docs/verktøy-praktisk-dosering.md\`. Versjon 14 er en egen regel (\`${B2_REGEL.id}\`) som bygger på den godkjente versjon 13 og erstatter den i det øyeblikket den selv er klinisk godkjent; til da gjelder versjon 13 uendret.`,
-    `**Versjon 14 er ikke godkjent, og godkjenningen av versjon 13 gjelder ikke den.** Overgangen fra tabletter til dråper og dråpepreferansen er nye valg (åpne forslag til kontrolløren, B2.1–B2.3). Startdosene, pasientgruppen, trinnene, sluttdosen, seponeringen og oppfølgingen er de samme som i versjon 13.`,
+    `**Versjon 14 er ikke godkjent, og godkjenningen av versjon 13 gjelder ikke den.** Overgangen fra tabletter til dråper og dråpepreferansen er nye valg (åpne forslag til kontrolløren, B2.1–B2.3). Startdosene, trinnene, sluttdosen, seponeringen og oppfølgingen er de samme som i versjon 13. Aldersspørsmålet er rettet til «${ELDRE.tekst}», så pasientgruppen er nøyaktig Peders avgrensning (under 65 år); det retter et avvik i versjon 13, som spør «Er pasienten over 65 år?» (B2.4).`,
     `Hva som er nytt for klinikeren: med versjon 13 må en pasient på 20 mg tabletter gå over til 15 dråper første dag, og verktøyet stopper hvis tablett er valgt (kasus K1-08 og K1-09). Med versjon 14 gis første trinn (15 mg) med hele tabletter, og planen går over til dråper fra andre trinn. Fra 10 mg tabletter kan ingen hel tablett gi 8 mg, så planen går over til dråper fra første trinn, som i versjon 13. Pasienter som allerede bruker dråper, får nøyaktig den samme planen som i versjon 13.`,
     `Kasusene går gjennom den samme veien som verktøysiden, som aldri viser en delplan, med de norske preparatene i FEST-uttrekket hentet ${fest}, på en kopi med simulert avklaring av de åpne valgene og simulert godkjenning («${SIMULERT_KONTROLLOR}»). Kopien lagres ikke og brukes ikke av appen. Kasusene er syntetiske; pasientopplysninger inngår ikke, og ingen tekst fra Psychiatrienet vises.`,
   ],
@@ -1325,8 +1328,9 @@ export const FORSLAG_B2: Kontrollforslag = {
     },
     {
       nr: 'B2.4',
-      sporsmal: `Omfanget for Peders avgjørelse på K1.9 («${K1_9_AVGJORELSE.avgrensning}»): versjon 14 har de samme startdosene (10 og 20 mg), den samme pasientgruppen (voksne under 65 år, kort behandlingstid, uten tidligere seponeringsplager, og nei på nedsatt leverfunksjon og langsom CYP2C19-metabolisme), de samme trinnene fra 12 mg og den samme sluttdosen med dråper (1 mg → 0). Tablettpasienter var allerede med i versjon 13 gjennom overgangen mg for mg ved start (K1.11). Bare tidspunktet for overgangen er endret. Er omfanget uendret, slik at avgjørelsen kan brukes uten å spørre Peder på nytt?`,
-      anbefalt: 'Ja, uendret. Ingen ny pasientgruppe, startdose eller sluttdose; alle utenfor får et sikkert stopp (kasus B2-05–B2-09).',
+      sporsmal: `Omfanget for Peders avgjørelse på K1.9 («${K1_9_AVGJORELSE.avgrensning}»): versjon 14 har de samme startdosene (10 og 20 mg), de samme trinnene fra 12 mg og den samme sluttdosen med dråper (1 mg → 0), og pasientgruppen er voksne under 65 år med kort behandlingstid, uten tidligere seponeringsplager, og nei på nedsatt leverfunksjon og langsom CYP2C19-metabolisme. Versjon 13 spør «Er pasienten over 65 år?», så en pasient på nøyaktig 65 år kan svare nei og få planen, selv om avgjørelsen gjelder under 65 år. Versjon 14 spør «${ELDRE.tekst}», så 65 år regnes med og stopper (kasus B2-17–B2-19 ved 64, 65 og 66 år); det retter avviket i versjon 13 og gjør omfanget snevrere, aldri bredere. Tablettpasienter var allerede med i versjon 13 gjennom overgangen mg for mg ved start (K1.11), og ellers er bare tidspunktet for overgangen endret. Er omfanget uendret eller snevrere, slik at avgjørelsen kan brukes uten å spørre Peder på nytt?`,
+      anbefalt:
+        'Ja, snevrere på ett punkt og ellers uendret. Ingen ny pasientgruppe, startdose eller sluttdose; 65 år er nå utenfor, som avgjørelsen sier, og alle utenfor får et sikkert stopp (kasus B2-05–B2-09 og B2-17–B2-19).',
     },
     {
       nr: 'B2.5',
@@ -1347,7 +1351,8 @@ export const FORSLAG_B2: Kontrollforslag = {
           .map(([f, s]) => `${s.map(tall).join(', ')} mg (form ${f})`)
           .join(' og ')}. Tilfellene med dråper er uendret.`,
         'Fortolkningen: teksten om overgangen fra tabletter til dråper sier nå at tablettene brukes så lenge de gir dosen.',
-        'Alt annet er uendret: trinnene, valgområdene, det minste trinnet, sluttdosen, seponeringen, vurderingspunktene, spørsmålene, unntakene og regneeksemplene.',
+        `Aldersspørsmålet er rettet fra «Er pasienten over 65 år?» til «${ELDRE.tekst}» (B2.4): ${ELDRE.begrunnelse} Svaret ja stopper som før; i versjon 13 står avviket til versjon 14 er godkjent.`,
+        'Alt annet er uendret: trinnene, valgområdene, det minste trinnet, sluttdosen, seponeringen, vurderingspunktene, de andre spørsmålene, unntakene og regneeksemplene.',
       ]),
     },
     {
@@ -1368,7 +1373,9 @@ export const FORSLAG_B2: Kontrollforslag = {
             'B2-02 (K0-01)',
           ],
           ['Dråper 20 og 10 mg, kort behandlingstid', 'Komplett', 'Nøyaktig den samme planen', 'B2-03, B2-04'],
-          ['Lang behandlingstid, andre startdoser, 65 år eller eldre, tidligere seponeringsplager', 'Stopp', 'Stopp', 'B2-05–B2-09'],
+          ['Lang behandlingstid, andre startdoser, eldre enn 65 år, tidligere seponeringsplager', 'Stopp', 'Stopp', 'B2-05–B2-09'],
+          ['Nøyaktig 65 år', 'Plan, fordi 65 år svarer nei på «over 65 år» (avviket fra K1.9)', 'Stopp', 'B2-18, B2-19'],
+          ['64 år', 'Komplett', 'Komplett', 'B2-17'],
         ],
       ),
     },
@@ -1401,16 +1408,9 @@ export const FORSLAG_B2: Kontrollforslag = {
     kb('B2-07', 'pasientforhold', 'escitalopram tablett 20 mg, lang behandlingstid', B2_REGEL, '20', ikkeKomplett('escitalopram', `${EN_REDUKSJON}, og ${overSluttdosen(18)}`), [17], {
       skjema: { ...form(TABLETT), svar: LANG },
     }),
-    kb(
-      'B2-08',
-      'pasientforhold',
-      'escitalopram tablett 20 mg, 65 år eller eldre',
-      B2_REGEL,
-      '20',
-      stopp('Startdosen 20 mg er utenfor det regelen gjelder for (høyst 10 mg ved eldre over 65 år).', UTENFOR_OMFANG),
-      [],
-      { skjema: { ...form(TABLETT), svar: { eldre: true } } },
-    ),
+    kb('B2-08', 'pasientforhold', 'escitalopram tablett 20 mg, 66 år (ja på «65 år eller eldre»)', B2_REGEL, '20', stopp(OVER_ALDERSGRENSEN(20), UTENFOR_OMFANG), [], {
+      skjema: { ...form(TABLETT), svar: { eldre: true } },
+    }),
     kb(
       'B2-09',
       'pasientforhold',
@@ -1493,6 +1493,17 @@ export const FORSLAG_B2: Kontrollforslag = {
         B2_DATO,
         true,
       ),
+    }),
+    // --- Aldersgrensen i Peders avgjørelse (K1.9, under 65 år) ved 64, 65 og 66 år; 66 år er B2-08
+    kb('B2-17', 'pasientforhold', 'escitalopram tablett 10 mg, 64 år (nei på «65 år eller eldre»): komplett', B2_REGEL, '10', { ...plan(null, ...FRA_10), planutfall: SEPONERT_10 }, [], {
+      skjema: { ...form(TABLETT), svar: { eldre: false } },
+      velger: VELGER_10,
+    }),
+    kb('B2-18', 'pasientforhold', 'escitalopram tablett 10 mg, nøyaktig 65 år (ja på «65 år eller eldre»): stopp', B2_REGEL, '10', stopp(utenforOmfang(10), UTENFOR_OMFANG), [], {
+      skjema: { ...form(TABLETT), svar: { eldre: true } },
+    }),
+    kb('B2-19', 'pasientforhold', 'escitalopram tablett 20 mg, nøyaktig 65 år (ja på «65 år eller eldre»): stopp', B2_REGEL, '20', stopp(OVER_ALDERSGRENSEN(20), UTENFOR_OMFANG), [], {
+      skjema: { ...form(TABLETT), svar: { eldre: true } },
     }),
   ],
 }

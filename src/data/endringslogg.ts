@@ -21,7 +21,7 @@ export const ENDRINGSLOGG: Endring[] = [
     utenVarsel: true,
     punkter: [
       'Gjelder bare administratorene, som fortsatt er de eneste som ser verktøyene. Ingen godkjent plan er endret: den godkjente nedtrappingen av escitalopram med dråper gjelder som før.',
-      'En ny versjon av nedtrappingen av escitalopram er sendt til faglig kontroll og er ikke godkjent. En pasient som bruker 20 mg tabletter, får første trinn (15 mg) med hele tabletter og går så over til dråper med samme dose i mg; fra 10 mg tabletter går planen over til dråper fra første trinn. Pasienter som bruker dråper, får den samme planen som før.',
+      'En ny versjon av nedtrappingen av escitalopram er sendt til faglig kontroll og er ikke godkjent. En pasient som bruker 20 mg tabletter, får første trinn (15 mg) med hele tabletter og går så over til dråper med samme dose i mg; fra 10 mg tabletter går planen over til dråper fra første trinn. Pasienter som bruker dråper, får den samme planen som før. Den nye versjonen spør om pasienten er 65 år eller eldre, slik at en pasient på nøyaktig 65 år ikke får en plan som bare er vurdert for pasienter under 65 år.',
       'Først når den nye versjonen er godkjent, erstatter den den gamle.',
     ],
   },
@@ -414,7 +414,9 @@ export const ENDRINGSLOGG: Endring[] = [
     sammendrag: 'Den ukentlige kildekontrollen startet ikke; rettet',
     typer: ['Funksjonalitet'],
     omfang: 'Minimalt omfang',
-    punkter: ['Ingen endring i appen. Kontrollen av kildene og FEST-dataene stoppet før den kom i gang, så adminmenyen ville vist at den stoppet. Nå starter den som den skal.'],
+    punkter: [
+      'Ingen endring i appen. Kontrollen av kildene og FEST-dataene stoppet før den kom i gang, så adminmenyen ville vist at den stoppet. Nå starter den som den skal.',
+    ],
     utenVarsel: true,
   },
   {
@@ -1088,9 +1090,7 @@ export const ENDRINGSLOGG: Endring[] = [
     sammendrag: 'Kurateringskøen starter med en pilot på citalopram, lurasidon og GHB',
     typer: ['Funksjonalitet'],
     omfang: 'Minimalt omfang',
-    punkter: [
-      'Ingen endring i appen. Kurateringskøen gir bare ut citalopram, lurasidon og GHB til piloten med de nye kurateringsgrenene er bestått. Deretter går den videre gjennom hele stoffregisteret.',
-    ],
+    punkter: ['Ingen endring i appen. Kurateringskøen gir bare ut citalopram, lurasidon og GHB til piloten med de nye kurateringsgrenene er bestått. Deretter går den videre gjennom hele stoffregisteret.'],
     utenVarsel: true,
   },
   {
@@ -1099,9 +1099,7 @@ export const ENDRINGSLOGG: Endring[] = [
     sammendrag: 'Kurateringskøen følger kurateringsgrenene, og Claude kan kuratere fagsider etter den faglige protokollen',
     typer: ['Funksjonalitet'],
     omfang: 'Minimalt omfang',
-    punkter: [
-      'Ingen endring i appen. Kurateringskøen følger nå hver kuratering i dens egen arbeidsversjon, gjennom kontrollrundene mellom kuratoren og kontrolløren, fram til den er publisert, og den føres bare som ferdig for det stoffet og den kurateringsarten arbeidsversjonen faktisk gjelder. Claude kan kuratere fagsidene etter den samme faglige protokollen og de samme kvalitetskravene som før, mens ChatGPT kontrollerer og godkjenner hver kuratering uavhengig.',
-    ],
+    punkter: ['Ingen endring i appen. Kurateringskøen følger nå hver kuratering i dens egen arbeidsversjon, gjennom kontrollrundene mellom kuratoren og kontrolløren, fram til den er publisert, og den føres bare som ferdig for det stoffet og den kurateringsarten arbeidsversjonen faktisk gjelder. Claude kan kuratere fagsidene etter den samme faglige protokollen og de samme kvalitetskravene som før, mens ChatGPT kontrollerer og godkjenner hver kuratering uavhengig.'],
     utenVarsel: true,
   },
   {
@@ -1147,9 +1145,7 @@ export const ENDRINGSLOGG: Endring[] = [
     sammendrag: 'Kurateringsgrener: fagsider kan kurateres i en egen arbeidsversjon og publiseres samlet etter faglig godkjenning',
     typer: ['Funksjonalitet'],
     omfang: 'Minimalt omfang',
-    punkter: [
-      'Ingen endring i appen ennå. En fagside kan nå kurateres i en egen, isolert arbeidsversjon som ikke påvirker den publiserte siden, kontrolleres og godkjennes av en uavhengig kontrollør, og publiseres samlet i ett steg.',
-    ],
+    punkter: ['Ingen endring i appen ennå. En fagside kan nå kurateres i en egen, isolert arbeidsversjon som ikke påvirker den publiserte siden, kontrolleres og godkjennes av en uavhengig kontrollør, og publiseres samlet i ett steg.'],
     utenVarsel: true,
   },
   {
@@ -1158,9 +1154,7 @@ export const ENDRINGSLOGG: Endring[] = [
     sammendrag: 'Hver publisering av en fagside lagres som en hel versjon av siden',
     typer: ['Funksjonalitet'],
     omfang: 'Minimalt omfang',
-    punkter: [
-      'Ingen endring i appen ennå. Hver gang en fagside, et kort på den, en referanse den bruker eller bivirkningene publiseres, lagres siden som en samlet versjon som senere kan vises, sammenlignes og gjenopprettes.',
-    ],
+    punkter: ['Ingen endring i appen ennå. Hver gang en fagside, et kort på den, en referanse den bruker eller bivirkningene publiseres, lagres siden som en samlet versjon som senere kan vises, sammenlignes og gjenopprettes.'],
     utenVarsel: true,
   },
   {
@@ -1169,9 +1163,7 @@ export const ENDRINGSLOGG: Endring[] = [
     sammendrag: 'Plan for isolerte kurateringsgrener og fullstendig versjonshistorikk for fagsidene',
     typer: ['Funksjonalitet'],
     omfang: 'Minimalt omfang',
-    punkter: [
-      'Ingen endring i appen. En beskrivelse av hvordan fagsidene skal kunne kurateres i en egen arbeidsversjon, kontrolleres faglig felt for felt og publiseres samlet, er lagt inn som grunnlag for arbeidet videre.',
-    ],
+    punkter: ['Ingen endring i appen. En beskrivelse av hvordan fagsidene skal kunne kurateres i en egen arbeidsversjon, kontrolleres faglig felt for felt og publiseres samlet, er lagt inn som grunnlag for arbeidet videre.'],
     utenVarsel: true,
   },
   {
@@ -1447,7 +1439,9 @@ export const ENDRINGSLOGG: Endring[] = [
     typer: ['Funksjonalitet'],
     omfang: 'Minimalt omfang',
     utenVarsel: true,
-    punkter: ['Den aller første endringen som ble publisert etter forrige oppdatering, kunne bli stående usett i søket til neste dag. Nå fanges også den.'],
+    punkter: [
+      'Den aller første endringen som ble publisert etter forrige oppdatering, kunne bli stående usett i søket til neste dag. Nå fanges også den.',
+    ],
   },
   {
     versjon: '1.85.0',
@@ -1772,7 +1766,9 @@ export const ENDRINGSLOGG: Endring[] = [
     sammendrag: 'Kategoriikonene også øverst på fagsidene',
     typer: ['Design / layout'],
     omfang: 'Minimalt omfang',
-    punkter: ['Kategorien øverst på hver fagside, over navnet på stoffet, har nå det samme ikonet foran seg som i stoffregisteret. Står stoffet i flere kategorier, har hver sitt ikon.'],
+    punkter: [
+      'Kategorien øverst på hver fagside, over navnet på stoffet, har nå det samme ikonet foran seg som i stoffregisteret. Står stoffet i flere kategorier, har hver sitt ikon.',
+    ],
   },
   {
     versjon: '1.73.3',
@@ -1882,7 +1878,9 @@ export const ENDRINGSLOGG: Endring[] = [
     sammendrag: 'Spesialtegnmenyen og lenkepanelet står ikke åpne samtidig',
     typer: ['Funksjonalitet'],
     omfang: 'Minimalt omfang',
-    punkter: ['Når du åpner spesialtegnmenyen mens lenke- eller referansepanelet står åpent, lukkes panelet, og omvendt, også når du bruker tastaturet.'],
+    punkter: [
+      'Når du åpner spesialtegnmenyen mens lenke- eller referansepanelet står åpent, lukkes panelet, og omvendt, også når du bruker tastaturet.',
+    ],
   },
   {
     versjon: '1.70.0',
@@ -1968,7 +1966,9 @@ export const ENDRINGSLOGG: Endring[] = [
     sammendrag: 'Varselinnstillingene er gruppert etter hva de gjelder',
     typer: ['Design / layout'],
     omfang: 'Mindre omfang',
-    punkter: ['Innstillingene for varsler står nå under overskriftene Fortolkning, Idéer, Diskusjoner, Favorittsider og Appen, hver med sitt ikon, så det er lettere å finne riktig valg.'],
+    punkter: [
+      'Innstillingene for varsler står nå under overskriftene Fortolkning, Idéer, Diskusjoner, Favorittsider og Appen, hver med sitt ikon, så det er lettere å finne riktig valg.',
+    ],
   },
   {
     versjon: '1.65.0',
@@ -2039,7 +2039,9 @@ export const ENDRINGSLOGG: Endring[] = [
     sammendrag: 'Vinduene lukkes heller ikke når et trykk utenfor slippes inne i dem',
     typer: ['Funksjonalitet'],
     omfang: 'Minimalt omfang',
-    punkter: ['Trykker du ned utenfor et vindu og slipper museknappen inne i det, blir vinduet stående. Bare et klikk som både begynner og slutter utenfor, lukker det.'],
+    punkter: [
+      'Trykker du ned utenfor et vindu og slipper museknappen inne i det, blir vinduet stående. Bare et klikk som både begynner og slutter utenfor, lukker det.',
+    ],
   },
   {
     versjon: '1.62.4',
@@ -2213,7 +2215,9 @@ export const ENDRINGSLOGG: Endring[] = [
     sammendrag: 'Favorittvarsler når et kort flyttes mellom fagsider',
     typer: ['Funksjonalitet'],
     omfang: 'Minimalt omfang',
-    punkter: ['Flyttes et kort fra én fagside til en annen, får de som har den gamle siden som favoritt, også varsel om det, og varselet på den nye siden nevner bare delen kortet havnet i.'],
+    punkter: [
+      'Flyttes et kort fra én fagside til en annen, får de som har den gamle siden som favoritt, også varsel om det, og varselet på den nye siden nevner bare delen kortet havnet i.',
+    ],
     utenVarsel: true,
   },
   {
@@ -2500,7 +2504,9 @@ export const ENDRINGSLOGG: Endring[] = [
     sammendrag: 'Den ekstra hentingen fra ClinPGx er fjernet igjen',
     typer: ['Fag'],
     omfang: 'Minimalt omfang',
-    punkter: ['ClinPGx-dataene hentes igjen bare ved den ukentlige kjøringen.'],
+    punkter: [
+      'ClinPGx-dataene hentes igjen bare ved den ukentlige kjøringen.',
+    ],
   },
   {
     versjon: '1.41.0',
@@ -2522,7 +2528,9 @@ export const ENDRINGSLOGG: Endring[] = [
     sammendrag: 'De 18 nye ClinPGx-koblingene er lagt inn i databasen',
     typer: ['Fag'],
     omfang: 'Minimalt omfang',
-    punkter: ['De 18 sidene er koblet til ClinPGx i produksjonen, så 66 stoffsider er nå koblet. Dataene for de nye sidene vises etter neste henting fra ClinPGx.'],
+    punkter: [
+      'De 18 sidene er koblet til ClinPGx i produksjonen, så 66 stoffsider er nå koblet. Dataene for de nye sidene vises etter neste henting fra ClinPGx.',
+    ],
   },
   {
     versjon: '1.40.0',
@@ -2560,7 +2568,9 @@ export const ENDRINGSLOGG: Endring[] = [
     sammendrag: 'Farmakogenetikken fra ClinPGx hentes første gang i dag',
     typer: ['Fag'],
     omfang: 'Minimalt omfang',
-    punkter: ['ClinPGx-dataene for de 48 koblede stoffsidene hentes én gang i dag, uten å vente på den ukentlige kjøringen.'],
+    punkter: [
+      'ClinPGx-dataene for de 48 koblede stoffsidene hentes én gang i dag, uten å vente på den ukentlige kjøringen.',
+    ],
   },
   {
     versjon: '1.39.1',
@@ -2568,7 +2578,9 @@ export const ENDRINGSLOGG: Endring[] = [
     sammendrag: 'Farmakogenetikken fra ClinPGx og koblingene til 48 stoffsider er lagt inn i databasen',
     typer: ['Fag'],
     omfang: 'Minimalt omfang',
-    punkter: ['De 48 stoffsidene er koblet til ClinPGx i produksjonen. Dataene vises etter den ukentlige hentingen, eller med en gang når en administrator trykker «Hent fra ClinPGx nå» på siden.'],
+    punkter: [
+      'De 48 stoffsidene er koblet til ClinPGx i produksjonen. Dataene vises etter den ukentlige hentingen, eller med en gang når en administrator trykker «Hent fra ClinPGx nå» på siden.',
+    ],
   },
   {
     versjon: '1.39.0',
@@ -2640,7 +2652,9 @@ export const ENDRINGSLOGG: Endring[] = [
     sammendrag: 'De nasjonale referanseområdene for antiepileptika er lagt inn i databasen',
     typer: ['Fag'],
     omfang: 'Minimalt omfang',
-    punkter: ['Endringene for topiramat, okskarbazepin, de andre antiepileptika og klonazepam ved epilepsi vises nå på sidene.'],
+    punkter: [
+      'Endringene for topiramat, okskarbazepin, de andre antiepileptika og klonazepam ved epilepsi vises nå på sidene.',
+    ],
   },
   {
     versjon: '1.36.6',
@@ -2900,7 +2914,9 @@ export const ENDRINGSLOGG: Endring[] = [
     sammendrag: 'Ingen tom stripe nederst når en skuff glir opp',
     typer: ['Design / layout'],
     omfang: 'Minimalt omfang',
-    punkter: ['Mens en seksjon eller et detaljkort glir opp eller igjen, fyller innholdet hele skuffen. Før kunne det stå en tom stripe nederst i skuffen underveis.'],
+    punkter: [
+      'Mens en seksjon eller et detaljkort glir opp eller igjen, fyller innholdet hele skuffen. Før kunne det stå en tom stripe nederst i skuffen underveis.',
+    ],
   },
   {
     versjon: '1.28.3',
@@ -2932,7 +2948,9 @@ export const ENDRINGSLOGG: Endring[] = [
     sammendrag: 'Brukerlista kan rulles igjen',
     typer: ['Design / layout'],
     omfang: 'Minimalt omfang',
-    punkter: ['I brukerlista kan du nå rulle ned til alle brukerne. Før ble lista kuttet nederst når det var flere brukere enn det var plass til i vinduet.'],
+    punkter: [
+      'I brukerlista kan du nå rulle ned til alle brukerne. Før ble lista kuttet nederst når det var flere brukere enn det var plass til i vinduet.',
+    ],
   },
   {
     versjon: '1.28.0',

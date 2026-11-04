@@ -458,6 +458,11 @@ export interface Formovergangsforslag {
   tilfelle: { startdoser: number[]; formstyrker: Record<string, number[]> }
   /** Teksten i fortolkningen om overgangen, som erstatter den gamle (matchet med `erstatter`). */
   tilpasning: { erstatter: RegExp; tekst: string; henvisninger: Kildehenvisning[] }
+  /**
+   * Spørsmål som rettes i den nye versjonen (samme id, så svarene og kravene
+   * som bruker spørsmålet, står), med begrunnelsen for rettelsen.
+   */
+  sporsmal?: readonly { id: string; tekst: string; ja: string; begrunnelse: string }[]
   /** Dokumenterte avklaringer av overgangen og den praktiske doseringen; uten dem er de åpne forslag. */
   avklaringer?: { overgang?: Avklaring; praktisk?: Avklaring }
   /** Kontrollørens kliniske godkjenning, når den er gitt (som {@link Avslutningsforslag.godkjent}). */
@@ -485,6 +490,15 @@ export const B2_ESCITALOPRAM: Formovergangsforslag = {
     henvisninger: [K1_KILDER.draape],
   },
   tilfelle: { startdoser: [10, 20], formstyrker: { '53': [5, 10, 20], '748': [1] } },
+  sporsmal: [
+    {
+      id: 'eldre',
+      tekst: 'Er pasienten 65 år eller eldre?',
+      ja: '65 år eller eldre',
+      begrunnelse:
+        'Peders avgjørelse på K1.9 gjelder voksne under 65 år, men versjon 13 spør «Er pasienten over 65 år?», så en pasient på nøyaktig 65 år kan svare nei og få en plan utenfor avgrensningen. Versjon 14 spør om 65 år eller eldre, så 65 år regnes med og stopper (ChatGPTs kontroll av planen for brukervennlighet, 04.11.2026).',
+    },
+  ],
   tilpasning: {
     erstatter: /^En pasient som bruker escitalopram tabletter, kan gå over til dråper/,
     tekst:
@@ -506,6 +520,13 @@ export function medFormovergang(r: Regel, a: Formovergangsforslag): Regel {
     (avklaring: Avklaring | undefined) =>
     (begrunnelse: string, henvisninger: Kildehenvisning[]): Grunnlag =>
       avklaring ? { type: 'ousfar_vurdering', begrunnelse, henvisninger, avklaring } : apent(begrunnelse, henvisninger)
+  const sporsmal = (r.sporsmal ?? []).map((s) => {
+    const rettet = a.sporsmal?.find((x) => x.id === s.id)
+    return rettet ? { ...s, tekst: rettet.tekst, ja: rettet.ja } : s
+  })
+  const ukjente = (a.sporsmal ?? []).filter((x) => !r.sporsmal?.some((s) => s.id === x.id))
+  if (ukjente.length > 0) throw new Error(`${r.id}: spørsmålene ${ukjente.map((x) => x.id).join(', ')} finnes ikke i regelen.`)
+  const rettelser = (a.sporsmal ?? []).map((x) => ` Spørsmålet «${x.id}» er rettet til «${x.tekst}»: ${x.begrunnelse}`).join('')
   const versjon = r.versjon + 1
   const forste = r.plan.forlop[0]!
   const forlop: Forlop = {
@@ -535,6 +556,7 @@ export function medFormovergang(r: Regel, a: Formovergangsforslag): Regel {
     tittel: a.tittel,
     versjon,
     erstatter: [r.id],
+    ...(r.sporsmal && { sporsmal }),
     plan: { ...r.plan, forlop: [forlop] },
     klinisk_omfang: { ...omfang, tilfeller },
     fortolkning: { ...r.fortolkning, tilpasninger: r.fortolkning.tilpasninger.map((u) => (a.tilpasning.erstatter.test(u.tekst) ? utsagn(a.tilpasning.tekst, ...a.tilpasning.henvisninger) : u)) },
@@ -545,7 +567,7 @@ export function medFormovergang(r: Regel, a: Formovergangsforslag): Regel {
         steg(
           'utkast',
           versjon,
-          `Ny versjon i B2 (${B2_DATO}) som egen regel som erstatter ${r.id} når den er godkjent: pasienter som bruker tabletter, fortsetter med tabletter så lenge de gir dosen og går så over til dråper mg for mg, og praktisk dosering med høyst ${a.praktisk.draper} dråper som preferanse. Startdosene, pasientgruppen, trinnene, sluttdosen og oppfølgingen er uendret fra versjon ${r.versjon}.`,
+          `Ny versjon i B2 (${B2_DATO}) som egen regel som erstatter ${r.id} når den er godkjent: pasienter som bruker tabletter, fortsetter med tabletter så lenge de gir dosen og går så over til dråper mg for mg, og praktisk dosering med høyst ${a.praktisk.draper} dråper som preferanse. Startdosene, pasientgruppen, trinnene, sluttdosen og oppfølgingen er uendret fra versjon ${r.versjon}.${rettelser}`,
           B2_DATO,
         ),
         steg(
