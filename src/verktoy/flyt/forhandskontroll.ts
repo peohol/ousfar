@@ -297,7 +297,8 @@ export function forhandskontroll(g: Forhandsgrunnlag): Forhandsresultat {
       const valgt = p.grunnskjema.formvalg[forlop]?.legemiddelform
       const navn = listeOg(koder.map(formnavn))
       if (valgt && koder.includes(valgt)) continue
-      if (koder.length === 1 && beslutninger.B4) {
+      // B4: bare når ingen form er valgt; en form klinikeren har valgt, byttes ikke ut.
+      if (koder.length === 1 && beslutninger.B4 && !valgt) {
         formvalg = { ...formvalg, [forlop]: { legemiddelform: koder[0]! } }
         grunner.push(forklaring('form_valgt', `Verktøyet bruker ${navn}, fordi bare den gir en komplett plan.`, { losning: 'i_verktoyet' }))
         continue
