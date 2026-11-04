@@ -32,6 +32,8 @@ import { erKliniskGodkjent, fingeravtrykk, harBeregning } from '../verktoy/regle
 import type { Regel } from '../verktoy/regler/modell'
 import { bareFritak, kjorKasus, PILOTKASUS, tidsstempel, type Pilotkasus, type Pilotutfall, type Uttrekkene } from '../verktoy/regler/pilotmatrise'
 import { snarvalg } from '../verktoy/snarvalg'
+import { kjorKontrollkasus, KONTROLLFORSLAG, omfangsplaner } from '../verktoy/kontrollgrunnlag'
+import { FEST_TILLEGG, kjorTilleggskasus } from '../verktoy/tilleggsgrunnlag'
 import { fraForlop, REGELSETT, tilForlop, tilgjengelighet, type Verktoyvalg } from '../verktoy/tilgjengelighet'
 import type { Verktoysperre } from '../verktoy/sperrer'
 
@@ -224,20 +226,31 @@ describe('S2: ingen godkjent regel får nytt fingeravtrykk', () => {
   })
 })
 
-/** Planen slik motoren ga den, uten formatering: dosene og preparatene per forløp, vurderingspunktene og forbeholdene. */
+/** Dosene siden tilbyr for neste trinn når forskriveren velger dose per trinn. */
+const tilbys = (r: Doseplanresultat | undefined) =>
+  r?.trinnvalg?.map((t) => `${t.forlop} trinn ${t.trinn} fra ${tall(t.fra_mg)} mg: ${t.doser.map((d) => `${tall(d.mg)} mg${d.dager !== undefined ? ` (${d.dager} d)` : ''}`).join(' | ')}`)
+
+/**
+ * Utfallet slik motoren ga det, uten formatering: for en plan dosene og
+ * preparatene per forløp, vurderingspunktene og forbeholdene; ellers
+ * grunnene. Dosene siden tilbyr for neste trinn står med i begge tilfeller.
+ */
 function oppsummering(u: Utfall): unknown {
-  if (u.utfall !== 'plan') return u.utfall === 'ingen' ? { utfall: u.utfall, status: u.status, grunner: u.grunner } : { ...u, resultat: undefined, tekst: undefined }
+  const valg = tilbys(u.resultat)
+  const med = <T extends object>(x: T) => (valg ? { ...x, tilbys: valg } : x)
+  if (u.utfall !== 'plan') return med(u.utfall === 'ingen' ? { utfall: u.utfall, status: u.status, grunner: u.grunner } : { ...u, resultat: undefined, tekst: undefined })
   const r = u.resultat!
-  const regel = REGELSETT.regler.find((x) => x.id === r.regel.id)!
-  const v = planvisning(r, regel)!
-  return {
+  // Kontrollkasusene kan regne med en regel som bare er godkjent i kontrollgrunnlaget; da finnes ingen visning.
+  const regel = REGELSETT.regler.find((x) => x.id === r.regel.id && fingeravtrykk(x) === r.regel.fingeravtrykk)
+  const v = regel && planvisning(r, regel)
+  return med({
     regel: `${r.regel.id} v${r.regel.versjon}`,
     forlop: planform(r),
     preparater: preparatliste(r),
-    vurderinger: v.vurderinger,
+    vurderinger: v ? v.vurderinger : null,
     forbehold: r.status === 'doseplan' ? r.forbehold : [],
     avvik: r.status === 'doseplan' ? r.avvik : [],
-  }
+  })
 }
 
 describe('S3: de samme planene for de samme kasusene', () => {
@@ -246,14 +259,27 @@ describe('S3: de samme planene for de samme kasusene', () => {
    * klinisk endring: det godtas bare i PR-en der en ny, godkjent
    * regelversjon uttrykkelig tar i bruk ny motoratferd (B2), og da bare
    * for den regelen, med `vitest -u` og oppdateringen vist i PR-beskrivelsen.
+   * Dette er det eneste øyeblikksbildet for S3; motorarbeidet (B1) prøves mot det.
    */
+  const PILOT = { pilot: UTTREKKENE[FEST_PILOT]!, aksept: UTTREKKENE[`${MAPPE}/fest-aksepttest.json`]! }
   it('omfangskasusene', () => {
     expect(Object.fromEntries(KJORT.map((x) => [x.kasus.id, oppsummering(x.utfall)]))).toMatchSnapshot()
   })
   it('P11-matrisen', () => {
-    const u = { pilot: UTTREKKENE[FEST_PILOT]!, aksept: UTTREKKENE[`${MAPPE}/fest-aksepttest.json`]! }
-    expect(Object.fromEntries(PILOTKASUS.map((k) => [k.id, oppsummering(kjorKasus(k, u))]))).toMatchSnapshot()
+    expect(Object.fromEntries(PILOTKASUS.map((k) => [k.id, oppsummering(kjorKasus(k, PILOT))]))).toMatchSnapshot()
   })
+  it('K4-kasusene', () => {
+    expect(Object.fromEntries(kjorTilleggskasus(UTTREKKENE[FEST_TILLEGG]!).map(({ k, res }) => [k.id, oppsummering(res)]))).toMatchSnapshot()
+  })
+  it('kontrollkasusene og hver vei gjennom det kliniske omfanget i kontrollgrunnlagene', () => {
+    const ut: Record<string, unknown> = {}
+    for (const f of KONTROLLFORSLAG) {
+      for (const k of f.kasus) ut[`kontroll ${f.nr} ${k.id}`] = oppsummering(kjorKontrollkasus(k, PILOT))
+      for (const o of omfangsplaner(f, PILOT))
+        for (const v of o.veier) ut[`omfang ${f.nr} ${o.regel.id} ${o.form ?? '-'} ${tall(o.startdose_mg)} mg [${v.valg.map((x) => x.valgt).join(',')}]`] = oppsummering(v.utfall)
+    }
+    expect(ut).toMatchSnapshot()
+  }, 300_000)
 })
 
 /* --- S4 og S5: hver betingelse må besvares, og ukjent gir aldri plan ---------------------- */

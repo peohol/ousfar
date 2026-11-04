@@ -1,5 +1,543 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`S3: de samme planene for de samme kasusene > K4-kasusene 1`] = `
+{
+  "K4-01": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [],
+      "til": [
+        "dag 1–14 [09.11.2026–22.11.2026]: 25 mg annenhver dag = 1 tablett à 25 mg",
+        "dag 15–28 [23.11.2026–06.12.2026]: 25 mg = 1 tablett à 25 mg",
+        "dag 29–35 [07.12.2026–13.12.2026]: 50 mg = 1 tablett à 50 mg",
+        "fra dag 36 [14.12.2026]: 100 mg = 1 tablett à 100 mg",
+      ],
+    },
+    "preparater": [
+      "Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "tillegg-valproat-lamotrigin v2",
+    "vurderinger": [
+      "Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.",
+      "Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.",
+      "Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.",
+      "Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.",
+    ],
+  },
+  "K4-02": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [],
+      "til": [
+        "dag 1–14 [09.11.2026–22.11.2026]: 25 mg = 1 tablett à 25 mg",
+        "dag 15–28 [23.11.2026–06.12.2026]: 50 mg = 1 tablett à 50 mg",
+        "dag 29–35 [07.12.2026–13.12.2026]: 100 mg = 1 tablett à 100 mg",
+        "fra dag 36 [14.12.2026]: 200 mg = 1 tablett à 200 mg",
+      ],
+    },
+    "preparater": [
+      "Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Lamictal tyggetab/disperg tab 200 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "tillegg-litium-lamotrigin v2",
+    "vurderinger": [
+      "Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.",
+      "Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.",
+      "Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Vurder klinisk respons; videre justering (100–400 mg/dag er brukt i studier) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.",
+      "Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.",
+    ],
+  },
+  "K4-10": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [],
+      "til": [
+        "dag 1–14 [09.11.2026–22.11.2026]: 25 mg annenhver dag = 1 tablett à 25 mg",
+        "dag 15–28 [23.11.2026–06.12.2026]: 25 mg = 1 tablett à 25 mg",
+        "dag 29–35 [07.12.2026–13.12.2026]: 50 mg = 1 tablett à 50 mg",
+        "fra dag 36 [14.12.2026]: 100 mg = 1 tablett à 100 mg",
+      ],
+    },
+    "preparater": [
+      "Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "tillegg-valproat-lamotrigin v2",
+    "vurderinger": [
+      "Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.",
+      "Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.",
+      "Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.",
+      "Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.",
+    ],
+  },
+  "K4-11": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten er under 18 år.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-12": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten har tidligere fått utslett, Stevens-Johnsons syndrom, toksisk epidermal nekrolyse, DRESS eller aseptisk meningitt ved bruk av lamotrigin.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-13": {
+    "grunner": [
+      "Må avklares før beregning (ukjent): Pasienten er gravid, planlegger graviditet eller ammer. Sammen med valproat gjelder det også valproatbehandlingen: valproat er kontraindisert under graviditet ved bipolar lidelse, og spesialist skal konsulteres.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-14": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [],
+      "til": [
+        "dag 1–14 [09.11.2026–22.11.2026]: 25 mg annenhver dag = 1 tablett à 25 mg",
+        "dag 15–28 [23.11.2026–06.12.2026]: 25 mg = 1 tablett à 25 mg",
+        "dag 29–35 [07.12.2026–13.12.2026]: 50 mg = 1 tablett à 50 mg",
+        "fra dag 36 [14.12.2026]: 100 mg = 1 tablett à 100 mg",
+      ],
+    },
+    "preparater": [
+      "Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "tillegg-valproat-lamotrigin v2",
+    "vurderinger": [
+      "Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.",
+      "Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.",
+      "Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.",
+      "Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.",
+    ],
+  },
+  "K4-15": {
+    "grunner": [
+      "Aktuell døgndose må fylles inn som et tall større enn 0.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "mangler",
+  },
+  "K4-16": {
+    "grunner": [
+      "Ingen klinisk doseplan kan vises.",
+      "Legemiddeldataene ble sist kontrollert mot FEST 3. november 2026. Den nattlige oppdateringen har ikke gått siden, så nyere endringer i FEST kan mangle.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-17": {
+    "grunner": [
+      "Ingen av de perorale preparatene av lamotrigin i FEST kan brukes: Lamictal tyggetab/disperg tab 5 mg: krever godkjenningsfritak, som ikke er valgt · Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt · Lamictal tyggetab/disperg tab 200 mg: krever godkjenningsfritak, som ikke er valgt · Lamictal tyggetab/disperg tab 100 mg: krever godkjenningsfritak, som ikke er valgt · Lamictal tyggetab/disperg tab 25 mg, varenr. 196808: krever godkjenningsfritak, som ikke er valgt · Lamictal tyggetab/disperg tab 2 mg: krever godkjenningsfritak, som ikke er valgt · Lamictal tyggetab/disperg tab 50 mg: krever godkjenningsfritak, som ikke er valgt.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-18": {
+    "grunner": [
+      "lamotrigin dag 1–14: den ideelle dosen 25 mg annenhver dag kan ikke gis med preparatene i FEST nøyaktig og ikke over 200 mg. Nærmeste doser som kan settes sammen: 20 mg (-20 %) og 50 mg (+100 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-19": {
+    "grunner": [
+      "Ingen klinisk doseplan kan vises.",
+      "Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke); den må kontrolleres på nytt.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-20": {
+    "grunner": [
+      "lamotrigin fra dag 36: den ideelle dosen 250 mg kan ikke gis med preparatene i FEST nøyaktig og ikke over 200 mg. Nærmeste doser som kan settes sammen: 225 mg (-10 %) og 275 mg (+10 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-21": {
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "sperret",
+  },
+  "K4-22": {
+    "grunner": [
+      "Måldosen 200 mg er utenfor det regelen gjelder for (100 mg).",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-23": {
+    "grunner": [
+      "Svaret ja (østrogenholdig prevensjon eller behandling, som kan kreve en høyere vedlikeholdsdose av lamotrigin enn måldosen; måldosen krever en særskilt vurdering) krever en skriftlig begrunnelse fra forskriveren, en særskilt vurdering. Skriv begrunnelsen, eller vurder om regelen passer.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-24": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [],
+      "til": [
+        "dag 1–14 [09.11.2026–22.11.2026]: 25 mg annenhver dag = 1 tablett à 25 mg",
+        "dag 15–28 [23.11.2026–06.12.2026]: 25 mg = 1 tablett à 25 mg",
+        "dag 29–35 [07.12.2026–13.12.2026]: 50 mg = 1 tablett à 50 mg",
+        "fra dag 36 [14.12.2026]: 100 mg = 1 tablett à 100 mg",
+      ],
+    },
+    "preparater": [
+      "Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "tillegg-valproat-lamotrigin v2",
+    "vurderinger": [
+      "Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.",
+      "Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.",
+      "Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.",
+      "Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.",
+    ],
+  },
+  "K4-25": {
+    "grunner": [
+      "Må besvares før beregning: Bruker pasienten østrogenholdig prevensjon eller annen østrogenholdig behandling, som hormonsubstitusjon?",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-26": {
+    "grunner": [
+      "Må bekreftes før beregning: Pasienten bruker sikker prevensjon uten avbrudd: minst én sikker, helst brukeruavhengig metode (som spiral eller implantat), eller to komplementære metoder med en barrieremetode.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-27": {
+    "grunner": [
+      "Må besvares før beregning: Er pasienten jente eller kvinne som kan bli gravid? Det gjelder også den som ikke er seksuelt aktiv, med mindre det er sterke grunner til at det ikke er risiko for graviditet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-28": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten er gravid, planlegger graviditet eller ammer. Sammen med valproat gjelder det også valproatbehandlingen: valproat er kontraindisert under graviditet ved bipolar lidelse, og spesialist skal konsulteres.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-29": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [],
+      "til": [
+        "dag 1–14 [09.11.2026–22.11.2026]: 25 mg annenhver dag = 1 tablett à 25 mg",
+        "dag 15–28 [23.11.2026–06.12.2026]: 25 mg = 1 tablett à 25 mg",
+        "dag 29–35 [07.12.2026–13.12.2026]: 50 mg = 1 tablett à 50 mg",
+        "fra dag 36 [14.12.2026]: 100 mg = 1 tablett à 100 mg",
+      ],
+    },
+    "preparater": [
+      "Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "tillegg-valproat-lamotrigin v2",
+    "vurderinger": [
+      "Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.",
+      "Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.",
+      "Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.",
+      "Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.",
+    ],
+  },
+  "K4-30": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [],
+      "til": [
+        "dag 1–14 [09.11.2026–22.11.2026]: 25 mg = 1 tablett à 25 mg",
+        "dag 15–28 [23.11.2026–06.12.2026]: 50 mg = 1 tablett à 50 mg",
+        "dag 29–35 [07.12.2026–13.12.2026]: 100 mg = 1 tablett à 100 mg",
+        "fra dag 36 [14.12.2026]: 200 mg = 1 tablett à 200 mg",
+      ],
+    },
+    "preparater": [
+      "Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Lamictal tyggetab/disperg tab 200 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "tillegg-litium-lamotrigin v2",
+    "vurderinger": [
+      "Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.",
+      "Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.",
+      "Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Vurder klinisk respons; videre justering (100–400 mg/dag er brukt i studier) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.",
+      "Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.",
+    ],
+  },
+  "K4-31": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten bruker i tillegg valproat, eller et legemiddel som induserer lamotrigin-glukuronidering (fenytoin, karbamazepin, fenobarbital, primidon, rifampicin eller lopinavir/ritonavir). Da gjelder en annen opptrapping.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-32": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten bruker et annet legemiddel med ukjent farmakokinetisk interaksjon med lamotrigin. Da skal opptrappingen for samtidig valproat brukes, og planen må lages for det. (Østrogenholdig prevensjon alene er ikke et slikt forhold; se spørsmålet om østrogenholdig behandling.)",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-33": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten har moderat eller alvorlig nedsatt leverfunksjon (Child-Pugh B eller C).",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-34": {
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten bruker lamotrigin nå, eller har sluttet så nylig at det er under fem halveringstider siden siste dose (ca. 7 døgn alene og ca. 15 døgn sammen med valproat, ut fra gjennomsnittlig halveringstid). Da er dette ikke en oppstart.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-35": {
+    "grunner": [
+      "Må bekreftes før beregning: Pasienten bruker Lithionit 42 mg depottabletter, og døgndosen er fylt inn i mg litium (Li⁺): antall tabletter × 42 mg (6 mmol litium per tablett). Andre litiumpreparater, også de der styrken oppgis som mg litiumsalt, er utenfor regelen.",
+      "Må bekreftes før beregning: Den første stabiliserende måldosen (200 mg/dag) er det kliniske målet for denne opptrappingen hos pasienten, vurdert ut fra indikasjon, forventet respons og interaksjoner. Er et annet mål ønsket, gjelder ikke regelen.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-36": {
+    "grunner": [
+      "Startdosen 0,5 mg er utenfor det regelen gjelder for (42, 84, 126, 168, 210, 252, 294, 336, 378, 420 mg).",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-37": {
+    "grunner": [
+      "Startdosen 170 mg er utenfor det regelen gjelder for (42, 84, 126, 168, 210, 252, 294, 336, 378, 420 mg).",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-38": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [],
+      "til": [
+        "dag 1–14 [09.11.2026–22.11.2026]: 25 mg = 1 tablett à 25 mg",
+        "dag 15–28 [23.11.2026–06.12.2026]: 50 mg = 1 tablett à 50 mg",
+        "dag 29–35 [07.12.2026–13.12.2026]: 100 mg = 1 tablett à 100 mg",
+        "fra dag 36 [14.12.2026]: 200 mg = 1 tablett à 200 mg",
+      ],
+    },
+    "preparater": [
+      "Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Lamictal tyggetab/disperg tab 200 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "tillegg-litium-lamotrigin v2",
+    "vurderinger": [
+      "Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.",
+      "Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.",
+      "Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Vurder klinisk respons; videre justering (100–400 mg/dag er brukt i studier) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.",
+      "Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.",
+    ],
+  },
+  "K4-39": {
+    "grunner": [
+      "Startdosen 462 mg er utenfor det regelen gjelder for (42, 84, 126, 168, 210, 252, 294, 336, 378, 420 mg).",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-40": {
+    "grunner": [
+      "Måldosen 300 mg er utenfor det regelen gjelder for (200 mg).",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-41": {
+    "grunner": [
+      "Må bekreftes før beregning: Den første stabiliserende måldosen (200 mg/dag) er det kliniske målet for denne opptrappingen hos pasienten, vurdert ut fra indikasjon, forventet respons og interaksjoner. Er et annet mål ønsket, gjelder ikke regelen.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-42": {
+    "grunner": [
+      "Må bekreftes før beregning: Måldosen er vurdert særskilt fordi østrogenholdig behandling kan kreve en vedlikeholdsdose opptil det dobbelte: opptrappingen går likevel bare til 200 mg/dag, og en senere økning planlegges individuelt etter respons og eventuelt serumkonsentrasjon av lamotrigin.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-43": {
+    "grunner": [
+      "Må bekreftes før beregning: Pasienten bruker et natriumvalproatpreparat, og døgndosen som er fylt inn, er den pasienten bruker nå, i mg natriumvalproat slik den står i legemiddellisten. Preparat, styrke og fordeling over døgnet fortsetter uendret som i legemiddellisten; preparater der dosen ikke oppgis i mg natriumvalproat, er utenfor regelen. Verktøyet kontrollerer ikke denne dosen mot noe preparat eller område; planen gjentar den bare.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-44": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [],
+      "til": [
+        "dag 1–14 [09.11.2026–22.11.2026]: 25 mg annenhver dag = 1 tablett à 25 mg",
+        "dag 15–28 [23.11.2026–06.12.2026]: 25 mg = 1 tablett à 25 mg",
+        "dag 29–35 [07.12.2026–13.12.2026]: 50 mg = 1 tablett à 50 mg",
+        "fra dag 36 [14.12.2026]: 100 mg = 1 tablett à 100 mg",
+      ],
+    },
+    "preparater": [
+      "Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "tillegg-valproat-lamotrigin v2",
+    "vurderinger": [
+      "Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.",
+      "Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.",
+      "Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.",
+      "Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.",
+    ],
+  },
+  "K4-45": {
+    "grunner": [
+      "Må bekreftes før beregning: Pasienten er informert om den mulige risikoen for nevroutviklingsforstyrrelser hos barn som unnfanges mens han bruker valproat eller de 3 første månedene etter at han har sluttet (sammenhengen er usikker), om behovet for effektiv prevensjon, også for en kvinnelig partner, i hele denne perioden, og om at han ikke skal donere sæd i samme periode.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-46": {
+    "grunner": [
+      "Må besvares før beregning: Er pasienten gutt eller mann som kan gjøre en partner gravid?",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-47": {
+    "grunner": [
+      "lamotrigin dag 1–14: den ideelle dosen 25 mg annenhver dag kan ikke gis med preparatene i FEST nøyaktig og ikke over 200 mg. Nærmeste doser som kan settes sammen: 20 mg (-20 %) og 50 mg (+100 %). En annen dose, et større avvik eller en annen formulering er et nytt forslag som krever en egen faglig vurdering og godkjenning; beregningen gjør det ikke selv.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "K4-50": {
+    "grunner": [
+      "OUSFAR har ingen regel for denne kombinasjonen.",
+    ],
+    "status": "ikke_stottet",
+    "utfall": "ingen",
+  },
+  "K4-51": {
+    "grunner": [
+      "OUSFAR har ingen regel for denne kombinasjonen.",
+    ],
+    "status": "ikke_stottet",
+    "utfall": "ingen",
+  },
+  "K4-52": {
+    "grunner": [
+      "OUSFAR har ingen regel for denne kombinasjonen.",
+    ],
+    "status": "ikke_stottet",
+    "utfall": "ingen",
+  },
+}
+`;
+
 exports[`S3: de samme planene for de samme kasusene > P11-matrisen 1`] = `
 {
   "E01": {
@@ -8,6 +546,9 @@ exports[`S3: de samme planene for de samme kasusene > P11-matrisen 1`] = `
     ],
     "resultat": undefined,
     "tekst": undefined,
+    "tilbys": [
+      "fra trinn 1 fra 10 mg: 8 mg",
+    ],
     "utfall": "stopp",
   },
   "E02": {
@@ -1252,6 +1793,1627 @@ exports[`S3: de samme planene for de samme kasusene > P11-matrisen 1`] = `
     ],
     "regel": "depot-paliperidon-xeplion v3",
     "vurderinger": [],
+  },
+}
+`;
+
+exports[`S3: de samme planene for de samme kasusene > kontrollkasusene og hver vei gjennom det kliniske omfanget i kontrollgrunnlagene 1`] = `
+{
+  "kontroll 1 F1-01": {
+    "feil": [],
+    "grunner": [
+      "amitriptylin dag 1–28: den ideelle dosen 37,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 35 mg (-6,67 %, faktisk reduksjon 30 % fra 50 mg) og 40 mg (+6,67 %, faktisk reduksjon 20 % fra 50 mg). Den foretrukne reduksjonen til 37,5 mg (−25 % fra 50 mg) kan ikke gis med preparatene. Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 50 mg innenfor det foretrukne området 5–25 %: 40 mg (−20 %). Beregningen velger ikke selv.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "tilbys": [
+      "fra trinn 1 fra 50 mg: 40 mg",
+    ],
+    "utfall": "stopp",
+  },
+  "kontroll 1 F1-02": {
+    "avvik": [
+      "amitriptylin dag 1–28: 40 mg, valgt av forskriveren fordi den beregnede dosen 37,5 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "amitriptylin dag 57–84: 25 mg, valgt av forskriveren fordi den beregnede dosen 22,5 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "amitriptylin fra dag 85: 20 mg, valgt av forskriveren fordi den beregnede dosen 18,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "dag 1–28: 40 mg = 4 tabletter à 10 mg, valgt av forskriveren (beregnet 37,5 mg; −20 %)",
+        "dag 29–56: 30 mg = 3 tabletter à 10 mg",
+        "dag 57–84: 25 mg = 1 tablett à 25 mg, valgt av forskriveren (beregnet 22,5 mg; −16,67 %)",
+        "fra dag 85: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 18,75 mg; −20 %)",
+        "neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt",
+      ],
+    },
+    "preparater": [
+      "Amitriptylin Abcur tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Abcur tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Orifarm tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Orifarm tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Sarotex tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Sarotex tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "seponering-amitriptylin v12",
+    "vurderinger": [],
+  },
+  "kontroll 1 F1-03": {
+    "avvik": [
+      "amitriptylin fra dag 1: 20 mg, valgt av forskriveren fordi den beregnede dosen 18,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "fra dag 1: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 18,75 mg; −20 %)",
+        "én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene",
+      ],
+    },
+    "preparater": [
+      "Amitriptylin Abcur tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Orifarm tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Sarotex tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "seponering-amitriptylin v12",
+    "vurderinger": [],
+  },
+  "kontroll 1 F1-04": {
+    "avvik": [
+      "amitriptylin dag 1–28: 120 mg, valgt av forskriveren fordi den beregnede dosen 112,5 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "amitriptylin dag 29–56: 100 mg, valgt av forskriveren fordi den beregnede dosen 90 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "amitriptylin dag 85–112: 60 mg, valgt av forskriveren fordi den beregnede dosen 56,25 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "amitriptylin dag 141–168: 35 mg, valgt av forskriveren fordi den beregnede dosen 33,75 mg ikke kan gis; faktisk reduksjon 22,22 % fra dosen før.",
+      "amitriptylin dag 169–196: 30 mg, valgt av forskriveren fordi den beregnede dosen 26,25 mg ikke kan gis; faktisk reduksjon 14,29 % fra dosen før.",
+      "amitriptylin dag 197–224: 25 mg, valgt av forskriveren fordi den beregnede dosen 22,5 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "amitriptylin fra dag 225: 20 mg, valgt av forskriveren fordi den beregnede dosen 18,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "dag 1–28: 120 mg = 2 tabletter à 10 mg + 2 tabletter à 50 mg, valgt av forskriveren (beregnet 112,5 mg; −20 %)",
+        "dag 29–56: 100 mg = 2 tabletter à 50 mg, valgt av forskriveren (beregnet 90 mg; −16,67 %)",
+        "dag 57–84: 75 mg = 1 tablett à 25 mg + 1 tablett à 50 mg",
+        "dag 85–112: 60 mg = 1 tablett à 10 mg + 1 tablett à 50 mg, valgt av forskriveren (beregnet 56,25 mg; −20 %)",
+        "dag 113–140: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg",
+        "dag 141–168: 35 mg = 1 tablett à 10 mg + 1 tablett à 25 mg, valgt av forskriveren (beregnet 33,75 mg; −22,22 %)",
+        "dag 169–196: 30 mg = 3 tabletter à 10 mg, valgt av forskriveren (beregnet 26,25 mg; −14,29 %)",
+        "dag 197–224: 25 mg = 1 tablett à 25 mg, valgt av forskriveren (beregnet 22,5 mg; −16,67 %)",
+        "fra dag 225: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 18,75 mg; −20 %)",
+        "neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt",
+      ],
+    },
+    "preparater": [
+      "Amitriptylin Abcur tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Abcur tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Abcur tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Orifarm tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Orifarm tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Sarotex tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Sarotex tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "seponering-amitriptylin v12",
+    "vurderinger": [],
+  },
+  "kontroll 1 F1-05": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "fra dag 1: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg",
+        "én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene",
+      ],
+    },
+    "preparater": [
+      "Amitriptylin Abcur tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Abcur tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Orifarm tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Orifarm tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Sarotex tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Sarotex tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "seponering-amitriptylin v12",
+    "vurderinger": [],
+  },
+  "kontroll 1 F1-06": {
+    "avvik": [
+      "amitriptylin fra dag 1: 70 mg, valgt av forskriveren fordi den beregnede dosen 67,5 mg ikke kan gis; faktisk reduksjon 6,67 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "fra dag 1: 70 mg = 2 tabletter à 10 mg + 1 tablett à 50 mg, valgt av forskriveren (beregnet 67,5 mg; −6,67 %)",
+        "én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene",
+      ],
+    },
+    "preparater": [
+      "Amitriptylin Abcur tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Abcur tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Orifarm tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Sarotex tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "seponering-amitriptylin v12",
+    "vurderinger": [],
+  },
+  "kontroll 1 F1-07": {
+    "feil": [],
+    "grunner": [
+      "amitriptylin dag 1–28: den ideelle dosen 90 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 85 mg (-5,56 %, faktisk reduksjon 15 % fra 100 mg) og 100 mg (+11,11 %). Den foretrukne reduksjonen til 90 mg (−10 % fra 100 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 5–10 %. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet.",
+      "Startdosen 100 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 25, 50, 75, 100 og 150 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 10, 25 og 50 mg; 50 og 75 mg, FEST-legemiddelform 53, ved lang behandlingstid og nei på de andre spørsmålene, reduksjon per trinn (% av aktuell dose) 10 %, styrker (fra) 10, 25 og 50 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 1 F1-08": {
+    "feil": [],
+    "grunner": [
+      "Ingen klinisk doseplan kan vises.",
+      "Startdosen 60 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 25, 50, 75, 100 og 150 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 10, 25 og 50 mg; 50 og 75 mg, FEST-legemiddelform 53, ved lang behandlingstid og nei på de andre spørsmålene, reduksjon per trinn (% av aktuell dose) 10 %, styrker (fra) 10, 25 og 50 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 1 F1-09": {
+    "feil": [],
+    "grunner": [
+      "amitriptylin dag 1–28: den ideelle dosen 7,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 10 mg (+33,33 %). Den foretrukne reduksjonen til 7,5 mg (−25 % fra 10 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 5–25 %. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet.",
+      "Startdosen 10 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 25, 50, 75, 100 og 150 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 10, 25 og 50 mg; 50 og 75 mg, FEST-legemiddelform 53, ved lang behandlingstid og nei på de andre spørsmålene, reduksjon per trinn (% av aktuell dose) 10 %, styrker (fra) 10, 25 og 50 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 1 F1-10": {
+    "feil": [],
+    "grunner": [
+      "Ingen klinisk doseplan kan vises.",
+      "Reduksjon per trinn (% av aktuell dose) 20 % er ikke verdien som er kontrollert (25 %), heller ikke med begrunnelse. Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 1 F1-11": {
+    "feil": [],
+    "grunner": [
+      "amitriptylin dag 1–28: den ideelle dosen 37,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 35 mg (-6,67 %, faktisk reduksjon 30 % fra 50 mg) og 40 mg (+6,67 %, faktisk reduksjon 20 % fra 50 mg). Den foretrukne reduksjonen til 37,5 mg (−25 % fra 50 mg) kan ikke gis med preparatene. Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 50 mg innenfor det foretrukne området 5–25 %: 40 mg (−20 %). Beregningen velger ikke selv.",
+      "Startdosen 50 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 25, 50, 75, 100 og 150 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 10, 25 og 50 mg; 50 og 75 mg, FEST-legemiddelform 53, ved lang behandlingstid og nei på de andre spørsmålene, reduksjon per trinn (% av aktuell dose) 10 %, styrker (fra) 10, 25 og 50 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 1 F1-12": {
+    "feil": [],
+    "grunner": [
+      "Regelen gjelder ikke: Et tidligere forsøk på å trappe ned eller seponere dette legemidlet har gitt seponeringssymptomer eller mislyktes; da gjelder den langsomme varianten av regelen.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 1 F1-13": {
+    "feil": [],
+    "grunner": [
+      "amitriptylin dag 1–28: den ideelle dosen 47,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 45 mg (-5,26 %, faktisk reduksjon 10 % fra 50 mg) og 50 mg (+5,26 %). Den foretrukne reduksjonen til 47,5 mg (−5 % fra 50 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 1–5 %. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet.",
+      "Startdosen 50 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for; ingen tilfeller er kontrollert. Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 1 F1-14": {
+    "feil": [],
+    "grunner": [
+      "Må bekreftes før beregning: Lever- og nyrefunksjon og interaksjoner er vurdert. Ved nedsatt organfunksjon eller interaksjoner som kan endre konsentrasjonen av legemidlet, må dosen og planen vurderes individuelt.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 1 F1-15": {
+    "avvik": [
+      "nortriptylin dag 1–28: 40 mg, valgt av forskriveren fordi den beregnede dosen 37,5 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "nortriptylin dag 57–84: 25 mg, valgt av forskriveren fordi den beregnede dosen 22,5 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "nortriptylin fra dag 85: 20 mg, valgt av forskriveren fordi den beregnede dosen 18,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "dag 1–28: 40 mg = 4 tabletter à 10 mg, valgt av forskriveren (beregnet 37,5 mg; −20 %)",
+        "dag 29–56: 30 mg = 3 tabletter à 10 mg",
+        "dag 57–84: 25 mg = 1 tablett à 25 mg, valgt av forskriveren (beregnet 22,5 mg; −16,67 %)",
+        "fra dag 85: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 18,75 mg; −20 %)",
+        "neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt",
+      ],
+    },
+    "preparater": [
+      "Noritren tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Noritren tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "seponering-nortriptylin v12",
+    "vurderinger": [],
+  },
+  "kontroll 1 F1-16": {
+    "avvik": [
+      "nortriptylin dag 1–28: 120 mg, valgt av forskriveren fordi den beregnede dosen 112,5 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "nortriptylin dag 29–56: 100 mg, valgt av forskriveren fordi den beregnede dosen 90 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "nortriptylin dag 85–112: 60 mg, valgt av forskriveren fordi den beregnede dosen 56,25 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "nortriptylin dag 141–168: 35 mg, valgt av forskriveren fordi den beregnede dosen 33,75 mg ikke kan gis; faktisk reduksjon 22,22 % fra dosen før.",
+      "nortriptylin dag 169–196: 30 mg, valgt av forskriveren fordi den beregnede dosen 26,25 mg ikke kan gis; faktisk reduksjon 14,29 % fra dosen før.",
+      "nortriptylin dag 197–224: 25 mg, valgt av forskriveren fordi den beregnede dosen 22,5 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "nortriptylin fra dag 225: 20 mg, valgt av forskriveren fordi den beregnede dosen 18,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "dag 1–28: 120 mg = 2 tabletter à 10 mg + 2 tabletter à 50 mg, valgt av forskriveren (beregnet 112,5 mg; −20 %)",
+        "dag 29–56: 100 mg = 2 tabletter à 50 mg, valgt av forskriveren (beregnet 90 mg; −16,67 %)",
+        "dag 57–84: 75 mg = 1 tablett à 25 mg + 1 tablett à 50 mg",
+        "dag 85–112: 60 mg = 1 tablett à 10 mg + 1 tablett à 50 mg, valgt av forskriveren (beregnet 56,25 mg; −20 %)",
+        "dag 113–140: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg",
+        "dag 141–168: 35 mg = 1 tablett à 10 mg + 1 tablett à 25 mg, valgt av forskriveren (beregnet 33,75 mg; −22,22 %)",
+        "dag 169–196: 30 mg = 3 tabletter à 10 mg, valgt av forskriveren (beregnet 26,25 mg; −14,29 %)",
+        "dag 197–224: 25 mg = 1 tablett à 25 mg, valgt av forskriveren (beregnet 22,5 mg; −16,67 %)",
+        "fra dag 225: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 18,75 mg; −20 %)",
+        "neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt",
+      ],
+    },
+    "preparater": [
+      "Noritren tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Noritren tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Noritren tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "seponering-nortriptylin v12",
+    "vurderinger": [],
+  },
+  "kontroll 1 F1-17": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "fra dag 1: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg",
+        "én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene",
+      ],
+    },
+    "preparater": [
+      "Noritren tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Noritren tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "seponering-nortriptylin v12",
+    "vurderinger": [],
+  },
+  "kontroll 1 F1-18": {
+    "feil": [],
+    "grunner": [
+      "nortriptylin dag 1–28: den ideelle dosen 56,25 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 55 mg (-2,22 %, faktisk reduksjon 26,67 % fra 75 mg) og 60 mg (+6,67 %, faktisk reduksjon 20 % fra 75 mg). Den foretrukne reduksjonen til 56,25 mg (−25 % fra 75 mg) kan ikke gis med preparatene. Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 75 mg innenfor det foretrukne området 5–25 %: 60 mg (−20 %). Beregningen velger ikke selv.",
+      "Startdosen 75 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 25, 50 og 150 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 10, 25 og 50 mg; 50 mg, FEST-legemiddelform 53, ved lang behandlingstid og nei på de andre spørsmålene, reduksjon per trinn (% av aktuell dose) 10 %, styrker (fra) 10, 25 og 50 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 1 F1-19": {
+    "feil": [],
+    "grunner": [
+      "nortriptylin dag 1–28: den ideelle dosen 37,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 35 mg (-6,67 %, faktisk reduksjon 30 % fra 50 mg) og 40 mg (+6,67 %, faktisk reduksjon 20 % fra 50 mg). Den foretrukne reduksjonen til 37,5 mg (−25 % fra 50 mg) kan ikke gis med preparatene. Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 50 mg innenfor det foretrukne området 5–25 %: 40 mg (−20 %). Beregningen velger ikke selv.",
+      "Startdosen 50 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 25, 50 og 150 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 10, 25 og 50 mg; 50 mg, FEST-legemiddelform 53, ved lang behandlingstid og nei på de andre spørsmålene, reduksjon per trinn (% av aktuell dose) 10 %, styrker (fra) 10, 25 og 50 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 1 F1-20": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "fra dag 1: 15 mg = 1 tablett à 10 mg + 1 tablett à 5 mg",
+        "én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene",
+      ],
+    },
+    "preparater": [
+      "Cipralex tab 10 mg, varenr. 005812, 005834 og 011047 (FEST: «Delbar i 2»)",
+      "Cipralex tab 10 mg, varenr. 014844 (FEST: «Delbar i 2»)",
+      "Cipralex tab 5 mg, varenr. 005757 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Cipralex tab 5 mg, varenr. 536639 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Escitalopram Actavis tab 10 mg (FEST: «Delbar i 2»)",
+      "Escitalopram Actavis tab 5 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Escitalopram Grindeks tab 10 mg (FEST: «Delbar i 2»)",
+    ],
+    "regel": "seponering-escitalopram v12",
+    "vurderinger": null,
+  },
+  "kontroll 1 F1-21": {
+    "feil": [],
+    "grunner": [
+      "escitalopram dag 1–28: den ideelle dosen 7,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 5 mg (-33,33 %, faktisk reduksjon 50 % fra 10 mg) og 10 mg (+33,33 %). Den foretrukne reduksjonen til 7,5 mg (−25 % fra 10 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 5–25 %. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet.",
+      "Startdosen 10 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 20 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 5, 10 og 20 mg; 10 og 20 mg, FEST-legemiddelform 748, med nei på alle spørsmålene, styrker (fra) 1 mg; 10 og 20 mg, FEST-legemiddelform 748, ved lang behandlingstid og nei på de andre spørsmålene, reduksjon per trinn (% av aktuell dose) 10 %, styrker (fra) 1 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 1 F1-22": {
+    "feil": [],
+    "grunner": [
+      "escitalopram dag 1–28: den ideelle dosen 18 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (-16,67 %, faktisk reduksjon 25 % fra 20 mg) og 20 mg (+11,11 %). Den foretrukne reduksjonen til 18 mg (−10 % fra 20 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 5–10 %. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet.",
+      "Startdosen 20 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 20 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 5, 10 og 20 mg; 10 og 20 mg, FEST-legemiddelform 748, med nei på alle spørsmålene, styrker (fra) 1 mg; 10 og 20 mg, FEST-legemiddelform 748, ved lang behandlingstid og nei på de andre spørsmålene, reduksjon per trinn (% av aktuell dose) 10 %, styrker (fra) 1 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 1 F1-23": {
+    "avvik": [
+      "escitalopram dag 29–56: 12 mg, valgt av forskriveren fordi den beregnede dosen 11,25 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "escitalopram dag 85–112: 7 mg, valgt av forskriveren fordi den beregnede dosen 6,75 mg ikke kan gis; faktisk reduksjon 22,22 % fra dosen før.",
+      "escitalopram dag 113–140: 6 mg, valgt av forskriveren fordi den beregnede dosen 5,25 mg ikke kan gis; faktisk reduksjon 14,29 % fra dosen før.",
+      "escitalopram dag 141–168: 5 mg, valgt av forskriveren fordi den beregnede dosen 4,5 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "escitalopram dag 169–196: 4 mg, valgt av forskriveren fordi den beregnede dosen 3,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "dag 1–28: 15 mg = 15 dråper à 1 mg",
+        "dag 29–56: 12 mg = 12 dråper à 1 mg, valgt av forskriveren (beregnet 11,25 mg; −20 %)",
+        "dag 57–84: 9 mg = 9 dråper à 1 mg",
+        "dag 85–112: 7 mg = 7 dråper à 1 mg, valgt av forskriveren (beregnet 6,75 mg; −22,22 %)",
+        "dag 113–140: 6 mg = 6 dråper à 1 mg, valgt av forskriveren (beregnet 5,25 mg; −14,29 %)",
+        "dag 141–168: 5 mg = 5 dråper à 1 mg, valgt av forskriveren (beregnet 4,5 mg; −16,67 %)",
+        "dag 169–196: 4 mg = 4 dråper à 1 mg, valgt av forskriveren (beregnet 3,75 mg; −20 %)",
+        "fra dag 197: 3 mg = 3 dråper à 1 mg",
+        "neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt",
+      ],
+    },
+    "preparater": [
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 092005 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 419396 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 553965 (Hele dråper)",
+    ],
+    "regel": "seponering-escitalopram v12",
+    "vurderinger": null,
+  },
+  "kontroll 1 F1-24": {
+    "avvik": [
+      "escitalopram dag 1–28: 8 mg, valgt av forskriveren fordi den beregnede dosen 7,5 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "escitalopram dag 57–84: 5 mg, valgt av forskriveren fordi den beregnede dosen 4,5 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "escitalopram dag 85–112: 4 mg, valgt av forskriveren fordi den beregnede dosen 3,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "dag 1–28: 8 mg = 8 dråper à 1 mg, valgt av forskriveren (beregnet 7,5 mg; −20 %)",
+        "dag 29–56: 6 mg = 6 dråper à 1 mg",
+        "dag 57–84: 5 mg = 5 dråper à 1 mg, valgt av forskriveren (beregnet 4,5 mg; −16,67 %)",
+        "dag 85–112: 4 mg = 4 dråper à 1 mg, valgt av forskriveren (beregnet 3,75 mg; −20 %)",
+        "fra dag 113: 3 mg = 3 dråper à 1 mg",
+        "neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt",
+      ],
+    },
+    "preparater": [
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 092005 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 419396 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 553965 (Hele dråper)",
+    ],
+    "regel": "seponering-escitalopram v12",
+    "vurderinger": null,
+  },
+  "kontroll 1 F1-25": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "fra dag 1: 18 mg = 18 dråper à 1 mg",
+        "én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene",
+      ],
+    },
+    "preparater": [
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 092005 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 419396 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 553965 (Hele dråper)",
+    ],
+    "regel": "seponering-escitalopram v12",
+    "tilbys": [
+      "fra trinn 2 fra 18 mg: 17 mg",
+    ],
+    "vurderinger": null,
+  },
+  "kontroll 1 F1-26": {
+    "avvik": [
+      "escitalopram dag 29–56: 17 mg, valgt av forskriveren fordi den beregnede dosen 16,2 mg ikke kan gis; faktisk reduksjon 5,56 % fra dosen før.",
+      "escitalopram dag 57–84: 16 mg, valgt av forskriveren fordi den beregnede dosen 15,3 mg ikke kan gis; faktisk reduksjon 5,88 % fra dosen før.",
+      "escitalopram dag 85–112: 15 mg, valgt av forskriveren fordi den beregnede dosen 14,4 mg ikke kan gis; faktisk reduksjon 6,25 % fra dosen før.",
+      "escitalopram dag 113–140: 14 mg, valgt av forskriveren fordi den beregnede dosen 13,5 mg ikke kan gis; faktisk reduksjon 6,67 % fra dosen før.",
+      "escitalopram dag 141–168: 13 mg, valgt av forskriveren fordi den beregnede dosen 12,6 mg ikke kan gis; faktisk reduksjon 7,14 % fra dosen før.",
+      "escitalopram dag 169–196: 12 mg, valgt av forskriveren fordi den beregnede dosen 11,7 mg ikke kan gis; faktisk reduksjon 7,69 % fra dosen før.",
+      "escitalopram dag 197–224: 11 mg, valgt av forskriveren fordi den beregnede dosen 10,8 mg ikke kan gis; faktisk reduksjon 8,33 % fra dosen før.",
+      "escitalopram dag 225–252: 10 mg, valgt av forskriveren fordi den beregnede dosen 9,9 mg ikke kan gis; faktisk reduksjon 9,09 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "dag 1–28: 18 mg = 18 dråper à 1 mg",
+        "dag 29–56: 17 mg = 17 dråper à 1 mg, valgt av forskriveren (beregnet 16,2 mg; −5,56 %)",
+        "dag 57–84: 16 mg = 16 dråper à 1 mg, valgt av forskriveren (beregnet 15,3 mg; −5,88 %)",
+        "dag 85–112: 15 mg = 15 dråper à 1 mg, valgt av forskriveren (beregnet 14,4 mg; −6,25 %)",
+        "dag 113–140: 14 mg = 14 dråper à 1 mg, valgt av forskriveren (beregnet 13,5 mg; −6,67 %)",
+        "dag 141–168: 13 mg = 13 dråper à 1 mg, valgt av forskriveren (beregnet 12,6 mg; −7,14 %)",
+        "dag 169–196: 12 mg = 12 dråper à 1 mg, valgt av forskriveren (beregnet 11,7 mg; −7,69 %)",
+        "dag 197–224: 11 mg = 11 dråper à 1 mg, valgt av forskriveren (beregnet 10,8 mg; −8,33 %)",
+        "dag 225–252: 10 mg = 10 dråper à 1 mg, valgt av forskriveren (beregnet 9,9 mg; −9,09 %)",
+        "fra dag 253: 9 mg = 9 dråper à 1 mg",
+        "neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt",
+      ],
+    },
+    "preparater": [
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 092005 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 419396 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 553965 (Hele dråper)",
+    ],
+    "regel": "seponering-escitalopram v12",
+    "vurderinger": null,
+  },
+  "kontroll 1 F1-27": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "fra dag 1: 9 mg = 9 dråper à 1 mg",
+        "én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene",
+      ],
+    },
+    "preparater": [
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 092005 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 419396 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 553965 (Hele dråper)",
+    ],
+    "regel": "seponering-escitalopram v12",
+    "vurderinger": null,
+  },
+  "kontroll 1 F1-28": {
+    "feil": [],
+    "grunner": [
+      "escitalopram dag 1–28: den ideelle dosen 11,25 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 11 mg (-2,22 %, faktisk reduksjon 26,67 % fra 15 mg) og 12 mg (+6,67 %, faktisk reduksjon 20 % fra 15 mg). Den foretrukne reduksjonen til 11,25 mg (−25 % fra 15 mg) kan ikke gis med preparatene. Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 15 mg innenfor det foretrukne området 5–25 %: 12 mg (−20 %). Beregningen velger ikke selv.",
+      "Startdosen 15 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 20 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 5, 10 og 20 mg; 10 og 20 mg, FEST-legemiddelform 748, med nei på alle spørsmålene, styrker (fra) 1 mg; 10 og 20 mg, FEST-legemiddelform 748, ved lang behandlingstid og nei på de andre spørsmålene, reduksjon per trinn (% av aktuell dose) 10 %, styrker (fra) 1 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 1 F1-29": {
+    "feil": [],
+    "grunner": [
+      "escitalopram dag 1–28: den ideelle dosen 0,75 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 1 mg (+33,33 %). Den foretrukne reduksjonen til 0,75 mg (−25 % fra 1 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 5–25 %. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet.",
+      "Startdosen 1 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 20 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 5, 10 og 20 mg; 10 og 20 mg, FEST-legemiddelform 748, med nei på alle spørsmålene, styrker (fra) 1 mg; 10 og 20 mg, FEST-legemiddelform 748, ved lang behandlingstid og nei på de andre spørsmålene, reduksjon per trinn (% av aktuell dose) 10 %, styrker (fra) 1 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 1 F1-30": {
+    "feil": [],
+    "grunner": [
+      "Startdosen 20 mg er utenfor det regelen gjelder for (høyst 10 mg ved eldre over 65 år).",
+      "Startdosen 20 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 20 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 5, 10 og 20 mg; 10 og 20 mg, FEST-legemiddelform 748, med nei på alle spørsmålene, styrker (fra) 1 mg; 10 og 20 mg, FEST-legemiddelform 748, ved lang behandlingstid og nei på de andre spørsmålene, reduksjon per trinn (% av aktuell dose) 10 %, styrker (fra) 1 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 1 F1-31": {
+    "feil": [],
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten har kjent QT-forlengelse eller medfødt langt QT-syndrom, eller bruker et annet legemiddel som forlenger QT-intervallet. Det er en kontraindikasjon i preparatomtalen; en generell begrunnelse kan ikke overstyre den, og nedtrappingen må planlegges individuelt.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 1 F1-32": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "fra dag 1: 19 mg = 19 dråper à 1 mg",
+        "én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene",
+      ],
+    },
+    "preparater": [
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 092005 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 419396 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 553965 (Hele dråper)",
+    ],
+    "regel": "seponering-escitalopram-langsom v8",
+    "vurderinger": [],
+  },
+  "kontroll 1 F1-33": {
+    "feil": [],
+    "grunner": [
+      "escitalopram dag 1–28: den ideelle dosen 9,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 9 mg (-5,26 %, faktisk reduksjon 10 % fra 10 mg) og 10 mg (+5,26 %). Den foretrukne reduksjonen til 9,5 mg (−5 % fra 10 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 1–5 %. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet.",
+      "Startdosen 10 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 20 mg, FEST-legemiddelform 748, med nei på alle spørsmålene, styrker (fra) 1 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 1 F1-34": {
+    "feil": [],
+    "grunner": [
+      "escitalopram dag 1–28: den ideelle dosen 19 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 15 mg (-21,05 %, faktisk reduksjon 25 % fra 20 mg) og 20 mg (+5,26 %). Den foretrukne reduksjonen til 19 mg (−5 % fra 20 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 1–5 %. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet.",
+      "Startdosen 20 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 20 mg, FEST-legemiddelform 748, med nei på alle spørsmålene, styrker (fra) 1 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 1 F1-35": {
+    "grunner": [
+      "Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning.",
+    ],
+    "status": "ikke_godkjent",
+    "utfall": "ingen",
+  },
+  "kontroll 1 F1-36": {
+    "grunner": [
+      "Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning.",
+    ],
+    "status": "ikke_godkjent",
+    "utfall": "ingen",
+  },
+  "kontroll 1 F1-37": {
+    "grunner": [
+      "Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning.",
+    ],
+    "status": "ikke_godkjent",
+    "utfall": "ingen",
+  },
+  "kontroll 1 F1-38": {
+    "feil": [],
+    "grunner": [
+      "Ingen klinisk doseplan kan vises.",
+      "Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke); den må kontrolleres på nytt.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 1 F1-39": {
+    "feil": [],
+    "grunner": [
+      "amitriptylin (fra): styrken 10 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST, så planen ville blitt satt sammen annerledes enn den som er kontrollert. Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 1 F1-40": {
+    "avvik": [
+      "amitriptylin dag 1–28: 40 mg, valgt av forskriveren fordi den beregnede dosen 37,5 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "amitriptylin dag 57–84: 25 mg, valgt av forskriveren fordi den beregnede dosen 22,5 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "amitriptylin fra dag 85: 20 mg, valgt av forskriveren fordi den beregnede dosen 18,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "dag 1–28: 40 mg = 4 tabletter à 10 mg, valgt av forskriveren (beregnet 37,5 mg; −20 %)",
+        "dag 29–56: 30 mg = 3 tabletter à 10 mg",
+        "dag 57–84: 25 mg = 1 tablett à 25 mg, valgt av forskriveren (beregnet 22,5 mg; −16,67 %)",
+        "fra dag 85: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 18,75 mg; −20 %)",
+        "neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt",
+      ],
+    },
+    "preparater": [
+      "Amitriptylin Abcur tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Abcur tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Orifarm tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Orifarm tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Sarotex tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Sarotex tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "seponering-amitriptylin v12",
+    "vurderinger": [],
+  },
+  "kontroll 2 K1-01": {
+    "avvik": [
+      "escitalopram dag 1–28: 8 mg, valgt av forskriveren fordi den beregnede dosen 7,5 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "escitalopram dag 57–84: 5 mg, valgt av forskriveren fordi den beregnede dosen 4,5 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "escitalopram dag 85–112: 4 mg, valgt av forskriveren fordi den beregnede dosen 3,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "escitalopram dag 141–168: 2 mg, valgt av forskriveren fordi den beregnede dosen 2,25 mg ikke kan gis; faktisk reduksjon 33,33 % fra dosen før.",
+      "escitalopram dag 169–196: 1 mg, valgt av forskriveren fordi den beregnede dosen 1,5 mg ikke kan gis; faktisk reduksjon 50 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "dag 1–28: 8 mg = 8 dråper à 1 mg, valgt av forskriveren (beregnet 7,5 mg; −20 %)",
+        "dag 29–56: 6 mg = 6 dråper à 1 mg",
+        "dag 57–84: 5 mg = 5 dråper à 1 mg, valgt av forskriveren (beregnet 4,5 mg; −16,67 %)",
+        "dag 85–112: 4 mg = 4 dråper à 1 mg, valgt av forskriveren (beregnet 3,75 mg; −20 %)",
+        "dag 113–140: 3 mg = 3 dråper à 1 mg",
+        "dag 141–168: 2 mg = 2 dråper à 1 mg, valgt av forskriveren (beregnet 2,25 mg; −33,33 %)",
+        "dag 169–196: 1 mg = 1 dråpe à 1 mg, valgt av forskriveren (beregnet 1,5 mg; −50 %)",
+        "fra dag 197: seponert",
+      ],
+    },
+    "preparater": [
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 092005 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 419396 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 553965 (Hele dråper)",
+    ],
+    "regel": "seponering-escitalopram v13",
+    "vurderinger": [
+      "Escitalopram, før hver doseendring (dag 29, 57, 85, 113, 141, 169, 197): Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. Ved funn: Ved utålelige symptomer: gå tilbake til forrige dose og fortsett senere mer gradvis. Ny plan beregnes fra dosen pasienten da bruker.",
+      "Escitalopram, 7 dager etter siste dose (dag 203): Vurder seponeringssymptomer og tegn på tilbakefall 7 dager etter siste dose. Ved funn: Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt. Oppfølgingen kan fremskyndes eller forlenges etter symptomer og risiko for tilbakefall.",
+      "Escitalopram, 14 dager etter siste dose (dag 210): Vurder seponeringssymptomer og tegn på tilbakefall 14 dager etter siste dose. Ved funn: Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt. Oppfølgingen kan fremskyndes eller forlenges etter symptomer og risiko for tilbakefall.",
+      "Escitalopram, 28 dager etter siste dose (dag 224): Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose. Ved funn: Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt. Oppfølgingen kan fremskyndes eller forlenges etter symptomer og risiko for tilbakefall.",
+    ],
+  },
+  "kontroll 2 K1-02": {
+    "avvik": [
+      "escitalopram dag 29–56: 12 mg, valgt av forskriveren fordi den beregnede dosen 11,25 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "escitalopram dag 85–112: 7 mg, valgt av forskriveren fordi den beregnede dosen 6,75 mg ikke kan gis; faktisk reduksjon 22,22 % fra dosen før.",
+      "escitalopram dag 113–140: 6 mg, valgt av forskriveren fordi den beregnede dosen 5,25 mg ikke kan gis; faktisk reduksjon 14,29 % fra dosen før.",
+      "escitalopram dag 141–168: 5 mg, valgt av forskriveren fordi den beregnede dosen 4,5 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "escitalopram dag 169–196: 4 mg, valgt av forskriveren fordi den beregnede dosen 3,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "escitalopram dag 225–252: 2 mg, valgt av forskriveren fordi den beregnede dosen 2,25 mg ikke kan gis; faktisk reduksjon 33,33 % fra dosen før.",
+      "escitalopram dag 253–280: 1 mg, valgt av forskriveren fordi den beregnede dosen 1,5 mg ikke kan gis; faktisk reduksjon 50 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "dag 1–28: 15 mg = 15 dråper à 1 mg",
+        "dag 29–56: 12 mg = 12 dråper à 1 mg, valgt av forskriveren (beregnet 11,25 mg; −20 %)",
+        "dag 57–84: 9 mg = 9 dråper à 1 mg",
+        "dag 85–112: 7 mg = 7 dråper à 1 mg, valgt av forskriveren (beregnet 6,75 mg; −22,22 %)",
+        "dag 113–140: 6 mg = 6 dråper à 1 mg, valgt av forskriveren (beregnet 5,25 mg; −14,29 %)",
+        "dag 141–168: 5 mg = 5 dråper à 1 mg, valgt av forskriveren (beregnet 4,5 mg; −16,67 %)",
+        "dag 169–196: 4 mg = 4 dråper à 1 mg, valgt av forskriveren (beregnet 3,75 mg; −20 %)",
+        "dag 197–224: 3 mg = 3 dråper à 1 mg",
+        "dag 225–252: 2 mg = 2 dråper à 1 mg, valgt av forskriveren (beregnet 2,25 mg; −33,33 %)",
+        "dag 253–280: 1 mg = 1 dråpe à 1 mg, valgt av forskriveren (beregnet 1,5 mg; −50 %)",
+        "fra dag 281: seponert",
+      ],
+    },
+    "preparater": [
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 092005 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 419396 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 553965 (Hele dråper)",
+    ],
+    "regel": "seponering-escitalopram v13",
+    "vurderinger": [
+      "Escitalopram, før hver doseendring (dag 29, 57, 85, 113, 141, 169, 197, 225, 253, 281): Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. Ved funn: Ved utålelige symptomer: gå tilbake til forrige dose og fortsett senere mer gradvis. Ny plan beregnes fra dosen pasienten da bruker.",
+      "Escitalopram, 7 dager etter siste dose (dag 287): Vurder seponeringssymptomer og tegn på tilbakefall 7 dager etter siste dose. Ved funn: Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt. Oppfølgingen kan fremskyndes eller forlenges etter symptomer og risiko for tilbakefall.",
+      "Escitalopram, 14 dager etter siste dose (dag 294): Vurder seponeringssymptomer og tegn på tilbakefall 14 dager etter siste dose. Ved funn: Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt. Oppfølgingen kan fremskyndes eller forlenges etter symptomer og risiko for tilbakefall.",
+      "Escitalopram, 28 dager etter siste dose (dag 308): Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose. Ved funn: Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt. Oppfølgingen kan fremskyndes eller forlenges etter symptomer og risiko for tilbakefall.",
+    ],
+  },
+  "kontroll 2 K1-03": {
+    "feil": [],
+    "grunner": [
+      "escitalopram dag 1–28: den ideelle dosen 7,5 mg kan ikke gis med preparatene i FEST nøyaktig og ikke under 1 mg. Nærmeste doser som kan settes sammen: 7 mg (-6,67 %, faktisk reduksjon 30 % fra 10 mg) og 8 mg (+6,67 %, faktisk reduksjon 20 % fra 10 mg). Den foretrukne reduksjonen til 7,5 mg (−25 % fra 10 mg) kan ikke gis med preparatene. Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 10 mg innenfor det foretrukne området 5–25 %: 8 mg (−20 %). Beregningen velger ikke selv.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "tilbys": [
+      "fra trinn 1 fra 10 mg: 8 mg",
+    ],
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-04": {
+    "feil": [],
+    "grunner": [
+      "Komplett plan ikke tilgjengelig: escitalopram: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 1 mg eller lavere (planen står på 3 mg).",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "tilbys": [
+      "fra trinn 6 fra 3 mg: 2 mg",
+    ],
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-05": {
+    "feil": [],
+    "grunner": [
+      "Komplett plan ikke tilgjengelig: escitalopram: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 1 mg eller lavere (planen står på 2 mg).",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "tilbys": [
+      "fra trinn 7 fra 2 mg: 1 mg",
+    ],
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-06": {
+    "feil": [],
+    "grunner": [
+      "Komplett plan ikke tilgjengelig: escitalopram: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 1 mg eller lavere (planen står på 9 mg).",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-07": {
+    "feil": [],
+    "grunner": [
+      "Komplett plan ikke tilgjengelig: escitalopram: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 1 mg eller lavere (planen står på 9 mg).",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-08": {
+    "feil": [],
+    "grunner": [
+      "Komplett plan ikke tilgjengelig: escitalopram: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 1 mg eller lavere (planen står på 15 mg).",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-09": {
+    "feil": [],
+    "grunner": [
+      "escitalopram dag 1–28: den ideelle dosen 7,5 mg kan ikke gis med preparatene i FEST nøyaktig og ikke under 1 mg. Nærmeste doser som kan settes sammen: 5 mg (-33,33 %, faktisk reduksjon 50 % fra 10 mg) og 10 mg (+33,33 %). Den foretrukne reduksjonen til 7,5 mg (−25 % fra 10 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 5–25 %. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet.",
+      "Startdosen 10 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 20 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 5, 10 og 20 mg; 10 og 20 mg, FEST-legemiddelform 748, med nei på alle spørsmålene, styrker (fra) 1 mg; 10 og 20 mg, FEST-legemiddelform 748, ved lang behandlingstid og nei på de andre spørsmålene, reduksjon per trinn (% av aktuell dose) 10 %, styrker (fra) 1 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-10": {
+    "feil": [],
+    "grunner": [
+      "escitalopram dag 1–28: den ideelle dosen 11,25 mg kan ikke gis med preparatene i FEST nøyaktig og ikke under 1 mg. Nærmeste doser som kan settes sammen: 11 mg (-2,22 %, faktisk reduksjon 26,67 % fra 15 mg) og 12 mg (+6,67 %, faktisk reduksjon 20 % fra 15 mg). Den foretrukne reduksjonen til 11,25 mg (−25 % fra 15 mg) kan ikke gis med preparatene. Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 15 mg innenfor det foretrukne området 5–25 %: 12 mg (−20 %). Beregningen velger ikke selv.",
+      "Startdosen 15 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 20 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 5, 10 og 20 mg; 10 og 20 mg, FEST-legemiddelform 748, med nei på alle spørsmålene, styrker (fra) 1 mg; 10 og 20 mg, FEST-legemiddelform 748, ved lang behandlingstid og nei på de andre spørsmålene, reduksjon per trinn (% av aktuell dose) 10 %, styrker (fra) 1 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-11": {
+    "feil": [],
+    "grunner": [
+      "escitalopram dag 1–28: den ideelle dosen 2,25 mg kan ikke gis med preparatene i FEST nøyaktig og ikke under 1 mg. Nærmeste doser som kan settes sammen: 2 mg (-11,11 %, faktisk reduksjon 33,33 % fra 3 mg) og 3 mg (+33,33 %). Den foretrukne reduksjonen til 2,25 mg (−25 % fra 3 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 5–25 %. Ved denne lave dosen lar regelen forskriveren velge det minste trinnet som kan gis, med faktisk reduksjon høyst 50 %: 2 mg (−33,33 %). Beregningen velger ikke selv.",
+      "Startdosen 3 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 20 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 5, 10 og 20 mg; 10 og 20 mg, FEST-legemiddelform 748, med nei på alle spørsmålene, styrker (fra) 1 mg; 10 og 20 mg, FEST-legemiddelform 748, ved lang behandlingstid og nei på de andre spørsmålene, reduksjon per trinn (% av aktuell dose) 10 %, styrker (fra) 1 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-12": {
+    "feil": [],
+    "grunner": [
+      "Startdosen 20 mg er utenfor det regelen gjelder for (høyst 10 mg ved eldre over 65 år).",
+      "Startdosen 20 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 20 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 5, 10 og 20 mg; 10 og 20 mg, FEST-legemiddelform 748, med nei på alle spørsmålene, styrker (fra) 1 mg; 10 og 20 mg, FEST-legemiddelform 748, ved lang behandlingstid og nei på de andre spørsmålene, reduksjon per trinn (% av aktuell dose) 10 %, styrker (fra) 1 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-13": {
+    "feil": [],
+    "grunner": [
+      "Regelen gjelder ikke: Et tidligere forsøk på å trappe ned eller seponere dette legemidlet har gitt seponeringssymptomer eller mislyktes; da gjelder den langsomme varianten av regelen.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-14": {
+    "feil": [],
+    "grunner": [
+      "Komplett plan ikke tilgjengelig: nortriptylin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-15": {
+    "feil": [],
+    "grunner": [
+      "Komplett plan ikke tilgjengelig: amitriptylin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-16": {
+    "feil": [],
+    "grunner": [
+      "amitriptylin dag 1–28: den ideelle dosen 37,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 35 mg (-6,67 %, faktisk reduksjon 30 % fra 50 mg) og 40 mg (+6,67 %, faktisk reduksjon 20 % fra 50 mg). Den foretrukne reduksjonen til 37,5 mg (−25 % fra 50 mg) kan ikke gis med preparatene. Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 50 mg innenfor det foretrukne området 5–25 %: 40 mg (−20 %). Beregningen velger ikke selv.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "tilbys": [
+      "fra trinn 1 fra 50 mg: 40 mg",
+    ],
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-17": {
+    "feil": [],
+    "grunner": [
+      "Komplett plan ikke tilgjengelig: sertralin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-18": {
+    "feil": [],
+    "grunner": [
+      "Komplett plan ikke tilgjengelig: sertralin: neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-19": {
+    "feil": [],
+    "forlop": [
+      "fra",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "formvalg",
+  },
+  "kontroll 2 K1-20": {
+    "grunner": [
+      "Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning.",
+    ],
+    "status": "ikke_godkjent",
+    "utfall": "ingen",
+  },
+  "kontroll 2 K1-21": {
+    "grunner": [
+      "Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning.",
+    ],
+    "status": "ikke_godkjent",
+    "utfall": "ingen",
+  },
+  "kontroll 2 K1-22": {
+    "feil": [],
+    "grunner": [
+      "Ingen klinisk doseplan kan vises.",
+      "Regelen har åpne valg som må avklares faglig: plan.forlop[0].faser[0].strategi.minste_trinn.fra_mg (åpent forslag), plan.forlop[0].faser[0].strategi.minste_trinn.maks_prosent (åpent forslag).",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-23": {
+    "feil": [],
+    "grunner": [
+      "Ingen klinisk doseplan kan vises.",
+      "Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke); den må kontrolleres på nytt.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-24": {
+    "feil": [],
+    "grunner": [
+      "Ingen av de perorale preparatene av escitalopram i FEST kan brukes med valgene som er gjort: Cipralex dråper, oppl 20 mg/ml, varenr. 553965: er avregistrert i FEST · Cipralex dråper, oppl 20 mg/ml, varenr. 419396: er avregistrert i FEST · Cipralex dråper, oppl 20 mg/ml, varenr. 092005: er avregistrert i FEST.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-25": {
+    "feil": [],
+    "grunner": [
+      "escitalopram dag 1–28: den ideelle dosen 7,5 mg kan ikke gis med preparatene i FEST nøyaktig og ikke under 1 mg. Nærmeste doser som kan settes sammen: 7 mg (-6,67 %, faktisk reduksjon 30 % fra 10 mg) og 8 mg (+6,67 %, faktisk reduksjon 20 % fra 10 mg). Den foretrukne reduksjonen til 7,5 mg (−25 % fra 10 mg) kan ikke gis med preparatene. Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 10 mg innenfor det foretrukne området 5–25 %: 8 mg (−20 %). Beregningen velger ikke selv.",
+      "Startdosen 10 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 20 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 5, 10 og 20 mg; 10 og 20 mg, FEST-legemiddelform 748, med nei på alle spørsmålene, styrker (fra) 1 mg; 10 og 20 mg, FEST-legemiddelform 748, ved lang behandlingstid og nei på de andre spørsmålene, reduksjon per trinn (% av aktuell dose) 10 %, styrker (fra) 1 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-26": {
+    "feil": [],
+    "grunner": [
+      "Svaret ja (nedsatt leverfunksjon, som krever en særskilt vurdering) krever en skriftlig begrunnelse fra forskriveren, en særskilt vurdering. Skriv begrunnelsen, eller vurder om regelen passer.",
+      "Startdosen 10 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 20 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 5, 10 og 20 mg; 10 og 20 mg, FEST-legemiddelform 748, med nei på alle spørsmålene, styrker (fra) 1 mg; 10 og 20 mg, FEST-legemiddelform 748, ved lang behandlingstid og nei på de andre spørsmålene, reduksjon per trinn (% av aktuell dose) 10 %, styrker (fra) 1 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-27": {
+    "feil": [],
+    "grunner": [
+      "escitalopram dag 1–28: den ideelle dosen 7,5 mg kan ikke gis med preparatene i FEST nøyaktig og ikke under 1 mg. Nærmeste doser som kan settes sammen: 7 mg (-6,67 %, faktisk reduksjon 30 % fra 10 mg) og 8 mg (+6,67 %, faktisk reduksjon 20 % fra 10 mg). Den foretrukne reduksjonen til 7,5 mg (−25 % fra 10 mg) kan ikke gis med preparatene. Regelen lar forskriveren velge en dose som kan gis, med faktisk reduksjon fra 10 mg innenfor det foretrukne området 5–25 %: 8 mg (−20 %). Beregningen velger ikke selv.",
+      "Startdosen 10 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 20 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 5, 10 og 20 mg; 10 og 20 mg, FEST-legemiddelform 748, med nei på alle spørsmålene, styrker (fra) 1 mg; 10 og 20 mg, FEST-legemiddelform 748, ved lang behandlingstid og nei på de andre spørsmålene, reduksjon per trinn (% av aktuell dose) 10 %, styrker (fra) 1 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-28": {
+    "feil": [],
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten er under 18 år. Reglene er laget for voksne; nedtrapping hos barn og ungdom må vurderes særskilt.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "kontroll 2 K1-29": {
+    "feil": [],
+    "grunner": [
+      "Regelen gjelder ikke: Pasienten har kjent QT-forlengelse eller medfødt langt QT-syndrom, eller bruker et annet legemiddel som forlenger QT-intervallet. Det er en kontraindikasjon i preparatomtalen; en generell begrunnelse kan ikke overstyre den, og nedtrappingen må planlegges individuelt.",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "omfang 1 seponering-amitriptylin 53 100 mg [60,35,30,25,20]": {
+    "avvik": [
+      "amitriptylin dag 29–56: 60 mg, valgt av forskriveren fordi den beregnede dosen 56,25 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "amitriptylin dag 85–112: 35 mg, valgt av forskriveren fordi den beregnede dosen 33,75 mg ikke kan gis; faktisk reduksjon 22,22 % fra dosen før.",
+      "amitriptylin dag 113–140: 30 mg, valgt av forskriveren fordi den beregnede dosen 26,25 mg ikke kan gis; faktisk reduksjon 14,29 % fra dosen før.",
+      "amitriptylin dag 141–168: 25 mg, valgt av forskriveren fordi den beregnede dosen 22,5 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "amitriptylin fra dag 169: 20 mg, valgt av forskriveren fordi den beregnede dosen 18,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "dag 1–28: 75 mg = 1 tablett à 25 mg + 1 tablett à 50 mg",
+        "dag 29–56: 60 mg = 1 tablett à 10 mg + 1 tablett à 50 mg, valgt av forskriveren (beregnet 56,25 mg; −20 %)",
+        "dag 57–84: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg",
+        "dag 85–112: 35 mg = 1 tablett à 10 mg + 1 tablett à 25 mg, valgt av forskriveren (beregnet 33,75 mg; −22,22 %)",
+        "dag 113–140: 30 mg = 3 tabletter à 10 mg, valgt av forskriveren (beregnet 26,25 mg; −14,29 %)",
+        "dag 141–168: 25 mg = 1 tablett à 25 mg, valgt av forskriveren (beregnet 22,5 mg; −16,67 %)",
+        "fra dag 169: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 18,75 mg; −20 %)",
+        "neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt",
+      ],
+    },
+    "preparater": [
+      "Amitriptylin Abcur tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Abcur tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Abcur tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Orifarm tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Orifarm tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Sarotex tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Sarotex tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "seponering-amitriptylin v12",
+    "vurderinger": [],
+  },
+  "omfang 1 seponering-amitriptylin 53 150 mg [120,100,60,35,30,25,20]": {
+    "avvik": [
+      "amitriptylin dag 1–28: 120 mg, valgt av forskriveren fordi den beregnede dosen 112,5 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "amitriptylin dag 29–56: 100 mg, valgt av forskriveren fordi den beregnede dosen 90 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "amitriptylin dag 85–112: 60 mg, valgt av forskriveren fordi den beregnede dosen 56,25 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "amitriptylin dag 141–168: 35 mg, valgt av forskriveren fordi den beregnede dosen 33,75 mg ikke kan gis; faktisk reduksjon 22,22 % fra dosen før.",
+      "amitriptylin dag 169–196: 30 mg, valgt av forskriveren fordi den beregnede dosen 26,25 mg ikke kan gis; faktisk reduksjon 14,29 % fra dosen før.",
+      "amitriptylin dag 197–224: 25 mg, valgt av forskriveren fordi den beregnede dosen 22,5 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "amitriptylin fra dag 225: 20 mg, valgt av forskriveren fordi den beregnede dosen 18,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "dag 1–28: 120 mg = 2 tabletter à 10 mg + 2 tabletter à 50 mg, valgt av forskriveren (beregnet 112,5 mg; −20 %)",
+        "dag 29–56: 100 mg = 2 tabletter à 50 mg, valgt av forskriveren (beregnet 90 mg; −16,67 %)",
+        "dag 57–84: 75 mg = 1 tablett à 25 mg + 1 tablett à 50 mg",
+        "dag 85–112: 60 mg = 1 tablett à 10 mg + 1 tablett à 50 mg, valgt av forskriveren (beregnet 56,25 mg; −20 %)",
+        "dag 113–140: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg",
+        "dag 141–168: 35 mg = 1 tablett à 10 mg + 1 tablett à 25 mg, valgt av forskriveren (beregnet 33,75 mg; −22,22 %)",
+        "dag 169–196: 30 mg = 3 tabletter à 10 mg, valgt av forskriveren (beregnet 26,25 mg; −14,29 %)",
+        "dag 197–224: 25 mg = 1 tablett à 25 mg, valgt av forskriveren (beregnet 22,5 mg; −16,67 %)",
+        "fra dag 225: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 18,75 mg; −20 %)",
+        "neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt",
+      ],
+    },
+    "preparater": [
+      "Amitriptylin Abcur tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Abcur tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Abcur tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Orifarm tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Orifarm tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Sarotex tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Sarotex tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "seponering-amitriptylin v12",
+    "vurderinger": [],
+  },
+  "omfang 1 seponering-amitriptylin 53 25 mg [20]": {
+    "avvik": [
+      "amitriptylin fra dag 1: 20 mg, valgt av forskriveren fordi den beregnede dosen 18,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "fra dag 1: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 18,75 mg; −20 %)",
+        "én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene",
+      ],
+    },
+    "preparater": [
+      "Amitriptylin Abcur tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Orifarm tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Sarotex tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "seponering-amitriptylin v12",
+    "vurderinger": [],
+  },
+  "omfang 1 seponering-amitriptylin 53 50 mg [40,25,20]": {
+    "avvik": [
+      "amitriptylin dag 1–28: 40 mg, valgt av forskriveren fordi den beregnede dosen 37,5 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "amitriptylin dag 57–84: 25 mg, valgt av forskriveren fordi den beregnede dosen 22,5 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "amitriptylin fra dag 85: 20 mg, valgt av forskriveren fordi den beregnede dosen 18,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "dag 1–28: 40 mg = 4 tabletter à 10 mg, valgt av forskriveren (beregnet 37,5 mg; −20 %)",
+        "dag 29–56: 30 mg = 3 tabletter à 10 mg",
+        "dag 57–84: 25 mg = 1 tablett à 25 mg, valgt av forskriveren (beregnet 22,5 mg; −16,67 %)",
+        "fra dag 85: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 18,75 mg; −20 %)",
+        "neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt",
+      ],
+    },
+    "preparater": [
+      "Amitriptylin Abcur tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Abcur tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Orifarm tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Orifarm tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Sarotex tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Sarotex tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "seponering-amitriptylin v12",
+    "vurderinger": [],
+  },
+  "omfang 1 seponering-amitriptylin 53 50 mg []": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "fra dag 1: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg",
+        "én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene",
+      ],
+    },
+    "preparater": [
+      "Amitriptylin Abcur tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Abcur tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Orifarm tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Orifarm tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Sarotex tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Sarotex tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "seponering-amitriptylin v12",
+    "vurderinger": [],
+  },
+  "omfang 1 seponering-amitriptylin 53 75 mg [60,35,30,25,20]": {
+    "avvik": [
+      "amitriptylin dag 1–28: 60 mg, valgt av forskriveren fordi den beregnede dosen 56,25 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "amitriptylin dag 57–84: 35 mg, valgt av forskriveren fordi den beregnede dosen 33,75 mg ikke kan gis; faktisk reduksjon 22,22 % fra dosen før.",
+      "amitriptylin dag 85–112: 30 mg, valgt av forskriveren fordi den beregnede dosen 26,25 mg ikke kan gis; faktisk reduksjon 14,29 % fra dosen før.",
+      "amitriptylin dag 113–140: 25 mg, valgt av forskriveren fordi den beregnede dosen 22,5 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "amitriptylin fra dag 141: 20 mg, valgt av forskriveren fordi den beregnede dosen 18,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "dag 1–28: 60 mg = 1 tablett à 10 mg + 1 tablett à 50 mg, valgt av forskriveren (beregnet 56,25 mg; −20 %)",
+        "dag 29–56: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg",
+        "dag 57–84: 35 mg = 1 tablett à 10 mg + 1 tablett à 25 mg, valgt av forskriveren (beregnet 33,75 mg; −22,22 %)",
+        "dag 85–112: 30 mg = 3 tabletter à 10 mg, valgt av forskriveren (beregnet 26,25 mg; −14,29 %)",
+        "dag 113–140: 25 mg = 1 tablett à 25 mg, valgt av forskriveren (beregnet 22,5 mg; −16,67 %)",
+        "fra dag 141: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 18,75 mg; −20 %)",
+        "neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt",
+      ],
+    },
+    "preparater": [
+      "Amitriptylin Abcur tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Abcur tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Abcur tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Orifarm tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Orifarm tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Sarotex tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Sarotex tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "seponering-amitriptylin v12",
+    "vurderinger": [],
+  },
+  "omfang 1 seponering-amitriptylin 53 75 mg [70]": {
+    "avvik": [
+      "amitriptylin fra dag 1: 70 mg, valgt av forskriveren fordi den beregnede dosen 67,5 mg ikke kan gis; faktisk reduksjon 6,67 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "fra dag 1: 70 mg = 2 tabletter à 10 mg + 1 tablett à 50 mg, valgt av forskriveren (beregnet 67,5 mg; −6,67 %)",
+        "én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene",
+      ],
+    },
+    "preparater": [
+      "Amitriptylin Abcur tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Abcur tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Amitriptylin Orifarm tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Sarotex tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "seponering-amitriptylin v12",
+    "vurderinger": [],
+  },
+  "omfang 1 seponering-escitalopram 53 20 mg []": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "fra dag 1: 15 mg = 1 tablett à 10 mg + 1 tablett à 5 mg",
+        "én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene",
+      ],
+    },
+    "preparater": [
+      "Cipralex tab 10 mg, varenr. 005812, 005834 og 011047 (FEST: «Delbar i 2»)",
+      "Cipralex tab 10 mg, varenr. 014844 (FEST: «Delbar i 2»)",
+      "Cipralex tab 5 mg, varenr. 005757 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Cipralex tab 5 mg, varenr. 536639 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Escitalopram Actavis tab 10 mg (FEST: «Delbar i 2»)",
+      "Escitalopram Actavis tab 5 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Escitalopram Grindeks tab 10 mg (FEST: «Delbar i 2»)",
+    ],
+    "regel": "seponering-escitalopram v12",
+    "vurderinger": null,
+  },
+  "omfang 1 seponering-escitalopram 748 10 mg [8,5,4]": {
+    "avvik": [
+      "escitalopram dag 1–28: 8 mg, valgt av forskriveren fordi den beregnede dosen 7,5 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "escitalopram dag 57–84: 5 mg, valgt av forskriveren fordi den beregnede dosen 4,5 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "escitalopram dag 85–112: 4 mg, valgt av forskriveren fordi den beregnede dosen 3,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "dag 1–28: 8 mg = 8 dråper à 1 mg, valgt av forskriveren (beregnet 7,5 mg; −20 %)",
+        "dag 29–56: 6 mg = 6 dråper à 1 mg",
+        "dag 57–84: 5 mg = 5 dråper à 1 mg, valgt av forskriveren (beregnet 4,5 mg; −16,67 %)",
+        "dag 85–112: 4 mg = 4 dråper à 1 mg, valgt av forskriveren (beregnet 3,75 mg; −20 %)",
+        "fra dag 113: 3 mg = 3 dråper à 1 mg",
+        "neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt",
+      ],
+    },
+    "preparater": [
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 092005 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 419396 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 553965 (Hele dråper)",
+    ],
+    "regel": "seponering-escitalopram v12",
+    "vurderinger": null,
+  },
+  "omfang 1 seponering-escitalopram 748 10 mg []": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "fra dag 1: 9 mg = 9 dråper à 1 mg",
+        "én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene",
+      ],
+    },
+    "preparater": [
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 092005 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 419396 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 553965 (Hele dråper)",
+    ],
+    "regel": "seponering-escitalopram v12",
+    "vurderinger": null,
+  },
+  "omfang 1 seponering-escitalopram 748 20 mg [12,7,6,5,4]": {
+    "avvik": [
+      "escitalopram dag 29–56: 12 mg, valgt av forskriveren fordi den beregnede dosen 11,25 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "escitalopram dag 85–112: 7 mg, valgt av forskriveren fordi den beregnede dosen 6,75 mg ikke kan gis; faktisk reduksjon 22,22 % fra dosen før.",
+      "escitalopram dag 113–140: 6 mg, valgt av forskriveren fordi den beregnede dosen 5,25 mg ikke kan gis; faktisk reduksjon 14,29 % fra dosen før.",
+      "escitalopram dag 141–168: 5 mg, valgt av forskriveren fordi den beregnede dosen 4,5 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "escitalopram dag 169–196: 4 mg, valgt av forskriveren fordi den beregnede dosen 3,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "dag 1–28: 15 mg = 15 dråper à 1 mg",
+        "dag 29–56: 12 mg = 12 dråper à 1 mg, valgt av forskriveren (beregnet 11,25 mg; −20 %)",
+        "dag 57–84: 9 mg = 9 dråper à 1 mg",
+        "dag 85–112: 7 mg = 7 dråper à 1 mg, valgt av forskriveren (beregnet 6,75 mg; −22,22 %)",
+        "dag 113–140: 6 mg = 6 dråper à 1 mg, valgt av forskriveren (beregnet 5,25 mg; −14,29 %)",
+        "dag 141–168: 5 mg = 5 dråper à 1 mg, valgt av forskriveren (beregnet 4,5 mg; −16,67 %)",
+        "dag 169–196: 4 mg = 4 dråper à 1 mg, valgt av forskriveren (beregnet 3,75 mg; −20 %)",
+        "fra dag 197: 3 mg = 3 dråper à 1 mg",
+        "neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt",
+      ],
+    },
+    "preparater": [
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 092005 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 419396 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 553965 (Hele dråper)",
+    ],
+    "regel": "seponering-escitalopram v12",
+    "vurderinger": null,
+  },
+  "omfang 1 seponering-escitalopram 748 20 mg [17,16,15,14,13,12,11,10]": {
+    "avvik": [
+      "escitalopram dag 29–56: 17 mg, valgt av forskriveren fordi den beregnede dosen 16,2 mg ikke kan gis; faktisk reduksjon 5,56 % fra dosen før.",
+      "escitalopram dag 57–84: 16 mg, valgt av forskriveren fordi den beregnede dosen 15,3 mg ikke kan gis; faktisk reduksjon 5,88 % fra dosen før.",
+      "escitalopram dag 85–112: 15 mg, valgt av forskriveren fordi den beregnede dosen 14,4 mg ikke kan gis; faktisk reduksjon 6,25 % fra dosen før.",
+      "escitalopram dag 113–140: 14 mg, valgt av forskriveren fordi den beregnede dosen 13,5 mg ikke kan gis; faktisk reduksjon 6,67 % fra dosen før.",
+      "escitalopram dag 141–168: 13 mg, valgt av forskriveren fordi den beregnede dosen 12,6 mg ikke kan gis; faktisk reduksjon 7,14 % fra dosen før.",
+      "escitalopram dag 169–196: 12 mg, valgt av forskriveren fordi den beregnede dosen 11,7 mg ikke kan gis; faktisk reduksjon 7,69 % fra dosen før.",
+      "escitalopram dag 197–224: 11 mg, valgt av forskriveren fordi den beregnede dosen 10,8 mg ikke kan gis; faktisk reduksjon 8,33 % fra dosen før.",
+      "escitalopram dag 225–252: 10 mg, valgt av forskriveren fordi den beregnede dosen 9,9 mg ikke kan gis; faktisk reduksjon 9,09 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "dag 1–28: 18 mg = 18 dråper à 1 mg",
+        "dag 29–56: 17 mg = 17 dråper à 1 mg, valgt av forskriveren (beregnet 16,2 mg; −5,56 %)",
+        "dag 57–84: 16 mg = 16 dråper à 1 mg, valgt av forskriveren (beregnet 15,3 mg; −5,88 %)",
+        "dag 85–112: 15 mg = 15 dråper à 1 mg, valgt av forskriveren (beregnet 14,4 mg; −6,25 %)",
+        "dag 113–140: 14 mg = 14 dråper à 1 mg, valgt av forskriveren (beregnet 13,5 mg; −6,67 %)",
+        "dag 141–168: 13 mg = 13 dråper à 1 mg, valgt av forskriveren (beregnet 12,6 mg; −7,14 %)",
+        "dag 169–196: 12 mg = 12 dråper à 1 mg, valgt av forskriveren (beregnet 11,7 mg; −7,69 %)",
+        "dag 197–224: 11 mg = 11 dråper à 1 mg, valgt av forskriveren (beregnet 10,8 mg; −8,33 %)",
+        "dag 225–252: 10 mg = 10 dråper à 1 mg, valgt av forskriveren (beregnet 9,9 mg; −9,09 %)",
+        "fra dag 253: 9 mg = 9 dråper à 1 mg",
+        "neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt",
+      ],
+    },
+    "preparater": [
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 092005 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 419396 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 553965 (Hele dråper)",
+    ],
+    "regel": "seponering-escitalopram v12",
+    "vurderinger": null,
+  },
+  "omfang 1 seponering-escitalopram-langsom 748 20 mg []": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "fra dag 1: 19 mg = 19 dråper à 1 mg",
+        "én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene",
+      ],
+    },
+    "preparater": [
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 092005 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 419396 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 553965 (Hele dråper)",
+    ],
+    "regel": "seponering-escitalopram-langsom v8",
+    "vurderinger": [],
+  },
+  "omfang 1 seponering-nortriptylin 53 150 mg [120,100,60,35,30,25,20]": {
+    "avvik": [
+      "nortriptylin dag 1–28: 120 mg, valgt av forskriveren fordi den beregnede dosen 112,5 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "nortriptylin dag 29–56: 100 mg, valgt av forskriveren fordi den beregnede dosen 90 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "nortriptylin dag 85–112: 60 mg, valgt av forskriveren fordi den beregnede dosen 56,25 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "nortriptylin dag 141–168: 35 mg, valgt av forskriveren fordi den beregnede dosen 33,75 mg ikke kan gis; faktisk reduksjon 22,22 % fra dosen før.",
+      "nortriptylin dag 169–196: 30 mg, valgt av forskriveren fordi den beregnede dosen 26,25 mg ikke kan gis; faktisk reduksjon 14,29 % fra dosen før.",
+      "nortriptylin dag 197–224: 25 mg, valgt av forskriveren fordi den beregnede dosen 22,5 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "nortriptylin fra dag 225: 20 mg, valgt av forskriveren fordi den beregnede dosen 18,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "dag 1–28: 120 mg = 2 tabletter à 10 mg + 2 tabletter à 50 mg, valgt av forskriveren (beregnet 112,5 mg; −20 %)",
+        "dag 29–56: 100 mg = 2 tabletter à 50 mg, valgt av forskriveren (beregnet 90 mg; −16,67 %)",
+        "dag 57–84: 75 mg = 1 tablett à 25 mg + 1 tablett à 50 mg",
+        "dag 85–112: 60 mg = 1 tablett à 10 mg + 1 tablett à 50 mg, valgt av forskriveren (beregnet 56,25 mg; −20 %)",
+        "dag 113–140: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg",
+        "dag 141–168: 35 mg = 1 tablett à 10 mg + 1 tablett à 25 mg, valgt av forskriveren (beregnet 33,75 mg; −22,22 %)",
+        "dag 169–196: 30 mg = 3 tabletter à 10 mg, valgt av forskriveren (beregnet 26,25 mg; −14,29 %)",
+        "dag 197–224: 25 mg = 1 tablett à 25 mg, valgt av forskriveren (beregnet 22,5 mg; −16,67 %)",
+        "fra dag 225: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 18,75 mg; −20 %)",
+        "neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt",
+      ],
+    },
+    "preparater": [
+      "Noritren tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Noritren tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Noritren tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "seponering-nortriptylin v12",
+    "vurderinger": [],
+  },
+  "omfang 1 seponering-nortriptylin 53 25 mg [20]": {
+    "avvik": [
+      "nortriptylin fra dag 1: 20 mg, valgt av forskriveren fordi den beregnede dosen 18,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "fra dag 1: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 18,75 mg; −20 %)",
+        "én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene",
+      ],
+    },
+    "preparater": [
+      "Noritren tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "seponering-nortriptylin v12",
+    "vurderinger": [],
+  },
+  "omfang 1 seponering-nortriptylin 53 50 mg [40,25,20]": {
+    "avvik": [
+      "nortriptylin dag 1–28: 40 mg, valgt av forskriveren fordi den beregnede dosen 37,5 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "nortriptylin dag 57–84: 25 mg, valgt av forskriveren fordi den beregnede dosen 22,5 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "nortriptylin fra dag 85: 20 mg, valgt av forskriveren fordi den beregnede dosen 18,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "dag 1–28: 40 mg = 4 tabletter à 10 mg, valgt av forskriveren (beregnet 37,5 mg; −20 %)",
+        "dag 29–56: 30 mg = 3 tabletter à 10 mg",
+        "dag 57–84: 25 mg = 1 tablett à 25 mg, valgt av forskriveren (beregnet 22,5 mg; −16,67 %)",
+        "fra dag 85: 20 mg = 2 tabletter à 10 mg, valgt av forskriveren (beregnet 18,75 mg; −20 %)",
+        "neste trinn kan ikke gis med preparatene; avslutning vurderes individuelt",
+      ],
+    },
+    "preparater": [
+      "Noritren tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Noritren tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "seponering-nortriptylin v12",
+    "vurderinger": [],
+  },
+  "omfang 1 seponering-nortriptylin 53 50 mg []": {
+    "avvik": [],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "fra dag 1: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg",
+        "én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene",
+      ],
+    },
+    "preparater": [
+      "Noritren tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      "Noritren tab 25 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+    ],
+    "regel": "seponering-nortriptylin v12",
+    "vurderinger": [],
+  },
+  "omfang 2 seponering-escitalopram 53 20 mg []": {
+    "grunner": [
+      "Komplett plan ikke tilgjengelig: escitalopram: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 1 mg eller lavere (planen står på 15 mg).",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "omfang 2 seponering-escitalopram 748 10 mg [8,5,4,2,1]": {
+    "avvik": [
+      "escitalopram dag 1–28: 8 mg, valgt av forskriveren fordi den beregnede dosen 7,5 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "escitalopram dag 57–84: 5 mg, valgt av forskriveren fordi den beregnede dosen 4,5 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "escitalopram dag 85–112: 4 mg, valgt av forskriveren fordi den beregnede dosen 3,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "escitalopram dag 141–168: 2 mg, valgt av forskriveren fordi den beregnede dosen 2,25 mg ikke kan gis; faktisk reduksjon 33,33 % fra dosen før.",
+      "escitalopram dag 169–196: 1 mg, valgt av forskriveren fordi den beregnede dosen 1,5 mg ikke kan gis; faktisk reduksjon 50 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "dag 1–28: 8 mg = 8 dråper à 1 mg, valgt av forskriveren (beregnet 7,5 mg; −20 %)",
+        "dag 29–56: 6 mg = 6 dråper à 1 mg",
+        "dag 57–84: 5 mg = 5 dråper à 1 mg, valgt av forskriveren (beregnet 4,5 mg; −16,67 %)",
+        "dag 85–112: 4 mg = 4 dråper à 1 mg, valgt av forskriveren (beregnet 3,75 mg; −20 %)",
+        "dag 113–140: 3 mg = 3 dråper à 1 mg",
+        "dag 141–168: 2 mg = 2 dråper à 1 mg, valgt av forskriveren (beregnet 2,25 mg; −33,33 %)",
+        "dag 169–196: 1 mg = 1 dråpe à 1 mg, valgt av forskriveren (beregnet 1,5 mg; −50 %)",
+        "fra dag 197: seponert",
+      ],
+    },
+    "preparater": [
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 092005 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 419396 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 553965 (Hele dråper)",
+    ],
+    "regel": "seponering-escitalopram v13",
+    "vurderinger": [
+      "Escitalopram, før hver doseendring (dag 29, 57, 85, 113, 141, 169, 197): Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. Ved funn: Ved utålelige symptomer: gå tilbake til forrige dose og fortsett senere mer gradvis. Ny plan beregnes fra dosen pasienten da bruker.",
+      "Escitalopram, 7 dager etter siste dose (dag 203): Vurder seponeringssymptomer og tegn på tilbakefall 7 dager etter siste dose. Ved funn: Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt. Oppfølgingen kan fremskyndes eller forlenges etter symptomer og risiko for tilbakefall.",
+      "Escitalopram, 14 dager etter siste dose (dag 210): Vurder seponeringssymptomer og tegn på tilbakefall 14 dager etter siste dose. Ved funn: Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt. Oppfølgingen kan fremskyndes eller forlenges etter symptomer og risiko for tilbakefall.",
+      "Escitalopram, 28 dager etter siste dose (dag 224): Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose. Ved funn: Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt. Oppfølgingen kan fremskyndes eller forlenges etter symptomer og risiko for tilbakefall.",
+    ],
+  },
+  "omfang 2 seponering-escitalopram 748 10 mg []": {
+    "grunner": [
+      "Komplett plan ikke tilgjengelig: escitalopram: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 1 mg eller lavere (planen står på 9 mg).",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
+  },
+  "omfang 2 seponering-escitalopram 748 20 mg [12,7,6,5,4,2,1]": {
+    "avvik": [
+      "escitalopram dag 29–56: 12 mg, valgt av forskriveren fordi den beregnede dosen 11,25 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "escitalopram dag 85–112: 7 mg, valgt av forskriveren fordi den beregnede dosen 6,75 mg ikke kan gis; faktisk reduksjon 22,22 % fra dosen før.",
+      "escitalopram dag 113–140: 6 mg, valgt av forskriveren fordi den beregnede dosen 5,25 mg ikke kan gis; faktisk reduksjon 14,29 % fra dosen før.",
+      "escitalopram dag 141–168: 5 mg, valgt av forskriveren fordi den beregnede dosen 4,5 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+      "escitalopram dag 169–196: 4 mg, valgt av forskriveren fordi den beregnede dosen 3,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+      "escitalopram dag 225–252: 2 mg, valgt av forskriveren fordi den beregnede dosen 2,25 mg ikke kan gis; faktisk reduksjon 33,33 % fra dosen før.",
+      "escitalopram dag 253–280: 1 mg, valgt av forskriveren fordi den beregnede dosen 1,5 mg ikke kan gis; faktisk reduksjon 50 % fra dosen før.",
+    ],
+    "forbehold": [
+      "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+      "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+      "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+    ],
+    "forlop": {
+      "fra": [
+        "dag 1–28: 15 mg = 15 dråper à 1 mg",
+        "dag 29–56: 12 mg = 12 dråper à 1 mg, valgt av forskriveren (beregnet 11,25 mg; −20 %)",
+        "dag 57–84: 9 mg = 9 dråper à 1 mg",
+        "dag 85–112: 7 mg = 7 dråper à 1 mg, valgt av forskriveren (beregnet 6,75 mg; −22,22 %)",
+        "dag 113–140: 6 mg = 6 dråper à 1 mg, valgt av forskriveren (beregnet 5,25 mg; −14,29 %)",
+        "dag 141–168: 5 mg = 5 dråper à 1 mg, valgt av forskriveren (beregnet 4,5 mg; −16,67 %)",
+        "dag 169–196: 4 mg = 4 dråper à 1 mg, valgt av forskriveren (beregnet 3,75 mg; −20 %)",
+        "dag 197–224: 3 mg = 3 dråper à 1 mg",
+        "dag 225–252: 2 mg = 2 dråper à 1 mg, valgt av forskriveren (beregnet 2,25 mg; −33,33 %)",
+        "dag 253–280: 1 mg = 1 dråpe à 1 mg, valgt av forskriveren (beregnet 1,5 mg; −50 %)",
+        "fra dag 281: seponert",
+      ],
+    },
+    "preparater": [
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 092005 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 419396 (Hele dråper)",
+      "Cipralex dråper, oppl 20 mg/ml, varenr. 553965 (Hele dråper)",
+    ],
+    "regel": "seponering-escitalopram v13",
+    "vurderinger": [
+      "Escitalopram, før hver doseendring (dag 29, 57, 85, 113, 141, 169, 197, 225, 253, 281): Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. Ved funn: Ved utålelige symptomer: gå tilbake til forrige dose og fortsett senere mer gradvis. Ny plan beregnes fra dosen pasienten da bruker.",
+      "Escitalopram, 7 dager etter siste dose (dag 287): Vurder seponeringssymptomer og tegn på tilbakefall 7 dager etter siste dose. Ved funn: Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt. Oppfølgingen kan fremskyndes eller forlenges etter symptomer og risiko for tilbakefall.",
+      "Escitalopram, 14 dager etter siste dose (dag 294): Vurder seponeringssymptomer og tegn på tilbakefall 14 dager etter siste dose. Ved funn: Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt. Oppfølgingen kan fremskyndes eller forlenges etter symptomer og risiko for tilbakefall.",
+      "Escitalopram, 28 dager etter siste dose (dag 308): Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose. Ved funn: Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt. Oppfølgingen kan fremskyndes eller forlenges etter symptomer og risiko for tilbakefall.",
+    ],
+  },
+  "omfang 2 seponering-escitalopram 748 20 mg [17,16,15,14,13,12,11,10]": {
+    "grunner": [
+      "Komplett plan ikke tilgjengelig: escitalopram: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 1 mg eller lavere (planen står på 9 mg).",
+    ],
+    "resultat": undefined,
+    "tekst": undefined,
+    "utfall": "stopp",
   },
 }
 `;

@@ -84,7 +84,7 @@ I `verktoy-brukervennlighet/maling/for/` i prosjektmappen, navngitt `<kasus>-<br
 
 ## 3. Invariantene S1–S9 (`verktoyflyt-invarianter.test.ts`)
 
-Testen prøver hver godkjent regel med beregning som verktøyene tilbyr, i hver startdose, legemiddelform og svarkombinasjon regelens kliniske omfang er kontrollert med (uten omfang regelens regneeksempler), og hver måldose regelen tilbyr: 35 kasus, 11 av dem med plan på main. P11-matrisen (115 kasus) prøves i tillegg for S3.
+Testen prøver hver godkjent regel med beregning som verktøyene tilbyr, i hver startdose, legemiddelform og svarkombinasjon regelens kliniske omfang er kontrollert med (uten omfang regelens regneeksempler), og hver måldose regelen tilbyr: 35 kasus, 11 av dem med plan på main. S3 prøver i tillegg P11-matrisen (115 kasus), K4-kasusene (43) og kontrollkasusene sammen med hver vei gjennom det kliniske omfanget i kontrollgrunnlagene (91), til sammen 284 utfall i ett øyeblikksbilde. For hvert utfall lagres også hvilke dosevalg verktøyet tilbyr underveis.
 
 | Invariant   | Hva testen kontrollerer                                                                                                                                                                     | Status før forenklingen                                      |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
