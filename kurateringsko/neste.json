@@ -1,19 +1,58 @@
 {
-  "oppdatert_kl": "2026-11-04T09:27:32.295Z",
+  "oppdatert_kl": "2026-11-04T10:27:15.563Z",
   "malt_kl": "2026-11-03T19:26:48.792Z",
   "antall": {
-    "klar": 93,
+    "klar": 96,
     "reservert": 0,
     "fagarbeid_ferdig": 0,
     "venter_godkjenning": 0,
     "sammenslatt": 0,
     "publisert": 16,
-    "blokkert": 9,
+    "blokkert": 6,
     "utenfor": 1
   },
   "aktive": [],
   "holdes_tilbake": null,
   "neste": [
+    {
+      "stoff": "karbamazepin",
+      "modus": "de_novo",
+      "poeng": 427.6,
+      "grunner": [
+        "De novo-kuratering i runden som gjelder.",
+        "Aldri kuratert.",
+        "Ingen kuratering å regne alderen fra.",
+        "9 av 13 redaksjonelle seksjoner er tomme.",
+        "1 av 6 elementer har ingen kilde."
+      ],
+      "tidligst_kl": null
+    },
+    {
+      "stoff": "escitalopram",
+      "modus": "de_novo",
+      "poeng": 426.9,
+      "grunner": [
+        "De novo-kuratering i runden som gjelder.",
+        "Aldri kuratert.",
+        "Ingen kuratering å regne alderen fra.",
+        "5 av 13 redaksjonelle seksjoner er tomme.",
+        "20 av 26 elementer har ingen kilde."
+      ],
+      "tidligst_kl": null
+    },
+    {
+      "stoff": "paliperidon",
+      "modus": "de_novo",
+      "poeng": 426.9,
+      "grunner": [
+        "De novo-kuratering i runden som gjelder.",
+        "Aldri kuratert.",
+        "Ingen kuratering å regne alderen fra.",
+        "5 av 13 redaksjonelle seksjoner er tomme.",
+        "20 av 26 elementer har ingen kilde."
+      ],
+      "tidligst_kl": null
+    },
     {
       "stoff": "klonazepam",
       "modus": "de_novo",
@@ -104,45 +143,6 @@
         "1 av 10 elementer har ingen kilde."
       ],
       "tidligst_kl": null
-    },
-    {
-      "stoff": "duloksetin",
-      "modus": "de_novo",
-      "poeng": 423.6,
-      "grunner": [
-        "De novo-kuratering i runden som gjelder.",
-        "Aldri kuratert.",
-        "Ingen kuratering å regne alderen fra.",
-        "5 av 13 redaksjonelle seksjoner er tomme.",
-        "19 av 27 elementer har ingen kilde."
-      ],
-      "tidligst_kl": null
-    },
-    {
-      "stoff": "amisulprid",
-      "modus": "de_novo",
-      "poeng": 423.5,
-      "grunner": [
-        "De novo-kuratering i runden som gjelder.",
-        "Aldri kuratert.",
-        "Ingen kuratering å regne alderen fra.",
-        "5 av 13 redaksjonelle seksjoner er tomme.",
-        "21 av 30 elementer har ingen kilde."
-      ],
-      "tidligst_kl": null
-    },
-    {
-      "stoff": "paroksetin",
-      "modus": "de_novo",
-      "poeng": 423.5,
-      "grunner": [
-        "De novo-kuratering i runden som gjelder.",
-        "Aldri kuratert.",
-        "Ingen kuratering å regne alderen fra.",
-        "5 av 13 redaksjonelle seksjoner er tomme.",
-        "21 av 30 elementer har ingen kilde."
-      ],
-      "tidligst_kl": null
     }
   ],
   "til_gjennomgang": [],
@@ -152,8 +152,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.",
-          "kl": "2026-11-04T09:27:32.295Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.",
+          "kl": "2026-11-04T10:27:15.563Z",
           "kilde": "system"
         }
       ]
@@ -163,19 +163,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.",
-          "kl": "2026-11-04T09:27:32.295Z",
-          "kilde": "system"
-        }
-      ]
-    },
-    {
-      "stoff": "escitalopram",
-      "blokkeringer": [
-        {
-          "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, godkjent); den må avsluttes først.",
-          "kl": "2026-11-04T09:27:32.295Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.",
+          "kl": "2026-11-04T10:27:15.563Z",
           "kilde": "system"
         }
       ]
@@ -185,19 +174,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, tilbakemelding); den må avsluttes først.",
-          "kl": "2026-11-04T09:27:32.295Z",
-          "kilde": "system"
-        }
-      ]
-    },
-    {
-      "stoff": "karbamazepin",
-      "blokkeringer": [
-        {
-          "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, godkjent); den må avsluttes først.",
-          "kl": "2026-11-04T09:27:32.295Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.",
+          "kl": "2026-11-04T10:27:15.563Z",
           "kilde": "system"
         }
       ]
@@ -218,8 +196,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, retting); den må avsluttes først.",
-          "kl": "2026-11-04T09:27:32.295Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.",
+          "kl": "2026-11-04T10:27:15.563Z",
           "kilde": "system"
         }
       ]
@@ -232,17 +210,6 @@
           "grunn": "Skrivefasen stoppet av et automatisk sikkerhetsfilter; venter på avgjørelse fra fagansvarlig.",
           "kl": "2026-10-17T14:52:49.441Z",
           "kilde": "agent"
-        }
-      ]
-    },
-    {
-      "stoff": "paliperidon",
-      "blokkeringer": [
-        {
-          "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, godkjent); den må avsluttes først.",
-          "kl": "2026-11-04T09:27:32.295Z",
-          "kilde": "system"
         }
       ]
     }
