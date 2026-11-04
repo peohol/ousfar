@@ -345,7 +345,7 @@ describe('Doseplanen i verktøyene', () => {
     expect(p.rader[0]).toMatchObject({ type: 'periode', dager: 'Dag 1–14', datoer: '02.11.2026–15.11.2026', celler: [{ dose: '12,5 mg', elementer: ['1 tablett à 10 mg', '½ tablett à 5 mg'] }] })
     // Planen går ikke til null: siste dose fortsetter til avslutningen er vurdert.
     // Siste dose holdes ett trinn, og så seponeres legemidlet etter den syntetiske avslutningen, så planen er komplett.
-    expect(p.rader[1]).toEqual({ type: 'periode', dager: 'Dag 15–28', datoer: '16.11.2026–29.11.2026', celler: [{ dose: '6,25 mg', elementer: ['1¼ tabletter à 5 mg'] }] })
+    expect(p.rader[1]).toEqual({ type: 'periode', dager: 'Dag 15–28', datoer: '16.11.2026–29.11.2026', celler: [{ dose: '6,25 mg', elementer: ['1¼ tabletter à 5 mg'], enheter: ['tablett'] }] })
     expect(p.rader.at(-1)).toMatchObject({ type: 'periode', dager: 'Fra dag 29', datoer: 'fra 30.11.2026', celler: [{ dose: 'Seponert' }] })
     expect(p.rader).toHaveLength(3)
     expect(p.versjoner).toEqual([

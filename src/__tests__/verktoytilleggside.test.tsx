@@ -7,16 +7,18 @@
  * Ingen simulering: reglene er godkjent av den uavhengige kontrolløren for
  * nøyaktig sin versjon og sitt fingeravtrykk (`TILLEGGSVEDTAK`).
  */
-import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react'
+import { act, cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Verktoyside, type VerktoysideProps } from '../components/verktoy/Verktoyside'
 import { glemBildet } from '../oppdatering/bevaring'
 import { FEST_TILLEGG } from '../verktoy/tilleggsgrunnlag'
-import { besvarAlt, pilotklokke, pilotlesing, pilotuttrekk } from './hjelp/pilotside'
+import { pilotklokke, pilotlesing, pilotuttrekk } from './hjelp/pilotside'
+import { BEKREFTELSER, besvarAlt, kopier, planpanel, stoppet, type Bruker } from './hjelp/verktoyflyt'
 
 beforeEach(() => {
   window.scrollTo = () => {}
+  Element.prototype.scrollIntoView ??= function () {}
   sessionStorage.clear()
   glemBildet()
 })
@@ -42,8 +44,6 @@ function vis(props: Partial<VerktoysideProps> = {}) {
   )
 }
 
-type Bruker = ReturnType<typeof userEvent.setup>
-
 /** Velger det eksisterende legemidlet og lamotrigin, og fyller inn dosen og måldosen. */
 async function fyllInn(user: Bruker, fra: string, dose: string, maldose: string) {
   await act(async () => {})
@@ -53,41 +53,31 @@ async function fyllInn(user: Bruker, fra: string, dose: string, maldose: string)
   await user.type(screen.getByRole('textbox', { name: /Måldose/ }), maldose)
 }
 
-const beregn = async (user: Bruker) => user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
-
-/** Teksten som kopieres med «Kopier planen». */
-async function kopier(user: Bruker) {
-  await user.click(screen.getByRole('button', { name: 'Kopier planen' }))
-  return navigator.clipboard.readText()
-}
-
-/** Ingen plan å kopiere, og siden sier hvorfor: i et varsel ved skjemaet eller under «Ingen doseplan». */
-async function stoppet(grunn: RegExp) {
-  await waitFor(() => expect(screen.queryByRole('button', { name: 'Kopier planen' })).toBeNull())
-  const steder = [...screen.queryAllByRole('alert'), ...screen.queryAllByRole('heading', { name: 'Ingen doseplan' }).map((h) => h.closest('section')!)]
-  expect(steder.map((x) => x.textContent).join('\n')).toMatch(grunn)
-}
+/** Avkrysningen i «Bekreft før planen vises» som passer `navn`. */
+const bekreftelse = (navn: RegExp) => within(screen.getByRole('group', { name: BEKREFTELSER })).getByRole('checkbox', { name: navn })
 
 describe('Kombinere stemningsstabiliserende med de godkjente reglene', () => {
   it('valproat → lamotrigin: planen kopieres med mg natriumvalproat og preparatet fra legemiddellisten, og stopper uten nødvendige bekreftelser', async () => {
     const user = userEvent.setup()
     vis()
     await fyllInn(user, 'Valproat', '1000', '100')
-    // Ingenting er bekreftet eller besvart: ingen plan.
-    await beregn(user)
-    expect((await screen.findAllByRole('alert')).length).toBeGreaterThan(0)
+    // Ingenting er bekreftet eller besvart: ingen plan, og panelet sier hvor mange spørsmål som gjenstår.
+    await stoppet(/\d+ spørsmål igjen/)
     expect(screen.queryByRole('button', { name: 'Kopier planen' })).toBeNull()
 
-    // Alt bekreftet, nei på hvert spørsmål og unntak: hele planen.
+    // Alt bekreftet, nei på hvert spørsmål og unntak: hele planen, beregnet av seg selv.
     await besvarAlt(user)
-    await beregn(user)
     const tekst = await kopier(user)
     expect(tekst).toMatch(/^Kombinere stemningsstabiliserende\n/)
-    expect(tekst).toContain('Komplett plan til sluttmålet: Valproat fortsetter uendret på 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten); Lamotrigin fortsetter på 100 mg fra dag 36.')
+    expect(tekst).toContain(
+      'Komplett plan til sluttmålet: Valproat fortsetter uendret på 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten); Lamotrigin fortsetter på 100 mg fra dag 36.',
+    )
     const rader = tekst.split('\n').filter((l) => l.includes('Valproat peroralt:'))
     expect(rader).toHaveLength(4)
     for (const l of rader)
-      expect(l).toContain('Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke')
+      expect(l).toContain(
+        'Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke',
+      )
     expect(tekst).toMatch(/Dag 1–14: Valproat peroralt: .*; Lamotrigin peroralt: 25 mg annenhver dag = 1 tablett à 25 mg/)
     expect(tekst).toMatch(/Fra dag 36: Valproat peroralt: .*; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg/)
     expect(tekst).toContain('Bekreftet: Pasienten bruker et natriumvalproatpreparat')
@@ -95,36 +85,38 @@ describe('Kombinere stemningsstabiliserende med de godkjente reglene', () => {
     expect(tekst).not.toMatch(/simulert/i)
     // Planen bygger på den ordinære 25 mg-pakningen; advarselen gjelder bare fritakspakningen med samme navn, med varenummer.
     expect(tekst).toContain('- Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)')
-    expect(tekst).toContain('Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808')
+    expect(tekst).toContain(
+      'Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808',
+    )
     expect(tekst).not.toMatch(/Lamictal tyggetab\/disperg tab 25 mg: /)
 
     // Pasienten kan bli gravid: de fire vilkårene i programmet må bekreftes; uten dem ingen plan.
+    // Uten en av dem gjenstår ett spørsmål, og planen beregnes ikke.
     await besvarAlt(user, [/kan bli gravid/])
-    await besvarAlt(user, [/kan bli gravid/]) // bekreftelsene svaret tar fram
-    const vilkar = within(screen.getByRole('group', { name: 'Bekreft før beregning' })).getByRole('checkbox', { name: /sikker prevensjon uten avbrudd/ })
+    const vilkar = bekreftelse(/sikker prevensjon uten avbrudd/)
     await user.click(vilkar)
-    await beregn(user)
-    await stoppet(/bekreft én forutsetning/)
+    await stoppet(/Ett spørsmål igjen/)
     await user.click(vilkar)
-    await beregn(user)
     expect(await kopier(user)).toContain('Bekreftet: Pasienten bruker sikker prevensjon uten avbrudd')
 
     // Pasienten kan bli far: forholdsreglene for menn må bekreftes; uten dem ingen plan.
     await besvarAlt(user, [/kan gjøre en partner gravid/])
-    await besvarAlt(user, [/kan gjøre en partner gravid/]) // bekreftelsene svaret tar fram
-    const far = within(screen.getByRole('group', { name: 'Bekreft før beregning' })).getByRole('checkbox', { name: /mulige risikoen for nevroutviklingsforstyrrelser/ })
+    const far = bekreftelse(/mulige risikoen for nevroutviklingsforstyrrelser/)
     await user.click(far)
-    await beregn(user)
-    await stoppet(/bekreft én forutsetning/)
+    await stoppet(/Ett spørsmål igjen/)
     await user.click(far)
-    await beregn(user)
     expect(await kopier(user)).toContain('Bekreftet: Pasienten er informert om den mulige risikoen')
 
     // Uten bekreftet natriumvalproatpreparat og dose: ingen plan.
     await besvarAlt(user)
-    await user.click(within(screen.getByRole('group', { name: 'Bekreft før beregning' })).getByRole('checkbox', { name: /natriumvalproatpreparat/ }))
-    await beregn(user)
-    await stoppet(/bekreft én forutsetning/)
+    await user.click(bekreftelse(/natriumvalproatpreparat/))
+    await stoppet(/Ett spørsmål igjen/)
+    // «Ukjent» stopper som et ubesvart forhold, og sier det ved spørsmålet og i panelet.
+    await user.click(bekreftelse(/natriumvalproatpreparat/))
+    const gravid = screen.getByRole('radiogroup', { name: /kan bli gravid/ })
+    await user.click(within(gravid).getByRole('radio', { name: 'Ukjent' }))
+    await stoppet(/Ingen plan med disse svarene/)
+    expect(planpanel().textContent).toContain('Uten svar her lager verktøyet ingen plan.')
   })
 
   it('litium → lamotrigin: planen kopieres med Lithionit-tabletter, mg Li⁺ og mmol, og en dose som ikke er hele tabletter stopper', async () => {
@@ -132,7 +124,6 @@ describe('Kombinere stemningsstabiliserende med de godkjente reglene', () => {
     vis()
     await fyllInn(user, 'Litium', '168', '200')
     await besvarAlt(user)
-    await beregn(user)
     const tekst = await kopier(user)
     expect(tekst).toContain('Komplett plan til sluttmålet: Litium fortsetter uendret på 168 mg Li⁺ (24 mmol); Lamotrigin fortsetter på 200 mg fra dag 36.')
     const rader = tekst.split('\n').filter((l) => l.includes('Litium peroralt:'))
@@ -148,14 +139,12 @@ describe('Kombinere stemningsstabiliserende med de godkjente reglene', () => {
     const dose = screen.getByRole('textbox', { name: /^Aktuell (døgn)?dose av/ })
     await user.clear(dose)
     await user.type(dose, '170')
-    await beregn(user)
     await stoppet(/170 mg er utenfor det regelen gjelder for/)
     await user.clear(dose)
     await user.type(dose, '168')
     const mal = screen.getByRole('textbox', { name: /Måldose/ })
     await user.clear(mal)
     await user.type(mal, '300')
-    await beregn(user)
     await stoppet(/300 mg er utenfor det regelen gjelder for/)
   })
 })

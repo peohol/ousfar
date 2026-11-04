@@ -338,11 +338,11 @@
   border-radius: var(--runding-felt);
 }
 
-.verktoystatus :is(h2, p, ul) {
+.verktoystatus :is(h2, h3, p, ul) {
   margin: 0;
 }
 
-.verktoystatus h2 {
+.verktoystatus :is(h2, h3) {
   font-family: var(--skrift-display);
   font-size: var(--tekst-seksjon);
   font-weight: var(--vekt-medium);
@@ -371,7 +371,7 @@
   gap: var(--rom-3);
 }
 
-.verktoyfagtekst :is(h3, p, ul) {
+.verktoyfagtekst :is(h3, h4, p, ul) {
   margin: 0;
 }
 
@@ -387,15 +387,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--rom-2);
-}
-
-.doseplan__overtittel {
-  margin: 0;
-  font-size: var(--tekst-meta);
-  font-weight: var(--vekt-halvfet);
-  letter-spacing: var(--sperring-meta);
-  text-transform: uppercase;
-  color: var(--blekk-dempet);
 }
 
 .doseplan__tittel {
@@ -443,91 +434,6 @@
   margin: 0;
   font-size: var(--tekst-etikett);
   color: var(--blekk-dempet);
-}
-
-/* Tabellen ruller sidelengs på smale flater i stedet for å presse siden ut. */
-.doseplan__tabell {
-  overflow-x: auto;
-  border: var(--kant) solid var(--linje);
-  border-radius: var(--runding-felt);
-}
-
-.doseplan table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: var(--tekst-ui);
-  font-variant-numeric: tabular-nums;
-}
-
-.doseplan :is(th, td) {
-  padding: var(--rom-4) var(--rom-5);
-  text-align: left;
-  vertical-align: top;
-  border-bottom: var(--kant) solid var(--linje);
-}
-
-.doseplan tbody tr:last-child :is(th, td) {
-  border-bottom: 0;
-}
-
-.doseplan thead th {
-  font-size: var(--tekst-liten);
-  font-weight: var(--vekt-halvfet);
-  color: var(--blekk-dempet);
-  background: var(--flate-hevet);
-}
-
-.doseplan__administrasjon {
-  font-weight: var(--vekt-normal);
-}
-
-.doseplan tbody th {
-  font-weight: var(--vekt-halvfet);
-  white-space: nowrap;
-}
-
-.doseplan tr[data-type='injeksjon'] {
-  background: var(--aksent-flate);
-}
-
-.doseplan__dager,
-.doseplan__datoer {
-  display: block;
-}
-
-.doseplan__datoer,
-.doseplan__elementer,
-.doseplan__avvik {
-  font-size: var(--tekst-liten);
-  font-weight: var(--vekt-normal);
-  color: var(--blekk-dempet);
-}
-
-.doseplan__celle {
-  display: flex;
-  flex-direction: column;
-  gap: var(--rom-1);
-}
-
-.doseplan__avvik {
-  font-style: italic;
-}
-
-.doseplan__injeksjon,
-.doseplan__vurdering {
-  display: flex;
-  gap: var(--rom-2);
-}
-
-.doseplan__vurdering {
-  font-size: var(--tekst-etikett);
-  line-height: var(--linjehoyde-lesing);
-}
-
-.doseplan__injeksjon > span {
-  display: flex;
-  flex-direction: column;
-  gap: var(--rom-1);
 }
 
 .doseplan__del {
@@ -613,60 +519,6 @@
   color: var(--blekk-dempet);
 }
 
-/* På smale skjermer stables tabellen: én blokk per dag, med virkestoffet
-   foran hver dose og uten de tomme cellene. Rollene i markeringen holder den
-   en tabell for skjermlesere. */
-@media (max-width: 40rem) {
-  .doseplan__tabell {
-    overflow-x: visible;
-  }
-
-  .doseplan :is(table, tbody, tr, th, td) {
-    display: block;
-  }
-
-  .doseplan thead {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
-  .doseplan tbody tr {
-    padding: var(--rom-4) var(--rom-5);
-    border-bottom: var(--kant) solid var(--linje);
-  }
-
-  .doseplan tbody :is(th, td) {
-    padding: 0;
-    border-bottom: 0;
-  }
-
-  .doseplan tbody th {
-    margin-bottom: var(--rom-3);
-    white-space: normal;
-  }
-
-  .doseplan tbody td + td {
-    margin-top: var(--rom-3);
-  }
-
-  .doseplan td[data-tom] {
-    display: none;
-  }
-
-  .doseplan td::before {
-    content: attr(data-kolonne);
-    display: block;
-    margin-bottom: var(--rom-1);
-    font-size: var(--tekst-liten);
-    font-weight: var(--vekt-halvfet);
-    color: var(--blekk-dempet);
-  }
-}
-
 /* --- Utskrift -----------------------------------------------------------------
    Bare doseplanen skrives ut, uten knappene, i svart på hvitt. */
 @media print {
@@ -686,20 +538,13 @@
     background: #fff;
   }
 
-  .verktoyside > :not(.doseplan),
-  .doseplan__handlinger {
+  .verktoyside > :not(.verktoyflyt),
+  .doseplan__handlinger,
+  .planpanel__tillegg {
     display: none;
   }
 
-  .doseplan__tabell {
-    overflow: visible;
-  }
-
-  .doseplan :is(thead th, tr[data-type='injeksjon']) {
-    background: transparent;
-  }
-
-  .doseplan tr {
+  .tidslinje__punkt {
     break-inside: avoid;
   }
 }
@@ -715,4 +560,756 @@
 /* Når varslene ikke kunne leses: dempet, for det er ikke en påvist endring. */
 .regelvarsel__ulest {
   color: var(--blekk-dempet);
+}
+/* --- Arbeidsflyten (planen §3 og §8) -------------------------------------------
+   Fire steg i fast rekkefølge til venstre, planen til høyre på store
+   skjermer og under stegene på smale. Stegene er en ekte rekkefølge og får
+   derfor tall; alt annet er stille, så tidslinjen er det man husker. */
+.scene--verktoy:has(.verktoyflyt) {
+  width: min(100%, 78rem);
+}
+
+.verktoyflyt {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--rom-9);
+  align-items: start;
+}
+
+@media (min-width: 64rem) {
+  .verktoyflyt {
+    grid-template-columns: minmax(0, 1fr) minmax(22rem, 30rem);
+    gap: var(--rom-9) clamp(var(--rom-8), 4vw, var(--rom-10));
+  }
+
+  .verktoyflyt__plan {
+    position: sticky;
+    top: var(--toppmeny-offset);
+    max-height: calc(100dvh - var(--toppmeny-offset) - var(--rom-6));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+}
+
+.verktoyflyt__steg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-9);
+  min-width: 0;
+}
+
+/* Ett steg: tallet i en liten sirkel ved overskriften, innholdet under. */
+.flytsteg {
+  display: grid;
+  grid-template-columns: var(--hoyde-liten) minmax(0, 1fr);
+  column-gap: var(--rom-4);
+  row-gap: var(--rom-5);
+}
+
+.flytsteg__tall {
+  display: grid;
+  place-items: center;
+  width: var(--hoyde-liten);
+  height: var(--hoyde-liten);
+  font-size: var(--tekst-etikett);
+  font-weight: var(--vekt-halvfet);
+  font-variant-numeric: tabular-nums;
+  color: var(--blekk-dempet);
+  border: var(--kant) solid var(--linje-kontroll);
+  border-radius: 50%;
+}
+
+.flytsteg[data-ferdig] .flytsteg__tall {
+  color: var(--paa-aksent);
+  background: var(--aksent);
+  border-color: var(--aksent);
+}
+
+.flytsteg__tittel {
+  align-self: center;
+  margin: 0;
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-seksjon);
+  font-weight: var(--vekt-medium);
+  line-height: var(--linjehoyde-titler);
+}
+
+.flytsteg__tittel:focus {
+  outline: none;
+}
+
+.flytsteg__innhold {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-6);
+  min-width: 0;
+}
+
+@media (max-width: 40rem) {
+  .flytsteg__innhold {
+    grid-column: 1 / -1;
+  }
+}
+
+.flytsteg__hjelp {
+  margin: 0;
+  max-width: 62ch;
+  font-size: var(--tekst-etikett);
+  line-height: var(--linjehoyde-lesing);
+  color: var(--blekk-dempet);
+  text-wrap: pretty;
+}
+
+/* --- Statuslinjen etter steg 2: den eneste fremhevede meldingen i skjemaet --- */
+.flytstatus {
+  display: flex;
+  gap: var(--rom-4);
+  align-items: flex-start;
+  margin: 0;
+  padding: var(--rom-5) var(--rom-6);
+  font-size: var(--tekst-ui);
+  line-height: var(--linjehoyde-lesing);
+  color: var(--blekk);
+  background: var(--flate);
+  border: var(--kant) solid var(--linje);
+  border-radius: var(--runding-felt);
+}
+
+.flytstatus__ikon {
+  flex: none;
+  width: var(--ikon-ui);
+  height: var(--ikon-ui);
+  margin-top: 0.15em;
+}
+
+.flytstatus__tekst {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+  min-width: 0;
+}
+
+.flytstatus__tekst :is(p, ul) {
+  margin: 0;
+}
+
+.flytstatus__tekst ul {
+  padding-left: var(--rom-6);
+}
+
+.flytstatus__tittel {
+  font-weight: var(--vekt-halvfet);
+}
+
+.flytstatus[data-utfall='kan_lages_hvis'] {
+  background: var(--aksent-flate);
+  border-color: var(--aksent);
+}
+
+.flytstatus[data-utfall='kan_ikke'] {
+  color: var(--toksisk-blekk);
+  background: var(--toksisk-flate);
+  border-color: var(--toksisk-kant);
+}
+
+/* --- Spørsmålene --------------------------------------------------------------
+   Et spørsmål er teksten og tre like store trykkflater under. Svaret som er
+   valgt, er fylt og har en hake, så det leses også uten farge. */
+.sporsmalsgruppe {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.sporsmalsgruppe > h3 {
+  margin: 0 0 var(--rom-2);
+  font-size: var(--tekst-liten);
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk-dempet);
+}
+
+.sporsmalsliste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--kant) solid var(--linje);
+}
+
+.sporsmal {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--rom-3) var(--rom-6);
+  padding: var(--rom-5) 0;
+  border-bottom: var(--kant) solid var(--linje);
+}
+
+@media (max-width: 40rem) {
+  .sporsmal {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.sporsmal__tekst {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-1);
+  margin: 0;
+  font-size: var(--tekst-ui);
+  font-weight: var(--vekt-medium);
+  line-height: var(--linjehoyde-lesing);
+  text-wrap: pretty;
+}
+
+.sporsmal__hjelp {
+  font-size: var(--tekst-liten);
+  font-weight: var(--vekt-normal);
+  color: var(--blekk-dempet);
+}
+
+.sporsmal__merknad {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: var(--rom-3);
+  margin: 0;
+  padding: var(--rom-3) var(--rom-4);
+  font-size: var(--tekst-etikett);
+  line-height: var(--linjehoyde-lesing);
+  color: var(--toksisk-blekk);
+  background: var(--toksisk-flate);
+  border-radius: var(--runding-underkort);
+}
+
+.sporsmal__merknad[data-tone='ukjent'] {
+  color: var(--blekk);
+  background: var(--flate-hevet);
+}
+
+.sporsmal__merknad svg {
+  flex: none;
+  width: 1.15em;
+  height: 1.15em;
+  margin-top: 0.2em;
+}
+
+/* De tre svarene som én segmentert kontroll. Radioknappene ligger usynlige
+   over hver flate, så piltastene og skjermleserne virker som for vanlige
+   radioknapper. */
+.svarvalg {
+  display: inline-grid;
+  grid-auto-columns: minmax(4.5rem, 1fr);
+  grid-auto-flow: column;
+  padding: 3px;
+  background: var(--flate-hevet);
+  border-radius: var(--runding-pille);
+}
+
+@media (max-width: 40rem) {
+  .svarvalg {
+    display: grid;
+  }
+}
+
+.svarvalg__valg {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--rom-2);
+  min-height: var(--hoyde-trykk);
+  padding: 0 var(--rom-5);
+  font-size: var(--tekst-ui);
+  font-weight: var(--vekt-medium);
+  color: var(--blekk);
+  border-radius: var(--runding-pille);
+  cursor: pointer;
+  transition:
+    background-color var(--fart-rask) var(--kurve),
+    color var(--fart-rask) var(--kurve);
+}
+
+.svarvalg__valg input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.svarvalg__valg:hover {
+  background: color-mix(in oklab, var(--flate) 60%, transparent);
+}
+
+.svarvalg__hake {
+  display: none;
+  width: 1em;
+  height: 1em;
+}
+
+.svarvalg__valg:has(input:checked) {
+  color: var(--paa-aksent);
+  background: var(--aksent);
+}
+
+.svarvalg__valg:has(input:checked) .svarvalg__hake {
+  display: block;
+}
+
+.svarvalg__valg:has(input:focus-visible) {
+  outline: var(--fokusring) solid var(--fokus);
+  outline-offset: 2px;
+}
+
+.svarvalg[data-mangler] {
+  box-shadow: inset 0 0 0 var(--kant-aktiv) var(--alvorlig-kant);
+}
+
+/* --- Planpanelet ----------------------------------------------------------------
+   Står ved siden av stegene på store skjermer. Før planen kan beregnes, sier
+   det hva som gjenstår; det viser aldri en delplan. */
+.planpanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-6);
+  padding: var(--rom-7) var(--rom-7) var(--rom-8);
+  background: var(--flate);
+  border: var(--kant) solid var(--linje);
+  border-radius: var(--runding-panel);
+}
+
+.planpanel__vent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-3);
+  margin: 0;
+  color: var(--blekk-dempet);
+}
+
+.planpanel__vent h2 {
+  margin: 0;
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-seksjon);
+  font-weight: var(--vekt-medium);
+  color: var(--blekk);
+}
+
+.planpanel__vent p {
+  margin: 0;
+  font-size: var(--tekst-etikett);
+  line-height: var(--linjehoyde-lesing);
+}
+
+/* Den faste knappen nederst på smale skjermer: hopper til planen eller sier hvor mye som gjenstår. */
+.planhopp {
+  position: sticky;
+  bottom: var(--rom-4);
+  z-index: var(--lag-innhold);
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+:root[data-dokk] .planhopp {
+  bottom: var(--dokk-offset);
+}
+
+.planhopp .knapp {
+  pointer-events: auto;
+  box-shadow: var(--skygge-toppmeny);
+}
+
+@media (min-width: 64rem) {
+  .planhopp {
+    display: none;
+  }
+}
+
+/* --- Tidslinjen ---------------------------------------------------------------
+   Det ene som skal huskes: en rolig, loddrett linje der dosen leses i stor,
+   tabulær Newsreader, og hva som gis som små symboler med tall. Formskifter,
+   vurderinger og injeksjoner er markeringer på linjen; sluttmålet avslutter
+   den. */
+.tidslinje {
+  --tidslinje-nar: 6.75rem;
+  --tidslinje-skinne: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.tidslinje__punkt {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--tidslinje-nar) var(--tidslinje-skinne) minmax(0, 1fr);
+  column-gap: var(--rom-3);
+  padding-bottom: var(--rom-6);
+}
+
+/* Skinnen: en hårlinje gjennom midten av kolonnen, fra dette punktet til det neste. */
+.tidslinje__punkt::before {
+  content: '';
+  position: absolute;
+  top: 0.9rem;
+  bottom: 0;
+  left: calc(var(--tidslinje-nar) + var(--rom-3) + var(--tidslinje-skinne) / 2 - 1px);
+  width: 2px;
+  background: var(--linje-sterk);
+}
+
+.tidslinje__punkt:last-child::before {
+  display: none;
+}
+
+.tidslinje__nar {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 0.3rem;
+  text-align: right;
+}
+
+.tidslinje__dager {
+  white-space: nowrap;
+  font-size: var(--tekst-etikett);
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk);
+}
+
+.tidslinje__datoer {
+  font-size: var(--tekst-liten);
+  color: var(--blekk-dempet);
+}
+
+.tidslinje__merke {
+  position: relative;
+  z-index: 1;
+  justify-self: center;
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-top: 0.5rem;
+  background: var(--aksent);
+  border: 3px solid var(--flate);
+  border-radius: 50%;
+  box-sizing: content-box;
+}
+
+.tidslinje__punkt[data-type='vurdering'] .tidslinje__merke {
+  width: 0.625rem;
+  height: 0.625rem;
+  background: var(--flate);
+  border: 2px solid var(--blekk-dempet);
+  outline: 3px solid var(--flate);
+}
+
+.tidslinje__punkt[data-type='injeksjon'] .tidslinje__merke {
+  border-radius: 0.25rem;
+  transform: rotate(45deg);
+}
+
+.tidslinje__punkt[data-type='slutt'] .tidslinje__merke {
+  width: 1rem;
+  height: 1rem;
+  background: var(--blekk);
+  border-radius: 0.2rem;
+}
+
+.tidslinje__innhold {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-2);
+  min-width: 0;
+}
+
+.tidslinje__legemiddel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-1);
+}
+
+.tidslinje__legemiddel + .tidslinje__legemiddel {
+  padding-top: var(--rom-3);
+  border-top: var(--kant) dashed var(--linje);
+}
+
+.tidslinje__navn {
+  font-size: var(--tekst-liten);
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk-dempet);
+}
+
+.tidslinje__dose {
+  margin: 0;
+  font-family: var(--skrift-display);
+  font-size: 1.75rem;
+  font-weight: var(--vekt-medium);
+  font-variant-numeric: tabular-nums lining-nums;
+  line-height: var(--linjehoyde-titler);
+  letter-spacing: -0.01em;
+  color: var(--blekk-sterk);
+}
+
+.tidslinje__dose small {
+  font-family: var(--skrift-ui);
+  font-size: var(--tekst-etikett);
+  font-weight: var(--vekt-medium);
+  letter-spacing: 0;
+  color: var(--blekk-dempet);
+}
+
+.tidslinje__gis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rom-1) var(--rom-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--tekst-etikett);
+  color: var(--blekk);
+}
+
+.tidslinje__gis li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rom-2);
+}
+
+.tidslinje__gis svg {
+  flex: none;
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.tidslinje__avvik {
+  margin: 0;
+  font-size: var(--tekst-liten);
+  font-style: italic;
+  color: var(--blekk-dempet);
+}
+
+/* Et skifte av legemiddelform er en hendelse på linjen, ikke bare en ny rad. */
+.tidslinje__skifte {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rom-2);
+  margin: 0 0 var(--rom-1);
+  padding: 2px var(--rom-3);
+  font-size: var(--tekst-liten);
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk);
+  background: var(--aksent-flate);
+  border-radius: var(--runding-pille);
+}
+
+.tidslinje__vurdering {
+  margin: 0;
+  font-size: var(--tekst-etikett);
+  line-height: var(--linjehoyde-lesing);
+  color: var(--blekk);
+}
+
+.tidslinje__vurdering strong {
+  font-weight: var(--vekt-halvfet);
+}
+
+.tidslinje__punkt[data-type='slutt'] .tidslinje__dose {
+  font-size: var(--tekst-seksjon);
+}
+
+/* På smale skjermer står dagene over dosen, så lange dagnummer aldri presser linjen. */
+@media (max-width: 40rem) {
+  .tidslinje {
+    --tidslinje-nar: 0px;
+  }
+
+  .tidslinje__punkt {
+    grid-template-columns: var(--tidslinje-skinne) minmax(0, 1fr);
+    grid-template-areas: 'merke nar' 'merke innhold';
+  }
+
+  .tidslinje__punkt::before {
+    left: calc(var(--tidslinje-skinne) / 2 - 1px);
+  }
+
+  .tidslinje__merke {
+    grid-area: merke;
+    align-self: start;
+    margin-top: 0.2rem;
+  }
+
+  .tidslinje__nar {
+    grid-area: nar;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0 var(--rom-3);
+    padding-top: 0;
+    text-align: left;
+  }
+
+  .tidslinje__innhold {
+    grid-area: innhold;
+  }
+
+  .tidslinje__dose {
+    font-size: 1.5rem;
+  }
+}
+
+/* Overskriften i planpanelet: steg 4 med tallet, som de andre stegene. */
+.planpanel__tittel {
+  display: flex;
+  align-items: center;
+  gap: var(--rom-4);
+  margin: 0;
+  font-family: var(--skrift-display);
+  font-size: var(--tekst-seksjon);
+  font-weight: var(--vekt-medium);
+  line-height: var(--linjehoyde-titler);
+}
+
+.planpanel[data-ferdig] .planpanel__tittel .flytsteg__tall {
+  color: var(--paa-aksent);
+  background: var(--aksent);
+  border-color: var(--aksent);
+}
+
+.planpanel:focus {
+  outline: none;
+}
+
+.planpanel__melding {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-3);
+  font-size: var(--tekst-etikett);
+  line-height: var(--linjehoyde-lesing);
+  color: var(--blekk-dempet);
+}
+
+.planpanel__melding :is(p, ul) {
+  margin: 0;
+}
+
+.planpanel__melding ul {
+  padding-left: var(--rom-6);
+}
+
+.planpanel__melding[data-tone='stopp'] {
+  padding: var(--rom-4) var(--rom-5);
+  color: var(--toksisk-blekk);
+  background: var(--toksisk-flate);
+  border: var(--kant) solid var(--toksisk-kant);
+  border-radius: var(--runding-felt);
+}
+
+.planpanel__meldingstittel {
+  margin: 0;
+  font-size: var(--tekst-ui);
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk);
+}
+
+.planpanel__melding[data-tone='stopp'] .planpanel__meldingstittel {
+  color: inherit;
+}
+
+.planpanel__henter {
+  display: flex;
+  align-items: center;
+  gap: var(--rom-3);
+}
+
+.planpanel__tilpass {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-4);
+  padding-bottom: var(--rom-4);
+}
+
+.planpanel__valgte ul {
+  margin: 0 0 var(--rom-3);
+  padding-left: var(--rom-6);
+  font-size: var(--tekst-etikett);
+}
+
+.trinnvalg__trinn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-3);
+}
+
+.sporsmal--form {
+  padding: 0;
+  border: 0;
+}
+
+.sporsmal--avkrysning {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.sporsmal--avkrysning[data-mangler] {
+  padding-left: var(--rom-4);
+  border-left: 3px solid var(--alvorlig-kant);
+}
+
+.sporsmal__punkter {
+  margin: var(--rom-2) 0 0;
+  padding-left: var(--rom-6);
+}
+
+.flytsteg__etikett {
+  margin-bottom: var(--rom-2);
+  padding: 0;
+  font-size: var(--tekst-liten);
+  font-weight: var(--vekt-halvfet);
+  color: var(--blekk-dempet);
+}
+
+.doseplan__merknad {
+  margin: 0;
+  font-size: var(--tekst-liten);
+  color: var(--blekk-dempet);
+}
+
+.planpanel__tillegg {
+  border-top: var(--kant) solid var(--linje);
+}
+
+.sporsmalsflate {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-8);
+}
+
+.sporsmal--avkrysning .avkryssing {
+  align-items: flex-start;
+  font-size: var(--tekst-etikett);
+  line-height: var(--linjehoyde-lesing);
+  color: var(--blekk);
+}
+
+.sporsmal--avkrysning .avkryssing input {
+  margin-top: 0.25em;
+}
+
+.doseplan__del ul {
+  list-style: disc;
+}
+
+.doseplan__del li + li {
+  margin-top: var(--rom-2);
 }
