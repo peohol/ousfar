@@ -447,6 +447,21 @@ function synligTekst(): string {
   return REGELTEKSTER.reduce((t, x) => t.split(x).join(' '), kopi.textContent ?? '')
 }
 
+/**
+ * Om regelens spørsmålskatalog er kontrollert for nøyaktig denne
+ * regelversjonen (katalogavtrykket, plan S5b og §4.4). Modulen kommer med C1
+ * (`src/verktoy/flyt/katalogkontroll.ts`, `harKontrollertKatalog`); til da
+ * har ingen regel kontrollert katalog, og alle vises i reservevisningen.
+ */
+const KATALOGKONTROLL = Object.values(import.meta.glob<{ harKontrollertKatalog?: (r: Regel) => boolean }>('../verktoy/flyt/katalogkontroll.ts', { eager: true }))[0]
+const harKontrollertKatalog = (r: Regel) => KATALOGKONTROLL?.harKontrollertKatalog?.(r) ?? false
+/**
+ * Merket på reservevisningen (plan S5): regelens egne tekster og svar,
+ * også «Gjelder»/«Gjelder ikke» for unntak, slik dagens skjema viser dem.
+ * A1 setter `data-reservevisning` på elementet som viser betingelsene slik.
+ */
+const RESERVEVISNING = '[data-reservevisning]'
+
 describe('Det klinikeren ser før planen', () => {
   beforeEach(() => {
     window.scrollTo = () => {}
@@ -484,6 +499,17 @@ describe('Det klinikeren ser før planen', () => {
       const dose = await waitFor(() => screen.getByRole('textbox', { name: /^Aktuell/ }))
       const forste = OMFANGSKASUS.find((o) => o.verktoy === v && JSON.stringify(o.kasus.valg) === JSON.stringify(s.valg))
       fireEvent.change(dose, { target: { value: forste?.kasus.dose ?? '10' } })
+      // Valget bruker katalogen bare når hver godkjent regel det kan beregnes med, har kontrollert katalog.
+      const kontrollert = GODKJENTE.filter((r) => s.regler.some((x) => x.id === r.id)).every(harKontrollertKatalog)
+      const reserve = document.querySelector(RESERVEVISNING) !== null
+      if (!kontrollert) {
+        if (!reserve) ut.push(`${navn}: regelen har ikke kontrollert katalog, men vises ikke i reservevisningen`)
+        side.unmount()
+        sessionStorage.clear()
+        glemBildet()
+        continue
+      }
+      if (reserve) ut.push(`${navn}: reservevisningen brukes selv om katalogen er kontrollert`)
       const tekst = synligTekst()
       for (const [begrep, m] of INTERNE) if (m.test(tekst)) ut.push(`${navn}: ${begrep} («${tekst.match(m)![0]}»)`)
       for (const r of screen.queryAllByRole('radio')) {
@@ -516,15 +542,27 @@ describe('Det klinikeren ser før planen', () => {
   }
 
   /**
-   * Dagens skjema (før A1) viser «Gjelder»/«Gjelder ikke», regel-ID og
-   * fingeravtrykk under «Faglig grunnlag». Testen er derfor merket `fails`
-   * til A1 er på plass; A1 endrer `it.fails` til `it` i samme PR, og
-   * dermed er det testet at ingen av begrepene står igjen.
+   * Kriterium 2 (plan §11): for regler med kontrollert katalog står ingen
+   * regel-ID, interne begreper, koder eller svaret «Gjelder» i det klinikeren
+   * ser. Regler uten kontrollert katalog vises i reservevisningen, som med
+   * vilje beholder regelens egne tekster og svar; der kontrolleres bare at
+   * reservevisningen brukes, og at den ikke brukes noe annet sted. Valg uten
+   * beregning skal heller ikke vise interne begreper. Kriteriet er nådd først
+   * når hver godkjent regel har kontrollert katalog.
+   *
+   * I dag finnes verken katalogen (C1) eller reservevisningen (A1), og
+   * skjemaet viser «Gjelder», regel-ID og fingeravtrykk. Testen er derfor
+   * merket `fails`; den endres til `it` når A1 og C1 er på plass og hver
+   * godkjent regel har kontrollert katalog.
    */
   it.fails(
-    'har ingen regel-ID, interne begreper eller svaret «Gjelder» (akseptansekriterium 2)',
+    'har ingen regel-ID, interne begreper eller svaret «Gjelder» der katalogen er kontrollert, og reservevisningen bare der den ikke er det (akseptansekriterium 2)',
     async () => {
       expect(await funn()).toEqual([])
+      expect(
+        GODKJENTE.filter((r) => !harKontrollertKatalog(r)).map((r) => `${r.id} v${r.versjon}`),
+        'godkjente regler uten kontrollert katalog',
+      ).toEqual([])
     },
     60_000,
   )
