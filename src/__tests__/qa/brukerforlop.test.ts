@@ -33,8 +33,9 @@ const SVEIP = omfangssveip(UTTREKK)
 /**
  * Hver regelversjon i settene 03.11.2026 (main 7fdd675), med fingeravtrykket.
  * Samme id og versjon skal alltid ha samme innhold; en endret regel får ny
- * versjon. Legg nye versjoner til her når de kommer, aldri ved å endre en
- * eksisterende linje.
+ * versjon. Nye regler legges til her; en regel som får en ny klinisk godkjent
+ * versjon, får linjen flyttet til den versjonen (testen krever at versjonen
+ * bare øker).
  */
 const REGELVERSJONER: Record<string, [number, string]> = {
   // ousfar-verktoy-pilot v17
@@ -46,7 +47,8 @@ const REGELVERSJONER: Record<string, [number, string]> = {
   // ousfar-verktoy-nedtrapping v15
   'ousfar-verktoy-nedtrapping/seponering-amitriptylin': [12, 'a43c1164e4061a1757fefea381da027b8cefe92c077d742855fd4e2f5486b6e3'],
   'ousfar-verktoy-nedtrapping/seponering-amitriptylin-langsom': [8, '187bc1250baf2af7c3c969e73e0edee424d2fc1fd8a8874a08523d6730b679ce'],
-  'ousfar-verktoy-nedtrapping/seponering-escitalopram': [12, '7710be648e96682c1c8a35a8e4d9c4428109b294f29b63ae9401ef29b41bd3c1'],
+  // v13 er klinisk godkjent (K1, #323); versjonen øker, aldri motsatt.
+  'ousfar-verktoy-nedtrapping/seponering-escitalopram': [13, 'e8a3c17edda10da43b1df4171a733a23133da50ebcda31cd71a771022a8a78d7'],
   'ousfar-verktoy-nedtrapping/seponering-escitalopram-langsom': [8, '4e49c175ac6aa49cba89d7db711f710c14b654681cc3138994dbaaaebb69c095'],
   'ousfar-verktoy-nedtrapping/seponering-fluoksetin': [12, 'df89f2dadfc482e86a6dd8852966922d9834ec6ae728de8ffe2fd5e46cc2951a'],
   'ousfar-verktoy-nedtrapping/seponering-fluoksetin-langsom': [8, 'e9946f1fcd42cb834677d9ef6751307fbbe0a9ec41b28d4d28687ac2efe29ddd'],
@@ -85,6 +87,7 @@ const GODKJENT = [
   'ousfar-verktoy-nedtrapping/seponering-vortioksetin',
   'ousfar-verktoy-nedtrapping/seponering-bupropion',
   'ousfar-verktoy-nedtrapping/seponering-agomelatin',
+  'ousfar-verktoy-nedtrapping/seponering-escitalopram',
   'ousfar-verktoy-tillegg/tillegg-valproat-lamotrigin',
   'ousfar-verktoy-tillegg/tillegg-litium-lamotrigin',
 ]
@@ -165,6 +168,23 @@ describe('QA-kontrollen selv', () => {
     const regel = structuredClone(x.regel!)
     tilForlop(regel)!.faser.push({ type: 'opptrapping', trinn: [] })
     expect(komplett(regel, res, inn)).toBe(false)
+  })
+})
+
+describe('QA: K0-01 escitalopram (tablett og dråper)', () => {
+  const r = (id: string) => RESULTATER.find((x) => x.forlop.id === id)!
+  it('regner ikke tablettvarianten som levert, men gir komplett plan til 0 med dråper fra 10 og 20 mg ved kort behandlingstid', () => {
+    const regel = r('H-30').regel
+    if (!regel || !erKliniskGodkjent(regel) || regel.versjon < 13) return
+    // Tabletten har ingen kontrollert overgang til dråper i verktøyet, så den stopper uten doser.
+    expect([r('K0-01').klasse, r('K0-01').utfall?.resultat?.status]).not.toContain('komplett')
+    expect(r('K0-01').klasse).toBe('stoppet')
+    expect(['H-30', 'H-31'].map((id) => [id, r(id).klasse, r(id).feil])).toEqual([
+      ['H-30', 'komplett', []],
+      ['H-31', 'komplett', []],
+    ])
+    // Lang behandlingstid er utenfor det avgrensede omfanget.
+    expect([r('H-32').klasse, r('H-32').vist.join(' ')]).toEqual(['stoppet', expect.stringMatching(/Komplett plan ikke tilgjengelig/)])
   })
 })
 

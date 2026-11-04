@@ -83,7 +83,7 @@ describe('oversikten', () => {
       .filter((a) => a.classList.contains('verktoykort__lenke'))
       .map((a) => [...a.querySelectorAll('.verktoykort__linje')].map((l) => l.textContent))
 
-  it('viser de fire verktøyene, og at bare de godkjente reglene som kan gi en komplett plan, kan beregnes: de to depotreglene og de to tilleggsreglene', async () => {
+  it('viser de fire verktøyene, og at bare de godkjente reglene som kan gi en komplett plan, kan beregnes: escitalopram, de to depotreglene og de to tilleggsreglene', async () => {
     vis()
     expect(screen.getByRole('heading', { level: 1, name: 'Verktøy' })).toBeTruthy()
     expect(document.activeElement).toBe(screen.getByRole('heading', { level: 1 }))
@@ -96,7 +96,8 @@ describe('oversikten', () => {
     // Kortene sier hva som faktisk kan brukes, ikke hvor mange regler som venter.
     // Vortioksetin og sertralin → mirtazapin er godkjent, men gir aldri en komplett plan, så de loves ikke (leveranseplanen §3).
     expect(kortlinjer()).toEqual([
-      ['Ingen beregning tilgjengelig ennå', 'Fagtekst: Agomelatin, Bupropion'],
+      // Escitalopram (K1, godkjent 04.11.2026) gir en komplett plan til seponering med dråper.
+      ['Kan beregnes: Escitalopram', 'Fagtekst: Agomelatin, Bupropion'],
       ['Ingen beregning tilgjengelig ennå'],
       ['Kan beregnes: Aripiprazol: peroral → depotinjeksjon, Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)'],
       // Kombinere stemningsstabiliserende (K4): begge tilleggsreglene er godkjent av den uavhengige kontrolløren og gir en komplett plan.
@@ -1187,6 +1188,61 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
     expect(screen.queryByRole('table')).toBeNull()
     expect(screen.queryByText(/15 mg =/)).toBeNull()
   })
+
+  it('escitalopram dråper 10 mg (K1, godkjent 04.11.2026): komplett plan til seponering med forskriverens valg, kopieres, og stopper uten doser utenfor omfanget', async () => {
+    const user = userEvent.setup()
+    const tittel = REGELSETT.regler.find((r) => r.id === 'seponering-escitalopram')!.tittel
+    const beregn = async (dose: string, ja: RegExp[] = [], form = '748') => {
+      vis({ verktoy: 'trappe-ned-antidepressiv', legemidler: fra(AKSEPT), klokke: klokke(AKSEPT) })
+      await user.type(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' }), 'Escitalopram')
+      await user.type(await screen.findByRole('textbox', { name: /Aktuell døgndose av escitalopram/ }), dose)
+      await besvar(user, ja)
+      await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+      await user.selectOptions(await screen.findByRole('combobox', { name: 'Legemiddelform av escitalopram' }), form)
+      await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
+    }
+    await beregn('10')
+    // Ved hvert trinn som ikke kan gis i hele dråper, tilbyr siden nøyaktig én dose; ingen doser vises før planen er komplett.
+    const valgt: string[] = []
+    while (!screen.queryByRole('region', { name: tittel })) {
+      const gruppe = await screen.findByRole('group', { name: /kan ikke gis nøyaktig$/ })
+      expect(screen.queryByRole('table')).toBeNull()
+      const [knapp, ...andre] = within(gruppe).getAllByRole('button')
+      expect(andre).toEqual([])
+      valgt.push(knapp!.textContent!)
+      await user.click(knapp!)
+      await act(async () => {})
+    }
+    expect(valgt).toEqual(['8 mg (−20 %)', '5 mg (−16,67 %)', '4 mg (−20 %)', '2 mg (−33,33 %)', '1 mg (−50 %)'])
+    const plan = screen.getByRole('region', { name: tittel })
+    expect(within(plan).getByText(/^Komplett plan til sluttmålet: Escitalopram seponert fra dag 197\./)).toBeTruthy()
+    const rader = within(plan).getAllByRole('row').map((r) => [...r.querySelectorAll('th, td')].map((c) => c.textContent))
+    expect(rader).toContainEqual(['Fra dag 197', 'Seponert'])
+    expect(rader.at(-1)![0]).toBe('Dag 224')
+    await user.click(within(plan).getByRole('button', { name: 'Kopier planen' }))
+    const tekst = await navigator.clipboard.readText()
+    expect(tekst).toContain('Komplett plan til sluttmålet: Escitalopram seponert fra dag 197.')
+    expect(tekst).toMatch(/: 3 mg = 3 dråper à 1 mg\n[^]*: 2 mg = 2 dråper à 1 mg [^]*: 1 mg = 1 dråpe à 1 mg /)
+    expect(tekst).toContain('Fra dag 197: Escitalopram peroralt: Seponert')
+    for (const d of [7, 14, 28]) expect(tekst).toContain(`Dag ${196 + d}: Vurdering (Escitalopram): Vurder seponeringssymptomer og tegn på tilbakefall ${d} dager etter siste dose.`)
+    expect(tekst).toMatch(/\n- Cipralex dråper, oppl 20 mg\/ml(, varenr\. \d{6})? \(Hele dråper\)\n/)
+    expect(tekst).toMatch(/Regel seponering-escitalopram, versjon 13, fingeravtrykk e8a3c17edda1/)
+    cleanup()
+
+    // Utenfor omfanget: ingen plan og ingen doser, bare grunnen.
+    for (const [dose, ja, form, grunn] of [
+      ['10', [/65 år/], '748', /er ikke et tilfelle godkjenningen kan gjelde for/],
+      ['20', [/mange måneder/], '748', /Komplett plan ikke tilgjengelig: escitalopram: /],
+      ['20', [], '53', /Komplett plan ikke tilgjengelig: escitalopram: /],
+    ] as const) {
+      await beregn(dose, [...ja], form)
+      expect((await ingenPlan()).textContent, `${dose} ${form} ${ja}`).toMatch(grunn)
+      expect(screen.queryByRole('table')).toBeNull()
+      expect(screen.queryByText(/ mg = \d+ dråper? à 1 mg/)).toBeNull()
+      cleanup()
+    }
+    // Fire beregninger gjennom hele siden.
+  }, 30_000)
 
   describe('forenklingen (VDR-3)', () => {
     // En godkjent regel som gir en komplett plan; klinikere får aldri en delplan (Peders beslutning 03.11.2026).

@@ -682,7 +682,7 @@ export function lagQaRapport(resultater: readonly Forlopsresultat[], tillegg: re
     `<!-- Laget av \`QA_SKRIV=1 npx vitest run src/__tests__/qa\`; rediger ikke for hånd. -->`,
     '# OUSFAR Verktøy – uavhengig QA av brukerforløp',
     '',
-    'Spor H i `docs/verktøy-klinisk-leveranseplan-2026-11.md`. Hvert forløp er en syntetisk, vanlig situasjon kjørt gjennom den samme veien som verktøysiden, mot de lagrede FEST-uttrekkene. Klassen er QA-testens egen vurdering av planens forløp (komplett = når sluttmålet), ikke regelens selvbeskrivelse. Dette er en måling, ikke en klinisk godkjenning.',
+    'Spor H i `docs/verktøy-klinisk-leveranseplan-2026-11.md`. Hvert forløp er en syntetisk, vanlig situasjon kjørt gjennom den samme veien som verktøysiden, mot de lagrede FEST-uttrekkene. Klassen er QA-testens egen vurdering av planens forløp (komplett = når sluttmålet), ikke regelens selvbeskrivelse. Dette er en måling, ikke en klinisk godkjenning. Verktøyene er bare synlige for administratorer; ingen plan her er tilgjengelig for klinikere. K0-01 slik den står (tablett) regnes ikke som levert: bare dråper fra 10 og 20 mg ved kort behandlingstid gir komplett plan, og verktøyet har ingen kontrollert overgang fra tablett til dråper.',
     '',
     '## Måltall per leveranse',
     '',
