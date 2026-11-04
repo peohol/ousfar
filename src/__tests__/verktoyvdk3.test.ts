@@ -24,11 +24,12 @@ import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from '../verktoy/regler
 import { erKliniskGodkjent, fingeravtrykk, kontrollutfall } from '../verktoy/regler/godkjenning'
 import { FAKTUMRETTELSER } from '../verktoy/regler/bygg'
 import { NEDTRAPPINGSDISPOSISJON } from '../verktoy/regler/nedtrapping'
-import { REGELSETT, tilgjengelighet } from '../verktoy/tilgjengelighet'
+import { tilgjengelighet } from '../verktoy/tilgjengelighet'
 
 const les = (fil: string) => readFileSync(new URL(`../../${fil}`, import.meta.url), 'utf8')
 const uttrekkene = { pilot: JSON.parse(les(FEST_PILOT)) as Festuttrekk, aksept: JSON.parse(les(FEST_AKSEPTTEST)) as Festuttrekk }
-const regel = (id: string) => REGELSETT.regler.find((r) => r.id === id)!
+/** Forslag 1 gjelder versjonene etter rettelsen; K1 har siden gitt escitalopram en ny versjon i appen (`regler/k1.ts`). */
+const regel = (id: string) => FORSLAG_1.settene!.flatMap((s) => s.regler).find((r) => r.id === id)!
 const PLANER = omfangsplaner(FORSLAG_1, uttrekkene)
 
 describe('Regelversjonene til kontroll', () => {
@@ -58,15 +59,18 @@ describe('Regelversjonene til kontroll', () => {
       expect(kontrollutfall(r), k.id).toBe('ikke_godkjent')
       expect(r.godkjenning.historikk.some((s) => s.av === SIMULERT_KONTROLLOR), k.id).toBe(false)
       const t = tilgjengelighet(verktoy, { fra: { nokkel: r.fra!.type === 'virkestoff' ? r.fra!.nokkel : '', formulering: 'standard' } })
-      expect(t.status, k.id).toBe('ikke_godkjent')
+      // Appen bruker K1-versjonen av escitalopram (versjon 13, godkjent 04.11.2026), aldri versjonen her.
+      const esc = r.fra!.type === 'virkestoff' && r.fra!.nokkel === 'escitalopram'
+      expect(t.status, k.id).toBe(esc ? 'tilgjengelig' : 'ikke_godkjent')
+      if (esc) expect(t.regler.map((x) => `${x.id} v${x.versjon}`), k.id).toEqual(['seponering-escitalopram v13'])
     }
   })
 
   it('har ingen tekniske hindringer for en godkjenning av nøyaktig versjonen, men en endret versjon kan ikke godkjennes', () => {
     for (const k of FORSLAG_1.regler) {
-      expect(godkjenningshindringer(k, FORSLAG_1.dato), k.id).toEqual([])
-      expect(godkjenningshindringer({ ...k, fingeravtrykk: '0'.repeat(64) }, FORSLAG_1.dato).length, k.id).toBeGreaterThan(0)
-      expect(godkjenningshindringer({ ...k, versjon: k.versjon + 1 }, FORSLAG_1.dato).length, k.id).toBeGreaterThan(0)
+      expect(godkjenningshindringer(k, FORSLAG_1.dato, FORSLAG_1.settene), k.id).toEqual([])
+      expect(godkjenningshindringer({ ...k, fingeravtrykk: '0'.repeat(64) }, FORSLAG_1.dato, FORSLAG_1.settene).length, k.id).toBeGreaterThan(0)
+      expect(godkjenningshindringer({ ...k, versjon: k.versjon + 1 }, FORSLAG_1.dato, FORSLAG_1.settene).length, k.id).toBeGreaterThan(0)
     }
   })
 })
@@ -116,7 +120,7 @@ describe('De syntetiske testkasusene', () => {
   it('har unike id-er og gjør hvert testkasus i VDK-2-planen (K1-01–K1-15) til en test', () => {
     const ider = FORSLAG_1.kasus.map((k) => k.id)
     expect(new Set(ider).size).toBe(ider.length)
-    expect(FORSLAG_1.kasus.flatMap((k) => (k.vdk2 ? [k.vdk2] : [])).sort()).toEqual(Array.from({ length: 15 }, (_, i) => `K1-${String(i + 1).padStart(2, '0')}`))
+    expect(FORSLAG_1.kasus.flatMap((k) => (k.ref ? [k.ref] : [])).sort()).toEqual(Array.from({ length: 15 }, (_, i) => `K1-${String(i + 1).padStart(2, '0')}`))
   })
 
   it('prøver hver regel i forslaget både med og uten plan', () => {

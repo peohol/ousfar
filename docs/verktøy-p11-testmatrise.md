@@ -6,17 +6,17 @@ Hvert kasus går den samme veien som verktøysiden: tilgjengeligheten for valgen
 
 FEST-uttrekkene: `src/data/verktoy/fest-pilotsett.json` (hentet 2026-10-30T22:21:14.140Z) og `src/data/verktoy/fest-aksepttest.json` (hentet 2026-10-30T22:21:13.425Z), begge kontrollert 2026-10-30T04:15:57.810377+00:00. Kasusene beregnes 6 timer etter kontrollen, om ikke annet står.
 
-**113 kasus:** 16 gir en plan, 82 stopper, 3 mangler noe i skjemaet, 1 ber om legemiddelform, 2 gir fagtekst, 4 gir verken plan eller fagtekst og 5 er deaktivert. Alle utfallene er som forventet.
+**115 kasus:** 16 gir en plan, 84 stopper, 3 mangler noe i skjemaet, 1 ber om legemiddelform, 2 gir fagtekst, 4 gir verken plan eller fagtekst og 5 er deaktivert. Alle utfallene er som forventet.
 
 ## Kategoriene
 
 | Kategori | Kasus |
 |---|---|
-| Vanlig dose innenfor det godkjente omfanget | V01, V03, S01, S02, M01, X01, X06, X07 |
+| Vanlig dose innenfor det godkjente omfanget | V01, V03, S01, S02, M01, X01, X06, X07, E01 |
 | Uvanlige doser og grenseverdier | V04, V05, V06, V07, V08, V09, V17, S04, S05, S06, S07, M02, M03, M04, M05, M06, X08, X09, X10, X11, X12, X21, X22, X23, X24 |
 | Pasientforhold, også ubesvarte | V10, V11, V12, V13, V14, V15, S08, S09, S10, M08, M12, X13, X14 |
 | Interaksjonssperrer | V16, S11, S12, M09, M10, M11 |
-| Utilgjengelige eller endrede preparater | V18, V19, V20, V21, V22, V23, V24, S00, S13, S14, S15, S16, M13, M14, M15, M16, X15, X16, X17 |
+| Utilgjengelige eller endrede preparater | V18, V19, V20, V21, V22, V23, V24, S00, S13, S14, S15, S16, M13, M14, M15, M16, X15, X16, X17, E02 |
 | Foreldet FEST | V25, V26, S17, M17, M19, X18 |
 | Feil fra datakildene | V27, V28, V29, V30, V31, V32 |
 | Injeksjons- og startdatoer | V02, S03, M07, X02, X03, X04, X05, X25 |
@@ -160,10 +160,10 @@ FEST-uttrekkene: `src/data/verktoy/fest-pilotsett.json` (hentet 2026-10-30T22:21
 
 | Kasus | Kategori | Hva | Dose | Endring | Utfall |
 |---|---|---|---|---|---|
-| I01 | Regler som ikke er godkjent | escitalopram | «10» | – | **Ingen plan eller fagtekst** (status ikke_godkjent). Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning. |
+| I01 | Regler som ikke er godkjent | sertralin (kontrollert, ikke godkjent) | «100» | – | **Ingen plan eller fagtekst** (status ikke_godkjent). Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning. |
 | I02 | Regler som ikke er godkjent | duloksetin | «60» | – | **Ingen plan eller fagtekst** (status ikke_godkjent). Beregning er ikke tilgjengelig: regelen er bare fagtekst, fordi det ikke finnes en dokumentert måte å gi trinnene med dagens norske preparater. Fagteksten er ikke klinisk godkjent. |
 | I03 | Regler som ikke er godkjent | fenelzin (MAO-hemmer) | «45» | – | **Ingen plan eller fagtekst** (status ikke_stottet). Fenelzin finnes i Norge bare med godkjenningsfritak og har ingen norsk preparatomtale, og kildens Stop-oppføring er ikke tilgjengelig. OUSFAR har derfor ingen regel for fenelzin. |
 | I04 | Regler som ikke er godkjent | olanzapin → kvetiapin | «10» | – | **Ingen plan eller fagtekst** (status ikke_godkjent). Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning. |
-| I05 | Regler som ikke er godkjent | escitalopramregelen brakt direkte til beregningen | «20» | regelen seponering-escitalopram direkte | **Ingen plan.** Regelversjonen er ikke godkjent, ikke klinisk godkjent. Komplett plan ikke tilgjengelig: escitalopram: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. |
+| I05 | Regler som ikke er godkjent | sertralinregelen brakt direkte til beregningen | «100» | regelen seponering-sertralin direkte | **Ingen plan.** Regelversjonen er ikke godkjent, ikke klinisk godkjent. Komplett plan ikke tilgjengelig: sertralin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene. |
 | I06 | Regler som ikke er godkjent | olanzapin → kvetiapin brakt direkte til beregningen | «10» | måldose 300 mg; regelen antipsykotikabytte-olanzapin-kvetiapin direkte | **Ingen plan.** Regelversjonen er ikke godkjent, ikke klinisk godkjent. Komplett plan ikke tilgjengelig: olanzapin: ikke beregnet (Nedtrappingen av olanzapin beregnes ikke: et fast skjema er ikke validert (kontrollrunden 30.10.2026). Den planlegges i, eller med råd fra, spesialisthelsetjenesten og tilpasses toleransen og symptomene; olanzapin seponeres ikke brått). |
 | I07 | Endret regel eller regelversjon | godkjenningen fjernet fra en godkjent regel | «15» | regelen depot-aripiprazol-maintena direkte, siste godkjenning fjernet fra historikken | **Ingen plan.** Siste steg er ikke en klinisk godkjenning fra en uavhengig kontrollør. Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke); den må kontrolleres på nytt. |

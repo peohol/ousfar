@@ -834,7 +834,7 @@ describe('Kontrollene av et regelsett', () => {
 describe('Reglene', () => {
   it('rapporten sier hvor mange regler som faktisk er gyldig klinisk godkjent', () => {
     expect(lagRegelrapport()).toMatch(/\*\*5 regler, 3 klinisk godkjent\.\*\*.*3 av reglene er klinisk godkjent/)
-    const en = lagRegelrapport(sett([godkjenn(regel('depot-paliperidon-xeplion')), regel('seponering-escitalopram')]))
+    const en = lagRegelrapport(sett([godkjenn(regel('depot-paliperidon-xeplion')), regel('seponering-sertralin')]))
     expect(en).toMatch(/\*\*2 regler, 1 klinisk godkjent\.\*\*.*1 av reglene er klinisk godkjent/)
     expect(en).not.toMatch(/ingen av reglene/)
     expect(lagRegelrapport(sett([godkjenn(regel('depot-paliperidon-xeplion'))]))).toMatch(/Alle reglene er klinisk godkjent/)
