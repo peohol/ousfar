@@ -28,7 +28,7 @@ import { FORMULERINGSKLASSER, type Formuleringsklasse } from '../festformulering
 import { AVSLUTNING_FELLES, AVVIK_IKKE_BEREGNET, avrund, beregn, overAvslutning, overAvslutningKort, erIsoDato, tempolengde, fordelingstekst, hverTekst, injeksjonstidspunkt, medEnhet, medSvarforslag, utenBeregningLinje, valgtSuffiks, trinnvalgOmrade, minstetrinnFra, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
 import { erstattereFor, erstattettekst, fingeravtrykk, godkjenningsfeil, kanonisk, sha256 } from '../regler/godkjenning'
 import { avslutningFor, justerbare, parameterfeil, type Beregningsinndata, type Fase, type Forlop, type Klinisktilfelle, type Parameter, type Regel, type Regelsett } from '../regler/modell'
-import { byggesteiner, DOSEENHETER, norskDato, type Byggestein, type Preparatgrunnlag } from './byggesteiner'
+import { byggesteiner, DOSEENHETER, norskDato, varenrTekst, type Byggestein, type Preparatgrunnlag } from './byggesteiner'
 import { doser, fordel, styrkevalg, velgSerie, type Dosekandidat, type Doseelement, type Periodevalg, type Styrkevalg } from './dosevalg'
 
 /** Økes når doseplanen endres slik at like inndata kan gi et annet resultat. */
@@ -357,7 +357,7 @@ function kontrollertePreparater(tilfeller: Klinisktilfelle[], f: Forlopsresultat
   const ute = brukbare.filter((b) => !inne.includes(b))
   return {
     brukbare: inne,
-    begrensninger: ute.map((b) => `${b.navn_form_styrke}: ${b.mg === null ? 'har ingen styrke i FEST' : `styrken ${tall(b.mg)} mg er ikke blant styrkene i FEST det kliniske omfanget er kontrollert med`}, og brukes ikke`),
+    begrensninger: ute.map((b) => `${b.etikett}: ${b.mg === null ? 'har ingen styrke i FEST' : `styrken ${tall(b.mg)} mg er ikke blant styrkene i FEST det kliniske omfanget er kontrollert med`}, og brukes ikke`),
   }
 }
 
@@ -391,6 +391,7 @@ export function utenforForlop(def: Forlop, b: Byggestein): boolean {
 function utvalgFor(def: Forlop, steiner: Byggestein[], valg: Formvalg, fritak: boolean): { brukbare: Byggestein[]; begrensninger: string[] } {
   const begrensninger: string[] = []
   const brukbare: Byggestein[] = []
+  const ute: [Byggestein, string[]][] = []
   for (const b of steiner) {
     if (utenforForlop(def, b)) continue
     if (valg.klasse && b.klasse !== valg.klasse) continue
@@ -398,8 +399,15 @@ function utvalgFor(def: Forlop, steiner: Byggestein[], valg: Formvalg, fritak: b
     if (valg.preparater && !valg.preparater.includes(b.id)) continue
     const grunner = [...b.begrensninger]
     if (b.registrering === 'godkjenningsfritak' && !fritak) grunner.push('krever godkjenningsfritak, som ikke er valgt')
-    if (grunner.length > 0) begrensninger.push(`${b.navn_form_styrke}: ${grunner.join('; ')}`)
+    if (grunner.length > 0) ute.push([b, grunner])
     else brukbare.push(b)
+  }
+  // Et preparat som ikke kan brukes, nevner preparatene med samme navn som kan brukes. Om planen faktisk bruker dem,
+  // avgjøres først når dosene er valgt, og står i preparatlisten; advarselen sier det derfor ikke.
+  for (const [b, grunner] of ute) {
+    const tvilling = brukbare.filter((x) => x.navn_form_styrke === b.navn_form_styrke)
+    if (tvilling.length > 0) grunner.push(`en annen pakning med samme navn kan brukes: ${varenrTekst(tvilling.flatMap((x) => x.varenr).sort())}`)
+    begrensninger.push(`${b.etikett}: ${grunner.join('; ')}`)
   }
   return { brukbare, begrensninger }
 }
@@ -496,7 +504,7 @@ function ingenDose(f: Forlopsresultat, p: Periode, valg: Styrkevalg[], alleValg:
   return (
     `${f.virkestoff} ${dager(p)}: den ideelle dosen ${tall(p.mg)} mg${hverSuffiks(p)} kan ikke gis med preparatene i FEST ${tol > 0 ? `innenfor ±${tall(tol * 100)} %` : 'nøyaktig'}${grenser}. ` +
     (naermeste.length > 0 ? `Nærmeste doser som kan settes sammen: ${naermeste.join(' og ')}. ` : '') +
-    (utenfor.length > 0 ? `${listeOg(utenfor.map((b) => b.navn_form_styrke))} brukes ikke her, fordi FEST melder at ${utenfor.length === 1 ? 'det' : 'de'} ikke er markedsført hele perioden. ` : '') +
+    (utenfor.length > 0 ? `${listeOg(utenfor.map((b) => b.etikett))} brukes ikke her, fordi FEST melder at ${utenfor.length === 1 ? 'det' : 'de'} ikke er markedsført hele perioden. ` : '') +
     (valgtekst ?? ANNEN_DOSE)
   )
 }
@@ -676,7 +684,7 @@ function praktiskForlop(def: Forlop, f: Forlopsresultat, g: Preparatgrunnlag, in
   const alleValg = styrkevalg(brukbare)
   const ut: Praktiskforlop = { ...grunn, begrensninger, perioder: [], injeksjoner: [] }
   for (const b of brukbare) {
-    if (b.marked_til) ut.begrensninger.push(`${b.navn_form_styrke}: FEST melder at det ikke er markedsført fra ${norskDato(b.marked_til)}; brukes bare i perioder som slutter før`)
+    if (b.marked_til) ut.begrensninger.push(`${b.etikett}: FEST melder at det ikke er markedsført fra ${norskDato(b.marked_til)}; brukes bare i perioder som slutter før`)
   }
   ut.begrensninger.sort()
   const sluttdato = (p: { til: number | null; til_dato?: string | null }) => (inndata.startdato && p.til !== null ? (p.til_dato ?? null) : null)
@@ -1015,7 +1023,8 @@ function beregnPlan(regel: Regel, inndata: Doseplaninndata, grunnlag: Preparatgr
   const sperre = [...kliniskSperre(regel, utvalg, naa, alleRegler(omgivelse, regelsett)), ...omfangsfeil(regel, inndata, forlop)]
   const klinisk = sperre.length === 0 && ideell.klinisk_godkjent
   return medValg({
-    ...versjoner(sha256(kanonisk({ kildedato: utvalg.kildedato, preparater: unike }))),
+    // Etiketten er bare visning, så preparatgrunnlaget er det samme som før den kom.
+    ...versjoner(sha256(kanonisk({ kildedato: utvalg.kildedato, preparater: unike.map(({ etikett: _e, ...b }) => b) }))),
     status: 'doseplan' as const,
     klinisk,
     sperre,
@@ -1151,7 +1160,7 @@ export function preparatliste(r: Doseplanresultat): string[] {
   const linjer = new Set<string>()
   for (const f of r.forlop) {
     for (const e of [...f.perioder.flatMap((p) => p.elementer), ...f.injeksjoner.map((i) => i.element)]) {
-      for (const b of e.preparater) linjer.add(`${b.navn_form_styrke} (${b.registrering === 'godkjenningsfritak' ? 'godkjenningsfritak; ' : ''}${b.deling_grunnlag})`)
+      for (const b of e.preparater) linjer.add(`${b.etikett} (${b.registrering === 'godkjenningsfritak' ? 'godkjenningsfritak; ' : ''}${b.deling_grunnlag})`)
     }
   }
   return [...linjer].sort((a, b) => a.localeCompare(b, 'nb'))

@@ -11,6 +11,7 @@ import { gjelderFortsatt } from '../verktoy/doseplan'
 import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from '../verktoy/regler/aksepttest'
 import { erKliniskGodkjent } from '../verktoy/regler/godkjenning'
 import { avvikFra, KATEGORIER, kjorKasus, lagPilotmatriserapport, PILOTKASUS, PILOTMATRISEFIL, tidFor, type Kasuskategori } from '../verktoy/regler/pilotmatrise'
+import { FEST_TILLEGG, kjorTilleggskasus } from '../verktoy/tilleggsgrunnlag'
 import { REGELSETT } from '../verktoy/tilgjengelighet'
 
 const les = (fil: string) => readFileSync(new URL(`../../${fil}`, import.meta.url), 'utf8')
@@ -34,6 +35,10 @@ describe('testmatrisen for de godkjente reglene (P11.1–P11.4)', () => {
   it('prøver hver godkjent regel, og hver beregnbar regel i hver kategori fra P11.1', () => {
     const godkjente = REGELSETT.regler.filter(erKliniskGodkjent)
     const prøvd = new Set(PILOTKASUS.flatMap((k) => (k.regel ? [] : [kjorKasus(k, uttrekkene)]).flatMap((u) => ('resultat' in u && u.resultat ? [u.resultat.regel.id] : u.utfall === 'fagtekst' ? u.regler.map((r) => r.split(' ')[0]!) : []))))
+    // De godkjente tilleggsreglene (K4) prøves i sitt eget kontrollgrunnlag, med FEST-uttrekket for tilleggsreglene, og hvert kasus må gi utfallet det forventer.
+    const tillegg = kjorTilleggskasus(JSON.parse(les(FEST_TILLEGG)) as Festuttrekk)
+    expect(tillegg.flatMap(({ k, avvik }) => avvik.map((a) => `${k.id}: ${a}`))).toEqual([])
+    for (const { k, res } of tillegg) if (!k.regel?.endre && 'resultat' in res && res.resultat) prøvd.add(res.resultat.regel.id)
     expect([...prøvd].sort()).toEqual(godkjente.map((r) => r.id).sort())
     const kategorier: Record<string, Kasuskategori[]> = {
       V: ['vanlig_dose', 'uvanlig_dose', 'pasientforhold', 'interaksjon', 'preparat', 'foreldet_fest', 'datakilde', 'injeksjonsdato', 'regelendring', 'ikke_godkjent', 'nodstopp'],
