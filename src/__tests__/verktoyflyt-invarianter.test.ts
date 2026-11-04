@@ -26,8 +26,9 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { glemBildet } from '../oppdatering/bevaring'
 import { gjelderFortsatt, osloDato, ubesvart, TOMT_SKJEMA, type Planskjema } from '../verktoy/doseplan'
 import { elementtekst, planform, preparatliste, type Doseplanresultat } from '../verktoy/motor/plan'
-import { kildeliste, planTekst, planvisning } from '../verktoy/planvisning'
-import { festkoblinger, VALGTEKSTER, VERKTOY, virkestoffvalg, type Verktoy } from '../verktoy/register'
+import { kildelinje, planTekst, planvisning, regellinje } from '../verktoy/planvisning'
+import { festkoblinger, KARTLEGGING, VALGTEKSTER, VERKTOY, virkestoffvalg, type Verktoy } from '../verktoy/register'
+import { kjerne, komplett, tidslinjeavvik, type Planinndata, type Tidslinje } from './qa/brukerforlop'
 import { avrund } from '../verktoy/regler/beregning'
 import { erKliniskGodkjent, fingeravtrykk, harBeregning } from '../verktoy/regler/godkjenning'
 import type { Regel } from '../verktoy/regler/modell'
@@ -72,6 +73,8 @@ const TABLETT = '53'
 /* --- Kasusene ------------------------------------------------------------------- */
 
 interface Omfangskasus {
+  /** Det planen beregnes fra: aktuell dose og eventuell måldose, til den uavhengige kontrollen av sluttmålet. */
+  inn: Planinndata
   kasus: Pilotkasus
   uttrekk: Uttrekkene
   verktoy: Verktoy
@@ -151,6 +154,7 @@ const OMFANGSKASUS: Omfangskasus[] = VERKTOY.flatMap((verktoy) =>
                 verktoy,
                 regel,
                 uttrekk: uttrekkFor(s.valg),
+                inn: { startdose_mg: t.dose, ...(mal !== undefined && { maldose_mg: mal }) },
                 kasus: { id, kategori: 'vanlig_dose', hva: id, verktoy: verktoy.id, valg: s.valg, uttrekk: 'pilot', dose: tall(t.dose), skjema, forventet: { utfall: 'sperret' } },
               }
             }),
@@ -181,21 +185,6 @@ function kjor(k: Pilotkasus, u: Uttrekkene): { utfall: Utfall; skjema: Partial<P
 const KJORT = OMFANGSKASUS.map((o) => ({ ...o, ...kjor(o.kasus, o.uttrekk) }))
 const PLANER = KJORT.filter((x) => x.utfall.utfall === 'plan')
 
-/** Om planen faktisk når sluttmålet, vurdert av planens egne forløp og ikke av regelens tekst. */
-function naarSluttmalet(verktoy: Verktoy, regel: Regel, r: Doseplanresultat): string[] {
-  if (r.status !== 'doseplan') return ['ingen plan']
-  const fra = r.forlop.find((f) => f.id === fraForlop(regel)?.id)
-  const til = tilForlop(regel) && r.forlop.find((f) => f.id === tilForlop(regel)!.id)
-  const fortsetter = (f: (typeof r.forlop)[number]) => f.siste_dosedag === null && (f.perioder.some((p) => p.til === null && p.mg > 0) || f.injeksjoner.some((i) => i.vedlikehold))
-  const feil: string[] = []
-  if (!fra) return ['planen har ikke forløpet for legemidlet pasienten bruker']
-  if (verktoy.type === 'seponering' && fra.siste_dosedag === null) feil.push('legemidlet seponeres ikke')
-  if (verktoy.type === 'bytte' && fra.id !== til?.id && fra.siste_dosedag === null) feil.push('legemidlet det byttes fra, seponeres ikke')
-  if (verktoy.type !== 'seponering' && (!til || !fortsetter(til))) feil.push('legemidlet det byttes til eller legges til, fortsetter ikke med en fast dose')
-  if (verktoy.type === 'tillegg' && fra.siste_dosedag !== null) feil.push('legemidlet pasienten bruker, seponeres i et tillegg')
-  return feil
-}
-
 /* --- S1 og S9: bare komplette planer, og ingen løfter uten plan -------------------------- */
 
 describe('S1: planen kommer bare fra den kliniske motoren og når alltid sluttmålet', () => {
@@ -206,12 +195,95 @@ describe('S1: planen kommer bare fra den kliniske motoren og når alltid sluttm�
     expect(PLANER.length).toBeGreaterThan(0)
   })
 
+  /**
+   * To vurderinger av sluttmålet, uavhengige av hverandre: planens egen
+   * (`planvisning`) og QA-kontrollens (`komplett` i `qa/brukerforlop.ts`),
+   * som leser planens forløp mot det forskriveren oppga: nedtrapping er
+   * seponert; i et bytte er det gamle seponert og det nye ender på nøyaktig
+   * den kliniske måldosen; i et tillegg holdes det eksisterende på nøyaktig
+   * den aktuelle dosen og det nye ender på måldosen.
+   */
   it.each(PLANER.map((x) => [x.kasus.id, x] as const))('%s: en klinisk, komplett plan til sluttmålet', (_, x) => {
     const r = x.utfall.resultat!
     expect([r.status, r.klinisk, r.status === 'doseplan' && r.sperre]).toEqual(['doseplan', true, []])
     const v = planvisning(r, x.regel)!
     expect(v.utfall.komplett, v.utfall.tekst).toBe(true)
-    expect(naarSluttmalet(x.verktoy, x.regel, r)).toEqual([])
+    expect(komplett(x.regel, r, x.inn), 'den uavhengige kontrollen av sluttmålet').toBe(true)
+  })
+
+  type Planforlop = Extract<Doseplanresultat, { status: 'doseplan' }>['forlop'][number]
+  /** Planen endret med vilje på én måte som gjør den ufullstendig; hver endring skal få S1 til å feile. */
+  function feilplaner(x: (typeof PLANER)[number]): [string, Doseplanresultat][] {
+    const r = x.utfall.resultat!
+    if (r.status !== 'doseplan') return []
+    const fra = fraForlop(x.regel)?.id
+    const til = tilForlop(x.regel)?.id
+    const endret = (hva: string, endre: (f: Planforlop) => boolean, id: string | undefined): [string, Doseplanresultat][] => {
+      const kopi = structuredClone(r)
+      const f = kopi.forlop.find((y) => y.id === id)
+      return f && endre(f) ? [[hva, kopi]] : []
+    }
+    const sluttdose = (f: Planforlop) => {
+      const siste = f.perioder.at(-1)
+      const vedlikehold = f.injeksjoner.filter((i) => i.vedlikehold).at(-1)
+      if (siste?.til === null) siste.mg += 1
+      else if (vedlikehold) vedlikehold.mg += 1
+      else return false
+      return true
+    }
+    if (x.verktoy.type === 'seponering')
+      return endret(
+        'legemidlet seponeres ikke',
+        (f) => {
+          f.siste_dosedag = null
+          const siste = f.perioder.at(-1)
+          if (siste) siste.til = null
+          return true
+        },
+        fra,
+      )
+    return [
+      ...endret('det nye legemidlet ender på en annen dose enn måldosen', sluttdose, til),
+      ...(x.verktoy.type === 'tillegg'
+        ? endret(
+            'den eksisterende dosen endres',
+            (f) => {
+              if (f.uendret_mg !== undefined) f.uendret_mg += 1
+              for (const p of f.perioder) p.mg += 1
+              return f.uendret_mg !== undefined || f.perioder.length > 0
+            },
+            fra,
+          )
+        : endret(
+            'legemidlet det byttes fra, seponeres ikke',
+            (f) => {
+              if (f.siste_dosedag === null) return false
+              f.siste_dosedag = null
+              const siste = f.perioder.at(-1)
+              if (siste) siste.til = null
+              return true
+            },
+            fra,
+          )),
+    ]
+  }
+
+  it.each(PLANER.map((x) => [x.kasus.id, x] as const))('%s: en plan som med vilje er gjort ufullstendig, regnes ikke som komplett', (_, x) => {
+    const feil = feilplaner(x)
+    expect(feil.length, 'minst én endring kan prøves').toBeGreaterThan(0)
+    for (const [hva, r] of feil) expect(komplett(x.regel, r, x.inn), hva).toBe(false)
+    // En annen måldose enn den forskriveren valgte, er heller ikke sluttmålet.
+    if (x.inn.maldose_mg !== undefined) expect(komplett(x.regel, x.utfall.resultat!, { ...x.inn, maldose_mg: x.inn.maldose_mg + 1 }), 'annen måldose').toBe(false)
+  })
+
+  it('hver type feil er prøvd: seponering, sluttdose, eksisterende dose og legemidlet det byttes fra', () => {
+    const prøvd = new Set(PLANER.flatMap((x) => feilplaner(x).map(([hva]) => hva)))
+    expect([...prøvd].sort()).toEqual([
+      'den eksisterende dosen endres',
+      'det nye legemidlet ender på en annen dose enn måldosen',
+      'legemidlet det byttes fra, seponeres ikke',
+      'legemidlet seponeres ikke',
+    ])
   })
 
   it('gir aldri en plan som ikke når sluttmålet, heller ikke i P11-matrisen', () => {
@@ -219,7 +291,10 @@ describe('S1: planen kommer bare fra den kliniske motoren og når alltid sluttm�
       const u = kjorKasus(k, { pilot: UTTREKKENE[FEST_PILOT]!, aksept: UTTREKKENE[`${MAPPE}/fest-aksepttest.json`]! })
       if (u.utfall !== 'plan') continue
       const regel = REGELSETT.regler.find((r) => r.id === u.resultat!.regel.id)!
+      const tall = (x: string | undefined) => (x ? Number(x.replace(',', '.')) : undefined)
+      const maldose = tall(k.skjema?.maldose)
       expect(planvisning(u.resultat!, regel)?.utfall.komplett, k.id).toBe(true)
+      expect(komplett(regel, u.resultat!, { startdose_mg: tall(k.dose)!, ...(maldose !== undefined && { maldose_mg: maldose }) }), `${k.id}: den uavhengige kontrollen`).toBe(true)
     }
   })
 })
@@ -392,30 +467,200 @@ describe('S7: nødstopp, FEST og klokken virker som før', () => {
 
 /* --- S8: kopien har hele planen ------------------------------------------------------- */
 
-/** Teksten redusert til bokstaver og tall, med desimaltegn mellom sifre bevart, så formen kan endres uten at innholdet gjør det. */
-const kjerne = (t: string) =>
-  t
-    .toLowerCase()
-    .replace(/(\d)[,.](\d)/g, '$1#$2')
-    .replace(/[^\p{L}\p{N}½¼¾#]/gu, '')
+/** Teksten i et element slik den leses: tekst i samme element samlet, hvert underelement på sin egen linje. */
+function lesbar(el: Element): string {
+  const noder = [...el.childNodes]
+  if (noder.every((n) => n.nodeType === Node.TEXT_NODE)) return el.textContent ?? ''
+  return noder
+    .map((n) => (n instanceof Element ? lesbar(n) : (n.textContent ?? '')).trim())
+    .filter(Boolean)
+    .join('\n')
+}
+const enLinje = (el: Element) => (el.textContent ?? '').replace(/\s+/g, ' ').trim()
+
+/** Raden sin tid: dagene, og datoene i parentes når planen har en startdato (slik kopien skriver dem). */
+function naar(th: Element): string {
+  const [dager, ...datoer] = lesbar(th).split('\n')
+  return datoer.length > 0 ? `${dager} (${datoer.join(' ')})` : dager!
+}
+
+/** Tidslinjen slik planen viser den, i formen `tidslinjeavvik` (QA) sammenligner med kopien. */
+function tidslinjen(tabell: HTMLTableElement): Tidslinje {
+  return {
+    koloner: [...tabell.querySelectorAll('thead th')].map(enLinje),
+    rader: [...tabell.querySelectorAll('tbody tr')].map((r) => [...r.children].map((c, i) => (i === 0 ? naar(c) : lesbar(c)))),
+  }
+}
+
+/** Dagene en rad i tabellen gjelder: «Dag 3», «Dag 1–14» eller «Fra dag 15». */
+function dagene(naar: string): [number, number] | null {
+  const m = /^(?:Dag (\d+)(?:–(\d+))?|Fra dag (\d+))$/.exec(naar)
+  if (!m) return null
+  return m[3] ? [Number(m[3]), Infinity] : [Number(m[1]), Number(m[2] ?? m[1])]
+}
+
+const linjene = (tekst: string) => tekst.split('\n').map(kjerne)
+
+/**
+ * Det motoren beregnet, mot tabellen planen viser, celle for celle: hver
+ * periode står i raden for dagen den begynner, under sitt legemiddel, med
+ * dosen først og hvert preparat på sin linje; hver injeksjon står i en
+ * injeksjonsrad under sitt legemiddel. Kolonnene er legemidlene i
+ * forløpenes rekkefølge.
+ */
+function motoravvik(r: Extract<Doseplanresultat, { status: 'doseplan' }>, tabell: HTMLTableElement): string[] {
+  const avvik: string[] = []
+  const koloner = [...tabell.querySelectorAll('thead th')].slice(1).map(enLinje)
+  const rader = [...tabell.querySelectorAll('tbody tr')].map((tr) => ({
+    type: tr.getAttribute('data-type'),
+    naar: lesbar(tr.children[0]!).split('\n')[0]!,
+    celler: [...tr.children].slice(1).map(lesbar),
+  }))
+  r.forlop.forEach((f, i) => {
+    const navn = KARTLEGGING.virkestoffer.find((v) => v.nokkel === f.virkestoff)?.navn ?? f.virkestoff
+    if (!koloner[i]?.startsWith(navn)) avvik.push(`kolonne ${i + 1} er «${koloner[i]}», ikke ${navn}`)
+    for (const p of f.perioder) {
+      const rad = rader.find((x) => x.type === 'periode' && dagene(x.naar)?.[0] === p.fra)
+      const celle = rad && linjene(rad.celler[i] ?? '')
+      const dose = kjerne(`${tall(p.mg)} mg`)
+      // Dosen står først, og et tall rett etter den (for eksempel «15 mg» for «5 mg») godtas ikke.
+      if (!celle || !celle[0]!.startsWith(dose) || /^[\p{N}‡|]/u.test(celle[0]!.slice(dose.length)))
+        avvik.push(`${navn} dag ${p.fra}: ${tall(p.mg)} mg står ikke først i cellen (${JSON.stringify(rad?.celler[i])})`)
+      for (const e of p.elementer) if (!celle?.includes(kjerne(elementtekst(e)))) avvik.push(`${navn} dag ${p.fra}: «${elementtekst(e)}» står ikke i cellen`)
+    }
+    for (const inj of f.injeksjoner) {
+      const dose = kjerne(`Injeksjon ${tall(inj.mg)} mg`)
+      const funnet = rader.some((x) => x.type === 'injeksjon' && linjene(x.celler[i] ?? '').includes(dose) && linjene(x.celler[i] ?? '').includes(kjerne(elementtekst(inj.element))))
+      if (!funnet) avvik.push(`${navn}: injeksjonen ${tall(inj.mg)} mg står ikke i en injeksjonsrad under legemidlet`)
+    }
+  })
+  return avvik
+}
+
+/** Kopien endret med vilje på én måte; hver endring skal gi et avvik mot tabellen. */
+function feilkopier(kopi: string, koloner: readonly string[]): [string, string][] {
+  const linjer = kopi.split('\n')
+  // Tidslinjen er linjene mellom den første og den andre tomme linjen (planTekst).
+  const start = linjer.indexOf('') + 1
+  const slutt = linjer.indexOf('', start) < 0 ? linjer.length : linjer.indexOf('', start)
+  const endre = (hva: string, finn: (l: string) => boolean, ny: (l: string) => string): [string, string][] => {
+    const i = linjer.findIndex((l, j) => j >= start && j < slutt && finn(l))
+    return i < 0 ? [] : [[hva, linjer.map((l, j) => (j === i ? ny(l) : l)).join('\n')]]
+  }
+  return [
+    ...endre(
+      'dag 1 blir dag 10',
+      (l) => /^Dag 1\b(?!\d)/.test(l),
+      (l) => l.replace(/^Dag 1/, 'Dag 10'),
+    ),
+    ...endre(
+      'en dose på 5 mg blir 15 mg',
+      (l) => /(^|[^\d,])5 mg/.test(l),
+      (l) => l.replace(/(^|[^\d,])5 mg/, '$11' + '5 mg'),
+    ),
+    ...endre(
+      'en annen dose får et ekstra siffer foran',
+      (l) => /: (\d+(?:,\d+)?) mg/.test(l),
+      (l) => l.replace(/: (\d+(?:,\d+)?) mg/, ': 1$1 mg'),
+    ),
+    ...endre(
+      'et desimaltegn faller bort (som 2,5 → 25 mg)',
+      (l) => /\d,\d+ mg/.test(l),
+      (l) => l.replace(/(\d),(\d+) mg/, '$1$2 mg'),
+    ),
+    ...endre(
+      'et desimaltegn kommer til (som 25 → 2,5 mg)',
+      (l) => /(^|[^\d,])(\d)(\d) mg/.test(l),
+      (l) => l.replace(/(^|[^\d,])(\d)(\d) mg/, '$1$2,$3 mg'),
+    ),
+    ...koloner
+      .flatMap((a) =>
+        koloner
+          .filter((b) => b !== a)
+          .flatMap((b) =>
+            endre(
+              'legemidlene bytter plass på samme dag',
+              (l) => /^[^:]+: /.test(l) && l.includes(`: ${a}: `) && l.includes(`; ${b}: `),
+              (l) => l.replace(`: ${a}: `, ': \u0000: ').replace(`; ${b}: `, `; ${a}: `).replace(': \u0000: ', `: ${b}: `),
+            ),
+          ),
+      )
+      .slice(0, 1),
+  ]
+}
 
 describe('S8: kopien inneholder hele planen', () => {
-  it.each(PLANER.map((x) => [x.kasus.id, x] as const))('%s', (_, x) => {
+  afterEach(cleanup)
+  const PLANVISNING = import('../components/verktoy/Doseplanvisning')
+
+  /** Planen vist på siden, med tabellen og kopien. */
+  async function vist(x: (typeof PLANER)[number]) {
+    const { Doseplanvisning } = await PLANVISNING
     const r = x.utfall.resultat!
     if (r.status !== 'doseplan') throw new Error('ingen plan')
     const v = planvisning(r, x.regel)!
-    const kopi = kjerne(planTekst(v, x.verktoy.navn))
-    const mangler = (deler: string[]) => deler.filter((d) => !kopi.includes(kjerne(d)))
-    const elementer = r.forlop.flatMap((f) => [
-      ...f.perioder.flatMap((p) => [`dag ${p.fra}`, `${tall(p.mg)} mg`, ...p.elementer.map(elementtekst)]),
-      ...f.injeksjoner.flatMap((i) => [`${tall(i.mg)} mg`, elementtekst(i.element)]),
-    ])
-    expect(mangler(elementer), 'dager, doser, preparater og antall').toEqual([])
+    const { container } = render(createElement(Doseplanvisning, { plan: v, overskrift: x.verktoy.navn }))
+    return { r, v, tabell: container.querySelector('table')!, kopi: planTekst(v, x.verktoy.navn) }
+  }
+
+  it.each(PLANER.map((x) => [x.kasus.id, x] as const))('%s: tabellen har det motoren beregnet, og kopien har tabellen celle for celle', async (_, x) => {
+    const { r, tabell, kopi } = await vist(x)
+    expect(motoravvik(r, tabell), 'motoren mot tabellen').toEqual([])
+    expect(tidslinjeavvik(tidslinjen(tabell), kopi), 'tabellen mot kopien').toEqual([])
+  })
+
+  it.each(PLANER.map((x) => [x.kasus.id, x] as const))('%s: kopien har resten av planen linje for linje', async (_, x) => {
+    const { r, v, kopi } = await vist(x)
+    const linjer = new Set(kopi.split('\n'))
+    const mangler = (deler: readonly string[]) => deler.filter((d) => !linjer.has(`- ${d}`))
     expect(mangler(v.vurderinger), 'vurderingspunkter').toEqual([])
     expect(mangler(r.forbehold), 'forbehold').toEqual([])
     expect(mangler(preparatliste(r)), 'preparatene').toEqual([])
-    expect(mangler(kildeliste(x.regel).map((k) => k.url)), 'kildene').toEqual([])
-    expect(mangler([`versjon ${r.regel.versjon}`, r.regel.fingeravtrykk.slice(0, 12)]), 'regelversjon og fingeravtrykk').toEqual([])
+    expect(mangler(v.kilder.map(kildelinje)), 'kildene').toEqual([])
+    expect(mangler([regellinje(r.regel)]), 'regelversjon og fingeravtrykk').toEqual([])
+  })
+
+  it.each(PLANER.map((x) => [x.kasus.id, x] as const))('%s: en kopi eller tabell som med vilje er gjort feil, gir avvik', async (_, x) => {
+    const { r, tabell, kopi } = await vist(x)
+    const t = tidslinjen(tabell)
+    for (const [hva, feil] of feilkopier(kopi, t.koloner.slice(1))) expect(tidslinjeavvik(t, feil), hva).not.toEqual([])
+    // Motoren med en annen dose i første periode, eller med forløpene i omvendt rekkefølge, stemmer ikke med tabellen.
+    const annenDose = structuredClone(r)
+    const periode = annenDose.forlop.flatMap((f) => f.perioder)[0]
+    const injeksjon = annenDose.forlop.flatMap((f) => f.injeksjoner)[0]
+    if (periode) periode.mg += 10
+    else if (injeksjon) injeksjon.mg += 10
+    expect(motoravvik(annenDose, tabell), 'en annen dose fra motoren').not.toEqual([])
+    if (r.forlop.length > 1) expect(motoravvik({ ...r, forlop: [...r.forlop].reverse() }, tabell), 'legemidlene i omvendt rekkefølge').not.toEqual([])
+    // Tabellen med to celler byttet om i første rad med dose under to legemidler.
+    const i = t.rader.findIndex((r) => r.slice(1).filter((c) => c && c !== '–').length >= 2)
+    if (i >= 0) {
+      const rad = t.rader[i]!
+      const byttet = { ...t, rader: t.rader.map((r, j) => (j === i ? [r[0]!, ...r.slice(1).reverse()] : r)) }
+      if (rad.slice(1).join() !== rad.slice(1).reverse().join()) expect(tidslinjeavvik(byttet, kopi), 'cellene byttet mellom legemidlene').not.toEqual([])
+    }
+  })
+
+  it('hver type feil er prøvd, og minst én plan har to legemidler samtidig', async () => {
+    const prøvd = new Set<string>()
+    let samtidig = 0
+    for (const x of PLANER) {
+      const { tabell, kopi } = await vist(x)
+      for (const [hva] of feilkopier(kopi, tidslinjen(tabell).koloner.slice(1))) prøvd.add(hva)
+      if (tidslinjen(tabell).rader.some((r) => r.slice(1).filter((c) => c && c !== '–').length >= 2)) samtidig++
+      cleanup()
+    }
+    expect([...prøvd].sort()).toEqual(
+      [
+        'dag 1 blir dag 10',
+        'en annen dose får et ekstra siffer foran',
+        'en dose på 5 mg blir 15 mg',
+        'et desimaltegn faller bort (som 2,5 → 25 mg)',
+        'et desimaltegn kommer til (som 25 → 2,5 mg)',
+        'legemidlene bytter plass på samme dag',
+      ].sort(),
+    )
+    expect(samtidig, 'planer med to legemidler samme dag').toBeGreaterThan(0)
   })
 })
 
