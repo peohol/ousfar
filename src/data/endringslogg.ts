@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.125.3',
+    dato: '2026-11-04',
+    sammendrag: 'Oversikt over hva de kliniske verktøyene faktisk kan etter hver godkjent leveranse',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Gjelder bare administratorene. Ingen regler, doser, godkjenninger eller sperrer er endret.',
+      'Planen for de kliniske verktøyene fører nå, etter hver godkjent leveranse, hvilke komplette planer verktøyene faktisk gir og hva som gjenstår før minstekravene er nådd.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.125.1',
     dato: '2026-11-04',
     sammendrag: 'Første regler for å legge lamotrigin til valproat eller litium, faglig godkjent og bare for administratorene',
