@@ -20,13 +20,20 @@ import { besvart, FEST_AKSEPTTEST, FEST_PILOT, omgivelseFor, type Festuttrekk } 
 import { type Disposisjon, disponer, disposisjonsfeil, erKliniskGodkjent, fingeravtrykk, harBeregning, kontrollutfall, vurderingsfeil } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett } from '../verktoy/regler/kontroll'
 import type { Forlop, Regel, Regelsett } from '../verktoy/regler/modell'
-import { NEDTRAPPINGSDISPOSISJON, NEDTRAPPINGSSETT, SAMMENLIGNINGSSETT } from '../verktoy/regler/nedtrapping'
+import { NEDTRAPPINGSDISPOSISJON, NEDTRAPPINGSSETT_FOR_K1, SAMMENLIGNINGSSETT } from '../verktoy/regler/nedtrapping'
 import { PILOTDISPOSISJON, PILOTSETT } from '../verktoy/regler/pilotsett'
 import { TILLEGGSSETT } from '../verktoy/regler/tillegg'
 import { FAKTUMRETTELSER } from '../verktoy/regler/bygg'
 import { REGELRAPPORTER, statustekst } from '../verktoy/regler/rapport'
 import { REGELSETT, tilgjengelighet } from '../verktoy/tilgjengelighet'
 import { godkjennITest } from './hjelp/verktoyplan'
+
+/**
+ * Disposisjonen gjelder nedtrappingsreglene før K1 ga escitalopram en ny versjon
+ * med avslutning fra dråper på 1 mg (`regler/k1.ts`); den nye versjonen har ingen
+ * disposisjon, er godkjent for seg ({@link GODKJENT_ETTER_LEVERANSEN}) og er testet i `verktoyk1.test.ts`.
+ */
+const NEDTRAPPINGSSETT = NEDTRAPPINGSSETT_FOR_K1
 
 /**
  * De åtte regelversjonene kontrolløren har godkjent i oppgitt omfang, med fingeravtrykket godkjenningen gjelder.
@@ -44,6 +51,12 @@ const GODKJENTE: Record<string, { sett: string; versjon: number; fingeravtrykk: 
   'tillegg-valproat-lamotrigin': { sett: TILLEGGSSETT.id, versjon: 2, fingeravtrykk: '0a9213f31b5f428935fceeef41498a2999682631b1692749bb7ebe19c82639b8', beregning: true },
   'tillegg-litium-lamotrigin': { sett: TILLEGGSSETT.id, versjon: 2, fingeravtrykk: '786436a0ea8d115b7927a9a20ffabc736b59bc06c59117769551e5f75e89e44b', beregning: true },
 }
+
+/**
+ * Regler kontrolløren har godkjent etter leveransen, i appens regelsett: escitalopram versjon 13 fra K1
+ * (04.11.2026, `regler/k1.ts`), testet i `verktoyk1.test.ts`. Verktøyene kan gi en beregning etter dem.
+ */
+const GODKJENT_ETTER_LEVERANSEN = ['seponering-escitalopram']
 
 const SETTENE = [PILOTSETT, NEDTRAPPINGSSETT, TILLEGGSSETT, SAMMENLIGNINGSSETT]
 const ALLE = SETTENE.flatMap((s) => s.regler.map((r) => ({ sett: s, r })))
@@ -168,7 +181,8 @@ describe('Klinisk tilgjengelige regler i den første avgrensede leveransen (P4.8
   })
 
   it('gir i verktøyene en beregning bare etter de godkjente reglene, for hvert virkestoff, hver formulering og hvert bytte', () => {
-    const godkjente = new Set(Object.keys(GODKJENTE))
+    const godkjente = new Set([...Object.keys(GODKJENTE), ...GODKJENT_ETTER_LEVERANSEN])
+    for (const id of GODKJENT_ETTER_LEVERANSEN) expect(erKliniskGodkjent(REGELSETT.regler.find((r) => r.id === id)!), id).toBe(true)
     const sett = new Set<string>()
     for (const v of VERKTOY) {
       const valgene = virkestoffvalg(v).flatMap((x) => x.formuleringer.map((formulering) => ({ nokkel: x.nokkel, formulering })))
@@ -276,8 +290,8 @@ describe('Klinisk tilgjengelige regler i den første avgrensede leveransen (P4.8
           }
         }
       }
-      // Prøven er ikke tom: hver av de 24 vises i et verktøy, unntatt den langsomme vortioksetinregelen, der verktøyet viser den godkjente hovedregelen.
-      expect([...iVerktoyene].sort()).toEqual(IKKE_GODKJENTE.map(({ r }) => r.id).filter((id) => id !== 'seponering-vortioksetin-langsom').sort())
+      // Prøven er ikke tom: hver av de 24 vises i et verktøy, unntatt de langsomme variantene av vortioksetin og escitalopram, der verktøyet viser den godkjente hovedregelen.
+      expect([...iVerktoyene].sort()).toEqual(IKKE_GODKJENTE.map(({ r }) => r.id).filter((id) => !['seponering-vortioksetin-langsom', 'seponering-escitalopram-langsom'].includes(id)).sort())
     })
 
     it('godtar ikke en vurdering som ikke lenger stemmer med regelen, eller som mangler fingeravtrykk', () => {

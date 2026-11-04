@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.125.5',
+    versjon: '1.125.6',
     dato: '2026-11-04',
     sammendrag: 'Bytter mellom antidepressiva, til faglig kontroll',
     typer: ['Funksjonalitet'],
@@ -38,6 +38,33 @@ export const ENDRINGSLOGG: Endring[] = [
       'Gjelder bare administratorene, som fortsatt er de eneste som ser verktøyene. Ingen regler, doser eller godkjenninger er endret, og ingen regel bruker dette ennå.',
       'En ny regel kan oppgi hvilke eldre regler for samme bytte den erstatter. Når den nye regelen er klinisk godkjent, tilbyr verktøyet ikke lenger de gamle, og en plan etter dem stopper med beskjed om at regelen er trukket og hvilken regel som har erstattet den. Før godkjenningen gjelder de gamle som før.',
     ],
+  },
+  {
+    versjon: '1.125.3',
+    dato: '2026-11-04',
+    sammendrag: 'Oversikt over hva de kliniske verktøyene faktisk kan etter hver godkjent leveranse',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Gjelder bare administratorene. Ingen regler, doser, godkjenninger eller sperrer er endret.',
+      'Planen for de kliniske verktøyene fører nå, etter hver godkjent leveranse, hvilke komplette planer verktøyene faktisk gir og hva som gjenstår før minstekravene er nådd.',
+    ],
+    utenVarsel: true,
+  },
+  {
+    versjon: '1.125.2',
+    dato: '2026-11-04',
+    sammendrag: 'Nedtrapping av escitalopram med dråper helt til seponering, godkjent for en avgrenset pasientgruppe',
+    typer: ['Fag'],
+    omfang: 'Mindre omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Gjelder bare administratorene, som fortsatt er de eneste som ser verktøyene. Sperrene for verktøyene er uendret.',
+      'Escitalopram har fått en ny versjon: med dråper (1 mg per dråpe) går planen ned til 3 mg, så 2 og 1 mg, og 1 mg holdes et helt trinn før seponering. Planen har vurdering før hver endring og 7, 14 og 28 dager etter siste dose. Pasienter som bruker tabletter, kan gå over til dråper med samme dose.',
+      'Peder har avgjort at escitalopram kan stoppes fra 1 mg hos voksne under 65 år med kort behandlingstid, uten tidligere seponeringsplager. Den faglige kontrollen har godkjent planen fra 10 eller 20 mg for denne gruppen, når interaksjoner og kontraindikasjoner er avklart. Siste dose holdes og vurderes for hver pasient før seponering. Pasienter utenfor gruppen får ingen plan. For nortriptylin, amitriptylin, sertralin og escitalopram etter lang behandlingstid finnes ingen dokumentert metode helt ned, så verktøyet sier «Komplett plan ikke tilgjengelig» i stedet for å vise doser.',
+    ],
+    utenVarsel: true,
   },
   {
     versjon: '1.125.1',

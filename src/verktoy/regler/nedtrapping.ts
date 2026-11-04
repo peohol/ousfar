@@ -52,12 +52,13 @@
  * gjengir teksten der.
  */
 import { kravtekst, omradetekst } from './beregning'
-import { FAKTUMRETTELSER, FORUTSETNINGER_FELLES, forslag, h, kilde, leveransen, NICE, planhorisont, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, pn, RCPSYCH, RCPSYCH_TIDLIGERE, steg, utsagn, vurdert } from './bygg'
+import { FAKTUMRETTELSER, FORUTSETNINGER_FELLES, forslag, h, kilde, KONTROLLOREN, leveransen, NICE, planhorisont, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, pn, RCPSYCH, RCPSYCH_TIDLIGERE, steg, utsagn, vurdert } from './bygg'
 import { disponer } from './godkjenning'
 import type { Avklaring, Begrunnelseskrav, Bekreftelse, Fase, Forlop, Godkjenningssteg, Grunnlag, Inndatakrav, Kildehenvisning, Kliniskomfang, Nedtrappingsstrategi, Parameter, Regel, Regelsett, Regneeksempel, Sporsmal, Unntak, Utsagn } from './modell'
 import { REGELMODELLVERSJON } from './modell'
 import { gruppeRestApAripiprazol, seponeringCitalopramHyperbolsk, SPC } from './pilotsett'
 import { rett } from './rettelse'
+import { medAvslutninger } from './k1'
 
 /* --- Fakta fra preparatomtalene, med egne ord ----------------------------------------- */
 
@@ -218,7 +219,7 @@ const historikk = (versjoner: Versjon[]) => versjoner.flatMap((v, i) => [steg('u
 
 const tall = (x: number) => String(x).replace('.', ',')
 
-const kontrollor = { av: 'ChatGPT (uavhengig kontrollør)', rolle: 'uavhengig_kontrollor' } as const
+const kontrollor = KONTROLLOREN
 
 /**
  * Avklaringen fra fagvurderingen 29.10.2026 (beslutning 1): valgområdene per
@@ -2297,12 +2298,24 @@ export const NEDTRAPPINGSSETT_FOR_RETTELSENE: Regelsett = {
   ),
 }
 
-/** Nedtrappingsreglene appen bruker: settet før rettelsene med `FAKTUMRETTELSER` og kontrollørens registrerte vurdering av de nye versjonene. */
-export const NEDTRAPPINGSSETT: Regelsett = {
+/**
+ * Settet etter `FAKTUMRETTELSER` og kontrollørens registrerte vurdering av de
+ * nye versjonene (versjon 15, appversjon 1.123.1), før K1. Appen bruker det
+ * ikke; kontrollgrunnlagene for rettelsen og VDK-3 forslag 1 gjelder det.
+ */
+export const NEDTRAPPINGSSETT_FOR_K1: Regelsett = {
   ...NEDTRAPPINGSSETT_FOR_RETTELSENE,
   versjon: 15,
   beskrivelse: `${NEDTRAPPINGSSETT_FOR_RETTELSENE.beskrivelse} Etter kontrollørens vurdering 03.11.2026 er faktumet fra RCPsych om små reduksjoner fra starten presisert (\`docs/verktøy-kildefunn-1-2.md\` §8): de 17 reglene som viser til det, har fått en ny versjon som bare skiller seg i dette faktumet. Kontrolløren har godkjent den nye versjonen av vortioksetinregelen (versjon 12) med samme kliniske omfang som versjon 11, og de andre er kontrollert og ikke godkjent som før (\`docs/verktøy-rettelse-langvarig.md\`).`,
   regler: rett([...NEDTRAPPINGSSETT_FOR_RETTELSENE.regler], FAKTUMRETTELSER),
+}
+
+/** Nedtrappingsreglene appen bruker: settet etter rettelsene med den nye versjonen fra K1 (`k1.ts`). */
+export const NEDTRAPPINGSSETT: Regelsett = {
+  ...NEDTRAPPINGSSETT_FOR_K1,
+  versjon: 16,
+  beskrivelse: `${NEDTRAPPINGSSETT_FOR_K1.beskrivelse} I K1 har escitalopram fått versjon 13: med dråper på 1 mg kan forskriveren fra 3 mg velge et minste trinn på én dråpe (3 → 2 → 1 mg), og fra 1 mg holdes dosen et helt trinn før seponering, med oppfølging etter siste dose. Sluttdosen er avgjort av Peder (K1.9), det minste trinnet og oppfølgingen er avklart av kontrolløren (K1.10 og K1.12), og kontrolløren har godkjent versjonen 04.11.2026 bare for et snevert omfang: dråper fra 10 eller 20 mg hos voksne under 65 år med kort behandlingstid og uten tidligere seponeringsplager (\`docs/verktøy-k1-nedtrapping-kontrollgrunnlag.md\`). Alle andre tilfeller og stoffer har ingen komplett plan. En plan som ikke når sluttmålet, vises aldri; verktøyet sier «Komplett plan ikke tilgjengelig» og hvorfor.`,
+  regler: medAvslutninger([...NEDTRAPPINGSSETT_FOR_K1.regler]),
 }
 
 /**

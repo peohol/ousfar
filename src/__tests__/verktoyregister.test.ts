@@ -5,6 +5,7 @@
  * Med pilotreglene og nedtrappingsreglene (P7), som ingen er klinisk godkjent, kan ingenting beregnes. De
  * positive visningene bruker de isolerte testdataene i `hjelp/verktoyplan.ts`.
  */
+import { K1_AVSLUTNINGER } from '../verktoy/regler/k1'
 import { describe, expect, it } from 'vitest'
 import { adresse, lesRute, sidesti, verktoyadresse } from '../domain/rute'
 import { beregnPlan, festIderFor, formvalgFor, gjelderFortsatt, inndataFor, lesDose, mangler, medRegel, osloDato, skjemaFor, TOMT_SKJEMA, valgidentitet } from '../verktoy/doseplan'
@@ -107,6 +108,9 @@ describe('Søket etter verktøy', () => {
   })
 })
 
+/** Reglene K1 ga en ny versjon med avslutning, til faglig kontroll (`regler/k1.ts`). */
+const K1 = K1_AVSLUTNINGER.map((k) => k.regel)
+
 describe('Regelstatusen', () => {
   it('sier at reglene i pilotsettet og P7 er kontrollert og ikke godkjent, unntatt de klinisk godkjente beregningene og fagteksten', () => {
     // Hovedregelen, den langsomme varianten og for fluoksetin annenhver dag står side om side; klinikeren velger strategi.
@@ -127,8 +131,9 @@ describe('Regelstatusen', () => {
     const GODKJENT_FAGTEKST = ['seponering-bupropion', 'seponering-agomelatin']
     // Depotreglene er klinisk godkjent for de avgrensede oppstartene (kontrollørens gjennomgang av 62ebb21), og sertralin → mirtazapin
     // og hovedregelen for vortioksetin for de avgrensede startforløpene (gjennomgangen av f77e1a9); de kan beregnes. Den langsomme
-    // varianten for vortioksetin er kontrollert og ikke godkjent og vises ikke ved siden av.
-    const GODKJENT_BEREGNING = ['kryssnedtrapping-sertralin-mirtazapin', 'depot-aripiprazol-maintena', 'depot-paliperidon-xeplion', 'seponering-vortioksetin']
+    // varianten for vortioksetin er kontrollert og ikke godkjent og vises ikke ved siden av. Escitalopram versjon 13 fra K1 er godkjent
+    // av kontrolløren 04.11.2026 for dråper fra 10 eller 20 mg; den langsomme varianten vises heller ikke ved siden av.
+    const GODKJENT_BEREGNING = ['kryssnedtrapping-sertralin-mirtazapin', 'depot-aripiprazol-maintena', 'depot-paliperidon-xeplion', 'seponering-vortioksetin', ...K1]
     for (const [verktoy, valg, alle] of tilfeller) {
       const t = tilgjengelighet(verktoy!, valg)
       const godkjente = alle.filter((id) => GODKJENT_BEREGNING.includes(id))
@@ -161,9 +166,10 @@ describe('Regelstatusen', () => {
     expect(new Set([...tilfeller.flatMap(([, , r]) => r), ...tillegg])).toEqual(new Set([...PILOTSETT.regler, ...NEDTRAPPINGSSETT.regler, ...TILLEGGSSETT.regler].map((r) => r.id)))
     // Leveransenes sett (K2–K4) har egne tester for sine regler.
     expect(REGELSETT.regler).toHaveLength(REGELSETTENE.reduce((n, x) => n + x.regler.length, 0))
-    expect(VERKTOY.map((x) => regeloversikt(x).tilgjengelige)).toEqual([1, 1, 2, 2])
-    expect(VERKTOY.map((x) => regeloversikt(x).ikkeGodkjent)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length - 1, 1, 1, 0])
-    // K2s fem komplette antidepressivbytter står til faglig kontroll.
+    // Escitalopram versjon 13 fra K1 er godkjent (04.11.2026) og kan beregnes, i tillegg til vortioksetin.
+    expect(VERKTOY.map((x) => regeloversikt(x).tilgjengelige)).toEqual([2, 1, 2, 2])
+    expect(VERKTOY.map((x) => regeloversikt(x).ikkeGodkjent)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length - 1 - K1.length, 1, 1, 0])
+    // K2s fem antidepressivbytter står til faglig kontroll.
     expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([0, 5, 0, 0])
   })
 
@@ -211,7 +217,9 @@ describe('Snarvalgene (VDR-3)', () => {
   it('er nøyaktig valgene som gir beregning eller godkjent fagtekst, med beregningene først', () => {
     expect(VERKTOY.map((x) => snarvalg(x).map((s) => [s.status, s.tekst]))).toEqual([
       // Vortioksetin og sertralin → mirtazapin er godkjent, men kan aldri gi en komplett plan, så de tilbys ikke som beregnbare (leveranseplanen §3).
+      // Escitalopram (K1, godkjent 04.11.2026) kan gi en komplett plan til seponering med dråper.
       [
+        ['tilgjengelig', 'Escitalopram'],
         ['fagtekst', 'Agomelatin'],
         ['fagtekst', 'Bupropion'],
       ],
@@ -244,9 +252,13 @@ describe('Snarvalgene (VDR-3)', () => {
     expect(snarvalg(TRAPPE_NED!, testsett(TEST_NEDTRAPPING)).map((s) => s.tekst)).toContain('Escitalopram')
   })
 
-  it('følger regelsettet: en regel godkjent bare i testen gir et snarvalg der, ikke i appen', () => {
+  it('følger regelsettet: en regel godkjent bare i testen gir et snarvalg der, og uten den registrerte godkjenningen gir escitalopram ikke et snarvalg i appen', () => {
     expect(snarvalg(TRAPPE_NED!, testsett(TEST_NEDTRAPPING)).map((s) => s.tekst)).toContain('Escitalopram')
-    expect(snarvalg(TRAPPE_NED!).map((s) => s.tekst)).not.toContain('Escitalopram')
+    expect(snarvalg(TRAPPE_NED!).map((s) => s.tekst)).toContain('Escitalopram')
+    const utenGodkjenning = structuredClone(REGELSETT)
+    const esc = utenGodkjenning.regler.find((r) => r.id === 'seponering-escitalopram')!
+    esc.godkjenning = { status: 'til_faglig_kontroll', historikk: esc.godkjenning.historikk.slice(0, -1) }
+    expect(snarvalg(TRAPPE_NED!, utenGodkjenning).map((s) => s.tekst)).not.toContain('Escitalopram')
   })
 })
 
@@ -287,12 +299,15 @@ describe('Doseplanen i verktøyene', () => {
     const ider = (sett: Regelsett) => reglerFor(TRAPPE_NED!, valg, sett).map((r) => r.id)
     // Før den nye regelen er gyldig godkjent, gjelder den gamle som før.
     expect(ider(med(ikkeGodkjent))).toEqual(expect.arrayContaining(['test-nedtrapping', 'test-nedtrapping-ny']))
-    expect(tilgjengelighet(TRAPPE_NED!, valg, med(ikkeGodkjent)).regler.map((r) => r.id)).toEqual(['test-nedtrapping'])
+    // Andre godkjente regler for escitalopram (K1) står ved siden av; bare den gamle og den nye prøves her.
+    expect(tilgjengelighet(TRAPPE_NED!, valg, med(ikkeGodkjent)).regler.map((r) => r.id)).toContain('test-nedtrapping')
+    expect(tilgjengelighet(TRAPPE_NED!, valg, med(ikkeGodkjent)).regler.map((r) => r.id)).not.toContain('test-nedtrapping-ny')
     expect(plan(med(ikkeGodkjent))).toMatchObject({ status: 'doseplan', klinisk: true, sperre: [] })
     // Godkjent: den gamle er borte fra verktøyet og oversikten, og appen stopper en plan etter den.
     expect(ider(med(ny))).toContain('test-nedtrapping-ny')
     expect(ider(med(ny))).not.toContain('test-nedtrapping')
-    expect(tilgjengelighet(TRAPPE_NED!, valg, med(ny)).regler.map((r) => r.id)).toEqual(['test-nedtrapping-ny'])
+    expect(tilgjengelighet(TRAPPE_NED!, valg, med(ny)).regler.map((r) => r.id)).toContain('test-nedtrapping-ny')
+    expect(tilgjengelighet(TRAPPE_NED!, valg, med(ny)).regler.map((r) => r.id)).not.toContain('test-nedtrapping')
     expect(regeloversikt(TRAPPE_NED!, med(ny)).tilgjengelige).toBe(regeloversikt(TRAPPE_NED!, med(ikkeGodkjent)).tilgjengelige)
     const trukket = plan(med(ny))
     expect(trukket).toMatchObject({ status: 'stoppet', klinisk: false })
