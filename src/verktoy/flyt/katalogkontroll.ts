@@ -8,9 +8,10 @@
  * det regelfingeravtrykket. Ellers brukes den trygge standarden: hver
  * betingelse med regelens egen tekst, og hver bekreftelse som avkrysning.
  *
- * Et avtrykk føres her først når ChatGPT har kontrollert tabellen i
- * `docs/verktøy-sporsmalskatalog.md` for regelversjonen, i en egen endring
- * som viser kontrollen.
+ * Et avtrykk føres her først når ChatGPT har godkjent tabellen i
+ * `docs/verktøy-sporsmalskatalog.md` med nøyaktig de avtrykkene den viser
+ * for regelversjonen. Det første settet føres i samme PR som katalogen
+ * (#329), før merge; senere endringer av katalogen føres på samme måte.
  */
 import { fingeravtrykk, kanonisk, sha256 } from '../regler/godkjenning'
 import type { Regel } from '../regler/modell'
