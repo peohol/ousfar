@@ -163,6 +163,26 @@ describe('K2: sluttrinnet ved bytte (K2-2)', () => {
     }
   })
 
+  it('med utvasking 0 starter sertralin nøyaktig dagen etter siste dose, både i beregningen og i den praktiske planen (P5.7)', () => {
+    for (const r of BYTTESETT.regler.filter((x) => !sluttrinnApent(x))) {
+      for (const d of r.inndata.find((x) => x.navn === 'startdose')!.verdier!) {
+        const res = beregnSomGodkjent(r, { startdose_mg: d, maldose_mg: 50 })
+        if (res.status !== 'modellberegning') throw new Error(`${r.id} ${d}: ${JSON.stringify(res)}`)
+        const [fra, til] = res.forlop
+        expect(til!.start, `${r.id} ${d}`).toBe(fra!.siste_dosedag! + 1)
+        expect(til!.perioder[0]!.fra).toBe(fra!.siste_dosedag! + 1)
+        expect(res.kontroller.find((k) => k.krav.startsWith('Minst 0 dager uten'))).toMatchObject({ oppfylt: true, detalj: expect.stringMatching(/\(0 dager\)/) })
+      }
+    }
+    // Den praktiske planen med preparater: siste escitalopram dag 28, sertralin fra dag 29 på samme rad.
+    const u = kjorK2(kasus('bytte-escitalopram-sertralin:20-50'), UTTREKK)
+    expect(u.utfall).toBe('plan')
+    expect(u.utfall === 'plan' && u.linjer.filter((l) => !erVurdering(l)).slice(-2)).toEqual([
+      'Dag 15–28 (23.11.2026–06.12.2026): Escitalopram peroralt: 5 mg = 1 tablett à 5 mg',
+      'Fra dag 29 (fra 07.12.2026): Escitalopram peroralt: Seponert; Sertralin peroralt: 50 mg = 1 tablett à 50 mg',
+    ])
+  })
+
   it('begrunner direkte overgang mot moderat bytte og kryssnedtrapping, som alternativene som ikke er valgt', () => {
     for (const r of BYTTESETT.regler.filter((x) => !sluttrinnApent(x))) {
       const start = r.plan.forlop[1]!.start

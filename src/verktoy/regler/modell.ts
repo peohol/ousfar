@@ -746,13 +746,13 @@ const feltnavn = (sti: string) => sti.replace(/\[\d+\]/g, '').split('.').at(-1) 
  */
 export function parameterfeil(p: Parameter, sti: string): string | null {
   const navn = feltnavn(sti)
-  const minst = KAN_VAERE_NULL.has(navn) ? 0 : null
+  const nullTillatt = KAN_VAERE_NULL.has(navn)
   const forventet = FELTENHET[navn]
   if (!forventet) return `feltet ${navn || '(uten navn)'} er ikke en parameter i regelmodellen`
   if (p.enhet !== forventet) return `enheten er ${p.enhet}, men ${navn} skal være i ${forventet}`
   const feil = (v: number): string | null => {
     if (typeof v !== 'number' || !Number.isFinite(v)) return 'er ikke et endelig tall'
-    if (minst === 0 ? v < 0 : v <= 0) return minst === 0 ? 'kan ikke være under 0' : 'må være over 0'
+    if (nullTillatt ? v < 0 : v <= 0) return nullTillatt ? 'kan ikke være under 0' : 'må være over 0'
     if (p.enhet === 'prosent' && v > 100) return 'kan ikke være over 100 %'
     if (heltall.includes(p.enhet) && !Number.isInteger(v)) return 'må være et helt tall'
     return null
