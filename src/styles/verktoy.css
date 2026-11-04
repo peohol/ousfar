@@ -546,6 +546,13 @@
   .tidslinje__punkt {
     break-inside: avoid;
   }
+
+  /* Planpanelet står fast og ruller på store skjermer; på papir skal hele planen flyte over sidene. */
+  .verktoyflyt .verktoyflyt__plan {
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
 }
 
 /* Begrunnelsen for valgene er vanlig tekst over flere linjer, ikke et tall. */
