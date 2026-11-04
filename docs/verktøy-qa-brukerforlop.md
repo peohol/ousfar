@@ -1,13 +1,13 @@
 <!-- Laget av `QA_SKRIV=1 npx vitest run src/__tests__/qa`; rediger ikke for hånd. -->
 # OUSFAR Verktøy – uavhengig QA av brukerforløp
 
-Spor H i `docs/verktøy-klinisk-leveranseplan-2026-11.md`. Hvert forløp er en syntetisk, vanlig situasjon kjørt gjennom den samme veien som verktøysiden, mot de lagrede FEST-uttrekkene. Klassen er QA-testens egen vurdering av planens forløp (komplett = når sluttmålet), ikke regelens selvbeskrivelse. Dette er en måling, ikke en klinisk godkjenning. Verktøyene er bare synlige for administratorer; ingen plan her er tilgjengelig for klinikere. K0-01 slik den står (tablett) regnes ikke som levert: bare dråper fra 10 og 20 mg ved kort behandlingstid gir komplett plan, og verktøyet har ingen kontrollert overgang fra tablett til dråper.
+Spor H i `docs/verktøy-klinisk-leveranseplan-2026-11.md`. Hvert forløp er en syntetisk, vanlig situasjon kjørt gjennom den samme veien som verktøysiden, mot de lagrede FEST-uttrekkene. Klassen er QA-testens egen vurdering av planens forløp (komplett = når sluttmålet), ikke regelens selvbeskrivelse. Dette er en måling, ikke en klinisk godkjenning. Verktøyene er bare synlige for administratorer; ingen plan her er tilgjengelig for klinikere. K0-01 slik den står (tablett valgt i skjemaet) gir ingen komplett plan og regnes ikke som levert: regelen godtar faglig overgang fra tabletter til dråper mg for mg, men appens automatiske brukerflyt fra tablettvalget gir ingen plan. Når forskriveren selv bytter til dråper (H-39), gir dråper fra 10 og 20 mg ved kort behandlingstid komplett plan i et snevert omfang.
 
 ## Måltall per leveranse
 
 | Leveranse | Komplett plan til sluttmål | Delplan | Godkjent fagtekst | Regel finnes, men beregningen stopper | Ikke godkjent regel | Regel til kontroll | Ikke støttet | Sperret | Skjemaet krever mer | Verktøyet finnes ikke |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| K1 Trappe ned antidepressiv | 2 |  | 2 | 6 | 13 |  |  |  |  |  |
+| K1 Trappe ned antidepressiv | 3 |  | 2 | 6 | 13 |  |  |  |  |  |
 | K2 Bytte antidepressiv |  |  |  | 3 |  |  | 9 |  |  |  |
 | K3 Bytte antipsykotikum | 2 |  |  |  | 1 |  | 7 |  |  |  |
 | K4 Kombinere stemningsstabiliserende | 2 |  |  |  |  |  | 2 |  | 1 |  |
@@ -66,6 +66,7 @@ Spor H i `docs/verktøy-klinisk-leveranseplan-2026-11.md`. Hvert forløp er en s
 | H-36 | Vortioksetin 20 mg når 15 mg-tablettene er avregistrert | Regel finnes, men beregningen stopper (seponering-vortioksetin v12) | vortioksetin (fra): styrken 15 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST, så planen ville blitt satt sammen annerledes enn den som er kontrollert. Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet. | – |
 | H-37 | Sertralin 100 mg byttes til mirtazapin når mirtazapin 15 mg er avregistrert | Regel finnes, men beregningen stopper (kryssnedtrapping-sertralin-mirtazapin v10) | [formvalg til: Tablett] / mirtazapin (til): styrken 15 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST, så planen ville blitt satt sammen annerledes enn den som er kontrollert. Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet. | – |
 | H-38 | Står på valproat; lamotrigin legges til uten at måldosen er valgt | Skjemaet krever mer | Måldosen må fylles inn som et tall større enn 0. | – |
+| H-39 | Escitalopram 10 mg tablett, kort behandlingstid; forskriveren bytter til dråper etter at tablettvalget ikke ga plan | Komplett plan til sluttmål (seponering-escitalopram v13) | [formvalg først fra: Tablett: Regel finnes, men beregningen stopper] / [formvalg byttet til legemiddelform 748] / [valgt dose escitalopram trinn 1: 8 mg] / [valgt dose escitalopram trinn 3: 5 mg] / [valgt dose escitalopram trinn 4: 4 mg] / [valgt dose escitalopram trinn 6: 2 mg] / [valgt dose escitalopram trinn 7: 1 mg] / Dag 1–28: Escitalopram peroralt: 8 mg = 8 dråper à 1 mg (valgt av forskriveren (beregnet 7,5 mg; −20 %)) / Dag 29: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. / Dag 29–56: Escitalopram peroralt: 6 mg = 6 dråper à 1 mg / Dag 57: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. / Dag 57–84: Escitalopram peroralt: 5 mg = 5 dråper à 1 mg (valgt av forskriveren (beregnet 4,5 mg; −16,67 %)) / Dag 85: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. / Dag 85–112: Escitalopram peroralt: 4 mg = 4 dråper à 1 mg (valgt av forskriveren (beregnet 3,75 mg; −20 %)) / Dag 113: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. / Dag 113–140: Escitalopram peroralt: 3 mg = 3 dråper à 1 mg / Dag 141: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. / Dag 141–168: Escitalopram peroralt: 2 mg = 2 dråper à 1 mg (valgt av forskriveren (beregnet 2,25 mg; −33,33 %)) / Dag 169: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. / Dag 169–196: Escitalopram peroralt: 1 mg = 1 dråpe à 1 mg (valgt av forskriveren (beregnet 1,5 mg; −50 %)) / Dag 197: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. / Fra dag 197: Escitalopram peroralt: Seponert / Dag 203: Vurdering (Escitalopram): Vurder seponeringssymptomer og tegn på tilbakefall 7 dager etter siste dose. / Dag 210: Vurdering (Escitalopram): Vurder seponeringssymptomer og tegn på tilbakefall 14 dager etter siste dose. / Dag 224: Vurdering (Escitalopram): Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose. | – |
 
 ## Delplan vises som klinisk doseplan
 
@@ -73,15 +74,15 @@ Klinikerflaten skal aldri tilby en delplan som klinisk doseplan, heller ikke for
 
 ## Minstekrav for første nyttige leveranse (målt på katalogen)
 
-| Krav | Komplette i katalogen | Minst | Oppfylt |
-| --- | ---: | ---: | --- |
-| K1 komplette nedtrappinger | 2 | 2 | ja |
-| K2 komplette antidepressivbytter | 0 | 3 | nei |
-| K3 komplette perorale antipsykotikabytter | 0 | 2 | nei |
-| K3 komplette depotrelaterte antipsykotikabytter | 2 | 2 | ja |
-| K4 komplette tilleggsscenarier | 2 | 2 | ja |
+| Krav | Ulike godkjente forløp med komplett plan | Positive kasus | Minst | Oppfylt |
+| --- | ---: | ---: | ---: | --- |
+| K1 komplette nedtrappinger | 1 | 3 | 2 | nei |
+| K2 komplette antidepressivbytter | 0 | 0 | 3 | nei |
+| K3 komplette perorale antipsykotikabytter | 0 | 0 | 2 | nei |
+| K3 komplette depotrelaterte antipsykotikabytter | 2 | 2 | 2 | ja |
+| K4 komplette tilleggsscenarier | 2 | 2 | 2 | ja |
 
-Oppfylt her betyr bare at QA-testen finner så mange komplette planer i katalogen; klinisk godkjenning og prøve i appen kreves i tillegg (plan §8).
+Kravet telles i ulike klinisk godkjente forløp (regler), ikke i positive kasus: to startdoser eller to legemiddelformer i samme regel er ett forløp. Oppfylt her betyr bare at QA-testen finner så mange; klinisk godkjenning og prøve i appen kreves i tillegg (plan §8).
 
 ## Dekningsnevnere (alle valg i verktøyene)
 

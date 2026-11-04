@@ -85,6 +85,12 @@ export interface Brukerforlop {
   fest?: Pilotkasus['fest']
   /** «regelens»: forskriveren velger måldosen regelen tilbyr, når den tilbyr nøyaktig én (som K4-reglene gjør). */
   maldose?: 'regelens'
+  /**
+   * Legemiddelformen forskriveren bytter til etter første beregning (FEST-kode),
+   * for eksempel dråper etter at tablettvalget ikke ga plan. Forløpet regnes
+   * da i to steg, slik siden gjør: først med formen siden foreslår, så med denne.
+   */
+  formbytte?: string
 }
 
 /** FEST-legemiddelformen dråper (mikstur, dråper), som escitalopram finnes som. */
@@ -175,6 +181,7 @@ export const BRUKERFORLOP: readonly Brukerforlop[] = [
   { ...ned('H-36', 'Vortioksetin 20 mg når 15 mg-tablettene er avregistrert', 'vortioksetin', '20'), fest: avregistrert('vortioksetin', 15) },
   { ...ad('H-37', 'Sertralin 100 mg byttes til mirtazapin når mirtazapin 15 mg er avregistrert', 'sertralin', 'mirtazapin', '100'), fest: avregistrert('mirtazapin', 15) },
   { ...tillegg('H-38', 'Står på valproat; lamotrigin legges til uten at måldosen er valgt', 'valproat', 'lamotrigin', '1000'), maldose: undefined },
+  { ...ned('H-39', 'Escitalopram 10 mg tablett, kort behandlingstid; forskriveren bytter til dråper etter at tablettvalget ikke ga plan', 'escitalopram', '10'), formbytte: DRAPER },
 ]
 
 /* --- Kjøringen ------------------------------------------------------------------- */
@@ -249,6 +256,10 @@ export interface Forlopsresultat {
   vist: string[]
   /** Brudd på QA-invariantene; tom når alt er i orden. */
   feil: string[]
+  /** Skjemaet slik forløpet til slutt fylte det ut (måldose, svar, formvalg og valgte doser). */
+  skjema?: Partial<Planskjema>
+  /** Ved formbytte: utfallet før byttet. */
+  forBytte?: Utfallsklasse
 }
 
 /**
@@ -277,6 +288,22 @@ function medRegelensMaldose(verktoy: Verktoy, f: Brukerforlop): Partial<Planskje
 
 /** Kjører forløpet som verktøysiden ville gjort, med automatiske formvalg der siden ber om det. */
 export function kjorForlop(f: Brukerforlop, u: Uttrekkene, ekstra: Partial<Pilotkasus> = {}): Forlopsresultat {
+  if (f.formbytte) {
+    const { formbytte, ...uten } = f
+    const forst = kjorEtt(uten, u, ekstra)
+    const etter = kjorEtt({ ...uten, skjema: { ...uten.skjema, formvalg: { fra: { legemiddelform: formbytte } } } }, u, ekstra)
+    return {
+      ...etter,
+      forlop: f,
+      forBytte: forst.klasse,
+      formvalg: [`først ${forst.formvalg.join(', ') || 'formen siden foreslår'}: ${KLASSENAVN[forst.klasse]}`, `byttet til legemiddelform ${formbytte}`, ...etter.formvalg],
+      feil: [...forst.feil.filter((x) => x === DELPLAN_VIST), ...etter.feil],
+    }
+  }
+  return kjorEtt(f, u, ekstra)
+}
+
+function kjorEtt(f: Brukerforlop, u: Uttrekkene, ekstra: Partial<Pilotkasus>): Forlopsresultat {
   const verktoy = VERKTOY.find(VERKTOY_FOR[f.leveranse])
   if (!verktoy)
     return {
@@ -340,7 +367,7 @@ export function kjorForlop(f: Brukerforlop, u: Uttrekkene, ekstra: Partial<Pilot
   // En regel som er endret på en kopi (simulert godkjenning i et kontrollgrunnlag), vurderes som kopien.
   const regel = ekstra.regel && regelFor(utfall) ? endretKopi(regelFor(utfall)!, ekstra.regel) : regelFor(utfall)
   const grunner = 'grunner' in utfall ? utfall.grunner : []
-  const base = { forlop: f, verktoy, uttrekk, utfall, formvalg, trinnvalg, regel }
+  const base = { forlop: f, verktoy, uttrekk, utfall, formvalg, trinnvalg, regel, skjema }
   switch (utfall.utfall) {
     case 'plan': {
       const klasse = komplett(regel!, utfall.resultat!, planinndata(f.dose, skjema.maldose)) ? 'komplett' : 'delplan'
@@ -379,6 +406,40 @@ export function kjorForlop(f: Brukerforlop, u: Uttrekkene, ekstra: Partial<Pilot
     case 'sperret':
       return { ...base, klasse: 'sperret', vist: [], feil: [] }
   }
+}
+
+/** Tidslinjen slik appen viser den: kolonneoverskriftene og cellene i hver rad. */
+export interface Tidslinje {
+  koloner: string[]
+  rader: string[][]
+}
+
+/** Bokstaver og tall, uten mellomrom og tegn, så celletekst og kopiert linje kan sammenlignes. */
+const kjerne = (x: string) => x.replace(/[^\p{L}\p{N}]/gu, '').toLowerCase()
+
+/**
+ * Den synlige tidslinjen mot den kopierte teksten: hver rad i tabellen har
+ * linjer med samme tidspunkt i kopien, og hver celle står i dem (bortsett fra
+ * ordet «Vurdering», som kopien skriver med virkestoffet i parentes); hver
+ * tidslinjelinje i kopien har en rad i tabellen.
+ */
+export function tidslinjeavvik(t: Tidslinje, kopi: string): string[] {
+  const avvik: string[] = []
+  const linjer = kopi.split('\n')
+  const tidspunkt = new Set(t.rader.map((r) => r[0]!))
+  for (const [naar, ...celler] of t.rader) {
+    const her = kjerne(linjer.filter((l) => l.startsWith(`${naar}: `) || l.startsWith(`${naar} (`)).join(' '))
+    if (!her) {
+      avvik.push(`tabellraden «${naar}» finnes ikke i kopien`)
+      continue
+    }
+    for (const c of celler.filter(Boolean)) if (!her.includes(kjerne(c.replace(/^Vurdering\s*/, '')))) avvik.push(`cellen «${c.slice(0, 50)}» (${naar}) står ikke slik i kopien`)
+  }
+  for (const l of linjer) {
+    const m = /^((?:Fra )?[Dd]ag \d+(?:–\d+)?)(?: \([^)]*\))?: /.exec(l)
+    if (m && !tidspunkt.has(m[1]!)) avvik.push(`kopiens linje «${l.slice(0, 50)}» har ingen rad i tabellen`)
+  }
+  return avvik
 }
 
 /* --- Den uavhengige vurderingen ---------------------------------------------------- */
@@ -682,7 +743,7 @@ export function lagQaRapport(resultater: readonly Forlopsresultat[], tillegg: re
     `<!-- Laget av \`QA_SKRIV=1 npx vitest run src/__tests__/qa\`; rediger ikke for hånd. -->`,
     '# OUSFAR Verktøy – uavhengig QA av brukerforløp',
     '',
-    'Spor H i `docs/verktøy-klinisk-leveranseplan-2026-11.md`. Hvert forløp er en syntetisk, vanlig situasjon kjørt gjennom den samme veien som verktøysiden, mot de lagrede FEST-uttrekkene. Klassen er QA-testens egen vurdering av planens forløp (komplett = når sluttmålet), ikke regelens selvbeskrivelse. Dette er en måling, ikke en klinisk godkjenning. Verktøyene er bare synlige for administratorer; ingen plan her er tilgjengelig for klinikere. K0-01 slik den står (tablett) regnes ikke som levert: bare dråper fra 10 og 20 mg ved kort behandlingstid gir komplett plan, og verktøyet har ingen kontrollert overgang fra tablett til dråper.',
+    'Spor H i `docs/verktøy-klinisk-leveranseplan-2026-11.md`. Hvert forløp er en syntetisk, vanlig situasjon kjørt gjennom den samme veien som verktøysiden, mot de lagrede FEST-uttrekkene. Klassen er QA-testens egen vurdering av planens forløp (komplett = når sluttmålet), ikke regelens selvbeskrivelse. Dette er en måling, ikke en klinisk godkjenning. Verktøyene er bare synlige for administratorer; ingen plan her er tilgjengelig for klinikere. K0-01 slik den står (tablett valgt i skjemaet) gir ingen komplett plan og regnes ikke som levert: regelen godtar faglig overgang fra tabletter til dråper mg for mg, men appens automatiske brukerflyt fra tablettvalget gir ingen plan. Når forskriveren selv bytter til dråper (H-39), gir dråper fra 10 og 20 mg ved kort behandlingstid komplett plan i et snevert omfang.',
     '',
     '## Måltall per leveranse',
     '',

@@ -24,7 +24,21 @@ import { VERKTOY, virkestoffvalg } from '../../verktoy/register'
 import { erKliniskGodkjent, fingeravtrykk, harBeregning } from '../../verktoy/regler/godkjenning'
 import { SAMMENLIGNINGSSETT } from '../../verktoy/regler/nedtrapping'
 import { REGELSETTENE, tilForlop, tilgjengelighet } from '../../verktoy/tilgjengelighet'
-import { BRUKERFORLOP, KLASSENAVN, kjorForlop, komplett, lagQaRapport, lesUttrekkene, omfangssveip, planfeil, QA_RAPPORT, sveiplinjer, type Leveranse } from './brukerforlop'
+import {
+  BRUKERFORLOP,
+  KLASSENAVN,
+  kjorForlop,
+  tidslinjeavvik,
+  type Tidslinje,
+  komplett,
+  lagQaRapport,
+  lesUttrekkene,
+  omfangssveip,
+  planfeil,
+  QA_RAPPORT,
+  sveiplinjer,
+  type Leveranse,
+} from './brukerforlop'
 
 const UTTREKK = lesUttrekkene()
 const RESULTATER = BRUKERFORLOP.map((f) => kjorForlop(f, UTTREKK))
@@ -171,18 +185,47 @@ describe('QA-kontrollen selv', () => {
   })
 })
 
+describe('QA: tidslinjen i appen mot kopien', () => {
+  const kopi = [
+    'Trappe ned antidepressiv',
+    '',
+    'Dag 1–28: Escitalopram peroralt: 8 mg = 8 dråper à 1 mg',
+    'Dag 29: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer.',
+    'Fra dag 29: Escitalopram peroralt: Seponert',
+  ].join('\n')
+  const tabell: Tidslinje = {
+    koloner: ['Når', 'Escitalopram peroralt'],
+    rader: [
+      ['Dag 1–28', '8 mg\n8 dråper à 1 mg'],
+      ['Dag 29', 'Vurdering\nFør endringen: Vurder seponeringssymptomer.'],
+      ['Fra dag 29', 'Seponert'],
+    ],
+  }
+  it('godtar en tabell som står slik i kopien, og finner en annen dose, en manglende rad og en linje uten rad', () => {
+    expect(tidslinjeavvik(tabell, kopi)).toEqual([])
+    const feilDose = { ...tabell, rader: tabell.rader.map((r) => (r[0] === 'Dag 1–28' ? ['Dag 1–28', '9 mg\n9 dråper à 1 mg'] : r)) }
+    expect(tidslinjeavvik(feilDose, kopi).join()).toMatch(/cellen «9 mg/)
+    expect(tidslinjeavvik({ ...tabell, rader: [...tabell.rader, ['Dag 57', '4 mg']] }, kopi).join()).toMatch(/tabellraden «Dag 57» finnes ikke/)
+    expect(tidslinjeavvik({ ...tabell, rader: tabell.rader.slice(1) }, kopi).join()).toMatch(/kopiens linje «Dag 1–28/)
+  })
+})
+
 describe('QA: K0-01 escitalopram (tablett og dråper)', () => {
   const r = (id: string) => RESULTATER.find((x) => x.forlop.id === id)!
   it('regner ikke tablettvarianten som levert, men gir komplett plan til 0 med dråper fra 10 og 20 mg ved kort behandlingstid', () => {
     const regel = r('H-30').regel
     if (!regel || !erKliniskGodkjent(regel) || regel.versjon < 13) return
-    // Tabletten har ingen kontrollert overgang til dråper i verktøyet, så den stopper uten doser.
+    // Fra tablettvalget gir appens automatiske flyt ingen plan; forskriveren må selv bytte til dråper (H-39).
     expect([r('K0-01').klasse, r('K0-01').utfall?.resultat?.status]).not.toContain('komplett')
     expect(r('K0-01').klasse).toBe('stoppet')
-    expect(['H-30', 'H-31'].map((id) => [id, r(id).klasse, r(id).feil])).toEqual([
+    expect(['H-30', 'H-31', 'H-39'].map((id) => [id, r(id).klasse, r(id).feil])).toEqual([
       ['H-30', 'komplett', []],
       ['H-31', 'komplett', []],
+      ['H-39', 'komplett', []],
     ])
+    // Byttet fra tablett til dråper: først ingen plan, deretter den samme planen som med dråper fra starten.
+    expect(r('H-39').forBytte).toBe('stoppet')
+    expect(r('H-39').utfall?.tekst).toBe(r('H-30').utfall?.tekst)
     // Lang behandlingstid er utenfor det avgrensede omfanget.
     expect([r('H-32').klasse, r('H-32').vist.join(' ')]).toEqual(['stoppet', expect.stringMatching(/Komplett plan ikke tilgjengelig/)])
   })
@@ -303,11 +346,12 @@ function nevnere(): string[] {
   ]
 }
 
-/** Minstekravene for første nyttige leveranse (plan §5), målt på katalogen. */
+/** Minstekravene for første nyttige leveranse (plan §5): ulike klinisk godkjente forløp (regler) med komplett plan, ikke antall positive kasus. */
 function minstekrav(): string[] {
-  const komplette = (l: Leveranse, filter: (id: string) => boolean = () => true) => RESULTATER.filter((r) => r.forlop.leveranse === l && r.klasse === 'komplett' && filter(r.forlop.id)).length
+  const komplette = (l: Leveranse, filter: (id: string) => boolean = () => true) => RESULTATER.filter((r) => r.forlop.leveranse === l && r.klasse === 'komplett' && filter(r.forlop.id))
+  const ulike = (x: readonly { regel?: { id: string } }[]) => new Set(x.map((r) => r.regel!.id)).size
   const depot = (id: string) => BRUKERFORLOP.find((f) => f.id === id)!.valg.til?.formulering !== 'standard' || BRUKERFORLOP.find((f) => f.id === id)!.valg.fra.formulering !== 'standard'
-  const rader: [string, number, number][] = [
+  const rader: [string, ReturnType<typeof komplette>, number][] = [
     ['K1 komplette nedtrappinger', komplette('K1'), 2],
     ['K2 komplette antidepressivbytter', komplette('K2'), 3],
     ['K3 komplette perorale antipsykotikabytter', komplette('K3', (id) => !depot(id)), 2],
@@ -317,11 +361,11 @@ function minstekrav(): string[] {
   return [
     '## Minstekrav for første nyttige leveranse (målt på katalogen)',
     '',
-    '| Krav | Komplette i katalogen | Minst | Oppfylt |',
-    '| --- | ---: | ---: | --- |',
-    ...rader.map(([k, n, m]) => `| ${k} | ${n} | ${m} | ${n >= m ? 'ja' : 'nei'} |`),
+    '| Krav | Ulike godkjente forløp med komplett plan | Positive kasus | Minst | Oppfylt |',
+    '| --- | ---: | ---: | ---: | --- |',
+    ...rader.map(([k, x, m]) => `| ${k} | ${ulike(x)} | ${x.length} | ${m} | ${ulike(x) >= m ? 'ja' : 'nei'} |`),
     '',
-    'Oppfylt her betyr bare at QA-testen finner så mange komplette planer i katalogen; klinisk godkjenning og prøve i appen kreves i tillegg (plan §8).',
+    'Kravet telles i ulike klinisk godkjente forløp (regler), ikke i positive kasus: to startdoser eller to legemiddelformer i samme regel er ett forløp. Oppfylt her betyr bare at QA-testen finner så mange; klinisk godkjenning og prøve i appen kreves i tillegg (plan §8).',
     '',
   ]
 }
