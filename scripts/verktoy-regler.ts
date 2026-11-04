@@ -24,6 +24,7 @@ import { festkoblinger } from '../src/verktoy/register'
 import { DEKNINGSRAPPORTFIL, lagDekningsrapport } from '../src/verktoy/dekningsrapport'
 import { disposisjonsfeil } from '../src/verktoy/regler/godkjenning'
 import { kontrollerRegelsett } from '../src/verktoy/regler/kontroll'
+import { REGELSETT } from '../src/verktoy/tilgjengelighet'
 import { lagRegelrapport, REGELRAPPORTER } from '../src/verktoy/regler/rapport'
 import { lagMotorrapport, MOTORRAPPORTFIL } from '../src/verktoy/motor/rapport'
 import { lagRegeldekningsrapport, REGELDEKNINGSFIL } from '../src/verktoy/regeldekning'
@@ -43,7 +44,7 @@ const lesUttrekk = (fil: string) => JSON.parse(readFileSync(new URL(`../${fil}`,
 async function kontroll() {
   let antall = 0
   for (const { sett, disposisjoner = [] } of REGELRAPPORTER) {
-    const feil = [...kontrollerRegelsett(sett), ...disposisjoner.flatMap((d) => disposisjonsfeil(sett.regler, d))]
+    const feil = [...kontrollerRegelsett(sett, undefined, REGELSETT.regler), ...disposisjoner.flatMap((d) => disposisjonsfeil(sett.regler, d))]
     for (const f of feil) console.error(`✗ ${sett.id}: ${f}`)
     console.log(feil.length === 0 ? `✓ ${sett.id}: ${sett.regler.length} regler uten feil` : `${sett.id}: ${feil.length} feil`)
     antall += feil.length

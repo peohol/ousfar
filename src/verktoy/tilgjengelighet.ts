@@ -10,7 +10,7 @@
 import { dekningFor, dekningstekst } from './dekning'
 import { KILDEFORMULERINGER, type Kildeformulering, type Virkestoffkartlegging } from './kartlegging'
 import { KARTLEGGING, VERKTOY, virkestoffvalg, type Verktoy } from './register'
-import { godkjenningsfeil, harBeregning, kontrollutfall } from './regler/godkjenning'
+import { erErstattet, godkjenningsfeil, harBeregning, kontrollutfall } from './regler/godkjenning'
 import { REGELMODELLVERSJON, type Administrasjon, type Forlop, type Regel, type Regelsett, type Virkestoffvalg } from './regler/modell'
 import { DOMENESETT } from './regler/domenesett'
 import { NEDTRAPPINGSSETT } from './regler/nedtrapping'
@@ -92,14 +92,19 @@ export function avSlaget(verktoy: Pick<Verktoy, 'type'>, r: Pick<Regel, 'til'> &
   return r.til !== null && (r.plan.form === 'tillegg') === (verktoy.type === 'tillegg')
 }
 
-/** Reglene i settet som gjelder valgene i verktøyet: samme slag, retning, virkestoffer og administrasjonsform. */
+/**
+ * Reglene i settet som gjelder valgene i verktøyet: samme slag, retning,
+ * virkestoffer og administrasjonsform. En regel som er erstattet av en gyldig
+ * godkjent regel i settet (`Regel.erstatter`), er trukket og er ikke med.
+ */
 export function reglerFor(verktoy: Verktoy, valg: Verktoyvalg, regelsett: Regelsett = REGELSETT, k: Virkestoffkartlegging = KARTLEGGING): Regel[] {
-  return regelsett.regler.filter((r) => {
+  const passer = (r: Regel) => {
     if (!avSlaget(verktoy, r) || (verktoy.type !== 'seponering' && !valg.til)) return false
     if (!passerVirkestoff(r.fra, valg.fra.nokkel, k) || fraForlop(r)?.administrasjon !== administrasjonFor(valg.fra.formulering)) return false
     if (!valg.til || !r.til) return true
     return passerVirkestoff(r.til, valg.til.nokkel, k) && tilForlop(r)?.administrasjon === administrasjonFor(valg.til.formulering)
-  })
+  }
+  return regelsett.regler.filter((r) => passer(r) && !erErstattet(r, regelsett.regler))
 }
 
 /** Gruppemedlemmet valgene gjelder når regelen er for en gruppe. */
@@ -175,14 +180,15 @@ export const verktoyeneFor = (r: Pick<Regel, 'fra' | 'til' | 'plan'>, verktoyene
  * mange som er kontrollert og ikke godkjent (også bare fagtekst), og hvor
  * mange som venter på faglig kontroll, med de samme kravene som
  * {@link tilgjengelighet}: en godkjent regel uten beregning telles ikke som
- * tilgjengelig.
+ * tilgjengelig, og en erstattet regel telles ikke.
  */
 export function regeloversikt(
   verktoy: Verktoy,
   regelsett: Regelsett = REGELSETT,
   k: Virkestoffkartlegging = KARTLEGGING,
 ): { tilgjengelige: number; ikkeGodkjent: number; tilKontroll: number } {
-  const egne = regelsett.regler.filter(iVerktoyet(verktoy, k))
+  const iv = iVerktoyet(verktoy, k)
+  const egne = regelsett.regler.filter((r) => iv(r) && !erErstattet(r, regelsett.regler))
   return {
     tilgjengelige: egne.filter((r) => godkjenningsfeil(r).length === 0 && harBeregning(r)).length,
     ikkeGodkjent: egne.filter((r) => utenGodkjenning(r) && kontrollutfall(r) !== 'til_kontroll').length,
