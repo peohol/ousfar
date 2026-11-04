@@ -48,6 +48,7 @@ Gjelder hver PR i denne planen. Hver invariant håndheves av en test som D eier 
 | S3 | For hver godkjent regel og hvert kasus i QA-katalogen (K0-01–K0-12, H-01–H-39) er planen (perioder, doser, preparater, vurderingspunkter) uendret, med mindre en ny, godkjent regelversjon uttrykkelig tar i bruk ny motoratferd. |
 | S4 | «Ukjent» er aldri det trygge svaret. Ukjent og ubesvart gir ingen plan, men en konkret forklaring på hva som må avklares. |
 | S5 | Hver betingelse i hver godkjent regel (spørsmål, unntak, bekreftelse) er enten spurt om, avledet fra et eksplisitt svar med testet avbildning, eller vist i planen og kopien. En ny betingelse uten klassifisering spørres om med regelens egen tekst (trygg standard). |
+| S5b | Avbildningen fra katalogen til motorens felt er bundet til kontrollen: hver regelversjon har et kontrollert katalogavtrykk (§4.4). Stemmer ikke avtrykket for katalogoppføringene regelen bruker, brukes den trygge standarden fra S5 for hele regelen: alle betingelser spørres med regelens tekst, og alle bekreftelser krysses av. Ingen godkjent regel får dermed andre inndata uten ny kontroll. |
 | S6 | Avledninger testes ved grenseverdier (alder 17/18, 64/65/66; dosegrenser). |
 | S7 | Nødstopper, sperrelesing, FEST-ferskhet, godkjenningsfritak og klokkekontroll virker som i dag; eksisterende tester endres ikke for å bli grønne. |
 | S8 | Kopien inneholder hele planen: alle trinn med dager/datoer, doser, preparater, styrker og antall enheter, administrasjon, vurderingspunkter, forbehold, kilder, regelversjon og fingeravtrykk. |
@@ -84,7 +85,7 @@ Skissen viser oppsettet, ikke reelle doser. På stor skjerm står planen ved sid
 
 ### 4.1 Klassifisering av betingelsene
 
-Hver betingelse i en regel (`Sporsmal`, `Unntak`, `Bekreftelse`) får én kategori i en ny katalog (`src/verktoy/flyt/sporsmal.ts`). Katalogen ligger **utenfor** regelen, så fingeravtrykket ikke endres (S2), og den avbildes til nøyaktig de samme feltene motoren leser i dag (`svar`, `pasientforhold`, `bekreftet`).
+Hver betingelse i en regel (`Sporsmal`, `Unntak`, `Bekreftelse`) får én kategori i en ny katalog (`src/verktoy/flyt/sporsmal.ts`). Katalogen ligger **utenfor** regelen, så regelens fingeravtrykk ikke endres (S2). Avbildningen har likevel sitt eget kontrollerte avtrykk per regelversjon (S5b, §4.4), så en senere endring i katalogen ikke stille endrer hva motoren får. Den avbildes til nøyaktig de samme feltene motoren leser i dag (`svar`, `pasientforhold`, `bekreftet`).
 
 | Kategori | Hva | Vises som | Eksempler fra godkjente regler |
 | --- | --- | --- | --- |
@@ -115,6 +116,8 @@ Felles spørsmål på tvers av regler (alder, organfunksjon, interaksjoner, grav
 
 C lager `docs/verktøy-sporsmalskatalog.md`: én rad per betingelse i hver godkjent regel med regelens tekst, ny tekst, kategori, svaralternativer, avbildning til motoren og hva «Ukjent» gir. ChatGPT kontrollerer tabellen sammen med C sin PR. Tabellen genereres fra katalogen, og en test sier fra når den ikke stemmer med koden.
 
+**Katalogavtrykk (S5b).** For hver regelversjon beregnes et avtrykk (sha256) av katalogoppføringene regelen bruker: kategori, tekst, svar, avbildning, avledning og hva «Ukjent» gir. Når ChatGPT har kontrollert tabellen, føres avtrykket som kontrollert for nøyaktig den regelversjonen og det regelfingeravtrykket (`src/verktoy/flyt/katalogkontroll.ts`, samme mønster som godkjenningshistorikken). Ved kjøring brukes katalogen for en regel bare når avtrykket stemmer; ellers den trygge standarden. En test viser at en endret katalogoppføring gir standarden til ny kontroll er ført, og at standarden gir de samme motorinndataene som dagens skjema.
+
 ## 5. Tidlig kontroll av om en komplett plan kan lages
 
 Ny funksjon `forhandskontroll` (`src/verktoy/flyt/forhandskontroll.ts`), kjørt etter steg 1 og etter steg 2, og på nytt ved hvert svar:
@@ -122,7 +125,7 @@ Ny funksjon `forhandskontroll` (`src/verktoy/flyt/forhandskontroll.ts`), kjørt 
 1. Finnes en klinisk godkjent, usperret regel for valget (`tilgjengelighet`, sperrer)?
 2. Er startdosen (og ved behov form og preparat) innenfor regelens kliniske omfang (`klinisk_omfang.tilfeller`)? Hvis ikke: hvilke doser og former er godkjent, i klartekst («Godkjent for 10 og 20 mg»).
 3. Finnes norske preparater i FEST for hele forløpet? FEST leses allerede etter steg 2, ikke etter skjemaet.
-4. **Prøveberegning:** motoren kjøres med de svarene som er gitt og de trygge svarene for resten. Gir heller ikke det en komplett plan, sier verktøyet det nå, med grunnen. Gir det en plan, vises den ikke; brukeren får «En komplett plan kan lages hvis svarene under tillater det» og en teller for gjenstående spørsmål (S9).
+4. **Prøveberegning:** motoren kjøres med de svarene som er gitt og de trygge svarene for resten. Krever planen et valg av dose for et trinn (`trinnvalg`, for eksempel minste trinn for escitalopram v13), prøves hvert tillatte alternativ (avgrenset dybde); et slikt valg er en gjenstående opplysning, ikke en stopp. Gir ingen gren en komplett plan, og stopper alle av andre grunner enn manglende valg, sier verktøyet det nå, med grunnen. B skiller derfor stoppkoder for «valg trengs» fra reelle stopp. Gir det en plan, vises den ikke; brukeren får «En komplett plan kan lages hvis svarene under tillater det» og en teller for gjenstående spørsmål (S9).
 5. **Gjenstående opplysninger:** hvilke spørsmål som fortsatt kan avgjøre utfallet.
 
 Stoppgrunnene fra motoren er i dag fri tekst. B legger til en strukturert kode ved hver stoppgrunn (tekstene uendret), og C oversetter kodene til korte forklaringer med handling (`src/verktoy/flyt/stopp.ts`): hva som mangler, om det kan løses i verktøyet (for eksempel «velg dråper») eller må vurderes individuelt, og eventuell kilde. Oversikten over verktøyene og snarvalgene sier hva hvert verktøy kan gi i dag («Bytte antidepressiv: ingen komplett plan er godkjent ennå»), så ingen fyller ut et skjema forgjeves (P11).
