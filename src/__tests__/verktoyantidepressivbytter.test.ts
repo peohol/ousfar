@@ -6,7 +6,7 @@
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { FEST_K2, K2_KONTROLLFIL, K2_REGELRAPPORT, K2KASUS, k2avvik, kjorK2, lagK2Kontrollgrunnlag, somAvklartOgGodkjent, type K2kasus } from '../verktoy/k2kontroll'
+import { FEST_K2, K2_KONTROLLFIL, K2_REGELRAPPORT, K2KASUS, k2avvik, kjorK2, lagK2Kontrollgrunnlag, somAvklartOgGodkjent, type K2kasus, type Sluttrinn } from '../verktoy/k2kontroll'
 import { VERKTOY } from '../verktoy/register'
 import { BYTTESETT } from '../verktoy/regler/antidepressivbytter'
 import type { Festuttrekk } from '../verktoy/regler/aksepttest'
@@ -38,10 +38,10 @@ const vurderinger = (k: K2kasus) =>
     .filter(erVurdering)
     .map((l) => l.replace(/^Dag (\d+) \([^)]*\): Vurdering \((\w+)\): (Før endringen: )?.*$/, (_, d: string, navn: string, for_?: string) => `dag ${d} ${navn}${for_ ? ' før' : ''}`))
 
-/** Inndata med alle bekreftelser og nei på alle unntak, på en kopi med simulert avklaring og godkjenning. */
-function beregnSomGodkjent(r: Regel, x: Partial<Beregningsinndata>) {
+/** Inndata med alle bekreftelser og nei på alle unntak, på en kopi med simulert avklaring og godkjenning, og sluttrinnet som oppgitt (K2-2). */
+function beregnSomGodkjent(r: Regel, x: Partial<Beregningsinndata>, sluttrinn: Sluttrinn = 'laveste_tablett') {
   const kopi = structuredClone(r)
-  somAvklartOgGodkjent(kopi)
+  somAvklartOgGodkjent(kopi, sluttrinn)
   return beregn(kopi, { startdose_mg: 0, bekreftet: r.bekreftelser.map((b) => b.id), pasientforhold: Object.fromEntries(r.unntak.map((u) => [u.id, false])), ...x })
 }
 
@@ -89,7 +89,7 @@ describe('K2: regelsettet', () => {
     const aktivert = (trekkV10: boolean) => {
       const settene = structuredClone([...REGELSETTENE])
       const komplett = settene.flatMap((x) => x.regler).find((r) => r.id === 'bytte-sertralin-mirtazapin')!
-      somAvklartOgGodkjent(komplett)
+      somAvklartOgGodkjent(komplett, 'laveste_tablett')
       const v10 = settene.flatMap((x) => x.regler).find((r) => r.id === 'kryssnedtrapping-sertralin-mirtazapin')!
       if (trekkV10) v10.godkjenning = { status: 'trukket', historikk: [...v10.godkjenning.historikk, { ...v10.godkjenning.historikk.at(-1)!, status: 'trukket', dato: '2026-11-03', merknad: 'Erstattet av den komplette regelen (simulert).' }] }
       return tilgjengelighet(verktoy, valg, samlet(settene)).regler.map((r) => r.id)
@@ -113,7 +113,31 @@ describe('K2: regelsettet', () => {
   })
 })
 
-describe('K2: komplette forløp ende til ende med preparatene i FEST', () => {
+describe('K2: sluttrinnet ved bytte (K2-2)', () => {
+  it('seponerer aldri det gamle SSRI-et uten et avgjort sluttrinn: hver kombinasjon stopper, også simulert godkjent', () => {
+    for (const r of BYTTESETT.regler) {
+      const fase = r.plan.forlop[0]!.faser[0]!
+      expect(fase.type === 'nedtrapping' && typeof fase.avslutning === 'object' && fase.avslutning.fra_hoyst_mg.verdi, r.id).toBeNull()
+      expect(apneValg(r)).toContain('fra.faser[0].avslutning (åpent forslag)')
+      for (const d of r.inndata.find((x) => x.navn === 'startdose')!.verdier!) {
+        const res = beregnSomGodkjent(r, { startdose_mg: d, maldose_mg: r.inndata.find((x) => x.navn === 'maldose')!.verdier![0] }, 'ikke_avgjort')
+        expect(res.status, `${r.id} ${d}`).toBe('stoppet')
+        expect(res.status === 'stoppet' && res.stoppgrunner.join(' '), `${r.id} ${d}`).toMatch(/avslutning\.fra_hoyst_mg mangler og må avklares faglig/)
+      }
+    }
+  })
+
+  it('begrunner ikke seponeringen med laveste dose i preparatomtalen', () => {
+    for (const r of BYTTESETT.regler) {
+      const fase = r.plan.forlop[0]!.faser[0]!
+      if (fase.type !== 'nedtrapping' || fase.strategi.type !== 'prosent_av_aktuell') throw new Error(r.id)
+      const g = fase.strategi.sluttdose_mg!.grunnlag
+      expect(g.type === 'ousfar_vurdering' && g.begrunnelse, r.id).toMatch(/ingen seponeringsgrense/)
+    }
+  })
+})
+
+describe('K2: planene hvis sluttrinnet avgjøres som laveste tablettdose (K2-2, ikke avgjort), ende til ende med preparatene i FEST', () => {
   it('K0-04: sertralin 100 mg → mirtazapin 30 mg, til sertralin er seponert og mirtazapin står på 30 mg', () => {
     expect(linjer(kasus('bytte-sertralin-mirtazapin:100-30'))).toEqual([
       'Dag 1–14 (09.11.2026–22.11.2026): Sertralin peroralt: 50 mg = 1 tablett à 50 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg',

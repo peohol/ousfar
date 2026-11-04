@@ -45,7 +45,8 @@ const valgFor = (r: Regel): Verktoyvalg => {
  * med kontrollørens avklaringer; kopien viser hva den ville gitt om valgene
  * godtas uendret. Endres noe annet, stemmer ikke fingeravtrykket.
  */
-export function somAvklartOgGodkjent(x: Regel): void {
+export function somAvklartOgGodkjent(x: Regel, sluttrinn: Sluttrinn): void {
+  if (sluttrinn === 'laveste_tablett') medSluttrinnVedLavesteTablett(x)
   for (const [, g] of alleGrunnlag(x)) {
     if (g.type === 'ousfar_vurdering' && !g.avklaring) {
       g.avklaring = { dato: DATO, av: SIMULERT_KONTROLLOR, rolle: 'uavhengig_kontrollor', regelversjon: x.versjon, merknad: 'Simulert avklaring, bare i kontrollgrunnlaget.' }
@@ -54,7 +55,31 @@ export function somAvklartOgGodkjent(x: Regel): void {
   simulerGodkjenning(x, { id: x.id, versjon: x.versjon, fingeravtrykk: fingeravtrykk(x) }, DATO)
 }
 
-const simulert = (r: Regel): NonNullable<Pilotkasus['regel']> => ({ id: r.id, endre: { hva: `simulert avklaring og klinisk godkjenning av versjon ${r.versjon}, bare på en kopi`, endre: somAvklartOgGodkjent } })
+/**
+ * Sluttrinnet ved bytte (K2-2) i simuleringen: `ikke_avgjort` er regelen slik
+ * den er, der hver plan stopper før seponering; `laveste_tablett` er
+ * alternativet Peder vurderer, at det gamle SSRI-et seponeres fra laveste
+ * tablettdose. Det er ikke avgjort, og vises bare for at kontrolløren og Peder
+ * skal se planene det ville gitt.
+ */
+export type Sluttrinn = 'ikke_avgjort' | 'laveste_tablett'
+
+/** Setter sluttrinnet til laveste tablettdose (halveringens sluttdose), bare på en kopi i kontrollgrunnlaget. */
+export function medSluttrinnVedLavesteTablett(x: Regel): void {
+  for (const f of x.plan.forlop) {
+    for (const fase of f.faser) {
+      if (fase.type !== 'nedtrapping' || typeof fase.avslutning !== 'object' || fase.strategi.type !== 'prosent_av_aktuell' || !fase.strategi.sluttdose_mg) continue
+      fase.avslutning.fra_hoyst_mg.verdi = fase.strategi.sluttdose_mg.verdi
+    }
+  }
+}
+
+const SLUTTRINNTEKST: Record<Sluttrinn, string> = { ikke_avgjort: 'sluttrinnet ikke avgjort, slik regelen er', laveste_tablett: 'sluttrinnet simulert som laveste tablettdose (K2-2, ikke avgjort)' }
+
+const simulert = (r: Regel, sluttrinn: Sluttrinn): NonNullable<Pilotkasus['regel']> => ({
+  id: r.id,
+  endre: { hva: `simulert avklaring og klinisk godkjenning av versjon ${r.versjon}, ${SLUTTRINNTEKST[sluttrinn]}, bare på en kopi`, endre: (x: Regel) => somAvklartOgGodkjent(x, sluttrinn) },
+})
 
 /** Bytter der et godkjent startforløp allerede finnes; det skal fortsatt være det verktøyet bruker til den komplette regelen er godkjent. */
 const GODKJENT_START: Record<string, string> = { 'bytte-sertralin-mirtazapin': 'det godkjente startforløpet (kryssnedtrapping-sertralin-mirtazapin v10)' }
@@ -84,7 +109,7 @@ export function kasusFor(r: Regel): K2kasus[] {
   const valg = valgFor(r)
   const fra = valg.fra.nokkel
   const til = valg.til!.nokkel
-  const g = simulert(r)
+  const g = simulert(r, 'laveste_tablett')
   const hoy = String(startdoser(r).at(-1))
   const mal = String(maldoser(r).at(-1))
   const felles = { regelId: r.id, verktoy: VERKTOY, valg, uttrekk: 'aksept' as const, regel: g }
@@ -105,12 +130,25 @@ export function kasusFor(r: Regel): K2kasus[] {
           ...felles,
           id: `${r.id}:${d}-${m}`,
           kategori: 'vanlig_dose',
-          hva: `${fra} ${tall(d)} mg til ${til} ${tall(m)} mg`,
+          hva: `${fra} ${tall(d)} mg til ${til} ${tall(m)} mg, sluttrinnet simulert som laveste tablettdose`,
           dose: String(d),
           skjema: { maldose: String(m), startdato: '2026-11-09' },
           forventet: { utfall: 'plan', linjer: [] },
         }),
       ),
+    ),
+    // Slik regelen er: uten avgjort sluttrinn seponeres ikke det gamle SSRI-et, og ingen plan vises.
+    ...startdoser(r).map(
+      (d): K2kasus => ({
+        ...felles,
+        id: `${r.id}:${d}-sluttrinn-ikke-avgjort`,
+        kategori: 'vanlig_dose',
+        hva: `${fra} ${tall(d)} mg til ${til} ${mal} mg, ${SLUTTRINNTEKST.ikke_avgjort}`,
+        dose: String(d),
+        skjema: { maldose: mal, startdato: '2026-11-09' },
+        regel: simulert(r, 'ikke_avgjort'),
+        forventet: { utfall: 'stopp', grunner: ['avslutning.fra_hoyst_mg mangler og må avklares faglig'] },
+      }),
     ),
     stopp('dose-utenfor', `${fra} ${tall(startdoser(r)[0]! * 1.5)} mg, en dose regelen ikke gjelder for`, { dose: String(startdoser(r)[0]! * 1.5) }, ['er utenfor det regelen gjelder for'], 'uvanlig_dose'),
     stopp('maldose-utenfor', `vedlikeholdsdose ${til} ${tall(maldoser(r).at(-1)! * 1.5)} mg`, { skjema: { maldose: String(maldoser(r).at(-1)! * 1.5) } }, ['er utenfor det regelen gjelder for'], 'uvanlig_dose'),
@@ -196,8 +234,8 @@ export const SPORSMAL: readonly { nr: string; sporsmal: string; anbefalt: string
   },
   {
     nr: 'K2-2',
-    sporsmal: 'Kan seponeringen fra laveste dose (sertralin 25 mg, escitalopram 5 mg, citalopram 10 mg) etter 14 dager være en del av planen ved bytte, når toleransen er vurdert?',
-    anbefalt: 'Ja ved bytte: det nye antidepressivet er startet eller startes straks, og planen sier at seponeringen bare gjøres når toleransen er vurdert.',
+    sporsmal: 'Sluttrinnet ved bytte: kan det gamle SSRI-et seponeres fra laveste tablettdose (sertralin 25 mg, escitalopram 5 mg, citalopram 10 mg) etter 14 dager når det nye legemidlet er startet eller startes straks, eller trengs mindre trinn eller flytende formuleringer? Laveste dose i preparatomtalen er ingen seponeringsgrense, og ingen kilde i OUSFAR dokumenterer sluttrinnet ved bytte.',
+    anbefalt: 'Ikke avgjort. Til det er avgjort faglig, seponerer ingen regel, og hver plan stopper uten delplan. Planene under «hvis sluttrinnet avgjøres som laveste tablettdose» viser bare hva det alternativet ville gitt.',
   },
   {
     nr: 'K2-3',
@@ -206,8 +244,8 @@ export const SPORSMAL: readonly { nr: string; sporsmal: string; anbefalt: string
   },
   {
     nr: 'K2-4',
-    sporsmal: '(Es)citalopram → sertralin: er et moderat bytte med tre hele dager uten SSRI riktig standard, eller bør det være direkte bytte eller kryssnedtrapping?',
-    anbefalt: 'Moderat bytte som standard (lav interaksjonsrisiko); direkte bytte og kryssnedtrapping kan bli egne regler senere.',
+    sporsmal: '(Es)citalopram → sertralin: er et moderat bytte med tre hele dager uten SSRI riktig for dette omfanget (voksne 18–65 år, depresjon, kort behandlingstid, normal leverfunksjon)? Tre dager er omtrent 2,4 halveringstider for escitalopram og 2,0 for citalopram (preparatomtalene pkt. 5.2), innenfor Keks mfl.s 2–5 halveringstider og 2–4 dager. Direkte bytte og kryssnedtrapping er ikke vurdert.',
+    anbefalt: 'Moderat bytte i dette omfanget, med vurdering av seponeringssymptomer og forverring i dagene uten SSRI; direkte bytte og kryssnedtrapping krever egne kilder og regler.',
   },
   {
     nr: 'K2-5',
@@ -255,7 +293,7 @@ export function lagK2Kontrollgrunnlag(u: Festuttrekk): string {
 
 <!-- Laget av \`npx vite-node scripts/verktoy-antidepressivbytter.ts -- rapport\` fra reglene og FEST-uttrekket. Ikke rediger for hånd. -->
 
-**Ingen av reglene er klinisk godkjent.** Planene under er regnet på en kopi der hvert åpne OUSFAR-valg er simulert avklart uendret og regelen simulert godkjent, gjennom samme vei som verktøysiden, med preparatene i FEST-uttrekket ${u.hentet.slice(0, 10)} (\`${FEST_K2}\`). Kopien lagres aldri og går aldri til verktøysiden. Fingeravtrykket ved hver regel er versjonen under kontroll; en virkelig godkjenning krever en ny versjon med kontrollørens avklaringer, og den får et nytt fingeravtrykk. Uten godkjenning sier verktøyet at faglig kontroll gjenstår; det godkjente startforløpet fra sertralin til mirtazapin (versjon 10) brukes fortsatt i appen. Bakgrunn og kilder: \`docs/verktøy-k2-antidepressivbytter.md\`; reglene i sin helhet: \`${K2_REGELRAPPORT.fil}\`.
+**Ingen av reglene er klinisk godkjent, og ingen av dem seponerer det gamle SSRI-et ennå:** sluttrinnet ved bytte (K2-2) er ikke avgjort, så hver plan stopper før en delplan (kasusene «sluttrinnet ikke avgjort»). Planene under er regnet på en kopi der sluttrinnet er simulert som laveste tablettdose – et alternativ som ikke er avgjort – hvert annet åpent OUSFAR-valg er simulert avklart uendret, og regelen er simulert godkjent, gjennom samme vei som verktøysiden, med preparatene i FEST-uttrekket ${u.hentet.slice(0, 10)} (\`${FEST_K2}\`). Kopien lagres aldri og går aldri til verktøysiden. Fingeravtrykket ved hver regel er versjonen under kontroll; en virkelig godkjenning krever en ny versjon med kontrollørens avklaringer, og den får et nytt fingeravtrykk. Uten godkjenning sier verktøyet at faglig kontroll gjenstår. Det godkjente startforløpet fra sertralin til mirtazapin (versjon 10) er en delplan, som verktøyet ikke viser; det gir «Komplett plan ikke tilgjengelig». Bakgrunn og kilder: \`docs/verktøy-k2-antidepressivbytter.md\`; reglene i sin helhet: \`${K2_REGELRAPPORT.fil}\`.
 
 Kasusene er syntetiske. ${kjort.length} kasus, ${avvik.length === 0 ? 'alle med forventet utfall' : `${avvik.length} avvik`}.
 

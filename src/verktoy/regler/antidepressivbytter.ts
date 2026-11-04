@@ -32,7 +32,7 @@
 import type { Domenesett } from './domenesett'
 import { FORUTSETNINGER_FELLES, forslag, h, halvering, kilde, NICE, pn, RCPSYCH, steg, trinn14, utsagn } from './bygg'
 import { SPC } from './pilotsett'
-import type { Bekreftelse, Beregningsinndata, Forlop, Godkjenning, Kildehenvisning, Regel, Regelsett, Regneeksempel, Unntak, Vurderingspunkt } from './modell'
+import type { Avslutning, Bekreftelse, Beregningsinndata, Forlop, Godkjenning, Kildehenvisning, Regel, Regelsett, Regneeksempel, Unntak, Vurderingspunkt } from './modell'
 import { REGELMODELLVERSJON } from './modell'
 
 /* --- Fakta fra kildene, med egne ord ------------------------------------------------ */
@@ -135,8 +135,11 @@ const CITALOPRAM: Fra = {
   lever: PREPARATOMTALE.cipramilHalveringstid,
 }
 
-/** Halveringstiden som utvaskingen før sertralin bygger på. */
-const HALVERINGSTID: Partial<Record<Fra['nokkel'], Kildehenvisning>> = { escitalopram: PREPARATOMTALE.cipralexHalveringstid, citalopram: PREPARATOMTALE.cipramilHalveringstid }
+/** Halveringstiden (preparatomtalen pkt. 5.2, i timer) som utvaskingen før sertralin bygger på. */
+const HALVERINGSTID: Partial<Record<Fra['nokkel'], { timer: number; henvisning: Kildehenvisning }>> = {
+  escitalopram: { timer: 30, henvisning: PREPARATOMTALE.cipralexHalveringstid },
+  citalopram: { timer: 36, henvisning: PREPARATOMTALE.cipramilHalveringstid },
+}
 
 /** Tablett (FEST-form 53), den eneste formen reglene gjelder. */
 const TABLETT = '53'
@@ -149,7 +152,37 @@ const TIL_KONTROLL =
   'Sendt til uavhengig faglig kontroll av kilder, klinisk innhold, norske preparater og regneeksempler (K2). Ikke klinisk godkjent; alle OUSFAR-valg er åpne forslag.'
 const tilKontroll = (): Godkjenning => ({ status: 'til_faglig_kontroll', historikk: [steg('utkast', 1, UTKAST, DATO), steg('til_faglig_kontroll', 1, TIL_KONTROLL, DATO)] })
 
-/** Nedtrappingen av SSRI-et til seponering: halvering hver 14. dag ned til laveste dose i preparatomtalen, som gis i 14 dager før seponering. */
+/**
+ * Sluttrinnet ved bytte (K2-2): om, og fra hvilken dose, det gamle SSRI-et kan
+ * seponeres mens det nye legemidlet er startet eller startes. Laveste dose i
+ * preparatomtalen er ingen seponeringsgrense (ChatGPTs kontroll 03.11.2026), og
+ * ingen kilde i OUSFAR dokumenterer sluttrinnet ved bytte. Til det er avgjort
+ * faglig, har avslutningen ingen verdi, og hver plan stopper med «Komplett
+ * plan ikke tilgjengelig» i stedet for å seponere.
+ */
+function sluttrinnVedBytte(fra: Fra): Avslutning {
+  return {
+    type: 'seponering',
+    fra_hoyst_mg: forslag(
+      null,
+      'mg',
+      `Ikke avgjort. Halveringen stopper ved ${fra.sluttdose.mg} mg, laveste dose som kan gis med hele tabletter av styrkene i FEST, men det dokumenterer ikke at ${fra.nokkel} kan seponeres derfra. NICE og RCPsych beskriver mindre trinn ved lave doser og eventuelt flytende formuleringer; om det nye legemidlet gjør et kortere sluttforløp forsvarlig ved bytte, må avgjøres faglig (K2-2).`,
+      { art: 'bindende_krav', henvisninger: [NICE.andel, NICE.flytende, RCPSYCH.lavDose, NICE.bytte] },
+    ),
+    grunnlag: {
+      type: 'ousfar_vurdering',
+      begrunnelse: `Seponering av ${fra.nokkel} ved bytte krever en faglig avgjørelse av sluttrinnet for dette avgrensede omfanget. Uten den beregner regelen ingen seponering, og planen er ikke komplett.`,
+      henvisninger: [NICE.tempo, NICE.bytte],
+      avklaring: null,
+    },
+  }
+}
+
+/**
+ * Nedtrappingen av SSRI-et: halvering hver 14. dag ned til laveste
+ * tablettdose, som holdes ett trinn; seponering bare med et avgjort sluttrinn
+ * ({@link sluttrinnVedBytte}).
+ */
 function nedtrappingTilSeponering(fra: Fra): Forlop {
   return {
     id: 'fra',
@@ -165,13 +198,14 @@ function nedtrappingTilSeponering(fra: Fra): Forlop {
           forslag(
             fra.sluttdose.mg,
             'mg',
-            `Laveste dose i preparatomtalen (${fra.sluttdose.mg} mg) er siste trinn; den gis like lenge som de andre trinnene, og ${fra.nokkel} seponeres etter den. Halveringen gir da bare hele tabletter av styrkene i FEST.`,
+            `Halveringen stopper ved ${fra.sluttdose.mg} mg, laveste dose i preparatomtalen og laveste dose som kan gis med hele tabletter av styrkene i FEST. Dosen er ingen seponeringsgrense; seponeringen herfra er et eget, åpent valg (sluttrinnet ved bytte, K2-2).`,
             { henvisninger: [fra.sluttdose.henvisning, NICE.andel] },
           ),
         ),
         trinnlengde: trinn14('Ved bytte åpner NICE for raskere nedtrapping enn ved seponering; OUSFAR foreslår nedre del av RCPsychs to til fire uker. Dagene er minstetider: neste reduksjon først når toleransen er vurdert.', {
           henvisninger: [NICE.bytte, fra.seponering],
         }),
+        avslutning: sluttrinnVedBytte(fra),
       },
     ],
     vurderinger: [
@@ -262,15 +296,20 @@ const besvart = (bekreftet: string[], unntak: Unntak[], maldose_mg: number, star
   ...endre,
 })
 
-/** Dag–dag for hvert trinn i halveringen fra `startdose`, til og med siste dag før seponering; `n` er antall trinn. */
-function nedtrappingslinjer(startdose: number, sluttdose: number): { linjer: string[]; sisteDag: number } {
-  const linjer: string[] = []
-  let dag = 1
-  for (let mg = startdose / 2; mg >= sluttdose; mg /= 2) {
-    linjer.push(`dag ${dag}–${dag + 13}: ${mg} mg`)
-    dag += 14
+/**
+ * Regneeksempelet for en startdose og vedlikeholdsdose i omfanget: uten
+ * avgjort sluttrinn (K2-2) seponeres ikke det gamle SSRI-et, og regelen gir
+ * ingen plan. Planene et avgjort sluttrinn ville gitt, står i
+ * kontrollgrunnlaget og er ikke del av regelen.
+ */
+function utenSluttrinn(fra: Fra, til: string, bekreftet: string[], unntak: Unntak[], startdose: number, maldose: number): Regneeksempel {
+  return {
+    id: `fra-${startdose}-mg-til-${maldose}-mg`,
+    beskrivelse: `${fra.nokkel} ${startdose} mg til ${til} ${maldose} mg: halveringen når ${fra.sluttdose.mg} mg, men uten avgjort sluttrinn seponeres ikke ${fra.nokkel}, og planen stopper før en delplan.`,
+    inndata: besvart(bekreftet, unntak, maldose, startdose),
+    forventet: {},
+    stopp: /avslutning\.fra_hoyst_mg mangler og må avklares faglig/,
   }
-  return { linjer: [...linjer, `fra dag ${dag}: seponert`], sisteDag: dag - 1 }
 }
 
 /** Den syntetiske dosen kasusene bruker når en regel skal stoppe av en annen grunn enn dosen. */
@@ -293,15 +332,8 @@ export function ssriTilMirtazapin(fra: Fra): Regel {
       grunnlag: { type: 'kilde', henvisninger: [PREPARATOMTALE.remeronNyreLever] },
     },
   ]
-  const eksempel = (startdose: number, maldose: number): Regneeksempel => {
-    const { linjer, sisteDag } = nedtrappingslinjer(startdose, fra.sluttdose.mg)
-    return {
-      id: `fra-${startdose}-mg-til-${maldose}-mg`,
-      beskrivelse: `${fra.nokkel} ${startdose} mg til mirtazapin ${maldose} mg: halvering hver 14. dag til ${fra.sluttdose.mg} mg og seponering, mirtazapin 15 mg fra dag 1${maldose === 15 ? ' som fortsetter' : ` og ${maldose} mg fra dagen etter siste dose ${fra.nokkel}`}.`,
-      inndata: besvart(BEKREFTET_MIRTAZAPIN, unntak, maldose, startdose),
-      forventet: { fra: linjer, til: maldose === 15 ? ['fra dag 1: 15 mg'] : [`dag 1–${sisteDag}: 15 mg`, `fra dag ${sisteDag + 1}: ${maldose} mg`] },
-    }
-  }
+  const eksempel = (startdose: number, maldose: number) => utenSluttrinn(fra, 'mirtazapin', BEKREFTET_MIRTAZAPIN, unntak, startdose, maldose)
+
   const lav = fra.startdoser[0]!
   const hoy = forsteDose(fra)
   return {
@@ -403,7 +435,6 @@ export function ssriTilMirtazapin(fra: Fra): Regel {
     eksempler: [
       eksempel(hoy, 30),
       eksempel(lav, 15),
-      eksempel(lav, 30),
       {
         id: 'startdose-utenfor',
         beskrivelse: `En dose som ikke kan halveres med hele tabletter, stopper.`,
@@ -457,16 +488,8 @@ export function ssriTilSertralin(fra: Fra): Regel {
   const unntak = felleUnntak(fra, SERTRALIN_TIL)
   const halveringstid = HALVERINGSTID[fra.nokkel]
   if (!halveringstid) throw new Error(`${fra.nokkel}: halveringstiden utvaskingen bygger på, mangler`)
-  const eksempel = (startdose: number, maldose: number): Regneeksempel => {
-    const { linjer, sisteDag } = nedtrappingslinjer(startdose, fra.sluttdose.mg)
-    const start = sisteDag + UTVASKING_DAGER + 1
-    return {
-      id: `fra-${startdose}-mg-til-${maldose}-mg`,
-      beskrivelse: `${fra.nokkel} ${startdose} mg til sertralin ${maldose} mg: halvering hver 14. dag til ${fra.sluttdose.mg} mg og seponering, tre dager uten SSRI, så sertralin 50 mg${maldose === 50 ? ' som fortsetter' : ` i 14 dager og deretter ${maldose} mg`}.`,
-      inndata: besvart(BEKREFTET_SERTRALIN, unntak, maldose, startdose),
-      forventet: { fra: linjer, til: maldose === 50 ? [`fra dag ${start}: 50 mg`] : [`dag ${start}–${start + 13}: 50 mg`, `fra dag ${start + 14}: ${maldose} mg`] },
-    }
-  }
+  const eksempel = (startdose: number, maldose: number) => utenSluttrinn(fra, 'sertralin', BEKREFTET_SERTRALIN, unntak, startdose, maldose)
+
   const lav = fra.startdoser[0]!
   const hoy = forsteDose(fra)
   return {
@@ -491,8 +514,8 @@ export function ssriTilSertralin(fra: Fra): Regel {
             utvasking: forslag(
               UTVASKING_DAGER,
               'dager',
-              `Tre hele dager uten SSRI: innenfor de 2–4 dagene ved et moderat bytte og minst to halveringstider for ${fra.nokkel} (omtrent 30–36 timer). Et minimum, ikke en fast startdato.`,
-              { art: 'bindende_krav', henvisninger: [KEKS.moderat, KEKS.utvasking, halveringstid] },
+              `Tre hele dager (72 timer) uten SSRI er omtrent ${(72 / halveringstid.timer).toFixed(1).replace(".", ",")} halveringstider for ${fra.nokkel} (omtrent ${halveringstid.timer} timer etter gjentatt dosering): innenfor de 2–5 halveringstidene Keks mfl. regner som tryggest med tanke på interaksjoner, og innenfor de 2–4 dagene ved et moderat bytte. Lengre halveringstid hos eldre og ved nedsatt leverfunksjon er utenfor omfanget (unntakene). Dagene er et minimum, ikke en fast startdato. Direkte bytte og kryssnedtrapping er ikke vurdert for dette paret (K2-4).`,
+              { art: 'bindende_krav', henvisninger: [KEKS.moderat, KEKS.utvasking, halveringstid.henvisning] },
             ),
           },
           faser: [
@@ -554,7 +577,7 @@ export function ssriTilSertralin(fra: Fra): Regel {
         utsagn(`${fra.nokkel[0]!.toUpperCase()}${fra.nokkel.slice(1)} trappes ned gradvis, over minst én til to uker.`, fra.seponering),
         utsagn('Fra et SSRI til et annet: det første trappes ned, og det nye startes i lav dose.', KEKS.ssriSsri),
         utsagn('Moderat bytte: nedtrapping til seponering, 2–4 dager uten legemiddel og oppstart i lav dose; interaksjonsrisikoen er lav.', KEKS.moderat),
-        utsagn('Tryggest med tanke på interaksjoner er 2–5 halveringstider uten legemiddel før det nye startes.', KEKS.utvasking, halveringstid),
+        utsagn('Tryggest med tanke på interaksjoner er 2–5 halveringstider uten legemiddel før det nye startes.', KEKS.utvasking, halveringstid.henvisning),
         utsagn('Sertralin startes med 50 mg ved depresjon og økes i trinn på 50 mg med minst én ukes mellomrom.', PREPARATOMTALE.zoloftStart, PREPARATOMTALE.zoloftOkning),
       ],
       tilpasninger: [
@@ -567,7 +590,7 @@ export function ssriTilSertralin(fra: Fra): Regel {
         utsagn(
           `Etter tre hele dager uten SSRI startes sertralin 50 mg. Har forskriveren valgt 100 mg, økes dosen etter 14 dager; planen er da fullført. Høyere doser er senere, responsstyrte vurderinger.`,
           KEKS.moderat,
-          halveringstid,
+          halveringstid.henvisning,
           PREPARATOMTALE.zoloftOkning,
         ),
         utsagn('OUSFAR har valgt et moderat bytte med utvasking, ikke direkte bytte eller kryssnedtrapping, fordi to SSRI-er samtidig gir høyere risiko for serotonerge bivirkninger.', KEKS.utvasking, KEKS.moderat),
@@ -592,7 +615,6 @@ export function ssriTilSertralin(fra: Fra): Regel {
     eksempler: [
       eksempel(hoy, 100),
       eksempel(lav, 50),
-      eksempel(lav, 100),
       {
         id: 'startdose-utenfor',
         beskrivelse: 'En dose som ikke kan halveres med hele tabletter, stopper.',

@@ -12,16 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.125.1',
-    dato: '2026-11-03',
-    sammendrag: 'Komplette bytter mellom antidepressiva, til faglig kontroll',
+    versjon: '1.125.3',
+    dato: '2026-11-04',
+    sammendrag: 'Bytter mellom antidepressiva, til faglig kontroll',
     typer: ['Funksjonalitet'],
     omfang: 'Minimalt omfang',
     gjelder: ['verktoy/bytte-antidepressiv'],
     punkter: [
-      'Gjelder bare administratorene. Fem regler for hele bytter er lagt inn: fra sertralin, escitalopram eller citalopram til mirtazapin, og fra escitalopram eller citalopram til sertralin. Hver plan går fra dagens dose til det gamle legemidlet er seponert og det nye står på en vedlikeholdsdose klinikeren velger, med norske tabletter.',
-      'Reglene bygger på de norske preparatomtalene og publiserte råd om bytte av antidepressiva, ikke på Psychiatrienet. De er sendt til uavhengig faglig kontroll og er ikke godkjent; til da sier verktøyet at faglig kontroll gjenstår i stedet for at det ikke har noen regel, og det beregner ingen plan.',
-      'Det godkjente startforløpet fra sertralin til mirtazapin er uendret og er fortsatt det verktøyet viser.',
+      'Gjelder bare administratorene. Fem regler for hele bytter er lagt inn: fra sertralin, escitalopram eller citalopram til mirtazapin, og fra escitalopram eller citalopram til sertralin, med norske tabletter og en vedlikeholdsdose forskriveren velger.',
+      'Hvordan det gamle legemidlet skal seponeres ved bytte, er ikke avgjort faglig. Til det er avgjort, gir reglene ingen plan, men sier «Komplett plan ikke tilgjengelig» og hvorfor, i stedet for å vise en plan som slutter på laveste tablettdose.',
+      'Reglene bygger på de norske preparatomtalene og publiserte råd om bytte av antidepressiva, ikke på Psychiatrienet. De er sendt til uavhengig faglig kontroll og er ikke godkjent.',
+      'Det godkjente startforløpet fra sertralin til mirtazapin er uendret, men vises ikke, fordi det ikke fører til et sluttmål.',
     ],
     utenVarsel: true,
   },

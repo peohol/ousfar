@@ -292,7 +292,9 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
   if (r.godkjenning.status === 'ikke_godkjent') for (const x of vurderingsfeil(r)) f(`er merket kontrollert og ikke godkjent, men vurderingen er ikke gyldig: ${x}`)
 
   // Regneeksemplene: et beregnbart eksempel gir nøyaktig det forventede, et stopp-eksempel stopper av riktig grunn.
-  if (r.beregnbarhet !== 'bare_tekstlig' && r.beregnbarhet !== 'mangler_anbefaling' && !r.eksempler.some((e) => !e.stopp)) f('har ingen regneeksempler med beregnet plan')
+  // En regel med en verdi som mangler (venter på faglig avklaring), kan ikke beregne noe før den er avklart; stopp-eksemplene viser det.
+  const ventetVerdi = parametre(r).some(([, p]) => p.verdi === null)
+  if (r.beregnbarhet !== 'bare_tekstlig' && r.beregnbarhet !== 'mangler_anbefaling' && !ventetVerdi && !r.eksempler.some((e) => !e.stopp)) f('har ingen regneeksempler med beregnet plan')
   const eks = r.eksempler.map((e) => e.id)
   if (new Set(eks).size !== eks.length) f('to regneeksempler har samme id')
   for (const e of r.eksempler) {
