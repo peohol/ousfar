@@ -619,9 +619,19 @@ describe('Sperren mot klinisk bruk', () => {
       expect(med(['positivkontroll-bare-i-test'], (r) => (r.fra = { type: 'virkestoff', nokkel: 'testoksetin' }))).toEqual([annet])
       expect(med(['positivkontroll-bare-i-test'], (r) => (r.til = { type: 'virkestoff', nokkel: 'testoksetin' }))).toEqual([annet])
       expect(med(['positivkontroll-bare-i-test'], (r) => (r.plan.form = r.plan.form === 'seponering' ? 'kryssnedtrapping' : 'seponering'))).toEqual([annet])
-      // To regler kan ikke erstatte hverandre.
+      // Erstatningene kan ikke danne en sirkel av noen lengde, for da ville alle reglene i den være trukket.
       const ny = erstatter(false)
-      expect(erstatningsfeil([ny], [{ ...gammel, erstatter: [ny.id] }, ny])).toEqual(['positivkontroll-ny-bare-i-test: erstatter positivkontroll-bare-i-test, som selv erstatter positivkontroll-ny-bare-i-test'])
+      expect(erstatningsfeil([ny], [{ ...gammel, erstatter: [ny.id] }, ny])).toEqual(['positivkontroll-ny-bare-i-test: inngår i en sirkel av erstatninger (positivkontroll-ny-bare-i-test → positivkontroll-bare-i-test → positivkontroll-ny-bare-i-test)'])
+      const a: Regel = { ...gammel, id: 'a', erstatter: ['b'] }
+      const b: Regel = { ...gammel, id: 'b', erstatter: ['c'] }
+      const c: Regel = { ...gammel, id: 'c', erstatter: ['a'] }
+      expect(erstatningsfeil([a, b, c])).toEqual([
+        'a: inngår i en sirkel av erstatninger (a → b → c → a)',
+        'b: inngår i en sirkel av erstatninger (b → c → a → b)',
+        'c: inngår i en sirkel av erstatninger (c → a → b → c)',
+      ])
+      // En kjede uten sirkel er i orden, også når en regel erstatter flere.
+      expect(erstatningsfeil([{ ...a, erstatter: ['b', 'c'] }, b, { ...c, erstatter: undefined }])).toEqual([])
       // Kontrollen av et regelsett slår opp erstatningene i alle appens regler, så de kan stå i et annet sett.
       const sett: Regelsett = { id: 'test', versjon: 1, modell: REGELMODELLVERSJON, beskrivelse: 'Bare i testen.', regler: [{ ...ny, erstatter: ['finnes-ikke'] }] }
       expect(kontrollerRegelsett(sett)).toContainEqual('positivkontroll-ny-bare-i-test: erstatter finnes-ikke, som ikke finnes')
