@@ -10,11 +10,14 @@
  *
  * - **SSRI → mirtazapin, kryssnedtrapping** (sertralin, escitalopram,
  *   citalopram): SSRI-et halveres hver 14. dag ned til laveste dose i
- *   preparatomtalen og seponeres etter den; mirtazapin 15 mg fra dag 1 og,
- *   når SSRI-et er seponert, den valgte vedlikeholdsdosen 15 eller 30 mg.
- * - **(Es)citalopram → sertralin, moderat bytte** : nedtrapping som over til
- *   seponering, tre hele dager uten SSRI, så sertralin 50 mg og etter 14 dager
- *   den valgte vedlikeholdsdosen 50 eller 100 mg.
+ *   preparatomtalen; mirtazapin 15 mg fra dag 1 og, når SSRI-et er seponert,
+ *   den valgte vedlikeholdsdosen 15 eller 30 mg. Seponeringen fra laveste dose
+ *   er ikke avgjort faglig (K2-2), så planene stopper.
+ * - **(Es)citalopram → sertralin, nedtrapping og direkte overgang**: halvering
+ *   hver 14. dag ned til laveste tablettdose og seponering derfra, sertralin
+ *   50 mg dagen etter og, etter tidligst 14 dager og en vurdering av effekt,
+ *   toleranse og seponeringssymptomer, den valgte vedlikeholdsdosen 50 eller
+ *   100 mg. Planen gjelder bare kort behandlingstid ({@link KORT_BEHANDLINGSTID_UKER}).
  *
  * Hver regel er OUSFARs egen vurdering, bygget på norske preparatomtaler,
  * Keks mfl. 2016 (tabell 2 og 3), NICE NG222 og RCPsych, med fakta gjengitt
@@ -83,12 +86,41 @@ const PREPARATOMTALE = {
   zoloftStart: h('dmp-zoloft', 'pkt. 4.2', 'Ved depresjon startes sertralin med 50 mg daglig.'),
   zoloftOkning: h('dmp-zoloft', 'pkt. 4.2', 'Ved manglende respons på 50 mg kan dosen økes i trinn på 50 mg med minst én ukes mellomrom, høyst 200 mg daglig.'),
   zoloftEldreLever: h('dmp-zoloft', 'pkt. 4.2', 'Doseringen til eldre vurderes nøye (hyponatremi); ved nedsatt leverfunksjon brukes lavere eller sjeldnere dosering.'),
+  zoloftRespons: h(
+    'dmp-zoloft',
+    'pkt. 4.2',
+    'Effekten kan ses i løpet av sju dager, men vanligvis trengs lengre observasjonstid for å vise terapeutisk effekt. Doseendringer gjøres ikke oftere enn én gang i uken (eliminasjonshalveringstid 24 timer).',
+  ),
+  zoloftVedlikehold: h('dmp-zoloft', 'pkt. 4.2', 'Ved langtidsbehandling holdes dosen på laveste effektive nivå og justeres etter terapeutisk respons.'),
   cipralexEldre: h('dmp-cipralex', 'pkt. 4.2', 'Over 65 år startes det med 5 mg, høyst 10 mg; ved mild til moderat nedsatt leverfunksjon 5 mg de to første ukene, høyst 10 mg.'),
   cipralexHalveringstid: h('dmp-cipralex', 'pkt. 5.2', 'Halveringstiden etter gjentatt dosering er omtrent 30 timer.'),
-  cipralexRespons: h('dmp-cipralex', 'pkt. 4.2', 'Ved depresjon er 10 mg vanlig dose, høyst 20 mg; vanligvis trengs 2–4 ukers behandling før antidepressiv respons.'),
+  cipralexSymptomer: h(
+    'dmp-cipralex',
+    'pkt. 4.4',
+    'Seponeringssymptomer kommer vanligvis de første dagene etter seponering og går vanligvis over innen to uker, men kan hos noen vare i 2–3 måneder eller mer.',
+  ),
   cipramilEldre: h('dmp-cipramil', 'pkt. 4.2', 'Over 65 år halveres dosen til 10–20 mg, høyst 20 mg daglig.'),
   cipramilHalveringstid: h('dmp-cipramil', 'pkt. 5.2', 'Eliminasjonshalveringstiden er omtrent halvannet døgn; den er lengre hos eldre og ved nedsatt leverfunksjon.'),
   cipramilStart: h('dmp-cipramil', 'pkt. 4.2', 'Ved panikklidelse startes det med 10 mg; ved depresjon er anbefalt dose 20 mg, høyst 40 mg.'),
+  cipramilSymptomer: h(
+    'dmp-cipramil',
+    'pkt. 4.4',
+    'Seponeringssymptomer kommer vanligvis de første dagene etter seponering og går vanligvis over innen to uker, men kan hos noen vare i 2–3 måneder eller mer.',
+  ),
+}
+
+/** Fakta fra RCPsych-veiledningen som K2 trenger utover de felles (`RCPSYCH` i `bygg.ts`). */
+const RCPSYCH_K2 = {
+  kort: h(
+    'rcpsych-stopping',
+    'When and how should I stop my antidepressants?',
+    'Etter bare noen ukers bruk kan nedtrapping og seponering ofte skje over omtrent en måned, helst minst fire uker; etter mange måneder eller år går nedtrappingen langsommere, vanligvis over måneder.',
+  ),
+  kortRisiko: h(
+    'rcpsych-stopping',
+    'Who is affected by antidepressant withdrawal symptoms?',
+    'Risikoen for seponeringssymptomer synes størst etter høy dose over lang tid, men de kan komme også etter kort bruk, og hvem som får dem, kan ikke forutsies.',
+  ),
 }
 
 /* --- Virkestoffene ---------------------------------------------------------------------- */
@@ -146,10 +178,19 @@ const CITALOPRAM: Fra = {
   lever: PREPARATOMTALE.cipramilHalveringstid,
 }
 
-/** Halveringstiden (preparatomtalen pkt. 5.2, i timer) som utvaskingen før sertralin bygger på. */
-const HALVERINGSTID: Partial<Record<Fra['nokkel'], { timer: number; henvisning: Kildehenvisning }>> = {
-  escitalopram: { timer: 30, henvisning: PREPARATOMTALE.cipralexHalveringstid },
-  citalopram: { timer: 36, henvisning: PREPARATOMTALE.cipramilHalveringstid },
+/**
+ * Det overgangen til sertralin bygger på for hvert SSRI: halveringstiden
+ * (preparatomtalen pkt. 5.2, i timer) og når seponeringssymptomene vanligvis
+ * kommer (pkt. 4.4).
+ */
+interface Overgang {
+  timer: number
+  henvisning: Kildehenvisning
+  symptomer: Kildehenvisning
+}
+const OVERGANG: Partial<Record<Fra['nokkel'], Overgang>> = {
+  escitalopram: { timer: 30, henvisning: PREPARATOMTALE.cipralexHalveringstid, symptomer: PREPARATOMTALE.cipralexSymptomer },
+  citalopram: { timer: 36, henvisning: PREPARATOMTALE.cipramilHalveringstid, symptomer: PREPARATOMTALE.cipramilSymptomer },
 }
 
 /** Tablett (FEST-form 53), den eneste formen reglene gjelder. */
@@ -178,7 +219,7 @@ function sluttrinnVedBytte(fra: Fra, dekning?: Dekning): Avslutning {
       fra_hoyst_mg: forslag(fra.sluttdose.mg, 'mg', dekning.begrunnelse, { art: 'bindende_krav', henvisninger: dekning.henvisninger }),
       grunnlag: {
         type: 'ousfar_vurdering',
-        begrunnelse: `${stor(fra.nokkel)} seponeres fra ${fra.sluttdose.mg} mg bare fordi ${dekning.nytt} tar over dagen etter; uten det nye legemidlet er ${fra.sluttdose.mg} mg ingen seponeringsgrense. Seponeringen skjer først når toleransen på ${fra.sluttdose.mg} mg er vurdert. Gjelder bare omfanget i regelen (K2-2).`,
+        begrunnelse: `${stor(fra.nokkel)} seponeres fra ${fra.sluttdose.mg} mg bare i denne planen, der ${dekning.nytt} startes dagen etter; uten et nytt legemiddel med samme virkningsmekanisme er ${fra.sluttdose.mg} mg ingen seponeringsgrense. Seponeringen skjer først når toleransen på ${fra.sluttdose.mg} mg er vurdert, og den første uken etter overgangen følges seponeringssymptomer og forverring tett. Gjelder bare omfanget i regelen (K2-2).`,
         henvisninger: [...dekning.henvisninger, NICE.tempo, NICE.bytte],
         avklaring: null,
       },
@@ -202,9 +243,11 @@ function sluttrinnVedBytte(fra: Fra, dekning?: Dekning): Avslutning {
 }
 
 /**
- * Det som gjør siste trinn av det gamle SSRI-et forsvarlig ved bytte: et nytt
- * legemiddel med samme virkning som tar over dagen etter, med begrunnelsen og
- * kildene. Uten dekning har sluttrinnet ingen verdi ({@link sluttrinnVedBytte}).
+ * Det som kan gjøre siste trinn av det gamle SSRI-et forsvarlig ved bytte: et
+ * nytt legemiddel med samme virkningsmekanisme som startes dagen etter, med
+ * begrunnelsen, kildene og oppfølgingen. Det gir en forventet, ikke garantert,
+ * fortsatt virkning. Uten dekning har sluttrinnet ingen verdi
+ * ({@link sluttrinnVedBytte}).
  */
 interface Dekning {
   nytt: string
@@ -259,32 +302,40 @@ function nedtrappingTilSeponering(fra: Fra, dekning?: Dekning): Forlop {
   }
 }
 
+/** Når respons på det nye legemidlet kan vurderes, etter preparatomtalen. */
+interface Respons {
+  /** Hvorfor fire uker, med preparatomtalens egne ord om responstiden. */
+  begrunnelse: string
+  henvisninger: Kildehenvisning[]
+}
+
 /**
- * Oppfølgingen av det nye legemidlet: toleransen før hver økning i planen, og
- * respons og bivirkninger når preparatomtalens 2–4 uker etter oppstarten og
- * etter hver doseendring er gått.
+ * Oppfølgingen av det nye legemidlet: effekt, toleranse og
+ * seponeringssymptomer etter det gamle SSRI-et før hver økning i planen, og
+ * respons og bivirkninger fire uker etter oppstarten og etter hver
+ * doseendring. Vedlikeholdsdosen er forskriverens valg og kan justeres.
  */
-function oppfolgingAvNyttLegemiddel(navn: string, respons: Kildehenvisning, okning: Kildehenvisning): Vurderingspunkt[] {
+function oppfolgingAvNyttLegemiddel(navn: string, fra: Fra, respons: Respons, okning: Kildehenvisning[]): Vurderingspunkt[] {
   return [
     {
-      id: 'toleranse_for_okning',
+      id: 'for_okning',
       nar: { type: 'for_hvert_trinn' },
-      tekst: `Vurder at dosen av ${navn} så langt tåles.`,
-      ved_funn: 'Tåles den dårlig, økes den ikke, og byttet vurderes på nytt.',
-      grunnlag: { type: 'kilde', henvisninger: [okning] },
+      tekst: `Vurder effekten av ${navn} så langt og om økningen fortsatt trengs, hvordan ${navn} tåles, og om pasienten har seponeringssymptomer etter ${fra.nokkel}.`,
+      ved_funn: `Vedlikeholdsdosen er forskriverens valg og kan justeres. Er effekten tilstrekkelig, beholdes dosen. Ved dårlig toleranse eller seponeringssymptomer økes den ikke nå, men vurderes på nytt senere; ved vedvarende plager planlegges byttet individuelt.`,
+      grunnlag: { type: 'kilde', henvisninger: [...okning, fra.seponering] },
     },
     {
       id: 'respons',
       nar: {
         type: 'etter_endring',
-        dager: forslag(28, 'dager', `Respons og bivirkninger av ${navn} vurderes fire uker etter oppstarten og etter hver doseendring: ved slutten av de 2–4 ukene preparatomtalen oppgir før respons kan ventes.`, {
+        dager: forslag(28, 'dager', `Respons og bivirkninger av ${navn} vurderes fire uker etter oppstarten og etter hver doseendring: ${respons.begrunnelse}`, {
           omrade: [14, 28],
-          henvisninger: [respons],
+          henvisninger: respons.henvisninger,
         }),
       },
       tekst: `Vurder respons og bivirkninger av ${navn}.`,
       ved_funn: 'Uten tilstrekkelig respons vurderes videre behandling etter preparatomtalen; det er utenfor denne planen.',
-      grunnlag: { type: 'kilde', henvisninger: [respons] },
+      grunnlag: { type: 'kilde', henvisninger: respons.henvisninger },
     },
   ]
 }
@@ -301,6 +352,12 @@ const bekreftelseSammedisinering = (fra: Fra, til: string): Bekreftelse => ({
   grunnlag: { type: 'kilde', henvisninger: [NICE.kombinasjon, KEKS.forsiktig] },
 })
 
+/**
+ * Lengste sammenhengende bruk av det gamle SSRI-et (uker) som regnes som kort
+ * behandlingstid: OUSFARs forslag, åpent til det er avklart ({@link felleUnntak}).
+ */
+export const KORT_BEHANDLINGSTID_UKER = 8
+
 /** Pasientforholdene der ingen av reglene gjelder: byttet planlegges da individuelt. */
 function felleUnntak(fra: Fra, til: { navn: string; eldre: Kildehenvisning; lever: Kildehenvisning }): Unntak[] {
   return [
@@ -311,8 +368,15 @@ function felleUnntak(fra: Fra, til: { navn: string; eldre: Kildehenvisning; leve
     },
     {
       id: 'lang_behandlingstid',
-      tekst: `Pasienten har brukt ${fra.nokkel} i mange måneder eller lenger. Da anbefales mindre reduksjoner fra starten, og byttet planlegges individuelt med langsommere, symptomstyrt nedtrapping.`,
-      grunnlag: { type: 'kilde', henvisninger: [RCPSYCH.langvarig, RCPSYCH.proporsjonal, RCPSYCH.fireUker] },
+      tekst: `Pasienten har brukt ${fra.nokkel} sammenhengende i mer enn ${KORT_BEHANDLINGSTID_UKER} uker. Planen gjelder bare kort behandlingstid; etter lengre bruk anbefales mindre reduksjoner og langsommere, symptomstyrt nedtrapping, og byttet planlegges individuelt.`,
+      grunnlag: {
+        type: 'ousfar_vurdering',
+        begrunnelse:
+          `RCPsych skiller mellom bruk i bare noen uker, der nedtrapping og seponering ofte kan skje over omtrent en måned, og bruk i mange måneder eller år, der nedtrappingen går langsommere, men gir ingen eksakt grense. ` +
+          `OUSFAR foreslår ${KORT_BEHANDLINGSTID_UKER} uker som kontrollerbar grense for «kort behandlingstid»: den øvre delen av «noen uker», før «mange måneder». Grensen er OUSFARs valg, ikke en verdi fra kildene.`,
+        henvisninger: [RCPSYCH_K2.kort, RCPSYCH.langvarig, RCPSYCH.fireUker],
+        avklaring: null,
+      },
     },
     {
       id: 'over_65',
@@ -361,6 +425,10 @@ const MIRTAZAPIN_MALDOSER = [15, 30]
 /** Tablettstyrkene av mirtazapin i FEST (mg) da reglene ble laget; 45 mg brukes ikke i planene. */
 const MIRTAZAPIN_STYRKER = [15, 30, 45]
 const BEKREFTET_MIRTAZAPIN = ['indikasjon', 'toleranse_overlapp', 'serotonerg_sammedisinering']
+const MIRTAZAPIN_RESPONS: Respons = {
+  begrunnelse: 'ved slutten av de 2–4 ukene preparatomtalen oppgir før respons kan ventes.',
+  henvisninger: [PREPARATOMTALE.remeronRespons],
+}
 
 /**
  * Det godkjente startforløpet fra sertralin til mirtazapin (pilotsettet,
@@ -405,7 +473,7 @@ export function ssriTilMirtazapin(fra: Fra, erstatter?: string[]): Regel {
             { type: 'hold', dose: { type: 'fast', mg: kilde(15, 'mg', 'veiledende_preferanse', SPC.remeronDose) }, varighet: { type: 'til_forlop_er_avsluttet', forlop: 'fra' } },
             { type: 'vedlikehold', dose: { type: 'inndata', navn: 'maldose' } },
           ],
-          vurderinger: oppfolgingAvNyttLegemiddel('mirtazapin', PREPARATOMTALE.remeronRespons, KEKS.kryss),
+          vurderinger: oppfolgingAvNyttLegemiddel('mirtazapin', fra, MIRTAZAPIN_RESPONS, [KEKS.kryss, PREPARATOMTALE.remeronRespons]),
         },
       ],
     },
@@ -463,8 +531,9 @@ export function ssriTilMirtazapin(fra: Fra, erstatter?: string[]): Regel {
         ),
         utsagn('Dagen etter siste dose av SSRI-et går mirtazapin til vedlikeholdsdosen forskriveren har valgt, 15 eller 30 mg. Planen er da fullført; en eventuell økning til 45 mg er en senere, responsstyrt vurdering.', KEKS.kryss, PREPARATOMTALE.remeronRespons),
         utsagn(
-          'Planen gjelder bare kort behandlingstid uten tidligere seponeringsplager, voksne til og med 65 år og normal lever- og nyrefunksjon, med tabletter for begge legemidlene. Alt annet stopper, og byttet planlegges individuelt.',
-          RCPSYCH.langvarig, RCPSYCH.proporsjonal,
+          `Planen gjelder bare kort behandlingstid (høyst ${KORT_BEHANDLINGSTID_UKER} uker sammenhengende) uten tidligere seponeringsplager, voksne til og med 65 år og normal lever- og nyrefunksjon, med tabletter for begge legemidlene. Alt annet stopper, og byttet planlegges individuelt.`,
+          RCPSYCH_K2.kort,
+          RCPSYCH.langvarig,
           NICE.tidligere,
         ),
       ],
@@ -509,7 +578,7 @@ export function ssriTilMirtazapin(fra: Fra, erstatter?: string[]): Regel {
         beskrivelse: 'Etter lang behandlingstid gjelder ikke regelen.',
         inndata: besvart(BEKREFTET_MIRTAZAPIN, unntak, 30, hoy, { pasientforhold: { ...Object.fromEntries(unntak.map((u) => [u.id, false])), lang_behandlingstid: true } }),
         forventet: {},
-        stopp: new RegExp(`Regelen gjelder ikke: Pasienten har brukt ${fra.nokkel} i mange måneder`),
+        stopp: new RegExp(`Regelen gjelder ikke: Pasienten har brukt ${fra.nokkel} sammenhengende i mer enn ${KORT_BEHANDLINGSTID_UKER} uker`),
       },
     ],
     klinisk_omfang: {
@@ -530,26 +599,33 @@ export function ssriTilMirtazapin(fra: Fra, erstatter?: string[]): Regel {
 const SERTRALIN_MALDOSER = [50, 100]
 const BEKREFTET_SERTRALIN = ['indikasjon', 'toleranse_bytte', 'serotonerg_sammedisinering']
 const SERTRALIN_TIL = { navn: 'sertralin', eldre: PREPARATOMTALE.zoloftEldreLever, lever: PREPARATOMTALE.zoloftEldreLever }
-/** Dager uten SSRI mellom siste dose av det gamle og første dose sertralin: ingen, sertralin tar over dagen etter. */
+/** Dager uten SSRI mellom siste dose av det gamle og første dose sertralin: ingen, sertralin startes dagen etter. */
 const UTVASKING_DAGER = 0
 /** Dager etter siste dose av det gamle SSRI-et da overgangen vurderes. */
 const OVERGANG_VURDERES_DAG = 7
+const SERTRALIN_RESPONS: Respons = {
+  begrunnelse:
+    'preparatomtalen oppgir at effekten kan ses i løpet av sju dager, men at det vanligvis trengs lengre observasjonstid for å vise terapeutisk effekt. Fire uker er OUSFARs valg innenfor det.',
+  henvisninger: [PREPARATOMTALE.zoloftRespons],
+}
 
 /**
  * Dekningen ved (es)citalopram → sertralin: sertralin 50 mg dagen etter siste
- * dose tar over SERT-bindingen, så det siste trinnet av det gamle SSRI-et er
- * ikke et bortfall av SSRI-virkningen. OUSFARs forslag til kontrolløren (K2-2, K2-4).
+ * dose ventes å holde SERT-hemmingen oppe, men det er ikke garantert at det
+ * hindrer seponeringssymptomer eller forverring, så den første uken følges tett
+ * og planen justeres individuelt. OUSFARs forslag til kontrolløren (K2-2, K2-4).
  */
-function sertralinTarOver(fra: Fra, halveringstid: { timer: number; henvisning: Kildehenvisning }): Dekning {
-  const t = halveringstid.timer
+function overgangTilSertralin(fra: Fra, overgang: Overgang): Dekning {
+  const t = overgang.timer
   return {
     nytt: 'sertralin',
     begrunnelse:
-      `Seponering fra ${fra.sluttdose.mg} mg med direkte overgang: siste dose ${fra.nokkel} er ${fra.sluttdose.mg} mg, og sertralin 50 mg startes dagen etter. ` +
-      `Siste trinn er 100 % av den ordinerte dosen ${fra.nokkel}, men ikke et bortfall av SSRI-virkningen: sertralin 50 mg er preparatomtalens startdose og minste vanlige dose, der SERT-bindingen flater ut ved omtrent 80 % (Sørensen mfl.), og ${fra.nokkel} elimineres gradvis over flere døgn (halveringstid omtrent ${t} timer). ` +
-      `Keks mfl. regner bytte fra ett SSRI med kort halveringstid til et annet som et av de utvalgte tilfellene der direkte bytte kan brukes, og utvasking som ikke nødvendig mellom disse SSRI-ene når byttet gjøres forsiktig og under nær oppfølging; seponeringssymptomene avhenger av det nye legemidlet. ` +
-      `Nedtrappingen til ${fra.sluttdose.mg} mg først gjør overlappen i eksponering de første dagene liten. Mindre trinn eller dråper er ikke nødvendige for sluttrinnet, fordi sertralin tar over.`,
-    henvisninger: [KEKS.direkte, KEKS.direkteRisiko, KEKS.utenUtvasking, KEKS.ssriSsri, LITTERATUR.hyperbolsk, PREPARATOMTALE.zoloftStart, halveringstid.henvisning],
+      `Seponering fra ${fra.sluttdose.mg} mg med direkte overgang: siste dose ${fra.nokkel} er ${fra.sluttdose.mg} mg, og sertralin 50 mg startes dagen etter. Siste trinn er 100 % av den ordinerte dosen ${fra.nokkel}. ` +
+      `Sertralin 50 mg er preparatomtalens startdose ved depresjon, og ved minste vanlige SSRI-dose er SERT-bindingen omtrent 80 % (Sørensen mfl.); ${fra.nokkel} elimineres dessuten gradvis over flere døgn (halveringstid omtrent ${t} timer). ` +
+      `SERT-hemmingen ventes derfor å fortsette etter overgangen, men det er ikke garantert at den hindrer seponeringssymptomer eller forverring: Keks mfl. regner seponeringssymptomer som sannsynlige ved direkte bytte, avhengig av det nye legemidlet, og RCPsych beskriver at de kan komme også etter kort bruk. ` +
+      `Keks mfl. regner bytte fra ett SSRI med kort halveringstid til et annet som et av de utvalgte tilfellene der direkte bytte kan brukes, og utvasking som ikke nødvendig mellom disse SSRI-ene når byttet gjøres forsiktig og under nær oppfølging. ` +
+      `Nedtrappingen til ${fra.sluttdose.mg} mg først gjør overlappen i eksponering de første dagene liten. Den første uken etter overgangen følges seponeringssymptomer, serotonerg belastning og forverring, og planen justeres individuelt ved plager.`,
+    henvisninger: [KEKS.direkte, KEKS.direkteRisiko, KEKS.utenUtvasking, KEKS.ssriSsri, LITTERATUR.hyperbolsk, RCPSYCH_K2.kortRisiko, PREPARATOMTALE.zoloftStart, overgang.henvisning],
     etter_seponering: [
       {
         id: 'etter_overgang',
@@ -558,13 +634,14 @@ function sertralinTarOver(fra: Fra, halveringstid: { timer: number; henvisning: 
           dager: forslag(
             OVERGANG_VURDERES_DAG,
             'dager',
-            `En uke etter siste dose ${fra.nokkel}, når sertralin er tatt i en uke: seponeringssymptomer kommer vanligvis de første dagene, og overlappen i eksponering for de to SSRI-ene er da i hovedsak over (omtrent ${tall5(t)} halveringstider). OUSFARs valg; dagen kan fremskyndes ved symptomer.`,
-            { omrade: [3, 7], henvisninger: [KEKS.forsiktig, KEKS.direkte, halveringstid.henvisning] },
+            `En uke etter siste dose ${fra.nokkel}, når sertralin er tatt i en uke: seponeringssymptomer kommer vanligvis de første dagene etter seponering, og overlappen i eksponering for de to SSRI-ene er da i hovedsak over (omtrent ${tall5(t)} halveringstider). OUSFARs valg; dagen kan fremskyndes ved symptomer.`,
+            { omrade: [3, 7], henvisninger: [overgang.symptomer, KEKS.forsiktig, KEKS.direkte, overgang.henvisning] },
           ),
         },
         tekst: `Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra ${fra.nokkel} til sertralin.`,
-        ved_funn: 'Ved plagsomme symptomer vurderes byttet individuelt; ved tegn på serotonerg belastning vurderes sertralin og øvrige legemidler straks.',
-        grunnlag: { type: 'kilde', henvisninger: [KEKS.forsiktig, KEKS.direkteRisiko] },
+        ved_funn:
+          'Ved plagsomme seponeringssymptomer eller forverring planlegges det videre forløpet individuelt, og en eventuell økning av sertralin venter til symptomene er vurdert. Ved tegn på serotonerg belastning vurderes sertralin og øvrige legemidler straks.',
+        grunnlag: { type: 'kilde', henvisninger: [overgang.symptomer, KEKS.forsiktig, KEKS.direkteRisiko] },
       },
     ],
   }
@@ -586,8 +663,8 @@ function nedtrappingslinjer(startdose: number, sluttdose: number): { linjer: str
 
 export function ssriTilSertralin(fra: Fra): Regel {
   const unntak = felleUnntak(fra, SERTRALIN_TIL)
-  const halveringstid = HALVERINGSTID[fra.nokkel]
-  if (!halveringstid) throw new Error(`${fra.nokkel}: halveringstiden overgangen bygger på, mangler`)
+  const overgang = OVERGANG[fra.nokkel]
+  if (!overgang) throw new Error(`${fra.nokkel}: halveringstiden og symptomtiden overgangen bygger på, mangler`)
   const eksempel = (startdose: number, maldose: number): Regneeksempel => {
     const { linjer, sisteDag } = nedtrappingslinjer(startdose, fra.sluttdose.mg)
     const start = sisteDag + UTVASKING_DAGER + 1
@@ -610,7 +687,7 @@ export function ssriTilSertralin(fra: Fra): Regel {
     plan: {
       form: 'sekvensielt',
       forlop: [
-        nedtrappingTilSeponering(fra, sertralinTarOver(fra, halveringstid)),
+        nedtrappingTilSeponering(fra, overgangTilSertralin(fra, overgang)),
         {
           id: 'til',
           virkestoff: { type: 'virkestoff', nokkel: 'sertralin' },
@@ -624,9 +701,9 @@ export function ssriTilSertralin(fra: Fra): Regel {
               UTVASKING_DAGER,
               'dager',
               `Ingen dager uten SSRI: sertralin startes dagen etter siste dose ${fra.nokkel} (direkte overgang etter nedtrapping til ${fra.sluttdose.mg} mg). Keks mfl. regner utvasking som ikke nødvendig fra ett av disse SSRI-ene til et annet når byttet gjøres forsiktig og under nær oppfølging. ` +
-                `Moderat bytte med 2–4 dager uten legemiddel er vurdert og ikke valgt: det har lavest interaksjonsrisiko, men i dagene uten SSRI kan seponeringssymptomer komme uten et SSRI som tar over, og ${fra.nokkel} er da bare delvis eliminert (halveringstid omtrent ${halveringstid.timer} timer). ` +
+                `Moderat bytte med 2–4 dager uten legemiddel er vurdert og ikke valgt: det har lavest interaksjonsrisiko, men i dagene uten SSRI kan seponeringssymptomer komme uten noe SSRI, mens ${fra.nokkel} bare er delvis eliminert (halveringstid omtrent ${overgang.timer} timer). ` +
                 'Kryssnedtrapping med to SSRI-er i terapeutisk dose samtidig er heller ikke valgt, fordi det gir størst serotonerg belastning. Lengre halveringstid hos eldre og ved nedsatt leverfunksjon er utenfor omfanget (unntakene) (K2-4).',
-              { art: 'bindende_krav', henvisninger: [KEKS.utenUtvasking, KEKS.direkte, KEKS.moderat, KEKS.utvasking, halveringstid.henvisning] },
+              { art: 'bindende_krav', henvisninger: [KEKS.utenUtvasking, KEKS.direkte, KEKS.moderat, KEKS.utvasking, overgang.henvisning] },
             ),
           },
           faser: [
@@ -635,15 +712,20 @@ export function ssriTilSertralin(fra: Fra): Regel {
               dose: { type: 'fast', mg: kilde(50, 'mg', 'veiledende_preferanse', PREPARATOMTALE.zoloftStart) },
               varighet: {
                 type: 'dager',
-                dager: forslag(14, 'dager', 'Preparatomtalen krever minst én uke mellom doseendringer; OUSFAR foreslår 14 dager på 50 mg før en eventuell økning, så responsen kan vurderes.', {
-                  omrade: [7, 28],
-                  henvisninger: [PREPARATOMTALE.zoloftOkning, PREPARATOMTALE.cipralexRespons],
-                }),
+                dager: forslag(
+                  14,
+                  'dager',
+                  'Preparatomtalen krever minst én uke mellom doseendringer, og effekten trenger vanligvis lengre observasjonstid enn én uke. OUSFAR foreslår 14 dager på 50 mg før en eventuell økning, så effekt, toleranse og seponeringssymptomer etter overgangen kan vurderes først; dagene er minstetider.',
+                  {
+                    omrade: [7, 28],
+                    henvisninger: [PREPARATOMTALE.zoloftOkning, PREPARATOMTALE.zoloftRespons],
+                  },
+                ),
               },
             },
             { type: 'vedlikehold', dose: { type: 'inndata', navn: 'maldose' } },
           ],
-          vurderinger: oppfolgingAvNyttLegemiddel('sertralin', PREPARATOMTALE.cipralexRespons, PREPARATOMTALE.zoloftOkning),
+          vurderinger: oppfolgingAvNyttLegemiddel('sertralin', fra, SERTRALIN_RESPONS, [PREPARATOMTALE.zoloftOkning, PREPARATOMTALE.zoloftRespons, PREPARATOMTALE.zoloftVedlikehold]),
         },
       ],
     },
@@ -666,8 +748,8 @@ export function ssriTilSertralin(fra: Fra): Regel {
         grunnlag: {
           type: 'ousfar_vurdering',
           begrunnelse:
-            'Forskriveren velger vedlikeholdsdosen 50 eller 100 mg. Sertralin startes med 50 mg, preparatomtalens startdose ved depresjon, og 100 mg er én økning på 50 mg. Høyere doser er senere, responsstyrte økninger og ingen del av planen.',
-          henvisninger: [PREPARATOMTALE.zoloftStart, PREPARATOMTALE.zoloftOkning],
+            'Forskriveren velger vedlikeholdsdosen 50 eller 100 mg. Sertralin startes med 50 mg, preparatomtalens startdose ved depresjon, og 100 mg er én økning på 50 mg, som preparatomtalen beskriver ved manglende respons på 50 mg. Før økningen vurderes effekt, toleranse og seponeringssymptomer, og valget kan justeres der. Høyere doser er senere, responsstyrte økninger og ingen del av planen.',
+          henvisninger: [PREPARATOMTALE.zoloftStart, PREPARATOMTALE.zoloftOkning, PREPARATOMTALE.zoloftVedlikehold],
           avklaring: null,
         },
       },
@@ -676,8 +758,8 @@ export function ssriTilSertralin(fra: Fra): Regel {
       bekreftelseIndikasjon([PREPARATOMTALE.zoloftStart, fra.dose]),
       {
         id: 'toleranse_bytte',
-        tekst: `Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av ${fra.nokkel}, en uke etter overgangen til sertralin, før økningen av sertralin og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. Den første uken etter overgangen følges seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen.`,
-        grunnlag: { type: 'kilde', henvisninger: [NICE.tempo, RCPSYCH.tid, KEKS.direkte, KEKS.forsiktig, PREPARATOMTALE.cipralexRespons] },
+        tekst: `Pasienten følges opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av ${fra.nokkel}, en uke etter overgangen til sertralin, før en eventuell økning av sertralin (effekt, toleranse og seponeringssymptomer) og fire uker etter oppstarten og hver endring av den. Dagene er minstetider. Den første uken etter overgangen følges seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen.`,
+        grunnlag: { type: 'kilde', henvisninger: [NICE.tempo, RCPSYCH.tid, KEKS.direkte, KEKS.forsiktig, PREPARATOMTALE.zoloftRespons] },
       },
       bekreftelseSammedisinering(fra, 'sertralin'),
     ],
@@ -691,30 +773,36 @@ export function ssriTilSertralin(fra: Fra): Regel {
         utsagn('Direkte bytte, der det nye startes dagen etter, passer i utvalgte tilfeller som bytte fra ett SSRI med kort halveringstid til et annet; seponeringssymptomene og interaksjonsrisikoen avhenger av det nye legemidlet.', KEKS.direkte, KEKS.direkteRisiko),
         utsagn('SERT-bindingen flater ut ved omtrent 80 % rundt minste vanlige dose.', LITTERATUR.hyperbolsk),
         utsagn('Sertralin startes med 50 mg ved depresjon og økes i trinn på 50 mg med minst én ukes mellomrom.', PREPARATOMTALE.zoloftStart, PREPARATOMTALE.zoloftOkning),
+        utsagn('Effekten av sertralin kan ses i løpet av sju dager, men vanligvis trengs lengre observasjonstid for å vise terapeutisk effekt.', PREPARATOMTALE.zoloftRespons),
+        utsagn('Seponeringssymptomer kan komme også etter kort bruk; de kommer vanligvis de første dagene etter seponering og går vanligvis over innen to uker.', RCPSYCH_K2.kortRisiko, overgang.symptomer),
       ],
       tilpasninger: [
         utsagn(
-          `OUSFAR halverer ${fra.nokkel} hver 14. dag ned til ${fra.sluttdose.mg} mg, gir den dosen i 14 dager og seponerer derfra fordi sertralin tar over dagen etter (K2-2).`,
+          `OUSFAR halverer ${fra.nokkel} hver 14. dag ned til ${fra.sluttdose.mg} mg, gir den dosen i 14 dager og seponerer derfra med direkte overgang til sertralin dagen etter (K2-2). Sertralin ventes å holde SERT-hemmingen oppe, men det er ikke garantert at det hindrer seponeringssymptomer; de følges tett den første uken, og planen justeres individuelt ved plager.`,
           NICE.andel,
           NICE.bytte,
           KEKS.direkte,
+          KEKS.direkteRisiko,
           LITTERATUR.hyperbolsk,
+          RCPSYCH_K2.kortRisiko,
         ),
         utsagn(
-          `Dagen etter siste dose ${fra.nokkel} startes sertralin 50 mg. Har forskriveren valgt 100 mg, økes dosen etter 14 dager; planen er da fullført. Høyere doser er senere, responsstyrte vurderinger.`,
+          `Dagen etter siste dose ${fra.nokkel} startes sertralin 50 mg. Har forskriveren valgt 100 mg, økes dosen tidligst etter 14 dager, når effekt, toleranse og seponeringssymptomer er vurdert; planen er da fullført. Vedlikeholdsdosen kan justeres ved vurderingen, og høyere doser er senere, responsstyrte vurderinger.`,
           KEKS.utenUtvasking,
           PREPARATOMTALE.zoloftStart,
           PREPARATOMTALE.zoloftOkning,
+          PREPARATOMTALE.zoloftRespons,
         ),
         utsagn(
-          'OUSFAR har valgt nedtrapping til laveste tablettdose og så direkte overgang, ikke moderat bytte med dager uten SSRI eller kryssnedtrapping med to SSRI-er i terapeutisk dose samtidig: nedtrappingen gjør overlappen i eksponering liten, og sertralin tar over SSRI-virkningen så det siste trinnet ikke gir et bortfall av den.',
+          'OUSFAR har valgt nedtrapping til laveste tablettdose og så direkte overgang, ikke moderat bytte med dager uten SSRI eller kryssnedtrapping med to SSRI-er i terapeutisk dose samtidig: nedtrappingen gjør overlappen i eksponering liten, og sertralin ventes å gi fortsatt SERT-hemming i dagene etter siste dose. Seponeringssymptomer kan likevel komme.',
           KEKS.direkte,
           KEKS.utenUtvasking,
           KEKS.moderat,
         ),
         utsagn(
-          'Planen gjelder bare kort behandlingstid uten tidligere seponeringsplager, voksne til og med 65 år og normal leverfunksjon, med tabletter for begge legemidlene. Alt annet stopper, og byttet planlegges individuelt.',
-          RCPSYCH.langvarig, RCPSYCH.proporsjonal,
+          `Planen gjelder bare kort behandlingstid (høyst ${KORT_BEHANDLINGSTID_UKER} uker sammenhengende) uten tidligere seponeringsplager, voksne til og med 65 år og normal leverfunksjon, med tabletter for begge legemidlene. Alt annet stopper, og byttet planlegges individuelt.`,
+          RCPSYCH_K2.kort,
+          RCPSYCH.langvarig,
           NICE.tidligere,
         ),
       ],
@@ -725,7 +813,8 @@ export function ssriTilSertralin(fra: Fra): Regel {
       ],
       usikkerhet: [
         'De første dagene etter overgangen bruker pasienten sertralin mens det gamle SSRI-et fortsatt elimineres; Keks mfl. regner interaksjonsrisikoen ved direkte bytte som betydelig, avhengig av det nye legemidlet. Nedtrappingen til laveste tablettdose først gjør overlappen liten, men ingen kilde tallfester den.',
-        'At sertralin 50 mg demper seponeringssymptomene etter det gamle SSRI-et, bygger på at begge hemmer SERT og at bindingen flater ut rundt minste vanlige dose; ingen kilde har målt seponeringssymptomer ved akkurat denne overgangen.',
+        'At sertralin 50 mg kan dempe seponeringssymptomene etter det gamle SSRI-et, bygger på at begge hemmer SERT og at bindingen flater ut rundt minste vanlige dose; ingen kilde har målt seponeringssymptomer ved akkurat denne overgangen, og symptomene kan komme likevel.',
+        `Grensen for kort behandlingstid (${KORT_BEHANDLINGSTID_UKER} uker) er OUSFARs valg: RCPsych skiller bare mellom «noen uker» og «mange måneder eller år».`,
         'RCPsych og Keks mfl. beskriver nedtrapping over omtrent fire uker; fra laveste startdose tar planen to uker. Om det er forsvarlig ved bytte, er et spørsmål til faglig kontroll.',
       ],
     },
@@ -783,7 +872,7 @@ export const BYTTESETT: Regelsett = {
   versjon: 1,
   modell: REGELMODELLVERSJON,
   beskrivelse:
-    'Komplette bytter mellom antidepressiva (K2): fra pasientens nåværende dose til seponering av det gamle legemidlet og en valgt vedlikeholdsdose av det nye. Fem regler i to familier, til uavhengig faglig kontroll; ingen er klinisk godkjent. Til sertralin har sluttrinnet et konkret forslag (direkte overgang); til mirtazapin er det ikke avgjort, og planene stopper.',
+    'Komplette bytter mellom antidepressiva (K2): fra pasientens nåværende dose til seponering av det gamle legemidlet og en valgt vedlikeholdsdose av det nye. Fem regler i to familier, til uavhengig faglig kontroll; ingen er klinisk godkjent. Til sertralin har sluttrinnet et konkret forslag (direkte overgang med tett oppfølging den første uken); til mirtazapin er det ikke avgjort, og planene stopper.',
   regler: [ssriTilMirtazapin(SERTRALIN, [STARTFORLOP_SERTRALIN_MIRTAZAPIN]), ssriTilMirtazapin(ESCITALOPRAM), ssriTilMirtazapin(CITALOPRAM), ssriTilSertralin(ESCITALOPRAM), ssriTilSertralin(CITALOPRAM)],
 }
 

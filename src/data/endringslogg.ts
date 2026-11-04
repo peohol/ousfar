@@ -20,7 +20,8 @@ export const ENDRINGSLOGG: Endring[] = [
     gjelder: ['verktoy/bytte-antidepressiv'],
     punkter: [
       'Gjelder bare administratorene. Fem regler for hele bytter er lagt inn: fra sertralin, escitalopram eller citalopram til mirtazapin, og fra escitalopram eller citalopram til sertralin, med norske tabletter og en vedlikeholdsdose forskriveren velger.',
-      'Fra escitalopram eller citalopram til sertralin trappes det gamle ned til laveste tablettdose, og sertralin startes dagen etter siste dose, så pasienten aldri er uten et SSRI. Disse to planene går helt til vedlikeholdsdosen når reglene er godkjent.',
+      'Fra escitalopram eller citalopram til sertralin trappes det gamle ned til laveste tablettdose, og sertralin startes dagen etter siste dose, så pasienten aldri er uten et SSRI. Seponeringssymptomer kan likevel komme, så planen har en vurdering en uke etter overgangen og en vurdering av effekt, toleranse og seponeringssymptomer før en eventuell økning til 100 mg. Disse to planene går helt til vedlikeholdsdosen når reglene er godkjent.',
+      'Byttereglene gjelder bare kort behandlingstid, høyst åtte uker sammenhengende. Ved lengre bruk gir de ingen plan, og byttet planlegges individuelt.',
       'Ved bytte til mirtazapin er det ikke avgjort faglig hvordan det gamle legemidlet skal seponeres. Til det er avgjort, gir de reglene ingen plan, men sier «Komplett plan ikke tilgjengelig» og hvorfor.',
       'Reglene bygger på de norske preparatomtalene og publiserte råd om bytte av antidepressiva, ikke på Psychiatrienet. De er sendt til uavhengig faglig kontroll og er ikke godkjent.',
       'Det godkjente startforløpet fra sertralin til mirtazapin er uendret, men vises ikke, fordi det ikke fører til et sluttmål.',

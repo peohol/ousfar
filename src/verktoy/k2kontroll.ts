@@ -16,7 +16,7 @@
  * skriver rapporten, og testene sier fra når den ikke er oppdatert.
  */
 import type { Festuttrekk } from './regler/aksepttest'
-import { ANTIDEPRESSIVBYTTER, BYTTESETT, NYTT_LEGEMIDDEL_I_FEST } from './regler/antidepressivbytter'
+import { ANTIDEPRESSIVBYTTER, BYTTESETT, KORT_BEHANDLINGSTID_UKER, NYTT_LEGEMIDDEL_I_FEST } from './regler/antidepressivbytter'
 import { fingeravtrykk } from './regler/godkjenning'
 import { alleGrunnlag, type Regel } from './regler/modell'
 import { avregistrert, avvikFra, kjorKasus, type Pilotkasus, SIMULERT_KONTROLLOR, simulerGodkjenning, type Uttrekkene } from './regler/pilotmatrise'
@@ -242,9 +242,9 @@ export const SPORSMAL: readonly { nr: string; sporsmal: string; anbefalt: string
   {
     nr: 'K2-2',
     sporsmal:
-      'Sluttrinnet ved bytte. (a) Escitalopram eller citalopram → sertralin: kan escitalopram 5 mg eller citalopram 10 mg seponeres etter 14 dager når sertralin 50 mg startes dagen etter? Siste trinn er 100 % av den ordinerte dosen, men sertralin 50 mg (minste vanlige dose, SERT-binding nær platået) tar over SSRI-virkningen, og det gamle elimineres over flere døgn. (b) Til mirtazapin, som ikke hemmer SERT: kan SSRI-et seponeres fra laveste tablettdose, eller trengs mindre trinn eller flytende formuleringer? Laveste dose i preparatomtalen er ingen seponeringsgrense i seg selv.',
+      'Sluttrinnet ved bytte. (a) Escitalopram eller citalopram → sertralin: kan escitalopram 5 mg eller citalopram 10 mg seponeres etter 14 dager når sertralin 50 mg startes dagen etter? Siste trinn er 100 % av den ordinerte dosen. Sertralin 50 mg (minste vanlige dose, SERT-binding nær platået) ventes å holde SERT-hemmingen oppe, og det gamle elimineres over flere døgn, men det er ikke garantert at seponeringssymptomer eller forverring uteblir. (b) Til mirtazapin, som ikke hemmer SERT: kan SSRI-et seponeres fra laveste tablettdose, eller trengs mindre trinn eller flytende formuleringer? Laveste dose i preparatomtalen er ingen seponeringsgrense i seg selv.',
     anbefalt:
-      '(a) Ja, i det avgrensede omfanget, med vurdering før seponeringen og en uke etter overgangen; dette er OUSFARs forslag i reglene. (b) Ikke avgjort: til mirtazapin seponerer ingen regel, og hver plan stopper uten delplan; planene «sluttrinnet simulert som laveste tablettdose» viser bare hva det alternativet ville gitt.',
+      '(a) Ja, i det avgrensede omfanget, med vurdering før seponeringen, tett oppfølging av seponeringssymptomer og forverring den første uken og individuell justering ved plager; dette er OUSFARs forslag i reglene. (b) Ikke avgjort: til mirtazapin seponerer ingen regel, og hver plan stopper uten delplan; planene «sluttrinnet simulert som laveste tablettdose» viser bare hva det alternativet ville gitt.',
   },
   {
     nr: 'K2-3',
@@ -254,23 +254,29 @@ export const SPORSMAL: readonly { nr: string; sporsmal: string; anbefalt: string
   {
     nr: 'K2-4',
     sporsmal:
-      '(Es)citalopram → sertralin: er nedtrapping til laveste tablettdose og så direkte overgang (sertralin 50 mg dagen etter siste dose, ingen dager uten SSRI) riktig for dette omfanget (voksne 18–65 år, depresjon, kort behandlingstid, ingen tidligere seponeringsplager, normal leverfunksjon)? Keks mfl.: utvasking er ikke nødvendig mellom disse SSRI-ene når byttet gjøres forsiktig og under nær oppfølging, og direkte bytte passer fra ett SSRI med kort halveringstid til et annet, men interaksjonsrisikoen er betydelig. Alternativene var moderat bytte (2–4 dager uten SSRI: lavest interaksjonsrisiko, men seponeringssymptomer uten et SSRI som tar over) og kryssnedtrapping (to SSRI-er i terapeutisk dose samtidig).',
+      `(Es)citalopram → sertralin: er nedtrapping til laveste tablettdose og så direkte overgang (sertralin 50 mg dagen etter siste dose, ingen dager uten SSRI) riktig for dette omfanget (voksne 18–65 år, depresjon, høyst ${KORT_BEHANDLINGSTID_UKER} ukers sammenhengende behandling, ingen tidligere seponeringsplager, normal leverfunksjon)? Keks mfl.: utvasking er ikke nødvendig mellom disse SSRI-ene når byttet gjøres forsiktig og under nær oppfølging, og direkte bytte passer fra ett SSRI med kort halveringstid til et annet, men interaksjonsrisikoen er betydelig. Alternativene var moderat bytte (2–4 dager uten SSRI: lavest interaksjonsrisiko, men seponeringssymptomer i dagene uten SSRI) og kryssnedtrapping (to SSRI-er i terapeutisk dose samtidig).`,
     anbefalt: 'Direkte overgang etter nedtrapping til laveste tablettdose, med vurdering av seponeringssymptomer, serotonerg belastning og forverring en uke etter overgangen; moderat bytte og kryssnedtrapping er ikke valgt.',
   },
   {
     nr: 'K2-5',
-    sporsmal: 'Sertralin: er 50 mg i minst 14 dager før valgt økning til 100 mg riktig, og skal høyere doser holdes utenfor planen?',
-    anbefalt: 'Ja; preparatomtalen krever minst én uke, og 14 dager gir tid til å vurdere responsen.',
+    sporsmal:
+      'Sertralin: er 50 mg i minst 14 dager før en valgt økning til 100 mg riktig, med en vurdering før økningen av effekt og behov, toleranse og seponeringssymptomer etter det gamle SSRI-et, og skal høyere doser holdes utenfor planen?',
+    anbefalt:
+      'Ja; Zoloft-preparatomtalen krever minst én uke mellom doseendringer og sier at effekten vanligvis trenger lengre observasjonstid enn én uke. Vedlikeholdsdosen er forskriverens valg: er effekten tilstrekkelig, beholdes 50 mg, og ved dårlig toleranse eller seponeringssymptomer venter økningen.',
   },
   {
     nr: 'K2-6',
-    sporsmal: 'Er avgrensningen dekkende: depresjon hos voksne 18–65 år, kort behandlingstid, ingen tidligere seponeringsplager, normal lever- og (for mirtazapin) nyrefunksjon, tabletter, bekreftet kontroll av serotonerg sammedisinering?',
-    anbefalt: 'Ja for første leveranse; eldre, lang behandlingstid og andre former krever egne regler.',
+    sporsmal:
+      `Er avgrensningen dekkende: depresjon hos voksne 18–65 år, kort behandlingstid, ingen tidligere seponeringsplager, normal lever- og (for mirtazapin) nyrefunksjon, tabletter, bekreftet kontroll av serotonerg sammedisinering? Er ${KORT_BEHANDLINGSTID_UKER} ukers sammenhengende bruk riktig som kontrollerbar grense for kort behandlingstid? RCPsych skiller bare mellom «noen uker» (nedtrapping over omtrent en måned) og «mange måneder eller år» (langsommere), uten eksakt grense.`,
+    anbefalt:
+      `Ja for første leveranse, med ${KORT_BEHANDLINGSTID_UKER} uker som OUSFARs forslag til grense (øvre del av «noen uker»); lengre bruk, eldre og andre former stopper og krever egne regler.`,
   },
   {
     nr: 'K2-7',
-    sporsmal: 'Er vurderingspunktene i planen riktige og nok: seponeringssymptomer og forverring før hver reduksjon og før seponeringen, toleransen før økningen av det nye legemidlet, og respons og bivirkninger fire uker etter oppstarten og etter hver doseendring av det?',
-    anbefalt: 'Ja; fire uker er slutten av de 2–4 ukene preparatomtalene oppgir før respons kan ventes, og en tidligere kontroll kan legges til av forskriveren.',
+    sporsmal:
+      'Er vurderingspunktene i planen riktige og nok: seponeringssymptomer og forverring før hver reduksjon og før seponeringen, effekt, toleranse og seponeringssymptomer før økningen av det nye legemidlet, og respons og bivirkninger fire uker etter oppstarten og etter hver doseendring av det?',
+    anbefalt:
+      'Ja; for mirtazapin er fire uker slutten av de 2–4 ukene preparatomtalen oppgir før respons kan ventes, og for sertralin er det OUSFARs valg innenfor preparatomtalens «lengre observasjonstid» enn én uke. En tidligere kontroll kan legges til av forskriveren.',
   },
 ]
 
@@ -303,7 +309,7 @@ export function lagK2Kontrollgrunnlag(u: Festuttrekk): string {
 
 <!-- Laget av \`npx vite-node scripts/verktoy-antidepressivbytter.ts -- rapport\` fra reglene og FEST-uttrekket. Ikke rediger for hånd. -->
 
-**Ingen av reglene er klinisk godkjent.** ${BYTTESETT.regler.filter((r) => !sluttrinnApent(r)).map((r) => r.tittel).join(' og ')}: sluttrinnet er OUSFARs konkrete forslag til kontroll, der SSRI-et seponeres fra laveste tablettdose fordi sertralin tar over dagen etter (direkte overgang, K2-2 og K2-4). ${BYTTESETT.regler.filter(sluttrinnApent).map((r) => r.tittel).join(', ')}: sluttrinnet er ikke avgjort, så hver plan stopper før en delplan (kasusene «sluttrinnet ikke avgjort»), og planene for dem er regnet med sluttrinnet simulert som laveste tablettdose – et alternativ som ikke er avgjort. Planene under er regnet på en kopi der hvert åpent OUSFAR-valg er simulert avklart uendret og regelen er simulert godkjent, gjennom samme vei som verktøysiden, med preparatene i FEST-uttrekket ${u.hentet.slice(0, 10)} (\`${FEST_K2}\`). Kopien lagres aldri og går aldri til verktøysiden. Fingeravtrykket ved hver regel er versjonen under kontroll; en virkelig godkjenning krever en ny versjon med kontrollørens avklaringer, og den får et nytt fingeravtrykk. Uten godkjenning sier verktøyet at faglig kontroll gjenstår. Det godkjente startforløpet fra sertralin til mirtazapin (versjon 10) er en delplan, som verktøyet ikke viser; det gir «Komplett plan ikke tilgjengelig». Bakgrunn og kilder: \`docs/verktøy-k2-antidepressivbytter.md\`; reglene i sin helhet: \`${K2_REGELRAPPORT.fil}\`.
+**Ingen av reglene er klinisk godkjent.** ${BYTTESETT.regler.filter((r) => !sluttrinnApent(r)).map((r) => r.tittel).join(' og ')}: sluttrinnet er OUSFARs konkrete forslag til kontroll, der SSRI-et seponeres fra laveste tablettdose og sertralin 50 mg startes dagen etter (direkte overgang, K2-2 og K2-4). Sertralin ventes å holde SERT-hemmingen oppe, men seponeringssymptomer kan komme likevel; de følges tett den første uken, og planen justeres individuelt ved plager. ${BYTTESETT.regler.filter(sluttrinnApent).map((r) => r.tittel).join(', ')}: sluttrinnet er ikke avgjort, så hver plan stopper før en delplan (kasusene «sluttrinnet ikke avgjort»), og planene for dem er regnet med sluttrinnet simulert som laveste tablettdose – et alternativ som ikke er avgjort. Planene under er regnet på en kopi der hvert åpent OUSFAR-valg er simulert avklart uendret og regelen er simulert godkjent, gjennom samme vei som verktøysiden, med preparatene i FEST-uttrekket ${u.hentet.slice(0, 10)} (\`${FEST_K2}\`). Kopien lagres aldri og går aldri til verktøysiden. Fingeravtrykket ved hver regel er versjonen under kontroll; en virkelig godkjenning krever en ny versjon med kontrollørens avklaringer, og den får et nytt fingeravtrykk. Uten godkjenning sier verktøyet at faglig kontroll gjenstår. Det godkjente startforløpet fra sertralin til mirtazapin (versjon 10) er en delplan, som verktøyet ikke viser; det gir «Komplett plan ikke tilgjengelig». Bakgrunn og kilder: \`docs/verktøy-k2-antidepressivbytter.md\`; reglene i sin helhet: \`${K2_REGELRAPPORT.fil}\`.
 
 Kasusene er syntetiske. ${kjort.length} kasus, ${avvik.length === 0 ? 'alle med forventet utfall' : `${avvik.length} avvik`}.
 

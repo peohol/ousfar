@@ -8,7 +8,7 @@ import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { FEST_K2, K2_KONTROLLFIL, K2_REGELRAPPORT, K2KASUS, k2avvik, kjorK2, lagK2Kontrollgrunnlag, medSluttrinnVedLavesteTablett, sluttrinnApent, somAvklartOgGodkjent, type K2kasus, type Sluttrinn } from '../verktoy/k2kontroll'
 import { VERKTOY } from '../verktoy/register'
-import { BYTTESETT, STARTFORLOP_SERTRALIN_MIRTAZAPIN } from '../verktoy/regler/antidepressivbytter'
+import { BYTTESETT, KORT_BEHANDLINGSTID_UKER, STARTFORLOP_SERTRALIN_MIRTAZAPIN } from '../verktoy/regler/antidepressivbytter'
 import type { Festuttrekk } from '../verktoy/regler/aksepttest'
 import { beregn } from '../verktoy/regler/beregning'
 import { erstatningsfeil, fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
@@ -147,7 +147,7 @@ describe('K2: regelsettet', () => {
 })
 
 describe('K2: sluttrinnet ved bytte (K2-2)', () => {
-  it('har et konkret sluttrinn bare der sertralin tar over dagen etter (direkte overgang), som åpent forslag til kontrolløren', () => {
+  it('har et konkret sluttrinn bare der sertralin startes dagen etter (direkte overgang), som åpent forslag til kontrolløren', () => {
     expect(BYTTESETT.regler.filter((r) => !sluttrinnApent(r)).map((r) => r.id)).toEqual(['bytte-escitalopram-sertralin', 'bytte-citalopram-sertralin'])
     for (const r of BYTTESETT.regler.filter((x) => !sluttrinnApent(x))) {
       const fase = r.plan.forlop[0]!.faser[0]!
@@ -155,12 +155,70 @@ describe('K2: sluttrinnet ved bytte (K2-2)', () => {
       // Seponeringen gjelder bare fra laveste tablettdose, og bare fordi sertralin startes dagen etter siste dose.
       expect(fase.avslutning.fra_hoyst_mg.verdi, r.id).toBe(fase.strategi.sluttdose_mg!.verdi)
       expect(fase.avslutning.fra_hoyst_mg.grunnlag.type === 'ousfar_vurdering' && fase.avslutning.fra_hoyst_mg.grunnlag.avklaring, r.id).toBeNull()
-      expect(fase.avslutning.grunnlag.type === 'ousfar_vurdering' && fase.avslutning.grunnlag.begrunnelse, r.id).toMatch(/bare fordi sertralin tar over dagen etter; uten det nye legemidlet er \d+ mg ingen seponeringsgrense/)
+      expect(fase.avslutning.grunnlag.type === 'ousfar_vurdering' && fase.avslutning.grunnlag.begrunnelse, r.id).toMatch(/bare i denne planen, der sertralin startes dagen etter; uten et nytt legemiddel med samme virkningsmekanisme er \d+ mg ingen seponeringsgrense/)
       const start = r.plan.forlop[1]!.start
       expect(start.type === 'etter_utvasking' && start.forlop === 'fra' && start.utvasking.verdi, r.id).toBe(0)
       expect(apneValg(r)).toContain('fra.faser[0].avslutning (åpent forslag)')
       expect(r.plan.forlop[0]!.vurderinger!.map((v) => v.nar.type)).toEqual(['for_hvert_trinn', 'etter_seponering'])
     }
+  })
+
+  it('lover ikke at sertralin hindrer seponeringssymptomer: virkningen er forventet, ikke garantert, med tett oppfølging og individuell justering (ChatGPT 04.11)', () => {
+    for (const r of BYTTESETT.regler.filter((x) => !sluttrinnApent(x))) {
+      // Ingen formulering om at sertralin «tar over» eller at siste trinn ikke gir bortfall av virkningen.
+      expect(JSON.stringify(r), r.id).not.toMatch(/tar over|bortfall av SSRI-virkningen|ikke gir et bortfall|ikke nødvendige for sluttrinnet/)
+      const fase = r.plan.forlop[0]!.faser[0]!
+      if (fase.type !== 'nedtrapping' || typeof fase.avslutning !== 'object') throw new Error(r.id)
+      const begrunnelse = fase.avslutning.fra_hoyst_mg.grunnlag.type === 'ousfar_vurdering' ? fase.avslutning.fra_hoyst_mg.grunnlag.begrunnelse : ''
+      for (const del of ['ventes derfor å fortsette', 'ikke garantert at den hindrer seponeringssymptomer eller forverring', 'planen justeres individuelt ved plager']) expect(begrunnelse, r.id).toContain(del)
+      expect((fase.avslutning.fra_hoyst_mg.grunnlag.henvisninger ?? []).map((x) => x.kilde)).toContain('rcpsych-stopping')
+      const overgang = r.plan.forlop[0]!.vurderinger!.find((v) => v.id === 'etter_overgang')!
+      expect(overgang.ved_funn).toMatch(/planlegges det videre forløpet individuelt, og en eventuell økning av sertralin venter/)
+      // Når symptomene vanligvis kommer, står i preparatomtalen for det gamle SSRI-et.
+      expect(overgang.grunnlag.type === 'kilde' && overgang.grunnlag.henvisninger[0]).toMatchObject({ kilde: r.fra.type === 'virkestoff' && r.fra.nokkel === 'escitalopram' ? 'dmp-cipralex' : 'dmp-cipramil', sted: 'pkt. 4.4' })
+    }
+  })
+
+  it('gjelder bare kort behandlingstid med en kontrollerbar grense, som er et åpent OUSFAR-forslag og stopper over grensen', () => {
+    for (const r of BYTTESETT.regler) {
+      const u = r.unntak.find((x) => x.id === 'lang_behandlingstid')!
+      expect(u.tekst, r.id).toContain(`sammenhengende i mer enn ${KORT_BEHANDLINGSTID_UKER} uker`)
+      expect(u.grunnlag.type === 'ousfar_vurdering' && u.grunnlag.avklaring, r.id).toBeNull()
+      expect(u.grunnlag.type === 'ousfar_vurdering' && u.grunnlag.begrunnelse, r.id).toMatch(/Grensen er OUSFARs valg, ikke en verdi fra kildene/)
+      expect(apneValg(r), r.id).toContain('lang_behandlingstid (åpent forslag)')
+    }
+    for (const r of BYTTESETT.regler.filter((x) => !sluttrinnApent(x))) {
+      const d = r.inndata.find((x) => x.navn === 'startdose')!.verdier![0]!
+      const pasientforhold = Object.fromEntries(r.unntak.map((x) => [x.id, false]))
+      expect(beregnSomGodkjent(r, { startdose_mg: d, maldose_mg: 50 }).status, r.id).toBe('modellberegning')
+      const lang = beregnSomGodkjent(r, { startdose_mg: d, maldose_mg: 50, pasientforhold: { ...pasientforhold, lang_behandlingstid: true } })
+      expect(lang.status, r.id).not.toBe('modellberegning')
+      expect(JSON.stringify(lang), r.id).toContain(`Regelen gjelder ikke: Pasienten har brukt`)
+    }
+  })
+
+  it('bygger oppfølgingen av sertralin på Zoloft-preparatomtalen og vurderer effekt, toleranse og seponeringssymptomer før 50 → 100 mg (ChatGPT 04.11)', () => {
+    for (const r of BYTTESETT.regler.filter((x) => !sluttrinnApent(x))) {
+      const til = r.plan.forlop[1]!
+      const bekreftelse = r.bekreftelser.find((b) => b.id === 'toleranse_bytte')!
+      // Ingen respons- eller effekttid for sertralin hentet fra preparatomtalen for escitalopram eller citalopram:
+      // derfra står bare det gamle SSRI-ets seponering og halveringstid.
+      const henvisningerI = (x: unknown) => [...JSON.stringify(x).matchAll(/\{"kilde":"(dmp-[^"]+)","sted":"([^"]*)","faktum":"([^"]*)"\}/g)].map((m) => ({ kilde: m[1], sted: m[2], faktum: m[3] }))
+      const fraSpc = (x: unknown) => henvisningerI(x).filter((h) => h.kilde !== 'dmp-zoloft')
+      expect(henvisningerI(til).map((x) => x.kilde), r.id).toContain('dmp-zoloft')
+      for (const h of [...fraSpc(til), ...fraSpc(bekreftelse)]) expect(h.faktum, `${r.id} ${h.kilde}`).toMatch(/^(Brå seponering bør unngås|Halveringstiden|Eliminasjonshalveringstiden)/)
+      expect(JSON.stringify(r), r.id).not.toContain('før antidepressiv respons')
+      const respons = til.vurderinger!.find((v) => v.id === 'respons')!
+      expect(respons.grunnlag.type === 'kilde' && respons.grunnlag.henvisninger).toEqual([expect.objectContaining({ kilde: 'dmp-zoloft', faktum: expect.stringMatching(/^Effekten kan ses i løpet av sju dager, men vanligvis trengs lengre observasjonstid/) })])
+      const okning = til.vurderinger!.find((v) => v.id === 'for_okning')!
+      for (const del of ['Vurder effekten av sertralin så langt og om økningen fortsatt trengs', 'hvordan sertralin tåles', 'seponeringssymptomer etter']) expect(okning.tekst, r.id).toContain(del)
+      expect(okning.ved_funn).toMatch(/Vedlikeholdsdosen er forskriverens valg og kan justeres\. Er effekten tilstrekkelig, beholdes dosen\. Ved dårlig toleranse eller seponeringssymptomer økes den ikke nå/)
+    }
+    // I den viste planen står vurderingen før økningen på dagen sertralin går fra 50 til 100 mg.
+    const plan = planlinjer(kasus('bytte-escitalopram-sertralin:20-100'))
+    expect(plan).toContain(
+      'Dag 43 (21.12.2026): Vurdering (Sertralin): Før endringen: Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter escitalopram.',
+    )
   })
 
   it('med utvasking 0 starter sertralin nøyaktig dagen etter siste dose, både i beregningen og i den praktiske planen (P5.7)', () => {
