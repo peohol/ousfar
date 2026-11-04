@@ -5,7 +5,7 @@
  * Med pilotreglene og nedtrappingsreglene (P7), som ingen er klinisk godkjent, kan ingenting beregnes. De
  * positive visningene bruker de isolerte testdataene i `hjelp/verktoyplan.ts`.
  */
-import { K1_AVSLUTNINGER } from '../verktoy/regler/k1'
+import { K1_AVSLUTNINGER, K1_OVERGANGER } from '../verktoy/regler/k1'
 import { describe, expect, it } from 'vitest'
 import { adresse, lesRute, sidesti, verktoyadresse } from '../domain/rute'
 import { beregnPlan, festIderFor, formvalgFor, gjelderFortsatt, inndataFor, lesDose, mangler, medRegel, osloDato, skjemaFor, TOMT_SKJEMA, valgidentitet } from '../verktoy/doseplan'
@@ -45,7 +45,10 @@ describe('Verktøyregisteret', () => {
   it('har bare virkestoffer som valg: gruppene løses opp, og johannesurt er aldri med', () => {
     for (const x of VERKTOY) {
       const valg = virkestoffvalg(x)
-      const tekster = valg.flatMap((s) => [s.nokkel, s.navn, ...s.aliaser]).join(' ').toLowerCase()
+      const tekster = valg
+        .flatMap((s) => [s.nokkel, s.navn, ...s.aliaser])
+        .join(' ')
+        .toLowerCase()
       expect(tekster).not.toMatch(/johannesurt|hypericum|perikum|john.?s wort/)
       expect(tekster).not.toMatch(/rest ap|partial agonist|partiell/)
       for (const g of KARTLEGGING.grupper) expect(valg.map((s) => s.nokkel)).not.toContain(g.id)
@@ -171,13 +174,17 @@ describe('Regelstatusen', () => {
     expect(REGELSETT.regler).toHaveLength(PILOTSETT.regler.length + NEDTRAPPINGSSETT.regler.length + TILLEGGSSETT.regler.length + ANTIPSYKOTIKASETT.regler.length)
     // Escitalopram versjon 13 fra K1 er godkjent (04.11.2026) og kan beregnes, i tillegg til vortioksetin, og tre antipsykotikabytter fra K3.
     expect(VERKTOY.map((x) => regeloversikt(x).tilgjengelige)).toEqual([2, 1, 2 + K3_GODKJENT.length, 2])
-    expect(VERKTOY.map((x) => regeloversikt(x).ikkeGodkjent)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length - 1 - K1.length, 1, 1, 0])
-    // K1-versjonen av escitalopram er godkjent (04.11.2026); bare fire av K3s antipsykotikabytter venter på kontroll.
-    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([0, 0, ANTIPSYKOTIKASETT.regler.length - K3_GODKJENT.length, 0])
+    expect(VERKTOY.map((x) => regeloversikt(x).ikkeGodkjent)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length - 1 - K1.length - K1_OVERGANGER.length, 1, 1, 0])
+    // K1-versjonen av escitalopram er godkjent (04.11.2026); escitalopram med tabletter og dråper (B2) og fire av K3s antipsykotikabytter venter på kontroll.
+    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([K1_OVERGANGER.length, 0, ANTIPSYKOTIKASETT.regler.length - K3_GODKJENT.length, 0])
   })
 
   it('forklarer hvorfor et antidepressivum uten regel ikke kan trappes ned, med dekningen fra P7', () => {
-    expect(tilgjengelighet(TRAPPE_NED!, { fra: v('dosulepin') })).toEqual({ status: 'ikke_stottet', regler: [], grunner: ['Dosulepin har ingen preparater i FEST. OUSFAR har derfor ingen regel for dosulepin.'] })
+    expect(tilgjengelighet(TRAPPE_NED!, { fra: v('dosulepin') })).toEqual({
+      status: 'ikke_stottet',
+      regler: [],
+      grunner: ['Dosulepin har ingen preparater i FEST. OUSFAR har derfor ingen regel for dosulepin.'],
+    })
     expect(tilgjengelighet(TRAPPE_NED!, { fra: v('fenelzin') }).grunner.join(' ')).toMatch(/godkjenningsfritak.*Stop-oppføring er ikke tilgjengelig/)
     // Dekningen gjelder seponeringen; et bytte uten regel får den vanlige teksten.
     expect(tilgjengelighet(BYTTE_AD!, { fra: v('dosulepin'), til: v('sertralin') }).grunner).toEqual(['OUSFAR har ingen regel for denne kombinasjonen.'])
@@ -189,7 +196,10 @@ describe('Regelstatusen', () => {
     expect(tilgjengelighet(BYTTE_AP!, { fra: v('aripiprazol'), til: v('aripiprazol') })).toMatchObject({ status: 'ikke_stottet', grunner: [expect.stringMatching(/samme legemidlet/)] })
     // Depotregelen gjelder fra peroral, ikke fra depot.
     expect(tilgjengelighet(BYTTE_AP!, { fra: v('aripiprazol', 'LA'), til: v('aripiprazol', 'LA') }).status).toBe('ikke_stottet')
-    expect(tilgjengelighet(BYTTE_AP!, { fra: v('zuklopentiksol', 'MA'), til: v('aripiprazol') })).toMatchObject({ status: 'ikke_stottet', grunner: [expect.stringMatching(/middels langtidsvirkende/)] })
+    expect(tilgjengelighet(BYTTE_AP!, { fra: v('zuklopentiksol', 'MA'), til: v('aripiprazol') })).toMatchObject({
+      status: 'ikke_stottet',
+      grunner: [expect.stringMatching(/middels langtidsvirkende/)],
+    })
     // Seponeringsregelen er ikke et bytte, og byttet er ikke en seponering.
     expect(reglerFor(BYTTE_AD!, { fra: v('escitalopram'), til: v('sertralin') })).toEqual([])
     expect(reglerFor(TRAPPE_NED!, { fra: v('sertralin') }).map((r) => r.id)).toEqual(['seponering-sertralin', 'seponering-sertralin-langsom'])

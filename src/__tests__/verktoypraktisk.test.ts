@@ -5,7 +5,9 @@
  *
  * S3-fasiten (`__snapshots__/verktoy-s3-planer.json`) ble laget med motoren på
  * main før B1 og skal ikke oppdateres for å bli grønn: en endring der betyr
- * at en godkjent plan, et stopp eller et valg verktøyet tilbyr er endret.
+ * at en godkjent plan, et stopp eller et valg verktøyet tilbyr er endret. En
+ * klinisk PR med nye kasus (som B2) legger bare til nye utfall; de som står
+ * der fra før, skal være uendret.
  *
  * Alle doser er syntetiske; ingen pasientopplysninger.
  */

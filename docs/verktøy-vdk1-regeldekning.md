@@ -153,6 +153,7 @@ Regelutkast som er kontrollert og ikke godkjent (eller bare fagtekst), og som de
 | Trappe ned antidepressiv | `seponering-citalopram` v9 | Citalopram | fagtekst | bare fagtekst |
 | Trappe ned antidepressiv | `seponering-duloksetin` v6 | Duloksetin | fagtekst | bare fagtekst |
 | Trappe ned antidepressiv | `seponering-escitalopram-langsom` v8 | Escitalopram | beregnbar | ikke godkjent |
+| Trappe ned antidepressiv | `seponering-escitalopram-tabletter-og-draper` v14 | Escitalopram | beregnbar | til kontroll |
 | Trappe ned antidepressiv | `seponering-fluoksetin` v12 | Fluoksetin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-fluoksetin-annenhver-dag` v5 | Fluoksetin | beregnbar | ikke godkjent |
 | Trappe ned antidepressiv | `seponering-fluoksetin-langsom` v8 | Fluoksetin | beregnbar | ikke godkjent |

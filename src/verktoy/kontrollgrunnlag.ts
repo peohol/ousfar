@@ -21,7 +21,7 @@ import { norskDato } from './motor/byggesteiner'
 import { valgtekst } from './regler/aksepttest'
 import { erKliniskGodkjent, fingeravtrykk, godkjenningsfeil, KONTROLLUTFALL, kontrollutfall } from './regler/godkjenning'
 import { alleGrunnlag, type Klinisktilfelle, type Regel, type Regelsett } from './regler/modell'
-import { K1_9_AVGJORELSE, K1_DATO, K1_GODKJENNING_0411, K1_KONTROLL_0411 } from './regler/k1'
+import { B2_DATO, B2_ESCITALOPRAM, K1_9_AVGJORELSE, K1_DATO, K1_GODKJENNING_0411, K1_KONTROLL_0411 } from './regler/k1'
 import { STI } from './regler/nedtrapping'
 import { ETTER_RETTELSENE } from './kontrollsett'
 import { avregistrert, avvikFra, kjorKasus, type Kontrollregel, nyStyrke, type Pilotkasus, type Pilotutfall, SIMULERT_KONTROLLOR, simulerGodkjenning, type Uttrekkene } from './regler/pilotmatrise'
@@ -238,7 +238,7 @@ const iTekst = (x: Record<string, number> | undefined) => Object.fromEntries(Obj
  */
 export function planerFor(f: Kontrollforslag, k: Kontrollregel, tilfelle: Klinisktilfelle, startdose_mg: number, uttrekkene: Uttrekkene): Omfangsplan {
   const r = regelMedId(k.id, f.settene)
-  const form = tilfelle.legemiddelform ?? null
+  const form = tilfelle.legemiddelform ?? tilfelle.legemiddelformer?.[0] ?? null
   const grunn: Pilotkasus = {
     id: `${k.id}-${form ?? 'form'}-${startdose_mg}`,
     kategori: 'vanlig_dose',
@@ -323,7 +323,16 @@ const godkjentUtenAvklaring = (k: Kontrollregel, sti: RegExp, hva: string, dato:
  */
 const kasusFor =
   (dato: string, settene?: readonly Regelsett[], avklar = false) =>
-  (id: string, kategori: Pilotkasus['kategori'], hva: string, r: Kontrollregel, dose: string, forventning: Pilotkasus['forventet'] & { planutfall?: string }, tilbyr: number[] = [], x: Partial<Kontrollkasus> = {}): Kontrollkasus => {
+  (
+    id: string,
+    kategori: Pilotkasus['kategori'],
+    hva: string,
+    r: Kontrollregel,
+    dose: string,
+    forventning: Pilotkasus['forventet'] & { planutfall?: string },
+    tilbyr: number[] = [],
+    x: Partial<Kontrollkasus> = {},
+  ): Kontrollkasus => {
     const { planutfall, ...forventet } = forventning
     return {
       id,
@@ -367,11 +376,13 @@ export const FORSLAG_1: Kontrollforslag = {
     {
       nr: '1.1',
       sporsmal: 'Gjelder en godkjenning hele kjeden av reduksjoner der forskriveren velger dosen som tilbys ved hvert trinn som ikke kan gis nøyaktig, eller bare første reduksjon?',
-      anbefalt: 'Hele kjeden innenfor det foretrukne området. Hvert valg er eksplisitt og merket i planen, hver reduksjon krever ny vurdering av toleransen, og prinsippet er alt akseptert i P7-A. Ved hvert valg i omfanget tilbys nøyaktig én dose (avsnitt 5), så kjeden er bestemt av startdosen.',
+      anbefalt:
+        'Hele kjeden innenfor det foretrukne området. Hvert valg er eksplisitt og merket i planen, hver reduksjon krever ny vurdering av toleransen, og prinsippet er alt akseptert i P7-A. Ved hvert valg i omfanget tilbys nøyaktig én dose (avsnitt 5), så kjeden er bestemt av startdosen.',
     },
     {
       nr: '1.2',
-      sporsmal: 'Er en delplan som stopper ved 20 mg (amitriptylin og nortriptylin), 3 mg (escitalopram dråper, kort behandlingstid) eller 9 mg (escitalopram dråper, lang behandlingstid) akseptabel når planen sier at avslutningen vurderes individuelt?',
+      sporsmal:
+        'Er en delplan som stopper ved 20 mg (amitriptylin og nortriptylin), 3 mg (escitalopram dråper, kort behandlingstid) eller 9 mg (escitalopram dråper, lang behandlingstid) akseptabel når planen sier at avslutningen vurderes individuelt?',
       anbefalt: 'Ja. Det er samme utfall som for vortioksetin, planen går aldri til null, og undertittelen sier at den ikke er en fullstendig plan.',
     },
     {
@@ -381,17 +392,20 @@ export const FORSLAG_1: Kontrollforslag = {
     },
     {
       nr: '1.4',
-      sporsmal: 'Escitalopram dråper fra 20 mg ved lang behandlingstid gir ti reduksjoner over 252 dager ned til 9 mg, der åtte trinn på 1 mg er valgt av forskriveren (−5,56 % til −9,09 %). Skal godkjenningen ved lang behandlingstid gjelde hele kjeden, eller bare første reduksjon?',
+      sporsmal:
+        'Escitalopram dråper fra 20 mg ved lang behandlingstid gir ti reduksjoner over 252 dager ned til 9 mg, der åtte trinn på 1 mg er valgt av forskriveren (−5,56 % til −9,09 %). Skal godkjenningen ved lang behandlingstid gjelde hele kjeden, eller bare første reduksjon?',
       anbefalt: 'Hele kjeden. Hvert trinn er innenfor 5–10 % per trinn, som kontrolløren valgte for lang behandlingstid i P7-B, og hvert trinn har minst 28 dager og ny vurdering.',
     },
     {
       nr: '1.5',
-      sporsmal: 'Skal den langsomme varianten for escitalopram (dråper 20 mg, én reduksjon til 19 mg, −5 %) godkjennes? Med både hovedregelen og den langsomme varianten godkjent må forskriveren velge strategien; hovedregelen stopper ved tidligere seponeringssymptomer, og den langsomme varianten krever at de er vurdert.',
+      sporsmal:
+        'Skal den langsomme varianten for escitalopram (dråper 20 mg, én reduksjon til 19 mg, −5 %) godkjennes? Med både hovedregelen og den langsomme varianten godkjent må forskriveren velge strategien; hovedregelen stopper ved tidligere seponeringssymptomer, og den langsomme varianten krever at de er vurdert.',
       anbefalt: 'Ja, som én mulig reduksjon med revurdering, avgrenset slik som vortioksetin. Registreringen trenger den tekniske endringen i avsnitt 2.',
     },
     {
       nr: '1.6',
-      sporsmal: 'Planene for amitriptylin og nortriptylin bruker bare hele tabletter, men noen trinn trenger flere tabletter (for eksempel 40 mg som 4 × 10 mg og 120 mg som 2 × 10 mg + 2 × 50 mg). Er det akseptabelt?',
+      sporsmal:
+        'Planene for amitriptylin og nortriptylin bruker bare hele tabletter, men noen trinn trenger flere tabletter (for eksempel 40 mg som 4 × 10 mg og 120 mg som 2 × 10 mg + 2 × 50 mg). Er det akseptabelt?',
       anbefalt: 'Ja. Det er hele tabletter i de kontrollerte styrkene uten deling, og sammensetningen står i planen. Verktøyet foreslår ingen pakning.',
     },
     {
@@ -402,49 +416,348 @@ export const FORSLAG_1: Kontrollforslag = {
   ],
   kasus: [
     // --- Amitriptylin v12
-    k1('F1-01', 'vanlig_dose', 'amitriptylin 50 mg, kort behandlingstid, før forskriveren har valgt', AMITRIPTYLIN, '50', stopp('amitriptylin dag 1–28: den ideelle dosen 37,5 mg kan ikke gis med preparatene i FEST nøyaktig.'), [40], { ref: 'K1-01' }),
-    k1('F1-02', 'vanlig_dose', 'amitriptylin 50 mg, kort, forskriveren velger dosen som tilbys ved hvert trinn', AMITRIPTYLIN, '50', plan(STARTFORLOP, 'Dag 1–28: Amitriptylin peroralt: 40 mg = 4 tabletter à 10 mg (valgt av forskriveren (beregnet 37,5 mg; −20 %))', 'Dag 29–56: Amitriptylin peroralt: 30 mg = 3 tabletter à 10 mg', 'Dag 57–84: Amitriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))', 'Fra dag 85: Amitriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))'), [], { velger: [40, 25, 20] , ref: 'K1-02' }),
-    k1('F1-03', 'vanlig_dose', 'amitriptylin 25 mg, kort, laveste startdose i omfanget', AMITRIPTYLIN, '25', plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Amitriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))'), [], { velger: [20] }),
-    k1('F1-04', 'vanlig_dose', 'amitriptylin 150 mg, kort, høyeste startdose i omfanget', AMITRIPTYLIN, '150', plan(STARTFORLOP, 'Dag 1–28: Amitriptylin peroralt: 120 mg = 2 tabletter à 10 mg + 2 tabletter à 50 mg (valgt av forskriveren (beregnet 112,5 mg; −20 %))', 'Dag 29–56: Amitriptylin peroralt: 100 mg = 2 tabletter à 50 mg (valgt av forskriveren (beregnet 90 mg; −16,67 %))', 'Dag 57–84: Amitriptylin peroralt: 75 mg = 1 tablett à 25 mg + 1 tablett à 50 mg', 'Dag 85–112: Amitriptylin peroralt: 60 mg = 1 tablett à 10 mg + 1 tablett à 50 mg (valgt av forskriveren (beregnet 56,25 mg; −20 %))', 'Dag 113–140: Amitriptylin peroralt: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg', 'Dag 141–168: Amitriptylin peroralt: 35 mg = 1 tablett à 10 mg + 1 tablett à 25 mg (valgt av forskriveren (beregnet 33,75 mg; −22,22 %))', 'Dag 169–196: Amitriptylin peroralt: 30 mg = 3 tabletter à 10 mg (valgt av forskriveren (beregnet 26,25 mg; −14,29 %))', 'Dag 197–224: Amitriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))', 'Fra dag 225: Amitriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))'), [], { velger: [120, 100, 60, 35, 30, 25, 20] }),
-    k1('F1-05', 'pasientforhold', 'amitriptylin 50 mg, lang behandlingstid', AMITRIPTYLIN, '50', plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Amitriptylin peroralt: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg'), [], { skjema: { svar: LANG }, ref: 'K1-03' }),
-    k1('F1-06', 'pasientforhold', 'amitriptylin 75 mg, lang behandlingstid', AMITRIPTYLIN, '75', plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Amitriptylin peroralt: 70 mg = 2 tabletter à 10 mg + 1 tablett à 50 mg (valgt av forskriveren (beregnet 67,5 mg; −6,67 %))'), [], { skjema: { svar: LANG }, velger: [70] }),
+    k1(
+      'F1-01',
+      'vanlig_dose',
+      'amitriptylin 50 mg, kort behandlingstid, før forskriveren har valgt',
+      AMITRIPTYLIN,
+      '50',
+      stopp('amitriptylin dag 1–28: den ideelle dosen 37,5 mg kan ikke gis med preparatene i FEST nøyaktig.'),
+      [40],
+      { ref: 'K1-01' },
+    ),
+    k1(
+      'F1-02',
+      'vanlig_dose',
+      'amitriptylin 50 mg, kort, forskriveren velger dosen som tilbys ved hvert trinn',
+      AMITRIPTYLIN,
+      '50',
+      plan(
+        STARTFORLOP,
+        'Dag 1–28: Amitriptylin peroralt: 40 mg = 4 tabletter à 10 mg (valgt av forskriveren (beregnet 37,5 mg; −20 %))',
+        'Dag 29–56: Amitriptylin peroralt: 30 mg = 3 tabletter à 10 mg',
+        'Dag 57–84: Amitriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))',
+        'Fra dag 85: Amitriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))',
+      ),
+      [],
+      { velger: [40, 25, 20], ref: 'K1-02' },
+    ),
+    k1(
+      'F1-03',
+      'vanlig_dose',
+      'amitriptylin 25 mg, kort, laveste startdose i omfanget',
+      AMITRIPTYLIN,
+      '25',
+      plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Amitriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))'),
+      [],
+      { velger: [20] },
+    ),
+    k1(
+      'F1-04',
+      'vanlig_dose',
+      'amitriptylin 150 mg, kort, høyeste startdose i omfanget',
+      AMITRIPTYLIN,
+      '150',
+      plan(
+        STARTFORLOP,
+        'Dag 1–28: Amitriptylin peroralt: 120 mg = 2 tabletter à 10 mg + 2 tabletter à 50 mg (valgt av forskriveren (beregnet 112,5 mg; −20 %))',
+        'Dag 29–56: Amitriptylin peroralt: 100 mg = 2 tabletter à 50 mg (valgt av forskriveren (beregnet 90 mg; −16,67 %))',
+        'Dag 57–84: Amitriptylin peroralt: 75 mg = 1 tablett à 25 mg + 1 tablett à 50 mg',
+        'Dag 85–112: Amitriptylin peroralt: 60 mg = 1 tablett à 10 mg + 1 tablett à 50 mg (valgt av forskriveren (beregnet 56,25 mg; −20 %))',
+        'Dag 113–140: Amitriptylin peroralt: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg',
+        'Dag 141–168: Amitriptylin peroralt: 35 mg = 1 tablett à 10 mg + 1 tablett à 25 mg (valgt av forskriveren (beregnet 33,75 mg; −22,22 %))',
+        'Dag 169–196: Amitriptylin peroralt: 30 mg = 3 tabletter à 10 mg (valgt av forskriveren (beregnet 26,25 mg; −14,29 %))',
+        'Dag 197–224: Amitriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))',
+        'Fra dag 225: Amitriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))',
+      ),
+      [],
+      { velger: [120, 100, 60, 35, 30, 25, 20] },
+    ),
+    k1(
+      'F1-05',
+      'pasientforhold',
+      'amitriptylin 50 mg, lang behandlingstid',
+      AMITRIPTYLIN,
+      '50',
+      plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Amitriptylin peroralt: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg'),
+      [],
+      { skjema: { svar: LANG }, ref: 'K1-03' },
+    ),
+    k1(
+      'F1-06',
+      'pasientforhold',
+      'amitriptylin 75 mg, lang behandlingstid',
+      AMITRIPTYLIN,
+      '75',
+      plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Amitriptylin peroralt: 70 mg = 2 tabletter à 10 mg + 1 tablett à 50 mg (valgt av forskriveren (beregnet 67,5 mg; −6,67 %))'),
+      [],
+      { skjema: { svar: LANG }, velger: [70] },
+    ),
     k1('F1-07', 'uvanlig_dose', 'amitriptylin 100 mg, lang behandlingstid (utenfor omfanget)', AMITRIPTYLIN, '100', stopp(utenforOmfang(100), UTENFOR_OMFANG), [], { skjema: { svar: LANG } }),
     k1('F1-08', 'uvanlig_dose', 'amitriptylin 60 mg, kort (startdose utenfor omfanget)', AMITRIPTYLIN, '60', ingenPlan(utenforOmfang(60)), [], { ref: 'K1-06' }),
     k1('F1-09', 'uvanlig_dose', 'amitriptylin 10 mg, kort (laveste styrke)', AMITRIPTYLIN, '10', stopp(utenforOmfang(10), UTENFOR_OMFANG), [], { ref: 'K1-05' }),
-    k1('F1-10', 'uvanlig_dose', 'amitriptylin 50 mg, kort, trinnstørrelsen endret til 20 %', AMITRIPTYLIN, '50', ingenPlan('Reduksjon per trinn (% av aktuell dose) 20 % er ikke verdien som er kontrollert (25 %), heller ikke med begrunnelse.', UTENFOR_OMFANG), [], { skjema: { justert: { [STI.prosent]: '20' } } }),
-    k1('F1-11', 'pasientforhold', 'amitriptylin 50 mg, eldre eller hjerte- og karsykdom', AMITRIPTYLIN, '50', stopp(utenforOmfang(50), UTENFOR_OMFANG), [], { skjema: { svar: { eldre_hjerte: true } } }),
-    k1('F1-12', 'pasientforhold', 'amitriptylin 50 mg, tidligere seponeringssymptomer', AMITRIPTYLIN, '50', stopp('Regelen gjelder ikke: Et tidligere forsøk på å trappe ned eller seponere dette legemidlet har gitt seponeringssymptomer eller mislyktes; da gjelder den langsomme varianten av regelen.'), [], { skjema: { pasientforhold: { tidligere_seponeringssymptomer: true } } }),
-    k1('F1-13', 'ikke_godkjent', 'amitriptylin 50 mg, den langsomme varianten (ikke i forslaget)', AMITRIPTYLIN, '50', stopp('ikke et tilfelle godkjenningen kan gjelde for; ingen tilfeller er kontrollert', UTENFOR_OMFANG), [], { regel: { id: 'seponering-amitriptylin-langsom' }, ref: 'K1-04' }),
-    k1('F1-14', 'interaksjon', 'amitriptylin 50 mg, organfunksjon og interaksjoner ikke vurdert', AMITRIPTYLIN, '50', stopp('Må bekreftes før beregning: Lever- og nyrefunksjon og interaksjoner er vurdert.'), [], { skjema: { bekreftet: ['startforslag'] } }),
+    k1(
+      'F1-10',
+      'uvanlig_dose',
+      'amitriptylin 50 mg, kort, trinnstørrelsen endret til 20 %',
+      AMITRIPTYLIN,
+      '50',
+      ingenPlan('Reduksjon per trinn (% av aktuell dose) 20 % er ikke verdien som er kontrollert (25 %), heller ikke med begrunnelse.', UTENFOR_OMFANG),
+      [],
+      { skjema: { justert: { [STI.prosent]: '20' } } },
+    ),
+    k1('F1-11', 'pasientforhold', 'amitriptylin 50 mg, eldre eller hjerte- og karsykdom', AMITRIPTYLIN, '50', stopp(utenforOmfang(50), UTENFOR_OMFANG), [], {
+      skjema: { svar: { eldre_hjerte: true } },
+    }),
+    k1(
+      'F1-12',
+      'pasientforhold',
+      'amitriptylin 50 mg, tidligere seponeringssymptomer',
+      AMITRIPTYLIN,
+      '50',
+      stopp('Regelen gjelder ikke: Et tidligere forsøk på å trappe ned eller seponere dette legemidlet har gitt seponeringssymptomer eller mislyktes; da gjelder den langsomme varianten av regelen.'),
+      [],
+      { skjema: { pasientforhold: { tidligere_seponeringssymptomer: true } } },
+    ),
+    k1(
+      'F1-13',
+      'ikke_godkjent',
+      'amitriptylin 50 mg, den langsomme varianten (ikke i forslaget)',
+      AMITRIPTYLIN,
+      '50',
+      stopp('ikke et tilfelle godkjenningen kan gjelde for; ingen tilfeller er kontrollert', UTENFOR_OMFANG),
+      [],
+      { regel: { id: 'seponering-amitriptylin-langsom' }, ref: 'K1-04' },
+    ),
+    k1(
+      'F1-14',
+      'interaksjon',
+      'amitriptylin 50 mg, organfunksjon og interaksjoner ikke vurdert',
+      AMITRIPTYLIN,
+      '50',
+      stopp('Må bekreftes før beregning: Lever- og nyrefunksjon og interaksjoner er vurdert.'),
+      [],
+      { skjema: { bekreftet: ['startforslag'] } },
+    ),
     // --- Nortriptylin v12
-    k1('F1-15', 'vanlig_dose', 'nortriptylin 50 mg, kort, forskriveren velger ved hvert trinn', NORTRIPTYLIN, '50', plan(STARTFORLOP, 'Dag 1–28: Nortriptylin peroralt: 40 mg = 4 tabletter à 10 mg (valgt av forskriveren (beregnet 37,5 mg; −20 %))', 'Dag 29–56: Nortriptylin peroralt: 30 mg = 3 tabletter à 10 mg', 'Dag 57–84: Nortriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))', 'Fra dag 85: Nortriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))'), [], { velger: [40, 25, 20] , ref: 'K1-07' }),
-    k1('F1-16', 'vanlig_dose', 'nortriptylin 150 mg, kort', NORTRIPTYLIN, '150', plan(STARTFORLOP, 'Dag 1–28: Nortriptylin peroralt: 120 mg = 2 tabletter à 10 mg + 2 tabletter à 50 mg (valgt av forskriveren (beregnet 112,5 mg; −20 %))', 'Dag 29–56: Nortriptylin peroralt: 100 mg = 2 tabletter à 50 mg (valgt av forskriveren (beregnet 90 mg; −16,67 %))', 'Dag 57–84: Nortriptylin peroralt: 75 mg = 1 tablett à 25 mg + 1 tablett à 50 mg', 'Dag 85–112: Nortriptylin peroralt: 60 mg = 1 tablett à 10 mg + 1 tablett à 50 mg (valgt av forskriveren (beregnet 56,25 mg; −20 %))', 'Dag 113–140: Nortriptylin peroralt: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg', 'Dag 141–168: Nortriptylin peroralt: 35 mg = 1 tablett à 10 mg + 1 tablett à 25 mg (valgt av forskriveren (beregnet 33,75 mg; −22,22 %))', 'Dag 169–196: Nortriptylin peroralt: 30 mg = 3 tabletter à 10 mg (valgt av forskriveren (beregnet 26,25 mg; −14,29 %))', 'Dag 197–224: Nortriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))', 'Fra dag 225: Nortriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))'), [], { velger: [120, 100, 60, 35, 30, 25, 20] }),
-    k1('F1-17', 'pasientforhold', 'nortriptylin 50 mg, lang behandlingstid', NORTRIPTYLIN, '50', plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Nortriptylin peroralt: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg'), [], { skjema: { svar: LANG } }),
+    k1(
+      'F1-15',
+      'vanlig_dose',
+      'nortriptylin 50 mg, kort, forskriveren velger ved hvert trinn',
+      NORTRIPTYLIN,
+      '50',
+      plan(
+        STARTFORLOP,
+        'Dag 1–28: Nortriptylin peroralt: 40 mg = 4 tabletter à 10 mg (valgt av forskriveren (beregnet 37,5 mg; −20 %))',
+        'Dag 29–56: Nortriptylin peroralt: 30 mg = 3 tabletter à 10 mg',
+        'Dag 57–84: Nortriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))',
+        'Fra dag 85: Nortriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))',
+      ),
+      [],
+      { velger: [40, 25, 20], ref: 'K1-07' },
+    ),
+    k1(
+      'F1-16',
+      'vanlig_dose',
+      'nortriptylin 150 mg, kort',
+      NORTRIPTYLIN,
+      '150',
+      plan(
+        STARTFORLOP,
+        'Dag 1–28: Nortriptylin peroralt: 120 mg = 2 tabletter à 10 mg + 2 tabletter à 50 mg (valgt av forskriveren (beregnet 112,5 mg; −20 %))',
+        'Dag 29–56: Nortriptylin peroralt: 100 mg = 2 tabletter à 50 mg (valgt av forskriveren (beregnet 90 mg; −16,67 %))',
+        'Dag 57–84: Nortriptylin peroralt: 75 mg = 1 tablett à 25 mg + 1 tablett à 50 mg',
+        'Dag 85–112: Nortriptylin peroralt: 60 mg = 1 tablett à 10 mg + 1 tablett à 50 mg (valgt av forskriveren (beregnet 56,25 mg; −20 %))',
+        'Dag 113–140: Nortriptylin peroralt: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg',
+        'Dag 141–168: Nortriptylin peroralt: 35 mg = 1 tablett à 10 mg + 1 tablett à 25 mg (valgt av forskriveren (beregnet 33,75 mg; −22,22 %))',
+        'Dag 169–196: Nortriptylin peroralt: 30 mg = 3 tabletter à 10 mg (valgt av forskriveren (beregnet 26,25 mg; −14,29 %))',
+        'Dag 197–224: Nortriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))',
+        'Fra dag 225: Nortriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))',
+      ),
+      [],
+      { velger: [120, 100, 60, 35, 30, 25, 20] },
+    ),
+    k1(
+      'F1-17',
+      'pasientforhold',
+      'nortriptylin 50 mg, lang behandlingstid',
+      NORTRIPTYLIN,
+      '50',
+      plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Nortriptylin peroralt: 45 mg = 2 tabletter à 10 mg + 1 tablett à 25 mg'),
+      [],
+      { skjema: { svar: LANG } },
+    ),
     k1('F1-18', 'uvanlig_dose', 'nortriptylin 75 mg, kort (startdose utenfor omfanget)', NORTRIPTYLIN, '75', stopp(utenforOmfang(75), UTENFOR_OMFANG), [], { ref: 'K1-08' }),
     k1('F1-19', 'pasientforhold', 'nortriptylin 50 mg, eldre', NORTRIPTYLIN, '50', stopp(utenforOmfang(50), UTENFOR_OMFANG), [], { skjema: { svar: { eldre: true } } }),
     // --- Escitalopram v12 og den langsomme varianten v8
-    k1('F1-20', 'vanlig_dose', 'escitalopram tablett 20 mg, kort', ESCITALOPRAM, '20', plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Escitalopram peroralt: 15 mg = 1 tablett à 10 mg + 1 tablett à 5 mg'), [], { skjema: form(TABLETT) , ref: 'K1-12' }),
-    k1('F1-21', 'uvanlig_dose', 'escitalopram tablett 10 mg, kort (utenfor omfanget)', ESCITALOPRAM, '10', stopp(utenforOmfang(10), UTENFOR_OMFANG), [], { skjema: form(TABLETT) , ref: 'K1-13' }),
-    k1('F1-22', 'uvanlig_dose', 'escitalopram tablett 20 mg, lang behandlingstid (utenfor omfanget)', ESCITALOPRAM, '20', stopp(utenforOmfang(20), UTENFOR_OMFANG), [], { skjema: { ...form(TABLETT), svar: LANG } }),
-    k1('F1-23', 'vanlig_dose', 'escitalopram dråper 20 mg, kort, forskriveren velger ved hvert trinn', ESCITALOPRAM, '20', plan(STARTFORLOP, 'Dag 1–28: Escitalopram peroralt: 15 mg = 15 dråper à 1 mg', 'Dag 29–56: Escitalopram peroralt: 12 mg = 12 dråper à 1 mg (valgt av forskriveren (beregnet 11,25 mg; −20 %))', 'Dag 57–84: Escitalopram peroralt: 9 mg = 9 dråper à 1 mg', 'Dag 85–112: Escitalopram peroralt: 7 mg = 7 dråper à 1 mg (valgt av forskriveren (beregnet 6,75 mg; −22,22 %))', 'Dag 113–140: Escitalopram peroralt: 6 mg = 6 dråper à 1 mg (valgt av forskriveren (beregnet 5,25 mg; −14,29 %))', 'Dag 141–168: Escitalopram peroralt: 5 mg = 5 dråper à 1 mg (valgt av forskriveren (beregnet 4,5 mg; −16,67 %))', 'Dag 169–196: Escitalopram peroralt: 4 mg = 4 dråper à 1 mg (valgt av forskriveren (beregnet 3,75 mg; −20 %))', 'Fra dag 197: Escitalopram peroralt: 3 mg = 3 dråper à 1 mg'), [], { skjema: form(DRAPER), velger: [12, 7, 6, 5, 4] , ref: 'K1-09' }),
-    k1('F1-24', 'vanlig_dose', 'escitalopram dråper 10 mg, kort, forskriveren velger ved hvert trinn', ESCITALOPRAM, '10', plan(STARTFORLOP, 'Dag 1–28: Escitalopram peroralt: 8 mg = 8 dråper à 1 mg (valgt av forskriveren (beregnet 7,5 mg; −20 %))', 'Dag 29–56: Escitalopram peroralt: 6 mg = 6 dråper à 1 mg', 'Dag 57–84: Escitalopram peroralt: 5 mg = 5 dråper à 1 mg (valgt av forskriveren (beregnet 4,5 mg; −16,67 %))', 'Dag 85–112: Escitalopram peroralt: 4 mg = 4 dråper à 1 mg (valgt av forskriveren (beregnet 3,75 mg; −20 %))', 'Fra dag 113: Escitalopram peroralt: 3 mg = 3 dråper à 1 mg'), [], { skjema: form(DRAPER), velger: [8, 5, 4] }),
-    k1('F1-25', 'pasientforhold', 'escitalopram dråper 20 mg, lang behandlingstid, før forskriveren har valgt', ESCITALOPRAM, '20', plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Escitalopram peroralt: 18 mg = 18 dråper à 1 mg'), [17], { skjema: { ...form(DRAPER), svar: LANG }, ref: 'K1-10' }),
-    k1('F1-26', 'pasientforhold', 'escitalopram dråper 20 mg, lang behandlingstid, forskriveren velger ved hvert trinn', ESCITALOPRAM, '20', plan(STARTFORLOP, 'Dag 1–28: Escitalopram peroralt: 18 mg = 18 dråper à 1 mg', 'Dag 29–56: Escitalopram peroralt: 17 mg = 17 dråper à 1 mg (valgt av forskriveren (beregnet 16,2 mg; −5,56 %))', 'Dag 57–84: Escitalopram peroralt: 16 mg = 16 dråper à 1 mg (valgt av forskriveren (beregnet 15,3 mg; −5,88 %))', 'Dag 85–112: Escitalopram peroralt: 15 mg = 15 dråper à 1 mg (valgt av forskriveren (beregnet 14,4 mg; −6,25 %))', 'Dag 113–140: Escitalopram peroralt: 14 mg = 14 dråper à 1 mg (valgt av forskriveren (beregnet 13,5 mg; −6,67 %))', 'Dag 141–168: Escitalopram peroralt: 13 mg = 13 dråper à 1 mg (valgt av forskriveren (beregnet 12,6 mg; −7,14 %))', 'Dag 169–196: Escitalopram peroralt: 12 mg = 12 dråper à 1 mg (valgt av forskriveren (beregnet 11,7 mg; −7,69 %))', 'Dag 197–224: Escitalopram peroralt: 11 mg = 11 dråper à 1 mg (valgt av forskriveren (beregnet 10,8 mg; −8,33 %))', 'Dag 225–252: Escitalopram peroralt: 10 mg = 10 dråper à 1 mg (valgt av forskriveren (beregnet 9,9 mg; −9,09 %))', 'Fra dag 253: Escitalopram peroralt: 9 mg = 9 dråper à 1 mg'), [], { skjema: { ...form(DRAPER), svar: LANG }, velger: [17, 16, 15, 14, 13, 12, 11, 10] }),
-    k1('F1-27', 'pasientforhold', 'escitalopram dråper 10 mg, lang behandlingstid', ESCITALOPRAM, '10', plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Escitalopram peroralt: 9 mg = 9 dråper à 1 mg'), [], { skjema: { ...form(DRAPER), svar: LANG } }),
+    k1(
+      'F1-20',
+      'vanlig_dose',
+      'escitalopram tablett 20 mg, kort',
+      ESCITALOPRAM,
+      '20',
+      plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Escitalopram peroralt: 15 mg = 1 tablett à 10 mg + 1 tablett à 5 mg'),
+      [],
+      { skjema: form(TABLETT), ref: 'K1-12' },
+    ),
+    k1('F1-21', 'uvanlig_dose', 'escitalopram tablett 10 mg, kort (utenfor omfanget)', ESCITALOPRAM, '10', stopp(utenforOmfang(10), UTENFOR_OMFANG), [], { skjema: form(TABLETT), ref: 'K1-13' }),
+    k1('F1-22', 'uvanlig_dose', 'escitalopram tablett 20 mg, lang behandlingstid (utenfor omfanget)', ESCITALOPRAM, '20', stopp(utenforOmfang(20), UTENFOR_OMFANG), [], {
+      skjema: { ...form(TABLETT), svar: LANG },
+    }),
+    k1(
+      'F1-23',
+      'vanlig_dose',
+      'escitalopram dråper 20 mg, kort, forskriveren velger ved hvert trinn',
+      ESCITALOPRAM,
+      '20',
+      plan(
+        STARTFORLOP,
+        'Dag 1–28: Escitalopram peroralt: 15 mg = 15 dråper à 1 mg',
+        'Dag 29–56: Escitalopram peroralt: 12 mg = 12 dråper à 1 mg (valgt av forskriveren (beregnet 11,25 mg; −20 %))',
+        'Dag 57–84: Escitalopram peroralt: 9 mg = 9 dråper à 1 mg',
+        'Dag 85–112: Escitalopram peroralt: 7 mg = 7 dråper à 1 mg (valgt av forskriveren (beregnet 6,75 mg; −22,22 %))',
+        'Dag 113–140: Escitalopram peroralt: 6 mg = 6 dråper à 1 mg (valgt av forskriveren (beregnet 5,25 mg; −14,29 %))',
+        'Dag 141–168: Escitalopram peroralt: 5 mg = 5 dråper à 1 mg (valgt av forskriveren (beregnet 4,5 mg; −16,67 %))',
+        'Dag 169–196: Escitalopram peroralt: 4 mg = 4 dråper à 1 mg (valgt av forskriveren (beregnet 3,75 mg; −20 %))',
+        'Fra dag 197: Escitalopram peroralt: 3 mg = 3 dråper à 1 mg',
+      ),
+      [],
+      { skjema: form(DRAPER), velger: [12, 7, 6, 5, 4], ref: 'K1-09' },
+    ),
+    k1(
+      'F1-24',
+      'vanlig_dose',
+      'escitalopram dråper 10 mg, kort, forskriveren velger ved hvert trinn',
+      ESCITALOPRAM,
+      '10',
+      plan(
+        STARTFORLOP,
+        'Dag 1–28: Escitalopram peroralt: 8 mg = 8 dråper à 1 mg (valgt av forskriveren (beregnet 7,5 mg; −20 %))',
+        'Dag 29–56: Escitalopram peroralt: 6 mg = 6 dråper à 1 mg',
+        'Dag 57–84: Escitalopram peroralt: 5 mg = 5 dråper à 1 mg (valgt av forskriveren (beregnet 4,5 mg; −16,67 %))',
+        'Dag 85–112: Escitalopram peroralt: 4 mg = 4 dråper à 1 mg (valgt av forskriveren (beregnet 3,75 mg; −20 %))',
+        'Fra dag 113: Escitalopram peroralt: 3 mg = 3 dråper à 1 mg',
+      ),
+      [],
+      { skjema: form(DRAPER), velger: [8, 5, 4] },
+    ),
+    k1(
+      'F1-25',
+      'pasientforhold',
+      'escitalopram dråper 20 mg, lang behandlingstid, før forskriveren har valgt',
+      ESCITALOPRAM,
+      '20',
+      plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Escitalopram peroralt: 18 mg = 18 dråper à 1 mg'),
+      [17],
+      { skjema: { ...form(DRAPER), svar: LANG }, ref: 'K1-10' },
+    ),
+    k1(
+      'F1-26',
+      'pasientforhold',
+      'escitalopram dråper 20 mg, lang behandlingstid, forskriveren velger ved hvert trinn',
+      ESCITALOPRAM,
+      '20',
+      plan(
+        STARTFORLOP,
+        'Dag 1–28: Escitalopram peroralt: 18 mg = 18 dråper à 1 mg',
+        'Dag 29–56: Escitalopram peroralt: 17 mg = 17 dråper à 1 mg (valgt av forskriveren (beregnet 16,2 mg; −5,56 %))',
+        'Dag 57–84: Escitalopram peroralt: 16 mg = 16 dråper à 1 mg (valgt av forskriveren (beregnet 15,3 mg; −5,88 %))',
+        'Dag 85–112: Escitalopram peroralt: 15 mg = 15 dråper à 1 mg (valgt av forskriveren (beregnet 14,4 mg; −6,25 %))',
+        'Dag 113–140: Escitalopram peroralt: 14 mg = 14 dråper à 1 mg (valgt av forskriveren (beregnet 13,5 mg; −6,67 %))',
+        'Dag 141–168: Escitalopram peroralt: 13 mg = 13 dråper à 1 mg (valgt av forskriveren (beregnet 12,6 mg; −7,14 %))',
+        'Dag 169–196: Escitalopram peroralt: 12 mg = 12 dråper à 1 mg (valgt av forskriveren (beregnet 11,7 mg; −7,69 %))',
+        'Dag 197–224: Escitalopram peroralt: 11 mg = 11 dråper à 1 mg (valgt av forskriveren (beregnet 10,8 mg; −8,33 %))',
+        'Dag 225–252: Escitalopram peroralt: 10 mg = 10 dråper à 1 mg (valgt av forskriveren (beregnet 9,9 mg; −9,09 %))',
+        'Fra dag 253: Escitalopram peroralt: 9 mg = 9 dråper à 1 mg',
+      ),
+      [],
+      { skjema: { ...form(DRAPER), svar: LANG }, velger: [17, 16, 15, 14, 13, 12, 11, 10] },
+    ),
+    k1('F1-27', 'pasientforhold', 'escitalopram dråper 10 mg, lang behandlingstid', ESCITALOPRAM, '10', plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Escitalopram peroralt: 9 mg = 9 dråper à 1 mg'), [], {
+      skjema: { ...form(DRAPER), svar: LANG },
+    }),
     k1('F1-28', 'uvanlig_dose', 'escitalopram dråper 15 mg, kort (startdose utenfor omfanget)', ESCITALOPRAM, '15', stopp(utenforOmfang(15), UTENFOR_OMFANG), [], { skjema: form(DRAPER) }),
-    k1('F1-29', 'uvanlig_dose', 'escitalopram dråper 1 mg', ESCITALOPRAM, '1', stopp(utenforOmfang(1), UTENFOR_OMFANG), [], { skjema: form(DRAPER) , ref: 'K1-15' }),
-    k1('F1-30', 'pasientforhold', 'escitalopram dråper 20 mg, 65 år eller eldre', ESCITALOPRAM, '20', stopp('Startdosen 20 mg er utenfor det regelen gjelder for (høyst 10 mg ved eldre over 65 år).', UTENFOR_OMFANG), [], { skjema: { ...form(DRAPER), svar: { eldre: true } }, ref: 'K1-14' }),
-    k1('F1-31', 'pasientforhold', 'escitalopram dråper 20 mg, QT-forlengelse', ESCITALOPRAM, '20', stopp('Regelen gjelder ikke: Pasienten har kjent QT-forlengelse eller medfødt langt QT-syndrom, eller bruker et annet legemiddel som forlenger QT-intervallet.'), [], { skjema: { ...form(DRAPER), pasientforhold: { qt_forlengelse: true } } }),
-    k1('F1-32', 'vanlig_dose', 'escitalopram dråper 20 mg, tidligere seponeringssymptomer (langsom variant)', ESCITALOPRAM_LANGSOM, '20', plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Escitalopram peroralt: 19 mg = 19 dråper à 1 mg'), [], { skjema: form(DRAPER) , ref: 'K1-11' }),
+    k1('F1-29', 'uvanlig_dose', 'escitalopram dråper 1 mg', ESCITALOPRAM, '1', stopp(utenforOmfang(1), UTENFOR_OMFANG), [], { skjema: form(DRAPER), ref: 'K1-15' }),
+    k1(
+      'F1-30',
+      'pasientforhold',
+      'escitalopram dråper 20 mg, 65 år eller eldre',
+      ESCITALOPRAM,
+      '20',
+      stopp('Startdosen 20 mg er utenfor det regelen gjelder for (høyst 10 mg ved eldre over 65 år).', UTENFOR_OMFANG),
+      [],
+      { skjema: { ...form(DRAPER), svar: { eldre: true } }, ref: 'K1-14' },
+    ),
+    k1(
+      'F1-31',
+      'pasientforhold',
+      'escitalopram dråper 20 mg, QT-forlengelse',
+      ESCITALOPRAM,
+      '20',
+      stopp('Regelen gjelder ikke: Pasienten har kjent QT-forlengelse eller medfødt langt QT-syndrom, eller bruker et annet legemiddel som forlenger QT-intervallet.'),
+      [],
+      { skjema: { ...form(DRAPER), pasientforhold: { qt_forlengelse: true } } },
+    ),
+    k1(
+      'F1-32',
+      'vanlig_dose',
+      'escitalopram dråper 20 mg, tidligere seponeringssymptomer (langsom variant)',
+      ESCITALOPRAM_LANGSOM,
+      '20',
+      plan(EN_FORSTE_REDUKSJON, 'Fra dag 1: Escitalopram peroralt: 19 mg = 19 dråper à 1 mg'),
+      [],
+      { skjema: form(DRAPER), ref: 'K1-11' },
+    ),
     k1('F1-33', 'uvanlig_dose', 'escitalopram dråper 10 mg, langsom variant (utenfor omfanget)', ESCITALOPRAM_LANGSOM, '10', stopp(utenforOmfang(10), UTENFOR_OMFANG), [], { skjema: form(DRAPER) }),
     k1('F1-34', 'uvanlig_dose', 'escitalopram tablett 20 mg, langsom variant (utenfor omfanget)', ESCITALOPRAM_LANGSOM, '20', stopp(utenforOmfang(20), UTENFOR_OMFANG), [], { skjema: form(TABLETT) }),
     // --- Uten simulert godkjenning, endret regel og endrede preparater
     k1('F1-35', 'ikke_godkjent', 'amitriptylin slik verktøyet er i dag', AMITRIPTYLIN, '50', { utfall: 'ingen', status: 'ikke_godkjent' }, [], { regel: undefined }),
     k1('F1-36', 'ikke_godkjent', 'nortriptylin slik verktøyet er i dag', NORTRIPTYLIN, '50', { utfall: 'ingen', status: 'ikke_godkjent' }, [], { regel: undefined }),
     k1('F1-37', 'ikke_godkjent', 'escitalopram slik verktøyet er i dag', ESCITALOPRAM, '20', { utfall: 'ingen', status: 'ikke_godkjent' }, [], { regel: undefined }),
-    k1('F1-38', 'regelendring', 'amitriptylin 100 mg med trinnlengden endret etter godkjenningen', AMITRIPTYLIN, '100', ingenPlan('Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke)'), [], { regel: endretEtter(AMITRIPTYLIN, 'trinnlengden 28 → 21 dager', (r) => { const f = r.plan.forlop[0]!.faser[0]!; if (f.type === 'nedtrapping') f.trinnlengde.verdi = 21 }) }),
-    k1('F1-39', 'preparat', 'amitriptylin 50 mg, kort, 10 mg avregistrert', AMITRIPTYLIN, '50', stopp('amitriptylin (fra): styrken 10 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST, så planen ville blitt satt sammen annerledes enn den som er kontrollert.', UTENFOR_OMFANG), [], { fest: avregistrert('amitriptylin', 10) }),
-    k1('F1-40', 'preparat', 'amitriptylin 50 mg, kort, ny styrke 20 mg i FEST', AMITRIPTYLIN, '50', plan(STARTFORLOP, 'Dag 1–28: Amitriptylin peroralt: 40 mg = 4 tabletter à 10 mg (valgt av forskriveren (beregnet 37,5 mg; −20 %))', 'Dag 29–56: Amitriptylin peroralt: 30 mg = 3 tabletter à 10 mg', 'Dag 57–84: Amitriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))', 'Fra dag 85: Amitriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))'), [], { fest: nyStyrke('amitriptylin', 10, 20, 'nytt'), velger: [40, 25, 20] }),
+    k1(
+      'F1-38',
+      'regelendring',
+      'amitriptylin 100 mg med trinnlengden endret etter godkjenningen',
+      AMITRIPTYLIN,
+      '100',
+      ingenPlan('Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke)'),
+      [],
+      {
+        regel: endretEtter(AMITRIPTYLIN, 'trinnlengden 28 → 21 dager', (r) => {
+          const f = r.plan.forlop[0]!.faser[0]!
+          if (f.type === 'nedtrapping') f.trinnlengde.verdi = 21
+        }),
+      },
+    ),
+    k1(
+      'F1-39',
+      'preparat',
+      'amitriptylin 50 mg, kort, 10 mg avregistrert',
+      AMITRIPTYLIN,
+      '50',
+      stopp(
+        'amitriptylin (fra): styrken 10 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST, så planen ville blitt satt sammen annerledes enn den som er kontrollert.',
+        UTENFOR_OMFANG,
+      ),
+      [],
+      { fest: avregistrert('amitriptylin', 10) },
+    ),
+    k1(
+      'F1-40',
+      'preparat',
+      'amitriptylin 50 mg, kort, ny styrke 20 mg i FEST',
+      AMITRIPTYLIN,
+      '50',
+      plan(
+        STARTFORLOP,
+        'Dag 1–28: Amitriptylin peroralt: 40 mg = 4 tabletter à 10 mg (valgt av forskriveren (beregnet 37,5 mg; −20 %))',
+        'Dag 29–56: Amitriptylin peroralt: 30 mg = 3 tabletter à 10 mg',
+        'Dag 57–84: Amitriptylin peroralt: 25 mg = 1 tablett à 25 mg (valgt av forskriveren (beregnet 22,5 mg; −16,67 %))',
+        'Fra dag 85: Amitriptylin peroralt: 20 mg = 2 tabletter à 10 mg (valgt av forskriveren (beregnet 18,75 mg; −20 %))',
+      ),
+      [],
+      { fest: nyStyrke('amitriptylin', 10, 20, 'nytt'), velger: [40, 25, 20] },
+    ),
   ],
 }
 
@@ -497,7 +810,15 @@ function draperTilSeponering(trinn: ([number] | [number, number, number])[]): st
 }
 
 /** Forskriverens valg i K1-01 (escitalopram dråper fra 10 mg), gjort på forhånd: trinn, dosen før og valgt dose. */
-const VALG_FRA_10_MG = ([[1, 10, 8], [3, 6, 5], [4, 5, 4], [6, 3, 2], [7, 2, 1]] as const).map(([trinn, fra_mg, mg]) => ({ forlop: 'fra', trinn, fra_mg, mg }))
+const VALG_FRA_10_MG = (
+  [
+    [1, 10, 8],
+    [3, 6, 5],
+    [4, 5, 4],
+    [6, 3, 2],
+    [7, 2, 1],
+  ] as const
+).map(([trinn, fra_mg, mg]) => ({ forlop: 'fra', trinn, fra_mg, mg }))
 
 export const FORSLAG_K1: Kontrollforslag = {
   nr: 2,
@@ -518,7 +839,8 @@ export const FORSLAG_K1: Kontrollforslag = {
   ],
   avgrensning: {
     dato: DATO_K1,
-    tekst: 'Den sikre stoppen godtas, men K1 er ikke godtatt som produkt. Lag minst ett avgrenset, kildeforankret positivt klinisk forløp der det faktisk kan forsvares: definert startdose og behandlingshistorikk, små relative lavdosetrinn, dokumentert presisjon og administrasjon (også tablett ↔ dråper når aktuelt), symptomstyrt lengde og en særskilt vurdert siste dose → null. Laveste dose i preparatomtalen er ikke sluttgrensen, og algoritmen skal aldri finne opp oppmåling eller seponeringsgrense. Uten faglig og praktisk forsvarlig komplett plan: full stopp uten kopierbar delplan. Den globale sperren mot delplaner hører hjemme i motoren (#319). Lag positive og negative ende-til-ende-tester med faktiske norske preparater, og verifiser regelversjon og fingeravtrykk separat. Ingen av de fire K1-reglene er godkjent.',
+    tekst:
+      'Den sikre stoppen godtas, men K1 er ikke godtatt som produkt. Lag minst ett avgrenset, kildeforankret positivt klinisk forløp der det faktisk kan forsvares: definert startdose og behandlingshistorikk, små relative lavdosetrinn, dokumentert presisjon og administrasjon (også tablett ↔ dråper når aktuelt), symptomstyrt lengde og en særskilt vurdert siste dose → null. Laveste dose i preparatomtalen er ikke sluttgrensen, og algoritmen skal aldri finne opp oppmåling eller seponeringsgrense. Uten faglig og praktisk forsvarlig komplett plan: full stopp uten kopierbar delplan. Den globale sperren mot delplaner hører hjemme i motoren (#319). Lag positive og negative ende-til-ende-tester med faktiske norske preparater, og verifiser regelversjon og fingeravtrykk separat. Ingen av de fire K1-reglene er godkjent.',
   },
   forutsetninger: [
     'Godkjenningen gjelder nøyaktig versjonen og fingeravtrykket i tabellen over. Sluttdosen og seponeringen fra 1 mg er avklart av Peder (K1.9); det minste trinnet og oppfølgingsdagene er avklart av kontrolløren (K1.10 og K1.12). Regelen har ingen åpne valg.',
@@ -530,38 +852,46 @@ export const FORSLAG_K1: Kontrollforslag = {
   sporsmal: [
     {
       nr: 'K1.9',
-      sporsmal: 'Sluttdose for escitalopram: er 1 mg (én dråpe), holdt et helt trinn (minst 28 dager som standard, lenger ved symptomer), en forsvarlig siste dose før seponering? Ingen registrert kilde angir en sluttdose. 1 mg er 5 % av 20 mg og 10 % av 10 mg; RCPsych beskriver at noen trenger å gå ned mot 2 % av opprinnelig dose, og at seponeringssymptomer kan komme uansett hvor lav dosen er. Doser under 1 mg krever fortynning, som ikke er dokumentert. Etterkontrollen av 0c25831 ba om en uavhengig og eksplisitt avklaring av hvilke pasienter 1 mg → 0 etter symptomstyrt hold er faglig forsvarlig for. Forslaget gjelder bare regelens kliniske omfang: voksne under 65 år, kort behandlingstid, ingen tidligere seponeringssymptomer eller mislykket nedtrapping, ikke nedsatt leverfunksjon og ikke kjent langsom CYP2C19-metaboliserer, med dråper. Trengs mindre trinn enn én dråpe, beregner verktøyet dem ikke: dosen holdes på siste tolererte dose, og videre nedtrapping planlegges individuelt, uten fortynning eller oppmåling fra verktøyet. Er 1 mg → 0 forsvarlig for denne gruppen?',
+      sporsmal:
+        'Sluttdose for escitalopram: er 1 mg (én dråpe), holdt et helt trinn (minst 28 dager som standard, lenger ved symptomer), en forsvarlig siste dose før seponering? Ingen registrert kilde angir en sluttdose. 1 mg er 5 % av 20 mg og 10 % av 10 mg; RCPsych beskriver at noen trenger å gå ned mot 2 % av opprinnelig dose, og at seponeringssymptomer kan komme uansett hvor lav dosen er. Doser under 1 mg krever fortynning, som ikke er dokumentert. Etterkontrollen av 0c25831 ba om en uavhengig og eksplisitt avklaring av hvilke pasienter 1 mg → 0 etter symptomstyrt hold er faglig forsvarlig for. Forslaget gjelder bare regelens kliniske omfang: voksne under 65 år, kort behandlingstid, ingen tidligere seponeringssymptomer eller mislykket nedtrapping, ikke nedsatt leverfunksjon og ikke kjent langsom CYP2C19-metaboliserer, med dråper. Trengs mindre trinn enn én dråpe, beregner verktøyet dem ikke: dosen holdes på siste tolererte dose, og videre nedtrapping planlegges individuelt, uten fortynning eller oppmåling fra verktøyet. Er 1 mg → 0 forsvarlig for denne gruppen?',
       anbefalt: `Avgjort av Peder ${norskDato(K1_9_AVGJORELSE.dato)}: «${K1_9_AVGJORELSE.valg}», avgrenset slik avsnittet «Peders avgjørelse på K1.9» siterer. Regelens kliniske omfang er det samme eller snevrere, og alle utenfor får et sikkert stopp (kasus K1-06, K1-07, K1-12, K1-13 og K1-25–K1-28). Kontrolløren har kontrollert at regelen følger avgjørelsen, og godkjent regelen (avsnittet «Kontrollørens godkjenning av versjon 13»).`,
     },
     {
       nr: 'K1.10',
-      sporsmal: 'Minste trinn: fra 3 mg er 3 → 2 mg en reduksjon på 33 % og 2 → 1 mg 50 %. Trinnene er større enn NICE-eksempelet på 25 % ved lav dose, og svaret på K1.6 var nei til et generelt større siste trinn på om lag 50 % som snarvei. Er ett minste trinn på én dråpe akseptabelt her, når det bare gjelder escitalopram dråper fra 3 mg eller lavere (der ingen mindre dose kan gis), forskriveren velger det aktivt, og tempoet styres av symptomer?',
+      sporsmal:
+        'Minste trinn: fra 3 mg er 3 → 2 mg en reduksjon på 33 % og 2 → 1 mg 50 %. Trinnene er større enn NICE-eksempelet på 25 % ved lav dose, og svaret på K1.6 var nei til et generelt større siste trinn på om lag 50 % som snarvei. Er ett minste trinn på én dråpe akseptabelt her, når det bare gjelder escitalopram dråper fra 3 mg eller lavere (der ingen mindre dose kan gis), forskriveren velger det aktivt, og tempoet styres av symptomer?',
       anbefalt: `Avklart av kontrolløren ${norskDato(K1_KONTROLL_0411.minste_trinn.dato)}: ja, avgrenset til dette escitalopramforløpet (avsnittet «Kontrollørens avklaring av K1.10 og K1.12»).`,
     },
     {
       nr: 'K1.11',
-      sporsmal: 'Overgang fra escitalopram tablett til dråper (K0-01): regelen sier nå at en pasient som bruker tabletter, kan gå over til dråper med samme døgndose i mg når planen starter. Grunnlaget er preparatomtalen for Cipralex 20 mg/ml dråper (DMP 07-4892, oppdatert 02.05.2024), registrert som kilden `dmp-cipralex-draper`: pkt. 2 (én dråpe er 1 mg) og pkt. 5.2 (dråpene er bioekvivalente med Cipralex tabletter). Generiske tabletter er godkjent mot Cipralex tabletter, men ikke sammenlignet direkte med dråpene. Er dette tilstrekkelig?',
+      sporsmal:
+        'Overgang fra escitalopram tablett til dråper (K0-01): regelen sier nå at en pasient som bruker tabletter, kan gå over til dråper med samme døgndose i mg når planen starter. Grunnlaget er preparatomtalen for Cipralex 20 mg/ml dråper (DMP 07-4892, oppdatert 02.05.2024), registrert som kilden `dmp-cipralex-draper`: pkt. 2 (én dråpe er 1 mg) og pkt. 5.2 (dråpene er bioekvivalente med Cipralex tabletter). Generiske tabletter er godkjent mot Cipralex tabletter, men ikke sammenlignet direkte med dråpene. Er dette tilstrekkelig?',
       anbefalt: `Ja, mg for mg, slik regelen sier det. Planen starter da med dråper fra døgndosen pasienten bruker (kasus K1-01). Omfattet av kontrollørens godkjenning ${norskDato(K1_GODKJENNING_0411.dato)}, som viser til kasus K1-01 og K1-02.`,
     },
     {
       nr: 'K1.12',
-      sporsmal: 'Oppfølging etter siste dose: vurdering 7, 14 og 28 dager etter siste dose, i tillegg til vurderingen før hver endring. 7 og 14 dager bygger på preparatomtalen (symptomene kommer vanligvis de første dagene og går vanligvis over innen to uker); 28 dager er OUSFARs valg, fordi symptomene kan vare lenger og tilbakefall må vurderes. Er punktene riktige?',
+      sporsmal:
+        'Oppfølging etter siste dose: vurdering 7, 14 og 28 dager etter siste dose, i tillegg til vurderingen før hver endring. 7 og 14 dager bygger på preparatomtalen (symptomene kommer vanligvis de første dagene og går vanligvis over innen to uker); 28 dager er OUSFARs valg, fordi symptomene kan vare lenger og tilbakefall må vurderes. Er punktene riktige?',
       anbefalt: `Avklart av kontrolløren ${norskDato(K1_KONTROLL_0411.oppfolging.dato)}: ja, som kontrollpunkter, ikke som obligatoriske eller optimale dager for alle (avsnittet «Kontrollørens avklaring av K1.10 og K1.12»).`,
     },
     {
       nr: 'K1.13',
-      sporsmal: 'Escitalopram etter lang behandlingstid (10 % per trinn): dråpene gir hele milligram, så planen stopper på 9 mg (9 → 8 mg er 11 %), og verktøyet viser «komplett plan ikke tilgjengelig». Skal det være slik til en metode for mindre trinn er dokumentert?',
+      sporsmal:
+        'Escitalopram etter lang behandlingstid (10 % per trinn): dråpene gir hele milligram, så planen stopper på 9 mg (9 → 8 mg er 11 %), og verktøyet viser «komplett plan ikke tilgjengelig». Skal det være slik til en metode for mindre trinn er dokumentert?',
       anbefalt: 'Ja. Det minste trinnet gjelder bare fra 3 mg, og ingen dokumentert metode gir trinn på høyst 10 % under 10 mg.',
     },
     {
       nr: 'K1.14',
-      sporsmal: 'Nortriptylin og amitriptylin (K0-03): tablettene er 10, 25 og 50 mg, og verken FEST eller preparatomtalene for 10 mg-tablettene (Noritren, DMP 0000-04957, oppdatert 20.06.2024; Sarotex, 0000-04327; Amitriptylin Orifarm, 17-11692; Amitriptylin Abcur, 16-11418) oppgir deling. Amitriptylin mikstur 10 mg/5 ml finnes bare med godkjenningsfritak, og måleskjeen gir 5 og 10 mg. Planene stopper derfor på 20 mg med «komplett plan ikke tilgjengelig». Finnes en dokumentert metode?',
+      sporsmal:
+        'Nortriptylin og amitriptylin (K0-03): tablettene er 10, 25 og 50 mg, og verken FEST eller preparatomtalene for 10 mg-tablettene (Noritren, DMP 0000-04957, oppdatert 20.06.2024; Sarotex, 0000-04327; Amitriptylin Orifarm, 17-11692; Amitriptylin Abcur, 16-11418) oppgir deling. Amitriptylin mikstur 10 mg/5 ml finnes bare med godkjenningsfritak, og måleskjeen gir 5 og 10 mg. Planene stopper derfor på 20 mg med «komplett plan ikke tilgjengelig». Finnes en dokumentert metode?',
       anbefalt: 'Nei, ikke i dag. Reglene er uendret (versjon 12), og verktøyet gir «komplett plan ikke tilgjengelig».',
     },
     {
       nr: 'K1.15',
-      sporsmal: 'Sertralin (K0-02): tablettene er 25, 50 og 100 mg. Konsentratet til mikstur (Zoloft 20 mg/ml) har en gradert pipette, men preparatomtalen oppgir ikke graderingen, og konsentratet skal fortynnes. Kan konsentratet brukes når graderingen er dokumentert, og skal verktøyet kunne bruke en validert apotektilberedning?',
-      anbefalt: 'Bare når graderingen og den minste dosen som kan måles, er dokumentert, eller en navngitt tilberedning har dokumentert styrke, holdbarhet og måleutstyr. Ingen av delene er dokumentert i dag, så sertralin gir «komplett plan ikke tilgjengelig».',
+      sporsmal:
+        'Sertralin (K0-02): tablettene er 25, 50 og 100 mg. Konsentratet til mikstur (Zoloft 20 mg/ml) har en gradert pipette, men preparatomtalen oppgir ikke graderingen, og konsentratet skal fortynnes. Kan konsentratet brukes når graderingen er dokumentert, og skal verktøyet kunne bruke en validert apotektilberedning?',
+      anbefalt:
+        'Bare når graderingen og den minste dosen som kan måles, er dokumentert, eller en navngitt tilberedning har dokumentert styrke, holdbarhet og måleutstyr. Ingen av delene er dokumentert i dag, så sertralin gir «komplett plan ikke tilgjengelig».',
     },
   ],
   avsnitt: [
@@ -570,11 +900,23 @@ export const FORSLAG_K1: Kontrollforslag = {
       tekst: tabell(
         ['Krav', 'Hva er gjort'],
         [
-          ['Minst ett avgrenset, kildeforankret positivt forløp med små relative lavdosetrinn, dokumentert presisjon og administrasjon, symptomstyrt lengde og en særskilt vurdert siste dose → 0', 'Escitalopram dråper fra 10 og 20 mg ved kort behandlingstid (kasus K1-01 og K1-02, avsnittet «Hvilke forløp som er komplette»): trinn på høyst 25 % til 3 mg, så 3 → 2 → 1 mg med dråper på 1 mg, 1 mg et helt trinn og seponering. Vurdering før hver endring og 7, 14 og 28 dager etter siste dose. Sluttdosen er avgjort av Peder (K1.9), og det minste trinnet og oppfølgingen er avklart av kontrolløren (K1.10 og K1.12).'],
+          [
+            'Minst ett avgrenset, kildeforankret positivt forløp med små relative lavdosetrinn, dokumentert presisjon og administrasjon, symptomstyrt lengde og en særskilt vurdert siste dose → 0',
+            'Escitalopram dråper fra 10 og 20 mg ved kort behandlingstid (kasus K1-01 og K1-02, avsnittet «Hvilke forløp som er komplette»): trinn på høyst 25 % til 3 mg, så 3 → 2 → 1 mg med dråper på 1 mg, 1 mg et helt trinn og seponering. Vurdering før hver endring og 7, 14 og 28 dager etter siste dose. Sluttdosen er avgjort av Peder (K1.9), og det minste trinnet og oppfølgingen er avklart av kontrolløren (K1.10 og K1.12).',
+          ],
           ['Tablett ↔ dråper med eksakt ekvivalens og administrasjon', 'Preparatomtalen for dråpene er registrert som kilde (`dmp-cipralex-draper`); overgangen er mg for mg (K1.11, kasus K1-01).'],
-          ['Ingen oppfunnet oppmåling eller seponeringsgrense', 'Bare hele dråper; ingen fortynning, oppmåling eller apotektilberedning. Sluttdosen er ingen grense fra en kilde, men en dokumentert faglig avgjørelse for et avgrenset omfang (K1.9).'],
-          ['Ellers full stopp uten kopierbar delplan', 'Motorens globale sperre (#319). Lang behandlingstid, escitalopram tablett, nortriptylin, amitriptylin og sertralin gir «komplett plan ikke tilgjengelig» (kasus K1-06–K1-08 og K1-14–K1-18).'],
-          ['Positive og negative ende-til-ende-tester med norske preparater; versjon og fingeravtrykk separat', '`src/__tests__/verktoyk1.test.ts`: kasusene her, alle planer i omfanget, og egne tester av versjon og fingeravtrykk.'],
+          [
+            'Ingen oppfunnet oppmåling eller seponeringsgrense',
+            'Bare hele dråper; ingen fortynning, oppmåling eller apotektilberedning. Sluttdosen er ingen grense fra en kilde, men en dokumentert faglig avgjørelse for et avgrenset omfang (K1.9).',
+          ],
+          [
+            'Ellers full stopp uten kopierbar delplan',
+            'Motorens globale sperre (#319). Lang behandlingstid, escitalopram tablett, nortriptylin, amitriptylin og sertralin gir «komplett plan ikke tilgjengelig» (kasus K1-06–K1-08 og K1-14–K1-18).',
+          ],
+          [
+            'Positive og negative ende-til-ende-tester med norske preparater; versjon og fingeravtrykk separat',
+            '`src/__tests__/verktoyk1.test.ts`: kasusene her, alle planer i omfanget, og egne tester av versjon og fingeravtrykk.',
+          ],
         ],
       ),
     },
@@ -592,7 +934,11 @@ ${tabell(
   ['Avgrensningen', 'Regelens kliniske omfang', 'Utenfor: sikkert stopp'],
   [
     ['Voksne', 'Under 18 år stopper ordinær planlegging', 'K1-28'],
-    ['Under 65 år', 'Bare nei på spørsmålet om alder over 65 år; også nei om nedsatt leverfunksjon og kjent langsom CYP2C19-metaboliserer, som er snevrere enn avgrensningen', 'K1-12, K1-25, K1-26, K1-27'],
+    [
+      'Under 65 år',
+      'Bare nei på spørsmålet om alder over 65 år; også nei om nedsatt leverfunksjon og kjent langsom CYP2C19-metaboliserer, som er snevrere enn avgrensningen',
+      'K1-12, K1-25, K1-26, K1-27',
+    ],
     ['Kort behandlingstid', 'Komplett plan bare ved kort behandlingstid; lang behandlingstid gir «komplett plan ikke tilgjengelig»', 'K1-06, K1-07'],
     ['Uten tidligere seponeringsplager', 'Tidligere seponeringssymptomer eller mislykket nedtrapping: regelen gjelder ikke', 'K1-13'],
     ['Fra 10 eller 20 mg', 'Dråper fra 10 eller 20 mg; tablettpasienter går over til dråper med samme dose (K1.11)', 'K1-08, K1-10, K1-11'],
@@ -622,9 +968,15 @@ ${liste([
       tekst: `${tabell(
         ['Funn', 'Status'],
         [
-          ['1 mg → 0 er ikke klinisk validert; avklar uavhengig og eksplisitt hvilke pasienter det er forsvarlig for, og oppgi trygg håndtering når mindre trinn trengs', 'Avgjort av Peder (K1.9, avsnittet under). Regelen sier at verktøyet ikke beregner trinn under én dråpe: dosen holdes på siste tolererte dose, og videre nedtrapping planlegges individuelt. Ingen fortynning eller oppmåling er lagt til.'],
+          [
+            '1 mg → 0 er ikke klinisk validert; avklar uavhengig og eksplisitt hvilke pasienter det er forsvarlig for, og oppgi trygg håndtering når mindre trinn trengs',
+            'Avgjort av Peder (K1.9, avsnittet under). Regelen sier at verktøyet ikke beregner trinn under én dråpe: dosen holdes på siste tolererte dose, og videre nedtrapping planlegges individuelt. Ingen fortynning eller oppmåling er lagt til.',
+          ],
           ['De positive eksemplene er ett virkestoff med samme sluttrinn; de andre stoffene har ingen komplett plan', 'Riktig, og et reelt gjenstående leveransegap (under). K1 er ikke ferdig.'],
-          ['Global sikring i #319 og kontroll etter integrasjonen; simulert godkjenning er ikke klinisk godkjenning', 'Motoren (#319) har den globale sperren. Kontrollørens godkjenning er nå registrert i regelen, og kasusene for escitalopram går uten simulering gjennom verktøyets egen tilgjengelighet. Integrert kontroll av hele appen gjøres i QA (#321) etter at PR-ene er flettet.'],
+          [
+            'Global sikring i #319 og kontroll etter integrasjonen; simulert godkjenning er ikke klinisk godkjenning',
+            'Motoren (#319) har den globale sperren. Kontrollørens godkjenning er nå registrert i regelen, og kasusene for escitalopram går uten simulering gjennom verktøyets egen tilgjengelighet. Integrert kontroll av hele appen gjøres i QA (#321) etter at PR-ene er flettet.',
+          ],
         ],
       )}
 
@@ -677,10 +1029,25 @@ Ved hvert trinn som ikke kan gis nøyaktig, tilbyr verktøyet nøyaktig én dose
       tekst: `${tabell(
         ['Stoff', 'Hva som finnes', 'Hva som mangler for små trinn', 'Kilde'],
         [
-          ['Escitalopram', 'Tabletter 5, 10 og 20 mg (10 og 20 mg kan deles i to). Dråper 20 mg/ml, én dråpe er 1 mg, bioekvivalente med Cipralex tabletter.', 'Under 1 mg krever fortynning, som ikke er dokumentert. Under 3 mg er trinnene over 25 % (K1.10).', 'FEST-uttrekket; dmp-cipralex; dmp-cipralex-draper (pkt. 2, 4.2, 4.4 og 5.2)'],
+          [
+            'Escitalopram',
+            'Tabletter 5, 10 og 20 mg (10 og 20 mg kan deles i to). Dråper 20 mg/ml, én dråpe er 1 mg, bioekvivalente med Cipralex tabletter.',
+            'Under 1 mg krever fortynning, som ikke er dokumentert. Under 3 mg er trinnene over 25 % (K1.10).',
+            'FEST-uttrekket; dmp-cipralex; dmp-cipralex-draper (pkt. 2, 4.2, 4.4 og 5.2)',
+          ],
           ['Nortriptylin', 'Tabletter 10, 25 og 50 mg.', 'Deling er ikke oppgitt i FEST eller preparatomtalen. Ingen flytende form (K1.14).', 'FEST-uttrekket; dmp-noritren'],
-          ['Amitriptylin', 'Tabletter 10, 25 og 50 mg. Mikstur 10 mg/5 ml og 50 mg/5 ml bare med godkjenningsfritak.', 'Deling er ikke oppgitt. Måleskjeen til miksturen på 10 mg/5 ml gir 2,5 og 5 ml, det vil si 5 og 10 mg (K1.14).', 'FEST-uttrekket; dmp-sarotex; preparatomtalen for Amitriptyline 10 mg/5 ml oral solution (Syri Limited, revidert 09.12.2025, pkt. 6.5)'],
-          ['Sertralin', 'Tabletter 25, 50 og 100 mg (noen 50 og 100 mg kan deles i to). Konsentrat til mikstur 20 mg/ml.', 'Pipetten er gradert, men graderingen er ikke oppgitt, og konsentratet skal fortynnes (K1.15).', 'FEST-uttrekket; dmp-zoloft; svensk preparatomtale for Zoloft konsentrat pkt. 6.5 og 6.6'],
+          [
+            'Amitriptylin',
+            'Tabletter 10, 25 og 50 mg. Mikstur 10 mg/5 ml og 50 mg/5 ml bare med godkjenningsfritak.',
+            'Deling er ikke oppgitt. Måleskjeen til miksturen på 10 mg/5 ml gir 2,5 og 5 ml, det vil si 5 og 10 mg (K1.14).',
+            'FEST-uttrekket; dmp-sarotex; preparatomtalen for Amitriptyline 10 mg/5 ml oral solution (Syri Limited, revidert 09.12.2025, pkt. 6.5)',
+          ],
+          [
+            'Sertralin',
+            'Tabletter 25, 50 og 100 mg (noen 50 og 100 mg kan deles i to). Konsentrat til mikstur 20 mg/ml.',
+            'Pipetten er gradert, men graderingen er ikke oppgitt, og konsentratet skal fortynnes (K1.15).',
+            'FEST-uttrekket; dmp-zoloft; svensk preparatomtale for Zoloft konsentrat pkt. 6.5 og 6.6',
+          ],
         ],
       )}
 
@@ -709,51 +1076,428 @@ Ingen tabeller fra Psychiatrienet er brukt eller konvertert. Ingen validert apot
   refkolonne: 'K0',
   kasus: [
     // --- Komplette planer: escitalopram dråper til seponering
-    ke('K1-01', 'vanlig_dose', 'escitalopram 10 mg, kort behandlingstid; pasienten bruker tabletter og går over til dråper med samme døgndose', K1_ESCITALOPRAM, '10', { ...plan(null, ...draperTilSeponering([[8, 7.5, 20], [6], [5, 4.5, 16.67], [4, 3.75, 20], [3], [2, 2.25, 33.33], [1, 1.5, 50]])), planutfall: `${KOMPLETT}: Escitalopram seponert fra dag 197.` }, [], { skjema: form(DRAPER), velger: [8, 5, 4, 2, 1], ref: 'K0-01' }),
-    ke('K1-02', 'vanlig_dose', 'escitalopram dråper 20 mg, kort behandlingstid', K1_ESCITALOPRAM, '20', { ...plan(null, ...draperTilSeponering([[15], [12, 11.25, 20], [9], [7, 6.75, 22.22], [6, 5.25, 14.29], [5, 4.5, 16.67], [4, 3.75, 20], [3], [2, 2.25, 33.33], [1, 1.5, 50]])), planutfall: `${KOMPLETT}: Escitalopram seponert fra dag 281.` }, [], { skjema: form(DRAPER), velger: [12, 7, 6, 5, 4, 2, 1] }),
+    ke(
+      'K1-01',
+      'vanlig_dose',
+      'escitalopram 10 mg, kort behandlingstid; pasienten bruker tabletter og går over til dråper med samme døgndose',
+      K1_ESCITALOPRAM,
+      '10',
+      {
+        ...plan(null, ...draperTilSeponering([[8, 7.5, 20], [6], [5, 4.5, 16.67], [4, 3.75, 20], [3], [2, 2.25, 33.33], [1, 1.5, 50]])),
+        planutfall: `${KOMPLETT}: Escitalopram seponert fra dag 197.`,
+      },
+      [],
+      { skjema: form(DRAPER), velger: [8, 5, 4, 2, 1], ref: 'K0-01' },
+    ),
+    ke(
+      'K1-02',
+      'vanlig_dose',
+      'escitalopram dråper 20 mg, kort behandlingstid',
+      K1_ESCITALOPRAM,
+      '20',
+      {
+        ...plan(null, ...draperTilSeponering([[15], [12, 11.25, 20], [9], [7, 6.75, 22.22], [6, 5.25, 14.29], [5, 4.5, 16.67], [4, 3.75, 20], [3], [2, 2.25, 33.33], [1, 1.5, 50]])),
+        planutfall: `${KOMPLETT}: Escitalopram seponert fra dag 281.`,
+      },
+      [],
+      { skjema: form(DRAPER), velger: [12, 7, 6, 5, 4, 2, 1] },
+    ),
     // --- Underveis: verktøyet tilbyr én dose og viser ingen doser før planen er komplett
-    ke('K1-03', 'vanlig_dose', 'escitalopram dråper 10 mg, før forskriveren har valgt', K1_ESCITALOPRAM, '10', stopp('escitalopram dag 1–28: den ideelle dosen 7,5 mg kan ikke gis med preparatene i FEST nøyaktig'), [8], { skjema: form(DRAPER) }),
-    ke('K1-04', 'vanlig_dose', 'escitalopram dråper 10 mg, valgt ned til 3 mg: minste trinn til 2 mg tilbys', K1_ESCITALOPRAM, '10', ikkeKomplett('escitalopram', `${IKKE_VIDERE}, og ${overSluttdosen(3)}`), [2], { skjema: form(DRAPER), velger: [8, 5, 4] }),
-    ke('K1-05', 'vanlig_dose', 'escitalopram dråper 10 mg, valgt ned til 2 mg: minste trinn til 1 mg tilbys', K1_ESCITALOPRAM, '10', ikkeKomplett('escitalopram', `${IKKE_VIDERE}, og ${overSluttdosen(2)}`), [1], { skjema: form(DRAPER), velger: [8, 5, 4, 2] }),
+    ke(
+      'K1-03',
+      'vanlig_dose',
+      'escitalopram dråper 10 mg, før forskriveren har valgt',
+      K1_ESCITALOPRAM,
+      '10',
+      stopp('escitalopram dag 1–28: den ideelle dosen 7,5 mg kan ikke gis med preparatene i FEST nøyaktig'),
+      [8],
+      { skjema: form(DRAPER) },
+    ),
+    ke(
+      'K1-04',
+      'vanlig_dose',
+      'escitalopram dråper 10 mg, valgt ned til 3 mg: minste trinn til 2 mg tilbys',
+      K1_ESCITALOPRAM,
+      '10',
+      ikkeKomplett('escitalopram', `${IKKE_VIDERE}, og ${overSluttdosen(3)}`),
+      [2],
+      { skjema: form(DRAPER), velger: [8, 5, 4] },
+    ),
+    ke(
+      'K1-05',
+      'vanlig_dose',
+      'escitalopram dråper 10 mg, valgt ned til 2 mg: minste trinn til 1 mg tilbys',
+      K1_ESCITALOPRAM,
+      '10',
+      ikkeKomplett('escitalopram', `${IKKE_VIDERE}, og ${overSluttdosen(2)}`),
+      [1],
+      { skjema: form(DRAPER), velger: [8, 5, 4, 2] },
+    ),
     // --- Ingen komplett plan
-    ke('K1-06', 'pasientforhold', 'escitalopram dråper 20 mg, lang behandlingstid', K1_ESCITALOPRAM, '20', ikkeKomplett('escitalopram', `${IKKE_VIDERE}, og ${overSluttdosen(9)}`), [], { skjema: { ...form(DRAPER), svar: LANG }, velger: [17, 16, 15, 14, 13, 12, 11, 10] }),
-    ke('K1-07', 'pasientforhold', 'escitalopram dråper 10 mg, lang behandlingstid', K1_ESCITALOPRAM, '10', ikkeKomplett('escitalopram', `${EN_REDUKSJON}, og ${overSluttdosen(9)}`), [], { skjema: { ...form(DRAPER), svar: LANG } }),
-    ke('K1-08', 'vanlig_dose', 'escitalopram tablett 20 mg, kort behandlingstid', K1_ESCITALOPRAM, '20', ikkeKomplett('escitalopram', `${EN_REDUKSJON}, og ${overSluttdosen(15)}`), [], { skjema: form(TABLETT) }),
+    ke('K1-06', 'pasientforhold', 'escitalopram dråper 20 mg, lang behandlingstid', K1_ESCITALOPRAM, '20', ikkeKomplett('escitalopram', `${IKKE_VIDERE}, og ${overSluttdosen(9)}`), [], {
+      skjema: { ...form(DRAPER), svar: LANG },
+      velger: [17, 16, 15, 14, 13, 12, 11, 10],
+    }),
+    ke('K1-07', 'pasientforhold', 'escitalopram dråper 10 mg, lang behandlingstid', K1_ESCITALOPRAM, '10', ikkeKomplett('escitalopram', `${EN_REDUKSJON}, og ${overSluttdosen(9)}`), [], {
+      skjema: { ...form(DRAPER), svar: LANG },
+    }),
+    ke('K1-08', 'vanlig_dose', 'escitalopram tablett 20 mg, kort behandlingstid', K1_ESCITALOPRAM, '20', ikkeKomplett('escitalopram', `${EN_REDUKSJON}, og ${overSluttdosen(15)}`), [], {
+      skjema: form(TABLETT),
+    }),
     // --- Utenfor omfanget og stopp
-    ke('K1-09', 'uvanlig_dose', 'escitalopram tablett 10 mg, kort behandlingstid (utenfor omfanget; dråper i K1-01)', K1_ESCITALOPRAM, '10', stopp(utenforOmfang(10), UTENFOR_OMFANG), [], { skjema: form(TABLETT), ref: 'K0-01' }),
-    ke('K1-10', 'uvanlig_dose', 'escitalopram dråper 15 mg, kort behandlingstid (omfanget er ikke utvidet)', K1_ESCITALOPRAM, '15', stopp(utenforOmfang(15), UTENFOR_OMFANG), [], { skjema: form(DRAPER) }),
-    ke('K1-11', 'uvanlig_dose', 'escitalopram dråper 3 mg som startdose (det minste trinnet gir ingen nye startdoser)', K1_ESCITALOPRAM, '3', stopp(utenforOmfang(3), UTENFOR_OMFANG), [], { skjema: form(DRAPER) }),
-    ke('K1-12', 'pasientforhold', 'escitalopram dråper 20 mg, 65 år eller eldre', K1_ESCITALOPRAM, '20', stopp('Startdosen 20 mg er utenfor det regelen gjelder for (høyst 10 mg ved eldre over 65 år).', UTENFOR_OMFANG), [], { skjema: { ...form(DRAPER), svar: { eldre: true } } }),
-    ke('K1-13', 'pasientforhold', 'escitalopram dråper 20 mg, tidligere seponeringssymptomer', K1_ESCITALOPRAM, '20', stopp('Regelen gjelder ikke: Et tidligere forsøk på å trappe ned eller seponere dette legemidlet har gitt seponeringssymptomer eller mislyktes; da gjelder den langsomme varianten av regelen.'), [], { skjema: { ...form(DRAPER), pasientforhold: { tidligere_seponeringssymptomer: true } } }),
+    ke('K1-09', 'uvanlig_dose', 'escitalopram tablett 10 mg, kort behandlingstid (utenfor omfanget; dråper i K1-01)', K1_ESCITALOPRAM, '10', stopp(utenforOmfang(10), UTENFOR_OMFANG), [], {
+      skjema: form(TABLETT),
+      ref: 'K0-01',
+    }),
+    ke('K1-10', 'uvanlig_dose', 'escitalopram dråper 15 mg, kort behandlingstid (omfanget er ikke utvidet)', K1_ESCITALOPRAM, '15', stopp(utenforOmfang(15), UTENFOR_OMFANG), [], {
+      skjema: form(DRAPER),
+    }),
+    ke('K1-11', 'uvanlig_dose', 'escitalopram dråper 3 mg som startdose (det minste trinnet gir ingen nye startdoser)', K1_ESCITALOPRAM, '3', stopp(utenforOmfang(3), UTENFOR_OMFANG), [], {
+      skjema: form(DRAPER),
+    }),
+    ke(
+      'K1-12',
+      'pasientforhold',
+      'escitalopram dråper 20 mg, 65 år eller eldre',
+      K1_ESCITALOPRAM,
+      '20',
+      stopp('Startdosen 20 mg er utenfor det regelen gjelder for (høyst 10 mg ved eldre over 65 år).', UTENFOR_OMFANG),
+      [],
+      { skjema: { ...form(DRAPER), svar: { eldre: true } } },
+    ),
+    ke(
+      'K1-13',
+      'pasientforhold',
+      'escitalopram dråper 20 mg, tidligere seponeringssymptomer',
+      K1_ESCITALOPRAM,
+      '20',
+      stopp('Regelen gjelder ikke: Et tidligere forsøk på å trappe ned eller seponere dette legemidlet har gitt seponeringssymptomer eller mislyktes; da gjelder den langsomme varianten av regelen.'),
+      [],
+      { skjema: { ...form(DRAPER), pasientforhold: { tidligere_seponeringssymptomer: true } } },
+    ),
     // --- Nortriptylin, amitriptylin og sertralin, uendret (versjon 12)
-    kk('K1-14', 'vanlig_dose', 'nortriptylin 50 mg, kort behandlingstid', NORTRIPTYLIN, '50', ikkeKomplett('nortriptylin', `${IKKE_VIDERE}; avslutning vurderes individuelt`), [], { velger: [40, 25, 20] }),
+    kk('K1-14', 'vanlig_dose', 'nortriptylin 50 mg, kort behandlingstid', NORTRIPTYLIN, '50', ikkeKomplett('nortriptylin', `${IKKE_VIDERE}; avslutning vurderes individuelt`), [], {
+      velger: [40, 25, 20],
+    }),
     kk('K1-15', 'vanlig_dose', 'amitriptylin 25 mg, kort behandlingstid', AMITRIPTYLIN, '25', ikkeKomplett('amitriptylin', EN_REDUKSJON), [], { velger: [20], ref: 'K0-03' }),
-    kk('K1-16', 'vanlig_dose', 'amitriptylin 50 mg, kort, før forskriveren har valgt', AMITRIPTYLIN, '50', stopp('amitriptylin dag 1–28: den ideelle dosen 37,5 mg kan ikke gis med preparatene i FEST nøyaktig.'), [40]),
+    kk(
+      'K1-16',
+      'vanlig_dose',
+      'amitriptylin 50 mg, kort, før forskriveren har valgt',
+      AMITRIPTYLIN,
+      '50',
+      stopp('amitriptylin dag 1–28: den ideelle dosen 37,5 mg kan ikke gis med preparatene i FEST nøyaktig.'),
+      [40],
+    ),
     kk('K1-17', 'vanlig_dose', 'sertralin tablett 100 mg, kort behandlingstid', SERTRALIN, '100', ikkeKomplett('sertralin', EN_REDUKSJON), [], { ref: 'K0-02' }),
-    kk('K1-18', 'vanlig_dose', 'sertralin tablett 200 mg, kort behandlingstid', SERTRALIN, '200', ikkeKomplett('sertralin', `${IKKE_VIDERE}; avslutning vurderes individuelt`), [], { velger: [125, 100] }),
+    kk('K1-18', 'vanlig_dose', 'sertralin tablett 200 mg, kort behandlingstid', SERTRALIN, '200', ikkeKomplett('sertralin', `${IKKE_VIDERE}; avslutning vurderes individuelt`), [], {
+      velger: [125, 100],
+    }),
     // --- Verktøyet i dag, endret regel og endrede preparater
-    ke('K1-19', 'preparat', 'escitalopram 10 mg slik verktøyet er i dag, før legemiddelformen er valgt: verktøyet ber om valget', K1_ESCITALOPRAM, '10', { utfall: 'formvalg', forlop: ['fra'] }, [], { ref: 'K0-01' }),
+    ke('K1-19', 'preparat', 'escitalopram 10 mg slik verktøyet er i dag, før legemiddelformen er valgt: verktøyet ber om valget', K1_ESCITALOPRAM, '10', { utfall: 'formvalg', forlop: ['fra'] }, [], {
+      ref: 'K0-01',
+    }),
     kk('K1-20', 'ikke_godkjent', 'amitriptylin slik verktøyet er i dag', AMITRIPTYLIN, '25', { utfall: 'ingen', status: 'ikke_godkjent' }, [], { regel: undefined, ref: 'K0-03' }),
     kk('K1-21', 'ikke_godkjent', 'sertralin slik verktøyet er i dag', SERTRALIN, '100', { utfall: 'ingen', status: 'ikke_godkjent' }, [], { regel: undefined, ref: 'K0-02' }),
-    ke('K1-22', 'ikke_godkjent', 'escitalopram dråper 10 mg, godkjent med det minste trinnet uten avklaring (K1.10), med valgene fra K1-01', K1_ESCITALOPRAM, '10', ingenPlan('Regelen har åpne valg som må avklares faglig'), [], { skjema: { ...form(DRAPER), trinnvalg: VALG_FRA_10_MG }, regel: godkjentUtenAvklaring(K1_ESCITALOPRAM, /minste_trinn/, 'det minste trinnet', DATO_K1) }),
-    ke('K1-23', 'regelendring', 'escitalopram dråper 10 mg med sluttdosen endret til 2 mg etter godkjenningen, med valgene fra K1-01', K1_ESCITALOPRAM, '10', ingenPlan('Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke)'), [], {
-      skjema: { ...form(DRAPER), trinnvalg: VALG_FRA_10_MG },
-      regel: endretEtter(K1_ESCITALOPRAM, 'sluttdosen 1 → 2 mg', (r) => {
-        const f = r.plan.forlop[0]!.faser[0]!
-        if (f.type === 'nedtrapping' && typeof f.avslutning === 'object') f.avslutning.fra_hoyst_mg.verdi = 2
-      }, DATO_K1, true),
-    }),
-    ke('K1-24', 'preparat', 'escitalopram dråper 10 mg, dråpene avregistrert', K1_ESCITALOPRAM, '10', stopp('Ingen av de perorale preparatene av escitalopram i FEST kan brukes med valgene som er gjort', 'er avregistrert i FEST'), [], { skjema: form(DRAPER), fest: avregistrert('escitalopram', 1) }),
+    ke(
+      'K1-22',
+      'ikke_godkjent',
+      'escitalopram dråper 10 mg, godkjent med det minste trinnet uten avklaring (K1.10), med valgene fra K1-01',
+      K1_ESCITALOPRAM,
+      '10',
+      ingenPlan('Regelen har åpne valg som må avklares faglig'),
+      [],
+      { skjema: { ...form(DRAPER), trinnvalg: VALG_FRA_10_MG }, regel: godkjentUtenAvklaring(K1_ESCITALOPRAM, /minste_trinn/, 'det minste trinnet', DATO_K1) },
+    ),
+    ke(
+      'K1-23',
+      'regelendring',
+      'escitalopram dråper 10 mg med sluttdosen endret til 2 mg etter godkjenningen, med valgene fra K1-01',
+      K1_ESCITALOPRAM,
+      '10',
+      ingenPlan('Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke)'),
+      [],
+      {
+        skjema: { ...form(DRAPER), trinnvalg: VALG_FRA_10_MG },
+        regel: endretEtter(
+          K1_ESCITALOPRAM,
+          'sluttdosen 1 → 2 mg',
+          (r) => {
+            const f = r.plan.forlop[0]!.faser[0]!
+            if (f.type === 'nedtrapping' && typeof f.avslutning === 'object') f.avslutning.fra_hoyst_mg.verdi = 2
+          },
+          DATO_K1,
+          true,
+        ),
+      },
+    ),
+    ke(
+      'K1-24',
+      'preparat',
+      'escitalopram dråper 10 mg, dråpene avregistrert',
+      K1_ESCITALOPRAM,
+      '10',
+      stopp('Ingen av de perorale preparatene av escitalopram i FEST kan brukes med valgene som er gjort', 'er avregistrert i FEST'),
+      [],
+      { skjema: form(DRAPER), fest: avregistrert('escitalopram', 1) },
+    ),
     // --- Utenfor Peders avgrensning (K1.9): sikre stopp, også fra 10 mg der preparatomtalen tillater dosen
-    ke('K1-25', 'pasientforhold', 'escitalopram dråper 10 mg, kort, 65 år eller eldre', K1_ESCITALOPRAM, '10', stopp(utenforOmfang(10), UTENFOR_OMFANG), [], { skjema: { ...form(DRAPER), svar: { eldre: true } } }),
-    ke('K1-26', 'pasientforhold', 'escitalopram dråper 10 mg, kort, nedsatt leverfunksjon', K1_ESCITALOPRAM, '10', stopp(utenforOmfang(10), UTENFOR_OMFANG), [], { skjema: { ...form(DRAPER), svar: { nedsatt_leverfunksjon: true } } }),
-    ke('K1-27', 'pasientforhold', 'escitalopram dråper 10 mg, kort, kjent langsom CYP2C19-metaboliserer', K1_ESCITALOPRAM, '10', stopp(utenforOmfang(10), UTENFOR_OMFANG), [], { skjema: { ...form(DRAPER), svar: { langsom_cyp2c19: true } } }),
-    ke('K1-28', 'pasientforhold', 'escitalopram dråper 10 mg, kort, under 18 år', K1_ESCITALOPRAM, '10', stopp('Regelen gjelder ikke: Pasienten er under 18 år.'), [], { skjema: { ...form(DRAPER), pasientforhold: { under_18: true } } }),
-    ke('K1-29', 'pasientforhold', 'escitalopram dråper 10 mg, kort, kjent QT-forlengelse (kontraindikasjon)', K1_ESCITALOPRAM, '10', stopp('Regelen gjelder ikke: Pasienten har kjent QT-forlengelse', 'Det er en kontraindikasjon i preparatomtalen'), [], { skjema: { ...form(DRAPER), pasientforhold: { qt_forlengelse: true } } }),
+    ke('K1-25', 'pasientforhold', 'escitalopram dråper 10 mg, kort, 65 år eller eldre', K1_ESCITALOPRAM, '10', stopp(utenforOmfang(10), UTENFOR_OMFANG), [], {
+      skjema: { ...form(DRAPER), svar: { eldre: true } },
+    }),
+    ke('K1-26', 'pasientforhold', 'escitalopram dråper 10 mg, kort, nedsatt leverfunksjon', K1_ESCITALOPRAM, '10', stopp(utenforOmfang(10), UTENFOR_OMFANG), [], {
+      skjema: { ...form(DRAPER), svar: { nedsatt_leverfunksjon: true } },
+    }),
+    ke('K1-27', 'pasientforhold', 'escitalopram dråper 10 mg, kort, kjent langsom CYP2C19-metaboliserer', K1_ESCITALOPRAM, '10', stopp(utenforOmfang(10), UTENFOR_OMFANG), [], {
+      skjema: { ...form(DRAPER), svar: { langsom_cyp2c19: true } },
+    }),
+    ke('K1-28', 'pasientforhold', 'escitalopram dråper 10 mg, kort, under 18 år', K1_ESCITALOPRAM, '10', stopp('Regelen gjelder ikke: Pasienten er under 18 år.'), [], {
+      skjema: { ...form(DRAPER), pasientforhold: { under_18: true } },
+    }),
+    ke(
+      'K1-29',
+      'pasientforhold',
+      'escitalopram dråper 10 mg, kort, kjent QT-forlengelse (kontraindikasjon)',
+      K1_ESCITALOPRAM,
+      '10',
+      stopp('Regelen gjelder ikke: Pasienten har kjent QT-forlengelse', 'Det er en kontraindikasjon i preparatomtalen'),
+      [],
+      { skjema: { ...form(DRAPER), pasientforhold: { qt_forlengelse: true } } },
+    ),
   ],
 }
 
-export const KONTROLLFORSLAG: readonly Kontrollforslag[] = [FORSLAG_1, FORSLAG_K1]
+/* --- B2: escitalopram med tabletter så lenge de gir dosen, så dråper ------------------ */
+
+/** Escitalopram med tabletter og dråper (B2), versjon 14: egen regel som erstatter versjon 13 når den er godkjent (`regler/k1.ts`). */
+const B2_REGEL: Kontrollregel = { id: B2_ESCITALOPRAM.id, versjon: 14, fingeravtrykk: '6cd2ab5472495cc3d856e2b07e4d645b3a3e531318f445ddbf830854509fb129' }
+/** Kasus for B2 med simulert avklaring av de åpne valgene og simulert godkjenning, gjennom den samme veien som verktøysiden. */
+const kb = somVerktoysiden(kasusFor(B2_DATO, undefined, true))
+/** Valgene i K1-01 og K1-02 (dråper fra 10 og 20 mg), som forskriveren gjør i B2 også. */
+const VELGER_10 = [8, 5, 4, 2, 1]
+const VELGER_20 = [12, 7, 6, 5, 4, 2, 1]
+const FRA_10 = draperTilSeponering([[8, 7.5, 20], [6], [5, 4.5, 16.67], [4, 3.75, 20], [3], [2, 2.25, 33.33], [1, 1.5, 50]])
+const FRA_20 = draperTilSeponering([[15], [12, 11.25, 20], [9], [7, 6.75, 22.22], [6, 5.25, 14.29], [5, 4.5, 16.67], [4, 3.75, 20], [3], [2, 2.25, 33.33], [1, 1.5, 50]])
+/** Planen fra 20 mg tabletter: første trinn (15 mg) med hele tabletter, så de samme dråpene som fra 20 mg dråper. */
+const FRA_20_TABLETTER = ['Dag 1–28: Escitalopram peroralt: 15 mg = 1 tablett à 10 mg + 1 tablett à 5 mg', ...FRA_20.slice(1)]
+const SEPONERT_10 = `${KOMPLETT}: Escitalopram seponert fra dag 197.`
+const SEPONERT_20 = `${KOMPLETT}: Escitalopram seponert fra dag 281.`
+
+export const FORSLAG_B2: Kontrollforslag = {
+  nr: 3,
+  overskrift: 'B2: escitalopram med tabletter og dråper – kontrollgrunnlag',
+  tittel: 'Escitalopram fra tabletter: tabletter så lenge de gir dosen, så dråper til seponering',
+  fil: 'docs/verktøy-b2-escitalopram-kontrollgrunnlag.md',
+  dato: B2_DATO,
+  verktoy: SEPONERING,
+  regler: [B2_REGEL],
+  motor: kliniskDoseplan,
+  simulerAvklaring: true,
+  visPlanutfall: true,
+  innledning: (fest) => [
+    `**Escitalopram fra tabletter (10 eller 20 mg): tabletter så lenge hele tabletter gir dosen i trinnet, så dråper mg for mg til seponering.** Grunnlag for uavhengig faglig kontroll av B2 i \`docs/verktøy-brukervennlighet-2026-11.md\` (§6) og \`docs/verktøy-praktisk-dosering.md\`. Versjon 14 er en egen regel (\`${B2_REGEL.id}\`) som bygger på den godkjente versjon 13 og erstatter den i det øyeblikket den selv er klinisk godkjent; til da gjelder versjon 13 uendret.`,
+    `**Versjon 14 er ikke godkjent, og godkjenningen av versjon 13 gjelder ikke den.** Overgangen fra tabletter til dråper og dråpepreferansen er nye valg (åpne forslag til kontrolløren, B2.1–B2.3). Startdosene, pasientgruppen, trinnene, sluttdosen, seponeringen og oppfølgingen er de samme som i versjon 13.`,
+    `Hva som er nytt for klinikeren: med versjon 13 må en pasient på 20 mg tabletter gå over til 15 dråper første dag, og verktøyet stopper hvis tablett er valgt (kasus K1-08 og K1-09). Med versjon 14 gis første trinn (15 mg) med hele tabletter, og planen går over til dråper fra andre trinn. Fra 10 mg tabletter kan ingen hel tablett gi 8 mg, så planen går over til dråper fra første trinn, som i versjon 13. Pasienter som allerede bruker dråper, får nøyaktig den samme planen som i versjon 13.`,
+    `Kasusene går gjennom den samme veien som verktøysiden, som aldri viser en delplan, med de norske preparatene i FEST-uttrekket hentet ${fest}, på en kopi med simulert avklaring av de åpne valgene og simulert godkjenning («${SIMULERT_KONTROLLOR}»). Kopien lagres ikke og brukes ikke av appen. Kasusene er syntetiske; pasientopplysninger inngår ikke, og ingen tekst fra Psychiatrienet vises.`,
+  ],
+  forutsetninger: [
+    'Godkjenningen gjelder nøyaktig versjonen og fingeravtrykket i tabellen over, og bare det kliniske omfanget i avsnittet «Reglene». Overgangen (B2.1) og dråpepreferansen (B2.2) må avklares av kontrolløren og registreres på valgene i regelen før en godkjenning kan registreres.',
+    'Peders avgjørelse på K1.9 (seponering fra 1 mg) gjelder bare når omfanget er uendret eller snevrere. Vurderingen står i B2.4; mener kontrolløren at omfanget er utvidet, må Peder spørres på nytt før en godkjenning.',
+    'Versjon 13 trekkes i det øyeblikket versjon 14 er gyldig klinisk godkjent (`Regel.erstatter`); til da gjelder den uendret. Godkjennes versjon 14 ikke, er ingenting endret for klinikeren.',
+    'Sperrene for de kliniske verktøyene og synligheten bare for administratorer er uendret.',
+  ],
+  sporsmal: [
+    {
+      nr: 'B2.1',
+      sporsmal: `Overgangen: ${B2_ESCITALOPRAM.overgang.begrunnelse} Grunnlaget for mg for mg er det samme som i K1.11 (preparatomtalen for Cipralex dråper pkt. 2 og 5.2). Er det riktig at overgangen skjer når hele tabletter ikke lenger gir dosen, og ikke allerede ved start?`,
+      anbefalt: 'Ja. Det sparer pasienten for mange dråper ved høye doser, krever ingen deling og blander ikke to preparater i samme dose (kasus B2-01 og B2-02).',
+    },
+    {
+      nr: 'B2.2',
+      sporsmal: `Dråpepreferansen (B6): ${B2_ESCITALOPRAM.praktisk.begrunnelse} Er ${B2_ESCITALOPRAM.praktisk.draper} riktig verdi?`,
+      anbefalt: 'Ja, som preferanse. Den avgjør bare om 15 mg gis som tabletter eller 15 dråper (kasus B2-01 og B2-16); 12 dråper og færre gis med dråper fordi ingen hel tablett gir dosen.',
+    },
+    {
+      nr: 'B2.3',
+      sporsmal:
+        'Første trinn fra 20 mg er 15 mg som én tablett à 10 mg og én à 5 mg i 28 dager (to styrker, ingen deling), før pasienten går over til dråper. Alternativet er 15 dråper fra første dag (én pakning). Er tablettene det mest praktiske for pasienten, når to nye pakninger trengs for ett trinn?',
+      anbefalt: 'Ja, men det er en praktisk avveining uten kilde. Velger kontrolløren dråper fra start, kan dråpepreferansen tas ut, og regelen gir da planen i versjon 13 for alle.',
+    },
+    {
+      nr: 'B2.4',
+      sporsmal: `Omfanget for Peders avgjørelse på K1.9 («${K1_9_AVGJORELSE.avgrensning}»): versjon 14 har de samme startdosene (10 og 20 mg), den samme pasientgruppen (voksne under 65 år, kort behandlingstid, uten tidligere seponeringsplager, og nei på nedsatt leverfunksjon og langsom CYP2C19-metabolisme), de samme trinnene fra 12 mg og den samme sluttdosen med dråper (1 mg → 0). Tablettpasienter var allerede med i versjon 13 gjennom overgangen mg for mg ved start (K1.11). Bare tidspunktet for overgangen er endret. Er omfanget uendret, slik at avgjørelsen kan brukes uten å spørre Peder på nytt?`,
+      anbefalt: 'Ja, uendret. Ingen ny pasientgruppe, startdose eller sluttdose; alle utenfor får et sikkert stopp (kasus B2-05–B2-09).',
+    },
+    {
+      nr: 'B2.5',
+      sporsmal: `Erstatningen: versjon 14 er en egen regel som erstatter versjon 13 (\`seponering-escitalopram\`) når den er godkjent, så det aldri finnes to godkjente regler for samme nedtrapping. Den gir dråpepasienter nøyaktig den samme planen som versjon 13 (kasus B2-03 og B2-04). Er det riktig at versjon 13 trekkes når versjon 14 godkjennes?`,
+      anbefalt: 'Ja. Versjon 14 gir det samme som versjon 13 for alle tilfellene versjon 13 er godkjent for, og i tillegg en komplett plan fra tabletter.',
+    },
+  ],
+  avsnitt: [
+    {
+      tittel: 'Hva som er endret fra versjon 13',
+      tekst: liste([
+        `Egen regel \`${B2_REGEL.id}\` med \`erstatter: ['seponering-escitalopram']\`: versjon 13 gjelder til versjon 14 er godkjent.`,
+        `Formovergang tablett (FEST-form ${B2_ESCITALOPRAM.overgang.fra}) → dråper (FEST-form ${B2_ESCITALOPRAM.overgang.til}) i forløpet, aldri tilbake, én form per dose (B2.1).`,
+        `Praktisk dosering med høyst ${B2_ESCITALOPRAM.praktisk.draper} dråper per administrasjon som preferanse (B2.2, B6).`,
+        `Klinisk omfang: tilfellet «tablett 20 mg» (som aldri ga en komplett plan) er erstattet av «tabletter så dråper, 10 og 20 mg», med styrkene ${Object.entries(
+          B2_ESCITALOPRAM.tilfelle.formstyrker,
+        )
+          .map(([f, s]) => `${s.map(tall).join(', ')} mg (form ${f})`)
+          .join(' og ')}. Tilfellene med dråper er uendret.`,
+        'Fortolkningen: teksten om overgangen fra tabletter til dråper sier nå at tablettene brukes så lenge de gir dosen.',
+        'Alt annet er uendret: trinnene, valgområdene, det minste trinnet, sluttdosen, seponeringen, vurderingspunktene, spørsmålene, unntakene og regneeksemplene.',
+      ]),
+    },
+    {
+      tittel: 'Hvilke forløp som er komplette',
+      tekst: tabell(
+        ['Tilfelle', 'Versjon 13 i dag', 'Versjon 14', 'Kasus'],
+        [
+          [
+            'Tablett 20 mg, kort behandlingstid',
+            '«Komplett plan ikke tilgjengelig» (stopper på 15 mg tabletter); med dråper valgt: 15 dråper fra dag 1',
+            'Komplett: 15 mg som tabletter (10 + 5 mg), så dråper 12 → 9 → 7 → 6 → 5 → 4 → 3 → 2 → 1 mg, seponert fra dag 281',
+            'B2-01, B2-15',
+          ],
+          [
+            'Tablett 10 mg, kort behandlingstid',
+            'Utenfor omfanget; med dråper valgt: komplett',
+            'Komplett, dråper fra første trinn: 8 → 6 → 5 → 4 → 3 → 2 → 1 mg, seponert fra dag 197',
+            'B2-02 (K0-01)',
+          ],
+          ['Dråper 20 og 10 mg, kort behandlingstid', 'Komplett', 'Nøyaktig den samme planen', 'B2-03, B2-04'],
+          ['Lang behandlingstid, andre startdoser, 65 år eller eldre, tidligere seponeringsplager', 'Stopp', 'Stopp', 'B2-05–B2-09'],
+        ],
+      ),
+    },
+  ],
+  kasusinnledning:
+    'Kasusene går gjennom den samme veien som verktøysiden, som aldri viser en delplan, og kjøres i testene (`src/__tests__/verktoyb2.test.ts`). Uten annen merknad er regelen versjon 14 på en kopi med simulert avklaring og godkjenning. Organfunksjon og interaksjoner er bekreftet, og svaret er nei på alle unntak og spørsmål.',
+  refkolonne: 'K0',
+  kasus: [
+    // --- Komplette planer
+    kb('B2-01', 'vanlig_dose', 'escitalopram tablett 20 mg, kort behandlingstid: 15 mg med tabletter, så dråper', B2_REGEL, '20', { ...plan(null, ...FRA_20_TABLETTER), planutfall: SEPONERT_20 }, [], {
+      skjema: form(TABLETT),
+      velger: VELGER_20,
+    }),
+    kb('B2-02', 'vanlig_dose', 'escitalopram tablett 10 mg, kort behandlingstid: dråper fra første trinn', B2_REGEL, '10', { ...plan(null, ...FRA_10), planutfall: SEPONERT_10 }, [], {
+      skjema: form(TABLETT),
+      velger: VELGER_10,
+      ref: 'K0-01',
+    }),
+    kb('B2-03', 'vanlig_dose', 'escitalopram dråper 20 mg, kort behandlingstid: som versjon 13 (K1-02)', B2_REGEL, '20', { ...plan(null, ...FRA_20), planutfall: SEPONERT_20 }, [], {
+      skjema: form(DRAPER),
+      velger: VELGER_20,
+    }),
+    kb('B2-04', 'vanlig_dose', 'escitalopram dråper 10 mg, kort behandlingstid: som versjon 13 (K1-01)', B2_REGEL, '10', { ...plan(null, ...FRA_10), planutfall: SEPONERT_10 }, [], {
+      skjema: form(DRAPER),
+      velger: VELGER_10,
+    }),
+    // --- Grenser og stopp
+    kb('B2-05', 'uvanlig_dose', 'escitalopram tablett 15 mg (omfanget er ikke utvidet)', B2_REGEL, '15', stopp(utenforOmfang(15), UTENFOR_OMFANG), [], { skjema: form(TABLETT) }),
+    kb('B2-06', 'uvanlig_dose', 'escitalopram tablett 5 mg (omfanget er ikke utvidet)', B2_REGEL, '5', stopp(utenforOmfang(5), UTENFOR_OMFANG), [], { skjema: form(TABLETT) }),
+    kb('B2-07', 'pasientforhold', 'escitalopram tablett 20 mg, lang behandlingstid', B2_REGEL, '20', ikkeKomplett('escitalopram', `${EN_REDUKSJON}, og ${overSluttdosen(18)}`), [17], {
+      skjema: { ...form(TABLETT), svar: LANG },
+    }),
+    kb(
+      'B2-08',
+      'pasientforhold',
+      'escitalopram tablett 20 mg, 65 år eller eldre',
+      B2_REGEL,
+      '20',
+      stopp('Startdosen 20 mg er utenfor det regelen gjelder for (høyst 10 mg ved eldre over 65 år).', UTENFOR_OMFANG),
+      [],
+      { skjema: { ...form(TABLETT), svar: { eldre: true } } },
+    ),
+    kb(
+      'B2-09',
+      'pasientforhold',
+      'escitalopram tablett 20 mg, tidligere seponeringssymptomer',
+      B2_REGEL,
+      '20',
+      stopp('Regelen gjelder ikke: Et tidligere forsøk på å trappe ned eller seponere dette legemidlet har gitt seponeringssymptomer eller mislyktes; da gjelder den langsomme varianten av regelen.'),
+      [],
+      { skjema: { ...form(TABLETT), pasientforhold: { tidligere_seponeringssymptomer: true } } },
+    ),
+    kb(
+      'B2-10',
+      'vanlig_dose',
+      'escitalopram tablett 20 mg, før forskriveren har valgt dosen i andre trinn: ingen doser vises, 12 mg tilbys',
+      B2_REGEL,
+      '20',
+      ikkeKomplett('escitalopram', `${EN_REDUKSJON}, og ${overSluttdosen(15)}`),
+      [12],
+      { skjema: form(TABLETT) },
+    ),
+    kb(
+      'B2-11',
+      'preparat',
+      'escitalopram tablett 20 mg, dråpene avregistrert',
+      B2_REGEL,
+      '20',
+      stopp('styrken 1 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST', UTENFOR_OMFANG),
+      [],
+      { skjema: form(TABLETT), fest: avregistrert('escitalopram', 1) },
+    ),
+    kb(
+      'B2-12',
+      'preparat',
+      'escitalopram tablett 20 mg, 5 mg-tablettene avregistrert',
+      B2_REGEL,
+      '20',
+      stopp('styrken 5 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST', UTENFOR_OMFANG),
+      [],
+      { skjema: form(TABLETT), fest: avregistrert('escitalopram', 5) },
+    ),
+    // --- Endret regel og åpne valg
+    kb(
+      'B2-13',
+      'regelendring',
+      'escitalopram tablett 20 mg med dråpepreferansen endret til 3 etter godkjenningen',
+      B2_REGEL,
+      '20',
+      ingenPlan('Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke)'),
+      [],
+      {
+        skjema: form(TABLETT),
+        regel: endretEtter(B2_REGEL, 'dråpepreferansen 5 → 3', (r) => void (r.plan.forlop[0]!.dosevalg!.praktisk!.draper = 3), B2_DATO, true),
+      },
+    ),
+    kb('B2-14', 'ikke_godkjent', 'escitalopram tablett 20 mg, godkjent med overgangen uten avklaring (B2.1)', B2_REGEL, '20', ingenPlan('Regelen har åpne valg som må avklares faglig'), [], {
+      skjema: form(TABLETT),
+      regel: godkjentUtenAvklaring(B2_REGEL, /formoverganger/, 'overgangen', B2_DATO),
+    }),
+    // --- Versjon 13 gjelder uendret til versjon 14 er godkjent, og hva preferansen gjør
+    kb(
+      'B2-15',
+      'ikke_godkjent',
+      'escitalopram tablett 20 mg slik verktøyet er i dag: versjon 14 står til faglig kontroll, så verktøyet bruker versjon 13 (som K1-08)',
+      B2_REGEL,
+      '20',
+      ikkeKomplett('escitalopram', `${EN_REDUKSJON}, og ${overSluttdosen(15)}`),
+      [],
+      { skjema: form(TABLETT), regel: undefined },
+    ),
+    kb('B2-16', 'regelendring', 'escitalopram tablett 20 mg uten dråpepreferansen: 15 dråper fra første trinn', B2_REGEL, '20', { ...plan(null, ...FRA_20), planutfall: SEPONERT_20 }, [], {
+      skjema: form(TABLETT),
+      velger: VELGER_20,
+      regel: endretEtter(
+        B2_REGEL,
+        'uten dråpepreferansen, deretter simulert godkjenning av kopien',
+        (r) => {
+          delete r.plan.forlop[0]!.dosevalg!.praktisk
+          simulerGodkjenning(r, { ...B2_REGEL, fingeravtrykk: fingeravtrykk(r) }, B2_DATO)
+        },
+        B2_DATO,
+        true,
+      ),
+    }),
+  ],
+}
+
+export const KONTROLLFORSLAG: readonly Kontrollforslag[] = [FORSLAG_1, FORSLAG_K1, FORSLAG_B2]
 
 /* --- Rapporten ------------------------------------------------------------------ */
 
@@ -773,8 +1517,7 @@ const sisteDose = (u: Pilotutfall & { resultat?: { status: string } }) => {
 }
 
 /** Planutfallet slik planen viser det: «Komplett plan til sluttmålet: …» eller «Delplan, …»; `null` når ingen plan vises. */
-export const planutfallstekst = (u: Pilotutfall): string | null =>
-  ((u as ReturnType<typeof kjorKasus>).tekst ?? '').split('\n').find((l) => l.startsWith(KOMPLETT) || l.startsWith(DELPLAN)) ?? null
+export const planutfallstekst = (u: Pilotutfall): string | null => ((u as ReturnType<typeof kjorKasus>).tekst ?? '').split('\n').find((l) => l.startsWith(KOMPLETT) || l.startsWith(DELPLAN)) ?? null
 
 /** Doseendringene i planen, uten vurderingspunktene. */
 const reduksjonslinjer = (linjer: string[]) => linjer.filter((l) => !/^Dag \d+: Vurdering \(/.test(l))
@@ -783,7 +1526,10 @@ function veitekst(v: Planvei, visUtfall = false): string {
   const valg = v.valg.length > 0 ? `${liste(v.valg.map((x) => `${valgtekst(x.trinn)} Valgt: ${tall(x.valgt)} mg.`))}\n\n` : 'Ingen trinn krever forskriverens valg.\n\n'
   const u = v.utfall
   const utfall = visUtfall && planutfallstekst(u)
-  const vist = u.utfall === 'plan' ? `${u.undertittel ? `*${u.undertittel}*\n\n` : ''}${utfall ? `**${utfall}**\n\n` : ''}${liste(u.linjer)}` : `**Ingen plan vises** (${u.utfall}):\n\n${liste('grunner' in u ? u.grunner : [])}`
+  const vist =
+    u.utfall === 'plan'
+      ? `${u.undertittel ? `*${u.undertittel}*\n\n` : ''}${utfall ? `**${utfall}**\n\n` : ''}${liste(u.linjer)}`
+      : `**Ingen plan vises** (${u.utfall}):\n\n${liste('grunner' in u ? u.grunner : [])}`
   return `${valg}${vist}`
 }
 
@@ -792,7 +1538,10 @@ const forventningstekst = (k: Kontrollkasus) => {
   const tilbys = k.tilbyr.length > 0 ? ` Tilbyr ${k.tilbyr.map((mg) => `${tall(mg)} mg`).join(', ')} for neste trinn.` : ''
   if (f.utfall === 'plan') return `Plan: ${f.linjer.map((l) => l.replace(/^(Fra dag \d+|Dag [\d–]+): [^:]+: /, '').replace(/ = .*$/, '')).join(' → ')}.${tilbys}`
   if (f.utfall === 'stopp') {
-    const grunner = f.grunner.filter((g) => g !== 'Ingen klinisk doseplan kan vises.' && g !== UTENFOR_OMFANG).join(' ').replace(/\.$/, '')
+    const grunner = f.grunner
+      .filter((g) => g !== 'Ingen klinisk doseplan kan vises.' && g !== UTENFOR_OMFANG)
+      .join(' ')
+      .replace(/\.$/, '')
     return `Ingen plan: ${grunner}${f.grunner.includes(UTENFOR_OMFANG) ? ' (utenfor omfanget)' : ''}.${tilbys}`
   }
   if (f.utfall === 'ingen') return `Verktøyet tilbyr ingen beregning (${f.status.replace('_', ' ')}).`
@@ -806,7 +1555,13 @@ function utgangspunktavsnitt(f: Kontrollforslag, x: NonNullable<Kontrollforslag[
     const r = regelMedId(o.regel.id, x.settene)
     return o.veier.map((v) => {
       const siste = sisteDose(v.utfall)
-      return [`\`${o.regel.id}\` v${o.regel.versjon}`, tilfellenavn(r, o, uttrekkene), v.valg.length > 0 ? v.valg.map((c) => `${tall(c.valgt)} mg`).join(', ') : '–', siste === null ? '–' : `${tall(siste)} mg`, planutfallstekst(v.utfall) ?? (v.utfall.utfall === 'plan' ? '–' : 'ingen plan')]
+      return [
+        `\`${o.regel.id}\` v${o.regel.versjon}`,
+        tilfellenavn(r, o, uttrekkene),
+        v.valg.length > 0 ? v.valg.map((c) => `${tall(c.valgt)} mg`).join(', ') : '–',
+        siste === null ? '–' : `${tall(siste)} mg`,
+        planutfallstekst(v.utfall) ?? (v.utfall.utfall === 'plan' ? '–' : 'ingen plan'),
+      ]
     })
   })
   return {
@@ -827,7 +1582,9 @@ export function lagKontrollgrunnlag(f: Kontrollforslag, uttrekkene: Uttrekkene):
     ['Regel', 'Versjon', 'Fingeravtrykk', 'Status i dag', 'Vurdert av kontrolløren', 'Tekniske hindringer for en godkjenning'],
     regler.map(({ k, r }) => {
       // Kontrollørens vurdering av nøyaktig denne versjonen og dette innholdet, om den finnes.
-      const vurdert = r.godkjenning.historikk.find((x) => (x.status === 'ikke_godkjent' || x.status === 'klinisk_godkjent') && x.rolle === 'uavhengig_kontrollor' && x.regelversjon === k.versjon && x.fingeravtrykk === k.fingeravtrykk)
+      const vurdert = r.godkjenning.historikk.find(
+        (x) => (x.status === 'ikke_godkjent' || x.status === 'klinisk_godkjent') && x.rolle === 'uavhengig_kontrollor' && x.regelversjon === k.versjon && x.fingeravtrykk === k.fingeravtrykk,
+      )
       const hindringer = godkjenningshindringer(k, f.dato, f.settene)
       return [
         `\`${k.id}\``,
@@ -892,12 +1649,24 @@ ${liste(omfang)}`
     f.kasus.map((k) => {
       const avvik = kontrollavvik(k, uttrekkene)
       const regel = k.regel ? `${k.regel.id}${k.regel.endre ? ` (${k.regel.endre.hva})` : ''}` : 'den verktøyet tilbyr i dag'
-      return [k.id, k.ref ?? '–', `${k.hva}${k.velger?.length ? `; forskriveren velger ${k.velger.map((mg) => `${tall(mg)} mg`).join(', ')}` : ''}`, regel, forventningstekst(k), avvik.length === 0 ? 'som forventet' : `**avvik:** ${avvik.join(' ')}`]
+      return [
+        k.id,
+        k.ref ?? '–',
+        `${k.hva}${k.velger?.length ? `; forskriveren velger ${k.velger.map((mg) => `${tall(mg)} mg`).join(', ')}` : ''}`,
+        regel,
+        forventningstekst(k),
+        avvik.length === 0 ? 'som forventet' : `**avvik:** ${avvik.join(' ')}`,
+      ]
     }),
   )
   const innledning = f.innledning?.(norskDato(u.hentet.slice(0, 10))) ?? [
     `**${f.tittel}.** Grunnlag for uavhengig faglig kontroll av forslag ${f.nr} i \`docs/verktøy-vdk2-prioritering.md\`, laget ${norskDato(f.dato)}.`,
-    `**Ingen regel er godkjent eller aktivert, og denne PR-en endrer ingen regel.** Verktøyet tilbyr i dag ingen beregning for disse reglene (kasus ${f.kasus.filter((k) => !k.regel).map((k) => k.id).join(', ')}). For å vise hva verktøyet ville vist om nøyaktig disse versjonene ble godkjent, er planene under regnet på en kopi av hver regel med en simulert godkjenning («${SIMULERT_KONTROLLOR}»), gjennom den samme veien som verktøysiden og med de norske preparatene i FEST-uttrekket hentet ${norskDato(u.hentet.slice(0, 10))}. Kopien lagres ikke og brukes ikke av appen. En plan som ikke når sluttmålet (en delplan), står her slik motoren beregner den, for kontrollens skyld: verktøysiden viser aldri en delplan, men «${KOMPLETT_IKKE_TILGJENGELIG}» med grunnen (Peders beslutning 03.11.2026). Kasusene er syntetiske; pasientopplysninger inngår ikke, og ingen tekst fra Psychiatrienet vises.`,
+    `**Ingen regel er godkjent eller aktivert, og denne PR-en endrer ingen regel.** Verktøyet tilbyr i dag ingen beregning for disse reglene (kasus ${f.kasus
+      .filter((k) => !k.regel)
+      .map((k) => k.id)
+      .join(
+        ', ',
+      )}). For å vise hva verktøyet ville vist om nøyaktig disse versjonene ble godkjent, er planene under regnet på en kopi av hver regel med en simulert godkjenning («${SIMULERT_KONTROLLOR}»), gjennom den samme veien som verktøysiden og med de norske preparatene i FEST-uttrekket hentet ${norskDato(u.hentet.slice(0, 10))}. Kopien lagres ikke og brukes ikke av appen. En plan som ikke når sluttmålet (en delplan), står her slik motoren beregner den, for kontrollens skyld: verktøysiden viser aldri en delplan, men «${KOMPLETT_IKKE_TILGJENGELIG}» med grunnen (Peders beslutning 03.11.2026). Kasusene er syntetiske; pasientopplysninger inngår ikke, og ingen tekst fra Psychiatrienet vises.`,
   ]
   // Avsnittene nummereres fortløpende, med forslagets egne avsnitt etter spørsmålene.
   const egne = [...(f.avsnitt ?? []), ...(f.utgangspunkt ? [utgangspunktavsnitt(f, f.utgangspunkt, uttrekkene)] : [])]
@@ -922,7 +1691,10 @@ ${liste(f.forutsetninger)}
 
 ## 3. Spørsmål til kontrolløren
 
-${tabell(['#', 'Spørsmål', 'Anbefalt svar'], f.sporsmal.map((x) => [x.nr, x.sporsmal, x.anbefalt]))}
+${tabell(
+  ['#', 'Spørsmål', 'Anbefalt svar'],
+  f.sporsmal.map((x) => [x.nr, x.sporsmal, x.anbefalt]),
+)}
 
 ${egne.map((a, i) => `## ${4 + i}. ${a.tittel}\n\n${a.tekst}\n\n`).join('')}## ${nr.regler}. Reglene
 
