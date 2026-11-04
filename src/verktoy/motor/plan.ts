@@ -26,7 +26,7 @@
 import { FEST_FORELDET_ETTER_TIMER, festForeldet } from '../../legemiddeldata/referanser'
 import { FORMULERINGSKLASSER, type Formuleringsklasse } from '../festformuleringer'
 import { AVSLUTNING_FELLES, AVVIK_IKKE_BEREGNET, avrund, beregn, overAvslutning, overAvslutningKort, erIsoDato, tempolengde, fordelingstekst, hverTekst, injeksjonstidspunkt, medEnhet, medSvarforslag, utenBeregningLinje, valgtSuffiks, trinnvalgOmrade, minstetrinnFra, type Forlopsresultat, type Injeksjon, type Kontroll, type Periode } from '../regler/beregning'
-import { fingeravtrykk, godkjenningsfeil, kanonisk, sha256 } from '../regler/godkjenning'
+import { erstattereFor, erstattettekst, fingeravtrykk, godkjenningsfeil, kanonisk, sha256 } from '../regler/godkjenning'
 import { avslutningFor, justerbare, parameterfeil, type Beregningsinndata, type Fase, type Forlop, type Klinisktilfelle, type Parameter, type Regel, type Regelsett } from '../regler/modell'
 import { byggesteiner, DOSEENHETER, norskDato, type Byggestein, type Preparatgrunnlag } from './byggesteiner'
 import { doser, fordel, styrkevalg, velgSerie, type Dosekandidat, type Doseelement, type Periodevalg, type Styrkevalg } from './dosevalg'
@@ -70,6 +70,12 @@ export interface Omgivelse {
   /** ISO-tidspunkt. */
   naa: string
   fagtekst?: Fagtekst[]
+  /**
+   * Alle reglene appen bruker, så motoren kan se om regelen er trukket fordi
+   * en gyldig godkjent regel erstatter den (`Regel.erstatter`); uten feltet
+   * brukes reglene i regelsettet planen beregnes med.
+   */
+  regler?: readonly Regel[]
 }
 
 /** Én periode med døgndose: den ideelle dosen fra regelen og den som faktisk gis. */
@@ -246,10 +252,15 @@ export function festFerskhet(utvalg: Pick<Preparatgrunnlag['utvalg'], 'kontrolle
   return []
 }
 
-/** Hvorfor en plan etter `regel` med preparatene i `utvalg` ikke kan være klinisk; tom når den kan. */
-export function kliniskSperre(regel: Regel, utvalg: Preparatgrunnlag['utvalg'], naa: Date): string[] {
+/**
+ * Hvorfor en plan etter `regel` med preparatene i `utvalg` ikke kan være
+ * klinisk; tom når den kan. En regel som en gyldig godkjent regel blant
+ * `regler` erstatter, er trukket og gir aldri en klinisk plan.
+ */
+export function kliniskSperre(regel: Regel, utvalg: Preparatgrunnlag['utvalg'], naa: Date, regler: readonly Regel[] = []): string[] {
   const sperre: string[] = []
   if (regel.id.startsWith(SYNTETISK_REGEL)) sperre.push('Regelen er en syntetisk testregel.')
+  sperre.push(...erstattereFor(regel, regler).map(erstattettekst))
   sperre.push(...godkjenningsfeil(regel))
   if (utvalg.kilde !== 'FEST') sperre.push(`Preparatene er fra «${utvalg.kilde}», ikke fra FEST.`)
   sperre.push(...festFerskhet(utvalg, naa))
@@ -928,6 +939,9 @@ export function sluttmalMangler(f: Praktiskforlop, inndata?: Pick<Doseplaninndat
   }
 }
 
+/** Reglene motoren ser etter erstatninger blant: appens regler når de er gitt, ellers regelsettets. */
+const alleRegler = (omgivelse: Omgivelse, regelsett?: Regelsett): readonly Regel[] => omgivelse.regler ?? regelsett?.regler ?? []
+
 function beregnPlan(regel: Regel, inndata: Doseplaninndata, grunnlag: Preparatgrunnlag, omgivelse: Omgivelse, regelsett?: Regelsett, kontrollerte?: Klinisktilfelle[]): Doseplanresultat {
   const { utvalg } = grunnlag
   const merknader: string[] = []
@@ -998,7 +1012,7 @@ function beregnPlan(regel: Regel, inndata: Doseplaninndata, grunnlag: Preparatgr
 
   const brukte = forlop.flatMap((f) => [...f.perioder.flatMap((p) => p.elementer), ...f.injeksjoner.map((i) => i.element)]).flatMap((e) => e.preparater)
   const unike = [...new Map(brukte.map((b) => [b.id, b])).values()].sort((a, b) => (a.id < b.id ? -1 : 1))
-  const sperre = [...kliniskSperre(regel, utvalg, naa), ...omfangsfeil(regel, inndata, forlop)]
+  const sperre = [...kliniskSperre(regel, utvalg, naa, alleRegler(omgivelse, regelsett)), ...omfangsfeil(regel, inndata, forlop)]
   const klinisk = sperre.length === 0 && ideell.klinisk_godkjent
   return medValg({
     ...versjoner(sha256(kanonisk({ kildedato: utvalg.kildedato, preparater: unike }))),
@@ -1042,7 +1056,7 @@ function klinisk(args: Parameters<typeof beregnDoseplan>, komplett: boolean): Do
     // Valg av dose per trinn tilbys bare når planen kan bli klinisk, og en plan utenfor omfanget sier det, så et valg ikke ser ut til å kunne hjelpe.
     const utenfor = omfangsfeil(regel, inndata, [])
     const med = utenfor.length > 0 ? { ...r, stoppgrunner: [...r.stoppgrunner, ...utenfor] } : r
-    if (!med.trinnvalg || [...kliniskSperre(regel, grunnlag.utvalg, new Date(omgivelse.naa)), ...utenfor].length === 0) return med
+    if (!med.trinnvalg || [...kliniskSperre(regel, grunnlag.utvalg, new Date(omgivelse.naa), alleRegler(omgivelse, regelsett)), ...utenfor].length === 0) return med
     const { trinnvalg: _t, ...uten } = med
     return uten
   }

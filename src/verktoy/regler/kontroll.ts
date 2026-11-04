@@ -15,7 +15,7 @@ import type { Kildearkiv } from '../kildearkiv'
 import { kildegrunnlag, type Kildeanbefaling, type Kildepart } from '../kildeanbefalinger'
 import { erSperret, KILDEFORMULERINGER, type Virkestoffkartlegging } from '../kartlegging'
 import { beregn, kortform, utlosteKrav } from './beregning'
-import { godkjenningsfeil, vurderingsfeil } from './godkjenning'
+import { erstatningsfeil, godkjenningsfeil, vurderingsfeil } from './godkjenning'
 import { kildeFor } from './kilder'
 import {
   alleGrunnlag,
@@ -309,12 +309,17 @@ function kontrollerRegel(r: Regel, g: Kontrollgrunnlag): string[] {
   return feil
 }
 
-/** Alt som er galt med regelsettet; tom når det er i orden. */
-export function kontrollerRegelsett(s: Regelsett, g: Kontrollgrunnlag = lesKontrollgrunnlag()): string[] {
+/**
+ * Alt som er galt med regelsettet; tom når det er i orden. Erstatningene
+ * (`Regel.erstatter`) slås opp blant `alle`, så en regel kan erstatte en
+ * regel i et annet sett.
+ */
+export function kontrollerRegelsett(s: Regelsett, g: Kontrollgrunnlag = lesKontrollgrunnlag(), alle: readonly Regel[] = s.regler): string[] {
   const feil: string[] = []
   if (s.modell !== REGELMODELLVERSJON) feil.push(`${s.id}: laget for regelmodell ${s.modell}, gjeldende er ${REGELMODELLVERSJON}`)
   const ids = s.regler.map((r) => r.id)
   for (const id of new Set(ids)) if (ids.filter((x) => x === id).length > 1) feil.push(`${s.id}: regelen ${id} finnes flere ganger`)
   for (const r of s.regler) feil.push(...kontrollerRegel(r, g))
+  feil.push(...erstatningsfeil(s.regler, alle))
   return feil
 }

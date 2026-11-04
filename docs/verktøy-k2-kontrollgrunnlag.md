@@ -22,7 +22,7 @@ Kasusene er syntetiske. 134 kasus, alle med forventet utfall.
 
 ### Bytte fra sertralin til mirtazapin, kryssnedtrapping til seponering
 
-`bytte-sertralin-mirtazapin`, versjon 1, fingeravtrykk `debeaab754dfd728ba59306d6ef921c3f446413f61d682c6aa0d87e988f07834`. Status: til faglig kontroll.
+`bytte-sertralin-mirtazapin`, versjon 1, fingeravtrykk `a035a77003736fc07ad09a5ef088242beded50355cc4693b22b10de5062f2b65`. Status: til faglig kontroll.
 
 **sertralin 50 mg til mirtazapin 15 mg, sluttrinnet simulert som laveste tablettdose** (startdato 09.11.2026):
 
@@ -121,11 +121,11 @@ Kasusene er syntetiske. 134 kasus, alle med forventet utfall.
 | mirtazapin 30 mg avregistrert i FEST | stopper: mirtazapin (til): styrken 30 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST, så planen ville blitt satt sammen annerledes enn den som er kontrollert. Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet. |
 | FEST eldre enn 48 timer | stopper: Ingen klinisk doseplan kan vises. Legemiddeldataene ble sist kontrollert mot FEST 3. november 2026. Den nattlige oppdateringen har ikke gått siden, så nyere endringer i FEST kan mangle. |
 | regelen endret etter kontrollen (annet fingeravtrykk) | stopper: Ingen klinisk doseplan kan vises. Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke); den må kontrolleres på nytt. |
-| uten godkjenning: verktøyet bruker fortsatt det godkjente startforløpet (kryssnedtrapping-sertralin-mirtazapin v10) og ber om formvalg for mirtazapin | formvalg |
+| uten godkjenning: verktøyet bruker fortsatt det godkjente startforløpet (kryssnedtrapping-sertralin-mirtazapin) og ber om formvalg for mirtazapin | formvalg |
 
 ### Bytte fra escitalopram til mirtazapin, kryssnedtrapping til seponering
 
-`bytte-escitalopram-mirtazapin`, versjon 1, fingeravtrykk `c2e2dc6116e01a65b60c7eb4a2cd91d1ccefff817f6447b1e6f87a0ca867080c`. Status: til faglig kontroll.
+`bytte-escitalopram-mirtazapin`, versjon 1, fingeravtrykk `2ec1eaea6c561a5dc7352d1cedb5824031dc3fa43274355ad18059372a90db5e`. Status: til faglig kontroll.
 
 **escitalopram 10 mg til mirtazapin 15 mg, sluttrinnet simulert som laveste tablettdose** (startdato 09.11.2026):
 
@@ -201,7 +201,7 @@ Kasusene er syntetiske. 134 kasus, alle med forventet utfall.
 
 ### Bytte fra citalopram til mirtazapin, kryssnedtrapping til seponering
 
-`bytte-citalopram-mirtazapin`, versjon 1, fingeravtrykk `27c1100cfb7fe25fc1a9f39860a627ca04ec8c62617e33746a53e71217c978b8`. Status: til faglig kontroll.
+`bytte-citalopram-mirtazapin`, versjon 1, fingeravtrykk `3ab41f3c8d268a9f89d6f739423864c5afb75c78a3c734273daac4759ecf8347`. Status: til faglig kontroll.
 
 **citalopram 20 mg til mirtazapin 15 mg, sluttrinnet simulert som laveste tablettdose** (startdato 09.11.2026):
 
@@ -277,7 +277,7 @@ Kasusene er syntetiske. 134 kasus, alle med forventet utfall.
 
 ### Bytte fra escitalopram til sertralin, nedtrapping og kort utvasking
 
-`bytte-escitalopram-sertralin`, versjon 1, fingeravtrykk `216b06fb0580cb14d48b2ab7134e5a51f8d9ee87b911e78afbf35062ba46bc43`. Status: til faglig kontroll.
+`bytte-escitalopram-sertralin`, versjon 1, fingeravtrykk `3609d1747ffb7c9a4e29d0b15d570af482282fdce267bfd7f0c46dccb05947bd`. Status: til faglig kontroll.
 
 **escitalopram 10 mg til sertralin 50 mg, sluttrinnet simulert som laveste tablettdose** (startdato 09.11.2026):
 
@@ -359,7 +359,7 @@ Kasusene er syntetiske. 134 kasus, alle med forventet utfall.
 
 ### Bytte fra citalopram til sertralin, nedtrapping og kort utvasking
 
-`bytte-citalopram-sertralin`, versjon 1, fingeravtrykk `2b8cb1b487781872bfe87371dd54567c880ea0fc1d0b08e775ec766b9f7bd815`. Status: til faglig kontroll.
+`bytte-citalopram-sertralin`, versjon 1, fingeravtrykk `1bfe5bbcb9dc5b4960ad1aa65aae018d35fe02d0aefef24446b666153fa07e0f`. Status: til faglig kontroll.
 
 **citalopram 20 mg til sertralin 50 mg, sluttrinnet simulert som laveste tablettdose** (startdato 09.11.2026):
 

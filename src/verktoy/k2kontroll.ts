@@ -82,7 +82,8 @@ const simulert = (r: Regel, sluttrinn: Sluttrinn): NonNullable<Pilotkasus['regel
 })
 
 /** Bytter der et godkjent startforløp allerede finnes; det skal fortsatt være det verktøyet bruker til den komplette regelen er godkjent. */
-const GODKJENT_START: Record<string, string> = { 'bytte-sertralin-mirtazapin': 'det godkjente startforløpet (kryssnedtrapping-sertralin-mirtazapin v10)' }
+/** Det godkjente startforløpet regelen erstatter, som verktøyet bruker til regelen er godkjent. */
+const erstattet = (r: Regel) => (r.erstatter?.length ? `det godkjente startforløpet (${r.erstatter.join(', ')})` : undefined)
 
 /** Ett kasus i kontrollgrunnlaget, med regelen det gjelder. */
 export interface K2kasus extends Pilotkasus {
@@ -184,10 +185,10 @@ export function kasusFor(r: Regel): K2kasus[] {
       ...felles,
       id: `${r.id}:uten-godkjenning`,
       kategori: 'ikke_godkjent',
-      hva: GODKJENT_START[r.id] ? `uten godkjenning: verktøyet bruker fortsatt ${GODKJENT_START[r.id]} og ber om formvalg for mirtazapin` : 'uten godkjenning (slik appen er nå): faglig kontroll gjenstår',
-      dose: GODKJENT_START[r.id] ? String(startdoser(r)[1]) : hoy,
+      hva: erstattet(r) ? `uten godkjenning: verktøyet bruker fortsatt ${erstattet(r)} og ber om formvalg for mirtazapin` : 'uten godkjenning (slik appen er nå): faglig kontroll gjenstår',
+      dose: erstattet(r) ? String(startdoser(r)[1]) : hoy,
       regel: undefined,
-      forventet: GODKJENT_START[r.id] ? { utfall: 'formvalg', forlop: ['til'] } : { utfall: 'ingen', status: 'til_kontroll' },
+      forventet: erstattet(r) ? { utfall: 'formvalg', forlop: ['til'] } : { utfall: 'ingen', status: 'til_kontroll' },
     },
   ]
 }

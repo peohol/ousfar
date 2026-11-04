@@ -8,15 +8,17 @@ import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { FEST_K2, K2_KONTROLLFIL, K2_REGELRAPPORT, K2KASUS, k2avvik, kjorK2, lagK2Kontrollgrunnlag, somAvklartOgGodkjent, type K2kasus, type Sluttrinn } from '../verktoy/k2kontroll'
 import { VERKTOY } from '../verktoy/register'
-import { BYTTESETT } from '../verktoy/regler/antidepressivbytter'
+import { BYTTESETT, STARTFORLOP_SERTRALIN_MIRTAZAPIN } from '../verktoy/regler/antidepressivbytter'
 import type { Festuttrekk } from '../verktoy/regler/aksepttest'
 import { beregn } from '../verktoy/regler/beregning'
-import { fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
+import { erstatningsfeil, fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett, lesKontrollgrunnlag } from '../verktoy/regler/kontroll'
-import { apneValg, type Beregningsinndata, type Regel } from '../verktoy/regler/modell'
+import { apneValg, type Beregningsinndata, type Regel, type Regelsett } from '../verktoy/regler/modell'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
 import { REGELRAPPORTER } from '../verktoy/regler/rapport'
-import { REGELSETTENE, samlet, tilgjengelighet } from '../verktoy/tilgjengelighet'
+import { kliniskSperre } from '../verktoy/motor/plan'
+import { REGELSETTENE, reglerFor, samlet, tilgjengelighet } from '../verktoy/tilgjengelighet'
+import { testFest, TESTKLOKKE } from './hjelp/verktoyplan'
 
 const les = (fil: string) => readFileSync(new URL(`../../${fil}`, import.meta.url), 'utf8')
 const UTTREKK = JSON.parse(les(FEST_K2)) as Festuttrekk
@@ -47,7 +49,7 @@ function beregnSomGodkjent(r: Regel, x: Partial<Beregningsinndata>, sluttrinn: S
 
 describe('K2: regelsettet', () => {
   it('består regelkontrollen', () => {
-    expect(kontrollerRegelsett(BYTTESETT, lesKontrollgrunnlag())).toEqual([])
+    expect(kontrollerRegelsett(BYTTESETT, lesKontrollgrunnlag(), REGELSETTENE.flatMap((x) => x.regler))).toEqual([])
   })
 
   it('har fem regler, alle til faglig kontroll, uten gyldig godkjenning og med åpne valg', () => {
@@ -83,20 +85,51 @@ describe('K2: regelsettet', () => {
     expect(t.regler.map((r) => `${r.id} v${r.versjon}`)).toEqual(['kryssnedtrapping-sertralin-mirtazapin v10'])
   })
 
-  it('ved aktivering må den komplette regelen erstatte startforløpet: med versjon 10 trukket tilbyr verktøyet bare den komplette planen', () => {
+  describe('ved aktivering erstatter den komplette regelen startforløpet (versjon 10) atomisk', () => {
     const verktoy = VERKTOY.find((v) => v.id === 'bytte-antidepressiv')!
     const valg = { fra: { nokkel: 'sertralin', formulering: 'standard' }, til: { nokkel: 'mirtazapin', formulering: 'standard' } } as const
-    const aktivert = (trekkV10: boolean) => {
+    const finn = (settene: Regelsett[], id: string) => settene.flatMap((x) => x.regler).find((r) => r.id === id)!
+    /** Appens regelsett med den komplette regelen simulert godkjent; `endre` endrer den før eller etter godkjenningen. */
+    const aktivert = (endre?: { for?: (r: Regel) => void; etter?: (r: Regel) => void }) => {
       const settene = structuredClone([...REGELSETTENE])
-      const komplett = settene.flatMap((x) => x.regler).find((r) => r.id === 'bytte-sertralin-mirtazapin')!
+      const komplett = finn(settene, 'bytte-sertralin-mirtazapin')
+      endre?.for?.(komplett)
       somAvklartOgGodkjent(komplett, 'laveste_tablett')
-      const v10 = settene.flatMap((x) => x.regler).find((r) => r.id === 'kryssnedtrapping-sertralin-mirtazapin')!
-      if (trekkV10) v10.godkjenning = { status: 'trukket', historikk: [...v10.godkjenning.historikk, { ...v10.godkjenning.historikk.at(-1)!, status: 'trukket', dato: '2026-11-03', merknad: 'Erstattet av den komplette regelen (simulert).' }] }
-      return tilgjengelighet(verktoy, valg, samlet(settene)).regler.map((r) => r.id)
+      endre?.etter?.(komplett)
+      return { settene, sett: samlet(settene), v10: finn(settene, STARTFORLOP_SERTRALIN_MIRTAZAPIN) }
     }
-    // Uten at versjon 10 trekkes, får forskriveren to godkjente planer å velge mellom; godkjenningen av den komplette regelen må derfor trekke versjon 10 i samme endring.
-    expect(aktivert(false).sort()).toEqual(['bytte-sertralin-mirtazapin', 'kryssnedtrapping-sertralin-mirtazapin'])
-    expect(aktivert(true)).toEqual(['bytte-sertralin-mirtazapin'])
+    const tilbudt = (sett: Regelsett) => tilgjengelighet(verktoy, valg, sett).regler.map((r) => r.id).sort()
+
+    it('regelen oppgir startforløpet som den erstatter, og feltet er med i fingeravtrykket kontrolløren godkjenner', () => {
+      const komplett = BYTTESETT.regler.find((r) => r.id === 'bytte-sertralin-mirtazapin')!
+      expect(komplett.erstatter).toEqual([STARTFORLOP_SERTRALIN_MIRTAZAPIN])
+      expect(BYTTESETT.regler.filter((r) => r.erstatter).map((r) => r.id)).toEqual(['bytte-sertralin-mirtazapin'])
+      expect(fingeravtrykk({ ...komplett, erstatter: undefined })).not.toBe(fingeravtrykk(komplett))
+      expect(erstatningsfeil(REGELSETTENE.flatMap((x) => x.regler))).toEqual([])
+    })
+
+    it('før godkjenningen gjelder versjon 10 som før', () => {
+      expect(tilbudt(samlet([...REGELSETTENE]))).toEqual([STARTFORLOP_SERTRALIN_MIRTAZAPIN])
+    })
+
+    it('godkjent: bare den komplette planen tilbys, uten at versjon 10 endres, og en plan etter versjon 10 stopper', () => {
+      const { sett, v10 } = aktivert()
+      expect(v10.godkjenning.status).toBe('klinisk_godkjent')
+      expect(tilbudt(sett)).toEqual(['bytte-sertralin-mirtazapin'])
+      expect(reglerFor(verktoy, valg, sett).map((r) => r.id)).not.toContain(STARTFORLOP_SERTRALIN_MIRTAZAPIN)
+      // Den kliniske sperren som stopper hver plan etter versjon 10: bare erstatningen, siden godkjenningen av versjon 10 ellers er gyldig og FEST er fersk.
+      expect(kliniskSperre(v10, testFest(), TESTKLOKKE(), sett.regler)).toEqual(['Regelen er trukket: den er erstattet av «Bytte fra sertralin til mirtazapin, kryssnedtrapping til seponering» (regelversjon 1), som er klinisk godkjent.'])
+      expect(kliniskSperre(v10, testFest(), TESTKLOKKE(), samlet([...REGELSETTENE]).regler)).toEqual([])
+    })
+
+    it('uten erstatningen ville forskriveren fått to godkjente planer å velge mellom', () => {
+      expect(tilbudt(aktivert({ for: (r) => delete r.erstatter }).sett)).toEqual(['bytte-sertralin-mirtazapin', STARTFORLOP_SERTRALIN_MIRTAZAPIN])
+    })
+
+    it('en erstatning lagt til etter godkjenningen gjør godkjenningen ugyldig, og versjon 10 gjelder fortsatt', () => {
+      const { sett } = aktivert({ for: (r) => delete r.erstatter, etter: (r) => { r.erstatter = [STARTFORLOP_SERTRALIN_MIRTAZAPIN] } })
+      expect(tilbudt(sett)).toEqual([STARTFORLOP_SERTRALIN_MIRTAZAPIN])
+    })
   })
 
   it('sier at faglig kontroll gjenstår for de nye kombinasjonene', () => {

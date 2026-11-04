@@ -35,7 +35,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra sertralin til mirtazapin, kryssnedtrapping til seponering
 
-`bytte-sertralin-mirtazapin`, versjon 1, fingeravtrykk `debeaab754dfd728ba59306d6ef921c3f446413f61d682c6aa0d87e988f07834`. Kryssnedtrapping: sertralin → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`bytte-sertralin-mirtazapin`, versjon 1, fingeravtrykk `a035a77003736fc07ad09a5ef088242beded50355cc4693b22b10de5062f2b65`. Kryssnedtrapping: sertralin → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code).
 
@@ -56,7 +56,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 **OUSFARs selvstendige tilpasninger (må kontrolleres):**
 
-- OUSFAR halverer sertralin hver 14. dag ned til 25 mg, gir den dosen i 14 dager og seponerer etter den. Mirtazapin 15 mg gis fra dag 1 og holdes til siste dose sertralin.
+- OUSFAR halverer sertralin hver 14. dag ned til 25 mg, gir den dosen i 14 dager og seponerer derfra først når sluttrinnet ved bytte er avgjort faglig (K2-2). Mirtazapin 15 mg gis fra dag 1 og holdes til siste dose sertralin.
   - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
   - Raskere nedtrapping kan være aktuelt ved bytte av antidepressiv. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
   - Startdose 50 mg daglig (25 mg ved enkelte angstlidelser); økning i trinn på 50 mg til maksimalt 200 mg daglig. *([dmp-zoloft](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08203.pdf), pkt. 4.2)*
@@ -129,7 +129,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra escitalopram til mirtazapin, kryssnedtrapping til seponering
 
-`bytte-escitalopram-mirtazapin`, versjon 1, fingeravtrykk `c2e2dc6116e01a65b60c7eb4a2cd91d1ccefff817f6447b1e6f87a0ca867080c`. Kryssnedtrapping: escitalopram → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`bytte-escitalopram-mirtazapin`, versjon 1, fingeravtrykk `2ec1eaea6c561a5dc7352d1cedb5824031dc3fa43274355ad18059372a90db5e`. Kryssnedtrapping: escitalopram → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code).
 
@@ -150,7 +150,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 **OUSFARs selvstendige tilpasninger (må kontrolleres):**
 
-- OUSFAR halverer escitalopram hver 14. dag ned til 5 mg, gir den dosen i 14 dager og seponerer etter den. Mirtazapin 15 mg gis fra dag 1 og holdes til siste dose escitalopram.
+- OUSFAR halverer escitalopram hver 14. dag ned til 5 mg, gir den dosen i 14 dager og seponerer derfra først når sluttrinnet ved bytte er avgjort faglig (K2-2). Mirtazapin 15 mg gis fra dag 1 og holdes til siste dose escitalopram.
   - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
   - Raskere nedtrapping kan være aktuelt ved bytte av antidepressiv. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
   - Over 65 år startes det med 5 mg, høyst 10 mg; ved mild til moderat nedsatt leverfunksjon 5 mg de to første ukene, høyst 10 mg. *([dmp-cipralex](https://produktinformasjon.legemiddelsok.no/preparatomtaler/2002-00713.pdf), pkt. 4.2)*
@@ -223,7 +223,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra citalopram til mirtazapin, kryssnedtrapping til seponering
 
-`bytte-citalopram-mirtazapin`, versjon 1, fingeravtrykk `27c1100cfb7fe25fc1a9f39860a627ca04ec8c62617e33746a53e71217c978b8`. Kryssnedtrapping: citalopram → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`bytte-citalopram-mirtazapin`, versjon 1, fingeravtrykk `3ab41f3c8d268a9f89d6f739423864c5afb75c78a3c734273daac4759ecf8347`. Kryssnedtrapping: citalopram → mirtazapin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code).
 
@@ -244,7 +244,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 **OUSFARs selvstendige tilpasninger (må kontrolleres):**
 
-- OUSFAR halverer citalopram hver 14. dag ned til 10 mg, gir den dosen i 14 dager og seponerer etter den. Mirtazapin 15 mg gis fra dag 1 og holdes til siste dose citalopram.
+- OUSFAR halverer citalopram hver 14. dag ned til 10 mg, gir den dosen i 14 dager og seponerer derfra først når sluttrinnet ved bytte er avgjort faglig (K2-2). Mirtazapin 15 mg gis fra dag 1 og holdes til siste dose citalopram.
   - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
   - Raskere nedtrapping kan være aktuelt ved bytte av antidepressiv. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
   - Ved panikklidelse startes det med 10 mg; ved depresjon er anbefalt dose 20 mg, høyst 40 mg. *([dmp-cipramil](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08151.pdf), pkt. 4.2)*
@@ -317,7 +317,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra escitalopram til sertralin, nedtrapping og kort utvasking
 
-`bytte-escitalopram-sertralin`, versjon 1, fingeravtrykk `216b06fb0580cb14d48b2ab7134e5a51f8d9ee87b911e78afbf35062ba46bc43`. Sekvensielt bytte: escitalopram → sertralin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`bytte-escitalopram-sertralin`, versjon 1, fingeravtrykk `3609d1747ffb7c9a4e29d0b15d570af482282fdce267bfd7f0c46dccb05947bd`. Sekvensielt bytte: escitalopram → sertralin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code).
 
@@ -338,7 +338,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 **OUSFARs selvstendige tilpasninger (må kontrolleres):**
 
-- OUSFAR halverer escitalopram hver 14. dag ned til 5 mg, gir den dosen i 14 dager og seponerer etter den.
+- OUSFAR halverer escitalopram hver 14. dag ned til 5 mg, gir den dosen i 14 dager og seponerer derfra først når sluttrinnet ved bytte er avgjort faglig (K2-2).
   - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
   - Raskere nedtrapping kan være aktuelt ved bytte av antidepressiv. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
   - Over 65 år startes det med 5 mg, høyst 10 mg; ved mild til moderat nedsatt leverfunksjon 5 mg de to første ukene, høyst 10 mg. *([dmp-cipralex](https://produktinformasjon.legemiddelsok.no/preparatomtaler/2002-00713.pdf), pkt. 4.2)*
@@ -413,7 +413,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra citalopram til sertralin, nedtrapping og kort utvasking
 
-`bytte-citalopram-sertralin`, versjon 1, fingeravtrykk `2b8cb1b487781872bfe87371dd54567c880ea0fc1d0b08e775ec766b9f7bd815`. Sekvensielt bytte: citalopram → sertralin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`bytte-citalopram-sertralin`, versjon 1, fingeravtrykk `1bfe5bbcb9dc5b4960ad1aa65aae018d35fe02d0aefef24446b666153fa07e0f`. Sekvensielt bytte: citalopram → sertralin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
 
 **Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code).
 
@@ -434,7 +434,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 **OUSFARs selvstendige tilpasninger (må kontrolleres):**
 
-- OUSFAR halverer citalopram hver 14. dag ned til 10 mg, gir den dosen i 14 dager og seponerer etter den.
+- OUSFAR halverer citalopram hver 14. dag ned til 10 mg, gir den dosen i 14 dager og seponerer derfra først når sluttrinnet ved bytte er avgjort faglig (K2-2).
   - Dosen trappes ned trinnvis til null; hvert trinn er en andel av forrige dose (eksempel: 50 %), med mindre trinn (eksempel: 25 %) når dosen blir lav. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
   - Raskere nedtrapping kan være aktuelt ved bytte av antidepressiv. *([nice-ng222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations), anbefaling 1.4.16)*
   - Ved panikklidelse startes det med 10 mg; ved depresjon er anbefalt dose 20 mg, høyst 40 mg. *([dmp-cipramil](https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-08151.pdf), pkt. 4.2)*

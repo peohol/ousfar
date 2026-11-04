@@ -323,7 +323,15 @@ const MIRTAZAPIN_MALDOSER = [15, 30]
 const MIRTAZAPIN_STYRKER = [15, 30, 45]
 const BEKREFTET_MIRTAZAPIN = ['indikasjon', 'toleranse_overlapp', 'serotonerg_sammedisinering']
 
-export function ssriTilMirtazapin(fra: Fra): Regel {
+/**
+ * Det godkjente startforløpet fra sertralin til mirtazapin (pilotsettet,
+ * versjon 10) er en delplan. Den komplette regelen erstatter det, så motoren
+ * trekker det i samme øyeblikk som den komplette regelen er gyldig godkjent.
+ */
+export const STARTFORLOP_SERTRALIN_MIRTAZAPIN = 'kryssnedtrapping-sertralin-mirtazapin'
+
+/** `erstatter`: eldre regler for samme bytte som denne regelen trekker når den godkjennes. */
+export function ssriTilMirtazapin(fra: Fra, erstatter?: string[]): Regel {
   const unntak: Unntak[] = [
     ...felleUnntak(fra, MIRTAZAPIN),
     {
@@ -340,6 +348,7 @@ export function ssriTilMirtazapin(fra: Fra): Regel {
     id: `bytte-${fra.nokkel}-mirtazapin`,
     versjon: 1,
     tittel: `Bytte fra ${fra.nokkel} til mirtazapin, kryssnedtrapping til seponering`,
+    ...(erstatter ? { erstatter } : {}),
     fra: { type: 'virkestoff', nokkel: fra.nokkel },
     til: { type: 'virkestoff', nokkel: 'mirtazapin' },
     plan: {
@@ -407,7 +416,7 @@ export function ssriTilMirtazapin(fra: Fra): Regel {
       ],
       tilpasninger: [
         utsagn(
-          `OUSFAR halverer ${fra.nokkel} hver 14. dag ned til ${fra.sluttdose.mg} mg, gir den dosen i 14 dager og seponerer etter den. Mirtazapin 15 mg gis fra dag 1 og holdes til siste dose ${fra.nokkel}.`,
+          `OUSFAR halverer ${fra.nokkel} hver 14. dag ned til ${fra.sluttdose.mg} mg, gir den dosen i 14 dager og seponerer derfra først når sluttrinnet ved bytte er avgjort faglig (K2-2). Mirtazapin 15 mg gis fra dag 1 og holdes til siste dose ${fra.nokkel}.`,
           NICE.andel,
           NICE.bytte,
           fra.sluttdose.henvisning,
@@ -582,7 +591,7 @@ export function ssriTilSertralin(fra: Fra): Regel {
       ],
       tilpasninger: [
         utsagn(
-          `OUSFAR halverer ${fra.nokkel} hver 14. dag ned til ${fra.sluttdose.mg} mg, gir den dosen i 14 dager og seponerer etter den.`,
+          `OUSFAR halverer ${fra.nokkel} hver 14. dag ned til ${fra.sluttdose.mg} mg, gir den dosen i 14 dager og seponerer derfra først når sluttrinnet ved bytte er avgjort faglig (K2-2).`,
           NICE.andel,
           NICE.bytte,
           fra.sluttdose.henvisning,
@@ -666,7 +675,7 @@ export const BYTTESETT: Regelsett = {
   modell: REGELMODELLVERSJON,
   beskrivelse:
     'Komplette bytter mellom antidepressiva (K2): fra pasientens nåværende dose til seponering av det gamle legemidlet og en valgt vedlikeholdsdose av det nye. Fem regler i to familier, til uavhengig faglig kontroll; ingen er klinisk godkjent.',
-  regler: [ssriTilMirtazapin(SERTRALIN), ssriTilMirtazapin(ESCITALOPRAM), ssriTilMirtazapin(CITALOPRAM), ssriTilSertralin(ESCITALOPRAM), ssriTilSertralin(CITALOPRAM)],
+  regler: [ssriTilMirtazapin(SERTRALIN, [STARTFORLOP_SERTRALIN_MIRTAZAPIN]), ssriTilMirtazapin(ESCITALOPRAM), ssriTilMirtazapin(CITALOPRAM), ssriTilSertralin(ESCITALOPRAM), ssriTilSertralin(CITALOPRAM)],
 }
 
 export const ANTIDEPRESSIVBYTTER: Domenesett = {
