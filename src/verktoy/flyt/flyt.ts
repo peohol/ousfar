@@ -79,15 +79,22 @@ const maldoseTekst = (r: Regel) => {
 }
 const fyllInn = (r: Regel, t: string | undefined) => t?.replaceAll('{maldose}', maldoseTekst(r))
 
-/** Spørsmålet med regelens egen tekst for en betingelse uten (kontrollert) katalogoppføring (S5). */
+/**
+ * Reservevisningen for en betingelse uten kontrollert katalogoppføring (S5):
+ * regelens egen, fullstendige tekst med sin opprinnelige type og svarlogikk,
+ * slik dagens skjema viser den. Spørsmål har «Ja»/«Nei», unntak regelens to
+ * svar («Gjelder»/«Gjelder ikke») og bekreftelser en avkrysning. Den gjøres
+ * aldri om til et generisk spørsmål, og gir de samme motorinndataene som
+ * dagens skjema.
+ */
 function standard(type: Betingelsestype, x: { id: string; tekst: string }): [Definisjon, Avbildning] {
   const id = standardId(type, x.id)
   const def: Definisjon =
     type === 'bekreftelse'
       ? { id, tekst: x.tekst, gruppe: 'vurdering', kategori: 'uklassifisert', art: 'avkrysning', alternativer: SVARSETT.bekreftet }
       : type === 'unntak'
-        ? { id, tekst: x.tekst, hjelp: 'Svar ja hvis dette gjelder pasienten.', gruppe: 'stopp', kategori: 'uklassifisert', art: 'valg', alternativer: SVARSETT.ja_nei_ukjent }
-        : { id, tekst: x.tekst, gruppe: 'endrer', kategori: 'uklassifisert', art: 'valg', alternativer: SVARSETT.ja_nei_ukjent }
+        ? { id, tekst: x.tekst, gruppe: 'stopp', kategori: 'uklassifisert', art: 'valg', alternativer: SVARSETT.gjelder }
+        : { id, tekst: x.tekst, gruppe: 'endrer', kategori: 'uklassifisert', art: 'valg', alternativer: SVARSETT.ja_nei }
   return [def, { type, id: x.id, fra: [{ sporsmal: id }], kombinasjon: type === 'bekreftelse' ? 'alle' : 'en', ...(type === 'unntak' && { forklaring: UNNTAK_STANDARD }) }]
 }
 
@@ -264,8 +271,8 @@ export function vurderFlyt(r: Regel, svar: Readonly<Record<string, string>>, g: 
     if (neste.size === synlige.size && [...neste].every((x) => synlige.has(x))) break
     synlige = neste
   }
-  // Et svar som stopper planen, skjuler gruppene etter: de kan ikke endre utfallet.
-  const forste = defs.find((d) => synlige.has(d.id) && svar[d.id] !== undefined && stopper.get(d.id)!.ved.includes(svar[d.id]!))
+  // Et svar som stopper planen, skjuler gruppene etter: de kan ikke endre utfallet. Reservevisningen viser alt, som dagens skjema (S5).
+  const forste = oppsett.katalog && defs.find((d) => synlige.has(d.id) && svar[d.id] !== undefined && stopper.get(d.id)!.ved.includes(svar[d.id]!))
   if (forste) {
     const grense = GRUPPEREKKEFOLGE.indexOf(forste.gruppe)
     synlige = new Set([...synlige].filter((id) => GRUPPEREKKEFOLGE.indexOf(defs.find((d) => d.id === id)!.gruppe) <= grense))

@@ -35,8 +35,18 @@ export const SVARSETT = {
     { verdi: '65_eller_eldre', tekst: '65 år eller eldre' },
     { verdi: 'ukjent', tekst: 'Ukjent' },
   ],
-  /** Én bekreftelse (trygg standard og samlet bekreftelse). */
+  /** Én bekreftelse (reservevisningen og samlet bekreftelse). */
   bekreftet: [{ verdi: 'ja', tekst: 'Bekreftet' }],
+  /** Reservevisningen av et spørsmål i regelen, som i dagens skjema (S5). */
+  ja_nei: [
+    { verdi: 'ja', tekst: 'Ja' },
+    { verdi: 'nei', tekst: 'Nei' },
+  ],
+  /** Reservevisningen av et unntak, med regelens to svar som i dagens skjema (S5). */
+  gjelder: [
+    { verdi: 'ja', tekst: 'Gjelder' },
+    { verdi: 'nei', tekst: 'Gjelder ikke' },
+  ],
 } as const satisfies Record<string, readonly Svaralternativ[]>
 
 export type Svarsett = keyof typeof SVARSETT
@@ -285,7 +295,6 @@ export const KATALOGSPORSMAL: readonly Katalogsporsmal[] = [
   {
     id: 'eldre_enn_65',
     tekst: 'Er pasienten over 65 år?',
-    hjelp: 'Regelen har grensen «over 65 år». En pasient som er 65 år, er ikke over 65.',
     gruppe: 'endrer',
     kategori: 'sikkerhetsopplysning',
     svar: 'ja_nei_ukjent',
