@@ -121,7 +121,7 @@ Advarsler:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; planen bruker i stedet varenr. 196808 med samme navn
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -202,7 +202,7 @@ Advarsler:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; planen bruker i stedet varenr. 196808 med samme navn
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -284,7 +284,7 @@ Advarsler:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; planen bruker i stedet varenr. 196808 med samme navn
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -365,7 +365,7 @@ Advarsler:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; planen bruker i stedet varenr. 196808 med samme navn
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -450,7 +450,7 @@ Advarsler:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; planen bruker i stedet varenr. 196808 med samme navn
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -531,7 +531,7 @@ Advarsler:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; planen bruker i stedet varenr. 196808 med samme navn
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -614,7 +614,7 @@ Advarsler:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; planen bruker i stedet varenr. 196808 med samme navn
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -697,7 +697,7 @@ Advarsler:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; planen bruker i stedet varenr. 196808 med samme navn
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.
@@ -779,7 +779,7 @@ Advarsler:
 - Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.
 - FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.
 - Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.
-- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; planen bruker i stedet varenr. 196808 med samme navn
+- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808
 
 Antakelser:
 - Pasienten bruker legemidlet daglig i den oppgitte dosen og har gjort det lenge nok til at dosen er stabil.

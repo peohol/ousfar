@@ -95,7 +95,7 @@ describe('Kombinere stemningsstabiliserende med de godkjente reglene', () => {
     expect(tekst).not.toMatch(/simulert/i)
     // Planen bygger på den ordinære 25 mg-pakningen; advarselen gjelder bare fritakspakningen med samme navn, med varenummer.
     expect(tekst).toContain('- Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)')
-    expect(tekst).toContain('Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; planen bruker i stedet varenr. 196808 med samme navn')
+    expect(tekst).toContain('Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808')
     expect(tekst).not.toMatch(/Lamictal tyggetab\/disperg tab 25 mg: /)
 
     // Pasienten kan bli gravid: de fire vilkårene i programmet må bekreftes; uten dem ingen plan.

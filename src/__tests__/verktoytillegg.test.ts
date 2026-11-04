@@ -248,7 +248,7 @@ describe('Kontrollgrunnlaget (ende til ende som verktøysiden)', () => {
       expect(preparater, id).toContain(`- Lamictal tyggetab/disperg tab 25 mg, varenr. ${LAMICTAL_25.ordinaer} (FEST oppgir ikke deling; regnes som ikke delbar)`)
       expect(preparater, id).not.toContain(LAMICTAL_25.fritak)
       expect(tekst, id).toContain(
-        `- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. ${LAMICTAL_25.fritak}: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; planen bruker i stedet varenr. ${LAMICTAL_25.ordinaer} med samme navn`,
+        `- Lamotrigin: Lamictal tyggetab/disperg tab 25 mg, varenr. ${LAMICTAL_25.fritak}: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. ${LAMICTAL_25.ordinaer}`,
       )
       // Ingen advarsel om 25 mg uten varenummer, som kunne leses som at dosen planen bruker, er utilgjengelig.
       expect(tekst, id).not.toMatch(/Lamictal tyggetab\/disperg tab 25 mg: /)

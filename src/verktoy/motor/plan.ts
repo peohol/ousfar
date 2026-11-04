@@ -391,10 +391,11 @@ function utvalgFor(def: Forlop, steiner: Byggestein[], valg: Formvalg, fritak: b
     if (grunner.length > 0) ute.push([b, grunner])
     else brukbare.push(b)
   }
-  // Et preparat som ikke kan brukes, men har et brukbart preparat med samme navn, sier hvilket planen bruker i stedet.
+  // Et preparat som ikke kan brukes, nevner preparatene med samme navn som kan brukes. Om planen faktisk bruker dem,
+  // avgjøres først når dosene er valgt, og står i preparatlisten; advarselen sier det derfor ikke.
   for (const [b, grunner] of ute) {
     const tvilling = brukbare.filter((x) => x.navn_form_styrke === b.navn_form_styrke)
-    if (tvilling.length > 0) grunner.push(`planen bruker i stedet ${varenrTekst(tvilling.flatMap((x) => x.varenr).sort())} med samme navn`)
+    if (tvilling.length > 0) grunner.push(`en annen pakning med samme navn kan brukes: ${varenrTekst(tvilling.flatMap((x) => x.varenr).sort())}`)
     begrensninger.push(`${b.etikett}: ${grunner.join('; ')}`)
   }
   return { brukbare, begrensninger }
