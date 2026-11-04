@@ -117,16 +117,16 @@ const L = LITIUM_LAMOTRIGIN
  * beregningen gir noe annet.
  */
 export const PLAN_VALPROAT: readonly string[] = [
-  'Dag 1–14 (09.11.2026–22.11.2026): Valproat peroralt: 1000 mg = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 25 mg annenhver dag = 1 tablett à 25 mg',
+  'Dag 1–14 (09.11.2026–22.11.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 25 mg annenhver dag = 1 tablett à 25 mg',
   'Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.',
   'Dag 15 (23.11.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.',
-  'Dag 15–28 (23.11.2026–06.12.2026): Valproat peroralt: 1000 mg = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg',
+  'Dag 15–28 (23.11.2026–06.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 25 mg = 1 tablett à 25 mg',
   'Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.',
   'Dag 29 (07.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.',
-  'Dag 29–35 (07.12.2026–13.12.2026): Valproat peroralt: 1000 mg = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg',
+  'Dag 29–35 (07.12.2026–13.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 50 mg = 1 tablett à 50 mg',
   'Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn.',
   'Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.',
-  'Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg',
+  'Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg',
   'Dag 36 (14.12.2026): Vurdering (Lamotrigin): Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.',
   'Dag 36 (14.12.2026): Vurdering (Lamotrigin): Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.',
 ]
@@ -170,6 +170,21 @@ export const TILLEGGSKASUS: readonly Tilleggskasus[] = [
     regel: simulert(V),
     skjema: { bekreftet: V.bekreftelser.filter((b) => !b.ved).map((b) => b.id) },
   }),
+  // Valproatdosen: preparatet og dosen bekreftes som pasientens nåværende, i mg natriumvalproat som i legemiddellisten.
+  kasus('K4-43', V, 'valproat', 'pasientforhold', 'det er ikke bekreftet at pasienten bruker et natriumvalproatpreparat i den innfylte dosen', '1000', { utfall: 'stopp', grunner: ['Må bekreftes før beregning: Pasienten bruker et natriumvalproatpreparat'] }, {
+    regel: simulert(V),
+    skjema: { bekreftet: V.bekreftelser.filter((b) => !b.ved).map((b) => b.id).filter((id) => id !== 'aktuell_dose') },
+  }),
+  // Gutter og menn som kan bli fedre: egne forholdsregler for valproat, adskilt fra programmet for kvinner.
+  kasus('K4-44', V, 'valproat', 'pasientforhold', 'kan bli far, og informasjonen og vurderingen for menn som bruker valproat er bekreftet hver for seg', '1000', { utfall: 'plan', linjer: [...PLAN_VALPROAT] }, {
+    regel: simulert(V),
+    skjema: { svar: { kan_bli_far: true }, bekreftet: V.bekreftelser.filter((b) => b.ved?.sporsmal !== 'kan_bli_gravid').map((b) => b.id) },
+  }),
+  kasus('K4-45', V, 'valproat', 'pasientforhold', 'kan bli far, men informasjonen om risiko, prevensjon og sæddonasjon er ikke bekreftet', '1000', { utfall: 'stopp', grunner: ['Må bekreftes før beregning: Pasienten er informert om den mulige risikoen'] }, {
+    regel: simulert(V),
+    skjema: { svar: { kan_bli_far: true }, bekreftet: V.bekreftelser.map((b) => b.id).filter((id) => id !== 'far_informasjon') },
+  }),
+  kasus('K4-46', V, 'valproat', 'pasientforhold', 'det er ikke besvart om pasienten kan bli far', '1000', { utfall: 'stopp', grunner: ['Må besvares før beregning: Er pasienten gutt eller mann som kan gjøre en partner gravid?'] }, { regel: simulert(V), ubesvart: ['kan_bli_far'] }),
   kasus('K4-15', V, 'valproat', 'uvanlig_dose', 'ingen dose av valproat er fylt inn', '', { utfall: 'mangler', grunner: ['Aktuell døgndose må fylles inn'] }, { regel: simulert(V) }),
   kasus('K4-16', V, 'valproat', 'foreldet_fest', 'FEST-kopien er 49 timer gammel', '1000', { utfall: 'stopp', grunner: ['Den nattlige oppdateringen har ikke gått'] }, { regel: simulert(V), timer: 49 }),
   kasus('K4-17', V, 'valproat', 'preparat', 'alle lamotriginpreparatene krever godkjenningsfritak', '1000', { utfall: 'stopp', grunner: ['godkjenningsfritak'] }, { regel: simulert(V), fest: bareFritak('lamotrigin') }),
@@ -285,7 +300,7 @@ export const TILLEGGSSPORSMAL: readonly { nr: string; sporsmal: string; anbefalt
   {
     nr: 'K4.6',
     sporsmal: 'Etter kontrollen 03.11.2026 må forskriveren svare på om pasienten kan bli gravid. Ved ja må fire vilkår i det graviditetsforebyggende programmet bekreftes hver for seg (indikasjon og årlig spesialistvurdering, informasjon og risikoskjema, sikker prevensjon, graviditetstest og kontakt ved graviditet); hvert som mangler, stopper (K4-14, K4-26–K4-29). Graviditet, planlagt graviditet og amming stopper uansett, også når vilkårene er bekreftet. Er vilkårene og formuleringene riktige og tilstrekkelige?',
-    anbefalt: 'Ja; de følger vilkårene i pkt. 4.4 i Orfiril-preparatomtalen, gjelder ikke menn, og et ja løser aldri en graviditet.',
+    anbefalt: 'Ja; de følger vilkårene i pkt. 4.4 i Orfiril-preparatomtalen, og et ja løser aldri en graviditet. Gutter og menn har egne forholdsregler (K4.9).',
   },
   {
     nr: 'K4.7',
@@ -297,6 +312,16 @@ export const TILLEGGSSPORSMAL: readonly { nr: string; sporsmal: string; anbefalt
     sporsmal: 'Opptrappingen er den samme ved østrogenholdig prevensjon eller behandling, men forskriveren må svare på det. Et ja krever både en bekreftet særskilt vurdering av måldosen og en skriftlig begrunnelse, fordi vedlikeholdsdosen kan måtte bli opptil dobbelt så høy (K4-23–K4-25, K4-42). I tillegg står det som vurderingspunkt ved måldosen. Er det tilstrekkelig?',
     anbefalt: 'Ja; preparatomtalen endrer ikke opptrappingen, men sier at vedlikeholdsdosen kan måtte økes.',
   },
+  {
+    nr: 'K4.9',
+    sporsmal: 'Etter kontrollen 03.11.2026 må forskriveren også svare på om pasienten er gutt eller mann som kan gjøre en partner gravid. Ved ja må to forholdsregler fra pkt. 4.4 i Orfiril-preparatomtalen bekreftes hver for seg: informasjon om den mulige risikoen, om prevensjon (også for en kvinnelig partner) og om sæddonasjon, og at behandlingen er vurdert, med andre alternativer ved planlagt farskap. Hver som mangler, eller et ubesvart spørsmål, stopper (K4-44–K4-46). Planlagt farskap stopper ikke planen. Er det riktig og tilstrekkelig?',
+    anbefalt: 'Ja; preparatomtalen beskriver forsiktighetstiltak og en vurdering, ikke en kontraindikasjon, og årsakssammenhengen er usikker. Bekreftelsene holdes adskilt fra programmet for jenter og kvinner.',
+  },
+  {
+    nr: 'K4.10',
+    sporsmal: 'Valproatdosen oppgis i mg natriumvalproat, og kopien viser til pasientens preparat og fordeling over døgnet i legemiddellisten i stedet for å angi et preparat. Forskriveren bekrefter at pasienten bruker et natriumvalproatpreparat i den dosen, og dosen kontrolleres ikke (K4-10, K4-43). Er det riktig å overlate preparatet til legemiddellisten i stedet for å avgrense regelen til bestemte valproatpreparater?',
+    anbefalt: 'Ja; preparatomtalen fastsetter dosen individuelt og gir ingen dose regelen kan kontrollere mot, og verktøyet konverterer ikke mellom preparater. Preparater der dosen ikke oppgis i mg natriumvalproat, er utenfor regelen.',
+  },
 ]
 
 /** Kombinasjonene verktøyet bevisst ikke dekker ennå, med grunnen. */
@@ -305,7 +330,7 @@ export const IKKE_DEKKET: readonly string[] = [
   'Aripiprazol, olanzapin, gabapentin og topiramat → lamotrigin: samme opptrapping som med litium etter tabell 6, men hvert par må vurderes for seg før det legges til.',
   'Kvetiapin, risperidon og ziprasidon → lamotrigin: interaksjonen er ikke beskrevet i tabell 6; preparatomtalen sier da at opptrappingen for samtidig valproat skal brukes. Ikke laget.',
   'Lamotrigin → valproat (motsatt retning): lamotrigindosen skal halveres når valproat legges til (tabell 5), men opptrappingen av valproat er ikke vurdert. Ikke laget.',
-  'Valproatdosen kontrolleres ikke: Orfiril-preparatomtalen fastsetter den individuelt etter respons og gir ikke noe område, og valproatpreparatene har mange styrker og flytende former. Planen gjentar den innfylte dosen, og forskriveren bekrefter at det er pasientens aktuelle dose i mg slik styrken står på preparatet. Litiumdosen kontrolleres mot hele Lithionit 42 mg-tabletter (K4-36–K4-39).',
+  'Valproatdosen kontrolleres ikke: Orfiril-preparatomtalen fastsetter den individuelt etter respons og gir ikke noe område, og valproatpreparatene har mange styrker og flytende former. Planen gjentar den innfylte dosen i mg natriumvalproat og viser til pasientens preparat og fordeling over døgnet i legemiddellisten; forskriveren bekrefter at det er pasientens aktuelle preparat og dose (K4-43). Preparater der dosen ikke oppgis i mg natriumvalproat, er utenfor regelen. Litiumdosen kontrolleres mot hele Lithionit 42 mg-tabletter (K4-36–K4-39).',
   'Andre litiumpreparater enn Lithionit 42 mg (Lithionit 83 mg, Carblit og preparater med godkjenningsfritak, der styrken kan være oppgitt som mg litiumsalt): utenfor regelen til enhet og styrke er vurdert for hvert preparat.',
   'En annen måldose enn preparatomtalens første stabiliserende måldose: videre opptrapping etter klinisk respons beregnes ikke (K4-22, K4-40).',
   'Alle andre par i Combining Moodstabilizers (110 i alt): ingen kildeforankret regel ennå.',

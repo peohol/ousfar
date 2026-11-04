@@ -101,6 +101,7 @@ export const LAMICTAL = {
 
 /** Fakta fra Orfiril-preparatomtalen (valproat), med egne ord. */
 export const ORFIRIL = {
+  styrke: h('dmp-orfiril', 'pkt. 2', 'Orfiril inneholder natriumvalproat, og styrken oppgis i mg natriumvalproat per enterotablett (150, 300 og 600 mg).'),
   dose: h('dmp-orfiril', 'pkt. 4.2, Maniske episoder ved bipolar lidelse', 'Døgndosen av valproat tilpasses og følges individuelt etter klinisk respons; gjennomsnittlig døgndose er 1000–2000 mg.'),
   fertilAlder: h(
     'dmp-orfiril',
@@ -124,6 +125,21 @@ export const ORFIRIL = {
     'dmp-orfiril',
     'pkt. 4.3 og 4.4, Graviditetsplanlegging og Ved graviditet',
     'Ved bipolar lidelse er valproat kontraindisert under graviditet. Planlegger kvinnen graviditet, eller blir hun gravid, skal spesialist konsulteres og valproat revurderes, normalt seponeres.',
+  ),
+  mannRisiko: h(
+    'dmp-orfiril',
+    'pkt. 4.4 og 4.6, Bruk hos mannlige pasienter',
+    'Én studie antyder økt risiko for nevroutviklingsforstyrrelser hos barn unnfanget av menn som har brukt valproat de 3 siste månedene før unnfangelsen; andre studier gjør ikke det, og årsakssammenhengen er usikker.',
+  ),
+  mannInformasjon: h(
+    'dmp-orfiril',
+    'pkt. 4.4, Bruk hos mannlige pasienter',
+    'Som forsiktighetstiltak informeres mannlige pasienter om risikoen og om behovet for effektiv prevensjon, også for en kvinnelig partner, under behandlingen og minst 3 måneder etter; de skal ikke donere sæd i samme periode.',
+  ),
+  mannVurdering: h(
+    'dmp-orfiril',
+    'pkt. 4.4, Bruk hos mannlige pasienter',
+    'Behandlende lege vurderer regelmessig om valproat fortsatt er mest passende; planlegger pasienten å få barn, vurderes og diskuteres andre behandlingsalternativer.',
   ),
   lamotrigin: h('dmp-orfiril', 'pkt. 4.5, Lamotrigin', 'Valproat hemmer omsetningen av lamotrigin, så lamotrigindosen bør reduseres; risikoen for hudreaksjoner ser ut til å øke ved kombinasjonen.'),
   fertil: h(
@@ -517,6 +533,15 @@ const KAN_BLI_GRAVID: Sporsmal = {
   grunnlag: { type: 'kilde', henvisninger: [ORFIRIL.fertilAlder, ORFIRIL.fertil] },
 }
 
+/** Gutter og menn som kan gjøre en partner gravid: egne forholdsregler, adskilt fra programmet for jenter og kvinner. */
+const KAN_BLI_FAR: Sporsmal = {
+  id: 'kan_bli_far',
+  tekst: 'Er pasienten gutt eller mann som kan gjøre en partner gravid?',
+  ja: 'kan bli far; informasjonen og vurderingen ved valproatbehandling av menn må bekreftes hver for seg',
+  nei: 'kan ikke bli far',
+  grunnlag: { type: 'kilde', henvisninger: [ORFIRIL.mannRisiko] },
+}
+
 export const VALPROAT_LAMOTRIGIN = lamotrigintillegg({
   nokkel: 'valproat',
   navn: 'valproat',
@@ -552,6 +577,20 @@ export const VALPROAT_LAMOTRIGIN = lamotrigintillegg({
         henvisninger: [ORFIRIL.graviditetstest, ORFIRIL.ppp],
       },
     ].map((x) => ({ id: x.id, tekst: x.tekst, ved: { sporsmal: KAN_BLI_GRAVID.id, svar: true }, grunnlag: { type: 'kilde' as const, henvisninger: x.henvisninger } })),
+    // Gutter og menn som kan bli fedre: forholdsreglene for menn, ikke programmet for kvinner.
+    ...[
+      {
+        id: 'far_informasjon',
+        henvisninger: [ORFIRIL.mannRisiko, ORFIRIL.mannInformasjon],
+        tekst:
+          'Pasienten er informert om den mulige risikoen for nevroutviklingsforstyrrelser hos barn som unnfanges mens han bruker valproat eller de 3 første månedene etter at han har sluttet (sammenhengen er usikker), om behovet for effektiv prevensjon, også for en kvinnelig partner, i hele denne perioden, og om at han ikke skal donere sæd i samme periode.',
+      },
+      {
+        id: 'far_vurdering',
+        henvisninger: [ORFIRIL.mannVurdering],
+        tekst: 'Behandlende lege har vurdert at valproat fortsatt er den mest passende behandlingen, og planlegger pasienten å bli far, er andre behandlingsalternativer vurdert og diskutert med ham.',
+      },
+    ].map((x) => ({ id: x.id, tekst: x.tekst, ved: { sporsmal: KAN_BLI_FAR.id, svar: true }, grunnlag: { type: 'kilde' as const, henvisninger: x.henvisninger } })),
   ],
   unntak: [
     {
@@ -567,11 +606,12 @@ export const VALPROAT_LAMOTRIGIN = lamotrigintillegg({
   ],
   dose: {
     tekst:
-      'Døgndosen som er fylt inn for valproat, er den pasienten bruker nå, i mg slik styrken står på pasientens valproatpreparat. Verktøyet kontrollerer ikke denne dosen mot noe preparat eller område; planen gjentar den bare.',
-    henvisninger: [ORFIRIL.dose],
+      'Pasienten bruker et natriumvalproatpreparat, og døgndosen som er fylt inn, er den pasienten bruker nå, i mg natriumvalproat slik den står i legemiddellisten. Preparat, styrke og fordeling over døgnet fortsetter uendret som i legemiddellisten; preparater der dosen ikke oppgis i mg natriumvalproat, er utenfor regelen. Verktøyet kontrollerer ikke denne dosen mot noe preparat eller område; planen gjentar den bare.',
+    henvisninger: [ORFIRIL.styrke, ORFIRIL.dose],
+    visning: { enhet: 'mg natriumvalproat (preparat og fordeling som i legemiddellisten)' },
   },
   ostrogen: ORFIRIL.ostrogen,
-  sporsmal: [KAN_BLI_GRAVID],
+  sporsmal: [KAN_BLI_GRAVID, KAN_BLI_FAR],
   forutsetninger: ['Valproatbehandlingen følges opp som før (blodbilde, lever og pankreas etter preparatomtalen); planen endrer ikke valproatdosen.'],
 })
 

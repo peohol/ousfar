@@ -68,8 +68,41 @@ describe('Tilleggsreglene', () => {
     expect(litium).not.toMatch(/Litium fortsetter uendret på 168 mg[;.]/)
     // Valproat: dosen er bare bekreftet av forskriveren, og planen sier det.
     const valproat = resultat('K4-10').res.tekst!
-    expect(valproat).toContain('Valproat peroralt: 1000 mg = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke')
     expect(valproat).not.toContain('kontrollert mot regelens tillatte doser')
+  })
+
+  it('skriver valproatdosen i den kopierte planen som mg natriumvalproat med pasientens preparat fra legemiddellisten, og stopper uten den bekreftelsen', () => {
+    // Den faktiske teksten som kopieres, fra den samme veien som verktøysiden.
+    const valproat = resultat('K4-10').res.tekst!
+    const rader = valproat.split('\n').filter((l) => l.includes('Valproat peroralt:'))
+    expect(rader).toHaveLength(4)
+    for (const l of rader)
+      expect(l).toContain('Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke')
+    // Den gamle, preparatløse teksten står ingen steder.
+    expect(valproat).not.toMatch(/Valproat peroralt: 1000 mg =/)
+    expect(valproat).not.toMatch(/Valproat fortsetter uendret på 1000 mg[;.]/)
+    // Forskriveren må bekrefte preparatet og dosen; ellers ingen plan.
+    expect(VALPROAT_LAMOTRIGIN.bekreftelser.find((b) => b.id === 'aktuell_dose')?.tekst).toMatch(/^Pasienten bruker et natriumvalproatpreparat, og døgndosen .* i mg natriumvalproat slik den står i legemiddellisten\./)
+    expect(resultat('K4-43').res.utfall).toBe('stopp')
+  })
+
+  it('har egne forholdsregler for gutter og menn som kan bli fedre, adskilt fra programmet for kvinner', () => {
+    const far = VALPROAT_LAMOTRIGIN.bekreftelser.filter((b) => b.ved?.sporsmal === 'kan_bli_far')
+    expect(far.map((b) => b.id)).toEqual(['far_informasjon', 'far_vurdering'])
+    for (const b of far) {
+      expect(b.ved, b.id).toEqual({ sporsmal: 'kan_bli_far', svar: true })
+      expect(b.grunnlag.type === 'kilde' && b.grunnlag.henvisninger.every((h) => h.kilde === 'dmp-orfiril'), b.id).toBe(true)
+    }
+    expect(VALPROAT_LAMOTRIGIN.sporsmal?.map((x) => x.id)).toEqual(['kan_bli_gravid', 'kan_bli_far', 'ostrogen'])
+    expect(LITIUM_LAMOTRIGIN.sporsmal?.map((x) => x.id)).not.toContain('kan_bli_far')
+    // Ja og begge bekreftet gir plan med bekreftelsene i kontrollene, og uten vilkårene for kvinner.
+    const ja = resultat('K4-44').res.tekst!
+    for (const b of far) expect(ja, b.id).toContain(`Bekreftet: ${b.tekst.replace(/\.$/, '')}: oppfylt`)
+    for (const b of VALPROAT_LAMOTRIGIN.bekreftelser.filter((x) => x.ved?.sporsmal === 'kan_bli_gravid')) expect(ja, b.id).not.toContain(b.tekst)
+    // En bekreftelse som mangler, eller et ubesvart spørsmål, stopper.
+    for (const id of ['K4-45', 'K4-46']) expect(resultat(id).res.utfall, id).toBe('stopp')
+    // Nei (standard): bekreftelsene for menn står ikke i planen.
+    for (const b of far) expect(resultat('K4-10').res.tekst!, b.id).not.toContain(b.tekst)
   })
 
   it('går bare til en måldose forskriveren har valgt, og stopper ved et annet mål', () => {
@@ -163,7 +196,7 @@ describe('Kontrollgrunnlaget (ende til ende som verktøysiden)', () => {
 
   it('viser to komplette planer til sluttmålet, med det eksisterende legemidlet uendret og vurderingspunkter', () => {
     for (const [id, eksisterende, mal] of [
-      ['K4-10', 'Valproat fortsetter uendret på 1000 mg', 'Lamotrigin fortsetter på 100 mg fra dag 36'],
+      ['K4-10', 'Valproat fortsetter uendret på 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten)', 'Lamotrigin fortsetter på 100 mg fra dag 36'],
       ['K4-30', 'Litium fortsetter uendret på 168 mg Li⁺ (24 mmol)', 'Lamotrigin fortsetter på 200 mg fra dag 36'],
     ] as const) {
       const tekst = resultat(id).res.tekst!
