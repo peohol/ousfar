@@ -12,12 +12,13 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.126.0',
+    versjon: '1.125.3',
     dato: '2026-11-04',
     sammendrag: 'En ny regel i de kliniske verktøyene kan erstatte en eldre, som da trekkes i samme øyeblikk som den nye godkjennes',
     typer: ['Funksjonalitet'],
     omfang: 'Mindre omfang',
     gjelder: ['verktoy'],
+    utenVarsel: true,
     punkter: [
       'Gjelder bare administratorene, som fortsatt er de eneste som ser verktøyene. Ingen regler, doser eller godkjenninger er endret, og ingen regel bruker dette ennå.',
       'En ny regel kan oppgi hvilke eldre regler for samme bytte den erstatter. Når den nye regelen er klinisk godkjent, tilbyr verktøyet ikke lenger de gamle, og en plan etter dem stopper med beskjed om at regelen er trukket og hvilken regel som har erstattet den. Før godkjenningen gjelder de gamle som før.',
