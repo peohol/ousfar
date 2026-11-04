@@ -22,11 +22,14 @@
  * tabletter. Psychiatrienet står bare som referanse til kildeoppføringen fra
  * P3; ingen regel bygger på eller gjengir teksten der.
  *
- * **Ingen av reglene er klinisk godkjent.** De er sendt til uavhengig faglig
- * kontroll; til da gir verktøyet ingen plan for dem.
+ * Begge reglene er klinisk godkjent av en uavhengig kontrollør for nøyaktig
+ * sin versjon og sitt fingeravtrykk ({@link TILLEGGSVEDTAK}). Endres en regel,
+ * gjelder ikke godkjenningen, og verktøyet gir ingen plan før den er
+ * kontrollert på nytt.
  */
 import { FORUTSETNINGER_FELLES, h, kilde, pn, steg, utsagn } from './bygg'
 import type { Domenesett } from './domenesett'
+import { godkjenn, type Godkjenningsvedtak } from './godkjenning'
 import type { Bekreftelse, Forlop, Godkjenning, Inndatakrav, Kildehenvisning, Regel, Regelsett, Regneeksempel, Sporsmal, Uendretvisning, Unntak, Vurderingspunkt } from './modell'
 import { REGELMODELLVERSJON } from './modell'
 
@@ -664,13 +667,41 @@ export const LITIUM_LAMOTRIGIN = lamotrigintillegg({
   forutsetninger: ['Litiumbehandlingen følges opp som før med serumlitium og nyre-, hjerte- og stoffskiftefunksjon; planen endrer ikke litiumdosen.'],
 })
 
+/**
+ * Den uavhengige faglige vurderingen av begge reglene: ChatGPT, som
+ * uavhengig kontrollør, i kontrollen av HEAD 3c76293 04.11.2026 (PR #322,
+ * kommentar 6620240499, formidlet av Peder). Den gjelder bare nøyaktig
+ * versjonen og fingeravtrykket under; endres regelen, gjelder den ikke
+ * lenger, og regelen står til faglig kontroll igjen. Utviklerne av reglene
+ * er ikke kontrollører.
+ */
+export const TILLEGGSVEDTAK: Godkjenningsvedtak = {
+  av: 'ChatGPT (uavhengig kontrollør)',
+  dato: '2026-11-04',
+  gjennomgang: 'Uavhengig kilde- og regelkontroll av 3c76293 04.11.2026 (PR #322, kommentar 6620240499)',
+  regler: {
+    'tillegg-valproat-lamotrigin': {
+      versjon: 2,
+      fingeravtrykk: '0a9213f31b5f428935fceeef41498a2999682631b1692749bb7ebe19c82639b8',
+      avgrensning:
+        'lamotrigin lagt til eksisterende, uendret natriumvalproat etter tabell 3 i Lamictal-preparatomtalen (25 mg annenhver dag i to uker, 25 mg daglig i to uker, 50 mg daglig i uke 5), til det pasientvalgte første stabiliserende målet 100 mg/dag, med Lamictal dispergerbare tabletter. Ingen generell godkjenning av valproatbehandling, indikasjon, andre styrker eller formuleringer eller andre kombinasjoner.',
+    },
+    'tillegg-litium-lamotrigin': {
+      versjon: 2,
+      fingeravtrykk: '786436a0ea8d115b7927a9a20ffabc736b59bc06c59117769551e5f75e89e44b',
+      avgrensning:
+        'lamotrigin lagt til eksisterende, uendret Lithionit 42 mg etter tabell 3 i Lamictal-preparatomtalen (25, 50 og 100 mg), til det pasientvalgte første stabiliserende målet 200 mg/dag fra uke 6, med Lamictal dispergerbare tabletter. Ingen generell godkjenning av litiumbehandling, andre litiumpreparater eller andre kombinasjoner.',
+    },
+  },
+}
+
 export const TILLEGGSSETT: Regelsett = {
   id: 'ousfar-verktoy-tillegg',
   versjon: 1,
   modell: REGELMODELLVERSJON,
   beskrivelse:
-    'Utkast til tilleggsregler for kombinering av stemningsstabiliserende legemidler (K4): lamotrigin lagt til valproat og lagt til litium, etter opptrappingstabellen for bipolar lidelse i Lamictal-preparatomtalen, med Lamictal tyggetabletter/dispergerbare tabletter. Det eksisterende legemidlet fortsetter uendret. Ingen av reglene er klinisk godkjent.',
-  regler: [VALPROAT_LAMOTRIGIN, LITIUM_LAMOTRIGIN],
+    'Utkast til tilleggsregler for kombinering av stemningsstabiliserende legemidler (K4): lamotrigin lagt til valproat og lagt til litium, etter opptrappingstabellen for bipolar lidelse i Lamictal-preparatomtalen, med Lamictal tyggetabletter/dispergerbare tabletter. Det eksisterende legemidlet fortsetter uendret. Begge reglene er klinisk godkjent av en uavhengig kontrollør for nøyaktig sin versjon og sitt fingeravtrykk (TILLEGGSVEDTAK), og vises bare for administratorer.',
+  regler: godkjenn([VALPROAT_LAMOTRIGIN, LITIUM_LAMOTRIGIN], TILLEGGSVEDTAK),
 }
 
 export const TILLEGG: Domenesett = {

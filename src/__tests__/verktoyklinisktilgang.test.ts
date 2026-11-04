@@ -22,13 +22,15 @@ import { kontrollerRegelsett } from '../verktoy/regler/kontroll'
 import type { Forlop, Regel, Regelsett } from '../verktoy/regler/modell'
 import { NEDTRAPPINGSDISPOSISJON, NEDTRAPPINGSSETT, SAMMENLIGNINGSSETT } from '../verktoy/regler/nedtrapping'
 import { PILOTDISPOSISJON, PILOTSETT } from '../verktoy/regler/pilotsett'
+import { TILLEGGSSETT } from '../verktoy/regler/tillegg'
 import { FAKTUMRETTELSER } from '../verktoy/regler/bygg'
 import { REGELRAPPORTER, statustekst } from '../verktoy/regler/rapport'
 import { REGELSETT, tilgjengelighet } from '../verktoy/tilgjengelighet'
 import { godkjennITest } from './hjelp/verktoyplan'
 
 /**
- * De seks regelversjonene kontrolløren har godkjent i oppgitt omfang, med fingeravtrykket godkjenningen gjelder.
+ * De åtte regelversjonene kontrolløren har godkjent i oppgitt omfang, med fingeravtrykket godkjenningen gjelder.
+ * De to tilleggsreglene i K4 er godkjent 04.11.2026 (`TILLEGGSVEDTAK`, PR #322).
  * Sertralin → mirtazapin og vortioksetin er godkjent på nytt i versjonen etter faktumrettelsen 03.11.2026
  * (`docs/verktøy-rettelse-langvarig.md`), med samme kliniske omfang som versjon 9 og 11.
  */
@@ -39,9 +41,11 @@ const GODKJENTE: Record<string, { sett: string; versjon: number; fingeravtrykk: 
   'seponering-vortioksetin': { sett: NEDTRAPPINGSSETT.id, versjon: 12, fingeravtrykk: 'b28dec93f5ede06c6565e1ce5d6aa62606c69250f1a9088dae0c57d3121101f3', beregning: true },
   'seponering-bupropion': { sett: NEDTRAPPINGSSETT.id, versjon: 5, fingeravtrykk: 'e7536668ac7f2d4dfd9959f24cfdfc4874182a4fc295355f0d10a05f438b5f5f', beregning: false },
   'seponering-agomelatin': { sett: NEDTRAPPINGSSETT.id, versjon: 1, fingeravtrykk: '6d42863f3573fb2e0d6dbffd27ff78a7f1c2b539c8dce2cfcd36ad417b61a2d1', beregning: false },
+  'tillegg-valproat-lamotrigin': { sett: TILLEGGSSETT.id, versjon: 2, fingeravtrykk: '0a9213f31b5f428935fceeef41498a2999682631b1692749bb7ebe19c82639b8', beregning: true },
+  'tillegg-litium-lamotrigin': { sett: TILLEGGSSETT.id, versjon: 2, fingeravtrykk: '786436a0ea8d115b7927a9a20ffabc736b59bc06c59117769551e5f75e89e44b', beregning: true },
 }
 
-const SETTENE = [PILOTSETT, NEDTRAPPINGSSETT, SAMMENLIGNINGSSETT]
+const SETTENE = [PILOTSETT, NEDTRAPPINGSSETT, TILLEGGSSETT, SAMMENLIGNINGSSETT]
 const ALLE = SETTENE.flatMap((s) => s.regler.map((r) => ({ sett: s, r })))
 const ANDRE = ALLE.filter(({ r }) => !(r.id in GODKJENTE))
 /** Reglene i leveransen som ikke er godkjent; sammenligningssettet er ikke i verktøyet og står som utkast. */
@@ -104,12 +108,12 @@ const ikkeKlinisk = (p: Doseplanresultat, hva: string) => {
 }
 
 describe('Klinisk tilgjengelige regler i den første avgrensede leveransen (P4.8 og P7.5)', () => {
-  it('er nøyaktig de seks regelversjonene kontrolløren har godkjent, med fingeravtrykkene godkjenningen gjelder', () => {
+  it('er nøyaktig de åtte regelversjonene kontrolløren har godkjent, med fingeravtrykkene godkjenningen gjelder', () => {
     const godkjente = ALLE.filter(({ r }) => erKliniskGodkjent(r))
     expect(Object.fromEntries(godkjente.map(({ sett, r }) => [r.id, { sett: sett.id, versjon: r.versjon, fingeravtrykk: fingeravtrykk(r), beregning: harBeregning(r) }]))).toEqual(GODKJENTE)
-    // Tre beregninger i P4, én beregning og to tekstregler i P7, og ingen i sammenligningssettet.
+    // Tre beregninger i P4, én beregning og to tekstregler i P7, to beregninger i K4, og ingen i sammenligningssettet.
     const telling = (sett: string, beregning: boolean) => godkjente.filter((x) => x.sett.id === sett && harBeregning(x.r) === beregning).length
-    expect([telling(PILOTSETT.id, true), telling(PILOTSETT.id, false), telling(NEDTRAPPINGSSETT.id, true), telling(NEDTRAPPINGSSETT.id, false), godkjente.filter((x) => x.sett === SAMMENLIGNINGSSETT).length]).toEqual([3, 0, 1, 2, 0])
+    expect([telling(PILOTSETT.id, true), telling(PILOTSETT.id, false), telling(NEDTRAPPINGSSETT.id, true), telling(NEDTRAPPINGSSETT.id, false), telling(TILLEGGSSETT.id, true), godkjente.filter((x) => x.sett === SAMMENLIGNINGSSETT).length]).toEqual([3, 0, 1, 2, 2, 0])
     for (const { r } of godkjente) expect(kontrollutfall(r), r.id).toBe('godkjent')
   })
 
@@ -178,7 +182,7 @@ describe('Klinisk tilgjengelige regler i den første avgrensede leveransen (P4.8
         }
       }
     }
-    // Hver av de seks kan nås fra et verktøy.
+    // Hver av de åtte kan nås fra et verktøy.
     expect([...sett].sort()).toEqual([...godkjente].sort())
   })
 

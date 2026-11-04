@@ -13,11 +13,11 @@ import { describe, expect, it } from 'vitest'
 import { VERKTOY } from '../verktoy/register'
 import type { Festuttrekk } from '../verktoy/regler/aksepttest'
 import { beregn, kortform } from '../verktoy/regler/beregning'
-import { erKliniskGodkjent, kontrollutfall } from '../verktoy/regler/godkjenning'
+import { erKliniskGodkjent, fingeravtrykk, kontrollutfall } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett } from '../verktoy/regler/kontroll'
 import { tilleggsfeil } from '../verktoy/regler/modell'
 import { SIMULERT_KONTROLLOR } from '../verktoy/regler/pilotmatrise'
-import { LAMICTAL, LITIUM_LAMOTRIGIN, OPPTRAPPING, TILLEGGSSETT, VALPROAT_LAMOTRIGIN } from '../verktoy/regler/tillegg'
+import { LAMICTAL, LITIUM_LAMOTRIGIN, OPPTRAPPING, TILLEGGSSETT, TILLEGGSVEDTAK, VALPROAT_LAMOTRIGIN } from '../verktoy/regler/tillegg'
 import { FEST_TILLEGG, kjorTilleggskasus, lagTilleggsgrunnlag, TILLEGGSGRUNNLAGFIL, TILLEGGSKASUS } from '../verktoy/tilleggsgrunnlag'
 import { REGELSETT, reglerFor, tilgjengelighet } from '../verktoy/tilgjengelighet'
 
@@ -39,7 +39,7 @@ describe('Tilleggsreglene', () => {
       // Det eksisterende legemidlet fortsetter uendret; planen beregner det ikke.
       expect(r.plan.forlop[0]!.faser.map((f) => f.type), r.id).toEqual(['uendret'])
       // Måldosen må velges, og regelen gjelder bare preparatomtalens første stabiliserende måldose.
-      expect(r.inndata.find((k) => k.navn === 'maldose'), r.id).toMatchObject({ verdier: [OPPTRAPPING[r === VALPROAT_LAMOTRIGIN ? 'hemmer' : 'noytral'].maldose], art: 'bindende_krav' })
+      expect(r.inndata.find((k) => k.navn === 'maldose'), r.id).toMatchObject({ verdier: [OPPTRAPPING[r.id === VALPROAT_LAMOTRIGIN.id ? 'hemmer' : 'noytral'].maldose], art: 'bindende_krav' })
       // Østrogenholdig behandling må besvares, og et ja krever en skriftlig vurdering av måldosen.
       expect(r.sporsmal?.find((x) => x.id === 'ostrogen'), r.id).toMatchObject({ krever_begrunnelse: true, grunnlag: { henvisninger: expect.arrayContaining([LAMICTAL.hormonell]) } })
     }
@@ -141,14 +141,28 @@ describe('Tilleggsreglene', () => {
     expect(resultat('K4-13').res.utfall).toBe('stopp')
   })
 
-  it('er ikke godkjent, og verktøyet gir ingen plan for dem i dag', () => {
+  it('er klinisk godkjent av den uavhengige kontrolløren for nøyaktig versjonen og fingeravtrykket i vedtaket, og bare det', () => {
+    expect(Object.keys(TILLEGGSVEDTAK.regler).sort()).toEqual(TILLEGGSSETT.regler.map((r) => r.id).sort())
     for (const r of TILLEGGSSETT.regler) {
-      expect(erKliniskGodkjent(r), r.id).toBe(false)
-      expect(kontrollutfall(r), r.id).toBe('til_kontroll')
+      const vedtak = TILLEGGSVEDTAK.regler[r.id]!
+      expect(erKliniskGodkjent(r), r.id).toBe(true)
+      expect(kontrollutfall(r), r.id).toBe('godkjent')
+      expect(r.versjon, r.id).toBe(vedtak.versjon)
+      expect(fingeravtrykk(r), r.id).toBe(vedtak.fingeravtrykk)
+      // Siste steg er kontrollørens godkjenning, sporbar til kontrollen; ingen simulering, og ingen utvikler som kontrollør.
+      expect(r.godkjenning.historikk.at(-1), r.id).toMatchObject({ status: 'klinisk_godkjent', av: 'ChatGPT (uavhengig kontrollør)', rolle: 'uavhengig_kontrollor', regelversjon: 2, fingeravtrykk: vedtak.fingeravtrykk })
+      expect(r.godkjenning.historikk.at(-1)!.merknad, r.id).toContain('kommentar 6620240499')
       expect(r.godkjenning.historikk.some((s) => s.av === SIMULERT_KONTROLLOR), r.id).toBe(false)
+      expect(r.godkjenning.historikk.filter((s) => s.rolle === 'utvikler').every((s) => s.av !== TILLEGGSVEDTAK.av), r.id).toBe(true)
       const t = tilgjengelighet(KOMBINERE, { fra: peroral(r.fra!.type === 'virkestoff' ? r.fra!.nokkel : ''), til: peroral('lamotrigin') })
-      expect(t.status, r.id).toBe('til_kontroll')
+      expect(t.status, r.id).toBe('tilgjengelig')
+      // En endret regel er ikke lenger godkjent.
+      const endret = structuredClone(r)
+      endret.plan.forlop[1]!.vurderinger![0]!.tekst += ' Endret.'
+      expect(erKliniskGodkjent(endret), r.id).toBe(false)
     }
+    // Reglene slik de ble utviklet, uten vedtaket, er ikke godkjent.
+    for (const r of [VALPROAT_LAMOTRIGIN, LITIUM_LAMOTRIGIN]) expect(r.godkjenning.status, r.id).toBe('til_faglig_kontroll')
   })
 
   it('følger tabell 3 i preparatomtalen nøyaktig: annenhver dag og lavere måldose med valproat, uten valproat 25 → 50 → 100 → 200 mg', () => {
@@ -220,9 +234,9 @@ describe('Kontrollgrunnlaget (ende til ende som verktøysiden)', () => {
     expect(les(TILLEGGSGRUNNLAGFIL), 'Kjør `npm run verktoy:regler -- tilleggsgrunnlag`').toBe(lagTilleggsgrunnlag(uttrekk))
   })
 
-  it('sier at reglene ikke er godkjent og viser ingen tekst fra Psychiatrienet', () => {
+  it('sier hvem som har godkjent reglene, og viser ingen tekst fra Psychiatrienet', () => {
     const tekst = les(TILLEGGSGRUNNLAGFIL)
-    expect(tekst).toContain('**Reglene er ikke godkjent.**')
+    expect(tekst).toContain('**Begge reglene er klinisk godkjent av en uavhengig kontrollør (ChatGPT, 04.11.2026, PR #322, kommentar 6620240499)')
     expect(tekst).not.toContain('psychiatrienet.nl/switchtabel/show')
   })
 })

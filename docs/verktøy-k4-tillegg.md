@@ -2,9 +2,9 @@
 
 <!-- Laget av `npm run verktoy:regler -- rapport` fra reglene i src/verktoy/regler/. Ikke rediger for hånd; endre reglene og lag rapporten på nytt. -->
 
-Regelsett `ousfar-verktoy-tillegg` versjon 1, regelmodell 12, beregningsmotor 10. Utkast til tilleggsregler for kombinering av stemningsstabiliserende legemidler (K4): lamotrigin lagt til valproat og lagt til litium, etter opptrappingstabellen for bipolar lidelse i Lamictal-preparatomtalen, med Lamictal tyggetabletter/dispergerbare tabletter. Det eksisterende legemidlet fortsetter uendret. Ingen av reglene er klinisk godkjent.
+Regelsett `ousfar-verktoy-tillegg` versjon 1, regelmodell 12, beregningsmotor 10. Utkast til tilleggsregler for kombinering av stemningsstabiliserende legemidler (K4): lamotrigin lagt til valproat og lagt til litium, etter opptrappingstabellen for bipolar lidelse i Lamictal-preparatomtalen, med Lamictal tyggetabletter/dispergerbare tabletter. Det eksisterende legemidlet fortsetter uendret. Begge reglene er klinisk godkjent av en uavhengig kontrollør for nøyaktig sin versjon og sitt fingeravtrykk (TILLEGGSVEDTAK), og vises bare for administratorer.
 
-**2 regler, 0 klinisk godkjent.** Utfallet av kontrollen: 2 ikke ferdig kontrollert. Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. De er ikke empirisk validerte kliniske anbefalinger, og ingen av reglene er klinisk godkjent. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-klinisk-leveranseplan-2026-11.md`.
+**2 regler, 2 klinisk godkjent.** Utfallet av kontrollen: 2 kontrollert og godkjent i oppgitt omfang. Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. Alle reglene er klinisk godkjent etter uavhengig faglig kontroll i nøyaktig denne versjonen; beregningene er likevel ikke empirisk validerte og erstatter ikke klinisk vurdering av den enkelte pasient. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-klinisk-leveranseplan-2026-11.md`.
 
 Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel bygger på teksten der, og den vises ikke (`docs/verktøy-p3-rettigheter.md`).
 
@@ -12,8 +12,8 @@ Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel by
 
 | Regel | Form | Fra → til | Beregnbarhet | Åpne valg | Status | Eksempler |
 | --- | --- | --- | --- | --- | --- | --- |
-| `tillegg-valproat-lamotrigin` | tillegg til eksisterende legemiddel | valproat → lamotrigin | entydig beregnbar | 0 | til faglig kontroll | 9 |
-| `tillegg-litium-lamotrigin` | tillegg til eksisterende legemiddel | litium → lamotrigin | entydig beregnbar | 0 | til faglig kontroll | 11 |
+| `tillegg-valproat-lamotrigin` | tillegg til eksisterende legemiddel | valproat → lamotrigin | entydig beregnbar | 0 | klinisk godkjent | 9 |
+| `tillegg-litium-lamotrigin` | tillegg til eksisterende legemiddel | litium → lamotrigin | entydig beregnbar | 0 | klinisk godkjent | 11 |
 
 ## Kilder
 
@@ -28,9 +28,9 @@ Hentet og lest 03.11.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Legge lamotrigin til valproat
 
-`tillegg-valproat-lamotrigin`, versjon 2, fingeravtrykk `0a9213f31b5f428935fceeef41498a2999682631b1692749bb7ebe19c82639b8`. Tillegg til eksisterende legemiddel: valproat → lamotrigin. **Entydig beregnbar**; status **til faglig kontroll**.
+`tillegg-valproat-lamotrigin`, versjon 2, fingeravtrykk `0a9213f31b5f428935fceeef41498a2999682631b1692749bb7ebe19c82639b8`. Tillegg til eksisterende legemiddel: valproat → lamotrigin. **Entydig beregnbar**; status **klinisk godkjent**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code) → klinisk godkjent (versjon 2, 04.11.2026, ChatGPT (uavhengig kontrollør)).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -153,9 +153,9 @@ Hentet og lest 03.11.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Legge lamotrigin til litium
 
-`tillegg-litium-lamotrigin`, versjon 2, fingeravtrykk `786436a0ea8d115b7927a9a20ffabc736b59bc06c59117769551e5f75e89e44b`. Tillegg til eksisterende legemiddel: litium → lamotrigin. **Entydig beregnbar**; status **til faglig kontroll**.
+`tillegg-litium-lamotrigin`, versjon 2, fingeravtrykk `786436a0ea8d115b7927a9a20ffabc736b59bc06c59117769551e5f75e89e44b`. Tillegg til eksisterende legemiddel: litium → lamotrigin. **Entydig beregnbar**; status **klinisk godkjent**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 03.11.2026, Claude Code) → til faglig kontroll (versjon 2, 03.11.2026, Claude Code) → klinisk godkjent (versjon 2, 04.11.2026, ChatGPT (uavhengig kontrollør)).
 
 **Kildetro – det som følger direkte av kildene:**
 

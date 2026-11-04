@@ -56,6 +56,8 @@ describe('hva de godkjente reglene bygger på', () => {
       'seponering-agomelatin v1',
       'seponering-bupropion v5',
       'seponering-vortioksetin v12',
+      'tillegg-litium-lamotrigin v2',
+      'tillegg-valproat-lamotrigin v2',
     ])
   })
 
@@ -67,7 +69,8 @@ describe('hva de godkjente reglene bygger på', () => {
     expect(regel('seponering-bupropion').beregning).toBe(false)
     expect(regel('seponering-agomelatin').beregning).toBe(false)
     // Tekstreglene bygger ingen plan av preparatene, så FEST kontrolleres bare for de beregnbare.
-    expect(virkestofferForFest(REGLER)).toEqual(['aripiprazol', 'mirtazapin', 'paliperidon', 'sertralin', 'vortioksetin'])
+    // Tilleggsreglene (K4) tar med det eksisterende legemidlet, også når planen bare gjentar dosen.
+    expect(virkestofferForFest(REGLER)).toEqual(['aripiprazol', 'lamotrigin', 'litium', 'mirtazapin', 'paliperidon', 'sertralin', 'valproat', 'vortioksetin'])
   })
 
   it('gir krever vurdering bare når endringen treffer en godkjent regel og sier noe om innholdet', () => {
@@ -480,8 +483,8 @@ describe('en kjøring og rapporten', () => {
       const b = berort(g, 'syntetisk')
       expect(b.verktoy, g.regel.id).toEqual(VERKTOY.filter((v) => iVerktoyet(v)(g.regel)).map((v) => v.id))
       expect(b.verktoy!.length, g.regel.id).toBeGreaterThan(0)
-      // Seponering og bytte hører til hvert sitt verktøy.
-      for (const id of b.verktoy!) expect(VERKTOY.find((v) => v.id === id)!.type).toBe(g.regel.til === null ? 'seponering' : 'bytte')
+      // Seponering, bytte og tillegg hører til hvert sitt verktøy.
+      for (const id of b.verktoy!) expect(VERKTOY.find((v) => v.id === id)!.type).toBe(g.regel.til === null ? 'seponering' : g.regel.plan.form === 'tillegg' ? 'tillegg' : 'bytte')
     }
   })
 

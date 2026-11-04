@@ -5,11 +5,10 @@
  * lagrede FEST-uttrekket `src/data/verktoy/fest-tillegg.json`, og hele
  * planteksten slik kopien ville vist den.
  *
- * Reglene er ikke godkjent. For å vise kontrolløren hva verktøyet ville vist
- * om nøyaktig den versjonen ble godkjent, regnes planene på en kopi av regelen
- * med en simulert godkjenning bundet til versjonen og fingeravtrykket under
- * kontroll (`simulerGodkjenning`). Kopien lagres aldri og går aldri til
- * verktøysiden. Kasusene uten simulert godkjenning viser hva appen gir i dag.
+ * Begge reglene er klinisk godkjent av en uavhengig kontrollør for nøyaktig
+ * sin versjon og sitt fingeravtrykk (`TILLEGGSVEDTAK`), så kasusene bruker de
+ * godkjente reglene slik appen har dem, uten simulering. Bare kasusene som
+ * endrer en kopi av regelen (en endret regel, en annen måldose), sier det.
  *
  * Kasusene er syntetiske: ingen pasientopplysninger, bare doser og svar valgt
  * for å prøve reglene, også ved grensene. Rapporten skrives med
@@ -49,17 +48,8 @@ const STARTDATO = '2026-11-09'
 /** Versjonen og fingeravtrykket kontrolløren bes vurdere. */
 export const kontrollregel = (r: Regel): Kontrollregel => ({ id: r.id, versjon: r.versjon, fingeravtrykk: fingeravtrykk(r) })
 
-/** Regelen med en simulert godkjenning av nøyaktig versjonen under kontroll, eventuelt endret etterpå på kopien. */
-const simulert = (r: Regel, etter?: { hva: string; endre: (x: Regel) => void }): NonNullable<Pilotkasus['regel']> => ({
-  id: r.id,
-  endre: {
-    hva: `simulert klinisk godkjenning av versjon ${r.versjon}, bare på en kopi${etter ? `; deretter ${etter.hva}` : ''}`,
-    endre: (x) => {
-      simulerGodkjenning(x, kontrollregel(r), DATO)
-      etter?.endre(x)
-    },
-  },
-})
+/** Den godkjente regelen slik appen har den, eventuelt endret på en kopi som aldri går til appen. */
+const regelen = (r: Regel, etter?: { hva: string; endre: (x: Regel) => void }): NonNullable<Pilotkasus['regel']> => ({ id: r.id, ...(etter && { endre: etter }) })
 
 const peroral = (nokkel: string) => ({ nokkel, formulering: 'standard' as const })
 const valgFor = (fra: string) => ({ fra: peroral(fra), til: peroral('lamotrigin') })
@@ -147,50 +137,50 @@ export const PLAN_LITIUM: readonly string[] = [
 ]
 
 export const TILLEGGSKASUS: readonly Tilleggskasus[] = [
-  // Slik appen er i dag: reglene er ikke godkjent, så verktøyet gir ingen plan.
-  kasus('K4-01', V, 'valproat', 'ikke_godkjent', 'regelen er til faglig kontroll; ingen plan i appen', '1000', { utfall: 'ingen', status: 'til_kontroll' }),
-  kasus('K4-02', L, 'litium', 'ikke_godkjent', 'regelen er til faglig kontroll; ingen plan i appen', '168', { utfall: 'ingen', status: 'til_kontroll' }),
-  // Valproat → lamotrigin, med simulert godkjenning.
-  kasus('K4-10', V, 'valproat', 'vanlig_dose', 'hele opptrappingen med valproat', '1000', { utfall: 'plan', linjer: [...PLAN_VALPROAT] }, { regel: simulert(V) }),
-  kasus('K4-11', V, 'valproat', 'pasientforhold', 'pasienten er under 18 år', '1000', { utfall: 'stopp', grunner: [UNNTAK] }, { regel: simulert(V), skjema: { pasientforhold: { under_18: true } } }),
-  kasus('K4-12', V, 'valproat', 'pasientforhold', 'tidligere utslett på lamotrigin', '1000', { utfall: 'stopp', grunner: [UNNTAK] }, { regel: simulert(V), skjema: { pasientforhold: { tidligere_reaksjon: true } } }),
-  kasus('K4-13', V, 'valproat', 'pasientforhold', 'graviditet er ikke vurdert (ubesvart)', '1000', { utfall: 'stopp', grunner: ['Må avklares før beregning (ukjent): Pasienten er gravid'] }, { regel: simulert(V), ubesvart: ['graviditet'] }),
+  // Slik appen er nå: begge reglene er godkjent, og verktøyet gir planen.
+  kasus('K4-01', V, 'valproat', 'vanlig_dose', 'den godkjente regelen i appen, uten simulering: hele opptrappingen', '1000', { utfall: 'plan', linjer: [...PLAN_VALPROAT] }),
+  kasus('K4-02', L, 'litium', 'vanlig_dose', 'den godkjente regelen i appen, uten simulering: hele opptrappingen', '168', { utfall: 'plan', linjer: [...PLAN_LITIUM] }),
+  // Valproat → lamotrigin.
+  kasus('K4-10', V, 'valproat', 'vanlig_dose', 'hele opptrappingen med valproat', '1000', { utfall: 'plan', linjer: [...PLAN_VALPROAT] }, { regel: regelen(V) }),
+  kasus('K4-11', V, 'valproat', 'pasientforhold', 'pasienten er under 18 år', '1000', { utfall: 'stopp', grunner: [UNNTAK] }, { regel: regelen(V), skjema: { pasientforhold: { under_18: true } } }),
+  kasus('K4-12', V, 'valproat', 'pasientforhold', 'tidligere utslett på lamotrigin', '1000', { utfall: 'stopp', grunner: [UNNTAK] }, { regel: regelen(V), skjema: { pasientforhold: { tidligere_reaksjon: true } } }),
+  kasus('K4-13', V, 'valproat', 'pasientforhold', 'graviditet er ikke vurdert (ubesvart)', '1000', { utfall: 'stopp', grunner: ['Må avklares før beregning (ukjent): Pasienten er gravid'] }, { regel: regelen(V), ubesvart: ['graviditet'] }),
   // Jenter og kvinner som kan bli gravide: hvert vilkår i det graviditetsforebyggende programmet for valproat bekreftes for seg.
-  kasus('K4-14', V, 'valproat', 'pasientforhold', 'kan bli gravid, og alle vilkårene i det graviditetsforebyggende programmet er bekreftet hver for seg', '1000', { utfall: 'plan', linjer: [...PLAN_VALPROAT] }, { regel: simulert(V), skjema: { svar: { kan_bli_gravid: true } } }),
+  kasus('K4-14', V, 'valproat', 'pasientforhold', 'kan bli gravid, og alle vilkårene i det graviditetsforebyggende programmet er bekreftet hver for seg', '1000', { utfall: 'plan', linjer: [...PLAN_VALPROAT] }, { regel: regelen(V), skjema: { svar: { kan_bli_gravid: true } } }),
   kasus('K4-26', V, 'valproat', 'pasientforhold', 'kan bli gravid, men sikker prevensjon er ikke bekreftet', '1000', { utfall: 'stopp', grunner: ['Må bekreftes før beregning: Pasienten bruker sikker prevensjon uten avbrudd'] }, {
-    regel: simulert(V),
+    regel: regelen(V),
     skjema: { svar: { kan_bli_gravid: true }, bekreftet: V.bekreftelser.map((b) => b.id).filter((id) => id !== 'ppp_prevensjon') },
   }),
-  kasus('K4-27', V, 'valproat', 'pasientforhold', 'det er ikke besvart om pasienten kan bli gravid', '1000', { utfall: 'stopp', grunner: ['Må besvares før beregning: Er pasienten jente eller kvinne som kan bli gravid?'] }, { regel: simulert(V), ubesvart: ['kan_bli_gravid'] }),
+  kasus('K4-27', V, 'valproat', 'pasientforhold', 'det er ikke besvart om pasienten kan bli gravid', '1000', { utfall: 'stopp', grunner: ['Må besvares før beregning: Er pasienten jente eller kvinne som kan bli gravid?'] }, { regel: regelen(V), ubesvart: ['kan_bli_gravid'] }),
   kasus('K4-28', V, 'valproat', 'pasientforhold', 'kan bli gravid og alle vilkårene er bekreftet, men pasienten planlegger graviditet: stopper, vilkårene løser ikke det', '1000', { utfall: 'stopp', grunner: [UNNTAK] }, {
-    regel: simulert(V),
+    regel: regelen(V),
     skjema: { svar: { kan_bli_gravid: true }, pasientforhold: { graviditet: true } },
   }),
   kasus('K4-29', V, 'valproat', 'pasientforhold', 'kan ikke bli gravid: vilkårene i programmet spørres ikke etter', '1000', { utfall: 'plan', linjer: [...PLAN_VALPROAT] }, {
-    regel: simulert(V),
+    regel: regelen(V),
     skjema: { bekreftet: V.bekreftelser.filter((b) => !b.ved).map((b) => b.id) },
   }),
   // Valproatdosen: preparatet og dosen bekreftes som pasientens nåværende, i mg natriumvalproat som i legemiddellisten.
   kasus('K4-43', V, 'valproat', 'pasientforhold', 'det er ikke bekreftet at pasienten bruker et natriumvalproatpreparat i den innfylte dosen', '1000', { utfall: 'stopp', grunner: ['Må bekreftes før beregning: Pasienten bruker et natriumvalproatpreparat'] }, {
-    regel: simulert(V),
+    regel: regelen(V),
     skjema: { bekreftet: V.bekreftelser.filter((b) => !b.ved).map((b) => b.id).filter((id) => id !== 'aktuell_dose') },
   }),
   // Gutter og menn som kan bli fedre: egne forholdsregler for valproat, adskilt fra programmet for kvinner.
   kasus('K4-44', V, 'valproat', 'pasientforhold', 'kan bli far, og informasjonen og vurderingen for menn som bruker valproat er bekreftet hver for seg', '1000', { utfall: 'plan', linjer: [...PLAN_VALPROAT] }, {
-    regel: simulert(V),
+    regel: regelen(V),
     skjema: { svar: { kan_bli_far: true }, bekreftet: V.bekreftelser.filter((b) => b.ved?.sporsmal !== 'kan_bli_gravid').map((b) => b.id) },
   }),
   kasus('K4-45', V, 'valproat', 'pasientforhold', 'kan bli far, men informasjonen om risiko, prevensjon og sæddonasjon er ikke bekreftet', '1000', { utfall: 'stopp', grunner: ['Må bekreftes før beregning: Pasienten er informert om den mulige risikoen'] }, {
-    regel: simulert(V),
+    regel: regelen(V),
     skjema: { svar: { kan_bli_far: true }, bekreftet: V.bekreftelser.map((b) => b.id).filter((id) => id !== 'far_informasjon') },
   }),
-  kasus('K4-46', V, 'valproat', 'pasientforhold', 'det er ikke besvart om pasienten kan bli far', '1000', { utfall: 'stopp', grunner: ['Må besvares før beregning: Er pasienten gutt eller mann som kan gjøre en partner gravid?'] }, { regel: simulert(V), ubesvart: ['kan_bli_far'] }),
-  kasus('K4-15', V, 'valproat', 'uvanlig_dose', 'ingen dose av valproat er fylt inn', '', { utfall: 'mangler', grunner: ['Aktuell døgndose må fylles inn'] }, { regel: simulert(V) }),
-  kasus('K4-16', V, 'valproat', 'foreldet_fest', 'FEST-kopien er 49 timer gammel', '1000', { utfall: 'stopp', grunner: ['Den nattlige oppdateringen har ikke gått'] }, { regel: simulert(V), timer: 49 }),
-  kasus('K4-17', V, 'valproat', 'preparat', 'alle lamotriginpreparatene krever godkjenningsfritak', '1000', { utfall: 'stopp', grunner: ['godkjenningsfritak'] }, { regel: simulert(V), fest: bareFritak('lamotrigin') }),
-  kasus('K4-18', V, 'valproat', 'preparat', 'Lamictal 25 mg er midlertidig utgått: 25 mg annenhver dag kan ikke gis, og planen stopper i stedet for å velge en annen dose', '1000', { utfall: 'stopp', grunner: ['den ideelle dosen 25 mg annenhver dag kan ikke gis'] }, { regel: simulert(V), fest: midlertidigUtgatt('lamotrigin', 25, 'Lamictal') }),
+  kasus('K4-46', V, 'valproat', 'pasientforhold', 'det er ikke besvart om pasienten kan bli far', '1000', { utfall: 'stopp', grunner: ['Må besvares før beregning: Er pasienten gutt eller mann som kan gjøre en partner gravid?'] }, { regel: regelen(V), ubesvart: ['kan_bli_far'] }),
+  kasus('K4-15', V, 'valproat', 'uvanlig_dose', 'ingen dose av valproat er fylt inn', '', { utfall: 'mangler', grunner: ['Aktuell døgndose må fylles inn'] }, { regel: regelen(V) }),
+  kasus('K4-16', V, 'valproat', 'foreldet_fest', 'FEST-kopien er 49 timer gammel', '1000', { utfall: 'stopp', grunner: ['Den nattlige oppdateringen har ikke gått'] }, { regel: regelen(V), timer: 49 }),
+  kasus('K4-17', V, 'valproat', 'preparat', 'alle lamotriginpreparatene krever godkjenningsfritak', '1000', { utfall: 'stopp', grunner: ['godkjenningsfritak'] }, { regel: regelen(V), fest: bareFritak('lamotrigin') }),
+  kasus('K4-18', V, 'valproat', 'preparat', 'Lamictal 25 mg er midlertidig utgått: 25 mg annenhver dag kan ikke gis, og planen stopper i stedet for å velge en annen dose', '1000', { utfall: 'stopp', grunner: ['den ideelle dosen 25 mg annenhver dag kan ikke gis'] }, { regel: regelen(V), fest: midlertidigUtgatt('lamotrigin', 25, 'Lamictal') }),
   kasus('K4-19', V, 'valproat', 'regelendring', 'regelen er endret etter godkjenningen (måldose 150 mg)', '1000', { utfall: 'stopp', grunner: ['Regelen er endret etter godkjenningen'] }, {
-    regel: simulert(V, { hva: 'måldosen endret til 150 mg', endre: (x) => medMaldose(x, 150) }),
+    regel: regelen(V, { hva: 'måldosen endret til 150 mg', endre: (x) => medMaldose(x, 150) }),
     skjema: { maldose: '150' },
   }),
   kasus('K4-20', V, 'valproat', 'uvanlig_dose', 'høyeste dose sammen med valproat: en plan over 200 mg stopper (godkjenningen simulert for den endrede kopien)', '1000', { utfall: 'stopp', grunner: ['den ideelle dosen 250 mg kan ikke gis med preparatene i FEST nøyaktig og ikke over 200 mg'] }, {
@@ -200,36 +190,36 @@ export const TILLEGGSKASUS: readonly Tilleggskasus[] = [
     } } },
     skjema: { maldose: '250' },
   }),
-  kasus('K4-22', V, 'valproat', 'uvanlig_dose', 'forskriveren velger 200 mg som mål: regelen trapper bare opp til den første stabiliserende måldosen', '1000', { utfall: 'stopp', grunner: ['Måldosen 200 mg er utenfor det regelen gjelder for (100 mg)'] }, { regel: simulert(V), skjema: { maldose: '200' } }),
-  kasus('K4-23', V, 'valproat', 'interaksjon', 'østrogenholdig prevensjon uten skriftlig vurdering av måldosen', '1000', { utfall: 'stopp', grunner: ['skriftlig begrunnelse'] }, { regel: simulert(V), skjema: { svar: { ostrogen: true } } }),
+  kasus('K4-22', V, 'valproat', 'uvanlig_dose', 'forskriveren velger 200 mg som mål: regelen trapper bare opp til den første stabiliserende måldosen', '1000', { utfall: 'stopp', grunner: ['Måldosen 200 mg er utenfor det regelen gjelder for (100 mg)'] }, { regel: regelen(V), skjema: { maldose: '200' } }),
+  kasus('K4-23', V, 'valproat', 'interaksjon', 'østrogenholdig prevensjon uten skriftlig vurdering av måldosen', '1000', { utfall: 'stopp', grunner: ['skriftlig begrunnelse'] }, { regel: regelen(V), skjema: { svar: { ostrogen: true } } }),
   kasus('K4-24', V, 'valproat', 'interaksjon', 'østrogenholdig prevensjon med skriftlig vurdering av måldosen', '1000', { utfall: 'plan', linjer: [...PLAN_VALPROAT] }, {
-    regel: simulert(V),
+    regel: regelen(V),
     skjema: { svar: { ostrogen: true }, begrunnelse: 'Syntetisk: måldosen vurderes på nytt etter titreringen, med serumkonsentrasjon av lamotrigin.' },
   }),
-  kasus('K4-25', V, 'valproat', 'pasientforhold', 'spørsmålet om østrogenholdig behandling er ubesvart', '1000', { utfall: 'stopp', grunner: ['østrogenholdig'] }, { regel: simulert(V), ubesvart: ['ostrogen'] }),
-  kasus('K4-21', V, 'valproat', 'nodstopp', 'verktøyet er deaktivert med nødstoppen', '1000', { utfall: 'sperret' }, { regel: simulert(V), sperrer: [sperre('verktoy', VERKTOY)] }),
-  // Litium → lamotrigin, med simulert godkjenning.
-  kasus('K4-30', L, 'litium', 'vanlig_dose', 'hele opptrappingen med litium', '168', { utfall: 'plan', linjer: [...PLAN_LITIUM] }, { regel: simulert(L) }),
-  kasus('K4-31', L, 'litium', 'interaksjon', 'pasienten bruker også karbamazepin', '168', { utfall: 'stopp', grunner: [UNNTAK] }, { regel: simulert(L), skjema: { pasientforhold: { valproat_eller_induserende: true } } }),
-  kasus('K4-32', L, 'litium', 'interaksjon', 'pasienten bruker et legemiddel med ukjent interaksjon med lamotrigin', '168', { utfall: 'stopp', grunner: [UNNTAK] }, { regel: simulert(L), skjema: { pasientforhold: { ukjent_interaksjon: true } } }),
-  kasus('K4-33', L, 'litium', 'pasientforhold', 'moderat nedsatt leverfunksjon', '168', { utfall: 'stopp', grunner: [UNNTAK] }, { regel: simulert(L), skjema: { pasientforhold: { nedsatt_leverfunksjon: true } } }),
-  kasus('K4-34', L, 'litium', 'pasientforhold', 'bruker lamotrigin allerede (ikke en oppstart)', '168', { utfall: 'stopp', grunner: [UNNTAK] }, { regel: simulert(L), skjema: { pasientforhold: { bruker_lamotrigin: true } } }),
+  kasus('K4-25', V, 'valproat', 'pasientforhold', 'spørsmålet om østrogenholdig behandling er ubesvart', '1000', { utfall: 'stopp', grunner: ['østrogenholdig'] }, { regel: regelen(V), ubesvart: ['ostrogen'] }),
+  kasus('K4-21', V, 'valproat', 'nodstopp', 'verktøyet er deaktivert med nødstoppen', '1000', { utfall: 'sperret' }, { regel: regelen(V), sperrer: [sperre('verktoy', VERKTOY)] }),
+  // Litium → lamotrigin.
+  kasus('K4-30', L, 'litium', 'vanlig_dose', 'hele opptrappingen med litium', '168', { utfall: 'plan', linjer: [...PLAN_LITIUM] }, { regel: regelen(L) }),
+  kasus('K4-31', L, 'litium', 'interaksjon', 'pasienten bruker også karbamazepin', '168', { utfall: 'stopp', grunner: [UNNTAK] }, { regel: regelen(L), skjema: { pasientforhold: { valproat_eller_induserende: true } } }),
+  kasus('K4-32', L, 'litium', 'interaksjon', 'pasienten bruker et legemiddel med ukjent interaksjon med lamotrigin', '168', { utfall: 'stopp', grunner: [UNNTAK] }, { regel: regelen(L), skjema: { pasientforhold: { ukjent_interaksjon: true } } }),
+  kasus('K4-33', L, 'litium', 'pasientforhold', 'moderat nedsatt leverfunksjon', '168', { utfall: 'stopp', grunner: [UNNTAK] }, { regel: regelen(L), skjema: { pasientforhold: { nedsatt_leverfunksjon: true } } }),
+  kasus('K4-34', L, 'litium', 'pasientforhold', 'bruker lamotrigin allerede (ikke en oppstart)', '168', { utfall: 'stopp', grunner: [UNNTAK] }, { regel: regelen(L), skjema: { pasientforhold: { bruker_lamotrigin: true } } }),
   kasus('K4-35', L, 'litium', 'pasientforhold', 'det er ikke bekreftet at den innfylte litiumdosen er den pasienten bruker nå', '168', { utfall: 'stopp', grunner: ['Må bekreftes før beregning: Pasienten bruker Lithionit 42 mg depottabletter'] }, {
-    regel: simulert(L),
+    regel: regelen(L),
     skjema: { bekreftet: ['fortsetter_litium', 'utslett_informert'] },
   }),
   // Litiumdosen må være hele Lithionit-tabletter (42 mg Li⁺), opp til den høyeste veiledende vedlikeholdsdosen.
-  kasus('K4-36', L, 'litium', 'uvanlig_dose', 'en usannsynlig litiumdose (0,5 mg) stopper', '0,5', { utfall: 'stopp', grunner: [LITIUMDOSE] }, { regel: simulert(L) }),
-  kasus('K4-37', L, 'litium', 'uvanlig_dose', 'en dose som ikke er hele Lithionit-tabletter (170 mg, for eksempel mg litiumsalt), stopper', '170', { utfall: 'stopp', grunner: [LITIUMDOSE] }, { regel: simulert(L) }),
-  kasus('K4-38', L, 'litium', 'uvanlig_dose', 'grensen: 10 tabletter (420 mg Li⁺) er innenfor', '420', { utfall: 'plan', linjer: PLAN_LITIUM.map((l) => l.replace('168 mg Li⁺ (24 mmol) = 4 tabletter', '420 mg Li⁺ (60 mmol) = 10 tabletter')) }, { regel: simulert(L) }),
-  kasus('K4-39', L, 'litium', 'uvanlig_dose', 'grensen: 11 tabletter (462 mg Li⁺) er over den høyeste veiledende vedlikeholdsdosen og stopper', '462', { utfall: 'stopp', grunner: [LITIUMDOSE] }, { regel: simulert(L) }),
-  kasus('K4-40', L, 'litium', 'uvanlig_dose', 'forskriveren velger 300 mg som mål: regelen trapper bare opp til den første stabiliserende måldosen', '168', { utfall: 'stopp', grunner: ['Måldosen 300 mg er utenfor det regelen gjelder for (200 mg)'] }, { regel: simulert(L), skjema: { maldose: '300' } }),
+  kasus('K4-36', L, 'litium', 'uvanlig_dose', 'en usannsynlig litiumdose (0,5 mg) stopper', '0,5', { utfall: 'stopp', grunner: [LITIUMDOSE] }, { regel: regelen(L) }),
+  kasus('K4-37', L, 'litium', 'uvanlig_dose', 'en dose som ikke er hele Lithionit-tabletter (170 mg, for eksempel mg litiumsalt), stopper', '170', { utfall: 'stopp', grunner: [LITIUMDOSE] }, { regel: regelen(L) }),
+  kasus('K4-38', L, 'litium', 'uvanlig_dose', 'grensen: 10 tabletter (420 mg Li⁺) er innenfor', '420', { utfall: 'plan', linjer: PLAN_LITIUM.map((l) => l.replace('168 mg Li⁺ (24 mmol) = 4 tabletter', '420 mg Li⁺ (60 mmol) = 10 tabletter')) }, { regel: regelen(L) }),
+  kasus('K4-39', L, 'litium', 'uvanlig_dose', 'grensen: 11 tabletter (462 mg Li⁺) er over den høyeste veiledende vedlikeholdsdosen og stopper', '462', { utfall: 'stopp', grunner: [LITIUMDOSE] }, { regel: regelen(L) }),
+  kasus('K4-40', L, 'litium', 'uvanlig_dose', 'forskriveren velger 300 mg som mål: regelen trapper bare opp til den første stabiliserende måldosen', '168', { utfall: 'stopp', grunner: ['Måldosen 300 mg er utenfor det regelen gjelder for (200 mg)'] }, { regel: regelen(L), skjema: { maldose: '300' } }),
   kasus('K4-41', L, 'litium', 'pasientforhold', 'måldosen er ikke bekreftet som pasientens kliniske mål', '168', { utfall: 'stopp', grunner: ['Må bekreftes før beregning: Den første stabiliserende måldosen (200 mg/dag) er det kliniske målet'] }, {
-    regel: simulert(L),
+    regel: regelen(L),
     skjema: { bekreftet: L.bekreftelser.map((b) => b.id).filter((id) => id !== 'maldose_valgt') },
   }),
   kasus('K4-42', L, 'litium', 'interaksjon', 'østrogenholdig behandling med skriftlig begrunnelse, men den særskilte vurderingen av måldosen er ikke bekreftet', '168', { utfall: 'stopp', grunner: ['Må bekreftes før beregning: Måldosen er vurdert særskilt'] }, {
-    regel: simulert(L),
+    regel: regelen(L),
     skjema: { svar: { ostrogen: true }, begrunnelse: 'Syntetisk: vurdert.', bekreftet: L.bekreftelser.map((b) => b.id).filter((id) => id !== 'ostrogen_maldose') },
   }),
   // Kombinasjoner uten regel: verktøyet sier det, og beregner ingenting.
@@ -345,7 +335,7 @@ export function lagTilleggsgrunnlag(u: Festuttrekk): string {
     '',
     '> Generert av `npm run verktoy:regler -- tilleggsgrunnlag` fra `src/verktoy/tilleggsgrunnlag.ts`. Ikke rediger for hånd; testene sier fra når rapporten ikke er oppdatert.',
     '',
-    'Kasusene går den samme veien som verktøysiden, med preparatene i det lagrede FEST-uttrekket. **Reglene er ikke godkjent.** Kasusene med «simulert godkjenning» viser hva verktøyet ville vist om nøyaktig versjonen og fingeravtrykket under ble godkjent; kopien lagres aldri og går aldri til appen. Kasusene er syntetiske, uten pasientopplysninger. Selve reglene, kildene og fakta står i `docs/verktøy-k4-tillegg.md`.',
+    'Kasusene går den samme veien som verktøysiden, med preparatene i det lagrede FEST-uttrekket. **Begge reglene er klinisk godkjent av en uavhengig kontrollør (ChatGPT, 04.11.2026, PR #322, kommentar 6620240499) for nøyaktig versjonen og fingeravtrykket under**, og kasusene bruker dem slik appen har dem. Kasusene som endrer en kopi av regelen, sier det; kopien går aldri til appen. Kasusene er syntetiske, uten pasientopplysninger. Selve reglene, kildene og fakta står i `docs/verktøy-k4-tillegg.md`.',
     '',
     `FEST-uttrekket: \`${FEST_TILLEGG}\` (hentet ${u.hentet}, kontrollert ${u.utvalg.kontrollert_kl}).`,
     '',

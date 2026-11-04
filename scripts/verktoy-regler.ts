@@ -29,7 +29,7 @@ import { lagRegeldekningsrapport, REGELDEKNINGSFIL } from '../src/verktoy/regeld
 import { KONTROLLFORSLAG, lagKontrollgrunnlag } from '../src/verktoy/kontrollgrunnlag'
 import { lagRettelseskontroll, RETTELSESKONTROLLFIL } from '../src/verktoy/rettelseskontroll'
 import { avvikFra, kjorKasus, lagPilotmatriserapport, PILOTKASUS, PILOTMATRISEFIL } from '../src/verktoy/regler/pilotmatrise'
-import { FEST_TILLEGG, lagTilleggsgrunnlag, TILLEGGSGRUNNLAGFIL, TILLEGGSSTOFFER } from '../src/verktoy/tilleggsgrunnlag'
+import { FEST_TILLEGG, kjorTilleggskasus, lagTilleggsgrunnlag, TILLEGGSGRUNNLAGFIL, TILLEGGSKASUS, TILLEGGSSTOFFER } from '../src/verktoy/tilleggsgrunnlag'
 
 const skriv = (fil: string, innhold: string) => {
   writeFileSync(new URL(`../${fil}`, import.meta.url), innhold)
@@ -51,7 +51,11 @@ async function kontroll() {
   const avvik = PILOTKASUS.flatMap((k) => avvikFra(k, kjorKasus(k, uttrekkene)).map((f) => `${k.id}: ${f}`))
   for (const f of avvik) console.error(`✗ testmatrisen: ${f}`)
   console.log(avvik.length === 0 ? `✓ testmatrisen: ${PILOTKASUS.length} kasus som forventet` : `testmatrisen: ${avvik.length} avvik`)
-  antall += avvik.length
+  // De godkjente tilleggsreglene (K4) ende til ende, i sitt eget kontrollgrunnlag med FEST-uttrekket for tilleggsreglene.
+  const tillegg = kjorTilleggskasus(lesUttrekk(FEST_TILLEGG)).flatMap(({ k, avvik }) => avvik.map((f) => `${k.id}: ${f}`))
+  for (const f of tillegg) console.error(`✗ kontrollgrunnlaget for tillegg: ${f}`)
+  console.log(tillegg.length === 0 ? `✓ kontrollgrunnlaget for tillegg: ${TILLEGGSKASUS.length} kasus som forventet` : `kontrollgrunnlaget for tillegg: ${tillegg.length} avvik`)
+  antall += avvik.length + tillegg.length
   if (antall > 0) process.exit(1)
 }
 

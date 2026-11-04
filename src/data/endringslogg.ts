@@ -13,13 +13,13 @@ import type { Endring } from '../domain/versjon'
 export const ENDRINGSLOGG: Endring[] = [
   {
     versjon: '1.125.3',
-    dato: '2026-11-03',
-    sammendrag: 'Første regler for å legge lamotrigin til valproat eller litium, til faglig kontroll',
+    dato: '2026-11-04',
+    sammendrag: 'Første regler for å legge lamotrigin til valproat eller litium, faglig godkjent og bare for administratorene',
     typer: ['Fag'],
     omfang: 'Mindre omfang',
     gjelder: ['verktoy/kombinere-stemningsstabiliserende'],
     punkter: [
-      'Gjelder bare administratorene. Reglene er ikke godkjent, så verktøyet gir fortsatt ingen plan og sier at regelen er til faglig kontroll.',
+      'Gjelder bare administratorene. Begge reglene er faglig godkjent av en uavhengig kontrollør for nøyaktig denne versjonen, så verktøyet gir nå en komplett plan for dem. Endres en regel, gir verktøyet ingen plan før den er kontrollert på nytt.',
       'Verktøyet «Kombinere stemningsstabiliserende» har fått to regler fra preparatomtalen for Lamictal: lamotrigin lagt til valproat (25 mg annenhver dag, opp til 100 mg fra dag 36, aldri over 200 mg) og lagt til litium (25 mg, opp til 200 mg fra dag 36). Det eksisterende legemidlet står uendret.',
       'Forskriveren må velge måldosen, og planen går bare til preparatomtalens første stabiliserende måldose; et annet mål beregnes ikke. Bruker pasienten østrogenholdig prevensjon eller behandling, må måldosen vurderes skriftlig.',
       'Litiumdosen oppgis i mg litium som på Lithionit 42 mg (6 mmol per tablett) og må være hele tabletter, fra 1 til 10 daglig. Valproatdosen oppgis i mg natriumvalproat og kontrolleres ikke. Forskriveren må bekrefte at pasienten bruker et natriumvalproatpreparat i den dosen, og planen viser til preparatet og fordelingen over døgnet i legemiddellisten.',
