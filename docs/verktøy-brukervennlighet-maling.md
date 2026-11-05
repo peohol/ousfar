@@ -11,7 +11,7 @@ Alt er syntetiske forløp, kjørt som administrator. Ingenting her er klinisk pr
 - **Svarene:** «Nei» eller «Gjelder ikke» på alt, alle bekreftelser krysset av, måldosen regelen tilbyr, tablett når siden ber om form, og den første dosen siden tilbyr ved dosevalg. Det er det korteste forløpet til en plan; en pasient med et «ja» får flere eller like mange handlinger.
 - **Antall** er det samme på mobil (390 px, berøring) og stor skjerm (1440 px). Med snarvalg («Kan beregnes nå») blir valgene av legemiddel og formulering ett trykk; tallet står i egen kolonne.
 - **Nødstopp** er prøvd ved at nettleseren fikk en syntetisk sperre som svar på lesingen av sperrene; ingen sperre ble satt.
-- Skriptet og alle skjermbildene ligger i prosjektmappen `verktoy-brukervennlighet/maling/for/` (skriptet som `maling.ts`, tallene som `maling-resultater.json`) (ikke i repoet, fordi bildene er store og viser administratorkontoen). Etter at #321 er slått sammen, flyttes skriptet inn i `src/__tests__/qa/`, så etter-målingen kjøres på samme måte.
+- Skriptet er `src/__tests__/qa/maling.ts` (kjøres med `npx vite-node src/__tests__/qa/maling.ts`), så etter-målingen kjøres på samme måte. Skjermbildene og tallene (`maling-resultater.json`) ligger i prosjektmappen `verktoy-brukervennlighet/maling/for/`, ikke i repoet, fordi bildene er store og viser administratorkontoen.
 
 ## 2. Før-målingen (v1.125.5)
 
