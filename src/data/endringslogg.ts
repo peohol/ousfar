@@ -12,6 +12,20 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.126.0',
+    dato: '2026-11-05',
+    sammendrag: 'THC-syre: beskjed når en høyere sikkerhetsmargin gir en mildere konklusjon',
+    typer: ['Fag', 'Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['fortolkning/ircak'],
+    endrerFortolkning: true,
+    punkter: [
+      'Fortolkningen av THC-syre prøver nå alle sikkerhetsmarginene som er høyere enn den du har valgt. Gir en av dem en mildere konklusjon, for eksempel «Kan ikke fastslås» i stedet for «Nytt inntak», står det et tydelig banner over kommentaren.',
+      'Banneret viser hver mildere konklusjon og hvilken margin som gir den, med en knapp for å bruke den marginen. Gir to høyere marginer hver sin konklusjon, vises begge.',
+      'At en lavere margin ville gitt en strengere konklusjon, vises aldri. Kommentaren endres ikke før du selv bytter margin.',
+    ],
+  },
+  {
     versjon: '1.125.12',
     dato: '2026-11-05',
     sammendrag: 'Nedtrapping av escitalopram fra tabletter, med tabletter så lenge de gir dosen og så dråper, er faglig godkjent',

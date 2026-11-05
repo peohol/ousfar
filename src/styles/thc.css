@@ -137,6 +137,40 @@
   font-weight: var(--vekt-halvfet);
 }
 
+/* Banneret over kommentaren når en høyere sikkerhetsmargin gir en mildere
+   konklusjon: overskriften, konklusjonen nå, og hvert mildere utfall med
+   knappen til høyre. */
+.thc-mildere {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-3);
+  white-space: normal;
+}
+
+.thc-mildere__hode {
+  font-weight: var(--vekt-halvfet);
+}
+
+.thc-mildere__liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rom-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.thc-mildere__utfall {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rom-3) var(--rom-5);
+}
+
+.thc-mildere__utfall > p {
+  flex: 1 1 16rem;
+}
+
 /* --- Visualiseringen ------------------------------------------------------ */
 
 .thc-plot__figur {

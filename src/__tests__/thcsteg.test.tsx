@@ -135,6 +135,45 @@ describe('fortolkningsmodulen for THC-syre', () => {
     expect(kommentarer.size).toBeGreaterThan(1)
   })
 
+  it('sier fra når en høyere sikkerhetsmargin gir en mildere konklusjon, og bytter margin med knappen', async () => {
+    const user = userEvent.setup()
+    visSteg({ status: 'klar', modell: THC_MODELL })
+    // Kronisk, 50 → 40 på tre døgn: 50 % gir nytt inntak, 90 % «kan ikke fastslås», 99 % «ikke nødvendigvis nytt».
+    const inn = {
+      ...tomThcInndata(THC_REGELSETT),
+      forrigeVerdi: '50',
+      forrigeDato: '2026-07-04',
+      aktuellVerdi: '40',
+      aktuellDato: '2026-07-07',
+    }
+    await user.type(gruppe('Forrige prøve').getByRole('textbox', { name: 'IRCAK' }), inn.forrigeVerdi)
+    await user.type(gruppe('Forrige prøve').getByLabelText('Prøvedato'), inn.forrigeDato)
+    await user.type(gruppe('Denne prøven').getByRole('textbox', { name: 'IRCAK' }), inn.aktuellVerdi)
+    await user.type(gruppe('Denne prøven').getByLabelText('Prøvedato'), inn.aktuellDato)
+
+    const banner = () => screen.queryByRole('note', { name: 'Mildere konklusjon med høyere sikkerhetsmargin' })
+    const knapper = () => within(banner()!).queryAllByRole('button').map((b) => b.textContent)
+
+    // Standardmarginen, 90 %: bare 99 % gir noe mildere.
+    expect(banner()!.textContent).toContain('Med 90 % sikkerhetsmargin blir konklusjonen «Kan ikke fastslås».')
+    expect(banner()!.textContent).toContain('Med 99 % sikkerhetsmargin: «Ikke nødvendigvis nytt».')
+    expect(knapper()).toEqual(['Bruk 99 % sikkerhetsmargin'])
+
+    // Uten margin: begge de høyere marginene gir hvert sitt mildere utfall.
+    trykkPaaValg(marginvalg(0.5))
+    expect(banner()!.textContent).toContain('Uten sikkerhetsmargin blir konklusjonen «Nytt inntak».')
+    expect(banner()!.textContent).toContain('Med 90 % sikkerhetsmargin: «Kan ikke fastslås».')
+    expect(knapper()).toEqual(['Bruk 90 % sikkerhetsmargin', 'Bruk 99 % sikkerhetsmargin'])
+
+    // Knappen velger marginen; på den høyeste er det ingenting mildere å vise.
+    await user.click(screen.getByRole('button', { name: 'Bruk 99 % sikkerhetsmargin' }))
+    expect(screen.getByRole('slider', { name: 'Sikkerhetsmargin' }).getAttribute('aria-valuetext')).toBe('99 %')
+    const forventet = fortolkThc({ ...inn, sikkerhetsmargin: 0.99 }, THC_MODELL)
+    if (forventet.type !== 'kommentar') throw new Error('Tilfellet skal gi en kommentar.')
+    expect(screen.getByText(forventet.kommentar)).toBeTruthy()
+    expect(banner()).toBeNull()
+  })
+
   it('forklarer sikkerhetsmarginen under bryteren, med eksempelet regnet av reglene', async () => {
     const user = userEvent.setup()
     visSteg({ status: 'klar', modell: THC_MODELL })
