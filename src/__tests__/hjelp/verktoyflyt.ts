@@ -27,6 +27,67 @@ const synlig = (el: Element) => {
 export const punkter = (rot: HTMLElement = screen.getByRole('list', { name: 'Planen dag for dag' })) =>
   [...rot.children].map((li) => [li.querySelector('.tidslinje__dager')!.textContent!, synlig(li.querySelector('.tidslinje__innhold')!)] as const)
 
+/** Teksten i et element på én linje. */
+const enLinje = (el: Element) => (el.textContent ?? '').replace(/\s+/g, ' ').trim()
+
+/**
+ * Tidslinjen planen viser (`Tidslinje`), lest inn i tabellform: én rad per
+ * punkt med tiden og én celle per legemiddel (`data-kolonne`), med
+ * legemidlets navn som kolonneoverskrift. Navnet og et formskifte («Over til
+ * dråper») er merkelapper ved cellen og er ikke med i den; en dose og en
+ * injeksjon står på én linje, og en vurdering er «Vurdering» og hele teksten.
+ * Et legemiddel uten celle i en doserad har ingen dose («–»). Sluttmålet er en
+ * doserad.
+ */
+export function tidslinjetabell(liste: Element): HTMLTableElement {
+  const navn = new Map<number, string>()
+  for (const el of liste.querySelectorAll('[data-kolonne]')) {
+    const k = Number(el.getAttribute('data-kolonne'))
+    const n = el.querySelector(':scope > .tidslinje__navn, :scope > .kun-skjermleser')
+    if (n && !navn.has(k)) navn.set(k, enLinje(n))
+  }
+  const antall = Math.max(-1, ...navn.keys()) + 1
+  const lag = <K extends keyof HTMLElementTagNameMap>(tag: K, tekst?: string) => Object.assign(document.createElement(tag), tekst === undefined ? {} : { textContent: tekst })
+  const tabell = lag('table')
+  const hode = tabell.appendChild(lag('thead')).appendChild(lag('tr'))
+  hode.appendChild(lag('th', 'Når'))
+  for (let k = 0; k < antall; k++) hode.appendChild(lag('th', navn.get(k) ?? ''))
+  const kropp = tabell.appendChild(lag('tbody'))
+  for (const li of liste.children) {
+    const type = li.getAttribute('data-type') === 'slutt' ? 'periode' : li.getAttribute('data-type')!
+    const tr = kropp.appendChild(lag('tr'))
+    tr.setAttribute('data-type', type)
+    tr.appendChild(lag('th')).append(...[...li.querySelector('.tidslinje__nar')!.children].map((x) => x.cloneNode(true)))
+    for (let k = 0; k < antall; k++) {
+      const td = tr.appendChild(lag('td'))
+      const celle = li.querySelector(`.tidslinje__innhold [data-kolonne="${k}"]`)
+      if (!celle) {
+        if (type === 'periode') td.textContent = '–'
+        continue
+      }
+      if (type === 'vurdering') {
+        const etikett = celle.querySelector('strong')?.textContent ?? ''
+        td.textContent = `Vurdering ${(celle.textContent ?? '').slice(etikett.length).trim()}`
+        continue
+      }
+      const kopi = celle.cloneNode(true) as Element
+      kopi.querySelectorAll(':scope > .tidslinje__navn, :scope > .kun-skjermleser, :scope > .tidslinje__skifte').forEach((x) => x.remove())
+      kopi.querySelectorAll('.tidslinje__dose').forEach((x) => (x.textContent = enLinje(x)))
+      td.append(kopi)
+    }
+  }
+  return tabell
+}
+
+/** Tidslinjen i tabellform som tekst, i formen `tidslinjeavvik` (QA) sammenligner med kopien: overskriftene og cellene i hver rad. */
+export function tidslinjetekst(liste: Element) {
+  const tabell = tidslinjetabell(liste)
+  return {
+    koloner: [...tabell.querySelectorAll('thead th')].map((c) => c.textContent!),
+    rader: [...tabell.querySelectorAll('tbody tr')].map((tr) => [...tr.querySelectorAll('th, td')].map((c) => c.textContent!)),
+  }
+}
+
 /** Venter på planen med tittelen `tittel`. */
 export const planen = (tittel: string | RegExp) => screen.findByRole('region', { name: tittel }, { timeout: 3000 })
 

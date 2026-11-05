@@ -10,7 +10,7 @@ import { lesKartdata } from '../verktoy/kartdata'
 import { ETTER_RETTELSENE } from '../verktoy/kontrollsett'
 import { VERKTOY, virkestoffvalg } from '../verktoy/register'
 import { AKSEPTSTOFFER, beregnAksept, besvart, FEST_AKSEPTTEST, formerFor, reduksjoner, vanligDose, type Festuttrekk } from '../verktoy/regler/aksepttest'
-import { erKliniskGodkjent, fingeravtrykk, kanonisk } from '../verktoy/regler/godkjenning'
+import { erErstattet, erKliniskGodkjent, fingeravtrykk, kanonisk } from '../verktoy/regler/godkjenning'
 import { PILOTKASUS } from '../verktoy/regler/pilotmatrise'
 import {
   DEKNINGSUTFALL,
@@ -69,7 +69,7 @@ describe('Kombinasjonene', () => {
     expect(beregning.sort()).toEqual(
       [
         'trappe-ned-antidepressiv: vortioksetin/standard',
-        // Escitalopram versjon 13 fra K1, godkjent 04.11.2026.
+        // Escitalopram versjon 14 med tabletter og dråper fra B2, godkjent 05.11.2026; den erstatter versjon 13 fra K1.
         'trappe-ned-antidepressiv: escitalopram/standard',
         'bytte-antidepressiv: sertralin/standard → mirtazapin/standard',
         // De to byttene til sertralin fra K2, godkjent 05.11.2026 (`K2VEDTAK`).
@@ -86,7 +86,8 @@ describe('Kombinasjonene', () => {
       ].sort(),
     )
     expect(new Set([...ALLE.values()].flatMap((ks) => ks.filter((k) => k.utfall === 'beregning').flatMap((k) => k.regler)))).toEqual(
-      new Set(REGELSETT.regler.filter((r) => erKliniskGodkjent(r) && r.beregnbarhet !== 'bare_tekstlig')),
+      // En godkjent regel som er erstattet (escitalopram versjon 13), gir ingen beregning.
+      new Set(REGELSETT.regler.filter((r) => erKliniskGodkjent(r) && r.beregnbarhet !== 'bare_tekstlig' && !erErstattet(r, REGELSETT.regler))),
     )
   })
 

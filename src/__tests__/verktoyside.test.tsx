@@ -121,7 +121,7 @@ describe('oversikten', () => {
     // Kortene sier hva som faktisk kan brukes, ikke hvor mange regler som venter.
     // Vortioksetin og sertralin → mirtazapin er godkjent, men gir aldri en komplett plan, så de loves ikke (leveranseplanen §3).
     expect(kortlinjer()).toEqual([
-      // Escitalopram (K1, godkjent 04.11.2026) gir en komplett plan til seponering med dråper.
+      // Escitalopram (versjon 14, godkjent 05.11.2026) gir en komplett plan til seponering med tabletter og dråper.
       ['Kan beregnes: Escitalopram', 'Fagtekst: Agomelatin, Bupropion'],
       // Bytte antidepressiv: de to byttene til sertralin fra K2 som kontrolløren godkjente 05.11.2026.
       ['Kan beregnes: Citalopram → sertralin, Escitalopram → sertralin'],
@@ -1257,59 +1257,7 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
     expect(screen.queryByRole('heading', { name: /^Steg 2/ })).toBeNull()
   })
 
-  it('escitalopram dråper 10 mg (K1, godkjent 04.11.2026): komplett plan til seponering med forskriverens valg, kopieres, og stopper uten doser utenfor omfanget', async () => {
-    const user = userEvent.setup()
-    const tittel = REGELSETT.regler.find((r) => r.id === 'seponering-escitalopram')!.tittel
-    const beregn = async (dose: string, ja: RegExp[] = [], form = '748') => {
-      vis({ verktoy: 'trappe-ned-antidepressiv', legemidler: fra(AKSEPT), klokke: klokke(AKSEPT) })
-      await user.type(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' }), 'Escitalopram')
-      await user.type(await screen.findByRole('textbox', { name: /Aktuell døgndose av escitalopram/ }), dose)
-      await velgForm(user, 'Legemiddelform av escitalopram', form)
-      await besvar(user, ja)
-    }
-    await beregn('10')
-    // Ved hvert trinn som ikke kan gis i hele dråper, tilbyr siden nøyaktig én dose; ingen doser vises før planen er komplett.
-    const valgt: string[] = []
-    for (;;) {
-      const neste = await waitFor(() => screen.queryByRole('region', { name: tittel }) ?? screen.getByRole('group', { name: /^Trinn \d+ av Escitalopram$/ }))
-      if (neste.tagName === 'SECTION') break
-      expect(tidslinje()).toBeNull()
-      const [knapp, ...andre] = within(neste).getAllByRole('button')
-      expect(andre).toEqual([])
-      valgt.push(knapp!.textContent!)
-      await user.click(knapp!)
-    }
-    expect(valgt).toEqual(['8 mg (−20 %)', '5 mg (−16,67 %)', '4 mg (−20 %)', '2 mg (−33,33 %)', '1 mg (−50 %)'])
-    const plan = screen.getByRole('region', { name: tittel })
-    expect(within(plan).getByText(/^Komplett plan til sluttmålet: Escitalopram seponert fra dag 197\./)).toBeTruthy()
-    const rader = punkter(within(plan).getByRole('list', { name: 'Planen dag for dag' }))
-    expect(rader).toContainEqual(['Fra dag 197', 'Seponert'])
-    expect(rader.at(-1)![0]).toBe('Dag 224')
-    // Dråpene står med dråpesymbolet.
-    expect(plan.querySelector('.tidslinje [data-ikon="dropper"]')).toBeTruthy()
-    const tekst = await kopier(user)
-    expect(tekst).toContain('Komplett plan til sluttmålet: Escitalopram seponert fra dag 197.')
-    expect(tekst).toMatch(/: 3 mg = 3 dråper à 1 mg\n[^]*: 2 mg = 2 dråper à 1 mg [^]*: 1 mg = 1 dråpe à 1 mg /)
-    expect(tekst).toContain('Fra dag 197: Escitalopram peroralt: Seponert')
-    for (const d of [7, 14, 28]) expect(tekst).toContain(`Dag ${196 + d}: Vurdering (Escitalopram): Vurder seponeringssymptomer og tegn på tilbakefall ${d} dager etter siste dose.`)
-    expect(tekst).toMatch(/\n- Cipralex dråper, oppl 20 mg\/ml(, varenr\. \d{6})? \(Hele dråper\)\n/)
-    expect(tekst).toMatch(/Regel seponering-escitalopram, versjon 13, fingeravtrykk e8a3c17edda1/)
-    cleanup()
-
-    // Utenfor omfanget: ingen plan og ingen doser, bare grunnen, i klartekst; motorens egen tekst står bak «Vis detaljer».
-    for (const [dose, ja, form, grunn] of [
-      ['10', [/65 år/], '748', /^4Steg 4: PlanenIngen plan med disse svareneVerktøyet har ingen godkjent plan ved eldre over 65 år\. Verktøyet lager ingen plan/],
-      ['20', [/mange måneder/], '748', /^4Steg 4: PlanenIngen plan med disse svareneMed dette svaret kan verktøyet ikke lage en komplett plan helt til sluttmålet\./],
-      // Med tabletter: ingen plan, men siden sier hvilken form som kan gi en, før noe beregnes.
-      ['20', [], '53', /^4Steg 4: PlanenEtt spørsmål igjenMed tablett kan verktøyet ikke lage en komplett plan, men med dråper, oppløsning kan det\. Velg dråper, oppløsning\./],
-    ] as const) {
-      await beregn(dose, [...ja], form)
-      await stoppet(grunn)
-      expect(screen.queryByText(/ mg = \d+ dråper? à 1 mg/)).toBeNull()
-      cleanup()
-    }
-    // Fire beregninger gjennom hele siden.
-  }, 60_000)
+  // Escitalopram (versjon 14 med tabletter og dråper, og versjon 13 før godkjenningen): src/__tests__/verktoyb2side.test.tsx.
 
   describe('forenklingen (VDR-3)', () => {
     // En godkjent regel som gir en komplett plan; klinikere får aldri en delplan (Peders beslutning 03.11.2026).

@@ -26,7 +26,8 @@ import { gjeldendeBekreftelser, type Regel } from '../verktoy/regler/modell'
 import { verktoystatus } from '../verktoy/snarvalg'
 import type { Verktoysperre } from '../verktoy/sperrer'
 import { FEST_TILLEGG } from '../verktoy/tilleggsgrunnlag'
-import { REGELSETT, type Verktoyvalg } from '../verktoy/tilgjengelighet'
+import { FOR_B2 } from '../verktoy/kontrollsett'
+import { REGELSETT, samlet, type Verktoyvalg } from '../verktoy/tilgjengelighet'
 
 const les = (fil: string) => readFileSync(new URL(`../../${fil}`, import.meta.url), 'utf8')
 const uttrekk = (fil: string) => JSON.parse(les(fil)) as Festuttrekk
@@ -37,7 +38,10 @@ const klokke = (u: Festuttrekk) => new Date(u.utvalg.kontrollert_kl!)
 
 const GODKJENTE = REGELSETT.regler.filter((r) => godkjenningsfeil(r).length === 0)
 const regel = (id: string) => REGELSETT.regler.find((r) => r.id === id)!
-const ESC = regel('seponering-escitalopram')
+// Escitalopram slik appen har den: versjon 14 med tabletter og dråper (B2, godkjent 05.11.2026), som erstatter versjon 13.
+const ESC = regel('seponering-escitalopram-tabletter-og-draper')
+/** Escitalopram versjon 13 (K1), som spør «over 65 år»; godkjent, men erstattet i appen av versjon 14. */
+const ESC13 = regel('seponering-escitalopram')
 const VORT = regel('seponering-vortioksetin')
 const VALPROAT = regel('tillegg-valproat-lamotrigin')
 const LITIUM = regel('tillegg-litium-lamotrigin')
@@ -300,22 +304,25 @@ describe('felles spørsmål og grenseverdier (S6)', () => {
     }
   })
 
-  it('skiller «over 65 år» (escitalopram) fra «65 år eller eldre» (vortioksetin) ved 64/65/66', () => {
-    const e = (ar: number) => vurderFlyt(ESC, alderssvar(ar), katalog(ESC)).felt.svar.eldre
+  it('skiller «over 65 år» (escitalopram versjon 13) fra «65 år eller eldre» (vortioksetin og escitalopram versjon 14) ved 64/65/66', () => {
+    const e = (ar: number) => vurderFlyt(ESC13, alderssvar(ar), katalog(ESC13)).felt.svar.eldre
     const v = (ar: number) => vurderFlyt(VORT, alderssvar(ar), katalog(VORT)).felt.svar.eldre
+    const e14 = (ar: number) => vurderFlyt(ESC, alderssvar(ar), katalog(ESC)).felt.svar.eldre
     expect([e(17), e(64), e(65), e(66)]).toEqual([false, false, false, true])
     expect([v(17), v(64), v(65), v(66)]).toEqual([false, false, true, true])
-    // Oppfølgingsspørsmålet vises bare ved 65 eller eldre, og bare for escitalopram.
-    expect(vurderFlyt(ESC, alderssvar(64), katalog(ESC)).sporsmal.map((s) => s.id)).not.toContain('eldre_enn_65')
-    expect(vurderFlyt(ESC, { alder: '65_eller_eldre' }, katalog(ESC)).sporsmal.map((s) => s.id)).toContain('eldre_enn_65')
+    expect([e14(17), e14(64), e14(65), e14(66)]).toEqual([false, false, true, true])
+    // Oppfølgingsspørsmålet vises bare ved 65 eller eldre, og bare for escitalopram versjon 13.
+    expect(vurderFlyt(ESC, alderssvar(65), katalog(ESC)).sporsmal.map((s) => s.id)).not.toContain('eldre_enn_65')
+    expect(vurderFlyt(ESC13, alderssvar(64), katalog(ESC13)).sporsmal.map((s) => s.id)).not.toContain('eldre_enn_65')
+    expect(vurderFlyt(ESC13, { alder: '65_eller_eldre' }, katalog(ESC13)).sporsmal.map((s) => s.id)).toContain('eldre_enn_65')
     expect(vurderFlyt(VORT, { alder: '65_eller_eldre' }, katalog(VORT)).sporsmal.map((s) => s.id)).not.toContain('eldre_enn_65')
     // Ved 65 eller eldre er «over 65» ukjent til oppfølgingen er besvart.
-    expect('eldre' in vurderFlyt(ESC, { alder: '65_eller_eldre' }, katalog(ESC)).felt.svar).toBe(false)
+    expect('eldre' in vurderFlyt(ESC13, { alder: '65_eller_eldre' }, katalog(ESC13)).felt.svar).toBe(false)
     // Et svar for et skjult oppfølgingsspørsmål teller ikke.
-    expect(vurderFlyt(ESC, { alder: '18_64', eldre_enn_65: 'ja' }, katalog(ESC)).felt.svar.eldre).toBe(false)
-    // «65 år eller eldre» avleder ikke «over 65 år»: regelens eget spørsmål stilles uendret, uten tilleggstekst (kjent avvik for v13, rettes i v14).
-    const oppfolging = vurderFlyt(ESC, { alder: '65_eller_eldre' }, katalog(ESC)).sporsmal.find((s) => s.id === 'eldre_enn_65')!
-    expect(oppfolging.tekst).toBe(ESC.sporsmal!.find((s) => s.id === 'eldre')!.tekst)
+    expect(vurderFlyt(ESC13, { alder: '18_64', eldre_enn_65: 'ja' }, katalog(ESC13)).felt.svar.eldre).toBe(false)
+    // «65 år eller eldre» avleder ikke «over 65 år»: regelens eget spørsmål stilles uendret, uten tilleggstekst (kjent avvik for v13, rettet i v14, som har erstattet v13 i appen).
+    const oppfolging = vurderFlyt(ESC13, { alder: '65_eller_eldre' }, katalog(ESC13)).sporsmal.find((s) => s.id === 'eldre_enn_65')!
+    expect(oppfolging.tekst).toBe(ESC13.sporsmal!.find((s) => s.id === 'eldre')!.tekst)
     expect(oppfolging.hjelp).toBeUndefined()
   })
 
@@ -358,7 +365,7 @@ describe('felles spørsmål og grenseverdier (S6)', () => {
     }
   })
 
-  it('gir samme utfall i motoren ved 64/65/66 år som regelens eget spørsmål (escitalopram 20 mg dråper)', () => {
+  it('gir samme utfall i motoren ved 64/65/66 år som regelens eget spørsmål (escitalopram 20 mg dråper, versjon 14: 65 år stopper)', () => {
     const valg: Verktoyvalg = { fra: { nokkel: 'escitalopram', formulering: 'standard' } }
     const utfall = (ar: number) => {
       const g = katalog(ESC)
@@ -373,7 +380,7 @@ describe('felles spørsmål og grenseverdier (S6)', () => {
         flytgrunnlag: g,
       }).tilstand.kontroll.utfall
     }
-    expect([utfall(64), utfall(65), utfall(66)]).toEqual(['kan_lages_hvis', 'kan_lages_hvis', 'kan_ikke'])
+    expect([utfall(64), utfall(65), utfall(66)]).toEqual(['kan_lages_hvis', 'kan_ikke', 'kan_ikke'])
   })
 })
 
@@ -475,17 +482,33 @@ describe('forbehold, avledede forutsetninger og «Ingen av disse» (B1, B2, B5)'
 describe('forhåndskontrollen (§5, S9)', () => {
   const esc: Verktoyvalg = { fra: { nokkel: 'escitalopram', formulering: 'standard' } }
   const skjema = (x: Partial<Planskjema>): Planskjema => ({ ...TOMT_SKJEMA, ...x })
-  const fk = (startdose: string, x: Partial<Planskjema> = {}, b: Partial<Beslutninger> = {}) =>
-    forhandskontroll({ verktoy: NED, valg: esc, sperrer: [], skjema: skjema({ startdose, ...x }), utvalg: AKSEPT.utvalg, naa: klokke(AKSEPT), beslutninger: { ...BESLUTNINGER, ...b } })
+  const fk = (startdose: string, x: Partial<Planskjema> = {}, b: Partial<Beslutninger> = {}, regelsett = REGELSETT) =>
+    forhandskontroll({ verktoy: NED, valg: esc, sperrer: [], skjema: skjema({ startdose, ...x }), utvalg: AKSEPT.utvalg, naa: klokke(AKSEPT), beslutninger: { ...BESLUTNINGER, ...b }, regelsett })
+  /** Regelsettene før versjon 14 (B2) ble godkjent: escitalopram versjon 13, som bare gir en komplett plan med dråper. */
+  const FOR_V14 = samlet(FOR_B2)
 
   it('sier straks etter dosen, før pasientspørsmål, at escitalopram 15 mg ikke har en godkjent plan, med dosene som er godkjent', () => {
     const k = fk('15')
     expect(k.utfall).toBe('kan_ikke')
-    expect(k.grunner[0]!.tekst).toMatch(/^Den godkjente planen gjelder bare startdosene 10 og 20 mg \(tablett: 20 mg; dråper, oppløsning: 10 og 20 mg\)\./)
+    // Versjon 14 gjelder 10 og 20 mg i begge formene.
+    expect(k.grunner[0]!.tekst).toMatch(/^Den godkjente planen gjelder bare startdosene 10 og 20 mg\. /)
+    // Med ulike doser per form sier den hvilke: versjon 13 gjaldt bare 20 mg som tablett.
+    expect(fk('15', {}, {}, FOR_V14).grunner[0]!.tekst).toMatch(/^Den godkjente planen gjelder bare startdosene 10 og 20 mg \(tablett: 20 mg; dråper, oppløsning: 10 og 20 mg\)\./)
   })
 
-  it('sier at escitalopram 10 mg kan lages med dråper, ikke med tablett (K0-01), og velger dråper selv bare med B4', () => {
+  it('sier at escitalopram 10 mg kan lages med tablett og med dråper i appen (versjon 14, K0-01)', () => {
     const tablett = fk('10', { formvalg: { fra: { legemiddelform: '53' } } })
+    expect(tablett.utfall).toBe('kan_lages_hvis')
+    expect(tablett.former).toEqual({ fra: ['53', '748'] })
+    expect(tablett.grunner.map((g) => g.kode)).not.toContain('formvalg_trengs')
+    expect(tablett.regler.map((r) => r.id)).toEqual([ESC.id])
+    // Begge formene kan gi en komplett plan, så B4 velger ingen form selv.
+    expect(fk('10', {}, { B4: true }).formvalg).toBeUndefined()
+  })
+
+  it('sa med versjon 13 at escitalopram 10 mg kan lages med dråper, ikke med tablett, og velger dråper selv bare med B4', () => {
+    const fk13 = (startdose: string, x: Partial<Planskjema> = {}, b: Partial<Beslutninger> = {}) => fk(startdose, x, b, FOR_V14)
+    const tablett = fk13('10', { formvalg: { fra: { legemiddelform: '53' } } })
     expect(tablett.utfall).toBe('kan_lages_hvis')
     expect(tablett.former).toEqual({ fra: ['748'] })
     expect(tablett.grunner).toEqual([
@@ -497,12 +520,12 @@ describe('forhåndskontrollen (§5, S9)', () => {
       }),
     ])
     expect(tablett.formvalg).toBeUndefined()
-    const auto = fk('10', {}, { B4: true })
+    const auto = fk13('10', {}, { B4: true })
     expect(auto.formvalg).toEqual({ fra: { legemiddelform: '748' } })
     expect(auto.grunner.map((g) => g.kode)).toEqual(['form_valgt'])
     // Uten B4 må formen velges; en form klinikeren har valgt, byttes aldri ut i stillhet.
-    expect(fk('10', {}, { B4: false }).grunner.map((g) => g.kode)).toEqual(['formvalg_trengs'])
-    expect(fk('10', { formvalg: { fra: { legemiddelform: '53' } } }, { B4: true }).formvalg).toBeUndefined()
+    expect(fk13('10', {}, { B4: false }).grunner.map((g) => g.kode)).toEqual(['formvalg_trengs'])
+    expect(fk13('10', { formvalg: { fra: { legemiddelform: '53' } } }, { B4: true }).formvalg).toBeUndefined()
   })
 
   it('sier aldri «kan ikke» når taket stoppet prøveberegningen før en mulig plan ble funnet (ChatGPT 04.11)', () => {
@@ -669,7 +692,7 @@ describe('hele flyten til planen (S1, S9)', () => {
   })
 
   it('finner reglene som kan gi en komplett plan', () => {
-    expect(reglerMedPlan({ verktoy: NED, valg: { fra: { nokkel: 'escitalopram', formulering: 'standard' } } }).map((r) => r.id)).toEqual(['seponering-escitalopram'])
+    expect(reglerMedPlan({ verktoy: NED, valg: { fra: { nokkel: 'escitalopram', formulering: 'standard' } } }).map((r) => r.id)).toEqual([ESC.id])
     expect(reglerMedPlan({ verktoy: NED, valg: { fra: { nokkel: 'vortioksetin', formulering: 'standard' } } })).toEqual([])
     expect(medFlytsvar(medFlytsvar(TOMT_SKJEMA, 'a', 'ja'), 'a', undefined).flytsvar).toEqual({})
     expect(medFlytfelt(TOMT_SKJEMA, { svar: { x: true }, pasientforhold: {}, bekreftet: ['y'] })).toMatchObject({ svar: { x: true }, bekreftet: ['y'] })
@@ -808,7 +831,7 @@ describe('flyten og forhåndskontrollen er enige om svar som stopper', () => {
     'antipsykotikabytte-risperidon-aripiprazol': ap('risperidon', 'aripiprazol', 'standard', '3'),
     'tillegg-valproat-lamotrigin': tillegg('valproat', '1000'),
     'tillegg-litium-lamotrigin': tillegg('litium', '84'),
-    'seponering-escitalopram': { verktoy: NED, valg: { fra: { nokkel: 'escitalopram', formulering: 'standard' } }, fest: AKSEPT, skjema: { startdose: '20' } },
+    [ESC.id]: { verktoy: NED, valg: { fra: { nokkel: 'escitalopram', formulering: 'standard' } }, fest: AKSEPT, skjema: { startdose: '20' } },
     ...Object.fromEntries(
       ['escitalopram', 'citalopram'].map((stoff) => [
         `bytte-${stoff}-sertralin`,

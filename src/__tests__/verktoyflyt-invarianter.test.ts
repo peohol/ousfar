@@ -30,6 +30,7 @@ import { norskDato } from '../verktoy/motor/byggesteiner'
 import { kildelinje, planTekst, planvisning, regellinje, type Planrad, type Planvisning } from '../verktoy/planvisning'
 import { festkoblinger, KARTLEGGING, VALGTEKSTER, VERKTOY, virkestoffvalg, type Verktoy } from '../verktoy/register'
 import { BRUKERFORLOP, kjerne, kjorForlop, komplett, lesUttrekkene, tidslinjeavvik, type Planinndata, type Tidslinje } from './qa/brukerforlop'
+import { tidslinjetabell } from './hjelp/verktoyflyt'
 import { avrund } from '../verktoy/regler/beregning'
 import { erKliniskGodkjent, fingeravtrykk, harBeregning } from '../verktoy/regler/godkjenning'
 import type { Regel } from '../verktoy/regler/modell'
@@ -327,6 +328,8 @@ describe('S2: ingen godkjent regel får nytt fingeravtrykk', () => {
     'depot-aripiprazol-maintena': [3, '04d1debe48f02ea03a31aab3d7cd5cdeb15c56d4b43797bda353f3d857297f20'],
     'depot-paliperidon-xeplion': [3, '21a335eec8c3816ee21627ceec3197e52957ccdf99cdbfaa00a3ca3cb5987bdf'],
     'seponering-escitalopram': [13, 'e8a3c17edda10da43b1df4171a733a23133da50ebcda31cd71a771022a8a78d7'],
+    // Godkjent 05.11.2026 (B2, #330); erstatter versjon 13 i appen, som beholder sin godkjenning.
+    'seponering-escitalopram-tabletter-og-draper': [14, '01b2fb560a8defe0114f9552d619bc6bf15e27b07fa6352d6331d9beb500721f'],
     'seponering-vortioksetin': [12, 'b28dec93f5ede06c6565e1ce5d6aa62606c69250f1a9088dae0c57d3121101f3'],
     'seponering-bupropion': [5, 'e7536668ac7f2d4dfd9959f24cfdfc4874182a4fc295355f0d10a05f438b5f5f'],
     'seponering-agomelatin': [1, '6d42863f3573fb2e0d6dbffd27ff78a7f1c2b539c8dce2cfcd36ad417b61a2d1'],
@@ -488,55 +491,6 @@ function lesbar(el: Element): string {
     .join('\n')
 }
 const enLinje = (el: Element) => (el.textContent ?? '').replace(/\s+/g, ' ').trim()
-
-/**
- * Tidslinjen planen viser (`Tidslinje`), lest inn i tabellform: én rad per
- * punkt med tiden og én celle per legemiddel (`data-kolonne`), med
- * legemidlets navn som kolonneoverskrift. Navnet og et formskifte («Over til
- * dråper») er merkelapper ved cellen og er ikke med i den; en dose og en
- * injeksjon står på én linje, og en vurdering er «Vurdering» og hele teksten.
- * Et legemiddel uten celle i en doserad har ingen dose («–»). Sluttmålet er en
- * doserad.
- */
-function tabellen(liste: Element): HTMLTableElement {
-  const navn = new Map<number, string>()
-  for (const el of liste.querySelectorAll('[data-kolonne]')) {
-    const k = Number(el.getAttribute('data-kolonne'))
-    const n = el.querySelector(':scope > .tidslinje__navn, :scope > .kun-skjermleser')
-    if (n && !navn.has(k)) navn.set(k, enLinje(n))
-  }
-  const antall = Math.max(-1, ...navn.keys()) + 1
-  const lag = <K extends keyof HTMLElementTagNameMap>(tag: K, tekst?: string) => Object.assign(document.createElement(tag), tekst === undefined ? {} : { textContent: tekst })
-  const tabell = lag('table')
-  const hode = tabell.appendChild(lag('thead')).appendChild(lag('tr'))
-  hode.appendChild(lag('th', 'Når'))
-  for (let k = 0; k < antall; k++) hode.appendChild(lag('th', navn.get(k) ?? ''))
-  const kropp = tabell.appendChild(lag('tbody'))
-  for (const li of liste.children) {
-    const type = li.getAttribute('data-type') === 'slutt' ? 'periode' : li.getAttribute('data-type')!
-    const tr = kropp.appendChild(lag('tr'))
-    tr.setAttribute('data-type', type)
-    tr.appendChild(lag('th')).append(...[...li.querySelector('.tidslinje__nar')!.children].map((x) => x.cloneNode(true)))
-    for (let k = 0; k < antall; k++) {
-      const td = tr.appendChild(lag('td'))
-      const celle = li.querySelector(`.tidslinje__innhold [data-kolonne="${k}"]`)
-      if (!celle) {
-        if (type === 'periode') td.textContent = '–'
-        continue
-      }
-      if (type === 'vurdering') {
-        const etikett = celle.querySelector('strong')?.textContent ?? ''
-        td.textContent = `Vurdering ${(celle.textContent ?? '').slice(etikett.length).trim()}`
-        continue
-      }
-      const kopi = celle.cloneNode(true) as Element
-      kopi.querySelectorAll(':scope > .tidslinje__navn, :scope > .kun-skjermleser, :scope > .tidslinje__skifte').forEach((x) => x.remove())
-      kopi.querySelectorAll('.tidslinje__dose').forEach((x) => (x.textContent = enLinje(x)))
-      td.append(kopi)
-    }
-  }
-  return tabell
-}
 
 /** Raden sin tid: dagene, og datoene i parentes når planen har en startdato (slik kopien skriver dem). */
 function naar(th: Element): string {
@@ -773,7 +727,7 @@ describe('S8: kopien inneholder hele planen', () => {
     if (r.status !== 'doseplan') throw new Error('ingen plan')
     const v = endret ?? planvisning(r, x.regel)!
     const { container } = render(createElement(Doseplanvisning, { plan: v, overskrift: x.verktoy.navn }))
-    return { r, v, tabell: tabellen(container.querySelector('ol.tidslinje')!), kopi: planTekst(v, x.verktoy.navn) }
+    return { r, v, tabell: tidslinjetabell(container.querySelector('ol.tidslinje')!), kopi: planTekst(v, x.verktoy.navn) }
   }
 
   it.each(PLANER.map((x) => [x.kasus.id, x] as const))('%s: tabellen har det motoren beregnet, og kopien har tabellen celle for celle', async (_, x) => {
@@ -930,6 +884,7 @@ function katalogGjelder(r: Regel): boolean {
 const VENTER_PA_KATALOGKONTROLL: readonly string[] = [
   'kryssnedtrapping-sertralin-mirtazapin v10',
   'seponering-escitalopram v13',
+  'seponering-escitalopram-tabletter-og-draper v14',
   'seponering-vortioksetin v12',
   'bytte-escitalopram-sertralin v2',
   'bytte-citalopram-sertralin v2',

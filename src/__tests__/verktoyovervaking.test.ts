@@ -64,6 +64,8 @@ describe('hva de godkjente reglene bygger på', () => {
       'seponering-bupropion v5',
       // Godkjent av kontrolløren 04.11.2026 i K1 (`regler/k1.ts`).
       'seponering-escitalopram v13',
+      // Godkjent av kontrolløren 05.11.2026 i B2 (`regler/k1.ts`); erstatter versjon 13 i appen.
+      'seponering-escitalopram-tabletter-og-draper v14',
       'seponering-vortioksetin v12',
       'tillegg-litium-lamotrigin v2',
       'tillegg-valproat-lamotrigin v2',

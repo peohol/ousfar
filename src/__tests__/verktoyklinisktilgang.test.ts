@@ -17,7 +17,7 @@ import { byggesteiner, type Preparatgrunnlag } from '../verktoy/motor/byggestein
 import { kliniskDelplan, kliniskDoseplan, type Doseplaninndata, type Doseplanresultat } from '../verktoy/motor/plan'
 import { festkoblinger, KARTLEGGING, VERKTOY, virkestoffvalg } from '../verktoy/register'
 import { besvart, FEST_AKSEPTTEST, FEST_PILOT, omgivelseFor, type Festuttrekk } from '../verktoy/regler/aksepttest'
-import { type Disposisjon, disponer, disposisjonsfeil, erKliniskGodkjent, fingeravtrykk, harBeregning, kontrollutfall, vurderingsfeil } from '../verktoy/regler/godkjenning'
+import { type Disposisjon, disponer, disposisjonsfeil, erErstattet, erKliniskGodkjent, fingeravtrykk, harBeregning, kontrollutfall, vurderingsfeil } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett } from '../verktoy/regler/kontroll'
 import type { Forlop, Regel, Regelsett } from '../verktoy/regler/modell'
 import { NEDTRAPPINGSDISPOSISJON, NEDTRAPPINGSSETT_FOR_K1, SAMMENLIGNINGSSETT } from '../verktoy/regler/nedtrapping'
@@ -54,12 +54,14 @@ const GODKJENTE: Record<string, { sett: string; versjon: number; fingeravtrykk: 
 
 /**
  * Regler kontrolløren har godkjent etter leveransen, i appens regelsett: escitalopram versjon 13 fra K1
- * (04.11.2026, `regler/k1.ts`), testet i `verktoyk1.test.ts`, tre antipsykotikabytter fra K3
+ * (04.11.2026, `regler/k1.ts`), testet i `verktoyk1.test.ts`, og versjon 14 med tabletter og dråper fra B2
+ * (05.11.2026), som erstatter den og er testet i `verktoyb2.test.ts`, tre antipsykotikabytter fra K3
  * (04.11.2026, `ANTIPSYKOTIKAVEDTAK`), testet i `verktoyantipsykotika.test.ts`, og to bytter til sertralin fra K2
  * (05.11.2026, `K2VEDTAK`), testet i `verktoyantidepressivbytter.test.ts`. Verktøyene kan gi en beregning etter dem.
  */
 const GODKJENT_ETTER_LEVERANSEN = [
   'seponering-escitalopram',
+  'seponering-escitalopram-tabletter-og-draper',
   'depot-risperidon-xeplion',
   'antipsykotikabytte-olanzapin-aripiprazol',
   'antipsykotikabytte-risperidon-aripiprazol',
@@ -205,8 +207,8 @@ describe('Klinisk tilgjengelige regler i den første avgrensede leveransen (P4.8
         }
       }
     }
-    // Hver av de åtte kan nås fra et verktøy.
-    expect([...sett].sort()).toEqual([...godkjente].sort())
+    // Hver av dem kan nås fra et verktøy, unntatt en regel en godkjent regel erstatter (escitalopram versjon 13, erstattet av versjon 14).
+    expect([...sett].sort()).toEqual([...godkjente].filter((id) => !erErstattet({ id }, REGELSETT.regler)).sort())
   })
 
   describe('Vurderingen «kontrollert, ikke godkjent» gjelder bare nøyaktig de vurderte regelversjonene', () => {
@@ -299,8 +301,13 @@ describe('Klinisk tilgjengelige regler i den første avgrensede leveransen (P4.8
           }
         }
       }
-      // Prøven er ikke tom: hver av de 24 vises i et verktøy, unntatt de langsomme variantene av vortioksetin og escitalopram, der verktøyet viser den godkjente hovedregelen.
-      expect([...iVerktoyene].sort()).toEqual(IKKE_GODKJENTE.map(({ r }) => r.id).filter((id) => !['seponering-vortioksetin-langsom', 'seponering-escitalopram-langsom'].includes(id)).sort())
+      // Prøven er ikke tom: hver av de 24 vises i et verktøy, unntatt de langsomme variantene av vortioksetin og escitalopram, der verktøyet viser den godkjente hovedregelen,
+      // og regler en godkjent regel erstatter (escitalopram, erstattet av versjon 14 fra B2), som verktøyet aldri viser.
+      expect([...iVerktoyene].sort()).toEqual(
+        IKKE_GODKJENTE.map(({ r }) => r.id)
+          .filter((id) => !['seponering-vortioksetin-langsom', 'seponering-escitalopram-langsom'].includes(id) && !erErstattet({ id }, REGELSETT.regler))
+          .sort(),
+      )
     })
 
     it('godtar ikke en vurdering som ikke lenger stemmer med regelen, eller som mangler fingeravtrykk', () => {

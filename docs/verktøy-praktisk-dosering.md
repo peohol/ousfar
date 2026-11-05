@@ -10,7 +10,7 @@ Alle feltene er valgfrie. En regel uten dem har samme fingeravtrykk og gir samme
 | --- | --- |
 | `Forlop.formoverganger` | Dokumenterte overganger mellom to FEST-legemiddelformer i samme forløp, for eksempel tablett (53) → dråper (748). Forløpet starter i formen pasienten bruker og går videre langs kjeden, aldri tilbake. `samtidig` tillater at én dose i overgangen settes sammen av begge formene. `grunnlag` må dokumentere at formene kan byttes mg for mg. |
 | `Dosevalg.praktisk` | Praktisk dosering: `draper` er preferansegrensen for dråper per administrasjon (B6), med `grunnlag`. Det er en preferanse, ikke en grense. Alle dråpene i dosen telles sammen, over alle styrkene, og dosen regnes som én administrasjon, fordi regelen ikke bestemmer noen fordeling over døgnet. En regel med `fordeling` kan derfor ikke bruke feltet ennå: da ville motoren påstått en fordeling som ikke er dokumentert. |
-| `Klinisktilfelle.legemiddelformer`, `formstyrker` | Klinisk omfang for et tilfelle med formovergang: formene i rekkefølge (planen må starte i den første) og styrkene som er kontrollert per form. |
+| `Klinisktilfelle.legemiddelformer`, `formstyrker` | Klinisk omfang for et tilfelle med formovergang: formene i rekkefølge (planen må starte i den første) og styrkene som er kontrollert per form. Mangler en av styrkene i FEST, stopper planen, også når et tilfelle med bare den siste formen har alle sine. |
 | Nedtrappingsfase `automatisk_trinnvalg` | B3, se §4. |
 
 `formovergangsfeil` stopper en regel der overgangene forgrener seg, går i sløyfe, ikke er perorale, eller der et tilfelle ikke følger kjeden. Dråpepreferansen må være et helt tall over 0. Feilene vises som «Regelen er ugyldig: …» (stoppkode `regelfeil`).
@@ -47,7 +47,7 @@ Kontrollert 04.11.2026 mot alle regler som da var klinisk godkjent på main:
 
 Kontrollen ble gjentatt 05.11.2026 etter at K2, K3, QA og D var på main, mot alle 14 godkjente regler, også de nye K2-reglene (bytte fra escitalopram eller citalopram til sertralin) og K3-reglene. Motoren brukte da en preferanse på 5 dråper i hvert forløp, og hele S3-øyeblikksbildet i `verktoyflyt-invarianter.test.ts` ga nøyaktig samme utfall.
 
-**Forskjellen kommer først med en formovergang.** Dette er grunnlaget for escitalopram v14 (B2). Doseplanmotoren gir disse planene med escitalopram v13 utvidet med overgangen tablett → dråper og en preferanse på 5 dråper (eksemplene er testet i `src/__tests__/verktoypraktisk.test.ts`). De er ikke klinisk kontrollert.
+**Forskjellen kommer først med en formovergang.** Dette er grunnlaget for escitalopram v14 (B2, `docs/verktøy-b2-escitalopram-kontrollgrunnlag.md`), som bruker overgangen uten `samtidig`: tabletter så lenge hele tabletter gir dosen, så dråper. Doseplanmotoren gir disse planene med escitalopram v13 utvidet med overgangen tablett → dråper og en preferanse på 5 dråper (eksemplene er testet i `src/__tests__/verktoypraktisk.test.ts`). De er ikke klinisk kontrollert.
 
 | Start | Overgang | Døgndoser (mg) |
 | --- | --- | --- |
