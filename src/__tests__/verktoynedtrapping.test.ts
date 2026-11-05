@@ -45,7 +45,7 @@ import { syntetiskUtvalg, type Testpreparat } from '../verktoy/motor/syntetisk'
 import { VERKTOY, virkestoffvalg } from '../verktoy/register'
 import { akseptsett, AKSEPTSTOFFER, AKSEPTTESTFIL, annenhverDag, beregnAksept, besvart, FEST_AKSEPTTEST, KORT, LANG, lagAksepttestrapport, omfang, omfangssett, PROSENTSTI, reduksjoner, sisteDose, styrker, valgtekst, vanligDose, type Festuttrekk } from '../verktoy/regler/aksepttest'
 import { AVSLUTNING_FELLES, avrund, beregn, kortform, MINSTE_VISTE_MG, nulldagfeil, SISTE_DOSE, TIDLIGSTE_DATOER, trinnTilHorisont, type Forlopsresultat, type Periode } from '../verktoy/regler/beregning'
-import { erKliniskGodkjent, fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
+import { erErstattet, erKliniskGodkjent, fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett, lesKontrollgrunnlag } from '../verktoy/regler/kontroll'
 import { apneValg, henvisninger, justerbare, nulltrinnfeil, type Beregningsinndata, type Fase, type Nedtrappingsstrategi, type Regel, type Regelsett } from '../verktoy/regler/modell'
 import { NICE, PLANHORISONT_LANGSOM, PLANHORISONT_TRINN, RCPSYCH, RCPSYCH_TIDLIGERE } from '../verktoy/regler/bygg'
@@ -1299,13 +1299,14 @@ describe('Aksepttesten med norske preparater (P7.5, del E.2)', () => {
     expect(sett.filter((t) => t.nokkel === 'escitalopram').map((t) => t.form.navn)).toEqual(expect.arrayContaining(['Tablett', 'Dråper, oppløsning']))
   })
 
-  it('gir en klinisk plan bare i de godkjente cellene for vortioksetin og escitalopram (K1), aldri en plan til null uten godkjent avslutning, og hver annen plan ender med individuell avslutning', () => {
+  it('gir en klinisk plan bare i de godkjente cellene for vortioksetin (escitalopram versjon 13 er erstattet av versjon 14), aldri en plan til null uten godkjent avslutning, og hver annen plan ender med individuell avslutning', () => {
     // De godkjente beregnbare P7-reglene er vortioksetin, bare 20 → 15 mg ved kort behandlingstid med tabletter (gjennomgangen av f77e1a9),
-    // og escitalopram versjon 13 fra K1 (godkjent 04.11.2026). Aksepttesten regner med motoren som viser delplaner; i verktøyet er
-    // escitalopram enten komplett til seponering fra dråper eller «komplett plan ikke tilgjengelig» (`verktoyk1.test.ts`).
+    // og escitalopram versjon 13 fra K1 (godkjent 04.11.2026). Versjon 13 er erstattet av versjon 14 med tabletter og dråper (B2, godkjent
+    // 05.11.2026), så den gir ingen klinisk plan lenger; versjon 14 er prøvd i `verktoyb2.test.ts`. Aksepttesten regner med motoren som viser delplaner.
     const kliniske = sett.flatMap((t) => t.resultater.filter((r) => r.plan?.klinisk).map((r) => `${t.nokkel} ${t.form.kode} ${r.startdose_mg} ${r.scenario}`))
     // (h) er (a) med forskriverens valg der et trinn ikke kan gis; med vortioksetin trengs ingen valg, så planen er den samme. Videreføringen (f) fra 15 mg er ikke klinisk.
-    expect(kliniske).toEqual(['escitalopram 53 20 a', 'escitalopram 53 20 h', 'escitalopram 748 20 a', 'escitalopram 748 20 b', 'escitalopram 748 20 h', 'vortioksetin null 20 a', 'vortioksetin null 20 h'])
+    expect(kliniske).toEqual(['vortioksetin null 20 a', 'vortioksetin null 20 h'])
+    expect(erErstattet(regel('escitalopram'), REGELSETT.regler)).toBe(true)
     for (const p of planer) {
       if (p.klinisk && !K1.includes(p.regel.id)) expect(planform(p).fra).toEqual(['fra dag 1: 15 mg = 1 tablett à 15 mg', EN_REDUKSJON])
       if (p.status !== 'doseplan') continue

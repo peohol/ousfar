@@ -18,7 +18,8 @@ import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from '../verktoy/regler
 import { fingeravtrykk } from '../verktoy/regler/godkjenning'
 import { formkjede, formovergangsfeil, type Fase, type Grunnlag, type Regel, type Trinnvalgsvar } from '../verktoy/regler/modell'
 import { besvartSkjema, kjorKasus, PILOTKASUS, simulerGodkjenning, tidFor, type Pilotkasus } from '../verktoy/regler/pilotmatrise'
-import { REGELSETT } from '../verktoy/tilgjengelighet'
+import { FOR_B2 } from '../verktoy/kontrollsett'
+import { REGELSETT, samlet } from '../verktoy/tilgjengelighet'
 
 const les = (fil: string) => readFileSync(new URL(`../../${fil}`, import.meta.url), 'utf8')
 const uttrekkene = { pilot: JSON.parse(les(FEST_PILOT)) as Festuttrekk, aksept: JSON.parse(les(FEST_AKSEPTTEST)) as Festuttrekk }
@@ -26,6 +27,14 @@ const uttrekkene = { pilot: JSON.parse(les(FEST_PILOT)) as Festuttrekk, aksept: 
 /* --- Felles for testene under: escitalopram med endringer på en kopi ------------------ */
 
 const ESC = 'seponering-escitalopram'
+/**
+ * Regelsettene der escitalopram versjon 13 gjelder: før versjon 14 (B2) ble
+ * godkjent og erstattet den. Testene endrer versjon 13 på en kopi for å prøve
+ * mekanismene fra B1; i appen er versjon 13 trukket, så motoren gir ingen
+ * klinisk plan etter den (`verktoyb2.test.ts`).
+ */
+const SETTENE = FOR_B2
+const SETT = samlet(SETTENE)
 const TABLETT = '53'
 const DRAPER = '748'
 /** Et syntetisk grunnlag med en simulert avklaring, så kopien ikke har åpne valg; ingen faglig vurdering. */
@@ -75,14 +84,14 @@ function kasus(dose: string, skjema: Partial<Planskjema>, e?: Endring): Pilotkas
   }
 }
 
-const kjor = (dose: string, skjema: Partial<Planskjema>, e?: Endring, motor: Motor = beregnDoseplan) => kjorKasus(kasus(dose, skjema, e), uttrekkene, undefined, motor)
+const kjor = (dose: string, skjema: Partial<Planskjema>, e?: Endring, motor: Motor = beregnDoseplan) => kjorKasus(kasus(dose, skjema, e), uttrekkene, SETTENE, motor)
 
 /** Rett til motoren, også når skjemaet ville bedt om et formvalg først. */
 function direkte(dose: string, skjema: Partial<Planskjema>, e?: Endring, motor: Motor = beregnDoseplan): Doseplanresultat {
-  const r = structuredClone(REGELSETT.regler.find((x) => x.id === ESC)!)
+  const r = structuredClone(SETT.regler.find((x) => x.id === ESC)!)
   if (e) endret(e)(r)
   const k = kasus(dose, skjema)
-  return beregnPlan(r, k.valg, besvartSkjema(r, dose, skjema), uttrekkene.aksept.utvalg, tidFor(k, uttrekkene), REGELSETT, undefined, motor)
+  return beregnPlan(r, k.valg, besvartSkjema(r, dose, skjema), uttrekkene.aksept.utvalg, tidFor(k, uttrekkene), SETT, SETTENE, motor)
 }
 
 /** Planen når forskriveren ved hvert trinn som ikke kan gis nøyaktig, velger dosen `velg` gir (standard: den foretrukne). */

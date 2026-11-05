@@ -21,9 +21,9 @@ import { norskDato } from './motor/byggesteiner'
 import { valgtekst } from './regler/aksepttest'
 import { erKliniskGodkjent, fingeravtrykk, godkjenningsfeil, KONTROLLUTFALL, kontrollutfall } from './regler/godkjenning'
 import { alleGrunnlag, type Klinisktilfelle, type Regel, type Regelsett } from './regler/modell'
-import { B2_DATO, B2_ESCITALOPRAM, B2_KONTROLL_0411, K1_9_AVGJORELSE, K1_DATO, K1_GODKJENNING_0411, K1_KONTROLL_0411 } from './regler/k1'
+import { B2_DATO, B2_ESCITALOPRAM, B2_GODKJENNING_0511, B2_KONTROLL_0411, K1_9_AVGJORELSE, K1_DATO, K1_GODKJENNING_0411, K1_KONTROLL_0411 } from './regler/k1'
 import { STI } from './regler/nedtrapping'
-import { ETTER_RETTELSENE } from './kontrollsett'
+import { ETTER_RETTELSENE, FOR_B2 } from './kontrollsett'
 import { avregistrert, avvikFra, kjorKasus, type Kontrollregel, nyStyrke, type Pilotkasus, type Pilotutfall, SIMULERT_KONTROLLOR, simulerGodkjenning, type Uttrekkene } from './regler/pilotmatrise'
 import { grunnlag, liste, tabell, tall, utsagn } from './regler/rapport'
 import { inndatavilkar } from './regler/beregning'
@@ -773,10 +773,12 @@ const DATO_K1 = K1_DATO
 const somVerktoysiden =
   (f: ReturnType<typeof kasusFor>): ReturnType<typeof kasusFor> =>
   (...a) => ({ ...f(...a), motor: kliniskDoseplan })
+/** Regelsettene K1 gjelder: versjon 13 slik appen brukte den til versjon 14 (B2) ble godkjent 05.11.2026 og erstattet den. */
+const SETTENE_K1 = FOR_B2
 /** Kasus for K1 med regelversjoner uten åpne valg (versjon 12), med simulert godkjenning. */
-const kk = somVerktoysiden(kasusFor(DATO_K1))
+const kk = somVerktoysiden(kasusFor(DATO_K1, SETTENE_K1))
 /** Kasus for escitalopram versjon 13: den registrerte godkjenningen, gjennom verktøyets egen tilgjengelighet; uten den simulert. */
-const ke = somVerktoysiden(kasusFor(DATO_K1, undefined, true))
+const ke = somVerktoysiden(kasusFor(DATO_K1, SETTENE_K1, true))
 
 /** Stoppet når planen ikke når sluttmålet ({@link KOMPLETT_IKKE_TILGJENGELIG}). */
 const ikkeKomplett = (stoff: string, hvorfor: string) => stopp(`${KOMPLETT_IKKE_TILGJENGELIG}: ${stoff}: ${hvorfor}.`)
@@ -828,6 +830,7 @@ export const FORSLAG_K1: Kontrollforslag = {
   dato: DATO_K1,
   verktoy: SEPONERING,
   regler: [K1_ESCITALOPRAM],
+  settene: SETTENE_K1,
   motor: kliniskDoseplan,
   simulerAvklaring: true,
   visPlanutfall: true,
@@ -835,6 +838,7 @@ export const FORSLAG_K1: Kontrollforslag = {
     `**Escitalopram med dråper helt til seponering (3 → 2 → 1 mg), og ellers «${KOMPLETT_IKKE_TILGJENGELIG}».** Grunnlag for uavhengig faglig kontroll av K1 i \`docs/verktøy-klinisk-leveranseplan-2026-11.md\`, ny runde etter kontrollen av PR #323 ${norskDato(DATO_K1)}.`,
     `**Escitalopram versjon 13 er klinisk godkjent av kontrolløren ${norskDato(K1_GODKJENNING_0411.dato)}, bare i et snevert omfang.** Med dråper (1 mg per dråpe) kan forskriveren fra 3 mg velge et minste trinn på én dråpe, 3 → 2 → 1 mg, og fra 1 mg holdes dosen et helt trinn før seponering, med vurdering før hver endring og 7, 14 og 28 dager etter siste dose. Sluttdosen 1 mg er avgjort faglig av Peder ${norskDato(K1_9_AVGJORELSE.dato)} for et avgrenset omfang (K1.9, avsnittet «Peders avgjørelse på K1.9»); det minste trinnet og oppfølgingsdagene er avklart av kontrolløren ${norskDato(K1_KONTROLL_0411.minste_trinn.dato)} (K1.10 og K1.12). Kontrolløren godkjente deretter nøyaktig denne versjonen og dette fingeravtrykket (avsnittet «Kontrollørens godkjenning av versjon 13»). Peder har ikke godkjent noe annet enn K1.9. Alle andre regler, også nortriptylin, amitriptylin og sertralin, er uendret og ikke godkjent. Motoren (#319) viser aldri en delplan: når en plan ikke når sluttmålet, står det «${KOMPLETT_IKKE_TILGJENGELIG}» og grunnen, uten doser. Sperrene og synligheten bare for administratorer er uendret.`,
     `**K1-milepælen er ikke nådd.** Ett virkestoff med to startdoser oppfyller ikke målet om to ulike vanlige nedtrappingsscenarier i relevant bredde. Godkjenningen gjelder bare denne første leveransen; dekningsarbeidet for de andre stoffene og pasientgruppene fortsetter separat (avsnittet «Hva som gjenstår»).`,
+    `**Versjon 13 er erstattet i appen av versjon 14 med tabletter og dråper (B2), som kontrolløren godkjente ${norskDato(B2_GODKJENNING_0511.dato)} (\`docs/verktøy-b2-escitalopram-kontrollgrunnlag.md\`).** Kasusene her regnes derfor med regelsettene slik appen brukte dem til da, så grunnlaget fortsatt gjelder nøyaktig versjon 13; godkjenningen av versjon 13 er uendret.`,
     `Kasusene for escitalopram går uten simulert godkjenning, gjennom verktøyets egen tilgjengelighet og den samme veien som verktøysiden, som aldri viser en delplan, med de norske preparatene i FEST-uttrekket hentet ${fest}. Bare kasusene som prøver en endret regel (K1-22 og K1-23), bruker en kopi. Planene for nortriptylin, amitriptylin og sertralin er regnet på en kopi med en simulert godkjenning («${SIMULERT_KONTROLLOR}») for å vise at de stopper selv om de ble godkjent; kopien lagres ikke og brukes ikke av appen. Kasusene er syntetiske; pasientopplysninger inngår ikke, og ingen tekst fra Psychiatrienet vises.`,
   ],
   avgrensning: {
@@ -1385,15 +1389,15 @@ export const FORSLAG_B2: Kontrollforslag = {
   simulerAvklaring: true,
   visPlanutfall: true,
   innledning: (fest) => [
-    `**Escitalopram fra tabletter (10 eller 20 mg): tabletter så lenge hele tabletter gir dosen i trinnet, så dråper mg for mg til seponering.** Grunnlag for uavhengig faglig kontroll av B2 i \`docs/verktøy-brukervennlighet-2026-11.md\` (§6) og \`docs/verktøy-praktisk-dosering.md\`. Versjon 14 er en egen regel (\`${B2_REGEL.id}\`) som bygger på den godkjente versjon 13 og erstatter den i det øyeblikket den selv er klinisk godkjent; til da gjelder versjon 13 uendret.`,
-    `**Versjon 14 er ikke godkjent, og godkjenningen av versjon 13 gjelder ikke den.** Overgangen fra tabletter til dråper og dråpepreferansen var nye valg; kontrolløren har avklart dem (B2.1–B2.3) og svart nei på tabletter og dråper i samme dose (B2.6), men regelen er ikke godkjent. Startdosene, trinnene, sluttdosen, seponeringen og oppfølgingen er de samme som i versjon 13. Aldersspørsmålet er rettet til «${ELDRE.tekst}», så pasientgruppen er nøyaktig Peders avgrensning (under 65 år); det retter et avvik i versjon 13, som spør «Er pasienten over 65 år?» (B2.4).`,
+    `**Escitalopram fra tabletter (10 eller 20 mg): tabletter så lenge hele tabletter gir dosen i trinnet, så dråper mg for mg til seponering.** Grunnlag for uavhengig faglig kontroll av B2 i \`docs/verktøy-brukervennlighet-2026-11.md\` (§6) og \`docs/verktøy-praktisk-dosering.md\`. Versjon 14 er en egen regel (\`${B2_REGEL.id}\`) som bygger på den godkjente versjon 13 og erstatter den i det øyeblikket den selv er klinisk godkjent; til da gjaldt versjon 13 uendret.`,
+    `**Versjon 14 er klinisk godkjent av kontrolløren ${norskDato(B2_GODKJENNING_0511.dato)}, bare i et snevert omfang, og har erstattet versjon 13 i appen.** Godkjenningen av versjon 13 gjaldt ikke versjon 14; den har sin egen godkjenning for nøyaktig versjonen og fingeravtrykket (avsnittet «Kontrollørens godkjenning av versjon 14»). Overgangen fra tabletter til dråper og dråpepreferansen var nye valg; kontrolløren avklarte dem (B2.1–B2.3) og svarte nei på tabletter og dråper i samme dose (B2.6) før den samlede kontrollen. Startdosene, trinnene, sluttdosen, seponeringen og oppfølgingen er de samme som i versjon 13. Aldersspørsmålet er rettet til «${ELDRE.tekst}», så pasientgruppen er nøyaktig Peders avgrensning (under 65 år); det retter et avvik i versjon 13, som spør «Er pasienten over 65 år?» (B2.4).`,
     `Hva som er nytt for klinikeren: med versjon 13 må en pasient på 20 mg tabletter gå over til 15 dråper første dag, og verktøyet stopper hvis tablett er valgt (kasus K1-08 og K1-09). Med versjon 14 gis første trinn (15 mg) med hele tabletter, og planen går over til dråper fra andre trinn. Fra 10 mg tabletter kan ingen hel tablett gi 8 mg, så planen går over til dråper fra første trinn, som i versjon 13. Pasienter som allerede bruker dråper, får nøyaktig den samme planen som i versjon 13.`,
-    `Kasusene går gjennom den samme veien som verktøysiden, som aldri viser en delplan, med de norske preparatene i FEST-uttrekket hentet ${fest}, på en kopi med simulert avklaring av de åpne valgene og simulert godkjenning («${SIMULERT_KONTROLLOR}»). Kopien lagres ikke og brukes ikke av appen. Kasusene er syntetiske; pasientopplysninger inngår ikke, og ingen tekst fra Psychiatrienet vises.`,
+    `Kasusene går uten simulert godkjenning, gjennom verktøyets egen tilgjengelighet og den samme veien som verktøysiden, som aldri viser en delplan, med de norske preparatene i FEST-uttrekket hentet ${fest}. Bare kasusene som prøver en endret regel eller en godkjenning uten avklaring (B2-13, B2-14, B2-20 og B2-21), bruker en kopi, og B2-15 viser verktøyet slik det var før godkjenningen. Kopiene lagres ikke og brukes ikke av appen. Visningen og kopien på den virkelige verktøysiden er prøvd i \`src/__tests__/verktoyb2side.test.tsx\`. Kasusene er syntetiske; pasientopplysninger inngår ikke, og ingen tekst fra Psychiatrienet vises.`,
   ],
   forutsetninger: [
-    `Godkjenningen gjelder nøyaktig versjonen og fingeravtrykket i tabellen over, og bare det kliniske omfanget i avsnittet «Reglene». Avklaringene av overgangen (B2.1) og dråpepreferansen (B2.2) er registrert på valgene i regelen (${B2_KONTROLL_0411.kontroll}); det endret fingeravtrykket, så den samlede kontrollen gjelder det nye. Før en godkjenning kontrolleres alle positive og negative forløp, FEST-formene og -styrkene, den komplette seponeringen og visningen og kopien i den virkelige brukerflyten uten simulering etter #327.`,
+    `Godkjenningen gjelder nøyaktig versjonen og fingeravtrykket i tabellen over, og bare det kliniske omfanget i avsnittet «Reglene». Avklaringene av overgangen (B2.1) og dråpepreferansen (B2.2) er registrert på valgene i regelen (${B2_KONTROLL_0411.kontroll}); det endret fingeravtrykket, så den samlede kontrollen gjaldt det nye. Kontrolløren godkjente nøyaktig dette fingeravtrykket ${norskDato(B2_GODKJENNING_0511.dato)}; endres regelen, kreves en ny faglig kontroll.`,
     'Peders avgjørelse på K1.9 (seponering fra 1 mg) gjelder bare når omfanget er uendret eller snevrere. Vurderingen står i B2.4; mener kontrolløren at omfanget er utvidet, må Peder spørres på nytt før en godkjenning.',
-    'Versjon 13 trekkes i det øyeblikket versjon 14 er gyldig klinisk godkjent (`Regel.erstatter`); til da gjelder den uendret. Godkjennes versjon 14 ikke, er ingenting endret for klinikeren.',
+    'Versjon 13 trekkes i det øyeblikket versjon 14 er gyldig klinisk godkjent (`Regel.erstatter`), og det er den nå. Blir godkjenningen av versjon 14 ugyldig (for eksempel fordi regelen endres), gjelder versjon 13 igjen uendret.',
     'Sperrene for de kliniske verktøyene og synligheten bare for administratorer er uendret.',
     `Holdbarheten etter anbrudd for dråpene (${B2_PAKNINGER.holdbarhet_etter_anbrudd_dager / 7} uker, preparatomtalen pkt. 6.3) er oppgitt av kontrolløren 04.11.2026 og brukes bare i regnestykket for pakninger (B2.3 og B2.6); den er ikke en del av regelen.`,
   ],
@@ -1438,9 +1442,19 @@ export const FORSLAG_B2: Kontrollforslag = {
       tekst: `${B2_KONTROLL_0411.kontroll} svarte på spørsmålene i avsnitt 3. Avklaringene av B2.1 og B2.2 er registrert på valgene i regelen (rollen uavhengig kontrollør, regelversjon 14). De er ingen klinisk godkjenning av regelen: den kommer først etter den samlede kontrollen av nøyaktig versjonen og fingeravtrykket i tabellen. Svaret nei på B2.6 betyr at versjon 14 gir hver dose med én form; tabletter og dråper i samme dose kan eventuelt vurderes senere som et valgfritt alternativ med egen versjon og kontroll. Den detaljerte kurven med 28 dager per trinn er et startforslag med minstetider, ikke en universelt optimal plan.\n\n${liste([B2_KONTROLL_0411.overgang.merknad, B2_KONTROLL_0411.praktisk.merknad])}`,
     },
     {
+      tittel: 'Kontrollørens godkjenning av versjon 14',
+      tekst: `${B2_GODKJENNING_0511.kontroll} kom til en positiv, uavhengig faglig konklusjon for nøyaktig versjon 14 og godkjente den klinisk. Godkjenningen er registrert i regelen som siste steg i historikken, med rollen uavhengig kontrollør, regelversjon 14 og fingeravtrykket \`${B2_GODKJENNING_0511.fingeravtrykk}\`. Verktøyet gir planen bare så lenge regelen har nøyaktig dette fingeravtrykket, og versjon 13 er trukket fra appen i samme øyeblikk.
+
+${liste([
+  `Avgrensning: ${B2_GODKJENNING_0511.avgrensning}`,
+  'Kontrolløren kontrollerte de 21 positive og negative kasusene, planene i omfanget, testen av den atomiske erstatningen og FEST-uttrekket fra 30.10.2026, og de norske preparatopplysningene for Cipralex (1 mg per dråpe, 15 ml per flaske, åtte ukers holdbarhet etter anbrudd) og NICE NG222 anbefaling 1.4.16–1.4.17.',
+  'Kasusene B2-01–B2-04 viser de komplette planene uten simulert godkjenning; de negative kasusene viser at alle utenfor omfanget stopper uten doser.',
+])}`,
+    },
+    {
       tittel: 'Hva som er endret fra versjon 13',
       tekst: liste([
-        `Egen regel \`${B2_REGEL.id}\` med \`erstatter: ['seponering-escitalopram']\`: versjon 13 gjelder til versjon 14 er godkjent.`,
+        `Egen regel \`${B2_REGEL.id}\` med \`erstatter: ['seponering-escitalopram']\`: versjon 13 gjaldt til versjon 14 ble godkjent ${norskDato(B2_GODKJENNING_0511.dato)}.`,
         `Formovergang tablett (FEST-form ${B2_ESCITALOPRAM.overgang.fra}) → dråper (FEST-form ${B2_ESCITALOPRAM.overgang.til}) i forløpet, aldri tilbake, én form per dose (B2.1).`,
         `Praktisk dosering med høyst ${B2_ESCITALOPRAM.praktisk.draper} dråper per administrasjon som preferanse (B2.2, B6).`,
         `Klinisk omfang: tilfellet «tablett 20 mg» (som aldri ga en komplett plan) er erstattet av «tabletter så dråper, 10 og 20 mg», med styrkene ${Object.entries(
@@ -1449,14 +1463,14 @@ export const FORSLAG_B2: Kontrollforslag = {
           .map(([f, s]) => `${s.map(tall).join(', ')} mg (form ${f})`)
           .join(' og ')}. Tilfellene med dråper er uendret.`,
         'Fortolkningen: teksten om overgangen fra tabletter til dråper sier nå at tablettene brukes så lenge de gir dosen.',
-        `Aldersspørsmålet er rettet fra «Er pasienten over 65 år?» til «${ELDRE.tekst}» (B2.4): ${ELDRE.begrunnelse} Svaret ja stopper som før; i versjon 13 står avviket til versjon 14 er godkjent.`,
+        `Aldersspørsmålet er rettet fra «Er pasienten over 65 år?» til «${ELDRE.tekst}» (B2.4): ${ELDRE.begrunnelse} Svaret ja stopper som før; versjon 13, med avviket, er trukket nå som versjon 14 er godkjent.`,
         'Alt annet er uendret: trinnene, valgområdene, det minste trinnet, sluttdosen, seponeringen, vurderingspunktene, de andre spørsmålene, unntakene og regneeksemplene.',
       ]),
     },
     {
       tittel: 'Hvilke forløp som er komplette',
       tekst: tabell(
-        ['Tilfelle', 'Versjon 13 i dag', 'Versjon 14', 'Kasus'],
+        ['Tilfelle', `Versjon 13 (til ${norskDato(B2_GODKJENNING_0511.dato)})`, 'Versjon 14', 'Kasus'],
         [
           [
             'Tablett 20 mg, kort behandlingstid',
@@ -1479,7 +1493,7 @@ export const FORSLAG_B2: Kontrollforslag = {
     },
   ],
   kasusinnledning:
-    'Kasusene går gjennom den samme veien som verktøysiden, som aldri viser en delplan, og kjøres i testene (`src/__tests__/verktoyb2.test.ts`). Uten annen merknad er regelen versjon 14 på en kopi med simulert avklaring og godkjenning. Organfunksjon og interaksjoner er bekreftet, og svaret er nei på alle unntak og spørsmål.',
+    'Kasusene går gjennom den samme veien som verktøysiden, som aldri viser en delplan, og kjøres i testene (`src/__tests__/verktoyb2.test.ts`). Uten annen merknad er regelen den godkjente versjon 14, slik verktøyet har den. Organfunksjon og interaksjoner er bekreftet, og svaret er nei på alle unntak og spørsmål.',
   refkolonne: 'K0',
   kasus: [
     // --- Komplette planer
@@ -1567,16 +1581,16 @@ export const FORSLAG_B2: Kontrollforslag = {
       skjema: form(TABLETT),
       regel: godkjentUtenAvklaring(B2_REGEL, /formoverganger/, 'overgangen', B2_DATO),
     }),
-    // --- Versjon 13 gjelder uendret til versjon 14 er godkjent, og hva preferansen gjør
+    // --- Versjon 13 gjaldt uendret til versjon 14 ble godkjent, og hva preferansen gjør
     kb(
       'B2-15',
       'ikke_godkjent',
-      'escitalopram tablett 20 mg slik verktøyet er i dag: versjon 14 står til faglig kontroll, så verktøyet bruker versjon 13 (som K1-08)',
+      'escitalopram tablett 20 mg slik verktøyet var før godkjenningen: med versjon 14 til faglig kontroll brukte verktøyet versjon 13 (som K1-08)',
       B2_REGEL,
       '20',
       ikkeKomplett('escitalopram', `${EN_REDUKSJON}, og ${overSluttdosen(15)}`),
       [],
-      { skjema: form(TABLETT), regel: undefined },
+      { skjema: form(TABLETT), regel: undefined, settene: FOR_B2 },
     ),
     kb('B2-16', 'regelendring', 'escitalopram tablett 20 mg uten dråpepreferansen: 15 dråper fra første trinn', B2_REGEL, '20', { ...plan(null, ...FRA_20), planutfall: SEPONERT_20 }, [], {
       skjema: form(TABLETT),

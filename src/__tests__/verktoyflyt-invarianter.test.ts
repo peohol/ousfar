@@ -327,6 +327,8 @@ describe('S2: ingen godkjent regel får nytt fingeravtrykk', () => {
     'depot-aripiprazol-maintena': [3, '04d1debe48f02ea03a31aab3d7cd5cdeb15c56d4b43797bda353f3d857297f20'],
     'depot-paliperidon-xeplion': [3, '21a335eec8c3816ee21627ceec3197e52957ccdf99cdbfaa00a3ca3cb5987bdf'],
     'seponering-escitalopram': [13, 'e8a3c17edda10da43b1df4171a733a23133da50ebcda31cd71a771022a8a78d7'],
+    // Godkjent 05.11.2026 (B2, #330); erstatter versjon 13 i appen, som beholder sin godkjenning.
+    'seponering-escitalopram-tabletter-og-draper': [14, '01b2fb560a8defe0114f9552d619bc6bf15e27b07fa6352d6331d9beb500721f'],
     'seponering-vortioksetin': [12, 'b28dec93f5ede06c6565e1ce5d6aa62606c69250f1a9088dae0c57d3121101f3'],
     'seponering-bupropion': [5, 'e7536668ac7f2d4dfd9959f24cfdfc4874182a4fc295355f0d10a05f438b5f5f'],
     'seponering-agomelatin': [1, '6d42863f3573fb2e0d6dbffd27ff78a7f1c2b539c8dce2cfcd36ad417b61a2d1'],
@@ -881,6 +883,7 @@ function katalogGjelder(r: Regel): boolean {
 const VENTER_PA_KATALOGKONTROLL: readonly string[] = [
   'kryssnedtrapping-sertralin-mirtazapin v10',
   'seponering-escitalopram v13',
+  'seponering-escitalopram-tabletter-og-draper v14',
   'seponering-vortioksetin v12',
   'bytte-escitalopram-sertralin v2',
   'bytte-citalopram-sertralin v2',

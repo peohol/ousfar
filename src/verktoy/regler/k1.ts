@@ -469,7 +469,7 @@ export interface Formovergangsforslag {
   godkjent?: Avslutningsforslag['godkjent']
 }
 
-/** B2: escitalopram fra tabletter til dråper, med versjon 13 som grunnlag. */
+/** B2: escitalopram fra tabletter til dråper, med versjon 13 som grunnlag; versjon 14 godkjent av kontrolløren 05.11.2026 ({@link B2_GODKJENNING_0511}). */
 export const B2_DATO = '2026-11-04'
 
 /**
@@ -502,6 +502,21 @@ export const B2_KONTROLL_0411 = {
     'B2.5': 'ja',
     'B2.6': 'nei, ikke som standard i versjon 14',
   },
+} as const
+
+/**
+ * Kontrollørens uavhengige kliniske substanskontroll av cd28050 05.11.2026
+ * (PR #330, kommentar 6665304397): faglig godkjenning av nøyaktig versjon 14
+ * med dette fingeravtrykket, i kontrollørens snevre omfang. Ingen godkjenning
+ * av vilkårlige startdoser, lengre behandling eller tilsvarende strategier.
+ */
+export const B2_GODKJENNING_0511 = {
+  dato: '2026-11-05',
+  kontroll: 'Kontrollørens uavhengige kliniske substanskontroll av cd28050 05.11.2026 (PR #330, kommentar 6665304397)',
+  fingeravtrykk: '01b2fb560a8defe0114f9552d619bc6bf15e27b07fa6352d6331d9beb500721f',
+  avgrensning:
+    'start på 10 eller 20 mg escitalopram hos voksne under 65 år med kort behandlingstid, uten tidligere seponeringsplager og uten de øvrige eksklusjonsforholdene i regelen. Fra 20 mg tabletter gis første reduksjon til 15 mg som hele 10 + 5 mg tabletter og deretter 12 → 9 → 7 → 6 → 5 → 4 → 3 → 2 → 1 mg som dråper før null; fra 10 mg tabletter brukes dråper fra første reduksjon (8 → 6 → 5 → 4 → 3 → 2 → 1 mg før null); dråpepasientenes doseforløp er uendret fra godkjent versjon 13. ' +
+    'Overgang mg for mg, fem dråper som myk praktisk preferanse (ikke terskel) og ingen tabletter og dråper samtidig i én dose er akseptert. Trinntidene er individuelle minstetider og startforslag, ikke en dokumentert optimal standard. Godkjenningen gjelder den eksakte regelversjonen, ikke vilkårlige startdoser, lengre behandling eller tilsvarende nedtrappingsstrategier.',
 } as const
 export const B2_ESCITALOPRAM: Formovergangsforslag = {
   regel: 'seponering-escitalopram',
@@ -538,6 +553,7 @@ export const B2_ESCITALOPRAM: Formovergangsforslag = {
     henvisninger: [K1_KILDER.draape, K1_KILDER.bioekvivalens],
   },
   avklaringer: { overgang: B2_KONTROLL_0411.overgang, praktisk: B2_KONTROLL_0411.praktisk },
+  godkjent: B2_GODKJENNING_0511,
 }
 
 /** Reglene med formovergang (B2). */

@@ -14,15 +14,15 @@ export const ENDRINGSLOGG: Endring[] = [
   {
     versjon: '1.125.12',
     dato: '2026-11-05',
-    sammendrag: 'Forslag til nedtrapping av escitalopram fra tabletter, med tabletter så lenge de gir dosen og så dråper, sendt til faglig kontroll',
+    sammendrag: 'Nedtrapping av escitalopram fra tabletter, med tabletter så lenge de gir dosen og så dråper, er faglig godkjent',
     typer: ['Fag'],
     omfang: 'Minimalt omfang',
     gjelder: ['verktoy'],
     utenVarsel: true,
     punkter: [
-      'Gjelder bare administratorene, som fortsatt er de eneste som ser verktøyene. Ingen godkjent plan er endret: den godkjente nedtrappingen av escitalopram med dråper gjelder som før.',
-      'En ny versjon av nedtrappingen av escitalopram er sendt til faglig kontroll og er ikke godkjent. En pasient som bruker 20 mg tabletter, får første trinn (15 mg) med hele tabletter og går så over til dråper med samme dose i mg; fra 10 mg tabletter går planen over til dråper fra første trinn. Pasienter som bruker dråper, får den samme planen som før. Den nye versjonen spør om pasienten er 65 år eller eldre, slik at en pasient på nøyaktig 65 år ikke får en plan som bare er vurdert for pasienter under 65 år.',
-      'Først når den nye versjonen er godkjent, erstatter den den gamle.',
+      'Gjelder bare administratorene, som fortsatt er de eneste som ser verktøyene.',
+      'Den nye versjonen av nedtrappingen av escitalopram er godkjent av den uavhengige kontrolløren og erstatter den gamle. En pasient som bruker 20 mg tabletter, får første trinn (15 mg) med hele tabletter og går så over til dråper med samme dose i mg; fra 10 mg tabletter går planen over til dråper fra første trinn. Pasienter som bruker dråper, får den samme planen som før.',
+      'Spørsmålet om alder er nå om pasienten er 65 år eller eldre, slik at en pasient på nøyaktig 65 år ikke får en plan som bare er vurdert for pasienter under 65 år.',
     ],
   },
   {

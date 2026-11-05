@@ -115,6 +115,9 @@ describe('Søket etter verktøy', () => {
 
 /** Reglene K1 ga en ny versjon med avslutning, til faglig kontroll (`regler/k1.ts`). */
 const K1 = K1_AVSLUTNINGER.map((k) => k.regel)
+/** Reglene med formovergang (B2) som er godkjent, og reglene de erstatter i appen. */
+const B2_GODKJENT = K1_OVERGANGER.filter((o) => o.godkjent).map((o) => o.id)
+const B2_ERSTATTET = K1_OVERGANGER.filter((o) => o.godkjent).map((o) => o.regel)
 
 describe('Regelstatusen', () => {
   it('sier at reglene i pilotsettet og P7 er kontrollert og ikke godkjent, unntatt de klinisk godkjente beregningene og fagteksten', () => {
@@ -137,11 +140,12 @@ describe('Regelstatusen', () => {
     // Depotreglene er klinisk godkjent for de avgrensede oppstartene (kontrollørens gjennomgang av 62ebb21), og sertralin → mirtazapin
     // og hovedregelen for vortioksetin for de avgrensede startforløpene (gjennomgangen av f77e1a9); de kan beregnes. Den langsomme
     // varianten for vortioksetin er kontrollert og ikke godkjent og vises ikke ved siden av. Escitalopram versjon 13 fra K1 er godkjent
-    // av kontrolløren 04.11.2026 for dråper fra 10 eller 20 mg; den langsomme varianten vises heller ikke ved siden av.
-    const GODKJENT_BEREGNING = ['kryssnedtrapping-sertralin-mirtazapin', 'depot-aripiprazol-maintena', 'depot-paliperidon-xeplion', 'seponering-vortioksetin', ...K1]
+    // av kontrolløren 04.11.2026 for dråper fra 10 eller 20 mg, og versjon 14 med tabletter og dråper (B2) er godkjent 05.11.2026 og
+    // erstatter den; den langsomme varianten vises heller ikke ved siden av.
+    const GODKJENT_BEREGNING = ['kryssnedtrapping-sertralin-mirtazapin', 'depot-aripiprazol-maintena', 'depot-paliperidon-xeplion', 'seponering-vortioksetin', ...K1, ...B2_GODKJENT]
     for (const [verktoy, valg, alle] of tilfeller) {
       const t = tilgjengelighet(verktoy!, valg)
-      const godkjente = alle.filter((id) => GODKJENT_BEREGNING.includes(id))
+      const godkjente = alle.filter((id) => GODKJENT_BEREGNING.includes(id) && !B2_ERSTATTET.includes(id))
       const regler = godkjente.length > 0 ? godkjente : alle
       expect(t.regler.map((r) => r.id)).toEqual(regler)
       if (GODKJENT_BEREGNING.includes(regler[0]!)) {
@@ -177,11 +181,11 @@ describe('Regelstatusen', () => {
     // To sertralinbytter fra K2 er godkjent (K2VEDTAK, 05.11.2026) og gir beregning; de tre til mirtazapin står til faglig kontroll (`verktoyantidepressivbytter.test.ts`).
     const K2_GODKJENT = Object.keys(K2VEDTAK!.regler)
     for (const id of K2_GODKJENT) expect(BYTTESETT.regler.find((r) => r.id === id)?.godkjenning.status, id).toBe('klinisk_godkjent')
-    // Escitalopram versjon 13 fra K1 er godkjent (04.11.2026) og kan beregnes, i tillegg til vortioksetin, tre antipsykotikabytter fra K3 og to sertralinbytter fra K2.
+    // Escitalopram (versjon 14 fra B2, som erstatter versjon 13 fra K1) kan beregnes, i tillegg til vortioksetin, tre antipsykotikabytter fra K3 og to sertralinbytter fra K2.
     expect(VERKTOY.map((x) => regeloversikt(x).tilgjengelige)).toEqual([2, 1 + K2_GODKJENT.length, 2 + K3_GODKJENT.length, 2])
     expect(VERKTOY.map((x) => regeloversikt(x).ikkeGodkjent)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length - 1 - K1.length - K1_OVERGANGER.length, 1, 1, 0])
-    // Escitalopram med tabletter og dråper (B2), K2s tre bytter til mirtazapin og fire av K3s antipsykotikabytter står til faglig kontroll.
-    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([K1_OVERGANGER.length, BYTTESETT.regler.length - K2_GODKJENT.length, ANTIPSYKOTIKASETT.regler.length - K3_GODKJENT.length, 0])
+    // K2s tre bytter til mirtazapin og fire av K3s antipsykotikabytter står til faglig kontroll; escitalopram med tabletter og dråper (B2) er godkjent.
+    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([K1_OVERGANGER.length - B2_GODKJENT.length, BYTTESETT.regler.length - K2_GODKJENT.length, ANTIPSYKOTIKASETT.regler.length - K3_GODKJENT.length, 0])
   })
 
   it('forklarer hvorfor et antidepressivum uten regel ikke kan trappes ned, med dekningen fra P7', () => {
@@ -281,9 +285,10 @@ describe('Snarvalgene (VDR-3)', () => {
   it('følger regelsettet: en regel godkjent bare i testen gir et snarvalg der, og uten den registrerte godkjenningen gir escitalopram ikke et snarvalg i appen', () => {
     expect(snarvalg(TRAPPE_NED!, testsett(TEST_NEDTRAPPING)).map((s) => s.tekst)).toContain('Escitalopram')
     expect(snarvalg(TRAPPE_NED!).map((s) => s.tekst)).toContain('Escitalopram')
+    // Uten godkjenningen av versjon 13 (K1) og versjon 14 (B2), som erstatter den.
     const utenGodkjenning = structuredClone(REGELSETT)
-    const esc = utenGodkjenning.regler.find((r) => r.id === 'seponering-escitalopram')!
-    esc.godkjenning = { status: 'til_faglig_kontroll', historikk: esc.godkjenning.historikk.slice(0, -1) }
+    for (const esc of utenGodkjenning.regler.filter((r) => [...K1, ...K1_OVERGANGER.map((o) => o.id)].includes(r.id)))
+      esc.godkjenning = { status: 'til_faglig_kontroll', historikk: esc.godkjenning.historikk.slice(0, -1) }
     expect(snarvalg(TRAPPE_NED!, utenGodkjenning).map((s) => s.tekst)).not.toContain('Escitalopram')
   })
 })

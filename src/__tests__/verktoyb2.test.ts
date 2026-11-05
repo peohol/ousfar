@@ -4,19 +4,21 @@
  * kontrollgrunnlaget `docs/verktøy-b2-escitalopram-kontrollgrunnlag.md`.
  *
  * Testene viser at versjon 14 er en egen regel som ikke arver godkjenningen
- * av versjon 13, at versjon 13 gjelder uendret til versjon 14 er godkjent og
- * da trekkes, at dråpepasienter får nøyaktig den samme planen som før, og
- * kasusene i kontrollgrunnlaget. Alle doser er syntetiske.
+ * av versjon 13, men har sin egen godkjenning fra kontrolløren 05.11.2026 for
+ * nøyaktig fingeravtrykket, at versjon 13 gjaldt uendret til versjon 14 ble
+ * godkjent og nå er trukket, at dråpepasienter får nøyaktig den samme planen
+ * som før, og kasusene i kontrollgrunnlaget. Alle doser er syntetiske.
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { B2_PAKNINGER, flaskerOverTid, FORSLAG_B2, FORSLAG_K1, KONTROLLFORSLAG, kontrollavvik, omfangsplaner, type Omfangsplan } from '../verktoy/kontrollgrunnlag'
 import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from '../verktoy/regler/aksepttest'
 import { erErstattet, erKliniskGodkjent, erstatningsfeil, fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
-import { B2_ESCITALOPRAM, B2_KONTROLL_0411, K1_9_AVGJORELSE, K1_OVERGANGER, medFormovergang } from '../verktoy/regler/k1'
+import { B2_ESCITALOPRAM, B2_GODKJENNING_0511, B2_KONTROLL_0411, K1_9_AVGJORELSE, K1_OVERGANGER, medFormovergang } from '../verktoy/regler/k1'
 import { alleGrunnlag, formovergangsfeil, type Avklaring, type Regel } from '../verktoy/regler/modell'
 import { simulerGodkjenning } from '../verktoy/regler/pilotmatrise'
-import { REGELSETT } from '../verktoy/tilgjengelighet'
+import { FOR_B2 } from '../verktoy/kontrollsett'
+import { REGELSETT, samlet } from '../verktoy/tilgjengelighet'
 
 const les = (fil: string) => readFileSync(new URL(`../../${fil}`, import.meta.url), 'utf8')
 const uttrekkene = { pilot: JSON.parse(les(FEST_PILOT)) as Festuttrekk, aksept: JSON.parse(les(FEST_AKSEPTTEST)) as Festuttrekk }
@@ -35,11 +37,19 @@ describe('Versjon 14 (B2)', () => {
     expect(formovergangsfeil(r)).toEqual([])
   })
 
-  it('arver ikke godkjenningen: står til faglig kontroll med overgangen og dråpepreferansen avklart av kontrolløren, uten klinisk godkjenning', () => {
+  it('er klinisk godkjent av kontrolløren for nøyaktig versjon 14 og fingeravtrykket, med overgangen og dråpepreferansen avklart, uten simulering', () => {
     const r = i(V14)
-    expect(r.godkjenning.status).toBe('til_faglig_kontroll')
-    expect(erKliniskGodkjent(r)).toBe(false)
-    expect(r.godkjenning.historikk.some((h) => h.status === 'klinisk_godkjent' && h.regelversjon === 14)).toBe(false)
+    expect(r.godkjenning.status).toBe('klinisk_godkjent')
+    expect(erKliniskGodkjent(r)).toBe(true)
+    expect(godkjenningsfeil(r)).toEqual([])
+    // Det siste steget er kontrollørens godkjenning av nøyaktig dette fingeravtrykket; ingenting er simulert.
+    const sist = r.godkjenning.historikk.at(-1)!
+    expect(sist).toMatchObject({ status: 'klinisk_godkjent', rolle: 'uavhengig_kontrollor', regelversjon: 14, dato: B2_GODKJENNING_0511.dato, fingeravtrykk: B2_GODKJENNING_0511.fingeravtrykk })
+    expect([fingeravtrykk(r), FORSLAG_B2.regler[0]!.fingeravtrykk]).toEqual([B2_GODKJENNING_0511.fingeravtrykk, B2_GODKJENNING_0511.fingeravtrykk])
+    expect(B2_GODKJENNING_0511.fingeravtrykk).toBe('01b2fb560a8defe0114f9552d619bc6bf15e27b07fa6352d6331d9beb500721f')
+    expect(JSON.stringify(r.godkjenning)).not.toMatch(/Simulert/)
+    // Godkjenningen av versjon 13 gjelder ikke versjon 14: bare ett godkjenningssteg for versjon 14.
+    expect(r.godkjenning.historikk.filter((h) => h.status === 'klinisk_godkjent' && h.regelversjon === 14)).toHaveLength(1)
     expect(alleGrunnlag(r).filter(([, g]) => g.type === 'ousfar_vurdering' && !g.avklaring)).toEqual([])
     // Avklaringene er kontrollørens (B2.1 og B2.2), for nøyaktig versjon 14.
     const avklart = (sti: string) => alleGrunnlag(r).find(([s]) => s === sti)![1] as { avklaring: Avklaring }
@@ -48,24 +58,34 @@ describe('Versjon 14 (B2)', () => {
     for (const a of [B2_KONTROLL_0411.overgang, B2_KONTROLL_0411.praktisk]) expect([a.rolle, a.regelversjon]).toEqual(['uavhengig_kontrollor', 14])
     // B2.6 nei: én form per dose.
     expect(r.plan.forlop[0]!.formoverganger![0]!.samtidig).toBeUndefined()
-    // Uten en registrert godkjenning gir regelen ingen plan.
-    expect(godkjenningsfeil(r).length).toBeGreaterThan(0)
   })
 
-  it('endrer ikke versjon 13: samme fingeravtrykk, fortsatt godkjent og ikke trukket', () => {
+  it('gir ingen plan når regelen endres etter godkjenningen: fingeravtrykket stemmer ikke lenger', () => {
+    const endret = structuredClone(i(V14))
+    endret.plan.forlop[0]!.dosevalg!.praktisk!.draper = 3
+    expect(fingeravtrykk(endret)).not.toBe(B2_GODKJENNING_0511.fingeravtrykk)
+    expect(godkjenningsfeil(endret).join(' ')).toMatch(/fingeravtrykk/i)
+  })
+
+  it('endrer ikke versjon 13: samme fingeravtrykk og godkjenning, og den gjaldt til versjon 14 ble godkjent', () => {
     const r = i(V13)
     expect([r.versjon, fingeravtrykk(r), erKliniskGodkjent(r)]).toEqual([13, FORSLAG_K1.regler[0]!.fingeravtrykk, true])
-    expect(erErstattet(r, REGELSETT.regler)).toBe(false)
+    // Før godkjenningen av versjon 14 (regelsettene K1 gjelder) var versjon 13 ikke trukket.
+    const for_ = samlet(FOR_B2).regler
+    expect(erKliniskGodkjent(for_.find((x) => x.id === V14)!)).toBe(false)
+    expect(erErstattet(r, for_)).toBe(false)
   })
 
-  it('trekker versjon 13 i det øyeblikket versjon 14 er gyldig godkjent', () => {
-    const ny = structuredClone(i(V14))
-    for (const [, g] of alleGrunnlag(ny))
-      if (g.type === 'ousfar_vurdering' && !g.avklaring) g.avklaring = { dato: '2026-11-04', av: 'Simulert i testen', rolle: 'uavhengig_kontrollor', regelversjon: 14, merknad: 'Bare i testen.' }
+  it('trekker versjon 13 nå som versjon 14 er gyldig godkjent, og bare da', () => {
+    expect(erErstattet(i(V13), REGELSETT.regler)).toBe(true)
+    // Med en ugyldig godkjenning av versjon 14 (endret etter godkjenningen) gjelder versjon 13 fortsatt.
+    const endret = structuredClone(i(V14))
+    endret.plan.forlop[0]!.dosevalg!.praktisk!.draper = 3
+    expect(erErstattet(i(V13), REGELSETT.regler.map((r) => (r.id === V14 ? endret : r)))).toBe(false)
+    // En simulert godkjenning av versjon 14 i regelsettene før godkjenningen trekker også versjon 13, som atomisk erstatning.
+    const ny = structuredClone(samlet(FOR_B2).regler.find((x) => x.id === V14)!)
     simulerGodkjenning(ny, { id: ny.id, versjon: ny.versjon, fingeravtrykk: fingeravtrykk(ny) }, '2026-11-04')
-    expect(erKliniskGodkjent(ny)).toBe(true)
-    const regler = REGELSETT.regler.map((r) => (r.id === V14 ? ny : r))
-    expect(erErstattet(i(V13), regler)).toBe(true)
+    expect(erErstattet(i(V13), samlet(FOR_B2).regler.map((r) => (r.id === V14 ? ny : r)))).toBe(true)
   })
 
   it('endrer bare overgangen, den praktiske doseringen, tablettilfellet, teksten om overgangen og aldersspørsmålet', () => {
