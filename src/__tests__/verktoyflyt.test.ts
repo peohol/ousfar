@@ -761,6 +761,77 @@ describe('ekte brukerforløp med de godkjente katalogene i appen (ChatGPT 04.11)
   })
 })
 
+describe('flyten og forhåndskontrollen er enige om svar som stopper', () => {
+  type Tilfelle = { verktoy: (typeof VERKTOY)[number]; valg: Verktoyvalg; fest: Festuttrekk; skjema: Partial<Planskjema> }
+  const AP = uttrekk(FEST_ANTIPSYKOTIKA)
+  const ap = (fra: string, til: string, form: Verktoyvalg['fra']['formulering'], startdose: string): Tilfelle => ({
+    verktoy: BYTTE_AP,
+    valg: { fra: { nokkel: fra, formulering: 'standard' }, til: { nokkel: til, formulering: form } },
+    fest: AP,
+    skjema: { startdose },
+  })
+  const tillegg = (fra: string, startdose: string): Tilfelle => ({
+    verktoy: TILLEGGSVERKTOY,
+    valg: { fra: { nokkel: fra, formulering: 'standard' }, til: { nokkel: 'lamotrigin', formulering: 'standard' } },
+    fest: TILLEGG,
+    skjema: { startdose },
+  })
+  /** Hver regel med kontrollert katalog i appen, og escitalopram med katalogen kontrollert i testen. */
+  const TILFELLER: Record<string, Tilfelle> = {
+    'depot-aripiprazol-maintena': ap('aripiprazol', 'aripiprazol', 'LA', '15'),
+    'depot-paliperidon-xeplion': ap('paliperidon', 'paliperidon', 'ER', '6'),
+    'depot-risperidon-xeplion': ap('risperidon', 'paliperidon', 'ER', '3'),
+    'antipsykotikabytte-olanzapin-aripiprazol': ap('olanzapin', 'aripiprazol', 'standard', '20'),
+    'antipsykotikabytte-risperidon-aripiprazol': ap('risperidon', 'aripiprazol', 'standard', '3'),
+    'tillegg-valproat-lamotrigin': tillegg('valproat', '1000'),
+    'tillegg-litium-lamotrigin': tillegg('litium', '84'),
+    'seponering-escitalopram': { verktoy: NED, valg: { fra: { nokkel: 'escitalopram', formulering: 'standard' } }, fest: AKSEPT, skjema: { startdose: '20' } },
+  }
+
+  it('dekker hver regel med kontrollert katalog', () => {
+    expect(KONTROLLERTE_KATALOGER.map((k) => k.regel).filter((id) => !(id in TILFELLER))).toEqual([])
+  })
+
+  it('gir «kan ikke» med flytens stoppgrunn for hvert svar flyten sier stopper, i katalogen og i reservevisningen', () => {
+    let antall = 0
+    for (const [id, t] of Object.entries(TILFELLER)) {
+      const r = regel(id)
+      for (const [navn, g] of [
+        ['katalog', katalog(r)],
+        ['reserve', RESERVE],
+        ['appen', {}],
+      ] as const) {
+        const base = besvarTillatende(r, g)
+        const vanlig = vurderFlyt(r, base, g)
+        expect(vanlig.stopp, `${id} ${navn}`).toEqual([])
+        for (const q of vanlig.sporsmal) {
+          for (const v of q.stopperVed ?? []) {
+            const svar = { ...base, [q.id]: v }
+            const flyt = vurderFlyt(r, svar, g)
+            const hva = `${id} ${navn} ${q.id}=${v}`
+            expect(
+              flyt.stopp.map((x) => x.sporsmal),
+              hva,
+            ).toContain(q.id)
+            const skjema: Planskjema = { ...TOMT_SKJEMA, ...t.skjema, flytsvar: svar }
+            const grunnlag = { verktoy: t.verktoy, valg: t.valg, sperrer: [], regel: r, skjema, utvalg: t.fest.utvalg, naa: klokke(t.fest) }
+            // Samme svar gir samme utfall og samme stoppgrunn, med flyten gitt …
+            expect(forhandskontroll({ ...grunnlag, flyt }), hva).toEqual({ utfall: 'kan_ikke', grunner: flyt.stopp, gjenstar: 0, regler: [r] })
+            // … og i hele tilstanden: ingenting står igjen, og planen er ikke neste steg.
+            const ut = flyttilstand({ ...grunnlag, flytgrunnlag: g })
+            expect(ut.tilstand.kontroll, hva).toEqual({ utfall: 'kan_ikke', grunner: flyt.stopp, gjenstar: 0 })
+            expect(ut.tilstand.steg, hva).not.toBe('plan')
+            // Uten flyten regner forhåndskontrollen den selv fra svarene i skjemaet, med appens katalogoppsett.
+            if (navn === 'appen') expect(forhandskontroll(grunnlag), hva).toMatchObject({ utfall: 'kan_ikke', grunner: flyt.stopp })
+            antall++
+          }
+        }
+      }
+    }
+    expect(antall).toBeGreaterThan(100)
+  })
+})
+
 describe('stoppforklaringene', () => {
   it('kjenner igjen motorens faste tekster', () => {
     expect(klassifiser(`${KOMPLETT_IKKE_TILGJENGELIG}: escitalopram: …`)).toBe('ikke_komplett')

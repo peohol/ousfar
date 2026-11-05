@@ -69,6 +69,6 @@ export function flyttilstand(g: Forhandsgrunnlag & { flytgrunnlag?: Flytgrunnlag
 }
 
 export { KAN_LAGES_HVIS, forhandskontroll, type Forhandsgrunnlag, type Forhandsresultat } from './forhandskontroll'
-export { medIngenAvDisse, vurderFlyt, flytoppsett, SAMLET, type Flytresultat } from './flyt'
+export { medIngenAvDisse, svarStopper, vurderFlyt, flytoppsett, SAMLET, type Flytresultat } from './flyt'
 export { stoppforklaringer, stoppkoder, klassifiser } from './stopp'
 export type * from './typer'

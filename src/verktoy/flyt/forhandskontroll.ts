@@ -25,7 +25,7 @@ import type { Verktoy } from '../register'
 import { SPERRET, usperrede, type Verktoysperre } from '../sperrer'
 import { medlemFor, REGELSETT, tilgjengelighet, type Verktoyvalg } from '../tilgjengelighet'
 import { BESLUTNINGER, type Beslutninger } from './beslutninger'
-import { INDIVIDUELT, medFlytfelt, type Flytresultat } from './flyt'
+import { INDIVIDUELT, medFlytfelt, vurderFlyt, type Flytresultat } from './flyt'
 import { stoppforklaringer } from './stopp'
 import { VALG_TRENGS, type Forhandskontroll, type Stoppforklaring, type Stoppkodenavn } from './typer'
 
@@ -263,16 +263,14 @@ export function forhandskontroll(g: Forhandsgrunnlag): Forhandsresultat {
   if (g.regel) regler = regler.filter((r) => r.id === g.regel!.id)
   if (regler.length === 0) return kanIkke([forklaring('ingen_regel', 'Den valgte planen kan ikke brukes for dette valget.')])
 
-  // Et svar i flyten som stopper planen, avgjør før noe beregnes.
-  const stoppsvar = (g.flyt?.sporsmal ?? []).filter((s) => s.valgt !== undefined && s.stopperVed?.includes(s.valgt))
-  if (stoppsvar.length > 0)
-    return kanIkke(
-      stoppsvar.map((s) => forklaring('svar_stopper', s.forklaring ?? INDIVIDUELT, { sporsmal: s.id })),
-      regler,
-    )
+  // Svarene i flyten gjelder også når bare skjemaet er gitt: flyten regnes da her, med standardoppsettet.
+  const flytsvar = g.skjema?.flytsvar
+  const flyt = g.flyt ?? (regler.length === 1 && flytsvar && Object.keys(flytsvar).length > 0 ? vurderFlyt(regler[0]!, flytsvar, { beslutninger: g.beslutninger }) : undefined)
+  // Et svar i flyten som stopper planen, avgjør før noe beregnes, med flytens egen stoppgrunn.
+  if (flyt && flyt.stopp.length > 0) return kanIkke(flyt.stopp, regler)
 
   const start = g.skjema ? lesDose(g.skjema.startdose) : undefined
-  const gjenstarFlyt = g.flyt?.gjenstar.length ?? 0
+  const gjenstarFlyt = flyt?.gjenstar.length ?? 0
   if (start === undefined) return ukjent(regler, gjenstarFlyt)
   const formnavn = (kode: string) => g.utvalg?.merkevarer.find((m) => m.legemiddelform?.kode === kode)?.legemiddelform?.tekst?.toLowerCase() ?? `legemiddelform ${kode}`
   const feil = regler.map((r) => dosefeil(r, start, formnavn))
@@ -285,7 +283,7 @@ export function forhandskontroll(g: Forhandsgrunnlag): Forhandsresultat {
   const nokkel = kanonisk({
     regler: regler.map((r) => [r.id, r.versjon]),
     skjema: g.skjema,
-    felt: g.flyt?.felt ?? null,
+    felt: flyt?.felt ?? null,
     utvalg: idFor(g.utvalg),
     naa: g.naa.toISOString().slice(0, 16),
     sperrer: g.sperrer.map((s) => s.id),
@@ -306,13 +304,13 @@ export function forhandskontroll(g: Forhandsgrunnlag): Forhandsresultat {
   let feilet: Stoppforklaring[] = []
   let ufullstendig = false
   for (const r of regler) {
-    const grunnlag = { ...g, skjema: g.skjema!, utvalg: g.utvalg, valg: g.valg }
+    const grunnlag = { ...g, ...(flyt && { flyt }), skjema: g.skjema!, utvalg: g.utvalg, valg: g.valg }
     const p = prove(r, grunnlag)
     if (p.lykkes.length === 0) {
       // Taket stoppet søket før alle muligheter var prøvd: det er ikke vist at planen er umulig.
       if (p.avbrutt) ufullstendig = true
       else if (feilet.length === 0 && p.forste)
-        feilet = [...arsaker(r, grunnlag, p.grunnskjema), ...stoppforklaringer(p.forste, r, g.flyt?.oppsett).filter((f) => !GJENSTAENDE.includes(f.kode as Stoppkodenavn))]
+        feilet = [...arsaker(r, grunnlag, p.grunnskjema), ...stoppforklaringer(p.forste, r, flyt?.oppsett).filter((f) => !GJENSTAENDE.includes(f.kode as Stoppkodenavn))]
       continue
     }
     gode.push(r)
@@ -354,9 +352,9 @@ export function forhandskontroll(g: Forhandsgrunnlag): Forhandsresultat {
     }
     // Måldosen velges av forskriveren; prøveberegningen har bare vist at minst én av verdiene gir en plan.
     if (maldoseMangler(r, p.grunnskjema)) ekstra++
-    if (kanKreveBegrunnelse(r) && g.flyt?.begrunnelse && !p.grunnskjema.begrunnelse.trim()) {
+    if (kanKreveBegrunnelse(r) && flyt?.begrunnelse && !p.grunnskjema.begrunnelse.trim()) {
       ekstra++
-      grunner.push(forklaring('begrunnelse_trengs', g.flyt.begrunnelse.hjelp, { handling: 'Skriv begrunnelsen.', losning: 'i_verktoyet' }))
+      grunner.push(forklaring('begrunnelse_trengs', flyt.begrunnelse.hjelp, { handling: 'Skriv begrunnelsen.', losning: 'i_verktoyet' }))
     }
   }
   const ut: Forhandsresultat =
