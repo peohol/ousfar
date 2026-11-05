@@ -4,12 +4,14 @@
  * gjennom den samme veien som verktøysiden (`kjorKasus`), med preparatene i
  * det lagrede FEST-uttrekket for K2.
  *
- * Reglene er ikke godkjent. Planene vises på en kopi med en simulert
- * godkjenning bundet til versjonen og fingeravtrykket under kontroll
- * (`somGodkjent`), så kontrolløren ser nøyaktig det appen ville vist om den
- * versjonen ble godkjent. Uten den simulerte godkjenningen sier verktøyet at
- * faglig kontroll gjenstår, og det godkjente startforløpet fra sertralin til
- * mirtazapin (versjon 10) er fortsatt det appen bruker.
+ * En regel som er gyldig klinisk godkjent (`K2VEDTAK`), kjøres som den er,
+ * uten simulering, gjennom verktøysidens egen vei: tilgjengeligheten, motoren,
+ * visningen og teksten som kopieres. En regel som ikke er godkjent, vises på en
+ * kopi med en simulert godkjenning bundet til versjonen og fingeravtrykket
+ * under kontroll (`somAvklartOgGodkjent`), så kontrolløren ser nøyaktig det
+ * appen ville vist om den versjonen ble godkjent; uten den sier verktøyet at
+ * faglig kontroll gjenstår. Det godkjente startforløpet fra sertralin til
+ * mirtazapin (versjon 10) er en delplan, som verktøyet ikke viser.
  *
  * Kasusene er syntetiske: bare doser og svar valgt for å prøve reglene, også
  * ved grensene. `npx vite-node scripts/verktoy-antidepressivbytter.ts -- rapport`
@@ -17,8 +19,8 @@
  */
 import type { Festuttrekk } from './regler/aksepttest'
 import { ANTIDEPRESSIVBYTTER, BYTTESETT, KORT_BEHANDLINGSTID_UKER, NYTT_LEGEMIDDEL_I_FEST } from './regler/antidepressivbytter'
-import { fingeravtrykk } from './regler/godkjenning'
-import { alleGrunnlag, type Regel } from './regler/modell'
+import { fingeravtrykk, godkjenningsfeil } from './regler/godkjenning'
+import { alleGrunnlag, apneValg, type Regel } from './regler/modell'
 import { LANG_BEHANDLINGSTID } from './regler/nedtrapping'
 import { avregistrert, avvikFra, kjorKasus, type Pilotkasus, SIMULERT_KONTROLLOR, simulerGodkjenning, type Uttrekkene } from './regler/pilotmatrise'
 import type { Regelrapport } from './regler/rapport'
@@ -91,6 +93,9 @@ const simulert = (r: Regel, sluttrinn: Sluttrinn): NonNullable<Pilotkasus['regel
 /** Det godkjente startforløpet regelen erstatter, som verktøyet bruker til regelen er godkjent. */
 const erstattet = (r: Regel) => (r.erstatter?.length ? `det godkjente startforløpet (${r.erstatter.join(', ')})` : undefined)
 
+/** Om regelen er gyldig klinisk godkjent; da kjøres kasusene uten simulering. */
+export const ekteGodkjent = (r: Regel) => godkjenningsfeil(r).length === 0
+
 /** Ett kasus i kontrollgrunnlaget, med regelen det gjelder. */
 export interface K2kasus extends Pilotkasus {
   regelId: string
@@ -116,8 +121,10 @@ export function kasusFor(r: Regel): K2kasus[] {
   const valg = valgFor(r)
   const fra = valg.fra.nokkel
   const til = valg.til!.nokkel
-  const g = simulert(r, 'laveste_tablett')
   const apent = sluttrinnApent(r)
+  // En godkjent regel kjøres slik verktøysiden kjører den: ingen kopi og ingen simulering.
+  const ekte = ekteGodkjent(r)
+  const g = ekte ? undefined : simulert(r, 'laveste_tablett')
   const hoy = String(startdoser(r).at(-1))
   const mal = String(maldoser(r).at(-1))
   const felles = { regelId: r.id, verktoy: VERKTOY, valg, uttrekk: 'aksept' as const, regel: g }
@@ -138,7 +145,7 @@ export function kasusFor(r: Regel): K2kasus[] {
           ...felles,
           id: `${r.id}:${d}-${m}`,
           kategori: 'vanlig_dose',
-          hva: `${fra} ${tall(d)} mg til ${til} ${tall(m)} mg, ${apent ? 'sluttrinnet simulert som laveste tablettdose' : 'med direkte overgang (OUSFARs forslag)'}`,
+          hva: `${fra} ${tall(d)} mg til ${til} ${tall(m)} mg, ${apent ? 'sluttrinnet simulert som laveste tablettdose' : ekte ? 'med direkte overgang, klinisk godkjent regel uten simulering' : 'med direkte overgang (simulert godkjenning)'}`,
           dose: String(d),
           skjema: { maldose: String(m), startdato: '2026-11-09' },
           forventet: { utfall: 'plan', linjer: [] },
@@ -183,12 +190,12 @@ export function kasusFor(r: Regel): K2kasus[] {
       }),
     ),
     stopp('foreldet-fest', 'FEST eldre enn 48 timer', { timer: 49 }, ['Den nattlige oppdateringen har ikke gått siden'], 'foreldet_fest'),
-    stopp('endret-regel', 'regelen endret etter kontrollen (annet fingeravtrykk)', { regel: { id: r.id, endre: { hva: 'endret trinnlengde etter den simulerte godkjenningen', endre: (x: Regel) => {
-      g.endre!.endre(x)
+    stopp('endret-regel', 'regelen endret etter kontrollen (annet fingeravtrykk)', { regel: { id: r.id, endre: { hva: `endret trinnlengde etter ${ekte ? 'den kliniske godkjenningen' : 'den simulerte godkjenningen'}`, endre: (x: Regel) => {
+      g?.endre?.endre(x)
       const fase = x.plan.forlop[0]!.faser[0]
       if (fase?.type === 'nedtrapping') fase.trinnlengde.verdi = 7
     } } } }, ['fingeravtrykket stemmer ikke'], 'regelendring'),
-    {
+    ...(ekte ? [] : [{
       ...felles,
       id: `${r.id}:uten-godkjenning`,
       kategori: 'ikke_godkjent',
@@ -196,7 +203,7 @@ export function kasusFor(r: Regel): K2kasus[] {
       dose: erstattet(r) ? String(startdoser(r)[1]) : hoy,
       regel: undefined,
       forventet: erstattet(r) ? { utfall: 'formvalg', forlop: ['til'] } : { utfall: 'ingen', status: 'til_kontroll' },
-    },
+    } satisfies K2kasus]),
   ]
 }
 
@@ -286,6 +293,35 @@ export const SPORSMAL: readonly { nr: string; sporsmal: string; anbefalt: string
   },
 ]
 
+/** Statusen for regelen i kontrollgrunnlaget, med hvordan planene er regnet. */
+function statustekst(r: Regel): string {
+  if (ekteGodkjent(r)) return 'klinisk godkjent for nøyaktig denne versjonen og dette fingeravtrykket; planene er regnet med regelen som den er, uten simulering'
+  const apne = apneValg(r).length
+  return apne === 0 ? 'hvert valg avklart av kontrolløren, til godkjenning av nøyaktig dette fingeravtrykket; planene er regnet med simulert godkjenning' : `til faglig kontroll med ${apne} åpne valg; planene er regnet med simulert avklaring og godkjenning`
+}
+
+/** Innledningen til kontrollgrunnlaget, skrevet ut fra reglenes status så den aldri kan avvike fra dem. */
+function innledning(u: Festuttrekk): string {
+  const titler = (rs: Regel[]) => rs.map((r) => r.tittel).join(' og ')
+  const sertralin = BYTTESETT.regler.filter((r) => !sluttrinnApent(r))
+  const godkjente = sertralin.filter(ekteGodkjent)
+  const avklarte = sertralin.filter((r) => !ekteGodkjent(r) && apneValg(r).length === 0)
+  const mirtazapin = BYTTESETT.regler.filter(sluttrinnApent)
+  return [
+    godkjente.length > 0
+      ? `**Klinisk godkjent:** ${titler(godkjente)}, hver for nøyaktig sin versjon og sitt fingeravtrykk. Planene for dem er regnet med regelen slik den er, uten simulering, gjennom verktøysidens egen vei: tilgjengeligheten, motoren, visningen og teksten som kopieres.`
+      : '**Ingen av reglene er klinisk godkjent.**',
+    avklarte.length > 0
+      ? `${titler(avklarte)}: hvert OUSFAR-valg er avklart av den uavhengige kontrolløren 04.11.2026, og versjonen venter på godkjenning av nøyaktig fingeravtrykket under; planene for dem er regnet på en kopi med simulert godkjenning.`
+      : '',
+    `Til sertralin seponeres SSRI-et fra laveste tablettdose, og sertralin 50 mg startes dagen etter (direkte overgang, K2-2 og K2-4). Sertralin ventes å holde SERT-hemmingen oppe, men seponeringssymptomer kan komme likevel; de følges tett den første uken, og planen justeres individuelt ved plager.`,
+    `${titler(mirtazapin)}: sluttrinnet er ikke avgjort, så hver plan stopper før en delplan (kasusene «sluttrinnet ikke avgjort»), og planene for dem er regnet på en kopi med simulert avklaring og godkjenning og sluttrinnet simulert som laveste tablettdose – et alternativ som ikke er avgjort.`,
+    `En kopi lagres aldri og går aldri til verktøysiden. Preparatene er fra FEST-uttrekket ${u.hentet.slice(0, 10)} (\`${FEST_K2}\`). Uten godkjenning sier verktøyet at faglig kontroll gjenstår. Det godkjente startforløpet fra sertralin til mirtazapin (versjon 10) er en delplan, som verktøyet ikke viser; det gir «Komplett plan ikke tilgjengelig». Bakgrunn og kilder: \`docs/verktøy-k2-antidepressivbytter.md\`; reglene i sin helhet: \`${K2_REGELRAPPORT.fil}\`.`,
+  ]
+    .filter(Boolean)
+    .join(' ')
+}
+
 export function lagK2Kontrollgrunnlag(u: Festuttrekk): string {
   const kjort = K2KASUS.map((k) => ({ k, u: kjorK2(k, u) }))
   const regler = BYTTESETT.regler.map((r) => {
@@ -295,7 +331,7 @@ export function lagK2Kontrollgrunnlag(u: Festuttrekk): string {
     return [
       `### ${r.tittel}`,
       '',
-      `\`${r.id}\`, versjon ${r.versjon}, fingeravtrykk \`${fingeravtrykk(r)}\`. Status: til faglig kontroll.`,
+      `\`${r.id}\`, versjon ${r.versjon}, fingeravtrykk \`${fingeravtrykk(r)}\`. Status: ${statustekst(r)}.`,
       '',
       ...planer.flatMap(({ k, u: x }) => [
         `**${k.hva}** (startdato 09.11.2026)${x.utfall === 'plan' && x.undertittel ? ` – ${x.undertittel}` : ''}:`,
@@ -315,7 +351,7 @@ export function lagK2Kontrollgrunnlag(u: Festuttrekk): string {
 
 <!-- Laget av \`npx vite-node scripts/verktoy-antidepressivbytter.ts -- rapport\` fra reglene og FEST-uttrekket. Ikke rediger for hånd. -->
 
-**Ingen av reglene er klinisk godkjent.** ${BYTTESETT.regler.filter((r) => !sluttrinnApent(r)).map((r) => r.tittel).join(' og ')}: sluttrinnet er OUSFARs konkrete forslag til kontroll, der SSRI-et seponeres fra laveste tablettdose og sertralin 50 mg startes dagen etter (direkte overgang, K2-2 og K2-4). Sertralin ventes å holde SERT-hemmingen oppe, men seponeringssymptomer kan komme likevel; de følges tett den første uken, og planen justeres individuelt ved plager. ${BYTTESETT.regler.filter(sluttrinnApent).map((r) => r.tittel).join(', ')}: sluttrinnet er ikke avgjort, så hver plan stopper før en delplan (kasusene «sluttrinnet ikke avgjort»), og planene for dem er regnet med sluttrinnet simulert som laveste tablettdose – et alternativ som ikke er avgjort. Planene under er regnet på en kopi der hvert åpent OUSFAR-valg er simulert avklart uendret og regelen er simulert godkjent, gjennom samme vei som verktøysiden, med preparatene i FEST-uttrekket ${u.hentet.slice(0, 10)} (\`${FEST_K2}\`). Kopien lagres aldri og går aldri til verktøysiden. Fingeravtrykket ved hver regel er versjonen under kontroll; en virkelig godkjenning krever en ny versjon med kontrollørens avklaringer, og den får et nytt fingeravtrykk. Uten godkjenning sier verktøyet at faglig kontroll gjenstår. Det godkjente startforløpet fra sertralin til mirtazapin (versjon 10) er en delplan, som verktøyet ikke viser; det gir «Komplett plan ikke tilgjengelig». Bakgrunn og kilder: \`docs/verktøy-k2-antidepressivbytter.md\`; reglene i sin helhet: \`${K2_REGELRAPPORT.fil}\`.
+${innledning(u)}
 
 Kasusene er syntetiske. ${kjort.length} kasus, ${avvik.length === 0 ? 'alle med forventet utfall' : `${avvik.length} avvik`}.
 

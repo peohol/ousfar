@@ -8,18 +8,25 @@ import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { FEST_K2, K2_KONTROLLFIL, K2_REGELRAPPORT, K2KASUS, k2avvik, kjorK2, lagK2Kontrollgrunnlag, medSluttrinnVedLavesteTablett, sluttrinnApent, somAvklartOgGodkjent, SPORSMAL, type K2kasus, type Sluttrinn } from '../verktoy/k2kontroll'
 import { VERKTOY } from '../verktoy/register'
-import { BYTTESETT, KORT_BEHANDLINGSTID_UKER, STARTFORLOP_SERTRALIN_MIRTAZAPIN } from '../verktoy/regler/antidepressivbytter'
+import { BYTTESETT, K2_AVKLARINGER, K2VEDTAK, KORT_BEHANDLINGSTID_UKER, STARTFORLOP_SERTRALIN_MIRTAZAPIN } from '../verktoy/regler/antidepressivbytter'
+import { KONTROLLOREN } from '../verktoy/regler/bygg'
 import type { Festuttrekk } from '../verktoy/regler/aksepttest'
 import { beregn } from '../verktoy/regler/beregning'
 import { erstatningsfeil, fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett, lesKontrollgrunnlag } from '../verktoy/regler/kontroll'
 import { LANG_BEHANDLINGSTID } from '../verktoy/regler/nedtrapping'
-import { apneValg, type Beregningsinndata, type Regel, type Regelsett } from '../verktoy/regler/modell'
+import { alleGrunnlag, apneValg, type Beregningsinndata, type Regel, type Regelsett } from '../verktoy/regler/modell'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
 import { REGELRAPPORTER } from '../verktoy/regler/rapport'
 import { kliniskSperre } from '../verktoy/motor/plan'
 import { REGELSETTENE, reglerFor, samlet, tilgjengelighet } from '../verktoy/tilgjengelighet'
 import { testFest, TESTKLOKKE } from './hjelp/verktoyplan'
+
+/** Fingeravtrykkene til versjon 1 av sertralinreglene, slik kontrolløren gjennomgikk dem i ba2d571 (04.11.2026). */
+const VERSJON_1: Record<string, string> = {
+  'bytte-escitalopram-sertralin': 'd84eacafe511a9a220561b6e01974eae926ef55a633bd2ef14685f842a319c69',
+  'bytte-citalopram-sertralin': 'f74a0606f5c0241af4c03972d6fee8788380c4cace1e87ee3a9ff898969841d4',
+}
 
 const les = (fil: string) => readFileSync(new URL(`../../${fil}`, import.meta.url), 'utf8')
 const UTTREKK = JSON.parse(les(FEST_K2)) as Festuttrekk
@@ -53,7 +60,7 @@ describe('K2: regelsettet', () => {
     expect(kontrollerRegelsett(BYTTESETT, lesKontrollgrunnlag(), REGELSETTENE.flatMap((x) => x.regler))).toEqual([])
   })
 
-  it('har fem regler, alle til faglig kontroll, uten gyldig godkjenning og med åpne valg', () => {
+  it('har fem regler, alle til faglig kontroll uten gyldig godkjenning; bare mirtazapinreglene har åpne valg', () => {
     expect(BYTTESETT.regler.map((r) => r.id)).toEqual([
       'bytte-sertralin-mirtazapin',
       'bytte-escitalopram-mirtazapin',
@@ -61,12 +68,40 @@ describe('K2: regelsettet', () => {
       'bytte-escitalopram-sertralin',
       'bytte-citalopram-sertralin',
     ])
+    // Ingen godkjenning er registrert ennå: kontrolløren har avklart valgene i sertralinreglene, men ikke godkjent fingeravtrykkene.
+    expect(K2VEDTAK).toBeNull()
     for (const r of BYTTESETT.regler) {
       expect(r.godkjenning.status).toBe('til_faglig_kontroll')
       expect(godkjenningsfeil(r).length).toBeGreaterThan(0)
-      expect(apneValg(r).length).toBeGreaterThan(0)
       expect(beregn(r, r.eksempler[0]!.inndata).klinisk_godkjent).toBe(false)
+      if (sluttrinnApent(r)) {
+        expect([r.versjon, apneValg(r).length > 0], r.id).toEqual([1, true])
+      } else {
+        expect([r.versjon, apneValg(r)], r.id).toEqual([2, []])
+        expect(r.godkjenning.historikk.at(-1)).toMatchObject({ status: 'til_faglig_kontroll', regelversjon: 2, merknad: expect.stringMatching(/^Ingen åpne valg; til kontrollørens samlede kontroll av nøyaktig denne versjonen og dette fingeravtrykket\. Ikke klinisk godkjent\./) })
+      }
     }
+  })
+
+  it('har i versjon 2 av sertralinreglene kontrollørens avklaring av hvert OUSFAR-valg fra gjennomgangen av ba2d571 (kommentar 6633525970), og ingen andre endringer', () => {
+    for (const r of BYTTESETT.regler.filter((x) => !sluttrinnApent(x))) {
+      const avklarte = alleGrunnlag(r).filter(([, g]) => g.type === 'ousfar_vurdering')
+      expect(avklarte.map(([sti]) => sti).sort(), r.id).toEqual(Object.keys(K2_AVKLARINGER).sort())
+      for (const [sti, g] of avklarte) {
+        expect(g.type === 'ousfar_vurdering' && g.avklaring, `${r.id} ${sti}`).toEqual({
+          dato: '2026-11-04',
+          av: KONTROLLOREN.av,
+          rolle: 'uavhengig_kontrollor',
+          regelversjon: 2,
+          merknad: `Kontrollørens gjennomgang av ba2d571 04.11.2026 (PR #318, kommentar 6633525970): ${K2_AVKLARINGER[sti]}`,
+        })
+      }
+      // Versjon 1 er det kontrolløren gjennomgikk: uten avklaringene er innholdet det samme.
+      const utenAvklaring = structuredClone(r)
+      for (const [, g] of alleGrunnlag(utenAvklaring)) if (g.type === 'ousfar_vurdering') g.avklaring = null
+      expect(fingeravtrykk({ ...utenAvklaring, versjon: 1 }), r.id).toBe(VERSJON_1[r.id])
+    }
+    expect(K2_AVKLARINGER.lang_behandlingstid).toMatch(/OUSFARs egen beslutning, ikke studiedata og ingen generell medisinsk terskel; «Trappe ned» endres ikke\./)
   })
 
   it('bygger ikke på Psychiatrienet: bare kildeoppføringens id som referanse', () => {
@@ -148,18 +183,18 @@ describe('K2: regelsettet', () => {
 })
 
 describe('K2: sluttrinnet ved bytte (K2-2)', () => {
-  it('har et konkret sluttrinn bare der sertralin startes dagen etter (direkte overgang), som åpent forslag til kontrolløren', () => {
+  it('har et konkret sluttrinn bare der sertralin startes dagen etter (direkte overgang), avklart av kontrolløren', () => {
     expect(BYTTESETT.regler.filter((r) => !sluttrinnApent(r)).map((r) => r.id)).toEqual(['bytte-escitalopram-sertralin', 'bytte-citalopram-sertralin'])
     for (const r of BYTTESETT.regler.filter((x) => !sluttrinnApent(x))) {
       const fase = r.plan.forlop[0]!.faser[0]!
       if (fase.type !== 'nedtrapping' || typeof fase.avslutning !== 'object' || fase.strategi.type !== 'prosent_av_aktuell') throw new Error(r.id)
       // Seponeringen gjelder bare fra laveste tablettdose, og bare fordi sertralin startes dagen etter siste dose.
       expect(fase.avslutning.fra_hoyst_mg.verdi, r.id).toBe(fase.strategi.sluttdose_mg!.verdi)
-      expect(fase.avslutning.fra_hoyst_mg.grunnlag.type === 'ousfar_vurdering' && fase.avslutning.fra_hoyst_mg.grunnlag.avklaring, r.id).toBeNull()
+      expect(fase.avslutning.fra_hoyst_mg.grunnlag.type === 'ousfar_vurdering' && fase.avslutning.fra_hoyst_mg.grunnlag.avklaring, r.id).toMatchObject({ av: KONTROLLOREN.av, merknad: expect.stringContaining('K2-2(a): ja for dette snevre omfanget') })
       expect(fase.avslutning.grunnlag.type === 'ousfar_vurdering' && fase.avslutning.grunnlag.begrunnelse, r.id).toMatch(/bare i denne planen, der sertralin startes dagen etter; uten et nytt legemiddel med samme virkningsmekanisme er \d+ mg ingen seponeringsgrense/)
       const start = r.plan.forlop[1]!.start
       expect(start.type === 'etter_utvasking' && start.forlop === 'fra' && start.utvasking.verdi, r.id).toBe(0)
-      expect(apneValg(r)).toContain('fra.faser[0].avslutning (åpent forslag)')
+      expect(apneValg(r)).toEqual([])
       expect(r.plan.forlop[0]!.vurderinger!.map((v) => v.nar.type)).toEqual(['for_hvert_trinn', 'etter_seponering'])
     }
   })
@@ -180,13 +215,13 @@ describe('K2: sluttrinnet ved bytte (K2-2)', () => {
     }
   })
 
-  it('gjelder bare de første ukene av behandlingen, med en kontrollerbar grense som er et åpent OUSFAR-forslag, stopper over grensen og ikke endrer «Trappe ned» (K2-8)', () => {
+  it('gjelder bare de første ukene av behandlingen, med en kontrollerbar grense som er OUSFARs egen beslutning (avklart for sertralinreglene), stopper over grensen og ikke endrer «Trappe ned» (K2-8)', () => {
     for (const r of BYTTESETT.regler) {
       const u = r.unntak.find((x) => x.id === 'lang_behandlingstid')!
       expect(u.tekst, r.id).toContain(`sammenhengende i mer enn ${KORT_BEHANDLINGSTID_UKER} uker`)
-      expect(u.grunnlag.type === 'ousfar_vurdering' && u.grunnlag.avklaring, r.id).toBeNull()
       expect(u.grunnlag.type === 'ousfar_vurdering' && u.grunnlag.begrunnelse, r.id).toMatch(/Grensen er OUSFARs valg, ikke en verdi fra kildene/)
-      expect(apneValg(r), r.id).toContain('lang_behandlingstid (åpent forslag)')
+      if (sluttrinnApent(r)) expect(apneValg(r), r.id).toContain('lang_behandlingstid (åpent forslag)')
+      else expect(u.grunnlag.type === 'ousfar_vurdering' && u.grunnlag.avklaring?.merknad, r.id).toContain('ja som pilotavgrensning')
       // Motsigelsen mot det felles spørsmålet i «Trappe ned» står uttrykkelig, og det spørsmålet er uendret.
       expect(u.grunnlag.type === 'ousfar_vurdering' && u.grunnlag.begrunnelse, r.id).toContain(`ingen ny felles definisjon av kort behandlingstid: «Trappe ned» spør fortsatt «${LANG_BEHANDLINGSTID.tekst}»`)
     }

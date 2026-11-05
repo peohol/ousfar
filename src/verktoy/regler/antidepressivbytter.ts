@@ -25,20 +25,24 @@
  * med egne ord. Psychiatrienet står bare som referanse til kildeoppføringen
  * fra P3; ingen regel bygger på teksten der, og ingen tabell er overført.
  *
- * **Ingen av reglene er klinisk godkjent.** De er sendt til uavhengig faglig
- * kontroll; alle OUSFAR-valg står som åpne forslag til de er avklart. Det
- * godkjente startforløpet fra sertralin til mirtazapin (versjon 10 i
- * `pilotsett.ts`) er uendret og brukes fortsatt i appen.
+ * **Ingen av reglene er klinisk godkjent.** I de to reglene til sertralin er
+ * hvert OUSFAR-valg avklart av den uavhengige kontrolløren 04.11.2026
+ * ({@link K2_AVKLARINGER}); versjon 2 venter på kontrollørens endelige
+ * godkjenning av nøyaktig sitt fingeravtrykk ({@link K2VEDTAK}). De tre
+ * reglene til mirtazapin har åpne forslag og et sluttrinn som ikke er avgjort,
+ * så de stopper. Det godkjente startforløpet fra sertralin til mirtazapin
+ * (versjon 10 i `pilotsett.ts`) er en delplan, som verktøyet ikke viser.
  *
  * Settet er med i verktøyene gjennom `domenesett.ts` (`ANTIDEPRESSIVBYTTER`),
  * og `npm run verktoy:regler -- rapport` skriver regelrapporten om det.
  */
 import type { Domenesett } from './domenesett'
-import { FORUTSETNINGER_FELLES, forslag, h, halvering, kilde, NICE, pn, RCPSYCH, steg, trinn14, utsagn } from './bygg'
+import { FORUTSETNINGER_FELLES, forslag, h, halvering, kilde, KONTROLLOREN, NICE, pn, RCPSYCH, steg, trinn14, utsagn } from './bygg'
+import { godkjenn, type Godkjenningsvedtak } from './godkjenning'
 import { LANG_BEHANDLINGSTID } from './nedtrapping'
 import { LITTERATUR, SPC } from './pilotsett'
 import type { Avslutning, Bekreftelse, Beregningsinndata, Forlop, Godkjenning, Kildehenvisning, Regel, Regelsett, Regneeksempel, Unntak, Vurderingspunkt } from './modell'
-import { REGELMODELLVERSJON } from './modell'
+import { alleGrunnlag, REGELMODELLVERSJON } from './modell'
 
 /* --- Fakta fra kildene, med egne ord ------------------------------------------------ */
 
@@ -862,6 +866,76 @@ export function ssriTilSertralin(fra: Fra): Regel {
   }
 }
 
+/* --- Kontrollørens avklaringer og godkjenning ------------------------------------------------- */
+
+/** Kontrollørens gjennomgang som avklarte valgene i reglene til sertralin. */
+const KONTROLLEN_0411 = { ...KONTROLLOREN, dato: '2026-11-04', gjennomgang: 'Kontrollørens gjennomgang av ba2d571 04.11.2026 (PR #318, kommentar 6633525970)' } as const
+
+const SLUTTRINN_AVKLART =
+  'K2-2(a): ja for dette snevre omfanget. Et siste trinn til null avvises ikke mekanisk fordi det er 100 % av siste ordinerte dose; absoluttdosen, den gradvise elimineringen, den nye SERT-hemmingen og rest- og interaksjonsrisikoen er vurdert samlet. Faglig plausibelt, men ingen dokumentasjon for at seponeringssymptomer uteblir, og ingen universell byttemetode.'
+
+/**
+ * Kontrollørens avklaring av hvert OUSFAR-valg i de to reglene til sertralin
+ * (stien i regelen og svaret, med spørsmålet i `docs/verktøy-k2-kontrollgrunnlag.md`).
+ * Et valg som ikke står her, eller en sti som ikke finnes i regelen, stopper
+ * byggingen ({@link avklartAvKontrolloren}), så ingen avklaring arves ukontrollert.
+ */
+export const K2_AVKLARINGER: Readonly<Record<string, string>> = {
+  'plan.forlop[0].faser[0].strategi.prosent': 'K2-1: ja; halvering av forrige dose ved bytte, med klinisk vurdering før hver endring.',
+  'plan.forlop[0].faser[0].strategi.sluttdose_mg':
+    'K2-1 og K2-2(a): ja; halveringen stopper ved laveste tablettdose, som her bare er siste trinn før direkte overgang til sertralin, ikke en generell seponeringsgrense.',
+  'plan.forlop[0].faser[0].trinnlengde': 'K2-1: ja; 14 dager per reduksjonstrinn som minstetid, med klinisk vurdering før endring.',
+  'plan.forlop[0].faser[0].avslutning.fra_hoyst_mg': SLUTTRINN_AVKLART,
+  'fra.faser[0].avslutning': SLUTTRINN_AVKLART,
+  'plan.forlop[0].vurderinger[1].nar.dager': 'K2-7: ja; tett kontroll etter overgangen, med individuell tilpasning ved symptomer.',
+  'plan.forlop[1].start.utvasking': 'K2-4: ja; direkte overgang til sertralin 50 mg dagen etter siste dose, for dette snevre omfanget, ikke som universell byttemetode.',
+  'plan.forlop[1].faser[0].varighet.dager':
+    'K2-5: ja; minst 14 dager på 50 mg før en eventuell økning, med faktisk vurdering av effekt og behov, toleranse og seponeringssymptomer før økningen.',
+  'plan.forlop[1].vurderinger[1].nar.dager': 'K2-7: ja; respons og bivirkninger vurderes fire uker etter oppstarten og etter hver doseendring.',
+  'inndata.startdose': 'K2-6: ja; bare de oppgitte startdosene.',
+  'inndata.maldose':
+    'K2-5: ja; vedlikeholdsdosen 50 eller 100 mg er forskriverens valg, med faktisk vurdering før en eventuell økning. Et valgt mål er ikke et løfte om at økningen er riktig for alle.',
+  lang_behandlingstid: `K2-6 og K2-8: ja som pilotavgrensning. Høyst ${KORT_BEHANDLINGSTID_UKER} ukers sammenhengende bruk er OUSFARs egen beslutning, ikke studiedata og ingen generell medisinsk terskel; «Trappe ned» endres ikke.`,
+  klinisk_omfang: `K2-6: ja; voksne med depresjon på de oppgitte startdosene, høyst ${KORT_BEHANDLINGSTID_UKER} ukers sammenhengende bruk, uten tidligere seponeringsplager eller kompliserende interaksjoner eller sykdom, med tabletter.`,
+}
+
+/**
+ * Ny versjon av regelen der hvert OUSFAR-valg har kontrollørens avklaring
+ * ({@link K2_AVKLARINGER}). Versjonen står til kontrollørens samlede kontroll
+ * av nøyaktig sitt fingeravtrykk; den er ikke klinisk godkjent.
+ */
+function avklartAvKontrolloren(r: Regel): Regel {
+  const x = structuredClone(r)
+  x.versjon = r.versjon + 1
+  const brukt = new Set<string>()
+  for (const [sti, g] of alleGrunnlag(x)) {
+    if (g.type !== 'ousfar_vurdering' || g.avklaring) continue
+    const svar = K2_AVKLARINGER[sti]
+    if (!svar) throw new Error(`${x.id}: kontrolløren har ikke avklart ${sti}`)
+    g.avklaring = { dato: KONTROLLEN_0411.dato, av: KONTROLLEN_0411.av, rolle: KONTROLLEN_0411.rolle, regelversjon: x.versjon, merknad: `${KONTROLLEN_0411.gjennomgang}: ${svar}` }
+    brukt.add(sti)
+  }
+  const ukjente = Object.keys(K2_AVKLARINGER).filter((sti) => !brukt.has(sti))
+  if (ukjente.length > 0) throw new Error(`${x.id}: avklaringer for valg regelen ikke har: ${ukjente.join(', ')}`)
+  x.godkjenning = {
+    status: 'til_faglig_kontroll',
+    historikk: [
+      ...r.godkjenning.historikk,
+      steg('utkast', x.versjon, `Versjon ${x.versjon}: hvert OUSFAR-valg i versjon ${r.versjon} avklart av kontrolløren (${KONTROLLEN_0411.gjennomgang}); innholdet ellers uendret.`, KONTROLLEN_0411.dato),
+      steg('til_faglig_kontroll', x.versjon, 'Ingen åpne valg; til kontrollørens samlede kontroll av nøyaktig denne versjonen og dette fingeravtrykket. Ikke klinisk godkjent.', KONTROLLEN_0411.dato),
+    ],
+  }
+  return x
+}
+
+/**
+ * Kontrollørens kliniske godkjenning av nøyaktige versjoner og fingeravtrykk
+ * i K2, når den er gitt; `null` til da. Bare reglene, versjonene og
+ * fingeravtrykkene vedtaket nevner, blir godkjent (`godkjenn`); en endret regel
+ * blir det ikke.
+ */
+export const K2VEDTAK: Godkjenningsvedtak | null = null
+
 /* --- Regelsettet ------------------------------------------------------------------------------ */
 
 /**
@@ -877,8 +951,14 @@ export const BYTTESETT: Regelsett = {
   versjon: 1,
   modell: REGELMODELLVERSJON,
   beskrivelse:
-    'Komplette bytter mellom antidepressiva (K2): fra pasientens nåværende dose til seponering av det gamle legemidlet og en valgt vedlikeholdsdose av det nye. Fem regler i to familier, til uavhengig faglig kontroll; ingen er klinisk godkjent. Til sertralin har sluttrinnet et konkret forslag (direkte overgang med tett oppfølging den første uken); til mirtazapin er det ikke avgjort, og planene stopper.',
-  regler: [ssriTilMirtazapin(SERTRALIN, [STARTFORLOP_SERTRALIN_MIRTAZAPIN]), ssriTilMirtazapin(ESCITALOPRAM), ssriTilMirtazapin(CITALOPRAM), ssriTilSertralin(ESCITALOPRAM), ssriTilSertralin(CITALOPRAM)],
+    'Komplette bytter mellom antidepressiva (K2): fra pasientens nåværende dose til seponering av det gamle legemidlet og en valgt vedlikeholdsdose av det nye. Fem regler i to familier; ingen er klinisk godkjent. De to til sertralin (nedtrapping og direkte overgang med tett oppfølging den første uken) har hvert valg avklart av den uavhengige kontrolløren og venter på godkjenning av nøyaktig sitt fingeravtrykk; til mirtazapin er sluttrinnet ikke avgjort, og planene stopper.',
+  regler: ((regler: Regel[]) => (K2VEDTAK ? godkjenn(regler, K2VEDTAK) : regler))([
+    ssriTilMirtazapin(SERTRALIN, [STARTFORLOP_SERTRALIN_MIRTAZAPIN]),
+    ssriTilMirtazapin(ESCITALOPRAM),
+    ssriTilMirtazapin(CITALOPRAM),
+    avklartAvKontrolloren(ssriTilSertralin(ESCITALOPRAM)),
+    avklartAvKontrolloren(ssriTilSertralin(CITALOPRAM)),
+  ]),
 }
 
 export const ANTIDEPRESSIVBYTTER: Domenesett = {

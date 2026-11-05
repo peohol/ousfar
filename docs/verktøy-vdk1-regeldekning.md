@@ -170,9 +170,9 @@ Regelutkast som er kontrollert og ikke godkjent (eller bare fagtekst), og som de
 | Trappe ned antidepressiv | `seponering-venlafaksin` v6 | Venlafaksin | fagtekst | bare fagtekst |
 | Trappe ned antidepressiv | `seponering-vortioksetin-langsom` v8 | Vortioksetin | beregnbar | ikke godkjent |
 | Bytte antidepressiv | `bytte-citalopram-mirtazapin` v1 | Citalopram → Mirtazapin | beregnbar | til kontroll |
-| Bytte antidepressiv | `bytte-citalopram-sertralin` v1 | Citalopram → Sertralin | beregnbar | til kontroll |
+| Bytte antidepressiv | `bytte-citalopram-sertralin` v2 | Citalopram → Sertralin | beregnbar | til kontroll |
 | Bytte antidepressiv | `bytte-escitalopram-mirtazapin` v1 | Escitalopram → Mirtazapin | beregnbar | til kontroll |
-| Bytte antidepressiv | `bytte-escitalopram-sertralin` v1 | Escitalopram → Sertralin | beregnbar | til kontroll |
+| Bytte antidepressiv | `bytte-escitalopram-sertralin` v2 | Escitalopram → Sertralin | beregnbar | til kontroll |
 | Bytte antidepressiv | `bytte-sertralin-mirtazapin` v1 | Sertralin → Mirtazapin | beregnbar | til kontroll |
 | Bytte antidepressiv | `mao-fluoksetin-fenelzin` v7 | Fluoksetin → Fenelzin | beregnbar | ikke godkjent |
 | Bytte antipsykotikum | `antipsykotikabytte-aripiprazol-olanzapin` v2 | Aripiprazol (peroral) → Olanzapin (peroral) | beregnbar | til kontroll |
