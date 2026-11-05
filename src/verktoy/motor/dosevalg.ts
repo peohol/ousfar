@@ -22,6 +22,14 @@
  *    forløpet blir mildere: runder ett trinn opp, blir neste reduksjon større.
  * 5. **Fast rekkefølge**: lavest dose først.
  *
+ * Med praktisk dosering (`Dosevalg.praktisk`, B1) teller dråper over
+ * preferansegrensen per administrasjon først i punkt 3, før delingene. Med en
+ * formovergang (`Forlop.formoverganger`, B1) har hver dose et stadium i
+ * overgangen (første form, begge formene samtidig når regelen tillater det,
+ * neste form, og så videre); stadiet går aldri tilbake, og etter punkt 3
+ * kommer færrest formskifter og så lengst tid i den første formen. Uten
+ * feltene er rekkefølgen og resultatet som før.
+ *
  * En dose består av høyst {@link MAKS_STYRKER} styrker og til sammen høyst
  * {@link MAKS_ENHETER} tabletter eller kapsler eller {@link MAKS_DRAPER}
  * dråper. Det er en praktisk ramme for
@@ -63,8 +71,32 @@ export interface Doseelement {
 export interface Dosekandidat {
   mg: number
   elementer: Doseelement[]
-  /** [godkjenningsfritak, delinger (halv 1, kvart 2), tabletter/kapsler/målinger, styrker] */
-  kompleksitet: [number, number, number, number]
+  /**
+   * [godkjenningsfritak, delinger (halv 1, kvart 2), tabletter/kapsler/målinger, styrker];
+   * med praktisk dosering [godkjenningsfritak, dråper over preferansen, delinger, tabletter/kapsler/målinger, styrker].
+   */
+  kompleksitet: readonly number[]
+  /** Stadiet i formovergangen ({@link Formstadier}): 2·i for bare form i, 2·i + 1 for form i og i + 1 samtidig. Bare med en formovergang. */
+  stadium?: number
+}
+
+/** Praktisk dosering i dosevalget (`Dosevalg.praktisk`): dråpene per administrasjon som foretrekkes. */
+export interface Praktisk {
+  draper: number
+}
+
+/** Formene i en formovergang i rekkefølge (FEST-koder), og for hver overgang om begge formene kan gis i samme dose. */
+export interface Formstadier {
+  former: readonly string[]
+  samtidig: readonly boolean[]
+}
+
+/** Det dosevalget tar hensyn til utover de harde kravene; tomt gir dagens valg. */
+export interface Doseoppsett {
+  praktisk?: Praktisk
+  stadier?: Formstadier
+  /** Én kandidat per dose og stadium i stedet for per dose, så serien kan velge stadiet (dosene i en periode). */
+  perStadium?: boolean
 }
 
 /** Grupperer brukbare byggesteiner (med styrke og doseenhet) i styrkevalg, sortert. */
@@ -113,16 +145,38 @@ function innenforRammene(elementer: readonly Doseelement[]): boolean {
   return [...sum].every(([d, n]) => n <= RAMME[d])
 }
 
-function kandidat(elementer: Doseelement[], fritak: ReadonlySet<string>): Dosekandidat {
+/**
+ * Dråpene over preferansen i én administrasjon: alle dråpene i dosen til
+ * sammen, over alle styrkene. Dosen er én administrasjon, for regelen
+ * bestemmer ikke en fordeling over døgnet (`FORBEHOLD_DOGNDOSE`); en regel
+ * med fordeling kan ikke bruke praktisk dosering (`formovergangsfeil`), så
+ * motoren påstår aldri en gunstigere fordeling enn den som er dokumentert.
+ */
+const draperOver = (elementer: readonly Doseelement[], p: Praktisk) => Math.max(0, elementer.reduce((s, e) => s + (e.doseenhet === 'drape' ? e.antall : 0), 0) - p.draper)
+
+/** Stadiet dosen har i formovergangen, eller `null` når formene ikke kan gis sammen slik (eller en form er utenfor overgangen). */
+export function stadiumFor(elementer: readonly Doseelement[], st: Formstadier, form: (e: Doseelement) => string): number | null {
+  const i = [...new Set(elementer.map((e) => st.former.indexOf(form(e))))].sort((a, b) => a - b)
+  if (i.length === 0 || i[0]! < 0) return null
+  if (i.length === 1) return 2 * i[0]!
+  return i.length === 2 && i[1] === i[0]! + 1 && st.samtidig[i[0]!] ? 2 * i[0]! + 1 : null
+}
+
+function kandidat(elementer: Doseelement[], fritak: ReadonlySet<string>, o: Doseoppsett, form: (e: Doseelement) => string): Dosekandidat | null {
+  const stadium = o.stadier ? stadiumFor(elementer, o.stadier, form) : undefined
+  if (stadium === null) return null
+  const delinger = elementer.reduce((s, e) => s + DELINGER[delingFor(e.antall)], 0)
   return {
     mg: elementer.reduce((s, e) => s + e.antall * e.mg, 0),
     elementer,
     kompleksitet: [
       elementer.filter((e) => fritak.has(e.styrke)).length,
-      elementer.reduce((s, e) => s + DELINGER[delingFor(e.antall)], 0),
+      ...(o.praktisk ? [draperOver(elementer, o.praktisk)] : []),
+      delinger,
       elementer.reduce((s, e) => s + enheter(e), 0),
       elementer.length,
     ],
+    ...(stadium !== undefined && { stadium }),
   }
 }
 
@@ -145,21 +199,26 @@ function antallFor(v: Styrkevalg, maksMg: number): number[] {
  * styrkevalgene innenfor rammene, én kandidat per dose: den enkleste som
  * `godta` godtar (for eksempel at døgndosen kan fordeles slik
  * preparatomtalen krever). Injeksjoner settes aldri sammen; én dose er én
- * hel injeksjon.
+ * hel injeksjon. Med `oppsett` ({@link Doseoppsett}) regnes praktisk
+ * dosering med, og med en formovergang bare doser formene kan gis sammen i
+ * (`perStadium`: én per dose og stadium).
  */
-export function doser(valg: readonly Styrkevalg[], fra: number, til: number, godta: (k: Dosekandidat) => boolean = () => true): Dosekandidat[] {
+export function doser(valg: readonly Styrkevalg[], fra: number, til: number, godta: (k: Dosekandidat) => boolean = () => true, oppsett: Doseoppsett = {}): Dosekandidat[] {
   const fritak = new Set(valg.filter((v) => v.registrering === 'godkjenningsfritak').map((v) => v.nokkel))
+  const former = new Map(valg.map((v) => [v.nokkel, v.legemiddelform?.kode ?? '']))
+  const form = (e: Doseelement) => former.get(e.styrke) ?? ''
+  // Med en formovergang avgjør det tidligste stadiet blant like enkle doser, så den første formen brukes lengst.
+  const kost = (k: Dosekandidat) => (oppsett.stadier ? [...k.kompleksitet, k.stadium ?? 0] : k.kompleksitet)
   const beste = new Map<string, Dosekandidat>()
   const legg = (elementer: Doseelement[]) => {
     if (elementer.some((e) => e.preparater.length === 0)) return
-    const k = kandidat(elementer, fritak)
-    if (k.mg < fra - EPS || k.mg > til + EPS) return
+    const k = kandidat(elementer, fritak, oppsett, form)
+    if (!k || k.mg < fra - EPS || k.mg > til + EPS) return
     if (!innenforRammene(elementer) || !godta(k)) return
-    const nokkel = k.mg.toFixed(6)
+    const nokkel = `${k.mg.toFixed(6)}${oppsett.perStadium ? `|${k.stadium}` : ''}`
     const forrige = beste.get(nokkel)
-    if (!forrige || sammenlign(k.kompleksitet, forrige.kompleksitet) < 0 || (sammenlign(k.kompleksitet, forrige.kompleksitet) === 0 && elementnokkel(k) < elementnokkel(forrige))) {
-      beste.set(nokkel, k)
-    }
+    const d = forrige ? sammenlign(kost(k), kost(forrige)) : -1
+    if (d < 0 || (d === 0 && elementnokkel(k) < elementnokkel(forrige!))) beste.set(nokkel, k)
   }
   const per = valg.map((v) => ({ v, antall: antallFor(v, til) }))
   for (const [i, a] of per.entries()) {
@@ -169,13 +228,13 @@ export function doser(valg: readonly Styrkevalg[], fra: number, til: number, god
       for (const b of per.slice(i + 1)) {
         if (b.v.doseenhet === 'injeksjon') continue
         for (const y of b.antall) {
-          if ((x * a.v.mg + y * b.v.mg) > til + EPS) break
+          if (x * a.v.mg + y * b.v.mg > til + EPS) break
           legg([element(a.v, x), element(b.v, y)])
         }
       }
     }
   }
-  return [...beste.values()].sort((a, b) => a.mg - b.mg)
+  return [...beste.values()].sort((a, b) => a.mg - b.mg || (a.stadium ?? 0) - (b.stadium ?? 0))
 }
 
 export const elementnokkel = (k: Pick<Dosekandidat, 'elementer'>) => k.elementer.map((e) => `${e.styrke}×${e.antall}`).join('+')
@@ -203,23 +262,28 @@ const retningFra = (fra: number, til: number) => (Math.abs(til - fra) <= EPS * M
 /**
  * Velger én dose per periode etter rekkefølgen øverst i filen. Retningen
  * følger den ideelle kurven fra `start` (dosen forløpet starter med): synker
- * den, kan den praktiske dosen ikke øke, og omvendt. `null` når ingen rekke
- * oppfyller kravene.
+ * den, kan den praktiske dosen ikke øke, og omvendt. Har kandidatene et
+ * stadium i en formovergang, starter forløpet i stadium 0 (formen pasienten
+ * bruker) og går aldri tilbake. `null` når ingen rekke oppfyller kravene.
  */
 export function velgSerie(perioder: readonly Periodevalg[], start: number): Dosekandidat[] | null {
-  type Tilstand = { mg: number; kost: number[]; forrige: number }
-  let forrige: (Tilstand | null)[] = [{ mg: start, kost: [0, 0, 0, 0, 0, 0], forrige: -1 }]
+  type Tilstand = { mg: number; stadium: number; kost: number[]; forrige: number }
+  let forrige: (Tilstand | null)[] = [{ mg: start, stadium: 0, kost: [], forrige: -1 }]
   let fraIdeell = start
   const lag: (Tilstand | null)[][] = []
   for (const p of perioder) {
     const retning = retningFra(fraIdeell, p.ideell)
     const naa = p.kandidater.map((k): Tilstand | null => {
-      const egen = [relativtAvvik(p.ideell, k.mg), ...k.kompleksitet, (retning * (k.mg - p.ideell)) / p.ideell]
+      const stadium = k.stadium ?? 0
       let best: Tilstand | null = null
       for (const [j, t] of forrige.entries()) {
         if (!t || (retning < 0 && k.mg > t.mg + EPS) || (retning > 0 && k.mg < t.mg - EPS)) continue
-        const kost = egen.map((x, n) => x + t.kost[n]!)
-        if (!best || sammenlign(kost, best.kost) < 0) best = { mg: k.mg, kost, forrige: j }
+        if (stadium < t.stadium) continue
+        // Med en formovergang: formskiftet og stadiet etter enkelheten, før avrundingen mot forrige dose.
+        const skifte = k.stadium === undefined ? [] : [stadium === t.stadium ? 0 : 1, stadium]
+        const egen = [relativtAvvik(p.ideell, k.mg), ...k.kompleksitet, ...skifte, (retning * (k.mg - p.ideell)) / p.ideell]
+        const kost = egen.map((x, n) => x + (t.kost[n] ?? 0))
+        if (!best || sammenlign(kost, best.kost) < 0) best = { mg: k.mg, stadium, kost, forrige: j }
       }
       return best
     })
@@ -271,14 +335,21 @@ export function fordel(k: Pick<Dosekandidat, 'elementer'>, antall: readonly numb
       const valg = (i: number, bruk: number[]): void => {
         if (i === typer.length) {
           const mg = bruk.reduce((s, c, j) => s + c * typer[j]![0], 0)
-          if (mg > EPS && mg <= maks + EPS) sok(igjen.map((c, j) => c - bruk[j]!), [...doser, mg])
+          if (mg > EPS && mg <= maks + EPS)
+            sok(
+              igjen.map((c, j) => c - bruk[j]!),
+              [...doser, mg],
+            )
           return
         }
         for (let c = 0; c <= igjen[i]!; c++) valg(i + 1, [...bruk, c])
       }
       valg(0, [])
     }
-    sok(typer.map(([, c]) => c), [])
+    sok(
+      typer.map(([, c]) => c),
+      [],
+    )
     if (best) return best
   }
   return null
