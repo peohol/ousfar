@@ -345,28 +345,52 @@ describe('QA: det eksisterende legemidlet i et tillegg holdes på den faktiske d
   }
 })
 
-describe('QA: K3 telles for seg (peroral → peroral og depot)', () => {
-  const ut = (id: string) => RESULTATER.find((r) => r.forlop.id === id)!
-  const godkjent = (id: string) => ALLE.some((x) => x.nokkel.endsWith(`/${id}`) && erKliniskGodkjent(x.r))
-  const regelen = (id: string) => ALLE.find((x) => x.nokkel.endsWith(`/${id}`) && erKliniskGodkjent(x.r))!.r
+const utfallet = (id: string) => RESULTATER.find((r) => r.forlop.id === id)!
+const godkjentRegel = (id: string) => ALLE.find((x) => x.nokkel.endsWith(`/${id}`) && erKliniskGodkjent(x.r))?.r
 
-  it('finner godkjenningsfritaket fra FEST: peroral paliperidon bare med fritak, peroral risperidon og aripiprazol markedsført', () => {
-    if (!godkjent('depot-paliperidon-xeplion') || !godkjent('depot-risperidon-xeplion')) return
-    expect(['depot-paliperidon-xeplion', 'depot-risperidon-xeplion', 'depot-aripiprazol-maintena'].map((id) => startKreverFritak(regelen(id)))).toEqual([true, false, false])
+/**
+ * Når alle reglene er klinisk godkjent: forløpene innenfor regelens start- og
+ * måldoser gir komplett plan uten QA-avvik, og forløpene rett utenfor stopper
+ * med grunnen. Før godkjenningen prøves ingenting (forløpene står da i
+ * rapporten som til kontroll).
+ */
+const grenser = (regler: string[], komplette: string[], stopp: [string, RegExp][]) =>
+  it(`gir komplett plan bare ved regelens start- og måldoser (${regler.join(', ')})`, () => {
+    if (!regler.every(godkjentRegel)) return
+    for (const id of komplette) expect([id, utfallet(id).klasse, utfallet(id).feil]).toEqual([id, 'komplett', []])
+    for (const [id, grunn] of stopp) expect([id, utfallet(id).klasse, utfallet(id).vist.join(' ')]).toEqual([id, 'stoppet', expect.stringMatching(grunn)])
   })
 
-  it('gir komplett plan bare ved regelens start- og måldoser', () => {
-    if (!godkjent('antipsykotikabytte-olanzapin-aripiprazol') || !godkjent('antipsykotikabytte-risperidon-aripiprazol') || !godkjent('depot-risperidon-xeplion')) return
-    for (const id of ['K0-08', 'H-40', 'H-41', 'H-42']) expect([id, ut(id).klasse, ut(id).feil]).toEqual([id, 'komplett', []])
-    // Startdose utenfor (olanzapin 10, risperidon 4 og 2 til Xeplion) og måldose utenfor (aripiprazol 20).
-    for (const [id, grunn] of [
+describe('QA: K3 telles for seg (peroral → peroral og depot)', () => {
+  it('finner godkjenningsfritaket fra FEST: peroral paliperidon bare med fritak, peroral risperidon og aripiprazol markedsført', () => {
+    const ider = ['depot-paliperidon-xeplion', 'depot-risperidon-xeplion', 'depot-aripiprazol-maintena']
+    if (!ider.every(godkjentRegel)) return
+    expect(ider.map((id) => startKreverFritak(godkjentRegel(id)!))).toEqual([true, false, false])
+  })
+
+  // Startdose utenfor (olanzapin 10, risperidon 4 og 2 til Xeplion) og måldose utenfor (aripiprazol 20).
+  grenser(
+    ['antipsykotikabytte-olanzapin-aripiprazol', 'antipsykotikabytte-risperidon-aripiprazol', 'depot-risperidon-xeplion'],
+    ['K0-08', 'H-40', 'H-41', 'H-42'],
+    [
       ['K0-07', /Startdosen 10 mg/],
       ['K0-10', /Startdosen 4 mg/],
       ['H-44', /Startdosen 2 mg/],
       ['H-43', /Måldosen 20 mg/],
-    ] as const)
-      expect([id, ut(id).klasse, ut(id).vist.join(' ')]).toEqual([id, 'stoppet', expect.stringMatching(grunn)])
-  })
+    ],
+  )
+})
+
+describe('QA: K2 bytte fra escitalopram og citalopram til sertralin', () => {
+  // Startdose utenfor (escitalopram 15) og måldose utenfor (sertralin 150).
+  grenser(
+    ['bytte-escitalopram-sertralin', 'bytte-citalopram-sertralin'],
+    ['K0-06', 'H-15', 'H-45', 'H-46'],
+    [
+      ['H-48', /Startdosen 15 mg/],
+      ['H-47', /Måldosen 150 mg/],
+    ],
+  )
 })
 
 describe('QA: omfanget til beregningene som er tilgjengelige', () => {

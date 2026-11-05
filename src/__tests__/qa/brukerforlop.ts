@@ -98,6 +98,8 @@ const DRAPER = '748'
 const form = (legemiddelform: string): Partial<Planskjema> => ({ formvalg: { fra: { legemiddelform } } })
 const lang: Partial<Planskjema> = { svar: { lang_behandlingstid: true } }
 
+/** Måldosen forskriveren velger i skjemaet (mg), når regelen tilbyr flere. */
+const mal = (maldose: string): Pick<Brukerforlop, 'skjema'> => ({ skjema: { maldose } })
 const p = (nokkel: string) => ({ nokkel, formulering: 'standard' as const })
 const ned = (id: string, hva: string, nokkel: string, dose: string): Brukerforlop => ({
   id,
@@ -114,8 +116,6 @@ const ad = (id: string, hva: string, fra: string, til: string, dose: string): Br
   dose,
 })
 const ap = (id: string, hva: string, fra: Verktoyvalg['fra'], til: NonNullable<Verktoyvalg['til']>, dose: string): Brukerforlop => ({ id, leveranse: 'K3', hva, valg: { fra, til }, dose })
-/** Måldosen forskriveren velger i skjemaet (mg), når regelen tilbyr flere. */
-const mal = (maldose: string): Pick<Brukerforlop, 'skjema'> => ({ skjema: { maldose } })
 const tillegg = (id: string, hva: string, fra: string, til: string, dose: string): Brukerforlop => ({
   id,
   leveranse: 'K4',
@@ -135,9 +135,9 @@ export const BRUKERFORLOP: readonly Brukerforlop[] = [
   ned('K0-01', 'Escitalopram 10 mg tablett, kort behandlingstid, skal seponeres', 'escitalopram', '10'),
   ned('K0-02', 'Sertralin 100 mg tablett, kort behandlingstid, skal seponeres', 'sertralin', '100'),
   ned('K0-03', 'Amitriptylin 25 mg tablett, kort behandlingstid, skal seponeres', 'amitriptylin', '25'),
-  ad('K0-04', 'Sertralin 100 mg byttes til mirtazapin', 'sertralin', 'mirtazapin', '100'),
-  ad('K0-05', 'Escitalopram 20 mg byttes til mirtazapin', 'escitalopram', 'mirtazapin', '20'),
-  ad('K0-06', 'Escitalopram 20 mg byttes til sertralin', 'escitalopram', 'sertralin', '20'),
+  { ...ad('K0-04', 'Sertralin 100 mg byttes til mirtazapin', 'sertralin', 'mirtazapin', '100'), ...mal('15') },
+  { ...ad('K0-05', 'Escitalopram 20 mg byttes til mirtazapin', 'escitalopram', 'mirtazapin', '20'), ...mal('15') },
+  { ...ad('K0-06', 'Escitalopram 20 mg byttes til sertralin', 'escitalopram', 'sertralin', '20'), ...mal('50') },
   { ...ap('K0-07', 'Olanzapin 10 mg tablett byttes til aripiprazol tablett', p('olanzapin'), p('aripiprazol'), '10'), ...mal('10') },
   { ...ap('K0-08', 'Risperidon 4 mg tablett byttes til aripiprazol tablett', p('risperidon'), p('aripiprazol'), '4'), ...mal('10') },
   ap('K0-09', 'Aripiprazol 15 mg tablett til Abilify Maintena', p('aripiprazol'), { nokkel: 'aripiprazol', formulering: 'LA' }, '15'),
@@ -159,7 +159,7 @@ export const BRUKERFORLOP: readonly Brukerforlop[] = [
   ned('H-12', 'Bupropion 300 mg skal seponeres', 'bupropion', '300'),
   ned('H-13', 'Agomelatin 25 mg skal seponeres', 'agomelatin', '25'),
   ad('H-14', 'Sertralin 50 mg byttes til mirtazapin', 'sertralin', 'mirtazapin', '50'),
-  ad('H-15', 'Citalopram 20 mg byttes til sertralin', 'citalopram', 'sertralin', '20'),
+  { ...ad('H-15', 'Citalopram 20 mg byttes til sertralin 100 mg', 'citalopram', 'sertralin', '20'), ...mal('100') },
   ad('H-16', 'Sertralin 100 mg byttes til escitalopram', 'sertralin', 'escitalopram', '100'),
   ad('H-17', 'Escitalopram 20 mg byttes til vortioksetin', 'escitalopram', 'vortioksetin', '20'),
   ad('H-18', 'Fluoksetin 20 mg byttes til sertralin', 'fluoksetin', 'sertralin', '20'),
@@ -189,6 +189,10 @@ export const BRUKERFORLOP: readonly Brukerforlop[] = [
   { ...ap('H-42', 'Risperidon 3 mg tablett til Xeplion månedlig', p('risperidon'), { nokkel: 'paliperidon', formulering: 'ER' }, '3'), maldose: 'regelens' },
   { ...ap('H-43', 'Olanzapin 20 mg tablett byttes til aripiprazol med måldose 20 mg', p('olanzapin'), p('aripiprazol'), '20'), ...mal('20') },
   { ...ap('H-44', 'Risperidon 2 mg tablett til Xeplion månedlig', p('risperidon'), { nokkel: 'paliperidon', formulering: 'ER' }, '2'), maldose: 'regelens' },
+  { ...ad('H-45', 'Escitalopram 10 mg byttes til sertralin 100 mg', 'escitalopram', 'sertralin', '10'), ...mal('100') },
+  { ...ad('H-46', 'Citalopram 40 mg byttes til sertralin 50 mg', 'citalopram', 'sertralin', '40'), ...mal('50') },
+  { ...ad('H-47', 'Escitalopram 20 mg byttes til sertralin med måldose 150 mg', 'escitalopram', 'sertralin', '20'), ...mal('150') },
+  { ...ad('H-48', 'Escitalopram 15 mg byttes til sertralin 50 mg', 'escitalopram', 'sertralin', '15'), ...mal('50') },
 ]
 
 /* --- Kjøringen ------------------------------------------------------------------- */
