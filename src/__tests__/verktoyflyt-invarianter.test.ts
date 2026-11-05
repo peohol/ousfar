@@ -26,7 +26,8 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { glemBildet } from '../oppdatering/bevaring'
 import { gjelderFortsatt, osloDato, ubesvart, TOMT_SKJEMA, type Planskjema } from '../verktoy/doseplan'
 import { elementtekst, planform, preparatliste, type Doseplanresultat } from '../verktoy/motor/plan'
-import { kildelinje, planTekst, planvisning, regellinje } from '../verktoy/planvisning'
+import { norskDato } from '../verktoy/motor/byggesteiner'
+import { kildelinje, planTekst, planvisning, regellinje, type Planrad, type Planvisning } from '../verktoy/planvisning'
 import { festkoblinger, KARTLEGGING, VALGTEKSTER, VERKTOY, virkestoffvalg, type Verktoy } from '../verktoy/register'
 import { BRUKERFORLOP, kjerne, kjorForlop, komplett, lesUttrekkene, tidslinjeavvik, type Planinndata, type Tidslinje } from './qa/brukerforlop'
 import { avrund } from '../verktoy/regler/beregning'
@@ -511,40 +512,153 @@ function dagene(naar: string): [number, number] | null {
 
 const linjene = (tekst: string) => tekst.split('\n').map(kjerne)
 
+/** Tiden i en injeksjonsrad for vedlikeholdet: «Hver måned fra 1 måned etter dag 8», «Hver 3. måned fra 3 måneder etter dag 36». */
+function vedlikeholdet(naar: string): { maaneder: number; fra: number; etter_dag: number } | null {
+  const m = /^Hver (?:måned|(\d+)\. måned) fra (\d+) måned(?:er)? etter dag (\d+)$/.exec(naar)
+  return m ? { maaneder: Number(m[1] ?? 1), fra: Number(m[2]), etter_dag: Number(m[3]) } : null
+}
+
 /**
- * Det motoren beregnet, mot tabellen planen viser, celle for celle: hver
- * periode står i raden for dagen den begynner, under sitt legemiddel, med
- * dosen først og hvert preparat på sin linje; hver injeksjon står i en
- * injeksjonsrad under sitt legemiddel. Kolonnene er legemidlene i
- * forløpenes rekkefølge.
+ * Det motoren beregnet, mot tabellen planen viser, celle for celle:
+ *
+ * - Doseradene dekker dagene uten hull eller overlapp, fra planens første dag.
+ *   Hver rad ligger helt inne i én periode for hvert legemiddel, så både
+ *   første og siste dag i hver periode stemmer; dosen står først i cellen og
+ *   hvert preparat på sin linje.
+ * - Et legemiddel som fortsetter uendret, har nøyaktig motorens `uendret_mg`
+ *   fra sin første dag; en celle uten periode har ingen dose.
+ * - Injeksjonene står i motorens rekkefølge under sitt legemiddel, hver på
+ *   motorens dag og dato (vedlikeholdet med intervall og første gang), med
+ *   dosen, preparatet, vinduet og stedet.
+ * - Radene står i dagenes rekkefølge, og kolonnene er legemidlene i
+ *   forløpenes rekkefølge.
  */
 function motoravvik(r: Extract<Doseplanresultat, { status: 'doseplan' }>, tabell: HTMLTableElement): string[] {
   const avvik: string[] = []
   const koloner = [...tabell.querySelectorAll('thead th')].slice(1).map(enLinje)
-  const rader = [...tabell.querySelectorAll('tbody tr')].map((tr) => ({
-    type: tr.getAttribute('data-type'),
-    naar: lesbar(tr.children[0]!).split('\n')[0]!,
-    celler: [...tr.children].slice(1).map(lesbar),
-  }))
+  const rader = [...tabell.querySelectorAll('tbody tr')].map((tr) => {
+    const [naar, dato] = lesbar(tr.children[0]!).split('\n')
+    return { type: tr.getAttribute('data-type'), naar: naar!, dato, dager: dagene(naar!), celler: [...tr.children].slice(1).map(lesbar) }
+  })
+  // Dosen står først i cellen; «15 mg» er ikke «5 mg», og «2,5 mg» er ikke «2 mg».
+  const forst = (celle: string[] | undefined, dose: string) => !!celle && celle[0]!.startsWith(kjerne(dose)) && !/^[‡|]/u.test(celle[0]!.slice(kjerne(dose).length))
+
+  // Doseradene: sammenhengende dager fra planens første dag.
+  const doserader = rader.filter((x) => x.type === 'periode')
+  for (const x of doserader) if (!x.dager) avvik.push(`doseraden «${x.naar}» har ingen dager`)
+  // Planens første dag: den første perioden, den første dagen med uendret dose, eller dagen legemidlet er seponert.
+  const forste = Math.min(
+    ...r.forlop.flatMap((f) => [
+      ...f.perioder.map((p) => p.fra),
+      ...(f.uendret_mg !== undefined ? [f.start] : []),
+      ...(f.siste_dosedag !== null && f.perioder.length === 0 && f.injeksjoner.length === 0 ? [f.siste_dosedag + 1] : []),
+    ]),
+  )
+  if (doserader.length > 0 && doserader[0]?.dager?.[0] !== forste) avvik.push(`første doserad er «${doserader[0]?.naar}», ikke dag ${forste}`)
+  doserader.slice(1).forEach((x, j) => {
+    const for_ = doserader[j]!.dager
+    if (for_ && x.dager && x.dager[0] !== for_[1] + 1) avvik.push(`«${doserader[j]!.naar}» følges av «${x.naar}»: dagene henger ikke sammen`)
+  })
+  const sisteDag = doserader.at(-1)?.dager?.[1] ?? 0
+
   r.forlop.forEach((f, i) => {
     const navn = KARTLEGGING.virkestoffer.find((v) => v.nokkel === f.virkestoff)?.navn ?? f.virkestoff
     if (!koloner[i]?.startsWith(navn)) avvik.push(`kolonne ${i + 1} er «${koloner[i]}», ikke ${navn}`)
-    for (const p of f.perioder) {
-      const rad = rader.find((x) => x.type === 'periode' && dagene(x.naar)?.[0] === p.fra)
-      const celle = rad && linjene(rad.celler[i] ?? '')
-      const dose = kjerne(`${tall(p.mg)} mg`)
-      // Dosen står først, og et tall rett etter den (for eksempel «15 mg» for «5 mg») godtas ikke.
-      if (!celle || !celle[0]!.startsWith(dose) || /^[\p{N}‡|]/u.test(celle[0]!.slice(dose.length)))
-        avvik.push(`${navn} dag ${p.fra}: ${tall(p.mg)} mg står ikke først i cellen (${JSON.stringify(rad?.celler[i])})`)
-      for (const e of p.elementer) if (!celle?.includes(kjerne(elementtekst(e)))) avvik.push(`${navn} dag ${p.fra}: «${elementtekst(e)}» står ikke i cellen`)
+    for (const p of f.perioder) if ((p.til ?? Infinity) > sisteDag) avvik.push(`${navn} dag ${p.fra}–${p.til ?? ''}: tabellen slutter på dag ${sisteDag}`)
+    for (const x of doserader) {
+      if (!x.dager) continue
+      const [a, b] = x.dager
+      const celle = linjene(x.celler[i] ?? '')
+      const p = f.perioder.find((q) => q.fra <= a && (q.til === null || q.til >= a))
+      if (p) {
+        if ((p.til ?? Infinity) < b) avvik.push(`${navn} «${x.naar}»: perioden med ${tall(p.mg)} mg slutter dag ${p.til}`)
+        if (!forst(celle, `${tall(p.mg)} mg`)) avvik.push(`${navn} «${x.naar}»: ${tall(p.mg)} mg står ikke først i cellen (${JSON.stringify(x.celler[i])})`)
+        for (const e of p.elementer) if (!celle.includes(kjerne(elementtekst(e)))) avvik.push(`${navn} «${x.naar}»: «${elementtekst(e)}» står ikke i cellen`)
+      } else if (f.perioder.some((q) => q.fra > a && q.fra <= b)) {
+        avvik.push(`${navn} «${x.naar}»: en periode begynner inne i raden`)
+      } else if (f.uendret_mg !== undefined && a >= f.start) {
+        if (!forst(celle, `${tall(f.uendret_mg)} ${f.uendret_visning?.enhet ?? 'mg'}`) || !celle.some((l) => l.includes(kjerne('uendret dose'))))
+          avvik.push(`${navn} «${x.naar}»: den uendrede dosen ${tall(f.uendret_mg)} ${f.uendret_visning?.enhet ?? 'mg'} står ikke i cellen (${JSON.stringify(x.celler[i])})`)
+      } else if (!(celle[0] === kjerne('–') || celle[0]?.startsWith(kjerne('Seponert')))) {
+        avvik.push(`${navn} «${x.naar}»: motoren har ingen dose, men cellen er ${JSON.stringify(x.celler[i])}`)
+      }
     }
-    for (const inj of f.injeksjoner) {
-      const dose = kjerne(`Injeksjon ${tall(inj.mg)} mg`)
-      const funnet = rader.some((x) => x.type === 'injeksjon' && linjene(x.celler[i] ?? '').includes(dose) && linjene(x.celler[i] ?? '').includes(kjerne(elementtekst(inj.element))))
-      if (!funnet) avvik.push(`${navn}: injeksjonen ${tall(inj.mg)} mg står ikke i en injeksjonsrad under legemidlet`)
-    }
+
+    // Injeksjonene, i motorens rekkefølge, mot injeksjonsradene under legemidlet.
+    const vist = rader.filter((x) => x.type === 'injeksjon' && x.celler[i])
+    const beregnet = [...f.injeksjoner].sort((x, y) => (x.dag ?? Infinity) - (y.dag ?? Infinity))
+    if (vist.length !== beregnet.length) avvik.push(`${navn}: ${beregnet.length} injeksjoner beregnet, ${vist.length} vist`)
+    beregnet.forEach((inj, k) => {
+      const x = vist[k]
+      if (!x) return
+      const v = inj.vedlikehold
+      const tid = v ? vedlikeholdet(x.naar) : x.dager
+      if (v ? !tid || JSON.stringify(tid) !== JSON.stringify({ maaneder: v.maaneder, fra: v.maaneder, etter_dag: v.etter_dag }) : JSON.stringify(tid) !== JSON.stringify([inj.dag, inj.dag]))
+        avvik.push(`${navn}: injeksjon ${k + 1} står «${x.naar}», ikke ${v ? `hver ${v.maaneder}. måned etter dag ${v.etter_dag}` : `dag ${inj.dag}`}`)
+      const dato = v?.forste_dato ?? inj.dato
+      const ventet = dato && `${v ? 'første ' : ''}${norskDato(dato)}`
+      if ((x.dato ?? undefined) !== (ventet || undefined)) avvik.push(`${navn}: injeksjon ${k + 1} har datoen «${x.dato ?? ''}», ikke «${ventet ?? ''}»`)
+      const celle = linjene(x.celler[i]!)
+      if (celle[0] !== kjerne(`Injeksjon ${tall(inj.mg)} mg`)) avvik.push(`${navn}: injeksjon ${k + 1} er «${celle[0]}», ikke ${tall(inj.mg)} mg`)
+      if (!celle.includes(kjerne(elementtekst(inj.element)))) avvik.push(`${navn}: injeksjon ${k + 1} mangler «${elementtekst(inj.element)}»`)
+      const detalj = [inj.vindu_dager && `±${inj.vindu_dager} dager`, inj.sted, v?.tidligst_dager && `tidligst ${v.tidligst_dager} dager etter forrige`].filter((d): d is string => !!d)
+      const deler = x.celler[i]!.split('\n')
+        .flatMap((l) => l.split(', '))
+        .map(kjerne)
+      for (const d of detalj) if (!deler.includes(kjerne(d))) avvik.push(`${navn}: injeksjon ${k + 1} mangler «${d}»`)
+    })
+  })
+
+  // Radene i dagenes rekkefølge; vedlikeholdet står sist.
+  const start = rader.map((x) => x.dager?.[0] ?? (vedlikeholdet(x.naar) ? Infinity : NaN))
+  start.forEach((d, j) => {
+    if (Number.isNaN(d)) avvik.push(`raden «${rader[j]!.naar}» har ingen dag`)
+    else if (j > 0 && d < start[j - 1]!) avvik.push(`«${rader[j]!.naar}» står etter «${rader[j - 1]!.naar}»`)
   })
   return avvik
+}
+
+/**
+ * Planen endret med vilje på én måte før den vises, slik at tabellen og
+ * kopien har den samme feilen; da kan bare kontrollen mot motoren se den.
+ */
+function feilvisninger(v: Planvisning): [string, Planvisning][] {
+  const endre = (hva: string, finn: (r: Planrad) => boolean, ny: (r: Planrad) => Planrad): [string, Planvisning][] => {
+    const i = v.rader.findIndex(finn)
+    return i < 0 ? [] : [[hva, { ...v, rader: v.rader.map((r, j) => (j === i ? ny(structuredClone(r)) : r)) }]]
+  }
+  const uendret = (r: Planrad) => (r.type === 'periode' ? r.celler.findIndex((c) => c?.elementer.some((e) => e.includes('uendret dose'))) : -1)
+  return [
+    ...endre(
+      'en periode er kortet ned (som dag 1–14 → dag 1–7)',
+      (r) => r.type === 'periode' && /^Dag \d+–\d+$/.test(r.dager),
+      (r) => {
+        const [fra, til] = dagene(r.dager)!
+        const kortere = fra + Math.floor((til - fra) / 2)
+        return { ...r, dager: kortere === fra ? `Dag ${fra}` : `Dag ${fra}–${kortere}` }
+      },
+    ),
+    ...endre(
+      'en injeksjon er flyttet en uke (som Xeplion dag 8 → dag 15)',
+      (r) => r.type === 'injeksjon' && /^Dag \d+$/.test(r.dager),
+      (r) => ({ ...r, dager: `Dag ${dagene(r.dager)![0] + 7}` }),
+    ),
+    ...endre(
+      'vedlikeholdsintervallet er endret',
+      (r) => r.type === 'injeksjon' && vedlikeholdet(r.dager) !== null,
+      (r) => ({ ...r, dager: r.dager.startsWith('Hver måned') ? r.dager.replace('Hver måned', 'Hver 3. måned') : r.dager.replace(/^Hver \d+\. måned/, 'Hver måned') }),
+    ),
+    ...endre(
+      'en uendret dose er endret (som litium eller valproat)',
+      (r) => uendret(r) >= 0,
+      (r) => {
+        if (r.type !== 'periode') return r
+        const c = r.celler[uendret(r)]!
+        c.dose = c.dose.replace(/^\d+(?:,\d+)?/, (n) => tall(2 * Number(n.replace(',', '.'))))
+        return r
+      },
+    ),
+  ]
 }
 
 /** Kopien endret med vilje på én måte; hver endring skal gi et avvik mot tabellen. */
@@ -603,12 +717,12 @@ describe('S8: kopien inneholder hele planen', () => {
   afterEach(cleanup)
   const PLANVISNING = import('../components/verktoy/Doseplanvisning')
 
-  /** Planen vist på siden, med tabellen og kopien. */
-  async function vist(x: (typeof PLANER)[number]) {
+  /** Planen vist på siden, med tabellen og kopien; `endret` viser en plan som med vilje er gjort feil i stedet. */
+  async function vist(x: (typeof PLANER)[number], endret?: Planvisning) {
     const { Doseplanvisning } = await PLANVISNING
     const r = x.utfall.resultat!
     if (r.status !== 'doseplan') throw new Error('ingen plan')
-    const v = planvisning(r, x.regel)!
+    const v = endret ?? planvisning(r, x.regel)!
     const { container } = render(createElement(Doseplanvisning, { plan: v, overskrift: x.verktoy.navn }))
     return { r, v, tabell: container.querySelector('table')!, kopi: planTekst(v, x.verktoy.navn) }
   }
@@ -649,6 +763,40 @@ describe('S8: kopien inneholder hele planen', () => {
       const byttet = { ...t, rader: t.rader.map((r, j) => (j === i ? [r[0]!, ...r.slice(1).reverse()] : r)) }
       if (rad.slice(1).join() !== rad.slice(1).reverse().join()) expect(tidslinjeavvik(byttet, kopi), 'cellene byttet mellom legemidlene').not.toEqual([])
     }
+  })
+
+  it.each(PLANER.map((x) => [x.kasus.id, x] as const))('%s: den samme feilen i tabellen og kopien oppdages mot motoren', async (_, x) => {
+    const { r, v } = await vist(x)
+    cleanup()
+    for (const [hva, feil] of feilvisninger(v)) {
+      const { tabell, kopi } = await vist(x, feil)
+      expect(tidslinjeavvik(tidslinjen(tabell), kopi), `${hva}: tabellen og kopien er like`).toEqual([])
+      expect(motoravvik(r, tabell), hva).not.toEqual([])
+      cleanup()
+    }
+  })
+
+  it('hver feil i både tabellen og kopien er prøvd, i K2-, K3- og K4-planer', async () => {
+    const prøvd = new Map<string, Set<string>>()
+    for (const x of PLANER) {
+      const { v } = await vist(x)
+      for (const [hva] of feilvisninger(v)) prøvd.set(hva, new Set([...(prøvd.get(hva) ?? []), ...v.kolonner.map((k) => k.navn)]))
+      cleanup()
+    }
+    expect([...prøvd.keys()].sort()).toEqual(
+      [
+        'en injeksjon er flyttet en uke (som Xeplion dag 8 → dag 15)',
+        'en periode er kortet ned (som dag 1–14 → dag 1–7)',
+        'en uendret dose er endret (som litium eller valproat)',
+        'vedlikeholdsintervallet er endret',
+      ].sort(),
+    )
+    const legemidler = (hva: string) => [...(prøvd.get(hva) ?? [])].map((n) => n.toLowerCase())
+    expect(
+      legemidler('en injeksjon er flyttet en uke (som Xeplion dag 8 → dag 15)').some((n) => n.includes('paliperidon')),
+      'Xeplion',
+    ).toBe(true)
+    expect(legemidler('en uendret dose er endret (som litium eller valproat)').filter((n) => /litium|valpro/.test(n)).length, 'litium og valproat').toBeGreaterThanOrEqual(2)
   })
 
   it('hver type feil er prøvd, og minst én plan har to legemidler samtidig', async () => {
