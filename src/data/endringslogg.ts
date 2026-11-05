@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.125.8',
+    dato: '2026-11-05',
+    sammendrag: 'Plan for å gjøre de kliniske verktøyene vesentlig enklere å bruke',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy'],
+    utenVarsel: true,
+    punkter: [
+      'Gjelder bare administratorene. Ingen regler, doser, godkjenninger, sperrer eller skjermbilder er endret ennå.',
+      'Planen beskriver en felles, kortere arbeidsflyt for alle fire verktøyene: færre og tydeligere spørsmål med svarene ja, nei og ukjent, tidlig beskjed når en komplett plan ikke kan lages, automatisk valg og kombinasjon av tabletter og dråper der det er dokumentert, og planen vist som en tidslinje som er lett å kopiere.',
+    ],
+  },
+  {
     versjon: '1.125.7',
     dato: '2026-11-05',
     sammendrag: 'Uavhengig kontroll av verktøyenes vanlige brukerforløp',
