@@ -225,11 +225,11 @@ Klinisk prøveverifisert (§8): 0 i alle fire verktøy. Alle verktøyene er fort
 
 Peder bestemte 05.11.2026 at [K5-D-planen](verktøy-k5-dosefleksible-forlop.md) skal gjennomføres når de pågående kliniske leveransene (K1–K4, QA) og arbeidet med brukervennlighet ([plan](verktøy-brukervennlighet-2026-11.md)) er ferdige. Målet er at de fire verktøyene gir komplette planer innenfor klinisk godkjente **doseområder**, ikke bare ved forhåndsdefinerte startdoser. Uavhengig klinisk godkjenning av eksakt gyldighetsområde og fingeravtrykk og kravet om komplette forløp gjelder uendret.
 
-**K5-D er ikke startet.** Koordinatoren kontrollerer startporten (K5-D-planen §1) og fører resultatet her. Først når alle punktene er dokumentert oppfylt, gjør koordinatoren K5-D0 (nytt datert nullpunkt og prioritering) og deler resten i parallelle tråder (D1 motor og QA, D2 de fire fagsporene).
+**K5-D er ikke startet.** Koordinatoren kontrollerer startporten (K5-D-planen §1) og fører resultatet her. Når de andre punktene er dokumentert oppfylt, lager koordinatoren det nye, daterte nullpunktet som første del av K5-D0, og det oppfyller det tredje punktet. Først da gjør koordinatoren resten av K5-D0 (prioritering) og deler arbeidet i parallelle tråder (D1 motor og QA, D2 de fire fagsporene). Ingen annen K5-D-implementering starter før alle fire punktene er oppfylt.
 
 | Startport (K5-D-planen §1) | Status 05.11.2026 |
 | --- | --- |
 | Pågående PR-er integrert eller eksplisitt avsluttet | Ikke oppfylt: #318, #321 og #326–#331 er åpne (§10.3). En PR som lukkes uten merge, føres som uoppfylt behov |
 | Samlet `main` består bygg, tester, regel- og FEST-kontroll og syntetisk brukerflyt i den publiserte administrator-appen, med skjermvisning og kopi | Ikke oppfylt: kjøres på integrert `main` etter siste PR i §10.3 |
-| Koordinatoren har oppdatert fremdriften og laget et nytt, datert nullpunkt med gjenstående K1–K4-mangler | Ikke oppfylt: gjøres i K5-D0 etter de to punktene over |
+| Koordinatoren har oppdatert fremdriften og laget et nytt, datert nullpunkt med gjenstående K1–K4-mangler | Ikke oppfylt: lages som første del av K5-D0 når de andre punktene er oppfylt |
 | `VERKTOYENE_VISES_FOR` er fortsatt `'admin'` | Oppfylt: uendret, og K5-D endrer den ikke |
