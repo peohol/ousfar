@@ -34,6 +34,7 @@ import {
   alleGrunnlag,
   apneValg,
   henvisninger,
+  parameterfeil,
   REGELMODELLVERSJON,
   type Avklaring,
   type Nedtrappingsstrategi,
@@ -327,6 +328,21 @@ describe('Pilotsettet', () => {
       expect(res.status).toBe('modellberegning')
       expect(kortform(res)).toEqual(e.forventet)
     }
+  })
+})
+
+describe('Gyldige parameterverdier', () => {
+  const p = (verdi: number, enhet: Parameter['enhet'] = 'dager'): Parameter => ({ verdi, enhet, art: 'bindende_krav', grunnlag: { type: 'kilde', henvisninger: [] } })
+  it('godtar utvasking 0 dager som direkte overgang, men ikke under 0 eller en brøkdel av en dag', () => {
+    expect(parameterfeil(p(0), 'plan.forlop[1].start.utvasking')).toBeNull()
+    expect(parameterfeil(p(3), 'plan.forlop[1].start.utvasking')).toBeNull()
+    expect(parameterfeil(p(-1), 'plan.forlop[1].start.utvasking')).toBe('-1 dager kan ikke være under 0')
+    expect(parameterfeil(p(0.5), 'plan.forlop[1].start.utvasking')).toBe('0.5 dager må være et helt tall')
+  })
+  it('avviser fortsatt 0 for alle andre felt, som trinnlengde, dager og doser', () => {
+    expect(parameterfeil(p(0), 'plan.forlop[0].faser[0].trinnlengde')).toBe('0 dager må være over 0')
+    expect(parameterfeil(p(0), 'plan.forlop[0].faser[0].varighet.dager')).toBe('0 dager må være over 0')
+    expect(parameterfeil(p(0, 'mg'), 'plan.forlop[0].faser[0].avslutning.fra_hoyst_mg')).toBe('0 mg må være over 0')
   })
 })
 

@@ -28,7 +28,7 @@ Et regelsett (`Regelsett`) har id, versjon og regelmodellversjon, og kan innehol
 
 **Dag 1** er planens første dag. Med startdato får hver dag en kalenderdato; uten startdato regnes det i dager.
 
-**Forløp.** En plan har ett forløp per legemiddel og administrasjonsform. Et forløp starter på en fast dag, eller *etter utvasking*: når et tidligere forløp er avsluttet, etter minst *n* hele dager uten legemiddel (første mulige dag = siste dosedag + *n* + 1). Et forløp kan holde en dose *til et annet forløp er avsluttet* (overlapp i kryssnedtrapping). Et forløp som er pasientens nåværende legemiddel, har utgangsdose = startdosen.
+**Forløp.** En plan har ett forløp per legemiddel og administrasjonsform. Et forløp starter på en fast dag, eller *etter utvasking*: når et tidligere forløp er avsluttet, etter minst *n* hele dager uten legemiddel (første mulige dag = siste dosedag + *n* + 1). Med *n* = 0 er det en direkte overgang: det nye legemidlet startes dagen etter siste dose (K2, (es)citalopram → sertralin). Et forløp kan holde en dose *til et annet forløp er avsluttet* (overlapp i kryssnedtrapping). Et forløp som er pasientens nåværende legemiddel, har utgangsdose = startdosen.
 
 **Faser:**
 
@@ -96,7 +96,7 @@ Kontrollene krever at grensene i et krav er innenfor området, at `ved` er et sp
 - `Forlop.fordeling` uten `over_mg` gjelder hver døgndose i forløpet, også vedlikeholdet. Doseplanmotoren velger den enkleste sammensetningen *som kan fordeles* (ikke den enkleste først og så fordelingen), f.eks. 100 mg som 4 tabletter à 25 mg (50 + 50 mg) når én tablett à 100 mg ikke kan deles. Kan ingen sammensetning fordeles, stopper planen.
 - Et forløp som starter etter utvasking og ikke beregnes, vises som «tidligst dag 92: 35 dagers utvasking fullført; fenelzin er ikke startet eller dosert av planen. Klinisk oppstart kan først vurderes etter kontroll av kontraindikasjoner, interaksjoner og øvrige forhold», aldri som en oppstart. Uten utvasking står det at legemidlet ikke er startet eller dosert av planen, og at oppstarten vurderes individuelt. Et forløp som fortsetter uten beregning etter beregnede perioder, er uendret («videre dosering beregnes ikke; planlegges individuelt»).
 
-**Gyldige verdier.** Doser og varigheter er endelige tall over 0, prosenter over 0 og høyst 100, og dager, måneder og trinn hele tall (`parameterfeil`). En startdato må være en gyldig kalenderdato som `ÅÅÅÅ-MM-DD`; `2027-02-31` normaliseres ikke. Ugyldige verdier i regelen eller inndata gir en stopp med grunnen, og beregningen kaster aldri: også en feil i regelen selv blir en kontrollert stopp.
+**Gyldige verdier.** Doser og varigheter er endelige tall over 0 (unntatt utvasking, som kan være 0 for direkte overgang, men aldri under 0), prosenter over 0 og høyst 100, og dager, måneder og trinn hele tall (`parameterfeil`). En startdato må være en gyldig kalenderdato som `ÅÅÅÅ-MM-DD`; `2027-02-31` normaliseres ikke. Ugyldige verdier i regelen eller inndata gir en stopp med grunnen, og beregningen kaster aldri: også en feil i regelen selv blir en kontrollert stopp.
 
 **Måneder.** Månedlige injeksjoner regnes fra forrige injeksjon. Med startdato er én måned senere samme dato, eller siste dag i måneden når den er kortere (31. januar → 28. februar); tidsvinduet i preparatomtalen gjelder rundt den datoen.
 

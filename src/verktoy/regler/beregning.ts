@@ -562,7 +562,11 @@ function beregnForlop(regel: Regel, f: Forlop, ctx: Kontekst): Forlopsresultat {
     ctx.kontroller.push({
       krav: `Minst ${utvasking} dager uten ${forrige.virkestoff} før ${virkestoff} (${f.start.utvasking.art === 'bindende_krav' ? 'bindende' : 'veiledende'})`,
       oppfylt: true,
-      detalj: `Uten legemiddel dag ${fra}–${start - 1} (${start - fra} dager); ${virkestoff} tidligst dag ${start}.`,
+      // Ved direkte overgang (utvasking 0) er det ingen dager uten legemiddel å vise som et tidsrom.
+      detalj:
+        start > fra
+          ? `Uten legemiddel dag ${fra}–${start - 1} (${start - fra} dager); ${virkestoff} tidligst dag ${start}.`
+          : `Direkte overgang uten dager uten legemiddel; ${virkestoff} tidligst dag ${start}, dagen etter siste dose av ${forrige.virkestoff}.`,
     })
   }
 
