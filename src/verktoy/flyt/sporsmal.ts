@@ -117,6 +117,14 @@ const TIL_ARIPIPRAZOL = [
 type Bytte = (typeof TIL_ARIPIPRAZOL)[number]
 const forHvertBytte = (lag: (b: Bytte) => Katalogsporsmal) => TIL_ARIPIPRAZOL.map(lag)
 
+/** Byttene til sertralin (K2), som har samme oppbygning: antidepressivet det byttes fra. */
+const TIL_SERTRALIN = [
+  { regel: 'bytte-escitalopram-sertralin', stoff: 'escitalopram' },
+  { regel: 'bytte-citalopram-sertralin', stoff: 'citalopram' },
+] as const
+type Sertralinbytte = (typeof TIL_SERTRALIN)[number]
+const forHvertSertralinbytte = (lag: (b: Sertralinbytte) => Katalogsporsmal) => TIL_SERTRALIN.map(lag)
+
 const INDIVIDUELT = 'Verktøyet lager ingen plan, og behandlingen må planlegges individuelt.'
 
 /** Spørsmålene, i rekkefølgen de stilles innen hver gruppe. */
@@ -291,6 +299,23 @@ export const KATALOGSPORSMAL: readonly Katalogsporsmal[] = [
     svar: 'ja_nei_ukjent',
   },
 
+  ...forHvertSertralinbytte(({ stoff }) => ({
+    id: `tidligere_seponeringsplager_${stoff}`,
+    tekst: `Har et tidligere forsøk på å trappe ned eller seponere ${stoff} eller et annet antidepressiv gitt seponeringssymptomer eller mislyktes?`,
+    gruppe: 'stopp',
+    kategori: 'sikkerhetsopplysning',
+    svar: 'ja_nei_ukjent',
+  })),
+  // Byttereglenes egen grense (K2-8): ikke det samme som «mange måneder eller lenger» i «Trappe ned», og slås ikke sammen med det.
+  ...forHvertSertralinbytte(({ stoff }) => ({
+    id: `over_8_uker_${stoff}`,
+    tekst: `Har pasienten brukt ${stoff} sammenhengende i mer enn 8 uker?`,
+    gruppe: 'stopp',
+    kategori: 'sikkerhetsopplysning',
+    svar: 'ja_nei_ukjent',
+  })),
+  { id: 'depresjon_bytte', tekst: 'Gjelder byttet behandling av depresjon?', gruppe: 'stopp', kategori: 'sikkerhetsopplysning', svar: 'ja_nei_ukjent' },
+
   // --- Forhold som endrer planen ---
   {
     id: 'eldre_enn_65',
@@ -447,6 +472,22 @@ export const KATALOGSPORSMAL: readonly Katalogsporsmal[] = [
     kategori: 'klinisk_vurdering',
     svar: 'ja_ikke_enna',
   },
+  ...forHvertSertralinbytte(({ stoff }) => ({
+    id: `oppfolging_bytte_${stoff}`,
+    tekst: `Følges pasienten opp ved vurderingspunktene i planen: før hver reduksjon og før seponeringen av ${stoff}, en uke etter overgangen til sertralin, før en eventuell økning av sertralin og fire uker etter oppstarten og hver endring av den?`,
+    hjelp:
+      'Før en økning vurderes effekt, toleranse og seponeringssymptomer. Dagene er minstetider. Den første uken etter overgangen følges seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen.',
+    gruppe: 'vurdering',
+    kategori: 'klinisk_vurdering',
+    svar: 'ja_ikke_enna',
+  })),
+  ...forHvertSertralinbytte(({ stoff }) => ({
+    id: `serotonerg_bytte_${stoff}`,
+    tekst: `Er pasientens øvrige legemidler kontrollert, og bruker pasienten ingen andre serotonerge legemidler eller andre legemidler som gjør byttet fra ${stoff} til sertralin mer risikofylt?`,
+    gruppe: 'vurdering',
+    kategori: 'klinisk_vurdering',
+    svar: 'ja_nei_ukjent',
+  })),
 ]
 
 /** Alderen som avgjør «under 18 år» og «65 år eller eldre». */
@@ -544,6 +585,50 @@ const tilAripiprazol = ({ regel, stoff }: Bytte): Katalogbetingelse[] => [
   { regel, type: 'bekreftelse', id: 'siste_trinn', kategori: 'klinisk_vurdering', fra: fra(`siste_trinn_${stoff}`, `seponering_informert_${stoff}`) },
 ]
 
+/**
+ * Betingelsene i byttene til sertralin (K2). Indikasjonen «voksen (18–65 år)
+ * med depresjon» avgjøres av alderen, som spørres én gang, og av
+ * indikasjonen: 18–64 år er innenfor; ved 65 år eller eldre avgjør «over 65
+ * år», så 65 år er innenfor og over 65 år utenfor.
+ */
+const tilSertralin = ({ regel, stoff }: Sertralinbytte): Katalogbetingelse[] => [
+  {
+    regel,
+    type: 'bekreftelse',
+    id: 'indikasjon',
+    kategori: 'sikkerhetsopplysning',
+    fra: [{ sporsmal: 'alder', ja: ['18_64'], nei: ['under_18'] }, { sporsmal: 'eldre_enn_65', ja: ['nei'], nei: ['ja'] }, { sporsmal: 'depresjon_bytte' }],
+    forklaring: `Regelen gjelder bare voksne 18–65 år med depresjon. ${INDIVIDUELT}`,
+  },
+  {
+    regel,
+    type: 'unntak',
+    id: 'tidligere_seponeringssymptomer',
+    kategori: 'sikkerhetsopplysning',
+    fra: fra(`tidligere_seponeringsplager_${stoff}`),
+    forklaring: 'Da passer ikke den faste planen, og byttet planlegges individuelt med mindre trinn.',
+  },
+  {
+    regel,
+    type: 'unntak',
+    id: 'lang_behandlingstid',
+    kategori: 'sikkerhetsopplysning',
+    fra: fra(`over_8_uker_${stoff}`),
+    forklaring: `Byttet er bare vurdert for de første 8 ukene av behandlingen. ${INDIVIDUELT}`,
+  },
+  { regel, type: 'unntak', id: 'over_65', kategori: 'sikkerhetsopplysning', fra: OVER_65, forklaring: `Preparatomtalene har egne doser eller krav om nøye oppfølging for eldre. ${INDIVIDUELT}` },
+  {
+    regel,
+    type: 'unntak',
+    id: 'nedsatt_leverfunksjon',
+    kategori: 'sikkerhetsopplysning',
+    fra: fra('nedsatt_leverfunksjon'),
+    forklaring: `Preparatomtalene krever da lavere doser eller særskilt hensyn. ${INDIVIDUELT}`,
+  },
+  { regel, type: 'bekreftelse', id: 'toleranse_bytte', kategori: 'klinisk_vurdering', fra: fra(`oppfolging_bytte_${stoff}`) },
+  { regel, type: 'bekreftelse', id: 'serotonerg_sammedisinering', kategori: 'klinisk_vurdering', fra: fra(`serotonerg_bytte_${stoff}`), forklaring: INDIVIDUELT },
+]
+
 /** Hver betingelse i hver godkjent regel. En betingelse som ikke står her, spørres med regelens egen tekst (S5). */
 export const KATALOGBETINGELSER: readonly Katalogbetingelse[] = [
   // Escitalopram (K1, v13).
@@ -576,6 +661,9 @@ export const KATALOGBETINGELSER: readonly Katalogbetingelse[] = [
   },
   { regel: SERT, type: 'bekreftelse', id: 'toleranse_overlapp', kategori: 'forbehold' },
   { regel: SERT, type: 'bekreftelse', id: 'serotonerg_sammedisinering', kategori: 'klinisk_vurdering', fra: fra('serotonerg_sammedisinering'), forklaring: INDIVIDUELT },
+
+  // Escitalopram eller citalopram → sertralin (K2, v2).
+  ...TIL_SERTRALIN.flatMap(tilSertralin),
 
   // Aripiprazol → Abilify Maintena (v3).
   {

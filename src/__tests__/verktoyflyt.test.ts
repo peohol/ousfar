@@ -335,6 +335,29 @@ describe('felles spørsmål og grenseverdier (S6)', () => {
     }
   })
 
+  it('følger «voksen (18–65 år)» og «over 65 år» i byttene til sertralin ved 17/18 og 64/65/66, og spør om behandlingstiden for seg (K2-8)', () => {
+    for (const [id, stoff] of [
+      ['bytte-escitalopram-sertralin', 'escitalopram'],
+      ['bytte-citalopram-sertralin', 'citalopram'],
+    ] as const) {
+      const r = regel(id)
+      const felt = (ar: number) => vurderFlyt(r, { ...alderssvar(ar), depresjon_bytte: 'ja' }, katalog(r)).felt
+      const voksen = (ar: number) => felt(ar).bekreftet.includes('indikasjon')
+      expect([17, 18, 64, 65, 66].map(voksen), id).toEqual([false, true, true, true, false])
+      expect(
+        [17, 18, 64, 65, 66].map((ar) => felt(ar).pasientforhold.over_65),
+        id,
+      ).toEqual([false, false, false, false, true])
+      // Uten depresjon, eller med ukjent indikasjon, er indikasjonen ikke bekreftet.
+      for (const d of ['nei', 'ukjent']) expect(vurderFlyt(r, { alder: '18_64', depresjon_bytte: d }, katalog(r)).felt.bekreftet, `${id} ${d}`).not.toContain('indikasjon')
+      // Byttereglenes 8 uker er et eget spørsmål, ikke «mange måneder eller lenger» fra «Trappe ned».
+      const tid = vurderFlyt(r, {}, katalog(r)).sporsmal.find((q) => q.id === `over_8_uker_${stoff}`)!
+      expect(tid.tekst).toBe(`Har pasienten brukt ${stoff} sammenhengende i mer enn 8 uker?`)
+      expect(vurderFlyt(r, { [`over_8_uker_${stoff}`]: 'ja' }, katalog(r)).felt.pasientforhold.lang_behandlingstid).toBe(true)
+      expect(vurderFlyt(r, {}, katalog(r)).sporsmal.some((q) => q.id === 'lang_behandlingstid')).toBe(false)
+    }
+  })
+
   it('gir samme utfall i motoren ved 64/65/66 år som regelens eget spørsmål (escitalopram 20 mg dråper)', () => {
     const valg: Verktoyvalg = { fra: { nokkel: 'escitalopram', formulering: 'standard' } }
     const utfall = (ar: number) => {
@@ -776,7 +799,7 @@ describe('flyten og forhåndskontrollen er enige om svar som stopper', () => {
     fest: TILLEGG,
     skjema: { startdose },
   })
-  /** Hver regel med kontrollert katalog i appen, og escitalopram med katalogen kontrollert i testen. */
+  /** Hver regel med kontrollert katalog i appen, og escitalopram og byttene til sertralin med katalogen kontrollert i testen. */
   const TILFELLER: Record<string, Tilfelle> = {
     'depot-aripiprazol-maintena': ap('aripiprazol', 'aripiprazol', 'LA', '15'),
     'depot-paliperidon-xeplion': ap('paliperidon', 'paliperidon', 'ER', '6'),
@@ -786,6 +809,12 @@ describe('flyten og forhåndskontrollen er enige om svar som stopper', () => {
     'tillegg-valproat-lamotrigin': tillegg('valproat', '1000'),
     'tillegg-litium-lamotrigin': tillegg('litium', '84'),
     'seponering-escitalopram': { verktoy: NED, valg: { fra: { nokkel: 'escitalopram', formulering: 'standard' } }, fest: AKSEPT, skjema: { startdose: '20' } },
+    ...Object.fromEntries(
+      ['escitalopram', 'citalopram'].map((stoff) => [
+        `bytte-${stoff}-sertralin`,
+        { verktoy: BYTTE_AD, valg: { fra: { nokkel: stoff, formulering: 'standard' }, til: { nokkel: 'sertralin', formulering: 'standard' } }, fest: PILOT, skjema: { startdose: '20' } },
+      ]),
+    ),
   }
 
   it('dekker hver regel med kontrollert katalog', () => {
@@ -859,7 +888,8 @@ describe('stoppforklaringene', () => {
 describe('oversikten per verktøy (P11)', () => {
   it('sier hva hvert verktøy kan gi nå', () => {
     expect(verktoystatus(NED, [])).toMatchObject({ kanGiPlan: true, tekst: 'Komplett plan kan lages for Escitalopram.' })
-    expect(verktoystatus(BYTTE_AD, [])).toEqual({ kanGiPlan: false, tekst: 'Ingen komplett plan er godkjent ennå.', valg: [] })
+    expect(verktoystatus(BYTTE_AD, [])).toMatchObject({ kanGiPlan: true, tekst: 'Komplett plan kan lages for Citalopram → sertralin og Escitalopram → sertralin.' })
+    expect(verktoystatus(BYTTE_AD, []).valg.map((v) => v.tekst)).toEqual(['Citalopram → sertralin', 'Escitalopram → sertralin'])
     const alle: Verktoysperre = { id: 's', omfang: 'alle', mal: null, grunn: 'Test', satt_kl: '2026-11-04T10:00:00Z', satt_av: null }
     expect(verktoystatus(TILLEGGSVERKTOY, [alle])).toMatchObject({ kanGiPlan: false, tekst: 'Verktøyet er midlertidig deaktivert. Ingen plan kan lages nå.' })
   })

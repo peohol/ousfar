@@ -13,7 +13,7 @@ import type { Endring } from '../domain/versjon'
 export const ENDRINGSLOGG: Endring[] = [
   {
     versjon: '1.125.11',
-    dato: '2026-11-04',
+    dato: '2026-11-05',
     sammendrag: 'Grunnlaget for en enklere arbeidsflyt i de kliniske verktøyene, med spørsmål i vanlig språk og tidlig beskjed om en komplett plan kan lages',
     typer: ['Funksjonalitet'],
     omfang: 'Minimalt omfang',
@@ -24,6 +24,23 @@ export const ENDRINGSLOGG: Endring[] = [
       'Verktøyene har fått grunnlaget for den nye arbeidsflyten: hver betingelse i de godkjente reglene kan stilles som et kort spørsmål med «Ja», «Nei» og «Ukjent», i fast rekkefølge, og «Ukjent» gir aldri en plan. De nye spørsmålstekstene tas først i bruk når de er faglig kontrollert for hver regelversjon; til da gjelder regelens egen tekst.',
       'En forhåndskontroll kan si tidlig om en komplett plan kan lages, og hvorfor ikke, før alle spørsmålene er besvart. Den lover aldri en plan; planen lages bare av den vanlige beregningen.',
     ],
+  },
+  {
+    versjon: '1.125.6',
+    dato: '2026-11-05',
+    sammendrag: 'Bytter mellom antidepressiva: to bytter til sertralin',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy/bytte-antidepressiv'],
+    punkter: [
+      'Gjelder bare administratorene. Fem regler for hele bytter er lagt inn: fra sertralin, escitalopram eller citalopram til mirtazapin, og fra escitalopram eller citalopram til sertralin, med norske tabletter og en vedlikeholdsdose forskriveren velger.',
+      'Fra escitalopram eller citalopram til sertralin trappes det gamle ned til laveste tablettdose, og sertralin startes dagen etter siste dose, så pasienten aldri er uten et SSRI. Seponeringssymptomer kan likevel komme, så planen har en vurdering en uke etter overgangen og en vurdering av effekt, toleranse og seponeringssymptomer før en eventuell økning til 100 mg. Disse to planene går helt til vedlikeholdsdosen.',
+      'Byttereglene gjelder bare de første åtte ukene av sammenhengende bruk. Ved lengre bruk gir de ingen plan, og byttet planlegges individuelt. «Trappe ned» er ikke endret.',
+      'Ved bytte til mirtazapin er det ikke avgjort faglig hvordan det gamle legemidlet skal seponeres. Til det er avgjort, gir de reglene ingen plan, men sier «Komplett plan ikke tilgjengelig» og hvorfor.',
+      'Reglene bygger på de norske preparatomtalene og publiserte råd om bytte av antidepressiva, ikke på Psychiatrienet. En uavhengig kontrollør har godkjent de to byttene til sertralin, bare for voksne 18–65 år med depresjon på escitalopram 10 eller 20 mg eller citalopram 20 eller 40 mg, uten tidligere seponeringsplager eller kompliserende interaksjoner.',
+      'Det godkjente startforløpet fra sertralin til mirtazapin er uendret, men vises ikke, fordi det ikke fører til et sluttmål.',
+    ],
+    utenVarsel: true,
   },
   {
     versjon: '1.125.5',
