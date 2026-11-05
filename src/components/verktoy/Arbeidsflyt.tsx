@@ -19,7 +19,7 @@ import {
   type Planskjema,
 } from '../../verktoy/doseplan'
 import { flyttilstand, forhandskontroll, KAN_LAGES_HVIS, medFlytsvar, medIngenAvDisse, type Flyttilstand, type Flytsporsmal, type Stoppforklaring } from '../../verktoy/flyt'
-import { UKJENT_FORKLARING, UNNTAK_STANDARD } from '../../verktoy/flyt/flyt'
+import { UKJENT_FORKLARING } from '../../verktoy/flyt/flyt'
 import { foretrukketTekst, mellomtrinntekst, tempotekst, trinndosetekst, type Doseplanresultat, type Formalternativer, type Trinnvalg } from '../../verktoy/motor/plan'
 import { planvisning, type Planvisning } from '../../verktoy/planvisning'
 import { KARTLEGGING, type Verktoy, type Verktoytype } from '../../verktoy/register'
@@ -312,20 +312,12 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
   const kanIkke = utfall?.tilstand.kontroll.utfall === 'kan_ikke'
   const steg2 = doseOk && feltfeil.length === 0 && forhand.data?.status === 'klar' && (kanIkke || !Object.entries(alternativer).some(([f, a]) => uvalgt(a, f)))
   const apne = regel ? ubesvart(regel, fullt) : { sporsmal: [], unntak: [], bekreftelser: [] }
-  // Et svar som etter flyten stopper planen, står ved spørsmålet; panelet sier det samme, også når forhåndskontrollen
-  // regner forholdet som gjenstående (en bekreftelse i katalogen besvart med «Nei» eller «Ikke ennå»).
-  const stoppendeSvar: Stoppforklaring[] = useMemo(
-    () =>
-      synligeSporsmal
-        .filter((sp) => sp.valgt !== undefined && sp.stopperVed?.includes(sp.valgt))
-        .map((sp) => tilstand?.kontroll.grunner.find((g) => g.sporsmal === sp.id) ?? { kode: 'svar_stopper', tekst: sp.forklaring ?? UNNTAK_STANDARD, sporsmal: sp.id }),
-    [synligeSporsmal, tilstand],
-  )
-  const stopperSvar = tilstand?.kontroll.utfall === 'kan_ikke' || stoppendeSvar.length > 0
+  // Et svar som stopper planen, gir «kan ikke» i forhåndskontrollen (flytens felles kilde); det står ved spørsmålet og i panelet.
+  const stopperSvar = kanIkke
   // Planen beregnes bare når forhåndskontrollen sier at en komplett plan kan lages og ingenting gjenstår; den lover likevel aldri en plan (S9).
   // Nådde prøveberegningen taket uten å avgjøre noe, beregnes planen med de faktiske svarene når alt er besvart.
   const beregnes = !!tilstand && (tilstand.kontroll.utfall === 'kan_lages_hvis' || ikkeAvklart(tilstand))
-  const steg3 = beregnes && stoppendeSvar.length === 0 && tilstand.kontroll.gjenstar === 0 && apne.sporsmal.length + apne.unntak.length + apne.bekreftelser.length === 0
+  const steg3 = beregnes && tilstand.kontroll.gjenstar === 0 && apne.sporsmal.length + apne.unntak.length + apne.bekreftelser.length === 0
 
   // Beregningen.
   const [beregning, setBeregning] = useState<Beregning | null>(null)
@@ -550,11 +542,8 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
     if (!steg2) return <Panelmelding tittel="Velg legemiddelform">{<p>Velg i steg 2 hva pasienten bruker, så går flyten videre.</p>}</Panelmelding>
     if (stopperSvar && tilstand)
       return (
-        <Panelmelding
-          tone="stopp"
-          tittel={(tilstand.kontroll.utfall === 'kan_ikke' ? tilstand.kontroll.grunner : stoppendeSvar).some((g) => g.sporsmal) ? 'Ingen plan med disse svarene' : 'Ingen plan for dette tilfellet'}
-        >
-          <Grunnliste grunner={tilstand.kontroll.utfall === 'kan_ikke' ? tilstand.kontroll.grunner : stoppendeSvar} />
+        <Panelmelding tone="stopp" tittel={tilstand.kontroll.grunner.some((g) => g.sporsmal) ? 'Ingen plan med disse svarene' : 'Ingen plan for dette tilfellet'}>
+          <Grunnliste grunner={tilstand.kontroll.grunner} />
         </Panelmelding>
       )
     if (!steg3 && tilstand) {
