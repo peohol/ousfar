@@ -69,6 +69,8 @@ const REGELVERSJONER: Record<string, [number, string]> = {
   'ousfar-verktoy-nedtrapping/seponering-amitriptylin-langsom': [8, '187bc1250baf2af7c3c969e73e0edee424d2fc1fd8a8874a08523d6730b679ce'],
   // v13 er klinisk godkjent (K1, #323); versjonen øker, aldri motsatt.
   'ousfar-verktoy-nedtrapping/seponering-escitalopram': [13, 'e8a3c17edda10da43b1df4171a733a23133da50ebcda31cd71a771022a8a78d7'],
+  // v14 med tabletter og dråper er klinisk godkjent (B2, #330) og erstatter v13 i appen.
+  'ousfar-verktoy-nedtrapping/seponering-escitalopram-tabletter-og-draper': [14, '01b2fb560a8defe0114f9552d619bc6bf15e27b07fa6352d6331d9beb500721f'],
   'ousfar-verktoy-nedtrapping/seponering-escitalopram-langsom': [8, '4e49c175ac6aa49cba89d7db711f710c14b654681cc3138994dbaaaebb69c095'],
   'ousfar-verktoy-nedtrapping/seponering-fluoksetin': [12, 'df89f2dadfc482e86a6dd8852966922d9834ec6ae728de8ffe2fd5e46cc2951a'],
   'ousfar-verktoy-nedtrapping/seponering-fluoksetin-langsom': [8, 'e9946f1fcd42cb834677d9ef6751307fbbe0a9ec41b28d4d28687ac2efe29ddd'],
@@ -115,6 +117,7 @@ const GODKJENT = [
   'ousfar-verktoy-nedtrapping/seponering-bupropion',
   'ousfar-verktoy-nedtrapping/seponering-agomelatin',
   'ousfar-verktoy-nedtrapping/seponering-escitalopram',
+  'ousfar-verktoy-nedtrapping/seponering-escitalopram-tabletter-og-draper',
   'ousfar-verktoy-antidepressivbytter/bytte-escitalopram-sertralin',
   'ousfar-verktoy-antidepressivbytter/bytte-citalopram-sertralin',
   'ousfar-verktoy-antipsykotikabytter/depot-risperidon-xeplion',
@@ -248,20 +251,20 @@ describe('QA: tidslinjen i appen mot kopien', () => {
 
 describe('QA: K0-01 escitalopram (tablett og dråper)', () => {
   const r = (id: string) => RESULTATER.find((x) => x.forlop.id === id)!
-  it('regner ikke tablettvarianten som levert, men gir komplett plan til 0 med dråper fra 10 og 20 mg ved kort behandlingstid', () => {
-    const regel = r('H-30').regel
-    if (!regel || !erKliniskGodkjent(regel) || regel.versjon < 13) return
-    // Fra tablettvalget gir appens automatiske flyt ingen plan; forskriveren må selv bytte til dråper (H-39).
-    expect([r('K0-01').klasse, r('K0-01').utfall?.resultat?.status]).not.toContain('komplett')
-    expect(r('K0-01').klasse).toBe('stoppet')
-    expect(['H-30', 'H-31', 'H-39'].map((id) => [id, r(id).klasse, r(id).feil])).toEqual([
+  it('gir komplett plan til 0 fra tablett (versjon 14, B2) og med dråper fra 10 og 20 mg ved kort behandlingstid', () => {
+    const regel = r('K0-01').regel
+    if (!regel || !erKliniskGodkjent(regel)) return
+    // Fra tablettvalget gir appens flyt nå en komplett plan med versjon 14 (godkjent 05.11.2026): dråper fra første trinn fra 10 mg.
+    expect([regel.id, regel.versjon]).toEqual(['seponering-escitalopram-tabletter-og-draper', 14])
+    expect(['K0-01', 'H-30', 'H-31', 'H-39'].map((id) => [id, r(id).klasse, r(id).feil])).toEqual([
+      ['K0-01', 'komplett', []],
       ['H-30', 'komplett', []],
       ['H-31', 'komplett', []],
       ['H-39', 'komplett', []],
     ])
-    // Byttet fra tablett til dråper: først ingen plan, deretter den samme planen som med dråper fra starten.
-    expect(r('H-39').forBytte).toBe('stoppet')
+    // Med dråper valgt etter tablett: den samme planen som med dråper fra starten, og som fra tablett (dråper fra første trinn).
     expect(r('H-39').utfall?.tekst).toBe(r('H-30').utfall?.tekst)
+    expect(r('K0-01').utfall?.tekst).toBe(r('H-30').utfall?.tekst)
     // Lang behandlingstid er utenfor det avgrensede omfanget.
     expect([r('H-32').klasse, r('H-32').vist.join(' ')]).toEqual(['stoppet', expect.stringMatching(/Komplett plan ikke tilgjengelig/)])
   })

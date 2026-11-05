@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { gjelderFortsatt } from '../verktoy/doseplan'
 import { FEST_AKSEPTTEST, FEST_PILOT, type Festuttrekk } from '../verktoy/regler/aksepttest'
-import { erKliniskGodkjent } from '../verktoy/regler/godkjenning'
+import { erErstattet, erKliniskGodkjent } from '../verktoy/regler/godkjenning'
 import { avvikFra, KATEGORIER, kjorKasus, lagPilotmatriserapport, PILOTKASUS, PILOTMATRISEFIL, tidFor, type Kasuskategori } from '../verktoy/regler/pilotmatrise'
 import { FEST_TILLEGG, kjorTilleggskasus } from '../verktoy/tilleggsgrunnlag'
 import { FEST_ANTIPSYKOTIKA } from '../verktoy/regler/antipsykotikabytter'
@@ -53,7 +53,8 @@ describe('testmatrisen for de godkjente reglene (P11.1–P11.4)', () => {
       expect(k2avvik(k, res), k.id).toEqual([])
       if (!k.regel && 'resultat' in res && res.resultat) prøvd.add(res.resultat.regel.id)
     }
-    expect([...prøvd].sort()).toEqual(godkjente.map((r) => r.id).sort())
+    // En godkjent regel som er erstattet av en godkjent versjon (escitalopram v13, erstattet av B2 v14), gir ingen plan i appen; den prøves i sitt eget kontrollgrunnlag (`verktoyk1.test.ts`).
+    expect([...prøvd].sort()).toEqual(godkjente.filter((r) => !erErstattet(r, REGELSETT.regler)).map((r) => r.id).sort())
     const kategorier: Record<string, Kasuskategori[]> = {
       V: ['vanlig_dose', 'uvanlig_dose', 'pasientforhold', 'interaksjon', 'preparat', 'foreldet_fest', 'datakilde', 'injeksjonsdato', 'regelendring', 'ikke_godkjent', 'nodstopp'],
       S: ['vanlig_dose', 'uvanlig_dose', 'pasientforhold', 'interaksjon', 'preparat', 'foreldet_fest', 'injeksjonsdato', 'regelendring', 'nodstopp'],

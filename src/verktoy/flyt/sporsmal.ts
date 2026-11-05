@@ -101,6 +101,7 @@ export interface Katalogbetingelse {
 }
 
 const ESC = 'seponering-escitalopram'
+const ESC_B2 = 'seponering-escitalopram-tabletter-og-draper'
 const VORT = 'seponering-vortioksetin'
 const SERT = 'kryssnedtrapping-sertralin-mirtazapin'
 const MAINTENA = 'depot-aripiprazol-maintena'
@@ -629,21 +630,28 @@ const tilSertralin = ({ regel, stoff }: Sertralinbytte): Katalogbetingelse[] => 
   { regel, type: 'bekreftelse', id: 'serotonerg_sammedisinering', kategori: 'klinisk_vurdering', fra: fra(`serotonerg_bytte_${stoff}`), forklaring: INDIVIDUELT },
 ]
 
-/** Hver betingelse i hver godkjent regel. En betingelse som ikke står her, spørres med regelens egen tekst (S5). */
-export const KATALOGBETINGELSER: readonly Katalogbetingelse[] = [
-  // Escitalopram (K1, v13).
-  ...nedtrapping(ESC),
+/** Betingelsene i escitalopramreglene (K1 og B2), som bare skiller seg i aldersgrensen `eldre`. */
+const escitalopram = (regel: string, eldre: readonly Svarkilde[]): Katalogbetingelse[] => [
+  ...nedtrapping(regel),
   {
-    regel: ESC,
+    regel,
     type: 'unntak',
     id: 'qt_forlengelse',
     kategori: 'sikkerhetsopplysning',
     fra: fra('qt_forlengelse'),
     forklaring: `Det er en kontraindikasjon i preparatomtalen, og en begrunnelse kan ikke overstyre den. ${INDIVIDUELT}`,
   },
-  { regel: ESC, type: 'sporsmal', id: 'eldre', kategori: 'sikkerhetsopplysning', fra: OVER_65 },
-  { regel: ESC, type: 'sporsmal', id: 'nedsatt_leverfunksjon', kategori: 'sikkerhetsopplysning', fra: fra('nedsatt_leverfunksjon') },
-  { regel: ESC, type: 'sporsmal', id: 'langsom_cyp2c19', kategori: 'sikkerhetsopplysning', fra: fra('langsom_cyp2c19') },
+  { regel, type: 'sporsmal', id: 'eldre', kategori: 'sikkerhetsopplysning', fra: eldre },
+  { regel, type: 'sporsmal', id: 'nedsatt_leverfunksjon', kategori: 'sikkerhetsopplysning', fra: fra('nedsatt_leverfunksjon') },
+  { regel, type: 'sporsmal', id: 'langsom_cyp2c19', kategori: 'sikkerhetsopplysning', fra: fra('langsom_cyp2c19') },
+]
+
+/** Hver betingelse i hver godkjent regel. En betingelse som ikke står her, spørres med regelens egen tekst (S5). */
+export const KATALOGBETINGELSER: readonly Katalogbetingelse[] = [
+  // Escitalopram (K1, v13): «over 65 år».
+  ...escitalopram(ESC, OVER_65),
+  // Escitalopram med tabletter og dråper (B2, v14): som versjon 13, men grensen er «65 år eller eldre».
+  ...escitalopram(ESC_B2, [FRA_65]),
 
   // Vortioksetin (v12): grensen er «65 år eller eldre».
   ...nedtrapping(VORT),

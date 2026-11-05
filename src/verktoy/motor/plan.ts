@@ -427,8 +427,11 @@ function tilfellerFor(regel: Regel, inndata: Doseplaninndata): Klinisktilfelle[]
  */
 function kontrollertePreparater(tilfeller: Klinisktilfelle[], f: Forlopsresultat, brukbare: Byggestein[]): { brukbare: Byggestein[]; begrensninger: string[] } {
   const former = new Set(brukbare.map((b) => b.legemiddelform?.kode ?? ''))
-  // Et tilfelle med en annen form gjelder ikke; omfangsfeil forklarer det.
-  const aktuelle = tilfeller.filter((t) => (t.legemiddelformer ? t.legemiddelformer.some((k) => former.has(k)) : !t.legemiddelform || former.has(t.legemiddelform)))
+  // Et tilfelle med en annen form gjelder ikke; omfangsfeil forklarer det. Kan forløpet bruke flere former i en
+  // formovergang som et tilfelle med flere former dekker, gjelder bare slike tilfeller, så en manglende styrke i
+  // den første formen stopper planen selv om et tilfelle med bare den siste formen har alle sine.
+  const overgang = former.size > 1 && tilfeller.some((t) => t.legemiddelformer && [...former].every((k) => t.legemiddelformer!.includes(k)))
+  const aktuelle = tilfeller.filter((t) => (t.legemiddelformer ? t.legemiddelformer.some((k) => former.has(k)) : !overgang && (!t.legemiddelform || former.has(t.legemiddelform))))
   if (aktuelle.length === 0 || aktuelle.some((t) => !t.styrker)) return { brukbare, begrensninger: [] }
   const lik = (a: number | null, b: number) => a !== null && Math.abs(a - b) < 1e-9
   const formen = (t: Klinisktilfelle, b: Byggestein) => {
