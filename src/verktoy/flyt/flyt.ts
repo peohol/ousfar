@@ -15,7 +15,7 @@ import { gjeldendeBekreftelser, type Bekreftelse, type Regel } from '../regler/m
 import { BESLUTNINGER, type Beslutninger } from './beslutninger'
 import { betingelserFor, katalogGjelder, KONTROLLERTE_KATALOGER, sporsmalFor, type Katalogkontroll } from './katalogkontroll'
 import { jaVed, KATALOGBETINGELSER, KATALOGSPORSMAL, neiVed, SVARSETT, type Betingelsestype, type Katalogbetingelse, type Katalogsporsmal, type Svarkilde } from './sporsmal'
-import type { Flytsporsmal, Kategori, Sporsmalsgruppe, Svaralternativ } from './typer'
+import type { Flytsporsmal, Kategori, Sporsmalsgruppe, Stoppforklaring, Svaralternativ } from './typer'
 
 export const GRUPPEREKKEFOLGE: readonly Sporsmalsgruppe[] = ['stopp', 'endrer', 'vurdering']
 
@@ -207,11 +207,20 @@ export interface Flytresultat {
   forutsatt: string[]
   /** Synlige spørsmål som er ubesvart, «Ukjent» eller «Ikke ennå». */
   gjenstar: Flytsporsmal[]
+  /**
+   * Svarene som stopper planen, med forklaringen: den ene kilden for «dette
+   * svaret stopper». Forhåndskontrollen og visningen leser den herfra, så de
+   * aldri kan si noe annet enn flyten om samme svar.
+   */
+  stopp: Stoppforklaring[]
   /** Et svar som krever skriftlig begrunnelse, med hva det gjelder. */
   begrunnelse?: { hjelp: string }
   /** Stoppgruppens spørsmål «Ingen av disse» kan besvare (beslutning B5); tom uten den. */
   ingenAvDisse: string[]
 }
+
+/** Om svaret som er valgt på spørsmålet, stopper planen. */
+export const svarStopper = (s: Pick<Flytsporsmal, 'valgt' | 'stopperVed'>): boolean => s.valgt !== undefined && (s.stopperVed?.includes(s.valgt) ?? false)
 
 /** Svarene som gjør at regelen ikke kan gi en plan, og forklaringen. */
 function stopp(r: Regel, def: Definisjon, avbildninger: readonly Avbildning[]): { ved: string[]; forklaring?: string } {
@@ -272,7 +281,7 @@ export function vurderFlyt(r: Regel, svar: Readonly<Record<string, string>>, g: 
     synlige = neste
   }
   // Et svar som stopper planen, skjuler gruppene etter: de kan ikke endre utfallet. Reservevisningen viser alt, som dagens skjema (S5).
-  const forste = oppsett.katalog && defs.find((d) => synlige.has(d.id) && svar[d.id] !== undefined && stopper.get(d.id)!.ved.includes(svar[d.id]!))
+  const forste = oppsett.katalog && defs.find((d) => synlige.has(d.id) && svarStopper({ valgt: svar[d.id], stopperVed: stopper.get(d.id)!.ved }))
   if (forste) {
     const grense = GRUPPEREKKEFOLGE.indexOf(forste.gruppe)
     synlige = new Set([...synlige].filter((id) => GRUPPEREKKEFOLGE.indexOf(defs.find((d) => d.id === id)!.gruppe) <= grense))
@@ -317,6 +326,14 @@ export function vurderFlyt(r: Regel, svar: Readonly<Record<string, string>>, g: 
     // Den samlede avkrysningen vises bare når det er noe å bekrefte.
     .filter((s) => s.id !== SAMLET || (s.punkter ?? []).length > 0)
   const gjenstar = vist.filter((s) => s.valgt === undefined || s.valgt === 'ukjent' || (s.valgt === 'nei' && s.alternativer === SVARSETT.ja_ikke_enna))
+  const stoppgrunner: Stoppforklaring[] = vist
+    .filter((s) => svarStopper(s))
+    .map((s) => ({
+      kode: 'svar_stopper',
+      tekst: s.forklaring ?? ((bruker.get(s.id) ?? []).some((a) => a.type === 'unntak') ? UNNTAK_STANDARD : INDIVIDUELT),
+      losning: 'individuelt',
+      sporsmal: s.id,
+    }))
 
   const begrunnes = (r.sporsmal ?? []).filter((s) => s.krever_begrunnelse && felt.svar[s.id] === true)
   const ingenAvDisse = beslutninger.B5
@@ -328,6 +345,7 @@ export function vurderFlyt(r: Regel, svar: Readonly<Record<string, string>>, g: 
     felt,
     forutsatt,
     gjenstar,
+    stopp: stoppgrunner,
     ...(begrunnes.length > 0 && { begrunnelse: { hjelp: `Svaret ${begrunnes.map((s) => `«${s.ja}»`).join(' og ')} krever en skriftlig begrunnelse.` } }),
     ingenAvDisse,
   }
