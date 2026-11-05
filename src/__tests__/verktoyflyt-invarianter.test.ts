@@ -489,6 +489,55 @@ function lesbar(el: Element): string {
 }
 const enLinje = (el: Element) => (el.textContent ?? '').replace(/\s+/g, ' ').trim()
 
+/**
+ * Tidslinjen planen viser (`Tidslinje`), lest inn i tabellform: én rad per
+ * punkt med tiden og én celle per legemiddel (`data-kolonne`), med
+ * legemidlets navn som kolonneoverskrift. Navnet og et formskifte («Over til
+ * dråper») er merkelapper ved cellen og er ikke med i den; en dose og en
+ * injeksjon står på én linje, og en vurdering er «Vurdering» og hele teksten.
+ * Et legemiddel uten celle i en doserad har ingen dose («–»). Sluttmålet er en
+ * doserad.
+ */
+function tabellen(liste: Element): HTMLTableElement {
+  const navn = new Map<number, string>()
+  for (const el of liste.querySelectorAll('[data-kolonne]')) {
+    const k = Number(el.getAttribute('data-kolonne'))
+    const n = el.querySelector(':scope > .tidslinje__navn, :scope > .kun-skjermleser')
+    if (n && !navn.has(k)) navn.set(k, enLinje(n))
+  }
+  const antall = Math.max(-1, ...navn.keys()) + 1
+  const lag = <K extends keyof HTMLElementTagNameMap>(tag: K, tekst?: string) => Object.assign(document.createElement(tag), tekst === undefined ? {} : { textContent: tekst })
+  const tabell = lag('table')
+  const hode = tabell.appendChild(lag('thead')).appendChild(lag('tr'))
+  hode.appendChild(lag('th', 'Når'))
+  for (let k = 0; k < antall; k++) hode.appendChild(lag('th', navn.get(k) ?? ''))
+  const kropp = tabell.appendChild(lag('tbody'))
+  for (const li of liste.children) {
+    const type = li.getAttribute('data-type') === 'slutt' ? 'periode' : li.getAttribute('data-type')!
+    const tr = kropp.appendChild(lag('tr'))
+    tr.setAttribute('data-type', type)
+    tr.appendChild(lag('th')).append(...[...li.querySelector('.tidslinje__nar')!.children].map((x) => x.cloneNode(true)))
+    for (let k = 0; k < antall; k++) {
+      const td = tr.appendChild(lag('td'))
+      const celle = li.querySelector(`.tidslinje__innhold [data-kolonne="${k}"]`)
+      if (!celle) {
+        if (type === 'periode') td.textContent = '–'
+        continue
+      }
+      if (type === 'vurdering') {
+        const etikett = celle.querySelector('strong')?.textContent ?? ''
+        td.textContent = `Vurdering ${(celle.textContent ?? '').slice(etikett.length).trim()}`
+        continue
+      }
+      const kopi = celle.cloneNode(true) as Element
+      kopi.querySelectorAll(':scope > .tidslinje__navn, :scope > .kun-skjermleser, :scope > .tidslinje__skifte').forEach((x) => x.remove())
+      kopi.querySelectorAll('.tidslinje__dose').forEach((x) => (x.textContent = enLinje(x)))
+      td.append(kopi)
+    }
+  }
+  return tabell
+}
+
 /** Raden sin tid: dagene, og datoene i parentes når planen har en startdato (slik kopien skriver dem). */
 function naar(th: Element): string {
   const [dager, ...datoer] = lesbar(th).split('\n')
@@ -724,7 +773,7 @@ describe('S8: kopien inneholder hele planen', () => {
     if (r.status !== 'doseplan') throw new Error('ingen plan')
     const v = endret ?? planvisning(r, x.regel)!
     const { container } = render(createElement(Doseplanvisning, { plan: v, overskrift: x.verktoy.navn }))
-    return { r, v, tabell: container.querySelector('table')!, kopi: planTekst(v, x.verktoy.navn) }
+    return { r, v, tabell: tabellen(container.querySelector('ol.tidslinje')!), kopi: planTekst(v, x.verktoy.navn) }
   }
 
   it.each(PLANER.map((x) => [x.kasus.id, x] as const))('%s: tabellen har det motoren beregnet, og kopien har tabellen celle for celle', async (_, x) => {
@@ -980,17 +1029,12 @@ describe('Det klinikeren ser før planen', () => {
    * reservevisningen brukes, og at den ikke brukes noe annet sted. Valg uten
    * beregning skal heller ikke vise interne begreper.
    *
-   * I dag finnes verken katalogen (C1) eller reservevisningen (A1), og
-   * skjemaet viser «Gjelder», regel-ID og fingeravtrykk. Testen er derfor
-   * merket `fails`; A1 endrer den til `it`.
+   * Katalogen (C1) og reservevisningen (A1) er på plass, så dette er en
+   * vanlig test.
    */
-  it.fails(
-    'har ingen regel-ID, interne begreper eller svaret «Gjelder» der katalogen er kontrollert, og reservevisningen bare der den ikke er det (akseptansekriterium 2)',
-    async () => {
-      expect(await funn()).toEqual([])
-    },
-    60_000,
-  )
+  it('har ingen regel-ID, interne begreper eller svaret «Gjelder» der katalogen er kontrollert, og reservevisningen bare der den ikke er det (akseptansekriterium 2)', async () => {
+    expect(await funn()).toEqual([])
+  }, 60_000)
 
   /**
    * Hvilke godkjente regler som står i reservevisningen, er en uttrykkelig

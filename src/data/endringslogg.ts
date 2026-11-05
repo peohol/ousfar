@@ -13,7 +13,7 @@ import type { Endring } from '../domain/versjon'
 export const ENDRINGSLOGG: Endring[] = [
   {
     versjon: '1.125.13',
-    dato: '2026-11-04',
+    dato: '2026-11-05',
     sammendrag: 'De fire kliniske verktøyene har fått én enkel arbeidsflyt i fire steg, og planen vises som en tidslinje',
     typer: ['Funksjonalitet', 'Design / layout'],
     omfang: 'Større omfang',

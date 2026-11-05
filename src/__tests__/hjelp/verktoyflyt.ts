@@ -16,9 +16,16 @@ export const planpanel = () => screen.getByRole('region', { name: /^Steg 4: / })
 /** Tidslinjen i planen som vises, eller `null`. */
 export const tidslinje = () => screen.queryByRole('list', { name: 'Planen dag for dag' })
 
-/** Punktene i tidslinjen som [når, innhold]: «Dag 1–14» og teksten ved siden av. */
+/** Teksten slik den ses: uten det som bare er for skjermlesere (navnet på legemidlet når planen har ett). */
+const synlig = (el: Element) => {
+  const kopi = el.cloneNode(true) as Element
+  kopi.querySelectorAll('.kun-skjermleser').forEach((x) => x.remove())
+  return kopi.textContent ?? ''
+}
+
+/** Punktene i tidslinjen som [når, innhold]: «Dag 1–14» og teksten ved siden av, slik den ses. */
 export const punkter = (rot: HTMLElement = screen.getByRole('list', { name: 'Planen dag for dag' })) =>
-  [...rot.children].map((li) => [li.querySelector('.tidslinje__dager')!.textContent!, li.querySelector('.tidslinje__innhold')!.textContent!] as const)
+  [...rot.children].map((li) => [li.querySelector('.tidslinje__dager')!.textContent!, synlig(li.querySelector('.tidslinje__innhold')!)] as const)
 
 /** Venter på planen med tittelen `tittel`. */
 export const planen = (tittel: string | RegExp) => screen.findByRole('region', { name: tittel }, { timeout: 3000 })

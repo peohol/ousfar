@@ -40,15 +40,6 @@ export function formskifter(rader: readonly Planrad[]): Map<number, Map<number, 
   return ut
 }
 
-/** Teksten for et vurderingspunkt: hele første gang, og «Som dag 29.» når den samme vurderingen kommer igjen. */
-function gjentatt(forst: Map<string, string>, r: Extract<Planrad, { type: 'vurdering' }>): string {
-  const nokkel = `${r.kolonne}|${r.tekst}`
-  const tidligere = forst.get(nokkel)
-  if (tidligere) return `Samme som ${tidligere.charAt(0).toLowerCase()}${tidligere.slice(1)}.`
-  forst.set(nokkel, r.dager)
-  return r.tekst
-}
-
 /** Den siste raden er sluttmålet når hvert legemiddel i den er seponert. */
 const erSlutt = (r: Planrad, i: number, rader: readonly Planrad[]) => r.type === 'periode' && rader.slice(i + 1).every((x) => x.type !== 'periode') && r.celler.every((c) => !c || c.dose === SEPONERT)
 
@@ -58,14 +49,18 @@ const erSlutt = (r: Planrad, i: number, rader: readonly Planrad[]) => r.type ===
  * og datoer, dosen og hva som gis, med formskifter, vurderingspunkter og
  * injeksjoner som markeringer på linjen og sluttmålet til slutt. Den er en
  * ordnet liste for skjermlesere, og bygger på de samme radene som teksten
- * som kopieres (`planTekst`), så de sier det samme.
+ * som kopieres (`planTekst`), så de sier det samme, celle for celle (S8):
+ * hvert legemiddel står med navnet (for skjermlesere når det er ett) og
+ * kolonnen sin (`data-kolonne`), og hver vurdering med hele teksten.
  */
 export function Tidslinje({ plan }: { plan: Planvisning }) {
   const flere = plan.kolonner.length > 1
   const skifter = formskifter(plan.rader)
-  const navn = (k: number) => `${plan.kolonner[k]!.navn} ${plan.kolonner[k]!.administrasjon}`
-  // En vurdering som gjentas, står i sin helhet første gang og kort etterpå; hele teksten står i oppfølgingen og i kopien.
-  const forst = new Map<string, string>()
+  const navn = (k: number) => (
+    <span className={flere ? 'tidslinje__navn' : 'kun-skjermleser'}>
+      {plan.kolonner[k]!.navn} {plan.kolonner[k]!.administrasjon}
+    </span>
+  )
   return (
     <ol className="tidslinje" aria-label="Planen dag for dag">
       {plan.rader.map((r, i) => {
@@ -79,14 +74,14 @@ export function Tidslinje({ plan }: { plan: Planvisning }) {
             <span className="tidslinje__merke" aria-hidden="true" />
             <div className="tidslinje__innhold">
               {r.type === 'vurdering' ? (
-                <p className="tidslinje__vurdering">
-                  <strong>Vurdering{flere ? ` (${plan.kolonner[r.kolonne]!.navn})` : ''}:</strong> {gjentatt(forst, r)}
+                <p className="tidslinje__vurdering" data-kolonne={r.kolonne}>
+                  <strong>Vurdering{flere ? ` (${plan.kolonner[r.kolonne]!.navn})` : ''}:</strong> {r.tekst}
                 </p>
               ) : r.type === 'injeksjon' ? (
-                <div className="tidslinje__legemiddel">
-                  {flere && <span className="tidslinje__navn">{navn(r.kolonne)}</span>}
+                <div className="tidslinje__legemiddel" data-kolonne={r.kolonne}>
+                  {navn(r.kolonne)}
                   <p className="tidslinje__dose">
-                    {r.dose} <small>injeksjon</small>
+                    <small>Injeksjon</small> {r.dose}
                   </p>
                   <ul className="tidslinje__gis">
                     <li>
@@ -100,8 +95,8 @@ export function Tidslinje({ plan }: { plan: Planvisning }) {
                 r.celler.map(
                   (c, k) =>
                     c && (
-                      <div key={k} className="tidslinje__legemiddel">
-                        {flere && <span className="tidslinje__navn">{navn(k)}</span>}
+                      <div key={k} className="tidslinje__legemiddel" data-kolonne={k}>
+                        {navn(k)}
                         {skifter.get(i)?.get(k) && <span className="tidslinje__skifte">{skifter.get(i)!.get(k)}</span>}
                         <p className="tidslinje__dose">{c.dose}</p>
                         {c.elementer.length > 0 && (
