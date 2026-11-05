@@ -26,6 +26,43 @@ export const ENDRINGSLOGG: Endring[] = [
     ],
   },
   {
+    versjon: '1.125.9',
+    dato: '2026-11-05',
+    sammendrag: 'Måling av hvor tungvinte verktøyene er i dag, og nye kontroller av sikkerheten før de forenkles',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy'],
+    utenVarsel: true,
+    punkter: [
+      'Ingen endring i appen. Det er målt hvor mange valg, svar, avkrysninger og beregninger som trengs i dag før verktøyene gir en plan eller sier at de ikke kan, på mobil og stor skjerm, som utgangspunkt for forenklingen.',
+      'Nye automatiske kontroller passer på at forenklingen ikke svekker sikkerheten: de godkjente reglene og planene deres er uendret, ingen plan vises uten å nå sluttmålet, et ubesvart spørsmål gir aldri en plan, nødstopp og FEST-kontroll virker som før, og kopien har hele planen.',
+    ],
+  },
+  {
+    versjon: '1.125.8',
+    dato: '2026-11-05',
+    sammendrag: 'Plan for å gjøre de kliniske verktøyene vesentlig enklere å bruke',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy'],
+    utenVarsel: true,
+    punkter: [
+      'Gjelder bare administratorene. Ingen regler, doser, godkjenninger, sperrer eller skjermbilder er endret ennå.',
+      'Planen beskriver en felles, kortere arbeidsflyt for alle fire verktøyene: færre og tydeligere spørsmål med svarene ja, nei og ukjent, tidlig beskjed når en komplett plan ikke kan lages, automatisk valg og kombinasjon av tabletter og dråper der det er dokumentert, og planen vist som en tidslinje som er lett å kopiere.',
+    ],
+  },
+  {
+    versjon: '1.125.7',
+    dato: '2026-11-05',
+    sammendrag: 'Uavhengig kontroll av verktøyenes vanlige brukerforløp',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Vanlige situasjoner i de fire verktøyene prøves nå automatisk, både i testene og i den publiserte appen, slik at det vises hvilke forløp som gir en komplett plan, og hvilke som stopper med «Komplett plan ikke tilgjengelig», fagtekst eller ingen plan. Det kontrolleres også at ingen delplan vises som doseplan, og at de godkjente reglene ikke endres i det stille.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.125.6',
     dato: '2026-11-05',
     sammendrag: 'Bytter mellom antidepressiva: to bytter til sertralin',
