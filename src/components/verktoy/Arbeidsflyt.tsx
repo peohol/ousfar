@@ -314,7 +314,9 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
   const apne = regel ? ubesvart(regel, fullt) : { sporsmal: [], unntak: [], bekreftelser: [] }
   const stopperSvar = tilstand?.kontroll.utfall === 'kan_ikke'
   // Planen beregnes bare når forhåndskontrollen sier at en komplett plan kan lages og ingenting gjenstår; den lover likevel aldri en plan (S9).
-  const steg3 = !!tilstand && tilstand.kontroll.utfall === 'kan_lages_hvis' && tilstand.kontroll.gjenstar === 0 && apne.sporsmal.length + apne.unntak.length + apne.bekreftelser.length === 0
+  // Nådde prøveberegningen taket uten å avgjøre noe, beregnes planen med de faktiske svarene når alt er besvart.
+  const beregnes = !!tilstand && (tilstand.kontroll.utfall === 'kan_lages_hvis' || ikkeAvklart(tilstand))
+  const steg3 = beregnes && tilstand.kontroll.gjenstar === 0 && apne.sporsmal.length + apne.unntak.length + apne.bekreftelser.length === 0
 
   // Beregningen.
   const [beregning, setBeregning] = useState<Beregning | null>(null)
@@ -783,6 +785,9 @@ function Grunnliste({ grunner }: { grunner: readonly Stoppforklaring[] }) {
  * meldingen i skjemaet. Den lover aldri en plan (S9), og sier hva verktøyet
  * har valgt selv (en legemiddelform, B4) og hva som må velges.
  */
+/** Prøveberegningen nådde taket uten å avgjøre om en komplett plan kan lages; planen beregnes da med de faktiske svarene. */
+const ikkeAvklart = (t: Flyttilstand) => t.kontroll.utfall === 'ukjent' && t.kontroll.grunner.some((g) => g.kode === 'ikke_avklart')
+
 function Kontrollstatus({ tilstand, boks }: { tilstand: Flyttilstand; boks: MutableRefObject<HTMLDivElement | null> }) {
   const { utfall, grunner, gjenstar } = tilstand.kontroll
   const egne = grunner.filter((g) => !g.sporsmal)
@@ -793,6 +798,16 @@ function Kontrollstatus({ tilstand, boks }: { tilstand: Flyttilstand; boks: Muta
         <div className="flytstatus__tekst">
           <p className="flytstatus__tittel">Verktøyet kan ikke lage en plan for dette.</p>
           <Grunnliste grunner={egne} />
+        </div>
+      </div>
+    )
+  if (ikkeAvklart(tilstand))
+    return (
+      <div ref={boks} tabIndex={-1} className="flytstatus" data-utfall="ukjent" role="status">
+        <Ikon navn="info2" className="flytstatus__ikon" />
+        <div className="flytstatus__tekst">
+          <p className="flytstatus__tittel">{egne[0]!.tekst}</p>
+          {gjenstar > 0 && <p>{`${gjenstartekst(gjenstar)}.`}</p>}
         </div>
       </div>
     )
