@@ -14,6 +14,7 @@ import { avvikFra, KATEGORIER, kjorKasus, lagPilotmatriserapport, PILOTKASUS, PI
 import { FEST_TILLEGG, kjorTilleggskasus } from '../verktoy/tilleggsgrunnlag'
 import { FEST_ANTIPSYKOTIKA } from '../verktoy/regler/antipsykotikabytter'
 import { kjorAntipsykotikakasus } from '../verktoy/regler/antipsykotikakasus'
+import { FEST_K2, K2KASUS, k2avvik, kjorK2 } from '../verktoy/k2kontroll'
 import { REGELSETT } from '../verktoy/tilgjengelighet'
 
 const les = (fil: string) => readFileSync(new URL(`../../${fil}`, import.meta.url), 'utf8')
@@ -45,6 +46,13 @@ describe('testmatrisen for de godkjente reglene (P11.1–P11.4)', () => {
     const antipsykotika = kjorAntipsykotikakasus(JSON.parse(les(FEST_ANTIPSYKOTIKA)) as Festuttrekk, uttrekkene.aksept)
     expect(antipsykotika.flatMap(({ k, avvik }) => avvik.map((a) => `${k.id}: ${a}`))).toEqual([])
     for (const { k, res } of antipsykotika) if (!k.regel && 'resultat' in res && res.resultat) prøvd.add(res.resultat.regel.id)
+    // De to godkjente sertralinbyttene (K2) prøves i kontrollgrunnlaget for K2, med FEST-uttrekket for K2; kasusene for dem har ingen simulert godkjenning.
+    const k2 = JSON.parse(les(FEST_K2)) as Festuttrekk
+    for (const k of K2KASUS) {
+      const res = kjorK2(k, k2)
+      expect(k2avvik(k, res), k.id).toEqual([])
+      if (!k.regel && 'resultat' in res && res.resultat) prøvd.add(res.resultat.regel.id)
+    }
     expect([...prøvd].sort()).toEqual(godkjente.map((r) => r.id).sort())
     const kategorier: Record<string, Kasuskategori[]> = {
       V: ['vanlig_dose', 'uvanlig_dose', 'pasientforhold', 'interaksjon', 'preparat', 'foreldet_fest', 'datakilde', 'injeksjonsdato', 'regelendring', 'ikke_godkjent', 'nodstopp'],

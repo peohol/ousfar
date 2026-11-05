@@ -242,7 +242,7 @@ describe('S9: verktøyet lover ingen plan det ikke kan gi', () => {
 
 describe('S2: ingen godkjent regel får nytt fingeravtrykk', () => {
   /**
-   * Fingeravtrykkene godkjenningene gjelder (main 04.11.2026, etter #320).
+   * Fingeravtrykkene godkjenningene gjelder (main 05.11.2026, etter #320 og #318).
    * En ny, godkjent regelversjon legges til her i samme PR som godkjenningen;
    * en linje fjernes bare når regelen er erstattet av en godkjent versjon.
    */
@@ -259,6 +259,8 @@ describe('S2: ingen godkjent regel får nytt fingeravtrykk', () => {
     'antipsykotikabytte-risperidon-aripiprazol': [8, '866ac93c58fb921c78cd71518ec91637cb31a175b7a9a480552fcebe54cca870'],
     'tillegg-valproat-lamotrigin': [2, '0a9213f31b5f428935fceeef41498a2999682631b1692749bb7ebe19c82639b8'],
     'tillegg-litium-lamotrigin': [2, '786436a0ea8d115b7927a9a20ffabc736b59bc06c59117769551e5f75e89e44b'],
+    'bytte-escitalopram-sertralin': [2, 'c0bf6c61e38c437d4c8e41d36653fe1ce3b1a9c1dfb0f9d9af603e9f7dd0289c'],
+    'bytte-citalopram-sertralin': [2, '2b64ff9e383e6f9462600c4921a9dd7828ea2adc4ab404646f142ce306a57aa8'],
   }
   it('de godkjente reglene i appen er nøyaktig disse versjonene, med uendret fingeravtrykk', () => {
     const naa = Object.fromEntries(REGELSETT.regler.filter(erKliniskGodkjent).map((r) => [r.id, [r.versjon, fingeravtrykk(r)]]))
@@ -468,12 +470,18 @@ function katalogGjelder(r: Regel): boolean {
 }
 /**
  * De godkjente reglene som med vilje står i reservevisningen til katalogen
- * deres er kontrollert (C1, fd9d3a9: ChatGPT har godkjent avtrykkene for de
- * sju andre). Den som fører et nytt katalogavtrykk, eller får en ny regel
+ * deres er kontrollert (C1, 3da270b: ChatGPT har godkjent avtrykkene for de
+ * sju andre; K2-byttene til sertralin, #318, har katalog som ikke er kontrollert ennå). Den som fører et nytt katalogavtrykk, eller får en ny regel
  * godkjent uten avtrykk, endrer listen i samme PR. Kriterium 2 er helt nådd
  * først når listen er tom (plan §11).
  */
-const VENTER_PA_KATALOGKONTROLL: readonly string[] = ['kryssnedtrapping-sertralin-mirtazapin v10', 'seponering-escitalopram v13', 'seponering-vortioksetin v12']
+const VENTER_PA_KATALOGKONTROLL: readonly string[] = [
+  'kryssnedtrapping-sertralin-mirtazapin v10',
+  'seponering-escitalopram v13',
+  'seponering-vortioksetin v12',
+  'bytte-escitalopram-sertralin v2',
+  'bytte-citalopram-sertralin v2',
+]
 
 /**
  * Merket på reservevisningen (plan S5): regelens egne tekster og svar,
