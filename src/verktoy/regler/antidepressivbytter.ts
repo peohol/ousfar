@@ -929,12 +929,29 @@ function avklartAvKontrolloren(r: Regel): Regel {
 }
 
 /**
- * Kontrollørens kliniske godkjenning av nøyaktige versjoner og fingeravtrykk
- * i K2, når den er gitt; `null` til da. Bare reglene, versjonene og
- * fingeravtrykkene vedtaket nevner, blir godkjent (`godkjenn`); en endret regel
- * blir det ikke.
+ * Kontrollørens avgrensning av godkjenningen, ordrett fra kommentar
+ * 6649961365 (fra «bare», uten uthevingene). Den er gitt samlet for begge
+ * sertralinbyttene («henholdsvis»), og gjelder derfor ordrett for hver av dem.
  */
-export const K2VEDTAK: Godkjenningsvedtak | null = null
+const K2_GODKJENT_OMFANG =
+  'bare voksne 18–65 år med depresjon, henholdsvis escitalopram 10/20 mg eller citalopram 20/40 mg, høyst åtte ukers sammenhengende behandling som OUSFARs egen pilotgrense, ingen tidligere seponeringsplager, ingen kompliserende leverfunksjon/interaksjoner, og de dokumenterte norske tablettformene/-styrkene. Halvering hvert 14. døgn som minstetid, vurdering før trinn, siste 5/10 mg → 0 med sertralin 50 mg fra neste dag, valgt sertralinmål 50 eller 100 mg og reell klinisk vurdering av effekt/behov, toleranse og seponeringssymptomer før eventuell økning. Individuell pause/omlegging ved plager, kontroll den første uken og senere responskontroll er forutsetninger. Nulltrinnet er ikke en feil fordi det er «100 %» av siste ordinerte dose; konkret PK/PD og symptomrisiko avgjør. Dette godkjenner verken en generell SSRI-bytteprotokoll, andre startdoser, langvarig bruk eller de tre mirtazapinreglene.'
+
+/**
+ * Kontrollørens kliniske godkjenning av nøyaktige versjoner og fingeravtrykk
+ * i K2 (ChatGPT som uavhengig kontrollør, PR #318, kommentar 6649961365,
+ * formidlet av Peder). Bare reglene, versjonene og fingeravtrykkene vedtaket
+ * nevner, blir godkjent (`godkjenn`); en endret regel blir det ikke, og står
+ * til faglig kontroll igjen. De tre mirtazapinbyttene er ikke godkjent.
+ */
+export const K2VEDTAK: Godkjenningsvedtak | null = {
+  av: KONTROLLOREN.av,
+  dato: '2026-11-05',
+  gjennomgang: 'Kontrollørens gjennomgang av ce40b3a 05.11.2026 (PR #318, kommentar 6649961365)',
+  regler: {
+    'bytte-escitalopram-sertralin': { versjon: 2, fingeravtrykk: 'c0bf6c61e38c437d4c8e41d36653fe1ce3b1a9c1dfb0f9d9af603e9f7dd0289c', avgrensning: K2_GODKJENT_OMFANG },
+    'bytte-citalopram-sertralin': { versjon: 2, fingeravtrykk: '2b64ff9e383e6f9462600c4921a9dd7828ea2adc4ab404646f142ce306a57aa8', avgrensning: K2_GODKJENT_OMFANG },
+  },
+}
 
 /* --- Regelsettet ------------------------------------------------------------------------------ */
 

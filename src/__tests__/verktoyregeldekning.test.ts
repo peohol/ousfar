@@ -64,7 +64,7 @@ describe('Kombinasjonene', () => {
     }
   })
 
-  it('gir beregning bare for kombinasjonene de ti godkjente reglene med beregning gjelder', () => {
+  it('gir beregning bare for kombinasjonene de tolv godkjente reglene med beregning gjelder', () => {
     const beregning = [...ALLE].flatMap(([id, ks]) => ks.filter((k) => k.utfall === 'beregning').map((k) => `${id}: ${k.valg.fra.nokkel}/${k.valg.fra.formulering}${k.valg.til ? ` → ${k.valg.til.nokkel}/${k.valg.til.formulering}` : ''}`))
     expect(beregning.sort()).toEqual(
       [
@@ -72,6 +72,9 @@ describe('Kombinasjonene', () => {
         // Escitalopram versjon 13 fra K1, godkjent 04.11.2026.
         'trappe-ned-antidepressiv: escitalopram/standard',
         'bytte-antidepressiv: sertralin/standard → mirtazapin/standard',
+        // De to byttene til sertralin fra K2, godkjent 05.11.2026 (`K2VEDTAK`).
+        'bytte-antidepressiv: escitalopram/standard → sertralin/standard',
+        'bytte-antidepressiv: citalopram/standard → sertralin/standard',
         'bytte-antipsykotikum: aripiprazol/standard → aripiprazol/LA',
         'bytte-antipsykotikum: paliperidon/standard → paliperidon/ER',
         // De tre antipsykotikabyttene fra K3, godkjent 04.11.2026 (`ANTIPSYKOTIKAVEDTAK`).

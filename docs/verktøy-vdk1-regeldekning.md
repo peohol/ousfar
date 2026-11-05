@@ -6,7 +6,7 @@ Oversikten svarer på VDK-1 i `docs/verktøy-omlegging-2026-11.md`: hva de tre v
 
 Kildetabellen fra Psychiatrienet er bare brukt som metadata som allerede ligger i repoet (om tabellen har en anbefaling for kombinasjonen), og bare i sum. Ingen tekst fra kilden er brukt, og at kilden har en anbefaling, gir aldri i seg selv en OUSFAR-regel (`docs/verktøy-p3-rettigheter.md`).
 
-**Regelsettet har 12 klinisk godkjente regelversjoner** (`kryssnedtrapping-sertralin-mirtazapin` v10, `depot-aripiprazol-maintena` v3, `depot-paliperidon-xeplion` v3, `seponering-escitalopram` v13, `seponering-vortioksetin` v12, `seponering-bupropion` v5, `seponering-agomelatin` v1, `depot-risperidon-xeplion` v8, `antipsykotikabytte-olanzapin-aripiprazol` v8, `antipsykotikabytte-risperidon-aripiprazol` v8, `tillegg-valproat-lamotrigin` v2, `tillegg-litium-lamotrigin` v2), 10 av dem med beregning, hver bare i omfanget kontrolløren godkjente.
+**Regelsettet har 14 klinisk godkjente regelversjoner** (`kryssnedtrapping-sertralin-mirtazapin` v10, `depot-aripiprazol-maintena` v3, `depot-paliperidon-xeplion` v3, `seponering-escitalopram` v13, `seponering-vortioksetin` v12, `seponering-bupropion` v5, `seponering-agomelatin` v1, `bytte-escitalopram-sertralin` v2, `bytte-citalopram-sertralin` v2, `depot-risperidon-xeplion` v8, `antipsykotikabytte-olanzapin-aripiprazol` v8, `antipsykotikabytte-risperidon-aripiprazol` v8, `tillegg-valproat-lamotrigin` v2, `tillegg-litium-lamotrigin` v2), 12 av dem med beregning, hver bare i omfanget kontrolløren godkjente.
 
 ## 1. Sammendrag
 
@@ -16,11 +16,11 @@ Antall kombinasjoner etter hva verktøyet gir. For seponering er en kombinasjon 
 | --- | --- | --- | --- | --- |
 | Valgbart | 23 virkestoffer, 23 valg med formulering | 23 virkestoffer, 23 valg med formulering | 25 virkestoffer, 34 valg med formulering | 11 virkestoffer, 11 valg med formulering |
 | Kombinasjoner | 23 | 506 | 1122 | 110 |
-| Beregning med klinisk godkjent regel (i godkjent omfang) | 2 | 1 | 5 | 2 |
+| Beregning med klinisk godkjent regel (i godkjent omfang) | 2 | 3 | 5 | 2 |
 | Klinisk godkjent fagtekst, ingen beregning | 2 | 0 | 0 | 0 |
 | Regel finnes, kontrollert og ikke godkjent | 6 | 1 | 1 | 0 |
 | Regel finnes som fagtekst, ikke godkjent | 6 | 0 | 0 | 0 |
-| Regel finnes, ikke ferdig kontrollert | 0 | 4 | 4 | 0 |
+| Regel finnes, ikke ferdig kontrollert | 0 | 2 | 4 | 0 |
 | Ingen OUSFAR-regel; kilden har en anbefaling | 0 | 500 | 885 | 108 |
 | Ingen OUSFAR-regel; kilden har ingen anbefaling | 0 | 0 | 161 | 0 |
 | Ingen OUSFAR-regel; begrenset av preparater eller kilde | 7 | 0 | 0 | 0 |
@@ -34,6 +34,8 @@ Hver klinisk godkjente regel med beregning, kombinasjonen den gjelder, og omfang
 | --- | --- | --- | --- | --- |
 | Trappe ned antidepressiv | `seponering-escitalopram` v13 | Escitalopram | Kontrollørens samlede kontroll av 255dd94 04.11.2026 (PR #323, kommentar 6622813839): faglig akseptert og klinisk godkjent bare for nøyaktig denne regelversjonen og dette fingeravtrykket, avgrenset til et symptomstyrt, pragmatisk komplett forløp fra 10 eller 20 mg hos voksne under 65 år med kort behandlingstid, ingen tidligere seponeringsplager og avklarte interaksjoner og kontraindikasjoner, med hele Cipralex-dråper (1 mg per dråpe), valgt gradvis reduksjon til 3 → 2 → 1 mg, siste dose holdt og vurdert individuelt før 1 → 0, og fleksible kontrollpunkter 7, 14 og 28 dager etter siste dose. Godkjenningen er ingen generell garanti mot seponeringsplager, ingen automatisk terskel for andre preparater eller pasientgrupper, og ingen fullført K1-dekning. 1 mg er en praktisk formuleringsterskel, ikke en dokumentert universell trygg seponeringsgrense. | 2 kasus, 0 gir plan |
 | Trappe ned antidepressiv | `seponering-vortioksetin` v12 | Vortioksetin | Kontrollørens gjennomgang av a38fac14 03.11.2026 (rettelsen av RCPsych-faktumet, PR #309): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare én første reduksjon 20 → 15 mg/døgn, med minst 28 dager før ny symptomstyrt vurdering, hos voksne under 65 år, kort/ikke-langvarig behandling, uten tidligere seponeringsplager, etter alle opprinnelige vurderinger/stopp, med kontrollerte tabletter/styrker. Ingen påfølgende reduksjon, langsom variant eller utvidet pasientgruppe. Identisk klinisk omfang som v11. Godkjenningen gjelder bare dette eksakte fingeravtrykket og disse betingelsene. Den er en korrigering av kildebeskrivelsen, ikke en ny generell godkjenning av algoritmer for nedtrapping. | 18 kasus, 0 gir plan |
+| Bytte antidepressiv | `bytte-citalopram-sertralin` v2 | Citalopram → Sertralin | Kontrollørens gjennomgang av ce40b3a 05.11.2026 (PR #318, kommentar 6649961365): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare voksne 18–65 år med depresjon, henholdsvis escitalopram 10/20 mg eller citalopram 20/40 mg, høyst åtte ukers sammenhengende behandling som OUSFARs egen pilotgrense, ingen tidligere seponeringsplager, ingen kompliserende leverfunksjon/interaksjoner, og de dokumenterte norske tablettformene/-styrkene. Halvering hvert 14. døgn som minstetid, vurdering før trinn, siste 5/10 mg → 0 med sertralin 50 mg fra neste dag, valgt sertralinmål 50 eller 100 mg og reell klinisk vurdering av effekt/behov, toleranse og seponeringssymptomer før eventuell økning. Individuell pause/omlegging ved plager, kontroll den første uken og senere responskontroll er forutsetninger. Nulltrinnet er ikke en feil fordi det er «100 %» av siste ordinerte dose; konkret PK/PD og symptomrisiko avgjør. Dette godkjenner verken en generell SSRI-bytteprotokoll, andre startdoser, langvarig bruk eller de tre mirtazapinreglene. | 0 kasus, 0 gir plan |
+| Bytte antidepressiv | `bytte-escitalopram-sertralin` v2 | Escitalopram → Sertralin | Kontrollørens gjennomgang av ce40b3a 05.11.2026 (PR #318, kommentar 6649961365): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare voksne 18–65 år med depresjon, henholdsvis escitalopram 10/20 mg eller citalopram 20/40 mg, høyst åtte ukers sammenhengende behandling som OUSFARs egen pilotgrense, ingen tidligere seponeringsplager, ingen kompliserende leverfunksjon/interaksjoner, og de dokumenterte norske tablettformene/-styrkene. Halvering hvert 14. døgn som minstetid, vurdering før trinn, siste 5/10 mg → 0 med sertralin 50 mg fra neste dag, valgt sertralinmål 50 eller 100 mg og reell klinisk vurdering av effekt/behov, toleranse og seponeringssymptomer før eventuell økning. Individuell pause/omlegging ved plager, kontroll den første uken og senere responskontroll er forutsetninger. Nulltrinnet er ikke en feil fordi det er «100 %» av siste ordinerte dose; konkret PK/PD og symptomrisiko avgjør. Dette godkjenner verken en generell SSRI-bytteprotokoll, andre startdoser, langvarig bruk eller de tre mirtazapinreglene. | 0 kasus, 0 gir plan |
 | Bytte antidepressiv | `kryssnedtrapping-sertralin-mirtazapin` v10 | Sertralin → Mirtazapin | Kontrollørens gjennomgang av a38fac14 03.11.2026 (rettelsen av RCPsych-faktumet, PR #309): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare det tidligere godkjente startforløpet fra sertralin 50 eller 100 mg, kort/ikke-langvarig behandling, med kontrollerte tabletter og styrker, obligatoriske bekreftelser og tidligere seponeringsplager fraværende. Dette omfatter ikke videre 25 → 0, opptrapping av mirtazapin, andre doser, langtidsbehandling eller endret trinnlengde. Identisk klinisk omfang som v9. Godkjenningen gjelder bare dette eksakte fingeravtrykket og disse betingelsene. Den er en korrigering av kildebeskrivelsen, ikke en ny generell godkjenning av algoritmer for nedtrapping. | 14 kasus, 0 gir plan |
 | Bytte antipsykotikum | `depot-aripiprazol-maintena` v3 | Aripiprazol (peroral) → Aripiprazol (depotinjeksjon) | Kontrollørens gjennomgang av 62ebb21 30.10.2026 (P4.8): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: oppstart med én injeksjon Abilify Maintena 400 mg, peroral aripiprazol i 14 dager og deretter 400 mg månedlig, hos voksne med schizofreni som er stabilisert på og har tålt peroral aripiprazol. Gjelder ikke andre depottyper eller oppstartsvarianter, kjent langsom CYP2D6-omsetning, sterke CYP2D6- eller CYP3A4-hemmere, CYP3A4-induktorer eller ubekreftet stabilisering eller toleranse. | 13 kasus, 4 gir plan |
 | Bytte antipsykotikum | `antipsykotikabytte-olanzapin-aripiprazol` v8 | Olanzapin (peroral) → Aripiprazol (peroral) | Kontrollørens ellevte gjennomgang av 63464bd 04.11.2026 (PR #320, kommentar 6626569802): faglig akseptert og klinisk godkjent bare for nøyaktig denne avgrensede situasjonen: bare stabil voksen poliklinisk pasient med schizofreni: olanzapin 20 → 15 → 10 → 5 → 0 mg, med aripiprazol etablert på forskriverens valgte og tolererte 10 eller 15 mg, minst to ukers overlapp før nedtrappingen, minst 14 dager per reduksjon, tett vurdering av symptomer og bivirkninger, stopp eller individuell omlegging ved plager, og uten tidligere seponeringsproblemer. Dette er en bevisst langsommere strategi etter TARC 2018, ikke en generell regel for seponering av olanzapin. | 0 kasus, 0 gir plan |
@@ -79,6 +81,14 @@ Valgene i testmatrisen som ikke gir en plan, selv om regelen er godkjent: dosen,
 - V16 (interaksjonssperrer): organfunksjon og interaksjoner ikke vurdert, dose «20» → ingen plan
 - V17 (uvanlige doser og grenseverdier): mindre trinn enn regelens forslag, dose «20» → ingen plan
 - V18 (utilgjengelige eller endrede preparater): dråper i stedet for tabletter, dose «20» → ingen plan
+
+**`bytte-citalopram-sertralin`** – 0 av 0 valg gir ingen plan:
+
+- Ingen.
+
+**`bytte-escitalopram-sertralin`** – 0 av 0 valg gir ingen plan:
+
+- Ingen.
 
 **`kryssnedtrapping-sertralin-mirtazapin`** – 14 av 14 valg gir ingen plan:
 
@@ -170,9 +180,7 @@ Regelutkast som er kontrollert og ikke godkjent (eller bare fagtekst), og som de
 | Trappe ned antidepressiv | `seponering-venlafaksin` v6 | Venlafaksin | fagtekst | bare fagtekst |
 | Trappe ned antidepressiv | `seponering-vortioksetin-langsom` v8 | Vortioksetin | beregnbar | ikke godkjent |
 | Bytte antidepressiv | `bytte-citalopram-mirtazapin` v1 | Citalopram → Mirtazapin | beregnbar | til kontroll |
-| Bytte antidepressiv | `bytte-citalopram-sertralin` v2 | Citalopram → Sertralin | beregnbar | til kontroll |
 | Bytte antidepressiv | `bytte-escitalopram-mirtazapin` v1 | Escitalopram → Mirtazapin | beregnbar | til kontroll |
-| Bytte antidepressiv | `bytte-escitalopram-sertralin` v2 | Escitalopram → Sertralin | beregnbar | til kontroll |
 | Bytte antidepressiv | `bytte-sertralin-mirtazapin` v1 | Sertralin → Mirtazapin | beregnbar | til kontroll |
 | Bytte antidepressiv | `mao-fluoksetin-fenelzin` v7 | Fluoksetin → Fenelzin | beregnbar | ikke godkjent |
 | Bytte antipsykotikum | `antipsykotikabytte-aripiprazol-olanzapin` v2 | Aripiprazol (peroral) → Olanzapin (peroral) | beregnbar | til kontroll |
@@ -204,11 +212,11 @@ Per fra-valg: hvor mange til-valg som gir plan eller godkjent fagtekst, hvor man
 | Agomelatin | 22 | 0 | 0 | 22 | 0 | 0 |
 | Amitriptylin | 22 | 0 | 0 | 22 | 0 | 0 |
 | Bupropion | 22 | 0 | 0 | 22 | 0 | 0 |
-| Citalopram | 22 | 0 | 2 | 20 | 0 | 0 |
+| Citalopram | 22 | 1 | 1 | 20 | 0 | 0 |
 | Doksepin | 22 | 0 | 0 | 22 | 0 | 0 |
 | Dosulepin | 22 | 0 | 0 | 22 | 0 | 0 |
 | Duloksetin | 22 | 0 | 0 | 22 | 0 | 0 |
-| Escitalopram | 22 | 0 | 2 | 20 | 0 | 0 |
+| Escitalopram | 22 | 1 | 1 | 20 | 0 | 0 |
 | Fenelzin | 22 | 0 | 0 | 22 | 0 | 0 |
 | Fluoksetin | 22 | 0 | 1 | 21 | 0 | 0 |
 | Fluvoksamin | 22 | 0 | 0 | 22 | 0 | 0 |

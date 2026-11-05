@@ -4,7 +4,7 @@
 
 Regelsett `ousfar-verktoy-antidepressivbytter` versjon 1, regelmodell 12, beregningsmotor 10. Komplette bytter mellom antidepressiva (K2): fra pasientens nåværende dose til seponering av det gamle legemidlet og en valgt vedlikeholdsdose av det nye. Fem regler i to familier; ingen er klinisk godkjent. De to til sertralin (nedtrapping og direkte overgang med tett oppfølging den første uken) har hvert valg avklart av den uavhengige kontrolløren og venter på godkjenning av nøyaktig sitt fingeravtrykk; til mirtazapin er sluttrinnet ikke avgjort, og planene stopper.
 
-**5 regler, 0 klinisk godkjent.** Utfallet av kontrollen: 5 ikke ferdig kontrollert. Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. De er ikke empirisk validerte kliniske anbefalinger, og ingen av reglene er klinisk godkjent. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-k2-antidepressivbytter.md` og `docs/verktøy-k2-kontrollgrunnlag.md` og `docs/verktøy-p4-regelmodell.md`.
+**5 regler, 2 klinisk godkjent.** Utfallet av kontrollen: 2 kontrollert og godkjent i oppgitt omfang, 3 ikke ferdig kontrollert. Alle beregninger under er *modellberegninger*: den faglige dosekurven regelen gir, regnet ut deterministisk. 2 av reglene er klinisk godkjent etter uavhengig faglig kontroll i nøyaktig denne versjonen; de andre er ikke, og beregningene etter dem er ikke kliniske anbefalinger. Ingen av beregningene er empirisk validerte. En klinisk godkjenning gjelder bare regelversjonen og fingeravtrykket den ble gitt for. Dosene er ideelle (to desimaler); hvilke doser som kan gis med norske preparater, avgjøres i P5. Modellen og valgene er beskrevet i `docs/verktøy-k2-antidepressivbytter.md` og `docs/verktøy-k2-kontrollgrunnlag.md` og `docs/verktøy-p4-regelmodell.md`.
 
 Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel bygger på teksten der, og den vises ikke (`docs/verktøy-p3-rettigheter.md`).
 
@@ -15,8 +15,8 @@ Psychiatrienet er bare en referanse reglene kan sammenlignes med; ingen regel by
 | `bytte-sertralin-mirtazapin` | kryssnedtrapping | sertralin → mirtazapin | beregnbar etter faglig avklaring | 11 | til faglig kontroll | 6 |
 | `bytte-escitalopram-mirtazapin` | kryssnedtrapping | escitalopram → mirtazapin | beregnbar etter faglig avklaring | 11 | til faglig kontroll | 6 |
 | `bytte-citalopram-mirtazapin` | kryssnedtrapping | citalopram → mirtazapin | beregnbar etter faglig avklaring | 11 | til faglig kontroll | 6 |
-| `bytte-escitalopram-sertralin` | sekvensielt bytte | escitalopram → sertralin | beregnbar etter faglig avklaring | 0 | til faglig kontroll | 5 |
-| `bytte-citalopram-sertralin` | sekvensielt bytte | citalopram → sertralin | beregnbar etter faglig avklaring | 0 | til faglig kontroll | 5 |
+| `bytte-escitalopram-sertralin` | sekvensielt bytte | escitalopram → sertralin | beregnbar etter faglig avklaring | 0 | klinisk godkjent | 5 |
+| `bytte-citalopram-sertralin` | sekvensielt bytte | citalopram → sertralin | beregnbar etter faglig avklaring | 0 | klinisk godkjent | 5 |
 
 ## Kilder
 
@@ -318,9 +318,9 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra escitalopram til sertralin, nedtrapping og direkte overgang
 
-`bytte-escitalopram-sertralin`, versjon 2, fingeravtrykk `c0bf6c61e38c437d4c8e41d36653fe1ce3b1a9c1dfb0f9d9af603e9f7dd0289c`. Sekvensielt bytte: escitalopram → sertralin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`bytte-escitalopram-sertralin`, versjon 2, fingeravtrykk `c0bf6c61e38c437d4c8e41d36653fe1ce3b1a9c1dfb0f9d9af603e9f7dd0289c`. Sekvensielt bytte: escitalopram → sertralin. **Beregnbar etter faglig avklaring**; status **klinisk godkjent**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 04.11.2026, Claude Code) → til faglig kontroll (versjon 2, 04.11.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 04.11.2026, Claude Code) → til faglig kontroll (versjon 2, 04.11.2026, Claude Code) → klinisk godkjent (versjon 2, 05.11.2026, ChatGPT (uavhengig kontrollør)).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -424,7 +424,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Kontroll: Bekreftet: Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra escitalopram til sertralin mer risikofylt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 10, 20 mg (bindende) – oppfylt. 20 mg.
   - Kontroll: Måldosen er 50, 100 mg (bindende) – oppfylt. 100 mg.
-  - Kontroll: Minst 0 dager uten escitalopram før sertralin (bindende) – oppfylt. Uten legemiddel dag 29–28 (0 dager); sertralin tidligst dag 29.
+  - Kontroll: Minst 0 dager uten escitalopram før sertralin (bindende) – oppfylt. Direkte overgang uten dager uten legemiddel; sertralin tidligst dag 29, dagen etter siste dose av escitalopram.
 - *escitalopram 10 mg til sertralin 50 mg: halvering hver 14. dag til 5 mg og seponering, sertralin 50 mg fra dagen etter som fortsetter.* Inndata: startdose 10 mg; måldose 50 mg; bekreftet: indikasjon, toleranse_bytte, serotonerg_sammedisinering; pasientforhold: tidligere_seponeringssymptomer nei, lang_behandlingstid nei, over_65 nei, nedsatt_leverfunksjon nei.
   - **fra:** dag 1–14: 5 mg; fra dag 15: seponert
   - **til:** fra dag 15: 50 mg
@@ -437,7 +437,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Kontroll: Bekreftet: Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra escitalopram til sertralin mer risikofylt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 10, 20 mg (bindende) – oppfylt. 10 mg.
   - Kontroll: Måldosen er 50, 100 mg (bindende) – oppfylt. 50 mg.
-  - Kontroll: Minst 0 dager uten escitalopram før sertralin (bindende) – oppfylt. Uten legemiddel dag 15–14 (0 dager); sertralin tidligst dag 15.
+  - Kontroll: Minst 0 dager uten escitalopram før sertralin (bindende) – oppfylt. Direkte overgang uten dager uten legemiddel; sertralin tidligst dag 15, dagen etter siste dose av escitalopram.
 - *En dose som ikke kan halveres med hele tabletter, stopper.* Inndata: startdose 15 mg; måldose 100 mg; bekreftet: indikasjon, toleranse_bytte, serotonerg_sammedisinering; pasientforhold: tidligere_seponeringssymptomer nei, lang_behandlingstid nei, over_65 nei, nedsatt_leverfunksjon nei.
   - **Stoppet:** Startdosen 15 mg er utenfor det regelen gjelder for (10, 20 mg).
 - *150 mg sertralin er en senere, responsstyrt økning og ikke en vedlikeholdsdose planen beregner.* Inndata: startdose 20 mg; måldose 150 mg; bekreftet: indikasjon, toleranse_bytte, serotonerg_sammedisinering; pasientforhold: tidligere_seponeringssymptomer nei, lang_behandlingstid nei, over_65 nei, nedsatt_leverfunksjon nei.
@@ -449,9 +449,9 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
 
 ## Bytte fra citalopram til sertralin, nedtrapping og direkte overgang
 
-`bytte-citalopram-sertralin`, versjon 2, fingeravtrykk `2b64ff9e383e6f9462600c4921a9dd7828ea2adc4ab404646f142ce306a57aa8`. Sekvensielt bytte: citalopram → sertralin. **Beregnbar etter faglig avklaring**; status **til faglig kontroll**.
+`bytte-citalopram-sertralin`, versjon 2, fingeravtrykk `2b64ff9e383e6f9462600c4921a9dd7828ea2adc4ab404646f142ce306a57aa8`. Sekvensielt bytte: citalopram → sertralin. **Beregnbar etter faglig avklaring**; status **klinisk godkjent**.
 
-**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 04.11.2026, Claude Code) → til faglig kontroll (versjon 2, 04.11.2026, Claude Code).
+**Godkjenningshistorikk:** utkast (versjon 1, 03.11.2026, Claude Code) → til faglig kontroll (versjon 1, 03.11.2026, Claude Code) → utkast (versjon 2, 04.11.2026, Claude Code) → til faglig kontroll (versjon 2, 04.11.2026, Claude Code) → klinisk godkjent (versjon 2, 05.11.2026, ChatGPT (uavhengig kontrollør)).
 
 **Kildetro – det som følger direkte av kildene:**
 
@@ -555,7 +555,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Kontroll: Bekreftet: Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra citalopram til sertralin mer risikofylt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 20, 40 mg (bindende) – oppfylt. 40 mg.
   - Kontroll: Måldosen er 50, 100 mg (bindende) – oppfylt. 100 mg.
-  - Kontroll: Minst 0 dager uten citalopram før sertralin (bindende) – oppfylt. Uten legemiddel dag 29–28 (0 dager); sertralin tidligst dag 29.
+  - Kontroll: Minst 0 dager uten citalopram før sertralin (bindende) – oppfylt. Direkte overgang uten dager uten legemiddel; sertralin tidligst dag 29, dagen etter siste dose av citalopram.
 - *citalopram 20 mg til sertralin 50 mg: halvering hver 14. dag til 10 mg og seponering, sertralin 50 mg fra dagen etter som fortsetter.* Inndata: startdose 20 mg; måldose 50 mg; bekreftet: indikasjon, toleranse_bytte, serotonerg_sammedisinering; pasientforhold: tidligere_seponeringssymptomer nei, lang_behandlingstid nei, over_65 nei, nedsatt_leverfunksjon nei.
   - **fra:** dag 1–14: 10 mg; fra dag 15: seponert
   - **til:** fra dag 15: 50 mg
@@ -568,7 +568,7 @@ Hentet og lest 28.10.2026. Kontrollsummen (SHA-256) er av dokumentet slik det bl
   - Kontroll: Bekreftet: Forskriveren har kontrollert pasientens øvrige legemidler: pasienten bruker ikke andre serotonerge legemidler eller andre legemidler som gjør byttet fra citalopram til sertralin mer risikofylt. – oppfylt. Bekreftet av forskriveren.
   - Kontroll: Startdosen er 20, 40 mg (bindende) – oppfylt. 20 mg.
   - Kontroll: Måldosen er 50, 100 mg (bindende) – oppfylt. 50 mg.
-  - Kontroll: Minst 0 dager uten citalopram før sertralin (bindende) – oppfylt. Uten legemiddel dag 15–14 (0 dager); sertralin tidligst dag 15.
+  - Kontroll: Minst 0 dager uten citalopram før sertralin (bindende) – oppfylt. Direkte overgang uten dager uten legemiddel; sertralin tidligst dag 15, dagen etter siste dose av citalopram.
 - *En dose som ikke kan halveres med hele tabletter, stopper.* Inndata: startdose 30 mg; måldose 100 mg; bekreftet: indikasjon, toleranse_bytte, serotonerg_sammedisinering; pasientforhold: tidligere_seponeringssymptomer nei, lang_behandlingstid nei, over_65 nei, nedsatt_leverfunksjon nei.
   - **Stoppet:** Startdosen 30 mg er utenfor det regelen gjelder for (20, 40 mg).
 - *150 mg sertralin er en senere, responsstyrt økning og ikke en vedlikeholdsdose planen beregner.* Inndata: startdose 40 mg; måldose 150 mg; bekreftet: indikasjon, toleranse_bytte, serotonerg_sammedisinering; pasientforhold: tidligere_seponeringssymptomer nei, lang_behandlingstid nei, over_65 nei, nedsatt_leverfunksjon nei.

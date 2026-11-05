@@ -13,6 +13,7 @@ import { planTekst, planvisning } from '../verktoy/planvisning'
 import { finnVirkestoff, KARTLEGGING, sokVerktoy, VERKTOY, verktoyFor, virkestoffvalg } from '../verktoy/register'
 import { NEDTRAPPINGSSETT } from '../verktoy/regler/nedtrapping'
 import { ANTIPSYKOTIKASETT, ANTIPSYKOTIKAVEDTAK } from '../verktoy/regler/antipsykotikabytter'
+import { BYTTESETT, K2VEDTAK } from '../verktoy/regler/antidepressivbytter'
 import { PILOTSETT } from '../verktoy/regler/pilotsett'
 import { TILLEGGSSETT } from '../verktoy/regler/tillegg'
 import { snarvalg } from '../verktoy/snarvalg'
@@ -170,11 +171,14 @@ describe('Regelstatusen', () => {
     expect(new Set([...tilfeller.flatMap(([, , r]) => r), ...tillegg, ...ANTIPSYKOTIKASETT.regler.map((r) => r.id)])).toEqual(new Set([...PILOTSETT.regler, ...NEDTRAPPINGSSETT.regler, ...TILLEGGSSETT.regler, ...ANTIPSYKOTIKASETT.regler].map((r) => r.id)))
     // Leveransenes sett (K2–K4) har egne tester for sine regler.
     expect(REGELSETT.regler).toHaveLength(REGELSETTENE.reduce((n, x) => n + x.regler.length, 0))
-    // Escitalopram versjon 13 fra K1 er godkjent (04.11.2026) og kan beregnes, i tillegg til vortioksetin, og tre antipsykotikabytter fra K3.
-    expect(VERKTOY.map((x) => regeloversikt(x).tilgjengelige)).toEqual([2, 1, 2 + K3_GODKJENT.length, 2])
+    // To sertralinbytter fra K2 er godkjent (K2VEDTAK, 05.11.2026) og gir beregning; de tre til mirtazapin står til faglig kontroll (`verktoyantidepressivbytter.test.ts`).
+    const K2_GODKJENT = Object.keys(K2VEDTAK!.regler)
+    for (const id of K2_GODKJENT) expect(BYTTESETT.regler.find((r) => r.id === id)?.godkjenning.status, id).toBe('klinisk_godkjent')
+    // Escitalopram versjon 13 fra K1 er godkjent (04.11.2026) og kan beregnes, i tillegg til vortioksetin, tre antipsykotikabytter fra K3 og to sertralinbytter fra K2.
+    expect(VERKTOY.map((x) => regeloversikt(x).tilgjengelige)).toEqual([2, 1 + K2_GODKJENT.length, 2 + K3_GODKJENT.length, 2])
     expect(VERKTOY.map((x) => regeloversikt(x).ikkeGodkjent)).toEqual([NEDTRAPPINGSSETT.regler.length - GODKJENT_FAGTEKST.length - 1 - K1.length, 1, 1, 0])
-    // K2s fem antidepressivbytter og fire av K3s antipsykotikabytter står til faglig kontroll.
-    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([0, 5, ANTIPSYKOTIKASETT.regler.length - K3_GODKJENT.length, 0])
+    // K2s tre bytter til mirtazapin og fire av K3s antipsykotikabytter står til faglig kontroll.
+    expect(VERKTOY.map((x) => regeloversikt(x).tilKontroll)).toEqual([0, BYTTESETT.regler.length - K2_GODKJENT.length, ANTIPSYKOTIKASETT.regler.length - K3_GODKJENT.length, 0])
   })
 
   it('forklarer hvorfor et antidepressivum uten regel ikke kan trappes ned, med dekningen fra P7', () => {
@@ -227,7 +231,11 @@ describe('Snarvalgene (VDR-3)', () => {
         ['fagtekst', 'Agomelatin'],
         ['fagtekst', 'Bupropion'],
       ],
-      [],
+      // Bytte antidepressiv: de to godkjente byttene til sertralin fra K2 (05.11.2026).
+      [
+        ['tilgjengelig', 'Citalopram → sertralin'],
+        ['tilgjengelig', 'Escitalopram → sertralin'],
+      ],
       // Bytte antipsykotikum: pilotens depotregler og de tre godkjente byttene fra K3 (04.11.2026).
       [
         ['tilgjengelig', 'Aripiprazol: peroral → depotinjeksjon'],

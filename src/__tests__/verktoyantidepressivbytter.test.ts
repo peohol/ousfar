@@ -12,7 +12,7 @@ import { BYTTESETT, K2_AVKLARINGER, K2VEDTAK, KORT_BEHANDLINGSTID_UKER, STARTFOR
 import { KONTROLLOREN } from '../verktoy/regler/bygg'
 import type { Festuttrekk } from '../verktoy/regler/aksepttest'
 import { beregn } from '../verktoy/regler/beregning'
-import { erstatningsfeil, fingeravtrykk, godkjenningsfeil } from '../verktoy/regler/godkjenning'
+import { erstatningsfeil, fingeravtrykk, godkjenn, godkjenningsfeil, vedtaksfeil } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett, lesKontrollgrunnlag } from '../verktoy/regler/kontroll'
 import { LANG_BEHANDLINGSTID } from '../verktoy/regler/nedtrapping'
 import { alleGrunnlag, apneValg, type Beregningsinndata, type Regel, type Regelsett } from '../verktoy/regler/modell'
@@ -60,7 +60,7 @@ describe('K2: regelsettet', () => {
     expect(kontrollerRegelsett(BYTTESETT, lesKontrollgrunnlag(), REGELSETTENE.flatMap((x) => x.regler))).toEqual([])
   })
 
-  it('har fem regler, alle til faglig kontroll uten gyldig godkjenning; bare mirtazapinreglene har åpne valg', () => {
+  it('har fem regler: de to sertralinbyttene er klinisk godkjent for nøyaktig versjon 2 og sitt fingeravtrykk (K2VEDTAK), de tre mirtazapinbyttene står til faglig kontroll med åpne valg', () => {
     expect(BYTTESETT.regler.map((r) => r.id)).toEqual([
       'bytte-sertralin-mirtazapin',
       'bytte-escitalopram-mirtazapin',
@@ -68,18 +68,55 @@ describe('K2: regelsettet', () => {
       'bytte-escitalopram-sertralin',
       'bytte-citalopram-sertralin',
     ])
-    // Ingen godkjenning er registrert ennå: kontrolløren har avklart valgene i sertralinreglene, men ikke godkjent fingeravtrykkene.
-    expect(K2VEDTAK).toBeNull()
+    // Kontrollørens godkjenning av ce40b3a 05.11.2026 (PR #318, kommentar 6649961365), formidlet av Peder.
+    expect(K2VEDTAK).toMatchObject({ av: KONTROLLOREN.av, dato: '2026-11-05', gjennomgang: 'Kontrollørens gjennomgang av ce40b3a 05.11.2026 (PR #318, kommentar 6649961365)' })
+    expect(Object.fromEntries(Object.entries(K2VEDTAK!.regler).map(([id, g]) => [id, [g.versjon, g.fingeravtrykk]]))).toEqual({
+      'bytte-escitalopram-sertralin': [2, 'c0bf6c61e38c437d4c8e41d36653fe1ce3b1a9c1dfb0f9d9af603e9f7dd0289c'],
+      'bytte-citalopram-sertralin': [2, '2b64ff9e383e6f9462600c4921a9dd7828ea2adc4ab404646f142ce306a57aa8'],
+    })
+    expect(vedtaksfeil(BYTTESETT.regler, K2VEDTAK!)).toEqual([])
     for (const r of BYTTESETT.regler) {
-      expect(r.godkjenning.status).toBe('til_faglig_kontroll')
-      expect(godkjenningsfeil(r).length).toBeGreaterThan(0)
-      expect(beregn(r, r.eksempler[0]!.inndata).klinisk_godkjent).toBe(false)
       if (sluttrinnApent(r)) {
+        // Mirtazapinbyttene: ikke godkjent, sluttrinnet ikke avgjort.
+        expect(r.godkjenning.status, r.id).toBe('til_faglig_kontroll')
+        expect(godkjenningsfeil(r).length, r.id).toBeGreaterThan(0)
+        expect(beregn(r, r.eksempler[0]!.inndata).klinisk_godkjent, r.id).toBe(false)
         expect([r.versjon, apneValg(r).length > 0], r.id).toEqual([1, true])
-      } else {
-        expect([r.versjon, apneValg(r)], r.id).toEqual([2, []])
-        expect(r.godkjenning.historikk.at(-1)).toMatchObject({ status: 'til_faglig_kontroll', regelversjon: 2, merknad: expect.stringMatching(/^Ingen åpne valg; til kontrollørens samlede kontroll av nøyaktig denne versjonen og dette fingeravtrykket\. Ikke klinisk godkjent\./) })
+        expect(r.id in K2VEDTAK!.regler, r.id).toBe(false)
+        continue
       }
+      expect([r.versjon, apneValg(r)], r.id).toEqual([2, []])
+      expect(r.godkjenning.status, r.id).toBe('klinisk_godkjent')
+      expect(godkjenningsfeil(r), r.id).toEqual([])
+      expect(beregn(r, r.eksempler[0]!.inndata).klinisk_godkjent, r.id).toBe(true)
+      const [kontroll, godkjent] = r.godkjenning.historikk.slice(-2)
+      expect(kontroll, r.id).toMatchObject({ status: 'til_faglig_kontroll', regelversjon: 2, merknad: expect.stringMatching(/^Ingen åpne valg; til kontrollørens samlede kontroll/) })
+      // Avgrensningen står ordrett slik kontrolløren ga den, også at mirtazapinreglene, andre startdoser og langvarig bruk ikke er godkjent.
+      expect(godkjent, r.id).toMatchObject({ status: 'klinisk_godkjent', dato: '2026-11-05', av: KONTROLLOREN.av, rolle: 'uavhengig_kontrollor', regelversjon: 2, fingeravtrykk: K2VEDTAK!.regler[r.id]!.fingeravtrykk })
+      for (const del of [
+        'bare voksne 18–65 år med depresjon, henholdsvis escitalopram 10/20 mg eller citalopram 20/40 mg, høyst åtte ukers sammenhengende behandling som OUSFARs egen pilotgrense',
+        'siste 5/10 mg → 0 med sertralin 50 mg fra neste dag, valgt sertralinmål 50 eller 100 mg og reell klinisk vurdering av effekt/behov, toleranse og seponeringssymptomer før eventuell økning',
+        'Dette godkjenner verken en generell SSRI-bytteprotokoll, andre startdoser, langvarig bruk eller de tre mirtazapinreglene.',
+      ])
+        expect(godkjent!.merknad, r.id).toContain(del)
+    }
+  })
+
+  it('godkjenner ikke en endret regel: et annet fingeravtrykk eller en annen versjon gir ingen godkjenning, og regelen står til faglig kontroll', () => {
+    const ikkeGodkjent = BYTTESETT.regler.filter((r) => r.godkjenning.status !== 'klinisk_godkjent')
+    expect(ikkeGodkjent.map((r) => r.id)).toEqual(['bytte-sertralin-mirtazapin', 'bytte-escitalopram-mirtazapin', 'bytte-citalopram-mirtazapin'])
+    for (const id of Object.keys(K2VEDTAK!.regler)) {
+      const r = BYTTESETT.regler.find((x) => x.id === id)!
+      // Regelen før godkjenningen, med én endring i innholdet eller versjonen.
+      const for_ = { ...structuredClone(r), godkjenning: { status: 'til_faglig_kontroll' as const, historikk: structuredClone(r.godkjenning.historikk.slice(0, -1)) } }
+      expect(godkjenn([for_], K2VEDTAK!)[0]!.godkjenning.status, id).toBe('klinisk_godkjent')
+      const endret = structuredClone(for_)
+      const fase = endret.plan.forlop[0]!.faser[0]!
+      if (fase.type === 'nedtrapping') fase.trinnlengde.verdi = 7
+      expect(godkjenn([endret], K2VEDTAK!)[0]!.godkjenning.status, id).toBe('til_faglig_kontroll')
+      expect(vedtaksfeil([endret], { ...K2VEDTAK!, regler: { [id]: K2VEDTAK!.regler[id]! } })).toEqual([`${id}: innholdet er endret etter godkjenningen (fingeravtrykket stemmer ikke)`])
+      const nyVersjon = { ...structuredClone(for_), versjon: 3 }
+      expect(godkjenn([nyVersjon], K2VEDTAK!)[0]!.godkjenning.status, id).toBe('til_faglig_kontroll')
     }
   })
 
@@ -168,16 +205,16 @@ describe('K2: regelsettet', () => {
     })
   })
 
-  it('sier at faglig kontroll gjenstår for de nye kombinasjonene', () => {
+  it('gir beregning for de to godkjente byttene til sertralin, og sier at faglig kontroll gjenstår for byttene til mirtazapin', () => {
     const verktoy = VERKTOY.find((v) => v.id === 'bytte-antidepressiv')!
-    for (const [fra, til] of [
-      ['escitalopram', 'mirtazapin'],
-      ['citalopram', 'mirtazapin'],
-      ['escitalopram', 'sertralin'],
-      ['citalopram', 'sertralin'],
+    for (const [fra, til, status] of [
+      ['escitalopram', 'mirtazapin', 'til_kontroll'],
+      ['citalopram', 'mirtazapin', 'til_kontroll'],
+      ['escitalopram', 'sertralin', 'tilgjengelig'],
+      ['citalopram', 'sertralin', 'tilgjengelig'],
     ] as const) {
       const t = tilgjengelighet(verktoy, { fra: { nokkel: fra, formulering: 'standard' }, til: { nokkel: til, formulering: 'standard' } })
-      expect(t.status, `${fra} → ${til}`).toBe('til_kontroll')
+      expect(t.status, `${fra} → ${til}`).toBe(status)
     }
   })
 })
@@ -269,7 +306,7 @@ describe('K2: sluttrinnet ved bytte (K2-2)', () => {
         const [fra, til] = res.forlop
         expect(til!.start, `${r.id} ${d}`).toBe(fra!.siste_dosedag! + 1)
         expect(til!.perioder[0]!.fra).toBe(fra!.siste_dosedag! + 1)
-        expect(res.kontroller.find((k) => k.krav.startsWith('Minst 0 dager uten'))).toMatchObject({ oppfylt: true, detalj: expect.stringMatching(/\(0 dager\)/) })
+        expect(res.kontroller.find((k) => k.krav.startsWith('Minst 0 dager uten'))).toMatchObject({ oppfylt: true, detalj: 'Direkte overgang uten dager uten legemiddel; sertralin tidligst dag ' + til!.start + ', dagen etter siste dose av ' + fra!.virkestoff + '.' })
       }
     }
     // Den praktiske planen med preparater: siste escitalopram dag 28, sertralin fra dag 29 på samme rad.

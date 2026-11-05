@@ -2,9 +2,9 @@
 
 <!-- Laget av `npx vite-node scripts/verktoy-antidepressivbytter.ts -- rapport` fra reglene og FEST-uttrekket. Ikke rediger for hånd. -->
 
-**Ingen av reglene er klinisk godkjent.** Bytte fra escitalopram til sertralin, nedtrapping og direkte overgang og Bytte fra citalopram til sertralin, nedtrapping og direkte overgang: hvert OUSFAR-valg er avklart av den uavhengige kontrolløren 04.11.2026, og versjonen venter på godkjenning av nøyaktig fingeravtrykket under; planene for dem er regnet på en kopi med simulert godkjenning. Til sertralin seponeres SSRI-et fra laveste tablettdose, og sertralin 50 mg startes dagen etter (direkte overgang, K2-2 og K2-4). Sertralin ventes å holde SERT-hemmingen oppe, men seponeringssymptomer kan komme likevel; de følges tett den første uken, og planen justeres individuelt ved plager. Bytte fra sertralin til mirtazapin, kryssnedtrapping til seponering og Bytte fra escitalopram til mirtazapin, kryssnedtrapping til seponering og Bytte fra citalopram til mirtazapin, kryssnedtrapping til seponering: sluttrinnet er ikke avgjort, så hver plan stopper før en delplan (kasusene «sluttrinnet ikke avgjort»), og planene for dem er regnet på en kopi med simulert avklaring og godkjenning og sluttrinnet simulert som laveste tablettdose – et alternativ som ikke er avgjort. En kopi lagres aldri og går aldri til verktøysiden. Preparatene er fra FEST-uttrekket 2026-11-03 (`src/data/verktoy/fest-antidepressivbytter.json`). Uten godkjenning sier verktøyet at faglig kontroll gjenstår. Det godkjente startforløpet fra sertralin til mirtazapin (versjon 10) er en delplan, som verktøyet ikke viser; det gir «Komplett plan ikke tilgjengelig». Bakgrunn og kilder: `docs/verktøy-k2-antidepressivbytter.md`; reglene i sin helhet: `docs/verktøy-k2-antidepressivbytter-regler.md`.
+**Klinisk godkjent:** Bytte fra escitalopram til sertralin, nedtrapping og direkte overgang og Bytte fra citalopram til sertralin, nedtrapping og direkte overgang, hver for nøyaktig sin versjon og sitt fingeravtrykk. Planene for dem er regnet med regelen slik den er, uten simulering, gjennom verktøysidens egen vei: tilgjengeligheten, motoren, visningen og teksten som kopieres. Til sertralin seponeres SSRI-et fra laveste tablettdose, og sertralin 50 mg startes dagen etter (direkte overgang, K2-2 og K2-4). Sertralin ventes å holde SERT-hemmingen oppe, men seponeringssymptomer kan komme likevel; de følges tett den første uken, og planen justeres individuelt ved plager. Bytte fra sertralin til mirtazapin, kryssnedtrapping til seponering og Bytte fra escitalopram til mirtazapin, kryssnedtrapping til seponering og Bytte fra citalopram til mirtazapin, kryssnedtrapping til seponering: sluttrinnet er ikke avgjort, så hver plan stopper før en delplan (kasusene «sluttrinnet ikke avgjort»), og planene for dem er regnet på en kopi med simulert avklaring og godkjenning og sluttrinnet simulert som laveste tablettdose – et alternativ som ikke er avgjort. En kopi lagres aldri og går aldri til verktøysiden. Preparatene er fra FEST-uttrekket 2026-11-03 (`src/data/verktoy/fest-antidepressivbytter.json`). Uten godkjenning sier verktøyet at faglig kontroll gjenstår. Det godkjente startforløpet fra sertralin til mirtazapin (versjon 10) er en delplan, som verktøyet ikke viser; det gir «Komplett plan ikke tilgjengelig». Bakgrunn og kilder: `docs/verktøy-k2-antidepressivbytter.md`; reglene i sin helhet: `docs/verktøy-k2-antidepressivbytter-regler.md`.
 
-Kasusene er syntetiske. 130 kasus, alle med forventet utfall.
+Kasusene er syntetiske. 128 kasus, alle med forventet utfall.
 
 ## Spørsmål til den faglige kontrollen
 
@@ -278,9 +278,9 @@ Kasusene er syntetiske. 130 kasus, alle med forventet utfall.
 
 ### Bytte fra escitalopram til sertralin, nedtrapping og direkte overgang
 
-`bytte-escitalopram-sertralin`, versjon 2, fingeravtrykk `c0bf6c61e38c437d4c8e41d36653fe1ce3b1a9c1dfb0f9d9af603e9f7dd0289c`. Status: hvert valg avklart av kontrolløren, til godkjenning av nøyaktig dette fingeravtrykket; planene er regnet med simulert godkjenning.
+`bytte-escitalopram-sertralin`, versjon 2, fingeravtrykk `c0bf6c61e38c437d4c8e41d36653fe1ce3b1a9c1dfb0f9d9af603e9f7dd0289c`. Status: klinisk godkjent for nøyaktig denne versjonen og dette fingeravtrykket; planene er regnet med regelen som den er, uten simulering.
 
-**escitalopram 10 mg til sertralin 50 mg, med direkte overgang (simulert godkjenning)** (startdato 09.11.2026):
+**escitalopram 10 mg til sertralin 50 mg, med direkte overgang, klinisk godkjent regel uten simulering** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Escitalopram peroralt: 5 mg = 1 tablett à 5 mg
     Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
@@ -288,7 +288,7 @@ Kasusene er syntetiske. 130 kasus, alle med forventet utfall.
     Dag 21 (29.11.2026): Vurdering (Escitalopram): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra escitalopram til sertralin.
     Dag 43 (21.12.2026): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
 
-**escitalopram 10 mg til sertralin 100 mg, med direkte overgang (simulert godkjenning)** (startdato 09.11.2026):
+**escitalopram 10 mg til sertralin 100 mg, med direkte overgang, klinisk godkjent regel uten simulering** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Escitalopram peroralt: 5 mg = 1 tablett à 5 mg
     Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
@@ -299,7 +299,7 @@ Kasusene er syntetiske. 130 kasus, alle med forventet utfall.
     Dag 43 (21.12.2026): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
     Dag 57 (04.01.2027): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
 
-**escitalopram 20 mg til sertralin 50 mg, med direkte overgang (simulert godkjenning)** (startdato 09.11.2026):
+**escitalopram 20 mg til sertralin 50 mg, med direkte overgang, klinisk godkjent regel uten simulering** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Escitalopram peroralt: 10 mg = 1 tablett à 10 mg
     Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
@@ -309,7 +309,7 @@ Kasusene er syntetiske. 130 kasus, alle med forventet utfall.
     Dag 35 (13.12.2026): Vurdering (Escitalopram): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra escitalopram til sertralin.
     Dag 57 (04.01.2027): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
 
-**escitalopram 20 mg til sertralin 100 mg, med direkte overgang (simulert godkjenning)** (startdato 09.11.2026):
+**escitalopram 20 mg til sertralin 100 mg, med direkte overgang, klinisk godkjent regel uten simulering** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Escitalopram peroralt: 10 mg = 1 tablett à 10 mg
     Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
@@ -354,13 +354,12 @@ Kasusene er syntetiske. 130 kasus, alle med forventet utfall.
 | sertralin 100 mg avregistrert i FEST | stopper: sertralin (til): styrken 100 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST, så planen ville blitt satt sammen annerledes enn den som er kontrollert. Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet. |
 | FEST eldre enn 48 timer | stopper: Ingen klinisk doseplan kan vises. Legemiddeldataene ble sist kontrollert mot FEST 3. november 2026. Den nattlige oppdateringen har ikke gått siden, så nyere endringer i FEST kan mangle. |
 | regelen endret etter kontrollen (annet fingeravtrykk) | stopper: Ingen klinisk doseplan kan vises. Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke); den må kontrolleres på nytt. |
-| uten godkjenning (slik appen er nå): faglig kontroll gjenstår | ingen plan (til_kontroll): Beregning er ikke tilgjengelig fordi faglig kontroll av regelen gjenstår. |
 
 ### Bytte fra citalopram til sertralin, nedtrapping og direkte overgang
 
-`bytte-citalopram-sertralin`, versjon 2, fingeravtrykk `2b64ff9e383e6f9462600c4921a9dd7828ea2adc4ab404646f142ce306a57aa8`. Status: hvert valg avklart av kontrolløren, til godkjenning av nøyaktig dette fingeravtrykket; planene er regnet med simulert godkjenning.
+`bytte-citalopram-sertralin`, versjon 2, fingeravtrykk `2b64ff9e383e6f9462600c4921a9dd7828ea2adc4ab404646f142ce306a57aa8`. Status: klinisk godkjent for nøyaktig denne versjonen og dette fingeravtrykket; planene er regnet med regelen som den er, uten simulering.
 
-**citalopram 20 mg til sertralin 50 mg, med direkte overgang (simulert godkjenning)** (startdato 09.11.2026):
+**citalopram 20 mg til sertralin 50 mg, med direkte overgang, klinisk godkjent regel uten simulering** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Citalopram peroralt: 10 mg = 1 tablett à 10 mg
     Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
@@ -368,7 +367,7 @@ Kasusene er syntetiske. 130 kasus, alle med forventet utfall.
     Dag 21 (29.11.2026): Vurdering (Citalopram): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra citalopram til sertralin.
     Dag 43 (21.12.2026): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
 
-**citalopram 20 mg til sertralin 100 mg, med direkte overgang (simulert godkjenning)** (startdato 09.11.2026):
+**citalopram 20 mg til sertralin 100 mg, med direkte overgang, klinisk godkjent regel uten simulering** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Citalopram peroralt: 10 mg = 1 tablett à 10 mg
     Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
@@ -379,7 +378,7 @@ Kasusene er syntetiske. 130 kasus, alle med forventet utfall.
     Dag 43 (21.12.2026): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
     Dag 57 (04.01.2027): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
 
-**citalopram 40 mg til sertralin 50 mg, med direkte overgang (simulert godkjenning)** (startdato 09.11.2026):
+**citalopram 40 mg til sertralin 50 mg, med direkte overgang, klinisk godkjent regel uten simulering** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Citalopram peroralt: 20 mg = 1 tablett à 20 mg
     Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
@@ -389,7 +388,7 @@ Kasusene er syntetiske. 130 kasus, alle med forventet utfall.
     Dag 35 (13.12.2026): Vurdering (Citalopram): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra citalopram til sertralin.
     Dag 57 (04.01.2027): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
 
-**citalopram 40 mg til sertralin 100 mg, med direkte overgang (simulert godkjenning)** (startdato 09.11.2026):
+**citalopram 40 mg til sertralin 100 mg, med direkte overgang, klinisk godkjent regel uten simulering** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Citalopram peroralt: 20 mg = 1 tablett à 20 mg
     Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
@@ -434,5 +433,4 @@ Kasusene er syntetiske. 130 kasus, alle med forventet utfall.
 | sertralin 100 mg avregistrert i FEST | stopper: sertralin (til): styrken 100 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST, så planen ville blitt satt sammen annerledes enn den som er kontrollert. Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet. |
 | FEST eldre enn 48 timer | stopper: Ingen klinisk doseplan kan vises. Legemiddeldataene ble sist kontrollert mot FEST 3. november 2026. Den nattlige oppdateringen har ikke gått siden, så nyere endringer i FEST kan mangle. |
 | regelen endret etter kontrollen (annet fingeravtrykk) | stopper: Ingen klinisk doseplan kan vises. Regelen er endret etter godkjenningen (fingeravtrykket stemmer ikke); den må kontrolleres på nytt. |
-| uten godkjenning (slik appen er nå): faglig kontroll gjenstår | ingen plan (til_kontroll): Beregning er ikke tilgjengelig fordi faglig kontroll av regelen gjenstår. |
 
