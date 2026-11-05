@@ -1797,6 +1797,1292 @@ exports[`S3: de samme planene for de samme kasusene > P11-matrisen 1`] = `
 }
 `;
 
+exports[`S3: de samme planene for de samme kasusene > QA-katalogen (K0-01–K0-12 og H-forløpene) 1`] = `
+{
+  "H-01": {
+    "formvalg": [],
+    "klasse": "stoppet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Komplett plan ikke tilgjengelig: vortioksetin: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene.",
+      ],
+      "resultat": undefined,
+      "tekst": undefined,
+      "utfall": "stopp",
+    },
+  },
+  "H-02": {
+    "formvalg": [],
+    "klasse": "stoppet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "vortioksetin dag 1–28: den ideelle dosen 7,5 mg kan ikke gis med preparatene i FEST nøyaktig. Nærmeste doser som kan settes sammen: 5 mg (-33,33 %, faktisk reduksjon 50 % fra 10 mg) og 10 mg (+33,33 %). Den foretrukne reduksjonen til 7,5 mg (−25 % fra 10 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 5–25 %. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet.",
+        "Startdosen 10 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 20 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 5, 10, 15 og 20 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+      ],
+      "resultat": undefined,
+      "tekst": undefined,
+      "utfall": "stopp",
+    },
+  },
+  "H-03": {
+    "formvalg": [
+      "fra: Tablett",
+    ],
+    "klasse": "stoppet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Komplett plan ikke tilgjengelig: escitalopram: én mulig reduksjon med revurdering; neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 1 mg eller lavere (planen står på 15 mg).",
+      ],
+      "resultat": undefined,
+      "tekst": undefined,
+      "utfall": "stopp",
+    },
+  },
+  "H-04": {
+    "formvalg": [],
+    "klasse": "ikke_godkjent",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning.",
+      ],
+      "status": "ikke_godkjent",
+      "utfall": "ingen",
+    },
+  },
+  "H-05": {
+    "formvalg": [],
+    "klasse": "ikke_godkjent",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Beregning er ikke tilgjengelig: regelen er bare fagtekst, fordi det ikke finnes en dokumentert måte å gi trinnene med dagens norske preparater. Fagteksten er ikke klinisk godkjent.",
+      ],
+      "status": "ikke_godkjent",
+      "utfall": "ingen",
+    },
+  },
+  "H-06": {
+    "formvalg": [],
+    "klasse": "ikke_godkjent",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning.",
+      ],
+      "status": "ikke_godkjent",
+      "utfall": "ingen",
+    },
+  },
+  "H-07": {
+    "formvalg": [],
+    "klasse": "ikke_godkjent",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Beregning er ikke tilgjengelig: regelen er bare fagtekst, fordi det ikke finnes en dokumentert måte å gi trinnene med dagens norske preparater. Fagteksten er ikke klinisk godkjent.",
+      ],
+      "status": "ikke_godkjent",
+      "utfall": "ingen",
+    },
+  },
+  "H-08": {
+    "formvalg": [],
+    "klasse": "ikke_godkjent",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Beregning er ikke tilgjengelig: regelen er bare fagtekst, fordi det ikke finnes en dokumentert måte å gi trinnene med dagens norske preparater. Fagteksten er ikke klinisk godkjent.",
+      ],
+      "status": "ikke_godkjent",
+      "utfall": "ingen",
+    },
+  },
+  "H-09": {
+    "formvalg": [],
+    "klasse": "ikke_godkjent",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Beregning er ikke tilgjengelig: regelen er bare fagtekst, fordi det ikke finnes en dokumentert måte å gi trinnene med dagens norske preparater. Fagteksten er ikke klinisk godkjent.",
+      ],
+      "status": "ikke_godkjent",
+      "utfall": "ingen",
+    },
+  },
+  "H-10": {
+    "formvalg": [],
+    "klasse": "ikke_godkjent",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning.",
+      ],
+      "status": "ikke_godkjent",
+      "utfall": "ingen",
+    },
+  },
+  "H-11": {
+    "formvalg": [],
+    "klasse": "ikke_godkjent",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Beregning er ikke tilgjengelig: regelen er bare fagtekst, fordi det ikke finnes en dokumentert måte å gi trinnene med dagens norske preparater. Fagteksten er ikke klinisk godkjent.",
+      ],
+      "status": "ikke_godkjent",
+      "utfall": "ingen",
+    },
+  },
+  "H-12": {
+    "formvalg": [],
+    "klasse": "fagtekst",
+    "trinnvalg": [],
+    "utfall": {
+      "regler": [
+        "seponering-bupropion v5",
+      ],
+      "resultat": undefined,
+      "tekst": undefined,
+      "utfall": "fagtekst",
+    },
+  },
+  "H-13": {
+    "formvalg": [],
+    "klasse": "fagtekst",
+    "trinnvalg": [],
+    "utfall": {
+      "regler": [
+        "seponering-agomelatin v1",
+      ],
+      "resultat": undefined,
+      "tekst": undefined,
+      "utfall": "fagtekst",
+    },
+  },
+  "H-14": {
+    "formvalg": [
+      "til: Tablett",
+    ],
+    "klasse": "stoppet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Komplett plan ikke tilgjengelig: sertralin: siste trinn før null; avslutning vurderes individuelt; mirtazapin: holdes til sertralin er avsluttet; videre dosering planlegges individuelt.",
+      ],
+      "resultat": undefined,
+      "tekst": undefined,
+      "utfall": "stopp",
+    },
+  },
+  "H-15": {
+    "formvalg": [],
+    "klasse": "komplett",
+    "trinnvalg": [],
+    "utfall": {
+      "avvik": [],
+      "forbehold": [
+        "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+        "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+        "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+      ],
+      "forlop": {
+        "fra": [
+          "dag 1–14: 10 mg = 1 tablett à 10 mg",
+          "fra dag 15: seponert",
+        ],
+        "til": [
+          "dag 15–28: 50 mg = 1 tablett à 50 mg",
+          "fra dag 29: 100 mg = 1 tablett à 100 mg",
+        ],
+      },
+      "preparater": [
+        "Cipramil tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Citalopram Orion tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Sertralin Bluefish tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Sertralin Bluefish tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Sertralin Hexal tab 100 mg (FEST: «Delbar i 2»)",
+        "Sertralin Hexal tab 50 mg (FEST: «Delbar i 2»)",
+        "Sertralin Zentiva tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Sertralin Zentiva tab 50 mg (FEST: «Delbar i 2»)",
+        "Sertraline Accord tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Sertraline Accord tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Zoloft tab 100 mg, varenr. 048708 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Zoloft tab 100 mg, varenr. 575365 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Zoloft tab 50 mg, varenr. 154603 og 161987 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Zoloft tab 50 mg, varenr. 535724, 575324 og 575340 (FEST: «Delbar i 2»)",
+      ],
+      "regel": "bytte-citalopram-sertralin v2",
+      "vurderinger": [
+        "Citalopram, før hver doseendring (dag 15): Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider. Ved funn: Hold dosen til symptomene er tålelige. Ved plagsomme symptomer går pasienten tilbake til forrige dose, og byttet planlegges på nytt med mindre trinn.",
+        "Citalopram, 7 dager etter siste dose (dag 21): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra citalopram til sertralin. Ved funn: Ved plagsomme seponeringssymptomer eller forverring planlegges det videre forløpet individuelt, og en eventuell økning av sertralin venter til symptomene er vurdert. Ved tegn på serotonerg belastning vurderes sertralin og øvrige legemidler straks.",
+        "Sertralin, før hver doseendring (dag 29): Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter citalopram. Ved funn: Vedlikeholdsdosen er forskriverens valg og kan justeres. Er effekten tilstrekkelig, beholdes dosen. Ved dårlig toleranse eller seponeringssymptomer økes den ikke nå, men vurderes på nytt senere; ved vedvarende plager planlegges byttet individuelt.",
+        "Sertralin, 28 dager etter hver doseendring (dag 43, 57): Vurder respons og bivirkninger av sertralin. Ved funn: Uten tilstrekkelig respons vurderes videre behandling etter preparatomtalen; det er utenfor denne planen.",
+      ],
+    },
+  },
+  "H-16": {
+    "formvalg": [],
+    "klasse": "ikke_stottet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "OUSFAR har ingen regel for denne kombinasjonen.",
+      ],
+      "status": "ikke_stottet",
+      "utfall": "ingen",
+    },
+  },
+  "H-17": {
+    "formvalg": [],
+    "klasse": "ikke_stottet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "OUSFAR har ingen regel for denne kombinasjonen.",
+      ],
+      "status": "ikke_stottet",
+      "utfall": "ingen",
+    },
+  },
+  "H-18": {
+    "formvalg": [],
+    "klasse": "ikke_stottet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "OUSFAR har ingen regel for denne kombinasjonen.",
+      ],
+      "status": "ikke_stottet",
+      "utfall": "ingen",
+    },
+  },
+  "H-19": {
+    "formvalg": [],
+    "klasse": "ikke_stottet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "OUSFAR har ingen regel for denne kombinasjonen.",
+      ],
+      "status": "ikke_stottet",
+      "utfall": "ingen",
+    },
+  },
+  "H-20": {
+    "formvalg": [],
+    "klasse": "ikke_stottet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "OUSFAR har ingen regel for denne kombinasjonen.",
+      ],
+      "status": "ikke_stottet",
+      "utfall": "ingen",
+    },
+  },
+  "H-21": {
+    "formvalg": [],
+    "klasse": "ikke_stottet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "OUSFAR har ingen regel for denne kombinasjonen.",
+      ],
+      "status": "ikke_stottet",
+      "utfall": "ingen",
+    },
+  },
+  "H-22": {
+    "formvalg": [],
+    "klasse": "ikke_stottet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "OUSFAR har ingen regel for denne kombinasjonen.",
+      ],
+      "status": "ikke_stottet",
+      "utfall": "ingen",
+    },
+  },
+  "H-23": {
+    "formvalg": [],
+    "klasse": "ikke_godkjent",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning.",
+      ],
+      "status": "ikke_godkjent",
+      "utfall": "ingen",
+    },
+  },
+  "H-24": {
+    "formvalg": [],
+    "klasse": "komplett",
+    "trinnvalg": [],
+    "utfall": {
+      "avvik": [],
+      "forbehold": [
+        "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+        "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+        "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+      ],
+      "forlop": {
+        "fra": [
+          "fra dag 1: seponert",
+        ],
+        "til": [
+          "dag 1: 150 mg = 1 injeksjon à 150 mg, deltoideus",
+          "dag 8: 100 mg = 1 injeksjon à 100 mg, deltoideus",
+          "hver måned fra 1 måned etter dag 8: 75 mg = 1 injeksjon à 75 mg, deltoideus eller setemuskel",
+        ],
+      },
+      "preparater": [
+        "Xeplion depotinj væske, susp 100 mg/sprøyte, varenr. 409745 (Én hel injeksjon; deler av en sprøyte brukes ikke)",
+        "Xeplion depotinj væske, susp 150 mg (Én hel injeksjon; deler av en sprøyte brukes ikke)",
+        "Xeplion depotinj væske, susp 150 mg/sprøyte, varenr. 536460 (Én hel injeksjon; deler av en sprøyte brukes ikke)",
+        "Xeplion depotinj væske, susp 75 mg/sprøyte, varenr. 412581 (Én hel injeksjon; deler av en sprøyte brukes ikke)",
+      ],
+      "regel": "depot-paliperidon-xeplion v3",
+      "vurderinger": [],
+    },
+  },
+  "H-25": {
+    "formvalg": [],
+    "klasse": "ikke_stottet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "OUSFAR har ingen regel for denne kombinasjonen.",
+      ],
+      "status": "ikke_stottet",
+      "utfall": "ingen",
+    },
+  },
+  "H-26": {
+    "formvalg": [],
+    "klasse": "til_kontroll",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Beregning er ikke tilgjengelig fordi faglig kontroll av regelen gjenstår.",
+      ],
+      "status": "til_kontroll",
+      "utfall": "ingen",
+    },
+  },
+  "H-27": {
+    "formvalg": [],
+    "klasse": "ikke_stottet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "OUSFAR har ingen regel for denne kombinasjonen.",
+      ],
+      "status": "ikke_stottet",
+      "utfall": "ingen",
+    },
+  },
+  "H-28": {
+    "formvalg": [],
+    "klasse": "ikke_stottet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "OUSFAR har ingen regel for denne kombinasjonen.",
+      ],
+      "status": "ikke_stottet",
+      "utfall": "ingen",
+    },
+  },
+  "H-29": {
+    "formvalg": [],
+    "klasse": "ikke_stottet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "OUSFAR har ingen regel for denne kombinasjonen.",
+      ],
+      "status": "ikke_stottet",
+      "utfall": "ingen",
+    },
+  },
+  "H-30": {
+    "formvalg": [],
+    "klasse": "komplett",
+    "trinnvalg": [
+      "escitalopram trinn 1: 8 mg",
+      "escitalopram trinn 3: 5 mg",
+      "escitalopram trinn 4: 4 mg",
+      "escitalopram trinn 6: 2 mg",
+      "escitalopram trinn 7: 1 mg",
+    ],
+    "utfall": {
+      "avvik": [
+        "escitalopram dag 1–28: 8 mg, valgt av forskriveren fordi den beregnede dosen 7,5 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+        "escitalopram dag 57–84: 5 mg, valgt av forskriveren fordi den beregnede dosen 4,5 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+        "escitalopram dag 85–112: 4 mg, valgt av forskriveren fordi den beregnede dosen 3,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+        "escitalopram dag 141–168: 2 mg, valgt av forskriveren fordi den beregnede dosen 2,25 mg ikke kan gis; faktisk reduksjon 33,33 % fra dosen før.",
+        "escitalopram dag 169–196: 1 mg, valgt av forskriveren fordi den beregnede dosen 1,5 mg ikke kan gis; faktisk reduksjon 50 % fra dosen før.",
+      ],
+      "forbehold": [
+        "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+        "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+        "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+      ],
+      "forlop": {
+        "fra": [
+          "dag 1–28: 8 mg = 8 dråper à 1 mg, valgt av forskriveren (beregnet 7,5 mg; −20 %)",
+          "dag 29–56: 6 mg = 6 dråper à 1 mg",
+          "dag 57–84: 5 mg = 5 dråper à 1 mg, valgt av forskriveren (beregnet 4,5 mg; −16,67 %)",
+          "dag 85–112: 4 mg = 4 dråper à 1 mg, valgt av forskriveren (beregnet 3,75 mg; −20 %)",
+          "dag 113–140: 3 mg = 3 dråper à 1 mg",
+          "dag 141–168: 2 mg = 2 dråper à 1 mg, valgt av forskriveren (beregnet 2,25 mg; −33,33 %)",
+          "dag 169–196: 1 mg = 1 dråpe à 1 mg, valgt av forskriveren (beregnet 1,5 mg; −50 %)",
+          "fra dag 197: seponert",
+        ],
+      },
+      "preparater": [
+        "Cipralex dråper, oppl 20 mg/ml, varenr. 092005 (Hele dråper)",
+        "Cipralex dråper, oppl 20 mg/ml, varenr. 419396 (Hele dråper)",
+        "Cipralex dråper, oppl 20 mg/ml, varenr. 553965 (Hele dråper)",
+      ],
+      "regel": "seponering-escitalopram v13",
+      "vurderinger": [
+        "Escitalopram, før hver doseendring (dag 29, 57, 85, 113, 141, 169, 197): Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. Ved funn: Ved utålelige symptomer: gå tilbake til forrige dose og fortsett senere mer gradvis. Ny plan beregnes fra dosen pasienten da bruker.",
+        "Escitalopram, 7 dager etter siste dose (dag 203): Vurder seponeringssymptomer og tegn på tilbakefall 7 dager etter siste dose. Ved funn: Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt. Oppfølgingen kan fremskyndes eller forlenges etter symptomer og risiko for tilbakefall.",
+        "Escitalopram, 14 dager etter siste dose (dag 210): Vurder seponeringssymptomer og tegn på tilbakefall 14 dager etter siste dose. Ved funn: Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt. Oppfølgingen kan fremskyndes eller forlenges etter symptomer og risiko for tilbakefall.",
+        "Escitalopram, 28 dager etter siste dose (dag 224): Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose. Ved funn: Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt. Oppfølgingen kan fremskyndes eller forlenges etter symptomer og risiko for tilbakefall.",
+      ],
+    },
+  },
+  "H-31": {
+    "formvalg": [],
+    "klasse": "komplett",
+    "trinnvalg": [
+      "escitalopram trinn 2: 12 mg",
+      "escitalopram trinn 4: 7 mg",
+      "escitalopram trinn 5: 6 mg",
+      "escitalopram trinn 6: 5 mg",
+      "escitalopram trinn 7: 4 mg",
+      "escitalopram trinn 9: 2 mg",
+      "escitalopram trinn 10: 1 mg",
+    ],
+    "utfall": {
+      "avvik": [
+        "escitalopram dag 29–56: 12 mg, valgt av forskriveren fordi den beregnede dosen 11,25 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+        "escitalopram dag 85–112: 7 mg, valgt av forskriveren fordi den beregnede dosen 6,75 mg ikke kan gis; faktisk reduksjon 22,22 % fra dosen før.",
+        "escitalopram dag 113–140: 6 mg, valgt av forskriveren fordi den beregnede dosen 5,25 mg ikke kan gis; faktisk reduksjon 14,29 % fra dosen før.",
+        "escitalopram dag 141–168: 5 mg, valgt av forskriveren fordi den beregnede dosen 4,5 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+        "escitalopram dag 169–196: 4 mg, valgt av forskriveren fordi den beregnede dosen 3,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+        "escitalopram dag 225–252: 2 mg, valgt av forskriveren fordi den beregnede dosen 2,25 mg ikke kan gis; faktisk reduksjon 33,33 % fra dosen før.",
+        "escitalopram dag 253–280: 1 mg, valgt av forskriveren fordi den beregnede dosen 1,5 mg ikke kan gis; faktisk reduksjon 50 % fra dosen før.",
+      ],
+      "forbehold": [
+        "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+        "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+        "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+      ],
+      "forlop": {
+        "fra": [
+          "dag 1–28: 15 mg = 15 dråper à 1 mg",
+          "dag 29–56: 12 mg = 12 dråper à 1 mg, valgt av forskriveren (beregnet 11,25 mg; −20 %)",
+          "dag 57–84: 9 mg = 9 dråper à 1 mg",
+          "dag 85–112: 7 mg = 7 dråper à 1 mg, valgt av forskriveren (beregnet 6,75 mg; −22,22 %)",
+          "dag 113–140: 6 mg = 6 dråper à 1 mg, valgt av forskriveren (beregnet 5,25 mg; −14,29 %)",
+          "dag 141–168: 5 mg = 5 dråper à 1 mg, valgt av forskriveren (beregnet 4,5 mg; −16,67 %)",
+          "dag 169–196: 4 mg = 4 dråper à 1 mg, valgt av forskriveren (beregnet 3,75 mg; −20 %)",
+          "dag 197–224: 3 mg = 3 dråper à 1 mg",
+          "dag 225–252: 2 mg = 2 dråper à 1 mg, valgt av forskriveren (beregnet 2,25 mg; −33,33 %)",
+          "dag 253–280: 1 mg = 1 dråpe à 1 mg, valgt av forskriveren (beregnet 1,5 mg; −50 %)",
+          "fra dag 281: seponert",
+        ],
+      },
+      "preparater": [
+        "Cipralex dråper, oppl 20 mg/ml, varenr. 092005 (Hele dråper)",
+        "Cipralex dråper, oppl 20 mg/ml, varenr. 419396 (Hele dråper)",
+        "Cipralex dråper, oppl 20 mg/ml, varenr. 553965 (Hele dråper)",
+      ],
+      "regel": "seponering-escitalopram v13",
+      "vurderinger": [
+        "Escitalopram, før hver doseendring (dag 29, 57, 85, 113, 141, 169, 197, 225, 253, 281): Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. Ved funn: Ved utålelige symptomer: gå tilbake til forrige dose og fortsett senere mer gradvis. Ny plan beregnes fra dosen pasienten da bruker.",
+        "Escitalopram, 7 dager etter siste dose (dag 287): Vurder seponeringssymptomer og tegn på tilbakefall 7 dager etter siste dose. Ved funn: Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt. Oppfølgingen kan fremskyndes eller forlenges etter symptomer og risiko for tilbakefall.",
+        "Escitalopram, 14 dager etter siste dose (dag 294): Vurder seponeringssymptomer og tegn på tilbakefall 14 dager etter siste dose. Ved funn: Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt. Oppfølgingen kan fremskyndes eller forlenges etter symptomer og risiko for tilbakefall.",
+        "Escitalopram, 28 dager etter siste dose (dag 308): Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose. Ved funn: Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt. Oppfølgingen kan fremskyndes eller forlenges etter symptomer og risiko for tilbakefall.",
+      ],
+    },
+  },
+  "H-32": {
+    "formvalg": [],
+    "klasse": "stoppet",
+    "trinnvalg": [
+      "escitalopram trinn 2: 17 mg",
+      "escitalopram trinn 3: 16 mg",
+      "escitalopram trinn 4: 15 mg",
+      "escitalopram trinn 5: 14 mg",
+      "escitalopram trinn 6: 13 mg",
+      "escitalopram trinn 7: 12 mg",
+      "escitalopram trinn 8: 11 mg",
+      "escitalopram trinn 9: 10 mg",
+    ],
+    "utfall": {
+      "grunner": [
+        "Komplett plan ikke tilgjengelig: escitalopram: neste trinn kan ikke gis med preparatene, og regelens avslutning gjelder bare fra 1 mg eller lavere (planen står på 9 mg).",
+      ],
+      "resultat": undefined,
+      "tekst": undefined,
+      "utfall": "stopp",
+    },
+  },
+  "H-33": {
+    "formvalg": [],
+    "klasse": "ikke_godkjent",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning.",
+      ],
+      "status": "ikke_godkjent",
+      "utfall": "ingen",
+    },
+  },
+  "H-34": {
+    "formvalg": [],
+    "klasse": "ikke_godkjent",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning.",
+      ],
+      "status": "ikke_godkjent",
+      "utfall": "ingen",
+    },
+  },
+  "H-35": {
+    "formvalg": [],
+    "klasse": "ikke_godkjent",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning.",
+      ],
+      "status": "ikke_godkjent",
+      "utfall": "ingen",
+    },
+  },
+  "H-36": {
+    "formvalg": [],
+    "klasse": "stoppet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "vortioksetin (fra): styrken 15 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST, så planen ville blitt satt sammen annerledes enn den som er kontrollert. Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+      ],
+      "resultat": undefined,
+      "tekst": undefined,
+      "utfall": "stopp",
+    },
+  },
+  "H-37": {
+    "formvalg": [
+      "til: Tablett",
+    ],
+    "klasse": "stoppet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "mirtazapin (til): styrken 15 mg som det kliniske omfanget er kontrollert med, finnes ikke lenger i FEST, så planen ville blitt satt sammen annerledes enn den som er kontrollert. Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+      ],
+      "resultat": undefined,
+      "tekst": undefined,
+      "utfall": "stopp",
+    },
+  },
+  "H-38": {
+    "formvalg": [],
+    "klasse": "skjema",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Måldosen må fylles inn som et tall større enn 0.",
+      ],
+      "resultat": undefined,
+      "tekst": undefined,
+      "utfall": "mangler",
+    },
+  },
+  "H-39": {
+    "formvalg": [
+      "først fra: Tablett: Regel finnes, men beregningen stopper",
+      "byttet til legemiddelform 748",
+    ],
+    "klasse": "komplett",
+    "trinnvalg": [
+      "escitalopram trinn 1: 8 mg",
+      "escitalopram trinn 3: 5 mg",
+      "escitalopram trinn 4: 4 mg",
+      "escitalopram trinn 6: 2 mg",
+      "escitalopram trinn 7: 1 mg",
+    ],
+    "utfall": {
+      "avvik": [
+        "escitalopram dag 1–28: 8 mg, valgt av forskriveren fordi den beregnede dosen 7,5 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+        "escitalopram dag 57–84: 5 mg, valgt av forskriveren fordi den beregnede dosen 4,5 mg ikke kan gis; faktisk reduksjon 16,67 % fra dosen før.",
+        "escitalopram dag 85–112: 4 mg, valgt av forskriveren fordi den beregnede dosen 3,75 mg ikke kan gis; faktisk reduksjon 20 % fra dosen før.",
+        "escitalopram dag 141–168: 2 mg, valgt av forskriveren fordi den beregnede dosen 2,25 mg ikke kan gis; faktisk reduksjon 33,33 % fra dosen før.",
+        "escitalopram dag 169–196: 1 mg, valgt av forskriveren fordi den beregnede dosen 1,5 mg ikke kan gis; faktisk reduksjon 50 % fra dosen før.",
+      ],
+      "forbehold": [
+        "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+        "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+        "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+      ],
+      "forlop": {
+        "fra": [
+          "dag 1–28: 8 mg = 8 dråper à 1 mg, valgt av forskriveren (beregnet 7,5 mg; −20 %)",
+          "dag 29–56: 6 mg = 6 dråper à 1 mg",
+          "dag 57–84: 5 mg = 5 dråper à 1 mg, valgt av forskriveren (beregnet 4,5 mg; −16,67 %)",
+          "dag 85–112: 4 mg = 4 dråper à 1 mg, valgt av forskriveren (beregnet 3,75 mg; −20 %)",
+          "dag 113–140: 3 mg = 3 dråper à 1 mg",
+          "dag 141–168: 2 mg = 2 dråper à 1 mg, valgt av forskriveren (beregnet 2,25 mg; −33,33 %)",
+          "dag 169–196: 1 mg = 1 dråpe à 1 mg, valgt av forskriveren (beregnet 1,5 mg; −50 %)",
+          "fra dag 197: seponert",
+        ],
+      },
+      "preparater": [
+        "Cipralex dråper, oppl 20 mg/ml, varenr. 092005 (Hele dråper)",
+        "Cipralex dråper, oppl 20 mg/ml, varenr. 419396 (Hele dråper)",
+        "Cipralex dråper, oppl 20 mg/ml, varenr. 553965 (Hele dråper)",
+      ],
+      "regel": "seponering-escitalopram v13",
+      "vurderinger": [
+        "Escitalopram, før hver doseendring (dag 29, 57, 85, 113, 141, 169, 197): Vurder seponeringssymptomer og tegn på tilbakefall. Reduser dosen eller seponer først når eventuelle symptomer er borte eller tålelige; til da forlenges trinnet. Ved funn: Ved utålelige symptomer: gå tilbake til forrige dose og fortsett senere mer gradvis. Ny plan beregnes fra dosen pasienten da bruker.",
+        "Escitalopram, 7 dager etter siste dose (dag 203): Vurder seponeringssymptomer og tegn på tilbakefall 7 dager etter siste dose. Ved funn: Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt. Oppfølgingen kan fremskyndes eller forlenges etter symptomer og risiko for tilbakefall.",
+        "Escitalopram, 14 dager etter siste dose (dag 210): Vurder seponeringssymptomer og tegn på tilbakefall 14 dager etter siste dose. Ved funn: Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt. Oppfølgingen kan fremskyndes eller forlenges etter symptomer og risiko for tilbakefall.",
+        "Escitalopram, 28 dager etter siste dose (dag 224): Vurder seponeringssymptomer og tegn på tilbakefall 28 dager etter siste dose. Ved funn: Seponeringssymptomer kan komme selv etter svært lave doser. Ved plagsomme symptomer kan legemidlet startes igjen i lav dose en tid før en ny og langsommere nedtrapping; ved tilbakefall vurderes behandlingen på nytt. Trengs mindre trinn enn én dråpe (1 mg), kan verktøyet ikke beregne dem, og videre nedtrapping planlegges individuelt. Oppfølgingen kan fremskyndes eller forlenges etter symptomer og risiko for tilbakefall.",
+      ],
+    },
+  },
+  "H-40": {
+    "formvalg": [
+      "fra: Tablett",
+      "til: Tablett",
+    ],
+    "klasse": "komplett",
+    "trinnvalg": [],
+    "utfall": {
+      "avvik": [],
+      "forbehold": [
+        "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+        "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+        "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+      ],
+      "forlop": {
+        "fra": [
+          "dag 1–28: 20 mg = 2 tabletter à 10 mg",
+          "dag 29–42: 15 mg = 2 tabletter à 7,5 mg",
+          "dag 43–56: 10 mg = 1 tablett à 10 mg",
+          "dag 57–70: 5 mg = 1 tablett à 5 mg",
+          "fra dag 71: seponert",
+        ],
+        "til": [
+          "dag 1–7: 5 mg = 1 tablett à 5 mg",
+          "dag 8–14: 10 mg = 1 tablett à 10 mg",
+          "fra dag 15: 15 mg = 1 tablett à 15 mg",
+        ],
+      },
+      "preparater": [
+        "Abilify tab 10 mg, varenr. 011008 (FEST: «Ikke delbar»)",
+        "Abilify tab 10 mg, varenr. 077742 (FEST: «Ikke delbar»)",
+        "Abilify tab 10 mg, varenr. 449700 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Abilify tab 15 mg, varenr. 010953 og 011019 (FEST: «Ikke delbar»)",
+        "Abilify tab 15 mg, varenr. 077724 (FEST: «Ikke delbar»)",
+        "Abilify tab 15 mg, varenr. 575089 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Abilify tab 5 mg, varenr. 016596 og 016635 (FEST: «Ikke delbar»)",
+        "Abilify tab 5 mg, varenr. 107308 (FEST: «Ikke delbar»)",
+        "Abilify tab 5 mg, varenr. 471072 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Aripiprazole Accord tab 10 mg (FEST: «Ikke delbar»)",
+        "Aripiprazole Accord tab 15 mg (FEST: «Ikke delbar»)",
+        "Aripiprazole Accord tab 5 mg (FEST: «Ikke delbar»)",
+        "Aripiprazole Medical Valley tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Aripiprazole Medical Valley tab 15 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Aripiprazole Medical Valley tab 5 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Olanzapine Accord tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Olanzapine Accord tab 5 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Olanzapine Accord tab 7,5 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Olanzapine Teva tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Olanzapine Teva tab 5 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Olanzapine Teva tab 7,5 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Olanzapine Viatris tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Olanzapine Viatris tab 5 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Olanzapine Viatris tab 7,5 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Zyprexa tab 10 mg, varenr. 014671 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Zyprexa tab 10 mg, varenr. 044862 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Zyprexa tab 10 mg, varenr. 129106 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Zyprexa tab 10 mg, varenr. 476281 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Zyprexa tab 5 mg, varenr. 128058 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Zyprexa tab 5 mg, varenr. 182718 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Zyprexa tab 7,5 mg, varenr. 129098 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Zyprexa tab 7,5 mg, varenr. 484184 (FEST oppgir ikke deling; regnes som ikke delbar)",
+      ],
+      "regel": "antipsykotikabytte-olanzapin-aripiprazol v8",
+      "vurderinger": [
+        "Olanzapin, før hver doseendring (dag 29, 43, 57, 71): Før hver reduksjon av olanzapin, også det siste trinnet til 0: tilstanden vurderes (forverring av psykosen og seponeringsplager: kvalme, oppkast, hodepine, uro, angst, søvnløshet og svetting, og akatisi, dystoni og dyskinesi), og pasienten følges tett gjennom hele byttet. Ved funn: Ved forverring, uro eller seponeringsplager holdes dosen, og resten av nedtrappingen planlegges individuelt.",
+        "Olanzapin, 14 dager etter siste dose (dag 84): Olanzapin er seponert: tilstanden vurderes på nytt (forverring av psykosen og seponeringsplager: kvalme, oppkast, hodepine, uro, angst, søvnløshet og svetting, og akatisi, dystoni og dyskinesi). Ved funn: Ved forverring eller seponeringsplager vurderes behandlingen individuelt; planen gir ingen ny dose. Pasienten følges tettere ved behov, også før dette kontrollpunktet.",
+        "Aripiprazol, før hver doseendring (dag 8, 15): Før hver økning av aripiprazol: toleransen vurderes (akatisi, uro, aktivering og søvnvansker). Ved funn: Ved dårlig toleranse holdes dosen, og resten av byttet planlegges individuelt.",
+      ],
+    },
+  },
+  "H-41": {
+    "formvalg": [
+      "til: Tablett",
+    ],
+    "klasse": "komplett",
+    "trinnvalg": [],
+    "utfall": {
+      "avvik": [],
+      "forbehold": [
+        "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+        "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+        "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+      ],
+      "forlop": {
+        "fra": [
+          "dag 1–28: 4 mg = 1 tablett à 4 mg",
+          "dag 29–42: 3 mg = 1 tablett à 3 mg",
+          "dag 43–56: 2 mg = 1 tablett à 2 mg",
+          "dag 57–70: 1 mg = 1 tablett à 1 mg",
+          "fra dag 71: seponert",
+        ],
+        "til": [
+          "dag 1–7: 5 mg = 1 tablett à 5 mg",
+          "dag 8–14: 10 mg = 1 tablett à 10 mg",
+          "fra dag 15: 15 mg = 1 tablett à 15 mg",
+        ],
+      },
+      "preparater": [
+        "Abilify tab 10 mg, varenr. 011008 (FEST: «Ikke delbar»)",
+        "Abilify tab 10 mg, varenr. 077742 (FEST: «Ikke delbar»)",
+        "Abilify tab 10 mg, varenr. 449700 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Abilify tab 15 mg, varenr. 010953 og 011019 (FEST: «Ikke delbar»)",
+        "Abilify tab 15 mg, varenr. 077724 (FEST: «Ikke delbar»)",
+        "Abilify tab 15 mg, varenr. 575089 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Abilify tab 5 mg, varenr. 016596 og 016635 (FEST: «Ikke delbar»)",
+        "Abilify tab 5 mg, varenr. 107308 (FEST: «Ikke delbar»)",
+        "Abilify tab 5 mg, varenr. 471072 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Aripiprazole Accord tab 10 mg (FEST: «Ikke delbar»)",
+        "Aripiprazole Accord tab 15 mg (FEST: «Ikke delbar»)",
+        "Aripiprazole Accord tab 5 mg (FEST: «Ikke delbar»)",
+        "Aripiprazole Medical Valley tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Aripiprazole Medical Valley tab 15 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Aripiprazole Medical Valley tab 5 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Risperdal tab 1 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Risperdal tab 4 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Risperidon Sandoz tab 1 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Risperidon Sandoz tab 2 mg (FEST: «Delbar i 2»)",
+        "Risperidon Sandoz tab 3 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Risperidon Sandoz tab 4 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Risperidone Grindeks tab 1 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Risperidone Grindeks tab 2 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Risperidone Grindeks tab 3 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Risperidone Grindeks tab 4 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      ],
+      "regel": "antipsykotikabytte-risperidon-aripiprazol v8",
+      "vurderinger": [
+        "Risperidon, før hver doseendring (dag 29, 43, 57, 71): Før hver reduksjon av risperidon, også det siste trinnet til 0: tilstanden vurderes (forverring av psykosen og seponeringsplager: kvalme, oppkast, svette og søvnløshet, og akatisi, dystoni og dyskinesi), og pasienten følges tett gjennom hele byttet. Ved funn: Ved forverring, uro eller seponeringsplager holdes dosen, og resten av nedtrappingen planlegges individuelt.",
+        "Risperidon, 14 dager etter siste dose (dag 84): Risperidon er seponert: tilstanden vurderes på nytt (forverring av psykosen og seponeringsplager: kvalme, oppkast, svette og søvnløshet, og akatisi, dystoni og dyskinesi). Ved funn: Ved forverring eller seponeringsplager vurderes behandlingen individuelt; planen gir ingen ny dose. Pasienten følges tettere ved behov, også før dette kontrollpunktet.",
+        "Aripiprazol, før hver doseendring (dag 8, 15): Før hver økning av aripiprazol: toleransen vurderes (akatisi, uro, aktivering og søvnvansker). Ved funn: Ved dårlig toleranse holdes dosen, og resten av byttet planlegges individuelt.",
+      ],
+    },
+  },
+  "H-42": {
+    "formvalg": [],
+    "klasse": "komplett",
+    "trinnvalg": [],
+    "utfall": {
+      "avvik": [],
+      "forbehold": [
+        "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+        "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+        "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+      ],
+      "forlop": {
+        "fra": [
+          "fra dag 1: seponert",
+        ],
+        "til": [
+          "dag 1: 150 mg = 1 injeksjon à 150 mg, deltoideus",
+          "dag 8: 100 mg = 1 injeksjon à 100 mg, deltoideus",
+          "hver måned fra 1 måned etter dag 8: 75 mg = 1 injeksjon à 75 mg, deltoideus eller setemuskel",
+        ],
+      },
+      "preparater": [
+        "Xeplion depotinj væske, susp 100 mg/sprøyte, varenr. 409745 (Én hel injeksjon; deler av en sprøyte brukes ikke)",
+        "Xeplion depotinj væske, susp 150 mg (Én hel injeksjon; deler av en sprøyte brukes ikke)",
+        "Xeplion depotinj væske, susp 150 mg/sprøyte, varenr. 536460 (Én hel injeksjon; deler av en sprøyte brukes ikke)",
+        "Xeplion depotinj væske, susp 75 mg/sprøyte, varenr. 412581 (Én hel injeksjon; deler av en sprøyte brukes ikke)",
+      ],
+      "regel": "depot-risperidon-xeplion v8",
+      "vurderinger": [
+        "Paliperidon, før hver doseendring (dag 8): Før injeksjonen dag 8 og før hver månedlige vedlikeholdsinjeksjon: psykotiske symptomer, ekstrapyramidale og andre bivirkninger og reaksjoner etter forrige injeksjon vurderes, og pasienten følges tett gjennom byttet. Ved funn: Planens 75 mg gjelder ikke lenger, og vedlikeholdsdosen vurderes individuelt, ved forverring eller tilbakefall av psykotiske symptomer, dosebegrensende eller ekstrapyramidale bivirkninger, overfølsomhet, nedsatt nyrefunksjon eller utviklet overvekt eller fedme. Dosen kan justeres månedlig, men full effekt av en endret dose kan først sees etter flere måneder.",
+      ],
+    },
+  },
+  "H-43": {
+    "formvalg": [
+      "fra: Tablett",
+      "til: Tablett",
+    ],
+    "klasse": "stoppet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Måldosen 20 mg er utenfor det regelen gjelder for (10, 15 mg).",
+      ],
+      "resultat": undefined,
+      "tekst": undefined,
+      "utfall": "stopp",
+    },
+  },
+  "H-44": {
+    "formvalg": [],
+    "klasse": "stoppet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Startdosen 2 mg er utenfor det regelen gjelder for (3 mg).",
+      ],
+      "resultat": undefined,
+      "tekst": undefined,
+      "utfall": "stopp",
+    },
+  },
+  "H-45": {
+    "formvalg": [],
+    "klasse": "komplett",
+    "trinnvalg": [],
+    "utfall": {
+      "avvik": [],
+      "forbehold": [
+        "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+        "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+        "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+      ],
+      "forlop": {
+        "fra": [
+          "dag 1–14: 5 mg = 1 tablett à 5 mg",
+          "fra dag 15: seponert",
+        ],
+        "til": [
+          "dag 15–28: 50 mg = 1 tablett à 50 mg",
+          "fra dag 29: 100 mg = 1 tablett à 100 mg",
+        ],
+      },
+      "preparater": [
+        "Cipralex tab 5 mg, varenr. 005757 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Cipralex tab 5 mg, varenr. 536639 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Escitalopram Actavis tab 5 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Sertralin Bluefish tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Sertralin Bluefish tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Sertralin Hexal tab 100 mg (FEST: «Delbar i 2»)",
+        "Sertralin Hexal tab 50 mg (FEST: «Delbar i 2»)",
+        "Sertralin Zentiva tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Sertralin Zentiva tab 50 mg (FEST: «Delbar i 2»)",
+        "Sertraline Accord tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Sertraline Accord tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Zoloft tab 100 mg, varenr. 048708 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Zoloft tab 100 mg, varenr. 575365 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Zoloft tab 50 mg, varenr. 154603 og 161987 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Zoloft tab 50 mg, varenr. 535724, 575324 og 575340 (FEST: «Delbar i 2»)",
+      ],
+      "regel": "bytte-escitalopram-sertralin v2",
+      "vurderinger": [
+        "Escitalopram, før hver doseendring (dag 15): Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider. Ved funn: Hold dosen til symptomene er tålelige. Ved plagsomme symptomer går pasienten tilbake til forrige dose, og byttet planlegges på nytt med mindre trinn.",
+        "Escitalopram, 7 dager etter siste dose (dag 21): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra escitalopram til sertralin. Ved funn: Ved plagsomme seponeringssymptomer eller forverring planlegges det videre forløpet individuelt, og en eventuell økning av sertralin venter til symptomene er vurdert. Ved tegn på serotonerg belastning vurderes sertralin og øvrige legemidler straks.",
+        "Sertralin, før hver doseendring (dag 29): Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter escitalopram. Ved funn: Vedlikeholdsdosen er forskriverens valg og kan justeres. Er effekten tilstrekkelig, beholdes dosen. Ved dårlig toleranse eller seponeringssymptomer økes den ikke nå, men vurderes på nytt senere; ved vedvarende plager planlegges byttet individuelt.",
+        "Sertralin, 28 dager etter hver doseendring (dag 43, 57): Vurder respons og bivirkninger av sertralin. Ved funn: Uten tilstrekkelig respons vurderes videre behandling etter preparatomtalen; det er utenfor denne planen.",
+      ],
+    },
+  },
+  "H-46": {
+    "formvalg": [],
+    "klasse": "komplett",
+    "trinnvalg": [],
+    "utfall": {
+      "avvik": [],
+      "forbehold": [
+        "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+        "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+        "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+      ],
+      "forlop": {
+        "fra": [
+          "dag 1–14: 20 mg = 1 tablett à 20 mg",
+          "dag 15–28: 10 mg = 1 tablett à 10 mg",
+          "fra dag 29: seponert",
+        ],
+        "til": [
+          "fra dag 29: 50 mg = 1 tablett à 50 mg",
+        ],
+      },
+      "preparater": [
+        "Cipramil tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Cipramil tab 20 mg, varenr. 159194 (FEST: «Delbar i 2»)",
+        "Cipramil tab 20 mg, varenr. 396177 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Citalopram Orion tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Citalopram Orion tab 20 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Sertralin Bluefish tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Sertralin Hexal tab 50 mg (FEST: «Delbar i 2»)",
+        "Sertralin Zentiva tab 50 mg (FEST: «Delbar i 2»)",
+        "Sertraline Accord tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Zoloft tab 50 mg, varenr. 154603 og 161987 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Zoloft tab 50 mg, varenr. 535724, 575324 og 575340 (FEST: «Delbar i 2»)",
+      ],
+      "regel": "bytte-citalopram-sertralin v2",
+      "vurderinger": [
+        "Citalopram, før hver doseendring (dag 15, 29): Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider. Ved funn: Hold dosen til symptomene er tålelige. Ved plagsomme symptomer går pasienten tilbake til forrige dose, og byttet planlegges på nytt med mindre trinn.",
+        "Citalopram, 7 dager etter siste dose (dag 35): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra citalopram til sertralin. Ved funn: Ved plagsomme seponeringssymptomer eller forverring planlegges det videre forløpet individuelt, og en eventuell økning av sertralin venter til symptomene er vurdert. Ved tegn på serotonerg belastning vurderes sertralin og øvrige legemidler straks.",
+        "Sertralin, før hver doseendring: Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter citalopram. Ved funn: Vedlikeholdsdosen er forskriverens valg og kan justeres. Er effekten tilstrekkelig, beholdes dosen. Ved dårlig toleranse eller seponeringssymptomer økes den ikke nå, men vurderes på nytt senere; ved vedvarende plager planlegges byttet individuelt.",
+        "Sertralin, 28 dager etter hver doseendring (dag 57): Vurder respons og bivirkninger av sertralin. Ved funn: Uten tilstrekkelig respons vurderes videre behandling etter preparatomtalen; det er utenfor denne planen.",
+      ],
+    },
+  },
+  "H-47": {
+    "formvalg": [],
+    "klasse": "stoppet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Måldosen 150 mg er utenfor det regelen gjelder for (50, 100 mg).",
+      ],
+      "resultat": undefined,
+      "tekst": undefined,
+      "utfall": "stopp",
+    },
+  },
+  "H-48": {
+    "formvalg": [],
+    "klasse": "stoppet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Startdosen 15 mg er utenfor det regelen gjelder for (10, 20 mg).",
+        "Startdosen 15 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 10 og 20 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 5, 10 og 20 mg, styrker (til) 50 og 100 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+      ],
+      "resultat": undefined,
+      "tekst": undefined,
+      "utfall": "stopp",
+    },
+  },
+  "K0-01": {
+    "formvalg": [
+      "fra: Tablett",
+    ],
+    "klasse": "stoppet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "escitalopram dag 1–28: den ideelle dosen 7,5 mg kan ikke gis med preparatene i FEST nøyaktig og ikke under 1 mg. Nærmeste doser som kan settes sammen: 5 mg (-33,33 %, faktisk reduksjon 50 % fra 10 mg) og 10 mg (+33,33 %). Den foretrukne reduksjonen til 7,5 mg (−25 % fra 10 mg) kan ikke gis med preparatene, og ingen dose som kan gis, har en faktisk reduksjon innenfor det foretrukne området 5–25 %. En større reduksjon er et avvik fra den foretrukne reduksjonen; verktøyet tilbyr eller beregner den ikke, og en annen plan må vurderes individuelt utenfor verktøyet.",
+        "Startdosen 10 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 20 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 5, 10 og 20 mg; 10 og 20 mg, FEST-legemiddelform 748, med nei på alle spørsmålene, styrker (fra) 1 mg; 10 og 20 mg, FEST-legemiddelform 748, ved lang behandlingstid og nei på de andre spørsmålene, reduksjon per trinn (% av aktuell dose) 10 %, styrker (fra) 1 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet.",
+      ],
+      "resultat": undefined,
+      "tekst": undefined,
+      "utfall": "stopp",
+    },
+  },
+  "K0-02": {
+    "formvalg": [],
+    "klasse": "ikke_godkjent",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning.",
+      ],
+      "status": "ikke_godkjent",
+      "utfall": "ingen",
+    },
+  },
+  "K0-03": {
+    "formvalg": [],
+    "klasse": "ikke_godkjent",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning.",
+      ],
+      "status": "ikke_godkjent",
+      "utfall": "ingen",
+    },
+  },
+  "K0-04": {
+    "formvalg": [
+      "til: Tablett",
+    ],
+    "klasse": "stoppet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Komplett plan ikke tilgjengelig: sertralin: siste trinn før null; avslutning vurderes individuelt; mirtazapin: holdes til sertralin er avsluttet; videre dosering planlegges individuelt.",
+      ],
+      "resultat": undefined,
+      "tekst": undefined,
+      "utfall": "stopp",
+    },
+  },
+  "K0-05": {
+    "formvalg": [],
+    "klasse": "til_kontroll",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Beregning er ikke tilgjengelig fordi faglig kontroll av regelen gjenstår.",
+      ],
+      "status": "til_kontroll",
+      "utfall": "ingen",
+    },
+  },
+  "K0-06": {
+    "formvalg": [],
+    "klasse": "komplett",
+    "trinnvalg": [],
+    "utfall": {
+      "avvik": [],
+      "forbehold": [
+        "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+        "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+        "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+      ],
+      "forlop": {
+        "fra": [
+          "dag 1–14: 10 mg = 1 tablett à 10 mg",
+          "dag 15–28: 5 mg = 1 tablett à 5 mg",
+          "fra dag 29: seponert",
+        ],
+        "til": [
+          "fra dag 29: 50 mg = 1 tablett à 50 mg",
+        ],
+      },
+      "preparater": [
+        "Cipralex tab 10 mg, varenr. 005812, 005834 og 011047 (FEST: «Delbar i 2»)",
+        "Cipralex tab 10 mg, varenr. 014844 (FEST: «Delbar i 2»)",
+        "Cipralex tab 5 mg, varenr. 005757 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Cipralex tab 5 mg, varenr. 536639 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Escitalopram Actavis tab 10 mg (FEST: «Delbar i 2»)",
+        "Escitalopram Actavis tab 5 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Escitalopram Grindeks tab 10 mg (FEST: «Delbar i 2»)",
+        "Sertralin Bluefish tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Sertralin Hexal tab 50 mg (FEST: «Delbar i 2»)",
+        "Sertralin Zentiva tab 50 mg (FEST: «Delbar i 2»)",
+        "Sertraline Accord tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Zoloft tab 50 mg, varenr. 154603 og 161987 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Zoloft tab 50 mg, varenr. 535724, 575324 og 575340 (FEST: «Delbar i 2»)",
+      ],
+      "regel": "bytte-escitalopram-sertralin v2",
+      "vurderinger": [
+        "Escitalopram, før hver doseendring (dag 15, 29): Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider. Ved funn: Hold dosen til symptomene er tålelige. Ved plagsomme symptomer går pasienten tilbake til forrige dose, og byttet planlegges på nytt med mindre trinn.",
+        "Escitalopram, 7 dager etter siste dose (dag 35): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra escitalopram til sertralin. Ved funn: Ved plagsomme seponeringssymptomer eller forverring planlegges det videre forløpet individuelt, og en eventuell økning av sertralin venter til symptomene er vurdert. Ved tegn på serotonerg belastning vurderes sertralin og øvrige legemidler straks.",
+        "Sertralin, før hver doseendring: Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter escitalopram. Ved funn: Vedlikeholdsdosen er forskriverens valg og kan justeres. Er effekten tilstrekkelig, beholdes dosen. Ved dårlig toleranse eller seponeringssymptomer økes den ikke nå, men vurderes på nytt senere; ved vedvarende plager planlegges byttet individuelt.",
+        "Sertralin, 28 dager etter hver doseendring (dag 57): Vurder respons og bivirkninger av sertralin. Ved funn: Uten tilstrekkelig respons vurderes videre behandling etter preparatomtalen; det er utenfor denne planen.",
+      ],
+    },
+  },
+  "K0-07": {
+    "formvalg": [
+      "fra: Tablett",
+      "til: Tablett",
+    ],
+    "klasse": "stoppet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Startdosen 10 mg er utenfor det regelen gjelder for (20 mg).",
+      ],
+      "resultat": undefined,
+      "tekst": undefined,
+      "utfall": "stopp",
+    },
+  },
+  "K0-08": {
+    "formvalg": [
+      "til: Tablett",
+    ],
+    "klasse": "komplett",
+    "trinnvalg": [],
+    "utfall": {
+      "avvik": [],
+      "forbehold": [
+        "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+        "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+        "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+      ],
+      "forlop": {
+        "fra": [
+          "dag 1–28: 4 mg = 1 tablett à 4 mg",
+          "dag 29–42: 3 mg = 1 tablett à 3 mg",
+          "dag 43–56: 2 mg = 1 tablett à 2 mg",
+          "dag 57–70: 1 mg = 1 tablett à 1 mg",
+          "fra dag 71: seponert",
+        ],
+        "til": [
+          "dag 1–7: 5 mg = 1 tablett à 5 mg",
+          "fra dag 8: 10 mg = 1 tablett à 10 mg",
+        ],
+      },
+      "preparater": [
+        "Abilify tab 10 mg, varenr. 011008 (FEST: «Ikke delbar»)",
+        "Abilify tab 10 mg, varenr. 077742 (FEST: «Ikke delbar»)",
+        "Abilify tab 10 mg, varenr. 449700 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Abilify tab 5 mg, varenr. 016596 og 016635 (FEST: «Ikke delbar»)",
+        "Abilify tab 5 mg, varenr. 107308 (FEST: «Ikke delbar»)",
+        "Abilify tab 5 mg, varenr. 471072 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Aripiprazole Accord tab 10 mg (FEST: «Ikke delbar»)",
+        "Aripiprazole Accord tab 5 mg (FEST: «Ikke delbar»)",
+        "Aripiprazole Medical Valley tab 10 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Aripiprazole Medical Valley tab 5 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Risperdal tab 1 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Risperdal tab 4 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Risperidon Sandoz tab 1 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Risperidon Sandoz tab 2 mg (FEST: «Delbar i 2»)",
+        "Risperidon Sandoz tab 3 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Risperidon Sandoz tab 4 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Risperidone Grindeks tab 1 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Risperidone Grindeks tab 2 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Risperidone Grindeks tab 3 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Risperidone Grindeks tab 4 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      ],
+      "regel": "antipsykotikabytte-risperidon-aripiprazol v8",
+      "vurderinger": [
+        "Risperidon, før hver doseendring (dag 29, 43, 57, 71): Før hver reduksjon av risperidon, også det siste trinnet til 0: tilstanden vurderes (forverring av psykosen og seponeringsplager: kvalme, oppkast, svette og søvnløshet, og akatisi, dystoni og dyskinesi), og pasienten følges tett gjennom hele byttet. Ved funn: Ved forverring, uro eller seponeringsplager holdes dosen, og resten av nedtrappingen planlegges individuelt.",
+        "Risperidon, 14 dager etter siste dose (dag 84): Risperidon er seponert: tilstanden vurderes på nytt (forverring av psykosen og seponeringsplager: kvalme, oppkast, svette og søvnløshet, og akatisi, dystoni og dyskinesi). Ved funn: Ved forverring eller seponeringsplager vurderes behandlingen individuelt; planen gir ingen ny dose. Pasienten følges tettere ved behov, også før dette kontrollpunktet.",
+        "Aripiprazol, før hver doseendring (dag 8): Før hver økning av aripiprazol: toleransen vurderes (akatisi, uro, aktivering og søvnvansker). Ved funn: Ved dårlig toleranse holdes dosen, og resten av byttet planlegges individuelt.",
+      ],
+    },
+  },
+  "K0-09": {
+    "formvalg": [
+      "fra: Tablett",
+    ],
+    "klasse": "komplett",
+    "trinnvalg": [],
+    "utfall": {
+      "avvik": [],
+      "forbehold": [
+        "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+        "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+        "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+      ],
+      "forlop": {
+        "fra": [
+          "dag 1–14: 15 mg = 1 tablett à 15 mg",
+          "fra dag 15: seponert",
+        ],
+        "til": [
+          "dag 1: 400 mg = 1 injeksjon à 400 mg",
+          "hver måned fra 1 måned etter dag 1: 400 mg = 1 injeksjon à 400 mg",
+        ],
+      },
+      "preparater": [
+        "Abilify Maintena pulv til depotinj væske, susp 400 mg (Én hel injeksjon; deler av en sprøyte brukes ikke)",
+        "Abilify Maintena pulv til depotinj væske, susp 400 mg/sprøyte (Én hel injeksjon; deler av en sprøyte brukes ikke)",
+        "Abilify tab 15 mg, varenr. 010953 og 011019 (FEST: «Ikke delbar»)",
+        "Abilify tab 15 mg, varenr. 077724 (FEST: «Ikke delbar»)",
+        "Abilify tab 15 mg, varenr. 575089 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Aripiprazole Accord tab 15 mg (FEST: «Ikke delbar»)",
+        "Aripiprazole Medical Valley tab 15 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      ],
+      "regel": "depot-aripiprazol-maintena v3",
+      "vurderinger": [],
+    },
+  },
+  "K0-10": {
+    "formvalg": [],
+    "klasse": "stoppet",
+    "trinnvalg": [],
+    "utfall": {
+      "grunner": [
+        "Startdosen 4 mg er utenfor det regelen gjelder for (3 mg).",
+      ],
+      "resultat": undefined,
+      "tekst": undefined,
+      "utfall": "stopp",
+    },
+  },
+  "K0-11": {
+    "formvalg": [],
+    "klasse": "komplett",
+    "trinnvalg": [],
+    "utfall": {
+      "avvik": [],
+      "forbehold": [
+        "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+        "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+        "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+      ],
+      "forlop": {
+        "fra": [],
+        "til": [
+          "dag 1–14: 25 mg = 1 tablett à 25 mg",
+          "dag 15–28: 50 mg = 1 tablett à 50 mg",
+          "dag 29–35: 100 mg = 1 tablett à 100 mg",
+          "fra dag 36: 200 mg = 1 tablett à 200 mg",
+        ],
+      },
+      "preparater": [
+        "Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Lamictal tyggetab/disperg tab 200 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      ],
+      "regel": "tillegg-litium-lamotrigin v2",
+      "vurderinger": [
+        "Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.",
+        "Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.",
+        "Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Vurder klinisk respons; videre justering (100–400 mg/dag er brukt i studier) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.",
+        "Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.",
+      ],
+    },
+  },
+  "K0-12": {
+    "formvalg": [],
+    "klasse": "komplett",
+    "trinnvalg": [],
+    "utfall": {
+      "avvik": [],
+      "forbehold": [
+        "Beregnet etter en klinisk godkjent regelversjon. Den erstatter ikke klinisk vurdering av den enkelte pasient.",
+        "FEST viser hva som er registrert og markedsført, ikke hva apoteket har på lager.",
+        "Dosene er døgndoser; fordelingen over døgnet er ikke en del av regelen, unntatt der planen viser den fordi preparatomtalen krever det.",
+      ],
+      "forlop": {
+        "fra": [],
+        "til": [
+          "dag 1–14: 25 mg annenhver dag = 1 tablett à 25 mg",
+          "dag 15–28: 25 mg = 1 tablett à 25 mg",
+          "dag 29–35: 50 mg = 1 tablett à 50 mg",
+          "fra dag 36: 100 mg = 1 tablett à 100 mg",
+        ],
+      },
+      "preparater": [
+        "Lamictal tyggetab/disperg tab 100 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Lamictal tyggetab/disperg tab 25 mg, varenr. 196808 (FEST oppgir ikke deling; regnes som ikke delbar)",
+        "Lamictal tyggetab/disperg tab 50 mg (FEST oppgir ikke deling; regnes som ikke delbar)",
+      ],
+      "regel": "tillegg-valproat-lamotrigin v2",
+      "vurderinger": [
+        "Lamotrigin, før hver doseendring (dag 15, 29, 36): Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Dosen økes bare når pasienten ikke har slike tegn. Ved funn: Ved utslett eller tegn på overfølsomhet seponeres lamotrigin straks, med mindre utslettet klart ikke skyldes lamotrigin, og pasienten utredes. Planen gjelder ikke videre.",
+        "Lamotrigin, før hver doseendring (dag 15, 29, 36): Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring. Ved funn: Ved klinisk forverring eller selvmordstanker vurderes behandlingen på nytt, inkludert om lamotrigin skal seponeres.",
+        "Lamotrigin, dag 36: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Vurder klinisk respons; videre justering (høyst 200 mg/dag sammen med valproat) beregnes ikke og planlegges individuelt, uten raskere økning enn preparatomtalen tillater.",
+        "Lamotrigin, dag 36: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin. Det beregnes ikke.",
+      ],
+    },
+  },
+}
+`;
+
 exports[`S3: de samme planene for de samme kasusene > kontrollkasusene og hver vei gjennom det kliniske omfanget i kontrollgrunnlagene 1`] = `
 {
   "kontroll 1 F1-01": {

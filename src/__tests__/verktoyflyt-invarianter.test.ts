@@ -12,8 +12,8 @@
  * måldose regelen tilbyr (eller eksemplets egen).
  * Der siden lar forskriveren velge dose for et trinn, velges den første
  * dosen som tilbys, slik QA-forløpene gjør. Kasusene i P11-matrisen
- * (`PILOTKASUS`) prøves i tillegg for S3. Når QA-katalogen (K0-01–K0-12,
- * H-01–H-39, `src/__tests__/qa/`) er slått sammen, tas den med her (S3).
+ * (`PILOTKASUS`) og QA-katalogen (K0-01–K0-12 og H-forløpene,
+ * `src/__tests__/qa/`) prøves i tillegg for S3.
  *
  * Ingen regel endres eller godkjennes her, og ingenting her er pasientdata.
  */
@@ -28,7 +28,7 @@ import { gjelderFortsatt, osloDato, ubesvart, TOMT_SKJEMA, type Planskjema } fro
 import { elementtekst, planform, preparatliste, type Doseplanresultat } from '../verktoy/motor/plan'
 import { kildelinje, planTekst, planvisning, regellinje } from '../verktoy/planvisning'
 import { festkoblinger, KARTLEGGING, VALGTEKSTER, VERKTOY, virkestoffvalg, type Verktoy } from '../verktoy/register'
-import { kjerne, komplett, tidslinjeavvik, type Planinndata, type Tidslinje } from './qa/brukerforlop'
+import { BRUKERFORLOP, kjerne, kjorForlop, komplett, lesUttrekkene, tidslinjeavvik, type Planinndata, type Tidslinje } from './qa/brukerforlop'
 import { avrund } from '../verktoy/regler/beregning'
 import { erKliniskGodkjent, fingeravtrykk, harBeregning } from '../verktoy/regler/godkjenning'
 import type { Regel } from '../verktoy/regler/modell'
@@ -384,6 +384,16 @@ describe('S3: de samme planene for de samme kasusene', () => {
   })
   it('P11-matrisen', () => {
     expect(Object.fromEntries(PILOTKASUS.map((k) => [k.id, oppsummering(kjorKasus(k, PILOT))]))).toMatchSnapshot()
+  })
+  it('QA-katalogen (K0-01–K0-12 og H-forløpene)', () => {
+    const u = lesUttrekkene()
+    const ut = Object.fromEntries(
+      BRUKERFORLOP.map((f) => {
+        const r = kjorForlop(f, u)
+        return [f.id, { klasse: r.klasse, ...(r.utfall ? { utfall: oppsummering(r.utfall) } : {}), formvalg: r.formvalg, trinnvalg: r.trinnvalg }]
+      }),
+    )
+    expect(ut).toMatchSnapshot()
   })
   it('K4-kasusene', () => {
     expect(Object.fromEntries(kjorTilleggskasus(UTTREKKENE[FEST_TILLEGG]!).map(({ k, res }) => [k.id, oppsummering(res)]))).toMatchSnapshot()
