@@ -80,3 +80,28 @@ export function snarvalg(verktoy: Verktoy, regelsett: Regelsett = REGELSETT): Sn
  */
 export const utenSperrede = (valg: readonly Snarvalg[], sperrer: readonly Verktoysperre[], verktoy: Pick<Verktoy, 'id'>): Snarvalg[] =>
   valg.filter((s) => usperrede(sperrer, verktoy, s.regler).length > 0)
+
+/** Hva et verktøy kan gi nå, i én setning til oversikten og verktøysiden (P11 i `docs/verktøy-brukervennlighet-2026-11.md`). */
+export interface Verktoystatus {
+  /** Om minst ett valg kan gi en komplett plan nå. */
+  kanGiPlan: boolean
+  tekst: string
+  /** Valgene som kan gi en komplett plan, uten dem en nødstopp holder utenfor. */
+  valg: Snarvalg[]
+}
+
+const navneliste = (xs: string[]) => (xs.length <= 1 ? xs.join('') : `${xs.slice(0, -1).join(', ')} og ${xs.at(-1)}`)
+
+/**
+ * Hva verktøyet kan gi nå: «Komplett plan kan lages for escitalopram»,
+ * «Ingen komplett plan er godkjent ennå» eller at verktøyet er deaktivert.
+ * Det samme utvalget som snarvalgene, så teksten aldri lover mer enn
+ * beregningen kan gi; alt kontrolleres på nytt når noe beregnes.
+ */
+export function verktoystatus(verktoy: Verktoy, sperrer: readonly Verktoysperre[], regelsett: Regelsett = REGELSETT): Verktoystatus {
+  const alle = snarvalg(verktoy, regelsett).filter((s) => s.status === 'tilgjengelig')
+  const valg = utenSperrede(alle, sperrer, verktoy)
+  if (valg.length > 0) return { kanGiPlan: true, tekst: `Komplett plan kan lages for ${navneliste(valg.map((s) => s.tekst))}.`, valg }
+  if (alle.length > 0) return { kanGiPlan: false, tekst: 'Verktøyet er midlertidig deaktivert. Ingen plan kan lages nå.', valg }
+  return { kanGiPlan: false, tekst: 'Ingen komplett plan er godkjent ennå.', valg }
+}

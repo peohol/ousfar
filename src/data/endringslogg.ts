@@ -26,6 +26,20 @@ export const ENDRINGSLOGG: Endring[] = [
     ],
   },
   {
+    versjon: '1.125.11',
+    dato: '2026-11-05',
+    sammendrag: 'Grunnlaget for en enklere arbeidsflyt i de kliniske verktøyene, med spørsmål i vanlig språk og tidlig beskjed om en komplett plan kan lages',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy'],
+    utenVarsel: true,
+    punkter: [
+      'Gjelder bare administratorene, som fortsatt er de eneste som ser verktøyene. Ingenting endres i verktøyene ennå, og ingen regler, doser eller godkjenninger er endret.',
+      'Verktøyene har fått grunnlaget for den nye arbeidsflyten: hver betingelse i de godkjente reglene kan stilles som et kort spørsmål med «Ja», «Nei» og «Ukjent», i fast rekkefølge, og «Ukjent» gir aldri en plan. De nye spørsmålstekstene tas først i bruk når de er faglig kontrollert for hver regelversjon; til da gjelder regelens egen tekst.',
+      'En forhåndskontroll kan si tidlig om en komplett plan kan lages, og hvorfor ikke, før alle spørsmålene er besvart. Den lover aldri en plan; planen lages bare av den vanlige beregningen.',
+    ],
+  },
+  {
     versjon: '1.125.10',
     dato: '2026-11-05',
     sammendrag: 'De kliniske verktøyene kan nå beskrive overgang fra tabletter til dråper og foretrekke doser som er enkle å gi, men ingen regel bruker det ennå',
