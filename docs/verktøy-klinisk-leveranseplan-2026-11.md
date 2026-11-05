@@ -59,7 +59,7 @@ Ikke tilby tomme valg som om de er støttet. Presiser «ikke-markedsført», «g
 | **K2** | **Bytte antidepressiv – første nyttige leveranse** | Minst **tre vanlige, forskjellige, komplette** byttescenarier med norsk tilgjengelige formuleringer. Begynn med sertralin → mirtazapin og klinisk relevante SSRI-bytter som kildene kan støtte. Hele forløpet, inklusive videre avslutning og relevant opptrapping, må være vurdert. | Pågår i egen tråd fra 03.11.2026 |
 | **K3** | **Bytte antipsykotikum – første nyttige leveranse** | Minst **to komplette peroral-til-peroral** og **to komplette depotrelaterte** scenarier fra dokumenterte kilder. Gjenbruk godkjente Maintena-/Xeplion-grunnlag der mulig; undersøk også risperidon → Xeplion, preparatforskjeller og depotintervaller. Ustøttede varianter stopper. | **Avgrenset første leveranse 04.11.2026 (#320, §10.4); om minstekravet er nådd, avgjøres etter QA-telling** |
 | **K4** | **Kombinere stemningsstabiliserende – gjeninnfør opprinnelig kildeområde** | Verktøyet finnes i meny/søk for admin. Minst **to klinisk kontrollerte, gjennomførbare** tilleggsscenarier med start/oppfølging/monitorering; ikke gi doseplan for en kombinasjon uten tilstrekkelig kildegrunnlag. Bevar retning og dobbelkontroller interaksjoner. | **Første leveranse slått sammen 04.11.2026 (#322): to komplette, klinisk godkjente tilleggsforløp (§10.4). Minstekravet er nådd; verktøyet er fortsatt bare for administratorer** |
-| **K5** | **Bredde, kvalitet og utrulling** | Utvid godkjent dekning systematisk per evidensbasert strategi og relevante virkestoff/formuleringer – **ikke tusen PR-er for tusen celler**. Klinisk prøvebruk, eksempler fra produksjon med syntetiske data og Peders godkjenning før åpning for andre. | Ikke startet |
+| **K5** | **Bredde, kvalitet og utrulling** | Utvid godkjent dekning systematisk per evidensbasert strategi og relevante virkestoff/formuleringer – **ikke tusen PR-er for tusen celler**. Klinisk prøvebruk, eksempler fra produksjon med syntetiske data og Peders godkjenning før åpning for andre. | **Neste fase, ikke startet:** K5-D, dosefleksible og komplette forløp ([egen plan](verktøy-k5-dosefleksible-forlop.md), Peders bestilling 05.11.2026). Starter først når startporten er dokumentert oppfylt (§10.5) |
 
 **Tallene i K1–K4 er minstekrav til den første reelt nyttige leveransen, ikke et påskudd for å erklære hele tabellgrunnlaget ferdig.** Det langsiktige målet er høy og etterprøvbar dekning av relevante norske kliniske situasjoner. Kildemangel, manglende norsk preparat og uforsvarlige kombinasjoner skal være eksplisitte unntak, aldri stilltiende «ferdig».
 
@@ -189,9 +189,16 @@ Kolonnene «I dag» og «Kjent hindring» viser status ved nullpunktet og, der e
 | 4 | #323 | C – K1, escitalopram-dråper fra 10 eller 20 mg til seponering (K0-01 når dråper velges; med tablett valgt og for K0-03 amitriptylin stopper planen fortsatt) | 1.125.2 | #322 | Slått sammen 04.11 |
 | 5 | #325 | A – K0, fremdrift ført etter merge (denne planen) | 1.125.3 | #323 | Slått sammen 04.11 |
 | 6 | #324 | G – motor: gammel regel trekkes atomisk når ny godkjennes | 1.125.4 | – | Slått sammen 04.11 |
-| 7 | #320 | E – K3, sju bytteregler (K0-07, K0-08 og K0-10) | 1.125.5 | #319 | 3 av 7 regler klinisk godkjent; slås sammen som avgrenset K3-leveranse |
+| 7 | #320 | E – K3, sju bytteregler (K0-07, K0-08 og K0-10) | 1.125.5 | #319 | Slått sammen 04.11 som avgrenset K3-leveranse (3 av 7 regler klinisk godkjent) |
 | 8 | #318 | D – K2, fem bytteregler (K0-04–K0-06) | 1.125.6 | #324 | Til kontroll; ingen regel godkjent |
 | 9 | #321 | H – testkasus K0-01–K0-12 og kontroll i den publiserte appen | 1.125.7 | alle over (rapporten lages på nytt sist) | Til kontroll |
+| 10 | #326 | Brukervennlighet – plan for enklere verktøy ([plan](verktøy-brukervennlighet-2026-11.md)) | 1.125.8 | #321 | Til kontroll |
+| 11 | #328 | Brukervennlighet D – før-måling og sikkerhetsinvarianter S1–S9 | 1.125.9 | #321 (gjenbruker QA-kontrollene) | Til kontroll; S1 og S8 rettes etter #321 |
+| 12 | #327 | Brukervennlighet B1 – stoppkoder, formovergang og praktisk dosering i motoren | 1.125.10 | #328 | Til kontroll; ingen regel endret |
+| 13 | #329 | Brukervennlighet C1 – spørsmålskatalog og forhåndskontroll | 1.125.11 | – | Til kontroll |
+| 14 | #330 | Brukervennlighet B2 – escitalopram v14, tabletter og dråper i samme nedtrapping | 1.125.12 | #327 | Til kontroll; v14 ikke klinisk godkjent, v13 gjelder |
+| 15 | #331 | Brukervennlighet A1 – felles firestegsflyt og planen som tidslinje | 1.125.13 | #329 | Til kontroll |
+| 16 | denne | A – K0, K5-D registrert som neste fase; startporten kontrolleres før merge | 1.125.14 | alle over | Til kontroll |
 
 Rekkefølgen ble endret 04.11.2026 slik at PR-ene som er nærmest godkjent, slås sammen først. Godkjenner ChatGPT i en annen rekkefølge, nummererer koordinatoren om de uavhengige PR-ene; PR-er som avhenger av #319, merges etter den.
 
@@ -213,3 +220,16 @@ Føres av koordinatoren bare når en PR er slått sammen etter ChatGPTs kontroll
 | 1 av minst 2 | 0 av minst 3 | K3 peroral: 2 ulike forløp (olanzapin 20 mg og risperidon 4 mg → aripiprazol); K3 depot: risperidon 3 mg → Xeplion i tillegg til Maintena v3 (den eldre paliperidon → Xeplion v3 krever godkjenningsfritak og telles for seg). Om minstekravet er nådd, avgjøres etter separat telling i QA (#321) | 2 av minst 2 |
 
 Klinisk prøveverifisert (§8): 0 i alle fire verktøy. Alle verktøyene er fortsatt bare synlige for administratorer.
+
+### 10.5 Neste fase: K5-D, dosefleksible og komplette forløp
+
+Peder bestemte 05.11.2026 at [K5-D-planen](verktøy-k5-dosefleksible-forlop.md) skal gjennomføres når de pågående kliniske leveransene (K1–K4, QA) og arbeidet med brukervennlighet ([plan](verktøy-brukervennlighet-2026-11.md)) er ferdige. Målet er at de fire verktøyene gir komplette planer innenfor klinisk godkjente **doseområder**, ikke bare ved forhåndsdefinerte startdoser. Uavhengig klinisk godkjenning av eksakt gyldighetsområde og fingeravtrykk og kravet om komplette forløp gjelder uendret.
+
+**K5-D er ikke startet.** Koordinatoren kontrollerer startporten (K5-D-planen §1) og fører resultatet her. Først når alle punktene er dokumentert oppfylt, gjør koordinatoren K5-D0 (nytt datert nullpunkt og prioritering) og deler resten i parallelle tråder (D1 motor og QA, D2 de fire fagsporene).
+
+| Startport (K5-D-planen §1) | Status 05.11.2026 |
+| --- | --- |
+| Pågående PR-er integrert eller eksplisitt avsluttet | Ikke oppfylt: #318, #321 og #326–#331 er åpne (§10.3). En PR som lukkes uten merge, føres som uoppfylt behov |
+| Samlet `main` består bygg, tester, regel- og FEST-kontroll og syntetisk brukerflyt i den publiserte administrator-appen, med skjermvisning og kopi | Ikke oppfylt: kjøres på integrert `main` etter siste PR i §10.3 |
+| Koordinatoren har oppdatert fremdriften og laget et nytt, datert nullpunkt med gjenstående K1–K4-mangler | Ikke oppfylt: gjøres i K5-D0 etter de to punktene over |
+| `VERKTOYENE_VISES_FOR` er fortsatt `'admin'` | Oppfylt: uendret, og K5-D endrer den ikke |
