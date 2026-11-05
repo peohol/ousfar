@@ -25,6 +25,17 @@ export const ENDRINGSLOGG: Endring[] = [
     ],
   },
   {
+    versjon: '1.125.7',
+    dato: '2026-11-05',
+    sammendrag: 'Uavhengig kontroll av verktøyenes vanlige brukerforløp',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Vanlige situasjoner i de fire verktøyene prøves nå automatisk, både i testene og i den publiserte appen, slik at det vises hvilke forløp som gir en komplett plan, og hvilke som stopper med «Komplett plan ikke tilgjengelig», fagtekst eller ingen plan. Det kontrolleres også at ingen delplan vises som doseplan, og at de godkjente reglene ikke endres i det stille.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.125.6',
     dato: '2026-11-05',
     sammendrag: 'Bytter mellom antidepressiva: to bytter til sertralin',
