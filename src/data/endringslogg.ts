@@ -26,6 +26,20 @@ export const ENDRINGSLOGG: Endring[] = [
     ],
   },
   {
+    versjon: '1.125.10',
+    dato: '2026-11-05',
+    sammendrag: 'De kliniske verktøyene kan nå beskrive overgang fra tabletter til dråper og foretrekke doser som er enkle å gi, men ingen regel bruker det ennå',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy'],
+    utenVarsel: true,
+    punkter: [
+      'Gjelder bare administratorene, som fortsatt er de eneste som ser verktøyene. Ingen regler, doser, planer eller godkjenninger er endret.',
+      'En regel kan nå tillate en dokumentert overgang fra én legemiddelform til en annen i samme plan, for eksempel tabletter mens de gir en enkel dose og så dråper, og kan be verktøyet foretrekke doser med få dråper og få delte tabletter. Hver regel som tar dette i bruk, må kontrolleres og godkjennes på nytt.',
+      'Hver grunn til at verktøyet stopper, har fått en fast kode i tillegg til teksten, så de nye skjermbildene kan forklare stoppet og vise hva som skal gjøres. Tekstene er de samme som før.',
+    ],
+  },
+  {
     versjon: '1.125.9',
     dato: '2026-11-05',
     sammendrag: 'Måling av hvor tungvinte verktøyene er i dag, og nye kontroller av sikkerheten før de forenkles',
