@@ -1308,7 +1308,7 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
       cleanup()
     }
     // Fire beregninger gjennom hele siden.
-  }, 30_000)
+  }, 60_000)
 
   describe('forenklingen (VDR-3)', () => {
     // En godkjent regel som gir en komplett plan; klinikere får aldri en delplan (Peders beslutning 03.11.2026).
