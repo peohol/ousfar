@@ -206,7 +206,8 @@ async function main() {
 
   const uttrekk = lesUttrekkene()
   const rader: string[] = []
-  let verifisert = 0
+  const verifiserte: string[] = []
+  const nyttForsok: string[] = []
   const bare = process.env.QA_FORLOP?.split(',')
   for (const f of (BRUKERFORLOP as readonly Brukerforlop[]).filter((x) => !bare || bare.includes(x.id))) {
     const r = kjorForlop(f, uttrekk)
@@ -217,7 +218,16 @@ async function main() {
     }
     let a: Appresultat
     try {
-      a = await kjorIApp(side, url, r)
+      // Et tidsavbrudd når siden lastes, er nettet, ikke appen: forløpet kjøres på nytt fra en tom side, høyst to ganger.
+      for (let forsok = 1; ; forsok++) {
+        try {
+          a = await kjorIApp(side, url, r)
+          break
+        } catch (e) {
+          if (forsok > 2 || !/page\.goto: Timeout/.test(String(e))) throw e
+          nyttForsok.push(f.id)
+        }
+      }
     } catch (e) {
       rader.push(`| ${f.id} | ${celle(f.hva)} | ${KLASSENAVN[r.klasse]} | kjøringen feilet: ${celle(String(e).split('\n')[0]!)} | ja |`)
       continue
@@ -226,7 +236,7 @@ async function main() {
     if (avvik.length > 0 && process.env.QA_BILDER) await side.screenshot({ path: `${process.env.QA_BILDER}/${f.id}.png`, fullPage: true })
     // Tidslinjen og kopien slik appen ga dem, for å kunne lese sammenligningen etterpå.
     if (a.tabell && process.env.QA_BILDER) writeFileSync(`${process.env.QA_BILDER}/${f.id}.json`, JSON.stringify({ tidslinje: a.tidslinje, kopi: a.tekst }, null, 2))
-    if (a.tabell && avvik.length === 0) verifisert++
+    if (a.tabell && avvik.length === 0) verifiserte.push(f.id)
     const app = a.tabell
       ? 'Plan'
       : celle(
@@ -250,8 +260,9 @@ async function main() {
       '',
       `Kjørt ${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC mot ${url} (${versjon}) som administrator, med dagens FEST. Hvert forløp er det samme som i \`docs/verktøy-qa-brukerforlop.md\`: syntetiske doser, alle bekreftelser og nei på hvert unntak og spørsmål (ja der forløpet svarer ja), måldosen forløpet velger, tablett når siden ber om legemiddelform med mindre forløpet velger en annen form eller bytter form underveis. Siden lastes helt på nytt for hvert forløp. Bare lesing; ingenting er lagret. «Avvik» sammenligner med den lokale kjøringen mot de lagrede FEST-uttrekkene: hele kopien linje for linje, og den synlige tidslinjen (hver rad og celle) mot kopien.`,
       '',
-      `Planer teknisk ende-til-ende-verifisert i appen (hele kopien lik den lokale kjøringen linje for linje, bortsett fra FEST-tidspunktet): **${verifisert}**. Dette er en teknisk verifikasjon med syntetiske data, ikke «klinisk prøveverifisert» (plan §8); det krever i tillegg en faglig gjennomgang av hele doseringsforløpet, kildene og de relevante risikoene.`,
+      `Planer teknisk ende-til-ende-verifisert i appen (hele kopien lik den lokale kjøringen linje for linje, bortsett fra FEST-tidspunktet): **${verifiserte.length}** (${verifiserte.join(', ') || 'ingen'}). Dette er en teknisk verifikasjon med syntetiske data, ikke «klinisk prøveverifisert» (plan §8); det krever i tillegg en faglig gjennomgang av hele doseringsforløpet, kildene og de relevante risikoene.`,
       '',
+      ...(nyttForsok.length > 0 ? [`Kjørt på nytt fra en tom side etter tidsavbrudd da siden skulle lastes (nettet, ikke appen): ${[...new Set(nyttForsok)].join(', ')}.`, ''] : []),
       '## Kontroller som ikke er gjort',
       '',
       '- Verktøyene er bare synlige for administratorer. Ingen kontroll her viser hva en kliniker ser, og ingen plan er tilgjengelig for klinikere.',
