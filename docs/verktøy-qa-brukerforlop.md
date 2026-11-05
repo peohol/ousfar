@@ -8,7 +8,7 @@ Spor H i `docs/verktøy-klinisk-leveranseplan-2026-11.md`. Hvert forløp er en s
 | Leveranse | Komplett plan til sluttmål | Delplan | Godkjent fagtekst | Regel finnes, men beregningen stopper | Ikke godkjent regel | Regel til kontroll | Ikke støttet | Sperret | Skjemaet krever mer | Verktøyet finnes ikke |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | K1 Trappe ned antidepressiv | 3 |  | 2 | 6 | 13 |  |  |  |  |  |
-| K2 Bytte antidepressiv |  |  |  | 3 |  |  | 13 |  |  |  |
+| K2 Bytte antidepressiv | 4 |  |  | 5 |  | 1 | 6 |  |  |  |
 | K3 Bytte antipsykotikum | 6 |  |  | 4 | 1 | 1 | 3 |  |  |  |
 | K4 Kombinere stemningsstabiliserende | 2 |  |  |  |  |  | 2 |  | 1 |  |
 
@@ -20,8 +20,8 @@ Spor H i `docs/verktøy-klinisk-leveranseplan-2026-11.md`. Hvert forløp er en s
 | K0-02 | Sertralin 100 mg tablett, kort behandlingstid, skal seponeres | Ikke godkjent regel | Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning. | – |
 | K0-03 | Amitriptylin 25 mg tablett, kort behandlingstid, skal seponeres | Ikke godkjent regel | Beregning er ikke tilgjengelig: regelen er kontrollert, men ikke godkjent for klinisk beregning. | – |
 | K0-04 | Sertralin 100 mg byttes til mirtazapin | Regel finnes, men beregningen stopper (kryssnedtrapping-sertralin-mirtazapin v10) | [måldose 15 mg] / [formvalg til: Tablett] / Komplett plan ikke tilgjengelig: sertralin: siste trinn før null; avslutning vurderes individuelt; mirtazapin: holdes til sertralin er avsluttet; videre dosering planlegges individuelt. | – |
-| K0-05 | Escitalopram 20 mg byttes til mirtazapin | Ikke støttet | [måldose 15 mg] / OUSFAR har ingen regel for denne kombinasjonen. | – |
-| K0-06 | Escitalopram 20 mg byttes til sertralin | Ikke støttet | [måldose 50 mg] / OUSFAR har ingen regel for denne kombinasjonen. | – |
+| K0-05 | Escitalopram 20 mg byttes til mirtazapin | Regel til kontroll | [måldose 15 mg] / Beregning er ikke tilgjengelig fordi faglig kontroll av regelen gjenstår. | – |
+| K0-06 | Escitalopram 20 mg byttes til sertralin | Komplett plan til sluttmål (bytte-escitalopram-sertralin v2) | [måldose 50 mg] / Dag 1–14: Escitalopram peroralt: 10 mg = 1 tablett à 10 mg / Dag 15: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider. / Dag 15–28: Escitalopram peroralt: 5 mg = 1 tablett à 5 mg / Dag 29: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider. / Fra dag 29: Escitalopram peroralt: Seponert; Sertralin peroralt: 50 mg = 1 tablett à 50 mg / Dag 35: Vurdering (Escitalopram): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra escitalopram til sertralin. / Dag 57: Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin. | – |
 | K0-07 | Olanzapin 10 mg tablett byttes til aripiprazol tablett | Regel finnes, men beregningen stopper (antipsykotikabytte-olanzapin-aripiprazol v8) | [måldose 10 mg] / [formvalg fra: Tablett] / [formvalg til: Tablett] / Startdosen 10 mg er utenfor det regelen gjelder for (20 mg). | – |
 | K0-08 | Risperidon 4 mg tablett byttes til aripiprazol tablett | Komplett plan til sluttmål (antipsykotikabytte-risperidon-aripiprazol v8) | [måldose 10 mg] / [formvalg til: Tablett] / Dag 1–7: Risperidon peroralt: 4 mg = 1 tablett à 4 mg; Aripiprazol peroralt: 5 mg = 1 tablett à 5 mg / Dag 8: Vurdering (Aripiprazol): Før endringen: Før hver økning av aripiprazol: toleransen vurderes (akatisi, uro, aktivering og søvnvansker). / Dag 8–28: Risperidon peroralt: 4 mg = 1 tablett à 4 mg; Aripiprazol peroralt: 10 mg = 1 tablett à 10 mg / Dag 29: Vurdering (Risperidon): Før endringen: Før hver reduksjon av risperidon, også det siste trinnet til 0: tilstanden vurderes (forverring av psykosen og seponeringsplager: kvalme, oppkast, svette og søvnløshet, og akatisi, dystoni og dyskinesi), og pasienten følges tett gjennom hele byttet. / Dag 29–42: Risperidon peroralt: 3 mg = 1 tablett à 3 mg; Aripiprazol peroralt: 10 mg = 1 tablett à 10 mg / Dag 43: Vurdering (Risperidon): Før endringen: Før hver reduksjon av risperidon, også det siste trinnet til 0: tilstanden vurderes (forverring av psykosen og seponeringsplager: kvalme, oppkast, svette og søvnløshet, og akatisi, dystoni og dyskinesi), og pasienten følges tett gjennom hele byttet. / Dag 43–56: Risperidon peroralt: 2 mg = 1 tablett à 2 mg; Aripiprazol peroralt: 10 mg = 1 tablett à 10 mg / Dag 57: Vurdering (Risperidon): Før endringen: Før hver reduksjon av risperidon, også det siste trinnet til 0: tilstanden vurderes (forverring av psykosen og seponeringsplager: kvalme, oppkast, svette og søvnløshet, og akatisi, dystoni og dyskinesi), og pasienten følges tett gjennom hele byttet. / Dag 57–70: Risperidon peroralt: 1 mg = 1 tablett à 1 mg; Aripiprazol peroralt: 10 mg = 1 tablett à 10 mg / Dag 71: Vurdering (Risperidon): Før endringen: Før hver reduksjon av risperidon, også det siste trinnet til 0: tilstanden vurderes (forverring av psykosen og seponeringsplager: kvalme, oppkast, svette og søvnløshet, og akatisi, dystoni og dyskinesi), og pasienten følges tett gjennom hele byttet. / Fra dag 71: Risperidon peroralt: Seponert; Aripiprazol peroralt: 10 mg = 1 tablett à 10 mg / Dag 84: Vurdering (Risperidon): Risperidon er seponert: tilstanden vurderes på nytt (forverring av psykosen og seponeringsplager: kvalme, oppkast, svette og søvnløshet, og akatisi, dystoni og dyskinesi). | – |
 | K0-09 | Aripiprazol 15 mg tablett til Abilify Maintena | Komplett plan til sluttmål (depot-aripiprazol-maintena v3) | [formvalg fra: Tablett] / Dag 1–14: Aripiprazol peroralt: 15 mg = 1 tablett à 15 mg / Dag 1: Aripiprazol depotinjeksjon 400 mg = 1 injeksjon à 400 mg / Fra dag 15: Aripiprazol peroralt: Seponert / Hver måned fra 1 måned etter dag 1: Aripiprazol depotinjeksjon 400 mg = 1 injeksjon à 400 mg (tidligst 26 dager etter forrige) | – |
@@ -42,7 +42,7 @@ Spor H i `docs/verktøy-klinisk-leveranseplan-2026-11.md`. Hvert forløp er en s
 | H-12 | Bupropion 300 mg skal seponeres | Godkjent fagtekst | seponering-bupropion v5 | – |
 | H-13 | Agomelatin 25 mg skal seponeres | Godkjent fagtekst | seponering-agomelatin v1 | – |
 | H-14 | Sertralin 50 mg byttes til mirtazapin | Regel finnes, men beregningen stopper (kryssnedtrapping-sertralin-mirtazapin v10) | [formvalg til: Tablett] / Komplett plan ikke tilgjengelig: sertralin: siste trinn før null; avslutning vurderes individuelt; mirtazapin: holdes til sertralin er avsluttet; videre dosering planlegges individuelt. | – |
-| H-15 | Citalopram 20 mg byttes til sertralin 100 mg | Ikke støttet | [måldose 100 mg] / OUSFAR har ingen regel for denne kombinasjonen. | – |
+| H-15 | Citalopram 20 mg byttes til sertralin 100 mg | Komplett plan til sluttmål (bytte-citalopram-sertralin v2) | [måldose 100 mg] / Dag 1–14: Citalopram peroralt: 10 mg = 1 tablett à 10 mg / Dag 15: Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider. / Dag 15–28: Citalopram peroralt: Seponert; Sertralin peroralt: 50 mg = 1 tablett à 50 mg / Dag 21: Vurdering (Citalopram): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra citalopram til sertralin. / Dag 29: Vurdering (Sertralin): Før endringen: Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter citalopram. / Fra dag 29: Sertralin peroralt: 100 mg = 1 tablett à 100 mg / Dag 43: Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin. / Dag 57: Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin. | – |
 | H-16 | Sertralin 100 mg byttes til escitalopram | Ikke støttet | OUSFAR har ingen regel for denne kombinasjonen. | – |
 | H-17 | Escitalopram 20 mg byttes til vortioksetin | Ikke støttet | OUSFAR har ingen regel for denne kombinasjonen. | – |
 | H-18 | Fluoksetin 20 mg byttes til sertralin | Ikke støttet | OUSFAR har ingen regel for denne kombinasjonen. | – |
@@ -72,10 +72,10 @@ Spor H i `docs/verktøy-klinisk-leveranseplan-2026-11.md`. Hvert forløp er en s
 | H-42 | Risperidon 3 mg tablett til Xeplion månedlig | Komplett plan til sluttmål (depot-risperidon-xeplion v8) | [måldose 75 mg] / Fra dag 1: Risperidon peroralt: Seponert / Dag 1: Paliperidon depotinjeksjon 150 mg = 1 injeksjon à 150 mg (deltoideus) / Dag 8: Vurdering (Paliperidon): Før endringen: Før injeksjonen dag 8 og før hver månedlige vedlikeholdsinjeksjon: psykotiske symptomer, ekstrapyramidale og andre bivirkninger og reaksjoner etter forrige injeksjon vurderes, og pasienten følges tett gjennom byttet. / Dag 8: Paliperidon depotinjeksjon 100 mg = 1 injeksjon à 100 mg (±4 dager, deltoideus) / Hver måned fra 1 måned etter dag 8: Paliperidon depotinjeksjon 75 mg = 1 injeksjon à 75 mg (±7 dager, deltoideus eller setemuskel) | – |
 | H-43 | Olanzapin 20 mg tablett byttes til aripiprazol med måldose 20 mg | Regel finnes, men beregningen stopper (antipsykotikabytte-olanzapin-aripiprazol v8) | [måldose 20 mg] / [formvalg fra: Tablett] / [formvalg til: Tablett] / Måldosen 20 mg er utenfor det regelen gjelder for (10, 15 mg). | – |
 | H-44 | Risperidon 2 mg tablett til Xeplion månedlig | Regel finnes, men beregningen stopper (depot-risperidon-xeplion v8) | [måldose 75 mg] / Startdosen 2 mg er utenfor det regelen gjelder for (3 mg). | – |
-| H-45 | Escitalopram 10 mg byttes til sertralin 100 mg | Ikke støttet | [måldose 100 mg] / OUSFAR har ingen regel for denne kombinasjonen. | – |
-| H-46 | Citalopram 40 mg byttes til sertralin 50 mg | Ikke støttet | [måldose 50 mg] / OUSFAR har ingen regel for denne kombinasjonen. | – |
-| H-47 | Escitalopram 20 mg byttes til sertralin med måldose 150 mg | Ikke støttet | [måldose 150 mg] / OUSFAR har ingen regel for denne kombinasjonen. | – |
-| H-48 | Escitalopram 15 mg byttes til sertralin 50 mg | Ikke støttet | [måldose 50 mg] / OUSFAR har ingen regel for denne kombinasjonen. | – |
+| H-45 | Escitalopram 10 mg byttes til sertralin 100 mg | Komplett plan til sluttmål (bytte-escitalopram-sertralin v2) | [måldose 100 mg] / Dag 1–14: Escitalopram peroralt: 5 mg = 1 tablett à 5 mg / Dag 15: Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider. / Dag 15–28: Escitalopram peroralt: Seponert; Sertralin peroralt: 50 mg = 1 tablett à 50 mg / Dag 21: Vurdering (Escitalopram): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra escitalopram til sertralin. / Dag 29: Vurdering (Sertralin): Før endringen: Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter escitalopram. / Fra dag 29: Sertralin peroralt: 100 mg = 1 tablett à 100 mg / Dag 43: Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin. / Dag 57: Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin. | – |
+| H-46 | Citalopram 40 mg byttes til sertralin 50 mg | Komplett plan til sluttmål (bytte-citalopram-sertralin v2) | [måldose 50 mg] / Dag 1–14: Citalopram peroralt: 20 mg = 1 tablett à 20 mg / Dag 15: Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider. / Dag 15–28: Citalopram peroralt: 10 mg = 1 tablett à 10 mg / Dag 29: Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider. / Fra dag 29: Citalopram peroralt: Seponert; Sertralin peroralt: 50 mg = 1 tablett à 50 mg / Dag 35: Vurdering (Citalopram): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra citalopram til sertralin. / Dag 57: Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin. | – |
+| H-47 | Escitalopram 20 mg byttes til sertralin med måldose 150 mg | Regel finnes, men beregningen stopper (bytte-escitalopram-sertralin v2) | [måldose 150 mg] / Måldosen 150 mg er utenfor det regelen gjelder for (50, 100 mg). | – |
+| H-48 | Escitalopram 15 mg byttes til sertralin 50 mg | Regel finnes, men beregningen stopper (bytte-escitalopram-sertralin v2) | [måldose 50 mg] / Startdosen 15 mg er utenfor det regelen gjelder for (10, 20 mg). / Startdosen 15 mg med disse svarene og denne legemiddelformen er ikke et tilfelle godkjenningen kan gjelde for (kontrollert: 10 og 20 mg, FEST-legemiddelform 53, med nei på alle spørsmålene, styrker (fra) 5, 10 og 20 mg, styrker (til) 50 og 100 mg). Planen er utenfor det kliniske omfanget regelen er kontrollert for, og må vurderes individuelt utenfor verktøyet. | – |
 
 ## Delplan vises som klinisk doseplan
 
@@ -86,7 +86,7 @@ Klinikerflaten skal aldri tilby en delplan som klinisk doseplan, heller ikke for
 | Krav | Ulike godkjente forløp med komplett plan | Positive kasus | Minst | Oppfylt | Regler |
 | --- | ---: | ---: | ---: | --- | --- |
 | K1 komplette nedtrappinger | 1 | 3 | 2 | nei | seponering-escitalopram v13 |
-| K2 komplette antidepressivbytter | 0 | 0 | 3 | nei | – |
+| K2 komplette antidepressivbytter | 2 | 4 | 3 | nei | bytte-citalopram-sertralin v2, bytte-escitalopram-sertralin v2 |
 | K3 komplette perorale antipsykotikabytter (peroral → peroral) | 2 | 3 | 2 | ja | antipsykotikabytte-olanzapin-aripiprazol v8, antipsykotikabytte-risperidon-aripiprazol v8 |
 | K3 komplette depotrelaterte antipsykotikabytter fra et markedsført startlegemiddel | 2 | 2 | 2 | ja | depot-aripiprazol-maintena v3, depot-risperidon-xeplion v8 |
 | K3 depotrelaterte der startlegemidlet bare finnes med godkjenningsfritak (telles for seg) | 1 | 1 | – | telles ikke | depot-paliperidon-xeplion v3 |
@@ -99,7 +99,7 @@ Kravet telles i ulike klinisk godkjente forløp (regler), ikke i positive kasus:
 | Verktøy | Valg | Beregning | Fagtekst | Ikke godkjent | Til kontroll | Ikke støttet |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Trappe ned antidepressiv | 23 | 2 | 2 | 12 | 0 | 7 |
-| Bytte antidepressiv | 506 | 1 | 0 | 1 | 0 | 504 |
+| Bytte antidepressiv | 506 | 3 | 0 | 1 | 2 | 500 |
 | Bytte antipsykotikum | 1122 | 5 | 0 | 1 | 4 | 1112 |
 | Kombinere stemningsstabiliserende | 110 | 2 | 0 | 0 | 0 | 108 |
 
@@ -132,6 +132,36 @@ Startdosene 0,5–400 mg (halve mg opp til 40 mg, så trinn på 5 mg), hver lege
 - Klasse: –
 - QA-avvik i planene: 0
 - Delplan vises som klinisk doseplan: 0 av 0 planer
+
+### Bytte antidepressiv: bytte-citalopram-sertralin v2
+
+- Startdoser med plan: 20, 40
+- Måldoser med plan: 20 → 50; 20 → 100; 40 → 50; 40 → 100
+- Klasse: Komplett plan til sluttmål
+- QA-avvik i planene: 0
+- Delplan vises som klinisk doseplan: 0 av 4 planer
+- unntak tidligere_seponeringssymptomer = ja: Regel finnes, men beregningen stopper
+- unntak lang_behandlingstid = ja: Regel finnes, men beregningen stopper
+- unntak over_65 = ja: Regel finnes, men beregningen stopper
+- unntak nedsatt_leverfunksjon = ja: Regel finnes, men beregningen stopper
+- bekreftelse indikasjon mangler: Regel finnes, men beregningen stopper
+- bekreftelse toleranse_bytte mangler: Regel finnes, men beregningen stopper
+- bekreftelse serotonerg_sammedisinering mangler: Regel finnes, men beregningen stopper
+
+### Bytte antidepressiv: bytte-escitalopram-sertralin v2
+
+- Startdoser med plan: 10, 20
+- Måldoser med plan: 10 → 50; 10 → 100; 20 → 50; 20 → 100
+- Klasse: Komplett plan til sluttmål
+- QA-avvik i planene: 0
+- Delplan vises som klinisk doseplan: 0 av 4 planer
+- unntak tidligere_seponeringssymptomer = ja: Regel finnes, men beregningen stopper
+- unntak lang_behandlingstid = ja: Regel finnes, men beregningen stopper
+- unntak over_65 = ja: Regel finnes, men beregningen stopper
+- unntak nedsatt_leverfunksjon = ja: Regel finnes, men beregningen stopper
+- bekreftelse indikasjon mangler: Regel finnes, men beregningen stopper
+- bekreftelse toleranse_bytte mangler: Regel finnes, men beregningen stopper
+- bekreftelse serotonerg_sammedisinering mangler: Regel finnes, men beregningen stopper
 
 ### Bytte antidepressiv: kryssnedtrapping-sertralin-mirtazapin v10
 

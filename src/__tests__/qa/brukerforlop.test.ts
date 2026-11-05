@@ -98,12 +98,15 @@ const REGELVERSJONER: Record<string, [number, string]> = {
   'ousfar-verktoy-antipsykotikabytter/depot-risperidon-xeplion': [8, '1672334c468f28cf181aa4d786370e60f3f232f76f63d374e0c505d847ab184e'],
   'ousfar-verktoy-antipsykotikabytter/antipsykotikabytte-olanzapin-aripiprazol': [8, 'f141a13a9e9368542d7719cfb0abea7cfb77a41d7d89248e5f9e1d70e0aa5f5e'],
   'ousfar-verktoy-antipsykotikabytter/antipsykotikabytte-risperidon-aripiprazol': [8, '866ac93c58fb921c78cd71518ec91637cb31a175b7a9a480552fcebe54cca870'],
+  // ousfar-verktoy-antidepressivbytter (K2, #318): bare de to klinisk godkjente
+  'ousfar-verktoy-antidepressivbytter/bytte-escitalopram-sertralin': [2, 'c0bf6c61e38c437d4c8e41d36653fe1ce3b1a9c1dfb0f9d9af603e9f7dd0289c'],
+  'ousfar-verktoy-antidepressivbytter/bytte-citalopram-sertralin': [2, '2b64ff9e383e6f9462600c4921a9dd7828ea2adc4ab404646f142ce306a57aa8'],
   // ousfar-verktoy-tillegg (K4, #322)
   'ousfar-verktoy-tillegg/tillegg-valproat-lamotrigin': [2, '0a9213f31b5f428935fceeef41498a2999682631b1692749bb7ebe19c82639b8'],
   'ousfar-verktoy-tillegg/tillegg-litium-lamotrigin': [2, '786436a0ea8d115b7927a9a20ffabc736b59bc06c59117769551e5f75e89e44b'],
 }
 
-/** Versjonene kontrolløren har godkjent (docs/verktøy-utviklingsplan.md, verktøy-rettelse-langvarig.md; K3: docs/verktøy-k3-antipsykotikabytter.md; K4: src/verktoy/regler/tillegg.ts). */
+/** Versjonene kontrolløren har godkjent (docs/verktøy-utviklingsplan.md, verktøy-rettelse-langvarig.md; K2: src/verktoy/regler/antidepressivbytter.ts; K3: docs/verktøy-k3-antipsykotikabytter.md; K4: src/verktoy/regler/tillegg.ts). */
 const GODKJENT = [
   'ousfar-verktoy-pilot/kryssnedtrapping-sertralin-mirtazapin',
   'ousfar-verktoy-pilot/depot-aripiprazol-maintena',
@@ -112,6 +115,8 @@ const GODKJENT = [
   'ousfar-verktoy-nedtrapping/seponering-bupropion',
   'ousfar-verktoy-nedtrapping/seponering-agomelatin',
   'ousfar-verktoy-nedtrapping/seponering-escitalopram',
+  'ousfar-verktoy-antidepressivbytter/bytte-escitalopram-sertralin',
+  'ousfar-verktoy-antidepressivbytter/bytte-citalopram-sertralin',
   'ousfar-verktoy-antipsykotikabytter/depot-risperidon-xeplion',
   'ousfar-verktoy-antipsykotikabytter/antipsykotikabytte-olanzapin-aripiprazol',
   'ousfar-verktoy-antipsykotikabytter/antipsykotikabytte-risperidon-aripiprazol',
