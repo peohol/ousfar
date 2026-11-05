@@ -4,7 +4,7 @@
  * tidslinjen, formvalgene i steg 2, spørsmålene i steg 3 og kopien av planen.
  * Planen beregnes av seg selv når alt er besvart; hjelperne venter på den.
  */
-import { screen, waitFor, within } from '@testing-library/react'
+import { act, screen, waitFor, within } from '@testing-library/react'
 import type userEvent from '@testing-library/user-event'
 import { expect } from 'vitest'
 
@@ -63,14 +63,40 @@ export const sporsmal = (tekst: string | RegExp) => screen.getByRole('radiogroup
 /** Svaret som sier ja (`Ja`, eller «Gjelder» for et unntak i reservevisningen), og svaret som sier nei. */
 const JA = /^(Ja|Gjelder)$/
 const NEI = /^(Nei|Gjelder ikke)$/
+/**
+ * Svaret på et spørsmål fra en kontrollert katalog som ikke er ja/nei: en
+ * vurdering klinikeren har gjort («Ja» framfor «Ikke ennå»), og en voksen
+ * pasient under 65 år (syntetisk standard).
+ */
+const STANDARDSVAR = [/^Ja$/, /^18–64 år$/]
 
 /**
- * Svarer nei på hvert spørsmål og forhold, og krysser av hver bekreftelse; `ja`
- * er forholdene og spørsmålene som gjelder. Et svar kan vise nye bekreftelser,
- * så det fortsetter til ingenting er endret. Venter først på spørsmålene, som
- * kommer når steg 2 er fylt ut og FEST har svart.
+ * Svaret testen ønsker på spørsmålet `valg`: et eget svar i `svar`, ja når det
+ * står i `ja` eller i `snudd`, ellers nei eller standardsvaret.
  */
-export async function besvarAlt(user: Bruker, ja: RegExp[] = []) {
+function onsketSvar(valg: HTMLElement, ja: RegExp[], svar: (readonly [RegExp, RegExp])[], snudd: ReadonlySet<string>) {
+  const tekst = sporsmalstekst(valg)
+  const eget = svar.find(([s]) => s.test(tekst))?.[1]
+  const finn = (m: RegExp) => within(valg).queryByRole('radio', { name: m }) as HTMLInputElement | null
+  const funnet = eget ? finn(eget) : ja.some((j) => j.test(tekst)) || snudd.has(tekst) ? finn(JA) : (finn(NEI) ?? STANDARDSVAR.map(finn).find(Boolean))
+  if (!funnet) throw new Error(`Vet ikke hva som skal svares på «${tekst}»`)
+  return funnet
+}
+
+/** Om spørsmålet `valg` sier ved seg at svaret stopper planen (merknaden uten «Ukjent»-tone). */
+const svaretStopper = (valg: HTMLElement) => !!valg.closest('li')?.querySelector('.sporsmal__merknad:not([data-tone])')
+
+/**
+ * Svarer slik at planen kan lages, og krysser av hver bekreftelse: nei på hvert
+ * spørsmål og forhold, men ja der siden sier at nei stopper planen (et
+ * spørsmål i katalogen som spør om en forutsetning). `ja` er forholdene og
+ * spørsmålene som gjelder, og `svar` gir et bestemt svar på et spørsmål
+ * (tekst → svar); de snus aldri. Et spørsmål som ikke er ja/nei, får
+ * standardsvaret. Et svar kan vise nye spørsmål og bekreftelser, så det
+ * fortsetter til ingenting er endret. Venter først på spørsmålene, som kommer
+ * når steg 2 er fylt ut og FEST har svart.
+ */
+export async function besvarAlt(user: Bruker, ja: RegExp[] = [], svar: (readonly [RegExp, RegExp])[] = []) {
   await waitFor(
     () => {
       expect(screen.getByRole('heading', { name: /^Steg 3(, utfylt)?: / })).toBeTruthy()
@@ -78,19 +104,36 @@ export async function besvarAlt(user: Bruker, ja: RegExp[] = []) {
     },
     { timeout: 3000 },
   )
+  const snudd = new Set<string>()
+  // En kontrollert katalog stiller også vurderingene som spørsmål («Ja»/«Ikke ennå»).
+  const grupper = [...VALGGRUPPER, BEKREFTELSER]
   for (;;) {
     let endret = false
-    for (const navn of VALGGRUPPER) {
+    for (const navn of grupper) {
       const gruppe = screen.queryByRole('group', { name: navn })
-      for (const valg of gruppe ? within(gruppe).getAllByRole('radiogroup') : []) {
-        const onsket = within(valg).getByRole('radio', { name: ja.some((j) => j.test(sporsmalstekst(valg))) ? JA : NEI }) as HTMLInputElement
+      for (const valg of gruppe ? within(gruppe).queryAllByRole('radiogroup') : []) {
+        const onsket = onsketSvar(valg, ja, svar, snudd)
         if (onsket.checked) continue
         await user.click(onsket)
         endret = true
       }
     }
+    // Flyten regnes på nytt etter svarene; et nei som stopper planen, snus til ja.
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 20))
+    })
+    for (const navn of grupper) {
+      const gruppe = screen.queryByRole('group', { name: navn })
+      for (const valg of gruppe ? within(gruppe).queryAllByRole('radiogroup') : []) {
+        const tekst = sporsmalstekst(valg)
+        if (snudd.has(tekst) || ja.some((j) => j.test(tekst)) || svar.some(([s]) => s.test(tekst)) || !svaretStopper(valg)) continue
+        if (!within(valg).queryByRole('radio', { name: NEI, checked: true })) continue
+        snudd.add(tekst)
+        endret = true
+      }
+    }
     const bekreft = screen.queryByRole('group', { name: BEKREFTELSER })
-    for (const boks of bekreft ? within(bekreft).getAllByRole('checkbox') : [])
+    for (const boks of bekreft ? within(bekreft).queryAllByRole('checkbox') : [])
       if (!(boks as HTMLInputElement).checked) {
         await user.click(boks)
         endret = true

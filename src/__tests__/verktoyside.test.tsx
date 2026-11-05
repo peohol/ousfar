@@ -1507,20 +1507,22 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
       expect(within(planpanel()).getByText(/^(Ett|\d+) spørsmål igjen$/)).toBeTruthy()
       expect(legemidler.les).toHaveBeenCalledOnce()
       await user.click(hopp)
-      const boks = within(screen.getByRole('group', { name: 'Bekreft før planen vises' })).getByRole('checkbox')
-      await waitFor(() => expect(boks.getAttribute('aria-invalid')).toBe('true'))
-      await user.click(boks)
-      expect(boks.getAttribute('aria-invalid')).toBeNull()
+      // Regelen har en kontrollert katalog: forutsetningen og forholdene stilles som spørsmål med Ja, Nei og Ukjent, og de som mangler svar, merkes.
+      const stopp = screen.getByRole('group', { name: 'Forhold som stopper en automatisk plan' })
+      const [forutsetning, forhold] = within(stopp).getAllByRole('radiogroup') as [HTMLElement, HTMLElement]
+      await waitFor(() => expect(forutsetning.getAttribute('aria-invalid')).toBe('true'))
+      expect(forhold.getAttribute('aria-invalid')).toBe('true')
+      await user.click(within(forutsetning).getByRole('radio', { name: 'Ja' }))
+      expect(forutsetning.getAttribute('aria-invalid')).toBeNull()
 
       // Et forhold som stopper: svaret sier straks hva det betyr, ved spørsmålet og i panelet.
-      const forhold = within(screen.getByRole('group', { name: 'Forhold som stopper en automatisk plan' })).getAllByRole('radiogroup')[0]!
       const ved = forhold.closest('li')!
-      expect(ved.textContent).not.toContain(FORHOLD_JA)
-      await user.click(within(forhold).getByRole('radio', { name: 'Gjelder' }))
-      expect(ved.textContent).toContain(FORHOLD_JA)
+      expect(ved.querySelector('.sporsmal__merknad')).toBeNull()
+      await user.click(within(forhold).getByRole('radio', { name: 'Ja' }))
+      expect(ved.querySelector('.sporsmal__merknad:not([data-tone])')!.textContent).toMatch(/\S/)
       expect(within(planpanel()).getByText('Ingen plan med disse svarene')).toBeTruthy()
-      await user.click(within(forhold).getByRole('radio', { name: 'Gjelder ikke' }))
-      expect(ved.textContent).not.toContain(FORHOLD_JA)
+      await user.click(within(forhold).getByRole('radio', { name: 'Nei' }))
+      expect(ved.querySelector('.sporsmal__merknad')).toBeNull()
       expect(legemidler.les).toHaveBeenCalledOnce()
     })
   })

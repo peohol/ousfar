@@ -14,7 +14,7 @@ import { Verktoyside, type VerktoysideProps } from '../components/verktoy/Verkto
 import { glemBildet } from '../oppdatering/bevaring'
 import { FEST_TILLEGG } from '../verktoy/tilleggsgrunnlag'
 import { pilotklokke, pilotlesing, pilotuttrekk } from './hjelp/pilotside'
-import { BEKREFTELSER, besvarAlt, kopier, planpanel, stoppet, type Bruker } from './hjelp/verktoyflyt'
+import { besvarAlt, kopier, planpanel, sporsmal, stoppet, type Bruker } from './hjelp/verktoyflyt'
 
 beforeEach(() => {
   window.scrollTo = () => {}
@@ -53,8 +53,11 @@ async function fyllInn(user: Bruker, fra: string, dose: string, maldose: string)
   await user.type(screen.getByRole('textbox', { name: /Måldose/ }), maldose)
 }
 
-/** Avkrysningen i «Bekreft før planen vises» som passer `navn`. */
-const bekreftelse = (navn: RegExp) => within(screen.getByRole('group', { name: BEKREFTELSER })).getByRole('checkbox', { name: navn })
+/** Svaret som sier at et vilkår ikke er oppfylt: «Nei», eller «Ikke ennå» for en vurdering. */
+const IKKE = /^(Nei|Ikke ennå)$/
+
+/** Svarer `verdi` på spørsmålet som passer `tekst`. */
+const svar = (user: Bruker, tekst: RegExp, verdi: RegExp) => user.click(within(sporsmal(tekst)).getByRole('radio', { name: verdi }))
 
 describe('Kombinere stemningsstabiliserende med de godkjente reglene', () => {
   it('valproat → lamotrigin: planen kopieres med mg natriumvalproat og preparatet fra legemiddellisten, og stopper uten nødvendige bekreftelser', async () => {
@@ -90,27 +93,24 @@ describe('Kombinere stemningsstabiliserende med de godkjente reglene', () => {
     )
     expect(tekst).not.toMatch(/Lamictal tyggetab\/disperg tab 25 mg: /)
 
-    // Pasienten kan bli gravid: de fire vilkårene i programmet må bekreftes; uten dem ingen plan.
-    // Uten en av dem gjenstår ett spørsmål, og planen beregnes ikke.
+    // Pasienten kan bli gravid: vilkårene i programmet stilles som spørsmål; et vilkår som ikke er oppfylt, gir ingen plan.
     await besvarAlt(user, [/kan bli gravid/])
-    const vilkar = bekreftelse(/sikker prevensjon uten avbrudd/)
-    await user.click(vilkar)
-    await stoppet(/Ett spørsmål igjen/)
-    await user.click(vilkar)
+    await svar(user, /sikker prevensjon uten avbrudd/, IKKE)
+    await stoppet(/Ingen plan med disse svarene/)
+    await svar(user, /sikker prevensjon uten avbrudd/, /^Ja$/)
     expect(await kopier(user)).toContain('Bekreftet: Pasienten bruker sikker prevensjon uten avbrudd')
 
-    // Pasienten kan bli far: forholdsreglene for menn må bekreftes; uten dem ingen plan.
+    // Pasienten kan bli far: forholdsreglene for menn må være gitt. «Ikke ennå» er en vurdering som gjenstår, ikke en stopp.
     await besvarAlt(user, [/kan gjøre en partner gravid/])
-    const far = bekreftelse(/mulige risikoen for nevroutviklingsforstyrrelser/)
-    await user.click(far)
+    await svar(user, /mulige risikoen for nevroutviklingsforstyrrelser/, /^Ikke ennå$/)
     await stoppet(/Ett spørsmål igjen/)
-    await user.click(far)
+    await svar(user, /mulige risikoen for nevroutviklingsforstyrrelser/, /^Ja$/)
     expect(await kopier(user)).toContain('Bekreftet: Pasienten er informert om den mulige risikoen')
 
-    // Uten bekreftet natriumvalproatpreparat og dose: ingen plan.
+    // Uten natriumvalproatpreparat og dose i mg natriumvalproat: ingen plan.
     await besvarAlt(user)
-    await user.click(bekreftelse(/natriumvalproatpreparat/))
-    await stoppet(/Ett spørsmål igjen/)
+    await svar(user, /natriumvalproatpreparat/, IKKE)
+    await stoppet(/Ingen plan med disse svarene/)
   }, 30_000)
 
   it('litium → lamotrigin: planen kopieres med Lithionit-tabletter, mg Li⁺ og mmol, og en dose som ikke er hele tabletter stopper', async () => {
