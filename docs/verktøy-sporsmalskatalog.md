@@ -33,7 +33,7 @@ Fingeravtrykk `12801aa22a0ca2a576b9ba737d5d5cb52db3a73dc1b437bde7f20a896214c81a`
 
 ### Fra peroral aripiprazol til Abilify Maintena, oppstart med én injeksjon (`depot-aripiprazol-maintena` v3)
 
-Fingeravtrykk `04d1debe48f02ea03a31aab3d7cd5cdeb15c56d4b43797bda353f3d857297f20` · katalogavtrykk `d8332fef6a65e76541133ea29ece36e4fd610b90425a11f3b9051e7bbb819428` · ikke kontrollert ennå: appen bruker regelens egne tekster (S5b).
+Fingeravtrykk `04d1debe48f02ea03a31aab3d7cd5cdeb15c56d4b43797bda353f3d857297f20` · katalogavtrykk `d8332fef6a65e76541133ea29ece36e4fd610b90425a11f3b9051e7bbb819428` · katalogen er kontrollert og brukes.
 
 | Betingelse | Regelens tekst | Ny tekst i flyten | Kategori | Svar | Avbildning til motoren | «Ukjent» / ubesvart gir | Forklaring ved stopp |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -44,7 +44,7 @@ Fingeravtrykk `04d1debe48f02ea03a31aab3d7cd5cdeb15c56d4b43797bda353f3d857297f20`
 
 ### Fra peroral paliperidon depottablett til Xeplion (`depot-paliperidon-xeplion` v3)
 
-Fingeravtrykk `21a335eec8c3816ee21627ceec3197e52957ccdf99cdbfaa00a3ca3cb5987bdf` · katalogavtrykk `f9c3e2226a4ed6dfd415db2df7c36981f7ad9d22f0f04ae970d1c3add5cb8267` · ikke kontrollert ennå: appen bruker regelens egne tekster (S5b).
+Fingeravtrykk `21a335eec8c3816ee21627ceec3197e52957ccdf99cdbfaa00a3ca3cb5987bdf` · katalogavtrykk `f9c3e2226a4ed6dfd415db2df7c36981f7ad9d22f0f04ae970d1c3add5cb8267` · katalogen er kontrollert og brukes.
 
 | Betingelse | Regelens tekst | Ny tekst i flyten | Kategori | Svar | Avbildning til motoren | «Ukjent» / ubesvart gir | Forklaring ved stopp |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -100,7 +100,7 @@ Regelen har ingen spørsmål, unntak eller bekreftelser.
 
 ### Fra peroral risperidon til Xeplion (`depot-risperidon-xeplion` v8)
 
-Fingeravtrykk `1672334c468f28cf181aa4d786370e60f3f232f76f63d374e0c505d847ab184e` · katalogavtrykk `699c4653569a26c396b180d3dc452a9855492c1fd4bf196f6009b0f5391aa4b7` · ikke kontrollert ennå: appen bruker regelens egne tekster (S5b).
+Fingeravtrykk `1672334c468f28cf181aa4d786370e60f3f232f76f63d374e0c505d847ab184e` · katalogavtrykk `699c4653569a26c396b180d3dc452a9855492c1fd4bf196f6009b0f5391aa4b7` · katalogen er kontrollert og brukes.
 
 | Betingelse | Regelens tekst | Ny tekst i flyten | Kategori | Svar | Avbildning til motoren | «Ukjent» / ubesvart gir | Forklaring ved stopp |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -114,7 +114,7 @@ Fingeravtrykk `1672334c468f28cf181aa4d786370e60f3f232f76f63d374e0c505d847ab184e`
 
 ### Fra olanzapin til aripiprazol, kryss-titrering (`antipsykotikabytte-olanzapin-aripiprazol` v8)
 
-Fingeravtrykk `f141a13a9e9368542d7719cfb0abea7cfb77a41d7d89248e5f9e1d70e0aa5f5e` · katalogavtrykk `c864b7076a8be14a5637f5600ff44d1cb8107b5bf9fb4f29f3e6385e404989ee` · ikke kontrollert ennå: appen bruker regelens egne tekster (S5b).
+Fingeravtrykk `f141a13a9e9368542d7719cfb0abea7cfb77a41d7d89248e5f9e1d70e0aa5f5e` · katalogavtrykk `c864b7076a8be14a5637f5600ff44d1cb8107b5bf9fb4f29f3e6385e404989ee` · katalogen er kontrollert og brukes.
 
 | Betingelse | Regelens tekst | Ny tekst i flyten | Kategori | Svar | Avbildning til motoren | «Ukjent» / ubesvart gir | Forklaring ved stopp |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -129,7 +129,7 @@ Fingeravtrykk `f141a13a9e9368542d7719cfb0abea7cfb77a41d7d89248e5f9e1d70e0aa5f5e`
 
 ### Fra risperidon til aripiprazol, kryss-titrering (`antipsykotikabytte-risperidon-aripiprazol` v8)
 
-Fingeravtrykk `866ac93c58fb921c78cd71518ec91637cb31a175b7a9a480552fcebe54cca870` · katalogavtrykk `3829851fbeff48009199f69e0781e1402a0f92a272d6916fd7dc79fcbff6420d` · ikke kontrollert ennå: appen bruker regelens egne tekster (S5b).
+Fingeravtrykk `866ac93c58fb921c78cd71518ec91637cb31a175b7a9a480552fcebe54cca870` · katalogavtrykk `3829851fbeff48009199f69e0781e1402a0f92a272d6916fd7dc79fcbff6420d` · katalogen er kontrollert og brukes.
 
 | Betingelse | Regelens tekst | Ny tekst i flyten | Kategori | Svar | Avbildning til motoren | «Ukjent» / ubesvart gir | Forklaring ved stopp |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -144,7 +144,7 @@ Fingeravtrykk `866ac93c58fb921c78cd71518ec91637cb31a175b7a9a480552fcebe54cca870`
 
 ### Legge lamotrigin til valproat (`tillegg-valproat-lamotrigin` v2)
 
-Fingeravtrykk `0a9213f31b5f428935fceeef41498a2999682631b1692749bb7ebe19c82639b8` · katalogavtrykk `5705970026b34e98f4bd8f1e48ea1fe37717e85a0f9dbf4ec0f490987b79d4e9` · ikke kontrollert ennå: appen bruker regelens egne tekster (S5b).
+Fingeravtrykk `0a9213f31b5f428935fceeef41498a2999682631b1692749bb7ebe19c82639b8` · katalogavtrykk `5705970026b34e98f4bd8f1e48ea1fe37717e85a0f9dbf4ec0f490987b79d4e9` · katalogen er kontrollert og brukes.
 
 | Betingelse | Regelens tekst | Ny tekst i flyten | Kategori | Svar | Avbildning til motoren | «Ukjent» / ubesvart gir | Forklaring ved stopp |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -172,7 +172,7 @@ Fingeravtrykk `0a9213f31b5f428935fceeef41498a2999682631b1692749bb7ebe19c82639b8`
 
 ### Legge lamotrigin til litium (`tillegg-litium-lamotrigin` v2)
 
-Fingeravtrykk `786436a0ea8d115b7927a9a20ffabc736b59bc06c59117769551e5f75e89e44b` · katalogavtrykk `b4da785134bdad4212a1162bc4cf2dacf929bbb8e6bcef809c57841ffe49e264` · ikke kontrollert ennå: appen bruker regelens egne tekster (S5b).
+Fingeravtrykk `786436a0ea8d115b7927a9a20ffabc736b59bc06c59117769551e5f75e89e44b` · katalogavtrykk `b4da785134bdad4212a1162bc4cf2dacf929bbb8e6bcef809c57841ffe49e264` · katalogen er kontrollert og brukes.
 
 | Betingelse | Regelens tekst | Ny tekst i flyten | Kategori | Svar | Avbildning til motoren | «Ukjent» / ubesvart gir | Forklaring ved stopp |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -194,4 +194,12 @@ Fingeravtrykk `786436a0ea8d115b7927a9a20ffabc736b59bc06c59117769551e5f75e89e44b`
 
 ## Kontrollerte avtrykk
 
-Ingen ennå.
+| Regel | Versjon | Katalogavtrykk | Dato | Av |
+| --- | --- | --- | --- | --- |
+| `depot-aripiprazol-maintena` | 3 | `d8332fef6a65e76541133ea29ece36e4fd610b90425a11f3b9051e7bbb819428` | 2026-11-04 | ChatGPT (via Peder) |
+| `depot-paliperidon-xeplion` | 3 | `f9c3e2226a4ed6dfd415db2df7c36981f7ad9d22f0f04ae970d1c3add5cb8267` | 2026-11-04 | ChatGPT (via Peder) |
+| `depot-risperidon-xeplion` | 8 | `699c4653569a26c396b180d3dc452a9855492c1fd4bf196f6009b0f5391aa4b7` | 2026-11-04 | ChatGPT (via Peder) |
+| `antipsykotikabytte-olanzapin-aripiprazol` | 8 | `c864b7076a8be14a5637f5600ff44d1cb8107b5bf9fb4f29f3e6385e404989ee` | 2026-11-04 | ChatGPT (via Peder) |
+| `antipsykotikabytte-risperidon-aripiprazol` | 8 | `3829851fbeff48009199f69e0781e1402a0f92a272d6916fd7dc79fcbff6420d` | 2026-11-04 | ChatGPT (via Peder) |
+| `tillegg-valproat-lamotrigin` | 2 | `5705970026b34e98f4bd8f1e48ea1fe37717e85a0f9dbf4ec0f490987b79d4e9` | 2026-11-04 | ChatGPT (via Peder) |
+| `tillegg-litium-lamotrigin` | 2 | `b4da785134bdad4212a1162bc4cf2dacf929bbb8e6bcef809c57841ffe49e264` | 2026-11-04 | ChatGPT (via Peder) |

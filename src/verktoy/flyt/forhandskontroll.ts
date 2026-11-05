@@ -8,6 +8,7 @@
  * 3. Prøveberegning med FEST: motoren (`kliniskDoseplan`, via `beregnPlan`) kjøres med svarene som er gitt og
  *    de svarene som tillater en plan for resten, for hver legemiddelform og, når planen krever et dosevalg
  *    for et trinn, for hvert tillatte valg (avgrenset). Et valg som trengs, er gjenstående, ikke en stopp.
+ *    «Kan ikke» krever at alle mulighetene er prøvd; stopper taket søket før det, er utfallet «ukjent».
  *
  * Kontrollen lover aldri en plan (S9): prøveberegningen vises aldri, og
  * «kan lages hvis» betyr bare at motoren kan gi en komplett plan når de
@@ -30,6 +31,9 @@ import { VALG_TRENGS, type Forhandskontroll, type Stoppforklaring, type Stoppkod
 
 /** Det klinikeren ser når prøveberegningen gir en komplett plan. Det er aldri et løfte om en plan (S9). */
 export const KAN_LAGES_HVIS = 'En komplett plan kan lages hvis svarene under tillater det.'
+
+/** Når prøveberegningen nådde taket uten å finne en komplett plan: ingenting er avgjort, og planen beregnes med de faktiske svarene. */
+export const IKKE_AVKLART = 'Verktøyet kunne ikke avklare på forhånd om en komplett plan kan lages. Svar på spørsmålene, så beregnes planen med svarene.'
 
 /** Den største dybden av dosevalg prøveberegningen går gjennom. */
 export const MAKS_DOSEVALG = 30
@@ -54,6 +58,8 @@ export interface Forhandsgrunnlag {
   /** Flyten for regelen med svarene som er gitt. */
   flyt?: Flytresultat
   beslutninger?: Readonly<Beslutninger>
+  /** Taket for prøveberegningen; standard {@link MAKS_BEREGNINGER} og {@link MAKS_DOSEVALG}. Bare tester setter det. */
+  provetak?: { beregninger?: number; dosevalg?: number }
 }
 
 export interface Forhandsresultat extends Forhandskontroll {
@@ -147,15 +153,30 @@ interface Forsok {
   dosevalg: number
 }
 
+/** Hvor mye prøveberegningen har igjen, og om den måtte stoppe før alle muligheter var prøvd. */
+interface Budsjett {
+  igjen: number
+  dybde: number
+  /** Sann når taket stoppet søket med muligheter igjen: da er ingenting avgjort. */
+  avbrutt: boolean
+}
+
 /** Beregner, og går gjennom dosevalgene for trinn depth-first til en komplett plan, med et samlet tak på antall beregninger. */
-function proveMedDosevalg(beregn: (s: Planskjema) => Doseplanresultat, s: Planskjema, budsjett: { igjen: number }, dybde = 0): Forsok {
+function proveMedDosevalg(beregn: (s: Planskjema) => Doseplanresultat, s: Planskjema, budsjett: Budsjett, dybde = 0): Forsok {
   budsjett.igjen--
   const resultat = beregn(s)
-  if (resultat.status === 'doseplan' || !resultat.trinnvalg?.length || dybde >= MAKS_DOSEVALG) return { resultat, dosevalg: dybde }
+  if (resultat.status === 'doseplan' || !resultat.trinnvalg?.length) return { resultat, dosevalg: dybde }
+  if (dybde >= budsjett.dybde) {
+    budsjett.avbrutt = true
+    return { resultat, dosevalg: dybde }
+  }
   const t = resultat.trinnvalg.find((x) => !x.mellomtrinn) ?? resultat.trinnvalg[0]!
   let forste: Forsok | undefined
   for (const d of t.doser) {
-    if (budsjett.igjen <= 0) break
+    if (budsjett.igjen <= 0) {
+      budsjett.avbrutt = true
+      break
+    }
     const f = proveMedDosevalg(beregn, medTrinnvalg(s, t, d.mg), budsjett, dybde + 1)
     if (f.resultat.status === 'doseplan') return f
     forste ??= f
@@ -174,7 +195,7 @@ const GJENSTAENDE: readonly string[] = [...VALG_TRENGS, 'unntak_ukjent', 'sporsm
 /** Prøveberegningen for én regel: om en komplett plan kan lages, med hvilke former, og ellers grunnene. */
 function prove(r: Regel, g: Forhandsgrunnlag & { skjema: Planskjema; utvalg: Legemiddelutvalg; valg: Verktoyvalg }, grunnskjema: Planskjema = g.flyt ? medFlytfelt(g.skjema, g.flyt.felt) : g.skjema) {
   const beregn = (s: Planskjema) => beregnPlan(r, g.valg, s, g.utvalg, g.naa, g.regelsett ?? REGELSETT)
-  const budsjett = { igjen: MAKS_BEREGNINGER }
+  const budsjett: Budsjett = { igjen: g.provetak?.beregninger ?? MAKS_BEREGNINGER, dybde: g.provetak?.dosevalg ?? MAKS_DOSEVALG, avbrutt: false }
   const alternativer = formvalgFor(r, g.valg, { ...grunnskjema, formvalg: {} }, g.utvalg, g.naa)
   // Formene som prøves per forløp: valget som er gjort først, så de andre.
   const formsett: Record<string, { klasse?: string; legemiddelform?: string }>[] = [{}]
@@ -191,7 +212,10 @@ function prove(r: Regel, g: Forhandsgrunnlag & { skjema: Planskjema; utvalg: Leg
     for (const svar of svarkandidater(r, grunnskjema.svar)) {
       for (const formvalg of formsett) {
         for (const f of fritak) {
-          if (budsjett.igjen <= 0) break
+          if (budsjett.igjen <= 0) {
+            budsjett.avbrutt = true
+            break
+          }
           if (lykkes.some((x) => kanonisk(x.formvalg) === kanonisk(formvalg) && (x.fritak || !f))) continue
           const s = proveskjema(r, { ...grunnskjema, formvalg: { ...grunnskjema.formvalg, ...formvalg }, godkjenningsfritak: f }, svar, maldose)
           const forsok = proveMedDosevalg(beregn, s, budsjett)
@@ -201,7 +225,7 @@ function prove(r: Regel, g: Forhandsgrunnlag & { skjema: Planskjema; utvalg: Leg
       }
     }
   }
-  return { lykkes, forste, alternativer, grunnskjema }
+  return { lykkes, forste, alternativer, grunnskjema, avbrutt: budsjett.avbrutt }
 }
 
 /**
@@ -267,6 +291,7 @@ export function forhandskontroll(g: Forhandsgrunnlag): Forhandsresultat {
     sperrer: g.sperrer.map((s) => s.id),
     b: g.beslutninger ?? BESLUTNINGER,
     gjenstarFlyt,
+    tak: g.provetak ?? null,
   })
   const funnet = lagret.get(nokkel)
   if (funnet) return funnet
@@ -279,11 +304,14 @@ export function forhandskontroll(g: Forhandsgrunnlag): Forhandsresultat {
   let dosevalg: number | undefined
   let ekstra = 0
   let feilet: Stoppforklaring[] = []
+  let ufullstendig = false
   for (const r of regler) {
     const grunnlag = { ...g, skjema: g.skjema!, utvalg: g.utvalg, valg: g.valg }
     const p = prove(r, grunnlag)
     if (p.lykkes.length === 0) {
-      if (feilet.length === 0 && p.forste)
+      // Taket stoppet søket før alle muligheter var prøvd: det er ikke vist at planen er umulig.
+      if (p.avbrutt) ufullstendig = true
+      else if (feilet.length === 0 && p.forste)
         feilet = [...arsaker(r, grunnlag, p.grunnskjema), ...stoppforklaringer(p.forste, r, g.flyt?.oppsett).filter((f) => !GJENSTAENDE.includes(f.kode as Stoppkodenavn))]
       continue
     }
@@ -334,7 +362,9 @@ export function forhandskontroll(g: Forhandsgrunnlag): Forhandsresultat {
   const ut: Forhandsresultat =
     gode.length > 0
       ? { utfall: 'kan_lages_hvis', grunner, gjenstar: gjenstarFlyt + ekstra, regler: gode, ...(dosevalg && { dosevalg }), ...(former && { former }), ...(formvalg && { formvalg }) }
-      : kanIkke(feilet.length > 0 ? feilet : [forklaring('ikke_komplett', `Verktøyet kan ikke lage en komplett plan for dette tilfellet. ${INDIVIDUELT}`)])
+      : ufullstendig
+        ? { ...ukjent(regler, gjenstarFlyt), grunner: [forklaring('ikke_avklart', IKKE_AVKLART, { losning: 'i_verktoyet' })] }
+        : kanIkke(feilet.length > 0 ? feilet : [forklaring('ikke_komplett', `Verktøyet kan ikke lage en komplett plan for dette tilfellet. ${INDIVIDUELT}`)])
   if (lagret.size > 200) lagret.delete(lagret.keys().next().value!)
   lagret.set(nokkel, ut)
   return ut
