@@ -48,6 +48,13 @@ export interface Planskjema {
    */
   trinnvalg: Trinnvalgsvar[]
   /**
+   * Svarene i den nye spørsmålsflyten (`src/verktoy/flyt/`): spørsmålets id →
+   * verdien. Flyten avbilder dem til `svar`, `pasientforhold` og `bekreftet`
+   * (`medFlytfelt`); motoren leser bare de tre. Mangler i skjemaer lagret
+   * før flyten fantes.
+   */
+  flytsvar?: Record<string, string>
+  /**
    * Valgene skjemaet er fylt ut for ({@link valgidentitet}). Skifter
    * virkestoffet eller formuleringen, begynner skjemaet på nytt, så ingen dose,
    * bekreftelse eller svar på et unntak følger med til andre valg.
@@ -68,6 +75,7 @@ export const TOMT_SKJEMA: Planskjema = {
   godkjenningsfritak: false,
   justert: {},
   trinnvalg: [],
+  flytsvar: {},
   gjelder: '',
 }
 
