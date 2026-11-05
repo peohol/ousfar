@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.125.13',
+    versjon: '1.126.1',
     dato: '2026-11-05',
     sammendrag: 'De fire kliniske verktøyene har fått én enkel arbeidsflyt i fire steg, og planen vises som en tidslinje',
     typer: ['Funksjonalitet', 'Design / layout'],
@@ -27,6 +27,20 @@ export const ENDRINGSLOGG: Endring[] = [
       'Når bare én legemiddelform kan gi en komplett plan, velger verktøyet den og sier det ved valget; den kan endres.',
       'Planen vises som en tidslinje dag for dag, og «Kopier planen» kopierer hele planen. Datoen, justeringene og valgte doser per trinn står under «Tilpass planen», og kildene og versjonen under «Kilder og grunnlag».',
       'Svarene velges med tastene 1, 2 og 3 og piltastene, og skjemaet tas vare på gjennom en oppdatering av appen.',
+    ],
+  },
+  {
+    versjon: '1.126.0',
+    dato: '2026-11-05',
+    sammendrag: 'THC-syre: beskjed når en høyere sikkerhetsmargin gir en mildere konklusjon',
+    typer: ['Fag', 'Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['fortolkning/ircak'],
+    endrerFortolkning: true,
+    punkter: [
+      'Fortolkningen av THC-syre prøver nå alle sikkerhetsmarginene som er høyere enn den du har valgt. Gir en av dem en mildere konklusjon, for eksempel «Kan ikke fastslås» i stedet for «Nytt inntak», står det et tydelig banner over kommentaren.',
+      'Banneret viser hver mildere konklusjon og hvilken margin som gir den, med en knapp for å bruke den marginen. Gir to høyere marginer hver sin konklusjon, vises begge.',
+      'At en lavere margin ville gitt en strengere konklusjon, vises aldri. Kommentaren endres ikke før du selv bytter margin.',
     ],
   },
   {

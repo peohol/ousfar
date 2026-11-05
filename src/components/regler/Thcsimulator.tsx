@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { fortolkThc, tomThcInndata, type ThcModell } from '../../domain/thcMotor'
+import { fortolkThc, mildereVedHoyereMargin, tomThcInndata, type ThcModell } from '../../domain/thcMotor'
 import { THC_TEKSTBOLKER } from '../../domain/thcTekster'
 import { Button } from '../Button'
 import { ThcKommentar, ThcKurvebilde } from '../ThcUtfall'
@@ -15,6 +15,9 @@ export function Thcsimulator({ modell }: { modell: ThcModell }) {
   const { regler } = modell
   const [inndata, setInndata] = useState(() => tomThcInndata(regler))
   const resultat = useMemo(() => fortolkThc(inndata, modell), [inndata, modell])
+  const mildere = useMemo(() => mildereVedHoyereMargin(inndata, modell, resultat), [inndata, modell, resultat])
+  const sett = <K extends keyof typeof inndata>(felt: K, verdi: (typeof inndata)[K]) =>
+    setInndata((forrige) => ({ ...forrige, [felt]: verdi }))
 
   return (
     <Detaljkort
@@ -32,7 +35,7 @@ export function Thcsimulator({ modell }: { modell: ThcModell }) {
       <ThcSkjema
         inndata={inndata}
         regler={regler}
-        onEndre={(felt, verdi) => setInndata((forrige) => ({ ...forrige, [felt]: verdi }))}
+        onEndre={sett}
       />
       <div className="simulator__resultat">
         {resultat.type === 'kommentar' && (
@@ -43,7 +46,12 @@ export function Thcsimulator({ modell }: { modell: ThcModell }) {
         <ThcKommentar
           resultat={resultat}
           regler={regler}
-          onIngenTidligere={() => setInndata((forrige) => ({ ...forrige, ingenTidligere: true }))}
+          onIngenTidligere={() => sett('ingenTidligere', true)}
+          marginsjekk={{
+            valgt: inndata.sikkerhetsmargin,
+            mildere,
+            onVelg: (margin) => sett('sikkerhetsmargin', margin),
+          }}
         />
         <ThcKurvebilde resultat={resultat} regler={regler} />
       </div>

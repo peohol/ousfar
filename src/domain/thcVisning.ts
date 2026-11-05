@@ -1,6 +1,18 @@
-import { sammenlignMedForrige, type ThcForventet, type ThcKonklusjon } from './thcMotor'
+import {
+  sammenlignMedForrige,
+  type ThcForventet,
+  type ThcKonklusjon,
+  type ThcSamletVurdering,
+} from './thcMotor'
 import { INGEN_SIKKERHETSMARGIN, KURVEFARGE, type ThcKonsentrasjonsniva, type ThcRegelsett } from './thcRegelsett'
-import { kommentardeler, settSammen, THC_TEKSTBOLKER, type ThcKommentarnokkel, type ThcTekster } from './thcTekster'
+import {
+  kommentardeler,
+  settSammen,
+  THC_SITUASJONSINFO,
+  THC_TEKSTBOLKER,
+  type ThcKommentarnokkel,
+  type ThcTekster,
+} from './thcTekster'
 import { formaterIrcak, ordEndring } from './thcTall'
 
 /**
@@ -27,6 +39,25 @@ export function marginvalg(margin: number): string {
   return margin === INGEN_SIKKERHETSMARGIN
     ? `${marginmerke(margin)} (${somProsent(margin)}\u00a0%)`
     : marginmerke(margin)
+}
+
+/** «Med 90 % sikkerhetsmargin», eller «Uten sikkerhetsmargin» for marginen uten korreksjon. */
+export function medMargin(margin: number): string {
+  return margin === INGEN_SIKKERHETSMARGIN ? 'Uten sikkerhetsmargin' : `Med ${marginmerke(margin)} sikkerhetsmargin`
+}
+
+/** Marginene som en liste: «99 %», «99 % eller 99,9 %», «95 %, 99 % eller 99,9 %». */
+export function marginliste(marginer: readonly number[]): string {
+  const merker = marginer.map(marginmerke)
+  return merker.length <= 1 ? (merker[0] ?? '') : `${merker.slice(0, -1).join(', ')} eller ${merker.at(-1)}`
+}
+
+/**
+ * Navnet på en konklusjon slik modulen viser den: situasjonens tittel, og for
+ * den samlede vurderingen nytt inntak etter den tidligere prøven den fant.
+ */
+export function konklusjonsnavn(konklusjon: ThcKonklusjon, samlet: ThcSamletVurdering | null): string {
+  return samlet ? `Nytt inntak etter tidligere prøve ${samlet.dato}` : THC_SITUASJONSINFO[konklusjon].tittel
 }
 
 /** «en nedgang på 74 %», «en økning på 5 %» eller «ingen endring». */

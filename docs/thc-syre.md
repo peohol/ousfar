@@ -98,6 +98,20 @@ sier at ingen av de tidligere prøvene ga «nytt inntak»
 sammenligningen med forrige prøve. En tidligere prøve må være tatt før
 forrige prøve.
 
+**Mildere konklusjon med høyere margin.** Peders bestilling 05.11.2026.
+`mildereVedHoyereMargin` fortolker de samme inndataene med hver margin i
+regelsettet som er høyere enn den valgte, og gir hver konklusjon som er
+mildere enn den valgte marginen gir, med marginene som gir den. Strengheten
+er, fra mildest: «ikke nødvendigvis nytt», «kan ikke fastslås», nytt inntak
+etter en enda tidligere prøve (samlet vurdering; jo eldre prøve, desto
+mildere, siden inntaket da kan ha skjedd før forrige prøve) og nytt inntak
+etter forrige prøve. Modulen og simulatoren viser et banner øverst i
+kommentaren med hvert utfall og en knapp «Bruk {margin} sikkerhetsmargin»
+for den laveste marginen som gir det. Lavere marginer prøves aldri, og
+banneret står ikke uten en vurdering mot forrige prøve (ingen tidligere
+prøve, kort tid, IRCAK 0 i forrige prøve). Kommentaren endres bare når
+brukeren selv bytter margin.
+
 ## Regler og tekster er adskilt
 
 Reglene avgjør konklusjonen. Tekstene er ordlyden kommentaren bygges av. De er
