@@ -378,7 +378,7 @@ export interface Vurderingspunkt {
 /** Når et forløp starter. */
 export type Forlopsstart =
   | { type: 'dag'; dag: Dag }
-  /** Sekvensielt: når forløpet `forlop` er avsluttet, etter minst `utvasking` dager uten legemiddel. */
+  /** Sekvensielt: når forløpet `forlop` er avsluttet, etter minst `utvasking` dager uten legemiddel; 0 er en direkte overgang dagen etter siste dose. */
   | { type: 'etter_utvasking'; forlop: string; utvasking: Parameter }
 
 /**
@@ -788,27 +788,29 @@ export const FELTENHET: Record<string, Enhet> = {
   fra_hoyst_mg: 'mg',
 }
 
-const feltnavn = (sti: string) =>
-  sti
-    .replace(/\[\d+\]/g, '')
-    .split('.')
-    .at(-1) ?? ''
+/** Parameterfelt som kan være 0: utvasking 0 dager er en direkte overgang dagen etter siste dose. */
+const KAN_VAERE_NULL: ReadonlySet<string> = new Set(['utvasking'])
+
+const feltnavn = (sti: string) => sti.replace(/\[\d+\]/g, '').split('.').at(-1) ?? ''
 
 /**
  * Hva som er galt med en parameter på stien `sti`, eller `null` når den er
  * gyldig (en manglende verdi er ikke ugyldig, men må avklares). Enheten må
  * være den feltet krever (`FELTENHET`); doser og varigheter er positive og
  * endelige, prosenter over 0 og høyst 100, og dager, måneder og trinn hele
- * tall.
+ * tall. Unntaket er feltene i `KAN_VAERE_NULL`: utvasking 0 dager er en
+ * direkte overgang, der det nye legemidlet startes dagen etter siste dose av
+ * det gamle (K2).
  */
 export function parameterfeil(p: Parameter, sti: string): string | null {
   const navn = feltnavn(sti)
+  const nullTillatt = KAN_VAERE_NULL.has(navn)
   const forventet = FELTENHET[navn]
   if (!forventet) return `feltet ${navn || '(uten navn)'} er ikke en parameter i regelmodellen`
   if (p.enhet !== forventet) return `enheten er ${p.enhet}, men ${navn} skal være i ${forventet}`
   const feil = (v: number): string | null => {
     if (typeof v !== 'number' || !Number.isFinite(v)) return 'er ikke et endelig tall'
-    if (v <= 0) return 'må være over 0'
+    if (nullTillatt ? v < 0 : v <= 0) return nullTillatt ? 'kan ikke være under 0' : 'må være over 0'
     if (p.enhet === 'prosent' && v > 100) return 'kan ikke være over 100 %'
     if (heltall.includes(p.enhet) && !Number.isInteger(v)) return 'må være et helt tall'
     return null
