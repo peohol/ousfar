@@ -31,7 +31,7 @@ Hver dose i en overgang har et *stadium*: første form alene, begge formene samt
 
 ## 3. Hvilke godkjente planer prinsippet ville endret
 
-Kontrollert 04.11.2026 mot alle regler som er klinisk godkjent på main:
+Kontrollert 04.11.2026 mot alle regler som da var klinisk godkjent på main:
 
 - kryssnedtrapping sertralin → mirtazapin v10
 - Abilify Maintena v3
@@ -44,6 +44,8 @@ Kontrollert 04.11.2026 mot alle regler som er klinisk godkjent på main:
 - litium + lamotrigin v2
 
 **Praktisk dosering alene endrer ingen godkjent plan.** Hver regel fikk `praktisk` med 5 dråper og en simulert godkjenning, og alle 158 pilot- og tilleggskasus ble kjørt på nytt. Ingen plan, ingen stopp og ingen tilbudte trinnvalg ble annerledes. Det eneste avviket var teksten om godkjenning i én kasus, som kommer av selve simuleringen. Grunnen er at ingen godkjent regel blander dråper og tabletter i dag, så det finnes ingen dose der prinsippet kan velge noe annet.
+
+Kontrollen ble gjentatt 05.11.2026 etter at K2, K3, QA og D var på main, mot alle 14 godkjente regler, også de nye K2-reglene (bytte fra escitalopram eller citalopram til sertralin) og K3-reglene. Motoren brukte da en preferanse på 5 dråper i hvert forløp, og hele S3-øyeblikksbildet i `verktoyflyt-invarianter.test.ts` ga nøyaktig samme utfall.
 
 **Forskjellen kommer først med en formovergang.** Dette er grunnlaget for escitalopram v14 (B2, `docs/verktøy-b2-escitalopram-kontrollgrunnlag.md`), som bruker overgangen uten `samtidig`: tabletter så lenge hele tabletter gir dosen, så dråper. Doseplanmotoren gir disse planene med escitalopram v13 utvidet med overgangen tablett → dråper og en preferanse på 5 dråper (eksemplene er testet i `src/__tests__/verktoypraktisk.test.ts`). De er ikke klinisk kontrollert.
 
@@ -96,13 +98,6 @@ Stoppene fra regelmotoren (`beregn`) er fri tekst. Unntak, bekreftelser og spør
 
 ## 6. Bevis for at ingen godkjent plan endres (S3)
 
-`src/__tests__/__snapshots__/verktoy-s3-planer.json` ble laget på main før B1 og lagt inn som egen commit. Den inneholder utfallet av:
-
-- alle pilotkasus;
-- alle tilleggskasus;
-- alle kasus i kontrollforslagene;
-- omfangsplanene.
-
-For hver kasus står planlinjene eller stoppgrunnene og dosene som tilbys i trinnvalg. Testen i `verktoypraktisk.test.ts` krever at motoren gir nøyaktig det samme etter B1. Skal fasiten endres, må det være en tilsiktet klinisk endring med egen kontroll.
+S3 prøves i `src/__tests__/verktoyflyt-invarianter.test.ts` (tråd D), mot et øyeblikksbilde laget på main før B1. Det dekker omfangskasusene for alle godkjente regler, P11-matrisen, QA-katalogen, K4-kasusene og kontrollkasusene med hver vei gjennom det kliniske omfanget. Testen gir nøyaktig samme utfall med B1. Skal øyeblikksbildet endres, må det være en tilsiktet klinisk endring med egen kontroll.
 
 Regelmodellversjonen (12) og doseplanmotorversjonen (10) er ikke økt. Feltene er valgfrie og endrer ingen plan, og en økning ville endret genererte kontrollgrunnlag som andre tråder eier. Økningen kan gjøres sammen med den første regelen som tar feltene i bruk (B2) hvis ChatGPT ønsker det.

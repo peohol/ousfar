@@ -13,7 +13,7 @@ import type { Endring } from '../domain/versjon'
 export const ENDRINGSLOGG: Endring[] = [
   {
     versjon: '1.125.12',
-    dato: '2026-11-04',
+    dato: '2026-11-05',
     sammendrag: 'Forslag til nedtrapping av escitalopram fra tabletter, med tabletter så lenge de gir dosen og så dråper, sendt til faglig kontroll',
     typer: ['Fag'],
     omfang: 'Minimalt omfang',
@@ -27,7 +27,7 @@ export const ENDRINGSLOGG: Endring[] = [
   },
   {
     versjon: '1.125.10',
-    dato: '2026-11-04',
+    dato: '2026-11-05',
     sammendrag: 'De kliniske verktøyene kan nå beskrive overgang fra tabletter til dråper og foretrekke doser som er enkle å gi, men ingen regel bruker det ennå',
     typer: ['Funksjonalitet'],
     omfang: 'Minimalt omfang',
@@ -38,6 +38,60 @@ export const ENDRINGSLOGG: Endring[] = [
       'En regel kan nå tillate en dokumentert overgang fra én legemiddelform til en annen i samme plan, for eksempel tabletter mens de gir en enkel dose og så dråper, og kan be verktøyet foretrekke doser med få dråper og få delte tabletter. Hver regel som tar dette i bruk, må kontrolleres og godkjennes på nytt.',
       'Hver grunn til at verktøyet stopper, har fått en fast kode i tillegg til teksten, så de nye skjermbildene kan forklare stoppet og vise hva som skal gjøres. Tekstene er de samme som før.',
     ],
+  },
+  {
+    versjon: '1.125.9',
+    dato: '2026-11-05',
+    sammendrag: 'Måling av hvor tungvinte verktøyene er i dag, og nye kontroller av sikkerheten før de forenkles',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy'],
+    utenVarsel: true,
+    punkter: [
+      'Ingen endring i appen. Det er målt hvor mange valg, svar, avkrysninger og beregninger som trengs i dag før verktøyene gir en plan eller sier at de ikke kan, på mobil og stor skjerm, som utgangspunkt for forenklingen.',
+      'Nye automatiske kontroller passer på at forenklingen ikke svekker sikkerheten: de godkjente reglene og planene deres er uendret, ingen plan vises uten å nå sluttmålet, et ubesvart spørsmål gir aldri en plan, nødstopp og FEST-kontroll virker som før, og kopien har hele planen.',
+    ],
+  },
+  {
+    versjon: '1.125.8',
+    dato: '2026-11-05',
+    sammendrag: 'Plan for å gjøre de kliniske verktøyene vesentlig enklere å bruke',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy'],
+    utenVarsel: true,
+    punkter: [
+      'Gjelder bare administratorene. Ingen regler, doser, godkjenninger, sperrer eller skjermbilder er endret ennå.',
+      'Planen beskriver en felles, kortere arbeidsflyt for alle fire verktøyene: færre og tydeligere spørsmål med svarene ja, nei og ukjent, tidlig beskjed når en komplett plan ikke kan lages, automatisk valg og kombinasjon av tabletter og dråper der det er dokumentert, og planen vist som en tidslinje som er lett å kopiere.',
+    ],
+  },
+  {
+    versjon: '1.125.7',
+    dato: '2026-11-05',
+    sammendrag: 'Uavhengig kontroll av verktøyenes vanlige brukerforløp',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Vanlige situasjoner i de fire verktøyene prøves nå automatisk, både i testene og i den publiserte appen, slik at det vises hvilke forløp som gir en komplett plan, og hvilke som stopper med «Komplett plan ikke tilgjengelig», fagtekst eller ingen plan. Det kontrolleres også at ingen delplan vises som doseplan, og at de godkjente reglene ikke endres i det stille.',
+    ],
+    utenVarsel: true,
+  },
+  {
+    versjon: '1.125.6',
+    dato: '2026-11-05',
+    sammendrag: 'Bytter mellom antidepressiva: to bytter til sertralin',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy/bytte-antidepressiv'],
+    punkter: [
+      'Gjelder bare administratorene. Fem regler for hele bytter er lagt inn: fra sertralin, escitalopram eller citalopram til mirtazapin, og fra escitalopram eller citalopram til sertralin, med norske tabletter og en vedlikeholdsdose forskriveren velger.',
+      'Fra escitalopram eller citalopram til sertralin trappes det gamle ned til laveste tablettdose, og sertralin startes dagen etter siste dose, så pasienten aldri er uten et SSRI. Seponeringssymptomer kan likevel komme, så planen har en vurdering en uke etter overgangen og en vurdering av effekt, toleranse og seponeringssymptomer før en eventuell økning til 100 mg. Disse to planene går helt til vedlikeholdsdosen.',
+      'Byttereglene gjelder bare de første åtte ukene av sammenhengende bruk. Ved lengre bruk gir de ingen plan, og byttet planlegges individuelt. «Trappe ned» er ikke endret.',
+      'Ved bytte til mirtazapin er det ikke avgjort faglig hvordan det gamle legemidlet skal seponeres. Til det er avgjort, gir de reglene ingen plan, men sier «Komplett plan ikke tilgjengelig» og hvorfor.',
+      'Reglene bygger på de norske preparatomtalene og publiserte råd om bytte av antidepressiva, ikke på Psychiatrienet. En uavhengig kontrollør har godkjent de to byttene til sertralin, bare for voksne 18–65 år med depresjon på escitalopram 10 eller 20 mg eller citalopram 20 eller 40 mg, uten tidligere seponeringsplager eller kompliserende interaksjoner.',
+      'Det godkjente startforløpet fra sertralin til mirtazapin er uendret, men vises ikke, fordi det ikke fører til et sluttmål.',
+    ],
+    utenVarsel: true,
   },
   {
     versjon: '1.125.5',
