@@ -53,6 +53,9 @@ describe('hva de godkjente reglene bygger på', () => {
       // Godkjent av kontrolløren 04.11.2026 i K3 (`ANTIPSYKOTIKAVEDTAK`).
       'antipsykotikabytte-olanzapin-aripiprazol v8',
       'antipsykotikabytte-risperidon-aripiprazol v8',
+      // Godkjent av kontrolløren 05.11.2026 i K2 (`K2VEDTAK`).
+      'bytte-citalopram-sertralin v2',
+      'bytte-escitalopram-sertralin v2',
       'depot-aripiprazol-maintena v3',
       'depot-paliperidon-xeplion v3',
       'depot-risperidon-xeplion v8',
@@ -61,6 +64,8 @@ describe('hva de godkjente reglene bygger på', () => {
       'seponering-bupropion v5',
       // Godkjent av kontrolløren 04.11.2026 i K1 (`regler/k1.ts`).
       'seponering-escitalopram v13',
+      // Godkjent av kontrolløren 05.11.2026 i B2 (`regler/k1.ts`); erstatter versjon 13 i appen.
+      'seponering-escitalopram-tabletter-og-draper v14',
       'seponering-vortioksetin v12',
       'tillegg-litium-lamotrigin v2',
       'tillegg-valproat-lamotrigin v2',
@@ -76,8 +81,8 @@ describe('hva de godkjente reglene bygger på', () => {
     expect(regel('seponering-agomelatin').beregning).toBe(false)
     // Tekstreglene bygger ingen plan av preparatene, så FEST kontrolleres bare for de beregnbare.
     // Tilleggsreglene (K4) tar med det eksisterende legemidlet, også når planen bare gjentar dosen.
-    // Antipsykotikabyttene (K3) bruker også olanzapin og risperidon fra FEST.
-    expect(virkestofferForFest(REGLER)).toEqual(['aripiprazol', 'escitalopram', 'lamotrigin', 'litium', 'mirtazapin', 'olanzapin', 'paliperidon', 'risperidon', 'sertralin', 'valproat', 'vortioksetin'])
+    // Antipsykotikabyttene (K3) bruker også olanzapin og risperidon fra FEST, og sertralinbyttene (K2) citalopram.
+    expect(virkestofferForFest(REGLER)).toEqual(['aripiprazol', 'citalopram', 'escitalopram', 'lamotrigin', 'litium', 'mirtazapin', 'olanzapin', 'paliperidon', 'risperidon', 'sertralin', 'valproat', 'vortioksetin'])
     // Escitalopram (K1) bygger også på preparatomtalen for dråpene, så endringer i den fanges opp.
     expect([...regel('seponering-escitalopram').kilder]).toContain('dmp-cipralex-draper')
   })
@@ -171,7 +176,8 @@ describe('kildedokumentene', () => {
     expect(r.funn).toHaveLength(1)
     const f = r.funn[0]!
     expect(f).toMatchObject({ id: 'dokument:keks-2016', kilde: 'dokument', art: 'endret', niva: 'krever_vurdering', objekt: 'keks-2016' })
-    expect(f.berorte.map((b) => `${b.regel} v${b.versjon}`)).toEqual(['kryssnedtrapping-sertralin-mirtazapin v10'])
+    // Sertralinbyttene i K2 bygger også på Keks 2016.
+    expect(f.berorte.map((b) => `${b.regel} v${b.versjon}`)).toEqual(['kryssnedtrapping-sertralin-mirtazapin v10', 'bytte-escitalopram-sertralin v2', 'bytte-citalopram-sertralin v2'])
     expect(f.berorte[0]!.fingeravtrykk).toBe(fingeravtrykk(REGLER.find((g) => g.regel.id === 'kryssnedtrapping-sertralin-mirtazapin')!.regel))
     expect(f.detaljer.join(' ')).toContain(sha(new TextEncoder().encode(ny)))
     expect(f.detaljer.join(' ')).toContain(sha(synligTekst(ny)))
@@ -299,8 +305,10 @@ describe('preparatene i FEST', () => {
     etter.utvalg.merkevarer = etter.utvalg.merkevarer.filter((m) => m.id !== id)
     const funn = festfunn(AKSEPT, etter, SERTRALIN, REGLER, K)
     expect(funn).toMatchObject([{ id: `fest:sertralin:${id}`, art: 'fjernet', niva: 'krever_vurdering' }])
-    expect(funn[0]!.berorte.map((b) => `${b.regel} v${b.versjon}`)).toEqual(['kryssnedtrapping-sertralin-mirtazapin v10'])
-    expect(funn[0]!.berorte[0]!.hvorfor).toMatch(/forløpet «fra»/)
+    // Sertralin 50 mg er også startdosen i sertralinbyttene i K2 (forløpet «til»).
+    expect(funn[0]!.berorte.map((b) => `${b.regel} v${b.versjon}`)).toEqual(['bytte-citalopram-sertralin v2', 'bytte-escitalopram-sertralin v2', 'kryssnedtrapping-sertralin-mirtazapin v10'])
+    expect(funn[0]!.berorte[0]!.hvorfor).toMatch(/forløpet «til»/)
+    expect(funn[0]!.berorte[2]!.hvorfor).toMatch(/forløpet «fra»/)
   })
 
   it('krever vurdering når styrke, form eller delbarhet endres, men ikke når bare navnet endres', () => {

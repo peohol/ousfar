@@ -10,7 +10,7 @@ import { lesKartdata } from '../verktoy/kartdata'
 import { ETTER_RETTELSENE } from '../verktoy/kontrollsett'
 import { VERKTOY, virkestoffvalg } from '../verktoy/register'
 import { AKSEPTSTOFFER, beregnAksept, besvart, FEST_AKSEPTTEST, formerFor, reduksjoner, vanligDose, type Festuttrekk } from '../verktoy/regler/aksepttest'
-import { erKliniskGodkjent, fingeravtrykk, kanonisk } from '../verktoy/regler/godkjenning'
+import { erErstattet, erKliniskGodkjent, fingeravtrykk, kanonisk } from '../verktoy/regler/godkjenning'
 import { PILOTKASUS } from '../verktoy/regler/pilotmatrise'
 import {
   DEKNINGSUTFALL,
@@ -64,14 +64,17 @@ describe('Kombinasjonene', () => {
     }
   })
 
-  it('gir beregning bare for kombinasjonene de ti godkjente reglene med beregning gjelder', () => {
+  it('gir beregning bare for kombinasjonene de tolv godkjente reglene med beregning gjelder', () => {
     const beregning = [...ALLE].flatMap(([id, ks]) => ks.filter((k) => k.utfall === 'beregning').map((k) => `${id}: ${k.valg.fra.nokkel}/${k.valg.fra.formulering}${k.valg.til ? ` → ${k.valg.til.nokkel}/${k.valg.til.formulering}` : ''}`))
     expect(beregning.sort()).toEqual(
       [
         'trappe-ned-antidepressiv: vortioksetin/standard',
-        // Escitalopram versjon 13 fra K1, godkjent 04.11.2026.
+        // Escitalopram versjon 14 med tabletter og dråper fra B2, godkjent 05.11.2026; den erstatter versjon 13 fra K1.
         'trappe-ned-antidepressiv: escitalopram/standard',
         'bytte-antidepressiv: sertralin/standard → mirtazapin/standard',
+        // De to byttene til sertralin fra K2, godkjent 05.11.2026 (`K2VEDTAK`).
+        'bytte-antidepressiv: escitalopram/standard → sertralin/standard',
+        'bytte-antidepressiv: citalopram/standard → sertralin/standard',
         'bytte-antipsykotikum: aripiprazol/standard → aripiprazol/LA',
         'bytte-antipsykotikum: paliperidon/standard → paliperidon/ER',
         // De tre antipsykotikabyttene fra K3, godkjent 04.11.2026 (`ANTIPSYKOTIKAVEDTAK`).
@@ -83,13 +86,14 @@ describe('Kombinasjonene', () => {
       ].sort(),
     )
     expect(new Set([...ALLE.values()].flatMap((ks) => ks.filter((k) => k.utfall === 'beregning').flatMap((k) => k.regler)))).toEqual(
-      new Set(REGELSETT.regler.filter((r) => erKliniskGodkjent(r) && r.beregnbarhet !== 'bare_tekstlig')),
+      // En godkjent regel som er erstattet (escitalopram versjon 13), gir ingen beregning.
+      new Set(REGELSETT.regler.filter((r) => erKliniskGodkjent(r) && r.beregnbarhet !== 'bare_tekstlig' && !erErstattet(r, REGELSETT.regler))),
     )
   })
 
   it('skiller kombinasjoner uten regel etter om kildetabellen har en anbefaling', () => {
     const ad = verktoy('bytte-antidepressiv')
-    const k = ALLE.get(ad.id)!.find((x) => x.valg.fra.nokkel === 'escitalopram' && x.valg.til?.nokkel === 'sertralin')!
+    const k = ALLE.get(ad.id)!.find((x) => x.valg.fra.nokkel === 'escitalopram' && x.valg.til?.nokkel === 'vortioksetin')!
     expect(k.utfall).toBe(kildeHarAnbefaling(KART, ad, k.valg) ? 'kilde_har_anbefaling' : 'kilde_uten_anbefaling')
     const ap = ALLE.get('bytte-antipsykotikum')!
     expect(ap.some((x) => x.utfall === 'kilde_uten_anbefaling')).toBe(true)

@@ -92,7 +92,7 @@ describe('nødstoppen i administrasjonsmenyen', () => {
     await screen.findByText('Ingen sperrer. Verktøyene er tilgjengelige.')
     await user.click(screen.getByRole('radio', { name: 'Én klinisk godkjent regel' }))
     const regler = within(screen.getByRole('combobox', { name: 'Regelen' })).getAllByRole('option').slice(1).map((o) => o.getAttribute('value'))
-    expect(regler.sort()).toEqual(['antipsykotikabytte-olanzapin-aripiprazol', 'antipsykotikabytte-risperidon-aripiprazol', 'depot-aripiprazol-maintena', 'depot-paliperidon-xeplion', 'depot-risperidon-xeplion', 'kryssnedtrapping-sertralin-mirtazapin', 'seponering-agomelatin', 'seponering-bupropion', 'seponering-escitalopram', 'seponering-vortioksetin', 'tillegg-litium-lamotrigin', 'tillegg-valproat-lamotrigin'])
+    expect(regler.sort()).toEqual(['antipsykotikabytte-olanzapin-aripiprazol', 'antipsykotikabytte-risperidon-aripiprazol', 'bytte-citalopram-sertralin', 'bytte-escitalopram-sertralin', 'depot-aripiprazol-maintena', 'depot-paliperidon-xeplion', 'depot-risperidon-xeplion', 'kryssnedtrapping-sertralin-mirtazapin', 'seponering-agomelatin', 'seponering-bupropion', 'seponering-escitalopram', 'seponering-escitalopram-tabletter-og-draper', 'seponering-vortioksetin', 'tillegg-litium-lamotrigin', 'tillegg-valproat-lamotrigin'])
     await user.click(screen.getByRole('radio', { name: 'Alle verktøyene' }))
     expect(screen.queryByRole('combobox')).toBeNull()
     await user.type(screen.getByRole('textbox', { name: 'Grunn' }), 'Kritisk feil i motoren.')

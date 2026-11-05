@@ -94,8 +94,12 @@ describe('Regelsettene før og etter rettelsen', () => {
 
   it('appen viser ikke lenger til faktumet slik det stod, bare til de rettede faktaene', () => {
     for (const r of REGELSETT.regler) expect(henvisninger(r).some(lik(RETTELSE.fra)), r.id).toBe(false)
-    expect(REGELSETT.regler.filter((r) => henvisninger(r).some(lik(RCPSYCH.langvarig))).map((r) => r.id).sort()).toEqual([...BERORTE].sort())
-    expect(REGELSETT.regler.filter((r) => henvisninger(r).some(lik(RCPSYCH.proporsjonal))).map((r) => r.id).sort()).toEqual([...BERORTE].sort())
+    // De rettede settene viser til de nye faktaene nøyaktig der det gamle stod; senere sett (K2–K4) kan også vise til dem.
+    const rettede = [...PILOTSETT.regler, ...NEDTRAPPINGSSETT.regler]
+    expect(rettede.filter((r) => henvisninger(r).some(lik(RCPSYCH.langvarig))).map((r) => r.id).sort()).toEqual([...BERORTE].sort())
+    expect(rettede.filter((r) => henvisninger(r).some(lik(RCPSYCH.proporsjonal))).map((r) => r.id).sort()).toEqual([...BERORTE].sort())
+    // Kontrollørens to fakta står alltid sammen, så ingen regel gjengir bare den ene delen av kilden.
+    for (const r of REGELSETT.regler) expect(henvisninger(r).some(lik(RCPSYCH.langvarig)), r.id).toBe(henvisninger(r).some(lik(RCPSYCH.proporsjonal)))
   })
 })
 
