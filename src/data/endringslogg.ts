@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.126.6',
+    dato: '2026-11-06',
+    sammendrag: 'De kliniske verktøyene er kontrollert på nytt i appen etter den nye arbeidsflyten',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Gjelder bare administratorene. Ingen regler, doser, godkjenninger, sperrer eller tekster i verktøyene er endret.',
+      'Den uavhengige kontrollen av brukerforløpene er kjørt på nytt i den publiserte appen med arbeidsflyten i fire steg, også nødstoppen og kontrollen av at legemiddeldataene fra FEST er ferske. Resultatet står i kontrollrapportene for verktøyene.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.126.5',
     dato: '2026-11-06',
     sammendrag: 'Fagsidene hentes med langt mindre arbeid for databasen',
