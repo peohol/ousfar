@@ -1,6 +1,6 @@
 {
   "versjon": 1,
-  "oppdatert_kl": "2026-11-06T09:27:01.292Z",
+  "oppdatert_kl": "2026-11-06T10:26:27.652Z",
   "malt_kl": "2026-11-06T09:27:01.292Z",
   "teller": 82,
   "stoffer": {
@@ -3515,17 +3515,11 @@
     "klonazepam": {
       "stoff": "klonazepam",
       "navn": "Klonazepam",
-      "status": "klar",
+      "status": "blokkert",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 425.5,
-        "grunner": [
-          "De novo-kuratering i runden som gjelder.",
-          "Aldri kuratert.",
-          "Ingen kuratering å regne alderen fra.",
-          "9 av 13 redaksjonelle seksjoner er tomme.",
-          "1 av 8 elementer har ingen kilde."
-        ]
+        "poeng": 0,
+        "grunner": []
       },
       "maal": {
         "kl": "2026-11-05T12:31:24.050Z",
@@ -3541,7 +3535,14 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [],
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
+          "kl": "2026-11-06T10:26:27.652Z",
+          "kilde": "system"
+        }
+      ],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
@@ -3641,17 +3642,11 @@
     "kodein": {
       "stoff": "kodein",
       "navn": "Kodein",
-      "status": "klar",
+      "status": "blokkert",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 425.5,
-        "grunner": [
-          "De novo-kuratering i runden som gjelder.",
-          "Aldri kuratert.",
-          "Ingen kuratering å regne alderen fra.",
-          "9 av 13 redaksjonelle seksjoner er tomme.",
-          "1 av 8 elementer har ingen kilde."
-        ]
+        "poeng": 0,
+        "grunner": []
       },
       "maal": {
         "kl": "2026-11-05T12:31:24.050Z",
@@ -3667,7 +3662,14 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [],
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
+          "kl": "2026-11-06T10:26:27.652Z",
+          "kilde": "system"
+        }
+      ],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
@@ -4856,11 +4858,17 @@
     "metylfenidat": {
       "stoff": "metylfenidat",
       "navn": "Metylfenidat",
-      "status": "blokkert",
+      "status": "klar",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 0,
-        "grunner": []
+        "poeng": 426.4,
+        "grunner": [
+          "De novo-kuratering i runden som gjelder.",
+          "Aldri kuratert.",
+          "Ingen kuratering å regne alderen fra.",
+          "9 av 13 redaksjonelle seksjoner er tomme.",
+          "1 av 7 elementer har ingen kilde."
+        ]
       },
       "maal": {
         "kl": "2026-11-05T12:31:24.050Z",
@@ -4876,14 +4884,7 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [
-        {
-          "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, retting); den må avsluttes først.",
-          "kl": "2026-11-06T09:27:01.292Z",
-          "kilde": "system"
-        }
-      ],
+      "blokkeringer": [],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
@@ -5294,17 +5295,11 @@
     "oksykodon": {
       "stoff": "oksykodon",
       "navn": "Oksykodon",
-      "status": "klar",
+      "status": "blokkert",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 425.5,
-        "grunner": [
-          "De novo-kuratering i runden som gjelder.",
-          "Aldri kuratert.",
-          "Ingen kuratering å regne alderen fra.",
-          "9 av 13 redaksjonelle seksjoner er tomme.",
-          "1 av 8 elementer har ingen kilde."
-        ]
+        "poeng": 0,
+        "grunner": []
       },
       "maal": {
         "kl": "2026-11-05T12:31:24.050Z",
@@ -5320,7 +5315,14 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [],
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
+          "kl": "2026-11-06T10:26:27.652Z",
+          "kilde": "system"
+        }
+      ],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
@@ -5336,17 +5338,11 @@
     "olanzapin": {
       "stoff": "olanzapin",
       "navn": "Olanzapin",
-      "status": "klar",
+      "status": "blokkert",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 425.1,
-        "grunner": [
-          "De novo-kuratering i runden som gjelder.",
-          "Aldri kuratert.",
-          "Ingen kuratering å regne alderen fra.",
-          "5 av 13 redaksjonelle seksjoner er tomme.",
-          "22 av 30 elementer har ingen kilde."
-        ]
+        "poeng": 0,
+        "grunner": []
       },
       "maal": {
         "kl": "2026-11-05T12:31:24.050Z",
@@ -5362,7 +5358,14 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [],
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
+          "kl": "2026-11-06T10:26:27.652Z",
+          "kilde": "system"
+        }
+      ],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
@@ -6838,17 +6841,11 @@
     "ziprasidon": {
       "stoff": "ziprasidon",
       "navn": "Ziprasidon",
-      "status": "klar",
+      "status": "blokkert",
       "modus": "de_novo",
       "prioritet": {
-        "poeng": 425.1,
-        "grunner": [
-          "De novo-kuratering i runden som gjelder.",
-          "Aldri kuratert.",
-          "Ingen kuratering å regne alderen fra.",
-          "5 av 13 redaksjonelle seksjoner er tomme.",
-          "22 av 30 elementer har ingen kilde."
-        ]
+        "poeng": 0,
+        "grunner": []
       },
       "maal": {
         "kl": "2026-11-04T16:28:20.146Z",
@@ -6864,7 +6861,14 @@
       "tidligst_kl": null,
       "gjenoppta": null,
       "pr": null,
-      "blokkeringer": [],
+      "blokkeringer": [
+        {
+          "kode": "annen_gren",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
+          "kl": "2026-11-06T10:26:27.652Z",
+          "kilde": "system"
+        }
+      ],
       "sist_kuratert": null,
       "siste_kjoring": null,
       "aktiv": true,
