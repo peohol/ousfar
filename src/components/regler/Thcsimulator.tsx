@@ -48,7 +48,6 @@ export function Thcsimulator({ modell }: { modell: ThcModell }) {
           regler={regler}
           onIngenTidligere={() => sett('ingenTidligere', true)}
           marginsjekk={{
-            valgt: inndata.sikkerhetsmargin,
             mildere,
             onVelg: (margin) => sett('sikkerhetsmargin', margin),
           }}

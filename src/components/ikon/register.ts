@@ -646,6 +646,15 @@ const REGISTER = {
       C(18, 12, 2.5, 'f2', 'accent', 'pop'),
     ],
   },
+  /** Varseltrekanten: noe brukeren bør vurdere, som en mildere konklusjon med høyere sikkerhetsmargin. */
+  advarsel: {
+    vb: 24,
+    ga: 'shake',
+    parts: [
+      P('M10.3 4.2a2 2 0 0 1 3.4 0l7.9 13.6a2 2 0 0 1-1.7 3H4.1a2 2 0 0 1-1.7-3z', 'f1', 'warn'),
+      P('M12 9v4.5M12 17h.01', 'l', 'i-ink'),
+    ],
+  },
   fallback: {
     vb: 48,
     parts: [

@@ -105,9 +105,12 @@ mildere enn den valgte marginen gir, med marginene som gir den. Strengheten
 er, fra mildest: «ikke nødvendigvis nytt», «kan ikke fastslås», nytt inntak
 etter en enda tidligere prøve (samlet vurdering; jo eldre prøve, desto
 mildere, siden inntaket da kan ha skjedd før forrige prøve) og nytt inntak
-etter forrige prøve. Modulen og simulatoren viser et banner øverst i
-kommentaren med hvert utfall og en knapp «Bruk {margin} sikkerhetsmargin»
-for den laveste marginen som gir det. Lavere marginer prøves aldri, og
+etter forrige prøve. Modulen og simulatoren viser et midtstilt banner,
+«Vurder høyere sikkerhetsmargin» med varseltrekant, øverst i kommentaren.
+Under en skillelinje per utfall står «Med {marginer} sikkerhetsmargin endres
+konklusjonen til «…»» og en knapp «Bruk {margin}» for den laveste marginen som
+gir det. Konklusjonen med den valgte marginen gjentas ikke; den står i
+kommentaren rett under. Lavere marginer prøves aldri, og
 banneret står ikke uten en vurdering mot forrige prøve (ingen tidligere
 prøve, kort tid, IRCAK 0 i forrige prøve). Kommentaren endres bare når
 brukeren selv bytter margin.

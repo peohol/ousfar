@@ -25,6 +25,19 @@ export const ENDRINGSLOGG: Endring[] = [
     utenVarsel: true,
   },
   {
+    versjon: '1.126.3',
+    dato: '2026-11-06',
+    sammendrag: 'THC-syre: ryddigere banner om høyere sikkerhetsmargin',
+    typer: ['Design / layout'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['fortolkning/ircak'],
+    punkter: [
+      'Banneret over kommentaren heter nå «Vurder høyere sikkerhetsmargin», med en varseltrekant, og står midt i kommentarkortet.',
+      'Hver mildere konklusjon står for seg under en skillelinje, som «Med 99 % sikkerhetsmargin endres konklusjonen til «kan ikke fastslås»», med knappen «Bruk 99 %» under.',
+      'Setningen om hva konklusjonen blir med marginen du har valgt, er fjernet, siden den står i kommentaren rett under.',
+    ],
+  },
+  {
     versjon: '1.126.2',
     dato: '2026-11-06',
     sammendrag: 'Neste fase for de kliniske verktøyene er planlagt: komplette planer for hele doseområder',

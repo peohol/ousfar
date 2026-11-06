@@ -1,5 +1,7 @@
 # OUSFAR Verktøy – klinisk leveranseplan fra 03.11.2026
 
+> **Oppfølging 06.11.2026:** [Produktrevisjon og utbedringsplan](verktøy-produktrevisjon-2026-11.md) dokumenterer påvist avvik mellom bestilt funksjon, publisert arbeidsflyt og klinisk strategi, samt nye krav til reell brukbarhet og kortfattet visning. Denne kliniske planen beholder de bindende kravene til kilder, eksakte regelgodkjenninger og pasientsikkerhet. **Ikke anse tidligere merge-de UX-PR-er som dokumentasjon på at den opprinnelige bestillingen er oppfylt.** K5-D forblir utsatt til startporten og samlet klinisk/UX-produktkontroll er dokumentert.
+
 **Status:** Ny styrende arbeidsplan, ikke en klinisk godkjenning. **Mål:** brukbare, norske, interaktive psykofarmakaverktøy – ikke mer infrastruktur som mål i seg selv.
 
 Denne planen **overstyrer prioritering og ferdigkriterier** for klinisk funksjon i `docs/verktøy-utviklingsplan.md` (P7–P10) og `docs/verktøy-omlegging-2026-11.md` (VDK), der dokumentene er forskjellige. Historiske beslutninger, gjeldende sikkerhetssperrer og tidligere faglige kontrollutfall beholdes. Planen skal ikke tolkes som tillatelse til å sette ikke-godkjente regler i produksjon.

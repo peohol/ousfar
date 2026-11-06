@@ -138,23 +138,32 @@
 }
 
 /* Banneret over kommentaren når en høyere sikkerhetsmargin gir en mildere
-   konklusjon: overskriften, konklusjonen nå, og hvert mildere utfall med
-   knappen til høyre. */
+   konklusjon: midtstilt i kortet, med overskriften og varseltrekanten øverst
+   og hvert mildere utfall under en skillelinje, med knappen under teksten. */
 .thc-mildere {
   display: flex;
   flex-direction: column;
+  align-self: center;
+  align-items: center;
   gap: var(--rom-3);
+  max-width: 100%;
+  text-align: center;
   white-space: normal;
 }
 
 .thc-mildere__hode {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rom-2);
+  font-size: var(--tekst-lesing);
   font-weight: var(--vekt-halvfet);
+  line-height: var(--linjehoyde-ui);
 }
 
 .thc-mildere__liste {
   display: flex;
   flex-direction: column;
-  gap: var(--rom-3);
+  align-self: stretch;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -162,13 +171,15 @@
 
 .thc-mildere__utfall {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-items: center;
-  gap: var(--rom-3) var(--rom-5);
+  gap: var(--rom-3);
+  padding-block: var(--rom-4);
+  border-top: var(--kant) solid var(--toksisk-kant);
 }
 
-.thc-mildere__utfall > p {
-  flex: 1 1 16rem;
+.thc-mildere__utfall:last-child {
+  padding-bottom: 0;
 }
 
 /* --- Visualiseringen ------------------------------------------------------ */
