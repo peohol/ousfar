@@ -19,7 +19,7 @@
 import { writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { FEST_FORELDET_ETTER_TIMER } from '../../legemiddeldata/referanser'
-import { flytoppsett, klassifiser } from '../../verktoy/flyt'
+import { flytoppsett, reglerMedPlan } from '../../verktoy/flyt'
 import { jaVed, type Betingelsestype } from '../../verktoy/flyt/sporsmal'
 import { FORMULERINGSNAVN, VALGTEKSTER, virkestoffvalg } from '../../verktoy/register'
 import { BRUKERFORLOP, kjorForlop, KLASSENAVN, lesUttrekkene, tidslinjeavvik, type Brukerforlop, type Forlopsresultat, type Tidslinje } from './brukerforlop'
@@ -363,32 +363,41 @@ function sammenlign(r: Forlopsresultat, a: Appresultat): string[] {
     ]
   }
   if (r.klasse === 'fagtekst') return /Beregning er ikke tilgjengelig/.test(a.tekst) ? ['appen sier at beregning ikke er tilgjengelig, men viser ikke fagteksten'] : []
-  return r.vist.length === 0 || r.vist.some((l) => sammeGrunn(l, a.tekst)) ? [] : [`appens tekst gir ikke samme grunn som «${r.vist[0]!.slice(0, 60)}…»`]
+  return r.vist.length === 0 || sammeGrunn(r, a.tekst) ? [] : [`appens tekst gir ikke samme grunn som «${r.vist[0]!.slice(0, 60)}…»`]
 }
 
 /** Tallene i en tekst, som «10, 20 mg» eller «10 og 20 mg». */
 const tallI = (t: string) => (t.match(/\d+(?:,\d+)?/g) ?? []).join(' ')
 
+/** Forhåndskontrollens stopp når ingen godkjent regel for valget kan gi en komplett plan (`forhandskontroll`, kode `ikke_komplett`). */
+const INGEN_KOMPLETT_REGEL = 'Ingen godkjent regel gir en komplett plan for dette valget ennå.'
+
 /**
- * Om steg 4 i appen gir samme grunn som den lokale stoppgrunnen `lokal`.
- * Motorens egen tekst står bak «Vis detaljer» når beregningen er kjørt; ellers
- * stopper forhåndskontrollen tidligere med en kort forklaring i vanlig språk
- * (§5 i `docs/verktøy-brukervennlighet-2026-11.md`). Da må forklaringen være
- * den samme: de samme tillatte startdosene, eller at ingen komplett plan kan
- * lages når grunnen lokalt er at planen ikke når sluttmålet, at en dose ikke
- * kan gis eller at tilfellet er utenfor omfanget.
+ * Om steg 4 i appen gir samme grunn som den lokale kjøringen, for hver mulig
+ * grunn for seg (aldri en generisk tekst som kunne dekke flere):
+ * - motorens egen stoppgrunn står ordrett i appen (bak «Vis detaljer» når
+ *   beregningen er kjørt);
+ * - forhåndskontrollen stopper på startdosen: lokalt stopper motoren på
+ *   startdosen, og appen viser de samme tillatte startdosene;
+ * - forhåndskontrollen stopper fordi ingen godkjent regel for valget kan gi en
+ *   komplett plan: lokalt finnes det heller ingen slik regel for valget
+ *   (`reglerMedPlan`), uavhengig av hvor motoren stopper.
+ * Gir grunnen appen viser, eller `undefined` når den ikke er den samme.
  */
-export function sammeGrunn(lokal: string, app: string): boolean {
-  if (app.includes(lokal.slice(0, 60))) return true
-  const start = /^Startdosen [\d,]+ mg er utenfor det regelen gjelder for \(([^)]*)\)/.exec(lokal)
-  if (start) {
-    const vist = /Regelen gjelder bare startdoser på ([^.]*)\./.exec(app)
-    return !!vist && tallI(vist[1]!) === tallI(start[1]!)
-  }
-  const kode = klassifiser(lokal)
-  if (kode === 'ikke_komplett' || kode === 'ingen_dose' || kode === 'utenfor_omfang')
-    return /Ingen godkjent regel gir en komplett plan|kan ikke lage en komplett plan|ingen godkjent plan for denne kombinasjonen/.test(app)
-  return false
+export function sammeGrunn(r: Forlopsresultat, app: string): string | undefined {
+  const eksakt = r.vist.find((l) => app.includes(l))
+  if (eksakt) return 'motorens tekst'
+  const vist = /Regelen gjelder bare startdoser på ([^.]*)\./.exec(app)
+  if (vist)
+    return r.vist.some((l) => {
+      const start = /^Startdosen [\d,]+ mg er utenfor det regelen gjelder for \(([^)]*)\)/.exec(l)
+      return start && tallI(start[1]!) === tallI(vist[1]!)
+    })
+      ? 'de samme tillatte startdosene'
+      : undefined
+  if (app.includes(INGEN_KOMPLETT_REGEL))
+    return r.verktoy && reglerMedPlan({ verktoy: r.verktoy, valg: r.forlop.valg }).length === 0 ? 'ingen regel for valget gir komplett plan, også lokalt' : undefined
+  return undefined
 }
 
 /** Forklaringen i steg 4 når appen ikke viser noen plan: linjen etter «Ingen plan …», eller en kjent stopptekst. */
@@ -402,6 +411,9 @@ function stopplinje(tekst: string): string | undefined {
 }
 
 const celle = (x: string) => x.replace(/\|/g, '\\|').replace(/\n/g, ' ')
+
+/** Det steg 4 sier når databasen ikke svarte på FEST-oppslaget. */
+const FEST_IKKE_HENTET = /Fikk ikke hentet preparatene fra FEST/
 
 /** Grunnen i den syntetiske nødstoppen; den lagres ikke, men står i svaret appen får. */
 const SPERREGRUNN = 'Syntetisk nødstopp i QA-kontrollen (ikke lagret).'
@@ -425,7 +437,18 @@ const festKontrollert = (timer: number) => async (rute: Side) => {
  * på mer enn 48 timer (`les_legemidler`), og grensen rett under. Svarene
  * endres bare i nettleseren; ingenting lagres.
  */
-const SIKKERHETSKONTROLLER: readonly { id: string; hva: string; forlop: string; rute: string; svar: (rute: Side) => Promise<void>; plan: boolean; grunn?: RegExp; kreverGrunn?: boolean }[] = [
+const SIKKERHETSKONTROLLER: readonly {
+  id: string
+  hva: string
+  forlop: string
+  rute: string
+  svar: (rute: Side) => Promise<void>
+  plan: boolean
+  grunn?: RegExp
+  kreverGrunn?: boolean
+  steg4?: boolean
+  mangler?: string
+}[] = [
   ...['K0-01', 'K0-11'].map((forlop) => ({
     id: `N-${forlop}`,
     hva: 'Nødstopp for alle verktøy',
@@ -441,6 +464,7 @@ const SIKKERHETSKONTROLLER: readonly { id: string; hva: string; forlop: string; 
     grunn: new RegExp(SPERREGRUNN.replace(/[.()]/g, '\\$&')),
     // Nødstoppen skal si hvem, når og hvorfor (`Verktoyside`).
     kreverGrunn: true,
+    mangler: 'nødstoppens grunn',
   })),
   ...['K0-01', 'H-30'].map((forlop) => ({
     id: `F-${forlop}`,
@@ -449,7 +473,12 @@ const SIKKERHETSKONTROLLER: readonly { id: string; hva: string; forlop: string; 
     rute: '**/rpc/les_legemidler*',
     svar: festKontrollert(72),
     plan: false,
-    grunn: /sist kontrollert mot FEST/,
+    // Forklaringen at FEST-kopien er for gammel (`festForeldet`, eller motorens tekst bak «Vis detaljer»).
+    grunn: /sist kontrollert mot FEST|FEST-kopien|FEST sist ble kontrollert/,
+    kreverGrunn: true,
+    mangler: 'at FEST-kopien ikke er kontrollert på over 48 timer',
+    // Flyten skal ha nådd steg 4 og stoppet der, så stoppet ikke skyldes at skjemaet ikke ble fylt ut.
+    steg4: true,
   })),
   { id: 'F-K0-01-47', hva: 'FEST-kopien kontrollert for 47 timer siden (under grensen på 48)', forlop: 'K0-01', rute: '**/rpc/les_legemidler*', svar: festKontrollert(47), plan: true },
 ]
@@ -484,14 +513,16 @@ async function main() {
     }
     let a: Appresultat
     try {
-      // Et tidsavbrudd når siden lastes, er nettet, ikke appen: forløpet kjøres på nytt fra en tom side, høyst to ganger.
+      // Et tidsavbrudd når siden lastes, eller når databasen ikke svarer på FEST-oppslaget (appen sier det selv og
+      // tilbyr «Prøv igjen»), er nettet eller databasen, ikke verktøyet: forløpet kjøres på nytt fra en tom side, høyst to ganger.
       for (let forsok = 1; ; forsok++) {
         try {
           a = await kjorIApp(side, url, r)
-          break
+          if (forsok > 2 || a.tabell || !FEST_IKKE_HENTET.test(a.tekst)) break
+          nyttForsok.push(`${f.id} (FEST-oppslaget svarte ikke)`)
         } catch (e) {
           if (forsok > 2 || !/page\.goto: Timeout/.test(String(e))) throw e
-          nyttForsok.push(f.id)
+          nyttForsok.push(`${f.id} (siden lastet ikke)`)
         }
       }
     } catch (e) {
@@ -516,20 +547,35 @@ async function main() {
                 .find((l) => l.length > 40)
             : stopplinje(a.tekst)) ?? 'Ingen plan',
         )
-    rader.push(`| ${f.id} | ${celle(f.hva)} | ${KLASSENAVN[r.klasse]} | ${app} | ${avvik.length ? celle(avvik.join('; ')) : 'nei'} |`)
+    // Hvordan grunnen er sammenlignet med den lokale, når forløpet stopper.
+    const grunn = !a.tabell && r.klasse !== 'fagtekst' && r.vist.length > 0 ? sammeGrunn(r, a.tekst) : undefined
+    rader.push(`| ${f.id} | ${celle(f.hva)} | ${KLASSENAVN[r.klasse]} | ${app}${grunn ? ` (samme grunn: ${grunn})` : ''} | ${avvik.length ? celle(avvik.join('; ')) : 'nei'} |`)
     console.log(f.id, KLASSENAVN[r.klasse], a.tabell ? 'plan' : 'ingen plan', avvik.join('; '))
   }
   // Sikkerhetsstoppene: samme forløp med et endret svar fra databasen.
   const sikkerhet: string[] = []
   for (const k of SIKKERHETSKONTROLLER.filter((x) => !bare || bare.includes(x.id) || bare.includes(x.forlop))) {
     const r = kjorForlop(BRUKERFORLOP.find((x) => x.id === k.forlop)!, uttrekk)
-    await side.route(k.rute, k.svar)
+    // Hvor mange svar fra databasen som ble endret: uten noen er ingenting prøvd.
+    let endret = 0
+    await side.route(k.rute, async (rute: Side) => {
+      endret++
+      await k.svar(rute)
+    })
     let a: Appresultat | undefined
     let feil: string | undefined
     try {
-      a = await kjorIApp(side, url, r)
+      // Som for forløpene: et tidsavbrudd når siden lastes, er nettet; kasuset kjøres på nytt fra en tom side, høyst to ganger.
+      for (let forsok = 1; ; forsok++) {
+        try {
+          a = await kjorIApp(side, url, r)
+          break
+        } catch (e) {
+          if (forsok > 2 || !/page\.goto: Timeout/.test(String(e))) throw e
+          nyttForsok.push(`${k.id} (siden lastet ikke)`)
+        }
+      }
     } catch (e) {
-      // En nødstopp kan ta bort skjemaet før forløpet er fylt ut; da er det siden som avgjør.
       feil = String(e).split('\n')[0]
     } finally {
       await side.unroute(k.rute)
@@ -540,15 +586,19 @@ async function main() {
         .locator('body')
         .innerText()
         .catch(() => '')) as string) + (a?.tekst ?? '')
+    // En kjøring som feiler, eller der svaret ikke ble endret, beviser ingenting og er alltid et avvik.
     const avvik = [
+      ...(feil ? [`kjøringen feilet: ${feil}`] : []),
+      ...(endret === 0 ? ['svaret fra databasen ble ikke endret'] : []),
+      ...(k.steg4 && !feil && !stopplinje(a?.tekst ?? '') ? ['flyten nådde ikke et stopp i steg 4'] : []),
       ...(plan !== k.plan ? [k.plan ? 'appen viser ingen plan' : 'appen viser en plan'] : []),
-      ...(k.kreverGrunn && !k.grunn!.test(tekst) ? [`siden nevner ikke ${k.grunn!.source}`] : []),
+      ...(k.kreverGrunn && !k.grunn!.test(tekst) ? [`appen stopper, men siden sier ikke ${k.mangler}`] : []),
       ...(k.plan && a?.tabell ? sammenlign(r, a) : []),
     ]
     if (avvik.length > 0 && process.env.QA_BILDER) await side.screenshot({ path: `${process.env.QA_BILDER}/${k.id}.png`, fullPage: true })
     // Grunnen siden gir: linjen som nevner den, ellers den første forklaringen i steg 4.
     const forklaring = stopplinje(a?.tekst ?? '')
-    const vist = plan ? 'Plan' : `Ingen plan${feil ? ` (skjemaet stoppet: ${feil})` : ''}`
+    const vist = feil ? 'Kjøringen feilet' : plan ? 'Plan' : 'Ingen plan'
     const nevnt = !k.grunn
       ? '–'
       : k.grunn.test(tekst)
@@ -568,11 +618,11 @@ async function main() {
       '<!-- Laget av `npx vite-node src/__tests__/qa/appkontroll.ts`; rediger ikke for hånd. -->',
       '# OUSFAR Verktøy – brukerforløpene i den publiserte appen',
       '',
-      `Kjørt ${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC mot ${url} (${versjon}) som administrator, med dagens FEST. Hvert forløp er det samme som i \`docs/verktøy-qa-brukerforlop.md\`, gjennomført i firestegsflyten uten «Beregn»-knapp: syntetiske doser, måldosen forløpet velger, legemiddelformen forløpet velger (ellers den siden har valgt selv, eller tablett), i steg 3 det svaret i flyten som gir forløpets ja, nei på hvert annet forhold, ja der siden sier at nei stopper planen, og kryss ved hver bekreftelse. Planen leses når steg 4 har stått i ro. Siden lastes helt på nytt for hvert forløp. Bare lesing; ingenting er lagret. «Avvik» sammenligner med den lokale kjøringen mot de lagrede FEST-uttrekkene: hele kopien linje for linje, og den synlige tidslinjen (hver rad og celle) mot kopien. Kopien i appen har i tillegg en «Forutsatt»-del med forbeholdene flyten har lagt til grunn; hver linje i den må være ordrett en bekreftelse i regelen som den lokale kjøringen også har gitt, og delen holdes ellers utenfor sammenligningen. Uten plan sammenlignes grunnen i steg 4 (med «Vis detaljer» åpnet) med den lokale: motorens tekst når beregningen er kjørt, ellers forhåndskontrollens korte forklaring med de samme tillatte startdosene, eller at ingen komplett plan kan lages når planen lokalt ikke når sluttmålet.`,
+      `Kjørt ${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC mot ${url} (${versjon}) som administrator, med dagens FEST. Hvert forløp er det samme som i \`docs/verktøy-qa-brukerforlop.md\`, gjennomført i firestegsflyten uten «Beregn»-knapp: syntetiske doser, måldosen forløpet velger, legemiddelformen forløpet velger (ellers den siden har valgt selv, eller tablett), i steg 3 det svaret i flyten som gir forløpets ja, nei på hvert annet forhold, ja der siden sier at nei stopper planen, og kryss ved hver bekreftelse. Planen leses når steg 4 har stått i ro. Siden lastes helt på nytt for hvert forløp. Bare lesing; ingenting er lagret. «Avvik» sammenligner med den lokale kjøringen mot de lagrede FEST-uttrekkene: hele kopien linje for linje, og den synlige tidslinjen (hver rad og celle) mot kopien. Kopien i appen har i tillegg en «Forutsatt»-del med forbeholdene flyten har lagt til grunn; hver linje i den må være ordrett en bekreftelse i regelen som den lokale kjøringen også har gitt, og delen holdes ellers utenfor sammenligningen. Uten plan sammenlignes grunnen i steg 4 (med «Vis detaljer» åpnet) med den lokale, hver grunn for seg og aldri mot en generisk tekst: motorens stoppgrunn ordrett, eller forhåndskontrollens korte forklaring med de samme tillatte startdosene som motoren stopper på, eller «ingen godkjent regel gir en komplett plan for dette valget» bare når det heller ikke lokalt finnes en slik regel for valget. Hvilken som ble brukt, står i parentes.`,
       '',
       `Planer teknisk ende-til-ende-verifisert i appen (hele kopien lik den lokale kjøringen linje for linje, bortsett fra FEST-tidspunktet): **${verifiserte.length}** (${verifiserte.join(', ') || 'ingen'}). Dette er en teknisk verifikasjon med syntetiske data, ikke «klinisk prøveverifisert» (plan §8); det krever i tillegg en faglig gjennomgang av hele doseringsforløpet, kildene og de relevante risikoene.`,
       '',
-      ...(nyttForsok.length > 0 ? [`Kjørt på nytt fra en tom side etter tidsavbrudd da siden skulle lastes (nettet, ikke appen): ${[...new Set(nyttForsok)].join(', ')}.`, ''] : []),
+      ...(nyttForsok.length > 0 ? [`Kjørt på nytt fra en tom side etter et tidsavbrudd i nettet eller databasen (ikke i verktøyet): ${[...new Set(nyttForsok)].join(', ')}.`, ''] : []),
       '## Kontroller som ikke er gjort',
       '',
       '- Verktøyene er bare synlige for administratorer. Ingen kontroll her viser hva en kliniker ser, og ingen plan er tilgjengelig for klinikere.',
@@ -588,7 +638,7 @@ async function main() {
       '',
       `Forløp som ellers gir en komplett plan, med en syntetisk nødstopp («${SPERREGRUNN}») eller en FEST-kopi som oppgis kontrollert for 72 eller 47 timer siden (grensen er ${FEST_FORELDET_ETTER_TIMER} timer). Svaret fra databasen endres bare i nettleseren; ingen sperre eller FEST-data lagres.`,
       '',
-      '«Grunnen nevnt» er om siden sier hvorfor det ikke er noen plan (nødstoppens grunn, eller at FEST-kopien ikke er kontrollert på lenge). For nødstoppen er det et krav; for FEST-kopien er det bare registrert, fordi kravet er at ingen plan vises.',
+      '«Grunnen nevnt» er om siden sier hvorfor det ikke er noen plan: nødstoppens grunn, eller at FEST-kopien ikke er kontrollert på lenge. Begge er krav. En kjøring som feiler, eller der svaret fra databasen ikke ble endret, er alltid et avvik, og for FEST-kopien må flyten ha nådd et stopp i steg 4.',
       '',
       '| Id | Situasjon | Ventet | I appen | Grunnen nevnt | Avvik |',
       '| --- | --- | --- | --- | --- | --- |',
