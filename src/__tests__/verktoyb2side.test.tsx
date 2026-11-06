@@ -27,7 +27,7 @@ import type { Regelsett } from '../verktoy/regler/modell'
 import { avregistrert } from '../verktoy/regler/pilotmatrise'
 import { REGELSETT, samlet } from '../verktoy/tilgjengelighet'
 import { pilotklokke, pilotlesing, pilotuttrekk } from './hjelp/pilotside'
-import { besvarAlt, stoppet as ingenPlan, tidslinje as tidslinjen, tidslinjetekst, velgForm, type Bruker } from './hjelp/verktoyflyt'
+import { besvarAlt, planpanel, stoppet as ingenPlan, tidslinje as tidslinjen, tidslinjetekst, velgForm, type Bruker } from './hjelp/verktoyflyt'
 import { tidslinjeavvik } from './qa/brukerforlop'
 
 beforeEach(() => {
@@ -216,6 +216,24 @@ describe('Escitalopram versjon 14 (B2) på verktøysiden, uten simulering', () =
       sessionStorage.clear()
     }
   }, 120_000)
+
+  it('sier at FEST-kopien er for gammel når den ikke er kontrollert på over 48 timer, og ellers gir planen (K0-01, QA F-K0-01)', async () => {
+    const user = userEvent.setup()
+    const kontrollert = new Date(AKSEPT.utvalg.kontrollert_kl!)
+    const om = (timer: number) => () => new Date(kontrollert.getTime() + timer * 3_600_000)
+    vis({ klokke: om(72) })
+    // FEST gjelder alle reglene likt, så panelet sier grunnen selv, ikke en generell tekst om at planen ikke kan bli komplett.
+    await beregn(user, '10', TABLETT)
+    await stoppet(/Ingen plan for dette tilfelletLegemiddeldataene ble sist kontrollert mot FEST 30\. oktober 2026\. Den nattlige oppdateringen har ikke gått siden, så nyere endringer i FEST kan mangle\. Verktøyet lager ingen plan før legemiddeldataene er kontrollert mot FEST igjen/)
+    expect(planpanel().textContent).not.toMatch(/kan ikke lage en komplett plan/)
+    cleanup()
+    glemBildet()
+    sessionStorage.clear()
+    // Rett under grensen gir den samme dosen en plan.
+    vis({ klokke: om(47) })
+    expect(await beregn(user, '10', TABLETT)).toBe(true)
+    expect((await velgTilKomplett(user, V14.tittel)).plan).toBeTruthy()
+  }, 60_000)
 
   it('spør om 65 år eller eldre, ikke om over 65 år', async () => {
     const user = userEvent.setup()

@@ -11,7 +11,7 @@ import { describe, expect, it } from 'vitest'
 import { beregnPlan, medTrinnvalg, TOMT_SKJEMA, type Planskjema } from '../verktoy/doseplan'
 import { BESLUTNINGER, type Beslutninger } from '../verktoy/flyt/beslutninger'
 import { flytoppsett, medFlytfelt, medIngenAvDisse, SAMLET, standardId, vurderFlyt, type Flytgrunnlag } from '../verktoy/flyt/flyt'
-import { forhandskontroll, IKKE_AVKLART, KAN_LAGES_HVIS } from '../verktoy/flyt/forhandskontroll'
+import { FEST_IKKE_FERSK, forhandskontroll, IKKE_AVKLART, KAN_LAGES_HVIS } from '../verktoy/flyt/forhandskontroll'
 import { flyttilstand, medFlytsvar, reglerMedPlan } from '../verktoy/flyt'
 import { harKontrollertKatalog, katalogavtrykk, katalogGjelder, KONTROLLERTE_KATALOGER, type Katalogkontroll } from '../verktoy/flyt/katalogkontroll'
 import { KATALOGTABELLFIL, lagKatalogtabell } from '../verktoy/flyt/katalogtabell'
@@ -555,6 +555,21 @@ describe('forhåndskontrollen (§5, S9)', () => {
     // Kontrollen har ingen plan å vise (S9).
     expect(Object.keys(k).sort()).toEqual(['dosevalg', 'former', 'gjenstar', 'grunner', 'regler', 'utfall'])
     expect(KAN_LAGES_HVIS).toBe('En komplett plan kan lages hvis svarene under tillater det.')
+  })
+
+  it('sier straks, før dosen, at FEST-kopien ikke er fersk, med grunnen og for hver form; rett under 48 timer stopper den ikke (QA F-K0-01)', () => {
+    const om = (minutter: number) => new Date(klokke(AKSEPT).getTime() + minutter * 60_000)
+    const med = (naa: Date, x: Partial<Planskjema> = {}) => forhandskontroll({ verktoy: NED, valg: esc, sperrer: [], skjema: skjema(x), utvalg: AKSEPT.utvalg, naa })
+    for (const x of [{}, { startdose: '10', formvalg: { fra: { legemiddelform: '53' } } }, { startdose: '20', formvalg: { fra: { legemiddelform: '748' } } }]) {
+      const k = med(om(48 * 60 + 1), x)
+      expect(k.utfall, JSON.stringify(x)).toBe('kan_ikke')
+      expect(k.grunner).toEqual([expect.objectContaining({ kode: 'ikke_klinisk', tekst: expect.stringMatching(/^Legemiddeldataene ble sist kontrollert mot FEST .*Den nattlige oppdateringen har ikke gått siden.* /) })])
+      expect(k.grunner[0]!.tekst.endsWith(FEST_IKKE_FERSK)).toBe(true)
+      // Akkurat 48 timer er fersk.
+      expect(med(om(48 * 60), x).grunner.map((g) => g.kode)).not.toContain('ikke_klinisk')
+    }
+    // Et tidsstempel fram i tid kan ikke stoles på, og sies på samme måte.
+    expect(med(om(-6)).grunner[0]!.tekst).toMatch(/fram i tid; tidsstemplet kan ikke stoles på\. Verktøyet lager ingen plan før/)
   })
 
   it('lover ingenting før nødstoppen eller FEST er lest, og stopper ved en aktiv sperre', () => {

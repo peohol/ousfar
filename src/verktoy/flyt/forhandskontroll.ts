@@ -3,7 +3,8 @@
  * `docs/verktøy-brukervennlighet-2026-11.md`), kjørt etter valget av
  * legemiddel, etter dosen og på nytt ved hvert svar:
  *
- * 1. Finnes en klinisk godkjent, usperret regel som kan gi en komplett plan for valget?
+ * 1. Finnes en klinisk godkjent, usperret regel som kan gi en komplett plan for valget, og er FEST-kopien
+ *    fersk og gyldig? FEST gjelder alle reglene likt, så en foreldet kopi sies straks, med grunnen.
  * 2. Er startdosen innenfor regelens krav og kliniske omfang? Ellers: hvilke doser er godkjent.
  * 3. Prøveberegning med FEST: motoren (`kliniskDoseplan`, via `beregnPlan`) kjøres med svarene som er gitt og
  *    de svarene som tillater en plan for resten, for hver legemiddelform og, når planen krever et dosevalg
@@ -17,7 +18,7 @@
  */
 import type { Legemiddelutvalg } from '../../legemiddeldata/lesing'
 import { beregnPlan, formvalgFor, kanKreveBegrunnelse, lesDose, medTrinnvalg, trengerMaldose, type Planskjema } from '../doseplan'
-import type { Doseplanresultat } from '../motor/plan'
+import { festFerskhet, type Doseplanresultat } from '../motor/plan'
 import { inndatagrenser } from '../regler/beregning'
 import { kanonisk } from '../regler/godkjenning'
 import { gjeldendeBekreftelser, komplettfeil, type Regel, type Regelsett } from '../regler/modell'
@@ -34,6 +35,9 @@ export const KAN_LAGES_HVIS = 'En komplett plan kan lages hvis svarene under til
 
 /** Når prøveberegningen nådde taket uten å finne en komplett plan: ingenting er avgjort, og planen beregnes med de faktiske svarene. */
 export const IKKE_AVKLART = 'Verktøyet kunne ikke avklare på forhånd om en komplett plan kan lages. Svar på spørsmålene, så beregnes planen med svarene.'
+
+/** Når FEST-kopien ikke er fersk og gyldig: ingen regel kan gi en plan før den er kontrollert igjen. */
+export const FEST_IKKE_FERSK = 'Verktøyet lager ingen plan før legemiddeldataene er kontrollert mot FEST igjen; til da må behandlingen planlegges individuelt.'
 
 /** Den største dybden av dosevalg prøveberegningen går gjennom. */
 export const MAKS_DOSEVALG = 30
@@ -262,6 +266,10 @@ export function forhandskontroll(g: Forhandsgrunnlag): Forhandsresultat {
   if (regler.length === 0) return kanIkke([forklaring('sperret', SPERRET)])
   if (g.regel) regler = regler.filter((r) => r.id === g.regel!.id)
   if (regler.length === 0) return kanIkke([forklaring('ingen_regel', 'Den valgte planen kan ikke brukes for dette valget.')])
+  if (g.utvalg) {
+    const fest = festFerskhet(g.utvalg, g.naa)
+    if (fest.length > 0) return kanIkke([forklaring('ikke_klinisk', `${fest.join(' ')} ${FEST_IKKE_FERSK}`, { handling: 'Prøv igjen senere.' })], regler)
+  }
 
   // Svarene i flyten gjelder også når bare skjemaet er gitt: flyten regnes da her, med standardoppsettet.
   const flytsvar = g.skjema?.flytsvar

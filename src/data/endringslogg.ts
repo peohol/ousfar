@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.126.6',
+    dato: '2026-11-06',
+    sammendrag: 'Verktøyene sier at FEST-dataene er for gamle når det er derfor ingen plan lages',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Gjelder bare administratorene. Ingen regler, doser, godkjenninger eller sperrer er endret.',
+      'Er legemiddeldataene ikke kontrollert mot FEST på over 48 timer, sier steg 4 nå nettopp det, med datoen for siste kontroll, i stedet for en generell tekst om at planen ikke kan bli komplett. Verktøyet lager fortsatt ingen plan da.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.126.3',
     dato: '2026-11-06',
     sammendrag: 'THC-syre: ryddigere banner om høyere sikkerhetsmargin',
