@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.126.7',
+    versjon: '1.126.8',
     dato: '2026-11-06',
     sammendrag: 'Automatiske kontroller av appen kjøres nå mot en egen testdatabase, ikke mot den OUSFAR bruker',
     typer: ['Funksjonalitet'],
