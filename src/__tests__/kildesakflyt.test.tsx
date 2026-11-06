@@ -33,7 +33,8 @@ import { lagKildeovervakingslager } from '../verktoy/overvaking/varsling'
 import { FEST_PILOT } from '../verktoy/regler/aksepttest'
 import { lesVerktoysperrer } from '../verktoy/sperrer'
 import { kallSom } from './hjelp/fest'
-import { besvarAlt, pilotklokke, pilotlesing, pilotuttrekk } from './hjelp/pilotside'
+import { pilotklokke, pilotlesing, pilotuttrekk } from './hjelp/pilotside'
+import { besvarAlt, planen, planpanel, stoppet, tidslinje } from './hjelp/verktoyflyt'
 import { nyDatabase, opprettBruker, som } from './hjelp/testdatabase'
 
 // PGlite leser sine egne pakker som `Blob`; jsdom sin `Blob` mangler `arrayBuffer`.
@@ -104,6 +105,7 @@ const BEVIS = {
 
 beforeEach(() => {
   window.scrollTo = () => {}
+  Element.prototype.scrollIntoView ??= function () {}
   sessionStorage.clear()
   glemBildet()
 })
@@ -120,7 +122,17 @@ describe('produksjonsflyten fra kildesak til verktøysiden (VDR-5)', () => {
     (hvem: string): Databasekall =>
     async (funksjon, argumenter) => {
       const navn = Object.keys(argumenter)
-      const rader = await som(db, hvem, async (tx) => (await tx.query<{ r: unknown }>(`select public.${funksjon}(${navn.map((n, i) => `${n} => $${i + 1}`).join(', ')}) as r`, navn.map((n) => argumenter[n]))).rows)
+      const rader = await som(
+        db,
+        hvem,
+        async (tx) =>
+          (
+            await tx.query<{ r: unknown }>(
+              `select public.${funksjon}(${navn.map((n, i) => `${n} => $${i + 1}`).join(', ')}) as r`,
+              navn.map((n) => argumenter[n]),
+            )
+          ).rows,
+      )
       return rader[0]!.r
     }
   const meld = (r: Overvakingsrapport) => registrer(tjener, r, 'cron', 'https://github.com/eier/repo/actions/runs/1')
@@ -147,9 +159,9 @@ describe('produksjonsflyten fra kildesak til verktøysiden (VDR-5)', () => {
   }
 
   /**
-   * Bytte fra 100 mg sertralin til mirtazapin; gir siden når beregningen er gjort. Startforløpet når ikke sluttmålet, så
-   * klinikeren får ingen delplan, bare at en komplett plan ikke er tilgjengelig (Peders beslutning 03.11.2026). Byttet står derfor
-   * ikke blant snarvalgene og skrives inn.
+   * Bytte fra sertralin til mirtazapin; gir siden når valget er gjort. Startforløpet når ikke sluttmålet, så klinikeren får
+   * ingen delplan, bare at en komplett plan ikke er tilgjengelig (Peders beslutning 03.11.2026), og det med en gang, før
+   * dosen og spørsmålene om pasienten. Byttet står derfor ikke blant snarvalgene og skrives inn.
    */
   async function sertralinTilMirtazapin() {
     const user = verktoyside('bytte-antidepressiv')
@@ -157,15 +169,9 @@ describe('produksjonsflyten fra kildesak til verktøysiden (VDR-5)', () => {
     expect(screen.queryByRole('button', { name: 'Sertralin → mirtazapin' })).toBeNull()
     await user.type(screen.getByRole('combobox', { name: 'Bytte fra' }), 'Sertralin')
     await user.type(screen.getByRole('combobox', { name: 'Bytte til' }), 'Mirtazapin')
-    await user.type(await screen.findByRole('textbox', { name: /Aktuell døgndose av sertralin/ }), '100')
-    await besvarAlt(user)
-    await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
-    await user.selectOptions(await screen.findByRole('combobox', { name: 'Legemiddelform av mirtazapin' }), '53')
-    await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
-    const stopp = (await screen.findByRole('heading', { name: 'Ingen doseplan' })).closest('section')!
-    expect(stopp.textContent).toMatch(/Komplett plan ikke tilgjengelig: sertralin: /)
-    expect(screen.queryByRole('table')).toBeNull()
-    return stopp.closest('.verktoyside') as HTMLElement
+    await stoppet(/Ingen plan for dette valgetIngen godkjent regel gir en komplett plan for dette valget ennå\./)
+    expect(screen.queryByRole('textbox', { name: /Aktuell døgndose av sertralin/ })).toBeNull()
+    return planpanel().closest('.verktoyside') as HTMLElement
   }
 
   beforeAll(async () => {
@@ -188,7 +194,9 @@ describe('produksjonsflyten fra kildesak til verktøysiden (VDR-5)', () => {
     expect(within(plan).queryByRole('note')).toBeNull()
 
     // Agenten har sammenlignet avsnittene: avsluttet teknisk, og samme innhold senere gir ingen ny sak.
-    expect(await agent('teknisk_konklusjon', { funn: s.id, versjon: s.versjon, konklusjon: 'uten_faglig_betydning', begrunnelse: 'Bare oppsettet rundt teksten er endret.', bevis: BEVIS })).toBe(s.versjon + 2)
+    expect(await agent('teknisk_konklusjon', { funn: s.id, versjon: s.versjon, konklusjon: 'uten_faglig_betydning', begrunnelse: 'Bare oppsettet rundt teksten er endret.', bevis: BEVIS })).toBe(
+      s.versjon + 2,
+    )
     expect((await saker()).find((f) => f.id === s.id)).toMatchObject({ tilstand: 'avsluttet', utfall: 'teknisk_avklart' })
     expect(await meld(rapport('2027-05-10T06:20:00Z', [funn('oppsett', 'a')]))).toMatchObject({ nye: 0, endrede: 0 })
     expect((await redaktor().les()).saker).toEqual([])
@@ -208,7 +216,7 @@ describe('produksjonsflyten fra kildesak til verktøysiden (VDR-5)', () => {
     const user = verktoyside('trappe-ned-antidepressiv')
     await waitFor(() => expect(screen.queryByText(TILGJENGELIGHET_UKONTROLLERT.henter)).toBeNull())
     await user.type(screen.getByRole('combobox', { name: 'Virkestoff pasienten bruker' }), 'Vortioksetin')
-    expect(await screen.findByRole('textbox', { name: /Aktuell døgndose av vortioksetin/ })).toBeTruthy()
+    await stoppet(/Ingen plan for dette valget/)
     expect(screen.queryByRole('note')).toBeNull()
 
     // Redaktøren får spørsmålet med valg og virkning, og en prikk.
@@ -254,14 +262,14 @@ describe('produksjonsflyten fra kildesak til verktøysiden (VDR-5)', () => {
     await user.type(screen.getByRole('combobox', { name: 'Bytte fra' }), 'Sertralin')
     await user.type(screen.getByRole('combobox', { name: 'Bytte til' }), 'Mirtazapin')
     expect((await screen.findByRole('alert', { name: 'Midlertidig deaktivert' })).textContent).toMatch(/Kildesak nr\. \d+: Kilden for byttet er revidert/)
-    expect(screen.queryByRole('button', { name: 'Beregn doseplan' })).toBeNull()
+    expect(screen.queryByRole('heading', { name: /^Steg 2/ })).toBeNull()
+    expect(tidslinje()).toBeNull()
 
     user = verktoyside('bytte-antipsykotikum')
     await user.click(await screen.findByRole('button', { name: 'Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)' }))
     await user.type(await screen.findByRole('textbox', { name: /Aktuell døgndose av paliperidon/ }), '6')
     await besvarAlt(user)
-    await user.click(screen.getByRole('button', { name: 'Beregn doseplan' }))
-    expect(await screen.findByRole('table')).toBeTruthy()
+    expect(within(await planen(/Xeplion/)).getByRole('list', { name: 'Planen dag for dag' })).toBeTruthy()
 
     // Saken er avsluttet med nødstoppen som kontrollert tiltak; historikken står.
     const lukket = (await saker()).find((f) => f.id === s.id)!
