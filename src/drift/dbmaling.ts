@@ -134,6 +134,10 @@ export interface Periode {
   /** Fasen perioden hører til: kapasitet og siste migrering ved periodens slutt. */
   fase: string
   rolig: boolean
+  /** Råtallene fra loggene, så andelene i en fase kan regnes av summen av kall. */
+  kall: number
+  automatisert: number
+  feil5xx: number
   kallPerTime: number
   automatisertAndel: number
   feilAndel: number
@@ -163,7 +167,9 @@ export function perioder(malinger: readonly Maling[]): Periode[] {
     const a = sortert[i - 1] as Maling
     const b = sortert[i] as Maling
     const sek = (Date.parse(b.tid) - Date.parse(a.tid)) / 1000
-    if (sek <= 0 || a.oppstart !== b.oppstart) continue
+    // En omstart nullstiller tellerne, og en ny fase (oppgradering eller migrering) mellom
+    // målingene ville blandet gammel og ny oppførsel i samme periode; begge hoppes over.
+    if (sek <= 0 || a.oppstart !== b.oppstart || fasenavn(a) !== fasenavn(b)) continue
     const d = (felt: keyof Maling['teller']) => b.teller[felt] - a.teller[felt]
     if (d('swapInnSider') < 0 || d('diskOperasjoner') < 0) continue
     const timer = sek / 3600
@@ -193,6 +199,9 @@ export function perioder(malinger: readonly Maling[]): Periode[] {
       fase: fasenavn(b),
       rolig: kallPerTime < ROLIG_KALL_PER_TIME,
       kallPerTime,
+      kall: t.kall,
+      automatisert: t.automatisert,
+      feil5xx: t.feil5xx,
       automatisertAndel: t.kall > 0 ? avrund(t.automatisert / t.kall, 3) : 0,
       feilAndel: t.kall > 0 ? avrund(t.feil5xx / t.kall, 3) : 0,
       tidsavbrudd: t.tidsavbrudd,
@@ -245,6 +254,8 @@ export function faser(liste: readonly Periode[]): Fasesammendrag[] {
         tempMBPerKall: kall > 0 ? avrund(vektetSnitt(medKall, (p) => p.funksjoner[navn]?.tempMBPerKall ?? 0, vekt)) : null,
       }
     }
+    const sum = (felt: 'kall' | 'automatisert' | 'feil5xx') => ps.reduce((n, p) => n + p[felt], 0)
+    const andel = (felt: 'automatisert' | 'feil5xx') => (sum('kall') > 0 ? avrund(sum(felt) / sum('kall'), 3) : 0)
     return {
       fase,
       fra: ps[0]?.fra ?? '',
@@ -259,8 +270,8 @@ export function faser(liste: readonly Periode[]): Fasesammendrag[] {
         : null,
       alle: {
         kallPerTime: avrund(vektetSnitt(ps, (p) => p.kallPerTime, timer)),
-        automatisertAndel: avrund(vektetSnitt(ps, (p) => p.automatisertAndel, timer), 3),
-        feilAndel: avrund(vektetSnitt(ps, (p) => p.feilAndel, timer), 3),
+        automatisertAndel: andel('automatisert'),
+        feilAndel: andel('feil5xx'),
         iops: avrund(vektetSnitt(ps, (p) => p.iops, timer)),
         tempMBPerTime: avrund(vektetSnitt(ps, (p) => p.tempMBPerTime, timer)),
       },

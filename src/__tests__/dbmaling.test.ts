@@ -144,6 +144,11 @@ describe('perioder mellom målingene', () => {
     expect(p?.funksjoner.les_stoff?.p95Ms).toBe(2500)
   })
 
+  it('hopper over en periode der kapasiteten eller migreringen har endret seg', () => {
+    expect(perioder([a, { ...b, sistMigrering: '20261107000000' }])).toEqual([])
+    expect(perioder([a, { ...b, kapasitet: { beregning: 'micro', minneMB: 1000 } }])).toEqual([])
+  })
+
   it('regner en periode som rolig bare under grensen', () => {
     const start = maling('2026-11-06T00:00:00.000Z')
     const rett = (kall: number) => perioder([start, maling('2026-11-06T01:00:00.000Z', { trafikk: trafikk(kall) })])[0]?.rolig
@@ -170,6 +175,20 @@ describe('faser', () => {
     expect(f1?.alle.iops).toBe(150)
     expect(f2?.fase).toBe('micro · migrering 20261103093000')
     expect(f2?.rolig?.iops).toBe(1)
+  })
+})
+
+describe('andelene i en fase', () => {
+  it('regnes av summen av kall, ikke som snitt av periodene', () => {
+    const t = (h: number) => `2026-11-06T${String(h).padStart(2, '0')}:00:00.000Z`
+    const liste = [
+      maling(t(0)),
+      maling(t(1), { trafikk: trafikk(1, { automatisert: 1, feil5xx: 1 }) }),
+      maling(t(2), { trafikk: trafikk(999) }),
+    ]
+    const [f] = faser(perioder(liste))
+    expect(f?.alle.automatisertAndel).toBe(0.001)
+    expect(f?.alle.feilAndel).toBe(0.001)
   })
 })
 
