@@ -3,9 +3,10 @@
  * `docs/verktøy-brukervennlighet-2026-11.md`), kjørt etter valget av
  * legemiddel, etter dosen og på nytt ved hvert svar:
  *
- * 1. Finnes en klinisk godkjent, usperret regel som kan gi en komplett plan for valget, og er FEST-kopien
- *    fersk og gyldig? FEST gjelder alle reglene likt, så en foreldet kopi sies straks, med grunnen.
- * 2. Er startdosen innenfor regelens krav og kliniske omfang? Ellers: hvilke doser er godkjent.
+ * 1. Finnes en klinisk godkjent, usperret regel som kan gi en komplett plan for valget?
+ * 2. Er startdosen innenfor regelens krav og kliniske omfang? Ellers: hvilke doser er godkjent. Er så
+ *    FEST-kopien fersk og gyldig? FEST gjelder alle reglene likt, så en foreldet kopi sies her, med grunnen,
+ *    etter stopp som gjelder pasienten og dosen.
  * 3. Prøveberegning med FEST: motoren (`kliniskDoseplan`, via `beregnPlan`) kjøres med svarene som er gitt og
  *    de svarene som tillater en plan for resten, for hver legemiddelform og, når planen krever et dosevalg
  *    for et trinn, for hvert tillatte valg (avgrenset). Et valg som trengs, er gjenstående, ikke en stopp.
@@ -266,10 +267,6 @@ export function forhandskontroll(g: Forhandsgrunnlag): Forhandsresultat {
   if (regler.length === 0) return kanIkke([forklaring('sperret', SPERRET)])
   if (g.regel) regler = regler.filter((r) => r.id === g.regel!.id)
   if (regler.length === 0) return kanIkke([forklaring('ingen_regel', 'Den valgte planen kan ikke brukes for dette valget.')])
-  if (g.utvalg) {
-    const fest = festFerskhet(g.utvalg, g.naa)
-    if (fest.length > 0) return kanIkke([forklaring('ikke_klinisk', `${fest.join(' ')} ${FEST_IKKE_FERSK}`, { handling: 'Prøv igjen senere.' })], regler)
-  }
 
   // Svarene i flyten gjelder også når bare skjemaet er gitt: flyten regnes da her, med standardoppsettet.
   const flytsvar = g.skjema?.flytsvar
@@ -284,6 +281,12 @@ export function forhandskontroll(g: Forhandsgrunnlag): Forhandsresultat {
   const feil = regler.map((r) => dosefeil(r, start, formnavn))
   if (feil.every((f) => f !== undefined)) return kanIkke([forklaring('utenfor_omfang', `${feil[0]} ${INDIVIDUELT}`)], [])
   regler = regler.filter((_, i) => feil[i] === undefined)
+  // FEST gjelder alle reglene likt: er kopien ikke fersk og gyldig, sies det her, før prøveberegningen, med grunnen.
+  // Stopp som gjelder pasienten (et svar i flyten) og dosen, sies først, fordi de står også når FEST er oppdatert.
+  if (g.utvalg) {
+    const fest = festFerskhet(g.utvalg, g.naa)
+    if (fest.length > 0) return kanIkke([forklaring('ikke_klinisk', `${fest.join(' ')} ${FEST_IKKE_FERSK}`, { handling: 'Prøv igjen senere.' })], regler)
+  }
   // En måldose regelen ikke har faste verdier for, må velges før prøveberegningen kan si noe.
   if (regler.some((r) => maldosekandidater(r, g.skjema!) === undefined)) return ukjent(regler, gjenstarFlyt + 1)
   if (!g.utvalg) return ukjent(regler, gjenstarFlyt)
