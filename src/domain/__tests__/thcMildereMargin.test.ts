@@ -10,7 +10,7 @@ import {
   type ThcModell,
 } from '../thcMotor'
 import { normalkvantil, type ThcRegelsett } from '../thcRegelsett'
-import { konklusjonsnavn, marginliste, medMargin } from '../thcVisning'
+import { konklusjonsnavn, konklusjonsnavnISetning, marginliste } from '../thcVisning'
 import { THC_MODELL, THC_REGELSETT, THC_TEKSTER } from '../../__tests__/hjelp/thcgrunnlag'
 
 /**
@@ -210,12 +210,15 @@ describe('mildere konklusjon med høyere sikkerhetsmargin', () => {
   })
 
   it('skriver marginene og konklusjonene slik banneret viser dem', () => {
-    expect(medMargin(0.5)).toBe('Uten sikkerhetsmargin')
-    expect(medMargin(0.9)).toBe('Med 90 % sikkerhetsmargin')
     expect(marginliste([0.99])).toBe('99 %')
     expect(marginliste([0.99, 0.999])).toBe('99 % eller 99,9 %')
     expect(marginliste([0.95, 0.99, 0.999])).toBe('95 %, 99 % eller 99,9 %')
     expect(konklusjonsnavn('vanskelig', null)).toBe('Kan ikke fastslås')
     expect(konklusjonsnavn('ikke_nodvendigvis', null)).toBe('Ikke nødvendigvis nytt')
+    expect(konklusjonsnavnISetning('vanskelig', null)).toBe('kan ikke fastslås')
+    expect(konklusjonsnavnISetning('ikke_nodvendigvis', null)).toBe('ikke nødvendigvis nytt')
+    expect(konklusjonsnavnISetning('vanskelig', { dato: '01.06.2026', ircak: 0, dager: 36 })).toBe(
+      'nytt inntak etter tidligere prøve 01.06.2026',
+    )
   })
 })
