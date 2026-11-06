@@ -8,15 +8,17 @@
  * være en reell endring i FEST og vurderes for seg.
  *
  * Bare lesing: ingen plan, sperre eller innstilling lagres. Kjøres med
- * `npx vite-node src/__tests__/qa/appkontroll.ts` når APP_URL,
- * BOOTSTRAP_ADMIN_USERNAME og BOOTSTRAP_ADMIN_PASSWORD er satt, og skriver
- * {@link APPKONTROLL}. Ikke en del av `npm test`, fordi den trenger nett og
- * innlogging.
+ * `npx vite-node src/__tests__/qa/appkontroll.ts`, og skriver
+ * {@link APPKONTROLL}. Som standard kjøres den i det lokale testmiljøet med
+ * egen database; mot den publiserte appen (APP_URL) bare som en kort,
+ * begrenset kontroll med `QA_PRODUKSJON=ja` (`testmiljo.ts`, `docs/qa-testmiljo.md`). Ikke en del
+ * av `npm test`, fordi den trenger Docker eller nett og innlogging.
  */
 import { writeFileSync } from 'node:fs'
-import { createRequire } from 'node:module'
 import { FORMULERINGSNAVN, VALGTEKSTER, virkestoffvalg } from '../../verktoy/register'
 import { BRUKERFORLOP, kjorForlop, KLASSENAVN, lesUttrekkene, tidslinjeavvik, type Brukerforlop, type Forlopsresultat, type Tidslinje } from './brukerforlop'
+import { apneTestmiljo, Teststopp } from './testmiljo'
+import { trafikklinje } from './trafikkvakt'
 
 export const APPKONTROLL = 'docs/verktøy-qa-appkontroll.md'
 
@@ -32,20 +34,6 @@ interface Appresultat {
   tidslinje?: Tidslinje
   /** Ved formbytte: om appen viste en plan før byttet. */
   planForBytte?: boolean
-}
-
-const miljo = (navn: string) => {
-  const x = process.env[navn]
-  if (!x) throw new Error(`${navn} mangler.`)
-  return x
-}
-
-async function loggInn(p: Side, url: string) {
-  await p.goto(url, { waitUntil: 'networkidle' })
-  await p.fill('input[name=username]', miljo('BOOTSTRAP_ADMIN_USERNAME'))
-  await p.fill('input[name=password]', miljo('BOOTSTRAP_ADMIN_PASSWORD'))
-  await p.click('button:has-text("Logg inn")')
-  await p.waitForSelector('input[name=username]', { state: 'detached', timeout: 30_000 })
 }
 
 async function velg(p: Side, felt: string, navn: string, rolle: string, formulering: string, flere: boolean) {
@@ -189,13 +177,9 @@ function sammenlign(r: Forlopsresultat, a: Appresultat): string[] {
 const celle = (x: string) => x.replace(/\|/g, '\\|').replace(/\n/g, ' ')
 
 async function main() {
-  const url = miljo('APP_URL').replace(/\/$/, '')
-  const kreve = createRequire(import.meta.url)
-  const { chromium } = kreve('playwright') as { chromium: { launch(): Promise<Side> } }
-  const nettleser = await chromium.launch()
-  const kontekst = await nettleser.newContext({ viewport: { width: 1300, height: 1000 }, permissions: ['clipboard-read', 'clipboard-write'] })
-  const side = await kontekst.newPage()
-  await loggInn(side, url)
+  const miljo = await apneTestmiljo()
+  const url = miljo.url
+  const side: Side = await miljo.side()
   const versjon = (
     await side
       .locator('text=/^v\\d+\\.\\d+\\.\\d+$/')
@@ -208,6 +192,7 @@ async function main() {
   const rader: string[] = []
   const verifiserte: string[] = []
   const nyttForsok: string[] = []
+  let stoppet: string | null = null
   const bare = process.env.QA_FORLOP?.split(',')
   for (const f of (BRUKERFORLOP as readonly Brukerforlop[]).filter((x) => !bare || bare.includes(x.id))) {
     const r = kjorForlop(f, uttrekk)
@@ -216,15 +201,23 @@ async function main() {
       rader.push(`| ${f.id} | ${celle(f.hva)} | ${KLASSENAVN[r.klasse]} | – | – |`)
       continue
     }
+    // Vernet: taket på forløp og pausen i produksjon, og stopp ved overbelastning.
+    try {
+      await miljo.forlop()
+    } catch (e) {
+      if (!(e instanceof Teststopp)) throw e
+      stoppet = e.message
+      break
+    }
     let a: Appresultat
     try {
-      // Et tidsavbrudd når siden lastes, er nettet, ikke appen: forløpet kjøres på nytt fra en tom side, høyst to ganger.
+      // Et tidsavbrudd når siden lastes, kan være nettet: forløpet kjøres på nytt fra en tom side, så mange ganger vernet tillater (aldri i produksjon).
       for (let forsok = 1; ; forsok++) {
         try {
           a = await kjorIApp(side, url, r)
           break
         } catch (e) {
-          if (forsok > 2 || !/page\.goto: Timeout/.test(String(e))) throw e
+          if (forsok > miljo.grenser.nyeForsok || !/page\.goto: Timeout/.test(String(e))) throw e
           nyttForsok.push(f.id)
         }
       }
@@ -250,7 +243,13 @@ async function main() {
     rader.push(`| ${f.id} | ${celle(f.hva)} | ${KLASSENAVN[r.klasse]} | ${app} | ${avvik.length ? celle(avvik.join('; ')) : 'nei'} |`)
     console.log(f.id, KLASSENAVN[r.klasse], a.tabell ? 'plan' : 'ingen plan', avvik.join('; '))
   }
-  await nettleser.close()
+  const trafikk = await miljo.avslutt()
+  // Vernet kan ha stoppet kjøringen under det siste forløpet, uten at et nytt forløp ble forsøkt.
+  stoppet ??= trafikk.stoppet && `Kjøringen er stoppet: ${trafikk.stoppet}.`
+  if (stoppet) {
+    console.error(stoppet)
+    process.exitCode = 1
+  }
 
   writeFileSync(
     APPKONTROLL,
@@ -258,9 +257,12 @@ async function main() {
       '<!-- Laget av `npx vite-node src/__tests__/qa/appkontroll.ts`; rediger ikke for hånd. -->',
       '# OUSFAR Verktøy – brukerforløpene i den publiserte appen',
       '',
-      `Kjørt ${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC mot ${url} (${versjon}) som administrator, med dagens FEST. Hvert forløp er det samme som i \`docs/verktøy-qa-brukerforlop.md\`: syntetiske doser, alle bekreftelser og nei på hvert unntak og spørsmål (ja der forløpet svarer ja), måldosen forløpet velger, tablett når siden ber om legemiddelform med mindre forløpet velger en annen form eller bytter form underveis. Siden lastes helt på nytt for hvert forløp. Bare lesing; ingenting er lagret. «Avvik» sammenligner med den lokale kjøringen mot de lagrede FEST-uttrekkene: hele kopien linje for linje, og den synlige tidslinjen (hver rad og celle) mot kopien.`,
+      `Kjørt ${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC mot ${url} (${versjon}) som administrator, ${miljo.modus === 'lokal' ? 'i det lokale testmiljøet med egen database og FEST fra de lagrede uttrekkene' : 'i produksjonen, som en begrenset kontroll, med dagens FEST'}. Hvert forløp er det samme som i \`docs/verktøy-qa-brukerforlop.md\`: syntetiske doser, alle bekreftelser og nei på hvert unntak og spørsmål (ja der forløpet svarer ja), måldosen forløpet velger, tablett når siden ber om legemiddelform med mindre forløpet velger en annen form eller bytter form underveis. Siden lastes helt på nytt for hvert forløp. Bare lesing; ingenting er lagret. «Avvik» sammenligner med den lokale kjøringen mot de lagrede FEST-uttrekkene: hele kopien linje for linje, og den synlige tidslinjen (hver rad og celle) mot kopien.`,
       '',
       `Planer teknisk ende-til-ende-verifisert i appen (hele kopien lik den lokale kjøringen linje for linje, bortsett fra FEST-tidspunktet): **${verifiserte.length}** (${verifiserte.join(', ') || 'ingen'}). Dette er en teknisk verifikasjon med syntetiske data, ikke «klinisk prøveverifisert» (plan §8); det krever i tillegg en faglig gjennomgang av hele doseringsforløpet, kildene og de relevante risikoene.`,
+      '',
+      ...(stoppet ? [`**Kjøringen ble stoppet av vernet før alle forløpene var kjørt.** ${stoppet} Forløpene som mangler i tabellen, er ikke kjørt.`, ''] : []),
+      `${trafikklinje(trafikk)}`,
       '',
       ...(nyttForsok.length > 0 ? [`Kjørt på nytt fra en tom side etter tidsavbrudd da siden skulle lastes (nettet, ikke appen): ${[...new Set(nyttForsok)].join(', ')}.`, ''] : []),
       '## Kontroller som ikke er gjort',

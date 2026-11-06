@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.126.7',
+    versjon: '1.126.5',
     dato: '2026-11-06',
     sammendrag: 'Fagsidene hentes med langt mindre arbeid for databasen',
     typer: ['Funksjonalitet'],
@@ -21,6 +21,19 @@ export const ENDRINGSLOGG: Endring[] = [
     punkter: [
       'Når en fagside åpnes, henter databasen nå bare siden, kortene og kildene den viser, i stedet for alt faginnholdet i basen. Det samme gjelder når søket henter alle fagsidene.',
       'Sidene, kortene, kildene og rekkefølgen er nøyaktig de samme som før, og hvem som ser utkast, er uendret. Fagsidene skal åpne raskere, særlig når databasen har mye å gjøre.',
+    ],
+    utenVarsel: true,
+  },
+  {
+    versjon: '1.126.4',
+    dato: '2026-11-06',
+    sammendrag: 'Automatiske kontroller av appen kjøres nå mot en egen testdatabase, ikke mot den OUSFAR bruker',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Ingenting i appen er endret. Endringen gjelder bare de automatiske kontrollene som åpner appen og går gjennom verktøyene.',
+      'De kjøres nå mot en egen testdatabase med syntetiske data, slik at de ikke gjør OUSFAR tregere for brukerne. Mot den publiserte appen kan bare en kort, begrenset kontroll kjøres, og den stopper av seg selv ved tegn på overbelastning.',
     ],
     utenVarsel: true,
   },
