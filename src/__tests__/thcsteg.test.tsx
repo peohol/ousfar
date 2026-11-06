@@ -151,19 +151,24 @@ describe('fortolkningsmodulen for THC-syre', () => {
     await user.type(gruppe('Denne prøven').getByRole('textbox', { name: 'IRCAK' }), inn.aktuellVerdi)
     await user.type(gruppe('Denne prøven').getByLabelText('Prøvedato'), inn.aktuellDato)
 
-    const banner = () => screen.queryByRole('note', { name: 'Mildere konklusjon med høyere sikkerhetsmargin' })
+    const banner = () => screen.queryByRole('note', { name: 'Vurder høyere sikkerhetsmargin' })
     const knapper = () => within(banner()!).queryAllByRole('button').map((b) => b.textContent)
 
-    // Standardmarginen, 90 %: bare 99 % gir noe mildere.
-    expect(banner()!.textContent).toContain('Med 90 % sikkerhetsmargin blir konklusjonen «Kan ikke fastslås».')
-    expect(banner()!.textContent).toContain('Med 99 % sikkerhetsmargin: «Ikke nødvendigvis nytt».')
-    expect(knapper()).toEqual(['Bruk 99 % sikkerhetsmargin'])
+    // Standardmarginen, 90 %: bare 99 % gir noe mildere. Konklusjonen nå står i
+    // kommentaren under, og gjentas ikke i banneret.
+    expect(within(banner()!).getByText('Vurder høyere sikkerhetsmargin')).toBeTruthy()
+    expect(banner()!.textContent).toContain('Med 99 % sikkerhetsmargin endres konklusjonen til «ikke nødvendigvis nytt».')
+    expect(banner()!.textContent).not.toMatch(/kan ikke fastslås|Med 90 %/i)
+    expect(knapper()).toEqual(['Bruk 99 %'])
+    expect(within(banner()!).getByRole('button', { name: 'Bruk 99 % sikkerhetsmargin' })).toBeTruthy()
 
     // Uten margin: begge de høyere marginene gir hvert sitt mildere utfall.
     trykkPaaValg(marginvalg(0.5))
-    expect(banner()!.textContent).toContain('Uten sikkerhetsmargin blir konklusjonen «Nytt inntak».')
-    expect(banner()!.textContent).toContain('Med 90 % sikkerhetsmargin: «Kan ikke fastslås».')
-    expect(knapper()).toEqual(['Bruk 90 % sikkerhetsmargin', 'Bruk 99 % sikkerhetsmargin'])
+    expect(banner()!.textContent).not.toContain('Nytt inntak')
+    expect(banner()!.textContent).toContain('Med 90 % sikkerhetsmargin endres konklusjonen til «kan ikke fastslås».')
+    expect(banner()!.textContent).toContain('Med 99 % sikkerhetsmargin endres konklusjonen til «ikke nødvendigvis nytt».')
+    expect(knapper()).toEqual(['Bruk 90 %', 'Bruk 99 %'])
+    expect(within(banner()!).getAllByRole('listitem')).toHaveLength(2)
 
     // Knappen velger marginen; på den høyeste er det ingenting mildere å vise.
     await user.click(screen.getByRole('button', { name: 'Bruk 99 % sikkerhetsmargin' }))

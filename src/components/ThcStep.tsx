@@ -258,7 +258,6 @@ function ThcFortolkning({
           regler={regler}
           onIngenTidligere={() => sett('ingenTidligere', true)}
           marginsjekk={{
-            valgt: inndata.sikkerhetsmargin,
             mildere,
             onVelg: (margin) => sett('sikkerhetsmargin', margin),
           }}

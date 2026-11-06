@@ -41,11 +41,6 @@ export function marginvalg(margin: number): string {
     : marginmerke(margin)
 }
 
-/** «Med 90 % sikkerhetsmargin», eller «Uten sikkerhetsmargin» for marginen uten korreksjon. */
-export function medMargin(margin: number): string {
-  return margin === INGEN_SIKKERHETSMARGIN ? 'Uten sikkerhetsmargin' : `Med ${marginmerke(margin)} sikkerhetsmargin`
-}
-
 /** Marginene som en liste: «99 %», «99 % eller 99,9 %», «95 %, 99 % eller 99,9 %». */
 export function marginliste(marginer: readonly number[]): string {
   const merker = marginer.map(marginmerke)
@@ -58,6 +53,12 @@ export function marginliste(marginer: readonly number[]): string {
  */
 export function konklusjonsnavn(konklusjon: ThcKonklusjon, samlet: ThcSamletVurdering | null): string {
   return samlet ? `Nytt inntak etter tidligere prøve ${samlet.dato}` : THC_SITUASJONSINFO[konklusjon].tittel
+}
+
+/** Som {@link konklusjonsnavn}, men midt i en setning: «kan ikke fastslås». */
+export function konklusjonsnavnISetning(konklusjon: ThcKonklusjon, samlet: ThcSamletVurdering | null): string {
+  const navn = konklusjonsnavn(konklusjon, samlet)
+  return navn.charAt(0).toLowerCase() + navn.slice(1)
 }
 
 /** «en nedgang på 74 %», «en økning på 5 %» eller «ingen endring». */
