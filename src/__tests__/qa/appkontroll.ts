@@ -244,6 +244,8 @@ async function main() {
     console.log(f.id, KLASSENAVN[r.klasse], a.tabell ? 'plan' : 'ingen plan', avvik.join('; '))
   }
   const trafikk = await miljo.avslutt()
+  // Vernet kan ha stoppet kjøringen under det siste forløpet, uten at et nytt forløp ble forsøkt.
+  stoppet ??= trafikk.stoppet && `Kjøringen er stoppet: ${trafikk.stoppet}.`
   if (stoppet) {
     console.error(stoppet)
     process.exitCode = 1
