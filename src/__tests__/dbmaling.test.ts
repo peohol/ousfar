@@ -213,13 +213,17 @@ describe('rapporten og historikken', () => {
 describe('arbeidsflyten', () => {
   const flyt = readFileSync(new URL('../../.github/workflows/db-maling.yml', import.meta.url), 'utf8')
 
-  it('måler hver tredje time og for hånd, bare fra main, og skriver bare til historikkgrenen', () => {
+  it('måler hver tredje time og for hånd, bare fra main, og lagrer historikken uten å pushe noe', () => {
     expect(flyt).toMatch(/schedule:\n\s+- cron: '50 \*\/3 \* \* \*'\n\s+workflow_dispatch:/)
     expect(flyt).toContain("if: github.ref == 'refs/heads/main'")
     expect(flyt).toContain('permissions: {}')
     expect(flyt).toContain('environment: produksjon')
-    expect(flyt).toContain('git push --quiet origin "HEAD:$GREN"')
-    expect(flyt).toContain('GREN: drift-malinger')
+    // Historikken er et artefakt i kjøringen: ingen push, så verken CI eller Vercel starter av målingene.
+    expect(flyt).not.toMatch(/git (push|commit|clone)|contents: write/)
+    expect(flyt).toMatch(/permissions:\n\s+contents: read\n(\s+#.*\n)?\s+actions: read/)
+    expect(flyt).toContain('gh run download "$forrige"')
+    expect(flyt).toMatch(/actions\/upload-artifact@[0-9a-f]{40} # v/)
+    expect(flyt).toContain('ARTEFAKT: db-malinger')
     expect(flyt).not.toMatch(/SUPABASE_SECRET_KEY|SUPABASE_DB_PASSWORD|db push|apply_migration/)
     for (const linje of flyt.split('\n').filter((l) => /^\s*- uses: /.test(l))) expect(linje, linje).toMatch(/@[0-9a-f]{40} # v/)
     // Uttrykk står bare som verdien til en nøkkel (som `env`), aldri inne i et skript.

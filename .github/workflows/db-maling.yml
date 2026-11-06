@@ -4,8 +4,10 @@
 #
 # Målingen bare leser: maskinens metrikker, statistikkvisningene og loggene.
 # Den kaller ikke appen og endrer ingenting i databasen. Historikken (én
-# måling per linje) ligger på grenen `drift-malinger`, ikke på main, så
-# målingene utløser verken CI eller utrulling. Rapporten står i sammendraget.
+# måling per linje) lagres som et artefakt i kjøringen, ikke i Git: ingen push,
+# så målingene utløser verken CI eller noen utrulling i Vercel. Hver kjøring
+# henter artefaktet fra forrige vellykkede kjøring, legger målingen til og
+# lagrer hele historikken på nytt. Rapporten står i sammendraget.
 name: Databasemåling
 
 on:
@@ -20,7 +22,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  GREN: drift-malinger
+  ARTEFAKT: db-malinger
   FIL: db-malinger.jsonl
 
 jobs:
@@ -32,8 +34,9 @@ jobs:
     # SUPABASE_ACCESS_TOKEN ligger i miljøet, som bare main får bruke.
     environment: produksjon
     permissions:
-      # Bare for å legge målingen til historikkgrenen.
-      contents: write
+      contents: read
+      # Bare for å hente historikken fra forrige kjøring.
+      actions: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -52,13 +55,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          adresse="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          if git ls-remote --exit-code --heads "$adresse" "$GREN" > /dev/null; then
-            git clone --quiet --depth 1 --branch "$GREN" "$adresse" malinger
+          mkdir -p malinger
+          forrige=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow db-maling.yml --branch main --status success \
+            --limit 1 --json databaseId --jq '.[0].databaseId // empty')
+          if [ -n "$forrige" ]; then
+            gh run download "$forrige" --repo "$GITHUB_REPOSITORY" --name "$ARTEFAKT" --dir malinger \
+              || echo "Fant ingen historikk i kjøring $forrige; begynner på nytt."
           else
-            # Første kjøring: en egen gren uten appens historikk.
-            git init --quiet --initial-branch "$GREN" malinger
-            git -C malinger remote add origin "$adresse"
+            echo 'Ingen vellykket kjøring før denne; begynner på nytt.'
           fi
 
       - name: Mål
@@ -70,11 +74,9 @@ jobs:
         run: npm run -s db:maling -- rapport --historikk "malinger/$FIL" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Lagre historikken
-        run: |
-          set -euo pipefail
-          cd malinger
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add "$FIL"
-          git commit --quiet -m "Databasemåling $(date -u +%FT%RZ)"
-          git push --quiet origin "HEAD:$GREN"
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ${{ env.ARTEFAKT }}
+          path: malinger/${{ env.FIL }}
+          if-no-files-found: error
+          retention-days: 90

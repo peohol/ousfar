@@ -14,15 +14,19 @@ Ingen belastningstest: målingen kaller ikke appen, og den endrer ingenting.
 - Arbeidsflyten `.github/workflows/db-maling.yml` måler hver tredje time (og
   kan startes for hånd), bare fra `main`, med `SUPABASE_ACCESS_TOKEN` fra miljøet
   `produksjon`.
-- Hver måling legges som én JSON-linje i `db-malinger.jsonl` på grenen
-  `drift-malinger`. Grenen har ingen felles historikk med appen, så målingene
-  utløser verken CI eller utrulling. Arbeidsflyten lager grenen første gang.
+- Hver måling legges som én JSON-linje i `db-malinger.jsonl`, som lagres som
+  artefaktet `db-malinger` i kjøringen (beholdes i 90 dager). Hver kjøring henter
+  artefaktet fra forrige vellykkede kjøring, legger målingen til og lagrer hele
+  historikken på nytt, så det nyeste artefaktet har alt. Ingenting pushes til
+  Git, så målingene utløser verken CI eller noen utrulling i Vercel (Vercel
+  bygger hver gren som pushes, også en gren uten appen). Har ingen kjøring lyktes
+  på 90 dager, begynner historikken på nytt.
 - Rapporten står i sammendraget for kjøringen. Den kan også lages fra en
-  hvilken som helst økt med tilgangstokenet:
+  hvilken som helst økt med tilgangstokenet, med historikken lastet ned fra den
+  nyeste kjøringen (*Actions → Databasemåling → Artifacts*):
 
   ```
-  git fetch origin drift-malinger && git show origin/drift-malinger:db-malinger.jsonl > /tmp/m.jsonl
-  npm run -s db:maling -- rapport --historikk /tmp/m.jsonl
+  npm run -s db:maling -- rapport --historikk db-malinger.jsonl
   ```
 
   `--historikk` kan gis flere ganger; filene slås sammen. Målingene fra før
