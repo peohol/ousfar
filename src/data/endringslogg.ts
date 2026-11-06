@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.126.7',
+    dato: '2026-11-06',
+    sammendrag: 'Fagsidene hentes med langt mindre arbeid for databasen',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['stoff', 'sok'],
+    punkter: [
+      'Når en fagside åpnes, henter databasen nå bare siden, kortene og kildene den viser, i stedet for alt faginnholdet i basen. Det samme gjelder når søket henter alle fagsidene.',
+      'Sidene, kortene, kildene og rekkefølgen er nøyaktig de samme som før, og hvem som ser utkast, er uendret. Fagsidene skal åpne raskere, særlig når databasen har mye å gjøre.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.126.3',
     dato: '2026-11-06',
     sammendrag: 'THC-syre: ryddigere banner om høyere sikkerhetsmargin',
