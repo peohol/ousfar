@@ -24,6 +24,7 @@ kjernen og stegene ikke henter noe fra faginnholdet selv.
 | `supabase/migrations/*_datakort_per_analytt.sql` | Datakortene én gang per kode på en side flere koder deler, og referanseområdet til hver kode (`les_referanseomrader`) |
 | `src/faginnhold/sammenslatte.ts`, `scripts/lag-sammenslaing.ts`, `supabase/migrations/*_sammenslatte_stoffsider.sql` | Den historiske datamigrasjonen for sammenslåinger som måtte flytte innhold |
 | `supabase/migrations/*_stoffidentitet.sql` | Stoffets nøkkel (`slug`) på sidene, og lesingen etter stoffet: `les_stoff`, `les_stoffer`, `les_stoffliste`, `les_stoffreferanseomrader` |
+| `supabase/migrations/*_stoffsider_som_json_nodvendige.sql` | Samme lesing, uten å bygge JSON for andre utgaver enn dem svaret inneholder, og uten midlertidige filer (`docs/stoffsidelesing-ytelse.md`) |
 | `supabase/migrations/*_kanoniske_stoffsider.sql` | Datamigrasjonen som ga sidene «Hydroksybupropion» og «Paliperidon (hydroksyrisperidon)» stoffets navn og nøkkel, og HBUP en egen komponent for hydroksybupropion |
 | `src/faginnhold/historiskesider.ts` | Hvordan sidene var lagt opp per analyttkode før, for importene som lager historiske migrasjoner |
 | `supabase/migrations/*_regelredigering_lesing.sql` | Historikken til ett objekt (`les_historikk`) og regelsettet for én kode |
@@ -441,7 +442,10 @@ publiserte revisjonen, øyeblikksbildet og hvem som laget det. Lesemodus leser
 det publiserte; redigeringsmodus utkastet. `les_stoffer` gir alle sidene på
 samme form, til søket, og `les_stoffliste` nøkkelen og navnet til hver side.
 `les_referanser` gir referansebasen. Alle kjører med rettighetene til den som
-leser, så radsikkerheten gjelder som ellers.
+leser, så radsikkerheten gjelder som ellers. Lesingen bygger bare utgavene
+svaret inneholder, aldri alle utgavene i tilstanden; hold det slik når den
+endres, og mål med `src/__tests__/ytelse/stoffsidelesing.test.ts`
+(`docs/stoffsidelesing-ytelse.md`).
 
 Fortolkningsreglene leses for seg, etter analyttkoden og modulen
 (`finn_intervallregelsett`, `les_thc_regelsett`, `les_scenarioregler`; se

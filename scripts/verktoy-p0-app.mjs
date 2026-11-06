@@ -10,25 +10,26 @@
  * handlinger i stedet for å velges i det skjulte. Bare lesing: ingenting
  * lagres i appen. Syntetiske pasienter.
  *
- *   APP_URL=… BOOTSTRAP_ADMIN_USERNAME=… BOOTSTRAP_ADMIN_PASSWORD=… \
- *     node scripts/verktoy-p0-app.mjs [id …]
+ *   npx vite-node scripts/verktoy-p0-app.mjs [id …]
  *
- * Uten id kjøres alle forløpene, ett om gangen. Resultatene skrives til
+ * Som standard kjøres den i det lokale testmiljøet med egen database
+ * (`src/__tests__/qa/testmiljo.ts`, `docs/qa-testmiljo.md`). Mot den publiserte
+ * appen bare med `QA_PRODUKSJON=ja`, APP_URL og BOOTSTRAP_ADMIN_*; da gjelder
+ * vernets tak (høyst seks forløp, pause mellom dem, ingen nye forsøk) og
+ * kjøringen stopper ved første tegn på overbelastning.
+ *
+ * Uten id kjøres alle forløpene, ett om gangen, i en ny nettleserkontekst hver
+ * med innloggingen fra den første. Resultatene skrives til
  * mappen i P0_UT (standard `p0-utdata/`, ikke i git). Kommandoen avslutter med
  * status 1 hvis minst ett forløp feilet, slik at en ufullstendig kjøring ikke
  * kan forveksles med en fullført.
  */
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { createRequire } from 'node:module'
 import { join } from 'node:path'
+import { apneTestmiljo, Teststopp } from '../src/__tests__/qa/testmiljo'
 
-const { chromium } = createRequire(import.meta.url)('playwright')
-const miljo = (navn) => {
-  const x = process.env[navn]
-  if (!x) throw new Error(`${navn} mangler.`)
-  return x
-}
-const URL_ = miljo('APP_URL').replace(/\/$/, '')
+const miljo = await apneTestmiljo()
+const URL_ = miljo.url
 const UT = process.env.P0_UT ?? 'p0-utdata'
 const FORLOP = JSON.parse(readFileSync(new URL('./verktoy-p0-forlop.json', import.meta.url), 'utf8')).forlop
 
@@ -89,14 +90,10 @@ async function svarAlle(p, svar, logg) {
   return n
 }
 
-async function kjor(nettleser, f) {
+async function kjor(f) {
   const mobil = f.mobil === true
-  const kontekst = await nettleser.newContext({
-    viewport: mobil ? { width: 390, height: 844 } : { width: 1300, height: 1000 },
-    ...(mobil ? { isMobile: true, hasTouch: true } : {}),
-    permissions: ['clipboard-read', 'clipboard-write'],
-  })
-  const p = await kontekst.newPage()
+  // Logget inn; den forrige konteksten lukkes, så bare én er åpen om gangen.
+  const p = await miljo.side(mobil ? { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } : {})
   const navn = join(UT, f.id)
   const logg = []
   let handlinger = 0
@@ -105,11 +102,6 @@ async function kjor(nettleser, f) {
     logg.push(beskrivelse)
     await vent(p)
   }
-  await p.goto(URL_, { waitUntil: 'networkidle' })
-  await p.fill('input[name=username]', miljo('BOOTSTRAP_ADMIN_USERNAME'))
-  await p.fill('input[name=password]', miljo('BOOTSTRAP_ADMIN_PASSWORD'))
-  await p.click('button:has-text("Logg inn")')
-  await p.waitForSelector('input[name=username]', { state: 'detached', timeout: 30_000 })
   await p.goto(`${URL_}/#/verktoy/${f.verktoy}`, { waitUntil: 'networkidle' })
   await p.getByRole('combobox').first().waitFor({ timeout: 30_000 })
   await vent(p)
@@ -178,7 +170,6 @@ async function kjor(nettleser, f) {
     await p.emulateMedia({ media: 'print' })
     await p.pdf({ path: `${navn}.pdf`, format: 'A4' })
   }
-  await kontekst.close()
   const utfall = /Komplett plan til sluttmålet/.test(plan) ? 'komplett plan' : /Ingen plan|kan ikke lage en plan/.test(plan) ? 'stopp' : 'annet'
   const sammendrag = { id: f.id, hva: f.hva, versjon, utfall, handlinger, dosevalg: dosevalg.length, skjermtegn: plan.length, kopitegn: kopi.length, overskrift: plan.split('\n').filter(Boolean).slice(1, 3).join(' / ') }
   writeFileSync(
@@ -190,11 +181,19 @@ async function kjor(nettleser, f) {
 
 const valgte = process.argv.slice(2)
 mkdirSync(UT, { recursive: true })
-const nettleser = await chromium.launch()
 const resultater = []
+let stoppet = null
 for (const f of FORLOP.filter((x) => valgte.length === 0 || valgte.includes(x.id))) {
   try {
-    const r = await kjor(nettleser, f)
+    // Vernet: taket på forløp og pausen i produksjon, og stopp ved overbelastning.
+    await miljo.forlop()
+  } catch (e) {
+    if (!(e instanceof Teststopp)) throw e
+    stoppet = e.message
+    break
+  }
+  try {
+    const r = await kjor(f)
     resultater.push(r)
     console.log(JSON.stringify(r))
   } catch (e) {
@@ -202,8 +201,14 @@ for (const f of FORLOP.filter((x) => valgte.length === 0 || valgte.includes(x.id
     resultater.push({ id: f.id, feil: String(e).split('\n')[0] })
   }
 }
-await nettleser.close()
-writeFileSync(join(UT, 'sammendrag.json'), JSON.stringify({ kjort: new Date().toISOString(), app: URL_, resultater }, null, 2))
+const trafikk = await miljo.avslutt()
+// Vernet kan ha stoppet kjøringen under det siste forløpet, uten at et nytt forløp ble forsøkt.
+stoppet ??= trafikk.stoppet && `Kjøringen er stoppet: ${trafikk.stoppet}.`
+writeFileSync(join(UT, 'sammendrag.json'), JSON.stringify({ kjort: new Date().toISOString(), app: URL_, modus: miljo.modus, trafikk, stoppet, resultater }, null, 2))
+if (stoppet) {
+  console.error(stoppet)
+  process.exitCode = 1
+}
 const feilet = resultater.filter((r) => r.feil).map((r) => r.id)
 if (feilet.length > 0) {
   console.error(`${feilet.length} av ${resultater.length} forløp feilet: ${feilet.join(', ')}`)
