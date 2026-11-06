@@ -1,18 +1,49 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "ok",
   "jobb": {
     "gren": "kuratorjobb/manuell-42202993869",
     "foresporsel_commit": "89a7e20082631a1b1a2a4c5545927ba915e83b75",
     "foresporsel_sha256": "b2b55a543a7c67a1473b8eacd5b97446dc0e094b3462a51b9ee0948443d3f700",
     "kode_commit": "ffe07855339824037fdc2c109fec34492c1f2926",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/42202993869",
-    "startet_kl": "2026-11-06T10:29:29.225Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-11-06T10:29:31.229Z",
+    "ferdig_kl": "2026-11-06T10:29:56.144Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "olanzapin"
+    ],
+    "oppgaver": [
+      "funksjonstest"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 1632
+    }
+  ],
+  "stoffer": {
+    "olanzapin": {
+      "status": "ok",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/olanzapin/funksjonstest.json"
+        }
+      }
+    }
+  }
 }
