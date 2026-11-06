@@ -18,6 +18,7 @@ FAR er et verktøy for fortolkning og kommentering av farmakologiske analyser. B
 - Les relevante filer før du endrer dem. Gjør små, tydelige endringer direkte; undersøk og lag en kort plan først når endringen er bred, risikofylt eller berører flere systemdeler.
 - Følg eksisterende arkitektur og mønstre. Gjør den minste helhetlige endringen som løser problemet, og rett årsaken fremfor å legge på en omvei. Ikke refaktorer uvedkommende kode.
 - Fullfør oppgaven ende-til-ende: implementer, oppdater eller legg til tester, kjør relevante kontroller, rett feil og kontroller diffen. Ikke stopp ved å fortelle bidragsyteren hva vedkommende må gjøre videre dersom Claude kan gjøre det.
+- Automatiserte nettleserkontroller av appen (Playwright) kjøres i det lokale testmiljøet med egen database, aldri som omfattende kjøringer mot den publiserte appen; start dem med `apneTestmiljo()` (`docs/qa-testmiljo.md`).
 - Bruk fokuserte tester underveis. Før en kodeendring ferdigstilles, kjør normalt `npm test` og `npm run build`. Hvis en av dem åpenbart ikke er relevant eller ikke kan kjøres, si kort hvorfor.
 - Bruk `npm run data` bare når kildedataene som bygger det genererte datasettet faktisk skal endres.
 - Ikke svekk eller slett tester bare for å få grønt resultat. Når tilsiktet atferd endres, oppdater testene slik at den nye atferden blir eksplisitt verifisert.
