@@ -1,5 +1,7 @@
 # OUSFAR Verktøy – enklere og mer brukervennlige psykofarmakaverktøy (plan 04.11.2026)
 
+> **Oppfølging 06.11.2026:** Den tidligere UX-leveransen er teknisk integrert, men Peders faktiske bruk av escitalopramnedtrapping og citalopram → sertralin viser vedvarende, vesentlige mangler. [Ny produktrevisjons- og utbedringsplan](verktøy-produktrevisjon-2026-11.md) styrer videre feilretting, uavhengig strategikontroll, semantiske spørsmålskataloger, redusert informasjon og ny nettlesertest. [ChatGPTs faste PR-kontrollstandard](chatgpt-pr-kontrollstandard.md) krever vurdering av opprinnelig bestilling og faktisk brukbarhet i tillegg til teknikk og klinikk. **Ikke tolk grønn CI eller ferdig A1 som produktaksept.**
+
 **Status:** Plan til ChatGPT-kontroll, ikke en klinisk godkjenning. Gjelder alle fire verktøyene: *Trappe ned antidepressiv*, *Bytte antidepressiv*, *Bytte antipsykotikum* (inkludert depot) og *Kombinere stemningsstabiliserende*, og skal kunne gjenbrukes for senere verktøy.
 
 **Forhold til andre planer:** `docs/verktøy-klinisk-leveranseplan-2026-11.md` styrer fortsatt hvilke kliniske regler som lages og godkjennes (K0–K5). Denne planen endrer **hvordan verktøyene brukes**, ikke hvilke regler som er godkjent. Pågående kliniske PR-er (#320 K3, #318 K2, #321 QA) og deres godkjenninger berøres ikke; arbeidet her slås sammen etter dem (§9). Versjonsnumre og merge-rekkefølge eies av K0-tråden.
