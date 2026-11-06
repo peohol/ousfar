@@ -1,0 +1,56 @@
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+Den absolutte biotilgjengeligheten av oksykodon er 60-87 % ved oral administrasjon. Maksimal
+plasmakonsentrasjon oppnås etter ca. 1-1,5 time.
+
+Distribusjon
+Ved steady state er distribusjonsvolumet for oksykodon 2,6 l/kg og plasmaproteinbindingen 38-45 %.
+
+Biotransformasjon
+Oksykodon metaboliseres i tarm og lever via cytokrom P450-systemet til noroksykodon (CYP3A4) og
+oksymorfon (CYP2D6) og til flere glukuronid-konjugater. Bidraget fra metabolittene til den totale
+farmakodynamiske effekten er ubetydelig.
+
+Eliminasjon
+Ved steady state er plasmahalveringstiden ca. 3 timer. Oksykodon og dets metabolitter skilles ut via
+urinen. Utskillelse via fæces er ikke undersøkt.
+
+Linearitet/ikke-linearitet
+Etter administrasjon av kapselformuleringen av oksykodonhydroklorid, øker plasmakonsentrasjonen
+lineært i dosespekteret fra 5 til 20 mg.
+
+Kjønn
+Kvinnelige pasienter har i gjennomsnitt inntil 25 % høyere oksykodonplasmakonsentrasjon enn menn
+etter justering for kroppsvekt. Årsaken til denne forskjellen er ukjent.
+
+5.3   Prekliniske sikkerhetsdata
+
+Teratogenitet
+Oksykodon hadde ingen effekt på fertilitet og tidlig embryoutvikling hos hann- og hunnrotter i doser
+på opptil 8 mg/kg kroppsvekt og induserte ingen misdannelser hos rotter i doser på opptil 8 mg/kg
+eller hos kaniner i doser på 125 mg/kg kroppsvekt. I en statistisk undersøkelse med individuelle fostre
+ble det imidlertid observert en doserelatert økning av misdannelser hos kaniner (økt forekomst av
+27 presakrale ryggvirvler, et ekstra par ribben). Når disse parametrene ble statistisk evaluert i kull, var
+det bare økt forekomst av 27 presakrale ryggvirvler og bare i gruppen som fikk 125 mg/kg, et dosenivå
+som induserte alvorlige farmakotoksiske effekter i drektige dyr. I en studie av pre- og postnatal
+utvikling hos rotter var F1-generasjonens kroppsvekt lavere ved 6 mg/kg/dag sammenlignet med
+kroppsvekten i kontrollgruppene ved doser som reduserte morens vekt og fórinntak (NOAEL 2 mg/kg
+kroppsvekt). Det var ingen effekt på verken fysiske, refleksologiske eller sensoriske
+utviklingsparametre eller på atferds- og reproduksjonsindekser.
+
+Karsinogenitet
+Langtids karsinogenitetsstudier ble ikke utført.
+
+Mutagenitet
+Oksykodon viste klastogent potensiale i in vitro-undersøkelser. In vivo ble imidlertid ikke slike funn
+observert, selv ikke ved toksiske doser. Resultatene viser at den mutagene risikoen for oksykodon hos
+mennesker, kan utelukkes ved terapeutiske konsentrasjoner.
+
+
+6.    FARMASØYTISKE OPPLYSNINGER
+
+6.1   Hjelpestoffer
+
+Kapselinnhold:
+Cellulose, mikrokrystallinsk

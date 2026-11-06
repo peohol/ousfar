@@ -1,0 +1,57 @@
+Medisinsk overvåkning er nødvendig hos pasienter med nedsatt lever- eller nyrefunksjon fordi det er
+rapportert en rekke bivirkninger forbundet med propylenglykol, f.eks. forstyrrelser i nyrefunksjonen (akutt
+tubulær nekrose), akutt nyresvikt og forstyrrelser i leverfunksjonen.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Iqtopam kan administreres i kombinasjon med ett eller flere antiepileptika. Hvis det legges til et ekstra
+legemiddel i pasientens regime, skal imidlertid reaksjonen på behandlingen evalueres nøye, fordi dette øker
+sannsynligheten for at det oppstår uønskede virkninger som sedasjon og apati. I slike tilfeller må dosen av
+hvert legemiddel justeres for å oppnå optimal ønsket effekt.
+
+Samtidig behandling med fenytoin eller primidon kan endre (vanligvis øke) serumkonsentrasjonen av disse
+to stoffene.
+
+Farmakokinetiske legemiddelinteraksjoner
+Antiepileptika som fenytoin, fenobarbital, karbamazepin, lamotrigin og valproat kan øke clearance av
+klonazepam, og dermed senke plasmakonsentrasjonene hos sistnevnte under kombinert behandling.
+
+Klonazepam i seg selv induserer ikke enzymene som er ansvarlige for sin egen metabolisme.
+
+In vitro-data indikerer at CYP3A4 katalyserer klonazepammetabolisme, men graden av CYP3A4s bidrag til
+eliminering av klonazepam er ikke blitt kvantifisert in vivo. Det anbefales å utvise forsiktighet under bruk og
+seponering samt under behandling med legemidler som er potente hemmere eller induktorer for CYP3A4,
+siden det kan være nødvendig med dosejustering. Slike legemidler inkluderer enkelte urtemidler, som
+johannesurt. Klonazepam i seg selv induserer ikke enzymene som er ansvarlige for egen metabolisme.
+
+De selektive serotoninopptakshemmerene sertralin og fluoksetin og antiepileptikumet felbamat har ikke
+betydelig innvirkning på farmakokinetikken til klonazepam hvis de administreres samtidig.
+
+Farmakodynamiske legemiddelinteraksjoner
+Kombinasjonen av klonazepam og valproinsyre kan noen ganger forårsake absens.
+
+Forsterket virkning på sedasjon, respirasjon og hemodynamikk kan forekomme dersom klonazepam
+administreres samtidig med andre sentralt virkende depressiver, inkludert alkohol. Se pkt. 4.9 om
+overdosering for advarsler mot andre CNS-depressiver, inkludert alkohol.
+
+I kombinasjonsbehandling med CNS-depressiver må dosen av hvert legemiddel justeres for å oppnå
+optimal effekt.
+Opioider
+Når sedativer som benzodiazepiner eller relaterte legemidler som klonazepam brukes samtidig med opioider,
+øker risikoen for sedasjon, respirasjonsdepresjon, koma og død på grunn av tilleggseffekten av CNS-
+depressiver. Dosen og varigheten bør begrenses ved samtidig bruk (se pkt. 4.4).
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet
+
+Risiko relatert til epilepsi og antiepileptika generelt
+For alle antiepileptika er det påvist at hos barn til kvinner som ble behandlet mot epilepsi, er forekomsten av
+misdannelser to til tre ganger større enn andelen på rundt 3 % i den generelle populasjonen. Hos den
+behandlede populasjonen er det notert en økning i misdannelser med polyterapi, men det er ikke klarlagt i
+hvilken grad behandlingen og/eller den underliggende tilstanden er årsaken til dette. Seponering av
+antiepileptisk behandling kan føre til forverring av sykdommen, noe som kan være skadelig for både moren
+og fosteret.
+
+Risikoer relatert til klonazepam
+Basert på dyrestudier kan det ikke utelukkes at klonazepam kan føre til medfødte misdannelser (se pkt. 5.3).

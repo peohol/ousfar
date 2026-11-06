@@ -1,0 +1,777 @@
+{
+  "stoff": "olanzapin",
+  "status": "advarsel",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-11-06T04:15:06.240302+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 44,
+    "hentet": 4,
+    "dokumenter": 1,
+    "mangler": [
+      {
+        "merkevare_id": "ID_0259C444-7C0E-4121-9E26-4E3AC12B9EBE",
+        "varenavn": "Olanzapine Teva",
+        "navn_form_styrke": "Olanzapine Teva tab 2,5 mg",
+        "produsent": "Teva B.V.",
+        "atc": "N05AH03",
+        "legemiddelform": "Tablett, filmdrasjert",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_09921905-C4C6-4E11-90AD-A550B8E56657",
+        "varenavn": "Zypadhera",
+        "navn_form_styrke": "Zypadhera pulv til depotinj væske, susp 210 mg",
+        "produsent": "CHEPLAPHARM Registration GmbH",
+        "atc": "N05AH03",
+        "legemiddelform": "Pulver og væske til depotinjeksjonsvæske, suspensjon",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_0AEEC344-C826-4AA4-BD46-A8A80BD36809",
+        "varenavn": "Olanzapine Teva",
+        "navn_form_styrke": "Olanzapine Teva tab 5 mg",
+        "produsent": "Teva B.V.",
+        "atc": "N05AH03",
+        "legemiddelform": "Tablett, filmdrasjert",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_108C34F9-C9CF-47DA-8F67-961035907882",
+        "varenavn": "Zyprexa Velotab",
+        "navn_form_styrke": "Zyprexa Velotab smeltetab 15 mg",
+        "produsent": "Orifarm AS",
+        "atc": "N05AH03",
+        "legemiddelform": "Smeltetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_142318EE-F294-4564-94A6-E0E7FC5083A3",
+        "varenavn": "Olanzapine Teva",
+        "navn_form_styrke": "Olanzapine Teva smeltetab 10 mg",
+        "produsent": "Teva B.V.",
+        "atc": "N05AH03",
+        "legemiddelform": "Smeltetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_15B0F332-A517-406A-A32A-59A551258F18",
+        "varenavn": "Zyprexa",
+        "navn_form_styrke": "Zyprexa tab 10 mg",
+        "produsent": "Abacus Medicine A/S",
+        "atc": "N05AH03",
+        "legemiddelform": "Tablett, drasjert",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_1888125A-D7C6-45C6-A046-AB3511119E98",
+        "varenavn": "Zyprexa Relprevv",
+        "navn_form_styrke": "Zyprexa Relprevv pulv til depotinj væske, susp 405 mg",
+        "produsent": "Pharmaco",
+        "atc": "N05AH03",
+        "legemiddelform": "Pulver og væske til depotinjeksjonsvæske, suspensjon",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_1AE2A596-414E-477C-952C-EA976B682391",
+        "varenavn": "Zypadhera",
+        "navn_form_styrke": "Zypadhera pulv til depotinj væske, susp 300 mg",
+        "produsent": "Cheplapharm Arzneimittel GmbH",
+        "atc": "N05AH03",
+        "legemiddelform": "Pulver og væske til depotinjeksjonsvæske, suspensjon",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_252796FB-8488-483A-90AA-B0062F34ABD8",
+        "varenavn": "Zyprexa Velotab",
+        "navn_form_styrke": "Zyprexa Velotab smeltetab 15 mg",
+        "produsent": "CHEPLAPHARM Registration GmbH",
+        "atc": "N05AH03",
+        "legemiddelform": "Smeltetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_29A8099C-12E2-4FFE-B017-F2E58641F0CF",
+        "varenavn": "Olanzapine Teva",
+        "navn_form_styrke": "Olanzapine Teva smeltetab 20 mg",
+        "produsent": "Teva B.V.",
+        "atc": "N05AH03",
+        "legemiddelform": "Smeltetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_354190CB-C738-468F-9A50-CD2B0B86253C",
+        "varenavn": "Zyprexa",
+        "navn_form_styrke": "Zyprexa tab 10 mg",
+        "produsent": "Orifarm AS",
+        "atc": "N05AH03",
+        "legemiddelform": "Tablett, drasjert",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_3D32657F-88C5-4A6A-9FF4-45C1372AB236",
+        "varenavn": "Zyprexa Velotab",
+        "navn_form_styrke": "Zyprexa Velotab smeltetab 15 mg",
+        "produsent": "2care4 ApS",
+        "atc": "N05AH03",
+        "legemiddelform": "Smeltetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_42C84D17-D8D6-4D46-9849-4C3220B8871F",
+        "varenavn": "Zypadhera",
+        "navn_form_styrke": "Zypadhera pulv til depotinj væske, susp 300 mg",
+        "produsent": "CHEPLAPHARM Registration GmbH",
+        "atc": "N05AH03",
+        "legemiddelform": "Pulver og væske til depotinjeksjonsvæske, suspensjon",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_4C10CE3B-A4D5-4164-95D8-0E66FD5851DA",
+        "varenavn": "Olanzapine Teva",
+        "navn_form_styrke": "Olanzapine Teva tab 10 mg",
+        "produsent": "Teva B.V.",
+        "atc": "N05AH03",
+        "legemiddelform": "Tablett, filmdrasjert",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_55FDAE4A-2F4D-41B1-B253-C3AA78EE5093",
+        "varenavn": "Olanzapine Viatris",
+        "navn_form_styrke": "Olanzapine Viatris tab 10 mg",
+        "produsent": "Viatris Limited",
+        "atc": "N05AH03",
+        "legemiddelform": "Tablett, filmdrasjert",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_5621343F-F92D-4435-BB37-8A1D0E578445",
+        "varenavn": "Zyprexa Velotab",
+        "navn_form_styrke": "Zyprexa Velotab smeltetab 10 mg",
+        "produsent": "Orifarm AS",
+        "atc": "N05AH03",
+        "legemiddelform": "Smeltetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_65FA71AE-C5B1-4B26-8BCB-0F9CA1925EE4",
+        "varenavn": "Olanzapin-ratiopharm",
+        "navn_form_styrke": "Olanzapin-ratiopharm tab 7,5 mg",
+        "produsent": "Ratiopharm",
+        "atc": "N05AH03",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_67B608BC-6CB9-4B60-B25D-B849B661E0FE",
+        "varenavn": "Zyprexa",
+        "navn_form_styrke": "Zyprexa tab 2,5 mg",
+        "produsent": "CHEPLAPHARM Registration GmbH",
+        "atc": "N05AH03",
+        "legemiddelform": "Tablett, drasjert",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_70D61E3F-F00D-4B23-BA4D-F3ADAD8D7EE1",
+        "varenavn": "Zyprexa Velotab",
+        "navn_form_styrke": "Zyprexa Velotab smeltetab 20 mg",
+        "produsent": "CHEPLAPHARM Registration GmbH",
+        "atc": "N05AH03",
+        "legemiddelform": "Smeltetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_723BA74C-EE83-4F9E-8833-F432EF709D93",
+        "varenavn": "Zypadhera",
+        "navn_form_styrke": "Zypadhera pulv til depotinj væske, susp 405 mg",
+        "produsent": "Cheplapharm Arzneimittel GmbH",
+        "atc": "N05AH03",
+        "legemiddelform": "Pulver og væske til depotinjeksjonsvæske, suspensjon",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_76F1C585-B1BA-40D1-B4BD-3408BBA6F119",
+        "varenavn": "Zyprexa",
+        "navn_form_styrke": "Zyprexa tab 7,5 mg",
+        "produsent": "Abacus Medicine A/S",
+        "atc": "N05AH03",
+        "legemiddelform": "Tablett, drasjert",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_76FA891E-AF54-40CF-B363-9A71DD27D832",
+        "varenavn": "Zyprexa",
+        "navn_form_styrke": "Zyprexa tab 5 mg",
+        "produsent": "CHEPLAPHARM Registration GmbH",
+        "atc": "N05AH03",
+        "legemiddelform": "Tablett, drasjert",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_86D02E40-0452-426C-A606-DAFD329EF096",
+        "varenavn": "Zyprexa",
+        "navn_form_styrke": "Zyprexa tab 10 mg",
+        "produsent": "CHEPLAPHARM Registration GmbH",
+        "atc": "N05AH03",
+        "legemiddelform": "Tablett, drasjert",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_987E0DD5-2A5A-4D5F-9D05-8C869D3107A5",
+        "varenavn": "Olanzapine Teva",
+        "navn_form_styrke": "Olanzapine Teva tab 7,5 mg",
+        "produsent": "Teva B.V.",
+        "atc": "N05AH03",
+        "legemiddelform": "Tablett, filmdrasjert",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_987F77C3-1FA7-4779-8A31-EDAF737A4899",
+        "varenavn": "Zyprexa Velotab",
+        "navn_form_styrke": "Zyprexa Velotab smeltetab 5 mg",
+        "produsent": "CHEPLAPHARM Registration GmbH",
+        "atc": "N05AH03",
+        "legemiddelform": "Smeltetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_AB0096F3-4098-4C57-B92E-02E316981139",
+        "varenavn": "Zyprexa",
+        "navn_form_styrke": "Zyprexa pulv til inj væske, oppl 10 mg",
+        "produsent": "CHEPLAPHARM Registration GmbH",
+        "atc": "N05AH03",
+        "legemiddelform": "Pulver til injeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_AFF06F5C-4872-4017-A633-5CB2FF668855",
+        "varenavn": "Zyprexa",
+        "navn_form_styrke": "Zyprexa tab 7,5 mg",
+        "produsent": "CHEPLAPHARM Registration GmbH",
+        "atc": "N05AH03",
+        "legemiddelform": "Tablett, drasjert",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_B53C3D5C-D048-4B15-A8DB-B6F332F514ED",
+        "varenavn": "Olanzapine Teva",
+        "navn_form_styrke": "Olanzapine Teva smeltetab 5 mg",
+        "produsent": "Teva B.V.",
+        "atc": "N05AH03",
+        "legemiddelform": "Smeltetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_BADE004B-27F3-47D8-B312-C80ED3527276",
+        "varenavn": "Zypadhera",
+        "navn_form_styrke": "Zypadhera pulv til depotinj væske, susp 210 mg",
+        "produsent": "Cheplapharm",
+        "atc": "N05AH03",
+        "legemiddelform": "Pulver og væske til depotinjeksjonsvæske, suspensjon",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_D068EE52-5A0A-490E-9941-1A9FD4210FCA",
+        "varenavn": "Zyprexa Velotab",
+        "navn_form_styrke": "Zyprexa Velotab smeltetab 5 mg",
+        "produsent": "Orifarm AS",
+        "atc": "N05AH03",
+        "legemiddelform": "Smeltetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_D3C449FA-A256-4DDC-A367-8C2168F66164",
+        "varenavn": "Olanzapine Viatris",
+        "navn_form_styrke": "Olanzapine Viatris tab 5 mg",
+        "produsent": "Viatris Limited",
+        "atc": "N05AH03",
+        "legemiddelform": "Tablett, filmdrasjert",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_D6ECEC1F-C11D-46FF-8940-2FAABB7AF882",
+        "varenavn": "Zyprexa Velotab",
+        "navn_form_styrke": "Zyprexa Velotab smeltetab 5 mg",
+        "produsent": "2care4 ApS",
+        "atc": "N05AH03",
+        "legemiddelform": "Smeltetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_D8A4726A-3096-41A3-BC41-583937D349F3",
+        "varenavn": "Zyprexa Velotab",
+        "navn_form_styrke": "Zyprexa Velotab smeltetab 10 mg",
+        "produsent": "CHEPLAPHARM Registration GmbH",
+        "atc": "N05AH03",
+        "legemiddelform": "Smeltetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_DF35F4BE-7FBA-4ADA-97F8-11F225BC2674",
+        "varenavn": "Olanzapine Viatris",
+        "navn_form_styrke": "Olanzapine Viatris tab 7,5 mg",
+        "produsent": "Viatris Limited",
+        "atc": "N05AH03",
+        "legemiddelform": "Tablett, filmdrasjert",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_E1E2BB74-521E-4F87-BAE3-5F6731DB255E",
+        "varenavn": "Zyprexa Velotab",
+        "navn_form_styrke": "Zyprexa Velotab smeltetab 20 mg",
+        "produsent": "Orifarm AS",
+        "atc": "N05AH03",
+        "legemiddelform": "Smeltetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_E3C09068-3C3A-4F19-9067-B7895AD8EBC1",
+        "varenavn": "Olanzapine Teva",
+        "navn_form_styrke": "Olanzapine Teva smeltetab 15 mg",
+        "produsent": "Teva B.V.",
+        "atc": "N05AH03",
+        "legemiddelform": "Smeltetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_E529B0E2-EA5E-48C7-9B97-011A39114E5E",
+        "varenavn": "Zyprexa",
+        "navn_form_styrke": "Zyprexa tab 5 mg",
+        "produsent": "Orifarm AS",
+        "atc": "N05AH03",
+        "legemiddelform": "Tablett, drasjert",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_E86E09FE-848B-41A4-8547-AE224DFC8723",
+        "varenavn": "Zyprexa",
+        "navn_form_styrke": "Zyprexa pulv til inj væske, oppl 10 mg",
+        "produsent": "Orifarm AS",
+        "atc": "N05AH03",
+        "legemiddelform": "Pulver til injeksjonsvæske, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_F5085013-724E-4BDE-9FAA-1B344F9FEECA",
+        "varenavn": "Zyprexa",
+        "navn_form_styrke": "Zyprexa tab 10 mg",
+        "produsent": "2care4 ApS",
+        "atc": "N05AH03",
+        "legemiddelform": "Tablett, drasjert",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_FD8A3487-C9A9-4AC8-A5C4-320C6604F051",
+        "varenavn": "Zypadhera",
+        "navn_form_styrke": "Zypadhera pulv til depotinj væske, susp 405 mg",
+        "produsent": "CHEPLAPHARM Registration GmbH",
+        "atc": "N05AH03",
+        "legemiddelform": "Pulver og væske til depotinjeksjonsvæske, suspensjon",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 4 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 4,
+        "ikke_dmp": 0,
+        "uten_omtale": 40
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "40 av 44 preparater i FEST mangler en hentet preparatomtale fra DMP: 40 uten preparatomtale i FEST (f.eks. sentralt godkjente, med omtalen hos EMA). SPC-behovet er ikke dekket; se «dekning.mangler».",
+      "antall": {
+        "preparater": 44,
+        "hentet": 4,
+        "mangler": 40,
+        "dokumenter": 1
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6081.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6081.pdf",
+      "hentet_kl": "2026-11-06T10:22:52.075Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "261077",
+        "content-md5": "DJrWr9noWuBJOZF8xB1wng==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:50 GMT",
+        "etag": "0x8DE53793C7B901C",
+        "date": "Fri, 06 Nov 2026 10:22:52 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_8950A6D3-F261-4B7A-B158-A93296C56457",
+          "varenavn": "Olanzapine Accord",
+          "navn_form_styrke": "Olanzapine Accord tab 5 mg",
+          "produsent": "Accord Healthcare B.V.",
+          "atc": "N05AH03",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6081.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (261077 byte).",
+          "antall": {
+            "bytes": 261077
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "74f2cc75ac3846d1b1e6a4de4aea95657b6107db845de25a89ce70d61704ed7e"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6082.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6082.pdf",
+      "hentet_kl": "2026-11-06T10:22:59.571Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "261077",
+        "content-md5": "DJrWr9noWuBJOZF8xB1wng==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:43 GMT",
+        "etag": "0x8DE53793837F483",
+        "date": "Fri, 06 Nov 2026 10:23:00 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_8D25D425-08CB-48B5-8BE6-8080D2738E4C",
+          "varenavn": "Olanzapine Accord",
+          "navn_form_styrke": "Olanzapine Accord tab 7,5 mg",
+          "produsent": "Accord Healthcare B.V.",
+          "atc": "N05AH03",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6082.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (261077 byte).",
+          "antall": {
+            "bytes": 261077
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "74f2cc75ac3846d1b1e6a4de4aea95657b6107db845de25a89ce70d61704ed7e"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6083.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6083.pdf",
+      "hentet_kl": "2026-11-06T10:23:00.618Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "261077",
+        "content-md5": "DJrWr9noWuBJOZF8xB1wng==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:44 GMT",
+        "etag": "0x8DE537938C41AD3",
+        "date": "Fri, 06 Nov 2026 10:23:01 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_B1C27E30-6DF6-4B36-B24C-8A0268E111C3",
+          "varenavn": "Olanzapine Accord",
+          "navn_form_styrke": "Olanzapine Accord tab 10 mg",
+          "produsent": "Accord Healthcare B.V.",
+          "atc": "N05AH03",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6083.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (261077 byte).",
+          "antall": {
+            "bytes": 261077
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "74f2cc75ac3846d1b1e6a4de4aea95657b6107db845de25a89ce70d61704ed7e"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6080.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6080.pdf",
+      "hentet_kl": "2026-11-06T10:23:01.827Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "261077",
+        "content-md5": "DJrWr9noWuBJOZF8xB1wng==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:55 GMT",
+        "etag": "0x8DE53793F5B144D",
+        "date": "Fri, 06 Nov 2026 10:23:01 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_FB066391-7A23-42DC-B2CF-A4BDD55F0988",
+          "varenavn": "Olanzapine Accord",
+          "navn_form_styrke": "Olanzapine Accord tab 2,5 mg",
+          "produsent": "Accord Healthcare B.V.",
+          "atc": "N05AH03",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6080.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (261077 byte).",
+          "antall": {
+            "bytes": 261077
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "74f2cc75ac3846d1b1e6a4de4aea95657b6107db845de25a89ce70d61704ed7e"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "74f2cc75ac3846d1b1e6a4de4aea95657b6107db845de25a89ce70d61704ed7e",
+      "bytes": 261077,
+      "mappe": "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1",
+      "pdf": {
+        "sider": 17,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "Summary of Product characteristics",
+        "laget": "Wed May 12 11:02:54 2021 UTC",
+        "endret": "Wed May 12 11:02:54 2021 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/original.pdf",
+        "tekst": "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/tekst/side-001.txt",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/tekst/side-002.txt",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/tekst/side-003.txt",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/tekst/side-004.txt",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/tekst/side-005.txt",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/tekst/side-006.txt",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/tekst/side-007.txt",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/tekst/side-008.txt",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/tekst/side-009.txt",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/tekst/side-010.txt",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/tekst/side-011.txt",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/tekst/side-012.txt",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/tekst/side-013.txt",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/tekst/side-014.txt",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/tekst/side-015.txt",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/tekst/side-016.txt",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/tekst/side-017.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/sider/side-001.png",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/sider/side-002.png",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/sider/side-003.png",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/sider/side-004.png",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/sider/side-005.png",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/sider/side-006.png",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/sider/side-007.png",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/sider/side-008.png",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/sider/side-009.png",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/sider/side-010.png",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/sider/side-011.png",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/sider/side-012.png",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/sider/side-013.png",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/sider/side-014.png",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/sider/side-015.png",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/sider/side-016.png",
+          "kuratorjobb/resultat/olanzapin/spc/74f2cc75ac3846d1/sider/side-017.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 7,
+        "til": 12
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (17 sider).",
+          "antall": {
+            "sider": 17
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 38886
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 7."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 17
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": []
+}

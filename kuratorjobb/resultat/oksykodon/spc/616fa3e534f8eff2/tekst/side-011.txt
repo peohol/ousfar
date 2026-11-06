@@ -1,0 +1,59 @@
+11 + 6 % av dosen som O-demetylerte metabolitter (bl.a. oksymorfon).
+
+Spesielle pasientpopulasjoner
+Oksykodons plasmakonsentrasjon påvirkes kun nominelt av alder og er 15 % høyere hos eldre
+sammenlignet med yngre pasienter.
+
+Kvinnelige pasienter har i gjennomsnitt opptil 25 % høyere plasmakonsentrasjon av oksykodon enn
+menn basert på kroppsvekt.
+
+Pasienter med lett, moderat og sterkt nedsatt leverfunksjon viste henholdsvis 1,2, 2,0 og 1,9 ganger
+økning i plasmakonsentrasjonen sammenlignet med pasienter med normal leverfunksjon. AUC-verdier
+økte i gjennomsnitt henholdsvis 1,4, 3,2 og 3,2 ganger sammenlignet med pasienter med normal
+leverfunksjon. Eliminasjonshalveringstiden for oksykodon økte henholdsvis 1,1, 1,8 og 1,8 ganger
+sammenlignet med pasienter med normal leverfunksjon.
+
+Pasienter med lett, moderat og sterkt nedsatt nyrefunksjon viste henholdsvis 1,1, 1,4 og 1,7 ganger
+økning i plasmakonsentrasjonen sammenlignet med pasienter med normal nyrefunksjon. AUC-verdier
+økte i gjennomsnitt henholdsvis 1,5, 1,7 og 2,3 ganger sammenlignet med pasienter med normal
+nyrefunksjon. Eliminasjonshalveringstiden for oksykodon økte henholdsvis 1,5, 1,2 og 1,4 ganger
+sammenlignet med pasienter med normal nyrefunksjon.
+
+5.3   Prekliniske sikkerhetsdata
+
+Reproduksjonstoksisitet
+Oksykodon hadde ingen effekt på fertilitet og tidlig embryoutvikling hos hann- og hunnrotter ved
+doser opptil 8 mg/kg kroppsvekt, og forårsaket ingen misdannelser hos rotter ved doser opptil 8 mg/kg
+eller hos kaniner ved doser opptil 125 mg/kg kroppsvekt. Da individuelle fostre ble benyttet i statistisk
+evaluering av kaniner, ble det imidlertid observert en doserelatert økning i utviklingsavvik (økt
+forekomst av 27 presakrale ryggvirvler, og ekstra par ribben). Når disse parameterne ble statistisk
+evaluert med hensyn til kull, var kun forekomsten av 27 presakrale ryggvirvler økt og kun i 125 mg/kg
+gruppen, et dosenivå som ga alvorlige farmakotoksiske effekter hos de drektige dyrene.
+
+I en studie av pre- og postnatal utvikling hos rotter, ble det sett redusert kroppsvekt hos rotteungene
+ved 6 mg/kg/dag, ved doser som reduserte maternell vekt og næringsinntak (NOAEL 2 mg/kg
+kroppsvekt). Der var ingen effekter på fysiske, reflektoriske, eller sensoriske utviklingsparametere,
+eller på atferds- eller reproduksjonsindikatorer.
+
+Gentoksisitet/karsinogenese
+Som for andre opioider var også oksykodon gentoksisk i enkelte in vitro-analyser (f.eks.
+muselymfomtest). Det ble ikke sett gentoksiske effekter i bakteriell mutasjonstest (Ames test) eller i
+mikronukleus test hos mus.
+
+Det er ikke utført langtidsstudier med hensyn til karsinogenitet.
+
+
+6.    FARMASØYTISKE OPPLYSNINGER
+
+6.1   Hjelpestoffer
+
+Cellulose, mikrokrystallinsk
+Magnesiumstearat
+
+Kapselskall
+Gelatin
+Paraoransje (E110) (kun 5 mg kapsler)
+Indigokarmin (E132)
+Jernoksid (E172)
+Titandioksid (E171)
+Natriumlaurylsulfat

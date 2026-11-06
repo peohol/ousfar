@@ -1,0 +1,54 @@
+ Undersøkelser
+ Svært vanlige: Økt totalnivå av bilirubin, økt GGT, økte plasmaprolaktinnivåer16.
+13
+  Etter korttidsbehandling (median varighet 22 dager) var vektøkning på ≥ 7 % av baseline
+kroppsvekt (kg) svært vanlig (40,6 %), ≥ 15 % av baseline kroppsvekt var vanlig (7,1 %) og ≥
+25 % var vanlig (2,5 %). Ved langvarig eksponering (minst 24 uker) gikk 89,4 % opp ≥ 7 %,
+55,3 % gikk opp ≥ 15 % og 29,1 % gikk opp ≥ 25 % av baseline kroppsvekt.
+14
+  Observert for fastende normale nivåer ved baseline (< 1,016 mmol/l) som økte til høye
+nivåer (≥ 1,467 mmol/l) og endringer i fastende triglyserider fra borderline ved baseline (≥
+1,016 mmol/l - < 1,467 mmol/l) til høye (≥ 1,467 mmol/l).
+15
+  Endringer i fastende totalkolesterolnivåer fra normal ved baseline (< 4,39 mmol/l) til høyt (≥
+5,17 mmol/l) ble observert som vanlig. Endringer i fastende totalkolesterolnivåer fra
+borderline ved baseline (≥ 4,39 - < 5,17 mmol/l) til høyt (≥ 5,17 mmol/l) var svært vanlig.
+16
+     Forhøyede plasmaprolaktinnivåer ble rapportert hos 47,4 % av unge pasienter.
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det
+mulig å overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell
+oppfordres til å melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes
+på nettsiden til Statens legemiddelverk: www.legemiddelverket.no/meldeskjema.
+
+4.9        Overdosering
+
+Tegn og symptomer
+Svært vanlige symptomer ved overdosering (> 10 % insidens) inkluderer takykardi,
+agitasjon/aggressivitet, dysartri, forskjellige ekstrapyramidale symptomer og redusert nivå av
+bevissthet fra sedasjon til koma.
+
+Andre medisinsk signifikante følger av overdosering inkluderer delirium, kramper, koma,
+mulig malignt nevroleptikasyndrom, respirasjonsdepresjon, aspirasjon, hypertensjon eller
+hypotensjon, hjertearytmi (< 2 % av overdoseringstilfellene) og sirkulatorisk kollaps. Fatale
+utfall er rapportert for akutte overdoseringer så lave som 450 mg, men overlevelse er også
+rapportert etter akutt overdose på ca. 2 g oral olanzapin.
+
+Behandling av overdose
+Det finnes ingen spesifikk motgift for olanzapin. Induksjon av brekninger anbefales ikke.
+Standard prosedyrer for behandling av overdoser kan være aktuelt (dvs. ventrikkelskylling,
+administrering av aktivt kull). Samtidig administrering av aktivt kull ble vist å redusere oral
+biotilgjengelighet av olanzapin med 50 til 60 %.
+
+Symptomatisk behandling og monitorering av vital organfunksjon skal iverksettes i henhold
+til klinisk status, inkludert behandling av hypotensjon og sirkulasjonssvikt samt
+respirasjonsstøtte. Ikke bruk adrenalin, dopamin eller andre sympatomimetiske midler med
+betaagonistaktivitet, siden betastimulering kan forverre hypotensjon. Kardiovaskulær
+monitorering er nødvendig for å avdekke mulige arytmier. Tett medisinsk oppfølging og
+monitorering bør fortsette inntil pasienten kommer seg.
+
+
+5.         FARMAKOLOGISKE EGENSKAPER
+
+5.1        Farmakodynamiske egenskaper

@@ -1,0 +1,56 @@
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Samtidig bruk av opioider med sedativa, som benzodiazepiner eller lignende legemidler, øker risikoen
+for sedasjon, respirasjonsdepresjon, koma og dødsfall på grunn av additiv CNS-hemmende effekt.
+Dose og varighet ved samtidig bruk bør begrenses (se pkt. 4.4).
+
+Legemidler som hemmer CNS inkluderer, men er ikke begrenset til: andre opioider, gabapentinoider
+som pregabalin, anxiolytika, hypnotika og sedativa (inkl. benzodiazepiner), antipsykotika,
+antidepressiva, fentiaziner, nevroleptika, anestetika, muskelrelaksantia, antihistaminer, antiemetika og
+alkohol.
+
+Alkohol kan forsterke de farmakodynamiske effektene av oksykodon, og samtidig bruk bør unngås.
+
+MAO-hemmere er kjent for å interagere med narkotiske analgetika. MAO-hemmere gir CNS-
+stimulering eller -hemming forbundet med hyper- eller hypotensive kriser (se pkt. 4.4). Oksykodon
+bør brukes med forsiktighet hos pasienter som tar MAO-hemmere eller som har fått MAO-hemmere i
+løpet av de siste to ukene (se pkt. 4.4).
+
+Samtidig bruk av oksykodon og serotonerge legemidler, som en selektiv serotoninreopptakshemmer
+(SSRI) eller en serotonin- og noradrenalinreopptakshemmer (SNRI), kan forårsake serotonintoksisitet.
+Symptomene på serotonintoksisitet kan inkludere endringer i mental status (f.eks. agitasjon,
+hallusinasjoner, koma), autonome forstyrrelser (f.eks. takykardi, ustabilt blodtrykk, hypertermi),
+nevromuskulære avvik (f.eks. hyperrefleksi, koordinasjonsproblemer, stivhet) og/eller
+gastrointestinale symptomer (f.eks. kvalme, oppkast, diaré). Oksykodon skal brukes med forsiktighet
+hos pasienter som bruker disse legemidlene. Hos enkelte pasienter kan det være behov for
+dosereduksjon.
+
+Legemidler med antikolinerge virkninger (f.eks. antipsykotika, trisykliske antidepressiva,
+antihistaminer, antiemetika, muskelrelaksantia, legemidler mot Parkinsons sykdom) kan forsterke de
+antikolinerge bivirkningene av oksykodon (som forstoppelse, munntørrhet eller dysfunksjonell
+vannlating).
+
+Oksykodon metaboliseres hovedsakelig av CYP3A4, med et bidrag fra CYP2D6. Aktivitetene til disse
+metabolske banene kan hemmes eller induseres av ulike legemidler eller kosttilskudd som
+administreres samtidig, noe som kan føre til endret plasmakonsentrasjon av oksykodon. Det kan derfor
+være nødvendig å justere oksykodondosen.
+
+CYP3A4-hemmere, som makrolidantibiotika (f.eks. klaritomycin, erytromycin og telitromycin), azol-
+soppmidler (f.eks. ketokonazol, vorikonazol, itrakonazol og posakonasol), proteasehemmere (f.eks.
+boceprevir, ritonavir, indinavir, nelfinavir og saquinavir), cimetidin og grapefruktjuice kan føre til en
+redusert clearance av oksykodon som kan føre til en økning av plasmakonsentrasjonen av oksykodon.
+Av den grunn kan det være nødvendig å justere oksykodondosen tilsvarende.
+
+Noen spesifikke eksempler er gitt nedenfor:
+
+     Når 200 mg itrakonazol, en potent CYP3A4-hemmer, administreres oralt i fem dager, øker
+      AUC for oral oksykodon. I gjennomsnitt var AUC omtrent 2,4 ganger høyere (mellom 1,5 og
+      3,4).
+     Når 200 mg vorikonazol, en potent CYP3A4-hemmer, ble administrert to ganger daglig i fire
+      dager (de første to dosene var på 400 mg) så økte AUC for oral oksykodon. I gjennomsnitt var
+      AUC ca. 3,6 ganger høyere (mellom 2,7 og 5,6).
+     Når 800 mg telitromycin, en CYP3A4-hemmer, ble administrert peroralt i fire dager økte AUC
+      for oral oksykodon. I gjennomsnitt var AUC ca. 1,8 ganger hoyere (mellom 1,3 og 2,3).
+     Når 200 ml grapefruktjuice, en CYP3A4-hemmer, ble administrert tre ganger daglig i fem
+      dager, økte AUC for oral oksykodon. I gjennomsnitt var AUC ca. 1,7 ganger høyere (mellom
+      1,1 og 2,1).

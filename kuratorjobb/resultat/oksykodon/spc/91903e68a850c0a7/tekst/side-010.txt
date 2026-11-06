@@ -1,0 +1,59 @@
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: analgetika, opioider, opiumsalkaloider, ATC-kode: N02A A05
+
+Oksykodon viser affinitet til kappa-, my- og deltaopioidreseptorer i hjernen og ryggmargen. Det virker
+på disse reseptorene som en opioidagonist uten en antagonistisk effekt. Den terapeutiske effekten er
+hovedsakelig analgetisk og sedativ.
+
+5.2   Farmakokinetiske egenskaper
+
+Korrelasjon mellom dose og plasmakonsentrasjon av oksykodonhydroklorid, samt korrelasjon mellom
+konsentrasjon og visse forventede opioidvirkninger er påvist.
+
+Absorpsjon
+Biotilgjengeligheten etter oral administrasjon av oksykodon er 60-87 %. Gjennomsnittlig maksimal
+konsentrasjon var oppnådd innen ca 1,5 timer og virkningen varer i rundt 6 timer.
+
+Distribusjon
+Etter absorpsjon er virkestoffet fordelt i hele kroppen. Cirka 38 % er bundet til plasmaproteiner og
+distribusjonsvolumet ved ”steady state” er 2,61 l/kg. Eliminasjonshalveringstid er 3,2-5,1 timer og
+plasmaclearance er 0,8 l/min.
+
+Biotransformasjon
+Oksykodon metaboliseres i tarmen og leveren via cytokrom P450-systemet til noroksykodon og
+oksymorfon samt flere glukuronidkonjugater. CYP3A og CYP2D6 er trolig involvert i dannelsen av
+henholdsvis noroksykodon og oksymorfon. Oksymorfon har en viss analgetisk aktivitet, men er
+tilstede i plasma i lave konsentrasjoner og anses ikke å bidra til oksykodons farmakologiske effekt.
+
+Eliminasjon
+Oksykodon og dets metabolitter utskilles via urin. Fekal utskillelse er ikke undersøkt.
+
+5.3   Prekliniske sikkerhetsdata
+
+Studier har vist at oksykodonhydroklorid ikke påvirket fertilitet eller tidlig embryoutvikling hos hann-
+og hunnrotter ved doser inntil 8 mg/kg kroppsvekt og gav ingen misdannelser hos rotter ved doser
+inntil 8 mg/kg eller hos kaniner ved doser på 125 mg/kg kroppsvekt. Da individuelle fostre ble brukt i
+statistisk evaluering av kaniner, ble det imidlertid observert en doserelatert økning i utviklingsavvik
+(økt forekomst av 27 presakrale ryggvirvler, ekstra par ribben). Når disse parameterne ble statistisk
+vurdert med hensyn til kull, var kun forekomsten av 27 presakrale ryggvirvler økt og kun i 125 mg/kg
+gruppen, et dosenivå som gav alvorlige farmakotoksiske effekter i de drektige dyrene. I en studie av
+pre- og postnatal utvikling hos rotter var F1 kroppsvekt lavere ved 6 mg/kg/d sammenlignet med
+kroppsvekt i kontrollgruppen ved doser som reduserte mordyrets vekt og fødeinntak (NOAEL 2 mg/kg
+kroppsvekt). Det var ingen effekter verken på fysiske, reflektoriske eller sensoriske
+utviklingsparametere eller på atferds- eller reproduksjonsindikatorer.
+Langtidsstudier av karsinogenitet er ikke gjennomført.
+
+Oksykodon viser et klastogent potensiale in vitro. Det er imidlertid ikke sett tilsvarende effekter in
+vivo, selv ved toksiske doser. Resultatene indikerer at man med god sikkerhet kan utelukke mutagen
+risiko for mennesker ved terapeutiske konsentrasjoner av Oxycodone Orifarm.
+
+
+6.    FARMASØYTISKE OPPLYSNINGER
+
+6.1   Hjelpestoffer
+
+
+                                                  10

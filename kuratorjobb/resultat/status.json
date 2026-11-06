@@ -1,18 +1,96 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "feil",
   "jobb": {
     "gren": "kuratorjobb/manuell-42201709024",
     "foresporsel_commit": "7cbab0456b30746d076e3143f3b8a28961354992",
     "foresporsel_sha256": "724bbe09849bcadf1f7e792d5256e7b8b82482814ce4f46ec90203138fd898aa",
     "kode_commit": "ffe07855339824037fdc2c109fec34492c1f2926",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/42201709024",
-    "startet_kl": "2026-11-06T10:19:26.877Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-11-06T10:19:28.902Z",
+    "ferdig_kl": "2026-11-06T10:23:02.136Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "klonazepam",
+      "kodein",
+      "oksykodon",
+      "olanzapin"
+    ],
+    "oppgaver": [
+      "funksjonstest",
+      "spc"
+    ]
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 1277
+    }
+  ],
+  "stoffer": {
+    "klonazepam": {
+      "status": "feil",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "feil",
+          "fil": "kuratorjobb/resultat/klonazepam/funksjonstest.json"
+        },
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/klonazepam/spc.json"
+        }
+      }
+    },
+    "kodein": {
+      "status": "feil",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "ok",
+          "fil": "kuratorjobb/resultat/kodein/funksjonstest.json"
+        },
+        "spc": {
+          "status": "feil",
+          "fil": "kuratorjobb/resultat/kodein/spc.json"
+        }
+      }
+    },
+    "oksykodon": {
+      "status": "feil",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "feil",
+          "fil": "kuratorjobb/resultat/oksykodon/funksjonstest.json"
+        },
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/oksykodon/spc.json"
+        }
+      }
+    },
+    "olanzapin": {
+      "status": "feil",
+      "oppgaver": {
+        "funksjonstest": {
+          "status": "feil",
+          "fil": "kuratorjobb/resultat/olanzapin/funksjonstest.json"
+        },
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/olanzapin/spc.json"
+        }
+      }
+    }
+  }
 }

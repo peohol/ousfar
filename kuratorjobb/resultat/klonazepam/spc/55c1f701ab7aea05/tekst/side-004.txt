@@ -1,0 +1,57 @@
+for administrasjon kan føre til endringer i pasientens reaksjoner, avhengig av individuell sensibilitet. Se også
+pkt. 4.7.
+
+Kombinasjon med antiepileptisk behandling
+Dosen av klonazepam må justeres nøye ut fra individuelle behov hos pasienter som får behandling med
+andre sentralt virkende legemidler eller krampestillende midler (antiepileptika) (se pkt. 4.5).
+
+Seponering av behandling eller dosereduksjon
+Administrasjon av krampestillende midler, inkludert klonazepam, må ikke avbrytes brått på grunn av
+risikoen for å utløse status epilepticus. Hvis behandlende lege avgjør at det er behov for dosereduksjon eller
+seponering, skal dette skje gradvis. I slike tilfeller anbefales det en kombinasjon med andre antiepileptika.
+
+Intravenøs administrasjon
+En vene med akseptabel diameter bør velges til intravenøs administrasjon. Injeksjonen må administreres
+svært langsomt, med konstant overvåkning av EEG, respirasjon og blodtrykk. Rask injeksjon eller
+utilstrekkelig venediameter er assosiert med risiko for tromboflebitt, som kan føre til trombose.
+Respirasjonsdepresjon kan oppstå, spesielt etter intravenøs administrasjon av klonazepam.
+
+Hos voksne og ungdom skal injeksjonshastigheten ikke overskride 0,25–0,5 mg (0,5–1 ml klargjort
+oppløsning) per minutt (se pkt. 4.2). Bivirkninger som påvirker nerve- og muskelsystemet, inkludert fatigue,
+er temmelig vanlig og som regel forbigående. De oppstår vanligvis spontant i forbindelse med behandling
+eller dosereduksjon. Disse bivirkningene kan delvis unngås ved å øke dosen langsomt i begynnelsen av
+behandlingen (se pkt. 4.8).
+
+Porfyri
+Klonazepam kan utløse anfall av porfyri. Klonazepam skal derfor brukes med forsiktighet hos pasienter med
+porfyri.
+
+Sykehistorie med narkotikamisbruk og avhengighet
+Bruk av benzodiazepiner kan føre til utvikling av fysisk og psykisk avhengighet (se pkt. 4.8). Særlig kan
+langtidsbehandling eller behandling med høye doser føre til reversible forstyrrelser som dysartri, redusert
+koordinasjon av bevegelser og nedsatt gangevne (ataksi), nystagmus og synsforstyrrelser (diplopi).
+Anterograd amnesi kan forekomme ved bruk av benzodiazepiner i terapeutiske doser, og risikoen øker med
+høyere doser. Amnestisk virkning kan bli assosiert med upassende atferd. Ved visse former for epilepsi er
+det en mulighet for økt hyppighet av krampeanfall (se pkt. 4.8) under langtidsbehandling.
+
+Risikoen for avhengighet og/eller misbruk øker med dosestørrelse og behandlingsvarighet. Den er også
+høyere hos pasienter som har en sykehistorie med misbruk av narkotika og/eller alkohol.
+
+Hvis pasienten har utviklet fysisk avhengighet, vil brå seponering ledsages av abstinenssymptomer. Under
+langtidsbehandling kan abstinenssymptomene utvikle seg etter lengre tids bruk, særlig ved høye doser eller
+hvis den daglige dosen reduseres raskt eller seponeres brått. Symptomene inkluderer skjelving, svetting,
+agitasjon, søvnforstyrrelser og angst, hodepine, muskelsmerter, ekstrem angst, anspenthet, rastløshet,
+forvirring, irritasjon og epileptiske krampeanfall som kan assosieres med den underliggende sykdommen.
+
+I alvorlige tilfeller kan følgende symptomer oppstå: derealisasjon, depersonalisering, hyperakusis,
+nummenhet og prikking i armer og/eller bein, overfølsomhet overfor lys, støy og fysisk kontakt eller
+hallusinasjoner. Siden risikoen for abstinenssymptomer er større etter brå seponering av behandlingen, bør
+brå seponering fra legemidlet unngås og behandlingen – selv etter kun kort varighet – seponeres ved gradvis
+nedtrapping av den daglige dosen. Risikoen for abstinenssymptomer øker hvis benzodiazepiner
+administreres sammen med sedativer på dagtid (krysstoleranse).
+
+Eldre
+Det må utøves særlig forsiktighet hos eldre pasienter i forbindelse med titreringsfasen av behandling med
+klonazepam. De farmakologiske effektene av benzodiazepiner ser ut til å være sterkere hos eldre pasienter.
+Dette kan gi økt muskelavslappende virkning (som kan føre til fall og benbrudd), økt kardiorespiratorisk
+virkning og sterkere kognitive og sedative bivirkninger sammenliknet med yngre pasienter.

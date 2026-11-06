@@ -1,0 +1,53 @@
+Plutselig hjertedød
+I rapporter om olanzapin etter markedsføring er tilfeller med plutselig hjertedød rapportert hos
+pasienter med olanzapin. I en retrospektiv observasjonell kohortstudie var risikoen for antatt
+plutselig hjertedød hos pasienter behandlet med olanzapin omtrent dobbelt så høy som
+risikoen hos pasienter som ikke brukte antipsykotika. I studien var risikoen med olanzapin
+sammenlignbar med risikoen med atypiske antipsykotika, som var inkludert i en gruppert
+analyse.
+
+Pediatrisk populasjon
+Olanzapin er ikke indisert til behandling av barn og ungdom. Studier med pasienter i alderen
+13-17 år viste forskjellige bivirkninger, blant annet vektøkning, forandringer i metabolske
+parametre og en økning i prolaktinnivåene (se pkt. 4.8 og 5.1).
+
+Laktose
+Olanzapine Accord filmdrasjerte tabletter inneholder laktose. Pasienter med sjeldne arvelige
+problemer med galaktoseinterolanse, total laktasemangel eller glukose-galaktose
+malabsorpsjon bør ikke ta dette legemidlet.
+
+4.5     Interaksjon med andre legemidler og andre former for interaksjon
+
+Interaksjonsstudier har kun blitt utført på voksne.
+
+Potensielle interaksjoner som påvirker olanzapin
+Siden olanzapin metaboliseres av CYP1A2, kan substanser som spesifikt induserer eller
+hemmer dette isoenzymet, påvirke farmakokinetikken til olanzapin.
+
+Induksjon av CYP1A2
+Olanzapins metabolisme kan induseres av røyking og karbamazepin, noe som kan føre til
+reduserte olanzapinkonsentrasjoner. Bare svak til moderat økning i olanzapinclearance er blitt
+observert. De kliniske konsekvenser er trolig begrensede, men klinisk overvåkning anbefales
+og en økning av olanzapindosen kan vurderes hvis det er nødvendig (se pkt. 4.2).
+
+Hemming av CYP1A2
+Fluvoksamin, en spesifikk CYP1A2-hemmer, har vist seg å gi vesentlig hemming av
+metabolismen til olanzapin. Den gjennomsnittlige økningen i Cmax for olanzapin, inntatt etter
+fluvoksamin, var 54 % hos kvinnelige ikke-røykere og 77 % hos mannlige røykere. Den
+gjennomsnittlige økningen av AUC for olanzapin var henholdsvis 52 % og 108 %. En lavere
+startdose av olanzapin bør vurderes hos pasienter som bruker fluvoksamin eller andre
+CYP1A2-hemmere, som for eksempel ciprofloksacin. En reduksjon i olanzapindosen bør
+vurderes dersom behandling med en hemmer av CYP1A2 er initiert.
+
+Nedsatt biotilgjengelighet
+Aktivt kull reduserer biotilgjengeligheten av oral olanzapin med 50 til 60 % og bør tas minst
+2 timer før eller etter olanzapin.
+Fluoksetin (en CYP2D6-hemmer), enkeltdoser av antacida (aluminium, magnesium) eller
+cimetidin er ikke vist å påvirke farmakokinetikken til olanzapin signifikant.
+
+Olanzapins potensielle innvirkning på andre legemidler
+Olanzapin kan antagonisere effekten av direkte og indirekte dopaminagonister.
+
+Olanzapin hemmer ikke de viktigste CYP450-isoenzymene in vitro (dvs. 1A2, 2D6, 2C9,
+2C19, 3A4). Derfor er ingen spesiell interaksjon forventet. Dette er bekreftet i in vitro studier,
+der ingen hemming av metabolismen av følgende aktive substanser ble funnet: trisykliske

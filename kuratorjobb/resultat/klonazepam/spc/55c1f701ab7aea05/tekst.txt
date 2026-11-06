@@ -1,0 +1,664 @@
+1.    LEGEMIDLETS NAVN
+
+Iqtopam 1 mg/ml konsentrat til injeksjons-/infusjonsvæske, oppløsning
+
+
+2.    KVALITATIV OG KVANTITATIV SAMMENSETNING
+
+1 ml konsentrat (én ampulle) inneholder 1 mg klonazepam.
+
+Hjelpestoffer med kjent effekt
+Vannfri etanol (158 mg/ml), benzylalkohol (31 mg/ml), propylenglykol (805 g/ml).
+
+For fullstendig liste over hjelpestoffer, se pkt. 6.1.
+
+
+3.    LEGEMIDDELFORM
+
+Konsentrat til injeksjons-/infusjonsvæske, oppløsning (sterilt konsentrat)
+En fargeløs eller svakt gul-grønn oppløsning.
+
+
+4.    KLINISKE OPPLYSNINGER
+
+4.1   Indikasjoner
+
+Behandling mot epilepsi, generaliserte krampeanfall (fraværskramper, myokloniske kramper,
+toniske/kloniske kramper), delvise krampeanfall og status epilepticus hos voksne og ungdom fra 12 år.
+
+4.2   Dosering og administrasjonsmåte
+
+Dosering
+Dosering ved epilepsi
+Doseringen er individuell og tilpasses ut fra pasientens alder, klinisk effekt og toleranse. For mer
+informasjon om intravenøs administrasjon, se pkt. 4.4.
+
+Voksne og unge pasienter (12–18 år)
+Langsom intravenøs injeksjon (i rundt 5 minutter) av 1 ampulle med klonazepam (1 mg) fortynnet
+med 1,0 ml vann til injeksjonsvæsker. Hos voksne og unge pasienter kan denne dosen gjentas ved
+behov. Maksimalt anbefalt dose hos voksne og ungdom er 20 mg daglig.
+
+Dosen kan gis som en intramuskulær injeksjon eller langsom intravenøs infusjon (se pkt. 6.6).
+
+Kun i spesielle tilfeller der intravenøs administrasjon ikke er mulig, bør intramuskulær (i.m.)
+administrasjonsvei brukes, på grunn av den langsomme absorpsjonshastigheten etter i.m.-
+administrasjon (etter i.m.-administrasjon er tmaks 3 timer, se pkt. 5.2).
+
+Eldre
+Det bør brukes lavest mulig dose hos eldre pasienter, og det må utøves forsiktighet når dosen titreres (se
+pkt. 4.4).
+
+Pediatrisk populasjon
+På grunn av innholdet av etanol, benzylalkohol og propylenglykol i formuleringen er dette
+legemidlet ikke indisert til bruk hos spedbarn og barn under 12 år (se pkt. 4.3).
+
+Nedsatt nyrefunksjon
+Sikkerheten og effekten av klonazepam hos pasienter med nedsatt nyrefunksjon har ikke blitt studert. Det
+kreves imidlertid ingen dosejustering hos disse pasientene med hensyn til farmakokinetikken (se pkt. 5.2).
+Nedsatt leverfunksjon
+Pasienter med alvorlig nedsatt leverfunksjon bør ikke behandles med klonazepam (se pkt. 4.3). Pasienter
+med lett til moderat nedsatt leverfunksjon skal gis lavest mulig dose.
+
+Seponering
+Klonazepam skal ikke seponeres brått. Nedtrapping skal gjøres med langsom dosereduksjon for å unngå
+fremkalling av toniske/kloniske kramper. Abstinenssymptomene varierer veldig og kan strekke seg fra noen
+få timer til en hel uke eller mer. I mindre alvorlige tilfeller kan abstinenssymptomene være begrenset til
+skjelving, rastløshet, søvnløshet, angst, hodepine og konsentrasjonsvansker. Abstinenssymptomer, som
+svetting, muskel- og magekramper og bevissthetsendringer, kan imidlertid forekomme. I sjeldne tilfeller kan
+det forekomme delirium og kraftige kloniske kramper.
+
+Ved abstinenssymptomer kreves det nøye medisinsk overvåkning og pasientstøtte.
+
+Administrasjonsmåte
+Legemidlet kan administreres som langsom intravenøs injeksjon, intravenøs infusjon eller intramuskulær
+injeksjon.
+
+Langsom intravenøs injeksjon
+Langsom intravenøs injeksjon bør brukes ved akutt behandling, ikke ved langtidsbehandling. Konsentratet i
+én ampulle med legemidlet, som inneholder 1 mg av virkestoffet, kan kun brukes etter fortynning med
+1,0 ml vann til injeksjonsvæsker for å forhindre lokal irritasjon på injeksjonsstedet. Oppløsningen til
+injeksjon skal klargjøres umiddelbart før administrasjon.
+
+Intravenøs infusjon
+Oppløsningen til infusjon bør brukes ved langtidsbehandling og skal klargjøres umiddelbart før
+administrasjon.
+
+All intravenøs behandling skal administreres langsomt, med konstant overvåkning av EEG, respirasjon og
+blodtrykk.
+
+Intramuskulær injeksjon
+Kun i spesielle tilfeller der intravenøs administrasjon ikke er mulig, bør intramuskulær (i.m.)
+administrasjonsvei brukes, på grunn av den langsomme absorpsjonshastigheten etter i.m.-administrasjon.
+Ved intramuskulær injeksjon bør legemidlet ikke fortynnes, siden administrasjonen da kan være mer
+smertefull.
+
+Det er påvist at klonazepam kan absorberes av infusjonsposer og infusjonssett av plast som inneholder PVC.
+Dette kan føre til at konsentrasjonen av klonazepam reduseres med opptil 50 %, særlig dersom klargjorte
+poser som inneholder klonazepam, oppbevares i varme omgivelser i 24 timer eller lengre, eller dersom det
+brukes lange slangesett eller langsomme infusjonshastigheter. Poser og infusjonssett som inneholder PVC,
+bør unngås ved infusjon av klonazepam. Utøv forsiktighet ved skifte mellom poser og infusjonssett som
+inneholder PVC, og poser og infusjonssett som ikke inneholder PVC, ved infusjon av klonazepam.
+
+4.3   Kontraindikasjoner
+
+     Overfølsomhet overfor virkestoffet eller overfor noen av hjelpestoffene listet opp i pkt. 6.1, eller
+      overfor andre legemidler i benzodiazepin-gruppen.
+     Alvorlig respirasjonssvikt.
+     Alvorlig nedsatt leverfunksjon.
+     Pasienter som er i koma.
+     Pasienter som man vet misbruker legemidler, narkotika eller alkohol.
+     Barn under 12 år.
+4.4   Advarsler og forsiktighetsregler
+
+Selvmordstanker, selvmordsatferd og depresjon
+Det er rapportert selvmordstanker og selvmordsatferd hos pasienter som ble behandlet med antiepileptika,
+for ulike indikasjoner. En metaanalyse av randomiserte, placebokontrollerte studier av antiepileptika har
+også vist en liten økning i risikoen for selvmordstanker og selvmordsatferd. Virkningsmekanismen med
+hensyn til denne risikoen er ikke kjent, og tilgjengelige data utelukker ikke muligheten for en økt risiko ved
+bruk av klonazepam.
+
+Pasientene bør derfor overvåkes for tegn på selvmordstanker og selvmordsatferd, og passende behandling
+bør vurderes. Pasienter (og pasientenes pleiere/omsorgspersoner) bør be om medisinsk rådgivning hvis det
+oppstår tegn til selvmordstanker eller selvmordsatferd. Pasienter som har en sykehistorie med depresjon
+og/eller selvmordsforsøk, skal holdes under nøye overvåkning.
+
+Sentralnervesystemet (CNS)
+Iqtopam skal kun brukes med særlig forsiktighet hos pasienter med spinale eller cerebellære ataksier.
+
+Kombinert bruk av alkohol/CNS-depressiver
+Bruk av klonazepam i kombinasjon med alkohol og/eller CNS-depressiver bør unngås. Slik kombinert bruk
+kan øke den kliniske effekten av klonazepam, inkludert alvorlig sedasjon, klinisk relevant respiratorisk
+og/eller kardiovaskulær depresjon (se pkt. 4.5).
+
+Amnesi
+Anterograd amnesi kan forekomme ved bruk av benzodiazepiner i terapeutiske doser, og risikoen øker med
+høyere doser.
+
+Myasthenia gravis
+Det bør utvises særlig forsiktighet ved administrasjon av klonazepam hos pasienter med myasthenia gravis
+på grunn av tilleggsrisikoen for muskelsvakhet og respirasjonsdepresjon.
+
+Psykiatriske og «paradoksale» reaksjoner
+Under behandling med benzodiazepiner er det rapportert paradoksale reaksjoner, som rastløshet,
+opphisselse, irritabilitet, aggressivitet, angst, vrangforestillinger, raseri, mareritt, hallusinasjoner, psykoser,
+upassende oppførsel og andre atferdsmessige symptomer (se pkt. 4.8). Paradoksale reaksjoner kan være en
+klasseeffekt av benzodiazepiner. Hvis dette inntreffer under behandling med Iqtopam, skal gradvis
+seponering av behandlingen vurderes (se Seponering av behandling eller dosereduksjon). Paradoksale
+reaksjoner observeres oftere hos barn og eldre pasienter.
+
+Pediatrisk populasjon
+På grunn av innholdet av etanol, benzylalkohol og propylenglykol i formuleringen er dette legemidlet ikke
+indisert til bruk hos spedbarn og barn under 12 år (se pkt. 4.3).
+
+Respirasjonssvikt
+Dosen av klonazepam må justeres nøye ut fra individuelle behov hos pasienter med underliggende
+sykdommer i respirasjonssystemet (f.eks. kronisk obstruktiv lungesykdom). Virkningen på
+respirasjonssystemet kan forsterkes hos pasienter med underliggende obstruktiv sykdom i luftveiene eller
+hjerneskade eller hvis det er gitt andre legemidler som undertrykker respirasjonen. Som regel kan denne
+virkningen unngås dersom dosen justeres nøye ut fra individuelle behov.
+
+Reaksjonsevne
+Som alle legemidler av denne typen kan Iqtopam, avhengig av dose, administrasjonsmåte og individuell
+sensitivitet, føre til endringer i pasientens reaksjoner (f.eks. evne til å kjøre bil, atferd i trafikken) (se
+pkt. 4.7).
+
+Som en generell regel har epileptiske pasienter ikke tillatelse til å kjøre bil. Selv om tilstanden er godt
+regulert på klonazepam, må man være oppmerksom på at enhver økning av dose eller endring av tidspunkt
+for administrasjon kan føre til endringer i pasientens reaksjoner, avhengig av individuell sensibilitet. Se også
+pkt. 4.7.
+
+Kombinasjon med antiepileptisk behandling
+Dosen av klonazepam må justeres nøye ut fra individuelle behov hos pasienter som får behandling med
+andre sentralt virkende legemidler eller krampestillende midler (antiepileptika) (se pkt. 4.5).
+
+Seponering av behandling eller dosereduksjon
+Administrasjon av krampestillende midler, inkludert klonazepam, må ikke avbrytes brått på grunn av
+risikoen for å utløse status epilepticus. Hvis behandlende lege avgjør at det er behov for dosereduksjon eller
+seponering, skal dette skje gradvis. I slike tilfeller anbefales det en kombinasjon med andre antiepileptika.
+
+Intravenøs administrasjon
+En vene med akseptabel diameter bør velges til intravenøs administrasjon. Injeksjonen må administreres
+svært langsomt, med konstant overvåkning av EEG, respirasjon og blodtrykk. Rask injeksjon eller
+utilstrekkelig venediameter er assosiert med risiko for tromboflebitt, som kan føre til trombose.
+Respirasjonsdepresjon kan oppstå, spesielt etter intravenøs administrasjon av klonazepam.
+
+Hos voksne og ungdom skal injeksjonshastigheten ikke overskride 0,25–0,5 mg (0,5–1 ml klargjort
+oppløsning) per minutt (se pkt. 4.2). Bivirkninger som påvirker nerve- og muskelsystemet, inkludert fatigue,
+er temmelig vanlig og som regel forbigående. De oppstår vanligvis spontant i forbindelse med behandling
+eller dosereduksjon. Disse bivirkningene kan delvis unngås ved å øke dosen langsomt i begynnelsen av
+behandlingen (se pkt. 4.8).
+
+Porfyri
+Klonazepam kan utløse anfall av porfyri. Klonazepam skal derfor brukes med forsiktighet hos pasienter med
+porfyri.
+
+Sykehistorie med narkotikamisbruk og avhengighet
+Bruk av benzodiazepiner kan føre til utvikling av fysisk og psykisk avhengighet (se pkt. 4.8). Særlig kan
+langtidsbehandling eller behandling med høye doser føre til reversible forstyrrelser som dysartri, redusert
+koordinasjon av bevegelser og nedsatt gangevne (ataksi), nystagmus og synsforstyrrelser (diplopi).
+Anterograd amnesi kan forekomme ved bruk av benzodiazepiner i terapeutiske doser, og risikoen øker med
+høyere doser. Amnestisk virkning kan bli assosiert med upassende atferd. Ved visse former for epilepsi er
+det en mulighet for økt hyppighet av krampeanfall (se pkt. 4.8) under langtidsbehandling.
+
+Risikoen for avhengighet og/eller misbruk øker med dosestørrelse og behandlingsvarighet. Den er også
+høyere hos pasienter som har en sykehistorie med misbruk av narkotika og/eller alkohol.
+
+Hvis pasienten har utviklet fysisk avhengighet, vil brå seponering ledsages av abstinenssymptomer. Under
+langtidsbehandling kan abstinenssymptomene utvikle seg etter lengre tids bruk, særlig ved høye doser eller
+hvis den daglige dosen reduseres raskt eller seponeres brått. Symptomene inkluderer skjelving, svetting,
+agitasjon, søvnforstyrrelser og angst, hodepine, muskelsmerter, ekstrem angst, anspenthet, rastløshet,
+forvirring, irritasjon og epileptiske krampeanfall som kan assosieres med den underliggende sykdommen.
+
+I alvorlige tilfeller kan følgende symptomer oppstå: derealisasjon, depersonalisering, hyperakusis,
+nummenhet og prikking i armer og/eller bein, overfølsomhet overfor lys, støy og fysisk kontakt eller
+hallusinasjoner. Siden risikoen for abstinenssymptomer er større etter brå seponering av behandlingen, bør
+brå seponering fra legemidlet unngås og behandlingen – selv etter kun kort varighet – seponeres ved gradvis
+nedtrapping av den daglige dosen. Risikoen for abstinenssymptomer øker hvis benzodiazepiner
+administreres sammen med sedativer på dagtid (krysstoleranse).
+
+Eldre
+Det må utøves særlig forsiktighet hos eldre pasienter i forbindelse med titreringsfasen av behandling med
+klonazepam. De farmakologiske effektene av benzodiazepiner ser ut til å være sterkere hos eldre pasienter.
+Dette kan gi økt muskelavslappende virkning (som kan føre til fall og benbrudd), økt kardiorespiratorisk
+virkning og sterkere kognitive og sedative bivirkninger sammenliknet med yngre pasienter.
+Nedsatt leverfunksjon
+Benzodiazepiner kan indusere hepatisk encefalopati hos pasienter med alvorlig nedsatt leverfunksjon. Det
+skal derfor utvises forsiktighet og gis lavest mulig dose ved behandling av pasienter med lett til moderat
+nedsatt leverfunksjon (se pkt. 4.2). Klonazepam er kontraindisert hos pasienter med alvorlig nedsatt
+leverfunksjon (se pkt. 4.3).
+
+Sykehistorie med misbruk av alkohol eller narkotika
+Dette legemidlet skal brukes med ekstrem forsiktighet hos pasienter som har en sykehistorie med misbruk av
+alkohol eller narkotika, eller ved akutt forgiftning med alkohol eller narkotika.
+
+Dette legemidlet inneholder benzylalkohol, etanol og propylenglykol
+
+Benzylalkohol
+Dette legemidlet inneholder 31 mg benzylalkohol i hver ampulle. Dette tilsvarer 31 mg/ml.
+Benzylalkohol kan forårsake allergiske reaksjoner.
+
+Intravenøs administrasjon av benzylalkohol er forbundet med alvorlige bivirkninger og død hos nyfødte
+(«gasping syndrom»). Det er ikke kjent ved hvilken mengde benzylalkohol blir toksisk.
+
+Økt risiko for opphopning av benzylalkohol hos yngre barn.
+
+Større mengder må kun gis dersom det er strengt nødvendig. Det må utvises forsiktighet ved bruk av større
+volum, spesielt hos pasienter med nedsatt lever- og nyrefunksjon og hos pasienter som er gravide eller
+ammer, på grunn av risikoen for opphopning og toksisitet (metabolsk acidose).
+
+Etanol
+Dette legemidlet inneholder 158 mg alkohol (etanol) i hver ampulle. Dette tilsvarer 80 % v/v (alkohol per
+volum). Mengden per dose av dette legemidlet tilsvarer mindre enn 4 ml øl eller 2 ml vin.
+
+En dose på 20 mg av dette legemidlet som gis til en voksen som veier 70 kg vil medføre en eksponering av
+etanol på 45 mg/kg. Dette kan medføre en stigning av alkoholkonsentrasjonen i blodet (BAC) på omtrent
+7,5 mg/100 ml (se rapport EMA/CHMP/43486/2018. appendix 1).
+
+Til sammenligning, en voksen som drikker ett glass vin eller 500 ml øl vil sannsynligvis ha en BAC på ca.
+50 mg/100 ml.
+
+Mengden alkohol i dette legemidlet vil sannsynligvis ikke påvirke ungdom eller voksne.
+
+Alkoholen i dette legemidlet kan påvirke effektene av andre legemidler. Samtidig administrering av
+legemidler som inneholder f.eks. propylenglykol eller etanol kan medføreen opphopning av etanol og
+forårsake bivirkninger, særlig hos yngre barn med lav eller umoden metabolisme.
+
+Da dette legemidlet vanligvis gis langsomt over 2 timer, kan effekten av alkoholen i legemidlet være lavere.
+
+Propylenglykol
+Dette legemidlet inneholder 805 mg propylenglykol i hver ampulle. Dette tilsvarer 805 mg/ml.
+
+Samtidig administrasjon med alle andre substrater for alkohol dehydrogenase f.eks.etanol kan forårsake
+bivirkninger hos barn under 5 år.
+
+Propylenglykol har ikke blitt vist å føre til reproduksjons- og utviklingstoksisitet hos dyr ogmennesker.
+Imidlertid kan det nå til fosteret og er påvist i morsmelk. Som en konsekvens, skal administrering av
+propylenglykol til gravide og pasienter som ammer, vurderes individuelt for hver enkelt pasient.
+Medisinsk overvåkning er nødvendig hos pasienter med nedsatt lever- eller nyrefunksjon fordi det er
+rapportert en rekke bivirkninger forbundet med propylenglykol, f.eks. forstyrrelser i nyrefunksjonen (akutt
+tubulær nekrose), akutt nyresvikt og forstyrrelser i leverfunksjonen.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Iqtopam kan administreres i kombinasjon med ett eller flere antiepileptika. Hvis det legges til et ekstra
+legemiddel i pasientens regime, skal imidlertid reaksjonen på behandlingen evalueres nøye, fordi dette øker
+sannsynligheten for at det oppstår uønskede virkninger som sedasjon og apati. I slike tilfeller må dosen av
+hvert legemiddel justeres for å oppnå optimal ønsket effekt.
+
+Samtidig behandling med fenytoin eller primidon kan endre (vanligvis øke) serumkonsentrasjonen av disse
+to stoffene.
+
+Farmakokinetiske legemiddelinteraksjoner
+Antiepileptika som fenytoin, fenobarbital, karbamazepin, lamotrigin og valproat kan øke clearance av
+klonazepam, og dermed senke plasmakonsentrasjonene hos sistnevnte under kombinert behandling.
+
+Klonazepam i seg selv induserer ikke enzymene som er ansvarlige for sin egen metabolisme.
+
+In vitro-data indikerer at CYP3A4 katalyserer klonazepammetabolisme, men graden av CYP3A4s bidrag til
+eliminering av klonazepam er ikke blitt kvantifisert in vivo. Det anbefales å utvise forsiktighet under bruk og
+seponering samt under behandling med legemidler som er potente hemmere eller induktorer for CYP3A4,
+siden det kan være nødvendig med dosejustering. Slike legemidler inkluderer enkelte urtemidler, som
+johannesurt. Klonazepam i seg selv induserer ikke enzymene som er ansvarlige for egen metabolisme.
+
+De selektive serotoninopptakshemmerene sertralin og fluoksetin og antiepileptikumet felbamat har ikke
+betydelig innvirkning på farmakokinetikken til klonazepam hvis de administreres samtidig.
+
+Farmakodynamiske legemiddelinteraksjoner
+Kombinasjonen av klonazepam og valproinsyre kan noen ganger forårsake absens.
+
+Forsterket virkning på sedasjon, respirasjon og hemodynamikk kan forekomme dersom klonazepam
+administreres samtidig med andre sentralt virkende depressiver, inkludert alkohol. Se pkt. 4.9 om
+overdosering for advarsler mot andre CNS-depressiver, inkludert alkohol.
+
+I kombinasjonsbehandling med CNS-depressiver må dosen av hvert legemiddel justeres for å oppnå
+optimal effekt.
+Opioider
+Når sedativer som benzodiazepiner eller relaterte legemidler som klonazepam brukes samtidig med opioider,
+øker risikoen for sedasjon, respirasjonsdepresjon, koma og død på grunn av tilleggseffekten av CNS-
+depressiver. Dosen og varigheten bør begrenses ved samtidig bruk (se pkt. 4.4).
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet
+
+Risiko relatert til epilepsi og antiepileptika generelt
+For alle antiepileptika er det påvist at hos barn til kvinner som ble behandlet mot epilepsi, er forekomsten av
+misdannelser to til tre ganger større enn andelen på rundt 3 % i den generelle populasjonen. Hos den
+behandlede populasjonen er det notert en økning i misdannelser med polyterapi, men det er ikke klarlagt i
+hvilken grad behandlingen og/eller den underliggende tilstanden er årsaken til dette. Seponering av
+antiepileptisk behandling kan føre til forverring av sykdommen, noe som kan være skadelig for både moren
+og fosteret.
+
+Risikoer relatert til klonazepam
+Basert på dyrestudier kan det ikke utelukkes at klonazepam kan føre til medfødte misdannelser (se pkt. 5.3).
+Klonazepam passerer placenta hos mennesker. Administrasjon av høye doser i siste trimester av graviditeten
+eller under fødselen kan forårsake uregelmessig hjerterytme hos det ufødte barnet og hypotermi, hypotoni,
+mild respirasjonsdepresjon og dårlig næringsopptak hos det nyfødte barnet. I enkelte tilfeller er det også blitt
+rapportert abstinenssymptomer hos barnet. Det er viktig å merke seg at både selve graviditeten og brå
+seponering av legemidlet kan føre til forverring av epilepsien.
+
+Iqtopam inneholder benzylalkohol. Siden dette konserveringsmiddelet kan passere placenta og kan
+forårsake opphopning og toksisitet (metabolsk acidose), bør Iqtopam brukes med forsiktighet under
+graviditet.
+
+Iqtopam inneholder propylenglykol. Propylenglykol har ikke blitt vist å føre til reproduksjons- og
+utviklingstoksisitet hos dyr og mennesker. Imidlertid kan det nå fosteret og er påvist i morsmelk. Som
+en konsekvens, skal administrering av propylenglykol til gravide og pasienter som ammer, vurderes
+individuelt for hver enkelt pasient.
+
+Amming
+Klonazepam utskilles i morsmelk hos mennesker i så stor grad at effekter på nyfødte/spedbarn som ammes
+er sannsynlig, selv ved terapeutiske doser.
+
+Amming skal opphøre ved behandling med Iqtopam.
+
+4.7      Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+Selv om klonazepam tas som foreskrevet, kan det gi reaksjoner i en slik grad at evnen til å kjøre bil eller
+bruke maskiner reduseres. Denne uønskede virkningen forsterkes gjennom inntak av alkohol.
+
+Bilkjøring, bruk av maskiner og andre aktiviteter som krever økt oppmerksomhet, skal derfor unngås helt
+eller i hvert fall under de første dagene av behandlingen.
+
+4.8      Bivirkninger
+
+Bivirkninger rapportert etter markedsføring
+Frekvenskategoriene er som følger:
+Svært vanlige (≥ 1/10)
+Vanlige (≥ 1/100 til < 1/10)
+Mindre vanlige (≥ 1/1000 til < 1/100)
+Sjeldne (≥ 1/10 000 til < 1/1000)
+Svært sjeldne (< 1/10 000)
+Ikke kjent (kan ikke anslås ut ifra tilgjengelige data)
+
+      Organklassesystem/Frekvens                          Bivirkninger
+
+      Forstyrrelser i immunsystemet
+      Svært sjeldne                                       Anafylaktiske reaksjoner
+
+      Ikke kjent                                          Overfølsomhet
+Psykiatriske lidelser
+Sjeldne                                          Nedsatt libido
+Ikke kjent                                       Emosjonelle forstyrrelser, affektive lidelser,
+                                                 forvirring, desorientering, depresjon, rastløshet,
+                                                 irritabilitet, aggressivitet, agitasjon, nervøsitet,
+                                                 fiendtlighet, angst, søvnforstyrrelser,
+                                                 vrangforestillinger, raseri, mareritt og unormale
+                                                 drømmer, hallusinasjoner, psykomotorisk
+                                                 hyperaktivitet, psykoser, upassende atferd, andre
+                                                 atferdsmessige bivirkninger, avhengighet og
+                                                 abstinenssyndrom (se pkt. 4.4)
+Nevrologiske sykdommer
+Vanlige                                         Nedsatt konsentrasjon, somnolens, nedsatt
+                                                reaksjonsevne, hypotoni, svimmelhet, ataksi (se
+                                                pkt. 4.4), nystagmus
+Sjeldne                                         Hodepine
+Ikke kjent                                      Reversible forstyrrelser (dysartri, redusert
+                                                koordinasjon ved bevegelser og nedsatt gangevne
+                                                (ataksi)), anterograd amnesi og amnesi som kan
+                                                bli assosiert med upassende atferd (se pkt. 4.4),
+                                                epilepsi
+Øyesykdommer
+Ikke kjent                                       Diplopi (se pkt. 4.4)
+
+Hjertesykdommer
+Ikke kjent                                       Hjertesvikt (inkludert hjertestans)
+
+Sykdommer i respirasjonsorganer, thorax og mediastinum
+Ikke kjent                                 Respirasjonsdepresjon (se pkt. 4.4)
+
+Gastrointestinale sykdommer
+Sjeldne                                          Kvalme, smerter i øvre del av magen
+
+Hud- og underhudssykdommer
+Sjeldne                                          Urtikaria, pruritus, utslett, forbigående hårtap,
+                                                 pigmentendringer
+Sykdommer i muskler, bindevev og skjelett
+Vanlige                                          Muskelsvakhet (se pkt. 4.4)
+
+Sykdommer i nyre og urinveier
+Sjeldne                                          Urininkontinens
+
+Lidelser i kjønnsorganer og brystsykdommer
+Sjeldne                                    Erektil dysfunksjon
+
+Generelle lidelser og reaksjoner på administrasjonsstedet
+Vanlige                                       Fatigue (trøtthet, apati) (se pkt. 4.4)
+
+Ikke kjent                                       Paradoksale reaksjoner, inkludert irritabilitet,
+                                                 tromboflebitt/trombose
+Skader, forgiftninger og komplikasjoner ved medisinske prosedyrer
+Ikke kjent                                   Risiko for fall og fraktur
+
+Undersøkelser
+Sjeldne                                          Trombocytopeni
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemiddelet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemiddelet kontinuerlig. Helsepersonell oppfordres til
+å melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til
+Direktoratet for medisinske produkter: www.dmp.no/meldeskjema.
+
+4.9   Overdosering
+
+Symptomer
+Det er vanlig at benzodiazepiner kan forårsake døsighet, ataksi, dysartri og nystagmus. Overdose av Iqtopam
+er sjeldent livstruende hvis legemidlet tas alene, men kan føre til arefleksi, apné, hypotensjon,
+kardiorespiratorisk depresjon og koma. Hvis koma inntreffer, varer den typisk i noen få timer, men den kan
+vare lenger og vende tilbake, særlig hos eldre pasienter. Respirasjonsdepresjon forårsaket av
+benzodiazepiner er mer alvorlige hos pasienter med respiratoriske sykdommer.
+
+Benzodiazepiner forsterker virkningene av andre CNS-depressiver, inkludert alkohol.
+
+Behandling
+Det er nødvendig å overvåke pasientens vitale tegn og iverksette nødvendige tiltak, avhengig av pasientens
+kliniske status. Særlig kan pasienter kreve symptomatisk behandling for kardiorespiratoriske virkninger eller
+virkninger på sentralnervesystemet.
+
+Hvis CNS-depresjonen er alvorlig, kan man vurdere bruk av flumazenil, en benzodiazepinantagonist, men
+under nøye overvåkning. Siden flumazenil har kort halveringstid (rundt en time), må pasienter som får
+administrert flumazenil overvåkes etter at virkningen har gått ut. Flumazenil skal brukes med ekstrem
+forsiktighet i nærvær av legemidler som reduserer krampeterskelen (f.eks. trisykliske antidepressiva). Mer
+informasjon om riktig bruk av flumazenil (Anexate) er gitt i preparatomtalen.
+
+Advarsel
+Benzodiazepinantagonisten flumazenil er ikke indisert hos pasienter med epilepsi som får benzodiazepiner.
+Behandling med benzodiazepinantagonister hos disse pasientene kan fremkalle krampeanfall.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Antiepileptika, benzodiazepinderivater, ATC-kode: N03AE01
+
+Den sentrale virkningsmekanismen til benzodiazepiner er basert på økt GABA-mediert hemming.
+Klonazepam binder seg til benzodiazepinreseptorene og produserer dermed en potensiering av GABA-
+systemet.
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+Etter i.m.-administrasjon er tmaks. cirka 3 timer, og biotilgjengeligheten er 93 %. Det er gjort sporadiske
+observasjoner av uregelmessigheter i absorpsjonsprofilene til klonazepam etter i.m.-administrasjon.
+Plasmakonsentrasjonene av klonazepam, som optimal effekt er blitt observert ved, er mellom 20 og
+70 ng/ml (gjennomsnittlig 55 ng/ml).
+
+Hos pasienter med panikklidelser er terskelen for plasmakonsentrasjonen av klonazepam ca. 17 ng/ml.
+
+Distribusjon
+Klonazepam distribueres svært raskt til ulike organer og kroppsvev, med foretrukket opptak i
+hjernestrukturer. Halveringstiden på distribusjonen er ca. 0,5–3,5 timer. Det gjennomsnittlige
+distribusjonsvolumet til klonazepam er anslått å være ca. 3 l/kg. Plasmaproteinbindingen til klonazepam er
+82–86 %.
+
+Biotransformasjon
+Biotransformasjonen av klonazepam involverer oksidativ hydroksylering ved C3-posisjonen og reduksjon
+av 7-nitrogruppen med dannelse via 7-amino til 7-acetylaminforbindelser. Hepatisk cytokrom P-450 3A4 er
+involvert i nitroreduksjonen av klonazepam til farmakologisk inaktive metabolitter. Hovedmetabolitten er 7-
+amino-klonazepam, som viste kun lav antikonvulserende aktivitet i eksperimenter. Fire ytterligere
+sekundære metabolitter er blitt identifisert.
+
+Eliminasjon
+Gjennomsnittlig halveringstid for eliminasjon er 30–40 timer. Clearance er 55 ml/min.
+Eliminasjonshastigheten hos barn er lik den som ble observert hos voksne.
+
+Av total radioaktivitet i radiomerket oral dose ble 50–70 % av klonazepam utskilt i urin og 10–30 % i feces,
+så å si utelukkende i form av frie eller konjugerte metabolitter. Mindre enn 2 % uendret klonazepam
+forekommer i urin. Metabolittene er tilstedeværende i urinen, både som frie og konjugerte (glukuronid og
+sulfat) forbindelser.
+
+Spesielle populasjoner
+
+Pasienter med nyresvikt
+Nyresykdommer påvirker ikke farmakokinetikken til klonazepam. Basert på kinetiske kriterier kreves det
+ikke noen dosejustering hos pasienter med nyresvikt.
+
+Pasienter med leversvikt
+Det er ikke undersøkt hvorvidt leversvikt har innvirkning på farmakokinetikken til klonazepam.
+
+Eldre
+Farmakokinetikken til klonazepam hos eldre har ikke blitt fastslått.
+
+Pediatrisk populasjon
+Generelt er eliminasjonshastigheten hos barn lik den som ble observert hos voksne. Etter at det var gitt
+terapeutiske doser til barn (0,03–0,11 mg/kg), lå serumkonsentrasjonene innenfor det samme området
+(13–72 ng/ml) som de effektive konsentrasjonene hos voksne.
+
+Hos nyfødte barn resulterte doser på 0,10 mg/kg i konsentrasjoner på 28–117 ng/ml på slutten av en
+kort infusjon, og 30 minutter senere gikk de ned til 18–60 ng/ml. Hos nyfødte var clearance-verdiene
+avhengige av postnatal alder. Begrensede data indikerer at eliminasjonshalveringstiden per kilogram
+kroppsvekt hos for tidlig fødte og terminfødte spedbarn (gestasjonsalder 28–42 uker, postnatal alder
+0,5–44 dager) kan sammenliknes med det som er blitt rapportert hos voksne.
+
+Hos barn ble det rapportert clearance-verdier på 0,42 ± 0,32 ml/min/kg (alder 2–18 år) og 0,88 ±
+0,4 ml/min/kg (alder 7–12 år). Disse verdiene sank ved økende kroppsvekt. Ketogen diett hos barn har ingen
+innvirkning på konsentrasjonene av klonazepam.
+
+5.3   Prekliniske sikkerhetsdata
+
+Karsinogenitet
+Det er ikke blitt gjennomført 2-års karsinogenitetsstudier av klonazepam. I en 18-måneders klinisk studie
+hos rotter ble det imidlertid ikke observert behandlingsrelaterte histopatologiske endringer opp til den
+høyeste testede dosen på 300 mg/kg/dag.
+
+Mutagenisitet
+Gentoksisitetstester ved bruk av bakterielle systemer med in vitro eller vertsmediert metabolsk aktivering
+indikerte ikke en gentoksisk sannsynlighet for klonazepam.
+Nedsatt fertilitet
+Studier som undersøkte fertilitet og generell reproduksjonsevne hos rotter, viste redusert drektighetsrate og
+nedsatt overlevelse av avkom ved doser på 10 og 100 mg/kg/dag.
+
+Teratogenisitet
+Det ble ikke observert avvikende maternelle eller embryoføtale virkninger hos verken mus eller rotter som
+følge av administrasjon av oral klonazepam under organogenesen, med doser på henholdsvis 20 eller
+40 mg/kg/dag.
+
+I flere studier med kaniner som fikk doser av klonazepam på opptil 20 mg/kg/dag, ble det observert en lav,
+ikke-doserelatert forekomst på et liknende mønster av misdannelser (leppespalte, misdannet øyelokk,
+sammenvokst brystbein og lemdefekter) (se pkt. 4.6).
+
+
+6.     FARMASØYTISKE OPPLYSNINGER
+
+6.1    Hjelpestoffer
+
+Etanol, vannfri
+Benzylalkohol
+Iseddik
+Propylenglykol
+
+6.2    Uforlikeligheter
+
+Iqtopam-infusjoner skal ikke klargjøres med natriumbikarbonatoppløsning.
+Oppløsningen skal ikke oppbevares i PVC-poser da virkestoffet klonazepam absorberes av PVC (se pkt. 4.2
+og 6.6).
+
+6.3    Holdbarhet
+
+3 år
+
+Oppløsning til intravenøs infusjon er vist stabilitet i opptil 2 timer ved romtemperatur (25 °C ± 2 °C) og i
+kjøleskap (2 °C – 8 °C) ved fortynning i
+     0,9 % NaCl
+     0,45 % NaCl + 2,5 % glukose
+     5 % glukose
+     10 % glukose
+
+Av mikrobiologiske hensyn bør legemidlet brukes umiddelbart etter fortynning.
+
+6.4    Oppbevaringsbetingelser
+
+Oppbevares ved høyst 25 °C. Skal ikke fryses. Oppbevar ampullene i ytteremballasjen for å beskytte mot lys.
+For oppbevaringsbetingelser etter rekonstituering, se pkt. 6.3.
+
+6.5    Emballasje (type og innhold)
+
+10 ampuller av ravfarget, transparent borosilikatglass med høy hydrolytisk motstand (type I).
+Ampullene er plassert på to plastbrett før innsetting i pappesken.
+Pakningsstørrelse: 10 ampuller med 1 ml
+6.6   Spesielle forholdsregler for destruksjon og annen håndtering
+
+Langsom intravenøs injeksjon
+Konsentratet i én ampulle med legemidlet, som inneholder 1 mg av virkestoffet, kan kun brukes etter
+fortynning med 1,0 ml vann til injeksjonsvæsker for å forhindre lokal irritasjon på injeksjonsstedet.
+Løsningen for injeksjon skal klargjøres umiddelbart før administrasjon. Intravenøs injeksjon skal
+administreres langsomt, med konstant overvåkning av EEG, respirasjon og blodtrykk.
+
+Intravenøs infusjon
+Oppløsningen til infusjon skal klargjøres umiddelbart før administrasjon.
+
+Bland maksimalt 1 ml (= 1 mg) konsentrat i 85 ml oppløsning til infusjon. For eksempel, kan 3 mg
+klonazepam (3 ampuller) fortynnes med 250 ml av følgende oppløsninger: natriumklorid 9 mg/ml
+(0,9 %) oppløsning til infusjon, glukose 5 % og 10 % oppløsning til infusjon, natriumklorid 4,5 mg/ml
+(0,45 %) og glukose 2,5 % oppløsning til infusjon.
+
+Det er påvist at klonazepam kan absorberes i infusjonsposer og slangesett av plast som inneholder PVC, og
+føre til at konsentrasjonen av klonazepam reduseres med opptil 50 %, særlig dersom klargjorte poser
+oppbevares i varme omgivelser i 24 timer eller lengre, eller dersom det brukes lange slangesett eller
+langsomme infusjonshastigheter. Poser og infusjonssett som inneholder PVC, bør unngås ved infusjon av
+klonazepam. Utøv forsiktighet ved skifte mellom poser og infusjonssett som inneholder PVC, og poser og
+infusjonssett som ikke inneholder PVC, ved infusjon av klonazepam.
+
+Eventuelle fargeendringer på oppløsninger til injeksjon og infusjon av legemidlet har ingen innvirkning på
+legemidlets aktivitet eller egenskaper.
+
+Det anbefales ikke å bruke infusjonsposer og infusjonssett av PVC for klargjøring av oppløsninger av
+legemidlet, på grunn av den betydelige reduksjonen av klonazepaminnholdet som skjer under oppbevaring.
+Oppløsninger av legemidlet beregnet til infusjon i 0,9 % NaCl-oppløsning, 0,45 % NaCl-oppløsning + 2,5 %
+glukoseoppløsning, 5 % glukoseoppløsning og 10 % glukoseoppløsning, oppbevart ved romtemperatur (25
+°C ± 2 °C) i pakninger som inneholder PVC, skal brukes innen 1 time på grunn avtap av virkestoff
+forårsaket av sorpsjon på PVC.
+
+Intramuskulær injeksjon
+Kun i spesielle tilfeller der intravenøs administrasjon ikke er mulig, bør intramuskulær (i.m.)
+administrasjonsvei brukes, på grunn av den langsomme absorpsjonshastigheten etter i.m.-administrasjon.
+Ved intramuskulær injeksjon bør legemidlet ikke fortynnes, siden administrasjonen da kan være mer
+smertefull.
+
+Med mindre det er uunngåelig, skal Iqtopam-ampullene med virkestoffet ikke fjernes fra esken, som
+beskytter legemidlet mot lys.
+
+Ikke anvendt legemiddel samt avfall bør destrueres i overensstemmelse med lokale krav.
+
+
+7.    INNEHAVER AV MARKEDSFØRINGSTILLATELSEN
+
+XGX Pharma ApS
+Frederiksgade 11, st. th
+1265 København K
+Danmark
+
+
+8.    MARKEDSFØRINGSTILLATELSESNUMMER (NUMRE)
+
+20-13754
+9.    DATO FOR FØRSTE MARKEDSFØRINGSTILLATELSE / SISTE FORNYELSE
+
+Dato for første markedsføringstillatelse: 3. februar 2023
+Dato for siste fornyelse:
+
+
+10.   OPPDATERINGSDATO
+
+26.11.2024
+

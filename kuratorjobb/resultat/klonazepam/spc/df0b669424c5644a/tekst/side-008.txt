@@ -1,0 +1,48 @@
+5.2      Farmakokinetiske egenskaper
+Absorpsjon: Hurtig og tilnærmet fullstendig. Biotilgjengelighet er ca. 90% med store
+variasjoner mellom individer. Plasmakonsentrasjonen av klonazepam ved steady state ved
+dosering én gang daglig er tre ganger høyere enn ved en enkelt peroral dose. Beregnet
+akkumulasjonsratio for dosering to og tre ganger daglig er henholdsvis 5 og 7. Etter flere
+orale doser á 2 mg tre ganger daglig var plasmakonsentrasjonen ved steady state
+gjennomsnittlig 55 ng/ml. Forholdet mellom plasmakonsentrasjon og dose er lineært for
+klonazepam. Plasmakonsentrasjon som gir antikonvulsiv effekt for klonazepam ligger mellom
+20 til 70 ng/ml. Alvorlig toksisk effekt, inkludert økt frekvens av anfall, utviklet seg for
+flertallet av pasienter med steady state plasmakonsentrasjoner over 100 ng/ml.
+
+Distribusjon: Maks. plasmakonsentrasjon nås etter 1-4 timer. Klinisk effekt (peroralt 2 mg)
+etter 30-60 minutter. Proteinbinding: Ca. 82-86% bundet til plasmaproteiner ved terapeutiske
+konsentrasjoner. Fordeling: Til alt vev. Distribusjonsvolum: 3 liter/kg.
+
+Biotransformasjon: Omdannelse skjer hovedsakelig ved reduksjon av nitrogruppen. Ingen
+aktive eller svakt aktive metabolitter.
+
+Eliminasjon: Halveringstid: 30-40 timer uavhengig av dose. Clearance er tilnærmet 55 ml/min
+uavhengig av kjønn, men vektnormaliserte verdier gikk ned med øknende kroppsvekt.
+Utskillelse: 50-70% via nyrene og 10-30% i fæces.
+
+Nedsatt nyrefunksjon: Farmakokinetikken av klonazepam påvirkes ikke ved nedsatt
+nyrefunksjon. Ingen dosejustering er nødvendig.
+
+Nedsatt leverfunskjon: Plasmaproteinbinding hos pasienter med cirrhose er signifikant
+forskjellig fra friske personer. Farmakokinetikken til klonazepam ved nedsatt leverfunksjon
+har ikke blitt undersøkt ytterligere, men erfaring fra et liknende nitrobenzodiazepin
+(nitrazepam) viser at clearance av ubundet klonazepam kan bli redusert ved levercirrhose.
+
+Eldre pasienter:Farmakokinetikken av klonazepam hos eldre er ikke fastslått.
+
+
+5.3     Prekliniske sikkerhetsdata
+En 18-måneders ikke-konvensjonell karsinogenese-studie med klonazepam gitt til rotte viste
+ingen karsinogene egenskaper i opptil høyeste testede dose på 300 mg/kg/dag.
+Mutagenisitetstester in vitro indikerte ingen mutagenitet.
+Fertilitets- og reproduksjonsstudier på rotte viste en redusert graviditetsrate og svekket
+overlevelse av avkom ved 10 og 100 mg/kg/dag.
+Klonazepam har i flere studier på kaniner vist en lav insidens av teratogene effekter
+(ganespalte, åpne øyelokk, skjelett- og hoftedefekter).
+
+6.     FARMASØYTISKE OPPLYSNINGER
+
+6.1    Fortegnelse over hjelpestoffer
+       0,5 mg tabletter:    Laktosemonohydrat 40 mg, maisstivelse, pregelatinisert
+                            potetstivelse, talkum, magnesiumstearat, jernoksid, gul og rød
+                            (E 172)

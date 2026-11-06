@@ -1,0 +1,56 @@
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemiddelet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemiddelet kontinuerlig. Helsepersonell oppfordres til
+å melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til
+Direktoratet for medisinske produkter: www.dmp.no/meldeskjema.
+
+4.9   Overdosering
+
+Symptomer
+Det er vanlig at benzodiazepiner kan forårsake døsighet, ataksi, dysartri og nystagmus. Overdose av Iqtopam
+er sjeldent livstruende hvis legemidlet tas alene, men kan føre til arefleksi, apné, hypotensjon,
+kardiorespiratorisk depresjon og koma. Hvis koma inntreffer, varer den typisk i noen få timer, men den kan
+vare lenger og vende tilbake, særlig hos eldre pasienter. Respirasjonsdepresjon forårsaket av
+benzodiazepiner er mer alvorlige hos pasienter med respiratoriske sykdommer.
+
+Benzodiazepiner forsterker virkningene av andre CNS-depressiver, inkludert alkohol.
+
+Behandling
+Det er nødvendig å overvåke pasientens vitale tegn og iverksette nødvendige tiltak, avhengig av pasientens
+kliniske status. Særlig kan pasienter kreve symptomatisk behandling for kardiorespiratoriske virkninger eller
+virkninger på sentralnervesystemet.
+
+Hvis CNS-depresjonen er alvorlig, kan man vurdere bruk av flumazenil, en benzodiazepinantagonist, men
+under nøye overvåkning. Siden flumazenil har kort halveringstid (rundt en time), må pasienter som får
+administrert flumazenil overvåkes etter at virkningen har gått ut. Flumazenil skal brukes med ekstrem
+forsiktighet i nærvær av legemidler som reduserer krampeterskelen (f.eks. trisykliske antidepressiva). Mer
+informasjon om riktig bruk av flumazenil (Anexate) er gitt i preparatomtalen.
+
+Advarsel
+Benzodiazepinantagonisten flumazenil er ikke indisert hos pasienter med epilepsi som får benzodiazepiner.
+Behandling med benzodiazepinantagonister hos disse pasientene kan fremkalle krampeanfall.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Antiepileptika, benzodiazepinderivater, ATC-kode: N03AE01
+
+Den sentrale virkningsmekanismen til benzodiazepiner er basert på økt GABA-mediert hemming.
+Klonazepam binder seg til benzodiazepinreseptorene og produserer dermed en potensiering av GABA-
+systemet.
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+Etter i.m.-administrasjon er tmaks. cirka 3 timer, og biotilgjengeligheten er 93 %. Det er gjort sporadiske
+observasjoner av uregelmessigheter i absorpsjonsprofilene til klonazepam etter i.m.-administrasjon.
+Plasmakonsentrasjonene av klonazepam, som optimal effekt er blitt observert ved, er mellom 20 og
+70 ng/ml (gjennomsnittlig 55 ng/ml).
+
+Hos pasienter med panikklidelser er terskelen for plasmakonsentrasjonen av klonazepam ca. 17 ng/ml.
+
+Distribusjon
+Klonazepam distribueres svært raskt til ulike organer og kroppsvev, med foretrukket opptak i
+hjernestrukturer. Halveringstiden på distribusjonen er ca. 0,5–3,5 timer. Det gjennomsnittlige

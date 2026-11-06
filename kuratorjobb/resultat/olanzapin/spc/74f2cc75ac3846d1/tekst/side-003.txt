@@ -1,0 +1,54 @@
+Røykere: Startdosen og doseringsområdet trenger ikke å rutinemessig endres for ikke-røykere
+i forhold til røykere. Røyking kan indusere metabolismen av olanzapin. Klinisk oppfølging er
+anbefalt, og en økning av olanzapindosen kan vurderes ved behov (se pkt. 4.5).
+
+Når det foreligger flere enn én faktor som kan resultere i tregere metabolisme (kvinne, eldre,
+ikke-røyker), bør det vurderes å redusere startdosen. Doseøkning bør være konservativ hos
+disse pasientene.
+(Se pkt. 4.5 og pkt. 5.2).
+
+Pediatrisk populasjon
+Olanzapin anbefales ikke til barn og ungdom under 18 år på grunn av manglende data
+vedrørende sikkerhet og effekt. En større andel av vektøkning og større lipid- og
+prolaktinforandringer har vært rapportert i korttidsstudier med unge pasienter enn i studier
+med voksne pasienter (se pkt. 4.4, 4.8, 5.1 og 5.2).
+
+4.3     Kontraindikasjoner
+
+Overfølsomhet overfor virkestoffet eller overfor ett eller flere av hjelpestoffene listet opp i
+pkt. 6.1. Pasienter med kjent risiko for trangvinkelglaukom.
+
+4.4     Advarsler og forsiktighetsregler
+
+Under antipsykotisk behandling kan forbedring av pasientens kliniske tilstand ta flere dager til
+noen uker. Pasienter bør overvåkes nøye i denne perioden.
+
+Demensrelatert psykose og/eller adferdsforstyrrelser
+Olanzapin er ikke anbefalt til bruk hos pasienter med demensrelatert psykose og/eller
+atferdsforstyrrelser på grunn av en økning i dødeligheten og risikoen for cerebrovaskulær
+sykdom. I placebokontrollerte kliniske studier (6-12 ukers varighet) av eldre pasienter
+(gjennomsnittsalder 78 år) med demensrelatert psykose og/eller forstyrret atferd, var det en 2-
+folds økning i forekomsten av dødsfall blant olanzapinbehandlede pasienter sammenlignet
+med pasienter behandlet med placebo (henholdsvis 3,5 % og 1,5 %). Den høyere forekomsten
+av død var ikke assosiert med olanzapindosen (gjennomsnittlig daglig dose 4,4 mg) eller
+varighet av behandlingen. Risikofaktorer som kan være predisponerende for økt dødelighet i
+denne pasientgruppen, inkluderer alder > 65 år, dysfasi, sedasjon, feilernæring og
+dehydrering, lungesykdom (f.eks. lungebetennelse, med eller uten aspirasjon) eller samtidig
+bruk av benzodiazepiner. Forekomsten av død var imidlertid høyere blant
+olanzapinbehandlede enn blant placebobehandlede pasienter uavhengig av disse
+risikofaktorene.
+
+I de samme kliniske studiene ble cerebrovaskulære bivirkninger (CVAE, f.eks. hjerneslag,
+TIA), inkludert dødsfall, rapportert. Det var en 3-folds økning i CVAE hos pasienter
+behandlet med olanzapin sammenlignet med pasienter behandlet med placebo (henholdsvis
+1,3 % og 0,4 %). Alle olanzapin- og placebobehandlede pasienter som opplevde en
+cerebrovaskulær hendelse, hadde preeksisterende risikofaktorer. Alder > 75 år og
+vaskulær/blandet type demens ble identifisert som risikofaktorer for CVAE i forbindelse med
+olanzapinbehandling. Effekten av olanzapin var ikke fastslått i disse studiene.
+
+Parkinsons sykdom
+Bruk av olanzapin i behandling av dopaminagonist-relatert psykose hos pasienter med
+Parkinsons sykdom, er ikke anbefalt. I kliniske studier ble forverring av Parkinsonspasienters
+symptomer og hallusinasjoner rapportert som svært vanlig og hyppigere enn med placebo (se
+pkt. 4.8), og olanzapin var ikke mer effektivt enn placebo i behandling av psykotiske
+symptomer. I disse studiene måtte pasienter i utgangspunktet være stabil på laveste effektive

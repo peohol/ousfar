@@ -1,0 +1,55 @@
+hepatocellulær, kolestatisk eller blandet leverskade) er diagnostisert, bør
+olanzapinbehandlingen avsluttes.
+
+Nøytropeni
+Forsiktighet bør utvises hos pasienter med lave leukocytt- og/eller nøytrofilverdier, hos
+pasienter som får legemidler kjent for å forårsake nøytropeni, hos pasienter med en historie
+med legemiddelindusert benmargssuppresjon/-toksisitet, hos pasienter med
+benmargssuppresjon forårsaket av samtidig sykdom, strålebehandling eller kjemoterapi, og
+hos pasienter med hypereosinofile tilstander eller med myeloproliferativ sykdom. Nøytropeni
+er ofte rapportert når olanzapin og valproat brukes samtidig (se pkt. 4.8).
+
+Seponering av behandling
+Akutte symptomer som svetting, søvnløshet, skjelving, angst, kvalme eller oppkast har
+sjelden blitt rapportert ( 0,01% og < 0,1%) når olanzapin blir seponert brått.
+
+QT-intervall
+I kliniske studier var klinisk relevant QTc-forlengelse (Fridericia QT-korreksjon [QTcF]
+500 millisekunder [msek] på et hvilket som helst tidspunkt etter baseline hos pasienter med
+baseline QTcF <500 ms) mindre vanlig (0,1 % til 1 %) hos pasienter behandlet med
+olanzapin. Det var ingen signifikant forskjell i relaterte hjerte-episoder sammenlignet med
+placebo. Forsiktighet bør utvises når olanzapin forskrives sammen med legemidler kjent for å
+øke QTc-intervallet, spesielt hos eldre, hos pasienter med medfødt lang QT-syndrom,
+kongestiv hjertesvikt, hjertehypertrofi, hypokalemi eller hypomagnesemi.
+
+Tromboembolisme
+Sammenfallende venøs tromboembolisme og olanzapinbehandling har blitt rapportert mindre
+vanlig (≥ 0,1 % og < 1 %). Årsakssammenheng mellom forekomst av venøs
+tromboembolisme og behandling med olanzapin er ikke klarlagt. Siden pasienter med
+schizofreni ofte har ervervede risikofaktorer for venøs tromboembolisme, bør imidlertid alle
+mulige risikofaktorer for VTE, f.eks. immobilisering av pasienter, identifiseres og
+forebyggende tiltak gjennomføres.
+
+Generell effekt på sentralnervesystemet
+Som følge av olanzapins primære effekt på sentralnervesystemet, bør man utvise forsiktighet
+når legemidlet tas i kombinasjon med andre sentralt virkende legemidler og alkohol. Siden
+olanzapin viser dopaminantagonisme in vitro, kan det motvirke effekten av direkte og
+indirekte dopaminagonister.
+
+Kramper
+Olanzapin bør brukes med forsiktighet hos pasienter som tidligere har hatt krampeanfall eller
+som er utsatt for faktorer som kan nedsette krampeterskelen. Krampeanfall er rapportert som
+mindre vanlig hos pasienter som behandles med olanzapin. I de fleste tilfellene var tidligere
+krampeanfall eller risikofaktorer for krampeanfall rapportert.
+
+Tardiv dyskinesi
+I sammenligningsstudier på ett års varighet eller mindre, var olanzapin forbundet med en
+statistisk signifikant lavere forekomst av behandlingsrelatert dyskinesi. Risikoen for tardiv
+dyskinesi øker imidlertid med langvarig eksponering, og derfor burde dosereduksjon eller
+seponering vurderes dersom tegn eller symptomer på tardiv dyskinesi oppstår hos en pasient
+på olanzapin. Disse symptomene kan midlertidig forverres eller oppstå etter seponering av
+behandlingen.
+
+Postural hypotensjon
+Postural hypotensjon ble sjeldent observert hos eldre i kliniske studier med olanzapin. Det
+anbefales at blodtrykket måles jevnlig hos pasienter over 65 år.

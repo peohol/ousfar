@@ -1,0 +1,55 @@
+Hos pasienter med nedsatt nyrefunksjon (kreatininclearance < 10 ml/min) vs. friske
+forsøkspersoner, var det ingen signifikant forskjell i gjennomsnittlig halveringstid (37,7 vs.
+32,4 timer) eller clearance (21,2 vs. 25,0 l/time). En massebalansestudie viste at ca. 57 % av
+radiomerket olanzapin ble gjenfunnet i urin, hovedsakelig som metabolitter.
+
+Nedsatt leverfunksjon
+En liten studie som undersøkte effekten av nedsatt leverfunksjon hos 6 pasienter med klinisk
+signifikant (Childs Pugh Class A (n = 5) og B (n = 1)) cirrhose viste liten effekt på
+farmakokinetikken til peroralt administrert olanzapin (2,5-7,5 mg enkeltdose): Personer med
+lett til moderat nedsatt leverfunksjon hadde noe økt systemisk clearance og raskere
+eliminasjonshalveringstid sammenlignet med personer med normal leverfunksjon (n = 3). Det
+var flere røykere blant personer med cirrhose (4/6; 67 %) enn hos personer med normal
+leverfunksjon (0/3; 0 %).
+
+Røykere
+Hos ikke-røykere vs. røykere (menn og kvinner) ble gjennomsnittlig halveringstid forlenget
+(38,6 vs. 30,4 timer) og clearance ble redusert (18,6 vs. 27,7 l/time).
+
+Plasmaclearance av olanzapin er lavere hos eldre enn yngre pasienter, hos kvinner vs. menn
+og hos ikke-røykere vs. røykere. Effekten av alder, kjønn eller røyking på clearance og
+halveringstid for olanzapin er imidlertid liten i forhold til den totale variabiliteten mellom
+individer.
+
+I en studie med kaukasiere, japanere og kinesere, var det ingen forskjeller i de
+farmakokinetiske parametre mellom de tre populasjonene.
+
+Pediatrisk populasjon
+Unge (alder 13 til 17 år): Farmakokinetikken til olanzapin er lik for ungdom og voksne. I
+kliniske studier var gjennomsnitteksponeringen for olanzapin ca. 27 % høyere hos unge.
+Demografiske forskjeller mellom unge og voksne inkluderer en lavere gjennomsnittlig
+kroppsvekt og færre unge var røykere. Det er mulighet for at slike faktorer bidrar til den
+høyere gjennomsnittlige eksponeringen observert hos ungdommer.
+
+5.3     Prekliniske sikkerhetsdata
+
+Akutt (enkeltdose) toksisitet
+Tegn på oral toksisitet hos gnagere var karakterisert for potente nevroleptiske forbindelser:
+hypoaktivitet, koma, skjelving, kloniske kramper, spyttsekresjon og hemmet vektøkning.
+Median letal dose var ca. 210 mg/kg (mus) og 175 mg/kg (rotte). Hunder tolererte perorale
+enkeltdoser på opptil 100 mg/kg uten mortalitet. Kliniske tegn inkluderte sedasjon, ataksi,
+skjelvinger, økt puls, tung pust, miose og anoreksi. Hos aper resulterte perorale enkeltdoser på
+opptil 100 mg/kg i utmattelse, og høyere doser ga delvis bevisstløshet.
+
+Toksisitet ved gjentatt dosering
+I studier på mus med varighet opptil 3 måneder og på rotter og hunder med opptil 1 års
+varighet, var hovedeffektene CNS-depresjon, antikolinerge effekter og perifere hematologiske
+lidelser. Toleranse overfor CNS-depresjon ble utviklet. Vekstparametre ble redusert ved høye
+doser. Reversible effekter i overensstemmelse med forhøyet prolaktin hos rotter, omfattet
+redusert ovarie- og uterusvekt og morfologiske forandringer i vaginalt epitel og melkekjertler.
+
+Hematologisk toksisitet
+Effekter på hematologiparametre ble funnet i alle arter, herunder doserelatert reduksjon i
+sirkulerende leukocytter hos mus og ikke-spesifikk reduksjon av sirkulerende leukocytter hos
+rotter. Det ble imidlertid ikke observert tegn på benmargscytotoksisitet. Reversibel
+nøytropeni, trombocytopeni eller anemi ble utviklet hos noen få hunder behandlet med 8 eller

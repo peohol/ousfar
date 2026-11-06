@@ -1,0 +1,55 @@
+I en annen 12-måneders studie av forebygging av tilbakefall av manisk episode hos pasienter
+som fikk bedring med en kombinasjon av olanzapin og litium og deretter ble randomisert til
+olanzapin eller litium alene, var olanzapin statistisk ikke dårligere enn litium med hensyn til
+det det primære endepunktet tilbakefall ved bipolar lidelse (olanzapin 30,0 %, litium 38,3 %;
+p = 0,055).
+
+I en 18-måneders kombinasjonsbehandlingsstudie med pasienter med maniske eller blandede
+episoder, stabilisert på olanzapin og en stemningsstabilisator (litium eller valproat) var
+langtids kombinasjonsbehandling med olanzapin og litium eller valproat ikke statistisk
+signifikant bedre enn litium eller valproat alene, med hensyn til å utsette tilbakefall av bipolar
+lidelse, definert ved syndromkriterier (diagnostisk).
+
+Pediatrisk populasjon
+Kontrollerte effektdata hos unge (alderen 13 til 17 år) er begrenset til data på korttidsstudier
+av schizofreni (6 uker) og mani assosiert med bipolar lidelse type I (3 uker), som omfatter
+mindre enn 200 unge. Olanzapin ble brukt i en fleksibel dose fra 2,5 til 20 mg/dag. Under
+behandling med olanzapin hadde unge en betydelig høyere vektøkning enn voksne. Graden av
+endringer i fastende totalkolesterol, LDL-kolesterol, triglyserider og prolaktin (se pkt. 4.4 og
+4.8) var større hos unge enn hos voksne. Det er ingen kontrollerte data på vedlikeholdseffekt
+og på langtidssikkerhet (se pkt. 4.4 og 4.8). Informasjon om langtidssikkerhet er primært
+begrenset til åpne, ikke-kontrollerte data.
+
+5.2     Farmakokinetiske egenskaper
+
+Absorpsjon
+Olanzapin absorberes godt etter oral administrasjon, og oppnår maksimal
+plasmakonsentrasjon innen 5 til 8 timer. Absorpsjonen blir ikke påvirket av mat. Absolutt oral
+biotilgjengelighet i forhold til intravenøs administrasjon er ikke fastslått.
+
+Distribusjon
+Plasmaproteinbindingen til olanzapin var omtrent 93 % over konsentrasjonsområdet på
+omtrent 7 til omtrent 1000 ng/ml. Olanzapin bindes hovedsakelig til albumin og 1-syre-
+glykoprotein.
+
+Biotransformasjon
+Olanzapin metaboliseres i lever ved konjugering og oksidering. Hovedmetabolitten i blodet er
+10-N-glukuronid som ikke passerer blod-/hjernebarrieren. Cytokrom P450-CYP1A2 og P450-
+CYP2D6 bidrar til dannelse av N-desmetyl- og 2-hydroksymetylmetabolittene som begge
+viste signifikant lavere farmakologisk aktivitet in vivo enn olanzapin i dyrestudier. Den
+farmakologiske aktiviteten stammer hovedsakelig fra modersubstansen olanzapin. Olanzapins
+gjennomsnittlige terminale eliminasjonshalveringstid etter oral administrasjon til friske
+forsøkspersoner varierte avhengig av alder og kjønn.
+
+Eliminasjon
+Hos friske eldre (65 år) vs. yngre personer, ble gjennomsnittlig halveringstid forlenget (51,8
+vs. 33,8 timer) og clearance ble redusert (17,5 vs. 18,2 l/time). Den farmakokinetiske
+variabiliteten observert hos eldre er innenfor samme område som hos andre pasientgrupper.
+Hos 44 pasienter > 65 år med schizofreni, var dosering fra 5 til 20 mg/dag ikke forbundet med
+noen spesiell bivirkningsprofil.
+
+Hos kvinner vs. menn var den gjennomsnittlige halveringstiden noe forlenget (36,7 vs. 32,3
+timer) og clearance var redusert (18,9 vs. 27,3 l/time). Men olanzapin (5-20 mg) viste en
+tilsvarende sikkerhetsprofil hos kvinnelige (n = 467) som i mannlige pasienter (n = 869).
+
+Nyrelidelser

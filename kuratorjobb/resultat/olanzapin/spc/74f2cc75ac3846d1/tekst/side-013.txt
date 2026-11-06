@@ -1,0 +1,54 @@
+Farmakoterapeutisk gruppe: Psykoleptika, diazepiner, oksazepiner, tiazepiner og oksepiner,
+ATC-kode: N05A H03.
+
+Farmakodynamiske effekter
+Olanzapin er et antipsykotisk, antimanisk og stemningsstabiliserende middel som har en bred
+farmakologisk profil på tvers av en rekke reseptorsystemer.
+
+I prekliniske studier viste olanzapin et spekter av reseptoraffinitet (Ki; < 100nM) for serotonin
+5HT2A/2C-, 5HT3-, 5HT6-reseptorer; dopamin D1, D2, D3, D4, D5-reseptorer; kolinerge
+muskarinreseptorer m1-m5; alfa1-adrenerge reseptorer og histamin H1-reseptorer. Dyrestudier
+med olanzapin indikerte 5HT- og dopamin-antagonisme og kolinerg antagonisme, i samsvar
+med reseptorbindende profil. Olanzapin viste en høyere in vitro affinitet for serotonin 5HT2-
+reseptorer enn dopamin D2-reseptorer og høyere 5HT2- enn D2-aktivitet i in vivo-modeller.
+Elektrofysiologiske studier viste at olanzapin selektivt reduserte avfyring i mesolimbiske
+(A10) dopaminerge nevroner, mens de har liten effekt på striatale (A9) baner involvert i
+motorisk funksjon. Olanzapin reduserte en betinget unngåelsesrespons, en test som indikerer
+antipsykotisk aktivitet, ved lavere doser enn de som fremkaller katalepsi, en effekt som
+indikerer motoriske bivirkninger. I motsetning til visse andre antipsykotika, øker olanzapin
+responsen i en test av angstdemping.
+
+I en positronemisjonstomografi (PET) studie med en enkelt oral dose (10mg) til friske
+frivillige viste at, olanzapin ga høyere okkupasjon av 5HT2A –reseptorer enn av dopamin D2-
+reseptorer. Dessuten avslørte en SPECT-studie (Single Photon Emission Computed
+Tomography) av schizofrene pasienter at pasienter som responderte på olanzapin hadde lavere
+striatal D2-bindingsgrad enn visse andre pasienter som responderte på antipsykotika og
+risperidon, men var sammenlignbar med D2-bindingsgraden hos pasienter som responderte på
+klozapin.
+
+Klinisk effekt
+I to av to placebo-kontrollerte og to av tre komparative studier med over 2900 schizofrene
+pasienter med både positive og negative symptomer, ble olanzapin assosiert med statistisk
+signifikant større forbedringer (p = 0,001) av negative og positive symptomer.
+
+I en multinasjonal, dobbeltblind, komparativ studie av schizofreni, schizoaffektive og relaterte
+lidelser, som inkluderte 1481 pasienter med varierende grad av relaterte depressive
+symptomer (gjennomsnitt ved start var 1,6 på Montgomery-Asbergs depresjonsskala), viste
+en prospektiv sekundær analyse av baseline til endepunkt endring av stemningsleie-score en
+statistisk signifikant bedring (p = 0,001) i favør av olanzapin (-6,0) vs. haloperidol (-3,1).
+
+Hos pasienter med en manisk eller blandet episode av bipolar lidelse, demonstrerte olanzapin
+overlegen effekt i forhold til placebo og dinatriumvalproat (divalproex) med hensyn til
+reduksjon av maniske symptomer over en periode på tre uker. Olanzapin viste også
+sammenlignbar effekt i forhold til haloperidol med hensyn til andelen av pasientene med
+symptomatisk bedring av mani og depresjon etter 6 og 12 uker. I en
+kombinasjonsbehandlingsstudie med pasienter behandlet med litium eller valproat i minst to
+uker, resulterte supplering med olanzapin 10 mg (samtidig behandling med litium eller
+valproat) en større reduksjon i symptomer på mani enn kun litium eller valproat etter 6 uker.
+
+I en 12-måneders studie av forebygging av tilbakefall av manisk episode hos pasienter som
+fikk bedring med olanzapin og deretter ble randomisert til olanzapin eller placebo, viste
+olanzapin seg å være statistisk signifikant bedre enn placebo med hensyn til det primære
+endepunktet tilbakefall av bipolar lidelse. Olanzapin viste også en statistisk signifikant fordel
+fremfor placebo i forhold til å forebygge enten tilbakefall av mani eller tilbakefall av
+depresjon.
