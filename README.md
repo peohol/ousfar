@@ -7,11 +7,16 @@ kommentaren kopiert til utklippstavlen — hele veien med tastaturet.
 Appen dekker psykofarmaka, antihypertensiver, THC-syre i urin, stoffene med
 ruspotensial i serum og etanolmarkørene EtG og EtS.
 
-## Utviklingsplan for farmakologiske verktøy
+## Psykofarmakaverktøy – planer og klinisk produktkontroll
 
-Planlagte verktøy for nedtrapping og bytte av psykofarmaka, med fremdrift,
-ansvarsdeling og kliniske kontrollpunkter: [Verktøy – utviklingsplan og fremdrift](docs/verktøy-utviklingsplan.md).
-Dette er foreløpig en plan; verktøyene er ikke implementert.
+De fire psykofarmakaverktøyene er implementert i et foreløpig, **administratorbegrenset** omfang. Klinisk dekning og brukeropplevelse er ennå ikke tilstrekkelig dokumentert for ordinær klinikertilgang; et lite antall klinisk godkjente komplette forløp er ikke ensbetydende med bred brukbarhet.
+
+- [Aktuell produktrevisjon og utbedringsplan](docs/verktøy-produktrevisjon-2026-11.md) – dokumenterte brukerproblemer, kontroll av klinisk strategi, lesbar plan og test i faktisk app.
+- [Klinisk leveranseplan K0–K5](docs/verktøy-klinisk-leveranseplan-2026-11.md) – kilde- og sikkerhetskrav og klinisk fremdrift.
+- [Tidligere plan for brukerflyten](docs/verktøy-brukervennlighet-2026-11.md) – tidligere UX-arbeid; oppfølgingen er i produktrevisjonen.
+- [K5-D, dosefleksible forløp](docs/verktøy-k5-dosefleksible-forlop.md) – ikke startet; startporten skal dokumenteres før arbeidet begynner.
+
+**For ChatGPTs PR-gjennomganger:** Start med [AGENTS.md](AGENTS.md) og [fast PR-kontrollstandard](docs/chatgpt-pr-kontrollstandard.md). Også den opprinnelige bestillingen, faktisk klinisk nytte og unødvendig tekst/brukerarbeid skal vurderes, ikke bare testene.
 
 ## Kom i gang
 
