@@ -32,7 +32,7 @@ Med «kort behandlingstid», alle unntak avkreftet, standardinnstillinger og all
 
 ## 2. Feil- og friksjonsmatrise
 
-«Handlinger» er antall klikk og inntastinger fra tomt verktøy til endelig utfall, uten innlogging. Tegn i kopien gjelder knappen «Kopier planen». Kategoriene for første hindring: **F** = feil, **K** = korrekt og forklart stopp, **K?** = stopp uten konkret grunn, **O** = utenfor godkjent omfang (manglende støtte), **U** = unødvendig brukerarbeid.
+«Handlinger» er antall klikk og inntastinger fra tomt verktøy til endelig utfall, uten innlogging. I forløp som stopper, telles handlingene til planpanelet første gang viser stoppet; spørsmålene etter det besvares ikke. Tegn i kopien gjelder knappen «Kopier planen». Kategoriene for første hindring: **F** = feil, **K** = korrekt og forklart stopp, **K?** = stopp uten konkret grunn, **O** = utenfor godkjent omfang (manglende støtte), **U** = unødvendig brukerarbeid.
 
 | Id | Situasjon (syntetisk) | Regel, fingeravtrykk | Handlinger | Utfall i appen | Første hindring og ordlyd | Kat. | Kopi, tegn |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -41,27 +41,27 @@ Med «kort behandlingstid», alle unntak avkreftet, standardinnstillinger og all
 | P0-A03 | Escitalopram 10 mg dråper, som over | v14 | 20 | Komplett plan, dag 197 | Som A01 | U | 15 267 |
 | P0-A04 | Escitalopram 20 mg dråper, som over | v14 | 22 | Komplett plan, dag 281 | Som A02 | U | 16 892 |
 | P0-A05 | Som A01 på mobil (390 punkter) | v14 | 20 | Komplett plan | Dosevalget ligger nederst, etter ca. 3 000 punkter med spørsmål ([bilde](verktøy-p0/p0-a05-dosevalg-mobil.png)) | U | – |
-| P0-N01 | Escitalopram 10 mg tablett, **brukt i mange måneder** | v14 | 15 | Ingen plan | «Med dette svaret kan verktøyet ikke lage en komplett plan helt til sluttmålet. Verktøyet lager ingen plan …», og nesten samme setning en gang til. Ingenting ved spørsmålet; sier ikke at godkjenningen bare gjelder kort behandlingstid | K? / O | – |
-| P0-N02 | Escitalopram 10 mg tablett, tidligere seponeringsplager («Gjelder») | v14 | 15 | Ingen plan | «Da gjelder ikke regelen. Verktøyet lager ingen plan, og behandlingen må planlegges individuelt.» | F (språk) | – |
-| P0-N03 | Escitalopram 10 mg tablett, 65 år eller eldre | v14 | 15 | Ingen plan | «Verktøyet har ingen godkjent plan ved 65 år eller eldre …» | K | – |
-| P0-N04 | Escitalopram 15 mg tablett | v14 | 15 | Ingen plan | Allerede i steg 2: «Den godkjente planen gjelder bare startdosene 10 og 20 mg …». Alle 12 spørsmålene vises likevel | K (U) | – |
-| P0-N05 | Escitalopram 10 mg tablett, nedsatt leverfunksjon | v14 | 15 | Ingen plan | «Verktøyet har ingen godkjent plan ved nedsatt leverfunksjon …» | K | – |
+| P0-N01 | Escitalopram 10 mg tablett, **brukt i mange måneder** | v14 | 9 | Ingen plan | «Med dette svaret kan verktøyet ikke lage en komplett plan helt til sluttmålet. Verktøyet lager ingen plan …», og nesten samme setning en gang til. Stoppet kommer i planpanelet straks «Ja» er valgt; ingenting ved spørsmålet; sier ikke at godkjenningen bare gjelder kort behandlingstid | K? / O | – |
+| P0-N02 | Escitalopram 10 mg tablett, tidligere seponeringsplager («Gjelder») | v14 | 4 | Ingen plan | «Da gjelder ikke regelen. Verktøyet lager ingen plan, og behandlingen må planlegges individuelt.» | F (språk) | – |
+| P0-N03 | Escitalopram 10 mg tablett, 65 år eller eldre | v14 | 10 | Ingen plan | «Verktøyet har ingen godkjent plan ved 65 år eller eldre …» | K | – |
+| P0-N04 | Escitalopram 15 mg tablett | v14 | 3 | Ingen plan | Allerede i steg 2: «Den godkjente planen gjelder bare startdosene 10 og 20 mg …». Alle 12 spørsmålene vises likevel | K (U) | – |
+| P0-N05 | Escitalopram 10 mg tablett, nedsatt leverfunksjon | v14 | 11 | Ingen plan | «Verktøyet har ingen godkjent plan ved nedsatt leverfunksjon …» | K | – |
 | P0-N06 | Escitalopram 10 mg tablett, kort behandlingstid, «Reduksjon per trinn» 50 % (feltet sier «Regelen tillater 5–50 %») | v14 | 16 | Ingen plan | «Verktøyet kan ikke vise en klinisk plan nå. Prøv igjen senere.» + «Det finnes ingen godkjent plan for denne kombinasjonen …» (10 % gir det samme) | F | – |
 | P0-N07 | Som N06, «Minste antall dager per trinn» 14 («Regelen tillater minst 14 dager») | v14 | 16 | Ingen plan | «Det finnes ingen godkjent plan for denne kombinasjonen av dose, legemiddelform og svar …» | F | – |
 | P0-B01 | Citalopram 20 mg → sertralin 100 mg, under 8 uker, ingen unntak | bytte-citalopram-sertralin v2, `2b64ff9e383e` | 11 | Komplett plan: citalopram 10 mg dag 1–14, seponert dag 15; sertralin 50 mg dag 15–28, 100 mg fra dag 29 | Fire «Gjelder/Gjelder ikke»-utsagn og tre lange bekreftelser (reservevisning) | U | 10 938 |
-| P0-B02 | Som B01, citalopram brukt **i mer enn 8 uker** | v2 | 11 | Ingen plan | «Da gjelder ikke regelen …» | F (språk) / O | – |
-| P0-B03 | Escitalopram 10 mg → sertralin 100 mg, under 8 uker | bytte-escitalopram-sertralin v2, `c0bf6c61e38c` | 11 | Komplett plan (escitalopram 5 mg dag 1–14, sertralin fra dag 15) | Som B01 | U | – |
+| P0-B02 | Som B01, citalopram brukt **i mer enn 8 uker** | v2 | 6 | Ingen plan | «Da gjelder ikke regelen …» | F (språk) / O | – |
+| P0-B03 | Escitalopram 10 mg → sertralin 100 mg, under 8 uker | bytte-escitalopram-sertralin v2, `c0bf6c61e38c` | 11 | Komplett plan (escitalopram 5 mg dag 1–14, sertralin fra dag 15) | Som B01 | U | 11 092 |
 | P0-C01 | Olanzapin 20 mg tablett → aripiprazol 15 mg | antipsykotikabytte-olanzapin-aripiprazol v8, `f141a13a9e93` | 14 | Komplett plan, kryss-titrering, olanzapin seponert dag 71 | Spørsmålet «Bruker pasienten peroral olanzapin … ikke depotinjeksjon?» etter at «Peroral» og «Tablett» alt er valgt | U | 12 807 |
-| P0-C02 | Olanzapin **10 mg** → aripiprazol 15 mg | v8 | – | Ingen plan | Godkjent bare fra 20 mg | O | – |
+| P0-C02 | Olanzapin **10 mg** → aripiprazol 15 mg | v8 | 4 | Ingen plan | «Regelen gjelder bare startdoser på 20 mg. Verktøyet lager ingen plan …» | O | – |
 | P0-C03 | Risperidon 4 mg tablett → aripiprazol 10 mg | antipsykotikabytte-risperidon-aripiprazol v8, `866ac93c58fb` | 14 | Komplett plan, risperidon seponert dag 71 | Som C01 | U | 11 837 |
 | P0-C04 | Aripiprazol 15 mg tablett → Abilify Maintena | depot-aripiprazol-maintena v3, `04d1debe48f0` | 7 | Komplett plan: 400 mg dag 1, peroral aripiprazol til dag 14, 400 mg månedlig | – | – | 4 201 |
 | P0-C05 | Risperidon 3 mg tablett → Xeplion 75 mg | depot-risperidon-xeplion v8, `1672334c468f` | 10 | Komplett plan: 150 mg dag 1, 100 mg dag 8, 75 mg månedlig | – | – | 8 298 |
 | P0-C06 | Paliperidon 6 mg depottablett → Xeplion | depot-paliperidon-xeplion v3, `21a335eec8c3` | 4 | Komplett plan | «Viktig for denne planen» lister fire pakninger med godkjenningsfritak som ikke brukes | U | 4 702 |
-| P0-C07 | Som C05, toleranse for risperidon **ikke** dokumentert i journalen | v8 | – | Ingen plan | Bare «Verktøyet lager ingen plan, og behandlingen må planlegges individuelt.», uten grunn | K? | – |
+| P0-C07 | Som C05, toleranse for risperidon **ikke** dokumentert i journalen | v8 | 6 | Ingen plan | Bare «Verktøyet lager ingen plan, og behandlingen må planlegges individuelt.», uten grunn | K? | – |
 | P0-D01 | Valproat 1000 mg + lamotrigin til 100 mg | tillegg-valproat-lamotrigin v2, `0a9213f31b5f` | 18 | Komplett plan: 25 mg annenhver dag uke 1–2, 25 mg uke 3–4, 50 mg uke 5, 100 mg fra dag 36 | Inklusjonsspørsmål der «Nei» stopper, blandet med eksklusjonsspørsmål der «Ja» stopper | U | 10 615 |
 | P0-D02 | Litium 168 mg Li⁺ (4 × Lithionit 42 mg) + lamotrigin til 200 mg | tillegg-litium-lamotrigin v2, `786436a0ea8d` | 19 | Komplett plan: 25 → 50 → 100 → 200 mg fra dag 36 | Som D01 | U | 10 499 |
 
-De endelige tallene står i `sammendrag.json` etter kjøringen. Kopien av hver plan, sideteksten og alle handlinger står i én fil per forløp.
+Tallene er fra én samlet kjøring av alle 24 forløp mot den publiserte appen 1.126.3 den 06.11.2026, uten feil i noe forløp. Kopien av hver plan, sideteksten og alle handlinger står i én fil per forløp.
 
 **Hva som virker:** Alle de godkjente forløpene gir komplette, korrekte og like planer på skjerm, i kopi og i utskrift når svarene ligger innenfor omfanget. Dosene i K3- og K4-planene stemmer med preparatomtalene ved stikkprøve. Det gjelder Lamictal pkt. 4.2 (tillegg til valproat og uten interagerende legemidler), Xeplion pkt. 4.2 (150 mg dag 1 og 100 mg dag 8 i deltoideus) og Abilify Maintena pkt. 4.2 (oppstart med én injeksjon og 14 dager peroral aripiprazol). De korrekte stoppene for alder, lever, dose utenfor omfanget og pasientgruppe i K3 er konkrete og forståelige.
 

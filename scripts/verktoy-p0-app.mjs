@@ -14,7 +14,9 @@
  *     node scripts/verktoy-p0-app.mjs [id …]
  *
  * Uten id kjøres alle forløpene, ett om gangen. Resultatene skrives til
- * mappen i P0_UT (standard `p0-utdata/`, ikke i git).
+ * mappen i P0_UT (standard `p0-utdata/`, ikke i git). Kommandoen avslutter med
+ * status 1 hvis minst ett forløp feilet, slik at en ufullstendig kjøring ikke
+ * kan forveksles med en fullført.
  */
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
@@ -37,11 +39,25 @@ async function vent(p) {
   await p.waitForTimeout(600)
 }
 
-/** Svarene klinikeren gir: forløpets egne der teksten passer, ellers det trygge svaret («Gjelder ikke», «Nei», «Ja» på bekreftelser). */
+/** Planpanelet viser et endelig stopp: klinikeren får ingen plan uansett hvordan resten besvares. */
+const harStoppet = async (p) => /^Ingen plan/m.test(await p.locator('.planpanel').innerText())
+
+/** Synlig tekst i hele verktøyet (spørsmål, svaralternativer, meldinger og planpanelet). */
+const sidetekst = async (p) => p.locator('main').first().innerText().catch(() => p.locator('body').innerText())
+
+/**
+ * Svarene klinikeren gir: forløpets egne der teksten passer, ellers det trygge svaret («Gjelder ikke», «Nei», «Ja» på bekreftelser).
+ * Stopper så snart planpanelet viser et endelig stopp, så handlingene telles til
+ * utfallet og ikke til et ferdig utfylt skjema.
+ */
 async function svarAlle(p, svar, logg) {
   let n = 0
   for (let endret = true; endret; ) {
     endret = false
+    if (await harStoppet(p)) {
+      logg.push('(planpanelet viser et endelig stopp; resten av spørsmålene besvares ikke)')
+      break
+    }
     const sporsmal = await p.$$eval('li[data-flytsporsmal]', (ls) =>
       ls.map((l) => ({
         id: l.dataset.flytsporsmal,
@@ -132,6 +148,7 @@ async function kjor(nettleser, f) {
   }
   await vent(p)
   const forPlan = await p.locator('.planpanel').innerText()
+  const forSide = await sidetekst(p)
   await p.locator('.planpanel').screenshot({ path: `${navn}-panel.png` })
   for (const [tekst, fil] of f.bilder ?? []) await p.locator('li[data-flytsporsmal]', { hasText: new RegExp(tekst) }).first().screenshot({ path: `${navn}-${fil}.png` })
   await p.screenshot({ path: `${navn}-steg3.png`, fullPage: true })
@@ -149,6 +166,7 @@ async function kjor(nettleser, f) {
   }
   await p.screenshot({ path: `${navn}.png`, fullPage: true })
   const plan = await p.locator('.planpanel').innerText()
+  const side = await sidetekst(p)
   let kopi = ''
   const kopier = p.getByRole('button', { name: 'Kopier planen' })
   if ((await kopier.count()) > 0) {
@@ -165,7 +183,7 @@ async function kjor(nettleser, f) {
   const sammendrag = { id: f.id, hva: f.hva, versjon, utfall, handlinger, dosevalg: dosevalg.length, skjermtegn: plan.length, kopitegn: kopi.length, overskrift: plan.split('\n').filter(Boolean).slice(1, 3).join(' / ') }
   writeFileSync(
     `${navn}.md`,
-    [`# ${f.id}: ${f.hva}`, '', '```json', JSON.stringify(sammendrag, null, 2), '```', '', '## Handlinger', ...logg.map((l) => `- ${l}`), '', '## Planpanelet før dosevalg', '```', forPlan, '```', '', '## Planpanelet til slutt', '```', plan, '```', '', `## Kopien (${kopi.length} tegn)`, '```', kopi, '```', ''].join('\n'),
+    [`# ${f.id}: ${f.hva}`, '', '```json', JSON.stringify(sammendrag, null, 2), '```', '', '## Handlinger', ...logg.map((l) => `- ${l}`), '', '## Planpanelet før dosevalg', '```', forPlan, '```', '', '## Planpanelet til slutt', '```', plan, '```', '', '## Hele siden før dosevalg', '```', forSide, '```', '', '## Hele siden til slutt', '```', side, '```', '', `## Kopien (${kopi.length} tegn)`, '```', kopi, '```', ''].join('\n'),
   )
   return sammendrag
 }
@@ -186,3 +204,8 @@ for (const f of FORLOP.filter((x) => valgte.length === 0 || valgte.includes(x.id
 }
 await nettleser.close()
 writeFileSync(join(UT, 'sammendrag.json'), JSON.stringify({ kjort: new Date().toISOString(), app: URL_, resultater }, null, 2))
+const feilet = resultater.filter((r) => r.feil).map((r) => r.id)
+if (feilet.length > 0) {
+  console.error(`${feilet.length} av ${resultater.length} forløp feilet: ${feilet.join(', ')}`)
+  process.exitCode = 1
+}
