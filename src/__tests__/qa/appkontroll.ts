@@ -11,10 +11,11 @@
  * ({@link SIKKERHETSKONTROLLER}).
  *
  * Bare lesing: ingen plan, sperre eller innstilling lagres. Kjøres med
- * `npx vite-node src/__tests__/qa/appkontroll.ts` når APP_URL,
- * BOOTSTRAP_ADMIN_USERNAME og BOOTSTRAP_ADMIN_PASSWORD er satt, og skriver
- * {@link APPKONTROLL}. Ikke en del av `npm test`, fordi den trenger nett og
- * innlogging.
+ * `npx vite-node src/__tests__/qa/appkontroll.ts`, og skriver
+ * {@link APPKONTROLL}. Som standard kjøres den i det lokale testmiljøet med
+ * egen database; mot den publiserte appen (APP_URL) bare som en kort,
+ * begrenset kontroll med `QA_PRODUKSJON=ja` (`testmiljo.ts`, `docs/qa-testmiljo.md`). Ikke en del
+ * av `npm test`, fordi den trenger Docker eller nett og innlogging.
  */
 import { writeFileSync } from 'node:fs'
 import { FEST_FORELDET_ETTER_TIMER } from '../../legemiddeldata/referanser'
