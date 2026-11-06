@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.126.4',
+    dato: '2026-11-06',
+    sammendrag: 'Automatiske kontroller av appen kjøres nå mot en egen testdatabase, ikke mot den OUSFAR bruker',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Ingenting i appen er endret. Endringen gjelder bare de automatiske kontrollene som åpner appen og går gjennom verktøyene.',
+      'De kjøres nå mot en egen testdatabase med syntetiske data, slik at de ikke gjør OUSFAR tregere for brukerne. Mot den publiserte appen kan bare en kort, begrenset kontroll kjøres, og den stopper av seg selv ved tegn på overbelastning.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.126.3',
     dato: '2026-11-06',
     sammendrag: 'THC-syre: ryddigere banner om høyere sikkerhetsmargin',
