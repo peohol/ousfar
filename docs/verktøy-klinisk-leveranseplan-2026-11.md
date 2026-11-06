@@ -197,10 +197,10 @@ Kolonnene «I dag» og «Kjent hindring» viser status ved nullpunktet og, der e
 | 12 | #327 | Brukervennlighet B1 – stoppkoder, formovergang og praktisk dosering i motoren | 1.125.10 | #328 | Slått sammen 05.11; ingen regel endret |
 | 13 | #329 | Brukervennlighet C1 – spørsmålskatalog og forhåndskontroll | 1.125.11 | – | Slått sammen 05.11 |
 | 14 | #330 | Brukervennlighet B2 – escitalopram v14, tabletter og dråper i samme nedtrapping | 1.125.12 | #327 | Slått sammen 05.11; v14 klinisk godkjent og erstatter v13 (§10.4) |
-| 15 | #331 | Brukervennlighet A1 – felles firestegsflyt og planen som tidslinje | 1.126.1 | #329, #330 og #334 | Til kontroll; integreres med `main` etter #334 |
+| 15 | #331 | Brukervennlighet A1 – felles firestegsflyt og planen som tidslinje | 1.126.1 | #329, #330 og #334 | Slått sammen 06.11; ingen regel endret |
 | 16 | denne | A – K0, K5-D registrert som neste fase; startporten kontrolleres før merge | 1.126.2 | alle over | Til kontroll; slås sammen sist |
 
-#334 (THC-syre, 1.126.0) hører ikke til denne planen, men slås sammen før #331 etter Peders prioritering 05.11.2026 og tar derfor versjonen før A1.
+#334 (THC-syre, 1.126.0) hører ikke til denne planen, men ble slått sammen 05.11.2026 før #331 etter Peders prioritering og tok derfor versjonen før A1.
 
 Rekkefølgen ble endret 04.11.2026 slik at PR-ene som er nærmest godkjent, slås sammen først. Godkjenner ChatGPT i en annen rekkefølge, nummererer koordinatoren om de uavhengige PR-ene; PR-er som avhenger av #319, merges etter den.
 
@@ -221,6 +221,7 @@ Føres av koordinatoren bare når en PR er slått sammen etter ChatGPTs kontroll
 | 05.11.2026 | #327 | Ingen endring i hva verktøyene kan og ingen regel endret. Motoren kan beskrive en dokumentert overgang mellom legemiddelformer og foretrekke praktiske doser, og hver stoppgrunn har fått en fast kode. | – |
 | 05.11.2026 | #329 | Ingen endring i hva verktøyene kan og ingen regel endret. Grunnlag for spørsmål i vanlig språk med «Ja», «Nei» og «Ukjent» («Ukjent» gir aldri plan) og en forhåndskontroll som sier tidlig hvorfor en komplett plan ikke kan lages. | – |
 | 05.11.2026 | #330 | «Trappe ned antidepressiv» gir komplett plan for escitalopram også når pasienten bruker Cipralex tabletter 10 eller 20 mg. Versjon 14 av nedtrappingen er klinisk godkjent av kontrolløren 05.11.2026 (PR #330, kommentar 6665304397) for nøyaktig sin versjon og fingeravtrykket `01b2fb560a8defe0114f9552d619bc6bf15e27b07fa6352d6331d9beb500721f`, og erstatter versjon 13. Fra 20 mg gis første trinn (15 mg) som én tablett à 10 mg og én à 5 mg, så dråper mg for mg: 12, 9, 7, 6, 5, 4, 3, 2 og 1 mg før seponering; fra 10 mg gis dråper fra første reduksjon: 8, 6, 5, 4, 3, 2 og 1 mg. Den samme dosen gis aldri som tabletter og dråper samtidig. Med dråper som startform er planen den samme som i versjon 13. Omfanget er det samme som i #323, men spørsmålet om alder er nå «65 år eller eldre», så en pasient på nøyaktig 65 år stopper. Andre startdoser og avregistrerte styrker stopper. Verifisert uten simulering gjennom verktøysiden (`src/__tests__/verktoyb2side.test.tsx`). | K1: 1 av 2 (samme virkestoff som #323; K0-01 er nå komplett også fra tabletter) |
+| 06.11.2026 | #331 | Ingen regel, dose eller godkjenning endret, og planene beregnes som før. Alle fire verktøyene har én arbeidsflyt i fire steg (hva som skal gjøres, nåværende behandling, om pasienten, planen) uten «Beregn»-knapp. Verktøyet sier så tidlig som mulig om en komplett plan kan lages, og velger legemiddelform selv når bare én kan gi komplett plan. Planen vises som tidslinje og kopieres i sin helhet. Escitalopram v14 er prøvd gjennom flyten fra tabletter og dråper (10 og 20 mg) til 0 mg, og stoppene (65 år eller eldre, lang behandlingstid, tidligere seponeringsplager, manglende FEST-styrker) virker. | – |
 
 **Komplette forløp i appen nå:**
 
@@ -236,9 +237,9 @@ Peder bestemte 05.11.2026 at [K5-D-planen](verktøy-k5-dosefleksible-forlop.md) 
 
 **K5-D er ikke startet.** Koordinatoren kontrollerer startporten (K5-D-planen §1) og fører resultatet her. Når de andre punktene er dokumentert oppfylt, lager koordinatoren det nye, daterte nullpunktet som første del av K5-D0, og det oppfyller det tredje punktet. Først da gjør koordinatoren resten av K5-D0 (prioritering) og deler arbeidet i parallelle tråder (D1 motor og QA, D2 de fire fagsporene). Ingen annen K5-D-implementering starter før alle fire punktene er oppfylt.
 
-| Startport (K5-D-planen §1) | Status 05.11.2026 |
+| Startport (K5-D-planen §1) | Status 06.11.2026 |
 | --- | --- |
-| Pågående PR-er integrert eller eksplisitt avsluttet | Ikke oppfylt: #318, #321 og #326–#330 er slått sammen 05.11; #331 og denne PR-en er åpne (§10.3). En PR som lukkes uten merge, føres som uoppfylt behov |
-| Samlet `main` består bygg, tester, regel- og FEST-kontroll og syntetisk brukerflyt i den publiserte administrator-appen, med skjermvisning og kopi | Ikke oppfylt: kjøres på integrert `main` etter siste PR i §10.3. QA-kontrollen i appen (#321) ble gjort før arbeidsflyten ble endret (#327–#331) og må gjøres på nytt |
+| Pågående PR-er integrert eller eksplisitt avsluttet | Oppfylles når denne PR-en er slått sammen: #318, #321 og #326–#330 er slått sammen 05.11 og #331 06.11 (§10.3); ingen er lukket uten merge |
+| Samlet `main` består bygg, tester, regel- og FEST-kontroll og syntetisk brukerflyt i den publiserte administrator-appen, med skjermvisning og kopi | Ikke oppfylt: kjøres på integrert `main` etter at denne PR-en er slått sammen. QA-kontrollen i appen (#321) ble gjort før arbeidsflyten ble endret (#327–#331) og må gjøres på nytt |
 | Koordinatoren har oppdatert fremdriften og laget et nytt, datert nullpunkt med gjenstående K1–K4-mangler | Ikke oppfylt: lages som første del av K5-D0 når de andre punktene er oppfylt |
 | `VERKTOYENE_VISES_FOR` er fortsatt `'admin'` | Oppfylt: uendret, og K5-D endrer den ikke |

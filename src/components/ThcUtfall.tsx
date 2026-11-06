@@ -6,8 +6,9 @@ import { Panelhode } from './Panelhode'
 import { ThcForklaring } from './ThcForklaring'
 import { ThcPlot } from './ThcPlot'
 import { Ikon } from './ikon/Ikon'
-import type { ThcResultat } from '../domain/thcMotor'
+import type { ThcMildereUtfall, ThcResultat } from '../domain/thcMotor'
 import type { ThcRegelsett } from '../domain/thcRegelsett'
+import { konklusjonsnavn, marginliste, marginmerke, medMargin } from '../domain/thcVisning'
 
 /**
  * Utfallet av en THC-fortolkning, slik fortolkningsmodulen og simulatoren på
@@ -16,16 +17,29 @@ import type { ThcRegelsett } from '../domain/thcRegelsett'
  * kopiere.
  */
 
+/** Det banneret om en mildere konklusjon med høyere sikkerhetsmargin trenger. */
+export interface ThcMarginsjekk {
+  /** Den valgte marginen. */
+  valgt: number
+  /** De mildere utfallene høyere marginer gir ({@link mildereVedHoyereMargin}). */
+  mildere: ThcMildereUtfall[]
+  /** Velger marginen. Uten den står banneret uten knapper. */
+  onVelg?: (margin: number) => void
+}
+
 export function ThcKommentar({
   resultat,
   regler,
   onIngenTidligere,
+  marginsjekk,
   handling,
 }: {
   resultat: ThcResultat
   regler: ThcRegelsett
   /** Huker av «Ingen tidligere prøve». Uten den står varselet uten knapp. */
   onIngenTidligere?: () => void
+  /** Sier fra når en høyere sikkerhetsmargin gir en mildere konklusjon. */
+  marginsjekk?: ThcMarginsjekk
   /** Det som står under kommentaren, som kopiknappen. */
   handling?: ReactNode
 }) {
@@ -47,6 +61,12 @@ export function ThcKommentar({
   return (
     <>
       <Panelhode ikon="interp">Kommentar</Panelhode>
+      {marginsjekk && marginsjekk.mildere.length > 0 && (
+        <MildereMargin
+          {...marginsjekk}
+          naa={konklusjonsnavn(resultat.konklusjon, resultat.samlet)}
+        />
+      )}
       {resultat.langtMellomProvene && (
         <div className="notis notis--handling" role="note">
           <p>
@@ -71,6 +91,40 @@ export function ThcKommentar({
       <p className="kommentartekst">{resultat.kommentar}</p>
       {handling}
     </>
+  )
+}
+
+/**
+ * Banneret over kommentaren når en høyere sikkerhetsmargin enn den valgte gir
+ * en mildere konklusjon: hvert mildere utfall med marginene som gir det, og en
+ * knapp for den laveste av dem. At en lavere margin gir en strengere
+ * konklusjon, sies aldri.
+ */
+function MildereMargin({ valgt, mildere, onVelg, naa }: ThcMarginsjekk & { naa: string }) {
+  return (
+    <div className="notis thc-mildere" role="note" aria-label="Mildere konklusjon med høyere sikkerhetsmargin">
+      <p className="thc-mildere__hode">Høyere sikkerhetsmargin gir en mildere konklusjon</p>
+      <p>
+        {medMargin(valgt)} blir konklusjonen «{naa}».
+      </p>
+      <ul className="thc-mildere__liste">
+        {mildere.map(({ marginer, konklusjon, samlet }) => {
+          const laveste = marginer[0]!
+          return (
+            <li key={marginer.join('|')} className="thc-mildere__utfall">
+              <p>
+                Med {marginliste(marginer)} sikkerhetsmargin: «{konklusjonsnavn(konklusjon, samlet)}».
+              </p>
+              {onVelg && (
+                <Button variant="kant" onClick={() => onVelg(laveste)}>
+                  Bruk {marginmerke(laveste)} sikkerhetsmargin
+                </Button>
+              )}
+            </li>
+          )
+        })}
+      </ul>
+    </div>
   )
 }
 

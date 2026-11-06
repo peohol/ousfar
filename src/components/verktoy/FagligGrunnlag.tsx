@@ -52,11 +52,15 @@ const DELER = [
   { felt: 'preparater', tittel: 'Preparater fra FEST', forklaring: 'Preparatene planen bygger på, slik FEST viste dem da planen ble beregnet.' },
 ] as const satisfies readonly { felt: keyof Grunnlag; tittel: string; forklaring: string }[]
 
-/** «Faglig grunnlag»: lukket til forskriveren åpner den, og åpen i utskriften (`Doseplanvisning`). */
+/**
+ * Grunnlaget nederst i planen eller fagteksten: lukket til forskriveren åpner
+ * det, og åpent i utskriften (`Doseplanvisning`). Det heter «Kilder og
+ * versjon» når en beregnet plan har versjonene, ellers «Kilder og grunnlag».
+ */
 export function FagligGrunnlag({ grunnlag }: { grunnlag: Grunnlag }) {
   return (
     <div className="faglig-grunnlag">
-      <Details summary="Faglig grunnlag" ikon="refs">
+      <Details summary={(grunnlag.versjoner ?? []).length > 0 ? 'Kilder og versjon' : 'Kilder og grunnlag'} ikon="refs">
         <div className="faglig-grunnlag__innhold">
           <section className="faglig-grunnlag__del">
             <h3>Slik er forslaget laget</h3>

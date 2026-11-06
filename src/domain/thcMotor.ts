@@ -598,6 +598,68 @@ function samletVurdering(
   return null
 }
 
+/* --- Mildere konklusjon med høyere margin ----------------------------------- */
+
+/**
+ * Hvor streng konklusjonen i et resultat er, til sammenligning: høyere er
+ * strengere. «Ikke nødvendigvis nytt» er mildest og nytt inntak mot forrige
+ * prøve strengest. Nytt inntak etter en enda tidligere prøve (den samlede
+ * vurderingen) ligger mellom «kan ikke fastslås» og nytt inntak etter forrige
+ * prøve, siden inntaket da kan ha skjedd før forrige prøve; jo eldre den
+ * tidligere prøven er, desto mildere. `null` når resultatet ikke er en
+ * vurdering mot forrige prøve, og marginen dermed ikke betyr noe.
+ */
+function strenghet(resultat: ThcResultat): readonly [number, number] | null {
+  if (resultat.type !== 'kommentar' || resultat.konklusjon === 'uten_forrige') return null
+  const trinn = THC_KONKLUSJONER.indexOf(resultat.konklusjon)
+  // Den samlede vurderingen gir nytt inntak, men etter en eldre prøve.
+  if (resultat.samlet) return [trinn + 0.5, -resultat.samlet.dager]
+  return [trinn, 0]
+}
+
+/** Negativ når `a` er mildere enn `b`. */
+function sammenlignStrenghet(a: readonly [number, number], b: readonly [number, number]): number {
+  return a[0] - b[0] || a[1] - b[1]
+}
+
+/** Et mildere utfall som en høyere sikkerhetsmargin gir. */
+export interface ThcMildereUtfall {
+  /** Marginene som gir utfallet, stigende. Den første er den laveste som gir det. */
+  marginer: number[]
+  konklusjon: ThcKonklusjon
+  /** Satt når utfallet er nytt inntak etter en enda tidligere prøve. */
+  samlet: ThcSamletVurdering | null
+}
+
+/**
+ * Hver mildere konklusjon en høyere sikkerhetsmargin enn den valgte ville gi,
+ * med marginene som gir den, i stigende margin. Alle regelsettets marginer
+ * over den valgte prøves, så det følger med når marginene endres. En lavere
+ * margin prøves aldri, og en høyere margin som gir samme eller en strengere
+ * konklusjon, er ikke med. Tomt når det ikke er noe å fortolke ennå, eller
+ * når fortolkningen ikke er en vurdering mot forrige prøve.
+ */
+export function mildereVedHoyereMargin(
+  inn: ThcInndata,
+  modell: ThcModell,
+  resultat: ThcResultat = fortolkThc(inn, modell),
+): ThcMildereUtfall[] {
+  const valgt = strenghet(resultat)
+  if (valgt === null) return []
+  const utfall = new Map<string, ThcMildereUtfall>()
+  for (const { margin } of modell.regler.sikkerhetsmarginer) {
+    if (!(margin > inn.sikkerhetsmargin)) continue
+    const alternativ = fortolkThc({ ...inn, sikkerhetsmargin: margin }, modell)
+    const grad = strenghet(alternativ)
+    if (alternativ.type !== 'kommentar' || grad === null || !(sammenlignStrenghet(grad, valgt) < 0)) continue
+    const nokkel = `${alternativ.konklusjon}|${alternativ.samlet?.dato ?? ''}`
+    const funnet = utfall.get(nokkel)
+    if (funnet) funnet.marginer.push(margin)
+    else utfall.set(nokkel, { marginer: [margin], konklusjon: alternativ.konklusjon, samlet: alternativ.samlet })
+  }
+  return [...utfall.values()]
+}
+
 /** Sant når marginen er den uten korreksjon — medianen er den målte verdien. */
 export function erUtenMargin(margin: number): boolean {
   return margin === INGEN_SIKKERHETSMARGIN

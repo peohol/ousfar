@@ -10,7 +10,7 @@
  * annet). Kildene står som henvisninger med lenke; Psychiatrienet bare som
  * kildeoppføringen, aldri med innhold.
  */
-import { norskDato } from './motor/byggesteiner'
+import { norskDato, type Doseenhet } from './motor/byggesteiner'
 import { elementtekst, EN_REDUKSJON_KORT, fordelingSuffiks, preparatliste, seponeringsdag, sluttmalMangler, type Doseplanresultat, type Praktiskforlop } from './motor/plan'
 import { KARTLEGGING } from './register'
 import { avrund, hverTekst, injeksjonstidspunkt, valgtTekst } from './regler/beregning'
@@ -23,6 +23,8 @@ export interface Dosecelle {
   dose: string
   /** «1½ tablett à 10 mg» per styrke. */
   elementer: string[]
+  /** Doseenheten for hvert element i `elementer` (tablett, dråpe …), til symbolene i tidslinjen; `null` når elementet ikke er én enhet. */
+  enheter?: (Doseenhet | null)[]
   /** «ideelt 12,5 mg (+20 %)» når dosen avviker fra regelens kurve. */
   avvik?: string
 }
@@ -31,7 +33,7 @@ export type Planrad =
   | { type: 'periode'; dager: string; datoer?: string; celler: (Dosecelle | null)[] }
   /** Et vurderingspunkt i forløpet i kolonnen (regelmodell 12). */
   | { type: 'vurdering'; dager: string; datoer?: string; kolonne: number; tekst: string }
-  | { type: 'injeksjon'; dager: string; datoer?: string; kolonne: number; dose: string; element: string; detalj?: string }
+  | { type: 'injeksjon'; dager: string; datoer?: string; kolonne: number; dose: string; element: string; enhet: Doseenhet; detalj?: string }
 
 export interface Plankilde {
   tittel: string
@@ -131,7 +133,12 @@ function rader(forlop: Praktiskforlop[], startdato: string | undefined, vurderin
       const p = f.perioder.find((x) => x.fra <= fra && (x.til === null || x.til >= fra))
       if (p) {
         const avvik = [Math.abs(p.avvik_prosent) > 1e-7 && `ideelt ${mg(p.ideell_mg)} (${p.avvik_prosent > 0 ? '+' : ''}${String(avrund(p.avvik_prosent)).replace('.', ',')} %)`, valgtTekst(p)].filter(Boolean).join('; ')
-        return { dose: `${mg(p.mg)}${p.hver ? ` ${hverTekst(p.hver)}` : ''}${fordelingSuffiks(p)}`, elementer: p.elementer.map(elementtekst), ...(avvik && { avvik }) }
+        return {
+          dose: `${mg(p.mg)}${p.hver ? ` ${hverTekst(p.hver)}` : ''}${fordelingSuffiks(p)}`,
+          elementer: p.elementer.map(elementtekst),
+          enheter: p.elementer.map((e) => e.doseenhet),
+          ...(avvik && { avvik }),
+        }
       }
       if (f.uendret_mg !== undefined && fra >= f.start) return uendretCelle(f)
       return fra === seponeringsdag(f) ? seponert(f) : null
@@ -154,6 +161,7 @@ function rader(forlop: Praktiskforlop[], startdato: string | undefined, vurderin
           kolonne,
           dose: mg(inj.mg),
           element: elementtekst(inj.element),
+          enhet: inj.element.doseenhet,
           ...(detalj && { detalj }),
         },
       })
@@ -396,8 +404,12 @@ export const PLANDELER = [
 
 const punkter = (overskrift: string, linjer: readonly string[]) => (linjer.length > 0 ? [``, `${overskrift}:`, ...linjer.map((l) => `- ${l}`)] : [])
 
-/** Planen som ren tekst, til utklippstavlen: det samme som står på skjermen. */
-export function planTekst(v: Planvisning, overskrift: string): string {
+/**
+ * Planen som ren tekst, til utklippstavlen: det samme som står på skjermen,
+ * i tidslinjens rekkefølge. `forutsatt` er de avledede svarene og
+ * forbeholdene flyten har lagt til grunn (§4.1); de står etter planen.
+ */
+export function planTekst(v: Planvisning, overskrift: string, forutsatt: readonly string[] = []): string {
   // Navnet med administrasjonsformen, som kolonnene på skjermen: samme virkestoff kan stå både peroralt og som depot.
   const kolonne = (i: number) => `${v.kolonner[i]!.navn} ${v.kolonner[i]!.administrasjon}`
   const celle = (c: Dosecelle | null, i: number) =>
@@ -415,6 +427,7 @@ export function planTekst(v: Planvisning, overskrift: string): string {
     v.utfall.tekst,
     '',
     ...linjer,
+    ...punkter('Forutsatt', forutsatt),
     ...PLANDELER.flatMap((d) => punkter(d.tittel, v[d.felt])),
     ...punkter('Kilder', v.kilder.map(kildelinje)),
     ...punkter('Versjoner', v.versjoner),

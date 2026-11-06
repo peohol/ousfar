@@ -11,7 +11,13 @@ import { ThcSkjema } from './ThcSkjema'
 import { ThcKommentar, ThcVisualisering } from './ThcUtfall'
 import { Ikon } from './ikon/Ikon'
 import { THC_ANALYSEMETODE, THC_KODE } from '../domain/thc'
-import { fortolkThc, tomThcInndata, type ThcModell, type ThcRegler } from '../domain/thcMotor'
+import {
+  fortolkThc,
+  mildereVedHoyereMargin,
+  tomThcInndata,
+  type ThcModell,
+  type ThcRegler,
+} from '../domain/thcMotor'
 import { erBekreftelse } from '../hooks/useKeyboard'
 import { rullTilKort, useKortHopp } from '../hooks/useKortHopp'
 
@@ -129,6 +135,7 @@ function ThcFortolkning({
   }, [fokusTeller])
 
   const resultat = useMemo(() => fortolkThc(inndata, modell), [inndata, modell])
+  const mildere = useMemo(() => mildereVedHoyereMargin(inndata, modell, resultat), [inndata, modell, resultat])
   const kommentar = resultat.type === 'kommentar' ? resultat.kommentar : null
 
   // Reserveteksten for manuell kopiering gjelder kommentaren slik den var da
@@ -250,6 +257,11 @@ function ThcFortolkning({
           resultat={resultat}
           regler={regler}
           onIngenTidligere={() => sett('ingenTidligere', true)}
+          marginsjekk={{
+            valgt: inndata.sikkerhetsmargin,
+            mildere,
+            onVelg: (margin) => sett('sikkerhetsmargin', margin),
+          }}
           handling={
             <div className="handlingsrad handlingsrad--start">
               <Button ref={kopierKnapp} type="submit" icon={<Ikon navn="copy" />} shortcut="↵">

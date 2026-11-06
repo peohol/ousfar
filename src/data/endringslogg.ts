@@ -13,7 +13,7 @@ import type { Endring } from '../domain/versjon'
 export const ENDRINGSLOGG: Endring[] = [
   {
     versjon: '1.126.2',
-    dato: '2026-11-05',
+    dato: '2026-11-06',
     sammendrag: 'Neste fase for de kliniske verktøyene er planlagt: komplette planer for hele doseområder',
     typer: ['Funksjonalitet'],
     omfang: 'Minimalt omfang',
@@ -23,6 +23,38 @@ export const ENDRINGSLOGG: Endring[] = [
       'Planen for de kliniske verktøyene viser nå neste fase: verktøyene skal gi komplette planer for klinisk godkjente doseområder, ikke bare for enkelte startdoser. Fasen starter først når dagens leveranser er ferdige og kontrollert samlet, og planen viser hva som gjenstår før det.',
     ],
     utenVarsel: true,
+  },
+  {
+    versjon: '1.126.1',
+    dato: '2026-11-05',
+    sammendrag: 'De fire kliniske verktøyene har fått én enkel arbeidsflyt i fire steg, og planen vises som en tidslinje',
+    typer: ['Funksjonalitet', 'Design / layout'],
+    omfang: 'Større omfang',
+    gjelder: ['verktoy'],
+    utenVarsel: true,
+    punkter: [
+      'Gjelder bare administratorene, som fortsatt er de eneste som ser verktøyene. Ingen regler, doser eller godkjenninger er endret, og planen beregnes som før.',
+      'Alle fire verktøyene følger de samme fire stegene: hva som skal gjøres, nåværende behandling, om pasienten og planen. Hvert steg vises når det forrige er fylt ut, og det er ingen «Beregn»-knapp: planen kommer av seg selv når alt er besvart.',
+      'Verktøyet sier så tidlig som mulig om en komplett plan kan lages. Kan valget ikke gi en plan, står det med en gang, før dosen og spørsmålene. Et svar eller en dose som gjør at ingen plan kan lages, sier det straks, ved spørsmålet og i panelet, med beregningens egen tekst bak «Vis detaljer». Kan det ikke avklares på forhånd, sier verktøyet det og beregner planen med svarene.',
+      'Spørsmålene står gruppert: forholdene som stopper en plan først, så det som påvirker planen, og bekreftelsene til slutt. Der spørsmålstekstene er faglig kontrollert, står de i vanlig språk med svarene Ja, Nei og Ukjent; for de andre reglene står regelens egne tekster og svar som før. Knappen «N spørsmål igjen» hopper til det første spørsmålet som mangler svar.',
+      'Når bare én legemiddelform kan gi en komplett plan, velger verktøyet den og sier det ved valget; den kan endres.',
+      'Planen vises som en tidslinje dag for dag, og «Kopier planen» kopierer hele planen. Datoen, justeringene og valgte doser per trinn står under «Tilpass planen», og kildene og versjonen under «Kilder og grunnlag».',
+      'Svarene velges med tastene 1, 2 og 3 og piltastene, og skjemaet tas vare på gjennom en oppdatering av appen.',
+    ],
+  },
+  {
+    versjon: '1.126.0',
+    dato: '2026-11-05',
+    sammendrag: 'THC-syre: beskjed når en høyere sikkerhetsmargin gir en mildere konklusjon',
+    typer: ['Fag', 'Funksjonalitet'],
+    omfang: 'Mindre omfang',
+    gjelder: ['fortolkning/ircak'],
+    endrerFortolkning: true,
+    punkter: [
+      'Fortolkningen av THC-syre prøver nå alle sikkerhetsmarginene som er høyere enn den du har valgt. Gir en av dem en mildere konklusjon, for eksempel «Kan ikke fastslås» i stedet for «Nytt inntak», står det et tydelig banner over kommentaren.',
+      'Banneret viser hver mildere konklusjon og hvilken margin som gir den, med en knapp for å bruke den marginen. Gir to høyere marginer hver sin konklusjon, vises begge.',
+      'At en lavere margin ville gitt en strengere konklusjon, vises aldri. Kommentaren endres ikke før du selv bytter margin.',
+    ],
   },
   {
     versjon: '1.125.12',

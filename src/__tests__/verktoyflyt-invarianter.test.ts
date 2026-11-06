@@ -30,6 +30,7 @@ import { norskDato } from '../verktoy/motor/byggesteiner'
 import { kildelinje, planTekst, planvisning, regellinje, type Planrad, type Planvisning } from '../verktoy/planvisning'
 import { festkoblinger, KARTLEGGING, VALGTEKSTER, VERKTOY, virkestoffvalg, type Verktoy } from '../verktoy/register'
 import { BRUKERFORLOP, kjerne, kjorForlop, komplett, lesUttrekkene, tidslinjeavvik, type Planinndata, type Tidslinje } from './qa/brukerforlop'
+import { tidslinjetabell } from './hjelp/verktoyflyt'
 import { avrund } from '../verktoy/regler/beregning'
 import { erKliniskGodkjent, fingeravtrykk, harBeregning } from '../verktoy/regler/godkjenning'
 import type { Regel } from '../verktoy/regler/modell'
@@ -726,7 +727,7 @@ describe('S8: kopien inneholder hele planen', () => {
     if (r.status !== 'doseplan') throw new Error('ingen plan')
     const v = endret ?? planvisning(r, x.regel)!
     const { container } = render(createElement(Doseplanvisning, { plan: v, overskrift: x.verktoy.navn }))
-    return { r, v, tabell: container.querySelector('table')!, kopi: planTekst(v, x.verktoy.navn) }
+    return { r, v, tabell: tidslinjetabell(container.querySelector('ol.tidslinje')!), kopi: planTekst(v, x.verktoy.navn) }
   }
 
   it.each(PLANER.map((x) => [x.kasus.id, x] as const))('%s: tabellen har det motoren beregnet, og kopien har tabellen celle for celle', async (_, x) => {
@@ -983,17 +984,12 @@ describe('Det klinikeren ser før planen', () => {
    * reservevisningen brukes, og at den ikke brukes noe annet sted. Valg uten
    * beregning skal heller ikke vise interne begreper.
    *
-   * I dag finnes verken katalogen (C1) eller reservevisningen (A1), og
-   * skjemaet viser «Gjelder», regel-ID og fingeravtrykk. Testen er derfor
-   * merket `fails`; A1 endrer den til `it`.
+   * Katalogen (C1) og reservevisningen (A1) er på plass, så dette er en
+   * vanlig test.
    */
-  it.fails(
-    'har ingen regel-ID, interne begreper eller svaret «Gjelder» der katalogen er kontrollert, og reservevisningen bare der den ikke er det (akseptansekriterium 2)',
-    async () => {
-      expect(await funn()).toEqual([])
-    },
-    60_000,
-  )
+  it('har ingen regel-ID, interne begreper eller svaret «Gjelder» der katalogen er kontrollert, og reservevisningen bare der den ikke er det (akseptansekriterium 2)', async () => {
+    expect(await funn()).toEqual([])
+  }, 60_000)
 
   /**
    * Hvilke godkjente regler som står i reservevisningen, er en uttrykkelig
