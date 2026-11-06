@@ -1,5 +1,5 @@
 {
-  "oppdatert_kl": "2026-11-06T10:26:27.652Z",
+  "oppdatert_kl": "2026-11-06T11:26:01.467Z",
   "malt_kl": "2026-11-06T09:27:01.292Z",
   "antall": {
     "klar": 95,
@@ -153,7 +153,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
-          "kl": "2026-11-06T10:26:27.652Z",
+          "kl": "2026-11-06T11:26:01.467Z",
           "kilde": "system"
         }
       ]
@@ -164,7 +164,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
-          "kl": "2026-11-06T10:26:27.652Z",
+          "kl": "2026-11-06T11:26:01.467Z",
           "kilde": "system"
         }
       ]
@@ -197,7 +197,7 @@
         {
           "kode": "annen_gren",
           "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
-          "kl": "2026-11-06T10:26:27.652Z",
+          "kl": "2026-11-06T11:26:01.467Z",
           "kilde": "system"
         }
       ]
@@ -207,8 +207,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
-          "kl": "2026-11-06T10:26:27.652Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.",
+          "kl": "2026-11-06T11:26:01.467Z",
           "kilde": "system"
         }
       ]
@@ -218,8 +218,8 @@
       "blokkeringer": [
         {
           "kode": "annen_gren",
-          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, arbeid); den må avsluttes først.",
-          "kl": "2026-11-06T10:26:27.652Z",
+          "grunn": "Fagsiden har en aktiv kurateringsgren køen ikke følger (de_novo, klar); den må avsluttes først.",
+          "kl": "2026-11-06T11:26:01.467Z",
           "kilde": "system"
         }
       ]
