@@ -228,6 +228,15 @@ export interface Teknisk {
   rapportfeil?: string
   seksjoner?: { seksjon: string; art: string }[]
   kontrollert_kl: string
+  /** Datoen forhåndsvisningen ble slettet for å spare plass; bare i eldre revisjoner. */
+  forhandsvisning_fjernet?: string
+}
+
+/** Hvorfor revisjonen ikke har noen forhåndsvisning, i én setning. */
+export function uteblittForhandsvisning(teknisk: Teknisk | undefined): string {
+  return teknisk?.forhandsvisning_fjernet
+    ? 'Forhåndsvisningen av denne eldre revisjonen er slettet for å spare plass; den siste revisjonen i grenen har sin.'
+    : `Revisjonen har ingen forhåndsvisning fordi prøvepubliseringen feilet: ${teknisk?.feil ?? 'ukjent feil'}`
 }
 
 /** Fagsiden og bivirkningene slik de blir publisert, i samme form som `les_stoff` og `les_bivirkninger`. */

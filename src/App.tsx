@@ -76,7 +76,7 @@ import { Verktoyside } from './components/verktoy/Verktoyside'
 import { kallMot } from './legemiddeldata/lager'
 import { lagLegemiddelleser, lagLegemiddelsok } from './legemiddeldata/lesing'
 import { lagFarmakogenetikkleser, lagFarmakogenetikksok } from './clinpgx/lesing'
-import { lagCpicleser } from './cpic/lesing'
+import { lagCpicleserOmIBruk } from './cpic/lesing'
 import { lagBivirkningsleser } from './bivirkninger/lesing'
 import { lagKjemileser } from './kjemi/lesing'
 import { lagLableser, lagLabsokleser } from './farmakologiportalen/lesing'
@@ -189,7 +189,7 @@ export default function App() {
       kanRedigere: profil.role === 'admin',
       legemidler: lagLegemiddelleser(klient()),
       farmakogenetikk: lagFarmakogenetikkleser(klient()),
-      cpic: lagCpicleser(klient()),
+      cpic: lagCpicleserOmIBruk(klient()),
       bivirkninger: lagBivirkningsleser(klient()),
       kjemi: lagKjemileser(klient()),
       laboratorier: lagLableser(klient()),
@@ -259,7 +259,7 @@ export default function App() {
           sider: lagSideleser(stille),
           legemidler: lagLegemiddelsok(stille),
           farmakogenetikk: lagFarmakogenetikksok(stille),
-          cpic: lagCpicleser(stille),
+          cpic: lagCpicleserOmIBruk(stille),
           laboratorier: lagLabsokleser(stille),
           versjoner: lagVersjonsleser(stille),
           mellomlager: nettleserlager,
