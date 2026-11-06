@@ -12,6 +12,17 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.126.7',
+    dato: '2026-11-06',
+    sammendrag: 'Jevnlig, skånsom måling av hvor hardt databasen arbeider',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    punkter: [
+      'Ingen endring i appen. Hver tredje time måles svartid, feilrate, minnebruk, disk og midlertidige filer i databasen, uten å belaste appen, slik at det kan sees hva som faktisk gjør appen raskere: mindre testtrafikk, rettinger i databasen eller mer kapasitet.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.126.3',
     dato: '2026-11-06',
     sammendrag: 'THC-syre: ryddigere banner om høyere sikkerhetsmargin',
