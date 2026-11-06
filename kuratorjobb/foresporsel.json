@@ -1,0 +1,13 @@
+{
+  "versjon": 1,
+  "stoffer": [
+    "klonazepam",
+    "kodein",
+    "oksykodon",
+    "olanzapin"
+  ],
+  "oppgaver": [
+    "funksjonstest",
+    "spc"
+  ]
+}
