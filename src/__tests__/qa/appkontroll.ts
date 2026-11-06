@@ -17,12 +17,13 @@
  * innlogging.
  */
 import { writeFileSync } from 'node:fs'
-import { createRequire } from 'node:module'
 import { FEST_FORELDET_ETTER_TIMER } from '../../legemiddeldata/referanser'
 import { flytoppsett, reglerMedPlan } from '../../verktoy/flyt'
 import { jaVed, type Betingelsestype } from '../../verktoy/flyt/sporsmal'
 import { FORMULERINGSNAVN, VALGTEKSTER, virkestoffvalg } from '../../verktoy/register'
 import { BRUKERFORLOP, kjorForlop, KLASSENAVN, lesUttrekkene, tidslinjeavvik, type Brukerforlop, type Forlopsresultat, type Tidslinje } from './brukerforlop'
+import { apneTestmiljo, Teststopp } from './testmiljo'
+import { trafikklinje } from './trafikkvakt'
 
 export const APPKONTROLL = 'docs/verktøy-qa-appkontroll.md'
 
@@ -38,20 +39,6 @@ interface Appresultat {
   tidslinje?: Tidslinje
   /** Ved formbytte: om appen viste en plan før byttet. */
   planForBytte?: boolean
-}
-
-const miljo = (navn: string) => {
-  const x = process.env[navn]
-  if (!x) throw new Error(`${navn} mangler.`)
-  return x
-}
-
-async function loggInn(p: Side, url: string) {
-  await p.goto(url, { waitUntil: 'networkidle' })
-  await p.fill('input[name=username]', miljo('BOOTSTRAP_ADMIN_USERNAME'))
-  await p.fill('input[name=password]', miljo('BOOTSTRAP_ADMIN_PASSWORD'))
-  await p.click('button:has-text("Logg inn")')
-  await p.waitForSelector('input[name=username]', { state: 'detached', timeout: 30_000 })
 }
 
 /** Tidslinjen i planpanelet («Planen dag for dag»). */
@@ -484,13 +471,21 @@ const SIKKERHETSKONTROLLER: readonly {
 ]
 
 async function main() {
-  const url = miljo('APP_URL').replace(/\/$/, '')
-  const kreve = createRequire(import.meta.url)
-  const { chromium } = kreve('playwright') as { chromium: { launch(): Promise<Side> } }
-  const nettleser = await chromium.launch()
-  const kontekst = await nettleser.newContext({ viewport: { width: 1300, height: 1000 }, permissions: ['clipboard-read', 'clipboard-write'] })
-  const side = await kontekst.newPage()
-  await loggInn(side, url)
+  const miljo = await apneTestmiljo()
+  const url = miljo.url
+  const side: Side = await miljo.side()
+  let stoppet: string | null = null
+  /** Vernet før hvert forløp: taket og pausen i produksjon, og stopp ved overbelastning. */
+  const fortsett = async () => {
+    try {
+      await miljo.forlop()
+      return true
+    } catch (e) {
+      if (!(e instanceof Teststopp)) throw e
+      stoppet ??= e.message
+      return false
+    }
+  }
   const versjon = (
     await side
       .locator('text=/^v\\d+\\.\\d+\\.\\d+$/')
@@ -511,6 +506,7 @@ async function main() {
       rader.push(`| ${f.id} | ${celle(f.hva)} | ${KLASSENAVN[r.klasse]} | – | – |`)
       continue
     }
+    if (!(await fortsett())) break
     let a: Appresultat
     try {
       // Et tidsavbrudd når siden lastes, eller når databasen ikke svarer på FEST-oppslaget (appen sier det selv og
@@ -518,10 +514,10 @@ async function main() {
       for (let forsok = 1; ; forsok++) {
         try {
           a = await kjorIApp(side, url, r)
-          if (forsok > 2 || a.tabell || !FEST_IKKE_HENTET.test(a.tekst)) break
+          if (forsok > miljo.grenser.nyeForsok || a.tabell || !FEST_IKKE_HENTET.test(a.tekst)) break
           nyttForsok.push(`${f.id} (FEST-oppslaget svarte ikke)`)
         } catch (e) {
-          if (forsok > 2 || !/page\.goto: Timeout/.test(String(e))) throw e
+          if (forsok > miljo.grenser.nyeForsok || !/page\.goto: Timeout/.test(String(e))) throw e
           nyttForsok.push(`${f.id} (siden lastet ikke)`)
         }
       }
@@ -555,6 +551,7 @@ async function main() {
   // Sikkerhetsstoppene: samme forløp med et endret svar fra databasen.
   const sikkerhet: string[] = []
   for (const k of SIKKERHETSKONTROLLER.filter((x) => !bare || bare.includes(x.id) || bare.includes(x.forlop))) {
+    if (!(await fortsett())) break
     const r = kjorForlop(BRUKERFORLOP.find((x) => x.id === k.forlop)!, uttrekk)
     // Hvor mange svar fra databasen som ble endret: uten noen er ingenting prøvd.
     let endret = 0
@@ -571,7 +568,7 @@ async function main() {
           a = await kjorIApp(side, url, r)
           break
         } catch (e) {
-          if (forsok > 2 || !/page\.goto: Timeout/.test(String(e))) throw e
+          if (forsok > miljo.grenser.nyeForsok || !/page\.goto: Timeout/.test(String(e))) throw e
           nyttForsok.push(`${k.id} (siden lastet ikke)`)
         }
       }
@@ -610,7 +607,13 @@ async function main() {
     sikkerhet.push(`| ${k.id} | ${celle(k.hva)} (${k.forlop}) | ${k.plan ? 'Plan' : 'Ingen plan'} | ${vist} | ${celle(nevnt)} | ${avvik.length ? celle(avvik.join('; ')) : 'nei'} |`)
     console.log(k.id, plan ? 'plan' : 'ingen plan', avvik.join('; '))
   }
-  await nettleser.close()
+  const trafikk = await miljo.avslutt()
+  // Vernet kan ha stoppet kjøringen under det siste forløpet, uten at et nytt forløp ble forsøkt.
+  stoppet ??= trafikk.stoppet && `Kjøringen er stoppet: ${trafikk.stoppet}.`
+  if (stoppet) {
+    console.error(stoppet)
+    process.exitCode = 1
+  }
 
   writeFileSync(
     APPKONTROLL,
@@ -618,9 +621,12 @@ async function main() {
       '<!-- Laget av `npx vite-node src/__tests__/qa/appkontroll.ts`; rediger ikke for hånd. -->',
       '# OUSFAR Verktøy – brukerforløpene i den publiserte appen',
       '',
-      `Kjørt ${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC mot ${url} (${versjon}) som administrator, med dagens FEST. Hvert forløp er det samme som i \`docs/verktøy-qa-brukerforlop.md\`, gjennomført i firestegsflyten uten «Beregn»-knapp: syntetiske doser, måldosen forløpet velger, legemiddelformen forløpet velger (ellers den siden har valgt selv, eller tablett), i steg 3 det svaret i flyten som gir forløpets ja, nei på hvert annet forhold, ja der siden sier at nei stopper planen, og kryss ved hver bekreftelse. Planen leses når steg 4 har stått i ro. Siden lastes helt på nytt for hvert forløp. Bare lesing; ingenting er lagret. «Avvik» sammenligner med den lokale kjøringen mot de lagrede FEST-uttrekkene: hele kopien linje for linje, og den synlige tidslinjen (hver rad og celle) mot kopien. Kopien i appen har i tillegg en «Forutsatt»-del med forbeholdene flyten har lagt til grunn; hver linje i den må være ordrett en bekreftelse i regelen som den lokale kjøringen også har gitt, og delen holdes ellers utenfor sammenligningen. Uten plan sammenlignes grunnen i steg 4 (med «Vis detaljer» åpnet) med den lokale, hver grunn for seg og aldri mot en generisk tekst: motorens stoppgrunn ordrett, eller forhåndskontrollens korte forklaring med de samme tillatte startdosene som motoren stopper på, eller «ingen godkjent regel gir en komplett plan for dette valget» bare når det heller ikke lokalt finnes en slik regel for valget. Hvilken som ble brukt, står i parentes.`,
+      `Kjørt ${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC mot ${url} (${versjon}) som administrator, ${miljo.modus === 'lokal' ? 'i det lokale testmiljøet med egen database og FEST fra de lagrede uttrekkene' : 'i produksjonen, som en begrenset kontroll, med dagens FEST'}. Hvert forløp er det samme som i \`docs/verktøy-qa-brukerforlop.md\`, gjennomført i firestegsflyten uten «Beregn»-knapp: syntetiske doser, måldosen forløpet velger, legemiddelformen forløpet velger (ellers den siden har valgt selv, eller tablett), i steg 3 det svaret i flyten som gir forløpets ja, nei på hvert annet forhold, ja der siden sier at nei stopper planen, og kryss ved hver bekreftelse. Planen leses når steg 4 har stått i ro. Siden lastes helt på nytt for hvert forløp. Bare lesing; ingenting er lagret. «Avvik» sammenligner med den lokale kjøringen mot de lagrede FEST-uttrekkene: hele kopien linje for linje, og den synlige tidslinjen (hver rad og celle) mot kopien. Kopien i appen har i tillegg en «Forutsatt»-del med forbeholdene flyten har lagt til grunn; hver linje i den må være ordrett en bekreftelse i regelen som den lokale kjøringen også har gitt, og delen holdes ellers utenfor sammenligningen. Uten plan sammenlignes grunnen i steg 4 (med «Vis detaljer» åpnet) med den lokale, hver grunn for seg og aldri mot en generisk tekst: motorens stoppgrunn ordrett, eller forhåndskontrollens korte forklaring med de samme tillatte startdosene som motoren stopper på, eller «ingen godkjent regel gir en komplett plan for dette valget» bare når det heller ikke lokalt finnes en slik regel for valget. Hvilken som ble brukt, står i parentes.`,
       '',
       `Planer teknisk ende-til-ende-verifisert i appen (hele kopien lik den lokale kjøringen linje for linje, bortsett fra FEST-tidspunktet): **${verifiserte.length}** (${verifiserte.join(', ') || 'ingen'}). Dette er en teknisk verifikasjon med syntetiske data, ikke «klinisk prøveverifisert» (plan §8); det krever i tillegg en faglig gjennomgang av hele doseringsforløpet, kildene og de relevante risikoene.`,
+      '',
+      ...(stoppet ? [`**Kjøringen ble stoppet av vernet før alle forløpene var kjørt.** ${stoppet} Forløpene og kontrollene som mangler i tabellene, er ikke kjørt.`, ''] : []),
+      trafikklinje(trafikk),
       '',
       ...(nyttForsok.length > 0 ? [`Kjørt på nytt fra en tom side etter et tidsavbrudd i nettet eller databasen (ikke i verktøyet): ${[...new Set(nyttForsok)].join(', ')}.`, ''] : []),
       '## Kontroller som ikke er gjort',
