@@ -1,18 +1,59 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "advarsel",
   "jobb": {
     "gren": "kuratorjobb/oksykodon-spc-20261106",
     "foresporsel_commit": "c8fe2bd6c32b06f1be6c516315fa419dff9391ba",
     "foresporsel_sha256": "5315724508a6245c90b22a24238c8f6ff9a56952162ef8bb2da2ba6565b6282d",
     "kode_commit": "ffe07855339824037fdc2c109fec34492c1f2926",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/42202556412",
-    "startet_kl": "2026-11-06T10:25:57.681Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-11-06T10:25:59.653Z",
+    "ferdig_kl": "2026-11-06T10:26:30.326Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "oksykodon"
+    ],
+    "oppgaver": [
+      "spc"
+    ],
+    "spc": {
+      "adresser": [
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-09980.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/2001-09979.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/17-11701.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/21-13878.pdf"
+      ],
+      "maks": 20,
+      "dpi": 150
+    }
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 1892
+    }
+  ],
+  "stoffer": {
+    "oksykodon": {
+      "status": "advarsel",
+      "oppgaver": {
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/oksykodon/spc.json"
+        }
+      }
+    }
+  }
 }

@@ -1,0 +1,55 @@
+In vitro og studier på dyr viser at naturlige opioider, som morfin, har ulike effekter på deler av
+immunsystemet.Klinisk relevans av disse funnene er ukjent. Hvorvidt oksykodon, et semisyntetisk
+opioid, har immunologiske effekter som ligner på morfin, er ukjent.
+
+5.2   Farmakokinetiske egenskaper
+
+Farmakokinetiske studier med friske forsøkspersoner viste lik biotilgjengelighet av oksykodon fra
+Oxycodone Hameln når det ble gitt subkutant og intravenøst både som en enkel bolusdose og som
+kontinuerlig infusjon over 8 timer.
+
+Absorpsjon
+Etter absorpsjon distribueres oksykodon i hele kroppen. Omtrent 45 % er bundet til plasmaprotein. Det
+metaboliseres i leveren for å produsere noroksykodon, oksymorfon og ulike konjugerte glukuronider.
+Den analgetiske effekten av metabolittene er klinisk ubetydelig.
+
+Eliminasjon
+Virkestoffet og dets metabolitter utskilles i både urin og avføring.
+
+Spesielle pasientgrupper
+Plasmakonsentrasjonene av oksykodon påvirkes kun minimalt av alder og er 15 % større hos eldre enn
+hos yngre pasienter.
+
+Kvinner har i gjennomsnitt plasmasentrasjoner av oksykodon opp til 25 % høyere enn menn, justert
+etter vekt.
+
+Legemidlet trenger inn i morkaken og kan skilles ut i morsmelk hos mennesker.
+
+Sammenlignet med personer med normal leverfunksjon, kan pasienter med lett til alvorlig nedsatt
+leverfunksjon ha høyere plasmakonsentrasjoner av oksykodon og noroksykodon og lavere
+plasmakonsentrasjoner av oksymorfon. Det kan være en økning i eliminasjonshalveringstiden til
+oksykodon, og dette kan føre til økt effekt av legemidlet.
+
+Sammenlignet med personer med normal nyrefunksjon, kan pasienter med lett til alvorlig nedsatt
+nyrefunksjon ha høyere plasmakonsentrasjoner av oksykodon og dets metabolitter. Det kan være en
+økning i eliminasjonshalveringstiden til oksykodon, og dette kan føre til økt effekt av legemidlet.
+
+5.3   Prekliniske sikkerhetsdata
+
+Prekliniske data viser ingen spesiell fare for mennesker basert på konvensjonelle studier av
+sikkerhetsfarmakologi, toksisitet ved gjentatt dose og gentoksisitet.
+
+Teratogenisitet
+Oksykodon hadde ingen effekt på fertilitet eller tidlig embryonal utvikling hos hann- og hunnrotter i
+doser så høye som 8 mg/kg/d. Oksykodon forårsaket heller ikke misdannelser hos rotter ved doser på
+opptil 8 mg/kg/d eller hos kaniner ved doser på opptil 125 mg/kg/d. Doserelaterte økninger i
+utviklingsvariasjon (økt forekomst av ekstra (27) presakral vertebrae og ekstra ribben) ble observert
+hos kaniner da dataene fra enkelte foster ble analysert. Men, da de samme dataene ble analysert hos
+kull i motsetning til hos individuelle fostre, var det ingen doserelatert økning i utviklingsvariasjoner,
+selv om forekomsten av ekstra presakral vertebrae forblir signifikant høyere i gruppen 125 mg/kg/d
+sammenlignet med kontrollgruppen. Siden dette doseringsnivået var assosiert med alvorlige
+farmakotoksiske virkninger hos drektige dyr, kan fosterfunnene ha vært en sekundær konsekvens av
+alvorlig maternal toksisitet.
+
+I en studie av peri- og postnatal utvikling hos rotter ble maternale kroppsvekts- og
+matinntaksparametere redusert for doser ≥ 2 mg/kg/d sammenlignet med kontrollgruppen.
