@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.126.5',
+    dato: '2026-11-06',
+    sammendrag: 'De kliniske verktøyene er gjennomtestet i appen: rapport om hvorfor de er vanskelige å bruke',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Gjelder bare administratorene. Ingen regler, doser, godkjenninger, spørsmål eller sperrer er endret.',
+      'Alle fire verktøyene er kjørt i appen med syntetiske pasienter, slik en kliniker ville brukt dem. Rapporten forklarer hvorfor nedtrapping av escitalopram sjelden gir plan, hvorfor noen spørsmål fortsatt har «Gjelder/Gjelder ikke», hvordan byttet fra citalopram til sertralin skiller seg fra det som ble bestilt, og hva som bør rettes først.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.126.3',
     dato: '2026-11-06',
     sammendrag: 'THC-syre: ryddigere banner om høyere sikkerhetsmargin',
