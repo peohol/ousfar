@@ -1,0 +1,51 @@
+Ziprasidon viser lineær kinetikk i det terapeutiske doseområdet på 40-80 mg to ganger daglig gitt sammen
+med mat.
+
+Ziprasidon blir i stor grad metabolisert etter oral administrasjon, og bare en liten mengde blir utskilt i urin
+(<1 %) eller fæces (< 4 %) som uforandret ziprasidon. Ziprasidon er primært utskilt via tre foreslåtte
+metabolismeveier resulterende i fire sirkulerende hovedmetabolitter, benzisotiazol piparazine (BITP)
+sulfoksid, BITP sulfon, ziprasidonsulfoksid og S-metyldihydroziprasidon. Uforandret ziprasidon
+representerer ca. 44 % av den totale medikamentrelaterte mengde i serum.
+
+Det finnes to hovedmetabolismeveier for ziprasidon: reduksjon og metylering for å skape S-
+metyldihydroziprasidon, som står for omtrent to tredjedeler av stoffskiftet, mens oksidativ metabolisering
+står for en tredjedel. In vitro-studier som bruker subcellulære fraksjoner fra menneskelever indikerer at S-
+metyldihydroziprasidon dannes i to trinn. Disse studiene viser at det første trinnet skjer primært ved
+kjemisk reduksjon av glutasjon, samt enzymatisk reduksjon av aldehydoksidase. Påfølgende trinn er
+metylering som skjer ved hjelp av tiol-metyltransferase. In vitro-studier indikerer at CYP3A4 er
+hovedcytokromet P450 som katalyserer ziprasidons oksidative metabolisme med et potensielt bidrag fra
+CYP1A2.
+
+Ziprasidon, S-metyl-dihydroziprasidon og ziprasidonsulfoksid ved testing in vitro deler egenskaper, som
+mulig predikerer en QTc-forlengende effekt. S-metyldihydroziprasidon blir hovedsakelig eliminert i
+fæces, ved biliær ekskresjon med et mindre bidrag av CYP3A4-katalysert metabolisme.
+Ziprasidonsulfoksidet blir eliminert via renal ekskresjon og ved sekundær metabolisme katalysert av CYP
+3A4.
+
+Spesielle pasientgrupper
+
+Farmakokinetisk screening av pasienter har ikke påvist noen signifikant farmakokinetisk forskjell mellom
+røykere og ikke-røykere.
+
+Ingen klinisk signifikant forskjell i farmakokinetikken med hensyn til alder eller kjønn er observert for
+ziprasidon. Farmakokinetikken av ziprasidon hos pediatriske pasienter i alderen 10-17 år var den samme
+som for voksne etter korrigering av forskjeller i kroppsvekt.
+
+I overensstemmelse med at renalclearance i liten grad bidrar til total clearance, ble det ikke sett noen
+progressiv økning av ziprasidon da ziprasidon ble gitt til pasienter med varierende nyrefunksjon.
+Påvirkning hos pasienter med mild (kreatininclearance 30-60 ml/min), moderat (kreatininclearance 10-
+29 ml/min) og alvorlig nedsatt nyrefunksjon (dialyseavhengig) var 146 %, 87 % og 75 % sammenlignet
+med friske (kreatininclearance >70 ml/min) etter oral dosering på 20 mg to ganger daglig i 7 dager. Det er
+ukjent om serumkonsentrasjonen av metabolittene øker hos slike pasienter.
+
+Ved mild til moderat nedsatt leverfunksjon (Child Pugh A eller B) forårsaket av cirrhose, var
+serumkonsentrasjonen etter oral dosering 30% høyere og terminal halveringstid var ca. 2 timer lenger enn
+hos normale pasienter. Effekten av nedsatt leverfunksjon på serumkonsentrasjonen av metabolittene er
+ukjent.
+
+5.3   Prekliniske sikkerhetsdata
+
+Prekliniske data indikerer ingen spesiell fare for mennesker basert på konvensjonelle studier av generell
+sikkerhetsfarmakologi, gentoksisitet og karsinogent potensiale. Reproduksjonsstudier hos rotter og kaniner
+har ikke gitt holdepunkter for teratogenitet. Uønskede effekter på fertilitet og redusert vekt hos avkom ble
+observert ved doser som forårsaket maternell toksisitet som redusert vektøkning. Økt perinatal mortalitet

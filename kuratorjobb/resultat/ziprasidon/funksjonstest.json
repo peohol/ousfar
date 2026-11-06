@@ -1,0 +1,98 @@
+{
+  "stoff": "ziprasidon",
+  "status": "feil",
+  "kontroller": [
+    {
+      "id": "les_stoff",
+      "rpc": "les_stoff",
+      "ms": 9258,
+      "status": "feil",
+      "melding": "les_stoff feilet (uten kode; teksten publiseres ikke)."
+    },
+    {
+      "id": "utkast_skjult",
+      "rpc": "les_stoff",
+      "ms": 914,
+      "status": "ok",
+      "melding": "Utkastet er skjult for en vanlig bruker, som det skal."
+    },
+    {
+      "id": "stoffliste",
+      "rpc": "les_stoffliste",
+      "ms": 1629,
+      "status": "ok",
+      "melding": "Siden står i lista over fagsider.",
+      "antall": {
+        "sider": 128
+      }
+    },
+    {
+      "id": "fest",
+      "status": "feil",
+      "melding": "Kunne ikke lese koblingen til FEST uten siden."
+    },
+    {
+      "id": "bivirkninger",
+      "rpc": "les_bivirkninger",
+      "ms": 1928,
+      "status": "ikke_aktuelt",
+      "melding": "Ingen bivirkninger er importert fra preparatomtaler for siden.",
+      "antall": {
+        "kilder": 0,
+        "rader": 0,
+        "rader_appen_viser": 0
+      }
+    },
+    {
+      "id": "clinpgx",
+      "status": "feil",
+      "melding": "Kunne ikke lese koblingen til ClinPGx uten siden."
+    },
+    {
+      "id": "kjemi",
+      "rpc": "les_kjemi",
+      "ms": 487,
+      "status": "ok",
+      "melding": "De kjemiske grunndataene ble lest, og koblingene stemmer (kontrollert 2026-11-04T03:15:15.183944+00:00).",
+      "antall": {
+        "forbindelser": 1,
+        "hentet": 1,
+        "ikke_hentet": 0,
+        "uavklarte": 0,
+        "rader": 1,
+        "rader_appen_viser": 1
+      }
+    },
+    {
+      "id": "kjemivisning",
+      "status": "ok",
+      "melding": "Seksjonen «Kjemiske grunndata» kan bygges av svaret."
+    },
+    {
+      "id": "laboratorieanalyser",
+      "rpc": "les_laboratorieanalyser",
+      "ms": 663,
+      "status": "ok",
+      "melding": "Laboratorieanalysene ble lest, og koblingene stemmer (kontrollert 2026-11-06T04:44:55.320162+00:00).",
+      "antall": {
+        "forbindelser": 1,
+        "koblet": 1,
+        "usikre": 0,
+        "komponenter": 1,
+        "analyser": 8,
+        "laboratorier": 6
+      }
+    },
+    {
+      "id": "laboratorievisning",
+      "status": "ok",
+      "melding": "Seksjonen «Analyse ved norske laboratorier» kan bygges av svaret, i alle enhetene.",
+      "antall": {
+        "tabeller": 2,
+        "rader": 7,
+        "ikke_omregnet": 0,
+        "usikre": 0
+      }
+    }
+  ]
+}

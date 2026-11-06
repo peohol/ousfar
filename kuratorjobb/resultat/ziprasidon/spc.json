@@ -1,0 +1,372 @@
+{
+  "stoff": "ziprasidon",
+  "status": "ok",
+  "kilde": "fest",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-11-06T04:15:06.240302+00:00"
+  },
+  "dekning": {
+    "dekket": true,
+    "preparater": 4,
+    "hentet": 4,
+    "dokumenter": 1,
+    "mangler": []
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 4 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 4,
+        "ikke_dmp": 0,
+        "uten_omtale": 0
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "ok",
+      "melding": "Alle 4 preparatene FEST oppgir, har en hentet preparatomtale fra DMP.",
+      "antall": {
+        "preparater": 4,
+        "hentet": 4,
+        "mangler": 0,
+        "dokumenter": 1
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6118.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6118.pdf",
+      "hentet_kl": "2026-11-06T10:15:58.643Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "414546",
+        "content-md5": "pW6ojeYUeJCImVY0qIDAEw==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:47 GMT",
+        "etag": "0x8DE53793AE59A64",
+        "date": "Fri, 06 Nov 2026 10:15:59 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_24ED5A90-D26C-4F50-A3D2-A37EEE781C3C",
+          "varenavn": "Ziprasidon Actavis",
+          "navn_form_styrke": "Ziprasidon Actavis kaps 80 mg",
+          "produsent": "Actavis Group PTC ehf",
+          "atc": "N05AE04",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6118.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (414546 byte).",
+          "antall": {
+            "bytes": 414546
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "f3bc576a4a158f758d5139dddcd6958aa4835059ed6a50d40d13def8a595f2ad"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6117.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6117.pdf",
+      "hentet_kl": "2026-11-06T10:16:05.874Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "414546",
+        "content-md5": "pW6ojeYUeJCImVY0qIDAEw==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:57 GMT",
+        "etag": "0x8DE537940B0AEE0",
+        "date": "Fri, 06 Nov 2026 10:16:06 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_5A178547-0489-4FBE-84C9-B1A7B93908D0",
+          "varenavn": "Ziprasidon Actavis",
+          "navn_form_styrke": "Ziprasidon Actavis kaps 60 mg",
+          "produsent": "Actavis Group PTC ehf",
+          "atc": "N05AE04",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6117.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (414546 byte).",
+          "antall": {
+            "bytes": 414546
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "f3bc576a4a158f758d5139dddcd6958aa4835059ed6a50d40d13def8a595f2ad"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6116.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6116.pdf",
+      "hentet_kl": "2026-11-06T10:16:07.182Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "414546",
+        "content-md5": "pW6ojeYUeJCImVY0qIDAEw==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:56 GMT",
+        "etag": "0x8DE53794038D10D",
+        "date": "Fri, 06 Nov 2026 10:16:07 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_6545F072-1F86-4DDB-83C4-F3C04FE90134",
+          "varenavn": "Ziprasidon Actavis",
+          "navn_form_styrke": "Ziprasidon Actavis kaps 40 mg",
+          "produsent": "Actavis Group PTC ehf",
+          "atc": "N05AE04",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6116.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (414546 byte).",
+          "antall": {
+            "bytes": 414546
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "f3bc576a4a158f758d5139dddcd6958aa4835059ed6a50d40d13def8a595f2ad"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6115.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6115.pdf",
+      "hentet_kl": "2026-11-06T10:16:08.431Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "414546",
+        "content-md5": "pW6ojeYUeJCImVY0qIDAEw==",
+        "last-modified": "Wed, 14 Jan 2026 14:28:54 GMT",
+        "etag": "0x8DE53793F1D29D2",
+        "date": "Fri, 06 Nov 2026 10:16:08 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_EB146F9D-C819-4565-ADF8-44722791B395",
+          "varenavn": "Ziprasidon Actavis",
+          "navn_form_styrke": "Ziprasidon Actavis kaps 20 mg",
+          "produsent": "Actavis Group PTC ehf",
+          "atc": "N05AE04",
+          "legemiddelform": "Kapsel, hard"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/08-6115.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (414546 byte).",
+          "antall": {
+            "bytes": 414546
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "f3bc576a4a158f758d5139dddcd6958aa4835059ed6a50d40d13def8a595f2ad"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "f3bc576a4a158f758d5139dddcd6958aa4835059ed6a50d40d13def8a595f2ad",
+      "bytes": 414546,
+      "mappe": "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75",
+      "pdf": {
+        "sider": 15,
+        "pdfversjon": "1.5",
+        "kryptert": false,
+        "tittel": "SUMMARY OF PRODUCT CHARACTERISTICS",
+        "laget": "Thu Feb 13 09:48:42 2025 UTC",
+        "endret": "Thu Feb 13 09:48:42 2025 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/original.pdf",
+        "tekst": "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/tekst/side-001.txt",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/tekst/side-002.txt",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/tekst/side-003.txt",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/tekst/side-004.txt",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/tekst/side-005.txt",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/tekst/side-006.txt",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/tekst/side-007.txt",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/tekst/side-008.txt",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/tekst/side-009.txt",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/tekst/side-010.txt",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/tekst/side-011.txt",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/tekst/side-012.txt",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/tekst/side-013.txt",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/tekst/side-014.txt",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/tekst/side-015.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/sider/side-001.png",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/sider/side-002.png",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/sider/side-003.png",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/sider/side-004.png",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/sider/side-005.png",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/sider/side-006.png",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/sider/side-007.png",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/sider/side-008.png",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/sider/side-009.png",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/sider/side-010.png",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/sider/side-011.png",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/sider/side-012.png",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/sider/side-013.png",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/sider/side-014.png",
+          "kuratorjobb/resultat/ziprasidon/spc/f3bc576a4a158f75/sider/side-015.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 7,
+        "til": 10
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (15 sider).",
+          "antall": {
+            "sider": 15
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 31434
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 7."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 15
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": []
+}

@@ -1,0 +1,51 @@
+Barne- og ungdomspopulasjon med bipolar mani og ungdom med schizofreni
+I en placebo-kontrollert studie med pasienter med bipolar lidelse (i alderen 10-17 år) var de vanligste
+bivirkningene (rapportert med en frekvens > 10 %) sedasjon, somnolens, hodepine, fatigue, kvalme og
+svimmelhet. I en placebo-kontrollert studie med pasienter med schizofreni (i alderen 13-17 år) var de
+vanligste bivirkningene (rapportert med en frekvens > 10 %) somnolens og ekstrapyramidale forstyrrelser.
+Hyppighet, type bivirkning og alvorlighetsgrad var hos disse pasientene generelt lik de man ser hos
+voksne med bipolar lidelse eller schizofreni som behandles med ziprasidon.
+I kliniske studier på pediatriske pasienter med bipolar mani og schizofreni var ziprasidon assosiert med en
+tilsvarende mild til moderat doserelatert QT-forlengelse av QT-intervall som er observert hos voksne.
+Tonisk kloniske anfall og hypotensjon var ikke rapportert i den placebokontrollerte pediatriske bipolare
+kliniske studien.
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til Direktoratet
+for medisinske produkter: www.dmp.no/meldeskjema.
+
+4.9   Overdosering
+
+Erfaring med overdosering av ziprasidon er begrenset. Det høyest bekreftede enkeltinntak av ziprasidon er
+12 800 mg. I dette tilfellet ble det sett ekstrapyramidale symptomer og et QTc-intervall på 446 ms (uten
+kardial sequele). Generelt er ekstrapyramidale symptomer, somnolens, tremor og angst de mest vanlig
+rapporterte symptomer etter en overdose.
+
+Mulighet for nedsatt bevissthet, krampeanfall eller dystonireaksjon i hode og nakke etter overdose kan
+medføre risiko for aspirasjon ved fremkalt brekning. Kardiovaskulær overvåkning bør igangsettes
+umiddelbart og bør inkludere kontinuerlig EKG-monitorering for å oppdage mulig arytmi. Det finnes
+ingen spesifikk motgift mot ziprasidon.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Antipsykotika, indolderivater, ATC-kode: N05A E04.
+
+Ziprasidon har høy affinitet for dopamin type 2 (D2) reseptorer og vesentlig høyere affinitet for serotonin
+type 2A(5HT2A) reseptorer. Reseptorblokkade 12 timer etter en enkelt dose på 40 mg var over 80 % for
+serotonin type 2Aog større enn 50 % for D2 målt ved positron-emisjon-tomografi (PET). Ziprasidon
+interagerer også med serotonin 5HT2C, 5HT1Dog 5HT1Areseptorer hvor affiniteten for disse
+bindingsstedene er lik eller større enn affiniteten for D2reseptoren. Ziprasidon har moderat affinitet for
+neuronale serotonin og noradrenalin transportører. Ziprasidon viser moderat affinitet for histamin H(1)- og
+alfa(1)-reseptorer. Ziprasidon viser ubetydelig affinitet for muskarin M(1)reseptorer.
+
+Ziprasidon er vist å være antagonist til både serotonin type 2A(5HT2A) og dopamin type 2 (D2) reseptorer.
+Det er foreslått at den terapeutiske aktiviteten delvis er mediert gjennom denne kombinasjon av
+antagonistisk aktivitet. Ziprasidon er også en potent antagonist ved 5HT2Cog 5HT1Dreseptorer, en potent
+agonist ved 5HT1A-reseptor, og hemmer neuronalt reopptak av noradrenalin og serotonin.
+
+Ytterligere informasjon om kliniske studier

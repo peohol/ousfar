@@ -1,0 +1,51 @@
+Samtidig behandling med legemidler som forlenger QT-intervallet, slik som klasse IA og klasse III
+antiarytmika, arsentrioksid, halofantrin, levometadylacetat, mesoridazin, tioridazin, pimozid,
+sparfloksacin, gatifloksacin, moksifloksacin, dolasetronmesylat, meflokin, sertindol eller cisaprid (se pkt.
+4.4 og 4.5).
+
+4.4    Advarsler og forsiktighetsregler
+
+Medisinsk sykehistorie, inkludert familieanamnese, og klinisk undersøkelse bør foretas for å identifisere
+pasienter hvor behandling med ziprasidon ikke er anbefalt (se pkt. 4.3).
+
+QT-intervall
+Ziprasidon forårsaker en mild til moderat doserelatert forlengelse av QT-intervallet (se pkt. 4.8 og 5.1).
+Ziprasidon bør ikke gis sammen med legemidler som er kjent for å forlenge QT-intervallet (se pkt. 4.3 og
+4.5). Forsiktighet bør utvises hos pasienter med signifikant bradykardi. Elektrolyttforstyrrelser som
+hypokalemi og hypomagnesemi øker risikoen for maligne arytmier og bør korrigeres før behandling med
+ziprasidon startes. EKG-undersøkelse bør vurderes før behandlingen startes hos pasienter med stabil
+hjertesykdom.
+
+Hvis hjertesymptomer som palpitasjoner, vertigo, synkope eller krampeanfall oppstår, bør muligheten for
+malign hjertearytmi vurderes og hjerteutredning, inkludert EKG utføres. Hvis QTc-intervallet er > 500 ms,
+anbefales det å avbryte behandlingen (se pkt. 4.3).
+
+Sjeldne tilfeller av torsade de pointes er rapportert etter markedsføring hos pasienter som fikk behandling
+med ziprasidon, og som hadde mange kompliserende risikofaktorer.
+
+Pediatrisk populasjon
+Sikkerhet og effekt av ziprasidon i behandling hos barn og ungdom med schizofreni har ikke blitt fastslått
+(se pkt. 5.1).
+
+Malignt nevroleptisk syndrom (MNS)
+MNS er en sjelden, men potensiell fatal tilstand, som er blitt rapportert i forbindelse med antipsykotiske
+legemidler, inklusive ziprasidon. Alle antipsykotiske legemidler skal umiddelbart seponeres ved
+behandling av MNS.
+
+Alvorlige hudbivirkninger
+Legemiddelindusert utslett med eosinofili og systemiske symptomer (DRESS) har blitt rapportert ved bruk
+av ziprasidon. DRESS er en kombinasjon av tre eller flere av følgende: Hudreaksjon (som utslett eller
+eksfoliativ dermatitt), eosinofili, feber, lymfadenopati og en eller flere systemiske komplikasjoner som
+hepatitt, nefritt, pneumonitt, myokarditt og perikarditt.
+Andre alvorlige hudbivirkninger, som Stevens-Johnsons syndrom, har blitt rapportert ved bruk av
+ziprasidon.
+Alvorlige hudbivirkninger er av og til fatale. Behandling med ziprasidon skal avsluttes dersom alvorlige
+hudbivirkninger oppstår.
+
+Tardive dyskinesier
+Ziprasidon har et potensiale til å forårsake tardive dyskinesier eller andre tardive ekstrapyramidale
+syndromer etter langtidsbehandling. Pasienter med bipolar lidelse er kjent for å være spesielt utsatt for
+denne typen symptomer. Dette forekommer hyppigere ved økt behandlingslengde og økende alder. Ved
+tegn eller symptomer på tardive dyskinesier bør dosereduksjon eller seponering overveies.
+
+Fall

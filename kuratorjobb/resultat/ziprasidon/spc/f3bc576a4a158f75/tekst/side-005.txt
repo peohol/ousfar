@@ -1,0 +1,52 @@
+og klasse III antiarytmika, arsentrioksid, halofantrin, levometadylacetat, mesoridazin, tioridazin, pimozid,
+sparfloksacin, gatifloksacin, moksifloksacin, dolasetronmesylat, meflokin, sertindol eller cisaprid (se pkt.
+4.3).
+
+Det er ikke utført interaksjonsstudier med ziprasidon i kombinasjon med andre legemidler hos barn.
+
+CNS-legemidler/alkohol
+
+På grunn av ziprasidons primære effekt på sentralnervesystemet, skal det brukes med forsiktighet sammen
+med andre sentralt virkende legemidler og med alkohol.
+
+Ziprasidons innvirkning på andre legemidler
+
+En in vivo-studie med dekstrometorfan viste ingen markert hemming av CYP2D6 ved
+plasmakonsentrasjoner 50 % lavere enn de som oppnås etter bruk av 40 mg ziprasidon to ganger daglig. In
+vitro-data indikerte at ziprasidon kan være en moderat hemmer av CYP2D6 og CYP3A4. Det er imidlertid
+lite sannsynlig at ziprasidon vil ha noen klinisk relevant innvirkning på farmakokinetikken til legemidler
+som metaboliseres via disse cytokrom P450 isoenzymene.
+
+Orale antikonsepsjonsmidler - administrasjon av ziprasidon medførte ingen signifikant endring av
+farmakokinetikken til østrogen (etinyløstradiol, et CYP3A4 substrat) eller progesteronforbindelser.
+
+Litium - samtidig administrering av ziprasidon hadde ingen effekt på farmakokinetikken til litium.
+
+Da ziprasidon og litium er assosiert med kardiale ledningsforandringer, kan kombinasjonen representere
+en fare for farmakodynamiske interaksjoner, inkludert arytmier. I kontrollerte kliniske studier har
+imidlertid kombinasjonen av ziprasidon og litium ikke vist økt klinisk risiko, sammenlignet med bare
+litium.
+
+Det foreligger begrensede data med hensyn til samtidig medisinering med det stemningsstabiliserende
+legemidlet karbamazepin.
+
+En farmakokinetisk interaksjon av ziprasidon med valproat er usannsynlig på grunn av mangel på felles
+metabolske veier for de to legemidlene. I en studie med pasienter viste samtidig administrering av
+ziprasidon og valproat at den gjennomsnittlige konsentrasjonen av valproat var innenfor det terapeutiske
+doseområdet i forhold til valproat administrert med placebo.
+
+Effekter av andre legemidler på ziprasidon
+
+CYP 3A4-hemmeren ketokonazol (400 mg/dag), som også hemmer p-gp (P-glykoprotein), økte
+serumkonsentrasjonen av ziprasidon med < 40 %. Serumkonsentrasjonen av S-metyldihydroziprasidon og
+ziprasidonsulfoksid ved forventet Tmax for ziprasidon økte med henholdsvis 55 % og 8 %. Ingen ytterligere
+QTc-forlengelse ble observert. Endringer i farmakokinetikken grunnet samtidig administrasjon av potente
+CYP3A4-hemmere vil sannsynligvis ikke være av klinisk betydning, og dosejustering er derfor ikke
+nødvendig. In vitro-data og data fra dyrestudier antyder at ziprasidon kan være et P-glykoprotein (p-gp) -
+substrat. In vivo-relevansen for mennesker forblir ukjent. Siden ziprasidon er et substrat til CYP3A4, og
+induksjon av CYP3A4 og p-gp er relatert til hverandre, kan samtidig administrasjon med indusere av
+CYP3A4 og p-gp, som karbamazepin, rifampicin og johannesurt, føre til redusert konsentrasjon av
+ziprasidon.
+
+Karbamazepinbehandling, 200 mg to ganger daglig i 21 dager, medførte en reduksjon på ca. 35 % i
+eksponeringen av ziprasidon.
