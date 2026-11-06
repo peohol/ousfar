@@ -89,6 +89,9 @@ function laasProduksjon(): () => void {
 
 async function loggInn(p: Pw, url: string, brukernavn: string, passord: string) {
   await p.goto(url, { waitUntil: 'networkidle' })
+  // Passordet skrives bare inn på adressen som ble godkjent, også om siden har sendt nettleseren videre.
+  const her = new URL(p.url()).origin
+  if (her !== new URL(url).origin) throw new Teststopp(`Innloggingen ble sendt videre til ${her}; passordet brukes bare på ${new URL(url).origin}.`)
   await p.fill('input[name=username]', brukernavn)
   await p.fill('input[name=password]', passord)
   await p.click('button:has-text("Logg inn")')

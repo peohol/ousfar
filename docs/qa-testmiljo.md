@@ -1,19 +1,26 @@
 # Nettleserkontroller: lokalt testmiljø og vern for produksjonen
 
 Gjelder skript som starter appen i en automatisert nettleser (Playwright):
-`src/__tests__/qa/appkontroll.ts`, P0-driveren `scripts/verktoy-p0-app.mjs`
-og nye skript av samme slag. Vanlige `npm test` berøres ikke.
+`src/__tests__/qa/appkontroll.ts`, målingen `src/__tests__/qa/maling.ts`,
+P0-driveren `scripts/verktoy-p0-app.mjs` og nye skript av samme slag. Vanlige
+`npm test` berøres ikke.
 
 ## Regelen
 
 - **Omfattende kontroller kjøres lokalt**, mot en egen database. Det er
   standard: skriptene starter det lokale testmiljøet selv.
-- **Produksjonen** (den publiserte appen, og forhåndsvisninger på Vercel, som
-  bruker den samme databasen) brukes bare til en kort, begrenset kontroll, og
-  bare når den velges uttrykkelig med `QA_PRODUKSJON=ja`.
+- **Produksjonen** (den publiserte appen) brukes bare til en kort, begrenset
+  kontroll, og bare når den velges uttrykkelig med `QA_PRODUKSJON=ja`.
+  Forhåndsvisninger på Vercel bruker den samme databasen og kontrolleres ikke
+  automatisert.
 - Nye skript bruker `apneTestmiljo()` i `src/__tests__/qa/testmiljo.ts` i
   stedet for å starte Playwright og logge inn selv. Da gjelder vernet
   nedenfor av seg selv.
+- **Håndheves i `npm test`** (`src/__tests__/qa/nettleservern.test.ts`): bare
+  `testmiljo.ts` får laste Playwright (eller Puppeteer) eller starte Chromium,
+  og de navngitte skriptene over, også P0-driveren når den sjekkes inn, må
+  bruke `apneTestmiljo()`. Et skript som styrer nettleseren selv, gjør CI rød
+  og kan ikke slås sammen.
 
 ## Kjøring
 
@@ -27,6 +34,14 @@ npm run qa:lokal -- stopp                                     # stopper den loka
 
 `APP_URL` alene velger ikke produksjonen: skymiljøet har den satt til den
 publiserte appen for andre formål.
+
+Med `QA_PRODUKSJON=ja` godtas bare adressene i `PRODUKSJONSVERTER`
+(`trafikkvakt.ts`), i dag `https://ousfar.vercel.app`: HTTPS, uten port eller
+brukernavn i adressen. Alt annet, også `http://`, fremmede domener og
+forhåndsvisninger på Vercel (mønsteret i adressene deres kan etterlignes),
+avvises før nettleseren åpnes og før administratorpassordet brukes. Sender
+siden nettleseren videre til en annen adresse før innloggingen, stopper
+kjøringen uten at passordet skrives inn.
 
 ## Det lokale testmiljøet (`lokalmiljo.ts`)
 

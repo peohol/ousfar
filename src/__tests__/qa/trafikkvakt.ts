@@ -91,18 +91,41 @@ type Miljo = Readonly<Record<string, string | undefined>>
 export type Mal = { modus: 'lokal' } | { modus: 'produksjon'; url: string }
 
 /**
+ * De eneste adressene produksjonsmodus godtar: den publiserte appen, over
+ * HTTPS og uten port. Kontrollen logger inn med administratorkontoen, så en
+ * ukjent adresse må avvises før passordet brukes. Forhåndsvisninger er ikke med:
+ * mønsteret i adressene deres kan andre Vercel-kontoer etterligne.
+ */
+export const PRODUKSJONSVERTER: readonly string[] = ['ousfar.vercel.app']
+
+/** Opphavet (`https://vert`) til en betrodd produksjonsadresse; ellers en feil med grunnen. */
+export function betroddProduksjonsadresse(adresse: string): string {
+  let u: URL
+  try {
+    u = new URL(adresse)
+  } catch {
+    throw new Error(`APP_URL er ikke en gyldig adresse («${adresse}»).`)
+  }
+  if (erLokal(u.href)) throw new Error(`QA_PRODUKSJON=ja gjelder den publiserte appen, ikke ${u.origin}. Uten QA_PRODUKSJON startes det lokale testmiljøet.`)
+  if (u.protocol !== 'https:') throw new Error(`QA_PRODUKSJON=ja krever HTTPS (fikk ${u.protocol}//${u.host}). Administratorpassordet sendes ikke ukryptert.`)
+  if (u.username || u.password || u.port || !PRODUKSJONSVERTER.includes(u.hostname))
+    throw new Error(`QA_PRODUKSJON=ja godtar bare ${PRODUKSJONSVERTER.map((v) => `https://${v}`).join(', ')} (fikk ${u.host}). Administratorpassordet brukes ikke mot andre adresser.`)
+  return u.origin
+}
+
+/**
  * Lokalt med mindre `QA_PRODUKSJON=ja`. `APP_URL` alene velger ikke
  * produksjonen, fordi skymiljøet har den satt til den publiserte appen for
- * andre formål; med `QA_PRODUKSJON=ja` er det den som kontrolleres.
+ * andre formål; med `QA_PRODUKSJON=ja` er det den som kontrolleres, og bare når
+ * den er en av {@link PRODUKSJONSVERTER}. Avgjøres før nettleseren åpnes.
  */
 export function malFor(miljo: Miljo): Mal {
   const svar = miljo.QA_PRODUKSJON?.trim().toLowerCase()
   if (!svar) return { modus: 'lokal' }
   if (svar !== PRODUKSJONSSVAR) throw new Error(`QA_PRODUKSJON må være «${PRODUKSJONSSVAR}» eller stå tom (fikk «${miljo.QA_PRODUKSJON}»).`)
-  const url = miljo.APP_URL?.trim().replace(/\/$/, '')
+  const url = miljo.APP_URL?.trim()
   if (!url) throw new Error('QA_PRODUKSJON=ja krever APP_URL, adressen til den publiserte appen.')
-  if (erLokal(url)) throw new Error(`QA_PRODUKSJON=ja gjelder den publiserte appen, ikke ${url}. Uten QA_PRODUKSJON startes det lokale testmiljøet.`)
-  return { modus: 'produksjon', url }
+  return { modus: 'produksjon', url: betroddProduksjonsadresse(url) }
 }
 
 /**

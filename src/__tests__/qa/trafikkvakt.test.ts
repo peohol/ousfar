@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { lagFestsvar, lokaltOppsett } from './lokalmiljo'
 import {
+  betroddProduksjonsadresse,
   blokkeresIProduksjon,
   erLokal,
   erSupabaseISkyen,
@@ -8,6 +9,7 @@ import {
   LOKALE_GRENSER,
   malFor,
   PRODUKSJONSGRENSER,
+  PRODUKSJONSVERTER,
   Teststopp,
   Trafikkvakt,
   type Grenser,
@@ -28,6 +30,25 @@ describe('hvor kontrollen kjører', () => {
     expect(() => malFor({ APP_URL: PROD, QA_PRODUKSJON: 'yes' })).toThrow(/QA_PRODUKSJON må være «ja»/)
     expect(() => malFor({ QA_PRODUKSJON: 'ja' })).toThrow(/krever APP_URL/)
     expect(() => malFor({ APP_URL: 'http://127.0.0.1:4173', QA_PRODUKSJON: 'ja' })).toThrow(/gjelder den publiserte appen/)
+  })
+
+  it('godtar i produksjon bare den publiserte appen over HTTPS, før passordet kan brukes', () => {
+    const mal = (APP_URL: string) => malFor({ APP_URL, QA_PRODUKSJON: 'ja' })
+    expect(PRODUKSJONSVERTER).toEqual(['ousfar.vercel.app'])
+    expect(mal('https://ousfar.vercel.app/verktoy?x=1')).toEqual({ modus: 'produksjon', url: PROD })
+    expect(mal('https://OUSFAR.vercel.app')).toEqual({ modus: 'produksjon', url: PROD })
+    expect(() => mal('http://ousfar.vercel.app')).toThrow(/krever HTTPS/)
+    for (const fremmed of [
+      'https://evil.example.com',
+      'https://ousfar.vercel.app.evil.example.com',
+      'https://ousfar-git-gren-peohol.vercel.app',
+      'https://ousfar.vercel.app@evil.example.com',
+      'https://bruker:passord@ousfar.vercel.app',
+      'https://ousfar.vercel.app:8443',
+    ])
+      expect(() => mal(fremmed), fremmed).toThrow(/godtar bare https:\/\/ousfar\.vercel\.app/)
+    expect(() => mal('ousfar.vercel.app')).toThrow(/ikke en gyldig adresse/)
+    expect(betroddProduksjonsadresse(`${PROD}/`)).toBe(PROD)
   })
 
   it('regner bare maskinen selv som lokal, og bare Supabase i skyen som produksjonsdatabasen', () => {
