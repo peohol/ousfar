@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.126.2',
+    dato: '2026-11-06',
+    sammendrag: 'Neste fase for de kliniske verktøyene er planlagt: komplette planer for hele doseområder',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Gjelder bare administratorene. Ingen regler, doser, godkjenninger eller sperrer er endret.',
+      'Planen for de kliniske verktøyene viser nå neste fase: verktøyene skal gi komplette planer for klinisk godkjente doseområder, ikke bare for enkelte startdoser. Fasen starter først når dagens leveranser er ferdige og kontrollert samlet, og planen viser hva som gjenstår før det.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.126.1',
     dato: '2026-11-05',
     sammendrag: 'De fire kliniske verktøyene har fått én enkel arbeidsflyt i fire steg, og planen vises som en tidslinje',
