@@ -145,8 +145,16 @@ async function kjor(f) {
   for (const [tekst, fil] of f.bilder ?? []) await p.locator('li[data-flytsporsmal]', { hasText: new RegExp(tekst) }).first().screenshot({ path: `${navn}-${fil}.png` })
   await p.screenshot({ path: `${navn}-steg3.png`, fullPage: true })
 
-  // Steg 4: dosevalgene planen ber om, ett om gangen (den første dosen som tilbys).
+  // Steg 4: dosevalgene planen ber om. Har hvert trinn bare én dose, godtas de samlet med ett trykk (spor B);
+  // ellers ett om gangen (den første dosen som tilbys).
   const dosevalg = []
+  const samlet = p.locator('[data-entydige]')
+  if ((await samlet.count()) > 0) {
+    const doser = await samlet.locator('li').allInnerTexts()
+    await samlet.getByRole('button', { name: 'Bruk disse dosene' }).click()
+    dosevalg.push(...doser.map((d) => `${d} (samlet, ett alternativ)`))
+    await gjort(`godtok ${doser.length} dosevalg med ett alternativ hvert, med ett trykk`)
+  }
   for (let n = 0; n < 30; n++) {
     const region = p.getByRole('region', { name: 'Doser som kan velges' })
     if ((await region.count()) === 0) break
