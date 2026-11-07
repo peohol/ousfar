@@ -14,6 +14,7 @@ import { REGELSETT } from '../tilgjengelighet'
 import { BESLUTNINGER } from './beslutninger'
 import { flytoppsett, SAMLET, standardId, vurderFlyt } from './flyt'
 import { katalogavtrykk, katalogGjelder, KONTROLLERTE_KATALOGER, betingelserFor } from './katalogkontroll'
+import { apningssvar, etterprov } from './katalogsemantikk'
 import { jaVed, KATALOGSPORSMAL, neiVed, SVARSETT, type Betingelsestype, type Svarkilde } from './sporsmal'
 
 export const KATALOGTABELLFIL = 'docs/verktøy-sporsmalskatalog.md'
@@ -56,14 +57,30 @@ const forklaringstekst = (forklaring: string | undefined, fra: readonly Svarkild
  * viser den når katalogen brukes: én rad per synlig spørsmål og stoppende svar.
  */
 function stopptabell(r: Regel, g: Parameters<typeof vurderFlyt>[2]): string[] {
-  const forste = vurderFlyt(r, {}, g)
-  const rader = forste.sporsmal.flatMap((s) =>
-    (s.stopperVed ?? []).map((svar) => {
-      const tekst = vurderFlyt(r, { [s.id]: svar }, g).sporsmal.find((x) => x.id === s.id)?.forklaring ?? ''
-      return `| \`${s.id}\` ${celle(s.tekst)} | «${etikett(s.id, svar)}» | ${celle(tekst)} |`
-    }),
-  )
+  const oppsett = flytoppsett(r, g)
+  // Hvert spørsmål, også de som bare vises etter et annet svar (med det svaret).
+  const rader = oppsett.sporsmal.flatMap((d) => {
+    const apning = apningssvar(r, oppsett, d.id)
+    const s = vurderFlyt(r, apning, g).sporsmal.find((x) => x.id === d.id)
+    const vises = Object.entries(apning)
+      .map(([id, v]) => `når \`${id}\` er «${etikett(id, v)}»`)
+      .join(' og ')
+    return (s?.stopperVed ?? []).map((svar) => {
+      const tekst = vurderFlyt(r, { ...apning, [d.id]: svar }, g).sporsmal.find((x) => x.id === d.id)?.forklaring ?? ''
+      return `| \`${d.id}\` ${celle(s!.tekst)}${vises ? ` _(vises ${vises})_` : ''} | «${etikett(d.id, svar)}» | ${celle(tekst)} |`
+    })
+  })
   return rader.length === 0 ? [] : ['', '**Svar som stopper planen** (med katalogen):', '', '| Spørsmål | Svar | Det klinikeren får vite |', '| --- | --- | --- |', ...rader]
+}
+
+/** Etterprøvingen mot regelens egne svar (`katalogsemantikk.ts`), i klartekst. */
+function etterprovingstekst(r: Regel, g: Parameters<typeof vurderFlyt>[2]): string[] {
+  const e = etterprov(r, g!)
+  return [
+    '',
+    `**Etterprøving mot regelens egne svar:** ${e.betingelser} betingelser og ${e.kombinasjoner} svarkombinasjoner (hvert svar og ubesvart på spørsmålene som avgjør hver betingelse, med det tillatende svaret på resten). I hver kombinasjon gir katalogen de samme motorinndataene som regelens egne svar. ${e.stopper} kombinasjoner stopper planen med katalogens forklaring${e.forutsetning > 0 ? `; i ${e.forutsetning} av dem er en forutsetning besvart med et svar som utelukker den, der regelens egne svar bare lar den stå ubekreftet, så ingen av dem gir plan` : ''}. ${e.uavklart} kombinasjoner har et ubesvart spørsmål eller «Vet ikke» og gir ingen plan. Avvik: ${e.avvik.length === 0 ? 'ingen' : e.avvik.length}.`,
+    ...e.avvik.map((a) => `- \`${a.betingelse}\` ${JSON.stringify(a.svar)}: ${a.feil}`),
+  ]
 }
 
 function regelavsnitt(r: Regel): string[] {
@@ -123,6 +140,7 @@ function regelavsnitt(r: Regel): string[] {
           '| --- | --- | --- | --- | --- | --- | --- | --- |',
           ...rader,
           ...stopptabell(r, medKatalog),
+          ...etterprovingstekst(r, medKatalog),
         ]),
     '',
   ]
