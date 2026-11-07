@@ -12,7 +12,7 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
-    versjon: '1.127.4',
+    versjon: '1.127.1',
     dato: '2026-11-07',
     sammendrag: 'Faglig grunnlag for bedre byttestrategier mellom antidepressiver',
     typer: ['Funksjonalitet'],
