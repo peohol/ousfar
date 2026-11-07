@@ -19,6 +19,7 @@ import { byggBivirkningsvisning } from '../bivirkninger/stoffside'
 import { lagFarmakogenetikkleser, type Farmakogenetikkutvalg } from '../clinpgx/lesing'
 import { byggFarmakogenetikkvisning, finnClinpgxkobling, kjemikaliestatuser } from '../clinpgx/stoffside'
 import { lagCpicleser } from '../cpic/lesing'
+import { stansFor, stansmelding } from '../datakilder/stans'
 import { byggCpicvisning } from '../cpic/stoffside'
 import { VISNINGSENHETER } from '../enheter/konsentrasjon'
 import { lagFaginnholdsleser, type Stoffsidedata } from '../faginnhold/lesing'
@@ -264,13 +265,18 @@ export async function funksjonstest(
     })
     if (pgx) bygg('farmakogenetikkvisning', 'Farmakogenetikkseksjonen', () => byggFarmakogenetikkvisning(pgx))
 
-    const cpic = await kall('cpic', 'les_cpic', () => lagCpicleser(klient).les(kjemikalier), (u) => {
-      const antall = { legemidler: u.legemidler.length, par: u.par.length, retningslinjer: u.retningslinjer.length, anbefalinger: u.anbefalinger.length }
-      if (!u.kilde.release) return { status: 'advarsel', melding: 'CPIC-kopien har ingen release; den er kanskje aldri hentet.', antall }
-      return u.legemidler.length === 0
-        ? { status: 'ok', melding: `CPIC (release ${u.kilde.release}) har ingenting for kjemikaliene.`, antall }
-        : { status: 'ok', melding: `CPIC-dataene ble lest (release ${u.kilde.release}).`, antall }
-    })
+    // Mens CPIC er stanset, leses ingenting derfra (`datakilder/stans.ts`).
+    const cpicstans = stansFor('cpic')
+    if (cpicstans) legg({ id: 'cpic', status: 'ikke_aktuelt', melding: stansmelding(cpicstans, 'CPIC') })
+    const cpic = cpicstans
+      ? undefined
+      : await kall('cpic', 'les_cpic', () => lagCpicleser(klient).les(kjemikalier), (u) => {
+          const antall = { legemidler: u.legemidler.length, par: u.par.length, retningslinjer: u.retningslinjer.length, anbefalinger: u.anbefalinger.length }
+          if (!u.kilde.release) return { status: 'advarsel', melding: 'CPIC-kopien har ingen release; den er kanskje aldri hentet.', antall }
+          return u.legemidler.length === 0
+            ? { status: 'ok', melding: `CPIC (release ${u.kilde.release}) har ingenting for kjemikaliene.`, antall }
+            : { status: 'ok', melding: `CPIC-dataene ble lest (release ${u.kilde.release}).`, antall }
+        })
     if (cpic) bygg('cpicvisning', 'CPIC-visningen', () => byggCpicvisning(cpic))
   }
 

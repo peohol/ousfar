@@ -214,7 +214,8 @@ function endring(ekstra: Partial<Endring>): Endring {
 
 const vurder = (kjoringer: Kjoring[], kilder?: Datakildestatus['kilder']) => {
   const status: Datakildestatus = { kjoringer, endringer: [], kilder }
-  return Object.fromEntries(vurderKilder(status, NA, { fest: 1, clinpgx: 7, cpic: 7 }).map((v) => [v.kilde, v]))
+  // Uten stansen av CPIC (datakilder/stans.ts, prøvd i cpicstans.test.ts), så vurderingen av en kilde med kjøringer prøves.
+  return Object.fromEntries(vurderKilder(status, NA, { fest: 1, clinpgx: 7, cpic: 7 }, {}).map((v) => [v.kilde, v]))
 }
 
 describe('vurderingen', () => {
@@ -222,7 +223,8 @@ describe('vurderingen', () => {
     expect(intervallDogn('30 2 * * 1')).toBe(7)
     expect(intervallDogn('15 4 * * *')).toBe(1)
     expect(intervallDogn('0 3 1 * *')).toBeNull()
-    expect(kildeintervaller()).toEqual({ fest: 1, clinpgx: 7, cpic: 7, pubchem: 7, farmakologiportalen: 1 })
+    // CPIC er stanset, og har ingen planlagt jobb (cpicstans.test.ts).
+    expect(kildeintervaller()).toEqual({ fest: 1, clinpgx: 7, pubchem: 7, farmakologiportalen: 1 })
     // ClinPGx og Farmakologiportalen hentes fra GitHub Actions, ikke Vercel: intervallet står i oppsettet.
     expect(kildeintervaller([])).toEqual({ clinpgx: 7, farmakologiportalen: 1 })
     expect([jobbnavn(1), jobbnavn(7), jobbnavn(null)]).toEqual(['Nattlig jobb', 'Ukentlig jobb', 'Planlagt jobb'])

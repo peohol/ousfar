@@ -12,6 +12,21 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.127.0',
+    dato: '2026-11-06',
+    sammendrag: 'CPIC er tatt ut av fagsidene, og databasen måles jevnlig',
+    typer: ['Funksjonalitet'],
+    omfang: 'Moderat omfang',
+    gjelder: ['stoff', 'sok'],
+    punkter: [
+      'De strukturerte anbefalingene fra CPIC vises ikke lenger under «Farmakogenetikk» på fagsidene, og heller ikke oppslaget av diplotyper eller CPIC-treffene i søket. CPIC-dataene er slettet for å spare plass, og ingen nye hentes. De skal erstattes av norske farmakogenetiske data.',
+      'Retningslinjene fra ClinPGx står som før, også dem som er utarbeidet av CPIC.',
+      'Under «Datakilder» står CPIC som stanset.',
+      'Hver tredje time måles svartid, feilrate, minnebruk, disk og midlertidige filer i databasen, uten å belaste appen, slik at det kan sees hva som faktisk gjør appen raskere.',
+    ],
+    varsleFunksjonsendring: true,
+  },
+  {
     versjon: '1.126.8',
     dato: '2026-11-06',
     sammendrag: 'Verktøyene sier at FEST-dataene er for gamle når det er derfor ingen plan lages',

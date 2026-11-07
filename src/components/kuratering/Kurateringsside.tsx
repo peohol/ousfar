@@ -6,6 +6,7 @@ import {
   ARTSNAVN,
   STATUSNAVN,
   agenttilstand,
+  uteblittForhandsvisning,
   erAktiv,
   grenenErEndret,
   kanPubliseres,
@@ -305,7 +306,7 @@ function Grenbanner({
       )}
       {r?.melding && <p className="utgavebanner__linje">«{r.melding}»</p>}
       {!r?.forhandsvisning && r && (
-        <p className="utgavebanner__feil">Revisjonen har ingen forhåndsvisning fordi prøvepubliseringen feilet: {r.teknisk?.feil}</p>
+        <p className={r.teknisk?.forhandsvisning_fjernet ? 'utgavebanner__linje' : 'utgavebanner__feil'}>{uteblittForhandsvisning(r.teknisk)}</p>
       )}
       {merk.length > 0 && (
         <ul className="utgavebanner__liste" aria-label="Merknader">

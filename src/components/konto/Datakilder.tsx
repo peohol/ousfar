@@ -27,6 +27,7 @@ const TILSTAND: Record<Tilstand, { tekst: string; tone: Merketone }> = {
   ok: { tekst: 'I orden', tone: 'referanse' },
   advarsel: { tekst: 'Se over', tone: 'toksisk' },
   feil: { tekst: 'Feilet', tone: 'alvorlig' },
+  stanset: { tekst: 'Stanset', tone: 'noytral' },
 }
 
 const STATUSNAVN: Record<Kjoringsstatus, string> = {
@@ -151,15 +152,17 @@ function Kilde({
           {v.navn}
         </h3>
         <Merke tone={tilstand.tone}>{tilstand.tekst}</Merke>
-        <Button
-          variant="kant"
-          icon={<Ikon navn="reset" />}
-          disabled={henter !== null}
-          aria-label={`Hent fra ${v.navn} nå`}
-          onClick={onHent}
-        >
-          {henter === v.kilde ? 'Henter …' : 'Hent nå'}
-        </Button>
+        {v.tilstand !== 'stanset' && (
+          <Button
+            variant="kant"
+            icon={<Ikon navn="reset" />}
+            disabled={henter !== null}
+            aria-label={`Hent fra ${v.navn} nå`}
+            onClick={onHent}
+          >
+            {henter === v.kilde ? 'Henter …' : 'Hent nå'}
+          </Button>
+        )}
       </header>
       <p className="datakilde__melding">{v.melding}</p>
       <p className="skjemakvittering" role="status">

@@ -70,9 +70,11 @@ describe('datakildene', () => {
     expect(within(clinpgx).queryByText('Annotation of DPWG Guideline for sertraline')).toBeNull()
     expect(within(clinpgx).getByText('Ny anbefaling')).toBeTruthy()
 
+    // CPIC er stanset (datakilder/stans.ts): grunnen står i stedet for feilen, og ingenting kan hentes.
     const cpic = screen.getByRole('region', { name: 'CPIC' })
-    expect(within(cpic).getByText('Feilet', { selector: '.merke' })).toBeTruthy()
-    expect(within(cpic).getByText('Siste henting feilet: CPIC svarte 500. Dataene fra siste vellykkede henting står.')).toBeTruthy()
+    expect(within(cpic).getByText('Stanset', { selector: '.merke' })).toBeTruthy()
+    expect(within(cpic).getByText(/^Stanset 06\.11\.2026\. CPIC-dataene er slettet/)).toBeTruthy()
+    expect(within(cpic).queryByRole('button', { name: 'Hent fra CPIC nå' })).toBeNull()
     expect(within(cpic).getByText('v1.60.1')).toBeTruthy()
 
     await userEvent.click(screen.getByRole('checkbox', { name: 'Vis også endringer i metadata' }))
@@ -82,8 +84,8 @@ describe('datakildene', () => {
   it('henter fra kilden når administratoren ber om det, og leser statusen på nytt', async () => {
     const leser = falskLeser()
     render(<Datakilder apen onLukk={() => {}} leser={leser} />)
-    await userEvent.click(await screen.findByRole('button', { name: 'Hent fra CPIC nå' }))
-    expect(leser.hentNa).toHaveBeenCalledWith('cpic')
+    await userEvent.click(await screen.findByRole('button', { name: 'Hent fra ClinPGx nå' }))
+    expect(leser.hentNa).toHaveBeenCalledWith('clinpgx')
     await waitFor(() => expect(screen.getByText('Hentingen er ferdig (Uendret).')).toBeTruthy())
     expect(leser.status).toHaveBeenCalledTimes(2)
   })

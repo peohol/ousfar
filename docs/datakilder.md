@@ -135,12 +135,14 @@ sier hvilke kilder som bør ses over (`kilderSomBorSesOver`, med én endring per
 kilde fra `datakilder_status`). Den sjekkes når appen og fanen åpnes, hvert
 femte minutt og når panelet lukkes. Per kilde:
 
-- tilstanden (`src/datakilder/status.ts`, `vurderKilder`): **Feilet** når
+- tilstanden (`src/datakilder/status.ts`, `vurderKilder`): **Stanset** når
+  kilden er tatt ut av bruk (`src/datakilder/stans.ts`, under), uten «Hent nå»
+  og uten prikk på adminmenyen; **Feilet** når
   siste kjøring feilet, med feilteksten fra kjøringen; **Se over** når den var
   delvis (med feilene per kjemikalie), har stått uferdig i over en halvtime,
   eller når siste vellykkede henting er eldre enn intervallet og ett døgn til.
   Intervallet leses av cron-uttrykket i `vercel.json`: for FEST hver natt, så
-  to døgn; for CPIC og PubChem hver uke, så åtte døgn.
+  to døgn; for PubChem hver uke, så åtte døgn.
   ClinPGx og Farmakologiportalen kjøres av GitHub Actions og har intervallet i
   `KILDEOPPSETT` (ClinPGx hver uke, så åtte døgn; Farmakologiportalen hver
   natt, så to døgn). Meldingen ved en feil
@@ -168,6 +170,23 @@ femte minutt og når panelet lukkes. Per kilde:
   (ClinPGx, som henter i omganger), ber knappen om neste omgang av den samme
   kjøringen til alt er hentet. `CRON_SECRET` og `SUPABASE_SECRET_KEY` blir på
   serveren.
+
+## Stansede kilder
+
+En kilde kan stanses på ubestemt tid i `src/datakilder/stans.ts`
+(`STANSEDE_KILDER`, med dato og grunn). Da hentes ingenting: den planlagte
+jobben tas ut av `vercel.json` (eller arbeidsflyten), og endepunktet svarer
+410 med grunnen (`stansetSvar`), også for administratorer. Appen leser ingenting
+fra kilden, så den ikke vises noe sted, og funksjonstesten melder den som ikke
+aktuell. Panelet viser den som **Stanset** med grunnen.
+
+**CPIC er stanset fra 6.11.2026**, etter Peders beslutning: dataene skal
+erstattes av norske farmakogenetiske data, og databasen var over kvoten.
+Dataene og endringsloggen for CPIC er slettet
+(`*_slett_cpic_og_gamle_forhandsvisninger.sql`); skjemaet, funksjonene og
+oppsettet står, med kontrollsummene nullstilt. Tas CPIC i bruk igjen: fjern den
+fra `STANSEDE_KILDER`, legg jobben tilbake i `vercel.json`, og la første
+henting laste alt på nytt (`docs/cpic.md`).
 
 ## Koden
 

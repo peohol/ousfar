@@ -6,6 +6,7 @@
  * serverendepunktet (`src/cpic/endepunkt.ts`) med administratorens innlogging.
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { STANSEDE_KILDER, stansFor } from '../datakilder/stans'
 import type { Anbefaling, Gen, Genresultat, Genresultatoppslag, Legemiddel, Par, Publikasjon, Retningslinje } from './modell'
 
 /** Hvilken CPIC-database dataene kommer fra. */
@@ -220,4 +221,17 @@ export function lagCpicleser(klient: SupabaseClient, hent: typeof fetch = (...a)
       throw new Error((svar && 'feil' in svar && svar.feil) || `Serveren svarte ${res.status}.`)
     },
   }
+}
+
+/**
+ * Leseren appen bruker, eller ingen mens CPIC er stanset (`datakilder/stans.ts`):
+ * uten leser viser fagsidene, oppslaget, diplotypene, referansene og søket
+ * ingenting fra CPIC, og ingenting hentes fra databasen.
+ */
+export function lagCpicleserOmIBruk(
+  klient: SupabaseClient,
+  stansede = STANSEDE_KILDER,
+  hent?: typeof fetch,
+): Cpicleser | undefined {
+  return stansFor('cpic', stansede) ? undefined : lagCpicleser(klient, hent)
 }

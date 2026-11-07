@@ -12,6 +12,7 @@
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
 import vercel from '../../vercel.json'
+import { STANSEDE_KILDER, stansmelding, type Stans } from './stans'
 
 export const DATAKILDER = ['fest', 'clinpgx', 'cpic', 'pubchem', 'farmakologiportalen'] as const
 export type Datakilde = (typeof DATAKILDER)[number]
@@ -70,6 +71,7 @@ export const KILDEOPPSETT: Record<Datakilde, Kildeoppsett> = {
     endringslogg: true,
     intervall: 7,
   },
+  // Stanset fra 6.11.2026 (`stans.ts`); jobben står ikke lenger i `vercel.json`.
   cpic: { navn: 'CPIC', synk: '/api/cpic-synk', versjonsnavn: 'Skjemaversjon', etterFeil: null, endringslogg: true },
   // Alt som består kontrollen, byttes inn i én transaksjon (docs/kjemi.md).
   pubchem: { navn: 'PubChem', synk: '/api/pubchem-synk', versjonsnavn: 'Parserversjon', etterFeil: null, endringslogg: true },
@@ -308,7 +310,8 @@ export function kildeintervaller(crons: readonly { path: string; schedule: strin
   return intervaller
 }
 
-export type Tilstand = 'ok' | 'advarsel' | 'feil'
+/** `stanset`: kilden er tatt ut av bruk med vilje (`stans.ts`), så ingenting skal hentes. */
+export type Tilstand = 'ok' | 'advarsel' | 'feil' | 'stanset'
 
 export interface Kildevurdering {
   kilde: Datakilde
@@ -365,14 +368,16 @@ function funnet(kjoring: Kjoring, endringslogg: boolean): string {
 }
 
 /**
- * Hvordan det står til med hver kilde: feil når siste kjøring feilet, en
- * advarsel når den var delvis, henger, eller når det har gått mer enn
- * intervallet og ett døgn til siden siste vellykkede kjøring.
+ * Hvordan det står til med hver kilde: stanset når den er tatt ut av bruk,
+ * feil når siste kjøring feilet, en advarsel når den var delvis, henger, eller
+ * når det har gått mer enn intervallet og ett døgn til siden siste vellykkede
+ * kjøring.
  */
 export function vurderKilder(
   status: Datakildestatus,
   na: number = Date.now(),
   intervaller: Partial<Record<Datakilde, number>> = kildeintervaller(),
+  stansede: Readonly<Partial<Record<Datakilde, Stans>>> = STANSEDE_KILDER,
 ): Kildevurdering[] {
   return DATAKILDER.map((kilde) => {
     const { navn, etterFeil, beholdt: beholdtTekst, endringslogg } = KILDEOPPSETT[kilde]
@@ -393,6 +398,8 @@ export function vurderKilder(
       kilde, navn, tilstand, melding, siste, sisteVellykkede, sistVellykketKl, release, versjon, intervall, kjoringer, endringer,
     })
 
+    const stans = stansede[kilde]
+    if (stans) return vurdering('stanset', stansmelding(stans, navn))
     if (!siste) return vurdering('advarsel', `Ingen henting fra ${navn} er logget ennå.`)
     const beholdt =
       etterFeil ??
@@ -420,11 +427,12 @@ export function vurderKilder(
 
 /**
  * Navnene på kildene som bør ses over (siste henting feilet, var delvis, står
- * uferdig eller er for gammel), til prikken på adminmenyen.
+ * uferdig eller er for gammel), til prikken på adminmenyen. En stanset kilde
+ * skal ikke hentes, og bør ikke ses over.
  */
 export function kilderSomBorSesOver(status: Datakildestatus, na: number = Date.now()): string[] {
   return vurderKilder(status, na)
-    .filter((v) => v.tilstand !== 'ok')
+    .filter((v) => v.tilstand !== 'ok' && v.tilstand !== 'stanset')
     .map((v) => v.navn)
 }
 

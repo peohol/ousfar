@@ -5,6 +5,12 @@ datamodellen, lesingen, eller visningen og oppslaget som bygger på dem.
 Mønsteret er det samme som for FEST (`docs/legemiddeldata.md`) og ClinPGx
 (`docs/clinpgx.md`), og det som står der om prinsippene, gjelder også her.
 
+> **Stanset fra 6.11.2026.** CPIC-dataene er slettet for å spare plass og skal
+> erstattes av norske farmakogenetiske data. Ingenting hentes, endepunktet svarer
+> 410, og appen leser og viser ingenting fra CPIC (`src/datakilder/stans.ts`,
+> `docs/datakilder.md` under «Stansede kilder»). Resten av dokumentet beskriver
+> laget slik det står klart til å tas i bruk igjen.
+
 ClinPGx gir den brede kunnskapsoversikten på fagsiden (retningslinjer,
 preparatomtaler, kliniske annotasjoner). CPIC-laget gir det strukturerte:
 hvilke gen–legemiddel-par CPIC har vurdert, hvilke genetiske resultater en
