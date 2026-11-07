@@ -23,7 +23,8 @@ export const GRUPPEREKKEFOLGE: readonly Sporsmalsgruppe[] = ['stopp', 'endrer', 
 export const SAMLET = 'forutsetninger'
 
 export const INDIVIDUELT = 'Verktøyet lager ingen plan, og behandlingen må planlegges individuelt.'
-export const UNNTAK_STANDARD = `Da gjelder ikke regelen. ${INDIVIDUELT}`
+/** Reservevisningens stopp for et unntak: regelens utsagn står ved spørsmålet, så forklaringen viser til det. */
+export const UNNTAK_STANDARD = 'Verktøyet har ingen godkjent plan når dette stemmer for pasienten, og behandlingen må planlegges individuelt.'
 export const UKJENT_FORKLARING = 'Må avklares før verktøyet kan lage en plan.'
 
 /**
@@ -95,8 +96,8 @@ const fyllInn = (r: Regel, t: string | undefined) => t?.replaceAll('{maldose}', 
 /**
  * Reservevisningen for en betingelse uten kontrollert katalogoppføring (S5):
  * regelens egen, fullstendige tekst med sin opprinnelige type og svarlogikk,
- * slik dagens skjema viser den. Spørsmål har «Ja»/«Nei», unntak regelens to
- * svar («Gjelder»/«Gjelder ikke») og bekreftelser en avkrysning. Den gjøres
+ * slik dagens skjema viser den. Spørsmål har «Ja»/«Nei», unntak regelens
+ * utsagn med «Stemmer»/«Stemmer ikke» og bekreftelser en avkrysning. Den gjøres
  * aldri om til et generisk spørsmål, og gir de samme motorinndataene som
  * dagens skjema.
  */
@@ -246,9 +247,14 @@ export interface Flytresultat {
 /** Om svaret som er valgt på spørsmålet, stopper planen. */
 export const svarStopper = (s: Pick<Flytsporsmal, 'valgt' | 'stopperVed'>): boolean => s.valgt !== undefined && (s.stopperVed?.includes(s.valgt) ?? false)
 
-/** Svarene som gjør at regelen ikke kan gi en plan, og forklaringen. */
-function stopp(r: Regel, def: Definisjon, avbildninger: readonly Avbildning[], utelukket: readonly string[] = []): { ved: string[]; forklaring?: string } {
+/**
+ * Svarene som gjør at regelen ikke kan gi en plan, og forklaringen for hvert
+ * av dem: svarkildens egen, ellers betingelsens, ellers en som bygges av
+ * regelens tekst. `forklaring` er den første, for et spørsmål uten valgt svar.
+ */
+function stopp(r: Regel, def: Definisjon, avbildninger: readonly Avbildning[], utelukket: readonly string[] = []): { ved: string[]; forklaring?: string; forklaringer: Record<string, string> } {
   const ved = new Set<string>()
+  const forklaringer: Record<string, string> = {}
   let forklaring: string | undefined
   for (const a of avbildninger) {
     const k = a.fra.find((x) => x.sporsmal === def.id)
@@ -264,10 +270,12 @@ function stopp(r: Regel, def: Definisjon, avbildninger: readonly Avbildning[], u
       if (!stopper) continue
       ved.add(alt.verdi)
       const s = a.type === 'sporsmal' ? r.sporsmal?.find((x) => x.id === a.id) : undefined
-      forklaring ??= a.forklaring ?? (s ? ingenGodkjentPlan(b === 'ja' ? s.ja : (s.nei ?? 'dette svaret')) : undefined)
+      const tekst = k.forklaring ?? a.forklaring ?? (s ? ingenGodkjentPlan(b === 'ja' ? s.ja : (s.nei ?? 'dette svaret')) : undefined)
+      if (tekst) forklaringer[alt.verdi] ??= tekst
+      forklaring ??= tekst
     }
   }
-  return { ved: [...ved], ...(forklaring && { forklaring }) }
+  return { ved: [...ved], ...(forklaring && { forklaring }), forklaringer }
 }
 
 /** Flyten for regelen med svarene som er gitt (spørsmålets id → verdien). */
@@ -332,6 +340,7 @@ export function vurderFlyt(r: Regel, svar: Readonly<Record<string, string>>, g: 
       const punkter = d.id === SAMLET ? oppsett.samlet.filter((b) => gjeldende.has(b.id)).map((b) => b.tekst) : undefined
       const valgt = svar[d.id]
       const ukjent = valgt === 'ukjent'
+      const forklaring = ukjent ? UKJENT_FORKLARING : ((valgt !== undefined && st.forklaringer[valgt]) || st.forklaring)
       return {
         id: d.id,
         tekst: d.tekst,
@@ -342,7 +351,7 @@ export function vurderFlyt(r: Regel, svar: Readonly<Record<string, string>>, g: 
         svar: d.alternativer.map((a) => a.verdi),
         alternativer: d.alternativer,
         ...(st.ved.length > 0 && { stopperVed: st.ved }),
-        ...((st.forklaring || ukjent) && { forklaring: ukjent ? UKJENT_FORKLARING : st.forklaring }),
+        ...(forklaring && { forklaring }),
         ...(punkter && { punkter }),
         ...(valgt !== undefined && d.alternativer.some((a) => a.verdi === valgt) && { valgt }),
       }

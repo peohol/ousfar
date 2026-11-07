@@ -206,7 +206,7 @@ describe('Escitalopram versjon 14 (B2) på verktøysiden, uten simulering', () =
         [/mange måneder/],
         /Ingen plan med disse svareneVerktøyet har ingen godkjent plan ved lang behandlingstid\. Det betyr ikke nødvendigvis at behandlingen er uforsvarlig/,
       ],
-      ['20', TABLETT, [/tidligere forsøk/i], /Ingen plan med disse svareneDa gjelder ikke regelen\./],
+      ['20', TABLETT, [/tidligere forsøk/i], /Ingen plan med disse svareneVerktøyet har ingen godkjent plan når dette stemmer for pasienten, og behandlingen må planlegges individuelt\./],
       ['15', TABLETT, [], /Ingen plan for dette tilfelletDen godkjente planen gjelder bare startdosene 10 og 20 mg\./],
     ] as const) {
       vis()
