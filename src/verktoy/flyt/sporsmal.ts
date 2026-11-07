@@ -787,8 +787,8 @@ const tilSertralin = ({ regel, stoff }: Sertralinbytte): Katalogbetingelse[] => 
   },
 ]
 
-/** Betingelsene i escitalopramreglene (K1 og B2), som bare skiller seg i aldersgrensen `eldre`. */
-const escitalopram = (regel: string, eldre: readonly Svarkilde[]): Katalogbetingelse[] => [
+/** Betingelsene i escitalopramreglene (K1 og B2), som bare skiller seg i aldersgrensen `eldre` og forklaringen der. */
+const escitalopram = (regel: string, eldre: readonly Svarkilde[], eldreForklaring?: string): Katalogbetingelse[] => [
   ...nedtrapping(regel),
   {
     regel,
@@ -798,7 +798,7 @@ const escitalopram = (regel: string, eldre: readonly Svarkilde[]): Katalogbeting
     fra: fra('qt_forlengelse', 'qt_legemiddel'),
     forklaring: stopp('Det er en kontraindikasjon for escitalopram i preparatomtalen, og verktøyet kan ikke overstyre den.', 'nedtrapping'),
   },
-  { regel, type: 'sporsmal', id: 'eldre', kategori: 'sikkerhetsopplysning', fra: eldre },
+  { regel, type: 'sporsmal', id: 'eldre', kategori: 'sikkerhetsopplysning', fra: eldre, ...(eldreForklaring && { forklaring: eldreForklaring }) },
   {
     regel,
     type: 'sporsmal',
@@ -820,7 +820,7 @@ const escitalopram = (regel: string, eldre: readonly Svarkilde[]): Katalogbeting
 /** Hver betingelse i hver godkjent regel. En betingelse som ikke står her, spørres med regelens egen tekst (S5). */
 export const KATALOGBETINGELSER: readonly Katalogbetingelse[] = [
   // Escitalopram (K1, v13): «over 65 år». Erstattet av versjon 14 i appen.
-  ...escitalopram(ESC, OVER_65),
+  ...escitalopram(ESC, OVER_65, stopp(ikkeDekket('for pasienter over 65 år'), 'nedtrapping')),
   // Escitalopram med tabletter og dråper (B2, v14): som versjon 13, men grensen er «65 år eller eldre».
   ...escitalopram(ESC_B2, [FRA_65(stopp(UNDER_65, 'nedtrapping'))]),
 

@@ -10,12 +10,13 @@ import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { beregnPlan, medTrinnvalg, TOMT_SKJEMA, type Planskjema } from '../verktoy/doseplan'
 import { BESLUTNINGER, type Beslutninger } from '../verktoy/flyt/beslutninger'
-import { flytoppsett, medFlytfelt, medIngenAvDisse, SAMLET, standardId, vurderFlyt, type Flytgrunnlag, type Flytoppsett } from '../verktoy/flyt/flyt'
+import { flytoppsett, medFlytfelt, medIngenAvDisse, SAMLET, standardId, vurderFlyt, type Flytgrunnlag } from '../verktoy/flyt/flyt'
+import { tillatende } from '../verktoy/flyt/katalogsemantikk'
 import { FEST_IKKE_FERSK, forhandskontroll, IKKE_AVKLART, KAN_LAGES_HVIS } from '../verktoy/flyt/forhandskontroll'
 import { flyttilstand, medFlytsvar, reglerMedPlan } from '../verktoy/flyt'
 import { harKontrollertKatalog, katalogavtrykk, katalogGjelder, KONTROLLERTE_KATALOGER, type Katalogkontroll } from '../verktoy/flyt/katalogkontroll'
 import { KATALOGTABELLFIL, lagKatalogtabell } from '../verktoy/flyt/katalogtabell'
-import { jaVed, KATALOGBETINGELSER, KATALOGSPORSMAL, neiVed, SVARSETT, type Betingelsestype, type Katalogbetingelse } from '../verktoy/flyt/sporsmal'
+import { KATALOGBETINGELSER, KATALOGSPORSMAL, SVARSETT, type Betingelsestype, type Katalogbetingelse } from '../verktoy/flyt/sporsmal'
 import { FORKLARINGER, klassifiser, stoppforklaringer } from '../verktoy/flyt/stopp'
 import { KOMPLETT_IKKE_TILGJENGELIG, UTENFOR_OMFANG, type Doseplanresultat } from '../verktoy/motor/plan'
 import { VERKTOY } from '../verktoy/register'
@@ -55,21 +56,6 @@ const katalog = (r: Regel, b: Partial<Beslutninger> = {}): Flytgrunnlag => ({ ko
 const KANDIDATER = kontrollertITest(...GODKJENTE.filter((r) => KATALOGBETINGELSER.some((b) => b.regel === r.id)))
 /** Reservevisningen for hver regel, også de med kontrollert katalog i appen. */
 const RESERVE: Flytgrunnlag = { kontrollerte: [] }
-
-/**
- * Svaret som tillater en plan: det vanlige forløpet uten særlige forhold. Et
- * spørsmål en bekreftelse bruker, får svaret som bekrefter (også «Nei» der et
- * nei bekrefter, og «Poliklinisk» eller «Bivirkninger»), et spørsmål om et
- * forhold ved pasienten svaret som gjør forholdet usant, og alderen 18–64 år.
- */
-function tillatende(avbildninger: Flytoppsett['avbildninger'], id: string): string {
-  if (id === 'alder') return '18_64'
-  const kilder = avbildninger.flatMap((a) => a.fra.filter((k) => k.sporsmal === id).map((k) => [a.type, k] as const))
-  const bekreftelse = kilder.find(([type]) => type === 'bekreftelse')?.[1]
-  if (bekreftelse) return jaVed(bekreftelse)[0] ?? 'ja'
-  const forhold = kilder[0]?.[1]
-  return (forhold && neiVed(forhold)[0]) ?? 'nei'
-}
 
 /** Svarene som tillater en plan for hvert synlig spørsmål, til flyten er ferdig. */
 function besvarTillatende(r: Regel, g: Flytgrunnlag, start: Record<string, string> = {}): Record<string, string> {
