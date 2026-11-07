@@ -104,7 +104,7 @@ Uten kontrollert klassifisering (S5b) vises betingelsen i reservevisningen (S5):
 - Én opplysning per spørsmål. Sammensatte unntak deles opp når det gir klarere svar, og avbildes tilbake (unntaket gjelder hvis ett av delspørsmålene er ja, og er ukjent hvis ett er ukjent og ingen er ja).
 - Hjelpetekst bare der spørsmålet kan misforstås (for eksempel hva «mange måneder» betyr, med regelens egen grense).
 - Et stoppende svar forklares ved spørsmålet, i én setning, med hva som kan gjøres: «Da lager verktøyet ingen plan. Nedtrappingen må planlegges individuelt; mindre trinn enn én dråpe beregnes ikke.»
-- Ingen regel-ID, kontrollutfall, «omfang», «strategi» eller formuleringskoder i det klinikeren ser. Regelversjon og fingeravtrykk står i kopien og i «Kilder og versjon» nederst i planen.
+- Ingen regel-ID, kontrollutfall, «omfang», «strategi» eller formuleringskoder i det klinikeren ser. Regelversjon og fingeravtrykk står i kopien med faglig grunnlag og i «Faglig grunnlag og kilder» nederst i planen.
 
 ### 4.3 Rekkefølge og felles spørsmål
 
@@ -148,11 +148,11 @@ Stoppgrunnene fra motoren er i dag fri tekst. B legger til en strukturert kode v
 
 ## 7. Planresultat og kopi
 
-- **Tidslinje** i stedet for tabell: én rad per periode med dager og eventuelle datoer, dose, hva som gis («1 tablett 10 mg», «3 dråper»), formskifte markert, vurderingspunkter og oppfølging på riktig sted i tiden, og sluttmålet tydelig til slutt («Seponert fra dag 197», «Fast månedlig injeksjon»).
-- **Øverst:** én linje om hva planen er (komplett til sluttmålet), forutsetningene (avledede svar og forbehold) og eventuelle faglige varsler.
-- **Pakninger:** samlet liste over preparater og styrker planen bruker, med FEST-forbeholdet om lagerstatus.
-- **Kopi og utskrift:** «Kopier planen» gir hele planen som ren tekst i samme rekkefølge som tidslinjen (S8). Kopiteksten kan endres i form, men D kontrollerer at hvert element i planen fortsatt finnes i kopien, og ChatGPT kontrollerer kopien for minst ett forløp per verktøy.
-- **Kilder og versjon** nederst, sammenleggbart; åpnes ved utskrift som i dag.
+- **Tidslinje** i stedet for tabell: én rad per periode med dager og eventuelle datoer, dose, hva som gis («1 tablett 10 mg», «3 dråper»), formskifte markert med «husk resept», vurderingspunkter og oppfølging på riktig sted i tiden, og sluttmålet tydelig til slutt («Seponert fra dag 197», «Fast månedlig injeksjon»). Vurderingspunktene i tidslinjen viser nummeret og den første setningen; hele teksten står i listen under. Et legemiddel som fortsetter uendret, har hele forklaringen første gang og deretter bare «uendret dose».
+- **Øverst:** én linje om hva planen er (komplett til sluttmålet, med dato når startdato er oppgitt), utgangspunktet (dosen pasienten bruker nå), forutsetningene (avledede svar) og eventuelle faglige varsler.
+- **Standardplanen under tidslinjen (P3):** «Legemiddelform og resepter» (én linje per legemiddel: form, styrke og dager, og «husk resept» når legemidlet eller formen er ny), «Vurderingspunkter» nummerert med hva som gjøres ved funn, «Viktig for denne planen», «Forbehold» (også at FEST ikke viser lagerstatus) og én linje med regelversjonen og datoen for FEST-uttrekket.
+- **Faglig grunnlag og kilder** nederst, sammenleggbart: avvik fra regelens kurve, forutsetninger, usikkerhet, det beregningen kontrollerte, hele preparatlisten, preparater i FEST som ikke brukes, godkjenningen, kildene og versjonene. Utskriften har det som vises, så grunnlaget kommer bare med når det er åpnet.
+- **Kopi:** «Kopier planen» gir standardplanen som ren tekst i samme rekkefølge som tidslinjen, celle for celle (S8). «Kopier med faglig grunnlag» gir i tillegg hele grunnlaget; kontrollgrunnlagene for ChatGPT bygger på den. Kopiteksten kan endres i form, men testene kontrollerer at hvert element i planen fortsatt finnes i kopien.
 
 ## 8. Designretning
 

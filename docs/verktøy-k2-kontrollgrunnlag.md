@@ -28,75 +28,75 @@ Kasusene er syntetiske. 128 kasus, alle med forventet utfall.
 **sertralin 50 mg til mirtazapin 15 mg, sluttrinnet simulert som laveste tablettdose** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Sertralin peroralt: 25 mg = 1 tablett à 25 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 15 (23.11.2026): Vurdering (Sertralin): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Sertralin): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres.
     Fra dag 15 (fra 23.11.2026): Sertralin peroralt: Seponert; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
+    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
 
 **sertralin 50 mg til mirtazapin 30 mg, sluttrinnet simulert som laveste tablettdose** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Sertralin peroralt: 25 mg = 1 tablett à 25 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 15 (23.11.2026): Vurdering (Sertralin): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
-    Dag 15 (23.11.2026): Vurdering (Mirtazapin): Før endringen: Vurder effekten av mirtazapin så langt og om økningen fortsatt trengs, hvordan mirtazapin tåles, og om pasienten har seponeringssymptomer etter sertralin.
+    Dag 15 (23.11.2026): Vurdering (Sertralin): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres.
+    Dag 15 (23.11.2026): Vurdering (Mirtazapin): Før endringen, punkt 2: Vurder effekten av mirtazapin så langt og om økningen fortsatt trengs, hvordan mirtazapin tåles, og om pasienten har seponeringssymptomer etter sertralin.
     Fra dag 15 (fra 23.11.2026): Sertralin peroralt: Seponert; Mirtazapin peroralt: 30 mg = 1 tablett à 30 mg
-    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
-    Dag 43 (21.12.2026): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
+    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
+    Dag 43 (21.12.2026): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
 
 **sertralin 100 mg til mirtazapin 15 mg, sluttrinnet simulert som laveste tablettdose** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Sertralin peroralt: 50 mg = 1 tablett à 50 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 15 (23.11.2026): Vurdering (Sertralin): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Sertralin): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres.
     Dag 15–28 (23.11.2026–06.12.2026): Sertralin peroralt: 25 mg = 1 tablett à 25 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 29 (07.12.2026): Vurdering (Sertralin): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 29 (07.12.2026): Vurdering (Sertralin): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres.
     Fra dag 29 (fra 07.12.2026): Sertralin peroralt: Seponert; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
+    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
 
 **sertralin 100 mg til mirtazapin 30 mg, sluttrinnet simulert som laveste tablettdose** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Sertralin peroralt: 50 mg = 1 tablett à 50 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 15 (23.11.2026): Vurdering (Sertralin): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Sertralin): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres.
     Dag 15–28 (23.11.2026–06.12.2026): Sertralin peroralt: 25 mg = 1 tablett à 25 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 29 (07.12.2026): Vurdering (Sertralin): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
-    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Før endringen: Vurder effekten av mirtazapin så langt og om økningen fortsatt trengs, hvordan mirtazapin tåles, og om pasienten har seponeringssymptomer etter sertralin.
+    Dag 29 (07.12.2026): Vurdering (Sertralin): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres.
+    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Før endringen, punkt 2: Vurder effekten av mirtazapin så langt og om økningen fortsatt trengs, hvordan mirtazapin tåles, og om pasienten har seponeringssymptomer etter sertralin.
     Fra dag 29 (fra 07.12.2026): Sertralin peroralt: Seponert; Mirtazapin peroralt: 30 mg = 1 tablett à 30 mg
-    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
-    Dag 57 (04.01.2027): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
+    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
+    Dag 57 (04.01.2027): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
 
 **sertralin 200 mg til mirtazapin 15 mg, sluttrinnet simulert som laveste tablettdose** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Sertralin peroralt: 100 mg = 1 tablett à 100 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 15 (23.11.2026): Vurdering (Sertralin): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Sertralin): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres.
     Dag 15–28 (23.11.2026–06.12.2026): Sertralin peroralt: 50 mg = 1 tablett à 50 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 29 (07.12.2026): Vurdering (Sertralin): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 29 (07.12.2026): Vurdering (Sertralin): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres.
     Dag 29–42 (07.12.2026–20.12.2026): Sertralin peroralt: 25 mg = 1 tablett à 25 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
-    Dag 43 (21.12.2026): Vurdering (Sertralin): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
+    Dag 43 (21.12.2026): Vurdering (Sertralin): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres.
     Fra dag 43 (fra 21.12.2026): Sertralin peroralt: Seponert; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
 
 **sertralin 200 mg til mirtazapin 30 mg, sluttrinnet simulert som laveste tablettdose** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Sertralin peroralt: 100 mg = 1 tablett à 100 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 15 (23.11.2026): Vurdering (Sertralin): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Sertralin): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres.
     Dag 15–28 (23.11.2026–06.12.2026): Sertralin peroralt: 50 mg = 1 tablett à 50 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 29 (07.12.2026): Vurdering (Sertralin): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 29 (07.12.2026): Vurdering (Sertralin): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres.
     Dag 29–42 (07.12.2026–20.12.2026): Sertralin peroralt: 25 mg = 1 tablett à 25 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
-    Dag 43 (21.12.2026): Vurdering (Sertralin): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
-    Dag 43 (21.12.2026): Vurdering (Mirtazapin): Før endringen: Vurder effekten av mirtazapin så langt og om økningen fortsatt trengs, hvordan mirtazapin tåles, og om pasienten har seponeringssymptomer etter sertralin.
+    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
+    Dag 43 (21.12.2026): Vurdering (Sertralin): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres.
+    Dag 43 (21.12.2026): Vurdering (Mirtazapin): Før endringen, punkt 2: Vurder effekten av mirtazapin så langt og om økningen fortsatt trengs, hvordan mirtazapin tåles, og om pasienten har seponeringssymptomer etter sertralin.
     Fra dag 43 (fra 21.12.2026): Sertralin peroralt: Seponert; Mirtazapin peroralt: 30 mg = 1 tablett à 30 mg
-    Dag 71 (18.01.2027): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
+    Dag 71 (18.01.2027): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
 
 **mirtazapin 45 mg, som planene ikke bruker, avregistrert i FEST** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Sertralin peroralt: 100 mg = 1 tablett à 100 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 15 (23.11.2026): Vurdering (Sertralin): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Sertralin): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres.
     Dag 15–28 (23.11.2026–06.12.2026): Sertralin peroralt: 50 mg = 1 tablett à 50 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 29 (07.12.2026): Vurdering (Sertralin): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 29 (07.12.2026): Vurdering (Sertralin): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres.
     Dag 29–42 (07.12.2026–20.12.2026): Sertralin peroralt: 25 mg = 1 tablett à 25 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
-    Dag 43 (21.12.2026): Vurdering (Sertralin): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
-    Dag 43 (21.12.2026): Vurdering (Mirtazapin): Før endringen: Vurder effekten av mirtazapin så langt og om økningen fortsatt trengs, hvordan mirtazapin tåles, og om pasienten har seponeringssymptomer etter sertralin.
+    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
+    Dag 43 (21.12.2026): Vurdering (Sertralin): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før sertralin reduseres eller seponeres.
+    Dag 43 (21.12.2026): Vurdering (Mirtazapin): Før endringen, punkt 2: Vurder effekten av mirtazapin så langt og om økningen fortsatt trengs, hvordan mirtazapin tåles, og om pasienten har seponeringssymptomer etter sertralin.
     Fra dag 43 (fra 21.12.2026): Sertralin peroralt: Seponert; Mirtazapin peroralt: 30 mg = 1 tablett à 30 mg
-    Dag 71 (18.01.2027): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
+    Dag 71 (18.01.2027): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
 
 | Kasus | Utfall |
 | --- | --- |
@@ -131,49 +131,49 @@ Kasusene er syntetiske. 128 kasus, alle med forventet utfall.
 **escitalopram 10 mg til mirtazapin 15 mg, sluttrinnet simulert som laveste tablettdose** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Escitalopram peroralt: 5 mg = 1 tablett à 5 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres.
     Fra dag 15 (fra 23.11.2026): Escitalopram peroralt: Seponert; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
+    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
 
 **escitalopram 10 mg til mirtazapin 30 mg, sluttrinnet simulert som laveste tablettdose** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Escitalopram peroralt: 5 mg = 1 tablett à 5 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
-    Dag 15 (23.11.2026): Vurdering (Mirtazapin): Før endringen: Vurder effekten av mirtazapin så langt og om økningen fortsatt trengs, hvordan mirtazapin tåles, og om pasienten har seponeringssymptomer etter escitalopram.
+    Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres.
+    Dag 15 (23.11.2026): Vurdering (Mirtazapin): Før endringen, punkt 2: Vurder effekten av mirtazapin så langt og om økningen fortsatt trengs, hvordan mirtazapin tåles, og om pasienten har seponeringssymptomer etter escitalopram.
     Fra dag 15 (fra 23.11.2026): Escitalopram peroralt: Seponert; Mirtazapin peroralt: 30 mg = 1 tablett à 30 mg
-    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
-    Dag 43 (21.12.2026): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
+    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
+    Dag 43 (21.12.2026): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
 
 **escitalopram 20 mg til mirtazapin 15 mg, sluttrinnet simulert som laveste tablettdose** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Escitalopram peroralt: 10 mg = 1 tablett à 10 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres.
     Dag 15–28 (23.11.2026–06.12.2026): Escitalopram peroralt: 5 mg = 1 tablett à 5 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 29 (07.12.2026): Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 29 (07.12.2026): Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres.
     Fra dag 29 (fra 07.12.2026): Escitalopram peroralt: Seponert; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
+    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
 
 **escitalopram 20 mg til mirtazapin 30 mg, sluttrinnet simulert som laveste tablettdose** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Escitalopram peroralt: 10 mg = 1 tablett à 10 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres.
     Dag 15–28 (23.11.2026–06.12.2026): Escitalopram peroralt: 5 mg = 1 tablett à 5 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 29 (07.12.2026): Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
-    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Før endringen: Vurder effekten av mirtazapin så langt og om økningen fortsatt trengs, hvordan mirtazapin tåles, og om pasienten har seponeringssymptomer etter escitalopram.
+    Dag 29 (07.12.2026): Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres.
+    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Før endringen, punkt 2: Vurder effekten av mirtazapin så langt og om økningen fortsatt trengs, hvordan mirtazapin tåles, og om pasienten har seponeringssymptomer etter escitalopram.
     Fra dag 29 (fra 07.12.2026): Escitalopram peroralt: Seponert; Mirtazapin peroralt: 30 mg = 1 tablett à 30 mg
-    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
-    Dag 57 (04.01.2027): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
+    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
+    Dag 57 (04.01.2027): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
 
 **mirtazapin 45 mg, som planene ikke bruker, avregistrert i FEST** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Escitalopram peroralt: 10 mg = 1 tablett à 10 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres.
     Dag 15–28 (23.11.2026–06.12.2026): Escitalopram peroralt: 5 mg = 1 tablett à 5 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 29 (07.12.2026): Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
-    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Før endringen: Vurder effekten av mirtazapin så langt og om økningen fortsatt trengs, hvordan mirtazapin tåles, og om pasienten har seponeringssymptomer etter escitalopram.
+    Dag 29 (07.12.2026): Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres.
+    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Før endringen, punkt 2: Vurder effekten av mirtazapin så langt og om økningen fortsatt trengs, hvordan mirtazapin tåles, og om pasienten har seponeringssymptomer etter escitalopram.
     Fra dag 29 (fra 07.12.2026): Escitalopram peroralt: Seponert; Mirtazapin peroralt: 30 mg = 1 tablett à 30 mg
-    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
-    Dag 57 (04.01.2027): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
+    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
+    Dag 57 (04.01.2027): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
 
 | Kasus | Utfall |
 | --- | --- |
@@ -207,49 +207,49 @@ Kasusene er syntetiske. 128 kasus, alle med forventet utfall.
 **citalopram 20 mg til mirtazapin 15 mg, sluttrinnet simulert som laveste tablettdose** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Citalopram peroralt: 10 mg = 1 tablett à 10 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres.
     Fra dag 15 (fra 23.11.2026): Citalopram peroralt: Seponert; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
+    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
 
 **citalopram 20 mg til mirtazapin 30 mg, sluttrinnet simulert som laveste tablettdose** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Citalopram peroralt: 10 mg = 1 tablett à 10 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
-    Dag 15 (23.11.2026): Vurdering (Mirtazapin): Før endringen: Vurder effekten av mirtazapin så langt og om økningen fortsatt trengs, hvordan mirtazapin tåles, og om pasienten har seponeringssymptomer etter citalopram.
+    Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres.
+    Dag 15 (23.11.2026): Vurdering (Mirtazapin): Før endringen, punkt 2: Vurder effekten av mirtazapin så langt og om økningen fortsatt trengs, hvordan mirtazapin tåles, og om pasienten har seponeringssymptomer etter citalopram.
     Fra dag 15 (fra 23.11.2026): Citalopram peroralt: Seponert; Mirtazapin peroralt: 30 mg = 1 tablett à 30 mg
-    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
-    Dag 43 (21.12.2026): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
+    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
+    Dag 43 (21.12.2026): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
 
 **citalopram 40 mg til mirtazapin 15 mg, sluttrinnet simulert som laveste tablettdose** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Citalopram peroralt: 20 mg = 1 tablett à 20 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres.
     Dag 15–28 (23.11.2026–06.12.2026): Citalopram peroralt: 10 mg = 1 tablett à 10 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 29 (07.12.2026): Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 29 (07.12.2026): Vurdering (Citalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres.
     Fra dag 29 (fra 07.12.2026): Citalopram peroralt: Seponert; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
+    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
 
 **citalopram 40 mg til mirtazapin 30 mg, sluttrinnet simulert som laveste tablettdose** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Citalopram peroralt: 20 mg = 1 tablett à 20 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres.
     Dag 15–28 (23.11.2026–06.12.2026): Citalopram peroralt: 10 mg = 1 tablett à 10 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 29 (07.12.2026): Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
-    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Før endringen: Vurder effekten av mirtazapin så langt og om økningen fortsatt trengs, hvordan mirtazapin tåles, og om pasienten har seponeringssymptomer etter citalopram.
+    Dag 29 (07.12.2026): Vurdering (Citalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres.
+    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Før endringen, punkt 2: Vurder effekten av mirtazapin så langt og om økningen fortsatt trengs, hvordan mirtazapin tåles, og om pasienten har seponeringssymptomer etter citalopram.
     Fra dag 29 (fra 07.12.2026): Citalopram peroralt: Seponert; Mirtazapin peroralt: 30 mg = 1 tablett à 30 mg
-    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
-    Dag 57 (04.01.2027): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
+    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
+    Dag 57 (04.01.2027): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
 
 **mirtazapin 45 mg, som planene ikke bruker, avregistrert i FEST** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Citalopram peroralt: 20 mg = 1 tablett à 20 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres.
     Dag 15–28 (23.11.2026–06.12.2026): Citalopram peroralt: 10 mg = 1 tablett à 10 mg; Mirtazapin peroralt: 15 mg = 1 tablett à 15 mg
-    Dag 29 (07.12.2026): Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
-    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Før endringen: Vurder effekten av mirtazapin så langt og om økningen fortsatt trengs, hvordan mirtazapin tåles, og om pasienten har seponeringssymptomer etter citalopram.
+    Dag 29 (07.12.2026): Vurdering (Citalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres.
+    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Før endringen, punkt 2: Vurder effekten av mirtazapin så langt og om økningen fortsatt trengs, hvordan mirtazapin tåles, og om pasienten har seponeringssymptomer etter citalopram.
     Fra dag 29 (fra 07.12.2026): Citalopram peroralt: Seponert; Mirtazapin peroralt: 30 mg = 1 tablett à 30 mg
-    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
-    Dag 57 (04.01.2027): Vurdering (Mirtazapin): Vurder respons og bivirkninger av mirtazapin.
+    Dag 29 (07.12.2026): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
+    Dag 57 (04.01.2027): Vurdering (Mirtazapin): Punkt 3: Vurder respons og bivirkninger av mirtazapin.
 
 | Kasus | Utfall |
 | --- | --- |
@@ -283,57 +283,57 @@ Kasusene er syntetiske. 128 kasus, alle med forventet utfall.
 **escitalopram 10 mg til sertralin 50 mg, med direkte overgang, klinisk godkjent regel uten simulering** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Escitalopram peroralt: 5 mg = 1 tablett à 5 mg
-    Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres.
     Fra dag 15 (fra 23.11.2026): Escitalopram peroralt: Seponert; Sertralin peroralt: 50 mg = 1 tablett à 50 mg
-    Dag 21 (29.11.2026): Vurdering (Escitalopram): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra escitalopram til sertralin.
-    Dag 43 (21.12.2026): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
+    Dag 21 (29.11.2026): Vurdering (Escitalopram): Punkt 2: Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra escitalopram til sertralin.
+    Dag 43 (21.12.2026): Vurdering (Sertralin): Punkt 4: Vurder respons og bivirkninger av sertralin.
 
 **escitalopram 10 mg til sertralin 100 mg, med direkte overgang, klinisk godkjent regel uten simulering** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Escitalopram peroralt: 5 mg = 1 tablett à 5 mg
-    Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres.
     Dag 15–28 (23.11.2026–06.12.2026): Escitalopram peroralt: Seponert; Sertralin peroralt: 50 mg = 1 tablett à 50 mg
-    Dag 21 (29.11.2026): Vurdering (Escitalopram): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra escitalopram til sertralin.
-    Dag 29 (07.12.2026): Vurdering (Sertralin): Før endringen: Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter escitalopram.
+    Dag 21 (29.11.2026): Vurdering (Escitalopram): Punkt 2: Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra escitalopram til sertralin.
+    Dag 29 (07.12.2026): Vurdering (Sertralin): Før endringen, punkt 3: Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter escitalopram.
     Fra dag 29 (fra 07.12.2026): Sertralin peroralt: 100 mg = 1 tablett à 100 mg
-    Dag 43 (21.12.2026): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
-    Dag 57 (04.01.2027): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
+    Dag 43 (21.12.2026): Vurdering (Sertralin): Punkt 4: Vurder respons og bivirkninger av sertralin.
+    Dag 57 (04.01.2027): Vurdering (Sertralin): Punkt 4: Vurder respons og bivirkninger av sertralin.
 
 **escitalopram 20 mg til sertralin 50 mg, med direkte overgang, klinisk godkjent regel uten simulering** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Escitalopram peroralt: 10 mg = 1 tablett à 10 mg
-    Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres.
     Dag 15–28 (23.11.2026–06.12.2026): Escitalopram peroralt: 5 mg = 1 tablett à 5 mg
-    Dag 29 (07.12.2026): Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 29 (07.12.2026): Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres.
     Fra dag 29 (fra 07.12.2026): Escitalopram peroralt: Seponert; Sertralin peroralt: 50 mg = 1 tablett à 50 mg
-    Dag 35 (13.12.2026): Vurdering (Escitalopram): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra escitalopram til sertralin.
-    Dag 57 (04.01.2027): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
+    Dag 35 (13.12.2026): Vurdering (Escitalopram): Punkt 2: Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra escitalopram til sertralin.
+    Dag 57 (04.01.2027): Vurdering (Sertralin): Punkt 4: Vurder respons og bivirkninger av sertralin.
 
 **escitalopram 20 mg til sertralin 100 mg, med direkte overgang, klinisk godkjent regel uten simulering** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Escitalopram peroralt: 10 mg = 1 tablett à 10 mg
-    Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres.
     Dag 15–28 (23.11.2026–06.12.2026): Escitalopram peroralt: 5 mg = 1 tablett à 5 mg
-    Dag 29 (07.12.2026): Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 29 (07.12.2026): Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres.
     Dag 29–42 (07.12.2026–20.12.2026): Escitalopram peroralt: Seponert; Sertralin peroralt: 50 mg = 1 tablett à 50 mg
-    Dag 35 (13.12.2026): Vurdering (Escitalopram): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra escitalopram til sertralin.
-    Dag 43 (21.12.2026): Vurdering (Sertralin): Før endringen: Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter escitalopram.
+    Dag 35 (13.12.2026): Vurdering (Escitalopram): Punkt 2: Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra escitalopram til sertralin.
+    Dag 43 (21.12.2026): Vurdering (Sertralin): Før endringen, punkt 3: Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter escitalopram.
     Fra dag 43 (fra 21.12.2026): Sertralin peroralt: 100 mg = 1 tablett à 100 mg
-    Dag 57 (04.01.2027): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
-    Dag 71 (18.01.2027): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
+    Dag 57 (04.01.2027): Vurdering (Sertralin): Punkt 4: Vurder respons og bivirkninger av sertralin.
+    Dag 71 (18.01.2027): Vurdering (Sertralin): Punkt 4: Vurder respons og bivirkninger av sertralin.
 
 **sertralin 25 mg, som planene ikke bruker, avregistrert i FEST** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Escitalopram peroralt: 10 mg = 1 tablett à 10 mg
-    Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres.
     Dag 15–28 (23.11.2026–06.12.2026): Escitalopram peroralt: 5 mg = 1 tablett à 5 mg
-    Dag 29 (07.12.2026): Vurdering (Escitalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 29 (07.12.2026): Vurdering (Escitalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres.
     Dag 29–42 (07.12.2026–20.12.2026): Escitalopram peroralt: Seponert; Sertralin peroralt: 50 mg = 1 tablett à 50 mg
-    Dag 35 (13.12.2026): Vurdering (Escitalopram): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra escitalopram til sertralin.
-    Dag 43 (21.12.2026): Vurdering (Sertralin): Før endringen: Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter escitalopram.
+    Dag 35 (13.12.2026): Vurdering (Escitalopram): Punkt 2: Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra escitalopram til sertralin.
+    Dag 43 (21.12.2026): Vurdering (Sertralin): Før endringen, punkt 3: Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter escitalopram.
     Fra dag 43 (fra 21.12.2026): Sertralin peroralt: 100 mg = 1 tablett à 100 mg
-    Dag 57 (04.01.2027): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
-    Dag 71 (18.01.2027): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
+    Dag 57 (04.01.2027): Vurdering (Sertralin): Punkt 4: Vurder respons og bivirkninger av sertralin.
+    Dag 71 (18.01.2027): Vurdering (Sertralin): Punkt 4: Vurder respons og bivirkninger av sertralin.
 
 | Kasus | Utfall |
 | --- | --- |
@@ -362,57 +362,57 @@ Kasusene er syntetiske. 128 kasus, alle med forventet utfall.
 **citalopram 20 mg til sertralin 50 mg, med direkte overgang, klinisk godkjent regel uten simulering** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Citalopram peroralt: 10 mg = 1 tablett à 10 mg
-    Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres.
     Fra dag 15 (fra 23.11.2026): Citalopram peroralt: Seponert; Sertralin peroralt: 50 mg = 1 tablett à 50 mg
-    Dag 21 (29.11.2026): Vurdering (Citalopram): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra citalopram til sertralin.
-    Dag 43 (21.12.2026): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
+    Dag 21 (29.11.2026): Vurdering (Citalopram): Punkt 2: Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra citalopram til sertralin.
+    Dag 43 (21.12.2026): Vurdering (Sertralin): Punkt 4: Vurder respons og bivirkninger av sertralin.
 
 **citalopram 20 mg til sertralin 100 mg, med direkte overgang, klinisk godkjent regel uten simulering** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Citalopram peroralt: 10 mg = 1 tablett à 10 mg
-    Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres.
     Dag 15–28 (23.11.2026–06.12.2026): Citalopram peroralt: Seponert; Sertralin peroralt: 50 mg = 1 tablett à 50 mg
-    Dag 21 (29.11.2026): Vurdering (Citalopram): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra citalopram til sertralin.
-    Dag 29 (07.12.2026): Vurdering (Sertralin): Før endringen: Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter citalopram.
+    Dag 21 (29.11.2026): Vurdering (Citalopram): Punkt 2: Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra citalopram til sertralin.
+    Dag 29 (07.12.2026): Vurdering (Sertralin): Før endringen, punkt 3: Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter citalopram.
     Fra dag 29 (fra 07.12.2026): Sertralin peroralt: 100 mg = 1 tablett à 100 mg
-    Dag 43 (21.12.2026): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
-    Dag 57 (04.01.2027): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
+    Dag 43 (21.12.2026): Vurdering (Sertralin): Punkt 4: Vurder respons og bivirkninger av sertralin.
+    Dag 57 (04.01.2027): Vurdering (Sertralin): Punkt 4: Vurder respons og bivirkninger av sertralin.
 
 **citalopram 40 mg til sertralin 50 mg, med direkte overgang, klinisk godkjent regel uten simulering** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Citalopram peroralt: 20 mg = 1 tablett à 20 mg
-    Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres.
     Dag 15–28 (23.11.2026–06.12.2026): Citalopram peroralt: 10 mg = 1 tablett à 10 mg
-    Dag 29 (07.12.2026): Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 29 (07.12.2026): Vurdering (Citalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres.
     Fra dag 29 (fra 07.12.2026): Citalopram peroralt: Seponert; Sertralin peroralt: 50 mg = 1 tablett à 50 mg
-    Dag 35 (13.12.2026): Vurdering (Citalopram): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra citalopram til sertralin.
-    Dag 57 (04.01.2027): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
+    Dag 35 (13.12.2026): Vurdering (Citalopram): Punkt 2: Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra citalopram til sertralin.
+    Dag 57 (04.01.2027): Vurdering (Sertralin): Punkt 4: Vurder respons og bivirkninger av sertralin.
 
 **citalopram 40 mg til sertralin 100 mg, med direkte overgang, klinisk godkjent regel uten simulering** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Citalopram peroralt: 20 mg = 1 tablett à 20 mg
-    Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres.
     Dag 15–28 (23.11.2026–06.12.2026): Citalopram peroralt: 10 mg = 1 tablett à 10 mg
-    Dag 29 (07.12.2026): Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 29 (07.12.2026): Vurdering (Citalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres.
     Dag 29–42 (07.12.2026–20.12.2026): Citalopram peroralt: Seponert; Sertralin peroralt: 50 mg = 1 tablett à 50 mg
-    Dag 35 (13.12.2026): Vurdering (Citalopram): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra citalopram til sertralin.
-    Dag 43 (21.12.2026): Vurdering (Sertralin): Før endringen: Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter citalopram.
+    Dag 35 (13.12.2026): Vurdering (Citalopram): Punkt 2: Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra citalopram til sertralin.
+    Dag 43 (21.12.2026): Vurdering (Sertralin): Før endringen, punkt 3: Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter citalopram.
     Fra dag 43 (fra 21.12.2026): Sertralin peroralt: 100 mg = 1 tablett à 100 mg
-    Dag 57 (04.01.2027): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
-    Dag 71 (18.01.2027): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
+    Dag 57 (04.01.2027): Vurdering (Sertralin): Punkt 4: Vurder respons og bivirkninger av sertralin.
+    Dag 71 (18.01.2027): Vurdering (Sertralin): Punkt 4: Vurder respons og bivirkninger av sertralin.
 
 **sertralin 25 mg, som planene ikke bruker, avregistrert i FEST** (startdato 09.11.2026):
 
     Dag 1–14 (09.11.2026–22.11.2026): Citalopram peroralt: 20 mg = 1 tablett à 20 mg
-    Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 15 (23.11.2026): Vurdering (Citalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres.
     Dag 15–28 (23.11.2026–06.12.2026): Citalopram peroralt: 10 mg = 1 tablett à 10 mg
-    Dag 29 (07.12.2026): Vurdering (Citalopram): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres. Neste trinn tas først når symptomene er borte eller tålelige; dagene er minstetider.
+    Dag 29 (07.12.2026): Vurdering (Citalopram): Før endringen, punkt 1: Vurder seponeringssymptomer og forverring av depresjonen før citalopram reduseres eller seponeres.
     Dag 29–42 (07.12.2026–20.12.2026): Citalopram peroralt: Seponert; Sertralin peroralt: 50 mg = 1 tablett à 50 mg
-    Dag 35 (13.12.2026): Vurdering (Citalopram): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra citalopram til sertralin.
-    Dag 43 (21.12.2026): Vurdering (Sertralin): Før endringen: Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter citalopram.
+    Dag 35 (13.12.2026): Vurdering (Citalopram): Punkt 2: Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra citalopram til sertralin.
+    Dag 43 (21.12.2026): Vurdering (Sertralin): Før endringen, punkt 3: Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter citalopram.
     Fra dag 43 (fra 21.12.2026): Sertralin peroralt: 100 mg = 1 tablett à 100 mg
-    Dag 57 (04.01.2027): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
-    Dag 71 (18.01.2027): Vurdering (Sertralin): Vurder respons og bivirkninger av sertralin.
+    Dag 57 (04.01.2027): Vurdering (Sertralin): Punkt 4: Vurder respons og bivirkninger av sertralin.
+    Dag 71 (18.01.2027): Vurdering (Sertralin): Punkt 4: Vurder respons og bivirkninger av sertralin.
 
 | Kasus | Utfall |
 | --- | --- |

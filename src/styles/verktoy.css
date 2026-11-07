@@ -459,6 +459,50 @@
   color: var(--toksisk-blekk);
 }
 
+/* Forbeholdene står for hver plan: små og dempet, etter det som gjelder akkurat denne planen. */
+.doseplan__del[data-tone='dempet'] :is(h3, ul) {
+  color: var(--blekk-dempet);
+}
+
+.doseplan__del[data-tone='dempet'] ul {
+  font-size: var(--tekst-liten);
+}
+
+/* Vurderingspunktene er nummerert, fordi tidslinjen viser til numrene. */
+.doseplan__del ol {
+  margin: 0;
+  padding-left: var(--rom-6);
+  font-size: var(--tekst-etikett);
+  line-height: var(--linjehoyde-lesing);
+}
+
+.doseplan__del ol li::marker {
+  font-weight: var(--vekt-halvfet);
+  font-variant-numeric: tabular-nums;
+}
+
+.doseplan__del ol li + li {
+  margin-top: var(--rom-2);
+}
+
+/* Dosen pasienten bruker nå, rett under sluttmålet. */
+.doseplan__utgangspunkt {
+  margin: 0;
+  font-size: var(--tekst-etikett);
+  line-height: var(--linjehoyde-lesing);
+}
+
+.doseplan__utgangspunkt span {
+  font-weight: var(--vekt-halvfet);
+}
+
+/* Regelversjonen og FEST-uttrekket i én liten linje; resten av sporbarheten står i det faglige grunnlaget. */
+.doseplan__spor {
+  margin: 0;
+  font-size: var(--tekst-liten);
+  color: var(--blekk-dempet);
+}
+
 /* De generelle forbeholdene, som står for hver plan: små, rett under tabellen. */
 .doseplan__forbehold {
   margin: 0;
@@ -543,8 +587,41 @@
     display: none;
   }
 
-  .tidslinje__punkt {
+  /* Skjemaet er usynlig på papiret, men tok plass og ga tomme sider etter en kort plan. */
+  .flytsteg:not(:has(.doseplan)) {
+    display: none;
+  }
+
+  .tidslinje__punkt,
+  .doseplan__del li {
     break-inside: avoid;
+  }
+
+  /* Det faglige grunnlaget skrives bare ut når det er åpnet på skjermen. */
+  .faglig-grunnlag:not(:has(details[open])) {
+    display: none;
+  }
+
+  /* Med ett legemiddel står navnet bare for skjermlesere på skjermen; på papir står det i hver rad. */
+  .tidslinje .tidslinje__navn--utskrift {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    clip-path: none;
+    white-space: normal;
+    font-size: var(--tekst-liten);
+    font-weight: var(--vekt-halvfet);
+  }
+
+  .tidslinje__dose {
+    font-size: 1.25rem;
+  }
+
+  .tidslinje__punkt {
+    padding-bottom: var(--rom-3);
   }
 
   /* Planpanelet står fast og ruller på store skjermer; på papir skal hele planen flyte over sidene. */

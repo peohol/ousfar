@@ -16,7 +16,7 @@ import { NEDTRAPPINGSDISPOSISJON, NEDTRAPPINGSSETT_FOR_K1 as NEDTRAPPINGSSETT, N
 import { PILOTDISPOSISJON, PILOTSETT, PILOTSETT_FOR_RETTELSENE } from '../verktoy/regler/pilotsett'
 import { rett, rettRegel } from '../verktoy/regler/rettelse'
 import { ETTER_RETTELSENE } from '../verktoy/kontrollsett'
-import { FOR_RETTELSENE, forventedeLinjeendringer, forventetFor, lagRettelseskontroll, matrisesammenligning, RETTELSESKONTROLLFIL, rettelsesrader, synlig, tilGodkjenning } from '../verktoy/rettelseskontroll'
+import { FOR_RETTELSENE, forventedeLinjeendringer, forventetFor, kopilinje, lagRettelseskontroll, matrisesammenligning, RETTELSESKONTROLLFIL, rettelsesrader, synlig, tilGodkjenning } from '../verktoy/rettelseskontroll'
 import { samlet } from '../verktoy/tilgjengelighet'
 
 // Kontrollgrunnlaget gjelder settene rett etter rettelsen; K1 har siden gitt escitalopram en ny versjon (`regler/k1.ts`, egne tester).
@@ -224,9 +224,9 @@ describe('Kontrollgrunnlaget', () => {
       // Hver linje som er ulik, er en av de forventede, og står med samme linje før rettelsen på samme plass.
       etter.forEach((l: string, i: number) => {
         if (l === for_[i]) return
-        const e = forventet.find((f) => l === `- ${f.ny}`)
+        const e = forventet.find((f) => l === kopilinje(f, 'ny'))
         expect(e, `${x.kasus.id}: ${l}`).toBeDefined()
-        expect(for_[i], x.kasus.id).toBe(`- ${e!.for}`)
+        expect(for_[i], x.kasus.id).toBe(kopilinje(e!, 'for'))
         brukt.add(e!.ny)
       })
     }
@@ -234,7 +234,7 @@ describe('Kontrollgrunnlaget', () => {
     expect([...endringer.values()].flat().map((e) => e.ny).filter((l) => !brukt.has(l))).toEqual([])
     // En endring utenfor de forventede linjene blir oppdaget, også i advarslene, kildene og versjonene.
     const x = planer.find((p) => endringer.has(p.etter.resultat!.regel.id))!
-    for (const del of ['Advarsler:', 'Kilder:', 'Versjoner:']) {
+    for (const del of ['Forbehold:', 'Kontroller:', 'Kilder:', 'Versjoner:']) {
       const endret = { ...x.etter, tekst: x.etter.tekst!.replace(`${del}\n- `, `${del}\n- endret `) }
       expect(endret.tekst, del).not.toBe(x.etter.tekst)
       expect(synlig(endret, endringer), del).not.toBe(synlig(x.for))

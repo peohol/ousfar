@@ -29,6 +29,7 @@ import { erKliniskGodkjent, fingeravtrykk, harBeregning } from '../../verktoy/re
 import type { Regel } from '../../verktoy/regler/modell'
 import { SAMMENLIGNINGSSETT } from '../../verktoy/regler/nedtrapping'
 import { REGELSETTENE, tilForlop, tilgjengelighet } from '../../verktoy/tilgjengelighet'
+import { SKIFTEINNRYKK } from '../../verktoy/planvisning'
 import {
   BRUKERFORLOP,
   KLASSENAVN,
@@ -264,7 +265,17 @@ describe('QA: K0-01 escitalopram (tablett og dråper)', () => {
     ])
     // Med dråper valgt etter tablett: den samme planen som med dråper fra starten, og som fra tablett (dråper fra første trinn).
     expect(r('H-39').utfall?.tekst).toBe(r('H-30').utfall?.tekst)
-    expect(r('K0-01').utfall?.tekst).toBe(r('H-30').utfall?.tekst)
+    // Fra tablett: den samme planen, og i tillegg formskiftet og påminnelsen om resept på dråper (P3).
+    const fraTablett = r('K0-01').utfall?.tekst ?? ''
+    expect(fraTablett).toContain(`\n${SKIFTEINNRYKK}Escitalopram peroralt – over til dråper fra første dag – husk resept\n`)
+    expect(fraTablett).toContain(' Ny legemiddelform (dråper): husk resept.')
+    expect(
+      fraTablett
+        .split('\n')
+        .filter((l) => !l.startsWith(SKIFTEINNRYKK))
+        .join('\n')
+        .replace(' Ny legemiddelform (dråper): husk resept.', ''),
+    ).toBe(r('H-30').utfall?.tekst)
     // Lang behandlingstid er utenfor det avgrensede omfanget.
     expect([r('H-32').klasse, r('H-32').vist.join(' ')]).toEqual(['stoppet', expect.stringMatching(/Komplett plan ikke tilgjengelig/)])
   })

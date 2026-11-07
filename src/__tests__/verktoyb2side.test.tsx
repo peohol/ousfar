@@ -18,6 +18,7 @@ import { act, cleanup, render, screen, waitFor, within } from '@testing-library/
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Verktoyside, type VerktoysideProps } from '../components/verktoy/Verktoyside'
+import { KOPIER } from '../components/verktoy/Doseplanvisning'
 import { glemBildet } from '../oppdatering/bevaring'
 import { FORSLAG_B2, kjorKontrollkasus } from '../verktoy/kontrollgrunnlag'
 import { FOR_B2 } from '../verktoy/kontrollsett'
@@ -107,8 +108,9 @@ async function velgTilKomplett(user: Bruker, tittel: string) {
 /** Tidslinjen på siden: kolonneoverskriftene og cellene i hver rad. */
 const tidslinje = (plan: HTMLElement) => tidslinjetekst(within(plan).getByRole('list', { name: 'Planen dag for dag' }))
 
-async function kopier(user: Bruker, plan: HTMLElement) {
-  await user.click(within(plan).getByRole('button', { name: 'Kopier planen' }))
+/** Kopien med det faglige grunnlaget (preparatene, versjonene og fingeravtrykket), som kontrollgrunnlaget bygger på, eller standardplanen (`kort`). */
+async function kopier(user: Bruker, plan: HTMLElement, hva: keyof typeof KOPIER = 'utvidet') {
+  await user.click(within(plan).getByRole('button', { name: KOPIER[hva].knapp }))
   return navigator.clipboard.readText()
 }
 
@@ -159,16 +161,19 @@ describe('Escitalopram versjon 14 (B2) på verktøysiden, uten simulering', () =
       for (const d of doser.slice(1)) expect(d.hva, `${d.mg} mg`).toBe(`${d.mg} ${d.mg === 1 ? 'dråpe' : 'dråper'} à 1 mg`)
       for (const d of doser) expect(/tablett/.test(d.hva) && /dråpe/.test(d.hva), `${d.mg} mg`).toBe(false)
       expect(tekst).toContain(`Fra dag ${seponert}: Escitalopram peroralt: Seponert`)
-      for (const d of [7, 14, 28]) expect(tekst).toContain(`Dag ${seponert - 1 + d}: Vurdering (Escitalopram): Vurder seponeringssymptomer og tegn på tilbakefall ${d} dager etter siste dose.`)
+      for (const [i, d] of [7, 14, 28].entries())
+        expect(tekst).toContain(`Dag ${seponert - 1 + d}: Vurdering (Escitalopram): Punkt ${i + 2}: Vurder seponeringssymptomer og tegn på tilbakefall ${d} dager etter siste dose.`)
       expect(tekst).toMatch(/\n- Cipralex dråper, oppl 20 mg\/ml(, varenr\. \d{6})? \(Hele dråper\)\n/)
       if (forste === 'tablett') expect(tekst).toMatch(/\n- Cipralex tab 5 mg/)
       expect(tekst).toContain(FINGERAVTRYKK)
-      expect(tekst).not.toMatch(/simulert|versjon 13/i)
+      // Ingen simulert godkjenning, og planen er ikke beregnet etter versjon 13 (godkjenningsteksten for versjon 14 nevner at den erstatter versjon 13).
+      expect(tekst).not.toMatch(/simulert/i)
+      expect(tekst).not.toMatch(/Regel seponering-escitalopram, versjon 13|Beregnet etter regelversjon 13/)
 
-      // Tidslinjen på siden har de samme dosene, dagene og vurderingene som kopien, celle for celle.
+      // Tidslinjen på siden har de samme dosene, dagene og vurderingene som standardkopien, celle for celle.
       const t = tidslinje(plan)
       expect(t.rader).toContainEqual([`Fra dag ${seponert}`, 'Seponert'])
-      expect(tidslinjeavvik(t, tekst)).toEqual([])
+      expect(tidslinjeavvik(t, await kopier(user, plan, 'kort'))).toEqual([])
 
       // Den samme planen som kasuset i kontrollgrunnlaget, regnet gjennom verktøyets egen tilgjengelighet uten simulering.
       const k = kasus(id)

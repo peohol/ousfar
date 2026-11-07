@@ -387,11 +387,14 @@ describe('Doseplanen i verktøyene', () => {
       'FEST-uttrekk 2026-10-15, kontrollert 2026-11-01T04:20:00Z, preparatstatus per 01.11.2026',
       expect.stringMatching(/^Preparatgrunnlag [0-9a-f]{12}$/),
     ])
-    expect(p.advarsler.join(' ')).toMatch(/klinisk godkjent regelversjon/)
+    expect(p.forbehold.join(' ')).toMatch(/klinisk godkjent regelversjon/)
     const tekst = planTekst(p, 'Trappe ned antidepressiv')
     expect(tekst).toMatch(/^Trappe ned antidepressiv\n/)
     expect(tekst).toMatch(/Dag 1–14 \(02\.11\.2026–15\.11\.2026\): Escitalopram peroralt: 12,5 mg = 1 tablett à 10 mg \+ ½ tablett à 5 mg/)
-    expect(tekst).toMatch(/Versjoner:/)
+    // Versjonene står i den utvidede kopien; standardkopien har regelversjonen i én linje.
+    expect(tekst).not.toMatch(/Versjoner:/)
+    expect(tekst).toMatch(/\nBeregnet etter regelversjon 1 med FEST-uttrekk fra 15\.10\.2026\.$/)
+    expect(planTekst(p, 'Trappe ned antidepressiv', [], true)).toMatch(/\nVersjoner:\n- Regel test-nedtrapping, versjon 1/)
   })
 
   it('viser depotinjeksjonene som egne hendelser', () => {

@@ -46,7 +46,7 @@ const linjer = (k: K2kasus) => planlinjer(k).filter((l) => !erVurdering(l))
 const vurderinger = (k: K2kasus) =>
   planlinjer(k)
     .filter(erVurdering)
-    .map((l) => l.replace(/^Dag (\d+) \([^)]*\): Vurdering \((\w+)\): (Før endringen: )?.*$/, (_, d: string, navn: string, for_?: string) => `dag ${d} ${navn}${for_ ? ' før' : ''}`))
+    .map((l) => l.replace(/^Dag (\d+) \([^)]*\): Vurdering \((\w+)\): (Før endringen[,:])?.*$/, (_, d: string, navn: string, for_?: string) => `dag ${d} ${navn}${for_ ? ' før' : ''}`))
 
 /** Inndata med alle bekreftelser og nei på alle unntak, på en kopi med simulert avklaring og godkjenning, og sluttrinnet som oppgitt (K2-2). */
 function beregnSomGodkjent(r: Regel, x: Partial<Beregningsinndata>, sluttrinn: Sluttrinn = 'laveste_tablett') {
@@ -293,8 +293,10 @@ describe('K2: sluttrinnet ved bytte (K2-2)', () => {
     }
     // I den viste planen står vurderingen før økningen på dagen sertralin går fra 50 til 100 mg.
     const plan = planlinjer(kasus('bytte-escitalopram-sertralin:20-100'))
-    expect(plan).toContain(
-      'Dag 43 (21.12.2026): Vurdering (Sertralin): Før endringen: Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter escitalopram.',
+    expect(plan).toContainEqual(
+      expect.stringMatching(
+        /^Dag 43 \(21\.12\.2026\): Vurdering \(Sertralin\): Før endringen, punkt \d+: Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter escitalopram\.$/,
+      ),
     )
   })
 

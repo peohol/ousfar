@@ -12,6 +12,23 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.127.3',
+    dato: '2026-11-07',
+    sammendrag: 'Doseplanene i verktøyene er kortere: det som trengs for å gjennomføre planen øverst, det faglige grunnlaget for seg',
+    typer: ['Design / layout', 'Funksjonalitet'],
+    omfang: 'Moderat omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Gjelder bare administratorene. Ingen regler, doser, godkjenninger, spørsmål eller sperrer er endret.',
+      'Planen viser først utgangspunktet og tidslinjen med doser, formskifter og vurderingspunkter, deretter hvilke legemiddelformer og styrker som trengs og når det må skrives ny resept, de nummererte vurderingspunktene med hva som gjøres ved funn, det som gjelder akkurat denne planen, og forbeholdene.',
+      'Vurderingspunkter samme dag står samlet i tidslinjen med nummeret i listen, og et legemiddel som fortsetter uendret, forklares bare første gang.',
+      'Avvik fra regelens kurve, forutsetninger, usikkerhet, kontroller, hele preparatlisten, godkjenning, kilder og versjoner står i «Faglig grunnlag og kilder» nederst, lukket til det åpnes.',
+      '«Kopier planen» gir den korte planen, og «Kopier med faglig grunnlag» gir alt. Nedtrapping av escitalopram 10 mg fra tabletter er gått fra over 15 000 til om lag 4 000 tegn.',
+      'Utskriften har det som vises: det faglige grunnlaget kommer bare med når det er åpnet.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.127.0',
     dato: '2026-11-06',
     sammendrag: 'CPIC er tatt ut av fagsidene, og databasen måles jevnlig',

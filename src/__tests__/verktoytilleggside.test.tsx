@@ -70,17 +70,18 @@ describe('Kombinere stemningsstabiliserende med de godkjente reglene', () => {
 
     // Alt bekreftet, nei på hvert spørsmål og unntak: hele planen, beregnet av seg selv.
     await besvarAlt(user)
-    const tekst = await kopier(user)
+    const tekst = await kopier(user, 'utvidet')
     expect(tekst).toMatch(/^Kombinere stemningsstabiliserende\n/)
     expect(tekst).toContain(
       'Komplett plan til sluttmålet: Valproat fortsetter uendret på 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten); Lamotrigin fortsetter på 100 mg fra dag 36.',
     )
     const rader = tekst.split('\n').filter((l) => l.includes('Valproat peroralt:'))
     expect(rader).toHaveLength(4)
-    for (const l of rader)
-      expect(l).toContain(
-        'Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke',
-      )
+    // Hele forklaringen i den første raden; deretter samme dose, merket uendret.
+    expect(rader[0]).toContain(
+      'Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose, bekreftet av forskriveren og ikke kontrollert; planen beregner den ikke',
+    )
+    for (const l of rader.slice(1)) expect(l).toContain('Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose;')
     expect(tekst).toMatch(/Dag 1–14: Valproat peroralt: .*; Lamotrigin peroralt: 25 mg annenhver dag = 1 tablett à 25 mg/)
     expect(tekst).toMatch(/Fra dag 36: Valproat peroralt: .*; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg/)
     expect(tekst).toContain('Bekreftet: Pasienten bruker et natriumvalproatpreparat')
@@ -98,14 +99,14 @@ describe('Kombinere stemningsstabiliserende med de godkjente reglene', () => {
     await svar(user, /sikker prevensjon uten avbrudd/, IKKE)
     await stoppet(/Ingen plan med disse svarene/)
     await svar(user, /sikker prevensjon uten avbrudd/, /^Ja$/)
-    expect(await kopier(user)).toContain('Bekreftet: Pasienten bruker sikker prevensjon uten avbrudd')
+    expect(await kopier(user, 'utvidet')).toContain('Bekreftet: Pasienten bruker sikker prevensjon uten avbrudd')
 
     // Pasienten kan bli far: forholdsreglene for menn må være gitt. «Ikke ennå» er en vurdering som gjenstår, ikke en stopp.
     await besvarAlt(user, [/kan gjøre en partner gravid/])
     await svar(user, /mulige risikoen for nevroutviklingsforstyrrelser/, /^Ikke ennå$/)
     await stoppet(/Ett spørsmål igjen/)
     await svar(user, /mulige risikoen for nevroutviklingsforstyrrelser/, /^Ja$/)
-    expect(await kopier(user)).toContain('Bekreftet: Pasienten er informert om den mulige risikoen')
+    expect(await kopier(user, 'utvidet')).toContain('Bekreftet: Pasienten er informert om den mulige risikoen')
 
     // Uten natriumvalproatpreparat og dose i mg natriumvalproat: ingen plan.
     await besvarAlt(user)
@@ -118,14 +119,14 @@ describe('Kombinere stemningsstabiliserende med de godkjente reglene', () => {
     vis()
     await fyllInn(user, 'Litium', '168', '200')
     await besvarAlt(user)
-    const tekst = await kopier(user)
+    const tekst = await kopier(user, 'utvidet')
     expect(tekst).toContain('Komplett plan til sluttmålet: Litium fortsetter uendret på 168 mg Li⁺ (24 mmol); Lamotrigin fortsetter på 200 mg fra dag 36.')
     const rader = tekst.split('\n').filter((l) => l.includes('Litium peroralt:'))
     expect(rader).toHaveLength(4)
-    for (const l of rader)
-      expect(l).toContain(
-        'Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke',
-      )
+    expect(rader[0]).toContain(
+      'Litium peroralt: 168 mg Li⁺ (24 mmol) = 4 tabletter Lithionit 42 mg depottablett; uendret dose, bekreftet av forskriveren som aktuell behandling og kontrollert mot regelens tillatte doser, ikke mot FEST; planen beregner den ikke',
+    )
+    for (const l of rader.slice(1)) expect(l).toContain('Litium peroralt: 168 mg Li⁺ (24 mmol) = uendret dose;')
     expect(tekst).toMatch(/Fra dag 36: Litium peroralt: .*; Lamotrigin peroralt: 200 mg = 1 tablett à 200 mg/)
     expect(tekst).toMatch(/Regel tillegg-litium-lamotrigin, versjon 2, fingeravtrykk 786436a0ea8d/)
 

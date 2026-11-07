@@ -62,21 +62,21 @@ describe('Bytte antidepressiv til sertralin med de godkjente reglene', () => {
     const user = userEvent.setup()
     vis()
     await fyllInn(user, 'Escitalopram', 'Sertralin', '10', '100')
-    const tekst = await kopier(user)
+    const tekst = await kopier(user, 'utvidet')
     expect(tekst).toMatch(/^Bytte antidepressiv\nBytte fra escitalopram til sertralin, nedtrapping og direkte overgang\n/)
     expect(tekst).toContain('Komplett plan til sluttmålet: Escitalopram seponert fra dag 15; Sertralin fortsetter på 100 mg fra dag 29.')
     // Tidslinjen: halvert til 5 mg (laveste tablettdose) i 14 dager, så direkte overgang dagen etter siste dose, og økning tidligst dag 29 etter en vurdering.
     expect(tekst).toMatch(/\nDag 1–14: Escitalopram peroralt: 5 mg = 1 tablett à 5 mg\n/)
-    expect(tekst).toMatch(/\nDag 15: Vurdering \(Escitalopram\): Før endringen: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres\./)
+    expect(tekst).toMatch(/\nDag 15: Vurdering \(Escitalopram\): Før endringen, punkt \d+: Vurder seponeringssymptomer og forverring av depresjonen før escitalopram reduseres eller seponeres\./)
     expect(tekst).toMatch(/\nDag 15–28: Escitalopram peroralt: Seponert; Sertralin peroralt: 50 mg = 1 tablett à 50 mg\n/)
     expect(tekst).toMatch(
-      /\nDag 21: Vurdering \(Escitalopram\): Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra escitalopram til sertralin\./,
+      /\nDag 21: Vurdering \(Escitalopram\): Punkt \d+: Vurder seponeringssymptomer, tegn på serotonerg belastning og forverring av depresjonen etter overgangen fra escitalopram til sertralin\./,
     )
     expect(tekst).toMatch(
-      /\nDag 29: Vurdering \(Sertralin\): Før endringen: Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter escitalopram\./,
+      /\nDag 29: Vurdering \(Sertralin\): Før endringen, punkt \d+: Vurder effekten av sertralin så langt og om økningen fortsatt trengs, hvordan sertralin tåles, og om pasienten har seponeringssymptomer etter escitalopram\./,
     )
     expect(tekst).toMatch(/\nFra dag 29: Sertralin peroralt: 100 mg = 1 tablett à 100 mg\n/)
-    expect(tekst).toMatch(/\nDag 43: Vurdering \(Sertralin\): Vurder respons og bivirkninger av sertralin\.\n/)
+    expect(tekst).toMatch(/\nDag 43: Vurdering \(Sertralin\): Punkt \d+: Vurder respons og bivirkninger av sertralin\.\n/)
     expect(tekst).toContain('Beregnet etter en klinisk godkjent regelversjon.')
     expect(tekst).toContain('Avkreftet: Pasienten har brukt escitalopram sammenhengende i mer enn 8 uker.')
     expect(tekst).toContain('Avkreftet: Et tidligere forsøk på å trappe ned eller seponere escitalopram')
@@ -94,12 +94,12 @@ describe('Bytte antidepressiv til sertralin med de godkjente reglene', () => {
     const user = userEvent.setup()
     vis()
     await fyllInn(user, 'Citalopram', 'Sertralin', '40', '50')
-    const tekst = await kopier(user)
+    const tekst = await kopier(user, 'utvidet')
     expect(tekst).toContain('Komplett plan til sluttmålet: Citalopram seponert fra dag 29; Sertralin fortsetter på 50 mg fra dag 29.')
     expect(tekst).toMatch(/\nDag 1–14: Citalopram peroralt: 20 mg = 1 tablett à 20 mg\n/)
     expect(tekst).toMatch(/\nDag 15–28: Citalopram peroralt: 10 mg = 1 tablett à 10 mg\n/)
     expect(tekst).toMatch(/\nFra dag 29: Citalopram peroralt: Seponert; Sertralin peroralt: 50 mg = 1 tablett à 50 mg\n/)
-    expect(tekst).toMatch(/\nDag 35: Vurdering \(Citalopram\): Vurder seponeringssymptomer, tegn på serotonerg belastning/)
+    expect(tekst).toMatch(/\nDag 35: Vurdering \(Citalopram\): Punkt \d+: Vurder seponeringssymptomer, tegn på serotonerg belastning/)
     expect(tekst).not.toMatch(/Dag \d+ \(?.*Vurdering \(Sertralin\): Før endringen/)
     expect(tekst).toContain('Regel bytte-citalopram-sertralin, versjon 2, fingeravtrykk 2b64ff9e383e')
     expect(tekst).not.toMatch(/simulert/i)
