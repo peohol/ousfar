@@ -12,6 +12,8 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Verktoyside, type VerktoysideProps } from '../components/verktoy/Verktoyside'
 import { glemBildet } from '../oppdatering/bevaring'
+import { forsteSetning } from '../verktoy/planvisning'
+import { VALPROAT_LAMOTRIGIN } from '../verktoy/regler/tillegg'
 import { FEST_TILLEGG } from '../verktoy/tilleggsgrunnlag'
 import { pilotklokke, pilotlesing, pilotuttrekk } from './hjelp/pilotside'
 import { besvarAlt, kopier, planpanel, sporsmal, stoppet, type Bruker } from './hjelp/verktoyflyt'
@@ -56,6 +58,23 @@ async function fyllInn(user: Bruker, fra: string, dose: string, maldose: string)
 /** Svaret som sier at et vilkår ikke er oppfylt: «Nei», eller «Ikke ennå» for en vurdering. */
 const IKKE = /^(Nei|Ikke ennå)$/
 
+/** Vilkårene i det graviditetsforebyggende programmet for valproat, i regelens rekkefølge. */
+const PPP = VALPROAT_LAMOTRIGIN.bekreftelser.filter((b) => b.ved?.sporsmal === 'kan_bli_gravid')
+/** Hvert unntak i valproatregelen, avkreftet, med første setning. */
+const AVKREFTET = VALPROAT_LAMOTRIGIN.unntak.map((u) => `- Avkreftet: ${forsteSetning(u.tekst)}`)
+
+/** Linjene under «Avklart for denne pasienten» i en kopi. */
+function avklart(tekst: string) {
+  const linjer = tekst.split('\n')
+  const fra = linjer.indexOf('Avklart for denne pasienten:') + 1
+  expect(fra).toBeGreaterThan(0)
+  const til = linjer.indexOf('', fra)
+  return linjer.slice(fra, til === -1 ? undefined : til)
+}
+
+/** De samme linjene slik de står på skjermen. */
+const avklartPaSkjermen = () => within(screen.getByRole('region', { name: 'Avklart for denne pasienten' })).getAllByRole('listitem').map((li) => li.textContent)
+
 /** Svarer `verdi` på spørsmålet som passer `tekst`. */
 const svar = (user: Bruker, tekst: RegExp, verdi: RegExp) => user.click(within(sporsmal(tekst)).getByRole('radio', { name: verdi }))
 
@@ -93,6 +112,12 @@ describe('Kombinere stemningsstabiliserende med de godkjente reglene', () => {
       'Lamictal tyggetab/disperg tab 25 mg, varenr. 279054: er midlertidig utgått i FEST fra 12.08.2026; krever godkjenningsfritak, som ikke er valgt; en annen pakning med samme navn kan brukes: varenr. 196808',
     )
     expect(tekst).not.toMatch(/Lamictal tyggetab\/disperg tab 25 mg: /)
+    // Kan ikke bli gravid: den korte planen sier det, uten vilkårene i det graviditetsforebyggende programmet.
+    const nei = await kopier(user)
+    expect(avklart(nei)).toContain('- Kan ikke bli gravid.')
+    expect(avklart(nei)).toContain('- Avkreftet: Pasienten er gravid, planlegger graviditet eller ammer.')
+    for (const b of PPP) expect(nei, b.id).not.toContain(b.tekst)
+    expect(avklartPaSkjermen()).toEqual(avklart(nei).map((l) => l.slice(2)))
 
     // Pasienten kan bli gravid: vilkårene i programmet stilles som spørsmål; et vilkår som ikke er oppfylt, gir ingen plan.
     await besvarAlt(user, [/kan bli gravid/])
@@ -100,6 +125,11 @@ describe('Kombinere stemningsstabiliserende med de godkjente reglene', () => {
     await stoppet(/Ingen plan med disse svarene/)
     await svar(user, /sikker prevensjon uten avbrudd/, /^Ja$/)
     expect(await kopier(user, 'utvidet')).toContain('Bekreftet: Pasienten bruker sikker prevensjon uten avbrudd')
+    // Det står kort i standardplanen: på skjermen, i den korte kopien og utenfor det faglige grunnlaget, så det kommer med i utskriften.
+    const ja = await kopier(user)
+    expect(avklart(ja)).toEqual(['- Kan bli gravid.', ...PPP.map((b) => `- Bekreftet: ${b.tekst}`), '- Kan ikke bli far.', expect.stringMatching(/^- Ingen østrogenholdig/), ...AVKREFTET])
+    expect(avklartPaSkjermen()).toEqual(avklart(ja).map((l) => l.slice(2)))
+    expect(screen.getByRole('region', { name: 'Avklart for denne pasienten' }).closest('details')).toBeNull()
 
     // Pasienten kan bli far: forholdsreglene for menn må være gitt. «Ikke ennå» er en vurdering som gjenstår, ikke en stopp.
     await besvarAlt(user, [/kan gjøre en partner gravid/])

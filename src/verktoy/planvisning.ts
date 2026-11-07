@@ -24,7 +24,7 @@
 import { DOSEENHETER, norskDato, type Doseenhet } from './motor/byggesteiner'
 import { elementtekst, EN_REDUKSJON_KORT, fordelingSuffiks, preparatliste, seponeringsdag, sluttmalMangler, type Doseplanresultat, type Praktiskforlop } from './motor/plan'
 import { KARTLEGGING } from './register'
-import { avrund, hverTekst, injeksjonstidspunkt, valgtTekst } from './regler/beregning'
+import { avrund, hverTekst, injeksjonstidspunkt, KRAV, valgtTekst } from './regler/beregning'
 import { erKliniskGodkjent, fingeravtrykk } from './regler/godkjenning'
 import { kildeFor } from './regler/kilder'
 import { henvisninger, type Regel } from './regler/modell'
@@ -111,6 +111,14 @@ export interface Planvisning {
   rader: Planrad[]
   /** Styrkene og formene planen bruker per legemiddel, med påminnelse om resept for nye legemidler og nye former. */
   preparatbehov: string[]
+  /**
+   * Det forskriveren har avklart for denne pasienten, kort: svarene som
+   * avgjør hvilke vilkår regelen stiller (f.eks. om pasienten kan bli gravid),
+   * med vilkårene som er bekreftet, og forholdene som er avkreftet
+   * ({@link avklart}). Står i standardplanen; hele kontrollskjemaet står i
+   * det faglige grunnlaget.
+   */
+  avklart: string[]
   /** Det motoren sier om akkurat denne planen (veiledende grenser, avslutning, krav som ikke er oppfylt); står i standardplanen. */
   viktig: string[]
   /** De generelle forbeholdene, som står for hver plan. */
@@ -546,6 +554,34 @@ function utgangspunkt(forlop: readonly Praktiskforlop[], kolonner: Planvisning['
 }
 
 /** Regelversjonen og datoen for FEST-uttrekket i én linje ({@link Planvisning.spor}). */
+/**
+ * Det forskriveren har avklart for pasienten, utledet av motorens kontroller
+ * (bare det motoren faktisk har kontrollert og funnet oppfylt) og regelens
+ * omfang, med regelens egne tekster:
+ * - svaret på hvert spørsmål som avgjør om det kreves egne bekreftelser
+ *   (`Bekreftelse.ved`), med svarets korte form fra regelen («Kan bli gravid»),
+ *   og hver bekreftelse svaret krever, som «Bekreftet: …»;
+ * - hvert unntak som er avkreftet, med første setning («Avkreftet: …»).
+ * Ubetingede bekreftelser, svar som ikke styrer vilkår, og begrunnelser i
+ * fritekst står bare i det faglige grunnlaget.
+ */
+function avklart(r: Extract<Doseplanresultat, { status: 'doseplan' }>, regel: Regel): string[] {
+  const oppfylt = new Set(r.kontroller.filter((k) => k.oppfylt).map((k) => k.krav))
+  const svarlinjer = (regel.sporsmal ?? []).flatMap((s) => {
+    const vilkar = regel.bekreftelser.filter((b) => b.ved?.sporsmal === s.id)
+    const svar = [true, false].find((x) => oppfylt.has(KRAV.svar(s, x)))
+    if (vilkar.length === 0 || svar === undefined) return []
+    // Svaret i regelens korte form, uten instruksen til skjemaet etter semikolon.
+    const kort = (svar ? s.ja : s.nei)?.split(';')[0]?.trim()
+    return [
+      kort ? `${storForbokstav(kort)}.` : KRAV.svar(s, svar),
+      ...vilkar.filter((b) => b.ved!.svar === svar && oppfylt.has(KRAV.bekreftet(b))).map(KRAV.bekreftet),
+    ]
+  })
+  const avkreftet = regel.unntak.filter((u) => oppfylt.has(KRAV.avkreftet(u))).map((u) => KRAV.avkreftet({ tekst: forsteSetning(u.tekst) }))
+  return [...svarlinjer, ...avkreftet]
+}
+
 export const sporlinje = (versjon: number, festdato: string | null) =>
   `Beregnet etter regelversjon ${versjon} med FEST-uttrekk fra ${festdato ? norskDato(festdato.slice(0, 10)) : 'ukjent dato'}.`
 
@@ -569,6 +605,7 @@ export function planvisning(r: Doseplanresultat, regel: Regel, startdato?: strin
     kolonner,
     rader: rader(r.forlop, startdato, vurderinger, utgang),
     preparatbehov: preparatbehov(r.forlop, (i) => `${navn(i)} ${kolonner[i]!.administrasjon}`, utgang),
+    avklart: avklart(r, regel),
     viktig: r.merknader,
     forbehold: r.forbehold,
     spor: sporlinje(r.regel.versjon, r.fest.kildedato),
@@ -598,6 +635,7 @@ type Listefelt = { [K in keyof Planvisning]: Planvisning[K] extends readonly str
  * fordi tidslinjen viser til numrene.
  */
 export const STANDARDDELER = [
+  { tittel: 'Avklart for denne pasienten', felt: 'avklart' },
   { tittel: 'Legemiddelform og resepter', felt: 'preparatbehov' },
   { tittel: 'Vurderingspunkter', felt: 'oppfolging', nummerert: true },
   { tittel: 'Viktig for denne planen', felt: 'viktig' },

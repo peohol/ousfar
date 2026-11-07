@@ -16,6 +16,7 @@ import { beregn, kortform } from '../verktoy/regler/beregning'
 import { erKliniskGodkjent, fingeravtrykk, kontrollutfall } from '../verktoy/regler/godkjenning'
 import { kontrollerRegelsett } from '../verktoy/regler/kontroll'
 import { tilleggsfeil } from '../verktoy/regler/modell'
+import { planvisning } from '../verktoy/planvisning'
 import { SIMULERT_KONTROLLOR } from '../verktoy/regler/pilotmatrise'
 import { LAMICTAL, LITIUM_LAMOTRIGIN, OPPTRAPPING, TILLEGGSSETT, TILLEGGSVEDTAK, VALPROAT_LAMOTRIGIN } from '../verktoy/regler/tillegg'
 import { FEST_TILLEGG, kjorTilleggskasus, LAMICTAL_25, lagTilleggsgrunnlag, TILLEGGSGRUNNLAGFIL, TILLEGGSKASUS } from '../verktoy/tilleggsgrunnlag'
@@ -133,6 +134,20 @@ describe('Tilleggsreglene', () => {
     // Nei: vilkårene spørres ikke etter og står ikke i planen.
     const nei = resultat('K4-29').res.tekst!
     for (const b of ppp) expect(nei, b.id).not.toContain(b.tekst)
+    // Den korte sikkerhetsoppsummeringen i standardplanen: svaret, og ved ja hvert bekreftede vilkår; ingen plan og ingen oppsummering når et vilkår mangler.
+    const avklart = (id: string) => {
+      const r = resultat(id).res.resultat!
+      return planvisning(r, VALPROAT_LAMOTRIGIN)?.avklart
+    }
+    expect(avklart('K4-14')!.slice(0, 5)).toEqual(['Kan bli gravid.', ...ppp.map((b) => `Bekreftet: ${b.tekst}`)])
+    expect(avklart('K4-29')![0]).toBe('Kan ikke bli gravid.')
+    expect(avklart('K4-29')!.join('\n')).not.toMatch(/graviditetsforebyggende|sikker prevensjon/)
+    for (const id of ['K4-14', 'K4-29']) {
+      expect(avklart(id), id).toContain('Avkreftet: Pasienten er gravid, planlegger graviditet eller ammer.')
+      expect(avklart(id), id).toContain('Avkreftet: Pasienten har tidligere fått utslett, Stevens-Johnsons syndrom, toksisk epidermal nekrolyse, DRESS eller aseptisk meningitt ved bruk av lamotrigin.')
+      expect(resultat(id).res.tekst, id).toContain('Avklart for denne pasienten:\n- ')
+    }
+    for (const id of ['K4-26', 'K4-27', 'K4-28']) expect(avklart(id), id).toBeUndefined()
   })
 
   it('stopper ved graviditet sammen med valproat, og sier at det også gjelder valproatbehandlingen', () => {

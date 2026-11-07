@@ -107,6 +107,18 @@ Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver 
 Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
 Dag 36 (14.12.2026): Vurdering (Lamotrigin): Punkt 3: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Punkt 4: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin.
 
+Avklart for denne pasienten:
+- Kan ikke bli gravid.
+- Kan ikke bli far.
+- Ingen østrogenholdig prevensjon eller behandling.
+- Avkreftet: Pasienten er under 18 år.
+- Avkreftet: Pasienten har tidligere fått utslett, Stevens-Johnsons syndrom, toksisk epidermal nekrolyse, DRESS eller aseptisk meningitt ved bruk av lamotrigin.
+- Avkreftet: Pasienten bruker lamotrigin nå, eller har sluttet så nylig at det er under fem halveringstider siden siste dose (ca. 7 døgn alene og ca. 15 døgn sammen med valproat, ut fra gjennomsnittlig halveringstid).
+- Avkreftet: Pasienten har moderat eller alvorlig nedsatt leverfunksjon (Child-Pugh B eller C).
+- Avkreftet: Pasienten har betydelig nedsatt nyrefunksjon eller nyresvikt i siste fase.
+- Avkreftet: Pasienten er gravid, planlegger graviditet eller ammer.
+- Avkreftet: Pasienten er kjent positiv for HLA-B*1502.
+
 Legemiddelform og resepter:
 - Lamotrigin peroralt: tabletter à 25 mg (Lamictal tyggetab/disperg tab 25 mg) dag 1–28; tabletter à 50 mg (Lamictal tyggetab/disperg tab 50 mg) dag 29–35; tabletter à 100 mg (Lamictal tyggetab/disperg tab 100 mg) fra dag 36. Nytt i planen: husk resept.
 
@@ -195,6 +207,18 @@ Dag 29–35 (07.12.2026–13.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) =
 Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
 Fra dag 36 (fra 14.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = uendret dose; Lamotrigin peroralt: 200 mg = 1 tablett à 200 mg
 Dag 36 (14.12.2026): Vurdering (Lamotrigin): Punkt 3: Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Punkt 4: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin.
+
+Avklart for denne pasienten:
+- Ingen østrogenholdig prevensjon eller behandling.
+- Avkreftet: Pasienten er under 18 år.
+- Avkreftet: Pasienten har tidligere fått utslett, Stevens-Johnsons syndrom, toksisk epidermal nekrolyse, DRESS eller aseptisk meningitt ved bruk av lamotrigin.
+- Avkreftet: Pasienten bruker lamotrigin nå, eller har sluttet så nylig at det er under fem halveringstider siden siste dose (ca. 7 døgn alene og ca. 15 døgn sammen med valproat, ut fra gjennomsnittlig halveringstid).
+- Avkreftet: Pasienten har moderat eller alvorlig nedsatt leverfunksjon (Child-Pugh B eller C).
+- Avkreftet: Pasienten har betydelig nedsatt nyrefunksjon eller nyresvikt i siste fase.
+- Avkreftet: Pasienten er gravid, planlegger graviditet eller ammer.
+- Avkreftet: Pasienten er kjent positiv for HLA-B*1502.
+- Avkreftet: Pasienten bruker i tillegg valproat, eller et legemiddel som induserer lamotrigin-glukuronidering (fenytoin, karbamazepin, fenobarbital, primidon, rifampicin eller lopinavir/ritonavir).
+- Avkreftet: Pasienten bruker et annet legemiddel med ukjent farmakokinetisk interaksjon med lamotrigin.
 
 Legemiddelform og resepter:
 - Lamotrigin peroralt: tabletter à 25 mg (Lamictal tyggetab/disperg tab 25 mg) dag 1–14; tabletter à 50 mg (Lamictal tyggetab/disperg tab 50 mg) dag 15–28; tabletter à 100 mg (Lamictal tyggetab/disperg tab 100 mg) dag 29–35; tabletter à 200 mg (Lamictal tyggetab/disperg tab 200 mg) fra dag 36. Nytt i planen: husk resept.
@@ -286,6 +310,18 @@ Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver 
 Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
 Dag 36 (14.12.2026): Vurdering (Lamotrigin): Punkt 3: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Punkt 4: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin.
 
+Avklart for denne pasienten:
+- Kan ikke bli gravid.
+- Kan ikke bli far.
+- Ingen østrogenholdig prevensjon eller behandling.
+- Avkreftet: Pasienten er under 18 år.
+- Avkreftet: Pasienten har tidligere fått utslett, Stevens-Johnsons syndrom, toksisk epidermal nekrolyse, DRESS eller aseptisk meningitt ved bruk av lamotrigin.
+- Avkreftet: Pasienten bruker lamotrigin nå, eller har sluttet så nylig at det er under fem halveringstider siden siste dose (ca. 7 døgn alene og ca. 15 døgn sammen med valproat, ut fra gjennomsnittlig halveringstid).
+- Avkreftet: Pasienten har moderat eller alvorlig nedsatt leverfunksjon (Child-Pugh B eller C).
+- Avkreftet: Pasienten har betydelig nedsatt nyrefunksjon eller nyresvikt i siste fase.
+- Avkreftet: Pasienten er gravid, planlegger graviditet eller ammer.
+- Avkreftet: Pasienten er kjent positiv for HLA-B*1502.
+
 Legemiddelform og resepter:
 - Lamotrigin peroralt: tabletter à 25 mg (Lamictal tyggetab/disperg tab 25 mg) dag 1–28; tabletter à 50 mg (Lamictal tyggetab/disperg tab 50 mg) dag 29–35; tabletter à 100 mg (Lamictal tyggetab/disperg tab 100 mg) fra dag 36. Nytt i planen: husk resept.
 
@@ -374,6 +410,22 @@ Dag 29–35 (07.12.2026–13.12.2026): Valproat peroralt: 1000 mg natriumvalproa
 Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
 Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
 Dag 36 (14.12.2026): Vurdering (Lamotrigin): Punkt 3: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Punkt 4: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin.
+
+Avklart for denne pasienten:
+- Kan bli gravid.
+- Bekreftet: Annen behandling har ikke effekt eller tolereres ikke, og spesialist i bipolar lidelse har ved siste årlige gjennomgang vurdert valproat som den mest egnede behandlingen.
+- Bekreftet: Pasienten har fått pasientinformasjonsheftet, har forstått og anerkjent risikoen for misdannelser og nevrologiske utviklingsforstyrrelser hos barnet, og risikoskjemaet er gjennomgått ved siste årlige gjennomgang.
+- Bekreftet: Pasienten bruker sikker prevensjon uten avbrudd: minst én sikker, helst brukeruavhengig metode (som spiral eller implantat), eller to komplementære metoder med en barrieremetode.
+- Bekreftet: Graviditet er utelukket med graviditetstest når det er behov for det, og pasienten vet at hun straks skal kontakte lege ved planlagt eller mistenkt graviditet.
+- Kan ikke bli far.
+- Ingen østrogenholdig prevensjon eller behandling.
+- Avkreftet: Pasienten er under 18 år.
+- Avkreftet: Pasienten har tidligere fått utslett, Stevens-Johnsons syndrom, toksisk epidermal nekrolyse, DRESS eller aseptisk meningitt ved bruk av lamotrigin.
+- Avkreftet: Pasienten bruker lamotrigin nå, eller har sluttet så nylig at det er under fem halveringstider siden siste dose (ca. 7 døgn alene og ca. 15 døgn sammen med valproat, ut fra gjennomsnittlig halveringstid).
+- Avkreftet: Pasienten har moderat eller alvorlig nedsatt leverfunksjon (Child-Pugh B eller C).
+- Avkreftet: Pasienten har betydelig nedsatt nyrefunksjon eller nyresvikt i siste fase.
+- Avkreftet: Pasienten er gravid, planlegger graviditet eller ammer.
+- Avkreftet: Pasienten er kjent positiv for HLA-B*1502.
 
 Legemiddelform og resepter:
 - Lamotrigin peroralt: tabletter à 25 mg (Lamictal tyggetab/disperg tab 25 mg) dag 1–28; tabletter à 50 mg (Lamictal tyggetab/disperg tab 50 mg) dag 29–35; tabletter à 100 mg (Lamictal tyggetab/disperg tab 100 mg) fra dag 36. Nytt i planen: husk resept.
@@ -468,6 +520,18 @@ Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver 
 Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
 Dag 36 (14.12.2026): Vurdering (Lamotrigin): Punkt 3: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Punkt 4: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin.
 
+Avklart for denne pasienten:
+- Kan ikke bli gravid.
+- Kan ikke bli far.
+- Ingen østrogenholdig prevensjon eller behandling.
+- Avkreftet: Pasienten er under 18 år.
+- Avkreftet: Pasienten har tidligere fått utslett, Stevens-Johnsons syndrom, toksisk epidermal nekrolyse, DRESS eller aseptisk meningitt ved bruk av lamotrigin.
+- Avkreftet: Pasienten bruker lamotrigin nå, eller har sluttet så nylig at det er under fem halveringstider siden siste dose (ca. 7 døgn alene og ca. 15 døgn sammen med valproat, ut fra gjennomsnittlig halveringstid).
+- Avkreftet: Pasienten har moderat eller alvorlig nedsatt leverfunksjon (Child-Pugh B eller C).
+- Avkreftet: Pasienten har betydelig nedsatt nyrefunksjon eller nyresvikt i siste fase.
+- Avkreftet: Pasienten er gravid, planlegger graviditet eller ammer.
+- Avkreftet: Pasienten er kjent positiv for HLA-B*1502.
+
 Legemiddelform og resepter:
 - Lamotrigin peroralt: tabletter à 25 mg (Lamictal tyggetab/disperg tab 25 mg) dag 1–28; tabletter à 50 mg (Lamictal tyggetab/disperg tab 50 mg) dag 29–35; tabletter à 100 mg (Lamictal tyggetab/disperg tab 100 mg) fra dag 36. Nytt i planen: husk resept.
 
@@ -556,6 +620,20 @@ Dag 29–35 (07.12.2026–13.12.2026): Valproat peroralt: 1000 mg natriumvalproa
 Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
 Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
 Dag 36 (14.12.2026): Vurdering (Lamotrigin): Punkt 3: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Punkt 4: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin.
+
+Avklart for denne pasienten:
+- Kan ikke bli gravid.
+- Kan bli far.
+- Bekreftet: Pasienten er informert om den mulige risikoen for nevroutviklingsforstyrrelser hos barn som unnfanges mens han bruker valproat eller de 3 første månedene etter at han har sluttet (sammenhengen er usikker), om behovet for effektiv prevensjon, også for en kvinnelig partner, i hele denne perioden, og om at han ikke skal donere sæd i samme periode.
+- Bekreftet: Behandlende lege har vurdert at valproat fortsatt er den mest passende behandlingen, og planlegger pasienten å bli far, er andre behandlingsalternativer vurdert og diskutert med ham.
+- Ingen østrogenholdig prevensjon eller behandling.
+- Avkreftet: Pasienten er under 18 år.
+- Avkreftet: Pasienten har tidligere fått utslett, Stevens-Johnsons syndrom, toksisk epidermal nekrolyse, DRESS eller aseptisk meningitt ved bruk av lamotrigin.
+- Avkreftet: Pasienten bruker lamotrigin nå, eller har sluttet så nylig at det er under fem halveringstider siden siste dose (ca. 7 døgn alene og ca. 15 døgn sammen med valproat, ut fra gjennomsnittlig halveringstid).
+- Avkreftet: Pasienten har moderat eller alvorlig nedsatt leverfunksjon (Child-Pugh B eller C).
+- Avkreftet: Pasienten har betydelig nedsatt nyrefunksjon eller nyresvikt i siste fase.
+- Avkreftet: Pasienten er gravid, planlegger graviditet eller ammer.
+- Avkreftet: Pasienten er kjent positiv for HLA-B*1502.
 
 Legemiddelform og resepter:
 - Lamotrigin peroralt: tabletter à 25 mg (Lamictal tyggetab/disperg tab 25 mg) dag 1–28; tabletter à 50 mg (Lamictal tyggetab/disperg tab 50 mg) dag 29–35; tabletter à 100 mg (Lamictal tyggetab/disperg tab 100 mg) fra dag 36. Nytt i planen: husk resept.
@@ -648,6 +726,19 @@ Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver 
 Fra dag 36 (fra 14.12.2026): Valproat peroralt: 1000 mg natriumvalproat (preparat og fordeling som i legemiddellisten) = uendret dose; Lamotrigin peroralt: 100 mg = 1 tablett à 100 mg
 Dag 36 (14.12.2026): Vurdering (Lamotrigin): Punkt 3: Den første stabiliserende måldosen som er valgt (100 mg/dag), er nådd. Punkt 4: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin.
 
+Avklart for denne pasienten:
+- Kan ikke bli gravid.
+- Kan ikke bli far.
+- Østrogenholdig prevensjon eller behandling, som kan kreve en høyere vedlikeholdsdose av lamotrigin enn måldosen.
+- Bekreftet: Måldosen er vurdert særskilt fordi østrogenholdig behandling kan kreve en vedlikeholdsdose opptil det dobbelte: opptrappingen går likevel bare til 100 mg/dag, og en senere økning planlegges individuelt etter respons og eventuelt serumkonsentrasjon av lamotrigin.
+- Avkreftet: Pasienten er under 18 år.
+- Avkreftet: Pasienten har tidligere fått utslett, Stevens-Johnsons syndrom, toksisk epidermal nekrolyse, DRESS eller aseptisk meningitt ved bruk av lamotrigin.
+- Avkreftet: Pasienten bruker lamotrigin nå, eller har sluttet så nylig at det er under fem halveringstider siden siste dose (ca. 7 døgn alene og ca. 15 døgn sammen med valproat, ut fra gjennomsnittlig halveringstid).
+- Avkreftet: Pasienten har moderat eller alvorlig nedsatt leverfunksjon (Child-Pugh B eller C).
+- Avkreftet: Pasienten har betydelig nedsatt nyrefunksjon eller nyresvikt i siste fase.
+- Avkreftet: Pasienten er gravid, planlegger graviditet eller ammer.
+- Avkreftet: Pasienten er kjent positiv for HLA-B*1502.
+
 Legemiddelform og resepter:
 - Lamotrigin peroralt: tabletter à 25 mg (Lamictal tyggetab/disperg tab 25 mg) dag 1–28; tabletter à 50 mg (Lamictal tyggetab/disperg tab 50 mg) dag 29–35; tabletter à 100 mg (Lamictal tyggetab/disperg tab 100 mg) fra dag 36. Nytt i planen: husk resept.
 
@@ -739,6 +830,18 @@ Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver 
 Fra dag 36 (fra 14.12.2026): Litium peroralt: 168 mg Li⁺ (24 mmol) = uendret dose; Lamotrigin peroralt: 200 mg = 1 tablett à 200 mg
 Dag 36 (14.12.2026): Vurdering (Lamotrigin): Punkt 3: Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Punkt 4: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin.
 
+Avklart for denne pasienten:
+- Ingen østrogenholdig prevensjon eller behandling.
+- Avkreftet: Pasienten er under 18 år.
+- Avkreftet: Pasienten har tidligere fått utslett, Stevens-Johnsons syndrom, toksisk epidermal nekrolyse, DRESS eller aseptisk meningitt ved bruk av lamotrigin.
+- Avkreftet: Pasienten bruker lamotrigin nå, eller har sluttet så nylig at det er under fem halveringstider siden siste dose (ca. 7 døgn alene og ca. 15 døgn sammen med valproat, ut fra gjennomsnittlig halveringstid).
+- Avkreftet: Pasienten har moderat eller alvorlig nedsatt leverfunksjon (Child-Pugh B eller C).
+- Avkreftet: Pasienten har betydelig nedsatt nyrefunksjon eller nyresvikt i siste fase.
+- Avkreftet: Pasienten er gravid, planlegger graviditet eller ammer.
+- Avkreftet: Pasienten er kjent positiv for HLA-B*1502.
+- Avkreftet: Pasienten bruker i tillegg valproat, eller et legemiddel som induserer lamotrigin-glukuronidering (fenytoin, karbamazepin, fenobarbital, primidon, rifampicin eller lopinavir/ritonavir).
+- Avkreftet: Pasienten bruker et annet legemiddel med ukjent farmakokinetisk interaksjon med lamotrigin.
+
 Legemiddelform og resepter:
 - Lamotrigin peroralt: tabletter à 25 mg (Lamictal tyggetab/disperg tab 25 mg) dag 1–14; tabletter à 50 mg (Lamictal tyggetab/disperg tab 50 mg) dag 15–28; tabletter à 100 mg (Lamictal tyggetab/disperg tab 100 mg) dag 29–35; tabletter à 200 mg (Lamictal tyggetab/disperg tab 200 mg) fra dag 36. Nytt i planen: husk resept.
 
@@ -828,6 +931,18 @@ Dag 29–35 (07.12.2026–13.12.2026): Litium peroralt: 420 mg Li⁺ (60 mmol) =
 Dag 36 (14.12.2026): Vurdering (Lamotrigin): Før endringen, punkt 1: Før hver doseøkning: spør etter utslett, feber, hovne lymfeknuter og sår i munn eller øyne. Punkt 2: Følg stemningsleiet: forverring av depresjon, nye symptomer og selvmordstanker, særlig ved oppstart og ved hver doseendring.
 Fra dag 36 (fra 14.12.2026): Litium peroralt: 420 mg Li⁺ (60 mmol) = uendret dose; Lamotrigin peroralt: 200 mg = 1 tablett à 200 mg
 Dag 36 (14.12.2026): Vurdering (Lamotrigin): Punkt 3: Den første stabiliserende måldosen som er valgt (200 mg/dag), er nådd. Punkt 4: Bruker pasienten østrogenholdig prevensjon eller hormonbehandling, kan vedlikeholdsdosen etter titreringen måtte bli høyere (opptil det dobbelte), og det kan være aktuelt å måle serumkonsentrasjonen av lamotrigin.
+
+Avklart for denne pasienten:
+- Ingen østrogenholdig prevensjon eller behandling.
+- Avkreftet: Pasienten er under 18 år.
+- Avkreftet: Pasienten har tidligere fått utslett, Stevens-Johnsons syndrom, toksisk epidermal nekrolyse, DRESS eller aseptisk meningitt ved bruk av lamotrigin.
+- Avkreftet: Pasienten bruker lamotrigin nå, eller har sluttet så nylig at det er under fem halveringstider siden siste dose (ca. 7 døgn alene og ca. 15 døgn sammen med valproat, ut fra gjennomsnittlig halveringstid).
+- Avkreftet: Pasienten har moderat eller alvorlig nedsatt leverfunksjon (Child-Pugh B eller C).
+- Avkreftet: Pasienten har betydelig nedsatt nyrefunksjon eller nyresvikt i siste fase.
+- Avkreftet: Pasienten er gravid, planlegger graviditet eller ammer.
+- Avkreftet: Pasienten er kjent positiv for HLA-B*1502.
+- Avkreftet: Pasienten bruker i tillegg valproat, eller et legemiddel som induserer lamotrigin-glukuronidering (fenytoin, karbamazepin, fenobarbital, primidon, rifampicin eller lopinavir/ritonavir).
+- Avkreftet: Pasienten bruker et annet legemiddel med ukjent farmakokinetisk interaksjon med lamotrigin.
 
 Legemiddelform og resepter:
 - Lamotrigin peroralt: tabletter à 25 mg (Lamictal tyggetab/disperg tab 25 mg) dag 1–14; tabletter à 50 mg (Lamictal tyggetab/disperg tab 50 mg) dag 15–28; tabletter à 100 mg (Lamictal tyggetab/disperg tab 100 mg) dag 29–35; tabletter à 200 mg (Lamictal tyggetab/disperg tab 200 mg) fra dag 36. Nytt i planen: husk resept.

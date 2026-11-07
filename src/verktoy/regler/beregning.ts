@@ -37,10 +37,23 @@ import {
   type Begrunnelseskrav,
   type Sporsmal,
   type Trinnvalgsvar,
+  type Bekreftelse,
+  type Unntak,
   forslagsverdi,
   justerbare,
   type Uendretvisning,
 } from './modell'
+
+/**
+ * Kravteksten i kontrollene for det forskriveren har avklart: et avkreftet
+ * unntak, en bekreftelse og svaret på et spørsmål. Planvisningen finner det
+ * motoren faktisk har kontrollert, igjen med de samme tekstene.
+ */
+export const KRAV = {
+  avkreftet: (u: Pick<Unntak, 'tekst'>) => `Avkreftet: ${u.tekst}`,
+  bekreftet: (b: Pick<Bekreftelse, 'tekst'>) => `Bekreftet: ${b.tekst}`,
+  svar: (s: Pick<Sporsmal, 'tekst'>, svar: boolean) => `${s.tekst} ${svar ? 'Ja' : 'Nei'}`,
+} as const
 
 /** Økes når beregningen endres slik at like inndata kan gi et annet resultat. */
 export const MOTORVERSJON = 10
@@ -1107,14 +1120,14 @@ export function beregn(regel: Regel, inndata: Beregningsinndata, regelsett?: Reg
     const svar = forhold[u.id]
     if (svar === true) stopp.push(`Regelen gjelder ikke: ${u.tekst}`)
     else if (svar === undefined) stopp.push(`Må avklares før beregning (ukjent): ${u.tekst}`)
-    else kontroller.push({ krav: `Avkreftet: ${u.tekst}`, oppfylt: true, detalj: 'Vurdert og avkreftet av forskriveren.' })
+    else kontroller.push({ krav: KRAV.avkreftet(u), oppfylt: true, detalj: 'Vurdert og avkreftet av forskriveren.' })
   }
   for (const [id, svar] of Object.entries(forhold)) {
     if (svar && !regel.unntak.some((u) => u.id === id)) stopp.push(`Pasientforholdet «${id}» er ukjent for regelen; det må vurderes individuelt.`)
   }
   for (const b of gjeldendeBekreftelser(regel, inndata.svar)) {
     const ja = inndata.bekreftet?.includes(b.id) ?? false
-    kontroller.push({ krav: `Bekreftet: ${b.tekst}`, oppfylt: ja, detalj: ja ? 'Bekreftet av forskriveren.' : 'Ikke bekreftet.' })
+    kontroller.push({ krav: KRAV.bekreftet(b), oppfylt: ja, detalj: ja ? 'Bekreftet av forskriveren.' : 'Ikke bekreftet.' })
     if (!ja) stopp.push(`Må bekreftes før beregning: ${b.tekst}`)
   }
   // Spørsmålene: hvert må være besvart, og svaret står i planen.
@@ -1122,7 +1135,7 @@ export function beregn(regel: Regel, inndata: Beregningsinndata, regelsett?: Reg
   for (const s of sporsmal) {
     const svar = inndata.svar?.[s.id]
     if (svar === undefined) stopp.push(`Må besvares før beregning: ${s.tekst}`)
-    else kontroller.push({ krav: `${s.tekst} ${svar ? 'Ja' : 'Nei'}`, oppfylt: true, detalj: 'Oppgitt av forskriveren.' })
+    else kontroller.push({ krav: KRAV.svar(s, svar), oppfylt: true, detalj: 'Oppgitt av forskriveren.' })
   }
   for (const id of Object.keys(inndata.svar ?? {})) if (!sporsmal.some((s) => s.id === id)) stopp.push(`Svaret «${id}» gjelder ikke et spørsmål i regelen.`)
   kontrollerBegrunnelser(regel, inndata, stopp, kontroller)

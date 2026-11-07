@@ -20,7 +20,7 @@ export const ENDRINGSLOGG: Endring[] = [
     gjelder: ['verktoy'],
     punkter: [
       'Gjelder bare administratorene. Ingen regler, doser, godkjenninger, spørsmål eller sperrer er endret.',
-      'Planen viser først utgangspunktet og tidslinjen med doser, formskifter og vurderingspunkter, deretter hvilke legemiddelformer og styrker som trengs og når det må skrives ny resept, de nummererte vurderingspunktene med hva som gjøres ved funn, det som gjelder akkurat denne planen, og forbeholdene.',
+      'Planen viser først utgangspunktet og tidslinjen med doser, formskifter og vurderingspunkter, deretter en kort oppsummering av det som er avklart for pasienten (for eksempel at pasienten kan bli gravid, med hvert vilkår som er bekreftet, og hvilke unntak som er avkreftet), hvilke legemiddelformer og styrker som trengs og når det må skrives ny resept, de nummererte vurderingspunktene med hva som gjøres ved funn, det som gjelder akkurat denne planen, og forbeholdene.',
       'Vurderingspunkter samme dag står samlet i tidslinjen med nummeret i listen, og et legemiddel som fortsetter uendret, forklares bare første gang.',
       'Avvik fra regelens kurve, forutsetninger, usikkerhet, kontroller, hele preparatlisten, godkjenning, kilder og versjoner står i «Faglig grunnlag og kilder» nederst, lukket til det åpnes.',
       '«Kopier planen» gir den korte planen, og «Kopier med faglig grunnlag» gir alt. Nedtrapping av escitalopram 10 mg fra tabletter er gått fra over 15 000 til om lag 4 000 tegn.',
