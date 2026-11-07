@@ -437,6 +437,8 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
 
   // «Tilpass planen» står på samme sted i panelet fra steg 2 er fylt ut, så et felt beholder fokus mens planen beregnes på nytt
   // eller forhåndskontrollen stopper på verdien, og en feil i startdatoen eller en justert verdi kan rettes der den står.
+  // Verdier med ett godkjent alternativ og ikke noe lagret er ikke et valg: de står samlet på én linje. Uten noen godkjent verdi (dosen eller svarene stopper planen) vises feltet ikke.
+  const laste = justeringer.filter((j) => j.godkjent?.length === 1 && !skjema.justert[j.sti]?.trim())
   const visTilpass = !!regel && doseOk && forhand.data?.status === 'klar' && (feltfeil.length > 0 || steg2)
   const tilpass = regel && (
     <Details summary="Tilpass planen" startApen={!!skjema.startdato || Object.values(skjema.justert).some((v) => v.trim() !== '')}>
@@ -446,7 +448,12 @@ export function Arbeidsflyt(p: ArbeidsflytProps) {
           <input className="inndatafelt" type="date" value={skjema.startdato} onChange={(e) => sett('startdato', e.target.value)} />
         </label>
         {!skjema.startdato && <p className="flytsteg__hjelp">Uten startdato står planen med dagnummer.</p>}
-        {justeringer.map((j) => {
+        {laste.length > 0 && (
+          <p className="flytsteg__hjelp" data-last>
+            {`Den godkjente planen bruker disse verdiene, og andre er ikke godkjent: ${laste.map((j) => `${j.navn.charAt(0).toLowerCase()}${j.navn.slice(1)} ${j.godkjentTekst}`).join(', ')}.`}
+          </p>
+        )}
+        {justeringer.filter((j) => !laste.includes(j) && !(j.godkjent?.length === 0 && !skjema.justert[j.sti]?.trim())).map((j) => {
           const hjelp = (
             <p id={`${id}-${j.sti}`} className="flytsteg__hjelp">
               {/dager/i.test(j.navn) ? `${j.hjelp} Dagene er minstetider.` : j.hjelp}

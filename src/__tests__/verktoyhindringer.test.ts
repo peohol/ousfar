@@ -99,8 +99,11 @@ describe('stoppmeldingene sier riktig årsak (spor B punkt 2 og 6)', () => {
   })
 })
 
-describe('undertitlene lover ikke en delplan (F5)', () => {
-  it('nedtrapping og bytte av antidepressiv lover en komplett plan, ikke «de første trinnene» eller «starten på et bytte»', () => {
+describe('undertitlene lover verken en delplan eller mer enn det som er godkjent (F5)', () => {
+  it('nedtrapping og bytte av antidepressiv lover en komplett plan bare der et godkjent forløp passer', () => {
     for (const v of VERKTOY) expect(v.beskrivelse).not.toMatch(/første trinnene|starten på et bytte/)
+    for (const v of VERKTOY.filter((x) => /antidepressiv/.test(x.beskrivelse))) {
+      expect(v.beskrivelse).toMatch(/^Komplett .* der et godkjent forløp passer\. Ellers sier verktøyet hvorfor\.$/)
+    }
   })
 })

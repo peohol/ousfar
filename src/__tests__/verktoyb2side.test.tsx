@@ -338,6 +338,11 @@ describe('Unødvendige hindringer er fjernet (spor B, P0-rapporten §8)', () => 
     expect(document.querySelector('[data-flytsporsmal-liste]')).toBeNull()
   })
 
+  it('ingressen lover en komplett plan bare der et godkjent forløp passer (F5)', () => {
+    vis()
+    expect(screen.getByText('Komplett nedtrappingsplan til seponering av ett antidepressivum der et godkjent forløp passer. Ellers sier verktøyet hvorfor.')).toBeTruthy()
+  })
+
   it('«Tilpass planen» viser verdiene den godkjente planen bruker, låst, i stedet for felt som alltid gir «ingen plan» (F1)', async () => {
     const user = userEvent.setup()
     vis()
@@ -346,8 +351,9 @@ describe('Unødvendige hindringer er fjernet (spor B, P0-rapporten §8)', () => 
     expect(plan).toBeTruthy()
     Element.prototype.scrollIntoView ??= () => {}
     await user.click(screen.getByText('Tilpass planen'))
+    // Låste verdier er ikke et valg: de står kort på én linje, uten felt.
     const last = [...document.querySelectorAll('[data-last]')].map((x) => x.textContent)
-    expect(last).toEqual([expect.stringMatching(/^Reduksjon per trinn \(% av aktuell dose\) 25 %Den godkjente planen bruker 25 %/), expect.stringMatching(/^Minste antall dager per trinn 28 dager/)])
+    expect(last).toEqual(['Den godkjente planen bruker disse verdiene, og andre er ikke godkjent: reduksjon per trinn (% av aktuell dose) 25 %, minste antall dager per trinn 28 dager.'])
     expect(screen.queryByRole('textbox', { name: /Reduksjon per trinn/ })).toBeNull()
     expect(screen.queryByText(/Regelen tillater 5–50 %/)).toBeNull()
   }, 30_000)
