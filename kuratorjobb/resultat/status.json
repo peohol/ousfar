@@ -1,0 +1,18 @@
+{
+  "versjon": 1,
+  "status": "kjorer",
+  "jobb": {
+    "gren": "kuratorjobb/kodein-spc-20261107",
+    "foresporsel_commit": "809dc0592184860ac209b2be7d718c9c7eae2bd8",
+    "foresporsel_sha256": "6a9e24a53ad73240f199a5cc2c28eb172244760896ea0051c262887db662feff",
+    "kode_commit": "55c8fa34d9643744f6698839011a5f51c7f772ba",
+    "kjoring": "https://github.com/peohol/ousfar/actions/runs/42412500385",
+    "startet_kl": "2026-11-07T20:45:05.217Z",
+    "ferdig_kl": null
+  },
+  "foresporsel": null,
+  "referanse": null,
+  "feil": [],
+  "bruker": [],
+  "stoffer": {}
+}
