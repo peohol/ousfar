@@ -36,12 +36,27 @@ export const FORKLARINGER: Record<Stoppkodenavn, Omit<Stoppforklaring, 'kode'>> 
     handling: 'Velg at preparater med godkjenningsfritak kan brukes, hvis det er aktuelt.',
     losning: 'i_verktoyet',
   },
-  ikke_komplett: { tekst: `Verktøyet kan ikke lage en komplett plan helt til sluttmålet. ${INDIVIDUELT}`, losning: 'individuelt' },
-  ikke_klinisk: { tekst: 'Verktøyet kan ikke vise en klinisk plan nå.', handling: 'Prøv igjen senere.', losning: 'individuelt' },
+  ikke_komplett: {
+    tekst: `Med de godkjente trinnene og de norske preparatene i FEST kan verktøyet ikke lage en komplett plan helt til sluttmålet. Det er en begrensning i verktøyet, ikke nødvendigvis en medisinsk grunn mot behandlingen. ${INDIVIDUELT}`,
+    losning: 'individuelt',
+  },
+  // Manglende godkjenning er ikke en midlertidig feil: ingen «Prøv igjen senere» (P0 N06). Det gjelder bare FEST ({@link FEST_FORKLARING}).
+  ikke_klinisk: { tekst: `Regelen er ikke gyldig klinisk godkjent for dette tilfellet, så verktøyet viser ingen plan. ${INDIVIDUELT}`, losning: 'individuelt' },
   sperret: { tekst: SPERRET, losning: 'individuelt' },
   regelfeil: { tekst: `Regelen kan ikke brukes slik den står. ${INDIVIDUELT}`, losning: 'individuelt' },
   annet: { tekst: INDIVIDUELT, losning: 'individuelt' },
 }
+
+/** `ikke_klinisk` fordi FEST-kopien ikke er bekreftet fersk og gyldig: det går over når kopien er kontrollert igjen. */
+const FEST_FORKLARING: Omit<Stoppforklaring, 'kode'> = {
+  tekst: 'Legemiddeldataene er ikke bekreftet ferske mot FEST, så verktøyet viser ingen plan nå; til da må behandlingen planlegges individuelt.',
+  handling: 'Prøv igjen senere.',
+  losning: 'individuelt',
+}
+const GJELDER_FEST = /FEST-kopien|FEST sist ble kontrollert|vellykket henting av FEST|ikke fra FEST|fra FEST|FEST-uttrekk/
+
+/** Overskriften motoren setter foran grunnene når en plan ikke er klinisk; den sier ingenting alene. */
+const IKKE_KLINISK_OVERSKRIFT = 'Ingen klinisk doseplan kan vises.'
 
 /** Motorens faste innledninger og formuleringer, i den rekkefølgen de prøves. */
 const MONSTRE: [RegExp, Stoppkodenavn][] = [
@@ -114,8 +129,11 @@ function iFlyten(oppsett: Flytoppsett | undefined, kode: Stoppkodenavn, ref: str
  */
 export function stoppforklaringer(r: Doseplanresultat, regel?: Regel, oppsett?: Flytoppsett): Stoppforklaring[] {
   const ut: Stoppforklaring[] = []
-  for (const k of stoppkoder(r, regel)) {
-    const f = FORKLARINGER[k.kode] ?? FORKLARINGER.annet
+  const koder = stoppkoder(r, regel)
+  // Overskriften er ingen grunn i seg selv; den tas bare med når den er alt motoren sier.
+  const egentlige = koder.length > 1 ? koder.filter((k) => k.tekst !== IKKE_KLINISK_OVERSKRIFT) : koder
+  for (const k of egentlige) {
+    const f = k.kode === 'ikke_klinisk' && GJELDER_FEST.test(k.tekst) ? FEST_FORKLARING : (FORKLARINGER[k.kode] ?? FORKLARINGER.annet)
     const fly = iFlyten(oppsett, k.kode, k.ref)
     const kilde = regel && k.ref ? kildetekst(grunnlagFor(regel, k.ref)) : undefined
     const forklaring: Stoppforklaring = {

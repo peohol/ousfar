@@ -12,6 +12,23 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.127.2',
+    dato: '2026-11-07',
+    sammendrag: 'Verktøyene ber ikke lenger om valg og svar som likevel ikke kan gi en plan',
+    typer: ['Funksjonalitet'],
+    omfang: 'Moderat omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Gjelder bare administratorene. Ingen regler, doser, godkjenninger, nødstopp eller sikkerhetsspørsmål er endret.',
+      'Under «Tilpass planen» vises bare verdiene den godkjente planen bruker. Verdier med bare ett godkjent alternativ står kort på én linje, ikke som felt som ville stoppet planen.',
+      'Allerede i steg 2 står det hva den godkjente planen ikke gjelder for, for eksempel lang behandlingstid ved escitalopram.',
+      'Når et svar eller en dose sikkert gjør at verktøyet ikke kan lage en plan, skjules spørsmålene som da ikke trengs, og stoppet sier hvilket forhold det gjelder. Manglende regelstøtte omtales ikke lenger som en medisinsk grunn, og «Prøv igjen senere» står bare når legemiddeldataene ikke er ferske.',
+      'Har hvert dosevalg i planen bare én mulig dose, vises alle samlet og godtas med ett trykk. For escitalopram erstatter det fem til sju enkeltbekreftelser. Dosene er de samme som før.',
+      'Undertitlene sier at verktøyene lager en komplett plan der et godkjent forløp passer, og ellers sier hvorfor.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.127.1',
     dato: '2026-11-07',
     sammendrag: 'Faglig grunnlag for bedre byttestrategier mellom antidepressiver',
