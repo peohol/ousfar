@@ -12,6 +12,19 @@ import type { Endring } from '../domain/versjon'
  */
 export const ENDRINGSLOGG: Endring[] = [
   {
+    versjon: '1.127.4',
+    dato: '2026-11-07',
+    sammendrag: 'Faglig grunnlag for bedre byttestrategier mellom antidepressiver',
+    typer: ['Funksjonalitet'],
+    omfang: 'Minimalt omfang',
+    gjelder: ['verktoy'],
+    punkter: [
+      'Gjelder bare administratorene. Ingen regler, doser, godkjenninger, spørsmål eller sperrer er endret.',
+      'Et nytt faglig grunnlag sammenligner måtene å bytte fra citalopram eller escitalopram til sertralin på, forklarer hvorfor dagens plan bare gjelder de første åtte ukene av behandlingen, og foreslår hvordan pasienter som har brukt legemidlet i måneder eller år kan få en plan. Forslagene skal kontrolleres faglig før noe tas i bruk.',
+    ],
+    utenVarsel: true,
+  },
+  {
     versjon: '1.127.0',
     dato: '2026-11-06',
     sammendrag: 'CPIC er tatt ut av fagsidene, og databasen måles jevnlig',
