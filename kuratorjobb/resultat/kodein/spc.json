@@ -1,0 +1,1299 @@
+{
+  "stoff": "kodein",
+  "status": "advarsel",
+  "kilde": "foresporsel",
+  "dpi": 150,
+  "fest": {
+    "kontrollert_kl": "2026-11-07T04:15:06.366674+00:00"
+  },
+  "dekning": {
+    "dekket": false,
+    "preparater": 20,
+    "hentet": 10,
+    "dokumenter": 7,
+    "mangler": [
+      {
+        "merkevare_id": "ID_000A27B8-3930-4264-80F9-CDB14C895662",
+        "varenavn": "Kodimagnyl Ikke-stoppende dak",
+        "navn_form_styrke": "Kodimagnyl Ikke-stoppende dak tab 9,6 mg/500 mg/150 mg",
+        "produsent": "Orifarm Healthcare",
+        "atc": "N02AJ07",
+        "legemiddelform": "Tablett, filmdrasjert",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_356FE72D-6C4A-45C3-BDF6-5F83B84248FC",
+        "varenavn": "Kodimagnyl Ikke-stoppende dak",
+        "navn_form_styrke": "Kodimagnyl Ikke-stoppende dak tab 9,6 mg/500 mg/150 mg",
+        "produsent": "Orifarm Healthcare A/S",
+        "atc": "N02AJ07",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_3DFD6333-3B5B-40E6-8559-2C9741199F50",
+        "varenavn": "Kodein stærk dak",
+        "navn_form_styrke": "Kodein stærk dak mikst oppl 8 mg/ml",
+        "produsent": "Orifarm Healthcare A/S",
+        "atc": "R05DA04",
+        "legemiddelform": "Mikstur, oppløsning",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_41E1F5B7-8670-4154-92AE-CF80926ADAAF",
+        "varenavn": "Dolviran",
+        "navn_form_styrke": "Dolviran tab 400 mg/9,6 mg/50 mg",
+        "produsent": "Kern Pharma",
+        "atc": "N02AJ07",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_5DB9FCD8-B8D3-47C7-8371-371821333F91",
+        "varenavn": "Kodein/paracetamol SA",
+        "navn_form_styrke": "Kodein/paracetamol SA stikkpille 2,5 mg/37,5 mg",
+        "produsent": "Sykehusapotekene Oslo, Ullevål",
+        "atc": "N02AJ06",
+        "legemiddelform": "Stikkpille",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_A1AC0290-E794-4D90-9BDC-C5D32A6A9AB7",
+        "varenavn": "Treo comp",
+        "navn_form_styrke": "Treo comp brusetab 500 mg/30 mg/50 mg",
+        "produsent": "Viatris",
+        "atc": "N02AJ07",
+        "legemiddelform": "Brusetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_A6914D60-6B46-4C06-9A17-12A4BFA7F407",
+        "varenavn": "Cod-Efferalgan",
+        "navn_form_styrke": "Cod-Efferalgan brusetab 500 mg/30 mg",
+        "produsent": "UPSA",
+        "atc": "N02AJ06",
+        "legemiddelform": "Brusetablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_B2498B96-4618-4C11-AABE-5D1755BC4814",
+        "varenavn": "Kodimagnyl Ikke-stoppende dak",
+        "navn_form_styrke": "Kodimagnyl Ikke-stoppende dak tab 9,6 mg/500 mg/150 mg",
+        "produsent": "Orifarm Healthcare",
+        "atc": "N02AJ07",
+        "legemiddelform": "Tablett",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_DC1DBEB9-3234-422A-9C24-5C95D72F8477",
+        "varenavn": "Sterk hostesirup NAF",
+        "navn_form_styrke": "Sterk hostesirup NAF sirup 1,5 mg/g/5 mg/g",
+        "produsent": "Ås produksjonslab AS",
+        "atc": "R05DA20",
+        "legemiddelform": "Sirup",
+        "grunn": "uten_omtale",
+        "adresse": null
+      },
+      {
+        "merkevare_id": "ID_F1B566E4-C14F-4DC6-BF2C-FD5F8730B55D",
+        "varenavn": "Kodein/paracetamol SA",
+        "navn_form_styrke": "Kodein/paracetamol SA stikkpille 5 mg/75 mg",
+        "produsent": "Sykehusapotekene Oslo, Ullevål",
+        "atc": "N02AJ06",
+        "legemiddelform": "Stikkpille",
+        "grunn": "uten_omtale",
+        "adresse": null
+      }
+    ]
+  },
+  "kontroller": [
+    {
+      "id": "fest",
+      "status": "ok",
+      "melding": "FEST oppgir 10 preparatomtaler hos DMP for stoffet; dekningen står i «dekning».",
+      "antall": {
+        "omtaler": 10,
+        "ikke_dmp": 0,
+        "uten_omtale": 10
+      }
+    },
+    {
+      "id": "dekning",
+      "status": "advarsel",
+      "melding": "10 av 20 preparater i FEST mangler en hentet preparatomtale fra DMP: 10 uten preparatomtale i FEST (f.eks. sentralt godkjente, med omtalen hos EMA). SPC-behovet er ikke dekket; se «dekning.mangler».",
+      "antall": {
+        "preparater": 20,
+        "hentet": 10,
+        "mangler": 10,
+        "dokumenter": 7
+      }
+    }
+  ],
+  "adresser": [
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-9952.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-9952.pdf",
+      "hentet_kl": "2026-11-07T20:45:11.354Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "267556",
+        "content-md5": "dTA1uaVFqEeTmdEftm+hPg==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:04 GMT",
+        "etag": "0x8DF2508621F1DE4",
+        "date": "Sat, 07 Nov 2026 20:45:12 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_58C43C22-D773-4D8B-BE21-2A3769437FD8",
+          "varenavn": "Altermol",
+          "navn_form_styrke": "Altermol tab 500 mg/30 mg",
+          "produsent": "Alternova",
+          "atc": "N02AJ06",
+          "legemiddelform": "Tablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-9952.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (267556 byte).",
+          "antall": {
+            "bytes": 267556
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "7c3e11b8af5a13ea5ba4e5f872f184b273706493e51ce0cc8f7a2dfabb33bac7"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/24-16663.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/24-16663.pdf",
+      "hentet_kl": "2026-11-07T20:45:17.008Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "363428",
+        "content-md5": "o29vZ9Hccd00U954uB48HQ==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:45 GMT",
+        "etag": "0x8DF25087A66E5CB",
+        "date": "Sat, 07 Nov 2026 20:45:17 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_8F559BEF-F320-49CF-86E6-4C87A1F8AFCD",
+          "varenavn": "Kodein ExtractumPharma",
+          "navn_form_styrke": "Kodein ExtractumPharma tab 10 mg",
+          "produsent": "ExtractumPharma Co. Ltd.",
+          "atc": "R05DA04",
+          "legemiddelform": "Tablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/24-16663.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (363428 byte).",
+          "antall": {
+            "bytes": 363428
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "fb0650cdd4312b97976cb3df08606c5329819a052b18a04749043a229b48691f"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/24-16665.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/24-16665.pdf",
+      "hentet_kl": "2026-11-07T20:45:23.969Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "363428",
+        "content-md5": "o29vZ9Hccd00U954uB48HQ==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:45 GMT",
+        "etag": "0x8DF25087A6C3C33",
+        "date": "Sat, 07 Nov 2026 20:45:24 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_37C43B48-9A63-4BCD-9201-A606945C2E68",
+          "varenavn": "Kodein ExtractumPharma",
+          "navn_form_styrke": "Kodein ExtractumPharma tab 20 mg",
+          "produsent": "ExtractumPharma Co. Ltd.",
+          "atc": "R05DA04",
+          "legemiddelform": "Tablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/24-16665.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (363428 byte).",
+          "antall": {
+            "bytes": 363428
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "fb0650cdd4312b97976cb3df08606c5329819a052b18a04749043a229b48691f"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/24-16666.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/24-16666.pdf",
+      "hentet_kl": "2026-11-07T20:45:25.445Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "363428",
+        "content-md5": "o29vZ9Hccd00U954uB48HQ==",
+        "last-modified": "Thu, 08 Oct 2026 06:50:45 GMT",
+        "etag": "0x8DF25087A6EFAEA",
+        "date": "Sat, 07 Nov 2026 20:45:26 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_F0EA673E-9837-4311-90E1-8D0BF5755C8C",
+          "varenavn": "Kodein ExtractumPharma",
+          "navn_form_styrke": "Kodein ExtractumPharma tab 30 mg",
+          "produsent": "ExtractumPharma Co. Ltd.",
+          "atc": "R05DA04",
+          "legemiddelform": "Tablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/24-16666.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (363428 byte).",
+          "antall": {
+            "bytes": 363428
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "fb0650cdd4312b97976cb3df08606c5329819a052b18a04749043a229b48691f"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06128.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06128.pdf",
+      "hentet_kl": "2026-11-07T20:45:26.759Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "266466",
+        "content-md5": "yMXgjUgaYvLeiinLFWN6oA==",
+        "last-modified": "Thu, 19 Mar 2026 20:47:56 GMT",
+        "etag": "0x8DE85F8CCD6EEE8",
+        "date": "Sat, 07 Nov 2026 20:45:26 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_14C04578-60D6-4A73-BEEC-95ACE10E1C69",
+          "varenavn": "Kodein",
+          "navn_form_styrke": "Kodein tab 25 mg",
+          "produsent": "Orifarm Healthcare A/S",
+          "atc": "R05DA04",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06128.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (266466 byte).",
+          "antall": {
+            "bytes": 266466
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "9341415a3f234d250251b9c9f2e0fc4088aa302f1a5682bcad67a413ba3799b3"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-04088.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-04088.pdf",
+      "hentet_kl": "2026-11-07T20:45:29.899Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "324291",
+        "content-md5": "m7wzHBOiwwaGQWPZWS1FUA==",
+        "last-modified": "Thu, 08 Oct 2026 06:49:21 GMT",
+        "etag": "0x8DF25084887AADA",
+        "date": "Sat, 07 Nov 2026 20:45:30 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_C392D211-0621-4571-89FD-B8552FC738D2",
+          "varenavn": "Paralgin Forte",
+          "navn_form_styrke": "Paralgin Forte tab 400 mg/30 mg",
+          "produsent": "Karo Pharma AS",
+          "atc": "N02AJ06",
+          "legemiddelform": "Tablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-04088.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (324291 byte).",
+          "antall": {
+            "bytes": 324291
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "e22c7f516807550f9049a66a830214b5379277323683e353529a0fa323870d48"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06139.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06139.pdf",
+      "hentet_kl": "2026-11-07T20:45:34.198Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "308872",
+        "content-md5": "ELzLXMyxnw0wiExRQzDH0g==",
+        "last-modified": "Thu, 08 Oct 2026 06:49:23 GMT",
+        "etag": "0x8DF250849BC9D36",
+        "date": "Sat, 07 Nov 2026 20:45:35 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_D3043157-D0D9-447E-8EF8-3B698FA12DDA",
+          "varenavn": "Paralgin Forte",
+          "navn_form_styrke": "Paralgin Forte stikkpille 400 mg/30 mg",
+          "produsent": "Karo Pharma AS",
+          "atc": "N02AJ06",
+          "legemiddelform": "Stikkpille"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06139.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (308872 byte).",
+          "antall": {
+            "bytes": 308872
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "a401ea8e4b769b107a08fb3e26d7c1f8e11b3a82435e857ac7198e47b71390ef"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07735.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07735.pdf",
+      "hentet_kl": "2026-11-07T20:45:39.848Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "308872",
+        "content-md5": "ELzLXMyxnw0wiExRQzDH0g==",
+        "last-modified": "Thu, 08 Oct 2026 06:49:28 GMT",
+        "etag": "0x8DF25084C834940",
+        "date": "Sat, 07 Nov 2026 20:45:40 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_F4E22E98-4563-4B44-8D03-2E48C7D5B0BC",
+          "varenavn": "Paralgin Major",
+          "navn_form_styrke": "Paralgin Major stikkpille 800 mg/60 mg",
+          "produsent": "Karo Pharma AS",
+          "atc": "N02AJ06",
+          "legemiddelform": "Stikkpille"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07735.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (308872 byte).",
+          "antall": {
+            "bytes": 308872
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "a401ea8e4b769b107a08fb3e26d7c1f8e11b3a82435e857ac7198e47b71390ef"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-9969.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-9969.pdf",
+      "hentet_kl": "2026-11-07T20:45:41.329Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "307864",
+        "content-md5": "jVxlrrhmMZ3qvD/8t3mWBg==",
+        "last-modified": "Thu, 15 Oct 2026 08:52:46 GMT",
+        "etag": "0x8DF2A99AF3C988A",
+        "date": "Sat, 07 Nov 2026 20:45:41 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_68C39479-10A9-4B93-B30F-DC0FF0815B05",
+          "varenavn": "Pinex Forte",
+          "navn_form_styrke": "Pinex Forte tab 500 mg/30 mg",
+          "produsent": "Teva B.V.",
+          "atc": "N02AJ06",
+          "legemiddelform": "Tablett, filmdrasjert"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-9969.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (307864 byte).",
+          "antall": {
+            "bytes": 307864
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "0f5f9d63ff6ead8aa1365474126d0996bca1a98fb645152bb42f769a3256a7a5"
+    },
+    {
+      "adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07522.pdf",
+      "endelig_adresse": "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07522.pdf",
+      "hentet_kl": "2026-11-07T20:45:47.640Z",
+      "hoder": {
+        "content-type": "application/pdf",
+        "content-length": "339084",
+        "content-md5": "DyEo34jU9WAwdNhOEnqfVg==",
+        "last-modified": "Thu, 08 Oct 2026 06:49:27 GMT",
+        "etag": "0x8DF25084BFB75A4",
+        "date": "Sat, 07 Nov 2026 20:45:48 GMT"
+      },
+      "preparater": [
+        {
+          "merkevare_id": "ID_02765233-C8E3-4569-AD0C-3AE884E55485",
+          "varenavn": "Pinex Forte",
+          "navn_form_styrke": "Pinex Forte brusetab 500 mg/30 mg",
+          "produsent": "Teva B.V.",
+          "atc": "N02AJ06",
+          "legemiddelform": "Brusetablett"
+        }
+      ],
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "adresse",
+          "status": "ok",
+          "melding": "Hentet fra DMP: https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07522.pdf"
+        },
+        {
+          "id": "http",
+          "status": "ok",
+          "melding": "DMP svarte 200."
+        },
+        {
+          "id": "innholdstype",
+          "status": "ok",
+          "melding": "Innholdstypen er application/pdf."
+        },
+        {
+          "id": "lengde",
+          "status": "ok",
+          "melding": "Lengden er den DMP oppga (339084 byte).",
+          "antall": {
+            "bytes": 339084
+          }
+        },
+        {
+          "id": "kontrollsum",
+          "status": "ok",
+          "melding": "MD5-summen er den DMP oppga."
+        },
+        {
+          "id": "pdf",
+          "status": "ok",
+          "melding": "Fila begynner og slutter som en PDF."
+        }
+      ],
+      "dokument": "d9ac2d4bd037ea1c2e5b12f6485a05c46b975685288a9fd60fc87c1c68bddb98"
+    }
+  ],
+  "dokumenter": [
+    {
+      "sha256": "7c3e11b8af5a13ea5ba4e5f872f184b273706493e51ce0cc8f7a2dfabb33bac7",
+      "bytes": 267556,
+      "mappe": "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea",
+      "pdf": {
+        "sider": 10,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "Hreferralspccleanno",
+        "laget": "Fri Jul 17 08:53:04 2026 UTC",
+        "endret": "Fri Jul 17 08:53:04 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea/original.pdf",
+        "tekst": "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea/tekst/side-001.txt",
+          "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea/tekst/side-002.txt",
+          "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea/tekst/side-003.txt",
+          "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea/tekst/side-004.txt",
+          "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea/tekst/side-005.txt",
+          "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea/tekst/side-006.txt",
+          "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea/tekst/side-007.txt",
+          "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea/tekst/side-008.txt",
+          "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea/tekst/side-009.txt",
+          "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea/tekst/side-010.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea/sider/side-001.png",
+          "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea/sider/side-002.png",
+          "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea/sider/side-003.png",
+          "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea/sider/side-004.png",
+          "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea/sider/side-005.png",
+          "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea/sider/side-006.png",
+          "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea/sider/side-007.png",
+          "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea/sider/side-008.png",
+          "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea/sider/side-009.png",
+          "kuratorjobb/resultat/kodein/spc/7c3e11b8af5a13ea/sider/side-010.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 6,
+        "til": 7
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (10 sider).",
+          "antall": {
+            "sider": 10
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 22333
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 6."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 10
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "fb0650cdd4312b97976cb3df08606c5329819a052b18a04749043a229b48691f",
+      "bytes": 363428,
+      "mappe": "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97",
+      "pdf": {
+        "sider": 13,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "Summary of Product Characteristics",
+        "laget": "Fri May  8 07:53:17 2026 UTC",
+        "endret": "Fri May  8 07:53:17 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/original.pdf",
+        "tekst": "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/tekst/side-001.txt",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/tekst/side-002.txt",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/tekst/side-003.txt",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/tekst/side-004.txt",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/tekst/side-005.txt",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/tekst/side-006.txt",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/tekst/side-007.txt",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/tekst/side-008.txt",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/tekst/side-009.txt",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/tekst/side-010.txt",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/tekst/side-011.txt",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/tekst/side-012.txt",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/tekst/side-013.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/sider/side-001.png",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/sider/side-002.png",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/sider/side-003.png",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/sider/side-004.png",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/sider/side-005.png",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/sider/side-006.png",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/sider/side-007.png",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/sider/side-008.png",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/sider/side-009.png",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/sider/side-010.png",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/sider/side-011.png",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/sider/side-012.png",
+          "kuratorjobb/resultat/kodein/spc/fb0650cdd4312b97/sider/side-013.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 9,
+        "til": 10
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (13 sider).",
+          "antall": {
+            "sider": 13
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 27683
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 9."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 13
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "9341415a3f234d250251b9c9f2e0fc4088aa302f1a5682bcad67a413ba3799b3",
+      "bytes": 266466,
+      "mappe": "kuratorjobb/resultat/kodein/spc/9341415a3f234d25",
+      "pdf": {
+        "sider": 7,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "PREPARATOMTALE (SmPC)",
+        "laget": "Tue Mar 10 12:16:14 2026 UTC",
+        "endret": "Tue Mar 10 12:16:14 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/kodein/spc/9341415a3f234d25/original.pdf",
+        "tekst": "kuratorjobb/resultat/kodein/spc/9341415a3f234d25/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/kodein/spc/9341415a3f234d25/tekst/side-001.txt",
+          "kuratorjobb/resultat/kodein/spc/9341415a3f234d25/tekst/side-002.txt",
+          "kuratorjobb/resultat/kodein/spc/9341415a3f234d25/tekst/side-003.txt",
+          "kuratorjobb/resultat/kodein/spc/9341415a3f234d25/tekst/side-004.txt",
+          "kuratorjobb/resultat/kodein/spc/9341415a3f234d25/tekst/side-005.txt",
+          "kuratorjobb/resultat/kodein/spc/9341415a3f234d25/tekst/side-006.txt",
+          "kuratorjobb/resultat/kodein/spc/9341415a3f234d25/tekst/side-007.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/kodein/spc/9341415a3f234d25/sider/side-001.png",
+          "kuratorjobb/resultat/kodein/spc/9341415a3f234d25/sider/side-002.png",
+          "kuratorjobb/resultat/kodein/spc/9341415a3f234d25/sider/side-003.png",
+          "kuratorjobb/resultat/kodein/spc/9341415a3f234d25/sider/side-004.png",
+          "kuratorjobb/resultat/kodein/spc/9341415a3f234d25/sider/side-005.png",
+          "kuratorjobb/resultat/kodein/spc/9341415a3f234d25/sider/side-006.png",
+          "kuratorjobb/resultat/kodein/spc/9341415a3f234d25/sider/side-007.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 4,
+        "til": 5
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (7 sider).",
+          "antall": {
+            "sider": 7
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 14880
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 4."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 7
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "e22c7f516807550f9049a66a830214b5379277323683e353529a0fa323870d48",
+      "bytes": 324291,
+      "mappe": "kuratorjobb/resultat/kodein/spc/e22c7f516807550f",
+      "pdf": {
+        "sider": 10,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "PREPARATOMTALE (SPC)",
+        "laget": "Fri May 22 08:23:33 2026 UTC",
+        "endret": "Fri May 22 08:23:33 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/kodein/spc/e22c7f516807550f/original.pdf",
+        "tekst": "kuratorjobb/resultat/kodein/spc/e22c7f516807550f/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/kodein/spc/e22c7f516807550f/tekst/side-001.txt",
+          "kuratorjobb/resultat/kodein/spc/e22c7f516807550f/tekst/side-002.txt",
+          "kuratorjobb/resultat/kodein/spc/e22c7f516807550f/tekst/side-003.txt",
+          "kuratorjobb/resultat/kodein/spc/e22c7f516807550f/tekst/side-004.txt",
+          "kuratorjobb/resultat/kodein/spc/e22c7f516807550f/tekst/side-005.txt",
+          "kuratorjobb/resultat/kodein/spc/e22c7f516807550f/tekst/side-006.txt",
+          "kuratorjobb/resultat/kodein/spc/e22c7f516807550f/tekst/side-007.txt",
+          "kuratorjobb/resultat/kodein/spc/e22c7f516807550f/tekst/side-008.txt",
+          "kuratorjobb/resultat/kodein/spc/e22c7f516807550f/tekst/side-009.txt",
+          "kuratorjobb/resultat/kodein/spc/e22c7f516807550f/tekst/side-010.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/kodein/spc/e22c7f516807550f/sider/side-001.png",
+          "kuratorjobb/resultat/kodein/spc/e22c7f516807550f/sider/side-002.png",
+          "kuratorjobb/resultat/kodein/spc/e22c7f516807550f/sider/side-003.png",
+          "kuratorjobb/resultat/kodein/spc/e22c7f516807550f/sider/side-004.png",
+          "kuratorjobb/resultat/kodein/spc/e22c7f516807550f/sider/side-005.png",
+          "kuratorjobb/resultat/kodein/spc/e22c7f516807550f/sider/side-006.png",
+          "kuratorjobb/resultat/kodein/spc/e22c7f516807550f/sider/side-007.png",
+          "kuratorjobb/resultat/kodein/spc/e22c7f516807550f/sider/side-008.png",
+          "kuratorjobb/resultat/kodein/spc/e22c7f516807550f/sider/side-009.png",
+          "kuratorjobb/resultat/kodein/spc/e22c7f516807550f/sider/side-010.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 5,
+        "til": 6
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (10 sider).",
+          "antall": {
+            "sider": 10
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 20803
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 5."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 10
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "a401ea8e4b769b107a08fb3e26d7c1f8e11b3a82435e857ac7198e47b71390ef",
+      "bytes": 308872,
+      "mappe": "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10",
+      "pdf": {
+        "sider": 10,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "PREPARATOMTALE (SPC)",
+        "laget": "Fri May 22 08:23:32 2026 UTC",
+        "endret": "Fri May 22 08:23:32 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10/original.pdf",
+        "tekst": "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10/tekst/side-001.txt",
+          "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10/tekst/side-002.txt",
+          "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10/tekst/side-003.txt",
+          "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10/tekst/side-004.txt",
+          "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10/tekst/side-005.txt",
+          "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10/tekst/side-006.txt",
+          "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10/tekst/side-007.txt",
+          "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10/tekst/side-008.txt",
+          "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10/tekst/side-009.txt",
+          "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10/tekst/side-010.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10/sider/side-001.png",
+          "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10/sider/side-002.png",
+          "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10/sider/side-003.png",
+          "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10/sider/side-004.png",
+          "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10/sider/side-005.png",
+          "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10/sider/side-006.png",
+          "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10/sider/side-007.png",
+          "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10/sider/side-008.png",
+          "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10/sider/side-009.png",
+          "kuratorjobb/resultat/kodein/spc/a401ea8e4b769b10/sider/side-010.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 6,
+        "til": 7
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (10 sider).",
+          "antall": {
+            "sider": 10
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 20946
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 6."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 10
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "0f5f9d63ff6ead8aa1365474126d0996bca1a98fb645152bb42f769a3256a7a5",
+      "bytes": 307864,
+      "mappe": "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a",
+      "pdf": {
+        "sider": 13,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": null,
+        "laget": "Thu Oct 15 08:43:18 2026 UTC",
+        "endret": "Thu Oct 15 08:43:18 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/original.pdf",
+        "tekst": "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/tekst/side-001.txt",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/tekst/side-002.txt",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/tekst/side-003.txt",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/tekst/side-004.txt",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/tekst/side-005.txt",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/tekst/side-006.txt",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/tekst/side-007.txt",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/tekst/side-008.txt",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/tekst/side-009.txt",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/tekst/side-010.txt",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/tekst/side-011.txt",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/tekst/side-012.txt",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/tekst/side-013.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/sider/side-001.png",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/sider/side-002.png",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/sider/side-003.png",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/sider/side-004.png",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/sider/side-005.png",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/sider/side-006.png",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/sider/side-007.png",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/sider/side-008.png",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/sider/side-009.png",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/sider/side-010.png",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/sider/side-011.png",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/sider/side-012.png",
+          "kuratorjobb/resultat/kodein/spc/0f5f9d63ff6ead8a/sider/side-013.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 7,
+        "til": 9
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (13 sider).",
+          "antall": {
+            "sider": 13
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 26123
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 7."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 13
+          }
+        }
+      ]
+    },
+    {
+      "sha256": "d9ac2d4bd037ea1c2e5b12f6485a05c46b975685288a9fd60fc87c1c68bddb98",
+      "bytes": 339084,
+      "mappe": "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c",
+      "pdf": {
+        "sider": 11,
+        "pdfversjon": "1.7",
+        "kryptert": false,
+        "tittel": "SmPC mal 8/96",
+        "laget": "Fri Mar 27 08:07:09 2026 UTC",
+        "endret": "Fri Mar 27 08:07:09 2026 UTC",
+        "produsent": null
+      },
+      "filer": {
+        "pdf": "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/original.pdf",
+        "tekst": "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/tekst.txt",
+        "sidetekster": [
+          "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/tekst/side-001.txt",
+          "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/tekst/side-002.txt",
+          "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/tekst/side-003.txt",
+          "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/tekst/side-004.txt",
+          "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/tekst/side-005.txt",
+          "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/tekst/side-006.txt",
+          "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/tekst/side-007.txt",
+          "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/tekst/side-008.txt",
+          "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/tekst/side-009.txt",
+          "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/tekst/side-010.txt",
+          "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/tekst/side-011.txt"
+        ],
+        "sidebilder": [
+          "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/sider/side-001.png",
+          "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/sider/side-002.png",
+          "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/sider/side-003.png",
+          "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/sider/side-004.png",
+          "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/sider/side-005.png",
+          "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/sider/side-006.png",
+          "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/sider/side-007.png",
+          "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/sider/side-008.png",
+          "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/sider/side-009.png",
+          "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/sider/side-010.png",
+          "kuratorjobb/resultat/kodein/spc/d9ac2d4bd037ea1c/sider/side-011.png"
+        ]
+      },
+      "avsnitt_4_8": {
+        "fra": 7,
+        "til": 9
+      },
+      "status": "ok",
+      "kontroller": [
+        {
+          "id": "pdfinfo",
+          "status": "ok",
+          "melding": "PDF-en kan leses (11 sider).",
+          "antall": {
+            "sider": 11
+          }
+        },
+        {
+          "id": "tekst",
+          "status": "ok",
+          "melding": "Teksten er trukket ut side for side.",
+          "antall": {
+            "tegn": 23631
+          }
+        },
+        {
+          "id": "avsnitt_4_8",
+          "status": "ok",
+          "melding": "Overskriften «4.8 Bivirkninger» står på side 7."
+        },
+        {
+          "id": "sidebilder",
+          "status": "ok",
+          "melding": "Et bilde av hver side, 150 dpi i gråtoner.",
+          "antall": {
+            "sider": 11
+          }
+        }
+      ]
+    }
+  ],
+  "utelatt": []
+}

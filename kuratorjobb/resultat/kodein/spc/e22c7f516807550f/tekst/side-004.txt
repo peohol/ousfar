@@ -1,0 +1,58 @@
+      svært sjeldne tilfeller fatalt.
+      Den estimerte forekomst av ultrarask legemiddelmetabolisme i ulike befolkningsgrupper er
+      oppsummert nedenfor:
+
+                 Populasjon                               Forekomst i %
+                 Afrikansk/etiopisk                       29 %
+                 Afroamerikansk                           3,4 % til 6,5 %
+                 Asiatisk                                 1,2 % til 2 %
+                 Kaukasisk                                3,6 % til 6,5 %
+                 Gresk                                    6,0 %
+                 Ungarsk                                  1,9 %
+                 Nordeuropeisk                            1%-2%
+
+      Postoperativ bruk hos barn
+      I publisert litteratur er det rapportert at kodein gitt postoperativt til barn etter tonsillektomi
+      og/eller adenoidektomi ved obstruktiv søvnapnésyndrom, har ført til sjeldne, men livstruende
+      bivirkninger, inkludert dødsfall (se også pkt. 4.3). Alle barn fikk kodeindoser som var
+      innenfor det riktige doseintervallet, men det var evidens for at disse barna enten hadde
+      ultrarask eller rask legemiddelmetabolisme med hensyn til deres evne til å omdanne kodein til
+      morfin.
+
+      Barn med nedsatt lungefunksjon
+      Kodein anbefales ikke hos barn med nedsatt lungefunksjon, inkludert ved nevromuskulære
+      lidelser, alvorlige hjerte- eller lungelidelser, infeksjoner i de øvre luftveiene eller i lungene,
+      multiple traumer eller omfattende kirurgiske inngrep. Disse faktorene kan forverre
+      symptomene på morfinforgiftning.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+      Sedativa som benzodiazepiner eller lignende legemidler eller gabapentinoider:
+      Samtidig bruk av Paralgin forte med sedativa, som benzodiazepiner elle lignende legemidler
+      eller gabapentinoider (gabapentin og pregabalin), øker risikoen for sedasjon,
+      respirasjonsdepresjon, koma og dødsfall på grunn av additiv CNS-hemmende effekt. Dose og
+      varighet ved samtidig bruk bør begrenses (se pkt. 4.4).
+
+      Følgende kombinasjon med Paralgin Forte bør unngås:
+      - kinidin.
+
+      Følgende legemidler kan kreve dosejustering i kombinasjon med Paralgin forte (de kan øke
+      levertoksisiteten av paracetamol og redusere effekten av kodein):
+      - nevroleptika
+      - antidepressiva
+      - warfarin
+      - visse antiepileptika (fenytoin, fenobarbital, karbamazepin)
+      - rifampicin,
+      - johannesurt (Hypericum perforatum)
+      - probenecid
+      - kolestyramin
+
+      Samtidig bruk av alkohol bør unngås.
+
+      Kodein:
+      Farmakokinetiske interaksjoner:
+      Kodein omdannes i lever blant annet gjennom CYP2D6-avhengig O-demetylering til morfin.
+      Denne omdanningen hemmes av visse legemidler som for eksempel
+      serotoninreopptakshemmere (SSRIer), antipsykotika av typen fentiaziner og bupropion, samt
+      kinidin og terbinafin. Disse legemidlene motvirker dermed effekten av kodein og samtidig
+      bruk kan derfor gi redusert smertestillende effekt.

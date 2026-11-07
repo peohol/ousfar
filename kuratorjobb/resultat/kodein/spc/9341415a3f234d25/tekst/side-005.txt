@@ -1,0 +1,57 @@
+Legemiddelavhengighet
+Gjentatt bruk av Kodein kan føre til legemiddelavhengighet, også ved terapeutiske doser. Risikoen for
+legemiddelavhengighet kan variere avhengig av pasients individuelle risikofaktorer, dosering og
+opioidbehandlingens varighet (se pkt. 4.4).
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til
+Direktoratet for medisinske produkter: www.dmp.no/meldeskjema.
+
+4.9   Overdosering
+
+Toksisitet
+Opioider er generelt mer toksiske for barn, eldre eller svekkede personer. Toksisiteten potenseres av
+alkohol og andre legemidler som påvirker CNS. Individuelle variasjoner.
+
+Voksne (ikke tilvendt): 640 mg ga alvorlig forgiftning. Letal dose hos voksne er 0,5-1,5 g
+(20-60 tabletter).
+
+Pediatrisk populasjon
+Barn 0-12 måneder: 20 mg i løpet av 24 timer til spedbarn (3 kg) ga alvorlig og 30 mg til barn 11
+måneder ga lett forgiftning.
+Barn over 1 år: < 3 mg/kg forventes ingen eller lette symptomer. Doser > 5 mg/kg kroppsvekt til
+småbarn (tilsvarer 2 tabletter til et barn på 10 kg) kan gi alvorlig forgiftning (inkl.
+respirasjonsdepresjon).
+
+Symptomer
+CNS-depresjon er hovedproblemet. Forgiftning forårsaker miose, kramper (særlig hos barn), oppkast
+kvalme, obstipasjon, døsighet, forvirring respirasjonsdepresjon, cyanose og til slutt koma. Erytem og
+ansiktsødem. Blek, fuktig hud, hypotermi. Sirkulasjonssvikt. Evt. acidose, rabdomyolyse og nyresvikt.
+
+Behandling
+Barn 0-12 måneder: Lege/sykehus uansett inntak.
+Symptomatisk, kombinert med evt. antikonvulsiv og respirasjonsstimulerende terapi. Antidot:
+Nalokson til voksne intravenøst ved uttalt CNS- og respirasjonsdepresjon, gjentas om nødvendig til
+normal respirasjon. Ventrikkeltømming og kull hvis indisert, men vurder fare for raskt innsettende
+CNS-depresjon. Respiratorbehandling ved pulmonale komplikasjoner eller manglende effekt av
+nalokson. Virkningen av en intravenøs injeksjon starter etter 30-60 sekunder og varer vanligvis 45-60
+minutter. Etter intramuskulær injeksjon starter virkningen etter 10 minutter og varer 2-3 timer.
+Pasienten observeres 24 timer på grunn av fare for at det igjen kan komme respirasjonsvansker.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Hoste- og forkjølelsesmidler, opiumsalkaloider og derivater.
+ATC-kode: R05D A04
+
+Virkningsmekanisme
+Virker sentralt.
+
+Farmakodynamiske effekter
+Hemmer hosterefleksen, blokkerer smerteimpulser. Kodein er et svaktvirkende analgetikum med
+sentral virkning. Kodein utøver sin effekt gjennom µ-opioidreseptorer (selv om kodein har lav affinitet
+for disse reseptorene) og dets analgetiske effekt skyldes at det omdannes til morfin. Det er påvist at

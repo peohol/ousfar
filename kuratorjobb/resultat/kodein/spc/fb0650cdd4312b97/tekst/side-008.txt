@@ -1,0 +1,57 @@
+      Etter at man slutter behandling med en CYP3A4-hemmer, kan effekten av hemmeren avta, noe
+      som kan føre til lavere kodeinnivåer, høyere norkodeinnivåer og mindre metabolisme via
+      CYP2D6, noe som fører til lavere morfinnivåer og resulterer i redusert opioideffekt eller
+      abstinenssyndrom hos pasienter som har utviklet fysisk avhengighet av kodein. Vurder å øke
+      dosen av kodein inntil stabil legemiddeleffekt er oppnådd. Vurder om det foreligger tegn på
+      opioidabstinens
+•     CYP2D6-hemmere: Effekten av kodein er antagelig forårsaket av dets O-demetylering til
+      morfin via enzymet CYP2D6. Kinidin, en sterk hemmer av CYP2D6, reduserer bioaktivering
+      av kodein, noe som reduserer effekten. Samtidig bruk av kodein og sterke CYP2D6-hemmere
+      skal unngås.
+      Samtidig bruk med andre CYP2D6-hemmere, f.eks. terbinafin, visse neuroleptika og andre
+      antidepressiva, kan kreve dosejustering.
+•     Enzyminduserende legemidler som rifampicin, barbiturater, flere antiepileptika, johannesurt
+      (Hypericum perforatum) osv. kan gi reduserte plasmakonsentrasjoner av morfin og dermed
+      redusere analgetisk effekt. Dosejustering skal vurderes. Den enzyminduserende effekten kan
+      vedvare i 2–3 uker etter seponering av det enzyminduserende legemidlet.
+•     Amitriptylin og klomipramin øker den analgetiske effekten av kodein, hovedsakelig på grunn
+      av økt tilgjengelighet av morfin. Dosereduksjon skal vurdere for å redusere risiko for
+      bivirkninger.
+
+Interferens med laboratorietester
+
+•     Opioider kan interferere med undersøkelser av ventrikkeltømming, ettersom de forsinker
+      ventrikkeltømmingen, og med hepatobiliær avbildning ved bruk av teknetium 99mTc disofenin,
+      ettersom opioidbehandling kan føre til sammentrekning av lukkemuskelen i Oddi og øke
+      trykket i galleveiene.
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet
+Risiko og nytte må vurderes fordi opioide analgetika går over i placenta. Studier hos dyr har vist at
+opioider forårsaker forsinket ossifikasjon hos mus og økt resorpsjon hos rotter.
+
+Kodein skal bare brukes under graviditet hvis det er strengt nødvendig. Som med alle legemidler bør
+forsiktighet utvises under graviditet, spesielt i første trimester. En mulig forbindelse med luftveis-
+og hjertemisdannelser er rapportert etter eksponering for kodein i første trimester.
+
+Gastroparese og risiko for aspirasjonspneumoni kan oppstå hos moren under fødselen.
+Administrering skal unngås i de sene stadiene av fødselen og under fødsel av et prematurt spedbarn.
+
+Regelmessig bruk under graviditet kan føre til at fosteret blir fysisk avhengig og føre til
+abstinenssymptomer hos nyfødte. Under fødselen går opioider inn i fosterets blodsirkulasjon og kan
+føre til respirasjonsdepresjon hos nyfødte. Luftveismisdannelser hos nyfødte kan være forbundet
+med eksponering for kodein under graviditet.
+
+Amming
+Kodein er kontraindisert hos kvinner som ammer (se pkt. 4.3).
+
+Ved normale terapeutiske doser kan kodein og dets aktive metabolitter forekomme i morsmelk i
+svært lave doser, og det er usannsynlig at det påvirker spedbarnet som ammes negativt. Imidlertid er
+det slik at hvis pasienten har ultrarask metabolisme av CYP2D6, så kan høyere nivåer av den aktive
+metabolitten, morfin, være til stede i morsmelk, og i svært sjeldne tilfeller kan det føre til
+symptomer på opioidtoksisitet hos spedbarnet, som kan være dødelig.
+
+Hvis mor eller barn utvikler symptomer på opioidtoksisitet, skal alle kodeinholdige legemidler
+seponeres, og alternative ikke-opioide analgetika foreskrives. I alvorlige tilfeller skal man vurdere å
+                                                    8

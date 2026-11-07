@@ -1,0 +1,58 @@
+Kodein er et svaktvirkende analgetikum med sentral virkning. Kodein utøver sin effekt gjennom
+µ-opioidreseptorer (selv om kodein har lav affinitet for disse reseptorene) og dets analgetiske effekt
+skyldes at det omdannes til morfin. Det brukes også til behandling av hoste og alvorlig diaré. Det er
+påvist at kodein (spesielt i kombinasjon med andre analgetika som paracetamol) er effektiv ved
+akutte nociseptive smerter.
+
+5.2    Farmakokinetiske egenskaper
+
+Kodein og dets salter absorberes lett fra mage-tarmkanalen, og toppkonsentrasjoner i plasma oppstår
+etter ca. én time. Kodein metaboliseres ved O- og N-demetylering i leveren til morfin og norkodein.
+Kodein og dets metabolitter utskilles nesten helt av nyrene, hovedsakelig som konjugater med
+glukuronsyre. Halveringstiden i plasma er rapportert å være mellom 3 og 4 timer.
+
+Absorpsjon
+Kodein absorberes godt fra mage-tarmkanalen. Etter oral administrering oppnås maksimal
+plasmakonsentrasjon etter 1–2 timer.
+
+Distribusjon
+Kodein overføres gjennom morkaken og skilles ut i morsmelk. Graden av plasmaproteinbinding av
+kodein er rundt 7–25 %.
+
+Biotransformasjon
+Kodein metaboliseres via CYP3A4 til norkodein, som inaktiveres videre via glukuronidering.
+Omtrent 10 % av det absorberte kodeinet demetyleres til morfin ved enzymet CYP2D6. Morfin
+omdannes videre til den aktive metabolitten morfin-6-glukuronid.
+
+Eliminasjon
+Kodein metaboliseres i leveren og elimineres gjennom nyrene, ca. 37 % som glukuronidkonjugater
+og 10 % som uendret kodein. Halveringstiden for eliminasjon i plasma er ca. 3–4 timer, som kan
+være så høy som 6 timer ved nedsatt leverfunksjon eller etter overdosering.
+
+Spesielle pasientgrupper (CYP2D6-polymorfisme)
+På grunn av genetisk polymorfisme mangler ca. 7 % av den kaukasiske befolkningen et fungerende
+CYP2D6-enzym. Den smertestillende effekten av kodein kan reduseres hos slike pasienter på grunn
+av manglende morfindannelse. Videre har 1–5 % av den kaukasiske befolkningen økt CYP2D6-
+aktivitet. Disse pasientene kan ha forhøyede plasmanivåer av morfin (se pkt. 4.4 og 4.6), og spesielt
+ved nedsatt nyrefunksjon kan bivirkninger av morfin oppstå da eliminasjonen av den aktive
+metabolitten morfin-6-glukuronid reduseres. Økt aktivitet av CYP2D6-enzymet er hyppigere i
+afrikanske populasjoner og Middelhavspopulasjoner.
+
+5.3 Prekliniske sikkerhetsdata
+
+Det foreligger ingen prekliniske data som er relevante for forskriveren utover de som allerede finnes
+i andre deler av preparatomtalen.
+
+
+6     FARMASØYTISKE OPPLYSNINGER
+
+6.1    Hjelpestoffer
+
+Mikrokrystallinsk cellulose
+Laktosemonohydrat
+Cellulosepulver
+Silika, kolloidal vannfri
+Natriumstivelsesglykolat
+Magnesiumstearat
+
+                                                   11

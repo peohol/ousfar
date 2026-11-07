@@ -1,0 +1,56 @@
+dager. Inntil seponeringssymptomene avtar bør videre bruk unngås og dersom behandling skal fortsettes
+bør det skje i samråd med lege.
+
+Som med andre opioider, ved utilstrekkelig smertekontroll som respons på en økt dose kodein, bør
+muligheten for opioidindusert hyperalgesi vurderes. Det kan være nødvendig å redusere dosen eller
+vurdere behandlingen på nytt.
+
+Paracetamol/kodein bør brukes med forsiktighet hos pasienter med:
+    - Nedsatt lever- og/eller nyrefunksjon.
+    - Respirasjonsdepresjon og akutt bronkial astma fordi kodein kan ha en hemmende effekt på
+        respirasjonen.
+    - Opioidavhengige pasienter.
+    - Forhøyet intrakranielt trykk eller kranietraume.
+    - Kombinasjonsterapi med CNS hemmende midler.
+    - Hypotyroidisme.
+    - Hypertrofi i prostata eller uretra striktur.
+    - Nedsatt adrenokortikal funksjon.
+    - Akutte magesmerter
+    - Eldre og svake pasienter.
+
+Paracetamol/kodein bør brukes med ytterste forsiktighet og i reduserte doser for pasienter med:
+    - Alvorlig nedsatt nyrefunksjon. Risiko for nyreskader ved langtidsbruk kan ikke utelukkes.
+    - Nedsatt leverfunksjon eller alkoholisme (se pkt. 4.5).
+
+Ved redusert tilgang på karbohydrat og høyverdig protein er sikkerhetsmarginen for toksiske
+leverreaksjoner mindre enn ved normal ernæringstilstand.
+
+Vedvarende bruk eller maksimale doser, spesielt hos pasienter med svekket ernæringstilstand på grunn
+av alkoholmisbruk, anoreksi eller feilernæring, medfører økt risiko for leverpåvirkning.
+
+Tilfeller av metabolsk acidose med høyt aniongap (HAGMA) forårsaket av pyroglutamat-acidose er
+rapportert hos pasienter med alvorlig sykdom slik som alvorlig nedsatt nyrefunksjon og sepsis, eller hos
+pasienter med underernæring eller andre årsaker til glutationmangel (f.eks. kronisk alkoholisme) som ble
+behandlet med paracetamol i terapeutisk dose i en lengre periode eller med en kombinasjon av
+paracetamol og flukloksacillin. Dersom HAGMA forårsaket av pyroglutamat-acidose mistenkes, er
+umiddelbar seponering av paracetamol og nøye overvåking anbefalt. Måling av 5-oksoprolin i urin kan
+være nyttig for å identifisere pyroglutamat-acidose som underliggende årsak til HAGMA hos pasienter
+med multiple risikofaktorer.
+
+Regelmessig bruk av analgetika, spesielt i kombinasjon med andre analgetiske legemidler kan føre til
+vedvarende nyreskader med risiko for nyresvikt (analgetisk nefropati).
+
+For å unngå risiko for overdosering bør det kontrolleres at legemidler som eventuelt inntas samtidig, ikke
+inneholder paracetamol.
+
+CYP 2D6-metabolisme
+Kodein metaboliseres via leverenzymet CYP 2D6 til morfin som er den aktive metabolitten. Dersom en
+pasient helt eller delvis mangler dette enzymet, vil ikke tilstrekkelig analgetisk effekt oppnås. Estimater
+indikerer at opptil 7 % av den kaukasiske populasjonen kan ha denne mangelen. Dersom pasienten har
+rask eller ultrarask legemiddelmetabolisme, er det imidlertid økt risiko for å utvikle bivirkninger
+forbundet med opioidforgiftning selv ved vanlige doser. Disse pasientene omdanner kodein til morfin
+raskt, noe som gir høyere serumnivåer av morfin enn forventet.
+
+Vanlige symptomer på opioidforgiftning omfatter forvirring, somnolens, overfladisk pust, små pupiller,
+kvalme, oppkast, forstoppelse og manglende appetitt. I alvorlige tilfeller kan dette omfatte symptomer på
+sirkulasjons- og respirasjonsdepresjon, som kan være livstruende og i svært sjeldne tilfeller fatale.

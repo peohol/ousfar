@@ -1,0 +1,58 @@
+      Premature og spedbarn under 3 måneder antas å ha økt risiko for toksisitet.
+
+      Behandling:
+
+      Kodein:
+      Symptomatisk, kombinert med ev. antikonvulsiv og respirasjonsstimulerende terapi. Antidot:
+      Nalokson.
+
+      Paracetamol:
+      Ventrikkeltømming og behandling med kull vurderes. N-acetylcystein gis så snart som mulig
+      etter sannsynlig inntak av toksisk dose, men behandlingen kan startes når som helst i
+      forgiftningsforløpet, også etter at pasienten har utviklet leverkoma. Levertransplantasjon kan
+      være aktuelt. Kontakt Giftinformasjonen ved behov.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+      Farmakoterapeutisk gruppe: Kombinasjonsanalgetikum; paracetamol og kodein.
+      ATC-kode: N02A J06
+
+      Virkningsmekanisme:
+      Kodein er et svaktvirkende analgetikum med sentral virkning. Kodein utøver sin effekt
+      gjennom -opioidreseptorer (selv om kodein har en lav affinitet til disse reseptorene) og dets
+      analgetiske effekt skyldes at det omdannes til morfin. Det er påvist at kodein (spesielt i
+      kombinasjon med andre analgetika som paracetamol) er effektiv ved akutte nociseptive
+      smerter. Paracetamol har sentral og perifer analgetisk effekt. Paracetamol har antipyretisk
+      effekt over varmereguleringssenteret i hypothalamus. Paracetamol påvirker ikke hemostasen
+      og irriterer ikke gastrointestinalslimhinnen.
+      Paracetamol forbruker glutation som beskytter mot skadelig effekt av paracetamols reaktive
+      metabolitt. Lavt glutationinnhold i utsatte vev disponerer for organskade.
+
+5.2   Farmakokinetiske egenskaper
+
+      Absorpsjon:
+      Paracetamol og kodein absorberes nesten fullstendig ved rektal administrering.
+      Absorpsjonshastigheten er noe langsommere enn ved oral administrering. Terapeutisk
+      serumkonsentrasjon oppnås etter ca. 1-1½ time.
+
+      Distribusjon:
+      Paracetamol distribueres raskt og fordeles til de fleste vev. Distribusjonsvolumet er ca.1
+      liter/kg.
+      Proteinbinding er på ca. 30 % for kodein, regnes som ubetydelig for paracetamol.
+
+      Biotransformasjon:
+      Paracetamol metaboliseres hovedsakelig til glukuronider og sulfatkonjugater i lever. En
+      mindre fraksjon konverteres av en cytochrome p-450-avhengig oksydase til en svært reaktiv
+      metabolitt. Denne metabolitten inaktiveres raskt ved konjugering med redusert glutation og
+      utskilles i urinen som acetylcystein og merkaptursyre- konjugater. Kodein metaboliseres
+      vesentlig via N- og O-metylering til blant annet morfin. Normalt omdannes 5-15 % av
+      kodeindosen til morfin. Disse metabolittene inaktiveres for en stor del ved konjugering til
+      glukuronat.
+
+      Spesielle pasientgrupper:
+      Langsom og ultrarask metabolisme ved enzymet CYP2D6
+      Omkring 7 % av den kaukasiske befolkningen mangler på grunn av sin gensammensetning et
+      fungerende CYP2D6 enzym. Disse individene har langsom metabolisme og kan få dårligere

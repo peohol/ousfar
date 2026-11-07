@@ -1,0 +1,57 @@
+      Metabolsk acidose med høyt aniongap
+      Tilfeller av metabolsk acidose med høyt aniongap forårsaket av pyroglutamat-acidose er
+      observert hos pasienter med risikofaktorer og som bruker paracetamol (se avsnitt 4.4).
+      Pyroglutamat-acidose kan forekomme som en konsekvens av lave glutation-nivåer hos disse
+      pasientene.
+
+      Legemiddelavhengighet
+      Gjentatt bruk av Paralgin forte eller Paralgin major kan føre til legemiddelavhengighet, også
+      ved terapeutiske doser. Risikoen for legemiddelavhengighet kan variere avhengig av pasients
+      individuelle risikofaktorer, dosering og opioidbehandlingens varighet (se pkt. 4.4).
+
+      Melding av mistenkte bivirkninger
+      Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det
+      mulig å overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell
+      oppfordres til å melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes
+      på nettsiden til Direktoratet for medisinske produkter: www.dmp.no/meldeskjema.
+
+4.9   Overdosering
+
+      Symptomer:
+
+      Kodein:
+      Forgiftning kan gi CNS-depresjon, kvalme, oppkast, obstipasjon, døsighet, miose,
+      hypotensjon, respirasjonsdepresjon, cyanose, kramper (særlig hos barn) og til slutt koma.
+
+      Paracetamol:
+      Akutt massiv overdosering av paracetamol kan gi leverskade. Symptomer på overdosering
+      første døgn er få. Anoreksi, magesmerter, kvalme og oppkast kan forekomme.
+      Innen 1,5 døgn starter vanligvis tegn på leverskade som smerter i øvre mageregion, økning i
+      ALAT/ASAT, INR og bilirubin. Innen 3-4 døgn skjer utvikling av maksimal levertoksisitet:
+      Leverkoma, koagulasjonsforstyrrelser og hypoglykemi. Akutt nyresvikt kan forekomme.
+
+      Toksisitet:
+
+      Kodein:
+      Toksisk dose av kodein varierer mye fra person til person. Noe av grunnen til dette er
+      toleranseutvikling hos kroniske brukere og individuell variasjon i dannelsen av morfin fra
+      kodein.
+
+      Samtidig inntak av andre rusmidler/legemidler som gir CNS-depresjon, som for eksempel
+      alkohol eller benzodiazepiner, vil øke toksisiteten av kodein.
+
+      Eldre og små barn er spesielt følsomme for kodein. Hos spedbarn må lege/sykehus kontaktes
+      ved alle inntak. 1 mg/kg peroralt hos barn (1-6 år) kan gi symptomer. Inntak på over 5 mg/kg
+      peroralt hos barn har gitt alvorlig forgiftning med respirasjonsstans.
+
+      Paracetamol:
+      Den viktigste risikofaktoren er overdosering over tid (for eksempel flere påfølgende dager).
+      Gjentatte overdoseringer nedsetter motstandsdyktigheten ved at nivået av glutation (i aktiv,
+      redusert form) kan være lavere enn normalt. Avklar derfor alltid først om dette er ett
+      enkeltinntak eller gjentatte inntak. Terapeutisk bruk av paracetamol i dagene før en eventuell
+      overdose er også relevant, og det skal normalt inkluderes når toksisk dose regnes ut. Alle
+      eksponeringer med toksisk dose skal til sykehus.
+
+      Toksisk dose voksne og barn > 3 mnd: 100 – 170 mg/kg per døgn, avhengig av alder og
+      tidsrommet inntaket strekker seg over.
+      Barn < 3 mnd: ved enhver mistanke om overdose bør Giftinformasjonen alltid kontaktes.

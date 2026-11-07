@@ -1,0 +1,59 @@
+      Virkningsmekanisme:
+      Kodein er et svaktvirkende analgetikum med sentral virkning. Kodein utøver sin effekt
+      gjennom -opioidreseptorer (selv om kodein har en lav affinitet til disse reseptorene) og dets
+      analgetiske effekt skyldes at det omdannes til morfin. Det er påvist at kodein (spesielt i
+      kombinasjon med andre analgetika som paracetamol) er effektiv ved akutte nociseptive
+      smerter. Paracetamol har sentral og perifer analgetisk effekt.
+      Paracetamol har antipyretisk effekt over varmereguleringssenteret i hypothalamus.
+      Paracetamol påvirker ikke hemostasen og irriterer ikke gastrointestinalslimhinnen.
+      Paracetamol forbruker glutation som beskytter mot skadelig effekt av paracetamols reaktive
+      metabolitt. Lavt glutationinnhold i utsatte vev disponerer for organskade.
+
+5.2   Farmakokinetiske egenskaper
+
+      Absorpsjon:
+      Paracetamol og kodein absorberes raskt og nær fullstendig etter oralt inntak. Maksimal
+      plasmakonsentrasjon oppnås ½-1 time etter oralt inntak.
+
+      Distribusjon:
+      Paracetamol distribueres raskt og fordeles til de fleste vev. Distribusjonsvolumet er ca.1
+      liter/kg.
+      Proteinbinding er på ca. 30 % for kodein og regnes som ubetydelig for paracetamol.
+
+      Biotransformasjon:
+      Paracetamol metaboliseres hovedsakelig til glukuronider og sulfatkonjugater i lever. En
+      mindre fraksjon konverteres av en cytochrome p-450-avhengig oksydase til en svært reaktiv
+      metabolitt. Denne metabolitten inaktiveres raskt ved konjugering med redusert glutation og
+      utskilles i urinen som acetylcystein og merkaptursyre konjugater. Kodein metaboliseres
+      vesentlig via N- og O-metylering til blant annet morfin. Normalt omdannes 5-15 % av
+      kodeindosen til morfin. Disse metabolittene inaktiveres for en stor del ved konjugering til
+      glukuronat.
+
+      Spesielle pasientgrupper:
+      Langsom og ultrarask metabolisme ved enzymet CYP2D6
+      Omkring 7% av den kaukasiske befolkningen mangler på grunn av sin gensammensetning et
+      fungerende CYP2D6 enzym. Disse individene har langsom metabolisme og kan få dårligere
+      effekt på grunn av manglende omdannelse til morfin. Omkring 1 % av den kaukasiske
+      befolkningen har ultrahurtig metabolisme. Individer med ultrahurtig metabolisme har en eller
+      flere dupliseringer av sine CYP2D6 kodede gener og har derfor en merkbart forhøyet
+      CYP2D6 aktivitet. Disse individene får forhøyede plasmakonsentrasjoner av morfin og har
+      derfor en økt risiko for morfinrelaterte bivirkninger (se pkt. 4.4 og 4.6). Dette er det særlig
+      viktig å være oppmerksom på dersom pasienten samtidig har nedsatt nyrefunksjon fordi dette
+      kan føre til økt konsentrasjon av metabolitten morfin-6-glukoronid. Den genetiske profilen for
+      CYP2D6 kan bestemmes ved genotyping.
+      Eliminasjon:
+      Halveringstid for kodein er på 3½ time og for paracetamol på 2-3 timer. Halveringstiden kan
+      forlenges ved toksiske doser eller hos pasienter med leverskade.
+      Kodein elimineres via nyrene hovedsakelig som glukuronat. 2/3 av dosen utskilles i løpet av 6
+      timer. Paracetamol elimineres via nyrene hovedsakelig som glukuronat med små mengder
+      sulfater og merkaptat og uforandret legemiddel. Ca. 85 % av en paracetamoldose kan
+      gjenfinnes i urinen som fritt og konjugert paracetamol innen 24 timer etter inntak.
+
+      Pasientfaktorer:
+      En serumkonsentrasjon på 5-20g paracetamol/ml vil gi smertestillende og febernedsettende
+      effekt. En normaldose paracetamol vil ha effekt i 4-6 timer. Doser over 1 g vil gi ubetydelig
+      økning i den terapeutiske effekten av paracetamol.
+
+5.3   Prekliniske sikkerhetsdata
+
+      Kodein: Mutagen effekt er ikke observert for kodein.

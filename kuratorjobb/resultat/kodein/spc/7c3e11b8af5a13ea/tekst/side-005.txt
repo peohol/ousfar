@@ -1,0 +1,59 @@
+Nevroleptika og antidepressiva har også en hemmende effekt på CYP2D6; derfor kan en dosejustering
+være nødvendig ved disse kombinasjonene.
+Enzyminduserende legemidler som rifampicin, barbiturater, flere antiepileptika, johannesurt
+(Hypericum perforatum) etc. kan redusere morfins plasmakonsentrasjon (se også interaksjoner med
+paracetamol under).
+
+Paracetamol
+Farmakodynamiske interaksjoner:
+Studier har vist at warfarins effekt kan forsterkes ved behandling med paracetamol. Effekten ser ut til
+å øke med økende paracetamoldose, men den kan også oppstå ved daglige doser på 1,5-2,0 g
+paracetamol i minst 5-7 dager. Sporadiske vanlige doser med paracetamol anses ikke å gi denne
+effekten.
+
+Farmakokinetiske interaksjoner:
+Enzyminduserende stoffer, som f.eks. enkelte antiepileptika (fenytoin, fenobarbital, karbamazepin) har
+i farmakokinetiske studier vist å gi en reduksjon til ca. 60 % av paracetamols plasma-AUC. Andre
+legemidler med enzyminduserende egenskaper, f.eks. rifampicin og johannesurt (Hypericum
+perforatum), antas også å redusere konsentrasjonen av paracetamol. I tillegg kan disse stoffer øke
+hepatoksisiteten til paracetamol pga. økt og raskere dannelse av toksiske metabolitter. Forsiktighet bør
+derfor utvise dersom enzyminduserende stoffer gis samtidig.
+
+Probenecid nesten halverer clearance av paracetamol ved å hemme konjugeringen med glukuronsyre.
+Dette betyr antageligvis at paracetamoldosen kan halveres når gitt samtidig med probenecid.
+
+Paracetamols absorpsjonshastighet kan økes av metoklopramid, men disse legemidlene kan gis
+samtidig. Absorpsjonen av paracetamol reduseres av kolestyramin. Dersom maksimal analgetisk effekt
+skal oppnås, bør ikke kolestyramin gis innen en time.
+
+Paracetamol kan påvirke kloramfenikols farmakokinetikk. Det anbefales derfor en analyse av
+kloramfenikol i plasma dersom behandlingen skal kombineres med kloramfenikol til injeksjon.
+
+Forsiktighet bør utvises når paracetamol brukes samtidig med flukloksacillin, da samtidig inntak har
+vært assosieret med HAGMA (high anion gap metabolic acidosis) forårsaket av pyroglutamat-acidose,
+spesielt hos pasienter med risikofaktorer (se pkt. 4.4).
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet:
+Paracetamol: En stor mengde data fra gravide kvinner indikerer hverken misdannelser, eller toksisitet
+hos foster eller det nyfødte barnet. Epidemiologiske studier på nevronal utvikling hos barn utsatt for
+paracetamol in utero viser ikke entydige resultater. Hvis klinisk nødvendig kan paracetamol brukes
+under graviditet med lavest mulig effektive dose i kortest mulig tid og lavest mulig frekvens.
+
+Kodein: Bør brukes med forsiktighet under første trimester. Ved langtidsbehandling under graviditet
+bør det tas hensyn til risikoen for neonatalt abstinenssyndrom.
+
+Amming:
+Kodein er kontraindisert ved amming (se pkt. 4.3).
+
+Ved vanlige terapeutiske doser kan kodein og dets metabolitter være tilstede i morsmelk i svært lave
+doser og det er ikke sannsynlig at det gir bivirkninger hos det diende spedbarnet. Dersom pasienten
+imidlertid er en ultrarask omsetter av CYP2D6, kan høyere nivåer av den aktive metabolitten, morfin,
+være tilstede i morsmelken og i svær sjeldne tilfeller kan dette gi symptomer på opioidtoksisitet hos
+spedbarnet, hvilket kan være fatalt.
+
+
+
+
+                                                                                                      5

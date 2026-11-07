@@ -1,0 +1,534 @@
+                                       PREPARATOMTALE
+
+
+
+1.    LEGEMIDLETS NAVN
+
+      Paralgin forte stikkpiller, Paralgin major stikkpiller "Karo Pharma"
+
+
+2.    KVALITATIV OG KVANTITATIV SAMMENSETNING
+
+      1 stikkpille Paralgin forte inneholder:
+      Paracetamol 400 mg og kodeinfosfat tilsv. kodeinfosfatsesquihydrat 30 mg
+      1 stikkpille Paralgin major inneholder:
+      Paracetamol 800 mg og kodeinfosfat tilsv. kodeinfosfatsesquihydrat 60 mg
+
+      For fullstendig liste over hjelpestoffer, se pkt. 6.1.
+
+
+3.    LEGEMIDDELFORM
+
+      Stikkpiller
+
+
+4.    KLINISKE OPPLYSNINGER
+
+4.1   Indikasjoner
+
+      Paralgin forte og major: Voksne: Moderate til sterke smerter.
+
+      Paralgin forte: Barn 12 år eller eldre: Behandling av akutte, moderate smerter, som ikke anses
+      å kunne lindres med andre analgetika som paracetamol eller ibuprofen (alene).
+
+4.2   Dosering og administrasjonsmåte
+
+      Dosering:
+      Voksne: 1 stikkpille Paralgin forte, evt. Paralgin major, inntil 4 ganger daglig med minst 6
+      timer mellom hver dose.
+
+      Pediatrisk populasjon:
+      Barn i alderen 12 år til 18 år:
+      > 12 år (> 40 kg): 1 stikkpille Paralgin forte inntil 4 ganger daglig, med minst 6 timer
+      mellom hver dose.
+
+      Behandlingsvarigheten skal være så kort som mulig, og hvis det ikke oppnås effektiv
+      smertelindring, skal pasientene/omsorgspersonene rådes til å oppsøke lege. Hos barn bør
+      behandlingens varighet begrenses til maksimalt 3 dager.
+
+      Barn under 12 år
+      Kodein bør ikke brukes til barn under 12 år på grunn av risiko for opioidtoksisitet som følge
+      av den varierende og uforutsigbare metaboliseringen av kodein til morfin (se pkt. 4.3 og 4.4).
+          Nedsatt nyrefunksjon
+          Ved nedsatt nyrefunksjon bør dosen justeres:
+           Glomerulær filtrering             Dosering
+           10-50 ml/min                      1 stikkpille Paralgin forte 400/30 mg hver 6. time
+           < 10 ml/min                       1 stikkpille Paralgin forte 400/30 mg hver 8. time
+
+          Nedsatt leverfunksjon
+          2 g paracetamol per døgn bør ikke overskrides ved alvorlig leversykdom, levercirrhose,
+          kronisk underernæring, samtidig kronisk alkoholmisbruk eller hos fastende pasienter.
+
+          Administrasjonsmåte:
+          Innføres i endetarmen.
+
+          Behandlingsmål og seponering
+          Før oppstart av behandling med Paralgin forte eller Paralgin major skal legen og pasienten bli
+          enige om en behandlingsstrategi, inkludert behandlingsvarighet og behandlingsmål, samt en
+          plan for å avslutte behandlingen, i samsvar med retningslinjene for smertebehandling. Under
+          behandlingen skal det være hyppig kontakt mellom legen og pasienten for å vurdere behovet
+          for videre behandling, vurdere seponering og å justere dosen om nødvendig. Når en pasient
+          ikke lenger trenger behandling med kodein, kan det være tilrådelig å trappe ned dosen gradvis
+          for å forebygge abstinenssymptomer. I fravær av adekvat smertekontroll skal muligheten for
+          hyperalgesi, toleranse og progresjon av underliggende sykdom vurderes (se pkt. 4.4).
+
+
+4.3       Kontraindikasjoner
+
+      •    Overfølsomhet overfor virkestoffene eller overfor noen av hjelpestoffene listet opp i avsnitt
+           6.1.
+      •    Akutt alvorlig hepatitt og alvorlig leversvikt
+      •    Alle pediatriske pasienter (i alderen 0-18 år) som gjennomgår tonsillektomi og/eller
+           adenoidektomi som behandling for obstruktiv søvnapnésyndrom, på grunn av økt risiko for
+           å utvikle alvorlige og livstruende bivirkninger (se pkt. 4.4)
+      •    Kvinner som ammer (se pkt. 4.6)
+      •    Pasienter som har kjent ultrarask legemiddelmetabolisme via CYP2D6
+
+4.4       Advarsler og forsiktighetsregler
+
+          Risiko ved samtidig bruk av sedativa som benzodiazepiner eller lignende legemidler
+          Samtidig bruk av Paralgin forte eller Paralgin major og sedativa, som benzodiazepiner eller
+          lignende legemidler, kan medføre sedasjon, respirasjonsdepresjon, koma og dødsfall. Derfor
+          bør samtidig forskrivning av sedativa være forbeholdt pasienter der andre
+          behandlingsalternativer ikke er mulig. Dersom Paralgin forte eller Paralgin major blir
+          forskrevet samtidig med sedativa, bør lavest effektive dose og kortest mulig behandlingstid
+          benyttes.
+          Pasienter skal overvåkes nøye for tegn og symptomer på respirasjonsdepresjon og sedasjon. I
+          den forbindelse anbefales det sterkt å gjøre pasienter og omsorgspersoner oppmerksom på
+          disse symptomene (se pkt. 4.5).
+
+          Opioider kan forårsake søvnrelaterte pusteforstyrrelser, inkludert sentral søvnapné (CSA) og
+          søvnrelatert hypoksemi. Opioidbruk øker risikoen for CSA på en doseavhengig måte. Hos
+          pasienter med CSA bør den totale opioiddosen vurderes redusert.
+
+          Sykdommer i lever og galleveier
+          Kodein kan forårsake dysfunksjon og spasmer i Oddis sfinkter, og dermed øke risikoen for
+          symptomer fra galleveiene og pankreatitt. Kodein/paracetamol må derfor administreres med
+          forsiktighet hos pasienter med pankreatitt og sykdommer i galleveiene.
+Kolecystektomi og akutt pankreatitt
+Kolecystektomerte pasienter kan ha en økt risiko for akutt pankreatitt pga. manglende
+reservoar og opioiders effekt på Oddis sfinkter (se pkt. 4.8). Disse pasientene må informeres
+om symptomer på akutt pankreatitt og bes om å ta kontakt umiddelbart ved sterke smerter i
+øvre del av magen
+
+Leverpåvirkning
+Ved langvarig bruk eller høye doser, spesielt hos pasienter med svekket ernæringstilstand på
+grunn av alkoholmisbruk, anoreksi, feilernæring eller fasting, er det økt risiko for
+leverpåvirkning.
+
+Nyreskade
+Risiko for nyreskader ved langvarig bruk er ikke utelukket. Forsiktighet bør utvises ved
+alvorlig lever- og nyreskade.
+
+Metabolsk acidose med høyt aniongap (HAGMA)
+Tilfeller av metabolsk acidose med høyt aniongap (HAGMA) forårsaket av pyroglutamat-
+acidose er rapportert hos pasienter med alvorlig sykdom slik som sterkt nedsatt nyrefunksjon
+og sepsis, eller hos pasienter med underernæring eller andre årsaker til glutationmangel (f.eks.
+kronisk alkoholisme) som ble behandlet med paracetamol i terapeutisk dose for en lengre
+periode eller i kombinasjonen paracetamol og flucloxacillin. Dersom HAGMA forårsaket av
+pyroglutamat-acidose mistenkes, er umiddelbar seponering av paracetamol og nøye
+overvåkning anbefalt. Måling av 5-oksoprolin i urin kan være nyttig for å identifisere
+pyroglutamat-acidose som underliggende årsak til HAGMA hos pasienter med multiple
+risikofaktorer.
+
+Toleranse og opioidbrukslidelse (misbruk og avhengighet)
+Toleranse, fysisk og psykologisk avhengighet, samt opioidbrukslidelse (OUD) kan utvikle seg
+ved gjentatt administrering av opioider som Paralgin forte eller Paralgin major. Gjentatt bruk
+av Paralgin forte eller Paralgin major kan føre til OUD. En høyere dose og lengre varighet av
+opioidbehandling kan øke risikoen for å utvikle OUD. Misbruk eller tilsiktet feilbruk av
+Paralgin forte eller Paralgin major kan føre til overdose og/eller dødsfall. Risikoen for å
+utvikle OUD er forhøyet hos pasienter med en personlig historie eller familiehistorie (foreldre
+eller søsken) med narkotika- /legemiddelmisbruk (inkludert alkoholmisbruk), hos brukere av
+tobakk, eller hos pasienter med en personlig historie med andre psykiske lidelser (f.eks.
+alvorlig depresjon, angst og personlighetsforstyrrelser).
+
+Før oppstart av behandling med Paralgin forte eller Paralagin major og under behandlingen,
+skal man bli enig med pasienten om behandlingsmål og en seponeringsplan (se pkt. 4.2). Før
+og under behandlingen skal pasienten også få informasjon om risikoene og symptomene på
+OUD. Hvis disse symptomene oppstår, skal pasienten rådes til å kontakte legen.
+
+Pasienter må følges opp med hensyn til tegn på legemiddeloppsøkende atferd (f.eks. ber om
+ny resept for tidlig). Dette inkluderer gjennomgang av samtidig bruk av opioider og
+psykoaktive legemidler (som benzodiazepiner). Det bør vurderes å konsultere en spesialist
+innen avhengighetsmedisin dersom pasienter har tegn og symptomer på OUD.
+
+Hyperalgesi
+Som med andre opioider, ved utilstrekkelig smertekontroll som respons på en økt dose
+kodein, bør muligheten for opioidindusert hyperalgesi vurderes. Det kan være nødvendig å
+redusere dosen eller vurdere behandlingen på nytt.
+
+Hodepine
+Ved langtidsbruk (> 3 mnd) av analgetika med inntak annenhver dag eller oftere, kan
+hodepine utvikles eller forverres. Hodepine utløst av overforbruk av analgetika bør ikke
+behandles med doseøkning. I slike tilfeller bør bruken av analgetika seponeres i samråd med
+lege.
+Metabolisering via CYP2D6
+Kodein metaboliseres via leverenzymet CYP2D6 til morfin som er kodeins aktive metabolitt.
+Hvis en pasient helt eller delvis mangler dette enzymet vil man ikke oppnå tilstrekkelig
+analgetisk effekt. Estimater tyder på at opp til 7 % av den kaukasiske populasjonen kan ha
+denne mangelen. Hvis en pasient derimot har rask eller ultrarask legemiddelmetabolisme er
+det økt risiko for å få bivirkninger forbundet med opioidtoksisitet, selv ved vanlige doser.
+Disse pasientene omdanner raskt kodein til morfin, noe som medfører høyere serumnivåer av
+morfin enn forventet.
+
+Vanlige symptomer på opioidtoksisitet omfatter forvirring, søvnighet, overfladisk pust, små
+pupiller, kvalme, oppkast, obstipasjon og manglende appetitt. I alvorlige tilfeller kan dette
+omfatte symptomer på sirkulasjons- og respirasjonsdepresjon, som kan være livstruende og i
+svært sjeldne tilfeller fatalt.
+Den estimerte forekomst av ultrarask legemiddelmetabolisme i ulike befolkningsgrupper er
+oppsummert nedenfor:
+
+        Populasjon                                          Forekomst i %
+        Afrikansk/etiopisk                                  29 %
+        Afroamerikansk                                      3,4 % til 6,5 %
+        Asiatisk                                            1,2 % til 2 %
+        Kaukasisk                                           3,6 % til 6,5 %
+        Gresk                                               6,0 %
+        Ungarsk                                             1,9 %
+        Nordeuropeisk                                       1%-2%
+
+
+Postoperativ bruk hos barn
+I publisert litteratur er det rapportert at kodein gitt postoperativt til barn etter tonsillektomi
+og/eller adenoidektomi ved obstruktiv søvnapnésyndrom, har ført til sjeldne, men livstruende
+bivirkninger, inkludert dødsfall (se også pkt. 4.3). Alle barn fikk kodeindoser som var
+innenfor det riktige doseintervallet, men det var evidens for at disse barna enten hadde
+ultrarask eller rask legemiddelmetabolisme med hensyn til deres evne til å omdanne kodein til
+morfin.
+
+Barn med nedsatt lungefunksjon
+Kodein anbefales ikke til barn med nedsatt lungefunksjon, inkludert ved nevromuskulære
+lidelser, alvorlige hjerte- eller lungelidelser, infeksjoner i de øvre luftveiene eller i lungene,
+multiple traumer eller omfattende kirurgiske inngrep. Disse faktorene kan forverre
+symptomene på morfinforgiftning.
+
+4.5     Interaksjon med andre legemidler og andre former for interaksjon
+
+Sedativa som benzodiazepiner eller lignende legemidler eller gabapentinoider:
+Samtidig bruk av Paralgin forte eller Paralgin major med sedativa, som benzodiazepiner elle
+lignende legemidler eller gabapentinoider (gabapentin og pregabalin), øker risikoen for
+sedasjon, respirasjonsdepresjon, koma og dødsfall på grunn av additiv CNS-hemmende
+effekt. Dose og varighet ved samtidig bruk bør begrenses (se pkt. 4.4).
+
+Følgende kombinasjon med Paralgin forte bør unngås:
+    - kinidin
+
+Følgende legemidler kan kreve dosejustering i kombinasjon med Paralgin forte:
+    - nevroleptika
+    - antidepressiva
+    - warfarin
+    - visse antiepileptika (fenytoin, fenobarbital, karbamazepin)
+    - rifampicin
+          -   johannesurt (Hypericum perforatum)
+          -   probenecid kolestyramin
+
+      Samtidig bruk av alkohol bør unngås.
+
+      Kodein:
+      Farmakokinetiske interaksjoner:
+      Kodein omdannes i lever blant annet gjennom CYP2D6-avhengig O-demetylering til morfin.
+      Denne omdanningen hemmes av visse legemidler som for eksempel serotonin
+      reopptakshemmere (SSRIer), antipsykotika av typen fentiaziner og bupropion, samt kinidin
+      og terbinafin. Disse legemidlene motvirker effekten av kodein og samtidig bruk kan derfor gi
+      redusert smertestillende effekt.
+
+      Enzyminduserende legemidler som f.eks. karbamazepin, rifampicin, barbiturater, Johannesurt
+      (Hypericum perforatum) mfl. kan redusere plasmakonsentrasjonen av morfin og gi redusert
+      smertestillende effekt (se også interaksjon med paracetamol nedenfor).
+
+      Paracetamol:
+      Farmakodynamiske interaksjoner:
+      Regelmessig bruk og vedvarende høy dosering over 1,5-2 gram paracetamol kan forsterke
+      effekten av perorale antikoagulantia (warfarin og andre kumarinderivater) og gi økt risiko for
+      blødning. Dosejustering kan være nødvendig ved samtidig bruk av paracetamol og disse
+      legemidlene.
+
+      Farmakokinetiske interaksjoner:
+      Enzyminduserende legemidler, slik som karbamazepin, fenytoin, fenobarbital, rifampicin og
+      Johannesurt (Hypericum perforatum) kan øke levertoksisiteten av paracetamol. Dosejustering
+      kan være nødvendig.
+
+      Isoniazid kan påvirke farmakokinetikken til paracetamol med mulig potensering av
+      levertoksisitet. Paracetamoldosen bør ikke overstige 3 gram per døgn.
+
+      Kolestyramin og kolestipol reduserer den gastrointestinale absorpsjonen av paracetamol.
+      Paracetamol bør tas en eller flere timer før, eventuelt flere timer etter kolestyramin/kolestipol.
+
+      Probenecid gir en nesten halvering i clearance av paracetamol ved å hemme konjugeringen
+      med glukuronsyre. Dette betyr sannsynligvis at dosen av paracetamol kan halveres når det gis
+      samtidig med probenecid.
+
+      Forsiktighet skal utvises når paracetamol brukes samtidig med flukloksacillin, da samtidig
+      inntak har blitt forbundet med metabolsk acidose med høyt aniongap forårsaket av
+      pyroglutamat-acidose, spesielt hos pasienter med risikofaktorer (se pkt. 4.4).
+
+4.6   Fertilitet, graviditet og amming
+
+      Graviditet:
+      Kodein: Ved langvarig behandling av moren ved graviditet er det sett neonatal abstinens etter
+      kodeinpåvirkning. Som for andre narkotiske analgetika er det sett neonatal
+      respirasjonsdepresjon ved bruk av kodein ved fødsler.
+
+      Paracetamol: En stor mengde data fra gravide kvinner indikerer hverken misdannelser eller
+      toksisitet hos fosteret eller det nyfødte barnet. Epidemiologiske studier på nevronal utvikling
+      hos barn utsatt for paracetamol in utero viser ikke entydige resultater.
+
+      Preparatet skal bare brukes under graviditet hvis fordelen oppveier en mulig risiko, og da med
+      lavest mulig effektiv dose i kortest mulig tid og lavest mulig frekvens.
+
+      Amming:
+      Kodein: Kodein skal ikke brukes under amming (se pkt. 4.3). Ved normale terapeutiske doser
+      kan kodein og dets aktive metabolitter være tilstede i morsmelk i meget lave doser, men det er
+      lite sannsynlig at dette påvirker barnet som ammes. Hvis pasienten imidlertid har ultrarask
+      metabolisme via CYP2D6 kan det være høyere innhold av den aktive metabolitten morfin i
+      morsmelken. Dette kan i svært sjeldne tilfeller føre til symptomer på opioidtoksisitet hos
+      barnet, som kan være fatalt.
+
+      Paracetamol: Paracetamol går i liten grad over i morsmelk. Det er lite sannsynlig at barn som
+      ammes blir påvirket ved terapeutiske doser.
+
+4.7   Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+      Paralgin forte og major kan påvirke evnen til å kjøre bil eller bruke maskiner.
+
+4.8   Bivirkninger
+
+      Følgende konvensjon er brukt for klassifisering av bivirkninger:
+          • Svært vanlige (≥ 1/10)
+          • Vanlige (≥ 1/100 til < 1/10)
+          • Mindre vanlige (≥ 1/1000 til < 1/100)
+          • Sjeldne (≥ 1/10 000 til < 1/1000)
+          • Svært sjeldne (< 1/10 000)
+          • Ikke kjent (kan ikke anslås ut ifra tilgjengelige data)
+
+          Sykdommer i blod og lymfatiske organer
+          Sjeldne:                    Trombocytopeni, leukopeni og hemolytisk anemi
+          Forstyrrelser i immunsystemet
+          Sjeldne:                    Hypersensitivitet overfor legemidlet
+          Stoffskifte- og ernæringsbetingede sykdommer
+          Ikke kjent:                 Metabolsk acidose med høyt aniongap
+          Nevrologiske sykdommer
+          Ikke kjent;                 Svimmelhet
+          Gastrointestinale sykdommer
+          Vanlige:                    Kvalme, obstipasjon
+          Sykdommer i lever og galleveier
+          Mindre vanlige:             Galleveisdyskinesi hos spesielt disponerte
+          Sjeldne:                    Leverpåvirkning
+          Ikke kjent:                 Akutt pankreatitt1, dysfunksjon i Oddis sfinkter
+          Hud- og underhudssykdommer
+          Sjeldne:                    Allergiske hudreaksjoner, eksantem
+          Ikke kjent:                 Fiksert legemiddelutslett (fixed drug eruption)
+          Generelle lidelser og reaksjoner på administrasjonsstedet
+          Vanlige:                    Tretthet
+          Ikke kjent:               Økt svetting
+      1
+          Pasienter som har gjennomgått kolecystektomi er spesielt utsatt (se avsnitt 4.4)
+
+      Beskrivelse av utvalgte bivirkninger
+
+      Det har blitt rapportert om svært sjeldne tilfeller av alvorlige hudreaksjoner, som Stevens-
+      Johnson syndrom (SJS) og toksisk epidermal nekrolyse (TEN).
+      Metabolsk acidose med høyt aniongap
+      Tilfeller av metabolsk acidose med høyt aniongap forårsaket av pyroglutamat-acidose er
+      observert hos pasienter med risikofaktorer og som bruker paracetamol (se avsnitt 4.4).
+      Pyroglutamat-acidose kan forekomme som en konsekvens av lave glutation-nivåer hos disse
+      pasientene.
+
+      Legemiddelavhengighet
+      Gjentatt bruk av Paralgin forte eller Paralgin major kan føre til legemiddelavhengighet, også
+      ved terapeutiske doser. Risikoen for legemiddelavhengighet kan variere avhengig av pasients
+      individuelle risikofaktorer, dosering og opioidbehandlingens varighet (se pkt. 4.4).
+
+      Melding av mistenkte bivirkninger
+      Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det
+      mulig å overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell
+      oppfordres til å melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes
+      på nettsiden til Direktoratet for medisinske produkter: www.dmp.no/meldeskjema.
+
+4.9   Overdosering
+
+      Symptomer:
+
+      Kodein:
+      Forgiftning kan gi CNS-depresjon, kvalme, oppkast, obstipasjon, døsighet, miose,
+      hypotensjon, respirasjonsdepresjon, cyanose, kramper (særlig hos barn) og til slutt koma.
+
+      Paracetamol:
+      Akutt massiv overdosering av paracetamol kan gi leverskade. Symptomer på overdosering
+      første døgn er få. Anoreksi, magesmerter, kvalme og oppkast kan forekomme.
+      Innen 1,5 døgn starter vanligvis tegn på leverskade som smerter i øvre mageregion, økning i
+      ALAT/ASAT, INR og bilirubin. Innen 3-4 døgn skjer utvikling av maksimal levertoksisitet:
+      Leverkoma, koagulasjonsforstyrrelser og hypoglykemi. Akutt nyresvikt kan forekomme.
+
+      Toksisitet:
+
+      Kodein:
+      Toksisk dose av kodein varierer mye fra person til person. Noe av grunnen til dette er
+      toleranseutvikling hos kroniske brukere og individuell variasjon i dannelsen av morfin fra
+      kodein.
+
+      Samtidig inntak av andre rusmidler/legemidler som gir CNS-depresjon, som for eksempel
+      alkohol eller benzodiazepiner, vil øke toksisiteten av kodein.
+
+      Eldre og små barn er spesielt følsomme for kodein. Hos spedbarn må lege/sykehus kontaktes
+      ved alle inntak. 1 mg/kg peroralt hos barn (1-6 år) kan gi symptomer. Inntak på over 5 mg/kg
+      peroralt hos barn har gitt alvorlig forgiftning med respirasjonsstans.
+
+      Paracetamol:
+      Den viktigste risikofaktoren er overdosering over tid (for eksempel flere påfølgende dager).
+      Gjentatte overdoseringer nedsetter motstandsdyktigheten ved at nivået av glutation (i aktiv,
+      redusert form) kan være lavere enn normalt. Avklar derfor alltid først om dette er ett
+      enkeltinntak eller gjentatte inntak. Terapeutisk bruk av paracetamol i dagene før en eventuell
+      overdose er også relevant, og det skal normalt inkluderes når toksisk dose regnes ut. Alle
+      eksponeringer med toksisk dose skal til sykehus.
+
+      Toksisk dose voksne og barn > 3 mnd: 100 – 170 mg/kg per døgn, avhengig av alder og
+      tidsrommet inntaket strekker seg over.
+      Barn < 3 mnd: ved enhver mistanke om overdose bør Giftinformasjonen alltid kontaktes.
+      Premature og spedbarn under 3 måneder antas å ha økt risiko for toksisitet.
+
+      Behandling:
+
+      Kodein:
+      Symptomatisk, kombinert med ev. antikonvulsiv og respirasjonsstimulerende terapi. Antidot:
+      Nalokson.
+
+      Paracetamol:
+      Ventrikkeltømming og behandling med kull vurderes. N-acetylcystein gis så snart som mulig
+      etter sannsynlig inntak av toksisk dose, men behandlingen kan startes når som helst i
+      forgiftningsforløpet, også etter at pasienten har utviklet leverkoma. Levertransplantasjon kan
+      være aktuelt. Kontakt Giftinformasjonen ved behov.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+      Farmakoterapeutisk gruppe: Kombinasjonsanalgetikum; paracetamol og kodein.
+      ATC-kode: N02A J06
+
+      Virkningsmekanisme:
+      Kodein er et svaktvirkende analgetikum med sentral virkning. Kodein utøver sin effekt
+      gjennom -opioidreseptorer (selv om kodein har en lav affinitet til disse reseptorene) og dets
+      analgetiske effekt skyldes at det omdannes til morfin. Det er påvist at kodein (spesielt i
+      kombinasjon med andre analgetika som paracetamol) er effektiv ved akutte nociseptive
+      smerter. Paracetamol har sentral og perifer analgetisk effekt. Paracetamol har antipyretisk
+      effekt over varmereguleringssenteret i hypothalamus. Paracetamol påvirker ikke hemostasen
+      og irriterer ikke gastrointestinalslimhinnen.
+      Paracetamol forbruker glutation som beskytter mot skadelig effekt av paracetamols reaktive
+      metabolitt. Lavt glutationinnhold i utsatte vev disponerer for organskade.
+
+5.2   Farmakokinetiske egenskaper
+
+      Absorpsjon:
+      Paracetamol og kodein absorberes nesten fullstendig ved rektal administrering.
+      Absorpsjonshastigheten er noe langsommere enn ved oral administrering. Terapeutisk
+      serumkonsentrasjon oppnås etter ca. 1-1½ time.
+
+      Distribusjon:
+      Paracetamol distribueres raskt og fordeles til de fleste vev. Distribusjonsvolumet er ca.1
+      liter/kg.
+      Proteinbinding er på ca. 30 % for kodein, regnes som ubetydelig for paracetamol.
+
+      Biotransformasjon:
+      Paracetamol metaboliseres hovedsakelig til glukuronider og sulfatkonjugater i lever. En
+      mindre fraksjon konverteres av en cytochrome p-450-avhengig oksydase til en svært reaktiv
+      metabolitt. Denne metabolitten inaktiveres raskt ved konjugering med redusert glutation og
+      utskilles i urinen som acetylcystein og merkaptursyre- konjugater. Kodein metaboliseres
+      vesentlig via N- og O-metylering til blant annet morfin. Normalt omdannes 5-15 % av
+      kodeindosen til morfin. Disse metabolittene inaktiveres for en stor del ved konjugering til
+      glukuronat.
+
+      Spesielle pasientgrupper:
+      Langsom og ultrarask metabolisme ved enzymet CYP2D6
+      Omkring 7 % av den kaukasiske befolkningen mangler på grunn av sin gensammensetning et
+      fungerende CYP2D6 enzym. Disse individene har langsom metabolisme og kan få dårligere
+      effekt på grunn av manglende omdannelse til morfin. Omkring 1 % av den kaukasiske
+      befolkningen har ultrahurtig metabolisme. Individer med ultrahurtig metabolisme har en eller
+      flere dupliseringer av sine CYP2D6 kodede gener og har derfor en merkbart forhøyet
+      CYP2D6 aktivitet. Disse individene får forhøyede plasmakonsentrasjoner av morfin og har
+      derfor en økt risiko for morfinrelaterte bivirkninger (se pkt. 4.4 og 4.6). Dette er det særlig
+      viktig å være oppmerksom på dersom pasienten samtidig har nedsatt nyrefunksjon fordi dette
+      kan føre til økt konsentrasjon av metabolitten morfin-6-glukoronid. Den genetiske profilen for
+      CYP2D6 kan bestemmes ved genotyping.
+
+      Eliminasjon:
+      Halveringstid for kodein er på 3 ½ time og for paracetamol på 2-3 timer. Halveringstiden kan
+      forlenges ved toksiske doser eller hos pasienter med leverskade.
+      Kodein elimineres via nyrene hovedsakelig som glukuronat. 2/3 av dosen utskilles i løpet av 6
+      timer. Paracetamol elimineres via nyrene hovedsakelig som glukuronat med små mengder
+      sulfater og merkaptat og uforandret legemiddel. Ca. 85 % av en paracetamoldose kan
+      gjenfinnes i urinen som fritt og konjugert paracetamol innen 24 timer etter inntak.
+
+      Pasientfaktorer:
+      En serumkonsentrasjon på 5-20g paracetamol/ml vil gi smertestillende og febernedsettende
+      effekt. En normaldose paracetamol vil ha effekt i 4-6 timer.
+
+5.3   Prekliniske sikkerhetsdata
+
+      Kodein: Mutagen effekt er ikke observert for kodein.
+
+      Paracetamol: Konvensjonelle studier utført i henhold til dagens standarder for vurdering av
+      reproduksjons- og utviklingstoksisitet er ikke tilgjengelige.
+      Studier fra cellelinjer i kultur, forsøksdyr og humane lymfocytter in vitro har vist at
+      paracetamol kan påvirke DNA og gi kromosomskader. Studier på humane lymfocytter in vivo
+      har gitt motstridende resultater. Det er ingen sikre holdepunkter for at paracetamol er
+      karsinogent hos mennesker. Paracetamol gir akutt nyre- og leverskade ved overdosering.
+
+
+6.    FARMASØYTISKE OPPLYSNINGER
+
+6.1   Fortegnelse over hjelpestoffer
+
+      Hardfett
+
+6.2   Uforlikeligheter
+
+      Ikke relevant.
+
+6.3   Holdbarhet
+
+      5 år
+
+6.4   Oppbevaringsbetingelser
+
+      Oppbevares ved høyst 25 °C
+
+6.5   Emballasje (type og innhold)
+
+      Torpedoformede PVC/PE plastbeholdere.
+      Paralgin forte: Pakning på 10 og 50 stk.
+      Paralgin major: Pakning på 10 og 10x10 stk.
+
+      Ikke alle pakningsstørrelser vil nødvendigvis bli markedsført.
+6.6   Spesielle forholdsregler for destruksjon og annen håndtering
+
+      Ingen spesielle forholdsregler
+
+
+7.    INNEHAVER AV MARKEDFØRINGSTILLATELSEN
+
+      Karo Pharma AS
+      Østensjøveien 27
+      Postboks 6733, Etterstad
+      N-0609 Oslo
+      Norge
+
+
+8.    MARKEDSFØRINGSTILLATELSESNUMMER (NUMRE)
+
+      Paralgin forte stikkpiller: 6139
+      Paralgin major stikkpiller: 7735
+
+
+9.    DATO FOR FØRSTE MARKEDSFØRINGSTILLATELSE/SISTE FORNYELSE
+
+      Siste gang:
+      Paralgin forte stikkpiller:        06.03.2009
+      Paralgin major:                    13.04.2007
+
+
+10.   OPPDATERINGSDATO
+
+      09.04.2026
+

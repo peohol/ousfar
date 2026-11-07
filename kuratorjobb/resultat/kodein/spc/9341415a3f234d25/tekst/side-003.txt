@@ -1,0 +1,57 @@
+ Asiatisk                                            1,2 % til 2 %
+ Kaukasisk                                           3,6 % til 6,5 %
+ Gresk                                               6,0 %
+ Ungarsk                                             1,9 %
+ Nordeuropeisk                                       1 % til 2 %
+
+Søvnrelaterte pusteforstyrrelser
+Opioider kan forårsake søvnrelaterte pusteforstyrrelser, inkludert sentral søvnapné (CSA) og
+søvnrelatert hypoksemi. Opioidbruk øker risikoen for CSA på en doseavhengig måte. Hos pasienter
+med CSA bør den totale opioiddosen vurderes redusert.
+
+Hyperalgesi
+Som med andre opioider, ved utilstrekkelig smertekontroll som respons på en økt dose kodein, bør
+muligheten for opioidindusert hyperalgesi vurderes. Det kan være nødvendig å redusere dosen eller
+vurdere behandlingen på nytt.
+
+Lever og galleveier
+Kodein kan forårsake dysfunksjon og spasmer i Oddis sfinkter, og dermed øke risikoen for symptomer
+fra galleveiene og pankreatitt. Kodein må derfor administreres med forsiktighet hos pasienter med
+pankreatitt og sykdommer i galleveiene.
+
+Risiko ved samtidig bruk av sedative legemidler som benzodiazepiner eller lignende legemidler
+Samtidig bruk av Kodein og sedative legemidler som benzodiazepiner eller lignende legemidler kan
+resultere i sedasjon, respirasjonsdepresjon, koma og død. På grunn av disse risikoene, bør samtidig
+forskrivning av disse sedativa være reservert for pasienter hvor alternativ behandling ikke er mulig.
+Hvis det besluttes å forskrive Kodein samtidig med sedativa, skal den laveste effektive dosen brukes,
+og behandlingsvarigheten være så kort som mulig.
+
+Pasientene bør følges nøye for tegn og symptomer på respirasjonsdepresjon og sedasjon. Det anbefales
+på det sterkeste å informere pasienter og deres omsorgspersoner om disse symptomene (se pkt. 4.5).
+
+Blodplatehemmende behandling med oral P2Y12-hemmer
+Det har vært observert redusert effekt av behandling med P2Y12-hemmer i løpet av den første dagen
+ved samtidig behandling med P2Y12-hemmer og morfin (se pkt. 4.5).
+
+Dette legemidlet inneholder laktose og pasienter med sjeldne arvelige problemer med
+galaktoseintoleranse, total laktasemangel eller glukose-galaktose malabsorpsjon bør ikke ta dette
+legemidlet.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Potenserer den sentraldepressive effekt av alkohol, sedativa, hypnotika o.l.
+
+Gabapentinoider (gabapentin og pregabalin), sedativa som benzodiazepiner og lignende legemidler
+Samtidig bruk av Kodein og gabapentinoider (gabapentin og pregabalin), sedativa som
+benzodiazepiner eller lignende legemidler kan føre til respirasjonsdepresjon, hypotensjon, dyp
+sedasjon, koma eller død på grunn av forsterket CNS-depressiv effekt. Dosering og varighet av
+samtidig bruk skal begrenses (se pkt. 4.4).
+
+MAO-hemmere
+Ved samtidig bruk kan MAO-hemmere føre til økt effekt av kodein.
+
+Kodein omdannes i lever blant annet gjennom CYP2D6-avhengig O-demetylering til morfin. Det er
+kjent at enkelte legemidler hemmer CYP2D6. Administrering av legemidler som hemmer CYP2D6
+(inkl. men ikke begrenset til rifampicin, kinidin, paroksetin) sammen med kodein kan derfor føre til
+redusert smertestillende effekt. For eksempel kan kodein kombinert med kinidin gi hemmet
+omdannelse av kodein til morfin med opp til 90 %. Samtidig bruk kan kreve dosetilpasning.

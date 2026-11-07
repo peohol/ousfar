@@ -1,0 +1,566 @@
+1.    LEGEMIDLETS NAVN
+
+Altermol 500 mg/30 mg tablett
+
+
+2.    KVALITATIV OG KVANTITATIV SAMMENSETNING
+
+Hver tablett inneholder 500 mg paracetamol og 30 mg kodeinfosfathemihydrat.
+
+Hjelpestoff med kjent effekt: Hver tablett inneholder 18 mg laktosemonohydrat (se også pkt. 4.4)
+For fullstendig liste over hjelpestoffer, se pkt. 6.1.
+
+
+3.    LEGEMIDDELFORM
+
+Tablett.
+
+Hvit, til nesten hvit, kapselformet, flat, udrasjert tablett med skråkant, 17,5 x 7 mm, preget med «PC2»
+på den ene siden og med delestrek på den andre siden.
+
+Delestreken er kun ment for å lette deling slik at det blir enklere å svelge tabletten, og ikke for å dele
+den i like doser.
+
+
+4.    KLINISKE OPPLYSNINGER
+
+4.1   Indikasjoner
+
+Opioid-sensitiv smerte når analgetika med kun perifer effekt ikke er tilstrekkelig.
+
+Kodein er indisert hos voksne, ungdom og barn 12 år eller eldre til behandling av akutte, moderate
+smerter som ikke anses for lindret med andre analgetika som paracetamol eller ibuprofen (alene).
+
+4.2   Dosering og administrasjonsmåte
+
+Dosering
+
+Voksne:
+1-2 tabletter 1-4 ganger i løpet av 24 timer. Maksimal daglig dose av kodein bør ikke overstige
+240 mg.
+
+Pediatrisk populasjon:
+Ungdom fra 12 år og eldre:
+I den pediatriske populasjonen i alderen 12-18 år skal dosen primært baseres på kodeinkomponenten
+og kroppsvekt. Anbefalt enkeltdose av kodein er 0,5-1 mg kodein/kg, maksimalt 4 ganger daglig.
+Dosen av Altermol bør justeres slik at paracetamolkomponenten ikke overstiger 15 mg/kg/dose (opp
+til 60 mg/kg/dag).
+
+Da Altermol-tabletten ikke kan deles, kan ikke barn som veier mindre enn 34 kg behandles uten at den
+maksimale anbefalte paracetamoldosen overstiges.
+
+Barn yngre enn 12 år:
+Kodein skal ikke brukes til barn under 12 år på grunn av risikoen for opioidtoksisitet som følge av den
+varierende og uforutsigbare metabolismen av kodein til morfin (se pkt. 4.3 og 4.4).
+
+Behandlingsmål og seponering
+
+                                                                                                             1
+Før oppstart av behandling med Altermol, skal legen og pasienten bli enige om en behandlingsstrategi,
+inkludert behandlingsvarighet og behandlingsmål, samt en plan for å avslutte behandlingen, i samsvar
+med retningslinjene for smertebehandling. Under behandlingen skal det være hyppig kontakt mellom
+legen og pasienten for å vurdere behovet for videre behandling, vurdere seponering og å justere dosen
+om nødvendig. Når en pasient ikke lenger trenger behandling med kodein, kan det være tilrådelig å
+trappe ned dosen gradvis for å forebygge abstinenssymptomer. I fravær av adekvat smertekontroll skal
+muligheten for hyperalgesi, toleranse og progresjon av underliggende sykdom vurderes (se pkt. 4.4).
+
+Behandlingsvarighet
+Behandlingsvarigheten skal være så kort som mulig, og hvis det ikke oppnås effektiv smertelindring
+skal pasientene/omsorgspersonene rådes til å oppsøke lege.
+
+4.3   Kontraindikasjoner
+
+Altermol er kontraindisert:
+•     Ved gallegangsspasmer.
+•     Ved overfølsomhet overfor virkestoffene eller overfor noen av hjelpestoffene listet opp i
+      pkt. 6.1.
+•     Hos alle pediatriske pasienter (i alderen 0-18 år) som gjennomgår tonsillektomi og/eller
+      adenoidektomi ved obstruktivt søvnapnésyndrom, på grunn av en økt risiko for å utvikle
+      alvorlige og livstruende bivirkninger (se pkt. 4.4).
+•     Hos kvinner som ammer (se pkt. 4.6).
+•     Hos de pasientene man vet har ultrarask metabolisme via CYP2D6.
+
+4.4   Advarsler og forsiktighetsregler
+
+Forsiktighet bør utvises ved akutt bronkial astma.
+
+Forsiktighet bør utøves for astmapasienter med overfølsomhet mot acetylsalisylsyre, da milde
+bronkospasmiske reaksjoner har blitt rapportert ved paracetamolbruk (kryssreaksjon).
+For pasienter med glutation-mangel, som ved sepsis, kan paracetamol øke risikoen for metabolsk
+acidose.
+
+Altermol bør ikke kombineres med andre smertestillende legemidler som inneholder paracetamol.
+Doser som er høyere enn anbefalt utgjør en risiko for svært alvorlig leverskade. Kliniske tegn på
+leverskade oppstår vanligvis etter et par dager og kulminerer som regel etter 4-6 dager. Antidot bør gis
+så snart som mulig. Se også pkt. 4.9 Overdosering.
+
+Tilfeller av metabolsk acidose med høyt aniongap (HAGMA) forårsaket av pyroglutamat-acidose er
+rapportert hos pasienter med alvorlig sykdom slik som sterkt nedsatt nyrefunksjon og sepsis, eller hos
+pasienter med underernæring eller andre årsaker til glutationmangel (f.eks. kronisk alkoholisme) som
+ble behandlet med paracetamol i terapeutisk dose for en lengre periode eller i kombinasjonen
+paracetamol og flucloxacillin. Dersom HAGMA forårsaket av pyroglutamat-acidose mistenkes, er
+umiddelbar seponering av paracetamol og nøye overvåkning anbefalt. Måling av 5-oksoprolin i urin
+kan være nyttig for å identifisere pyroglutamat-acidose som underliggende årsak til HAGMA hos
+pasienter med multiple risikofaktorer.
+
+Toleranse og opioidbrukslidelse (misbruk og avhengighet)
+Toleranse, fysisk og psykologisk avhengighet, samt opioidbrukslidelse (OUD) kan utvikle seg ved
+gjentatt administrering av opioider som Altermol. Gjentatt bruk av Altermol kan føre til OUD. En
+høyere dose og lengre varighet av opioidbehandling kan øke risikoen for å utvikle OUD. Misbruk eller
+tilsiktet feilbruk av Altermol kan føre til overdose og/eller dødsfall. Risikoen for å utvikle OUD er
+forhøyet hos pasienter med en personlig historie eller familiehistorie (foreldre eller søsken) med
+narkotika-/legemiddelmisbruk (inkludert alkoholmisbruk), hos brukere av tobakk, eller hos pasienter
+med en personlig historie med andre psykiske lidelser (f.eks. alvorlig depresjon, angst og
+personlighetsforstyrrelser).
+
+
+                                                                                                      2
+Før oppstart av behandling med Altermol og under behandlingen, skal man bli enig med pasienten om
+behandlingsmål og en seponeringsplan (se pkt. 4.2). Før og under behandlingen skal pasienten også få
+informasjon om risikoene og symptomene på OUD. Hvis disse symptomene oppstår, skal pasienten
+rådes til å kontakte legen.
+
+Pasienter må følges opp med hensyn til tegn på legemiddeloppsøkende atferd (f.eks. ber om ny resept
+for tidlig). Dette inkluderer gjennomgang av samtidig bruk av opioider og psykoaktive legemidler
+(som benzodiazepiner). Det bør vurderes å konsultere en spesialist innen avhengighetsmedisin dersom
+pasienter har tegn og symptomer på OUD.
+
+Metabolisering via CYP2D6
+Kodein metaboliseres via leverenzymet CYP2D6 til morfin, som er kodeins aktive metabolitt. Hvis en
+pasient helt eller delvis mangler dette enzymet, vil man ikke kunne oppnå tilstrekkelig analgetisk
+effekt. Estimater tyder på at opp til 7 % av den kaukasiske populasjonen kan ha denne mangelen. Hvis
+en pasient derimot har en rask eller ultrarask metabolisme, er det økt risiko for å få bivirkninger
+forbundet med opioidtoksisitet, selv ved vanlige forskrevne doser. Disse pasientene omdanner raskt
+kodein til morfin, noe som fører til høyere serumnivåer av morfin enn forventet. Enda viktigere er det
+å ta hensyn til dette dersom pasienten også har nedsatt nyrefunksjon (se pkt. 5.2).
+
+Vanlige symptomer på opioidtoksisitet omfatter forvirring, søvnighet, overfladisk pusting, små
+pupiller, kvalme, oppkast, konstipasjon og manglende appetitt. I alvorlige tilfeller kan dette omfatte
+symptomer på sirkulasjons- og respirasjonsdepresjon, som kan være livstruende og i svært sjeldne
+tilfeller fatalt.
+Den estimerte forekomsten av ultraraske omsettere i ulike befolkningsgrupper er oppsummert
+nedenfor:
+
+            Populasjon                            Forekomst %
+            Afrikansk/etiopisk                    29 %
+            Afrikansk/amerikansk                  3,4-6,5 %
+            Asiatisk                              1,2-2 %
+            Kaukasisk                             3,6-6,5 %
+            Gresk                                 6,0 %
+            Ungarsk                               1,9 %
+            Nordeuropeisk                         1-2 %
+
+
+Risiko ved samtidig bruk av sedativa som benzodiazepiner eller lignende legemidler
+Samtidig bruk av kodein og sedativa, som benzodiazepiner eller lignende legemidler, kan medføre
+sedasjon, respirasjonsdepresjon, koma og dødsfall. På grunn av disse risikofaktorene bør samtidig
+foreskrivning av sedativa være forbeholdt pasienter der andre behandlingsalternativer ikke er mulig.
+Dersom kodein blir foreskrevet samtidig med sedativa, bør laveste effektive dose og kortest mulig
+behandlingstid benyttes.
+
+Pasientene skal overvåkes nøye for tegn og symptomer på respirasjonsdepresjon og sedasjon. I den
+forbindelse anbefales det sterkt å gjøre pasienter og omsorgspersoner oppmerksom på disse
+symptomene (se pkt. 4.5).
+
+Søvnrelaterte pusteforstyrrelser, inkludert sentral søvnapné
+Opioider kan forårsake søvnrelaterte pusteforstyrrelser, inkludert sentral søvnapné (CSA) og
+søvnrelatert hypoksemi. Opioidbruk øker risikoen for CSA på en doseavhengig måte. Hos pasienter
+med CSA bør den totale opioiddosen vurderes redusert.
+
+Hyperalgesi
+Som med andre opioider, ved utilstrekkelig smertekontroll som respons på en økt dose kodein, bør
+muligheten for opioidindusert hyperalgesi vurderes. Det kan være nødvendig å redusere dosen eller
+vurdere behandlingen på nytt.
+
+                                                                                                         3
+Sykdommer i lever og galleveier
+Kodein kan forårsake dysfunksjon og spasmer i Oddis sfinkter, og dermed øke risikoen for symptomer
+fra galleveiene og pankreatitt. Kodein/paracetamol må derfor administreres med forsiktighet hos
+pasienter med pankreatitt og sykdommer i galleveiene.
+
+Postoperativ bruk hos barn
+I publisert litteratur er det rapportert at kodein gitt postoperativt til barn etter tonsillektomi og/eller
+adenoidektomi ved obstruktiv søvnapné har ført til sjeldne, men livstruende bivirkninger, inkludert
+dødsfall (se også pkt. 4.3). Alle barn fikk kodeindoser som var innenfor det hensiktsmessige
+doseintervallet, men det var evidens for at disse barna enten var ultraraske eller raske omsettere med
+hensyn til deres evne til å omdanne kodein til morfin.
+
+Barn med nedsatt lungefunksjon
+Det anbefales ikke å bruke kodein hos barn som kan ha nedsatt lungefunksjon, inkludert ved
+nevromuskulære lidelser, alvorlige hjerte- eller lungelidelser, infeksjoner i de øvre luftveiene eller i
+lungene, multiple traumer eller omfattende kirurgiske inngrep. Disse faktorene kan forverre
+symptomene på morfinforgiftning.
+
+Altermol tabletter inneholder laktosemonohydrat. Pasienter med sjeldne arvelige problemer med
+galaktoseintoleranse, en spesiell form for hereditær laktasemangel (”Lapp lactase deficiency”) eller
+glukose-galaktose malabsorpsjon bør ikke ta dette legemidlet.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Følgende kombinasjoner med Altermol bør unngås: kinidin.
+
+Dosejustering kan være nødvendig dersom følgende kombineres med Altermol:
+-    Nevroleptika
+-    Antidepressiva
+-    Warfarin
+-    Enzyminduserende legemidler, som f.eks. enkelte antiepileptika (fenytoin, fenobarbital,
+     karbamazepin)
+-    Rifampicin og johannesurt (Hypericum perforatum)
+-    Probenecid
+-    Metoklopramid
+-    Kolestyramin
+-    Kloramfenikol
+
+Samtidig inntak av alkohol bør unngås.
+
+Sedativa som benzodiazepiner eller lignende legemidler:
+Samtidig bruk av opioider med sedativa, som benzodiazepiner eller lignende legemidler, øker risikoen
+for sedasjon, respirasjonsdepresjon, koma og dødsfall på grunn av additiv CNS-hemmende effekt.
+Dose og varighet ved samtidig bruk bør begrenses (se pkt. 4.4).
+
+Samtidig bruk av Altermol og gabapentinoider (gabapentin og pregabalin) kan føre til
+respirasjonsdepresjon, hypotensjon, dyp sedasjon, koma eller død (se pkt. 4.4).
+
+Kodein
+Farmakokinetiske interaksjoner:
+Kodeins effekt er antageligvis forårsaket av dens O-demetylering til morfin via enzymet CYP2D6.
+Denne bioaktiveringen hemmes av enkelte legemidler som f.eks. kinidin, terbinafin, enkelte
+antidepressiva og nevroleptika etc. Disse legemidlene motvirker derfor effekten av kodein. Disse
+interaksjonene er dokumentert i studier med friske frivillige og/eller pilotstudier med pasienter.
+Direkte studier er utført med kinidin, en svært sterk hemmer av CYP2D6, og denne kombinasjonen
+bør derfor unngås.
+
+
+                                                                                                              4
+Nevroleptika og antidepressiva har også en hemmende effekt på CYP2D6; derfor kan en dosejustering
+være nødvendig ved disse kombinasjonene.
+Enzyminduserende legemidler som rifampicin, barbiturater, flere antiepileptika, johannesurt
+(Hypericum perforatum) etc. kan redusere morfins plasmakonsentrasjon (se også interaksjoner med
+paracetamol under).
+
+Paracetamol
+Farmakodynamiske interaksjoner:
+Studier har vist at warfarins effekt kan forsterkes ved behandling med paracetamol. Effekten ser ut til
+å øke med økende paracetamoldose, men den kan også oppstå ved daglige doser på 1,5-2,0 g
+paracetamol i minst 5-7 dager. Sporadiske vanlige doser med paracetamol anses ikke å gi denne
+effekten.
+
+Farmakokinetiske interaksjoner:
+Enzyminduserende stoffer, som f.eks. enkelte antiepileptika (fenytoin, fenobarbital, karbamazepin) har
+i farmakokinetiske studier vist å gi en reduksjon til ca. 60 % av paracetamols plasma-AUC. Andre
+legemidler med enzyminduserende egenskaper, f.eks. rifampicin og johannesurt (Hypericum
+perforatum), antas også å redusere konsentrasjonen av paracetamol. I tillegg kan disse stoffer øke
+hepatoksisiteten til paracetamol pga. økt og raskere dannelse av toksiske metabolitter. Forsiktighet bør
+derfor utvise dersom enzyminduserende stoffer gis samtidig.
+
+Probenecid nesten halverer clearance av paracetamol ved å hemme konjugeringen med glukuronsyre.
+Dette betyr antageligvis at paracetamoldosen kan halveres når gitt samtidig med probenecid.
+
+Paracetamols absorpsjonshastighet kan økes av metoklopramid, men disse legemidlene kan gis
+samtidig. Absorpsjonen av paracetamol reduseres av kolestyramin. Dersom maksimal analgetisk effekt
+skal oppnås, bør ikke kolestyramin gis innen en time.
+
+Paracetamol kan påvirke kloramfenikols farmakokinetikk. Det anbefales derfor en analyse av
+kloramfenikol i plasma dersom behandlingen skal kombineres med kloramfenikol til injeksjon.
+
+Forsiktighet bør utvises når paracetamol brukes samtidig med flukloksacillin, da samtidig inntak har
+vært assosieret med HAGMA (high anion gap metabolic acidosis) forårsaket av pyroglutamat-acidose,
+spesielt hos pasienter med risikofaktorer (se pkt. 4.4).
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet:
+Paracetamol: En stor mengde data fra gravide kvinner indikerer hverken misdannelser, eller toksisitet
+hos foster eller det nyfødte barnet. Epidemiologiske studier på nevronal utvikling hos barn utsatt for
+paracetamol in utero viser ikke entydige resultater. Hvis klinisk nødvendig kan paracetamol brukes
+under graviditet med lavest mulig effektive dose i kortest mulig tid og lavest mulig frekvens.
+
+Kodein: Bør brukes med forsiktighet under første trimester. Ved langtidsbehandling under graviditet
+bør det tas hensyn til risikoen for neonatalt abstinenssyndrom.
+
+Amming:
+Kodein er kontraindisert ved amming (se pkt. 4.3).
+
+Ved vanlige terapeutiske doser kan kodein og dets metabolitter være tilstede i morsmelk i svært lave
+doser og det er ikke sannsynlig at det gir bivirkninger hos det diende spedbarnet. Dersom pasienten
+imidlertid er en ultrarask omsetter av CYP2D6, kan høyere nivåer av den aktive metabolitten, morfin,
+være tilstede i morsmelken og i svær sjeldne tilfeller kan dette gi symptomer på opioidtoksisitet hos
+spedbarnet, hvilket kan være fatalt.
+
+
+
+
+                                                                                                      5
+4.7   Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+Behandling med Altermol kan redusere reaksjonsevnen. Dette bør tas i betraktning dersom full
+oppmerksomhet er nødvendig, f.eks. ved bilkjøring.
+
+4.8   Bivirkninger
+
+Der er estimert at ca. 15 % av personene opplever bivirkninger, som i hovedsak kan være forbundet
+med kodeins farmakologiske effekter. Bivirkningene er doserelaterte.
+
+I tabellen under er alle bivirkningene klassifisert i.h.t. organklassesystem og frekvens.
+
+Svært vanlige (≥ 1/10), vanlige (≥ 1/100 til < 1/10), mindre vanlige (≥ 1/1000 til < 1/100), sjeldne
+(≥ 1/10 000 til < 1/1000), svært sjeldne (< 1/10 000), ikke kjent (kan ikke anslås utifra tilgjengelige
+data).
+
+ Frekvens                Vanlige         Mindre           Sjeldne         Svært             Ikke kjent
+                         ( 1/100 til    vanlige          ( 1/10 000     sjeldne           (kan ikke
+ Organklassesystem       < 1/10)         ( 1/1000 til    til < 1/1000)   (< 1/10 000)      anslås utifra
+                                         < 1/100)                                           tilgjengelige
+                                                                                            data)
+
+ Forstyrrelser i                                          Allergisk
+ immunsystemet                                            reaksjon,
+                                                          angioødem
+ Stoffskifte- og                                                                            Metabolsk
+ ernæringsbetingede                                                                         acidose med
+ sykdommer                                                                                  høyt
+                                                                                            aniongap
+
+ Gastrointestinale       Kvalme,                                          Pankreatitt
+ sykdommer               konstipasjon
+
+
+
+ Sykdommer i lever                       Galle            Leverskade                        Dysfunksjon
+ og galleveier                           dyskinesi                                          i Oddis
+                                                                                            sfinkter
+
+ Hud- og                                                  Eksantem,
+ underhuds-                                               urtikaria
+ sykdommer
+
+ Generelle lidelser      Trøtthet                                                           Svimmelhet
+ og reaksjoner på
+ administrasjons-
+ stedet
+
+ Undersøkelser                                            Økt
+                                                          kreatinin
+
+
+Beskrivelse av utvalgte bivirkninger
+Metabolsk acidose med høyt aniongap
+
+
+
+                                                                                                            6
+Tilfeller av metabolsk acidose med høyt aniongap forårsaket av pyroglutamat-acidose er observert hos
+pasienter med risikofaktorer og som bruker paracetamol (se avsnitt 4.4). Pyroglutamat-acidose kan
+forekomme som en konsekvens av lave glutation-nivåer hos disse pasientene.
+
+Svært sjeldne tilfeller av alvorlige hudreaksjoner har blitt rapportert.
+
+Leverskade etter bruk av paracetamol har oppstått i forbindelse med misbruk av alkohol.
+Ved langvarig bruk kan ikke risikoen for nyreskade utelukkes fullstendig.
+
+Dyskinesi i gallegangen kan oppstå hos predisponerte pasienter.
+
+Legemiddelavhengighet
+Gjentatt bruk av Altermol kan føre til legemiddelavhengighet, også ved terapeutiske doser. Risikoen
+for legemiddelavhengighet kan variere avhengig av pasients individuelle risikofaktorer, dosering og
+opioidbehandlingens varighet (se pkt. 4.4).
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til
+Direktoratet for medisinske produkter: www.dmp.no/meldeskjema
+
+4.9   Overdosering
+
+I tilfelle av overdose med denne kombinasjonen, er de viktigste risikoene den hepatotoksiske effekten
+av paracetamol og kodeins depresjonseffekt på åndedrettet.
+
+Toksisitet: 2 Altermol tabletter 500 mg/30 mg til et 5 år gammelt barn ga ingen symptomer etter
+administrering av medisinsk kull. 20-30 Altermol tabletter 500 mg/30 mg til voksne ga alvorlig
+forgiftning.
+
+Paracetamol
+Overdose kan mette leverens evne til å lage konjugater, og som en følge av dette vil en stor andel av
+dosen metaboliseres ved hjelp av oksidering. Dersom glutationlagrene tømmes, vil det oppstå en
+irreversibel binding av den reaktive intermediære metabolitten til makromolekyler i leveren. Det er
+derfor særdeles viktig at behandling med antidot igangsettes så raskt som mulig dersom det skal være
+noen som helst mulighet for å forhindre eller begrense leverskaden fra toksiske doser.
+
+Til å begynne med etter inntak, og i de første dagene, kan det oppstå abdominalsmerter, kvalme og
+oppkast. Kliniske symptomer på leverskade dukker vanligvis opp etter et par dager og kulminerer som
+regel etter 4-6 dager. Nyreskade kan oppstå. Pankreatitt og toksisk myokardskade med arytmi og
+hjertesvikt er rapporter.
+
+Toksisitet:
+5 g i løpet av 24 timer til et 3 ½ år gammelt barn; 15-20 g til voksne, 10 g til en alkoholiker ga dødelig
+toksisitet. En toksisk dose for barn og voksne er vanligvis > 140 mg/kg. Sult, dehydrering, legemidler
+med enzyminduserende substanser som enkelte antiepileptika (fenytoin, fenobarbital, karbamazepin),
+rifampicin og johannesurt (Hypericum perforatum) samt kronisk høyt alkoholinntak er risikofaktorer,
+og selv en liten overdose kan under disse omstendighetene gi uttalt leverskade. Selv subakutt
+«terapeutisk» overdose har ført til alvorlig toksisitet ved doser som varierte fra 6 g/dag i en uke, 20 g i
+2-3 dager, etc.
+
+Behandling:
+Tett monitorering av lever- og nyrefunksjon, koagulasjonsstatus, væske- og elektrolyttstatus. Antidot
+er acetylcystein, og behandling med acetylcystein som er satt i gang i løpet av 8-10 timer gir
+fullstendig beskyttelse mot leverskade, og deretter minker effekten. Acetylcystein kan imidlertid gi
+noe beskyttelse selv etter 10 timer, men i slike tilfeller bør forlenget behandling administreres.
+
+                                                                                                         7
+Acetylcystein reduserer også mortaliteten dersom paracetamol-indusert leverskade har inntruffet.
+Behandling av lever- og nyresvikt er ofte påkrevd i tilfeller der tidsfristen for effektiv behandling med
+antidot er passert og det foreligger toksiske konsentrasjoner. Hemoperfusjon kan være indisert i
+særlige tilfeller. I ekstreme tilfeller kan levertransplantasjon være nødvendig.
+
+Kodein
+Hovedsymptomene er av samme type som for morfintoksisitet: redusert bevissthet,
+respirasjonsdepresjon, miotiske pupiller.
+Særlig hos barn kan det oppstå krampeanfall, erytem og ansiktsødem. Ved høyere doser kan hypoksi,
+respirasjonsstans, bevisstløshet, sirkulasjonssvikt og pulmonært ødem utvikles.
+
+Toksisitet:
+Store individuelle forskjeller. Utvikling av toleranse. Små barn og eldre er særlig følsomme. En
+dødelig dose for voksne er estimert til (0,5-) 0,8-1 g. Hos babyer (3 kg) gir 20 mg i løpet av 24 timer
+alvorlig toksisitet.
+30 mg til en 11 måneder gammel baby ga mild toksisitet. Ved doser på > 5 mg/kg er det risiko for
+alvorlig respirasjonsdepresjon hos barn. 640 mg til en voksen ga alvorlig toksisitet.
+
+Behandling:
+Symptomatisk behandling som tar sikte på å sikre respirasjon. Antidot er nalokson og dette motvirker
+respirasjonsdepresjon. Nalokson kan imidlertid ikke erstatte behandling med respirator ved alvorlig
+toksisitet.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Kodein og paracetamol, ATC-kode: N02AJ06.
+
+Altermol er et kombinasjonsanalgetikum som inneholder paracetamol og kodein, som er to analgetiske
+substanser med ulik virkningsmekanisme. Paracetamol er et anilinderivat med analgetisk effekt. Den
+analgetiske effekten er antageligvis koblet til det faktum at paracetamolmolekylet f.eks. kan fange og
+nøytralisere frie OH(-)- og O(-)-radikaler, som dannes ved vevsskade. Paracetamol hemmer også
+enzymet prostaglandinsyntetase i CNS, og man tror at smerteterskelen økes på denne måten.
+Paracetamol har en svakt hemmende effekt på prostaglandinsyntesen i perifere vev.
+
+I motsetning til acetylsalisylsyre fører ikke paracetamol til gastrointestinal irritasjon eller en økt
+blødningstendens.
+
+Kodein har sentrale analgetiske egenskaper som sannsynligvis skyldes dets opiate reseptoreffekt på
+CNS.
+Den analgetiske effekten oppnås etter ½-1 time, med maksimal effekt i løpet av ca. to timer.
+
+Kodein er et sentralt virkende svakt analgetikum. Kodein utøver sin effekt gjennom my (μ)-
+opioidreseptorer, selv om kodein har lav affinitet til disse reseptorene, og dets analgetiske effekt
+skyldes at det omdannes til morfin. Kodein, særlig i kombinasjon med andre analgetika, som f.eks.
+paracetamol, er vist å være effektiv ved akutte nociseptive smerter.
+
+5.2   Farmakokinetiske egenskaper
+
+Paracetamol og kodein absorberes raskt og nesten fullstendig, og maksimal plasmakonsentrasjon nås i
+løpet av en time. Paracetamol og kodein skilles ut via nyrene. Halveringstiden til paracetamol er ca.
+2-2 ½ time etter en terapeutisk dose, og substansen metaboliseres gjennom konjugering til glukuronid
+og sulfat. En liten andel metaboliseres også via oksidering og bundet til glutation. Det skilles ut som
+cystein- og merkaptursyrekonjugater. Kodein metaboliseres primært gjennom glukuronidering.
+
+
+                                                                                                          8
+Kodein er O-demetylert til morfin via en mindre metabolsk vei. Dette metabolske stadiet katalyseres
+av enzymet CYP2D6.
+Personer som er kjent langsomme omsettere av CYP2D6-enzymet kan oppleve tap av effekt pga.
+manglende evne til å danne morfin.
+Halveringstiden til kodein er ca. 2-3 timer, og etter metabolisering skilles substansen ut i urinen
+primært som kodein- og norkodeinkonjugater, og også (ca. 20 %) som morfinkonjugat og fritt kodein.
+
+Kodein
+Spesielle pasientgrupper:
+Langsomme og ultraraske omsettere vedrørende CYP2D6
+Kodein metaboliseres primært gjennom glukuronidering, men via en mindre metabolsk vei blir kodein
+O-demetylert til morfin. Denne reaksjonen katalyseres av enzymet CYP2D6. Omkring 7 % av den
+kaukasiske befolkningen mangler et fungerende CYP2D6 enzym grunnet sitt sett av gener, og disse
+individene kalles langsomme omsettere. Disse personene kan få dårligere effekt på grunn av
+manglende morfindannelse. Omkring 1 % av den kaukasiske befolkningen har ultrarask metabolisme.
+Personer med ultrarask metabolisme har en eller flere dupliseringer av sine gener som koder for
+enzymet CYP2D6 og har derfor en merkbart forhøyet CYP2D6 aktivitet. Disse personene får
+forhøyede plasmakonsentrasjoner av morfin når de gis kodein og har derfor en økt risiko for
+morfinrelaterte bivirkninger (se også pkt. 4.4 og 4.6). Dette er det særlig viktig å være oppmerksom på
+dersom pasienten samtidig har nedsatt nyrefunksjon fordi dette kan føre til økt konsentrasjon av den
+aktive metabolitten morfin-6-glukoronid. Settet av gener for CYP2D6 kan bestemmes ved genotyping.
+
+5.3    Prekliniske sikkerhetsdata
+
+Det er ingen flere prekliniske sikkerhetsdata som er relevante for vurdering av sikkerhet enn de som
+allerede er omtalt i denne preparatomtalen.
+
+Paracetamol
+Konvensjonelle studier utført i henhold til dagens standarder for vurdering av reproduksjons- og
+utviklingstoksisitet er ikke tilgjengelig.
+
+
+6.     FARMASØYTISKE OPPLYSNINGER
+
+6.1    Fortegnelse over hjelpestoffer
+
+Maisstivelse, pregelatinisert
+Stearinsyre
+Povidon
+Laktosemonohydrat
+Cellulose, mikrokrystallinsk (E460)
+Talkum (E553b)
+Magnesiumstearat
+
+6.2    Uforlikeligheter
+
+Ikke relevant.
+
+6.3    Holdbarhet
+
+4 år
+
+6.4    Oppbevaringsbetingelser
+
+Dette legemidlet krever ingen spesielle oppbevaringsbetingelser.
+
+6.5    Emballasje (type og innhold)
+
+                                                                                                       9
+Blisterpakning av A1/gjennomsiktig PVC: 10, 20, 50 og 100 tabletter.
+HDPE-beholder (flaske av hvit polyetylen): 100 og 250 tabletter.
+
+Ikke alle pakningsstørrelser vil nødvendigvis bli markedsført.
+
+6.6   Spesielle forholdsregler for destruksjon og annen håndtering
+
+Ingen spesielle forholdsregler for destruksjon.
+
+
+7.    INNEHAVER AV MARKEDSFØRINGSTILLATELSEN
+
+Alternova A/S
+Energivej 15
+5260 Odense S
+Danmark
+
+
+8.    MARKEDSFØRINGSTILLATELSESNUMMER (NUMRE)
+
+14-9952
+
+
+9.    DATO FOR FØRSTE MARKEDSFØRINGSTILLATELSE / SISTE FORNYELSE
+
+Dato for første markedsføringstillatelse: 11. november 2015
+Dato for siste fornyelse: 01.oktober 2020
+
+
+10.   OPPDATERINGSDATO
+
+16.07.2026
+
+
+
+
+                                                                       10
+

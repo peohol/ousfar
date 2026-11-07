@@ -1,0 +1,56 @@
+Det har blitt rapportert om svært sjeldne tilfeller av alvorlige hudreaksjoner.
+
+Legemiddelavhengighet
+Gjentatt bruk av Pinex Forte kan føre til legemiddelavhengighet, også ved terapeutiske doser. Risikoen
+for legemiddelavhengighet kan variere avhengig av pasients individuelle risikofaktorer, dosering og
+opioidbehandlingens varighet (se pkt. 4.4).
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til
+Direktoratet for medisinske produkter: www.dmp.no/meldeskjema.
+
+4.9   Overdosering
+
+Paracetamol:
+Symptomer
+Symptomer på paracetamolforgiftning innenfor de første 24 timer etter inntak er blekhet, kvalme,
+oppkast, anoreksi og magesmerter, men pasienten kan også være uten symptomer.
+
+Doser over 7,5-10 g (>150 mg/kg hos voksne og >200 mg/kg hos barn ≤6 år) innebærer risiko for
+leverskade, eventuelt også leversvikt og død.
+
+Tegn på leverskade viser seg 12 til 48 timer etter inntak: Smerter i øvre mageregion, økning i
+ALAT/ASAT, INR og bilirubin (lett forhøyet INR forekommer uten tegn til levernekrose).
+
+Innen 3-4 døgn utvikling av maksimale levertoksisitet: Leverkoma, koagulasjonsforstyrrelser og
+hypoglykemi. Akutt nyresvikt, abnorm glukosemetabolisme og metabolisk acidose kan forekomme.
+I alvorlige tilfeller kan leverinsuffisiensen føre til encefalopati, koma og død.
+
+Akutt nyresvikt med akutt tubulær nekrose kan utvikles selv uten alvorlig leverskade. Det er dessuten
+sett kardielle arytmier og pankreatitt.
+
+Behandling
+Antidotbehandling med N-acetylcystein er effektivt og bør startes øyeblikkelig ved sannsynlig inntak av
+toksisk dose.
+Øyeblikkelig sykehusinnleggelse. Behandlingsstart ved overdosering er nødvendig selv om det ikke er
+symptomer på forgiftning.
+Hvis indisert bør det foretas ventrikkeltømming og gis kull i løpet av de første fire timer.
+Intravenøs administrasjon (eller oral dersom det ikke er mulig å gi i.v.) av antidoten N-acetylcystein
+startes hurtigst mulig.
+Etter 10 timer og opp til 48 timer gir N-acetylcystein bare en viss grad av beskyttelse, her skal det gis
+forlenget behandling.
+Leververdier og nyrefunksjon skal følges og symptomatisk behandling bør implementeres.
+
+Man må være oppmerksom på samtidig behandling med andre legemidler som inneholder paracetamol.
+
+Kodein:
+Symptomer
+Forgiftning gir kramper, dessuten oppkast, døsighet, respirasjonsdepresjon, cyanose og til slutt koma.
+
+Behandling
+Symptomatisk, kombinert med ev. antikonvulsiv og respirasjonsstimulerende terapi. Antidot: Nalokson.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER

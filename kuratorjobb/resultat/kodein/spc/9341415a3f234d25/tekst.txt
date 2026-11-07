@@ -1,0 +1,378 @@
+1.    LEGEMIDLETS NAVN
+
+Kodein 25 mg tabletter, filmdrasjerte
+
+
+2.    KVALITATIV OG KVANTITATIV SAMMENSETNING
+
+1 tablett inneholder 25 mg kodeinfosfatsesquihydrat som kodeinfosfathemihydrat. Dette tilsvarer
+17,7 mg kodein.
+
+Hjelpestoffer med kjent effekt: laktosemonohydrat (65 mg).
+
+For fullstendig liste over hjelpestoffer, se pkt. 6.1
+
+
+3.    LEGEMIDDELFORM
+
+Tablett, filmdrasjert
+Hvite filmdrasjerte tabletter med delestrek.
+
+Tabletten kan deles i like doser.
+
+
+4.    KLINISKE OPPLYSNINGER
+
+4.1   Indikasjoner
+
+Voksne over 18 år: Tørrhoste og annen uproduktiv hoste. Smertestillende ved middels sterke smerter.
+
+4.2   Dosering og administrasjonsmåte
+
+Dosering
+Kodein skal brukes ved den laveste effektive dosen i kortest mulig tidsrom. Den maksimale daglige
+dosen kodein må ikke overstige 240 mg.
+Behandlingsvarigheten skal være så kort som mulig.
+
+Voksne:
+Hostedempende
+1-2 tabletter inntil 3 ganger daglig.
+
+Smertestillende
+1-2 tabletter inntil 4 ganger daglig med minst 6 timer mellom hver dose. Kan eventuelt kombineres
+med perifert virkende analgetikum.
+
+Behandlingsmål og seponering
+Før oppstart av behandling med Kodein, skal legen og pasienten bli enige om en behandlingsstrategi,
+inkludert behandlingsvarighet og behandlingsmål, samt en plan for å avslutte behandlingen, i samsvar
+med retningslinjene for smertebehandling. Under behandlingen skal det være hyppig kontakt mellom
+legen og pasienten for å vurdere behovet for videre behandling, vurdere seponering og å justere dosen
+om nødvendig. Når en pasient ikke lenger trenger behandling med kodein, kan det være tilrådelig å
+trappe ned dosen gradvis for å forebygge abstinenssymptomer. I fravær av adekvat smertekontroll skal
+muligheten for hyperalgesi, toleranse og progresjon av underliggende sykdom vurderes (se pkt. 4.4).
+
+Pediatrisk populasjon
+Kodein 25 mg tabletter er ikke godkjent til bruk hos barn under 18 år.
+4.3     Kontraindikasjoner
+
+•       Overfølsomhet overfor virkestoffet eller overfor noen av hjelpestoffene listet opp i pkt. 6.1.
+•       Alle pediatriske pasienter (i alderen 0-18 år) som gjennomgår tonsillektomi og/eller
+        adenoidektomi som behandling for obstruktiv søvnapnésyndrom, på grunn av økt risiko for å
+        utvikle alvorlige og livstruende bivirkninger (se pkt. 4.4).
+•       Kvinner som ammer (se pkt 4.6).
+•       Pasienter som har kjent, ultrarask legemiddelmetabolisme via CYP2D6.
+
+4.4     Advarsler og forsiktighetsregler
+
+Forsiktighet ved bronkialastma og nedsatt lever- eller nyrefunksjon.
+
+Kan gi døsighet og påvirke reaksjonsevnen (se også pkt. 4.7).
+
+Ved langtidsbruk (> 3 mnd) av analgetika med inntak annenhver dag eller oftere, kan hodepine
+utvikles eller forverres. Hodepine utløst av overforbruk av analgetika (MOH – medication-overuse
+headache) bør ikke behandles med doseøkning. I slike tilfeller bør bruken av analgetika seponeres i
+samråd med lege.
+
+Toleranse og opioidbrukslidelse (misbruk og avhengighet)
+Toleranse, fysisk og psykologisk avhengighet, samt opioidbrukslidelse (OUD) kan utvikle seg ved
+gjentatt administrering av opioider som Kodein. Gjentatt bruk av Kodein kan føre til OUD. En høyere
+dose og lengre varighet av opioidbehandling kan øke risikoen for å utvikle OUD. Misbruk eller
+tilsiktet feilbruk av kodein kan føre til overdose og/eller dødsfall. Risikoen for å utvikle OUD er
+forhøyet hos pasienter med en personlig historie eller familiehistorie (foreldre eller søsken) med
+narkotika-/legemiddelmisbruk (inkludert alkoholmisbruk), hos brukere av tobakk, eller hos pasienter
+med en personlig historie med andre psykiske lidelser (f.eks. alvorlig depresjon, angst og
+personlighetsforstyrrelser).
+
+Før oppstart av behandling med Kodein og under behandlingen, skal man bli enig med pasienten om
+behandlingsmål og en seponeringsplan (se pkt. 4.2). Før og under behandlingen skal pasienten også få
+informasjon om risikoene og symptomene på OUD. Hvis disse symptomene oppstår, skal pasienten
+rådes til å kontakte legen.
+
+Pasienter må følges opp med hensyn til tegn på legemiddeloppsøkende atferd (f.eks. ber om ny resept
+for tidlig). Dette inkluderer gjennomgang av samtidig bruk av opioider og psykoaktive legemidler
+(som benzodiazepiner). Det bør vurderes å konsultere en spesialist innen avhengighetsmedisin dersom
+pasienter har tegn og symptomer på OUD.
+
+Metabolisering via CYP2D6
+Kodein metaboliseres via leverenzymet CYP2D6 til morfin som er kodeins aktive metabolitt. Hvis en
+pasient helt eller delvis mangler dette enzymet, vil man ikke oppnå tilstrekkelig analgetisk effekt.
+Estimater tyder på at opp til 7 % av den kaukasiske populasjonen kan ha denne mangelen. Hvis en
+pasient derimot har rask eller ultrarask legemiddelmetabolisme er det økt risiko for å få bivirkninger
+forbundet med opioidtoksisitet, selv ved vanlige doser. Disse pasientene omdanner raskt kodein til
+morfin noe som medfører høyere serumnivåer av morfin enn forventet.
+
+Vanlige symptomer på opioidtoksisitet omfatter forvirring, søvnighet, overfladisk pust, små pupiller,
+kvalme, oppkast, konstipasjon og manglende appetitt. I alvorlige tilfeller kan dette omfatte symptomer
+på sirkulasjons- og respirasjonsdepresjon som kan være livstruende og i svært sjeldne tilfeller fatalt.
+Den estimerte forekomst av ultrarask legemiddelmetabolisme i de ulike befolkningsgruppene er
+oppsummert nedenfor:
+
+    Populasjon                                        Forekomst i %
+    Afrikansk/etiopisk                                29 %
+    Afroamerikansk                                    3,4 % til 6,5 %
+ Asiatisk                                            1,2 % til 2 %
+ Kaukasisk                                           3,6 % til 6,5 %
+ Gresk                                               6,0 %
+ Ungarsk                                             1,9 %
+ Nordeuropeisk                                       1 % til 2 %
+
+Søvnrelaterte pusteforstyrrelser
+Opioider kan forårsake søvnrelaterte pusteforstyrrelser, inkludert sentral søvnapné (CSA) og
+søvnrelatert hypoksemi. Opioidbruk øker risikoen for CSA på en doseavhengig måte. Hos pasienter
+med CSA bør den totale opioiddosen vurderes redusert.
+
+Hyperalgesi
+Som med andre opioider, ved utilstrekkelig smertekontroll som respons på en økt dose kodein, bør
+muligheten for opioidindusert hyperalgesi vurderes. Det kan være nødvendig å redusere dosen eller
+vurdere behandlingen på nytt.
+
+Lever og galleveier
+Kodein kan forårsake dysfunksjon og spasmer i Oddis sfinkter, og dermed øke risikoen for symptomer
+fra galleveiene og pankreatitt. Kodein må derfor administreres med forsiktighet hos pasienter med
+pankreatitt og sykdommer i galleveiene.
+
+Risiko ved samtidig bruk av sedative legemidler som benzodiazepiner eller lignende legemidler
+Samtidig bruk av Kodein og sedative legemidler som benzodiazepiner eller lignende legemidler kan
+resultere i sedasjon, respirasjonsdepresjon, koma og død. På grunn av disse risikoene, bør samtidig
+forskrivning av disse sedativa være reservert for pasienter hvor alternativ behandling ikke er mulig.
+Hvis det besluttes å forskrive Kodein samtidig med sedativa, skal den laveste effektive dosen brukes,
+og behandlingsvarigheten være så kort som mulig.
+
+Pasientene bør følges nøye for tegn og symptomer på respirasjonsdepresjon og sedasjon. Det anbefales
+på det sterkeste å informere pasienter og deres omsorgspersoner om disse symptomene (se pkt. 4.5).
+
+Blodplatehemmende behandling med oral P2Y12-hemmer
+Det har vært observert redusert effekt av behandling med P2Y12-hemmer i løpet av den første dagen
+ved samtidig behandling med P2Y12-hemmer og morfin (se pkt. 4.5).
+
+Dette legemidlet inneholder laktose og pasienter med sjeldne arvelige problemer med
+galaktoseintoleranse, total laktasemangel eller glukose-galaktose malabsorpsjon bør ikke ta dette
+legemidlet.
+
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Potenserer den sentraldepressive effekt av alkohol, sedativa, hypnotika o.l.
+
+Gabapentinoider (gabapentin og pregabalin), sedativa som benzodiazepiner og lignende legemidler
+Samtidig bruk av Kodein og gabapentinoider (gabapentin og pregabalin), sedativa som
+benzodiazepiner eller lignende legemidler kan føre til respirasjonsdepresjon, hypotensjon, dyp
+sedasjon, koma eller død på grunn av forsterket CNS-depressiv effekt. Dosering og varighet av
+samtidig bruk skal begrenses (se pkt. 4.4).
+
+MAO-hemmere
+Ved samtidig bruk kan MAO-hemmere føre til økt effekt av kodein.
+
+Kodein omdannes i lever blant annet gjennom CYP2D6-avhengig O-demetylering til morfin. Det er
+kjent at enkelte legemidler hemmer CYP2D6. Administrering av legemidler som hemmer CYP2D6
+(inkl. men ikke begrenset til rifampicin, kinidin, paroksetin) sammen med kodein kan derfor føre til
+redusert smertestillende effekt. For eksempel kan kodein kombinert med kinidin gi hemmet
+omdannelse av kodein til morfin med opp til 90 %. Samtidig bruk kan kreve dosetilpasning.
+Blodplatehemmende behandling med oral P2Y12-hemmer
+En forsinket og redusert eksponering for blodplatehemmende behandling med oral P2Y12-hemmer har
+vært observert hos pasienter med akutt koronarsyndrom behandlet med morfin. Denne interaksjonen
+kan være forbundet med redusert gastrointestinal motilitet og kan gjelde for andre opioider. Den
+kliniske relevansen er ukjent, men data indikerer et potensial for redusert effekt av P2Y12-hemmer
+hos pasienter som samtidig får morfin og en P2Y12-hemmer (se pkt. 4.4). Hos pasienter med akutt
+koronarsyndrom, der kodein ikke kan unngås og rask P2Y12-hemming anses avgjørende, kan bruk av
+en parenteral P2Y12-hemmer vurderes.
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet
+Sikkerheten ved bruk under graviditet er ikke klarlagt da erfaring fra mennesker er utilstrekkelig.
+Dyrestudier viser ikke reproduksjonstoksiske effekter. Slike resultater fra dyrestudier betyr
+nødvendigvis ikke fravær av skadelige effekter på humane fostre. Preparatet skal bare brukes ved
+graviditet hvis fordelen oppveier en mulig risiko.
+Abstinenssymptomer er sett hos nyfødte etter regelmessig bruk av kodein. På grunn av risiko for
+tilvenning av barnet bør kodein ikke brukes over lengre tid. Preparatet kan brukes under graviditet i
+korte perioder i terapeutiske doser.
+
+Amming
+Kodein skal ikke brukes under amming (se pkt. 4.3). Ved normale terapeutiske doser kan kodein og
+dets aktive metabolitter være til stede i morsmelk i meget lave doser, men det er lite sannsynlig at
+dette påvirker barnet som ammes. Hvis pasienten imidlertid har ultrarask metabolisme via CYP2D6,
+kan det være høyere innhold av den aktive metabolitten morfin i morsmelken. Dette kan i meget
+sjeldne tilfeller føre til symptomer på opioidtoksisitet hos barnet, som kan være fatalt.
+
+4.7   Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+Kodein gir tretthet, påvirker reaksjonsevnen og kan ha liten til moderat påvirkning på evnen til å kjøre
+bil og bruke maskiner.
+
+4.8   Bivirkninger
+
+Frekvensen av bivirkninger ved kortvarig bruk er 2-3 %.
+ Organklassesystem                Vanlige               Ikke kjent
+                                  (1/100 til <1/10) (kan ikke anslås ut i fra tilgjengelige data)
+ Forstyrrelser i immunsystemet                          Anafylaktiske reaksjoner,
+                                                        Allergi
+ Psykiatriske lidelser                                  Forvirring
+                                                        Avhengighet*
+ Nevrologiske sykdommer           Døsighet              Svimmelhet,
+
+Sykdommer i                                               Respirasjonsdepresjon
+respirasjonsorganer, thorax og
+mediastinum
+Gastrointestinale sykdommer         Brekninger,           Kvalme
+                                    Obstipasjon           Akutt pankreatitt
+                                                          Munntørrhet
+ Sykdommer i lever og                                     Galleveisdyskinesi**
+ galleveier                                               Dysfunksjon i Oddis sfinkter
+ Hud- og underhudssykdommer                               Urtikaria
+* Faren for tilvenning er mindre enn for morfin.
+** Forekommer hos spesielt disponerte pasienter.
+Legemiddelavhengighet
+Gjentatt bruk av Kodein kan føre til legemiddelavhengighet, også ved terapeutiske doser. Risikoen for
+legemiddelavhengighet kan variere avhengig av pasients individuelle risikofaktorer, dosering og
+opioidbehandlingens varighet (se pkt. 4.4).
+
+Melding av mistenkte bivirkninger
+Melding av mistenkte bivirkninger etter godkjenning av legemidlet er viktig. Det gjør det mulig å
+overvåke forholdet mellom nytte og risiko for legemidlet kontinuerlig. Helsepersonell oppfordres til å
+melde enhver mistenkt bivirkning. Dette gjøres via meldeskjema som finnes på nettsiden til
+Direktoratet for medisinske produkter: www.dmp.no/meldeskjema.
+
+4.9   Overdosering
+
+Toksisitet
+Opioider er generelt mer toksiske for barn, eldre eller svekkede personer. Toksisiteten potenseres av
+alkohol og andre legemidler som påvirker CNS. Individuelle variasjoner.
+
+Voksne (ikke tilvendt): 640 mg ga alvorlig forgiftning. Letal dose hos voksne er 0,5-1,5 g
+(20-60 tabletter).
+
+Pediatrisk populasjon
+Barn 0-12 måneder: 20 mg i løpet av 24 timer til spedbarn (3 kg) ga alvorlig og 30 mg til barn 11
+måneder ga lett forgiftning.
+Barn over 1 år: < 3 mg/kg forventes ingen eller lette symptomer. Doser > 5 mg/kg kroppsvekt til
+småbarn (tilsvarer 2 tabletter til et barn på 10 kg) kan gi alvorlig forgiftning (inkl.
+respirasjonsdepresjon).
+
+Symptomer
+CNS-depresjon er hovedproblemet. Forgiftning forårsaker miose, kramper (særlig hos barn), oppkast
+kvalme, obstipasjon, døsighet, forvirring respirasjonsdepresjon, cyanose og til slutt koma. Erytem og
+ansiktsødem. Blek, fuktig hud, hypotermi. Sirkulasjonssvikt. Evt. acidose, rabdomyolyse og nyresvikt.
+
+Behandling
+Barn 0-12 måneder: Lege/sykehus uansett inntak.
+Symptomatisk, kombinert med evt. antikonvulsiv og respirasjonsstimulerende terapi. Antidot:
+Nalokson til voksne intravenøst ved uttalt CNS- og respirasjonsdepresjon, gjentas om nødvendig til
+normal respirasjon. Ventrikkeltømming og kull hvis indisert, men vurder fare for raskt innsettende
+CNS-depresjon. Respiratorbehandling ved pulmonale komplikasjoner eller manglende effekt av
+nalokson. Virkningen av en intravenøs injeksjon starter etter 30-60 sekunder og varer vanligvis 45-60
+minutter. Etter intramuskulær injeksjon starter virkningen etter 10 minutter og varer 2-3 timer.
+Pasienten observeres 24 timer på grunn av fare for at det igjen kan komme respirasjonsvansker.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Hoste- og forkjølelsesmidler, opiumsalkaloider og derivater.
+ATC-kode: R05D A04
+
+Virkningsmekanisme
+Virker sentralt.
+
+Farmakodynamiske effekter
+Hemmer hosterefleksen, blokkerer smerteimpulser. Kodein er et svaktvirkende analgetikum med
+sentral virkning. Kodein utøver sin effekt gjennom µ-opioidreseptorer (selv om kodein har lav affinitet
+for disse reseptorene) og dets analgetiske effekt skyldes at det omdannes til morfin. Det er påvist at
+kodein (spesielt i kombinasjon med andre analgetika som paracetamol) er effektiv ved akutte
+nociseptive smerter.
+
+Postoperativ bruk hos barn
+I publisert litteratur er det rapportert at kodein gitt postoperativt til barn etter tonsillektomi og/eller
+adenoidektomi ved obstruktiv søvnapnésyndrom, har ført til sjeldne, men livstruende bivirkninger,
+inkludert dødsfall (se også pkt. 4.3). Alle barn fikk kodeindoser som var innenfor det riktige
+doseintervallet, men det var evidens for at disse barna enten hadde ultrarask eller rask
+legemiddelmetabolisme med hensyn til deres evne til å omdanne kodein til morfin.
+
+Barn med nedsatt lungefunksjon
+Det anbefales ikke å bruke kodein hos barn med nedsatt lungefunksjon, inkludert ved nevromuskulære
+lidelser, alvorlige hjerte- eller lungelidelser, infeksjoner i de øvre luftveiene eller i lungene, multiple
+traumer eller omfattende kirurgiske inngrep. Disse faktorene kan forverre symptomene på
+morfinforgiftning.
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon
+Raskt og nær fullstendig etter oralt inntak.
+
+Distribusjon: Virkningstid 4-6 timer.
+
+Biotransformasjon
+Metaboliseres ved O- og N-demetylering i lever til morfin (ca. 10 %), norkodein og andre
+metabolitter.
+
+Eliminasjon
+Halveringstid ca. 3 1/ time. Utskilles vesentlig renalt som konjugater og inaktive metabolitter. 2/3 av
+disse utskilles i løpet av 6 timer.
+
+Spesielle pasientgrupper:
+Langsom og ultrahurtig metabolisme ved enzymet CYP2D6.
+Omkring 7 % av den kaukasiske befolkningen mangler på grunn av sin gensammensetning et
+fungerende CYP2D6-enzym. Disse individene har langsom metabolisme og kan få dårligere effekt på
+grunn av manglende omdannelse til morfin.
+Omkring 3,6-6,5 % av den kaukasiske befolkningen har ultrahurtig metabolisme. Individer med
+ultrahurtig metabolisme har en eller flere dupliseringer av sine CYP2D6-kodede gener og har derfor
+merkbart forhøyet CYP2D6-aktivitet. Disse individene får forhøyede plasmakonsentrasjoner av morfin
+og har derfor en økt risiko for morfinrelaterte bivirkninger (se pkt. 4.4 og 4.6). Dette er det særlig
+viktig å være oppmerksom på dersom pasienten samtidig har nedsatt nyrefunksjon fordi dette kan føre
+til økt konsentrasjon av metabolitten morfin-6-glukuronid. Den genetiske profilen for CYP2D6 kan
+bestemmes ved genotyping.
+
+5.3   Prekliniske sikkerhetsdata
+
+Ingen prekliniske data av sikkerhetsmessig betydning foreligger.
+
+
+6.    FARMASØYTISKE OPPLYSNINGER
+
+6.1   Hjelpestoffer
+
+Potetstivelse, laktosemonohydrat 65 mg, mikrokrystallinsk cellulose, talkum, hypromellose,
+magnesiumstearat, gelatin, propylenglykol. Fargestoff: Titandioksid (E 171).
+6.2     Uforlikeligheter
+
+Ikke relevant.
+
+6.3     Holdbarhet
+
+5 år.
+
+6.4     Oppbevaringsbetingelser
+
+Oppbevares ved høyst 30 °C.
+
+6.5     Emballasje (type og innhold)
+
+Plastboks à 20 tabletter.
+
+6.6     Spesielle forholdsregler for destruksjon
+
+Ikke anvendt legemiddel samt avfall bør destrueres i overensstemmelse med lokale krav.
+
+
+7.      INNEHAVER AV MARKEDSFØRINGSTILLATELSEN
+
+Orifarm Healthcare A/S
+Energivej 15
+5260 Odense S
+Danmark
+
+8.      MARKEDSFØRINGSTILLATELSNUMMER
+
+6128
+
+
+9.      DATO FOR FØRSTE MARKEDSFØRINGSTILLATELSE / SISTE FORNYELSE
+
+Dato for første markedsføringstillatelse: 28. mai 1976
+Dato for siste fornyelse: 28. juni 2011
+
+
+10.     OPPDATERINGSDATO
+
+09.03.2026
+

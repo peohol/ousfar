@@ -1,0 +1,55 @@
+Det antas at overskuddet av toksisk metabolitt (detoksifiseres vanligvis ved hjelp av glutation ved inntak
+av vanlige doser paracetamol) bindes irreversibelt til levervev.
+
+Behandling
+Umiddelbar behandling er avgjørende ved håndtering av overdosering med paracetamol. Selv ved fravær
+av signifikante tidlige symptomer bør pasienten legges inn på sykehus øyeblikkelig. Symptomer kan være
+begrenset til kvalme eller oppkast og reflekterer ikke alltid alvorlighetsgraden av overdoseringen eller
+risikoen for organskade.
+
+Behandling med aktivt kull bør overveies innen 1 time etter overdoseringen. Plasmakonsentrasjonen av
+paracetamol bør måles tidligst 4 timer etter inntak (tidligere konsentrasjoner er usikre).
+
+Alle pasienter som har tatt paracetamoldoser på ca. 7,5 g eller mer de siste 4 timene bør gjennomgå
+mageskylling. Plasmakonsentrasjonen av paracetamol bør måles tidligst 4 timer etter inntak (tidligere
+konsentrasjoner er usikre).
+
+Behandling med N-acetylcystein kan gis i opptil 24 timer etter inntak av paracetamol. Den maksimale
+beskyttende effekten oppnås imidlertid opptil 8 timer etter inntak.
+
+Hvis det er nødvendig bør pasienten gis N-acetylcystein intravenøst, i henhold til fastsatt doseringsplan.
+Dersom oppkast ikke er et problem kan metionin gitt oralt være et egnet alternativ på avsidesliggende
+steder, utenfor sykehus. Generelle understøttende tiltak må være tilgjengelig.
+
+Behandling av pasienter som har alvorlig hepatisk dysfunksjon utover 24 timer etter inntak bør diskuteres
+med Giftinformasjonen eller en leveravdeling.
+
+
+5.    FARMAKOLOGISKE EGENSKAPER
+
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Analgetika, Opioider i kombinasjon med ikke-opioide analgetika.
+ATC-kode: N02A J06
+
+Paracetamol har både analgetisk og antipyretisk effekt. Det har imidlertid ikke antiinflammatorisk effekt.
+Mekanismen for den analgetiske virkningen er ikke fullstendig fastslått. Hovedvirkemåten for paracetamol
+er hemming av cyklooksygenase, et enzym som er viktig for prostaglandinsyntesen. Cyklooksygenasen i
+sentralnervesystemet er mer sensitiv for paracetamol enn perifer cyklooksygenase, og dette forklarer
+hvorfor paracetamol har en antipyretisk og analgetisk effekt. Paracetamol virker sannsynligvis antipyretisk
+ved sentral påvirkning på varmereguleringssenteret i hypotalamus.
+
+Kodein er et sentraltvirkende, svakt analgetikum. Kodein utøver sin effekt via µ-opioidreseptorer, selv om
+kodein har lav affinitet til disse reseptorene, og den analgetiske effekten skyldes omdanning til morfin.
+Spesielt i kombinasjon med andre analgetika slik som paracetamol, har kodein vist effekt ved akutt
+nociseptiv smerte.
+
+Kodeinfosfat brukes ved behandling av hoste og har CNS-dempende effekt.
+Kodein kan forsterke effekten av andre analgetika.
+Kodein er mye mindre potent enn morfin og er ikke egnet til bruk mot sterke smerter selv ved de høyeste
+tolererte dosene. Det gir ikke merkbar respirasjonsdepresjon, men har hostestillende effekt. Kodein er
+forskjellig fra morfin ved at vanlig medisinsk bruk av kodein ikke ofte forbindes med alvorlig
+avhengighet, og høye doser gir heller oppstemthet enn depresjon. Kodein har en lav affinitet for
+opioidreseptorer. Den analgetiske effekten av kodein kan skyldes biotransformasjon til morfin.
+
+                                                    10

@@ -1,0 +1,58 @@
+Før oppstart av behandling med Altermol og under behandlingen, skal man bli enig med pasienten om
+behandlingsmål og en seponeringsplan (se pkt. 4.2). Før og under behandlingen skal pasienten også få
+informasjon om risikoene og symptomene på OUD. Hvis disse symptomene oppstår, skal pasienten
+rådes til å kontakte legen.
+
+Pasienter må følges opp med hensyn til tegn på legemiddeloppsøkende atferd (f.eks. ber om ny resept
+for tidlig). Dette inkluderer gjennomgang av samtidig bruk av opioider og psykoaktive legemidler
+(som benzodiazepiner). Det bør vurderes å konsultere en spesialist innen avhengighetsmedisin dersom
+pasienter har tegn og symptomer på OUD.
+
+Metabolisering via CYP2D6
+Kodein metaboliseres via leverenzymet CYP2D6 til morfin, som er kodeins aktive metabolitt. Hvis en
+pasient helt eller delvis mangler dette enzymet, vil man ikke kunne oppnå tilstrekkelig analgetisk
+effekt. Estimater tyder på at opp til 7 % av den kaukasiske populasjonen kan ha denne mangelen. Hvis
+en pasient derimot har en rask eller ultrarask metabolisme, er det økt risiko for å få bivirkninger
+forbundet med opioidtoksisitet, selv ved vanlige forskrevne doser. Disse pasientene omdanner raskt
+kodein til morfin, noe som fører til høyere serumnivåer av morfin enn forventet. Enda viktigere er det
+å ta hensyn til dette dersom pasienten også har nedsatt nyrefunksjon (se pkt. 5.2).
+
+Vanlige symptomer på opioidtoksisitet omfatter forvirring, søvnighet, overfladisk pusting, små
+pupiller, kvalme, oppkast, konstipasjon og manglende appetitt. I alvorlige tilfeller kan dette omfatte
+symptomer på sirkulasjons- og respirasjonsdepresjon, som kan være livstruende og i svært sjeldne
+tilfeller fatalt.
+Den estimerte forekomsten av ultraraske omsettere i ulike befolkningsgrupper er oppsummert
+nedenfor:
+
+            Populasjon                            Forekomst %
+            Afrikansk/etiopisk                    29 %
+            Afrikansk/amerikansk                  3,4-6,5 %
+            Asiatisk                              1,2-2 %
+            Kaukasisk                             3,6-6,5 %
+            Gresk                                 6,0 %
+            Ungarsk                               1,9 %
+            Nordeuropeisk                         1-2 %
+
+
+Risiko ved samtidig bruk av sedativa som benzodiazepiner eller lignende legemidler
+Samtidig bruk av kodein og sedativa, som benzodiazepiner eller lignende legemidler, kan medføre
+sedasjon, respirasjonsdepresjon, koma og dødsfall. På grunn av disse risikofaktorene bør samtidig
+foreskrivning av sedativa være forbeholdt pasienter der andre behandlingsalternativer ikke er mulig.
+Dersom kodein blir foreskrevet samtidig med sedativa, bør laveste effektive dose og kortest mulig
+behandlingstid benyttes.
+
+Pasientene skal overvåkes nøye for tegn og symptomer på respirasjonsdepresjon og sedasjon. I den
+forbindelse anbefales det sterkt å gjøre pasienter og omsorgspersoner oppmerksom på disse
+symptomene (se pkt. 4.5).
+
+Søvnrelaterte pusteforstyrrelser, inkludert sentral søvnapné
+Opioider kan forårsake søvnrelaterte pusteforstyrrelser, inkludert sentral søvnapné (CSA) og
+søvnrelatert hypoksemi. Opioidbruk øker risikoen for CSA på en doseavhengig måte. Hos pasienter
+med CSA bør den totale opioiddosen vurderes redusert.
+
+Hyperalgesi
+Som med andre opioider, ved utilstrekkelig smertekontroll som respons på en økt dose kodein, bør
+muligheten for opioidindusert hyperalgesi vurderes. Det kan være nødvendig å redusere dosen eller
+vurdere behandlingen på nytt.
+
+                                                                                                         3

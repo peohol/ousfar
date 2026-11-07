@@ -1,0 +1,60 @@
+      Enzyminduserende legemidler som f.eks. karbamazepin, rifampicin, barbiturater, Johannesurt
+      (Hypericum perforatum) mfl. kan redusere plasmakonsentrasjonen av morfin og gi redusert
+      smertestillende effekt (se også interaksjon med paracetamol nedenfor).
+
+      Paracetamol:
+      Farmakodynamiske interaksjoner:
+      Regelmessig bruk og vedvarende høy dosering over 1,5-2 gram paracetamol daglig kan
+      forsterke effekten av perorale antikoagulantia (warfarin og andre kumarinderivater) og gi økt
+      risiko for blødning. Dosejustering kan være nødvendig ved samtidig bruk av paracetamol og
+      disse legemidlene.
+
+      Farmakokinetiske interaksjoner:
+      Enzyminduserende legemidler, slik som karbamazepin, fenytoin, fenobarbital, rifampicin og
+      Johannesurt (Hypericum perforatum) kan øke levertoksisiteten av paracetamol. Dosejustering
+      kan være nødvendig.
+
+      Isoniazid kan påvirke farmakokinetikken til paracetamol med mulig potensering av
+      levertoksisitet. Paracetamoldosen bør ikke overstige 3 gram per døgn.
+
+      Kolestyramin og kolestipol reduserer den gastrointestinale absorpsjonen av paracetamol.
+      Paracetamol bør tas en eller flere timer før, eventuelt flere timer etter kolestyramin/kolestipol.
+
+      Probenecid gir en nesten halvering i clearance av paracetamol ved å hemme konjugeringen
+      med glukuronsyre. Dette betyr sannsynligvis at dosen av paracetamol kan halveres når det gis
+      samtidig med probenecid.
+
+      Forsiktighet skal utvises når paracetamol brukes samtidig med flukloksacillin, da samtidig
+      inntak har blitt forbundet med metabolsk acidose med høyt aniongap forårsaket av
+      pyroglutamat-acidose, spesielt hos pasienter med risikofaktorer (se pkt. 4.4).
+
+4.6   Fertilitet, graviditet og amming
+
+      Graviditet:
+      Kodein: Ved langvarig behandling av moren ved graviditet er det sett neonatal abstinens etter
+      kodeinpåvirkning. Som for andre narkotiske analgetika er det sett neonatal
+      respirasjonsdepresjon ved bruk av kodein ved fødsler.
+
+      Paracetamol: En stor mengde data fra gravide kvinner indikerer hverken misdannelser eller
+      toksisitet hos fosteret eller det nyfødte barnet. Epidemiologiske studier på nevronal utvikling
+      hos barn utsatt for paracetamol in utero viser ikke entydige resultater.
+
+      Preparatet skal bare brukes under graviditet hvis fordelen oppveier en mulig risiko, og da med
+      lavest mulig effektiv dose i kortest mulig tid og lavest mulig frekvens.
+
+      Amming:
+      Kodein: Kodein skal ikke brukes under amming (se pkt. 4.3). Ved normale terapeutiske doser
+      kan kodein og dets aktive metabolitter være til stede i morsmelk i meget lave doser, men det
+      er lite sannsynlig at dette påvirker barnet som ammes. Hvis pasienten imidlertid har ultrarask
+      metabolisme via CYP2D6 kan det være høyere innhold av den aktive metabolitten morfin i
+      morsmelken. Dette kan i svært sjeldne tilfeller føre til symptomer på opioidtoksisitet hos
+      barnet, som kan være fatalt.
+
+      Paracetamol: Paracetamol går i liten grad over i morsmelk. Det er lite sannsynlig at barn som
+      ammes blir påvirket ved terapeutiske doser.
+
+4.7   Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+      Paralgin forte kan påvirke evnen til å kjøre bil eller bruke maskiner.
+
+4.8   Bivirkninger

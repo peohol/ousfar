@@ -1,0 +1,56 @@
+4.5   Interaksjon med andre legemidler og andre former for interaksjon
+
+Kontraindiserte kombinasjoner (se pkt. 4.3):
+
+MAO-hemmere (og legemidler med MAO-hemmervirkning som linezolid, moklobemid og
+selegilin) på grunn av mulig risiko for eksitasjon eller depresjon. Unngå samtidig bruk av MAO-
+hemmere. Kodein kan administreres to uker etter seponering av behandling med MAO-hemmere.
+
+Kombinasjoner som skal brukes med forsiktighet:
+
+Åndedrettsrelatert
+
+•     Alkohol: forsterket beroligende og hypotensiv effekt, økt risiko for respirasjonsdepresjon
+•     Beroligende antihistaminer: forsterket beroligende og hypotensiv effekt og økt risiko for
+      respirasjonsdepresjon
+•     Hypnotika, anxiolytika og andre narkotiske analgetika: forsterket beroligende effekt, økt
+      risiko for respirasjonsdepresjon
+
+Gastrointestinal-relatert
+
+•     Antikolinergika (f.eks. atropin): risiko for alvorlig forstoppelse som kan føre til paralytisk
+      ileus og/eller urinretensjon
+•     Metoklopramid og domperidon: antagonisert effekt på GI-aktivitet
+•     Diarémedisin (f.eks. loperamid, kaolin): økt risiko for alvorlig forstoppelse
+
+CNS-relatert
+
+•     Anestesi: forsterket beroligende og hypotensiv effekt
+•     Trisykliske antidepressiva: forsterket beroligende effekt
+•     Antipsykotika: forsterket beroligende og hypotensiv effekt
+•     Beroligende legemidler som benzodiazepiner eller relaterte legemidler, dvs. gabapentinoider
+      (gabapentin og pregabalin) - samtidig bruk av kodeinfosfathemihydrat med beroligende
+      legemidler som benzodiazepiner eller relaterte legemidler, dvs. gabapentinoider (gabapentin
+      og pregabalin) kan resultere i respirasjonsdepresjon, hypotension, dyp sedasjon, koma eller
+      død på grunn av additiv CNS-depressiv effekt. Dosen og varigheten av samtidig bruk skal
+      begrenses (se pkt. 4.4).
+•     Opioidantagonister, f.eks. buprenorfin, naltrekson, nalokson: kan utløse abstinenssymptomer
+•     Kinidin: redusert smertestillende effekt
+•     Antihypertensive midler: forsterket hypotensiv effekt
+•     Natriumoksybat: samtidig administrering av kodein og natriumoksybat kan forårsake økt
+      CNS-depresjon og/eller respirasjonsdepresjon og/eller hypotensjon
+
+Farmakokinetiske interaksjoner
+
+•     Ciprofloksacin når brukt som kirurgisk profylakse: unngå premedisinering med opioider da de
+      reduserer ciprofloksacinkonsentrasjonen i plasma
+•     Meksiletin: forsinket absorpsjon av meksiletin
+•     CYP3A4-hemmere: Samtidig bruk av kodein og CYP3A4-hemmere (f.eks. ritonavir som er en
+      sterk CYP3A4-hemmer, og cimetidin som er en moderat CYP3A4-hemmer) kan føre til en
+      økning i plasmakonsentrasjonen av kodein med påfølgende økt metabolisme av cytokrom
+      CYP2D6, noe som resulterer i høyere morfinnivåer, som kan øke eller forlenge bivirkningene
+      og kan forårsake potensielt dødelig respirasjonsdepresjon, spesielt når en hemmer legges til
+      etter at en stabil dose av kodein er oppnådd. Vurder å redusere dosen av kodein inntil stabil
+      legemiddeleffekt er oppnådd.
+
+                                                    7

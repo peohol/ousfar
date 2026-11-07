@@ -1,0 +1,54 @@
+5.2   Farmakokinetiske egenskaper
+
+Paracetamol
+
+Absorpsjon
+Etter oral administrering absorberes paracetamol raskt og nesten fullstendig. Maksimal
+plasmakonsentrasjon nås etter 30 minutter til 2 timer.
+
+Distribusjon
+Paracetamol distribueres raskt til alle vev. Konsentrasjonene er sammenlignbare i blod, spytt og plasma.
+Distribusjonsvolumet for paracetamol er ca. 1 liter/kg kroppsvekt. Ved terapeutiske doser er
+proteinbindingen ubetydelig.
+
+Biotransformasjon
+Hos voksne metaboliseres paracetamol i leveren hovedsakelig via to metaboliseringveier: glukuronid-
+(~60 %) og sulfat- (~35 %) konjugering. Den siste veien blir raskt mettet ved doser som er høyere enn
+terapeutisk dose. En mindre vesentlig metaboliseringvei, katalysert av cytokrom P450, resulterer i
+dannelse av et intermediat (N-acetyl-p-benzokinonimin) som normalt detoksifiseres raskt ved hjelp av
+gluation og elimineres i urinen, etter konjugering med cystein (~3 %) og merkaptopurinsyre. Hos nyfødte
+og barn <12 år er sulfatkonjugering viktigste eliminasjonsvei, og glukuronidering skjer i mindre grad enn
+hos voksne. Total eliminasjon hos barn er sammenlignbar med den hos voksne, på grunn av høyere
+kapasitet for sulfatkonjugering.
+
+Eliminasjon
+Eliminasjon av paracetamol skjer i hovedsak gjennom urinen. 90 % av inntatt dose elimineres via nyrene
+innen 24 timer, hovedsakelig som glukuronid- (60-80 %) og sulfat- (20-30 %) konjugater. Mindre enn 5 %
+elimineres uendret. Eliminasjonshalveringstiden er ca. 2 timer.
+Ved nedsatt nyre- eller leverfunksjon, etter overdosering og hos nyfødte er eliminasjonshalveringstiden for
+paracetamol forsinket. Maksimal effekt svarer til plasmakonsentrasjonene.
+Ved alvorlig nedsatt nyrefunksjon (kreatininclearance <10 ml/minutt) er eliminasjon av paracetamol og
+metabolittene forsinket.
+Det er ingen endringer i konjugeringskapasiteten hos eldre pasienter.
+
+Kodeinfosfat
+
+Absorpsjon
+Kodeinfosfat absorberes raskt og nesten fullstendig fra mage-tarmkanalen. Maksimal plasmakonsentrasjon
+ses etter ca. 2 timer.
+
+Distribusjon
+Plasmakonsentrasjonen etter administrering av en enkeltdose kodeinfosfat på 30 mg er
+ca. 0,25 mikromol/liter.
+
+Biotransformasjon
+Kodeinfosfat metaboliseres i leveren. Ca. 10 % av administrert dose omdannes til morfin, som antas å være
+ansvarlig for effekten.
+
+Eliminasjon
+Eliminasjonshalveringstiden er 3,5 timer. Kodeinfosfat utskilles hovedsakelig via nyrene som inaktive
+metabolitter. To tredeler av disse skilles ut i løpet av 6 timer. Effekten varer i 4–6 timer.
+
+Linearitet/ikke-linearitet
+
+                                                   11

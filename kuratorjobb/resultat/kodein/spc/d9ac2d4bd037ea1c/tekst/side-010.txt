@@ -1,0 +1,55 @@
+5.1   Farmakodynamiske egenskaper
+
+Farmakoterapeutisk gruppe: Kombinasjonsanalgetikum; paracetamol og kodein,
+ATC-kode: N02A A59.
+
+Virkningsmekanisme: Kodein: Svak sentral analgetisk effekt. Kodein utøver sin efffekt gjennom
+µ-opioidreseptorer, selv om kodein har lav affinitet til disse reseptorene. Den analgetiske effekten av
+kodein skyldes biotransformasjon til morfin. Kodein, spesielt i kombinasjon med andre analgetika slik
+som paracetamol, har vist effekt ved akutt nociseptiv smerte. Paracetamol: Sentral og perifer analgetisk
+effekt, antipyretisk effekt over varmereguleringssenteret i hypothalamus. Påvirker ikke hemostasen og
+irriterer ikke gastrointestinalslimhinnen. Paracetamol forbruker glutation som beskytter mot skadelig
+effekt av paracetamols reaktive metabolitt. Lavt glutationinnhold i utsatte vev disponerer for organskade.
+
+5.2   Farmakokinetiske egenskaper
+
+Absorpsjon:
+Paracetamol og kodein absorberes raskt og nær fullstending. Maks. plasmakonsentrasjon innen 1 time.
+Distribusjon:
+Proteinbinding: Kodein: Ca. 30 %. Paracetamol: Ved terapeutisk nivå 0-25 %.
+Distribusjonsvolum: Paracetamol: Ca. 1 liter/kg.
+Plasmakonsentrasjon: Kodein: Ca. 0,25 mmol/liter etter en engangsdose på 30 mg. Paracetamol: 0,033-
+0,133 mmol/liter (5-20 µg/ml).
+Halveringstid:
+Kodein: 3½ time. Paracetamol: 2-3 timer.
+Biotransformasjon:
+Kodein: Metaboliseres i leveren. Ca. 10 % av dosen omdannes til morfin som antas å stå for den
+analgetiske effekten. Paracetamol: Over 80 % konjugeres til glukuronat og sulfat. Små mengder
+deacetyleres eller hydroksyleres med cytokrom P-450. Ca. 3 % forblir uomdannet.
+Eliminasjon:
+Clearance: Paracetamol: Ca. 5 ml/min/kg.
+Utskillelse: Kodein: Utskilles vesentlig renalt som inaktive metabolitter. 2/3 av disse utskilles i løpet av 6
+timer. Paracetamol: Umetabolisert og metabolitter utskilles renalt.
+Varighet av effekt: 4–6 timer.
+Kinetikk: Både kodein og paracetamol har log-lineær kinetikk i eliminasjonsfasen.
+Pasientfaktorer som påvirker kinetikken: Eldre pasienter kan metabolisere kodein langsommere enn
+yngre pasienter. Dosejustering kan vurderes.
+
+Spesielle pasientgrupper
+Langsom og ultrahurtig metabolisme ved enzymet CYP 2D6
+Omkring 7 % av den kaukasiske befolkningen mangler på grunn av sin gensammensetning et fungerende
+CYP 2D6-enzym. Disse individene har langsom metabolisme og kan få dårligere effekt på grunn av
+manglende omdannelse til morfin.
+Omkring 1 % av den kaukasiske befolkningen har ultrahurtig metablisme. Individer med ultrahurtig
+metabolisme har en eller flere dupliseringer av sine CYP 2D6-kodede gener og har derfor en merkbart
+forhøyet CYP 2D6-aktivitet. Disse individene får forhøyede plasmakonsentrasjoner av morfin og har
+derfor en økt risiko for morfinrelaterte bivirkninger (se pkt. 4.4 og 4.6). Dette er det særlig viktig å være
+oppmerksom på dersom pasienten samtidig har nedsatt nyrefunksjon fordi dette kan føre til økt
+konsentrasjon av metabolitten morfin-6-glukoronid. Den genetiske profilen for CYP 2D6 kan bestemmes
+ved genotyping.
+
+5.3   Prekliniske sikkerhetsdata
+
+Paracetamol: Konvensjonelle studier utført i henhold til dagens standarder for vurdering av
+reproduksjons- og utviklingstoksisitet er ikke tilgjengelig. Studier fra cellelinjer i kultur, forsøksdyr og
+humane lymfocytter in vitro har vist at paracetamol kan påvirke DNA og gi kromosomskader. Studier på

@@ -1,18 +1,65 @@
 {
   "versjon": 1,
-  "status": "kjorer",
+  "status": "advarsel",
   "jobb": {
     "gren": "kuratorjobb/kodein-spc-20261107",
     "foresporsel_commit": "809dc0592184860ac209b2be7d718c9c7eae2bd8",
     "foresporsel_sha256": "6a9e24a53ad73240f199a5cc2c28eb172244760896ea0051c262887db662feff",
     "kode_commit": "55c8fa34d9643744f6698839011a5f51c7f772ba",
     "kjoring": "https://github.com/peohol/ousfar/actions/runs/42412500385",
-    "startet_kl": "2026-11-07T20:45:05.217Z",
-    "ferdig_kl": null
+    "startet_kl": "2026-11-07T20:45:07.386Z",
+    "ferdig_kl": "2026-11-07T20:45:53.513Z"
   },
-  "foresporsel": null,
+  "foresporsel": {
+    "versjon": 1,
+    "stoffer": [
+      "kodein"
+    ],
+    "oppgaver": [
+      "spc"
+    ],
+    "spc": {
+      "adresser": [
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-9952.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/24-16663.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/24-16665.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/24-16666.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06128.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-04088.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-06139.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07735.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/14-9969.pdf",
+        "https://produktinformasjon.legemiddelsok.no/preparatomtaler/0000-07522.pdf"
+      ],
+      "maks": 20,
+      "dpi": 150
+    }
+  },
   "referanse": null,
   "feil": [],
-  "bruker": [],
-  "stoffer": {}
+  "bruker": [
+    {
+      "id": "innlogging",
+      "status": "ok",
+      "melding": "Testbrukeren logget inn som appen gjør."
+    },
+    {
+      "id": "bruker",
+      "status": "ok",
+      "melding": "Testbrukeren er en vanlig innlogget bruker, ikke administrator.",
+      "rpc": "er_admin",
+      "ms": 816
+    }
+  ],
+  "stoffer": {
+    "kodein": {
+      "status": "advarsel",
+      "oppgaver": {
+        "spc": {
+          "status": "advarsel",
+          "fil": "kuratorjobb/resultat/kodein/spc.json"
+        }
+      }
+    }
+  }
 }

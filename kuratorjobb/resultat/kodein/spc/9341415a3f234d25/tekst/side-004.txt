@@ -1,0 +1,54 @@
+Blodplatehemmende behandling med oral P2Y12-hemmer
+En forsinket og redusert eksponering for blodplatehemmende behandling med oral P2Y12-hemmer har
+vært observert hos pasienter med akutt koronarsyndrom behandlet med morfin. Denne interaksjonen
+kan være forbundet med redusert gastrointestinal motilitet og kan gjelde for andre opioider. Den
+kliniske relevansen er ukjent, men data indikerer et potensial for redusert effekt av P2Y12-hemmer
+hos pasienter som samtidig får morfin og en P2Y12-hemmer (se pkt. 4.4). Hos pasienter med akutt
+koronarsyndrom, der kodein ikke kan unngås og rask P2Y12-hemming anses avgjørende, kan bruk av
+en parenteral P2Y12-hemmer vurderes.
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet
+Sikkerheten ved bruk under graviditet er ikke klarlagt da erfaring fra mennesker er utilstrekkelig.
+Dyrestudier viser ikke reproduksjonstoksiske effekter. Slike resultater fra dyrestudier betyr
+nødvendigvis ikke fravær av skadelige effekter på humane fostre. Preparatet skal bare brukes ved
+graviditet hvis fordelen oppveier en mulig risiko.
+Abstinenssymptomer er sett hos nyfødte etter regelmessig bruk av kodein. På grunn av risiko for
+tilvenning av barnet bør kodein ikke brukes over lengre tid. Preparatet kan brukes under graviditet i
+korte perioder i terapeutiske doser.
+
+Amming
+Kodein skal ikke brukes under amming (se pkt. 4.3). Ved normale terapeutiske doser kan kodein og
+dets aktive metabolitter være til stede i morsmelk i meget lave doser, men det er lite sannsynlig at
+dette påvirker barnet som ammes. Hvis pasienten imidlertid har ultrarask metabolisme via CYP2D6,
+kan det være høyere innhold av den aktive metabolitten morfin i morsmelken. Dette kan i meget
+sjeldne tilfeller føre til symptomer på opioidtoksisitet hos barnet, som kan være fatalt.
+
+4.7   Påvirkning av evnen til å kjøre bil og bruke maskiner
+
+Kodein gir tretthet, påvirker reaksjonsevnen og kan ha liten til moderat påvirkning på evnen til å kjøre
+bil og bruke maskiner.
+
+4.8   Bivirkninger
+
+Frekvensen av bivirkninger ved kortvarig bruk er 2-3 %.
+ Organklassesystem                Vanlige               Ikke kjent
+                                  (1/100 til <1/10) (kan ikke anslås ut i fra tilgjengelige data)
+ Forstyrrelser i immunsystemet                          Anafylaktiske reaksjoner,
+                                                        Allergi
+ Psykiatriske lidelser                                  Forvirring
+                                                        Avhengighet*
+ Nevrologiske sykdommer           Døsighet              Svimmelhet,
+
+Sykdommer i                                               Respirasjonsdepresjon
+respirasjonsorganer, thorax og
+mediastinum
+Gastrointestinale sykdommer         Brekninger,           Kvalme
+                                    Obstipasjon           Akutt pankreatitt
+                                                          Munntørrhet
+ Sykdommer i lever og                                     Galleveisdyskinesi**
+ galleveier                                               Dysfunksjon i Oddis sfinkter
+ Hud- og underhudssykdommer                               Urtikaria
+* Faren for tilvenning er mindre enn for morfin.
+** Forekommer hos spesielt disponerte pasienter.

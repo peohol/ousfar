@@ -1,0 +1,54 @@
+Samtidig bruk av Pinex Forte og gabapentinoider (gabapentin og pregabalin) kan føre til
+respirasjonsdepresjon, hypotensjon, dyp sedasjon, koma eller død (se pkt. 4.4).
+
+Barbiturater, hypnotika, anestetika og sentralstimulerende muskelrelaksanter
+Mulig mekanisme: Additiv CNS-hemming og respirasjonsdepresjon ved samtidig bruk av kodein.
+Effekt: CNS-inhibering og respirasjonsdepresjon.
+
+Antiepileptika
+Legemidler med en enzyminduserende effekt (f.eks. fenytoin, karbamazepin) reduserer
+biotilgjengeligheten av paracetamol via glukoronidering. Det er økt risiko for hepatisk toksisitet ved
+inntak av paracetamoloverdose hos pasienter som får behandling med enzyminduserende legemidler.
+
+Probenecid
+Ved samtidig behandling med probenecid bør det vurderes å redusere dosen, da probenecid nesten
+halverer paracetamols clearance ved å hemme konjugeringen med glukuronsyre.
+
+Alkohol
+Mulig mekanisme:
+A) Trolig på grunn av induksjon av leverenzymer og økt dannelse av hepatotoksiske
+paracetamolmetabolitter.
+B) Additiv eller synergetisk CNS-inhibering (kodein).
+Effekt:
+A) Økt risiko for hepatotoksisitet (se pkt. 4.4).
+B) Risiko for sedasjon (kodein).
+
+Rifampicin
+Rifampicin induserer CYP 3A4 i leveren og derav økes metabolismen av kodein. Dette medfører en
+reduksjon i effekt eller ingen effekt av kodein. Kombinasjonen kan brukes ved å justere dosen.
+
+Flukloksacillin
+Forsiktighet bør utvises når paracetamol brukes samtidig med flukloksacillin, da samtidig inntak har
+vært assosiert med metabolsk acidose med høyt aniongap forårsaket av pyroglutamat-acidose, spesielt
+hos pasienter med risikofaktorer (se pkt. 4.4).
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet:
+Forsiktighet bør utvises ved forskrivning til gravide kvinner. Preparatet skal bare brukes hvis fordelen
+oppveier en mulig risiko.
+
+Kodein: Det foreligger ikke tilstrekkelig data for kodeinfosfat til å kunne avgjøre risiko ved bruk.
+Metabolitter av kodein passerer placenta. Som for andre narkotiske analgetika er det sett neonatal
+respirasjonsdepresjon ved bruk av kodein ved fødsler. Ved langvarig behandling av moren ved graviditet
+er det sett neonatal abstinens.
+
+Paracetamol: En stor mengde data fra gravide kvinner indikerer hverken misdannelser, eller toksisitet
+hos foster eller det nyfødte barnet. Epidemiologiske studier på nevronal utvikling hos barn utsatt for
+paracetamol in utero viser ikke entydige resultater. Hvis klinisk nødvendig kan paracetamol brukes under
+graviditet med lavest mulig effektive dose i kortest mulig tid og lavest mulig frekvens.
+
+Amming:
+Kodein skal ikke brukes under amming (se pkt. 4.3).
+Ved vanlige terapeutiske doser kan kodein og dets aktive metabolitt finnes i morsmelk i svært lave
+doser, og det er lite sannsynlig at dette påvirker det diende barnet.

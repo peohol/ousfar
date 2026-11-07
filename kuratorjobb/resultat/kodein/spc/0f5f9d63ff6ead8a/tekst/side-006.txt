@@ -1,0 +1,55 @@
+Enzyminduserende legemidler som rifampicin, barbiturater, flere antiepileptika, prikkperikum (Hypericum
+perforatum) osv. kan redusere plasmakonsentrasjonen av morfin (se også interaksjon med paracetamol
+nedenfor).
+
+Paracetamol
+Farmakodynamiske interaksjoner:
+Den antikoagulerende effekten av warfarin og andre kumariner kan forsterkes ved regelmessig bruk av
+paracetamol, med økt risiko for blødning. Effekten kan oppstå allerede etter døgndoser på 2000 mg i
+3 dager. Sporadiske doser har ingen signifikant effekt på blødningstendensen. Økt overvåking av
+INR-verdier bør gjøres under kombinasjonsbehandlingen og etter at den er avsluttet.
+
+Farmakokinetiske interaksjoner:
+Bruk av forbindelser som induserer leverenzymer, som karbamazepin, fenytoin, fenobarbital, rifampicin
+og prikkperikum (Hypericum perforatum) kan øke levertoksisiteten av paracetamol på grunn av økning i
+og raskere dannelse av toksiske metabolitter. Forsiktighet bør derfor utvises ved samtidig bruk av
+enzyminduserende forbindelser.
+
+Probenecid gir en nesten halvering av clearance av paracetamol ved å hemme konjugeringen med
+glukuronsyre. Dette betyr sannsynligvis at dosen av paracetamol kan halveres når det gis samtidig med
+probenecid.
+Samtidig inntak av legemidler som øker hastigheten av mage-/tarmtømming, som metoklopramid eller
+domperidon, øker absorpsjonshastigheten og inntreden av effekt av paracetamol.
+
+Absorpsjonen av paracetamol reduseres av kolestyramin. Kolestyramin bør ikke gis den første timen
+dersom maksimal analgetisk effekt vil oppnås.
+
+Paracetamol kan påvirke farmakokinetikken til kloramfenikol. En analyse av kloramfenikol i plasma
+anbefales derfor ved kombinasjonsbehandling med kloramfenikol til injeksjon.
+
+Forsiktighet skal utvises når paracetamol brukes samtidig med flukloksacillin, da samtidig inntak har blitt
+forbundet med metabolisk acidose med høyt aniongap forårsaket av pyroglutamat-acidose, spesielt hos
+pasienter med risikofaktorer (se pkt. 4.4).
+
+4.6   Fertilitet, graviditet og amming
+
+Graviditet
+
+Kodein
+Pinex Forte bør brukes med forsiktighet ved graviditet, siden kodeinmetabolitter krysser placenta.
+Det er rapportert neonatal respirasjonsdepresjon i forbindelse med bruk av kodein under fødsel.
+
+Det er rapportert abstinenssymptomer hos nyfødte der moren har brukt paracetamol/kodein regelmessig
+under graviditeten.
+
+Paracetamol
+En stor mengde data fra gravide kvinner indikerer hverken misdannelser eller toksisitet hos foster eller det
+nyfødte barnet. Epidemiologiske studier på nevronal utvikling hos barn utsatt for paracetamol in utero
+viser ikke entydige resultater. Hvis klinisk nødvendig kan paracetamol brukes under graviditet med lavest
+mulig effektive dose i kortest mulig tid og lavest mulig frekvens.
+
+Amming
+
+Kodein
+
+                                                     6
