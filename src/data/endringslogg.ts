@@ -19,7 +19,7 @@ export const ENDRINGSLOGG: Endring[] = [
     omfang: 'Moderat omfang',
     gjelder: ['verktoy'],
     punkter: [
-      'Gjelder bare administratorene. Ingen regler, doser, godkjenninger eller nødstopp er endret, og ingen sikkerhetsspørsmål er tatt bort.',
+      'Gjelder bare administratorene. Ingen regler, doser, godkjenninger av regler eller nødstopp er endret, og ingen sikkerhetsspørsmål er tatt bort. De nye spørsmålene og stoppmeldingene er kontrollert for at de betyr det samme som reglene.',
       'Spørsmålene før planen er skrevet på vanlig norsk og besvares med Ja, Nei eller Vet ikke, i alle fire verktøy, også ved escitalopram og byttene mellom antidepressiver. Sammensatte spørsmål er delt opp, og spørsmål som et tidligere svar allerede avgjør, er tatt bort.',
       'Et svar som gjør at verktøyet ikke kan lage en plan, sier hva som stopper og hvorfor, for eksempel «Verktøyet har foreløpig ingen godkjent standardplan ved tidligere seponeringsvansker. Nedtrappingen må tilpasses individuelt.» «Da gjelder ikke regelen» står ikke lenger noe sted.',
       'Må et forhold likevel vises med regelens egen tekst, svares det «Stemmer» eller «Stemmer ikke» i stedet for «Gjelder» eller «Gjelder ikke».',
