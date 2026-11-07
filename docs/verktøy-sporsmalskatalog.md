@@ -35,7 +35,7 @@ Hele katalogen er endret, så alle katalogavtrykkene er nye og ingen er kontroll
 
 ### Bytte fra sertralin til mirtazapin, kryssnedtrapping (`kryssnedtrapping-sertralin-mirtazapin` v10)
 
-Fingeravtrykk `12801aa22a0ca2a576b9ba737d5d5cb52db3a73dc1b437bde7f20a896214c81a` · katalogavtrykk `ecb2ff7f8eab6822a8168bb32cf874bf7bf0c99dd88e238ad3a4a5a736b1c794` · ikke kontrollert ennå: appen bruker regelens egne tekster (S5b).
+Fingeravtrykk `12801aa22a0ca2a576b9ba737d5d5cb52db3a73dc1b437bde7f20a896214c81a` · katalogavtrykk `ecb2ff7f8eab6822a8168bb32cf874bf7bf0c99dd88e238ad3a4a5a736b1c794` · katalogen er kontrollert og brukes.
 
 | Betingelse | Regelens tekst | Ny tekst i flyten | Kategori | Svar | Avbildning til motoren | «Vet ikke» / ubesvart gir | Forklaring ved stopp |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -56,7 +56,7 @@ Fingeravtrykk `12801aa22a0ca2a576b9ba737d5d5cb52db3a73dc1b437bde7f20a896214c81a`
 
 ### Fra peroral aripiprazol til Abilify Maintena, oppstart med én injeksjon (`depot-aripiprazol-maintena` v3)
 
-Fingeravtrykk `04d1debe48f02ea03a31aab3d7cd5cdeb15c56d4b43797bda353f3d857297f20` · katalogavtrykk `8b42edb2bbfe9df0697e7db4595e05d9c1260525e24b50747cdb246474fdac12` · ikke kontrollert ennå: appen bruker regelens egne tekster (S5b).
+Fingeravtrykk `04d1debe48f02ea03a31aab3d7cd5cdeb15c56d4b43797bda353f3d857297f20` · katalogavtrykk `8b42edb2bbfe9df0697e7db4595e05d9c1260525e24b50747cdb246474fdac12` · katalogen er kontrollert og brukes.
 
 | Betingelse | Regelens tekst | Ny tekst i flyten | Kategori | Svar | Avbildning til motoren | «Vet ikke» / ubesvart gir | Forklaring ved stopp |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -81,7 +81,7 @@ Fingeravtrykk `04d1debe48f02ea03a31aab3d7cd5cdeb15c56d4b43797bda353f3d857297f20`
 
 ### Fra peroral paliperidon depottablett til Xeplion (`depot-paliperidon-xeplion` v3)
 
-Fingeravtrykk `21a335eec8c3816ee21627ceec3197e52957ccdf99cdbfaa00a3ca3cb5987bdf` · katalogavtrykk `cb84d59b5fa95c77bd5adea92a0c37e56979e8e69bf8f2e5000f244741991c99` · ikke kontrollert ennå: appen bruker regelens egne tekster (S5b).
+Fingeravtrykk `21a335eec8c3816ee21627ceec3197e52957ccdf99cdbfaa00a3ca3cb5987bdf` · katalogavtrykk `cb84d59b5fa95c77bd5adea92a0c37e56979e8e69bf8f2e5000f244741991c99` · katalogen er kontrollert og brukes.
 
 | Betingelse | Regelens tekst | Ny tekst i flyten | Kategori | Svar | Avbildning til motoren | «Vet ikke» / ubesvart gir | Forklaring ved stopp |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -139,7 +139,7 @@ Fingeravtrykk `e8a3c17edda10da43b1df4171a733a23133da50ebcda31cd71a771022a8a78d7`
 
 ### Seponering av vortioksetin, gjentatt prosentvis nedtrapping (`seponering-vortioksetin` v12)
 
-Fingeravtrykk `b28dec93f5ede06c6565e1ce5d6aa62606c69250f1a9088dae0c57d3121101f3` · katalogavtrykk `69b7d1907082e2498e3b30018a5f31300b11d1af741f1b6fc2158279c9ec9ddd` · ikke kontrollert ennå: appen bruker regelens egne tekster (S5b).
+Fingeravtrykk `b28dec93f5ede06c6565e1ce5d6aa62606c69250f1a9088dae0c57d3121101f3` · katalogavtrykk `69b7d1907082e2498e3b30018a5f31300b11d1af741f1b6fc2158279c9ec9ddd` · katalogen er kontrollert og brukes.
 
 | Betingelse | Regelens tekst | Ny tekst i flyten | Kategori | Svar | Avbildning til motoren | «Vet ikke» / ubesvart gir | Forklaring ved stopp |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -183,7 +183,7 @@ Regelen har ingen spørsmål, unntak eller bekreftelser.
 
 ### Seponering av escitalopram med tabletter og dråper, gjentatt prosentvis nedtrapping (`seponering-escitalopram-tabletter-og-draper` v14)
 
-Fingeravtrykk `01b2fb560a8defe0114f9552d619bc6bf15e27b07fa6352d6331d9beb500721f` · katalogavtrykk `2e9c28244fff4aa16e038f94873fd18fc4ce3991960683379dabf1c4c1f2158d` · ikke kontrollert ennå: appen bruker regelens egne tekster (S5b).
+Fingeravtrykk `01b2fb560a8defe0114f9552d619bc6bf15e27b07fa6352d6331d9beb500721f` · katalogavtrykk `2e9c28244fff4aa16e038f94873fd18fc4ce3991960683379dabf1c4c1f2158d` · katalogen er kontrollert og brukes.
 
 | Betingelse | Regelens tekst | Ny tekst i flyten | Kategori | Svar | Avbildning til motoren | «Vet ikke» / ubesvart gir | Forklaring ved stopp |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -221,7 +221,7 @@ Fingeravtrykk `01b2fb560a8defe0114f9552d619bc6bf15e27b07fa6352d6331d9beb500721f`
 
 ### Bytte fra escitalopram til sertralin, nedtrapping og direkte overgang (`bytte-escitalopram-sertralin` v2)
 
-Fingeravtrykk `c0bf6c61e38c437d4c8e41d36653fe1ce3b1a9c1dfb0f9d9af603e9f7dd0289c` · katalogavtrykk `225e7e10dddb64c5fb5d29b6cf2785d587fa1288cbb37ed0cfeed415b543e5c3` · ikke kontrollert ennå: appen bruker regelens egne tekster (S5b).
+Fingeravtrykk `c0bf6c61e38c437d4c8e41d36653fe1ce3b1a9c1dfb0f9d9af603e9f7dd0289c` · katalogavtrykk `225e7e10dddb64c5fb5d29b6cf2785d587fa1288cbb37ed0cfeed415b543e5c3` · katalogen er kontrollert og brukes.
 
 | Betingelse | Regelens tekst | Ny tekst i flyten | Kategori | Svar | Avbildning til motoren | «Vet ikke» / ubesvart gir | Forklaring ved stopp |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -249,7 +249,7 @@ Fingeravtrykk `c0bf6c61e38c437d4c8e41d36653fe1ce3b1a9c1dfb0f9d9af603e9f7dd0289c`
 
 ### Bytte fra citalopram til sertralin, nedtrapping og direkte overgang (`bytte-citalopram-sertralin` v2)
 
-Fingeravtrykk `2b64ff9e383e6f9462600c4921a9dd7828ea2adc4ab404646f142ce306a57aa8` · katalogavtrykk `fc34ff396c1fe9c4611426f9eba32cb09248aabdf0f36171ced2e579aea6fe12` · ikke kontrollert ennå: appen bruker regelens egne tekster (S5b).
+Fingeravtrykk `2b64ff9e383e6f9462600c4921a9dd7828ea2adc4ab404646f142ce306a57aa8` · katalogavtrykk `fc34ff396c1fe9c4611426f9eba32cb09248aabdf0f36171ced2e579aea6fe12` · katalogen er kontrollert og brukes.
 
 | Betingelse | Regelens tekst | Ny tekst i flyten | Kategori | Svar | Avbildning til motoren | «Vet ikke» / ubesvart gir | Forklaring ved stopp |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -277,7 +277,7 @@ Fingeravtrykk `2b64ff9e383e6f9462600c4921a9dd7828ea2adc4ab404646f142ce306a57aa8`
 
 ### Fra peroral risperidon til Xeplion (`depot-risperidon-xeplion` v8)
 
-Fingeravtrykk `1672334c468f28cf181aa4d786370e60f3f232f76f63d374e0c505d847ab184e` · katalogavtrykk `4436def26dad4887ada66b80c99aade860287b4a4c85f273f3114bc8db1d9b26` · ikke kontrollert ennå: appen bruker regelens egne tekster (S5b).
+Fingeravtrykk `1672334c468f28cf181aa4d786370e60f3f232f76f63d374e0c505d847ab184e` · katalogavtrykk `4436def26dad4887ada66b80c99aade860287b4a4c85f273f3114bc8db1d9b26` · katalogen er kontrollert og brukes.
 
 | Betingelse | Regelens tekst | Ny tekst i flyten | Kategori | Svar | Avbildning til motoren | «Vet ikke» / ubesvart gir | Forklaring ved stopp |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -306,7 +306,7 @@ Fingeravtrykk `1672334c468f28cf181aa4d786370e60f3f232f76f63d374e0c505d847ab184e`
 
 ### Fra olanzapin til aripiprazol, kryss-titrering (`antipsykotikabytte-olanzapin-aripiprazol` v8)
 
-Fingeravtrykk `f141a13a9e9368542d7719cfb0abea7cfb77a41d7d89248e5f9e1d70e0aa5f5e` · katalogavtrykk `53de23f5cbd195cde4f1e7dbd555baf368a01fa2cf05e32d2040cfa57070533e` · ikke kontrollert ennå: appen bruker regelens egne tekster (S5b).
+Fingeravtrykk `f141a13a9e9368542d7719cfb0abea7cfb77a41d7d89248e5f9e1d70e0aa5f5e` · katalogavtrykk `53de23f5cbd195cde4f1e7dbd555baf368a01fa2cf05e32d2040cfa57070533e` · katalogen er kontrollert og brukes.
 
 | Betingelse | Regelens tekst | Ny tekst i flyten | Kategori | Svar | Avbildning til motoren | «Vet ikke» / ubesvart gir | Forklaring ved stopp |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -340,7 +340,7 @@ Fingeravtrykk `f141a13a9e9368542d7719cfb0abea7cfb77a41d7d89248e5f9e1d70e0aa5f5e`
 
 ### Fra risperidon til aripiprazol, kryss-titrering (`antipsykotikabytte-risperidon-aripiprazol` v8)
 
-Fingeravtrykk `866ac93c58fb921c78cd71518ec91637cb31a175b7a9a480552fcebe54cca870` · katalogavtrykk `a26697d8036f71c7f7befac403c7724fef83187ebd3ed4c33253d587c306854d` · ikke kontrollert ennå: appen bruker regelens egne tekster (S5b).
+Fingeravtrykk `866ac93c58fb921c78cd71518ec91637cb31a175b7a9a480552fcebe54cca870` · katalogavtrykk `a26697d8036f71c7f7befac403c7724fef83187ebd3ed4c33253d587c306854d` · katalogen er kontrollert og brukes.
 
 | Betingelse | Regelens tekst | Ny tekst i flyten | Kategori | Svar | Avbildning til motoren | «Vet ikke» / ubesvart gir | Forklaring ved stopp |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -374,7 +374,7 @@ Fingeravtrykk `866ac93c58fb921c78cd71518ec91637cb31a175b7a9a480552fcebe54cca870`
 
 ### Legge lamotrigin til valproat (`tillegg-valproat-lamotrigin` v2)
 
-Fingeravtrykk `0a9213f31b5f428935fceeef41498a2999682631b1692749bb7ebe19c82639b8` · katalogavtrykk `35c45eb8dbdb4411dfce0ade5f6438c7653d7f775aa7e7fba295f11c748d9d54` · ikke kontrollert ennå: appen bruker regelens egne tekster (S5b).
+Fingeravtrykk `0a9213f31b5f428935fceeef41498a2999682631b1692749bb7ebe19c82639b8` · katalogavtrykk `35c45eb8dbdb4411dfce0ade5f6438c7653d7f775aa7e7fba295f11c748d9d54` · katalogen er kontrollert og brukes.
 
 | Betingelse | Regelens tekst | Ny tekst i flyten | Kategori | Svar | Avbildning til motoren | «Vet ikke» / ubesvart gir | Forklaring ved stopp |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -423,7 +423,7 @@ Fingeravtrykk `0a9213f31b5f428935fceeef41498a2999682631b1692749bb7ebe19c82639b8`
 
 ### Legge lamotrigin til litium (`tillegg-litium-lamotrigin` v2)
 
-Fingeravtrykk `786436a0ea8d115b7927a9a20ffabc736b59bc06c59117769551e5f75e89e44b` · katalogavtrykk `699ce72181ee0ed3ff667918a3f578c6b77ff8196f1437301906561757bbb05b` · ikke kontrollert ennå: appen bruker regelens egne tekster (S5b).
+Fingeravtrykk `786436a0ea8d115b7927a9a20ffabc736b59bc06c59117769551e5f75e89e44b` · katalogavtrykk `699ce72181ee0ed3ff667918a3f578c6b77ff8196f1437301906561757bbb05b` · katalogen er kontrollert og brukes.
 
 | Betingelse | Regelens tekst | Ny tekst i flyten | Kategori | Svar | Avbildning til motoren | «Vet ikke» / ubesvart gir | Forklaring ved stopp |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -467,4 +467,17 @@ Fingeravtrykk `786436a0ea8d115b7927a9a20ffabc736b59bc06c59117769551e5f75e89e44b`
 
 ## Kontrollerte avtrykk
 
-Ingen for den nåværende katalogen. Avtrykkene ChatGPT kontrollerte 04.11.2026 (de sju K3- og K4-reglene) gjaldt katalogen før P2a og er tatt ut.
+| Regel | Versjon | Katalogavtrykk | Dato | Av |
+| --- | --- | --- | --- | --- |
+| `kryssnedtrapping-sertralin-mirtazapin` | 10 | `ecb2ff7f8eab6822a8168bb32cf874bf7bf0c99dd88e238ad3a4a5a736b1c794` | 2026-11-07 | ChatGPT (via Peder) |
+| `depot-aripiprazol-maintena` | 3 | `8b42edb2bbfe9df0697e7db4595e05d9c1260525e24b50747cdb246474fdac12` | 2026-11-07 | ChatGPT (via Peder) |
+| `depot-paliperidon-xeplion` | 3 | `cb84d59b5fa95c77bd5adea92a0c37e56979e8e69bf8f2e5000f244741991c99` | 2026-11-07 | ChatGPT (via Peder) |
+| `seponering-vortioksetin` | 12 | `69b7d1907082e2498e3b30018a5f31300b11d1af741f1b6fc2158279c9ec9ddd` | 2026-11-07 | ChatGPT (via Peder) |
+| `seponering-escitalopram-tabletter-og-draper` | 14 | `2e9c28244fff4aa16e038f94873fd18fc4ce3991960683379dabf1c4c1f2158d` | 2026-11-07 | ChatGPT (via Peder) |
+| `bytte-escitalopram-sertralin` | 2 | `225e7e10dddb64c5fb5d29b6cf2785d587fa1288cbb37ed0cfeed415b543e5c3` | 2026-11-07 | ChatGPT (via Peder) |
+| `bytte-citalopram-sertralin` | 2 | `fc34ff396c1fe9c4611426f9eba32cb09248aabdf0f36171ced2e579aea6fe12` | 2026-11-07 | ChatGPT (via Peder) |
+| `depot-risperidon-xeplion` | 8 | `4436def26dad4887ada66b80c99aade860287b4a4c85f273f3114bc8db1d9b26` | 2026-11-07 | ChatGPT (via Peder) |
+| `antipsykotikabytte-olanzapin-aripiprazol` | 8 | `53de23f5cbd195cde4f1e7dbd555baf368a01fa2cf05e32d2040cfa57070533e` | 2026-11-07 | ChatGPT (via Peder) |
+| `antipsykotikabytte-risperidon-aripiprazol` | 8 | `a26697d8036f71c7f7befac403c7724fef83187ebd3ed4c33253d587c306854d` | 2026-11-07 | ChatGPT (via Peder) |
+| `tillegg-valproat-lamotrigin` | 2 | `35c45eb8dbdb4411dfce0ade5f6438c7653d7f775aa7e7fba295f11c748d9d54` | 2026-11-07 | ChatGPT (via Peder) |
+| `tillegg-litium-lamotrigin` | 2 | `699ce72181ee0ed3ff667918a3f578c6b77ff8196f1437301906561757bbb05b` | 2026-11-07 | ChatGPT (via Peder) |

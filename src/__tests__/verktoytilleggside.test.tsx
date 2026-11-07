@@ -5,21 +5,17 @@
  * spørsmålene og bekreftelsene, stoppene og planen som kopieres, med de
  * godkjente reglene i appen og preparatene i det lagrede FEST-uttrekket.
  * Ingen simulering: reglene er godkjent av den uavhengige kontrolløren for
- * nøyaktig sin versjon og sitt fingeravtrykk (`TILLEGGSVEDTAK`). Bare
- * spørsmålskatalogen fra P2a er ført som kontrollert i testen, til ChatGPT
- * har kontrollert den (`hjelp/katalogkandidater.ts`).
+ * nøyaktig sin versjon og sitt fingeravtrykk (`TILLEGGSVEDTAK`), og
+ * spørsmålskatalogen fra P2a er kontrollert av ChatGPT 07.11.2026.
  */
 import { act, cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Verktoyside, type VerktoysideProps } from '../components/verktoy/Verktoyside'
 import { glemBildet } from '../oppdatering/bevaring'
 import { FEST_TILLEGG } from '../verktoy/tilleggsgrunnlag'
 import { pilotklokke, pilotlesing, pilotuttrekk } from './hjelp/pilotside'
 import { besvarAlt, kopier, planpanel, sporsmal, stoppet, type Bruker } from './hjelp/verktoyflyt'
-import { forKatalogkandidater, utenKatalogkandidater } from './hjelp/katalogkandidater'
-
-vi.mock('../verktoy/flyt/katalogkontroll', async (original) => ({ ...(await original<object>()), KONTROLLERTE_KATALOGER: [] }))
 
 beforeEach(() => {
   window.scrollTo = () => {}
@@ -65,9 +61,6 @@ const IKKE = /^(Nei|Ikke ennå)$/
 const svar = (user: Bruker, tekst: RegExp, verdi: RegExp) => user.click(within(sporsmal(tekst)).getByRole('radio', { name: verdi }))
 
 describe('Kombinere stemningsstabiliserende med de godkjente reglene', () => {
-  // Spørsmålene i katalogen, slik appen viser dem når ChatGPT har kontrollert katalogen fra P2a.
-  beforeAll(forKatalogkandidater)
-  afterAll(utenKatalogkandidater)
   it('valproat → lamotrigin: planen kopieres med mg natriumvalproat og preparatet fra legemiddellisten, og stopper uten nødvendige bekreftelser', async () => {
     const user = userEvent.setup()
     vis()

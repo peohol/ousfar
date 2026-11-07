@@ -131,11 +131,24 @@ describe('katalogen dekker hver betingelse i hver godkjent regel (S5)', () => {
 
 describe('katalogavtrykket (S5b)', () => {
   it('er kontrollert for nøyaktig regelversjonene ChatGPT har godkjent den nåværende katalogen for, og ingen andre', () => {
-    // Tomt til ChatGPT har kontrollert katalogen fra P2a (07.11.2026); avtrykkene fra 04.11 gjaldt katalogen før den.
-    const godkjent: Record<string, number> = {}
+    // ChatGPTs kontroll 07.11.2026 av katalogen fra P2a: de tolv aktive reglene; escitalopram v13 er erstattet av v14 og ikke med.
+    const godkjent: Record<string, number> = {
+      'seponering-escitalopram-tabletter-og-draper': 14,
+      'seponering-vortioksetin': 12,
+      'kryssnedtrapping-sertralin-mirtazapin': 10,
+      'bytte-escitalopram-sertralin': 2,
+      'bytte-citalopram-sertralin': 2,
+      'depot-aripiprazol-maintena': 3,
+      'depot-paliperidon-xeplion': 3,
+      'depot-risperidon-xeplion': 8,
+      'antipsykotikabytte-olanzapin-aripiprazol': 8,
+      'antipsykotikabytte-risperidon-aripiprazol': 8,
+      'tillegg-valproat-lamotrigin': 2,
+      'tillegg-litium-lamotrigin': 2,
+    }
     expect(Object.fromEntries(KONTROLLERTE_KATALOGER.map((k) => [k.regel, k.regelversjon]))).toEqual(godkjent)
-    expect(KONTROLLERTE_KATALOGER.map((k) => k.regel)).not.toContain(ESC.id)
-    for (const k of KONTROLLERTE_KATALOGER) expect(k.merknad).toMatch(/ikke en ny godkjenning av doseringsregelen/)
+    expect(KONTROLLERTE_KATALOGER.map((k) => k.regel)).not.toContain(ESC13.id)
+    for (const k of KONTROLLERTE_KATALOGER) expect(k.merknad).toMatch(/ikke ny godkjenning av doser/)
     for (const r of GODKJENTE) {
       const med = r.id in godkjent
       expect(katalogGjelder(r), r.id).toBe(med)
@@ -878,7 +891,8 @@ describe('flyten og forhåndskontrollen er enige om svar som stopper', () => {
 
   it('dekker hver regel i bruk med en katalog, og hver regel med kontrollert katalog i appen', () => {
     expect(KANDIDATER.map((k) => k.regel).filter((id) => !(id in TILFELLER)).sort()).toEqual([ESC13.id, 'kryssnedtrapping-sertralin-mirtazapin', VORT.id].sort())
-    expect(KONTROLLERTE_KATALOGER.map((k) => k.regel).filter((id) => !(id in TILFELLER))).toEqual([])
+    // Vortioksetin og sertralin → mirtazapin har kontrollert katalog, men gir bare delplan (se over).
+    expect(KONTROLLERTE_KATALOGER.map((k) => k.regel).filter((id) => !(id in TILFELLER)).sort()).toEqual(['kryssnedtrapping-sertralin-mirtazapin', VORT.id].sort())
   })
 
   it('gir «kan ikke» med flytens stoppgrunn for hvert svar flyten sier stopper, i katalogen og i reservevisningen', () => {

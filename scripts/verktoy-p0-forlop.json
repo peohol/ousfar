@@ -156,14 +156,66 @@
    ],
    "svar": [
     [
-     "Et tidligere forsøk",
-     "Gjelder"
+     "tidligere fått seponeringssymptomer",
+     "Ja"
     ]
    ],
    "bilder": [
     [
-     "Et tidligere forsøk",
+     "tidligere fått seponeringssymptomer",
      "sporsmal"
+    ]
+   ]
+  },
+  {
+   "id": "P0-N08",
+   "hva": "Escitalopram 20 mg tablett, «Vet ikke» om behandlingstiden",
+   "verktoy": "trappe-ned-antidepressiv",
+   "stoff": [
+    [
+     "Virkestoff",
+     "Escitalopram"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell døgndose",
+     "20"
+    ]
+   ],
+   "form": [
+    "Tablett"
+   ],
+   "svar": [
+    [
+     "mange måneder",
+     "Vet ikke"
+    ]
+   ]
+  },
+  {
+   "id": "P0-N09",
+   "hva": "Escitalopram 20 mg tablett, brukt i mange måneder",
+   "verktoy": "trappe-ned-antidepressiv",
+   "stoff": [
+    [
+     "Virkestoff",
+     "Escitalopram"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell døgndose",
+     "20"
+    ]
+   ],
+   "form": [
+    "Tablett"
+   ],
+   "svar": [
+    [
+     "mange måneder",
+     "Ja"
     ]
    ]
   },
@@ -188,8 +240,8 @@
    ],
    "svar": [
     [
-     "65 år",
-     "Ja"
+     "Hvor gammel",
+     "65 år eller eldre"
     ]
    ]
   },
@@ -321,6 +373,12 @@
      "mer enn 8 uker",
      "sporsmal"
     ]
+   ],
+   "svar": [
+    [
+     "behandling av depresjon",
+     "Ja"
+    ]
    ]
   },
   {
@@ -349,8 +407,90 @@
    ],
    "svar": [
     [
+     "behandling av depresjon",
+     "Ja"
+    ],
+    [
      "mer enn 8 uker",
-     "Gjelder"
+     "Ja"
+    ]
+   ]
+  },
+  {
+   "id": "P0-B04",
+   "hva": "Citalopram 20 mg → sertralin 100 mg, pasienten er 65 år",
+   "verktoy": "bytte-antidepressiv",
+   "stoff": [
+    [
+     "Bytte fra",
+     "Citalopram"
+    ],
+    [
+     "Bytte til",
+     "Sertralin"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell",
+     "20"
+    ],
+    [
+     "Måldose",
+     "100"
+    ]
+   ],
+   "svar": [
+    [
+     "behandling av depresjon",
+     "Ja"
+    ],
+    [
+     "Hvor gammel",
+     "65 år eller eldre"
+    ],
+    [
+     "over 65 år",
+     "Nei"
+    ]
+   ]
+  },
+  {
+   "id": "P0-B05",
+   "hva": "Citalopram 20 mg → sertralin 100 mg, pasienten er 66 år",
+   "verktoy": "bytte-antidepressiv",
+   "stoff": [
+    [
+     "Bytte fra",
+     "Citalopram"
+    ],
+    [
+     "Bytte til",
+     "Sertralin"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell",
+     "20"
+    ],
+    [
+     "Måldose",
+     "100"
+    ]
+   ],
+   "svar": [
+    [
+     "behandling av depresjon",
+     "Ja"
+    ],
+    [
+     "Hvor gammel",
+     "65 år eller eldre"
+    ],
+    [
+     "over 65 år",
+     "Ja"
     ]
    ]
   },
@@ -376,6 +516,12 @@
     [
      "Måldose",
      "100"
+    ]
+   ],
+   "svar": [
+    [
+     "behandling av depresjon",
+     "Ja"
     ]
    ]
   },
@@ -408,15 +554,15 @@
      "18–64 år"
     ],
     [
-     "voksen, har schizofreni",
+     "schizofreni",
      "Ja"
     ],
     [
-     "Bruker pasienten peroral",
+     "stabil",
      "Ja"
     ],
     [
-     "har tålt",
+     "tålt",
      "Ja"
     ]
    ]
@@ -450,15 +596,15 @@
      "18–64 år"
     ],
     [
-     "voksen, har schizofreni",
+     "schizofreni",
      "Ja"
     ],
     [
-     "Bruker pasienten peroral",
+     "stabil",
      "Ja"
     ],
     [
-     "har tålt",
+     "tålt",
      "Ja"
     ]
    ]
@@ -492,15 +638,15 @@
      "18–64 år"
     ],
     [
-     "voksen, har schizofreni",
+     "schizofreni",
      "Ja"
     ],
     [
-     "Bruker pasienten peroral",
+     "stabil",
      "Ja"
     ],
     [
-     "har tålt",
+     "tålt",
      "Ja"
     ]
    ]
@@ -530,15 +676,15 @@
      "18–64 år"
     ],
     [
-     "voksen, har schizofreni",
+     "schizofreni",
      "Ja"
     ],
     [
-     "Bruker pasienten peroral",
+     "stabil",
      "Ja"
     ],
     [
-     "har tålt",
+     "tålt",
      "Ja"
     ]
    ]
@@ -569,15 +715,15 @@
      "18–64 år"
     ],
     [
-     "voksen, har schizofreni",
+     "schizofreni",
      "Ja"
     ],
     [
-     "Bruker pasienten peroral",
+     "stabil",
      "Ja"
     ],
     [
-     "har tålt",
+     "tålt",
      "Ja"
     ]
    ]
@@ -604,15 +750,15 @@
      "18–64 år"
     ],
     [
-     "voksen, har schizofreni",
+     "schizofreni",
      "Ja"
     ],
     [
-     "Bruker pasienten peroral",
+     "stabil",
      "Ja"
     ],
     [
-     "har tålt",
+     "tålt",
      "Ja"
     ]
    ]
@@ -643,11 +789,11 @@
      "18–64 år"
     ],
     [
-     "voksen, har schizofreni",
+     "schizofreni",
      "Ja"
     ],
     [
-     "Bruker pasienten peroral",
+     "stabil",
      "Ja"
     ]
    ],
@@ -688,16 +834,134 @@
      "18–64 år"
     ],
     [
-     "fast, og skal",
+     "valproat fast",
      "Ja"
     ],
     [
-     "natriumvalproat",
+     "natriumvalproatpreparat",
      "Ja"
     ],
     [
-     "Lithionit 42",
+     "døgndosen",
      "Ja"
+    ]
+   ]
+  },
+  {
+   "id": "P0-D03",
+   "hva": "Valproat 1000 mg + lamotrigin til 100 mg, kvinne som kan bli gravid, vilkårene i graviditetsforebyggende program oppfylt",
+   "verktoy": "kombinere-stemningsstabiliserende",
+   "stoff": [
+    [
+     "Eksisterende legemiddel",
+     "Valproat"
+    ],
+    [
+     "Legemiddel som legges til",
+     "Lamotrigin"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell",
+     "1000"
+    ],
+    [
+     "Måldose",
+     "100"
+    ]
+   ],
+   "svar": [
+    [
+     "Hvor gammel",
+     "18–64 år"
+    ],
+    [
+     "valproat fast",
+     "Ja"
+    ],
+    [
+     "natriumvalproatpreparat",
+     "Ja"
+    ],
+    [
+     "døgndosen",
+     "Ja"
+    ],
+    [
+     "kan bli gravid",
+     "Ja"
+    ],
+    [
+     "annen behandling ikke effekt",
+     "Ja"
+    ],
+    [
+     "spesialist i bipolar",
+     "Ja"
+    ],
+    [
+     "sikker prevensjon",
+     "Ja"
+    ]
+   ]
+  },
+  {
+   "id": "P0-D04",
+   "hva": "Valproat 1000 mg + lamotrigin til 100 mg, kvinne som kan bli gravid, uten sikker prevensjon",
+   "verktoy": "kombinere-stemningsstabiliserende",
+   "stoff": [
+    [
+     "Eksisterende legemiddel",
+     "Valproat"
+    ],
+    [
+     "Legemiddel som legges til",
+     "Lamotrigin"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell",
+     "1000"
+    ],
+    [
+     "Måldose",
+     "100"
+    ]
+   ],
+   "svar": [
+    [
+     "Hvor gammel",
+     "18–64 år"
+    ],
+    [
+     "valproat fast",
+     "Ja"
+    ],
+    [
+     "natriumvalproatpreparat",
+     "Ja"
+    ],
+    [
+     "døgndosen",
+     "Ja"
+    ],
+    [
+     "kan bli gravid",
+     "Ja"
+    ],
+    [
+     "annen behandling ikke effekt",
+     "Ja"
+    ],
+    [
+     "spesialist i bipolar",
+     "Ja"
+    ],
+    [
+     "sikker prevensjon",
+     "Nei"
     ]
    ]
   },
@@ -731,15 +995,19 @@
      "18–64 år"
     ],
     [
-     "fast, og skal",
+     "litium fast",
      "Ja"
     ],
     [
-     "natriumvalproat",
+     "serumlitium",
      "Ja"
     ],
     [
      "Lithionit 42",
+     "Ja"
+    ],
+    [
+     "døgndosen",
      "Ja"
     ]
    ]

@@ -25,7 +25,7 @@
  */
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { VARSLER_HENTES, VARSLER_ULEST } from '../components/verktoy/Regelvarsler'
 import { AUTOBEREGNING_MS } from '../components/verktoy/Arbeidsflyt'
 import { UNNTAK_STANDARD as FORHOLD_JA } from '../verktoy/flyt/flyt'
@@ -40,11 +40,8 @@ import { FEST_AKSEPTTEST, FEST_PILOT } from '../verktoy/regler/aksepttest'
 import { REGELSETT } from '../verktoy/tilgjengelighet'
 import { pilotklokke, pilotlesing, pilotuttrekk } from './hjelp/pilotside'
 import { besvarAlt, kopier, planen, planpanel, punkter, sporsmal, stoppet, tidslinje, velgForm, type Bruker } from './hjelp/verktoyflyt'
-import { forKatalogkandidater, utenKatalogkandidater } from './hjelp/katalogkandidater'
 
 import { godkjennITest, TEST_BEGRUNNELSE, TEST_DEPOT, TEST_JUSTERBAR, TEST_NEDTRAPPING, TEST_TRINNVALG, TEST_TRINNVALG_TO, TESTKLOKKE, testFest, testsett } from './hjelp/verktoyplan'
-
-vi.mock('../verktoy/flyt/katalogkontroll', async (original) => ({ ...(await original<object>()), KONTROLLERTE_KATALOGER: [] }))
 
 beforeEach(() => {
   window.scrollTo = () => {}
@@ -1263,9 +1260,6 @@ describe('pilotgjennomgangen med de godkjente reglene (P11.2, P11.4)', () => {
   // Escitalopram (versjon 14 med tabletter og dråper, og versjon 13 før godkjenningen): src/__tests__/verktoyb2side.test.tsx.
 
   describe('forenklingen (VDR-3)', () => {
-    // Spørsmålene i katalogen, slik appen viser dem når ChatGPT har kontrollert katalogen fra P2a.
-    beforeAll(forKatalogkandidater)
-    afterAll(utenKatalogkandidater)
     // En godkjent regel som gir en komplett plan; klinikere får aldri en delplan (Peders beslutning 03.11.2026).
     const XEPLION = 'depot-paliperidon-xeplion'
     const XEPLION_SNARVALG = 'Paliperidon: peroral → depotinjeksjon (paliperidonpalmitat)'

@@ -876,28 +876,13 @@ function katalogGjelder(r: Regel): boolean {
 }
 /**
  * De godkjente reglene som med vilje står i reservevisningen til katalogen
- * deres er kontrollert. P2a (07.11.2026) endret hele katalogen, så
- * avtrykkene ChatGPT godkjente 04.11 for de sju K3- og K4-reglene gjelder
- * ikke lenger, og alle venter på ChatGPTs kontroll av den nye katalogen. Den
- * som fører et nytt katalogavtrykk, eller får en ny regel godkjent uten
- * avtrykk, endrer listen i samme PR. Kriterium 2 er helt nådd først når
- * listen er tom (plan §11).
+ * deres er kontrollert. ChatGPT kontrollerte katalogen fra P2a for de tolv
+ * aktive reglene 07.11.2026; bare escitalopram v13, som er erstattet av v14
+ * i appen, står igjen. Den som fører et nytt katalogavtrykk, eller får en ny
+ * regel godkjent uten avtrykk, endrer listen i samme PR. For reglene appen
+ * bruker, er kriterium 2 nådd (plan §11).
  */
-const VENTER_PA_KATALOGKONTROLL: readonly string[] = [
-  'antipsykotikabytte-olanzapin-aripiprazol v8',
-  'antipsykotikabytte-risperidon-aripiprazol v8',
-  'bytte-citalopram-sertralin v2',
-  'bytte-escitalopram-sertralin v2',
-  'depot-aripiprazol-maintena v3',
-  'depot-paliperidon-xeplion v3',
-  'depot-risperidon-xeplion v8',
-  'kryssnedtrapping-sertralin-mirtazapin v10',
-  'seponering-escitalopram v13',
-  'seponering-escitalopram-tabletter-og-draper v14',
-  'seponering-vortioksetin v12',
-  'tillegg-litium-lamotrigin v2',
-  'tillegg-valproat-lamotrigin v2',
-]
+const VENTER_PA_KATALOGKONTROLL: readonly string[] = ['seponering-escitalopram v13']
 
 /**
  * Merket på reservevisningen (plan S5): regelens egne tekster og svar,

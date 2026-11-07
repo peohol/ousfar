@@ -17,7 +17,7 @@ import { describe, expect, it } from 'vitest'
 import { beregnPlan, entydigeTrinnvalg, medTrinnvalg, TOMT_SKJEMA } from '../verktoy/doseplan'
 import { flyttilstand } from '../verktoy/flyt'
 import { flytoppsett, INDIVIDUELT, standardId, UNNTAK_STANDARD, vurderFlyt, type Flytgrunnlag } from '../verktoy/flyt/flyt'
-import { harKontrollertKatalog, type Katalogkontroll } from '../verktoy/flyt/katalogkontroll'
+import { harKontrollertKatalog, KONTROLLERTE_KATALOGER, type Katalogkontroll } from '../verktoy/flyt/katalogkontroll'
 import { erErstattet, erKliniskGodkjent } from '../verktoy/regler/godkjenning'
 import type { Regel } from '../verktoy/regler/modell'
 import { besvartSkjema, tidFor } from '../verktoy/regler/pilotmatrise'
@@ -60,48 +60,41 @@ describe('P0-1 escitalopram: komplett plan bare etter ett dosevalg per trinn, hv
   })
 })
 
-describe('P0-2 reservevisningen med «Gjelder/Gjelder ikke» (rettet i P2a, venter på katalogkontrollen)', () => {
+describe('P0-2 reservevisningen med «Gjelder/Gjelder ikke» (rettet i P2a, katalogen kontrollert 07.11.2026)', () => {
   /** Reglene i bruk med spørsmål som vises med reservevisningen, med katalogene i `kontrollerte` (ellers appens). */
   const iReserve = (kontrollerte?: Katalogkontroll[]) =>
     iBruk
       .filter((r) => !flytoppsett(r, kontrollerte && { kontrollerte }).katalog && flytoppsett(r).sporsmal.length > 0)
       .map((r) => r.id)
       .sort()
+  const RESERVE: Flytgrunnlag = { kontrollerte: [] }
 
-  it('til ChatGPT har kontrollert katalogen fra P2a, vises hver godkjent regel i bruk med reservevisningen; hver av dem har en katalog', () => {
-    expect(iBruk.filter(harKontrollertKatalog)).toEqual([])
-    expect(iReserve()).toEqual(iBruk.filter((r) => flytoppsett(r).sporsmal.length > 0).map((r) => r.id).sort())
-    expect(iReserve().filter((id) => !KANDIDATER.some((k) => k.regel === id))).toEqual([])
+  it('ingen godkjent regel i bruk vises med reservevisningen i appen; avtrykkene i appen er nøyaktig katalogen slik den er nå', () => {
+    expect(iReserve()).toEqual([])
+    expect(iBruk.filter((r) => flytoppsett(r).sporsmal.length > 0).every(harKontrollertKatalog)).toBe(true)
+    for (const k of KONTROLLERTE_KATALOGER) expect(KANDIDATER.find((x) => x.regel === k.regel)?.katalogavtrykk, k.regel).toBe(k.katalogavtrykk)
   })
 
   it.each([ESCITALOPRAM, 'bytte-citalopram-sertralin', 'bytte-escitalopram-sertralin'])(
-    '%s: reservevisningen sier «Stemmer / Stemmer ikke» og aldri «Da gjelder ikke regelen»; katalogen spør med Ja / Nei / Vet ikke og sier hvorfor',
+    '%s: appen spør med Ja / Nei / Vet ikke og sier hvorfor; reservevisningen sier «Stemmer / Stemmer ikke» og aldri «Da gjelder ikke regelen»',
     (id) => {
       const r = regel(id)
-      const s = vurderFlyt(r, {}).sporsmal.find((x) => x.id === TIDLIGERE)!
-      expect(s.alternativer.map((a) => a.tekst)).toEqual(['Stemmer', 'Stemmer ikke'])
-      const reserve = vurderFlyt(r, { [TIDLIGERE]: 'ja' }).stopp.find((x) => x.sporsmal === TIDLIGERE)?.tekst
-      expect(reserve).toBe(UNNTAK_STANDARD)
-      expect(reserve).not.toMatch(/gjelder ikke regelen/i)
-      const g = { kontrollerte: KANDIDATER }
-      const q = vurderFlyt(r, {}, g).sporsmal.find((x) => /^tidligere_seponeringsplager/.test(x.id))!
+      const q = vurderFlyt(r, {}).sporsmal.find((x) => /^tidligere_seponeringsplager/.test(x.id))!
       expect(q.alternativer.map((a) => a.tekst)).toEqual(['Ja', 'Nei', 'Vet ikke'])
-      expect(vurderFlyt(r, { [q.id]: 'ja' }, g).stopp.find((x) => x.sporsmal === q.id)?.tekst).toMatch(
+      expect(vurderFlyt(r, { [q.id]: 'ja' }).stopp.find((x) => x.sporsmal === q.id)?.tekst).toMatch(
         /^Verktøyet har foreløpig ingen godkjent standardplan ved tidligere seponeringsvansker\. (Nedtrappingen må tilpasses individuelt|Byttet må planlegges individuelt)/,
       )
+      // Reservevisningen, som gjelder når et avtrykk ikke stemmer lenger.
+      const s = vurderFlyt(r, {}, RESERVE).sporsmal.find((x) => x.id === TIDLIGERE)!
+      expect(s.alternativer.map((a) => a.tekst)).toEqual(['Stemmer', 'Stemmer ikke'])
+      const reserve = vurderFlyt(r, { [TIDLIGERE]: 'ja' }, RESERVE).stopp.find((x) => x.sporsmal === TIDLIGERE)?.tekst
+      expect(reserve).toBe(UNNTAK_STANDARD)
+      expect(reserve).not.toMatch(/gjelder ikke regelen/i)
     },
   )
-
-  it('ønsket (P2a): med katalogen ført som kontrollert vises ingen godkjent regel i bruk med reservevisningen', () => {
-    expect(iReserve(KANDIDATER)).toEqual([])
-  })
-
-  it.fails('ønsket (P2): ingen godkjent regel i bruk vises med reservevisningen i appen (venter på at avtrykkene føres etter ChatGPTs kontroll)', () => {
-    expect(iReserve()).toEqual([])
-  })
 })
 
-describe('P0-3 stopp uten konkret grunn (rettet i P2a, venter på katalogkontrollen)', () => {
+describe('P0-3 stopp uten konkret grunn (rettet i P2a, katalogen kontrollert 07.11.2026)', () => {
   /** Alle svar på et synlig spørsmål som stopper planen, med forklaringen klinikeren får. */
   const stoppsvar = (r: Regel, g?: Flytgrunnlag) =>
     flytoppsett(r, g).sporsmal.flatMap((q) => {
@@ -110,29 +103,24 @@ describe('P0-3 stopp uten konkret grunn (rettet i P2a, venter på katalogkontrol
     })
   const generiske = (g?: Flytgrunnlag) => iBruk.flatMap((r) => stoppsvar(r, g)).filter((x) => x.tekst === INDIVIDUELT || x.tekst === UNNTAK_STANDARD || /gjelder ikke regelen/i.test(x.tekst ?? ''))
 
-  it('til avtrykkene er ført, kommer hvert generiske stopp fra reservevisningen, og ingen sier «Da gjelder ikke regelen»', () => {
-    const g = generiske()
-    expect(g.length).toBeGreaterThan(0)
-    expect(g.filter((x) => harKontrollertKatalog(regel(x.regel)))).toEqual([])
-    expect(g.filter((x) => /gjelder ikke regelen/i.test(x.tekst ?? ''))).toEqual([])
-  })
-
-  it('ønsket (P2a): med katalogen ført som kontrollert sier hvert svar som stopper planen, hvilket forhold som stopper og hvorfor', () => {
-    const g = { kontrollerte: KANDIDATER }
-    expect(generiske(g)).toEqual([])
+  it('i appen sier hvert svar som stopper planen, hvilket forhold som stopper og hvorfor', () => {
+    expect(generiske()).toEqual([])
     // Minst like mange stoppende svar som de 28 generiske i P0-rapporten, og hvert har sin egen tekst.
-    const alle = iBruk.flatMap((r) => stoppsvar(r, g))
+    const alle = iBruk.flatMap((r) => stoppsvar(r))
     expect(alle.length).toBeGreaterThan(28)
     for (const x of alle) expect(x.tekst, `${x.regel} ${x.sporsmal}=${x.svar}`).toMatch(/\S/)
   })
 
-  it.fails('ønsket (P2): i appen sier hvert svar som stopper planen, hvilket forhold som stopper og hvorfor (venter på at avtrykkene føres etter ChatGPTs kontroll)', () => {
-    expect(generiske()).toEqual([])
+  it('i reservevisningen kommer hvert generiske stopp fra unntakene, og ingen sier «Da gjelder ikke regelen»', () => {
+    const g = generiske({ kontrollerte: [] })
+    expect(g.length).toBeGreaterThan(0)
+    expect(g.filter((x) => /gjelder ikke regelen/i.test(x.tekst ?? ''))).toEqual([])
   })
 })
 
 describe('P0-4 lang behandlingstid ved escitalopram (rettet i spor B)', () => {
-  const LANG = standardId('sporsmal', 'lang_behandlingstid')
+  // Katalogens spørsmål, som avgjør regelspørsmålet `lang_behandlingstid` (P2a).
+  const LANG = 'lang_behandlingstid'
   const ESC = { fra: { nokkel: 'escitalopram', formulering: 'standard' as const } }
   const uttrekk = uttrekkFor(ESC, uttrekkene)
   const tilstand = (dose: string, legemiddelform: string, flytsvar: Record<string, string> = {}) =>
@@ -166,7 +154,7 @@ describe('P0-4 lang behandlingstid ved escitalopram (rettet i spor B)', () => {
     const ja = tilstand(dose, form, { [LANG]: 'ja' })
     expect(ja.tilstand.kontroll.utfall).toBe('kan_ikke')
     expect(ja.tilstand.kontroll.grunner).toEqual([
-      expect.objectContaining({ sporsmal: LANG, tekst: expect.stringMatching(/^Verktøyet har ingen godkjent plan ved lang behandlingstid\. Det betyr ikke nødvendigvis at behandlingen er uforsvarlig/) }),
+      expect.objectContaining({ sporsmal: LANG, tekst: expect.stringMatching(/^Den godkjente planen gjelder bare kort behandlingstid\. Etter lang bruk anbefales vanligvis mindre reduksjoner/) }),
     ])
     // Nei gir fortsatt en plan (svaret er tillatende).
     expect(tilstand(dose, form, { [LANG]: 'nei' }).tilstand.kontroll.utfall).toBe('kan_lages_hvis')
