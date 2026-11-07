@@ -18,6 +18,7 @@
  * vernets tak (høyst seks forløp, pause mellom dem, ingen nye forsøk) og
  * kjøringen stopper ved første tegn på overbelastning.
  *
+ * Et forløp med `fasit` kontrolleres mot fasiten for det forløpet (samme pasient på mobil).
  * Uten id kjøres alle forløpene, ett om gangen, i en ny nettleserkontekst hver
  * med innloggingen fra den første. Resultatene skrives til
  * mappen i P0_UT (standard `p0-utdata/`, ikke i git). Kommandoen avslutter med
@@ -210,7 +211,7 @@ async function kjor(f) {
   }
   const utfall = /Komplett plan til sluttmålet/.test(plan) ? 'komplett plan' : /Ingen plan|kan ikke lage en plan/.test(plan) ? 'stopp' : 'annet'
   // P4: det appen gir, mot den uavhengige fasiten (src/__tests__/qa/fasit.ts).
-  const avvik = kontrollerMotFasit(f.id, { utfall, skjerm: plan, kopi, utskrift, sporsmal, enkeltvalg })
+  const avvik = kontrollerMotFasit(f.fasit ?? f.id, { utfall, skjerm: plan, kopi, utskrift, sporsmal, enkeltvalg })
   const tall = { handlinger, dosevalg: dosevalg.length, enkeltvalg, sporsmal: sporsmal.length, sporsmalstegn, skjermtegn: plan.length, kopitegn: kopi.length, utskriftsider }
   const sammendrag = { id: f.id, hva: f.hva, versjon, mobil, utfall, ...tall, avvik, overskrift: plan.split('\n').filter(Boolean).slice(1, 3).join(' / ') }
   writeFileSync(

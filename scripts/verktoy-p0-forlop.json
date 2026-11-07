@@ -469,7 +469,8 @@
      "har tålt",
      "Ja"
     ]
-   ]
+   ],
+   "utskrift": true
   },
   {
    "id": "P0-C02",
@@ -630,7 +631,8 @@
      "har tålt",
      "Ja"
     ]
-   ]
+   ],
+   "utskrift": true
   },
   {
    "id": "P0-C06",
@@ -753,7 +755,8 @@
      "Lithionit 42",
      "Ja"
     ]
-   ]
+   ],
+   "utskrift": true
   },
   {
    "id": "P0-D02",
@@ -797,6 +800,151 @@
      "Ja"
     ]
    ]
+  },
+  {
+   "id": "P4-M01",
+   "hva": "Som P0-B01 (citalopram → sertralin), på mobil",
+   "verktoy": "bytte-antidepressiv",
+   "stoff": [
+    [
+     "Bytte fra",
+     "Citalopram"
+    ],
+    [
+     "Bytte til",
+     "Sertralin"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell",
+     "20"
+    ],
+    [
+     "Måldose",
+     "100"
+    ]
+   ],
+   "utskrift": true,
+   "mobil": true,
+   "fasit": "P0-B01"
+  },
+  {
+   "id": "P4-M02",
+   "hva": "Som P0-C05 (risperidon → Xeplion), på mobil",
+   "verktoy": "bytte-antipsykotikum",
+   "stoff": [
+    [
+     "snarvei",
+     "Risperidon (peroral) → paliperidon (depotinjeksjon (paliperidonpalmitat))"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell",
+     "3"
+    ],
+    [
+     "Måldose",
+     "75"
+    ]
+   ],
+   "svar": [
+    [
+     "Hvor gammel",
+     "18–64 år"
+    ],
+    [
+     "voksen, har schizofreni",
+     "Ja"
+    ],
+    [
+     "Bruker pasienten peroral",
+     "Ja"
+    ],
+    [
+     "har tålt",
+     "Ja"
+    ]
+   ],
+   "utskrift": true,
+   "mobil": true,
+   "fasit": "P0-C05"
+  },
+  {
+   "id": "P4-M03",
+   "hva": "Som P0-D01 (valproat + lamotrigin), på mobil",
+   "verktoy": "kombinere-stemningsstabiliserende",
+   "stoff": [
+    [
+     "Eksisterende legemiddel",
+     "Valproat"
+    ],
+    [
+     "Legemiddel som legges til",
+     "Lamotrigin"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell",
+     "1000"
+    ],
+    [
+     "Måldose",
+     "100"
+    ]
+   ],
+   "svar": [
+    [
+     "Hvor gammel",
+     "18–64 år"
+    ],
+    [
+     "fast, og skal",
+     "Ja"
+    ],
+    [
+     "natriumvalproat",
+     "Ja"
+    ],
+    [
+     "Lithionit 42",
+     "Ja"
+    ]
+   ],
+   "utskrift": true,
+   "mobil": true,
+   "fasit": "P0-D01"
+  },
+  {
+   "id": "P4-M04",
+   "hva": "Som P0-N01 (escitalopram, lang behandlingstid), på mobil",
+   "verktoy": "trappe-ned-antidepressiv",
+   "stoff": [
+    [
+     "Virkestoff",
+     "Escitalopram"
+    ]
+   ],
+   "felt": [
+    [
+     "Aktuell døgndose",
+     "10"
+    ]
+   ],
+   "form": [
+    "Tablett"
+   ],
+   "svar": [
+    [
+     "mange måneder",
+     "Ja"
+    ]
+   ],
+   "mobil": true,
+   "fasit": "P0-N01",
+   "utskrift": false
   }
  ]
 }
