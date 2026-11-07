@@ -102,7 +102,7 @@ async function trafikk(fra: string, til: string): Promise<Trafikk> {
   const [[sum], rpc, [avbrudd]] = await Promise.all([
     logger<{ kall: number; feil5xx: number; automatisert: number }>(
       `select count() kall, countIf(${STATUS} >= 500) feil5xx,
-         countIf(positionCaseInsensitive(${AGENT}, 'headless') > 0 or positionCaseInsensitive(${AGENT}, 'playwright') > 0) automatisert
+         countIf(match(${AGENT}, '(?i)headless|playwright')) automatisert
        from logs where ${API_KALL}`,
       fra,
       til,
