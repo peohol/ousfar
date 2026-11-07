@@ -4,7 +4,9 @@
  * legemiddel, etter dosen og på nytt ved hvert svar:
  *
  * 1. Finnes en klinisk godkjent, usperret regel som kan gi en komplett plan for valget?
- * 2. Er startdosen innenfor regelens krav og kliniske omfang? Ellers: hvilke doser er godkjent.
+ * 2. Er startdosen innenfor regelens krav og kliniske omfang? Ellers: hvilke doser er godkjent. Er så
+ *    FEST-kopien fersk og gyldig? FEST gjelder alle reglene likt, så en foreldet kopi sies her, med grunnen,
+ *    etter stopp som gjelder pasienten og dosen.
  * 3. Prøveberegning med FEST: motoren (`kliniskDoseplan`, via `beregnPlan`) kjøres med svarene som er gitt og
  *    de svarene som tillater en plan for resten, for hver legemiddelform og, når planen krever et dosevalg
  *    for et trinn, for hvert tillatte valg (avgrenset). Et valg som trengs, er gjenstående, ikke en stopp.
@@ -17,7 +19,7 @@
  */
 import type { Legemiddelutvalg } from '../../legemiddeldata/lesing'
 import { beregnPlan, formvalgFor, kanKreveBegrunnelse, lesDose, medTrinnvalg, trengerMaldose, type Planskjema } from '../doseplan'
-import type { Doseplanresultat } from '../motor/plan'
+import { festFerskhet, type Doseplanresultat } from '../motor/plan'
 import { inndatagrenser } from '../regler/beregning'
 import { kanonisk } from '../regler/godkjenning'
 import { gjeldendeBekreftelser, komplettfeil, type Regel, type Regelsett } from '../regler/modell'
@@ -34,6 +36,9 @@ export const KAN_LAGES_HVIS = 'En komplett plan kan lages hvis svarene under til
 
 /** Når prøveberegningen nådde taket uten å finne en komplett plan: ingenting er avgjort, og planen beregnes med de faktiske svarene. */
 export const IKKE_AVKLART = 'Verktøyet kunne ikke avklare på forhånd om en komplett plan kan lages. Svar på spørsmålene, så beregnes planen med svarene.'
+
+/** Når FEST-kopien ikke er fersk og gyldig: ingen regel kan gi en plan før den er kontrollert igjen. */
+export const FEST_IKKE_FERSK = 'Verktøyet lager ingen plan før legemiddeldataene er kontrollert mot FEST igjen; til da må behandlingen planlegges individuelt.'
 
 /** Den største dybden av dosevalg prøveberegningen går gjennom. */
 export const MAKS_DOSEVALG = 30
@@ -276,6 +281,12 @@ export function forhandskontroll(g: Forhandsgrunnlag): Forhandsresultat {
   const feil = regler.map((r) => dosefeil(r, start, formnavn))
   if (feil.every((f) => f !== undefined)) return kanIkke([forklaring('utenfor_omfang', `${feil[0]} ${INDIVIDUELT}`)], [])
   regler = regler.filter((_, i) => feil[i] === undefined)
+  // FEST gjelder alle reglene likt: er kopien ikke fersk og gyldig, sies det her, før prøveberegningen, med grunnen.
+  // Stopp som gjelder pasienten (et svar i flyten) og dosen, sies først, fordi de står også når FEST er oppdatert.
+  if (g.utvalg) {
+    const fest = festFerskhet(g.utvalg, g.naa)
+    if (fest.length > 0) return kanIkke([forklaring('ikke_klinisk', `${fest.join(' ')} ${FEST_IKKE_FERSK}`, { handling: 'Prøv igjen senere.' })], regler)
+  }
   // En måldose regelen ikke har faste verdier for, må velges før prøveberegningen kan si noe.
   if (regler.some((r) => maldosekandidater(r, g.skjema!) === undefined)) return ukjent(regler, gjenstarFlyt + 1)
   if (!g.utvalg) return ukjent(regler, gjenstarFlyt)

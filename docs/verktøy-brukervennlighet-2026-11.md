@@ -130,7 +130,7 @@ Ny funksjon `forhandskontroll` (`src/verktoy/flyt/forhandskontroll.ts`), kjørt 
 
 1. Finnes en klinisk godkjent, usperret regel for valget (`tilgjengelighet`, sperrer)?
 2. Er startdosen (og ved behov form og preparat) innenfor regelens kliniske omfang (`klinisk_omfang.tilfeller`)? Hvis ikke: hvilke doser og former er godkjent, i klartekst («Godkjent for 10 og 20 mg»).
-3. Finnes norske preparater i FEST for hele forløpet? FEST leses allerede etter steg 2, ikke etter skjemaet.
+3. Finnes norske preparater i FEST for hele forløpet? FEST leses allerede etter steg 2, ikke etter skjemaet. Er FEST-kopien ikke fersk og gyldig (over 48 timer gammel, fram i tid eller uten vellykket henting), gjelder det alle reglene likt: kontrollen sier det straks, med motorens grunn (for eksempel datoen for siste kontroll), og prøveberegner ikke.
 4. **Prøveberegning:** motoren kjøres med de svarene som er gitt og de trygge svarene for resten. Krever planen et valg av dose for et trinn (`trinnvalg`, for eksempel minste trinn for escitalopram v13), prøves hvert tillatte alternativ (avgrenset dybde); et slikt valg er en gjenstående opplysning, ikke en stopp. Gir ingen gren en komplett plan, og stopper alle av andre grunner enn manglende valg, sier verktøyet det nå, med grunnen. B skiller derfor stoppkoder for «valg trengs» fra reelle stopp. Gir det en plan, vises den ikke; brukeren får «En komplett plan kan lages hvis svarene under tillater det» og en teller for gjenstående spørsmål (S9).
 5. **Gjenstående opplysninger:** hvilke spørsmål som fortsatt kan avgjøre utfallet.
 
