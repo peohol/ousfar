@@ -57,7 +57,7 @@ Tabellen er OUSFARs sammenstilling fra kildene i §3 og vedlegg A, til kontroll.
 | Høy risiko for tilbakefall, alvorlig sykdom, nylig selvmordsrisiko | C eller individuell plan, med spesialist | Keks: kryssnedtrapping ved høy tilbakefallsrisiko. SPS: komplekse bytter med spesialistråd |
 | Andre serotonerge legemidler (for eksempel tramadol, triptaner, linezolid, litium), mistenkt serotonerg toksisitet | D eller ingen standardplan | Samtidig eksponering bør unngås |
 | Fra fluoksetin, til/fra MAO-hemmer | Ikke i K2 | Lang eliminasjon / spesialisthelsetjenesten (NICE 1.9.5) |
-| 65 år eller eldre, nedsatt leverfunksjon | Ingen standardplan nå | Egne doser og hyponatremirisiko i preparatomtalene; avgrensningen beholdes |
+| Over 65 år, nedsatt leverfunksjon | Ingen standardplan nå | Egne doser og hyponatremirisiko i preparatomtalene; avgrensningen fra v2 beholdes. 65-årsgrensen: v2 er godkjent for «18–65 år», mens regelens unntak gjelder «over 65 år» og den nyere katalogen spør «65 år eller eldre». Om en pasient på nøyaktig 65 år er med, er uavklart (P0-rapporten §4 b) og avgjøres av kontrolløren (D-K2-8); forslagene her endrer ikke grensen |
 
 ## 5. Hvordan bytteverktøyet kan tilby trygge alternativer (punkt 4)
 
@@ -73,7 +73,7 @@ Tabellen er OUSFARs sammenstilling fra kildene i §3 og vedlegg A, til kontroll.
 
 | Strategi | Foreslått innhold (OUSFAR-vurdering) | Foreslått omfang |
 | --- | --- | --- |
-| **K2-A «Direkte bytte»** (ny, foreslått som standard) | Siste dose av det gamle SSRI-et dag 0; sertralin 50 mg fra dag 1; vurdering av seponeringssymptomer, serotonerg belastning og forverring etter omtrent én uke; valgt mål 50 eller 100 mg som i v2 (økning tidligst etter 14 dager, etter vurdering av effekt, behov, toleranse og seponeringssymptomer) | Voksne 18–64 år, depresjon, escitalopram 10/20 mg eller citalopram 20/40 mg, tabletter, **uavhengig av behandlingstid** (eventuelt med en øvre grense, D-K2-2), normal leverfunksjon, ingen andre serotonerge legemidler |
+| **K2-A «Direkte bytte»** (ny, foreslått som standard) | Siste dose av det gamle SSRI-et dag 0; sertralin 50 mg fra dag 1; vurdering av seponeringssymptomer, serotonerg belastning og forverring etter omtrent én uke; valgt mål 50 eller 100 mg som i v2 (økning tidligst etter 14 dager, etter vurdering av effekt, behov, toleranse og seponeringssymptomer) | Voksne 18–65 år som i v2 (se D-K2-8 om 65 år), depresjon, escitalopram 10/20 mg eller citalopram 20/40 mg, tabletter, **uavhengig av behandlingstid** (eventuelt med en øvre grense, D-K2-2), normal leverfunksjon, ingen andre serotonerge legemidler |
 | **K2-B «Nedtrapping, så overgang»** (dagens v2, uendret) | Som i dag | Som i dag (høyst 8 uker) |
 | **K2-C «Overlapp»** (bare hvis Peder avgjør at bestillingen krever det, D-P1) | Må utledes selvstendig av kontrolløren fra uavhengige kilder; dette dokumentet foreslår ingen doser eller dager | Bare ved dokumentert høy tilbakefallsrisiko; strengere sjekk av serotonerg sammedisinering |
 
@@ -102,7 +102,7 @@ OUSFARs forslag er K1-L1 med en øvre grense for prosent per trinn under 10 mg s
 - **Én strategi = én regel = ett fingeravtrykk.** Ingen generell «SSRI-bytteprotokoll» (kontrollørens avgrensning 05.11.2026 gjelder fortsatt).
 - **FEST:** Hver ny regel bruker bare kontrollerte, markedsførte norske tabletter uten godkjenningsfritak (escitalopram 5/10/20 mg, citalopram 10/20/40 mg, sertralin 50/100 mg; FEST-uttrekket 03.11.2026). Citalopram finnes ikke som flytende form i FEST, og sertralinkonsentrat er sperret (kildematrisen). FEST eldre enn 48 timer og manglende styrke stopper som i dag.
 - **Sikkerhetssperrer beholdes:** alder, lever, fluoksetin og MAO-hemmere, andre serotonerge legemidler, ukjente svar, nødstopp og administratortilgang.
-- **Kasus ved grensene** for hver ny regel, i tillegg til P0-forløpene (vedlegg B): behandlingstid i hver kategori og «vet ikke», alder 64 og 65 år, hver godkjent startdose og nærmeste ikke-godkjente (15 mg, 30 mg), hvert mål, og alle stoppgrunner.
+- **Kasus ved grensene** for hver ny regel, i tillegg til P0-forløpene (vedlegg B): behandlingstid i hver kategori og «vet ikke», alder 64, 65 og 66 år, hver godkjent startdose og nærmeste ikke-godkjente (15 mg, 30 mg), hvert mål, og alle stoppgrunner.
 - **Ingen aktivering uten godkjenning:** En ny regel legges inn med status til faglig kontroll; den gamle står til den nye er godkjent og erstatter den.
 
 ## 8. Beslutninger
@@ -119,13 +119,14 @@ OUSFARs forslag er K1-L1 med en øvre grense for prosent per trinn under 10 mg s
 
 | Nr. | Spørsmål | OUSFARs forslag |
 | --- | --- | --- |
-| D-K2-1 | Er direkte bytte (K2-A) forsvarlig som standard for (es)citalopram → sertralin hos voksne under 65 år med depresjon? | Ja, med vurdering etter én uke og individuell tilpasning ved plager (SPS, Keks) |
+| D-K2-1 | Er direkte bytte (K2-A) forsvarlig som standard for (es)citalopram → sertralin hos voksne 18–65 år med depresjon (samme aldersomfang som v2)? | Ja, med vurdering etter én uke og individuell tilpasning ved plager (SPS, Keks) |
 | D-K2-2 | Skal K2-A gjelde uavhengig av behandlingstid, eller ha en øvre grense (for eksempel 2 år) til mer erfaring finnes? | Uavhengig av behandlingstid, men med tydeligere oppfølging etter mer enn 2 år; kontrolløren avgjør om en øvre grense trengs |
 | D-K2-3 | Fra escitalopram 20 mg eller citalopram 40 mg: sertralin 50 mg dag 1 og valgt økning til 100 mg tidligst etter 14 dager (som v2), eller 100 mg fra dag 1 (doseekvivalent)? | 50 mg dag 1 (preparatomtalens startdose, nær platået for transportørbinding, lavere serotonerg risiko), med økning etter vurdering. Om økningen kan komme etter 7 dager (Zoloft: minst én uke mellom endringer), er et eget valg |
 | D-K2-4 | Kan pasienter med tidligere seponeringsplager få K2-A, eller skal de fortsatt stoppe? | Fortsatt stopp i første versjon; vurderes på nytt med erfaring |
 | D-K2-5 | Skal K2-B (dagens v2) beholdes som valgfri strategi når K2-A godkjennes? | Ja, for pasienter som selv ønsker å redusere først, innen dagens omfang |
 | D-K2-6 | (P1-3) Skal det gamle SSRI-et trappes ned før overgangen? | Ikke som standard (K2-A); bare som valgt strategi (K2-B) |
 | D-K2-7 | (P1-5, K2-2b) Siste trinn ved SSRI → mirtazapin | Se §9 |
+| D-K2-8 | Er en pasient på nøyaktig 65 år med i byttereglene (v2 er godkjent for «18–65 år», unntaket gjelder «over 65 år», katalogen spør «65 år eller eldre»)? | Følge v2s godkjente ordlyd «18–65 år», slik at 65 år er med og bare over 65 år stopper; K2-A arver samme grense |
 | D-K1-1 | (M1) Minste trinn ved escitalopram etter lang behandlingstid | K1-L1 med øvre prosentgrense under 10 mg (§6.2) |
 | D-K1-2 | (P1-4/K2-8) Én felles inndeling av behandlingstid for alle verktøyene | Ja, med konkrete alternativer (§5 punkt 1) |
 
@@ -133,11 +134,19 @@ OUSFARs forslag er K1-L1 med en øvre grense for prosent per trinn under 10 mg s
 
 **P1-5 / K2-2b: siste trinn ved SSRI → mirtazapin.** Mirtazapin hemmer ikke serotonintransportøren, så argumentet for direkte bytte gjelder ikke. SPS beskriver forsiktig kryssnedtrapping over 2–4 uker med tempo etter toleranse, og Keks: trapp ned SSRI-et og start mirtazapin i lav dose. SPS viser et eksempel (hentet fra et proprietært samleverk, som ikke brukes her) der SSRI-et trappes ned under laveste tablettstyrke før stopp. Alternativene:
 
-- **M-A:** seponering fra laveste tablett (sertralin 25 mg, escitalopram 5 mg, citalopram 10 mg) etter minst 14 dager, med mirtazapin i gang og vurdering etter én uke; bare ved kort behandlingstid.
-- **M-B:** ett lavere trinn der et norsk preparat finnes: escitalopram dråper (1 mg per dråpe), som krever overgang fra tabletter og resept på dråper. Det finnes ingen flytende citalopram i FEST, og sertralinkonsentrat er sperret.
-- **M-C:** lengre tid på laveste tablett (for eksempel 28 dager) før stopp.
+- **M-A:** seponering fra laveste tablett (sertralin 25 mg, escitalopram 5 mg, citalopram 10 mg) etter 14 dager der, med mirtazapin i gang. Det er scenarioet som i dag står i K2-kontrollgrunnlaget.
+- **M-B:** lavere trinn der et norsk preparat finnes: escitalopram dråper (1 mg per dråpe), som krever overgang fra tabletter og resept på dråper. Det finnes ingen flytende citalopram i FEST, og sertralinkonsentrat er sperret.
+- **M-C:** lengre tid på laveste tablett før stopp.
 
-OUSFARs forslag: M-B for escitalopram og M-A kombinert med M-C for citalopram og sertralin, bare ved kort behandlingstid. Lang behandlingstid før mirtazapin er i praksis et nedtrappingsproblem og bør vente på avgjørelsen i §6.2.
+**OUSFARs konkrete forslag (bare ved kort behandlingstid, til kontroll):**
+
+| Fra | Siste trinn før stopp | Begrunnelse og forbehold |
+| --- | --- | --- |
+| Escitalopram | 5 mg tablett i 14 dager → dråper 3 mg i 14 dager → dråper 1 mg i 14 dager → stopp | Mindre trinn når dosen er lav (NICE 1.4.16: mindre andel ved lav dose); 14 dager per trinn er kontrollørens godkjente minstetid ved bytte (K2-1); sluttdosen 1 mg er den samme som i den godkjente K1-planen, men Peders avgjørelse om 1 mg (K1.9) gjelder bare K1 og må tas særskilt for bytte |
+| Citalopram | 10 mg tablett i 28 dager → stopp | Ingen lavere norsk dose uten deling; at citalopram 10 mg kan deles, er ikke kontrollert i preparatomtalen og er derfor ikke foreslått. Siste trinn forblir 10 → 0, og den lengre holdetiden er det eneste tiltaket |
+| Sertralin | 25 mg i 28 dager → stopp | Som citalopram; konsentratet er sperret |
+
+Mirtazapin 15 mg gis fra dag 1 og økes til valgt mål dagen etter siste SSRI-dose (som K2-3). Vurdering før hvert trinn og én uke etter stopp. Kontrolløren må avgjøre om 10 → 0 mg citalopram og 25 → 0 mg sertralin er forsvarlig med mirtazapin i gang (ingen transportørhemming), eller om disse to fortsatt skal stoppe. Lang behandlingstid før mirtazapin er i praksis et nedtrappingsproblem og bør vente på avgjørelsen i §6.2.
 
 **P1-6: vis strategitypen.** Ja (§5 punkt 4).
 
@@ -182,7 +191,8 @@ Forventet utfall er *forslaget* i dette dokumentet. Det blir fasit først når k
 | P1-T02 | Citalopram 40 mg i 6 måneder, mål sertralin 100 mg | Komplett plan: sertralin 50 mg fra dag 1, 100 mg tidligst etter 14 dager etter vurdering (D-K2-3) |
 | P1-T03 | Escitalopram 20 mg i 5 uker, bivirkninger | Komplett plan med K2-A; K2-B tilbys også |
 | P1-T04 | Som T01, behandlingstid «vet ikke» | Ingen plan: behandlingstiden må avklares |
-| P1-T05 | Som T01, 65 år | Ingen plan: ingen godkjent standardplan fra 65 år (egne doser for eldre) |
+| P1-T05 | Som T01, 66 år | Ingen plan: ingen godkjent standardplan over 65 år (egne doser for eldre) |
+| P1-T05b | Som T01, nøyaktig 65 år | Avhenger av D-K2-8; med OUSFARs forslag komplett plan som T01 |
 | P1-T06 | Som T01, tidligere seponeringsplager | Ingen plan (D-K2-4) med konkret forklaring |
 | P1-T07 | Som T01, bruker tramadol | Ingen plan: andre serotonerge legemidler gjør byttet mer risikofylt |
 | P1-T08 | Fluoksetin 20 mg → sertralin | Ingen plan: fluoksetin har lang eliminasjon og er ikke vurdert |
